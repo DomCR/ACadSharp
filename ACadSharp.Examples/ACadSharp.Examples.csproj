@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="_samples\**" />
+    <EmbeddedResource Remove="_samples\**" />
+    <None Remove="_samples\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ACadSharp\ACadSharp.csproj" />
+  </ItemGroup>
+
+</Project>

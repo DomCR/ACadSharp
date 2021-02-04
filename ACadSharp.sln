@@ -1,0 +1,72 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACadSharp", "ACadSharp\ACadSharp.csproj", "{66B978F6-8ED4-4E14-BD43-BBB86664ADB3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACadSharp.Examples", "ACadSharp.Examples\ACadSharp.Examples.csproj", "{546C216F-6738-41AD-81A4-12E4BC75E621}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D4F40AC7-232A-4140-B26C-C432E6B82E53}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentation", "{D6442D97-991A-4A63-9A93-A511643D0168}"
+	ProjectSection(SolutionItems) = preProject
+		documentation\autocad_2012_pdf_dxf-reference_enu.pdf = documentation\autocad_2012_pdf_dxf-reference_enu.pdf
+		documentation\OpenDesign_Specification_for_.dwg_files.pdf = documentation\OpenDesign_Specification_for_.dwg_files.pdf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{F5DAE5BA-4D19-4071-80C8-9DEECF0E7B32}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dxf", "dxf", "{33B3E35E-A3D8-413E-A44B-8FA4381DF018}"
+	ProjectSection(SolutionItems) = preProject
+		samples\dxf\ascii.dxf = samples\dxf\ascii.dxf
+		samples\dxf\bin.dxf = samples\dxf\bin.dxf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dwg", "dwg", "{BF9B0C8C-987D-42F2-BA92-9E762BDC8990}"
+	ProjectSection(SolutionItems) = preProject
+		samples\dwg\drawing_2000.dwg = samples\dwg\drawing_2000.dwg
+		samples\dwg\drawing_2004.dwg = samples\dwg\drawing_2004.dwg
+		samples\dwg\drawing_2007.dwg = samples\dwg\drawing_2007.dwg
+		samples\dwg\drawing_2010.dwg = samples\dwg\drawing_2010.dwg
+		samples\dwg\drawing_2013.dwg = samples\dwg\drawing_2013.dwg
+		samples\dwg\drawing_2018.dwg = samples\dwg\drawing_2018.dwg
+		samples\dwg\drawing_R14.dwg = samples\dwg\drawing_R14.dwg
+		samples\dwg\Floor Plan Sample.dwg = samples\dwg\Floor Plan Sample.dwg
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{66B978F6-8ED4-4E14-BD43-BBB86664ADB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66B978F6-8ED4-4E14-BD43-BBB86664ADB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66B978F6-8ED4-4E14-BD43-BBB86664ADB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66B978F6-8ED4-4E14-BD43-BBB86664ADB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{546C216F-6738-41AD-81A4-12E4BC75E621}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{546C216F-6738-41AD-81A4-12E4BC75E621}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{546C216F-6738-41AD-81A4-12E4BC75E621}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{546C216F-6738-41AD-81A4-12E4BC75E621}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D6442D97-991A-4A63-9A93-A511643D0168} = {D4F40AC7-232A-4140-B26C-C432E6B82E53}
+		{F5DAE5BA-4D19-4071-80C8-9DEECF0E7B32} = {D4F40AC7-232A-4140-B26C-C432E6B82E53}
+		{33B3E35E-A3D8-413E-A44B-8FA4381DF018} = {F5DAE5BA-4D19-4071-80C8-9DEECF0E7B32}
+		{BF9B0C8C-987D-42F2-BA92-9E762BDC8990} = {F5DAE5BA-4D19-4071-80C8-9DEECF0E7B32}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B40C2E48-575E-40D1-88C5-272437A5683F}
+	EndGlobalSection
+EndGlobal
