@@ -235,10 +235,9 @@ namespace ACadSharp.IO.DWG
 			m_fileHeader = m_fileHeader ?? ReadFileHeader();
 			IDwgStreamReader sreader = getSectionStream(DwgSectionDefinition.Header);
 
-			DwgHeaderReader hreader = new DwgHeaderReader();
+			DwgHeaderReader hreader = new DwgHeaderReader(m_fileHeader.AcadVersion);
 
-			return hreader.Read(sreader, m_fileHeader.AcadVersion,
-				m_fileHeader.AcadMaintenanceVersion, out m_objectPointers);
+			return hreader.Read(sreader, m_fileHeader.AcadMaintenanceVersion, out m_objectPointers);
 		}
 		/// <summary>
 		/// Read the classes section of the file.
@@ -399,7 +398,7 @@ namespace ACadSharp.IO.DWG
 		{
 			m_cadHeader = m_cadHeader ?? ReadHeader();
 			Dictionary<ulong, long> handles = ReadHandles();
-			
+
 			//Initialize the document
 			m_document = new CadDocument();
 			m_document.Header = m_cadHeader;

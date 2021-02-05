@@ -26,7 +26,7 @@ namespace ACadSharp.IO.DWG
 	 * name clash. To complicate matters more, files also exist with table records with duplicate 
 	 * names. This is incorrect, and the software should rename the record to be unique upon reading.
 	 */
-	internal class DwgObjectSectionReader
+	internal class DwgObjectSectionReader : DwgSectionReader
 	{
 		private long m_objectInitialPos = 0;
 
@@ -45,7 +45,6 @@ namespace ACadSharp.IO.DWG
 		private Dictionary<ulong, CadObject> m_objectMap = new Dictionary<ulong, CadObject>();
 		private List<DwgTemplate> m_templates = new List<DwgTemplate>();
 
-		private readonly ACadVersion m_version;
 		private readonly IDwgStreamReader m_reader;
 
 		/// <summary>
@@ -72,9 +71,8 @@ namespace ACadSharp.IO.DWG
 		private CRC8StreamHandler m_crcStream;
 
 		public DwgObjectSectionReader(ACadVersion version, CadDocument document,
-			IDwgStreamReader reader, Queue<ulong> handles, Dictionary<ulong, long> handleMap)
+			IDwgStreamReader reader, Queue<ulong> handles, Dictionary<ulong, long> handleMap) : base(version)
 		{
-			m_version = version;
 			m_document = document;
 			m_reader = reader;
 
@@ -514,10 +512,13 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.POLYLINE_3D:
 					break;
 				case ObjectType.ARC:
+					template = readArc();
 					break;
 				case ObjectType.CIRCLE:
+					template = readCircle();
 					break;
 				case ObjectType.LINE:
+					template = readLine();
 					break;
 				case ObjectType.DIMENSION_ORDINATE:
 					break;
@@ -663,6 +664,7 @@ namespace ACadSharp.IO.DWG
 			m_templates.Add(template);
 		}
 
+		#region Text entities
 		private DwgTemplate readText()
 		{
 			DwgTextEntityTemplate text = new DwgTextEntityTemplate(new Text());
@@ -785,6 +787,100 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Common Entity Handle Data H 7 STYLE(hard pointer)
 			template.StyleHandle = handleReference();
+		}
+		#endregion
+		private DwgTemplate readArc()
+		{
+			Arc arc = new Arc();
+			DwgEntityTemplate template = new DwgEntityTemplate(arc);
+
+			readCommonEntityData(template);
+
+			//Center 3BD 10
+			arc.Center = this.m_objectReader.Read3BitDouble();
+			//Radius BD 40
+			arc.Radius = this.m_objectReader.ReadBitDouble();
+			//Thickness BT 39
+			arc.Thickness = this.m_objectReader.ReadBitThickness();
+			//Extrusion BE 210
+			arc.Normal = this.m_objectReader.ReadBitExtrusion();
+			//Start angle BD 50
+			arc.StartAngle = this.m_objectReader.ReadBitDouble();
+			//End angle BD 51
+			arc.EndAngle = this.m_objectReader.ReadBitDouble();
+
+			return template;
+		}
+		private DwgTemplate readCircle()
+		{
+			Circle circle = new Circle();
+			DwgEntityTemplate template = new DwgEntityTemplate(circle);
+
+			readCommonEntityData(template);
+
+			//Center 3BD 10
+			circle.Center = this.m_objectReader.Read3BitDouble();
+			//Radius BD 40
+			circle.Radius = this.m_objectReader.ReadBitDouble();
+			//Thickness BT 39
+			circle.Thickness = this.m_objectReader.ReadBitThickness();
+			//Extrusion BE 210
+			circle.Normal = this.m_objectReader.ReadBitExtrusion();
+
+			return template;
+		}
+		private DwgTemplate readLine()
+		{
+			Line line = new Line();
+			DwgEntityTemplate template = new DwgEntityTemplate(line);
+
+			readCommonEntityData(template);
+
+			//R13-R14 Only:
+			if (R13_15Only)
+			{
+				//Start pt 3BD 10
+				line.StartPoint = this.m_objectReader.Read3BitDouble();
+				//End pt 3BD 11
+				line.EndPoint = this.m_objectReader.Read3BitDouble();
+			}
+
+			//R2000+:
+			if (R2000Plus)
+			{
+				//Z’s are zero bit B
+				bool flag = this.m_objectReader.ReadBit();
+				//Start Point x RD 10
+				double startX = this.m_objectReader.ReadDouble();
+				//End Point x DD 11 Use 10 value for default
+				double endX = this.m_objectReader.ReadBitDoubleWithDefault(startX);
+				//Start Point y RD 20
+				double startY = this.m_objectReader.ReadDouble();
+				//End Point y DD 21 Use 20 value for default
+				double endY = this.m_objectReader.ReadBitDoubleWithDefault(startY);
+
+				double startZ = 0.0;
+				double endZ = 0.0;
+
+				if (!flag)
+				{
+					//Start Point z RD 30 Present only if “Z’s are zero bit” is 0
+					startZ = this.m_objectReader.ReadDouble();
+					//End Point z DD 31 Present only if “Z’s are zero bit” is 0, use 30 value for default.
+					endZ = this.m_objectReader.ReadBitDoubleWithDefault(startZ);
+				}
+
+				line.StartPoint = new XYZ(startX, startY, startZ);
+				line.EndPoint = new XYZ(endX, endY, endZ);
+			}
+
+			//Common:
+			//Thickness BT 39
+			line.Thickness = this.m_objectReader.ReadBitThickness();
+			//Extrusion BE 210
+			line.Normal = this.m_objectReader.ReadBitExtrusion();
+
+			return template;
 		}
 		#endregion
 	}

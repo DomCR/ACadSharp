@@ -8,59 +8,22 @@ using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
+
 	/// <summary>
 	/// Util class to read the cad header.
 	/// </summary>
-	internal class DwgHeaderReader
+	internal class DwgHeaderReader : DwgSectionReader
 	{
-		/// <summary>
-		/// R13-R14 Only
-		/// </summary>
-		private bool R13_14Only;
-		/// <summary>
-		/// R13-R15 Only
-		/// </summary>
-		private bool R13_15Only;
-		/// <summary>
-		/// R2000+ Only
-		/// </summary>
-		private bool R2000Plus;
-		/// <summary>
-		/// Pre-2004 Only
-		/// </summary>
-		private bool R2004Pre;
-		/// <summary>
-		/// R2004+
-		/// </summary>
-		private bool R2004Plus;
-		/// <summary>
-		/// +R2007 Only
-		/// </summary>
-		private bool R2007Plus;
-		/// <summary>
-		/// R2010+ Only
-		/// </summary>
-		private bool R2010Plus;
-		/// <summary>
-		/// R2013+
-		/// </summary>
-		private bool R2013Plus;
-		/// <summary>
-		/// R2018+
-		/// </summary>
-		private bool R2018Plus;
-
 		private IDwgStreamReader m_mainReader;
 
-		public CadHeader Read(IDwgStreamReader sreader, ACadVersion version,
+		public DwgHeaderReader(ACadVersion version) : base(version) { }
+		public CadHeader Read(IDwgStreamReader sreader,
 			int acadMaintenanceVersion, out DwgHeaderHandlesCollection objectPointers)
 		{
 			//Save the parameter handler in a local variable
 			m_mainReader = sreader;
 
-			setVersionConditionals(version);
-
-			CadHeader header = new CadHeader(version);
+			CadHeader header = new CadHeader(m_version);
 			objectPointers = new DwgHeaderHandlesCollection();
 
 			//0xCF,0x7B,0x1F,0x23,0xFD,0xDE,0x38,0xA9,0x5F,0x7C,0x68,0xB8,0x4E,0x6D,0x33,0x5F
@@ -87,14 +50,14 @@ namespace ACadSharp.IO.DWG
 				long lastPositionInBits = initialPos + sizeInBits - 1L;
 
 				//Setup the text handler for versions 2007 and above
-				IDwgStreamReader textReader = DwgStreamReader.GetStreamHandler(version,
+				IDwgStreamReader textReader = DwgStreamReader.GetStreamHandler(m_version,
 					//Create a copy of the stream
 					new StreamIO(sreader.Stream, true).Stream);
 				//Set the position and use the flag
 				textReader.SetPositionByFlag(lastPositionInBits);
 
 				//Setup the handler for the references for versions 2007 and above
-				IDwgStreamReader referenceReader = DwgStreamReader.GetStreamHandler(version,
+				IDwgStreamReader referenceReader = DwgStreamReader.GetStreamHandler(m_version,
 					//Create a copy of the stream
 					new StreamIO(sreader.Stream, true).Stream);
 				//Set the position and jump the flag
@@ -1061,18 +1024,6 @@ namespace ACadSharp.IO.DWG
 			var endsn = m_mainReader.ReadSentinel();
 
 			return header;
-		}
-		private void setVersionConditionals(ACadVersion version)
-		{
-			R13_14Only = version == ACadVersion.AC1014 || version == ACadVersion.AC1012;
-			R13_15Only = version >= ACadVersion.AC1012 && version <= ACadVersion.AC1015;
-			R2000Plus = version >= ACadVersion.AC1015;
-			R2004Pre = version < ACadVersion.AC1018;
-			R2004Plus = version >= ACadVersion.AC1018;
-			R2007Plus = version >= ACadVersion.AC1021;
-			R2010Plus = version >= ACadVersion.AC1024;
-			R2013Plus = version >= ACadVersion.AC1027;
-			R2018Plus = version >= ACadVersion.AC1032;
 		}
 	}
 }

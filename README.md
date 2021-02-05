@@ -21,4 +21,7 @@ Early version of a dxf/dwg reader/writer library in C#.
 **Supported entities**:
 
 - Text
+- Arc
+- Cricle
+- Line
 
