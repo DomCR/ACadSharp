@@ -40,4 +40,9 @@ namespace ACadSharp.IO.Templates
 
 		public DwgTextEntityTemplate(TextEntity entity) : base(entity) { }
 	}
+
+	internal class DwgTableEntryTemplate : DwgTemplate
+	{
+		public DwgTableEntryTemplate(TableEntry entry) : base(entry) { }
+	}
 }

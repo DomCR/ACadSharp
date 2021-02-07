@@ -42,6 +42,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dwg", "dwg", "{BF9B0C8C-987
 		samples\dwg\Floor Plan Sample.dwg = samples\dwg\Floor Plan Sample.dwg
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACadSharp.Tests", "ACadSharp.Tests\ACadSharp.Tests.csproj", "{3503AFF9-E9C1-46F4-8E40-81D3035093DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACadTestGenerator", "ACadTestGenerator\ACadTestGenerator.csproj", "{5A00F437-F0E5-41AC-B0EB-34416B1A10B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +60,14 @@ Global
 		{546C216F-6738-41AD-81A4-12E4BC75E621}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{546C216F-6738-41AD-81A4-12E4BC75E621}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{546C216F-6738-41AD-81A4-12E4BC75E621}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3503AFF9-E9C1-46F4-8E40-81D3035093DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3503AFF9-E9C1-46F4-8E40-81D3035093DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3503AFF9-E9C1-46F4-8E40-81D3035093DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3503AFF9-E9C1-46F4-8E40-81D3035093DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A00F437-F0E5-41AC-B0EB-34416B1A10B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A00F437-F0E5-41AC-B0EB-34416B1A10B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A00F437-F0E5-41AC-B0EB-34416B1A10B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A00F437-F0E5-41AC-B0EB-34416B1A10B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

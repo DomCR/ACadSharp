@@ -428,7 +428,7 @@ namespace ACadSharp.IO.DWG
 			throw new NotImplementedException();
 		}
 		[Obsolete("Method to test the reading of different entities.")]
-		public List<Entity> ReadObjects(ObjectType type)
+		public List<CadObject> ReadObjects(ObjectType type)
 		{
 			m_cadHeader = m_cadHeader ?? ReadHeader();
 			Dictionary<ulong, long> handles = ReadHandles();
@@ -462,7 +462,7 @@ namespace ACadSharp.IO.DWG
 			throw new NotImplementedException();
 		}
 		[Obsolete("Method to test the reading of a single entity by it's offset.")]
-		public List<Entity> ReadObjects(long offset)
+		public CadObject ReadObject(long offset)
 		{
 			m_cadHeader = m_cadHeader ?? ReadHeader();
 			Dictionary<ulong, long> handles = ReadHandles();
@@ -491,9 +491,7 @@ namespace ACadSharp.IO.DWG
 				objectHandles,
 				handles);
 
-			sectionReader.Read(offset);
-
-			throw new NotImplementedException();
+			return sectionReader.Read(offset);
 		}
 		/// <inheritdoc/>
 		public void Dispose()

@@ -20,12 +20,12 @@ namespace ACadSharp
 		/// The handle of the entity.
 		/// </summary>
 		[DxfCodeValue(DxfCode.Handle)]
-		public ulong Handle { get; internal set; }
+		public ulong Handle { get; set; }
 		/// <summary>
 		/// Soft-pointer ID/handle to owner object
 		/// </summary>
 		[DxfCodeValue(DxfCode.SoftPointerId)]
-		public ulong OwnerHandle { get; internal set; }
+		public ulong OwnerHandle { get; set; }
 
 		/// <summary>
 		/// Objects objects that has been attached to this entity.
@@ -34,6 +34,10 @@ namespace ACadSharp
 
 		//TODO: Extended data
 
+		/// <summary>
+		/// Get a map of the object using the dxf codes in each field.
+		/// </summary>
+		/// <returns></returns>
 		internal Dictionary<DxfCode, object> GetCadObjectMap()
 		{
 			Dictionary<DxfCode, object> map = new Dictionary<DxfCode, object>();

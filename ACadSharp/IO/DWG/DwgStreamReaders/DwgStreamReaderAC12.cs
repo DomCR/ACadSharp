@@ -64,6 +64,30 @@ namespace ACadSharp.IO.DWG
 			}
 			return value;
 		}
+		/// <inheritdoc/>
+		public override Color ReadCmColor()
+		{
+			//CMC:
+			//BS: color index(always 0)
+			short colorIndex = ReadBitShort();
+			//BL: RGB value
+			int rgb = ReadBitLong();
+
+			byte id = ReadByte();
+
+			string colorName = string.Empty;
+			//RC: Color Byte(&1 => color name follows(TV),
+			if ((id & 1) == 1)
+				colorName = ReadVariableText();
+
+			string bookName = string.Empty;
+			//&2 => book name follows(TV))
+			if ((id & 2) == 2)
+				bookName = ReadVariableText();
+
+			//TODO: Finish the color implementation
+			return new Color();
+		}
 		public override Color ReadEnColor(out Transparency transparency, out bool flag)
 		{
 			Color color = new Color();

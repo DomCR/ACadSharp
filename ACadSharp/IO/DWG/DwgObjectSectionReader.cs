@@ -96,19 +96,26 @@ namespace ACadSharp.IO.DWG
 					//Incorrect handle
 					continue;
 
-				if (m_map.TryGetValue(handle, out long offset))
-				{
-					//Get the object type
-					ObjectType type = getEntityType(offset);
+				if (!m_map.TryGetValue(handle, out long offset))
+					continue;
 
-					//Read the object
-					readObject(type);
-				}
+				//Get the object type
+				ObjectType type = getEntityType(offset);
+
+				//Read the object
+				DwgTemplate template = readObject(type);
+
+				//Add the object to the map
+				m_objectMap[template.CadObject.Handle] = template.CadObject;
+				//Add the template to the list to be processed
+				m_templates.Add(template);
 			}
 		}
 		[Obsolete("Temporal method to test the reading of a single type object.")]
-		public void Read(ObjectType type)
+		public List<CadObject> Read(ObjectType type)
 		{
+			List<CadObject> objects = new List<CadObject>();
+
 			foreach (long offset in m_map.Values)
 			{
 				ObjectType et = getEntityType(offset);
@@ -116,11 +123,15 @@ namespace ACadSharp.IO.DWG
 				if (et != type)
 					continue;
 
-				readObject(et);
+				var template = readObject(et);
+
+				objects.Add(template.CadObject);
 			}
+
+			return objects;
 		}
 		[Obsolete("Temporal method to test the reading of a single object by offset.")]
-		public void Read(long offset)
+		public CadObject Read(long offset)
 		{
 			ObjectType et = getEntityType(offset);
 
@@ -128,7 +139,7 @@ namespace ACadSharp.IO.DWG
 			//	250511
 			//	250939
 
-			readObject(et);
+			return readObject(et).CadObject;
 		}
 		//**************************************************************************
 		private ObjectType getEntityType(long offset)
@@ -469,8 +480,9 @@ namespace ACadSharp.IO.DWG
 		}
 		#endregion
 
-		#region Entity readers
-		private void readObject(ObjectType type)
+
+		#region Object readers
+		private DwgTemplate readObject(ObjectType type)
 		{
 			DwgTemplate template = null;
 
@@ -482,8 +494,10 @@ namespace ACadSharp.IO.DWG
 					template = readText();
 					break;
 				case ObjectType.ATTRIB:
+					template = readAttribute();
 					break;
 				case ObjectType.ATTDEF:
+					template = readAttributeDefinition();
 					break;
 				case ObjectType.BLOCK:
 					break;
@@ -655,13 +669,7 @@ namespace ACadSharp.IO.DWG
 					break;
 			}
 
-			if (template == null)
-				return;
-
-			//Add the object to the map
-			m_objectMap[template.CadObject.Handle] = template.CadObject;
-			//Add the template to the list to be processed
-			m_templates.Add(template);
+			return template;
 		}
 
 		#region Text entities
@@ -677,14 +685,16 @@ namespace ACadSharp.IO.DWG
 			DwgTextEntityTemplate att = new DwgTextEntityTemplate(new Entities.Attribute());
 			readCommonTextData(att);
 
-			throw new NotImplementedException();
+			//TODO: implement attribute read
+			return null;
 		}
 		private DwgTemplate readAttributeDefinition()
 		{
 			DwgTextEntityTemplate attdef = new DwgTextEntityTemplate(new AttributeDefinition());
 			readCommonTextData(attdef);
 
-			throw new NotImplementedException();
+			//TODO: implement attribute definition read
+			return null;
 		}
 		private void readCommonTextData(DwgTextEntityTemplate template)
 		{
@@ -789,6 +799,7 @@ namespace ACadSharp.IO.DWG
 			template.StyleHandle = handleReference();
 		}
 		#endregion
+
 		private DwgTemplate readArc()
 		{
 			Arc arc = new Arc();
@@ -881,6 +892,13 @@ namespace ACadSharp.IO.DWG
 			line.Normal = this.m_objectReader.ReadBitExtrusion();
 
 			return template;
+		}
+
+		private DwgTemplate readLayer()
+		{
+			DwgTextEntityTemplate attdef = new DwgTextEntityTemplate(new AttributeDefinition());
+
+			return null;
 		}
 		#endregion
 	}

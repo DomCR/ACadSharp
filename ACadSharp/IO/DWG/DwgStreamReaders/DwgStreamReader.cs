@@ -558,25 +558,10 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
-		public Color ReadCmColor()
+		public virtual Color ReadCmColor()
 		{
-			//CMC:
-			//BS: color index(always 0)
+			//R15 and earlier: BS color index
 			short colorIndex = ReadBitShort();
-			//BL: RGB value
-			int rgb = ReadBitLong();
-
-			byte id = ReadByte();
-
-			string colorName = string.Empty;
-			//RC: Color Byte(&1 => color name follows(TV),
-			if ((id & 1) == 1)
-				colorName = ReadVariableText();
-
-			string bookName = string.Empty;
-			//&2 => book name follows(TV))
-			if ((id & 2) == 2)
-				bookName = ReadVariableText();
 
 			//TODO: Finish the color implementation
 			return new Color();

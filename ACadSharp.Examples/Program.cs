@@ -21,9 +21,15 @@ namespace ACadSharp.Examples
 			reader.Read();
 		}
 
+		static void ReadDwgHeader()
+		{
+
+		}
+
 		static void ReadDwg()
 		{
-			string file = Path.Combine(PathSamples, "dwg/drawing_2007.dwg");
+			string file = Path.Combine(PathSamples, "dwg/drawing_2000.dwg");
+			//string file = Path.Combine(PathSamples, "dwg/drawing_2007.dwg");
 			DwgReader reader = new DwgReader(file);
 
 			//TEXT ENTITIES OFFSETS:
@@ -31,7 +37,7 @@ namespace ACadSharp.Examples
 			//	250939
 
 			//reader.ReadObjects(ObjectType.TEXT);
-			reader.ReadObjects(250511);
+			reader.ReadObject(250511);
 		}
 	}
 }
