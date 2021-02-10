@@ -7,6 +7,12 @@ namespace ACadSharp.IO.DWG
 	/// </summary>
 	internal static class Dwg2004LZ77
 	{
+		/// <summary>
+		/// Decompress a stream with a specific decompressed size.
+		/// </summary>
+		/// <param name="compressed"></param>
+		/// <param name="decompressedSize"></param>
+		/// <returns></returns>
 		public static Stream Decompress(Stream compressed, long decompressedSize)
 		{
 			//Create a new stream
@@ -42,19 +48,17 @@ namespace ACadSharp.IO.DWG
 
 				if (opcode1 < 0x10 || opcode1 >= 0x40)
 				{
-					//compressedBytes = ((opcode1 & 0xF0) >> 4) – 1
 					compressedBytes = (opcode1 >> 4) - 1;
 					//Read the next byte(call it opcode2):
 					byte opcode2 = (byte)src.ReadByte();
-					//compOffset = (opcode2 << 2) | ((opcode1 & 0x0C) >> 2)
-					compOffset = (opcode1 >> 2 & 3 | opcode2 << 2) + 1;
+					compOffset = ((opcode1 >> 2 & 3) | (opcode2 << 2)) + 1;
 				}
 				//0x12 – 0x1F
 				else if (opcode1 < 0x20)
 				{
 					compressedBytes = readCompressedBytes(opcode1, 0b0111, src);
 					compOffset = (opcode1 & 8) << 11;
-					opcode1 = twoByteOffset(ref compOffset, 0x3FFF, src);
+					opcode1 = twoByteOffset(ref compOffset, 0x4000, src);
 				}
 				//0x20
 				else if (opcode1 >= 0x20)
@@ -85,9 +89,6 @@ namespace ACadSharp.IO.DWG
 				if (litCount > 0U)
 					opcode1 = copy(litCount, src, dst);
 			}
-
-			src.ReadByte();
-			src.ReadByte();
 		}
 		private static byte copy(int count, Stream src, Stream dst)
 		{
@@ -120,6 +121,7 @@ namespace ACadSharp.IO.DWG
 			if (compressedBytes == 0)
 			{
 				byte lastByte;
+
 				for (lastByte = (byte)compressed.ReadByte(); lastByte == 0; lastByte = (byte)compressed.ReadByte())
 					compressedBytes += byte.MaxValue;
 

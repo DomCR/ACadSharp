@@ -1321,6 +1321,7 @@ namespace ACadSharp.IO.DWG
 
 			//get the total size of the page
 			MemoryStream memoryStream = new MemoryStream((int)descriptor.DecompressedSize * descriptor.LocalSections.Count);
+
 			foreach (DwgLocalSectionMap section in descriptor.LocalSections)
 			{
 				if (section.IsEmpty)

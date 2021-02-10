@@ -138,10 +138,6 @@ namespace ACadSharp.IO.DWG
 
 			foreach (var offset in m_map)
 			{
-
-				if (offset.Key == 174)
-					continue;
-
 				ObjectType et = ObjectType.INVALID;
 
 				//Try needed for some tests where entities are not well formed...
@@ -498,7 +494,7 @@ namespace ACadSharp.IO.DWG
 
 			if (!flag)
 				//xdicobjhandle(hard owner)
-				handler.XDictHandle = handleReference();	//1035
+				handler.XDictHandle = handleReference();	//690
 
 			if (m_version <= ACadVersion.AC1024)
 				return;
