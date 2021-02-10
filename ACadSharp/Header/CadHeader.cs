@@ -20,7 +20,7 @@ namespace ACadSharp.Header
 		/// </summary>
 		[CadSystemVariable("ACADVER", DxfCode.Text)]
 		public string VersionString { get; set; }
-		public ACadVersion Version { get; set; }	//TODO: Fix the string version
+		public ACadVersion Version { get; set; }    //TODO: Fix the string version
 		/// <summary>
 		/// System variable ACADMAINTVER.
 		/// Maintenance version number(should be ignored)
@@ -562,6 +562,7 @@ namespace ACadSharp.Header
 
 			return map;
 		}
+
 		public void SetValue(string systemvar, object value)
 		{
 			foreach (PropertyInfo p in GetType().GetProperties())
@@ -577,7 +578,26 @@ namespace ACadSharp.Header
 				}
 			}
 		}
-		public void SetValue(string systemvar, params object[] values)
+		public object GetValue(string systemvar)
+		{
+			object value = null;
+
+			foreach (PropertyInfo p in GetType().GetProperties())
+			{
+				CadSystemVariableAttribute att = p.GetCustomAttribute<CadSystemVariableAttribute>();
+				if (att == null)
+					continue;
+
+				if ($"${att.Name}" == systemvar)
+				{
+					value = p.GetValue(this);
+					break;
+				}
+			}
+
+			return value;
+		}
+		internal void SetValue(string systemvar, params object[] values)
 		{
 			foreach (PropertyInfo p in GetType().GetProperties())
 			{

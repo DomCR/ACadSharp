@@ -9,7 +9,7 @@ namespace ACadSharp
 	/// </summary>
 	public enum ObjectType : short
 	{
-		UNDEFINED = -1,
+		INVALID = -1,
 		UNUSED = 0,
 
 		TEXT = 1,

@@ -584,6 +584,7 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public virtual ObjectType ReadObjectType()
 		{
+			//Until R2007, the object type was a bit short.
 			return (ObjectType)ReadBitShort();
 		}
 		/// <inheritdoc/>
@@ -762,7 +763,7 @@ namespace ACadSharp.IO.DWG
 		}
 		#endregion
 		//*******************************************************************
-		protected void applyFlagToPosition(long lastPos, out long length, out long strDataSize)
+		protected virtual void applyFlagToPosition(long lastPos, out long length, out long strDataSize)
 		{
 			//If 1, then the “endbit” location should be decremented by 16 bytes
 

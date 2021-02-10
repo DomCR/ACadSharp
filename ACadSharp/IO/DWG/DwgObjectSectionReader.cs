@@ -4,6 +4,7 @@ using ACadSharp.IO.Templates;
 using CSUtilities.IO;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace ACadSharp.IO.DWG
@@ -111,14 +112,40 @@ namespace ACadSharp.IO.DWG
 				m_templates.Add(template);
 			}
 		}
-		[Obsolete("Temporal method to test the reading of a single type object.")]
-		public List<CadObject> Read(ObjectType type)
+		[Obsolete("Temporal method to test the reading of all entities in the drawing.")]
+		public List<CadObject> ReadAll()
 		{
 			List<CadObject> objects = new List<CadObject>();
 
 			foreach (long offset in m_map.Values)
 			{
 				ObjectType et = getEntityType(offset);
+
+				var template = readObject(et);
+
+				if (template == null)
+					continue;
+
+				objects.Add(template.CadObject);
+			}
+
+			return objects;
+		}
+		[Obsolete("Temporal method to test the reading of a single type object.")]
+		public List<CadObject> Read(ObjectType type)
+		{
+			List<CadObject> objects = new List<CadObject>();
+
+			foreach (var offset in m_map)
+			{
+
+				if (offset.Key == 174)
+					continue;
+
+				ObjectType et = ObjectType.INVALID;
+
+				//Try needed for some tests where entities are not well formed...
+				et = getEntityType(offset.Value);
 
 				if (et != type)
 					continue;
@@ -139,11 +166,13 @@ namespace ACadSharp.IO.DWG
 			//	250511
 			//	250939
 
-			return readObject(et).CadObject;
+			return readObject(et)?.CadObject;
 		}
 		//**************************************************************************
 		private ObjectType getEntityType(long offset)
 		{
+			ObjectType type = ObjectType.INVALID;
+
 			//Set the position to the entity to find
 			m_crcReader.Position = offset;
 
@@ -151,24 +180,42 @@ namespace ACadSharp.IO.DWG
 			ushort size = (ushort)m_crcReader.ReadModularShort();
 
 			if (size <= 0U)
-				return ObjectType.UNUSED;
+				return type;
 
 			//remove the padding bits make sure the object stream ends on a byte boundary
-			uint sizeWithoutPadding = (uint)(size << 3);
+			uint sizeInBits = (uint)(size << 3);
 
 			//R2010+:
-			if (m_version >= ACadVersion.AC1024)
+			if (R2010Plus)
 			{
 				//MC : Size in bits of the handle stream (unsigned, 0x40 is not interpreted as sign).
+				//This includes the padding bits at the end of the handle stream 
+				//(the padding bits make sure the object stream ends on a byte boundary).
 				ulong handleSize = m_crcReader.ReadModularChar();
+
 				//Find the handles offset
-				ulong handleSectionOffset = size - handleSize;
+				ulong handleSectionOffset = (ulong)m_crcReader.PositionInBits() + sizeInBits - handleSize;
 
 				//Create a handler section reader
-				IDwgStreamReader hhandler = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(m_crcStream).Stream);
-				hhandler.SetPositionInBits((long)handleSectionOffset);
+				m_objectReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(m_crcStream, true).Stream);
+				m_objectReader.SetPositionInBits(m_crcReader.PositionInBits());
 
-				throw new NotImplementedException();
+				//set the initial posiltion and get the object type
+				m_objectInitialPos = m_objectReader.PositionInBits();
+				type = m_objectReader.ReadObjectType();
+
+				//if (type == ObjectType.BLOCK_HEADER || handleSize == 1)
+				//	return type;
+
+				//Create a handler section reader
+				m_referenceReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(m_crcStream, true).Stream);
+				m_referenceReader.SetPositionInBits((long)handleSectionOffset);
+
+				//Create a text section reader
+				m_textReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(m_crcStream, true).Stream);
+				m_textReader.SetPositionByFlag((long)handleSectionOffset - 1);
+
+				m_mergedReaders = new DwgMergedReader(m_objectReader, m_textReader, m_referenceReader); 
 			}
 			else
 			{
@@ -178,11 +225,14 @@ namespace ACadSharp.IO.DWG
 
 				m_referenceReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(m_crcStream, true).Stream);
 				m_textReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(m_crcStream, true).Stream);
+
+				//set the initial posiltion and get the object type
+				m_objectInitialPos = m_objectReader.PositionInBits();
+				type = m_objectReader.ReadObjectType();
 			}
 
-			m_objectInitialPos = m_objectReader.PositionInBits();
 
-			return m_objectReader.ReadObjectType();
+			return type;
 		}
 		//**************************************************************************
 		#region Common entity data
@@ -201,7 +251,7 @@ namespace ACadSharp.IO.DWG
 		private ulong handleReference(ulong handle)
 		{
 			//Read the handle
-			var value = m_referenceReader.HandleReference(handle);
+			var value = m_referenceReader.HandleReference(handle);  //690
 
 			//Add the value to the handles queue to be processed
 			m_handles.Enqueue(value);
@@ -277,9 +327,9 @@ namespace ACadSharp.IO.DWG
 			//Numreactors BL number of persistent reactors attached to this object
 			readReactors(template);
 
-
 			//R13-R14 Only:
-			if (m_version >= ACadVersion.AC1012 && m_version <= ACadVersion.AC1024)
+			//if (m_version >= ACadVersion.AC1012 && m_version <= ACadVersion.AC1014)
+			if (R13_14Only)
 			{
 				//8 LAYER (hard pointer)
 				template.LayerHandle = handleReference();
@@ -300,11 +350,8 @@ namespace ACadSharp.IO.DWG
 				//[NEXT ENTITY (relative soft pointer)]
 				template.NextEntity = handleReference(entity.Handle);
 			}
-			//R2013+:
 			else if (!(m_version >= ACadVersion.AC1018))
 			{
-				//Has DS binary data B If 1 then this object has associated binary data stored in the data store. 
-				//See for more details chapter 24.
 				m_handles.Enqueue(entity.Handle - 1UL);
 				m_handles.Enqueue(entity.Handle + 1UL);
 			}
@@ -321,7 +368,7 @@ namespace ACadSharp.IO.DWG
 			//Ltype scale	BD	48
 			entity.LinetypeScale = m_objectReader.ReadBitDouble();
 
-			if (!(m_version < ACadVersion.AC1015))
+			if (!(m_version >= ACadVersion.AC1015))
 			{
 				//Common:
 				//Invisibility BS 60
@@ -411,6 +458,8 @@ namespace ACadSharp.IO.DWG
 
 				//template.ExtendedData
 				readExtendedData(endPos);
+
+				size = m_objectReader.ReadBitShort();
 			}
 		}
 		private ExtendedData readExtendedData(long endPos)
@@ -449,13 +498,13 @@ namespace ACadSharp.IO.DWG
 
 			if (!flag)
 				//xdicobjhandle(hard owner)
-				handler.XDictHandle = handleReference();
+				handler.XDictHandle = handleReference();	//1035
 
 			if (m_version <= ACadVersion.AC1024)
 				return;
 
 			//R2013+:	
-			//Has DS binary data B If 1 then this object has associated binary data stored in the data store. See for more details chapter 24.
+			//Has DS binary data B If 1 then this object has associated binary data stored in the data store
 			m_objectReader.ReadBit();
 		}
 		/// <summary>
@@ -848,7 +897,7 @@ namespace ACadSharp.IO.DWG
 			readCommonEntityData(template);
 
 			//R13-R14 Only:
-			if (R13_15Only)
+			if (R13_14Only)
 			{
 				//Start pt 3BD 10
 				line.StartPoint = this.m_objectReader.Read3BitDouble();

@@ -41,6 +41,14 @@ namespace ACadSharp.IO.DWG
 			m_fileStream = new StreamIO(stream);
 		}
 		//**************************************************************************
+		public static CadDocument Read(Stream stream)
+		{
+			throw new NotImplementedException();
+		}
+		public static CadDocument Read(string filename)
+		{
+			throw new NotImplementedException();
+		}
 		/// <summary>
 		/// Read the file header data.
 		/// </summary>
@@ -427,6 +435,37 @@ namespace ACadSharp.IO.DWG
 
 			throw new NotImplementedException();
 		}
+		public List<CadObject> ReadAllObjects()
+		{
+			m_cadHeader = m_cadHeader ?? ReadHeader();
+			Dictionary<ulong, long> handles = ReadHandles();
+
+			//Initialize the document
+			m_document = new CadDocument();
+			m_document.Header = m_cadHeader;
+
+			IDwgStreamReader sreader = null;
+			if (m_fileHeader.AcadVersion <= ACadVersion.AC1015)
+			{
+				sreader = DwgStreamReader.GetStreamHandler(m_fileHeader.AcadVersion, m_fileStream.Stream);
+				sreader.Position = ReadObjFreeSpace();
+			}
+			else
+			{
+				sreader = getSectionStream(DwgSectionDefinition.AcDbObjects);
+			}
+
+			Queue<ulong> objectHandles = new Queue<ulong>(m_objectPointers.GetHandles());
+
+			DwgObjectSectionReader sectionReader = new DwgObjectSectionReader(
+				m_fileHeader.AcadVersion,
+				m_document,
+				sreader,
+				objectHandles,
+				handles);
+
+			return sectionReader.ReadAll();
+		}
 		[Obsolete("Method to test the reading of different entities.")]
 		public List<CadObject> ReadObjects(ObjectType type)
 		{
@@ -457,9 +496,7 @@ namespace ACadSharp.IO.DWG
 				objectHandles,
 				handles);
 
-			sectionReader.Read(type);
-
-			throw new NotImplementedException();
+			return sectionReader.Read(type);
 		}
 		[Obsolete("Method to test the reading of a single entity by it's offset.")]
 		public CadObject ReadObject(long offset)

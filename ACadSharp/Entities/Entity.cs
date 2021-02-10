@@ -20,7 +20,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Gets the object type for this entity.
 		/// </summary>
-		public virtual ObjectType ObjectType { get { return ObjectType.UNDEFINED; } }
+		public virtual ObjectType ObjectType { get { return ObjectType.INVALID; } }
 		/// <summary>
 		/// Specifies the layer for an object.
 		/// </summary>
