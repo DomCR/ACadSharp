@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Blocks\" />
     <Folder Include="Objects\" />
   </ItemGroup>
 

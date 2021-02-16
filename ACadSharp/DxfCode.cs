@@ -33,7 +33,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Primary text value for an entity
 		/// </summary>
-		XRefPath = 1,	//??
+		XRefPath = 1,
 		/// <summary>
 		/// Name (attribute tag, block name, and so on)
 		/// </summary>
@@ -137,6 +137,7 @@ namespace ACadSharp
 		ViewportNumber = 69,
 		Int16 = 70,
 		ViewMode = 71,
+		HatchAssociative = 71,
 		RegAppFlags = 71,
 		TxtStyleFlags = 71,
 		TxtMirrorFlags = 71,

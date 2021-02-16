@@ -6,7 +6,7 @@ namespace ACadSharp.IO.DXF
 {
 	internal interface IDxfStreamReader
 	{
-		bool SectionEndFound { get; }
+		bool EndSectionFound { get; }
 		DxfCode LastDxfCode { get; }
 		int LastCode { get; }
 		object LastValue { get; }

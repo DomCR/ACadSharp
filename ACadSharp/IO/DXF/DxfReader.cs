@@ -17,7 +17,7 @@ using System.Text;
 
 namespace ACadSharp.IO.DXF
 {
-	public class DxfReader
+	public class DxfReader : IDisposable
 	{
 		private string m_filename;
 		private StreamIO m_fileStream;
@@ -102,7 +102,7 @@ namespace ACadSharp.IO.DXF
 			Dictionary<string, DxfCode[]> headerMap = CadHeader.GetHeaderMap();
 
 			//Loop until the section ends
-			while (!m_reader.SectionEndFound)
+			while (!m_reader.EndSectionFound)
 			{
 				//Get next key/value
 				m_reader.ReadNext();
@@ -140,7 +140,7 @@ namespace ACadSharp.IO.DXF
 			//Advance to the first value in the section
 			m_reader.ReadNext();
 			//Loop until the section ends
-			while (!m_reader.SectionEndFound)
+			while (!m_reader.EndSectionFound)
 			{
 				if (m_reader.LastValueAsString == DxfFileToken.ClassEntry)
 					classes.Add(readClass());
@@ -166,7 +166,7 @@ namespace ACadSharp.IO.DXF
 			//Advance to the first value in the section
 			m_reader.ReadNext();
 			//Loop until the section ends
-			while (!m_reader.SectionEndFound)
+			while (!m_reader.EndSectionFound)
 			{
 				readTable(document);
 
@@ -179,6 +179,20 @@ namespace ACadSharp.IO.DXF
 		/// </summary>
 		public void ReadBlocks()
 		{
+			//Get the needed handler
+			m_reader = getSectionHandler(DxfFileToken.BlocksSection);
+		
+			//Advance to the first value in the section
+			m_reader.ReadNext();
+			//Loop until the section ends
+			while (!m_reader.EndSectionFound)
+			{
+				//if (m_reader.LastValueAsString == DxfFileToken.ClassEntry)
+				//	classes.Add(readBlock());
+				//else
+				//	m_reader.ReadNext();
+			}
+
 			throw new NotImplementedException();
 		}
 		/// <summary>
@@ -195,7 +209,7 @@ namespace ACadSharp.IO.DXF
 			//Advance to the first value in the section
 			m_reader.ReadNext();
 			//Loop until the section ends
-			while (!m_reader.SectionEndFound)
+			while (!m_reader.EndSectionFound)
 			{
 				entities.Add(readEntity());
 			}
@@ -215,6 +229,10 @@ namespace ACadSharp.IO.DXF
 		public void ReadThumbnailImage()
 		{
 			throw new NotImplementedException();
+		}
+		public void Dispose()
+		{
+			m_fileStream.Dispose();
 		}
 		//**************************************************************************
 		private IDxfStreamReader getHandler()
@@ -681,8 +699,11 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityArc:
 					entity = readArc(template);
 					break;
-				//case DxfFileToken.EntityCircle:
-				//	entity = readCircle(template);
+				case DxfFileToken.EntityCircle:
+					entity = readCircle(template);
+					break;
+				case DxfFileToken.EntityPolyline:
+				//	entity = readPolyline(template);
 				//	break;
 				//case DxfFileToken.EntityText:
 				//	entity = readText(template);
@@ -798,14 +819,12 @@ namespace ACadSharp.IO.DXF
 
 		private Arc readArc(DxfEntityTemplate template)
 		{
-			//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-0B14D8F1-0EBA-44BF-9108-57D8CE614BC8
-
 			//Create the arc based on the template
 			Arc arc = new Arc(template);
 
 			//Pre-declare structures
 			XYZ center = XYZ.Zero;
-			XYZ extrusion = XYZ.Zero = XYZ.AxisZ;
+			XYZ normal = XYZ.Zero = XYZ.AxisZ;
 
 			while (m_reader.LastDxfCode != DxfCode.Start)
 			{
@@ -847,14 +866,14 @@ namespace ACadSharp.IO.DXF
 					//Extrusion direction (optional; default = 0, 0, 1)
 					//DXF: X value; APP: 3D vector
 					case 210:
-						extrusion.X = m_reader.LastValueAsDouble;
+						normal.X = m_reader.LastValueAsDouble;
 						break;
 					//DXF: Y and Z values of extrusion direction (optional)
 					case 220:
-						extrusion.Y = m_reader.LastValueAsDouble;
+						normal.Y = m_reader.LastValueAsDouble;
 						break;
 					case 230:
-						extrusion.Z = m_reader.LastValueAsDouble;
+						normal.Z = m_reader.LastValueAsDouble;
 						break;
 					default:
 						Debug.Fail($"Unhandeled dxf code {m_reader.LastCode} at line {m_reader.Line}.");
@@ -866,18 +885,70 @@ namespace ACadSharp.IO.DXF
 
 			//Assign the structures
 			arc.Center = center;
-			arc.Normal = extrusion;
+			arc.Normal = normal;
 
 			return arc;
 		}
 		private Circle readCircle(DxfEntityTemplate template)
 		{
+			Circle circle = new Circle(template);
+
+			//Pre-declare structures
+			XYZ center = XYZ.Zero;
+			XYZ normal = XYZ.Zero = XYZ.AxisZ;
+
 			while (m_reader.LastDxfCode != DxfCode.Start)
 			{
+				switch (m_reader.LastCode)
+				{
+					//Subclass marker (AcDbCircle)
+					case 100:
+						Debug.Assert(m_reader.LastValueAsString == "AcDbCircle");
+					break;
+					//Thickness (optional; default = 0)
+					case 39:
+						circle.Thickness = m_reader.LastValueAsDouble;
+					break;
+					//Center point (in OCS)
+					//DXF: X value; APP: 3D point
+					case 10:
+						center.X = m_reader.LastValueAsDouble;
+					break;
+					//DXF: Y and Z values of center point (in OCS)
+					case 20:
+						center.Y = m_reader.LastValueAsDouble;
+					break;
+					case 30:
+						center.Z = m_reader.LastValueAsDouble;
+					break;
+					//Radius
+					case 40:
+						circle.Radius = m_reader.LastValueAsDouble;
+					break;
+					//Extrusion direction (optional; default = 0, 0, 1)
+					//DXF: X value; APP: 3D vector
+					case 210:
+						normal.X = m_reader.LastValueAsDouble;
+					break;
+					//DXF: Y and Z values of extrusion direction (optional)
+					case 220:
+						normal.Y = m_reader.LastValueAsDouble;
+					break;
+					case 230:
+						normal.Z = m_reader.LastValueAsDouble;
+					break;
+					default:
+						Debug.Fail($"Unhandeled dxf code {m_reader.LastCode} at line {m_reader.Line}.");
+					break;
+				}
 
+				m_reader.ReadNext();
 			}
 
-			return null;
+			circle.Center = center;
+			circle.Normal = normal;
+
+			return circle;
 		}
 		private Text readText(DxfEntityTemplate template)
 		{
@@ -889,7 +960,7 @@ namespace ACadSharp.IO.DXF
 			//Pre-declare structures
 			XYZ firstAlignmentPoint = XYZ.Zero;
 			XYZ secondAlignmentPoint = XYZ.Zero;
-			XYZ extrusion = XYZ.Zero = XYZ.AxisZ;
+			XYZ normal = XYZ.Zero = XYZ.AxisZ;
 
 			while (m_reader.LastDxfCode != DxfCode.Start)
 			{
@@ -936,6 +1007,38 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return null;
+		}
+		private PolyLine readPolyline(DxfEntityTemplate template)
+		{
+			PolyLine polyline = new PolyLine(template);
+
+			//Pre-declare structures
+			XYZ normal = XYZ.Zero = XYZ.AxisZ;
+
+			while (m_reader.LastDxfCode != DxfCode.Start)
+			{
+
+			}
+
+			polyline.Normal = normal;
+
+			return polyline;
+		}
+		private Hatch readHatch(DxfEntityTemplate template)
+		{
+			Hatch hatch = new Hatch(template);
+
+			//Pre-declare structures
+			XYZ normal = XYZ.Zero = XYZ.AxisZ;
+
+			while (m_reader.LastDxfCode != DxfCode.Start)
+			{
+
+			}
+
+			hatch.Normal = normal;
+
+			return hatch;
 		}
 		#endregion
 	}

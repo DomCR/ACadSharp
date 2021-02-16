@@ -9,7 +9,7 @@ namespace ACadSharp.IO.DXF
 {
 	internal class DxfTextReader : StreamReader, IDxfStreamReader
 	{
-		public bool SectionEndFound { get; private set; } = false;
+		public bool EndSectionFound { get; private set; } = false;
 		public DxfCode LastDxfCode { get; private set; }
 		public int LastCode { get { return (int)LastDxfCode; } }
 		public object LastValue { get; private set; }
@@ -45,7 +45,7 @@ namespace ACadSharp.IO.DXF
 			while (LastValueAsString != dxfEntry && (LastValueAsString != DxfFileToken.EndOfFile));
 
 			//Reset the end section flag
-			SectionEndFound = false;
+			EndSectionFound = false;
 		}
 		public Tuple<DxfCode, object> ReadNext()
 		{
@@ -54,7 +54,7 @@ namespace ACadSharp.IO.DXF
 
 			//Check for the end of the section
 			if (LastValueAsString == DxfFileToken.EndSection)
-				SectionEndFound = true;
+				EndSectionFound = true;
 
 			Tuple<DxfCode, object> pair = new Tuple<DxfCode, object>(LastDxfCode, LastValue);
 
@@ -70,7 +70,7 @@ namespace ACadSharp.IO.DXF
 		{
 			LastDxfCode = DxfCode.Invalid;
 			LastValue = string.Empty;
-			SectionEndFound = false;
+			EndSectionFound = false;
 
 			BaseStream.Position = 0;
 			DiscardBufferedData();

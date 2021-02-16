@@ -17,10 +17,8 @@ namespace ACadSharp.Entities
 		//100	Subclass marker(AcDbAttributeDefinition)
 
 		//280	Version number:
-		//0 = 2010
-		
+		//0 = 2010	
 		//3		Prompt string
-
 		//2		Tag string (cannot contain spaces)
 
 		//70	Attribute flags:
