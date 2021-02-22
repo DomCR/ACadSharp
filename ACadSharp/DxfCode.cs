@@ -173,6 +173,7 @@ namespace ACadSharp
 		NormalZ = 230,
 		XXInt16 = 270,
 		Int8 = 280,
+		DictionaryFlags = 281,
 		RenderMode = 281,
 		Bool = 290,
 		XTextString = 300,

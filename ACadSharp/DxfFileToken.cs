@@ -86,6 +86,7 @@ namespace ACadSharp
 		#endregion
 
 		public const string ObjectsSection = "OBJECTS";
+		public const string ObjectDictionary = "DICTIONARY";
 	}
 
 	public static class DxfSubclassMarker

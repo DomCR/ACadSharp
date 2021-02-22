@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Geometry;
 using ACadSharp.IO.Templates;
+using ACadSharp.Objects;
+using ACadSharp.Tables;
 using CSUtilities.IO;
 using System;
 using System.Collections.Generic;
@@ -105,6 +107,8 @@ namespace ACadSharp.IO.DWG
 
 				//Read the object
 				DwgTemplate template = readObject(type);
+				if (template == null)
+					continue;
 
 				//Add the object to the map
 				m_objectMap[template.CadObject.Handle] = template.CadObject;
@@ -211,7 +215,7 @@ namespace ACadSharp.IO.DWG
 				m_textReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(m_crcStream, true).Stream);
 				m_textReader.SetPositionByFlag((long)handleSectionOffset - 1);
 
-				m_mergedReaders = new DwgMergedReader(m_objectReader, m_textReader, m_referenceReader); 
+				m_mergedReaders = new DwgMergedReader(m_objectReader, m_textReader, m_referenceReader);
 			}
 			else
 			{
@@ -436,8 +440,32 @@ namespace ACadSharp.IO.DWG
 			//Lineweight RC 370
 			entity.Lineweight = (Lineweight)m_objectReader.ReadByte();
 		}
+		private void readCommonNonEntityData(DwgTemplate template)
+		{
+			if (m_version >= ACadVersion.AC1015 && m_version < ACadVersion.AC1024)
+				//Obj size RL size of object in bits, not including end handles
+				updateHandleReader();
 
-		private void readExtendedData(DwgEntityTemplate template)
+			//Common:
+			//Handle H 5 code 0, length followed by the handle bytes.
+			ulong handle = m_objectReader.HandleReference();
+			template.CadObject.Handle = handle;
+
+			//Extended object data, if any
+			readExtendedData(template);
+
+			//R13-R14 Only:
+			//Obj size RL size of object in bits, not including end handles
+			if (R13_14Only)
+				updateHandleReader();
+
+
+			//[Owner ref handle (soft pointer)]
+			template.CadObject.OwnerHandle = handleReference(template.CadObject.Handle);
+			//Read the cad object reactors
+			readReactors(template);
+		}
+		private void readExtendedData(DwgTemplate template)
 		{
 			//EED directly follows the entity handle.
 			//Each application's data is structured as follows:
@@ -471,8 +499,8 @@ namespace ACadSharp.IO.DWG
 		/// <summary>
 		/// Add the reactors to the template.
 		/// </summary>
-		/// <param name="handler"></param>
-		private void readReactors(DwgEntityTemplate handler)
+		/// <param name="template"></param>
+		private void readReactors(DwgTemplate template)
 		{
 			//Numreactors S number of reactors in this object
 			int numberOfReactors = m_objectReader.ReadBitLong();
@@ -480,7 +508,7 @@ namespace ACadSharp.IO.DWG
 			//Add the reactors to the template
 			for (int i = 0; i < numberOfReactors; ++i)
 				//[Reactors (soft pointer)]
-				handler.CadObject.Reactors.Add(handleReference(), null);
+				template.CadObject.Reactors.Add(handleReference(), null);
 
 			bool flag = false;
 			//R2004+:
@@ -494,7 +522,7 @@ namespace ACadSharp.IO.DWG
 
 			if (!flag)
 				//xdicobjhandle(hard owner)
-				handler.XDictHandle = handleReference();	//690
+				template.XDictHandle = handleReference();   //690
 
 			if (m_version <= ACadVersion.AC1024)
 				return;
@@ -524,7 +552,6 @@ namespace ACadSharp.IO.DWG
 			m_mergedReaders = new DwgMergedReader(m_objectReader, m_textReader, m_referenceReader);
 		}
 		#endregion
-
 
 		#region Object readers
 		private DwgTemplate readObject(ObjectType type)
@@ -624,6 +651,7 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.XLINE:
 					break;
 				case ObjectType.DICTIONARY:
+					template = readDictionary();
 					break;
 				case ObjectType.OLEFRAME:
 					break;
@@ -642,6 +670,7 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.LAYER_CONTROL_OBJ:
 					break;
 				case ObjectType.LAYER:
+					template = readLayer();
 					break;
 				case ObjectType.STYLE_CONTROL_OBJ:
 					break;
@@ -853,17 +882,17 @@ namespace ACadSharp.IO.DWG
 			readCommonEntityData(template);
 
 			//Center 3BD 10
-			arc.Center = this.m_objectReader.Read3BitDouble();
+			arc.Center = m_objectReader.Read3BitDouble();
 			//Radius BD 40
-			arc.Radius = this.m_objectReader.ReadBitDouble();
+			arc.Radius = m_objectReader.ReadBitDouble();
 			//Thickness BT 39
-			arc.Thickness = this.m_objectReader.ReadBitThickness();
+			arc.Thickness = m_objectReader.ReadBitThickness();
 			//Extrusion BE 210
-			arc.Normal = this.m_objectReader.ReadBitExtrusion();
+			arc.Normal = m_objectReader.ReadBitExtrusion();
 			//Start angle BD 50
-			arc.StartAngle = this.m_objectReader.ReadBitDouble();
+			arc.StartAngle = m_objectReader.ReadBitDouble();
 			//End angle BD 51
-			arc.EndAngle = this.m_objectReader.ReadBitDouble();
+			arc.EndAngle = m_objectReader.ReadBitDouble();
 
 			return template;
 		}
@@ -875,13 +904,13 @@ namespace ACadSharp.IO.DWG
 			readCommonEntityData(template);
 
 			//Center 3BD 10
-			circle.Center = this.m_objectReader.Read3BitDouble();
+			circle.Center = m_objectReader.Read3BitDouble();
 			//Radius BD 40
-			circle.Radius = this.m_objectReader.ReadBitDouble();
+			circle.Radius = m_objectReader.ReadBitDouble();
 			//Thickness BT 39
-			circle.Thickness = this.m_objectReader.ReadBitThickness();
+			circle.Thickness = m_objectReader.ReadBitThickness();
 			//Extrusion BE 210
-			circle.Normal = this.m_objectReader.ReadBitExtrusion();
+			circle.Normal = m_objectReader.ReadBitExtrusion();
 
 			return template;
 		}
@@ -896,24 +925,24 @@ namespace ACadSharp.IO.DWG
 			if (R13_14Only)
 			{
 				//Start pt 3BD 10
-				line.StartPoint = this.m_objectReader.Read3BitDouble();
+				line.StartPoint = m_objectReader.Read3BitDouble();
 				//End pt 3BD 11
-				line.EndPoint = this.m_objectReader.Read3BitDouble();
+				line.EndPoint = m_objectReader.Read3BitDouble();
 			}
 
 			//R2000+:
 			if (R2000Plus)
 			{
 				//Z’s are zero bit B
-				bool flag = this.m_objectReader.ReadBit();
+				bool flag = m_objectReader.ReadBit();
 				//Start Point x RD 10
-				double startX = this.m_objectReader.ReadDouble();
+				double startX = m_objectReader.ReadDouble();
 				//End Point x DD 11 Use 10 value for default
-				double endX = this.m_objectReader.ReadBitDoubleWithDefault(startX);
+				double endX = m_objectReader.ReadBitDoubleWithDefault(startX);
 				//Start Point y RD 20
-				double startY = this.m_objectReader.ReadDouble();
+				double startY = m_objectReader.ReadDouble();
 				//End Point y DD 21 Use 20 value for default
-				double endY = this.m_objectReader.ReadBitDoubleWithDefault(startY);
+				double endY = m_objectReader.ReadBitDoubleWithDefault(startY);
 
 				double startZ = 0.0;
 				double endZ = 0.0;
@@ -921,9 +950,9 @@ namespace ACadSharp.IO.DWG
 				if (!flag)
 				{
 					//Start Point z RD 30 Present only if “Z’s are zero bit” is 0
-					startZ = this.m_objectReader.ReadDouble();
+					startZ = m_objectReader.ReadDouble();
 					//End Point z DD 31 Present only if “Z’s are zero bit” is 0, use 30 value for default.
-					endZ = this.m_objectReader.ReadBitDoubleWithDefault(startZ);
+					endZ = m_objectReader.ReadBitDoubleWithDefault(startZ);
 				}
 
 				line.StartPoint = new XYZ(startX, startY, startZ);
@@ -932,18 +961,168 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Thickness BT 39
-			line.Thickness = this.m_objectReader.ReadBitThickness();
+			line.Thickness = m_objectReader.ReadBitThickness();
 			//Extrusion BE 210
-			line.Normal = this.m_objectReader.ReadBitExtrusion();
+			line.Normal = m_objectReader.ReadBitExtrusion();
+
+			return template;
+		}
+
+		private DwgTemplate readDictionary()
+		{
+			CadDictionary cadDictionary = new CadDictionary();
+			DwgDictionaryTemplate template = new DwgDictionaryTemplate(cadDictionary);
+
+			readCommonNonEntityData(template);
+
+			//Common:
+			//Numitems L number of dictonary items
+			int nentries = m_objectReader.ReadBitLong();
+
+			//R14 Only:
+			if (m_version == ACadVersion.AC1014)
+			{
+				//Unknown R14 RC Unknown R14 byte, has always been 0
+				byte zero = m_objectReader.ReadByte();
+			}
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//Cloning flag BS 281
+				cadDictionary.ClonningFlags = (DictionaryCloningFlags)m_objectReader.ReadBitShort();
+				//Hard Owner flag RC 280
+				cadDictionary.HardOwnerFlag = this.m_objectReader.ReadByte() > (byte)0;
+			}
+
+			//Common:
+			for (int i = 0; i < nentries; ++i)
+			{
+				//Text TV string name of dictionary entry, numitems entries
+				string key = m_textReader.ReadVariableText();
+				//Handle refs H parenthandle (soft relative pointer)
+				//[Reactors(soft pointer)]
+				//xdicobjhandle(hard owner)
+				//itemhandles (soft owner)
+				ulong handle = handleReference();
+
+				template.HandleEntries.Add(key, handle);
+			}
 
 			return template;
 		}
 
 		private DwgTemplate readLayer()
 		{
-			DwgTextEntityTemplate attdef = new DwgTextEntityTemplate(new AttributeDefinition());
+			//Initialize the template with the default layer
+			Layer layer = Layer.Default;
+			DwgLayerTemplate template = new DwgLayerTemplate(layer);
 
-			return null;
+			readCommonNonEntityData(template);
+
+			//Common:
+			//Entry name TV 2
+			layer.Name = m_textReader.ReadVariableText();
+
+			if (R2007Plus)
+			{
+				//xrefindex+1 BS 70 subtract one from this value when read.
+				//After that, -1 indicates that this reference did not come from an xref,
+				//otherwise this value indicates the index of the blockheader for the xref from which this came.
+				short xrefindex = m_objectReader.ReadBitShort();
+				//Xdep B 70 dependent on an xref. (16 bit)
+				if (((uint)xrefindex & 0b100000000) > 0)
+					layer.Flags |= LayerFlags.XrefDependent;
+			}
+			else
+			{
+				//64-flag B 70 The 64-bit of the 70 group.
+				m_objectReader.ReadBit();
+
+				//xrefindex+1 BS 70 subtract one from this value when read.
+				//After that, -1 indicates that this reference did not come from an xref,
+				//otherwise this value indicates the index of the blockheader for the xref from which this came.
+				int xrefindex = m_objectReader.ReadBitShort() - 1;
+
+				//Xdep B 70 dependent on an xref. (16 bit)
+				if (m_objectReader.ReadBit())
+					layer.Flags |= LayerFlags.XrefDependent;
+			}
+
+			//R13-R14 Only:
+			if (R13_14Only)
+			{
+				//Frozen B 70 if frozen (1 bit)
+				if (m_objectReader.ReadBit())
+					layer.Flags |= LayerFlags.Frozen;
+
+				//On B if on.
+				layer.IsOn = m_objectReader.ReadBit();
+
+				//Frz in new B 70 if frozen by default in new viewports (2 bit)
+				if (m_objectReader.ReadBit())
+					layer.Flags |= LayerFlags.FrozenNewViewports;
+
+				//Locked B 70 if locked (4 bit)
+				if (m_objectReader.ReadBit())
+					layer.Flags |= LayerFlags.Locked;
+			}
+			//R2000+:
+			if (R2000Plus)
+			{
+				//Values BS 70,290,370 
+				short values = m_objectReader.ReadBitShort();
+
+				//contains frozen (1 bit), 
+				if (((uint)values & 0b1) > 0)
+					layer.Flags |= LayerFlags.Frozen;
+
+				//on (2 bit)
+				layer.IsOn = (values & 0b10) == 0;
+
+				//frozen by default in new viewports (4 bit)
+				if (((uint)values & 0b100) > 0)
+					layer.Flags |= LayerFlags.FrozenNewViewports;
+				//locked (8 bit)
+				if (((uint)values & 0b1000) > 0)
+					layer.Flags |= LayerFlags.Locked;
+				//plotting flag (16 bit),
+				layer.PlotFlag = ((uint)values & 0b10000) > 0;
+
+				//and lineweight (mask with 0x03E0)
+				layer.LineWeight = (Lineweight)((values & 0x3E0) >> 5);
+			}
+
+			//Common:
+			//Color CMC 62
+			layer.Color = m_mergedReaders.ReadCmColor();
+
+			//Handle refs H Layer control (soft pointer)
+			//[Reactors(soft pointer)]
+			//xdicobjhandle(hard owner)
+			//External reference block handle(hard pointer)
+			template.LayerControlHandle = handleReference();
+
+			//R2000+:
+			if (this.R2000Plus)
+				//H 390 Plotstyle (hard pointer), by default points to PLACEHOLDER with handle 0x0f.
+				template.PlotStyleHandle = handleReference();
+
+			//R2007+:
+			if (R2007Plus)
+			{
+				//H 347 Material
+				template.MaterialHandle = handleReference();
+			}
+
+			//Common:
+			//H 6 linetype (hard pointer)
+			template.LineTypeHandle = handleReference();
+
+			//H Unknown handle (hard pointer). Always seems to be NULL.
+			//Some times is not...
+			//handleReference();
+
+			return template;
 		}
 		#endregion
 	}

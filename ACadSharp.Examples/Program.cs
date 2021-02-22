@@ -39,10 +39,11 @@ namespace ACadSharp.Examples
 
 			DwgReader reader = new DwgReader(file);
 
-			var a = reader.ReadObjects(ObjectType.LINE);
+			//var a = reader.ReadObjects(ObjectType.LINE);
+			reader.ReadObjects();
 
 			//var a = reader.ReadObject(250511);	//2007
-		
+
 		}
 	}
 }

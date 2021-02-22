@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
@@ -11,6 +12,11 @@ namespace ACadSharp.IO.Templates
 	{
 		public CadObject CadObject { get; set; }
 
+		/// <summary>
+		/// XDictionary handle linked to this object.
+		/// </summary>
+		public ulong XDictHandle { get; set; }
+
 		public DwgTemplate() { }
 		public DwgTemplate(CadObject cadObject)
 		{
@@ -20,10 +26,6 @@ namespace ACadSharp.IO.Templates
 
 	internal class DwgEntityTemplate : DwgTemplate
 	{
-		/// <summary>
-		/// XDictionary handle linked to this object.
-		/// </summary>
-		public ulong XDictHandle { get; set; }
 		public byte EntityMode { get; set; }
 		public ulong LayerHandle { get; set; }
 		public ulong LineTypeHandle { get; set; }
@@ -36,7 +38,7 @@ namespace ACadSharp.IO.Templates
 
 	internal class DwgTextEntityTemplate : DwgEntityTemplate
 	{
-		public ulong StyleHandle { get; set; } 
+		public ulong StyleHandle { get; set; }
 
 		public DwgTextEntityTemplate(TextEntity entity) : base(entity) { }
 	}
@@ -44,5 +46,26 @@ namespace ACadSharp.IO.Templates
 	internal class DwgTableEntryTemplate : DwgTemplate
 	{
 		public DwgTableEntryTemplate(TableEntry entry) : base(entry) { }
+	}
+
+	internal class DwgLayerTemplate : DwgTableEntryTemplate	
+	{
+		public ulong LayerControlHandle { get; internal set; }
+		public object PlotStyleHandle { get; internal set; }
+		public ulong MaterialHandle { get; internal set; }
+		public ulong LineTypeHandle { get; internal set; }
+
+		public DwgLayerTemplate(TableEntry entry) : base(entry) { }
+	}
+
+	internal class DwgObjectTemplate : DwgTemplate
+	{
+		public DwgObjectTemplate(CadObject cadObject) : base(cadObject) { }
+	}
+
+	internal class DwgDictionaryTemplate : DwgTemplate
+	{
+		public Dictionary<string, ulong> HandleEntries { get; set; } = new Dictionary<string, ulong>();
+		public DwgDictionaryTemplate(CadDictionary dictionary) : base(dictionary) { }
 	}
 }

@@ -42,7 +42,7 @@ namespace ACadSharp.Tables
 		/// Specifies the lineweight of an individual object or the default lineweight for the drawing.
 		/// </summary>
 		[DxfCodeValue(DxfCode.LineWeight)]
-		public Lineweight Lineweight { get; set; }
+		public Lineweight LineWeight { get; set; }
 		/// <summary>
 		/// Hard-pointer ID/handle of PlotStyleName object
 		/// </summary>
@@ -52,7 +52,9 @@ namespace ACadSharp.Tables
 		/// Hard-pointer ID/handle to Material object
 		/// </summary>
 		[DxfCodeValue(DxfCode.MaterialHandleId)]
-		public string Material { get; set; }	//TODO: Implement ulong handles, change to internal or private, implement the material class
+		public string Material { get; set; }    //TODO: Implement ulong handles, change to internal or private, implement the material class
+
+		public bool IsOn { get; set; }
 
 		public Layer(string name) : base(name)
 		{
