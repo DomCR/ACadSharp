@@ -1,4 +1,5 @@
-﻿using ACadSharp.Entities;
+﻿using ACadSharp.Blocks;
+using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
@@ -36,6 +37,16 @@ namespace ACadSharp.IO.Templates
 		public DwgEntityTemplate(Entity entity) : base(entity) { }
 	}
 
+	internal class DwgPolyLineTemplate : DwgEntityTemplate
+	{
+		public ulong FirstVertexHandle { get; internal set; }
+		public ulong LastVertexHandle { get; internal set; }
+		public ulong SeqendHandle { get; internal set; }
+		public List<ulong> VertexHandles { get; set; } = new List<ulong>();
+
+		public DwgPolyLineTemplate(PolyLine entity) : base(entity) { }
+	}
+
 	internal class DwgTextEntityTemplate : DwgEntityTemplate
 	{
 		public ulong StyleHandle { get; set; }
@@ -45,10 +56,11 @@ namespace ACadSharp.IO.Templates
 
 	internal class DwgTableEntryTemplate : DwgTemplate
 	{
+		public ulong LtypeControlHandle { get; set; }
 		public DwgTableEntryTemplate(TableEntry entry) : base(entry) { }
 	}
 
-	internal class DwgLayerTemplate : DwgTableEntryTemplate	
+	internal class DwgLayerTemplate : DwgTableEntryTemplate
 	{
 		public ulong LayerControlHandle { get; internal set; }
 		public object PlotStyleHandle { get; internal set; }
@@ -61,6 +73,18 @@ namespace ACadSharp.IO.Templates
 	internal class DwgObjectTemplate : DwgTemplate
 	{
 		public DwgObjectTemplate(CadObject cadObject) : base(cadObject) { }
+	}
+
+	internal class DwgBlockTemplate : DwgTableEntryTemplate
+	{
+		public ulong FirstEntityHandle { get; internal set; }
+		public ulong SecondEntityHandle { get; internal set; }
+		public ulong EndBlockHandle { get; internal set; }
+		public ulong LayoutHandle { get; internal set; }
+		public List<ulong> OwnedObjectsHandlers { get; set; } = new List<ulong>();
+		public List<ulong> Entries { get; set; } = new List<ulong>();
+
+		public DwgBlockTemplate(Block block) : base(block) { }
 	}
 
 	internal class DwgDictionaryTemplate : DwgTemplate

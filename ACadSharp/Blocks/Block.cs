@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ACadSharp.Blocks
 {
-	public class Block : CadObject
+	public class Block : TableEntry
 	{
 		/// <summary>
 		/// Gets the object type.
@@ -15,16 +15,67 @@ namespace ACadSharp.Blocks
 		public ObjectType ObjectType => ObjectType.BLOCK;
 		public override string ObjectName => DxfFileToken.BlocksSection;
 
+		public override bool XrefDependant
+		{
+			get
+			{
+				return Flags.HasFlag(BlockTypeFlags.XrefDependent);
+			}
+			set
+			{
+				if (value)
+					Flags |= BlockTypeFlags.XrefDependent;
+				else
+					Flags &= ~BlockTypeFlags.XrefDependent;
+			}
+		}
+		/// <summary>
+		/// Indicates if this block is anonymous.
+		/// </summary>
+		public bool IsAnonymous
+		{
+			get => (uint)(Flags & BlockTypeFlags.Anonymous) > 0U;
+			set
+			{
+				if (value)
+					Flags |= BlockTypeFlags.Anonymous;
+				else
+					Flags &= ~BlockTypeFlags.Anonymous;
+			}
+		}
+		public bool IsXref
+		{
+			get => (uint)(Flags & BlockTypeFlags.XRef) > 0U;
+			set
+			{
+				if (value)
+					Flags |= BlockTypeFlags.XRef;
+				else
+					Flags &= ~BlockTypeFlags.XRef;
+			}
+		}
+		public bool IsXRefOverlay
+		{
+			get => (uint)(Flags & BlockTypeFlags.XRefOverlay) > 0U;
+			set
+			{
+				if (value)
+					Flags |= BlockTypeFlags.XRefOverlay;
+				else
+					Flags &= ~BlockTypeFlags.XRefOverlay;
+			}
+		}
+		public bool IsLoadedXref { get; set; }
 		/// <summary>
 		/// Specifies the layer for an object.
 		/// </summary>
 		[DxfCodeValue(DxfCode.LayerName)]
 		public Layer Layer { get; set; } = Layer.Default;
-		/// <summary>
-		/// Specifies the name of the object.
-		/// </summary>
-		[DxfCodeValue(DxfCode.BlockName)]
-		public string Name { get; set; }
+		///// <summary>
+		///// Specifies the name of the object.
+		///// </summary>
+		//[DxfCodeValue(DxfCode.BlockName)]
+		//public string Name { get; set; }
 		/// <summary>
 		/// Block active flags.
 		/// </summary>

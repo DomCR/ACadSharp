@@ -31,12 +31,12 @@ namespace ACadSharp.Entities
 		/// 
 		/// </summary>
 		[DxfCodeValue(DxfCode.StartWith)]
-		public double StartWith { get; set; } = 0.0;
+		public double StartWidth { get; set; } = 0.0;
 		/// <summary>
 		/// 
 		/// </summary>
 		[DxfCodeValue(DxfCode.EndWith)]
-		public double EndWith { get; set; } = 0.0;
+		public double EndWidth { get; set; } = 0.0;
 
 		//71 Polyface mesh vertex index(optional; present only if nonzero)
 		//72 Polyface mesh vertex index(optional; present only if nonzero)

@@ -18,6 +18,21 @@ namespace ACadSharp.Tables
 		public static Layer Default { get { return new Layer(DefaultName); } }
 
 		public override string ObjectName => DxfFileToken.TableLayer;
+		public override bool XrefDependant
+		{
+			get
+			{
+				return Flags.HasFlag(LayerFlags.XrefDependent);
+			}
+			set
+			{
+				if (value)
+					Flags |= LayerFlags.XrefDependent;
+				else
+					Flags &= ~LayerFlags.XrefDependent;
+			}
+		}
+
 		/// <summary>
 		/// Layer state flags.
 		/// </summary>

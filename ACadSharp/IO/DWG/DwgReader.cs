@@ -406,6 +406,7 @@ namespace ACadSharp.IO.DWG
 		{
 			m_cadHeader = m_cadHeader ?? ReadHeader();
 			Dictionary<ulong, long> handles = ReadHandles();
+			List<DxfClass> classes = ReadClasses();
 
 			//Initialize the document
 			m_document = new CadDocument();
@@ -429,106 +430,12 @@ namespace ACadSharp.IO.DWG
 				m_document,
 				sreader,
 				objectPointers,
-				handles);
+				handles,
+				classes);
 
 			sectionReader.Read();
 
 			throw new NotImplementedException();
-		}
-		public List<CadObject> ReadAllObjects()
-		{
-			m_cadHeader = m_cadHeader ?? ReadHeader();
-			Dictionary<ulong, long> handles = ReadHandles();
-
-			//Initialize the document
-			m_document = new CadDocument();
-			m_document.Header = m_cadHeader;
-
-			IDwgStreamReader sreader = null;
-			if (m_fileHeader.AcadVersion <= ACadVersion.AC1015)
-			{
-				sreader = DwgStreamReader.GetStreamHandler(m_fileHeader.AcadVersion, m_fileStream.Stream);
-				sreader.Position = ReadObjFreeSpace();
-			}
-			else
-			{
-				sreader = getSectionStream(DwgSectionDefinition.AcDbObjects);
-			}
-
-			Queue<ulong> objectHandles = new Queue<ulong>(m_objectPointers.GetHandles());
-
-			DwgObjectSectionReader sectionReader = new DwgObjectSectionReader(
-				m_fileHeader.AcadVersion,
-				m_document,
-				sreader,
-				objectHandles,
-				handles);
-
-			return sectionReader.ReadAll();
-		}
-		[Obsolete("Method to test the reading of different entities.")]
-		public List<CadObject> ReadObjects(ObjectType type)
-		{
-			m_cadHeader = m_cadHeader ?? ReadHeader();
-			Dictionary<ulong, long> handles = ReadHandles();
-
-			//Initialize the document
-			m_document = new CadDocument();
-			m_document.Header = m_cadHeader;
-
-			IDwgStreamReader sreader = null;
-			if (m_fileHeader.AcadVersion <= ACadVersion.AC1015)
-			{
-				sreader = DwgStreamReader.GetStreamHandler(m_fileHeader.AcadVersion, m_fileStream.Stream);
-				sreader.Position = ReadObjFreeSpace();
-			}
-			else
-			{
-				sreader = getSectionStream(DwgSectionDefinition.AcDbObjects);
-			}
-
-			Queue<ulong> objectHandles = new Queue<ulong>(m_objectPointers.GetHandles());
-
-			DwgObjectSectionReader sectionReader = new DwgObjectSectionReader(
-				m_fileHeader.AcadVersion,
-				m_document,
-				sreader,
-				objectHandles,
-				handles);
-
-			return sectionReader.Read(type);
-		}
-		[Obsolete("Method to test the reading of a single entity by it's offset.")]
-		public CadObject ReadObject(long offset)
-		{
-			m_cadHeader = m_cadHeader ?? ReadHeader();
-			Dictionary<ulong, long> handles = ReadHandles();
-
-			//Initialize the document
-			m_document = new CadDocument();
-			m_document.Header = m_cadHeader;
-
-			IDwgStreamReader sreader = null;
-			if (m_fileHeader.AcadVersion <= ACadVersion.AC1015)
-			{
-				sreader = DwgStreamReader.GetStreamHandler(m_fileHeader.AcadVersion, m_fileStream.Stream);
-				sreader.Position = ReadObjFreeSpace();
-			}
-			else
-			{
-				sreader = getSectionStream(DwgSectionDefinition.AcDbObjects);
-			}
-
-			Queue<ulong> objectHandles = new Queue<ulong>(m_objectPointers.GetHandles());
-
-			DwgObjectSectionReader sectionReader = new DwgObjectSectionReader(
-				m_fileHeader.AcadVersion,
-				m_document,
-				sreader,
-				objectHandles,
-				handles);
-
-			return sectionReader.Read(offset);
 		}
 		/// <inheritdoc/>
 		public void Dispose()

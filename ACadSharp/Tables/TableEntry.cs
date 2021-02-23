@@ -19,8 +19,10 @@ namespace ACadSharp.Tables
 		/// </summary>
 		[DxfCodeValue(DxfCode.SymbolTableName)]
 		public string Name { get; set; }
-
-		public bool XrefDependant { get; set; }
+		/// <summary>
+		/// Table entry is xref dependent.
+		/// </summary>
+		public virtual bool XrefDependant { get; set; }
 
 		public TableEntry() { }
 		public TableEntry(string name)
