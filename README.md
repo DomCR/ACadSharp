@@ -20,8 +20,12 @@ Early version of a dxf/dwg reader/writer library in C#.
 
 **Supported entities**:
 
+- Point
 - Text
+- Attribute
+- Attribute definition
+- Block (WIP: not fully implemented with the owned objects)
 - Arc
 - Cricle
 - Line
-
+- Polyline 2D & 3D
