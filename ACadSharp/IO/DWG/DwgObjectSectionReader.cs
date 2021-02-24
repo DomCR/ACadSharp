@@ -572,12 +572,12 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.UNKNOW_9:
 					break;
 				case ObjectType.VERTEX_2D:
+					template = readVertex2D();
 					break;
 				case ObjectType.VERTEX_3D:
-					break;
 				case ObjectType.VERTEX_MESH:
-					break;
 				case ObjectType.VERTEX_PFACE:
+					template = readVertex3D();
 					break;
 				case ObjectType.VERTEX_PFACE_FACE:
 					break;
@@ -900,6 +900,61 @@ namespace ACadSharp.IO.DWG
 			return null;
 		}
 
+		private DwgTemplate readVertex2D()
+		{
+			Vertex vertex = new Vertex();
+			DwgEntityTemplate template = new DwgEntityTemplate(vertex);
+
+			readCommonEntityData(template);
+
+			//Flags EC 70 NOT bit-pair-coded.
+			vertex.Flags = (VertexFlags)m_objectReader.ReadByte();
+			//Point 3BD 10 NOTE THAT THE Z SEEMS TO ALWAYS BE 0.0! The Z must be taken from the 2D POLYLINE elevation.
+			vertex.Location = m_objectReader.Read3BitDouble();
+
+			//Start width BD 40 If it's negative, use the abs val for start AND end widths (and note that no end width will be present). This is a compression trick for cases where the start and end widths are identical and non-0.
+			double width = m_objectReader.ReadBitDouble();
+			if (width < 0.0)
+			{
+				vertex.StartWidth = -width;
+				vertex.EndWidth = -width;
+			}
+			else
+			{
+				vertex.StartWidth = width;
+				//End width BD 41 Not present if the start width is < 0.0; see above.
+				vertex.EndWidth = m_objectReader.ReadBitDouble();
+			}
+
+			//Bulge BD 42
+			vertex.Bulge = m_objectReader.ReadBitDouble();
+
+			//R2010+:
+			if (R2010Plus)
+				//Vertex ID BL 91
+				vertex.Id = m_objectReader.ReadBitLong();
+
+			//Common:
+			//Tangent dir BD 50
+			vertex.CurveTangent = m_objectReader.ReadBitDouble();
+
+			return template;
+		}
+		private DwgTemplate readVertex3D()
+		{
+			Vertex vertex = new Vertex();
+			DwgEntityTemplate template = new DwgEntityTemplate(vertex);
+
+			readCommonEntityData(template);
+
+			//Flags EC 70 NOT bit-pair-coded.
+			vertex.Flags = (VertexFlags)m_objectReader.ReadByte();
+			//Point 3BD 10
+			vertex.Location = m_objectReader.Read3BitDouble();
+
+			return template;
+		}
+
 		private DwgTemplate readPolyline2D()
 		{
 			PolyLine pline = new PolyLine();
@@ -908,19 +963,19 @@ namespace ACadSharp.IO.DWG
 			readCommonEntityData(template);
 
 			//Flags BS 70
-			pline.Flags = (PolylineFlags)this.m_objectReader.ReadBitShort();
+			pline.Flags = (PolylineFlags)m_objectReader.ReadBitShort();
 			//Curve type BS 75 Curve and smooth surface type.
-			pline.SmoothSurface = (SmoothSurfaceType)this.m_objectReader.ReadBitShort();
+			pline.SmoothSurface = (SmoothSurfaceType)m_objectReader.ReadBitShort();
 			//Start width BD 40 Default start width
-			pline.StartWidth = this.m_objectReader.ReadBitDouble();
+			pline.StartWidth = m_objectReader.ReadBitDouble();
 			//End width BD 41 Default end width
-			pline.EndWidth = this.m_objectReader.ReadBitDouble();
+			pline.EndWidth = m_objectReader.ReadBitDouble();
 			//Thickness BT 39
-			pline.Thickness = this.m_objectReader.ReadBitThickness();
+			pline.Thickness = m_objectReader.ReadBitThickness();
 			//Elevation BD 10 The 10-pt is (0,0,elev)
-			pline.Elevation = this.m_objectReader.ReadBitDouble();
+			pline.Elevation = m_objectReader.ReadBitDouble();
 			//Extrusion BE 210
-			pline.Normal = this.m_objectReader.ReadBitExtrusion();
+			pline.Normal = m_objectReader.ReadBitExtrusion();
 
 			//R2004+:
 			if (R2004Plus)

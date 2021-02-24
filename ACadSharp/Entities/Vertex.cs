@@ -15,9 +15,9 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
 		public XYZ Location { get; set; } = XYZ.Zero;
 		[DxfCodeValue(DxfCode.StartWith)]
-		public double StartWith { get; set; } = 0.0;
+		public double StartWidth { get; set; } = 0.0;
 		[DxfCodeValue(DxfCode.EndWith)]
-		public double EndWith { get; set; } = 0.0;
+		public double EndWidth { get; set; } = 0.0;
 		[DxfCodeValue(DxfCode.Bulge)]
 		public double Bulge { get; set; } = 0.0;
 		[DxfCodeValue(DxfCode.Int16)]
@@ -29,7 +29,8 @@ namespace ACadSharp.Entities
 		//72 Polyface mesh vertex index(optional; present only if nonzero)
 		//73 Polyface mesh vertex index(optional; present only if nonzero)
 		//74 Polyface mesh vertex index(optional; present only if nonzero)
-		//91 Vertex identifier
+		[DxfCodeValue(DxfCode.Identifier)]
+		public int Id { get; set; }
 
 		public Vertex() : base() { }
 
