@@ -3,6 +3,16 @@ using ACadSharp.IO.Templates;
 
 namespace ACadSharp.Entities
 {
+	public class HatchPattern
+	{
+		public string Name { get; set; }
+	}
+
+	public class HatchGradientPattern : HatchPattern
+	{
+
+	}
+
 	public class Hatch : Entity
 	{
 		public override ObjectType ObjectType => ObjectType.HATCH;
@@ -15,10 +25,10 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfCode.ZCoordinate)]
 		public double Elevation { get; set; }
 		/// <summary>
-		/// Specifies the hatch pattern name.
+		/// Pattern of this hatch.
 		/// </summary>
 		[DxfCodeValue(DxfCode.ShapeName)]
-		public string PatternName { get; set; }
+		public HatchPattern Pattern { get; set; }
 
 		//70	Solid fill flag(0 = pattern fill; 1 = solid fill); for MPolygon, the version of MPolygon
 		[DxfCodeValue(DxfCode.Int16)]

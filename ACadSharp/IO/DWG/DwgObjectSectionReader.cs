@@ -628,6 +628,7 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.VIEWPORT:
 					break;
 				case ObjectType.ELLIPSE:
+					template = readEllipse();
 					break;
 				case ObjectType.SPLINE:
 					break;
@@ -647,6 +648,7 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.OLEFRAME:
 					break;
 				case ObjectType.MTEXT:
+					template = readMText();
 					break;
 				case ObjectType.LEADER:
 					break;
@@ -720,6 +722,7 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.LWPOLYLINE:
 					break;
 				case ObjectType.HATCH:
+					template = readHatch();
 					break;
 				case ObjectType.XRECORD:
 					break;
@@ -1165,6 +1168,29 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private DwgTemplate readEllipse()
+		{
+			Ellipse ellipse = new Ellipse();
+			DwgEntityTemplate template = new DwgEntityTemplate(ellipse);
+
+			readCommonEntityData(template);
+
+			//Center 3BD 10 (WCS)
+			ellipse.Center = m_objectReader.Read3BitDouble();
+			//SM axis vec 3BD 11 Semi-major axis vector (WCS)
+			var smaxis = m_objectReader.Read3BitDouble();
+			//Extrusion 3BD 210
+			ellipse.Normal = m_objectReader.Read3BitDouble();
+			//Axis ratio BD 40 Minor/major axis ratio
+			ellipse.RadiusRatio = m_objectReader.ReadBitDouble();
+			//Beg angle BD 41 Starting angle (eccentric anomaly, radians)
+			ellipse.StartParameter = m_objectReader.ReadBitDouble();
+			//End angle BD 42 Ending angle (eccentric anomaly, radians)
+			ellipse.EndParameter = m_objectReader.ReadBitDouble();
+
+			return template;
+		}
+
 		private DwgTemplate readDictionary()
 		{
 			CadDictionary cadDictionary = new CadDictionary();
@@ -1204,6 +1230,86 @@ namespace ACadSharp.IO.DWG
 
 				template.HandleEntries.Add(key, handle);
 			}
+
+			return template;
+		}
+
+		private DwgTemplate readMText()
+		{
+			MText mtext = new MText();
+			DwgTextEntityTemplate template = new DwgTextEntityTemplate(mtext);
+
+			readCommonEntityData(template);
+
+			//Insertion pt3 BD 10 First picked point. (Location relative to text depends on attachment point (71).)
+			mtext.InsertPoint = m_objectReader.Read3BitDouble();
+			//Extrusion 3BD 210 Undocumented; appears in DXF and entget, but ACAD doesn't even bother to adjust it to unit length.
+			mtext.Normal = m_objectReader.Read3BitDouble();
+			//X-axis dir 3BD 11 Apparently the text x-axis vector. (Why not just a rotation?) ACAD maintains it as a unit vector.
+			mtext.AlignmentPoint = m_objectReader.Read3BitDouble();
+			//Rect width BD 41 Reference rectangle width (width picked by the user).
+			mtext.RectangleWitdth = m_objectReader.ReadBitDouble();
+
+			//R2007+:
+			if (R2007Plus)
+			{
+				//Rect height BD 46 Reference rectangle height.
+				mtext.RectangleHeight = m_objectReader.ReadBitDouble();
+			}
+
+			//Common:
+			//Text height BD 40 Undocumented
+			mtext.Height = m_objectReader.ReadBitDouble();
+			//Attachment BS 71 Similar to justification; see DXF doc
+			mtext.AttachmentPoint = (AttachmentPointType)m_objectReader.ReadBitShort();
+			//Drawing dir BS 72 Left to right, etc.; see DXF doc
+			mtext.DrawingDirection = (DrawingDirectionType)m_objectReader.ReadBitShort();
+			//Extents ht BD ---Undocumented and not present in DXF or entget
+			m_objectReader.ReadBitDouble();
+			//Extents wid BD ---Undocumented and not present in DXF or entget
+			m_objectReader.ReadBitDouble();
+			//Text TV 1 All text in one long string (Autocad format)
+			mtext.Value = m_textReader.ReadVariableText();
+
+			//H 7 STYLE (hard pointer)
+			template.StyleHandle = handleReference();
+
+			//R2000+:
+			if (R2000Plus)
+			{
+				//Linespacing Style BS 73
+				mtext.LineSpacingStyle = (LineSpacingStyleType)m_objectReader.ReadBitShort();
+				//Linespacing Factor BD 44
+				mtext.LineSpacing = m_objectReader.ReadBitDouble();
+				//Unknown bit B
+				m_objectReader.ReadBit();
+			}
+
+			//R2004+:
+			if (this.R2004Plus)
+			{
+				//Background flags BL 90 0 = no background, 1 = background fill, 2 = background fill with drawing fill color, 0x10 = text frame (R2018+)
+				mtext.BackgroundFillFlags = (BackgroundFillFlags)this.m_objectReader.ReadBitLong();
+
+				//background flags has bit 0x01 set, or in case of R2018 bit 0x10:
+				if ((mtext.BackgroundFillFlags & BackgroundFillFlags.UseBackgroundFillColor) != BackgroundFillFlags.None
+					|| m_version > ACadVersion.AC1027
+					&& (mtext.BackgroundFillFlags & BackgroundFillFlags.TextFrame) > 0)
+				{
+					//Background scale factor	BL 45 default = 1.5
+					mtext.BackgroundScale = this.m_objectReader.ReadBitDouble();
+					//Background color CMC 63
+					mtext.BackgroundColor = this.m_mergedReaders.ReadCmColor();
+					//Background transparency BL 441
+					mtext.BackgroundTransparency = new Transparency((short)this.m_objectReader.ReadBitLong());
+				}
+			}
+
+			//R2018+
+			if (!this.R2018Plus)
+				return template;
+
+			//Is NOT annotative B
 
 			return template;
 		}
@@ -1435,8 +1541,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readStyle()
 		{
-			//Initialize an empty style
-			Style style = new Style();
+			Style style = Style.Default;
 			DwgTableEntryTemplate template = new DwgTableEntryTemplate(style);
 
 			readCommonNonEntityData(template);
@@ -1551,6 +1656,30 @@ namespace ACadSharp.IO.DWG
 			{
 				//TODO: Implement the dashes handles
 				//handleReference();
+			}
+
+			return template;
+		}
+
+		private DwgTemplate readHatch()
+		{
+			Hatch hatch = new Hatch();
+			DwgEntityTemplate template = new DwgEntityTemplate(hatch);
+
+			readCommonEntityData(template);
+
+			//R2004+:
+			if (this.R2004Plus)
+			{
+				//Is Gradient Fill BL 450 Non-zero indicates a gradient fill is used.
+
+				//Reserved BL 451
+				//Gradient Angle BD 460
+				//Gradient Shift BD 461
+				//Single Color Grad.BL 452
+				//Gradient Tint BD 462
+				//# of Gradient Colors BL 453
+
 			}
 
 			return template;

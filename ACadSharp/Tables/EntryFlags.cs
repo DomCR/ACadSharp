@@ -1,27 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Tables
 {
 	/// <summary>
-	/// Standard layer flags (bit-coded values).
+	/// Standard entry flags (bit-coded values).
 	/// </summary>
 	[Flags]
-	public enum StyleFlags
+	public enum EntryFlags
 	{
 		/// <summary>
 		/// Default
 		/// </summary>
 		None = 0,
-		/// <summary>
-		/// If set, this entry describes a shape
-		/// </summary>
-		IsShape = 1,
-		/// <summary>
-		/// Vertical text
-		/// </summary>
-		VerticalText = 4,
 		/// <summary>
 		/// If set, table entry is externally dependent on an xRef.
 		/// </summary>

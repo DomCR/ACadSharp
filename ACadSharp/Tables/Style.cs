@@ -10,6 +10,11 @@ namespace ACadSharp.Tables
 	{
 		public override string ObjectName => DxfFileToken.TableStyle;
 
+		/// <summary>
+		/// Default text style.
+		/// </summary>
+		public static Style Default = new Style("STANDARD");
+
 		public override bool XrefDependant
 		{
 			get
@@ -74,7 +79,6 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(DxfCode.ExtendedDataInteger32)]
 		public FontFlags TrueType { get; set; }
 
-		public Style() : base() { }
 		public Style(string name) : base(name) { }
 		internal Style(DxfEntryTemplate template) : base(template) { }
 	}

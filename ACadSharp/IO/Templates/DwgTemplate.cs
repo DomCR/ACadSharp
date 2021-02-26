@@ -51,7 +51,7 @@ namespace ACadSharp.IO.Templates
 	{
 		public ulong StyleHandle { get; set; }
 
-		public DwgTextEntityTemplate(TextEntity entity) : base(entity) { }
+		public DwgTextEntityTemplate(Entity entity) : base(entity) { }
 	}
 
 	internal class DwgTableEntryTemplate : DwgTemplate

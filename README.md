@@ -22,6 +22,7 @@ Early version of a dxf/dwg reader/writer library in C#.
 
 - Point
 - Text
+- MText
 - Attribute
 - Attribute definition
 - Block (WIP: not fully implemented with the owned objects)

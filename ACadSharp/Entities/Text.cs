@@ -1,6 +1,4 @@
-﻿using ACadSharp.Attributes;
-using ACadSharp.Geometry;
-using ACadSharp.IO.Templates;
+﻿using ACadSharp.IO.Templates;
 
 namespace ACadSharp.Entities
 {
