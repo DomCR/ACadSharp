@@ -1286,10 +1286,10 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//R2004+:
-			if (this.R2004Plus)
+			if (R2004Plus)
 			{
 				//Background flags BL 90 0 = no background, 1 = background fill, 2 = background fill with drawing fill color, 0x10 = text frame (R2018+)
-				mtext.BackgroundFillFlags = (BackgroundFillFlags)this.m_objectReader.ReadBitLong();
+				mtext.BackgroundFillFlags = (BackgroundFillFlags)m_objectReader.ReadBitLong();
 
 				//background flags has bit 0x01 set, or in case of R2018 bit 0x10:
 				if ((mtext.BackgroundFillFlags & BackgroundFillFlags.UseBackgroundFillColor) != BackgroundFillFlags.None
@@ -1297,16 +1297,16 @@ namespace ACadSharp.IO.DWG
 					&& (mtext.BackgroundFillFlags & BackgroundFillFlags.TextFrame) > 0)
 				{
 					//Background scale factor	BL 45 default = 1.5
-					mtext.BackgroundScale = this.m_objectReader.ReadBitDouble();
+					mtext.BackgroundScale = m_objectReader.ReadBitDouble();
 					//Background color CMC 63
-					mtext.BackgroundColor = this.m_mergedReaders.ReadCmColor();
+					mtext.BackgroundColor = m_mergedReaders.ReadCmColor();
 					//Background transparency BL 441
-					mtext.BackgroundTransparency = new Transparency((short)this.m_objectReader.ReadBitLong());
+					mtext.BackgroundTransparency = new Transparency((short)m_objectReader.ReadBitLong());
 				}
 			}
 
 			//R2018+
-			if (!this.R2018Plus)
+			if (!R2018Plus)
 				return template;
 
 			//Is NOT annotative B
@@ -1664,22 +1664,274 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readHatch()
 		{
 			Hatch hatch = new Hatch();
-			DwgEntityTemplate template = new DwgEntityTemplate(hatch);
+			//TODO: Create a hatch template
+			DwgHatchTemplate template = new DwgHatchTemplate(hatch);
 
 			readCommonEntityData(template);
 
 			//R2004+:
-			if (this.R2004Plus)
+			if (R2004Plus)
 			{
+				HatchGradientPattern gradient = new HatchGradientPattern(null);
+
 				//Is Gradient Fill BL 450 Non-zero indicates a gradient fill is used.
+				bool enabled = m_objectReader.ReadBitLong() != 0;
 
 				//Reserved BL 451
+				gradient.Reserved = m_objectReader.ReadBitLong();
 				//Gradient Angle BD 460
+				gradient.Angle = m_objectReader.ReadBitDouble();
 				//Gradient Shift BD 461
+				gradient.Shift = m_objectReader.ReadBitDouble();
 				//Single Color Grad.BL 452
+				gradient.IsSingleColorGradient = (uint)m_objectReader.ReadBitLong() > 0U;
 				//Gradient Tint BD 462
-				//# of Gradient Colors BL 453
+				gradient.ColorTint = m_objectReader.ReadBitDouble();
 
+				//# of Gradient Colors BL 453
+				int ncolors = m_objectReader.ReadBitLong();
+				for (int i = 0; i < ncolors; ++i)
+				{
+					//Unknown double BD 463
+					var value = m_objectReader.ReadBitDouble();
+					//RGB Color
+					var color = m_mergedReaders.ReadCmColor();
+
+					gradient.Colors.Add(color);
+				}
+
+				//Gradient Name TV 470
+				gradient.Name = m_textReader.ReadVariableText();
+
+				//Set the pattern if is enabled
+				if (enabled)
+					hatch.Pattern = gradient;
+			}
+
+			//Common:
+			//Z coord BD 30 X, Y always 0.0
+			hatch.Elevation = m_objectReader.ReadBitDouble();
+			//Extrusion 3BD 210
+			hatch.Normal = m_objectReader.Read3BitDouble();
+			//Name TV 2 name of hatch
+			hatch.Pattern = new HatchPattern(m_textReader.ReadVariableText());
+			//Solidfill B 70 1 if solidfill, else 0
+			hatch.IsSolid = m_objectReader.ReadBit();
+			//Associative B 71 1 if associative, else 0
+			hatch.IsAssociative = m_objectReader.ReadBit();
+
+			//Numpaths BL 91 Number of paths enclosing the hatch
+			int npaths = m_objectReader.ReadBitLong();
+			bool hasDerivedBoundary = false;
+
+			#region Read the boundary path data
+			//int numboundaryobjhandles = 0;
+			for (int i = 0; i < npaths; i++)
+			{
+				DwgHatchTemplate.DwgBoundaryPathTemplate pathTemplate = new DwgHatchTemplate.DwgBoundaryPathTemplate();
+
+				//Pathflag BL 92 Path flag
+				pathTemplate.Path.Flags = (BoundaryPathFlags)m_mergedReaders.ReadBitLong();
+
+				if (pathTemplate.Path.Flags.HasFlag(BoundaryPathFlags.Derived))
+					hasDerivedBoundary = true;
+
+				if (!pathTemplate.Path.Flags.HasFlag(BoundaryPathFlags.Polyline))
+				{
+					//Numpathsegs BL 93 number of segments in this path
+					int nsegments = m_mergedReaders.ReadBitLong();
+					for (int j = 0; j < nsegments; ++j)
+					{
+						//pathtypestatus RC 72 type of path
+						byte pathTypeStatus = m_mergedReaders.ReadByte();
+						switch (pathTypeStatus)
+						{
+							case 1:
+								pathTemplate.Path.Edges.Add(new HatchBoundaryPath.Line
+								{
+									//pt0 2RD 10 first endpoint
+									Start = m_mergedReaders.Read2RawDouble(),
+									//pt1 2RD 11 second endpoint
+									End = m_mergedReaders.Read2RawDouble()
+								});
+								break;
+							case 2:
+								pathTemplate.Path.Edges.Add(new HatchBoundaryPath.Arc
+								{
+									//pt0 2RD 10 center
+									Center = m_mergedReaders.Read2RawDouble(),
+									//radius BD 40 radius
+									Radius = m_mergedReaders.ReadBitDouble(),
+									//startangle BD 50 start angle
+									StartAngle = m_mergedReaders.ReadBitDouble(),
+									//endangle BD 51 endangle
+									EndAngle = m_mergedReaders.ReadBitDouble(),
+									//isccw B 73 1 if counter clockwise, otherwise 0
+									CounterClockWise = m_mergedReaders.ReadBit()
+								});
+								break;
+							case 3:
+								pathTemplate.Path.Edges.Add(new HatchBoundaryPath.Ellipse
+								{
+									//pt0 2RD 10 center
+									Center = m_mergedReaders.Read2RawDouble(),
+									//endpoint 2RD 11 endpoint of major axis
+									MajorAxisEndPoint = m_mergedReaders.Read2RawDouble(),
+									//minormajoratio BD 40 ratio of minor to major axis
+									MinorToMajorRatio = m_mergedReaders.ReadBitDouble(),
+									//startangle BD 50 start angle
+									StartAngle = m_mergedReaders.ReadBitDouble(),
+									//endangle BD 51 endangle
+									EndAngle = m_mergedReaders.ReadBitDouble(),
+									//isccw B 73 1 if counter clockwise, otherwise 0
+									CounterClockWise = m_mergedReaders.ReadBit()
+								});
+								break;
+							case 4:
+								HatchBoundaryPath.Spline splineEdge = new HatchBoundaryPath.Spline();
+								//degree BL 94 degree of the spline
+								splineEdge.Degree = m_mergedReaders.ReadBitLong();
+								//isrational B 73 1 if rational(has weights), else 0
+								splineEdge.Rational = m_mergedReaders.ReadBit();
+								//isperiodic B 74 1 if periodic, else 0
+								splineEdge.Periodic = m_mergedReaders.ReadBit();
+
+								//numknots BL 95 number of knots
+								int numknots = m_mergedReaders.ReadBitLong();
+								//numctlpts BL 96 number of control points
+								int numctlpts = m_mergedReaders.ReadBitLong();
+
+								for (int k = 0; k < numknots; ++k)
+									//knot BD 40 knot value
+									splineEdge.Knots.Add(m_mergedReaders.ReadBitDouble());
+
+								for (int p = 0; p < numctlpts; ++p)
+								{
+									//pt0 2RD 10 control point
+									var cp = m_mergedReaders.Read2RawDouble();
+
+									double wheight = 0;
+									if (splineEdge.Rational)
+										//weight BD 40 weight
+										wheight = m_mergedReaders.ReadBitDouble();
+
+									//Add the control point and its wheight 
+									splineEdge.ControlPoints.Add(new XYZ(cp.X, cp.Y, wheight));
+								}
+
+								//R24:
+								if (R2010Plus)
+								{
+									//Numfitpoints BL 97 number of fit points
+									int nfitPoints = m_mergedReaders.ReadBitLong();
+									if (nfitPoints > 0)
+									{
+										for (int fp = 0; fp < nfitPoints; ++fp)
+										{
+											//Fitpoint 2RD 11
+											XY fpoint = (m_mergedReaders.Read2RawDouble());
+										}
+
+										//Start tangent 2RD 12
+										XY startTangent = m_mergedReaders.Read2RawDouble();
+										//End tangent 2RD 13
+										XY endTangent = m_mergedReaders.Read2RawDouble();
+									}
+								}
+
+								//Add the spline 
+								pathTemplate.Path.Edges.Add(splineEdge);
+								break;
+						}
+					}
+				}
+				else    //POLYLINE PATH
+				{
+					HatchBoundaryPath.Polyline pline = new HatchBoundaryPath.Polyline();
+					//bulgespresent B 72 bulges are present if 1
+					bool bulgespresent = m_mergedReaders.ReadBit();
+					//closed B 73 1 if closed
+					pline.IsClosed = m_mergedReaders.ReadBit();
+
+					//numpathsegs BL 91 number of path segments
+					int numpathsegs = m_mergedReaders.ReadBitLong();
+					for (int index = 0; index < numpathsegs; ++index)
+					{
+						//pt0 2RD 10 point on polyline
+						XY vertex = m_mergedReaders.Read2RawDouble();
+
+						double bulge = 0;
+						if (bulgespresent)
+							//bulge BD 42 bulge
+							bulge = m_mergedReaders.ReadBitDouble();
+
+						//Add the vertex 
+						pline.Vertices.Add(new XYZ(vertex.X, vertex.Y, bulge));
+					}
+				}
+
+				//numboundaryobjhandles BL 97 Number of boundary object handles for this path
+				int numboundaryobjhandles = m_objectReader.ReadBitLong();
+
+				//TODO: Add the path to the hatch (this has handles)
+				for (int h = 0; h < numboundaryobjhandles; h++)
+				{
+					pathTemplate.Handles.Add(handleReference());
+				}
+
+				template.AddPath(pathTemplate);
+			}
+			#endregion
+
+			//style BS 75 style of hatch 0==odd parity, 1==outermost, 2==whole area
+			hatch.HatchStyle = (HatchStyleType)m_objectReader.ReadBitShort();
+			//patterntype BS 76 pattern type 0==user-defined, 1==predefined, 2==custom
+			hatch.HatchPatternType = (HatchPatternType)m_objectReader.ReadBitShort();
+
+			if (hatch.IsSolid)
+			{
+				//angle BD 52 hatch angle
+				hatch.PatternAngle = this.m_objectReader.ReadBitDouble();
+				//scaleorspacing BD 41 scale or spacing(pattern fill only)
+				hatch.PatternScale = this.m_objectReader.ReadBitDouble();
+				//doublehatch B 77 1 for double hatch
+				hatch.IsDouble = this.m_objectReader.ReadBit();
+
+				//numdeflines BS 78 number of definition lines
+				int numdeflines = (int)m_objectReader.ReadBitShort();
+				for (int li = 0; li < numdeflines; ++li)
+				{
+					HatchPattern.Line line = new HatchPattern.Line();
+					//angle BD 53 line angle
+					line.Angle = m_objectReader.ReadBitDouble();
+					//pt0 2BD 43 / 44 pattern through this point(X, Y)
+					line.BasePoint = m_objectReader.Read2BitDouble();
+					//offset 2BD 45 / 56 pattern line offset
+					line.Offset = m_objectReader.Read2BitDouble();
+
+					//  numdashes BS 79 number of dash length items
+					int ndashes = (int)m_objectReader.ReadBitShort();
+					for (int ds = 0; ds < ndashes; ++ds)
+					{
+						//dashlength BD 49 dash length
+						line.DashLengths.Add(m_objectReader.ReadBitDouble());
+					}
+
+					hatch.Pattern.Lines.Add(line);
+				}
+			}
+
+			if (hasDerivedBoundary)
+				//pixelsize BD 47 pixel size
+				hatch.PixelSize = this.m_objectReader.ReadBitDouble();
+
+			//numseedpoints BL 98 number of seed points
+			int numseedpoints = this.m_objectReader.ReadBitLong();
+			for (int sp = 0; sp < numseedpoints; ++sp)
+			{
+				//pt0 2RD 10 seed point
+				XY spt = this.m_objectReader.Read2RawDouble();
+				hatch.SeedPoints.Add(spt);
 			}
 
 			return template;

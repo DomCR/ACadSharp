@@ -298,6 +298,11 @@ namespace ACadSharp.IO.DWG
 			return m_defaultHandler.ReadBitDouble();
 		}
 
+		public XY Read2BitDouble()
+		{
+			return m_defaultHandler.Read2BitDouble();
+		}
+
 		public int ReadBitLong()
 		{
 			return m_defaultHandler.ReadBitLong();

@@ -132,7 +132,11 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		/// <returns></returns>
 		double ReadBitDouble();
-
+		/// <summary>
+		/// 2BD : 2D point (2 bitdoubles)
+		/// </summary>
+		/// <returns></returns>
+		XY Read2BitDouble();
 		/// <summary>
 		/// 3BD : 3D point (3 bitdoubles)
 		/// </summary>

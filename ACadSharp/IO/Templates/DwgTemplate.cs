@@ -37,6 +37,28 @@ namespace ACadSharp.IO.Templates
 		public DwgEntityTemplate(Entity entity) : base(entity) { }
 	}
 
+	internal class DwgHatchTemplate : DwgEntityTemplate
+	{
+		public class DwgBoundaryPathTemplate
+		{
+			public HatchBoundaryPath Path { get; set; } = new HatchBoundaryPath();
+			public List<ulong> Handles { get; set; } = new List<ulong>();
+		}
+
+		private List<DwgBoundaryPathTemplate> m_pathTempaltes { get; set; } = new List<DwgBoundaryPathTemplate>();
+		public DwgHatchTemplate(Hatch hatch) : base(hatch) { }
+		/// <summary>
+		/// Add the path to the hatch and the templates list.
+		/// </summary>
+		/// <param name="template"></param>
+		public void AddPath(DwgBoundaryPathTemplate template)
+		{
+			(CadObject as Hatch).Paths.Add(template.Path);
+			m_pathTempaltes.Add(template);
+		}
+	}
+
+
 	internal class DwgPolyLineTemplate : DwgEntityTemplate
 	{
 		public ulong FirstVertexHandle { get; internal set; }

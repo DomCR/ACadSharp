@@ -270,6 +270,11 @@ namespace ACadSharp.IO.DWG
 
 			return value;
 		}
+		/// <inheritdoc/>
+		public XY Read2BitDouble()
+		{
+			return new XY(ReadBitDouble(), ReadBitDouble());
+		}
 
 		/// <inheritdoc/>
 		public XYZ Read3BitDouble()
