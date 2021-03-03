@@ -65,7 +65,7 @@ namespace ACadSharp.Tables.Collections
 		}
 		public bool Remove(T item)
 		{
-			return m_entries.Remove(item.TableName);
+			return m_entries.Remove(item.Name);
 		}
 		IEnumerator IEnumerable.GetEnumerator()
 		{

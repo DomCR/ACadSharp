@@ -10,11 +10,6 @@ namespace ACadSharp.Tables
 	public abstract class TableEntry : CadObject
 	{
 		/// <summary>
-		/// Specifies the Name of the table.
-		/// </summary>
-		[DxfCodeValue(DxfCode.Start)]
-		public string TableName { get; set; }
-		/// <summary>
 		/// Specifies the name of the object.
 		/// </summary>
 		[DxfCodeValue(DxfCode.SymbolTableName)]
@@ -31,8 +26,8 @@ namespace ACadSharp.Tables
 		}
 		internal TableEntry(DxfEntryTemplate template)
 		{
-			TableName = template.TableName;
-			//Name = template.Name;
+			//TableName = template.TableName;
+			Name = template.Name;
 			Handle = template.Handle;
 			OwnerHandle = template.OwnerHandle;
 		}

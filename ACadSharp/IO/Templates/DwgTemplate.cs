@@ -23,8 +23,12 @@ namespace ACadSharp.IO.Templates
 		{
 			CadObject = cadObject;
 		}
-	}
 
+		public virtual void Build(Dictionary<ulong, CadObject> map)
+		{
+
+		}
+	}
 	internal class DwgEntityTemplate : DwgTemplate
 	{
 		public byte EntityMode { get; set; }
@@ -35,6 +39,36 @@ namespace ACadSharp.IO.Templates
 		public ulong ColorHandle { get; set; }
 
 		public DwgEntityTemplate(Entity entity) : base(entity) { }
+
+		public override void Build(Dictionary<ulong, CadObject> map)
+		{
+			base.Build(map);
+
+			Entity entity = CadObject as Entity;
+
+			if (map.TryGetValue(LayerHandle, out CadObject layer))
+			{
+				entity.Layer = (Layer)layer;
+			}
+		}
+	}
+
+	internal class DwgInsertTemplate : DwgEntityTemplate
+	{
+		public bool HasAtts { get; internal set; }
+		public int OwnedObjectsCount { get; internal set; }
+		public ulong BlockHeaderHandle { get; internal set; }
+		public ulong FirstAttributeHandle { get; internal set; }
+		public ulong EndAttributeHandle { get; internal set; }
+		public ulong SeqendHandle { get; internal set; }
+		public List<ulong> OwnedHandles { get; set; } = new List<ulong>();
+
+		public DwgInsertTemplate(Insert insert) : base(insert) { }
+	}
+
+	internal class DwgBlockBeginTemplate : DwgEntityTemplate
+	{
+		public DwgBlockBeginTemplate(Entity block) : base(block) { }
 	}
 
 	internal class DwgHatchTemplate : DwgEntityTemplate
@@ -113,5 +147,15 @@ namespace ACadSharp.IO.Templates
 	{
 		public Dictionary<string, ulong> HandleEntries { get; set; } = new Dictionary<string, ulong>();
 		public DwgDictionaryTemplate(CadDictionary dictionary) : base(dictionary) { }
+	}
+
+
+	internal class DwgBlockCtrlObjectTemplate : DwgTemplate
+	{
+		public List<ulong> Handles { get; set; } = new List<ulong>();
+		public ulong ModelSpaceHandle { get; set; }
+		public ulong PaperSpaceHandle { get; set; }
+		public DwgBlockCtrlObjectTemplate() : base(new BlockControl()) { }
+		public class BlockControl : CadObject { }
 	}
 }

@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO.DWG;
+﻿using ACadSharp.IO;
+using ACadSharp.IO.DWG;
 using ACadSharp.IO.DXF;
 using System;
 using System.IO;
@@ -40,10 +41,16 @@ namespace ACadSharp.Examples
 			DwgReader reader = new DwgReader(file);
 
 			//var a = reader.ReadObjects(ObjectType.LINE);
-			reader.ReadObjects();
+			reader.ReadObjects(onProgress);
 
 			//var a = reader.ReadObject(250511);	//2007
 
+		}
+
+		private static void onProgress(object sender, ProgressEventArgs e)
+		{
+			Console.WriteLine($"Progress: {e.Progress * 100}%");
+			Console.WriteLine($"Message: {e.Message}");
 		}
 	}
 }

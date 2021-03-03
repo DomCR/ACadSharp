@@ -99,17 +99,15 @@ namespace ACadSharp.IO.DWG
 		/// <summary>
 		/// Read all the entities, tables and objects in the file.
 		/// </summary>
-		public void Read()
+		public void Read(ProgressEventHandler progress = null)
 		{
-			//TODO: Slow execution, implement a progress notification system.
+			progress?.Invoke(this, new ProgressEventArgs(0, "Start reading the object section"));
 
+			int n = 0;
 			//Read each handle in the header
 			while (m_handles.Any())
 			{
 				ulong handle = m_handles.Dequeue();
-				if (handle == 0)
-					//Incorrect handle
-					continue;
 
 				if (!m_map.TryGetValue(handle, out long offset))
 					continue;
@@ -117,15 +115,29 @@ namespace ACadSharp.IO.DWG
 				//Get the object type
 				ObjectType type = getEntityType(offset);
 
+				//Notify the readed object
+				progress?.Invoke(this, new ProgressEventArgs(n / (float)m_map.Count, $"Readed objects: {n} of {m_map.Count}"));
+				n++;
+
 				//Read the object
 				DwgTemplate template = readObject(type);
 				if (template == null)
+				{
+					//Add the object as null
+					m_objectMap[handle] = null;
 					continue;
+				}
 
 				//Add the object to the map
 				m_objectMap[template.CadObject.Handle] = template.CadObject;
 				//Add the template to the list to be processed
 				m_templates.Add(template);
+			}
+
+			//Build the templates
+			foreach (DwgTemplate item in m_templates)
+			{
+				item.Build(m_objectMap);
 			}
 		}
 		//**************************************************************************
@@ -211,14 +223,14 @@ namespace ACadSharp.IO.DWG
 		private ulong handleReference(ulong handle)
 		{
 			//Read the handle
-			var value = m_referenceReader.HandleReference(handle);  //690
+			ulong value = m_referenceReader.HandleReference(handle);
 
-			//Add the value to the handles queue to be processed
-			m_handles.Enqueue(value);
+			if (!m_objectMap.ContainsKey(value) && !m_handles.Contains(value))
+				//Add the value to the handles queue to be processed
+				m_handles.Enqueue(value);
 
 			return value;
 		}
-
 		/// <summary>
 		/// Read the common entity format.
 		/// </summary>
@@ -562,12 +574,16 @@ namespace ACadSharp.IO.DWG
 					template = readBlock();
 					break;
 				case ObjectType.ENDBLK:
+					//template = readEndBlock();
 					break;
 				case ObjectType.SEQEND:
+					template = readSeqend();
 					break;
 				case ObjectType.INSERT:
+					template = readInsert();
 					break;
 				case ObjectType.MINSERT:
+					template = readMInsert();
 					break;
 				case ObjectType.UNKNOW_9:
 					break;
@@ -742,6 +758,9 @@ namespace ACadSharp.IO.DWG
 					break;
 			}
 
+			if (template == null)
+				System.Diagnostics.Debug.Fail($"Not implemented dxf type: {type}");
+
 			return template;
 		}
 		private DwgTemplate readUnlistedType(short classNumber)
@@ -749,16 +768,62 @@ namespace ACadSharp.IO.DWG
 			if (!m_classes.TryGetValue(classNumber, out DxfClass c))
 				return null;
 
+			DwgTemplate template = null;
+
 			switch (c.DxfName)
 			{
+				case "ACDBDICTIONARYWDFLT":
+				case "ACDBDETAILVIEWSTYLE":
+				case "ACDBSECTIONVIEWSTYLE":
+				case "ACAD_TABLE":
+				case "CELLSTYLEMAP":
+				case "DBCOLOR":
+				case "DICTIONARYVAR":
+				case "DICTIONARYWDFLT":
+				case "FIELD":
+				case "GROUP":
+					System.Diagnostics.Debug.Fail($"Not implemented dxf class: {c.DxfName}");
+					break;
+				case "HATCH":
+					template = readHatch();
+					break;
+				case "IDBUFFER":
+				case "IMAGE":
+				case "IMAGEDEF":
+				case "IMAGEDEFREACTOR":
+				case "LAYER_INDEX":
+				case "LAYOUT":
+				case "LWPLINE":
 				case "MATERIAL":
-				case "WIPEOUTVARIABLES":
+					//template = readMaterial();
+					return null;    //Missing documentation
+				case "MLEADER":
+				case "MLEADERSTYLE":
+				case "OLE2FRAME":
+				case "PLACEHOLDER":
+				case "PLOTSETTINGS":
+				case "RASTERVARIABLES":
+				case "SCALE":
+				case "SORTENTSTABLE":
+				case "SPATIAL_FILTER":
+				case "SPATIAL_INDEX":
+				case "TABLEGEOMETRY":
+				case "TABLESTYLE":
+				case "TABLESTYLES":
+				case "VBA_PROJECT":
 				case "VISUALSTYLE":
+				case "WIPEOUT":
+				case "WIPEOUTVARIABLE":
+				case "WIPEOUTVARIABLES":
+				case "XRECORD":
+					System.Diagnostics.Debug.Fail($"Not implemented dxf class: {c.DxfName}");
+					break;
 				default:
+					System.Diagnostics.Debug.Fail($"Not implemented dxf class: {c.DxfName}");
 					break;
 			}
 
-			return null;
+			return template;
 		}
 		#region Text entities
 		private DwgTemplate readText()
@@ -890,18 +955,155 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readBlock()
 		{
-			//TODO: check the info that reads, it may not be the right template
+			BlockBegin block = new BlockBegin();
+			DwgEntityTemplate template = new DwgEntityTemplate(block);
 
-			Block block = new Block();
-			//DwgEntityTemplate template = new DwgEntityTemplate(block);
-
-			//readCommonEntityData(template);
+			readCommonEntityData(template);
 
 			//Block name TV 2
 			block.Name = m_textReader.ReadVariableText();
 
+			return template;
+		}
+
+		private DwgTemplate readSeqend()
+		{
+			//TODO: is seqend necessary??
+
 			return null;
 		}
+
+		#region Insert methods
+		private DwgTemplate readInsert()
+		{
+			DwgInsertTemplate template = new DwgInsertTemplate(new Insert());
+
+			readInsertCommonData(template);
+			readInsertCommonHandles(template);
+
+			return template;
+		}
+		private DwgTemplate readMInsert()
+		{
+			Insert insert = new Insert();
+			DwgInsertTemplate template = new DwgInsertTemplate(insert);
+
+			readInsertCommonData(template);
+
+			//Common:
+			//Numcols BS 70
+			insert.ColumnCount = (ushort)this.m_objectReader.ReadBitShort();
+			//Numrows BS 71
+			insert.RowCount = (ushort)this.m_objectReader.ReadBitShort();
+			//Col spacing BD 44
+			insert.ColumnSpacing = this.m_objectReader.ReadBitDouble();
+			//Row spacing BD 45
+			insert.RowSpacing = this.m_objectReader.ReadBitDouble();
+
+			readInsertCommonHandles(template);
+
+			return template;
+		}
+
+		private void readInsertCommonData(DwgInsertTemplate template)
+		{
+			Insert e = template.CadObject as Insert;
+
+			readCommonEntityData(template);
+
+			//Ins pt 3BD 10
+			e.InsertPoint = m_objectReader.Read3BitDouble();
+
+			//R13-R14 Only:
+			if (R13_14Only)
+			{
+				//X Scale BD 41
+				//Y Scale BD 42
+				//Z Scale BD 43
+				e.Scale = m_objectReader.Read3BitDouble();
+			}
+
+			//R2000 + Only:
+			if (R2000Plus)
+			{
+				double x = 1.0;
+				double y = 1.0;
+				double z = 1.0;
+
+				//Data flags BB
+				//Scale Data Varies with Data flags:
+				switch (m_objectReader.Read2Bits())
+				{
+					//00 – 41 value stored as a RD, followed by a 42 value stored as DD (use 41 for default value), and a 43 value stored as a DD(use 41 value for default value).
+					case 0:
+						x = m_objectReader.ReadDouble();
+						y = m_objectReader.ReadBitDoubleWithDefault(x);
+						z = m_objectReader.ReadBitDoubleWithDefault(x);
+						e.Scale = new XYZ(x, y, z);
+						break;
+					//01 – 41 value is 1.0, 2 DD’s are present, each using 1.0 as the default value, representing the 42 and 43 values.
+					case 1:
+						y = m_objectReader.ReadBitDoubleWithDefault(x);
+						z = m_objectReader.ReadBitDoubleWithDefault(x);
+						e.Scale = new XYZ(x, y, z);
+						break;
+					//10 – 41 value stored as a RD, and 42 & 43 values are not stored, assumed equal to 41 value.
+					case 2:
+						double xyz = m_objectReader.ReadDouble();
+						e.Scale = new XYZ(xyz, xyz, xyz);
+						break;
+					//11 - scale is (1.0, 1.0, 1.0), no data stored.
+					case 3:
+						e.Scale = new XYZ(x, y, z);
+						break;
+				}
+			}
+
+			//Common:
+			//Rotation BD 50
+			e.Rotation = m_objectReader.ReadBitDouble();
+			//Extrusion 3BD 210
+			e.Normal = m_objectReader.Read3BitDouble();
+			//Has ATTRIBs B 66 Single bit; 1 if ATTRIBs follow.
+			template.HasAtts = m_objectReader.ReadBit();
+			template.OwnedObjectsCount = 0;
+
+			//R2004+:
+			if (R2004Plus & template.HasAtts)
+				//Owned Object Count BL Number of objects owned by this object.
+				template.OwnedObjectsCount = m_objectReader.ReadBitLong();
+		}
+		private void readInsertCommonHandles(DwgInsertTemplate template)
+		{
+			//Common:
+			//Common Entity Handle Data
+			//H 2 BLOCK HEADER(hard pointer)
+			template.BlockHeaderHandle = handleReference();
+
+			if (!template.HasAtts)
+				return;
+
+			//R13 - R200:
+			if (m_version >= ACadVersion.AC1012 && m_version <= ACadVersion.AC1015)
+			{
+				//H[1st ATTRIB(soft pointer)] if 66 bit set; can be NULL
+				template.FirstAttributeHandle = handleReference();
+				//H[last ATTRIB](soft pointer)] if 66 bit set; can be NULL
+				template.EndAttributeHandle = handleReference();
+			}
+			//R2004:
+			else if (R2004Plus)
+			{
+				for (int i = 0; i < template.OwnedObjectsCount; ++i)
+					//H[ATTRIB(hard owner)] Repeats “Owned Object Count” times.
+					template.OwnedHandles.Add(handleReference());
+			}
+
+			//Common:
+			//H[SEQEND(hard owner)] if 66 bit set
+			template.SeqendHandle = handleReference();
+		}
+		#endregion
 
 		private DwgTemplate readVertex2D()
 		{
@@ -1317,9 +1519,7 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readBlockControlObject()
 		{
 			//TODO: Fix the block control object reader
-
-			CadDictionary cadDictionary = new CadDictionary();
-			DwgDictionaryTemplate template = new DwgDictionaryTemplate(cadDictionary);
+			DwgBlockCtrlObjectTemplate template = new DwgBlockCtrlObjectTemplate();
 
 			readCommonNonEntityData(template);
 
@@ -1328,14 +1528,15 @@ namespace ACadSharp.IO.DWG
 			var nentries = m_objectReader.ReadBitLong();
 			for (int i = 0; i < nentries; i++)
 			{
-				handleReference();
+				//xdicobjhandle (hard owner)
+				template.Handles.Add(handleReference());
 			}
 
 			//*MODEL_SPACE and *PAPER_SPACE(hard owner).
-			handleReference();
-			handleReference();
+			template.ModelSpaceHandle = handleReference();
+			template.PaperSpaceHandle = handleReference();
 
-			return null;
+			return template;
 		}
 		private DwgTemplate readBlockHeader()
 		{
@@ -1891,11 +2092,11 @@ namespace ACadSharp.IO.DWG
 			if (hatch.IsSolid)
 			{
 				//angle BD 52 hatch angle
-				hatch.PatternAngle = this.m_objectReader.ReadBitDouble();
+				hatch.PatternAngle = m_objectReader.ReadBitDouble();
 				//scaleorspacing BD 41 scale or spacing(pattern fill only)
-				hatch.PatternScale = this.m_objectReader.ReadBitDouble();
+				hatch.PatternScale = m_objectReader.ReadBitDouble();
 				//doublehatch B 77 1 for double hatch
-				hatch.IsDouble = this.m_objectReader.ReadBit();
+				hatch.IsDouble = m_objectReader.ReadBit();
 
 				//numdeflines BS 78 number of definition lines
 				int numdeflines = (int)m_objectReader.ReadBitShort();
@@ -1923,14 +2124,14 @@ namespace ACadSharp.IO.DWG
 
 			if (hasDerivedBoundary)
 				//pixelsize BD 47 pixel size
-				hatch.PixelSize = this.m_objectReader.ReadBitDouble();
+				hatch.PixelSize = m_objectReader.ReadBitDouble();
 
 			//numseedpoints BL 98 number of seed points
-			int numseedpoints = this.m_objectReader.ReadBitLong();
+			int numseedpoints = m_objectReader.ReadBitLong();
 			for (int sp = 0; sp < numseedpoints; ++sp)
 			{
 				//pt0 2RD 10 seed point
-				XY spt = this.m_objectReader.Read2RawDouble();
+				XY spt = m_objectReader.Read2RawDouble();
 				hatch.SeedPoints.Add(spt);
 			}
 

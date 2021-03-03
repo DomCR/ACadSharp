@@ -13,7 +13,7 @@ namespace ACadSharp.Blocks
 		/// Gets the object type.
 		/// </summary>
 		public ObjectType ObjectType => ObjectType.BLOCK;
-		public override string ObjectName => DxfFileToken.BlocksSection;
+		public override string ObjectName => DxfFileToken.Block;
 
 		public override bool XrefDependant
 		{

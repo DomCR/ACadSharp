@@ -19,7 +19,7 @@ namespace ACadSharp.Entities
 		/// Specifies the name of the object.
 		/// </summary>
 		[DxfCodeValue(DxfCode.BlockName)]
-		public string BlockName { get; set; } 
+		public string BlockName { get; set; }
 		/// <summary>
 		/// A 3D WCS coordinate representing the insertion or origin point.
 		/// </summary>
@@ -39,10 +39,14 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfCode.Angle)]
 		public double Rotation { get; set; } = 0.0;
 
-		//70	Column count(optional; default = 1)
-		//71	Row count(optional; default = 1)
-		//44	Column spacing(optional; default = 0)
-		//45	Row spacing(optional; default = 0)
+		[DxfCodeValue(DxfCode.Int16)]
+		public ushort ColumnCount { get; set; } = 1;
+		[DxfCodeValue(DxfCode.RowCount)]
+		public ushort RowCount { get; set; } = 1;
+		[DxfCodeValue(DxfCode.ShapeXOffset)]
+		public double ColumnSpacing { get; set; } = 0;
+		[DxfCodeValue(DxfCode.ShapeYOffset)]
+		public double RowSpacing { get; set; } = 0;
 
 		public Insert() : base() { }
 

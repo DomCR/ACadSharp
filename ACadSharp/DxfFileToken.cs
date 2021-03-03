@@ -34,6 +34,7 @@ namespace ACadSharp
 		#endregion
 
 		public const string BlocksSection = "BLOCKS";
+		public const string Block = "BLOCK";
 
 		#region Entities
 		public const string EntitiesSection = "ENTITIES";

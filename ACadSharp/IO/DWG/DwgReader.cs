@@ -402,7 +402,7 @@ namespace ACadSharp.IO.DWG
 		/// <remarks>
 		/// Refers to AcDb:AcDbObjects data section.
 		/// </remarks>
-		public void ReadObjects()
+		public void ReadObjects(ProgressEventHandler progress = null)
 		{
 			m_cadHeader = m_cadHeader ?? ReadHeader();
 			Dictionary<ulong, long> handles = ReadHandles();
@@ -433,7 +433,7 @@ namespace ACadSharp.IO.DWG
 				handles,
 				classes);
 
-			sectionReader.Read();
+			sectionReader.Read(progress);
 
 			throw new NotImplementedException();
 		}

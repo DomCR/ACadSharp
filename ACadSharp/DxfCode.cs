@@ -141,6 +141,7 @@ namespace ACadSharp
 		ViewportNumber = 69,
 		Int16 = 70,
 		ViewMode = 71,
+		RowCount = 71,
 		HatchAssociative = 71,
 		RegAppFlags = 71,
 		TxtStyleFlags = 71,

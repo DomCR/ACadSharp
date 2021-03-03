@@ -79,8 +79,8 @@ namespace ACadSharp.Tables
 
 		internal Layer(DxfEntryTemplate template) : base(template)
 		{
-			if (string.IsNullOrEmpty(template.TableName))
-				throw new ArgumentNullException(nameof(template.TableName), "Layer must have a name.");
+			if (string.IsNullOrEmpty(template.Name))
+				throw new ArgumentNullException(nameof(template.Name), "Layer must have a name.");
 		}
 	}
 }

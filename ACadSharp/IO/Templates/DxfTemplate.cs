@@ -10,7 +10,10 @@ namespace ACadSharp.IO.Templates
 	{
 		public string EntityName { get; set; }
 	}
-	internal class DxfEntryTemplate : TableEntry { }
+	internal class DxfEntryTemplate : TableEntry 
+	{
+		public string TableName { get; set; }
+	}
 	internal class DxfTableTemplate : CadObject
 	{
 		public string Name { get; set; }
