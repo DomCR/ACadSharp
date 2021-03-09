@@ -9,6 +9,7 @@ namespace ACadSharp.Examples
 	class Program
 	{
 		static string PathSamples = "../../../../samples";
+
 		static void Main(string[] args)
 		{
 			//ReadDxf();
@@ -20,11 +21,6 @@ namespace ACadSharp.Examples
 			string file = Path.Combine(PathSamples, "dxf/ascii.dxf");
 			DxfReader reader = new DxfReader(file);
 			reader.Read();
-		}
-
-		static void ReadDwgHeader()
-		{
-
 		}
 
 		static void ReadDwg()
@@ -40,11 +36,7 @@ namespace ACadSharp.Examples
 
 			DwgReader reader = new DwgReader(file);
 
-			//var a = reader.ReadObjects(ObjectType.LINE);
 			reader.ReadObjects(onProgress);
-
-			//var a = reader.ReadObject(250511);	//2007
-
 		}
 
 		private static void onProgress(object sender, ProgressEventArgs e)

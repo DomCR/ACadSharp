@@ -214,6 +214,11 @@ namespace ACadSharp.IO.DWG
 		byte[] ReadSentinel();
 
 		/// <summary>
+		/// 3DD : 3D point as 3 DD, needing 3 default values
+		/// </summary>
+		/// <returns></returns>
+		XYZ Read3BitDoubleWithDefault(XYZ defValues);
+		/// <summary>
 		/// CMC : CmColor value
 		/// </summary>
 		/// <returns></returns>

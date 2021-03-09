@@ -332,7 +332,10 @@ namespace ACadSharp.IO.DWG
 		{
 			throw new NotImplementedException();
 		}
-
+		public XYZ Read3BitDoubleWithDefault(XYZ defValues)
+		{
+			return m_defaultHandler.Read3BitDoubleWithDefault(defValues);
+		}
 		public Color ReadCmColor()
 		{
 			//To read a color in this version file needs to access to the

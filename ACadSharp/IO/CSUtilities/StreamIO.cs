@@ -31,7 +31,7 @@ namespace CSUtilities.IO
 		/// Initializes a new instance of the <see cref="StreamIO" /> class.
 		/// </summary>
 		/// <param name="filename">File to read/write.</param>
-		public StreamIO(string filename) : this(filename, FileMode.Open, FileAccess.ReadWrite) { }
+		public StreamIO(string filename) : this(filename, FileMode.Open, FileAccess.Read) { }
 		/// <summary>
 		/// Initializes a new instance of the <see cref="StreamIO" /> class.
 		/// </summary>

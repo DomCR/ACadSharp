@@ -13,7 +13,6 @@ namespace ACadSharp.IO.DWG
 {
 	public class DwgReader : IDisposable
 	{
-		private string m_filename;
 		private StreamIO m_fileStream;
 
 		private DwgFileHeader m_fileHeader;
@@ -29,7 +28,6 @@ namespace ACadSharp.IO.DWG
 		/// <param name="filename">The filename of the file to open.</param>
 		public DwgReader(string filename)
 		{
-			m_filename = filename;
 			m_fileStream = new StreamIO(filename);
 		}
 		/// <summary>
@@ -41,68 +39,53 @@ namespace ACadSharp.IO.DWG
 			m_fileStream = new StreamIO(stream);
 		}
 		//**************************************************************************
+		/// <summary>
+		/// Read a dwg document in a stream.
+		/// </summary>
+		/// <param name="stream"></param>
+		/// <returns></returns>
 		public static CadDocument Read(Stream stream)
 		{
-			throw new NotImplementedException();
-		}
-		public static CadDocument Read(string filename)
-		{
-			throw new NotImplementedException();
-		}
-		/// <summary>
-		/// Read the file header data.
-		/// </summary>
-		/// <returns></returns>
-		public DwgFileHeader ReadFileHeader()
-		{
-			//Reset the stream position at the begining
-			m_fileStream.Position = 0L;
+			CadDocument doc = null;
 
-			//0x00	6	“ACXXXX” version string
-			ACadVersion version = CadUtils.GetVersionFromName(m_fileStream.ReadString(6, Encoding.ASCII));
-			DwgFileHeader fileHeader = DwgFileHeader.GetFileHeader(version);
-
-			//Get the stream reader
-			IDwgStreamReader sreader = DwgStreamReader.GetStreamHandler(fileHeader.AcadVersion, m_fileStream.Stream);
-
-			//Read the file header
-			switch (fileHeader.AcadVersion)
+			using (DwgReader reader = new DwgReader(stream))
 			{
-				case ACadVersion.Unknown:
-					throw new Exception();
-				case ACadVersion.MC0_0:
-				case ACadVersion.AC1_2:
-				case ACadVersion.AC1_4:
-				case ACadVersion.AC1_50:
-				case ACadVersion.AC2_10:
-				case ACadVersion.AC1002:
-				case ACadVersion.AC1003:
-				case ACadVersion.AC1004:
-				case ACadVersion.AC1006:
-				case ACadVersion.AC1009:
-					throw new NotSupportedException();
-				case ACadVersion.AC1012:
-				case ACadVersion.AC1014:
-				case ACadVersion.AC1015:
-					readFileHeaderAC15(fileHeader as DwgFileHeader15, sreader);
-					break;
-				case ACadVersion.AC1018:
-					readFileHeaderAC18(fileHeader as DwgFileHeader18, sreader);
-					break;
-				case ACadVersion.AC1021:
-					readFileHeaderAC21(fileHeader as DwgFileHeader21, sreader);
-					break;
-				case ACadVersion.AC1024:
-				case ACadVersion.AC1027:
-				case ACadVersion.AC1032:
-					//Check if it works...
-					readFileHeaderAC18(fileHeader as DwgFileHeader18, sreader);
-					break;
-				default:
-					break;
+				doc = reader.Read();
 			}
 
-			return fileHeader;
+			return doc;
+		}
+		/// <summary>
+		/// Read a dwg document from a file.
+		/// </summary>
+		/// <param name="filename"></param>
+		/// <returns></returns>
+		public static CadDocument Read(string filename)
+		{
+			CadDocument doc = null;
+
+			using (DwgReader reader = new DwgReader(filename))
+			{
+				doc = reader.Read();
+			}
+
+			return doc;
+		}
+		/// <summary>
+		/// Read the dwg document.
+		/// </summary>
+		/// <returns></returns>
+		public CadDocument Read(ProgressEventHandler progress = null)
+		{
+			m_document = new CadDocument();
+
+			readFileHeader();
+
+			//m_document.SumaryInfo = ReadSummaryInfo();
+
+			m_document.Header = ReadHeader();
+
+			return m_document;
 		}
 		/// <summary>
 		/// Read the summary info of the dwg file.
@@ -113,7 +96,7 @@ namespace ACadSharp.IO.DWG
 		/// <returns></returns>
 		public CadSummaryInfo ReadSummaryInfo()
 		{
-			m_fileHeader = m_fileHeader ?? ReadFileHeader();
+			m_fileHeader = m_fileHeader ?? readFileHeader();
 
 			//Older versions than 2004 don't have summaryinfo in it's file
 			if (m_fileHeader.AcadVersion < ACadVersion.AC1018)
@@ -185,7 +168,7 @@ namespace ACadSharp.IO.DWG
 		/// <returns></returns>
 		public DwgPreview ReadPreview()
 		{
-			m_fileHeader = m_fileHeader ?? ReadFileHeader();
+			m_fileHeader = m_fileHeader ?? readFileHeader();
 
 			//Check if the preview exist
 			if (m_fileHeader.PreviewAddress < 0)
@@ -240,12 +223,68 @@ namespace ACadSharp.IO.DWG
 		/// <returns></returns>
 		public CadHeader ReadHeader()
 		{
-			m_fileHeader = m_fileHeader ?? ReadFileHeader();
+			m_fileHeader = m_fileHeader ?? readFileHeader();
 			IDwgStreamReader sreader = getSectionStream(DwgSectionDefinition.Header);
 
 			DwgHeaderReader hreader = new DwgHeaderReader(m_fileHeader.AcadVersion);
 
 			return hreader.Read(sreader, m_fileHeader.AcadMaintenanceVersion, out m_objectPointers);
+		}
+		//**************************************************************************
+		/// <summary>
+		/// Read the file header data.
+		/// </summary>
+		/// <returns></returns>
+		private DwgFileHeader readFileHeader()
+		{
+			//Reset the stream position at the begining
+			m_fileStream.Position = 0L;
+
+			//0x00	6	“ACXXXX” version string
+			ACadVersion version = CadUtils.GetVersionFromName(m_fileStream.ReadString(6, Encoding.ASCII));
+			DwgFileHeader fileHeader = DwgFileHeader.GetFileHeader(version);
+
+			//Get the stream reader
+			IDwgStreamReader sreader = DwgStreamReader.GetStreamHandler(fileHeader.AcadVersion, m_fileStream.Stream);
+
+			//Read the file header
+			switch (fileHeader.AcadVersion)
+			{
+				case ACadVersion.Unknown:
+					throw new Exception();
+				case ACadVersion.MC0_0:
+				case ACadVersion.AC1_2:
+				case ACadVersion.AC1_4:
+				case ACadVersion.AC1_50:
+				case ACadVersion.AC2_10:
+				case ACadVersion.AC1002:
+				case ACadVersion.AC1003:
+				case ACadVersion.AC1004:
+				case ACadVersion.AC1006:
+				case ACadVersion.AC1009:
+					throw new NotSupportedException();
+				case ACadVersion.AC1012:
+				case ACadVersion.AC1014:
+				case ACadVersion.AC1015:
+					readFileHeaderAC15(fileHeader as DwgFileHeader15, sreader);
+					break;
+				case ACadVersion.AC1018:
+					readFileHeaderAC18(fileHeader as DwgFileHeader18, sreader);
+					break;
+				case ACadVersion.AC1021:
+					readFileHeaderAC21(fileHeader as DwgFileHeader21, sreader);
+					break;
+				case ACadVersion.AC1024:
+				case ACadVersion.AC1027:
+				case ACadVersion.AC1032:
+					//Check if it works...
+					readFileHeaderAC18(fileHeader as DwgFileHeader18, sreader);
+					break;
+				default:
+					break;
+			}
+
+			return fileHeader;
 		}
 		/// <summary>
 		/// Read the classes section of the file.
@@ -254,9 +293,9 @@ namespace ACadSharp.IO.DWG
 		/// Refers to AcDb:Classes data section.
 		/// </remarks>
 		/// <returns></returns>
-		public List<DxfClass> ReadClasses()
+		private List<DxfClass> readClasses()
 		{
-			m_fileHeader = m_fileHeader ?? ReadFileHeader();
+			m_fileHeader = m_fileHeader ?? readFileHeader();
 
 			IDwgStreamReader sreader = getSectionStream(DwgSectionDefinition.Classes);
 
@@ -298,9 +337,9 @@ namespace ACadSharp.IO.DWG
 		/// Refers to AcDb:Handles data section.
 		/// </remarks>
 		/// <returns></returns>
-		public Dictionary<ulong, long> ReadHandles()
+		private Dictionary<ulong, long> readHandles()
 		{
-			m_fileHeader = m_fileHeader ?? ReadFileHeader();
+			m_fileHeader = m_fileHeader ?? readFileHeader();
 
 			IDwgStreamReader sreader = getSectionStream(DwgSectionDefinition.Handles);
 
@@ -364,9 +403,9 @@ namespace ACadSharp.IO.DWG
 		/// Refers to AcDb:ObjFreeSpace data section.
 		/// </remarks>
 		/// <returns>the offset where the object section is</returns>
-		public uint ReadObjFreeSpace()
+		private uint readObjFreeSpace()
 		{
-			m_fileHeader = m_fileHeader ?? ReadFileHeader();
+			m_fileHeader = m_fileHeader ?? readFileHeader();
 
 			if (m_fileHeader.AcadVersion < ACadVersion.AC1018)
 				return 0;
@@ -388,9 +427,9 @@ namespace ACadSharp.IO.DWG
 		/// Refers to AcDb:Template data section.
 		/// </remarks>
 		/// <returns></returns>
-		public void ReadTemplate()
+		private void readTemplate()
 		{
-			m_fileHeader = m_fileHeader ?? ReadFileHeader();
+			m_fileHeader = m_fileHeader ?? readFileHeader();
 
 			IDwgStreamReader sreader = getSectionStream(DwgSectionDefinition.Template);
 
@@ -402,11 +441,11 @@ namespace ACadSharp.IO.DWG
 		/// <remarks>
 		/// Refers to AcDb:AcDbObjects data section.
 		/// </remarks>
-		public void ReadObjects(ProgressEventHandler progress = null)
+		private void readObjects(ProgressEventHandler progress = null)
 		{
 			m_cadHeader = m_cadHeader ?? ReadHeader();
-			Dictionary<ulong, long> handles = ReadHandles();
-			List<DxfClass> classes = ReadClasses();
+			Dictionary<ulong, long> handles = readHandles();
+			List<DxfClass> classes = readClasses();
 
 			//Initialize the document
 			m_document = new CadDocument();
@@ -416,7 +455,7 @@ namespace ACadSharp.IO.DWG
 			if (m_fileHeader.AcadVersion <= ACadVersion.AC1015)
 			{
 				sreader = DwgStreamReader.GetStreamHandler(m_fileHeader.AcadVersion, m_fileStream.Stream);
-				sreader.Position = ReadObjFreeSpace();
+				sreader.Position = readObjFreeSpace();
 			}
 			else
 			{
@@ -434,8 +473,6 @@ namespace ACadSharp.IO.DWG
 				classes);
 
 			sectionReader.Read(progress);
-
-			throw new NotImplementedException();
 		}
 		/// <inheritdoc/>
 		public void Dispose()
@@ -443,7 +480,6 @@ namespace ACadSharp.IO.DWG
 			m_fileStream.Dispose();
 		}
 		//**************************************************************************
-
 		#region File Header reading methods
 		/// <summary>
 		/// Read the file header for the AC1012 to AC1015 (R13-R15) versions of the header.

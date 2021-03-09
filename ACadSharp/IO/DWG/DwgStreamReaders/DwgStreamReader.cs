@@ -561,7 +561,14 @@ namespace ACadSharp.IO.DWG
 		{
 			return ReadBytes(16);
 		}
-
+		/// <inheritdoc/>
+		public XYZ Read3BitDoubleWithDefault(XYZ defValues)
+		{
+			return new XYZ(
+				ReadBitDoubleWithDefault(defValues.X),
+				ReadBitDoubleWithDefault(defValues.Y),
+				ReadBitDoubleWithDefault(defValues.Z));
+		}
 		/// <inheritdoc/>
 		public virtual Color ReadCmColor()
 		{

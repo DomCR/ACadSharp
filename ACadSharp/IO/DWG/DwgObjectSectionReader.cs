@@ -7,9 +7,7 @@ using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSUtilities.IO;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace ACadSharp.IO.DWG
@@ -596,6 +594,7 @@ namespace ACadSharp.IO.DWG
 					template = readVertex3D();
 					break;
 				case ObjectType.VERTEX_PFACE_FACE:
+					template = readPfaceVertex();
 					break;
 				case ObjectType.POLYLINE_2D:
 					template = readPolyline2D();
@@ -613,35 +612,47 @@ namespace ACadSharp.IO.DWG
 					template = readLine();
 					break;
 				case ObjectType.DIMENSION_ORDINATE:
+					template = readDimOrdinate();
 					break;
 				case ObjectType.DIMENSION_LINEAR:
+					template = readDimLinear();
 					break;
 				case ObjectType.DIMENSION_ALIGNED:
+					template = readDimAligned();
 					break;
 				case ObjectType.DIMENSION_ANG_3_Pt:
+					template = readDimAngular3pt();
 					break;
 				case ObjectType.DIMENSION_ANG_2_Ln:
+					template = readDimLine2pt();
 					break;
 				case ObjectType.DIMENSION_RADIUS:
+					template = readDimRadius();
 					break;
 				case ObjectType.DIMENSION_DIAMETER:
+					template = readDimDiameter();
 					break;
 				case ObjectType.POINT:
 					template = readPoint();
 					break;
 				case ObjectType.FACE3D:
+					template = read3dFace();
 					break;
 				case ObjectType.POLYLINE_PFACE:
+					template = readPolylinePface();
 					break;
 				case ObjectType.POLYLINE_MESH:
+					template = readPolylineMesh();
 					break;
 				case ObjectType.SOLID:
-					break;
 				case ObjectType.TRACE:
+					template = readSolid();
 					break;
 				case ObjectType.SHAPE:
+					template = readShape();
 					break;
 				case ObjectType.VIEWPORT:
+					template = readViewPort();
 					break;
 				case ObjectType.ELLIPSE:
 					template = readEllipse();
@@ -992,13 +1003,13 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Numcols BS 70
-			insert.ColumnCount = (ushort)this.m_objectReader.ReadBitShort();
+			insert.ColumnCount = (ushort)m_objectReader.ReadBitShort();
 			//Numrows BS 71
-			insert.RowCount = (ushort)this.m_objectReader.ReadBitShort();
+			insert.RowCount = (ushort)m_objectReader.ReadBitShort();
 			//Col spacing BD 44
-			insert.ColumnSpacing = this.m_objectReader.ReadBitDouble();
+			insert.ColumnSpacing = m_objectReader.ReadBitDouble();
 			//Row spacing BD 45
-			insert.RowSpacing = this.m_objectReader.ReadBitDouble();
+			insert.RowSpacing = m_objectReader.ReadBitDouble();
 
 			readInsertCommonHandles(template);
 
@@ -1156,6 +1167,25 @@ namespace ACadSharp.IO.DWG
 			vertex.Flags = (VertexFlags)m_objectReader.ReadByte();
 			//Point 3BD 10
 			vertex.Location = m_objectReader.Read3BitDouble();
+
+			return template;
+		}
+		private DwgTemplate readPfaceVertex()
+		{
+			//TODO: Implement poly face vertex class
+			Vertex vertex = new Vertex();
+			DwgEntityTemplate template = new DwgEntityTemplate(vertex);
+
+			readCommonEntityData(template);
+
+			//Vert index BS 71 1 - based vertex index(see DXF doc)
+			m_objectReader.ReadBitShort();
+			//Vert index BS 72 1 - based vertex index(see DXF doc)
+			m_objectReader.ReadBitShort();
+			//Vert index BS 73 1 - based vertex index(see DXF doc)
+			m_objectReader.ReadBitShort();
+			//Vert index BS 74 1 - based vertex index(see DXF doc)
+			m_objectReader.ReadBitShort();
 
 			return template;
 		}
@@ -1350,7 +1380,34 @@ namespace ACadSharp.IO.DWG
 
 			return template;
 		}
-
+		private DwgTemplate readDimOrdinate()
+		{
+			return null;
+		}
+		private DwgTemplate readDimLinear()
+		{
+			return null;
+		}
+		private DwgTemplate readDimAligned()
+		{
+			return null;
+		}
+		private DwgTemplate readDimAngular3pt()
+		{
+			return null;
+		}
+		private DwgTemplate readDimLine2pt()
+		{
+			return null;
+		}
+		private DwgTemplate readDimRadius()
+		{
+			return null;
+		}
+		private DwgTemplate readDimDiameter()
+		{
+			return null;
+		}
 		private DwgTemplate readPoint()
 		{
 			Point pt = new Point();
@@ -1369,7 +1426,76 @@ namespace ACadSharp.IO.DWG
 
 			return template;
 		}
+		private DwgTemplate read3dFace()
+		{
+			Face3D face = new Face3D();
+			DwgEntityTemplate template = new DwgEntityTemplate(face);
 
+			readCommonEntityData(template);
+
+			//R13 - R14 Only:
+			if (R13_14Only)
+			{
+				//1st corner 3BD 10
+				face.FirstCorner = m_objectReader.Read3BitDouble();
+				//2nd corner 3BD 11
+				face.SecondCorner = m_objectReader.Read3BitDouble();
+				//3rd corner 3BD 12
+				face.ThirdCorner = m_objectReader.Read3BitDouble();
+				//4th corner 3BD 13
+				face.FourthCorner = m_objectReader.Read3BitDouble();
+				//Invis flags BS 70 Invisible edge flags
+				face.Flags = (InvisibleEdgeFlags)m_objectReader.ReadBitShort();
+			}
+
+			//R2000 +:
+			if (R2000Plus)
+			{
+				//Has no flag ind. B
+				bool noFlags = this.m_objectReader.ReadBit();
+				//Z is zero bit B
+				bool zIsZero = this.m_objectReader.ReadBit();
+
+				//1st corner x RD 10
+				double x = this.m_objectReader.ReadDouble();
+				//1st corner y RD 20
+				double y = this.m_objectReader.ReadDouble();
+				//1st corner z RD 30 Present only if “Z is zero bit” is 0.
+				double z = 0.0;
+
+				if (!zIsZero)
+					z = this.m_objectReader.ReadDouble();
+
+				face.FirstCorner = new XYZ(x, y, z);
+
+				//2nd corner 3DD 11 Use 10 value as default point
+				//3rd corner 3DD 12 Use 11 value as default point
+				//4th corner 3DD 13 Use 12 value as default point
+				//Invis flags BS 70 Present it “Has no flag ind.” is 0.
+			}
+
+			return template;
+		}
+		private DwgTemplate readPolylinePface()
+		{
+			return null;
+		}
+		private DwgTemplate readPolylineMesh()
+		{
+			return null;
+		}
+		private DwgTemplate readSolid()
+		{
+			return null;
+		}
+		private DwgTemplate readShape()
+		{
+			return null;
+		}
+		private DwgTemplate readViewPort()
+		{
+			return null;
+		}
 		private DwgTemplate readEllipse()
 		{
 			Ellipse ellipse = new Ellipse();
@@ -1567,7 +1693,7 @@ namespace ACadSharp.IO.DWG
 
 			//R2004+:
 			int nownedObjects = 0;
-			if (R2004Plus && (!block.IsXref && !block.IsXRefOverlay))
+			if (R2004Plus && !block.IsXref && !block.IsXRefOverlay)
 				//Owned Object Count BL Number of objects owned by this object.
 				nownedObjects = m_objectReader.ReadBitLong();
 
@@ -1613,7 +1739,7 @@ namespace ACadSharp.IO.DWG
 
 			//R13-R2000:
 			if (m_version >= ACadVersion.AC1012 && m_version <= ACadVersion.AC1015
-				&& (!block.IsXref && !block.IsXRefOverlay))
+				&& !block.IsXref && !block.IsXRefOverlay)
 			{
 				//first entity in the def. (soft pointer)
 				template.FirstEntityHandle = handleReference();
@@ -2030,7 +2156,7 @@ namespace ACadSharp.IO.DWG
 										for (int fp = 0; fp < nfitPoints; ++fp)
 										{
 											//Fitpoint 2RD 11
-											XY fpoint = (m_mergedReaders.Read2RawDouble());
+											XY fpoint = m_mergedReaders.Read2RawDouble();
 										}
 
 										//Start tangent 2RD 12

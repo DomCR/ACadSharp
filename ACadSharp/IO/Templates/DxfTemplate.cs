@@ -6,6 +6,8 @@ using System.Text;
 
 namespace ACadSharp.IO.Templates
 {
+	//TODO: Replace dxf templates for dwg templates, use only 1 kind of template.
+
 	internal class DxfEntityTemplate : Entity
 	{
 		public string EntityName { get; set; }
