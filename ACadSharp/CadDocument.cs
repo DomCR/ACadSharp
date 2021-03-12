@@ -19,7 +19,7 @@ namespace ACadSharp
 		public AppIdsTable AppIds { get; set; }
 		public BlockRecordsTable BlockRecords { get; set; }
 		public DimensionStylesTable DimensionStyles { get; set; }
-		public LayersTable Layers { get; set; }
+		public LayersTable Layers { get; set; } = new LayersTable();
 		public LineTypesTable LineTypes { get; set; }
 		public StylesTable Styles { get; set; }
 		public UCSTable UCSs { get; set; }

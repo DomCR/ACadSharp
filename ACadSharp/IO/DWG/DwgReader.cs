@@ -79,11 +79,13 @@ namespace ACadSharp.IO.DWG
 		{
 			m_document = new CadDocument();
 
+			//Read the file header
 			readFileHeader();
 
-			//m_document.SumaryInfo = ReadSummaryInfo();
+			//m_document.SummaryInfo = ReadSummaryInfo();
 
-			m_document.Header = ReadHeader();
+			//Read all the objects in the file
+			readObjects(m_document, progress);
 
 			return m_document;
 		}
@@ -441,14 +443,16 @@ namespace ACadSharp.IO.DWG
 		/// <remarks>
 		/// Refers to AcDb:AcDbObjects data section.
 		/// </remarks>
-		private void readObjects(ProgressEventHandler progress = null)
+		private void readObjects(CadDocument document, ProgressEventHandler progress = null)
 		{
 			m_cadHeader = m_cadHeader ?? ReadHeader();
 			Dictionary<ulong, long> handles = readHandles();
 			List<DxfClass> classes = readClasses();
 
 			//Initialize the document
-			m_document = new CadDocument();
+			if (document == null)
+				throw new ArgumentNullException(nameof(document));
+
 			m_document.Header = m_cadHeader;
 
 			IDwgStreamReader sreader = null;
@@ -497,6 +501,7 @@ namespace ACadSharp.IO.DWG
 			//Bytes at 0x13 and 0x14 are a raw short indicating the value of the code page for this drawing file.
 			sreader.ReadBytes(2);
 
+			//TODO: Wrong encoding code, fix the index coding
 			fileheader.DrawingCodePage = (CodePage)sreader.ReadShort();
 			sreader.Encoding = TextEncoding.GetListedEncoding(fileheader.DrawingCodePage);
 

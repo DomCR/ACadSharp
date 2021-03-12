@@ -64,6 +64,14 @@ namespace ACadSharp.IO.Templates
 		public List<ulong> OwnedHandles { get; set; } = new List<ulong>();
 
 		public DwgInsertTemplate(Insert insert) : base(insert) { }
+
+		public override void Build(Dictionary<ulong, CadObject> map)
+		{
+			base.Build(map);
+			Insert insert = CadObject as Insert;
+
+
+		}
 	}
 
 	internal class DwgBlockBeginTemplate : DwgEntityTemplate
@@ -145,7 +153,7 @@ namespace ACadSharp.IO.Templates
 
 	internal class DwgDictionaryTemplate : DwgTemplate
 	{
-		public Dictionary<string, ulong> HandleEntries { get; set; } = new Dictionary<string, ulong>();
+		public Dictionary<ulong, string> HandleEntries { get; set; } = new Dictionary<ulong, string>();
 		public DwgDictionaryTemplate(CadDictionary dictionary) : base(dictionary) { }
 	}
 

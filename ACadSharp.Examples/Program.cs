@@ -28,15 +28,18 @@ namespace ACadSharp.Examples
 			//string file = Path.Combine(PathSamples, "dwg/drawing_2000.dwg");
 			//string file = Path.Combine(PathSamples, "dwg/drawing_2007.dwg");
 			//string file = Path.Combine(PathSamples, "dwg/drawing_2010.dwg");
-
+			
+			//string file = Path.Combine(PathSamples, "dwg/single_entities/sample_R14.dwg");
+			//string file = Path.Combine(PathSamples, "dwg/single_entities/sample_2000.dwg");
 			string file = Path.Combine(PathSamples, "dwg/single_entities/sample_2007.dwg");
 			//string file = Path.Combine(PathSamples, "dwg/single_entities/sample_2010.dwg");
 			//string file = Path.Combine(PathSamples, "dwg/single_entities/sample_2013.dwg");
 			//string file = Path.Combine(PathSamples, "dwg/single_entities/sample_2018.dwg");
 
-			DwgReader reader = new DwgReader(file);
-
-			reader.ReadObjects(onProgress);
+			using (DwgReader reader = new DwgReader(file))
+			{
+				CadDocument doc = reader.Read(onProgress);
+			}
 		}
 
 		private static void onProgress(object sender, ProgressEventArgs e)

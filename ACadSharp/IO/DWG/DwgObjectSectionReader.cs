@@ -63,7 +63,7 @@ namespace ACadSharp.IO.DWG
 		/// <summary>
 		/// Reader focused on the handles section of the stream.
 		/// </summary>
-		private IDwgStreamReader m_referenceReader;
+		private IDwgStreamReader m_handlesReader;
 		/// <summary>
 		/// Reader focused on the string data section of the stream.
 		/// </summary>
@@ -108,13 +108,18 @@ namespace ACadSharp.IO.DWG
 				ulong handle = m_handles.Dequeue();
 
 				if (!m_map.TryGetValue(handle, out long offset))
+				{
+					//Notify the readed object
+					progress?.Invoke(this, new ProgressEventArgs(n / (float)m_map.Count, $"NULL readed: {n} of {m_map.Count}"));
+					n++;
 					continue;
+				}
 
 				//Get the object type
 				ObjectType type = getEntityType(offset);
 
 				//Notify the readed object
-				progress?.Invoke(this, new ProgressEventArgs(n / (float)m_map.Count, $"Readed objects: {n} of {m_map.Count}"));
+				progress?.Invoke(this, new ProgressEventArgs(n / (float)m_map.Count, $"{type} readed: {n} of {m_map.Count}"));
 				n++;
 
 				//Read the object
@@ -132,11 +137,8 @@ namespace ACadSharp.IO.DWG
 				m_templates.Add(template);
 			}
 
-			//Build the templates
-			foreach (DwgTemplate item in m_templates)
-			{
-				item.Build(m_objectMap);
-			}
+			//Build the templates in the document
+			buildTemplates();
 		}
 		//**************************************************************************
 		private ObjectType getEntityType(long offset)
@@ -178,14 +180,14 @@ namespace ACadSharp.IO.DWG
 				//	return type;
 
 				//Create a handler section reader
-				m_referenceReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(m_crcStream, true).Stream);
-				m_referenceReader.SetPositionInBits((long)handleSectionOffset);
+				m_handlesReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(m_crcStream, true).Stream);
+				m_handlesReader.SetPositionInBits((long)handleSectionOffset);
 
 				//Create a text section reader
 				m_textReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(m_crcStream, true).Stream);
 				m_textReader.SetPositionByFlag((long)handleSectionOffset - 1);
 
-				m_mergedReaders = new DwgMergedReader(m_objectReader, m_textReader, m_referenceReader);
+				m_mergedReaders = new DwgMergedReader(m_objectReader, m_textReader, m_handlesReader);
 			}
 			else
 			{
@@ -193,8 +195,8 @@ namespace ACadSharp.IO.DWG
 				m_objectReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(m_crcStream, true).Stream);
 				m_objectReader.SetPositionInBits(m_crcReader.PositionInBits());
 
-				m_referenceReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(m_crcStream, true).Stream);
-				m_textReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(m_crcStream, true).Stream);
+				m_handlesReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(m_crcStream, true).Stream);
+				m_textReader = m_objectReader;
 
 				//set the initial posiltion and get the object type
 				m_objectInitialPos = m_objectReader.PositionInBits();
@@ -203,6 +205,13 @@ namespace ACadSharp.IO.DWG
 
 
 			return type;
+		}
+		private void buildTemplates()
+		{
+			foreach (DwgTemplate item in m_templates)
+			{
+				item.Build(m_objectMap);
+			}
 		}
 		//**************************************************************************
 		#region Common entity data
@@ -221,7 +230,7 @@ namespace ACadSharp.IO.DWG
 		private ulong handleReference(ulong handle)
 		{
 			//Read the handle
-			ulong value = m_referenceReader.HandleReference(handle);
+			ulong value = m_handlesReader.HandleReference(handle);
 
 			if (!m_objectMap.ContainsKey(value) && !m_handles.Contains(value))
 				//Add the value to the handles queue to be processed
@@ -292,7 +301,7 @@ namespace ACadSharp.IO.DWG
 			//11 : Not used.
 
 			if (template.EntityMode == 0)
-				entity.OwnerHandle = m_referenceReader.HandleReference(entity.Handle);
+				entity.OwnerHandle = m_handlesReader.HandleReference(entity.Handle);
 
 			//Numreactors BL number of persistent reactors attached to this object
 			readReactors(template);
@@ -519,7 +528,7 @@ namespace ACadSharp.IO.DWG
 
 			if (!flag)
 				//xdicobjhandle(hard owner)
-				template.XDictHandle = handleReference();   //690
+				template.XDictHandle = handleReference();
 
 			if (m_version <= ACadVersion.AC1024)
 				return;
@@ -538,15 +547,16 @@ namespace ACadSharp.IO.DWG
 			long size = m_objectReader.ReadRawLong();
 
 			//Set the position to the handle section
-			m_referenceReader.SetPositionInBits(size + m_objectInitialPos);
+			m_handlesReader.SetPositionInBits(size + m_objectInitialPos);
 
 			if (m_version == ACadVersion.AC1021)
 			{
+				m_textReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(m_crcStream, true).Stream);
 				//"endbit" of the pre-handles section.
 				m_textReader.SetPositionByFlag(size + m_objectInitialPos - 1);
 			}
 
-			m_mergedReaders = new DwgMergedReader(m_objectReader, m_textReader, m_referenceReader);
+			m_mergedReaders = new DwgMergedReader(m_objectReader, m_textReader, m_handlesReader);
 		}
 		#endregion
 
@@ -658,6 +668,7 @@ namespace ACadSharp.IO.DWG
 					template = readEllipse();
 					break;
 				case ObjectType.SPLINE:
+					template = readSpline();
 					break;
 				case ObjectType.REGION:
 					break;
@@ -769,9 +780,6 @@ namespace ACadSharp.IO.DWG
 					break;
 			}
 
-			if (template == null)
-				System.Diagnostics.Debug.Fail($"Not implemented dxf type: {type}");
-
 			return template;
 		}
 		private DwgTemplate readUnlistedType(short classNumber)
@@ -793,7 +801,7 @@ namespace ACadSharp.IO.DWG
 				case "DICTIONARYWDFLT":
 				case "FIELD":
 				case "GROUP":
-					System.Diagnostics.Debug.Fail($"Not implemented dxf class: {c.DxfName}");
+					//System.Diagnostics.Debug.Fail($"Not implemented dxf class: {c.DxfName}");
 					break;
 				case "HATCH":
 					template = readHatch();
@@ -827,10 +835,10 @@ namespace ACadSharp.IO.DWG
 				case "WIPEOUTVARIABLE":
 				case "WIPEOUTVARIABLES":
 				case "XRECORD":
-					System.Diagnostics.Debug.Fail($"Not implemented dxf class: {c.DxfName}");
+					//System.Diagnostics.Debug.Fail($"Not implemented dxf class: {c.DxfName}");
 					break;
 				default:
-					System.Diagnostics.Debug.Fail($"Not implemented dxf class: {c.DxfName}");
+					//System.Diagnostics.Debug.Fail($"Not implemented dxf class: {c.DxfName}");
 					break;
 			}
 
@@ -1518,7 +1526,10 @@ namespace ACadSharp.IO.DWG
 
 			return template;
 		}
-
+		private DwgTemplate readSpline()
+		{
+			return null;
+		}
 		private DwgTemplate readDictionary()
 		{
 			CadDictionary cadDictionary = new CadDictionary();
@@ -1549,14 +1560,14 @@ namespace ACadSharp.IO.DWG
 			for (int i = 0; i < nentries; ++i)
 			{
 				//Text TV string name of dictionary entry, numitems entries
-				string key = m_textReader.ReadVariableText();
+				string name = m_textReader.ReadVariableText();
 				//Handle refs H parenthandle (soft relative pointer)
 				//[Reactors(soft pointer)]
 				//xdicobjhandle(hard owner)
 				//itemhandles (soft owner)
 				ulong handle = handleReference();
 
-				template.HandleEntries.Add(key, handle);
+				template.HandleEntries.Add(handle, name);
 			}
 
 			return template;
@@ -1779,6 +1790,8 @@ namespace ACadSharp.IO.DWG
 		{
 			//Initialize the template with the default layer
 			Layer layer = Layer.Default;
+			m_document.Layers.Add(layer);
+
 			DwgLayerTemplate template = new DwgLayerTemplate(layer);
 
 			readCommonNonEntityData(template);
@@ -1786,6 +1799,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Entry name TV 2
 			layer.Name = m_textReader.ReadVariableText();
+			//layer.Name = m_objectReader.ReadVariableText();
 
 			readXrefDependantBit(template);
 
