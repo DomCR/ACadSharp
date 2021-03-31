@@ -847,26 +847,39 @@ namespace ACadSharp.IO.DWG
 		#region Text entities
 		private DwgTemplate readText()
 		{
-			DwgTextEntityTemplate text = new DwgTextEntityTemplate(new Text());
-			readCommonTextData(text);
+			Text text = new Text();
+			DwgTextEntityTemplate template = new DwgTextEntityTemplate(text);
+			readCommonTextData(template);
 
-			return text;
+			return template;
 		}
 		private DwgTemplate readAttribute()
 		{
-			DwgTextEntityTemplate att = new DwgTextEntityTemplate(new Entities.Attribute());
-			readCommonTextData(att);
+			Attribute att = new Attribute();
+			DwgTextEntityTemplate template = new DwgTextEntityTemplate(att);
+			readCommonTextData(template);
 
-			//TODO: implement attribute read
-			return null;
+			readCommonAttData(att);
+
+			return template;
 		}
 		private DwgTemplate readAttributeDefinition()
 		{
-			DwgTextEntityTemplate attdef = new DwgTextEntityTemplate(new AttributeDefinition());
-			readCommonTextData(attdef);
+			AttributeDefinition attdef = new AttributeDefinition();
+			DwgTextEntityTemplate template = new DwgTextEntityTemplate(attdef);
+			readCommonTextData(template);
 
-			//TODO: implement attribute definition read
-			return null;
+			readCommonAttData(attdef);
+
+			//R2010+:
+			if (this.R2010Plus)
+				//Version RC ?		Repeated??
+				attdef.Version = this.m_objectReader.ReadByte();
+			//Common:
+			//Prompt TV 3
+			attdef.Prompt = this.m_textReader.ReadVariableText();
+
+			return template;
 		}
 		private void readCommonTextData(DwgTextEntityTemplate template)
 		{
@@ -969,6 +982,61 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Common Entity Handle Data H 7 STYLE(hard pointer)
 			template.StyleHandle = handleReference();
+		}
+		private void readCommonAttData(AttributeBase att)
+		{
+			//R2010+:
+			if (R2010Plus)
+				//Version RC ?
+				att.Version = m_objectReader.ReadByte();
+
+			//R2018+:
+			if (R2018Plus)
+			{
+				AttributeType type = (AttributeType)m_objectReader.ReadByte();
+
+				switch (type)
+				{
+					case AttributeType.SingleLine:
+						//Common:
+						//Tag TV 2
+						att.Tag = m_textReader.ReadVariableText();
+						//Field length BS 73 unused
+						short length = m_objectReader.ReadBitShort();
+						//Flags RC 70 NOT bit-pair - coded.
+						att.Flags = (AttributeFlags)m_objectReader.ReadByte();
+						//R2007 +:
+						if (R2007Plus)
+							//Lock position flag B 280
+							att.IsReallyLocked = m_objectReader.ReadBit();
+
+						break;
+					case AttributeType.MultiLine:
+					case AttributeType.ConstantMultiLine:
+						//Attribute type is multi line
+						//MTEXT fields … Here all fields of an embedded MTEXT object
+						//are written, starting from the Entmode
+						//(entity mode). The owner handle can be 0.
+
+						//TODO: Read MText data
+						System.Diagnostics.Debug.Fail("Reader not implemented for MText attribute.");
+						return;
+
+						short dataSize = m_objectReader.ReadBitShort();
+						if (dataSize > 0)
+						{
+							//Annotative data bytes RC Byte array with length Annotative data size.
+							m_objectReader.Advance(dataSize);
+							//Registered application H Hard pointer.
+							handleReference();
+							//Unknown BS 72? Value 0.
+							m_objectReader.ReadBitShort();
+						}
+						break;
+					default:
+						break;
+				}
+			}
 		}
 		#endregion
 
@@ -1790,7 +1858,6 @@ namespace ACadSharp.IO.DWG
 		{
 			//Initialize the template with the default layer
 			Layer layer = Layer.Default;
-			m_document.Layers.Add(layer);
 
 			DwgLayerTemplate template = new DwgLayerTemplate(layer);
 

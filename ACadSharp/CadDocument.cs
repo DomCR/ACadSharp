@@ -10,7 +10,7 @@ namespace ACadSharp
 {
 	//Visual reference of the structure
 	//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-A809CD71-4655-44E2-B674-1FE200B9FE30
-	public class CadDocument 
+	public class CadDocument
 	{
 		public CadHeader Header { get; set; }
 
@@ -25,13 +25,19 @@ namespace ACadSharp
 		public UCSTable UCSs { get; set; }
 		public ViewsTable Views { get; set; }
 		public ViewPortsTable ViewPorts { get; set; }
-		
+
 		public object Blocks { get; set; }
 
-		public List<Entity> Entities { get; set; } = new List<Entity>();
+		//TODO: Implement entity collection to store the document's entities
+		private Dictionary<ulong, Entity> m_entities { get; set; } = new Dictionary<ulong, Entity>();
 
 		public object Objects { get; set; }
 
 		public object ThumbnailImage { get; set; }
+
+		internal void AddEntity(Entity entity)
+		{
+			m_entities.Add(entity.Handle, entity);
+		}
 	}
 }

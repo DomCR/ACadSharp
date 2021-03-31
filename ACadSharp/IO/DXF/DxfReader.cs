@@ -84,7 +84,7 @@ namespace ACadSharp.IO.DXF
 			doc.Header = ReadHeader();
 			doc.Classes = ReadClasses();
 			ReadTables(doc);
-			doc.Entities = ReadEntities();
+			ReadEntities(doc);
 
 			return doc;
 		}
@@ -181,7 +181,7 @@ namespace ACadSharp.IO.DXF
 		{
 			//Get the needed handler
 			m_reader = getSectionHandler(DxfFileToken.BlocksSection);
-		
+
 			//Advance to the first value in the section
 			m_reader.ReadNext();
 			//Loop until the section ends
@@ -198,23 +198,19 @@ namespace ACadSharp.IO.DXF
 		/// <summary>
 		/// Read the ENTITIES section of the DXF file.
 		/// </summary>
-		public List<Entity> ReadEntities()
+		public void ReadEntities(CadDocument document)
 		{
 			//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484
 			//Get the needed handler
 			m_reader = getSectionHandler(DxfFileToken.EntitiesSection);
-
-			List<Entity> entities = new List<Entity>();
 
 			//Advance to the first value in the section
 			m_reader.ReadNext();
 			//Loop until the section ends
 			while (!m_reader.EndSectionFound)
 			{
-				entities.Add(readEntity());
+				document.AddEntity(readEntity());
 			}
-
-			return entities;
 		}
 		/// <summary>
 		/// Read the OBJECTS section of the DXF file.
@@ -904,42 +900,42 @@ namespace ACadSharp.IO.DXF
 					//Subclass marker (AcDbCircle)
 					case 100:
 						Debug.Assert(m_reader.LastValueAsString == "AcDbCircle");
-					break;
+						break;
 					//Thickness (optional; default = 0)
 					case 39:
 						circle.Thickness = m_reader.LastValueAsDouble;
-					break;
+						break;
 					//Center point (in OCS)
 					//DXF: X value; APP: 3D point
 					case 10:
 						center.X = m_reader.LastValueAsDouble;
-					break;
+						break;
 					//DXF: Y and Z values of center point (in OCS)
 					case 20:
 						center.Y = m_reader.LastValueAsDouble;
-					break;
+						break;
 					case 30:
 						center.Z = m_reader.LastValueAsDouble;
-					break;
+						break;
 					//Radius
 					case 40:
 						circle.Radius = m_reader.LastValueAsDouble;
-					break;
+						break;
 					//Extrusion direction (optional; default = 0, 0, 1)
 					//DXF: X value; APP: 3D vector
 					case 210:
 						normal.X = m_reader.LastValueAsDouble;
-					break;
+						break;
 					//DXF: Y and Z values of extrusion direction (optional)
 					case 220:
 						normal.Y = m_reader.LastValueAsDouble;
-					break;
+						break;
 					case 230:
 						normal.Z = m_reader.LastValueAsDouble;
-					break;
+						break;
 					default:
 						Debug.Fail($"Unhandeled dxf code {m_reader.LastCode} at line {m_reader.Line}.");
-					break;
+						break;
 				}
 
 				m_reader.ReadNext();

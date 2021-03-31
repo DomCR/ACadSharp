@@ -3,22 +3,16 @@ using ACadSharp.IO.Templates;
 
 namespace ACadSharp.Entities
 {
-	public class AttributeDefinition : TextEntity
+	public class AttributeDefinition : AttributeBase
 	{
 		public override ObjectType ObjectType => ObjectType.ATTDEF;
 		public override string ObjectName => DxfFileToken.EntityAttributeDefinition;
 
-		//100	Subclass marker(AcDbText)
-
-		[DxfCodeValue(DxfCode.VerticalTextJustification1)]
-		public override TextVerticalAlignment VerticalAlignment { get; set; } = TextVerticalAlignment.Baseline;
-
-
-		//100	Subclass marker(AcDbAttributeDefinition)
-
-		//280	Version number:
-		//0 = 2010	
-		//3		Prompt string
+		/// <summary>
+		/// Prompt text for this attribute.
+		/// </summary>
+		[DxfCodeValue(DxfCode.AttributePrompt)]
+		public string Prompt { get; internal set; }
 		//2		Tag string (cannot contain spaces)
 
 		//70	Attribute flags:

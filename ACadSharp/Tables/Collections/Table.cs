@@ -34,10 +34,6 @@ namespace ACadSharp.Tables.Collections
 
 		public void Add(T item)
 		{
-			//Cannot add a sty
-			if (m_entries.ContainsKey(item.Name))
-				return;
-
 			m_entries.Add(item.Name, item);
 		}
 		public void AddRange(IEnumerable<T> items)
