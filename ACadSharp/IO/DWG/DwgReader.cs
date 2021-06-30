@@ -1,9 +1,9 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Header;
-using CSUtilities.Converters;
-using CSUtilities.IO;
-using CSUtilities.Text;
+using ACadSharp.IO.Utils;
+using ACadSharp.IO.Utils.Converters;
+using ACadSharp.IO.Utils.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -82,7 +82,7 @@ namespace ACadSharp.IO.DWG
 			//Read the file header
 			readFileHeader();
 
-			//m_document.SummaryInfo = ReadSummaryInfo();
+			m_document.SummaryInfo = ReadSummaryInfo();
 
 			//Read all the objects in the file
 			readObjects(m_document, progress);
@@ -104,8 +104,8 @@ namespace ACadSharp.IO.DWG
 			if (m_fileHeader.AcadVersion < ACadVersion.AC1018)
 				return null;
 
-			IDwgStreamReader sectionHandler = getSectionStream("AcDb:SummaryInfo");
-			if (sectionHandler == null)
+			IDwgStreamReader reader = getSectionStream("AcDb:SummaryInfo");
+			if (reader == null)
 				return null;
 
 			CadSummaryInfo summary = new CadSummaryInfo();
@@ -114,50 +114,47 @@ namespace ACadSharp.IO.DWG
 			//Strings are encoded as a 16-bit length, followed by the character bytes (0-terminated).
 
 			//String	2 + n	Title
-			summary.Title = sectionHandler.ReadTextUnicode();
+			summary.Title = reader.ReadTextUnicode();
 			//String	2 + n	Subject
-			summary.Subject = sectionHandler.ReadTextUnicode();
+			summary.Subject = reader.ReadTextUnicode();
 			//String	2 + n	Author
-			summary.Author = sectionHandler.ReadTextUnicode();
+			summary.Author = reader.ReadTextUnicode();
 			//String	2 + n	Keywords
-			summary.Keywords = sectionHandler.ReadTextUnicode();
+			summary.Keywords = reader.ReadTextUnicode();
 			//String	2 + n	Comments
-			summary.Comments = sectionHandler.ReadTextUnicode();
+			summary.Comments = reader.ReadTextUnicode();
 			//String	2 + n	LastSavedBy
-			summary.LastSavedBy = sectionHandler.ReadTextUnicode();
+			summary.LastSavedBy = reader.ReadTextUnicode();
 			//String	2 + n	RevisionNumber
-			summary.RevisionNumber = sectionHandler.ReadTextUnicode();
+			summary.RevisionNumber = reader.ReadTextUnicode();
 			//String	2 + n	RevisionNumber
-			summary.HyperlinkBase = sectionHandler.ReadTextUnicode();
+			summary.HyperlinkBase = reader.ReadTextUnicode();
 
 			//?	8	Total editing time(ODA writes two zero Int32’s)
-			sectionHandler.ReadInt();
-			sectionHandler.ReadInt();
+			reader.ReadInt();
+			reader.ReadInt();
 
-			//TODO: Implement the int conversion to date time
 			//Julian date	8	Create date time
-			sectionHandler.ReadInt();
-			sectionHandler.ReadInt();
-			//Julian date	8	Modified date time
-			sectionHandler.ReadInt();
-			sectionHandler.ReadInt();
+			summary.CreatedDate = reader.Read8BitJulianDate();  //{12/13/2006 01:38:03}
+
+			//Julian date	8	Modified date timez
+			summary.ModifiedDate = reader.Read8BitJulianDate();
 
 			//Int16	2 + 2 * (2 + n)	Property count, followed by PropertyCount key/value string pairs.
-			summary.Properties.Clear();
-			var nproperties = sectionHandler.ReadShort();
+			short nproperties = reader.ReadShort();
 			for (int i = 0; i < nproperties; i++)
 			{
-				string propName = sectionHandler.ReadTextUnicode();
-				string propValue = sectionHandler.ReadTextUnicode();
+				string propName = reader.ReadTextUnicode();
+				string propValue = reader.ReadTextUnicode();
 
 				//Add the property
 				summary.Properties.Add(propName, propValue);
 			}
 
 			//Int32	4	Unknown(write 0)
-			sectionHandler.ReadInt();
+			reader.ReadInt();
 			//Int32	4	Unknown(write 0)
-			sectionHandler.ReadInt();
+			reader.ReadInt();
 
 			return summary;
 		}

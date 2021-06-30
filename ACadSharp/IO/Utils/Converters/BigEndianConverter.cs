@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CSUtilities.Converters
+namespace ACadSharp.IO.Utils.Converters
 {
 	internal class BigEndianConverter : EndianConverter
 	{
@@ -10,9 +10,9 @@ namespace CSUtilities.Converters
 		static IEndianConverter init()
 		{
 			if (BitConverter.IsLittleEndian)
-				return (IEndianConverter)new InverseConverter();
+				return new InverseConverter();
 			else
-				return (IEndianConverter)new DefaultEndianConverter();
+				return new DefaultEndianConverter();
 		}
 		public BigEndianConverter() : base(init()) { }
 	}

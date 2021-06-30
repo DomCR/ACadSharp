@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CSUtilities.Converters
+namespace ACadSharp.IO.Utils.Converters
 {
 	internal class DefaultEndianConverter : IEndianConverter
 	{
@@ -31,5 +31,5 @@ namespace CSUtilities.Converters
 		public ulong ToUInt64(byte[] arr, int length) => BitConverter.ToUInt64(arr, length);
 		public double ToDouble(byte[] arr, int length) => BitConverter.ToDouble(arr, length);
 		public float ToSingle(byte[] arr, int length) => BitConverter.ToSingle(arr, length);
-	} 
+	}
 }

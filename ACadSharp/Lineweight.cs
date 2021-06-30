@@ -2,7 +2,6 @@
 {
 	public enum Lineweight : short
 	{
-		//http://doc.veles.rs/netDXF/html/T_netDxf_Lineweight.htm
 		/// <summary>
 		/// Default lineweight.
 		/// </summary>

@@ -1,10 +1,10 @@
-﻿using CSUtilities.Converters;
+﻿using ACadSharp.IO.Utils.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace CSUtilities.IO
+namespace ACadSharp.IO.Utils
 {
 	/// <summary>
 	/// Utility class to read different data from a stream.
@@ -16,13 +16,13 @@ namespace CSUtilities.IO
 		/// </summary>
 		public virtual long Position
 		{
-			get => this.m_stream.Position;
-			set => this.m_stream.Position = value;
+			get => m_stream.Position;
+			set => m_stream.Position = value;
 		}
 		/// <summary>
 		/// Gets the length in bytes of the stream.
 		/// </summary>
-		public virtual long Length => this.m_stream.Length;
+		public virtual long Length => m_stream.Length;
 		public Stream Stream { get { return m_stream; } }
 		//*******************************************************************
 		protected Stream m_stream = null;
@@ -40,7 +40,7 @@ namespace CSUtilities.IO
 		/// <param name="access"></param>
 		public StreamIO(string filename, FileMode mode, FileAccess access)
 		{
-			m_stream = (Stream)File.Open(filename, mode, access);
+			m_stream = File.Open(filename, mode, access);
 		}
 		/// <summary>
 		/// Initializes a new instance of the <see cref="StreamIO" /> class.
@@ -59,14 +59,14 @@ namespace CSUtilities.IO
 				//Create a copy of the stream to allow seeking
 				byte[] buffer = new byte[stream.Length];
 				stream.Read(buffer, 0, buffer.Length);
-				m_stream = (Stream)new MemoryStream(buffer);
+				m_stream = new MemoryStream(buffer);
 
 				if (resetPosition)
 					//Reset the position to the begining
 					m_stream.Position = 0L;
 			}
 			else
-				this.m_stream = stream;
+				m_stream = stream;
 
 			stream.Position = position;
 		}
@@ -97,16 +97,16 @@ namespace CSUtilities.IO
 				throw new ArgumentOutOfRangeException("Length cannot be negative.");
 
 			//Save the current position
-			long save = this.Position;
+			long save = Position;
 			//Set the position to the begining
-			this.Position = offset;
+			Position = offset;
 
-			byte[] buffer = this.ReadBytes(length);
+			byte[] buffer = ReadBytes(length);
 			//if (this.m_stream.Read(buffer, offset, length) < length)
 			//	throw new EndOfStreamException();
 
 			//Reset the position
-			this.Position = save;
+			Position = save;
 
 			return buffer;
 		}
@@ -126,8 +126,8 @@ namespace CSUtilities.IO
 		/// <returns></returns>
 		public byte[] LookBytes(int count)
 		{
-			byte[] bs = this.ReadBytes(count);
-			this.Position -= count;
+			byte[] bs = ReadBytes(count);
+			Position -= count;
 			return bs;
 		}
 		/// <summary>
@@ -157,7 +157,7 @@ namespace CSUtilities.IO
 
 			byte[] buffer = new byte[length];
 
-			if (this.m_stream.Read(buffer, 0, length) < length)
+			if (m_stream.Read(buffer, 0, length) < length)
 				throw new EndOfStreamException();
 
 			return buffer;
@@ -179,7 +179,7 @@ namespace CSUtilities.IO
 		{
 			T converter = new T();
 
-			byte[] buffer = this.ReadBytes(2);
+			byte[] buffer = ReadBytes(2);
 			return converter.ToInt16(buffer);
 		}
 		/// <summary>
@@ -199,7 +199,7 @@ namespace CSUtilities.IO
 		{
 			T converter = new T();
 
-			byte[] buffer = this.ReadBytes(2);
+			byte[] buffer = ReadBytes(2);
 			return converter.ToUInt16(buffer);
 		}
 		/// <summary>
@@ -219,7 +219,7 @@ namespace CSUtilities.IO
 		{
 			T converter = new T();
 
-			byte[] buffer = this.ReadBytes(4);
+			byte[] buffer = ReadBytes(4);
 			return converter.ToInt32(buffer);
 		}
 		/// <summary>
@@ -239,7 +239,7 @@ namespace CSUtilities.IO
 		{
 			T converter = new T();
 
-			byte[] buffer = this.ReadBytes(4);
+			byte[] buffer = ReadBytes(4);
 			return converter.ToUInt32(buffer);
 		}
 		/// <summary>
@@ -259,7 +259,7 @@ namespace CSUtilities.IO
 		{
 			T converter = new T();
 
-			byte[] buffer = this.ReadBytes(4);
+			byte[] buffer = ReadBytes(4);
 			return converter.ToSingle(buffer);
 		}
 		/// <summary>
@@ -279,7 +279,7 @@ namespace CSUtilities.IO
 		{
 			T converter = new T();
 
-			byte[] buffer = this.ReadBytes(8);
+			byte[] buffer = ReadBytes(8);
 			return converter.ToDouble(buffer);
 		}
 		/// <summary>
@@ -299,7 +299,7 @@ namespace CSUtilities.IO
 		{
 			T converter = new T();
 
-			byte[] buffer = this.ReadBytes(8);
+			byte[] buffer = ReadBytes(8);
 			return converter.ToInt64(buffer);
 		}
 		/// <summary>
@@ -319,7 +319,7 @@ namespace CSUtilities.IO
 		{
 			T converter = new T();
 
-			byte[] buffer = this.ReadBytes(8);
+			byte[] buffer = ReadBytes(8);
 			return converter.ToUInt64(buffer);
 		}
 		/// <summary>
@@ -342,7 +342,7 @@ namespace CSUtilities.IO
 			if (length == 0)
 				return string.Empty;
 
-			byte[] numArray = this.ReadBytes(length);
+			byte[] numArray = ReadBytes(length);
 			return encoding.GetString(numArray);
 		}
 		/// <inheritdoc/>

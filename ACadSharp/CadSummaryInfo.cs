@@ -14,11 +14,8 @@ namespace ACadSharp
 		public string LastSavedBy { get; set; }
 		public string RevisionNumber { get; set; }
 		public string HyperlinkBase { get; set; }
+		public DateTime CreatedDate { get; set; }
+		public DateTime ModifiedDate { get; set; }
 		public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
-	}
-
-	public class DwgPreview
-	{
-
 	}
 }

@@ -14,6 +14,8 @@ namespace ACadSharp
 	{
 		public CadHeader Header { get; set; }
 
+		public CadSummaryInfo SummaryInfo { get; set; }
+
 		public DxfClassCollection Classes { get; set; }
 
 		public AppIdsTable AppIds { get; set; }

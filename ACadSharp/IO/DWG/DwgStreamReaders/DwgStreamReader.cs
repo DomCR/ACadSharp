@@ -1,7 +1,7 @@
 ﻿using ACadSharp.Geometry;
-using CSUtilities.Converters;
-using CSUtilities.IO;
-using CSUtilities.Text;
+using ACadSharp.IO.Utils;
+using ACadSharp.IO.Utils.Converters;
+using ACadSharp.IO.Utils.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -705,24 +705,20 @@ namespace ACadSharp.IO.DWG
 		#endregion
 
 		/// <inheritdoc/>
+		public DateTime Read8BitJulianDate()
+		{
+			return julianToDate(ReadInt(), ReadInt());
+		}
+
+		/// <inheritdoc/>
 		public DateTime ReadDateTime()
 		{
-			ReadBitLong();
-			ReadBitLong();
-
-			//TODO: implement the date time creation with 2 long
-
-			return new DateTime();
+			return julianToDate(ReadBitLong(), ReadBitLong());
 		}
 		/// <inheritdoc/>
 		public TimeSpan ReadTimeSpan()
 		{
-			ReadBitLong();
-			ReadBitLong();
-
-			//TODO: implement the time span creation with 2 long
-
-			return new TimeSpan();
+			return new TimeSpan(ReadBitLong(), 0, ReadBitLong() / 1000);
 		}
 
 		#region Stream pointer control
@@ -849,6 +845,15 @@ namespace ACadSharp.IO.DWG
 			if (ReadBit())
 				b3 |= 1;
 			return b3;
+		}
+		private DateTime julianToDate(int jdate, int miliseconds)
+		{
+			double unixTime = (jdate - 2440587.5) * 86400;
+
+			DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Local);
+			dtDateTime = dtDateTime.AddSeconds(unixTime).ToLocalTime();
+
+			return dtDateTime.AddMilliseconds(miliseconds);
 		}
 	}
 }

@@ -12,10 +12,13 @@ namespace ACadSharp
 		/// The AutoCAD class name of an object.
 		/// </summary>
 		public virtual string ObjectName { get; } = DxfFileToken.Undefined;
+
 		/// <summary>
 		/// The document (drawing) that contains the object.
 		/// </summary>
+		[Obsolete("Not useful, will be deleted in the next refactoring")]
 		public CadDocument Document { get; }
+
 		/// <summary>
 		/// The handle of the entity.
 		/// </summary>

@@ -1,5 +1,5 @@
 ﻿using ACadSharp.Geometry;
-using CSUtilities.Converters;
+using ACadSharp.IO.Utils.Converters;
 using System;
 using System.IO;
 using System.Text;
@@ -256,6 +256,11 @@ namespace ACadSharp.IO.DWG
 		double ReadBitThickness();
 		#endregion
 
+		/// <summary>
+		/// Reads 2 Integers into a DateTime.
+		/// </summary>
+		/// <returns></returns>
+		DateTime Read8BitJulianDate();
 		/// <summary>
 		/// BL: Julian day
 		/// BL: Milliseconds into the day

@@ -4,9 +4,9 @@ using ACadSharp.Entities;
 using ACadSharp.Geometry;
 using ACadSharp.Geometry.Units;
 using ACadSharp.IO.Templates;
+using ACadSharp.IO.Utils;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
-using CSUtilities.IO;
 using System.Collections.Generic;
 using System.Linq;
 

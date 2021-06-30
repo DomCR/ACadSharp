@@ -1,6 +1,6 @@
 ﻿using ACadSharp.Geometry;
-using CSUtilities.Converters;
-using CSUtilities.Text;
+using ACadSharp.IO.Utils.Converters;
+using ACadSharp.IO.Utils.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -366,6 +366,11 @@ namespace ACadSharp.IO.DWG
 		public Color ReadEnColor(out Transparency transparency, out bool flag)
 		{
 			return m_defaultHandler.ReadEnColor(out transparency, out flag);
+		}
+
+		public DateTime Read8BitJulianDate()
+		{
+			throw new NotImplementedException();
 		}
 
 		public DateTime ReadDateTime()

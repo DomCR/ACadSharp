@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CSUtilities.Text
+namespace ACadSharp.IO.Utils.Text
 {
 	/// <summary>
 	/// Code page <seealso cref="Encoding"/>.

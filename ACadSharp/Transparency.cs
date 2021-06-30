@@ -15,14 +15,14 @@ namespace ACadSharp
 		/// </summary>
 		public bool IsByLayer
 		{
-			get { return m_transparency == -1; }
+			get { return _value == -1; }
 		}
 		/// <summary>
 		/// Defines if the transparency is defined by block.
 		/// </summary>
 		public bool IsByBlock
 		{
-			get { return m_transparency == 100; }
+			get { return _value == 100; }
 		}
 		/// <summary>
 		/// Gets or sets the transparency value.
@@ -32,33 +32,32 @@ namespace ACadSharp
 		/// </remarks>
 		public short Value
 		{
-			get { return m_transparency; }
+			get { return _value; }
 			set
 			{
 				if (value == -1)
 				{
-					m_transparency = value;
+					_value = value;
 					return;
 				}
 
 				if (value == 100)
 				{
-					m_transparency = value;
+					_value = value;
 					return;
 				}
 
 				if (value < 0 || value > 90)
 					throw new ArgumentOutOfRangeException(nameof(value), value, "Transparency must be in range from 0 to 90.");
 
-				m_transparency = value;
+				_value = value;
 			}
 		}
-
-		private short m_transparency;
+		private short _value;
 
 		public Transparency(short value)
 		{
-			m_transparency = -1;
+			_value = -1;
 			Value = value;
 		}
 	}

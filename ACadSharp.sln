@@ -16,12 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentation", "{D6442D97-991A-4A63-9A93-A511643D0168}"
-	ProjectSection(SolutionItems) = preProject
-		documentation\autocad_2012_pdf_dxf-reference_enu.pdf = documentation\autocad_2012_pdf_dxf-reference_enu.pdf
-		documentation\OpenDesign_Specification_for_.dwg_files.pdf = documentation\OpenDesign_Specification_for_.dwg_files.pdf
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{F5DAE5BA-4D19-4071-80C8-9DEECF0E7B32}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dxf", "dxf", "{33B3E35E-A3D8-413E-A44B-8FA4381DF018}"
@@ -45,6 +39,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACadSharp.Tests", "ACadSharp.Tests\ACadSharp.Tests.csproj", "{3503AFF9-E9C1-46F4-8E40-81D3035093DD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACadTestGenerator", "ACadTestGenerator\ACadTestGenerator.csproj", "{5A00F437-F0E5-41AC-B0EB-34416B1A10B1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{B86AD482-05C4-400E-9CAE-7B96AD6B0C3E}"
+	ProjectSection(SolutionItems) = preProject
+		docs\autocad_2012_pdf_dxf-reference_enu.pdf = docs\autocad_2012_pdf_dxf-reference_enu.pdf
+		docs\OpenDesign_Specification_for_.dwg_files.pdf = docs\OpenDesign_Specification_for_.dwg_files.pdf
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,10 +73,10 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{D6442D97-991A-4A63-9A93-A511643D0168} = {D4F40AC7-232A-4140-B26C-C432E6B82E53}
 		{F5DAE5BA-4D19-4071-80C8-9DEECF0E7B32} = {D4F40AC7-232A-4140-B26C-C432E6B82E53}
 		{33B3E35E-A3D8-413E-A44B-8FA4381DF018} = {F5DAE5BA-4D19-4071-80C8-9DEECF0E7B32}
 		{BF9B0C8C-987D-42F2-BA92-9E762BDC8990} = {F5DAE5BA-4D19-4071-80C8-9DEECF0E7B32}
+		{B86AD482-05C4-400E-9CAE-7B96AD6B0C3E} = {D4F40AC7-232A-4140-B26C-C432E6B82E53}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B40C2E48-575E-40D1-88C5-272437A5683F}
