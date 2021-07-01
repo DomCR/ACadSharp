@@ -13,14 +13,11 @@ namespace ACadSharp.IO.DWG
 {
 	public class DwgReader : IDisposable
 	{
-		private StreamIO m_fileStream;
-
 		private DwgFileHeader m_fileHeader;
-
 		private CadHeader m_cadHeader;
 		private CadDocument m_document;
-
 		private DwgHeaderHandlesCollection m_objectPointers;
+		private readonly StreamIO m_fileStream;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DwgReader" /> class.

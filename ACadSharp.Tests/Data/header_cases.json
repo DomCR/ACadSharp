@@ -1,0 +1,112 @@
+[
+  {
+    "Name": "$ACADVER",
+    "Value": "24.0s (LMS Tech)"
+  },
+  {
+    "Name": "$DIMASO",
+    "Value": 1
+  },
+  {
+    "Name": "$DIMSHO",
+    "Value": 1
+  },
+  {
+    "Name": "$PLINEGEN",
+    "Value": 0
+  },
+  {
+    "Name": "$ORTHOMODE",
+    "Value": 0
+  },
+  {
+    "Name": "$REGENMODE",
+    "Value": 1
+  },
+  {
+    "Name": "$FILLMODE",
+    "Value": 1
+  },
+  {
+    "Name": "$QTEXTMODE",
+    "Value": 0
+  },
+  {
+    "Name": "$PSLTSCALE",
+    "Value": 1
+  },
+  {
+    "Name": "$LIMCHECK",
+    "Value": 0
+  },
+  {
+    "Name": "$BLIPMODE",
+    "Value": 0
+  },
+  {
+    "Name": "$SKPOLY",
+    "Value": 0
+  },
+  {
+    "Name": "$ANGDIR",
+    "Value": 0
+  },
+  {
+    "Name": "$SPLFRAME",
+    "Value": 0
+  },
+  {
+    "Name": "$MIRRTEXT",
+    "Value": 0
+  },
+  {
+    "Name": "$WORLDVIEW",
+    "Value": 1
+  },
+  {
+    "Name": "$LUNITS",
+    "Value": 4
+  },
+  {
+    "Name": "$INSBASE",
+    "Value": {
+      "Z": 0.0,
+      "Y": 0.0,
+      "X": 0.0
+    }
+  },
+  {
+    "Name": "$EXTMIN",
+    "Value": {
+      "Z": -0.002975236860777386,
+      "Y": 842.851445040812,
+      "X": 842.88765257557679
+    }
+  },
+  {
+    "Name": "$EXTMAX",
+    "Value": {
+      "Z": 97.502975690880533,
+      "Y": 3384.1081635125438,
+      "X": 3431.5548835378077
+    }
+  },
+  {
+    "Name": "$LIMMIN",
+    "Value": {
+      "Y": 0.0,
+      "X": 0.0
+    }
+  },
+  {
+    "Name": "$LIMMAX",
+    "Value": {
+      "Y": 864.0,
+      "X": 1152.0
+    }
+  },
+  {
+    "Name": "$DIMASSOC",
+    "Value": 1
+  }
+]
