@@ -8,6 +8,7 @@ namespace ACadSharp.Tables
 {
 	public class Style : TableEntry
 	{
+		public override ObjectType ObjectType => ObjectType.STYLE;
 		public override string ObjectName => DxfFileToken.TableStyle;
 
 		/// <summary>

@@ -7,6 +7,8 @@ namespace ACadSharp.Tables
 {
 	public class DimensionStyle : TableEntry
 	{
+		public override ObjectType ObjectType => ObjectType.DIMSTYLE;
+
 		public string PostFix { get; internal set; }
 		public string AlternateDimensioningSuffix { get; internal set; }
 		public bool GenerateTolerances { get; internal set; }

@@ -17,6 +17,7 @@ namespace ACadSharp.Tables
 		/// </summary>
 		public static Layer Default { get { return new Layer(DefaultName); } }
 
+		public override ObjectType ObjectType => ObjectType.LAYER;
 		public override string ObjectName => DxfFileToken.TableLayer;
 		public override bool XrefDependant
 		{

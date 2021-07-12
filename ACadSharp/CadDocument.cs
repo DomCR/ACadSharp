@@ -4,6 +4,7 @@ using ACadSharp.Header;
 using ACadSharp.Tables.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ACadSharp
@@ -29,17 +30,25 @@ namespace ACadSharp
 		public ViewPortsTable ViewPorts { get; set; }
 
 		public object Blocks { get; set; }
+		public object Objects { get; set; }
+		public object ThumbnailImage { get; set; }
 
 		//TODO: Implement entity collection to store the document's entities
-		private Dictionary<ulong, Entity> m_entities { get; set; } = new Dictionary<ulong, Entity>();
-
-		public object Objects { get; set; }
-
-		public object ThumbnailImage { get; set; }
+		private Dictionary<ulong, Entity> _entities { get; set; } = new Dictionary<ulong, Entity>();
+		private readonly Dictionary<ulong, CadObject> _cadObjects = new Dictionary<ulong, CadObject>();
 
 		internal void AddEntity(Entity entity)
 		{
-			m_entities.Add(entity.Handle, entity);
+			_entities.Add(entity.Handle, entity);
+		}
+		public void AddObject(CadObject cadObject)
+		{
+			throw new NotImplementedException();
+		}
+		private void assignHandle(CadObject cadObject)
+		{
+			ulong value = _cadObjects.Keys.Max() + 1;
+			cadObject.Handle = value;
 		}
 	}
 }

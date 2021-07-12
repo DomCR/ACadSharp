@@ -8,6 +8,8 @@ namespace ACadSharp.Objects
 	public class CadDictionary : CadObject
 	{
 		public override string ObjectName => DxfFileToken.ObjectDictionary;
+		public override ObjectType ObjectType => ObjectType.DICTIONARY;
+
 		//100	Subclass marker(AcDbDictionary)
 		/// <summary>
 		/// indicates that elements of the dictionary are to be treated as hard-owned.

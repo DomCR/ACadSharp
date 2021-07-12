@@ -7,6 +7,7 @@ namespace ACadSharp.Tables
 {
 	public class VPort : TableEntry
 	{
+		public override ObjectType ObjectType => ObjectType.VPORT;
 		public override string ObjectName => DxfFileToken.TableVport;
 
 		public VPort() : base() { }

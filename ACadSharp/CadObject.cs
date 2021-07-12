@@ -9,6 +9,10 @@ namespace ACadSharp
 	public abstract class CadObject
 	{
 		/// <summary>
+		/// Gets the object type.
+		/// </summary>
+		public abstract ObjectType ObjectType { get; }
+		/// <summary>
 		/// The AutoCAD class name of an object.
 		/// </summary>
 		public virtual string ObjectName { get; } = DxfFileToken.Undefined;
@@ -23,12 +27,13 @@ namespace ACadSharp
 		/// The handle of the entity.
 		/// </summary>
 		[DxfCodeValue(DxfCode.Handle)]
-		public ulong Handle { get; set; }
+		public ulong Handle { get; internal set; }
+
 		/// <summary>
 		/// Soft-pointer ID/handle to owner object
 		/// </summary>
 		[DxfCodeValue(DxfCode.SoftPointerId)]
-		public ulong OwnerHandle { get; set; }
+		public ulong OwnerHandle { get; internal set; }
 
 		/// <summary>
 		/// Objects objects that has been attached to this entity.
@@ -118,6 +123,7 @@ namespace ACadSharp
 			}
 		}
 
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return ObjectName;

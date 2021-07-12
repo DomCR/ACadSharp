@@ -26,7 +26,10 @@ namespace ACadSharp.IO.Templates
 
 		public virtual void Build(Dictionary<ulong, CadObject> map)
 		{
-
+			if (map.TryGetValue(XDictHandle, out CadObject xdict))
+			{
+				//CadObject.XDict = (Layer)xdict;
+			}
 		}
 	}
 	internal class DwgEntityTemplate : DwgTemplate
@@ -50,6 +53,11 @@ namespace ACadSharp.IO.Templates
 			{
 				entity.Layer = (Layer)layer;
 			}
+
+			if (map.TryGetValue(LineTypeHandle, out CadObject ltype))
+			{
+				entity.LineType = (LineType)ltype;
+			}
 		}
 	}
 
@@ -68,9 +76,13 @@ namespace ACadSharp.IO.Templates
 		public override void Build(Dictionary<ulong, CadObject> map)
 		{
 			base.Build(map);
+
 			Insert insert = CadObject as Insert;
 
+			foreach (var item in OwnedHandles)
+			{
 
+			}
 		}
 	}
 
@@ -163,7 +175,6 @@ namespace ACadSharp.IO.Templates
 		public List<ulong> Handles { get; set; } = new List<ulong>();
 		public ulong ModelSpaceHandle { get; set; }
 		public ulong PaperSpaceHandle { get; set; }
-		public DwgBlockCtrlObjectTemplate() : base(new BlockControl()) { }
-		public class BlockControl : CadObject { }
+		public DwgBlockCtrlObjectTemplate() : base(new BlockRecordsTable()) { }
 	}
 }

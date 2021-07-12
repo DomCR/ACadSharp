@@ -7,6 +7,8 @@ namespace ACadSharp.Tables
 {
 	public class AppId : TableEntry
 	{
+		public override ObjectType ObjectType => ObjectType.APPID;
+
 		public AppId(string name) : base(name)
 		{
 			if (string.IsNullOrEmpty(name))

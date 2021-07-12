@@ -8,6 +8,8 @@ namespace ACadSharp.Tables
 {
 	public class LineType : TableEntry
 	{
+		public override ObjectType ObjectType => ObjectType.LTYPE;
+
 		/// <summary>
 		/// Descriptive text for linetype
 		/// </summary>

@@ -18,10 +18,6 @@ namespace ACadSharp.Entities
 	{
 		//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-3610039E-27D1-4E23-B6D3-7E60B22BB5BD
 		/// <summary>
-		/// Gets the object type for this entity.
-		/// </summary>
-		public virtual ObjectType ObjectType { get { return ObjectType.INVALID; } }
-		/// <summary>
 		/// Specifies the layer for an object.
 		/// </summary>
 		[DxfCodeValue(DxfCode.LayerName)]
@@ -69,6 +65,7 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfCode.Alpha)]
 		public Transparency Transparency { get; set; }
+		public LineType LineType { get; set; }
 
 		/// <summary>
 		/// Default constructor for <see cref="Entity"/>

@@ -6,6 +6,8 @@ namespace ACadSharp.Objects
 {
 	public class Material : CadObject
 	{
+		public override ObjectType ObjectType => ObjectType.INVALID;
+
 		//1	Material name(string)
 
 		//2	Description(string, default null string)

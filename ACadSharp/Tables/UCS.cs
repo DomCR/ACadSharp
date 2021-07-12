@@ -8,6 +8,8 @@ namespace ACadSharp.Tables
 {
 	public class UCS : TableEntry
 	{
+		public override ObjectType ObjectType => ObjectType.UCS;
+
 		public XYZ PaperSpaceInsertionBase { get; internal set; }
 		public XYZ PaperSpaceExtMin { get; internal set; }
 		public XYZ PaperSpaceExtMax { get; internal set; }
