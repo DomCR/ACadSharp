@@ -44,14 +44,15 @@ namespace ACadSharp.IO.DWG
 		private Queue<ulong> m_handles;
 		private readonly Dictionary<ulong, long> m_map;
 		private readonly Dictionary<short, DxfClass> m_classes;
+
 		/// <summary>
 		/// Store the readed objects to create the document once finished
 		/// </summary>
-		private Dictionary<ulong, CadObject> m_objectMap = new Dictionary<ulong, CadObject>();
-		private List<DwgTemplate> m_templates = new List<DwgTemplate>();
+		private Dictionary<ulong, CadObject> m_objectMap { get { return _modelBuilder.ObjectsMap; } }// = new Dictionary<ulong, CadObject>();
+		private List<DwgTemplate> m_templates { get { return _modelBuilder.Templates; } } //= new List<DwgTemplate>();
+		private DwgModelBuilder _modelBuilder = new DwgModelBuilder();
 
 		private readonly IDwgStreamReader m_reader;
-
 		/// <summary>
 		/// Needed to handle some items like colors or some text data that may not be present.
 		/// </summary>
@@ -93,7 +94,7 @@ namespace ACadSharp.IO.DWG
 			//Setup the entity handler
 			m_crcReader = DwgStreamReader.GetStreamHandler(m_version, m_crcStream);
 		}
-		//**************************************************************************
+
 		/// <summary>
 		/// Read all the entities, tables and objects in the file.
 		/// </summary>
@@ -138,7 +139,9 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Build the templates in the document
-			buildTemplates();
+			//buildTemplates();
+			_modelBuilder.BuildHeaders();
+			_modelBuilder.BuildObjects();
 		}
 		//**************************************************************************
 		private ObjectType getEntityType(long offset)
@@ -210,6 +213,7 @@ namespace ACadSharp.IO.DWG
 		{
 			foreach (DwgTemplate item in m_templates)
 			{
+				item.CadObject.Document = m_document;
 				item.Build(m_objectMap);
 			}
 		}
@@ -361,9 +365,9 @@ namespace ACadSharp.IO.DWG
 			template.LayerHandle = handleReference();
 
 			//Ltype flags BB 00 = bylayer, 01 = byblock, 10 = continous, 11 = linetype handle present at end of object
-			byte ltypeFlags = m_objectReader.Read2Bits();
+			template.LtypeFlags = m_objectReader.Read2Bits();
 
-			if (ltypeFlags == 3)
+			if (template.LtypeFlags == 3)
 				//6 [LTYPE (hard pointer)] present if linetype flags were 11
 				template.LineTypeHandle = handleReference();
 
@@ -437,7 +441,6 @@ namespace ACadSharp.IO.DWG
 			//Obj size RL size of object in bits, not including end handles
 			if (R13_14Only)
 				updateHandleReader();
-
 
 			//[Owner ref handle (soft pointer)]
 			template.CadObject.OwnerHandle = handleReference(template.CadObject.Handle);
@@ -769,6 +772,7 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.VBA_PROJECT:
 					break;
 				case ObjectType.LAYOUT:
+					template = readLayout();
 					break;
 				case ObjectType.ACAD_PROXY_ENTITY:
 					break;
@@ -782,6 +786,7 @@ namespace ACadSharp.IO.DWG
 
 			return template;
 		}
+
 		private DwgTemplate readUnlistedType(short classNumber)
 		{
 			if (!m_classes.TryGetValue(classNumber, out DxfClass c))
@@ -797,6 +802,8 @@ namespace ACadSharp.IO.DWG
 				case "ACAD_TABLE":
 				case "CELLSTYLEMAP":
 				case "DBCOLOR":
+					template = readDwgColor();
+					break;
 				case "DICTIONARYVAR":
 				case "DICTIONARYWDFLT":
 				case "FIELD":
@@ -844,6 +851,7 @@ namespace ACadSharp.IO.DWG
 
 			return template;
 		}
+
 		#region Text entities
 		private DwgTemplate readText()
 		{
@@ -872,12 +880,12 @@ namespace ACadSharp.IO.DWG
 			readCommonAttData(attdef);
 
 			//R2010+:
-			if (this.R2010Plus)
+			if (R2010Plus)
 				//Version RC ?		Repeated??
-				attdef.Version = this.m_objectReader.ReadByte();
+				attdef.Version = m_objectReader.ReadByte();
 			//Common:
 			//Prompt TV 3
-			attdef.Prompt = this.m_textReader.ReadVariableText();
+			attdef.Prompt = m_textReader.ReadVariableText();
 
 			return template;
 		}
@@ -1528,19 +1536,19 @@ namespace ACadSharp.IO.DWG
 			if (R2000Plus)
 			{
 				//Has no flag ind. B
-				bool noFlags = this.m_objectReader.ReadBit();
+				bool noFlags = m_objectReader.ReadBit();
 				//Z is zero bit B
-				bool zIsZero = this.m_objectReader.ReadBit();
+				bool zIsZero = m_objectReader.ReadBit();
 
 				//1st corner x RD 10
-				double x = this.m_objectReader.ReadDouble();
+				double x = m_objectReader.ReadDouble();
 				//1st corner y RD 20
-				double y = this.m_objectReader.ReadDouble();
+				double y = m_objectReader.ReadDouble();
 				//1st corner z RD 30 Present only if “Z is zero bit” is 0.
 				double z = 0.0;
 
 				if (!zIsZero)
-					z = this.m_objectReader.ReadDouble();
+					z = m_objectReader.ReadDouble();
 
 				face.FirstCorner = new XYZ(x, y, z);
 
@@ -1717,6 +1725,65 @@ namespace ACadSharp.IO.DWG
 				return template;
 
 			//Is NOT annotative B
+			mtext.IsAnnotative = !m_objectReader.ReadBit();
+
+			//IF MTEXT is not annotative
+			if (!mtext.IsAnnotative)
+			{
+				//Version BS Default 0
+				var version = m_objectReader.ReadBitShort();
+				//Default flag B Default true
+				var defaultFlag = m_objectReader.ReadBit();
+
+				//BEGIN REDUNDANT FIELDS(see above for descriptions)
+				//Registered application H Hard pointer
+				ulong appHandle = handleReference();
+
+				//TODO: finish Mtext reader, save redundant fields??
+
+				//Attachment point BL
+				AttachmentPointType attachmentPoint = (AttachmentPointType)m_objectReader.ReadBitLong();
+				//X - axis dir 3BD 10
+				m_objectReader.Read3BitDouble();
+				//Insertion point 3BD 11
+				m_objectReader.Read3BitDouble();
+				//Rect width BD 40
+				m_objectReader.ReadBitDouble();
+				//Rect height BD 41
+				m_objectReader.ReadBitDouble();
+				//Extents width BD 42
+				m_objectReader.ReadBitDouble();
+				//Extents height BD 43
+				m_objectReader.ReadBitDouble();
+				//END REDUNDANT FIELDS
+
+				//Column type BS 71 0 = No columns, 1 = static columns, 2 = dynamic columns
+				mtext.ColumnType = (ColumnType)m_objectReader.ReadBitShort();
+				//IF Has Columns data(column type is not 0)
+				if (mtext.ColumnType != ColumnType.NoColumns)
+				{
+					//Column height count BL 72
+					int count = m_objectReader.ReadBitLong();
+					//Columnn width BD 44
+					mtext.ColumnWidth = m_objectReader.ReadBitDouble();
+					//Gutter BD 45
+					mtext.ColumnGutter = m_objectReader.ReadBitDouble();
+					//Auto height? B 73
+					mtext.ColumnAutoHeight = m_objectReader.ReadBit();
+					//Flow reversed? B 74
+					mtext.ColumnFlowReversed = m_objectReader.ReadBit();
+
+					//IF not auto height and column type is dynamic columns
+					if (!mtext.ColumnAutoHeight && mtext.ColumnType == ColumnType.DynamicColumns && count > 0)
+					{
+						for (int i = 0; i < count; ++i)
+						{
+							//Column height BD 46
+							mtext.ColumnHeights.Add(m_objectReader.ReadBitDouble());
+						}
+					}
+				}
+			}
 
 			return template;
 		}
@@ -2072,7 +2139,6 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readHatch()
 		{
 			Hatch hatch = new Hatch();
-			//TODO: Create a hatch template
 			DwgHatchTemplate template = new DwgHatchTemplate(hatch);
 
 			readCommonEntityData(template);
@@ -2344,6 +2410,188 @@ namespace ACadSharp.IO.DWG
 
 			return template;
 		}
+
+		private DwgTemplate readLayout()
+		{
+			//TODO: layout pag 210
+			Layout layout = new Layout();
+			DwgLayoutTemplate template = new DwgLayoutTemplate(layout);
+
+			readCommonNonEntityData(template);
+
+			layout.PlotSettings = readPlotSettings();
+
+			//Common:
+			//Layout name TV 1 layout name
+			layout.Name = m_textReader.ReadVariableText();
+			//Tab order BL 71 layout tab order
+			layout.TabOrder = m_objectReader.ReadBitLong();
+			//Flag BS 70 layout flags
+			layout.Flags = (LayoutFlags)m_objectReader.ReadBitShort();
+			//Ucs origin 3BD 13 layout ucs origin
+			layout.Origin = m_objectReader.Read3BitDouble();
+			//Limmin 2RD 10 layout minimum limits
+			layout.MinLimits = m_objectReader.Read2RawDouble();
+			//Limmax 2RD 11 layout maximum limits
+			layout.MaxLimits = m_objectReader.Read2RawDouble();
+			//Inspoint 3BD 12 layout insertion base point
+			layout.InsertionBasePoint = m_objectReader.Read3BitDouble();
+			//Ucs x axis 3BD 16 layout ucs x axis direction
+			layout.XAxis = m_objectReader.Read3BitDouble();
+			//Ucs y axis 3BD 17 layout ucs y axis direction
+			layout.YAxis = m_objectReader.Read3BitDouble();
+			//Elevation BD 146 layout elevation
+			layout.Elevation = m_objectReader.ReadBitDouble();
+			//Orthoview type BS 76 layout orthographic view type of UCS
+			layout.UcsOrthographicType = (OrthographicType)m_objectReader.ReadBitShort();
+			//Extmin 3BD 14 layout extent min
+			layout.MinExtents = m_objectReader.Read3BitDouble();
+			//Extmax 3BD 15 layout extent max
+			layout.MaxExtents = m_objectReader.Read3BitDouble();
+
+			int nLayouts = 0;
+			//R2004 +:
+			if (R2004Plus)
+				//Viewport count RL # of viewports in this layout
+				nLayouts = m_objectReader.ReadBitLong();
+
+			//Common:
+			//330 associated paperspace block record handle(soft pointer)
+			template.PaperSpaceBlockHandle = handleReference();
+			//331 last active viewport handle(soft pointer)
+			template.ActiveViewportHandle = handleReference();
+			//346 base ucs handle(hard pointer)
+			template.BaseUcsHandle = handleReference();
+			//345 named ucs handle(hard pointer)
+			template.NamesUcsHandle = handleReference();
+
+			//R2004+:
+			if (R2004Plus)
+			{
+				//Viewport handle(repeats Viewport count times) (soft pointer)
+				for (int index = 0; index < nLayouts; ++index)
+					template.ViewportHandles.Add(handleReference());
+			}
+
+			return template;
+		}
+
+		private PlotSettings readPlotSettings()
+		{
+			PlotSettings plot = new PlotSettings();
+
+			//Common:
+			//Page setup name TV 1 plotsettings page setup name
+			plot.Name = m_textReader.ReadVariableText();
+			//Printer / Config TV 2 plotsettings printer or configuration file
+			plot.SystemPrinterName = m_textReader.ReadVariableText();
+			//Plot layout flags BS 70 plotsettings plot layout flag
+			plot.Flags = (PlotFlags)m_objectReader.ReadBitShort();
+
+			PaperMargin margin = new PaperMargin()
+			{
+				//Left Margin BD 40 plotsettings left margin in millimeters
+				Left = m_objectReader.ReadBitDouble(),
+				//Bottom Margin BD 41 plotsettings bottom margin in millimeters
+				Bottom = m_objectReader.ReadBitDouble(),
+				//Right Margin BD 42 plotsettings right margin in millimeters
+				Right = m_objectReader.ReadBitDouble(),
+				//Top Margin BD 43 plotsettings top margin in millimeters
+				Top = m_objectReader.ReadBitDouble()
+			};
+			plot.UnprintableMargin = margin;
+
+			//Paper Width BD 44 plotsettings paper width in millimeters
+			plot.PaperWidth = m_objectReader.ReadBitDouble();
+			//Paper Height BD 45 plotsettings paper height in millimeters
+			plot.PaperHeight = m_objectReader.ReadBitDouble();
+
+			//Paper Size TV 4 plotsettings paper size
+			plot.PaperSize = m_textReader.ReadVariableText();
+
+			//Plot origin 2BD 46,47 plotsettings origin offset in millimeters
+			plot.PlotOrigin = m_objectReader.Read2BitDouble();
+			//Paper units BS 72 plotsettings plot paper units
+			plot.PaperUnits = (PlotPaperUnits)m_objectReader.ReadBitShort();
+			//Plot rotation BS 73 plotsettings plot rotation
+			plot.PaperRotation = (PlotRotation)m_objectReader.ReadBitShort();
+			//Plot type BS 74 plotsettings plot type
+			plot.PlotType = (PlotType)m_objectReader.ReadBitShort();
+
+			//Window min 2BD 48,49 plotsettings plot window area lower left
+			plot.WindowLowerLeft = m_objectReader.Read2BitDouble();
+			//Window max 2BD 140,141 plotsettings plot window area upper right
+			plot.WindowUpperLeft = m_objectReader.Read2BitDouble();
+
+			//R13 - R2000 Only:
+			if (m_version >= ACadVersion.AC1012 && m_version <= ACadVersion.AC1015)
+				//Plot view name T 6 plotsettings plot view name
+				plot.PlotViewName = m_textReader.ReadVariableText();
+
+			//Common:
+			//Real world units BD 142 plotsettings numerator of custom print scale
+			plot.NumeratorScale = m_objectReader.ReadBitDouble();
+			//Drawing units BD 143 plotsettings denominator of custom print scale
+			plot.DenominatorScale = m_objectReader.ReadBitDouble();
+			//Current style sheet TV 7 plotsettings current style sheet
+			plot.StyleSheet = m_textReader.ReadVariableText();
+			//Scale type BS 75 plotsettings standard scale type
+			plot.ScaledFit = (ScaledType)m_objectReader.ReadBitShort();
+			//Scale factor BD 147 plotsettings scale factor
+			plot.StandardScale = m_objectReader.ReadBitDouble();
+			//Paper image origin 2BD 148,149 plotsettings paper image origin
+			plot.PaperImageOrigin = m_objectReader.Read2BitDouble();
+
+			//R2004+:
+			if (R2004Plus)
+			{
+				//Shade plot mode BS 76
+				plot.ShadePlotMode = (ShadePlotMode)m_objectReader.ReadBitShort();
+				//Shade plot res.Level BS 77
+				plot.ShadePlotResolutionMode = (ShadePlotResolutionMode)m_objectReader.ReadBitShort();
+				//Shade plot custom DPI BS 78
+				plot.ShadePlotDPI = m_objectReader.ReadBitShort();
+
+				//6 plot view handle(hard pointer)
+				ulong plotViewHandle = handleReference();
+			}
+
+			//R2007 +:
+			if (R2007Plus)
+				//Visual Style handle(soft pointer)
+				handleReference();
+
+			return plot;
+		}
+
 		#endregion
+
+		private DwgTemplate readDwgColor()
+		{
+			DwgColorTemplate.DwgColor dwgColor = new DwgColorTemplate.DwgColor();
+			DwgColorTemplate template = new DwgColorTemplate(dwgColor);
+
+			readCommonNonEntityData(template);
+
+			short colorIndex = m_objectReader.ReadBitShort();
+
+			if (R2004Plus && m_version < ACadVersion.AC1032)
+			{
+				short index = (short)m_objectReader.ReadBitLong();
+				byte flags = m_objectReader.ReadByte();
+
+				if ((flags & 1U) > 0U)
+					template.Name = m_textReader.ReadVariableText();
+
+				if ((flags & 2U) > 0U)
+					template.BookName = m_textReader.ReadVariableText();
+
+				dwgColor.Color = new Color(index);
+			}
+
+			dwgColor.Color = new Color(colorIndex);
+
+			return template;
+		}
 	}
 }

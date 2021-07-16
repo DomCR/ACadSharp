@@ -3,6 +3,7 @@ using ACadSharp.Geometry;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -82,6 +83,16 @@ namespace ACadSharp.Entities
 		ByStyle = 5,
 	}
 
+	/// <summary>
+	/// Represents the type of columns.
+	/// </summary>
+	public enum ColumnType : short
+	{
+		NoColumns,
+		StaticColumns,
+		DynamicColumns,
+	}
+
 	public class MText : Entity
 	{
 		public override ObjectType ObjectType => ObjectType.MTEXT;
@@ -146,9 +157,8 @@ namespace ACadSharp.Entities
 		/// </remarks>
 		[DxfCodeValue(DxfCode.XCoordinate1, DxfCode.YCoordinate1, DxfCode.ZCoordinate1)]
 		public XYZ AlignmentPoint { get; set; } = XYZ.Zero;
-		//42
 
-		//Horizontal width of the characters that make up the mtext entity.This value will always be equal to or less than the value of group code 41 (read-only, ignored if supplied)
+		//42 Horizontal width of the characters that make up the mtext entity.This value will always be equal to or less than the value of group code 41 (read-only, ignored if supplied)
 
 		//43 Vertical height of the mtext entity(read-only, ignored if supplied)
 
@@ -199,13 +209,51 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfCode.BackgroundTransparency)]
 		public Transparency BackgroundTransparency { get; set; }
 
-		//75	Column type
-		//76	Column count
-		//78	Column Flow Reversed
-		//79	Column Autoheight
-		//48	Column width
-		//49	Column gutter
-		//50	Column heights; this code is followed by a column count(Int16), and then the number of column heights
+		#region Create a class column data ?
+		/// <summary>
+		/// Text column type.
+		/// </summary>
+		[DxfCodeValue(75)]
+		public ColumnType ColumnType { get; set; }
+
+		/// <summary>
+		/// Number of columns.
+		/// </summary>
+		[DxfCodeValue(76)]
+		public int ColumnCount { get { return this.ColumnHeights.Count; } }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether flow is reversed.
+		/// </summary>
+		[DxfCodeValue(78)]
+		public bool ColumnFlowReversed { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether height is automatic.
+		/// </summary>
+		[DxfCodeValue(79)]
+		public bool ColumnAutoHeight { get; set; }
+
+		/// <summary>
+		/// Width of the column.
+		/// </summary>
+		[DxfCodeValue(48)]
+		public double ColumnWidth { get; set; }
+
+		/// <summary>
+		/// Column gutter.
+		/// </summary>
+		[DxfCodeValue(49)]
+		public double ColumnGutter { get; set; }
+
+		/// <summary>
+		/// Column heights.
+		/// </summary>
+		[DxfCodeValue(50)]
+		public List<double> ColumnHeights { get; } = new List<double>();
+		#endregion
+
+		public bool IsAnnotative { get; set; }
 
 		public MText() : base() { }
 

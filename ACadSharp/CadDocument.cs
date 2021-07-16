@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Header;
+using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
 using System.Collections.Generic;
@@ -43,6 +44,13 @@ namespace ACadSharp
 		}
 		public void AddObject(CadObject cadObject)
 		{
+			//TODO: Assign the objects to each table or have an Add method foreach type?
+
+			if (cadObject.GetType().IsEquivalentTo(typeof(Layer)))
+			{
+				Layers.Add((Layer)cadObject);
+			}
+
 			throw new NotImplementedException();
 		}
 		private void assignHandle(CadObject cadObject)

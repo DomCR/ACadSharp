@@ -96,5 +96,9 @@ namespace ACadSharp.Blocks
 		/// </summary>
 		[DxfCodeValue(DxfCode.SymbolTableRecordComments)]
 		public string Comments { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
+		public BlockRecord Record { get; internal set; }
 	}
 }

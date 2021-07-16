@@ -63,77 +63,77 @@ namespace ACadSharp.Tests.IO.DWG
 			//}
 		}
 
-		[Theory]
-		[MemberData(nameof(TestData))]
-		public void ReadObjectsR14(CadObjectTestCase test)
-		{
-			ulong handle = test.GetHandle();
+		//[Theory]
+		//[MemberData(nameof(TestData))]
+		//public void ReadObjectsR14(CadObjectTestCase test)
+		//{
+		//	ulong handle = test.GetHandle();
 
-			var a = CadObjectsR14.FirstOrDefault(o => o.Handle == handle);
-			if (a == null)
-				return;
+		//	var a = CadObjectsR14.FirstOrDefault(o => o.Handle == handle);
+		//	if (a == null)
+		//		return;
 
-			test.Compare(a);
-		}
-		[Theory]
-		[MemberData(nameof(TestData))]
-		public void ReadObjects2000(CadObjectTestCase test)
-		{
-			ulong handle = test.GetHandle();
+		//	test.Compare(a);
+		//}
+		//[Theory]
+		//[MemberData(nameof(TestData))]
+		//public void ReadObjects2000(CadObjectTestCase test)
+		//{
+		//	ulong handle = test.GetHandle();
 
-			var a = CadObjects2000.FirstOrDefault(o => o.Handle == handle);
-			if (a == null)
-				return;
+		//	var a = CadObjects2000.FirstOrDefault(o => o.Handle == handle);
+		//	if (a == null)
+		//		return;
 
-			test.Compare(a);
-		}
-		[Theory]
-		[MemberData(nameof(TestData))]
-		public void ReadObjects2007(CadObjectTestCase test)
-		{
-			ulong handle = test.GetHandle();
+		//	test.Compare(a);
+		//}
+		//[Theory]
+		//[MemberData(nameof(TestData))]
+		//public void ReadObjects2007(CadObjectTestCase test)
+		//{
+		//	ulong handle = test.GetHandle();
 			
-			var a = CadObjects2007.FirstOrDefault(o => o.Handle == handle);
-			if (a == null)
-				return;
+		//	var a = CadObjects2007.FirstOrDefault(o => o.Handle == handle);
+		//	if (a == null)
+		//		return;
 
-			test.Compare(a);
-		}
-		[Theory]
-		[MemberData(nameof(TestData))]
-		public void ReadObjects2010(CadObjectTestCase test)
-		{
-			ulong handle = test.GetHandle();
+		//	test.Compare(a);
+		//}
+		//[Theory]
+		//[MemberData(nameof(TestData))]
+		//public void ReadObjects2010(CadObjectTestCase test)
+		//{
+		//	ulong handle = test.GetHandle();
 
-			var a = CadObjects2010.FirstOrDefault(o => o.Handle == handle);
-			if (a == null)
-				return;
+		//	var a = CadObjects2010.FirstOrDefault(o => o.Handle == handle);
+		//	if (a == null)
+		//		return;
 
-			test.Compare(a);
-		}
-		[Theory]
-		[MemberData(nameof(TestData))]
-		public void ReadObjects2013(CadObjectTestCase test)
-		{
-			ulong handle = test.GetHandle();
+		//	test.Compare(a);
+		//}
+		//[Theory]
+		//[MemberData(nameof(TestData))]
+		//public void ReadObjects2013(CadObjectTestCase test)
+		//{
+		//	ulong handle = test.GetHandle();
 
-			var a = CadObjects2013.FirstOrDefault(o => o.Handle == handle);
-			if (a == null)
-				return;
+		//	var a = CadObjects2013.FirstOrDefault(o => o.Handle == handle);
+		//	if (a == null)
+		//		return;
 
-			test.Compare(a);
-		}
-		[Theory]
-		[MemberData(nameof(TestData))]
-		public void ReadObjects2018(CadObjectTestCase test)
-		{
-			ulong handle = test.GetHandle();
+		//	test.Compare(a);
+		//}
+		//[Theory]
+		//[MemberData(nameof(TestData))]
+		//public void ReadObjects2018(CadObjectTestCase test)
+		//{
+		//	ulong handle = test.GetHandle();
 
-			var a = CadObjects2018.FirstOrDefault(o => o.Handle == handle);
-			if (a == null)
-				return;
+		//	var a = CadObjects2018.FirstOrDefault(o => o.Handle == handle);
+		//	if (a == null)
+		//		return;
 
-			test.Compare(a);
-		}
+		//	test.Compare(a);
+		//}
 	}
 }

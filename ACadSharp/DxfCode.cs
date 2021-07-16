@@ -68,6 +68,7 @@ namespace ACadSharp
 		DimensionAlternativePrefixSuffix = 4,
 		CLShapeName = 4,
 		SymbolTableRecordComments = 4,
+		PaperSize = 4,
 		/// <summary>
 		/// Cad object handle
 		/// </summary>
@@ -78,6 +79,7 @@ namespace ACadSharp
 		DimensionBlock = 5,
 		DimBlk1 = 6,
 		LinetypeName = 6,
+		PlotName = 6,
 		DimBlk2 = 7,
 		TextStyleName = 7,
 		/// <summary>

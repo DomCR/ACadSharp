@@ -21,7 +21,7 @@ namespace ACadSharp
 		/// The document (drawing) that contains the object.
 		/// </summary>
 		[Obsolete("Not useful, will be deleted in the next refactoring")]
-		public CadDocument Document { get; }
+		public CadDocument Document { get; internal set; }
 
 		/// <summary>
 		/// The handle of the entity.
@@ -33,17 +33,17 @@ namespace ACadSharp
 		/// Soft-pointer ID/handle to owner object
 		/// </summary>
 		[DxfCodeValue(DxfCode.SoftPointerId)]
-		public ulong OwnerHandle { get; internal set; }
+		public ulong? OwnerHandle { get; internal set; }
 
 		/// <summary>
-		/// Objects objects that has been attached to this entity.
+		/// Objects that are attached to this entity.
 		/// </summary>
 		public Dictionary<ulong, CadObject> Reactors { get; set; } = new Dictionary<ulong, CadObject>();
 
 		//TODO: Extended data
 
 		/// <summary>
-		/// Get a map of the object using the dxf codes in each field.
+		/// Get a map of the object using dxf codes in each field.
 		/// </summary>
 		/// <returns></returns>
 		internal Dictionary<DxfCode, object> GetCadObjectMap()
@@ -126,7 +126,7 @@ namespace ACadSharp
 		/// <inheritdoc/>
 		public override string ToString()
 		{
-			return ObjectName;
+			return $"{ObjectName}:{ObjectType}";
 		}
 	}
 }

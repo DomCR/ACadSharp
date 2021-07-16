@@ -7,6 +7,7 @@ using ACadSharp.IO.Utils.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ACadSharp.IO.DWG
@@ -460,7 +461,9 @@ namespace ACadSharp.IO.DWG
 				sreader = getSectionStream(DwgSectionDefinition.AcDbObjects);
 			}
 
-			Queue<ulong> objectPointers = new Queue<ulong>(m_objectPointers.GetHandles());
+			Queue<ulong> objectPointers = new Queue<ulong>(m_objectPointers.GetHandles()
+				.Where(o=> o.HasValue)
+				.Select(a => a.Value));
 
 			DwgObjectSectionReader sectionReader = new DwgObjectSectionReader(
 				m_fileHeader.AcadVersion,

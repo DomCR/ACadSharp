@@ -25,6 +25,7 @@ namespace ACadSharp
 		public const string TableAppId = "APPID";
 		public const string TableBlockRecord = "BLOCK_RECORD";
 		public const string TableDimstyle = "DIMSTYLE";
+		public const string TableLayout = "LAYOUT";
 		public const string TableLayer = "LAYER";
 		public const string TableLinetype = "LTYPE";
 		public const string TableStyle = "STYLE";
