@@ -5,6 +5,7 @@
 //See LICENSE file in the project root for full license information.
 #endregion
 using ACadSharp.Attributes;
+using ACadSharp.Blocks;
 using ACadSharp.Geometry;
 using System.Collections.Generic;
 using System.Text;
@@ -13,7 +14,7 @@ namespace ACadSharp.Objects
 {
 	public class Layout : CadObject
 	{
-		public override ObjectType ObjectType => ObjectType.LAYER;
+		public override ObjectType ObjectType => ObjectType.LAYOUT;
 		public override string ObjectName => DxfFileToken.TableLayout;
 
 		//100	//Subclass marker(AcDbPlotSettings)	//plotsettings object group codes
@@ -119,5 +120,10 @@ namespace ACadSharp.Objects
 		/// Plot settings for this layout.
 		/// </summary>
 		public PlotSettings PlotSettings { get; set; }
+
+		/// <summary>
+		/// The associated ModelSpace or PaperSpace block.
+		/// </summary>
+		public Block AssociatedBlock { get; set; }
 	}
 }

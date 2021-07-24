@@ -35,10 +35,6 @@ namespace ACadSharp.IO.DWG
 		private long m_objectInitialPos = 0;
 
 		/// <summary>
-		/// Document where the objects will be placed.
-		/// </summary>
-		private CadDocument m_document;
-		/// <summary>
 		/// During the object reading the handles will be added at the queue.
 		/// </summary>
 		private Queue<ulong> m_handles;
@@ -49,8 +45,8 @@ namespace ACadSharp.IO.DWG
 		/// Store the readed objects to create the document once finished
 		/// </summary>
 		private Dictionary<ulong, CadObject> m_objectMap { get { return _modelBuilder.ObjectsMap; } }// = new Dictionary<ulong, CadObject>();
-		private List<DwgTemplate> m_templates { get { return _modelBuilder.Templates; } } //= new List<DwgTemplate>();
-		private DwgModelBuilder _modelBuilder = new DwgModelBuilder();
+		private Dictionary<ulong, DwgTemplate> m_templates { get { return _modelBuilder.Templates; } } //= new List<DwgTemplate>();
+		private DwgModelBuilder _modelBuilder;
 
 		private readonly IDwgStreamReader m_reader;
 		/// <summary>
@@ -76,12 +72,13 @@ namespace ACadSharp.IO.DWG
 		private IDwgStreamReader m_crcReader;
 		private CRC8StreamHandler m_crcStream;
 
-		public DwgObjectSectionReader(ACadVersion version, CadDocument document,
+		public DwgObjectSectionReader(ACadVersion version, DwgModelBuilder builder,
 			IDwgStreamReader reader, Queue<ulong> handles,
 			Dictionary<ulong, long> handleMap,
 			List<DxfClass> classes) : base(version)
 		{
-			m_document = document;
+			_modelBuilder = builder;
+
 			m_reader = reader;
 
 			m_handles = new Queue<ulong>(handles);
@@ -135,13 +132,13 @@ namespace ACadSharp.IO.DWG
 				//Add the object to the map
 				m_objectMap[template.CadObject.Handle] = template.CadObject;
 				//Add the template to the list to be processed
-				m_templates.Add(template);
+				m_templates[template.CadObject.Handle] = template;
 			}
 
 			//Build the templates in the document
 			//buildTemplates();
-			_modelBuilder.BuildHeaders();
-			_modelBuilder.BuildObjects();
+			//_modelBuilder.BuildObjects();
+			_modelBuilder.BuildModelBase();
 		}
 		//**************************************************************************
 		private ObjectType getEntityType(long offset)
@@ -209,15 +206,7 @@ namespace ACadSharp.IO.DWG
 
 			return type;
 		}
-		private void buildTemplates()
-		{
-			foreach (DwgTemplate item in m_templates)
-			{
-				item.CadObject.Document = m_document;
-				item.Build(m_objectMap);
-			}
-		}
-		//**************************************************************************
+
 		#region Common entity data
 		/// <summary>
 		/// Get the handle of the entity and saves the value to the <see cref="m_handles"/>
@@ -447,10 +436,8 @@ namespace ACadSharp.IO.DWG
 			//Read the cad object reactors
 			readReactors(template);
 		}
-		private void readXrefDependantBit(DwgTableEntryTemplate template)
+		private void readXrefDependantBit(TableEntry entry)
 		{
-			TableEntry entry = template.CadObject as TableEntry;
-
 			if (R2007Plus)
 			{
 				//xrefindex+1 BS 70 subtract one from this value when read.
@@ -739,8 +726,10 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.VPORT:
 					break;
 				case ObjectType.APPID_CONTROL_OBJ:
+					template = readAppIdControlObject();
 					break;
 				case ObjectType.APPID:
+					template = readAppId();
 					break;
 				case ObjectType.DIMSTYLE_CONTROL_OBJ:
 					break;
@@ -1793,6 +1782,8 @@ namespace ACadSharp.IO.DWG
 			//TODO: Fix the block control object reader
 			DwgBlockCtrlObjectTemplate template = new DwgBlockCtrlObjectTemplate();
 
+			_modelBuilder.BlockControlTemplate = template;
+
 			readCommonNonEntityData(template);
 
 			//Common:
@@ -1815,13 +1806,15 @@ namespace ACadSharp.IO.DWG
 			Block block = new Block();
 			DwgBlockTemplate template = new DwgBlockTemplate(block);
 
+			_modelBuilder.BlockHeaders.Add(template);
+
 			readCommonNonEntityData(template);
 
 			//Common:
 			//Entry name TV 2
 			block.Name = m_textReader.ReadVariableText();
 
-			readXrefDependantBit(template);
+			readXrefDependantBit((TableEntry)template.CadObject);
 
 			//Anonymous B 1 if this is an anonymous block (1 bit)
 			block.IsAnonymous = m_objectReader.ReadBit();
@@ -1883,6 +1876,11 @@ namespace ACadSharp.IO.DWG
 				var scaleUniformly = m_objectReader.ReadByte() > 0;
 			}
 
+			//NULL(hard pointer)
+			this.handleReference();
+			//BLOCK entity. (hard owner)
+			template.HardOwnerHandle = this.handleReference();
+
 			//R13-R2000:
 			if (m_version >= ACadVersion.AC1012 && m_version <= ACadVersion.AC1015
 				&& !block.IsXref && !block.IsXRefOverlay)
@@ -1896,7 +1894,7 @@ namespace ACadSharp.IO.DWG
 			//R2004+:
 			if (R2004Plus)
 			{
-				for (int index = 0; index < nownedObjects; ++index)
+				for (int i = 0; i < nownedObjects; ++i)
 					//H[ENTITY(hard owner)] Repeats “Owned Object Count” times.
 					template.OwnedObjectsHandlers.Add(handleReference());
 			}
@@ -1935,7 +1933,7 @@ namespace ACadSharp.IO.DWG
 			layer.Name = m_textReader.ReadVariableText();
 			//layer.Name = m_objectReader.ReadVariableText();
 
-			readXrefDependantBit(template);
+			readXrefDependantBit((TableEntry)template.CadObject);
 
 			//R13-R14 Only:
 			if (R13_14Only)
@@ -2017,14 +2015,14 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readStyle()
 		{
 			Style style = Style.Default;
-			DwgTableEntryTemplate template = new DwgTableEntryTemplate(style);
+			DwgTableEntryTemplate<Style> template = new DwgTableEntryTemplate<Style>(style);
 
 			readCommonNonEntityData(template);
 
 			//Common:
 			//Entry name TV 2
 			style.Name = m_textReader.ReadVariableText();
-			readXrefDependantBit(template);
+			readXrefDependantBit((TableEntry)template.CadObject);
 
 			//shape file B 1 if a shape file rather than a font (1 bit)
 			if (m_objectReader.ReadBit())
@@ -2055,7 +2053,7 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readLType()
 		{
 			LineType ltype = new LineType();
-			DwgTableEntryTemplate template = new DwgTableEntryTemplate(ltype);
+			DwgTableEntryTemplate<LineType> template = new DwgTableEntryTemplate<LineType>(ltype);
 
 			readCommonNonEntityData(template);
 
@@ -2063,7 +2061,7 @@ namespace ACadSharp.IO.DWG
 			//Entry name TV 2
 			ltype.Name = m_textReader.ReadVariableText();
 
-			readXrefDependantBit(template);
+			readXrefDependantBit((TableEntry)template.CadObject);
 
 			//Description TV 3
 			ltype.Description = m_textReader.ReadVariableText();
@@ -2132,6 +2130,47 @@ namespace ACadSharp.IO.DWG
 				//TODO: Implement the dashes handles
 				//handleReference();
 			}
+
+			return template;
+		}
+
+		private DwgTemplate readAppIdControlObject()
+		{
+			_modelBuilder.DocumentToBuild.AppIds = new Tables.Collections.AppIdsTable();
+			DwgTableTemplate<AppId> template = new DwgTableTemplate<AppId>(
+				_modelBuilder.DocumentToBuild.AppIds);
+			_modelBuilder.AppIds = template;
+
+			readCommonNonEntityData(template);
+
+			//Common:
+			//Numentries BL 70
+			int numentries = this.m_objectReader.ReadBitLong();
+			for (int i = 0; i < numentries; ++i)
+				//Handle refs H NULL(soft pointer)	xdicobjhandle(hard owner)	the apps(soft owner)
+				template.EntryHandles.Add(this.handleReference());
+
+			return template;
+		}
+
+		private DwgTemplate readAppId()
+		{
+			AppId dxfAppId = new AppId();
+			DwgTemplate template = new DwgTemplate<AppId>(dxfAppId);
+
+			this.readCommonNonEntityData(template);
+
+			dxfAppId.Name = this.m_textReader.ReadVariableText();
+
+			this.readXrefDependantBit(dxfAppId);
+
+			//Unknown RC 71 Undoc'd 71-group; doesn't even appear in DXF or an entget if it's 0.
+			m_objectReader.ReadByte();
+			//Handle refs H The app control(soft pointer)
+			//[Reactors(soft pointer)]
+			//xdicobjhandle(hard owner)
+			//External reference block handle(hard pointer)
+			handleReference();
 
 			return template;
 		}

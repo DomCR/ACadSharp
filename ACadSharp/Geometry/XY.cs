@@ -12,6 +12,7 @@ namespace ACadSharp.Geometry
 
 		public double X { get; set; }
 		public double Y { get; set; }
+
 		public XY(double x, double y)
 		{
 			X = x;
@@ -60,6 +61,7 @@ namespace ACadSharp.Geometry
 		public double Y { get; set; }
 		public double Z { get; set; }
 		public double M { get; set; }
+
 		public XYZM(double x, double y, double z, double m)
 		{
 			X = x;

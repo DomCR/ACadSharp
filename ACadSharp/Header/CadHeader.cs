@@ -13,6 +13,9 @@ namespace ACadSharp.Header
 	public class CadHeader
 	{
 		//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
+	
+		//TODO : Finish the header documentation
+		
 		#region Header System Variables
 		/// <summary>
 		/// System variable ACADVER.

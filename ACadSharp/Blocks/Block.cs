@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Entities;
 using ACadSharp.Geometry;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
@@ -96,9 +97,12 @@ namespace ACadSharp.Blocks
 		/// </summary>
 		[DxfCodeValue(DxfCode.SymbolTableRecordComments)]
 		public string Comments { get; set; }
+		
 		/// <summary>
 		/// 
 		/// </summary>
 		public BlockRecord Record { get; internal set; }
+
+		public List<Entity> Entities { get; set; } = new List<Entity>();
 	}
 }

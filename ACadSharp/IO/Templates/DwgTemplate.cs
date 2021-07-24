@@ -10,14 +10,19 @@ using System.Text;
 
 namespace ACadSharp.IO.Templates
 {
-	internal abstract class DwgTypeTemplate<T> : DwgTemplate
+	internal interface ICadObjectBuilder
+	{
+		void Build(DwgModelBuilder builder);
+	}
+
+	internal class DwgTemplate<T> : DwgTemplate
 		where T : CadObject
 	{
 		public T TypedObject { get { return (T)CadObject; } }
-		public DwgTypeTemplate(T cadObject) : base(cadObject) { }
+		public DwgTemplate(T cadObject) : base(cadObject) { }
 	}
 
-	internal abstract class DwgTemplate
+	internal abstract class DwgTemplate : ICadObjectBuilder
 	{
 		public CadObject CadObject { get; set; }
 
@@ -58,14 +63,14 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 	}
-	internal class DwgEntityTemplate : DwgTypeTemplate<Entity>
+	internal class DwgEntityTemplate : DwgTemplate<Entity>
 	{
 		public byte EntityMode { get; set; }
 		public byte LtypeFlags { get; set; }
 		public ulong LayerHandle { get; set; }
 		public ulong? LineTypeHandle { get; set; }
-		public ulong PrevEntity { get; set; }
-		public ulong NextEntity { get; set; }
+		public ulong? PrevEntity { get; set; }
+		public ulong? NextEntity { get; set; }
 		public ulong? ColorHandle { get; set; }
 
 		public DwgEntityTemplate(Entity entity) : base(entity) { }
@@ -231,20 +236,21 @@ namespace ACadSharp.IO.Templates
 		public DwgTextEntityTemplate(Entity entity) : base(entity) { }
 	}
 
-	internal class DwgTableEntryTemplate : DwgTemplate
+	internal class DwgTableEntryTemplate<T> : DwgTemplate<T>
+		where T : TableEntry
 	{
 		public ulong LtypeControlHandle { get; set; }
-		public DwgTableEntryTemplate(TableEntry entry) : base(entry) { }
+		public DwgTableEntryTemplate(T entry) : base(entry) { }
 	}
 
-	internal class DwgLayerTemplate : DwgTableEntryTemplate
+	internal class DwgLayerTemplate : DwgTableEntryTemplate<Layer>
 	{
 		public ulong LayerControlHandle { get; internal set; }
 		public object PlotStyleHandle { get; internal set; }
 		public ulong MaterialHandle { get; internal set; }
 		public ulong LineTypeHandle { get; internal set; }
 
-		public DwgLayerTemplate(TableEntry entry) : base(entry) { }
+		public DwgLayerTemplate(Layer entry) : base(entry) { }
 	}
 
 	internal class DwgObjectTemplate : DwgTemplate
@@ -252,16 +258,43 @@ namespace ACadSharp.IO.Templates
 		public DwgObjectTemplate(CadObject cadObject) : base(cadObject) { }
 	}
 
-	internal class DwgBlockTemplate : DwgTableEntryTemplate
+	internal class DwgBlockTemplate : DwgTableEntryTemplate<Block>
 	{
-		public ulong FirstEntityHandle { get; internal set; }
-		public ulong SecondEntityHandle { get; internal set; }
-		public ulong EndBlockHandle { get; internal set; }
-		public ulong LayoutHandle { get; internal set; }
+		public ulong? FirstEntityHandle { get; set; }
+		public ulong? SecondEntityHandle { get; set; }
+		public ulong EndBlockHandle { get; set; }
+		public ulong? LayoutHandle { get; set; }
 		public List<ulong> OwnedObjectsHandlers { get; set; } = new List<ulong>();
 		public List<ulong> Entries { get; set; } = new List<ulong>();
+		public ulong? HardOwnerHandle { get; set; }
 
 		public DwgBlockTemplate(Block block) : base(block) { }
+
+		public override void Build(DwgModelBuilder builder)
+		{
+			base.Build(builder);
+
+			//if (this.HardOwnerHandle.HasValue)
+			//	TypedObject.BlockBegin = builder.GetCadObject<BlockBegin>(this.HardOwnerHandle);
+
+			if (LayoutHandle.HasValue && builder.TryGetCadObject<Layout>(LayoutHandle.Value, out Layout layout))
+			{
+				layout.AssociatedBlock = TypedObject;
+			}
+
+			if (this.FirstEntityHandle.HasValue && this.SecondEntityHandle.HasValue)
+			{
+
+			}
+
+			foreach (ulong handle in OwnedObjectsHandlers)
+			{
+				if (builder.TryGetCadObject<Entity>(handle, out Entity child))
+				{
+					TypedObject.Entities.Add(child);
+				}
+			}
+		}
 	}
 
 	internal class DwgDictionaryTemplate : DwgTemplate
@@ -276,6 +309,18 @@ namespace ACadSharp.IO.Templates
 		public ulong ModelSpaceHandle { get; set; }
 		public ulong PaperSpaceHandle { get; set; }
 		public DwgBlockCtrlObjectTemplate() : base(new BlockRecordsTable()) { }
+
+		public override void Build(DwgModelBuilder builder)
+		{
+			base.Build(builder);
+
+
+		}
+
+		private void addBlockToModel(DwgModelBuilder builder)
+		{
+
+		}
 	}
 
 	internal class DwgLayoutTemplate : DwgTemplate
@@ -286,5 +331,13 @@ namespace ACadSharp.IO.Templates
 		public ulong NamesUcsHandle { get; set; }
 		public List<ulong> ViewportHandles { get; set; } = new List<ulong>();
 		public DwgLayoutTemplate(Layout layout) : base(layout) { }
+	}
+
+	internal class DwgTableTemplate<T> : DwgTemplate<Table<T>>
+		where T : TableEntry
+	{
+		public List<ulong> EntryHandles { get; } = new List<ulong>();
+
+		public DwgTableTemplate(Table<T> tableControl) : base(tableControl) { }
 	}
 }

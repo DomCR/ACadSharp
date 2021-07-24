@@ -70,7 +70,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Default constructor for <see cref="Entity"/>
 		/// </summary>
-		public Entity() { }
+		public Entity() : base() { }
 		/// <summary>
 		/// Create an instance of <see cref="Entity"/> using a template.
 		/// </summary>

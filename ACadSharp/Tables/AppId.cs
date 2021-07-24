@@ -7,7 +7,14 @@ namespace ACadSharp.Tables
 {
 	public class AppId : TableEntry
 	{
+		/// <summary>
+		/// Default application registry name.
+		/// </summary>
+		public const string DefaultName = "ACAD";
+
 		public override ObjectType ObjectType => ObjectType.APPID;
+
+		public AppId() : this(DefaultName) { }
 
 		public AppId(string name) : base(name)
 		{

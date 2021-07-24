@@ -14,6 +14,9 @@ namespace ACadSharp
 	//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-A809CD71-4655-44E2-B674-1FE200B9FE30
 	public class CadDocument
 	{
+		/// <summary>
+		/// Contains all the header variables for this document.
+		/// </summary>
 		public CadHeader Header { get; set; }
 
 		public CadSummaryInfo SummaryInfo { get; set; }
@@ -21,14 +24,14 @@ namespace ACadSharp
 		public DxfClassCollection Classes { get; set; }
 
 		public AppIdsTable AppIds { get; set; }
-		public BlockRecordsTable BlockRecords { get; set; }
-		public DimensionStylesTable DimensionStyles { get; set; }
+		public BlockRecordsTable BlockRecords { get; set; } = new BlockRecordsTable();
+		public DimensionStylesTable DimensionStyles { get; set; } = new DimensionStylesTable();
 		public LayersTable Layers { get; set; } = new LayersTable();
-		public LineTypesTable LineTypes { get; set; }
-		public StylesTable Styles { get; set; }
-		public UCSTable UCSs { get; set; }
-		public ViewsTable Views { get; set; }
-		public ViewPortsTable ViewPorts { get; set; }
+		public LineTypesTable LineTypes { get; set; } = new LineTypesTable();
+		public StylesTable Styles { get; set; } = new StylesTable();
+		public UCSTable UCSs { get; set; } = new UCSTable();
+		public ViewsTable Views { get; set; } = new ViewsTable();
+		public ViewPortsTable ViewPorts { get; set; } = new ViewPortsTable();
 
 		public object Blocks { get; set; }
 		public object Objects { get; set; }
@@ -36,8 +39,15 @@ namespace ACadSharp
 
 		//TODO: Implement entity collection to store the document's entities
 		private Dictionary<ulong, Entity> _entities { get; set; } = new Dictionary<ulong, Entity>();
+		//Contains all the objects in the document.
 		private readonly Dictionary<ulong, CadObject> _cadObjects = new Dictionary<ulong, CadObject>();
 
+		public CadDocument()
+		{
+			AppIds = new AppIdsTable();
+		}
+
+		[Obsolete]
 		internal void AddEntity(Entity entity)
 		{
 			_entities.Add(entity.Handle, entity);
