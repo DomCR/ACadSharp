@@ -4,7 +4,10 @@
 //This source code is licensed under the MIT license. 
 //See LICENSE file in the project root for full license information.
 #endregion
-using System;
+using ACadSharp.Attributes;
+using ACadSharp.Geometry;
+using ACadSharp.Objects;
+using ACadSharp.Tables;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,241 +20,174 @@ namespace ACadSharp.Entities
 
 		//100	Subclass marker(AcDbViewport)
 
-		//10	Center point(in WCS)
-		//DXF: X value; APP: 3D point
-		//20, 30	DXF: Y and Z values of center point(in WCS)
-
-		//40	Width in paper space units
-
-		//41
-
-		//Height in paper space units
-
-		//68
-
-		//Viewport status field:
-
-		//-1 = On, but is fully off screen, or is one of the viewports that is not active because the $MAXACTVP count is currently being exceeded.
-
-		//0 = Off
-
-		//<positive value> = On and active.The value indicates the order of stacking for the viewports, where 1 is the active viewport, 2 is the next, and so forth
-
-		//69
-
-		//Viewport ID
-
-		//12
-
-		//View center point(in DCS)
-
-		//DXF: X value; APP: 2D point
-
-		//22
-
-		//DXF: View center point Y value(in DCS)
-
-		//13
-
-		//Snap base point
-
-		//DXF: X value; APP: 2D point
-
-		//23
-
-		//DXF: Snap base point Y value
-
-		//14
-
-		//Snap spacing
-
-		//DXF: X value; APP: 2D point
-
-		//24
-
-		//DXF: Snap spacing Y value
-
-		//15
-
-		//Grid spacing
-
-		//DXF: X value; APP: 2D point
-
-		//25
-
-		//DXF: Grid spacing Y value
-
-		//16
-
-		//View direction vector(in WCS)
-
-		//DXF: X value; APP: 3D vector
-
-		//26, 36
-
-		//DXF: Y and Z values of view direction vector(in WCS)
-
-		//17
-
-		//View target point(in WCS)
-
-		//DXF: X value; APP: 3D vector
-
-		//27, 37
-
-		//DXF: Y and Z values of view target point(in WCS)
-
-		//42
-
-		//Perspective lens length
-
-		//43
-
-		//Front clip plane Z value
-
-		//44
-
-		//Back clip plane Z value
-
-		//45
-
-		//View height(in model space units)
-
-		//50
-
-		//Snap angle
-
-		//51
-
-		//View twist angle
-
-		//72
-
-		//Circle zoom percent
-
-		//331
-
-		//Frozen layer object ID/handle(multiple entries may exist) (optional)
-
-		//90
-
-		//Viewport status bit-coded flags:
-
-		//1 (0x1) = Enables perspective mode
-
-		//2 (0x2) = Enables front clipping
-
-		//4 (0x4) = Enables back clipping
-
-		//8 (0x8) = Enables UCS follow
-
-		//16 (0x10) = Enables front clip not at eye
-
-		//32 (0x20) = Enables UCS icon visibility
-
-		//64 (0x40) = Enables UCS icon at origin
-
-		//128 (0x80) = Enables fast zoom
-
-		//256 (0x100) = Enables snap mode
-
-		//512 (0x200) = Enables grid mode
-
-		//1024 (0x400) = Enables isometric snap style
-
-		//2048 (0x800) = Enables hide plot mode
-
-		//4096 (0x1000) = kIsoPairTop.If set and kIsoPairRight is not set, then isopair top is enabled.If both kIsoPairTop and kIsoPairRight are set, then isopair left is enabled
-
-		//8192 (0x2000) = kIsoPairRight.If set and kIsoPairTop is not set, then isopair right is enabled
-
-		//16384 (0x4000) = Enables viewport zoom locking
-
-		//32768 (0x8000) = Currently always enabled
-
-		//65536 (0x10000) = Enables non-rectangular clipping
-
-		//131072 (0x20000) = Turns the viewport off
-
-		//262144 (0x40000) = Enables the display of the grid beyond the drawing limits
-
-		//524288 (0x80000) = Enable adaptive grid display
-
-		//1048576 (0x100000) = Enables subdivision of the grid below the set grid spacing when the grid display is adaptive
-
-		//2097152 (0x200000) = Enables grid follows workplane switching
-
-		//340
-
-		//Hard-pointer ID/handle to entity that serves as the viewport's clipping boundary (only present if viewport is non-rectangular)
-
-		//1
-
-		//Plot style sheet name assigned to this viewport
-
-		//281
-
-		//Render mode:
-
-		//0 = 2D Optimized(classic 2D)
-
-		//1 = Wireframe
-
-		//2 = Hidden line
-
-		//3 = Flat shaded
-
-		//4 = Gouraud shaded
-
-		//5 = Flat shaded with wireframe
-
-		//6 = Gouraud shaded with wireframe
-
-		//All rendering modes other than 2D Optimized engage the new 3D graphics pipeline.These values directly correspond to the SHADEMODE command and the AcDbAbstractViewTableRecord::RenderMode enum
-
-		//71
-
-		//UCS per viewport flag:
-
-		//0 = The UCS will not change when this viewport becomes active.
-
-		//1 = This viewport stores its own UCS which will become the current UCS whenever the viewport is activated
-
-		//74
-
-		//Display UCS icon at UCS origin flag:
-
-		//Controls whether UCS icon represents viewport UCS or current UCS(these will be different if UCSVP is 1 and viewport is not active). However, this field is currently being ignored and the icon always represents the viewport UCS
-
-		//110
-
-		//UCS origin
-
-		//DXF: X value; APP: 3D point
-
-		//120, 130
-
-		//DXF: Y and Z values of UCS origin
-
-		//111
-
-		//UCS X-axis
-
-		//DXF: X value; APP: 3D vector
-
-		//121, 131
-
-		//DXF: Y and Z values of UCS X-axis
-
-		//112
-
-		//UCS Y-axis
-
-		//DXF: X value; APP: 3D vector
-
-		//122, 132
-
-		//DXF: Y and Z values of UCS Y-axis
+		/// <summary>
+		/// Center point(in WCS)
+		/// </summary>
+		[DxfCodeValue(10, 20, 30)]
+		public XYZ Center { get; set; }
+
+		/// <summary>
+		/// Width in paper space units
+		/// </summary>
+		[DxfCodeValue(40)]
+		public double Width { get; set; }
+
+		/// <summary>
+		/// Height in paper space units
+		/// </summary>
+		[DxfCodeValue(41)]
+		public double Height { get; set; }
+
+		/// <summary>
+		/// Viewport ID
+		/// </summary>
+		[DxfCodeValue(69)]
+		public short Id { get; set; }
+
+		/// <summary>
+		/// View center point(in DCS)
+		/// </summary>
+		[DxfCodeValue(12, 22)]
+		public XY ViewCenter { get; set; }
+
+		/// <summary>
+		/// Snap base point
+		/// </summary>
+		[DxfCodeValue(13, 23)]
+		public XY SnapBase { get; set; }
+
+		/// <summary>
+		/// Snap spacing
+		/// </summary>
+		[DxfCodeValue(14, 24)]
+		public XY SnapSpacing { get; set; }
+
+		/// <summary>
+		/// Grid spacing
+		/// </summary>
+		[DxfCodeValue(15, 25)]
+		public XY GridSpacing { get; set; }
+
+		/// <summary>
+		/// View direction vector(in WCS)
+		/// </summary>
+		[DxfCodeValue(16, 26, 36)]
+		public XYZ ViewDirection { get; set; }
+
+		/// <summary>
+		/// View target point(in WCS)
+		/// </summary>
+		[DxfCodeValue(17, 27, 37)]
+		public XYZ ViewTarget { get; set; }
+
+		/// <summary>
+		/// Perspective lens length
+		/// </summary>
+		[DxfCodeValue(42)]
+		public double LensLength { get; set; }
+
+		/// <summary>
+		/// Front clip plane Z value
+		/// </summary>
+		[DxfCodeValue(43)]
+		public double FrontClipPlane { get; set; }
+
+		/// <summary>
+		/// Back clip plane Z value
+		/// </summary>
+		[DxfCodeValue(44)]
+		public double BackClipPlane { get; set; }
+
+		/// <summary>
+		/// View height(in model space units)
+		/// </summary>
+		[DxfCodeValue(45)]
+		public double ViewHeight { get; set; }
+
+		/// <summary>
+		/// Snap angle
+		/// </summary>
+		[DxfCodeValue(50)]
+		public double SnapAngle { get; set; }
+
+		/// <summary>
+		/// View twist angle
+		/// </summary>
+		[DxfCodeValue(51)]
+		public double TwistAngle { get; set; }
+
+		/// <summary>
+		/// Circle zoom percent
+		/// </summary>
+		[DxfCodeValue(72)]
+		public short CircleZoomPercent { get; set; }
+
+		/// <summary>
+		/// Frozen layer object ID/handle(multiple entries may exist)
+		/// </summary>
+		[DxfCodeValue(331)]
+		public List<Layer> FrozenLayers { get; private set; }
+
+		/// <summary>
+		/// Viewport status.
+		/// </summary>
+		[DxfCodeValue(90)]
+		public ViewportStatusFlags Status { get; set; }
+
+		/// <summary>
+		/// Hard-pointer ID/handle to entity that serves as the viewport's clipping boundary (only present if viewport is non-rectangular)
+		/// </summary>
+		[DxfCodeValue(340)]
+		public Entity Boundary { get; set; }
+
+		/// <summary>
+		/// Plot style sheet name assigned to this viewport
+		/// </summary>
+		[DxfCodeValue(1)]
+		public string StyleSheetName { get; set; }
+
+		/// <summary>
+		/// Render mode
+		/// </summary>
+		[DxfCodeValue(281)]
+		public RenderMode RenderMode { get; set; }
+
+		/// <summary>
+		/// UCS per viewport flag
+		/// </summary>
+		/// <remarks>
+		///0 = The UCS will not change when this viewport becomes active.
+		///1 = This viewport stores its own UCS which will become the current UCS whenever the viewport is activated
+		/// </remarks>
+		[DxfCodeValue(71)]
+		public bool UcsPerViewport { get; set; }
+
+		/// <summary>
+		/// Display UCS icon at UCS origin flag
+		/// </summary>
+		/// <remarks>
+		/// Controls whether UCS icon represents viewport UCS or current UCS(these will be different if UCSVP is 1 and viewport is not active). However, this field is currently being ignored and the icon always represents the viewport UCS
+		/// </remarks>
+		[DxfCodeValue(74)]
+		public bool DisplayUcsIcon { get; set; }
+
+		/// <summary>
+		/// UCS origin
+		/// </summary>
+		[DxfCodeValue(110, 120, 130)]
+		public XYZ UcsOrigin { get; set; }
+
+		/// <summary>
+		/// UCS X-axis
+		/// </summary>
+		[DxfCodeValue(111, 121, 131)]
+		public XYZ UcsXAxis { get; set; }
+
+		/// <summary>
+		/// UCS Y-axis
+		/// </summary>
+		[DxfCodeValue(112, 122, 132)]
+		public XYZ UcsYAxis { get; set; }
 
 		//345
 
@@ -261,73 +197,69 @@ namespace ACadSharp.Entities
 
 		//ID/handle of AcDbUCSTableRecord of base UCS if UCS is orthographic(79 code is non-zero). If not present and 79 code is non-zero, then base UCS is taken to be WORLD
 
-		//79
+		/// <summary>
+		/// Orthographic type of UCS
+		/// </summary>
+		[DxfCodeValue(79)]
+		public OrthographicType UcsOrthographicType { get; set; }
 
-		//Orthographic type of UCS:
+		/// <summary>
+		/// Viewport elevation
+		/// </summary>
+		[DxfCodeValue(146)]
+		public double Elevation { get; set; }
 
-		//0 = UCS is not orthographic
+		/// <summary>
+		/// Orthographic type of UCS
+		/// </summary>
+		[DxfCodeValue(170)]
+		public ShadePlotMode ShadePlotMode { get; set; }
 
-		//1 = Top; 2 = Bottom
+		/// <summary>
+		/// Frequency of major grid lines compared to minor grid lines
+		/// </summary>
+		[DxfCodeValue(61)]
+		public short MajorGridLineFrequency { get; set; }
 
-		//3 = Front; 4 = Back
+		//332	Background ID/Handle(optional)
 
-		//5 = Left; 6 = Right
+		//333	Shade plot ID/Handle(optional)
 
-		//146
+		//348	Visual style ID/Handle(optional)
 
-		//Elevation
+		/// <summary>
+		/// Default lighting flag.On when no user lights are specified.
+		/// </summary>
+		[DxfCodeValue(292)]
+		public bool UseDefaultLighting { get; set; }
 
-		//170
+		/// <summary>
+		/// Default lighting type.
+		/// </summary>
+		/// <remarks>
+		/// 0 = One distant light
+		/// 1 = Two distant lights 
+		/// </remarks>
+		[DxfCodeValue(282)]
+		public LightingType DefaultLightingType { get; set; }
 
-		//ShadePlot mode:
+		/// <summary>
+		/// View brightness
+		/// </summary>
+		[DxfCodeValue(141)]
+		public double Brightness { get; set; }
 
-		//0 = As Displayed
+		/// <summary>
+		/// View contrast
+		/// </summary>
+		[DxfCodeValue(142)]
+		public double Constrast { get; set; }
 
-		//1 = Wireframe
-
-		//2 = Hidden
-
-		//3 = Rendered
-
-		//61
-
-		//Frequency of major grid lines compared to minor grid lines
-
-		//332
-
-		//Background ID/Handle(optional)
-
-		//333
-
-		//Shade plot ID/Handle(optional)
-
-		//348
-
-		//Visual style ID/Handle(optional)
-
-		//292
-
-		//Default lighting flag.On when no user lights are specified.
-
-		//282
-
-		//Default lighting type:
-
-		//0 = One distant light
-
-		//1 = Two distant lights
-
-		//141
-
-		//View brightness
-
-		//142
-
-		//View contrast
-
-		//63,421,431
-
-		//Ambient light color.Write only if not black color.
+		/// <summary>
+		/// Ambient light color.Write only if not black color.
+		/// </summary>
+		[DxfCodeValue(63)]
+		public Color AmbientLightColor { get; set; }
 
 		//361
 
@@ -347,5 +279,14 @@ namespace ACadSharp.Entities
 		//Soft pointer reference to viewport object (for layer VP property override)
 
 		public Viewport() : base() { }
+	}
+
+	/// <summary>Represents lighting type.</summary>
+	public enum LightingType : byte
+	{
+		/// <summary>One distant light.</summary>
+		OneDistantLight,
+		/// <summary>Two distant lights.</summary>
+		TwoDistantLights,
 	}
 }

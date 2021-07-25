@@ -12,6 +12,7 @@ namespace ACadSharp.IO.Templates
 {
 	internal interface ICadObjectBuilder
 	{
+		bool ToBuild { get; }
 		void Build(DwgModelBuilder builder);
 	}
 
@@ -24,6 +25,7 @@ namespace ACadSharp.IO.Templates
 
 	internal abstract class DwgTemplate : ICadObjectBuilder
 	{
+		public bool ToBuild { get; private set; } = true;
 		public CadObject CadObject { get; set; }
 
 		/// <summary>
@@ -45,6 +47,8 @@ namespace ACadSharp.IO.Templates
 
 		public virtual void Build(DwgModelBuilder builder)
 		{
+			ToBuild = false;
+
 			if (CadObject.OwnerHandle != null)
 			{
 				//TODO: Set the owner of the object??
@@ -59,10 +63,11 @@ namespace ACadSharp.IO.Templates
 			{
 				CadObject reactor = builder.GetCadObject(handle);
 				if (reactor != null)
-					this.CadObject.Reactors.Add(handle, reactor);
+					CadObject.Reactors.Add(handle, reactor);
 			}
 		}
 	}
+
 	internal class DwgEntityTemplate : DwgTemplate<Entity>
 	{
 		public byte EntityMode { get; set; }
@@ -147,6 +152,16 @@ namespace ACadSharp.IO.Templates
 				//TODO: Set color by name, only for dxf?
 			}
 		}
+	}
+
+	internal class DwgViewportTemplate : DwgEntityTemplate
+	{
+		public ulong? ViewportHeaderHandle { get; set; }
+		public ulong? BoundaryHandle { get; set; }
+		public ulong? NamedUcsHandle { get; set; }
+		public ulong? BaseUcsHandle { get; set; }
+		public List<ulong> FrozenLayerHandles { get; set; } = new List<ulong>();
+		public DwgViewportTemplate(Viewport entity) : base(entity) { }
 	}
 
 	internal class DwgColorTemplate : DwgTemplate
@@ -274,7 +289,7 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			//if (this.HardOwnerHandle.HasValue)
+			//if (HardOwnerHandle.HasValue)
 			//	TypedObject.BlockBegin = builder.GetCadObject<BlockBegin>(this.HardOwnerHandle);
 
 			if (LayoutHandle.HasValue && builder.TryGetCadObject<Layout>(LayoutHandle.Value, out Layout layout))
@@ -282,9 +297,15 @@ namespace ACadSharp.IO.Templates
 				layout.AssociatedBlock = TypedObject;
 			}
 
-			if (this.FirstEntityHandle.HasValue && this.SecondEntityHandle.HasValue)
+			if (FirstEntityHandle.HasValue
+				&& SecondEntityHandle.HasValue
+				&& builder.TryGetObjectBuilder(FirstEntityHandle.Value, out DwgEntityTemplate entity))
 			{
-
+				do
+				{
+					TypedObject.Entities.Add(entity.TypedObject);
+					entity = builder.GetObjectBuilder<DwgEntityTemplate>(entity.NextEntity.Value);
+				} while (entity != null);
 			}
 
 			foreach (ulong handle in OwnedObjectsHandlers)
@@ -294,6 +315,8 @@ namespace ACadSharp.IO.Templates
 					TypedObject.Entities.Add(child);
 				}
 			}
+
+			//TODO: Process EndBlockHandle ?? 
 		}
 	}
 

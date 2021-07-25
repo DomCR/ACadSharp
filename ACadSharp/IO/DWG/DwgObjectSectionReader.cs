@@ -652,7 +652,7 @@ namespace ACadSharp.IO.DWG
 					template = readShape();
 					break;
 				case ObjectType.VIEWPORT:
-					template = readViewPort();
+					template = readViewport();
 					break;
 				case ObjectType.ELLIPSE:
 					template = readEllipse();
@@ -1565,9 +1565,149 @@ namespace ACadSharp.IO.DWG
 		{
 			return null;
 		}
-		private DwgTemplate readViewPort()
+		private DwgTemplate readViewport()
 		{
-			return null;
+			Viewport viewport = new Viewport();
+			DwgViewportTemplate template = new DwgViewportTemplate(viewport);
+
+			//Common Entity Data
+			readCommonEntityData(template);
+
+			//Center 3BD 10
+			viewport.Center = m_objectReader.Read3BitDouble();
+			//Width BD 40
+			viewport.Width = m_objectReader.ReadBitDouble();
+			//Height BD 41
+			viewport.Height = m_objectReader.ReadBitDouble();
+
+			//R2000 +:
+			if (R2000Plus)
+			{
+				//View Target 3BD 17
+				viewport.ViewTarget = m_objectReader.Read3BitDouble();
+				//View Direction 3BD 16
+				viewport.ViewDirection = m_objectReader.Read3BitDouble();
+				//View Twist Angle BD 51
+				viewport.TwistAngle = m_objectReader.ReadBitDouble();
+				//View Height BD 45
+				viewport.ViewHeight = m_objectReader.ReadBitDouble();
+				//Lens Length BD 42
+				viewport.LensLength = m_objectReader.ReadBitDouble();
+				//Front Clip Z BD 43
+				viewport.FrontClipPlane = m_objectReader.ReadBitDouble();
+				//Back Clip Z BD 44
+				viewport.BackClipPlane = m_objectReader.ReadBitDouble();
+				//Snap Angle BD 50
+				viewport.SnapAngle = m_objectReader.ReadBitDouble();
+				//View Center 2RD 12
+				viewport.ViewCenter = m_objectReader.Read2RawDouble();
+				//Snap Base 2RD 13
+				viewport.SnapBase = m_objectReader.Read2RawDouble();
+				//Snap Spacing 2RD 14
+				viewport.SnapSpacing = m_objectReader.Read2RawDouble();
+				//Grid Spacing 2RD 15
+				viewport.GridSpacing = m_objectReader.Read2RawDouble();
+				//Circle Zoom BS 72
+				viewport.CircleZoomPercent = m_objectReader.ReadBitShort();
+			}
+
+			//R2007 +:
+			if (R2007Plus)
+				//Grid Major BS 61
+				viewport.MajorGridLineFrequency = m_objectReader.ReadBitShort();
+
+			int frozenLayerCount = 0;
+			//R2000 +:
+			if (R2000Plus)
+			{
+				//Frozen Layer Count BL
+				frozenLayerCount = m_objectReader.ReadBitLong();
+				//Status Flags BL 90
+				viewport.Status = (ViewportStatusFlags)m_objectReader.ReadBitLong();
+				//Style Sheet TV 1
+				viewport.StyleSheetName = m_textReader.ReadVariableText();
+				//Render Mode RC 281
+				viewport.RenderMode = (RenderMode)m_objectReader.ReadByte();
+				//UCS at origin B 74
+				viewport.DisplayUcsIcon = m_objectReader.ReadBit();
+				//UCS per Viewport B 71
+				viewport.UcsPerViewport = m_objectReader.ReadBit();
+				//UCS Origin 3BD 110
+				viewport.UcsOrigin = m_objectReader.Read3BitDouble();
+				//UCS X Axis 3BD 111
+				viewport.UcsXAxis = m_objectReader.Read3BitDouble();
+				//UCS Y Axis 3BD 112
+				viewport.UcsYAxis = m_objectReader.Read3BitDouble();
+				//UCS Elevation BD 146
+				viewport.Elevation = m_objectReader.ReadBitDouble();
+				//UCS Ortho View Type BS 79
+				viewport.UcsOrthographicType = (OrthographicType)m_objectReader.ReadBitShort();
+			}
+
+			//R2004 +:
+			if (R2004Plus)
+				//ShadePlot Mode BS 170
+				viewport.ShadePlotMode = (ShadePlotMode)m_objectReader.ReadBitShort();
+
+			//R2007 +:
+			if (R2007Plus)
+			{
+				//Use def. lights B 292
+				viewport.UseDefaultLighting = m_objectReader.ReadBit();
+				//Def.lighting type RC 282
+				viewport.DefaultLightingType = (LightingType)m_objectReader.ReadByte();
+				//Brightness BD 141
+				viewport.Brightness = m_objectReader.ReadBitDouble();
+				//Contrast BD 142
+				viewport.Constrast = m_objectReader.ReadBitDouble();
+				//Ambient light color CMC 63
+				viewport.AmbientLightColor = m_objectReader.ReadCmColor();
+			}
+
+			//R13 - R14 Only:
+			if (R13_14Only)
+				//H VIEWPORT ENT HEADER(hard pointer)
+				template.ViewportHeaderHandle = handleReference();
+
+			//R2000 +:
+			if (R2000Plus)
+			{
+				for (int i = 0; i < frozenLayerCount; ++i)
+					//H 341 Frozen Layer Handles(use count from above)(hard pointer until R2000, soft pointer from R2004 onwards)
+					template.FrozenLayerHandles.Add(handleReference());
+
+				//H 340 Clip boundary handle(soft pointer)
+				template.BoundaryHandle = handleReference();
+			}
+
+			//R2000:
+			if (m_version == ACadVersion.AC1015)
+				//H VIEWPORT ENT HEADER((hard pointer))
+				template.ViewportHeaderHandle = handleReference();
+
+			//R2000 +:
+			if (R2000Plus)
+			{
+				//H 345 Named UCS Handle(hard pointer)
+				template.NamedUcsHandle = handleReference();
+				//H 346 Base UCS Handle(hard pointer)
+				template.BaseUcsHandle = handleReference();
+			}
+
+			//R2007 +:
+			if (!R2007Plus)
+			{
+				//H 332 Background(soft pointer)
+				long backgroundHandle = (long)handleReference();
+				//H 348 Visual Style(hard pointer)
+				long visualStyleHandle = (long)handleReference();
+				//H 333 Shadeplot ID(soft pointer)
+				long shadePlotIdHandle = (long)handleReference();
+				//H 361 Sun(hard owner)
+				long sunHandle = (long)handleReference();
+			}
+
+			return template;
 		}
 		private DwgTemplate readEllipse()
 		{
@@ -1877,9 +2017,9 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//NULL(hard pointer)
-			this.handleReference();
+			handleReference();
 			//BLOCK entity. (hard owner)
-			template.HardOwnerHandle = this.handleReference();
+			template.HardOwnerHandle = handleReference();
 
 			//R13-R2000:
 			if (m_version >= ACadVersion.AC1012 && m_version <= ACadVersion.AC1015
@@ -2145,10 +2285,10 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Numentries BL 70
-			int numentries = this.m_objectReader.ReadBitLong();
+			int numentries = m_objectReader.ReadBitLong();
 			for (int i = 0; i < numentries; ++i)
 				//Handle refs H NULL(soft pointer)	xdicobjhandle(hard owner)	the apps(soft owner)
-				template.EntryHandles.Add(this.handleReference());
+				template.EntryHandles.Add(handleReference());
 
 			return template;
 		}
@@ -2158,11 +2298,11 @@ namespace ACadSharp.IO.DWG
 			AppId dxfAppId = new AppId();
 			DwgTemplate template = new DwgTemplate<AppId>(dxfAppId);
 
-			this.readCommonNonEntityData(template);
+			readCommonNonEntityData(template);
 
-			dxfAppId.Name = this.m_textReader.ReadVariableText();
+			dxfAppId.Name = m_textReader.ReadVariableText();
 
-			this.readXrefDependantBit(dxfAppId);
+			readXrefDependantBit(dxfAppId);
 
 			//Unknown RC 71 Undoc'd 71-group; doesn't even appear in DXF or an entget if it's 0.
 			m_objectReader.ReadByte();

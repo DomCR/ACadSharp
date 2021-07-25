@@ -65,12 +65,14 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfCode.Alpha)]
 		public Transparency Transparency { get; set; }
+
 		public LineType LineType { get; set; }
 
 		/// <summary>
 		/// Default constructor for <see cref="Entity"/>
 		/// </summary>
 		public Entity() : base() { }
+
 		/// <summary>
 		/// Create an instance of <see cref="Entity"/> using a template.
 		/// </summary>

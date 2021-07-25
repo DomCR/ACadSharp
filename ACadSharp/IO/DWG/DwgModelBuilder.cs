@@ -67,7 +67,7 @@ namespace ACadSharp.IO.DWG
 				DocumentToBuild.DimensionStyles.Add(dstyle);
 
 			//Build all the objects in the document
-			foreach (ICadObjectBuilder item in Templates.Values)
+			foreach (ICadObjectBuilder item in Templates.Values.Where(b => b.ToBuild))
 				item.Build(this);
 
 			//foreach (var obj in this.ViewportTemplates)
@@ -109,14 +109,29 @@ namespace ACadSharp.IO.DWG
 			return false;
 		}
 
-		public ICadObjectBuilder GetObjectBuilder(ulong handle)
+		public T GetObjectBuilder<T>(ulong handle) where T : DwgTemplate
 		{
 			if (Templates.TryGetValue(handle, out DwgTemplate builder))
 			{
-				return builder;
+				return (T)builder;
 			}
 
 			return null;
+		}
+
+		public bool TryGetObjectBuilder<T>(ulong handle, out T value) where T : DwgTemplate
+		{
+			if (Templates.TryGetValue(handle, out DwgTemplate template))
+			{
+				if (template is T)
+				{
+					value = (T)template;
+					return true;
+				}
+			}
+
+			value = null;
+			return false;
 		}
 
 		[Obsolete]
