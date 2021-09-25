@@ -46,6 +46,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{B86AD482-0
 		docs\OpenDesign_Specification_for_.dwg_files.pdf = docs\OpenDesign_Specification_for_.dwg_files.pdf
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{9F28195B-66DE-4C0C-B1C0-C8BF3300ED9F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{B2461717-C79A-4081-AD58-5DF52D2EC41F}"
+	ProjectSection(SolutionItems) = preProject
+		..\MeshIO\.github\workflows\build_n_test.yml = ..\MeshIO\.github\workflows\build_n_test.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +84,8 @@ Global
 		{33B3E35E-A3D8-413E-A44B-8FA4381DF018} = {F5DAE5BA-4D19-4071-80C8-9DEECF0E7B32}
 		{BF9B0C8C-987D-42F2-BA92-9E762BDC8990} = {F5DAE5BA-4D19-4071-80C8-9DEECF0E7B32}
 		{B86AD482-05C4-400E-9CAE-7B96AD6B0C3E} = {D4F40AC7-232A-4140-B26C-C432E6B82E53}
+		{9F28195B-66DE-4C0C-B1C0-C8BF3300ED9F} = {D4F40AC7-232A-4140-B26C-C432E6B82E53}
+		{B2461717-C79A-4081-AD58-5DF52D2EC41F} = {9F28195B-66DE-4C0C-B1C0-C8BF3300ED9F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B40C2E48-575E-40D1-88C5-272437A5683F}
