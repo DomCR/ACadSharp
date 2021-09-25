@@ -29,6 +29,5 @@ namespace ACadSharp
 		{
 			Index = -1;
 		}
-
 	}
 }

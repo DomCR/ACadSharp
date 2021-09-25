@@ -40,11 +40,6 @@ namespace ACadSharp.IO.Templates
 			CadObject = cadObject;
 		}
 
-		public virtual void Build(Dictionary<ulong, CadObject> map)
-		{
-
-		}
-
 		public virtual void Build(DwgModelBuilder builder)
 		{
 			ToBuild = false;
@@ -79,41 +74,6 @@ namespace ACadSharp.IO.Templates
 		public ulong? ColorHandle { get; set; }
 
 		public DwgEntityTemplate(Entity entity) : base(entity) { }
-
-		public override void Build(Dictionary<ulong, CadObject> map)
-		{
-			base.Build(map);
-
-			Entity entity = CadObject as Entity;
-
-			//TODO: Find the owner
-			switch (EntityMode)
-			{
-				//Entity has a direct owner
-				case 0b00:
-					break;
-				//Entity is owned by the PSPACE
-				case 0b01:
-					break;
-				//Entity is owned by the MSPACE
-				case 0b10:
-					break;
-				//Not used
-				case 0b11:
-				default:
-					break;
-			}
-
-			if (map.TryGetValue(LayerHandle, out CadObject layer))
-			{
-				entity.Layer = (Layer)layer;
-			}
-
-			if (map.TryGetValue(LineTypeHandle.Value, out CadObject ltype))
-			{
-				entity.LineType = (LineType)ltype;
-			}
-		}
 
 		public override void Build(DwgModelBuilder builder)
 		{
@@ -195,9 +155,9 @@ namespace ACadSharp.IO.Templates
 
 		public DwgInsertTemplate(Insert insert) : base(insert) { }
 
-		public override void Build(Dictionary<ulong, CadObject> map)
+		public override void Build(DwgModelBuilder builder)
 		{
-			base.Build(map);
+			base.Build(builder);
 
 			Insert insert = CadObject as Insert;
 
