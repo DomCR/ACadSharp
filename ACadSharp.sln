@@ -50,7 +50,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{9F28
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{B2461717-C79A-4081-AD58-5DF52D2EC41F}"
 	ProjectSection(SolutionItems) = preProject
-		..\MeshIO\.github\workflows\build_n_test.yml = ..\MeshIO\.github\workflows\build_n_test.yml
+		.github\workflows\build_n_test.yml = .github\workflows\build_n_test.yml
 	EndProjectSection
 EndProject
 Global
