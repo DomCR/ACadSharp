@@ -1,6 +1,6 @@
 ﻿using ACadSharp.Geometry;
-using ACadSharp.IO.Utils.Converters;
-using ACadSharp.IO.Utils.Text;
+using CSUtilities.Converters;
+using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;

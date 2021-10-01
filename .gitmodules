@@ -1,0 +1,3 @@
+[submodule "CSUtilities"]
+	path = CSUtilities
+	url = https://github.com/DomCR/CSUtilities

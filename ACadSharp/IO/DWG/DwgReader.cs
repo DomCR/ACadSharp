@@ -1,9 +1,10 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Header;
-using ACadSharp.IO.Utils;
-using ACadSharp.IO.Utils.Converters;
-using ACadSharp.IO.Utils.Text;
+using CSUtilities;
+using CSUtilities.IO;
+using CSUtilities.Converters;
+using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;

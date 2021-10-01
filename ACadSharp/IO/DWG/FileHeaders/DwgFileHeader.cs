@@ -1,4 +1,4 @@
-﻿using ACadSharp.IO.Utils.Text;
+﻿using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
 using System.Text;

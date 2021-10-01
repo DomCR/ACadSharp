@@ -1,9 +1,8 @@
 ﻿using ACadSharp.Geometry;
-using ACadSharp.IO.Utils;
-using ACadSharp.IO.Utils.Converters;
-using ACadSharp.IO.Utils.Text;
+using CSUtilities.IO;
+using CSUtilities.Converters;
+using CSUtilities.Text;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -25,7 +24,7 @@ namespace ACadSharp.IO.DWG
 		public bool IsEmpty { get; private set; } = false;
 		protected byte m_lastByte;
 		public DwgStreamReader(Stream stream, bool resetPosition) : base(stream, resetPosition) { }
-		//*******************************************************************
+
 		public static IDwgStreamReader GetStreamHandler(ACadVersion version, Stream stream, bool resetPositon = false)
 		{
 			switch (version)
@@ -442,6 +441,7 @@ namespace ACadSharp.IO.DWG
 
 			return value;
 		}
+
 		#region Handle reference
 		/// <inheritdoc/>
 		public ulong HandleReference()

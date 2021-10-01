@@ -1,14 +1,10 @@
 ﻿using ACadSharp.Geometry.Units;
 using ACadSharp.Header;
-using ACadSharp.IO.Utils;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+
+using CSUtilities.IO;
 
 namespace ACadSharp.IO.DWG
 {
-
 	/// <summary>
 	/// Util class to read the cad header.
 	/// </summary>
@@ -16,7 +12,10 @@ namespace ACadSharp.IO.DWG
 	{
 		private IDwgStreamReader m_mainReader;
 
-		public DwgHeaderReader(ACadVersion version) : base(version) { }
+		public DwgHeaderReader(ACadVersion version) : base(version)
+		{
+		}
+
 		public CadHeader Read(IDwgStreamReader sreader,
 			int acadMaintenanceVersion, out DwgHeaderHandlesCollection objectPointers)
 		{
@@ -364,7 +363,7 @@ namespace ACadSharp.IO.DWG
 			header.CurrentEntityColor = sreader.ReadCmColor();
 
 			//H : HANDSEED The next handle, with an 8-bit length specifier preceding the handle
-			//bytes (standard hex handle form) (code 0). The HANDSEED is not part of the handle 
+			//bytes (standard hex handle form) (code 0). The HANDSEED is not part of the handle
 			//stream, but of the normal data stream (relevant for R21 and later).
 			header.HandleSeed = m_mainReader.HandleReference();
 
