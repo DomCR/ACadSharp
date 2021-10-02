@@ -3,10 +3,8 @@ using ACadSharp.IO.DWG;
 using ACadSharp.Tests.TestCases;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Xunit;
 
 namespace ACadSharp.Tests.IO.DWG
@@ -50,7 +48,7 @@ namespace ACadSharp.Tests.IO.DWG
 			using (DwgReader reader = new DwgReader(Path.Combine(SamplesPath, "drawing_2000.dwg")))
 			{
 				Header2000 = reader.ReadHeader();
-			}			
+			}
 			using (DwgReader reader = new DwgReader(Path.Combine(SamplesPath, "drawing_2007.dwg")))
 			{
 				Header2007 = reader.ReadHeader();
@@ -82,6 +80,7 @@ namespace ACadSharp.Tests.IO.DWG
 
 			Assert.Equal(compare, value);
 		}
+
 		[Theory]
 		[MemberData(nameof(TestData))]
 		public void ReadHeader2000(CadSystemVariablePair test)
@@ -95,6 +94,7 @@ namespace ACadSharp.Tests.IO.DWG
 
 			Assert.Equal(compare, value);
 		}
+
 		[Theory]
 		[MemberData(nameof(TestData))]
 		public void ReadHeader2007(CadSystemVariablePair test)
@@ -108,6 +108,7 @@ namespace ACadSharp.Tests.IO.DWG
 
 			Assert.Equal(compare, value);
 		}
+
 		[Theory]
 		[MemberData(nameof(TestData))]
 		public void ReadHeader2010(CadSystemVariablePair test)
@@ -121,6 +122,7 @@ namespace ACadSharp.Tests.IO.DWG
 
 			Assert.Equal(compare, value);
 		}
+
 		[Theory]
 		[MemberData(nameof(TestData))]
 		public void ReadHeader2013(CadSystemVariablePair test)
@@ -134,6 +136,7 @@ namespace ACadSharp.Tests.IO.DWG
 
 			Assert.Equal(compare, value);
 		}
+
 		[Theory]
 		[MemberData(nameof(TestData))]
 		public void ReadHeader2018(CadSystemVariablePair test)

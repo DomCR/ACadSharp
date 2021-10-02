@@ -25,16 +25,8 @@ namespace ACadSharp.Examples
 
 		static void ReadDwg()
 		{
-			//string file = Path.Combine(PathSamples, "dwg/drawing_2000.dwg");
-			//string file = Path.Combine(PathSamples, "dwg/drawing_2007.dwg");
-			//string file = Path.Combine(PathSamples, "dwg/drawing_2010.dwg");
-			
-			//string file = Path.Combine(PathSamples, "dwg/single_entities/sample_R14.dwg");
-			//string file = Path.Combine(PathSamples, "dwg/single_entities/sample_2000.dwg");
-			string file = Path.Combine(PathSamples, "dwg/single_entities/sample_2007.dwg");
-			//string file = Path.Combine(PathSamples, "dwg/single_entities/sample_2010.dwg");
-			//string file = Path.Combine(PathSamples, "dwg/single_entities/sample_2013.dwg");
-			//string file = Path.Combine(PathSamples, "dwg/single_entities/sample_2018.dwg");
+			string file = Path.Combine(PathSamples, "dwg/cad_v2000.dwg");
+			//string file = Path.Combine(PathSamples, "dwg/cad_v2007.dwg");
 
 			using (DwgReader reader = new DwgReader(file))
 			{

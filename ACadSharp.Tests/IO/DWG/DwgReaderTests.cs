@@ -11,7 +11,8 @@ namespace ACadSharp.Tests.IO.DWG
 {
 	public class DwgReaderTests
 	{
-		private const string samplesFolder = "../../../../samples/dwg/single_entities/";
+		//private const string samplesFolder = "../../../../samples/dwg/single_entities/";
+		private const string samplesFolder = "../../../../samples/dwg/";
 		public static readonly TheoryData<string> _filePaths;
 
 		static DwgReaderTests()

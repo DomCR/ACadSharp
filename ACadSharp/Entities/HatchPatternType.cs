@@ -12,6 +12,10 @@
 		/// <summary>
 		/// Solid fill.
 		/// </summary>
-		SolidFill = 1
+		SolidFill = 1,
+		/// <summary>
+		/// Custom hatch pattern from a pattern file.
+		/// </summary>
+		Custom = 2,
 	}
 }

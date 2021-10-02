@@ -1,6 +1,6 @@
 ﻿using ACadSharp.Geometry;
-using CSUtilities.IO;
 using CSUtilities.Converters;
+using CSUtilities.IO;
 using CSUtilities.Text;
 using System;
 using System.IO;
@@ -11,7 +11,9 @@ namespace ACadSharp.IO.DWG
 	internal abstract class DwgStreamReader : StreamIO, IDwgStreamReader
 	{
 		public Encoding Encoding { get; set; } = Encoding.Default;
+
 		public int BitShift { get; set; }
+
 		public override long Position
 		{
 			get => m_stream.Position;
@@ -21,9 +23,14 @@ namespace ACadSharp.IO.DWG
 				BitShift = 0;
 			}
 		}
+
 		public bool IsEmpty { get; private set; } = false;
+
 		protected byte m_lastByte;
-		public DwgStreamReader(Stream stream, bool resetPosition) : base(stream, resetPosition) { }
+
+		public DwgStreamReader(Stream stream, bool resetPosition) : base(stream, resetPosition)
+		{
+		}
 
 		public static IDwgStreamReader GetStreamHandler(ACadVersion version, Stream stream, bool resetPositon = false)
 		{
@@ -61,6 +68,7 @@ namespace ACadSharp.IO.DWG
 
 			return null;
 		}
+
 		//*******************************************************************
 		public override byte ReadByte()
 		{
@@ -79,12 +87,14 @@ namespace ACadSharp.IO.DWG
 
 			return (byte)(lastValues | (uint)(byte)((uint)m_lastByte >> 8 - BitShift));
 		}
+
 		public override byte[] ReadBytes(int length)
 		{
 			byte[] numArray = new byte[length];
 			applyShiftToArr(length, numArray);
 			return numArray;
 		}
+
 		public long SetPositionByFlag(long position)
 		{
 			SetPositionInBits(position);
@@ -116,6 +126,7 @@ namespace ACadSharp.IO.DWG
 		}
 
 		#region Read BIT CODES AND DATA DEFINITIONS
+
 		/// <inheritdoc/>
 		public bool ReadBit()
 		{
@@ -134,11 +145,13 @@ namespace ACadSharp.IO.DWG
 
 			return value;
 		}
+
 		/// <inheritdoc/>
 		public short ReadBitAsShort()
 		{
 			return ReadBit() ? (short)1 : (short)0;
 		}
+
 		/// <inheritdoc/>
 		public byte Read2Bits()
 		{
@@ -166,6 +179,7 @@ namespace ACadSharp.IO.DWG
 
 			return value;
 		}
+
 		/// <inheritdoc/>
 		public short ReadBitShort()
 		{
@@ -199,11 +213,13 @@ namespace ACadSharp.IO.DWG
 			}
 			return value;
 		}
+
 		/// <inheritdoc/>
 		public bool ReadBitShortAsBool()
 		{
 			return ReadBitShort() != 0;
 		}
+
 		/// <inheritdoc/>
 		public int ReadBitLong()
 		{
@@ -234,6 +250,7 @@ namespace ACadSharp.IO.DWG
 			}
 			return value;
 		}
+
 		/// <inheritdoc/>
 		public long ReadBitLongLong()
 		{
@@ -248,6 +265,7 @@ namespace ACadSharp.IO.DWG
 
 			return (long)value;
 		}
+
 		/// <inheritdoc/>
 		public double ReadBitDouble()
 		{
@@ -269,6 +287,7 @@ namespace ACadSharp.IO.DWG
 
 			return value;
 		}
+
 		/// <inheritdoc/>
 		public XY Read2BitDouble()
 		{
@@ -280,16 +299,19 @@ namespace ACadSharp.IO.DWG
 		{
 			return new XYZ(ReadBitDouble(), ReadBitDouble(), ReadBitDouble());
 		}
+
 		/// <inheritdoc/>
 		public char ReadRawChar()
 		{
 			return (char)ReadByte();
 		}
+
 		/// <inheritdoc/>
 		public long ReadRawLong()
 		{
 			return ReadInt();
 		}
+
 		/// <inheritdoc/>
 		public XY Read2RawDouble()
 		{
@@ -320,6 +342,7 @@ namespace ACadSharp.IO.DWG
 
 			return value;
 		}
+
 		/// <inheritdoc/>
 		public int ReadSignedModularChar()
 		{
@@ -409,6 +432,7 @@ namespace ACadSharp.IO.DWG
 			}
 			return value;
 		}
+
 		/// <inheritdoc/>
 		public int ReadModularShort()
 		{
@@ -443,16 +467,19 @@ namespace ACadSharp.IO.DWG
 		}
 
 		#region Handle reference
+
 		/// <inheritdoc/>
 		public ulong HandleReference()
 		{
 			return HandleReference(0UL, out ReferenceType _);
 		}
+
 		/// <inheritdoc/>
 		public ulong HandleReference(ulong referenceHandle)
 		{
 			return HandleReference(referenceHandle, out ReferenceType _);
 		}
+
 		/// <inheritdoc/>
 		public ulong HandleReference(ulong referenceHandle, out ReferenceType reference)
 		{
@@ -497,6 +524,7 @@ namespace ACadSharp.IO.DWG
 
 			return initialPos;
 		}
+
 		private ulong readHandle(int length)
 		{
 			byte[] raw = new byte[length];
@@ -533,7 +561,8 @@ namespace ACadSharp.IO.DWG
 
 			return LittleEndianConverter.Instance.ToUInt64(arr);
 		}
-		#endregion
+
+		#endregion Handle reference
 
 		/// <inheritdoc/>
 		public virtual string ReadTextUnicode()
@@ -553,6 +582,7 @@ namespace ACadSharp.IO.DWG
 
 			return value;
 		}
+
 		/// <inheritdoc/>
 		public abstract string ReadVariableText();
 
@@ -561,6 +591,7 @@ namespace ACadSharp.IO.DWG
 		{
 			return ReadBytes(16);
 		}
+
 		/// <inheritdoc/>
 		public XYZ Read3BitDoubleWithDefault(XYZ defValues)
 		{
@@ -569,6 +600,7 @@ namespace ACadSharp.IO.DWG
 				ReadBitDoubleWithDefault(defValues.Y),
 				ReadBitDoubleWithDefault(defValues.Z));
 		}
+
 		/// <inheritdoc/>
 		public virtual Color ReadCmColor()
 		{
@@ -599,10 +631,11 @@ namespace ACadSharp.IO.DWG
 			//Until R2007, the object type was a bit short.
 			return (ObjectType)ReadBitShort();
 		}
+
 		/// <inheritdoc/>
 		public virtual XYZ ReadBitExtrusion()
 		{
-			//For R13-R14 this is 3BD. 
+			//For R13-R14 this is 3BD.
 			return Read3BitDouble();
 		}
 
@@ -696,13 +729,15 @@ namespace ACadSharp.IO.DWG
 					throw new Exception();
 			}
 		}
+
 		/// <inheritdoc/>
 		public virtual double ReadBitThickness()
 		{
 			//For R13-R14, this is a BD.
 			return ReadBitDouble();
 		}
-		#endregion
+
+		#endregion Read BIT CODES AND DATA DEFINITIONS
 
 		/// <inheritdoc/>
 		public DateTime Read8BitJulianDate()
@@ -715,6 +750,7 @@ namespace ACadSharp.IO.DWG
 		{
 			return julianToDate(ReadBitLong(), ReadBitLong());
 		}
+
 		/// <inheritdoc/>
 		public TimeSpan ReadTimeSpan()
 		{
@@ -722,6 +758,7 @@ namespace ACadSharp.IO.DWG
 		}
 
 		#region Stream pointer control
+
 		/// <inheritdoc/>
 		public long PositionInBits()
 		{
@@ -732,6 +769,7 @@ namespace ACadSharp.IO.DWG
 
 			return bitPosition;
 		}
+
 		/// <inheritdoc/>
 		public void SetPositionInBits(long position)
 		{
@@ -743,11 +781,13 @@ namespace ACadSharp.IO.DWG
 
 			AdvanceByte();
 		}
+
 		/// <inheritdoc/>
 		public void AdvanceByte()
 		{
 			m_lastByte = base.ReadByte();
 		}
+
 		/// <inheritdoc/>
 		public void Advance(int offset)
 		{
@@ -756,6 +796,7 @@ namespace ACadSharp.IO.DWG
 
 			ReadByte();
 		}
+
 		/// <inheritdoc/>
 		public ushort ResetShift()
 		{
@@ -769,8 +810,9 @@ namespace ACadSharp.IO.DWG
 
 			return (ushort)(num | (uint)(ushort)((uint)m_lastByte << 8));
 		}
-		#endregion
-		//*******************************************************************
+
+		#endregion Stream pointer control
+
 		protected virtual void applyFlagToPosition(long lastPos, out long length, out long strDataSize)
 		{
 			//If 1, then the “endbit” location should be decremented by 16 bytes
@@ -781,9 +823,9 @@ namespace ACadSharp.IO.DWG
 			//short should be read at location endbit – 128 (bits)
 			strDataSize = ReadUShort();
 
-			//If this short has the 0x8000 bit set, 
+			//If this short has the 0x8000 bit set,
 			//then decrement endbit by an additional 16 bytes,
-			//strip the 0x8000 bit off of strDataSize, and read 
+			//strip the 0x8000 bit off of strDataSize, and read
 			//the short at this new location, calling it hiSize.
 			if (((ulong)strDataSize & 0x8000) <= 0UL)
 				return;
@@ -798,11 +840,12 @@ namespace ACadSharp.IO.DWG
 			//Then set strDataSize to (strDataSize | (hiSize << 15))
 			strDataSize += (hiSize & ushort.MaxValue) << 15;
 
-			//All unicode strings in this object are located in the “string stream”, 
-			//and should be read from this stream, even though the location of the 
-			//TV type fields in the object descriptions list these fields in among 
+			//All unicode strings in this object are located in the “string stream”,
+			//and should be read from this stream, even though the location of the
+			//TV type fields in the object descriptions list these fields in among
 			//the normal object data.
 		}
+
 		protected byte applyShiftToLasByte()
 		{
 			byte value = (byte)((uint)m_lastByte << BitShift);
@@ -811,6 +854,7 @@ namespace ACadSharp.IO.DWG
 
 			return (byte)((uint)value | (byte)((uint)m_lastByte >> 8 - BitShift));
 		}
+
 		private void applyShiftToArr(int length, byte[] arr)
 		{
 			//Empty Stream
@@ -833,6 +877,7 @@ namespace ACadSharp.IO.DWG
 				arr[i] = value;
 			}
 		}
+
 		private byte read3bits()
 		{
 			byte b1 = 0;
@@ -846,6 +891,7 @@ namespace ACadSharp.IO.DWG
 				b3 |= 1;
 			return b3;
 		}
+
 		private DateTime julianToDate(int jdate, int miliseconds)
 		{
 			double unixTime = (jdate - 2440587.5) * 86400;
