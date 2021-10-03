@@ -259,13 +259,16 @@ namespace ACadSharp.IO.Templates
 
 			if (FirstEntityHandle.HasValue
 				&& SecondEntityHandle.HasValue
-				&& builder.TryGetObjectBuilder(FirstEntityHandle.Value, out DwgEntityTemplate entity))
+				&& builder.TryGetObjectBuilder(FirstEntityHandle.Value, out DwgEntityTemplate template))
 			{
 				do
 				{
-					TypedObject.Entities.Add(entity.TypedObject);
-					entity = builder.GetObjectBuilder<DwgEntityTemplate>(entity.NextEntity.Value);
-				} while (entity != null);
+					if (template.NextEntity == null)
+						break;
+
+					TypedObject.Entities.Add(template.TypedObject);
+					template = builder.GetObjectBuilder<DwgEntityTemplate>(template.NextEntity.Value);
+				} while (template != null);
 			}
 
 			foreach (ulong handle in OwnedObjectsHandlers)

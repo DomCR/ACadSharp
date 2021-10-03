@@ -113,7 +113,7 @@ namespace ACadSharp.IO.DWG
 			{
 				ulong handle = m_handles.Dequeue();
 
-				if (!m_map.TryGetValue(handle, out long offset))
+				if (!m_map.TryGetValue(handle, out long offset) || m_objectMap.ContainsKey(handle))
 				{
 					//Notify the readed object
 					progress?.Invoke(this, new ProgressEventArgs(n / (float)m_map.Count, $"NULL readed: {n} of {m_map.Count}"));
@@ -231,7 +231,7 @@ namespace ACadSharp.IO.DWG
 			//Read the handle
 			ulong value = _handlesReader.HandleReference(handle);
 
-			if (!m_objectMap.ContainsKey(value) && !m_handles.Contains(value))
+			if (!m_objectMap.ContainsKey(value) && !m_handles.Contains(value) && value != 0)
 				//Add the value to the handles queue to be processed
 				m_handles.Enqueue(value);
 
