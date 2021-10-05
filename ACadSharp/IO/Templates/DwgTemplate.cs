@@ -19,7 +19,7 @@ namespace ACadSharp.IO.Templates
 	internal class DwgTemplate<T> : DwgTemplate
 		where T : CadObject
 	{
-		public T TypedObject { get { return (T)CadObject; } }
+		public new T CadObject { get { return (T)base.CadObject; } set { base.CadObject = value; } }
 		public DwgTemplate(T cadObject) : base(cadObject) { }
 	}
 
@@ -79,23 +79,23 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			TypedObject.Layer = builder.GetCadObject<Layer>(LayerHandle);
+			CadObject.Layer = builder.GetCadObject<Layer>(LayerHandle);
 
 			switch (LtypeFlags)
 			{
 				case 0:
-					TypedObject.LineType = null;    //Get the linetype by layer
+					CadObject.LineType = null;    //Get the linetype by layer
 					break;
 				case 1:
-					TypedObject.LineType = null;//Get the linetype by block
+					CadObject.LineType = null;//Get the linetype by block
 					break;
 				case 2:
-					TypedObject.LineType = null;//Get the linetype by continuous
+					CadObject.LineType = null;//Get the linetype by continuous
 					break;
 				case 3:
 					if (LineTypeHandle.HasValue)
 					{
-						TypedObject.LineType = builder.GetCadObject<LineType>(LineTypeHandle.Value);
+						CadObject.LineType = builder.GetCadObject<LineType>(LineTypeHandle.Value);
 					}
 					break;
 			}
@@ -105,7 +105,7 @@ namespace ACadSharp.IO.Templates
 				var dwgColor = builder.GetCadObject<DwgColorTemplate.DwgColor>(ColorHandle.Value);
 
 				if (dwgColor != null)
-					TypedObject.Color = dwgColor.Color;
+					CadObject.Color = dwgColor.Color;
 			}
 			else
 			{
@@ -141,6 +141,13 @@ namespace ACadSharp.IO.Templates
 			public override ObjectType ObjectType => ObjectType.INVALID;
 			public Color Color { get; set; }
 		}
+	}
+
+	internal class DwgGroupTemplate : DwgTemplate<Group>
+	{
+		public List<ulong> EntitiesHandles { get; set; } = new List<ulong>();
+
+		public DwgGroupTemplate(Group group) : base(group) { }
 	}
 
 	internal class DwgInsertTemplate : DwgEntityTemplate
@@ -254,7 +261,7 @@ namespace ACadSharp.IO.Templates
 
 			if (LayoutHandle.HasValue && builder.TryGetCadObject<Layout>(LayoutHandle.Value, out Layout layout))
 			{
-				layout.AssociatedBlock = TypedObject;
+				layout.AssociatedBlock = CadObject;
 			}
 
 			if (FirstEntityHandle.HasValue
@@ -266,7 +273,7 @@ namespace ACadSharp.IO.Templates
 					if (template.NextEntity == null)
 						break;
 
-					TypedObject.Entities.Add(template.TypedObject);
+					CadObject.Entities.Add(template.CadObject);
 					template = builder.GetObjectBuilder<DwgEntityTemplate>(template.NextEntity.Value);
 				} while (template != null);
 			}
@@ -275,7 +282,7 @@ namespace ACadSharp.IO.Templates
 			{
 				if (builder.TryGetCadObject<Entity>(handle, out Entity child))
 				{
-					TypedObject.Entities.Add(child);
+					CadObject.Entities.Add(child);
 				}
 			}
 

@@ -25,12 +25,12 @@ namespace ACadSharp.Examples
 
 		static void ReadDwg()
 		{
-			string file = Path.Combine(PathSamples, "dwg/cad_v2000.dwg");
-			//string file = Path.Combine(PathSamples, "dwg/cad_v2007.dwg");
+			//string file = Path.Combine(PathSamples, "dwg/cad_v2000.dwg");
+			string file = Path.Combine(PathSamples, "dwg/cad_v2018.dwg");
 
 			using (DwgReader reader = new DwgReader(file))
 			{
-				CadDocument doc = reader.Read(onProgress);
+				CadDocument doc = reader.Read(onNotification);
 			}
 		}
 
@@ -38,6 +38,11 @@ namespace ACadSharp.Examples
 		{
 			Console.WriteLine($"Progress: {e.Progress * 100}%");
 			Console.WriteLine($"Message: {e.Message}");
+		}
+
+		private static void onNotification(object sender, NotificationEventArgs e)
+		{
+			Console.WriteLine(e.Message);
 		}
 	}
 }

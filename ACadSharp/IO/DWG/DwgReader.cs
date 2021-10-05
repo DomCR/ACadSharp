@@ -74,7 +74,7 @@ namespace ACadSharp.IO.DWG
 		/// Read the dwg document.
 		/// </summary>
 		/// <returns></returns>
-		public CadDocument Read(ProgressEventHandler progress = null)
+		public CadDocument Read(NotificationEventHandler notification = null)
 		{
 			_document = new CadDocument();
 			_builder = new DwgModelBuilder(_document);
@@ -85,7 +85,7 @@ namespace ACadSharp.IO.DWG
 			_document.SummaryInfo = ReadSummaryInfo();
 
 			//Read all the objects in the file
-			readObjects(_document, progress);
+			readObjects(_document, notification);
 
 			return _document;
 		}
@@ -445,7 +445,7 @@ namespace ACadSharp.IO.DWG
 		/// <remarks>
 		/// Refers to AcDb:AcDbObjects data section.
 		/// </remarks>
-		private void readObjects(CadDocument document, ProgressEventHandler progress = null)
+		private void readObjects(CadDocument document, NotificationEventHandler notification = null)
 		{
 			_cadHeader = _cadHeader ?? ReadHeader();
 			Dictionary<ulong, long> handles = readHandles();
@@ -480,7 +480,7 @@ namespace ACadSharp.IO.DWG
 				handles,
 				classes);
 
-			sectionReader.Read(progress);
+			sectionReader.Read(notification);
 		}
 		/// <inheritdoc/>
 		public void Dispose()

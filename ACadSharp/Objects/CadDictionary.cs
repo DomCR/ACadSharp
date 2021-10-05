@@ -7,8 +7,9 @@ namespace ACadSharp.Objects
 {
 	public class CadDictionary : CadObject
 	{
-		public override string ObjectName => DxfFileToken.ObjectDictionary;
 		public override ObjectType ObjectType => ObjectType.DICTIONARY;
+
+		public override string ObjectName => DxfFileToken.ObjectDictionary;
 
 		//100	Subclass marker(AcDbDictionary)
 		/// <summary>
@@ -21,7 +22,6 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(DxfCode.DictionaryFlags)]
 		public DictionaryCloningFlags ClonningFlags { get; set; }
-
 
 		//3	Entry name(one for each entry) (optional)
 		//350	Soft-owner ID/handle to entry object (one for each entry) (optional)

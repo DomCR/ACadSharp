@@ -6,6 +6,7 @@ using ACadSharp.Geometry.Units;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
 using CSUtilities.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -103,6 +104,7 @@ namespace ACadSharp.IO.DWG
 		/// <summary>
 		/// Read all the entities, tables and objects in the file.
 		/// </summary>
+		[System.Obsolete]
 		public void Read(ProgressEventHandler progress = null)
 		{
 			progress?.Invoke(this, new ProgressEventArgs(0, "Start reading the object section"));
@@ -130,6 +132,45 @@ namespace ACadSharp.IO.DWG
 
 				//Read the object
 				DwgTemplate template = readObject(type);
+				if (template == null)
+				{
+					//Add the object as null
+					m_objectMap[handle] = null;
+					continue;
+				}
+
+				//Add the object to the map
+				m_objectMap[template.CadObject.Handle] = template.CadObject;
+				//Add the template to the list to be processed
+				m_templates[template.CadObject.Handle] = template;
+			}
+
+			//Build the templates in the document
+			//buildTemplates();
+			//_modelBuilder.BuildObjects();
+			_modelBuilder.BuildModelBase();
+		}
+
+		/// <summary>
+		/// Read all the entities, tables and objects in the file.
+		/// </summary>
+		public void Read(NotificationEventHandler notifications = null)
+		{
+			//Read each handle in the header
+			while (m_handles.Any())
+			{
+				ulong handle = m_handles.Dequeue();
+
+				if (!m_map.TryGetValue(handle, out long offset) || m_objectMap.ContainsKey(handle))
+				{
+					continue;
+				}
+
+				//Get the object type
+				ObjectType type = getEntityType(offset);
+
+				//Read the object
+				DwgTemplate template = readObject(type, notifications);
 				if (template == null)
 				{
 					//Add the object as null
@@ -566,7 +607,7 @@ namespace ACadSharp.IO.DWG
 
 		#region Object readers
 
-		private DwgTemplate readObject(ObjectType type)
+		private DwgTemplate readObject(ObjectType type, NotificationEventHandler notifications = null)
 		{
 			DwgTemplate template = null;
 
@@ -587,7 +628,7 @@ namespace ACadSharp.IO.DWG
 					template = readBlock();
 					break;
 				case ObjectType.ENDBLK:
-					//template = readEndBlock();
+					template = readEndBlock();
 					break;
 				case ObjectType.SEQEND:
 					template = readSeqend();
@@ -706,11 +747,13 @@ namespace ACadSharp.IO.DWG
 					template = readBlockHeader();
 					break;
 				case ObjectType.LAYER_CONTROL_OBJ:
+					template = readLayerControlObject();
 					break;
 				case ObjectType.LAYER:
 					template = readLayer();
 					break;
 				case ObjectType.STYLE_CONTROL_OBJ:
+					template = readStyleControlObject();
 					break;
 				case ObjectType.STYLE:
 					template = readStyle();
@@ -755,6 +798,7 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.VP_ENT_HDR:
 					break;
 				case ObjectType.GROUP:
+					template = readGroup();
 					break;
 				case ObjectType.MLINESTYLE:
 					break;
@@ -783,15 +827,16 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.ACAD_PROXY_OBJECT:
 					break;
 				default:
-					//TODO: implement the non fixed value objects (use the classes)
-					template = readUnlistedType((short)type);
-					break;
+					return readUnlistedType((short)type);
 			}
+
+			if (template == null)
+				notifications?.Invoke(null, new NotificationEventArgs($"Object reader not implemented: {type}"));
 
 			return template;
 		}
 
-		private DwgTemplate readUnlistedType(short classNumber)
+		private DwgTemplate readUnlistedType(short classNumber, NotificationEventHandler notifications = null)
 		{
 			if (!m_classes.TryGetValue(classNumber, out DxfClass c))
 				return null;
@@ -853,6 +898,9 @@ namespace ACadSharp.IO.DWG
 					//System.Diagnostics.Debug.Fail($"Not implemented dxf class: {c.DxfName}");
 					break;
 			}
+
+			if (template == null)
+				notifications?.Invoke(null, new NotificationEventArgs($"Unlisted object not implemented, DXF name: {c.DxfName}"));
 
 			return template;
 		}
@@ -1068,6 +1116,16 @@ namespace ACadSharp.IO.DWG
 
 			//Block name TV 2
 			block.Name = _textReader.ReadVariableText();
+
+			return template;
+		}
+
+		private DwgTemplate readEndBlock()
+		{
+			BlockEnd block = new BlockEnd();
+			DwgEntityTemplate template = new DwgEntityTemplate(block);
+
+			readCommonEntityData(template);
 
 			return template;
 		}
@@ -1588,7 +1646,7 @@ namespace ACadSharp.IO.DWG
 				//Invis flags BS 70 Present it “Has no flag ind.” is 0.
 			}
 
-			return template;
+			return null;
 		}
 
 		private DwgTemplate readPolylinePface()
@@ -2109,6 +2167,22 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private DwgTemplate readLayerControlObject()
+		{
+			DwgTableTemplate<Layer> template = new DwgTableTemplate<Layer>(_modelBuilder.DocumentToBuild.Layers);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Numentries BL 70 Counts layer "0", too.
+			int numentries = _objectReader.ReadBitLong();
+			for (int i = 0; i < numentries; ++i)
+				//Handle refs H NULL(soft pointer)	xdicobjhandle(hard owner)	the apps(soft owner)
+				template.EntryHandles.Add(handleReference());
+
+			return template;
+		}
+
 		private DwgTemplate readLayer()
 		{
 			//Initialize the template with the default layer
@@ -2198,6 +2272,23 @@ namespace ACadSharp.IO.DWG
 			//H Unknown handle (hard pointer). Always seems to be NULL.
 			//Some times is not...
 			//handleReference();
+
+			return template;
+		}
+
+		private DwgTemplate readStyleControlObject()
+		{
+			DwgTableTemplate<Style> template = new DwgTableTemplate<Style>(
+				_modelBuilder.DocumentToBuild.Styles);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Numentries BL 70 
+			int numentries = this._objectReader.ReadBitLong();
+			for (int i = 0; i < numentries; ++i)
+				//Handle refs H NULL(soft pointer) xdicobjhandle(hard owner)
+				template.EntryHandles.Add(handleReference());
 
 			return template;
 		}
@@ -2361,6 +2452,30 @@ namespace ACadSharp.IO.DWG
 			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)
 			handleReference();
+
+			return template;
+		}
+
+		private DwgTemplate readGroup()
+		{
+			Group group = new Group();
+			DwgGroupTemplate template = new DwgGroupTemplate(group);
+
+			this.readCommonNonEntityData(template);
+
+			//Str TV name of group
+			group.Description = this._textReader.ReadVariableText();
+
+			//Unnamed BS 1 if group has no name
+			this._objectReader.ReadBitShort();
+			//Selectable BS 1 if group selectable
+			group.Selectable = this._objectReader.ReadBitShort() > 0;
+
+			//Numhandles BL # objhandles in this group
+			int numhandles = this._objectReader.ReadBitLong();
+			for (int index = 0; index < numhandles; ++index)
+				//Handle refs H parenthandle (soft pointer)
+				template.EntitiesHandles.Add(this.handleReference());
 
 			return template;
 		}
@@ -2644,7 +2759,6 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readLayout()
 		{
-			//TODO: layout pag 210
 			Layout layout = new Layout();
 			DwgLayoutTemplate template = new DwgLayoutTemplate(layout);
 

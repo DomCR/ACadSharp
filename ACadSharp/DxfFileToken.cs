@@ -25,12 +25,14 @@ namespace ACadSharp
 		public const string ClassEntry = "CLASS";
 
 		#region Tables
+
 		public const string TablesSection = "TABLES";
 		public const string TableEntry = "TABLE";
 		public const string EndTable = "ENDTAB";
 		public const string TableAppId = "APPID";
 		public const string TableBlockRecord = "BLOCK_RECORD";
 		public const string TableDimstyle = "DIMSTYLE";
+		public const string TableGroup = "GROUP";
 		public const string TableLayout = "LAYOUT";
 		public const string TableLayer = "LAYER";
 		public const string TableLinetype = "LTYPE";
@@ -38,12 +40,14 @@ namespace ACadSharp
 		public const string TableUcs = "UCS";
 		public const string TableView = "VIEW";
 		public const string TableVport = "VPORT"; 
+
 		#endregion
 
 		public const string BlocksSection = "BLOCKS";
 		public const string Block = "BLOCK";
 
 		#region Entities
+
 		public const string EntitiesSection = "ENTITIES";
 		public const string Entity3DFace = "3DFACE";
 		public const string Entity3DSolid = "3DSOLID";
@@ -91,6 +95,7 @@ namespace ACadSharp
 		public const string EntityViewport = "VIEWPORT";
 		public const string EntityWipeout = "WIPEOUT";
 		public const string EntityXline = "XLINE";
+
 		#endregion
 
 		public const string ObjectsSection = "OBJECTS";
