@@ -13,7 +13,7 @@ namespace ACadSharp.IO.Templates
 	internal interface ICadObjectBuilder
 	{
 		bool ToBuild { get; }
-		void Build(DwgModelBuilder builder);
+		void Build(DwgDocumentBuilder builder);
 	}
 
 	internal class DwgTemplate<T> : DwgTemplate
@@ -40,7 +40,7 @@ namespace ACadSharp.IO.Templates
 			CadObject = cadObject;
 		}
 
-		public virtual void Build(DwgModelBuilder builder)
+		public virtual void Build(DwgDocumentBuilder builder)
 		{
 			ToBuild = false;
 
@@ -75,7 +75,7 @@ namespace ACadSharp.IO.Templates
 
 		public DwgEntityTemplate(Entity entity) : base(entity) { }
 
-		public override void Build(DwgModelBuilder builder)
+		public override void Build(DwgDocumentBuilder builder)
 		{
 			base.Build(builder);
 
@@ -114,6 +114,23 @@ namespace ACadSharp.IO.Templates
 		}
 	}
 
+	internal class DwgDimensionStyleTemplate : DwgTemplate<DimensionStyle>
+	{
+		public DwgDimensionStyleTemplate(DimensionStyle dimStyle) : base(dimStyle) { }
+
+		public string DIMBL_KName { get; internal set; }
+		public string DIMBLK1_Name { get; internal set; }
+		public string DIMBLK2_Name { get; internal set; }
+		public ulong DIMTXSTY { get; internal set; }
+		public ulong DIMLDRBLK { get; internal set; }
+		public ulong DIMBLK { get; internal set; }
+		public ulong DIMBLK1 { get; internal set; }
+		public ulong DIMBLK2 { get; internal set; }
+		public ulong Dimltype { get; internal set; }
+		public ulong Dimltex1 { get; internal set; }
+		public ulong Dimltex2 { get; internal set; }
+	}
+
 	internal class DwgViewportTemplate : DwgEntityTemplate
 	{
 		public ulong? ViewportHeaderHandle { get; set; }
@@ -131,7 +148,7 @@ namespace ACadSharp.IO.Templates
 
 		public DwgColorTemplate(DwgColor color) : base(color) { }
 
-		public override void Build(DwgModelBuilder builder)
+		public override void Build(DwgDocumentBuilder builder)
 		{
 			return;
 		}
@@ -145,9 +162,16 @@ namespace ACadSharp.IO.Templates
 
 	internal class DwgGroupTemplate : DwgTemplate<Group>
 	{
-		public List<ulong> EntitiesHandles { get; set; } = new List<ulong>();
+		public List<ulong> Handles { get; set; } = new List<ulong>();
 
 		public DwgGroupTemplate(Group group) : base(group) { }
+	}
+
+	internal class DwgViewportTableTemplate : DwgTemplate<ViewPortsTable>
+	{
+		public List<ulong> Handles { get; set; } = new List<ulong>();
+
+		public DwgViewportTableTemplate(ViewPortsTable table) : base(table) { }
 	}
 
 	internal class DwgInsertTemplate : DwgEntityTemplate
@@ -162,7 +186,7 @@ namespace ACadSharp.IO.Templates
 
 		public DwgInsertTemplate(Insert insert) : base(insert) { }
 
-		public override void Build(DwgModelBuilder builder)
+		public override void Build(DwgDocumentBuilder builder)
 		{
 			base.Build(builder);
 
@@ -222,6 +246,7 @@ namespace ACadSharp.IO.Templates
 		where T : TableEntry
 	{
 		public ulong LtypeControlHandle { get; set; }
+
 		public DwgTableEntryTemplate(T entry) : base(entry) { }
 	}
 
@@ -252,7 +277,7 @@ namespace ACadSharp.IO.Templates
 
 		public DwgBlockTemplate(Block block) : base(block) { }
 
-		public override void Build(DwgModelBuilder builder)
+		public override void Build(DwgDocumentBuilder builder)
 		{
 			base.Build(builder);
 
@@ -303,14 +328,14 @@ namespace ACadSharp.IO.Templates
 		public ulong PaperSpaceHandle { get; set; }
 		public DwgBlockCtrlObjectTemplate() : base(new BlockRecordsTable()) { }
 
-		public override void Build(DwgModelBuilder builder)
+		public override void Build(DwgDocumentBuilder builder)
 		{
 			base.Build(builder);
 
 
 		}
 
-		private void addBlockToModel(DwgModelBuilder builder)
+		private void addBlockToModel(DwgDocumentBuilder builder)
 		{
 
 		}

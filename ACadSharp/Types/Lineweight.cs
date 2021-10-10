@@ -6,7 +6,7 @@
 #endregion
 namespace ACadSharp
 {
-	public enum Lineweight : short
+	public enum LineweightType : short
 	{
 		/// <summary>
 		/// Default lineweight.

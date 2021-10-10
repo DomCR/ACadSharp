@@ -64,6 +64,7 @@ namespace ACadSharp.IO.DWG
 			}
 			return value;
 		}
+
 		/// <inheritdoc/>
 		public override Color ReadCmColor()
 		{
@@ -122,8 +123,18 @@ namespace ACadSharp.IO.DWG
 					color.Index = (short)(size & 0b111111111111);
 				}
 
-				//0x2000: color is followed by a transparency BL.
-				transparency = (flags & 0x2000U) <= 0U ? Transparency.ByLayer : new Transparency((short)ReadBitLong());
+				try
+				{
+					//TODO: Fix wrong values, like 102
+
+					//0x2000: color is followed by a transparency BL.
+					transparency = (flags & 0x2000U) <= 0U ? Transparency.ByLayer
+						: new Transparency((short)ReadBitLong());
+				}
+				catch (Exception)
+				{
+					transparency = Transparency.ByLayer;
+				}
 			}
 			else
 			{
@@ -398,6 +409,11 @@ namespace ACadSharp.IO.DWG
 		public int ReadModularShort()
 		{
 			throw new NotImplementedException();
+		}
+
+		public Color ReadColorByIndex()
+		{
+			return new Color(this.ReadBitShort());
 		}
 
 		public ObjectType ReadObjectType()

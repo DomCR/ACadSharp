@@ -18,36 +18,43 @@ namespace ACadSharp.IO.DWG
 		private DwgFileHeader _fileHeader;
 		private CadHeader _cadHeader;
 		private CadDocument _document;
-		private DwgModelBuilder _builder;
+		private DwgDocumentBuilder _builder;
 		private readonly StreamIO _fileStream;
+		private readonly NotificationEventHandler _notification;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DwgReader" /> class.
 		/// </summary>
 		/// <param name="filename">The filename of the file to open.</param>
-		public DwgReader(string filename)
+		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
+		public DwgReader(string filename, NotificationEventHandler notification = null)
 		{
 			_fileStream = new StreamIO(filename);
+			_notification = notification;
 		}
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DwgReader" /> class.
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
-		public DwgReader(Stream stream)
+		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
+
+		public DwgReader(Stream stream, NotificationEventHandler notification = null)
 		{
 			_fileStream = new StreamIO(stream);
+			_notification = notification;
 		}
 
 		/// <summary>
 		/// Read a dwg document in a stream.
 		/// </summary>
 		/// <param name="stream"></param>
+		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
 		/// <returns></returns>
-		public static CadDocument Read(Stream stream)
+		public static CadDocument Read(Stream stream, NotificationEventHandler notification = null)
 		{
 			CadDocument doc = null;
 
-			using (DwgReader reader = new DwgReader(stream))
+			using (DwgReader reader = new DwgReader(stream, notification))
 			{
 				doc = reader.Read();
 			}
@@ -59,11 +66,11 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <returns></returns>
-		public static CadDocument Read(string filename)
+		public static CadDocument Read(string filename, NotificationEventHandler notification = null)
 		{
 			CadDocument doc = null;
 
-			using (DwgReader reader = new DwgReader(filename))
+			using (DwgReader reader = new DwgReader(filename, notification))
 			{
 				doc = reader.Read();
 			}
@@ -74,10 +81,10 @@ namespace ACadSharp.IO.DWG
 		/// Read the dwg document.
 		/// </summary>
 		/// <returns></returns>
-		public CadDocument Read(NotificationEventHandler notification = null)
+		public CadDocument Read()
 		{
 			_document = new CadDocument();
-			_builder = new DwgModelBuilder(_document);
+			_builder = new DwgDocumentBuilder(_document);
 
 			//Read the file header
 			readFileHeader();
@@ -85,7 +92,7 @@ namespace ACadSharp.IO.DWG
 			_document.SummaryInfo = ReadSummaryInfo();
 
 			//Read all the objects in the file
-			readObjects(_document, notification);
+			readObjects(_document, _notification);
 
 			return _document;
 		}
@@ -390,7 +397,7 @@ namespace ACadSharp.IO.DWG
 					else
 					{
 						//0 offset, wrong reference
-						//need to handle?
+						_notification?.Invoke(this, new NotificationEventArgs($"Warning: readHandles, negative offset: {offset}"));
 					}
 				}
 
@@ -482,12 +489,13 @@ namespace ACadSharp.IO.DWG
 
 			sectionReader.Read(notification);
 		}
+
 		/// <inheritdoc/>
 		public void Dispose()
 		{
 			_fileStream.Dispose();
 		}
-		//**************************************************************************
+
 		#region File Header reading methods
 		/// <summary>
 		/// Read the file header for the AC1012 to AC1015 (R13-R15) versions of the header.
@@ -1188,7 +1196,6 @@ namespace ACadSharp.IO.DWG
 		}
 		#endregion
 
-		//**************************************************************************
 		private IDwgStreamReader getSectionStream(string sectionName)
 		{
 			Stream sectionStream = null;

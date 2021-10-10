@@ -37,7 +37,7 @@ namespace ACadSharp
 		public StylesTable Styles { get; set; } = new StylesTable();
 		public UCSTable UCSs { get; set; } = new UCSTable();
 		public ViewsTable Views { get; set; } = new ViewsTable();
-		public ViewPortsTable ViewPorts { get; set; } = new ViewPortsTable();
+		public ViewPortsTable Viewports { get; set; } = new ViewPortsTable();
 
 		public object Blocks { get; set; }
 		public object Objects { get; set; }

@@ -1,4 +1,4 @@
-﻿namespace ACadSharp.Header
+﻿namespace ACadSharp.Geometry.Units
 {
 	/// <summary>
 	/// Represents angular direction.

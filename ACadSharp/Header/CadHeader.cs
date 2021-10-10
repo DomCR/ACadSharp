@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Entities;
 using ACadSharp.Geometry;
 using ACadSharp.Geometry.Units;
 using ACadSharp.Tables;
@@ -297,7 +298,7 @@ namespace ACadSharp.Header
 		/// Current multiline justification.
 		/// System variable CMLJUST
 		/// </summary>
-		public VerticalAlignmentType CurrentMultilineJustification { get; set; }
+		public TextVerticalAlignment CurrentMultilineJustification { get; set; }
 		/// <summary>
 		/// 
 		/// System variable 

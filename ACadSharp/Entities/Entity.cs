@@ -16,12 +16,12 @@ namespace ACadSharp.Entities
 	/// </summary>
 	public abstract class Entity : CadObject
 	{
-		//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-3610039E-27D1-4E23-B6D3-7E60B22BB5BD
 		/// <summary>
 		/// Specifies the layer for an object.
 		/// </summary>
 		[DxfCodeValue(DxfCode.LayerName)]
 		public Layer Layer { get; set; } = Layer.Default;
+
 		/// <summary>
 		/// The True Color object of the object.
 		/// </summary>
@@ -32,11 +32,12 @@ namespace ACadSharp.Entities
 		/// </remarks>
 		[DxfCodeValue(DxfCode.Color)]
 		public Color Color { get; set; } = Color.ByLayer;
+		
 		/// <summary>
 		/// Specifies the lineweight of an individual object or the default lineweight for the drawing.
 		/// </summary>
 		[DxfCodeValue(DxfCode.LineWeight)]
-		public Lineweight Lineweight { get; set; } = Lineweight.Default;
+		public LineweightType Lineweight { get; set; } = LineweightType.Default;
 		/// <summary>
 		/// Linetype scale for this entity.
 		/// </summary>
@@ -55,11 +56,13 @@ namespace ACadSharp.Entities
 		/// </remarks>
 		[DxfCodeValue(DxfCode.Visibility)]
 		public bool IsInvisible { get; set; } = false;
+
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
 		/// </summary>
 		[DxfCodeValue(DxfCode.NormalX, DxfCode.NormalY, DxfCode.NormalZ)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
 		/// <summary>
 		/// Transparency value.
 		/// </summary>

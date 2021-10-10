@@ -10,10 +10,13 @@ namespace ACadSharp.IO.DWG
 {
 	internal abstract class DwgStreamReader : StreamIO, IDwgStreamReader
 	{
+		/// <inheritdoc/>
 		public Encoding Encoding { get; set; } = Encoding.Default;
 
+		/// <inheritdoc/>
 		public int BitShift { get; set; }
 
+		/// <inheritdoc/>
 		public override long Position
 		{
 			get => m_stream.Position;
@@ -69,7 +72,6 @@ namespace ACadSharp.IO.DWG
 			return null;
 		}
 
-		//*******************************************************************
 		public override byte ReadByte()
 		{
 			if (BitShift == 0)
@@ -623,6 +625,11 @@ namespace ACadSharp.IO.DWG
 			color.Index = colorNumber;
 
 			return color;
+		}
+
+		public Color ReadColorByIndex()
+		{
+			return new Color(this.ReadBitShort());
 		}
 
 		/// <inheritdoc/>

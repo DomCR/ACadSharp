@@ -50,7 +50,7 @@ namespace ACadSharp.IO.DWG
 		private Dictionary<ulong, CadObject> m_objectMap { get { return _modelBuilder.ObjectsMap; } }// = new Dictionary<ulong, CadObject>();
 
 		private Dictionary<ulong, DwgTemplate> m_templates { get { return _modelBuilder.Templates; } } //= new List<DwgTemplate>();
-		private DwgModelBuilder _modelBuilder;
+		private DwgDocumentBuilder _modelBuilder;
 
 		private readonly IDwgStreamReader m_reader;
 
@@ -81,7 +81,7 @@ namespace ACadSharp.IO.DWG
 
 		private CRC8StreamHandler _crcStream;
 
-		public DwgObjectSectionReader(ACadVersion version, DwgModelBuilder builder,
+		public DwgObjectSectionReader(ACadVersion version, DwgDocumentBuilder builder,
 			IDwgStreamReader reader, Queue<ulong> handles,
 			Dictionary<ulong, long> handleMap,
 			List<DxfClass> classes) : base(version)
@@ -148,7 +148,7 @@ namespace ACadSharp.IO.DWG
 			//Build the templates in the document
 			//buildTemplates();
 			//_modelBuilder.BuildObjects();
-			_modelBuilder.BuildModelBase();
+			_modelBuilder.BuildDocument();
 		}
 
 		/// <summary>
@@ -161,6 +161,7 @@ namespace ACadSharp.IO.DWG
 			{
 				ulong handle = m_handles.Dequeue();
 
+				//Check if the handle has already been read
 				if (!m_map.TryGetValue(handle, out long offset) || m_objectMap.ContainsKey(handle))
 				{
 					continue;
@@ -185,9 +186,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Build the templates in the document
-			//buildTemplates();
-			//_modelBuilder.BuildObjects();
-			_modelBuilder.BuildModelBase();
+			_modelBuilder.BuildDocument();
 		}
 
 		private ObjectType getEntityType(long offset)
@@ -400,7 +399,7 @@ namespace ACadSharp.IO.DWG
 			//R2000+:
 			//8 LAYER (hard pointer)
 			template.LayerHandle = handleReference();
-
+			
 			//Ltype flags BB 00 = bylayer, 01 = byblock, 10 = continous, 11 = linetype handle present at end of object
 			template.LtypeFlags = _objectReader.Read2Bits();
 
@@ -458,7 +457,7 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			//Lineweight RC 370
-			entity.Lineweight = (Lineweight)_objectReader.ReadByte();
+			entity.Lineweight = (LineweightType)_objectReader.ReadByte();
 		}
 
 		private void readCommonNonEntityData(DwgTemplate template)
@@ -763,6 +762,7 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.UNKNOW_37:
 					break;
 				case ObjectType.LTYPE_CONTROL_OBJ:
+					template = readLTypeControlObject();
 					break;
 				case ObjectType.LTYPE:
 					template = readLType();
@@ -772,14 +772,18 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.UNKNOW_3B:
 					break;
 				case ObjectType.VIEW_CONTROL_OBJ:
+					template = readViewControlObject();
 					break;
 				case ObjectType.VIEW:
 					break;
 				case ObjectType.UCS_CONTROL_OBJ:
+					template = readUcsControlObject();
 					break;
 				case ObjectType.UCS:
+					template = readUcs();
 					break;
 				case ObjectType.VPORT_CONTROL_OBJ:
+					template = readVPortControlObject();
 					break;
 				case ObjectType.VPORT:
 					break;
@@ -790,8 +794,10 @@ namespace ACadSharp.IO.DWG
 					template = readAppId();
 					break;
 				case ObjectType.DIMSTYLE_CONTROL_OBJ:
+					template = readDimStyleControlObject();
 					break;
 				case ObjectType.DIMSTYLE:
+					template = readDimStyle();
 					break;
 				case ObjectType.VP_ENT_HDR_CTRL_OBJ:
 					break;
@@ -831,7 +837,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			if (template == null)
-				notifications?.Invoke(null, new NotificationEventArgs($"Object reader not implemented: {type}"));
+				notifications?.Invoke(null, new NotificationEventArgs($"Object type not implemented: {type}"));
 
 			return template;
 		}
@@ -1661,7 +1667,38 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readSolid()
 		{
-			return null;
+			Solid3D solid = new Solid3D();
+			DwgEntityTemplate template = new DwgEntityTemplate(solid);
+
+			//Common Entity Data
+			this.readCommonEntityData(template);
+
+			//Thickness BT 39
+			solid.Thickness = this._objectReader.ReadBitThickness();
+
+			//Elevation BD ---Z for 10 - 13.
+			double elevation = this._objectReader.ReadBitDouble();
+
+			//1st corner 2RD 10
+			XY firstCorner = this._objectReader.Read2RawDouble();
+			solid.FirstCorner = new XYZ(firstCorner.X, firstCorner.Y, elevation);
+
+			//2nd corner 2RD 11
+			XY point2D2 = this._objectReader.Read2RawDouble();
+			solid.SecondCorner = new XYZ(point2D2.X, point2D2.Y, elevation);
+
+			//3rd corner 2RD 12
+			XY point2D3 = this._objectReader.Read2RawDouble();
+			solid.ThirdCorner = new XYZ(point2D3.X, point2D3.Y, elevation);
+
+			//4th corner 2RD 13
+			XY point2D4 = this._objectReader.Read2RawDouble();
+			solid.FourthCorner = new XYZ(point2D4.X, point2D4.Y, elevation);
+
+			//Extrusion BE 210
+			solid.Normal = this._objectReader.ReadBitExtrusion();
+
+			return template;
 		}
 
 		private DwgTemplate readShape()
@@ -2240,7 +2277,7 @@ namespace ACadSharp.IO.DWG
 				layer.PlotFlag = ((uint)values & 0b10000) > 0;
 
 				//and lineweight (mask with 0x03E0)
-				layer.LineWeight = (Lineweight)((values & 0x3E0) >> 5);
+				layer.LineWeight = (LineweightType)((values & 0x3E0) >> 5);
 			}
 
 			//Common:
@@ -2331,6 +2368,27 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private DwgTemplate readLTypeControlObject()
+		{
+			DwgTableTemplate<LineType> template = new DwgTableTemplate<LineType>(
+				_modelBuilder.DocumentToBuild.LineTypes);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Numentries BL 70 
+			int numentries = this._objectReader.ReadBitLong();
+			for (int i = 0; i < numentries; ++i)
+				//Handle refs H NULL(soft pointer) xdicobjhandle(hard owner)
+				template.EntryHandles.Add(handleReference());
+
+			//the linetypes, ending with BYLAYER and BYBLOCK.
+			template.EntryHandles.Add(handleReference());
+			template.EntryHandles.Add(handleReference());
+
+			return template;
+		}
+
 		private DwgTemplate readLType()
 		{
 			LineType ltype = new LineType();
@@ -2415,11 +2473,114 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private DwgTemplate readViewControlObject()
+		{
+			_modelBuilder.DocumentToBuild.Views = new Tables.Collections.ViewsTable();
+			DwgTableTemplate<View> template = new DwgTableTemplate<View>(
+				_modelBuilder.DocumentToBuild.Views);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Numentries BL 70
+			int numentries = _objectReader.ReadBitLong();
+			for (int i = 0; i < numentries; ++i)
+				//Handle refs H NULL(soft pointer)	xdicobjhandle(hard owner)	the apps(soft owner)
+				template.EntryHandles.Add(handleReference());
+
+			return template;
+		}
+
+		private DwgTemplate readUcsControlObject()
+		{
+			_modelBuilder.DocumentToBuild.UCSs = new Tables.Collections.UCSTable();
+			DwgTableTemplate<UCS> template = new DwgTableTemplate<UCS>(
+				_modelBuilder.DocumentToBuild.UCSs);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Numentries BL 70
+			int numentries = _objectReader.ReadBitLong();
+			for (int i = 0; i < numentries; ++i)
+				//Handle refs H NULL(soft pointer)	xdicobjhandle(hard owner)	the apps(soft owner)
+				template.EntryHandles.Add(handleReference());
+
+			return template;
+		}
+
+		private DwgTemplate readUcs()
+		{
+			UCS ucs = new UCS();
+			DwgTemplate<UCS> template = new DwgTemplate<UCS>(ucs);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Entry name TV 2
+			ucs.Name = this._textReader.ReadVariableText();
+
+			this.readXrefDependantBit(ucs);
+
+			//Origin 3BD 10
+			ucs.Origin = this._objectReader.Read3BitDouble();
+			//X - direction 3BD 11
+			ucs.XAxis = this._objectReader.Read3BitDouble();
+			//Y - direction 3BD 12
+			ucs.YAxis = this._objectReader.Read3BitDouble();
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Elevation BD 146
+				ucs.Elevation = this._objectReader.ReadBitDouble();
+				//OrthographicViewType BS 79
+				ucs.OrthographicViewType = (OrthographicType)this._objectReader.ReadBitShort();
+				//OrthographicType BS 71
+				ucs.OrthographicType = (OrthographicType)this._objectReader.ReadBitShort();
+			}
+
+			//Common:
+			//Handle refs H ucs control object (soft pointer)
+			long control = (long)this.handleReference();
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//Base UCS Handle H 346 hard pointer
+				long baseUcs = (long)this.handleReference();
+				//Named UCS Handle H -hard pointer, not present in DXF
+				long namedHandle = (long)this.handleReference();
+			}
+
+			return template;
+		}
+
+		private DwgTemplate readVPortControlObject()
+		{
+			_modelBuilder.DocumentToBuild.Viewports = new Tables.Collections.ViewPortsTable();
+			DwgTableTemplate<VPort> template = new DwgTableTemplate<VPort>(
+				_modelBuilder.DocumentToBuild.Viewports);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Numentries BL 70
+			int numentries = _objectReader.ReadBitLong();
+			for (int i = 0; i < numentries; ++i)
+				//Handle refs H NULL(soft pointer)	xdicobjhandle(hard owner)	the apps(soft owner)
+				template.EntryHandles.Add(handleReference());
+
+			return template;
+		}
+
+
 		private DwgTemplate readAppIdControlObject()
 		{
 			_modelBuilder.DocumentToBuild.AppIds = new Tables.Collections.AppIdsTable();
 			DwgTableTemplate<AppId> template = new DwgTableTemplate<AppId>(
 				_modelBuilder.DocumentToBuild.AppIds);
+
 			_modelBuilder.AppIds = template;
 
 			readCommonNonEntityData(template);
@@ -2456,6 +2617,366 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private DwgTemplate readDimStyleControlObject()
+		{
+			DwgTableTemplate<DimensionStyle> template = new DwgTableTemplate<DimensionStyle>(
+				_modelBuilder.DocumentToBuild.DimensionStyles);
+
+			readCommonNonEntityData(template);
+
+			//Common:
+			//Numentries BL 70
+			int numentries = _objectReader.ReadBitLong();
+			for (int i = 0; i < numentries; ++i)
+				//Handle refs H NULL(soft pointer)	xdicobjhandle(hard owner)	the apps(soft owner)
+				template.EntryHandles.Add(handleReference());
+
+			return template;
+		}
+
+		private DwgTemplate readDimStyle()
+		{
+			DimensionStyle dimStyle = new DimensionStyle();
+			DwgDimensionStyleTemplate template = new DwgDimensionStyleTemplate(dimStyle);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Entry name TV 2
+			dimStyle.Name = this._textReader.ReadVariableText();
+
+			this.readXrefDependantBit(dimStyle);
+
+			//R13 & R14 Only:
+			if (this.R13_14Only)
+			{
+				//DIMTOL B 71
+				dimStyle.GenerateTolerances = this._objectReader.ReadBit();
+				//DIMLIM B 72
+				dimStyle.LimitsGeneration = this._objectReader.ReadBit();
+				//DIMTIH B 73
+				dimStyle.TextOutsideHorizontal = this._objectReader.ReadBit();
+				//DIMTOH B 74
+				dimStyle.SuppressFirstExtensionLine = this._objectReader.ReadBit();
+				//DIMSE1 B 75
+				dimStyle.SuppressSecondExtensionLine = this._objectReader.ReadBit();
+				//DIMSE2 B 76
+				dimStyle.TextInsideHorizontal = this._objectReader.ReadBit();
+				//DIMALT B 170
+				dimStyle.AlternateUnitDimensioning = this._objectReader.ReadBit();
+				//DIMTOFL B 172
+				dimStyle.TextOutsideExtensions = this._objectReader.ReadBit();
+				//DIMSAH B 173
+				dimStyle.SeparateArrowBlocks = this._objectReader.ReadBit();
+				//DIMTIX B 174
+				dimStyle.TextInsideExtensions = this._objectReader.ReadBit();
+				//DIMSOXD B 175
+				dimStyle.SuppressOutsideExtensions = this._objectReader.ReadBit();
+				//DIMALTD RC 171
+				dimStyle.AlternateUnitDecimalPlaces = this._objectReader.ReadByte();
+				//DIMZIN RC 78
+				dimStyle.ZeroHandling = (ZeroHandling)this._objectReader.ReadRawChar();
+				//DIMSD1 B 281
+				dimStyle.SuppressFirstDimensionLine = this._objectReader.ReadBit();
+				//DIMSD2 B 282
+				dimStyle.SuppressSecondDimensionLine = this._objectReader.ReadBit();
+				//DIMTOLJ RC 283
+				dimStyle.ToleranceAlignment = (ToleranceAlignment)this._objectReader.ReadRawChar();
+				//DIMJUST RC 280
+				dimStyle.TextHorizontalAlignment = (DimensionTextHorizontalAlignment)this._objectReader.ReadByte();
+				//DIMFIT RC 287
+				dimStyle.DimensionFit = this._objectReader.ReadRawChar();
+				//DIMUPT B 288
+				dimStyle.CursorUpdate = this._objectReader.ReadBit();
+				//DIMTZIN RC 284
+				dimStyle.ToleranceZeroHandling = (ZeroHandling)this._objectReader.ReadByte();
+				//DIMALTZ RC 285
+				dimStyle.AlternateUnitZeroHandling = (ZeroHandling)this._objectReader.ReadByte();
+				//DIMALTTZ RC 286
+				dimStyle.AlternateUnitToleranceZeroHandling = (ZeroHandling)this._objectReader.ReadByte();
+				//DIMTAD RC 77
+				dimStyle.TextVerticalAlignment = (DimensionTextVerticalAlignment)this._objectReader.ReadByte();
+				//DIMUNIT BS 270
+				dimStyle.DimensionUnit = this._objectReader.ReadBitShort();
+				//DIMAUNIT BS 275
+				dimStyle.AngularUnit = (AngularUnitFormat)this._objectReader.ReadBitShort();
+				//DIMDEC BS 271
+				dimStyle.DecimalPlaces = this._objectReader.ReadBitShort();
+				//DIMTDEC BS 272
+				dimStyle.ToleranceDecimalPlaces = this._objectReader.ReadBitShort();
+				//DIMALTU BS 273
+				dimStyle.AlternateUnitFormat = (LinearUnitFormat)this._objectReader.ReadBitShort();
+				//DIMALTTD BS 274
+				dimStyle.AlternateUnitToleranceDecimalPlaces = this._objectReader.ReadBitShort();
+				//DIMSCALE BD 40
+				dimStyle.ScaleFactor = this._objectReader.ReadBitDouble();
+				//DIMASZ BD 41
+				dimStyle.ArrowSize = this._objectReader.ReadBitDouble();
+				//DIMEXO BD 42
+				dimStyle.ExtensionLineOffset = this._objectReader.ReadBitDouble();
+				//DIMDLI BD 43
+				dimStyle.DimensionLineIncrement = this._objectReader.ReadBitDouble();
+				//DIMEXE BD 44
+				dimStyle.ExtensionLineExtension = this._objectReader.ReadBitDouble();
+				//DIMRND BD 45
+				dimStyle.Rounding = this._objectReader.ReadBitDouble();
+				//DIMDLE BD 46
+				dimStyle.DimensionLineExtension = this._objectReader.ReadBitDouble();
+				//DIMTP BD 47
+				dimStyle.PlusTolerance = this._objectReader.ReadBitDouble();
+				//DIMTM BD 48
+				dimStyle.MinusTolerance = this._objectReader.ReadBitDouble();
+				//DIMTXT BD 140
+				dimStyle.TextHeight = this._objectReader.ReadBitDouble();
+				//DIMCEN BD 141
+				dimStyle.CenterMarkSize = this._objectReader.ReadBitDouble();
+				//DIMTSZ BD 142
+				dimStyle.TickSize = this._objectReader.ReadBitDouble();
+				//DIMALTF BD 143
+				dimStyle.AlternateUnitScaleFactor = this._objectReader.ReadBitDouble();
+				//DIMLFAC BD 144
+				dimStyle.LinearScaleFactor = this._objectReader.ReadBitDouble();
+				//DIMTVP BD 145
+				dimStyle.TextVerticalPosition = this._objectReader.ReadBitDouble();
+				//DIMTFAC BD 146
+				dimStyle.ToleranceScaleFactor = this._objectReader.ReadBitDouble();
+				//DIMGAP BD 147
+				dimStyle.DimensionLineGap = this._objectReader.ReadBitDouble();
+				//DIMPOST T 3
+				dimStyle.PostFix = this._textReader.ReadVariableText();
+				//DIMAPOST T 4
+				dimStyle.AlternateDimensioningSuffix = this._textReader.ReadVariableText();
+
+				//DIMBLK T 5
+				template.DIMBL_KName = this._textReader.ReadVariableText();
+				//DIMBLK1 T 6
+				template.DIMBLK1_Name = this._textReader.ReadVariableText();
+				//DIMBLK2 T 7
+				template.DIMBLK2_Name = this._textReader.ReadVariableText();
+
+				//DIMCLRD BS 176
+				dimStyle.DimensionLineColor = this._objectReader.ReadColorByIndex();
+				//DIMCLRE BS 177
+				dimStyle.ExtensionLineColor = this._objectReader.ReadColorByIndex();
+				//DIMCLRT BS 178
+				dimStyle.TextColor = this._objectReader.ReadColorByIndex();
+			}
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//DIMPOST TV 3
+				dimStyle.PostFix = this._textReader.ReadVariableText();
+				//DIMAPOST TV 4
+				dimStyle.AlternateDimensioningSuffix = this._textReader.ReadVariableText();
+				//DIMSCALE BD 40
+				dimStyle.ScaleFactor = this._objectReader.ReadBitDouble();
+				//DIMASZ BD 41
+				dimStyle.ArrowSize = this._objectReader.ReadBitDouble();
+				//DIMEXO BD 42
+				dimStyle.ExtensionLineOffset = this._objectReader.ReadBitDouble();
+				//DIMDLI BD 43
+				dimStyle.DimensionLineIncrement = this._objectReader.ReadBitDouble();
+				//DIMEXE BD 44
+				dimStyle.ExtensionLineExtension = this._objectReader.ReadBitDouble();
+				//DIMRND BD 45
+				dimStyle.Rounding = this._objectReader.ReadBitDouble();
+				//DIMDLE BD 46
+				dimStyle.DimensionLineExtension = this._objectReader.ReadBitDouble();
+				//DIMTP BD 47
+				dimStyle.PlusTolerance = this._objectReader.ReadBitDouble();
+				//DIMTM BD 48
+				dimStyle.MinusTolerance = this._objectReader.ReadBitDouble();
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//DIMFXL BD 49
+				dimStyle.FixedExtensionLineLength = this._objectReader.ReadBitDouble();
+				//DIMJOGANG BD 50
+				dimStyle.JoggedRadiusDimensionTransverseSegmentAngle = this._objectReader.ReadBitDouble();
+				//DIMTFILL BS 69
+				dimStyle.TextBackgroundFillMode = (DimensionTextBackgroundFillMode)this._objectReader.ReadBitShort();
+				//DIMTFILLCLR CMC 70
+				dimStyle.TextBackgroundColor = this._mergedReaders.ReadCmColor();
+			}
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//DIMTOL B 71
+				dimStyle.GenerateTolerances = this._objectReader.ReadBit();
+				//DIMLIM B 72
+				dimStyle.LimitsGeneration = this._objectReader.ReadBit();
+				//DIMTIH B 73
+				dimStyle.TextInsideHorizontal = this._objectReader.ReadBit();
+				//DIMTOH B 74
+				dimStyle.TextOutsideHorizontal = this._objectReader.ReadBit();
+				//DIMSE1 B 75
+				dimStyle.SuppressFirstExtensionLine = this._objectReader.ReadBit();
+				//DIMSE2 B 76
+				dimStyle.SuppressSecondExtensionLine = this._objectReader.ReadBit();
+				//DIMTAD BS 77
+				dimStyle.TextVerticalAlignment = (DimensionTextVerticalAlignment)this._objectReader.ReadBitShort();
+				//DIMZIN BS 78
+				dimStyle.ZeroHandling = (ZeroHandling)this._objectReader.ReadBitShort();
+				//DIMAZIN BS 79
+				dimStyle.AngularZeroHandling = (ZeroHandling)this._objectReader.ReadBitShort();
+			}
+
+			//R2007 +:
+			if (this.R2007Plus)
+				//DIMARCSYM BS 90
+				dimStyle.ArcLengthSymbolPosition = (ArcLengthSymbolPosition)this._objectReader.ReadBitShort();
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//DIMTXT BD 140
+				dimStyle.TextHeight = this._objectReader.ReadBitDouble();
+				//DIMCEN BD 141
+				dimStyle.CenterMarkSize = this._objectReader.ReadBitDouble();
+				//DIMTSZ BD 142
+				dimStyle.TickSize = this._objectReader.ReadBitDouble();
+				//DIMALTF BD 143
+				dimStyle.AlternateUnitScaleFactor = this._objectReader.ReadBitDouble();
+				//DIMLFAC BD 144
+				dimStyle.LinearScaleFactor = this._objectReader.ReadBitDouble();
+				//DIMTVP BD 145
+				dimStyle.TextVerticalPosition = this._objectReader.ReadBitDouble();
+				//DIMTFAC BD 146
+				dimStyle.ToleranceScaleFactor = this._objectReader.ReadBitDouble();
+				//DIMGAP BD 147
+				dimStyle.DimensionLineGap = this._objectReader.ReadBitDouble();
+				//DIMALTRND BD 148
+				dimStyle.AlternateUnitRounding = this._objectReader.ReadBitDouble();
+				//DIMALT B 170
+				dimStyle.AlternateUnitDimensioning = this._objectReader.ReadBit();
+				//DIMALTD BS 171
+				dimStyle.AlternateUnitDecimalPlaces = this._objectReader.ReadBitShort();
+				//DIMTOFL B 172
+				dimStyle.TextOutsideExtensions = this._objectReader.ReadBit();
+				//DIMSAH B 173
+				dimStyle.SeparateArrowBlocks = this._objectReader.ReadBit();
+				//DIMTIX B 174
+				dimStyle.TextInsideExtensions = this._objectReader.ReadBit();
+				//DIMSOXD B 175
+				dimStyle.SuppressOutsideExtensions = this._objectReader.ReadBit();
+				//DIMCLRD BS 176
+				dimStyle.DimensionLineColor = this._mergedReaders.ReadCmColor();
+				//DIMCLRE BS 177
+				dimStyle.ExtensionLineColor = this._mergedReaders.ReadCmColor();
+				//DIMCLRT BS 178
+				dimStyle.TextColor = this._mergedReaders.ReadCmColor();
+				//DIMADEC BS 179
+				dimStyle.AngularDimensionDecimalPlaces = this._objectReader.ReadBitShort();
+				//DIMDEC BS 271
+				dimStyle.DecimalPlaces = this._objectReader.ReadBitShort();
+				//DIMTDEC BS 272
+				dimStyle.ToleranceDecimalPlaces = this._objectReader.ReadBitShort();
+				//DIMALTU BS 273
+				dimStyle.AlternateUnitFormat = (LinearUnitFormat)this._objectReader.ReadBitShort();
+				//DIMALTTD BS 274
+				dimStyle.AlternateUnitToleranceDecimalPlaces = this._objectReader.ReadBitShort();
+				//DIMAUNIT BS 275
+				dimStyle.AngularUnit = (AngularUnitFormat)this._objectReader.ReadBitShort();
+				//DIMFRAC BS 276
+				dimStyle.FractionFormat = (FractionFormat)this._objectReader.ReadBitShort();
+				//DIMLUNIT BS 277
+				dimStyle.LinearUnitFormat = (LinearUnitFormat)this._objectReader.ReadBitShort();
+				//DIMDSEP BS 278
+				dimStyle.DecimalSeparator = (char)this._objectReader.ReadBitShort();
+				//DIMTMOVE BS 279
+				dimStyle.TextMovement = (TextMovement)this._objectReader.ReadBitShort();
+				//DIMJUST BS 280
+				dimStyle.TextHorizontalAlignment = (DimensionTextHorizontalAlignment)this._objectReader.ReadBitShort();
+				//DIMSD1 B 281
+				dimStyle.SuppressFirstDimensionLine = this._objectReader.ReadBit();
+				//DIMSD2 B 282
+				dimStyle.SuppressSecondDimensionLine = this._objectReader.ReadBit();
+				//DIMTOLJ BS 283
+				dimStyle.ToleranceAlignment = (ToleranceAlignment)this._objectReader.ReadBitShort();
+				//DIMTZIN BS 284
+				dimStyle.ToleranceZeroHandling = (ZeroHandling)this._objectReader.ReadBitShort();
+				//DIMALTZ BS 285
+				dimStyle.AlternateUnitZeroHandling = (ZeroHandling)this._objectReader.ReadBitShort();
+				//DIMALTTZ BS 286
+				dimStyle.AlternateUnitToleranceZeroHandling = (ZeroHandling)this._objectReader.ReadBitShort();
+				//DIMUPT B 288
+				dimStyle.CursorUpdate = this._objectReader.ReadBit();
+				//DIMFIT BS 287
+				this._objectReader.ReadBitShort();
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+				//DIMFXLON B 290
+				dimStyle.IsExtensionLineLengthFixed = this._objectReader.ReadBit();
+
+			//R2010+:
+			if (this.R2010Plus)
+			{
+				//DIMTXTDIRECTION B 295
+				dimStyle.TextDirection = this._objectReader.ReadBit() ? TextDirection.RightToLeft : TextDirection.LeftToRight;
+				//DIMALTMZF BD ?
+				dimStyle.AltMzf = this._objectReader.ReadBitDouble();
+				//DIMALTMZS T ?
+				dimStyle.AltMzs = this._textReader.ReadVariableText();
+				//DIMMZF BD ?
+				dimStyle.Mzf = this._objectReader.ReadBitDouble();
+				//DIMMZS T ?
+				dimStyle.Mzs = this._textReader.ReadVariableText();
+			}
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//DIMLWD BS 371
+				dimStyle.DimensionLineWeight = this._objectReader.ReadBitShort();
+				//DIMLWE BS 372
+				dimStyle.ExtensionLineWeight = this._objectReader.ReadBitShort();
+			}
+
+			//Common:
+			//Unknown B 70 Seems to set the 0 - bit(1) of the 70 - group.
+			this._objectReader.ReadBit();
+
+			//Handle refs H Dimstyle control(soft pointer)
+			//[Reactors(soft pointer)]
+			//xdicobjhandle(hard owner)
+			//External reference block handle(hard pointer)
+			long block = (long)this.handleReference();
+			//340 shapefile(DIMTXSTY)(hard pointer)
+			template.DIMTXSTY = this.handleReference();
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//341 leader block(DIMLDRBLK) (hard pointer)
+				template.DIMLDRBLK = this.handleReference();
+				//342 dimblk(DIMBLK)(hard pointer)
+				template.DIMBLK = this.handleReference();
+				//343 dimblk1(DIMBLK1)(hard pointer)
+				template.DIMBLK1 = this.handleReference();
+				//344 dimblk2(DIMBLK2)(hard pointer)
+				template.DIMBLK2 = this.handleReference();
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//345 dimltype(hard pointer)
+				template.Dimltype = this.handleReference();
+				//346 dimltex1(hard pointer)
+				template.Dimltex1 = this.handleReference();
+				//347 dimltex2(hard pointer)
+				template.Dimltex2 = this.handleReference();
+			}
+
+			return template;
+		}
+
 		private DwgTemplate readGroup()
 		{
 			Group group = new Group();
@@ -2475,7 +2996,7 @@ namespace ACadSharp.IO.DWG
 			int numhandles = this._objectReader.ReadBitLong();
 			for (int index = 0; index < numhandles; ++index)
 				//Handle refs H parenthandle (soft pointer)
-				template.EntitiesHandles.Add(this.handleReference());
+				template.Handles.Add(this.handleReference());
 
 			return template;
 		}

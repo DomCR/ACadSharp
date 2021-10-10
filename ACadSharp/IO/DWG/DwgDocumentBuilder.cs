@@ -1,10 +1,4 @@
-﻿#region copyright
-//Copyright 2021, Albert Domenech.
-//All rights reserved. 
-//This source code is licensed under the MIT license. 
-//See LICENSE file in the project root for full license information.
-#endregion
-using ACadSharp.IO.Templates;
+﻿using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using System;
 using System.Collections.Generic;
@@ -13,7 +7,7 @@ using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
-	internal class DwgModelBuilder
+	internal class DwgDocumentBuilder
 	{
 		public DwgHeaderHandlesCollection HeaderHandles { get; set; }
 
@@ -29,12 +23,12 @@ namespace ACadSharp.IO.DWG
 
 		public CadDocument DocumentToBuild { get; }
 
-		public DwgModelBuilder(CadDocument document)
+		public DwgDocumentBuilder(CadDocument document)
 		{
 			DocumentToBuild = document;
 		}
 
-		public void BuildModelBase()
+		public void BuildDocument()
 		{
 			foreach (DwgBlockTemplate header in BlockHeaders)
 				header.Build(this);

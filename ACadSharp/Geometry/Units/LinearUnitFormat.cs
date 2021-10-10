@@ -6,6 +6,10 @@
 	public enum LinearUnitFormat : short
 	{
 		/// <summary>
+		/// None
+		/// </summary>
+		None = 0,
+		/// <summary>
 		/// Scientific
 		/// </summary>
 		Scientific = 1,

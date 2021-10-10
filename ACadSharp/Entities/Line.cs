@@ -10,11 +10,13 @@ namespace ACadSharp.Entities
 		public override string ObjectName => DxfFileToken.EntityLine;
 
 		//100	Subclass marker(AcDbLine)
+
 		/// <summary>
 		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
 		/// </summary>
-		[DxfCodeValue(DxfCode.Thickness)]
+		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;
+
 		/// <summary>
 		/// A 3D coordinate representing the start point of the object.
 		/// </summary>

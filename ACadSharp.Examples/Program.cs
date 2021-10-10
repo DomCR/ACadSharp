@@ -25,19 +25,12 @@ namespace ACadSharp.Examples
 
 		static void ReadDwg()
 		{
-			//string file = Path.Combine(PathSamples, "dwg/cad_v2000.dwg");
-			string file = Path.Combine(PathSamples, "dwg/cad_v2018.dwg");
+			string file = Path.Combine(PathSamples, "dwg/cad_v2004.dwg");
 
-			using (DwgReader reader = new DwgReader(file))
+			using (DwgReader reader = new DwgReader(file, onNotification))
 			{
-				CadDocument doc = reader.Read(onNotification);
+				CadDocument doc = reader.Read();
 			}
-		}
-
-		private static void onProgress(object sender, ProgressEventArgs e)
-		{
-			Console.WriteLine($"Progress: {e.Progress * 100}%");
-			Console.WriteLine($"Message: {e.Message}");
 		}
 
 		private static void onNotification(object sender, NotificationEventArgs e)

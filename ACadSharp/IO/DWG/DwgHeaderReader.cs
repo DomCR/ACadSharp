@@ -283,7 +283,7 @@ namespace ACadSharp.IO.DWG
 			//BS : ISOLINES
 			header.SurfaceIsolineCount = sreader.ReadBitShort();
 			//BS : CMLJUST
-			header.CurrentMultilineJustification = (VerticalAlignmentType)sreader.ReadBitShort();
+			header.CurrentMultilineJustification = (Entities.TextVerticalAlignment)sreader.ReadBitShort();
 			//BS : TEXTQLTY
 			header.TextQuality = sreader.ReadBitShort();
 			//BD : LTSCALE
@@ -406,7 +406,7 @@ namespace ACadSharp.IO.DWG
 			//2RD: LIMMAX(PSPACE)
 			header.PaperSpaceUcs.PaperSpaceLimitsMax = sreader.Read2RawDouble();
 			//BD: ELEVATION(PSPACE)
-			header.PaperSpaceUcs.PaperSpaceElevation = sreader.ReadBitDouble();
+			header.PaperSpaceUcs.Elevation = sreader.ReadBitDouble();
 			//3BD: UCSORG(PSPACE)
 			header.PaperSpaceUcs.Origin = sreader.Read3BitDouble();
 			//3BD: UCSXDIR(PSPACE)
@@ -523,29 +523,29 @@ namespace ACadSharp.IO.DWG
 				//B : DIMSOXD
 				header.DimensionStyleOverrides.SuppressOutsideExtensions = sreader.ReadBit();
 				//RC : DIMALTD
-				header.DimensionStyleOverrides.AlternateUnitDecimalPlaces = sreader.ReadRawChar();
+				header.DimensionStyleOverrides.AlternateUnitDecimalPlaces = (short)sreader.ReadRawChar();
 				//RC : DIMZIN
-				header.DimensionStyleOverrides.ZeroHandling = sreader.ReadRawChar();
+				header.DimensionStyleOverrides.ZeroHandling = (Tables.ZeroHandling)sreader.ReadRawChar();
 				//B : DIMSD1
 				header.DimensionStyleOverrides.SuppressFirstDimensionLine = sreader.ReadBit();
 				//B : DIMSD2
 				header.DimensionStyleOverrides.SuppressSecondDimensionLine = sreader.ReadBit();
 				//RC : DIMTOLJ
-				header.DimensionStyleOverrides.ToleranceAlignment = sreader.ReadRawChar();
+				header.DimensionStyleOverrides.ToleranceAlignment = (Tables.ToleranceAlignment)sreader.ReadRawChar();
 				//RC : DIMJUST
-				header.DimensionStyleOverrides.TextHorizontalAlignment = sreader.ReadRawChar();
+				header.DimensionStyleOverrides.TextHorizontalAlignment = (Tables.DimensionTextHorizontalAlignment)sreader.ReadRawChar();
 				//RC : DIMFIT
 				header.DimensionStyleOverrides.DimensionFit = sreader.ReadRawChar();
 				//B : DIMUPT
 				header.DimensionStyleOverrides.CursorUpdate = sreader.ReadBit();
 				//RC : DIMTZIN
-				header.DimensionStyleOverrides.ToleranceZeroHandling = sreader.ReadRawChar();
+				header.DimensionStyleOverrides.ToleranceZeroHandling = (Tables.ZeroHandling)sreader.ReadRawChar();
 				//RC: DIMALTZ
-				header.DimensionStyleOverrides.AlternateUnitZeroHandling = sreader.ReadRawChar();
+				header.DimensionStyleOverrides.AlternateUnitZeroHandling = (Tables.ZeroHandling)sreader.ReadRawChar();
 				//RC : DIMALTTZ
-				header.DimensionStyleOverrides.AlternateUnitToleranceZeroHandling = sreader.ReadRawChar();
+				header.DimensionStyleOverrides.AlternateUnitToleranceZeroHandling = (Tables.ZeroHandling)sreader.ReadRawChar();
 				//RC : DIMTAD
-				header.DimensionStyleOverrides.TextVerticalAlignment = sreader.ReadRawChar();
+				header.DimensionStyleOverrides.TextVerticalAlignment = (Tables.DimensionTextVerticalAlignment)sreader.ReadRawChar();
 				//BS : DIMUNIT
 				header.DimensionStyleOverrides.DimensionUnit = sreader.ReadBitShort();
 				//BS : DIMAUNIT
@@ -555,7 +555,7 @@ namespace ACadSharp.IO.DWG
 				//BS : DIMTDEC
 				header.DimensionStyleOverrides.ToleranceDecimalPlaces = sreader.ReadBitShort();
 				//BS : DIMALTU
-				header.DimensionStyleOverrides.AlternateUnitFormat = sreader.ReadBitShort();
+				header.DimensionStyleOverrides.AlternateUnitFormat = (LinearUnitFormat)sreader.ReadBitShort();
 				//BS : DIMALTTD
 				header.DimensionStyleOverrides.AlternateUnitToleranceDecimalPlaces = sreader.ReadBitShort();
 				//H : DIMTXSTY(hard pointer)
@@ -590,7 +590,7 @@ namespace ACadSharp.IO.DWG
 				//BD : DIMJOGANG
 				header.DimensionStyleOverrides.JoggedRadiusDimensionTransverseSegmentAngle = sreader.ReadBitDouble();
 				//BS : DIMTFILL
-				header.DimensionStyleOverrides.TextBackgroundFillMode = sreader.ReadBitShort();
+				header.DimensionStyleOverrides.TextBackgroundFillMode = (Tables.DimensionTextBackgroundFillMode)sreader.ReadBitShort();
 				//CMC : DIMTFILLCLR
 				header.DimensionStyleOverrides.TextBackgroundColor = sreader.ReadCmColor();
 			}
@@ -611,18 +611,18 @@ namespace ACadSharp.IO.DWG
 				//B : DIMSE2
 				header.DimensionStyleOverrides.SuppressSecondExtensionLine = sreader.ReadBit();
 				//BS : DIMTAD
-				header.DimensionStyleOverrides.TextVerticalAlignment = (char)sreader.ReadBitShort();
+				header.DimensionStyleOverrides.TextVerticalAlignment = (Tables.DimensionTextVerticalAlignment)(char)sreader.ReadBitShort();
 				//BS : DIMZIN
-				header.DimensionStyleOverrides.ZeroHandling = (char)sreader.ReadBitShort();
+				header.DimensionStyleOverrides.ZeroHandling = (Tables.ZeroHandling)(char)sreader.ReadBitShort();
 				//BS : DIMAZIN
-				header.DimensionStyleOverrides.AngularZeroHandling = sreader.ReadBitShort();
+				header.DimensionStyleOverrides.AngularZeroHandling = (Tables.ZeroHandling)sreader.ReadBitShort();
 			}
 
 			//R2007 + Only:
 			if (R2007Plus)
 			{
 				//BS: DIMARCSYM
-				header.DimensionStyleOverrides.ArcLengthSymbolPosition = sreader.ReadBitShort();
+				header.DimensionStyleOverrides.ArcLengthSymbolPosition = (Tables.ArcLengthSymbolPosition)sreader.ReadBitShort();
 			}
 
 			//Common:
@@ -666,7 +666,7 @@ namespace ACadSharp.IO.DWG
 				//B : DIMALT
 				header.DimensionStyleOverrides.AlternateUnitDimensioning = sreader.ReadBit();
 				//BS : DIMALTD
-				header.DimensionStyleOverrides.AlternateUnitDecimalPlaces = (char)sreader.ReadBitShort();
+				header.DimensionStyleOverrides.AlternateUnitDecimalPlaces = (short)(char)sreader.ReadBitShort();
 				//B : DIMTOFL
 				header.DimensionStyleOverrides.TextOutsideExtensions = sreader.ReadBit();
 				//B : DIMSAH
@@ -695,33 +695,33 @@ namespace ACadSharp.IO.DWG
 				//BS : DIMTDEC
 				header.DimensionStyleOverrides.ToleranceDecimalPlaces = sreader.ReadBitShort();
 				//BS : DIMALTU
-				header.DimensionStyleOverrides.AlternateUnitFormat = sreader.ReadBitShort();
+				header.DimensionStyleOverrides.AlternateUnitFormat = (LinearUnitFormat)sreader.ReadBitShort();
 				//BS : DIMALTTD
 				header.DimensionStyleOverrides.AlternateUnitToleranceDecimalPlaces = sreader.ReadBitShort();
 				//BS : DIMAUNIT
 				header.DimensionStyleOverrides.AngularDimensionDecimalPlaces = sreader.ReadBitShort();
 				//BS : DIMFRAC
-				header.DimensionStyleOverrides.FractionFormat = sreader.ReadBitShort();
+				header.DimensionStyleOverrides.FractionFormat = (Tables.FractionFormat)sreader.ReadBitShort();
 				//BS : DIMLUNIT
-				header.DimensionStyleOverrides.LinearUnitFormat = sreader.ReadBitShort();
+				header.DimensionStyleOverrides.LinearUnitFormat = (LinearUnitFormat)sreader.ReadBitShort();
 				//BS : DIMDSEP
 				header.DimensionStyleOverrides.DecimalSeparator = (char)sreader.ReadBitShort();
 				//BS : DIMTMOVE
-				header.DimensionStyleOverrides.TextMovement = sreader.ReadBitShort();
+				header.DimensionStyleOverrides.TextMovement = (Tables.TextMovement)sreader.ReadBitShort();
 				//BS : DIMJUST
-				header.DimensionStyleOverrides.TextHorizontalAlignment = (char)sreader.ReadBitShort();
+				header.DimensionStyleOverrides.TextHorizontalAlignment = (Tables.DimensionTextHorizontalAlignment)(char)sreader.ReadBitShort();
 				//B : DIMSD1
 				header.DimensionStyleOverrides.SuppressFirstExtensionLine = sreader.ReadBit();
 				//B : DIMSD2
 				header.DimensionStyleOverrides.SuppressSecondExtensionnLine = sreader.ReadBit();
 				//BS : DIMTOLJ
-				header.DimensionStyleOverrides.ToleranceAlignment = (char)sreader.ReadBitShort();
+				header.DimensionStyleOverrides.ToleranceAlignment = (Tables.ToleranceAlignment)(char)sreader.ReadBitShort();
 				//BS : DIMTZIN
-				header.DimensionStyleOverrides.ToleranceZeroHandling = (char)sreader.ReadBitShort();
+				header.DimensionStyleOverrides.ToleranceZeroHandling = (Tables.ZeroHandling)(char)sreader.ReadBitShort();
 				//BS: DIMALTZ
-				header.DimensionStyleOverrides.AlternateUnitZeroHandling = (char)sreader.ReadBitShort();
+				header.DimensionStyleOverrides.AlternateUnitZeroHandling = (Tables.ZeroHandling)(char)sreader.ReadBitShort();
 				//BS : DIMALTTZ
-				header.DimensionStyleOverrides.AlternateUnitToleranceZeroHandling = (char)sreader.ReadBitShort();
+				header.DimensionStyleOverrides.AlternateUnitToleranceZeroHandling = (Tables.ZeroHandling)(char)sreader.ReadBitShort();
 				//B : DIMUPT
 				header.DimensionStyleOverrides.CursorUpdate = sreader.ReadBit();
 				//BS : DIMATFIT
@@ -739,7 +739,7 @@ namespace ACadSharp.IO.DWG
 			if (R2010Plus)
 			{
 				//B: DIMTXTDIRECTION
-				header.DimensionStyleOverrides.TextDirection = sreader.ReadBit();
+				header.DimensionStyleOverrides.TextDirection = sreader.ReadBit() ? Tables.TextDirection.RightToLeft : Tables.TextDirection.LeftToRight;
 				//BD : DIMALTMZF
 				header.DimensionStyleOverrides.AltMzf = sreader.ReadBitDouble();
 				//T : DIMALTMZS

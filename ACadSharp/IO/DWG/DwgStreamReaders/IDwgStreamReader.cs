@@ -232,6 +232,8 @@ namespace ACadSharp.IO.DWG
 		/// <returns></returns>
 		Color ReadEnColor(out Transparency transparency, out bool flag);
 
+		Color ReadColorByIndex();
+
 		/// <summary>
 		/// OT : Object type
 		/// </summary>
