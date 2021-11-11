@@ -25,31 +25,31 @@ namespace ACadSharp.IO.DWG
 
 		public DwgDocumentBuilder(CadDocument document)
 		{
-			DocumentToBuild = document;
+			this.DocumentToBuild = document;
 		}
 
 		public void BuildDocument()
 		{
-			foreach (DwgBlockTemplate header in BlockHeaders)
+			if (this.AppIds != null)
+				this.AppIds.Build(this);
+
+			if (this.HeaderHandles.BYLAYER != null && this.TryGetCadObject(this.HeaderHandles.BYLAYER.Value, out LineType lineType))
+				this.DocumentToBuild.LineTypes.Add(lineType);
+
+			if (this.HeaderHandles.BYBLOCK != null && this.TryGetCadObject(this.HeaderHandles.BYBLOCK.Value, out LineType byBlock))
+				this.DocumentToBuild.LineTypes.Add(byBlock);
+
+			if (this.HeaderHandles.CONTINUOUS != null && this.TryGetCadObject(this.HeaderHandles.CONTINUOUS.Value, out LineType continuous))
+				this.DocumentToBuild.LineTypes.Add(continuous);
+
+			foreach (DwgBlockTemplate header in this.BlockHeaders)
 				header.Build(this);
 
-			foreach (ICadObjectBuilder block in Blocks)
+			foreach (ICadObjectBuilder block in this.Blocks)
 				block.Build(this);
 
-			if (BlockControlTemplate != null)
-				BlockControlTemplate.Build(this);
-
-			if (AppIds != null)
-				AppIds.Build(this);
-
-			if (HeaderHandles.BYLAYER != null && TryGetCadObject(HeaderHandles.BYLAYER.Value, out LineType lineType))
-				DocumentToBuild.LineTypes.Add(lineType);
-
-			if (HeaderHandles.BYBLOCK != null && TryGetCadObject(HeaderHandles.BYBLOCK.Value, out LineType byBlock))
-				DocumentToBuild.LineTypes.Add(byBlock);
-
-			if (HeaderHandles.CONTINUOUS != null && TryGetCadObject(HeaderHandles.CONTINUOUS.Value, out LineType continuous))
-				DocumentToBuild.LineTypes.Add(continuous);
+			if (this.BlockControlTemplate != null)
+				this.BlockControlTemplate.Build(this);
 
 			//foreach (ICadObjectBuilder item in this.DictionaryBuilders)
 			//	item.Build(this);
@@ -57,12 +57,12 @@ namespace ACadSharp.IO.DWG
 			//foreach (ICadObjectBuilder item in this.DictionaryChildBuilders)
 			//	item.Build(this);
 
-			if (HeaderHandles.DIMSTYLE != null && TryGetCadObject(HeaderHandles.DIMSTYLE.Value, out DimensionStyle dstyle))
-				DocumentToBuild.DimensionStyles.Add(dstyle);
+			if (this.HeaderHandles.DIMSTYLE != null && this.TryGetCadObject(this.HeaderHandles.DIMSTYLE.Value, out DimensionStyle dstyle))
+				this.DocumentToBuild.DimensionStyles.Add(dstyle);
 
 			//Build all the objects in the document
-			foreach (ICadObjectBuilder item in Templates.Values.Where(b => b.ToBuild))
-				item.Build(this);
+			//foreach (ICadObjectBuilder item in Templates.Values.Where(b => b.ToBuild))
+			//	item.Build(this);
 
 			//foreach (var obj in this.ViewportTemplates)
 			//	obj.Build(this);
@@ -71,7 +71,7 @@ namespace ACadSharp.IO.DWG
 
 		public CadObject GetCadObject(ulong handle)
 		{
-			if (ObjectsMap.TryGetValue(handle, out CadObject cadObject))
+			if (this.ObjectsMap.TryGetValue(handle, out CadObject cadObject))
 				return cadObject;
 			else
 				return null;
@@ -79,7 +79,7 @@ namespace ACadSharp.IO.DWG
 
 		public T GetCadObject<T>(ulong handle) where T : CadObject
 		{
-			if (ObjectsMap.TryGetValue(handle, out CadObject cadObject))
+			if (this.ObjectsMap.TryGetValue(handle, out CadObject cadObject))
 			{
 				if (cadObject is T)
 					return (T)cadObject;
@@ -90,7 +90,7 @@ namespace ACadSharp.IO.DWG
 
 		public bool TryGetCadObject<T>(ulong handle, out T value) where T : CadObject
 		{
-			if (ObjectsMap.TryGetValue(handle, out CadObject cadObject))
+			if (this.ObjectsMap.TryGetValue(handle, out CadObject cadObject))
 			{
 				if (cadObject is T)
 				{
@@ -105,7 +105,7 @@ namespace ACadSharp.IO.DWG
 
 		public T GetObjectBuilder<T>(ulong handle) where T : DwgTemplate
 		{
-			if (Templates.TryGetValue(handle, out DwgTemplate builder))
+			if (this.Templates.TryGetValue(handle, out DwgTemplate builder))
 			{
 				return (T)builder;
 			}
@@ -115,7 +115,7 @@ namespace ACadSharp.IO.DWG
 
 		public bool TryGetObjectBuilder<T>(ulong handle, out T value) where T : DwgTemplate
 		{
-			if (Templates.TryGetValue(handle, out DwgTemplate template))
+			if (this.Templates.TryGetValue(handle, out DwgTemplate template))
 			{
 				if (template is T)
 				{
@@ -131,7 +131,7 @@ namespace ACadSharp.IO.DWG
 		[Obsolete]
 		public void BuildObjects()
 		{
-			foreach (var item in Templates.Values)
+			foreach (var item in this.Templates.Values)
 			{
 				item.Build(this);
 			}

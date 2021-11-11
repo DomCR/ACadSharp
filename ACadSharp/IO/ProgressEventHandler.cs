@@ -4,29 +4,24 @@ using System.Text;
 
 namespace ACadSharp.IO
 {
-	public delegate void ProgressEventHandler(object sender, ProgressEventArgs e);
-
-	public class ProgressEventArgs : EventArgs
-	{
-		public float Progress { get; }
-		public string Message { get; set; }
-		public string Error { get; set; }
-		public ProgressEventArgs(float progress, string message)
-		{
-			Progress = progress;
-			Message = message;
-		}
-	}
-
 	public delegate void NotificationEventHandler(object sender, NotificationEventArgs e);
+
+	public enum NotificationType
+	{
+		None,
+		NotSuported,
+		ObjectNotFound,
+	}
 
 	public class NotificationEventArgs : EventArgs
 	{
 		public string Message { get; }
+		public NotificationType NotificationType { get; set; }
 
-		public NotificationEventArgs(string message)
+		public NotificationEventArgs(string message, NotificationType notificationType = NotificationType.None)
 		{
 			this.Message = message;
+			this.NotificationType = notificationType;
 		}
 	}
 }

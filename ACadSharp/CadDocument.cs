@@ -4,6 +4,7 @@
 //This source code is licensed under the MIT license. 
 //See LICENSE file in the project root for full license information.
 #endregion
+using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Header;
@@ -73,6 +74,11 @@ namespace ACadSharp
 		{
 			ulong value = _cadObjects.Keys.Max() + 1;
 			cadObject.Handle = value;
+		}
+
+		internal void AddBlock(Block block, bool addEntities)
+		{
+
 		}
 	}
 }

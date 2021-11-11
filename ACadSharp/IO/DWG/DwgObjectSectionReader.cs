@@ -39,20 +39,14 @@ namespace ACadSharp.IO.DWG
 		/// <summary>
 		/// During the object reading the handles will be added at the queue.
 		/// </summary>
-		private Queue<ulong> m_handles;
+		private Queue<ulong> _handles;
 
-		private readonly Dictionary<ulong, long> m_map;
-		private readonly Dictionary<short, DxfClass> m_classes;
+		private readonly Dictionary<ulong, long> _map;
+		private readonly Dictionary<short, DxfClass> _classes;
 
-		/// <summary>
-		/// Store the readed objects to create the document once finished
-		/// </summary>
-		private Dictionary<ulong, CadObject> m_objectMap { get { return _modelBuilder.ObjectsMap; } }// = new Dictionary<ulong, CadObject>();
-
-		private Dictionary<ulong, DwgTemplate> m_templates { get { return _modelBuilder.Templates; } } //= new List<DwgTemplate>();
 		private DwgDocumentBuilder _modelBuilder;
 
-		private readonly IDwgStreamReader m_reader;
+		private readonly IDwgStreamReader _reader;
 
 		/// <summary>
 		/// Needed to handle some items like colors or some text data that may not be present.
@@ -77,78 +71,31 @@ namespace ACadSharp.IO.DWG
 		/// <summary>
 		/// Stream decoded using the crc.
 		/// </summary>
-		private IDwgStreamReader _crcReader;
+		private readonly IDwgStreamReader _crcReader;
 
-		private CRC8StreamHandler _crcStream;
+		private readonly CRC8StreamHandler _crcStream;
 
-		public DwgObjectSectionReader(ACadVersion version, DwgDocumentBuilder builder,
-			IDwgStreamReader reader, Queue<ulong> handles,
+		public DwgObjectSectionReader(
+			ACadVersion version, 
+			DwgDocumentBuilder builder,
+			IDwgStreamReader reader,
+			Queue<ulong> handles,
 			Dictionary<ulong, long> handleMap,
 			List<DxfClass> classes) : base(version)
 		{
 			_modelBuilder = builder;
 
-			m_reader = reader;
+			_reader = reader;
 
-			m_handles = new Queue<ulong>(handles);
-			m_map = new Dictionary<ulong, long>(handleMap);
-			m_classes = classes.ToDictionary(x => x.ClassNumber, x => x);
+			_handles = new Queue<ulong>(handles);
+			_map = new Dictionary<ulong, long>(handleMap);
+			_classes = classes.ToDictionary(x => x.ClassNumber, x => x);
 
 			//Initialize the crc stream
 			//RS : CRC for the data section, starting after the sentinel. Use 0xC0C1 for the initial value.
-			_crcStream = new CRC8StreamHandler(m_reader.Stream, 0xC0C1);
+			_crcStream = new CRC8StreamHandler(_reader.Stream, 0xC0C1);
 			//Setup the entity handler
 			_crcReader = DwgStreamReader.GetStreamHandler(m_version, _crcStream);
-		}
-
-		/// <summary>
-		/// Read all the entities, tables and objects in the file.
-		/// </summary>
-		[System.Obsolete]
-		public void Read(ProgressEventHandler progress = null)
-		{
-			progress?.Invoke(this, new ProgressEventArgs(0, "Start reading the object section"));
-
-			int n = 0;
-			//Read each handle in the header
-			while (m_handles.Any())
-			{
-				ulong handle = m_handles.Dequeue();
-
-				if (!m_map.TryGetValue(handle, out long offset) || m_objectMap.ContainsKey(handle))
-				{
-					//Notify the readed object
-					progress?.Invoke(this, new ProgressEventArgs(n / (float)m_map.Count, $"NULL readed: {n} of {m_map.Count}"));
-					n++;
-					continue;
-				}
-
-				//Get the object type
-				ObjectType type = getEntityType(offset);
-
-				//Notify the readed object
-				progress?.Invoke(this, new ProgressEventArgs(n / (float)m_map.Count, $"{type} readed: {n} of {m_map.Count}"));
-				n++;
-
-				//Read the object
-				DwgTemplate template = readObject(type);
-				if (template == null)
-				{
-					//Add the object as null
-					m_objectMap[handle] = null;
-					continue;
-				}
-
-				//Add the object to the map
-				m_objectMap[template.CadObject.Handle] = template.CadObject;
-				//Add the template to the list to be processed
-				m_templates[template.CadObject.Handle] = template;
-			}
-
-			//Build the templates in the document
-			//buildTemplates();
-			//_modelBuilder.BuildObjects();
-			_modelBuilder.BuildDocument();
 		}
 
 		/// <summary>
@@ -157,12 +104,12 @@ namespace ACadSharp.IO.DWG
 		public void Read(NotificationEventHandler notifications = null)
 		{
 			//Read each handle in the header
-			while (m_handles.Any())
+			while (_handles.Any())
 			{
-				ulong handle = m_handles.Dequeue();
+				ulong handle = _handles.Dequeue();
 
 				//Check if the handle has already been read
-				if (!m_map.TryGetValue(handle, out long offset) || m_objectMap.ContainsKey(handle))
+				if (!_map.TryGetValue(handle, out long offset) || _modelBuilder.ObjectsMap.ContainsKey(handle))
 				{
 					continue;
 				}
@@ -175,14 +122,14 @@ namespace ACadSharp.IO.DWG
 				if (template == null)
 				{
 					//Add the object as null
-					m_objectMap[handle] = null;
+					_modelBuilder.ObjectsMap[handle] = null;
 					continue;
 				}
 
 				//Add the object to the map
-				m_objectMap[template.CadObject.Handle] = template.CadObject;
+				_modelBuilder.ObjectsMap[template.CadObject.Handle] = template.CadObject;
 				//Add the template to the list to be processed
-				m_templates[template.CadObject.Handle] = template;
+				_modelBuilder.Templates[template.CadObject.Handle] = template;
 			}
 
 			//Build the templates in the document
@@ -254,7 +201,7 @@ namespace ACadSharp.IO.DWG
 		#region Common entity data
 
 		/// <summary>
-		/// Get the handle of the entity and saves the value to the <see cref="m_handles"/>
+		/// Get the handle of the entity and saves the value to the <see cref="_handles"/>
 		/// </summary>
 		/// <returns>the handle to reference into the entity</returns>
 		private ulong handleReference()
@@ -263,7 +210,7 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <summary>
-		/// Get the handle of the entity and saves the value to the <see cref="m_handles"/>
+		/// Get the handle of the entity and saves the value to the <see cref="_handles"/>
 		/// </summary>
 		/// <returns>the handle to reference into the entity</returns>
 		private ulong handleReference(ulong handle)
@@ -271,9 +218,9 @@ namespace ACadSharp.IO.DWG
 			//Read the handle
 			ulong value = _handlesReader.HandleReference(handle);
 
-			if (!m_objectMap.ContainsKey(value) && !m_handles.Contains(value) && value != 0)
+			if (!_modelBuilder.ObjectsMap.ContainsKey(value) && !_handles.Contains(value) && value != 0)
 				//Add the value to the handles queue to be processed
-				m_handles.Enqueue(value);
+				_handles.Enqueue(value);
 
 			return value;
 		}
@@ -347,7 +294,6 @@ namespace ACadSharp.IO.DWG
 			readReactors(template);
 
 			//R13-R14 Only:
-			//if (m_version >= ACadVersion.AC1012 && m_version <= ACadVersion.AC1014)
 			if (R13_14Only)
 			{
 				//8 LAYER (hard pointer)
@@ -371,8 +317,8 @@ namespace ACadSharp.IO.DWG
 			}
 			else if (!(m_version >= ACadVersion.AC1018))
 			{
-				m_handles.Enqueue(entity.Handle - 1UL);
-				m_handles.Enqueue(entity.Handle + 1UL);
+				_handles.Enqueue(entity.Handle - 1UL);
+				_handles.Enqueue(entity.Handle + 1UL);
 			}
 
 			//Color	CMC(B)	62
@@ -399,7 +345,7 @@ namespace ACadSharp.IO.DWG
 			//R2000+:
 			//8 LAYER (hard pointer)
 			template.LayerHandle = handleReference();
-			
+
 			//Ltype flags BB 00 = bylayer, 01 = byblock, 10 = continous, 11 = linetype handle present at end of object
 			template.LtypeFlags = _objectReader.Read2Bits();
 
@@ -844,7 +790,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readUnlistedType(short classNumber, NotificationEventHandler notifications = null)
 		{
-			if (!m_classes.TryGetValue(classNumber, out DxfClass c))
+			if (!_classes.TryGetValue(classNumber, out DxfClass c))
 				return null;
 
 			DwgTemplate template = null;
@@ -2063,9 +2009,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readBlockControlObject()
 		{
-			//TODO: Fix the block control object reader
 			DwgBlockCtrlObjectTemplate template = new DwgBlockCtrlObjectTemplate();
-
 			_modelBuilder.BlockControlTemplate = template;
 
 			readCommonNonEntityData(template);
@@ -2470,7 +2414,7 @@ namespace ACadSharp.IO.DWG
 				//handleReference();
 			}
 
-			return template;
+			return null;
 		}
 
 		private DwgTemplate readViewControlObject()

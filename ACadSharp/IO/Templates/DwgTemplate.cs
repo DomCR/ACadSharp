@@ -10,22 +10,8 @@ using System.Text;
 
 namespace ACadSharp.IO.Templates
 {
-	internal interface ICadObjectBuilder
-	{
-		bool ToBuild { get; }
-		void Build(DwgDocumentBuilder builder);
-	}
-
-	internal class DwgTemplate<T> : DwgTemplate
-		where T : CadObject
-	{
-		public new T CadObject { get { return (T)base.CadObject; } set { base.CadObject = value; } }
-		public DwgTemplate(T cadObject) : base(cadObject) { }
-	}
-
 	internal abstract class DwgTemplate : ICadObjectBuilder
 	{
-		public bool ToBuild { get; private set; } = true;
 		public CadObject CadObject { get; set; }
 
 		/// <summary>
@@ -34,83 +20,42 @@ namespace ACadSharp.IO.Templates
 		public ulong? XDictHandle { get; set; }
 		public List<ulong> ReactorsHandles { get; } = new List<ulong>();
 
-		public DwgTemplate() { }
 		public DwgTemplate(CadObject cadObject)
 		{
-			CadObject = cadObject;
+			this.CadObject = cadObject;
 		}
 
 		public virtual void Build(DwgDocumentBuilder builder)
 		{
-			ToBuild = false;
-
-			if (CadObject.OwnerHandle != null)
+			if (this.CadObject.OwnerHandle.HasValue)
 			{
-				//TODO: Set the owner of the object??
+				CadObject owner = builder.GetCadObject(this.CadObject.OwnerHandle.Value);
+				this.CadObject.Owner = owner;
 			}
 
-			if (XDictHandle.HasValue)
+			if (this.XDictHandle.HasValue)
 			{
 				//CadObject.XDict = builder.GetCadObject<XDictionary>(XDictHandle)
 			}
 
-			foreach (ulong handle in ReactorsHandles)
+			foreach (ulong handle in this.ReactorsHandles)
 			{
 				CadObject reactor = builder.GetCadObject(handle);
 				if (reactor != null)
-					CadObject.Reactors.Add(handle, reactor);
+					this.CadObject.Reactors.Add(handle, reactor);
 			}
 		}
 	}
 
-	internal class DwgEntityTemplate : DwgTemplate<Entity>
+	internal class DwgTemplate<T> : DwgTemplate
+		where T : CadObject
 	{
-		public byte EntityMode { get; set; }
-		public byte LtypeFlags { get; set; }
-		public ulong LayerHandle { get; set; }
-		public ulong? LineTypeHandle { get; set; }
-		public ulong? PrevEntity { get; set; }
-		public ulong? NextEntity { get; set; }
-		public ulong? ColorHandle { get; set; }
-
-		public DwgEntityTemplate(Entity entity) : base(entity) { }
+		public new T CadObject { get { return (T)base.CadObject; } set { base.CadObject = value; } }
+		public DwgTemplate(T cadObject) : base(cadObject) { }
 
 		public override void Build(DwgDocumentBuilder builder)
 		{
 			base.Build(builder);
-
-			CadObject.Layer = builder.GetCadObject<Layer>(LayerHandle);
-
-			switch (LtypeFlags)
-			{
-				case 0:
-					CadObject.LineType = null;    //Get the linetype by layer
-					break;
-				case 1:
-					CadObject.LineType = null;//Get the linetype by block
-					break;
-				case 2:
-					CadObject.LineType = null;//Get the linetype by continuous
-					break;
-				case 3:
-					if (LineTypeHandle.HasValue)
-					{
-						CadObject.LineType = builder.GetCadObject<LineType>(LineTypeHandle.Value);
-					}
-					break;
-			}
-
-			if (ColorHandle.HasValue)
-			{
-				var dwgColor = builder.GetCadObject<DwgColorTemplate.DwgColor>(ColorHandle.Value);
-
-				if (dwgColor != null)
-					CadObject.Color = dwgColor.Color;
-			}
-			else
-			{
-				//TODO: Set color by name, only for dxf?
-			}
 		}
 	}
 
@@ -190,9 +135,9 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			Insert insert = CadObject as Insert;
+			Insert insert = this.CadObject as Insert;
 
-			foreach (var item in OwnedHandles)
+			foreach (var item in this.OwnedHandles)
 			{
 
 			}
@@ -220,8 +165,8 @@ namespace ACadSharp.IO.Templates
 		/// <param name="template"></param>
 		public void AddPath(DwgBoundaryPathTemplate template)
 		{
-			(CadObject as Hatch).Paths.Add(template.Path);
-			m_pathTempaltes.Add(template);
+			(this.CadObject as Hatch).Paths.Add(template.Path);
+			this.m_pathTempaltes.Add(template);
 		}
 	}
 
@@ -284,30 +229,30 @@ namespace ACadSharp.IO.Templates
 			//if (HardOwnerHandle.HasValue)
 			//	TypedObject.BlockBegin = builder.GetCadObject<BlockBegin>(this.HardOwnerHandle);
 
-			if (LayoutHandle.HasValue && builder.TryGetCadObject<Layout>(LayoutHandle.Value, out Layout layout))
+			if (this.LayoutHandle.HasValue && builder.TryGetCadObject<Layout>(this.LayoutHandle.Value, out Layout layout))
 			{
-				layout.AssociatedBlock = CadObject;
+				layout.AssociatedBlock = this.CadObject;
 			}
 
-			if (FirstEntityHandle.HasValue
-				&& SecondEntityHandle.HasValue
-				&& builder.TryGetObjectBuilder(FirstEntityHandle.Value, out DwgEntityTemplate template))
+			if (this.FirstEntityHandle.HasValue
+				&& this.SecondEntityHandle.HasValue
+				&& builder.TryGetObjectBuilder(this.FirstEntityHandle.Value, out DwgEntityTemplate template))
 			{
 				do
 				{
 					if (template.NextEntity == null)
 						break;
 
-					CadObject.Entities.Add(template.CadObject);
+					this.CadObject.Entities.Add(template.CadObject);
 					template = builder.GetObjectBuilder<DwgEntityTemplate>(template.NextEntity.Value);
 				} while (template != null);
 			}
 
-			foreach (ulong handle in OwnedObjectsHandlers)
+			foreach (ulong handle in this.OwnedObjectsHandlers)
 			{
 				if (builder.TryGetCadObject<Entity>(handle, out Entity child))
 				{
-					CadObject.Entities.Add(child);
+					this.CadObject.Entities.Add(child);
 				}
 			}
 
@@ -323,21 +268,26 @@ namespace ACadSharp.IO.Templates
 
 	internal class DwgBlockCtrlObjectTemplate : DwgTemplate
 	{
-		public List<ulong> Handles { get; set; } = new List<ulong>();
 		public ulong ModelSpaceHandle { get; set; }
 		public ulong PaperSpaceHandle { get; set; }
+		public List<ulong> Handles { get; set; } = new List<ulong>();
 		public DwgBlockCtrlObjectTemplate() : base(new BlockRecordsTable()) { }
 
 		public override void Build(DwgDocumentBuilder builder)
 		{
 			base.Build(builder);
 
+			addBlockToModel(builder, ModelSpaceHandle);
+			addBlockToModel(builder, PaperSpaceHandle);
 
+			foreach (ulong handle in this.Handles)
+				this.addBlockToModel(builder, handle);
 		}
 
-		private void addBlockToModel(DwgDocumentBuilder builder)
+		private void addBlockToModel(DwgDocumentBuilder builder, ulong handle)
 		{
-
+			if (builder.TryGetCadObject<Block>(handle, out Block block))
+				builder.DocumentToBuild.AddBlock(block, true);
 		}
 	}
 
@@ -349,6 +299,13 @@ namespace ACadSharp.IO.Templates
 		public ulong NamesUcsHandle { get; set; }
 		public List<ulong> ViewportHandles { get; set; } = new List<ulong>();
 		public DwgLayoutTemplate(Layout layout) : base(layout) { }
+
+		public override void Build(DwgDocumentBuilder builder)
+		{
+			base.Build(builder);
+
+			throw new NotImplementedException();
+		}
 	}
 
 	internal class DwgTableTemplate<T> : DwgTemplate<Table<T>>

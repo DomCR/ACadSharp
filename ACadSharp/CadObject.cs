@@ -24,22 +24,18 @@ namespace ACadSharp
 		public virtual string ObjectName { get; } = DxfFileToken.Undefined;
 
 		/// <summary>
-		/// The document (drawing) that contains the object.
-		/// </summary>
-		[Obsolete("Not useful, will be deleted in the next refactoring")]
-		public CadDocument Document { get; internal set; }
-
-		/// <summary>
 		/// The handle of the entity.
 		/// </summary>
-		[DxfCodeValue(DxfCode.Handle)]
+		[DxfCodeValue(5)]
 		public ulong Handle { get; internal set; }
 
 		/// <summary>
 		/// Soft-pointer ID/handle to owner object
 		/// </summary>
-		[DxfCodeValue(DxfCode.SoftPointerId)]
+		[DxfCodeValue(330)]
 		public ulong? OwnerHandle { get; internal set; }
+
+		public CadObject Owner { get; internal set; }
 
 		/// <summary>
 		/// Objects that are attached to this entity.
@@ -71,6 +67,7 @@ namespace ACadSharp
 
 			return map;
 		}
+		
 		/// <summary>
 		/// Build the entity using a map with the dxf codes and the values.
 		/// </summary>

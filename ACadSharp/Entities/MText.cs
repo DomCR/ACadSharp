@@ -13,14 +13,17 @@ namespace ACadSharp.Entities
 	{
 		/// <summary>None.</summary>
 		None = 0,
+
 		/// <summary>
 		/// Use the background color.
 		/// </summary>
 		UseBackgroundFillColor = 1,
+
 		/// <summary>
 		/// Use the drawing window color.
 		/// </summary>
 		UseDrawingWindowColor = 2,
+
 		/// <summary>
 		/// Adds a text frame.
 		/// Introduced in AutoCAD 2018.
@@ -35,8 +38,10 @@ namespace ACadSharp.Entities
 	{
 		/// <summary>None.</summary>
 		None,
+
 		/// <summary>Taller characters will override.</summary>
 		AtLeast,
+
 		/// <summary>Taller characters will not override.</summary>
 		Exact,
 	}
@@ -48,20 +53,28 @@ namespace ACadSharp.Entities
 	{
 		/// <summary>Top left.</summary>
 		TopLeft = 1,
+
 		/// <summary>Top center.</summary>
 		TopCenter = 2,
+
 		/// <summary>Top right.</summary>
 		TopRight = 3,
+
 		/// <summary>Middle left.</summary>
 		MiddleLeft = 4,
+
 		/// <summary>Middle center.</summary>
 		MiddleCenter = 5,
+
 		/// <summary>Middle right.</summary>
 		MiddleRight = 6,
+
 		/// <summary>Bottom left.</summary>
 		BottomLeft = 7,
+
 		/// <summary>Bottom center.</summary>
 		BottomCenter = 8,
+
 		/// <summary>Bottom right.</summary>
 		BottomRight = 9,
 	}
@@ -73,12 +86,16 @@ namespace ACadSharp.Entities
 	{
 		/// <summary>Left to right.</summary>
 		LeftToRight = 1,
+
 		/// <summary>Right to left.</summary>
 		RightToLeft = 2,
+
 		/// <summary>Top to bottom.</summary>
 		TopToBottom = 3,
+
 		/// <summary>Bottom to top.</summary>
 		BottomToTop = 4,
+
 		/// <summary>By Style.</summary>
 		ByStyle = 5,
 	}
@@ -89,13 +106,16 @@ namespace ACadSharp.Entities
 	public enum ColumnType : short
 	{
 		NoColumns,
+
 		StaticColumns,
+
 		DynamicColumns,
 	}
 
 	public class MText : Entity
 	{
 		public override ObjectType ObjectType => ObjectType.MTEXT;
+
 		public override string ObjectName => DxfFileToken.EntityMText;
 
 		//100	Subclass marker(AcDbMText)
@@ -108,6 +128,7 @@ namespace ACadSharp.Entities
 		/// </remarks>
 		[DxfCodeValue(DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
 		public XYZ InsertPoint { get; set; } = XYZ.Zero;
+
 		/// <summary>
 		/// Changes the height of the object.
 		/// </summary>
@@ -116,23 +137,28 @@ namespace ACadSharp.Entities
 		/// </value>
 		[DxfCodeValue(DxfCode.TxtSize)]
 		public double Height { get; set; } = 0.0;
+
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		[DxfCodeValue(DxfCode.TxtStyleXScale)]
 		public double RectangleWitdth { get; set; }
+
 		[DxfCodeValue(DxfCode.TxtStyleYScale)]
 		public double RectangleHeight { get; set; }
+
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		[DxfCodeValue(DxfCode.TxtStyleFlags)]
 		public AttachmentPointType AttachmentPoint { get; set; }
+
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		[DxfCodeValue(DxfCode.HorizontalTextAlignment)]
 		public DrawingDirectionType DrawingDirection { get; set; }
+
 		/// <summary>
 		/// Specifies the text string for the entity.
 		/// </summary>
@@ -149,6 +175,7 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfCode.TextStyleName)]
 		public Style TextStyle { get; set; } = Style.Default;
+
 		/// <summary>
 		/// A 3D WCS coordinate representing the alignment point of the object.
 		/// </summary>
@@ -170,46 +197,53 @@ namespace ACadSharp.Entities
 		/// </value>
 		[DxfCodeValue(DxfCode.Angle)]
 		public double Rotation { get; set; } = 0.0;
+
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		[DxfCodeValue(DxfCode.VerticalTextAlignment)]
 		public LineSpacingStyleType LineSpacingStyle { get; set; }
+
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <remarks>
 		/// Percentage of default (3-on-5) line spacing to be applied.Valid values range from 0.25 to 4.00
 		/// </remarks>
 		[DxfCodeValue(DxfCode.ShapeXOffset)]
 		public double LineSpacing { get; set; }
+
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		[DxfCodeValue(DxfCode.Int32)]
 		public BackgroundFillFlags BackgroundFillFlags { get; set; }
+
 		/// <summary>
 		/// Determines how much border there is around the text.
 		/// </summary>
 		[DxfCodeValue(DxfCode.BackgroundScale)]
 		public double BackgroundScale { get; set; } = 1.5;
+
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <remarks>
 		/// Color to use for background fill when group code 90 is 1.
 		/// </remarks>
 		[DxfCodeValue(DxfCode.BackgroundColor)]
 		public Color BackgroundColor { get; set; }
+
 		//420 - 429	Background color(if RGB color)
 		//430 - 439	Background color(if color name)
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		[DxfCodeValue(DxfCode.BackgroundTransparency)]
 		public Transparency BackgroundTransparency { get; set; }
 
 		#region Create a class column data ?
+
 		/// <summary>
 		/// Text column type.
 		/// </summary>
@@ -251,12 +285,17 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(50)]
 		public List<double> ColumnHeights { get; } = new List<double>();
-		#endregion
+
+		#endregion Create a class column data ?
 
 		public bool IsAnnotative { get; set; }
 
-		public MText() : base() { }
+		public MText() : base()
+		{
+		}
 
-		internal MText(DxfEntityTemplate template) : base(template) { }
+		internal MText(DxfEntityTemplate template) : base(template)
+		{
+		}
 	}
 }
