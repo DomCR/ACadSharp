@@ -12,8 +12,9 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Specifies the name of the object.
 		/// </summary>
-		[DxfCodeValue(DxfCode.SymbolTableName)]
+		[DxfCodeValue(2)]
 		public string Name { get; set; }
+
 		/// <summary>
 		/// Table entry is xref dependent.
 		/// </summary>

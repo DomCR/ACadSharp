@@ -22,7 +22,7 @@ namespace ACadSharp.IO.DWG
 			//Save the parameter handler in a local variable
 			m_mainReader = sreader;
 
-			CadHeader header = new CadHeader(m_version);
+			CadHeader header = new CadHeader(_version);
 			objectPointers = new DwgHeaderHandlesCollection();
 
 			//0xCF,0x7B,0x1F,0x23,0xFD,0xDE,0x38,0xA9,0x5F,0x7C,0x68,0xB8,0x4E,0x6D,0x33,0x5F
@@ -49,14 +49,14 @@ namespace ACadSharp.IO.DWG
 				long lastPositionInBits = initialPos + sizeInBits - 1L;
 
 				//Setup the text handler for versions 2007 and above
-				IDwgStreamReader textReader = DwgStreamReader.GetStreamHandler(m_version,
+				IDwgStreamReader textReader = DwgStreamReader.GetStreamHandler(_version,
 					//Create a copy of the stream
 					new StreamIO(sreader.Stream, true).Stream);
 				//Set the position and use the flag
 				textReader.SetPositionByFlag(lastPositionInBits);
 
 				//Setup the handler for the references for versions 2007 and above
-				IDwgStreamReader referenceReader = DwgStreamReader.GetStreamHandler(m_version,
+				IDwgStreamReader referenceReader = DwgStreamReader.GetStreamHandler(_version,
 					//Create a copy of the stream
 					new StreamIO(sreader.Stream, true).Stream);
 				//Set the position and jump the flag

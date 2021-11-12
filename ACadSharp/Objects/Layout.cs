@@ -6,7 +6,9 @@
 #endregion
 using ACadSharp.Attributes;
 using ACadSharp.Blocks;
+using ACadSharp.Entities;
 using ACadSharp.Geometry;
+using ACadSharp.Tables;
 using System.Collections.Generic;
 using System.Text;
 
@@ -97,22 +99,26 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(76)]
 		public OrthographicType UcsOrthographicType { get; set; }
 
+		/// <summary>
+		/// The associated paper space block table record
+		/// </summary>
+		[DxfCodeValue(330)]
+		public Block AssociatedBlock { get; set; }
 
-		//330
+		/// <summary>
+		/// Viewport that was last active in this layout when the layout was current
+		/// </summary>
+		[DxfCodeValue(331)]
+		public Viewport Viewport { get; set; }
 
-		//ID/handle to this layout's associated paper space block table record
+		/// <summary>
+		/// Layout's UCS
+		/// </summary>
+		[DxfCodeValue(345)]
+		public UCS UCS { get; set; }
 
-		//331
-
-		//ID/handle to the viewport that was last active in this layout when the layout was current
-
-		//345
-
-		//ID/handle of AcDbUCSTableRecord if UCS is a named UCS.If not present, then UCS is unnamed
-
-		//346
-
-		//ID/handle of AcDbUCSTableRecord of base UCS if UCS is orthographic(76 code is non-zero). If not present and 76 code is non-zero, then base UCS is taken to be WORLD
+		//346	ID/handle of AcDbUCSTableRecord of base UCS if UCS is orthographic(76 code is non-zero).
+		//If not present and 76 code is non-zero, then base UCS is taken to be WORLD
 
 		//333	Shade plot ID
 
@@ -121,9 +127,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		public PlotSettings PlotSettings { get; set; }
 
-		/// <summary>
-		/// The associated ModelSpace or PaperSpace block.
-		/// </summary>
-		public Block AssociatedBlock { get; set; }
+		public List<Viewport> Viewports { get; } = new List<Viewport>();
+
 	}
 }

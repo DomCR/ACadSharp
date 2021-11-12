@@ -68,6 +68,9 @@ namespace ACadSharp.IO.Templates
 			{
 				//TODO: Set color by name, only for dxf?
 			}
+
+			//Add the entity to the document
+			builder.DocumentToBuild.AddEntity(CadObject);
 		}
 
 		private void applyLineType(DwgDocumentBuilder builder)

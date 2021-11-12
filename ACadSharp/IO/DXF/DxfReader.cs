@@ -390,78 +390,79 @@ namespace ACadSharp.IO.DXF
 
 			switch (template.Name)
 			{
-				case DxfFileToken.TableAppId:
-					document.AppIds = new AppIdsTable(template);
-					//Add the entries
-					foreach (TableEntry item in entries)
-					{
-						document.AppIds.Add(item as AppId);
-					}
-					break;
-				case DxfFileToken.TableBlockRecord:
-					document.BlockRecords = new BlockRecordsTable(template);
-					//Add the entries
-					foreach (TableEntry item in entries)
-					{
-						document.BlockRecords.Add(item as BlockRecord);
-					}
-					break;
-				case DxfFileToken.TableDimstyle:
-					document.DimensionStyles = new DimensionStylesTable(template);
-					//Add the entries
-					foreach (TableEntry item in entries)
-					{
-						document.DimensionStyles.Add(item as DimensionStyle);
-					}
-					break;
-				case DxfFileToken.TableLayer:
-					document.Layers = new LayersTable(template);
-					//Add the entries
-					foreach (TableEntry item in entries)
-					{
-						document.Layers.Add(item as Layer);
-					}
-					break;
-				case DxfFileToken.TableLinetype:
-					document.LineTypes = new LineTypesTable(template);
-					//Add the entries
-					foreach (TableEntry item in entries)
-					{
-						document.LineTypes.Add(item as LineType);
-					}
-					break;
-				case DxfFileToken.TableStyle:
-					document.Styles = new StylesTable(template);
-					//Add the entries
-					foreach (TableEntry item in entries)
-					{
-						document.Styles.Add(item as Style);
-					}
-					break;
-				case DxfFileToken.TableUcs:
-					document.UCSs = new UCSTable(template);
-					//Add the entries
-					foreach (TableEntry item in entries)
-					{
-						document.UCSs.Add(item as UCS);
-					}
-					break;
-				case DxfFileToken.TableView:
-					document.Views = new ViewsTable(template);
-					//Add the entries
-					foreach (TableEntry item in entries)
-					{
-						document.Views.Add(item as View);
-					}
-					break;
-				case DxfFileToken.TableVport:
-					document.Viewports = new ViewPortsTable(template);
-					//Add the entries
-					foreach (TableEntry item in entries)
-					{
-						document.Viewports.Add(item as VPort);
-					}
-					break;
+				//TODO: Cannot reasign the tables in a document
+				//case DxfFileToken.TableAppId:
+				//	document.AppIds = new AppIdsTable(template);
+				//	//Add the entries
+				//	foreach (TableEntry item in entries)
+				//	{
+				//		document.AppIds.Add(item as AppId);
+				//	}
+				//	break;
+				//case DxfFileToken.TableBlockRecord:
+				//	document.BlockRecords = new BlockRecordsTable(template);
+				//	//Add the entries
+				//	foreach (TableEntry item in entries)
+				//	{
+				//		document.BlockRecords.Add(item as BlockRecord);
+				//	}
+				//	break;
+				//case DxfFileToken.TableDimstyle:
+				//	document.DimensionStyles = new DimensionStylesTable(template);
+				//	//Add the entries
+				//	foreach (TableEntry item in entries)
+				//	{
+				//		document.DimensionStyles.Add(item as DimensionStyle);
+				//	}
+				//	break;
+				//case DxfFileToken.TableLayer:
+				//	document.Layers = new LayersTable(template);
+				//	//Add the entries
+				//	foreach (TableEntry item in entries)
+				//	{
+				//		document.Layers.Add(item as Layer);
+				//	}
+				//	break;
+				//case DxfFileToken.TableLinetype:
+				//	document.LineTypes = new LineTypesTable(template);
+				//	//Add the entries
+				//	foreach (TableEntry item in entries)
+				//	{
+				//		document.LineTypes.Add(item as LineType);
+				//	}
+				//	break;
+				//case DxfFileToken.TableStyle:
+				//	document.Styles = new StylesTable(template);
+				//	//Add the entries
+				//	foreach (TableEntry item in entries)
+				//	{
+				//		document.Styles.Add(item as Style);
+				//	}
+				//	break;
+				//case DxfFileToken.TableUcs:
+				//	document.UCSs = new UCSTable(template);
+				//	//Add the entries
+				//	foreach (TableEntry item in entries)
+				//	{
+				//		document.UCSs.Add(item as UCS);
+				//	}
+				//	break;
+				//case DxfFileToken.TableView:
+				//	document.Views = new ViewsTable(template);
+				//	//Add the entries
+				//	foreach (TableEntry item in entries)
+				//	{
+				//		document.Views.Add(item as View);
+				//	}
+				//	break;
+				//case DxfFileToken.TableVport:
+				//	document.Viewports = new ViewPortsTable(template);
+				//	//Add the entries
+				//	foreach (TableEntry item in entries)
+				//	{
+				//		document.Viewports.Add(item as VPort);
+				//	}
+				//	break;
 				default:
 					Debug.Fail($"Unhandeled table {template.Name}.");
 					break;

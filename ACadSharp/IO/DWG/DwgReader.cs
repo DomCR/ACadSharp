@@ -23,7 +23,7 @@ namespace ACadSharp.IO.DWG
 		private readonly NotificationEventHandler _notification;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DwgReader" /> class.
+		/// Initializes a new instance of the <see cref="DwgReader"/> class.
 		/// </summary>
 		/// <param name="filename">The filename of the file to open.</param>
 		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
@@ -304,7 +304,7 @@ namespace ACadSharp.IO.DWG
 		/// Refers to AcDb:Classes data section.
 		/// </remarks>
 		/// <returns></returns>
-		private List<DxfClass> readClasses()
+		private DxfClassCollection readClasses()
 		{
 			_fileHeader = _fileHeader ?? readFileHeader();
 
@@ -454,9 +454,9 @@ namespace ACadSharp.IO.DWG
 		/// </remarks>
 		private void readObjects(CadDocument document, NotificationEventHandler notification = null)
 		{
-			_cadHeader = _cadHeader ?? ReadHeader();
+			_cadHeader ??= ReadHeader();
 			Dictionary<ulong, long> handles = readHandles();
-			List<DxfClass> classes = readClasses();
+			_document.Classes = readClasses();
 
 			//Initialize the document
 			if (document == null)
@@ -475,7 +475,7 @@ namespace ACadSharp.IO.DWG
 				sreader = getSectionStream(DwgSectionDefinition.AcDbObjects);
 			}
 
-			Queue<ulong> objectPointers = new Queue<ulong>(_builder.HeaderHandles.GetHandles()
+			Queue<ulong> objectHandles = new Queue<ulong>(_builder.HeaderHandles.GetHandles()
 				.Where(o => o.HasValue)
 				.Select(a => a.Value));
 
@@ -483,9 +483,9 @@ namespace ACadSharp.IO.DWG
 				_fileHeader.AcadVersion,
 				_builder,
 				sreader,
-				objectPointers,
+				objectHandles,
 				handles,
-				classes);
+				_document.Classes);
 
 			sectionReader.Read(notification);
 		}
@@ -1059,7 +1059,7 @@ namespace ACadSharp.IO.DWG
 		#endregion
 
 		#region Classes section methods
-		private List<DxfClass> readClasses15(IDwgStreamReader sreader)
+		private DxfClassCollection readClasses15(IDwgStreamReader sreader)
 		{
 			//SN : 0x8D 0xA1 0xC4 0xB8 0xC4 0xA9 0xF8 0xC5 0xC0 0xDC 0xF4 0x5F 0xE7 0xCF 0xB6 0x8A
 			byte[] sn = sreader.ReadSentinel();
@@ -1079,7 +1079,7 @@ namespace ACadSharp.IO.DWG
 				sreader.ReadBit();
 			}
 
-			List<DxfClass> classes = new List<DxfClass>();
+			DxfClassCollection classes = new DxfClassCollection();
 			//We read sets of these until we exhaust the data.
 			while (sreader.Position < endSection)
 			{
@@ -1123,7 +1123,7 @@ namespace ACadSharp.IO.DWG
 			return classes;
 		}
 
-		private List<DxfClass> readClasses18(IDwgStreamReader sreader)
+		private DxfClassCollection readClasses18(IDwgStreamReader sreader)
 		{
 			//SN : 0x8D 0xA1 0xC4 0xB8 0xC4 0xA9 0xF8 0xC5 0xC0 0xDC 0xF4 0x5F 0xE7 0xCF 0xB6 0x8A
 			byte[] sn = sreader.ReadSentinel();
@@ -1149,7 +1149,7 @@ namespace ACadSharp.IO.DWG
 			//B : flag - to find the data string at the end of the section
 			sreader.ReadBit();
 
-			List<DxfClass> classes = new List<DxfClass>();
+			DxfClassCollection classes = new DxfClassCollection();
 			while (sreader.PositionInBits() < endSection)
 			{
 				DxfClass dxfClass = new DxfClass();

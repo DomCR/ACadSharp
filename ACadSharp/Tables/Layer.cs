@@ -37,33 +37,39 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Layer state flags.
 		/// </summary>
-		[DxfCodeValue(DxfCode.Int16)]
+		[DxfCodeValue(70)]
 		public LayerFlags Flags { get; set; }
+
 		/// <summary>
 		/// Specifies the Color of an object.
 		/// </summary>
-		[DxfCodeValue(DxfCode.Color)]
+		[DxfCodeValue(62)]
 		public Color Color { get; set; }
+		
 		/// <summary>
 		/// The linetype of an object. The default linetype is the linetype of the layer (ByLayer).
 		/// </summary>
-		[DxfCodeValue(DxfCode.LinetypeName)]
+		[DxfCodeValue(6)]
 		public LineType LineType { get; set; }  //TODO: implement default linetype
+		
 		/// <summary>
 		/// Specifies if the layer is plottable.
 		/// </summary>
 		[DxfCodeValue(DxfCode.Bool)]
 		public bool PlotFlag { get; set; }
+		
 		/// <summary>
 		/// Specifies the lineweight of an individual object or the default lineweight for the drawing.
 		/// </summary>
 		[DxfCodeValue(DxfCode.LineWeight)]
 		public LineweightType LineWeight { get; set; }
+		
 		/// <summary>
 		/// Hard-pointer ID/handle of PlotStyleName object
 		/// </summary>
 		[DxfCodeValue(DxfCode.PlotStyleNameType)]
-		public string PlotStyleName { get; set; }
+		public string PlotStyleName { get; set; }	//TODO: set the plot style for the layer
+		
 		/// <summary>
 		/// Hard-pointer ID/handle to Material object
 		/// </summary>

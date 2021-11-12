@@ -39,11 +39,11 @@
 		/// </summary>
 		protected bool R2018Plus;
 
-		protected readonly ACadVersion m_version;
+		protected readonly ACadVersion _version;
 
 		public DwgSectionReader(ACadVersion version)
 		{
-			m_version = version;
+			_version = version;
 
 			R13_14Only = version == ACadVersion.AC1014 || version == ACadVersion.AC1012;
 			R13_15Only = version >= ACadVersion.AC1012 && version <= ACadVersion.AC1015;

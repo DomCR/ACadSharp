@@ -76,12 +76,12 @@ namespace ACadSharp.IO.DWG
 		private readonly CRC8StreamHandler _crcStream;
 
 		public DwgObjectSectionReader(
-			ACadVersion version, 
+			ACadVersion version,
 			DwgDocumentBuilder builder,
 			IDwgStreamReader reader,
 			Queue<ulong> handles,
 			Dictionary<ulong, long> handleMap,
-			List<DxfClass> classes) : base(version)
+			DxfClassCollection classes) : base(version)
 		{
 			_modelBuilder = builder;
 
@@ -95,13 +95,13 @@ namespace ACadSharp.IO.DWG
 			//RS : CRC for the data section, starting after the sentinel. Use 0xC0C1 for the initial value.
 			_crcStream = new CRC8StreamHandler(_reader.Stream, 0xC0C1);
 			//Setup the entity handler
-			_crcReader = DwgStreamReader.GetStreamHandler(m_version, _crcStream);
+			_crcReader = DwgStreamReader.GetStreamHandler(_version, _crcStream);
 		}
 
 		/// <summary>
 		/// Read all the entities, tables and objects in the file.
 		/// </summary>
-		public void Read(NotificationEventHandler notifications = null)
+		public void Read(NotificationEventHandler notificationEvent = null)
 		{
 			//Read each handle in the header
 			while (_handles.Any())
@@ -118,7 +118,7 @@ namespace ACadSharp.IO.DWG
 				ObjectType type = getEntityType(offset);
 
 				//Read the object
-				DwgTemplate template = readObject(type, notifications);
+				DwgTemplate template = readObject(type, notificationEvent);
 				if (template == null)
 				{
 					//Add the object as null
@@ -128,6 +128,7 @@ namespace ACadSharp.IO.DWG
 
 				//Add the object to the map
 				_modelBuilder.ObjectsMap[template.CadObject.Handle] = template.CadObject;
+
 				//Add the template to the list to be processed
 				_modelBuilder.Templates[template.CadObject.Handle] = template;
 			}
@@ -164,7 +165,7 @@ namespace ACadSharp.IO.DWG
 				ulong handleSectionOffset = (ulong)_crcReader.PositionInBits() + sizeInBits - handleSize;
 
 				//Create a handler section reader
-				_objectReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(_crcStream, true).Stream);
+				_objectReader = DwgStreamReader.GetStreamHandler(_version, new StreamIO(_crcStream, true).Stream);
 				_objectReader.SetPositionInBits(_crcReader.PositionInBits());
 
 				//set the initial posiltion and get the object type
@@ -172,11 +173,11 @@ namespace ACadSharp.IO.DWG
 				type = _objectReader.ReadObjectType();
 
 				//Create a handler section reader
-				_handlesReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(_crcStream, true).Stream);
+				_handlesReader = DwgStreamReader.GetStreamHandler(_version, new StreamIO(_crcStream, true).Stream);
 				_handlesReader.SetPositionInBits((long)handleSectionOffset);
 
 				//Create a text section reader
-				_textReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(_crcStream, true).Stream);
+				_textReader = DwgStreamReader.GetStreamHandler(_version, new StreamIO(_crcStream, true).Stream);
 				_textReader.SetPositionByFlag((long)handleSectionOffset - 1);
 
 				_mergedReaders = new DwgMergedReader(_objectReader, _textReader, _handlesReader);
@@ -184,10 +185,10 @@ namespace ACadSharp.IO.DWG
 			else
 			{
 				//Create a handler section reader
-				_objectReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(_crcStream, true).Stream);
+				_objectReader = DwgStreamReader.GetStreamHandler(_version, new StreamIO(_crcStream, true).Stream);
 				_objectReader.SetPositionInBits(_crcReader.PositionInBits());
 
-				_handlesReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(_crcStream, true).Stream);
+				_handlesReader = DwgStreamReader.GetStreamHandler(_version, new StreamIO(_crcStream, true).Stream);
 				_textReader = _objectReader;
 
 				//set the initial posiltion and get the object type
@@ -234,7 +235,7 @@ namespace ACadSharp.IO.DWG
 			//Get the cad object as an entity
 			Entity entity = (Entity)template.CadObject;
 
-			if (m_version >= ACadVersion.AC1015 && m_version < ACadVersion.AC1024)
+			if (_version >= ACadVersion.AC1015 && _version < ACadVersion.AC1024)
 				//Obj size RL size of object in bits, not including end handles
 				updateHandleReader();
 
@@ -256,7 +257,7 @@ namespace ACadSharp.IO.DWG
 				//RL: Size of graphic image in bytes
 				//R2010 +:
 				//BLL: Size of graphic image in bytes
-				long graphicImageSize = m_version >= ACadVersion.AC1024 ?
+				long graphicImageSize = _version >= ACadVersion.AC1024 ?
 					_objectReader.ReadBitLongLong() : _objectReader.ReadRawLong();
 
 				//Common:
@@ -266,7 +267,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//R13 - R14 Only:
-			if (m_version >= ACadVersion.AC1012 && m_version <= ACadVersion.AC1014)
+			if (_version >= ACadVersion.AC1012 && _version <= ACadVersion.AC1014)
 				updateHandleReader();
 
 			//Common:
@@ -308,14 +309,14 @@ namespace ACadSharp.IO.DWG
 			//R13-R2000 Only:
 			//previous/next handles present if Nolinks is 0.
 			//Nolinks B 1 if major links are assumed +1, -1, else 0 For R2004+this always has value 1 (links are not used)
-			if (!(m_version >= ACadVersion.AC1018) && !_objectReader.ReadBit())
+			if (!(_version >= ACadVersion.AC1018) && !_objectReader.ReadBit())
 			{
 				//[PREVIOUS ENTITY (relative soft pointer)]
 				template.PrevEntity = handleReference(entity.Handle);
 				//[NEXT ENTITY (relative soft pointer)]
 				template.NextEntity = handleReference(entity.Handle);
 			}
-			else if (!(m_version >= ACadVersion.AC1018))
+			else if (!(_version >= ACadVersion.AC1018))
 			{
 				_handles.Enqueue(entity.Handle - 1UL);
 				_handles.Enqueue(entity.Handle + 1UL);
@@ -326,14 +327,14 @@ namespace ACadSharp.IO.DWG
 			entity.Transparency = transparency;
 
 			//R2004+:
-			if ((m_version >= ACadVersion.AC1018) && colorFlag)
+			if ((_version >= ACadVersion.AC1018) && colorFlag)
 				//[Color book color handle (hard pointer)]
 				template.ColorHandle = handleReference();
 
 			//Ltype scale	BD	48
 			entity.LinetypeScale = _objectReader.ReadBitDouble();
 
-			if (!(m_version >= ACadVersion.AC1015))
+			if (!(_version >= ACadVersion.AC1015))
 			{
 				//Common:
 				//Invisibility BS 60
@@ -354,7 +355,7 @@ namespace ACadSharp.IO.DWG
 				template.LineTypeHandle = handleReference();
 
 			//R2007+:
-			if (m_version >= ACadVersion.AC1021)
+			if (_version >= ACadVersion.AC1021)
 			{
 				//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present at end of object
 				if (_objectReader.Read2Bits() == 3)
@@ -376,7 +377,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//R2007 +:
-			if (m_version > ACadVersion.AC1021)
+			if (_version > ACadVersion.AC1021)
 			{
 				//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present at end of object
 				if (_objectReader.ReadBit())
@@ -408,7 +409,7 @@ namespace ACadSharp.IO.DWG
 
 		private void readCommonNonEntityData(DwgTemplate template)
 		{
-			if (m_version >= ACadVersion.AC1015 && m_version < ACadVersion.AC1024)
+			if (_version >= ACadVersion.AC1015 && _version < ACadVersion.AC1024)
 				//Obj size RL size of object in bits, not including end handles
 				updateHandleReader();
 
@@ -506,7 +507,7 @@ namespace ACadSharp.IO.DWG
 
 			bool flag = false;
 			//R2004+:
-			if (m_version >= ACadVersion.AC1018)
+			if (_version >= ACadVersion.AC1018)
 				/*XDic Missing Flag
 				 * B
 				 * If 1, no XDictionary handle is stored for this object,
@@ -518,7 +519,7 @@ namespace ACadSharp.IO.DWG
 				//xdicobjhandle(hard owner)
 				template.XDictHandle = handleReference();
 
-			if (m_version <= ACadVersion.AC1024)
+			if (_version <= ACadVersion.AC1024)
 				return;
 
 			//R2013+:
@@ -538,9 +539,9 @@ namespace ACadSharp.IO.DWG
 			//Set the position to the handle section
 			_handlesReader.SetPositionInBits(size + m_objectInitialPos);
 
-			if (m_version == ACadVersion.AC1021)
+			if (_version == ACadVersion.AC1021)
 			{
-				_textReader = DwgStreamReader.GetStreamHandler(m_version, new StreamIO(_crcStream, true).Stream);
+				_textReader = DwgStreamReader.GetStreamHandler(_version, new StreamIO(_crcStream, true).Stream);
 				//"endbit" of the pre-handles section.
 				_textReader.SetPositionByFlag(size + m_objectInitialPos - 1);
 			}
@@ -732,6 +733,7 @@ namespace ACadSharp.IO.DWG
 					template = readVPortControlObject();
 					break;
 				case ObjectType.VPORT:
+					template = readVPort();
 					break;
 				case ObjectType.APPID_CONTROL_OBJ:
 					template = readAppIdControlObject();
@@ -908,7 +910,7 @@ namespace ACadSharp.IO.DWG
 			XY pt = new XY();
 
 			//R13-14 Only:
-			if (m_version >= ACadVersion.AC1012 && m_version <= ACadVersion.AC1014)
+			if (_version >= ACadVersion.AC1012 && _version <= ACadVersion.AC1014)
 			{
 				//Elevation BD ---
 				elevation = _objectReader.ReadBitDouble();
@@ -1063,6 +1065,7 @@ namespace ACadSharp.IO.DWG
 		{
 			BlockBegin block = new BlockBegin();
 			DwgEntityTemplate template = new DwgEntityTemplate(block);
+			_modelBuilder.Blocks.Add(template);
 
 			readCommonEntityData(template);
 
@@ -1202,15 +1205,15 @@ namespace ACadSharp.IO.DWG
 			if (!template.HasAtts)
 				return;
 
-			//R13 - R200:
-			if (m_version >= ACadVersion.AC1012 && m_version <= ACadVersion.AC1015)
+			//R13 - R2000:
+			if (_version >= ACadVersion.AC1012 && _version <= ACadVersion.AC1015)
 			{
 				//H[1st ATTRIB(soft pointer)] if 66 bit set; can be NULL
 				template.FirstAttributeHandle = handleReference();
 				//H[last ATTRIB](soft pointer)] if 66 bit set; can be NULL
 				template.EndAttributeHandle = handleReference();
 			}
-			//R2004:
+			//R2004+:
 			else if (R2004Plus)
 			{
 				for (int i = 0; i < template.OwnedObjectsCount; ++i)
@@ -1334,7 +1337,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//R13-R2000:
-			if (m_version >= ACadVersion.AC1012 && m_version <= ACadVersion.AC1015)
+			if (_version >= ACadVersion.AC1012 && _version <= ACadVersion.AC1015)
 			{
 				//H first VERTEX (soft pointer)
 				template.FirstVertexHandle = handleReference();
@@ -1385,7 +1388,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//R13-R2000:
-			if (m_version >= ACadVersion.AC1012 && m_version <= ACadVersion.AC1015)
+			if (_version >= ACadVersion.AC1012 && _version <= ACadVersion.AC1015)
 			{
 				//H first VERTEX (soft pointer)
 				template.FirstVertexHandle = handleReference();
@@ -1768,7 +1771,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//R2000:
-			if (m_version == ACadVersion.AC1015)
+			if (_version == ACadVersion.AC1015)
 				//H VIEWPORT ENT HEADER((hard pointer))
 				template.ViewportHeaderHandle = handleReference();
 
@@ -1837,7 +1840,7 @@ namespace ACadSharp.IO.DWG
 			int nentries = _objectReader.ReadBitLong();
 
 			//R14 Only:
-			if (m_version == ACadVersion.AC1014)
+			if (_version == ACadVersion.AC1014)
 			{
 				//Unknown R14 RC Unknown R14 byte, has always been 0
 				byte zero = _objectReader.ReadByte();
@@ -1927,7 +1930,7 @@ namespace ACadSharp.IO.DWG
 
 				//background flags has bit 0x01 set, or in case of R2018 bit 0x10:
 				if ((mtext.BackgroundFillFlags & BackgroundFillFlags.UseBackgroundFillColor) != BackgroundFillFlags.None
-					|| m_version > ACadVersion.AC1027
+					|| _version > ACadVersion.AC1027
 					&& (mtext.BackgroundFillFlags & BackgroundFillFlags.TextFrame) > 0)
 				{
 					//Background scale factor	BL 45 default = 1.5
@@ -2111,7 +2114,7 @@ namespace ACadSharp.IO.DWG
 			template.HardOwnerHandle = handleReference();
 
 			//R13-R2000:
-			if (m_version >= ACadVersion.AC1012 && m_version <= ACadVersion.AC1015
+			if (_version >= ACadVersion.AC1012 && _version <= ACadVersion.AC1015
 				&& !block.IsXref && !block.IsXRefOverlay)
 			{
 				//first entity in the def. (soft pointer)
@@ -2168,7 +2171,6 @@ namespace ACadSharp.IO.DWG
 		{
 			//Initialize the template with the default layer
 			Layer layer = Layer.Default;
-
 			DwgLayerTemplate template = new DwgLayerTemplate(layer);
 
 			readCommonNonEntityData(template);
@@ -2386,7 +2388,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//R2004 and earlier:
-			if (m_version <= ACadVersion.AC1018)
+			if (_version <= ACadVersion.AC1018)
 			{
 				//Strings area X 9 256 bytes of text area. The complex dashes that have text use this area via the 75-group indices. It's basically a pile of 0-terminated strings. First byte is always 0 for R13 and data starts at byte 1. In R14 it is not a valid data start from byte 0.
 				//(The 9 - group is undocumented.)
@@ -2414,12 +2416,11 @@ namespace ACadSharp.IO.DWG
 				//handleReference();
 			}
 
-			return null;
+			return template;
 		}
 
 		private DwgTemplate readViewControlObject()
 		{
-			_modelBuilder.DocumentToBuild.Views = new Tables.Collections.ViewsTable();
 			DwgTableTemplate<View> template = new DwgTableTemplate<View>(
 				_modelBuilder.DocumentToBuild.Views);
 
@@ -2437,7 +2438,6 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readUcsControlObject()
 		{
-			_modelBuilder.DocumentToBuild.UCSs = new Tables.Collections.UCSTable();
 			DwgTableTemplate<UCS> template = new DwgTableTemplate<UCS>(
 				_modelBuilder.DocumentToBuild.UCSs);
 
@@ -2502,7 +2502,6 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readVPortControlObject()
 		{
-			_modelBuilder.DocumentToBuild.Viewports = new Tables.Collections.ViewPortsTable();
 			DwgTableTemplate<VPort> template = new DwgTableTemplate<VPort>(
 				_modelBuilder.DocumentToBuild.Viewports);
 
@@ -2518,10 +2517,182 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private DwgTemplate readVPort()
+		{
+			VPort vport = new VPort();
+			DwgVPortTemplate template = new DwgVPortTemplate(vport);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Entry name TV 2
+			vport.Name = _textReader.ReadVariableText();
+
+			readXrefDependantBit(vport);
+
+			//View height BD 40
+			vport.ViewHeight = this._objectReader.ReadBitDouble();
+			//Aspect ratio BD 41 The number stored here is actually the aspect ratio times the view height (40),
+			//so this number must be divided by the 40-value to produce the aspect ratio that entget gives.
+			//(R13 quirk; R12 has just the aspect ratio.)
+			vport.AspectRatio = this._objectReader.ReadBitDouble() / vport.ViewHeight;
+			//View Center 2RD 12 DCS. (If it's plan view, add the view target (17) to get the WCS coordinates.
+			//Careful! Sometimes you have to SAVE/OPEN to update the .dwg file.) Note that it's WSC in R12.
+			vport.Center = this._objectReader.Read2RawDouble();
+			//View target 3BD 17
+			vport.Target = this._objectReader.Read3BitDouble();
+			//View dir 3BD 16
+			vport.Direction = this._objectReader.Read3BitDouble();
+			//View twist BD 51
+			vport.TwistAngle = this._objectReader.ReadBitDouble();
+			//Lens length BD 42
+			vport.LensLength = this._objectReader.ReadBitDouble();
+			//Front clip BD 43
+			vport.FrontClippingPlane = this._objectReader.ReadBitDouble();
+			//Back clip BD 44
+			vport.BackClippingPlane = this._objectReader.ReadBitDouble();
+
+			//View mode X 71 4 bits: 0123
+			//Note that only bits 0, 1, 2, and 4 are given here; see UCSFOLLOW below for bit 3(8) of the 71.
+			//0 : 71's bit 0 (1)
+			if (this._objectReader.ReadBit())
+				vport.ViewMode |= ViewModeType.PerspectiveView;
+			//1 : 71's bit 1 (2)
+			if (this._objectReader.ReadBit())
+				vport.ViewMode |= ViewModeType.FrontClipping;
+			//2 : 71's bit 2 (4)
+			if (this._objectReader.ReadBit())
+				vport.ViewMode |= ViewModeType.BackClipping;
+			//3 : OPPOSITE of 71's bit 4 (16)
+			if (this._objectReader.ReadBit())
+				vport.ViewMode |= ViewModeType.FrontClippingZ;
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Render Mode RC 281
+				vport.RenderMode = (RenderMode)this._objectReader.ReadByte();
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Use default lights B 292
+				vport.UseDefaultLighting = this._objectReader.ReadBit();
+				//Default lighting type RC 282
+				vport.DefaultLighting = (DefaultLightingType)this._objectReader.ReadByte();
+				//Brightness BD 141
+				vport.Brightness = this._objectReader.ReadBitDouble();
+				//Constrast BD 142
+				vport.Contrast = this._objectReader.ReadBitDouble();
+				//Ambient Color CMC 63
+				vport.AmbientColor = this._mergedReaders.ReadCmColor();
+			}
+
+			//Common:
+			//Lower left 2RD 10 In fractions of screen width and height.
+			vport.BottomLeft = this._objectReader.Read2RawDouble();
+			//Upper right 2RD 11 In fractions of screen width and height.
+			vport.TopRight = this._objectReader.Read2RawDouble();
+
+			//UCSFOLLOW B 71 UCSFOLLOW. Bit 3 (8) of the 71-group.
+			if (this._objectReader.ReadBit())
+				vport.ViewMode |= ViewModeType.Follow;
+
+			//Circle zoom BS 72 Circle zoom percent.
+			vport.CircleZoomPercent = this._objectReader.ReadBitShort();
+
+			//Fast zoom B 73
+			this._objectReader.ReadBit();
+
+			//UCSICON X 74 2 bits: 01
+			//0 : 74's bit 0 (1)
+			if (this._objectReader.ReadBit())
+				vport.UcsIconDisplay = UscIconType.OnLower;
+			//1 : 74's bit 1 (2)
+			if (this._objectReader.ReadBit())
+				vport.UcsIconDisplay = UscIconType.OnOrigin;
+
+			//Grid on/off B 76
+			vport.ShowGrid = this._objectReader.ReadBit();
+			//Grd spacing 2RD 15
+			vport.GridSpacing = this._objectReader.Read2RawDouble();
+			//Snap on/off B 75
+			vport.SnapOn = this._objectReader.ReadBit();
+
+			//Snap style B 77
+			vport.IsometricSnap = this._objectReader.ReadBit();
+
+			//Snap isopair BS 78
+			vport.SnapIsoPair = this._objectReader.ReadBitShort();
+			//Snap rot BD 50
+			vport.SnapRotation = this._objectReader.ReadBitDouble();
+			//Snap base 2RD 13
+			vport.SnapBasePoint = this._objectReader.Read2RawDouble();
+			//Snp spacing 2RD 14
+			vport.SnapSpacing = this._objectReader.Read2RawDouble();
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Unknown B
+				this._objectReader.ReadBit();
+
+				//UCS per Viewport B 71
+				bool ucsPerViewport = this._objectReader.ReadBit();
+				//UCS Origin 3BD 110
+				vport.Origin = this._objectReader.Read3BitDouble();
+				//UCS X Axis 3BD 111
+				vport.XAxis = this._objectReader.Read3BitDouble();
+				//UCS Y Axis 3BD 112
+				vport.YAxis = this._objectReader.Read3BitDouble();
+				//UCS Elevation BD 146
+				vport.Elevation = this._objectReader.ReadBitDouble();
+				//UCS Orthographic type BS 79
+				vport.OrthographicType = (OrthographicType)this._objectReader.ReadBitShort();
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Grid flags BS 60
+				vport.GridFlags = (GridFlags)this._objectReader.ReadBitShort();
+				//Grid major BS 61
+				vport.MinorGridLinesPerMajorGridLine = this._objectReader.ReadBitShort();
+			}
+
+			//Common:
+			//Handle refs H Vport control(soft pointer)
+			//[Reactors(soft pointer)]
+			//xdicobjhandle(hard owner)
+			//External reference block handle(hard pointer)
+			template.VportControlHandle = this.handleReference();
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Background handle H 332 soft pointer
+				template.BackgroundHandle = this.handleReference();
+				//Visual Style handle H 348 hard pointer
+				template.StyelHandle = this.handleReference();
+				//Sun handle H 361 hard owner
+				template.SunHandle = this.handleReference();
+			}
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Named UCS Handle H 345 hard pointer
+				template.NamedUcsHandle = this.handleReference();
+				//Base UCS Handle H 346 hard pointer
+				template.BaseUcsHandle = this.handleReference();
+			}
+
+			return template;
+		}
 
 		private DwgTemplate readAppIdControlObject()
 		{
-			_modelBuilder.DocumentToBuild.AppIds = new Tables.Collections.AppIdsTable();
 			DwgTableTemplate<AppId> template = new DwgTableTemplate<AppId>(
 				_modelBuilder.DocumentToBuild.AppIds);
 
@@ -3279,7 +3450,7 @@ namespace ACadSharp.IO.DWG
 			if (R2004Plus)
 			{
 				//Viewport handle(repeats Viewport count times) (soft pointer)
-				for (int index = 0; index < nLayouts; ++index)
+				for (int i = 0; i < nLayouts; ++i)
 					template.ViewportHandles.Add(handleReference());
 			}
 
@@ -3334,7 +3505,7 @@ namespace ACadSharp.IO.DWG
 			plot.WindowUpperLeft = _objectReader.Read2BitDouble();
 
 			//R13 - R2000 Only:
-			if (m_version >= ACadVersion.AC1012 && m_version <= ACadVersion.AC1015)
+			if (_version >= ACadVersion.AC1012 && _version <= ACadVersion.AC1015)
 				//Plot view name T 6 plotsettings plot view name
 				plot.PlotViewName = _textReader.ReadVariableText();
 
@@ -3385,7 +3556,7 @@ namespace ACadSharp.IO.DWG
 
 			short colorIndex = _objectReader.ReadBitShort();
 
-			if (R2004Plus && m_version < ACadVersion.AC1032)
+			if (R2004Plus && _version < ACadVersion.AC1032)
 			{
 				short index = (short)_objectReader.ReadBitLong();
 				byte flags = _objectReader.ReadByte();

@@ -22,6 +22,6 @@ namespace ACadSharp.Objects
 		public bool Selectable { get; set; }
 
 		//340	Hard-pointer handle to entity in group(one entry per object)
-		public Dictionary<ulong, Entity> Entities { get; set; } = new Dictionary<ulong, Entity>();
+		public Dictionary<ulong, CadObject> Members { get; set; } = new Dictionary<ulong, CadObject>();
 	}
 }

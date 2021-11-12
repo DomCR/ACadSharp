@@ -1,4 +1,5 @@
-﻿using ACadSharp.Geometry;
+﻿using ACadSharp.Attributes;
+using ACadSharp.Geometry;
 using ACadSharp.IO.Templates;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace ACadSharp.Tables
 		public XY PaperSpaceLimitsMin { get; set; }
 		public XY PaperSpaceLimitsMax { get; set; }
 		public double Elevation { get; set; }
+
+		[DxfCodeValue(10, 20, 30)]
 		public XYZ Origin { get; set; }
 		public XYZ XAxis { get; set; }
 		public XYZ YAxis { get; set; }

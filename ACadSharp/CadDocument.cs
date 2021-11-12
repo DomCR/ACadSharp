@@ -8,6 +8,7 @@ using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Header;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
@@ -30,15 +31,17 @@ namespace ACadSharp
 
 		public DxfClassCollection Classes { get; set; }
 
-		public AppIdsTable AppIds { get; set; }
-		public BlockRecordsTable BlockRecords { get; set; } = new BlockRecordsTable();
-		public DimensionStylesTable DimensionStyles { get; set; } = new DimensionStylesTable();
-		public LayersTable Layers { get; set; } = new LayersTable();
-		public LineTypesTable LineTypes { get; set; } = new LineTypesTable();
-		public StylesTable Styles { get; set; } = new StylesTable();
-		public UCSTable UCSs { get; set; } = new UCSTable();
-		public ViewsTable Views { get; set; } = new ViewsTable();
-		public ViewPortsTable Viewports { get; set; } = new ViewPortsTable();
+		public AppIdsTable AppIds { get; }
+		public BlockRecordsTable BlockRecords { get; } = new BlockRecordsTable();
+		public DimensionStylesTable DimensionStyles { get; } = new DimensionStylesTable();
+		public LayersTable Layers { get; } = new LayersTable();
+		public LineTypesTable LineTypes { get; } = new LineTypesTable();
+		public StylesTable Styles { get; } = new StylesTable();
+		public UCSTable UCSs { get; } = new UCSTable();
+		public ViewsTable Views { get; } = new ViewsTable();
+		public ViewPortsTable Viewports { get; } = new ViewPortsTable();
+
+		public List<Layout> Layouts { get; } = new List<Layout>(); //TODO: replace for a collection or a table
 
 		public object Blocks { get; set; }
 		public object Objects { get; set; }

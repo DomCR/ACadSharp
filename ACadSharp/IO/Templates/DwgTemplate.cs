@@ -110,6 +110,20 @@ namespace ACadSharp.IO.Templates
 		public List<ulong> Handles { get; set; } = new List<ulong>();
 
 		public DwgGroupTemplate(Group group) : base(group) { }
+
+		public override void Build(DwgDocumentBuilder builder)
+		{
+			base.Build(builder);
+
+			foreach (var handle in this.Handles)
+			{
+				CadObject member = builder.GetCadObject(handle);
+				if (member != null)
+				{
+					this.CadObject.Members.Add(handle, member);
+				}
+			}
+		}
 	}
 
 	internal class DwgViewportTableTemplate : DwgTemplate<ViewPortsTable>
@@ -117,36 +131,25 @@ namespace ACadSharp.IO.Templates
 		public List<ulong> Handles { get; set; } = new List<ulong>();
 
 		public DwgViewportTableTemplate(ViewPortsTable table) : base(table) { }
-	}
-
-	internal class DwgInsertTemplate : DwgEntityTemplate
-	{
-		public bool HasAtts { get; internal set; }
-		public int OwnedObjectsCount { get; internal set; }
-		public ulong BlockHeaderHandle { get; internal set; }
-		public ulong FirstAttributeHandle { get; internal set; }
-		public ulong EndAttributeHandle { get; internal set; }
-		public ulong SeqendHandle { get; internal set; }
-		public List<ulong> OwnedHandles { get; set; } = new List<ulong>();
-
-		public DwgInsertTemplate(Insert insert) : base(insert) { }
 
 		public override void Build(DwgDocumentBuilder builder)
 		{
 			base.Build(builder);
 
-			Insert insert = this.CadObject as Insert;
-
-			foreach (var item in this.OwnedHandles)
-			{
-
-			}
+			throw new NotImplementedException();
 		}
 	}
 
 	internal class DwgBlockBeginTemplate : DwgEntityTemplate
 	{
 		public DwgBlockBeginTemplate(Entity block) : base(block) { }
+
+		public override void Build(DwgDocumentBuilder builder)
+		{
+			base.Build(builder);
+
+			throw new NotImplementedException();
+		}
 	}
 
 	internal class DwgHatchTemplate : DwgEntityTemplate
@@ -157,8 +160,10 @@ namespace ACadSharp.IO.Templates
 			public List<ulong> Handles { get; set; } = new List<ulong>();
 		}
 
-		private List<DwgBoundaryPathTemplate> m_pathTempaltes { get; set; } = new List<DwgBoundaryPathTemplate>();
+		private List<DwgBoundaryPathTemplate> _pathTempaltes { get; set; } = new List<DwgBoundaryPathTemplate>();
+
 		public DwgHatchTemplate(Hatch hatch) : base(hatch) { }
+
 		/// <summary>
 		/// Add the path to the hatch and the templates list.
 		/// </summary>
@@ -166,7 +171,14 @@ namespace ACadSharp.IO.Templates
 		public void AddPath(DwgBoundaryPathTemplate template)
 		{
 			(this.CadObject as Hatch).Paths.Add(template.Path);
-			this.m_pathTempaltes.Add(template);
+			this._pathTempaltes.Add(template);
+		}
+
+		public override void Build(DwgDocumentBuilder builder)
+		{
+			base.Build(builder);
+
+			//throw new NotImplementedException();
 		}
 	}
 
@@ -178,36 +190,31 @@ namespace ACadSharp.IO.Templates
 		public List<ulong> VertexHandles { get; set; } = new List<ulong>();
 
 		public DwgPolyLineTemplate(PolyLine entity) : base(entity) { }
-	}
 
-	internal class DwgTextEntityTemplate : DwgEntityTemplate
-	{
-		public ulong StyleHandle { get; set; }
+		public override void Build(DwgDocumentBuilder builder)
+		{
+			base.Build(builder);
 
-		public DwgTextEntityTemplate(Entity entity) : base(entity) { }
+			throw new NotImplementedException();
+		}
 	}
 
 	internal class DwgTableEntryTemplate<T> : DwgTemplate<T>
 		where T : TableEntry
 	{
-		public ulong LtypeControlHandle { get; set; }
+		public ulong? LtypeControlHandle { get; set; }
 
 		public DwgTableEntryTemplate(T entry) : base(entry) { }
-	}
 
-	internal class DwgLayerTemplate : DwgTableEntryTemplate<Layer>
-	{
-		public ulong LayerControlHandle { get; internal set; }
-		public object PlotStyleHandle { get; internal set; }
-		public ulong MaterialHandle { get; internal set; }
-		public ulong LineTypeHandle { get; internal set; }
+		public override void Build(DwgDocumentBuilder builder)
+		{
+			base.Build(builder);
 
-		public DwgLayerTemplate(Layer entry) : base(entry) { }
-	}
-
-	internal class DwgObjectTemplate : DwgTemplate
-	{
-		public DwgObjectTemplate(CadObject cadObject) : base(cadObject) { }
+			if (this.LtypeControlHandle.HasValue && this.LtypeControlHandle.Value > 0)
+			{
+				throw new NotImplementedException();
+			}
+		}
 	}
 
 	internal class DwgBlockTemplate : DwgTableEntryTemplate<Block>
@@ -236,7 +243,7 @@ namespace ACadSharp.IO.Templates
 
 			if (this.FirstEntityHandle.HasValue
 				&& this.SecondEntityHandle.HasValue
-				&& builder.TryGetObjectBuilder(this.FirstEntityHandle.Value, out DwgEntityTemplate template))
+				&& builder.TryGetObjectTemplate(this.FirstEntityHandle.Value, out DwgEntityTemplate template))
 			{
 				do
 				{
@@ -244,7 +251,7 @@ namespace ACadSharp.IO.Templates
 						break;
 
 					this.CadObject.Entities.Add(template.CadObject);
-					template = builder.GetObjectBuilder<DwgEntityTemplate>(template.NextEntity.Value);
+					template = builder.GetObjectTemplate<DwgEntityTemplate>(template.NextEntity.Value);
 				} while (template != null);
 			}
 
@@ -277,8 +284,8 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			addBlockToModel(builder, ModelSpaceHandle);
-			addBlockToModel(builder, PaperSpaceHandle);
+			this.addBlockToModel(builder, this.ModelSpaceHandle);
+			this.addBlockToModel(builder, this.PaperSpaceHandle);
 
 			foreach (ulong handle in this.Handles)
 				this.addBlockToModel(builder, handle);
@@ -289,30 +296,5 @@ namespace ACadSharp.IO.Templates
 			if (builder.TryGetCadObject<Block>(handle, out Block block))
 				builder.DocumentToBuild.AddBlock(block, true);
 		}
-	}
-
-	internal class DwgLayoutTemplate : DwgTemplate
-	{
-		public ulong PaperSpaceBlockHandle { get; set; }
-		public ulong ActiveViewportHandle { get; set; }
-		public ulong BaseUcsHandle { get; set; }
-		public ulong NamesUcsHandle { get; set; }
-		public List<ulong> ViewportHandles { get; set; } = new List<ulong>();
-		public DwgLayoutTemplate(Layout layout) : base(layout) { }
-
-		public override void Build(DwgDocumentBuilder builder)
-		{
-			base.Build(builder);
-
-			throw new NotImplementedException();
-		}
-	}
-
-	internal class DwgTableTemplate<T> : DwgTemplate<Table<T>>
-		where T : TableEntry
-	{
-		public List<ulong> EntryHandles { get; } = new List<ulong>();
-
-		public DwgTableTemplate(Table<T> tableControl) : base(tableControl) { }
 	}
 }
