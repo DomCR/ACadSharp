@@ -7,10 +7,10 @@ namespace ACadSharp.Entities.Collections
 {
 	public class VertexCollection : IEntityCollection<Vertex>
 	{
-		public int Count => m_vertices.Count;
+		public int Count => _vertices.Count;
 		public bool IsReadOnly => false;
 
-		public Dictionary<ulong, Vertex> m_vertices = new Dictionary<ulong, Vertex>();
+		public Dictionary<ulong, Vertex> _vertices = new Dictionary<ulong, Vertex>();
 
 		public VertexCollection() : base() { }
 
@@ -21,6 +21,7 @@ namespace ACadSharp.Entities.Collections
 
 			Add(item as Vertex);
 		}
+
 		public void Add(Vertex item)
 		{
 			if (item == null)
@@ -29,11 +30,20 @@ namespace ACadSharp.Entities.Collections
 			//if (m_vertices.ContainsKey(item.Handle))
 			//	throw new ArgumentException();
 
-			m_vertices.Add(item.Handle, item);
+			_vertices.Add(item.Handle, item);
 		}
+
+		public void AddRange(IEnumerable<Vertex> vertices)
+		{
+			foreach (var v in vertices)
+			{
+				this.Add(v);
+			}
+		}
+
 		public void Clear()
 		{
-			m_vertices.Clear();
+			_vertices.Clear();
 		}
 
 		public bool Contains(Entity item)
@@ -53,12 +63,12 @@ namespace ACadSharp.Entities.Collections
 
 		public IEnumerator<Entity> GetEnumerator()
 		{
-			return m_vertices.Values.GetEnumerator();
+			return _vertices.Values.GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return m_vertices.Values.GetEnumerator();
+			return _vertices.Values.GetEnumerator();
 		}
 	}
 }

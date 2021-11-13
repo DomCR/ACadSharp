@@ -45,6 +45,25 @@ namespace ACadSharp.IO.Templates
 					this.CadObject.Reactors.Add(handle, reactor);
 			}
 		}
+
+		protected IEnumerable<T> getEntitiesCollection<T>(DwgDocumentBuilder builder, ulong firstHandle, ulong endHandle)
+			where T : Entity
+		{
+			List<T> collection = new List<T>();
+
+			DwgEntityTemplate template = builder.GetObjectTemplate<DwgEntityTemplate>(firstHandle);
+			while (template != null)
+			{
+				collection.Add((T)template.CadObject);
+
+				if (template.CadObject.Handle == endHandle)
+					break;
+
+				template = builder.GetObjectTemplate<DwgEntityTemplate>(template.NextEntity.Value);
+			}
+
+			return collection;
+		}
 	}
 
 	internal class DwgTemplate<T> : DwgTemplate
@@ -140,6 +159,7 @@ namespace ACadSharp.IO.Templates
 		}
 	}
 
+	[Obsolete]
 	internal class DwgBlockBeginTemplate : DwgEntityTemplate
 	{
 		public DwgBlockBeginTemplate(Entity block) : base(block) { }
@@ -178,92 +198,7 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			//throw new NotImplementedException();
-		}
-	}
-
-	internal class DwgPolyLineTemplate : DwgEntityTemplate
-	{
-		public ulong FirstVertexHandle { get; internal set; }
-		public ulong LastVertexHandle { get; internal set; }
-		public ulong SeqendHandle { get; internal set; }
-		public List<ulong> VertexHandles { get; set; } = new List<ulong>();
-
-		public DwgPolyLineTemplate(PolyLine entity) : base(entity) { }
-
-		public override void Build(DwgDocumentBuilder builder)
-		{
-			base.Build(builder);
-
 			throw new NotImplementedException();
-		}
-	}
-
-	internal class DwgTableEntryTemplate<T> : DwgTemplate<T>
-		where T : TableEntry
-	{
-		public ulong? LtypeControlHandle { get; set; }
-
-		public DwgTableEntryTemplate(T entry) : base(entry) { }
-
-		public override void Build(DwgDocumentBuilder builder)
-		{
-			base.Build(builder);
-
-			if (this.LtypeControlHandle.HasValue && this.LtypeControlHandle.Value > 0)
-			{
-				throw new NotImplementedException();
-			}
-		}
-	}
-
-	internal class DwgBlockTemplate : DwgTableEntryTemplate<Block>
-	{
-		public ulong? FirstEntityHandle { get; set; }
-		public ulong? SecondEntityHandle { get; set; }
-		public ulong EndBlockHandle { get; set; }
-		public ulong? LayoutHandle { get; set; }
-		public List<ulong> OwnedObjectsHandlers { get; set; } = new List<ulong>();
-		public List<ulong> Entries { get; set; } = new List<ulong>();
-		public ulong? HardOwnerHandle { get; set; }
-
-		public DwgBlockTemplate(Block block) : base(block) { }
-
-		public override void Build(DwgDocumentBuilder builder)
-		{
-			base.Build(builder);
-
-			//if (HardOwnerHandle.HasValue)
-			//	TypedObject.BlockBegin = builder.GetCadObject<BlockBegin>(this.HardOwnerHandle);
-
-			if (this.LayoutHandle.HasValue && builder.TryGetCadObject<Layout>(this.LayoutHandle.Value, out Layout layout))
-			{
-				layout.AssociatedBlock = this.CadObject;
-			}
-
-			if (this.FirstEntityHandle.HasValue
-				&& this.SecondEntityHandle.HasValue
-				&& builder.TryGetObjectTemplate(this.FirstEntityHandle.Value, out DwgEntityTemplate template))
-			{
-				do
-				{
-					if (template.NextEntity == null)
-						break;
-
-					this.CadObject.Entities.Add(template.CadObject);
-					template = builder.GetObjectTemplate<DwgEntityTemplate>(template.NextEntity.Value);
-				} while (template != null);
-			}
-
-			foreach (ulong handle in this.OwnedObjectsHandlers)
-			{
-				if (builder.TryGetCadObject<Entity>(handle, out Entity child))
-				{
-					this.CadObject.Entities.Add(child);
-				}
-			}
-
-			//TODO: Process EndBlockHandle ?? 
 		}
 	}
 
@@ -271,30 +206,12 @@ namespace ACadSharp.IO.Templates
 	{
 		public Dictionary<ulong, string> HandleEntries { get; set; } = new Dictionary<ulong, string>();
 		public DwgDictionaryTemplate(CadDictionary dictionary) : base(dictionary) { }
-	}
-
-	internal class DwgBlockCtrlObjectTemplate : DwgTemplate
-	{
-		public ulong ModelSpaceHandle { get; set; }
-		public ulong PaperSpaceHandle { get; set; }
-		public List<ulong> Handles { get; set; } = new List<ulong>();
-		public DwgBlockCtrlObjectTemplate() : base(new BlockRecordsTable()) { }
 
 		public override void Build(DwgDocumentBuilder builder)
 		{
 			base.Build(builder);
 
-			this.addBlockToModel(builder, this.ModelSpaceHandle);
-			this.addBlockToModel(builder, this.PaperSpaceHandle);
 
-			foreach (ulong handle in this.Handles)
-				this.addBlockToModel(builder, handle);
-		}
-
-		private void addBlockToModel(DwgDocumentBuilder builder, ulong handle)
-		{
-			if (builder.TryGetCadObject<Block>(handle, out Block block))
-				builder.DocumentToBuild.AddBlock(block, true);
 		}
 	}
 }

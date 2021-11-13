@@ -30,17 +30,8 @@ namespace ACadSharp.IO.Templates
 
 			if (this.FirstAttributeHandle.HasValue)
 			{
-				DwgEntityTemplate template = builder.GetObjectTemplate<DwgEntityTemplate>(FirstAttributeHandle.Value);
-				do
-				{
-					insert.Attributes.Add((Entities.Attribute)template.CadObject);
-
-					if (template.CadObject.Handle == this.EndAttributeHandle.Value)
-						break;
-
-					template = builder.GetObjectTemplate<DwgEntityTemplate>(template.NextEntity.Value);
-
-				} while (template != null);
+				var attributes = getEntitiesCollection<Entities.Attribute>(builder, FirstAttributeHandle.Value, EndAttributeHandle.Value);
+				insert.Attributes.AddRange(attributes);
 			}
 			else
 			{

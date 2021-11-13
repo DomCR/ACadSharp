@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30907.101
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACadSharp", "ACadSharp\ACadSharp.csproj", "{66B978F6-8ED4-4E14-BD43-BBB86664ADB3}"
 EndProject
@@ -37,8 +37,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dwg", "dwg", "{BF9B0C8C-987
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACadSharp.Tests", "ACadSharp.Tests\ACadSharp.Tests.csproj", "{3503AFF9-E9C1-46F4-8E40-81D3035093DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACadTestGenerator", "ACadTestGenerator\ACadTestGenerator.csproj", "{5A00F437-F0E5-41AC-B0EB-34416B1A10B1}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{B86AD482-05C4-400E-9CAE-7B96AD6B0C3E}"
 	ProjectSection(SolutionItems) = preProject
 		docs\autocad_2012_pdf_dxf-reference_enu.pdf = docs\autocad_2012_pdf_dxf-reference_enu.pdf
@@ -54,8 +52,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CSUtilities", "CSUtilities\CSUtilities\CSUtilities.shproj", "{B4EF345D-52B9-47F1-AA2A-B4AE85F62EFC}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CSMath", "CSUtilities\CSMath\CSMath.shproj", "{411B6122-5EF6-46DB-A8F2-43E9C1841E4A}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		CSUtilities\CSMath\CSMath.projitems*{411b6122-5ef6-46db-a8f2-43e9c1841e4a}*SharedItemsImports = 13
 		CSUtilities\CSUtilities\CSUtilities.projitems*{66b978f6-8ed4-4e14-bd43-bbb86664adb3}*SharedItemsImports = 5
 		CSUtilities\CSUtilities\CSUtilities.projitems*{b4ef345d-52b9-47f1-aa2a-b4ae85f62efc}*SharedItemsImports = 13
 	EndGlobalSection
@@ -76,10 +77,6 @@ Global
 		{3503AFF9-E9C1-46F4-8E40-81D3035093DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3503AFF9-E9C1-46F4-8E40-81D3035093DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3503AFF9-E9C1-46F4-8E40-81D3035093DD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5A00F437-F0E5-41AC-B0EB-34416B1A10B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5A00F437-F0E5-41AC-B0EB-34416B1A10B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5A00F437-F0E5-41AC-B0EB-34416B1A10B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5A00F437-F0E5-41AC-B0EB-34416B1A10B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

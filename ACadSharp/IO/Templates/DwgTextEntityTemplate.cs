@@ -14,8 +14,17 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			TextEntity text = this.CadObject as TextEntity;
-			text.TextStyle = builder.GetCadObject<Style>(this.StyleHandle);
+			switch (this.CadObject)
+			{
+				case TextEntity text:
+					text.TextStyle = builder.GetCadObject<Style>(this.StyleHandle);
+					break;
+				case MText mtext:
+					mtext.TextStyle = builder.GetCadObject<Style>(this.StyleHandle);
+					break;
+				default:
+					throw new System.ArgumentException("Unknown type");
+			}
 		}
 	}
 }

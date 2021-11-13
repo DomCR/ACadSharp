@@ -43,37 +43,6 @@ namespace ACadSharp.IO.DWG
 			{
 				template.Build(this);
 			}
-
-			//Old version
-#if false
-			if (this.AppIds != null)
-				this.AppIds.Build(this);
-
-			if (this.HeaderHandles.BYLAYER != null && this.TryGetCadObject(this.HeaderHandles.BYLAYER.Value, out LineType lineType))
-				this.DocumentToBuild.LineTypes.Add(lineType);
-
-			if (this.HeaderHandles.BYBLOCK != null && this.TryGetCadObject(this.HeaderHandles.BYBLOCK.Value, out LineType byBlock))
-				this.DocumentToBuild.LineTypes.Add(byBlock);
-
-			if (this.HeaderHandles.CONTINUOUS != null && this.TryGetCadObject(this.HeaderHandles.CONTINUOUS.Value, out LineType continuous))
-				this.DocumentToBuild.LineTypes.Add(continuous);
-
-			foreach (DwgBlockTemplate header in this.BlockHeaders)
-				header.Build(this);
-
-			foreach (ICadObjectBuilder block in this.Blocks)
-				block.Build(this);
-
-			if (this.BlockControlTemplate != null)
-				this.BlockControlTemplate.Build(this);
-
-			if (this.HeaderHandles.DIMSTYLE != null && this.TryGetCadObject(this.HeaderHandles.DIMSTYLE.Value, out DimensionStyle dstyle))
-				this.DocumentToBuild.DimensionStyles.Add(dstyle);
-
-			//Build the rest of the objects in the document
-			foreach (ICadObjectBuilder item in Templates.Values.Where(b => b.ToBuild))
-				item.Build(this); 
-#endif
 		}
 
 		public CadObject GetCadObject(ulong handle)

@@ -14,8 +14,9 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
 		/// </summary>
-		[DxfCodeValue(DxfCode.Thickness)]
+		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;
+
 		/// <summary>
 		/// A 3D WCS coordinate representing the insertion or origin point.
 		/// </summary>
@@ -24,14 +25,16 @@ namespace ACadSharp.Entities
 		/// </remarks>
 		[DxfCodeValue(DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
 		public XYZ InsertPoint { get; set; } = XYZ.Zero;
+
 		/// <summary>
 		/// Changes the height of the object.
 		/// </summary>
 		/// <value>
 		/// This must be a positive, non-negative number.
 		/// </value>
-		[DxfCodeValue(DxfCode.TxtSize)]
+		[DxfCodeValue(40)]
 		public double Height { get; set; } = 0.0;
+
 		/// <summary>
 		/// Specifies the text string for the entity.
 		/// </summary>
@@ -40,6 +43,7 @@ namespace ACadSharp.Entities
 		/// </value>
 		[DxfCodeValue(DxfCode.Text)]
 		public string Value { get; set; } = string.Empty;
+
 		/// <summary>
 		/// Specifies the rotation angle for the object.
 		/// </summary>

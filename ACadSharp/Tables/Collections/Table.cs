@@ -12,7 +12,7 @@ namespace ACadSharp.Tables.Collections
 	{
 		public override string ObjectName => DxfFileToken.TableEntry;
 
-		public int Count => _entries.Count;
+		public int Count => this._entries.Count;
 		public bool IsReadOnly => false;
 		public T this[string name]
 		{
@@ -28,51 +28,51 @@ namespace ACadSharp.Tables.Collections
 
 		internal Table(DxfTableTemplate template) 
 		{
-			Handle = template.Handle;
-			OwnerHandle = template.OwnerHandle;
+			this.Handle = template.Handle;
+			this.OwnerHandle = template.OwnerHandle;
 		}
 
 		public void Add(T item)
 		{
-			_entries.Add(item.Name, item);
+			this._entries.Add(item.Name, item);
 		}
 		
 		public void AddRange(IEnumerable<T> items)
 		{
 			foreach (var item in items)
 			{
-				Add(item);
+				this.Add(item);
 			}
 		}
 		
 		public void Clear()
 		{
-			_entries.Clear();
+			this._entries.Clear();
 		}
 		
 		public bool Contains(T item)
 		{
-			return _entries.Values.Contains(item);
+			return this._entries.Values.Contains(item);
 		}
 		
 		public void CopyTo(T[] array, int arrayIndex)
 		{
-			_entries.Values.CopyTo(array, arrayIndex);
+			this._entries.Values.CopyTo(array, arrayIndex);
 		}
 		
 		public IEnumerator<T> GetEnumerator()
 		{
-			return _entries.Values.GetEnumerator();
+			return this._entries.Values.GetEnumerator();
 		}
 		
 		public bool Remove(T item)
 		{
-			return _entries.Remove(item.Name);
+			return this._entries.Remove(item.Name);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return _entries.Values.GetEnumerator();
+			return this._entries.Values.GetEnumerator();
 		}
 	}
 }

@@ -17,7 +17,7 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			foreach (var handle in this.EntryHandles)
+			foreach (ulong handle in this.EntryHandles)
 			{
 				try
 				{
