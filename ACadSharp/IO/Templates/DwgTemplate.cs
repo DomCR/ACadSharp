@@ -95,16 +95,6 @@ namespace ACadSharp.IO.Templates
 		public ulong Dimltex2 { get; internal set; }
 	}
 
-	internal class DwgViewportTemplate : DwgEntityTemplate
-	{
-		public ulong? ViewportHeaderHandle { get; set; }
-		public ulong? BoundaryHandle { get; set; }
-		public ulong? NamedUcsHandle { get; set; }
-		public ulong? BaseUcsHandle { get; set; }
-		public List<ulong> FrozenLayerHandles { get; set; } = new List<ulong>();
-		public DwgViewportTemplate(Viewport entity) : base(entity) { }
-	}
-
 	internal class DwgColorTemplate : DwgTemplate
 	{
 		public string Name { get; set; }
@@ -114,7 +104,9 @@ namespace ACadSharp.IO.Templates
 
 		public override void Build(DwgDocumentBuilder builder)
 		{
-			return;
+			base.Build(builder);
+
+			throw new NotImplementedException();
 		}
 
 		public class DwgColor : CadObject
@@ -124,75 +116,10 @@ namespace ACadSharp.IO.Templates
 		}
 	}
 
-	internal class DwgGroupTemplate : DwgTemplate<Group>
-	{
-		public List<ulong> Handles { get; set; } = new List<ulong>();
-
-		public DwgGroupTemplate(Group group) : base(group) { }
-
-		public override void Build(DwgDocumentBuilder builder)
-		{
-			base.Build(builder);
-
-			foreach (var handle in this.Handles)
-			{
-				CadObject member = builder.GetCadObject(handle);
-				if (member != null)
-				{
-					this.CadObject.Members.Add(handle, member);
-				}
-			}
-		}
-	}
-
-	internal class DwgViewportTableTemplate : DwgTemplate<ViewPortsTable>
-	{
-		public List<ulong> Handles { get; set; } = new List<ulong>();
-
-		public DwgViewportTableTemplate(ViewPortsTable table) : base(table) { }
-
-		public override void Build(DwgDocumentBuilder builder)
-		{
-			base.Build(builder);
-
-			throw new NotImplementedException();
-		}
-	}
-
 	[Obsolete]
 	internal class DwgBlockBeginTemplate : DwgEntityTemplate
 	{
 		public DwgBlockBeginTemplate(Entity block) : base(block) { }
-
-		public override void Build(DwgDocumentBuilder builder)
-		{
-			base.Build(builder);
-
-			throw new NotImplementedException();
-		}
-	}
-
-	internal class DwgHatchTemplate : DwgEntityTemplate
-	{
-		public class DwgBoundaryPathTemplate
-		{
-			public HatchBoundaryPath Path { get; set; } = new HatchBoundaryPath();
-			public List<ulong> Handles { get; set; } = new List<ulong>();
-		}
-
-		private List<DwgBoundaryPathTemplate> _pathTempaltes { get; set; } = new List<DwgBoundaryPathTemplate>();
-
-		public DwgHatchTemplate(Hatch hatch) : base(hatch) { }
-
-		/// <summary>
-		/// Add the path to the hatch and the templates list.
-		/// </summary>
-		/// <param name="template"></param>
-		public void AddPath(DwgBoundaryPathTemplate template)
-		{
-			(this.CadObject as Hatch).Paths.Add(template.Path);
-			this._pathTempaltes.Add(template);
-		}
 
 		public override void Build(DwgDocumentBuilder builder)
 		{

@@ -39,7 +39,7 @@ namespace ACadSharp
 		public StylesTable Styles { get; } = new StylesTable();
 		public UCSTable UCSs { get; } = new UCSTable();
 		public ViewsTable Views { get; } = new ViewsTable();
-		public ViewPortsTable Viewports { get; } = new ViewPortsTable();
+		public VPortsTable VPorts { get; } = new VPortsTable();
 
 		public List<Layout> Layouts { get; } = new List<Layout>(); //TODO: replace for a collection or a table
 

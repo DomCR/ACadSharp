@@ -21,7 +21,9 @@ namespace ACadSharp.IO.Templates
 			{
 				try
 				{
-					this.CadObject.Add(builder.GetCadObject<T>(handle));
+					T entry = builder.GetCadObject<T>(handle);
+					if (entry != null)
+						this.CadObject.Add(builder.GetCadObject<T>(handle));
 				}
 				catch (Exception)
 				{

@@ -261,9 +261,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(63)]
 		public Color AmbientLightColor { get; set; }
 
-		//361
-
-		//Sun ID/Handle(optional)
+		//361	Sun ID/Handle(optional)
 
 		//335
 
@@ -279,14 +277,5 @@ namespace ACadSharp.Entities
 		//Soft pointer reference to viewport object (for layer VP property override)
 
 		public Viewport() : base() { }
-	}
-
-	/// <summary>Represents lighting type.</summary>
-	public enum LightingType : byte
-	{
-		/// <summary>One distant light.</summary>
-		OneDistantLight,
-		/// <summary>Two distant lights.</summary>
-		TwoDistantLights,
 	}
 }

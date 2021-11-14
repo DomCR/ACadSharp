@@ -2502,7 +2502,7 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readVPortControlObject()
 		{
 			DwgTableTemplate<VPort> template = new DwgTableTemplate<VPort>(
-				this._modelBuilder.DocumentToBuild.Viewports);
+				this._modelBuilder.DocumentToBuild.VPorts);
 
 			this.readCommonNonEntityData(template);
 
