@@ -6,7 +6,10 @@ namespace ACadSharp.Tables.Collections
 	{
 		public override ObjectType ObjectType => ObjectType.VIEW_CONTROL_OBJ;
 
-		public ViewsTable() { }
 		internal ViewsTable(DxfTableTemplate template) : base(template) { }
+
+		public ViewsTable(CadDocument document) : base(document)
+		{
+		}
 	}
 }

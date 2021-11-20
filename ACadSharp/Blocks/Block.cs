@@ -10,11 +10,19 @@ namespace ACadSharp.Blocks
 {
 	public class Block : TableEntry
 	{
-		/// <summary>
-		/// Gets the object type.
-		/// </summary>
 		public override ObjectType ObjectType => ObjectType.BLOCK;
 		public override string ObjectName => DxfFileToken.Block;
+
+		public override CadDocument Document
+		{
+			get { return _document; }
+			internal set
+			{
+				_document = value;
+				_document.RegisterCollection(this.Entities);
+			}
+		}
+		private CadDocument _document;
 
 		public override bool XrefDependant
 		{
@@ -30,6 +38,7 @@ namespace ACadSharp.Blocks
 					Flags &= ~BlockTypeFlags.XrefDependent;
 			}
 		}
+
 		/// <summary>
 		/// Indicates if this block is anonymous.
 		/// </summary>
@@ -67,42 +76,47 @@ namespace ACadSharp.Blocks
 			}
 		}
 		public bool IsLoadedXref { get; set; }
+
 		/// <summary>
 		/// Specifies the layer for an object.
 		/// </summary>
-		[DxfCodeValue(DxfCode.LayerName)]
+		[DxfCodeValue(8)]
 		public Layer Layer { get; set; } = Layer.Default;
-		///// <summary>
-		///// Specifies the name of the object.
-		///// </summary>
-		//[DxfCodeValue(DxfCode.BlockName)]
-		//public string Name { get; set; }
+
 		/// <summary>
 		/// Block active flags.
 		/// </summary>
 		[DxfCodeValue(DxfCode.Int16)]
 		public BlockTypeFlags Flags { get; set; }
+
 		/// <summary>
 		/// Specifies the insert point of the block.
 		/// </summary>
 		[DxfCodeValue(DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
 		public XYZ BasePoint { get; set; } = XYZ.Zero;
+
 		/// <summary>
 		/// Gets the path of the block, document, application, or external reference.
 		/// </summary>
 		[DxfCodeValue(DxfCode.XRefPath)]
 		public string XrefPath { get; internal set; }
+
 		/// <summary>
 		/// Specifies the comments for the block or drawing.
 		/// </summary>
 		[DxfCodeValue(DxfCode.SymbolTableRecordComments)]
 		public string Comments { get; set; }
-		
+
 		/// <summary>
 		/// 
 		/// </summary>
 		public BlockRecord Record { get; internal set; }
 
-		public List<Entity> Entities { get; set; } = new List<Entity>();
+		public CadObjectCollection<Entity> Entities { get; set; }
+
+		public Block()
+		{
+			this.Entities = new CadObjectCollection<Entity>(this);
+		}
 	}
 }

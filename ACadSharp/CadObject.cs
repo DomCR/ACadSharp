@@ -1,10 +1,4 @@
-﻿#region copyright
-//Copyright 2021, Albert Domenech.
-//All rights reserved. 
-//This source code is licensed under the MIT license. 
-//See LICENSE file in the project root for full license information.
-#endregion
-using ACadSharp.Attributes;
+﻿using ACadSharp.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +9,10 @@ namespace ACadSharp
 	public abstract class CadObject
 	{
 		/// <summary>
-		/// Gets the object type.
+		/// Get the object type.
 		/// </summary>
 		public abstract ObjectType ObjectType { get; }
+
 		/// <summary>
 		/// The AutoCAD class name of an object.
 		/// </summary>
@@ -26,6 +21,9 @@ namespace ACadSharp
 		/// <summary>
 		/// The handle of the entity.
 		/// </summary>
+		/// <remarks>
+		/// If the value is 0 the object doesn't belong to any document.
+		/// </remarks>
 		[DxfCodeValue(5)]
 		public ulong Handle { get; internal set; }
 
@@ -33,9 +31,10 @@ namespace ACadSharp
 		/// Soft-pointer ID/handle to owner object
 		/// </summary>
 		[DxfCodeValue(330)]
-		public ulong? OwnerHandle { get; internal set; }
-
 		public CadObject Owner { get; internal set; }
+
+		[Obsolete("Will be replaced for the actual owner")]
+		public ulong? OwnerHandle { get; internal set; }
 
 		/// <summary>
 		/// Objects that are attached to this entity.
@@ -45,14 +44,22 @@ namespace ACadSharp
 		//TODO: Extended data
 
 		/// <summary>
+		/// Document where this element belongs
+		/// </summary>
+		public virtual CadDocument Document { get; internal set; }
+
+		/// <summary>
 		/// Get a map of the object using dxf codes in each field.
 		/// </summary>
 		/// <returns></returns>
+		//TODO: Create the mab based on each type in the hirearchy
 		internal Dictionary<DxfCode, object> GetCadObjectMap()
 		{
 			Dictionary<DxfCode, object> map = new Dictionary<DxfCode, object>();
 
-			foreach (PropertyInfo p in GetType().GetProperties())
+			var a = this.GetType().GetProperties();
+
+			foreach (PropertyInfo p in this.GetType().GetProperties())
 			{
 				DxfCodeValueAttribute att = p.GetCustomAttribute<DxfCodeValueAttribute>();
 				if (att == null)
@@ -74,9 +81,9 @@ namespace ACadSharp
 		/// <param name="map"></param>
 		internal virtual void Build(Dictionary<DxfCode, object> map)
 		{
-			var a = GetType().GetProperties();
+			var a = this.GetType().GetProperties();
 
-			foreach (PropertyInfo p in GetType().GetProperties())
+			foreach (PropertyInfo p in this.GetType().GetProperties())
 			{
 				DxfCodeValueAttribute att = p.GetCustomAttribute<DxfCodeValueAttribute>();
 				if (att == null)
@@ -129,7 +136,7 @@ namespace ACadSharp
 		/// <inheritdoc/>
 		public override string ToString()
 		{
-			return $"{ObjectName}:{ObjectType}";
+			return $"{this.ObjectName}:{this.ObjectType}";
 		}
 	}
 }

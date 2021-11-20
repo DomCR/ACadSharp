@@ -15,8 +15,8 @@ jobs:
     - name: Checkout
       run: git config --global core.autocrlf true
     - uses: actions/checkout@v2
-      #with: 
-      #  submodules: true
+      with: 
+        submodules: true
     - name: Restore dependencies
       run: dotnet restore
     - name: Build

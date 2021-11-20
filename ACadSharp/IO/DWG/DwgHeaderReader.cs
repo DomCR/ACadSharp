@@ -855,6 +855,11 @@ namespace ACadSharp.IO.DWG
 			{
 				//H: DICTIONARY(VISUALSTYLE)(hard pointer)
 				objectPointers.DICTIONARY_VISUALSTYLE = sreader.HandleReference();
+
+				//R2013+:
+				if (this.R2013Plus)
+					//H : UNKNOWN (hard pointer)
+					objectPointers.DICTIONARY_VISUALSTYLE = sreader.HandleReference();
 			}
 
 			//R2000 +:

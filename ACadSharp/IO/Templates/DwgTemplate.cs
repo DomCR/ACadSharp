@@ -14,10 +14,13 @@ namespace ACadSharp.IO.Templates
 	{
 		public CadObject CadObject { get; set; }
 
+		public ulong? OwnerHandle { get; set; }
+
 		/// <summary>
 		/// XDictionary handle linked to this object.
 		/// </summary>
 		public ulong? XDictHandle { get; set; }
+
 		public List<ulong> ReactorsHandles { get; } = new List<ulong>();
 
 		public DwgTemplate(CadObject cadObject)
@@ -27,10 +30,10 @@ namespace ACadSharp.IO.Templates
 
 		public virtual void Build(DwgDocumentBuilder builder)
 		{
-			if (this.CadObject.OwnerHandle.HasValue)
+			if (this.OwnerHandle.HasValue)
 			{
-				CadObject owner = builder.GetCadObject(this.CadObject.OwnerHandle.Value);
-				this.CadObject.Owner = owner;
+				if (builder.TryGetCadObject(this.OwnerHandle.Value, out CadObject owner))
+					this.CadObject.Owner = owner;
 			}
 
 			if (this.XDictHandle.HasValue)
@@ -59,7 +62,11 @@ namespace ACadSharp.IO.Templates
 				if (template.CadObject.Handle == endHandle)
 					break;
 
-				template = builder.GetObjectTemplate<DwgEntityTemplate>(template.NextEntity.Value);
+				if (template.NextEntity.HasValue)
+					template = builder.GetObjectTemplate<DwgEntityTemplate>(template.NextEntity.Value);
+				else
+					template = builder.GetObjectTemplate<DwgEntityTemplate>(template.CadObject.Handle + 1);
+
 			}
 
 			return collection;
@@ -80,8 +87,6 @@ namespace ACadSharp.IO.Templates
 
 	internal class DwgDimensionStyleTemplate : DwgTemplate<DimensionStyle>
 	{
-		public DwgDimensionStyleTemplate(DimensionStyle dimStyle) : base(dimStyle) { }
-
 		public string DIMBL_KName { get; internal set; }
 		public string DIMBLK1_Name { get; internal set; }
 		public string DIMBLK2_Name { get; internal set; }
@@ -93,6 +98,14 @@ namespace ACadSharp.IO.Templates
 		public ulong Dimltype { get; internal set; }
 		public ulong Dimltex1 { get; internal set; }
 		public ulong Dimltex2 { get; internal set; }
+		public DwgDimensionStyleTemplate(DimensionStyle dimStyle) : base(dimStyle) { }
+
+		public override void Build(DwgDocumentBuilder builder)
+		{
+			base.Build(builder);
+
+			//throw new NotImplementedException();
+		}
 	}
 
 	internal class DwgColorTemplate : DwgTemplate
@@ -138,7 +151,12 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
+			if (this.OwnerHandle.HasValue && this.OwnerHandle == 0)
+			{
 
+			}
+
+			//throw new NotImplementedException();
 		}
 	}
 }

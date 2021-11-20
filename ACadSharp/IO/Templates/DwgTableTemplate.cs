@@ -32,4 +32,30 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 	}
+
+	//internal class DwgViewportEntityControlTemplate : DwgTemplate<T>
+	//{
+	//	public List<ulong> EntryHandles { get; } = new List<ulong>();
+
+	//	public DwgViewportEntityControlTemplate(T tableControl) : base(tableControl) { }
+
+	//	public override void Build(DwgDocumentBuilder builder)
+	//	{
+	//		base.Build(builder);
+
+	//		foreach (ulong handle in this.EntryHandles)
+	//		{
+	//			try
+	//			{
+	//				T entry = builder.GetCadObject<T>(handle);
+	//				if (entry != null)
+	//					this.CadObject.Add(builder.GetCadObject<T>(handle));
+	//			}
+	//			catch (Exception)
+	//			{
+	//				//TODO: report the exceptions in the NotificationEventHandler
+	//			}
+	//		}
+	//	}
+	//}
 }

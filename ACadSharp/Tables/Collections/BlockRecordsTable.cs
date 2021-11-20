@@ -7,7 +7,7 @@ namespace ACadSharp.Tables.Collections
 	{
 		public override ObjectType ObjectType => ObjectType.BLOCK_CONTROL_OBJ;
 
-		public BlockRecordsTable() { }
+		public BlockRecordsTable(CadDocument document) : base(document) { }
 		internal BlockRecordsTable(DxfTableTemplate template) : base(template) { }
 	}
 }

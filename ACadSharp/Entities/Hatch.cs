@@ -5,17 +5,11 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
+	//TODO: FIX the hatch mess!!!!
+
 	public class HatchPattern
 	{
-		public static HatchPattern Solid
-		{
-			get
-			{
-				HatchPattern pattern = new HatchPattern("SOLID");
-
-				return pattern;
-			}
-		}
+		public readonly static HatchPattern Solid = new HatchPattern("SOLID");
 
 		public class Line
 		{

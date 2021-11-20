@@ -6,8 +6,10 @@ namespace ACadSharp.Tables.Collections
 	{
 		public override ObjectType ObjectType => ObjectType.VPORT_CONTROL_OBJ;
 
-		public VPortsTable() { }
-
 		internal VPortsTable(DxfTableTemplate template) : base(template) { }
+
+		public VPortsTable(CadDocument document) : base(document)
+		{
+		}
 	}
 }

@@ -609,22 +609,19 @@ namespace ACadSharp.IO.DWG
 			//R15 and earlier: BS color index
 			short colorIndex = ReadBitShort();
 
-			//TODO: Finish the color implementation
-			return new Color();
+			return new Color(colorIndex);
 		}
 
 		/// <inheritdoc/>
 		public virtual Color ReadEnColor(out Transparency transparency, out bool flag)
 		{
-			Color color = new Color();
 			flag = false;
 
 			//BS : color index (always 0)
 			short colorNumber = ReadBitShort();
 			transparency = Transparency.ByLayer;
-			color.Index = colorNumber;
 
-			return color;
+			return new Color(colorNumber);
 		}
 
 		public Color ReadColorByIndex()

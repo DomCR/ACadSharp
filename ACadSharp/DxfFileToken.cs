@@ -36,6 +36,7 @@ namespace ACadSharp
 		public const string TableLayout = "LAYOUT";
 		public const string TableLayer = "LAYER";
 		public const string TableLinetype = "LTYPE";
+		public const string TableMLStyle = "MLINESTYLE";
 		public const string TableStyle = "STYLE";
 		public const string TableUcs = "UCS";
 		public const string TableView = "VIEW";

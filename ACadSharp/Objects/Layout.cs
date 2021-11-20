@@ -1,10 +1,4 @@
-﻿#region copyright
-//Copyright 2021, Albert Domenech.
-//All rights reserved. 
-//This source code is licensed under the MIT license. 
-//See LICENSE file in the project root for full license information.
-#endregion
-using ACadSharp.Attributes;
+﻿using ACadSharp.Attributes;
 using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Geometry;
@@ -14,7 +8,7 @@ using System.Text;
 
 namespace ACadSharp.Objects
 {
-	public class Layout : CadObject
+	public class Layout : TableEntry
 	{
 		public override ObjectType ObjectType => ObjectType.LAYOUT;
 		public override string ObjectName => DxfFileToken.TableLayout;
@@ -24,8 +18,8 @@ namespace ACadSharp.Objects
 
 		//100	Subclass marker(AcDbLayout)
 
-		[DxfCodeValue(DxfCode.Text)]
-		public string Name { get; set; }
+		[DxfCodeValue(1)]
+		public override string Name { get; set; }
 
 		/// <summary>
 		/// Layout flags.

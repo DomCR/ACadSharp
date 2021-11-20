@@ -19,7 +19,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Specifies the layer for an object.
 		/// </summary>
-		[DxfCodeValue(DxfCode.LayerName)]
+		[DxfCodeValue(8)]
 		public Layer Layer { get; set; } = Layer.Default;
 
 		/// <summary>
@@ -30,13 +30,13 @@ namespace ACadSharp.Entities
 		/// This object can hold an RGB value, an ACI number (an integer from 1 to 255), or a named color.
 		/// Using an RGB value, you can choose from millions of colors.
 		/// </remarks>
-		[DxfCodeValue(DxfCode.Color)]
+		[DxfCodeValue(62)]
 		public Color Color { get; set; } = Color.ByLayer;
 		
 		/// <summary>
 		/// Specifies the lineweight of an individual object or the default lineweight for the drawing.
 		/// </summary>
-		[DxfCodeValue(DxfCode.LineWeight)]
+		[DxfCodeValue(370)]
 		public LineweightType Lineweight { get; set; } = LineweightType.Default;
 		/// <summary>
 		/// Linetype scale for this entity.
@@ -44,7 +44,7 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// This must be a positive, non-negative number.
 		/// </remarks>
-		[DxfCodeValue(DxfCode.LinetypeScale)]
+		[DxfCodeValue(48)]
 		public double LinetypeScale { get; set; } = 1.0;
 		/// <summary>
 		/// Specifies the visibility of an object or the application.
@@ -54,19 +54,19 @@ namespace ACadSharp.Entities
 		/// visible setting. Other factors can also cause an object to be invisible; 
 		/// for example, an object will not be displayed if its layer is off or frozen.
 		/// </remarks>
-		[DxfCodeValue(DxfCode.Visibility)]
+		[DxfCodeValue(60)]
 		public bool IsInvisible { get; set; } = false;
 
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
 		/// </summary>
-		[DxfCodeValue(DxfCode.NormalX, DxfCode.NormalY, DxfCode.NormalZ)]
+		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 		/// <summary>
 		/// Transparency value.
 		/// </summary>
-		[DxfCodeValue(DxfCode.Alpha)]
+		[DxfCodeValue(440)]
 		public Transparency Transparency { get; set; }
 
 		public LineType LineType { get; set; }
@@ -82,11 +82,11 @@ namespace ACadSharp.Entities
 		/// <param name="template"></param>
 		internal Entity(DxfEntityTemplate template)
 		{
-			Handle = template.Handle;
-			OwnerHandle = template.OwnerHandle;
-			Layer = template.Layer;
-			Color = template.Color;
-			Lineweight = template.Lineweight;
+			this.Handle = template.Handle;
+			//OwnerHandle = template.OwnerHandle;
+			this.Layer = template.Layer;
+			this.Color = template.Color;
+			this.Lineweight = template.Lineweight;
 		}
 
 		/// <summary>
@@ -97,7 +97,7 @@ namespace ACadSharp.Entities
 		{
 			Dictionary<string, PropertyInfo> map = new Dictionary<string, PropertyInfo>();
 
-			foreach (PropertyInfo p in GetType().GetProperties())
+			foreach (PropertyInfo p in this.GetType().GetProperties())
 			{
 				DxfSubClassEntityAttribute att = p.GetCustomAttribute<DxfSubClassEntityAttribute>();
 				if (att == null)

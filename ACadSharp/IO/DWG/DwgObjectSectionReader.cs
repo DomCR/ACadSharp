@@ -233,7 +233,7 @@ namespace ACadSharp.IO.DWG
 		private void readCommonEntityData(DwgEntityTemplate template)
 		{
 			//Get the cad object as an entity
-			Entity entity = (Entity)template.CadObject;
+			Entity entity = template.CadObject;
 
 			if (this._version >= ACadVersion.AC1015 && this._version < ACadVersion.AC1024)
 				//Obj size RL size of object in bits, not including end handles
@@ -309,14 +309,14 @@ namespace ACadSharp.IO.DWG
 			//R13-R2000 Only:
 			//previous/next handles present if Nolinks is 0.
 			//Nolinks B 1 if major links are assumed +1, -1, else 0 For R2004+this always has value 1 (links are not used)
-			if (!(this._version >= ACadVersion.AC1018) && !this._objectReader.ReadBit())
+			if (!this.R2004Plus && !this._objectReader.ReadBit())
 			{
 				//[PREVIOUS ENTITY (relative soft pointer)]
 				template.PrevEntity = this.handleReference(entity.Handle);
 				//[NEXT ENTITY (relative soft pointer)]
 				template.NextEntity = this.handleReference(entity.Handle);
 			}
-			else if (!(this._version >= ACadVersion.AC1018))
+			else if (!this.R2004Plus)
 			{
 				this._handles.Enqueue(entity.Handle - 1UL);
 				this._handles.Enqueue(entity.Handle + 1UL);
@@ -427,7 +427,7 @@ namespace ACadSharp.IO.DWG
 				this.updateHandleReader();
 
 			//[Owner ref handle (soft pointer)]
-			template.CadObject.OwnerHandle = this.handleReference(template.CadObject.Handle);
+			template.OwnerHandle = this.handleReference(template.CadObject.Handle);
 			//Read the cad object reactors
 			this.readReactors(template);
 		}
@@ -748,6 +748,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readDimStyle();
 					break;
 				case ObjectType.VP_ENT_HDR_CTRL_OBJ:
+					template = this.readViewportEntityControl();
 					break;
 				case ObjectType.VP_ENT_HDR:
 					break;
@@ -755,6 +756,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readGroup();
 					break;
 				case ObjectType.MLINESTYLE:
+					template = this.readMLStyle();
 					break;
 				case ObjectType.OLE2FRAME:
 					break;
@@ -1061,11 +1063,29 @@ namespace ACadSharp.IO.DWG
 
 		#endregion Text entities
 
+		private DwgTemplate readDocumentTable<T>(Table<T> table)
+			where T : TableEntry
+		{
+			DwgTableTemplate<T> template = new DwgTableTemplate<T>(table);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Numentries BL 70
+			int numentries = this._objectReader.ReadBitLong();
+			for (int i = 0; i < numentries; ++i)
+				//Handle refs H NULL(soft pointer)
+				//xdicobjhandle(hard owner)
+				//the apps(soft owner)
+				template.EntryHandles.Add(this.handleReference());
+
+			return template;
+		}
+
 		private DwgTemplate readBlock()
 		{
 			BlockBegin block = new BlockBegin();
 			DwgEntityTemplate template = new DwgEntityTemplate(block);
-			this._modelBuilder.Blocks.Add(template);
 
 			this.readCommonEntityData(template);
 
@@ -2037,15 +2057,13 @@ namespace ACadSharp.IO.DWG
 			Block block = new Block();
 			DwgBlockTemplate template = new DwgBlockTemplate(block);
 
-			this._modelBuilder.BlockHeaders.Add(template);
-
 			this.readCommonNonEntityData(template);
 
 			//Common:
 			//Entry name TV 2
 			block.Name = this._textReader.ReadVariableText();
 
-			this.readXrefDependantBit((TableEntry)template.CadObject);
+			this.readXrefDependantBit(template.CadObject);
 
 			//Anonymous B 1 if this is an anonymous block (1 bit)
 			block.IsAnonymous = this._objectReader.ReadBit();
@@ -2179,7 +2197,7 @@ namespace ACadSharp.IO.DWG
 			layer.Name = this._textReader.ReadVariableText();
 			//layer.Name = m_objectReader.ReadVariableText();
 
-			this.readXrefDependantBit((TableEntry)template.CadObject);
+			this.readXrefDependantBit(template.CadObject);
 
 			//R13-R14 Only:
 			if (this.R13_14Only)
@@ -2285,7 +2303,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Entry name TV 2
 			style.Name = this._textReader.ReadVariableText();
-			this.readXrefDependantBit((TableEntry)template.CadObject);
+			this.readXrefDependantBit(template.CadObject);
 
 			//shape file B 1 if a shape file rather than a font (1 bit)
 			if (this._objectReader.ReadBit())
@@ -2345,7 +2363,7 @@ namespace ACadSharp.IO.DWG
 			//Entry name TV 2
 			ltype.Name = this._textReader.ReadVariableText();
 
-			this.readXrefDependantBit((TableEntry)template.CadObject);
+			this.readXrefDependantBit(template.CadObject);
 
 			//Description TV 3
 			ltype.Description = this._textReader.ReadVariableText();
@@ -2695,15 +2713,15 @@ namespace ACadSharp.IO.DWG
 			DwgTableTemplate<AppId> template = new DwgTableTemplate<AppId>(
 				this._modelBuilder.DocumentToBuild.AppIds);
 
-			this._modelBuilder.AppIds = template;
-
 			this.readCommonNonEntityData(template);
 
 			//Common:
 			//Numentries BL 70
 			int numentries = this._objectReader.ReadBitLong();
 			for (int i = 0; i < numentries; ++i)
-				//Handle refs H NULL(soft pointer)	xdicobjhandle(hard owner)	the apps(soft owner)
+				//Handle refs H NULL(soft pointer)
+				//xdicobjhandle(hard owner)
+				//the apps(soft owner)
 				template.EntryHandles.Add(this.handleReference());
 
 			return template;
@@ -2742,7 +2760,9 @@ namespace ACadSharp.IO.DWG
 			//Numentries BL 70
 			int numentries = this._objectReader.ReadBitLong();
 			for (int i = 0; i < numentries; ++i)
-				//Handle refs H NULL(soft pointer)	xdicobjhandle(hard owner)	the apps(soft owner)
+				//Handle refs H NULL(soft pointer)	
+				//xdicobjhandle(hard owner)	
+				//the apps(soft owner)
 				template.EntryHandles.Add(this.handleReference());
 
 			return template;
@@ -3091,6 +3111,23 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private DwgTemplate readViewportEntityControl()
+		{
+			//DwgTableTemplate<Viewport> template = new DwgTableTemplate<Viewport>(
+			//	this._modelBuilder.DocumentToBuild.Viewports);
+
+			//this.readCommonNonEntityData(template);
+
+			////Common:
+			////Numentries BL 70
+			//int numentries = this._objectReader.ReadBitLong();
+			//for (int i = 0; i < numentries; ++i)
+			//	//Handle refs H NULL(soft pointer)	xdicobjhandle(hard owner)	the apps(soft owner)
+			//	template.EntryHandles.Add(this.handleReference());
+
+			return null;
+		}
+
 		private DwgTemplate readGroup()
 		{
 			Group group = new Group();
@@ -3111,6 +3148,84 @@ namespace ACadSharp.IO.DWG
 			for (int index = 0; index < numhandles; ++index)
 				//Handle refs H parenthandle (soft pointer)
 				template.Handles.Add(this.handleReference());
+
+			return template;
+		}
+
+		private DwgTemplate readMLStyle()
+		{
+			MLStyle mlineStyle = new MLStyle();
+			DwgMLStyleTemplate template = new DwgMLStyleTemplate(mlineStyle);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Name TV Name of this style
+			mlineStyle.Name = this._textReader.ReadVariableText();
+			//Desc TV Description of this style
+			mlineStyle.Description = this._textReader.ReadVariableText();
+			//Flags BS A short which reconstitutes the mlinestyle flags as defined in DXF.
+			//Here are the bits as they relate to DXF:
+			/*
+			 DWG bit goes with DXF bit
+				1				2
+				2				1
+				16				16
+				32				64
+				64				32
+				256				256
+				512				1024
+				1024			512
+			 */
+			short flags = this._objectReader.ReadBitShort();
+			if (((uint)flags & 1U) > 0U)
+				mlineStyle.Flags |= MLineStyleFlags.DisplayJoints;
+			if (((uint)flags & 2U) > 0U)
+				mlineStyle.Flags |= MLineStyleFlags.FillOn;
+			if (((uint)flags & 16U) > 0U)
+				mlineStyle.Flags |= MLineStyleFlags.StartSquareCap;
+			if (((uint)flags & 32U) > 0U)
+				mlineStyle.Flags |= MLineStyleFlags.StartRoundCap;
+			if (((uint)flags & 64U) > 0U)
+				mlineStyle.Flags |= MLineStyleFlags.StartInnerArcsCap;
+			if (((uint)flags & 256U) > 0U)
+				mlineStyle.Flags |= MLineStyleFlags.EndSquareCap;
+			if (((uint)flags & 512U) > 0U)
+				mlineStyle.Flags |= MLineStyleFlags.EndRoundCap;
+			if (((uint)flags & 1024U) > 0U)
+				mlineStyle.Flags |= MLineStyleFlags.EndInnerArcsCap;
+
+			//fillcolor CMC Fill color for this style
+			mlineStyle.FillColor = this._mergedReaders.ReadCmColor();
+			//startang BD Start angle
+			mlineStyle.StartAngle = this._objectReader.ReadBitDouble();
+			//endang BD End angle
+			mlineStyle.EndAngle = this._objectReader.ReadBitDouble();
+
+			//linesinstyle RC Number of lines in this style
+			int nlines = this._objectReader.ReadByte();
+			for (int i = 0; i < nlines; ++i)
+			{
+				MLStyle.Element element = new MLStyle.Element();
+				DwgMLStyleTemplate.ElementTemplate elementTemplate = new DwgMLStyleTemplate.ElementTemplate(element);
+
+				//Offset BD Offset of this segment
+				element.Offset = this._objectReader.ReadBitDouble();
+				//Color CMC Color of this segment
+				element.Color = this._mergedReaders.ReadCmColor();
+
+				//R2018+:
+				if (this.R2018Plus)
+					//Line type handle H Line type handle (hard pointer)
+					elementTemplate.LinetypeHandle = this.handleReference();
+				//Before R2018:
+				else
+					//Ltindex BS Linetype index (yes, index)
+					elementTemplate.LinetypeIndex = this._objectReader.ReadBitShort();
+
+				template.ElementTemplates.Add(elementTemplate);
+				mlineStyle.Elements.Add(element);
+			}
 
 			return template;
 		}
@@ -3353,7 +3468,7 @@ namespace ACadSharp.IO.DWG
 				hatch.IsDouble = this._objectReader.ReadBit();
 
 				//numdeflines BS 78 number of definition lines
-				int numdeflines = (int)this._objectReader.ReadBitShort();
+				int numdeflines = this._objectReader.ReadBitShort();
 				for (int li = 0; li < numdeflines; ++li)
 				{
 					HatchPattern.Line line = new HatchPattern.Line();
@@ -3365,7 +3480,7 @@ namespace ACadSharp.IO.DWG
 					line.Offset = this._objectReader.Read2BitDouble();
 
 					//  numdashes BS 79 number of dash length items
-					int ndashes = (int)this._objectReader.ReadBitShort();
+					int ndashes = this._objectReader.ReadBitShort();
 					for (int ds = 0; ds < ndashes; ++ds)
 					{
 						//dashlength BD 49 dash length
@@ -3389,7 +3504,7 @@ namespace ACadSharp.IO.DWG
 				hatch.SeedPoints.Add(spt);
 			}
 
-			return template;
+			return null;
 		}
 
 		private DwgTemplate readLayout()

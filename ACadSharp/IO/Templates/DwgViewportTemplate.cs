@@ -23,7 +23,7 @@ namespace ACadSharp.IO.Templates
 
 			if (this.ViewportHeaderHandle.HasValue && this.ViewportHeaderHandle > 0)
 			{
-				throw new NotImplementedException();
+				// TODO: implement ViewportHeaderHandle in DwgViewportTemplate
 			}
 
 			if (this.BoundaryHandle.HasValue && this.BoundaryHandle > 0)

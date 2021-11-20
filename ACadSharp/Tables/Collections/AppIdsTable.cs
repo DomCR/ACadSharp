@@ -6,7 +6,7 @@ namespace ACadSharp.Tables.Collections
 	{
 		public override ObjectType ObjectType => ObjectType.APPID_CONTROL_OBJ;
 
-		public AppIdsTable() { }
+		public AppIdsTable(CadDocument document) : base(document) { }
 		internal AppIdsTable(DxfTableTemplate template) : base(template) { }
 	}
 }

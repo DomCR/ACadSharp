@@ -9,6 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACadSharp.Examples", "ACadS
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D4F40AC7-232A-4140-B26C-C432E6B82E53}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		LICENSE = LICENSE
@@ -32,7 +33,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dwg", "dwg", "{BF9B0C8C-987
 		samples\dwg\drawing_2013.dwg = samples\dwg\drawing_2013.dwg
 		samples\dwg\drawing_2018.dwg = samples\dwg\drawing_2018.dwg
 		samples\dwg\drawing_R14.dwg = samples\dwg\drawing_R14.dwg
-		samples\dwg\Floor Plan Sample.dwg = samples\dwg\Floor Plan Sample.dwg
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACadSharp.Tests", "ACadSharp.Tests\ACadSharp.Tests.csproj", "{3503AFF9-E9C1-46F4-8E40-81D3035093DD}"

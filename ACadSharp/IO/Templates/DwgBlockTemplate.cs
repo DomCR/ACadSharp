@@ -29,20 +29,6 @@ namespace ACadSharp.IO.Templates
 			//	layout.AssociatedBlock = this.CadObject;
 			//}
 
-			if (this.FirstEntityHandle.HasValue
-				&& this.LastEntityHandle.HasValue
-				&& builder.TryGetObjectTemplate(this.FirstEntityHandle.Value, out DwgEntityTemplate template))
-			{
-				do
-				{
-					if (template.NextEntity == null)
-						break;
-
-					this.CadObject.Entities.Add(template.CadObject);
-					template = builder.GetObjectTemplate<DwgEntityTemplate>(template.NextEntity.Value);
-				} while (template != null);
-			}
-
 			if (this.FirstEntityHandle.HasValue)
 			{
 				var entities = this.getEntitiesCollection<Entity>(builder, FirstEntityHandle.Value, LastEntityHandle.Value);

@@ -6,7 +6,10 @@ namespace ACadSharp.Tables.Collections
 	{
 		public override ObjectType ObjectType => ObjectType.STYLE_CONTROL_OBJ;
 
-		public StylesTable() { }
 		internal StylesTable(DxfTableTemplate template) : base(template) { }
+
+		public StylesTable(CadDocument document) : base(document)
+		{
+		}
 	}
 }

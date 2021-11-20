@@ -1,10 +1,4 @@
-﻿#region copyright
-//Copyright 2021, Albert Domenech.
-//All rights reserved. 
-//This source code is licensed under the MIT license. 
-//See LICENSE file in the project root for full license information.
-#endregion
-using ACadSharp.Blocks;
+﻿using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Header;
@@ -32,29 +26,41 @@ namespace ACadSharp
 		public DxfClassCollection Classes { get; set; }
 
 		public AppIdsTable AppIds { get; }
-		public BlockRecordsTable BlockRecords { get; } = new BlockRecordsTable();
-		public DimensionStylesTable DimensionStyles { get; } = new DimensionStylesTable();
-		public LayersTable Layers { get; } = new LayersTable();
-		public LineTypesTable LineTypes { get; } = new LineTypesTable();
-		public StylesTable Styles { get; } = new StylesTable();
-		public UCSTable UCSs { get; } = new UCSTable();
-		public ViewsTable Views { get; } = new ViewsTable();
-		public VPortsTable VPorts { get; } = new VPortsTable();
+		public BlockRecordsTable BlockRecords { get; }
+		public DimensionStylesTable DimensionStyles { get; }
+		public LayersTable Layers { get; }
+		public LineTypesTable LineTypes { get; }
+		public StylesTable Styles { get; }
+		public UCSTable UCSs { get; }
+		public ViewsTable Views { get; }
+		public VPortsTable VPorts { get; }
 
-		public List<Layout> Layouts { get; } = new List<Layout>(); //TODO: replace for a collection or a table
+		public LayoutsTable Layouts { get; }
 
-		public object Blocks { get; set; }
-		public object Objects { get; set; }
-		public object ThumbnailImage { get; set; }
+		public CadDictionary RootDictionary { get; } = new CadDictionary();
 
 		//TODO: Implement entity collection to store the document's entities
 		private Dictionary<ulong, Entity> _entities { get; set; } = new Dictionary<ulong, Entity>();
 		//Contains all the objects in the document.
-		private readonly Dictionary<ulong, CadObject> _cadObjects = new Dictionary<ulong, CadObject>();
+		internal readonly Dictionary<ulong, CadObject> cadObjects = new Dictionary<ulong, CadObject>();
 
 		public CadDocument()
 		{
-			AppIds = new AppIdsTable();
+			//Header and summary
+			this.Header = new CadHeader();
+			this.SummaryInfo = new CadSummaryInfo();
+
+			//Initialize tables
+			this.AppIds = new AppIdsTable(this);
+			this.BlockRecords = new BlockRecordsTable(this);
+			this.DimensionStyles = new DimensionStylesTable(this);
+			this.Layers = new LayersTable(this);
+			this.LineTypes = new LineTypesTable(this);
+			this.Styles = new StylesTable(this);
+			this.UCSs = new UCSTable(this);
+			this.Views = new ViewsTable(this);
+			this.VPorts = new VPortsTable(this);
+			this.Layouts = new LayoutsTable(this);
 		}
 
 		[Obsolete]
@@ -62,26 +68,56 @@ namespace ACadSharp
 		{
 			_entities.Add(entity.Handle, entity);
 		}
-		public void AddObject(CadObject cadObject)
-		{
-			//TODO: Assign the objects to each table or have an Add method foreach type?
 
-			if (cadObject.GetType().IsEquivalentTo(typeof(Layer)))
+		private void registerCadObject(CadObject cadObject)
+		{
+			if (cadObject.Document != null)
+				throw new ArgumentException($"The item with handle {cadObject.Handle} is already assigned to a document");
+
+			cadObject.Document = this;
+
+			if (cadObject.Handle == 0 || cadObjects.ContainsKey(cadObject.Handle))
 			{
-				Layers.Add((Layer)cadObject);
+				cadObject.Handle = cadObjects.Keys.Max() + 1;
 			}
 
-			throw new NotImplementedException();
-		}
-		private void assignHandle(CadObject cadObject)
-		{
-			ulong value = _cadObjects.Keys.Max() + 1;
-			cadObject.Handle = value;
+			cadObjects.Add(cadObject.Handle, cadObject);
 		}
 
-		internal void AddBlock(Block block, bool addEntities)
+		private void addCadObject(CadObject cadObject)
 		{
+			//if (cadObject.Handle == 0 || cadObjects.ContainsKey(cadObject.Handle))
+			//{
+			//	cadObject.Handle = cadObjects.Keys.Max() + 1;
+			//}
 
+			//cadObjects.Add(cadObject.Handle, cadObject);
+		}
+
+		private void onBeforeAdd(object sender, CollectionChangedEventArgs e)
+		{
+			registerCadObject(e.Item);
+		}
+
+		private void onAdd(object sender, CollectionChangedEventArgs e)
+		{
+			addCadObject(e.Item);
+		}
+
+		internal void RegisterCollection<T>(IObservableCollection<T> collection, bool addElements = true)
+			where T : CadObject
+		{
+			collection.OnBeforeAdd += this.onBeforeAdd;
+			collection.OnAdd += this.onAdd;
+
+			if (addElements)
+			{
+				foreach (T item in collection)
+				{
+					registerCadObject(item);
+					addCadObject(item);
+				}
+			}
 		}
 	}
 }

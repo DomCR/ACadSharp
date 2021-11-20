@@ -13,18 +13,23 @@ namespace ACadSharp.Tables
 		/// Specifies the name of the object.
 		/// </summary>
 		[DxfCodeValue(2)]
-		public string Name { get; set; }
+		public virtual string Name { get; set; }
 
 		/// <summary>
 		/// Table entry is xref dependent.
 		/// </summary>
 		public virtual bool XrefDependant { get; set; }
 
-		public TableEntry() { }
+		public TableEntry() 
+		{
+			this.Name = string.Empty;
+		}
+
 		public TableEntry(string name)
 		{
 			Name = name;
 		}
+
 		internal TableEntry(DxfEntryTemplate template)
 		{
 			//TableName = template.TableName;

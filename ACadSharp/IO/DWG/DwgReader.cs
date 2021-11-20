@@ -84,7 +84,7 @@ namespace ACadSharp.IO.DWG
 		public CadDocument Read()
 		{
 			_document = new CadDocument();
-			_builder = new DwgDocumentBuilder(_document);
+			_builder = new DwgDocumentBuilder(_document, _notification);
 
 			//Read the file header
 			readFileHeader();
@@ -1149,7 +1149,7 @@ namespace ACadSharp.IO.DWG
 			//B : flag - to find the data string at the end of the section
 			sreader.ReadBit();
 
-			DxfClassCollection classes = new DxfClassCollection();
+			List<DxfClass> classesHolder = new List<DxfClass>();
 			while (sreader.PositionInBits() < endSection)
 			{
 				DxfClass dxfClass = new DxfClass();
@@ -1174,15 +1174,16 @@ namespace ACadSharp.IO.DWG
 				//BL : Unknown(normally 0L)
 				sreader.ReadBitLong();
 
-				classes.Add(dxfClass);
+				classesHolder.Add(dxfClass);
 			}
 
 			//Set the position 
 			sreader.SetPositionInBits(endSection);
 
+			DxfClassCollection classes = new DxfClassCollection();
 			//Read the names (in same order)
 			//X : String stream data
-			foreach (DxfClass dxfClass in classes)
+			foreach (DxfClass dxfClass in classesHolder)
 			{
 				//TV: appname
 				dxfClass.ApplicationName = sreader.ReadVariableText();
@@ -1190,6 +1191,8 @@ namespace ACadSharp.IO.DWG
 				dxfClass.CppClassName = sreader.ReadVariableText();
 				//TV : classdxfname
 				dxfClass.DxfName = sreader.ReadVariableText();
+
+				classes.Add(dxfClass);
 			}
 
 			return classes;

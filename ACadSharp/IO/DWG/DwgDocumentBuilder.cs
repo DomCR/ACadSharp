@@ -11,33 +11,36 @@ namespace ACadSharp.IO.DWG
 	{
 		public DwgHeaderHandlesCollection HeaderHandles { get; set; }
 
-		public DwgBlockCtrlObjectTemplate BlockControlTemplate { get; set; }
-
-		public List<DwgBlockTemplate> BlockHeaders { get; } = new List<DwgBlockTemplate>();
-		public List<ICadObjectBuilder> Blocks { get; } = new List<ICadObjectBuilder>();
-
-		public DwgTableTemplate<AppId> AppIds { get; set; }
-
 		public Dictionary<ulong, DwgTemplate> Templates { get; } = new Dictionary<ulong, DwgTemplate>();
+
 		public Dictionary<ulong, CadObject> ObjectsMap { get; } = new Dictionary<ulong, CadObject>();
 
 		public CadDocument DocumentToBuild { get; }
 
-		public DwgDocumentBuilder(CadDocument document)
+		public NotificationEventHandler NotificationHandler { get; }
+
+		public DwgDocumentBuilder(CadDocument document, NotificationEventHandler notification = null)
 		{
 			this.DocumentToBuild = document;
+			this.NotificationHandler = notification;
 		}
 
 		public void BuildDocument()
 		{
-			if (this.HeaderHandles.BYLAYER != null && this.TryGetCadObject(this.HeaderHandles.BYLAYER.Value, out LineType lineType))
+			if (this.HeaderHandles.BYLAYER.HasValue && this.TryGetCadObject(this.HeaderHandles.BYLAYER.Value, out LineType lineType))
 				this.DocumentToBuild.LineTypes.Add(lineType);
+			else
+				throw new NotImplementedException();
 
-			if (this.HeaderHandles.BYBLOCK != null && this.TryGetCadObject(this.HeaderHandles.BYBLOCK.Value, out LineType byBlock))
+			if (this.HeaderHandles.BYBLOCK.HasValue && this.TryGetCadObject(this.HeaderHandles.BYBLOCK.Value, out LineType byBlock))
 				this.DocumentToBuild.LineTypes.Add(byBlock);
+			else
+				throw new NotImplementedException();
 
-			if (this.HeaderHandles.CONTINUOUS != null && this.TryGetCadObject(this.HeaderHandles.CONTINUOUS.Value, out LineType continuous))
+			if (this.HeaderHandles.CONTINUOUS.HasValue && this.TryGetCadObject(this.HeaderHandles.CONTINUOUS.Value, out LineType continuous))
 				this.DocumentToBuild.LineTypes.Add(continuous);
+			else
+				throw new NotImplementedException();
 
 			foreach (DwgTemplate template in this.Templates.Values)
 			{
@@ -102,15 +105,6 @@ namespace ACadSharp.IO.DWG
 
 			value = null;
 			return false;
-		}
-
-		[Obsolete]
-		public void BuildObjects()
-		{
-			foreach (var item in this.Templates.Values)
-			{
-				item.Build(this);
-			}
 		}
 	}
 }

@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Entities;
 using System.Collections.Generic;
 
 namespace ACadSharp.Objects

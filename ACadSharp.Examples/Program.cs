@@ -25,11 +25,23 @@ namespace ACadSharp.Examples
 
 		static void ReadDwg()
 		{
-			string file = Path.Combine(PathSamples, "dwg/cad_v2004.dwg");
+			//string file = Path.Combine(PathSamples, "dwg/cad_v2013.dwg");
+			//using (DwgReader reader = new DwgReader(file, onNotification))
+			//{
+			//	CadDocument doc = reader.Read();
+			//}
 
-			using (DwgReader reader = new DwgReader(file, onNotification))
+			string[] files = Directory.GetFiles(PathSamples + "/dwg/", "*.dwg");
+
+			foreach (var f in files)
 			{
-				CadDocument doc = reader.Read();
+				using (DwgReader reader = new DwgReader(f, onNotification))
+				{
+					CadDocument doc = reader.Read();
+				}
+
+				Console.WriteLine($"file read : {f}");
+				Console.ReadLine();
 			}
 		}
 
