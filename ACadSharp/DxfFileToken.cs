@@ -41,6 +41,7 @@ namespace ACadSharp
 		public const string TableUcs = "UCS";
 		public const string TableView = "VIEW";
 		public const string TableVport = "VPORT"; 
+		public const string TableXRecord = "XRECORD"; 
 
 		#endregion
 

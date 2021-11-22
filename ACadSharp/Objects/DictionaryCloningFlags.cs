@@ -5,6 +5,7 @@ namespace ACadSharp.Objects
 	/// <summary>
 	/// Duplicate record cloning flag (determines how to merge duplicate entries).
 	/// </summary>
+	[Flags]
 	public enum DictionaryCloningFlags : short
 	{
 		/// <summary>

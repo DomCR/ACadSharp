@@ -10,6 +10,7 @@ namespace ACadSharp.Entities
 		/// Mirrored in X
 		/// </summary>
 		Backward = 2,
+
 		/// <summary>
 		/// Mirrored in Y
 		/// </summary>

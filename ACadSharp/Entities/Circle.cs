@@ -15,17 +15,19 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
 		/// </summary>
-		[DxfCodeValue(DxfCode.Thickness)]
+		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;
+
 		/// <summary>
 		/// Specifies the center of an arc, circle, ellipse, view, or viewport.
 		/// </summary>
-		[DxfCodeValue(DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
+		[DxfCodeValue(10, 20, 30)]
 		public XYZ Center { get; set; } = XYZ.Zero;
+
 		/// <summary>
 		/// Specifies the radius of an arc, circle, or position marker.
 		/// </summary>
-		[DxfCodeValue(DxfCode.Real)]
+		[DxfCodeValue(40)]
 		public double Radius { get; set; } = 1.0;
 
 		public Circle() : base() { }

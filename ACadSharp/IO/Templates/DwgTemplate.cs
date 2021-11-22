@@ -87,7 +87,7 @@ namespace ACadSharp.IO.Templates
 
 	internal class DwgDimensionStyleTemplate : DwgTemplate<DimensionStyle>
 	{
-		public string DIMBL_KName { get; internal set; }
+		public string DIMBL_Name { get; internal set; }
 		public string DIMBLK1_Name { get; internal set; }
 		public string DIMBLK2_Name { get; internal set; }
 		public ulong DIMTXSTY { get; internal set; }

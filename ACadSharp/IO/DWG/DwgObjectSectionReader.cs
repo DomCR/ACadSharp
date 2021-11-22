@@ -669,6 +669,7 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.BODY:
 					break;
 				case ObjectType.RAY:
+					template = this.readRay();
 					break;
 				case ObjectType.XLINE:
 					break;
@@ -685,6 +686,7 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.TOLERANCE:
 					break;
 				case ObjectType.MLINE:
+					template = this.readMLine();
 					break;
 				case ObjectType.BLOCK_CONTROL_OBJ:
 					template = this.readBlockControlObject();
@@ -770,6 +772,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readHatch();
 					break;
 				case ObjectType.XRECORD:
+					template = this.readXRecord();
 					break;
 				case ObjectType.ACDBPLACEHOLDER:
 					break;
@@ -1848,6 +1851,21 @@ namespace ACadSharp.IO.DWG
 			return null;
 		}
 
+		private DwgTemplate readRay()
+		{
+			Ray ray = new Ray();
+			DwgEntityTemplate template = new DwgEntityTemplate(ray);
+
+			this.readCommonEntityData(template);
+
+			//Point 3BD 10
+			ray.StartPoint = this._objectReader.Read3BitDouble();
+			//Vector 3BD 11
+			ray.Direction = this._objectReader.Read3BitDouble();
+
+			return template;
+		}
+
 		private DwgTemplate readDictionary()
 		{
 			CadDictionary cadDictionary = new CadDictionary();
@@ -2026,6 +2044,75 @@ namespace ACadSharp.IO.DWG
 					}
 				}
 			}
+
+			return template;
+		}
+
+		private DwgTemplate readMLine()
+		{
+			MLine mline = new MLine();
+			DwgMLineTemplate template = new DwgMLineTemplate(mline);
+
+			this.readCommonEntityData(template);
+
+			//Scale BD 40
+			mline.ScaleFactor = this._objectReader.ReadBitDouble();
+			//Just EC top (0), bottom(2), or center(1)
+			mline.Justification = (MLineJustification)this._objectReader.ReadByte();
+			//Base point 3BD 10
+			mline.StartPoint = this._objectReader.Read3BitDouble();
+			//Extrusion 3BD 210 etc.
+			mline.Extrusion = this._objectReader.Read3BitDouble();
+
+			//Openclosed BS open (1), closed(3)
+			mline.Flags |= this._objectReader.ReadBitShort() == 3 ? MLineFlags.Closed : MLineFlags.Has;
+
+			//Linesinstyle RC 73
+			int nlines = (int)this._objectReader.ReadByte();
+
+			//Numverts BS 72
+			int nverts = (int)this._objectReader.ReadBitShort();
+			for (int i = 0; i < nverts; ++i)
+			{
+				MLine.Vertex vertex = new MLine.Vertex();
+
+				//vertex 3BD
+				vertex.Position = this._objectReader.Read3BitDouble();
+				//vertex direction 3BD
+				vertex.Direction = this._objectReader.Read3BitDouble();
+				//miter direction 3BD
+				vertex.Miter = this._objectReader.Read3BitDouble();
+
+				for (int j = 0; j < nlines; ++j)
+				{
+					MLine.Vertex.Segment element = new MLine.Vertex.Segment();
+
+					//numsegparms BS
+					int nsegparms = (int)this._objectReader.ReadBitShort();
+					for (int k = 0; k < nsegparms; ++k)
+					{
+						//segparm BD segment parameter
+						double num5 = this._objectReader.ReadBitDouble();
+						element.Parameters.Add(num5);
+					}
+
+					//numareafillparms BS
+					int nfillparms = (int)this._objectReader.ReadBitShort();
+					for (int k = 0; k < nfillparms; ++k)
+					{
+						//areafillparm BD area fill parameter
+						double num5 = this._objectReader.ReadBitDouble();
+						element.AreaFillParameters.Add(num5);
+					}
+
+					vertex.Segments.Add(element);
+				}
+
+				mline.Vertices.Add(vertex);
+			}
+
+			//H mline style oject handle (hard pointer)
+			template.MLineStyleHandle = this.handleReference();
 
 			return template;
 		}
@@ -2882,7 +2969,7 @@ namespace ACadSharp.IO.DWG
 				dimStyle.AlternateDimensioningSuffix = this._textReader.ReadVariableText();
 
 				//DIMBLK T 5
-				template.DIMBL_KName = this._textReader.ReadVariableText();
+				template.DIMBL_Name = this._textReader.ReadVariableText();
 				//DIMBLK1 T 6
 				template.DIMBLK1_Name = this._textReader.ReadVariableText();
 				//DIMBLK2 T 7
@@ -3503,6 +3590,13 @@ namespace ACadSharp.IO.DWG
 				XY spt = this._objectReader.Read2RawDouble();
 				hatch.SeedPoints.Add(spt);
 			}
+
+			return null;
+		}
+
+		private DwgTemplate readXRecord()
+		{
+
 
 			return null;
 		}

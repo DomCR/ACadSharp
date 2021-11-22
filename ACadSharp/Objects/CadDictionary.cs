@@ -17,6 +17,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(280)]
 		public bool HardOwnerFlag { get; set; }
+
 		/// <summary>
 		/// Duplicate record cloning flag (determines how to merge duplicate entries)
 		/// </summary>
