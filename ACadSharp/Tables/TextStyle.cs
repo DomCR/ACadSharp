@@ -6,15 +6,16 @@ using System.Text;
 
 namespace ACadSharp.Tables
 {
-	public class Style : TableEntry
+	public class TextStyle : TableEntry
 	{
 		public override ObjectType ObjectType => ObjectType.STYLE;
+
 		public override string ObjectName => DxfFileToken.TableStyle;
 
 		/// <summary>
 		/// Default text style.
 		/// </summary>
-		public static Style Default = new Style("STANDARD");
+		public static TextStyle Default = new TextStyle("STANDARD");
 
 		public override bool XrefDependant
 		{
@@ -80,8 +81,8 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(DxfCode.ExtendedDataInteger32)]
 		public FontFlags TrueType { get; set; }
 
-		public Style(string name) : base(name) { }
-		internal Style(DxfEntryTemplate template) : base(template) { }
+		public TextStyle(string name) : base(name) { }
+		internal TextStyle(DxfEntryTemplate template) : base(template) { }
 	}
 }
 

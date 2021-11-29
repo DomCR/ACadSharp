@@ -12,40 +12,95 @@ using System.Text;
 
 namespace ACadSharp
 {
-	//Visual reference of the structure
-	//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-A809CD71-4655-44E2-B674-1FE200B9FE30
-	public class CadDocument
+	/// <summary>
+	/// An AutoCAD drawing
+	/// </summary>
+	public class CadDocument : CadObject
 	{
+		public override ObjectType ObjectType => ObjectType.INVALID;
+
 		/// <summary>
 		/// Contains all the header variables for this document.
 		/// </summary>
 		public CadHeader Header { get; set; }
 
+		/// <summary>
+		/// Accesses drawing properties such as the Title, Subject, Author, and Keywords properties
+		/// </summary>
 		public CadSummaryInfo SummaryInfo { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public DxfClassCollection Classes { get; set; }
 
+		/// <summary>
+		/// The collection of all registered applications in the drawing
+		/// </summary>
 		public AppIdsTable AppIds { get; }
+
+		/// <summary>
+		/// The collection of all block records in the drawing
+		/// </summary>
 		public BlockRecordsTable BlockRecords { get; }
+
+		/// <summary>
+		/// The collection of all dimension styles in the drawing
+		/// </summary>
 		public DimensionStylesTable DimensionStyles { get; }
+
+		/// <summary>
+		/// The collection of all layers in the drawing
+		/// </summary>
 		public LayersTable Layers { get; }
+
+		/// <summary>
+		/// The collection of all linetypes in the drawing
+		/// </summary>
 		public LineTypesTable LineTypes { get; }
-		public StylesTable Styles { get; }
+
+		/// <summary>
+		/// The collection of all text styles in the drawing
+		/// </summary>
+		public TextStylesTable TextStyles { get; }
+
+		/// <summary>
+		/// The collection of all user coordinate systems (UCSs) in the drawing
+		/// </summary>
 		public UCSTable UCSs { get; }
+
+		/// <summary>
+		/// The collection of all views in the drawing
+		/// </summary>
 		public ViewsTable Views { get; }
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public VPortsTable VPorts { get; }
 
+		/// <summary>
+		/// The collection of all layouts in the drawing
+		/// </summary>
 		public LayoutsTable Layouts { get; }
+
+		/// <summary>
+		/// The collection of all viewports in the drawing
+		/// </summary>
+		public ViewportCollection Viewports { get; }
 
 		public CadDictionary RootDictionary { get; } = new CadDictionary();
 
 		//TODO: Implement entity collection to store the document's entities
 		private Dictionary<ulong, Entity> _entities { get; set; } = new Dictionary<ulong, Entity>();
-		//Contains all the objects in the document.
-		internal readonly Dictionary<ulong, CadObject> cadObjects = new Dictionary<ulong, CadObject>();
+
+		//Contains all the objects in the document
+		private readonly Dictionary<ulong, CadObject> _cadObjects = new Dictionary<ulong, CadObject>();
 
 		public CadDocument()
 		{
+			_cadObjects.Add(this.Handle, this);
+
 			//Header and summary
 			this.Header = new CadHeader();
 			this.SummaryInfo = new CadSummaryInfo();
@@ -56,11 +111,28 @@ namespace ACadSharp
 			this.DimensionStyles = new DimensionStylesTable(this);
 			this.Layers = new LayersTable(this);
 			this.LineTypes = new LineTypesTable(this);
-			this.Styles = new StylesTable(this);
+			this.TextStyles = new TextStylesTable(this);
 			this.UCSs = new UCSTable(this);
 			this.Views = new ViewsTable(this);
 			this.VPorts = new VPortsTable(this);
 			this.Layouts = new LayoutsTable(this);
+			this.Viewports = new ViewportCollection(this);
+		}
+
+		public CadObject GetCadObject(ulong handle)
+		{
+			return this.GetCadObject<CadObject>(handle);
+		}
+
+		public T GetCadObject<T>(ulong handle)
+			where T : CadObject
+		{
+			if (_cadObjects.TryGetValue(handle, out CadObject obj))
+			{
+				return obj as T;
+			}
+
+			return null;
 		}
 
 		[Obsolete]
@@ -75,23 +147,16 @@ namespace ACadSharp
 				throw new ArgumentException($"The item with handle {cadObject.Handle} is already assigned to a document");
 
 			cadObject.Document = this;
-
-			if (cadObject.Handle == 0 || cadObjects.ContainsKey(cadObject.Handle))
-			{
-				cadObject.Handle = cadObjects.Keys.Max() + 1;
-			}
-
-			cadObjects.Add(cadObject.Handle, cadObject);
 		}
 
 		private void addCadObject(CadObject cadObject)
 		{
-			//if (cadObject.Handle == 0 || cadObjects.ContainsKey(cadObject.Handle))
-			//{
-			//	cadObject.Handle = cadObjects.Keys.Max() + 1;
-			//}
+			if (cadObject.Handle == 0 || _cadObjects.ContainsKey(cadObject.Handle))
+			{
+				cadObject.Handle = _cadObjects.Keys.Max() + 1;
+			}
 
-			//cadObjects.Add(cadObject.Handle, cadObject);
+			_cadObjects.Add(cadObject.Handle, cadObject);
 		}
 
 		private void onBeforeAdd(object sender, CollectionChangedEventArgs e)
@@ -117,6 +182,11 @@ namespace ACadSharp
 					registerCadObject(item);
 					addCadObject(item);
 				}
+			}
+
+			if (collection is CadObject cadObject)
+			{
+				addCadObject(cadObject);
 			}
 		}
 	}

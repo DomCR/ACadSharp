@@ -1,8 +1,8 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
-using ACadSharp.Geometry;
-using ACadSharp.Geometry.Units;
+using ACadSharp.Types.Units;
 using ACadSharp.Tables;
+using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +14,9 @@ namespace ACadSharp.Header
 	public class CadHeader
 	{
 		//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
-	
+
 		//TODO : Finish the header documentation
-		
+
 		#region Header System Variables
 		/// <summary>
 		/// System variable ACADVER.
@@ -551,7 +551,7 @@ namespace ACadSharp.Header
 		{
 			Version = version;
 		}
-		//***********************************************************************************
+
 		public static Dictionary<string, DxfCode[]> GetHeaderMap()
 		{
 			Dictionary<string, DxfCode[]> map = new Dictionary<string, DxfCode[]>();
@@ -582,6 +582,7 @@ namespace ACadSharp.Header
 				}
 			}
 		}
+
 		public object GetValue(string systemvar)
 		{
 			object value = null;
@@ -601,6 +602,7 @@ namespace ACadSharp.Header
 
 			return value;
 		}
+
 		internal void SetValue(string systemvar, params object[] values)
 		{
 			foreach (PropertyInfo p in GetType().GetProperties())

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ACadSharp.Geometry.Units
+namespace ACadSharp.Types.Units
 {
 	public enum UnitsType : short
 	{

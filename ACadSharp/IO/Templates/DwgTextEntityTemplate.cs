@@ -17,10 +17,10 @@ namespace ACadSharp.IO.Templates
 			switch (this.CadObject)
 			{
 				case TextEntity text:
-					text.TextStyle = builder.GetCadObject<Style>(this.StyleHandle);
+					text.Style = builder.GetCadObject<TextStyle>(this.StyleHandle);
 					break;
 				case MText mtext:
-					mtext.TextStyle = builder.GetCadObject<Style>(this.StyleHandle);
+					mtext.Style = builder.GetCadObject<TextStyle>(this.StyleHandle);
 					break;
 				default:
 					throw new System.ArgumentException("Unknown type");

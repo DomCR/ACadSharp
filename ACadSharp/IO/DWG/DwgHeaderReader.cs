@@ -1,4 +1,4 @@
-﻿using ACadSharp.Geometry.Units;
+﻿using ACadSharp.Types.Units;
 using ACadSharp.Header;
 
 using CSUtilities.IO;
@@ -10,7 +10,7 @@ namespace ACadSharp.IO.DWG
 	/// </summary>
 	internal class DwgHeaderReader : DwgSectionReader
 	{
-		private IDwgStreamReader m_mainReader;
+		private IDwgStreamReader _mainReader;
 
 		public DwgHeaderReader(ACadVersion version) : base(version)
 		{
@@ -20,7 +20,7 @@ namespace ACadSharp.IO.DWG
 			int acadMaintenanceVersion, out DwgHeaderHandlesCollection objectPointers)
 		{
 			//Save the parameter handler in a local variable
-			m_mainReader = sreader;
+			_mainReader = sreader;
 
 			CadHeader header = new CadHeader(_version);
 			objectPointers = new DwgHeaderHandlesCollection();
@@ -365,7 +365,7 @@ namespace ACadSharp.IO.DWG
 			//H : HANDSEED The next handle, with an 8-bit length specifier preceding the handle
 			//bytes (standard hex handle form) (code 0). The HANDSEED is not part of the handle
 			//stream, but of the normal data stream (relevant for R21 and later).
-			header.HandleSeed = m_mainReader.HandleReference();
+			header.HandleSeed = _mainReader.HandleReference();
 
 			//H : CLAYER (hard pointer)
 			objectPointers.CLAYER = sreader.HandleReference();
@@ -1021,11 +1021,11 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Set the position at the end of the section
-			m_mainReader.SetPositionInBits(initialPos + size * 8);
-			m_mainReader.ResetShift();
+			_mainReader.SetPositionInBits(initialPos + size * 8);
+			_mainReader.ResetShift();
 
 			//Ending sentinel: 0x30,0x84,0xE0,0xDC,0x02,0x21,0xC7,0x56,0xA0,0x83,0x97,0x47,0xB1,0x92,0xCC,0xA0
-			var endsn = m_mainReader.ReadSentinel();
+			var endsn = _mainReader.ReadSentinel();
 
 			return header;
 		}

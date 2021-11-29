@@ -98,6 +98,7 @@ namespace ACadSharp.IO.Templates
 		public ulong Dimltype { get; internal set; }
 		public ulong Dimltex1 { get; internal set; }
 		public ulong Dimltex2 { get; internal set; }
+		
 		public DwgDimensionStyleTemplate(DimensionStyle dimStyle) : base(dimStyle) { }
 
 		public override void Build(DwgDocumentBuilder builder)

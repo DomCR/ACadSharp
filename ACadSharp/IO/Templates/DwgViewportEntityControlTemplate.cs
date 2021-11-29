@@ -1,17 +1,15 @@
-﻿using ACadSharp.IO.DWG;
-using ACadSharp.Tables;
-using ACadSharp.Tables.Collections;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO.DWG;
 using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgTableTemplate<T> : DwgTemplate<Table<T>>
-		where T : TableEntry
+	internal class DwgViewportEntityControlTemplate : DwgTemplate<ViewportCollection>
 	{
 		public List<ulong> EntryHandles { get; } = new List<ulong>();
 
-		public DwgTableTemplate(Table<T> tableControl) : base(tableControl) { }
+		public DwgViewportEntityControlTemplate(ViewportCollection collection) : base(collection) { }
 
 		public override void Build(DwgDocumentBuilder builder)
 		{
@@ -21,9 +19,9 @@ namespace ACadSharp.IO.Templates
 			{
 				try
 				{
-					T entry = builder.GetCadObject<T>(handle);
+					Viewport entry = builder.GetCadObject<Viewport>(handle);
 					if (entry != null)
-						this.CadObject.Add(builder.GetCadObject<T>(handle));
+						this.CadObject.Add(builder.GetCadObject<Viewport>(handle));
 				}
 				catch (Exception)
 				{

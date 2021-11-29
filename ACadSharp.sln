@@ -57,6 +57,7 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		CSUtilities\CSMath\CSMath.projitems*{411b6122-5ef6-46db-a8f2-43e9c1841e4a}*SharedItemsImports = 13
+		CSUtilities\CSMath\CSMath.projitems*{66b978f6-8ed4-4e14-bd43-bbb86664adb3}*SharedItemsImports = 5
 		CSUtilities\CSUtilities\CSUtilities.projitems*{66b978f6-8ed4-4e14-bd43-bbb86664adb3}*SharedItemsImports = 5
 		CSUtilities\CSUtilities\CSUtilities.projitems*{b4ef345d-52b9-47f1-aa2a-b4ae85f62efc}*SharedItemsImports = 13
 	EndGlobalSection

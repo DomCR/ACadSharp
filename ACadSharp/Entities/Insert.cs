@@ -1,7 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Blocks;
-using ACadSharp.Geometry;
 using ACadSharp.IO.Templates;
+using CSMath;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities

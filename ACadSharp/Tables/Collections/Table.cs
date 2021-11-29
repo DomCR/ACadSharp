@@ -33,6 +33,7 @@ namespace ACadSharp.Tables.Collections
 
 		public Table(CadDocument document)
 		{
+			this.Owner = document;
 			this.Document = document;
 			this.Document.RegisterCollection(this);
 		}

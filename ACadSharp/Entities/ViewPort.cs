@@ -5,9 +5,9 @@
 //See LICENSE file in the project root for full license information.
 #endregion
 using ACadSharp.Attributes;
-using ACadSharp.Geometry;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using CSMath;
 using System.Collections.Generic;
 using System.Text;
 

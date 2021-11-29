@@ -1,8 +1,8 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
-using ACadSharp.Geometry;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using CSMath;
 using System.Collections.Generic;
 using System.Text;
 

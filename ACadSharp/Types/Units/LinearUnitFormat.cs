@@ -1,4 +1,4 @@
-﻿namespace ACadSharp.Geometry.Units
+﻿namespace ACadSharp.Types.Units
 {
 	/// <summary>
 	/// Units format for decimal numbers

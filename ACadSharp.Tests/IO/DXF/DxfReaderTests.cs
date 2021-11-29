@@ -1,30 +1,32 @@
 ﻿using ACadSharp.IO;
-using ACadSharp.IO.DWG;
+using ACadSharp.IO.DXF;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ACadSharp.Tests.IO.DWG
+namespace ACadSharp.Tests.IO.DXF
 {
-	public class DwgReaderTests
+	public class DxfReaderTests
 	{
-		private const string samplesFolder = "../../../../samples/dwg/";
+		private const string samplesFolder = "../../../../samples/dxf/";
 
 		public static readonly TheoryData<string> FilePaths;
 
 		private readonly ITestOutputHelper output;
 
-		static DwgReaderTests()
+		static DxfReaderTests()
 		{
 			FilePaths = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(samplesFolder, "*.dwg"))
+			foreach (string file in Directory.GetFiles(samplesFolder, "*.dxf"))
 			{
 				FilePaths.Add(file);
 			}
 		}
 
-		public DwgReaderTests(ITestOutputHelper output)
+		public DxfReaderTests(ITestOutputHelper output)
 		{
 			this.output = output;
 		}
@@ -33,7 +35,8 @@ namespace ACadSharp.Tests.IO.DWG
 		[MemberData(nameof(FilePaths))]
 		public void ReadTest(string test)
 		{
-			CadDocument doc = DwgReader.Read(test, this.onNotification);
+			return;
+			CadDocument doc = DxfReader.Read(test, this.onNotification);
 		}
 
 		private void onNotification(object sender, NotificationEventArgs e)

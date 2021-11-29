@@ -1,12 +1,12 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
-using ACadSharp.Geometry;
-using ACadSharp.Geometry.Units;
+using ACadSharp.Types.Units;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using CSMath;
 using CSUtilities.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -132,9 +132,6 @@ namespace ACadSharp.IO.DWG
 				//Add the template to the list to be processed
 				this._modelBuilder.Templates[template.CadObject.Handle] = template;
 			}
-
-			//Build the templates in the document
-			this._modelBuilder.BuildDocument();
 		}
 
 		private ObjectType getEntityType(long offset)
@@ -432,6 +429,8 @@ namespace ACadSharp.IO.DWG
 			this.readReactors(template);
 		}
 
+
+
 		private void readXrefDependantBit(TableEntry entry)
 		{
 			if (this.R2007Plus)
@@ -704,7 +703,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readStyleControlObject();
 					break;
 				case ObjectType.STYLE:
-					template = this.readStyle();
+					template = this.readTextStyle();
 					break;
 				case ObjectType.UNKNOW_36:
 					break;
@@ -753,6 +752,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readViewportEntityControl();
 					break;
 				case ObjectType.VP_ENT_HDR:
+					template = this.readViewportEntityHeader();
 					break;
 				case ObjectType.GROUP:
 					template = this.readGroup();
@@ -1522,6 +1522,8 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		#region Dimensions
+
 		private DwgTemplate readDimOrdinate()
 		{
 			return null;
@@ -1529,7 +1531,31 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readDimLinear()
 		{
-			return null;
+			DimensionLinear dimension = new DimensionLinear();
+			DwgDimensionTemplate template = new DwgDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			//Common:
+			//13 - pt 3BD 13 See DXF documentation.
+			dimension.FirstPoint = this._objectReader.Read3BitDouble();
+			//14 - pt 3BD 14 See DXF documentation.
+			dimension.SecondPoint = this._objectReader.Read3BitDouble();
+			//10 - pt 3BD 10 See DXF documentation.
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+
+			//Ext ln rot BD 52 Extension line rotation; see DXF documentation.
+			dimension.ExtLineRotation = this._objectReader.ReadBitDouble();
+			//Dim rot BD 50 Linear dimension rotation; see DXF documentation.
+			dimension.Rotation = this._objectReader.ReadBitDouble();
+
+			//Common Entity Handle Data
+			//H 3 DIMSTYLE(hard pointer)
+			template.StyleHandle = this.handleReference();
+			//H 2 anonymous BLOCK(hard pointer)
+			template.BlockHandle = this.handleReference();
+
+			return template;
 		}
 
 		private DwgTemplate readDimAligned()
@@ -1556,6 +1582,92 @@ namespace ACadSharp.IO.DWG
 		{
 			return null;
 		}
+
+		private void readCommonDimensionData(DwgDimensionTemplate template)
+		{
+			this.readCommonEntityData(template);
+
+			Dimension dimension = template.CadObject as Dimension;
+
+			//R2010:
+			if (this.R2010Plus)
+				//Version RC 280 0 = R2010
+				dimension.Version = this._objectReader.ReadByte();
+
+			//Common:
+			//Extrusion 3BD 210
+			dimension.Normal = this._objectReader.Read3BitDouble();
+			//Text midpt 2RD 11 See DXF documentation.
+			XY midpt = this._objectReader.Read2RawDouble();
+			//Elevation BD 11 Z - coord for the ECS points(11, 12, 16).
+			//12 (The 16 remains (0,0,0) in entgets of this entity,
+			//since the 16 is not used in this type of dimension
+			//and is not present in the binary form here.)
+			double elevation = this._objectReader.ReadBitDouble();
+			dimension.TextMiddlePoint = new XYZ(midpt.X, midpt.Y, elevation);
+
+			//Flags 1 RC 70 Non - bit - pair - coded.
+			//NOT the 70 group, but helps define it.
+			//Apparently only the two lowest bit are used:
+			//76543210:
+			//Bit 0 : The OPPOSITE of bit 7(128) of 70.
+			//Bit 1 : Same as bit 5(32) of the 70(but 32 is not doc'd by ACAD).
+			//The actual 70 - group value comes from 3 things:
+			//6 for being an ordinate DIMENSION, plus whatever bits "Flags 1" and "Flags 2" specify.
+			byte dimensionType = this._objectReader.ReadByte();//TODO: set dimension type
+
+			// if (!this.ModelBuilder.IsDxf21Superior)
+
+			//User text TV 1
+			dimension.Text = this._textReader.ReadVariableText();
+
+			//Text rot BD 53 See DXF documentation.
+			dimension.TextRotation = this._objectReader.ReadBitDouble();
+			//Horiz dir BD 51 See DXF documentation.
+			dimension.HorizontalDirection = this._objectReader.ReadBitDouble();
+
+			//TODO: readDimension insert scale and rotation not implemented
+
+			//Ins X - scale BD 41 Undoc'd. These apply to the insertion of the
+			//Ins Y - scale BD 42 anonymous block. None of them can be
+			//Ins Z - scale BD 43 dealt with via entget/entmake/entmod.
+			var insertionScaleFactor = new XYZ(this._objectReader.ReadBitDouble(), this._objectReader.ReadBitDouble(), this._objectReader.ReadBitDouble());
+
+			//Ins rotation BD 54 The last 2(43 and 54) are reported by DXFOUT(when not default values).
+			//ALL OF THEM can be set via DXFIN, however.
+			var insertionRotation = this._objectReader.ReadBitDouble();
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//Attachment Point BS 71
+				dimension.AttachmentPoint = (AttachmentPointType)this._objectReader.ReadBitShort();
+				//Linespacing Style BS 72
+				dimension.LineSpacingStyle = (LineSpacingStyleType)this._objectReader.ReadBitShort();
+				//Linespacing Factor BD 41
+				dimension.LineSpacingFactor = this._objectReader.ReadBitDouble();
+				//Actual Measurement BD 42
+				dimension.Measurement = this._objectReader.ReadBitDouble();
+			}
+
+			//R2007 +:
+			if (this.R2007Plus)
+			{
+				//Unknown B 73
+				this._objectReader.ReadBit();
+				//Flip arrow1 B 74
+				this._objectReader.ReadBit();
+				//Flip arrow2 B 75
+				this._objectReader.ReadBit();
+			}
+
+			//Common:
+			//12 - pt 2RD 12 See DXF documentation.
+			XY pt = this._objectReader.Read2RawDouble();
+			dimension.InsertionPoint = new XYZ((double)pt.X, (double)pt.Y, elevation);
+		}
+
+		#endregion
 
 		private DwgTemplate readPoint()
 		{
@@ -2365,8 +2477,8 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readStyleControlObject()
 		{
-			DwgTableTemplate<Style> template = new DwgTableTemplate<Style>(
-				this._modelBuilder.DocumentToBuild.Styles);
+			DwgTableTemplate<TextStyle> template = new DwgTableTemplate<TextStyle>(
+				this._modelBuilder.DocumentToBuild.TextStyles);
 
 			this.readCommonNonEntityData(template);
 
@@ -2380,10 +2492,10 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private DwgTemplate readStyle()
+		private DwgTemplate readTextStyle()
 		{
-			Style style = Style.Default;
-			DwgTableEntryTemplate<Style> template = new DwgTableEntryTemplate<Style>(style);
+			TextStyle style = TextStyle.Default;
+			DwgTableEntryTemplate<TextStyle> template = new DwgTableEntryTemplate<TextStyle>(style);
 
 			this.readCommonNonEntityData(template);
 
@@ -3200,17 +3312,24 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readViewportEntityControl()
 		{
-			//DwgTableTemplate<Viewport> template = new DwgTableTemplate<Viewport>(
-			//	this._modelBuilder.DocumentToBuild.Viewports);
+			DwgViewportEntityControlTemplate template = new DwgViewportEntityControlTemplate(
+				this._modelBuilder.DocumentToBuild.Viewports);
 
-			//this.readCommonNonEntityData(template);
+			this.readCommonNonEntityData(template);
 
-			////Common:
-			////Numentries BL 70
-			//int numentries = this._objectReader.ReadBitLong();
-			//for (int i = 0; i < numentries; ++i)
-			//	//Handle refs H NULL(soft pointer)	xdicobjhandle(hard owner)	the apps(soft owner)
-			//	template.EntryHandles.Add(this.handleReference());
+			//Common:
+			//Numentries BL 70
+			int numentries = this._objectReader.ReadBitLong();
+			for (int i = 0; i < numentries; ++i)
+				//Handle refs H NULL(soft pointer)	xdicobjhandle(hard owner)	the apps(soft owner)
+				template.EntryHandles.Add(this.handleReference());
+
+			return template;
+		}
+
+		private DwgTemplate readViewportEntityHeader()
+		{
+
 
 			return null;
 		}

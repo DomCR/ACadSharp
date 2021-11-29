@@ -23,6 +23,8 @@
   
   <Import Project="..\CSUtilities\CSUtilities\CSUtilities.projitems" Label="Shared" />
   
+  <Import Project="..\CSUtilities\CSMath\CSMath.projitems" Label="Shared" />
+  
   <ItemGroup>
     <None Include="..\README.md">
       <Pack>True</Pack>

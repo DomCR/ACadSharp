@@ -1,7 +1,7 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Geometry;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
+using CSMath;
 using System;
 using System.Collections.Generic;
 
@@ -69,7 +69,7 @@ namespace ACadSharp.Entities
 		/// Style of this text entity.
 		/// </summary>
 		[DxfCodeValue(DxfCode.TextStyleName)]
-		public Style TextStyle { get; set; } = Style.Default;
+		public TextStyle Style { get; set; } = TextStyle.Default;
 
 		/// <summary>
 		/// A 3D WCS coordinate representing the alignment point of the object.

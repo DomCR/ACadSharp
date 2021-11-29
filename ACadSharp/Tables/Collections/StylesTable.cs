@@ -2,13 +2,13 @@
 
 namespace ACadSharp.Tables.Collections
 {
-	public class StylesTable : Table<Style>
+	public class TextStylesTable : Table<TextStyle>
 	{
 		public override ObjectType ObjectType => ObjectType.STYLE_CONTROL_OBJ;
 
-		internal StylesTable(DxfTableTemplate template) : base(template) { }
+		internal TextStylesTable(DxfTableTemplate template) : base(template) { }
 
-		public StylesTable(CadDocument document) : base(document)
+		public TextStylesTable(CadDocument document) : base(document)
 		{
 		}
 	}

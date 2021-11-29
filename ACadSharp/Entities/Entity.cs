@@ -1,7 +1,7 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Geometry;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
+using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;

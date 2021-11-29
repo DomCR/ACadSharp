@@ -1,6 +1,6 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Geometry;
 using ACadSharp.IO.Templates;
+using CSMath;
 using System;
 
 namespace ACadSharp.Entities

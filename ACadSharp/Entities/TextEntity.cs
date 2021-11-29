@@ -1,7 +1,7 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Geometry;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
+using CSMath;
 
 namespace ACadSharp.Entities
 {
@@ -66,11 +66,13 @@ namespace ACadSharp.Entities
 		/// </value>
 		[DxfCodeValue(DxfCode.ObliqueAngle)]
 		public double ObliqueAngle { get; set; } = 0.0;
+
 		/// <summary>
 		/// Style of this text entity.
 		/// </summary>
 		[DxfCodeValue(DxfCode.TextStyleName)]
-		public Style TextStyle { get; set; } = Style.Default;
+		public TextStyle Style { get; set; } = TextStyle.Default;
+
 		/// <summary>
 		/// Mirror flags.
 		/// </summary>

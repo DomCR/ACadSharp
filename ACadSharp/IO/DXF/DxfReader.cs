@@ -1,10 +1,10 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
-using ACadSharp.Geometry;
 using ACadSharp.Header;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using CSMath;
 using CSUtilities.IO;
 using System;
 using System.Collections.Generic;
@@ -14,31 +14,36 @@ using System.Reflection;
 
 namespace ACadSharp.IO.DXF
 {
-	public class DxfReader : IDisposable
+	public class DxfReader : ICadReader
 	{
-		private string _filename;
-
-		private StreamIO _fileStream;
+		private CadDocument _document;
 
 		private IDxfStreamReader _reader;
+
+		private readonly StreamIO _fileStream;
+
+		private readonly NotificationEventHandler _notificationHandler;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DxfReader" /> class.
 		/// </summary>
 		/// <param name="filename">The filename of the file to open.</param>
-		public DxfReader(string filename)
+		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
+		public DxfReader(string filename, NotificationEventHandler notification = null)
 		{
-			_filename = filename;
-			_fileStream = new StreamIO(filename);
+			this._fileStream = new StreamIO(filename);
+			this._notificationHandler = notification;
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DxfReader" /> class.
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
-		public DxfReader(Stream stream)
+		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
+		public DxfReader(Stream stream, NotificationEventHandler notification = null)
 		{
-			_fileStream = new StreamIO(stream);
+			this._fileStream = new StreamIO(stream);
+			this._notificationHandler = notification;
 		}
 
 		/// <summary>
@@ -77,24 +82,56 @@ namespace ACadSharp.IO.DXF
 		}
 
 		/// <summary>
-		/// Read the complete document.
+		/// Read a dxf document in a stream
 		/// </summary>
-		public CadDocument Read()
+		/// <param name="stream"></param>
+		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
+		/// <returns></returns>
+		public static CadDocument Read(Stream stream, NotificationEventHandler notification = null)
 		{
-			CadDocument doc = new CadDocument();
+			CadDocument doc = null;
 
-			doc.Header = ReadHeader();
-			doc.Classes = ReadClasses();
-			ReadTables(doc);
-			ReadEntities(doc);
+			using (DxfReader reader = new DxfReader(stream, notification))
+			{
+				doc = reader.Read();
+			}
 
 			return doc;
 		}
 
 		/// <summary>
-		/// Read the HEADER section of the file.
+		/// Read a dxf document from a file
 		/// </summary>
+		/// <param name="filename"></param>
+		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
 		/// <returns></returns>
+		public static CadDocument Read(string filename, NotificationEventHandler notification = null)
+		{
+			CadDocument doc = null;
+
+			using (DxfReader reader = new DxfReader(filename, notification))
+			{
+				doc = reader.Read();
+			}
+
+			return doc;
+		}
+
+		/// <inheritdoc/>
+		public CadDocument Read()
+		{
+			this._document = new CadDocument();
+
+			this._document.Header = ReadHeader();
+			this._document.Classes = ReadClasses();
+
+			ReadTables(this._document);
+			ReadEntities(this._document);
+
+			return this._document;
+		}
+
+		/// <inheritdoc/>
 		public CadHeader ReadHeader()
 		{
 			//Get the needed handler
@@ -241,17 +278,16 @@ namespace ACadSharp.IO.DXF
 			_fileStream.Dispose();
 		}
 
-		//**************************************************************************
 		private IDxfStreamReader getHandler()
 		{
 			if (IsBinary())
-				return null;
+				throw new NotImplementedException();
 			else
 				return new DxfTextReader(_fileStream.Stream);
 
 			//TODO: Setup encoding
-			//AutoCAD 2007 DXF and later format -UTF - 8
-			//AutoCAD 2004 DXF and earlier format -Plain ASCII and CIF
+			//AutoCAD 2007 DXF and later format - UTF-8
+			//AutoCAD 2004 DXF and earlier format - Plain ASCII and CIF
 		}
 
 		private IDxfStreamReader getSectionHandler(string sectionName)
@@ -547,7 +583,7 @@ namespace ACadSharp.IO.DXF
 					table = new LineType(template);
 					break;
 				case DxfFileToken.TableStyle:
-					table = new Style(template);
+					table = new TextStyle(template);
 					break;
 				case DxfFileToken.TableUcs:
 					table = new UCS(template);
@@ -837,7 +873,7 @@ namespace ACadSharp.IO.DXF
 
 			//Pre-declare structures
 			XYZ center = XYZ.Zero;
-			XYZ normal = XYZ.Zero = XYZ.AxisZ;
+			XYZ normal = XYZ.AxisZ;
 
 			while (_reader.LastDxfCode != DxfCode.Start)
 			{
@@ -909,7 +945,7 @@ namespace ACadSharp.IO.DXF
 
 			//Pre-declare structures
 			XYZ center = XYZ.Zero;
-			XYZ normal = XYZ.Zero = XYZ.AxisZ;
+			XYZ normal = XYZ.AxisZ;
 
 			while (_reader.LastDxfCode != DxfCode.Start)
 			{
@@ -975,7 +1011,7 @@ namespace ACadSharp.IO.DXF
 			//Pre-declare structures
 			XYZ firstAlignmentPoint = XYZ.Zero;
 			XYZ secondAlignmentPoint = XYZ.Zero;
-			XYZ normal = XYZ.Zero = XYZ.AxisZ;
+			XYZ normal = XYZ.AxisZ;
 
 			while (_reader.LastDxfCode != DxfCode.Start)
 			{
@@ -1029,7 +1065,7 @@ namespace ACadSharp.IO.DXF
 			PolyLine polyline = new PolyLine(template);
 
 			//Pre-declare structures
-			XYZ normal = XYZ.Zero = XYZ.AxisZ;
+			XYZ normal = XYZ.AxisZ;
 
 			while (_reader.LastDxfCode != DxfCode.Start)
 			{
@@ -1045,7 +1081,7 @@ namespace ACadSharp.IO.DXF
 			Hatch hatch = new Hatch(template);
 
 			//Pre-declare structures
-			XYZ normal = XYZ.Zero = XYZ.AxisZ;
+			XYZ normal = XYZ.AxisZ;
 
 			while (_reader.LastDxfCode != DxfCode.Start)
 			{
