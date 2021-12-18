@@ -28,12 +28,6 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(4)]
 		public string AlternateDimensioningSuffix { get; set; }
 
-		//5	DIMBLK(obsolete, now object ID)
-
-		//6	DIMBLK1(obsolete, now object ID)
-
-		//7	DIMBLK2(obsolete, now object ID)
-
 		/// <summary>
 		/// DIMTOL
 		/// </summary>
@@ -457,6 +451,12 @@ namespace ACadSharp.Tables
 		/// </remarks>
 		[DxfCodeValue(342)]
 		public Block ArrowBlock { get; set; }
+
+		//5	DIMBLK(obsolete, now object ID)
+
+		//6	DIMBLK1(obsolete, now object ID)
+
+		//7	DIMBLK2(obsolete, now object ID)
 
 		/// <summary>
 		/// Arrowhead block for the first end of the dimension line

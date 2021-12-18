@@ -38,13 +38,11 @@ namespace ACadSharp.Tables.Collections
 			this.Document.RegisterCollection(this);
 		}
 
-		internal Table(DxfTableTemplate template)
-		{
-			this.Handle = template.Handle;
-		}
-
 		public void Add(T item)
 		{
+			if (string.IsNullOrEmpty(item.Name))
+				throw new ArgumentException($"Table entry must have a name.", nameof(item));
+
 			OnBeforeAdd?.Invoke(this, new CollectionChangedEventArgs(item));
 
 			this._entries.Add(item.Name, item);
@@ -84,16 +82,6 @@ namespace ACadSharp.Tables.Collections
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return this._entries.Values.GetEnumerator();
-		}
-
-		internal void addOnBuild(T item)
-		{
-			OnBeforeAdd?.Invoke(this, new CollectionChangedEventArgs(item));
-
-			this._entries.Add(item.Name, item);
-			item.Owner = this;
-
-			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
 		}
 	}
 }

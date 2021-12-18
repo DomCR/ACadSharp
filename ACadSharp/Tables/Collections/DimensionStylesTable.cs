@@ -7,6 +7,5 @@ namespace ACadSharp.Tables.Collections
 		public override ObjectType ObjectType => ObjectType.DIMSTYLE_CONTROL_OBJ;
 
 		public DimensionStylesTable(CadDocument document) : base(document) { }
-		internal DimensionStylesTable(DxfTableTemplate template) : base(template) { }
 	}
 }

@@ -13,12 +13,4 @@ namespace ACadSharp.IO.Templates
 		public override ObjectType ObjectType => ObjectType.INVALID;
 		public string EntityName { get; set; }
 	}
-
-	[Obsolete]
-	internal class DxfTableTemplate : CadObject
-	{
-		public override ObjectType ObjectType => ObjectType.INVALID;
-		public string Name { get; set; }
-		public int MaxEntries { get; internal set; }
-	}
 }

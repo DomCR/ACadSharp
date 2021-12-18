@@ -7,7 +7,5 @@ namespace ACadSharp.Tables.Collections
 		public override ObjectType ObjectType => ObjectType.LTYPE_CONTROL_OBJ;
 
 		public LineTypesTable(CadDocument document) : base(document) { }
-
-		internal LineTypesTable(DxfTableTemplate template) : base(template) { }
 	}
 }
