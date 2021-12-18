@@ -82,7 +82,6 @@ namespace ACadSharp.Tables
 		public FontFlags TrueType { get; set; }
 
 		public TextStyle(string name) : base(name) { }
-		internal TextStyle(DxfEntryTemplate template) : base(template) { }
 	}
 }
 

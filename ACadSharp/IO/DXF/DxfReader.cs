@@ -14,37 +14,27 @@ using System.Reflection;
 
 namespace ACadSharp.IO.DXF
 {
-	public class DxfReader : ICadReader
+	public class DxfReader : CadReaderBase
 	{
 		private CadDocument _document;
-
+		private DxfDocumentBuilder _builder;
 		private IDxfStreamReader _reader;
 
-		private readonly StreamIO _fileStream;
-
-		private readonly NotificationEventHandler _notificationHandler;
+		private event NotificationEventHandler _notificationHandler;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DxfReader" /> class.
 		/// </summary>
 		/// <param name="filename">The filename of the file to open.</param>
 		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
-		public DxfReader(string filename, NotificationEventHandler notification = null)
-		{
-			this._fileStream = new StreamIO(filename);
-			this._notificationHandler = notification;
-		}
+		public DxfReader(string filename, NotificationEventHandler notification = null) : base(filename, notification) { }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DxfReader" /> class.
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
 		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
-		public DxfReader(Stream stream, NotificationEventHandler notification = null)
-		{
-			this._fileStream = new StreamIO(stream);
-			this._notificationHandler = notification;
-		}
+		public DxfReader(Stream stream, NotificationEventHandler notification = null) : base(stream, notification) { }
 
 		/// <summary>
 		/// Check if the file format is in binary.
@@ -52,7 +42,7 @@ namespace ACadSharp.IO.DXF
 		/// <returns></returns>
 		public bool IsBinary()
 		{
-			return IsBinary(_fileStream.Stream);
+			return IsBinary(this._fileStream.Stream);
 		}
 
 		/// <summary>
@@ -118,37 +108,39 @@ namespace ACadSharp.IO.DXF
 		}
 
 		/// <inheritdoc/>
-		public CadDocument Read()
+		public override CadDocument Read()
 		{
 			this._document = new CadDocument();
+			this._builder = new DxfDocumentBuilder(this._document, this._notificationHandler);
 
-			this._document.Header = ReadHeader();
-			this._document.Classes = ReadClasses();
+			this._document.Header = this.ReadHeader();
+			this._document.Classes = this.readClasses();
 
-			ReadTables(this._document);
-			ReadEntities(this._document);
+			this.readTables();
+
+			this.readEntities(this._document);
 
 			return this._document;
 		}
 
 		/// <inheritdoc/>
-		public CadHeader ReadHeader()
+		public override CadHeader ReadHeader()
 		{
 			//Get the needed handler
-			_reader = getSectionHandler(DxfFileToken.HeaderSection);
+			this._reader = this.goToSection(DxfFileToken.HeaderSection);
 
 			CadHeader header = new CadHeader();
 
 			Dictionary<string, DxfCode[]> headerMap = CadHeader.GetHeaderMap();
 
 			//Loop until the section ends
-			while (!_reader.EndSectionFound)
+			while (!this._reader.EndSectionFound)
 			{
 				//Get next key/value
-				_reader.ReadNext();
+				this._reader.ReadNext();
 
 				//Get the current header variable
-				string currVar = _reader.LastValueAsString;
+				string currVar = this._reader.LastValueAsString;
 
 				if (!headerMap.TryGetValue(currVar, out var codes))
 					continue;
@@ -156,8 +148,8 @@ namespace ACadSharp.IO.DXF
 				object[] parameters = new object[codes.Length];
 				for (int i = 0; i < codes.Length; i++)
 				{
-					_reader.ReadNext();
-					parameters[i] = _reader.LastValue;
+					this._reader.ReadNext();
+					parameters[i] = this._reader.LastValue;
 				}
 
 				//Set the header value by name
@@ -167,68 +159,117 @@ namespace ACadSharp.IO.DXF
 			return header;
 		}
 
+		#region DxfClasses
+
 		/// <summary>
 		/// Read the CLASSES section of the DXF file.
 		/// </summary>
 		/// <returns></returns>
-		public DxfClassCollection ReadClasses()
+		private DxfClassCollection readClasses()
 		{
 			//Get the needed handler
-			_reader = getSectionHandler(DxfFileToken.ClassesSection);
+			this._reader = this.goToSection(DxfFileToken.ClassesSection);
 
 			DxfClassCollection classes = new DxfClassCollection();
 
 			//Advance to the first value in the section
-			_reader.ReadNext();
+			this._reader.ReadNext();
 			//Loop until the section ends
-			while (!_reader.EndSectionFound)
+			while (!this._reader.EndSectionFound)
 			{
-				if (_reader.LastValueAsString == DxfFileToken.ClassEntry)
-					classes.Add(readClass());
+				if (this._reader.LastValueAsString == DxfFileToken.ClassEntry)
+					classes.Add(this.readClass());
 				else
-					_reader.ReadNext();
+					this._reader.ReadNext();
 			}
 
 			return classes;
 		}
 
+		private DxfClass readClass()
+		{
+			DxfClass curr = new DxfClass();
+
+			Debug.Assert(this._reader.LastValueAsString == DxfFileToken.ClassEntry);
+
+			this._reader.ReadNext();
+			//Loop until the next class or the end of the section
+			while (this._reader.LastDxfCode != DxfCode.Start)
+			{
+				switch (this._reader.LastCode)
+				{
+					//Class DXF record name; always unique
+					case 1:
+						curr.DxfName = this._reader.LastValueAsString;
+						break;
+					//C++ class name. Used to bind with software that defines object class behavior; always unique
+					case 2:
+						curr.CppClassName = this._reader.LastValueAsString;
+						break;
+					//Application name. Posted in Alert box when a class definition listed in this section is not currently loaded
+					case 3:
+						curr.ApplicationName = this._reader.LastValueAsString;
+						break;
+					//Proxy capabilities flag.
+					case 90:
+						curr.ProxyFlags = (ProxyFlags)this._reader.LastValueAsShort;
+						break;
+					//Instance count for a custom class
+					case 91:
+						curr.InstanceCount = this._reader.LastValueAsInt;
+						break;
+					//Was-a-proxy flag. Set to 1 if class was not loaded when this DXF file was created, and 0 otherwise
+					case 280:
+						curr.WasAProxy = this._reader.LastValueAsBool;
+						break;
+					//Is - an - entity flag.
+					case 281:
+						curr.IsAnEntity = this._reader.LastValueAsBool;
+						break;
+					default:
+						break;
+				}
+
+				this._reader.ReadNext();
+			}
+
+			return curr;
+		}
+
+		#endregion
+
+		#region Tables
+
 		/// <summary>
 		/// Read the TABLES section of the DXF file.
 		/// </summary>
-		/// <param name="document">Document where the tables reside.</param>
-		public void ReadTables(CadDocument document)
+		private void readTables()
 		{
-			if (document == null)
-				throw new ArgumentNullException(nameof(document));
-
-			//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-A9FD9590-C97B-4E41-9F26-BD82C34A4F9F
 			//Get the needed handler
-			_reader = getSectionHandler(DxfFileToken.TablesSection);
+			this._reader = this.goToSection(DxfFileToken.TablesSection);
 
-			//Advance to the first value in the section
-			_reader.ReadNext();
-			//Loop until the section ends
-			while (!_reader.EndSectionFound)
-			{
-				readTable(document);
+			DxfTablesSectionReader reader = new DxfTablesSectionReader(
+				this._reader,
+				this._builder,
+				this._notificationHandler);
 
-				if (_reader.LastValueAsString == DxfFileToken.EndTable)
-					_reader.ReadNext();
-			}
+			reader.Read();
 		}
+
+		#endregion
 
 		/// <summary>
 		/// Read the BLOCKS section of the DXF file.
 		/// </summary>
-		public void ReadBlocks()
+		private void readBlocks()
 		{
 			//Get the needed handler
-			_reader = getSectionHandler(DxfFileToken.BlocksSection);
+			this._reader = this.goToSection(DxfFileToken.BlocksSection);
 
 			//Advance to the first value in the section
-			_reader.ReadNext();
+			this._reader.ReadNext();
 			//Loop until the section ends
-			while (!_reader.EndSectionFound)
+			while (!this._reader.EndSectionFound)
 			{
 				//if (m_reader.LastValueAsString == DxfFileToken.ClassEntry)
 				//	classes.Add(readBlock());
@@ -242,25 +283,25 @@ namespace ACadSharp.IO.DXF
 		/// <summary>
 		/// Read the ENTITIES section of the DXF file.
 		/// </summary>
-		public void ReadEntities(CadDocument document)
+		private void readEntities(CadDocument document)
 		{
 			//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484
 			//Get the needed handler
-			_reader = getSectionHandler(DxfFileToken.EntitiesSection);
+			this._reader = this.goToSection(DxfFileToken.EntitiesSection);
 
 			//Advance to the first value in the section
-			_reader.ReadNext();
+			this._reader.ReadNext();
 			//Loop until the section ends
-			while (!_reader.EndSectionFound)
+			while (!this._reader.EndSectionFound)
 			{
-				document.AddEntity(readEntity());
+				document.AddEntity(this.readEntity());
 			}
 		}
 
 		/// <summary>
 		/// Read the OBJECTS section of the DXF file.
 		/// </summary>
-		public void ReadObjects()
+		private void readObjects()
 		{
 			throw new NotImplementedException();
 		}
@@ -268,361 +309,32 @@ namespace ACadSharp.IO.DXF
 		/// <summary>
 		/// Read the THUMBNAILIMAGE section of the DXF file.
 		/// </summary>
-		public void ReadThumbnailImage()
+		private void ReadThumbnailImage()
 		{
 			throw new NotImplementedException();
 		}
 
-		public void Dispose()
-		{
-			_fileStream.Dispose();
-		}
-
 		private IDxfStreamReader getHandler()
 		{
-			if (IsBinary())
+			if (this.IsBinary())
 				throw new NotImplementedException();
 			else
-				return new DxfTextReader(_fileStream.Stream);
+				return new DxfTextReader(this._fileStream.Stream);
 
 			//TODO: Setup encoding
 			//AutoCAD 2007 DXF and later format - UTF-8
 			//AutoCAD 2004 DXF and earlier format - Plain ASCII and CIF
 		}
 
-		private IDxfStreamReader getSectionHandler(string sectionName)
+		private IDxfStreamReader goToSection(string sectionName)
 		{
 			//Get the needed handler
-			_reader = _reader ?? getHandler();
+			this._reader = this._reader ?? this.getHandler();
 			//Go to the start of header section
-			_reader.Find(sectionName);
+			this._reader.Find(sectionName);
 
-			return _reader;
+			return this._reader;
 		}
-
-		private DxfClass readClass()
-		{
-			DxfClass curr = new DxfClass();
-
-			Debug.Assert(_reader.LastValueAsString == DxfFileToken.ClassEntry);
-
-			_reader.ReadNext();
-			//Loop until the next class or the end of the section
-			while (_reader.LastDxfCode != DxfCode.Start)
-			{
-				switch (_reader.LastCode)
-				{
-					//Class DXF record name; always unique
-					case 1:
-						curr.DxfName = _reader.LastValueAsString;
-						break;
-					//C++ class name. Used to bind with software that defines object class behavior; always unique
-					case 2:
-						curr.CppClassName = _reader.LastValueAsString;
-						break;
-					//Application name. Posted in Alert box when a class definition listed in this section is not currently loaded
-					case 3:
-						curr.ApplicationName = _reader.LastValueAsString;
-						break;
-					//Proxy capabilities flag.
-					case 90:
-						curr.ProxyFlags = (ProxyFlags)_reader.LastValueAsShort;
-						break;
-					//Instance count for a custom class
-					case 91:
-						curr.InstanceCount = _reader.LastValueAsInt;
-						break;
-					//Was-a-proxy flag. Set to 1 if class was not loaded when this DXF file was created, and 0 otherwise
-					case 280:
-						curr.WasAProxy = _reader.LastValueAsBool;
-						break;
-					//Is - an - entity flag.
-					case 281:
-						curr.IsAnEntity = _reader.LastValueAsBool;
-						break;
-					default:
-						break;
-				}
-
-				_reader.ReadNext();
-			}
-
-			return curr;
-		}
-
-		#region Table section methods
-
-		/// <summary>
-		/// Read the tables in the document.
-		/// </summary>
-		/// <param name="document">Document where the tables reside.</param>
-		private void readTable(CadDocument document)
-		{
-			//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-5926A569-3E40-4ED2-AE06-6ACCE0EFC813
-
-			Debug.Assert(_reader.LastValueAsString == DxfFileToken.TableEntry);
-			//Read the table name
-			_reader.ReadNext();
-
-			DxfTableTemplate template = new DxfTableTemplate();
-			//Loop until the common data
-			while (_reader.LastDxfCode != DxfCode.Start)
-			{
-				switch (_reader.LastCode)
-				{
-					//Table name
-					case 2:
-						template.Name = _reader.LastValueAsString;
-						break;
-					//Handle
-					case 5:
-						template.Handle = _reader.LastValueAsHandle;
-						break;
-					//Start of application - defined group
-					case 102:
-						//TODO: read dictionary groups for entities
-						do
-						{
-							_reader.ReadNext();
-						}
-						while (_reader.LastDxfCode != DxfCode.ControlString);
-						break;
-					//Soft - pointer ID / handle to owner BLOCK_RECORD object
-					case 330:
-						template.OwnerHandle = _reader.LastValueAsHandle;
-						break;
-					//Subclass marker(AcDbSymbolTable)
-					case 100:
-						Debug.Assert(_reader.LastValueAsString == DxfSubclassMarker.Table
-							|| _reader.LastValueAsString == DxfSubclassMarker.DimensionStyleTable);
-
-						break;
-					case 71:
-					//Number of entries for dimension style table
-					case 340:
-						//Dimension table has the handles of the styles at the begining
-						break;
-					//Maximum number of entries in table
-					case 70:
-						template.MaxEntries = _reader.LastValueAsInt;
-						break;
-					default:
-						Debug.Fail($"Unhandeled dxf code {_reader.LastCode} at line {_reader.Line}.");
-						break;
-				}
-
-				_reader.ReadNext();
-			}
-
-			List<TableEntry> entries = new List<TableEntry>();
-
-			//Check if the table is empty
-			if (_reader.LastValueAsString != DxfFileToken.EndTable)
-			{
-				//Get the table entries
-				Debug.Assert(_reader.LastValueAsString == template.Name);
-				entries = readEntries();
-			}
-
-			switch (template.Name)
-			{
-				//TODO: Cannot reasign the tables in a document
-				//case DxfFileToken.TableAppId:
-				//	document.AppIds = new AppIdsTable(template);
-				//	//Add the entries
-				//	foreach (TableEntry item in entries)
-				//	{
-				//		document.AppIds.Add(item as AppId);
-				//	}
-				//	break;
-				//case DxfFileToken.TableBlockRecord:
-				//	document.BlockRecords = new BlockRecordsTable(template);
-				//	//Add the entries
-				//	foreach (TableEntry item in entries)
-				//	{
-				//		document.BlockRecords.Add(item as BlockRecord);
-				//	}
-				//	break;
-				//case DxfFileToken.TableDimstyle:
-				//	document.DimensionStyles = new DimensionStylesTable(template);
-				//	//Add the entries
-				//	foreach (TableEntry item in entries)
-				//	{
-				//		document.DimensionStyles.Add(item as DimensionStyle);
-				//	}
-				//	break;
-				//case DxfFileToken.TableLayer:
-				//	document.Layers = new LayersTable(template);
-				//	//Add the entries
-				//	foreach (TableEntry item in entries)
-				//	{
-				//		document.Layers.Add(item as Layer);
-				//	}
-				//	break;
-				//case DxfFileToken.TableLinetype:
-				//	document.LineTypes = new LineTypesTable(template);
-				//	//Add the entries
-				//	foreach (TableEntry item in entries)
-				//	{
-				//		document.LineTypes.Add(item as LineType);
-				//	}
-				//	break;
-				//case DxfFileToken.TableStyle:
-				//	document.Styles = new StylesTable(template);
-				//	//Add the entries
-				//	foreach (TableEntry item in entries)
-				//	{
-				//		document.Styles.Add(item as Style);
-				//	}
-				//	break;
-				//case DxfFileToken.TableUcs:
-				//	document.UCSs = new UCSTable(template);
-				//	//Add the entries
-				//	foreach (TableEntry item in entries)
-				//	{
-				//		document.UCSs.Add(item as UCS);
-				//	}
-				//	break;
-				//case DxfFileToken.TableView:
-				//	document.Views = new ViewsTable(template);
-				//	//Add the entries
-				//	foreach (TableEntry item in entries)
-				//	{
-				//		document.Views.Add(item as View);
-				//	}
-				//	break;
-				//case DxfFileToken.TableVport:
-				//	document.Viewports = new ViewPortsTable(template);
-				//	//Add the entries
-				//	foreach (TableEntry item in entries)
-				//	{
-				//		document.Viewports.Add(item as VPort);
-				//	}
-				//	break;
-				default:
-					Debug.Fail($"Unhandeled table {template.Name}.");
-					break;
-			}
-		}
-
-		private List<TableEntry> readEntries()
-		{
-			List<TableEntry> entries = new List<TableEntry>();
-
-			//Read all the entries until the end of the table
-			while (_reader.LastValueAsString != DxfFileToken.EndTable)
-			{
-				DxfEntryTemplate template = new DxfEntryTemplate();
-
-				//Read the common entry data
-				while (_reader.LastDxfCode != DxfCode.Subclass)
-				{
-					switch (_reader.LastCode)
-					{
-						//Entity type (table name)
-						case 0:
-							template.TableName = _reader.LastValueAsString;
-							break;
-						//Handle (all except DIMSTYLE)
-						case 5:
-						//Handle(all except DIMSTYLE)
-						case 105:
-							template.Handle = _reader.LastValueAsHandle;
-							break;
-						//Start of application - defined group
-						case 102:
-							//TODO: read dictionary groups for entities
-							do
-							{
-								_reader.ReadNext();
-							}
-							while (_reader.LastDxfCode != DxfCode.ControlString);
-							break;
-						//Soft - pointer ID / handle to owner BLOCK_RECORD object
-						case 330:
-							template.OwnerHandle = _reader.LastValueAsHandle;
-							break;
-						default:
-							Debug.Fail($"Unhandeled dxf code {_reader.LastCode} at line {_reader.Line}.");
-							break;
-					}
-
-					_reader.ReadNext();
-				}
-
-				Debug.Assert(_reader.LastValueAsString == DxfSubclassMarker.TableRecord);
-				_reader.ReadNext();
-
-				TableEntry entry = readEntry(template);
-				entries.Add(entry);
-			}
-
-			return entries;
-		}
-
-		private TableEntry readEntry(DxfEntryTemplate template)
-		{
-			TableEntry table = null;
-
-			//Get the entry
-			switch (template.TableName)
-			{
-				case DxfFileToken.TableAppId:
-					table = new AppId(template);
-					break;
-				case DxfFileToken.TableBlockRecord:
-					table = new BlockRecord(template);
-					break;
-				case DxfFileToken.TableDimstyle:
-					table = new DimensionStyle(template);
-					break;
-				case DxfFileToken.TableLayer:
-					table = new Layer(template);
-					break;
-				case DxfFileToken.TableLinetype:
-					table = new LineType(template);
-					break;
-				case DxfFileToken.TableStyle:
-					table = new TextStyle(template);
-					break;
-				case DxfFileToken.TableUcs:
-					table = new UCS(template);
-					break;
-				case DxfFileToken.TableView:
-					table = new View(template);
-					break;
-				case DxfFileToken.TableVport:
-					table = new VPort(template);
-					break;
-				default:
-					Debug.Fail($"Unhandeled table {template.Name}.");
-					break;
-			}
-
-			//Jump the SubclassMarker
-			_reader.ReadNext();
-
-			Dictionary<DxfCode, object> map = table?.GetCadObjectMap() ?? new Dictionary<DxfCode, object>();
-
-			while (_reader.LastDxfCode != DxfCode.Start)
-			{
-				//Check if the dxf code is registered
-				if (map.ContainsKey(_reader.LastDxfCode))
-				{
-					//Set the value
-					map[_reader.LastDxfCode] = _reader.LastValue;
-				}
-
-				_reader.ReadNext();
-			}
-
-			//Build the table based on the map
-			table?.Build(map);
-
-			return table;
-		}
-
-		#endregion Table section methods
 
 		#region Entities section methods
 
@@ -632,32 +344,32 @@ namespace ACadSharp.IO.DXF
 
 			DxfEntityTemplate template = new DxfEntityTemplate();
 			//Loop until the common data
-			while (_reader.LastDxfCode != DxfCode.Subclass)
+			while (this._reader.LastDxfCode != DxfCode.Subclass)
 			{
-				switch (_reader.LastCode)
+				switch (this._reader.LastCode)
 				{
 					//APP: entity name(changes each time a drawing is opened)
 					case -1:
 						break;
 					//Entity type
 					case 0:
-						template.EntityName = _reader.LastValueAsString;
+						template.EntityName = this._reader.LastValueAsString;
 						break;
 					//Handle
 					case 5:
-						template.Handle = _reader.LastValueAsHandle;
+						template.Handle = this._reader.LastValueAsHandle;
 						break;
 					//Start of application - defined group
 					case 102:
 						//TODO: read dictionary groups for entities
-						while (_reader.LastDxfCode != DxfCode.ControlString)
+						while (this._reader.LastDxfCode != DxfCode.ControlString)
 						{
-							_reader.ReadNext();
+							this._reader.ReadNext();
 						}
 						break;
 					//Soft - pointer ID / handle to owner BLOCK_RECORD object
 					case 330:
-						template.OwnerHandle = _reader.LastValueAsHandle;
+						template.OwnerHandle = this._reader.LastValueAsHandle;
 						break;
 					default:
 						//Debug.Fail($"Unhandeled dxf code {m_reader.LastCode} at line {m_reader.Line}.");
@@ -665,16 +377,16 @@ namespace ACadSharp.IO.DXF
 				}
 
 				//Get the next code/value
-				_reader.ReadNext();
+				this._reader.ReadNext();
 			}
 
 			//Get the subclass common entity data
-			Debug.Assert(_reader.LastValueAsString == DxfSubclassMarker.Entity);
-			_reader.ReadNext();
+			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.Entity);
+			this._reader.ReadNext();
 
-			while (_reader.LastDxfCode != DxfCode.Subclass)
+			while (this._reader.LastDxfCode != DxfCode.Subclass)
 			{
-				switch (_reader.LastCode)
+				switch (this._reader.LastCode)
 				{
 					//Absent or zero indicates entity is in model space. 1 indicates entity is in paper space (optional).
 					case 67:
@@ -685,7 +397,7 @@ namespace ACadSharp.IO.DXF
 					//Layer name
 					case 8:
 						//TODO: Create a link with the file layers
-						template.Layer = new Layer(_reader.LastValueAsString);
+						template.Layer = new Layer(this._reader.LastValueAsString);
 						break;
 					//Linetype name(present if not BYLAYER). The special name BYBLOCK indicates a floating linetype(optional)
 					case 6:
@@ -699,15 +411,15 @@ namespace ACadSharp.IO.DXF
 						break;
 					//Lineweight enum value. Stored and moved around as a 16-bit integer.
 					case 370:
-						template.Lineweight = (LineweightType)_reader.LastValueAsShort;
+						template.Lineweight = (LineweightType)this._reader.LastValueAsShort;
 						break;
 					//Linetype scale (optional)
 					case 48:
-						template.LinetypeScale = _reader.LastValueAsDouble;
+						template.LinetypeScale = this._reader.LastValueAsDouble;
 						break;
 					//Object visibility (optional)
 					case 60:
-						template.IsInvisible = _reader.LastValueAsBool;
+						template.IsInvisible = this._reader.LastValueAsBool;
 						break;
 					//Number of bytes in the proxy entity graphics represented in the subsequent 310 groups, which are binary chunk records (optional)
 					case 92:
@@ -723,7 +435,7 @@ namespace ACadSharp.IO.DXF
 						break;
 					//Transparency value. The group code cannot be used by custom entities for their own data because the group code is reserved for AcDbEntity, class-level color data and AcDbEntity, class-level transparency data
 					case 440:
-						template.Transparency = new Transparency(_reader.LastValueAsShort);
+						template.Transparency = new Transparency(this._reader.LastValueAsShort);
 						break;
 					//Hard-pointer ID/handle to the plot style object
 					case 390:
@@ -737,7 +449,7 @@ namespace ACadSharp.IO.DXF
 				}
 
 				//Get the next code/value
-				_reader.ReadNext();
+				this._reader.ReadNext();
 			}
 
 			Entity entity = null;
@@ -745,10 +457,10 @@ namespace ACadSharp.IO.DXF
 			switch (template.EntityName)
 			{
 				case DxfFileToken.EntityArc:
-					entity = readArc(template);
+					entity = this.readArc(template);
 					break;
 				case DxfFileToken.EntityCircle:
-					entity = readCircle(template);
+					entity = this.readCircle(template);
 					break;
 				case DxfFileToken.EntityPolyline:
 				//	entity = readPolyline(template);
@@ -757,7 +469,7 @@ namespace ACadSharp.IO.DXF
 				//	entity = readText(template);
 				//	break;
 				default:
-					entity = readEntity(template);
+					entity = this.readEntity(template);
 					//Debug.Fail($"Unhandeled entity {template.EntityName}.");
 					break;
 			}
@@ -806,23 +518,23 @@ namespace ACadSharp.IO.DXF
 			}
 
 			//Jump the SubclassMarker
-			_reader.ReadNext();
+			this._reader.ReadNext();
 
 			Dictionary<DxfCode, object> map = entity?.GetCadObjectMap() ?? new Dictionary<DxfCode, object>();
 
-			while (_reader.LastValueAsString != DxfFileToken.EndSection)
+			while (this._reader.LastValueAsString != DxfFileToken.EndSection)
 			{
-				if (_reader.LastDxfCode == DxfCode.Start)
+				if (this._reader.LastDxfCode == DxfCode.Start)
 				{
 					//Check if the entity has children in it
 					Dictionary<string, PropertyInfo> subEntity = entity?.GetSubEntitiesMap() ?? new Dictionary<string, PropertyInfo>();
 
-					if (!subEntity.ContainsKey(_reader.LastValueAsString))
+					if (!subEntity.ContainsKey(this._reader.LastValueAsString))
 						//Is a separated entity
 						break;
 
 					//Read the sequence
-					while (_reader.LastValueAsString != DxfFileToken.EndSequence)
+					while (this._reader.LastValueAsString != DxfFileToken.EndSequence)
 					{
 						Entity child = this.readEntity();
 
@@ -841,23 +553,23 @@ namespace ACadSharp.IO.DXF
 					}
 
 					//Read the end of sequence
-					_reader.ReadNext();
-					while (_reader.LastDxfCode != DxfCode.Start)
+					this._reader.ReadNext();
+					while (this._reader.LastDxfCode != DxfCode.Start)
 					{
-						_reader.ReadNext();
+						this._reader.ReadNext();
 					}
 
 					//The end of the sequence is the end of the entity
 					break;
 				}
-				else if (map.ContainsKey(_reader.LastDxfCode))
+				else if (map.ContainsKey(this._reader.LastDxfCode))
 				{
 					//Set the value
-					map[_reader.LastDxfCode] = _reader.LastValue;
+					map[this._reader.LastDxfCode] = this._reader.LastValue;
 				}
 
 				//Get the next line
-				_reader.ReadNext();
+				this._reader.ReadNext();
 			}
 
 			//Build the entity based on the map
@@ -875,61 +587,61 @@ namespace ACadSharp.IO.DXF
 			XYZ center = XYZ.Zero;
 			XYZ normal = XYZ.AxisZ;
 
-			while (_reader.LastDxfCode != DxfCode.Start)
+			while (this._reader.LastDxfCode != DxfCode.Start)
 			{
-				switch (_reader.LastCode)
+				switch (this._reader.LastCode)
 				{
 					//Subclass marker (AcDbCircle)
 					//Subclass marker (AcDbArc)
 					case 100:
-						Debug.Assert(_reader.LastValueAsString == "AcDbArc" || _reader.LastValueAsString == "AcDbCircle");
+						Debug.Assert(this._reader.LastValueAsString == "AcDbArc" || this._reader.LastValueAsString == "AcDbCircle");
 						break;
 					//Thickness (optional; default = 0)
 					case 39:
-						arc.Thickness = _reader.LastValueAsDouble;
+						arc.Thickness = this._reader.LastValueAsDouble;
 						break;
 					//Center point (in OCS)
 					//DXF: X value; APP: 3D point
 					case 10:
-						center.X = _reader.LastValueAsDouble;
+						center.X = this._reader.LastValueAsDouble;
 						break;
 					//DXF: Y and Z values of center point (in OCS)
 					case 20:
-						center.Y = _reader.LastValueAsDouble;
+						center.Y = this._reader.LastValueAsDouble;
 						break;
 					case 30:
-						center.Z = _reader.LastValueAsDouble;
+						center.Z = this._reader.LastValueAsDouble;
 						break;
 					//Radius
 					case 40:
-						arc.Radius = _reader.LastValueAsDouble;
+						arc.Radius = this._reader.LastValueAsDouble;
 						break;
 					//Start angle
 					case 50:
-						arc.StartAngle = _reader.LastValueAsDouble;
+						arc.StartAngle = this._reader.LastValueAsDouble;
 						break;
 					//End angle
 					case 51:
-						arc.EndAngle = _reader.LastValueAsDouble;
+						arc.EndAngle = this._reader.LastValueAsDouble;
 						break;
 					//Extrusion direction (optional; default = 0, 0, 1)
 					//DXF: X value; APP: 3D vector
 					case 210:
-						normal.X = _reader.LastValueAsDouble;
+						normal.X = this._reader.LastValueAsDouble;
 						break;
 					//DXF: Y and Z values of extrusion direction (optional)
 					case 220:
-						normal.Y = _reader.LastValueAsDouble;
+						normal.Y = this._reader.LastValueAsDouble;
 						break;
 					case 230:
-						normal.Z = _reader.LastValueAsDouble;
+						normal.Z = this._reader.LastValueAsDouble;
 						break;
 					default:
-						Debug.Fail($"Unhandeled dxf code {_reader.LastCode} at line {_reader.Line}.");
+						Debug.Fail($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}.");
 						break;
 				}
 
-				_reader.ReadNext();
+				this._reader.ReadNext();
 			}
 
 			//Assign the structures
@@ -947,52 +659,52 @@ namespace ACadSharp.IO.DXF
 			XYZ center = XYZ.Zero;
 			XYZ normal = XYZ.AxisZ;
 
-			while (_reader.LastDxfCode != DxfCode.Start)
+			while (this._reader.LastDxfCode != DxfCode.Start)
 			{
-				switch (_reader.LastCode)
+				switch (this._reader.LastCode)
 				{
 					//Subclass marker (AcDbCircle)
 					case 100:
-						Debug.Assert(_reader.LastValueAsString == "AcDbCircle");
+						Debug.Assert(this._reader.LastValueAsString == "AcDbCircle");
 						break;
 					//Thickness (optional; default = 0)
 					case 39:
-						circle.Thickness = _reader.LastValueAsDouble;
+						circle.Thickness = this._reader.LastValueAsDouble;
 						break;
 					//Center point (in OCS)
 					//DXF: X value; APP: 3D point
 					case 10:
-						center.X = _reader.LastValueAsDouble;
+						center.X = this._reader.LastValueAsDouble;
 						break;
 					//DXF: Y and Z values of center point (in OCS)
 					case 20:
-						center.Y = _reader.LastValueAsDouble;
+						center.Y = this._reader.LastValueAsDouble;
 						break;
 					case 30:
-						center.Z = _reader.LastValueAsDouble;
+						center.Z = this._reader.LastValueAsDouble;
 						break;
 					//Radius
 					case 40:
-						circle.Radius = _reader.LastValueAsDouble;
+						circle.Radius = this._reader.LastValueAsDouble;
 						break;
 					//Extrusion direction (optional; default = 0, 0, 1)
 					//DXF: X value; APP: 3D vector
 					case 210:
-						normal.X = _reader.LastValueAsDouble;
+						normal.X = this._reader.LastValueAsDouble;
 						break;
 					//DXF: Y and Z values of extrusion direction (optional)
 					case 220:
-						normal.Y = _reader.LastValueAsDouble;
+						normal.Y = this._reader.LastValueAsDouble;
 						break;
 					case 230:
-						normal.Z = _reader.LastValueAsDouble;
+						normal.Z = this._reader.LastValueAsDouble;
 						break;
 					default:
-						Debug.Fail($"Unhandeled dxf code {_reader.LastCode} at line {_reader.Line}.");
+						Debug.Fail($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}.");
 						break;
 				}
 
-				_reader.ReadNext();
+				this._reader.ReadNext();
 			}
 
 			circle.Center = center;
@@ -1013,48 +725,48 @@ namespace ACadSharp.IO.DXF
 			XYZ secondAlignmentPoint = XYZ.Zero;
 			XYZ normal = XYZ.AxisZ;
 
-			while (_reader.LastDxfCode != DxfCode.Start)
+			while (this._reader.LastDxfCode != DxfCode.Start)
 			{
-				switch (_reader.LastCode)
+				switch (this._reader.LastCode)
 				{
 					//Subclass marker(AcDbText)
 					case 100:
-						Debug.Assert(_reader.LastValueAsString == "AcDbText");
+						Debug.Assert(this._reader.LastValueAsString == "AcDbText");
 						break;
 					//Thickness(optional; default = 0)
 					case 39:
-						text.Thickness = _reader.LastValueAsDouble;
+						text.Thickness = this._reader.LastValueAsDouble;
 						break;
 					//First alignment point (in OCS)
 					//DXF: X value; APP: 3D point
 					case 10:
-						firstAlignmentPoint.X = _reader.LastValueAsDouble;
+						firstAlignmentPoint.X = this._reader.LastValueAsDouble;
 						break;
 					//DXF: Y and Z values of center point (in OCS)
 					case 20:
-						firstAlignmentPoint.Y = _reader.LastValueAsDouble;
+						firstAlignmentPoint.Y = this._reader.LastValueAsDouble;
 						break;
 					case 30:
-						firstAlignmentPoint.Z = _reader.LastValueAsDouble;
+						firstAlignmentPoint.Z = this._reader.LastValueAsDouble;
 						break;
 					//Text height
 					case 40:
-						text.Height = _reader.LastValueAsDouble;
+						text.Height = this._reader.LastValueAsDouble;
 						break;
 					//Default value(the string itself)
 					case 1:
-						text.Value = _reader.LastValueAsString;
+						text.Value = this._reader.LastValueAsString;
 						break;
 					//Text rotation (optional; default = 0)
 					case 50:
-						text.Rotation = _reader.LastValueAsDouble;
+						text.Rotation = this._reader.LastValueAsDouble;
 						break;
 					default:
 						//Debug.Fail($"Unhandeled dxf code {m_reader.LastCode} at line {m_reader.Line}.");
 						break;
 				}
 
-				_reader.ReadNext();
+				this._reader.ReadNext();
 			}
 
 			return null;
@@ -1067,7 +779,7 @@ namespace ACadSharp.IO.DXF
 			//Pre-declare structures
 			XYZ normal = XYZ.AxisZ;
 
-			while (_reader.LastDxfCode != DxfCode.Start)
+			while (this._reader.LastDxfCode != DxfCode.Start)
 			{
 			}
 
@@ -1083,7 +795,7 @@ namespace ACadSharp.IO.DXF
 			//Pre-declare structures
 			XYZ normal = XYZ.AxisZ;
 
-			while (_reader.LastDxfCode != DxfCode.Start)
+			while (this._reader.LastDxfCode != DxfCode.Start)
 			{
 			}
 

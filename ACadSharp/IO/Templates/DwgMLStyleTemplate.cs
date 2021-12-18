@@ -19,7 +19,7 @@ namespace ACadSharp.IO.Templates
 				this.Element = element;
 			}
 
-			public void Build(DwgDocumentBuilder builder)
+			public void Build(CadDocumentBuilder builder)
 			{
 				if (this.LinetypeHandle.HasValue)
 				{
@@ -41,7 +41,7 @@ namespace ACadSharp.IO.Templates
 
 		public DwgMLStyleTemplate(MLStyle mlStyle) : base(mlStyle) { }
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 

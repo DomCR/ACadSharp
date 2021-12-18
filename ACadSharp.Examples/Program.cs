@@ -12,8 +12,8 @@ namespace ACadSharp.Examples
 
 		static void Main(string[] args)
 		{
-			//ReadDxf();
-			ReadDwg();
+			ReadDxf();
+			//ReadDwg();
 		}
 
 		static void ReadDxf()

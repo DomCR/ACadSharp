@@ -15,7 +15,7 @@ namespace ACadSharp.IO.Templates
 		public List<ulong> FrozenLayerHandles { get; set; } = new List<ulong>();
 		public DwgViewportTemplate(Viewport entity) : base(entity) { }
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 

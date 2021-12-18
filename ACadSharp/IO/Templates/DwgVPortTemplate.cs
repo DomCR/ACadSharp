@@ -14,7 +14,7 @@ namespace ACadSharp.IO.Templates
 
 		public DwgVPortTemplate(VPort cadObject) : base(cadObject) { }
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 

@@ -22,14 +22,14 @@ namespace ACadSharp.Header
 		/// System variable ACADVER.
 		/// The AutoCAD drawing database version number.
 		/// </summary>
-		[CadSystemVariable("ACADVER", DxfCode.Text)]
+		[CadSystemVariable("$ACADVER", DxfCode.Text)]
 		public string VersionString { get; set; }
 		public ACadVersion Version { get; set; }    //TODO: Fix the string version
 		/// <summary>
 		/// System variable ACADMAINTVER.
 		/// Maintenance version number(should be ignored)
 		/// </summary>
-		[CadSystemVariable("ACADMAINTVER", DxfCode.Int16)]
+		[CadSystemVariable("$ACADMAINTVER", DxfCode.Int16)]
 		public short MaintenanceVersion { get; set; }
 		/// <summary>
 		/// System variable REQUIREDVERSIONS.
@@ -37,7 +37,7 @@ namespace ACadSharp.Header
 		/// Read only.
 		/// </summary>
 		/// <remarks>Only in <see cref="ACadVersion.AC1024"/> or above.</remarks>
-		[CadSystemVariable("REQUIREDVERSIONS", DxfCode.Int16)]
+		[CadSystemVariable("$REQUIREDVERSIONS", DxfCode.Int16)]
 		public long RequiredVersions { get; set; }
 		/// <summary>
 		/// System variable DIMASO.
@@ -45,12 +45,12 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// Obsolete; see DIMASSOC.
 		/// </remarks>
-		[CadSystemVariable("DIMASO", DxfCode.Int16)]
+		[CadSystemVariable("$DIMASO", DxfCode.Int16)]
 		public bool AssociatedDimensions { get; set; } = true;
 		/// <summary>
 		/// System variable DIMSHO.
 		/// </summary>
-		[CadSystemVariable("DIMSHO", DxfCode.Int16)]
+		[CadSystemVariable("$DIMSHO", DxfCode.Int16)]
 		public bool UpdateDimensionsWhileDragging { get; set; } = true;
 		/// <summary>
 		/// Undocumented
@@ -59,84 +59,84 @@ namespace ACadSharp.Header
 		/// <summary>
 		/// System variable PLINEGEN.
 		/// </summary>
-		[CadSystemVariable("PLINEGEN", DxfCode.Int16)]
+		[CadSystemVariable("$PLINEGEN", DxfCode.Int16)]
 		public bool PolylineLineTypeGeneration { get; set; }
 		/// <summary>
 		/// System variable ORTHOMODE.
 		/// Ortho mode on if nonzero.
 		/// </summary>
-		[CadSystemVariable("ORTHOMODE", DxfCode.Int16)]
+		[CadSystemVariable("$ORTHOMODE", DxfCode.Int16)]
 		public bool OrthoMode { get; set; }
 		/// <summary>
 		/// System variable REGENMODE.
 		/// REGENAUTO mode on if nonzero
 		/// </summary>
-		[CadSystemVariable("REGENMODE", DxfCode.Int16)]
+		[CadSystemVariable("$REGENMODE", DxfCode.Int16)]
 		public bool RegenerationMode { get; set; }
 		/// <summary>
 		/// System variable FILLMODE.
 		/// Fill mode on if nonzero
 		/// </summary>
-		[CadSystemVariable("FILLMODE", DxfCode.Int16)]
+		[CadSystemVariable("$FILLMODE", DxfCode.Int16)]
 		public bool FillMode { get; set; }
 		/// <summary>
 		/// System variable QTEXTMODE.
 		/// Quick Text mode on if nonzero
 		/// </summary>
-		[CadSystemVariable("QTEXTMODE", DxfCode.Int16)]
+		[CadSystemVariable("$QTEXTMODE", DxfCode.Int16)]
 		public bool QuickTextMode { get; set; }
 		/// <summary>
 		/// Controls paper space linetype scaling.
 		/// System variable PSLTSCALE.
 		/// </summary>
-		[CadSystemVariable("PSLTSCALE", DxfCode.Int16)]
+		[CadSystemVariable("$PSLTSCALE", DxfCode.Int16)]
 		public SpaceLineTypeScaling PaperSpaceLineTypeScaling { get; set; }
 		/// <summary>
 		/// Nonzero if limits checking is on
 		/// System variable LIMCHECK.
 		/// </summary>
-		[CadSystemVariable("LIMCHECK", DxfCode.Int16)]
+		[CadSystemVariable("$LIMCHECK", DxfCode.Int16)]
 		public bool LimitCheckingOn { get; set; }
 		/// <summary>
 		/// System variable BLIPMODE.	??
 		/// </summary>
-		[CadSystemVariable("BLIPMODE", DxfCode.Int16)]
+		[CadSystemVariable("$BLIPMODE", DxfCode.Int16)]
 		public bool BlipMode { get; set; }
 		/// <summary>
 		/// Controls the user timer for the drawing
 		/// System variable USRTIMER
 		/// </summary>
-		[CadSystemVariable("USRTIMER", DxfCode.Int16)]
+		[CadSystemVariable("$USRTIMER", DxfCode.Int16)]
 		public bool UserTimer { get; set; }
 		/// <summary>
 		/// Determines the object type created by the SKETCH command
 		/// System variable SKPOLY
 		/// </summary>
-		[CadSystemVariable("SKPOLY", DxfCode.Int16)]
+		[CadSystemVariable("$SKPOLY", DxfCode.Int16)]
 		public bool SketchPolylines { get; set; }
 		/// <summary>
 		/// Represents angular direction.
 		/// System variable ANGDIR
 		/// </summary>
-		[CadSystemVariable("ANGDIR", DxfCode.Int16)]
+		[CadSystemVariable("$ANGDIR", DxfCode.Int16)]
 		public AngularDirection AngularDirection { get; set; }
 		/// <summary>
 		/// Controls the display of helixes and smoothed mesh objects.
 		/// System variable SPLFRAME
 		/// </summary>
-		[CadSystemVariable("SPLFRAME", DxfCode.Int16)]
+		[CadSystemVariable("$SPLFRAME", DxfCode.Int16)]
 		public bool ShowSplineControlPoints { get; set; }
 		/// <summary>
 		/// Mirror text if nonzero
 		/// System variable MIRRTEXT
 		/// </summary>
-		[CadSystemVariable("MIRRTEXT", DxfCode.Int16)]
+		[CadSystemVariable("$MIRRTEXT", DxfCode.Int16)]
 		public bool MirrorText { get; set; }
 		/// <summary>
 		/// Determines whether input for the DVIEW and VPOINT command evaluated as relative to the WCS or current UCS
 		/// System variable WORLDVIEW
 		/// </summary>
-		[CadSystemVariable("WORLDVIEW", DxfCode.Int16)]
+		[CadSystemVariable("$WORLDVIEW", DxfCode.Int16)]
 		public bool WorldView { get; set; }
 		/// <summary>
 		/// 
@@ -177,7 +177,7 @@ namespace ACadSharp.Header
 		/// Units format for coordinates and distances
 		/// System variable LUNITS
 		/// </summary>
-		[CadSystemVariable("LUNITS", DxfCode.Int16)]
+		[CadSystemVariable("$LUNITS", DxfCode.Int16)]
 		public LinearUnitFormat LinearUnitFormat { get; set; }
 		/// <summary>
 		/// 
@@ -452,31 +452,31 @@ namespace ACadSharp.Header
 		/// System variable INSBASE.
 		/// Insertion base set by BASE command(in WCS)
 		/// </summary>
-		[CadSystemVariable("INSBASE", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
+		[CadSystemVariable("$INSBASE", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
 		public XYZ InsertionBase { get; set; } = new XYZ();
 		/// <summary>
 		/// System variable EXTMIN.
 		/// X, Y, and Z drawing extents lower-left corner (in WCS)
 		/// </summary>
-		[CadSystemVariable("EXTMIN", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
+		[CadSystemVariable("$EXTMIN", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
 		public XYZ ExtMin { get; set; }
 		/// <summary>
 		/// System variable EXTMAX.
 		/// X, Y, and Z drawing extents upper-right corner(in WCS)
 		/// </summary>
-		[CadSystemVariable("EXTMAX", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
+		[CadSystemVariable("$EXTMAX", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
 		public XYZ ExtMax { get; set; }
 		/// <summary>
 		/// System variable LIMMIN.
 		/// XY drawing limits lower-left corner (in WCS)
 		/// </summary>
-		[CadSystemVariable("LIMMIN", DxfCode.XCoordinate, DxfCode.YCoordinate)]
+		[CadSystemVariable("$LIMMIN", DxfCode.XCoordinate, DxfCode.YCoordinate)]
 		public XY LimitsMin { get; set; }
 		/// <summary>
 		/// System variable LIMMAX.
 		/// XY drawing limits upper-right corner (in WCS)
 		/// </summary>
-		[CadSystemVariable("LIMMAX", DxfCode.XCoordinate, DxfCode.YCoordinate)]
+		[CadSystemVariable("$LIMMAX", DxfCode.XCoordinate, DxfCode.YCoordinate)]
 		public XY LimitsMax { get; set; }
 		public double Elevation { get; set; }
 		public string DimensionBlockName { get; set; }
@@ -505,7 +505,7 @@ namespace ACadSharp.Header
 		/// System variable DIMASSOC.
 		/// Controls the associativity of dimension objects
 		/// </summary>
-		[CadSystemVariable("DIMASSOC", DxfCode.Int8)]
+		[CadSystemVariable("$DIMASSOC", DxfCode.Int8)]
 		public DimensionAssociation DimensionAssociativity { get; set; }
 		public byte HaloGapPercentage { get; set; }
 		public Color ObscuredColor { get; set; }
@@ -541,6 +541,7 @@ namespace ACadSharp.Header
 		public string StyleSheetName { get; set; }
 
 		public UCS Ucs { get; set; } = new UCS();
+
 		public DimensionStyle DimensionStyleOverrides { get; set; } = new DimensionStyle();
 		#endregion
 
@@ -549,7 +550,7 @@ namespace ACadSharp.Header
 		public CadHeader() { }
 		public CadHeader(ACadVersion version)
 		{
-			Version = version;
+			this.Version = version;
 		}
 
 		public static Dictionary<string, DxfCode[]> GetHeaderMap()
@@ -569,13 +570,13 @@ namespace ACadSharp.Header
 
 		public void SetValue(string systemvar, object value)
 		{
-			foreach (PropertyInfo p in GetType().GetProperties())
+			foreach (PropertyInfo p in this.GetType().GetProperties())
 			{
 				CadSystemVariableAttribute att = p.GetCustomAttribute<CadSystemVariableAttribute>();
 				if (att == null)
 					continue;
 
-				if ($"${att.Name}" == systemvar)
+				if (att.Name == systemvar)
 				{
 					p.SetValue(this, value);
 					break;
@@ -587,13 +588,13 @@ namespace ACadSharp.Header
 		{
 			object value = null;
 
-			foreach (PropertyInfo p in GetType().GetProperties())
+			foreach (PropertyInfo p in this.GetType().GetProperties())
 			{
 				CadSystemVariableAttribute att = p.GetCustomAttribute<CadSystemVariableAttribute>();
 				if (att == null)
 					continue;
 
-				if ($"${att.Name}" == systemvar)
+				if (att.Name == systemvar)
 				{
 					value = p.GetValue(this);
 					break;
@@ -605,10 +606,10 @@ namespace ACadSharp.Header
 
 		internal void SetValue(string systemvar, params object[] values)
 		{
-			foreach (PropertyInfo p in GetType().GetProperties())
+			foreach (PropertyInfo p in this.GetType().GetProperties())
 			{
 				CadSystemVariableAttribute att = p.GetCustomAttribute<CadSystemVariableAttribute>();
-				if (att == null || $"${att.Name}" != systemvar)
+				if (att == null || att.Name != systemvar)
 					continue;
 
 				object build = null;

@@ -13,7 +13,7 @@ namespace ACadSharp.IO.Templates
 
 		public DwgTableTemplate(Table<T> tableControl) : base(tableControl) { }
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 

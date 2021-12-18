@@ -28,7 +28,7 @@ namespace ACadSharp.IO.Templates
 			this.CadObject = cadObject;
 		}
 
-		public virtual void Build(DwgDocumentBuilder builder)
+		public virtual void Build(CadDocumentBuilder builder)
 		{
 			if (this.OwnerHandle.HasValue)
 			{
@@ -49,7 +49,7 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
-		protected IEnumerable<T> getEntitiesCollection<T>(DwgDocumentBuilder builder, ulong firstHandle, ulong endHandle)
+		protected IEnumerable<T> getEntitiesCollection<T>(CadDocumentBuilder builder, ulong firstHandle, ulong endHandle)
 			where T : Entity
 		{
 			List<T> collection = new List<T>();
@@ -79,7 +79,7 @@ namespace ACadSharp.IO.Templates
 		public new T CadObject { get { return (T)base.CadObject; } set { base.CadObject = value; } }
 		public DwgTemplate(T cadObject) : base(cadObject) { }
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 		}
@@ -101,7 +101,7 @@ namespace ACadSharp.IO.Templates
 		
 		public DwgDimensionStyleTemplate(DimensionStyle dimStyle) : base(dimStyle) { }
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
@@ -116,7 +116,7 @@ namespace ACadSharp.IO.Templates
 
 		public DwgColorTemplate(DwgColor color) : base(color) { }
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
@@ -135,7 +135,7 @@ namespace ACadSharp.IO.Templates
 	{
 		public DwgBlockBeginTemplate(Entity block) : base(block) { }
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
@@ -148,7 +148,7 @@ namespace ACadSharp.IO.Templates
 		public Dictionary<ulong, string> HandleEntries { get; set; } = new Dictionary<ulong, string>();
 		public DwgDictionaryTemplate(CadDictionary dictionary) : base(dictionary) { }
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 

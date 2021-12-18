@@ -33,7 +33,7 @@ namespace ACadSharp.IO.DXF
 		{
 			start();
 		}
-		//**************************************************************************
+
 		public void Find(string dxfEntry)
 		{
 			start();
@@ -65,7 +65,7 @@ namespace ACadSharp.IO.DXF
 			Line++;
 			return base.ReadLine();
 		}
-		//**************************************************************************
+		
 		private void start()
 		{
 			LastDxfCode = DxfCode.Invalid;
@@ -254,173 +254,6 @@ namespace ACadSharp.IO.DXF
 				return lineAsInt(strVal);
 
 			throw new DxfException(code, Line);
-		}
-
-		[Obsolete("Not working, cannot handle udocumented codes")]
-		private object readValue(DxfCode code)
-		{
-			string strVal = ReadLine();
-
-			switch (code)
-			{
-				case DxfCode.XDictionary:
-				case DxfCode.PReactors:
-				case DxfCode.Operator:
-				case DxfCode.XDataStart:
-				case DxfCode.HeaderId:
-				case DxfCode.End:
-					return null;
-				case DxfCode.Start:
-				case DxfCode.Text:
-				case DxfCode.ShapeName:
-				case DxfCode.AttributePrompt:
-				case DxfCode.TextBigFontFile:
-				case DxfCode.Handle:
-				case DxfCode.DimBlk1:
-				case DxfCode.DimBlk2:
-				case DxfCode.LayerName:
-				case DxfCode.CLShapeText:
-					return ReadLine();
-				case DxfCode.XCoordinate:
-				case DxfCode.YCoordinate:
-				case DxfCode.ZCoordinate:
-				case DxfCode.Elevation:
-				case DxfCode.Thickness:
-					return lineAsDouble(strVal);
-				case DxfCode.Real:
-				case DxfCode.TxtStyleXScale:
-				case DxfCode.TxtStylePSize:
-				case DxfCode.ViewFrontClip:
-				case DxfCode.ViewBackClip:
-				case DxfCode.ShapeYOffset:
-				case DxfCode.ShapeScale:
-				case DxfCode.PixelScale:
-				case DxfCode.LinetypeScale:
-				case DxfCode.DashLength:
-				case DxfCode.Angle:
-				case DxfCode.ViewportTwist:
-					return lineAsDouble(strVal);  //float ??
-				case DxfCode.Visibility:
-				case DxfCode.LayerLinetype:
-				case DxfCode.Color:
-				case DxfCode.HasSubentities:
-				case DxfCode.ViewportVisibility:
-				case DxfCode.ViewportActive:
-				case DxfCode.ViewportNumber:
-				case DxfCode.Int16:
-				case DxfCode.ViewMode:
-				case DxfCode.CircleSides:
-				case DxfCode.ViewportZoom:
-				case DxfCode.ViewportIcon:
-				case DxfCode.ViewportSnap:
-				case DxfCode.ViewportGrid:
-				case DxfCode.ViewportSnapStyle:
-				case DxfCode.ViewportSnapPair:
-					return lineAsShort(strVal);
-				case DxfCode.Int32:
-					return lineAsInt(strVal);
-				case DxfCode.Subclass:
-				case DxfCode.EmbeddedObjectStart:
-				case DxfCode.ControlString:
-					return LastValueAsString;
-				case DxfCode.DimVarHandle:
-					return lineAsHandle(strVal);
-				case DxfCode.UcsOrg:
-				case DxfCode.UcsOrientationX:
-				case DxfCode.UcsOrientationY:
-				case DxfCode.XReal:
-				case DxfCode.ViewBrightness:
-				case DxfCode.ViewContrast:
-					return lineAsDouble(strVal);
-				case DxfCode.Int64:
-					return lineAsLong(strVal);
-				case DxfCode.XInt16:
-					return lineAsShort(strVal);
-				case DxfCode.NormalX:
-				case DxfCode.NormalY:
-				case DxfCode.NormalZ:
-					return lineAsDouble(strVal);
-				case DxfCode.XXInt16:
-				case DxfCode.Int8:
-				case DxfCode.RenderMode:
-					return lineAsShort(strVal);
-				case DxfCode.Bool:
-					return lineAsBool(strVal);
-				case DxfCode.XTextString:
-					return ReadLine();
-				case DxfCode.BinaryChunk:
-					return lineAsBinaryChunk(strVal);
-				case DxfCode.ArbitraryHandle:
-				case DxfCode.SoftPointerId:
-				case DxfCode.HardPointerId:
-				case DxfCode.MaterialHandleId:
-				case DxfCode.SoftOwnershipId:
-				case DxfCode.HardOwnershipId:
-					return lineAsHandle(strVal);
-				case DxfCode.LineWeight:
-				case DxfCode.PlotStyleNameType:
-					return lineAsShort(strVal);
-				case DxfCode.PlotStyleNameId:
-					return lineAsHandle(strVal);
-				case DxfCode.ExtendedInt16:
-					return lineAsShort(strVal);
-				case DxfCode.LayoutName:
-					return ReadLine();
-				case DxfCode.ColorRgb:
-					return lineAsInt(strVal);
-				case DxfCode.ColorName:
-					return ReadLine();
-				case DxfCode.Alpha:
-				case DxfCode.GradientObjType:
-				case DxfCode.GradientPatType:
-				case DxfCode.GradientTintType:
-				case DxfCode.GradientColCount:
-					return lineAsInt(strVal);
-				case DxfCode.GradientAngle:
-				case DxfCode.GradientShift:
-				case DxfCode.GradientTintVal:
-				case DxfCode.GradientColVal:
-					return lineAsDouble(strVal);
-				case DxfCode.GradientName:
-					return ReadLine();
-				case DxfCode.HardPointHandle:
-				case DxfCode.HardPointHandle1:
-					return lineAsHandle(strVal);
-				case DxfCode.Comment:
-					return ReadLine();
-				case DxfCode.ExtendedDataAsciiString:
-				case DxfCode.ExtendedDataRegAppName:
-				case DxfCode.ExtendedDataControlString:
-				case DxfCode.ExtendedDataLayerName:
-					return ReadLine();
-				case DxfCode.ExtendedDataBinaryChunk:
-					return lineAsBinaryChunk(strVal);
-				case DxfCode.ExtendedDataHandle:
-					return ReadLine();
-				case DxfCode.ExtendedDataXCoordinate:
-				case DxfCode.ExtendedDataWorldXCoordinate:
-				case DxfCode.ExtendedDataWorldXDisp:
-				case DxfCode.ExtendedDataWorldXDir:
-				case DxfCode.ExtendedDataYCoordinate:
-				case DxfCode.ExtendedDataWorldYCoordinate:
-				case DxfCode.ExtendedDataWorldYDisp:
-				case DxfCode.ExtendedDataWorldYDir:
-				case DxfCode.ExtendedDataZCoordinate:
-				case DxfCode.ExtendedDataWorldZCoordinate:
-				case DxfCode.ExtendedDataWorldZDisp:
-				case DxfCode.ExtendedDataWorldZDir:
-				case DxfCode.ExtendedDataReal:
-				case DxfCode.ExtendedDataDist:
-				case DxfCode.ExtendedDataScale:
-					return lineAsDouble(strVal);
-				case DxfCode.ExtendedDataInteger16:
-					return lineAsShort(strVal);
-				case DxfCode.ExtendedDataInteger32:
-					return lineAsInt(strVal);
-				case DxfCode.Invalid:
-				default:
-					throw new DxfException((int)code, this.Line);
-			}
 		}
 	}
 }

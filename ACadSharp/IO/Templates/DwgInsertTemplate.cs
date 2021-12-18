@@ -17,7 +17,7 @@ namespace ACadSharp.IO.Templates
 
 		public DwgInsertTemplate(Insert insert) : base(insert) { }
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 

@@ -4,6 +4,6 @@ namespace ACadSharp.IO.Templates
 {
 	internal interface ICadObjectBuilder
 	{
-		void Build(DwgDocumentBuilder builder);
+		void Build(CadDocumentBuilder builder);
 	}
 }

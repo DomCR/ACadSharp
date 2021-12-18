@@ -8,9 +8,10 @@ namespace ACadSharp.IO
 
 	public enum NotificationType
 	{
-		None,
-		NotSuported,
-		ObjectNotFound,
+		NotImplemented = -1,
+		None = 0,
+		NotSupported = 1,
+		Error = 2,
 	}
 
 	public class NotificationEventArgs : EventArgs

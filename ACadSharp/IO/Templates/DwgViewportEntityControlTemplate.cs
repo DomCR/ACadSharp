@@ -11,7 +11,7 @@ namespace ACadSharp.IO.Templates
 
 		public DwgViewportEntityControlTemplate(ViewportCollection collection) : base(collection) { }
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 

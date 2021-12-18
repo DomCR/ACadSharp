@@ -14,7 +14,7 @@ namespace ACadSharp.IO.Templates
 
 			public DwgBoundaryPathTemplate() { }
 
-			public void Build(DwgDocumentBuilder builder)
+			public void Build(CadDocumentBuilder builder)
 			{
 				foreach (var handle in Handles)
 				{
@@ -38,7 +38,7 @@ namespace ACadSharp.IO.Templates
 			this._pathTempaltes.Add(template);
 		}
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 

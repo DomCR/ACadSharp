@@ -12,7 +12,7 @@ namespace ACadSharp.IO.Templates
 
 		public DwgLayerTemplate(Layer entry) : base(entry) { }
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			//TODO: finish the build for the layer
 

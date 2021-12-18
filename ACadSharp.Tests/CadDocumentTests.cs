@@ -1,17 +1,16 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ACadSharp;
+﻿using ACadSharp;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Tables;
+using Xunit;
 
 namespace ACadSharp.Tests
 {
-	[TestClass()]
 	public class CadDocumentTests
 	{
-		[TestMethod()]
+		[Fact()]
 		public void CadDocumentTest()
 		{
 			CadDocument document = new CadDocument();
@@ -31,16 +30,16 @@ namespace ACadSharp.Tests
 		private void assertTable<T>(CadDocument doc, Table<T> table)
 			where T : TableEntry
 		{
-			Assert.IsNotNull(table);
+			Assert.NotNull(table);
 
-			Assert.IsNotNull(table.Document);
-			Assert.AreEqual(doc, table.Document);
-			Assert.AreEqual(doc, table.Owner);
+			Assert.NotNull(table.Document);
+			Assert.Equal(doc, table.Document);
+			Assert.Equal(doc, table.Owner);
 
-			Assert.IsTrue(table.Handle != 0);
+			Assert.True(table.Handle != 0);
 
 			CadObject t = doc.GetCadObject(table.Handle);
-			Assert.AreEqual(t, table);
+			Assert.Equal(t, table);
 		}
 	}
 }

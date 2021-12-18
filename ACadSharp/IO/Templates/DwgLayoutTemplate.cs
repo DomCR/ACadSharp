@@ -16,7 +16,7 @@ namespace ACadSharp.IO.Templates
 		public List<ulong> ViewportHandles { get; set; } = new List<ulong>();
 		public DwgLayoutTemplate(Layout layout) : base(layout) { }
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 

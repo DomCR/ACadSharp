@@ -12,7 +12,7 @@ namespace ACadSharp.IO.Templates
 		public List<ulong> Handles { get; set; } = new List<ulong>();
 		public DwgBlockCtrlObjectTemplate(BlockRecordsTable blocks) : base(blocks) { }
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 

@@ -10,7 +10,7 @@ namespace ACadSharp.IO.Templates
 
 		public DwgTextEntityTemplate(Entity entity) : base(entity) { }
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 

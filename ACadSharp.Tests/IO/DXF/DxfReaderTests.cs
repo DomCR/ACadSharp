@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO;
+﻿using ACadSharp.Header;
+using ACadSharp.IO;
 using ACadSharp.IO.DXF;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace ACadSharp.Tests.IO.DXF
 {
 	public class DxfReaderTests
 	{
-		private const string samplesFolder = "../../../../samples/dxf/";
+		private const string _samplesFolder = "../../../../samples/dxf/";
 
 		public static readonly TheoryData<string> FilePaths;
 
@@ -20,7 +21,7 @@ namespace ACadSharp.Tests.IO.DXF
 		static DxfReaderTests()
 		{
 			FilePaths = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(samplesFolder, "*.dxf"))
+			foreach (string file in Directory.GetFiles(_samplesFolder, "*.dxf"))
 			{
 				FilePaths.Add(file);
 			}
@@ -35,8 +36,19 @@ namespace ACadSharp.Tests.IO.DXF
 		[MemberData(nameof(FilePaths))]
 		public void ReadTest(string test)
 		{
-			return;
 			CadDocument doc = DxfReader.Read(test, this.onNotification);
+		}
+
+		[Theory]
+		[MemberData(nameof(FilePaths))]
+		public void ReadHeaderTest(string test)
+		{
+			CadHeader header;
+
+			using (DxfReader reader = new DxfReader(test, this.onNotification))
+			{
+				header = reader.ReadHeader();
+			}
 		}
 
 		private void onNotification(object sender, NotificationEventArgs e)

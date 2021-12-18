@@ -51,7 +51,7 @@ namespace ACadSharp.IO.DWG
 				case ACadVersion.AC1004:
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
-					throw new NotSupportedException();
+					throw new NotSupportedException($"Dwg version not supported: {version}");
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 					return new DwgStreamReaderAC12(stream, resetPositon);

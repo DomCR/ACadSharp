@@ -109,7 +109,7 @@ namespace ACadSharp.IO.DWG
 				ulong handle = this._handles.Dequeue();
 
 				//Check if the handle has already been read
-				if (!this._map.TryGetValue(handle, out long offset) || this._modelBuilder.ObjectsMap.ContainsKey(handle))
+				if (!this._map.TryGetValue(handle, out long offset) || this._modelBuilder.Templates.ContainsKey(handle))
 				{
 					continue;
 				}
@@ -119,18 +119,9 @@ namespace ACadSharp.IO.DWG
 
 				//Read the object
 				DwgTemplate template = this.readObject(type, notificationEvent);
-				if (template == null)
-				{
-					//Add the object as null
-					this._modelBuilder.ObjectsMap[handle] = null;
-					continue;
-				}
-
-				//Add the object to the map
-				this._modelBuilder.ObjectsMap[template.CadObject.Handle] = template.CadObject;
 
 				//Add the template to the list to be processed
-				this._modelBuilder.Templates[template.CadObject.Handle] = template;
+				this._modelBuilder.Templates[handle] = template;
 			}
 		}
 
@@ -216,7 +207,7 @@ namespace ACadSharp.IO.DWG
 			//Read the handle
 			ulong value = this._handlesReader.HandleReference(handle);
 
-			if (!this._modelBuilder.ObjectsMap.ContainsKey(value) && !this._handles.Contains(value) && value != 0)
+			if (!this._modelBuilder.Templates.ContainsKey(value) && !this._handles.Contains(value) && value != 0)
 				//Add the value to the handles queue to be processed
 				this._handles.Enqueue(value);
 
@@ -429,8 +420,6 @@ namespace ACadSharp.IO.DWG
 			this.readReactors(template);
 		}
 
-
-
 		private void readXrefDependantBit(TableEntry entry)
 		{
 			if (this.R2007Plus)
@@ -439,21 +428,25 @@ namespace ACadSharp.IO.DWG
 				//After that, -1 indicates that this reference did not come from an xref,
 				//otherwise this value indicates the index of the blockheader for the xref from which this came.
 				short xrefindex = this._objectReader.ReadBitShort();
+
 				//Xdep B 70 dependent on an xref. (16 bit)
-				entry.XrefDependant = ((uint)xrefindex & 0b100000000) > 0;
+				if (((uint)xrefindex & 0b100000000) > 0)
+					entry.Flags |= StandardFlags.XrefDependent;
 			}
 			else
 			{
 				//64-flag B 70 The 64-bit of the 70 group.
-				this._objectReader.ReadBit();
+				if (this._objectReader.ReadBit())
+					entry.Flags |= StandardFlags.Referenced;
 
-				//xrefindex+1 BS 70 subtract one from this value when read.
+				//xrefindex + 1 BS 70 subtract one from this value when read.
 				//After that, -1 indicates that this reference did not come from an xref,
 				//otherwise this value indicates the index of the blockheader for the xref from which this came.
 				int xrefindex = this._objectReader.ReadBitShort() - 1;
 
 				//Xdep B 70 dependent on an xref. (16 bit)
-				entry.XrefDependant = this._objectReader.ReadBit();
+				if (this._objectReader.ReadBit())
+					entry.Flags |= StandardFlags.XrefDependent;
 			}
 		}
 
@@ -790,7 +783,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			if (template == null)
-				notifications?.Invoke(null, new NotificationEventArgs($"Object type not implemented: {type}"));
+				notifications?.Invoke(null, new NotificationEventArgs($"Object type not implemented: {type}", NotificationType.NotImplemented));
 
 			return template;
 		}
@@ -2265,13 +2258,19 @@ namespace ACadSharp.IO.DWG
 			this.readXrefDependantBit(template.CadObject);
 
 			//Anonymous B 1 if this is an anonymous block (1 bit)
-			block.IsAnonymous = this._objectReader.ReadBit();
+			if (this._objectReader.ReadBit())
+				block.Flags |= BlockTypeFlags.Anonymous;
+
 			//Hasatts B 1 if block contains attdefs (2 bit)
 			bool hasatts = this._objectReader.ReadBit();
+
 			//Blkisxref B 1 if block is xref (4 bit)
-			block.IsXref = this._objectReader.ReadBit();
+			if (this._objectReader.ReadBit())
+				block.Flags |= BlockTypeFlags.XRef;
+
 			//Xrefoverlaid B 1 if an overlaid xref (8 bit)
-			block.IsXRefOverlay = this._objectReader.ReadBit();
+			if (this._objectReader.ReadBit())
+				block.Flags |= BlockTypeFlags.XRefOverlay;
 
 			//R2000+:
 			if (this.R2000Plus)
@@ -2280,7 +2279,9 @@ namespace ACadSharp.IO.DWG
 
 			//R2004+:
 			int nownedObjects = 0;
-			if (this.R2004Plus && !block.IsXref && !block.IsXRefOverlay)
+			if (this.R2004Plus 
+				&& !block.Flags.HasFlag(BlockTypeFlags.XRef) 
+				&& !block.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 				//Owned Object Count BL Number of objects owned by this object.
 				nownedObjects = this._objectReader.ReadBitLong();
 
@@ -2331,7 +2332,8 @@ namespace ACadSharp.IO.DWG
 
 			//R13-R2000:
 			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015
-				&& !block.IsXref && !block.IsXRefOverlay)
+					&& !block.Flags.HasFlag(BlockTypeFlags.XRef)
+					&& !block.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 			{
 				//first entity in the def. (soft pointer)
 				template.FirstEntityHandle = this.handleReference();
@@ -2435,6 +2437,7 @@ namespace ACadSharp.IO.DWG
 				//locked (8 bit)
 				if (((uint)values & 0b1000) > 0)
 					layer.Flags |= LayerFlags.Locked;
+
 				//plotting flag (16 bit),
 				layer.PlotFlag = ((uint)values & 0b10000) > 0;
 
@@ -2928,14 +2931,14 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readAppId()
 		{
-			AppId dxfAppId = new AppId();
-			DwgTemplate template = new DwgTemplate<AppId>(dxfAppId);
+			AppId appId = new AppId();
+			DwgTemplate template = new DwgTemplate<AppId>(appId);
 
 			this.readCommonNonEntityData(template);
 
-			dxfAppId.Name = this._textReader.ReadVariableText();
+			appId.Name = this._textReader.ReadVariableText();
 
-			this.readXrefDependantBit(dxfAppId);
+			this.readXrefDependantBit(appId);
 
 			//Unknown RC 71 Undoc'd 71-group; doesn't even appear in DXF or an entget if it's 0.
 			this._objectReader.ReadByte();

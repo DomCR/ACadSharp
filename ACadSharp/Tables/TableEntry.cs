@@ -6,7 +6,6 @@ using System.Text;
 
 namespace ACadSharp.Tables
 {
-	//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-8427DD38-7B1F-4B7F-BF66-21ADD1F41295
 	public abstract class TableEntry : CadObject
 	{
 		/// <summary>
@@ -18,9 +17,16 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Table entry is xref dependent.
 		/// </summary>
+		[Obsolete]
 		public virtual bool XrefDependant { get; set; }
 
-		public TableEntry() 
+		/// <summary>
+		/// Standard flags
+		/// </summary>
+		[DxfCodeValue(70)]
+		public StandardFlags Flags { get; set; }
+
+		public TableEntry()
 		{
 			this.Name = string.Empty;
 		}

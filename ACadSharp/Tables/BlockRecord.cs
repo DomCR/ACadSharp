@@ -9,6 +9,7 @@ namespace ACadSharp.Tables
 	{
 		public override ObjectType ObjectType => ObjectType.BLOCK;
 		public override string ObjectName => DxfFileToken.TableBlockRecord;
+
 		/// <summary>
 		/// Hard-pointer ID/handle to associated LAYOUT object
 		/// </summary>

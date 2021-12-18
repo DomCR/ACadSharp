@@ -48,6 +48,22 @@ namespace ACadSharp
 		/// </summary>
 		public virtual CadDocument Document { get; internal set; }
 
+		internal void AssignDxfValue(DxfCode dxfCode, object value)
+		{
+			foreach (PropertyInfo p in this.GetType().GetProperties())
+			{
+				DxfCodeValueAttribute att = p.GetCustomAttribute<DxfCodeValueAttribute>();
+				if (att == null)
+					continue;
+
+				//Set the codes to the map
+				if (att.ValueCodes.Length == 1 && att.ValueCodes.First() == dxfCode)
+				{
+					p.SetValue(this, value);
+				}
+			}
+		}
+
 		/// <summary>
 		/// Get a map of the object using dxf codes in each field.
 		/// </summary>
@@ -56,8 +72,6 @@ namespace ACadSharp
 		internal Dictionary<DxfCode, object> GetCadObjectMap()
 		{
 			Dictionary<DxfCode, object> map = new Dictionary<DxfCode, object>();
-
-			var a = this.GetType().GetProperties();
 
 			foreach (PropertyInfo p in this.GetType().GetProperties())
 			{
@@ -74,7 +88,27 @@ namespace ACadSharp
 
 			return map;
 		}
-		
+
+		internal static Dictionary<int, object> GetCadObjectMap(Type type)
+		{
+			Dictionary<int, object> map = new Dictionary<int, object>();
+
+			foreach (PropertyInfo p in type.GetProperties())
+			{
+				DxfCodeValueAttribute att = p.GetCustomAttribute<DxfCodeValueAttribute>();
+				if (att == null)
+					continue;
+
+				//Set the codes to the map
+				foreach (DxfCode code in att.ValueCodes)
+				{
+					map.Add((int)code, null);
+				}
+			}
+
+			return map;
+		}
+
 		/// <summary>
 		/// Build the entity using a map with the dxf codes and the values.
 		/// </summary>
@@ -108,6 +142,7 @@ namespace ACadSharp
 
 				//Create an object with the same type of the property type
 				object value = null;
+
 				//Check if has a constructor with parameters
 				ConstructorInfo constr = p.PropertyType.GetConstructor(parameters.Select(o => o.GetType()).ToArray());
 

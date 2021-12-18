@@ -16,7 +16,7 @@ namespace ACadSharp.IO.Templates
 
 		public DwgEntityTemplate(Entity entity) : base(entity) { }
 
-		public override void Build(DwgDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
@@ -70,7 +70,7 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
-		private void applyLineType(DwgDocumentBuilder builder)
+		private void applyLineType(CadDocumentBuilder builder)
 		{
 			this.CadObject.LineType = builder.GetCadObject<LineType>(this.LineTypeHandle.Value);
 		}

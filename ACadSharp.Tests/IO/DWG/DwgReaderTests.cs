@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO;
+﻿using ACadSharp.Header;
+using ACadSharp.IO;
 using ACadSharp.IO.DWG;
 using System;
 using System.IO;
@@ -9,7 +10,7 @@ namespace ACadSharp.Tests.IO.DWG
 {
 	public class DwgReaderTests
 	{
-		private const string samplesFolder = "../../../../samples/dwg/";
+		private const string _samplesFolder = "../../../../samples/dwg/";
 
 		public static readonly TheoryData<string> FilePaths;
 
@@ -18,7 +19,7 @@ namespace ACadSharp.Tests.IO.DWG
 		static DwgReaderTests()
 		{
 			FilePaths = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(samplesFolder, "*.dwg"))
+			foreach (string file in Directory.GetFiles(_samplesFolder, "*.dwg"))
 			{
 				FilePaths.Add(file);
 			}
@@ -34,6 +35,18 @@ namespace ACadSharp.Tests.IO.DWG
 		public void ReadTest(string test)
 		{
 			CadDocument doc = DwgReader.Read(test, this.onNotification);
+		}
+
+		[Theory]
+		[MemberData(nameof(FilePaths))]
+		public void ReadHeaderTest(string test)
+		{
+			CadHeader header;
+
+			using (DwgReader reader = new DwgReader(test, this.onNotification))
+			{
+				header = reader.ReadHeader();
+			}
 		}
 
 		private void onNotification(object sender, NotificationEventArgs e)
