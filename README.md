@@ -1,4 +1,4 @@
-## ACadSharp ![Build](https://img.shields.io/github/workflow/status/DomCr/ACadSharp/Build/master) ![Test](https://img.shields.io/github/workflow/status/DomCr/ACadSharp/Build&Test/master)
+## ACadSharp ![Build](https://img.shields.io/github/workflow/status/DomCr/ACadSharp/Build/master)
 
 C# library to read/write cad files like dxf/dwg.
 
