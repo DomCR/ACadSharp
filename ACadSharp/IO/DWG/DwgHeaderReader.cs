@@ -511,7 +511,7 @@ namespace ACadSharp.IO.DWG
 				//B : DIMSE1
 				header.DimensionStyleOverrides.SuppressFirstExtensionLine = sreader.ReadBit();
 				//B : DIMSE2
-				header.DimensionStyleOverrides.SuppressSecondExtensionnLine = sreader.ReadBit();
+				header.DimensionStyleOverrides.SuppressSecondExtensionLine = sreader.ReadBit();
 				//B : DIMALT
 				header.DimensionStyleOverrides.AlternateUnitDimensioning = sreader.ReadBit();
 				//B : DIMTOFL
@@ -713,7 +713,7 @@ namespace ACadSharp.IO.DWG
 				//B : DIMSD1
 				header.DimensionStyleOverrides.SuppressFirstExtensionLine = sreader.ReadBit();
 				//B : DIMSD2
-				header.DimensionStyleOverrides.SuppressSecondExtensionnLine = sreader.ReadBit();
+				header.DimensionStyleOverrides.SuppressSecondExtensionLine = sreader.ReadBit();
 				//BS : DIMTOLJ
 				header.DimensionStyleOverrides.ToleranceAlignment = (Tables.ToleranceAlignment)(char)sreader.ReadBitShort();
 				//BS : DIMTZIN
@@ -780,9 +780,9 @@ namespace ACadSharp.IO.DWG
 			if (R2000Plus)
 			{
 				//BS: DIMLWD
-				header.DimensionStyleOverrides.DimensionLineWeight = sreader.ReadBitShort();
+				header.DimensionStyleOverrides.DimensionLineWeight = (LineweightType)sreader.ReadBitShort();
 				//BS : DIMLWE
-				header.DimensionStyleOverrides.ExtensionLineWeight = sreader.ReadBitShort();
+				header.DimensionStyleOverrides.ExtensionLineWeight = (LineweightType)sreader.ReadBitShort();
 			}
 
 			//H: BLOCK CONTROL OBJECT(hard owner)

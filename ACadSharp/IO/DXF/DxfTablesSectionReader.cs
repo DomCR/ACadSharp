@@ -97,7 +97,7 @@ namespace ACadSharp.IO.DXF
 						nentries = this._reader.LastValueAsInt;
 						break;
 					default:
-						_notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}."));
+						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}."));
 						break;
 				}
 
@@ -195,7 +195,7 @@ namespace ACadSharp.IO.DXF
 			switch (tableName)
 			{
 				case DxfFileToken.TableAppId:
-					template = readAppid();
+					template = this.readAppid();
 					break;
 				case DxfFileToken.TableBlockRecord:
 					//entry = new BlockRecord();
@@ -208,7 +208,7 @@ namespace ACadSharp.IO.DXF
 					break;
 				case DxfFileToken.TableLinetype:
 					DwgTableEntryTemplate<LineType> ltypeTemplate = new DwgTableEntryTemplate<LineType>(new LineType());
-					template = readRaw(ltypeTemplate, DxfSubclassMarker.Linetype, readLineType);
+					template = this.readRaw(ltypeTemplate, DxfSubclassMarker.Linetype, this.readLineType);
 					break;
 				case DxfFileToken.TableStyle:
 					//entry = new TextStyle();
@@ -221,7 +221,7 @@ namespace ACadSharp.IO.DXF
 					break;
 				case DxfFileToken.TableVport:
 					DwgVPortTemplate vportTemplate = new DwgVPortTemplate(new VPort());
-					template = readRaw(vportTemplate, DxfSubclassMarker.VPort, readVPort);
+					template = this.readRaw(vportTemplate, DxfSubclassMarker.VPort, this.readVPort);
 					break;
 				default:
 					Debug.Fail($"Unhandeled table {tableName}.");
@@ -322,7 +322,7 @@ namespace ACadSharp.IO.DXF
 						vport.Flags = (StandardFlags)this._reader.LastValueAsShort;
 						break;
 					default:
-						vport.AssignDxfValue(this._reader.LastDxfCode, _reader.LastValue);
+						vport.AssignDxfValue(this._reader.LastDxfCode, this._reader.LastValue);
 						Debug.Fail($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}.");
 						break;
 				}
@@ -351,7 +351,7 @@ namespace ACadSharp.IO.DXF
 				}
 				else
 				{
-					_notification?.Invoke(null, new NotificationEventArgs($"{cadObject.GetType().Name}: Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}."));
+					this._notification?.Invoke(null, new NotificationEventArgs($"{cadObject.GetType().Name}: Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}."));
 				}
 
 				this._reader.ReadNext();

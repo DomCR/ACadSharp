@@ -36,17 +36,10 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(DxfCode.BinaryChunk)]
 		public byte[] Preview { get; private set; }
 
-
 		public BlockRecord(string name) : base(name)
 		{
 			if (string.IsNullOrEmpty(name))
 				throw new ArgumentNullException(nameof(name), "Block record must have a name.");
-		}
-
-		internal BlockRecord(DxfEntryTemplate template) : base(template)
-		{
-			if (string.IsNullOrEmpty(template.TableName))
-				throw new ArgumentNullException(nameof(template.TableName), "Block record must have a name.");
 		}
 	}
 }

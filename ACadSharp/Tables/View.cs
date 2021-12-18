@@ -10,7 +10,5 @@ namespace ACadSharp.Tables
 		public override ObjectType ObjectType => ObjectType.VIEW;
 
 		public View(string name) : base(name) { }
-
-		internal View(DxfEntryTemplate template) : base(template) { }
 	}
 }

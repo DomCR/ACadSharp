@@ -23,7 +23,7 @@ namespace ACadSharp.IO.Templates
 
 			if (this.ViewportHeaderHandle.HasValue && this.ViewportHeaderHandle > 0)
 			{
-				// TODO: implement ViewportHeaderHandle in DwgViewportTemplate
+				builder.NotificationHandler?.Invoke(null, new NotificationEventArgs($"ViewportHeaderHandle not implemented for Viewport, handle {this.ViewportHeaderHandle}"));
 			}
 
 			if (this.BoundaryHandle.HasValue && this.BoundaryHandle > 0)
@@ -36,12 +36,12 @@ namespace ACadSharp.IO.Templates
 
 			if (this.NamedUcsHandle.HasValue && this.NamedUcsHandle > 0)
 			{
-				throw new NotImplementedException();
+				builder.NotificationHandler?.Invoke(null, new NotificationEventArgs($"Named ucs not implemented for Viewport, handle {this.NamedUcsHandle}"));
 			}
 
-			if (this.NamedUcsHandle.HasValue && this.NamedUcsHandle > 0)
+			if (this.BaseUcsHandle.HasValue && this.BaseUcsHandle > 0)
 			{
-				throw new NotImplementedException();
+				builder.NotificationHandler?.Invoke(null, new NotificationEventArgs($"Base ucs not implemented for Viewport, handle {this.BaseUcsHandle}"));
 			}
 
 			foreach (var handle in this.FrozenLayerHandles)

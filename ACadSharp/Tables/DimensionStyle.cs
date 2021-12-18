@@ -4,298 +4,478 @@ using ACadSharp.IO.Templates;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ACadSharp.Blocks;
 
 namespace ACadSharp.Tables
 {
-
-	/// <summary>
-	/// Represents the text direction (left-to-right or right-to-left).
-	/// </summary>
-	public enum TextDirection : byte
-	{
-		/// <summary>Display text left-to-right.</summary>
-		LeftToRight,
-		/// <summary>Display text right-to-left.</summary>
-		RightToLeft,
-	}
-
-	/// <summary>
-	/// Tolerance alignment.
-	/// </summary>
-	public enum ToleranceAlignment : byte
-	{
-		/// <summary>
-		/// Aligns the tolerance text with the bottom of the main dimension text.
-		/// </summary>
-		Bottom = 0,
-
-		/// <summary>
-		/// Aligns the tolerance text with the middle of the main dimension text.
-		/// </summary>
-		Middle = 1,
-
-		/// <summary>
-		/// Aligns the tolerance text with the top of the main dimension text.
-		/// </summary>
-		Top = 2
-	}
-
-	/// <summary>
-	/// Text movement rules.
-	/// </summary>
-	public enum TextMovement : short
-	{
-		/// <summary>
-		/// Moves the dimension line with dimension text.
-		/// </summary>
-		MoveLineWithText,
-		/// <summary>
-		/// Adds a leader when dimension text is moved.
-		/// </summary>
-		AddLeaderWhenTextMoved,
-		/// <summary>
-		/// Allows text to be moved freely without a leader.
-		/// </summary>
-		FreeTextPosition,
-	}
-
-	/// <summary>
-	/// Represents the fraction format when the linear unit format is set to architectural or fractional.
-	/// </summary>
-	public enum FractionFormat : short
-	{
-		/// <summary>
-		/// Horizontal stacking.
-		/// </summary>
-		Horizontal,
-		/// <summary>
-		/// Diagonal stacking.
-		/// </summary>
-		Diagonal,
-		/// <summary>
-		/// Not stacked.
-		/// </summary>
-		None,
-	}
-
-	/// <summary>
-	/// Controls the arc length symbol position in an arc length dimension.
-	/// </summary>
-	public enum ArcLengthSymbolPosition : short
-	{
-		/// <summary>
-		/// Before the dimension text (default).
-		/// </summary>
-		BeforeDimensionText,
-		/// <summary>
-		/// Above the dimension text.
-		/// </summary>
-		AboveDimensionText,
-		/// <summary>
-		/// Don't display the arc length symbol.
-		/// </summary>
-		None,
-	}
-
-	/// <summary>
-	/// Represents the dimension text background color.
-	/// </summary>
-	public enum DimensionTextBackgroundFillMode : short
-	{
-		/// <summary>
-		/// No background color is used.
-		/// </summary>
-		NoBackground,
-		/// <summary>
-		/// In this mode the drawing background color is used.
-		/// </summary>
-		DrawingBackgroundColor,
-		/// <summary>
-		/// This mode is used as the dimension text background.
-		/// </summary>
-		DimensionTextBackgroundColor,
-	}
-
-	/// <summary>
-	/// Represents supression of zeros in displaying decimal numbers.
-	/// </summary>
-	public enum ZeroHandling : byte
-	{
-		/// <summary>
-		/// Suppress zero feet and exactly zero inches.
-		/// </summary>
-		SuppressZeroFeetAndInches = 0,
-		/// <summary>
-		/// Show zero feet and exactly zero inches.
-		/// </summary>
-		ShowZeroFeetAndInches = 1,
-		/// <summary>
-		/// Show zero feet and suppress zero inches.
-		/// </summary>
-		ShowZeroFeetSuppressZeroInches = 2,
-		/// <summary>
-		/// Suppress zero feet and show zero inches.
-		/// </summary>
-		SuppressZeroFeetShowZeroInches = 3,
-		/// <summary>
-		/// Suppress leading zeroes in decimal numbers.
-		/// </summary>
-		SuppressDecimalLeadingZeroes = 4,
-		/// <summary>
-		/// Suppress trailing zeroes in decimal numbers.
-		/// </summary>
-		SuppressDecimalTrailingZeroes = 8,
-		/// <summary>
-		/// Suppress both leading and trailing zeroes in decimal numbers
-		/// </summary>
-		SuppressDecimalLeadingAndTrailingZeroes = 12,
-	}
-
-	/// <summary>
-	/// Controls the vertical placement of dimension text in relation to the dimension line.
-	/// </summary>
-	public enum DimensionTextHorizontalAlignment : byte
-	{
-		/// <summary>
-		/// Centers the dimension text along the dimension line between the extension lines.
-		/// </summary>
-		Centered = 0,
-
-		/// <summary>
-		/// Left-justifies the text with the first extension line along the dimension line.
-		/// </summary>
-		Left = 1,
-
-		/// <summary>
-		/// Right-justifies the text with the second extension line along the dimension line.
-		/// </summary>
-		Right = 2,
-
-		/// <summary>
-		/// Positions the text over or along the first extension line.
-		/// </summary>
-		OverFirstExtLine = 3,
-
-		/// <summary>
-		/// Positions the text over or along the second extension line.
-		/// </summary>
-		OverSecondExtLine = 4
-	}
-
-	/// <summary>
-	/// Controls the placement of dimension text.
-	/// </summary>
-	public enum DimensionTextVerticalAlignment
-	{
-		/// <summary>
-		/// Centers the dimension text between the two parts of the dimension line.
-		/// </summary>
-		Centered = 0,
-
-		/// <summary>
-		/// Places the dimension text above the dimension line.
-		/// </summary>
-		Above = 1,
-
-		/// <summary>
-		/// Places the dimension text on the side of the dimension line farthest away from the first defining point.
-		/// </summary>
-		Outside = 2,
-
-		/// <summary>
-		/// Places the dimension text to conform to a Japanese Industrial Standards (JIS) representation.
-		/// </summary>
-		JIS = 3,
-
-		/// <summary>
-		/// Places the dimension text under the dimension line.
-		/// </summary>
-		Below = 4
-	}
-
 	public class DimensionStyle : TableEntry
 	{
 		public override ObjectType ObjectType => ObjectType.DIMSTYLE;
 
 		public override string ObjectName => DxfFileToken.TableDimstyle;
 
+		//100	Subclass marker(AcDbDimStyleTableRecord)
+
+		/// <summary>
+		/// DIMPOST
+		/// </summary>
+		[DxfCodeValue(3)]
 		public string PostFix { get; set; }
+
+		/// <summary>
+		/// DIMAPOST
+		/// </summary>
+		[DxfCodeValue(4)]
 		public string AlternateDimensioningSuffix { get; set; }
 
+		//5	DIMBLK(obsolete, now object ID)
+
+		//6	DIMBLK1(obsolete, now object ID)
+
+		//7	DIMBLK2(obsolete, now object ID)
+
+		/// <summary>
+		/// DIMTOL
+		/// </summary>
 		[DxfCodeValue(71)]
 		public bool GenerateTolerances { get; set; }
+
+		/// <summary>
+		/// DIMLIM
+		/// </summary>
+		[DxfCodeValue(72)]
 		public bool LimitsGeneration { get; set; }
+
+		/// <summary>
+		/// DIMTIH
+		/// </summary>
+		[DxfCodeValue(73)]
 		public bool TextInsideHorizontal { get; set; }
+
+		/// <summary>
+		/// DIMTOH
+		/// </summary>
+		[DxfCodeValue(74)]
 		public bool TextOutsideHorizontal { get; set; }
+
+		/// <summary>
+		/// DIMSE1
+		/// </summary>
+		[DxfCodeValue(75)]
 		public bool SuppressFirstExtensionLine { get; set; }
-		public bool SuppressSecondExtensionnLine { get; set; }
-		public bool AlternateUnitDimensioning { get; set; }
-		public bool TextOutsideExtensions { get; set; }
-		public bool SeparateArrowBlocks { get; set; }
-		public bool TextInsideExtensions { get; set; }
-		public bool SuppressOutsideExtensions { get; set; }
-		public short AlternateUnitDecimalPlaces { get; set; }
-		public ZeroHandling ZeroHandling { get; set; }
-		public bool SuppressFirstDimensionLine { get; set; }
-		public bool SuppressSecondDimensionLine { get; set; }
-		public ToleranceAlignment ToleranceAlignment { get; set; }
-		public DimensionTextHorizontalAlignment TextHorizontalAlignment { get; set; }
-		public char DimensionFit { get; set; }
-		public bool CursorUpdate { get; set; }
-		public ZeroHandling ToleranceZeroHandling { get; set; }
-		public ZeroHandling AlternateUnitZeroHandling { get; set; }
-		public short AngularDimensionDecimalPlaces { get; set; }
-		public ZeroHandling AlternateUnitToleranceZeroHandling { get; set; }
-		public DimensionTextVerticalAlignment TextVerticalAlignment { get; set; }
-		public short DimensionUnit { get; set; }
-		public AngularUnitFormat AngularUnit { get; set; }
-		public short DecimalPlaces { get; set; }
-		public short ToleranceDecimalPlaces { get; set; }
-		public LinearUnitFormat AlternateUnitFormat { get; set; }
-		public short AlternateUnitToleranceDecimalPlaces { get; set; }
-		public double ScaleFactor { get; set; }
-		public double ArrowSize { get; set; }
-		public double ExtensionLineOffset { get; set; }
-		public double DimensionLineIncrement { get; set; }
-		public double ExtensionLineExtension { get; set; }
-		public double Rounding { get; set; }
-		public double DimensionLineExtension { get; set; }
-		public double PlusTolerance { get; set; }
-		public double MinusTolerance { get; set; }
-		public double FixedExtensionLineLength { get; set; }
-		public double JoggedRadiusDimensionTransverseSegmentAngle { get; set; }
-		public DimensionTextBackgroundFillMode TextBackgroundFillMode { get; set; }
-		public Color TextBackgroundColor { get; set; }
+
+		/// <summary>
+		/// DIMSE2
+		/// </summary>
+		[DxfCodeValue(76)]
 		public bool SuppressSecondExtensionLine { get; set; }
+
+		/// <summary>
+		/// DIMALT
+		/// </summary>
+		[DxfCodeValue(170)]
+		public bool AlternateUnitDimensioning { get; set; }
+
+		/// <summary>
+		/// DIMTOFL
+		/// </summary>
+		[DxfCodeValue(172)]
+		public bool TextOutsideExtensions { get; set; }
+
+		/// <summary>
+		/// DIMSAH
+		/// </summary>
+		[DxfCodeValue(173)]
+		public bool SeparateArrowBlocks { get; set; }
+
+		/// <summary>
+		/// DIMTIX
+		/// </summary>
+		[DxfCodeValue(174)]
+		public bool TextInsideExtensions { get; set; }
+
+		/// <summary>
+		/// DIMSOXD
+		/// </summary>
+		[DxfCodeValue(175)]
+		public bool SuppressOutsideExtensions { get; set; }
+
+		/// <summary>
+		/// DIMALTD
+		/// </summary>
+		[DxfCodeValue(171)]
+		public short AlternateUnitDecimalPlaces { get; set; }
+
+		/// <summary>
+		/// DIMZIN
+		/// </summary>
+		[DxfCodeValue(78)]
+		public ZeroHandling ZeroHandling { get; set; }
+
+		/// <summary>
+		/// DIMSD1
+		/// </summary>
+		[DxfCodeValue(281)]
+		public bool SuppressFirstDimensionLine { get; set; }
+
+		/// <summary>
+		/// DIMSD2
+		/// </summary>
+		[DxfCodeValue(282)]
+		public bool SuppressSecondDimensionLine { get; set; }
+
+		/// <summary>
+		/// DIMTOLJ
+		/// </summary>
+		[DxfCodeValue(283)]
+		public ToleranceAlignment ToleranceAlignment { get; set; }
+
+		/// <summary>
+		/// DIMJUST
+		/// </summary>
+		[DxfCodeValue(280)]
+		public DimensionTextHorizontalAlignment TextHorizontalAlignment { get; set; }
+
+		/// <summary>
+		/// DIMFIT
+		/// </summary>
+		[DxfCodeValue(287)]
+		public char DimensionFit { get; set; }
+
+		/// <summary>
+		/// DIMUPT
+		/// </summary>
+		[DxfCodeValue(288)]
+		public bool CursorUpdate { get; set; }
+
+		/// <summary>
+		/// DIMTZIN
+		/// </summary>
+		[DxfCodeValue(284)]
+		public ZeroHandling ToleranceZeroHandling { get; set; }
+
+		/// <summary>
+		/// DIMALTZ
+		/// </summary>
+		[DxfCodeValue(285)]
+		public ZeroHandling AlternateUnitZeroHandling { get; set; }
+
+		/// <summary>
+		/// DIMADEC
+		/// </summary>
+		[DxfCodeValue(179)]
+		public short AngularDimensionDecimalPlaces { get; set; }
+
+		/// <summary>
+		/// DIMALTTZ
+		/// </summary>
+		[DxfCodeValue(286)]
+		public ZeroHandling AlternateUnitToleranceZeroHandling { get; set; }
+
+		/// <summary>
+		/// DIMTAD
+		/// </summary>
+		[DxfCodeValue(77)]
+		public DimensionTextVerticalAlignment TextVerticalAlignment { get; set; }
+
+		/// <summary>
+		/// DIMUNIT (obsolete, now use DIMLUNIT AND DIMFRAC)
+		/// </summary>
+		[DxfCodeValue(270)]
+		public short DimensionUnit { get; set; }
+
+		/// <summary>
+		/// DIMAUNIT
+		/// </summary>
+		[DxfCodeValue(275)]
+		public AngularUnitFormat AngularUnit { get; set; }
+
+		/// <summary>
+		/// DIMDEC
+		/// </summary>
+		[DxfCodeValue(271)]
+		public short DecimalPlaces { get; set; }
+
+		/// <summary>
+		/// DIMTDEC
+		/// </summary>
+		[DxfCodeValue(272)]
+		public short ToleranceDecimalPlaces { get; set; }
+
+		/// <summary>
+		/// DIMALTU
+		/// </summary>
+		[DxfCodeValue(273)]
+		public LinearUnitFormat AlternateUnitFormat { get; set; }
+
+		/// <summary>
+		/// DIMALTTD
+		/// </summary>
+		[DxfCodeValue(274)]
+		public short AlternateUnitToleranceDecimalPlaces { get; set; }
+
+		/// <summary>
+		/// DIMSCALE
+		/// </summary>
+		[DxfCodeValue(40)]
+		public double ScaleFactor { get; set; }
+
+		/// <summary>
+		/// DIMASZ
+		/// </summary>
+		[DxfCodeValue(41)]
+		public double ArrowSize { get; set; }
+
+		/// <summary>
+		/// DIMEXO
+		/// </summary>
+		[DxfCodeValue(42)]
+		public double ExtensionLineOffset { get; set; }
+
+		/// <summary>
+		/// DIMDLI
+		/// </summary>
+		[DxfCodeValue(43)]
+		public double DimensionLineIncrement { get; set; }
+
+		/// <summary>
+		/// DIMEXE
+		/// </summary>
+		[DxfCodeValue(44)]
+		public double ExtensionLineExtension { get; set; }
+
+		/// <summary>
+		/// DIMRND
+		/// </summary>
+		[DxfCodeValue(45)]
+		public double Rounding { get; set; }
+
+		/// <summary>
+		/// DIMDLE
+		/// </summary>
+		[DxfCodeValue(46)]
+		public double DimensionLineExtension { get; set; }
+
+		/// <summary>
+		/// DIMTP
+		/// </summary>
+		[DxfCodeValue(47)]
+		public double PlusTolerance { get; set; }
+
+		/// <summary>
+		/// DIMTM
+		/// </summary>
+		[DxfCodeValue(48)]
+		public double MinusTolerance { get; set; }
+
+		/// <summary>
+		/// DIMFXL
+		/// </summary>
+		[DxfCodeValue(49)]
+		public double FixedExtensionLineLength { get; set; }
+
+		/// <summary>
+		/// DIMJOGANG
+		/// </summary>
+		[DxfCodeValue(50)]
+		public double JoggedRadiusDimensionTransverseSegmentAngle { get; set; }
+
+		/// <summary>
+		/// DIMTFILL
+		/// </summary>
+		[DxfCodeValue(69)]
+		public DimensionTextBackgroundFillMode TextBackgroundFillMode { get; set; }
+
+		/// <summary>
+		/// DIMTFILLCLR
+		/// </summary>
+		[DxfCodeValue(70)]
+		public Color TextBackgroundColor { get; set; }
+
+		/// <summary>
+		/// DIMAZIN
+		/// </summary>
+		[DxfCodeValue(79)]
 		public ZeroHandling AngularZeroHandling { get; set; }
+
+		/// <summary>
+		/// DIMARCSYM
+		/// </summary>
+		[DxfCodeValue(90)]
 		public ArcLengthSymbolPosition ArcLengthSymbolPosition { get; set; }
+
+		/// <summary>
+		/// DIMTXT
+		/// </summary>
+		[DxfCodeValue(140)]
 		public double TextHeight { get; set; }
+
+		/// <summary>
+		/// DIMCEN
+		/// </summary>
+		[DxfCodeValue(141)]
 		public double CenterMarkSize { get; set; }
+
+		/// <summary>
+		/// DIMTSZ
+		/// </summary>
+		[DxfCodeValue(142)]
 		public double TickSize { get; set; }
+
+		/// <summary>
+		/// DIMALTF
+		/// </summary>
+		[DxfCodeValue(143)]
 		public double AlternateUnitScaleFactor { get; set; }
+
+		/// <summary>
+		/// DIMLFAC
+		/// </summary>
+		[DxfCodeValue(144)]
 		public double LinearScaleFactor { get; set; }
+
+		/// <summary>
+		/// DIMTVP
+		/// </summary>
+		[DxfCodeValue(145)]
 		public double TextVerticalPosition { get; set; }
+
+		/// <summary>
+		/// DIMTFAC
+		/// </summary>
+		[DxfCodeValue(146)]
 		public double ToleranceScaleFactor { get; set; }
+
+		/// <summary>
+		/// DIMGAP
+		/// </summary>
+		[DxfCodeValue(147)]
 		public double DimensionLineGap { get; set; }
+
+		/// <summary>
+		/// DIMALTRND
+		/// </summary>
+		[DxfCodeValue(148)]
 		public double AlternateUnitRounding { get; set; }
+
+		/// <summary>
+		/// DIMCLRD
+		/// </summary>
+		[DxfCodeValue(176)]
 		public Color DimensionLineColor { get; set; }
+
+		/// <summary>
+		/// DIMCLRE
+		/// </summary>
+		[DxfCodeValue(177)]
 		public Color ExtensionLineColor { get; set; }
+
+		/// <summary>
+		/// DIMCLRT
+		/// </summary>
+		[DxfCodeValue(178)]
 		public Color TextColor { get; set; }
+
+		/// <summary>
+		/// DIMFRAC
+		/// </summary>
+		[DxfCodeValue(276)]
 		public FractionFormat FractionFormat { get; set; }
+
+		/// <summary>
+		/// DIMLUNIT
+		/// </summary>
+		[DxfCodeValue(277)]
 		public LinearUnitFormat LinearUnitFormat { get; set; }
+
+		/// <summary>
+		/// DIMDSEP
+		/// </summary>
+		[DxfCodeValue(278)]
 		public char DecimalSeparator { get; set; }
+
+		/// <summary>
+		/// DIMTMOVE
+		/// </summary>
+		[DxfCodeValue(279)]
 		public TextMovement TextMovement { get; set; }
+
+		/// <summary>
+		/// DIMFXLON
+		/// </summary>
+		[DxfCodeValue(290)]
 		public bool IsExtensionLineLengthFixed { get; set; }
+
+		/// <summary>
+		/// DIMTXTDIRECTION
+		/// </summary>
+		[DxfCodeValue(295)]
 		public TextDirection TextDirection { get; set; }
+		
 		public double AltMzf { get; set; }
+		
 		public double Mzf { get; set; }
-		public short DimensionLineWeight { get; set; }
-		public short ExtensionLineWeight { get; set; }
+
+		/// <summary>
+		/// DIMLWD
+		/// </summary>
+		[DxfCodeValue(371)]
+		public LineweightType DimensionLineWeight { get; set; }
+
+		/// <summary>
+		/// DIMLWE
+		/// </summary>
+		[DxfCodeValue(372)]
+		public LineweightType ExtensionLineWeight { get; set; }
+
 		public string AltMzs { get; set; }
 		public string Mzs { get; set; }
+
+		//289	DIMATFIT
 		public short DimensionTextArrowFit { get; set; }
 
+		/// <summary>
+		/// DIMTXSTY
+		/// </summary>
+		[DxfCodeValue(340)]
+		public TextStyle Style { get; set; }
+
+		/// <summary>
+		/// Arrowhead block for leaders
+		/// </summary>
+		/// <remarks>
+		/// DIMLDRBLK
+		/// </remarks>
+		[DxfCodeValue(341)]
+		public Block LeaderArrow { get; set; }
+
+		/// <summary>
+		/// Arrow block for this style
+		/// </summary>
+		/// <remarks>
+		/// DIMBLK
+		/// </remarks>
+		[DxfCodeValue(342)]
+		public Block ArrowBlock { get; set; }
+
+		/// <summary>
+		/// Arrowhead block for the first end of the dimension line
+		/// </summary>
+		/// <remarks>
+		/// DIMBLK1
+		/// </remarks>
+		[DxfCodeValue(343)]
+		public Block DimArrow1 { get; set; }
+
+		/// <summary>
+		/// Arrowhead block for the second end of the dimension line
+		/// </summary>
+		/// <remarks>
+		/// DIMBLK1
+		/// </remarks>
+		[DxfCodeValue(344)]
+		public Block DimArrow2 { get; set; }
+
 		public DimensionStyle() : base() { }
-		internal DimensionStyle(DxfEntryTemplate template) : base(template) { }
 	}
 }

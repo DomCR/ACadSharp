@@ -58,6 +58,7 @@ namespace ACadSharp.Tables
 		public List<LineTypeSegment> Segments { get; set; } = new List<LineTypeSegment>();
 
 		public LineType() : base() { }
+
 		public LineType(string name) : base(name) { }
 	}
 }

@@ -268,7 +268,5 @@ namespace ACadSharp.Tables
 		public Color AmbientColor { get; set; }
 
 		public VPort() : base() { }
-
-		internal VPort(DxfEntryTemplate template) : base(template) { }
 	}
 }

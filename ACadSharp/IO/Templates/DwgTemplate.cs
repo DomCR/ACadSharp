@@ -85,30 +85,6 @@ namespace ACadSharp.IO.Templates
 		}
 	}
 
-	internal class DwgDimensionStyleTemplate : DwgTemplate<DimensionStyle>
-	{
-		public string DIMBL_Name { get; internal set; }
-		public string DIMBLK1_Name { get; internal set; }
-		public string DIMBLK2_Name { get; internal set; }
-		public ulong DIMTXSTY { get; internal set; }
-		public ulong DIMLDRBLK { get; internal set; }
-		public ulong DIMBLK { get; internal set; }
-		public ulong DIMBLK1 { get; internal set; }
-		public ulong DIMBLK2 { get; internal set; }
-		public ulong Dimltype { get; internal set; }
-		public ulong Dimltex1 { get; internal set; }
-		public ulong Dimltex2 { get; internal set; }
-		
-		public DwgDimensionStyleTemplate(DimensionStyle dimStyle) : base(dimStyle) { }
-
-		public override void Build(CadDocumentBuilder builder)
-		{
-			base.Build(builder);
-
-			//throw new NotImplementedException();
-		}
-	}
-
 	internal class DwgColorTemplate : DwgTemplate
 	{
 		public string Name { get; set; }

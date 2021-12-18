@@ -15,12 +15,6 @@ namespace ACadSharp.Tables
 		public virtual string Name { get; set; }
 
 		/// <summary>
-		/// Table entry is xref dependent.
-		/// </summary>
-		[Obsolete]
-		public virtual bool XrefDependant { get; set; }
-
-		/// <summary>
 		/// Standard flags
 		/// </summary>
 		[DxfCodeValue(70)]
@@ -34,14 +28,6 @@ namespace ACadSharp.Tables
 		public TableEntry(string name)
 		{
 			Name = name;
-		}
-
-		internal TableEntry(DxfEntryTemplate template)
-		{
-			//TableName = template.TableName;
-			Name = template.Name;
-			Handle = template.Handle;
-			OwnerHandle = template.OwnerHandle;
 		}
 
 		public override string ToString()

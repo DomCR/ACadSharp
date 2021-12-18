@@ -3269,9 +3269,9 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//DIMLWD BS 371
-				dimStyle.DimensionLineWeight = this._objectReader.ReadBitShort();
+				dimStyle.DimensionLineWeight = (LineweightType)this._objectReader.ReadBitShort();
 				//DIMLWE BS 372
-				dimStyle.ExtensionLineWeight = this._objectReader.ReadBitShort();
+				dimStyle.ExtensionLineWeight = (LineweightType)this._objectReader.ReadBitShort();
 			}
 
 			//Common:

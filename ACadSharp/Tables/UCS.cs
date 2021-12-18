@@ -32,7 +32,5 @@ namespace ACadSharp.Tables
 		public OrthographicType OrthographicType { get; internal set; }
 
 		public UCS() : base() { }
-
-		internal UCS(DxfEntryTemplate template) : base(template) { }
 	}
 }
