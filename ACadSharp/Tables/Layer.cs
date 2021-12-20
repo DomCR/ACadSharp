@@ -61,7 +61,9 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(347)]
 		public string Material { get; set; }    //TODO: Implement ulong handles, change to internal or private, implement the material class
 
-		public bool IsOn { get; set; }	//TODO: Is the same as PlotFlag???
+		public bool IsOn { get; set; }  //TODO: Is the same as PlotFlag???
+
+		internal Layer() : base() { }
 
 		public Layer(string name) : base(name)
 		{

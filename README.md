@@ -65,6 +65,7 @@ The dwg reader is not yet fully implemented, the NotificationHandler will send a
 - ACAD_PROXY_OBJECT
 - SEQEND
 - XRECORD
+- VIEW
 
 ##### Dxf
 

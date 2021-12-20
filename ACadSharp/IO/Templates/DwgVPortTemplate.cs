@@ -16,6 +16,8 @@ namespace ACadSharp.IO.Templates
 
 		public override void Build(CadDocumentBuilder builder)
 		{
+			//TODO: implement DwgVPortTemplate
+
 			base.Build(builder);
 
 			if (this.BaseUcsHandle.HasValue)

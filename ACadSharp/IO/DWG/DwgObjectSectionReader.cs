@@ -44,7 +44,7 @@ namespace ACadSharp.IO.DWG
 		private readonly Dictionary<ulong, long> _map;
 		private readonly Dictionary<short, DxfClass> _classes;
 
-		private DwgDocumentBuilder _modelBuilder;
+		private DwgDocumentBuilder _builder;
 
 		private readonly IDwgStreamReader _reader;
 
@@ -83,7 +83,7 @@ namespace ACadSharp.IO.DWG
 			Dictionary<ulong, long> handleMap,
 			DxfClassCollection classes) : base(version)
 		{
-			this._modelBuilder = builder;
+			this._builder = builder;
 
 			this._reader = reader;
 
@@ -109,7 +109,7 @@ namespace ACadSharp.IO.DWG
 				ulong handle = this._handles.Dequeue();
 
 				//Check if the handle has already been read
-				if (!this._map.TryGetValue(handle, out long offset) || this._modelBuilder.Templates.ContainsKey(handle))
+				if (!this._map.TryGetValue(handle, out long offset) || this._builder.Templates.ContainsKey(handle))
 				{
 					continue;
 				}
@@ -121,7 +121,7 @@ namespace ACadSharp.IO.DWG
 				DwgTemplate template = this.readObject(type, notificationEvent);
 
 				//Add the template to the list to be processed
-				this._modelBuilder.Templates[handle] = template;
+				this._builder.Templates[handle] = template;
 			}
 		}
 
@@ -207,7 +207,7 @@ namespace ACadSharp.IO.DWG
 			//Read the handle
 			ulong value = this._handlesReader.HandleReference(handle);
 
-			if (!this._modelBuilder.Templates.ContainsKey(value) && !this._handles.Contains(value) && value != 0)
+			if (!this._builder.Templates.ContainsKey(value) && !this._handles.Contains(value) && value != 0)
 				//Add the value to the handles queue to be processed
 				this._handles.Enqueue(value);
 
@@ -716,6 +716,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readViewControlObject();
 					break;
 				case ObjectType.VIEW:
+					template = this.readView();
 					break;
 				case ObjectType.UCS_CONTROL_OBJ:
 					template = this.readUcsControlObject();
@@ -2224,7 +2225,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readBlockControlObject()
 		{
-			DwgBlockCtrlObjectTemplate template = new DwgBlockCtrlObjectTemplate(this._modelBuilder.DocumentToBuild.BlockRecords);
+			DwgBlockCtrlObjectTemplate template = new DwgBlockCtrlObjectTemplate(this._builder.DocumentToBuild.BlockRecords);
 
 			this.readCommonNonEntityData(template);
 
@@ -2359,7 +2360,7 @@ namespace ACadSharp.IO.DWG
 				//Insert Handles H N insert handles, where N corresponds to the number of insert count entries above(soft pointer).
 				for (int i = 0; i < insertCount; ++i)
 				{
-					//Entries	//TODO: necessary to story the insert handles??
+					//Entries	//TODO: necessary to store the insert handles??
 					template.InsertHandles.Add(this.handleReference());
 				}
 				//Layout Handle H(hard pointer)
@@ -2371,7 +2372,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readLayerControlObject()
 		{
-			DwgTableTemplate<Layer> template = new DwgTableTemplate<Layer>(this._modelBuilder.DocumentToBuild.Layers);
+			DwgTableTemplate<Layer> template = new DwgTableTemplate<Layer>(this._builder.DocumentToBuild.Layers);
 
 			this.readCommonNonEntityData(template);
 
@@ -2481,7 +2482,7 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readStyleControlObject()
 		{
 			DwgTableTemplate<TextStyle> template = new DwgTableTemplate<TextStyle>(
-				this._modelBuilder.DocumentToBuild.TextStyles);
+				this._builder.DocumentToBuild.TextStyles);
 
 			this.readCommonNonEntityData(template);
 
@@ -2536,7 +2537,7 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readLTypeControlObject()
 		{
 			DwgTableTemplate<LineType> template = new DwgTableTemplate<LineType>(
-				this._modelBuilder.DocumentToBuild.LineTypes);
+				this._builder.DocumentToBuild.LineTypes);
 
 			this.readCommonNonEntityData(template);
 
@@ -2632,7 +2633,7 @@ namespace ACadSharp.IO.DWG
 			for (int i = 0; i < ndashes; i++)
 			{
 				//TODO: Implement the dashes handles
-				//handleReference();
+				this.handleReference();
 			}
 
 			return template;
@@ -2641,7 +2642,7 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readViewControlObject()
 		{
 			DwgTableTemplate<View> template = new DwgTableTemplate<View>(
-				this._modelBuilder.DocumentToBuild.Views);
+				this._builder.DocumentToBuild.Views);
 
 			this.readCommonNonEntityData(template);
 
@@ -2655,10 +2656,17 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private DwgTemplate readView()
+		{
+
+
+			return null;
+		}
+
 		private DwgTemplate readUcsControlObject()
 		{
 			DwgTableTemplate<UCS> template = new DwgTableTemplate<UCS>(
-				this._modelBuilder.DocumentToBuild.UCSs);
+				this._builder.DocumentToBuild.UCSs);
 
 			this.readCommonNonEntityData(template);
 
@@ -2722,7 +2730,7 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readVPortControlObject()
 		{
 			DwgTableTemplate<VPort> template = new DwgTableTemplate<VPort>(
-				this._modelBuilder.DocumentToBuild.VPorts);
+				this._builder.DocumentToBuild.VPorts);
 
 			this.readCommonNonEntityData(template);
 
@@ -2913,7 +2921,7 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readAppIdControlObject()
 		{
 			DwgTableTemplate<AppId> template = new DwgTableTemplate<AppId>(
-				this._modelBuilder.DocumentToBuild.AppIds);
+				this._builder.DocumentToBuild.AppIds);
 
 			this.readCommonNonEntityData(template);
 
@@ -2954,7 +2962,7 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readDimStyleControlObject()
 		{
 			DwgTableTemplate<DimensionStyle> template = new DwgTableTemplate<DimensionStyle>(
-				this._modelBuilder.DocumentToBuild.DimensionStyles);
+				this._builder.DocumentToBuild.DimensionStyles);
 
 			this.readCommonNonEntityData(template);
 
@@ -3316,7 +3324,7 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readViewportEntityControl()
 		{
 			DwgViewportEntityControlTemplate template = new DwgViewportEntityControlTemplate(
-				this._modelBuilder.DocumentToBuild.Viewports);
+				this._builder.DocumentToBuild.Viewports);
 
 			this.readCommonNonEntityData(template);
 

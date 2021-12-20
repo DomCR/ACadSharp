@@ -9,6 +9,8 @@ namespace ACadSharp.Tables
 	{
 		public override ObjectType ObjectType => ObjectType.VIEW;
 
+		public View() : base() { }
+
 		public View(string name) : base(name) { }
 	}
 }

@@ -12,6 +12,8 @@ namespace ACadSharp.IO.DXF
 {
 	internal class DxfTablesSectionReader
 	{
+		private delegate bool checkDxfCodeValue(DwgTemplate template);
+
 		private readonly IDxfStreamReader _reader;
 		private readonly DxfDocumentBuilder _builder;
 		private readonly NotificationEventHandler _notification;
@@ -120,6 +122,26 @@ namespace ACadSharp.IO.DXF
 					template = new DwgTableTemplate<LineType>(this._builder.DocumentToBuild.LineTypes);
 					this.readEntries(name, handle.Value, (DwgTableTemplate<LineType>)template);
 					break;
+				case DxfFileToken.TableLayer:
+					template = new DwgTableTemplate<Layer>(this._builder.DocumentToBuild.Layers);
+					this.readEntries(name, handle.Value, (DwgTableTemplate<Layer>)template);
+					break;
+				case DxfFileToken.TableStyle:
+					template = new DwgTableTemplate<TextStyle>(this._builder.DocumentToBuild.TextStyles);
+					this.readEntries(name, handle.Value, (DwgTableTemplate<TextStyle>)template);
+					break;
+				case DxfFileToken.TableView:
+					template = new DwgTableTemplate<View>(this._builder.DocumentToBuild.Views);
+					this.readEntries(name, handle.Value, (DwgTableTemplate<View>)template);
+					break;
+				case DxfFileToken.TableUcs:
+					template = new DwgTableTemplate<UCS>(this._builder.DocumentToBuild.UCSs);
+					this.readEntries(name, handle.Value, (DwgTableTemplate<UCS>)template);
+					break;
+				case DxfFileToken.TableDimstyle:
+					template = new DwgTableTemplate<DimensionStyle>(this._builder.DocumentToBuild.DimensionStyles);
+					this.readEntries(name, handle.Value, (DwgTableTemplate<DimensionStyle>)template);
+					break;
 				default:
 					throw new DxfException($"Unknown table name {name}");
 			}
@@ -166,7 +188,11 @@ namespace ACadSharp.IO.DXF
 							break;
 						//Soft - pointer ID / handle to owner BLOCK_RECORD object
 						case 330:
-							Debug.Assert(this._reader.LastValueAsHandle == tableTemplate.CadObject.Handle);
+							if (this._reader.LastValueAsHandle != tableTemplate.CadObject.Handle)
+							{
+								var a = this._builder.GetCadObject(this._reader.LastValueAsHandle);
+								Debug.Assert(this._reader.LastValueAsHandle == tableTemplate.CadObject.Handle);
+							}
 							break;
 						default:
 							Debug.Fail($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}.");
@@ -179,59 +205,60 @@ namespace ACadSharp.IO.DXF
 				Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.TableRecord);
 				this._reader.ReadNext();
 
-				DwgTemplate template = this.readEntry(tableName, handle);
+				DwgTemplate template = null;
+
+				//Get the entry
+				switch (tableName)
+				{
+					case DxfFileToken.TableAppId:
+						template = this.readAppid();
+						break;
+					case DxfFileToken.TableBlockRecord:
+						//entry = new BlockRecord();
+						break;
+					case DxfFileToken.TableDimstyle:
+						DwgDimensionStyleTemplate dimStyleTemplate = new DwgDimensionStyleTemplate(new DimensionStyle());
+						template = this.readRaw(dimStyleTemplate, DxfSubclassMarker.DimensionStyle, this.readDimStyle);
+						break;
+					case DxfFileToken.TableLayer:
+						Layer layer = new Layer();
+						DwgLayerTemplate layerTemplate = new DwgLayerTemplate(layer);
+						template = this.readRaw(layerTemplate, DxfSubclassMarker.Layer, this.readLayer);
+						break;
+					case DxfFileToken.TableLinetype:
+						DwgTableEntryTemplate<LineType> ltypeTemplate = new DwgTableEntryTemplate<LineType>(new LineType());
+						template = this.readRaw(ltypeTemplate, DxfSubclassMarker.Linetype, this.readLineType);
+						_builder.NotificationHandler?.Invoke(ltypeTemplate.CadObject, new NotificationEventArgs($"Line type not fully read"));
+						break;
+					case DxfFileToken.TableStyle:
+						TextStyle style = TextStyle.Default;
+						DwgTableEntryTemplate<TextStyle> styleTemplate = new DwgTableEntryTemplate<TextStyle>(style);
+						template = this.readRaw(styleTemplate, DxfSubclassMarker.TextStyle, this.readTextStyle);
+						break;
+					case DxfFileToken.TableUcs:
+						DwgTemplate<UCS> ucsTemplate = new DwgTemplate<UCS>(new UCS());
+						template = this.readRaw(ucsTemplate, DxfSubclassMarker.Ucs, this.readUcs);
+						break;
+					case DxfFileToken.TableView:
+						DwgTableEntryTemplate<View> viewTemplate = new DwgTableEntryTemplate<View>(new View());
+						template = this.readRaw(viewTemplate, DxfSubclassMarker.View, this.readView);
+						_builder.NotificationHandler?.Invoke(viewTemplate.CadObject, new NotificationEventArgs($"View not implemented"));
+						break;
+					case DxfFileToken.TableVport:
+						DwgVPortTemplate vportTemplate = new DwgVPortTemplate(new VPort());
+						template = this.readRaw(vportTemplate, DxfSubclassMarker.VPort, this.readVPort);
+						break;
+					default:
+						Debug.Fail($"Unhandeled table {tableName}.");
+						break;
+				}
+
+				//Setup the common fields
+				template.CadObject.Handle = handle;
 
 				//Add the object and the template to the builder
 				this._builder.Templates[template.CadObject.Handle] = template;
 			}
-		}
-
-		private DwgTemplate readEntry(string tableName, ulong handle)
-		{
-			TableEntry entry = null;
-			DwgTemplate template = null;
-
-			//Get the entry
-			switch (tableName)
-			{
-				case DxfFileToken.TableAppId:
-					template = this.readAppid();
-					break;
-				case DxfFileToken.TableBlockRecord:
-					//entry = new BlockRecord();
-					break;
-				case DxfFileToken.TableDimstyle:
-					entry = new DimensionStyle();
-					break;
-				case DxfFileToken.TableLayer:
-					entry = Layer.Default;
-					break;
-				case DxfFileToken.TableLinetype:
-					DwgTableEntryTemplate<LineType> ltypeTemplate = new DwgTableEntryTemplate<LineType>(new LineType());
-					template = this.readRaw(ltypeTemplate, DxfSubclassMarker.Linetype, this.readLineType);
-					break;
-				case DxfFileToken.TableStyle:
-					//entry = new TextStyle();
-					break;
-				case DxfFileToken.TableUcs:
-					entry = new UCS();
-					break;
-				case DxfFileToken.TableView:
-					//entry = new View();
-					break;
-				case DxfFileToken.TableVport:
-					DwgVPortTemplate vportTemplate = new DwgVPortTemplate(new VPort());
-					template = this.readRaw(vportTemplate, DxfSubclassMarker.VPort, this.readVPort);
-					break;
-				default:
-					Debug.Fail($"Unhandeled table {tableName}.");
-					break;
-			}
-
-			//Setup the common fields
-			template.CadObject.Handle = handle;
-
-			return template;
 		}
 
 		private DwgTemplate readAppid()
@@ -247,13 +274,13 @@ namespace ACadSharp.IO.DXF
 
 			while (this._reader.LastDxfCode != DxfCode.Start)
 			{
-				switch (this._reader.LastValueAsInt)
+				switch (this._reader.LastCode)
 				{
 					case 2:
 						appId.Name = this._reader.LastValueAsString;
 						break;
 					case 70:
-						//appId.Flags = (StandardFlags)this._reader.LastValueAsShort;
+						appId.Flags = (StandardFlags)this._reader.LastValueAsShort;
 						break;
 					default:
 						Debug.Fail($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}.");
@@ -266,9 +293,39 @@ namespace ACadSharp.IO.DXF
 			return template;
 		}
 
-		public bool readLineType(int dxfCode, DwgTemplate template)
+		private bool readLineType(DwgTemplate template)
 		{
-			switch (dxfCode)
+			DwgTableEntryTemplate<LineType> ltypeTemplate = template as DwgTableEntryTemplate<LineType>;
+
+			switch (this._reader.LastCode)
+			{
+				//Pointer to STYLE object (one per element if code 74 > 0)
+				case 340:
+				default:
+					break;
+			}
+
+			return false;
+		}
+
+		private bool readView(DwgTemplate template)
+		{
+			switch (this._reader.LastCode)
+			{
+				//Pointer to STYLE object (one per element if code 74 > 0)
+				case 340:
+				default:
+					break;
+			}
+
+			return false;
+		}
+
+		public bool readTextStyle(DwgTemplate template)
+		{
+			DwgTableEntryTemplate<TextStyle> styleTemplate = template as DwgTableEntryTemplate<TextStyle>;
+
+			switch (this._reader.LastCode)
 			{
 				default:
 					break;
@@ -277,21 +334,57 @@ namespace ACadSharp.IO.DXF
 			return false;
 		}
 
-		public bool readVPort(int dxfCode, DwgTemplate template)
+		public bool readUcs(DwgTemplate template)
 		{
-			DwgVPortTemplate vportTemplate = template as DwgVPortTemplate;
+			DwgTableEntryTemplate<TextStyle> styleTemplate = template as DwgTableEntryTemplate<TextStyle>;
 
-			switch (dxfCode)
+			switch (this._reader.LastCode)
 			{
-				//332	Soft - pointer ID / handle to background object(optional)
-				case 332:
+				default:
+					break;
+			}
+
+			return false;
+		}
+
+		public bool readDimStyle(DwgTemplate template)
+		{
+			DwgDimensionStyleTemplate dimStyleTemplate = template as DwgDimensionStyleTemplate;
+
+			switch (this._reader.LastCode)
+			{
+				//DIMTXSTY
+				case 340:
+					dimStyleTemplate.DIMTXSTY = this._reader.LastValueAsHandle;
+					return true;
+				//DIMLDRBLK
+				case 341:
+				//DIMBLK
+				case 342:
+				//DIMBLK1
+				case 343:
+					return true;
+				default:
+					break;
+			}
+
+			return false;
+		}
+
+		public bool readLayer(DwgTemplate template)
+		{
+			DwgLayerTemplate layerTemplate = template as DwgLayerTemplate;
+
+			switch (this._reader.LastCode)
+			{
+				//Hard-pointer ID/handle to Material object
+				case 347:
 					break;
 				//333	Soft - pointer ID / handle to shade plot object(optional)
-				case 333:
+				case 380:
 					break;
 				//348	Hard - pointer ID / handle to visual style object(optional)
 				case 348:
-					vportTemplate.StyelHandle = this._reader.LastValueAsHandle;
 					break;
 				default:
 					break;
@@ -300,35 +393,69 @@ namespace ACadSharp.IO.DXF
 			return false;
 		}
 
-		private DwgTemplate readVPort()
+		public bool readVPort(DwgTemplate template)
 		{
-			VPort vport = new VPort();
-			DwgVPortTemplate template = new DwgVPortTemplate(vport);
+			DwgVPortTemplate vportTemplate = template as DwgVPortTemplate;
+
+			switch (this._reader.LastCode)
+			{
+				//Soft - pointer ID / handle to background object(optional)
+				case 332:
+					vportTemplate.BackgroundHandle = this._reader.LastValueAsHandle;
+					return true;
+				//Soft - pointer ID / handle to shade plot object(optional)
+				case 333:
+					_builder.NotificationHandler?.Invoke(
+						template.CadObject,
+						new NotificationEventArgs($"Code not implemented for type\n" +
+						$"\tcode : {this._reader.LastCode}\n" +
+						$"\ttype : {template.CadObject.ObjectType}"));
+					return true;
+				//Hard - pointer ID / handle to visual style object(optional)
+				case 348:
+					vportTemplate.StyelHandle = this._reader.LastValueAsHandle;
+					return true;
+				default:
+					break;
+			}
+
+			return false;
+		}
+
+		private DwgTemplate readRaw(DwgTemplate template, string subclass, checkDxfCodeValue check)
+		{
+			Dictionary<DxfCode, object> map = new Dictionary<DxfCode, object>();
 
 			Debug.Assert(this._reader.LastDxfCode == DxfCode.Subclass);
-			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.VPort);
-
-			//Jump the SubclassMarker
-			this._reader.ReadNext();
+			Debug.Assert(this._reader.LastValueAsString == subclass);
 
 			while (this._reader.LastDxfCode != DxfCode.Start)
 			{
-				switch (this._reader.LastCode)
+				if (check(template))
 				{
-					case 2:
-						vport.Name = this._reader.LastValueAsString;
-						break;
-					case 70:
-						vport.Flags = (StandardFlags)this._reader.LastValueAsShort;
-						break;
-					default:
-						vport.AssignDxfValue(this._reader.LastDxfCode, this._reader.LastValue);
-						Debug.Fail($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}.");
-						break;
+					this._reader.ReadNext();
+					continue;
+				}
+
+				try
+				{
+					//Add the value
+					map.Add(this._reader.LastDxfCode, this._reader.LastValue);
+				}
+				catch (Exception)
+				{
+					_builder.NotificationHandler?.Invoke(
+						template.CadObject,
+						new NotificationEventArgs($"Code already in the map for the reflection reader\n" +
+						$"\tcode : {this._reader.LastCode}\n" +
+						$"\ttype : {template.CadObject.ObjectType}"));
 				}
 
 				this._reader.ReadNext();
 			}
+
+			//Build the table based on the map
+			template.CadObject.Build(map);
 
 			return template;
 		}
@@ -360,31 +487,5 @@ namespace ACadSharp.IO.DXF
 			//Build the table based on the map
 			cadObject?.Build(map);
 		}
-
-		private DwgTemplate readRaw(DwgTemplate template, string subclass, processCode process)
-		{
-			Dictionary<DxfCode, object> map = new Dictionary<DxfCode, object>();
-
-			Debug.Assert(this._reader.LastDxfCode == DxfCode.Subclass);
-			Debug.Assert(this._reader.LastValueAsString == subclass);
-
-			while (this._reader.LastDxfCode != DxfCode.Start)
-			{
-				if (process(this._reader.LastCode, template))
-					continue;
-
-				//Add the value
-				map.Add(this._reader.LastDxfCode, this._reader.LastValue);
-
-				this._reader.ReadNext();
-			}
-
-			//Build the table based on the map
-			template.CadObject.Build(map);
-
-			return template;
-		}
-
-		private delegate bool processCode(int dxfCode, DwgTemplate template);
 	}
 }
