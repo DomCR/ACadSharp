@@ -12,12 +12,14 @@ namespace ACadSharp.Tables
 		/// Default layer 0, it will always exist in a file.
 		/// </summary>
 		public const string DefaultName = "0";
+
 		/// <summary>
 		/// Default layer in all cad formats, it will always exist in a file.
 		/// </summary>
 		public static Layer Default { get { return new Layer(DefaultName); } }
 
 		public override ObjectType ObjectType => ObjectType.LAYER;
+
 		public override string ObjectName => DxfFileToken.TableLayer;
 
 		/// <summary>

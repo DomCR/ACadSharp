@@ -118,7 +118,9 @@ namespace ACadSharp.IO.DXF
 
 			this.readTables();
 
-			this.readEntities(this._document);
+			this.readBlocks();
+
+			this.readEntities();
 
 			return this._document;
 		}
@@ -266,36 +268,28 @@ namespace ACadSharp.IO.DXF
 			//Get the needed handler
 			this._reader = this.goToSection(DxfFileToken.BlocksSection);
 
-			//Advance to the first value in the section
-			this._reader.ReadNext();
-			//Loop until the section ends
-			while (!this._reader.EndSectionFound)
-			{
-				//if (m_reader.LastValueAsString == DxfFileToken.ClassEntry)
-				//	classes.Add(readBlock());
-				//else
-				//	m_reader.ReadNext();
-			}
+			DxfBlockSectionReader reader = new DxfBlockSectionReader(
+				this._reader,
+				this._builder,
+				this._notificationHandler);
 
-			throw new NotImplementedException();
+			reader.Read();
 		}
 
 		/// <summary>
 		/// Read the ENTITIES section of the DXF file.
 		/// </summary>
-		private void readEntities(CadDocument document)
+		private void readEntities()
 		{
-			//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484
 			//Get the needed handler
 			this._reader = this.goToSection(DxfFileToken.EntitiesSection);
 
-			//Advance to the first value in the section
-			this._reader.ReadNext();
-			//Loop until the section ends
-			while (!this._reader.EndSectionFound)
-			{
-				document.AddEntity(this.readEntity());
-			}
+			DxfEntitiesSectionReader reader = new DxfEntitiesSectionReader(
+				this._reader,
+				this._builder,
+				this._notificationHandler);
+
+			reader.Read();
 		}
 
 		/// <summary>

@@ -11,7 +11,9 @@ namespace ACadSharp.Blocks
 	internal class BlockBegin : Entity
 	{
 		public override string ObjectName => DxfFileToken.Block;
+
 		public override ObjectType ObjectType => ObjectType.BLOCK;
+
 		public string Name { get; set; }
 	}
 }

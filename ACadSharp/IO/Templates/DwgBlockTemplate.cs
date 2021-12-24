@@ -15,6 +15,8 @@ namespace ACadSharp.IO.Templates
 		public List<ulong> InsertHandles { get; set; } = new List<ulong>();
 		public ulong? HardOwnerHandle { get; set; }
 
+		public string LayerName { get; set; }
+
 		public DwgBlockTemplate(Block block) : base(block) { }
 
 		public override void Build(CadDocumentBuilder builder)

@@ -48,6 +48,8 @@ namespace ACadSharp
 		/// </summary>
 		public virtual CadDocument Document { get; internal set; }
 
+		public CadObject() { }
+
 		internal void AssignDxfValue(DxfCode dxfCode, object value)
 		{
 			foreach (PropertyInfo p in this.GetType().GetProperties())

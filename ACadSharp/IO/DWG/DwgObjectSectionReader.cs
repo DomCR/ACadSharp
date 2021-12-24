@@ -2276,12 +2276,13 @@ namespace ACadSharp.IO.DWG
 			//R2000+:
 			if (this.R2000Plus)
 				//Loaded Bit B 0 indicates loaded for an xref
-				block.IsLoadedXref = this._objectReader.ReadBit();
+				if (this._objectReader.ReadBit())
+					block.Flags |= BlockTypeFlags.XRef;
 
 			//R2004+:
 			int nownedObjects = 0;
-			if (this.R2004Plus 
-				&& !block.Flags.HasFlag(BlockTypeFlags.XRef) 
+			if (this.R2004Plus
+				&& !block.Flags.HasFlag(BlockTypeFlags.XRef)
 				&& !block.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 				//Owned Object Count BL Number of objects owned by this object.
 				nownedObjects = this._objectReader.ReadBitLong();
@@ -2306,24 +2307,25 @@ namespace ACadSharp.IO.DWG
 
 				//Size of preview data BL Indicates number of bytes of data following.
 				int n = this._objectReader.ReadBitLong();
+				List<byte> data = new List<byte>();
 				for (int index = 0; index < n; ++index)
 				{
 					//Binary Preview Data N*RC 310
-					int data = this._objectReader.ReadByte();
+					data .Add( this._objectReader.ReadByte());
 				}
+
+				block.Record.Preview = data.ToArray();
 			}
 
 			//R2007+:
 			if (this.R2007Plus)
 			{
-				//TODO: this goes to the BLOCK_RECORD
-
 				//Insert units BS 70
-				var bunits = (UnitsType)this._objectReader.ReadBitShort();
+				block.Record.Units = (UnitsType)this._objectReader.ReadBitShort();
 				//Explodable B 280
-				var isExplodable = this._objectReader.ReadBit();
+				block.Record.IsExplodable = this._objectReader.ReadBit();
 				//Block scaling RC 281
-				var scaleUniformly = this._objectReader.ReadByte() > 0;
+				block.Record.CanScale = this._objectReader.ReadByte() > 0;
 			}
 
 			//NULL(hard pointer)

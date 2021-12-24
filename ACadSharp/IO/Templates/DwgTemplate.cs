@@ -126,6 +126,8 @@ namespace ACadSharp.IO.Templates
 
 		public override void Build(CadDocumentBuilder builder)
 		{
+			//TODO: DwgDictionaryTemplate.Build
+
 			base.Build(builder);
 
 			if (this.OwnerHandle.HasValue && this.OwnerHandle == 0)
@@ -133,7 +135,7 @@ namespace ACadSharp.IO.Templates
 
 			}
 
-			//throw new NotImplementedException();
+			builder.NotificationHandler?.Invoke(this.CadObject, new NotificationEventArgs($"Dictionary setup not implemented"));
 		}
 	}
 }

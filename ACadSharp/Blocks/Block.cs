@@ -29,8 +29,6 @@ namespace ACadSharp.Blocks
 
 		private CadDocument _document;
 
-		public bool IsLoadedXref { get; set; }
-
 		/// <summary>
 		/// Specifies the layer for an object.
 		/// </summary>
@@ -63,12 +61,13 @@ namespace ACadSharp.Blocks
 		/// <summary>
 		/// 
 		/// </summary>
-		public BlockRecord Record { get; internal set; }
+		public BlockRecord Record { get; }
 
 		public CadObjectCollection<Entity> Entities { get; set; }
 
 		public Block()
 		{
+			this.Record = new BlockRecord(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
 		}
 	}
