@@ -16,11 +16,11 @@ namespace ACadSharp.IO.DXF
 {
 	public class DxfReader : CadReaderBase
 	{
+		private event NotificationEventHandler _notificationHandler;
+
 		private CadDocument _document;
 		private DxfDocumentBuilder _builder;
 		private IDxfStreamReader _reader;
-
-		private event NotificationEventHandler _notificationHandler;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DxfReader" /> class.

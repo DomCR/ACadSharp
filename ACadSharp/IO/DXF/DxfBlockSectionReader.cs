@@ -41,7 +41,14 @@ namespace ACadSharp.IO.DXF
 			//Loop until the block end
 			while (this._reader.LastValueAsString != DxfFileToken.EndBlock)
 			{
-				DwgTemplate entity = this.readEntity();
+				DwgTemplate entityTemplate = this.readEntity();
+
+				Debug.Assert(entityTemplate.OwnerHandle == template.CadObject.Record.Handle);
+
+				//Add the handle to the template 
+				template.OwnedObjectsHandlers.Add(entityTemplate.CadObject.Handle);
+
+				_builder.Templates.Add(entityTemplate.CadObject.Handle, entityTemplate);
 
 				this._reader.ReadNext();
 			}
@@ -142,10 +149,7 @@ namespace ACadSharp.IO.DXF
 				this._reader.ReadNext();
 			}
 
-			if (!this._builder.TryGetObjectTemplate(handle.Value, out template))
-			{
-				template = new DwgBlockTemplate(new Block());
-			}
+			template = this._builder.BlockRecords[name];
 
 			template.CadObject.Handle = handle.Value;
 			template.OwnerHandle = ownerHandle.Value;

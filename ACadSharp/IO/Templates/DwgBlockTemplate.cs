@@ -9,11 +9,11 @@ namespace ACadSharp.IO.Templates
 	{
 		public ulong? FirstEntityHandle { get; set; }
 		public ulong? LastEntityHandle { get; set; }
-		public ulong EndBlockHandle { get; set; }
+		public ulong? BeginBlockHandle { get; set; }
+		public ulong? EndBlockHandle { get; set; }
 		public ulong? LayoutHandle { get; set; }
 		public List<ulong> OwnedObjectsHandlers { get; set; } = new List<ulong>();
 		public List<ulong> InsertHandles { get; set; } = new List<ulong>();
-		public ulong? HardOwnerHandle { get; set; }
 
 		public string LayerName { get; set; }
 
@@ -23,9 +23,17 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			//TODO: DwgBlockTemplate Process BlockBeginHandle ?? 
+			if (builder.TryGetCadObject(this.BeginBlockHandle, out BlockBegin blockBegin))
+			{
+				this.CadObject.BlockBegin = blockBegin;
+			}
 
-			//Is necessary to reassign the layout??
+			if (builder.TryGetCadObject(this.BeginBlockHandle, out BlockEnd blockEnd))
+			{
+				this.CadObject.BlockEnd = blockEnd;
+			}
+
+			//TODO: Is necessary to reassign the layout??
 			//if (this.LayoutHandle.HasValue && builder.TryGetCadObject<Layout>(this.LayoutHandle.Value, out Layout layout))
 			//{
 			//	layout.AssociatedBlock = this.CadObject;

@@ -2331,7 +2331,8 @@ namespace ACadSharp.IO.DWG
 			//NULL(hard pointer)
 			this.handleReference();
 			//BLOCK entity. (hard owner)
-			template.HardOwnerHandle = this.handleReference();
+			//Block begin object
+			template.BeginBlockHandle = this.handleReference();
 
 			//R13-R2000:
 			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015

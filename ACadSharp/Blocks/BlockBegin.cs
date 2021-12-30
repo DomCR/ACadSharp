@@ -8,7 +8,7 @@ namespace ACadSharp.Blocks
 	/// <summary>
 	/// Class to read the dwg BLOCK type.
 	/// </summary>
-	internal class BlockBegin : Entity
+	public class BlockBegin : Entity
 	{
 		public override string ObjectName => DxfFileToken.Block;
 

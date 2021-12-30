@@ -5,9 +5,10 @@ namespace ACadSharp.Blocks
 	/// <summary>
 	/// Class to read the dwg BLOCK type
 	/// </summary>
-	internal class BlockEnd : Entity
+	public class BlockEnd : Entity
 	{
-		public override string ObjectName => DxfFileToken.Block;
+		public override string ObjectName => DxfFileToken.EndBlock;
+
 		public override ObjectType ObjectType => ObjectType.ENDBLK;
 	}
 }

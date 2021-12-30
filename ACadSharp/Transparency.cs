@@ -13,7 +13,9 @@ namespace ACadSharp
 	public struct Transparency
 	{
 		public static Transparency ByLayer { get { return new Transparency(-1); } }
+		
 		public static Transparency ByBlock { get { return new Transparency(100); } }
+
 		public static Transparency Opaque { get { return new Transparency(0); } }
 
 		/// <summary>

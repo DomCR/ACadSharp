@@ -46,6 +46,27 @@ namespace ACadSharp.IO
 			return null;
 		}
 
+		public bool TryGetCadObject<T>(ulong? handle, out T value) where T : CadObject
+		{
+			if (!handle.HasValue)
+			{
+				value = null;
+				return false;
+			}
+
+			if (this.Templates.TryGetValue(handle.Value, out DwgTemplate template))
+			{
+				if (template?.CadObject is T)
+				{
+					value = (T)template.CadObject;
+					return true;
+				}
+			}
+
+			value = null;
+			return false;
+		}
+
 		public bool TryGetCadObject<T>(ulong handle, out T value) where T : CadObject
 		{
 			if (this.Templates.TryGetValue(handle, out DwgTemplate template))

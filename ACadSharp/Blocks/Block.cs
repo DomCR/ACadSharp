@@ -65,6 +65,10 @@ namespace ACadSharp.Blocks
 
 		public CadObjectCollection<Entity> Entities { get; set; }
 
+		public BlockBegin BlockBegin { get; internal set; }
+
+		public BlockEnd BlockEnd { get; internal set; }
+
 		public Block()
 		{
 			this.Record = new BlockRecord(this);

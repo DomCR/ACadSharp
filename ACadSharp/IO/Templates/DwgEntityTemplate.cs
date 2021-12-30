@@ -8,7 +8,8 @@ namespace ACadSharp.IO.Templates
 	{
 		public byte EntityMode { get; set; }
 		public byte? LtypeFlags { get; set; }
-		public ulong LayerHandle { get; set; }
+		public ulong? LayerHandle { get; set; }
+		public string LayerName { get; set; }
 		public ulong? LineTypeHandle { get; set; }
 		public ulong? PrevEntity { get; set; }
 		public ulong? NextEntity { get; set; }
@@ -20,7 +21,8 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			this.CadObject.Layer = builder.GetCadObject<Layer>(this.LayerHandle);
+			if (this.LayerHandle.HasValue && builder.TryGetCadObject<Layer>(this.LayerHandle.Value, out Layer layer))
+				this.CadObject.Layer = layer;
 
 			//Handle the line type for this entity
 			if (this.LtypeFlags.HasValue)
