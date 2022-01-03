@@ -6,42 +6,35 @@ using System.Text;
 
 namespace ACadSharp.Entities
 {
-	public class Arc : Entity
+	/// <summary>
+	/// Represents a <see cref="Arc"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EntityArc"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Arc"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EntityArc)]
+	[DxfSubClass(DxfSubclassMarker.Arc)]
+	public class Arc : Circle
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.ARC;
+
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityArc;
 
-		//100	Subclass marker(AcDbCircle)
-		/// <summary>
-		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
-		/// </summary>
-		[DxfCodeValue(DxfCode.Thickness)]
-		public double Thickness { get; set; } = 0.0;
-		/// <summary>
-		/// Specifies the center of an arc, circle, ellipse, view, or viewport.
-		/// </summary>
-		[DxfCodeValue(DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
-		public XYZ Center { get; set; } = XYZ.Zero;
-		/// <summary>
-		/// Specifies the radius of an arc, circle, or position marker.
-		/// </summary>
-		[DxfCodeValue(DxfCode.Real)]
-		public double Radius { get; set; } = 1.0;
-
-		//100	Subclass marker(AcDbArc)
 		/// <summary>
 		/// The start angle in radians.
 		/// </summary>
-		[DxfCodeValue(DxfCode.Angle)]
+		[DxfCodeValue(50)]
 		public double StartAngle { get; set; } = 0.0;
+
 		/// <summary>
 		/// The end angle in radians. Use 6.28 radians to specify a closed circle or ellipse.
 		/// </summary>
-		[DxfCodeValue(DxfCode.EndAngle)]
+		[DxfCodeValue(51)]
 		public double EndAngle { get; set; } = 180.0;
 
 		public Arc() : base() { }
-
-		internal Arc(DxfEntityTemplate template) : base(template) { }
 	}
 }

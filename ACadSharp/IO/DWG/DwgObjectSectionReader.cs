@@ -862,7 +862,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readText()
 		{
-			Text text = new Text();
+			TextEntity text = new TextEntity();
 			DwgTextEntityTemplate template = new DwgTextEntityTemplate(text);
 			this.readCommonTextData(template);
 
@@ -871,7 +871,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readAttribute()
 		{
-			Attribute att = new Attribute();
+			AttributeEntity att = new AttributeEntity();
 			DwgTextEntityTemplate template = new DwgTextEntityTemplate(att);
 			this.readCommonTextData(template);
 
@@ -884,6 +884,7 @@ namespace ACadSharp.IO.DWG
 		{
 			AttributeDefinition attdef = new AttributeDefinition();
 			DwgTextEntityTemplate template = new DwgTextEntityTemplate(attdef);
+
 			this.readCommonTextData(template);
 
 			this.readCommonAttData(attdef);
@@ -892,6 +893,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2010Plus)
 				//Version RC ?		Repeated??
 				attdef.Version = this._objectReader.ReadByte();
+
 			//Common:
 			//Prompt TV 3
 			attdef.Prompt = this._textReader.ReadVariableText();
@@ -1145,12 +1147,12 @@ namespace ACadSharp.IO.DWG
 
 		private void readInsertCommonData(DwgInsertTemplate template)
 		{
-			Insert e = template.CadObject as Insert;
+			Insert insert = template.CadObject as Insert;
 
 			this.readCommonEntityData(template);
 
 			//Ins pt 3BD 10
-			e.InsertPoint = this._objectReader.Read3BitDouble();
+			insert.InsertPoint = this._objectReader.Read3BitDouble();
 
 			//R13-R14 Only:
 			if (this.R13_14Only)
@@ -1158,7 +1160,7 @@ namespace ACadSharp.IO.DWG
 				//X Scale BD 41
 				//Y Scale BD 42
 				//Z Scale BD 43
-				e.Scale = this._objectReader.Read3BitDouble();
+				insert.Scale = this._objectReader.Read3BitDouble();
 			}
 
 			//R2000 + Only:
@@ -1177,31 +1179,31 @@ namespace ACadSharp.IO.DWG
 						x = this._objectReader.ReadDouble();
 						y = this._objectReader.ReadBitDoubleWithDefault(x);
 						z = this._objectReader.ReadBitDoubleWithDefault(x);
-						e.Scale = new XYZ(x, y, z);
+						insert.Scale = new XYZ(x, y, z);
 						break;
 					//01 – 41 value is 1.0, 2 DD’s are present, each using 1.0 as the default value, representing the 42 and 43 values.
 					case 1:
 						y = this._objectReader.ReadBitDoubleWithDefault(x);
 						z = this._objectReader.ReadBitDoubleWithDefault(x);
-						e.Scale = new XYZ(x, y, z);
+						insert.Scale = new XYZ(x, y, z);
 						break;
 					//10 – 41 value stored as a RD, and 42 & 43 values are not stored, assumed equal to 41 value.
 					case 2:
 						double xyz = this._objectReader.ReadDouble();
-						e.Scale = new XYZ(xyz, xyz, xyz);
+						insert.Scale = new XYZ(xyz, xyz, xyz);
 						break;
 					//11 - scale is (1.0, 1.0, 1.0), no data stored.
 					case 3:
-						e.Scale = new XYZ(x, y, z);
+						insert.Scale = new XYZ(x, y, z);
 						break;
 				}
 			}
 
 			//Common:
 			//Rotation BD 50
-			e.Rotation = this._objectReader.ReadBitDouble();
+			insert.Rotation = this._objectReader.ReadBitDouble();
 			//Extrusion 3BD 210
-			e.Normal = this._objectReader.Read3BitDouble();
+			insert.Normal = this._objectReader.Read3BitDouble();
 			//Has ATTRIBs B 66 Single bit; 1 if ATTRIBs follow.
 			template.HasAtts = this._objectReader.ReadBit();
 			template.OwnedObjectsCount = 0;
@@ -2124,28 +2126,28 @@ namespace ACadSharp.IO.DWG
 				//END REDUNDANT FIELDS
 
 				//Column type BS 71 0 = No columns, 1 = static columns, 2 = dynamic columns
-				mtext.ColumnType = (ColumnType)this._objectReader.ReadBitShort();
+				mtext.Column.ColumnType = (ColumnType)this._objectReader.ReadBitShort();
 				//IF Has Columns data(column type is not 0)
-				if (mtext.ColumnType != ColumnType.NoColumns)
+				if (mtext.Column.ColumnType != ColumnType.NoColumns)
 				{
 					//Column height count BL 72
 					int count = this._objectReader.ReadBitLong();
 					//Columnn width BD 44
-					mtext.ColumnWidth = this._objectReader.ReadBitDouble();
+					mtext.Column.ColumnWidth = this._objectReader.ReadBitDouble();
 					//Gutter BD 45
-					mtext.ColumnGutter = this._objectReader.ReadBitDouble();
+					mtext.Column.ColumnGutter = this._objectReader.ReadBitDouble();
 					//Auto height? B 73
-					mtext.ColumnAutoHeight = this._objectReader.ReadBit();
+					mtext.Column.ColumnAutoHeight = this._objectReader.ReadBit();
 					//Flow reversed? B 74
-					mtext.ColumnFlowReversed = this._objectReader.ReadBit();
+					mtext.Column.ColumnFlowReversed = this._objectReader.ReadBit();
 
 					//IF not auto height and column type is dynamic columns
-					if (!mtext.ColumnAutoHeight && mtext.ColumnType == ColumnType.DynamicColumns && count > 0)
+					if (!mtext.Column.ColumnAutoHeight && mtext.Column.ColumnType == ColumnType.DynamicColumns && count > 0)
 					{
 						for (int i = 0; i < count; ++i)
 						{
 							//Column height BD 46
-							mtext.ColumnHeights.Add(this._objectReader.ReadBitDouble());
+							mtext.Column.ColumnHeights.Add(this._objectReader.ReadBitDouble());
 						}
 					}
 				}

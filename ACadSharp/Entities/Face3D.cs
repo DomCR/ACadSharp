@@ -58,7 +58,5 @@ namespace ACadSharp.Entities
 		public InvisibleEdgeFlags Flags { get; set; }
 
 		public Face3D() : base() { }
-
-		internal Face3D(DxfEntityTemplate template) : base(template) { }
 	}
 }

@@ -30,8 +30,12 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;
 
-		public Solid3D() : base() { }
+		/// <summary>
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
-		internal Solid3D(DxfEntityTemplate template) : base(template) { }
+		public Solid3D() : base() { }
 	}
 }

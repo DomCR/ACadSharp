@@ -5,12 +5,14 @@ using CSMath;
 
 namespace ACadSharp.Entities
 {
-	/// <summary>
-	/// Fields for the subclass marker AcDbText.
-	/// </summary>
-	public abstract class TextEntity : Entity
+	public class TextEntity : Entity
 	{
 		//100	Subclass marker(AcDbText)
+
+		public override ObjectType ObjectType => ObjectType.TEXT;
+
+		public override string ObjectName => DxfFileToken.EntityText;
+
 		/// <summary>
 		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
 		/// </summary>
@@ -78,27 +80,34 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfCode.TxtMirrorFlags)]
 		public TextMirrorFlag Mirror { get; set; } = TextMirrorFlag.None;
+		
 		/// <summary>
 		/// Horizontal text justification type.
 		/// </summary>
 		[DxfCodeValue(DxfCode.HorizontalTextAlignment)]
 		public TextHorizontalAlignment HorizontalAlignment { get; set; } = TextHorizontalAlignment.Left;
+		
 		/// <summary>
 		/// A 3D WCS coordinate representing the alignment point of the object.
 		/// </summary>
 		/// <remarks>
 		/// This property will be reset to 0, 0, 0 and will become read-only when the Alignment property is set to acAlignmentLeft. To position text whose justification is left, fit, or aligned, use the InsertionPoint property.
 		/// </remarks>
-		[DxfCodeValue(DxfCode.XCoordinate1, DxfCode.YCoordinate1, DxfCode.ZCoordinate1)]
+		[DxfCodeValue(11, 21, 31)]
 		public XYZ AlignmentPoint { get; set; } = XYZ.Zero;
+
+		/// <summary>
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
 		/// <summary>
 		/// Vertical text justification type.
 		/// </summary>
-		[DxfCodeValue(DxfCode.VerticalTextAlignment)]
+		[DxfCodeValue(73)]
 		public virtual TextVerticalAlignment VerticalAlignment { get; set; } = TextVerticalAlignment.Baseline;
 
 		public TextEntity() : base() { }
-
-		internal TextEntity(DxfEntityTemplate template) : base(template) { }
 	}
 }

@@ -15,7 +15,7 @@ namespace ACadSharp
 	/// <summary>
 	/// An AutoCAD drawing
 	/// </summary>
-	public class CadDocument : CadObject
+	public class CadDocument : CadObject	//TODO: Remove the CadObject hineritance
 	{
 		public override ObjectType ObjectType => ObjectType.INVALID;
 
@@ -99,7 +99,7 @@ namespace ACadSharp
 
 		public CadDocument()
 		{
-			_cadObjects.Add(this.Handle, this);
+			_cadObjects.Add(0, this);
 
 			//Header and summary
 			this.Header = new CadHeader();

@@ -10,8 +10,15 @@ namespace ACadSharp.IO.DXF
 		DxfCode LastDxfCode { get; }
 		int LastCode { get; }
 		object LastValue { get; }
+
+		/// <summary>
+		/// Current line or offset in the file
+		/// </summary>
 		int Line { get; }
 
+		/// <summary>
+		/// Last value read in the dxf file without any transformation
+		/// </summary>
 		string LastValueAsString { get; }
 		bool LastValueAsBool { get; }
 		short LastValueAsShort { get; }

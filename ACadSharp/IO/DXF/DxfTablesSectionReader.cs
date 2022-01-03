@@ -200,6 +200,7 @@ namespace ACadSharp.IO.DXF
 				Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.TableRecord);
 				this._reader.ReadNext();
 
+				bool assignHandle = true;
 				DwgTemplate template = null;
 
 				//Get the entry
@@ -209,9 +210,14 @@ namespace ACadSharp.IO.DXF
 						template = this.readAppid();
 						break;
 					case DxfFileToken.TableBlockRecord:
-						template = new DwgBlockTemplate(new Block());
+						Block block = new Block();
+						template = new DwgBlockTemplate(block);
 						this.readRaw(template, DxfSubclassMarker.BlockRecord, this.readBlockRecord, readUntilStart);
 						this._builder.BlockRecords[(template.CadObject as Block).Name] = template as DwgBlockTemplate;
+
+						//Assign the handle to the record
+						block.Record.Handle = handle;
+						assignHandle = false;
 						break;
 					case DxfFileToken.TableDimstyle:
 						template = new DwgDimensionStyleTemplate(new DimensionStyle());
@@ -250,8 +256,11 @@ namespace ACadSharp.IO.DXF
 						break;
 				}
 
-				//Setup the common fields
-				template.CadObject.Handle = handle;
+				if (assignHandle)
+				{
+					//Setup the common fields
+					template.CadObject.Handle = handle;
+				}
 
 				//Add the object and the template to the builder
 				this._builder.Templates[template.CadObject.Handle] = template;

@@ -6,12 +6,29 @@ using System.Text;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Represents a <see cref="Circle"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EntityCircle"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Circle"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EntityCircle)]
+	[DxfSubClass(DxfSubclassMarker.Circle)]
 	public class Circle : Entity
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.CIRCLE;
+
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityCircle;
 
-		//100	Subclass marker(AcDbCircle)
+		/// <summary>
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
 		/// <summary>
 		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
 		/// </summary>
@@ -30,8 +47,9 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(40)]
 		public double Radius { get; set; } = 1.0;
 
+		/// <summary>
+		/// Default constructor
+		/// </summary>
 		public Circle() : base() { }
-
-		internal Circle(DxfEntityTemplate template) : base(template) { }
 	}
 }

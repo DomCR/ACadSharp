@@ -14,6 +14,7 @@ namespace ACadSharp.Entities
 	/// <summary>
 	/// The standard class for a basic CAD entity.
 	/// </summary>
+	[DxfSubClass(DxfSubclassMarker.Entity)]
 	public abstract class Entity : CadObject
 	{
 		/// <summary>
@@ -32,12 +33,13 @@ namespace ACadSharp.Entities
 		/// </remarks>
 		[DxfCodeValue(62)]
 		public Color Color { get; set; } = Color.ByLayer;
-		
+
 		/// <summary>
 		/// Specifies the lineweight of an individual object or the default lineweight for the drawing.
 		/// </summary>
 		[DxfCodeValue(370)]
 		public LineweightType Lineweight { get; set; } = LineweightType.Default;
+
 		/// <summary>
 		/// Linetype scale for this entity.
 		/// </summary>
@@ -46,6 +48,7 @@ namespace ACadSharp.Entities
 		/// </remarks>
 		[DxfCodeValue(48)]
 		public double LinetypeScale { get; set; } = 1.0;
+
 		/// <summary>
 		/// Specifies the visibility of an object or the application.
 		/// </summary>
@@ -58,48 +61,34 @@ namespace ACadSharp.Entities
 		public bool IsInvisible { get; set; } = false;
 
 		/// <summary>
-		/// Specifies the three-dimensional normal unit vector for the object.
-		/// </summary>
-		[DxfCodeValue(210, 220, 230)]
-		public XYZ Normal { get; set; } = XYZ.AxisZ;
-
-		/// <summary>
 		/// Transparency value.
 		/// </summary>
 		[DxfCodeValue(440)]
 		public Transparency Transparency { get; set; }
 
+		/// <summary>
+		/// Linetype name (present if not BYLAYER). The special name BYBLOCK indicates a floating linetype (optional)
+		/// </summary>
+		[DxfCodeValue(6)]
 		public LineType LineType { get; set; }
 
 		/// <summary>
-		/// Default constructor for <see cref="Entity"/>
+		/// Default constructor
 		/// </summary>
 		public Entity() : base() { }
-
-		/// <summary>
-		/// Create an instance of <see cref="Entity"/> using a template.
-		/// </summary>
-		/// <param name="template"></param>
-		internal Entity(DxfEntityTemplate template)
-		{
-			this.Handle = template.Handle;
-			//OwnerHandle = template.OwnerHandle;
-			this.Layer = template.Layer;
-			this.Color = template.Color;
-			this.Lineweight = template.Lineweight;
-		}
 
 		/// <summary>
 		/// Get the map of subentities (collection) inside this entity.
 		/// </summary>
 		/// <returns></returns>
+		[Obsolete]
 		internal Dictionary<string, PropertyInfo> GetSubEntitiesMap()
 		{
 			Dictionary<string, PropertyInfo> map = new Dictionary<string, PropertyInfo>();
 
 			foreach (PropertyInfo p in this.GetType().GetProperties())
 			{
-				DxfSubClassEntityAttribute att = p.GetCustomAttribute<DxfSubClassEntityAttribute>();
+				DxfSubClassAttribute att = p.GetCustomAttribute<DxfSubClassAttribute>();
 				if (att == null)
 					continue;
 

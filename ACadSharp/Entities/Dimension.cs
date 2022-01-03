@@ -45,6 +45,12 @@ namespace ACadSharp.Entities
 		public XYZ InsertionPoint { get; set; }
 
 		/// <summary>
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
+		/// <summary>
 		/// Dimension type
 		/// </summary>
 		[DxfCodeValue(70)]

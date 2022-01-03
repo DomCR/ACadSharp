@@ -20,9 +20,7 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(70)]
 		public StandardFlags Flags { get; set; }
 
-		internal TableEntry()
-		{
-		}
+		internal TableEntry() { }
 
 		public TableEntry(string name)
 		{

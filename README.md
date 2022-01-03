@@ -39,7 +39,8 @@ private static void onNotification(object sender, NotificationEventArgs e)
 }
 ```
 
-### WIP
+WIP
+---
 
 The dwg reader is not yet fully implemented, the NotificationHandler will send a message to inform about the objects that could not be readed.
 
@@ -75,3 +76,12 @@ The dwg reader is not yet fully implemented, the NotificationHandler will send a
 ##### Long term 
 
 - DwgWriter
+
+Contributing
+------------
+
+Please feel free to fork this repo and send a pull request if you want to contribute to this project.
+
+Notice that this project is in an alpha version, not all the features are implemented and there can be bugs due to this so any PR with a bug fix will not have a priority.
+
+If you want to contribute you can check the Dxf documentation [here](https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-235B22E0-A567-4CF6-92D3-38A2306D73F3). 

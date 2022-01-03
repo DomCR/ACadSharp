@@ -3,16 +3,29 @@ using ACadSharp.IO.Templates;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Represents a <see cref="AttributeDefinition"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EntityAttributeDefinition"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.AttributeDefinition"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EntityAttributeDefinition)]
+	[DxfSubClass(DxfSubclassMarker.AttributeDefinition)]
 	public class AttributeDefinition : AttributeBase
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.ATTDEF;
+
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityAttributeDefinition;
 
 		/// <summary>
 		/// Prompt text for this attribute.
 		/// </summary>
-		[DxfCodeValue(DxfCode.AttributePrompt)]
+		[DxfCodeValue(3)]
 		public string Prompt { get; internal set; }
+
 		//2		Tag string (cannot contain spaces)
 
 		//70	Attribute flags:
@@ -248,7 +261,5 @@ namespace ACadSharp.Entities
 		//Transparency of background fill color(not implemented)
 
 		public AttributeDefinition() : base() { }
-
-		internal AttributeDefinition(DxfEntityTemplate template) : base(template) { }
 	}
 }

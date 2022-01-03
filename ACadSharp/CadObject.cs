@@ -9,20 +9,20 @@ namespace ACadSharp
 	public abstract class CadObject
 	{
 		/// <summary>
-		/// Get the object type.
+		/// Get the object type
 		/// </summary>
 		public abstract ObjectType ObjectType { get; }
 
 		/// <summary>
-		/// The AutoCAD class name of an object.
+		/// The AutoCAD class name of an object
 		/// </summary>
 		public virtual string ObjectName { get; } = DxfFileToken.Undefined;
 
 		/// <summary>
-		/// The handle of the entity.
+		/// The handle of the entity
 		/// </summary>
 		/// <remarks>
-		/// If the value is 0 the object doesn't belong to any document.
+		/// If the value is 0 the object is not assigned to a document or a parent
 		/// </remarks>
 		[DxfCodeValue(5)]
 		public ulong Handle { get; internal set; }
@@ -37,7 +37,7 @@ namespace ACadSharp
 		public ulong? OwnerHandle { get; internal set; }
 
 		/// <summary>
-		/// Objects that are attached to this entity.
+		/// Objects that are attached to this entity
 		/// </summary>
 		public Dictionary<ulong, CadObject> Reactors { get; set; } = new Dictionary<ulong, CadObject>();
 
@@ -48,6 +48,9 @@ namespace ACadSharp
 		/// </summary>
 		public virtual CadDocument Document { get; internal set; }
 
+		/// <summary>
+		/// Default constructor
+		/// </summary>
 		public CadObject() { }
 
 		internal void AssignDxfValue(DxfCode dxfCode, object value)
@@ -66,36 +69,13 @@ namespace ACadSharp
 			}
 		}
 
-		/// <summary>
-		/// Get a map of the object using dxf codes in each field.
-		/// </summary>
-		/// <returns></returns>
-		//TODO: Create the mab based on each type in the hirearchy
-		internal Dictionary<DxfCode, object> GetCadObjectMap()
-		{
-			Dictionary<DxfCode, object> map = new Dictionary<DxfCode, object>();
-
-			foreach (PropertyInfo p in this.GetType().GetProperties())
-			{
-				DxfCodeValueAttribute att = p.GetCustomAttribute<DxfCodeValueAttribute>();
-				if (att == null)
-					continue;
-
-				//Set the codes to the map
-				foreach (DxfCode code in att.ValueCodes)
-				{
-					map.Add(code, null);
-				}
-			}
-
-			return map;
-		}
-
 		internal static Dictionary<int, object> GetCadObjectMap(Type type)
 		{
 			Dictionary<int, object> map = new Dictionary<int, object>();
 
-			foreach (PropertyInfo p in type.GetProperties())
+			foreach (PropertyInfo p in type.GetProperties(BindingFlags.Public
+														| BindingFlags.Instance
+														| BindingFlags.DeclaredOnly))
 			{
 				DxfCodeValueAttribute att = p.GetCustomAttribute<DxfCodeValueAttribute>();
 				if (att == null)

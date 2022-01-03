@@ -106,6 +106,13 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfCode.ZCoordinate)]
 		public double Elevation { get; set; }
+
+		/// <summary>
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
 		/// <summary>
 		/// Pattern of this hatch.
 		/// </summary>
@@ -196,8 +203,6 @@ namespace ACadSharp.Entities
 		public List<HatchBoundaryPath> Paths { get; set; } = new List<HatchBoundaryPath>();
 
 		public Hatch() : base() { }
-
-		internal Hatch(DxfEntityTemplate template) : base(template) { }
 	}
 
 	public class BoundaryPath

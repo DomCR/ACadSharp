@@ -8,7 +8,16 @@ using System.Text;
 
 namespace ACadSharp.Blocks
 {
-	public class Block : TableEntry
+	/// <summary>
+	/// Represents a <see cref="Block"/> entity
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.Block"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.BlockBegin"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.Block)]
+	[DxfSubClass(DxfSubclassMarker.BlockBegin)]
+	public class Block : TableEntry	//TODO: Change block to be an entity
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.BLOCK;

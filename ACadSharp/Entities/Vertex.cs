@@ -20,20 +20,21 @@ namespace ACadSharp.Entities
 		public double EndWidth { get; set; } = 0.0;
 		[DxfCodeValue(DxfCode.Bulge)]
 		public double Bulge { get; set; } = 0.0;
-		[DxfCodeValue(DxfCode.Int16)]
+
+		[DxfCodeValue(70)]
 		public VertexFlags Flags { get; set; }
-		[DxfCodeValue(DxfCode.Angle)]
+
+		[DxfCodeValue(50)]
 		public double CurveTangent { get; set; }
 
 		//71 Polyface mesh vertex index(optional; present only if nonzero)
 		//72 Polyface mesh vertex index(optional; present only if nonzero)
 		//73 Polyface mesh vertex index(optional; present only if nonzero)
 		//74 Polyface mesh vertex index(optional; present only if nonzero)
-		[DxfCodeValue(DxfCode.Identifier)]
+
+		[DxfCodeValue(91)]
 		public int Id { get; set; }
 
 		public Vertex() : base() { }
-
-		internal Vertex(DxfEntityTemplate template) : base(template) { }
 	}
 }

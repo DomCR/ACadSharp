@@ -25,6 +25,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Layer state flags.
 		/// </summary>
+		[DxfCodeValue(70)]
 		public new LayerFlags Flags { get; set; }
 
 		/// <summary>

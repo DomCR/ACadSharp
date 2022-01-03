@@ -24,8 +24,7 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Layout flags.
 		/// </summary>
-		[DxfCodeValue(70)]
-		public LayoutFlags Flags { get; set; }
+		public new LayoutFlags Flags { get; set; }
 
 		/// <summary>
 		/// Tab order.This number is an ordinal indicating this layout's ordering in the tab control that is attached to the drawing window. Note that the “Model” tab always appears as the first tab regardless of its tab order

@@ -49,8 +49,6 @@ namespace ACadSharp.IO.DXF
 				template.OwnedObjectsHandlers.Add(entityTemplate.CadObject.Handle);
 
 				_builder.Templates.Add(entityTemplate.CadObject.Handle, entityTemplate);
-
-				this._reader.ReadNext();
 			}
 
 			this._reader.ReadNext();

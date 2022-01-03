@@ -5,51 +5,74 @@ using System;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Represents a <see cref="Ellipse"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EntityEllipse"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Ellipse"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EntityEllipse)]
+	[DxfSubClass(DxfSubclassMarker.Ellipse)]
 	public class Ellipse : Entity
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.ELLIPSE;
+
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityEllipse;
 
-		//100	Subclass marker (AcDbEllipse)
 		/// <summary>
 		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
 		/// </summary>
-		[DxfCodeValue(DxfCode.Thickness)]
+		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;
+
+		/// <summary>
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
 		/// <summary>
 		/// Specifies the center of an arc, circle, ellipse, view, or viewport.
 		/// </summary>
-		[DxfCodeValue(DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
+		[DxfCodeValue(10, 20, 30)]
 		public XYZ Center { get; set; } = XYZ.Zero;
+		
 		/// <summary>
 		/// A 3D coordinate representing the endpoint of the object.
 		/// </summary>
-		[DxfCodeValue(DxfCode.XCoordinate1, DxfCode.YCoordinate1, DxfCode.ZCoordinate1)]
+		[DxfCodeValue(11, 21, 31)]
 		public XYZ EndPoint { get; set; } = XYZ.Zero;
+		
 		/// <summary>
 		/// Specifies the major to minor axis ratio of an ellipse.
 		/// </summary>
-		[DxfCodeValue(DxfCode.Real)]
+		[DxfCodeValue(40)]
 		public double RadiusRatio { get; set; } = 0.0;
+		
 		/// <summary>
 		/// Specifies the start parameter for an ellipse.
 		/// </summary>
 		/// <value>
 		/// The valid range is 0 to 2 * PI.
 		/// </value>
-		[DxfCodeValue(DxfCode.StartParameter)]
+		[DxfCodeValue(41)]
 		public double StartParameter { get; set; } = 0.0;
+		
 		/// <summary>
 		/// Specifies the end parameter for an ellipse.
 		/// </summary>
 		/// <value>
 		/// The valid range is 0 to 2 * PI.
 		/// </value>
-		[DxfCodeValue(DxfCode.EndParameter)]
+		[DxfCodeValue(42)]
 		public double EndParameter { get; set; } = Math.PI * 2;
 
+		/// <summary>
+		/// Default constructor
+		/// </summary>
 		public Ellipse() : base() { }
-
-		internal Ellipse(DxfEntityTemplate template) : base(template) { }
 	}
 }

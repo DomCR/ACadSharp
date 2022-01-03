@@ -15,7 +15,8 @@ namespace ACadSharp.IO.DXF
 		public object LastValue { get; private set; }
 		public int Line { get; private set; }
 
-		public string LastValueAsString { get { return LastValue.ToString(); } }
+		/// <inheritdoc/>
+		public string LastValueAsString { get; set; }
 		public bool LastValueAsBool { get { return lineAsBool(LastValueAsString); } }
 		public short LastValueAsShort { get { return lineAsShort(LastValueAsString); } }
 		public int LastValueAsInt { get { return lineAsInt(LastValueAsString); } }
@@ -50,7 +51,8 @@ namespace ACadSharp.IO.DXF
 		public Tuple<DxfCode, object> ReadNext()
 		{
 			LastDxfCode = readCode();
-			LastValue = readValue((int)LastDxfCode);
+			LastValueAsString = ReadLine();
+			LastValue = transformValue((int)LastDxfCode, LastValueAsString);
 
 			//Check for the end of the section
 			if (LastValueAsString == DxfFileToken.EndSection)
@@ -65,7 +67,7 @@ namespace ACadSharp.IO.DXF
 			Line++;
 			return base.ReadLine();
 		}
-		
+
 		private void start()
 		{
 			LastDxfCode = DxfCode.Invalid;
@@ -164,10 +166,8 @@ namespace ACadSharp.IO.DXF
 
 			return DxfCode.Invalid;
 		}
-		private object readValue(int code)
+		private object transformValue(int code, string strVal)
 		{
-			string strVal = ReadLine();
-
 			if (code >= 0 && code <= 9)
 				return strVal;
 			if (code >= 10 && code <= 39)

@@ -16,8 +16,8 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// MLStyle flags
 		/// </summary>
-		[DxfCodeValue(70)]
-		public MLineStyleFlags Flags { get; set; }
+		//[DxfCodeValue(70)]
+		public new MLineStyleFlags Flags { get; set; }
 
 		/// <summary>
 		/// Style description

@@ -21,7 +21,7 @@ namespace ACadSharp.Entities
 	}
 
 	/// <summary>
-	/// Common base class for <see cref="Attribute" /> and <see cref="AttributeDefinition" />.
+	/// Common base class for <see cref="AttributeEntity" /> and <see cref="AttributeDefinition" />.
 	/// </summary>
 	public abstract class AttributeBase : TextEntity
 	{
@@ -35,9 +35,10 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <value>
 		/// Cannot contain spaces.
-		/// </value>
+		/// </value> 
 		[DxfCodeValue(DxfCode.AttributeTag)]
 		public string Tag { get; set; }
+
 		/// <summary>
 		/// Attribute flags.
 		/// </summary>
@@ -55,7 +56,5 @@ namespace ACadSharp.Entities
 		public bool IsReallyLocked { get; set; }
 
 		public AttributeBase() : base() { }
-
-		internal AttributeBase(DxfEntityTemplate template) : base(template) { }
 	}
 }

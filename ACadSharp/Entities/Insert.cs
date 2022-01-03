@@ -15,7 +15,7 @@ namespace ACadSharp.Entities
 		//		if the value of attributes-follow flag is 1, a series of 
 		//		attribute entities is expected to follow the insert, terminated by a seqend entity
 		[DxfCodeValue(66)]
-		public List<Attribute> Attributes { get; set; } = new List<Attribute>();
+		public List<AttributeEntity> Attributes { get; set; } = new List<AttributeEntity>();
 
 		/// <summary>
 		/// Specifies the name of the object.
@@ -31,13 +31,13 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// A 3D WCS coordinate representing the insertion or origin point.
 		/// </summary>
-		[DxfCodeValue(DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
+		[DxfCodeValue(10, 20, 30)]
 		public XYZ InsertPoint { get; set; } = XYZ.Zero;
 
 		/// <summary>
 		/// Scale factor of this block.
 		/// </summary>
-		[DxfCodeValue(DxfCode.XScaleFactor, DxfCode.YScaleFactor, DxfCode.ZScaleFactor)]
+		[DxfCodeValue(41, 42, 43)]
 		public XYZ Scale { get; set; } = new XYZ(1, 1, 1);
 
 		/// <summary>
@@ -46,20 +46,27 @@ namespace ACadSharp.Entities
 		/// <value>
 		/// The rotation angle in radians.
 		/// </value>
-		[DxfCodeValue(DxfCode.Angle)]
+		[DxfCodeValue(50)]
 		public double Rotation { get; set; } = 0.0;
 
-		[DxfCodeValue(DxfCode.Int16)]
+		/// <summary>
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
+		[DxfCodeValue(70)]
 		public ushort ColumnCount { get; set; } = 1;
-		[DxfCodeValue(DxfCode.RowCount)]
+
+		[DxfCodeValue(71)]
 		public ushort RowCount { get; set; } = 1;
-		[DxfCodeValue(DxfCode.ShapeXOffset)]
+
+		[DxfCodeValue(44)]
 		public double ColumnSpacing { get; set; } = 0;
-		[DxfCodeValue(DxfCode.ShapeYOffset)]
+
+		[DxfCodeValue(45)]
 		public double RowSpacing { get; set; } = 0;
 
 		public Insert() : base() { }
-
-		internal Insert(DxfEntityTemplate template) : base(template) { }
 	}
 }
