@@ -1,6 +1,11 @@
-﻿using ACadSharp.IO.Templates;
+﻿using ACadSharp.Blocks;
+using ACadSharp.IO.DWG;
+using ACadSharp.IO.Templates;
+using ACadSharp.Tables;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace ACadSharp.IO
 {
@@ -8,6 +13,10 @@ namespace ACadSharp.IO
 	{
 		// Stores all the templates to build the document, some of the elements can be null due a missing implementation
 		public Dictionary<ulong, DwgTemplate> Templates { get; } = new Dictionary<ulong, DwgTemplate>();
+
+		public Dictionary<ulong, BlockRecord> BlockRecords { get; } = new Dictionary<ulong, BlockRecord>();
+
+		public Dictionary<string, LineType> LineTypes { get; set; } = new Dictionary<string, LineType>(StringComparer.OrdinalIgnoreCase);
 
 		public CadDocument DocumentToBuild { get; }
 

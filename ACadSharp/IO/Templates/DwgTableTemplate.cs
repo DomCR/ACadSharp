@@ -19,15 +19,24 @@ namespace ACadSharp.IO.Templates
 
 			foreach (ulong handle in this.EntryHandles)
 			{
+				if (!builder.TryGetCadObject<T>(handle, out T entry))
+					continue;
+
 				try
 				{
-					T entry = builder.GetCadObject<T>(handle);
-					if (entry != null)
-						this.CadObject.Add(builder.GetCadObject<T>(handle));
+					this.CadObject.Add(entry);
+				}
+				catch (ArgumentException ex)
+				{
+					builder.NotificationHandler?.Invoke(
+						entry,
+						new NotificationEventArgs(ex.Message));
 				}
 				catch (Exception)
 				{
-					//TODO: report the exceptions in the NotificationEventHandler
+					builder.NotificationHandler?.Invoke(
+						entry,
+						new NotificationEventArgs($"Entry not found [handle : {handle}] [type : {typeof(T)}]"));
 				}
 			}
 		}

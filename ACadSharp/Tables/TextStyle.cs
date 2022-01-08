@@ -15,7 +15,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Default text style.
 		/// </summary>
-		public static TextStyle Default = new TextStyle("STANDARD");
+		public static TextStyle Default { get { return new TextStyle("STANDARD"); } }
 
 		//100	Subclass marker(AcDbTextStyleTableRecord)
 
@@ -74,6 +74,8 @@ namespace ACadSharp.Tables
 		/// </summary>
 		[DxfCodeValue(1071)]
 		public FontFlags TrueType { get; set; }
+
+		internal TextStyle() : base() { }
 
 		public TextStyle(string name) : base(name) { }
 	}

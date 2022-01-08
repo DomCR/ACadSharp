@@ -29,7 +29,7 @@ namespace ACadSharp.Tables.Collections
 			}
 		}
 
-		private readonly Dictionary<string, T> _entries = new Dictionary<string, T>();
+		protected readonly Dictionary<string, T> _entries = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
 
 		public Table(CadDocument document)
 		{
@@ -38,17 +38,12 @@ namespace ACadSharp.Tables.Collections
 			this.Document.RegisterCollection(this);
 		}
 
-		public void Add(T item)
+		public virtual void Add(T item)
 		{
 			if (string.IsNullOrEmpty(item.Name))
 				throw new ArgumentException($"Table entry must have a name.", nameof(item));
 
-			OnBeforeAdd?.Invoke(this, new CollectionChangedEventArgs(item));
-
-			this._entries.Add(item.Name, item);
-			item.Owner = this;
-
-			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
+			this.add(item.Name, item);
 		}
 
 		public void AddRange(IEnumerable<T> items)
@@ -82,6 +77,16 @@ namespace ACadSharp.Tables.Collections
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return this._entries.Values.GetEnumerator();
+		}
+
+		protected void add(string key, T item)
+		{
+			OnBeforeAdd?.Invoke(this, new CollectionChangedEventArgs(item));
+
+			this._entries.Add(key, item);
+			item.Owner = this;
+
+			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
 		}
 	}
 }

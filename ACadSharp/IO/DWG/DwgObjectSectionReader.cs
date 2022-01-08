@@ -277,7 +277,7 @@ namespace ACadSharp.IO.DWG
 			//11 : Not used.
 
 			if (template.EntityMode == 0)
-				entity.OwnerHandle = this._handlesReader.HandleReference(entity.Handle);
+				template.OwnerHandle = this._handlesReader.HandleReference(entity.Handle);
 
 			//Numreactors BL number of persistent reactors attached to this object
 			this.readReactors(template);
@@ -416,6 +416,7 @@ namespace ACadSharp.IO.DWG
 
 			//[Owner ref handle (soft pointer)]
 			template.OwnerHandle = this.handleReference(template.CadObject.Handle);
+
 			//Read the cad object reactors
 			this.readReactors(template);
 		}
@@ -664,6 +665,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readRay();
 					break;
 				case ObjectType.XLINE:
+					template = this.readXLine();
 					break;
 				case ObjectType.DICTIONARY:
 					template = this.readDictionary();
@@ -1083,7 +1085,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readBlock()
 		{
-			BlockBegin block = new BlockBegin();
+			Block block = new Block(new BlockRecord());
 			DwgEntityTemplate template = new DwgEntityTemplate(block);
 
 			this.readCommonEntityData(template);
@@ -1956,7 +1958,117 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readSpline()
 		{
-			return null;
+			Spline spline = new Spline();
+			DwgEntityTemplate template = new DwgEntityTemplate(spline);
+
+			this.readCommonEntityData(template);
+
+			//Scenario BL a flag which is 2 for fitpts only, 1 for ctrlpts/knots.
+			//In 2013 the meaning is somehwat more sophisticated, see knot parameter below.
+			int scenario = this._objectReader.ReadBitLong();
+
+			//R2013+:
+			if (this.R2013Plus)
+			{
+				//Spline flags 1 BL Spline flags 1:
+				//method fit points = 1,
+				//CV frame show = 2,
+				//Is closed = 4. 
+				//At this point the regular spline flags closed bit is made equal to this bit.
+				//Value is overwritten below in scenario 2 though, 
+				//Use knot parameter = 8
+				spline.Flags1 = (SplineFlags1)this._mergedReaders.ReadBitLong();
+
+				//Knot parameter BL Knot parameter:
+				//Chord = 0,
+				//Square root = 1,
+				//Uniform = 2,
+				//Custom = 15
+				//The scenario flag becomes 1 if the knot parameter is Custom or has no fit data, otherwise 2.
+				spline.KnotParameterization = (KnotParameterization)this._mergedReaders.ReadBitLong();
+
+				scenario = ((spline.KnotParameterization == KnotParameterization.Custom || (spline.Flags1 & SplineFlags1.UseKnotParameter) == 0) ? 1 : 2);
+			}
+			else if (scenario == 2)
+			{
+				spline.Flags1 |= SplineFlags1.MethodFitPoints;
+			}
+			else
+			{
+				//If the spline does not have fit data, then the knot parameter should become Custom.
+				spline.KnotParameterization = KnotParameterization.Custom;
+			}
+
+			//Common:
+			//Degree BL degree of this spline
+			spline.Degree = this._objectReader.ReadBitLong();
+
+			int numfitpts = 0;
+			int numknots = 0;
+			int numctrlpts = 0;
+			bool flag = false;
+			switch (scenario)
+			{
+				case 2:
+					//Fit Tol BD 44
+					spline.FitTolerance = this._objectReader.ReadBitDouble();
+					//Beg tan vec 3BD 12 Beginning tangent direction vector (normalized).
+					spline.StartTangent = this._objectReader.Read3BitDouble();
+					//End tan vec 3BD 13 Ending tangent direction vector (normalized).
+					spline.EndTangent = this._objectReader.Read3BitDouble();
+					//num fit pts BL 74 Number of fit points.
+					//Stored as a LONG, although it is defined in DXF as a short.
+					//You can see this if you create a spline with >=256 fit points
+					numfitpts = this._objectReader.ReadBitLong();
+					break;
+				case 1:
+					//Rational B flag bit 2
+					if (this._objectReader.ReadBit())
+						spline.Flags |= SplineFlags.Rational;
+					//Closed B flag bit 0
+					if (this._objectReader.ReadBit())
+						spline.Flags |= SplineFlags.Closed;
+					//Periodic B flag bit 1
+					if (this._objectReader.ReadBit())
+						spline.Flags |= SplineFlags.Periodic;
+					//Knot tol BD 42
+					spline.KnotTolerance = this._objectReader.ReadBitDouble();
+					//Ctrl tol BD 43
+					spline.ControlPointTolerance = this._objectReader.ReadBitDouble();
+
+					//Numknots BL 72 This is stored as a LONG
+					//although it is defined in DXF as a short.
+					//You can see this if you create a spline with >=256 knots.
+					numknots = this._objectReader.ReadBitLong();
+					//Numctrlpts BL 73 Number of 10's (and 41's, if weighted) that follow.
+					//Same, stored as LONG, defined in DXF as a short.
+					numctrlpts = this._objectReader.ReadBitLong();
+					//Weight B Seems to be an echo of the 4 bit on the flag for "weights present".
+					flag = this._objectReader.ReadBit();
+					break;
+			}
+			for (int i = 0; i < numknots; i++)
+			{
+				//Knot BD knot value
+				spline.Knots.Add(this._objectReader.ReadBitDouble());
+			}
+			for (int j = 0; j < numctrlpts; j++)
+			{
+				//Control pt 3BD 10
+				spline.ControlPoints.Add(this._objectReader.Read3BitDouble());
+				if (flag)
+				{
+					//Weight D 41 if present as indicated by 4 bit on flag
+					spline.Weights.Add(this._objectReader.ReadBitDouble());
+				}
+			}
+			for (int k = 0; k < numfitpts; k++)
+			{
+				//Fit pt 3BD
+				spline.FitPoints.Add(this._objectReader.Read3BitDouble());
+			}
+
+			return template;
 		}
 
 		private DwgTemplate readRay()
@@ -1970,6 +2082,21 @@ namespace ACadSharp.IO.DWG
 			ray.StartPoint = this._objectReader.Read3BitDouble();
 			//Vector 3BD 11
 			ray.Direction = this._objectReader.Read3BitDouble();
+
+			return template;
+		}
+
+		private DwgTemplate readXLine()
+		{
+			XLine xline = new XLine();
+			DwgEntityTemplate template = new DwgEntityTemplate(xline);
+
+			this.readCommonEntityData(template);
+
+			//3 RD: a point on the construction line
+			xline.FirstPoint = this._objectReader.Read3BitDouble();
+			//3 RD : another point
+			xline.Direction = this._objectReader.Read3BitDouble();
 
 			return template;
 		}
@@ -2249,14 +2376,20 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readBlockHeader()
 		{
-			Block block = new Block();
-			DwgBlockTemplate template = new DwgBlockTemplate(block);
+			BlockRecord record = new BlockRecord();
+			Block block = record.BlockEntity;
+			DwgBlockRecordTemplate template = new DwgBlockRecordTemplate(record);
+			this._builder.BlockRecordTemplates.Add(template);
 
 			this.readCommonNonEntityData(template);
 
 			//Common:
 			//Entry name TV 2
-			block.Name = this._textReader.ReadVariableText();
+			//Warning: names ended with a number are not readed in this method
+			string name = this._textReader.ReadVariableText();
+			if (name.Equals("*Model_Space", System.StringComparison.CurrentCultureIgnoreCase) ||
+				name.Equals("*Paper_Space", System.StringComparison.CurrentCultureIgnoreCase))
+				record.Name = name;
 
 			this.readXrefDependantBit(template.CadObject);
 
@@ -2313,21 +2446,21 @@ namespace ACadSharp.IO.DWG
 				for (int index = 0; index < n; ++index)
 				{
 					//Binary Preview Data N*RC 310
-					data .Add( this._objectReader.ReadByte());
+					data.Add(this._objectReader.ReadByte());
 				}
 
-				block.Record.Preview = data.ToArray();
+				record.Preview = data.ToArray();
 			}
 
 			//R2007+:
 			if (this.R2007Plus)
 			{
 				//Insert units BS 70
-				block.Record.Units = (UnitsType)this._objectReader.ReadBitShort();
+				record.Units = (UnitsType)this._objectReader.ReadBitShort();
 				//Explodable B 280
-				block.Record.IsExplodable = this._objectReader.ReadBit();
+				record.IsExplodable = this._objectReader.ReadBit();
 				//Block scaling RC 281
-				block.Record.CanScale = this._objectReader.ReadByte() > 0;
+				record.CanScale = this._objectReader.ReadByte() > 0;
 			}
 
 			//NULL(hard pointer)
@@ -2503,7 +2636,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readTextStyle()
 		{
-			TextStyle style = TextStyle.Default;
+			TextStyle style = new TextStyle();
 			DwgTableEntryTemplate<TextStyle> template = new DwgTableEntryTemplate<TextStyle>(style);
 
 			this.readCommonNonEntityData(template);
@@ -2511,6 +2644,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Entry name TV 2
 			style.Name = this._textReader.ReadVariableText();
+
 			this.readXrefDependantBit(template.CadObject);
 
 			//shape file B 1 if a shape file rather than a font (1 bit)
@@ -2640,6 +2774,8 @@ namespace ACadSharp.IO.DWG
 				//TODO: Implement the dashes handles
 				this.handleReference();
 			}
+
+			_builder.LineTypes.Add(ltype.Name, ltype);
 
 			return template;
 		}
@@ -3731,9 +3867,21 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readXRecord()
 		{
+			XRecrod xRecord = new XRecrod();
+			CadXRecordBuilder template = new CadXRecordBuilder(xRecord);
 
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Numdatabytes BL number of databytes
+			long offset = this._objectReader.ReadBitLong();
 
 			return null;
+		}
+
+		private bool readRecord(CadXRecordBuilder template)
+		{
+			throw new System.NotImplementedException();
 		}
 
 		private DwgTemplate readLayout()

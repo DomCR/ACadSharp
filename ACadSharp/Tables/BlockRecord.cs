@@ -4,20 +4,39 @@ using ACadSharp.IO.Templates;
 using System;
 using ACadSharp.Objects;
 using ACadSharp.Blocks;
+using ACadSharp.Entities;
 
 namespace ACadSharp.Tables
 {
+	/// <summary>
+	/// Represents a <see cref="BlockRecord"/> entity
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.TableBlockRecord"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.BlockRecord"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.TableBlockRecord)]
+	[DxfSubClass(DxfSubclassMarker.BlockRecord)]
 	public class BlockRecord : TableEntry
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.BLOCK;
 
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableBlockRecord;
 
-		public override string Name
+		/// <inheritdoc/>
+		public override CadDocument Document
 		{
-			get => ((Block)Owner).Name;
-			set => ((Block)Owner).Name = value;
+			get { return _document; }
+			internal set
+			{
+				_document = value;
+				_document.RegisterCollection(this.Entities);
+			}
 		}
+
+		private CadDocument _document;
 
 		/// <summary>
 		/// Block insertion units
@@ -49,9 +68,22 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(340)]
 		public Layout Layout { get; set; }
 
-		public BlockRecord(Block owner) : base()
+		public CadObjectCollection<Entity> Entities { get; set; }
+
+		public Block BlockEntity { get; set; }
+
+		public BlockEnd BlockEnd { get; set; }
+
+		public BlockRecord() : base()
 		{
-			this.Owner = owner;
+			this.BlockEntity = new Block(this);
+			// this.BlockEnd = new BlockEnd(this);
+			this.Entities = new CadObjectCollection<Entity>(this);
+		}
+
+		public BlockRecord(string name) : base(name)
+		{
+			this.Entities = new CadObjectCollection<Entity>(this);
 		}
 	}
 }

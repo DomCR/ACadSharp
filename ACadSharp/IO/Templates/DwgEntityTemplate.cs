@@ -31,15 +31,15 @@ namespace ACadSharp.IO.Templates
 				{
 					case 0:
 						//Get the linetype by layer
-						this.CadObject.LineType = builder.DocumentToBuild.LineTypes["ByLayer"];
+						this.CadObject.LineType = builder.LineTypes["ByLayer"];
 						break;
 					case 1:
 						//Get the linetype by block
-						this.CadObject.LineType = builder.DocumentToBuild.LineTypes["ByBlock"];
+						this.CadObject.LineType = builder.LineTypes["ByBlock"];
 						break;
 					case 2:
 						//Get the linetype by continuous
-						this.CadObject.LineType = builder.DocumentToBuild.LineTypes["Continuous"];
+						this.CadObject.LineType = builder.LineTypes["Continuous"];
 						break;
 					case 3:
 						if (this.LineTypeHandle.HasValue)
@@ -56,7 +56,7 @@ namespace ACadSharp.IO.Templates
 			//TODO: Dxf sets the linetype by name
 			else
 			{
-				this.CadObject.LineType = builder.DocumentToBuild.LineTypes["ByLayer"];
+				this.CadObject.LineType = builder.LineTypes["ByLayer"];
 			}
 
 			if (this.ColorHandle.HasValue)

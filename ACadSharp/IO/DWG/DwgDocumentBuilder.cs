@@ -11,6 +11,8 @@ namespace ACadSharp.IO.DWG
 	{
 		public DwgHeaderHandlesCollection HeaderHandles { get; set; }
 
+		public List<DwgBlockRecordTemplate> BlockRecordTemplates { get; set; } = new List<DwgBlockRecordTemplate>();
+
 		public DwgDocumentBuilder(CadDocument document, NotificationEventHandler notification = null)
 			: base(document, notification)
 		{
@@ -18,20 +20,11 @@ namespace ACadSharp.IO.DWG
 
 		public override void BuildDocument()
 		{
-			if (this.HeaderHandles.BYLAYER.HasValue && this.TryGetCadObject(this.HeaderHandles.BYLAYER.Value, out LineType lineType))
-				this.DocumentToBuild.LineTypes.Add(lineType);
-			else
-				throw new NotImplementedException();
-
-			if (this.HeaderHandles.BYBLOCK.HasValue && this.TryGetCadObject(this.HeaderHandles.BYBLOCK.Value, out LineType byBlock))
-				this.DocumentToBuild.LineTypes.Add(byBlock);
-			else
-				throw new NotImplementedException();
-
-			if (this.HeaderHandles.CONTINUOUS.HasValue && this.TryGetCadObject(this.HeaderHandles.CONTINUOUS.Value, out LineType continuous))
-				this.DocumentToBuild.LineTypes.Add(continuous);
-			else
-				throw new NotImplementedException();
+			//Set the names for the block records before add them to the table
+			foreach (var item in this.BlockRecordTemplates)
+			{
+				item.SetBlockToRecord(this);
+			}
 
 			base.BuildDocument();
 		}

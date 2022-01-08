@@ -57,8 +57,6 @@ The dwg reader is not yet fully implemented, the NotificationHandler will send a
 - FACE3D
 - LWPOLYLINE
 - POLYLINE_PFACE
-- SPLINE
-- XLINE
 - LEADER
 - HATCH
 - SHAPE

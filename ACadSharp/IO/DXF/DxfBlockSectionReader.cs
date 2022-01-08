@@ -36,14 +36,14 @@ namespace ACadSharp.IO.DXF
 			this._reader.ReadNext();
 
 			//read the block begin entity
-			DwgBlockTemplate template = this.readBlockBegin();
+			DwgBlockRecordTemplate template = this.readBlockBegin();
 
 			//Loop until the block end
 			while (this._reader.LastValueAsString != DxfFileToken.EndBlock)
 			{
 				DwgTemplate entityTemplate = this.readEntity();
 
-				Debug.Assert(entityTemplate.OwnerHandle == template.CadObject.Record.Handle);
+				Debug.Assert(entityTemplate.OwnerHandle == template.CadObject.Handle);
 
 				//Add the handle to the template 
 				template.OwnedObjectsHandlers.Add(entityTemplate.CadObject.Handle);
@@ -62,9 +62,9 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private DwgBlockTemplate readBlockBegin()
+		private DwgBlockRecordTemplate readBlockBegin()
 		{
-			DwgBlockTemplate template = null;
+			DwgBlockRecordTemplate template = null;
 
 			ulong? handle = 0;
 			ulong? ownerHandle = 0;
@@ -147,15 +147,15 @@ namespace ACadSharp.IO.DXF
 				this._reader.ReadNext();
 			}
 
-			template = this._builder.BlockRecords[name];
+			//template = this._builder.BlockRecords[name];
 
-			template.CadObject.Handle = handle.Value;
-			template.OwnerHandle = ownerHandle.Value;
-			template.CadObject.Name = name;
-			template.CadObject.Comments = description;
-			template.CadObject.Flags = flags;
-			template.CadObject.BasePoint = basePoint;
-			template.LayerName = layerName;
+			//template.CadObject.Handle = handle.Value;
+			//template.OwnerHandle = ownerHandle.Value;
+			//template.CadObject.Name = name;
+			//template.CadObject.Comments = description;
+			//template.CadObject.Flags = flags;
+			//template.CadObject.BasePoint = basePoint;
+			//template.LayerName = layerName;
 
 			return template;
 		}

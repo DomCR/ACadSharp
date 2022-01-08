@@ -17,7 +17,7 @@ namespace ACadSharp.Blocks
 	/// </remarks>
 	[DxfName(DxfFileToken.Block)]
 	[DxfSubClass(DxfSubclassMarker.BlockBegin)]
-	public class Block : TableEntry	//TODO: Change block to be an entity
+	public class Block : Entity
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.BLOCK;
@@ -25,29 +25,21 @@ namespace ACadSharp.Blocks
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.Block;
 
-		/// <inheritdoc/>
-		public override CadDocument Document
-		{
-			get { return _document; }
-			internal set
-			{
-				_document = value;
-				_document.RegisterCollection(this.Entities);
-			}
-		}
-
-		private CadDocument _document;
-
 		/// <summary>
-		/// Specifies the layer for an object.
+		/// Specifies the name of the object.
 		/// </summary>
-		[DxfCodeValue(8)]
-		public Layer Layer { get; set; } = Layer.Default;
+		[DxfCodeValue(2)]
+		public string Name
+		{
+			get { return (this.Owner as BlockRecord).Name; }
+			set { (this.Owner as BlockRecord).Name = value; }
+		}
 
 		/// <summary>
 		/// Block active flags.
 		/// </summary>
-		public new BlockTypeFlags Flags { get; set; }
+		[DxfCodeValue(70)]
+		public BlockTypeFlags Flags { get; set; }
 
 		/// <summary>
 		/// Specifies the insert point of the block.
@@ -67,21 +59,9 @@ namespace ACadSharp.Blocks
 		[DxfCodeValue(4)]
 		public string Comments { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public BlockRecord Record { get; }
-
-		public CadObjectCollection<Entity> Entities { get; set; }
-
-		public BlockBegin BlockBegin { get; internal set; }
-
-		public BlockEnd BlockEnd { get; internal set; }
-
-		public Block()
+		public Block(BlockRecord record) : base()
 		{
-			this.Record = new BlockRecord(this);
-			this.Entities = new CadObjectCollection<Entity>(this);
+			this.Owner = record;
 		}
 	}
 }

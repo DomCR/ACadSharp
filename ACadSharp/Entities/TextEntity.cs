@@ -43,7 +43,7 @@ namespace ACadSharp.Entities
 		/// <value>
 		/// The maximum length is 256 characters.
 		/// </value>
-		[DxfCodeValue(DxfCode.Text)]
+		[DxfCodeValue(1)]
 		public string Value { get; set; } = string.Empty;
 
 		/// <summary>
@@ -52,12 +52,12 @@ namespace ACadSharp.Entities
 		/// <value>
 		/// The rotation angle in radians.
 		/// </value>
-		[DxfCodeValue(DxfCode.Angle)]
+		[DxfCodeValue(50)]
 		public double Rotation { get; set; } = 0.0;
 
 		//41	Relative X scale factor—width(optional; default = 1)	//Needed?? adjust value
 		//		This value is also adjusted when fit-type text is used
-		[DxfCodeValue(DxfCode.XScaleFactor)]
+		[DxfCodeValue(41)]
 		public double WidthFactor { get; set; } = 1.0;
 
 		/// <summary>
@@ -66,25 +66,25 @@ namespace ACadSharp.Entities
 		/// <value>
 		/// The angle in radians within the range of -85 to +85 degrees. A positive angle denotes a lean to the right; a negative value will have 2*PI added to it to convert it to its positive equivalent.
 		/// </value>
-		[DxfCodeValue(DxfCode.ObliqueAngle)]
+		[DxfCodeValue(51)]
 		public double ObliqueAngle { get; set; } = 0.0;
 
 		/// <summary>
 		/// Style of this text entity.
 		/// </summary>
-		[DxfCodeValue(DxfCode.TextStyleName)]
+		[DxfCodeValue(7)]
 		public TextStyle Style { get; set; } = TextStyle.Default;
 
 		/// <summary>
 		/// Mirror flags.
 		/// </summary>
-		[DxfCodeValue(DxfCode.TxtMirrorFlags)]
+		[DxfCodeValue(71)]
 		public TextMirrorFlag Mirror { get; set; } = TextMirrorFlag.None;
 		
 		/// <summary>
 		/// Horizontal text justification type.
 		/// </summary>
-		[DxfCodeValue(DxfCode.HorizontalTextAlignment)]
+		[DxfCodeValue(72)]
 		public TextHorizontalAlignment HorizontalAlignment { get; set; } = TextHorizontalAlignment.Left;
 		
 		/// <summary>

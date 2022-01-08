@@ -210,13 +210,13 @@ namespace ACadSharp.IO.DXF
 						template = this.readAppid();
 						break;
 					case DxfFileToken.TableBlockRecord:
-						Block block = new Block();
-						template = new DwgBlockTemplate(block);
+						BlockRecord record = new BlockRecord();
+						template = new DwgBlockRecordTemplate(record);
 						this.readRaw(template, DxfSubclassMarker.BlockRecord, this.readBlockRecord, readUntilStart);
-						this._builder.BlockRecords[(template.CadObject as Block).Name] = template as DwgBlockTemplate;
+						this._builder.BlockRecords[record.Handle] = record;
 
 						//Assign the handle to the record
-						block.Record.Handle = handle;
+						record.Handle = handle;
 						assignHandle = false;
 						break;
 					case DxfFileToken.TableDimstyle:
@@ -234,7 +234,7 @@ namespace ACadSharp.IO.DXF
 						_builder.NotificationHandler?.Invoke(template.CadObject, new NotificationEventArgs($"Line type not fully read"));
 						break;
 					case DxfFileToken.TableStyle:
-						TextStyle style = TextStyle.Default;
+						TextStyle style = new TextStyle();
 						template = new DwgTableEntryTemplate<TextStyle>(style);
 						this.readRaw(template, DxfSubclassMarker.TextStyle, this.readTextStyle, readUntilStart);
 						break;
@@ -301,7 +301,7 @@ namespace ACadSharp.IO.DXF
 
 		private bool readBlockRecord(DwgTemplate template)
 		{
-			DwgBlockTemplate blockTemplate = template as DwgBlockTemplate;
+			DwgBlockRecordTemplate blockTemplate = template as DwgBlockRecordTemplate;
 
 			switch (this._reader.LastCode)
 			{
@@ -316,18 +316,18 @@ namespace ACadSharp.IO.DXF
 				//Block insertion units
 				case 70:
 				case 1070:
-					blockTemplate.CadObject.Record.Units = (Types.Units.UnitsType)this._reader.LastValueAsShort;
+					blockTemplate.CadObject.Units = (Types.Units.UnitsType)this._reader.LastValueAsShort;
 					return true;
 				//Block explodability
 				case 280:
-					blockTemplate.CadObject.Record.IsExplodable = this._reader.LastValueAsBool;
+					blockTemplate.CadObject.IsExplodable = this._reader.LastValueAsBool;
 					return true;
 				//Block scalability
 				case 281:
-					blockTemplate.CadObject.Record.CanScale = this._reader.LastValueAsBool;
+					blockTemplate.CadObject.CanScale = this._reader.LastValueAsBool;
 					return true;
 				case 310:
-					blockTemplate.CadObject.Record.Preview = this._reader.LastValueAsBinaryChunk;
+					blockTemplate.CadObject.Preview = this._reader.LastValueAsBinaryChunk;
 					return true;
 				default:
 					break;

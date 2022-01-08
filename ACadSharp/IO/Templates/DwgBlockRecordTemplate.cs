@@ -1,34 +1,36 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.IO.DWG;
+using ACadSharp.Tables;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgBlockTemplate : DwgTableEntryTemplate<Block>
+	internal class DwgBlockRecordTemplate : DwgTableEntryTemplate<BlockRecord>
 	{
 		public ulong? FirstEntityHandle { get; set; }
+
 		public ulong? LastEntityHandle { get; set; }
+
 		public ulong? BeginBlockHandle { get; set; }
+
 		public ulong? EndBlockHandle { get; set; }
+
 		public ulong? LayoutHandle { get; set; }
+
 		public List<ulong> OwnedObjectsHandlers { get; set; } = new List<ulong>();
+
 		public List<ulong> InsertHandles { get; set; } = new List<ulong>();
 
 		public string LayerName { get; set; }
 
-		public DwgBlockTemplate(Block block) : base(block) { }
+		public DwgBlockRecordTemplate(BlockRecord block) : base(block) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
-			if (builder.TryGetCadObject(this.BeginBlockHandle, out BlockBegin blockBegin))
-			{
-				this.CadObject.BlockBegin = blockBegin;
-			}
-
-			if (builder.TryGetCadObject(this.BeginBlockHandle, out BlockEnd blockEnd))
+			if (builder.TryGetCadObject(this.EndBlockHandle, out BlockEnd blockEnd))
 			{
 				this.CadObject.BlockEnd = blockEnd;
 			}
@@ -54,8 +56,22 @@ namespace ACadSharp.IO.Templates
 					}
 				}
 			}
+		}
 
-			//TODO: DwgBlockTemplate Process EndBlockHandle ?? 
+		public void SetBlockToRecord(CadDocumentBuilder builder)
+		{
+			if (!builder.TryGetCadObject(this.BeginBlockHandle, out Block block))
+				return;
+
+			this.CadObject.Name = block.Name;
+
+			block.Flags = this.CadObject.BlockEntity.Flags;
+			block.BasePoint = this.CadObject.BlockEntity.BasePoint;
+			block.XrefPath = this.CadObject.BlockEntity.XrefPath;
+			block.Comments = this.CadObject.BlockEntity.Comments;
+
+			this.CadObject.BlockEntity = block;
+
 		}
 	}
 }

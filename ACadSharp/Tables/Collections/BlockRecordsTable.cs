@@ -2,7 +2,7 @@
 
 namespace ACadSharp.Tables.Collections
 {
-	public class BlockRecordsTable : Table<Block>
+	public class BlockRecordsTable : Table<BlockRecord>
 	{
 		public override ObjectType ObjectType => ObjectType.BLOCK_CONTROL_OBJ;
 
