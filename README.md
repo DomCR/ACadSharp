@@ -59,7 +59,6 @@ The dwg reader is not yet fully implemented, the NotificationHandler will send a
 - POLYLINE_PFACE
 - LEADER
 - HATCH
-- SHAPE
 - LWPOLYLINE
 - ACAD_PROXY_OBJECT
 - SEQEND

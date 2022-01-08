@@ -1558,6 +1558,9 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readDimAligned()
 		{
+			DimensionLinear dimension = new DimensionLinear();
+			DwgDimensionTemplate template = new DwgDimensionTemplate(dimension);
+
 			return null;
 		}
 
@@ -1785,7 +1788,39 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readShape()
 		{
-			return null;
+			Shape shape = new Shape();
+			CadShapeTemplate template = new CadShapeTemplate(shape);
+
+			this.readCommonEntityData(template);
+
+			//Ins pt 3BD 10
+			shape.InsertionPoint = this._objectReader.Read3BitDouble();
+			//Scale BD 40 Scale factor, default value 1.
+			shape.Size = this._objectReader.ReadBitDouble();
+			//Rotation BD 50 Rotation in radians, default value 0.
+			shape.Rotation = this._objectReader.ReadBitDouble();
+			//Width factor BD 41 Width factor, default value 1.
+			shape.RelativeXScale = this._objectReader.ReadBitDouble();
+			//Oblique BD 51 Oblique angle in radians, default value 0.
+			shape.ObliqueAngle = this._objectReader.ReadBitDouble();
+			//Thickness BD 39
+			shape.Thickness = this._objectReader.ReadBitDouble();
+
+			//Shapeno BS 2
+			//This is the shape index.
+			//In DXF the shape name is stored.
+			//When reading from DXF, the shape is found by iterating over all the text styles
+			//(SHAPEFILE, see paragraph 20.4.56) and when the text style contains a shape file,
+			//iterating over all the shapes until the one with the matching name is found.
+			template.ShapeIndex = (ushort)this._objectReader.ReadBitShort();
+
+			//Extrusion 3BD 210
+			shape.Extrusion = this._objectReader.Read3BitDouble();
+
+			//H SHAPEFILE (hard pointer)
+			template.ShapeFileHandle = this.handleReference();
+
+			return template;
 		}
 
 		private DwgTemplate readViewport()
