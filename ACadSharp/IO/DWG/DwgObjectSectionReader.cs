@@ -1108,9 +1108,11 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readSeqend()
 		{
-			//TODO: is seqend necessary??
+			DwgEntityTemplate template = new DwgEntityTemplate(new Seqend());
 
-			return null;
+			this.readCommonEntityData(template);
+
+			return template;
 		}
 
 		#region Insert methods
@@ -3618,7 +3620,30 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readViewportEntityHeader()
 		{
+			/*
+			  ViewportEntityHeader viewportEntityHeader = new ViewportEntityHeader();
+			  DwgTableEntryTemplate<ViewportEntityHeader> template = new DwgTableEntryTemplate<ViewportEntityHeader>(viewportEntityHeader);
 
+			  this.readCommonNonEntityData(template);
+
+			  //Common:
+			  //Entry name TV 2
+			  viewportEntityHeader.Name = this._textReader.ReadVariableText();
+
+			  this.readXrefDependantBit(viewportEntityHeader);
+
+			  //1 flag B The 1 bit of the 70 group
+			  this._objectReader.ReadBit();
+
+			  //Handle refs H viewport entity control (soft pointer)
+			  this.handleReference();
+			  //xdicobjhandle (hard owner)
+			  this.handleReference();
+			  //External reference block handle (hard pointer)
+			  this.handleReference();
+
+			  //TODO: ViewportEntityHeader is it necessary?
+			  */
 
 			return null;
 		}

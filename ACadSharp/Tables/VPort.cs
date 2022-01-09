@@ -184,7 +184,7 @@ namespace ACadSharp.Tables
 		/// AcDbUCSTableRecord if UCS is a named UCS.If not present, then UCS is unnamed
 		/// </remarks>
 		[DxfCodeValue(345)]
-		public UCS NamedUcs { get; set; }	//Should be the same as BaseUcs???
+		public UCS NamedUcs { get; set; }   //Should be the same as BaseUcs???
 
 		/// <summary>
 		/// Base Ucs

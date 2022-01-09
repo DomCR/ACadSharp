@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	[Obsolete("Update this class using a generic for collections")]
 	internal class DwgGroupTemplate : DwgTemplate<Group>
 	{
 		public List<ulong> Handles { get; set; } = new List<ulong>();

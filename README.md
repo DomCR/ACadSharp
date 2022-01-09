@@ -55,7 +55,6 @@ The dwg reader is not yet fully implemented, the NotificationHandler will send a
 - HATCH
 - LWPOLYLINE
 - ACAD_PROXY_OBJECT
-- SEQEND
 - XRECORD
 - VIEW
 
