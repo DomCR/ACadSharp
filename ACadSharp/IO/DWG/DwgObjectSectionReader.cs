@@ -1524,7 +1524,22 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readDimOrdinate()
 		{
-			return null;
+			DimensionOrdinate dimension = new DimensionOrdinate();
+			DwgDimensionTemplate template = new DwgDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			//Common:
+			//10 - pt 3BD 10 See DXF documentation.
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+			//13 - pt 3BD 13 See DXF documentation.
+			dimension.FeatureLocation = this._objectReader.Read3BitDouble();
+			//14 - pt 3BD 14 See DXF documentation.
+			dimension.LeaderEndpoint = this._objectReader.Read3BitDouble();
+
+			this.readCommonDimensionHandles(template);
+
+			return template;
 		}
 
 		private DwgTemplate readDimLinear()
@@ -1534,24 +1549,12 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonDimensionData(template);
 
-			//Common:
-			//13 - pt 3BD 13 See DXF documentation.
-			dimension.FirstPoint = this._objectReader.Read3BitDouble();
-			//14 - pt 3BD 14 See DXF documentation.
-			dimension.SecondPoint = this._objectReader.Read3BitDouble();
-			//10 - pt 3BD 10 See DXF documentation.
-			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+			this.readCommonDimensionAlignedData(template);
 
-			//Ext ln rot BD 52 Extension line rotation; see DXF documentation.
-			dimension.ExtLineRotation = this._objectReader.ReadBitDouble();
 			//Dim rot BD 50 Linear dimension rotation; see DXF documentation.
 			dimension.Rotation = this._objectReader.ReadBitDouble();
 
-			//Common Entity Handle Data
-			//H 3 DIMSTYLE(hard pointer)
-			template.StyleHandle = this.handleReference();
-			//H 2 anonymous BLOCK(hard pointer)
-			template.BlockHandle = this.handleReference();
+			this.readCommonDimensionHandles(template);
 
 			return template;
 		}
@@ -1561,27 +1564,101 @@ namespace ACadSharp.IO.DWG
 			DimensionLinear dimension = new DimensionLinear();
 			DwgDimensionTemplate template = new DwgDimensionTemplate(dimension);
 
-			return null;
+			this.readCommonDimensionData(template);
+
+			this.readCommonDimensionAlignedData(template);
+
+			this.readCommonDimensionHandles(template);
+
+			return template;
 		}
 
 		private DwgTemplate readDimAngular3pt()
 		{
-			return null;
+			DimensionAngular3Pt dimension = new DimensionAngular3Pt();
+			DwgDimensionTemplate template = new DwgDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			//Common:
+			//10 - pt 3BD 10 See DXF documentation.
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+			//13 - pt 3BD 13 See DXF documentation.
+			dimension.FirstPoint = this._objectReader.Read3BitDouble();
+			//14 - pt 3BD 14 See DXF documentation.
+			dimension.SecondPoint = this._objectReader.Read3BitDouble();
+			//15-pt 3BD 15 See DXF documentation.
+			dimension.AngleVertex = this._objectReader.Read3BitDouble();
+
+			this.readCommonDimensionHandles(template);
+
+			return template;
 		}
 
 		private DwgTemplate readDimLine2pt()
 		{
-			return null;
+			DimensionAngular2Line dimension = new DimensionAngular2Line();
+			DwgDimensionTemplate template = new DwgDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			//Common:
+			//16-pt 2RD 16 See DXF documentation.
+			XY xy = this._objectReader.Read2RawDouble();
+			dimension.DimensionArc = new XYZ(xy.X, xy.Y, dimension.TextMiddlePoint.Z);
+
+			//13 - pt 3BD 13 See DXF documentation.
+			dimension.FirstPoint = this._objectReader.Read3BitDouble();
+			//14 - pt 3BD 14 See DXF documentation.
+			dimension.SecondPoint = this._objectReader.Read3BitDouble();
+			//15-pt 3BD 15 See DXF documentation.
+			dimension.AngleVertex = this._objectReader.Read3BitDouble();
+			//10 - pt 3BD 10 See DXF documentation.
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+
+			this.readCommonDimensionHandles(template);
+
+			return template;
 		}
 
 		private DwgTemplate readDimRadius()
 		{
-			return null;
+			DimensionRadius dimension = new DimensionRadius();
+			DwgDimensionTemplate template = new DwgDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			//Common:
+			//10 - pt 3BD 10 See DXF documentation.
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+			//15-pt 3BD 15 See DXF documentation.
+			dimension.AngleVertex = this._objectReader.Read3BitDouble();
+			//Leader len D 40 Leader length.
+			dimension.LeaderLength = this._objectReader.ReadBitDouble();
+
+			this.readCommonDimensionHandles(template);
+
+			return template;
 		}
 
 		private DwgTemplate readDimDiameter()
 		{
-			return null;
+			DimensionDiameter dimension = new DimensionDiameter();
+			DwgDimensionTemplate template = new DwgDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			//Common:
+			//10 - pt 3BD 10 See DXF documentation.
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+			//15-pt 3BD 15 See DXF documentation.
+			dimension.AngleVertex = this._objectReader.Read3BitDouble();
+			//Leader len D 40 Leader length.
+			dimension.LeaderLength = this._objectReader.ReadBitDouble();
+
+			this.readCommonDimensionHandles(template);
+
+			return template;
 		}
 
 		private void readCommonDimensionData(DwgDimensionTemplate template)
@@ -1666,6 +1743,31 @@ namespace ACadSharp.IO.DWG
 			//12 - pt 2RD 12 See DXF documentation.
 			XY pt = this._objectReader.Read2RawDouble();
 			dimension.InsertionPoint = new XYZ((double)pt.X, (double)pt.Y, elevation);
+		}
+
+		private void readCommonDimensionAlignedData(DwgDimensionTemplate template)
+		{
+			DimensionAligned dimension = (DimensionAligned)template.CadObject;
+
+			//Common:
+			//13 - pt 3BD 13 See DXF documentation.
+			dimension.FirstPoint = this._objectReader.Read3BitDouble();
+			//14 - pt 3BD 14 See DXF documentation.
+			dimension.SecondPoint = this._objectReader.Read3BitDouble();
+			//10 - pt 3BD 10 See DXF documentation.
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+
+			//Ext ln rot BD 52 Extension line rotation; see DXF documentation.
+			dimension.ExtLineRotation = this._objectReader.ReadBitDouble();
+		}
+
+		private void readCommonDimensionHandles(DwgDimensionTemplate template)
+		{
+			//Common Entity Handle Data
+			//H 3 DIMSTYLE(hard pointer)
+			template.StyleHandle = this.handleReference();
+			//H 2 anonymous BLOCK(hard pointer)
+			template.BlockHandle = this.handleReference();
 		}
 
 		#endregion

@@ -130,39 +130,4 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(3)]
 		public DimensionStyle Style { get; set; }
 	}
-
-	public class DimensionLinear : Dimension
-	{
-		public override ObjectType ObjectType => ObjectType.DIMENSION_LINEAR;
-
-		public override string ObjectName => DxfFileToken.EntityDimension;
-
-		//100	Subclass marker(AcDbAlignedDimension)
-
-		/// <summary>
-		/// Insertion point for clones of a dimension—Baseline and Continue (in OCS)
-		/// </summary>
-		[DxfCodeValue(13, 23, 33)]
-		public XYZ FirstPoint { get; set; }
-
-		/// <summary>
-		/// Definition point for linear and angular dimensions(in WCS)
-		/// </summary>
-		[DxfCodeValue(14, 24, 34)]
-		public XYZ SecondPoint { get; set; }
-
-		/// <summary>
-		/// Angle of rotated, horizontal, or vertical dimensions
-		/// </summary>
-		[DxfCodeValue(50)]
-		public double Rotation { get; set; }
-
-		/// <summary>
-		/// Linear dimension types with an oblique angle have an optional group code 52.
-		/// When added to the rotation angle of the linear dimension(group code 50),
-		/// it gives the angle of the extension lines
-		/// </summary>
-		[DxfCodeValue(52)]
-		public double ExtLineRotation { get; set; }
-	}
 }
