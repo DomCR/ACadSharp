@@ -5,106 +5,17 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
-	//TODO: FIX the hatch mess!!!!
-
-	public class HatchPattern
-	{
-		public readonly static HatchPattern Solid = new HatchPattern("SOLID");
-
-		public class Line
-		{
-			public double Angle { get; internal set; }
-			public XY BasePoint { get; internal set; }
-			public XY Offset { get; internal set; }
-			public List<double> DashLengths { get; set; } = new List<double>();
-		}
-
-		public string Name { get; set; }
-		public double Angle { get; set; }
-		public double Scale { get; set; }
-
-		public List<Line> Lines { get; set; } = new List<Line>();
-
-		public HatchPattern(string name)
-		{
-			Name = name;
-		}
-	}
-
-	public class HatchGradientPattern : HatchPattern
-	{
-		public int Reserved { get; set; }
-		public double Shift { get; set; }
-		public bool IsSingleColorGradient { get; set; }
-		public double ColorTint { get; set; }
-		public List<Color> Colors { get; set; } = new List<Color>();
-		public HatchGradientPattern(string name) : base(name) { }
-	}
-
-	public class HatchBoundaryPath
-	{
-		#region Boundary path edge classes
-		public abstract class Edge
-		{
-
-		}
-		public class Line : Edge
-		{
-			public XY Start { get; set; }
-			public XY End { get; set; }
-		}
-		public class Arc : Edge
-		{
-			public XY Center { get; set; }
-			public double Radius { get; set; }
-			public double StartAngle { get; set; }
-			public double EndAngle { get; set; }
-			public bool CounterClockWise { get; set; }
-		}
-		public class Ellipse : Edge
-		{
-			public XY Center { get; set; }
-			public XY MajorAxisEndPoint { get; set; }
-			public double MinorToMajorRatio { get; set; }
-			public double StartAngle { get; set; }
-			public double EndAngle { get; set; }
-			public bool CounterClockWise { get; set; }
-		}
-		public class Spline : Edge
-		{
-			public int Degree { get; internal set; }
-			public bool Rational { get; internal set; }
-			public bool Periodic { get; internal set; }
-			public List<double> Knots { get; set; } = new List<double>();
-			/// <remarks>
-			/// Position values are only X and Y, Z represents the weight.
-			/// </remarks>
-			public List<XYZ> ControlPoints { get; set; } = new List<XYZ>();
-		}
-		public class Polyline : Edge
-		{
-			public bool IsClosed { get; set; }
-			/// <remarks>
-			/// Position values are only X and Y, Z represents the Bulge.
-			/// </remarks>
-			public List<XYZ> Vertices { get; set; } = new List<XYZ>();
-		}
-		#endregion
-
-		public List<Edge> Edges { get; set; } = new List<Edge>();
-		public BoundaryPathFlags Flags { get; set; }
-	}
-
 	public class Hatch : Entity
 	{
 		public override ObjectType ObjectType => ObjectType.HATCH;
 		public override string ObjectName => DxfFileToken.EntityHatch;
 
 		//100	Subclass marker(AcDbHatch)
+
 		/// <summary>
 		/// The current elevation of the object.
 		/// </summary>
-		[DxfCodeValue(DxfCode.ZCoordinate)]
+		[DxfCodeValue(30)]
 		public double Elevation { get; set; }
 
 		/// <summary>
@@ -119,59 +30,80 @@ namespace ACadSharp.Entities
 		/// <value>
 		/// Default value: SOLID pattern.
 		/// </value>
-		[DxfCodeValue(DxfCode.ShapeName)]
+		[DxfCodeValue(2)]
 		public HatchPattern Pattern { get; set; } = HatchPattern.Solid;
 
-		//70	Solid fill flag(0 = pattern fill; 1 = solid fill); for MPolygon, the version of MPolygon
-		[DxfCodeValue(DxfCode.Int16)]
+		/// <summary>
+		/// Solid fill flag
+		/// </summary>
+		[DxfCodeValue(70)]
 		public bool IsSolid { get; set; }
 
 		//63	For MPolygon, pattern fill color as the ACI
 
-		[DxfCodeValue(DxfCode.HatchAssociative)]
+		/// <summary>
+		/// Associativity flag
+		/// </summary>
+		[DxfCodeValue(71)]
 		public bool IsAssociative { get; set; }
 
-		//91	Number of boundary paths(loops)
+		/// <summary>
+		/// Hatch style
+		/// </summary>
+		[DxfCodeValue(75)]
+		public HatchStyleType HatchStyle { get; set; }
 
-		//varies
-		//Boundary path data.Repeats number of times specified by code 91. See Boundary Path Data
+		/// <summary>
+		/// Hatch pattern type
+		/// </summary>
+		[DxfCodeValue(76)]
+		public HatchPatternType HatchPatternType { get; set; }
 
-		[DxfCodeValue(DxfCode.SmoothType)]
-		public HatchStyleType HatchStyle { get;  set; }
-		[DxfCodeValue(DxfCode.HatchPatternType)]
-		public HatchPatternType HatchPatternType { get;  set; }
-
-		[DxfCodeValue(DxfCode.HatchPatternAngle)]
+		/// <summary>
+		/// Hatch pattern angle (pattern fill only)
+		/// </summary>
+		[DxfCodeValue(52)]
 		public double PatternAngle { get { return Pattern.Angle; } set { Pattern.Angle = value; } }
 
-		//41	Hatch pattern scale or spacing(pattern fill only)
-		[DxfCodeValue(DxfCode.XScaleFactor)]
+		/// <summary>
+		/// Hatch pattern scale or spacing(pattern fill only)
+		/// </summary>
+		[DxfCodeValue(41)]
 		public double PatternScale { get { return Pattern.Scale; } set { Pattern.Scale = value; } }
 
 		//73	For MPolygon, boundary annotation flag:
 		//0 = boundary is not an annotated boundary
 		//1 = boundary is an annotated boundary
 
-		[DxfCodeValue(DxfCode.HatchIsDoubleFlag)]
+		/// <summary>
+		/// Hatch pattern double flag (pattern fill only)
+		/// </summary>
+		[DxfCodeValue(77)]
 		public bool IsDouble { get; set; }
 
 		//78	Number of pattern definition lines
 		//varies
 		//Pattern line data.Repeats number of times specified by code 78. See Pattern Data
 
-		//47	Pixel size used to determine the density to perform various intersection and ray casting operations in hatch pattern computation for associative hatches and hatches created with the Flood method of hatching
-		[DxfCodeValue(DxfCode.PixelScale)]
+		/// <summary>
+		/// Pixel size used to determine the density to perform various intersection and ray casting operations in hatch pattern computation for associative hatches and hatches created with the Flood method of hatching
+		/// </summary>
+		[DxfCodeValue(47)]
 		public double PixelSize { get; set; }
 
-		//98	Number of seed points
 
 		//11	For MPolygon, offset vector
 
 		//99	For MPolygon, number of degenerate boundary paths(loops), where a degenerate boundary path is a border that is ignored by the hatch
 
+		/// <summary>
+		/// 
+		/// </summary>
+		//98	Number of seed points
 		//10	Seed point(in OCS)
 		//DXF: X value; APP: 2D point(multiple entries)
 		//20	DXF: Y value of seed point(in OCS); (multiple entries)
+		[DxfCodeValue(98)]
 		public List<XY> SeedPoints { get; set; } = new List<XY>();
 
 		//450	Indicates solid hatch or gradient; if solid hatch, the values for the remaining codes are ignored but must be present.Optional; if code 450 is in the file, then the following codes must be in the file: 451, 452, 453, 460, 461, 462, and 470. If code 450 is not in the file, then the following codes must not be in the file: 451, 452, 453, 460, 461, 462, and 470
@@ -200,13 +132,16 @@ namespace ACadSharp.Entities
 
 		//470	String(default = LINEAR)
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		//91	Number of boundary paths(loops)
+		//varies
+		//Boundary path data.Repeats number of times specified by code 91. See Boundary Path Data
+		[DxfCodeValue(91)]
 		public List<HatchBoundaryPath> Paths { get; set; } = new List<HatchBoundaryPath>();
 
 		public Hatch() : base() { }
-	}
-
-	public class BoundaryPath
-	{
-
 	}
 }

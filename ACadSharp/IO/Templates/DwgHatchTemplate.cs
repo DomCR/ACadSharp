@@ -19,31 +19,23 @@ namespace ACadSharp.IO.Templates
 				foreach (var handle in Handles)
 				{
 					var edge = builder.GetCadObject(handle);
-					throw new NotImplementedException();
+
+					builder.NotificationHandler?.Invoke(this.Path, new NotificationEventArgs($"Boundary path with handles not implemented"));
 				}
 			}
 		}
 
-		private List<DwgBoundaryPathTemplate> _pathTempaltes = new List<DwgBoundaryPathTemplate>();
+		public List<DwgBoundaryPathTemplate> PathTempaltes = new List<DwgBoundaryPathTemplate>();
 
 		public DwgHatchTemplate(Hatch hatch) : base(hatch) { }
-
-		/// <summary>
-		/// Add the path to the hatch and the templates list.
-		/// </summary>
-		/// <param name="template"></param>
-		public void AddPath(DwgBoundaryPathTemplate template)
-		{
-			(this.CadObject as Hatch).Paths.Add(template.Path);
-			this._pathTempaltes.Add(template);
-		}
 
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
-			foreach (DwgBoundaryPathTemplate t in _pathTempaltes)
+			foreach (DwgBoundaryPathTemplate t in PathTempaltes)
 			{
+				(this.CadObject as Hatch).Paths.Add(t.Path);
 				t.Build(builder);
 			}
 		}

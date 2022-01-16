@@ -31,7 +31,6 @@ namespace ACadSharp.IO.DWG
 	 * name clash. To complicate matters more, files also exist with table records with duplicate
 	 * names. This is incorrect, and the software should rename the record to be unique upon reading.
 	 */
-
 	internal class DwgObjectSectionReader : DwgSectionReader
 	{
 		private long m_objectInitialPos = 0;
@@ -676,6 +675,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readMText();
 					break;
 				case ObjectType.LEADER:
+					template = this.readLeader();
 					break;
 				case ObjectType.TOLERANCE:
 					break;
@@ -2422,6 +2422,112 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private DwgTemplate readLeader()
+		{
+			Leader leader = new Leader();
+			CadLeaderTemplate template = new CadLeaderTemplate(leader);
+
+			this.readCommonEntityData(template);
+
+			//Unknown bit B --- Always seems to be 0.
+			this._objectReader.ReadBit();
+
+			//Annot type BS --- Annotation type (NOT bit-coded):
+			//Value 0 : MTEXT
+			//Value 1 : TOLERANCE
+			//Value 2 : INSERT
+			//Value 3 : None
+			leader.CreationType = (LeaderCreationType)this._objectReader.ReadBitShort();
+			//path type BS ---
+			leader.PathType = (LeaderPathType)this._objectReader.ReadBitShort();
+
+			//numpts BL --- number of points
+			int npts = this._objectReader.ReadBitLong();
+			for (int i = 0; i < npts; i++)
+			{
+				//point 3BD 10 As many as counter above specifies.
+				leader.Vertices.Add(this._objectReader.Read3BitDouble());
+			}
+
+			//Origin 3BD --- The leader plane origin (by default it’s the first point).
+			this._objectReader.Read3BitDouble();    //Is necessary to store this value?
+													//Extrusion 3BD 210
+			leader.Normal = this._objectReader.Read3BitDouble();
+			//x direction 3BD 211
+			leader.HorizontalDirection = this._objectReader.Read3BitDouble();
+			//offsettoblockinspt 3BD 212 Used when the BLOCK option is used. Seems to be an unused feature.
+			leader.BlockOffset = this._objectReader.Read3BitDouble();
+
+			//R14+:
+			if (this._version >= ACadVersion.AC1014)
+			{
+				//Endptproj 3BD --- A non-planar leader gives a point that projects the endpoint back to the annotation.
+				//It's the offset from the endpoint of the leader to the annotation, taking into account the extrusion direction.
+				leader.AnnotationOffset = this._objectReader.Read3BitDouble();
+			}
+
+			//R13-R14 Only:
+			if (this.R13_14Only)
+			{
+				//DIMGAP BD --- The value of DIMGAP in the associated DIMSTYLE at the time of creation, multiplied by the dimscale in that dimstyle.
+				leader.Style.DimensionLineGap = this._objectReader.ReadBitDouble();
+			}
+
+			//Common:
+			if (this._version <= ACadVersion.AC1021)
+			{
+				//For higher versions this values are wrong and it works best if they are not read
+				//Box height BD 40 MTEXT extents height. (A text box is slightly taller, probably by some DIMvar amount.)
+				leader.TextHeight = this._objectReader.ReadBitDouble();
+				//Box width BD 41 MTEXT extents width. (A text box is slightly wider, probably by some DIMvar amount.)
+				leader.TextWidth = this._objectReader.ReadBitDouble();
+			}
+
+			//Hooklineonxdir B hook line is on x direction if 1
+			leader.HookLineDirection = this._objectReader.ReadBit();
+			//Arrowheadon B arrowhead on indicator
+			leader.ArrowHeadEnabled = this._objectReader.ReadBit();
+
+			//R13-R14 Only:
+			if (this.R13_14Only)
+			{
+				//Arrowheadtype BS arrowhead type
+				this._objectReader.ReadBitShort();
+				//Dimasz BD DIMASZ at the time of creation, multiplied by DIMSCALE
+				template.Dimasz = this._objectReader.ReadBitDouble();
+				//Unknown B
+				this._objectReader.ReadBit();
+				//Unknown B
+				this._objectReader.ReadBit();
+				//Unknown BS
+				this._objectReader.ReadBitShort();
+				//Byblockcolor BS
+				this._objectReader.ReadBitShort();
+				//Unknown B
+				this._objectReader.ReadBit();
+				//Unknown B
+				this._objectReader.ReadBit();
+			}
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Unknown BS
+				this._objectReader.ReadBitShort();
+				//Unknown B
+				this._objectReader.ReadBit();
+				//Unknown B
+				this._objectReader.ReadBit();
+			}
+
+			//H 340 Associated annotation
+			template.AnnotationHandle = this.handleReference();
+			//H 2 DIMSTYLE (hard pointer)
+			template.DIMSTYLEHandle = this.handleReference();
+
+			return template;
+		}
+
 		private DwgTemplate readMLine()
 		{
 			MLine mline = new MLine();
@@ -3814,13 +3920,12 @@ namespace ACadSharp.IO.DWG
 
 			#region Read the boundary path data
 
-			//int numboundaryobjhandles = 0;
 			for (int i = 0; i < npaths; i++)
 			{
 				DwgHatchTemplate.DwgBoundaryPathTemplate pathTemplate = new DwgHatchTemplate.DwgBoundaryPathTemplate();
 
 				//Pathflag BL 92 Path flag
-				pathTemplate.Path.Flags = (BoundaryPathFlags)this._mergedReaders.ReadBitLong();
+				pathTemplate.Path.Flags = (BoundaryPathFlags)this._objectReader.ReadBitLong();
 
 				if (pathTemplate.Path.Flags.HasFlag(BoundaryPathFlags.Derived))
 					hasDerivedBoundary = true;
@@ -3828,81 +3933,81 @@ namespace ACadSharp.IO.DWG
 				if (!pathTemplate.Path.Flags.HasFlag(BoundaryPathFlags.Polyline))
 				{
 					//Numpathsegs BL 93 number of segments in this path
-					int nsegments = this._mergedReaders.ReadBitLong();
+					int nsegments = this._objectReader.ReadBitLong();
 					for (int j = 0; j < nsegments; ++j)
 					{
 						//pathtypestatus RC 72 type of path
-						byte pathTypeStatus = this._mergedReaders.ReadByte();
+						byte pathTypeStatus = this._objectReader.ReadByte();
 						switch (pathTypeStatus)
 						{
 							case 1:
 								pathTemplate.Path.Edges.Add(new HatchBoundaryPath.Line
 								{
 									//pt0 2RD 10 first endpoint
-									Start = this._mergedReaders.Read2RawDouble(),
+									Start = this._objectReader.Read2RawDouble(),
 									//pt1 2RD 11 second endpoint
-									End = this._mergedReaders.Read2RawDouble()
+									End = this._objectReader.Read2RawDouble()
 								});
 								break;
 							case 2:
 								pathTemplate.Path.Edges.Add(new HatchBoundaryPath.Arc
 								{
 									//pt0 2RD 10 center
-									Center = this._mergedReaders.Read2RawDouble(),
+									Center = this._objectReader.Read2RawDouble(),
 									//radius BD 40 radius
-									Radius = this._mergedReaders.ReadBitDouble(),
+									Radius = this._objectReader.ReadBitDouble(),
 									//startangle BD 50 start angle
-									StartAngle = this._mergedReaders.ReadBitDouble(),
+									StartAngle = this._objectReader.ReadBitDouble(),
 									//endangle BD 51 endangle
-									EndAngle = this._mergedReaders.ReadBitDouble(),
+									EndAngle = this._objectReader.ReadBitDouble(),
 									//isccw B 73 1 if counter clockwise, otherwise 0
-									CounterClockWise = this._mergedReaders.ReadBit()
+									CounterClockWise = this._objectReader.ReadBit()
 								});
 								break;
 							case 3:
 								pathTemplate.Path.Edges.Add(new HatchBoundaryPath.Ellipse
 								{
 									//pt0 2RD 10 center
-									Center = this._mergedReaders.Read2RawDouble(),
+									Center = this._objectReader.Read2RawDouble(),
 									//endpoint 2RD 11 endpoint of major axis
-									MajorAxisEndPoint = this._mergedReaders.Read2RawDouble(),
+									MajorAxisEndPoint = this._objectReader.Read2RawDouble(),
 									//minormajoratio BD 40 ratio of minor to major axis
-									MinorToMajorRatio = this._mergedReaders.ReadBitDouble(),
+									MinorToMajorRatio = this._objectReader.ReadBitDouble(),
 									//startangle BD 50 start angle
-									StartAngle = this._mergedReaders.ReadBitDouble(),
+									StartAngle = this._objectReader.ReadBitDouble(),
 									//endangle BD 51 endangle
-									EndAngle = this._mergedReaders.ReadBitDouble(),
+									EndAngle = this._objectReader.ReadBitDouble(),
 									//isccw B 73 1 if counter clockwise, otherwise 0
-									CounterClockWise = this._mergedReaders.ReadBit()
+									CounterClockWise = this._objectReader.ReadBit()
 								});
 								break;
 							case 4:
 								HatchBoundaryPath.Spline splineEdge = new HatchBoundaryPath.Spline();
 								//degree BL 94 degree of the spline
-								splineEdge.Degree = this._mergedReaders.ReadBitLong();
+								splineEdge.Degree = this._objectReader.ReadBitLong();
 								//isrational B 73 1 if rational(has weights), else 0
-								splineEdge.Rational = this._mergedReaders.ReadBit();
+								splineEdge.Rational = this._objectReader.ReadBit();
 								//isperiodic B 74 1 if periodic, else 0
-								splineEdge.Periodic = this._mergedReaders.ReadBit();
+								splineEdge.Periodic = this._objectReader.ReadBit();
 
 								//numknots BL 95 number of knots
-								int numknots = this._mergedReaders.ReadBitLong();
+								int numknots = this._objectReader.ReadBitLong();
 								//numctlpts BL 96 number of control points
-								int numctlpts = this._mergedReaders.ReadBitLong();
+								int numctlpts = this._objectReader.ReadBitLong();
 
 								for (int k = 0; k < numknots; ++k)
 									//knot BD 40 knot value
-									splineEdge.Knots.Add(this._mergedReaders.ReadBitDouble());
+									splineEdge.Knots.Add(this._objectReader.ReadBitDouble());
 
 								for (int p = 0; p < numctlpts; ++p)
 								{
 									//pt0 2RD 10 control point
-									var cp = this._mergedReaders.Read2RawDouble();
+									var cp = this._objectReader.Read2RawDouble();
 
 									double wheight = 0;
 									if (splineEdge.Rational)
 										//weight BD 40 weight
-										wheight = this._mergedReaders.ReadBitDouble();
+										wheight = this._objectReader.ReadBitDouble();
 
 									//Add the control point and its wheight
 									splineEdge.ControlPoints.Add(new XYZ(cp.X, cp.Y, wheight));
@@ -3912,19 +4017,19 @@ namespace ACadSharp.IO.DWG
 								if (this.R2010Plus)
 								{
 									//Numfitpoints BL 97 number of fit points
-									int nfitPoints = this._mergedReaders.ReadBitLong();
+									int nfitPoints = this._objectReader.ReadBitLong();
 									if (nfitPoints > 0)
 									{
 										for (int fp = 0; fp < nfitPoints; ++fp)
 										{
 											//Fitpoint 2RD 11
-											XY fpoint = this._mergedReaders.Read2RawDouble();
+											XY fpoint = this._objectReader.Read2RawDouble();
 										}
 
 										//Start tangent 2RD 12
-										XY startTangent = this._mergedReaders.Read2RawDouble();
+										XY startTangent = this._objectReader.Read2RawDouble();
 										//End tangent 2RD 13
-										XY endTangent = this._mergedReaders.Read2RawDouble();
+										XY endTangent = this._objectReader.Read2RawDouble();
 									}
 								}
 
@@ -3938,21 +4043,21 @@ namespace ACadSharp.IO.DWG
 				{
 					HatchBoundaryPath.Polyline pline = new HatchBoundaryPath.Polyline();
 					//bulgespresent B 72 bulges are present if 1
-					bool bulgespresent = this._mergedReaders.ReadBit();
+					bool bulgespresent = this._objectReader.ReadBit();
 					//closed B 73 1 if closed
-					pline.IsClosed = this._mergedReaders.ReadBit();
+					pline.IsClosed = this._objectReader.ReadBit();
 
 					//numpathsegs BL 91 number of path segments
-					int numpathsegs = this._mergedReaders.ReadBitLong();
+					int numpathsegs = this._objectReader.ReadBitLong();
 					for (int index = 0; index < numpathsegs; ++index)
 					{
 						//pt0 2RD 10 point on polyline
-						XY vertex = this._mergedReaders.Read2RawDouble();
+						XY vertex = this._objectReader.Read2RawDouble();
 
 						double bulge = 0;
 						if (bulgespresent)
 							//bulge BD 42 bulge
-							bulge = this._mergedReaders.ReadBitDouble();
+							bulge = this._objectReader.ReadBitDouble();
 
 						//Add the vertex
 						pline.Vertices.Add(new XYZ(vertex.X, vertex.Y, bulge));
@@ -3962,13 +4067,13 @@ namespace ACadSharp.IO.DWG
 				//numboundaryobjhandles BL 97 Number of boundary object handles for this path
 				int numboundaryobjhandles = this._objectReader.ReadBitLong();
 
-				//TODO: Add the path to the hatch (this has handles)
 				for (int h = 0; h < numboundaryobjhandles; h++)
 				{
+					//boundaryhandle H 330 boundary handle(soft pointer)
 					pathTemplate.Handles.Add(this.handleReference());
 				}
 
-				template.AddPath(pathTemplate);
+				template.PathTempaltes.Add(pathTemplate);
 			}
 
 			#endregion Read the boundary path data
@@ -4024,7 +4129,7 @@ namespace ACadSharp.IO.DWG
 				hatch.SeedPoints.Add(spt);
 			}
 
-			return null;
+			return template;
 		}
 
 		private DwgTemplate readXRecord()

@@ -51,8 +51,6 @@ The dwg reader is not yet fully implemented, the NotificationHandler will send a
 - FACE3D
 - LWPOLYLINE
 - POLYLINE_PFACE
-- LEADER
-- HATCH
 - LWPOLYLINE
 - ACAD_PROXY_OBJECT
 - XRECORD

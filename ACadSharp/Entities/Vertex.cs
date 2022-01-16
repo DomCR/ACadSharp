@@ -12,13 +12,16 @@ namespace ACadSharp.Entities
 		//100	Subclass marker(AcDbVertex)
 		//100	Subclass marker(AcDb2dVertex or AcDb3dPolylineVertex)
 
-		[DxfCodeValue(DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
+		[DxfCodeValue(10, 20, 30)]
 		public XYZ Location { get; set; } = XYZ.Zero;
-		[DxfCodeValue(DxfCode.StartWith)]
+
+		[DxfCodeValue(40)]
 		public double StartWidth { get; set; } = 0.0;
-		[DxfCodeValue(DxfCode.EndWith)]
+
+		[DxfCodeValue(41)]
 		public double EndWidth { get; set; } = 0.0;
-		[DxfCodeValue(DxfCode.Bulge)]
+
+		[DxfCodeValue(42)]
 		public double Bulge { get; set; } = 0.0;
 
 		[DxfCodeValue(70)]
