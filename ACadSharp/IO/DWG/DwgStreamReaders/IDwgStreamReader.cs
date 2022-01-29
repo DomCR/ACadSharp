@@ -218,6 +218,7 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		/// <returns></returns>
 		XYZ Read3BitDoubleWithDefault(XYZ defValues);
+
 		/// <summary>
 		/// CMC : CmColor value
 		/// </summary>

@@ -1923,12 +1923,18 @@ namespace ACadSharp.IO.DWG
 				face.FirstCorner = new XYZ(x, y, z);
 
 				//2nd corner 3DD 11 Use 10 value as default point
+				face.SecondCorner = this._objectReader.Read3BitDoubleWithDefault(face.FirstCorner);
 				//3rd corner 3DD 12 Use 11 value as default point
+				face.ThirdCorner = this._objectReader.Read3BitDoubleWithDefault(face.SecondCorner);
 				//4th corner 3DD 13 Use 12 value as default point
+				face.FourthCorner = this._objectReader.Read3BitDoubleWithDefault(face.ThirdCorner);
+
 				//Invis flags BS 70 Present it “Has no flag ind.” is 0.
+				if (!noFlags)
+					face.Flags = (InvisibleEdgeFlags)this._objectReader.ReadBitShort();
 			}
 
-			return null;
+			return template;
 		}
 
 		private DwgTemplate readPolylinePface()

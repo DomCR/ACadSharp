@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO.Templates;
+﻿using ACadSharp.Attributes;
+using ACadSharp.IO.Templates;
 using CSMath;
 
 namespace ACadSharp.Entities
@@ -10,19 +11,7 @@ namespace ACadSharp.Entities
 
 		//100	Subclass marker(AcDbFace)
 
-		//10
-
-		//First corner(in WCS)
-
-		//DXF: X value; APP: 3D point
-
-		//20, 30
-
-		//DXF: Y and Z values of first corner(in WCS)
-
-		//11
-
-		//Second corner(in WCS)
+		//11	Second corner(in WCS)
 
 		//DXF: X value; APP: 3D point
 
@@ -48,11 +37,15 @@ namespace ACadSharp.Entities
 
 		//23, 33	DXF: Y and Z values of fourth corner(in WCS)
 
-
+		/// <summary>
+		/// First corner(in WCS)
+		/// </summary>
+		[DxfCodeValue(8)]
 		public XYZ FirstCorner { get; set; }
 		public XYZ SecondCorner { get; set; }
 		public XYZ ThirdCorner { get; set; }
 		public XYZ FourthCorner { get; set; }
+
 		//70	Invisible edge flags(optional; default = 0):
 
 		public InvisibleEdgeFlags Flags { get; set; }

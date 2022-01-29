@@ -48,7 +48,6 @@ The dwg reader is not yet fully implemented, the NotificationHandler will send a
 
 - ACDBPLACEHOLDER
 - VP_ENT_HDR
-- FACE3D
 - LWPOLYLINE
 - POLYLINE_PFACE
 - LWPOLYLINE
