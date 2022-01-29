@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,15 +34,16 @@ namespace ACadSharp
 		[DxfCodeValue(330)]
 		public CadObject Owner { get; internal set; }
 
-		[Obsolete("Will be replaced for the actual owner")]
-		public ulong? OwnerHandle { get; internal set; }
+		//TODO: CadDictionary for the CadObjects
+		public CadDictionary Dictionary { get; set; }
 
 		/// <summary>
 		/// Objects that are attached to this entity
 		/// </summary>
-		public Dictionary<ulong, CadObject> Reactors { get; set; } = new Dictionary<ulong, CadObject>();
+		public Dictionary<ulong, CadObject> Reactors { get; } = new Dictionary<ulong, CadObject>();
 
 		//TODO: Extended data
+		public ExtendedDataDictionary ExtendedData { get; } = new ExtendedDataDictionary();
 
 		/// <summary>
 		/// Document where this element belongs

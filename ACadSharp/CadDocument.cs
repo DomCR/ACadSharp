@@ -89,7 +89,7 @@ namespace ACadSharp
 		/// </summary>
 		public ViewportCollection Viewports { get; }
 
-		public CadDictionary RootDictionary { get; } = new CadDictionary();
+		public CadDictionary RootDictionary { get; internal set; } = new CadDictionary();
 
 		//TODO: Implement entity collection to store the document's entities
 		private Dictionary<ulong, Entity> _entities { get; set; } = new Dictionary<ulong, Entity>();

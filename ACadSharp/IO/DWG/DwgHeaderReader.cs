@@ -917,9 +917,9 @@ namespace ACadSharp.IO.DWG
 				//RC : HALOGAP
 				header.HaloGapPercentage = sreader.ReadByte();
 				//BS : OBSCUREDCOLOR
-				header.ObscuredColor = CadUtils.CreateColorFromIndex(sreader.ReadBitShort());
+				header.ObscuredColor = new Color(sreader.ReadBitShort());
 				//BS : INTERSECTIONCOLOR
-				header.InterfereColor = CadUtils.CreateColorFromIndex(sreader.ReadBitShort());
+				header.InterfereColor = new Color(sreader.ReadBitShort());
 				//RC : OBSCUREDLTYPE
 				header.ObscuredType = sreader.ReadByte();
 				//RC: INTERSECTIONDISPLAY

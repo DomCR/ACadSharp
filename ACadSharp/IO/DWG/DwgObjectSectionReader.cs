@@ -33,7 +33,9 @@ namespace ACadSharp.IO.DWG
 	 */
 	internal class DwgObjectSectionReader : DwgSectionReader
 	{
-		private long m_objectInitialPos = 0;
+		private long _objectInitialPos = 0;
+
+		private ushort _size;
 
 		/// <summary>
 		/// During the object reading the handles will be added at the queue.
@@ -132,13 +134,13 @@ namespace ACadSharp.IO.DWG
 			this._crcReader.Position = offset;
 
 			//MS : Size of object, not including the CRC
-			ushort size = (ushort)this._crcReader.ReadModularShort();
+			this._size = (ushort)this._crcReader.ReadModularShort();
 
-			if (size <= 0U)
+			if (this._size <= 0U)
 				return type;
 
 			//remove the padding bits make sure the object stream ends on a byte boundary
-			uint sizeInBits = (uint)(size << 3);
+			uint sizeInBits = (uint)(this._size << 3);
 
 			//R2010+:
 			if (this.R2010Plus)
@@ -156,7 +158,7 @@ namespace ACadSharp.IO.DWG
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
 				//set the initial posiltion and get the object type
-				this.m_objectInitialPos = this._objectReader.PositionInBits();
+				this._objectInitialPos = this._objectReader.PositionInBits();
 				type = this._objectReader.ReadObjectType();
 
 				//Create a handler section reader
@@ -179,7 +181,7 @@ namespace ACadSharp.IO.DWG
 				this._textReader = this._objectReader;
 
 				//set the initial posiltion and get the object type
-				this.m_objectInitialPos = this._objectReader.PositionInBits();
+				this._objectInitialPos = this._objectReader.PositionInBits();
 				type = this._objectReader.ReadObjectType();
 			}
 
@@ -466,27 +468,106 @@ namespace ACadSharp.IO.DWG
 				long endPos = this._objectReader.Position + size;
 
 				//template.ExtendedData
-				this.readExtendedData(endPos);
+				ExtendedData edata = this.readExtendedDataRecords(endPos);
+
+				template.EDataTemplate.Add(appHandle, edata);
 
 				size = this._objectReader.ReadBitShort();
 			}
 		}
 
-		private ExtendedData readExtendedData(long endPos)
+		private ExtendedData readExtendedDataRecords(long endPos)
 		{
-			ExtendedData edata = new ExtendedData();
+			ExtendedData data = new ExtendedData();
 
-			this._objectReader.ReadBytes((int)(endPos - this._objectReader.Position));
+			while (this._objectReader.Position < endPos)
+			{
+				//Each data item has a 1-byte code (DXF group code minus 1000) followed by the value.
+				DxfCode dxfCode = (DxfCode)(1000 + this._objectReader.ReadByte());
 
-			//TODO: Implement extended data reader
+				ExtendedDataRecord record = null;
 
-			return edata;
+				switch (dxfCode)
+				{
+					//0 (1000) String.
+					case DxfCode.ExtendedDataAsciiString:
+					//R13-R2004: 1st byte of value is the length N; this is followed by a 2-byte short indicating the codepage, followed by N single-byte characters.
+					//R2007 +: 2 - byte length N, followed by N Unicode characters(2 bytes each).
+					case DxfCode.ExtendedDataRegAppName:
+						//1 (1001) This one seems to be invalid; can't even use as a string inside braces.
+						//This would be a registered application that this data relates to, but we've already had that above, 
+						//so it would be redundant or irrelevant here.
+						record = new ExtendedDataRecord(dxfCode, this._objectReader.ReadTextUnicode());
+						break;
+					case DxfCode.ExtendedDataControlString:
+						//2 (1002) A '{' or '}'; 1 byte; ASCII 0 means '{', ASCII 1 means '}'
+						record = new ExtendedDataRecord(dxfCode, this._objectReader.ReadByte());
+						break;
+					case DxfCode.ExtendedDataLayerName:
+						//3 (1003) A layer table reference. The value is the handle of the layer;
+						//it's 8 bytes -- even if the leading ones are 0. It's not a string; read 
+						//it as hex, as usual for handles. (There's no length specifier this time.) 
+						//Even layer 0 is referred to by handle here.
+						byte[] arr = this._objectReader.ReadBytes(8);
+						ulong handle = System.BitConverter.ToUInt64(arr, 0);
+						record = new ExtendedDataRecord(dxfCode, handle);
+						break;
+					case DxfCode.ExtendedDataBinaryChunk:
+						//4 (1004) Binary chunk. The first byte of the value is a char giving the length; the bytes follow.
+						record = new ExtendedDataRecord(dxfCode, this._objectReader.ReadBytes(this._objectReader.ReadByte()));
+						break;
+					case DxfCode.ExtendedDataHandle:
+						//5 (1005) An entity handle reference.
+						//The value is given as 8 bytes -- even if the leading ones are 0.
+						//It's not a string; read it as hex, as usual for handles.
+						//(There's no length specifier this time.)
+						arr = this._objectReader.ReadBytes(8);
+						handle = System.BitConverter.ToUInt64(arr, 0);
+						record = new ExtendedDataRecord(dxfCode, handle);
+						break;
+					//10 - 13 (1010 - 1013)
+					case DxfCode.ExtendedDataXCoordinate:
+					case DxfCode.ExtendedDataWorldXCoordinate:
+					case DxfCode.ExtendedDataWorldXDisp:
+					case DxfCode.ExtendedDataWorldXDir:
+						//Points; 24 bytes(XYZ)-- 3 doubles
+						record = new ExtendedDataRecord(
+							dxfCode,
+							new XYZ(
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble()
+								)
+							);
+						break;
+					//40 - 42 (1040 - 1042)
+					case DxfCode.ExtendedDataReal:
+					case DxfCode.ExtendedDataDist:
+					case DxfCode.ExtendedDataScale:
+						//Reals; 8 bytes(double)
+						record = new ExtendedDataRecord(dxfCode, this._objectReader.ReadDouble());
+						break;
+					//70(1070) A short int; 2 bytes
+					case DxfCode.ExtendedDataInteger16:
+						record = new ExtendedDataRecord(dxfCode, this._objectReader.ReadShort());
+						break;
+					//71(1071) A long int; 4 bytes
+					case DxfCode.ExtendedDataInteger32:
+						record = new ExtendedDataRecord(dxfCode, this._objectReader.ReadRawLong());
+						break;
+					default:
+						this._objectReader.ReadBytes((int)(endPos - this._objectReader.Position));
+						this._builder.NotificationHandler?.Invoke(null, new NotificationEventArgs($"Unknown code for extended data: {dxfCode}"));
+						return data;
+				}
+
+				data.Data.Add(record);
+			}
+
+			return data;
 		}
 
-		/// <summary>
-		/// Add the reactors to the template.
-		/// </summary>
-		/// <param name="template"></param>
+		// Add the reactors to the template.
 		private void readReactors(DwgTemplate template)
 		{
 			//Numreactors S number of reactors in this object
@@ -529,13 +610,13 @@ namespace ACadSharp.IO.DWG
 			long size = this._objectReader.ReadRawLong();
 
 			//Set the position to the handle section
-			this._handlesReader.SetPositionInBits(size + this.m_objectInitialPos);
+			this._handlesReader.SetPositionInBits(size + this._objectInitialPos);
 
 			if (this._version == ACadVersion.AC1021)
 			{
 				this._textReader = DwgStreamReader.GetStreamHandler(this._version, new StreamIO(this._crcStream, true).Stream);
 				//"endbit" of the pre-handles section.
-				this._textReader.SetPositionByFlag(size + this.m_objectInitialPos - 1);
+				this._textReader.SetPositionByFlag(size + this._objectInitialPos - 1);
 			}
 
 			this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
@@ -768,7 +849,15 @@ namespace ACadSharp.IO.DWG
 					template = this.readHatch();
 					break;
 				case ObjectType.XRECORD:
-					template = this.readXRecord();
+					try
+					{
+						template = this.readXRecord();
+					}
+					catch (System.Exception)
+					{
+						//Xrecord don't seem stable enough
+						notifications?.Invoke(null, new NotificationEventArgs($"Failed to read xrecord"));
+					}
 					break;
 				case ObjectType.ACDBPLACEHOLDER:
 					break;
@@ -826,8 +915,6 @@ namespace ACadSharp.IO.DWG
 				case "LAYOUT":
 				case "LWPLINE":
 				case "MATERIAL":
-					//template = readMaterial();
-					return null;    //Missing documentation
 				case "MLEADER":
 				case "MLEADERSTYLE":
 				case "OLE2FRAME":
@@ -2277,7 +2364,7 @@ namespace ACadSharp.IO.DWG
 				//itemhandles (soft owner)
 				ulong handle = this.handleReference();
 
-				template.HandleEntries.Add(handle, name);
+				template.Entries.Add(name, handle);
 			}
 
 			return template;
@@ -4135,7 +4222,7 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readXRecord()
 		{
 			XRecrod xRecord = new XRecrod();
-			CadXRecordBuilder template = new CadXRecordBuilder(xRecord);
+			CadXRecordTemplate template = new CadXRecordTemplate(xRecord);
 
 			this.readCommonNonEntityData(template);
 
@@ -4143,12 +4230,78 @@ namespace ACadSharp.IO.DWG
 			//Numdatabytes BL number of databytes
 			long offset = this._objectReader.ReadBitLong();
 
-			return null;
-		}
+			//Databytes X databytes, however many there are to the handles
+			while (this._objectReader.Position < offset)
+			{
+				//Common:
+				//XRECORD data is pairs of:
+				//RS indicator number, then data. The indicator number indicates the DXF number of the data,
+				//then the data follows, so for instance an indicator of 1 would be followed by the string length (RC),
+				//the dwgcodepage (RC), and then the string, for R13-R2004 files. For R2007+,
+				//a string contains a short length N, and then N Unicode characters (2 bytes each).
+				//An indicator of 70 would mean a 2 byte short following. An indicator of 10 indicates
+				//3 8-byte doubles following. An indicator of 40 means 1 8-byte double. These indicator
+				//numbers all follow the normal AutoCAD DXF convention for group codes.
+				var code = this._objectReader.ReadShort();
+				var groupCode = GroupCodeValue.TransformValue(code);
 
-		private bool readRecord(CadXRecordBuilder template)
-		{
-			throw new System.NotImplementedException();
+				switch (groupCode)
+				{
+					case GroupCodeValueType.None:
+						break;
+					case GroupCodeValueType.String:
+						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadTextUnicode()));
+						break;
+					case GroupCodeValueType.Point3D:
+						xRecord.Entries.Add(new XRecrod.Entry(code,
+							new XYZ(
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble()
+								)));
+						break;
+					case GroupCodeValueType.Double:
+						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadDouble()));
+						break;
+					case GroupCodeValueType.Int16:
+						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadShort()));
+						break;
+					case GroupCodeValueType.Int32:
+						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadRawLong()));
+						break;
+					case GroupCodeValueType.Int64:
+						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadRawLong()));
+						break;
+					case GroupCodeValueType.StringHex:
+						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadTextUnicode()));
+						break;
+					case GroupCodeValueType.Bool:
+						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadByte() > 0));
+						break;
+					case GroupCodeValueType.Chunk:
+						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadBytes(this._objectReader.ReadByte())));
+						break;
+					default:
+						break;
+				}
+			}
+
+			//R2000+:
+			if (this.R2000Plus)
+				//Cloning flag BS 280
+				xRecord.ClonningFlags = (DictionaryCloningFlags)this._objectReader.ReadBitShort();
+
+			long size = this._objectInitialPos + (long)(this._size * 8U) - 7L;
+			while (this._handlesReader.PositionInBits() < size)
+			{
+				//Handle refs H parenthandle (soft pointer)
+				//[Reactors(soft pointer)]
+				//xdictionary(hard owner)
+				//objid object handles, as many as you can read until you run out of data
+				this.handleReference();
+			}
+
+			return template;
 		}
 
 		private DwgTemplate readLayout()

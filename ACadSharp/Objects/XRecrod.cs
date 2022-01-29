@@ -20,5 +20,21 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(280)]
 		public DictionaryCloningFlags ClonningFlags { get; set; }
+
+		//1-369 (except 5 and 105)	These values can be used by an application in any way
+		public List<Entry> Entries { get; set; } = new List<Entry>();
+
+		public class Entry
+		{
+			public int Code { get; }
+
+			public object Value { get; }
+
+			public Entry(int code, object value)
+			{
+				this.Code = code;
+				this.Value = value;
+			}
+		}
 	}
 }

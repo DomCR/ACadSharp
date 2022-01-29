@@ -48,6 +48,7 @@ namespace ACadSharp.IO.DXF
 			//Reset the end section flag
 			EndSectionFound = false;
 		}
+
 		public Tuple<DxfCode, object> ReadNext()
 		{
 			LastDxfCode = readCode();
@@ -62,6 +63,7 @@ namespace ACadSharp.IO.DXF
 
 			return pair;
 		}
+
 		public override string ReadLine()
 		{
 			Line++;

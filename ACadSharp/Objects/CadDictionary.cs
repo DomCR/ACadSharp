@@ -26,6 +26,6 @@ namespace ACadSharp.Objects
 
 		//3	Entry name(one for each entry) (optional)
 		//350	Soft-owner ID/handle to entry object (one for each entry) (optional)
-		public Dictionary<string, string> Entries { get; } = new Dictionary<string, string>();
+		public Dictionary<string, CadObject> Entries { get; } = new Dictionary<string, CadObject>();
 	}
 }

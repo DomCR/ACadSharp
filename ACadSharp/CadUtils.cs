@@ -27,6 +27,7 @@ namespace ACadSharp
 			else
 				return ACadVersion.Unknown;
 		}
+
 		public static Color CreateColorFromIndex(short index)
 		{
 			//TODO: get the color index form autocad 

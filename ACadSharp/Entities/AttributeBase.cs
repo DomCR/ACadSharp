@@ -25,10 +25,10 @@ namespace ACadSharp.Entities
 	/// </summary>
 	public abstract class AttributeBase : TextEntity
 	{
-		[DxfCodeValue(DxfCode.VerticalTextJustification1)]
+		[DxfCodeValue(74)]
 		public override TextVerticalAlignment VerticalAlignment { get; set; } = TextVerticalAlignment.Baseline;
 
-		[DxfCodeValue(DxfCode.Int8)]
+		[DxfCodeValue(280)]
 		public byte Version { get; set; }
 		/// <summary>
 		/// Specifies the tag string of the object.
@@ -36,13 +36,13 @@ namespace ACadSharp.Entities
 		/// <value>
 		/// Cannot contain spaces.
 		/// </value> 
-		[DxfCodeValue(DxfCode.AttributeTag)]
+		[DxfCodeValue(2)]
 		public string Tag { get; set; }
 
 		/// <summary>
 		/// Attribute flags.
 		/// </summary>
-		[DxfCodeValue(DxfCode.Int16)]
+		[DxfCodeValue(70)]
 		public AttributeFlags Flags { get; set; }
 
 		/// <summary>

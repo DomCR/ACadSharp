@@ -38,13 +38,13 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// 
 		/// </summary>
-		[DxfCodeValue(DxfCode.StartWith)]
+		[DxfCodeValue(40)]
 		public double StartWidth { get; set; } = 0.0;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		[DxfCodeValue(DxfCode.EndWith)]
+		[DxfCodeValue(41)]
 		public double EndWidth { get; set; } = 0.0;
 
 		//71 Polyface mesh vertex index(optional; present only if nonzero)
@@ -52,7 +52,7 @@ namespace ACadSharp.Entities
 		//73 Polyface mesh vertex index(optional; present only if nonzero)
 		//74 Polyface mesh vertex index(optional; present only if nonzero)
 
-		[DxfCodeValue(DxfCode.SmoothType)]
+		[DxfCodeValue(75)]
 		public SmoothSurfaceType SmoothSurface { get; set; }
 
 		/// <summary>

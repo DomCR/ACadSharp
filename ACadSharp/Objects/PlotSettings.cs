@@ -16,25 +16,25 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Page Setup name
 		/// </summary>
-		[DxfCodeValue(DxfCode.Text)]
+		[DxfCodeValue(1)]
 		public string Name { get; set; }
 
 		/// <summary>
 		/// Name of system printer or plot configuration file
 		/// </summary>
-		[DxfCodeValue(DxfCode.ShapeName)]
+		[DxfCodeValue(2)]
 		public string SystemPrinterName { get; set; }
 
 		/// <summary>
 		/// Paper size
 		/// </summary>
-		[DxfCodeValue(DxfCode.PaperSize)]
+		[DxfCodeValue(4)]
 		public string PaperSize { get; set; }
 
 		/// <summary>
 		/// Plot view name
 		/// </summary>
-		[DxfCodeValue(DxfCode.PlotName)]
+		[DxfCodeValue(6)]
 		public string PlotViewName { get; set; }
 
 		/// <summary>
@@ -172,7 +172,7 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Paper image origin
 		/// </summary>
-		[DxfCodeValue(148,149)]
+		[DxfCodeValue(148, 149)]
 		public XY PaperImageOrigin { get; set; }
 
 		/// <summary>

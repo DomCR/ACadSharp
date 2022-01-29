@@ -16,12 +16,11 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? OwnerHandle { get; set; }
 
-		/// <summary>
-		/// XDictionary handle linked to this object.
-		/// </summary>
 		public ulong? XDictHandle { get; set; }
 
 		public List<ulong> ReactorsHandles { get; } = new List<ulong>();
+
+		public Dictionary<ulong, ExtendedData> EDataTemplate { get; } = new Dictionary<ulong, ExtendedData>();
 
 		public DwgTemplate(CadObject cadObject)
 		{
@@ -36,9 +35,13 @@ namespace ACadSharp.IO.Templates
 					this.CadObject.Owner = owner;
 			}
 
-			if (this.XDictHandle.HasValue)
+			if (builder.TryGetCadObject(this.XDictHandle, out CadDictionary cadDictionary))
 			{
-				//CadObject.XDict = builder.GetCadObject<XDictionary>(XDictHandle)
+				this.CadObject.Dictionary = cadDictionary;
+			}
+			else if (this.XDictHandle.HasValue && this.XDictHandle.Value != 0)
+			{
+				builder.NotificationHandler?.Invoke(this.CadObject, new NotificationEventArgs($"Dictionary couldn't be found, handle : {this.XDictHandle}"));
 			}
 
 			foreach (ulong handle in this.ReactorsHandles)
@@ -46,6 +49,14 @@ namespace ACadSharp.IO.Templates
 				CadObject reactor = builder.GetCadObject(handle);
 				if (reactor != null)
 					this.CadObject.Reactors.Add(handle, reactor);
+			}
+
+			foreach (KeyValuePair<ulong, ExtendedData> item in this.EDataTemplate)
+			{
+				if (builder.TryGetCadObject(item.Key, out AppId app))
+				{
+
+				}
 			}
 		}
 
