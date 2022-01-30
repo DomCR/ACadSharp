@@ -63,7 +63,7 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			foreach (var item in ElementTemplates)
+			foreach (var item in this.ElementTemplates)
 			{
 				item.Build(builder);
 			}

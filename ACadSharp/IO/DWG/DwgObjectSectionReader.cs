@@ -528,8 +528,14 @@ namespace ACadSharp.IO.DWG
 					//10 - 13 (1010 - 1013)
 					case DxfCode.ExtendedDataXCoordinate:
 					case DxfCode.ExtendedDataWorldXCoordinate:
+					case DxfCode.ExtendedDataWorldYCoordinate:
+					case DxfCode.ExtendedDataWorldZCoordinate:
 					case DxfCode.ExtendedDataWorldXDisp:
+					case DxfCode.ExtendedDataWorldYDisp:
+					case DxfCode.ExtendedDataWorldZDisp:
 					case DxfCode.ExtendedDataWorldXDir:
+					case DxfCode.ExtendedDataWorldYDir:
+					case DxfCode.ExtendedDataWorldZDir:
 						//Points; 24 bytes(XYZ)-- 3 doubles
 						record = new ExtendedDataRecord(
 							dxfCode,

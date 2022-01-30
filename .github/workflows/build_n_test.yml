@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  GITHUB_WORKFLOW: BUILD_TEST
+
 jobs:
   build:
 
