@@ -11,43 +11,37 @@ namespace ACadSharp.Entities
 
 		//100	Subclass marker(AcDbFace)
 
-		//11	Second corner(in WCS)
-
-		//DXF: X value; APP: 3D point
-
-		//21, 31
-
-		//DXF: Y and Z values of second corner(in WCS)
-
-		//12
-
-		//Third corner(in WCS)
-
-		//DXF: X value; APP: 3D point
-
-		//22, 32
-
-		//DXF: Y and Z values of third corner(in WCS)
-
-		//13
-
-		//Fourth corner(in WCS). If only three corners are entered, this is the same as the third corner
-
-		//DXF: X value; APP: 3D point
-
-		//23, 33	DXF: Y and Z values of fourth corner(in WCS)
-
 		/// <summary>
 		/// First corner(in WCS)
 		/// </summary>
-		[DxfCodeValue(8)]
+		[DxfCodeValue(10, 20, 30)]
 		public XYZ FirstCorner { get; set; }
+
+		/// <summary>
+		/// Second corner(in WCS)
+		/// </summary>
+		[DxfCodeValue(11, 21, 31)]
 		public XYZ SecondCorner { get; set; }
+
+		/// <summary>
+		/// Third corner(in WCS)
+		/// </summary>
+		[DxfCodeValue(12, 22, 32)]
 		public XYZ ThirdCorner { get; set; }
+
+		/// <summary>
+		/// Fourth corner(in WCS).
+		/// </summary>
+		/// <remarks>
+		/// If only three corners are entered, this is the same as the third corner
+		/// </remarks>
+		[DxfCodeValue(13, 23, 33)]
 		public XYZ FourthCorner { get; set; }
 
-		//70	Invisible edge flags(optional; default = 0):
-
+		/// <summary>
+		/// Invisible edge flags
+		/// </summary>
+		[DxfCodeValue(70)]
 		public InvisibleEdgeFlags Flags { get; set; }
 
 		public Face3D() : base() { }

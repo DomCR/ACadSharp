@@ -2,6 +2,7 @@
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.IO.Templates
 {
@@ -27,12 +28,29 @@ namespace ACadSharp.IO.Templates
 				}
 				else if (this.LinetypeIndex.HasValue)
 				{
-					//TODO: Implement get linetype by index
-					//index = 32766??	//by block?
-					//index = 32767??	//by layer??
-					builder.NotificationHandler?.Invoke(
-						this.Element,
-						new NotificationEventArgs($"Linetype not assigned, index {LinetypeIndex}"));;
+					if (this.LinetypeIndex == short.MaxValue)
+					{
+						this.Element.LineType = builder.LineTypes["ByLayer"];
+					}
+					else if (this.LinetypeIndex == (short.MaxValue - 1))
+					{
+						this.Element.LineType = builder.LineTypes["ByBlock"];
+					}
+					else
+					{
+						try
+						{
+							//It can be assigned but is not checked
+							this.Element.LineType = builder.LineTypes.ElementAt(this.LinetypeIndex.Value).Value;
+						}
+						catch (System.Exception)
+						{
+							//TODO: Implement get linetype by index
+							builder.NotificationHandler?.Invoke(
+								this.Element,
+								new NotificationEventArgs($"Linetype not assigned, index {LinetypeIndex}"));
+						}
+					}
 				}
 			}
 		}

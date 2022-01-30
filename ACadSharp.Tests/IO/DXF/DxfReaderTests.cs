@@ -32,14 +32,14 @@ namespace ACadSharp.Tests.IO.DXF
 			this.output = output;
 		}
 
-		[Theory]
+		[Theory(Skip = "Not implemented")]
 		[MemberData(nameof(FilePaths))]
 		public void ReadTest(string test)
 		{
 			CadDocument doc = DxfReader.Read(test, this.onNotification);
 		}
 
-		[Theory]
+		[Theory(Skip = "Not implemented")]
 		[MemberData(nameof(FilePaths))]
 		public void ReadHeaderTest(string test)
 		{
