@@ -1,10 +1,17 @@
-﻿using ACadSharp.Entities;
+﻿using ACadSharp.Attributes;
+using ACadSharp.Entities;
 
 namespace ACadSharp.Blocks
 {
 	/// <summary>
-	/// Class to read the dwg BLOCK type
+	/// Represents a <see cref="BlockEnd"/> entity
 	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EndBlock"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.BlockEnd"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EndBlock)]
+	[DxfSubClass(DxfSubclassMarker.BlockEnd)]
 	public class BlockEnd : Entity
 	{
 		public override string ObjectName => DxfFileToken.EndBlock;

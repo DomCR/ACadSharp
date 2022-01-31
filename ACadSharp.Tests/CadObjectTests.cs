@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
 using System;
@@ -29,7 +30,7 @@ namespace ACadSharp.Tests
 			}
 		}
 
-		[Theory(Skip = "Not implemented")]
+		[Theory]
 		[MemberData(nameof(Types))]
 		public void GetCadObjectMapTest(Type t)
 		{
@@ -45,8 +46,20 @@ namespace ACadSharp.Tests
 				case DxfFileToken.EntityArc:
 					DxfMap.Create<Arc>();
 					break;
+				case DxfFileToken.Block:
+					DxfMap.Create<Block>();
+					break;
+				case DxfFileToken.EndBlock:
+					DxfMap.Create<BlockEnd>();
+					break;
+				case DxfFileToken.TableBlockRecord:
+					DxfMap.Create<BlockRecord>();
+					break;
 				case DxfFileToken.EntityCircle:
 					DxfMap.Create<Circle>();
+					break;
+				case DxfFileToken.EntityDimension:
+					DxfMap.Create<Dimension>();
 					break;
 				case DxfFileToken.EntityEllipse:
 					DxfMap.Create<Ellipse>();

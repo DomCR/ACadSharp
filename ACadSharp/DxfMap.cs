@@ -28,7 +28,7 @@ namespace ACadSharp
 		}
 
 		/// <summary>
-		/// Creates a dxf map for a <see cref="Entity"/> or a <see cref="TableEntry"/>
+		/// Creates a dxf map for an <see cref="Entity"/> or a <see cref="TableEntry"/>
 		/// </summary>
 		/// <remarks>
 		/// This method does not work with the entities <see cref="AttributeEntity"/> and <see cref="AttributeDefinition"/>
