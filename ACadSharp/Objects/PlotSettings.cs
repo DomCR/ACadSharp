@@ -9,7 +9,8 @@ namespace ACadSharp.Objects
 	public class PlotSettings : CadObject
 	{
 		public override ObjectType ObjectType => ObjectType.INVALID;
-		public override string ObjectName => "PLOTSETTINGS";
+
+		public override string ObjectName => DxfFileToken.ObjectPlotSettings;
 
 		//100	Subclass marker(AcDbPlotSettings)
 

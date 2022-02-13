@@ -5,6 +5,7 @@
 	/// </summary>
 	public enum ObjectType : short
 	{
+		UNASSIGNED = -999,
 		INVALID = -1,
 		UNUSED = 0,
 

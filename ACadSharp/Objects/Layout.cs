@@ -17,7 +17,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.TableLayout)]
 	[DxfSubClass(DxfSubclassMarker.Layout)]
-	public class Layout : TableEntry
+	public class Layout : TableEntry	//Layout should be an object not a table
 	{
 		public override ObjectType ObjectType => ObjectType.LAYOUT;
 		public override string ObjectName => DxfFileToken.TableLayout;

@@ -9,7 +9,7 @@ using ACadSharp.Entities;
 namespace ACadSharp.Tables
 {
 	/// <summary>
-	/// Represents a <see cref="BlockRecord"/> entity
+	/// Represents a <see cref="BlockRecord"/> entry
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.TableBlockRecord"/> <br/>

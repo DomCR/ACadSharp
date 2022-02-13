@@ -82,7 +82,7 @@ namespace ACadSharp
 		/// <summary>
 		/// The collection of all layouts in the drawing
 		/// </summary>
-		public LayoutsTable Layouts { get; }
+		public LayoutCollection Layouts { get; }
 
 		/// <summary>
 		/// The collection of all viewports in the drawing
@@ -115,7 +115,7 @@ namespace ACadSharp
 			this.UCSs = new UCSTable(this);
 			this.Views = new ViewsTable(this);
 			this.VPorts = new VPortsTable(this);
-			this.Layouts = new LayoutsTable(this);
+			this.Layouts = new LayoutCollection(this);
 			this.Viewports = new ViewportCollection(this);
 		}
 

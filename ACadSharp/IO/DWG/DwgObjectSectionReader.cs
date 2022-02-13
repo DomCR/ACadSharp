@@ -1958,7 +1958,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readSolid()
 		{
-			Solid3D solid = new Solid3D();
+			Solid solid = new Solid();
 			DwgEntityTemplate template = new DwgEntityTemplate(solid);
 
 			//Common Entity Data
