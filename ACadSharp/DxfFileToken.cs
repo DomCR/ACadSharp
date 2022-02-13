@@ -23,7 +23,6 @@
 		public const string TableBlockRecord = "BLOCK_RECORD";
 		public const string TableDimstyle = "DIMSTYLE";
 		public const string TableGroup = "GROUP";
-		public const string TableLayout = "LAYOUT";
 		public const string TableLayer = "LAYER";
 		public const string TableLinetype = "LTYPE";
 		public const string TableMLStyle = "MLINESTYLE";
@@ -94,5 +93,6 @@
 		public const string ObjectsSection = "OBJECTS";
 		public const string ObjectDictionary = "DICTIONARY";
 		public const string ObjectPlotSettings = "PLOTSETTINGS";
+		public const string ObjectLayout = "LAYOUT";
 	}
 }

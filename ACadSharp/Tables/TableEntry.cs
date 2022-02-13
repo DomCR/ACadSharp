@@ -9,10 +9,10 @@ namespace ACadSharp.Tables
 	public abstract class TableEntry : CadObject
 	{
 		/// <summary>
-		/// Specifies the name of the object.
+		/// Specifies the name of the object
 		/// </summary>
 		[DxfCodeValue(2)]
-		public virtual string Name { get; set; }
+		public string Name { get; set; }
 
 		/// <summary>
 		/// Standard flags

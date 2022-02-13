@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Objects
 {
-	public partial class MLStyle : TableEntry
+	public partial class MLStyle : CadObject
 	{
 		public override ObjectType ObjectType => ObjectType.MLINESTYLE;
 
@@ -14,10 +14,16 @@ namespace ACadSharp.Objects
 		//Subclass marker(AcDbMlineStyle)
 
 		/// <summary>
+		/// Mline style name
+		/// </summary>
+		[DxfCodeValue(2)]
+		public string Name { get; set; }
+
+		/// <summary>
 		/// MLStyle flags
 		/// </summary>
-		//[DxfCodeValue(70)]
-		public new MLineStyleFlags Flags { get; set; }
+		[DxfCodeValue(70)]
+		public MLineStyleFlags Flags { get; set; }
 
 		/// <summary>
 		/// Style description
@@ -45,7 +51,6 @@ namespace ACadSharp.Objects
 		public double EndAngle { get; set; } = 90;
 
 		//71	Number of elements
-
 		public List<MLStyle.Element> Elements { get; } = new List<Element>();
 	}
 }

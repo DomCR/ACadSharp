@@ -4326,7 +4326,7 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			layout.PlotSettings = this.readPlotSettings();
+			this.readPlotSettings(layout);
 
 			//Common:
 			//Layout name TV 1 layout name
@@ -4383,13 +4383,11 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private PlotSettings readPlotSettings()
+		private void readPlotSettings(PlotSettings plot)
 		{
-			PlotSettings plot = new PlotSettings();
-
 			//Common:
 			//Page setup name TV 1 plotsettings page setup name
-			plot.Name = this._textReader.ReadVariableText();
+			plot.PageName = this._textReader.ReadVariableText();
 			//Printer / Config TV 2 plotsettings printer or configuration file
 			plot.SystemPrinterName = this._textReader.ReadVariableText();
 			//Plot layout flags BS 70 plotsettings plot layout flag
@@ -4467,8 +4465,6 @@ namespace ACadSharp.IO.DWG
 			if (this.R2007Plus)
 				//Visual Style handle(soft pointer)
 				this.handleReference();
-
-			return plot;
 		}
 
 		#endregion Object readers
