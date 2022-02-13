@@ -10,7 +10,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/DomCR/ACadSharp</PackageProjectUrl>
-    <Copyright>Copyright (c) 2021 Albert Domenech</Copyright>
+    <Copyright>Copyright (c) 2022 Albert Domenech</Copyright>
     <Description>C# library to read/write cad files like dxf/dwg.</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
@@ -18,7 +18,7 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.0.0.0-alpha</Version>
+    <Version>1.0.1-alpha</Version>
   </PropertyGroup>
   
   <Import Project="..\CSUtilities\CSUtilities\CSUtilities.projitems" Label="Shared" />
