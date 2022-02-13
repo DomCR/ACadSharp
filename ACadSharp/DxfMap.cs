@@ -1,6 +1,8 @@
-﻿using ACadSharp.Attributes;
+﻿using ACadSharp;
+using ACadSharp.Attributes;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
+using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +17,39 @@ namespace ACadSharp
 		public string Name { get; set; }
 
 		public Dictionary<int, object> Properties { get; } = new Dictionary<int, object>();
+
+		public Dictionary<int, DxfProperty> DxfProperties { get; } = new Dictionary<int, DxfProperty>();
+
+		protected static void addClassProperties(DxfMapBase map, Type type)
+		{
+			foreach (var item in cadObjectMapDxf(type))
+			{
+				map.DxfProperties.Add(item.Key, item.Value);
+			}
+		}
+
+		protected static IEnumerable<KeyValuePair<int, DxfProperty>> cadObjectMapDxf(Type type)
+		{
+			foreach (PropertyInfo p in type.GetProperties(BindingFlags.Public
+														| BindingFlags.Instance
+														| BindingFlags.DeclaredOnly))
+			{
+				if (p.GetCustomAttribute<DxfCodeValueAttribute>() == null)
+					continue;
+
+				foreach (var item in DxfProperty.Create(p))
+				{
+					yield return new KeyValuePair<int, DxfProperty>(item.Code, item);
+				}
+			}
+		}
 	}
 
 	public class DxfMap : DxfMapBase
 	{
 		public Dictionary<string, DxfClassMap> SubClasses { get; private set; } = new Dictionary<string, DxfClassMap>();
 
-		public static DxfMap Create<T>(T cadObject)
+		public static CadObject Build<T>()
 			where T : CadObject
 		{
 			throw new NotImplementedException();
@@ -47,22 +75,34 @@ namespace ACadSharp
 			{
 				if (type.Equals(typeof(CadObject)))
 				{
-					foreach (var item in cadObjectMap(type))
-					{
-						map.Properties.Add(item.Key, item.Value);
-					}
+					addClassProperties(map, type);
 
 					break;
 				}
-				else
+				else if (type.Equals(typeof(TableEntry)))
+				{
+					//TODO: Handle the names and subclasses 
+					DxfClassMap classMap = map.SubClasses.Last().Value;
+
+					addClassProperties(classMap, type);
+				}
+				else if (type.Equals(typeof(AttributeEntity)) || type.Equals(typeof(AttributeDefinition)))
+				{
+					DxfClassMap attMap = new DxfClassMap();
+					attMap.Name = type.GetCustomAttribute<DxfSubClassAttribute>().ClassName;
+
+					addClassProperties(attMap, type);
+
+					//Get the base class for both atts
+					type = type.BaseType;
+					addClassProperties(attMap, type);
+
+					map.SubClasses.Add(attMap.Name, attMap);
+				}
+				else if (type.GetCustomAttribute<DxfSubClassAttribute>() != null)
 				{
 					DxfClassMap classMap = new DxfClassMap();
 					classMap.Name = type.GetCustomAttribute<DxfSubClassAttribute>().ClassName;
-
-					foreach (var item in cadObjectMap(type))
-					{
-						classMap.Properties.Add(item.Key, item.Value);
-					}
 
 					map.SubClasses.Add(classMap.Name, classMap);
 				}
@@ -70,27 +110,91 @@ namespace ACadSharp
 
 			return map;
 		}
-
-		private static IEnumerable<KeyValuePair<int, object>> cadObjectMap(Type type)
-		{
-			foreach (PropertyInfo p in type.GetProperties(BindingFlags.Public
-														| BindingFlags.Instance
-														| BindingFlags.DeclaredOnly))
-			{
-				DxfCodeValueAttribute att = p.GetCustomAttribute<DxfCodeValueAttribute>();
-				if (att == null)
-					continue;
-
-				//Set the codes to the map
-				foreach (DxfCode code in att.ValueCodes)
-				{
-					yield return new KeyValuePair<int, object>((int)code, null);
-				}
-			}
-		}
 	}
 
 	public class DxfClassMap : DxfMapBase
 	{
+		public static DxfClassMap Create<T>()
+			where T : CadObject
+		{
+			Type type = typeof(T);
+			DxfClassMap classMap = new DxfClassMap();
+
+			var att = type.GetCustomAttribute<DxfSubClassAttribute>();
+			if (att == null)
+				throw new ArgumentException($"{type.FullName} is not a dxf subclass");
+
+			classMap.Name = type.GetCustomAttribute<DxfSubClassAttribute>().ClassName;
+
+			addClassProperties(classMap, type);
+
+			return classMap;
+		}
+	}
+
+	public class DxfProperty
+	{
+		public int Code { get; }
+
+		public object Value { get; }
+
+		public DxfCodeValueAttribute DxfAttribute { get; }
+
+		private PropertyInfo _property;
+
+		private DxfProperty(int code, PropertyInfo property)
+		{
+			this.DxfAttribute = property.GetCustomAttribute<DxfCodeValueAttribute>();
+			if (this.DxfAttribute == null)
+				throw new ArgumentException($"The property does not implement the {nameof(DxfCodeValueAttribute)}", nameof(property));
+
+			this.Code = code;
+			_property = property;
+		}
+
+		public static IEnumerable<DxfProperty> Create(PropertyInfo property)
+		{
+			var att = property.GetCustomAttribute<DxfCodeValueAttribute>();
+			if (att == null)
+				throw new ArgumentException($"The property does not implement the {nameof(DxfCodeValueAttribute)}", nameof(property));
+
+			foreach (var item in att.ValueCodes)
+			{
+				yield return new DxfProperty((int)item, property);
+			}
+		}
+
+		public void SetValue<T>(T obj, object value)
+			where T : CadObject
+		{
+			if (_property.PropertyType.IsEquivalentTo(typeof(XYZ)))
+			{
+				XYZ vector = (XYZ)_property.GetValue(obj);
+
+				int index = (this.Code / 10) % 10 - 1;
+				double[] components = vector.GetComponents();
+				components[index] = Convert.ToDouble(value);
+
+				vector = vector.SetComponents(components);
+
+				this._property.SetValue(obj, vector);
+			}
+			if (_property.PropertyType.IsEquivalentTo(typeof(XY)))
+			{
+				IVector<XYZ> vector = (_property.GetValue(obj) as IVector<XYZ>);
+
+				int index = (this.Code / 10) % 10;
+				double[] components = vector.GetComponents();
+				components[index] = Convert.ToDouble(value);
+
+				vector = vector.SetComponents(components);
+
+				this._property.SetValue(obj, vector);
+			}
+			else
+			{
+				this._property.SetValue(obj, value);
+			}
+		}
 	}
 }

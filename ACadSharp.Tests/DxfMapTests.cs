@@ -30,7 +30,7 @@ namespace ACadSharp.Tests
 			}
 		}
 
-		[Theory(Skip = "Not fully implemented")]
+		[Theory]
 		[MemberData(nameof(Types))]
 		public void CreateMapTest(Type t)
 		{
@@ -38,7 +38,6 @@ namespace ACadSharp.Tests
 			DxfSubClassAttribute subclass = t.GetCustomAttribute<DxfSubClassAttribute>();
 
 			Assert.NotNull(att);
-			Assert.NotNull(subclass);
 
 			switch (att.Name)
 			{
@@ -64,6 +63,7 @@ namespace ACadSharp.Tests
 					DxfMap.Create<Circle>();
 					break;
 				case DxfFileToken.EntityDimension:
+					Assert.NotNull(subclass);
 					switch (subclass.ClassName)
 					{
 						case DxfSubclassMarker.AlignedDimension:
@@ -130,8 +130,14 @@ namespace ACadSharp.Tests
 				case DxfFileToken.EntitySeqend:
 					DxfMap.Create<Seqend>();
 					break;
+				case DxfFileToken.EntitySolid:
+					DxfMap.Create<Solid>();
+					break;
 				case DxfFileToken.Entity3DSolid:
 					DxfMap.Create<Solid3D>();
+					break;
+				case DxfFileToken.EntitySpline:
+					DxfMap.Create<Spline>();
 					break;
 				case DxfFileToken.EntityText:
 					DxfMap.Create<TextEntity>();
@@ -144,6 +150,9 @@ namespace ACadSharp.Tests
 					break;
 				case DxfFileToken.TableVport:
 					DxfMap.Create<VPort>();
+					break;
+				case DxfFileToken.EntityXline:
+					DxfMap.Create<XLine>();
 					break;
 				default:
 					throw new NotImplementedException($"Test not implemented for type {t.Name}");
