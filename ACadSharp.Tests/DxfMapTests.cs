@@ -11,17 +11,17 @@ using Xunit;
 
 namespace ACadSharp.Tests
 {
-	public class CadObjectTests
+	public class DxfMapTests
 	{
 		public static readonly TheoryData<Type> Types;
 
-		static CadObjectTests()
+		static DxfMapTests()
 		{
 			Types = new TheoryData<Type>();
 
 			var d = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.ManifestModule.Name == "ACadSharp.dll");
 
-			foreach (var item in d.GetTypes())
+			foreach (var item in d.GetTypes().Where(i => !i.IsAbstract))
 			{
 				if (item.IsSubclassOf(typeof(Entity)) || item.IsSubclassOf(typeof(TableEntry)))
 				{
@@ -30,18 +30,23 @@ namespace ACadSharp.Tests
 			}
 		}
 
-		[Theory]
+		[Theory(Skip = "Not fully implemented")]
 		[MemberData(nameof(Types))]
-		public void GetCadObjectMapTest(Type t)
+		public void CreateMapTest(Type t)
 		{
 			DxfNameAttribute att = t.GetCustomAttribute<DxfNameAttribute>();
+			DxfSubClassAttribute subclass = t.GetCustomAttribute<DxfSubClassAttribute>();
 
 			Assert.NotNull(att);
+			Assert.NotNull(subclass);
 
 			switch (att.Name)
 			{
 				case DxfFileToken.EntityAttribute:
+					DxfMap.Create<AttributeEntity>();
+					break;
 				case DxfFileToken.EntityAttributeDefinition:
+					DxfMap.Create<AttributeDefinition>();
 					return;
 				case DxfFileToken.EntityArc:
 					DxfMap.Create<Arc>();
@@ -59,7 +64,32 @@ namespace ACadSharp.Tests
 					DxfMap.Create<Circle>();
 					break;
 				case DxfFileToken.EntityDimension:
-					DxfMap.Create<Dimension>();
+					switch (subclass.ClassName)
+					{
+						case DxfSubclassMarker.AlignedDimension:
+							DxfMap.Create<DimensionAligned>();
+							break;
+						case DxfSubclassMarker.Angular2LineDimension:
+							DxfMap.Create<DimensionAngular2Line>();
+							break;
+						case DxfSubclassMarker.Angular3PointDimension:
+							DxfMap.Create<DimensionAngular3Pt>();
+							break;
+						case DxfSubclassMarker.DiametricDimension:
+							DxfMap.Create<DimensionDiameter>();
+							break;
+						case DxfSubclassMarker.LinearDimension:
+							DxfMap.Create<DimensionLinear>();
+							break;
+						case DxfSubclassMarker.OrdinateDimension:
+							DxfMap.Create<DimensionOrdinate>();
+							break;
+						case DxfSubclassMarker.RadialDimension:
+							DxfMap.Create<DimensionRadius>();
+							break;
+						default:
+							throw new NotImplementedException($"Test not implemented for type {t.Name}");
+					}
 					break;
 				case DxfFileToken.EntityEllipse:
 					DxfMap.Create<Ellipse>();
@@ -72,6 +102,9 @@ namespace ACadSharp.Tests
 					break;
 				case DxfFileToken.EntityInsert:
 					DxfMap.Create<Insert>();
+					break;
+				case DxfFileToken.EntityLeader:
+					DxfMap.Create<Leader>();
 					break;
 				case DxfFileToken.EntityLine:
 					DxfMap.Create<Line>();
@@ -91,6 +124,12 @@ namespace ACadSharp.Tests
 				case DxfFileToken.EntityRay:
 					DxfMap.Create<Ray>();
 					break;
+				case DxfFileToken.EntityShape:
+					DxfMap.Create<Shape>();
+					break;
+				case DxfFileToken.EntitySeqend:
+					DxfMap.Create<Seqend>();
+					break;
 				case DxfFileToken.Entity3DSolid:
 					DxfMap.Create<Solid3D>();
 					break;
@@ -102,6 +141,9 @@ namespace ACadSharp.Tests
 					break;
 				case DxfFileToken.EntityViewport:
 					DxfMap.Create<Viewport>();
+					break;
+				case DxfFileToken.TableVport:
+					DxfMap.Create<VPort>();
 					break;
 				default:
 					throw new NotImplementedException($"Test not implemented for type {t.Name}");

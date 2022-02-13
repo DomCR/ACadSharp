@@ -3,12 +3,19 @@ using CSMath;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Represents a <see cref="Ray"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EntityRay"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Ray"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EntityRay)]
+	[DxfSubClass(DxfSubclassMarker.Ray)]
 	public class Ray : Entity
 	{
 		public override ObjectType ObjectType => ObjectType.RAY;
 		public override string ObjectName => DxfFileToken.EntityRay;
-
-		//100	Subclass marker(AcDbRay)
 
 		/// <summary>
 		/// Start point(in WCS)

@@ -6,9 +6,19 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
-	public class PolyLine : Entity
+	/// <summary>
+	/// Represents a <see cref="PolyLine"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EntityPolyline"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Polyline"/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Polyline3d"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EntityPolyline)]
+	[DxfSubClass(DxfSubclassMarker.Polyline)]
+	public abstract class PolyLine : Entity	//TODO: Create an abstract task, split in 2d and 3d
 	{
-		public override ObjectType ObjectType => ObjectType.POLYLINE_2D;    //Shit there is a 3d too...
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityPolyline;
 
 		/// <summary>

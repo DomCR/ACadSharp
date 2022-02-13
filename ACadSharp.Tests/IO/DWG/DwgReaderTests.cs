@@ -21,7 +21,10 @@ namespace ACadSharp.Tests.IO.DWG
 			FilePaths = new TheoryData<string>();
 
 			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null)
+			{
+				FilePaths.Add(null);
 				return;
+			}
 
 			foreach (string file in Directory.GetFiles(_samplesFolder, "*.dwg"))
 			{
@@ -38,6 +41,9 @@ namespace ACadSharp.Tests.IO.DWG
 		[MemberData(nameof(FilePaths))]
 		public void ReadTest(string test)
 		{
+			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null)
+				return;
+
 			CadDocument doc = DwgReader.Read(test, this.onNotification);
 		}
 
@@ -45,6 +51,9 @@ namespace ACadSharp.Tests.IO.DWG
 		[MemberData(nameof(FilePaths))]
 		public void ReadHeaderTest(string test)
 		{
+			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null)
+				return;
+
 			CadHeader header;
 
 			using (DwgReader reader = new DwgReader(test, this.onNotification))

@@ -7,13 +7,22 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Represents a <see cref="MText"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EntityMText"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.MText"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EntityMText)]
+	[DxfSubClass(DxfSubclassMarker.MText)]
 	public partial class MText : Entity
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.MTEXT;
 
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityMText;
-
-		//100	Subclass marker(AcDbMText)
 
 		/// <summary>
 		/// A 3D WCS coordinate representing the insertion or origin point.

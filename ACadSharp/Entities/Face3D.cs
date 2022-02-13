@@ -4,12 +4,22 @@ using CSMath;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Represents a <see cref="Face3D"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.Entity3DFace"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Face3d"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.Entity3DFace)]
+	[DxfSubClass(DxfSubclassMarker.Face3d)]
 	public class Face3D : Entity
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.FACE3D;
-		public override string ObjectName => DxfFileToken.Entity3DFace;
 
-		//100	Subclass marker(AcDbFace)
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.Entity3DFace;
 
 		/// <summary>
 		/// First corner(in WCS)

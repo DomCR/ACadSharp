@@ -8,6 +8,15 @@ using System.Text;
 
 namespace ACadSharp.Tables
 {
+	/// <summary>
+	/// Represents a <see cref="VPort"/> table entry
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.TableVport"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.VPort"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.TableVport)]
+	[DxfSubClass(DxfSubclassMarker.VPort)]
 	public class VPort : TableEntry
 	{
 		public override ObjectType ObjectType => ObjectType.VPORT;

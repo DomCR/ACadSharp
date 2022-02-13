@@ -4,7 +4,7 @@ using CSMath;
 
 namespace ACadSharp.Entities
 {
-	public class Vertex : Entity
+	public class Vertex : Entity	//TODO: Create an abstract task, split in 2d and 3d
 	{
 		public override ObjectType ObjectType => ObjectType.VERTEX_2D;  //Shit there is a 3d too...
 		public override string ObjectName => DxfFileToken.EntityVertex;

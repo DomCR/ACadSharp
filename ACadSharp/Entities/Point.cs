@@ -4,12 +4,22 @@ using CSMath;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Represents a <see cref="Point"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EntityPoint"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Point"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EntityPoint)]
+	[DxfSubClass(DxfSubclassMarker.Point)]
 	public class Point : Entity
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.POINT;
-		public override string ObjectName => DxfFileToken.EntityPoint;
 
-		//100	Subclass marker(AcDbPoint)
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityPoint;
 
 		/// <summary>
 		/// Point location(in WCS)

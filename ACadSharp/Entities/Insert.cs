@@ -6,9 +6,21 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Represents a <see cref="Hatch"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EntityHatch"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Hatch"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EntityHatch)]
+	[DxfSubClass(DxfSubclassMarker.Hatch)]
 	public class Insert : Entity
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.INSERT;
+
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityInsert;
 
 		//66	Variable attributes-follow flag(optional; default = 0); 

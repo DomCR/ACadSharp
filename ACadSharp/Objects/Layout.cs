@@ -8,6 +8,15 @@ using System.Text;
 
 namespace ACadSharp.Objects
 {
+	/// <summary>
+	/// Represents a <see cref="Layout"/> table entry
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.TableLayout"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Layout"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.TableLayout)]
+	[DxfSubClass(DxfSubclassMarker.Layout)]
 	public class Layout : TableEntry
 	{
 		public override ObjectType ObjectType => ObjectType.LAYOUT;
@@ -15,8 +24,6 @@ namespace ACadSharp.Objects
 
 		//100	//Subclass marker(AcDbPlotSettings)	//plotsettings object group codes
 		//For group codes and descriptions following the AcDbPlotSettings marker, see PLOTSETTINGS
-
-		//100	Subclass marker(AcDbLayout)
 
 		[DxfCodeValue(1)]
 		public override string Name { get; set; }

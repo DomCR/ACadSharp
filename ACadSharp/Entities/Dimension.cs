@@ -10,10 +10,17 @@ using System.Threading.Tasks;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Represents a <see cref="Dimension"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EntityDimension"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Dimension"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EntityDimension)]
+	[DxfSubClass(DxfSubclassMarker.Dimension)]
 	public abstract class Dimension : Entity
 	{
-		//100	Subclass marker(AcDbDimension)
-
 		/// <summary>
 		/// Version number
 		/// </summary>

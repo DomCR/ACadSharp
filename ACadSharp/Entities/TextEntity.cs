@@ -5,10 +5,17 @@ using CSMath;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Represents a <see cref="TextEntity"/>
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EntityText"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Text"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EntityText)]
+	[DxfSubClass(DxfSubclassMarker.Text)]
 	public class TextEntity : Entity
 	{
-		//100	Subclass marker(AcDbText)
-
 		public override ObjectType ObjectType => ObjectType.TEXT;
 
 		public override string ObjectName => DxfFileToken.EntityText;
@@ -25,7 +32,7 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// This property is read-only except for text whose Alignment property is set to acAlignmentLeft, acAlignmentAligned, or acAlignmentFit. To position text whose justification is other than left, aligned, or fit, use the TextAlignmentPoint property.
 		/// </remarks>
-		[DxfCodeValue(DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
+		[DxfCodeValue(10, 20, 30)]
 		public XYZ InsertPoint { get; set; } = XYZ.Zero;
 
 		/// <summary>
@@ -55,8 +62,12 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(50)]
 		public double Rotation { get; set; } = 0.0;
 
-		//41	Relative X scale factor—width(optional; default = 1)	//Needed?? adjust value
-		//		This value is also adjusted when fit-type text is used
+		/// <summary>
+		/// Relative X scale factor—widt
+		/// </summary>
+		/// <remarks>
+		/// This value is also adjusted when fit-type text is used (optional)
+		/// </remarks>
 		[DxfCodeValue(41)]
 		public double WidthFactor { get; set; } = 1.0;
 
@@ -80,13 +91,13 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(71)]
 		public TextMirrorFlag Mirror { get; set; } = TextMirrorFlag.None;
-		
+
 		/// <summary>
 		/// Horizontal text justification type.
 		/// </summary>
 		[DxfCodeValue(72)]
 		public TextHorizontalAlignment HorizontalAlignment { get; set; } = TextHorizontalAlignment.Left;
-		
+
 		/// <summary>
 		/// A 3D WCS coordinate representing the alignment point of the object.
 		/// </summary>

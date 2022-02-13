@@ -350,11 +350,11 @@ namespace ACadSharp.IO.DWG
 				if (this._objectReader.Read2Bits() == 3)
 				{
 					//MATERIAL present if material flags were 11
-					long num2 = (long)this.handleReference();
+					this.handleReference();
 				}
 
 				//Shadow flags RC
-				int num3 = this._objectReader.ReadByte();
+				this._objectReader.ReadByte();
 			}
 
 			//R2000 +:
@@ -959,6 +959,7 @@ namespace ACadSharp.IO.DWG
 		{
 			TextEntity text = new TextEntity();
 			DwgTextEntityTemplate template = new DwgTextEntityTemplate(text);
+
 			this.readCommonTextData(template);
 
 			return template;
@@ -968,6 +969,7 @@ namespace ACadSharp.IO.DWG
 		{
 			AttributeEntity att = new AttributeEntity();
 			DwgTextEntityTemplate template = new DwgTextEntityTemplate(att);
+
 			this.readCommonTextData(template);
 
 			this.readCommonAttData(att);
@@ -1356,7 +1358,8 @@ namespace ACadSharp.IO.DWG
 			//Point 3BD 10 NOTE THAT THE Z SEEMS TO ALWAYS BE 0.0! The Z must be taken from the 2D POLYLINE elevation.
 			vertex.Location = this._objectReader.Read3BitDouble();
 
-			//Start width BD 40 If it's negative, use the abs val for start AND end widths (and note that no end width will be present). This is a compression trick for cases where the start and end widths are identical and non-0.
+			//Start width BD 40 If it's negative, use the abs val for start AND end widths (and note that no end width will be present).
+			//This is a compression trick for cases where the start and end widths are identical and non-0.
 			double width = this._objectReader.ReadBitDouble();
 			if (width < 0.0)
 			{
@@ -1422,7 +1425,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readPolyline2D()
 		{
-			PolyLine pline = new PolyLine();
+			PolyLine2D pline = new PolyLine2D();
 			DwgPolyLineTemplate template = new DwgPolyLineTemplate(pline);
 
 			this.readCommonEntityData(template);
@@ -1470,7 +1473,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readPolyline3D()
 		{
-			PolyLine pline = new PolyLine();
+			PolyLine3D pline = new PolyLine3D();
 			DwgPolyLineTemplate template = new DwgPolyLineTemplate(pline);
 
 			this.readCommonEntityData(template);

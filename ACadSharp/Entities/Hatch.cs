@@ -5,12 +5,22 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Represents a <see cref="Hatch"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EntityHatch"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Hatch"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EntityHatch)]
+	[DxfSubClass(DxfSubclassMarker.Hatch)]
 	public class Hatch : Entity
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.HATCH;
-		public override string ObjectName => DxfFileToken.EntityHatch;
 
-		//100	Subclass marker(AcDbHatch)
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityHatch;
 
 		/// <summary>
 		/// The current elevation of the object.

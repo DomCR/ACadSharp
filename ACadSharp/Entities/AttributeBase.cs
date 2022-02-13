@@ -31,27 +31,28 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(280)]
 		public byte Version { get; set; }
 		/// <summary>
-		/// Specifies the tag string of the object.
+		/// Specifies the tag string of the object
 		/// </summary>
 		/// <value>
-		/// Cannot contain spaces.
+		/// Cannot contain spaces
 		/// </value> 
 		[DxfCodeValue(2)]
 		public string Tag { get; set; }
 
 		/// <summary>
-		/// Attribute flags.
+		/// Attribute flags
 		/// </summary>
 		[DxfCodeValue(70)]
 		public AttributeFlags Flags { get; set; }
 
 		/// <summary>
-		/// MText flag.
+		/// MText flag
 		/// </summary>
-		//[DxfCodeValue(DxfCode.Int8)]
+		//[DxfCodeValue(280)]
 		//TODO: Check the dxf code of Attribute type.
 		//Missmatch between Autodesk documentation and OpenDesign
 		public AttributeType AttributeType { get; set; }
+
 		//Missmatch between Autodesk documentation and OpenDesign
 		public bool IsReallyLocked { get; set; }
 

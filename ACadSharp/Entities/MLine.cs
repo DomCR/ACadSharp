@@ -6,13 +6,20 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Represents a <see cref="MLine"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EntityMLine"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.MLine"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EntityMLine)]
+	[DxfSubClass(DxfSubclassMarker.MLine)]
 	public partial class MLine : Entity
 	{
 		public override ObjectType ObjectType => ObjectType.MLINE;
 
 		public override string ObjectName => DxfFileToken.EntityMLine;
-
-		//100	Subclass marker(AcDbMline)
 
 		/// <summary>
 		/// String of up to 32 characters.The name of the style used for this mline.An entry for this style must exist in the MLINESTYLE dictionary.
