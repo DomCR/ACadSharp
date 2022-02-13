@@ -15,7 +15,7 @@ namespace ACadSharp
 	/// <summary>
 	/// An AutoCAD drawing
 	/// </summary>
-	public class CadDocument : CadObject	//TODO: Remove the CadObject hineritance
+	public class CadDocument : CadObject    //TODO: Remove the CadObject hineritance
 	{
 		public override ObjectType ObjectType => ObjectType.INVALID;
 
@@ -82,7 +82,7 @@ namespace ACadSharp
 		/// <summary>
 		/// The collection of all layouts in the drawing
 		/// </summary>
-		public LayoutsTable Layouts { get; }
+		public List<Layout> Layouts { get; }
 
 		/// <summary>
 		/// The collection of all viewports in the drawing
@@ -115,8 +115,9 @@ namespace ACadSharp
 			this.UCSs = new UCSTable(this);
 			this.Views = new ViewsTable(this);
 			this.VPorts = new VPortsTable(this);
-			this.Layouts = new LayoutsTable(this);
 			this.Viewports = new ViewportCollection(this);
+
+			this.Layouts = new List<Layout>();
 		}
 
 		public CadObject GetCadObject(ulong handle)

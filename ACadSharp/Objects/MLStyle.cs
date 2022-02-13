@@ -5,19 +5,32 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Objects
 {
-	public partial class MLStyle : TableEntry
+	/// <summary>
+	/// Represents a <see cref="MLStyle"/> object
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.ObjectMLStyle"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.MLineStyle"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.ObjectMLStyle)]
+	[DxfSubClass(DxfSubclassMarker.MLineStyle)]
+	public partial class MLStyle : CadObject
 	{
 		public override ObjectType ObjectType => ObjectType.MLINESTYLE;
 
-		public override string ObjectName => DxfFileToken.TableMLStyle;
+		public override string ObjectName => DxfFileToken.ObjectMLStyle;
 
-		//Subclass marker(AcDbMlineStyle)
+		/// <summary>
+		/// Mline style name
+		/// </summary>
+		[DxfCodeValue(2)]
+		public string Name { get; set; }
 
 		/// <summary>
 		/// MLStyle flags
 		/// </summary>
-		//[DxfCodeValue(70)]
-		public new MLineStyleFlags Flags { get; set; }
+		[DxfCodeValue(70)]
+		public MLineStyleFlags Flags { get; set; }
 
 		/// <summary>
 		/// Style description
@@ -45,7 +58,6 @@ namespace ACadSharp.Objects
 		public double EndAngle { get; set; } = 90;
 
 		//71	Number of elements
-
 		public List<MLStyle.Element> Elements { get; } = new List<Element>();
 	}
 }

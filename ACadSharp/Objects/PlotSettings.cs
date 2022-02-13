@@ -6,18 +6,28 @@ using System.Text;
 
 namespace ACadSharp.Objects
 {
+	/// <summary>
+	/// Represents a <see cref="PlotSettings"/> object
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.ObjectPlotSettings"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.PlotSettings"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.ObjectPlotSettings)]
+	[DxfSubClass(DxfSubclassMarker.PlotSettings)]
 	public class PlotSettings : CadObject
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.INVALID;
-		public override string ObjectName => "PLOTSETTINGS";
 
-		//100	Subclass marker(AcDbPlotSettings)
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.ObjectPlotSettings;
 
 		/// <summary>
 		/// Page Setup name
 		/// </summary>
 		[DxfCodeValue(1)]
-		public string Name { get; set; }
+		public string PageName { get; set; }
 
 		/// <summary>
 		/// Name of system printer or plot configuration file

@@ -9,24 +9,27 @@ using System.Text;
 namespace ACadSharp.Objects
 {
 	/// <summary>
-	/// Represents a <see cref="Layout"/> table entry
+	/// Represents a <see cref="Layout"/> object
 	/// </summary>
 	/// <remarks>
-	/// Object name <see cref="DxfFileToken.TableLayout"/> <br/>
+	/// Object name <see cref="DxfFileToken.ObjectLayout"/> <br/>
 	/// Dxf class name <see cref="DxfSubclassMarker.Layout"/>
 	/// </remarks>
-	[DxfName(DxfFileToken.TableLayout)]
+	[DxfName(DxfFileToken.ObjectLayout)]
 	[DxfSubClass(DxfSubclassMarker.Layout)]
-	public class Layout : TableEntry
+	public class Layout : PlotSettings
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.LAYOUT;
-		public override string ObjectName => DxfFileToken.TableLayout;
 
-		//100	//Subclass marker(AcDbPlotSettings)	//plotsettings object group codes
-		//For group codes and descriptions following the AcDbPlotSettings marker, see PLOTSETTINGS
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.ObjectLayout;
 
+		/// <summary>
+		/// Layout name
+		/// </summary>
 		[DxfCodeValue(1)]
-		public override string Name { get; set; }
+		public string Name { get; set; }
 
 		/// <summary>
 		/// Layout flags.
@@ -121,11 +124,6 @@ namespace ACadSharp.Objects
 		//If not present and 76 code is non-zero, then base UCS is taken to be WORLD
 
 		//333	Shade plot ID
-
-		/// <summary>
-		/// Plot settings for this layout.
-		/// </summary>
-		public PlotSettings PlotSettings { get; set; }
 
 		public List<Viewport> Viewports { get; } = new List<Viewport>();
 

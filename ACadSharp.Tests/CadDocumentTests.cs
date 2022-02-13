@@ -24,7 +24,6 @@ namespace ACadSharp.Tests
 			this.assertTable(document, document.UCSs);
 			this.assertTable(document, document.Views);
 			this.assertTable(document, document.VPorts);
-			this.assertTable(document, document.Layouts);
 		}
 
 		private void assertTable<T>(CadDocument doc, Table<T> table)
