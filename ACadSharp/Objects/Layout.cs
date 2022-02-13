@@ -9,7 +9,7 @@ using System.Text;
 namespace ACadSharp.Objects
 {
 	/// <summary>
-	/// Represents a <see cref="Layout"/> table entry
+	/// Represents a <see cref="Layout"/> object
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.ObjectLayout"/> <br/>

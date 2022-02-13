@@ -5,13 +5,20 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Objects
 {
+	/// <summary>
+	/// Represents a <see cref="MLStyle"/> object
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.ObjectMLStyle"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.MLineStyle"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.ObjectMLStyle)]
+	[DxfSubClass(DxfSubclassMarker.MLineStyle)]
 	public partial class MLStyle : CadObject
 	{
 		public override ObjectType ObjectType => ObjectType.MLINESTYLE;
 
-		public override string ObjectName => DxfFileToken.TableMLStyle;
-
-		//Subclass marker(AcDbMlineStyle)
+		public override string ObjectName => DxfFileToken.ObjectMLStyle;
 
 		/// <summary>
 		/// Mline style name

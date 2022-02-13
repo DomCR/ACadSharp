@@ -25,7 +25,6 @@
 		public const string TableGroup = "GROUP";
 		public const string TableLayer = "LAYER";
 		public const string TableLinetype = "LTYPE";
-		public const string TableMLStyle = "MLINESTYLE";
 		public const string TableStyle = "STYLE";
 		public const string TableUcs = "UCS";
 		public const string TableView = "VIEW";
@@ -94,5 +93,6 @@
 		public const string ObjectDictionary = "DICTIONARY";
 		public const string ObjectPlotSettings = "PLOTSETTINGS";
 		public const string ObjectLayout = "LAYOUT";
+		public const string ObjectMLStyle = "MLINESTYLE";
 	}
 }
