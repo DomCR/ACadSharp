@@ -179,9 +179,9 @@ namespace ACadSharp
 
 				this._property.SetValue(obj, vector);
 			}
-			if (_property.PropertyType.IsEquivalentTo(typeof(XY)))
+			else if (_property.PropertyType.IsEquivalentTo(typeof(XY)))
 			{
-				IVector<XYZ> vector = (_property.GetValue(obj) as IVector<XYZ>);
+				XY vector = (XY)_property.GetValue(obj);
 
 				int index = (this.Code / 10) % 10;
 				double[] components = vector.GetComponents();
