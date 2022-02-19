@@ -6,13 +6,26 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Tables
 {
+	/// <summary>
+	/// Represents a <see cref="LineType"/> entry
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.TableLinetype"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Linetype"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.TableLinetype)]
+	[DxfSubClass(DxfSubclassMarker.Linetype)]
 	public class LineType : TableEntry
 	{
 		public static readonly LineType ByLayer = new LineType("ByLayer");
 
+		public static readonly LineType ByBlock = new LineType("ByBlock");
+		
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.LTYPE;
-		public override string ObjectName => DxfFileToken.TableLinetype;
 
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.TableLinetype;
 
 		/// <summary>
 		/// Descriptive text for linetype
