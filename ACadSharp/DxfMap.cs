@@ -167,9 +167,9 @@ namespace ACadSharp
 		public void SetValue<T>(T obj, object value)
 			where T : CadObject
 		{
-			if (_property.PropertyType.IsEquivalentTo(typeof(XYZ)))
+			if (_property.PropertyType.IsEquivalentTo(typeof(XY)))
 			{
-				XYZ vector = (XYZ)_property.GetValue(obj);
+				XY vector = (XY)_property.GetValue(obj);
 
 				int index = (this.Code / 10) % 10 - 1;
 				double[] components = vector.GetComponents();
@@ -179,11 +179,11 @@ namespace ACadSharp
 
 				this._property.SetValue(obj, vector);
 			}
-			else if (_property.PropertyType.IsEquivalentTo(typeof(XY)))
+			else if (_property.PropertyType.IsEquivalentTo(typeof(XYZ)))
 			{
-				XY vector = (XY)_property.GetValue(obj);
+				XYZ vector = (XYZ)_property.GetValue(obj);
 
-				int index = (this.Code / 10) % 10;
+				int index = (this.Code / 10) % 10 - 1;
 				double[] components = vector.GetComponents();
 				components[index] = Convert.ToDouble(value);
 
