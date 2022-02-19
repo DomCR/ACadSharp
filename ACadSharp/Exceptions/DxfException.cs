@@ -8,14 +8,14 @@ namespace ACadSharp.Exceptions
 	public class DxfException : Exception
 	{
 		/// <summary>
-		/// Invalid Dxf code.
+		/// Invalid Dxf code
 		/// </summary>
 		/// <param name="code"></param>
 		/// <param name="line"></param>
 		public DxfException(int code, long line) : base($"Invalid dxf code with value {code}, at line {line}.") { }
 
 		/// <summary>
-		/// Generic exception.
+		/// Generic exception
 		/// </summary>
 		/// <param name="message"></param>
 		/// <param name="line"></param>
