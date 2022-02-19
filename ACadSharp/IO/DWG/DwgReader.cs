@@ -8,11 +8,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using ACadSharp.Exceptions;
 
 namespace ACadSharp.IO.DWG
 {
 	public class DwgReader : CadReaderBase
 	{
+		public DwgReaderFlags Flags { get; set; }
+
 		private DwgFileHeader _fileHeader;
 
 		private CadDocument _document;
@@ -59,10 +62,23 @@ namespace ACadSharp.IO.DWG
 		/// <returns></returns>
 		public static CadDocument Read(string filename, NotificationEventHandler notification = null)
 		{
+			return DwgReader.Read(filename, DwgReaderFlags.None, notification);
+		}
+
+		/// <summary>
+		/// Read a dwg document from a file
+		/// </summary>
+		/// <param name="filename"></param>
+		/// <param name="flags"></param>
+		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
+		/// <returns></returns>
+		public static CadDocument Read(string filename, DwgReaderFlags flags, NotificationEventHandler notification = null)
+		{
 			CadDocument doc = null;
 
 			using (DwgReader reader = new DwgReader(filename, notification))
 			{
+				reader.Flags = flags;
 				doc = reader.Read();
 			}
 
@@ -73,7 +89,7 @@ namespace ACadSharp.IO.DWG
 		public override CadDocument Read()
 		{
 			this._document = new CadDocument();
-			this._builder = new DwgDocumentBuilder(this._document, this.notificationHandler);
+			this._builder = new DwgDocumentBuilder(this._document, this.Flags, this.notificationHandler);
 
 			//Read the file header
 			this.readFileHeader();
@@ -214,7 +230,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//TODO: Implement the image reading
-			return null;
+			throw new NotImplementedException();
 		}
 
 		/// <inheritdoc/>
@@ -257,7 +273,7 @@ namespace ACadSharp.IO.DWG
 			switch (fileHeader.AcadVersion)
 			{
 				case ACadVersion.Unknown:
-					throw new Exception();
+					throw new DwgNotSupportedException();
 				case ACadVersion.MC0_0:
 				case ACadVersion.AC1_2:
 				case ACadVersion.AC1_4:
@@ -268,7 +284,7 @@ namespace ACadSharp.IO.DWG
 				case ACadVersion.AC1004:
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
-					throw new NotSupportedException();
+					throw new DwgNotSupportedException(this._fileHeader.AcadVersion);
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
@@ -310,7 +326,7 @@ namespace ACadSharp.IO.DWG
 			switch (this._fileHeader.AcadVersion)
 			{
 				case ACadVersion.Unknown:
-					throw new Exception();
+					throw new DwgNotSupportedException();
 				case ACadVersion.MC0_0:
 				case ACadVersion.AC1_2:
 				case ACadVersion.AC1_4:
@@ -321,7 +337,7 @@ namespace ACadSharp.IO.DWG
 				case ACadVersion.AC1004:
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
-					throw new NotSupportedException();
+					throw new DwgNotSupportedException(this._fileHeader.AcadVersion);
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
@@ -541,17 +557,16 @@ namespace ACadSharp.IO.DWG
 			//20 9A 50 EE 40 78 36 FD 12 49 32 F6 9E 7D 49 DC
 			//AD 4F 14 F2 44 40 66 D0 6B C4 30 B7
 
-			CRC32StreamHandler crc32 = new CRC32StreamHandler(sreader.ReadBytes(0x6C), 0U); //108
+			StreamIO headerStream = new StreamIO(new CRC32StreamHandler(sreader.ReadBytes(0x6C), 0U)); //108
 
 			sreader.ReadBytes(20);  //CHECK IF IS USEFUL
-			#region Read header encrypted data
 
-			StreamIO headerStream = new StreamIO(crc32);
+			#region Read header encrypted data
 
 			//0x00	12	“AcFssFcAJMB” file ID string
 			string fileId = headerStream.ReadString(12, TextEncoding.GetListedEncoding(CodePage.Windows1252));
 			if (fileId != "AcFssFcAJMB\0")
-				throw new Exception();
+				throw new DwgException($"File validation failed, id should be : AcFssFcAJMB\0, but is : {fileId}");
 
 			//0x0C	4	0x00(long)
 			headerStream.ReadInt<LittleEndianConverter>();
@@ -1201,7 +1216,7 @@ namespace ACadSharp.IO.DWG
 			switch (this._fileHeader.AcadVersion)
 			{
 				case ACadVersion.Unknown:
-					throw new Exception();
+					throw new DwgNotSupportedException();
 				case ACadVersion.MC0_0:
 				case ACadVersion.AC1_2:
 				case ACadVersion.AC1_4:
@@ -1212,7 +1227,7 @@ namespace ACadSharp.IO.DWG
 				case ACadVersion.AC1004:
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
-					throw new NotSupportedException();
+					throw new DwgNotSupportedException(this._fileHeader.AcadVersion);
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:

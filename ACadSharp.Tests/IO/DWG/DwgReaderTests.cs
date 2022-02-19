@@ -62,6 +62,18 @@ namespace ACadSharp.Tests.IO.DWG
 			}
 		}
 
+		[Theory]
+		[MemberData(nameof(FilePaths))]
+		public void ReadCrcEnabledTest(string test)
+		{
+			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null)
+				return;
+
+			DwgReaderFlags flags = DwgReaderFlags.CheckCrc;
+
+			CadDocument doc = DwgReader.Read(test, flags, this.onNotification);
+		}
+
 		private void onNotification(object sender, NotificationEventArgs e)
 		{
 			output.WriteLine(e.Message);
