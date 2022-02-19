@@ -4,18 +4,22 @@ namespace ACadSharp.IO.DWG
 {
 	internal class CRC32StreamHandler : Stream
 	{
-		public override bool CanRead => StreamCRC.CanRead;
-		public override bool CanSeek => StreamCRC.CanSeek;
-		public override bool CanWrite => StreamCRC.CanWrite;
-		public override long Length => StreamCRC.Length;
+		public override bool CanRead => _stream.CanRead;
+		public override bool CanSeek => _stream.CanSeek;
+		public override bool CanWrite => _stream.CanWrite;
+		public override long Length => _stream.Length;
 		public override long Position
 		{
-			get => StreamCRC.Position;
-			set => StreamCRC.Position = value;
+			get => _stream.Position;
+			set => _stream.Position = value;
 		}
-		public Stream StreamCRC { get; }
-		public uint Seed => ~m_seed;
-		private uint m_seed;
+
+		private Stream _stream;
+
+		public uint Seed => ~_seed;
+
+		private uint _seed;
+
 		/// <summary>
 		/// Constructor that creates a magic sequence given an array of bytes.
 		/// </summary>
@@ -34,48 +38,54 @@ namespace ACadSharp.IO.DWG
 				arr[index] = (byte)(arr[index] ^ (uint)values);
 			}
 
-			StreamCRC = new MemoryStream(arr);
+			_stream = new MemoryStream(arr);
 
-			m_seed = ~seed;
+			_seed = ~seed;
 		}
+
 		public CRC32StreamHandler(Stream stream, uint seed)
 		{
-			StreamCRC = stream;
+			_stream = stream;
 			//Reverse the bits
-			m_seed = ~seed;
+			_seed = ~seed;
 		}
+
 		public override void Flush()
 		{
-			StreamCRC.Flush();
+			_stream.Flush();
 		}
+
 		public override int Read(byte[] buffer, int offset, int count)
 		{
-			int nbytes = StreamCRC.Read(buffer, offset, count);
+			int nbytes = _stream.Read(buffer, offset, count);
 			int length = offset + count;
 
 			for (int index = offset; index < length; ++index)
 			{
-				m_seed = m_seed >> 8 ^ CRC.Crc32Table[((int)m_seed ^ buffer[index]) & byte.MaxValue];
+				_seed = _seed >> 8 ^ CRC.Crc32Table[((int)_seed ^ buffer[index]) & byte.MaxValue];
 			}
 
 			return nbytes;
 		}
+		
 		public override long Seek(long offset, SeekOrigin origin)
 		{
-			return StreamCRC.Seek(offset, origin);
+			return _stream.Seek(offset, origin);
 		}
+		
 		public override void SetLength(long value)
 		{
-			StreamCRC.SetLength(value);
+			_stream.SetLength(value);
 		}
+
 		public override void Write(byte[] buffer, int offset, int count)
 		{
 			int num = offset + count;
 
 			for (int index = offset; index < num; ++index)
-				m_seed = m_seed >> 8 ^ CRC.Crc32Table[((int)m_seed ^ buffer[index]) & byte.MaxValue];
+				_seed = _seed >> 8 ^ CRC.Crc32Table[((int)_seed ^ buffer[index]) & byte.MaxValue];
 
-			StreamCRC.Write(buffer, offset, count);
+			_stream.Write(buffer, offset, count);
 		}
 	}
 }

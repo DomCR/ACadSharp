@@ -2,47 +2,66 @@
 
 namespace ACadSharp.IO.DWG
 {
+	/// <summary>
+	/// The AutoCAD DWG file format uses a modification of a standard cyclic redundancy check as an error detecting mechanism. <br/>
+	/// This class checks the integrity of the file using this check.
+	/// </summary>
+	/// <remarks>
+	/// This method is used extensively in pre-R13 files, but seems only to be used in the header for R13 and beyond.
+	/// </remarks>
 	internal class CRC8StreamHandler : Stream
 	{
-		public override bool CanRead => StreamCRC.CanRead;
-		public override bool CanSeek => StreamCRC.CanSeek;
-		public override bool CanWrite => StreamCRC.CanWrite;
-		public override long Length => StreamCRC.Length;
+		public override bool CanRead => this._stream.CanRead;
+
+		public override bool CanSeek => this._stream.CanSeek;
+
+		public override bool CanWrite => this._stream.CanWrite;
+
+		public override long Length => this._stream.Length;
+
 		public override long Position
 		{
-			get => StreamCRC.Position;
-			set => StreamCRC.Position = value;
+			get => this._stream.Position;
+			set => this._stream.Position = value;
 		}
-		public Stream StreamCRC { get; }
-		public ushort Seed { get; set; }
+
+		private Stream _stream;
+
+		private ushort _seed;
+
 		public CRC8StreamHandler(Stream stream, ushort seed)
 		{
-			StreamCRC = stream;
-			Seed = seed;
+			this._stream = stream;
+			this._seed = seed;
 		}
+
 		public override int Read(byte[] buffer, int offset, int count)
 		{
-			int nbytes = StreamCRC.Read(buffer, offset, count);
+			int nbytes = this._stream.Read(buffer, offset, count);
 			int length = offset + count;
 
 			for (int index = offset; index < length; ++index)
-				Seed = decode(Seed, buffer[index]);
+				this._seed = this.decode(this._seed, buffer[index]);
 
 			return nbytes;
 		}
-		public override void Flush() => StreamCRC.Flush();
-		public override long Seek(long offset, SeekOrigin origin) => StreamCRC.Seek(offset, origin);
-		public override void SetLength(long value) => StreamCRC.SetLength(value);
+
+		public override void Flush() => this._stream.Flush();
+
+		public override long Seek(long offset, SeekOrigin origin) => this._stream.Seek(offset, origin);
+
+		public override void SetLength(long value) => this._stream.SetLength(value);
+
 		public override void Write(byte[] buffer, int offset, int count)
 		{
 			int length = offset + count;
 
 			for (int index = offset; index < length; ++index)
-				Seed = decode(Seed, buffer[index]);
+				this._seed = this.decode(this._seed, buffer[index]);
 
-			StreamCRC.Write(buffer, offset, count);
+			this._stream.Write(buffer, offset, count);
 		}
-		//**************************************************************************
+
 		private ushort decode(ushort key, byte value)
 		{
 			int index = value ^ (byte)key;

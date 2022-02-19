@@ -10,6 +10,7 @@ using CSMath;
 using CSUtilities.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 
 namespace ACadSharp.IO.DWG
 {
@@ -74,7 +75,7 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		private readonly IDwgStreamReader _crcReader;
 
-		private readonly CRC8StreamHandler _crcStream;
+		private readonly Stream _crcStream;
 
 		public DwgObjectSectionReader(
 			ACadVersion version,
@@ -93,8 +94,12 @@ namespace ACadSharp.IO.DWG
 			this._classes = classes.ToDictionary(x => x.ClassNumber, x => x);
 
 			//Initialize the crc stream
-			//RS : CRC for the data section, starting after the sentinel. Use 0xC0C1 for the initial value.
-			this._crcStream = new CRC8StreamHandler(this._reader.Stream, 0xC0C1);
+			//RS : CRC for the data section, starting after the sentinel. Use 0xC0C1 for the initial value
+			if (this._builder.Flags.HasFlag(DwgReaderFlags.CheckCrc))
+				this._crcStream = new CRC8StreamHandler(this._reader.Stream, 0xC0C1);
+			else
+				this._crcStream = this._reader.Stream;
+
 			//Setup the entity handler
 			this._crcReader = DwgStreamReader.GetStreamHandler(this._version, this._crcStream);
 		}

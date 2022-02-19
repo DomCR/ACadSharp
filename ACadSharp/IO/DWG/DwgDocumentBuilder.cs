@@ -9,13 +9,16 @@ namespace ACadSharp.IO.DWG
 {
 	internal class DwgDocumentBuilder : CadDocumentBuilder
 	{
+		public DwgReaderFlags Flags { get; set; }
+
 		public DwgHeaderHandlesCollection HeaderHandles { get; set; }
 
 		public List<DwgBlockRecordTemplate> BlockRecordTemplates { get; set; } = new List<DwgBlockRecordTemplate>();
 
-		public DwgDocumentBuilder(CadDocument document, NotificationEventHandler notification = null)
+		public DwgDocumentBuilder(CadDocument document, DwgReaderFlags flags, NotificationEventHandler notification = null)
 			: base(document, notification)
 		{
+			this.Flags = flags;
 		}
 
 		public override void BuildDocument()
