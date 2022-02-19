@@ -41,6 +41,9 @@ namespace ACadSharp.Tests
 
 			switch (att.Name)
 			{
+				case DxfFileToken.TableAppId:
+					DxfMap.Create<AppId>();
+					break;
 				case DxfFileToken.EntityAttribute:
 					DxfMap.Create<AttributeEntity>();
 					break;
@@ -61,6 +64,9 @@ namespace ACadSharp.Tests
 					break;
 				case DxfFileToken.EntityCircle:
 					DxfMap.Create<Circle>();
+					break;
+				case DxfFileToken.TableDimstyle:
+					DxfMap.Create<DimensionStyle>();
 					break;
 				case DxfFileToken.EntityDimension:
 					Assert.NotNull(subclass);
@@ -103,8 +109,14 @@ namespace ACadSharp.Tests
 				case DxfFileToken.EntityInsert:
 					DxfMap.Create<Insert>();
 					break;
+				case DxfFileToken.TableLayer:
+					DxfMap.Create<Layer>();
+					break;
 				case DxfFileToken.EntityLeader:
 					DxfMap.Create<Leader>();
+					break;
+				case DxfFileToken.TableLinetype:
+					DxfMap.Create<LineType>();
 					break;
 				case DxfFileToken.EntityLine:
 					DxfMap.Create<Line>();
@@ -142,8 +154,17 @@ namespace ACadSharp.Tests
 				case DxfFileToken.EntityText:
 					DxfMap.Create<TextEntity>();
 					break;
+				case DxfFileToken.TableStyle:
+					DxfMap.Create<TextStyle>();
+					break;
+				case DxfFileToken.TableUcs:
+					DxfMap.Create<UCS>();
+					break;
 				case DxfFileToken.EntityVertex:
 					DxfMap.Create<Vertex>();
+					break;
+				case DxfFileToken.TableView:
+					DxfMap.Create<View>();
 					break;
 				case DxfFileToken.EntityViewport:
 					DxfMap.Create<Viewport>();
