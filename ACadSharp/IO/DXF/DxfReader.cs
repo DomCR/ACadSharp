@@ -324,6 +324,10 @@ namespace ACadSharp.IO.DXF
 		{
 			//Get the needed handler
 			this._reader = this._reader ?? this.getHandler();
+
+			if (this._reader.LastValueAsString == sectionName)
+				return this._reader;
+
 			//Go to the start of header section
 			this._reader.Find(sectionName);
 
