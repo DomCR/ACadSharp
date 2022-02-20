@@ -3050,7 +3050,7 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readLType()
 		{
 			LineType ltype = new LineType();
-			DwgTableEntryTemplate<LineType> template = new DwgTableEntryTemplate<LineType>(ltype);
+			DwgLineTypeTemplate template = new DwgLineTypeTemplate(ltype);
 
 			this.readCommonNonEntityData(template);
 
