@@ -212,7 +212,7 @@ namespace ACadSharp.IO.DXF
 					case DxfFileToken.TableBlockRecord:
 						BlockRecord record = new BlockRecord();
 						template = new DwgBlockRecordTemplate(record);
-						this.readRaw(template, DxfSubclassMarker.BlockRecord, this.readBlockRecord, readUntilStart);
+						this.readRawMap(template, DxfSubclassMarker.BlockRecord, this.readBlockRecord, readUntilStart);
 						this._builder.BlockRecords[record.Handle] = record;
 
 						//Assign the handle to the record
@@ -221,35 +221,35 @@ namespace ACadSharp.IO.DXF
 						break;
 					case DxfFileToken.TableDimstyle:
 						template = new DwgDimensionStyleTemplate(new DimensionStyle());
-						this.readRaw(template, DxfSubclassMarker.DimensionStyle, this.readDimStyle, readUntilStart);
+						this.readRawMap(template, DxfSubclassMarker.DimensionStyle, this.readDimStyle, readUntilStart);
 						break;
 					case DxfFileToken.TableLayer:
 						Layer layer = new Layer();
 						template = new DwgLayerTemplate(layer);
-						this.readRaw(template, DxfSubclassMarker.Layer, this.readLayer, readUntilStart);
+						this.readRawMap(template, DxfSubclassMarker.Layer, this.readLayer, readUntilStart);
 						break;
 					case DxfFileToken.TableLinetype:
 						template = new DwgTableEntryTemplate<LineType>(new LineType());
-						this.readRaw(template, DxfSubclassMarker.Linetype, this.readLineType, readUntilStart);
+						this.readRawMap(template, DxfSubclassMarker.Linetype, this.readLineType, readUntilStart);
 						_builder.NotificationHandler?.Invoke(template.CadObject, new NotificationEventArgs($"Line type not fully read"));
 						break;
 					case DxfFileToken.TableStyle:
 						TextStyle style = new TextStyle();
 						template = new DwgTableEntryTemplate<TextStyle>(style);
-						this.readRaw(template, DxfSubclassMarker.TextStyle, this.readTextStyle, readUntilStart);
+						this.readRawMap(template, DxfSubclassMarker.TextStyle, this.readTextStyle, readUntilStart);
 						break;
 					case DxfFileToken.TableUcs:
 						template = new DwgTemplate<UCS>(new UCS());
-						this.readRaw(template, DxfSubclassMarker.Ucs, this.readUcs, readUntilStart);
+						this.readRawMap(template, DxfSubclassMarker.Ucs, this.readUcs, readUntilStart);
 						break;
 					case DxfFileToken.TableView:
 						template = new DwgTableEntryTemplate<View>(new View());
-						this.readRaw(template, DxfSubclassMarker.View, this.readView, readUntilStart);
+						this.readRawMap(template, DxfSubclassMarker.View, this.readView, readUntilStart);
 						_builder.NotificationHandler?.Invoke(template.CadObject, new NotificationEventArgs($"View not implemented"));
 						break;
 					case DxfFileToken.TableVport:
 						template = new DwgVPortTemplate(new VPort());
-						this.readRaw(template, DxfSubclassMarker.VPort, this.readVPort, readUntilStart);
+						this.readRawMap(template, DxfSubclassMarker.VPort, this.readVPort, readUntilStart);
 						break;
 					default:
 						Debug.Fail($"Unhandeled table {tableName}.");

@@ -98,27 +98,27 @@ namespace ACadSharp.IO.DXF
 			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.Entity);
 			this._reader.ReadNext();
 
-			this.readRaw(template, null, this.readCommonEntity, readUntilSubClass);
+			this.readRawMap(template, null, this.readCommonEntity, readUntilSubClass);
 
 			switch (this._reader.LastValueAsString)
 			{
 				case DxfSubclassMarker.Line:
-					readRaw(template, this._reader.LastValueAsString, readLine, readUntilStart);
+					readRawMap(template, this._reader.LastValueAsString, readLine, readUntilStart);
 					break;
 				case DxfSubclassMarker.Insert:
-					readRaw(template, this._reader.LastValueAsString, readInsert, readUntilStart);
+					readRawMap(template, this._reader.LastValueAsString, readInsert, readUntilStart);
 					break;
 				case DxfSubclassMarker.MText:
-					readRaw(template, this._reader.LastValueAsString, readMText, readUntilStart);
+					readRawMap(template, this._reader.LastValueAsString, readMText, readUntilStart);
 					break;
 				case DxfSubclassMarker.Point:
-					readRaw(template, this._reader.LastValueAsString, readPoint, readUntilStart);
+					readRawMap(template, this._reader.LastValueAsString, readPoint, readUntilStart);
 					break;
 				case DxfSubclassMarker.Circle:
-					readRaw(template, this._reader.LastValueAsString, null, readUntilStart);
+					readRawMap(template, this._reader.LastValueAsString, null, readUntilStart);
 					break;
 				case DxfSubclassMarker.AttributeDefinition:
-					readRaw(template, this._reader.LastValueAsString, null, readUntilStart);
+					readRawMap(template, this._reader.LastValueAsString, null, readUntilStart);
 					break;
 				default:
 					Debug.Fail($"Unhandeled dxf entity {this._reader.LastValueAsString} at line {this._reader.Line}.");
@@ -225,7 +225,7 @@ namespace ACadSharp.IO.DXF
 		/// This method will disappear once all the objects are implemented
 		/// </remarks>
 		/// <returns></returns>
-		protected void readRaw(DwgTemplate template, string subclass, checkDxfCodeValue check, Func<bool> readUntil)
+		protected void readRawMap(DwgTemplate template, string subclass, checkDxfCodeValue check, Func<bool> readUntil)
 		{
 			//TODO: read raw should notify the codes that aren't assigned
 

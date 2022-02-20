@@ -125,6 +125,19 @@ namespace ACadSharp.IO.DXF
 			return this._document;
 		}
 
+		public CadDocument ReadWithDxfMap()
+		{
+			this._document = new CadDocument();
+			this._builder = new DxfDocumentBuilder(this._document, this._notificationHandler);
+
+			this._document.Header = this.ReadHeader();
+			this._document.Classes = this.readClasses();
+
+			this.readMappedTables();
+
+			return this._document;
+		}
+
 		/// <inheritdoc/>
 		public override CadHeader ReadHeader()
 		{
@@ -241,6 +254,19 @@ namespace ACadSharp.IO.DXF
 		#endregion
 
 		#region Tables
+
+		private void readMappedTables()
+		{
+			//Get the needed handler
+			this._reader = this.goToSection(DxfFileToken.TablesSection);
+
+			DxfTablesMapSectionReader reader = new DxfTablesMapSectionReader(
+				this._reader,
+				this._builder,
+				this._notificationHandler);
+
+			reader.Read();
+		}
 
 		/// <summary>
 		/// Read the TABLES section of the DXF file.
