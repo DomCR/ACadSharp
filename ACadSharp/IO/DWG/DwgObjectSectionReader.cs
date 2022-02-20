@@ -855,6 +855,7 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.LONG_TRANSACTION:
 					break;
 				case ObjectType.LWPOLYLINE:
+					template = this.readLWPolyline();
 					break;
 				case ObjectType.HATCH:
 					template = this.readHatch();
@@ -3833,30 +3834,28 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readViewportEntityHeader()
 		{
-			/*
-			  ViewportEntityHeader viewportEntityHeader = new ViewportEntityHeader();
-			  DwgTableEntryTemplate<ViewportEntityHeader> template = new DwgTableEntryTemplate<ViewportEntityHeader>(viewportEntityHeader);
+			//Viewport viewport = new Viewport();
+			//DwgViewportTemplate template = new DwgViewportTemplate(viewport);
 
-			  this.readCommonNonEntityData(template);
+			//this.readCommonNonEntityData(template);
 
-			  //Common:
-			  //Entry name TV 2
-			  viewportEntityHeader.Name = this._textReader.ReadVariableText();
+			////Common:
+			////Entry name TV 2
+			//viewport.StyleSheetName = this._textReader.ReadVariableText();
 
-			  this.readXrefDependantBit(viewportEntityHeader);
+			//this.readXrefDependantBit(viewport);
 
-			  //1 flag B The 1 bit of the 70 group
-			  this._objectReader.ReadBit();
+			////1 flag B The 1 bit of the 70 group
+			//this._objectReader.ReadBit();
 
-			  //Handle refs H viewport entity control (soft pointer)
-			  this.handleReference();
-			  //xdicobjhandle (hard owner)
-			  this.handleReference();
-			  //External reference block handle (hard pointer)
-			  this.handleReference();
+			////Handle refs H viewport entity control (soft pointer)
+			//this.handleReference();
+			////xdicobjhandle (hard owner)
+			//this.handleReference();
+			////External reference block handle (hard pointer)
+			//this.handleReference();
 
-			  //TODO: ViewportEntityHeader is it necessary?
-			  */
+			//TODO: ViewportEntityHeader is it necessary?
 
 			return null;
 		}
@@ -3961,6 +3960,11 @@ namespace ACadSharp.IO.DWG
 			}
 
 			return template;
+		}
+
+		private DwgTemplate readLWPolyline()
+		{
+			return null;
 		}
 
 		private DwgTemplate readHatch()

@@ -2,21 +2,16 @@
 using ACadSharp.Entities.Collections;
 using ACadSharp.IO.Templates;
 using CSMath;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Represents a <see cref="PolyLine"/> entity.
+	/// Represents a <see cref="PolyLine"/> entity
 	/// </summary>
-	/// <remarks>
-	/// Object name <see cref="DxfFileToken.EntityPolyline"/> <br/>
-	/// Dxf class name <see cref="DxfSubclassMarker.Polyline"/>
-	/// Dxf class name <see cref="DxfSubclassMarker.Polyline3d"/>
-	/// </remarks>
 	[DxfName(DxfFileToken.EntityPolyline)]
-	[DxfSubClass(DxfSubclassMarker.Polyline)]
-	public abstract class PolyLine : Entity	//TODO: Create an abstract task, split in 2d and 3d
+	public abstract class PolyLine : Entity //TODO: Create an abstract task, split in 2d and 3d
 	{
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityPolyline;
@@ -26,7 +21,7 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(30)]
 		public double Elevation { get; set; } = 0.0;
-		
+
 		/// <summary>
 		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
 		/// </summary>
