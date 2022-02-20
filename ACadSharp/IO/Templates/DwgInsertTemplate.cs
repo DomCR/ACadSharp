@@ -33,7 +33,32 @@ namespace ACadSharp.IO.Templates
 
 			if (this.BlockHeaderHandle.HasValue)
 			{
-				insert.Block = builder.GetCadObject<Block>(this.BlockHeaderHandle.Value);
+				// orig code
+				// insert.Block = builder.GetCadObject<Block>(this.BlockHeaderHandle.Value);
+
+				// problem: builder.GetCadObject<Block>(this.BlockHeaderHandle.Value) returns null
+				// because, in the case of an Insert object, GetObject fails the type (Block) check.
+				// the templates' CadObject is not of type "Block"
+
+				// proposed solution:
+				// 1) extract the handle	
+				ulong handle = this.BlockHeaderHandle.Value;
+
+				// 2) attempt to use the original GetCadObject
+				Block bl = builder.GetCadObject<Block>(handle);
+
+				if (bl != null) 
+				{
+					// 3) if the original GetCadObject returns a Block, use it
+					insert.Block = bl;
+				} 
+				else 
+				{
+					// 4) if the original GetCadObject returns null, use the BlockEntity
+					// from the BlockRecordTemplate
+					DwgBlockRecordTemplate brt = builder.GetObjectTemplate<DwgBlockRecordTemplate>(handle);
+					insert.Block = brt.CadObject.BlockEntity;
+				}
 			}
 
 			if (this.FirstAttributeHandle.HasValue)
