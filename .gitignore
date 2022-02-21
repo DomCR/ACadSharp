@@ -349,7 +349,6 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
-/samples
-/ACadSharp/ACadSharp.licenseheader
+/samples/local
 /.editorconfig
 /ACadTestGenerator

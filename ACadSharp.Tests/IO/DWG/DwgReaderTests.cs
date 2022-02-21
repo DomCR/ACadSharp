@@ -10,7 +10,7 @@ namespace ACadSharp.Tests.IO.DWG
 {
 	public class DwgReaderTests
 	{
-		private const string _samplesFolder = "../../../../samples/dwg/";
+		private const string _samplesFolder = "../../../../samples/";
 
 		public static readonly TheoryData<string> FilePaths;
 
@@ -41,9 +41,6 @@ namespace ACadSharp.Tests.IO.DWG
 		[MemberData(nameof(FilePaths))]
 		public void ReadTest(string test)
 		{
-			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null)
-				return;
-
 			CadDocument doc = DwgReader.Read(test, this.onNotification);
 		}
 
@@ -51,9 +48,6 @@ namespace ACadSharp.Tests.IO.DWG
 		[MemberData(nameof(FilePaths))]
 		public void ReadHeaderTest(string test)
 		{
-			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null)
-				return;
-
 			CadHeader header;
 
 			using (DwgReader reader = new DwgReader(test, this.onNotification))
@@ -66,9 +60,6 @@ namespace ACadSharp.Tests.IO.DWG
 		[MemberData(nameof(FilePaths))]
 		public void ReadCrcEnabledTest(string test)
 		{
-			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null)
-				return;
-
 			DwgReaderFlags flags = DwgReaderFlags.CheckCrc;
 
 			CadDocument doc = DwgReader.Read(test, flags, this.onNotification);
