@@ -20,12 +20,6 @@ namespace ACadSharp.Tests.IO.DWG
 		{
 			FilePaths = new TheoryData<string>();
 
-			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null)
-			{
-				FilePaths.Add(null);
-				return;
-			}
-
 			foreach (string file in Directory.GetFiles(_samplesFolder, "*.dwg"))
 			{
 				FilePaths.Add(file);
