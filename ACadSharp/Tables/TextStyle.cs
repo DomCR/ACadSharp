@@ -6,10 +6,21 @@ using System.Text;
 
 namespace ACadSharp.Tables
 {
+	/// <summary>
+	/// Represents a <see cref="TextStyle"/> entry
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.TableStyle"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.TextStyle"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.TableStyle)]
+	[DxfSubClass(DxfSubclassMarker.TextStyle)]
 	public class TextStyle : TableEntry
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.STYLE;
 
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableStyle;
 
 		/// <summary>

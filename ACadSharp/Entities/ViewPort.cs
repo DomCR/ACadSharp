@@ -1,10 +1,4 @@
-﻿#region copyright
-//Copyright 2021, Albert Domenech.
-//All rights reserved. 
-//This source code is licensed under the MIT license. 
-//See LICENSE file in the project root for full license information.
-#endregion
-using ACadSharp.Attributes;
+﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
@@ -13,12 +7,19 @@ using System.Text;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Represents a <see cref="Viewport"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EntityViewport"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Viewport"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EntityViewport)]
+	[DxfSubClass(DxfSubclassMarker.Viewport)]
 	public class Viewport : Entity
 	{
 		public override ObjectType ObjectType => ObjectType.VIEWPORT;
 		public override string ObjectName => DxfFileToken.EntityViewport;
-
-		//100	Subclass marker(AcDbViewport)
 
 		/// <summary>
 		/// Center point(in WCS)

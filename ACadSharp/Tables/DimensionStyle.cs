@@ -8,13 +8,22 @@ using ACadSharp.Blocks;
 
 namespace ACadSharp.Tables
 {
+	/// <summary>
+	/// Represents a <see cref="DimensionStyle"/> entry
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.TableDimstyle"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.DimensionStyle"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.TableDimstyle)]
+	[DxfSubClass(DxfSubclassMarker.DimensionStyle)]
 	public class DimensionStyle : TableEntry
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.DIMSTYLE;
 
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableDimstyle;
-
-		//100	Subclass marker(AcDbDimStyleTableRecord)
 
 		/// <summary>
 		/// DIMPOST

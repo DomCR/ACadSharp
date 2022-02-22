@@ -7,18 +7,11 @@ namespace ACadSharp.IO.Templates
 	internal class DwgTableEntryTemplate<T> : DwgTemplate<T>
 		where T : TableEntry
 	{
-		public ulong? LtypeControlHandle { get; set; }
-
 		public DwgTableEntryTemplate(T entry) : base(entry) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
-
-			if (this.LtypeControlHandle.HasValue && this.LtypeControlHandle.Value > 0)
-			{
-				throw new NotImplementedException();
-			}
 		}
 	}
 }

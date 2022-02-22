@@ -12,18 +12,26 @@ namespace ACadSharp.Tests.IO.DXF
 {
 	public class DxfReaderTests
 	{
-		private const string _samplesFolder = "../../../../samples/dxf/";
+		private const string _samplesFolder = "../../../../samples/";
 
-		public static readonly TheoryData<string> FilePaths;
+		public static readonly TheoryData<string> AsciiFiles;
+
+		public static readonly TheoryData<string> BinaryFiles;
 
 		private readonly ITestOutputHelper output;
 
 		static DxfReaderTests()
 		{
-			FilePaths = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(_samplesFolder, "*.dxf"))
+			AsciiFiles = new TheoryData<string>();
+			foreach (string file in Directory.GetFiles(_samplesFolder, "*_ascii.dxf"))
 			{
-				FilePaths.Add(file);
+				AsciiFiles.Add(file);
+			}
+
+			BinaryFiles = new TheoryData<string>();
+			foreach (string file in Directory.GetFiles(_samplesFolder, "*_binary.dxf"))
+			{
+				BinaryFiles.Add(file);
 			}
 		}
 
@@ -32,15 +40,15 @@ namespace ACadSharp.Tests.IO.DXF
 			this.output = output;
 		}
 
-		[Theory]
-		[MemberData(nameof(FilePaths))]
-		public void ReadTest(string test)
+		[Theory(Skip = "Not implemented")]
+		[MemberData(nameof(AsciiFiles))]
+		public void ReadAsciiTest(string test)
 		{
 			CadDocument doc = DxfReader.Read(test, this.onNotification);
 		}
 
-		[Theory]
-		[MemberData(nameof(FilePaths))]
+		[Theory(Skip = "Not implemented")]
+		[MemberData(nameof(AsciiFiles))]
 		public void ReadHeaderTest(string test)
 		{
 			CadHeader header;
