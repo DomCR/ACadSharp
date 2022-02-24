@@ -883,7 +883,7 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.ACAD_PROXY_OBJECT:
 					break;
 				default:
-					return this.readUnlistedType((short)type);
+					return this.readUnlistedType((short)type, notifications);
 			}
 
 			if (template == null)
@@ -913,8 +913,9 @@ namespace ACadSharp.IO.DWG
 				case "DICTIONARYVAR":
 				case "DICTIONARYWDFLT":
 				case "FIELD":
+					break;
 				case "GROUP":
-					//System.Diagnostics.Debug.Fail($"Not implemented dxf class: {c.DxfName}");
+					template = this.readGroup();
 					break;
 				case "HATCH":
 					template = this.readHatch();
@@ -924,7 +925,10 @@ namespace ACadSharp.IO.DWG
 				case "IMAGEDEF":
 				case "IMAGEDEFREACTOR":
 				case "LAYER_INDEX":
+					break;
 				case "LAYOUT":
+					template = readLayout();
+					break;
 				case "LWPLINE":
 				case "MATERIAL":
 				case "MLEADER":
@@ -945,16 +949,16 @@ namespace ACadSharp.IO.DWG
 				case "WIPEOUT":
 				case "WIPEOUTVARIABLE":
 				case "WIPEOUTVARIABLES":
+					break;
 				case "XRECORD":
-					//System.Diagnostics.Debug.Fail($"Not implemented dxf class: {c.DxfName}");
+					template = readXRecord();
 					break;
 				default:
-					//System.Diagnostics.Debug.Fail($"Not implemented dxf class: {c.DxfName}");
 					break;
 			}
 
 			if (template == null)
-				notifications?.Invoke(null, new NotificationEventArgs($"Unlisted object not implemented, DXF name: {c.DxfName}"));
+				notifications?.Invoke(c, new NotificationEventArgs($"Unlisted object not implemented, DXF name: {c.DxfName}"));
 
 			return template;
 		}
