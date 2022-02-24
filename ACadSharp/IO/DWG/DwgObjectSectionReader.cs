@@ -883,7 +883,7 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.ACAD_PROXY_OBJECT:
 					break;
 				default:
-					return this.readUnlistedType((short)type);
+					return this.readUnlistedType((short)type, notifications);
 			}
 
 			if (template == null)
@@ -954,7 +954,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			if (template == null)
-				notifications?.Invoke(null, new NotificationEventArgs($"Unlisted object not implemented, DXF name: {c.DxfName}"));
+				notifications?.Invoke(c, new NotificationEventArgs($"Unlisted object not implemented, DXF name: {c.DxfName}"));
 
 			return template;
 		}
