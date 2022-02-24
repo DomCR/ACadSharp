@@ -3395,7 +3395,7 @@ namespace ACadSharp.IO.DWG
 				//Background handle H 332 soft pointer
 				template.BackgroundHandle = this.handleReference();
 				//Visual Style handle H 348 hard pointer
-				template.StyelHandle = this.handleReference();
+				template.StyleHandle = this.handleReference();
 				//Sun handle H 361 hard owner
 				template.SunHandle = this.handleReference();
 			}

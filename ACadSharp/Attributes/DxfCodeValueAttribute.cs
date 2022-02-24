@@ -25,5 +25,15 @@ namespace ACadSharp.Attributes
 		{
 			this.IsReference = isReference;
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public enum DxfReference
+		{
+			None,
+			Handle,
+			Name
+		}
 	}
 }

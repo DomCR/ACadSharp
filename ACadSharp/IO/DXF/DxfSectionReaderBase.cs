@@ -82,7 +82,7 @@ namespace ACadSharp.IO.DXF
 				this._reader.ReadNext();
 			}
 
-			if (handleNotFound)
+			if (handleNotFound) //TODO: Set exception for no handle
 				throw new Exception();
 		}
 
@@ -280,20 +280,21 @@ namespace ACadSharp.IO.DXF
 			while (this._reader.LastDxfCode != DxfCode.Start
 				&& this._reader.LastDxfCode != DxfCode.Subclass)
 			{
-				if (this._reader.LastGroupCodeValue == GroupCodeValueType.Handle)
+				if (!map.DxfProperties.TryGetValue(this._reader.LastCode, out DxfProperty dxfProperty))
 				{
+					this._notification?.Invoke(null, new NotificationEventArgs($"Dxf code {this._reader.LastCode} not found in map for {typeof(T)}, value : {this._reader.LastValueAsString}"));
+					this._reader.ReadNext();
+					continue;
+				}
+
+				if (dxfProperty.IsReference)
+				{
+					//TODO: references may be also names in case of layers, blocks...
 					if (!template.AddHandle(this._reader.LastCode, this._reader.LastValueAsHandle))
 						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf code handle {this._reader.LastCode} not found in the template for {typeof(T)}, value : {this._reader.LastValueAsHandle}"));
 				}
 				else
 				{
-					if (!map.DxfProperties.TryGetValue(this._reader.LastCode, out DxfProperty dxfProperty))
-					{
-						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf code {this._reader.LastCode} not found in map for {typeof(T)}, value : {this._reader.LastValueAsString}"));
-						this._reader.ReadNext();
-						continue;
-					}
-
 					switch (this._reader.LastGroupCodeValue)
 					{
 						case GroupCodeValueType.String:
@@ -303,14 +304,13 @@ namespace ACadSharp.IO.DXF
 						case GroupCodeValueType.Int32:
 						case GroupCodeValueType.Int64:
 						case GroupCodeValueType.Chunk:
-							dxfProperty.SetValue(cadObject, this._reader.LastValue);
-							break;
 						case GroupCodeValueType.Bool:
-							dxfProperty.SetValue(cadObject, this._reader.LastValueAsBool);
+							dxfProperty.SetValue(cadObject, this._reader.LastValue);
 							break;
 						case GroupCodeValueType.Comment:
 							this._notification?.Invoke(null, new NotificationEventArgs($"Comment in the file :  {this._reader.LastValueAsString}"));
 							break;
+						case GroupCodeValueType.Handle:
 						case GroupCodeValueType.ObjectId:
 						case GroupCodeValueType.None:
 						default:

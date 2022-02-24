@@ -144,15 +144,27 @@ namespace ACadSharp
 
 		public object Value { get; }
 
-		public DxfCodeValueAttribute DxfAttribute { get; }
+		public bool IsReference { get { return this._dxfAttribute.IsReference; } }
+
+		private DxfCodeValueAttribute _dxfAttribute;
 
 		private PropertyInfo _property;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="code"></param>
+		/// <param name="property"></param>
+		/// <exception cref="ArgumentException"></exception>
 		private DxfProperty(int code, PropertyInfo property)
 		{
-			this.DxfAttribute = property.GetCustomAttribute<DxfCodeValueAttribute>();
-			if (this.DxfAttribute == null)
+			this._dxfAttribute = property.GetCustomAttribute<DxfCodeValueAttribute>();
+			
+			if (this._dxfAttribute == null)
 				throw new ArgumentException($"The property does not implement the {nameof(DxfCodeValueAttribute)}", nameof(property));
+
+			if(!this._dxfAttribute.ValueCodes.Contains((DxfCode)code))
+				throw new ArgumentException($"The {nameof(DxfCodeValueAttribute)} does not have match with the code {code}", nameof(property));
 
 			this.Code = code;
 			_property = property;
@@ -204,6 +216,10 @@ namespace ACadSharp
 			else if (_property.PropertyType.IsEquivalentTo(typeof(bool)))
 			{
 				this._property.SetValue(obj, Convert.ToBoolean(value));
+			}
+			else if (_property.PropertyType.IsEquivalentTo(typeof(char)))
+			{
+				this._property.SetValue(obj, Convert.ToChar(value));
 			}
 			else
 			{

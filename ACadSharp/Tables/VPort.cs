@@ -19,7 +19,10 @@ namespace ACadSharp.Tables
 	[DxfSubClass(DxfSubclassMarker.VPort)]
 	public class VPort : TableEntry
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.VPORT;
+
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableVport;
 
 		/// <summary>

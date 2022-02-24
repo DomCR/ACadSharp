@@ -461,7 +461,7 @@ namespace ACadSharp.IO.DXF
 					return true;
 				//Hard - pointer ID / handle to visual style object(optional)
 				case 348:
-					vportTemplate.StyelHandle = this._reader.LastValueAsHandle;
+					vportTemplate.StyleHandle = this._reader.LastValueAsHandle;
 					return true;
 				default:
 					break;

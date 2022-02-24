@@ -126,7 +126,7 @@ namespace ACadSharp.IO.DXF
 			//Read all the entries until the end of the table
 			while (this._reader.LastValueAsString != DxfFileToken.EndTable)
 			{
-				this.readCommonObjectData(out string _, out ulong handle, out ulong? ownerHandle);
+				this.readCommonObjectData(out _, out ulong handle, out ulong? ownerHandle);
 
 				Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.TableRecord);
 
@@ -199,43 +199,6 @@ namespace ACadSharp.IO.DXF
 				//Add the object and the template to the builder
 				this._builder.Templates[template.CadObject.Handle] = template;
 			}
-		}
-
-		public DwgTemplate readVPort()
-		{
-			VPort vport = new VPort();
-			DwgVPortTemplate template = new DwgVPortTemplate(new VPort());
-
-			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.VPort);
-
-			this._reader.ReadNext();
-
-			switch (this._reader.LastCode)
-			{
-				case 2:
-					vport.Name = this._reader.LastValueAsString;
-					break;
-				//Soft - pointer ID / handle to background object(optional)
-				case 332:
-					template.BackgroundHandle = this._reader.LastValueAsHandle;
-					break;
-				//Soft - pointer ID / handle to shade plot object(optional)
-				case 333:
-					_builder.NotificationHandler?.Invoke(
-						template.CadObject,
-						new NotificationEventArgs($"Code not implemented for type\n" +
-						$"\tcode : {this._reader.LastCode}\n" +
-						$"\ttype : {template.CadObject.ObjectType}"));
-					break;
-				//Hard - pointer ID / handle to visual style object(optional)
-				case 348:
-					template.StyelHandle = this._reader.LastValueAsHandle;
-					break;
-				default:
-					break;
-			}
-
-			return template;
 		}
 	}
 }
