@@ -13,7 +13,7 @@ namespace ACadSharp
 		public event EventHandler<CollectionChangedEventArgs> OnBeforeRemove;
 		public event EventHandler<CollectionChangedEventArgs> OnRemove;
 
-		public override ObjectType ObjectType => ObjectType.UNASSIGNED;
+		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
 		private readonly Dictionary<ulong, Layout> _entries = new Dictionary<ulong, Layout>();
 

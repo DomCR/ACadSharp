@@ -94,5 +94,6 @@
 		public const string ObjectPlotSettings = "PLOTSETTINGS";
 		public const string ObjectLayout = "LAYOUT";
 		public const string ObjectMLStyle = "MLINESTYLE";
+		public const string ObjectVisualStyle = "VISUALSTYLE";
 	}
 }

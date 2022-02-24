@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
+using ACadSharp.Objects;
 using CSMath;
 using System;
 using System.Collections.Generic;
@@ -234,17 +235,18 @@ namespace ACadSharp.Tables
 		public short MinorGridLinesPerMajorGridLine { get; set; }
 
 
-		//332
+		//332	Soft-pointer ID/handle to background object (optional)
 
-		//Soft-pointer ID/handle to background object (optional)
+		//333	Soft-pointer ID/handle to shade plot object (optional)
 
-		//333
-
-		//Soft-pointer ID/handle to shade plot object (optional)
-
-		//348
-
-		//Hard-pointer ID/handle to visual style object (optional)
+		/// <summary>
+		/// Visual style object (optional)
+		/// </summary>
+		/// <remarks>
+		/// (optional)
+		/// </remarks>
+		[DxfCodeValue(348)]
+		public VisualStyle VisualStyle { get; set; }
 
 		/// <summary>
 		/// Default Lighting On flag
