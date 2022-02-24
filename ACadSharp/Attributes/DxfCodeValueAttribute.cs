@@ -14,7 +14,13 @@ namespace ACadSharp.Attributes
 		/// <summary>
 		/// The property is not a raw value, indicates a reference to an object
 		/// </summary>
+		[Obsolete]
 		public bool IsReference { get; }
+
+		/// <summary>
+		/// Reference type for this dxf property
+		/// </summary>
+		public DxfReferenceType ReferenceType { get; }
 
 		public DxfCodeValueAttribute(params int[] codes)
 		{
@@ -26,14 +32,9 @@ namespace ACadSharp.Attributes
 			this.IsReference = isReference;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public enum DxfReference
+		public DxfCodeValueAttribute(DxfReferenceType referenceType, params int[] codes) : this(codes)
 		{
-			None,
-			Handle,
-			Name
+			this.ReferenceType = referenceType;
 		}
 	}
 }

@@ -146,6 +146,8 @@ namespace ACadSharp
 
 		public bool IsReference { get { return this._dxfAttribute.IsReference; } }
 
+		public DxfReferenceType ReferenceType { get { return this._dxfAttribute.ReferenceType; } }
+
 		private DxfCodeValueAttribute _dxfAttribute;
 
 		private PropertyInfo _property;

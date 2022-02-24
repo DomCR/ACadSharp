@@ -19,6 +19,25 @@ namespace ACadSharp.IO.Templates
 
 		public DwgVPortTemplate(VPort cadObject) : base(cadObject) { }
 
+		public override bool AddHandle(int dxfcode, ulong handle)
+		{
+			bool value = base.AddHandle(dxfcode, handle);
+			if (value)
+				return value;
+
+			switch (dxfcode)
+			{
+				case 348:
+					this.StyleHandle = handle;
+					value = true;
+					break;
+				default:
+					break;
+			}
+
+			return value;
+		}
+
 		public override void Build(CadDocumentBuilder builder)
 		{
 			//TODO: implement DwgVPortTemplate

@@ -3,6 +3,7 @@ using ACadSharp.IO;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DXF;
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace ACadSharp.Examples
@@ -44,6 +45,11 @@ namespace ACadSharp.Examples
 				Console.WriteLine($"file read : {f}");
 				Console.ReadLine();
 			}
+		}
+
+		private static void onNotificationFail(object sender, NotificationEventArgs e)
+		{
+			Debug.Fail(e.Message);
 		}
 
 		private static void onNotification(object sender, NotificationEventArgs e)

@@ -16,8 +16,6 @@ namespace ACadSharp.IO.DXF
 {
 	public class DxfReader : CadReaderBase
 	{
-		private event NotificationEventHandler _notificationHandler;
-
 		private CadDocument _document;
 		private DxfDocumentBuilder _builder;
 		private IDxfStreamReader _reader;
@@ -111,7 +109,7 @@ namespace ACadSharp.IO.DXF
 		public override CadDocument Read()
 		{
 			this._document = new CadDocument();
-			this._builder = new DxfDocumentBuilder(this._document, this._notificationHandler);
+			this._builder = new DxfDocumentBuilder(this._document, this.notificationHandler);
 
 			this._document.Header = this.ReadHeader();
 			this._document.Classes = this.readClasses();
@@ -250,7 +248,7 @@ namespace ACadSharp.IO.DXF
 			DxfTablesMapSectionReader reader = new DxfTablesMapSectionReader(
 				this._reader,
 				this._builder,
-				this._notificationHandler);
+				this.notificationHandler);
 
 			reader.Read();
 		}
@@ -266,7 +264,7 @@ namespace ACadSharp.IO.DXF
 			DxfTablesSectionReader reader = new DxfTablesSectionReader(
 				this._reader,
 				this._builder,
-				this._notificationHandler);
+				this.notificationHandler);
 
 			reader.Read();
 		}
@@ -284,7 +282,7 @@ namespace ACadSharp.IO.DXF
 			DxfBlockSectionReader reader = new DxfBlockSectionReader(
 				this._reader,
 				this._builder,
-				this._notificationHandler);
+				this.notificationHandler);
 
 			reader.Read();
 		}
@@ -300,7 +298,7 @@ namespace ACadSharp.IO.DXF
 			DxfEntitiesSectionReader reader = new DxfEntitiesSectionReader(
 				this._reader,
 				this._builder,
-				this._notificationHandler);
+				this.notificationHandler);
 
 			reader.Read();
 		}

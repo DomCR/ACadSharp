@@ -48,7 +48,11 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(72)]
 		public char Alignment { get; set; } = 'A';
 
-		//73	The number of linetype elements
+		/// <summary>
+		/// Linetype Segments
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Count, 73)]
+		public List<LineTypeSegment> Segments { get; set; } = new List<LineTypeSegment>();
 
 		//49	Dash, dot or space length(one entry per element)
 
@@ -68,7 +72,6 @@ namespace ACadSharp.Tables
 
 		//9	Text string (one per element if code 74 = 2)
 
-		public List<LineTypeSegment> Segments { get; set; } = new List<LineTypeSegment>();
 
 		public LineType() : base() { }
 

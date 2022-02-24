@@ -3084,7 +3084,7 @@ namespace ACadSharp.IO.DWG
 				//Complex shapecode BS 75 Shape number if shapeflag is 2, or index into the string area if shapeflag is 4.
 				short shapecode = this._objectReader.ReadBitShort();
 
-				//X-offset RD 44 (0.0 for a simple dash.)
+				//X - offset RD 44 (0.0 for a simple dash.)
 				//Y - offset RD 45(0.0 for a simple dash.)
 				XY offset = new XY(this._objectReader.ReadDouble(), this._objectReader.ReadDouble());
 				segment.Offset = offset;

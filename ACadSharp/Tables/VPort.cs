@@ -248,7 +248,7 @@ namespace ACadSharp.Tables
 		/// <remarks>
 		/// (optional)
 		/// </remarks>
-		[DxfCodeValue(348)]
+		[DxfCodeValue(true, 348)]
 		public VisualStyle VisualStyle { get; set; }
 
 		/// <summary>

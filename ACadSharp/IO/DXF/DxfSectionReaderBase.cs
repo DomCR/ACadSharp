@@ -287,11 +287,21 @@ namespace ACadSharp.IO.DXF
 					continue;
 				}
 
-				if (dxfProperty.IsReference)
+				if (dxfProperty.ReferenceType == DxfReferenceType.Handle)
 				{
 					//TODO: references may be also names in case of layers, blocks...
 					if (!template.AddHandle(this._reader.LastCode, this._reader.LastValueAsHandle))
-						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf code handle {this._reader.LastCode} not found in the template for {typeof(T)}, value : {this._reader.LastValueAsHandle}"));
+						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf referenced code {this._reader.LastCode} not implemented in the template for {typeof(T)}, value : {this._reader.LastValueAsHandle}"));
+				}
+				if (dxfProperty.ReferenceType == DxfReferenceType.Name)
+				{
+					//TODO: references may be also names in case of layers, blocks...
+					this._notification?.Invoke(null, new NotificationEventArgs($"Dxf referenced code {this._reader.LastCode} not implemented in the template for {typeof(T)}, value : {this._reader.LastValueAsHandle}"));
+				}
+				else if (dxfProperty.ReferenceType == DxfReferenceType.Count)
+				{
+					//TODO: read entries
+					this._notification?.Invoke(null, new NotificationEventArgs($"Dxf counter reference with code {this._reader.LastCode} not implemented for {typeof(T)} value : {this._reader.LastValueAsHandle}"));
 				}
 				else
 				{
