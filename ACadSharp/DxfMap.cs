@@ -128,6 +128,12 @@ namespace ACadSharp
 
 			addClassProperties(classMap, type);
 
+			if (type.BaseType == typeof(TableEntry))
+			{
+				//Properties in the table seem to be embeded to the hinerit type
+				addClassProperties(classMap, typeof(TableEntry));
+			}
+
 			return classMap;
 		}
 	}
@@ -190,6 +196,14 @@ namespace ACadSharp
 				vector = vector.SetComponents(components);
 
 				this._property.SetValue(obj, vector);
+			}
+			else if (_property.PropertyType.IsEquivalentTo(typeof(Color)))
+			{
+				this._property.SetValue(obj, new Color((short)value));
+			}
+			else if (_property.PropertyType.IsEquivalentTo(typeof(bool)))
+			{
+				this._property.SetValue(obj, Convert.ToBoolean(value));
 			}
 			else
 			{

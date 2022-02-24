@@ -3,7 +3,7 @@
 	/// <summary>
 	/// Orthographic type
 	/// </summary>
-	public enum OrthographicType : ushort
+	public enum OrthographicType 
 	{
 		/// <summary>
 		/// None

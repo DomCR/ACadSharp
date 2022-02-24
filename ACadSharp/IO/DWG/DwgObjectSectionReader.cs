@@ -4296,7 +4296,7 @@ namespace ACadSharp.IO.DWG
 					case GroupCodeValueType.Int64:
 						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadRawLong()));
 						break;
-					case GroupCodeValueType.StringHex:
+					case GroupCodeValueType.Handle:
 						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadTextUnicode()));
 						break;
 					case GroupCodeValueType.Bool:

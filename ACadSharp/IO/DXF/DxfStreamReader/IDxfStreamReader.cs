@@ -8,6 +8,7 @@ namespace ACadSharp.IO.DXF
 	{
 		bool EndSectionFound { get; }
 		DxfCode LastDxfCode { get; }
+		GroupCodeValueType LastGroupCodeValue { get; }
 		int LastCode { get; }
 		object LastValue { get; }
 

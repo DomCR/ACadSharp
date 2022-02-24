@@ -26,9 +26,65 @@ namespace ACadSharp.IO.DXF
 
 		public abstract void Read();
 
+		[Obsolete]
 		protected bool readUntilStart() => this._reader.LastDxfCode != DxfCode.Start;
 
+		[Obsolete]
 		protected bool readUntilSubClass() => this._reader.LastDxfCode != DxfCode.Subclass;
+
+		protected void readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle)
+		{
+			name = null;
+			handle = 0;
+			ownerHandle = null;
+
+			bool handleNotFound = true;
+
+			//Loop until the common data end
+			while (this._reader.LastDxfCode != DxfCode.Subclass)
+			{
+				switch (this._reader.LastCode)
+				{
+					//Table name
+					case 0:
+					case 2:
+						name = this._reader.LastValueAsString;
+						break;
+					//Handle
+					case 5:
+					case 105:
+						handle = this._reader.LastValueAsHandle;
+						handleNotFound = false;
+						break;
+					//Start of application - defined group
+					case 102:
+						//TODO: read dictionary groups for entities
+						do
+						{
+							this._reader.ReadNext();
+						}
+						while (this._reader.LastDxfCode != DxfCode.ControlString);
+						break;
+					//Soft - pointer ID / handle to owner BLOCK_RECORD object
+					case 330:
+						ownerHandle = this._reader.LastValueAsHandle;
+						break;
+					case 71:
+					//Number of entries for dimension style table
+					case 340:
+					//Dimension table has the handles of the styles at the begining
+					default:
+						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}."));
+						Debug.Fail($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}.");
+						break;
+				}
+
+				this._reader.ReadNext();
+			}
+
+			if (handleNotFound)
+				throw new Exception();
+		}
 
 		protected void readCommonObjectCodes(DwgTemplate template)
 		{
@@ -211,6 +267,60 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return false;
+		}
+
+		protected void readRaw<T>(T cadObject, DwgTemplate template)
+			where T : CadObject
+		{
+			DxfClassMap map = DxfClassMap.Create<T>();
+
+			Debug.Assert(map.Name == this._reader.LastValueAsString);
+			this._reader.ReadNext();
+
+			while (this._reader.LastDxfCode != DxfCode.Start
+				&& this._reader.LastDxfCode != DxfCode.Subclass)
+			{
+				if (this._reader.LastGroupCodeValue == GroupCodeValueType.Handle)
+				{
+					if (!template.AddHandle(this._reader.LastCode, this._reader.LastValueAsHandle))
+						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf code handle {this._reader.LastCode} not found in the template for {typeof(T)}, value : {this._reader.LastValueAsHandle}"));
+				}
+				else
+				{
+					if (!map.DxfProperties.TryGetValue(this._reader.LastCode, out DxfProperty dxfProperty))
+					{
+						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf code {this._reader.LastCode} not found in map for {typeof(T)}, value : {this._reader.LastValueAsString}"));
+						this._reader.ReadNext();
+						continue;
+					}
+
+					switch (this._reader.LastGroupCodeValue)
+					{
+						case GroupCodeValueType.String:
+						case GroupCodeValueType.Point3D:
+						case GroupCodeValueType.Double:
+						case GroupCodeValueType.Int16:
+						case GroupCodeValueType.Int32:
+						case GroupCodeValueType.Int64:
+						case GroupCodeValueType.Chunk:
+							dxfProperty.SetValue(cadObject, this._reader.LastValue);
+							break;
+						case GroupCodeValueType.Bool:
+							dxfProperty.SetValue(cadObject, this._reader.LastValueAsBool);
+							break;
+						case GroupCodeValueType.Comment:
+							this._notification?.Invoke(null, new NotificationEventArgs($"Comment in the file :  {this._reader.LastValueAsString}"));
+							break;
+						case GroupCodeValueType.ObjectId:
+						case GroupCodeValueType.None:
+						default:
+							this._notification?.Invoke(null, new NotificationEventArgs($"Group Code not handled {this._reader.LastGroupCodeValue} for {typeof(T)}, code : {this._reader.LastValue} | value : {this._reader.LastValueAsString}"));
+							break;
+					}
+				}
+
+				this._reader.ReadNext();
+			}
 		}
 
 		/// <summary>

@@ -3,7 +3,7 @@
 	/// <summary>
 	/// Viewport render mode
 	/// </summary>
-	public enum RenderMode : byte
+	public enum RenderMode
 	{
 		/// <summary>
 		/// Classic 2D

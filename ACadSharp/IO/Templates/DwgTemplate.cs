@@ -27,6 +27,11 @@ namespace ACadSharp.IO.Templates
 			this.CadObject = cadObject;
 		}
 
+		public virtual bool AddHandle(int dxfcode, ulong handle)
+		{
+			return false;
+		}
+
 		public virtual void Build(CadDocumentBuilder builder)
 		{
 			if (this.OwnerHandle.HasValue)

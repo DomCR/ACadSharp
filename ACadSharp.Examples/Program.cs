@@ -9,7 +9,7 @@ namespace ACadSharp.Examples
 {
 	class Program
 	{
-		static string PathSamples = "../../../../samples";
+		static string PathSamples = "../../../../samples/local";
 
 		static void Main(string[] args)
 		{
@@ -20,7 +20,7 @@ namespace ACadSharp.Examples
 		static void ReadDxf()
 		{
 			string file = Path.Combine(PathSamples, "dxf/ascii.dxf");
-			DxfReader reader = new DxfReader(file);
+			DxfReader reader = new DxfReader(file, onNotification);
 			reader.Read();
 		}
 

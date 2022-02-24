@@ -116,24 +116,11 @@ namespace ACadSharp.IO.DXF
 			this._document.Header = this.ReadHeader();
 			this._document.Classes = this.readClasses();
 
-			this.readTables();
-
-			this.readBlocks();
-
-			this.readEntities();
-
-			return this._document;
-		}
-
-		public CadDocument ReadWithDxfMap()
-		{
-			this._document = new CadDocument();
-			this._builder = new DxfDocumentBuilder(this._document, this._notificationHandler);
-
-			this._document.Header = this.ReadHeader();
-			this._document.Classes = this.readClasses();
-
 			this.readMappedTables();
+
+			//this.readBlocks();
+
+			//this.readEntities();
 
 			return this._document;
 		}

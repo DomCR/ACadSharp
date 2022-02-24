@@ -209,13 +209,16 @@ namespace ACadSharp
 
 	//TODO: Finish documentation for GroupCodeValueType
 	//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-2553CF98-44F6-4828-82DD-FE3BC7448113
+
+	/// <summary>
+	/// Group codes define the type of the associated value as an integer, a floating-point number, or a string, according to the following table of group code ranges.
+	/// </summary>
 	public enum GroupCodeValueType
 	{
 		None,
 
 		/// <summary>
-		/// String (with the introduction of extended symbol names in AutoCAD 2000, the 255-character limit has been increased to 2049 single-byte characters not including the newline at the end of the line); 
-		/// see the "Storage of String Values" section for more information
+		/// String (with the introduction of extended symbol names in AutoCAD 2000, the 255-character limit has been increased to 2049 single-byte characters not including the newline at the end of the line)
 		/// </summary>
 		/// <remarks>
 		/// Code range : 0-9
@@ -250,11 +253,21 @@ namespace ACadSharp
 		/// <remarks>
 		/// Code range : 105
 		/// </remarks>
-		StringHex,
+		Handle,
+
+		ObjectId,
 
 		Bool,
 
 		Chunk,
+
+		/// <summary>
+		/// Comment (string)
+		/// </summary>
+		/// <remarks>
+		/// Code range : 999
+		/// </remarks>
+		Comment
 	}
 
 	public static class GroupCodeValue
@@ -263,9 +276,9 @@ namespace ACadSharp
 		{
 			if (code >= 0 && code <= 9)
 				return GroupCodeValueType.String;
-			 if (code >= 10 && code <= 39)
+			if (code >= 10 && code <= 39)
 				return GroupCodeValueType.Point3D;
-			 if (code >= 40 && code <= 59)
+			if (code >= 40 && code <= 59)
 				return GroupCodeValueType.Double;
 			if (code >= 60 && code <= 79)
 				return GroupCodeValueType.Int16;
@@ -278,7 +291,7 @@ namespace ACadSharp
 			if (code == 102)
 				return GroupCodeValueType.String;
 			if (code == 105)
-				return GroupCodeValueType.StringHex;
+				return GroupCodeValueType.Handle;
 
 			if (code >= 110 && code <= 119)
 				return GroupCodeValueType.Double;
@@ -313,9 +326,10 @@ namespace ACadSharp
 				return GroupCodeValueType.Chunk;
 
 			if (code >= 320 && code <= 329)
-				return GroupCodeValueType.StringHex;
+				return GroupCodeValueType.Handle;
+
 			if (code >= 330 && code <= 369)
-				return GroupCodeValueType.StringHex;
+				return GroupCodeValueType.ObjectId;
 
 			if (code >= 370 && code <= 379)
 				return GroupCodeValueType.Int16;
@@ -323,7 +337,7 @@ namespace ACadSharp
 				return GroupCodeValueType.Int16;
 
 			if (code >= 390 && code <= 399)
-				return GroupCodeValueType.StringHex;
+				return GroupCodeValueType.Handle;
 
 			if (code >= 400 && code <= 409)
 				return GroupCodeValueType.Int16;
@@ -342,9 +356,11 @@ namespace ACadSharp
 			if (code >= 470 && code <= 479)
 				return GroupCodeValueType.String;
 			if (code >= 480 && code <= 481)
-				return GroupCodeValueType.StringHex;
+				return GroupCodeValueType.Handle;
+
 			if (code == 999)
-				return GroupCodeValueType.String;
+				return GroupCodeValueType.Comment;
+
 			if (code >= 1010 && code <= 1059)
 				return GroupCodeValueType.Double;
 			if (code >= 1000 && code <= 1003)
