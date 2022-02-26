@@ -36,7 +36,6 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Layer state flags.
 		/// </summary>
-		[DxfCodeValue(70)]
 		public new LayerFlags Flags { get; set; }
 
 		/// <summary>
@@ -48,7 +47,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// The linetype of an object. The default linetype is the linetype of the layer (ByLayer).
 		/// </summary>
-		[DxfCodeValue(6)]
+		[DxfCodeValue(DxfReferenceType.Name, 6)]
 		public LineType LineType { get; set; }  //TODO: implement default linetype
 
 		/// <summary>

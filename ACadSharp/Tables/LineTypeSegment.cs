@@ -37,5 +37,14 @@ namespace ACadSharp.Tables
 		/// </summary>
 		[DxfCodeValue(46)]
 		public double Scale { get; set; }
+
+		/// <summary>
+		/// Text string
+		/// </summary>
+		/// <remarks>
+		/// Only present if <see cref="LinetypeShapeFlags.Text"/> is present
+		/// </remarks>
+		[DxfCodeValue(9)]
+		public string Text { get; set; }
 	}
 }

@@ -267,7 +267,14 @@ namespace ACadSharp
 		/// <remarks>
 		/// Code range : 999
 		/// </remarks>
-		Comment
+		Comment,
+
+		ExtendedDataString,
+		ExtendedDataChunk,
+		ExtendedDataHandle,
+		ExtendedDataDouble,
+		ExtendedDataInt16,
+		ExtendedDataInt32,
 	}
 
 	public static class GroupCodeValue
@@ -361,18 +368,18 @@ namespace ACadSharp
 			if (code == 999)
 				return GroupCodeValueType.Comment;
 
-			if (code >= 1010 && code <= 1059)
-				return GroupCodeValueType.Double;
 			if (code >= 1000 && code <= 1003)
-				return GroupCodeValueType.String;
+				return GroupCodeValueType.ExtendedDataString;
 			if (code == 1004)
-				return GroupCodeValueType.Chunk;
+				return GroupCodeValueType.ExtendedDataChunk;
 			if (code >= 1005 && code <= 1009)
-				return GroupCodeValueType.String;
+				return GroupCodeValueType.ExtendedDataHandle;
+			if (code >= 1010 && code <= 1059)
+				return GroupCodeValueType.ExtendedDataDouble;
 			if (code >= 1060 && code <= 1070)
-				return GroupCodeValueType.Int16;
+				return GroupCodeValueType.ExtendedDataInt16;
 			if (code == 1071)
-				return GroupCodeValueType.Int32;
+				return GroupCodeValueType.ExtendedDataInt32;
 
 			return GroupCodeValueType.None;
 		}

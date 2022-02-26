@@ -41,7 +41,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Block insertion units
 		/// </summary>
-		[DxfCodeValue(70)]
+		// [DxfCodeValue(70)]	//Table entry uses flags and has the same code but dwg saves also the block record flags
 		public UnitsType Units { get; set; }
 
 		/// <summary>

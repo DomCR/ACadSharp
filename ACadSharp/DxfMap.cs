@@ -5,6 +5,7 @@ using ACadSharp.Tables;
 using CSMath;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -161,11 +162,11 @@ namespace ACadSharp
 		private DxfProperty(int code, PropertyInfo property)
 		{
 			this._dxfAttribute = property.GetCustomAttribute<DxfCodeValueAttribute>();
-			
+
 			if (this._dxfAttribute == null)
 				throw new ArgumentException($"The property does not implement the {nameof(DxfCodeValueAttribute)}", nameof(property));
 
-			if(!this._dxfAttribute.ValueCodes.Contains((DxfCode)code))
+			if (!this._dxfAttribute.ValueCodes.Contains((DxfCode)code))
 				throw new ArgumentException($"The {nameof(DxfCodeValueAttribute)} does not have match with the code {code}", nameof(property));
 
 			this.Code = code;
@@ -222,6 +223,10 @@ namespace ACadSharp
 			else if (_property.PropertyType.IsEquivalentTo(typeof(char)))
 			{
 				this._property.SetValue(obj, Convert.ToChar(value));
+			}
+			else if (_property.PropertyType.IsEnum)
+			{
+				this._property.SetValue(obj, Enum.ToObject(_property.PropertyType, value));
 			}
 			else
 			{

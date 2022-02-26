@@ -58,11 +58,22 @@ namespace ACadSharp.IO.DXF
 					case 70:
 						nentries = this._reader.LastValueAsInt;
 						break;
+					case 100 when this._reader.LastValueAsString == DxfSubclassMarker.DimensionStyleTable:
+						while (this._reader.LastDxfCode != DxfCode.Start)
+						{
+							//Dimstyle has the code 71 for the count of entries
+							//Also has 340 codes for each entry with the handles
+							this._reader.ReadNext();
+						}
+						break;
 					default:
 						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}."));
 						Debug.Fail($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}.");
 						break;
 				}
+
+				if (this._reader.LastDxfCode == DxfCode.Start)
+					break;
 
 				this._reader.ReadNext();
 			}
@@ -144,9 +155,19 @@ namespace ACadSharp.IO.DXF
 						this.readRaw(appid, template);
 						break;
 					case DxfFileToken.TableBlockRecord:
+						BlockRecord record = new BlockRecord();
+						template = new DwgBlockRecordTemplate(record); 
+						this.readRaw(record, template);
+						break;
 					case DxfFileToken.TableDimstyle:
+						DimensionStyle dimStyle = new DimensionStyle();
+						template = new DwgDimensionStyleTemplate(dimStyle);
+						this.readRaw(dimStyle, template);
+						break;
 					case DxfFileToken.TableLayer:
-						Debug.Fail($"Unhandeled table {tableName}.");
+						Layer layer = new Layer();
+						template = new DwgLayerTemplate(layer);
+						this.readRaw(layer, template);
 						break;
 					case DxfFileToken.TableLinetype:
 						LineType ltype = new LineType();
@@ -154,9 +175,19 @@ namespace ACadSharp.IO.DXF
 						this.readRaw(ltype, template);
 						break;
 					case DxfFileToken.TableStyle:
+						TextStyle style = new TextStyle();
+						template = new DwgTableEntryTemplate<TextStyle>(style);
+						this.readRaw(style, template);
+						break;
 					case DxfFileToken.TableUcs:
+						UCS ucs = new UCS();
+						template = new DwgTemplate<UCS>(ucs);
+						this.readRaw(ucs, template);
+						break;
 					case DxfFileToken.TableView:
-						Debug.Fail($"Unhandeled table {tableName}.");
+						View view = new View();
+						template = new DwgTemplate<View>(view);
+						this.readRaw(view, template);
 						break;
 					case DxfFileToken.TableVport:
 						VPort vport = new VPort();

@@ -2884,7 +2884,7 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readLayer()
 		{
 			//Initialize the template with the default layer
-			Layer layer = Layer.Default;
+			Layer layer = new Layer();
 			DwgLayerTemplate template = new DwgLayerTemplate(layer);
 
 			this.readCommonNonEntityData(template);

@@ -178,13 +178,17 @@ namespace ACadSharp.IO.DXF
 			{
 				case GroupCodeValueType.String:
 				case GroupCodeValueType.Comment:
+				case GroupCodeValueType.ExtendedDataString:
 					return strVal;
 				case GroupCodeValueType.Point3D:
 				case GroupCodeValueType.Double:
+				case GroupCodeValueType.ExtendedDataDouble:
 					return this.lineAsDouble(strVal);
 				case GroupCodeValueType.Int16:
+				case GroupCodeValueType.ExtendedDataInt16:
 					return this.lineAsShort(strVal);
 				case GroupCodeValueType.Int32:
+				case GroupCodeValueType.ExtendedDataInt32:
 					return this.lineAsInt(strVal);
 				case GroupCodeValueType.Int64:
 					return this.lineAsLong(strVal);

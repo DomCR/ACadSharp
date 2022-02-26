@@ -280,6 +280,14 @@ namespace ACadSharp.IO.DXF
 			while (this._reader.LastDxfCode != DxfCode.Start
 				&& this._reader.LastDxfCode != DxfCode.Subclass)
 			{
+				//Check for an extended data code
+				if (this._reader.LastDxfCode >= DxfCode.ExtendedDataAsciiString)
+				{
+					this.readExtendedData(cadObject);
+					this._reader.ReadNext();
+					continue;
+				}
+
 				if (!map.DxfProperties.TryGetValue(this._reader.LastCode, out DxfProperty dxfProperty))
 				{
 					this._notification?.Invoke(null, new NotificationEventArgs($"Dxf code {this._reader.LastCode} not found in map for {typeof(T)}, value : {this._reader.LastValueAsString}"));
@@ -293,7 +301,7 @@ namespace ACadSharp.IO.DXF
 					if (!template.AddHandle(this._reader.LastCode, this._reader.LastValueAsHandle))
 						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf referenced code {this._reader.LastCode} not implemented in the template for {typeof(T)}, value : {this._reader.LastValueAsHandle}"));
 				}
-				if (dxfProperty.ReferenceType == DxfReferenceType.Name)
+				else if (dxfProperty.ReferenceType == DxfReferenceType.Name)
 				{
 					//TODO: references may be also names in case of layers, blocks...
 					this._notification?.Invoke(null, new NotificationEventArgs($"Dxf referenced code {this._reader.LastCode} not implemented in the template for {typeof(T)}, value : {this._reader.LastValueAsHandle}"));
@@ -331,6 +339,21 @@ namespace ACadSharp.IO.DXF
 
 				this._reader.ReadNext();
 			}
+		}
+
+		// This method only works if the entries are strictly at the end of the object
+		private void readEntries()
+		{
+			while (this._reader.LastDxfCode != DxfCode.Start
+				&& this._reader.LastDxfCode != DxfCode.Subclass)
+			{
+				this._reader.ReadNext();
+			}
+		}
+
+		private void readExtendedData(CadObject cadObject)
+		{
+			//TODO: Handle extended data 
 		}
 
 		/// <summary>

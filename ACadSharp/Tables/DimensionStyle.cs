@@ -292,7 +292,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// DIMTFILLCLR
 		/// </summary>
-		[DxfCodeValue(70)]
+		//[DxfCodeValue(70)]	//No present in the dxf documentation
 		public Color TextBackgroundColor { get; set; }
 
 		/// <summary>
