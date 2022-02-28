@@ -20,7 +20,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Specifies the layer for an object.
 		/// </summary>
-		[DxfCodeValue(8)]
+		[DxfCodeValue(DxfReferenceType.Name, 8)]
 		public Layer Layer { get; set; } = Layer.Default;
 
 		/// <summary>

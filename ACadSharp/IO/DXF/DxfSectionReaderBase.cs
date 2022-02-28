@@ -86,7 +86,7 @@ namespace ACadSharp.IO.DXF
 				throw new Exception();
 		}
 
-		protected void readCommonObjectCodes(DwgTemplate template)
+		protected void readCommonObjectData(DwgTemplate template)
 		{
 			while (this._reader.LastDxfCode != DxfCode.Subclass)
 			{
@@ -116,6 +116,11 @@ namespace ACadSharp.IO.DXF
 
 				this._reader.ReadNext();
 			}
+		}
+
+		protected void readCommonEntityData(DwgTemplate template)
+		{
+
 		}
 
 		protected DwgTemplate readEntity()
@@ -148,7 +153,7 @@ namespace ACadSharp.IO.DXF
 					break;
 			}
 
-			this.readCommonObjectCodes(template);
+			this.readCommonObjectData(template);
 
 			//Jump subclass marker
 			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.Entity);
@@ -308,6 +313,11 @@ namespace ACadSharp.IO.DXF
 				}
 				else if (dxfProperty.ReferenceType == DxfReferenceType.Count)
 				{
+					for (int i = this._reader.LastValueAsInt; i > 0; i--)
+					{
+
+					}
+
 					//TODO: read entries
 					this._notification?.Invoke(null, new NotificationEventArgs($"Dxf counter reference with code {this._reader.LastCode} not implemented for {typeof(T)} value : {this._reader.LastValueAsHandle}"));
 				}
@@ -341,8 +351,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		// This method only works if the entries are strictly at the end of the object
-		private void readEntries()
+		private void readEntry()
 		{
 			while (this._reader.LastDxfCode != DxfCode.Start
 				&& this._reader.LastDxfCode != DxfCode.Subclass)

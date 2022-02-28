@@ -84,39 +84,39 @@ namespace ACadSharp.IO.DXF
 			{
 				case DxfFileToken.TableAppId:
 					template = new DwgTableTemplate<AppId>(this._builder.DocumentToBuild.AppIds);
-					this.readEntries(name, handle, (DwgTableTemplate<AppId>)template);
+					this.readEntries((DwgTableTemplate<AppId>)template);
 					break;
 				case DxfFileToken.TableBlockRecord:
 					template = new DwgBlockCtrlObjectTemplate(this._builder.DocumentToBuild.BlockRecords);
-					this.readEntries(name, handle, (DwgBlockCtrlObjectTemplate)template);
+					this.readEntries((DwgBlockCtrlObjectTemplate)template);
 					break;
 				case DxfFileToken.TableVport:
 					template = new DwgTableTemplate<VPort>(this._builder.DocumentToBuild.VPorts);
-					this.readEntries(name, handle, (DwgTableTemplate<VPort>)template);
+					this.readEntries((DwgTableTemplate<VPort>)template);
 					break;
 				case DxfFileToken.TableLinetype:
 					template = new DwgTableTemplate<LineType>(this._builder.DocumentToBuild.LineTypes);
-					this.readEntries(name, handle, (DwgTableTemplate<LineType>)template);
+					this.readEntries((DwgTableTemplate<LineType>)template);
 					break;
 				case DxfFileToken.TableLayer:
 					template = new DwgTableTemplate<Layer>(this._builder.DocumentToBuild.Layers);
-					this.readEntries(name, handle, (DwgTableTemplate<Layer>)template);
+					this.readEntries((DwgTableTemplate<Layer>)template);
 					break;
 				case DxfFileToken.TableStyle:
 					template = new DwgTableTemplate<TextStyle>(this._builder.DocumentToBuild.TextStyles);
-					this.readEntries(name, handle, (DwgTableTemplate<TextStyle>)template);
+					this.readEntries((DwgTableTemplate<TextStyle>)template);
 					break;
 				case DxfFileToken.TableView:
 					template = new DwgTableTemplate<View>(this._builder.DocumentToBuild.Views);
-					this.readEntries(name, handle, (DwgTableTemplate<View>)template);
+					this.readEntries((DwgTableTemplate<View>)template);
 					break;
 				case DxfFileToken.TableUcs:
 					template = new DwgTableTemplate<UCS>(this._builder.DocumentToBuild.UCSs);
-					this.readEntries(name, handle, (DwgTableTemplate<UCS>)template);
+					this.readEntries((DwgTableTemplate<UCS>)template);
 					break;
 				case DxfFileToken.TableDimstyle:
 					template = new DwgTableTemplate<DimensionStyle>(this._builder.DocumentToBuild.DimensionStyles);
-					this.readEntries(name, handle, (DwgTableTemplate<DimensionStyle>)template);
+					this.readEntries((DwgTableTemplate<DimensionStyle>)template);
 					break;
 				default:
 					throw new DxfException($"Unknown table name {name}");
@@ -131,23 +131,23 @@ namespace ACadSharp.IO.DXF
 		}
 
 
-		private void readEntries<T>(string tableName, ulong tableHandle, DwgTableTemplate<T> tableTemplate)
+		private void readEntries<T>(DwgTableTemplate<T> tableTemplate)
 			where T : TableEntry
 		{
 			//Read all the entries until the end of the table
 			while (this._reader.LastValueAsString != DxfFileToken.EndTable)
 			{
-				this.readCommonObjectData(out _, out ulong handle, out ulong? ownerHandle);
+				this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle);
 
+				Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.TableRecord);
 				Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.TableRecord);
 
 				this._reader.ReadNext();
 
-				bool assignHandle = true;
 				DwgTemplate template = null;
 
 				//Get the entry
-				switch (tableName)
+				switch (name)
 				{
 					case DxfFileToken.TableAppId:
 						AppId appid = new AppId();
@@ -156,7 +156,7 @@ namespace ACadSharp.IO.DXF
 						break;
 					case DxfFileToken.TableBlockRecord:
 						BlockRecord record = new BlockRecord();
-						template = new DwgBlockRecordTemplate(record); 
+						template = new DwgBlockRecordTemplate(record);
 						this.readRaw(record, template);
 						break;
 					case DxfFileToken.TableDimstyle:
@@ -195,15 +195,14 @@ namespace ACadSharp.IO.DXF
 						this.readRaw(vport, template);
 						break;
 					default:
-						Debug.Fail($"Unhandeled table {tableName}.");
+						Debug.Fail($"Unhandeled table {name}.");
 						break;
 				}
 
-				if (assignHandle)
-				{
-					//Setup the common fields
-					template.CadObject.Handle = handle;
-				}
+				//Setup the common fields
+				template.CadObject.Handle = handle;
+				template.OwnerHandle = ownerHandle;
+				tableTemplate.CadObject.Add((T)template.CadObject);
 
 				//Add the object and the template to the builder
 				this._builder.Templates[template.CadObject.Handle] = template;

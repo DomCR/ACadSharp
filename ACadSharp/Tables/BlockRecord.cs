@@ -44,6 +44,9 @@ namespace ACadSharp.Tables
 		// [DxfCodeValue(70)]	//Table entry uses flags and has the same code but dwg saves also the block record flags
 		public UnitsType Units { get; set; }
 
+		//This seems to be the right way to set the flags for the block records
+		public new BlockTypeFlags Flags { get { return this.BlockEntity.Flags; } set { this.BlockEntity.Flags = value; } }
+
 		/// <summary>
 		/// Specifies whether the block can be exploded
 		/// </summary>
@@ -77,7 +80,6 @@ namespace ACadSharp.Tables
 		public BlockRecord() : base()
 		{
 			this.BlockEntity = new Block(this);
-			// this.BlockEnd = new BlockEnd(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
 		}
 

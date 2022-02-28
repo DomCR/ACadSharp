@@ -116,7 +116,7 @@ namespace ACadSharp.IO.DXF
 
 			this.readMappedTables();
 
-			//this.readBlocks();
+			this.readMappedBlocks();
 
 			//this.readEntities();
 
@@ -270,6 +270,22 @@ namespace ACadSharp.IO.DXF
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Read the BLOCKS section of the DXF file.
+		/// </summary>
+		private void readMappedBlocks()
+		{
+			//Get the needed handler
+			this._reader = this.goToSection(DxfFileToken.BlocksSection);
+
+			DxfBlockMapSectionReader reader = new DxfBlockMapSectionReader(
+				this._reader,
+				this._builder,
+				this.notificationHandler);
+
+			reader.Read();
+		}
 
 		/// <summary>
 		/// Read the BLOCKS section of the DXF file.

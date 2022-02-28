@@ -35,8 +35,14 @@ namespace ACadSharp
 														| BindingFlags.Instance
 														| BindingFlags.DeclaredOnly))
 			{
-				if (p.GetCustomAttribute<DxfCodeValueAttribute>() == null)
+				DxfCodeValueAttribute att = p.GetCustomAttribute<DxfCodeValueAttribute>();
+				if (att == null)
 					continue;
+
+				if (att.ReferenceType == DxfReferenceType.Count)
+				{
+
+				}
 
 				foreach (var item in DxfProperty.Create(p))
 				{
@@ -139,14 +145,20 @@ namespace ACadSharp
 		}
 	}
 
-	public class DxfProperty
+	public abstract class DxfPropertyBase
 	{
 		public int Code { get; }
 
 		public object Value { get; }
 
-		public bool IsReference { get { return this._dxfAttribute.IsReference; } }
+		public DxfPropertyBase(int code)
+		{
+			this.Code = code;
+		}
+	}
 
+	public class DxfProperty : DxfPropertyBase
+	{
 		public DxfReferenceType ReferenceType { get { return this._dxfAttribute.ReferenceType; } }
 
 		private DxfCodeValueAttribute _dxfAttribute;
@@ -159,7 +171,7 @@ namespace ACadSharp
 		/// <param name="code"></param>
 		/// <param name="property"></param>
 		/// <exception cref="ArgumentException"></exception>
-		private DxfProperty(int code, PropertyInfo property)
+		private DxfProperty(int code, PropertyInfo property) : base(code)
 		{
 			this._dxfAttribute = property.GetCustomAttribute<DxfCodeValueAttribute>();
 
@@ -169,7 +181,6 @@ namespace ACadSharp
 			if (!this._dxfAttribute.ValueCodes.Contains((DxfCode)code))
 				throw new ArgumentException($"The {nameof(DxfCodeValueAttribute)} does not have match with the code {code}", nameof(property));
 
-			this.Code = code;
 			_property = property;
 		}
 
