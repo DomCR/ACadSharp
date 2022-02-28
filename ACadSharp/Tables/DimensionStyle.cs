@@ -440,7 +440,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// DIMTXSTY
 		/// </summary>
-		[DxfCodeValue(340)]
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public TextStyle Style { get; set; }
 
 		/// <summary>

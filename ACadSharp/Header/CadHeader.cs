@@ -562,7 +562,7 @@ namespace ACadSharp.Header
 				if (att == null)
 					continue;
 
-				map.Add($"${att.Name}", att.ValueCodes);
+				map.Add(att.Name, att.ValueCodes);
 			}
 
 			return map;

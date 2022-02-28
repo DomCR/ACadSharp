@@ -68,7 +68,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Associated Layout
 		/// </summary>
-		[DxfCodeValue(340)]
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public Layout Layout { get; set; }
 
 		public CadObjectCollection<Entity> Entities { get; set; }

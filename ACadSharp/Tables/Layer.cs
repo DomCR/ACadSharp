@@ -63,15 +63,15 @@ namespace ACadSharp.Tables
 		public LineweightType LineWeight { get; set; }
 
 		/// <summary>
-		/// Hard-pointer ID/handle of PlotStyleName object
+		/// PlotStyleName object
 		/// </summary>
-		[DxfCodeValue(380)]
+		[DxfCodeValue(DxfReferenceType.Handle, 390)]
 		public string PlotStyleName { get; set; }   //TODO: set the plot style for the layer
 
 		/// <summary>
 		/// Hard-pointer ID/handle to Material object
 		/// </summary>
-		[DxfCodeValue(347)]
+		[DxfCodeValue(DxfReferenceType.Handle, 347)]
 		public string Material { get; set; }    //TODO: Implement ulong handles, change to internal or private, implement the material class
 
 		public bool IsOn { get; set; }  //TODO: Is the same as PlotFlag???

@@ -116,7 +116,7 @@ namespace ACadSharp.IO.DXF
 
 			this.readMappedTables();
 
-			this.readMappedBlocks();
+			//this.readMappedBlocks();
 
 			//this.readEntities();
 
@@ -126,24 +126,26 @@ namespace ACadSharp.IO.DXF
 		/// <inheritdoc/>
 		public override CadHeader ReadHeader()
 		{
-			//Get the needed handler
 			this._reader = this.goToSection(DxfFileToken.HeaderSection);
 
 			CadHeader header = new CadHeader();
 
 			Dictionary<string, DxfCode[]> headerMap = CadHeader.GetHeaderMap();
 
+			this._reader.ReadNext();
+
 			//Loop until the section ends
 			while (!this._reader.EndSectionFound)
 			{
-				//Get next key/value
-				this._reader.ReadNext();
-
 				//Get the current header variable
 				string currVar = this._reader.LastValueAsString;
 
 				if (!headerMap.TryGetValue(currVar, out var codes))
+				{
+					this.notificationHandler(this, new NotificationEventArgs($"Header variable not implemented {currVar}"));
+					this._reader.ReadNext();
 					continue;
+				}
 
 				object[] parameters = new object[codes.Length];
 				for (int i = 0; i < codes.Length; i++)
@@ -154,6 +156,8 @@ namespace ACadSharp.IO.DXF
 
 				//Set the header value by name
 				header.SetValue(currVar, parameters);
+
+				this._reader.ReadNext();
 			}
 
 			return header;

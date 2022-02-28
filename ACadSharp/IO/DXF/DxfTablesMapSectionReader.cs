@@ -152,47 +152,47 @@ namespace ACadSharp.IO.DXF
 					case DxfFileToken.TableAppId:
 						AppId appid = new AppId();
 						template = new DwgTableEntryTemplate<AppId>(appid);
-						this.readRaw(appid, template);
+						this.readMapped(appid, template);
 						break;
 					case DxfFileToken.TableBlockRecord:
 						BlockRecord record = new BlockRecord();
 						template = new DwgBlockRecordTemplate(record);
-						this.readRaw(record, template);
+						this.readMapped(record, template);
 						break;
 					case DxfFileToken.TableDimstyle:
 						DimensionStyle dimStyle = new DimensionStyle();
 						template = new DwgDimensionStyleTemplate(dimStyle);
-						this.readRaw(dimStyle, template);
+						this.readMapped(dimStyle, template);
 						break;
 					case DxfFileToken.TableLayer:
 						Layer layer = new Layer();
 						template = new DwgLayerTemplate(layer);
-						this.readRaw(layer, template);
+						this.readMapped(layer, template);
 						break;
 					case DxfFileToken.TableLinetype:
 						LineType ltype = new LineType();
-						template = new DwgTableEntryTemplate<LineType>(ltype);
-						this.readRaw(ltype, template);
+						template = new CadLineTypeTemplate(ltype);
+						this.readMapped(ltype, template);
 						break;
 					case DxfFileToken.TableStyle:
 						TextStyle style = new TextStyle();
 						template = new DwgTableEntryTemplate<TextStyle>(style);
-						this.readRaw(style, template);
+						this.readMapped(style, template);
 						break;
 					case DxfFileToken.TableUcs:
 						UCS ucs = new UCS();
 						template = new DwgTemplate<UCS>(ucs);
-						this.readRaw(ucs, template);
+						this.readMapped(ucs, template);
 						break;
 					case DxfFileToken.TableView:
 						View view = new View();
 						template = new DwgTemplate<View>(view);
-						this.readRaw(view, template);
+						this.readMapped(view, template);
 						break;
 					case DxfFileToken.TableVport:
 						VPort vport = new VPort();
 						template = new DwgVPortTemplate(vport);
-						this.readRaw(vport, template);
+						this.readMapped(vport, template);
 						break;
 					default:
 						Debug.Fail($"Unhandeled table {name}.");

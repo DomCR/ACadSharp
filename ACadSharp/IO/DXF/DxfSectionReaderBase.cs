@@ -274,7 +274,7 @@ namespace ACadSharp.IO.DXF
 			return false;
 		}
 
-		protected void readRaw<T>(T cadObject, DwgTemplate template)
+		protected void readMapped<T>(T cadObject, DwgTemplate template)
 			where T : CadObject
 		{
 			DxfClassMap map = DxfClassMap.Create<T>();
@@ -293,9 +293,12 @@ namespace ACadSharp.IO.DXF
 					continue;
 				}
 
+
 				if (!map.DxfProperties.TryGetValue(this._reader.LastCode, out DxfProperty dxfProperty))
 				{
-					this._notification?.Invoke(null, new NotificationEventArgs($"Dxf code {this._reader.LastCode} not found in map for {typeof(T)}, value : {this._reader.LastValueAsString}"));
+					if (!template.CheckDxfCode(this._reader.LastCode, this._reader.LastValue))
+						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf code {this._reader.LastCode} not found in map for {typeof(T)}, value : {this._reader.LastValueAsString}"));
+
 					this._reader.ReadNext();
 					continue;
 				}
@@ -309,17 +312,12 @@ namespace ACadSharp.IO.DXF
 				else if (dxfProperty.ReferenceType == DxfReferenceType.Name)
 				{
 					//TODO: references may be also names in case of layers, blocks...
-					this._notification?.Invoke(null, new NotificationEventArgs($"Dxf referenced code {this._reader.LastCode} not implemented in the template for {typeof(T)}, value : {this._reader.LastValueAsHandle}"));
+					if (!template.AddName(this._reader.LastCode, this._reader.LastValueAsString))
+						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf referenced code {this._reader.LastCode} not implemented in the template for {typeof(T)}, value : {this._reader.LastValueAsHandle}"));
 				}
 				else if (dxfProperty.ReferenceType == DxfReferenceType.Count)
 				{
-					for (int i = this._reader.LastValueAsInt; i > 0; i--)
-					{
-
-					}
-
-					//TODO: read entries
-					this._notification?.Invoke(null, new NotificationEventArgs($"Dxf counter reference with code {this._reader.LastCode} not implemented for {typeof(T)} value : {this._reader.LastValueAsHandle}"));
+					//Do nothing just marks the amount
 				}
 				else
 				{
@@ -342,7 +340,7 @@ namespace ACadSharp.IO.DXF
 						case GroupCodeValueType.ObjectId:
 						case GroupCodeValueType.None:
 						default:
-							this._notification?.Invoke(null, new NotificationEventArgs($"Group Code not handled {this._reader.LastGroupCodeValue} for {typeof(T)}, code : {this._reader.LastValue} | value : {this._reader.LastValueAsString}"));
+							this._notification?.Invoke(null, new NotificationEventArgs($"Group Code not handled {this._reader.LastGroupCodeValue} for {typeof(T)}, code : {this._reader.LastCode} | value : {this._reader.LastValueAsString}"));
 							break;
 					}
 				}

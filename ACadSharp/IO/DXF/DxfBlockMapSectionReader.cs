@@ -48,16 +48,16 @@ namespace ACadSharp.IO.DXF
 
 			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.Entity);
 
-			this.readRaw<Entity>(template.CadObject, template);
+			this.readMapped<Entity>(template.CadObject, template);
 
 			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.BlockBegin);
 
-			this.readRaw<Block>(record.BlockEntity, template);
+			this.readMapped<Block>(record.BlockEntity, template);
 
 			switch (this._reader.LastValueAsString)
 			{
 				case DxfFileToken.EndBlock:
-					this.readRaw<BlockEnd>(record.BlockEnd, template);
+					this.readMapped<BlockEnd>(record.BlockEnd, template);
 					break;
 				default:
 					Debug.Fail($"Unhandeled dxf block entity {this._reader.LastValueAsString} at line {this._reader.Line}.");

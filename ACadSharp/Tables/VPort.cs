@@ -126,9 +126,7 @@ namespace ACadSharp.Tables
 
 		//Soft or hard-pointer ID/handle to frozen layer objects; repeats for each frozen layers
 
-		//1
-
-		//Plot style sheet
+		//1	Plot style sheet
 
 		/// <summary>
 		/// Render mode
@@ -221,9 +219,7 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(146)]
 		public double Elevation { get; set; }
 
-		//170
-
-		//Shade plot setting
+		//170	Shade plot setting
 
 		/// <summary>
 		/// Grid flags
@@ -248,7 +244,7 @@ namespace ACadSharp.Tables
 		/// <remarks>
 		/// (optional)
 		/// </remarks>
-		[DxfCodeValue(true, 348)]
+		[DxfCodeValue(DxfReferenceType.Handle, 348)]
 		public VisualStyle VisualStyle { get; set; }
 
 		/// <summary>

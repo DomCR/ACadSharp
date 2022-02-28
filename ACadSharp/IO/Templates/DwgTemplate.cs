@@ -32,6 +32,17 @@ namespace ACadSharp.IO.Templates
 			return false;
 		}
 
+		public virtual bool AddName(int dxfcode, string name)
+		{
+			return false;
+		}
+
+		public virtual bool CheckDxfCode(int dxfcode, object value)
+		{
+			//Will return true if the code is used by the template
+			return false;
+		}
+
 		public virtual void Build(CadDocumentBuilder builder)
 		{
 			if (this.OwnerHandle.HasValue)
