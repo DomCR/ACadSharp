@@ -1190,7 +1190,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readBlock()
 		{
-			Block block = new Block(new BlockRecord());
+			BlockReference block = new BlockReference(new BlockRecord());
 			DwgEntityTemplate template = new DwgEntityTemplate(block);
 
 			this.readCommonEntityData(template);
@@ -1203,7 +1203,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readEndBlock()
 		{
-			BlockEnd block = new BlockEnd();
+			BlockEnd block = new BlockEnd(new BlockRecord());
 			DwgEntityTemplate template = new DwgEntityTemplate(block);
 
 			this.readCommonEntityData(template);
@@ -1266,44 +1266,45 @@ namespace ACadSharp.IO.DWG
 			//R13-R14 Only:
 			if (this.R13_14Only)
 			{
+				XYZ scale = this._objectReader.Read3BitDouble();
 				//X Scale BD 41
+				insert.XScale = scale.X;
 				//Y Scale BD 42
+				insert.YScale = scale.Y;
 				//Z Scale BD 43
-				insert.Scale = this._objectReader.Read3BitDouble();
+				insert.ZScale = scale.Z;
 			}
 
 			//R2000 + Only:
 			if (this.R2000Plus)
 			{
-				double x = 1.0;
-				double y = 1.0;
-				double z = 1.0;
-
 				//Data flags BB
 				//Scale Data Varies with Data flags:
 				switch (this._objectReader.Read2Bits())
 				{
 					//00 – 41 value stored as a RD, followed by a 42 value stored as DD (use 41 for default value), and a 43 value stored as a DD(use 41 value for default value).
 					case 0:
-						x = this._objectReader.ReadDouble();
-						y = this._objectReader.ReadBitDoubleWithDefault(x);
-						z = this._objectReader.ReadBitDoubleWithDefault(x);
-						insert.Scale = new XYZ(x, y, z);
+						insert.XScale = this._objectReader.ReadDouble();
+						insert.YScale = this._objectReader.ReadBitDoubleWithDefault(insert.XScale);
+						insert.ZScale = this._objectReader.ReadBitDoubleWithDefault(insert.XScale);
 						break;
 					//01 – 41 value is 1.0, 2 DD’s are present, each using 1.0 as the default value, representing the 42 and 43 values.
 					case 1:
-						y = this._objectReader.ReadBitDoubleWithDefault(x);
-						z = this._objectReader.ReadBitDoubleWithDefault(x);
-						insert.Scale = new XYZ(x, y, z);
+						insert.YScale = this._objectReader.ReadBitDoubleWithDefault(insert.XScale);
+						insert.ZScale = this._objectReader.ReadBitDoubleWithDefault(insert.XScale);
 						break;
 					//10 – 41 value stored as a RD, and 42 & 43 values are not stored, assumed equal to 41 value.
 					case 2:
 						double xyz = this._objectReader.ReadDouble();
-						insert.Scale = new XYZ(xyz, xyz, xyz);
+						insert.XScale = xyz;
+						insert.YScale = xyz;
+						insert.ZScale = xyz;
 						break;
 					//11 - scale is (1.0, 1.0, 1.0), no data stored.
 					case 3:
-						insert.Scale = new XYZ(x, y, z);
+						insert.XScale = 1;
+						insert.YScale = 1;
+						insert.ZScale = 1;
 						break;
 				}
 			}
@@ -2734,7 +2735,7 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readBlockHeader()
 		{
 			BlockRecord record = new BlockRecord();
-			Block block = record.BlockEntity;
+			BlockReference block = record.BlockEntity;
 			DwgBlockRecordTemplate template = new DwgBlockRecordTemplate(record);
 			this._builder.BlockRecordTemplates.Add(template);
 

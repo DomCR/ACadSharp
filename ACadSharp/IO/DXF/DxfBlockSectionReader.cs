@@ -41,14 +41,14 @@ namespace ACadSharp.IO.DXF
 			//Loop until the block end
 			while (this._reader.LastValueAsString != DxfFileToken.EndBlock)
 			{
-				DwgTemplate entityTemplate = this.readEntity();
+				//DwgTemplate entityTemplate = this.readEntity();
 
-				Debug.Assert(entityTemplate.OwnerHandle == template.CadObject.Handle);
+				//Debug.Assert(entityTemplate.OwnerHandle == template.CadObject.Handle);
 
-				//Add the handle to the template 
-				template.OwnedObjectsHandlers.Add(entityTemplate.CadObject.Handle);
+				////Add the handle to the template 
+				//template.OwnedObjectsHandlers.Add(entityTemplate.CadObject.Handle);
 
-				_builder.Templates.Add(entityTemplate.CadObject.Handle, entityTemplate);
+				//_builder.Templates.Add(entityTemplate.CadObject.Handle, entityTemplate);
 			}
 
 			this._reader.ReadNext();

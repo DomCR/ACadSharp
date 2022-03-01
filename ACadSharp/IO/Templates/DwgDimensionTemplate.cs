@@ -25,7 +25,7 @@ namespace ACadSharp.IO.Templates
 				dimension.Style = style;
 			}
 
-			if (builder.TryGetCadObject<Block>(BlockHandle, out Block block))
+			if (builder.TryGetCadObject<BlockReference>(BlockHandle, out BlockReference block))
 			{
 				dimension.Block = block;
 			}

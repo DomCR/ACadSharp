@@ -22,7 +22,6 @@ namespace ACadSharp.IO.DXF
 			//Loop until the section ends
 			while (!this._reader.EndSectionFound)
 			{
-
 				if (this._reader.LastValueAsString == DxfFileToken.Block)
 					this.readBlock();
 				else
@@ -48,21 +47,36 @@ namespace ACadSharp.IO.DXF
 
 			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.Entity);
 
-			this.readMapped<Entity>(template.CadObject, template);
+			this.readMapped<Entity>(record.BlockEntity, template);
 
 			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.BlockBegin);
 
-			this.readMapped<Block>(record.BlockEntity, template);
+			this.readMapped<BlockReference>(record.BlockEntity, template);
 
-			switch (this._reader.LastValueAsString)
+			while (this._reader.LastValueAsString != DxfFileToken.EndBlock)
 			{
-				case DxfFileToken.EndBlock:
-					this.readMapped<BlockEnd>(record.BlockEnd, template);
-					break;
-				default:
-					Debug.Fail($"Unhandeled dxf block entity {this._reader.LastValueAsString} at line {this._reader.Line}.");
-					break;
+				DwgTemplate entityTemplate = this.readEntity();
+
+				if (entityTemplate == null)
+				{
+					this._reader.ReadNext();
+					Debug.Fail("Entity reader not implemented");
+					continue;
+				}
 			}
+
+			this.readBlockEnd(record.BlockEnd);
+		}
+
+		private void readBlockEnd(BlockEnd block)
+		{
+			DwgEntityTemplate template = new DwgEntityTemplate(block);
+
+			this.readCommonObjectData(template);
+
+			this.readMapped<Entity>(block, template);
+
+			this.readMapped<BlockEnd>(block, template);
 		}
 	}
 }

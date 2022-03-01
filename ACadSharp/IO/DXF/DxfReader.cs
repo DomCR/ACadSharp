@@ -116,7 +116,7 @@ namespace ACadSharp.IO.DXF
 
 			this.readMappedTables();
 
-			//this.readMappedBlocks();
+			this.readMappedBlocks();
 
 			//this.readEntities();
 

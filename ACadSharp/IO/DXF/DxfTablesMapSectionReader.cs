@@ -181,12 +181,12 @@ namespace ACadSharp.IO.DXF
 						break;
 					case DxfFileToken.TableUcs:
 						UCS ucs = new UCS();
-						template = new DwgTemplate<UCS>(ucs);
+						template = new CadUcsTemplate(ucs);
 						this.readMapped(ucs, template);
 						break;
 					case DxfFileToken.TableView:
 						View view = new View();
-						template = new DwgTemplate<View>(view);
+						template = new DwgTableEntryTemplate<View>(view);
 						this.readMapped(view, template);
 						break;
 					case DxfFileToken.TableVport:

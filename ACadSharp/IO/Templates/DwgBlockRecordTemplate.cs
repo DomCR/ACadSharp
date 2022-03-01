@@ -79,7 +79,7 @@ namespace ACadSharp.IO.Templates
 
 		public void SetBlockToRecord(CadDocumentBuilder builder)
 		{
-			if (!builder.TryGetCadObject(this.BeginBlockHandle, out Block block))
+			if (!builder.TryGetCadObject(this.BeginBlockHandle, out BlockReference block))
 				return;
 
 			this.CadObject.Name = block.Name;

@@ -33,7 +33,7 @@ namespace ACadSharp.IO.Templates
 
 			if (this.BlockHeaderHandle.HasValue)
 			{
-				insert.Block = builder.GetCadObject<Block>(this.BlockHeaderHandle.Value);
+				insert.Block = builder.GetCadObject<BlockReference>(this.BlockHeaderHandle.Value);
 			}
 
 			if (this.FirstAttributeHandle.HasValue)

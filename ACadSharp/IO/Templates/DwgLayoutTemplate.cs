@@ -20,7 +20,7 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			this.CadObject.AssociatedBlock = builder.GetCadObject<Block>(this.PaperSpaceBlockHandle);
+			this.CadObject.AssociatedBlock = builder.GetCadObject<BlockReference>(this.PaperSpaceBlockHandle);
 
 			this.CadObject.Viewport = builder.GetCadObject<Viewport>(this.ActiveViewportHandle);
 

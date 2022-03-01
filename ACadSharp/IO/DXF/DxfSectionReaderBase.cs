@@ -118,11 +118,6 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		protected void readCommonEntityData(DwgTemplate template)
-		{
-
-		}
-
 		protected DwgTemplate readEntity()
 		{
 			DwgEntityTemplate template = null;
@@ -153,33 +148,23 @@ namespace ACadSharp.IO.DXF
 					break;
 			}
 
+			//Jump the 0 marker
+			this._reader.ReadNext();
+
 			this.readCommonObjectData(template);
 
 			//Jump subclass marker
 			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.Entity);
-			this._reader.ReadNext();
 
-			this.readRawMap(template, null, this.readCommonEntity, readUntilSubClass);
+			this.readMapped<Entity>(template.CadObject, template);
 
 			switch (this._reader.LastValueAsString)
 			{
 				case DxfSubclassMarker.Line:
-					readRawMap(template, this._reader.LastValueAsString, readLine, readUntilStart);
+					this.readMapped<Line>((Line)template.CadObject, template);
 					break;
 				case DxfSubclassMarker.Insert:
-					readRawMap(template, this._reader.LastValueAsString, readInsert, readUntilStart);
-					break;
-				case DxfSubclassMarker.MText:
-					readRawMap(template, this._reader.LastValueAsString, readMText, readUntilStart);
-					break;
-				case DxfSubclassMarker.Point:
-					readRawMap(template, this._reader.LastValueAsString, readPoint, readUntilStart);
-					break;
-				case DxfSubclassMarker.Circle:
-					readRawMap(template, this._reader.LastValueAsString, null, readUntilStart);
-					break;
-				case DxfSubclassMarker.AttributeDefinition:
-					readRawMap(template, this._reader.LastValueAsString, null, readUntilStart);
+					this.readMapped<Insert>((Insert)template.CadObject, template);
 					break;
 				default:
 					Debug.Fail($"Unhandeled dxf entity {this._reader.LastValueAsString} at line {this._reader.Line}.");
@@ -218,6 +203,7 @@ namespace ACadSharp.IO.DXF
 			return false;
 		}
 
+		[Obsolete]
 		protected bool readLine(DwgTemplate template)
 		{
 			DwgEntityTemplate entityTemplate = template as DwgEntityTemplate;
@@ -345,15 +331,6 @@ namespace ACadSharp.IO.DXF
 					}
 				}
 
-				this._reader.ReadNext();
-			}
-		}
-
-		private void readEntry()
-		{
-			while (this._reader.LastDxfCode != DxfCode.Start
-				&& this._reader.LastDxfCode != DxfCode.Subclass)
-			{
 				this._reader.ReadNext();
 			}
 		}

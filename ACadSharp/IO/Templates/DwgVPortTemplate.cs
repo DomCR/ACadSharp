@@ -54,8 +54,6 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.NamedUcs = builder.GetCadObject<UCS>(this.NamedUcsHandle.Value);
 			}
 
-			builder.Templates.TryGetValue(StyleHandle.Value, out DwgTemplate temp);
-
 			if (builder.TryGetCadObject(StyleHandle, out CadObject style))
 			{
 

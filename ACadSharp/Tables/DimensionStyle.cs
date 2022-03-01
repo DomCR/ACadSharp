@@ -450,7 +450,7 @@ namespace ACadSharp.Tables
 		/// DIMLDRBLK
 		/// </remarks>
 		[DxfCodeValue(341)]
-		public Block LeaderArrow { get; set; }
+		public BlockReference LeaderArrow { get; set; }
 
 		/// <summary>
 		/// Arrow block for this style
@@ -459,7 +459,7 @@ namespace ACadSharp.Tables
 		/// DIMBLK
 		/// </remarks>
 		[DxfCodeValue(342)]
-		public Block ArrowBlock { get; set; }
+		public BlockReference ArrowBlock { get; set; }
 
 		//5	DIMBLK(obsolete, now object ID)
 
@@ -474,7 +474,7 @@ namespace ACadSharp.Tables
 		/// DIMBLK1
 		/// </remarks>
 		[DxfCodeValue(343)]
-		public Block DimArrow1 { get; set; }
+		public BlockReference DimArrow1 { get; set; }
 
 		/// <summary>
 		/// Arrowhead block for the second end of the dimension line
@@ -483,7 +483,7 @@ namespace ACadSharp.Tables
 		/// DIMBLK1
 		/// </remarks>
 		[DxfCodeValue(344)]
-		public Block DimArrow2 { get; set; }
+		public BlockReference DimArrow2 { get; set; }
 
 		public DimensionStyle() : base() { }
 	}
