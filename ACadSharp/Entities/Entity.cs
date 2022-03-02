@@ -67,7 +67,8 @@ namespace ACadSharp.Entities
 		public Transparency Transparency { get; set; }
 
 		/// <summary>
-		/// Linetype name (present if not BYLAYER). The special name BYBLOCK indicates a floating linetype (optional)
+		/// Linetype name (present if not BYLAYER). 
+		/// The special name BYBLOCK indicates a floating linetype (optional)
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 6)]
 		public LineType LineType { get; set; }

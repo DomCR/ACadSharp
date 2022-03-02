@@ -60,10 +60,13 @@ namespace ACadSharp.IO.DXF
 				if (entityTemplate == null)
 					continue;
 
+				//Add the object and the template to the builder
+				this._builder.Templates[entityTemplate.CadObject.Handle] = entityTemplate;
 				record.Entities.Add(entityTemplate.CadObject);
 			}
 
 			this.readBlockEnd(record.BlockEnd);
+			this._builder.Templates[template.CadObject.Handle] = template;
 		}
 
 		private void readBlockEnd(BlockEnd block)
@@ -75,6 +78,8 @@ namespace ACadSharp.IO.DXF
 			this.readMapped<Entity>(block, template);
 
 			this.readMapped<BlockEnd>(block, template);
+
+			this._builder.Templates[template.CadObject.Handle] = template;
 		}
 	}
 }

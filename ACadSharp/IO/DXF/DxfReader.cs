@@ -139,6 +139,12 @@ namespace ACadSharp.IO.DXF
 					case DxfFileToken.BlocksSection:
 						this.readBlocks();
 						break;
+					case DxfFileToken.EntitiesSection:
+						this.readEntities();
+						break;
+					case DxfFileToken.ObjectsSection:
+						// this.readObjects();
+						break;
 					default:
 						this.notificationHandler(this, new NotificationEventArgs($"Section not implemented {this._reader.LastValueAsString}"));
 						break;
@@ -323,7 +329,15 @@ namespace ACadSharp.IO.DXF
 		/// </summary>
 		private void readObjects()
 		{
-			throw new NotImplementedException();
+			//Get the needed handler
+			this._reader = this.goToSection(DxfFileToken.EntitiesSection);
+
+			DxfObjectsSectionReader reader = new DxfObjectsSectionReader(
+				this._reader,
+				this._builder,
+				this.notificationHandler);
+
+			reader.Read();
 		}
 
 		/// <summary>
