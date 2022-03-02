@@ -30,7 +30,7 @@ namespace ACadSharp.Tests
 			}
 		}
 
-		[Theory]
+		[Theory(Skip = "Not implemented")]
 		[MemberData(nameof(Types))]
 		public void CreateMapTest(Type t)
 		{
