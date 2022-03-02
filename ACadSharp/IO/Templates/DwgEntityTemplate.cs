@@ -72,10 +72,10 @@ namespace ACadSharp.IO.Templates
 			{
 				applyLineType(builder);
 			}
-			//TODO: Dxf sets the linetype by name
 			else
 			{
-				this.CadObject.LineType = builder.LineTypes["ByLayer"];
+				//TODO: Dxf sets the linetype by name
+				// this.CadObject.LineType = builder.LineTypes["ByLayer"];
 			}
 
 			if (this.ColorHandle.HasValue)

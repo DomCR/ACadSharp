@@ -153,6 +153,8 @@ namespace ACadSharp.IO.DXF
 				this._reader.ReadNext();
 			}
 
+			this._builder.BuildDocument();
+
 			return this._document;
 		}
 
