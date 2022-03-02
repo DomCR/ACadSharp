@@ -7,14 +7,14 @@ using System.Collections.Generic;
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Represents a <see cref="Hatch"/> entity.
+	/// Represents a <see cref="Insert"/> entity.
 	/// </summary>
 	/// <remarks>
-	/// Object name <see cref="DxfFileToken.EntityHatch"/> <br/>
-	/// Dxf class name <see cref="DxfSubclassMarker.Hatch"/>
+	/// Object name <see cref="DxfFileToken.EntityInsert"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Insert"/>
 	/// </remarks>
-	[DxfName(DxfFileToken.EntityHatch)]
-	[DxfSubClass(DxfSubclassMarker.Hatch)]
+	[DxfName(DxfFileToken.EntityInsert)]
+	[DxfSubClass(DxfSubclassMarker.Insert)]
 	public class Insert : Entity
 	{
 		/// <inheritdoc/>
@@ -26,18 +26,13 @@ namespace ACadSharp.Entities
 		//66	Variable attributes-follow flag(optional; default = 0); 
 		//		if the value of attributes-follow flag is 1, a series of 
 		//		attribute entities is expected to follow the insert, terminated by a seqend entity
-		[DxfCodeValue(66)]
+		[DxfCodeValue(DxfReferenceType.Count, 66)]
 		public List<AttributeEntity> Attributes { get; set; } = new List<AttributeEntity>();
-
-		/// <summary>
-		/// Specifies the name of the object.
-		/// </summary>
-		[DxfCodeValue(2)]
-		public string BlockName { get { return this.Block.Name; } }
 
 		/// <summary>
 		///  Gets the insert block definition
 		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Name, 2)]
 		public Block Block { get; set; }
 
 		/// <summary>
@@ -47,10 +42,22 @@ namespace ACadSharp.Entities
 		public XYZ InsertPoint { get; set; } = XYZ.Zero;
 
 		/// <summary>
-		/// Scale factor of this block.
+		/// X scale factor 
 		/// </summary>
-		[DxfCodeValue(41, 42, 43)]
-		public XYZ Scale { get; set; } = new XYZ(1, 1, 1);
+		[DxfCodeValue(41)]
+		public double XScale { get; set; } = 1;
+
+		/// <summary>
+		/// Y scale factor 
+		/// </summary>
+		[DxfCodeValue(42)]
+		public double YScale { get; set; } = 1;
+
+		/// <summary>
+		/// Z scale factor 
+		/// </summary>
+		[DxfCodeValue(43)]
+		public double ZScale { get; set; } = 1;
 
 		/// <summary>
 		/// Specifies the rotation angle for the object.

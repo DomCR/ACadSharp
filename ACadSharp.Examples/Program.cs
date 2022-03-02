@@ -3,24 +3,25 @@ using ACadSharp.IO;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DXF;
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace ACadSharp.Examples
 {
 	class Program
 	{
-		static string PathSamples = "../../../../samples";
+		static string PathSamples = "../../../../samples/local";
 
 		static void Main(string[] args)
 		{
-			//ReadDxf();
-			ReadDwg();
+			ReadDxf();
+			//ReadDwg();
 		}
 
 		static void ReadDxf()
 		{
-			string file = Path.Combine(PathSamples, "dxf/ascii.dxf");
-			DxfReader reader = new DxfReader(file);
+			string file = Path.Combine(PathSamples, "ascii.dxf");
+			DxfReader reader = new DxfReader(file, onNotification);
 			reader.Read();
 		}
 
@@ -44,6 +45,11 @@ namespace ACadSharp.Examples
 				Console.WriteLine($"file read : {f}");
 				Console.ReadLine();
 			}
+		}
+
+		private static void onNotificationFail(object sender, NotificationEventArgs e)
+		{
+			Debug.Fail(e.Message);
 		}
 
 		private static void onNotification(object sender, NotificationEventArgs e)

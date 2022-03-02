@@ -60,7 +60,7 @@ namespace ACadSharp.IO.DWG
 			return _referenceHander.HandleReference(referenceHandle);
 		}
 
-		public ulong HandleReference(ulong referenceHandle, out ReferenceType reference)
+		public ulong HandleReference(ulong referenceHandle, out DwgReferenceType reference)
 		{
 			return _referenceHander.HandleReference(referenceHandle, out reference);
 		}

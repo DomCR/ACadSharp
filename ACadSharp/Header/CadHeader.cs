@@ -127,52 +127,66 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$SPLFRAME", DxfCode.Int16)]
 		public bool ShowSplineControlPoints { get; set; }
 		/// <summary>
-		/// Mirror text if nonzero
+		/// Mirror text if nonzero <br/>
 		/// System variable MIRRTEXT
 		/// </summary>
 		[CadSystemVariable("$MIRRTEXT", DxfCode.Int16)]
 		public bool MirrorText { get; set; }
+
 		/// <summary>
-		/// Determines whether input for the DVIEW and VPOINT command evaluated as relative to the WCS or current UCS
+		/// Determines whether input for the DVIEW and VPOINT command evaluated as relative to the WCS or current UCS <br/>
 		/// System variable WORLDVIEW
 		/// </summary>
 		[CadSystemVariable("$WORLDVIEW", DxfCode.Int16)]
 		public bool WorldView { get; set; }
+
 		/// <summary>
-		/// 
+		/// 1 for previous release compatibility mode; 0 otherwise <br/>
 		/// System variable TILEMODE
 		/// </summary>
+		[CadSystemVariable("$TILEMODE", DxfCode.Int16)]
 		public bool ShowModelSpace { get; set; }
+
 		/// <summary>
-		/// 
+		/// Limits checking in paper space when nonzero <br/>
 		/// System variable PLIMCHECK
 		/// </summary>
+		[CadSystemVariable("$PLIMCHECK", DxfCode.Int16)]
 		public bool PaperSpaceLimitsChecking { get; set; }
+
 		/// <summary>
-		/// 
+		/// Controls the properties of xref-dependent layers: <br/>
+		/// 0 = Don't retain xref-dependent visibility settings <br/>
+		/// 1 = Retain xref-dependent visibility settings <br/>
 		/// System variable VISRETAIN
 		/// </summary>
+		[CadSystemVariable("$VISRETAIN", DxfCode.Int16)]
 		public bool RetainXRefDependentVisibilitySettings { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable DISPSILH
 		/// </summary>
 		public bool DisplaySilhouetteCurves { get; set; }
+		
 		/// <summary>
 		/// 
 		/// System variable PELLIPSE (not present in DXF)
 		/// </summary>
 		public bool CreateEllipseAsPolyline { get; set; }
+		
 		/// <summary>
 		/// 
 		/// System variable PROXYGRAPHICS
 		/// </summary>
 		public bool ProxyGraphics { get; set; }
+		
 		/// <summary>
 		/// 
 		/// System variable TREEDEPTH
 		/// </summary>
 		public short SpatialIndexMaxTreeDepth { get; set; }
+
 		/// <summary>
 		/// Units format for coordinates and distances
 		/// System variable LUNITS
@@ -562,7 +576,7 @@ namespace ACadSharp.Header
 				if (att == null)
 					continue;
 
-				map.Add($"${att.Name}", att.ValueCodes);
+				map.Add(att.Name, att.ValueCodes);
 			}
 
 			return map;

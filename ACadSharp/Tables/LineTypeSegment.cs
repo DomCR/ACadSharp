@@ -5,15 +5,27 @@ namespace ACadSharp.Tables
 {
 	public class LineTypeSegment
 	{
+		/// <summary>
+		/// Dash, dot or space length 
+		/// </summary>
+		[DxfCodeValue(49)]
 		public double Length { get; set; }
+
+		/// <summary>
+		/// Complex linetype element type
+		/// </summary>
+		[DxfCodeValue(74)]
 		public LinetypeShapeFlags Shapeflag { get; set; }
 
-		//44	X = X offset value(optional); multiple entries can exist
-		//45	Y = Y offset value(optional); multiple entries can exist
+		/// <summary>
+		/// Offset
+		/// </summary>
 		[DxfCodeValue(44, 45)]
 		public XY Offset { get; set; }
 
-		//50	R = (relative) or A = (absolute) rotation value in radians of embedded shape or text; one per element if code 74 specifies an embedded shape or text string
+		//50	R = (relative) or A = (absolute) rotation value in radians of embedded shape or text;
+		//one per element if code 74 specifies an embedded shape or text string
+		
 		/// <summary>
 		/// Rotation value in radians of embedded shape or text
 		/// </summary>
@@ -25,5 +37,14 @@ namespace ACadSharp.Tables
 		/// </summary>
 		[DxfCodeValue(46)]
 		public double Scale { get; set; }
+
+		/// <summary>
+		/// Text string
+		/// </summary>
+		/// <remarks>
+		/// Only present if <see cref="LinetypeShapeFlags.Text"/> is present
+		/// </remarks>
+		[DxfCodeValue(9)]
+		public string Text { get; set; }
 	}
 }

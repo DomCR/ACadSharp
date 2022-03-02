@@ -36,7 +36,6 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Layer state flags.
 		/// </summary>
-		[DxfCodeValue(70)]
 		public new LayerFlags Flags { get; set; }
 
 		/// <summary>
@@ -48,7 +47,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// The linetype of an object. The default linetype is the linetype of the layer (ByLayer).
 		/// </summary>
-		[DxfCodeValue(6)]
+		[DxfCodeValue(DxfReferenceType.Name, 6)]
 		public LineType LineType { get; set; }  //TODO: implement default linetype
 
 		/// <summary>
@@ -64,15 +63,15 @@ namespace ACadSharp.Tables
 		public LineweightType LineWeight { get; set; }
 
 		/// <summary>
-		/// Hard-pointer ID/handle of PlotStyleName object
+		/// PlotStyleName object
 		/// </summary>
-		[DxfCodeValue(380)]
+		[DxfCodeValue(DxfReferenceType.Handle, 390)]
 		public string PlotStyleName { get; set; }   //TODO: set the plot style for the layer
 
 		/// <summary>
 		/// Hard-pointer ID/handle to Material object
 		/// </summary>
-		[DxfCodeValue(347)]
+		[DxfCodeValue(DxfReferenceType.Handle, 347)]
 		public string Material { get; set; }    //TODO: Implement ulong handles, change to internal or private, implement the material class
 
 		public bool IsOn { get; set; }  //TODO: Is the same as PlotFlag???

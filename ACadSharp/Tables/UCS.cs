@@ -31,12 +31,31 @@ namespace ACadSharp.Tables
 		public XYZ PaperSpaceExtMax { get; set; }
 		public XY PaperSpaceLimitsMin { get; set; }
 		public XY PaperSpaceLimitsMax { get; set; }
+
+		/// <summary>
+		/// Elevation
+		/// </summary>
+		[DxfCodeValue(146)]
 		public double Elevation { get; set; }
 
+		/// <summary>
+		/// Origin (in WCS)
+		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ Origin { get; set; }
+
+		/// <summary>
+		/// X-axis direction (in WCS)
+		/// </summary>
+		[DxfCodeValue(11, 21, 31)]
 		public XYZ XAxis { get; set; }
+
+		/// <summary>
+		/// Y-axis direction(in WCS)
+		/// </summary>
+		[DxfCodeValue(12, 22, 32)]
 		public XYZ YAxis { get; set; }
+
 		public XYZ OrthographicTopDOrigin { get; set; }
 		public XYZ OrthographicBottomDOrigin { get; set; }
 		public XYZ OrthographicLeftDOrigin { get; set; }

@@ -473,17 +473,17 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public ulong HandleReference()
 		{
-			return HandleReference(0UL, out ReferenceType _);
+			return HandleReference(0UL, out DwgReferenceType _);
 		}
 
 		/// <inheritdoc/>
 		public ulong HandleReference(ulong referenceHandle)
 		{
-			return HandleReference(referenceHandle, out ReferenceType _);
+			return HandleReference(referenceHandle, out DwgReferenceType _);
 		}
 
 		/// <inheritdoc/>
-		public ulong HandleReference(ulong referenceHandle, out ReferenceType reference)
+		public ulong HandleReference(ulong referenceHandle, out DwgReferenceType reference)
 		{
 			//|CODE (4 bits)|COUNTER (4 bits)|HANDLE or OFFSET|
 			byte form = ReadByte();
@@ -494,7 +494,7 @@ namespace ACadSharp.IO.DWG
 			int counter = form & 0b00001111;
 
 			//Get the reference type reading the last 2 bits
-			reference = (ReferenceType)((uint)code & 0b0011);
+			reference = (DwgReferenceType)((uint)code & 0b0011);
 
 			ulong initialPos;
 

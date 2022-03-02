@@ -8,19 +8,25 @@ namespace ACadSharp.IO.Templates
 {
 	internal class DwgBlockCtrlObjectTemplate : DwgTableTemplate<BlockRecord>
 	{
-		public ulong ModelSpaceHandle { get; set; }
-		public ulong PaperSpaceHandle { get; set; }
+		public ulong? ModelSpaceHandle { get; set; }
+
+		public ulong? PaperSpaceHandle { get; set; }
+
 		public DwgBlockCtrlObjectTemplate(BlockRecordsTable blocks) : base(blocks) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
-			BlockRecord modelSpace = builder.GetCadObject<BlockRecord>(this.ModelSpaceHandle);
-			BlockRecord paperSpace = builder.GetCadObject<BlockRecord>(this.PaperSpaceHandle);
+			if (builder.TryGetCadObject<BlockRecord>(this.ModelSpaceHandle, out BlockRecord modelSpace))
+			{
+				this.CadObject.Add(modelSpace);
+			}
 
-			this.CadObject.Add(modelSpace);
-			this.CadObject.Add(paperSpace);
+			if (builder.TryGetCadObject<BlockRecord>(this.PaperSpaceHandle, out BlockRecord paperSpace))
+			{
+				this.CadObject.Add(paperSpace);
+			}
 		}
 	}
 }

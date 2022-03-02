@@ -20,7 +20,10 @@ namespace ACadSharp.Tables
 	[DxfSubClass(DxfSubclassMarker.VPort)]
 	public class VPort : TableEntry
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.VPORT;
+
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableVport;
 
 		/// <summary>
@@ -123,9 +126,7 @@ namespace ACadSharp.Tables
 
 		//Soft or hard-pointer ID/handle to frozen layer objects; repeats for each frozen layers
 
-		//1
-
-		//Plot style sheet
+		//1	Plot style sheet
 
 		/// <summary>
 		/// Render mode
@@ -218,9 +219,7 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(146)]
 		public double Elevation { get; set; }
 
-		//170
-
-		//Shade plot setting
+		//170	Shade plot setting
 
 		/// <summary>
 		/// Grid flags
@@ -245,7 +244,7 @@ namespace ACadSharp.Tables
 		/// <remarks>
 		/// (optional)
 		/// </remarks>
-		[DxfCodeValue(348)]
+		[DxfCodeValue(DxfReferenceType.Handle, 348)]
 		public VisualStyle VisualStyle { get; set; }
 
 		/// <summary>

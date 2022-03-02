@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
+using ACadSharp.Tables;
 
 namespace ACadSharp.Blocks
 {
@@ -17,5 +18,10 @@ namespace ACadSharp.Blocks
 		public override string ObjectName => DxfFileToken.EndBlock;
 
 		public override ObjectType ObjectType => ObjectType.ENDBLK;
+
+		public BlockEnd(BlockRecord record) : base()
+		{
+			this.Owner = record;
+		}
 	}
 }

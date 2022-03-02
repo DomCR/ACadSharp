@@ -26,6 +26,25 @@ namespace ACadSharp.IO.Templates
 
 		public DwgBlockRecordTemplate(BlockRecord block) : base(block) { }
 
+		public override bool AddHandle(int dxfcode, ulong handle)
+		{
+			bool value = base.AddHandle(dxfcode, handle);
+			if (value)
+				return value;
+
+			switch (dxfcode)
+			{
+				case 340:
+					LayoutHandle = handle;
+					value = true;
+					break;
+				default:
+					break;
+			}
+
+			return value;
+		}
+
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);

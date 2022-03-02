@@ -17,6 +17,25 @@ namespace ACadSharp.IO.Templates
 
 		public DwgEntityTemplate(Entity entity) : base(entity) { }
 
+		public override bool AddName(int dxfcode, string name)
+		{
+			bool value = base.AddName(dxfcode, name);
+			if (value)
+				return value;
+
+			switch (dxfcode)
+			{
+				case 8:
+					this.LayerName = name;
+					value = true;
+					break;
+				default:
+					break;
+			}
+
+			return value;
+		}
+
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
@@ -53,10 +72,10 @@ namespace ACadSharp.IO.Templates
 			{
 				applyLineType(builder);
 			}
-			//TODO: Dxf sets the linetype by name
 			else
 			{
-				this.CadObject.LineType = builder.LineTypes["ByLayer"];
+				//TODO: Dxf sets the linetype by name
+				// this.CadObject.LineType = builder.LineTypes["ByLayer"];
 			}
 
 			if (this.ColorHandle.HasValue)

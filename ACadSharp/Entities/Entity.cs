@@ -20,7 +20,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Specifies the layer for an object.
 		/// </summary>
-		[DxfCodeValue(8)]
+		[DxfCodeValue(DxfReferenceType.Name, 8)]
 		public Layer Layer { get; set; } = Layer.Default;
 
 		/// <summary>
@@ -67,9 +67,10 @@ namespace ACadSharp.Entities
 		public Transparency Transparency { get; set; }
 
 		/// <summary>
-		/// Linetype name (present if not BYLAYER). The special name BYBLOCK indicates a floating linetype (optional)
+		/// Linetype name (present if not BYLAYER). 
+		/// The special name BYBLOCK indicates a floating linetype (optional)
 		/// </summary>
-		[DxfCodeValue(6)]
+		[DxfCodeValue(DxfReferenceType.Name, 6)]
 		public LineType LineType { get; set; }
 
 		/// <summary>

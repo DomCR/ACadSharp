@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -11,75 +12,77 @@ namespace ACadSharp.IO.DXF
 	{
 		public bool EndSectionFound { get; private set; } = false;
 		public DxfCode LastDxfCode { get; private set; }
-		public int LastCode { get { return (int)LastDxfCode; } }
+		public GroupCodeValueType LastGroupCodeValue { get; private set; }
+		public int LastCode { get { return (int)this.LastDxfCode; } }
 		public object LastValue { get; private set; }
 		public int Line { get; private set; }
 
 		/// <inheritdoc/>
 		public string LastValueAsString { get; set; }
-		public bool LastValueAsBool { get { return lineAsBool(LastValueAsString); } }
-		public short LastValueAsShort { get { return lineAsShort(LastValueAsString); } }
-		public int LastValueAsInt { get { return lineAsInt(LastValueAsString); } }
-		public long LastValueAsLong { get { return lineAsLong(LastValueAsString); } }
-		public double LastValueAsDouble { get { return lineAsDouble(LastValueAsString); } }
-		public ulong LastValueAsHandle { get { return lineAsHandle(LastValueAsString); } }
-		public byte[] LastValueAsBinaryChunk { get { return lineAsBinaryChunk(LastValueAsString); } }
+		public bool LastValueAsBool { get { return this.lineAsBool(this.LastValueAsString); } }
+		public short LastValueAsShort { get { return this.lineAsShort(this.LastValueAsString); } }
+		public int LastValueAsInt { get { return this.lineAsInt(this.LastValueAsString); } }
+		public long LastValueAsLong { get { return this.lineAsLong(this.LastValueAsString); } }
+		public double LastValueAsDouble { get { return this.lineAsDouble(this.LastValueAsString); } }
+		public ulong LastValueAsHandle { get { return this.lineAsHandle(this.LastValueAsString); } }
+		public byte[] LastValueAsBinaryChunk { get { return this.lineAsBinaryChunk(this.LastValueAsString); } }
 
 
 		public DxfTextReader(Stream stream) : base(stream)
 		{
-			start();
+			this.start();
 		}
 		public DxfTextReader(Stream stream, Encoding encoding) : base(stream, encoding)
 		{
-			start();
+			this.start();
 		}
 
 		public void Find(string dxfEntry)
 		{
-			start();
+			this.start();
 
 			do
 			{
-				ReadNext();
+				this.ReadNext();
 			}
-			while (LastValueAsString != dxfEntry && (LastValueAsString != DxfFileToken.EndOfFile));
+			while (this.LastValueAsString != dxfEntry && (this.LastValueAsString != DxfFileToken.EndOfFile));
 
 			//Reset the end section flag
-			EndSectionFound = false;
+			this.EndSectionFound = false;
 		}
 
 		public Tuple<DxfCode, object> ReadNext()
 		{
-			LastDxfCode = readCode();
-			LastValueAsString = ReadLine();
-			LastValue = transformValue((int)LastDxfCode, LastValueAsString);
+			this.LastDxfCode = this.readCode();
+			this.LastValueAsString = this.ReadLine();
+			this.LastGroupCodeValue = GroupCodeValue.TransformValue(this.LastCode);
+			this.LastValue = this.transformValue(this.LastGroupCodeValue, this.LastValueAsString);
 
 			//Check for the end of the section
-			if (LastValueAsString == DxfFileToken.EndSection)
-				EndSectionFound = true;
+			if (this.LastValueAsString == DxfFileToken.EndSection)
+				this.EndSectionFound = true;
 
-			Tuple<DxfCode, object> pair = new Tuple<DxfCode, object>(LastDxfCode, LastValue);
+			Tuple<DxfCode, object> pair = new Tuple<DxfCode, object>(this.LastDxfCode, this.LastValue);
 
 			return pair;
 		}
 
 		public override string ReadLine()
 		{
-			Line++;
+			this.Line++;
 			return base.ReadLine();
 		}
 
 		private void start()
 		{
-			LastDxfCode = DxfCode.Invalid;
-			LastValue = string.Empty;
-			EndSectionFound = false;
+			this.LastDxfCode = DxfCode.Invalid;
+			this.LastValue = string.Empty;
+			this.EndSectionFound = false;
 
-			BaseStream.Position = 0;
-			DiscardBufferedData();
+			this.BaseStream.Position = 0;
+			this.DiscardBufferedData();
 
-			Line = 0;
+			this.Line = 0;
 		}
 		private bool lineAsBool(string str)
 		{
@@ -159,7 +162,7 @@ namespace ACadSharp.IO.DXF
 
 		private DxfCode readCode()
 		{
-			string line = ReadLine();
+			string line = this.ReadLine();
 
 			if (int.TryParse(line, NumberStyles.Integer, CultureInfo.InvariantCulture, out int value))
 			{
@@ -168,94 +171,40 @@ namespace ACadSharp.IO.DXF
 
 			return DxfCode.Invalid;
 		}
-		private object transformValue(int code, string strVal)
-		{
-			if (code >= 0 && code <= 9)
-				return strVal;
-			if (code >= 10 && code <= 39)
-				return lineAsDouble(strVal);
-			if (code >= 40 && code <= 59)
-				return lineAsDouble(strVal);
-			if (code >= 60 && code <= 79)
-				return lineAsShort(strVal);
-			if (code >= 90 && code <= 99)
-				return lineAsInt(strVal);
-			if (code == 100)
-				return strVal;
-			if (code == 101)
-				return strVal;
-			if (code == 102)
-				return strVal;
-			if (code == 105)
-				return lineAsHandle(strVal);
-			if (code >= 110 && code <= 119)
-				return lineAsDouble(strVal);
-			if (code >= 120 && code <= 129)
-				return lineAsDouble(strVal);
-			if (code >= 130 && code <= 139)
-				return lineAsDouble(strVal);
-			if (code >= 140 && code <= 149)
-				return lineAsDouble(strVal);
-			if (code >= 160 && code <= 169)
-				return lineAsLong(strVal);
-			if (code >= 170 && code <= 179)
-				return lineAsShort(strVal);
-			if (code >= 210 && code <= 239)
-				return lineAsDouble(strVal);
-			if (code >= 270 && code <= 279)
-				return lineAsShort(strVal);
-			if (code >= 280 && code <= 289)
-				return lineAsShort(strVal);
-			if (code >= 290 && code <= 299)
-				return lineAsBool(strVal);
-			if (code >= 300 && code <= 309)
-				return strVal;
-			if (code >= 310 && code <= 319)
-				return lineAsBinaryChunk(strVal);
-			if (code >= 320 && code <= 329)
-				return lineAsHandle(strVal);
-			if (code >= 330 && code <= 369)
-				return lineAsHandle(strVal);
-			if (code >= 370 && code <= 379)
-				return lineAsShort(strVal);
-			if (code >= 380 && code <= 389)
-				return lineAsShort(strVal);
-			if (code >= 390 && code <= 399)
-				return lineAsHandle(strVal);
-			if (code >= 400 && code <= 409)
-				return lineAsShort(strVal);
-			if (code >= 410 && code <= 419)
-				return strVal;
-			if (code >= 420 && code <= 429)
-				return lineAsInt(strVal);
-			if (code >= 430 && code <= 439)
-				return strVal;
-			if (code >= 440 && code <= 449)
-				return lineAsInt(strVal);
-			if (code >= 450 && code <= 459)
-				return lineAsInt(strVal);
-			if (code >= 460 && code <= 469)
-				return lineAsDouble(strVal);
-			if (code >= 470 && code <= 479)
-				return strVal;
-			if (code >= 480 && code <= 481)
-				return lineAsHandle(strVal);
-			if (code == 999)
-				return strVal;
-			if (code >= 1010 && code <= 1059)
-				return lineAsDouble(strVal);
-			if (code >= 1000 && code <= 1003)
-				return strVal;
-			if (code == 1004)
-				return lineAsBinaryChunk(strVal);
-			if (code >= 1005 && code <= 1009)
-				return strVal;
-			if (code >= 1060 && code <= 1070)
-				return lineAsShort(strVal);
-			if (code == 1071)
-				return lineAsInt(strVal);
 
-			throw new DxfException(code, Line);
+		private object transformValue(GroupCodeValueType code, string strVal)
+		{
+			switch (code)
+			{
+				case GroupCodeValueType.String:
+				case GroupCodeValueType.Comment:
+				case GroupCodeValueType.ExtendedDataString:
+					return strVal;
+				case GroupCodeValueType.Point3D:
+				case GroupCodeValueType.Double:
+				case GroupCodeValueType.ExtendedDataDouble:
+					return this.lineAsDouble(strVal);
+				case GroupCodeValueType.Int16:
+				case GroupCodeValueType.ExtendedDataInt16:
+					return this.lineAsShort(strVal);
+				case GroupCodeValueType.Int32:
+				case GroupCodeValueType.ExtendedDataInt32:
+					return this.lineAsInt(strVal);
+				case GroupCodeValueType.Int64:
+					return this.lineAsLong(strVal);
+				case GroupCodeValueType.Handle:
+				case GroupCodeValueType.ObjectId:
+				case GroupCodeValueType.ExtendedDataHandle:
+					return this.lineAsHandle(strVal);
+				case GroupCodeValueType.Bool:
+					return this.lineAsBool(strVal);
+				case GroupCodeValueType.Chunk:
+				case GroupCodeValueType.ExtendedDataChunk:
+					return this.lineAsBinaryChunk(strVal);
+				case GroupCodeValueType.None:
+				default:
+					throw new DxfException((int)code, this.Line);
+			}
 		}
 	}
 }
