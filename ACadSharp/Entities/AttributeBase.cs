@@ -23,6 +23,7 @@ namespace ACadSharp.Entities
 	/// <summary>
 	/// Common base class for <see cref="AttributeEntity" /> and <see cref="AttributeDefinition" />.
 	/// </summary>
+	[DxfSubClass(null, true)]
 	public abstract class AttributeBase : TextEntity
 	{
 		[DxfCodeValue(74)]

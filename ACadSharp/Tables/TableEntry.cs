@@ -6,6 +6,7 @@ using System.Text;
 
 namespace ACadSharp.Tables
 {
+	[DxfSubClass(DxfSubclassMarker.TableRecord, true)]
 	public abstract class TableEntry : CadObject
 	{
 		/// <summary>

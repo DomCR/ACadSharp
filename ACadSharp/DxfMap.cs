@@ -80,31 +80,19 @@ namespace ACadSharp
 
 			for (type = typeof(T); type != null; type = type.BaseType)
 			{
+				DxfSubClassAttribute subclass = type.GetCustomAttribute<DxfSubClassAttribute>();
+
 				if (type.Equals(typeof(CadObject)))
 				{
 					addClassProperties(map, type);
 
 					break;
 				}
-				else if (type.Equals(typeof(TableEntry)))
+				else if (subclass != null && subclass.IsEmpty)
 				{
-					//TODO: Handle the names and subclasses 
 					DxfClassMap classMap = map.SubClasses.Last().Value;
 
 					addClassProperties(classMap, type);
-				}
-				else if (type.Equals(typeof(AttributeEntity)) || type.Equals(typeof(AttributeDefinition)))
-				{
-					DxfClassMap attMap = new DxfClassMap();
-					attMap.Name = type.GetCustomAttribute<DxfSubClassAttribute>().ClassName;
-
-					addClassProperties(attMap, type);
-
-					//Get the base class for both atts
-					type = type.BaseType;
-					addClassProperties(attMap, type);
-
-					map.SubClasses.Add(attMap.Name, attMap);
 				}
 				else if (type.GetCustomAttribute<DxfSubClassAttribute>() != null)
 				{
