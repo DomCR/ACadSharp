@@ -111,14 +111,41 @@ namespace ACadSharp.IO.DXF
 			this._document = new CadDocument();
 			this._builder = new DxfDocumentBuilder(this._document, this.notificationHandler);
 
-			this._document.Header = this.ReadHeader();
-			this._document.Classes = this.readClasses();
+			this._reader = this._reader ?? this.getReader();
 
-			this.readMappedTables();
+			while (this._reader.LastValueAsString != DxfFileToken.EndOfFile)
+			{
+				if (this._reader.LastValueAsString != DxfFileToken.BeginSection)
+				{
+					this._reader.ReadNext();
+					continue;
+				}
+				else
+				{
+					this._reader.ReadNext();
+				}
 
-			this.readMappedBlocks();
+				switch (this._reader.LastValueAsString)
+				{
+					case DxfFileToken.HeaderSection:
+						this._document.Header = this.ReadHeader();
+						break;
+					case DxfFileToken.ClassesSection:
+						this._document.Classes = this.readClasses();
+						break;
+					case DxfFileToken.TablesSection:
+						this.readTables();
+						break;
+					case DxfFileToken.BlocksSection:
+						this.readBlocks();
+						break;
+					default:
+						this.notificationHandler(this, new NotificationEventArgs($"Section not implemented {this._reader.LastValueAsString}"));
+						break;
+				}
 
-			//this.readEntities();
+				this._reader.ReadNext();
+			}
 
 			return this._document;
 		}
@@ -244,22 +271,6 @@ namespace ACadSharp.IO.DXF
 
 		#region Tables
 
-		private void readMappedTables()
-		{
-			//Get the needed handler
-			this._reader = this.goToSection(DxfFileToken.TablesSection);
-
-			DxfTablesMapSectionReader reader = new DxfTablesMapSectionReader(
-				this._reader,
-				this._builder,
-				this.notificationHandler);
-
-			reader.Read();
-		}
-
-		/// <summary>
-		/// Read the TABLES section of the DXF file.
-		/// </summary>
 		private void readTables()
 		{
 			//Get the needed handler
@@ -274,22 +285,6 @@ namespace ACadSharp.IO.DXF
 		}
 
 		#endregion
-
-		/// <summary>
-		/// Read the BLOCKS section of the DXF file.
-		/// </summary>
-		private void readMappedBlocks()
-		{
-			//Get the needed handler
-			this._reader = this.goToSection(DxfFileToken.BlocksSection);
-
-			DxfBlockMapSectionReader reader = new DxfBlockMapSectionReader(
-				this._reader,
-				this._builder,
-				this.notificationHandler);
-
-			reader.Read();
-		}
 
 		/// <summary>
 		/// Read the BLOCKS section of the DXF file.
@@ -339,7 +334,7 @@ namespace ACadSharp.IO.DXF
 			throw new NotImplementedException();
 		}
 
-		private IDxfStreamReader getHandler()
+		private IDxfStreamReader getReader()
 		{
 			if (this.IsBinary())
 				throw new NotImplementedException();
@@ -354,7 +349,7 @@ namespace ACadSharp.IO.DXF
 		private IDxfStreamReader goToSection(string sectionName)
 		{
 			//Get the needed handler
-			this._reader = this._reader ?? this.getHandler();
+			this._reader = this._reader ?? this.getReader();
 
 			if (this._reader.LastValueAsString == sectionName)
 				return this._reader;

@@ -106,7 +106,7 @@ namespace ACadSharp.Objects
 		/// The associated paper space block table record
 		/// </summary>
 		[DxfCodeValue(330)]
-		public BlockReference AssociatedBlock { get; set; }
+		public Block AssociatedBlock { get; set; }
 
 		/// <summary>
 		/// Viewport that was last active in this layout when the layout was current

@@ -33,7 +33,7 @@ namespace ACadSharp.Entities
 		///  Gets the insert block definition
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 2)]
-		public BlockReference Block { get; set; }
+		public Block Block { get; set; }
 
 		/// <summary>
 		/// A 3D WCS coordinate representing the insertion or origin point.

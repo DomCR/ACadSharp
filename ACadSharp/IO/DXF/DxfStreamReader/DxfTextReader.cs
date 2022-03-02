@@ -194,10 +194,12 @@ namespace ACadSharp.IO.DXF
 					return this.lineAsLong(strVal);
 				case GroupCodeValueType.Handle:
 				case GroupCodeValueType.ObjectId:
+				case GroupCodeValueType.ExtendedDataHandle:
 					return this.lineAsHandle(strVal);
 				case GroupCodeValueType.Bool:
 					return this.lineAsBool(strVal);
 				case GroupCodeValueType.Chunk:
+				case GroupCodeValueType.ExtendedDataChunk:
 					return this.lineAsBinaryChunk(strVal);
 				case GroupCodeValueType.None:
 				default:

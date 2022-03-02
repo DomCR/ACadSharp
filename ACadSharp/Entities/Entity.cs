@@ -69,7 +69,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Linetype name (present if not BYLAYER). The special name BYBLOCK indicates a floating linetype (optional)
 		/// </summary>
-		[DxfCodeValue(6)]
+		[DxfCodeValue(DxfReferenceType.Name, 6)]
 		public LineType LineType { get; set; }
 
 		/// <summary>

@@ -6,6 +6,7 @@ namespace ACadSharp.IO.DXF
 {
 	internal interface IDxfStreamReader
 	{
+		[Obsolete]
 		bool EndSectionFound { get; }
 		DxfCode LastDxfCode { get; }
 		GroupCodeValueType LastGroupCodeValue { get; }

@@ -1190,7 +1190,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readBlock()
 		{
-			BlockReference block = new BlockReference(new BlockRecord());
+			Block block = new Block(new BlockRecord());
 			DwgEntityTemplate template = new DwgEntityTemplate(block);
 
 			this.readCommonEntityData(template);
@@ -2735,7 +2735,7 @@ namespace ACadSharp.IO.DWG
 		private DwgTemplate readBlockHeader()
 		{
 			BlockRecord record = new BlockRecord();
-			BlockReference block = record.BlockEntity;
+			Block block = record.BlockEntity;
 			DwgBlockRecordTemplate template = new DwgBlockRecordTemplate(record);
 			this._builder.BlockRecordTemplates.Add(template);
 

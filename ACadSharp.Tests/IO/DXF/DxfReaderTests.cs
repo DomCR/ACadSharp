@@ -40,9 +40,16 @@ namespace ACadSharp.Tests.IO.DXF
 			this.output = output;
 		}
 
-		[Theory(Skip = "Not implemented")]
+		[Theory]
 		[MemberData(nameof(AsciiFiles))]
 		public void ReadAsciiTest(string test)
+		{
+			CadDocument doc = DxfReader.Read(test, this.onNotification);
+		}
+
+		[Theory(Skip = "Not implemented")]
+		[MemberData(nameof(BinaryFiles))]
+		public void ReadBinaryTest(string test)
 		{
 			CadDocument doc = DxfReader.Read(test, this.onNotification);
 		}

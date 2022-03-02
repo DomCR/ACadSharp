@@ -54,7 +54,7 @@ namespace ACadSharp.Tests
 					DxfMap.Create<Arc>();
 					break;
 				case DxfFileToken.Block:
-					DxfMap.Create<BlockReference>();
+					DxfMap.Create<Block>();
 					break;
 				case DxfFileToken.EndBlock:
 					DxfMap.Create<BlockEnd>();

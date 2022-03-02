@@ -17,6 +17,25 @@ namespace ACadSharp.IO.Templates
 
 		public DwgEntityTemplate(Entity entity) : base(entity) { }
 
+		public override bool AddName(int dxfcode, string name)
+		{
+			bool value = base.AddName(dxfcode, name);
+			if (value)
+				return value;
+
+			switch (dxfcode)
+			{
+				case 8:
+					this.LayerName = name;
+					value = true;
+					break;
+				default:
+					break;
+			}
+
+			return value;
+		}
+
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);

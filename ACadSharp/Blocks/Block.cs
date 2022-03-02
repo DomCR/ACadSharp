@@ -9,7 +9,7 @@ using System.Text;
 namespace ACadSharp.Blocks
 {
 	/// <summary>
-	/// Represents a <see cref="BlockReference"/> entity
+	/// Represents a <see cref="Block"/> entity
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.Block"/> <br/>
@@ -17,7 +17,7 @@ namespace ACadSharp.Blocks
 	/// </remarks>
 	[DxfName(DxfFileToken.Block)]
 	[DxfSubClass(DxfSubclassMarker.BlockBegin)]
-	public class BlockReference : Entity
+	public class Block : Entity
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.BLOCK;
@@ -59,7 +59,7 @@ namespace ACadSharp.Blocks
 		[DxfCodeValue(4)]
 		public string Comments { get; set; }
 
-		public BlockReference(BlockRecord record) : base()
+		public Block(BlockRecord record) : base()
 		{
 			this.Owner = record;
 		}

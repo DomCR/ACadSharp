@@ -49,17 +49,17 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.Style = style;
 			}
 
-			if (this.DIMLDRBLK.HasValue && builder.TryGetCadObject(this.DIMLDRBLK.Value, out BlockReference leaderArrow))
+			if (this.DIMLDRBLK.HasValue && builder.TryGetCadObject(this.DIMLDRBLK.Value, out Block leaderArrow))
 			{
 				this.CadObject.LeaderArrow = leaderArrow;
 			}
 
-			if (this.DIMBLK1.HasValue && builder.TryGetCadObject(this.DIMBLK1.Value, out BlockReference dimArrow1))
+			if (this.DIMBLK1.HasValue && builder.TryGetCadObject(this.DIMBLK1.Value, out Block dimArrow1))
 			{
 				this.CadObject.DimArrow1 = dimArrow1;
 			}
 
-			if (this.DIMBLK2.HasValue && builder.TryGetCadObject(this.DIMBLK2.Value, out BlockReference dimArrow2))
+			if (this.DIMBLK2.HasValue && builder.TryGetCadObject(this.DIMBLK2.Value, out Block dimArrow2))
 			{
 				this.CadObject.DimArrow2 = dimArrow2;
 			}

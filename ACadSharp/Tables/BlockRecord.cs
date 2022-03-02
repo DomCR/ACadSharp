@@ -73,13 +73,13 @@ namespace ACadSharp.Tables
 
 		public CadObjectCollection<Entity> Entities { get; set; }
 
-		public BlockReference BlockEntity { get; set; }
+		public Block BlockEntity { get; set; }
 
 		public BlockEnd BlockEnd { get; set; }
 
 		public BlockRecord() : base()
 		{
-			this.BlockEntity = new BlockReference(this);
+			this.BlockEntity = new Block(this);
 			this.BlockEnd = new BlockEnd(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
 		}

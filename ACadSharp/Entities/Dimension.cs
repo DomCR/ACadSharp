@@ -31,7 +31,7 @@ namespace ACadSharp.Entities
 		/// Block that contains the entities that make up the dimension picture
 		/// </summary>
 		[DxfCodeValue(2)]
-		public BlockReference Block { get; set; }
+		public Block Block { get; set; }
 
 		/// <summary>
 		/// Definition point(in WCS)

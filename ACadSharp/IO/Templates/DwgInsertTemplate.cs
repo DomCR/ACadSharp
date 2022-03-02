@@ -25,6 +25,25 @@ namespace ACadSharp.IO.Templates
 
 		public DwgInsertTemplate(Insert insert) : base(insert) { }
 
+		public override bool AddName(int dxfcode, string name)
+		{
+			bool value = base.AddName(dxfcode, name);
+			if (value)
+				return value;
+
+			switch (dxfcode)
+			{
+				case 2:
+					this.BlockName = name;
+					value = true;
+					break;
+				default:
+					break;
+			}
+
+			return value;
+		}
+
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
@@ -33,7 +52,7 @@ namespace ACadSharp.IO.Templates
 
 			if (this.BlockHeaderHandle.HasValue)
 			{
-				insert.Block = builder.GetCadObject<BlockReference>(this.BlockHeaderHandle.Value);
+				insert.Block = builder.GetCadObject<Block>(this.BlockHeaderHandle.Value);
 			}
 
 			if (this.FirstAttributeHandle.HasValue)
