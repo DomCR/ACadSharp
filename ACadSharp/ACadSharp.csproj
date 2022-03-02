@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net5.0;net48;netstandard2.1</TargetFrameworks>
@@ -18,7 +18,7 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.0.1-alpha</Version>
+    <Version>1.1.0-alpha</Version>
   </PropertyGroup>
   
   <Import Project="..\CSUtilities\CSUtilities\CSUtilities.projitems" Label="Shared" />
