@@ -1359,7 +1359,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readVertex2D()
 		{
-			Vertex vertex = new Vertex();
+			Vertex2D vertex = new Vertex2D();
 			DwgEntityTemplate template = new DwgEntityTemplate(vertex);
 
 			this.readCommonEntityData(template);
@@ -1401,7 +1401,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readVertex3D()
 		{
-			Vertex vertex = new Vertex();
+			Vertex3D vertex = new Vertex3D();
 			DwgEntityTemplate template = new DwgEntityTemplate(vertex);
 
 			this.readCommonEntityData(template);
@@ -1416,8 +1416,7 @@ namespace ACadSharp.IO.DWG
 
 		private DwgTemplate readPfaceVertex()
 		{
-			//TODO: Implement poly face vertex class
-			Vertex vertex = new Vertex();
+			Vertex2D vertex = new Vertex2D();
 			DwgEntityTemplate template = new DwgEntityTemplate(vertex);
 
 			this.readCommonEntityData(template);

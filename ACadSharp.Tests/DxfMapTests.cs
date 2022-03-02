@@ -30,7 +30,7 @@ namespace ACadSharp.Tests
 			}
 		}
 
-		[Theory(Skip = "Not implemented")]
+		[Theory]
 		[MemberData(nameof(Types))]
 		public void CreateMapTest(Type t)
 		{
@@ -121,6 +121,9 @@ namespace ACadSharp.Tests
 				case DxfFileToken.EntityLine:
 					DxfMap.Create<Line>();
 					break;
+				case DxfFileToken.EntityLwPolyline:
+					DxfMap.Create<LwPolyLine>();
+					break;
 				case DxfFileToken.EntityMLine:
 					DxfMap.Create<MLine>();
 					break;
@@ -161,7 +164,18 @@ namespace ACadSharp.Tests
 					DxfMap.Create<UCS>();
 					break;
 				case DxfFileToken.EntityVertex:
-					DxfMap.Create<Vertex>();
+					Assert.NotNull(subclass);
+					switch (subclass.ClassName)
+					{
+						case DxfSubclassMarker.PolylineVertex:
+							DxfMap.Create<Vertex2D>();
+							break;
+						case DxfSubclassMarker.Polyline3dVertex:
+							DxfMap.Create<Vertex3D>();
+							break;
+						default:
+							throw new NotImplementedException($"Test not implemented for type {t.Name}");
+					}
 					break;
 				case DxfFileToken.TableView:
 					DxfMap.Create<View>();

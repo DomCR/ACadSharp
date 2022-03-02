@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO.Templates;
+﻿using ACadSharp.Attributes;
+using ACadSharp.IO.Templates;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Text;
 
 namespace ACadSharp.Tables.Collections
 {
+	[DxfSubClass(DxfSubclassMarker.Table)]
 	public abstract class Table<T> : CadObject, IObservableCollection<T>
 		where T : TableEntry
 	{

@@ -4,9 +4,12 @@ using CSMath;
 
 namespace ACadSharp.Entities
 {
-	public class Vertex : Entity	//TODO: Create an abstract task, split in 2d and 3d
+	/// <summary>
+	/// Represents a base for <see cref="Vertex2D"/> and <see cref="Vertex3D"/>
+	/// </summary>
+	[DxfSubClass(DxfSubclassMarker.Vertex)]
+	public abstract class Vertex : Entity
 	{
-		public override ObjectType ObjectType => ObjectType.VERTEX_2D;  //Shit there is a 3d too...
 		public override string ObjectName => DxfFileToken.EntityVertex;
 
 		//100	Subclass marker(AcDbVertex)
