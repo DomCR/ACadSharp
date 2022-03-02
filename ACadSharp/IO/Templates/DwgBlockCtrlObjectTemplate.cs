@@ -23,7 +23,7 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.Add(modelSpace);
 			}
 
-			if (builder.TryGetCadObject<BlockRecord>(this.ModelSpaceHandle, out BlockRecord paperSpace))
+			if (builder.TryGetCadObject<BlockRecord>(this.PaperSpaceHandle, out BlockRecord paperSpace))
 			{
 				this.CadObject.Add(paperSpace);
 			}
