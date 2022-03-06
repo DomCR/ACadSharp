@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Blocks;
 using ACadSharp.IO.Templates;
+using ACadSharp.Tables;
 using CSMath;
 using System.Collections.Generic;
 
@@ -33,7 +34,7 @@ namespace ACadSharp.Entities
 		///  Gets the insert block definition
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 2)]
-		public Block Block { get; set; }
+		public BlockRecord Block { get; set; }
 
 		/// <summary>
 		/// A 3D WCS coordinate representing the insertion or origin point.

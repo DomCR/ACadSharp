@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.IO.DWG;
+using ACadSharp.Tables;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
@@ -50,9 +51,9 @@ namespace ACadSharp.IO.Templates
 
 			Insert insert = this.CadObject as Insert;
 
-			if (this.BlockHeaderHandle.HasValue)
+			if (builder.TryGetCadObject(this.BlockHeaderHandle, out BlockRecord block))
 			{
-				insert.Block = builder.GetCadObject<Block>(this.BlockHeaderHandle.Value);
+				insert.Block = block;
 			}
 
 			if (this.FirstAttributeHandle.HasValue)
