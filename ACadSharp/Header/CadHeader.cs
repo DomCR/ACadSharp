@@ -19,18 +19,32 @@ namespace ACadSharp.Header
 
 		#region Header System Variables
 		/// <summary>
-		/// System variable ACADVER.
 		/// The AutoCAD drawing database version number.
 		/// </summary>
+		/// <remarks>
+		/// System variable ACADVER.
+		/// </remarks>
 		[CadSystemVariable("$ACADVER", DxfCode.Text)]
 		public string VersionString { get; set; }
 		public ACadVersion Version { get; set; }    //TODO: Fix the string version
+
 		/// <summary>
 		/// System variable ACADMAINTVER.
 		/// Maintenance version number(should be ignored)
 		/// </summary>
 		[CadSystemVariable("$ACADMAINTVER", DxfCode.Int16)]
 		public short MaintenanceVersion { get; set; }
+
+		/// <summary>
+		/// Drawing code page; set to the system code page when a new drawing is created,
+		/// but not otherwise maintained by AutoCAD
+		/// </summary>
+		/// <remarks>
+		/// System variable DWGCODEPAGE
+		/// </remarks>
+		[CadSystemVariable("$DWGCODEPAGE", 3)]
+		public string CodePage { get; set; }
+
 		/// <summary>
 		/// System variable REQUIREDVERSIONS.
 		/// The default value is 0.
@@ -39,6 +53,7 @@ namespace ACadSharp.Header
 		/// <remarks>Only in <see cref="ACadVersion.AC1024"/> or above.</remarks>
 		[CadSystemVariable("$REQUIREDVERSIONS", DxfCode.Int16)]
 		public long RequiredVersions { get; set; }
+
 		/// <summary>
 		/// System variable DIMASO.
 		/// </summary>
@@ -47,20 +62,24 @@ namespace ACadSharp.Header
 		/// </remarks>
 		[CadSystemVariable("$DIMASO", DxfCode.Int16)]
 		public bool AssociatedDimensions { get; set; } = true;
+
 		/// <summary>
 		/// System variable DIMSHO.
 		/// </summary>
 		[CadSystemVariable("$DIMSHO", DxfCode.Int16)]
 		public bool UpdateDimensionsWhileDragging { get; set; } = true;
+
 		/// <summary>
 		/// Undocumented
 		/// </summary>
 		public bool DIMSAV { get; set; }
+
 		/// <summary>
 		/// System variable PLINEGEN.
 		/// </summary>
 		[CadSystemVariable("$PLINEGEN", DxfCode.Int16)]
 		public bool PolylineLineTypeGeneration { get; set; }
+
 		/// <summary>
 		/// System variable ORTHOMODE.
 		/// Ortho mode on if nonzero.
@@ -168,19 +187,19 @@ namespace ACadSharp.Header
 		/// System variable DISPSILH
 		/// </summary>
 		public bool DisplaySilhouetteCurves { get; set; }
-		
+
 		/// <summary>
 		/// 
 		/// System variable PELLIPSE (not present in DXF)
 		/// </summary>
 		public bool CreateEllipseAsPolyline { get; set; }
-		
+
 		/// <summary>
 		/// 
 		/// System variable PROXYGRAPHICS
 		/// </summary>
 		public bool ProxyGraphics { get; set; }
-		
+
 		/// <summary>
 		/// 
 		/// System variable TREEDEPTH
@@ -582,43 +601,7 @@ namespace ACadSharp.Header
 			return map;
 		}
 
-		public void SetValue(string systemvar, object value)
-		{
-			foreach (PropertyInfo p in this.GetType().GetProperties())
-			{
-				CadSystemVariableAttribute att = p.GetCustomAttribute<CadSystemVariableAttribute>();
-				if (att == null)
-					continue;
-
-				if (att.Name == systemvar)
-				{
-					p.SetValue(this, value);
-					break;
-				}
-			}
-		}
-
-		public object GetValue(string systemvar)
-		{
-			object value = null;
-
-			foreach (PropertyInfo p in this.GetType().GetProperties())
-			{
-				CadSystemVariableAttribute att = p.GetCustomAttribute<CadSystemVariableAttribute>();
-				if (att == null)
-					continue;
-
-				if (att.Name == systemvar)
-				{
-					value = p.GetValue(this);
-					break;
-				}
-			}
-
-			return value;
-		}
-
-		internal void SetValue(string systemvar, params object[] values)
+		public void SetValue(string systemvar, params object[] values)
 		{
 			foreach (PropertyInfo p in this.GetType().GetProperties())
 			{
@@ -649,6 +632,26 @@ namespace ACadSharp.Header
 					break;
 				}
 			}
+		}
+
+		public object GetValue(string systemvar)
+		{
+			object value = null;
+
+			foreach (PropertyInfo p in this.GetType().GetProperties())
+			{
+				CadSystemVariableAttribute att = p.GetCustomAttribute<CadSystemVariableAttribute>();
+				if (att == null)
+					continue;
+
+				if (att.Name == systemvar)
+				{
+					value = p.GetValue(this);
+					break;
+				}
+			}
+
+			return value;
 		}
 	}
 }
