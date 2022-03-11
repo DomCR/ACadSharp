@@ -18,6 +18,12 @@ namespace ACadSharp.Tables
 		public LinetypeShapeFlags Shapeflag { get; set; }
 
 		/// <summary>
+		/// Shape number 
+		/// </summary>
+		[DxfCodeValue(75)]
+		public short ShapeNumber { get; set; }
+
+		/// <summary>
 		/// Offset
 		/// </summary>
 		[DxfCodeValue(44, 45)]

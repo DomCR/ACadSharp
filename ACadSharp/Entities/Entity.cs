@@ -77,26 +77,5 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Entity() : base() { }
-
-		/// <summary>
-		/// Get the map of subentities (collection) inside this entity.
-		/// </summary>
-		/// <returns></returns>
-		[Obsolete]
-		internal Dictionary<string, PropertyInfo> GetSubEntitiesMap()
-		{
-			Dictionary<string, PropertyInfo> map = new Dictionary<string, PropertyInfo>();
-
-			foreach (PropertyInfo p in this.GetType().GetProperties())
-			{
-				DxfSubClassAttribute att = p.GetCustomAttribute<DxfSubClassAttribute>();
-				if (att == null)
-					continue;
-
-				map.Add(att.ClassName, p);
-			}
-
-			return map;
-		}
 	}
 }

@@ -4,7 +4,7 @@ using ACadSharp.Objects;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgMLineTemplate : DwgEntityTemplate
+	internal class DwgMLineTemplate : CadEntityTemplate
 	{
 		public ulong MLineStyleHandle { get; set; }
 

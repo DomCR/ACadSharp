@@ -8,8 +8,6 @@ namespace ACadSharp.IO.DXF
 {
 	internal abstract class DxfSectionReaderBase
 	{
-		protected delegate bool checkDxfCodeValue(CadTemplate template);
-
 		protected readonly IDxfStreamReader _reader;
 		protected readonly DxfDocumentBuilder _builder;
 		protected readonly NotificationEventHandler _notification;
@@ -85,6 +83,10 @@ namespace ACadSharp.IO.DXF
 			{
 				switch (this._reader.LastCode)
 				{
+					//object name
+					case 0:
+						Debug.Assert(template.CadObject.ObjectName == this._reader.LastValueAsString);
+						break;
 					//Handle
 					case 5:
 						template.CadObject.Handle = this._reader.LastValueAsHandle;
@@ -111,9 +113,9 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		protected DwgEntityTemplate readEntity()
+		protected CadEntityTemplate readEntity()
 		{
-			DwgEntityTemplate template = null;
+			CadEntityTemplate template = null;
 
 			switch (this._reader.LastValueAsString)
 			{
@@ -124,16 +126,16 @@ namespace ACadSharp.IO.DXF
 					template = new DwgTextEntityTemplate(new AttributeDefinition());
 					break;
 				case DxfFileToken.EntityArc:
-					template = new DwgEntityTemplate(new Arc());
+					template = new CadEntityTemplate(new Arc());
 					break;
 				case DxfFileToken.EntityCircle:
-					template = new DwgEntityTemplate(new Circle());
+					template = new CadEntityTemplate(new Circle());
 					break;
 				case DxfFileToken.EntityEllipse:
-					template = new DwgEntityTemplate(new Ellipse());
+					template = new CadEntityTemplate(new Ellipse());
 					break;
 				case DxfFileToken.EntityLine:
-					template = new DwgEntityTemplate(new Line());
+					template = new CadEntityTemplate(new Line());
 					break;
 				case DxfFileToken.EntityInsert:
 					template = new DwgInsertTemplate(new Insert());
@@ -142,25 +144,25 @@ namespace ACadSharp.IO.DXF
 					template = new DwgTextEntityTemplate(new MText());
 					break;
 				case DxfFileToken.EntityPoint:
-					template = new DwgEntityTemplate(new Point());
+					template = new CadEntityTemplate(new Point());
 					break;
 				case DxfFileToken.EntityPolyline:
-					template = new DwgEntityTemplate(new PolyLine2D());
+					template = new CadEntityTemplate(new PolyLine2D());
 					break;
 				case DxfFileToken.EntityRay:
-					template = new DwgEntityTemplate(new Ray());
+					template = new CadEntityTemplate(new Ray());
 					break;
 				case DxfFileToken.EntitySolid:
-					template = new DwgEntityTemplate(new Solid());
+					template = new CadEntityTemplate(new Solid());
 					break;
 				case DxfFileToken.EntityText:
-					template = new DwgEntityTemplate(new TextEntity());
+					template = new CadEntityTemplate(new TextEntity());
 					break;
 				case DxfFileToken.EntityVertex:
-					template = new DwgEntityTemplate(new Vertex2D());
+					template = new CadEntityTemplate(new Vertex2D());
 					break;
 				case DxfFileToken.EntityXline:
-					template = new DwgEntityTemplate(new XLine());
+					template = new CadEntityTemplate(new XLine());
 					break;
 				default:
 					this._notification?.Invoke(null, new NotificationEventArgs($"Entity not implemented: {this._reader.LastValueAsString}"));
@@ -249,6 +251,11 @@ namespace ACadSharp.IO.DXF
 					this._reader.ReadNext();
 					continue;
 				}
+				else if(this._reader.LastDxfCode == DxfCode.ControlString)
+				{
+					this.readReactors();
+					continue;
+				}
 
 				if (!map.DxfProperties.TryGetValue(this._reader.LastCode, out DxfProperty dxfProperty))
 				{
@@ -308,6 +315,18 @@ namespace ACadSharp.IO.DXF
 		private void readExtendedData(CadObject cadObject)
 		{
 			//TODO: Handle extended data 
+		}
+
+		private void readReactors()
+		{
+			this._reader.ReadNext();
+
+			while (this._reader.LastDxfCode != DxfCode.ControlString)
+			{
+				this._reader.ReadNext();
+			}
+
+			this._reader.ReadNext();
 		}
 	}
 }

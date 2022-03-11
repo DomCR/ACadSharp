@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgPolyLineTemplate : DwgEntityTemplate
+	internal class DwgPolyLineTemplate : CadEntityTemplate
 	{
 		public ulong? FirstVertexHandle { get; internal set; }
 		public ulong? LastVertexHandle { get; internal set; }

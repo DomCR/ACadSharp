@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgInsertTemplate : DwgEntityTemplate
+	internal class DwgInsertTemplate : CadEntityTemplate
 	{
 		public bool HasAtts { get; set; }
 

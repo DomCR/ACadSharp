@@ -4,11 +4,23 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgTextEntityTemplate : DwgEntityTemplate
+	internal class DwgTextEntityTemplate : CadEntityTemplate
 	{
 		public ulong StyleHandle { get; set; }
 
 		public DwgTextEntityTemplate(Entity entity) : base(entity) { }
+
+		public override bool CheckDxfCode(int dxfcode, object value)
+		{
+			switch (dxfcode)
+			{
+				//Multiple options
+				case 280:
+					//return true;
+				default:
+					return false;
+			}
+		}
 
 		public override void Build(CadDocumentBuilder builder)
 		{

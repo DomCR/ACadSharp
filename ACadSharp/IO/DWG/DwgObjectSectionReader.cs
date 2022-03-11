@@ -224,7 +224,7 @@ namespace ACadSharp.IO.DWG
 		/// Read the common entity format.
 		/// </summary>
 		/// <param name="template"></param>
-		private void readCommonEntityData(DwgEntityTemplate template)
+		private void readCommonEntityData(CadEntityTemplate template)
 		{
 			//Get the cad object as an entity
 			Entity entity = template.CadObject;
@@ -1191,7 +1191,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readBlock()
 		{
 			Block block = new Block(new BlockRecord());
-			DwgEntityTemplate template = new DwgEntityTemplate(block);
+			CadEntityTemplate template = new CadEntityTemplate(block);
 
 			this.readCommonEntityData(template);
 
@@ -1204,7 +1204,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readEndBlock()
 		{
 			BlockEnd block = new BlockEnd(new BlockRecord());
-			DwgEntityTemplate template = new DwgEntityTemplate(block);
+			CadEntityTemplate template = new CadEntityTemplate(block);
 
 			this.readCommonEntityData(template);
 
@@ -1213,7 +1213,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readSeqend()
 		{
-			DwgEntityTemplate template = new DwgEntityTemplate(new Seqend());
+			CadEntityTemplate template = new CadEntityTemplate(new Seqend());
 
 			this.readCommonEntityData(template);
 
@@ -1360,7 +1360,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readVertex2D()
 		{
 			Vertex2D vertex = new Vertex2D();
-			DwgEntityTemplate template = new DwgEntityTemplate(vertex);
+			CadEntityTemplate template = new CadEntityTemplate(vertex);
 
 			this.readCommonEntityData(template);
 
@@ -1402,7 +1402,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readVertex3D()
 		{
 			Vertex3D vertex = new Vertex3D();
-			DwgEntityTemplate template = new DwgEntityTemplate(vertex);
+			CadEntityTemplate template = new CadEntityTemplate(vertex);
 
 			this.readCommonEntityData(template);
 
@@ -1417,7 +1417,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readPfaceVertex()
 		{
 			Vertex2D vertex = new Vertex2D();
-			DwgEntityTemplate template = new DwgEntityTemplate(vertex);
+			CadEntityTemplate template = new CadEntityTemplate(vertex);
 
 			this.readCommonEntityData(template);
 
@@ -1535,7 +1535,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readArc()
 		{
 			Arc arc = new Arc();
-			DwgEntityTemplate template = new DwgEntityTemplate(arc);
+			CadEntityTemplate template = new CadEntityTemplate(arc);
 
 			this.readCommonEntityData(template);
 
@@ -1558,7 +1558,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readCircle()
 		{
 			Circle circle = new Circle();
-			DwgEntityTemplate template = new DwgEntityTemplate(circle);
+			CadEntityTemplate template = new CadEntityTemplate(circle);
 
 			this.readCommonEntityData(template);
 
@@ -1577,7 +1577,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readLine()
 		{
 			Line line = new Line();
-			DwgEntityTemplate template = new DwgEntityTemplate(line);
+			CadEntityTemplate template = new CadEntityTemplate(line);
 
 			this.readCommonEntityData(template);
 
@@ -1883,7 +1883,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readPoint()
 		{
 			Point pt = new Point();
-			DwgEntityTemplate template = new DwgEntityTemplate(pt);
+			CadEntityTemplate template = new CadEntityTemplate(pt);
 
 			this.readCommonEntityData(template);
 
@@ -1902,7 +1902,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate read3dFace()
 		{
 			Face3D face = new Face3D();
-			DwgEntityTemplate template = new DwgEntityTemplate(face);
+			CadEntityTemplate template = new CadEntityTemplate(face);
 
 			this.readCommonEntityData(template);
 
@@ -1969,7 +1969,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readSolid()
 		{
 			Solid solid = new Solid();
-			DwgEntityTemplate template = new DwgEntityTemplate(solid);
+			CadEntityTemplate template = new CadEntityTemplate(solid);
 
 			//Common Entity Data
 			this.readCommonEntityData(template);
@@ -2187,7 +2187,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readEllipse()
 		{
 			Ellipse ellipse = new Ellipse();
-			DwgEntityTemplate template = new DwgEntityTemplate(ellipse);
+			CadEntityTemplate template = new CadEntityTemplate(ellipse);
 
 			this.readCommonEntityData(template);
 
@@ -2210,7 +2210,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readSpline()
 		{
 			Spline spline = new Spline();
-			DwgEntityTemplate template = new DwgEntityTemplate(spline);
+			CadEntityTemplate template = new CadEntityTemplate(spline);
 
 			this.readCommonEntityData(template);
 
@@ -2325,7 +2325,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readRay()
 		{
 			Ray ray = new Ray();
-			DwgEntityTemplate template = new DwgEntityTemplate(ray);
+			CadEntityTemplate template = new CadEntityTemplate(ray);
 
 			this.readCommonEntityData(template);
 
@@ -2340,7 +2340,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readXLine()
 		{
 			XLine xline = new XLine();
-			DwgEntityTemplate template = new DwgEntityTemplate(xline);
+			CadEntityTemplate template = new CadEntityTemplate(xline);
 
 			this.readCommonEntityData(template);
 

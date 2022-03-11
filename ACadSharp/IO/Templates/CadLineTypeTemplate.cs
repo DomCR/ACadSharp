@@ -58,6 +58,10 @@ namespace ACadSharp.IO.Templates
 					segment.Shapeflag = (LinetypeShapeFlags)value;
 					found = true;
 					break;
+				case 75:
+					segment.ShapeNumber = (short)value;
+					found = true;
+					break;
 				case 44:
 					segment.Offset = new CSMath.XY(segment.Offset.X, (double)value);
 					found = true;

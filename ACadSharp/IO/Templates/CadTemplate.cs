@@ -81,7 +81,7 @@ namespace ACadSharp.IO.Templates
 		{
 			List<T> collection = new List<T>();
 
-			DwgEntityTemplate template = builder.GetObjectTemplate<DwgEntityTemplate>(firstHandle);
+			CadEntityTemplate template = builder.GetObjectTemplate<CadEntityTemplate>(firstHandle);
 			while (template != null)
 			{
 				collection.Add((T)template.CadObject);
@@ -90,9 +90,9 @@ namespace ACadSharp.IO.Templates
 					break;
 
 				if (template.NextEntity.HasValue)
-					template = builder.GetObjectTemplate<DwgEntityTemplate>(template.NextEntity.Value);
+					template = builder.GetObjectTemplate<CadEntityTemplate>(template.NextEntity.Value);
 				else
-					template = builder.GetObjectTemplate<DwgEntityTemplate>(template.CadObject.Handle + 1);
+					template = builder.GetObjectTemplate<CadEntityTemplate>(template.CadObject.Handle + 1);
 
 			}
 

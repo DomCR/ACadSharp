@@ -99,6 +99,8 @@ namespace ACadSharp
 					DxfClassMap classMap = new DxfClassMap();
 					classMap.Name = type.GetCustomAttribute<DxfSubClassAttribute>().ClassName;
 
+					addClassProperties(classMap, type);
+
 					map.SubClasses.Add(classMap.Name, classMap);
 				}
 			}
@@ -123,10 +125,11 @@ namespace ACadSharp
 
 			addClassProperties(classMap, type);
 
-			if (type.BaseType == typeof(TableEntry))
+			DxfSubClassAttribute baseAtt = type.BaseType.GetCustomAttribute<DxfSubClassAttribute>();
+			if (baseAtt != null && baseAtt.IsEmpty)
 			{
 				//Properties in the table seem to be embeded to the hinerit type
-				addClassProperties(classMap, typeof(TableEntry));
+				addClassProperties(classMap, type.BaseType);
 			}
 
 			return classMap;
@@ -228,6 +231,10 @@ namespace ACadSharp
 			else if (_property.PropertyType.IsEquivalentTo(typeof(char)))
 			{
 				this._property.SetValue(obj, Convert.ToChar(value));
+			}
+			else if (_property.PropertyType.IsEquivalentTo(typeof(byte)))
+			{
+				this._property.SetValue(obj, Convert.ToByte(value));
 			}
 			else if (_property.PropertyType.IsEnum)
 			{

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgHatchTemplate : DwgEntityTemplate
+	internal class DwgHatchTemplate : CadEntityTemplate
 	{
 		public class DwgBoundaryPathTemplate : ICadObjectBuilder
 		{

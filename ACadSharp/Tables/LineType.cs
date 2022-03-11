@@ -61,9 +61,7 @@ namespace ACadSharp.Tables
 		//4 = Embedded element is a shape
 
 		//75	Shape number(one per element) if code 74 specifies an embedded shape
-
 		//If code 74 specifies an embedded text string, this value is set to 0
-
 		//If code 74 is set to 0, code 75 is omitted
 
 		/// <summary>

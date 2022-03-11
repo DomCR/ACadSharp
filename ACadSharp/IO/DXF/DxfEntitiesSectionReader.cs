@@ -19,7 +19,7 @@ namespace ACadSharp.IO.DXF
 			//Loop until the section ends
 			while (this._reader.LastValueAsString != DxfFileToken.EndSection)
 			{
-				DwgEntityTemplate template = this.readEntity();
+				CadEntityTemplate template = this.readEntity();
 
 				if (template == null)
 					continue;
