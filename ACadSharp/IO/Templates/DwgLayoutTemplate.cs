@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgLayoutTemplate : DwgTemplate<Layout>
+	internal class DwgLayoutTemplate : CadTemplate<Layout>
 	{
 		public ulong PaperSpaceBlockHandle { get; set; }
 		public ulong ActiveViewportHandle { get; set; }

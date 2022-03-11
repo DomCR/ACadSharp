@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgTemplate<T> : DwgTemplate
+	internal class CadTemplate<T> : CadTemplate
 		where T : CadObject
 	{
 		public new T CadObject { get { return (T)base.CadObject; } set { base.CadObject = value; } }
-		public DwgTemplate(T cadObject) : base(cadObject) { }
+		public CadTemplate(T cadObject) : base(cadObject) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{

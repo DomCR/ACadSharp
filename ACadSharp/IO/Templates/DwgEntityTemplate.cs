@@ -4,7 +4,7 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgEntityTemplate : DwgTemplate<Entity>
+	internal class DwgEntityTemplate : CadTemplate<Entity>
 	{
 		public byte EntityMode { get; set; }
 		public byte? LtypeFlags { get; set; }

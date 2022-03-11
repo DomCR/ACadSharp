@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgDictionaryTemplate : DwgTemplate<CadDictionary>
+	internal class DwgDictionaryTemplate : CadTemplate<CadDictionary>
 	{
 		public Dictionary<string, ulong> Entries { get; set; } = new Dictionary<string, ulong>();
 

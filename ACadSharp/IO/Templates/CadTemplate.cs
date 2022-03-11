@@ -10,7 +10,7 @@ using System.Text;
 
 namespace ACadSharp.IO.Templates
 {
-	internal abstract class DwgTemplate : ICadObjectBuilder
+	internal abstract class CadTemplate : ICadObjectBuilder
 	{
 		public CadObject CadObject { get; set; }
 
@@ -22,7 +22,7 @@ namespace ACadSharp.IO.Templates
 
 		public Dictionary<ulong, ExtendedData> EDataTemplate { get; } = new Dictionary<ulong, ExtendedData>();
 
-		public DwgTemplate(CadObject cadObject)
+		public CadTemplate(CadObject cadObject)
 		{
 			this.CadObject = cadObject;
 		}

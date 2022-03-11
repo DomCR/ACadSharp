@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgGroupTemplate : DwgTemplate<Group>
+	internal class DwgGroupTemplate : CadTemplate<Group>
 	{
 		public List<ulong> Handles { get; set; } = new List<ulong>();
 

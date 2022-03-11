@@ -77,7 +77,7 @@ namespace ACadSharp.IO.DXF
 				this._reader.ReadNext();
 			}
 
-			DwgTemplate template = null;
+			CadTemplate template = null;
 
 			switch (name)
 			{
@@ -143,7 +143,7 @@ namespace ACadSharp.IO.DXF
 
 				this._reader.ReadNext();
 
-				DwgTemplate template = null;
+				CadTemplate template = null;
 
 				//Get the entry
 				switch (name)

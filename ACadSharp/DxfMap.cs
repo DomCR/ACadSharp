@@ -213,7 +213,8 @@ namespace ACadSharp
 			}
 			else if (_property.PropertyType.IsEquivalentTo(typeof(Color)))
 			{
-				this._property.SetValue(obj, new Color((short)value));
+				//TODO: Implement color setter
+				//this._property.SetValue(obj, new Color((short)value));
 			}
 			else if (_property.PropertyType.IsEquivalentTo(typeof(Transparency)))
 			{

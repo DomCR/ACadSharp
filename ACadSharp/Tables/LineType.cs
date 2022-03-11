@@ -20,7 +20,7 @@ namespace ACadSharp.Tables
 		public static readonly LineType ByLayer = new LineType("ByLayer");
 
 		public static readonly LineType ByBlock = new LineType("ByBlock");
-		
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.LTYPE;
 
@@ -54,8 +54,6 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(DxfReferenceType.Count, 73)]
 		public List<LineTypeSegment> Segments { get; set; } = new List<LineTypeSegment>();
 
-		//49	Dash, dot or space length(one entry per element)
-
 		//74	Complex linetype element type(one per element). Default is 0 (no embedded shape/text)
 		//The following codes are bit values:
 		//1 = If set, code 50 specifies an absolute rotation; if not set, code 50 specifies a relative rotation
@@ -68,10 +66,11 @@ namespace ACadSharp.Tables
 
 		//If code 74 is set to 0, code 75 is omitted
 
-		//340	Pointer to STYLE object (one per element if code 74 > 0)
-
-		//9	Text string (one per element if code 74 = 2)
-
+		/// <summary>
+		/// Pointer to STYLE object (one per element if code 74 > 0)
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
+		public TextStyle Style { get; set; }
 
 		public LineType() : base() { }
 

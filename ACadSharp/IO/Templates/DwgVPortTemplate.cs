@@ -3,7 +3,7 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgVPortTemplate : DwgTemplate<VPort>
+	internal class DwgVPortTemplate : CadTemplate<VPort>
 	{
 		public ulong VportControlHandle { get; set; }
 		

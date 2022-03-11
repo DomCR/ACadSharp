@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgTableEntryTemplate<T> : DwgTemplate<T>
+	internal class DwgTableEntryTemplate<T> : CadTemplate<T>
 		where T : TableEntry
 	{
 		public DwgTableEntryTemplate(T entry) : base(entry) { }
