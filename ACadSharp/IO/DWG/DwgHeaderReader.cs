@@ -219,7 +219,7 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//BS: ATTMODE
-			header.AttributeVisibility = sreader.ReadBitShort();
+			header.AttributeVisibility = (AttributeVisibilityMode)sreader.ReadBitShort();
 
 			//R13 - R14 Only Only(stored in registry from R15 onwards):
 			if (R13_14Only)
