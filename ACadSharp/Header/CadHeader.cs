@@ -1,13 +1,12 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
-using ACadSharp.Types.Units;
 using ACadSharp.Tables;
+using ACadSharp.Types.Units;
 using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace ACadSharp.Header
 {
@@ -18,6 +17,7 @@ namespace ACadSharp.Header
 		//TODO : Finish the header documentation
 
 		#region Header System Variables
+
 		/// <summary>
 		/// System variable ACADVER.
 		/// The AutoCAD drawing database version number.
@@ -25,12 +25,23 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$ACADVER", DxfCode.Text)]
 		public string VersionString { get; set; }
 		public ACadVersion Version { get; set; }    //TODO: Fix the string version
+
 		/// <summary>
 		/// System variable ACADMAINTVER.
 		/// Maintenance version number(should be ignored)
 		/// </summary>
 		[CadSystemVariable("$ACADMAINTVER", DxfCode.Int16)]
 		public short MaintenanceVersion { get; set; }
+
+		/// <summary>
+		/// Drawing code page; set to the system code page when a new drawing is created, but not otherwise maintained by AutoCAD
+		/// </summary>
+		/// <remarks>
+		/// System variable DWGCODEPAGE
+		/// </remarks>
+		[CadSystemVariable("$DWGCODEPAGE", 3)]
+		public short DwgCodePage { get; set; }
+
 		/// <summary>
 		/// System variable REQUIREDVERSIONS.
 		/// The default value is 0.
@@ -39,6 +50,7 @@ namespace ACadSharp.Header
 		/// <remarks>Only in <see cref="ACadVersion.AC1024"/> or above.</remarks>
 		[CadSystemVariable("$REQUIREDVERSIONS", DxfCode.Int16)]
 		public long RequiredVersions { get; set; }
+
 		/// <summary>
 		/// System variable DIMASO.
 		/// </summary>
@@ -47,85 +59,100 @@ namespace ACadSharp.Header
 		/// </remarks>
 		[CadSystemVariable("$DIMASO", DxfCode.Int16)]
 		public bool AssociatedDimensions { get; set; } = true;
+
 		/// <summary>
 		/// System variable DIMSHO.
 		/// </summary>
 		[CadSystemVariable("$DIMSHO", DxfCode.Int16)]
 		public bool UpdateDimensionsWhileDragging { get; set; } = true;
+
 		/// <summary>
 		/// Undocumented
 		/// </summary>
 		public bool DIMSAV { get; set; }
+
 		/// <summary>
 		/// System variable PLINEGEN.
 		/// </summary>
 		[CadSystemVariable("$PLINEGEN", DxfCode.Int16)]
 		public bool PolylineLineTypeGeneration { get; set; }
+
 		/// <summary>
 		/// System variable ORTHOMODE.
 		/// Ortho mode on if nonzero.
 		/// </summary>
 		[CadSystemVariable("$ORTHOMODE", DxfCode.Int16)]
 		public bool OrthoMode { get; set; }
+
 		/// <summary>
 		/// System variable REGENMODE.
 		/// REGENAUTO mode on if nonzero
 		/// </summary>
 		[CadSystemVariable("$REGENMODE", DxfCode.Int16)]
 		public bool RegenerationMode { get; set; }
+
 		/// <summary>
 		/// System variable FILLMODE.
 		/// Fill mode on if nonzero
 		/// </summary>
 		[CadSystemVariable("$FILLMODE", DxfCode.Int16)]
 		public bool FillMode { get; set; }
+
 		/// <summary>
 		/// System variable QTEXTMODE.
 		/// Quick Text mode on if nonzero
 		/// </summary>
 		[CadSystemVariable("$QTEXTMODE", DxfCode.Int16)]
 		public bool QuickTextMode { get; set; }
+
 		/// <summary>
 		/// Controls paper space linetype scaling.
 		/// System variable PSLTSCALE.
 		/// </summary>
 		[CadSystemVariable("$PSLTSCALE", DxfCode.Int16)]
 		public SpaceLineTypeScaling PaperSpaceLineTypeScaling { get; set; }
+
 		/// <summary>
 		/// Nonzero if limits checking is on
 		/// System variable LIMCHECK.
 		/// </summary>
 		[CadSystemVariable("$LIMCHECK", DxfCode.Int16)]
 		public bool LimitCheckingOn { get; set; }
+
 		/// <summary>
 		/// System variable BLIPMODE.	??
 		/// </summary>
 		[CadSystemVariable("$BLIPMODE", DxfCode.Int16)]
 		public bool BlipMode { get; set; }
+
 		/// <summary>
 		/// Controls the user timer for the drawing
 		/// System variable USRTIMER
 		/// </summary>
 		[CadSystemVariable("$USRTIMER", DxfCode.Int16)]
 		public bool UserTimer { get; set; }
+
 		/// <summary>
 		/// Determines the object type created by the SKETCH command
 		/// System variable SKPOLY
 		/// </summary>
 		[CadSystemVariable("$SKPOLY", DxfCode.Int16)]
 		public bool SketchPolylines { get; set; }
+
 		/// <summary>
 		/// Represents angular direction.
 		/// System variable ANGDIR
 		/// </summary>
 		[CadSystemVariable("$ANGDIR", DxfCode.Int16)]
 		public AngularDirection AngularDirection { get; set; }
+
 		/// <summary>
 		/// Controls the display of helixes and smoothed mesh objects.
 		/// System variable SPLFRAME
 		/// </summary>
 		[CadSystemVariable("$SPLFRAME", DxfCode.Int16)]
 		public bool ShowSplineControlPoints { get; set; }
+
 		/// <summary>
 		/// Mirror text if nonzero <br/>
 		/// System variable MIRRTEXT
@@ -168,19 +195,19 @@ namespace ACadSharp.Header
 		/// System variable DISPSILH
 		/// </summary>
 		public bool DisplaySilhouetteCurves { get; set; }
-		
+
 		/// <summary>
 		/// 
 		/// System variable PELLIPSE (not present in DXF)
 		/// </summary>
 		public bool CreateEllipseAsPolyline { get; set; }
-		
+
 		/// <summary>
 		/// 
 		/// System variable PROXYGRAPHICS
 		/// </summary>
 		public bool ProxyGraphics { get; set; }
-		
+
 		/// <summary>
 		/// 
 		/// System variable TREEDEPTH
