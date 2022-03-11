@@ -2,9 +2,12 @@
 using ACadSharp.IO;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DXF;
+using ACadSharp.Tables;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace ACadSharp.Examples
 {
@@ -14,8 +17,10 @@ namespace ACadSharp.Examples
 
 		static void Main(string[] args)
 		{
-			ReadDxf();
+			//ReadDxf();
 			//ReadDwg();
+
+			getInsertEntities("", "MyBlock");
 		}
 
 		static void ReadDxf()
@@ -27,12 +32,6 @@ namespace ACadSharp.Examples
 
 		static void ReadDwg()
 		{
-			//string file = Path.Combine(PathSamples, "dwg/cad_v2013.dwg");
-			//using (DwgReader reader = new DwgReader(file, onNotification))
-			//{
-			//	CadDocument doc = reader.Read();
-			//}
-
 			string[] files = Directory.GetFiles(PathSamples + "/dwg/", "*.dwg");
 
 			foreach (var f in files)
@@ -45,6 +44,17 @@ namespace ACadSharp.Examples
 				Console.WriteLine($"file read : {f}");
 				Console.ReadLine();
 			}
+		}
+
+		static IEnumerable<Insert> getInsertEntities(string file, string blockname)
+		{
+			CadDocument doc = DwgReader.Read(file);
+
+			// Get the model space where all the drawing entities are
+			BlockRecord modelSpace = doc.BlockRecords["*Model_Space"];
+
+			// Get the insert instance that is using the block that you are looking for
+			return modelSpace.Entities.OfType<Insert>().Where(e => e.Block.Name == blockname);
 		}
 
 		private static void onNotificationFail(object sender, NotificationEventArgs e)
