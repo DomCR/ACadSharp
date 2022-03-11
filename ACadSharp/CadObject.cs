@@ -31,7 +31,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Soft-pointer ID/handle to owner object
 		/// </summary>
-		[DxfCodeValue(330)]
+		[DxfCodeValue(DxfReferenceType.Handle, 330)]
 		public CadObject Owner { get; internal set; }
 
 		//TODO: CadDictionary for the CadObjects

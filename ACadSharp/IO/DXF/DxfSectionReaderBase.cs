@@ -147,7 +147,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadEntityTemplate(new Point());
 					break;
 				case DxfFileToken.EntityPolyline:
-					template = new CadEntityTemplate(new PolyLine2D());
+					template = new CadPolyLineTemplate();
 					break;
 				case DxfFileToken.EntityRay:
 					template = new CadEntityTemplate(new Ray());
@@ -212,6 +212,14 @@ namespace ACadSharp.IO.DXF
 						break;
 					case DxfSubclassMarker.Point:
 						this.readMapped<Point>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.Polyline:
+						(template as CadPolyLineTemplate).SetPolyLineObject(new PolyLine2D());
+						this.readMapped<PolyLine2D>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.Polyline3d:
+						(template as CadPolyLineTemplate).SetPolyLineObject(new PolyLine3D());
+						this.readMapped<PolyLine3D>(template.CadObject, template);
 						break;
 					case DxfSubclassMarker.Text:
 						this.readMapped<TextEntity>(template.CadObject, template);

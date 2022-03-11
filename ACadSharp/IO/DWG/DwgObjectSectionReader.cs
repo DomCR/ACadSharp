@@ -1436,7 +1436,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readPolyline2D()
 		{
 			PolyLine2D pline = new PolyLine2D();
-			DwgPolyLineTemplate template = new DwgPolyLineTemplate(pline);
+			CadPolyLineTemplate template = new CadPolyLineTemplate(pline);
 
 			this.readCommonEntityData(template);
 
@@ -1484,7 +1484,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readPolyline3D()
 		{
 			PolyLine3D pline = new PolyLine3D();
-			DwgPolyLineTemplate template = new DwgPolyLineTemplate(pline);
+			CadPolyLineTemplate template = new CadPolyLineTemplate(pline);
 
 			this.readCommonEntityData(template);
 
