@@ -11,6 +11,13 @@ using System.Text;
 
 namespace ACadSharp.Header
 {
+	public enum AttributeVisibilityMode
+	{
+		None = 0,
+		Normal = 1,
+		All = 2
+	}
+
 	public class CadHeader
 	{
 		//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
@@ -44,6 +51,15 @@ namespace ACadSharp.Header
 		/// </remarks>
 		[CadSystemVariable("$DWGCODEPAGE", 3)]
 		public string CodePage { get; set; }
+
+		/// <summary>
+		/// Displays the name of the last person who modified the file
+		/// </summary>
+		/// <remarks>
+		/// System variable LASTSAVEDBY
+		/// </remarks>
+		[CadSystemVariable("$LASTSAVEDBY", 3)]
+		public string LastSavedBy { get; set; }
 
 		/// <summary>
 		/// System variable REQUIREDVERSIONS.
@@ -86,6 +102,7 @@ namespace ACadSharp.Header
 		/// </summary>
 		[CadSystemVariable("$ORTHOMODE", DxfCode.Int16)]
 		public bool OrthoMode { get; set; }
+
 		/// <summary>
 		/// System variable REGENMODE.
 		/// REGENAUTO mode on if nonzero
@@ -98,24 +115,32 @@ namespace ACadSharp.Header
 		/// </summary>
 		[CadSystemVariable("$FILLMODE", DxfCode.Int16)]
 		public bool FillMode { get; set; }
+
 		/// <summary>
-		/// System variable QTEXTMODE.
 		/// Quick Text mode on if nonzero
 		/// </summary>
+		/// <remarks>
+		/// System variable QTEXTMODE.
+		/// </remarks>
 		[CadSystemVariable("$QTEXTMODE", DxfCode.Int16)]
 		public bool QuickTextMode { get; set; }
+
 		/// <summary>
 		/// Controls paper space linetype scaling.
-		/// System variable PSLTSCALE.
 		/// </summary>
+		/// <remarks>
+		/// System variable PSLTSCALE.
+		/// </remarks>
 		[CadSystemVariable("$PSLTSCALE", DxfCode.Int16)]
 		public SpaceLineTypeScaling PaperSpaceLineTypeScaling { get; set; }
+
 		/// <summary>
 		/// Nonzero if limits checking is on
 		/// System variable LIMCHECK.
 		/// </summary>
 		[CadSystemVariable("$LIMCHECK", DxfCode.Int16)]
 		public bool LimitCheckingOn { get; set; }
+
 		/// <summary>
 		/// System variable BLIPMODE.	??
 		/// </summary>
@@ -127,24 +152,28 @@ namespace ACadSharp.Header
 		/// </summary>
 		[CadSystemVariable("$USRTIMER", DxfCode.Int16)]
 		public bool UserTimer { get; set; }
+
 		/// <summary>
 		/// Determines the object type created by the SKETCH command
 		/// System variable SKPOLY
 		/// </summary>
 		[CadSystemVariable("$SKPOLY", DxfCode.Int16)]
 		public bool SketchPolylines { get; set; }
+
 		/// <summary>
 		/// Represents angular direction.
 		/// System variable ANGDIR
 		/// </summary>
 		[CadSystemVariable("$ANGDIR", DxfCode.Int16)]
 		public AngularDirection AngularDirection { get; set; }
+
 		/// <summary>
 		/// Controls the display of helixes and smoothed mesh objects.
 		/// System variable SPLFRAME
 		/// </summary>
 		[CadSystemVariable("$SPLFRAME", DxfCode.Int16)]
 		public bool ShowSplineControlPoints { get; set; }
+
 		/// <summary>
 		/// Mirror text if nonzero <br/>
 		/// System variable MIRRTEXT
@@ -212,31 +241,40 @@ namespace ACadSharp.Header
 		/// </summary>
 		[CadSystemVariable("$LUNITS", DxfCode.Int16)]
 		public LinearUnitFormat LinearUnitFormat { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable LUPREC
 		/// </summary>
 		public short LinearUnitPrecision { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable AUNITS
 		/// </summary>
 		public AngularUnitFormat AngularUnit { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable AUPREC
 		/// </summary>
 		public short AngularUnitPrecision { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable OSMODE
 		/// </summary>
 		public ObjectSnapMode ObjectSnapMode { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable ATTMODE
+		/// Attribute visibility
 		/// </summary>
-		public short AttributeVisibility { get; set; }
+		/// <remarks>
+		/// System variable ATTMODE
+		/// </remarks>
+		[CadSystemVariable("$ATTMODE", 70)]
+		public AttributeVisibilityMode AttributeVisibility { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable PDMODE
@@ -322,41 +360,58 @@ namespace ACadSharp.Header
 		/// System variable MAXACTVP
 		/// </summary>
 		public short MaxViewportCount { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable ISOLINES
 		/// </summary>
 		public short SurfaceIsolineCount { get; set; }
+
 		/// <summary>
 		/// Current multiline justification.
 		/// System variable CMLJUST
 		/// </summary>
 		public TextVerticalAlignment CurrentMultilineJustification { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public short TextQuality { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Global linetype scale
 		/// </summary>
+		/// <remarks>
+		/// System variable LTSCALE
+		/// </remarks>
+		[CadSystemVariable("$LTSCALE", 40)]
 		public double LineTypeScale { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Default text height
 		/// </summary>
+		/// <remarks>
+		/// System variable TEXTSIZE
+		/// </remarks>
+		[CadSystemVariable("$TEXTSIZE", 40)]
 		public double TextHeightDefault { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Default trace width
 		/// </summary>
+		/// <remarks>
+		/// System variable TRACEWID
+		/// </remarks>
+		[CadSystemVariable("$TRACEWID", 40)]
 		public double TraceWidthDefault { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public double SketchIncrement { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
