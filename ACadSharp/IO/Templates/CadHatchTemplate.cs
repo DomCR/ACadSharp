@@ -5,14 +5,14 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgHatchTemplate : CadEntityTemplate
+	internal class CadHatchTemplate : CadEntityTemplate
 	{
-		public class DwgBoundaryPathTemplate : ICadObjectBuilder
+		public class CadBoundaryPathTemplate : ICadObjectBuilder
 		{
-			public HatchBoundaryPath Path { get; set; } = new HatchBoundaryPath();
+			public Hatch.BoundaryPath Path { get; set; } = new Hatch.BoundaryPath();
 			public List<ulong> Handles { get; set; } = new List<ulong>();
 
-			public DwgBoundaryPathTemplate() { }
+			public CadBoundaryPathTemplate() { }
 
 			public void Build(CadDocumentBuilder builder)
 			{
@@ -25,15 +25,15 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
-		public List<DwgBoundaryPathTemplate> PathTempaltes = new List<DwgBoundaryPathTemplate>();
+		public List<CadBoundaryPathTemplate> PathTempaltes = new List<CadBoundaryPathTemplate>();
 
-		public DwgHatchTemplate(Hatch hatch) : base(hatch) { }
+		public CadHatchTemplate(Hatch hatch) : base(hatch) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
-			foreach (DwgBoundaryPathTemplate t in PathTempaltes)
+			foreach (CadBoundaryPathTemplate t in PathTempaltes)
 			{
 				(this.CadObject as Hatch).Paths.Add(t.Path);
 				t.Build(builder);

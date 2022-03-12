@@ -1435,7 +1435,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readPolyline2D()
 		{
-			PolyLine2D pline = new PolyLine2D();
+			Polyline2D pline = new Polyline2D();
 			CadPolyLineTemplate template = new CadPolyLineTemplate(pline);
 
 			this.readCommonEntityData(template);
@@ -1483,7 +1483,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readPolyline3D()
 		{
-			PolyLine3D pline = new PolyLine3D();
+			Polyline3D pline = new Polyline3D();
 			CadPolyLineTemplate template = new CadPolyLineTemplate(pline);
 
 			this.readCommonEntityData(template);
@@ -3974,7 +3974,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readHatch()
 		{
 			Hatch hatch = new Hatch();
-			DwgHatchTemplate template = new DwgHatchTemplate(hatch);
+			CadHatchTemplate template = new CadHatchTemplate(hatch);
 
 			this.readCommonEntityData(template);
 
@@ -4037,7 +4037,7 @@ namespace ACadSharp.IO.DWG
 
 			for (int i = 0; i < npaths; i++)
 			{
-				DwgHatchTemplate.DwgBoundaryPathTemplate pathTemplate = new DwgHatchTemplate.DwgBoundaryPathTemplate();
+				CadHatchTemplate.CadBoundaryPathTemplate pathTemplate = new CadHatchTemplate.CadBoundaryPathTemplate();
 
 				//Pathflag BL 92 Path flag
 				pathTemplate.Path.Flags = (BoundaryPathFlags)this._objectReader.ReadBitLong();
@@ -4056,7 +4056,7 @@ namespace ACadSharp.IO.DWG
 						switch (pathTypeStatus)
 						{
 							case 1:
-								pathTemplate.Path.Edges.Add(new HatchBoundaryPath.Line
+								pathTemplate.Path.Edges.Add(new Hatch.BoundaryPath.Line
 								{
 									//pt0 2RD 10 first endpoint
 									Start = this._objectReader.Read2RawDouble(),
@@ -4065,7 +4065,7 @@ namespace ACadSharp.IO.DWG
 								});
 								break;
 							case 2:
-								pathTemplate.Path.Edges.Add(new HatchBoundaryPath.Arc
+								pathTemplate.Path.Edges.Add(new Hatch.BoundaryPath.Arc
 								{
 									//pt0 2RD 10 center
 									Center = this._objectReader.Read2RawDouble(),
@@ -4080,7 +4080,7 @@ namespace ACadSharp.IO.DWG
 								});
 								break;
 							case 3:
-								pathTemplate.Path.Edges.Add(new HatchBoundaryPath.Ellipse
+								pathTemplate.Path.Edges.Add(new Hatch.BoundaryPath.Ellipse
 								{
 									//pt0 2RD 10 center
 									Center = this._objectReader.Read2RawDouble(),
@@ -4097,7 +4097,8 @@ namespace ACadSharp.IO.DWG
 								});
 								break;
 							case 4:
-								HatchBoundaryPath.Spline splineEdge = new HatchBoundaryPath.Spline();
+								Hatch.BoundaryPath.Spline splineEdge = new Hatch.BoundaryPath.Spline();
+
 								//degree BL 94 degree of the spline
 								splineEdge.Degree = this._objectReader.ReadBitLong();
 								//isrational B 73 1 if rational(has weights), else 0
@@ -4138,13 +4139,13 @@ namespace ACadSharp.IO.DWG
 										for (int fp = 0; fp < nfitPoints; ++fp)
 										{
 											//Fitpoint 2RD 11
-											XY fpoint = this._objectReader.Read2RawDouble();
+											splineEdge.FitPoints.Add(this._objectReader.Read2RawDouble());
 										}
 
 										//Start tangent 2RD 12
-										XY startTangent = this._objectReader.Read2RawDouble();
+										splineEdge.StartTangent = this._objectReader.Read2RawDouble();
 										//End tangent 2RD 13
-										XY endTangent = this._objectReader.Read2RawDouble();
+										splineEdge.EndTangent = this._objectReader.Read2RawDouble();
 									}
 								}
 
@@ -4156,7 +4157,7 @@ namespace ACadSharp.IO.DWG
 				}
 				else    //POLYLINE PATH
 				{
-					HatchBoundaryPath.Polyline pline = new HatchBoundaryPath.Polyline();
+					Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
 					//bulgespresent B 72 bulges are present if 1
 					bool bulgespresent = this._objectReader.ReadBit();
 					//closed B 73 1 if closed
@@ -4169,13 +4170,12 @@ namespace ACadSharp.IO.DWG
 						//pt0 2RD 10 point on polyline
 						XY vertex = this._objectReader.Read2RawDouble();
 
-						double bulge = 0;
 						if (bulgespresent)
 							//bulge BD 42 bulge
-							bulge = this._objectReader.ReadBitDouble();
+							pline.Bulge = this._objectReader.ReadBitDouble();
 
 						//Add the vertex
-						pline.Vertices.Add(new XYZ(vertex.X, vertex.Y, bulge));
+						pline.Vertices.Add(new XY(vertex.X, vertex.Y));
 					}
 				}
 

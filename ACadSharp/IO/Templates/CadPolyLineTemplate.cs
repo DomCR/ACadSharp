@@ -13,13 +13,13 @@ namespace ACadSharp.IO.Templates
 
 		public CadPolyLineTemplate() : base(new PolyLinePlaceholder()) { }
 
-		public CadPolyLineTemplate(PolyLine entity) : base(entity) { }
+		public CadPolyLineTemplate(Polyline entity) : base(entity) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
-			PolyLine polyLine = this.CadObject as PolyLine;
+			Polyline polyLine = this.CadObject as Polyline;
 
 			if (FirstVertexHandle.HasValue)
 			{
@@ -37,7 +37,7 @@ namespace ACadSharp.IO.Templates
 			//TODO: DwgPolyLineTemplate SeqendHandle??
 		}
 
-		public void SetPolyLineObject(PolyLine polyLine)
+		public void SetPolyLineObject(Polyline polyLine)
 		{
 			polyLine.Handle = this.CadObject.Handle;
 			polyLine.Owner = this.CadObject.Owner;
@@ -54,7 +54,7 @@ namespace ACadSharp.IO.Templates
 			this.CadObject = polyLine;
 		}
 
-		public class PolyLinePlaceholder : PolyLine
+		public class PolyLinePlaceholder : Polyline
 		{
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
 		}

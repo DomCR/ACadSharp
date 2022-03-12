@@ -14,7 +14,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityHatch)]
 	[DxfSubClass(DxfSubclassMarker.Hatch)]
-	public class Hatch : Entity
+	public partial class Hatch : Entity
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.HATCH;
@@ -40,7 +40,7 @@ namespace ACadSharp.Entities
 		/// <value>
 		/// Default value: SOLID pattern.
 		/// </value>
-		[DxfCodeValue(2)]
+		[DxfCodeValue(DxfReferenceType.Name, 2)]
 		public HatchPattern Pattern { get; set; } = HatchPattern.Solid;
 
 		/// <summary>
@@ -107,13 +107,12 @@ namespace ACadSharp.Entities
 		//99	For MPolygon, number of degenerate boundary paths(loops), where a degenerate boundary path is a border that is ignored by the hatch
 
 		/// <summary>
-		/// 
+		/// Seed points
 		/// </summary>
-		//98	Number of seed points
 		//10	Seed point(in OCS)
 		//DXF: X value; APP: 2D point(multiple entries)
 		//20	DXF: Y value of seed point(in OCS); (multiple entries)
-		[DxfCodeValue(98)]
+		[DxfCodeValue(DxfReferenceType.Count, 98)]
 		public List<XY> SeedPoints { get; set; } = new List<XY>();
 
 		//450	Indicates solid hatch or gradient; if solid hatch, the values for the remaining codes are ignored but must be present.Optional; if code 450 is in the file, then the following codes must be in the file: 451, 452, 453, 460, 461, 462, and 470. If code 450 is not in the file, then the following codes must not be in the file: 451, 452, 453, 460, 461, 462, and 470
@@ -144,13 +143,13 @@ namespace ACadSharp.Entities
 
 
 		/// <summary>
-		/// 
+		/// Boundary paths (loops)
 		/// </summary>
 		//91	Number of boundary paths(loops)
 		//varies
 		//Boundary path data.Repeats number of times specified by code 91. See Boundary Path Data
-		[DxfCodeValue(91)]
-		public List<HatchBoundaryPath> Paths { get; set; } = new List<HatchBoundaryPath>();
+		[DxfCodeValue(DxfReferenceType.Count, 91)]
+		public List<BoundaryPath> Paths { get; set; } = new List<BoundaryPath>();
 
 		public Hatch() : base() { }
 	}

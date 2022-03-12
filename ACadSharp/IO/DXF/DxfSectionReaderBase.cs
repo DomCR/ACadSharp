@@ -137,6 +137,12 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityLine:
 					template = new CadEntityTemplate(new Line());
 					break;
+				//case DxfFileToken.EntityLwPolyline:
+				//	//template = new CadEntityTemplate(new Line());
+				//	break;
+				case DxfFileToken.EntityHatch:
+					template = new CadHatchTemplate(new Hatch());
+					break;
 				case DxfFileToken.EntityInsert:
 					template = new DwgInsertTemplate(new Insert());
 					break;
@@ -201,6 +207,9 @@ namespace ACadSharp.IO.DXF
 					case DxfSubclassMarker.Entity:
 						this.readMapped<Entity>(template.CadObject, template);
 						break;
+					case DxfSubclassMarker.Hatch:
+						this.readMapped<Hatch>(template.CadObject, template);
+						break;
 					case DxfSubclassMarker.Insert:
 						this.readMapped<Insert>(template.CadObject, template);
 						break;
@@ -213,13 +222,16 @@ namespace ACadSharp.IO.DXF
 					case DxfSubclassMarker.Point:
 						this.readMapped<Point>(template.CadObject, template);
 						break;
+					//case DxfSubclassMarker.PolyfaceMesh:
+					//	this.readMapped<PolyLine2D>(template.CadObject, template);
+					//	break;
 					case DxfSubclassMarker.Polyline:
 						(template as CadPolyLineTemplate).SetPolyLineObject(new PolyLine2D());
 						this.readMapped<PolyLine2D>(template.CadObject, template);
 						break;
 					case DxfSubclassMarker.Polyline3d:
-						(template as CadPolyLineTemplate).SetPolyLineObject(new PolyLine3D());
-						this.readMapped<PolyLine3D>(template.CadObject, template);
+						(template as CadPolyLineTemplate).SetPolyLineObject(new Polyline3D());
+						this.readMapped<Polyline3D>(template.CadObject, template);
 						break;
 					case DxfSubclassMarker.Text:
 						this.readMapped<TextEntity>(template.CadObject, template);

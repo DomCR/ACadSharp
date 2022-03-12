@@ -3,7 +3,7 @@
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Represents a <see cref="PolyLine3D"/> entity.
+	/// Represents a <see cref="Polyline3D"/> entity.
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.EntityPolyline"/> <br/>
@@ -11,7 +11,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityPolyline)]
 	[DxfSubClass(DxfSubclassMarker.Polyline3d)]
-	public class PolyLine3D : PolyLine
+	public class Polyline3D : Polyline
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.POLYLINE_3D;
