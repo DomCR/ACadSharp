@@ -10,6 +10,7 @@ namespace ACadSharp.IO.Templates
 		public class CadBoundaryPathTemplate : ICadObjectBuilder
 		{
 			public Hatch.BoundaryPath Path { get; set; } = new Hatch.BoundaryPath();
+
 			public List<ulong> Handles { get; set; } = new List<ulong>();
 
 			public CadBoundaryPathTemplate() { }
@@ -18,9 +19,10 @@ namespace ACadSharp.IO.Templates
 			{
 				foreach (var handle in Handles)
 				{
-					var edge = builder.GetCadObject(handle);
-
-					builder.NotificationHandler?.Invoke(this.Path, new NotificationEventArgs($"Boundary path with handles not implemented"));
+					if (builder.TryGetCadObject(handle, out Entity entity))
+					{
+						Path.Entities.Add(entity);
+					}
 				}
 			}
 		}

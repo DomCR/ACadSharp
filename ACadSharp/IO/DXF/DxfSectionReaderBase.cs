@@ -208,7 +208,7 @@ namespace ACadSharp.IO.DXF
 						this.readMapped<Entity>(template.CadObject, template);
 						break;
 					case DxfSubclassMarker.Hatch:
-						this.readMapped<Hatch>(template.CadObject, template);
+						this.readHatch((Hatch)template.CadObject, (CadHatchTemplate)template);
 						break;
 					case DxfSubclassMarker.Insert:
 						this.readMapped<Insert>(template.CadObject, template);
@@ -226,8 +226,8 @@ namespace ACadSharp.IO.DXF
 					//	this.readMapped<PolyLine2D>(template.CadObject, template);
 					//	break;
 					case DxfSubclassMarker.Polyline:
-						(template as CadPolyLineTemplate).SetPolyLineObject(new PolyLine2D());
-						this.readMapped<PolyLine2D>(template.CadObject, template);
+						(template as CadPolyLineTemplate).SetPolyLineObject(new Polyline2D());
+						this.readMapped<Polyline2D>(template.CadObject, template);
 						break;
 					case DxfSubclassMarker.Polyline3d:
 						(template as CadPolyLineTemplate).SetPolyLineObject(new Polyline3D());
@@ -335,6 +335,11 @@ namespace ACadSharp.IO.DXF
 		private void readExtendedData(CadObject cadObject)
 		{
 			//TODO: Handle extended data 
+		}
+
+		protected void readHatch(Hatch hatch, CadHatchTemplate template)
+		{
+			this.readMapped<Hatch>(template.CadObject, template);
 		}
 
 		private void readReactors()

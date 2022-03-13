@@ -4052,10 +4052,10 @@ namespace ACadSharp.IO.DWG
 					for (int j = 0; j < nsegments; ++j)
 					{
 						//pathtypestatus RC 72 type of path
-						byte pathTypeStatus = this._objectReader.ReadByte();
+						Hatch.BoundaryPath.EdgeType pathTypeStatus = (Hatch.BoundaryPath.EdgeType)this._objectReader.ReadByte();
 						switch (pathTypeStatus)
 						{
-							case 1:
+							case Hatch.BoundaryPath.EdgeType.Line:
 								pathTemplate.Path.Edges.Add(new Hatch.BoundaryPath.Line
 								{
 									//pt0 2RD 10 first endpoint
@@ -4064,7 +4064,7 @@ namespace ACadSharp.IO.DWG
 									End = this._objectReader.Read2RawDouble()
 								});
 								break;
-							case 2:
+							case Hatch.BoundaryPath.EdgeType.CircularArc:
 								pathTemplate.Path.Edges.Add(new Hatch.BoundaryPath.Arc
 								{
 									//pt0 2RD 10 center
@@ -4079,7 +4079,7 @@ namespace ACadSharp.IO.DWG
 									CounterClockWise = this._objectReader.ReadBit()
 								});
 								break;
-							case 3:
+							case Hatch.BoundaryPath.EdgeType.EllipticArc:
 								pathTemplate.Path.Edges.Add(new Hatch.BoundaryPath.Ellipse
 								{
 									//pt0 2RD 10 center
@@ -4096,7 +4096,7 @@ namespace ACadSharp.IO.DWG
 									CounterClockWise = this._objectReader.ReadBit()
 								});
 								break;
-							case 4:
+							case Hatch.BoundaryPath.EdgeType.Spline:
 								Hatch.BoundaryPath.Spline splineEdge = new Hatch.BoundaryPath.Spline();
 
 								//degree BL 94 degree of the spline
