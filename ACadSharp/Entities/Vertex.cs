@@ -7,7 +7,7 @@ namespace ACadSharp.Entities
 	/// <summary>
 	/// Represents a base for <see cref="Vertex2D"/> and <see cref="Vertex3D"/>
 	/// </summary>
-	[DxfSubClass(DxfSubclassMarker.Vertex)]
+	[DxfSubClass(DxfSubclassMarker.Vertex, true)]
 	public abstract class Vertex : Entity
 	{
 		public override string ObjectName => DxfFileToken.EntityVertex;

@@ -77,7 +77,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// 1 if the camera is plottable
 		/// </summary>
-		[DxfCodeValue(72)]
+		[DxfCodeValue(73)]
 		public bool IsPlottable { get; set; }
 
 		/// <summary>

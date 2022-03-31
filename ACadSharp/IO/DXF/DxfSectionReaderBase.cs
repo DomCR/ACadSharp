@@ -233,6 +233,9 @@ namespace ACadSharp.IO.DXF
 						(template as CadPolyLineTemplate).SetPolyLineObject(new Polyline3D());
 						this.readMapped<Polyline3D>(template.CadObject, template);
 						break;
+					case DxfSubclassMarker.Polyline3dVertex:
+						this.readMapped<Vertex3D>(template.CadObject, template);
+						break;
 					case DxfSubclassMarker.Text:
 						this.readMapped<TextEntity>(template.CadObject, template);
 						break;
