@@ -3,7 +3,7 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadLayerTemplate : DwgTableEntryTemplate<Layer>
+	internal class CadLayerTemplate : CadTableEntryTemplate<Layer>
 	{
 		public ulong LayerControlHandle { get; set; }
 
@@ -43,7 +43,7 @@ namespace ACadSharp.IO.Templates
 			switch (dxfcode)
 			{
 				case 6:
-					LineTypeName = name;
+					this.LineTypeName = name;
 					value = true;
 					break;
 				default:
@@ -62,7 +62,7 @@ namespace ACadSharp.IO.Templates
 			switch (dxfcode)
 			{
 				case 347:
-					MaterialHandle = handle;
+					this.MaterialHandle = handle;
 					value = true;
 					break;
 				case 390:
@@ -82,13 +82,13 @@ namespace ACadSharp.IO.Templates
 
 			base.Build(builder);
 
-			var a = builder.GetCadObject(LayerControlHandle);
+			var a = builder.GetCadObject(this.LayerControlHandle);
 
 			//this.CadObject.PlotStyleName = builder.GetCadObject(PlotStyleHandle);
 
-			var c = builder.GetCadObject(MaterialHandle);
+			var c = builder.GetCadObject(this.MaterialHandle);
 
-			this.CadObject.LineType = builder.GetCadObject<LineType>(LineTypeHandle);
+			this.CadObject.LineType = builder.GetCadObject<LineType>(this.LineTypeHandle);
 		}
 	}
 }

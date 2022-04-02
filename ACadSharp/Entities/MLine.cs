@@ -27,7 +27,7 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// Do not modify this field without also updating the associated entry in the MLINESTYLE dictionary
 		/// </remarks>
-		[DxfCodeValue(2)]
+		[DxfCodeValue(DxfReferenceType.Name, 2)]
 		public MLStyle Style { get; set; }
 		//340	Pointer-handle/ID of MLINESTYLE object
 
@@ -62,6 +62,7 @@ namespace ACadSharp.Entities
 		public XYZ Extrusion { get; set; } = XYZ.AxisZ;
 
 		//72	Number of vertices
+		[DxfCodeValue(DxfReferenceType.Count, 72)]
 		public List<Vertex> Vertices { get; set; } = new List<Vertex>();
 
 		public MLine() : base() { }

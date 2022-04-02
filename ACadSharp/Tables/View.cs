@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.IO.Templates;
+using ACadSharp.Objects;
 using CSMath;
 using System;
 using System.Collections.Generic;
@@ -108,7 +109,11 @@ namespace ACadSharp.Tables
 
 		//334	Soft-pointer ID/handle to live section object (optional)
 
-		//348	Hard-pointer ID/handle to visual style object (optional)
+		/// <summary>
+		/// Visual style object (optional)
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Handle, 348)]
+		public VisualStyle VisualStyle { get; set; }
 
 		//361	Sun hard ownership ID
 

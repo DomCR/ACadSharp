@@ -7,14 +7,24 @@ namespace ACadSharp.IO.Templates
 	internal class CadEntityTemplate : CadTemplate<Entity>
 	{
 		public byte EntityMode { get; set; }
+
 		public byte? LtypeFlags { get; set; }
+
 		public ulong? LayerHandle { get; set; }
+
 		public string LayerName { get; set; }
+
 		public ulong? LineTypeHandle { get; set; }
+
 		public string LtypeName { get; set; }
+
 		public ulong? PrevEntity { get; set; }
+
 		public ulong? NextEntity { get; set; }
+
 		public ulong? ColorHandle { get; set; }
+
+		public ulong? MaterialHandle { get; set; }
 
 		public CadEntityTemplate(Entity entity) : base(entity) { }
 
@@ -29,6 +39,23 @@ namespace ACadSharp.IO.Templates
 				default:
 					return false;
 			}
+		}
+
+		public override bool AddHandle(int dxfcode, ulong handle)
+		{
+			bool value = base.AddHandle(dxfcode, handle);
+			if (value)
+				return value;
+
+			switch (dxfcode)
+			{
+				case 347:
+					this.MaterialHandle = handle;
+					value = true;
+					break;
+			}
+
+			return value;
 		}
 
 		public override bool AddName(int dxfcode, string name)
@@ -46,8 +73,6 @@ namespace ACadSharp.IO.Templates
 				case 8:
 					this.LayerName = name;
 					value = true;
-					break;
-				default:
 					break;
 			}
 

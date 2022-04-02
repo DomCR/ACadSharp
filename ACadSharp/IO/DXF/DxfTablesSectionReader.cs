@@ -150,7 +150,7 @@ namespace ACadSharp.IO.DXF
 				{
 					case DxfFileToken.TableAppId:
 						AppId appid = new AppId();
-						template = new DwgTableEntryTemplate<AppId>(appid);
+						template = new CadTableEntryTemplate<AppId>(appid);
 						this.readMapped<AppId>(appid, template);
 						break;
 					case DxfFileToken.TableBlockRecord:
@@ -175,7 +175,7 @@ namespace ACadSharp.IO.DXF
 						break;
 					case DxfFileToken.TableStyle:
 						TextStyle style = new TextStyle();
-						template = new DwgTableEntryTemplate<TextStyle>(style);
+						template = new CadTableEntryTemplate<TextStyle>(style);
 						this.readMapped<TextStyle>(style, template);
 						break;
 					case DxfFileToken.TableUcs:
@@ -185,12 +185,12 @@ namespace ACadSharp.IO.DXF
 						break;
 					case DxfFileToken.TableView:
 						View view = new View();
-						template = new DwgTableEntryTemplate<View>(view);
+						template = new CadViewTemplate(view);
 						this.readMapped<View>(view, template);
 						break;
 					case DxfFileToken.TableVport:
 						VPort vport = new VPort();
-						template = new DwgVPortTemplate(vport);
+						template = new CadVPortTemplate(vport);
 						this.readMapped<VPort>(vport, template);
 						break;
 					default:

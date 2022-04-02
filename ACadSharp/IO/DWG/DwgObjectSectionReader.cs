@@ -355,7 +355,7 @@ namespace ACadSharp.IO.DWG
 				if (this._objectReader.Read2Bits() == 3)
 				{
 					//MATERIAL present if material flags were 11
-					this.handleReference();
+					template.MaterialHandle = this.handleReference();
 				}
 
 				//Shadow flags RC
@@ -2684,8 +2684,7 @@ namespace ACadSharp.IO.DWG
 					for (int k = 0; k < nsegparms; ++k)
 					{
 						//segparm BD segment parameter
-						double num5 = this._objectReader.ReadBitDouble();
-						element.Parameters.Add(num5);
+						element.Parameters.Add(this._objectReader.ReadBitDouble());
 					}
 
 					//numareafillparms BS
@@ -2693,8 +2692,7 @@ namespace ACadSharp.IO.DWG
 					for (int k = 0; k < nfillparms; ++k)
 					{
 						//areafillparm BD area fill parameter
-						double num5 = this._objectReader.ReadBitDouble();
-						element.AreaFillParameters.Add(num5);
+						element.AreaFillParameters.Add(this._objectReader.ReadBitDouble());
 					}
 
 					vertex.Segments.Add(element);
@@ -2994,7 +2992,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readTextStyle()
 		{
 			TextStyle style = new TextStyle();
-			DwgTableEntryTemplate<TextStyle> template = new DwgTableEntryTemplate<TextStyle>(style);
+			CadTableEntryTemplate<TextStyle> template = new CadTableEntryTemplate<TextStyle>(style);
 
 			this.readCommonNonEntityData(template);
 
@@ -3245,7 +3243,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readVPort()
 		{
 			VPort vport = new VPort();
-			DwgVPortTemplate template = new DwgVPortTemplate(vport);
+			CadVPortTemplate template = new CadVPortTemplate(vport);
 
 			this.readCommonNonEntityData(template);
 

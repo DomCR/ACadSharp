@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadLineTypeTemplate : DwgTableEntryTemplate<LineType>
+	internal class CadLineTypeTemplate : CadTableEntryTemplate<LineType>
 	{
 		public ulong? LtypeControlHandle { get; set; }
 

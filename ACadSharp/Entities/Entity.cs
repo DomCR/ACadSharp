@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 
 namespace ACadSharp.Entities
@@ -24,7 +25,7 @@ namespace ACadSharp.Entities
 		/// This object can hold an RGB value, an ACI number (an integer from 1 to 255), or a named color.
 		/// Using an RGB value, you can choose from millions of colors.
 		/// </remarks>
-		[DxfCodeValue(62)]
+		[DxfCodeValue(62, 420, 430)]
 		public Color Color { get; set; } = Color.ByLayer;
 
 		/// <summary>
@@ -65,6 +66,12 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 6)]
 		public LineType LineType { get; set; }
+
+		/// <summary>
+		/// Material object (present if not BYLAYER)
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Handle, 347)]
+		public Material Material { get; set; }
 
 		/// <summary>
 		/// Default constructor

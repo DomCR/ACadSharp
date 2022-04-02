@@ -149,6 +149,9 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityMText:
 					template = new DwgTextEntityTemplate(new MText());
 					break;
+				case DxfFileToken.EntityMLine:
+					template = new DwgMLineTemplate(new MLine());
+					break;
 				case DxfFileToken.EntityPoint:
 					template = new CadEntityTemplate(new Point());
 					break;
@@ -219,6 +222,9 @@ namespace ACadSharp.IO.DXF
 					case DxfSubclassMarker.Line:
 						this.readMapped<Line>(template.CadObject, template);
 						break;
+					case DxfSubclassMarker.MLine:
+						this.readMapped<MLine>(template.CadObject, template);
+						break;
 					case DxfSubclassMarker.MText:
 						this.readMapped<MText>(template.CadObject, template);
 						break;
@@ -239,6 +245,9 @@ namespace ACadSharp.IO.DXF
 					case DxfSubclassMarker.Polyline3dVertex:
 						this.readMapped<Vertex3D>(template.CadObject, template);
 						break;
+					case DxfSubclassMarker.Ray:
+						this.readMapped<Ray>(template.CadObject, template);
+						break;
 					case DxfSubclassMarker.Text:
 						this.readMapped<TextEntity>(template.CadObject, template);
 						break;
@@ -250,6 +259,9 @@ namespace ACadSharp.IO.DXF
 						break;
 					case DxfSubclassMarker.Viewport:
 						this.readMapped<Viewport>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.XLine:
+						this.readMapped<XLine>(template.CadObject, template);
 						break;
 					default:
 						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}"));
