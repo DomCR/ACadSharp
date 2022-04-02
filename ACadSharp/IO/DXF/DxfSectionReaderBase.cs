@@ -167,6 +167,9 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityVertex:
 					template = new CadEntityTemplate(new Vertex2D());
 					break;
+				case DxfFileToken.EntityViewport:
+					template = new DwgViewportTemplate(new Viewport());
+					break;
 				case DxfFileToken.EntityXline:
 					template = new CadEntityTemplate(new XLine());
 					break;
@@ -207,9 +210,9 @@ namespace ACadSharp.IO.DXF
 					case DxfSubclassMarker.Entity:
 						this.readMapped<Entity>(template.CadObject, template);
 						break;
-					case DxfSubclassMarker.Hatch:
-						this.readHatch((Hatch)template.CadObject, (CadHatchTemplate)template);
-						break;
+					//case DxfSubclassMarker.Hatch:
+					//	this.readHatch((Hatch)template.CadObject, (CadHatchTemplate)template);
+					//	break;
 					case DxfSubclassMarker.Insert:
 						this.readMapped<Insert>(template.CadObject, template);
 						break;
@@ -245,6 +248,9 @@ namespace ACadSharp.IO.DXF
 					case DxfSubclassMarker.Vertex:
 						this.readMapped<Vertex>(template.CadObject, template);
 						break;
+					case DxfSubclassMarker.Viewport:
+						this.readMapped<Viewport>(template.CadObject, template);
+						break;
 					default:
 						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}"));
 						while (this._reader.LastDxfCode != DxfCode.Start)
@@ -274,7 +280,7 @@ namespace ACadSharp.IO.DXF
 					this._reader.ReadNext();
 					continue;
 				}
-				else if(this._reader.LastDxfCode == DxfCode.ControlString)
+				else if (this._reader.LastDxfCode == DxfCode.ControlString)
 				{
 					this.readReactors();
 					continue;
@@ -342,7 +348,12 @@ namespace ACadSharp.IO.DXF
 
 		protected void readHatch(Hatch hatch, CadHatchTemplate template)
 		{
-			this.readMapped<Hatch>(template.CadObject, template);
+			//while (this._reader.LastDxfCode != DxfCode.Start)
+			//{
+			//	this._reader.ReadNext();
+			//}
+
+			//this.readMapped<Hatch>(template.CadObject, template);
 		}
 
 		private void readReactors()

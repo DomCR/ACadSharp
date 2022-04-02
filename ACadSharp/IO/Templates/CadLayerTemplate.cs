@@ -3,7 +3,7 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgLayerTemplate : DwgTableEntryTemplate<Layer>
+	internal class CadLayerTemplate : DwgTableEntryTemplate<Layer>
 	{
 		public ulong LayerControlHandle { get; set; }
 
@@ -15,7 +15,24 @@ namespace ACadSharp.IO.Templates
 
 		public string LineTypeName { get; set; }
 
-		public DwgLayerTemplate(Layer entry) : base(entry) { }
+		public CadLayerTemplate(Layer entry) : base(entry) { }
+
+		public override bool CheckDxfCode(int dxfcode, object value)
+		{
+			bool found = base.CheckDxfCode(dxfcode, value);
+			if (found)
+				return found;
+
+			switch (dxfcode)
+			{
+				case 348:
+					// Code not documented
+					found = true;
+					break;
+			}
+
+			return found;
+		}
 
 		public override bool AddName(int dxfcode, string name)
 		{

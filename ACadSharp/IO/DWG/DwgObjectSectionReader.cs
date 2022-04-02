@@ -2885,7 +2885,7 @@ namespace ACadSharp.IO.DWG
 		{
 			//Initialize the template with the default layer
 			Layer layer = new Layer();
-			DwgLayerTemplate template = new DwgLayerTemplate(layer);
+			CadLayerTemplate template = new CadLayerTemplate(layer);
 
 			this.readCommonNonEntityData(template);
 

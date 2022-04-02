@@ -165,7 +165,7 @@ namespace ACadSharp.IO.DXF
 						break;
 					case DxfFileToken.TableLayer:
 						Layer layer = new Layer();
-						template = new DwgLayerTemplate(layer);
+						template = new CadLayerTemplate(layer);
 						this.readMapped<Layer>(layer, template);
 						break;
 					case DxfFileToken.TableLinetype:

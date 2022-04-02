@@ -5,31 +5,28 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadHatchTemplate : CadEntityTemplate
+	internal partial class CadHatchTemplate : CadEntityTemplate
 	{
-		public class CadBoundaryPathTemplate : ICadObjectBuilder
-		{
-			public Hatch.BoundaryPath Path { get; set; } = new Hatch.BoundaryPath();
-
-			public List<ulong> Handles { get; set; } = new List<ulong>();
-
-			public CadBoundaryPathTemplate() { }
-
-			public void Build(CadDocumentBuilder builder)
-			{
-				foreach (var handle in Handles)
-				{
-					if (builder.TryGetCadObject(handle, out Entity entity))
-					{
-						Path.Entities.Add(entity);
-					}
-				}
-			}
-		}
+		public string HatchPatternName;
 
 		public List<CadBoundaryPathTemplate> PathTempaltes = new List<CadBoundaryPathTemplate>();
 
 		public CadHatchTemplate(Hatch hatch) : base(hatch) { }
+
+		public override bool AddName(int dxfcode, string name)
+		{
+			bool value = base.AddName(dxfcode, name);
+
+			switch (dxfcode)
+			{
+				case 2:
+					this.HatchPatternName = name;
+					value = true;
+					break;
+			}
+
+			return value;
+		}
 
 		public override void Build(CadDocumentBuilder builder)
 		{

@@ -141,7 +141,6 @@ namespace ACadSharp.Entities
 
 		//470	String(default = LINEAR)
 
-
 		/// <summary>
 		/// Boundary paths (loops)
 		/// </summary>

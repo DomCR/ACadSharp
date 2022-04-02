@@ -12,7 +12,7 @@ namespace ACadSharp.Tables
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.TableView"/> <br/>
-	/// Dxf class name <see cref="DxfSubclassMarker.BlockRecord"/>
+	/// Dxf class name <see cref="DxfSubclassMarker.View"/>
 	/// </remarks>
 	[DxfName(DxfFileToken.TableView)]
 	[DxfSubClass(DxfSubclassMarker.View)]
