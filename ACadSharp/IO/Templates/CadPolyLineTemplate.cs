@@ -21,9 +21,9 @@ namespace ACadSharp.IO.Templates
 
 			Polyline polyLine = this.CadObject as Polyline;
 
-			if (FirstVertexHandle.HasValue)
+			if (this.FirstVertexHandle.HasValue)
 			{
-				IEnumerable<Vertex> vertices = this.getEntitiesCollection<Vertex>(builder, FirstVertexHandle.Value, LastVertexHandle.Value);
+				IEnumerable<Vertex> vertices = this.getEntitiesCollection<Vertex>(builder, this.FirstVertexHandle.Value, this.LastVertexHandle.Value);
 				polyLine.Vertices.AddRange(vertices);
 			}
 			else

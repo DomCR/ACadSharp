@@ -150,7 +150,7 @@ namespace ACadSharp.IO.DXF
 					template = new DwgTextEntityTemplate(new MText());
 					break;
 				case DxfFileToken.EntityMLine:
-					template = new DwgMLineTemplate(new MLine());
+					template = new CadMLineTemplate(new MLine());
 					break;
 				case DxfFileToken.EntityPoint:
 					template = new CadEntityTemplate(new Point());

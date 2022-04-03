@@ -2643,7 +2643,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readMLine()
 		{
 			MLine mline = new MLine();
-			DwgMLineTemplate template = new DwgMLineTemplate(mline);
+			CadMLineTemplate template = new CadMLineTemplate(mline);
 
 			this.readCommonEntityData(template);
 
