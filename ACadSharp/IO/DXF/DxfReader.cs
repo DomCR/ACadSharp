@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace ACadSharp.IO.DXF
 {
@@ -353,7 +354,9 @@ namespace ACadSharp.IO.DXF
 		private IDxfStreamReader getReader()
 		{
 			if (this.IsBinary())
-				throw new NotImplementedException();
+			{
+				return new DxfBinaryReader(this._fileStream.Stream, Encoding.ASCII);
+			}
 			else
 				return new DxfTextReader(this._fileStream.Stream);
 
