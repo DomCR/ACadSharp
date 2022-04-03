@@ -164,7 +164,6 @@ namespace ACadSharp.Entities
 
 		public TextColumn Column { get; set; } = new TextColumn();
 
-
 		public MText() : base() { }
 	}
 }
