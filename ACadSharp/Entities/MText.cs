@@ -90,7 +90,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Style of this text entity.
 		/// </summary>
-		[DxfCodeValue(7)]
+		[DxfCodeValue(DxfReferenceType.Handle, 7)]
 		public TextStyle Style { get; set; } = TextStyle.Default;
 
 		/// <summary>
@@ -102,9 +102,25 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(11, 21, 31)]
 		public XYZ AlignmentPoint { get; set; } = XYZ.Zero;
 
-		//42 Horizontal width of the characters that make up the mtext entity.This value will always be equal to or less than the value of group code 41 (read-only, ignored if supplied)
+		/// <summary>
+		/// Horizontal width of the characters that make up the mtext entity.
+		/// This value will always be equal to or less than the value of group code 41 
+		/// </summary>
+		/// <remarks>
+		/// read-only, ignored if supplied
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Ignored, 42)]
+		public double HorizontalWidth { get; set; }
 
-		//43 Vertical height of the mtext entity(read-only, ignored if supplied)
+		/// <summary>
+		/// Horizontal width of the characters that make up the mtext entity.
+		/// This value will always be equal to or less than the value of group code 41 
+		/// </summary>
+		/// <remarks>
+		/// read-only, ignored if supplied
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Ignored, 43)]
+		public double VerticalWidth { get; set; }
 
 		/// <summary>
 		/// Specifies the rotation angle for the object.
@@ -148,11 +164,8 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// Color to use for background fill when group code 90 is 1.
 		/// </remarks>
-		[DxfCodeValue(63)]
+		[DxfCodeValue(63, 420, 430)]
 		public Color BackgroundColor { get; set; }
-
-		//420 - 429	Background color(if RGB color)
-		//430 - 439	Background color(if color name)
 
 		/// <summary>
 		///

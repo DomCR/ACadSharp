@@ -226,7 +226,11 @@ namespace ACadSharp.Entities
 
 		//333	Shade plot ID/Handle(optional)
 
-		//348	Visual style ID/Handle(optional)
+		/// <summary>
+		/// Visual style
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Handle, 348)]
+		public VisualStyle VisualStyle { get; set; }
 
 		/// <summary>
 		/// Default lighting flag.On when no user lights are specified.
@@ -259,7 +263,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Ambient light color.Write only if not black color.
 		/// </summary>
-		[DxfCodeValue(63)]
+		[DxfCodeValue(63, 421, 431)]
 		public Color AmbientLightColor { get; set; }
 
 		//361	Sun ID/Handle(optional)
