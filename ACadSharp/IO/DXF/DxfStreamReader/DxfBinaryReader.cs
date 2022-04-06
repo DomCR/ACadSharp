@@ -15,10 +15,10 @@ namespace ACadSharp.IO.DXF
 		public GroupCodeValueType LastGroupCodeValue { get; private set; }
 		public int LastCode { get { return (int)this.LastDxfCode; } }
 		public object LastValue { get; private set; }
-		public int Line { get; private set; }
+		public int Line { get { return (int)this.BaseStream.Position; } }
 
 		/// <inheritdoc/>
-		public string LastValueAsString { get { return this.LastValue as string; } set { this.LastValue = value; } }
+		public string LastValueAsString { get; private set; }
 
 		public bool LastValueAsBool { get { return this.lineAsBool(this.LastValueAsString); } }
 		public short LastValueAsShort { get { return this.lineAsShort(this.LastValueAsString); } }
@@ -26,7 +26,7 @@ namespace ACadSharp.IO.DXF
 		public long LastValueAsLong { get { return this.lineAsLong(this.LastValueAsString); } }
 		public double LastValueAsDouble { get { return this.lineAsDouble(this.LastValueAsString); } }
 		public ulong LastValueAsHandle { get { return this.lineAsHandle(this.LastValueAsString); } }
-		public byte[] LastValueAsBinaryChunk { get { return this.lineAsBinaryChunk(); } }
+		public byte[] LastValueAsBinaryChunk { get { return this.LastValue as byte[]; } }
 
 		public Encoding Encoding { get; set; }
 
@@ -70,14 +70,17 @@ namespace ACadSharp.IO.DXF
 
 		private void start()
 		{
+
 			this.LastDxfCode = DxfCode.Invalid;
 			this.LastValue = string.Empty;
 			this.EndSectionFound = false;
 
 			this.BaseStream.Position = 0;
 
-			this.Line = 0;
+			byte[] sentinel = this.ReadBytes(22);
+			string a = Encoding.ASCII.GetString(sentinel);
 		}
+
 		private bool lineAsBool(string str)
 		{
 			if (byte.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out byte result))
@@ -123,6 +126,7 @@ namespace ACadSharp.IO.DXF
 
 			return 0;
 		}
+
 		private ulong lineAsHandle(string str)
 		{
 			if (ulong.TryParse(str, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong result))
@@ -190,7 +194,8 @@ namespace ACadSharp.IO.DXF
 				b = this.ReadByte();
 			}
 
-			return this.Encoding.GetString(bytes.ToArray(), 0, bytes.Count);
+			this.LastValueAsString = this.Encoding.GetString(bytes.ToArray(), 0, bytes.Count);
+			return this.LastValueAsString;
 		}
 	}
 }
