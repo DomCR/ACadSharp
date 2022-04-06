@@ -25,6 +25,7 @@ namespace ACadSharp.Header
 		//TODO : Finish the header documentation
 
 		#region Header System Variables
+
 		/// <summary>
 		/// The AutoCAD drawing database version number.
 		/// </summary>
@@ -109,6 +110,7 @@ namespace ACadSharp.Header
 		/// </summary>
 		[CadSystemVariable("$REGENMODE", DxfCode.Int16)]
 		public bool RegenerationMode { get; set; }
+
 		/// <summary>
 		/// System variable FILLMODE.
 		/// Fill mode on if nonzero
@@ -146,6 +148,7 @@ namespace ACadSharp.Header
 		/// </summary>
 		[CadSystemVariable("$BLIPMODE", DxfCode.Int16)]
 		public bool BlipMode { get; set; }
+
 		/// <summary>
 		/// Controls the user timer for the drawing
 		/// System variable USRTIMER
@@ -517,55 +520,69 @@ namespace ACadSharp.Header
 		/// System variable 
 		/// </summary>
 		public TimeSpan TotalEditingTime { get; set; }
+		
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public TimeSpan UserElapsedTimeSpan { get; set; }
+		
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public Color CurrentEntityColor { get; set; }
+		
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public double ViewportDefaultViewScaleFactor { get; set; }
+		
 		/// <summary>
 		/// PSPACE
 		/// </summary>
 		public UCS PaperSpaceUcs { get; set; } = new UCS();
+		
 		/// <summary>
 		/// System variable INSBASE.
 		/// Insertion base set by BASE command(in WCS)
 		/// </summary>
 		[CadSystemVariable("$INSBASE", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
 		public XYZ InsertionBase { get; set; } = new XYZ();
+		
 		/// <summary>
 		/// System variable EXTMIN.
 		/// X, Y, and Z drawing extents lower-left corner (in WCS)
 		/// </summary>
 		[CadSystemVariable("$EXTMIN", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
 		public XYZ ExtMin { get; set; }
+		
 		/// <summary>
-		/// System variable EXTMAX.
+		/// System variable EXTMAX
 		/// X, Y, and Z drawing extents upper-right corner(in WCS)
 		/// </summary>
 		[CadSystemVariable("$EXTMAX", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
 		public XYZ ExtMax { get; set; }
+
 		/// <summary>
-		/// System variable LIMMIN.
 		/// XY drawing limits lower-left corner (in WCS)
 		/// </summary>
+		/// <remarks>
+		/// System variable LIMMIN
+		/// </remarks>
 		[CadSystemVariable("$LIMMIN", DxfCode.XCoordinate, DxfCode.YCoordinate)]
 		public XY LimitsMin { get; set; }
+
 		/// <summary>
-		/// System variable LIMMAX.
 		/// XY drawing limits upper-right corner (in WCS)
 		/// </summary>
+		/// <remarks>
+		/// System variable LIMMAX
+		/// </remarks>
 		[CadSystemVariable("$LIMMAX", DxfCode.XCoordinate, DxfCode.YCoordinate)]
 		public XY LimitsMax { get; set; }
+
 		public double Elevation { get; set; }
 		public string DimensionBlockName { get; set; }
 		public string DimensionBlockNameFirst { get; set; }
@@ -581,20 +598,30 @@ namespace ACadSharp.Header
 		public short ExtendedNames { get; set; }
 		public short PlotStyleMode { get; set; }
 		public short LoadOLEObject { get; set; }
+
 		public short InsUnits { get; set; }
+
 		public short CurrentEntityPlotStyleType { get; set; }
+
 		public string FingerPrintGuid { get; set; }
+
 		public string VersionGuid { get; set; }
+
 		public ObjectSortingFlags EntitySortingFlags { get; set; }
+
 		public byte IndexCreationFlags { get; set; }
+
 		public byte HideText { get; set; }
+
 		public byte ExternalReferenceClippingBoundaryType { get; set; }
+
 		/// <summary>
 		/// System variable DIMASSOC.
 		/// Controls the associativity of dimension objects
 		/// </summary>
 		[CadSystemVariable("$DIMASSOC", DxfCode.Int8)]
 		public DimensionAssociation DimensionAssociativity { get; set; }
+
 		public byte HaloGapPercentage { get; set; }
 		public Color ObscuredColor { get; set; }
 		public Color InterfereColor { get; set; }
@@ -636,6 +663,7 @@ namespace ACadSharp.Header
 		internal ulong HandleSeed { get; set; }
 
 		public CadHeader() { }
+
 		public CadHeader(ACadVersion version)
 		{
 			this.Version = version;
