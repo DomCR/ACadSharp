@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace ACadSharp.IO.DXF
 {
@@ -175,7 +176,7 @@ namespace ACadSharp.IO.DXF
 				//Get the current header variable
 				string currVar = this._reader.LastValueAsString;
 
-				if (!headerMap.TryGetValue(currVar, out var codes))
+				if (this._reader.LastValueAsString == null || !headerMap.TryGetValue(currVar, out var codes))
 				{
 					this.notificationHandler(this, new NotificationEventArgs($"Header variable not implemented {currVar}"));
 					this._reader.ReadNext();
@@ -353,7 +354,9 @@ namespace ACadSharp.IO.DXF
 		private IDxfStreamReader getReader()
 		{
 			if (this.IsBinary())
-				throw new NotImplementedException();
+			{
+				return new DxfBinaryReader(this._fileStream.Stream, Encoding.ASCII);
+			}
 			else
 				return new DxfTextReader(this._fileStream.Stream);
 

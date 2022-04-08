@@ -25,7 +25,7 @@ namespace ACadSharp.Examples
 
 		static void ReadDxf()
 		{
-			string file = Path.Combine(PathSamples, "ascii.dxf");
+			string file = Path.Combine(PathSamples, "bin.dxf");
 			DxfReader reader = new DxfReader(file, onNotification);
 			reader.Read();
 		}

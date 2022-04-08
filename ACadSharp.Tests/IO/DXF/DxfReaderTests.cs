@@ -47,7 +47,7 @@ namespace ACadSharp.Tests.IO.DXF
 			CadDocument doc = DxfReader.Read(test, this.onNotification);
 		}
 
-		[Theory(Skip = "Not implemented")]
+		[Theory]
 		[MemberData(nameof(BinaryFiles))]
 		public void ReadBinaryTest(string test)
 		{
@@ -66,7 +66,7 @@ namespace ACadSharp.Tests.IO.DXF
 			}
 		}
 
-		[Theory(Skip = "Not implemented")]
+		[Theory]
 		[MemberData(nameof(BinaryFiles))]
 		public void ReadHeaderBinaryTest(string test)
 		{
