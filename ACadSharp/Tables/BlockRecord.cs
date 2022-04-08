@@ -19,6 +19,16 @@ namespace ACadSharp.Tables
 	[DxfSubClass(DxfSubclassMarker.BlockRecord)]
 	public class BlockRecord : TableEntry
 	{
+		/// <summary>
+		/// Default block record name for the model space
+		/// </summary>
+		public const string ModelSpaceName = "*Model_Space";
+
+		/// <summary>
+		/// Default block record name for the paper space
+		/// </summary>
+		public const string PaperSpaceName = "*Paper_Space";
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.BLOCK;
 

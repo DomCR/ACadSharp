@@ -15,10 +15,13 @@ namespace ACadSharp
 	/// <summary>
 	/// An AutoCAD drawing
 	/// </summary>
-	public class CadDocument : CadObject    //TODO: Remove the CadObject hineritance
+	public class CadDocument : IHandledCadObject
 	{
-		public override ObjectType ObjectType => ObjectType.INVALID;
-
+		/// <summary>
+		/// The document handle is always 0, this field makes sure that no object overrides this value
+		/// </summary>
+		public ulong Handle { get { return 0; } }
+		 
 		/// <summary>
 		/// Contains all the header variables for this document.
 		/// </summary>
@@ -30,7 +33,7 @@ namespace ACadSharp
 		public CadSummaryInfo SummaryInfo { get; set; }
 
 		/// <summary>
-		/// 
+		/// Dxf classes defined in this document
 		/// </summary>
 		public DxfClassCollection Classes { get; set; }
 
@@ -91,15 +94,12 @@ namespace ACadSharp
 
 		public CadDictionary RootDictionary { get; internal set; } = new CadDictionary();
 
-		//TODO: Implement entity collection to store the document's entities
-		private Dictionary<ulong, Entity> _entities { get; set; } = new Dictionary<ulong, Entity>();
-
 		//Contains all the objects in the document
-		private readonly Dictionary<ulong, CadObject> _cadObjects = new Dictionary<ulong, CadObject>();
+		private readonly Dictionary<ulong, IHandledCadObject> _cadObjects = new Dictionary<ulong, IHandledCadObject>();
 
 		public CadDocument()
 		{
-			_cadObjects.Add(0, this);
+			_cadObjects.Add(this.Handle, this);
 
 			//Header and summary
 			this.Header = new CadHeader();
@@ -128,18 +128,12 @@ namespace ACadSharp
 		public T GetCadObject<T>(ulong handle)
 			where T : CadObject
 		{
-			if (_cadObjects.TryGetValue(handle, out CadObject obj))
+			if (_cadObjects.TryGetValue(handle, out IHandledCadObject obj))
 			{
 				return obj as T;
 			}
 
 			return null;
-		}
-
-		[Obsolete]
-		internal void AddEntity(Entity entity)
-		{
-			_entities.Add(entity.Handle, entity);
 		}
 
 		private void registerCadObject(CadObject cadObject)
