@@ -274,7 +274,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Ambient color(only output when non-black)
 		/// </summary>
-		[DxfCodeValue(63)]
+		[DxfCodeValue(63, 421, 431)]
 		public Color AmbientColor { get; set; }
 
 		public VPort() : base() { }

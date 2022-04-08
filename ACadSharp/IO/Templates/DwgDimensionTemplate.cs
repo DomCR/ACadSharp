@@ -5,7 +5,7 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgDimensionTemplate : DwgEntityTemplate
+	internal class DwgDimensionTemplate : CadEntityTemplate
 	{
 		public ulong StyleHandle { get; set; }
 		public ulong BlockHandle { get; set; }

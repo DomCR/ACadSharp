@@ -19,7 +19,7 @@ namespace ACadSharp.IO.DXF
 			//Loop until the section ends
 			while (this._reader.LastValueAsString != DxfFileToken.EndSection)
 			{
-				DwgEntityTemplate template = this.readEntity();
+				CadEntityTemplate template = this.readEntity();
 
 				if (template == null)
 					continue;
@@ -45,7 +45,7 @@ namespace ACadSharp.IO.DXF
 			//Loop until the section ends
 			while (this._reader.LastValueAsString != DxfFileToken.EndSection)
 			{
-				DwgTemplate template = this.readObject();
+				CadTemplate template = this.readObject();
 
 				if (template == null)
 					continue;
@@ -55,7 +55,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private DwgTemplate readObject()
+		private CadTemplate readObject()
 		{
 			throw new NotImplementedException();
 		}

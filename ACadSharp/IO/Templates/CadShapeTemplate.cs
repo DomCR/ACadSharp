@@ -2,7 +2,7 @@
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadShapeTemplate : DwgEntityTemplate
+	internal class CadShapeTemplate : CadEntityTemplate
 	{
 		public ushort? ShapeIndex { get; set; }
 		public ulong? ShapeFileHandle { get; set; }

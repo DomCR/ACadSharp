@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgBlockRecordTemplate : DwgTableEntryTemplate<BlockRecord>
+	internal class DwgBlockRecordTemplate : CadTableEntryTemplate<BlockRecord>
 	{
 		public ulong? FirstEntityHandle { get; set; }
 

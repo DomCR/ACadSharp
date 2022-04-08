@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgViewportTemplate : DwgEntityTemplate
+	internal class DwgViewportTemplate : CadEntityTemplate
 	{
 		public ulong? ViewportHeaderHandle { get; set; }
 		public ulong? BoundaryHandle { get; set; }

@@ -2,7 +2,7 @@
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgColorTemplate : DwgTemplate
+	internal class DwgColorTemplate : CadTemplate
 	{
 		public string Name { get; set; }
 		public string BookName { get; set; }
