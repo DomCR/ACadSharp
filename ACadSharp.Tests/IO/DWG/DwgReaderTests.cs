@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Header;
 using ACadSharp.IO;
 using ACadSharp.IO.DWG;
+using ACadSharp.Tests.Common;
 using System;
 using System.IO;
 using Xunit;
@@ -36,6 +37,9 @@ namespace ACadSharp.Tests.IO.DWG
 		public void ReadTest(string test)
 		{
 			CadDocument doc = DwgReader.Read(test, this.onNotification);
+
+			DocumentIntegrity.AssertTableHirearchy(doc);
+			DocumentIntegrity.AssertDocumentDefaults(doc);
 		}
 
 		[Theory]
@@ -50,7 +54,7 @@ namespace ACadSharp.Tests.IO.DWG
 			}
 		}
 
-		[Theory]
+		[Theory(Skip = "Long time test")]
 		[MemberData(nameof(FilePaths))]
 		public void ReadCrcEnabledTest(string test)
 		{
