@@ -40,6 +40,7 @@ namespace ACadSharp.Tests.IO.DWG
 
 			DocumentIntegrity.AssertTableHirearchy(doc);
 			DocumentIntegrity.AssertDocumentDefaults(doc);
+			DocumentIntegrity.AssertBlockRecords(doc);
 		}
 
 		[Theory]

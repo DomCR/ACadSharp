@@ -2,6 +2,7 @@
 using ACadSharp.Tables.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -29,11 +30,38 @@ namespace ACadSharp.Tests.Common
 			Assert.NotNull(doc.BlockRecords["*Model_Space"]);
 			Assert.NotNull(doc.BlockRecords["*Paper_Space"]);
 
-			//Assert linetypes
 			Assert.NotNull(doc.LineTypes["ByLayer"]);
 			Assert.NotNull(doc.LineTypes["ByBlock"]);
 			Assert.NotNull(doc.LineTypes["Continuous"]);
 
+			Assert.NotNull(doc.Layers["0"]);
+
+			Assert.NotNull(doc.TextStyles["Standard"]);
+
+			Assert.NotNull(doc.AppIds["ACAD"]);
+
+			Assert.NotNull(doc.DimensionStyles["Standard"]);
+
+			Assert.NotNull(doc.VPorts["*Active"]);
+
+			//TODO: Change layout list to an observable collection
+			Assert.NotNull(doc.Layouts.FirstOrDefault(l => l.Name == "Model"));
+		}
+
+		public static void AssertBlockRecords(CadDocument doc)
+		{
+			foreach (BlockRecord br in doc.BlockRecords)
+			{
+				Assert.Equal(br.Name, br.BlockEntity.Name);
+
+				Assert.NotNull(doc.GetCadObject(br.BlockEntity.Handle));
+				Assert.NotNull(doc.GetCadObject(br.BlockEnd.Handle));
+
+				foreach (Entities.Entity e in br.Entities)
+				{
+					Assert.NotNull(doc.GetCadObject(e.Handle));
+				}
+			}
 		}
 
 		private static void assertTable<T>(CadDocument doc, Table<T> table)

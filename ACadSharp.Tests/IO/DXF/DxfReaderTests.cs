@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Header;
 using ACadSharp.IO;
 using ACadSharp.IO.DXF;
+using ACadSharp.Tests.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -45,6 +46,10 @@ namespace ACadSharp.Tests.IO.DXF
 		public void ReadAsciiTest(string test)
 		{
 			CadDocument doc = DxfReader.Read(test, this.onNotification);
+
+			DocumentIntegrity.AssertTableHirearchy(doc);
+			DocumentIntegrity.AssertDocumentDefaults(doc);
+			DocumentIntegrity.AssertBlockRecords(doc);
 		}
 
 		[Theory]
@@ -52,6 +57,10 @@ namespace ACadSharp.Tests.IO.DXF
 		public void ReadBinaryTest(string test)
 		{
 			CadDocument doc = DxfReader.Read(test, this.onNotification);
+
+			DocumentIntegrity.AssertTableHirearchy(doc);
+			DocumentIntegrity.AssertDocumentDefaults(doc);
+			DocumentIntegrity.AssertBlockRecords(doc);
 		}
 
 		[Theory]

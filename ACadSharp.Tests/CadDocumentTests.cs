@@ -24,8 +24,7 @@ namespace ACadSharp.Tests
 		{
 			CadDocument doc = new CadDocument();
 
-			Assert.NotNull(doc.BlockRecords["*Model_Space"]);
-			Assert.NotNull(doc.BlockRecords["*Paper_Space"]);
+			DocumentIntegrity.AssertDocumentDefaults(doc);
 		}
 	}
 }
