@@ -9,10 +9,15 @@ namespace ACadSharp.IO.Templates
 	internal class DwgViewportTemplate : CadEntityTemplate
 	{
 		public ulong? ViewportHeaderHandle { get; set; }
+
 		public ulong? BoundaryHandle { get; set; }
+		
 		public ulong? NamedUcsHandle { get; set; }
+		
 		public ulong? BaseUcsHandle { get; set; }
+		
 		public List<ulong> FrozenLayerHandles { get; set; } = new List<ulong>();
+		
 		public DwgViewportTemplate(Viewport entity) : base(entity) { }
 
 		public override void Build(CadDocumentBuilder builder)

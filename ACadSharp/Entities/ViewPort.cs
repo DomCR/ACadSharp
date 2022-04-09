@@ -18,7 +18,10 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Viewport)]
 	public class Viewport : Entity
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.VIEWPORT;
+
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityViewport;
 
 		/// <summary>

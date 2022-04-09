@@ -109,7 +109,7 @@ namespace ACadSharp.IO.DXF
 		/// <inheritdoc/>
 		public override CadDocument Read()
 		{
-			this._document = new CadDocument();
+			this._document = new CadDocument(false);
 			this._builder = new DxfDocumentBuilder(this._document, this.OnNotificationHandler);
 
 			this._reader = this._reader ?? this.getReader();
