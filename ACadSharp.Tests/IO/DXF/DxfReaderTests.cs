@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Header;
 using ACadSharp.IO;
 using ACadSharp.IO.DXF;
+using ACadSharp.Tests.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,77 +11,60 @@ using Xunit.Abstractions;
 
 namespace ACadSharp.Tests.IO.DXF
 {
-	public class DxfReaderTests
+	public class DxfReaderTests : CadReaderTestsBase<DxfReader>
 	{
-		private const string _samplesFolder = "../../../../samples/";
-
-		public static readonly TheoryData<string> AsciiFiles;
-
-		public static readonly TheoryData<string> BinaryFiles;
-
-		private readonly ITestOutputHelper output;
-
-		static DxfReaderTests()
-		{
-			AsciiFiles = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(_samplesFolder, "*_ascii.dxf"))
-			{
-				AsciiFiles.Add(file);
-			}
-
-			BinaryFiles = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(_samplesFolder, "*_binary.dxf"))
-			{
-				BinaryFiles.Add(file);
-			}
-		}
-
-		public DxfReaderTests(ITestOutputHelper output)
-		{
-			this.output = output;
-		}
+		public DxfReaderTests(ITestOutputHelper output) : base(output) { }
 
 		[Theory]
-		[MemberData(nameof(AsciiFiles))]
-		public void ReadAsciiTest(string test)
-		{
-			CadDocument doc = DxfReader.Read(test, this.onNotification);
-		}
-
-		[Theory]
-		[MemberData(nameof(BinaryFiles))]
-		public void ReadBinaryTest(string test)
-		{
-			CadDocument doc = DxfReader.Read(test, this.onNotification);
-		}
-
-		[Theory]
-		[MemberData(nameof(AsciiFiles))]
+		[MemberData(nameof(DxfAsciiFiles))]
 		public void ReadHeaderAciiTest(string test)
 		{
-			CadHeader header;
-
-			using (DxfReader reader = new DxfReader(test, this.onNotification))
-			{
-				header = reader.ReadHeader();
-			}
+			base.ReadHeaderTest(test);
 		}
 
 		[Theory]
-		[MemberData(nameof(BinaryFiles))]
+		[MemberData(nameof(DxfBinaryFiles))]
 		public void ReadHeaderBinaryTest(string test)
 		{
-			CadHeader header;
-
-			using (DxfReader reader = new DxfReader(test, this.onNotification))
-			{
-				header = reader.ReadHeader();
-			}
+			base.ReadHeaderTest(test);
 		}
 
-		private void onNotification(object sender, NotificationEventArgs e)
+		[Theory]
+		[MemberData(nameof(DxfAsciiFiles))]
+		public void ReadAsciiTest(string test)
 		{
-			output.WriteLine(e.Message);
+			base.ReadTest(test);
+		}
+
+		[Theory]
+		[MemberData(nameof(DxfBinaryFiles))]
+		public void ReadBinaryTest(string test)
+		{
+			base.ReadTest(test);
+		}
+
+		[Theory]
+		[MemberData(nameof(DxfAsciiFiles))]
+		[MemberData(nameof(DxfBinaryFiles))]
+		public override void AssertDocumentDefaults(string test)
+		{
+			base.AssertDocumentDefaults(test);
+		}
+
+		[Theory]
+		[MemberData(nameof(DxfAsciiFiles))]
+		[MemberData(nameof(DxfBinaryFiles))]
+		public override void AssertTableHirearchy(string test)
+		{
+			base.AssertTableHirearchy(test);
+		}
+
+		[Theory]
+		[MemberData(nameof(DxfAsciiFiles))]
+		[MemberData(nameof(DxfBinaryFiles))]
+		public override void AssertBlockRecords(string test)
+		{
+			base.AssertBlockRecords(test);
 		}
 	}
 }

@@ -6,18 +6,18 @@ namespace ACadSharp.IO
 {
 	public abstract class CadReaderBase : ICadReader
 	{
-		protected NotificationEventHandler notificationHandler;
+		public NotificationEventHandler OnNotificationHandler;
 
 		internal readonly StreamIO _fileStream;
 
 		private CadReaderBase(NotificationEventHandler notification)
 		{
-			this.notificationHandler = notification;
+			this.OnNotificationHandler = notification;
 		}
 
 		protected CadReaderBase(string filename, NotificationEventHandler notification) : this(notification)
 		{
-			this._fileStream = new StreamIO(filename);
+			this._fileStream = new StreamIO(filename, FileMode.Open, FileAccess.Read);
 		}
 
 		protected CadReaderBase(Stream stream, NotificationEventHandler notification) : this(notification)

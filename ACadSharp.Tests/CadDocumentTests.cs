@@ -5,6 +5,7 @@ using System.Text;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Tables;
 using Xunit;
+using ACadSharp.Tests.Common;
 
 namespace ACadSharp.Tests
 {
@@ -15,30 +16,15 @@ namespace ACadSharp.Tests
 		{
 			CadDocument document = new CadDocument();
 
-			this.assertTable(document, document.AppIds);
-			this.assertTable(document, document.BlockRecords);
-			this.assertTable(document, document.DimensionStyles);
-			this.assertTable(document, document.Layers);
-			this.assertTable(document, document.LineTypes);
-			this.assertTable(document, document.TextStyles);
-			this.assertTable(document, document.UCSs);
-			this.assertTable(document, document.Views);
-			this.assertTable(document, document.VPorts);
+			DocumentIntegrity.AssertTableHirearchy(document);
 		}
 
-		private void assertTable<T>(CadDocument doc, Table<T> table)
-			where T : TableEntry
+		[Fact()]
+		public void CadDocumentDefaultTest()
 		{
-			Assert.NotNull(table);
+			CadDocument doc = new CadDocument();
 
-			Assert.NotNull(table.Document);
-			Assert.Equal(doc, table.Document);
-			Assert.Equal(doc, table.Owner);
-
-			Assert.True(table.Handle != 0);
-
-			CadObject t = doc.GetCadObject(table.Handle);
-			Assert.Equal(t, table);
+			DocumentIntegrity.AssertDocumentDefaults(doc);
 		}
 	}
 }
