@@ -78,14 +78,14 @@ namespace ACadSharp
 		public ViewsTable Views { get; }
 
 		/// <summary>
-		/// 
+		/// The collection of all vports in the drawing
 		/// </summary>
 		public VPortsTable VPorts { get; }
 
 		/// <summary>
 		/// The collection of all layouts in the drawing
 		/// </summary>
-		public List<Layout> Layouts { get; }
+		public List<Layout> Layouts { get; }	//TODO: change list for observable collection
 
 		/// <summary>
 		/// The collection of all viewports in the drawing
