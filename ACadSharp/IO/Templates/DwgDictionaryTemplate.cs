@@ -5,7 +5,7 @@ namespace ACadSharp.IO.Templates
 {
 	internal class DwgDictionaryTemplate : CadTemplate<CadDictionary>
 	{
-		public Dictionary<string, ulong> Entries { get; set; } = new Dictionary<string, ulong>();
+		public Dictionary<string, ulong?> Entries { get; set; } = new Dictionary<string, ulong?>();
 
 		public DwgDictionaryTemplate(CadDictionary dictionary) : base(dictionary) { }
 

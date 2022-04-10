@@ -5,13 +5,23 @@ using System.Text;
 
 namespace ACadSharp.Objects
 {
+	/// <summary>
+	/// Represents a <see cref="CadDictionary"/> object.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.ObjectDictionary"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Dictionary"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.ObjectDictionary)]
+	[DxfSubClass(DxfSubclassMarker.Dictionary)]
 	public class CadDictionary : CadObject
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.DICTIONARY;
 
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectDictionary;
 
-		//100	Subclass marker(AcDbDictionary)
 		/// <summary>
 		/// indicates that elements of the dictionary are to be treated as hard-owned.
 		/// </summary>

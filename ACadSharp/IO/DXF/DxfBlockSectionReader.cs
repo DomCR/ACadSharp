@@ -40,7 +40,7 @@ namespace ACadSharp.IO.DXF
 
 			if (!this._builder.TryGetCadObject(ownerHandle, out BlockRecord record))
 			{
-				throw new System.Exception();
+				throw new DxfException($"Block with handle {handle} and name {name} doesn't have a record");
 			}
 
 			CadEntityTemplate template = new CadEntityTemplate(record.BlockEntity);
