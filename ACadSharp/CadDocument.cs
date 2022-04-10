@@ -122,6 +122,24 @@ namespace ACadSharp
 				this.UCSs = new UCSTable(this);
 				this.Views = new ViewsTable(this);
 				this.VPorts = new VPortsTable(this);
+
+				//Default variables
+				this.AppIds.Add(AppId.Default);
+
+				this.BlockRecords.Add(BlockRecord.ModelSpace);
+				this.BlockRecords.Add(BlockRecord.PaperSpace);
+
+				this.LineTypes.Add(LineType.ByLayer);
+				this.LineTypes.Add(LineType.ByBlock);
+				this.LineTypes.Add(LineType.Continuous);
+
+				this.Layers.Add(Layer.Default);
+
+				this.TextStyles.Add(TextStyle.Default);
+
+				this.DimensionStyles.Add(DimensionStyle.Default);
+
+				this.VPorts.Add(VPort.Default);
 			}
 		}
 
@@ -166,9 +184,9 @@ namespace ACadSharp
 			switch (cadObject)
 			{
 				case BlockRecord record:
-					//this.addCadObject(record.Layout);
-					//this.addCadObject(record.BlockEnd);
-					//this.addCadObject(record.BlockEntity);
+					this.RegisterCollection(record.Entities);
+					this.addCadObject(record.BlockEnd);
+					this.addCadObject(record.BlockEntity);
 					break;
 			}
 		}

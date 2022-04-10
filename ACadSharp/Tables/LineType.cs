@@ -17,9 +17,11 @@ namespace ACadSharp.Tables
 	[DxfSubClass(DxfSubclassMarker.Linetype)]
 	public class LineType : TableEntry
 	{
-		public static readonly LineType ByLayer = new LineType("ByLayer");
+		public static LineType ByLayer { get { return new LineType("ByLayer"); } }
 
-		public static readonly LineType ByBlock = new LineType("ByBlock");
+		public static LineType ByBlock { get { return new LineType("ByBlock"); } }
+
+		public static LineType Continuous { get { return new LineType("Continuous"); } }
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.LTYPE;

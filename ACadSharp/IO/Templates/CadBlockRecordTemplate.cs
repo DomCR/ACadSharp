@@ -50,13 +50,7 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			if (builder.TryGetCadObject(this.EndBlockHandle, out BlockEnd blockEnd))
-			{
-				this.CadObject.BlockEnd = blockEnd;
-			}
-
-			//TODO: Is necessary to reassign the layout??
-			if (builder.TryGetCadObject<Layout>(this.LayoutHandle.Value, out Layout layout))
+			if (builder.TryGetCadObject(this.LayoutHandle, out Layout layout))
 			{
 				this.CadObject.Layout = layout;
 			}
@@ -80,18 +74,23 @@ namespace ACadSharp.IO.Templates
 
 		public void SetBlockToRecord(CadDocumentBuilder builder)
 		{
-			if (!builder.TryGetCadObject(this.BeginBlockHandle, out Block block))
-				return;
+			if (builder.TryGetCadObject(this.BeginBlockHandle, out Block block))
+			{
+				this.CadObject.Name = block.Name;
 
-			this.CadObject.Name = block.Name;
+				block.Flags = this.CadObject.BlockEntity.Flags;
+				block.BasePoint = this.CadObject.BlockEntity.BasePoint;
+				block.XrefPath = this.CadObject.BlockEntity.XrefPath;
+				block.Comments = this.CadObject.BlockEntity.Comments;
 
-			block.Flags = this.CadObject.BlockEntity.Flags;
-			block.BasePoint = this.CadObject.BlockEntity.BasePoint;
-			block.XrefPath = this.CadObject.BlockEntity.XrefPath;
-			block.Comments = this.CadObject.BlockEntity.Comments;
+				this.CadObject.BlockEntity = block;
 
-			this.CadObject.BlockEntity = block;
+			}
 
+			if (builder.TryGetCadObject(this.EndBlockHandle, out BlockEnd blockEnd))
+			{
+				this.CadObject.BlockEnd = blockEnd;
+			}
 		}
 	}
 }

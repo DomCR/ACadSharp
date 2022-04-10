@@ -38,7 +38,7 @@ namespace ACadSharp.Tables.Collections
 		protected Table(CadDocument document)
 		{
 			this.Owner = document;
-			this.Document.RegisterCollection(this);
+			document.RegisterCollection(this);
 		}
 
 		public virtual void Add(T item)

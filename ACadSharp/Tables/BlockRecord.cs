@@ -29,24 +29,15 @@ namespace ACadSharp.Tables
 		/// </summary>
 		public const string PaperSpaceName = "*Paper_Space";
 
+		public static BlockRecord ModelSpace { get { return new BlockRecord(ModelSpaceName); } }
+
+		public static BlockRecord PaperSpace { get { return new BlockRecord(PaperSpaceName); } }
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.BLOCK;
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableBlockRecord;
-
-		/// <inheritdoc/>
-		public override CadDocument Document
-		{
-			get { return _document; }
-			internal set
-			{
-				_document = value;
-				_document.RegisterCollection(this.Entities);
-			}
-		}
-
-		private CadDocument _document;
 
 		/// <summary>
 		/// Block insertion units
@@ -87,15 +78,12 @@ namespace ACadSharp.Tables
 
 		public BlockEnd BlockEnd { get; set; }
 
-		public BlockRecord() : base()
-		{
-			this.BlockEntity = new Block(this);
-			this.BlockEnd = new BlockEnd(this);
-			this.Entities = new CadObjectCollection<Entity>(this);
-		}
+		public BlockRecord() : this(null) { }
 
 		public BlockRecord(string name) : base(name)
 		{
+			this.BlockEntity = new Block(this);
+			this.BlockEnd = new BlockEnd(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
 		}
 	}
