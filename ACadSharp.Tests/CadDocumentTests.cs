@@ -14,9 +14,9 @@ namespace ACadSharp.Tests
 		[Fact()]
 		public void CadDocumentTest()
 		{
-			CadDocument document = new CadDocument();
+			CadDocument doc = new CadDocument();
 
-			DocumentIntegrity.AssertTableHirearchy(document);
+			DocumentIntegrity.AssertTableHirearchy(doc);
 		}
 
 		[Fact()]
