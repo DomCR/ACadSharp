@@ -172,7 +172,7 @@ namespace ACadSharp.IO.DXF
 						break;
 					case DxfFileToken.TableBlockRecord:
 						BlockRecord record = new BlockRecord();
-						template = new DwgBlockRecordTemplate(record);
+						template = new CadBlockRecordTemplate(record);
 						this.readMapped<BlockRecord>(record, template);
 						break;
 					case DxfFileToken.TableDimstyle:

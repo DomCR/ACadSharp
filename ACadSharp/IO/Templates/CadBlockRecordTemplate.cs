@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgBlockRecordTemplate : CadTableEntryTemplate<BlockRecord>
+	internal class CadBlockRecordTemplate : CadTableEntryTemplate<BlockRecord>
 	{
 		public ulong? FirstEntityHandle { get; set; }
 
@@ -25,7 +25,7 @@ namespace ACadSharp.IO.Templates
 
 		public string LayerName { get; set; }
 
-		public DwgBlockRecordTemplate(BlockRecord block) : base(block) { }
+		public CadBlockRecordTemplate(BlockRecord block) : base(block) { }
 
 		public override bool AddHandle(int dxfcode, ulong handle)
 		{
@@ -36,7 +36,7 @@ namespace ACadSharp.IO.Templates
 			switch (dxfcode)
 			{
 				case 340:
-					LayoutHandle = handle;
+					this.LayoutHandle = handle;
 					value = true;
 					break;
 				default:
@@ -63,7 +63,7 @@ namespace ACadSharp.IO.Templates
 
 			if (this.FirstEntityHandle.HasValue)
 			{
-				var entities = this.getEntitiesCollection<Entity>(builder, FirstEntityHandle.Value, LastEntityHandle.Value);
+				var entities = this.getEntitiesCollection<Entity>(builder, this.FirstEntityHandle.Value, this.LastEntityHandle.Value);
 				this.CadObject.Entities.AddRange(entities);
 			}
 			else

@@ -2731,7 +2731,7 @@ namespace ACadSharp.IO.DWG
 			BlockRecord record = new BlockRecord();
 			Block block = record.BlockEntity;
 
-			DwgBlockRecordTemplate template = new DwgBlockRecordTemplate(record);
+			CadBlockRecordTemplate template = new CadBlockRecordTemplate(record);
 			this._builder.BlockRecordTemplates.Add(template);
 
 			this.readCommonNonEntityData(template);

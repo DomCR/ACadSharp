@@ -13,7 +13,7 @@ namespace ACadSharp.IO.DWG
 
 		public DwgHeaderHandlesCollection HeaderHandles { get; set; }
 
-		public List<DwgBlockRecordTemplate> BlockRecordTemplates { get; set; } = new List<DwgBlockRecordTemplate>();
+		public List<CadBlockRecordTemplate> BlockRecordTemplates { get; set; } = new List<CadBlockRecordTemplate>();
 
 		public DwgDocumentBuilder(CadDocument document, DwgReaderFlags flags, NotificationEventHandler notification = null)
 			: base(document, notification)
