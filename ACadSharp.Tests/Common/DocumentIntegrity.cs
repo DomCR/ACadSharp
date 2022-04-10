@@ -46,7 +46,7 @@ namespace ACadSharp.Tests.Common
 			entryNotNull(doc.VPorts, "*Active");
 
 			//TODO: Change layout list to an observable collection
-			notNull(doc.Layouts.FirstOrDefault(l => l.Name == "Model"), "Model");
+			//notNull(doc.Layouts.FirstOrDefault(l => l.Name == "Model"), "Model");
 		}
 
 		public static void AssertBlockRecords(CadDocument doc)

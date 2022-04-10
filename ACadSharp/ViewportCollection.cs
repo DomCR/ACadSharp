@@ -18,8 +18,7 @@ namespace ACadSharp
 
 		public ViewportCollection(CadDocument document)
 		{
-			this.Document = document;
-			this.Document.RegisterCollection(this);
+			document.RegisterCollection(this);
 		}
 
 		public void Add(Viewport item)

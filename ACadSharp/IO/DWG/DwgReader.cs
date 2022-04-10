@@ -88,7 +88,7 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public override CadDocument Read()
 		{
-			this._document = new CadDocument();
+			this._document = new CadDocument(false);
 			this._builder = new DwgDocumentBuilder(this._document, this.Flags, this.OnNotificationHandler);
 
 			//Read the file header

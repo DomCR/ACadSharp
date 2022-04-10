@@ -33,11 +33,12 @@ namespace ACadSharp.Tables.Collections
 
 		protected readonly Dictionary<string, T> _entries = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
 
-		public Table(CadDocument document)
+		protected Table() { }
+
+		protected Table(CadDocument document)
 		{
 			this.Owner = document;
-			this.Document = document;
-			this.Document.RegisterCollection(this);
+			document.RegisterCollection(this);
 		}
 
 		public virtual void Add(T item)

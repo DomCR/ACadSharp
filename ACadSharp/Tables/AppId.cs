@@ -22,6 +22,8 @@ namespace ACadSharp.Tables
 		/// </summary>
 		public const string DefaultName = "ACAD";
 
+		public static AppId Default { get { return new AppId(DefaultName); } }
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.APPID;
 

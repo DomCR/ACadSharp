@@ -25,6 +25,8 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableDimstyle;
 
+		public static DimensionStyle Default { get { return new DimensionStyle("Standard"); } }
+
 		/// <summary>
 		/// DIMPOST
 		/// </summary>
@@ -414,9 +416,9 @@ namespace ACadSharp.Tables
 		/// </summary>
 		[DxfCodeValue(295)]
 		public TextDirection TextDirection { get; set; }
-		
+
 		public double AltMzf { get; set; }
-		
+
 		public double Mzf { get; set; }
 
 		/// <summary>
@@ -485,6 +487,8 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(344)]
 		public Block DimArrow2 { get; set; }
 
-		public DimensionStyle() : base() { }
+		public DimensionStyle() : this(null) { }
+
+		public DimensionStyle(string name) : base(name) { }
 	}
 }

@@ -21,7 +21,7 @@ namespace ACadSharp
 		/// The document handle is always 0, this field makes sure that no object overrides this value
 		/// </summary>
 		public ulong Handle { get { return 0; } }
-		 
+
 		/// <summary>
 		/// Contains all the header variables for this document.
 		/// </summary>
@@ -40,85 +40,113 @@ namespace ACadSharp
 		/// <summary>
 		/// The collection of all registered applications in the drawing
 		/// </summary>
-		public AppIdsTable AppIds { get; }
+		public AppIdsTable AppIds { get; private set; }
 
 		/// <summary>
 		/// The collection of all block records in the drawing
 		/// </summary>
-		public BlockRecordsTable BlockRecords { get; }
+		public BlockRecordsTable BlockRecords { get; private set; }
 
 		/// <summary>
 		/// The collection of all dimension styles in the drawing
 		/// </summary>
-		public DimensionStylesTable DimensionStyles { get; }
+		public DimensionStylesTable DimensionStyles { get; private set; }
 
 		/// <summary>
 		/// The collection of all layers in the drawing
 		/// </summary>
-		public LayersTable Layers { get; }
+		public LayersTable Layers { get; private set; }
 
 		/// <summary>
 		/// The collection of all linetypes in the drawing
 		/// </summary>
-		public LineTypesTable LineTypes { get; }
+		public LineTypesTable LineTypes { get; private set; }
 
 		/// <summary>
 		/// The collection of all text styles in the drawing
 		/// </summary>
-		public TextStylesTable TextStyles { get; }
+		public TextStylesTable TextStyles { get; private set; }
 
 		/// <summary>
 		/// The collection of all user coordinate systems (UCSs) in the drawing
 		/// </summary>
-		public UCSTable UCSs { get; }
+		public UCSTable UCSs { get; private set; }
 
 		/// <summary>
 		/// The collection of all views in the drawing
 		/// </summary>
-		public ViewsTable Views { get; }
+		public ViewsTable Views { get; private set; }
 
 		/// <summary>
 		/// The collection of all vports in the drawing
 		/// </summary>
-		public VPortsTable VPorts { get; }
+		public VPortsTable VPorts { get; private set; }
 
 		/// <summary>
 		/// The collection of all layouts in the drawing
 		/// </summary>
-		public List<Layout> Layouts { get; }	//TODO: change list for observable collection
+		[Obsolete("Layouts are always owned by dictionaries not the document")]
+		public List<Layout> Layouts { get; } = new List<Layout>();    //TODO: change list for observable collection
 
 		/// <summary>
 		/// The collection of all viewports in the drawing
 		/// </summary>
-		public ViewportCollection Viewports { get; }
+		[Obsolete("Viewports are only used by the R14 versions of dwg")]
+		public ViewportCollection Viewports { get; private set; }
 
 		public CadDictionary RootDictionary { get; internal set; } = new CadDictionary();
 
 		//Contains all the objects in the document
 		private readonly Dictionary<ulong, IHandledCadObject> _cadObjects = new Dictionary<ulong, IHandledCadObject>();
 
-		public CadDocument()
+		internal CadDocument(bool createDefaults)
 		{
-			_cadObjects.Add(this.Handle, this);
+			this._cadObjects.Add(this.Handle, this);
 
-			//Header and summary
-			this.Header = new CadHeader();
-			this.SummaryInfo = new CadSummaryInfo();
-
-			//Initialize tables
-			this.AppIds = new AppIdsTable(this);
-			this.BlockRecords = new BlockRecordsTable(this);
-			this.DimensionStyles = new DimensionStylesTable(this);
-			this.Layers = new LayersTable(this);
-			this.LineTypes = new LineTypesTable(this);
-			this.TextStyles = new TextStylesTable(this);
-			this.UCSs = new UCSTable(this);
-			this.Views = new ViewsTable(this);
-			this.VPorts = new VPortsTable(this);
+			//Initalize viewports only for management 
 			this.Viewports = new ViewportCollection(this);
 
-			this.Layouts = new List<Layout>();
+			if (createDefaults)
+			{
+				//Header and summary
+				this.Header = new CadHeader();
+				this.SummaryInfo = new CadSummaryInfo();
+
+				//Initialize tables
+				this.BlockRecords = new BlockRecordsTable(this);
+				this.AppIds = new AppIdsTable(this);
+				this.DimensionStyles = new DimensionStylesTable(this);
+				this.Layers = new LayersTable(this);
+				this.LineTypes = new LineTypesTable(this);
+				this.TextStyles = new TextStylesTable(this);
+				this.UCSs = new UCSTable(this);
+				this.Views = new ViewsTable(this);
+				this.VPorts = new VPortsTable(this);
+
+				//Default variables
+				this.AppIds.Add(AppId.Default);
+
+				this.BlockRecords.Add(BlockRecord.ModelSpace);
+				this.BlockRecords.Add(BlockRecord.PaperSpace);
+
+				this.LineTypes.Add(LineType.ByLayer);
+				this.LineTypes.Add(LineType.ByBlock);
+				this.LineTypes.Add(LineType.Continuous);
+
+				this.Layers.Add(Layer.Default);
+
+				this.TextStyles.Add(TextStyle.Default);
+
+				this.DimensionStyles.Add(DimensionStyle.Default);
+
+				this.VPorts.Add(VPort.Default);
+			}
 		}
+
+		/// <summary>
+		/// Creates a document with the default objects
+		/// </summary>
+		public CadDocument() : this(true) { }
 
 		public CadObject GetCadObject(ulong handle)
 		{
@@ -128,7 +156,7 @@ namespace ACadSharp
 		public T GetCadObject<T>(ulong handle)
 			where T : CadObject
 		{
-			if (_cadObjects.TryGetValue(handle, out IHandledCadObject obj))
+			if (this._cadObjects.TryGetValue(handle, out IHandledCadObject obj))
 			{
 				return obj as T;
 			}
@@ -136,52 +164,94 @@ namespace ACadSharp
 			return null;
 		}
 
-		private void registerCadObject(CadObject cadObject)
+		private void addCadObject(CadObject cadObject)
 		{
 			if (cadObject.Document != null)
 				throw new ArgumentException($"The item with handle {cadObject.Handle} is already assigned to a document");
 
 			cadObject.Document = this;
-		}
 
-		private void addCadObject(CadObject cadObject)
-		{
-			if (cadObject.Handle == 0 || _cadObjects.ContainsKey(cadObject.Handle))
+			if (cadObject.Handle == 0 || this._cadObjects.ContainsKey(cadObject.Handle))
 			{
-				cadObject.Handle = _cadObjects.Keys.Max() + 1;
+				cadObject.Handle = this._cadObjects.Keys.Max() + 1;
 			}
 
-			_cadObjects.Add(cadObject.Handle, cadObject);
-		}
+			this._cadObjects.Add(cadObject.Handle, cadObject);
 
-		private void onBeforeAdd(object sender, CollectionChangedEventArgs e)
-		{
-			registerCadObject(e.Item);
+			//TODO: Add the dictionary
+			//this.addCadObject(cadObject.Dictionary);
+
+			switch (cadObject)
+			{
+				case BlockRecord record:
+					this.RegisterCollection(record.Entities);
+					this.addCadObject(record.BlockEnd);
+					this.addCadObject(record.BlockEntity);
+					break;
+			}
 		}
 
 		private void onAdd(object sender, CollectionChangedEventArgs e)
 		{
-			addCadObject(e.Item);
+			this.addCadObject(e.Item);
 		}
 
 		internal void RegisterCollection<T>(IObservableCollection<T> collection, bool addElements = true)
 			where T : CadObject
 		{
-			collection.OnBeforeAdd += this.onBeforeAdd;
+			switch (collection)
+			{
+				case AppIdsTable:
+					this.AppIds = (AppIdsTable)collection;
+					this.AppIds.Owner = this;
+					break;
+				case BlockRecordsTable:
+					this.BlockRecords = (BlockRecordsTable)collection;
+					this.BlockRecords.Owner = this;
+					break;
+				case DimensionStylesTable:
+					this.DimensionStyles = (DimensionStylesTable)collection;
+					this.DimensionStyles.Owner = this;
+					break;
+				case LayersTable:
+					this.Layers = (LayersTable)collection;
+					this.Layers.Owner = this;
+					break;
+				case LineTypesTable:
+					this.LineTypes = (LineTypesTable)collection;
+					this.LineTypes.Owner = this;
+					break;
+				case TextStylesTable:
+					this.TextStyles = (TextStylesTable)collection;
+					this.TextStyles.Owner = this;
+					break;
+				case UCSTable:
+					this.UCSs = (UCSTable)collection;
+					this.UCSs.Owner = this;
+					break;
+				case ViewsTable:
+					this.Views = (ViewsTable)collection;
+					this.Views.Owner = this;
+					break;
+				case VPortsTable:
+					this.VPorts = (VPortsTable)collection;
+					this.VPorts.Owner = this;
+					break;
+			}
+
 			collection.OnAdd += this.onAdd;
+
+			if (collection is CadObject cadObject)
+			{
+				this.addCadObject(cadObject);
+			}
 
 			if (addElements)
 			{
 				foreach (T item in collection)
 				{
-					registerCadObject(item);
-					addCadObject(item);
+					this.addCadObject(item);
 				}
-			}
-
-			if (collection is CadObject cadObject)
-			{
-				addCadObject(cadObject);
 			}
 		}
 	}
