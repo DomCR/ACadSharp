@@ -218,7 +218,8 @@ namespace ACadSharp.IO.DXF
 				//Setup the common fields
 				template.CadObject.Handle = handle;
 				template.OwnerHandle = ownerHandle;
-				tableTemplate.CadObject.Add((T)template.CadObject);
+
+				tableTemplate.EntryHandles.Add(template.CadObject.Handle);
 
 				//Add the object and the template to the builder
 				this._builder.Templates[template.CadObject.Handle] = template;
