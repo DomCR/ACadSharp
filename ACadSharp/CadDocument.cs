@@ -159,6 +159,18 @@ namespace ACadSharp
 			}
 
 			this._cadObjects.Add(cadObject.Handle, cadObject);
+
+			//TODO: Add the dictionary
+			//this.addCadObject(cadObject.Dictionary);
+
+			switch (cadObject)
+			{
+				case BlockRecord record:
+					//this.addCadObject(record.Layout);
+					//this.addCadObject(record.BlockEnd);
+					//this.addCadObject(record.BlockEntity);
+					break;
+			}
 		}
 
 		private void onAdd(object sender, CollectionChangedEventArgs e)

@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.IO.DWG;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Collections.Generic;
 
@@ -55,10 +56,10 @@ namespace ACadSharp.IO.Templates
 			}
 
 			//TODO: Is necessary to reassign the layout??
-			//if (this.LayoutHandle.HasValue && builder.TryGetCadObject<Layout>(this.LayoutHandle.Value, out Layout layout))
-			//{
-			//	layout.AssociatedBlock = this.CadObject;
-			//}
+			if (builder.TryGetCadObject<Layout>(this.LayoutHandle.Value, out Layout layout))
+			{
+				this.CadObject.Layout = layout;
+			}
 
 			if (this.FirstEntityHandle.HasValue)
 			{

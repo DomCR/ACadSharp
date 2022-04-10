@@ -4202,7 +4202,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readLayout()
 		{
 			Layout layout = new Layout();
-			DwgLayoutTemplate template = new DwgLayoutTemplate(layout);
+			CadLayoutTemplate template = new CadLayoutTemplate(layout);
 
 			this.readCommonNonEntityData(template);
 
