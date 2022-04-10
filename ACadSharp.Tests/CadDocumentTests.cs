@@ -37,6 +37,8 @@ namespace ACadSharp.Tests
 			doc.BlockRecords[BlockRecord.ModelSpaceName].Entities.Add(line);
 
 			CadObject l = doc.GetCadObject(line.Handle);
+
+			//Assert existing element
 			Assert.NotNull(l);
 			Assert.Equal(line, l);
 			Assert.False(0 == l.Handle);

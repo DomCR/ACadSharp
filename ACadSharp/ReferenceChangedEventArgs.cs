@@ -2,14 +2,14 @@
 
 namespace ACadSharp
 {
-	public class CollectionChangedEventArgs : EventArgs
+	public class ReferenceChangedEventArgs : EventArgs
 	{
 		/// <summary>
 		/// Object that is being added or removed from the collection
 		/// </summary>
 		public CadObject Item { get; }
 
-		public CollectionChangedEventArgs(CadObject item)
+		public ReferenceChangedEventArgs(CadObject item)
 		{
 			this.Item = item;
 		}
