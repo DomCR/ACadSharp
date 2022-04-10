@@ -209,11 +209,6 @@ namespace ACadSharp
 					break;
 			}
 
-			if (typeof(T).IsEquivalentTo(typeof(TableEntry)))
-			{
-
-			}
-
 			collection.OnAdd += this.onAdd;
 
 			if (collection is CadObject cadObject)

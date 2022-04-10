@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Exceptions;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
 using System;
 using System.Diagnostics;
 
@@ -82,46 +83,62 @@ namespace ACadSharp.IO.DXF
 			switch (name)
 			{
 				case DxfFileToken.TableAppId:
-					template = new DwgTableTemplate<AppId>(this._builder.DocumentToBuild.AppIds);
+					template = new DwgTableTemplate<AppId>(new AppIdsTable());
 					this.readEntries((DwgTableTemplate<AppId>)template);
+					template.CadObject.Handle = handle;
+					this._builder.DocumentToBuild.RegisterCollection((AppIdsTable)template.CadObject);
 					break;
 				case DxfFileToken.TableBlockRecord:
-					template = new DwgBlockCtrlObjectTemplate(this._builder.DocumentToBuild.BlockRecords);
+					template = new DwgBlockCtrlObjectTemplate(new BlockRecordsTable());
 					this.readEntries((DwgBlockCtrlObjectTemplate)template);
+					template.CadObject.Handle = handle;
+					this._builder.DocumentToBuild.RegisterCollection((BlockRecordsTable)template.CadObject);
 					break;
 				case DxfFileToken.TableVport:
-					template = new DwgTableTemplate<VPort>(this._builder.DocumentToBuild.VPorts);
+					template = new DwgTableTemplate<VPort>(new VPortsTable());
 					this.readEntries((DwgTableTemplate<VPort>)template);
+					template.CadObject.Handle = handle;
+					this._builder.DocumentToBuild.RegisterCollection((VPortsTable)template.CadObject);
 					break;
 				case DxfFileToken.TableLinetype:
-					template = new DwgTableTemplate<LineType>(this._builder.DocumentToBuild.LineTypes);
+					template = new DwgTableTemplate<LineType>(new LineTypesTable());
 					this.readEntries((DwgTableTemplate<LineType>)template);
+					template.CadObject.Handle = handle;
+					this._builder.DocumentToBuild.RegisterCollection((LineTypesTable)template.CadObject);
 					break;
 				case DxfFileToken.TableLayer:
-					template = new DwgTableTemplate<Layer>(this._builder.DocumentToBuild.Layers);
+					template = new DwgTableTemplate<Layer>(new LayersTable());
 					this.readEntries((DwgTableTemplate<Layer>)template);
+					template.CadObject.Handle = handle;
+					this._builder.DocumentToBuild.RegisterCollection((LayersTable)template.CadObject);
 					break;
 				case DxfFileToken.TableStyle:
-					template = new DwgTableTemplate<TextStyle>(this._builder.DocumentToBuild.TextStyles);
+					template = new DwgTableTemplate<TextStyle>(new TextStylesTable());
 					this.readEntries((DwgTableTemplate<TextStyle>)template);
+					template.CadObject.Handle = handle;
+					this._builder.DocumentToBuild.RegisterCollection((TextStylesTable)template.CadObject);
 					break;
 				case DxfFileToken.TableView:
-					template = new DwgTableTemplate<View>(this._builder.DocumentToBuild.Views);
+					template = new DwgTableTemplate<View>(new ViewsTable());
 					this.readEntries((DwgTableTemplate<View>)template);
+					template.CadObject.Handle = handle;
+					this._builder.DocumentToBuild.RegisterCollection((ViewsTable)template.CadObject);
 					break;
 				case DxfFileToken.TableUcs:
-					template = new DwgTableTemplate<UCS>(this._builder.DocumentToBuild.UCSs);
+					template = new DwgTableTemplate<UCS>(new UCSTable());
 					this.readEntries((DwgTableTemplate<UCS>)template);
+					template.CadObject.Handle = handle;
+					this._builder.DocumentToBuild.RegisterCollection((UCSTable)template.CadObject);
 					break;
 				case DxfFileToken.TableDimstyle:
-					template = new DwgTableTemplate<DimensionStyle>(this._builder.DocumentToBuild.DimensionStyles);
+					template = new DwgTableTemplate<DimensionStyle>(new DimensionStylesTable());
 					this.readEntries((DwgTableTemplate<DimensionStyle>)template);
+					template.CadObject.Handle = handle;
+					this._builder.DocumentToBuild.RegisterCollection((DimensionStylesTable)template.CadObject);
 					break;
 				default:
 					throw new DxfException($"Unknown table name {name}");
 			}
-
-			template.CadObject.Handle = handle;
 
 			Debug.Assert(ownerHandle == null || ownerHandle.Value == 0);
 
