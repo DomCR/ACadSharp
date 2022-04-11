@@ -17,15 +17,15 @@ namespace ACadSharp.Examples
 
 		static void Main(string[] args)
 		{
-			//ReadDxf();
+			ReadDxf();
 			//ReadDwg();
 
-			getInsertEntities("", "MyBlock");
+			//getInsertEntities("", "MyBlock");
 		}
 
 		static void ReadDxf()
 		{
-			string file = Path.Combine(PathSamples, "bin.dxf");
+			string file = Path.Combine(PathSamples, "ascii.dxf");
 			DxfReader reader = new DxfReader(file, onNotification);
 			reader.Read();
 		}

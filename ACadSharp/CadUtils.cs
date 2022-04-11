@@ -4,6 +4,7 @@ using System.Text;
 
 namespace ACadSharp
 {
+	[Obsolete]
 	internal class CadUtils
 	{
 		/// <summary>

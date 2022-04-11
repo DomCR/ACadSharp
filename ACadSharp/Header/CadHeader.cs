@@ -37,17 +37,33 @@ namespace ACadSharp.Header
 			get { return this.Version.ToString(); }
 			set
 			{
+				/*
+				 The AutoCAD drawing database version number:
+				AC1006 = R10
+				AC1009 = R11 and R12
+				AC1012 = R13
+				AC1014 = R14
+				AC1015 = AutoCAD 2000
+				AC1018 = AutoCAD 2004
+				AC1021 = AutoCAD 2007
+				AC1024 = AutoCAD 2010
+				AC1027 = AutoCAD 2013
+				AC1032 = AutoCAD 2018
+				 */
+
 				this.Version = CadUtils.GetVersionFromName(value);
 			}
 		}
 
-		public ACadVersion Version { get; set; }    //TODO: Fix the string version
+		public ACadVersion Version { get; set; } = ACadVersion.AC1032;
 
 		/// <summary>
-		/// System variable ACADMAINTVER.
 		/// Maintenance version number(should be ignored)
 		/// </summary>
-		[CadSystemVariable("$ACADMAINTVER", DxfCode.Int16)]
+		/// <remarks>
+		/// System variable ACADMAINTVER.
+		/// </remarks>
+		[CadSystemVariable(DxfReferenceType.Ignored, "$ACADMAINTVER", 70)]
 		public short MaintenanceVersion { get; set; }
 
 		/// <summary>
@@ -223,8 +239,10 @@ namespace ACadSharp.Header
 
 		/// <summary>
 		/// 
-		/// System variable DISPSILH
 		/// </summary>
+		/// <remarks>
+		/// System variable DISPSILH
+		/// </remarks>
 		public bool DisplaySilhouetteCurves { get; set; }
 
 		/// <summary>
@@ -247,8 +265,10 @@ namespace ACadSharp.Header
 
 		/// <summary>
 		/// Units format for coordinates and distances
-		/// System variable LUNITS
 		/// </summary>
+		/// <remarks>
+		/// System variable LUNITS
+		/// </remarks>
 		[CadSystemVariable("$LUNITS", DxfCode.Int16)]
 		public LinearUnitFormat LinearUnitFormat { get; set; }
 
@@ -259,9 +279,12 @@ namespace ACadSharp.Header
 		public short LinearUnitPrecision { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable AUNITS
+		/// Entity linetype name, or BYBLOCK or BYLAYER
 		/// </summary>
+		/// <remarks>
+		/// System variable AUNITS
+		/// </remarks>
+		[CadSystemVariable("$AUNITS", 6)]
 		public AngularUnitFormat AngularUnit { get; set; }
 
 		/// <summary>
@@ -408,6 +431,56 @@ namespace ACadSharp.Header
 		public double TextHeightDefault { get; set; }
 
 		/// <summary>
+		/// Current text style name
+		/// </summary>
+		/// <remarks>
+		/// System variable TEXTSTYLE
+		/// </remarks>
+		[CadSystemVariable(DxfReferenceType.Name, "$TEXTSTYLE", 7)]
+		public string TextStyleName
+		{
+			get { return this.TextStyle.Name; }
+			set
+			{
+				if (this.Document != null)
+				{
+					this.TextStyle = this.Document.TextStyles[value];
+				}
+				else
+				{
+					this.TextStyle = new TextStyle(value);
+				}
+			}
+		}
+
+		public TextStyle TextStyle { get; private set; } = TextStyle.Default;
+
+		/// <summary>
+		/// Current layer name
+		/// </summary>
+		/// <remarks>
+		/// System variable CLAYER
+		/// </remarks>
+		[CadSystemVariable(DxfReferenceType.Name, "$CLAYER", 8)]
+		public string LayerName
+		{
+			get { return this.Layer.Name; }
+			set
+			{
+				if (this.Document != null)
+				{
+					this.Layer = this.Document.Layers[value];
+				}
+				else
+				{
+					this.Layer = new Layer(value);
+				}
+			}
+		}
+
+		public Layer Layer { get; private set; } = Layer.Default;
+
+		/// <summary>
 		/// Default trace width
 		/// </summary>
 		/// <remarks>
@@ -472,56 +545,82 @@ namespace ACadSharp.Header
 		/// System variable 
 		/// </summary>
 		public double UserDouble5 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// First chamfer distance
 		/// </summary>
+		/// <remarks>
+		/// System variable CHAMFERA
+		/// </remarks>
+		[CadSystemVariable("$CHAMFERA", 40)]
 		public double ChamferDistance1 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Second  chamfer distance
 		/// </summary>
+		/// <remarks>
+		/// System variable CHAMFERB
+		/// </remarks>
+		[CadSystemVariable("$CHAMFERB", 40)]
 		public double ChamferDistance2 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Chamfer length
 		/// </summary>
+		/// <remarks>
+		/// System variable CHAMFERC
+		/// </remarks>
+		[CadSystemVariable("$CHAMFERC", 40)]
 		public double ChamferLength { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Chamfer angle
 		/// </summary>
+		/// <remarks>
+		/// System variable CHAMFERD
+		/// </remarks>
+		[CadSystemVariable("$CHAMFERD", 40)]
 		public double ChamferAngle { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public double FacetResolution { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public double CurrentMultilineScale { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public double CurrentEntityLinetypeScale { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Name of menu file
 		/// </summary>
+		/// <remarks>		
+		/// System variable MENU
+		/// </remarks>
+		[CadSystemVariable("$MENU", 1)]
 		public string MenuFileName { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public DateTime CreateDateTime { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public DateTime UpdateDateTime { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
@@ -662,11 +761,15 @@ namespace ACadSharp.Header
 		public double ShadowPlaneLocation { get; set; }
 		public string StyleSheetName { get; set; }
 
+		#endregion
+
+		public CadDocument Document { get; internal set; }
+
 		public UCS Ucs { get; set; } = new UCS();
 
 		public DimensionStyle DimensionStyleOverrides { get; set; } = new DimensionStyle();
-		#endregion
 
+		[Obsolete]
 		internal ulong HandleSeed { get; set; }
 
 		public CadHeader() { }
