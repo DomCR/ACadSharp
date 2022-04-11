@@ -17,6 +17,11 @@ namespace ACadSharp.IO.DXF
 			foreach (var item in map)
 			{
 				this._writer.Write(DxfCode.CLShapeText, item.Key);
+
+				foreach (var cv in this._document.Header.GetValues(item.Key))
+				{
+					this._writer.Write(cv.Key, cv.Value.ToString());
+				}
 			}
 		}
 	}

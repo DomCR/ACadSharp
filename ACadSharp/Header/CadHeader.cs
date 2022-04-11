@@ -32,7 +32,7 @@ namespace ACadSharp.Header
 		/// System variable ACADVER.
 		/// </remarks>
 		[CadSystemVariable("$ACADVER", DxfCode.Text)]
-		public string VersionString { get; set; }
+		public string VersionString { get; set; } = "AC1032";
 		public ACadVersion Version { get; set; }    //TODO: Fix the string version
 
 		/// <summary>
@@ -519,44 +519,44 @@ namespace ACadSharp.Header
 		/// System variable 
 		/// </summary>
 		public TimeSpan TotalEditingTime { get; set; }
-		
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public TimeSpan UserElapsedTimeSpan { get; set; }
-		
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public Color CurrentEntityColor { get; set; }
-		
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public double ViewportDefaultViewScaleFactor { get; set; }
-		
+
 		/// <summary>
 		/// PSPACE
 		/// </summary>
 		public UCS PaperSpaceUcs { get; set; } = new UCS();
-		
+
 		/// <summary>
 		/// System variable INSBASE.
 		/// Insertion base set by BASE command(in WCS)
 		/// </summary>
 		[CadSystemVariable("$INSBASE", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
 		public XYZ InsertionBase { get; set; } = new XYZ();
-		
+
 		/// <summary>
 		/// System variable EXTMIN.
 		/// X, Y, and Z drawing extents lower-left corner (in WCS)
 		/// </summary>
 		[CadSystemVariable("$EXTMIN", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
 		public XYZ ExtMin { get; set; }
-		
+
 		/// <summary>
 		/// System variable EXTMAX
 		/// X, Y, and Z drawing extents upper-right corner(in WCS)
@@ -729,6 +729,46 @@ namespace ACadSharp.Header
 				if (att.Name == systemvar)
 				{
 					value = p.GetValue(this);
+					break;
+				}
+			}
+
+			return value;
+		}
+
+		/// <summary>
+		/// Get the primitive values in each dxf code
+		/// </summary>
+		/// <param name="systemvar"></param>
+		/// <returns>dictionary with the codes and values</returns>
+		public Dictionary<DxfCode, object> GetValues(string systemvar)
+		{
+			Dictionary<DxfCode, object> value = null;
+
+			foreach (PropertyInfo p in this.GetType().GetProperties())
+			{
+				CadSystemVariableAttribute att = p.GetCustomAttribute<CadSystemVariableAttribute>();
+				if (att == null)
+					continue;
+
+				if (att.Name == systemvar)
+				{
+					value = new Dictionary<DxfCode, object>();
+
+					if (att.ValueCodes.Length == 1)
+					{
+						value.Add(att.ValueCodes[0], p.GetValue(this));
+					}
+					else
+					{
+						IVector vector = (IVector)p.GetValue(this);
+						var arr = vector.GetComponents();
+						for (int i = 0; i < arr.Length; i++)
+						{
+							value.Add(att.ValueCodes[i], arr[i]);
+						}
+					}
+
 					break;
 				}
 			}
