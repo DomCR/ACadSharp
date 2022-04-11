@@ -1,13 +1,12 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
-using ACadSharp.Types.Units;
 using ACadSharp.Tables;
+using ACadSharp.Types.Units;
 using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace ACadSharp.Header
 {

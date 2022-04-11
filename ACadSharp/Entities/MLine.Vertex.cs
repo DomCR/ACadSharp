@@ -27,7 +27,7 @@ namespace ACadSharp.Entities
 			public XYZ Miter { get; set; }
 
 			//73	Number of elements in MLINESTYLE definition
-
+			[DxfCodeValue(DxfReferenceType.Count, 73)]
 			public List<Segment> Segments { get; set; } = new List<Segment>();
 
 			public class Segment
@@ -36,16 +36,18 @@ namespace ACadSharp.Entities
 				/// <summary>
 				/// Element parameters
 				/// </summary>
-				[DxfCodeValue(41)]
+				[DxfCodeValue(DxfReferenceType.Count, 74)]
+				//41	Element parameters(repeats based on previous code 74)
 				public List<double> Parameters { get; set; } = new List<double>();
-
-				//75	Number of area fill parameters for this element(repeats for each element in segment)
 
 				/// <summary>
 				/// Area fill parameters
 				/// </summary>
-				[DxfCodeValue(42)]
+				//75	Number of area fill parameters for this element(repeats for each element in segment)
+				//42	Area fill parameters(repeats based on previous code 75)
+				[DxfCodeValue(DxfReferenceType.Count, 75)]
 				public List<double> AreaFillParameters { get; set; } = new List<double>();
+
 			}
 		}
 	}

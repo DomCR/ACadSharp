@@ -26,6 +26,8 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableVport;
 
+		public static VPort Default { get { return new VPort("*Active"); } }
+
 		/// <summary>
 		/// Lower-left corner of viewport
 		/// </summary>
@@ -274,9 +276,11 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Ambient color(only output when non-black)
 		/// </summary>
-		[DxfCodeValue(63)]
+		[DxfCodeValue(63, 421, 431)]
 		public Color AmbientColor { get; set; }
 
-		public VPort() : base() { }
+		public VPort() : this(null) { }
+
+		public VPort(string name) : base(name) { }
 	}
 }

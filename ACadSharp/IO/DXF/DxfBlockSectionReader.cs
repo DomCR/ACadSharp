@@ -43,7 +43,7 @@ namespace ACadSharp.IO.DXF
 				throw new System.Exception();
 			}
 
-			DwgEntityTemplate template = new DwgEntityTemplate(record.BlockEntity);
+			CadEntityTemplate template = new CadEntityTemplate(record.BlockEntity);
 
 			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.Entity);
 
@@ -55,7 +55,7 @@ namespace ACadSharp.IO.DXF
 
 			while (this._reader.LastValueAsString != DxfFileToken.EndBlock)
 			{
-				DwgEntityTemplate entityTemplate = this.readEntity();
+				CadEntityTemplate entityTemplate = this.readEntity();
 
 				if (entityTemplate == null)
 					continue;
@@ -71,7 +71,7 @@ namespace ACadSharp.IO.DXF
 
 		private void readBlockEnd(BlockEnd block)
 		{
-			DwgEntityTemplate template = new DwgEntityTemplate(block);
+			CadEntityTemplate template = new CadEntityTemplate(block);
 
 			this.readCommonObjectData(template);
 

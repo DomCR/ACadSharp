@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgViewportEntityControlTemplate : DwgTemplate<ViewportCollection>
+	internal class DwgViewportEntityControlTemplate : CadTemplate<ViewportCollection>
 	{
 		public List<ulong> EntryHandles { get; } = new List<ulong>();
 

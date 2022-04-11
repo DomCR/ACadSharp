@@ -9,6 +9,7 @@ namespace ACadSharp.Attributes
 	sealed class CadSystemVariableAttribute : Attribute
 	{
 		public string Name { get; }
+		
 		public DxfCode[] ValueCodes { get; }
 
 		public CadSystemVariableAttribute(string variable, params int[] codes)

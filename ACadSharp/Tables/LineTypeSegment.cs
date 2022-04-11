@@ -18,6 +18,12 @@ namespace ACadSharp.Tables
 		public LinetypeShapeFlags Shapeflag { get; set; }
 
 		/// <summary>
+		/// Shape number 
+		/// </summary>
+		[DxfCodeValue(75)]
+		public short ShapeNumber { get; set; }
+
+		/// <summary>
 		/// Offset
 		/// </summary>
 		[DxfCodeValue(44, 45)]
@@ -46,5 +52,16 @@ namespace ACadSharp.Tables
 		/// </remarks>
 		[DxfCodeValue(9)]
 		public string Text { get; set; }
+
+		/// <summary>
+		/// Pointer to STYLE object (one per element if code 74 > 0)
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
+		public TextStyle Style { get; set; }	//TODO: set this to the parent
+
+		/// <summary>
+		/// Line type where this segment belongs
+		/// </summary>
+		public LineType LineType { get; }
 	}
 }

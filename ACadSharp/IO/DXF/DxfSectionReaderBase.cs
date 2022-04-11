@@ -8,8 +8,6 @@ namespace ACadSharp.IO.DXF
 {
 	internal abstract class DxfSectionReaderBase
 	{
-		protected delegate bool checkDxfCodeValue(DwgTemplate template);
-
 		protected readonly IDxfStreamReader _reader;
 		protected readonly DxfDocumentBuilder _builder;
 		protected readonly NotificationEventHandler _notification;
@@ -79,12 +77,16 @@ namespace ACadSharp.IO.DXF
 				throw new Exception();
 		}
 
-		protected void readCommonObjectData(DwgTemplate template)
+		protected void readCommonObjectData(CadTemplate template)
 		{
 			while (this._reader.LastDxfCode != DxfCode.Subclass)
 			{
 				switch (this._reader.LastCode)
 				{
+					//object name
+					case 0:
+						Debug.Assert(template.CadObject.ObjectName == this._reader.LastValueAsString);
+						break;
 					//Handle
 					case 5:
 						template.CadObject.Handle = this._reader.LastValueAsHandle;
@@ -111,20 +113,35 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		protected DwgEntityTemplate readEntity()
+		protected CadEntityTemplate readEntity()
 		{
-			DwgEntityTemplate template = null;
+			CadEntityTemplate template = null;
 
 			switch (this._reader.LastValueAsString)
 			{
+				case DxfFileToken.EntityAttribute:
+					template = new DwgTextEntityTemplate(new AttributeEntity());
+					break;
 				case DxfFileToken.EntityAttributeDefinition:
 					template = new DwgTextEntityTemplate(new AttributeDefinition());
 					break;
+				case DxfFileToken.EntityArc:
+					template = new CadEntityTemplate(new Arc());
+					break;
 				case DxfFileToken.EntityCircle:
-					template = new DwgEntityTemplate(new Circle());
+					template = new CadEntityTemplate(new Circle());
+					break;
+				case DxfFileToken.EntityEllipse:
+					template = new CadEntityTemplate(new Ellipse());
 					break;
 				case DxfFileToken.EntityLine:
-					template = new DwgEntityTemplate(new Line());
+					template = new CadEntityTemplate(new Line());
+					break;
+				//case DxfFileToken.EntityLwPolyline:
+				//	//template = new CadEntityTemplate(new Line());
+				//	break;
+				case DxfFileToken.EntityHatch:
+					template = new CadHatchTemplate(new Hatch());
 					break;
 				case DxfFileToken.EntityInsert:
 					template = new DwgInsertTemplate(new Insert());
@@ -132,11 +149,32 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityMText:
 					template = new DwgTextEntityTemplate(new MText());
 					break;
+				case DxfFileToken.EntityMLine:
+					template = new CadMLineTemplate(new MLine());
+					break;
 				case DxfFileToken.EntityPoint:
-					template = new DwgEntityTemplate(new Point());
+					template = new CadEntityTemplate(new Point());
+					break;
+				case DxfFileToken.EntityPolyline:
+					template = new CadPolyLineTemplate();
+					break;
+				case DxfFileToken.EntityRay:
+					template = new CadEntityTemplate(new Ray());
 					break;
 				case DxfFileToken.EntitySolid:
-					template = new DwgEntityTemplate(new Solid());
+					template = new CadEntityTemplate(new Solid());
+					break;
+				case DxfFileToken.EntityText:
+					template = new CadEntityTemplate(new TextEntity());
+					break;
+				case DxfFileToken.EntityVertex:
+					template = new CadEntityTemplate(new Vertex2D());
+					break;
+				case DxfFileToken.EntityViewport:
+					template = new DwgViewportTemplate(new Viewport());
+					break;
+				case DxfFileToken.EntityXline:
+					template = new CadEntityTemplate(new XLine());
 					break;
 				default:
 					this._notification?.Invoke(null, new NotificationEventArgs($"Entity not implemented: {this._reader.LastValueAsString}"));
@@ -157,20 +195,35 @@ namespace ACadSharp.IO.DXF
 			{
 				switch (this._reader.LastValueAsString)
 				{
+					case DxfSubclassMarker.Attribute:
+						this.readMapped<AttributeEntity>(template.CadObject, template);
+						break;
 					case DxfSubclassMarker.AttributeDefinition:
 						this.readMapped<AttributeDefinition>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.Arc:
+						this.readMapped<Arc>(template.CadObject, template);
 						break;
 					case DxfSubclassMarker.Circle:
 						this.readMapped<Circle>(template.CadObject, template);
 						break;
+					case DxfSubclassMarker.Ellipse:
+						this.readMapped<Ellipse>(template.CadObject, template);
+						break;
 					case DxfSubclassMarker.Entity:
 						this.readMapped<Entity>(template.CadObject, template);
 						break;
+					//case DxfSubclassMarker.Hatch:
+					//	this.readHatch((Hatch)template.CadObject, (CadHatchTemplate)template);
+					//	break;
 					case DxfSubclassMarker.Insert:
 						this.readMapped<Insert>(template.CadObject, template);
 						break;
 					case DxfSubclassMarker.Line:
 						this.readMapped<Line>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.MLine:
+						this.readMapped<MLine>(template.CadObject, template);
 						break;
 					case DxfSubclassMarker.MText:
 						this.readMapped<MText>(template.CadObject, template);
@@ -178,11 +231,37 @@ namespace ACadSharp.IO.DXF
 					case DxfSubclassMarker.Point:
 						this.readMapped<Point>(template.CadObject, template);
 						break;
+					//case DxfSubclassMarker.PolyfaceMesh:
+					//	this.readMapped<PolyLine2D>(template.CadObject, template);
+					//	break;
+					case DxfSubclassMarker.Polyline:
+						(template as CadPolyLineTemplate).SetPolyLineObject(new Polyline2D());
+						this.readMapped<Polyline2D>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.Polyline3d:
+						(template as CadPolyLineTemplate).SetPolyLineObject(new Polyline3D());
+						this.readMapped<Polyline3D>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.Polyline3dVertex:
+						this.readMapped<Vertex3D>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.Ray:
+						this.readMapped<Ray>(template.CadObject, template);
+						break;
 					case DxfSubclassMarker.Text:
 						this.readMapped<TextEntity>(template.CadObject, template);
 						break;
 					case DxfSubclassMarker.Trace:
 						this.readMapped<Solid>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.Vertex:
+						this.readMapped<Vertex>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.Viewport:
+						this.readMapped<Viewport>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.XLine:
+						this.readMapped<XLine>(template.CadObject, template);
 						break;
 					default:
 						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}"));
@@ -195,53 +274,7 @@ namespace ACadSharp.IO.DXF
 			return template;
 		}
 
-		protected bool readCommonEntity(DwgTemplate template)
-		{
-			DwgEntityTemplate entityTemplate = template as DwgEntityTemplate;
-
-			switch (this._reader.LastCode)
-			{
-				//Layer name
-				case 8:
-					entityTemplate.LayerName = this._reader.LastValueAsString;
-					return true;
-				//Hard-pointer ID/handle to material object (present if not BYLAYER)
-				case 347:
-				//Hard - pointer ID / handle to the plot style object
-				case 390:
-				//APP: layout tab name
-				case 410:
-					Debug.Fail("Entity code not readed");
-					return true;
-				//Transparency value
-				case 440:
-					//TODO: implement the transparency read
-					return true;
-				default:
-					break;
-			}
-
-			return false;
-		}
-
-		protected bool readInsert(DwgTemplate template)
-		{
-			DwgInsertTemplate insertTemplate = template as DwgInsertTemplate;
-
-			switch (this._reader.LastCode)
-			{
-				//Block name
-				case 2:
-					insertTemplate.BlockName = this._reader.LastValueAsString;
-					return true;
-				default:
-					break;
-			}
-
-			return false;
-		}
-
-		protected void readMapped<T>(CadObject cadObject, DwgTemplate template)
+		protected void readMapped<T>(CadObject cadObject, CadTemplate template)
 			where T : CadObject
 		{
 			DxfClassMap map = DxfClassMap.Create<T>();
@@ -259,7 +292,11 @@ namespace ACadSharp.IO.DXF
 					this._reader.ReadNext();
 					continue;
 				}
-
+				else if (this._reader.LastDxfCode == DxfCode.ControlString)
+				{
+					this.readReactors();
+					continue;
+				}
 
 				if (!map.DxfProperties.TryGetValue(this._reader.LastCode, out DxfProperty dxfProperty))
 				{
@@ -274,13 +311,13 @@ namespace ACadSharp.IO.DXF
 				{
 					//TODO: references may be also names in case of layers, blocks...
 					if (!template.AddHandle(this._reader.LastCode, this._reader.LastValueAsHandle))
-						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf referenced code {this._reader.LastCode} not implemented in the template for {typeof(T)} | value : {this._reader.LastValueAsHandle}"));
+						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf referenced code {this._reader.LastCode} not implemented in the {template.GetType().Name} for {typeof(T)} | value : {this._reader.LastValueAsHandle}"));
 				}
 				else if (dxfProperty.ReferenceType == DxfReferenceType.Name)
 				{
 					//TODO: references may be also names in case of layers, blocks...
 					if (!template.AddName(this._reader.LastCode, this._reader.LastValueAsString))
-						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf named referenced code {this._reader.LastCode} not implemented in the template for {typeof(T)} | value : {this._reader.LastValueAsHandle}"));
+						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf named referenced code {this._reader.LastCode} not implemented in the {template.GetType().Name} for {typeof(T)} | value : {this._reader.LastValueAsHandle}"));
 				}
 				else if (dxfProperty.ReferenceType == DxfReferenceType.Count)
 				{
@@ -321,55 +358,26 @@ namespace ACadSharp.IO.DXF
 			//TODO: Handle extended data 
 		}
 
-		/// <summary>
-		/// Util method for a fast implementation.
-		/// Read a cad object using the common dxf methods and assign it to the object.
-		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="subclass"></param>
-		/// <param name="check">Delegate for specific codes such as handles ore assignation to the template and not the CadObject</param>
-		/// <param name="readUntil"></param>
-		/// <remarks>
-		/// This method will disappear once all the objects are implemented
-		/// </remarks>
-		/// <returns></returns>
-		protected void readRawMap(DwgTemplate template, string subclass, checkDxfCodeValue check, Func<bool> readUntil)
+		protected void readHatch(Hatch hatch, CadHatchTemplate template)
 		{
-			//TODO: read raw should notify the codes that aren't assigned
-
-			Dictionary<DxfCode, object> map = new Dictionary<DxfCode, object>();
-
-			Debug.Assert(string.IsNullOrEmpty(subclass) || this._reader.LastDxfCode == DxfCode.Subclass);
-			Debug.Assert(string.IsNullOrEmpty(subclass) || this._reader.LastValueAsString == subclass);
-
 			//while (this._reader.LastDxfCode != DxfCode.Start)
-			while (readUntil.Invoke())
+			//{
+			//	this._reader.ReadNext();
+			//}
+
+			//this.readMapped<Hatch>(template.CadObject, template);
+		}
+
+		private void readReactors()
+		{
+			this._reader.ReadNext();
+
+			while (this._reader.LastDxfCode != DxfCode.ControlString)
 			{
-				if (check != null && check(template))
-				{
-					this._reader.ReadNext();
-					continue;
-				}
-
-				try
-				{
-					//Add the value
-					map.Add(this._reader.LastDxfCode, this._reader.LastValue);
-				}
-				catch (Exception)
-				{
-					this._builder.NotificationHandler?.Invoke(
-						template.CadObject,
-						new NotificationEventArgs($"Code already in the map for the reflection reader\n" +
-						$"\tcode : {this._reader.LastCode}\n" +
-						$"\ttype : {template.CadObject.ObjectType}"));
-				}
-
 				this._reader.ReadNext();
 			}
 
-			//Build the table based on the map
-			template.CadObject.Build(map);
+			this._reader.ReadNext();
 		}
 	}
 }

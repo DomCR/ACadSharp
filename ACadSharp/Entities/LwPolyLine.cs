@@ -5,7 +5,7 @@ using CSMath;
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Represents a <see cref="LwPolyLine"/> entity
+	/// Represents a <see cref="LwPolyline"/> entity
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.EntityLwPolyline"/> <br/>
@@ -13,7 +13,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityLwPolyline)]
 	[DxfSubClass(DxfSubclassMarker.LwPolyline)]
-	public class LwPolyLine : Entity
+	public class LwPolyline : Entity
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.LWPOLYLINE;

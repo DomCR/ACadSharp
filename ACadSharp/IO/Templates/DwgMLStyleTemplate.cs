@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgMLStyleTemplate : DwgTemplate<MLStyle>
+	internal class DwgMLStyleTemplate : CadTemplate<MLStyle>
 	{
 		public class ElementTemplate : ICadObjectBuilder
 		{

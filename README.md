@@ -1,4 +1,4 @@
-## ACadSharp ![Build](https://img.shields.io/github/workflow/status/DomCr/ACadSharp/Build/master) ![Build&Test](https://github.com/DomCr/ACadSharp/actions/workflows/build_n_test.yml/badge.svg) ![License](https://img.shields.io/github/license/DomCr/ACadSharp)
+## ACadSharp ![Build&Test](https://github.com/DomCr/ACadSharp/actions/workflows/build_n_test.yml/badge.svg) ![License](https://img.shields.io/github/license/DomCr/ACadSharp) ![nuget](https://img.shields.io/nuget/v/Acadsharp)
 
 C# library to read/write cad files like dxf/dwg.
 
@@ -58,6 +58,20 @@ The dwg/dxf readers are not yet fully implemented, the NotificationHandler will 
 - ACAD_PROXY_OBJECT
 - VIEW
 
+##### Dxf reader entities not implemented
+
+- LWPOLYLINE
+- POLYLINE_PFACE
+- LWPOLYLINE
+- DIMENSION
+- ACAD_TABLE
+- VIEW
+- SPLINE
+- WIPEOUT
+- LEADER
+- 3DFACE
+- MESH
+- HATCH
 
 ##### Long term 
 

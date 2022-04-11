@@ -83,7 +83,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Style of this text entity.
 		/// </summary>
-		[DxfCodeValue(7)]
+		[DxfCodeValue(DxfReferenceType.Handle, 7)]
 		public TextStyle Style { get; set; } = TextStyle.Default;
 
 		/// <summary>
