@@ -13,45 +13,6 @@ using System.Threading.Tasks;
 
 namespace ACadSharp
 {
-	public abstract class DxfMapBase
-	{
-		public string Name { get; set; }
-
-		public Dictionary<int, object> Properties { get; } = new Dictionary<int, object>();
-
-		public Dictionary<int, DxfProperty> DxfProperties { get; } = new Dictionary<int, DxfProperty>();
-
-		protected static void addClassProperties(DxfMapBase map, Type type)
-		{
-			foreach (var item in cadObjectMapDxf(type))
-			{
-				map.DxfProperties.Add(item.Key, item.Value);
-			}
-		}
-
-		protected static IEnumerable<KeyValuePair<int, DxfProperty>> cadObjectMapDxf(Type type)
-		{
-			foreach (PropertyInfo p in type.GetProperties(BindingFlags.Public
-														| BindingFlags.Instance
-														| BindingFlags.DeclaredOnly))
-			{
-				DxfCodeValueAttribute att = p.GetCustomAttribute<DxfCodeValueAttribute>();
-				if (att == null)
-					continue;
-
-				if (att.ReferenceType == DxfReferenceType.Count)
-				{
-
-				}
-
-				foreach (var item in DxfProperty.Create(p))
-				{
-					yield return new KeyValuePair<int, DxfProperty>(item.Code, item);
-				}
-			}
-		}
-	}
-
 	public class DxfMap : DxfMapBase
 	{
 		public Dictionary<string, DxfClassMap> SubClasses { get; private set; } = new Dictionary<string, DxfClassMap>();
@@ -109,33 +70,6 @@ namespace ACadSharp
 		}
 	}
 
-	public class DxfClassMap : DxfMapBase
-	{
-		public static DxfClassMap Create<T>()
-			where T : CadObject
-		{
-			Type type = typeof(T);
-			DxfClassMap classMap = new DxfClassMap();
-
-			var att = type.GetCustomAttribute<DxfSubClassAttribute>();
-			if (att == null)
-				throw new ArgumentException($"{type.FullName} is not a dxf subclass");
-
-			classMap.Name = type.GetCustomAttribute<DxfSubClassAttribute>().ClassName;
-
-			addClassProperties(classMap, type);
-
-			DxfSubClassAttribute baseAtt = type.BaseType.GetCustomAttribute<DxfSubClassAttribute>();
-			if (baseAtt != null && baseAtt.IsEmpty)
-			{
-				//Properties in the table seem to be embeded to the hinerit type
-				addClassProperties(classMap, type.BaseType);
-			}
-
-			return classMap;
-		}
-	}
-
 	public abstract class DxfPropertyBase
 	{
 		public int Code { get; }
@@ -175,6 +109,12 @@ namespace ACadSharp
 			_property = property;
 		}
 
+		/// <summary>
+		/// Create the DxfProperties for each dxf code assigned to the property
+		/// </summary>
+		/// <param name="property"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentException"></exception>
 		public static IEnumerable<DxfProperty> Create(PropertyInfo property)
 		{
 			var att = property.GetCustomAttribute<DxfCodeValueAttribute>();
