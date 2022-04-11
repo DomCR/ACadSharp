@@ -779,16 +779,16 @@ namespace ACadSharp.Header
 			this.Version = version;
 		}
 
-		public static Dictionary<string, DxfCode[]> GetHeaderMap()
+		public static Dictionary<string, CadSystemVariable> GetHeaderMap()
 		{
-			Dictionary<string, DxfCode[]> map = new Dictionary<string, DxfCode[]>();
+			Dictionary<string, CadSystemVariable> map = new Dictionary<string, CadSystemVariable>();
 			foreach (PropertyInfo p in typeof(CadHeader).GetProperties())
 			{
 				CadSystemVariableAttribute att = p.GetCustomAttribute<CadSystemVariableAttribute>();
 				if (att == null)
 					continue;
 
-				map.Add(att.Name, att.ValueCodes);
+				map.Add(att.Name, new CadSystemVariable(p));
 			}
 
 			return map;

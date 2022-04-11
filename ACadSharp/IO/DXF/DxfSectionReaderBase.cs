@@ -335,7 +335,7 @@ namespace ACadSharp.IO.DXF
 						case GroupCodeValueType.Int64:
 						case GroupCodeValueType.Chunk:
 						case GroupCodeValueType.Bool:
-							dxfProperty.SetValue(cadObject, this._reader.LastValue);
+							dxfProperty.SetValue(this._reader.LastCode, cadObject, this._reader.LastValue);
 							break;
 						case GroupCodeValueType.Comment:
 							this._notification?.Invoke(null, new NotificationEventArgs($"Comment in the file :  {this._reader.LastValueAsString}"));

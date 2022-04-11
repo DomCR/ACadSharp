@@ -6,12 +6,17 @@ using System.Text;
 namespace ACadSharp.Attributes
 {
 	[System.AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-	sealed class CadSystemVariableAttribute : Attribute
+	public sealed class CadSystemVariableAttribute : Attribute, ICodeValueAttribute
 	{
+		/// <summary>
+		/// System variable name
+		/// </summary>
 		public string Name { get; }
 
+		/// <inheritdoc/>
 		public DxfCode[] ValueCodes { get; }
 
+		/// <inheritdoc/>
 		public DxfReferenceType ReferenceType { get; }
 
 		public CadSystemVariableAttribute(string variable, params int[] codes)
