@@ -1,11 +1,4 @@
-﻿#region copyright
-//Copyright 2021, Albert Domenech.
-//All rights reserved. 
-//This source code is licensed under the MIT license. 
-//See LICENSE file in the project root for full license information.
-#endregion
-
-namespace ACadSharp
+﻿namespace ACadSharp
 {
 	/// <summary>
 	/// Type of dxf reference
@@ -32,8 +25,17 @@ namespace ACadSharp
 		/// </summary>
 		Count,
 
+		/// <summary>
+		/// Optional value
+		/// </summary>
+		/// <remarks>
+		/// This values are ignored, may be configurable in the future
+		/// </remarks>
 		Optional,
 
+		/// <summary>
+		/// Value will be ignored by the reader and writer
+		/// </summary>
 		Ignored
 	}
 }

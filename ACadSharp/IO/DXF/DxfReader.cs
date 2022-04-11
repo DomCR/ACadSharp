@@ -166,7 +166,7 @@ namespace ACadSharp.IO.DXF
 
 			CadHeader header = new CadHeader();
 
-			Dictionary<string, DxfCode[]> headerMap = CadHeader.GetHeaderMap();
+			Dictionary<string, CadSystemVariable> headerMap = CadHeader.GetHeaderMap();
 
 			this._reader.ReadNext();
 
@@ -176,17 +176,18 @@ namespace ACadSharp.IO.DXF
 				//Get the current header variable
 				string currVar = this._reader.LastValueAsString;
 
-				if (this._reader.LastValueAsString == null || !headerMap.TryGetValue(currVar, out var codes))
+				if (this._reader.LastValueAsString == null || !headerMap.TryGetValue(currVar, out var data))
 				{
-					//this.notificationHandler(this, new NotificationEventArgs($"Header variable not implemented {currVar}"));
+					this.OnNotificationHandler?.Invoke(this, new NotificationEventArgs($"Header variable not implemented {currVar}"));
 					this._reader.ReadNext();
 					continue;
 				}
 
-				object[] parameters = new object[codes.Length];
-				for (int i = 0; i < codes.Length; i++)
+				object[] parameters = new object[data.DxfCodes.Length];
+				for (int i = 0; i < data.DxfCodes.Length; i++)
 				{
 					this._reader.ReadNext();
+
 					parameters[i] = this._reader.LastValue;
 				}
 
