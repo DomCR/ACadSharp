@@ -350,6 +350,6 @@ MigrationBackup/
 .ionide/
 
 /samples/local
-/samples/local/out
+/samples/out
 /.editorconfig
 /ACadTestGenerator
