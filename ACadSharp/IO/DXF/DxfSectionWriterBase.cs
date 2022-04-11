@@ -29,23 +29,4 @@ namespace ACadSharp.IO.DXF
 
 		protected abstract void writeSection();
 	}
-
-	internal class DwgHeaderWriter : DxfSectionWriterBase
-	{
-		public override string SectionName { get { return DxfFileToken.HeaderSection; } }
-
-		public DwgHeaderWriter(IDxfStreamWriter writer, CadDocument document) : base(writer, document)
-		{
-		}
-
-		protected override void writeSection()
-		{
-			Dictionary<string, DxfCode[]> map = Header.CadHeader.GetHeaderMap();
-
-			foreach (var item in map)
-			{
-				this._writer.Write(DxfCode.CLShapeText, item.Key);
-			}
-		}
-	}
 }

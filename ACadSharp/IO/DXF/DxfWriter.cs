@@ -37,6 +37,18 @@ namespace ACadSharp.IO.DXF
 		{
 			this.writeHeader();
 
+			this.writeDxfClasses();
+
+			this.writeTables();
+
+			this.writeBlocks();
+
+			this.writeEntities();
+
+			this.writeObjects();
+
+			this.writeACDSData();
+
 			this._writer.Write(DxfCode.Start, DxfFileToken.EndOfFile);
 		}
 
@@ -59,7 +71,36 @@ namespace ACadSharp.IO.DXF
 
 		private void writeHeader()
 		{
-			new DwgHeaderWriter(this._writer, this._document).Write();
+			new DxfHeaderSectionWriter(this._writer, this._document).Write();
+		}
+
+		private void writeDxfClasses()
+		{
+			new DxfDxfClassesSectionWriter(this._writer, this._document).Write();
+		}
+
+		private void writeTables()
+		{
+			new DxfTablesSectionWriter(this._writer, this._document).Write();
+		}
+
+		private void writeBlocks()
+		{
+			new DxfBlocksSectionWriter(this._writer, this._document).Write();
+		}
+
+		private void writeEntities()
+		{
+			new DxfEntitiesSectionWriter(this._writer, this._document).Write();
+		}
+
+		private void writeObjects()
+		{
+			new DxfObjectsSectionWriter(this._writer, this._document).Write();
+		}
+
+		private void writeACDSData()
+		{
 		}
 	}
 }
