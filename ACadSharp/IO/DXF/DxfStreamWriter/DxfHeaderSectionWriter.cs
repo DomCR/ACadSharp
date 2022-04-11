@@ -12,15 +12,20 @@ namespace ACadSharp.IO.DXF
 
 		protected override void writeSection()
 		{
-			Dictionary<string, DxfCode[]> map = Header.CadHeader.GetHeaderMap();
+			Dictionary<string, CadSystemVariable> map = Header.CadHeader.GetHeaderMap();
 
 			foreach (var item in map)
 			{
 				this._writer.Write(DxfCode.CLShapeText, item.Key);
 
-				foreach (var cv in this._document.Header.GetValues(item.Key))
+				foreach (var csv in item.Value.DxfCodes)
 				{
-					this._writer.Write(cv.Key, cv.Value.ToString());
+					var a = item.Value.GetValue(csv, this._document.Header);
+
+					if (a == null)
+						continue;
+
+					this._writer.Write((DxfCode)csv, a.ToString());
 				}
 			}
 		}
