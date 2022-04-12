@@ -7,6 +7,10 @@ namespace ACadSharp.Tables.Collections
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.VPORT_CONTROL_OBJ;
 
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.TableVport;
+
+
 		internal VPortsTable() : base() { }
 
 		internal VPortsTable(CadDocument document) : base(document) { }
