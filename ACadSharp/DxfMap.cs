@@ -188,7 +188,8 @@ namespace ACadSharp
 
 		public object GetValue<TCadObject>(int code, TCadObject obj)
 		{
-			if (this._property.PropertyType.IsEquivalentTo(typeof(IVector)))
+			if (this._property.PropertyType.IsEquivalentTo(typeof(XY)) ||
+				this._property.PropertyType.IsEquivalentTo(typeof(XYZ)))
 			{
 				IVector vector = (IVector)this._property.GetValue(obj);
 

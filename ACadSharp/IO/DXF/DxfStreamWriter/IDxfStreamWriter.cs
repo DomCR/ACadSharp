@@ -6,6 +6,6 @@ namespace ACadSharp.IO.DXF
 {
 	internal interface IDxfStreamWriter : IDisposable
 	{
-		void Write(DxfCode code, string value);
+		void Write(DxfCode code, object value);
 	}
 }

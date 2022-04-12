@@ -20,12 +20,12 @@ namespace ACadSharp.IO.DXF
 
 				foreach (var csv in item.Value.DxfCodes)
 				{
-					var a = item.Value.GetValue(csv, this._document.Header);
+					object value = item.Value.GetValue(csv, this._document.Header);
 
-					if (a == null)
+					if (value == null)
 						continue;
 
-					this._writer.Write((DxfCode)csv, a.ToString());
+					this._writer.Write((DxfCode)csv, value);
 				}
 			}
 		}

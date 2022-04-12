@@ -32,6 +32,11 @@ namespace ACadSharp.Tests.IO.DXF
 			{
 				wr.Write();
 			}
+
+			using (var re = new DxfReader(path, onNotification))
+			{
+				CadDocument readed = re.Read();
+			}
 		}
 
 		[Fact(Skip = "Not implemented")]
@@ -44,6 +49,11 @@ namespace ACadSharp.Tests.IO.DXF
 			{
 				wr.Write();
 			}
+		}
+
+		protected void onNotification(object sender, NotificationEventArgs e)
+		{
+			_output.WriteLine(e.Message);
 		}
 	}
 }
