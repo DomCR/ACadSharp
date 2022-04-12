@@ -269,7 +269,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable LUNITS
 		/// </remarks>
-		[CadSystemVariable("$LUNITS", DxfCode.Int16)]
+		[CadSystemVariable("$LUNITS", 70)]
 		public LinearUnitFormat LinearUnitFormat { get; set; }
 
 		/// <summary>
@@ -284,7 +284,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable AUNITS
 		/// </remarks>
-		[CadSystemVariable("$AUNITS", 6)]
+		[CadSystemVariable("$AUNITS", 70)]
 		public AngularUnitFormat AngularUnit { get; set; }
 
 		/// <summary>
@@ -607,7 +607,7 @@ namespace ACadSharp.Header
 		/// System variable MENU
 		/// </remarks>
 		[CadSystemVariable("$MENU", 1)]
-		public string MenuFileName { get; set; }
+		public string MenuFileName { get; set; } = string.Empty;
 
 		/// <summary>
 		/// 
