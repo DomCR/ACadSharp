@@ -86,25 +86,27 @@ namespace ACadSharp.Header
 		public string LastSavedBy { get; set; }
 
 		/// <summary>
-		/// System variable REQUIREDVERSIONS.
 		/// The default value is 0.
 		/// Read only.
 		/// </summary>
-		/// <remarks>Only in <see cref="ACadVersion.AC1024"/> or above.</remarks>
+		/// <remarks>
+		/// System variable REQUIREDVERSIONS <br/>
+		/// Only in <see cref="ACadVersion.AC1024"/> or above
+		/// </remarks>
 		[CadSystemVariable("$REQUIREDVERSIONS", DxfCode.Int16)]
 		public long RequiredVersions { get; set; }
 
 		/// <summary>
-		/// System variable DIMASO.
 		/// </summary>
 		/// <remarks>
-		/// Obsolete; see DIMASSOC.
+		/// System variable DIMASO <br/>
+		/// Obsolete; see DIMASSOC
 		/// </remarks>
 		[CadSystemVariable("$DIMASO", DxfCode.Int16)]
 		public bool AssociatedDimensions { get; set; } = true;
 
 		/// <summary>
-		/// System variable DIMSHO.
+		/// System variable DIMSHO
 		/// </summary>
 		[CadSystemVariable("$DIMSHO", DxfCode.Int16)]
 		public bool UpdateDimensionsWhileDragging { get; set; } = true;
@@ -112,6 +114,9 @@ namespace ACadSharp.Header
 		/// <summary>
 		/// Undocumented
 		/// </summary>
+		/// <remarks>
+		/// System variable DIMSAV
+		/// </remarks>
 		public bool DIMSAV { get; set; }
 
 		/// <summary>
@@ -157,7 +162,7 @@ namespace ACadSharp.Header
 		/// System variable PSLTSCALE.
 		/// </remarks>
 		[CadSystemVariable("$PSLTSCALE", DxfCode.Int16)]
-		public SpaceLineTypeScaling PaperSpaceLineTypeScaling { get; set; }
+		public SpaceLineTypeScaling PaperSpaceLineTypeScaling { get; set; } = SpaceLineTypeScaling.Normal;
 
 		/// <summary>
 		/// Nonzero if limits checking is on
@@ -167,7 +172,7 @@ namespace ACadSharp.Header
 		public bool LimitCheckingOn { get; set; }
 
 		/// <summary>
-		/// System variable BLIPMODE.	??
+		/// System variable BLIPMODE	??
 		/// </summary>
 		[CadSystemVariable("$BLIPMODE", DxfCode.Int16)]
 		public bool BlipMode { get; set; }
@@ -191,7 +196,7 @@ namespace ACadSharp.Header
 		/// System variable ANGDIR
 		/// </summary>
 		[CadSystemVariable("$ANGDIR", DxfCode.Int16)]
-		public AngularDirection AngularDirection { get; set; }
+		public AngularDirection AngularDirection { get; set; } = AngularDirection.ClockWise;
 
 		/// <summary>
 		/// Controls the display of helixes and smoothed mesh objects.
@@ -269,7 +274,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable LUNITS
 		/// </remarks>
-		[CadSystemVariable("$LUNITS", DxfCode.Int16)]
+		[CadSystemVariable("$LUNITS", 70)]
 		public LinearUnitFormat LinearUnitFormat { get; set; }
 
 		/// <summary>
@@ -284,7 +289,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable AUNITS
 		/// </remarks>
-		[CadSystemVariable("$AUNITS", 6)]
+		[CadSystemVariable("$AUNITS", 70)]
 		public AngularUnitFormat AngularUnit { get; set; }
 
 		/// <summary>
@@ -607,7 +612,7 @@ namespace ACadSharp.Header
 		/// System variable MENU
 		/// </remarks>
 		[CadSystemVariable("$MENU", 1)]
-		public string MenuFileName { get; set; }
+		public string MenuFileName { get; set; } = string.Empty;
 
 		/// <summary>
 		/// 
@@ -722,12 +727,17 @@ namespace ACadSharp.Header
 		public byte ExternalReferenceClippingBoundaryType { get; set; }
 
 		/// <summary>
-		/// System variable DIMASSOC.
 		/// Controls the associativity of dimension objects
 		/// </summary>
+		/// <remarks>
+		/// System variable DIMASSOC
+		/// </remarks>
 		[CadSystemVariable("$DIMASSOC", DxfCode.Int8)]
-		public DimensionAssociation DimensionAssociativity { get; set; }
+		public DimensionAssociation DimensionAssociativity { get; set; } = DimensionAssociation.CreateExplodedDimensions;
 
+		/// <remarks>
+		/// System variable HALOGAP
+		/// </remarks>
 		public byte HaloGapPercentage { get; set; }
 		public Color ObscuredColor { get; set; }
 		public Color InterfereColor { get; set; }
