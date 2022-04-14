@@ -16,6 +16,14 @@ namespace ACadSharp.IO.DXF
 		protected override void writeSection()
 		{
 			this.writeTable(this._document.VPorts);
+			this.writeTable(this._document.LineTypes);
+			this.writeTable(this._document.Layers);
+			this.writeTable(this._document.TextStyles);
+			this.writeTable(this._document.Views);
+			this.writeTable(this._document.UCSs);
+			this.writeTable(this._document.AppIds);
+			this.writeTable(this._document.DimensionStyles);
+			this.writeTable(this._document.BlockRecords);
 		}
 
 		private void writeTable<T>(Table<T> table)
@@ -32,7 +40,6 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Table);
 
 			this._writer.Write(DxfCode.Int16, table.Count);
-
 
 			foreach (T item in table)
 			{
