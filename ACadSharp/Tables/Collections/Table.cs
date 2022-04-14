@@ -19,6 +19,7 @@ namespace ACadSharp.Tables.Collections
 
 		public override string ObjectName => DxfFileToken.TableEntry;
 
+		[DxfCodeValue(DxfReferenceType.Count, 70)]
 		public int Count => this._entries.Count;
 
 		public bool IsReadOnly => false;

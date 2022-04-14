@@ -72,7 +72,7 @@ namespace ACadSharp.IO.DXF
 				case GroupCodeValueType.Handle:
 				case GroupCodeValueType.ObjectId:
 				case GroupCodeValueType.ExtendedDataHandle:
-					this._stream.WriteLine(((ulong)value).ToString("{0:X}", System.Globalization.CultureInfo.InvariantCulture));
+					this._stream.WriteLine(((ulong)value).ToString("X", System.Globalization.CultureInfo.InvariantCulture));
 					return;
 				case GroupCodeValueType.Bool:
 					this._stream.WriteLine(Convert.ToInt16(value).ToString(System.Globalization.CultureInfo.InvariantCulture));

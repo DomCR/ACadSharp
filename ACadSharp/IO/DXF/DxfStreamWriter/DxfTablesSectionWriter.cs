@@ -29,9 +29,6 @@ namespace ACadSharp.IO.DXF
 		private void writeTable<T>(Table<T> table)
 			where T : TableEntry
 		{
-			if (table.Any())
-				return;
-
 			this._writer.Write(DxfCode.Start, DxfFileToken.EntityTable);
 			this._writer.Write(DxfCode.SymbolTableName, table.ObjectName);
 
