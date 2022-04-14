@@ -12,10 +12,10 @@ namespace ACadSharp.Tables.Collections
 	public abstract class Table<T> : CadObject, IObservableCollection<T>
 		where T : TableEntry
 	{
-		public event EventHandler<CollectionChangedEventArgs> OnBeforeAdd;
-		public event EventHandler<CollectionChangedEventArgs> OnAdd;
-		public event EventHandler<CollectionChangedEventArgs> OnBeforeRemove;
-		public event EventHandler<CollectionChangedEventArgs> OnRemove;
+		public event EventHandler<ReferenceChangedEventArgs> OnBeforeAdd;
+		public event EventHandler<ReferenceChangedEventArgs> OnAdd;
+		public event EventHandler<ReferenceChangedEventArgs> OnBeforeRemove;
+		public event EventHandler<ReferenceChangedEventArgs> OnRemove;
 
 		public override string ObjectName => DxfFileToken.TableEntry;
 
@@ -33,11 +33,12 @@ namespace ACadSharp.Tables.Collections
 
 		protected readonly Dictionary<string, T> _entries = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
 
-		public Table(CadDocument document)
+		protected Table() { }
+
+		protected Table(CadDocument document)
 		{
 			this.Owner = document;
-			this.Document = document;
-			this.Document.RegisterCollection(this);
+			document.RegisterCollection(this);
 		}
 
 		public virtual void Add(T item)
@@ -83,12 +84,12 @@ namespace ACadSharp.Tables.Collections
 
 		protected void add(string key, T item)
 		{
-			OnBeforeAdd?.Invoke(this, new CollectionChangedEventArgs(item));
+			OnBeforeAdd?.Invoke(this, new ReferenceChangedEventArgs(item));
 
 			this._entries.Add(key, item);
 			item.Owner = this;
 
-			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
+			OnAdd?.Invoke(this, new ReferenceChangedEventArgs(item));
 		}
 	}
 }

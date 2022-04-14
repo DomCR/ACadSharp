@@ -30,6 +30,10 @@ namespace ACadSharp
 		/// <summary>
 		/// Counter reference, the value is a list with multiple elements referenced to it
 		/// </summary>
-		Count
+		Count,
+
+		Optional,
+
+		Ignored
 	}
 }

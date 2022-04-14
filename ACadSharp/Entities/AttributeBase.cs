@@ -31,6 +31,7 @@ namespace ACadSharp.Entities
 
 		[DxfCodeValue(280)]
 		public byte Version { get; set; }
+
 		/// <summary>
 		/// Specifies the tag string of the object
 		/// </summary>

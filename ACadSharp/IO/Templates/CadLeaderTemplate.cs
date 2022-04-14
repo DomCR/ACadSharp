@@ -2,7 +2,7 @@
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadLeaderTemplate : DwgEntityTemplate
+	internal class CadLeaderTemplate : CadEntityTemplate
 	{
 		public CadLeaderTemplate(Leader entity) : base(entity) { }
 

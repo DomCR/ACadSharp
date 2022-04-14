@@ -88,8 +88,8 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public override CadDocument Read()
 		{
-			this._document = new CadDocument();
-			this._builder = new DwgDocumentBuilder(this._document, this.Flags, this.notificationHandler);
+			this._document = new CadDocument(false);
+			this._builder = new DwgDocumentBuilder(this._document, this.Flags, this.OnNotificationHandler);
 
 			//Read the file header
 			this.readFileHeader();
@@ -410,7 +410,7 @@ namespace ACadSharp.IO.DWG
 					else
 					{
 						//0 offset, wrong reference
-						notificationHandler.Invoke(this, new NotificationEventArgs($"Warning: readHandles, negative offset: {offset}"));
+						OnNotificationHandler.Invoke(this, new NotificationEventArgs($"Warning: readHandles, negative offset: {offset}"));
 					}
 				}
 
@@ -496,7 +496,7 @@ namespace ACadSharp.IO.DWG
 				handles,
 				this._document.Classes);
 
-			sectionReader.Read(this.notificationHandler);
+			sectionReader.Read(this.OnNotificationHandler);
 		}
 
 		#region File Header reading methods

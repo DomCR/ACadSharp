@@ -1,67 +1,61 @@
 ﻿using ACadSharp.Header;
 using ACadSharp.IO;
 using ACadSharp.IO.DWG;
+using ACadSharp.Tests.Common;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace ACadSharp.Tests.IO.DWG
 {
-	public class DwgReaderTests
+	public class DwgReaderTests : CadReaderTestsBase<DwgReader>
 	{
-		private const string _samplesFolder = "../../../../samples/";
+		public DwgReaderTests(ITestOutputHelper output) : base(output) { }
 
-		public static readonly TheoryData<string> FilePaths;
-
-		private readonly ITestOutputHelper output;
-
-		static DwgReaderTests()
+		[Theory]
+		[MemberData(nameof(DwgFilePaths))]
+		public override void ReadHeaderTest(string test)
 		{
-			FilePaths = new TheoryData<string>();
-
-			foreach (string file in Directory.GetFiles(_samplesFolder, "*.dwg"))
-			{
-				FilePaths.Add(file);
-			}
-		}
-
-		public DwgReaderTests(ITestOutputHelper output)
-		{
-			this.output = output;
+			base.ReadHeaderTest(test);
 		}
 
 		[Theory]
-		[MemberData(nameof(FilePaths))]
-		public void ReadTest(string test)
+		[MemberData(nameof(DwgFilePaths))]
+		public override void ReadTest(string test)
 		{
-			CadDocument doc = DwgReader.Read(test, this.onNotification);
+			base.ReadTest(test);
 		}
 
 		[Theory]
-		[MemberData(nameof(FilePaths))]
-		public void ReadHeaderTest(string test)
+		[MemberData(nameof(DwgFilePaths))]
+		public override void AssertDocumentDefaults(string test)
 		{
-			CadHeader header;
-
-			using (DwgReader reader = new DwgReader(test, this.onNotification))
-			{
-				header = reader.ReadHeader();
-			}
+			base.AssertDocumentDefaults(test);
 		}
 
 		[Theory]
-		[MemberData(nameof(FilePaths))]
+		[MemberData(nameof(DwgFilePaths))]
+		public override void AssertTableHirearchy(string test)
+		{
+			base.AssertTableHirearchy(test);
+		}
+
+		[Theory]
+		[MemberData(nameof(DwgFilePaths))]
+		public override void AssertBlockRecords(string test)
+		{
+			base.AssertBlockRecords(test);
+		}
+
+		[Theory(Skip = "Long time test")]
+		[MemberData(nameof(DwgFilePaths))]
 		public void ReadCrcEnabledTest(string test)
 		{
 			DwgReaderFlags flags = DwgReaderFlags.CheckCrc;
 
 			CadDocument doc = DwgReader.Read(test, flags, this.onNotification);
-		}
-
-		private void onNotification(object sender, NotificationEventArgs e)
-		{
-			output.WriteLine(e.Message);
 		}
 	}
 }

@@ -8,10 +8,10 @@ using System.Collections.Generic;
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Represents a <see cref="PolyLine"/> entity
+	/// Represents a <see cref="Polyline"/> entity
 	/// </summary>
 	[DxfName(DxfFileToken.EntityPolyline)]
-	public abstract class PolyLine : Entity //TODO: Create an abstract task, split in 2d and 3d
+	public abstract class Polyline : Entity //TODO: Create an abstract task, split in 2d and 3d
 	{
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityPolyline;
@@ -68,6 +68,6 @@ namespace ACadSharp.Entities
 		/// </remarks>
 		public VertexCollection Vertices { get; set; } = new VertexCollection();
 
-		public PolyLine() : base() { }
+		public Polyline() : base() { }
 	}
 }

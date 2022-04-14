@@ -122,7 +122,7 @@ namespace ACadSharp.Tests
 					DxfMap.Create<Line>();
 					break;
 				case DxfFileToken.EntityLwPolyline:
-					DxfMap.Create<LwPolyLine>();
+					DxfMap.Create<LwPolyline>();
 					break;
 				case DxfFileToken.EntityMLine:
 					DxfMap.Create<MLine>();
@@ -134,7 +134,7 @@ namespace ACadSharp.Tests
 					DxfMap.Create<Point>();
 					break;
 				case DxfFileToken.EntityPolyline:
-					DxfMap.Create<PolyLine>();
+					DxfMap.Create<Polyline>();
 					break;
 				case DxfFileToken.EntityRay:
 					DxfMap.Create<Ray>();

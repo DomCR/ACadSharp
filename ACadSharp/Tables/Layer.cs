@@ -41,7 +41,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Specifies the Color of an object.
 		/// </summary>
-		[DxfCodeValue(62)]
+		[DxfCodeValue(62, 420, 430)]
 		public Color Color { get; set; }
 
 		/// <summary>

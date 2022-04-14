@@ -8,10 +8,10 @@ namespace ACadSharp
 {
 	public class LayoutCollection : CadObject, IObservableCollection<Layout>
 	{
-		public event EventHandler<CollectionChangedEventArgs> OnBeforeAdd;
-		public event EventHandler<CollectionChangedEventArgs> OnAdd;
-		public event EventHandler<CollectionChangedEventArgs> OnBeforeRemove;
-		public event EventHandler<CollectionChangedEventArgs> OnRemove;
+		public event EventHandler<ReferenceChangedEventArgs> OnBeforeAdd;
+		public event EventHandler<ReferenceChangedEventArgs> OnAdd;
+		public event EventHandler<ReferenceChangedEventArgs> OnBeforeRemove;
+		public event EventHandler<ReferenceChangedEventArgs> OnRemove;
 
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
@@ -25,12 +25,12 @@ namespace ACadSharp
 
 		public void Add(Layout item)
 		{
-			OnBeforeAdd?.Invoke(this, new CollectionChangedEventArgs(item));
+			OnBeforeAdd?.Invoke(this, new ReferenceChangedEventArgs(item));
 
 			this._entries.Add(item.Handle, item);
 			item.Owner = this.Owner;
 
-			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
+			OnAdd?.Invoke(this, new ReferenceChangedEventArgs(item));
 		}
 
 		public void AddRange(IEnumerable<Layout> items)

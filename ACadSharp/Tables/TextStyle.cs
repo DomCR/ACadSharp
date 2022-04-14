@@ -26,9 +26,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Default text style.
 		/// </summary>
-		public static TextStyle Default { get { return new TextStyle("STANDARD"); } }
-
-		//100	Subclass marker(AcDbTextStyleTableRecord)
+		public static TextStyle Default { get { return new TextStyle("Standard"); } }
 
 		/// <summary>
 		/// Style state flags.

@@ -3,7 +3,7 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgDimensionStyleTemplate : DwgTemplate<DimensionStyle>
+	internal class DwgDimensionStyleTemplate : CadTemplate<DimensionStyle>
 	{
 		public string DIMBL_Name { get; internal set; }
 		public string DIMBLK1_Name { get; internal set; }

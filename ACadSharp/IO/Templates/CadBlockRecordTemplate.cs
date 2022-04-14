@@ -1,12 +1,13 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.IO.DWG;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgBlockRecordTemplate : DwgTableEntryTemplate<BlockRecord>
+	internal class CadBlockRecordTemplate : CadTableEntryTemplate<BlockRecord>
 	{
 		public ulong? FirstEntityHandle { get; set; }
 
@@ -24,7 +25,7 @@ namespace ACadSharp.IO.Templates
 
 		public string LayerName { get; set; }
 
-		public DwgBlockRecordTemplate(BlockRecord block) : base(block) { }
+		public CadBlockRecordTemplate(BlockRecord block) : base(block) { }
 
 		public override bool AddHandle(int dxfcode, ulong handle)
 		{
@@ -35,7 +36,7 @@ namespace ACadSharp.IO.Templates
 			switch (dxfcode)
 			{
 				case 340:
-					LayoutHandle = handle;
+					this.LayoutHandle = handle;
 					value = true;
 					break;
 				default:
@@ -49,20 +50,14 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			if (builder.TryGetCadObject(this.EndBlockHandle, out BlockEnd blockEnd))
+			if (builder.TryGetCadObject(this.LayoutHandle, out Layout layout))
 			{
-				this.CadObject.BlockEnd = blockEnd;
+				this.CadObject.Layout = layout;
 			}
-
-			//TODO: Is necessary to reassign the layout??
-			//if (this.LayoutHandle.HasValue && builder.TryGetCadObject<Layout>(this.LayoutHandle.Value, out Layout layout))
-			//{
-			//	layout.AssociatedBlock = this.CadObject;
-			//}
 
 			if (this.FirstEntityHandle.HasValue)
 			{
-				var entities = this.getEntitiesCollection<Entity>(builder, FirstEntityHandle.Value, LastEntityHandle.Value);
+				var entities = this.getEntitiesCollection<Entity>(builder, this.FirstEntityHandle.Value, this.LastEntityHandle.Value);
 				this.CadObject.Entities.AddRange(entities);
 			}
 			else
@@ -79,18 +74,23 @@ namespace ACadSharp.IO.Templates
 
 		public void SetBlockToRecord(CadDocumentBuilder builder)
 		{
-			if (!builder.TryGetCadObject(this.BeginBlockHandle, out Block block))
-				return;
+			if (builder.TryGetCadObject(this.BeginBlockHandle, out Block block))
+			{
+				this.CadObject.Name = block.Name;
 
-			this.CadObject.Name = block.Name;
+				block.Flags = this.CadObject.BlockEntity.Flags;
+				block.BasePoint = this.CadObject.BlockEntity.BasePoint;
+				block.XrefPath = this.CadObject.BlockEntity.XrefPath;
+				block.Comments = this.CadObject.BlockEntity.Comments;
 
-			block.Flags = this.CadObject.BlockEntity.Flags;
-			block.BasePoint = this.CadObject.BlockEntity.BasePoint;
-			block.XrefPath = this.CadObject.BlockEntity.XrefPath;
-			block.Comments = this.CadObject.BlockEntity.Comments;
+				this.CadObject.BlockEntity = block;
 
-			this.CadObject.BlockEntity = block;
+			}
 
+			if (builder.TryGetCadObject(this.EndBlockHandle, out BlockEnd blockEnd))
+			{
+				this.CadObject.BlockEnd = blockEnd;
+			}
 		}
 	}
 }

@@ -5,40 +5,55 @@ using System.Text;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Tables;
 using Xunit;
+using ACadSharp.Tests.Common;
+using ACadSharp.Entities;
 
 namespace ACadSharp.Tests
 {
 	public class CadDocumentTests
 	{
-		[Fact()]
+		[Fact]
 		public void CadDocumentTest()
 		{
-			CadDocument document = new CadDocument();
+			CadDocument doc = new CadDocument();
 
-			this.assertTable(document, document.AppIds);
-			this.assertTable(document, document.BlockRecords);
-			this.assertTable(document, document.DimensionStyles);
-			this.assertTable(document, document.Layers);
-			this.assertTable(document, document.LineTypes);
-			this.assertTable(document, document.TextStyles);
-			this.assertTable(document, document.UCSs);
-			this.assertTable(document, document.Views);
-			this.assertTable(document, document.VPorts);
+			DocumentIntegrity.AssertTableHirearchy(doc);
 		}
 
-		private void assertTable<T>(CadDocument doc, Table<T> table)
-			where T : TableEntry
+		[Fact]
+		public void CadDocumentDefaultTest()
 		{
-			Assert.NotNull(table);
+			CadDocument doc = new CadDocument();
 
-			Assert.NotNull(table.Document);
-			Assert.Equal(doc, table.Document);
-			Assert.Equal(doc, table.Owner);
+			DocumentIntegrity.AssertDocumentDefaults(doc);
+		}
 
-			Assert.True(table.Handle != 0);
+		[Fact]
+		public void AddCadObject()
+		{
+			Line line = new Line();
+			CadDocument doc = new CadDocument();
 
-			CadObject t = doc.GetCadObject(table.Handle);
-			Assert.Equal(t, table);
+			doc.BlockRecords[BlockRecord.ModelSpaceName].Entities.Add(line);
+
+			CadObject l = doc.GetCadObject(line.Handle);
+
+			//Assert existing element
+			Assert.NotNull(l);
+			Assert.Equal(line, l);
+			Assert.False(0 == l.Handle);
+			Assert.Equal(line.Handle, l.Handle);
+		}
+
+		[Fact]
+		public void NotAllowDuplicate()
+		{
+			Line line = new Line();
+			CadDocument doc = new CadDocument();
+
+			doc.BlockRecords[BlockRecord.ModelSpaceName].Entities.Add(line);
+
+			Assert.Throws<ArgumentException>(() => doc.BlockRecords[BlockRecord.ModelSpaceName].Entities.Add(line));
 		}
 	}
 }

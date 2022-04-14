@@ -19,24 +19,25 @@ namespace ACadSharp.Tables
 	[DxfSubClass(DxfSubclassMarker.BlockRecord)]
 	public class BlockRecord : TableEntry
 	{
+		/// <summary>
+		/// Default block record name for the model space
+		/// </summary>
+		public const string ModelSpaceName = "*Model_Space";
+
+		/// <summary>
+		/// Default block record name for the paper space
+		/// </summary>
+		public const string PaperSpaceName = "*Paper_Space";
+
+		public static BlockRecord ModelSpace { get { return new BlockRecord(ModelSpaceName); } }
+
+		public static BlockRecord PaperSpace { get { return new BlockRecord(PaperSpaceName); } }
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.BLOCK;
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableBlockRecord;
-
-		/// <inheritdoc/>
-		public override CadDocument Document
-		{
-			get { return _document; }
-			internal set
-			{
-				_document = value;
-				_document.RegisterCollection(this.Entities);
-			}
-		}
-
-		private CadDocument _document;
 
 		/// <summary>
 		/// Block insertion units
@@ -73,19 +74,38 @@ namespace ACadSharp.Tables
 
 		public CadObjectCollection<Entity> Entities { get; set; }
 
-		public Block BlockEntity { get; set; }
-
-		public BlockEnd BlockEnd { get; set; }
-
-		public BlockRecord() : base()
+		public Block BlockEntity
 		{
-			this.BlockEntity = new Block(this);
-			this.BlockEnd = new BlockEnd(this);
-			this.Entities = new CadObjectCollection<Entity>(this);
+			get { return _blockEntity; }
+			set
+			{
+				this._blockEntity = value;
+				this._blockEntity.Owner = this;
+				this.onReferenceChange(new ReferenceChangedEventArgs(this._blockEntity));
+			}
 		}
+
+		public BlockEnd BlockEnd
+		{
+			get { return _blockEnd; }
+			set
+			{
+				this._blockEnd = value;
+				this._blockEnd.Owner = this;
+				this.onReferenceChange(new ReferenceChangedEventArgs(this._blockEnd));
+			}
+		}
+
+		private Block _blockEntity;
+
+		private BlockEnd _blockEnd;
+
+		public BlockRecord() : this(null) { }
 
 		public BlockRecord(string name) : base(name)
 		{
+			this.BlockEntity = new Block(this);
+			this.BlockEnd = new BlockEnd(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
 		}
 	}

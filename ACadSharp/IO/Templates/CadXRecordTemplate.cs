@@ -2,7 +2,7 @@
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadXRecordTemplate : DwgTemplate<XRecrod>
+	internal class CadXRecordTemplate : CadTemplate<XRecrod>
 	{
 		public CadXRecordTemplate(XRecrod cadObject) : base(cadObject) { }
 	}

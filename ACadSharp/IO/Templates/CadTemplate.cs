@@ -10,7 +10,7 @@ using System.Text;
 
 namespace ACadSharp.IO.Templates
 {
-	internal abstract class DwgTemplate : ICadObjectBuilder
+	internal abstract class CadTemplate : ICadObjectBuilder
 	{
 		public CadObject CadObject { get; set; }
 
@@ -22,7 +22,7 @@ namespace ACadSharp.IO.Templates
 
 		public Dictionary<ulong, ExtendedData> EDataTemplate { get; } = new Dictionary<ulong, ExtendedData>();
 
-		public DwgTemplate(CadObject cadObject)
+		public CadTemplate(CadObject cadObject)
 		{
 			this.CadObject = cadObject;
 		}
@@ -81,7 +81,7 @@ namespace ACadSharp.IO.Templates
 		{
 			List<T> collection = new List<T>();
 
-			DwgEntityTemplate template = builder.GetObjectTemplate<DwgEntityTemplate>(firstHandle);
+			CadEntityTemplate template = builder.GetObjectTemplate<CadEntityTemplate>(firstHandle);
 			while (template != null)
 			{
 				collection.Add((T)template.CadObject);
@@ -90,9 +90,9 @@ namespace ACadSharp.IO.Templates
 					break;
 
 				if (template.NextEntity.HasValue)
-					template = builder.GetObjectTemplate<DwgEntityTemplate>(template.NextEntity.Value);
+					template = builder.GetObjectTemplate<CadEntityTemplate>(template.NextEntity.Value);
 				else
-					template = builder.GetObjectTemplate<DwgEntityTemplate>(template.CadObject.Handle + 1);
+					template = builder.GetObjectTemplate<CadEntityTemplate>(template.CadObject.Handle + 1);
 
 			}
 
