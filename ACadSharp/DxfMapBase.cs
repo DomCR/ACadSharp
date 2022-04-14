@@ -36,11 +36,9 @@ namespace ACadSharp
 
 				}
 
-				var dxfprop = new DxfProperty(p);
-
-				foreach (var item in dxfprop.DxfCodes)
+				foreach (var item in att.ValueCodes)
 				{
-					yield return new KeyValuePair<int, DxfProperty>(item, dxfprop);
+					yield return new KeyValuePair<int, DxfProperty>((int)item, new DxfProperty((int)item, p));
 				}
 			}
 		}
