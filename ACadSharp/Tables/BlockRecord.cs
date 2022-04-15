@@ -74,9 +74,31 @@ namespace ACadSharp.Tables
 
 		public CadObjectCollection<Entity> Entities { get; set; }
 
-		public Block BlockEntity { get; set; }
+		public Block BlockEntity
+		{
+			get { return _blockEntity; }
+			set
+			{
+				this._blockEntity = value;
+				this._blockEntity.Owner = this;
+				this.onReferenceChange(new ReferenceChangedEventArgs(this._blockEntity));
+			}
+		}
 
-		public BlockEnd BlockEnd { get; set; }
+		public BlockEnd BlockEnd
+		{
+			get { return _blockEnd; }
+			set
+			{
+				this._blockEnd = value;
+				this._blockEnd.Owner = this;
+				this.onReferenceChange(new ReferenceChangedEventArgs(this._blockEnd));
+			}
+		}
+
+		private Block _blockEntity;
+
+		private BlockEnd _blockEnd;
 
 		public BlockRecord() : this(null) { }
 

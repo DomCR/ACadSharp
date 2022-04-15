@@ -9,6 +9,8 @@ namespace ACadSharp
 {
 	public abstract class CadObject : IHandledCadObject
 	{
+		public event EventHandler<ReferenceChangedEventArgs> OnReferenceChange;
+
 		/// <summary>
 		/// Get the object type
 		/// </summary>
@@ -52,6 +54,11 @@ namespace ACadSharp
 		/// Default constructor
 		/// </summary>
 		public CadObject() { }
+
+		protected void onReferenceChange(ReferenceChangedEventArgs args)
+		{
+			OnReferenceChange?.Invoke(this, args);
+		}
 
 		/// <inheritdoc/>
 		public override string ToString()

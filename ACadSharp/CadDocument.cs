@@ -187,11 +187,17 @@ namespace ACadSharp
 					this.RegisterCollection(record.Entities);
 					this.addCadObject(record.BlockEnd);
 					this.addCadObject(record.BlockEntity);
+					record.OnReferenceChange += this.onReferenceChanged;
 					break;
 			}
 		}
 
-		private void onAdd(object sender, CollectionChangedEventArgs e)
+		private void onReferenceChanged(object sender, ReferenceChangedEventArgs e)
+		{
+			this.addCadObject(e.Item);
+		}
+
+		private void onAdd(object sender, ReferenceChangedEventArgs e)
 		{
 			this.addCadObject(e.Item);
 		}

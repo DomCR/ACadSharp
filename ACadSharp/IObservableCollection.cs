@@ -7,14 +7,14 @@ namespace ACadSharp
 		where T : CadObject
 	{
 		[Obsolete]
-		event EventHandler<CollectionChangedEventArgs> OnBeforeAdd;
+		event EventHandler<ReferenceChangedEventArgs> OnBeforeAdd;
 		
-		event EventHandler<CollectionChangedEventArgs> OnAdd;
+		event EventHandler<ReferenceChangedEventArgs> OnAdd;
 
 		[Obsolete]
-		event EventHandler<CollectionChangedEventArgs> OnBeforeRemove;
+		event EventHandler<ReferenceChangedEventArgs> OnBeforeRemove;
 		
-		event EventHandler<CollectionChangedEventArgs> OnRemove;
+		event EventHandler<ReferenceChangedEventArgs> OnRemove;
 
 		void Add(T item);
 
