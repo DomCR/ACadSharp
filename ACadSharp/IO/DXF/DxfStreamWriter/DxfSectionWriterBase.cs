@@ -56,7 +56,8 @@ namespace ACadSharp.IO.DXF
 
 				foreach (KeyValuePair<int, DxfProperty> v in item.Value.DxfProperties)
 				{
-					if (v.Value.ReferenceType == DxfReferenceType.Ignored)
+					if (v.Value.ReferenceType.HasFlag(DxfReferenceType.Ignored)
+						|| v.Value.ReferenceType.HasFlag(DxfReferenceType.Optional))
 						continue;
 
 					object value = v.Value.GetValue(v.Key, cadObject);
