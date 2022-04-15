@@ -14,8 +14,13 @@ namespace ACadSharp.IO.DXF
 
 		public void Write(DxfCode code, object value)
 		{
-			this.writeDxfCode((int)code);
-			this.writeValue((int)code, value);
+			this.Write((int)code, value);
+		}
+
+		public void Write(int code, object value)
+		{
+			this.writeDxfCode(code);
+			this.writeValue(code, value);
 		}
 
 		/// <inheritdoc/>

@@ -48,6 +48,19 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		protected void writeMap(DxfMap map, CadObject cadObject)
+		{
+			foreach (var item in map.SubClasses)
+			{
+				this._writer.Write(DxfCode.Subclass, item.Key);
+
+				foreach (KeyValuePair<int, DxfProperty> v in item.Value.DxfProperties)
+				{
+					this._writer.Write(v.Key, v.Value.GetValue(v.Key, cadObject));
+				}
+			}
+		}
+
 		protected abstract void writeSection();
 	}
 }

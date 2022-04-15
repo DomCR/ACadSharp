@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -137,8 +138,21 @@ namespace ACadSharp
 
 		public object GetValue<TCadObject>(int code, TCadObject obj)
 		{
-			if (this._property.PropertyType.IsEquivalentTo(typeof(XY)) ||
-				this._property.PropertyType.IsEquivalentTo(typeof(XYZ)))
+			switch (this._attributeData.ReferenceType)
+			{
+				case DxfReferenceType.None:
+					break;
+				case DxfReferenceType.Handle:
+					break;
+				case DxfReferenceType.Name:
+					break;
+				case DxfReferenceType.Count:
+					break;
+				default:
+					break;
+			}
+
+			if (this._property.PropertyType.HasInterface<IVector>())
 			{
 				IVector vector = (IVector)this._property.GetValue(obj);
 
@@ -167,7 +181,7 @@ namespace ACadSharp
 			}
 			else if (this._property.PropertyType.IsEquivalentTo(typeof(Transparency)))
 			{
-				//TODO: Implement transparency setter
+				//TODO: Implement transparency getter
 				return this._property.GetValue(obj);
 			}
 			else

@@ -38,9 +38,13 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(DxfCode.Int16, table.Count);
 
-			foreach (T item in table)
+			foreach (T entry in table)
 			{
+				DxfMap map = DxfMap.Create<T>();
 
+				this.writeCommonObjectData(entry);
+
+				this.writeMap(map, entry);
 			}
 
 			this._writer.Write(DxfCode.Start, DxfFileToken.EndTable);

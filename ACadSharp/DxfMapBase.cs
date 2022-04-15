@@ -9,8 +9,6 @@ namespace ACadSharp
 	{
 		public string Name { get; set; }
 
-		public Dictionary<int, object> Properties { get; } = new Dictionary<int, object>();
-
 		public Dictionary<int, DxfProperty> DxfProperties { get; } = new Dictionary<int, DxfProperty>();
 
 		protected static void addClassProperties(DxfMapBase map, Type type)

@@ -66,6 +66,8 @@ namespace ACadSharp
 				}
 			}
 
+			map.SubClasses = new Dictionary<string, DxfClassMap>(map.SubClasses.Reverse().ToDictionary(o => o.Key, o => o.Value));
+
 			return map;
 		}
 	}
