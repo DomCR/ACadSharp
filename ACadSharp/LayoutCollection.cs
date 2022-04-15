@@ -19,8 +19,8 @@ namespace ACadSharp
 
 		public LayoutCollection(CadDocument document)
 		{
-			this.Document = document;
-			this.Document.RegisterCollection(this);
+			this.Owner = document;
+			document.RegisterCollection(this);
 		}
 
 		public void Add(Layout item)
