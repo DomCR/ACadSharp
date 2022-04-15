@@ -42,7 +42,11 @@ namespace ACadSharp.IO.DXF
 			{
 				DxfMap map = DxfMap.Create<T>();
 
+				this._writer.Write(DxfCode.Start, entry.ObjectName);
+
 				this.writeCommonObjectData(entry);
+
+				this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.TableRecord);
 
 				this.writeMap(map, entry);
 			}

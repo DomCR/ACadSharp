@@ -84,7 +84,7 @@ namespace ACadSharp.IO.DXF
 					return;
 				case GroupCodeValueType.Chunk:
 				case GroupCodeValueType.ExtendedDataChunk:
-					break;
+					throw new NotImplementedException();
 			}
 
 			this._stream.WriteLine(value.ToString());

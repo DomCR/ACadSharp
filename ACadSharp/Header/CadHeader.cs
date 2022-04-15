@@ -441,7 +441,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable TEXTSTYLE
 		/// </remarks>
-		[CadSystemVariable(DxfReferenceType.Name, "$TEXTSTYLE", 7)]
+		[CadSystemVariable("$TEXTSTYLE", 7)]
 		public string TextStyleName
 		{
 			get { return this.TextStyle.Name; }
@@ -466,7 +466,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable CLAYER
 		/// </remarks>
-		[CadSystemVariable(DxfReferenceType.Name, "$CLAYER", 8)]
+		[CadSystemVariable("$CLAYER", 8)]
 		public string LayerName
 		{
 			get { return this.Layer.Name; }

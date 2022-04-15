@@ -2,6 +2,8 @@
 using CSMath;
 using CSUtilities.Extensions;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -140,16 +142,66 @@ namespace ACadSharp
 		{
 			switch (this._attributeData.ReferenceType)
 			{
-				case DxfReferenceType.None:
-					break;
 				case DxfReferenceType.Handle:
-					break;
+					return this.getHandledValue(obj);
 				case DxfReferenceType.Name:
-					break;
+					return this.getNamedValue(obj);
 				case DxfReferenceType.Count:
-					break;
+					return this.getCounterValue(obj);
+				case DxfReferenceType.None:
 				default:
-					break;
+					return getRawValue(code, obj);
+			}
+		}
+
+		private ulong? getHandledValue<TCadObject>(TCadObject obj)
+		{
+			if (!this._property.PropertyType.HasInterface<IHandledCadObject>())
+				throw new ArgumentException();
+
+			IHandledCadObject handled = (IHandledCadObject)this._property.GetValue(obj);
+
+			return handled?.Handle;
+		}
+
+		private string getNamedValue<TCadObject>(TCadObject obj)
+		{
+			if (!this._property.PropertyType.HasInterface<INamedCadObject>())
+				throw new ArgumentException();
+
+			INamedCadObject handled = (INamedCadObject)this._property.GetValue(obj);
+
+			return handled?.Name;
+		}
+
+		private int getCounterValue<TCadObject>(TCadObject obj)
+		{
+			if (!this._property.PropertyType.HasInterface<IEnumerable>())
+				throw new ArgumentException();
+
+			IEnumerable collection = (IEnumerable)this._property.GetValue(obj);
+			if (collection == null)
+				return 0;
+
+			int counter = 0;
+			foreach (var item in collection)
+			{
+				counter++;
+			}
+
+			return counter;
+		}
+
+		private object getRawValue<TCadObject>(int code, TCadObject obj)
+		{
+			GroupCodeValueType groupCode = GroupCodeValue.TransformValue(code);
+
+			switch (groupCode)
+			{
+				case GroupCodeValueType.Handle:
+				case GroupCodeValueType.ObjectId:
+				case GroupCodeValueType.ExtendedDataHandle:
+					return this.getHandledValue<TCadObject>(obj);
 			}
 
 			if (this._property.PropertyType.HasInterface<IVector>())
@@ -168,7 +220,7 @@ namespace ACadSharp
 				switch (code)
 				{
 					case 62:
-						break;
+						return color.Index;
 					case 420:
 						// true color
 						break;
@@ -177,7 +229,7 @@ namespace ACadSharp
 						break;
 				}
 
-				return color;
+				return null;
 			}
 			else if (this._property.PropertyType.IsEquivalentTo(typeof(Transparency)))
 			{

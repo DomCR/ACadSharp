@@ -56,7 +56,14 @@ namespace ACadSharp.IO.DXF
 
 				foreach (KeyValuePair<int, DxfProperty> v in item.Value.DxfProperties)
 				{
-					this._writer.Write(v.Key, v.Value.GetValue(v.Key, cadObject));
+					if (v.Value.ReferenceType == DxfReferenceType.Ignored)
+						continue;
+
+					object value = v.Value.GetValue(v.Key, cadObject);
+					if (value == null)
+						continue;
+
+					this._writer.Write(v.Key, value);
 				}
 			}
 		}

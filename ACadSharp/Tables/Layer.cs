@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.IO.Templates;
+using ACadSharp.Objects;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -65,14 +66,15 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// PlotStyleName object
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Handle, 390)]
-		public string PlotStyleName { get; set; }   //TODO: set the plot style for the layer
+		//[DxfCodeValue(DxfReferenceType.Handle, 390)]
+		[DxfCodeValue(DxfReferenceType.Ignored, 390)]
+		public string PlotStyleName { get; set; }  //TODO: set the plot style for the layer
 
 		/// <summary>
 		/// Hard-pointer ID/handle to Material object
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 347)]
-		public string Material { get; set; }    //TODO: Implement ulong handles, change to internal or private, implement the material class
+		public Material Material { get; set; }    //TODO: Implement ulong handles, change to internal or private, implement the material class
 
 		public bool IsOn { get; set; }  //TODO: Is the same as PlotFlag???
 

@@ -7,7 +7,7 @@ using System.Text;
 namespace ACadSharp.Tables
 {
 	[DxfSubClass(DxfSubclassMarker.TableRecord, true)]
-	public abstract class TableEntry : CadObject
+	public abstract class TableEntry : CadObject, INamedCadObject
 	{
 		/// <summary>
 		/// Specifies the name of the object
