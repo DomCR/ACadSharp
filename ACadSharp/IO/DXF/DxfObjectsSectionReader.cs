@@ -32,10 +32,18 @@ namespace ACadSharp.IO.DXF
 
 		private CadTemplate readObject()
 		{
+			CadTemplate template = null;
+
 			switch (this._reader.LastValueAsString)
 			{
 				case DxfFileToken.ObjectDictionary:
 					return this.readDictionary();
+				case DxfFileToken.ObjectLayout:
+					template = new CadLayoutTemplate(new Layout());
+					break;
+				case DxfFileToken.TableXRecord:
+					template = new CadXRecordTemplate(new XRecrod());
+					break;
 				default:
 					this._notification?.Invoke(null, new NotificationEventArgs($"Object not implemented: {this._reader.LastValueAsString}"));
 					do
@@ -45,12 +53,34 @@ namespace ACadSharp.IO.DXF
 					while (this._reader.LastDxfCode != DxfCode.Start);
 					return null;
 			}
+
+			//Jump the 0 marker
+			this._reader.ReadNext();
+
+			this.readCommonObjectData(template);
+
+			while (this._reader.LastDxfCode == DxfCode.Subclass)
+			{
+				switch (this._reader.LastValueAsString)
+				{
+					case DxfSubclassMarker.XRecord:
+						this.readMapped<XRecrod>(template.CadObject, template);
+						break;
+					default:
+						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}"));
+						while (this._reader.LastDxfCode != DxfCode.Start)
+							this._reader.ReadNext();
+						break;
+				}
+			}
+
+			return template;
 		}
 
 		private CadTemplate readDictionary()
 		{
 			CadDictionary cadDictionary = new CadDictionary();
-			DwgDictionaryTemplate template = new DwgDictionaryTemplate(cadDictionary);
+			CadDictionaryTemplate template = new CadDictionaryTemplate(cadDictionary);
 
 			string lastKey = null;
 
@@ -78,7 +108,8 @@ namespace ACadSharp.IO.DXF
 						lastKey = this._reader.LastValueAsString;
 						template.Entries.Add(lastKey, null);
 						break;
-					case 350:
+					case 350: // Soft-owner ID/handle to entry object 
+					case 360: // Hard-owner ID/handle to entry object
 						template.Entries[lastKey] = this._reader.LastValueAsHandle;
 						break;
 					default:

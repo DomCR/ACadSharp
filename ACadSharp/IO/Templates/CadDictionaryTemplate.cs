@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgDictionaryTemplate : CadTemplate<CadDictionary>
+	internal class CadDictionaryTemplate : CadTemplate<CadDictionary>
 	{
 		public Dictionary<string, ulong?> Entries { get; set; } = new Dictionary<string, ulong?>();
 
-		public DwgDictionaryTemplate(CadDictionary dictionary) : base(dictionary) { }
+		public CadDictionaryTemplate(CadDictionary dictionary) : base(dictionary) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{

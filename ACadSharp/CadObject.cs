@@ -35,7 +35,7 @@ namespace ACadSharp
 		public IHandledCadObject Owner { get; internal set; }
 
 		//TODO: CadDictionary for the CadObjects
-		public CadDictionary Dictionary { get; set; }
+		public CadDictionary XDictionary { get; set; }
 
 		/// <summary>
 		/// Objects that are attached to this entity

@@ -2360,7 +2360,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readDictionary()
 		{
 			CadDictionary cadDictionary = new CadDictionary();
-			DwgDictionaryTemplate template = new DwgDictionaryTemplate(cadDictionary);
+			CadDictionaryTemplate template = new CadDictionaryTemplate(cadDictionary);
 
 			this.readCommonNonEntityData(template);
 
