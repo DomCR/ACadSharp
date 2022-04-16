@@ -3688,6 +3688,8 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readViewportEntityControl()
 		{
+			return null;
+
 			DwgViewportEntityControlTemplate template = new DwgViewportEntityControlTemplate(
 				this._builder.DocumentToBuild.Viewports);
 
