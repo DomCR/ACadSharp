@@ -85,8 +85,7 @@ namespace ACadSharp
 		/// <summary>
 		/// The collection of all layouts in the drawing
 		/// </summary>
-		[Obsolete("Layouts are always owned by dictionaries not the document")]
-		public LayoutCollection Layouts { get; private set; }
+		public LayoutCollection Layouts { get; private set; }	//TODO: Layouts have to go to the designed dictionary
 
 		/// <summary>
 		/// The collection of all viewports in the drawing
