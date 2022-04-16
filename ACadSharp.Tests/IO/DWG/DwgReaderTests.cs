@@ -49,6 +49,13 @@ namespace ACadSharp.Tests.IO.DWG
 			base.AssertBlockRecords(test);
 		}
 
+		[Theory]
+		[MemberData(nameof(DwgFilePaths))]
+		public override void AssertDocumentTree(string test)
+		{
+			base.AssertDocumentTree(test);
+		}
+
 		[Theory(Skip = "Long time test")]
 		[MemberData(nameof(DwgFilePaths))]
 		public void ReadCrcEnabledTest(string test)
