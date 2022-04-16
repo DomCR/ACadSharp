@@ -1,16 +1,23 @@
 ﻿using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using ACadSharp.Tests.TestCases;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ACadSharp.Tests.Common
 {
 	public static class DocumentIntegrity
 	{
+		public static ITestOutputHelper Output { get; set; }
+
+		private const string _documentTree = "../../../../ACadSharp.Tests/Data/document_tree.json";
+
 		public static void AssertTableHirearchy(CadDocument doc)
 		{
 			//Assert all the tables in the doc
@@ -65,6 +72,15 @@ namespace ACadSharp.Tests.Common
 			}
 		}
 
+		public static void AssertDocumentTree(CadDocument doc)
+		{
+			var a = System.IO.Path.GetFullPath(_documentTree);
+
+			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(File.ReadAllText(_documentTree));
+
+			assertTable(doc.BlockRecords, tree.BlocksTable);
+		}
+
 		private static void assertTable<T>(CadDocument doc, Table<T> table)
 			where T : TableEntry
 		{
@@ -85,6 +101,57 @@ namespace ACadSharp.Tests.Common
 				Assert.Equal(entry.Owner, table);
 
 				documentObjectNotNull(doc, entry);
+			}
+		}
+
+		private static void assertTable<T>(Table<T> table, Node node)
+			where T : TableEntry
+		{
+			assertObject(table, node);
+
+			foreach (T entry in table)
+			{
+				Node child = node.GetByHandle(entry.Handle);
+				if (child == null)
+					continue;
+
+				assertObject(entry, child);
+			}
+		}
+		private static void assertObject(CadObject co, Node node)
+		{
+			Assert.True(co.Handle == node.Handle);
+			Assert.True(co.Owner.Handle == node.OwnerHandle);
+			//Assert.True(entry.Dictionary.Handle == child.DictionaryHandle);
+
+			switch (co)
+			{
+				case BlockRecord record:
+					assertCollection(record.Entities, node);
+					break;
+				default:
+					break;
+			}
+		}
+
+		private static void assertCollection(IEnumerable<CadObject> collection, Node node)
+		{
+			//Check the actual elements in the collection
+			foreach (CadObject entry in collection)
+			{
+				Node child = node.GetByHandle(entry.Handle);
+				if (child == null)
+					continue;
+
+				assertObject(entry, child);
+			}
+
+			//Look for missing elements
+			foreach (Node n in node.Children)
+			{
+				var o = collection.FirstOrDefault(x => x.Handle == n.Handle);
+				if (o == null)
+					Output?.WriteLine($"Owner : {n.OwnerHandle} missing object with handle : {n.Handle}");
 			}
 		}
 

@@ -104,7 +104,7 @@ namespace ACadSharp
 			this._cadObjects.Add(this.Handle, this);
 
 			//Initalize viewports only for management 
-			this.Viewports = new ViewportCollection(this);
+			//this.Viewports = new ViewportCollection(this);
 
 			if (createDefaults)
 			{
