@@ -63,7 +63,9 @@ namespace ACadSharp.Tests.IO
 
 		public virtual void ReadTest(string test)
 		{
-			Assert.NotNull(getDocument(test));
+			CadDocument doc = this.getDocument(test);
+
+			Assert.NotNull(doc);
 		}
 
 		public virtual void AssertDocumentDefaults(string test)
