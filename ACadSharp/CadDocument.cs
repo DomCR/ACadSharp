@@ -85,8 +85,7 @@ namespace ACadSharp
 		/// <summary>
 		/// The collection of all layouts in the drawing
 		/// </summary>
-		[Obsolete("Layouts are always owned by dictionaries not the document")]
-		public List<Layout> Layouts { get; } = new List<Layout>();    //TODO: change list for observable collection
+		public LayoutCollection Layouts { get; private set; }	//TODO: Layouts have to go to the designed dictionary
 
 		/// <summary>
 		/// The collection of all viewports in the drawing
@@ -105,6 +104,8 @@ namespace ACadSharp
 
 			//Initalize viewports only for management 
 			//this.Viewports = new ViewportCollection(this);
+
+			this.Layouts = new LayoutCollection(this);
 
 			if (createDefaults)
 			{
@@ -140,6 +141,8 @@ namespace ACadSharp
 				this.DimensionStyles.Add(DimensionStyle.Default);
 
 				this.VPorts.Add(VPort.Default);
+
+				this.Layouts.Add(Layout.Default);
 			}
 		}
 

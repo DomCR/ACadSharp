@@ -19,6 +19,10 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.Layout)]
 	public class Layout : PlotSettings
 	{
+		public const string LayoutModelName = "Model";
+
+		public static Layout Default { get { return new Layout(LayoutModelName); } }
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.LAYOUT;
 
@@ -127,5 +131,11 @@ namespace ACadSharp.Objects
 
 		public List<Viewport> Viewports { get; } = new List<Viewport>();
 
+		public Layout() : this(null) { }
+
+		public Layout(string name) : base()
+		{
+			this.Name = name;
+		}
 	}
 }
