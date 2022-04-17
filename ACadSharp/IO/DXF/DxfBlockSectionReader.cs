@@ -43,7 +43,11 @@ namespace ACadSharp.IO.DXF
 				throw new DxfException($"Block with handle {handle} and name {name} doesn't have a record");
 			}
 
+			//Assign the handle to the entity
+			record.BlockEntity.Handle = handle;
+
 			CadEntityTemplate template = new CadEntityTemplate(record.BlockEntity);
+			template.OwnerHandle = ownerHandle;
 
 			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.Entity);
 

@@ -14,9 +14,9 @@ namespace ACadSharp.IO
 		// Stores all the templates to build the document, some of the elements can be null due a missing implementation
 		public Dictionary<ulong, CadTemplate> Templates { get; } = new Dictionary<ulong, CadTemplate>();
 
-		public Dictionary<ulong, BlockRecord> BlockRecords { get; } = new Dictionary<ulong, BlockRecord>();
+		public Dictionary<ulong, CadObject> Objects { get; } = new Dictionary<ulong, CadObject>();
 
-		public Dictionary<string, LineType> LineTypes { get; set; } = new Dictionary<string, LineType>(StringComparer.OrdinalIgnoreCase);
+		public Dictionary<string, LineType> LineTypes { get; } = new Dictionary<string, LineType>(StringComparer.OrdinalIgnoreCase);
 
 		public CadDocument DocumentToBuild { get; }
 

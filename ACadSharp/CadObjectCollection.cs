@@ -7,9 +7,7 @@ namespace ACadSharp
 	public class CadObjectCollection<T> : IObservableCollection<T>
 		where T : CadObject
 	{
-		public event EventHandler<ReferenceChangedEventArgs> OnBeforeAdd;
 		public event EventHandler<ReferenceChangedEventArgs> OnAdd;
-		public event EventHandler<ReferenceChangedEventArgs> OnBeforeRemove;
 		public event EventHandler<ReferenceChangedEventArgs> OnRemove;
 
 		public CadObject Owner { get; }
@@ -23,8 +21,6 @@ namespace ACadSharp
 
 		public void Add(T item)
 		{
-			OnBeforeAdd?.Invoke(this, new ReferenceChangedEventArgs(item));
-
 			this._entries.Add(item.Handle, item);
 			item.Owner = this.Owner;
 

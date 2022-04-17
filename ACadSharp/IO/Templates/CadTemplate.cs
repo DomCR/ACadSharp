@@ -45,11 +45,12 @@ namespace ACadSharp.IO.Templates
 
 		public virtual void Build(CadDocumentBuilder builder)
 		{
-			if (this.OwnerHandle.HasValue)
-			{
-				if (builder.TryGetCadObject(this.OwnerHandle.Value, out CadObject owner))
-					this.CadObject.Owner = owner;
-			}
+			if (false)
+				if (this.OwnerHandle.HasValue)
+				{
+					if (builder.TryGetCadObject(this.OwnerHandle.Value, out CadObject owner))
+						this.CadObject.Owner = owner;
+				}
 
 			if (builder.TryGetCadObject(this.XDictHandle, out CadDictionary cadDictionary))
 			{

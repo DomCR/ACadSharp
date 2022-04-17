@@ -8,6 +8,14 @@ namespace ACadSharp.IO.Templates
 
 		public override bool CheckDxfCode(int dxfcode, object value)
 		{
+			switch (dxfcode)
+			{
+				//NOTE: Undocumented codes
+				case 370:
+				case 440:
+					return true;
+			}
+
 			//1-369 (except 5 and 105)
 			//These values can be used by an application in any way
 

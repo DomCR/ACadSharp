@@ -8,9 +8,7 @@ namespace ACadSharp
 {
 	public class LayoutCollection : IObservableCollection<Layout>
 	{
-		public event EventHandler<ReferenceChangedEventArgs> OnBeforeAdd;
 		public event EventHandler<ReferenceChangedEventArgs> OnAdd;
-		public event EventHandler<ReferenceChangedEventArgs> OnBeforeRemove;
 		public event EventHandler<ReferenceChangedEventArgs> OnRemove;
 
 		public CadDocument Owner { get; }
@@ -25,8 +23,6 @@ namespace ACadSharp
 
 		public void Add(Layout item)
 		{
-			OnBeforeAdd?.Invoke(this, new ReferenceChangedEventArgs(item));
-
 			this._entries.Add(item.Handle, item);
 			item.Owner = this.Owner;
 

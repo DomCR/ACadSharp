@@ -197,6 +197,8 @@ namespace ACadSharp
 
 		private void onReferenceChanged(object sender, ReferenceChangedEventArgs e)
 		{
+			//TODO: Should remove the old one??
+
 			this.addCadObject(e.Item);
 		}
 
