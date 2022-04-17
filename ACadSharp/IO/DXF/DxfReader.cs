@@ -143,9 +143,9 @@ namespace ACadSharp.IO.DXF
 					case DxfFileToken.EntitiesSection:
 						this.readEntities();
 						break;
-					//case DxfFileToken.ObjectsSection:
-					//	this.readObjects();
-					//	break;
+					case DxfFileToken.ObjectsSection:
+						this.readObjects();
+						break;
 					default:
 						this.OnNotificationHandler(this, new NotificationEventArgs($"Section not implemented {this._reader.LastValueAsString}"));
 						break;
