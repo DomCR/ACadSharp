@@ -2360,7 +2360,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readDictionary()
 		{
 			CadDictionary cadDictionary = new CadDictionary();
-			DwgDictionaryTemplate template = new DwgDictionaryTemplate(cadDictionary);
+			CadDictionaryTemplate template = new CadDictionaryTemplate(cadDictionary);
 
 			this.readCommonNonEntityData(template);
 
@@ -3688,6 +3688,8 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readViewportEntityControl()
 		{
+			return null;
+
 			DwgViewportEntityControlTemplate template = new DwgViewportEntityControlTemplate(
 				this._builder.DocumentToBuild.Viewports);
 

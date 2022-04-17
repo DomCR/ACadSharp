@@ -294,7 +294,15 @@ namespace ACadSharp.IO.DXF
 				}
 				else if (this._reader.LastDxfCode == DxfCode.ControlString)
 				{
-					this.readReactors();
+					if (!template.CheckDxfCode(this._reader.LastCode, this._reader.LastValue))
+					{
+						this.readReactors();
+					}
+					else
+					{
+						this._reader.ReadNext();
+					}
+					
 					continue;
 				}
 
@@ -309,13 +317,11 @@ namespace ACadSharp.IO.DXF
 
 				if (dxfProperty.ReferenceType == DxfReferenceType.Handle)
 				{
-					//TODO: references may be also names in case of layers, blocks...
 					if (!template.AddHandle(this._reader.LastCode, this._reader.LastValueAsHandle))
 						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf referenced code {this._reader.LastCode} not implemented in the {template.GetType().Name} for {typeof(T)} | value : {this._reader.LastValueAsHandle}"));
 				}
 				else if (dxfProperty.ReferenceType == DxfReferenceType.Name)
 				{
-					//TODO: references may be also names in case of layers, blocks...
 					if (!template.AddName(this._reader.LastCode, this._reader.LastValueAsString))
 						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf named referenced code {this._reader.LastCode} not implemented in the {template.GetType().Name} for {typeof(T)} | value : {this._reader.LastValueAsHandle}"));
 				}

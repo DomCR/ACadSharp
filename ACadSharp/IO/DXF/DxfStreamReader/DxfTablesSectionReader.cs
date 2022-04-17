@@ -142,6 +142,8 @@ namespace ACadSharp.IO.DXF
 
 			Debug.Assert(ownerHandle == null || ownerHandle.Value == 0);
 
+			template.OwnerHandle = ownerHandle;
+
 			//Add the object and the template to the builder
 			this._builder.Templates[template.CadObject.Handle] = template;
 		}

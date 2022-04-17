@@ -1,5 +1,7 @@
-﻿using ACadSharp.Exceptions;
+﻿using ACadSharp.Entities;
+using ACadSharp.Exceptions;
 using ACadSharp.IO.Templates;
+using ACadSharp.Tables;
 using System;
 
 namespace ACadSharp.IO.DXF
@@ -27,37 +29,6 @@ namespace ACadSharp.IO.DXF
 				//Add the object and the template to the builder
 				this._builder.Templates[template.CadObject.Handle] = template;
 			}
-		}
-	}
-
-	internal class DxfObjectsSectionReader : DxfSectionReaderBase
-	{
-		public DxfObjectsSectionReader(IDxfStreamReader reader, DxfDocumentBuilder builder, NotificationEventHandler notification = null)
-			: base(reader, builder, notification)
-		{
-		}
-
-		public override void Read()
-		{
-			//Advance to the first value in the section
-			this._reader.ReadNext();
-
-			//Loop until the section ends
-			while (this._reader.LastValueAsString != DxfFileToken.EndSection)
-			{
-				CadTemplate template = this.readObject();
-
-				if (template == null)
-					continue;
-
-				//Add the object and the template to the builder
-				this._builder.Templates[template.CadObject.Handle] = template;
-			}
-		}
-
-		private CadTemplate readObject()
-		{
-			throw new NotImplementedException();
 		}
 	}
 }
