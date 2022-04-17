@@ -26,7 +26,7 @@ namespace ACadSharp.IO.DXF
 					continue;
 
 				//Add the object and the template to the builder
-				this._builder.Templates[template.CadObject.Handle] = template;
+				this._builder.AddTemplate(template);
 			}
 		}
 

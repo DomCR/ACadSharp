@@ -10,7 +10,7 @@ using System.Text;
 
 namespace ACadSharp.IO.Templates
 {
-	internal abstract class CadTemplate : ICadObjectBuilder
+	internal abstract class CadTemplate : ICadObjectTemplate
 	{
 		public CadObject CadObject { get; set; }
 

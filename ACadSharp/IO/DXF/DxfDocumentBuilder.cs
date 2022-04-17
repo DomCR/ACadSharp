@@ -7,19 +7,30 @@ namespace ACadSharp.IO.DXF
 {
 	internal class DxfDocumentBuilder : CadDocumentBuilder
 	{
-		public Dictionary<ulong, ICadTableTemplate> TableTemplates { get; } = new Dictionary<ulong, ICadTableTemplate>();
+		protected Dictionary<ulong, ICadTableTemplate> tableTemplates  = new Dictionary<ulong, ICadTableTemplate>();
 
 		public DxfDocumentBuilder(CadDocument document, NotificationEventHandler notification = null) : base(document, notification) { }
 
 		public override void BuildDocument()
 		{
+			foreach (ICadTableTemplate table in tableTemplates.Values)
+			{
+				table.Build(this);
+			}
+
 			//Assign the owners for the different objects
-			foreach (CadTemplate template in this.Templates.Values)
+			foreach (CadTemplate template in this.templates.Values)
 			{
 				this.assignOwners(template);
 			}
 
 			base.BuildDocument();
+		}
+
+		public void AddTableTemplate(ICadTableTemplate tableTemplate)
+		{
+			this.tableTemplates[tableTemplate.CadObject.Handle] = tableTemplate;
+			this.cadObjects[tableTemplate.CadObject.Handle] = tableTemplate.CadObject;
 		}
 
 		private void assignOwners(CadTemplate template)

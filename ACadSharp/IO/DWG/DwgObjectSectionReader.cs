@@ -115,7 +115,7 @@ namespace ACadSharp.IO.DWG
 				ulong handle = this._handles.Dequeue();
 
 				//Check if the handle has already been read
-				if (!this._map.TryGetValue(handle, out long offset) || this._builder.Templates.ContainsKey(handle))
+				if (!this._map.TryGetValue(handle, out long offset) || this._builder.TryGetObjectTemplate(handle, out CadTemplate _))
 				{
 					continue;
 				}
@@ -127,7 +127,8 @@ namespace ACadSharp.IO.DWG
 				CadTemplate template = this.readObject(type, notificationEvent);
 
 				//Add the template to the list to be processed
-				this._builder.Templates[handle] = template;
+				if (template != null)
+					this._builder.AddTemplate(template);
 			}
 		}
 
@@ -213,7 +214,7 @@ namespace ACadSharp.IO.DWG
 			//Read the handle
 			ulong value = this._handlesReader.HandleReference(handle);
 
-			if (!this._builder.Templates.ContainsKey(value) && !this._handles.Contains(value) && value != 0)
+			if (!this._builder.TryGetObjectTemplate(value, out CadTemplate _) && !this._handles.Contains(value) && value != 0)
 				//Add the value to the handles queue to be processed
 				this._handles.Enqueue(value);
 
