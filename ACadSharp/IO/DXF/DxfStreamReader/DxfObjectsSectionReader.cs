@@ -63,6 +63,12 @@ namespace ACadSharp.IO.DXF
 			{
 				switch (this._reader.LastValueAsString)
 				{
+					case DxfSubclassMarker.Layout:
+						this.readMapped<Layout>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.PlotSettings:
+						this.readMapped<PlotSettings>(template.CadObject, template);
+						break;
 					case DxfSubclassMarker.XRecord:
 						this.readMapped<XRecrod>(template.CadObject, template);
 						break;

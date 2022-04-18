@@ -68,20 +68,53 @@ namespace ACadSharp.Objects
 		/// <summary>
 		///Plot origin in millimeters
 		/// </summary>
-		[DxfCodeValue(46, 47)]
 		public XY PlotOrigin { get; set; }
+
+		/// <summary>
+		/// Plot origin: X value of origin offset in millimeters
+		/// </summary>
+		[DxfCodeValue(46)]
+		public double PlotOriginX { get; set; }
+
+		/// <summary>
+		/// Plot origin: Y value of origin offset in millimeters
+		/// </summary>
+		[DxfCodeValue(47)]
+		public double PlotOriginY { get; set; }
 
 		/// <summary>
 		/// Plot lower-left window corner
 		/// </summary>
-		[DxfCodeValue(48, 49)]
 		public XY WindowLowerLeft { get; set; }
+
+		/// <summary>
+		/// Plot window area: X value of lower-left window corner
+		/// </summary>
+		[DxfCodeValue(48)]
+		public double WindowLowerLeftX { get; set; }
+
+		/// <summary>
+		/// Plot window area: Y value of upper-right window corner
+		/// </summary>
+		[DxfCodeValue(49)]
+		public double WindowLowerLeftY { get; set; }
 
 		/// <summary>
 		/// Plot upper-left window corner
 		/// </summary>
-		[DxfCodeValue(140, 141)]
 		public XY WindowUpperLeft { get; set; }
+
+		/// <summary>
+		/// Plot window area: X value of lower-left window corner
+		/// </summary>
+		[DxfCodeValue(140)]
+		public double WindowUpperLeftX { get; set; }
+
+		/// <summary>
+		/// Plot window area: Y value of upper-right window corner
+		/// </summary>
+		[DxfCodeValue(141)]
+		public double WindowUpperLeftY { get; set; }
 
 		/// <summary>
 		/// Gets the scale factor.
@@ -182,8 +215,19 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Paper image origin
 		/// </summary>
-		[DxfCodeValue(148, 149)]
 		public XY PaperImageOrigin { get; set; }
+
+		/// <summary>
+		/// Paper image origin: X value
+		/// </summary>
+		[DxfCodeValue(148)]
+		public double PaperImageOriginX { get; set; }
+
+		/// <summary>
+		/// Paper image origin: Y value
+		/// </summary>
+		[DxfCodeValue(149)]
+		public double PaperImageOriginY { get; set; }
 
 		/// <summary>
 		///ShadePlot ID/Handle(optional)
