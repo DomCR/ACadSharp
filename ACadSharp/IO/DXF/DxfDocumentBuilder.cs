@@ -43,12 +43,15 @@ namespace ACadSharp.IO.DXF
 			{
 				this.NotificationHandler?.Invoke(null, new NotificationEventArgs($"Owner not found for {template.GetType().FullName} with handle {template.CadObject.Handle}"));
 			}
-			else if (this.TryGetCadObject(template.OwnerHandle.Value, out CadObject co))
+			else if (this.TryGetCadObject(template.OwnerHandle.Value, out CadObject owner))
 			{
-				switch (co)
+				switch (owner)
 				{
+					case CadObject co when template.CadObject is CadDictionary dictionary:
+						owner.XDictionary = dictionary;
+						break;
 					case CadDictionary dict:
-						co.XDictionary = dict;
+						//Dictionaries have the entries in the template
 						break;
 					case BlockRecord record when template.CadObject is Entity entity:
 						record.Entities.Add(entity);
@@ -60,7 +63,7 @@ namespace ACadSharp.IO.DXF
 						insert.Attributes.Add(att);
 						break;
 					default:
-						this.NotificationHandler?.Invoke(null, new NotificationEventArgs($"Owner {co.GetType().Name} with handle {co.Handle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}"));
+						this.NotificationHandler?.Invoke(null, new NotificationEventArgs($"Owner {owner.GetType().Name} with handle {owner.Handle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}"));
 						break;
 				}
 			}

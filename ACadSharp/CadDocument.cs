@@ -93,7 +93,18 @@ namespace ACadSharp
 		[Obsolete("Viewports are only used by the R14 versions of dwg")]
 		public ViewportCollection Viewports { get; private set; }
 
-		public CadDictionary RootDictionary { get; internal set; } = new CadDictionary();
+		public CadDictionary RootDictionary
+		{
+			get { return this._rootDictionary; }
+			internal set
+			{
+				this._rootDictionary = value;
+				this._rootDictionary.OnAdd += this.onAdd;
+				this._rootDictionary.Owner = this;
+			}
+		}
+
+		private CadDictionary _rootDictionary = new CadDictionary();
 
 		//Contains all the objects in the document
 		private readonly Dictionary<ulong, IHandledCadObject> _cadObjects = new Dictionary<ulong, IHandledCadObject>();
@@ -166,7 +177,14 @@ namespace ACadSharp
 		private void addCadObject(CadObject cadObject)
 		{
 			if (cadObject.Document != null)
+			{
+				//Avoid exception if the element is assign to this document
+				//TODO: AddCadObject: Not very elegant or reilable, check the integrity of this approax
+				if (cadObject.Document == this && this._cadObjects.ContainsKey(cadObject.Handle))
+					return;
+
 				throw new ArgumentException($"The item with handle {cadObject.Handle} is already assigned to a document");
+			}
 
 			cadObject.Document = this;
 
@@ -176,12 +194,11 @@ namespace ACadSharp
 			}
 
 			this._cadObjects.Add(cadObject.Handle, cadObject);
+			cadObject.OnReferenceChange += this.onReferenceChanged;
 
 			//TODO: Add the dictionary
 			if (cadObject.XDictionary != null)
 				this.RegisterCollection(cadObject.XDictionary);
-
-			cadObject.OnReferenceChange += this.onReferenceChanged;
 
 			switch (cadObject)
 			{
@@ -202,7 +219,14 @@ namespace ACadSharp
 
 		private void onAdd(object sender, ReferenceChangedEventArgs e)
 		{
-			this.addCadObject(e.Item);
+			if (e.Item is CadDictionary dictionary)
+			{
+				this.RegisterCollection(dictionary);
+			}
+			else
+			{
+				this.addCadObject(e.Item);
+			}
 		}
 
 		internal void RegisterCollection<T>(IObservableCollection<T> collection, bool addElements = true)
