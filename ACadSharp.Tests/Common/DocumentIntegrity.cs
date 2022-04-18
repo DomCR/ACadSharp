@@ -121,7 +121,7 @@ namespace ACadSharp.Tests.Common
 		{
 			Assert.True(co.Handle == node.Handle);
 			Assert.True(co.Owner.Handle == node.OwnerHandle);
-			//Assert.True(entry.Dictionary.Handle == child.DictionaryHandle);
+			//Assert.True(co.XDictionary.Handle == node.DictionaryHandle);
 
 			switch (co)
 			{

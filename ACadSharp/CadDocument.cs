@@ -178,7 +178,8 @@ namespace ACadSharp
 			this._cadObjects.Add(cadObject.Handle, cadObject);
 
 			//TODO: Add the dictionary
-			//this.addCadObject(cadObject.Dictionary);
+			if (cadObject.XDictionary != null)
+				this.RegisterCollection(cadObject.XDictionary);
 
 			cadObject.OnReferenceChange += this.onReferenceChanged;
 
@@ -258,7 +259,14 @@ namespace ACadSharp
 			{
 				foreach (T item in collection)
 				{
-					this.addCadObject(item);
+					if (item is CadDictionary dictionary)
+					{
+						this.RegisterCollection(dictionary);
+					}
+					else
+					{
+						this.addCadObject(item);
+					}
 				}
 			}
 		}

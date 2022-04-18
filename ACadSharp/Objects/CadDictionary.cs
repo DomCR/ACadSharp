@@ -55,6 +55,7 @@ namespace ACadSharp.Objects
 				throw new ArgumentException($"Dictionary already contains {value.GetType().FullName}", nameof(value));
 
 			this._entries.Add(key, value);
+			value.Owner = this;
 
 			OnAdd?.Invoke(this, new ReferenceChangedEventArgs(value));
 		}

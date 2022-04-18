@@ -120,15 +120,6 @@ namespace ACadSharp.IO.DXF
 				this._reader.ReadNext();
 			}
 
-			if (this._builder.TryGetCadObject(template.OwnerHandle.Value, out CadObject co))
-			{
-				co.XDictionary = template.CadObject;
-			}
-			else
-			{
-				this._notification?.Invoke(null, new NotificationEventArgs($"Block record owner {template.OwnerHandle} not found for entity {template.CadObject.Handle}"));
-			}
-
 			return template;
 		}
 	}

@@ -61,12 +61,9 @@ namespace ACadSharp
 		public virtual CadDocument Document
 		{
 			get { return this._document; }
-			set
+			internal set
 			{
 				this._document = value;
-
-				//if (this._xdictionary != null)
-				//	this._document.RegisterCollection(_xdictionary);
 			}
 		}
 

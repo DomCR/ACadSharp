@@ -45,6 +45,11 @@ namespace ACadSharp.IO.Templates
 
 		public virtual void Build(CadDocumentBuilder builder)
 		{
+			if(this.CadObject.Handle == 23)
+			{
+
+			}
+
 			if (false)
 				if (this.OwnerHandle.HasValue)
 				{

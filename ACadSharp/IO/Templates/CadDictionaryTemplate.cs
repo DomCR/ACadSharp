@@ -16,7 +16,7 @@ namespace ACadSharp.IO.Templates
 			if (this.OwnerHandle.HasValue && this.OwnerHandle == 0)
 			{
 				builder.DocumentToBuild.RootDictionary = this.CadObject;
-				builder.DocumentToBuild.RegisterCollection(this.CadObject);
+				//builder.DocumentToBuild.RegisterCollection(this.CadObject);
 			}
 			else if (builder.TryGetCadObject(this.OwnerHandle, out CadObject co))
 			{
