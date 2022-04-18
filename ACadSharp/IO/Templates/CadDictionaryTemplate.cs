@@ -16,13 +16,18 @@ namespace ACadSharp.IO.Templates
 			if (this.OwnerHandle.HasValue && this.OwnerHandle == 0)
 			{
 				builder.DocumentToBuild.RootDictionary = this.CadObject;
+				builder.DocumentToBuild.RegisterCollection(this.CadObject);
+			}
+			else if (builder.TryGetCadObject(this.OwnerHandle, out CadObject co))
+			{
+				co.XDictionary = this.CadObject;
 			}
 
 			foreach (var item in this.Entries)
 			{
 				if (builder.TryGetCadObject(item.Value, out CadObject entry))
 				{
-					this.CadObject.Entries.Add(item.Key, entry);
+					this.CadObject.Add(item.Key, entry);
 				}
 			}
 		}

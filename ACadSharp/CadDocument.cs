@@ -85,7 +85,7 @@ namespace ACadSharp
 		/// <summary>
 		/// The collection of all layouts in the drawing
 		/// </summary>
-		public LayoutCollection Layouts { get; private set; }	//TODO: Layouts have to go to the designed dictionary
+		public Layout[] Layouts { get { return this._cadObjects.Values.OfType<Layout>().ToArray(); } }   //TODO: Layouts have to go to the designed dictionary or blocks
 
 		/// <summary>
 		/// The collection of all viewports in the drawing
@@ -104,8 +104,6 @@ namespace ACadSharp
 
 			//Initalize viewports only for management 
 			//this.Viewports = new ViewportCollection(this);
-
-			this.Layouts = new LayoutCollection(this);
 
 			if (createDefaults)
 			{
@@ -141,8 +139,6 @@ namespace ACadSharp
 				this.DimensionStyles.Add(DimensionStyle.Default);
 
 				this.VPorts.Add(VPort.Default);
-
-				this.Layouts.Add(Layout.Default);
 			}
 		}
 
@@ -184,13 +180,14 @@ namespace ACadSharp
 			//TODO: Add the dictionary
 			//this.addCadObject(cadObject.Dictionary);
 
+			cadObject.OnReferenceChange += this.onReferenceChanged;
+
 			switch (cadObject)
 			{
 				case BlockRecord record:
 					this.RegisterCollection(record.Entities);
 					this.addCadObject(record.BlockEnd);
 					this.addCadObject(record.BlockEntity);
-					record.OnReferenceChange += this.onReferenceChanged;
 					break;
 			}
 		}

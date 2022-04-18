@@ -120,11 +120,7 @@ namespace ACadSharp.IO.DXF
 				this._reader.ReadNext();
 			}
 
-			if (template.OwnerHandle == 0)
-			{
-				this._builder.DocumentToBuild.RootDictionary = template.CadObject;
-			}
-			else if (this._builder.TryGetCadObject(template.OwnerHandle.Value, out CadObject co))
+			if (this._builder.TryGetCadObject(template.OwnerHandle.Value, out CadObject co))
 			{
 				co.XDictionary = template.CadObject;
 			}

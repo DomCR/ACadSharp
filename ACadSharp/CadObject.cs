@@ -35,7 +35,17 @@ namespace ACadSharp
 		public IHandledCadObject Owner { get; internal set; }
 
 		//TODO: CadDictionary for the CadObjects
-		public CadDictionary XDictionary { get; set; }
+		public CadDictionary XDictionary
+		{
+			get { return this._xdictionary; }
+			set
+			{
+				//if (this._document != null)
+				//	this._document.RegisterCollection(value);
+
+				this._xdictionary = value;
+			}
+		}
 
 		/// <summary>
 		/// Objects that are attached to this entity
@@ -48,7 +58,21 @@ namespace ACadSharp
 		/// <summary>
 		/// Document where this element belongs
 		/// </summary>
-		public virtual CadDocument Document { get; internal set; }
+		public virtual CadDocument Document
+		{
+			get { return this._document; }
+			set
+			{
+				this._document = value;
+
+				//if (this._xdictionary != null)
+				//	this._document.RegisterCollection(_xdictionary);
+			}
+		}
+
+		private CadDocument _document = null;
+
+		private CadDictionary _xdictionary = null;
 
 		/// <summary>
 		/// Default constructor

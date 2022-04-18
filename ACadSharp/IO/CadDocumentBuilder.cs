@@ -77,6 +77,7 @@ namespace ACadSharp.IO
 			return this.TryGetCadObject(handle.Value, out value);
 		}
 
+		[Obsolete]
 		public bool TryGetCadObject<T>(ulong handle, out T value) where T : CadObject
 		{
 			if (this.templates.TryGetValue(handle, out CadTemplate template))

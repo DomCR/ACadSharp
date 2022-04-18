@@ -52,7 +52,6 @@ namespace ACadSharp.Tests.Common
 
 			entryNotNull(doc.VPorts, "*Active");
 
-			//TODO: Change layout list to an observable collection
 			notNull(doc.Layouts.FirstOrDefault(l => l.Name == "Model"), "Model");
 		}
 

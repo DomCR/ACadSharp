@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Collections.Generic;
 
@@ -7,7 +8,7 @@ namespace ACadSharp.IO.DXF
 {
 	internal class DxfDocumentBuilder : CadDocumentBuilder
 	{
-		protected Dictionary<ulong, ICadTableTemplate> tableTemplates  = new Dictionary<ulong, ICadTableTemplate>();
+		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new Dictionary<ulong, ICadTableTemplate>();
 
 		public DxfDocumentBuilder(CadDocument document, NotificationEventHandler notification = null) : base(document, notification) { }
 
@@ -46,6 +47,9 @@ namespace ACadSharp.IO.DXF
 			{
 				switch (co)
 				{
+					case CadDictionary dict:
+						co.XDictionary = dict;
+						break;
 					case BlockRecord record when template.CadObject is Entity entity:
 						record.Entities.Add(entity);
 						break;
