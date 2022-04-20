@@ -186,8 +186,8 @@ namespace ACadSharp
 			{
 				//Avoid exception if the element is assign to this document
 				//TODO: AddCadObject: Not very elegant or reilable, check the integrity of this approax
-				if (cadObject.Document == this && this._cadObjects.ContainsKey(cadObject.Handle))
-					return;
+				//if (cadObject.Document == this && this._cadObjects.ContainsKey(cadObject.Handle))
+				//	return;
 
 				throw new ArgumentException($"The item with handle {cadObject.Handle} is already assigned to a document");
 			}

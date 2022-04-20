@@ -36,22 +36,15 @@ namespace ACadSharp.IO.DXF
 
 		private void assignOwners(CadTemplate template)
 		{
-			if (template.CadObject.Owner != null)
+			if (template.CadObject.Owner != null || template.CadObject is CadDictionary)
 				return;
 
-			if (!template.OwnerHandle.HasValue)
-			{
-				this.NotificationHandler?.Invoke(null, new NotificationEventArgs($"Owner not found for {template.GetType().FullName} with handle {template.CadObject.Handle}"));
-			}
-			else if (this.TryGetCadObject(template.OwnerHandle.Value, out CadObject owner))
+			if (this.TryGetCadObject(template.OwnerHandle, out CadObject owner))
 			{
 				switch (owner)
 				{
-					case CadObject co when template.CadObject is CadDictionary dictionary:
-						owner.XDictionary = dictionary;
-						break;
-					case CadDictionary dict:
-						//Dictionaries have the entries in the template
+					case CadDictionary:
+						//Entries of the dictionary are assigned in the template
 						break;
 					case BlockRecord record when template.CadObject is Entity entity:
 						record.Entities.Add(entity);

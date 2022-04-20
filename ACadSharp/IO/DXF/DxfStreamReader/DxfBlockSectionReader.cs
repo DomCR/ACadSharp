@@ -3,6 +3,7 @@ using ACadSharp.Entities;
 using ACadSharp.Exceptions;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace ACadSharp.IO.DXF
@@ -36,7 +37,7 @@ namespace ACadSharp.IO.DXF
 			//Read the table name
 			this._reader.ReadNext();
 
-			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle);
+			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors);
 
 			if (!this._builder.TryGetCadObject(ownerHandle, out BlockRecord record))
 			{
@@ -48,6 +49,8 @@ namespace ACadSharp.IO.DXF
 
 			CadEntityTemplate template = new CadEntityTemplate(record.BlockEntity);
 			template.OwnerHandle = ownerHandle;
+			template.XDictHandle = xdictHandle;
+			template.ReactorsHandles = reactors;
 
 			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.Entity);
 
