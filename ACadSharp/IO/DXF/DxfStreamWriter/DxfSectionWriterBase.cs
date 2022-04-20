@@ -40,7 +40,7 @@ namespace ACadSharp.IO.DXF
 				//this._writer.Write(DxfCode.ControlString, "}");
 			}
 
-			if (cadObject.Dictionary != null)
+			if (cadObject.XDictionary != null)
 			{
 				//this._writer.Write(DxfCode.ControlString, "{ACAD_XDICTIONARY");
 				//this._writer.Write(DxfCode.HardOwnershipId, cadObject.Dictionary.Handle);
