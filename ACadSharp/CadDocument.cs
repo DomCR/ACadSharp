@@ -99,8 +99,8 @@ namespace ACadSharp
 			internal set
 			{
 				this._rootDictionary = value;
-				this._rootDictionary.OnAdd += this.onAdd;
 				this._rootDictionary.Owner = this;
+				this.RegisterCollection(_rootDictionary);
 			}
 		}
 
@@ -132,6 +132,12 @@ namespace ACadSharp
 				this.UCSs = new UCSTable(this);
 				this.Views = new ViewsTable(this);
 				this.VPorts = new VPortsTable(this);
+
+				//Root dictionary
+				this.RootDictionary = CadDictionary.CreateRoot();
+
+				//Entries
+				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(Layout.LayoutModelName, Layout.Default);
 
 				//Default variables
 				this.AppIds.Add(AppId.Default);
