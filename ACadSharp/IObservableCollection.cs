@@ -10,10 +10,10 @@ namespace ACadSharp
 
 		event EventHandler<ReferenceChangedEventArgs> OnRemove;
 
-		void Add(T item);
+		//void Add(T item);
 
-		bool Remove(T item);
+		//bool Remove(T item);
 
-		void AddRange(IEnumerable<T> items);
+		//void AddRange(IEnumerable<T> items);
 	}
 }

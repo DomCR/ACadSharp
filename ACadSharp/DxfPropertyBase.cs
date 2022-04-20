@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Objects;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
@@ -105,6 +106,32 @@ namespace ACadSharp
 						// dictionary color
 						break;
 				}
+			}
+			else if (_property.PropertyType.IsEquivalentTo(typeof(PaperMargin)))
+			{
+				PaperMargin margin = (PaperMargin)_property.GetValue(obj);
+
+				switch (code)
+				{
+					//40	Size, in millimeters, of unprintable margin on left side of paper
+					case 40:
+						margin = new PaperMargin((double)value, margin.Bottom, margin.Right, margin.Top);
+						break;
+					//41	Size, in millimeters, of unprintable margin on bottom of paper
+					case 41:
+						margin = new PaperMargin(margin.Left, (double)value, margin.Right, margin.Top);
+						break;
+					//42	Size, in millimeters, of unprintable margin on right side of paper
+					case 42:
+						margin = new PaperMargin(margin.Left, margin.Bottom, (double)value, margin.Top);
+						break;
+					//43	Size, in millimeters, of unprintable margin on top of paper
+					case 43:
+						margin = new PaperMargin(margin.Left, margin.Bottom, margin.Right, (double)value);
+						break;
+				}
+
+				this._property.SetValue(obj, margin);
 			}
 			else if (this._property.PropertyType.IsEquivalentTo(typeof(Transparency)))
 			{

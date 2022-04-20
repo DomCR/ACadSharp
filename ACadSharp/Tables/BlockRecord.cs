@@ -70,7 +70,7 @@ namespace ACadSharp.Tables
 		/// Associated Layout
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public Layout Layout { get; set; }
+		public Layout Layout { get; set; }	//TODO: Assign the block layout (if there is one)
 
 		public CadObjectCollection<Entity> Entities { get; set; }
 

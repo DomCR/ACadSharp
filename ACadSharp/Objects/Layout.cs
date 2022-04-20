@@ -109,19 +109,19 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// The associated paper space block table record
 		/// </summary>
-		[DxfCodeValue(330)]
+		[DxfCodeValue(DxfReferenceType.Handle, 330)]
 		public BlockRecord AssociatedBlock { get; set; }
 
 		/// <summary>
 		/// Viewport that was last active in this layout when the layout was current
 		/// </summary>
-		[DxfCodeValue(331)]
+		[DxfCodeValue(DxfReferenceType.Handle, 331)]
 		public Viewport Viewport { get; set; }
 
 		/// <summary>
 		/// Layout's UCS
 		/// </summary>
-		[DxfCodeValue(345)]
+		[DxfCodeValue(DxfReferenceType.Handle, 345)]
 		public UCS UCS { get; set; }
 
 		//346	ID/handle of AcDbUCSTableRecord of base UCS if UCS is orthographic(76 code is non-zero).

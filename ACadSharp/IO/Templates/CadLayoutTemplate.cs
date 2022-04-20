@@ -49,8 +49,6 @@ namespace ACadSharp.IO.Templates
 			{
 				this.CadObject.Viewports.Add(builder.GetCadObject<Viewport>(handle));
 			}
-
-			builder.DocumentToBuild.Layouts.Add(this.CadObject);
 		}
 	}
 }

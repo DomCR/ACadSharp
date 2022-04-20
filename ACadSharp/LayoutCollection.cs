@@ -21,12 +21,11 @@ namespace ACadSharp
 			document.RegisterCollection(this);
 		}
 
-		public void Add(Layout item)
+		public void Add(Layout layout)
 		{
-			this._entries.Add(item.Handle, item);
-			item.Owner = this.Owner;
+			this._entries.Add(layout.Handle, layout);
 
-			OnAdd?.Invoke(this, new ReferenceChangedEventArgs(item));
+			OnAdd?.Invoke(this, new ReferenceChangedEventArgs(layout));
 		}
 
 		public void AddRange(IEnumerable<Layout> items)

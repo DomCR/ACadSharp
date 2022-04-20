@@ -26,7 +26,7 @@ namespace ACadSharp.IO.DXF
 					continue;
 
 				//Add the object and the template to the builder
-				this._builder.Templates[template.CadObject.Handle] = template;
+				this._builder.AddTemplate(template);
 			}
 		}
 
@@ -63,6 +63,12 @@ namespace ACadSharp.IO.DXF
 			{
 				switch (this._reader.LastValueAsString)
 				{
+					case DxfSubclassMarker.Layout:
+						this.readMapped<Layout>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.PlotSettings:
+						this.readMapped<PlotSettings>(template.CadObject, template);
+						break;
 					case DxfSubclassMarker.XRecord:
 						this.readMapped<XRecrod>(template.CadObject, template);
 						break;
@@ -118,19 +124,6 @@ namespace ACadSharp.IO.DXF
 				}
 
 				this._reader.ReadNext();
-			}
-
-			if (template.OwnerHandle == 0)
-			{
-				this._builder.DocumentToBuild.RootDictionary = template.CadObject;
-			}
-			else if (this._builder.TryGetCadObject(template.OwnerHandle.Value, out CadObject co))
-			{
-				co.XDictionary = template.CadObject;
-			}
-			else
-			{
-				this._notification?.Invoke(null, new NotificationEventArgs($"Block record owner {template.OwnerHandle} not found for entity {template.CadObject.Handle}"));
 			}
 
 			return template;

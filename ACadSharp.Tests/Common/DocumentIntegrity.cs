@@ -52,7 +52,6 @@ namespace ACadSharp.Tests.Common
 
 			entryNotNull(doc.VPorts, "*Active");
 
-			//TODO: Change layout list to an observable collection
 			notNull(doc.Layouts.FirstOrDefault(l => l.Name == "Model"), "Model");
 		}
 
@@ -122,7 +121,7 @@ namespace ACadSharp.Tests.Common
 		{
 			Assert.True(co.Handle == node.Handle);
 			Assert.True(co.Owner.Handle == node.OwnerHandle);
-			//Assert.True(entry.Dictionary.Handle == child.DictionaryHandle);
+			//Assert.True(co.XDictionary.Handle == node.DictionaryHandle);
 
 			switch (co)
 			{

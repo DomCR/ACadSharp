@@ -12,9 +12,7 @@ namespace ACadSharp.Tables.Collections
 	public abstract class Table<T> : CadObject, IObservableCollection<T>
 		where T : TableEntry
 	{
-		public event EventHandler<ReferenceChangedEventArgs> OnBeforeAdd;
 		public event EventHandler<ReferenceChangedEventArgs> OnAdd;
-		public event EventHandler<ReferenceChangedEventArgs> OnBeforeRemove;
 		public event EventHandler<ReferenceChangedEventArgs> OnRemove;
 
 		public override string ObjectName => DxfFileToken.TableEntry;
@@ -85,8 +83,6 @@ namespace ACadSharp.Tables.Collections
 
 		protected void add(string key, T item)
 		{
-			OnBeforeAdd?.Invoke(this, new ReferenceChangedEventArgs(item));
-
 			this._entries.Add(key, item);
 			item.Owner = this;
 
