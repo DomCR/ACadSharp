@@ -11,6 +11,8 @@ namespace ACadSharp.IO
 {
 	internal abstract class CadDocumentBuilder
 	{
+		public NotificationEventHandler NotificationHandler { get; }
+
 		public CadDocument DocumentToBuild { get; }
 
 		public Dictionary<string, LineType> LineTypes { get; } = new Dictionary<string, LineType>(StringComparer.OrdinalIgnoreCase);
@@ -19,8 +21,6 @@ namespace ACadSharp.IO
 		protected Dictionary<ulong, CadTemplate> templates = new Dictionary<ulong, CadTemplate>();
 
 		protected Dictionary<ulong, CadObject> cadObjects = new Dictionary<ulong, CadObject>();
-
-		public NotificationEventHandler NotificationHandler { get; }
 
 		public CadDocumentBuilder(CadDocument document, NotificationEventHandler notification = null)
 		{
