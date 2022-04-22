@@ -73,11 +73,9 @@ namespace ACadSharp.Tests.Common
 
 		public static void AssertDocumentTree(CadDocument doc)
 		{
-			var a = System.IO.Path.GetFullPath(_documentTree);
-
 			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(File.ReadAllText(_documentTree));
 
-			assertTable(doc.BlockRecords, tree.BlocksTable);
+			assertTable(doc.BlockRecords, tree.BlocksTable, doc.Header.Version >= ACadVersion.AC1021);
 		}
 
 		private static void assertTable<T>(CadDocument doc, Table<T> table)
@@ -103,10 +101,10 @@ namespace ACadSharp.Tests.Common
 			}
 		}
 
-		private static void assertTable<T>(Table<T> table, Node node)
+		private static void assertTable<T>(Table<T> table, Node node, bool assertDictionary)
 			where T : TableEntry
 		{
-			assertObject(table, node);
+			assertObject(table, node, assertDictionary);
 
 			foreach (T entry in table)
 			{
@@ -114,26 +112,28 @@ namespace ACadSharp.Tests.Common
 				if (child == null)
 					continue;
 
-				assertObject(entry, child);
+				assertObject(entry, child, assertDictionary);
 			}
 		}
-		private static void assertObject(CadObject co, Node node)
+		private static void assertObject(CadObject co, Node node, bool assertDictionary)
 		{
 			Assert.True(co.Handle == node.Handle);
 			Assert.True(co.Owner.Handle == node.OwnerHandle);
-			//Assert.True(co.XDictionary.Handle == node.DictionaryHandle);
+
+			if (co.XDictionary != null && assertDictionary)
+				Assert.True(co.XDictionary.Handle == node.DictionaryHandle);
 
 			switch (co)
 			{
 				case BlockRecord record:
-					assertCollection(record.Entities, node);
+					assertCollection(record.Entities, node, assertDictionary);
 					break;
 				default:
 					break;
 			}
 		}
 
-		private static void assertCollection(IEnumerable<CadObject> collection, Node node)
+		private static void assertCollection(IEnumerable<CadObject> collection, Node node, bool assertDictionary)
 		{
 			//Check the actual elements in the collection
 			foreach (CadObject entry in collection)
@@ -142,7 +142,7 @@ namespace ACadSharp.Tests.Common
 				if (child == null)
 					continue;
 
-				assertObject(entry, child);
+				assertObject(entry, child, assertDictionary);
 			}
 
 			//Look for missing elements
