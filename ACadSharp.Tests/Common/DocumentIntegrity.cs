@@ -62,6 +62,9 @@ namespace ACadSharp.Tests.Common
 				Assert.Equal(br.Name, br.BlockEntity.Name);
 
 				documentObjectNotNull(doc, br.BlockEntity);
+
+				Assert.True(br.Handle == br.BlockEntity.Owner.Handle, "Block entity owner doesn't mach");
+				
 				documentObjectNotNull(doc, br.BlockEnd);
 
 				foreach (Entities.Entity e in br.Entities)

@@ -26,6 +26,8 @@ namespace ACadSharp.IO.DXF
 		/// <inheritdoc/>
 		public void Dispose()
 		{
+			this._stream.Flush();
+			this._stream.Close();
 			this._stream.Dispose();
 		}
 

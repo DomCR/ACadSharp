@@ -261,7 +261,8 @@ namespace ACadSharp
 			else if (this._property.PropertyType.IsEquivalentTo(typeof(Transparency)))
 			{
 				//TODO: Implement transparency getter
-				return this._property.GetValue(obj);
+				//return this._property.GetValue(obj);
+				return null;
 			}
 			else
 			{
