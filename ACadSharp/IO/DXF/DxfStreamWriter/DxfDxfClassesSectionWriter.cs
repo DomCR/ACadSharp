@@ -4,7 +4,7 @@
 	{
 		public override string SectionName { get { return DxfFileToken.ClassesSection; } }
 
-		public DxfDxfClassesSectionWriter(IDxfStreamWriter writer, CadDocument document) : base(writer, document)
+		public DxfDxfClassesSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder) : base(writer, document, holder)
 		{
 		}
 

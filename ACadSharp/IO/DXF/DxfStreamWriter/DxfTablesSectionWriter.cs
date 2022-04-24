@@ -9,7 +9,7 @@ namespace ACadSharp.IO.DXF
 	{
 		public override string SectionName { get { return DxfFileToken.TablesSection; } }
 
-		public DxfTablesSectionWriter(IDxfStreamWriter writer, CadDocument document) : base(writer, document)
+		public DxfTablesSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder) : base(writer, document, holder)
 		{
 		}
 

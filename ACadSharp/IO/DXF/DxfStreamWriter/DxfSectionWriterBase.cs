@@ -1,4 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using ACadSharp.Blocks;
+using ACadSharp.Entities;
+using ACadSharp.IO.DXF;
+using ACadSharp.Tables;
+using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.IO.DXF
 {
@@ -6,15 +11,19 @@ namespace ACadSharp.IO.DXF
 	{
 		public abstract string SectionName { get; }
 
+		public CadObjectHolder Holder { get; }
+
 		protected IDxfStreamWriter _writer;
 		protected CadDocument _document;
 
 		public DxfSectionWriterBase(
 			IDxfStreamWriter writer,
-			CadDocument document)
+			CadDocument document,
+			CadObjectHolder holder)
 		{
 			this._writer = writer;
 			this._document = document;
+			this.Holder = holder;
 		}
 
 		public void Write()
@@ -32,7 +41,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(DxfCode.Handle, cadObject.Handle);
 			this._writer.Write(DxfCode.SoftPointerId, cadObject.Owner.Handle);
 
-			//TODO: Write exended data and dictionary
+			//TODO: Write exended data
 			if (cadObject.ExtendedData != null)
 			{
 				//this._writer.Write(DxfCode.ControlString, "{ACAD_REACTORS");
@@ -42,9 +51,12 @@ namespace ACadSharp.IO.DXF
 
 			if (cadObject.XDictionary != null)
 			{
-				//this._writer.Write(DxfCode.ControlString, "{ACAD_XDICTIONARY");
-				//this._writer.Write(DxfCode.HardOwnershipId, cadObject.Dictionary.Handle);
-				//this._writer.Write(DxfCode.ControlString, "}");
+				this._writer.Write(DxfCode.ControlString, "{ACAD_XDICTIONARY");
+				this._writer.Write(DxfCode.HardOwnershipId, cadObject.XDictionary.Handle);
+				this._writer.Write(DxfCode.ControlString, "}");
+
+				//Add the dictionary in the object holder
+				this.Holder.Objects.Add(cadObject.XDictionary);
 			}
 		}
 
@@ -66,6 +78,28 @@ namespace ACadSharp.IO.DXF
 
 					this._writer.Write(v.Key, value);
 				}
+			}
+		}
+
+		protected void writeEntity<T>(T e)
+			where T : Entity
+		{
+			DxfMap map = DxfMap.Create<T>();
+
+			this._writer.Write(DxfCode.Start, e.ObjectName);
+
+			this.writeCommonObjectData(e);
+
+			this.writeMap(map, e);
+		}
+
+		protected void writeObject<T>(T co)
+			where T : CadObject
+		{
+			switch (co)
+			{
+				default:
+					break;
 			}
 		}
 

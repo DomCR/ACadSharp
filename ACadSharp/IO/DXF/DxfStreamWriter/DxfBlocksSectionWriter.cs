@@ -1,5 +1,7 @@
 ﻿using ACadSharp.Blocks;
+using ACadSharp.Entities;
 using ACadSharp.Tables;
+using System;
 
 namespace ACadSharp.IO.DXF
 {
@@ -7,13 +9,11 @@ namespace ACadSharp.IO.DXF
 	{
 		public override string SectionName { get { return DxfFileToken.BlocksSection; } }
 
-		public DxfBlocksSectionWriter(IDxfStreamWriter writer, CadDocument document) : base(writer, document)
-		{
-		}
+		public DxfBlocksSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder objectHolder) : base(writer, document, objectHolder) { }
 
 		protected override void writeSection()
 		{
-			foreach (BlockRecord b in _document.BlockRecords)
+			foreach (BlockRecord b in this._document.BlockRecords)
 			{
 				DxfMap map = DxfMap.Create<Block>();
 
@@ -23,6 +23,8 @@ namespace ACadSharp.IO.DXF
 
 				this.writeMap(map, b.BlockEntity);
 
+				this.processEntities(b);
+
 				DxfMap bendmap = DxfMap.Create<BlockEnd>();
 
 				this._writer.Write(DxfCode.Start, b.BlockEnd.ObjectName);
@@ -30,6 +32,24 @@ namespace ACadSharp.IO.DXF
 				this.writeCommonObjectData(b.BlockEnd);
 
 				this.writeMap(bendmap, b.BlockEnd);
+			}
+		}
+
+		private void processEntities(BlockRecord b)
+		{
+			if (b.Name == BlockRecord.ModelSpaceName)
+			{
+				foreach (Entity e in b.Entities)
+				{
+					this.Holder.Entities.Add(e);
+				}
+			}
+			else
+			{
+				foreach (Entity e in b.Entities)
+				{
+					this.writeEntity(e);
+				}
 			}
 		}
 	}

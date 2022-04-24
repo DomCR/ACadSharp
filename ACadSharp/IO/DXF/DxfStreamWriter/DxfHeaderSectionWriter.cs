@@ -6,7 +6,7 @@ namespace ACadSharp.IO.DXF
 	{
 		public override string SectionName { get { return DxfFileToken.HeaderSection; } }
 
-		public DxfHeaderSectionWriter(IDxfStreamWriter writer, CadDocument document) : base(writer, document)
+		public DxfHeaderSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder) : base(writer, document, holder)
 		{
 		}
 

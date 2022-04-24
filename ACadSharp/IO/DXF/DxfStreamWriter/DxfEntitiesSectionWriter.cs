@@ -4,13 +4,16 @@
 	{
 		public override string SectionName { get { return DxfFileToken.EntitiesSection; } }
 
-		public DxfEntitiesSectionWriter(IDxfStreamWriter writer, CadDocument document) : base(writer, document)
+		public DxfEntitiesSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder) : base(writer, document, holder)
 		{
 		}
 
 		protected override void writeSection()
 		{
-
+			foreach (Entities.Entity item in this.Holder.Entities)
+			{
+				this.writeEntity(item);
+			}
 		}
 	}
 }
