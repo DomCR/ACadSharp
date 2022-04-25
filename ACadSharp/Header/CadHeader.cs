@@ -74,7 +74,7 @@ namespace ACadSharp.Header
 		/// System variable DWGCODEPAGE
 		/// </remarks>
 		[CadSystemVariable("$DWGCODEPAGE", 3)]
-		public string CodePage { get; set; }
+		public string CodePage { get; set; } = "ANSI_1252";
 
 		/// <summary>
 		/// Displays the name of the last person who modified the file
@@ -83,7 +83,7 @@ namespace ACadSharp.Header
 		/// System variable LASTSAVEDBY
 		/// </remarks>
 		[CadSystemVariable("$LASTSAVEDBY", 3)]
-		public string LastSavedBy { get; set; }
+		public string LastSavedBy { get; set; } = "ACadSharp";
 
 		/// <summary>
 		/// The default value is 0.
@@ -383,11 +383,19 @@ namespace ACadSharp.Header
 		/// System variable SHADEDGE
 		/// </summary>
 		public ShadeEdgeType ShadeEdge { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable SHADEDIF
+		/// Percent ambient/diffuse light
 		/// </summary>
-		public short ShadeDiffuseToAmbientPercentage { get; set; }
+		/// <remarks>
+		/// System variable SHADEDIF
+		/// </remarks>
+		/// <value>
+		/// range 1-100
+		/// </value>
+		[CadSystemVariable("$ATTMODE", 70)]
+		public short ShadeDiffuseToAmbientPercentage { get; set; } = 70;
+
 		/// <summary>
 		/// 
 		/// System variable UNITMODE
