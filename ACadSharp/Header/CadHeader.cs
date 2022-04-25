@@ -393,7 +393,7 @@ namespace ACadSharp.Header
 		/// <value>
 		/// range 1-100
 		/// </value>
-		[CadSystemVariable("$ATTMODE", 70)]
+		[CadSystemVariable("$SHADEDIF", 70)]
 		public short ShadeDiffuseToAmbientPercentage { get; set; } = 70;
 
 		/// <summary>
