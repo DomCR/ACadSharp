@@ -50,7 +50,7 @@ namespace ACadSharp.IO.DXF
 
 		public void Write()
 		{
-			this._objectHolder.Objects.Add(_document.RootDictionary);
+			this._objectHolder.Objects.Enqueue(_document.RootDictionary);
 
 			this.writeHeader();
 

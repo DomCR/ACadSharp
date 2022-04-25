@@ -1,4 +1,7 @@
-﻿namespace ACadSharp.IO.DXF
+﻿using ACadSharp.Entities;
+using System.Linq;
+
+namespace ACadSharp.IO.DXF
 {
 	internal class DxfEntitiesSectionWriter : DxfSectionWriterBase
 	{
@@ -10,8 +13,10 @@
 
 		protected override void writeSection()
 		{
-			foreach (Entities.Entity item in this.Holder.Entities)
+			while (this.Holder.Entities.Any())
 			{
+				Entity item = this.Holder.Entities.Dequeue();
+
 				this.writeEntity(item);
 			}
 		}

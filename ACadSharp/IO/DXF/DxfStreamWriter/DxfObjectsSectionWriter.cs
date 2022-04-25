@@ -1,4 +1,6 @@
-﻿namespace ACadSharp.IO.DXF
+﻿using System.Linq;
+
+namespace ACadSharp.IO.DXF
 {
 	internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 	{
@@ -10,8 +12,10 @@
 
 		protected override void writeSection()
 		{
-			foreach (CadObject item in this.Holder.Objects)
+			while (this.Holder.Objects.Any())
 			{
+				CadObject item = this.Holder.Objects.Dequeue(); 
+
 				this.writeObject(item);
 			}
 		}

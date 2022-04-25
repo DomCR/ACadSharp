@@ -41,7 +41,7 @@ namespace ACadSharp.IO.DXF
 			{
 				foreach (Entity e in b.Entities)
 				{
-					this.Holder.Entities.Add(e);
+					this.Holder.Entities.Enqueue(e);
 				}
 			}
 			else

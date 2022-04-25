@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.IO.DXF;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System;
 using System.Collections.Generic;
@@ -56,7 +57,7 @@ namespace ACadSharp.IO.DXF
 				this._writer.Write(DxfCode.ControlString, "}");
 
 				//Add the dictionary in the object holder
-				this.Holder.Objects.Add(cadObject.XDictionary);
+				this.Holder.Objects.Enqueue(cadObject.XDictionary);
 			}
 		}
 
@@ -96,10 +97,38 @@ namespace ACadSharp.IO.DXF
 		protected void writeObject<T>(T co)
 			where T : CadObject
 		{
+			DxfMap map = null;
+
 			switch (co)
 			{
-				default:
-					break;
+				case CadDictionary cadDictionary:
+					this.writeDictionary(cadDictionary);
+					return;
+			}
+		}
+
+		protected void writeDictionary(CadDictionary e)
+		{
+			this._writer.Write(DxfCode.Start, e.ObjectName);
+
+			this.writeCommonObjectData(e);
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Dictionary);
+
+			this._writer.Write(280, e.HardOwnerFlag);
+			this._writer.Write(281, (int)e.ClonningFlags);
+
+			System.Diagnostics.Debug.Assert(e.EntryNames.Length == e.EntryHandles.Length);
+			for (int i = 0; i < e.EntryNames.Length; i++)
+			{
+				this._writer.Write(3, e.EntryNames[i]);
+				this._writer.Write(350, e.EntryHandles[i]);
+			}
+
+			//Add the entries as objects
+			foreach (CadObject item in e)
+			{
+				this.Holder.Objects.Enqueue(item);
 			}
 		}
 
