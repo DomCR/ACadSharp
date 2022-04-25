@@ -35,7 +35,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Dxf classes defined in this document
 		/// </summary>
-		public DxfClassCollection Classes { get; set; }
+		public DxfClassCollection Classes { get; set; } = new DxfClassCollection();
 
 		/// <summary>
 		/// The collection of all registered applications in the drawing

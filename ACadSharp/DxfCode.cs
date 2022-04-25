@@ -281,7 +281,11 @@ namespace ACadSharp
 	{
 		public static GroupCodeValueType TransformValue(int code)
 		{
-			if (code >= 0 && code <= 9)
+			if (code >= 0 && code <= 4)
+				return GroupCodeValueType.String;
+			if (code == 5)
+				return GroupCodeValueType.Handle;
+			if (code >= 6 && code <= 9)
 				return GroupCodeValueType.String;
 			if (code >= 10 && code <= 39)
 				return GroupCodeValueType.Point3D;

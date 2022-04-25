@@ -441,7 +441,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable TEXTSTYLE
 		/// </remarks>
-		[CadSystemVariable(DxfReferenceType.Name, "$TEXTSTYLE", 7)]
+		[CadSystemVariable("$TEXTSTYLE", 7)]
 		public string TextStyleName
 		{
 			get { return this.TextStyle.Name; }
@@ -466,7 +466,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable CLAYER
 		/// </remarks>
-		[CadSystemVariable(DxfReferenceType.Name, "$CLAYER", 8)]
+		[CadSystemVariable("$CLAYER", 8)]
 		public string LayerName
 		{
 			get { return this.Layer.Name; }
@@ -850,6 +850,46 @@ namespace ACadSharp.Header
 				if (att.Name == systemvar)
 				{
 					value = p.GetValue(this);
+					break;
+				}
+			}
+
+			return value;
+		}
+
+		/// <summary>
+		/// Get the primitive values in each dxf code
+		/// </summary>
+		/// <param name="systemvar"></param>
+		/// <returns>dictionary with the codes and values</returns>
+		public Dictionary<DxfCode, object> GetValues(string systemvar)
+		{
+			Dictionary<DxfCode, object> value = null;
+
+			foreach (PropertyInfo p in this.GetType().GetProperties())
+			{
+				CadSystemVariableAttribute att = p.GetCustomAttribute<CadSystemVariableAttribute>();
+				if (att == null)
+					continue;
+
+				if (att.Name == systemvar)
+				{
+					value = new Dictionary<DxfCode, object>();
+
+					if (att.ValueCodes.Length == 1)
+					{
+						value.Add(att.ValueCodes[0], p.GetValue(this));
+					}
+					else
+					{
+						IVector vector = (IVector)p.GetValue(this);
+						var arr = vector.GetComponents();
+						for (int i = 0; i < arr.Length; i++)
+						{
+							value.Add(att.ValueCodes[i], arr[i]);
+						}
+					}
+
 					break;
 				}
 			}

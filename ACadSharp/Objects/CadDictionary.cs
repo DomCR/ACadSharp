@@ -104,13 +104,17 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(281)]
 		public DictionaryCloningFlags ClonningFlags { get; set; }
 
-		//3	Entry name(one for each entry) (optional)
+		/// <summary>
+		/// Entry names
+		/// </summary>
 		[DxfCodeValue(3)]
-		public string[] EntryNames { get; }
+		public string[] EntryNames { get { return this._entries.Keys.ToArray(); } }
 
-		//350	Soft-owner ID/handle to entry object (one for each entry) (optional)
+		/// <summary>
+		/// Soft-owner ID/handle to entry object
+		/// </summary>
 		[DxfCodeValue(350)]
-		public ulong[] EntryHandle { get; }
+		public ulong[] EntryHandles { get { return this._entries.Values.Select(c => c.Handle).ToArray(); } }
 
 		public CadObject this[string entry] { get { return this._entries[entry]; } }
 

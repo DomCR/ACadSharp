@@ -1,7 +1,10 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -16,14 +19,19 @@ namespace ACadSharp
 		{
 			get
 			{
+				if (this._assignedCode.HasValue)
+					return this._assignedCode.Value;
+
 				if (this.DxfCodes.Length == 1)
-					return DxfCodes.First();
+					return this.DxfCodes.First();
 				else
 					return (int)DxfCode.Invalid;
 			}
 		}
 
-		public int[] DxfCodes { get { return _attributeData.ValueCodes.Select(c => (int)c).ToArray(); } }
+		public int[] DxfCodes { get { return this._attributeData.ValueCodes.Select(c => (int)c).ToArray(); } }
+
+		protected int? _assignedCode;
 
 		protected PropertyInfo _property;
 
@@ -38,11 +46,19 @@ namespace ACadSharp
 
 			this._property = property;
 		}
+
+		/// <summary>
+		/// Set the value for the property using the AssignedCode
+		/// </summary>
+		/// <typeparam name="TCadObject"></typeparam>
+		/// <param name="obj"></param>
+		/// <param name="value"></param>
+		/// <exception cref="InvalidOperationException"></exception>
 		public void SetValue<TCadObject>(TCadObject obj, object value)
 			where TCadObject : CadObject
 		{
 			if (this.AssignedCode == (int)DxfCode.Invalid)
-				throw new InvalidOperationException("This property has multiple dxf values assigned");
+				throw new InvalidOperationException("This property has multiple dxf values assigned or doesn't have a default value assigned");
 
 			this.SetValue(this.AssignedCode, obj, value);
 		}
@@ -95,7 +111,7 @@ namespace ACadSharp
 			{
 				PaperMargin margin = (PaperMargin)_property.GetValue(obj);
 
-				switch (this.Code)
+				switch (code)
 				{
 					//40	Size, in millimeters, of unprintable margin on left side of paper
 					case 40:
@@ -117,7 +133,7 @@ namespace ACadSharp
 
 				this._property.SetValue(obj, margin);
 			}
-			else if (_property.PropertyType.IsEquivalentTo(typeof(Transparency)))
+			else if (this._property.PropertyType.IsEquivalentTo(typeof(Transparency)))
 			{
 				//TODO: Implement transparency setter
 				//this._property.SetValue(obj, new Transparency((short)value));
@@ -151,11 +167,72 @@ namespace ACadSharp
 		}
 
 		public object GetValue<TCadObject>(int code, TCadObject obj)
-			where TCadObject : CadObject
 		{
-			throw new Exception();
+			switch (this._attributeData.ReferenceType)
+			{
+				case DxfReferenceType.Handle:
+					return this.getHandledValue(obj);
+				case DxfReferenceType.Name:
+					return this.getNamedValue(obj);
+				case DxfReferenceType.Count:
+					return this.getCounterValue(obj);
+				case DxfReferenceType.None:
+				default:
+					return getRawValue(code, obj);
+			}
+		}
 
-			if (this._property.PropertyType.IsEquivalentTo(typeof(IVector)))
+		private ulong? getHandledValue<TCadObject>(TCadObject obj)
+		{
+			if (!this._property.PropertyType.HasInterface<IHandledCadObject>())
+				throw new ArgumentException();
+
+			IHandledCadObject handled = (IHandledCadObject)this._property.GetValue(obj);
+
+			return handled?.Handle;
+		}
+
+		private string getNamedValue<TCadObject>(TCadObject obj)
+		{
+			if (!this._property.PropertyType.HasInterface<INamedCadObject>())
+				throw new ArgumentException();
+
+			INamedCadObject handled = (INamedCadObject)this._property.GetValue(obj);
+
+			return handled?.Name;
+		}
+
+		private int getCounterValue<TCadObject>(TCadObject obj)
+		{
+			if (!this._property.PropertyType.HasInterface<IEnumerable>())
+				throw new ArgumentException();
+
+			IEnumerable collection = (IEnumerable)this._property.GetValue(obj);
+			if (collection == null)
+				return 0;
+
+			int counter = 0;
+			foreach (var item in collection)
+			{
+				counter++;
+			}
+
+			return counter;
+		}
+
+		private object getRawValue<TCadObject>(int code, TCadObject obj)
+		{
+			GroupCodeValueType groupCode = GroupCodeValue.TransformValue(code);
+
+			switch (groupCode)
+			{
+				case GroupCodeValueType.Handle:
+				case GroupCodeValueType.ObjectId:
+				case GroupCodeValueType.ExtendedDataHandle:
+					return this.getHandledValue<TCadObject>(obj);
+			}
+
+			if (this._property.PropertyType.HasInterface<IVector>())
 			{
 				IVector vector = (IVector)this._property.GetValue(obj);
 
@@ -171,7 +248,7 @@ namespace ACadSharp
 				switch (code)
 				{
 					case 62:
-						break;
+						return color.Index;
 					case 420:
 						// true color
 						break;
@@ -180,12 +257,13 @@ namespace ACadSharp
 						break;
 				}
 
-				return color;
+				return null;
 			}
 			else if (this._property.PropertyType.IsEquivalentTo(typeof(Transparency)))
 			{
-				//TODO: Implement transparency setter
-				return this._property.GetValue(obj);
+				//TODO: Implement transparency getter
+				//return this._property.GetValue(obj);
+				return null;
 			}
 			else
 			{

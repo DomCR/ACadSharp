@@ -8,6 +8,9 @@ namespace ACadSharp.Tables.Collections
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.STYLE_CONTROL_OBJ;
 
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.TableStyle;
+
 		internal TextStylesTable() : base() { }
 
 		internal TextStylesTable(CadDocument document) : base(document) { }

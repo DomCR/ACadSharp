@@ -26,6 +26,8 @@ namespace ACadSharp.Tests
 			CadDocument doc = new CadDocument();
 
 			DocumentIntegrity.AssertDocumentDefaults(doc);
+			DocumentIntegrity.AssertTableHirearchy(doc);
+			DocumentIntegrity.AssertBlockRecords(doc);
 		}
 
 		[Fact]
