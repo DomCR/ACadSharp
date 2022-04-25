@@ -107,11 +107,8 @@ namespace ACadSharp.Entities
 		//99	For MPolygon, number of degenerate boundary paths(loops), where a degenerate boundary path is a border that is ignored by the hatch
 
 		/// <summary>
-		/// Seed points
+		/// Seed points codes: 10 | 20 Seed point(in OCS)
 		/// </summary>
-		//10	Seed point(in OCS)
-		//DXF: X value; APP: 2D point(multiple entries)
-		//20	DXF: Y value of seed point(in OCS); (multiple entries)
 		[DxfCodeValue(DxfReferenceType.Count, 98)]
 		public List<XY> SeedPoints { get; set; } = new List<XY>();
 

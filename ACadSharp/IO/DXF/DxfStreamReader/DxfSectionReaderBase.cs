@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
+using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -220,9 +221,9 @@ namespace ACadSharp.IO.DXF
 					case DxfSubclassMarker.Entity:
 						this.readMapped<Entity>(template.CadObject, template);
 						break;
-					//case DxfSubclassMarker.Hatch:
-					//	this.readHatch((Hatch)template.CadObject, (CadHatchTemplate)template);
-					//	break;
+					case DxfSubclassMarker.Hatch:
+						this.readHatch((Hatch)template.CadObject, (CadHatchTemplate)template);
+						break;
 					case DxfSubclassMarker.Insert:
 						this.readMapped<Insert>(template.CadObject, template);
 						break;
@@ -373,10 +374,44 @@ namespace ACadSharp.IO.DXF
 
 		protected void readHatch(Hatch hatch, CadHatchTemplate template)
 		{
-			//while (this._reader.LastDxfCode != DxfCode.Start)
-			//{
-			//	this._reader.ReadNext();
-			//}
+			bool isFirstSeed = true;
+			XY seedPoint = new XY();
+			DxfClassMap map = DxfClassMap.Create<Hatch>();
+
+			while (this._reader.LastDxfCode != DxfCode.Start)
+			{
+				map.DxfProperties.TryGetValue(this._reader.LastCode, out DxfProperty dxfProperty);
+
+				switch (this._reader.LastCode)
+				{
+					case 78:    //Number of pattern definition lines
+					case 91:    //Number of boundary paths (loops)
+						break;
+					case 10:
+						seedPoint = new XY(this._reader.LastValueAsDouble, seedPoint.Y);
+						break;
+					case 20:
+						if (!isFirstSeed)
+						{
+							seedPoint = new XY(seedPoint.X, this._reader.LastValueAsDouble);
+							hatch.SeedPoints.Add(seedPoint);
+						}
+						break;
+					case 30:
+						hatch.Elevation = this._reader.LastValueAsDouble;
+						isFirstSeed = false;
+						break;
+					default:
+						if (dxfProperty != null)
+						{
+							dxfProperty.SetValue(hatch, this._reader.LastValue);
+						}
+						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code : {this._reader.LastCode} with value : {this._reader.LastValue} for subclass {DxfSubclassMarker.Hatch}"));
+						break;
+				}
+
+				this._reader.ReadNext();
+			}
 
 			//this.readMapped<Hatch>(template.CadObject, template);
 		}

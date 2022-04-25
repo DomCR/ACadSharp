@@ -8,6 +8,8 @@ namespace ACadSharp.Entities
 	{
 		public partial class BoundaryPath
 		{
+			public BoundaryPathFlags Flags { get; set; }
+
 			/// <summary>
 			/// Number of edges in this boundary path
 			/// </summary>
@@ -21,8 +23,6 @@ namespace ACadSharp.Entities
 			/// 
 			/// </summary>
 			public List<Entity> Entities { get; set; } = new List<Entity>();
-
-			public BoundaryPathFlags Flags { get; set; }
 		}
 	}
 }
