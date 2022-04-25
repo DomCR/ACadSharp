@@ -3,6 +3,7 @@ using ACadSharp.Entities;
 using ACadSharp.Exceptions;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace ACadSharp.IO.DXF
@@ -36,14 +37,20 @@ namespace ACadSharp.IO.DXF
 			//Read the table name
 			this._reader.ReadNext();
 
-			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle);
+			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors);
 
 			if (!this._builder.TryGetCadObject(ownerHandle, out BlockRecord record))
 			{
-				throw new System.Exception();
+				throw new DxfException($"Block with handle {handle} and name {name} doesn't have a record");
 			}
 
+			//Assign the handle to the entity
+			record.BlockEntity.Handle = handle;
+
 			CadEntityTemplate template = new CadEntityTemplate(record.BlockEntity);
+			template.OwnerHandle = ownerHandle;
+			template.XDictHandle = xdictHandle;
+			template.ReactorsHandles = reactors;
 
 			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.Entity);
 
@@ -61,12 +68,12 @@ namespace ACadSharp.IO.DXF
 					continue;
 
 				//Add the object and the template to the builder
-				this._builder.Templates[entityTemplate.CadObject.Handle] = entityTemplate;
+				this._builder.AddTemplate(entityTemplate);
 				record.Entities.Add(entityTemplate.CadObject);
 			}
 
 			this.readBlockEnd(record.BlockEnd);
-			this._builder.Templates[template.CadObject.Handle] = template;
+			this._builder.AddTemplate(template);
 		}
 
 		private void readBlockEnd(BlockEnd block)
@@ -79,7 +86,7 @@ namespace ACadSharp.IO.DXF
 
 			this.readMapped<BlockEnd>(block, template);
 
-			this._builder.Templates[template.CadObject.Handle] = template;
+			this._builder.AddTemplate(template);
 		}
 	}
 }

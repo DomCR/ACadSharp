@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgTableTemplate<T> : CadTemplate<Table<T>>
+	internal class DwgTableTemplate<T> : CadTemplate<Table<T>>, ICadTableTemplate
 		where T : TableEntry
 	{
 		public List<ulong> EntryHandles { get; } = new List<ulong>();

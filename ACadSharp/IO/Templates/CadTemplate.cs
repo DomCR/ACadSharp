@@ -10,7 +10,7 @@ using System.Text;
 
 namespace ACadSharp.IO.Templates
 {
-	internal abstract class CadTemplate : ICadObjectBuilder
+	internal abstract class CadTemplate : ICadObjectTemplate
 	{
 		public CadObject CadObject { get; set; }
 
@@ -18,7 +18,7 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? XDictHandle { get; set; }
 
-		public List<ulong> ReactorsHandles { get; } = new List<ulong>();
+		public List<ulong> ReactorsHandles { get; set; } = new List<ulong>();
 
 		public Dictionary<ulong, ExtendedData> EDataTemplate { get; } = new Dictionary<ulong, ExtendedData>();
 
@@ -45,15 +45,16 @@ namespace ACadSharp.IO.Templates
 
 		public virtual void Build(CadDocumentBuilder builder)
 		{
-			if (this.OwnerHandle.HasValue)
-			{
-				if (builder.TryGetCadObject(this.OwnerHandle.Value, out CadObject owner))
-					this.CadObject.Owner = owner;
-			}
+			if (false)
+				if (this.OwnerHandle.HasValue)
+				{
+					if (builder.TryGetCadObject(this.OwnerHandle.Value, out CadObject owner))
+						this.CadObject.Owner = owner;
+				}
 
 			if (builder.TryGetCadObject(this.XDictHandle, out CadDictionary cadDictionary))
 			{
-				this.CadObject.Dictionary = cadDictionary;
+				this.CadObject.XDictionary = cadDictionary;
 			}
 			else if (this.XDictHandle.HasValue && this.XDictHandle.Value != 0)
 			{
@@ -62,8 +63,7 @@ namespace ACadSharp.IO.Templates
 
 			foreach (ulong handle in this.ReactorsHandles)
 			{
-				CadObject reactor = builder.GetCadObject(handle);
-				if (reactor != null)
+				if (builder.TryGetCadObject(handle, out CadObject reactor))
 					this.CadObject.Reactors.Add(handle, reactor);
 			}
 

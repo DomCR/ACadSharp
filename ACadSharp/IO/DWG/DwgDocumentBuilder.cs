@@ -15,6 +15,8 @@ namespace ACadSharp.IO.DWG
 
 		public List<CadBlockRecordTemplate> BlockRecordTemplates { get; set; } = new List<CadBlockRecordTemplate>();
 
+		public List<CadDictionaryTemplate> CadDictionaryTemplates { get; set; } = new List<CadDictionaryTemplate>();
+
 		public DwgDocumentBuilder(CadDocument document, DwgReaderFlags flags, NotificationEventHandler notification = null)
 			: base(document, notification)
 		{

@@ -8,7 +8,7 @@ namespace ACadSharp.IO.Templates
 {
 	internal class DwgMLStyleTemplate : CadTemplate<MLStyle>
 	{
-		public class ElementTemplate : ICadObjectBuilder
+		public class ElementTemplate : ICadObjectTemplate
 		{
 			public ulong? LinetypeHandle { get; set; }
 			public int? LinetypeIndex { get; set; }

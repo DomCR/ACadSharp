@@ -19,10 +19,10 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public override long Position
 		{
-			get => m_stream.Position;
+			get => _stream.Position;
 			set
 			{
-				m_stream.Position = value;
+				_stream.Position = value;
 				BitShift = 0;
 			}
 		}

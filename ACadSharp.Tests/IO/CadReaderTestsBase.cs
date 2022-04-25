@@ -22,7 +22,7 @@ namespace ACadSharp.Tests.IO
 
 		public static TheoryData<string> DxfBinaryFiles { get; }
 
-		protected readonly Dictionary<string, CadDocument> _documents = new Dictionary<string, CadDocument>();	//TODO: this does not store the document readed
+		protected readonly Dictionary<string, CadDocument> _documents = new Dictionary<string, CadDocument>();  //TODO: this does not store the document readed
 
 		protected readonly ITestOutputHelper _output;
 
@@ -50,6 +50,7 @@ namespace ACadSharp.Tests.IO
 		public CadReaderTestsBase(ITestOutputHelper output)
 		{
 			this._output = output;
+			DocumentIntegrity.Output = output;
 		}
 
 		public virtual void ReadHeaderTest(string test)
@@ -63,7 +64,9 @@ namespace ACadSharp.Tests.IO
 
 		public virtual void ReadTest(string test)
 		{
-			Assert.NotNull(getDocument(test));
+			CadDocument doc = this.getDocument(test);
+
+			Assert.NotNull(doc);
 		}
 
 		public virtual void AssertDocumentDefaults(string test)
@@ -85,6 +88,13 @@ namespace ACadSharp.Tests.IO
 			CadDocument doc = this.getDocument(test);
 
 			DocumentIntegrity.AssertBlockRecords(doc);
+		}
+
+		public virtual void AssertDocumentTree(string test)
+		{
+			CadDocument doc = this.getDocument(test);
+
+			DocumentIntegrity.AssertDocumentTree(doc);
 		}
 
 		public void Dispose()

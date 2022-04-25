@@ -85,8 +85,7 @@ namespace ACadSharp
 		/// <summary>
 		/// The collection of all layouts in the drawing
 		/// </summary>
-		[Obsolete("Layouts are always owned by dictionaries not the document")]
-		public List<Layout> Layouts { get; } = new List<Layout>();    //TODO: change list for observable collection
+		public Layout[] Layouts { get { return this._cadObjects.Values.OfType<Layout>().ToArray(); } }   //TODO: Layouts have to go to the designed dictionary or blocks
 
 		/// <summary>
 		/// The collection of all viewports in the drawing
@@ -94,7 +93,18 @@ namespace ACadSharp
 		[Obsolete("Viewports are only used by the R14 versions of dwg")]
 		public ViewportCollection Viewports { get; private set; }
 
-		public CadDictionary RootDictionary { get; internal set; } = new CadDictionary();
+		public CadDictionary RootDictionary
+		{
+			get { return this._rootDictionary; }
+			internal set
+			{
+				this._rootDictionary = value;
+				this._rootDictionary.Owner = this;
+				this.RegisterCollection(_rootDictionary);
+			}
+		}
+
+		private CadDictionary _rootDictionary = new CadDictionary();
 
 		//Contains all the objects in the document
 		private readonly Dictionary<ulong, IHandledCadObject> _cadObjects = new Dictionary<ulong, IHandledCadObject>();
@@ -104,7 +114,7 @@ namespace ACadSharp
 			this._cadObjects.Add(this.Handle, this);
 
 			//Initalize viewports only for management 
-			this.Viewports = new ViewportCollection(this);
+			//this.Viewports = new ViewportCollection(this);
 
 			if (createDefaults)
 			{
@@ -122,6 +132,12 @@ namespace ACadSharp
 				this.UCSs = new UCSTable(this);
 				this.Views = new ViewsTable(this);
 				this.VPorts = new VPortsTable(this);
+
+				//Root dictionary
+				this.RootDictionary = CadDictionary.CreateRoot();
+
+				//Entries
+				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(Layout.LayoutModelName, Layout.Default);
 
 				//Default variables
 				this.AppIds.Add(AppId.Default);
@@ -167,7 +183,14 @@ namespace ACadSharp
 		private void addCadObject(CadObject cadObject)
 		{
 			if (cadObject.Document != null)
+			{
+				//Avoid exception if the element is assign to this document
+				//TODO: AddCadObject: Not very elegant or reilable, check the integrity of this approax
+				//if (cadObject.Document == this && this._cadObjects.ContainsKey(cadObject.Handle))
+				//	return;
+
 				throw new ArgumentException($"The item with handle {cadObject.Handle} is already assigned to a document");
+			}
 
 			cadObject.Document = this;
 
@@ -177,9 +200,11 @@ namespace ACadSharp
 			}
 
 			this._cadObjects.Add(cadObject.Handle, cadObject);
+			cadObject.OnReferenceChange += this.onReferenceChanged;
 
 			//TODO: Add the dictionary
-			//this.addCadObject(cadObject.Dictionary);
+			if (cadObject.XDictionary != null)
+				this.RegisterCollection(cadObject.XDictionary);
 
 			switch (cadObject)
 			{
@@ -187,19 +212,27 @@ namespace ACadSharp
 					this.RegisterCollection(record.Entities);
 					this.addCadObject(record.BlockEnd);
 					this.addCadObject(record.BlockEntity);
-					record.OnReferenceChange += this.onReferenceChanged;
 					break;
 			}
 		}
 
 		private void onReferenceChanged(object sender, ReferenceChangedEventArgs e)
 		{
+			//TODO: Should remove the old one??
+
 			this.addCadObject(e.Item);
 		}
 
 		private void onAdd(object sender, ReferenceChangedEventArgs e)
 		{
-			this.addCadObject(e.Item);
+			if (e.Item is CadDictionary dictionary)
+			{
+				this.RegisterCollection(dictionary);
+			}
+			else
+			{
+				this.addCadObject(e.Item);
+			}
 		}
 
 		internal void RegisterCollection<T>(IObservableCollection<T> collection, bool addElements = true)
@@ -256,7 +289,14 @@ namespace ACadSharp
 			{
 				foreach (T item in collection)
 				{
-					this.addCadObject(item);
+					if (item is CadDictionary dictionary)
+					{
+						this.RegisterCollection(dictionary);
+					}
+					else
+					{
+						this.addCadObject(item);
+					}
 				}
 			}
 		}

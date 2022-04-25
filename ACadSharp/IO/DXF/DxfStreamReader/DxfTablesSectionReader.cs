@@ -3,6 +3,7 @@ using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace ACadSharp.IO.DXF
@@ -45,7 +46,7 @@ namespace ACadSharp.IO.DXF
 
 			int nentries = 0;
 
-			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle);
+			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors);
 
 			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.Table);
 
@@ -142,10 +143,13 @@ namespace ACadSharp.IO.DXF
 
 			Debug.Assert(ownerHandle == null || ownerHandle.Value == 0);
 
-			//Add the object and the template to the builder
-			this._builder.Templates[template.CadObject.Handle] = template;
-		}
+			template.OwnerHandle = ownerHandle;
+			template.XDictHandle = xdictHandle;
+			template.ReactorsHandles = reactors;
 
+			//Add the object and the template to the builder
+			this._builder.AddTableTemplate((ICadTableTemplate)template);
+		}
 
 		private void readEntries<T>(DwgTableTemplate<T> tableTemplate)
 			where T : TableEntry
@@ -153,7 +157,7 @@ namespace ACadSharp.IO.DXF
 			//Read all the entries until the end of the table
 			while (this._reader.LastValueAsString != DxfFileToken.EndTable)
 			{
-				this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle);
+				this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors);
 
 				Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.TableRecord);
 				Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.TableRecord);
@@ -218,11 +222,13 @@ namespace ACadSharp.IO.DXF
 				//Setup the common fields
 				template.CadObject.Handle = handle;
 				template.OwnerHandle = ownerHandle;
+				template.XDictHandle = xdictHandle;
+				template.ReactorsHandles = reactors;
 
 				tableTemplate.EntryHandles.Add(template.CadObject.Handle);
 
 				//Add the object and the template to the builder
-				this._builder.Templates[template.CadObject.Handle] = template;
+				this._builder.AddTemplate(template);
 			}
 		}
 	}

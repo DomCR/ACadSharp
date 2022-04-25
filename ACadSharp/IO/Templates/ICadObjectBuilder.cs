@@ -2,7 +2,7 @@
 
 namespace ACadSharp.IO.Templates
 {
-	internal interface ICadObjectBuilder
+	internal interface ICadObjectTemplate
 	{
 		void Build(CadDocumentBuilder builder);
 	}

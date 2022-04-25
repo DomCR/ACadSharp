@@ -18,12 +18,12 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.2.1-alpha</Version>
+    <Version>1.2.3-alpha</Version>
   </PropertyGroup>
   
-  <Import Project="..\CSUtilities\CSUtilities\CSUtilities.projitems" Label="Shared" />
-  
   <Import Project="..\CSUtilities\CSMath\CSMath.projitems" Label="Shared" />
+  
+  <Import Project="..\CSUtilities\CSUtilities\CSUtilities.projitems" Label="Shared" />
   
   <ItemGroup>
     <None Include="..\README.md">
