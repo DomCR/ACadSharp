@@ -424,7 +424,7 @@ namespace ACadSharp.Header
 		/// System variable LTSCALE
 		/// </remarks>
 		[CadSystemVariable("$LTSCALE", 40)]
-		public double LineTypeScale { get; set; }
+		public double LineTypeScale { get; set; } = 1.0d;
 
 		/// <summary>
 		/// Default text height
