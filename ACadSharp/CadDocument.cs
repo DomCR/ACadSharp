@@ -122,16 +122,18 @@ namespace ACadSharp
 				this.Header = new CadHeader();
 				this.SummaryInfo = new CadSummaryInfo();
 
+				//The order of the elements is rellevant for the handles assignation
+
 				//Initialize tables
 				this.BlockRecords = new BlockRecordsTable(this);
-				this.AppIds = new AppIdsTable(this);
-				this.DimensionStyles = new DimensionStylesTable(this);
 				this.Layers = new LayersTable(this);
-				this.LineTypes = new LineTypesTable(this);
+				this.DimensionStyles = new DimensionStylesTable(this);
 				this.TextStyles = new TextStylesTable(this);
-				this.UCSs = new UCSTable(this);
+				this.LineTypes = new LineTypesTable(this);
 				this.Views = new ViewsTable(this);
+				this.UCSs = new UCSTable(this);
 				this.VPorts = new VPortsTable(this);
+				this.AppIds = new AppIdsTable(this);
 
 				//Root dictionary
 				this.RootDictionary = CadDictionary.CreateRoot();

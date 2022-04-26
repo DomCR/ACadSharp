@@ -18,6 +18,12 @@ namespace ACadSharp.IO.DXF
 			{
 				this._writer.Write(DxfCode.CLShapeText, item.Key);
 
+				if (item.Key == "$HANDSEED")	//Not very elegant but by now...
+				{
+					this._writer.Write(DxfCode.Handle, this._document.Header.HandleSeed);
+					continue;
+				}
+
 				foreach (var csv in item.Value.DxfCodes)
 				{
 					object value = item.Value.GetValue(csv, this._document.Header);

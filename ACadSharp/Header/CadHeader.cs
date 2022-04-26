@@ -622,6 +622,9 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$MENU", 1)]
 		public string MenuFileName { get; set; } = string.Empty;
 
+		[CadSystemVariable("$HANDSEED", 5)]
+		public ulong HandleSeed { get; internal set; } = 0x27;
+
 		/// <summary>
 		/// 
 		/// System variable 
@@ -786,9 +789,6 @@ namespace ACadSharp.Header
 		public UCS Ucs { get; set; } = new UCS();
 
 		public DimensionStyle DimensionStyleOverrides { get; set; } = new DimensionStyle();
-
-		[Obsolete]
-		internal ulong HandleSeed { get; set; }
 
 		public CadHeader() { }
 
