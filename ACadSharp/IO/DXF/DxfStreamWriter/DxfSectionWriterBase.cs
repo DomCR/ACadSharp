@@ -82,8 +82,8 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		protected void writeEntity<T>(T e)
-			where T : Entity
+		protected void writeMappedObject<T>(T e)
+			where T : CadObject
 		{
 			DxfMap map = DxfMap.Create<T>();
 
@@ -104,6 +104,11 @@ namespace ACadSharp.IO.DXF
 				case CadDictionary cadDictionary:
 					this.writeDictionary(cadDictionary);
 					return;
+				case Layout layout:
+					this.writeMappedObject<Layout>(layout);
+					break;
+				default:
+					break;
 			}
 		}
 

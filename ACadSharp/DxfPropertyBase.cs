@@ -259,6 +259,22 @@ namespace ACadSharp
 
 				return null;
 			}
+			else if (this._property.PropertyType.IsEquivalentTo(typeof(PaperMargin)))
+			{
+				switch (code)
+				{
+					case 40:
+						return ((PaperMargin)this._property.GetValue(obj)).Left;
+					case 41:
+						return ((PaperMargin)this._property.GetValue(obj)).Bottom;
+					case 42:
+						return ((PaperMargin)this._property.GetValue(obj)).Right;
+					case 43:
+						return ((PaperMargin)this._property.GetValue(obj)).Top;
+					default:
+						throw new Exception();
+				}
+			}
 			else if (this._property.PropertyType.IsEquivalentTo(typeof(Transparency)))
 			{
 				//TODO: Implement transparency getter

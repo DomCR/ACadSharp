@@ -622,6 +622,12 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$MENU", 1)]
 		public string MenuFileName { get; set; } = string.Empty;
 
+		/// <summary>
+		/// Next available handle
+		/// </summary>
+		/// <remarks>
+		/// System variable HANDSEED
+		/// </remarks>
 		[CadSystemVariable("$HANDSEED", 5)]
 		public ulong HandleSeed { get; internal set; } = 0x27;
 

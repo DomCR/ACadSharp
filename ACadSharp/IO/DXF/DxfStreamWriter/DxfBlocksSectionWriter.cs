@@ -48,7 +48,7 @@ namespace ACadSharp.IO.DXF
 			{
 				foreach (Entity e in b.Entities)
 				{
-					this.writeEntity(e);
+					this.writeMappedObject(e);
 				}
 			}
 		}

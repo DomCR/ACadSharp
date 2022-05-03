@@ -17,7 +17,7 @@ namespace ACadSharp.IO.DXF
 			{
 				Entity item = this.Holder.Entities.Dequeue();
 
-				this.writeEntity(item);
+				this.writeMappedObject(item);
 			}
 		}
 	}
