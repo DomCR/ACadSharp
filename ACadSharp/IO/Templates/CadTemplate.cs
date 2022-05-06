@@ -71,7 +71,7 @@ namespace ACadSharp.IO.Templates
 			{
 				if (builder.TryGetCadObject(item.Key, out AppId app))
 				{
-
+					this.CadObject.ExtendedData.Add(app, item.Value);
 				}
 			}
 		}

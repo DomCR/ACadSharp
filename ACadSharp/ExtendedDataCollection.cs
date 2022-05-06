@@ -1,12 +1,18 @@
-﻿using System;
+﻿using ACadSharp.Tables;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace ACadSharp
 {
-	public class ExtendedDataDictionary //: IDictionary<string, ExtendedData>
+	public class ExtendedDataDictionary
 	{
-		private Dictionary<string, ExtendedData> _data = new Dictionary<string, ExtendedData>();    //AppId, Data
+		private Dictionary<AppId, ExtendedData> _data = new Dictionary<AppId, ExtendedData>();
+
+		public void Add(AppId app, ExtendedData edata)
+		{
+			this._data.Add(app, edata);
+		}
 	}
 
 	public class ExtendedData
@@ -16,13 +22,28 @@ namespace ACadSharp
 
 	public class ExtendedDataRecord
 	{
-		public DxfCode Code { get; set; }
+		public DxfCode Code
+		{
+			get { return this._code; }
+			set
+			{
+				if (value < DxfCode.ExtendedDataAsciiString)
+				{
+					throw new ArgumentException($"Dxf code for ExtendedDataRecord is not valid: {value}", nameof(value));
+				}
+
+				this._code = value;
+			}
+		}
 
 		public object Value { get; set; }
 
+		private DxfCode _code;
+
 		public ExtendedDataRecord(DxfCode dxfCode, object value)
 		{
-			//TODO: finish the dxf code throw exception for wrong values
+			this.Code = dxfCode;
+			this.Value = value;
 		}
 	}
 }
