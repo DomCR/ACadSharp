@@ -58,7 +58,7 @@ namespace ACadSharp.Tables
 		/// Specifies the scaling allowed for the block
 		/// </summary>
 		[DxfCodeValue(281)]
-		public bool CanScale { get; set; }
+		public bool CanScale { get; set; } = true;
 
 		/// <summary>
 		/// DXF: Binary data for bitmap preview(optional)
@@ -70,7 +70,7 @@ namespace ACadSharp.Tables
 		/// Associated Layout
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public Layout Layout { get; set; }	//TODO: Assign the block layout (if there is one)
+		public Layout Layout { get; set; }  //TODO: Assign the block layout (if there is one)
 
 		public CadObjectCollection<Entity> Entities { get; set; }
 

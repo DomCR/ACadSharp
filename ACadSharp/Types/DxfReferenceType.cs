@@ -1,39 +1,44 @@
-﻿#region copyright
-//Copyright 2021, Albert Domenech.
-//All rights reserved. 
-//This source code is licensed under the MIT license. 
-//See LICENSE file in the project root for full license information.
-#endregion
+﻿using System;
 
 namespace ACadSharp
 {
 	/// <summary>
 	/// Type of dxf reference
 	/// </summary>
-	public enum DxfReferenceType
+	[Flags]
+	public enum DxfReferenceType : byte
 	{
 		/// <summary>
 		/// No reference, the value is a primitive
 		/// </summary>
-		None,
+		None = 0,
 
 		/// <summary>
 		/// Handle reference, the value is a handle pointing to an object
 		/// </summary>
-		Handle,
+		Handle = 1,
 
 		/// <summary>
 		/// Name reference, the value is a name pointing to an object 
 		/// </summary>
-		Name,
+		Name = 2,
 
 		/// <summary>
 		/// Counter reference, the value is a list with multiple elements referenced to it
 		/// </summary>
-		Count,
+		Count = 4,
 
-		Optional,
+		/// <summary>
+		/// Optional value
+		/// </summary>
+		/// <remarks>
+		/// This values are ignored, may be configurable in the future
+		/// </remarks>
+		Optional = 8,
 
-		Ignored
+		/// <summary>
+		/// Value will be ignored by the reader and writer
+		/// </summary>
+		Ignored = 16
 	}
 }

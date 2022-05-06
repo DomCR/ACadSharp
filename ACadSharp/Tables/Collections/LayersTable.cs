@@ -11,6 +11,9 @@ namespace ACadSharp.Tables.Collections
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.LAYER_CONTROL_OBJ;
 
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.TableLayer;
+
 		internal LayersTable() { }
 
 		internal LayersTable(CadDocument document) : base(document) { }

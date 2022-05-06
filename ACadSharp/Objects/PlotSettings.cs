@@ -204,7 +204,7 @@ namespace ACadSharp.Objects
 				_shadePlotDPI = value;
 			}
 		}
-		private short _shadePlotDPI;
+		private short _shadePlotDPI = 300;
 
 		/// <summary>
 		/// A floating point scale factor that represents the standard scale value specified in code 75.
@@ -232,7 +232,7 @@ namespace ACadSharp.Objects
 		/// <summary>
 		///ShadePlot ID/Handle(optional)
 		/// </summary>
-		[DxfCodeValue(333)]
+		[DxfCodeValue(DxfReferenceType.Ignored, 333)]
 		public ulong ShadePlotIDHandle { get; set; }
 	}
 }

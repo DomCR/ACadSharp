@@ -32,14 +32,38 @@ namespace ACadSharp.Header
 		/// System variable ACADVER.
 		/// </remarks>
 		[CadSystemVariable("$ACADVER", DxfCode.Text)]
-		public string VersionString { get; set; }
-		public ACadVersion Version { get; set; }    //TODO: Fix the string version
+		public string VersionString
+		{
+			get { return this.Version.ToString(); }
+			set
+			{
+				/*
+				 The AutoCAD drawing database version number:
+				AC1006 = R10
+				AC1009 = R11 and R12
+				AC1012 = R13
+				AC1014 = R14
+				AC1015 = AutoCAD 2000
+				AC1018 = AutoCAD 2004
+				AC1021 = AutoCAD 2007
+				AC1024 = AutoCAD 2010
+				AC1027 = AutoCAD 2013
+				AC1032 = AutoCAD 2018
+				 */
+
+				this.Version = CadUtils.GetVersionFromName(value);
+			}
+		}
+
+		public ACadVersion Version { get; set; } = ACadVersion.AC1032;
 
 		/// <summary>
-		/// System variable ACADMAINTVER.
 		/// Maintenance version number(should be ignored)
 		/// </summary>
-		[CadSystemVariable("$ACADMAINTVER", DxfCode.Int16)]
+		/// <remarks>
+		/// System variable ACADMAINTVER.
+		/// </remarks>
+		[CadSystemVariable(DxfReferenceType.Ignored, "$ACADMAINTVER", 70)]
 		public short MaintenanceVersion { get; set; }
 
 		/// <summary>
@@ -50,7 +74,7 @@ namespace ACadSharp.Header
 		/// System variable DWGCODEPAGE
 		/// </remarks>
 		[CadSystemVariable("$DWGCODEPAGE", 3)]
-		public string CodePage { get; set; }
+		public string CodePage { get; set; } = "ANSI_1252";
 
 		/// <summary>
 		/// Displays the name of the last person who modified the file
@@ -59,28 +83,30 @@ namespace ACadSharp.Header
 		/// System variable LASTSAVEDBY
 		/// </remarks>
 		[CadSystemVariable("$LASTSAVEDBY", 3)]
-		public string LastSavedBy { get; set; }
+		public string LastSavedBy { get; set; } = "ACadSharp";
 
 		/// <summary>
-		/// System variable REQUIREDVERSIONS.
 		/// The default value is 0.
 		/// Read only.
 		/// </summary>
-		/// <remarks>Only in <see cref="ACadVersion.AC1024"/> or above.</remarks>
+		/// <remarks>
+		/// System variable REQUIREDVERSIONS <br/>
+		/// Only in <see cref="ACadVersion.AC1024"/> or above
+		/// </remarks>
 		[CadSystemVariable("$REQUIREDVERSIONS", DxfCode.Int16)]
 		public long RequiredVersions { get; set; }
 
 		/// <summary>
-		/// System variable DIMASO.
 		/// </summary>
 		/// <remarks>
-		/// Obsolete; see DIMASSOC.
+		/// System variable DIMASO <br/>
+		/// Obsolete; see DIMASSOC
 		/// </remarks>
 		[CadSystemVariable("$DIMASO", DxfCode.Int16)]
 		public bool AssociatedDimensions { get; set; } = true;
 
 		/// <summary>
-		/// System variable DIMSHO.
+		/// System variable DIMSHO
 		/// </summary>
 		[CadSystemVariable("$DIMSHO", DxfCode.Int16)]
 		public bool UpdateDimensionsWhileDragging { get; set; } = true;
@@ -88,6 +114,9 @@ namespace ACadSharp.Header
 		/// <summary>
 		/// Undocumented
 		/// </summary>
+		/// <remarks>
+		/// System variable DIMSAV
+		/// </remarks>
 		public bool DIMSAV { get; set; }
 
 		/// <summary>
@@ -133,7 +162,7 @@ namespace ACadSharp.Header
 		/// System variable PSLTSCALE.
 		/// </remarks>
 		[CadSystemVariable("$PSLTSCALE", DxfCode.Int16)]
-		public SpaceLineTypeScaling PaperSpaceLineTypeScaling { get; set; }
+		public SpaceLineTypeScaling PaperSpaceLineTypeScaling { get; set; } = SpaceLineTypeScaling.Normal;
 
 		/// <summary>
 		/// Nonzero if limits checking is on
@@ -143,7 +172,7 @@ namespace ACadSharp.Header
 		public bool LimitCheckingOn { get; set; }
 
 		/// <summary>
-		/// System variable BLIPMODE.	??
+		/// System variable BLIPMODE	??
 		/// </summary>
 		[CadSystemVariable("$BLIPMODE", DxfCode.Int16)]
 		public bool BlipMode { get; set; }
@@ -167,7 +196,7 @@ namespace ACadSharp.Header
 		/// System variable ANGDIR
 		/// </summary>
 		[CadSystemVariable("$ANGDIR", DxfCode.Int16)]
-		public AngularDirection AngularDirection { get; set; }
+		public AngularDirection AngularDirection { get; set; } = AngularDirection.ClockWise;
 
 		/// <summary>
 		/// Controls the display of helixes and smoothed mesh objects.
@@ -215,8 +244,10 @@ namespace ACadSharp.Header
 
 		/// <summary>
 		/// 
-		/// System variable DISPSILH
 		/// </summary>
+		/// <remarks>
+		/// System variable DISPSILH
+		/// </remarks>
 		public bool DisplaySilhouetteCurves { get; set; }
 
 		/// <summary>
@@ -239,9 +270,11 @@ namespace ACadSharp.Header
 
 		/// <summary>
 		/// Units format for coordinates and distances
-		/// System variable LUNITS
 		/// </summary>
-		[CadSystemVariable("$LUNITS", DxfCode.Int16)]
+		/// <remarks>
+		/// System variable LUNITS
+		/// </remarks>
+		[CadSystemVariable("$LUNITS", 70)]
 		public LinearUnitFormat LinearUnitFormat { get; set; }
 
 		/// <summary>
@@ -251,9 +284,12 @@ namespace ACadSharp.Header
 		public short LinearUnitPrecision { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable AUNITS
+		/// Entity linetype name, or BYBLOCK or BYLAYER
 		/// </summary>
+		/// <remarks>
+		/// System variable AUNITS
+		/// </remarks>
+		[CadSystemVariable("$AUNITS", 70)]
 		public AngularUnitFormat AngularUnit { get; set; }
 
 		/// <summary>
@@ -347,11 +383,19 @@ namespace ACadSharp.Header
 		/// System variable SHADEDGE
 		/// </summary>
 		public ShadeEdgeType ShadeEdge { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable SHADEDIF
+		/// Percent ambient/diffuse light
 		/// </summary>
-		public short ShadeDiffuseToAmbientPercentage { get; set; }
+		/// <remarks>
+		/// System variable SHADEDIF
+		/// </remarks>
+		/// <value>
+		/// range 1-100
+		/// </value>
+		[CadSystemVariable("$SHADEDIF", 70)]
+		public short ShadeDiffuseToAmbientPercentage { get; set; } = 70;
+
 		/// <summary>
 		/// 
 		/// System variable UNITMODE
@@ -388,7 +432,7 @@ namespace ACadSharp.Header
 		/// System variable LTSCALE
 		/// </remarks>
 		[CadSystemVariable("$LTSCALE", 40)]
-		public double LineTypeScale { get; set; }
+		public double LineTypeScale { get; set; } = 1.0d;
 
 		/// <summary>
 		/// Default text height
@@ -398,6 +442,56 @@ namespace ACadSharp.Header
 		/// </remarks>
 		[CadSystemVariable("$TEXTSIZE", 40)]
 		public double TextHeightDefault { get; set; }
+
+		/// <summary>
+		/// Current text style name
+		/// </summary>
+		/// <remarks>
+		/// System variable TEXTSTYLE
+		/// </remarks>
+		[CadSystemVariable("$TEXTSTYLE", 7)]
+		public string TextStyleName
+		{
+			get { return this.TextStyle.Name; }
+			set
+			{
+				if (this.Document != null)
+				{
+					this.TextStyle = this.Document.TextStyles[value];
+				}
+				else
+				{
+					this.TextStyle = new TextStyle(value);
+				}
+			}
+		}
+
+		public TextStyle TextStyle { get; private set; } = TextStyle.Default;
+
+		/// <summary>
+		/// Current layer name
+		/// </summary>
+		/// <remarks>
+		/// System variable CLAYER
+		/// </remarks>
+		[CadSystemVariable("$CLAYER", 8)]
+		public string LayerName
+		{
+			get { return this.Layer.Name; }
+			set
+			{
+				if (this.Document != null)
+				{
+					this.Layer = this.Document.Layers[value];
+				}
+				else
+				{
+					this.Layer = new Layer(value);
+				}
+			}
+		}
+
+		public Layer Layer { get; private set; } = Layer.Default;
 
 		/// <summary>
 		/// Default trace width
@@ -464,110 +558,159 @@ namespace ACadSharp.Header
 		/// System variable 
 		/// </summary>
 		public double UserDouble5 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// First chamfer distance
 		/// </summary>
+		/// <remarks>
+		/// System variable CHAMFERA
+		/// </remarks>
+		[CadSystemVariable("$CHAMFERA", 40)]
 		public double ChamferDistance1 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Second  chamfer distance
 		/// </summary>
+		/// <remarks>
+		/// System variable CHAMFERB
+		/// </remarks>
+		[CadSystemVariable("$CHAMFERB", 40)]
 		public double ChamferDistance2 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Chamfer length
 		/// </summary>
+		/// <remarks>
+		/// System variable CHAMFERC
+		/// </remarks>
+		[CadSystemVariable("$CHAMFERC", 40)]
 		public double ChamferLength { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Chamfer angle
 		/// </summary>
+		/// <remarks>
+		/// System variable CHAMFERD
+		/// </remarks>
+		[CadSystemVariable("$CHAMFERD", 40)]
 		public double ChamferAngle { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public double FacetResolution { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public double CurrentMultilineScale { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public double CurrentEntityLinetypeScale { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Name of menu file
 		/// </summary>
-		public string MenuFileName { get; set; }
+		/// <remarks>		
+		/// System variable MENU
+		/// </remarks>
+		[CadSystemVariable("$MENU", 1)]
+		public string MenuFileName { get; set; } = string.Empty;
+
+		/// <summary>
+		/// Next available handle
+		/// </summary>
+		/// <remarks>
+		/// System variable HANDSEED
+		/// </remarks>
+		[CadSystemVariable("$HANDSEED", 5)]
+		public ulong HandleSeed { get; internal set; } = 0x27;
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public DateTime CreateDateTime { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public DateTime UpdateDateTime { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public TimeSpan TotalEditingTime { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public TimeSpan UserElapsedTimeSpan { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public Color CurrentEntityColor { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
 		/// </summary>
 		public double ViewportDefaultViewScaleFactor { get; set; }
+
 		/// <summary>
 		/// PSPACE
 		/// </summary>
 		public UCS PaperSpaceUcs { get; set; } = new UCS();
+
 		/// <summary>
 		/// System variable INSBASE.
 		/// Insertion base set by BASE command(in WCS)
 		/// </summary>
 		[CadSystemVariable("$INSBASE", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
 		public XYZ InsertionBase { get; set; } = new XYZ();
+
 		/// <summary>
 		/// System variable EXTMIN.
 		/// X, Y, and Z drawing extents lower-left corner (in WCS)
 		/// </summary>
 		[CadSystemVariable("$EXTMIN", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
 		public XYZ ExtMin { get; set; }
+
 		/// <summary>
-		/// System variable EXTMAX.
+		/// System variable EXTMAX
 		/// X, Y, and Z drawing extents upper-right corner(in WCS)
 		/// </summary>
 		[CadSystemVariable("$EXTMAX", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
 		public XYZ ExtMax { get; set; }
+
 		/// <summary>
-		/// System variable LIMMIN.
 		/// XY drawing limits lower-left corner (in WCS)
 		/// </summary>
+		/// <remarks>
+		/// System variable LIMMIN
+		/// </remarks>
 		[CadSystemVariable("$LIMMIN", DxfCode.XCoordinate, DxfCode.YCoordinate)]
 		public XY LimitsMin { get; set; }
+
 		/// <summary>
-		/// System variable LIMMAX.
 		/// XY drawing limits upper-right corner (in WCS)
 		/// </summary>
+		/// <remarks>
+		/// System variable LIMMAX
+		/// </remarks>
 		[CadSystemVariable("$LIMMAX", DxfCode.XCoordinate, DxfCode.YCoordinate)]
 		public XY LimitsMax { get; set; }
+
 		public double Elevation { get; set; }
 		public string DimensionBlockName { get; set; }
 		public string DimensionBlockNameFirst { get; set; }
@@ -583,20 +726,35 @@ namespace ACadSharp.Header
 		public short ExtendedNames { get; set; }
 		public short PlotStyleMode { get; set; }
 		public short LoadOLEObject { get; set; }
+
 		public short InsUnits { get; set; }
+
 		public short CurrentEntityPlotStyleType { get; set; }
+
 		public string FingerPrintGuid { get; set; }
+
 		public string VersionGuid { get; set; }
+
 		public ObjectSortingFlags EntitySortingFlags { get; set; }
+
 		public byte IndexCreationFlags { get; set; }
+
 		public byte HideText { get; set; }
+
 		public byte ExternalReferenceClippingBoundaryType { get; set; }
+
 		/// <summary>
-		/// System variable DIMASSOC.
 		/// Controls the associativity of dimension objects
 		/// </summary>
+		/// <remarks>
+		/// System variable DIMASSOC
+		/// </remarks>
 		[CadSystemVariable("$DIMASSOC", DxfCode.Int8)]
-		public DimensionAssociation DimensionAssociativity { get; set; }
+		public DimensionAssociation DimensionAssociativity { get; set; } = DimensionAssociation.CreateExplodedDimensions;
+
+		/// <remarks>
+		/// System variable HALOGAP
+		/// </remarks>
 		public byte HaloGapPercentage { get; set; }
 		public Color ObscuredColor { get; set; }
 		public Color InterfereColor { get; set; }
@@ -630,29 +788,31 @@ namespace ACadSharp.Header
 		public double ShadowPlaneLocation { get; set; }
 		public string StyleSheetName { get; set; }
 
+		#endregion
+
+		public CadDocument Document { get; internal set; }
+
 		public UCS Ucs { get; set; } = new UCS();
 
 		public DimensionStyle DimensionStyleOverrides { get; set; } = new DimensionStyle();
-		#endregion
-
-		internal ulong HandleSeed { get; set; }
 
 		public CadHeader() { }
+
 		public CadHeader(ACadVersion version)
 		{
 			this.Version = version;
 		}
 
-		public static Dictionary<string, DxfCode[]> GetHeaderMap()
+		public static Dictionary<string, CadSystemVariable> GetHeaderMap()
 		{
-			Dictionary<string, DxfCode[]> map = new Dictionary<string, DxfCode[]>();
+			Dictionary<string, CadSystemVariable> map = new Dictionary<string, CadSystemVariable>();
 			foreach (PropertyInfo p in typeof(CadHeader).GetProperties())
 			{
 				CadSystemVariableAttribute att = p.GetCustomAttribute<CadSystemVariableAttribute>();
 				if (att == null)
 					continue;
 
-				map.Add(att.Name, att.ValueCodes);
+				map.Add(att.Name, new CadSystemVariable(p));
 			}
 
 			return map;
@@ -704,6 +864,46 @@ namespace ACadSharp.Header
 				if (att.Name == systemvar)
 				{
 					value = p.GetValue(this);
+					break;
+				}
+			}
+
+			return value;
+		}
+
+		/// <summary>
+		/// Get the primitive values in each dxf code
+		/// </summary>
+		/// <param name="systemvar"></param>
+		/// <returns>dictionary with the codes and values</returns>
+		public Dictionary<DxfCode, object> GetValues(string systemvar)
+		{
+			Dictionary<DxfCode, object> value = null;
+
+			foreach (PropertyInfo p in this.GetType().GetProperties())
+			{
+				CadSystemVariableAttribute att = p.GetCustomAttribute<CadSystemVariableAttribute>();
+				if (att == null)
+					continue;
+
+				if (att.Name == systemvar)
+				{
+					value = new Dictionary<DxfCode, object>();
+
+					if (att.ValueCodes.Length == 1)
+					{
+						value.Add(att.ValueCodes[0], p.GetValue(this));
+					}
+					else
+					{
+						IVector vector = (IVector)p.GetValue(this);
+						var arr = vector.GetComponents();
+						for (int i = 0; i < arr.Length; i++)
+						{
+							value.Add(att.ValueCodes[i], arr[i]);
+						}
+					}
+
 					break;
 				}
 			}
