@@ -1,11 +1,7 @@
-﻿using ACadSharp.Header;
-using ACadSharp.IO;
+﻿using ACadSharp.IO;
 using ACadSharp.IO.DXF;
-using ACadSharp.Tests.Common;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -16,6 +12,14 @@ namespace ACadSharp.Tests.IO.DXF
 		private const string _samplesFolder = "../../../../samples/out";
 
 		protected readonly ITestOutputHelper _output;
+
+		static DxfWriterTests()
+		{
+			if (!Directory.Exists(_samplesFolder))
+			{
+				Directory.CreateDirectory(_samplesFolder);
+			}
+		}
 
 		public DxfWriterTests(ITestOutputHelper output)
 		{
