@@ -42,19 +42,19 @@ namespace ACadSharp.Tables
 		/// Origin (in WCS)
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
-		public XYZ Origin { get; set; }
+		public XYZ Origin { get; set; } = XYZ.Zero;
 
 		/// <summary>
 		/// X-axis direction (in WCS)
 		/// </summary>
 		[DxfCodeValue(11, 21, 31)]
-		public XYZ XAxis { get; set; }
+		public XYZ XAxis { get; set; } = XYZ.AxisX;
 
 		/// <summary>
 		/// Y-axis direction(in WCS)
 		/// </summary>
 		[DxfCodeValue(12, 22, 32)]
-		public XYZ YAxis { get; set; }
+		public XYZ YAxis { get; set; } = XYZ.AxisY;
 
 		public XYZ OrthographicTopDOrigin { get; set; }
 		public XYZ OrthographicBottomDOrigin { get; set; }

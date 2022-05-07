@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Types.Units;
 using CSMath;
@@ -120,10 +121,15 @@ namespace ACadSharp.Header
 		public bool DIMSAV { get; set; }
 
 		/// <summary>
-		/// System variable PLINEGEN.
+		/// Governs the generation of linetype patterns around the vertices of a 2D polyline:<br/>
+		/// 1 = Linetype is generated in a continuous pattern around vertices of the polyline<br/>
+		/// 0 = Each segment of the polyline starts and ends with a dash
 		/// </summary>
-		[CadSystemVariable("$PLINEGEN", DxfCode.Int16)]
-		public bool PolylineLineTypeGeneration { get; set; }
+		/// <remarks>
+		/// System variable PLINEGEN
+		/// </remarks>
+		[CadSystemVariable("$PLINEGEN", 70)]
+		public bool PolylineLineTypeGeneration { get; set; } = false;
 
 		/// <summary>
 		/// System variable ORTHOMODE.
@@ -210,7 +216,7 @@ namespace ACadSharp.Header
 		/// System variable MIRRTEXT
 		/// </summary>
 		[CadSystemVariable("$MIRRTEXT", DxfCode.Int16)]
-		public bool MirrorText { get; set; }
+		public bool MirrorText { get; set; } = false;
 
 		/// <summary>
 		/// Determines whether input for the DVIEW and VPOINT command evaluated as relative to the WCS or current UCS <br/>
@@ -275,13 +281,16 @@ namespace ACadSharp.Header
 		/// System variable LUNITS
 		/// </remarks>
 		[CadSystemVariable("$LUNITS", 70)]
-		public LinearUnitFormat LinearUnitFormat { get; set; }
+		public LinearUnitFormat LinearUnitFormat { get; set; } = LinearUnitFormat.Decimal;
 
 		/// <summary>
-		/// 
-		/// System variable LUPREC
+		/// Units precision for coordinates and distances
 		/// </summary>
-		public short LinearUnitPrecision { get; set; }
+		/// <remarks>
+		/// System variable LUPREC
+		/// </remarks>
+		[CadSystemVariable("$LUPREC", 70)]
+		public short LinearUnitPrecision { get; set; } = 4;
 
 		/// <summary>
 		/// Entity linetype name, or BYBLOCK or BYLAYER
@@ -293,9 +302,12 @@ namespace ACadSharp.Header
 		public AngularUnitFormat AngularUnit { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable AUPREC
+		/// Units precision for angles
 		/// </summary>
+		/// <remarks>
+		/// System variable AUPREC
+		/// </remarks>
+		[CadSystemVariable("$AUPREC", 70)]
 		public short AngularUnitPrecision { get; set; }
 
 		/// <summary>
@@ -314,10 +326,14 @@ namespace ACadSharp.Header
 		public AttributeVisibilityMode AttributeVisibility { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable PDMODE
+		/// Point display mode
 		/// </summary>
+		/// <remarks>
+		/// System variable PDMODE
+		/// </remarks>
+		[CadSystemVariable("$PDMODE", 70)]
 		public short PointDisplayMode { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable USERI1
@@ -373,11 +389,13 @@ namespace ACadSharp.Header
 		/// System variable SURFTAB2
 		/// </summary>
 		public short SurfaceMeshTabulationCount2 { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable SPLINETYPE
 		/// </summary>
 		public SplineType SplineType { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable SHADEDGE
@@ -414,10 +432,13 @@ namespace ACadSharp.Header
 		public short SurfaceIsolineCount { get; set; }
 
 		/// <summary>
-		/// Current multiline justification.
-		/// System variable CMLJUST
+		/// Current multiline justification
 		/// </summary>
-		public TextVerticalAlignment CurrentMultilineJustification { get; set; }
+		/// <remarks>
+		/// System variable CMLJUST
+		/// </remarks>
+		[CadSystemVariable("$CMLJUST", 70)]
+		public VerticalAlignmentType CurrentMultilineJustification { get; set; } = VerticalAlignmentType.Top;
 
 		/// <summary>
 		/// 
@@ -441,7 +462,7 @@ namespace ACadSharp.Header
 		/// System variable TEXTSIZE
 		/// </remarks>
 		[CadSystemVariable("$TEXTSIZE", 40)]
-		public double TextHeightDefault { get; set; }
+		public double TextHeightDefault { get; set; } = 2.5d;
 
 		/// <summary>
 		/// Current text style name
@@ -477,21 +498,71 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$CLAYER", 8)]
 		public string LayerName
 		{
-			get { return this.Layer.Name; }
+			get { return this.CurrentLayer.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this.Layer = this.Document.Layers[value];
+					this.CurrentLayer = this.Document.Layers[value];
 				}
 				else
 				{
-					this.Layer = new Layer(value);
+					this.CurrentLayer = new Layer(value);
 				}
 			}
 		}
 
-		public Layer Layer { get; private set; } = Layer.Default;
+		public Layer CurrentLayer { get; private set; } = Layer.Default;
+
+		/// <summary>
+		/// Entity linetype name, or BYBLOCK or BYLAYER
+		/// </summary>
+		/// <remarks>
+		/// System variable CELTYPE
+		/// </remarks>
+		[CadSystemVariable("$CELTYPE", 8)]
+		public string LineTypeName
+		{
+			get { return this.CurrentLType.Name; }
+			set
+			{
+				if (this.Document != null)
+				{
+					this.CurrentLType = this.Document.LineTypes[value];
+				}
+				else
+				{
+					this.CurrentLType = new LineType(value);
+				}
+			}
+		}
+
+		public LineType CurrentLType { get; private set; } = LineType.ByLayer;
+
+		/// <summary>
+		/// Current multiline style name
+		/// </summary>
+		/// <remarks>
+		/// System variable CMLSTYLE
+		/// </remarks>
+		[CadSystemVariable("$CMLSTYLE", 2)]
+		public string MultilineStyleName { get; set; } = "Standard";
+		//{
+		//	get { return this.CurrentLType.Name; }
+		//	set
+		//	{
+		//		if (this.Document != null)
+		//		{
+		//			this.CurrentLType = this.Document.LineTypes[value];
+		//		}
+		//		else
+		//		{
+		//			this.CurrentLType = new LineType(value);
+		//		}
+		//	}
+		//}
+
+		//public MLStyle CurrentTextStyle { get; private set; } = MLStyle.Default;
 
 		/// <summary>
 		/// Default trace width
@@ -518,16 +589,25 @@ namespace ACadSharp.Header
 		/// System variable 
 		/// </summary>
 		public double ThicknessDefault { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Angle 0 direction
 		/// </summary>
+		/// <remarks>
+		/// System variable ANGBASE
+		/// </remarks>
+		[CadSystemVariable("$ANGBASE", 50)]
 		public double AngleBase { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Point display size
 		/// </summary>
+		/// <remarks>
+		/// System variable PDSIZE
+		/// </remarks>
+		[CadSystemVariable("$PDSIZE", 40)]
 		public double PointDisplaySize { get; set; }
+
 		/// <summary>
 		/// 
 		/// System variable 
@@ -602,16 +682,22 @@ namespace ACadSharp.Header
 		public double FacetResolution { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Current multiline scale
 		/// </summary>
-		public double CurrentMultilineScale { get; set; }
+		/// <remarks>
+		/// System variable CMLSCALE
+		/// </remarks>
+		[CadSystemVariable("$CMLSCALE", 40)]
+		public double CurrentMultilineScale { get; set; } = 20.0d;
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Current entity linetype scale
 		/// </summary>
-		public double CurrentEntityLinetypeScale { get; set; }
+		/// <remarks>
+		/// System variable CHAMFERD
+		/// </remarks>
+		[CadSystemVariable("$CELTSCALE", 40)]
+		public double CurrentEntityLinetypeScale { get; set; } = 1.0d;
 
 		/// <summary>
 		/// Name of menu file
@@ -632,21 +718,48 @@ namespace ACadSharp.Header
 		public ulong HandleSeed { get; internal set; } = 0x27;
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Local date/time of drawing creation (see Special Handling of Date/Time Variables)
 		/// </summary>
-		public DateTime CreateDateTime { get; set; }
+		/// <remarks>
+		/// System variable TDCREATE
+		/// </remarks>
+		//[CadSystemVariable("$TDCREATE",40)]
+		public DateTime CreateDateTime { get; set; } = DateTime.Now;
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Universal date/time the drawing was created(see Special Handling of Date/Time Variables)
 		/// </summary>
+		/// <remarks>
+		/// System variable TDUCREATE
+		/// </remarks>
+		//[CadSystemVariable("$TDUCREATE", 40)]
+		public DateTime UniversalCreateDateTime { get; set; } = DateTime.UtcNow;
+
+		/// <summary>
+		/// Local date/time of last drawing update(see Special Handling of Date/Time Variables)
+		/// </summary>
+		/// <remarks>
+		/// System variable TDUPDATE
+		/// </remarks>
+		//[CadSystemVariable("$TDUPDATE", 40)]
 		public DateTime UpdateDateTime { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Universal date/time of the last update/save(see Special Handling of Date/Time Variables)
 		/// </summary>
+		/// <remarks>
+		/// System variable TDUUPDATE
+		/// </remarks>
+		//[CadSystemVariable("$TDUUPDATE", 40)]
+		public DateTime UniversalUpdateDateTime { get; set; }
+
+		/// <summary>
+		/// Cumulative editing time for this drawing(see Special Handling of Date/Time Variables)
+		/// </summary>
+		/// <remarks>
+		/// System variable TDINDWG
+		/// </remarks>
+		//[CadSystemVariable("$TDINDWG", 40)]
 		public TimeSpan TotalEditingTime { get; set; }
 
 		/// <summary>
@@ -656,10 +769,13 @@ namespace ACadSharp.Header
 		public TimeSpan UserElapsedTimeSpan { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Current entity color number
 		/// </summary>
-		public Color CurrentEntityColor { get; set; }
+		/// <remarks>
+		/// System variable CECOLOR
+		/// </remarks>
+		[CadSystemVariable("$CECOLOR", 62)]
+		public Color CurrentEntityColor { get; set; } = Color.ByLayer;
 
 		/// <summary>
 		/// 
@@ -668,9 +784,55 @@ namespace ACadSharp.Header
 		public double ViewportDefaultViewScaleFactor { get; set; }
 
 		/// <summary>
-		/// PSPACE
+		/// Origin of current UCS (in WCS)
 		/// </summary>
-		public UCS PaperSpaceUcs { get; set; } = new UCS();
+		/// <remarks>
+		/// System variable UCSORG
+		/// </remarks>
+		[CadSystemVariable("$UCSORG", 10, 20, 30)]
+		public XYZ PaperSpaceUcsOrigin
+		{
+			get { return this._paperSpaceUcs.Origin; }
+			set
+			{
+				this._paperSpaceUcs.Origin = value;
+			}
+		}
+
+		/// <summary>
+		/// Direction of the current UCS X axis (in WCS)
+		/// </summary>
+		/// <remarks>
+		/// System variable UCSXDIR
+		/// </remarks>
+		[CadSystemVariable("$UCSXDIR", 10, 20, 30)]
+		public XYZ PaperSpaceUcsXAxis
+		{
+			get { return this._paperSpaceUcs.XAxis; }
+			set
+			{
+				this._paperSpaceUcs.XAxis = value;
+			}
+		}
+
+		/// <summary>
+		/// Direction of the current UCS Y aYis (in WCS)
+		/// </summary>
+		/// <remarks>
+		/// System variable UCSYDIR
+		/// </remarks>
+		[CadSystemVariable("$UCSYDIR", 10, 20, 30)]
+		public XYZ PaperSpaceUcsYAYis
+		{
+			get { return this._paperSpaceUcs.YAxis; }
+			set
+			{
+				this._paperSpaceUcs.YAxis = value;
+			}
+		}
+
+		[Obsolete("Will convert to private")]
+		public UCS _paperSpaceUcs { get; set; } = new UCS();
 
 		/// <summary>
 		/// System variable INSBASE.
@@ -718,16 +880,55 @@ namespace ACadSharp.Header
 		public short StackedTextAlignment { get; set; }
 		public short StackedTextSizePercentage { get; set; }
 		public string HyperLinkBase { get; set; }
-		public short CurrentEntityLineWeight { get; set; }
+
+		/// <summary>
+		/// Lineweight of new objects
+		/// </summary>
+		/// <remarks>
+		/// System variable CELWEIGHT
+		/// </remarks>
+		[CadSystemVariable("$CELWEIGHT", 370)]
+		public LineweightType CurrentEntityLineWeight { get; set; } = LineweightType.ByLayer;
+
 		public short EndCaps { get; set; }
+
 		public short JoinStyle { get; set; }
-		public short DisplayLineWeight { get; set; }
+
+		/// <summary>
+		/// Controls the display of lineweights on the Model or Layout tab<br/>
+		/// 0 = Lineweight is not displayed<br/>
+		/// 1 = Lineweight is displayed
+		/// </summary>
+		/// <remarks>
+		/// System variable LWDISPLAY
+		/// </remarks>
+		[CadSystemVariable("$LWDISPLAY", 290)]
+		public bool DisplayLineWeight { get; set; } = false;
+
 		public short XEdit { get; set; }
-		public short ExtendedNames { get; set; }
+
+		/// <summary>
+		/// Controls symbol table naming:<br/>
+		/// 0 = AutoCAD Release 14 compatibility. Limits names to 31 characters in length. Names can include the letters A to Z, the numerals 0 to 9, and the special characters dollar sign ($), underscore (_), and hyphen (-).<br/>
+		/// 1 = AutoCAD 2000. Names can be up to 255 characters in length, and can include the letters A to Z, the numerals 0 to 9, spaces, and any special characters not used for other purposes by Microsoft Windows and AutoCAD
+		/// </summary>
+		/// <remarks>
+		/// System variable EXTNAMES
+		/// </remarks>
+		[CadSystemVariable("$EXTNAMES", 290)]
+		public bool ExtendedNames { get; set; } = true;
+
 		public short PlotStyleMode { get; set; }
 		public short LoadOLEObject { get; set; }
 
-		public short InsUnits { get; set; }
+		/// <summary>
+		/// Default drawing units for AutoCAD DesignCenter blocks
+		/// </summary>
+		/// <remarks>
+		/// System variable INSUNITS
+		/// </remarks>
+		[CadSystemVariable("$INSUNITS", 70)]
+		public UnitsType InsUnits { get; set; } = UnitsType.Unitless;
 
 		public short CurrentEntityPlotStyleType { get; set; }
 
@@ -794,7 +995,335 @@ namespace ACadSharp.Header
 
 		public UCS Ucs { get; set; } = new UCS();
 
-		public DimensionStyle DimensionStyleOverrides { get; set; } = new DimensionStyle();
+
+		/// <summary>
+		/// Dimension style name
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMSTYLE
+		/// </remarks>
+		[CadSystemVariable("$DIMSTYLE", 2)]
+		public string DimensionStyleOverridesName
+		{
+			get { return this.DimensionStyleOverrides.Name; }
+			set
+			{
+				if (this.Document != null)
+				{
+					this.DimensionStyleOverrides = this.Document.DimensionStyles[value];
+				}
+				else
+				{
+					this.DimensionStyleOverrides = new DimensionStyle(value);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Number of precision places displayed in angular dimensions
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMADEC
+		/// </remarks>
+		[CadSystemVariable("$DIMADEC", 70)]
+		public short DimensionAngularDimensionDecimalPlaces
+		{
+			get { return this.DimensionStyleOverrides.AngularDimensionDecimalPlaces; }
+			set
+			{
+				this.DimensionStyleOverrides.AngularDimensionDecimalPlaces = value;
+			}
+		}
+
+		/// <summary>
+		/// Number of decimal places for the tolerance values of a primary units dimension
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMDEC
+		/// </remarks>
+		[CadSystemVariable("$DIMDEC", 70)]
+		public short DimensionDecimalPlaces
+		{
+			get { return this.DimensionStyleOverrides.DecimalPlaces; }
+			set
+			{
+				this.DimensionStyleOverrides.DecimalPlaces = value;
+			}
+		}
+
+		/// <summary>
+		/// Number of decimal places to display the tolerance values
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMTDEC
+		/// </remarks>
+		[CadSystemVariable("$DIMTDEC", 70)]
+		public short DimensionToleranceDecimalPlaces
+		{
+			get { return this.DimensionStyleOverrides.ToleranceDecimalPlaces; }
+			set
+			{
+				this.DimensionStyleOverrides.ToleranceDecimalPlaces = value;
+			}
+		}
+
+		/// <summary>
+		/// Units format for alternate units of all dimension style family members except angular
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMALTU
+		/// </remarks>
+		[CadSystemVariable("$DIMALTU", 70)]
+		public LinearUnitFormat DimensionAlternateUnitFormat
+		{
+			get { return this.DimensionStyleOverrides.AlternateUnitFormat; }
+			set
+			{
+				this.DimensionStyleOverrides.AlternateUnitFormat = value;
+			}
+		}
+
+		/// <summary>
+		/// Number of decimal places for tolerance values of an alternate units dimension
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMALTTD
+		/// </remarks>
+		[CadSystemVariable("$DIMALTTD", 70)]
+		public short DimensionAlternateUnitToleranceDecimalPlaces
+		{
+			get { return this.DimensionStyleOverrides.AlternateUnitToleranceDecimalPlaces; }
+			set
+			{
+				this.DimensionStyleOverrides.AlternateUnitToleranceDecimalPlaces = value;
+			}
+		}
+
+		/// <summary>
+		/// Angle format for angular dimensions
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMAUNIT
+		/// </remarks>
+		[CadSystemVariable("$DIMAUNIT", 70)]
+		public AngularUnitFormat DimensionAngularUnit
+		{
+			get { return this.DimensionStyleOverrides.AngularUnit; }
+			set
+			{
+				this.DimensionStyleOverrides.AngularUnit = value;
+			}
+		}
+
+		/// <summary>
+		/// Undocumented
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMFRAC
+		/// </remarks>
+		[CadSystemVariable("$DIMFRAC", 70)]
+		public FractionFormat DimensionFractionFormat
+		{
+			get { return this.DimensionStyleOverrides.FractionFormat; }
+			set
+			{
+				this.DimensionStyleOverrides.FractionFormat = value;
+			}
+		}
+
+		/// <summary>
+		/// Sets units for all dimension types except Angular
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMLUNIT
+		/// </remarks>
+		[CadSystemVariable("$DIMLUNIT", 70)]
+		public LinearUnitFormat DimensionLinearUnitFormat
+		{
+			get { return this.DimensionStyleOverrides.LinearUnitFormat; }
+			set
+			{
+				this.DimensionStyleOverrides.LinearUnitFormat = value;
+			}
+		}
+
+		/// <summary>
+		/// Single-character decimal separator used when creating dimensions whose unit format is decimal
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMLUNIT
+		/// </remarks>
+		[CadSystemVariable("$DIMDSEP", 70)]
+		public char DimensionDecimalSeparator
+		{
+			get { return this.DimensionStyleOverrides.DecimalSeparator; }
+			set
+			{
+				this.DimensionStyleOverrides.DecimalSeparator = value;
+			}
+		}
+
+		/// <summary>
+		/// Dimension text movement rules decimal
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMTMOVE
+		/// </remarks>
+		[CadSystemVariable("$DIMTMOVE", 70)]
+		public TextMovement DimensionTextMovement
+		{
+			get { return this.DimensionStyleOverrides.TextMovement; }
+			set
+			{
+				this.DimensionStyleOverrides.TextMovement = value;
+			}
+		}
+
+		/// <summary>
+		/// Horizontal dimension text position
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMJUST
+		/// </remarks>
+		[CadSystemVariable("$DIMJUST", 70)]
+		public DimensionTextHorizontalAlignment DimensionTextHorizontalAlignment
+		{
+			get { return this.DimensionStyleOverrides.TextHorizontalAlignment; }
+			set
+			{
+				this.DimensionStyleOverrides.TextHorizontalAlignment = value;
+			}
+		}
+
+		/// <summary>
+		/// Suppression of first extension line
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMSD1
+		/// </remarks>
+		[CadSystemVariable("$DIMSD1", 70)]
+		public bool DimensionSuppressFirstExtensionLine
+		{
+			get { return this.DimensionStyleOverrides.SuppressFirstExtensionLine; }
+			set
+			{
+				this.DimensionStyleOverrides.SuppressFirstExtensionLine = value;
+			}
+		}
+
+		/// <summary>
+		/// Suppression of second extension line
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMSD2
+		/// </remarks>
+		[CadSystemVariable("$DIMSD2", 70)]
+		public bool DimensionSuppressSecondExtensionLine
+		{
+			get { return this.DimensionStyleOverrides.SuppressSecondExtensionLine; }
+			set
+			{
+				this.DimensionStyleOverrides.SuppressSecondExtensionLine = value;
+			}
+		}
+
+		/// <summary>
+		/// Vertical justification for tolerance values
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMTOLJ
+		/// </remarks>
+		[CadSystemVariable("$DIMTOLJ", 70)]
+		public ToleranceAlignment DimensionToleranceAlignment
+		{
+			get { return this.DimensionStyleOverrides.ToleranceAlignment; }
+			set
+			{
+				this.DimensionStyleOverrides.ToleranceAlignment = value;
+			}
+		}
+
+		/// <summary>
+		/// Controls suppression of zeros for tolerance values
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMTZIN
+		/// </remarks>
+		[CadSystemVariable("$DIMTZIN", 70)]
+		public ZeroHandling DimensionToleranceZeroHandling
+		{
+			get { return this.DimensionStyleOverrides.ToleranceZeroHandling; }
+			set
+			{
+				this.DimensionStyleOverrides.ToleranceZeroHandling = value;
+			}
+		}
+
+		/// <summary>
+		/// Controls suppression of zeros for alternate unit dimension values
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMALTZ
+		/// </remarks>
+		[CadSystemVariable("$DIMALTZ", 70)]
+		public ZeroHandling DimensionAlternateUnitZeroHandling
+		{
+			get { return this.DimensionStyleOverrides.AlternateUnitZeroHandling; }
+			set
+			{
+				this.DimensionStyleOverrides.AlternateUnitZeroHandling = value;
+			}
+		}
+
+		/// <summary>
+		/// Controls suppression of zeros for alternate tolerance values
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMALTTZ
+		/// </remarks>
+		[CadSystemVariable("$DIMALTTZ", 70)]
+		public ZeroHandling DimensionAlternateUnitToleranceZeroHandling
+		{
+			get { return this.DimensionStyleOverrides.AlternateUnitToleranceZeroHandling; }
+			set
+			{
+				this.DimensionStyleOverrides.AlternateUnitToleranceZeroHandling = value;
+			}
+		}
+
+		/// <summary>
+		/// Cursor functionality for user-positioned text
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMUPT
+		/// </remarks>
+		[CadSystemVariable("$DIMUPT", 70)]
+		public bool DimensionCursorUpdate
+		{
+			get { return this.DimensionStyleOverrides.CursorUpdate; }
+			set
+			{
+				this.DimensionStyleOverrides.CursorUpdate = value;
+			}
+		}
+
+		/// <summary>
+		/// Controls dimension text and arrow placement when space is not sufficient to place both within the extension lines
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMATFIT
+		/// </remarks>
+		[CadSystemVariable("$DIMATFIT", 70)]
+		public short DimensionDimensionTextArrowFit
+		{
+			get { return this.DimensionStyleOverrides.DimensionTextArrowFit; }
+			set
+			{
+				this.DimensionStyleOverrides.DimensionTextArrowFit = value;
+			}
+		}
+
+		public DimensionStyle DimensionStyleOverrides { get; private set; } = DimensionStyle.Default;
 
 		public CadHeader() { }
 

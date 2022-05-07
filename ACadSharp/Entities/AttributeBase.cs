@@ -27,7 +27,7 @@ namespace ACadSharp.Entities
 	public abstract class AttributeBase : TextEntity
 	{
 		[DxfCodeValue(74)]
-		public override TextVerticalAlignment VerticalAlignment { get; set; } = TextVerticalAlignment.Baseline;
+		public override TextVerticalAlignmentType VerticalAlignment { get; set; } = TextVerticalAlignmentType.Baseline;
 
 		[DxfCodeValue(280)]
 		public byte Version { get; set; }
