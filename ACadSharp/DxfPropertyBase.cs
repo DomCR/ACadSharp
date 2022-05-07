@@ -170,6 +170,8 @@ namespace ACadSharp
 		{
 			switch (this._attributeData.ReferenceType)
 			{
+				case DxfReferenceType.Unprocess:
+					return this._property.GetValue(obj);
 				case DxfReferenceType.Handle:
 					return this.getHandledValue(obj);
 				case DxfReferenceType.Name:
@@ -240,6 +242,14 @@ namespace ACadSharp
 				double[] components = vector.GetComponents();
 				return components[index];
 			}
+			else if (this._property.PropertyType.IsEquivalentTo(typeof(DateTime)))
+			{
+				return CadUtils.ToJulianCalendar((DateTime)this._property.GetValue(obj));
+			}
+			else if (this._property.PropertyType.IsEquivalentTo(typeof(TimeSpan)))
+			{
+				return ((TimeSpan)this._property.GetValue(obj)).TotalDays;
+			}
 			else if (this._property.PropertyType.IsEquivalentTo(typeof(Color)))
 			{
 				//TODO: Implement color getter
@@ -248,6 +258,7 @@ namespace ACadSharp
 				switch (code)
 				{
 					case 62:
+					case 70:
 						return color.Index;
 					case 420:
 						// true color
