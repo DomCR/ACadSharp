@@ -39,7 +39,15 @@ namespace ACadSharp.IO.DXF
 
 		protected void writeCommonObjectData(CadObject cadObject)
 		{
-			this._writer.Write(DxfCode.Handle, cadObject.Handle);
+			if (cadObject is DimensionStyle)
+			{
+				this._writer.Write(DxfCode.DimVarHandle, cadObject.Handle);
+			}
+			else
+			{
+				this._writer.Write(DxfCode.Handle, cadObject.Handle);
+			}
+
 			this._writer.Write(DxfCode.SoftPointerId, cadObject.Owner.Handle);
 
 			//TODO: Write exended data

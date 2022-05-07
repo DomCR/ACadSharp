@@ -170,6 +170,8 @@ namespace ACadSharp
 		{
 			switch (this._attributeData.ReferenceType)
 			{
+				case DxfReferenceType.Unprocess:
+					return this._property.GetValue(obj);
 				case DxfReferenceType.Handle:
 					return this.getHandledValue(obj);
 				case DxfReferenceType.Name:

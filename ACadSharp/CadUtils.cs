@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ACadSharp
 {
-	internal class CadUtils
+	internal static class CadUtils
 	{
 		/// <summary>
 		/// Get the version of the autocad drawing by name.

@@ -34,6 +34,7 @@ namespace ACadSharp
 			where T : CadObject
 		{
 			DxfMap map = new DxfMap();
+			bool isDimensionStyle = false;
 
 			Type type = typeof(T);
 			DxfNameAttribute dxf = type.GetCustomAttribute<DxfNameAttribute>();
@@ -44,10 +45,14 @@ namespace ACadSharp
 			{
 				DxfSubClassAttribute subclass = type.GetCustomAttribute<DxfSubClassAttribute>();
 
+				if (type.Equals(typeof(DimensionStyle)))
+				{
+					isDimensionStyle = true;
+				}
+
 				if (type.Equals(typeof(CadObject)))
 				{
 					addClassProperties(map, type);
-
 					break;
 				}
 				else if (subclass != null && subclass.IsEmpty)
@@ -65,6 +70,13 @@ namespace ACadSharp
 
 					map.SubClasses.Add(classMap.Name, classMap);
 				}
+			}
+
+			if (isDimensionStyle)
+			{
+				//TODO: Dimensions use the 105 instead of the 5... try to find a better fix
+				map.DxfProperties.Add(105, map.DxfProperties[5]);
+				map.DxfProperties.Remove(5);
 			}
 
 			map.SubClasses = new Dictionary<string, DxfClassMap>(map.SubClasses.Reverse().ToDictionary(o => o.Key, o => o.Value));

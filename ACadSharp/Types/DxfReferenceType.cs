@@ -39,6 +39,8 @@ namespace ACadSharp
 		/// <summary>
 		/// Value will be ignored by the reader and writer
 		/// </summary>
-		Ignored = 16
+		Ignored = 16,
+
+		Unprocess = 32
 	}
 }

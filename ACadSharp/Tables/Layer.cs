@@ -49,7 +49,7 @@ namespace ACadSharp.Tables
 		/// The linetype of an object. The default linetype is the linetype of the layer (ByLayer).
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 6)]
-		public LineType LineType { get; set; }  //TODO: implement default linetype
+		public LineType LineType { get; set; } = LineType.Continuous;
 
 		/// <summary>
 		/// Specifies if the layer is plottable.
@@ -66,9 +66,8 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// PlotStyleName object
 		/// </summary>
-		//[DxfCodeValue(DxfReferenceType.Handle, 390)]
-		[DxfCodeValue(DxfReferenceType.Ignored, 390)]
-		public string PlotStyleName { get; set; }  //TODO: set the plot style for the layer
+		[DxfCodeValue(DxfReferenceType.Unprocess, 390)]
+		public ulong PlotStyleName { get; set; } = 0;
 
 		/// <summary>
 		/// Hard-pointer ID/handle to Material object
