@@ -83,7 +83,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable LASTSAVEDBY
 		/// </remarks>
-		[CadSystemVariable("$LASTSAVEDBY", 3)]
+		[CadSystemVariable(DxfReferenceType.Ignored, "$LASTSAVEDBY", 3)]
 		public string LastSavedBy { get; set; } = "ACadSharp";
 
 		/// <summary>
@@ -94,7 +94,7 @@ namespace ACadSharp.Header
 		/// System variable REQUIREDVERSIONS <br/>
 		/// Only in <see cref="ACadVersion.AC1024"/> or above
 		/// </remarks>
-		[CadSystemVariable("$REQUIREDVERSIONS", DxfCode.Int16)]
+		[CadSystemVariable(DxfReferenceType.Ignored, "$REQUIREDVERSIONS", 70)]
 		public long RequiredVersions { get; set; }
 
 		/// <summary>
@@ -520,7 +520,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable CELTYPE
 		/// </remarks>
-		[CadSystemVariable("$CELTYPE", 8)]
+		[CadSystemVariable("$CELTYPE", 6)]
 		public string LineTypeName
 		{
 			get { return this.CurrentLType.Name; }
@@ -882,7 +882,7 @@ namespace ACadSharp.Header
 		/// System variable DIMBLK
 		/// </remarks>
 		[CadSystemVariable("$DIMBLK", 1)]
-		public string DimensionBlockName { get; set; }
+		public string DimensionBlockName { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Arrow block name for leaders
@@ -891,7 +891,7 @@ namespace ACadSharp.Header
 		/// System variable DIMLDRBLK
 		/// </remarks>
 		[CadSystemVariable("$DIMLDRBLK", 1)]
-		public string ArrowBlockName { get; set; }
+		public string ArrowBlockName { get; set; } = string.Empty;
 
 		public string DimensionBlockNameFirst { get; set; }
 		public string DimensionBlockNameSecond { get; set; }
@@ -1987,7 +1987,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable DIMTXTDIRECTION
 		/// </remarks>
-		[CadSystemVariable("$DIMTXTDIRECTION", 40)]
+		[CadSystemVariable("$DIMTXTDIRECTION", 70)]
 		public TextDirection DimensionTextDirection
 		{
 			get { return this.DimensionStyleOverrides.TextDirection; }

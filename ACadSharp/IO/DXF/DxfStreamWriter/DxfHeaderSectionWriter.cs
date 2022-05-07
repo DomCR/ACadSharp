@@ -14,11 +14,14 @@ namespace ACadSharp.IO.DXF
 		{
 			Dictionary<string, CadSystemVariable> map = Header.CadHeader.GetHeaderMap();
 
-			foreach (var item in map)
+			foreach (KeyValuePair<string, CadSystemVariable> item in map)
 			{
+				if (item.Value.ReferenceType.HasFlag(DxfReferenceType.Ignored))
+					continue;
+
 				this._writer.Write(DxfCode.CLShapeText, item.Key);
 
-				if (item.Key == "$HANDSEED")	//Not very elegant but by now...
+				if (item.Key == "$HANDSEED")    //Not very elegant but by now...
 				{
 					this._writer.Write(DxfCode.Handle, this._document.Header.HandleSeed);
 					continue;
