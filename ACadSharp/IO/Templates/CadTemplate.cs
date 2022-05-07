@@ -21,6 +21,8 @@ namespace ACadSharp.IO.Templates
 		public List<ulong> ReactorsHandles { get; set; } = new List<ulong>();
 
 		public Dictionary<ulong, ExtendedData> EDataTemplate { get; } = new Dictionary<ulong, ExtendedData>();
+		
+		public Dictionary<string, ExtendedData> EDataTemplateByAppName { get; } = new Dictionary<string, ExtendedData>();
 
 		public CadTemplate(CadObject cadObject)
 		{
