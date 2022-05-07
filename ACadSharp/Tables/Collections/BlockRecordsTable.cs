@@ -4,6 +4,7 @@ namespace ACadSharp.Tables.Collections
 {
 	public class BlockRecordsTable : Table<BlockRecord>
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.BLOCK_CONTROL_OBJ;
 		
 		/// <inheritdoc/>

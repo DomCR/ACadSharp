@@ -93,6 +93,9 @@ namespace ACadSharp
 		[Obsolete("Viewports are only used by the R14 versions of dwg")]
 		public ViewportCollection Viewports { get; private set; }
 
+		/// <summary>
+		/// Root dictionary of the document
+		/// </summary>
 		public CadDictionary RootDictionary
 		{
 			get { return this._rootDictionary; }
@@ -103,6 +106,10 @@ namespace ACadSharp
 				this.RegisterCollection(_rootDictionary);
 			}
 		}
+
+		public BlockRecord ModelSpace { get { return this.BlockRecords[BlockRecord.ModelSpaceName]; } }
+
+		public BlockRecord PaperSpace { get { return this.BlockRecords[BlockRecord.PaperSpaceName]; } }
 
 		private CadDictionary _rootDictionary = new CadDictionary();
 
@@ -186,11 +193,6 @@ namespace ACadSharp
 		{
 			if (cadObject.Document != null)
 			{
-				//Avoid exception if the element is assign to this document
-				//TODO: AddCadObject: Not very elegant or reilable, check the integrity of this approax
-				//if (cadObject.Document == this && this._cadObjects.ContainsKey(cadObject.Handle))
-				//	return;
-
 				throw new ArgumentException($"The item with handle {cadObject.Handle} is already assigned to a document");
 			}
 
@@ -198,7 +200,11 @@ namespace ACadSharp
 
 			if (cadObject.Handle == 0 || this._cadObjects.ContainsKey(cadObject.Handle))
 			{
-				cadObject.Handle = this._cadObjects.Keys.Max() + 1;
+				var nextHandle = this._cadObjects.Keys.Max() + 1;
+
+				this.Header.HandleSeed = nextHandle + 1;
+
+				cadObject.Handle = nextHandle;
 			}
 
 			this._cadObjects.Add(cadObject.Handle, cadObject);

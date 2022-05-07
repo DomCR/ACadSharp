@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO;
 using ACadSharp.IO.DXF;
 using System;
 using System.IO;
@@ -30,7 +31,7 @@ namespace ACadSharp.Tests.IO.DXF
 		public void WriteAsciiTest()
 		{
 			CadDocument doc = new CadDocument();
-			string path = Path.Combine(_samplesFolder, "out_sample_ascii.dxf");
+			string path = Path.Combine(_samplesFolder, "out_empty_sample_ascii.dxf");
 
 			using (var wr = new DxfWriter(path, doc, false))
 			{
@@ -47,7 +48,7 @@ namespace ACadSharp.Tests.IO.DXF
 		public void WriteBinaryTest()
 		{
 			CadDocument doc = new CadDocument();
-			string path = Path.Combine(_samplesFolder, "out_sample_binary.dxf");
+			string path = Path.Combine(_samplesFolder, "out_empty_sample_binary.dxf");
 
 			using (var wr = new DxfWriter(path, doc, true))
 			{

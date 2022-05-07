@@ -12,13 +12,18 @@ using Xunit.Abstractions;
 
 namespace ACadSharp.Tests.Common
 {
-	public static class DocumentIntegrity
+	public class DocumentIntegrity
 	{
-		public static ITestOutputHelper Output { get; set; }
+		public ITestOutputHelper Output { get; set; }
 
 		private const string _documentTree = "../../../../ACadSharp.Tests/Data/document_tree.json";
 
-		public static void AssertTableHirearchy(CadDocument doc)
+		public DocumentIntegrity(ITestOutputHelper output)
+		{
+			Output = output;
+		}
+
+		public void AssertTableHirearchy(CadDocument doc)
 		{
 			//Assert all the tables in the doc
 			assertTable(doc, doc.AppIds);
@@ -32,7 +37,7 @@ namespace ACadSharp.Tests.Common
 			assertTable(doc, doc.VPorts);
 		}
 
-		public static void AssertDocumentDefaults(CadDocument doc)
+		public void AssertDocumentDefaults(CadDocument doc)
 		{
 			//Assert the default values for the document
 			entryNotNull(doc.BlockRecords, "*Model_Space");
@@ -55,7 +60,7 @@ namespace ACadSharp.Tests.Common
 			notNull(doc.Layouts.FirstOrDefault(l => l.Name == "Model"), "Model");
 		}
 
-		public static void AssertBlockRecords(CadDocument doc)
+		public void AssertBlockRecords(CadDocument doc)
 		{
 			foreach (BlockRecord br in doc.BlockRecords)
 			{
@@ -64,7 +69,7 @@ namespace ACadSharp.Tests.Common
 				documentObjectNotNull(doc, br.BlockEntity);
 
 				Assert.True(br.Handle == br.BlockEntity.Owner.Handle, "Block entity owner doesn't mach");
-				
+
 				documentObjectNotNull(doc, br.BlockEnd);
 
 				foreach (Entities.Entity e in br.Entities)
@@ -74,14 +79,14 @@ namespace ACadSharp.Tests.Common
 			}
 		}
 
-		public static void AssertDocumentTree(CadDocument doc)
+		public void AssertDocumentTree(CadDocument doc)
 		{
 			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(File.ReadAllText(_documentTree));
 
 			assertTable(doc.BlockRecords, tree.BlocksTable, doc.Header.Version >= ACadVersion.AC1021);
 		}
 
-		private static void assertTable<T>(CadDocument doc, Table<T> table)
+		private void assertTable<T>(CadDocument doc, Table<T> table)
 			where T : TableEntry
 		{
 			Assert.NotNull(table);
@@ -104,7 +109,7 @@ namespace ACadSharp.Tests.Common
 			}
 		}
 
-		private static void assertTable<T>(Table<T> table, Node node, bool assertDictionary)
+		private void assertTable<T>(Table<T> table, Node node, bool assertDictionary)
 			where T : TableEntry
 		{
 			assertObject(table, node, assertDictionary);
@@ -118,7 +123,7 @@ namespace ACadSharp.Tests.Common
 				assertObject(entry, child, assertDictionary);
 			}
 		}
-		private static void assertObject(CadObject co, Node node, bool assertDictionary)
+		private void assertObject(CadObject co, Node node, bool assertDictionary)
 		{
 			Assert.True(co.Handle == node.Handle);
 			Assert.True(co.Owner.Handle == node.OwnerHandle);
@@ -136,7 +141,7 @@ namespace ACadSharp.Tests.Common
 			}
 		}
 
-		private static void assertCollection(IEnumerable<CadObject> collection, Node node, bool assertDictionary)
+		private void assertCollection(IEnumerable<CadObject> collection, Node node, bool assertDictionary)
 		{
 			//Check the actual elements in the collection
 			foreach (CadObject entry in collection)
@@ -157,19 +162,19 @@ namespace ACadSharp.Tests.Common
 			}
 		}
 
-		private static void documentObjectNotNull<T>(CadDocument doc, T o)
+		private void documentObjectNotNull<T>(CadDocument doc, T o)
 			where T : CadObject
 		{
 			Assert.True(doc.GetCadObject(o.Handle) != null, $"Object of type {typeof(T)} | {o.Handle} not found in the doucment");
 
 		}
 
-		private static void notNull<T>(T o, string info)
+		private void notNull<T>(T o, string info)
 		{
 			Assert.True(o != null, $"Object of type {typeof(T)} should not be null:  {info}");
 		}
 
-		private static void entryNotNull<T>(Table<T> table, string entry)
+		private void entryNotNull<T>(Table<T> table, string entry)
 			where T : TableEntry
 		{
 			Assert.True(table[entry] != null, $"Entry with name {entry} is null for thable {table}");
