@@ -7,6 +7,10 @@ namespace ACadSharp.Examples
 {
 	public static class ReaderExamples
 	{
+		/// <summary>
+		/// Read a dxf file
+		/// </summary>
+		/// <param name="file">dxf file path</param>
 		public static void ReadDxf(string file)
 		{
 			using (DxfReader reader = new DxfReader(file, onNotification))
@@ -15,6 +19,10 @@ namespace ACadSharp.Examples
 			}
 		}
 
+		/// <summary>
+		/// Read a dwg file
+		/// </summary>
+		/// <param name="file">dwg file path</param>
 		public static void ReadDwg(string file)
 		{
 			using (DwgReader reader = new DwgReader(file, onNotification))
@@ -25,6 +33,7 @@ namespace ACadSharp.Examples
 
 		private static void onNotification(object sender, NotificationEventArgs e)
 		{
+			//Write in the console all the messages
 			Console.WriteLine(e.Message);
 		}
 	}
