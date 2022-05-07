@@ -34,7 +34,7 @@ namespace ACadSharp.IO.DXF
 		/// <exception cref="NotImplementedException">Binary writer not implemented</exception>
 		public DxfWriter(Stream stream, CadDocument document, bool binary)
 		{
-			var encoding = Encoding.UTF8;
+			var encoding = new UTF8Encoding(false);
 
 			if (binary)
 			{
