@@ -1747,7 +1747,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable DIMPOST
 		/// </remarks>
-		[CadSystemVariable("$DIMPOST", 70)]
+		[CadSystemVariable("$DIMPOST", 1)]
 		public string DimensionPostFix
 		{
 			get { return this.DimensionStyleOverrides.PostFix; }
