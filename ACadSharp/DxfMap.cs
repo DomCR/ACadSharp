@@ -1,6 +1,7 @@
 ﻿using ACadSharp;
 using ACadSharp.Attributes;
 using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
 using System;
@@ -13,45 +14,6 @@ using System.Threading.Tasks;
 
 namespace ACadSharp
 {
-	public abstract class DxfMapBase
-	{
-		public string Name { get; set; }
-
-		public Dictionary<int, object> Properties { get; } = new Dictionary<int, object>();
-
-		public Dictionary<int, DxfProperty> DxfProperties { get; } = new Dictionary<int, DxfProperty>();
-
-		protected static void addClassProperties(DxfMapBase map, Type type)
-		{
-			foreach (var item in cadObjectMapDxf(type))
-			{
-				map.DxfProperties.Add(item.Key, item.Value);
-			}
-		}
-
-		protected static IEnumerable<KeyValuePair<int, DxfProperty>> cadObjectMapDxf(Type type)
-		{
-			foreach (PropertyInfo p in type.GetProperties(BindingFlags.Public
-														| BindingFlags.Instance
-														| BindingFlags.DeclaredOnly))
-			{
-				DxfCodeValueAttribute att = p.GetCustomAttribute<DxfCodeValueAttribute>();
-				if (att == null)
-					continue;
-
-				if (att.ReferenceType == DxfReferenceType.Count)
-				{
-
-				}
-
-				foreach (var item in DxfProperty.Create(p))
-				{
-					yield return new KeyValuePair<int, DxfProperty>(item.Code, item);
-				}
-			}
-		}
-	}
-
 	public class DxfMap : DxfMapBase
 	{
 		public Dictionary<string, DxfClassMap> SubClasses { get; private set; } = new Dictionary<string, DxfClassMap>();
@@ -105,157 +67,9 @@ namespace ACadSharp
 				}
 			}
 
+			map.SubClasses = new Dictionary<string, DxfClassMap>(map.SubClasses.Reverse().ToDictionary(o => o.Key, o => o.Value));
+
 			return map;
-		}
-	}
-
-	public class DxfClassMap : DxfMapBase
-	{
-		public static DxfClassMap Create<T>()
-			where T : CadObject
-		{
-			Type type = typeof(T);
-			DxfClassMap classMap = new DxfClassMap();
-
-			var att = type.GetCustomAttribute<DxfSubClassAttribute>();
-			if (att == null)
-				throw new ArgumentException($"{type.FullName} is not a dxf subclass");
-
-			classMap.Name = type.GetCustomAttribute<DxfSubClassAttribute>().ClassName;
-
-			addClassProperties(classMap, type);
-
-			DxfSubClassAttribute baseAtt = type.BaseType.GetCustomAttribute<DxfSubClassAttribute>();
-			if (baseAtt != null && baseAtt.IsEmpty)
-			{
-				//Properties in the table seem to be embeded to the hinerit type
-				addClassProperties(classMap, type.BaseType);
-			}
-
-			return classMap;
-		}
-	}
-
-	public abstract class DxfPropertyBase
-	{
-		public int Code { get; }
-
-		public object Value { get; }
-
-		public DxfPropertyBase(int code)
-		{
-			this.Code = code;
-		}
-	}
-
-	public class DxfProperty : DxfPropertyBase
-	{
-		public DxfReferenceType ReferenceType { get { return this._dxfAttribute.ReferenceType; } }
-
-		private DxfCodeValueAttribute _dxfAttribute;
-
-		private PropertyInfo _property;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="code"></param>
-		/// <param name="property"></param>
-		/// <exception cref="ArgumentException"></exception>
-		private DxfProperty(int code, PropertyInfo property) : base(code)
-		{
-			this._dxfAttribute = property.GetCustomAttribute<DxfCodeValueAttribute>();
-
-			if (this._dxfAttribute == null)
-				throw new ArgumentException($"The property does not implement the {nameof(DxfCodeValueAttribute)}", nameof(property));
-
-			if (!this._dxfAttribute.ValueCodes.Contains((DxfCode)code))
-				throw new ArgumentException($"The {nameof(DxfCodeValueAttribute)} does not have match with the code {code}", nameof(property));
-
-			_property = property;
-		}
-
-		public static IEnumerable<DxfProperty> Create(PropertyInfo property)
-		{
-			var att = property.GetCustomAttribute<DxfCodeValueAttribute>();
-			if (att == null)
-				throw new ArgumentException($"The property does not implement the {nameof(DxfCodeValueAttribute)}", nameof(property));
-
-			foreach (var item in att.ValueCodes)
-			{
-				yield return new DxfProperty((int)item, property);
-			}
-		}
-
-		public void SetValue<T>(T obj, object value)
-			where T : CadObject
-		{
-			if (_property.PropertyType.IsEquivalentTo(typeof(XY)))
-			{
-				XY vector = (XY)_property.GetValue(obj);
-
-				int index = (this.Code / 10) % 10 - 1;
-				double[] components = vector.GetComponents();
-				components[index] = Convert.ToDouble(value);
-
-				vector = vector.SetComponents(components);
-
-				this._property.SetValue(obj, vector);
-			}
-			else if (_property.PropertyType.IsEquivalentTo(typeof(XYZ)))
-			{
-				XYZ vector = (XYZ)_property.GetValue(obj);
-
-				int index = (this.Code / 10) % 10 - 1;
-				double[] components = vector.GetComponents();
-				components[index] = Convert.ToDouble(value);
-
-				vector = vector.SetComponents(components);
-
-				this._property.SetValue(obj, vector);
-			}
-			else if (_property.PropertyType.IsEquivalentTo(typeof(Color)))
-			{
-				//TODO: Implement color setter
-
-				switch (this.Code)
-				{
-					case 62:
-						this._property.SetValue(obj, new Color((short)value));
-						break;
-					case 420:
-						// true color
-						break;
-					case 430:
-						// dictionary color
-						break;
-				}
-			}
-			else if (_property.PropertyType.IsEquivalentTo(typeof(Transparency)))
-			{
-				//TODO: Implement transparency setter
-				//this._property.SetValue(obj, new Transparency((short)value));
-			}
-			else if (_property.PropertyType.IsEquivalentTo(typeof(bool)))
-			{
-				this._property.SetValue(obj, Convert.ToBoolean(value));
-			}
-			else if (_property.PropertyType.IsEquivalentTo(typeof(char)))
-			{
-				this._property.SetValue(obj, Convert.ToChar(value));
-			}
-			else if (_property.PropertyType.IsEquivalentTo(typeof(byte)))
-			{
-				this._property.SetValue(obj, Convert.ToByte(value));
-			}
-			else if (_property.PropertyType.IsEnum)
-			{
-				this._property.SetValue(obj, Enum.ToObject(_property.PropertyType, value));
-			}
-			else
-			{
-				this._property.SetValue(obj, value);
-			}
 		}
 	}
 }

@@ -7,14 +7,12 @@ namespace ACadSharp
 	public class CadObjectCollection<T> : IObservableCollection<T>
 		where T : CadObject
 	{
-		public event EventHandler<ReferenceChangedEventArgs> OnBeforeAdd;
 		public event EventHandler<ReferenceChangedEventArgs> OnAdd;
-		public event EventHandler<ReferenceChangedEventArgs> OnBeforeRemove;
 		public event EventHandler<ReferenceChangedEventArgs> OnRemove;
 
 		public CadObject Owner { get; }
 
-		private readonly Dictionary<ulong, T> _entries = new Dictionary<ulong, T>();
+		private readonly List<T> _entries = new List<T>();
 
 		public CadObjectCollection(CadObject owner)
 		{
@@ -23,9 +21,10 @@ namespace ACadSharp
 
 		public void Add(T item)
 		{
-			OnBeforeAdd?.Invoke(this, new ReferenceChangedEventArgs(item));
+			if (this._entries.Contains(item))
+				throw new ArgumentException($"Item {item.GetType().FullName} is already in the collection", nameof(item));
 
-			this._entries.Add(item.Handle, item);
+			this._entries.Add(item);
 			item.Owner = this.Owner;
 
 			OnAdd?.Invoke(this, new ReferenceChangedEventArgs(item));
@@ -46,12 +45,12 @@ namespace ACadSharp
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			return this._entries.Values.GetEnumerator();
+			return this._entries.GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return this._entries.Values.GetEnumerator();
+			return this._entries.GetEnumerator();
 		}
 	}
 }

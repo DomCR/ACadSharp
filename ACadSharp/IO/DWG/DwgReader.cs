@@ -703,7 +703,7 @@ namespace ACadSharp.IO.DWG
 				//0x1C	4	Encrypted(0 = no, 1 = yes, 2 = unknown)
 				descriptor.Encrypted = streamIO.ReadInt<LittleEndianConverter>();
 				//0x20	64	Section Name(string)
-				descriptor.Name = streamIO.ReadString(64, TextEncoding.GetListedEncoding(CodePage.Windows1252)).Replace("\0", "");
+				descriptor.Name = streamIO.ReadString(64, TextEncoding.GetListedEncoding(CodePage.Windows1252)).Split('\0')[0];
 
 				ulong currPosition = 0;
 				//Following this, the following (local) section page map data will be present

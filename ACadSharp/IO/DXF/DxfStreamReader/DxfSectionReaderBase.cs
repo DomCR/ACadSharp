@@ -8,6 +8,21 @@ namespace ACadSharp.IO.DXF
 {
 	internal abstract class DxfSectionReaderBase
 	{
+		/// <summary>
+		/// Object reactors, list of handles
+		/// </summary>
+		public const string ReactorsToken = "{ACAD_REACTORS";
+
+		/// <summary>
+		/// Handle for the xdictionary
+		/// </summary>
+		public const string DictionaryToken = "{ACAD_XDICTIONARY";
+
+		/// <summary>
+		/// Block references
+		/// </summary>
+		public const string BlkRefToken = "{BLKREFS";
+
 		protected readonly IDxfStreamReader _reader;
 		protected readonly DxfDocumentBuilder _builder;
 		protected readonly NotificationEventHandler _notification;
@@ -24,11 +39,13 @@ namespace ACadSharp.IO.DXF
 
 		public abstract void Read();
 
-		protected void readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle)
+		protected void readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors)
 		{
 			name = null;
 			handle = 0;
 			ownerHandle = null;
+			xdictHandle = null;
+			reactors = new List<ulong>();
 
 			bool handleNotFound = true;
 
@@ -50,13 +67,8 @@ namespace ACadSharp.IO.DXF
 						break;
 					//Start of application - defined group
 					case 102:
-						//TODO: read dictionary groups for entities
-						do
-						{
-							this._reader.ReadNext();
-						}
-						while (this._reader.LastDxfCode != DxfCode.ControlString);
-						break;
+						this.readDefinedGroups(out xdictHandle, out reactors);
+						continue;
 					//Soft - pointer ID / handle to owner BLOCK_RECORD object
 					case 330:
 						ownerHandle = this._reader.LastValueAsHandle;
@@ -93,13 +105,8 @@ namespace ACadSharp.IO.DXF
 						break;
 					//Start of application - defined group
 					case 102:
-						//TODO: read dictionary groups for entities
-						do
-						{
-							this._reader.ReadNext();
-						}
-						while (this._reader.LastDxfCode != DxfCode.ControlString);
-						break;
+						this.readDefinedGroups(template);
+						continue;
 					//Soft - pointer ID / handle to owner BLOCK_RECORD object
 					case 330:
 						template.OwnerHandle = this._reader.LastValueAsHandle;
@@ -294,7 +301,15 @@ namespace ACadSharp.IO.DXF
 				}
 				else if (this._reader.LastDxfCode == DxfCode.ControlString)
 				{
-					this.readReactors();
+					if (!template.CheckDxfCode(this._reader.LastCode, this._reader.LastValue))
+					{
+						this.readDefinedGroups(template);
+					}
+					else
+					{
+						this._reader.ReadNext();
+					}
+
 					continue;
 				}
 
@@ -309,13 +324,11 @@ namespace ACadSharp.IO.DXF
 
 				if (dxfProperty.ReferenceType == DxfReferenceType.Handle)
 				{
-					//TODO: references may be also names in case of layers, blocks...
 					if (!template.AddHandle(this._reader.LastCode, this._reader.LastValueAsHandle))
 						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf referenced code {this._reader.LastCode} not implemented in the {template.GetType().Name} for {typeof(T)} | value : {this._reader.LastValueAsHandle}"));
 				}
 				else if (dxfProperty.ReferenceType == DxfReferenceType.Name)
 				{
-					//TODO: references may be also names in case of layers, blocks...
 					if (!template.AddName(this._reader.LastCode, this._reader.LastValueAsString))
 						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf named referenced code {this._reader.LastCode} not implemented in the {template.GetType().Name} for {typeof(T)} | value : {this._reader.LastValueAsHandle}"));
 				}
@@ -335,7 +348,7 @@ namespace ACadSharp.IO.DXF
 						case GroupCodeValueType.Int64:
 						case GroupCodeValueType.Chunk:
 						case GroupCodeValueType.Bool:
-							dxfProperty.SetValue(cadObject, this._reader.LastValue);
+							dxfProperty.SetValue(this._reader.LastCode, cadObject, this._reader.LastValue);
 							break;
 						case GroupCodeValueType.Comment:
 							this._notification?.Invoke(null, new NotificationEventArgs($"Comment in the file :  {this._reader.LastValueAsString}"));
@@ -368,13 +381,37 @@ namespace ACadSharp.IO.DXF
 			//this.readMapped<Hatch>(template.CadObject, template);
 		}
 
-		private void readReactors()
+		private void readDefinedGroups(CadTemplate template)
 		{
-			this._reader.ReadNext();
+			this.readDefinedGroups(out ulong? xdict, out List<ulong> reactorsHandles);
 
-			while (this._reader.LastDxfCode != DxfCode.ControlString)
+			template.XDictHandle = xdict;
+			template.ReactorsHandles = template.ReactorsHandles;
+
+		}
+
+		private void readDefinedGroups(out ulong? xdictHandle, out List<ulong> reactors)
+		{
+			xdictHandle = null;
+			reactors = new List<ulong>();
+
+			switch (this._reader.LastValueAsString)
 			{
-				this._reader.ReadNext();
+				case DxfSectionReaderBase.DictionaryToken:
+					this._reader.ReadNext();
+					xdictHandle = this._reader.LastValueAsHandle;
+					this._reader.ReadNext();
+					Debug.Assert(_reader.LastDxfCode == DxfCode.ControlString);
+					break;
+				case DxfSectionReaderBase.ReactorsToken:
+				case DxfSectionReaderBase.BlkRefToken:
+				default:
+					do
+					{
+						this._reader.ReadNext();
+					}
+					while (this._reader.LastDxfCode != DxfCode.ControlString);
+					break;
 			}
 
 			this._reader.ReadNext();

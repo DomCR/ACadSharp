@@ -1,16 +1,23 @@
 ﻿using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using ACadSharp.Tests.TestCases;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ACadSharp.Tests.Common
 {
 	public static class DocumentIntegrity
 	{
+		public static ITestOutputHelper Output { get; set; }
+
+		private const string _documentTree = "../../../../ACadSharp.Tests/Data/document_tree.json";
+
 		public static void AssertTableHirearchy(CadDocument doc)
 		{
 			//Assert all the tables in the doc
@@ -45,8 +52,7 @@ namespace ACadSharp.Tests.Common
 
 			entryNotNull(doc.VPorts, "*Active");
 
-			//TODO: Change layout list to an observable collection
-			//notNull(doc.Layouts.FirstOrDefault(l => l.Name == "Model"), "Model");
+			notNull(doc.Layouts.FirstOrDefault(l => l.Name == "Model"), "Model");
 		}
 
 		public static void AssertBlockRecords(CadDocument doc)
@@ -56,6 +62,9 @@ namespace ACadSharp.Tests.Common
 				Assert.Equal(br.Name, br.BlockEntity.Name);
 
 				documentObjectNotNull(doc, br.BlockEntity);
+
+				Assert.True(br.Handle == br.BlockEntity.Owner.Handle, "Block entity owner doesn't mach");
+				
 				documentObjectNotNull(doc, br.BlockEnd);
 
 				foreach (Entities.Entity e in br.Entities)
@@ -63,6 +72,13 @@ namespace ACadSharp.Tests.Common
 					documentObjectNotNull(doc, e);
 				}
 			}
+		}
+
+		public static void AssertDocumentTree(CadDocument doc)
+		{
+			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(File.ReadAllText(_documentTree));
+
+			assertTable(doc.BlockRecords, tree.BlocksTable, doc.Header.Version >= ACadVersion.AC1021);
 		}
 
 		private static void assertTable<T>(CadDocument doc, Table<T> table)
@@ -85,6 +101,59 @@ namespace ACadSharp.Tests.Common
 				Assert.Equal(entry.Owner, table);
 
 				documentObjectNotNull(doc, entry);
+			}
+		}
+
+		private static void assertTable<T>(Table<T> table, Node node, bool assertDictionary)
+			where T : TableEntry
+		{
+			assertObject(table, node, assertDictionary);
+
+			foreach (T entry in table)
+			{
+				Node child = node.GetByHandle(entry.Handle);
+				if (child == null)
+					continue;
+
+				assertObject(entry, child, assertDictionary);
+			}
+		}
+		private static void assertObject(CadObject co, Node node, bool assertDictionary)
+		{
+			Assert.True(co.Handle == node.Handle);
+			Assert.True(co.Owner.Handle == node.OwnerHandle);
+
+			if (co.XDictionary != null && assertDictionary)
+				Assert.True(co.XDictionary.Handle == node.DictionaryHandle);
+
+			switch (co)
+			{
+				case BlockRecord record:
+					assertCollection(record.Entities, node, assertDictionary);
+					break;
+				default:
+					break;
+			}
+		}
+
+		private static void assertCollection(IEnumerable<CadObject> collection, Node node, bool assertDictionary)
+		{
+			//Check the actual elements in the collection
+			foreach (CadObject entry in collection)
+			{
+				Node child = node.GetByHandle(entry.Handle);
+				if (child == null)
+					continue;
+
+				assertObject(entry, child, assertDictionary);
+			}
+
+			//Look for missing elements
+			foreach (Node n in node.Children)
+			{
+				var o = collection.FirstOrDefault(x => x.Handle == n.Handle);
+				if (o == null)
+					Output?.WriteLine($"Owner : {n.OwnerHandle} missing object with handle : {n.Handle}");
 			}
 		}
 

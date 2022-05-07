@@ -41,7 +41,7 @@ namespace ACadSharp.IO.Templates
 		{
 			polyLine.Handle = this.CadObject.Handle;
 			polyLine.Owner = this.CadObject.Owner;
-			polyLine.Dictionary = this.CadObject.Dictionary;
+			polyLine.XDictionary = this.CadObject.XDictionary;
 			//polyLine.Reactors = this.CadObject.Reactors;
 			//polyLine.ExtendedData = this.CadObject.ExtendedData;
 

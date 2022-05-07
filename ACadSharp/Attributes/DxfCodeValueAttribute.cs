@@ -4,16 +4,12 @@ using System.Linq;
 namespace ACadSharp.Attributes
 {
 	[System.AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
-	public sealed class DxfCodeValueAttribute : Attribute
+	public sealed class DxfCodeValueAttribute : Attribute, ICodeValueAttribute
 	{
-		/// <summary>
-		/// Dxf codes binding the property
-		/// </summary>
+		/// <inheritdoc/>
 		public DxfCode[] ValueCodes { get; }
 
-		/// <summary>
-		/// Reference type for this dxf property
-		/// </summary>
+		/// <inheritdoc/>
 		public DxfReferenceType ReferenceType { get; }
 
 		public DxfCodeValueAttribute(params int[] codes)
