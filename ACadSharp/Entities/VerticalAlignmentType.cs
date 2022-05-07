@@ -3,23 +3,21 @@
 	/// <summary>
 	/// Text vertical justification.
 	/// </summary>
-	public enum TextVerticalAlignment : short
+	public enum VerticalAlignmentType : short
 	{
-		/// <summary>
-		/// Text aligned to baseline.
-		/// </summary>
-		Baseline = 0,
 		/// <summary>
 		/// Top
 		/// </summary>
-		Top = 1,
+		Top = 0,
+
 		/// <summary>
 		/// Middle
 		/// </summary>
-		Middle = 2,
+		Middle = 1,
+
 		/// <summary>
 		/// Bottom
 		/// </summary>
-		Bottom = 3,
+		Bottom = 2,
 	}
 }

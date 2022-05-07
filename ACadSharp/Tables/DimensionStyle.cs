@@ -31,13 +31,13 @@ namespace ACadSharp.Tables
 		/// DIMPOST
 		/// </summary>
 		[DxfCodeValue(3)]
-		public string PostFix { get; set; }
+		public string PostFix { get; set; } = "<>";
 
 		/// <summary>
 		/// DIMAPOST
 		/// </summary>
 		[DxfCodeValue(4)]
-		public string AlternateDimensioningSuffix { get; set; }
+		public string AlternateDimensioningSuffix { get; set; } = "[]";
 
 		/// <summary>
 		/// DIMTOL
@@ -229,7 +229,18 @@ namespace ACadSharp.Tables
 		/// DIMASZ
 		/// </summary>
 		[DxfCodeValue(41)]
-		public double ArrowSize { get; set; }
+		public double ArrowSize
+		{
+			get { return this._arrowSize; }
+			set
+			{
+				if (value < 0)
+				{
+					throw new ArgumentOutOfRangeException(nameof(value), value, "The ArrowSize must be equals or greater than zero.");
+				}
+				this._arrowSize = value;
+			}
+		}
 
 		/// <summary>
 		/// DIMEXO
@@ -486,6 +497,8 @@ namespace ACadSharp.Tables
 		/// </remarks>
 		[DxfCodeValue(344)]
 		public Block DimArrow2 { get; set; }
+
+		private double _arrowSize = 0.18;
 
 		public DimensionStyle() : this(null) { }
 
