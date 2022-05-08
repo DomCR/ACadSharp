@@ -44,6 +44,7 @@ namespace ACadSharp
 				//	this._document.RegisterCollection(value);
 
 				this._xdictionary = value;
+				this._xdictionary.Owner = this;
 			}
 		}
 

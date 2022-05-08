@@ -129,7 +129,10 @@ namespace ACadSharp.Tests.Common
 			Assert.True(co.Owner.Handle == node.OwnerHandle);
 
 			if (co.XDictionary != null && assertDictionary)
+			{
 				Assert.True(co.XDictionary.Handle == node.DictionaryHandle);
+				Assert.True(co.XDictionary.Owner == co);
+			}
 
 			switch (co)
 			{
