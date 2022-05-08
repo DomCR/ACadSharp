@@ -11,6 +11,16 @@ namespace ACadSharp.Tests.IO
 {
 	public class IOTests : IOTestsBase
 	{
+		private const string _samplesFolder = "../../../../samples/out";
+
+		static IOTests()
+		{
+			if (!Directory.Exists(_samplesFolder))
+			{
+				Directory.CreateDirectory(_samplesFolder);
+			}
+		}
+
 		public IOTests(ITestOutputHelper output) : base(output)
 		{
 		}

@@ -16,8 +16,6 @@ namespace ACadSharp.Tests.IO.DXF
 
 		protected readonly ITestOutputHelper _output;
 
-		private static int lineCount = 0;
-		private static StringBuilder output = new StringBuilder();
 		static DxfWriterTests()
 		{
 			if (!Directory.Exists(_samplesFolder))
