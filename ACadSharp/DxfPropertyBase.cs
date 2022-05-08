@@ -187,7 +187,7 @@ namespace ACadSharp
 		private ulong? getHandledValue<TCadObject>(TCadObject obj)
 		{
 			if (!this._property.PropertyType.HasInterface<IHandledCadObject>())
-				throw new ArgumentException();
+				throw new ArgumentException($"Property {this._property.Name} for type : {obj.GetType().FullName} does not implement IHandledCadObject");
 
 			IHandledCadObject handled = (IHandledCadObject)this._property.GetValue(obj);
 
@@ -197,7 +197,7 @@ namespace ACadSharp
 		private string getNamedValue<TCadObject>(TCadObject obj)
 		{
 			if (!this._property.PropertyType.HasInterface<INamedCadObject>())
-				throw new ArgumentException();
+				throw new ArgumentException($"Property {this._property.Name} for type : {obj.GetType().FullName} does not implement INamedCadObject");
 
 			INamedCadObject handled = (INamedCadObject)this._property.GetValue(obj);
 

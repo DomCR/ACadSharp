@@ -1,56 +1,21 @@
 ﻿using ACadSharp.Header;
 using ACadSharp.IO;
 using ACadSharp.IO.DWG;
-using ACadSharp.Tests.Common;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace ACadSharp.Tests.IO
 {
-	public abstract class CadReaderTestsBase<T> : IDisposable
+	public abstract class CadReaderTestsBase<T> : IOTestsBase, IDisposable
 		where T : CadReaderBase
 	{
-		private const string _samplesFolder = "../../../../samples/";
-
-		public static TheoryData<string> DwgFilePaths { get; }
-
-		public static TheoryData<string> DxfAsciiFiles { get; }
-
-		public static TheoryData<string> DxfBinaryFiles { get; }
-
 		protected readonly Dictionary<string, CadDocument> _documents = new Dictionary<string, CadDocument>();  //TODO: this does not store the document readed
 
-		protected readonly ITestOutputHelper _output;
-
-		static CadReaderTestsBase()
+		public CadReaderTestsBase(ITestOutputHelper output) : base(output)
 		{
-			DwgFilePaths = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(_samplesFolder, $"*.dwg"))
-			{
-				DwgFilePaths.Add(file);
-			}
-
-			DxfAsciiFiles = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(_samplesFolder, "*_ascii.dxf"))
-			{
-				DxfAsciiFiles.Add(file);
-			}
-
-			DxfBinaryFiles = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(_samplesFolder, "*_binary.dxf"))
-			{
-				DxfBinaryFiles.Add(file);
-			}
-		}
-
-		public CadReaderTestsBase(ITestOutputHelper output)
-		{
-			this._output = output;
-			DocumentIntegrity.Output = output;
 		}
 
 		public virtual void ReadHeaderTest(string test)
@@ -73,28 +38,28 @@ namespace ACadSharp.Tests.IO
 		{
 			CadDocument doc = this.getDocument(test);
 
-			DocumentIntegrity.AssertDocumentDefaults(doc);
+			this._docIntegrity.AssertDocumentDefaults(doc);
 		}
 
 		public virtual void AssertTableHirearchy(string test)
 		{
 			CadDocument doc = this.getDocument(test);
 
-			DocumentIntegrity.AssertTableHirearchy(doc);
+			this._docIntegrity.AssertTableHirearchy(doc);
 		}
 
 		public virtual void AssertBlockRecords(string test)
 		{
 			CadDocument doc = this.getDocument(test);
 
-			DocumentIntegrity.AssertBlockRecords(doc);
+			this._docIntegrity.AssertBlockRecords(doc);
 		}
 
 		public virtual void AssertDocumentTree(string test)
 		{
 			CadDocument doc = this.getDocument(test);
 
-			DocumentIntegrity.AssertDocumentTree(doc);
+			this._docIntegrity.AssertDocumentTree(doc);
 		}
 
 		public void Dispose()
@@ -116,11 +81,6 @@ namespace ACadSharp.Tests.IO
 			_documents.Add(path, doc);
 
 			return doc;
-		}
-
-		protected void onNotification(object sender, NotificationEventArgs e)
-		{
-			_output.WriteLine(e.Message);
 		}
 	}
 }

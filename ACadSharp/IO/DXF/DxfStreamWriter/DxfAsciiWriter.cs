@@ -86,7 +86,12 @@ namespace ACadSharp.IO.DXF
 					return;
 				case GroupCodeValueType.Chunk:
 				case GroupCodeValueType.ExtendedDataChunk:
-					throw new NotImplementedException();
+					byte[] arr = value as byte[];
+					foreach (byte v in arr)
+					{
+						this._stream.Write(string.Format("{0:X2}", v));
+					}
+					return;
 			}
 
 			this._stream.WriteLine(value.ToString());

@@ -33,40 +33,45 @@ namespace ACadSharp
 		public static DxfMap Create<T>()
 			where T : CadObject
 		{
+			return DxfMap.Create(typeof(T));
+		}
+
+		//TODO: change to public? Using the type parameter does not constraing the use of the method
+		internal static DxfMap Create(Type type)
+		{
 			DxfMap map = new DxfMap();
 			bool isDimensionStyle = false;
 
-			Type type = typeof(T);
 			DxfNameAttribute dxf = type.GetCustomAttribute<DxfNameAttribute>();
 
 			map.Name = dxf.Name;
 
-			for (type = typeof(T); type != null; type = type.BaseType)
+			for (Type t = type; t != null; t = t.BaseType)
 			{
-				DxfSubClassAttribute subclass = type.GetCustomAttribute<DxfSubClassAttribute>();
+				DxfSubClassAttribute subclass = t.GetCustomAttribute<DxfSubClassAttribute>();
 
-				if (type.Equals(typeof(DimensionStyle)))
+				if (t.Equals(typeof(DimensionStyle)))
 				{
 					isDimensionStyle = true;
 				}
 
-				if (type.Equals(typeof(CadObject)))
+				if (t.Equals(typeof(CadObject)))
 				{
-					addClassProperties(map, type);
+					addClassProperties(map, t);
 					break;
 				}
 				else if (subclass != null && subclass.IsEmpty)
 				{
 					DxfClassMap classMap = map.SubClasses.Last().Value;
 
-					addClassProperties(classMap, type);
+					addClassProperties(classMap, t);
 				}
-				else if (type.GetCustomAttribute<DxfSubClassAttribute>() != null)
+				else if (t.GetCustomAttribute<DxfSubClassAttribute>() != null)
 				{
 					DxfClassMap classMap = new DxfClassMap();
-					classMap.Name = type.GetCustomAttribute<DxfSubClassAttribute>().ClassName;
+					classMap.Name = t.GetCustomAttribute<DxfSubClassAttribute>().ClassName;
 
-					addClassProperties(classMap, type);
+					addClassProperties(classMap, t);
 
 					map.SubClasses.Add(classMap.Name, classMap);
 				}
