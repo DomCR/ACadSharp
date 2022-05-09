@@ -117,7 +117,7 @@ namespace ACadSharp.Entities
 		/// Vertical text justification type.
 		/// </summary>
 		[DxfCodeValue(73)]
-		public virtual TextVerticalAlignment VerticalAlignment { get; set; } = TextVerticalAlignment.Baseline;
+		public virtual TextVerticalAlignmentType VerticalAlignment { get; set; } = TextVerticalAlignmentType.Baseline;
 
 		public TextEntity() : base() { }
 	}

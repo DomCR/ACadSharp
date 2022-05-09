@@ -17,10 +17,6 @@ namespace ACadSharp.IO.Templates
 			{
 				builder.DocumentToBuild.RootDictionary = this.CadObject;
 			}
-			//else if (builder.TryGetCadObject(this.OwnerHandle, out CadObject co))
-			//{
-			//	co.XDictionary = this.CadObject;
-			//}
 
 			foreach (var item in this.Entries)
 			{

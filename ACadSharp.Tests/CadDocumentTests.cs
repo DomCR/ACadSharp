@@ -7,17 +7,25 @@ using ACadSharp.Tables;
 using Xunit;
 using ACadSharp.Tests.Common;
 using ACadSharp.Entities;
+using Xunit.Abstractions;
 
 namespace ACadSharp.Tests
 {
 	public class CadDocumentTests
 	{
+		protected readonly DocumentIntegrity _docIntegrity;
+
+		public CadDocumentTests(ITestOutputHelper output)
+		{
+			this._docIntegrity = new DocumentIntegrity(output);
+		}
+
 		[Fact]
 		public void CadDocumentTest()
 		{
 			CadDocument doc = new CadDocument();
 
-			DocumentIntegrity.AssertTableHirearchy(doc);
+			this._docIntegrity.AssertTableHirearchy(doc);
 		}
 
 		[Fact]
@@ -25,7 +33,9 @@ namespace ACadSharp.Tests
 		{
 			CadDocument doc = new CadDocument();
 
-			DocumentIntegrity.AssertDocumentDefaults(doc);
+			this._docIntegrity.AssertDocumentDefaults(doc);
+			this._docIntegrity.AssertTableHirearchy(doc);
+			this._docIntegrity.AssertBlockRecords(doc);
 		}
 
 		[Fact]

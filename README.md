@@ -44,10 +44,6 @@ WIP
 
 The dwg/dxf readers are not yet fully implemented, the NotificationHandler will send a message to inform about the objects that could not be readed or any other error in the process.
 
-##### Document integration
-
-- Set tests to check the final document integrity
-
 ##### Dwg entities not implemented
 
 - ACDBPLACEHOLDER
@@ -75,7 +71,6 @@ The dwg/dxf readers are not yet fully implemented, the NotificationHandler will 
 
 ##### Long term 
 
-- DxfWriter
 - DwgWriter
 
 Contributing

@@ -9,18 +9,22 @@
 		/// Decimal degrees
 		/// </summary>
 		DecimalDegrees,
+
 		/// <summary>
 		/// Degrees/minutes/seconds
 		/// </summary>
 		DegreesMinutesSeconds,
+
 		/// <summary>
 		/// Gradians
 		/// </summary>
 		Gradians,
+
 		/// <summary>
 		/// Radians
 		/// </summary>
 		Radians,
+
 		/// <summary>
 		/// Surveyors units
 		/// </summary>

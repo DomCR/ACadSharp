@@ -159,8 +159,7 @@ namespace ACadSharp.IO.DXF
 			{
 				this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors);
 
-				Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.TableRecord);
-				Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.TableRecord);
+				Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.TableRecord, $"Expected: {DxfSubclassMarker.TableRecord} but was {this._reader.LastValueAsString}");
 
 				this._reader.ReadNext();
 

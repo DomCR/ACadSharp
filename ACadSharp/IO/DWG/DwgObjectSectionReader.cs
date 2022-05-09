@@ -1050,7 +1050,7 @@ namespace ACadSharp.IO.DWG
 				//Horiz align. BS 72
 				text.HorizontalAlignment = (TextHorizontalAlignment)this._objectReader.ReadBitShort();
 				//Vert align. BS 73
-				text.VerticalAlignment = (TextVerticalAlignment)this._objectReader.ReadBitShort();
+				text.VerticalAlignment = (TextVerticalAlignmentType)this._objectReader.ReadBitShort();
 
 				//Common:
 				//Common Entity Handle Data H 7 STYLE(hard pointer)
@@ -1105,7 +1105,7 @@ namespace ACadSharp.IO.DWG
 				text.HorizontalAlignment = (TextHorizontalAlignment)this._objectReader.ReadBitShort();
 			//Vert align. BS 73 present if !(DataFlags & 0x80)
 			if ((dataFlags & 0x80) == 0)
-				text.VerticalAlignment = (TextVerticalAlignment)this._objectReader.ReadBitShort();
+				text.VerticalAlignment = (TextVerticalAlignmentType)this._objectReader.ReadBitShort();
 
 			//Common:
 			//Common Entity Handle Data H 7 STYLE(hard pointer)
