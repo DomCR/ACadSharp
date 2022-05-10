@@ -40,11 +40,11 @@ namespace ACadSharp
 			get { return this._xdictionary; }
 			set
 			{
-				//if (this._document != null)
-				//	this._document.RegisterCollection(value);
+				if (value == null)
+					return;
 
 				this._xdictionary = value;
-				//this._xdictionary.Owner = this;
+				this._xdictionary.Owner = this;
 			}
 		}
 
