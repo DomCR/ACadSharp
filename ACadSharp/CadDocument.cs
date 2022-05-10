@@ -107,8 +107,19 @@ namespace ACadSharp
 			}
 		}
 
+		/// <summary>
+		/// Collection with all the entities in the drawing
+		/// </summary>
+		public CadObjectCollection<Entity> ModelEntities { get { return this.BlockRecords[BlockRecord.ModelSpaceName].Entities; } }
+
+		/// <summary>
+		/// Model space block record containing the drawing
+		/// </summary>
 		public BlockRecord ModelSpace { get { return this.BlockRecords[BlockRecord.ModelSpaceName]; } }
 
+		/// <summary>
+		/// Default paper space of the model
+		/// </summary>
 		public BlockRecord PaperSpace { get { return this.BlockRecords[BlockRecord.PaperSpaceName]; } }
 
 		private CadDictionary _rootDictionary = new CadDictionary();
@@ -146,12 +157,17 @@ namespace ACadSharp
 				this.RootDictionary = CadDictionary.CreateRoot();
 
 				//Entries
-				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(Layout.LayoutModelName, Layout.Default);
+				Layout modelLayout = Layout.Default;
+				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(Layout.LayoutModelName, modelLayout);
 
 				//Default variables
 				this.AppIds.Add(AppId.Default);
 
-				this.BlockRecords.Add(BlockRecord.ModelSpace);
+				//Blocks
+				BlockRecord model = BlockRecord.ModelSpace;
+				model.Layout = modelLayout;
+				this.BlockRecords.Add(model);
+
 				this.BlockRecords.Add(BlockRecord.PaperSpace);
 
 				this.LineTypes.Add(LineType.ByLayer);

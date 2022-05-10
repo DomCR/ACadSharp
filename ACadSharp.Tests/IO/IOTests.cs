@@ -11,16 +11,6 @@ namespace ACadSharp.Tests.IO
 {
 	public class IOTests : IOTestsBase
 	{
-		private const string _samplesFolder = "../../../../samples/out";
-
-		static IOTests()
-		{
-			if (!Directory.Exists(_samplesFolder))
-			{
-				Directory.CreateDirectory(_samplesFolder);
-			}
-		}
-
 		public IOTests(ITestOutputHelper output) : base(output)
 		{
 		}
@@ -31,10 +21,9 @@ namespace ACadSharp.Tests.IO
 		{
 			CadDocument doc = DwgReader.Read(test, this.onNotification);
 
-			string dir = Path.GetDirectoryName(test);
 			string file = Path.GetFileNameWithoutExtension(test);
 
-			string pathOut = Path.Combine(dir, "out", $"{file}_out.dxf");
+			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_out.dxf");
 
 			using (DxfWriter writer = new DxfWriter(pathOut, doc, false))
 			{

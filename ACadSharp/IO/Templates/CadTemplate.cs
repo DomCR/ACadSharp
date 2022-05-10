@@ -48,11 +48,6 @@ namespace ACadSharp.IO.Templates
 			if (builder.TryGetCadObject(this.XDictHandle, out CadDictionary cadDictionary))
 			{
 				this.CadObject.XDictionary = cadDictionary;
-				this.CadObject.XDictionary.Owner = this.CadObject;
-			}
-			else if (this.XDictHandle.HasValue && this.XDictHandle.Value != 0)
-			{
-				builder.NotificationHandler?.Invoke(this.CadObject, new NotificationEventArgs($"Dictionary couldn't be found, handle : {this.XDictHandle}"));
 			}
 
 			foreach (ulong handle in this.ReactorsHandles)

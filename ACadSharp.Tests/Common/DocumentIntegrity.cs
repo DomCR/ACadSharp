@@ -132,6 +132,9 @@ namespace ACadSharp.Tests.Common
 			{
 				Assert.True(co.XDictionary.Handle == node.DictionaryHandle);
 				Assert.True(co.XDictionary.Owner == co);
+
+				this.notNull<CadDocument>(co.XDictionary.Document, "Dictionary is not assigned to a document");
+				Assert.Equal(co.Document, co.XDictionary.Document);
 			}
 
 			switch (co)

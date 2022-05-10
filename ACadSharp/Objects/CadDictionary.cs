@@ -21,6 +21,8 @@ namespace ACadSharp.Objects
 		public event EventHandler<ReferenceChangedEventArgs> OnAdd;
 		public event EventHandler<ReferenceChangedEventArgs> OnRemove;
 
+		#region Root dictionary entries
+
 		/// <summary>
 		/// ACAD_COLOR dictionary entry
 		/// </summary>
@@ -85,6 +87,8 @@ namespace ACadSharp.Objects
 		/// ACAD_VISUALSTYLE dictionary entry
 		/// </summary>
 		public const string AcadVisualStyle = "ACAD_VISUALSTYLE";
+
+		#endregion
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.DICTIONARY;
