@@ -378,14 +378,17 @@ namespace ACadSharp.IO.DXF
 			XY seedPoint = new XY();
 			DxfClassMap map = DxfClassMap.Create<Hatch>();
 
+			//Jump sublcass
+			this._reader.ReadNext();
+
 			while (this._reader.LastDxfCode != DxfCode.Start)
 			{
 				map.DxfProperties.TryGetValue(this._reader.LastCode, out DxfProperty dxfProperty);
 
 				switch (this._reader.LastCode)
 				{
-					case 78:    //Number of pattern definition lines
-					case 91:    //Number of boundary paths (loops)
+					case 2:
+						template.HatchPatternName = this._reader.LastValueAsString;
 						break;
 					case 10:
 						seedPoint = new XY(this._reader.LastValueAsDouble, seedPoint.Y);
@@ -401,10 +404,15 @@ namespace ACadSharp.IO.DXF
 						hatch.Elevation = this._reader.LastValueAsDouble;
 						isFirstSeed = false;
 						break;
+					case 78:    //Number of pattern definition lines
+					case 91:    //Number of boundary paths (loops)
+					case 98:    //Number of seed points
+						break;
 					default:
 						if (dxfProperty != null)
 						{
 							dxfProperty.SetValue(hatch, this._reader.LastValue);
+							break;
 						}
 						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code : {this._reader.LastCode} with value : {this._reader.LastValue} for subclass {DxfSubclassMarker.Hatch}"));
 						break;
@@ -414,6 +422,20 @@ namespace ACadSharp.IO.DXF
 			}
 
 			//this.readMapped<Hatch>(template.CadObject, template);
+		}
+
+		private void readLoops(Hatch hatch, CadHatchTemplate template, int count)
+		{
+			for (int i = 0; i < count; i++)
+			{
+				if (this._reader.LastCode != 92)
+				{
+					this._notification?.Invoke(null, new NotificationEventArgs($"Boundary path should start with code 92 but it was {this._reader.LastCode}"));
+					break;
+				}
+
+
+			}
 		}
 
 		private void readDefinedGroups(CadTemplate template)
