@@ -3884,7 +3884,7 @@ namespace ACadSharp.IO.DWG
 
 				//Set the pattern if is enabled
 				if (enabled)
-					hatch.Pattern = gradient;
+					hatch.GradientColor = gradient;
 			}
 
 			//Common:
