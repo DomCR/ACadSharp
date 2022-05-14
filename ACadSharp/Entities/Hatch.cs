@@ -112,7 +112,7 @@ namespace ACadSharp.Entities
 		public List<XY> SeedPoints { get; set; } = new List<XY>();
 
 		/// <summary>
-		/// Seed points codes (in OCS) : 10 | 20
+		/// Gradient color pattern, if exists
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 470)]
 		public HatchGradientPattern GradientColor { get; set; } //= "LINEAR";

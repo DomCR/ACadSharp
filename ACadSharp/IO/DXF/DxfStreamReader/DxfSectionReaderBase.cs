@@ -405,8 +405,14 @@ namespace ACadSharp.IO.DXF
 						isFirstSeed = false;
 						break;
 					case 78:    //Number of pattern definition lines
+						break;
 					case 91:    //Number of boundary paths (loops)
+						this.readLoops(hatch, template, this._reader.LastValueAsInt);
+						break;
 					case 98:    //Number of seed points
+						break;
+					case 470:
+						template.GradientColorName = this._reader.LastValueAsString;
 						break;
 					default:
 						if (dxfProperty != null)
@@ -426,6 +432,9 @@ namespace ACadSharp.IO.DXF
 
 		private void readLoops(Hatch hatch, CadHatchTemplate template, int count)
 		{
+			if (this._reader.LastCode == 91)
+				this._reader.ReadNext();
+
 			for (int i = 0; i < count; i++)
 			{
 				if (this._reader.LastCode != 92)
@@ -434,8 +443,17 @@ namespace ACadSharp.IO.DXF
 					break;
 				}
 
-
+				this.readLoop();
 			}
+		}
+
+		private Hatch.BoundaryPath readLoop()
+		{
+			BoundaryPathFlags flags = (BoundaryPathFlags)this._reader.LastValueAsInt;
+
+			this._reader.ReadNext();
+
+			throw new NotImplementedException();
 		}
 
 		private void readDefinedGroups(CadTemplate template)
@@ -443,8 +461,7 @@ namespace ACadSharp.IO.DXF
 			this.readDefinedGroups(out ulong? xdict, out List<ulong> reactorsHandles);
 
 			template.XDictHandle = xdict;
-			template.ReactorsHandles = template.ReactorsHandles;
-
+			template.ReactorsHandles = reactorsHandles;
 		}
 
 		private void readDefinedGroups(out ulong? xdictHandle, out List<ulong> reactors)
