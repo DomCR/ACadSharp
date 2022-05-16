@@ -1,0 +1,46 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ACadSharp.IO.DWG
+{
+	public class DwgWriter : IDisposable
+	{
+		private CadDocument _document;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="filename"></param>
+		/// <param name="document"></param>
+		/// <exception cref="NotImplementedException">Binary writer not implemented</exception>
+		public DwgWriter(string filename, CadDocument document, bool binary)
+			: this(File.Create(filename), document)
+		{
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="stream"></param>
+		/// <param name="document"></param>
+		/// <exception cref="NotImplementedException">Binary writer not implemented</exception>
+		public DwgWriter(Stream stream, CadDocument document)
+		{
+			this._document = document;
+		}
+
+		public void Write()
+		{
+
+		}
+
+		/// <inheritdoc/>
+		public void Dispose()
+		{
+		}
+	}
+}
