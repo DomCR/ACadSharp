@@ -31,9 +31,5 @@
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="IO\DWG\DwgStreamWriters\" />
-  </ItemGroup>
 
 </Project>

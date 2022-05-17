@@ -17,7 +17,7 @@ namespace ACadSharp.IO.DWG
 		/// <param name="filename"></param>
 		/// <param name="document"></param>
 		/// <exception cref="NotImplementedException">Binary writer not implemented</exception>
-		public DwgWriter(string filename, CadDocument document, bool binary)
+		public DwgWriter(string filename, CadDocument document)
 			: this(File.Create(filename), document)
 		{
 		}
