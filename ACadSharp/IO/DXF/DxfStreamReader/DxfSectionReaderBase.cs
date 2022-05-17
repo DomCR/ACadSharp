@@ -4,6 +4,7 @@ using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace ACadSharp.IO.DXF
 {
@@ -426,8 +427,6 @@ namespace ACadSharp.IO.DXF
 
 				this._reader.ReadNext();
 			}
-
-			//this.readMapped<Hatch>(template.CadObject, template);
 		}
 
 		private void readLoops(Hatch hatch, CadHatchTemplate template, int count)
@@ -439,21 +438,233 @@ namespace ACadSharp.IO.DXF
 			{
 				if (this._reader.LastCode != 92)
 				{
-					this._notification?.Invoke(null, new NotificationEventArgs($"Boundary path should start with code 92 but it was {this._reader.LastCode}"));
+					this._notification?.Invoke(null, new NotificationEventArgs($"Boundary path should start with code 92 but was {this._reader.LastCode}"));
 					break;
 				}
 
-				this.readLoop();
+				Hatch.BoundaryPath path = this.readLoop();
+				if (path != null)
+					hatch.Paths.Add(path);
 			}
 		}
 
 		private Hatch.BoundaryPath readLoop()
 		{
-			BoundaryPathFlags flags = (BoundaryPathFlags)this._reader.LastValueAsInt;
+			Hatch.BoundaryPath boundary = new Hatch.BoundaryPath();
+			boundary.Flags = (BoundaryPathFlags)this._reader.LastValueAsInt;
 
+			if (boundary.Flags.HasFlag(BoundaryPathFlags.Polyline))
+			{
+				Hatch.BoundaryPath.Edge pl = new Hatch.BoundaryPath.Polyline();
+				this._notification?.Invoke(null, new NotificationEventArgs($"Hatch.BoundaryPath.Polyline not implemented"));
+
+				return null;
+			}
+			else
+			{
+				this._reader.ReadNext();
+
+				if (this._reader.LastCode != 93)
+				{
+					this._notification?.Invoke(null, new NotificationEventArgs($"Edge Boundary path should start with code 93 but was {this._reader.LastCode}"));
+					return null;
+				}
+
+				int edges = this._reader.LastValueAsInt;
+				this._reader.ReadNext();
+
+				for (int i = 0; i < edges; i++)
+				{
+					var edge = this.readEdge();
+					if (edge != null)
+						boundary.Edges.Add(edge);
+				}
+			}
+
+			return boundary;
+		}
+
+		private void readPolylineBoundary()
+		{
+
+		}
+
+		private Hatch.BoundaryPath.Edge readEdge()
+		{
+			if (this._reader.LastCode != 72)
+			{
+				this._notification?.Invoke(null, new NotificationEventArgs($"Edge Boundary path should should define the type with code 72 but was {this._reader.LastCode}"));
+				return null;
+			}
+
+			Hatch.BoundaryPath.EdgeType type = (Hatch.BoundaryPath.EdgeType)this._reader.LastValueAsInt;
 			this._reader.ReadNext();
 
-			throw new NotImplementedException();
+			switch (type)
+			{
+				case Hatch.BoundaryPath.EdgeType.Line:
+					Hatch.BoundaryPath.Line line = new Hatch.BoundaryPath.Line();
+					while (true)
+					{
+						switch (this._reader.LastCode)
+						{
+							case 10:
+								line.Start = new XY(this._reader.LastValueAsDouble, line.Start.Y);
+								break;
+							case 20:
+								line.Start = new XY(line.Start.X, this._reader.LastValueAsDouble);
+								break;
+							case 11:
+								line.End = new XY(this._reader.LastValueAsDouble, line.End.Y);
+								break;
+							case 21:
+								line.End = new XY(line.End.X, this._reader.LastValueAsDouble);
+								break;
+							default:
+								return line;
+						}
+
+						this._reader.ReadNext();
+					}
+				case Hatch.BoundaryPath.EdgeType.CircularArc:
+					Hatch.BoundaryPath.Arc arc = new Hatch.BoundaryPath.Arc();
+					while (true)
+					{
+						switch (this._reader.LastCode)
+						{
+							case 10:
+								arc.Center = new XY(this._reader.LastValueAsDouble, arc.Center.Y);
+								break;
+							case 20:
+								arc.Center = new XY(arc.Center.X, this._reader.LastValueAsDouble);
+								break;
+							case 40:
+								arc.Radius = this._reader.LastValueAsDouble;
+								break;
+							case 50:
+								arc.StartAngle = this._reader.LastValueAsDouble;
+								break;
+							case 51:
+								arc.EndAngle = this._reader.LastValueAsDouble;
+								break;
+							case 73:
+								arc.CounterClockWise = this._reader.LastValueAsBool;
+								break;
+							default:
+								return arc;
+						}
+
+						this._reader.ReadNext();
+					}
+				case Hatch.BoundaryPath.EdgeType.EllipticArc:
+					Hatch.BoundaryPath.Ellipse ellipse = new Hatch.BoundaryPath.Ellipse();
+					while (true)
+					{
+						switch (this._reader.LastCode)
+						{
+							case 10:
+								ellipse.Center = new XY(this._reader.LastValueAsDouble, ellipse.Center.Y);
+								break;
+							case 20:
+								ellipse.Center = new XY(ellipse.Center.X, this._reader.LastValueAsDouble);
+								break;
+							case 11:
+								ellipse.MajorAxisEndPoint = new XY(this._reader.LastValueAsDouble, ellipse.Center.Y);
+								break;
+							case 21:
+								ellipse.MajorAxisEndPoint = new XY(ellipse.Center.X, this._reader.LastValueAsDouble);
+								break;
+							case 40:
+								ellipse.Radius = this._reader.LastValueAsDouble;
+								break;
+							case 50:
+								ellipse.StartAngle = this._reader.LastValueAsDouble;
+								break;
+							case 51:
+								ellipse.EndAngle = this._reader.LastValueAsDouble;
+								break;
+							case 73:
+								ellipse.CounterClockWise = this._reader.LastValueAsBool;
+								break;
+							default:
+								return ellipse;
+						}
+
+						this._reader.ReadNext();
+					}
+				case Hatch.BoundaryPath.EdgeType.Spline:
+					Hatch.BoundaryPath.Spline spline = new Hatch.BoundaryPath.Spline();
+					int nKnots = 0;
+					int nCtrlPoints = 0;
+					int nFitPoints = 0;
+
+					XYZ controlPoint = new XYZ();
+					XY fitPoint = new XY();
+
+					while (true)
+					{
+						switch (this._reader.LastCode)
+						{
+							case 10:
+								controlPoint = new XYZ(this._reader.LastValueAsDouble, 0, 1);
+								break;
+							case 20:
+								controlPoint = new XYZ(controlPoint.X, this._reader.LastValueAsDouble, controlPoint.Z);
+								spline.ControlPoints.Add(controlPoint);
+								break;
+							case 11:
+								fitPoint = new XY(this._reader.LastValueAsDouble, 0);
+								break;
+							case 21:
+								fitPoint = new XY(fitPoint.X, this._reader.LastValueAsDouble);
+								spline.FitPoints.Add(fitPoint);
+								break;
+							case 42:
+								var last = spline.ControlPoints[spline.ControlPoints.Count - 1];
+								spline.ControlPoints[spline.ControlPoints.Count - 1] = new XYZ(last.X, last.Y, this._reader.LastValueAsDouble);
+								break;
+							case 12:
+								spline.StartTangent = new XY(this._reader.LastValueAsDouble, spline.StartTangent.Y);
+								break;
+							case 22:
+								spline.StartTangent = new XY(spline.StartTangent.X, this._reader.LastValueAsDouble);
+								break;
+							case 13:
+								spline.EndTangent = new XY(this._reader.LastValueAsDouble, spline.EndTangent.Y);
+								break;
+							case 23:
+								spline.EndTangent = new XY(spline.EndTangent.X, this._reader.LastValueAsDouble);
+								break;
+							case 94:
+								spline.Degree = this._reader.LastValueAsInt;
+								break;
+							case 73:
+								spline.Rational = this._reader.LastValueAsBool;
+								break;
+							case 74:
+								spline.Periodic = this._reader.LastValueAsBool;
+								break;
+							case 95:
+								nKnots = this._reader.LastValueAsInt;
+								break;
+							case 96:
+								nCtrlPoints = this._reader.LastValueAsInt;
+								break;
+							case 97:
+								nFitPoints = this._reader.LastValueAsInt;
+								break;
+							case 40:
+								spline.Knots.Add(this._reader.LastValueAsDouble);
+								break;
+							default:
+								return spline;
+						}
+
+						this._reader.ReadNext();
+					}
+			}
+
+			return null;
 		}
 
 		private void readDefinedGroups(CadTemplate template)
@@ -475,7 +686,7 @@ namespace ACadSharp.IO.DXF
 					this._reader.ReadNext();
 					xdictHandle = this._reader.LastValueAsHandle;
 					this._reader.ReadNext();
-					Debug.Assert(_reader.LastDxfCode == DxfCode.ControlString);
+					Debug.Assert(this._reader.LastDxfCode == DxfCode.ControlString);
 					break;
 				case DxfSectionReaderBase.ReactorsToken:
 				case DxfSectionReaderBase.BlkRefToken:

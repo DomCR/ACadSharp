@@ -15,11 +15,11 @@ namespace ACadSharp.IO.Templates
 
 			public void Build(CadDocumentBuilder builder)
 			{
-				foreach (var handle in Handles)
+				foreach (var handle in this.Handles)
 				{
 					if (builder.TryGetCadObject(handle, out Entity entity))
 					{
-						Path.Entities.Add(entity);
+						this.Path.Entities.Add(entity);
 					}
 				}
 			}
