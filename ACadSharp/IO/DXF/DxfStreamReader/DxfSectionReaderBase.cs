@@ -388,6 +388,16 @@ namespace ACadSharp.IO.DXF
 
 				switch (this._reader.LastCode)
 				{
+					//TODO: Check hatch undocumented codes
+					case 43:
+					case 44:
+					case 45:
+					case 46:
+					case 49:
+					case 53:
+					case 79:
+					case 90:
+						break;
 					case 2:
 						template.HatchPatternName = this._reader.LastValueAsString;
 						break;
@@ -409,17 +419,26 @@ namespace ACadSharp.IO.DXF
 						break;
 					case 91:    //Number of boundary paths (loops)
 						this.readLoops(hatch, template, this._reader.LastValueAsInt);
-						break;
+						continue;
 					case 98:    //Number of seed points
 						break;
 					case 470:
 						template.GradientColorName = this._reader.LastValueAsString;
+						break;
+					case 450:
+						//TODO: Implement gradient read
 						break;
 					default:
 						if (dxfProperty != null)
 						{
 							dxfProperty.SetValue(hatch, this._reader.LastValue);
 							break;
+						}
+						else if (this._reader.LastDxfCode >= DxfCode.ExtendedDataAsciiString)
+						{
+							this.readExtendedData(hatch);
+							this._reader.ReadNext();
+							continue;
 						}
 						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code : {this._reader.LastCode} with value : {this._reader.LastValue} for subclass {DxfSubclassMarker.Hatch}"));
 						break;
@@ -442,18 +461,18 @@ namespace ACadSharp.IO.DXF
 					break;
 				}
 
-				Hatch.BoundaryPath path = this.readLoop();
+				CadHatchTemplate.CadBoundaryPathTemplate path = this.readLoop();
 				if (path != null)
-					hatch.Paths.Add(path);
+					template.PathTempaltes.Add(path);
 			}
 		}
 
-		private Hatch.BoundaryPath readLoop()
+		private CadHatchTemplate.CadBoundaryPathTemplate readLoop()
 		{
-			Hatch.BoundaryPath boundary = new Hatch.BoundaryPath();
-			boundary.Flags = (BoundaryPathFlags)this._reader.LastValueAsInt;
+			CadHatchTemplate.CadBoundaryPathTemplate template = new CadHatchTemplate.CadBoundaryPathTemplate();
+			template.Path.Flags = (BoundaryPathFlags)this._reader.LastValueAsInt;
 
-			if (boundary.Flags.HasFlag(BoundaryPathFlags.Polyline))
+			if (template.Path.Flags.HasFlag(BoundaryPathFlags.Polyline))
 			{
 				Hatch.BoundaryPath.Edge pl = new Hatch.BoundaryPath.Polyline();
 				this._notification?.Invoke(null, new NotificationEventArgs($"Hatch.BoundaryPath.Polyline not implemented"));
@@ -477,11 +496,30 @@ namespace ACadSharp.IO.DXF
 				{
 					var edge = this.readEdge();
 					if (edge != null)
-						boundary.Edges.Add(edge);
+						template.Path.Edges.Add(edge);
 				}
 			}
 
-			return boundary;
+			bool end = false;
+			while (!end)
+			{
+				switch (this._reader.LastCode)
+				{
+					//Number of source boundary objects
+					case 97:
+						break;
+					case 330:
+						template.Handles.Add(this._reader.LastValueAsHandle);
+						break;
+					default:
+						end = true;
+						continue;
+				}
+
+				this._reader.ReadNext();
+			}
+
+			return template;
 		}
 
 		private void readPolylineBoundary()
