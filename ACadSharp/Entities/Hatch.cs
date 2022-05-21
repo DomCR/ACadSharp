@@ -115,7 +115,7 @@ namespace ACadSharp.Entities
 		/// Gradient color pattern, if exists
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 470)]
-		public HatchGradientPattern GradientColor { get; set; } //= "LINEAR";
+		public HatchGradientPattern GradientColor { get; set; } = new HatchGradientPattern();
 
 		/// <summary>
 		/// Boundary paths (loops)

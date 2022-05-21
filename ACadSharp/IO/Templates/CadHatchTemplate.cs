@@ -9,8 +9,6 @@ namespace ACadSharp.IO.Templates
 	{
 		public string HatchPatternName { get; set; }
 
-		public string GradientColorName { get; set; }
-
 		public List<CadBoundaryPathTemplate> PathTempaltes = new List<CadBoundaryPathTemplate>();
 
 		public CadHatchTemplate(Hatch hatch) : base(hatch) { }

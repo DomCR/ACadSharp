@@ -67,7 +67,6 @@ The dwg/dxf readers are not yet fully implemented, the NotificationHandler will 
 - LEADER
 - 3DFACE
 - MESH
-- HATCH
 
 ##### Long term 
 

@@ -422,11 +422,29 @@ namespace ACadSharp.IO.DXF
 						continue;
 					case 98:    //Number of seed points
 						break;
-					case 470:
-						template.GradientColorName = this._reader.LastValueAsString;
-						break;
 					case 450:
-						//TODO: Implement gradient read
+						hatch.GradientColor.Enabled = this._reader.LastValueAsBool;
+						break;
+					case 451:
+						hatch.GradientColor.Reserved = this._reader.LastValueAsInt;
+						break;
+					case 452:
+						hatch.GradientColor.IsSingleColorGradient = this._reader.LastValueAsBool;
+						break;
+					case 453:
+						//Number of colors
+						break;
+					case 460:
+						hatch.GradientColor.Angle = this._reader.LastValueAsDouble;
+						break;
+					case 461:
+						hatch.GradientColor.Shift = this._reader.LastValueAsDouble;
+						break;
+					case 462:
+						hatch.GradientColor.ColorTint = this._reader.LastValueAsDouble;
+						break;
+					case 470:
+						hatch.GradientColor.Name = this._reader.LastValueAsString;
 						break;
 					default:
 						if (dxfProperty != null)
