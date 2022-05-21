@@ -279,7 +279,7 @@ namespace ACadSharp
 		/// </summary>
 		public bool IsByLayer
 		{
-			get { return Index == 256; }
+			get { return this.Index == 256; }
 		}
 
 		/// <summary>
@@ -287,7 +287,7 @@ namespace ACadSharp
 		/// </summary>
 		public bool IsByBlock
 		{
-			get { return Index == 0; }
+			get { return this.Index == 0; }
 		}
 
 		public short Index { get; set; }
