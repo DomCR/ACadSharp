@@ -171,7 +171,7 @@ namespace ACadSharp.IO.DXF
 			this._reader.ReadNext();
 
 			//Loop until the section ends
-			while (!this._reader.EndSectionFound)
+			while (this._reader.LastValueAsString != DxfFileToken.EndSection)
 			{
 				//Get the current header variable
 				string currVar = this._reader.LastValueAsString;
@@ -216,7 +216,7 @@ namespace ACadSharp.IO.DXF
 			//Advance to the first value in the section
 			this._reader.ReadNext();
 			//Loop until the section ends
-			while (!this._reader.EndSectionFound)
+			while (this._reader.LastValueAsString != DxfFileToken.EndSection)
 			{
 				if (this._reader.LastValueAsString == DxfFileToken.ClassEntry)
 					classes.Add(this.readClass());

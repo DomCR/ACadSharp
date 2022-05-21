@@ -10,7 +10,6 @@ namespace ACadSharp.IO.DXF
 {
 	internal class DxfTextReader : StreamReader, IDxfStreamReader
 	{
-		public bool EndSectionFound { get; private set; } = false;
 		public DxfCode LastDxfCode { get; private set; }
 		public GroupCodeValueType LastGroupCodeValue { get; private set; }
 		public int LastCode { get { return (int)this.LastDxfCode; } }
@@ -46,9 +45,6 @@ namespace ACadSharp.IO.DXF
 				this.ReadNext();
 			}
 			while (this.LastValueAsString != dxfEntry && (this.LastValueAsString != DxfFileToken.EndOfFile));
-
-			//Reset the end section flag
-			this.EndSectionFound = false;
 		}
 
 		public Tuple<DxfCode, object> ReadNext()
@@ -57,10 +53,6 @@ namespace ACadSharp.IO.DXF
 			this.LastValueAsString = this.ReadLine();
 			this.LastGroupCodeValue = GroupCodeValue.TransformValue(this.LastCode);
 			this.LastValue = this.transformValue(this.LastGroupCodeValue, this.LastValueAsString);
-
-			//Check for the end of the section
-			if (this.LastValueAsString == DxfFileToken.EndSection)
-				this.EndSectionFound = true;
 
 			Tuple<DxfCode, object> pair = new Tuple<DxfCode, object>(this.LastDxfCode, this.LastValue);
 
@@ -77,13 +69,13 @@ namespace ACadSharp.IO.DXF
 		{
 			this.LastDxfCode = DxfCode.Invalid;
 			this.LastValue = string.Empty;
-			this.EndSectionFound = false;
 
 			this.BaseStream.Position = 0;
 			this.DiscardBufferedData();
 
 			this.Line = 0;
 		}
+
 		private bool lineAsBool(string str)
 		{
 			if (byte.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out byte result))
