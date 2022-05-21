@@ -443,6 +443,27 @@ namespace ACadSharp.IO.DXF
 					case 462:
 						hatch.GradientColor.ColorTint = this._reader.LastValueAsDouble;
 						break;
+					case 463:
+						GradientColor gradient = new GradientColor();
+						gradient.Value = this._reader.LastValueAsDouble;
+						hatch.GradientColor.Colors.Add(gradient);
+						break;
+					case 63:
+						GradientColor colorByIndex = hatch.GradientColor.Colors.LastOrDefault();
+						if (colorByIndex != null)
+						{
+							colorByIndex.Color = new Color(this._reader.LastValueAsShort);
+						}
+						break;
+					case 421:
+						GradientColor colorByRgb = hatch.GradientColor.Colors.LastOrDefault();
+						if (colorByRgb != null)
+						{
+							//TODO: Hatch assign color by true color
+							//TODO: Is always duplicated by 63, is it needed??
+							//colorByRgb.Color = new Color(this._reader.LastValueAsShort);
+						}
+						break;
 					case 470:
 						hatch.GradientColor.Name = this._reader.LastValueAsString;
 						break;
