@@ -69,7 +69,7 @@ namespace ACadSharp.IO.DXF
 			this.BaseStream.Position = 0;
 
 			byte[] sentinel = this.ReadBytes(22);
-			string a = Encoding.ASCII.GetString(sentinel);
+			string s = Encoding.ASCII.GetString(sentinel);
 		}
 
 		private bool lineAsBool(string str)

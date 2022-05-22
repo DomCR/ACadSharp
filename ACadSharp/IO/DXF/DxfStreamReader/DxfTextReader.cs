@@ -31,6 +31,7 @@ namespace ACadSharp.IO.DXF
 		{
 			this.start();
 		}
+
 		public DxfTextReader(Stream stream, Encoding encoding) : base(stream, encoding)
 		{
 			this.start();
@@ -71,9 +72,9 @@ namespace ACadSharp.IO.DXF
 			this.LastValue = string.Empty;
 
 			this.BaseStream.Position = 0;
-			this.DiscardBufferedData();
-
 			this.Line = 0;
+
+			this.DiscardBufferedData();
 		}
 
 		private bool lineAsBool(string str)
