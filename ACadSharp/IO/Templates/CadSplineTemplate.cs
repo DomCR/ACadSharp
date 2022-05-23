@@ -82,5 +82,24 @@ namespace ACadSharp.IO.Templates
 
             return found;
         }
+
+        public override void Build(CadDocumentBuilder builder)
+        {
+            base.Build(builder);
+
+            Spline spline = this.CadObject as Spline;
+
+            if (spline.Knots.Count > 0)
+            {
+                spline.Flags1 |= SplineFlags1.UseKnotParameter;                
+            }
+
+            if (spline.FitPoints.Count > 0)
+            {
+                spline.Flags1 |= SplineFlags1.MethodFitPoints;
+            }
+
+            //TODO: add KnotParametrization flag
+        }
     }
 }
