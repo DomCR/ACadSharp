@@ -183,6 +183,9 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityXline:
 					template = new CadEntityTemplate(new XLine());
 					break;
+				case DxfFileToken.EntitySpline:
+					template = new CadSplineTemplate(new Spline());
+					break;
 				default:
 					this._notification?.Invoke(null, new NotificationEventArgs($"Entity not implemented: {this._reader.LastValueAsString}"));
 					do
@@ -269,6 +272,9 @@ namespace ACadSharp.IO.DXF
 						break;
 					case DxfSubclassMarker.XLine:
 						this.readMapped<XLine>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.Spline:
+						this.readMapped<Spline>(template.CadObject, template);
 						break;
 					default:
 						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}"));
