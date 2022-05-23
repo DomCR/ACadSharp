@@ -3851,40 +3851,36 @@ namespace ACadSharp.IO.DWG
 			//R2004+:
 			if (this.R2004Plus)
 			{
-				HatchGradientPattern gradient = new HatchGradientPattern(null);
-
 				//Is Gradient Fill BL 450 Non-zero indicates a gradient fill is used.
-				bool enabled = this._objectReader.ReadBitLong() != 0;
+				hatch.GradientColor.Enabled = this._objectReader.ReadBitLong() != 0;
 
 				//Reserved BL 451
-				gradient.Reserved = this._objectReader.ReadBitLong();
+				hatch.GradientColor.Reserved = this._objectReader.ReadBitLong();
 				//Gradient Angle BD 460
-				gradient.Angle = this._objectReader.ReadBitDouble();
+				hatch.GradientColor.Angle = this._objectReader.ReadBitDouble();
 				//Gradient Shift BD 461
-				gradient.Shift = this._objectReader.ReadBitDouble();
+				hatch.GradientColor.Shift = this._objectReader.ReadBitDouble();
 				//Single Color Grad.BL 452
-				gradient.IsSingleColorGradient = (uint)this._objectReader.ReadBitLong() > 0U;
+				hatch.GradientColor.IsSingleColorGradient = (uint)this._objectReader.ReadBitLong() > 0U;
 				//Gradient Tint BD 462
-				gradient.ColorTint = this._objectReader.ReadBitDouble();
+				hatch.GradientColor.ColorTint = this._objectReader.ReadBitDouble();
 
 				//# of Gradient Colors BL 453
 				int ncolors = this._objectReader.ReadBitLong();
 				for (int i = 0; i < ncolors; ++i)
 				{
-					//Unknown double BD 463
-					var value = this._objectReader.ReadBitDouble();
-					//RGB Color
-					var color = this._mergedReaders.ReadCmColor();
+					GradientColor color = new GradientColor();
 
-					gradient.Colors.Add(color);
+					//Gradient Value double BD 463
+					color.Value = this._objectReader.ReadBitDouble();
+					//RGB Color
+					color.Color = this._mergedReaders.ReadCmColor();
+
+					hatch.GradientColor.Colors.Add(color);
 				}
 
 				//Gradient Name TV 470
-				gradient.Name = this._textReader.ReadVariableText();
-
-				//Set the pattern if is enabled
-				if (enabled)
-					hatch.Pattern = gradient;
+				hatch.GradientColor.Name = this._textReader.ReadVariableText();
 			}
 
 			//Common:
@@ -3957,7 +3953,7 @@ namespace ACadSharp.IO.DWG
 									//endpoint 2RD 11 endpoint of major axis
 									MajorAxisEndPoint = this._objectReader.Read2RawDouble(),
 									//minormajoratio BD 40 ratio of minor to major axis
-									MinorToMajorRatio = this._objectReader.ReadBitDouble(),
+									Radius = this._objectReader.ReadBitDouble(),
 									//startangle BD 50 start angle
 									StartAngle = this._objectReader.ReadBitDouble(),
 									//endangle BD 51 endangle
