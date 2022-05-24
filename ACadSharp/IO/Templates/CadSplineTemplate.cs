@@ -35,8 +35,8 @@ namespace ACadSharp.IO.Templates
                 case 10:
                     this._currentControlPoint = new CSMath.XYZ(
                         (double)value,
-                        _currentControlPoint.Y,
-                        _currentControlPoint.Z
+                        0,
+                        0
                         );
                     return true;
                 case 20:
@@ -59,8 +59,8 @@ namespace ACadSharp.IO.Templates
                 case 11:
                     this._currentFitPoint = new CSMath.XYZ(
                         (double)value,
-                        _currentFitPoint.Y,
-                        _currentFitPoint.Z
+                        0,
+                        0
                         );
                     return true;
                 case 21:
