@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
-	//TODO: SPLINE Not possible to map
 	/// <summary>
 	/// Represents a <see cref="Spline"/> entity.
 	/// </summary>
@@ -47,16 +46,14 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Number of knots
 		/// </summary>
-		[DxfCodeValue(72)]
-		public int KnotCount { get; set; }
+		[DxfCodeValue(DxfReferenceType.Count, 72)]
 		//40	Knot value(one entry per knot)
 		public List<double> Knots { get; } = new List<double>();
 
 		/// <summary>
 		/// Number of control points
 		/// </summary>
-		[DxfCodeValue(73)]
-		public int ControlPointCount { get; set; }
+		[DxfCodeValue(DxfReferenceType.Count, 73)]
 		//10	Control points(in WCS); one entry per control point
 		//DXF: X value; APP: 3D point
 		//20, 30	DXF: Y and Z values of control points(in WCS); one entry per control point
@@ -65,8 +62,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Number of fit points
 		/// </summary>
-		[DxfCodeValue(74)]
-		public int FitPointCount { get; set; }
+		[DxfCodeValue(DxfReferenceType.Count, 74)]
 		//11	Fit points(in WCS); one entry per fit point
 		//DXF: X value; APP: 3D point
 		//21, 31	DXF: Y and Z values of fit points(in WCS); one entry per fit point
@@ -105,11 +101,8 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Weight(if not 1); with multiple group pairs, they are present if all are not 1
 		/// </summary>
-		[DxfCodeValue(41)]
+		[DxfCodeValue(DxfReferenceType.Count, 41)]
 		public List<double> Weights { get; } = new List<double>();
-
-
-
 
 		internal SplineFlags1 Flags1 { get; set; }
 
