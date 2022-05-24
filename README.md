@@ -62,7 +62,6 @@ The dwg/dxf readers are not yet fully implemented, the NotificationHandler will 
 - DIMENSION
 - ACAD_TABLE
 - VIEW
-- SPLINE
 - WIPEOUT
 - LEADER
 - 3DFACE
