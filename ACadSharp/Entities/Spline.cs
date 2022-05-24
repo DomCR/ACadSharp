@@ -48,6 +48,7 @@ namespace ACadSharp.Entities
 		/// Number of knots
 		/// </summary>
 		[DxfCodeValue(72)]
+		public int KnotCount { get; set; }
 		//40	Knot value(one entry per knot)
 		public List<double> Knots { get; } = new List<double>();
 
@@ -55,6 +56,7 @@ namespace ACadSharp.Entities
 		/// Number of control points
 		/// </summary>
 		[DxfCodeValue(73)]
+		public int ControlPointCount { get; set; }
 		//10	Control points(in WCS); one entry per control point
 		//DXF: X value; APP: 3D point
 		//20, 30	DXF: Y and Z values of control points(in WCS); one entry per control point
@@ -64,6 +66,7 @@ namespace ACadSharp.Entities
 		/// Number of fit points
 		/// </summary>
 		[DxfCodeValue(74)]
+		public int FitPointCount { get; set; }
 		//11	Fit points(in WCS); one entry per fit point
 		//DXF: X value; APP: 3D point
 		//21, 31	DXF: Y and Z values of fit points(in WCS); one entry per fit point
