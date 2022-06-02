@@ -1,16 +1,10 @@
 ﻿using ACadSharp.Classes;
-using ACadSharp.Entities;
 using ACadSharp.Header;
-using ACadSharp.IO.Templates;
-using ACadSharp.Tables;
-using ACadSharp.Tables.Collections;
-using CSMath;
 using CSUtilities.IO;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Text;
 
 namespace ACadSharp.IO.DXF
