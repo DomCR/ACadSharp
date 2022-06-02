@@ -30,7 +30,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Block that contains the entities that make up the dimension picture
 		/// </summary>
-		[DxfCodeValue(2)]
+		[DxfCodeValue(DxfReferenceType.Name, 2)]
 		public Block Block { get; set; }
 
 		/// <summary>
@@ -107,8 +107,12 @@ namespace ACadSharp.Entities
 		/// If null, the dimension measurement is drawn as the text, 
 		/// if ““ (one blank space), the text is suppressed.Anything else is drawn as the text
 		/// </remarks>
-		[DxfCodeValue(1)]
-		public string Text { get; set; }
+		[DxfCodeValue(DxfReferenceType.Optional, 1)]
+		public string Text
+		{
+			get { return string.IsNullOrEmpty(_text) ? this.Measurement.ToString() : this._text; }
+			set { this._text = value; }
+		}
 
 		/// <summary>
 		/// rotation angle of the dimension text away from its default orientation (the direction of the dimension line)
@@ -116,17 +120,14 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// Optional
 		/// </remarks>
-		[DxfCodeValue(53)]
+		[DxfCodeValue(DxfReferenceType.Optional, 53)]
 		public double TextRotation { get; set; }
 
 		/// <summary>
 		/// All dimension types have an optional 51 group code, which indicates the horizontal direction for the dimension entity.The dimension entity determines the orientation of dimension text and lines for horizontal, vertical, and rotated linear dimensions
 		/// This group value is the negative of the angle between the OCS X axis and the UCS X axis. It is always in the XY plane of the OCS
 		/// </summary>
-		/// <remarks>
-		/// Optional
-		/// </remarks>
-		[DxfCodeValue(51)]
+		[DxfCodeValue(DxfReferenceType.Optional, 51)]
 		public double HorizontalDirection { get; set; }
 
 		//This group value is the negative of the angle between the OCS X axis and the UCS X axis.It is always in the XY plane of the OCS
@@ -134,7 +135,9 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Dimension style
 		/// </summary>
-		[DxfCodeValue(3)]
+		[DxfCodeValue(DxfReferenceType.Name, 3)]
 		public DimensionStyle Style { get; set; }
+
+		private string _text;
 	}
 }
