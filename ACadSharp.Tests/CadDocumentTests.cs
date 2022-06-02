@@ -44,11 +44,47 @@ namespace ACadSharp.Tests
 			Line line = new Line();
 			CadDocument doc = new CadDocument();
 
-			doc.BlockRecords[BlockRecord.ModelSpaceName].Entities.Add(line);
+			doc.Entities.Add(line);
 
 			CadObject l = doc.GetCadObject(line.Handle);
 
 			//Assert existing element
+			Assert.NotNull(l);
+			Assert.Equal(line, l);
+			Assert.False(0 == l.Handle);
+			Assert.Equal(line.Handle, l.Handle);
+		}
+
+		[Fact]
+		public void AddCadObjectWithNewLayer()
+		{
+			Line line = new Line();
+			Layer layer = new Layer("test_layer");
+
+			line.Layer = layer;
+
+			CadDocument doc = new CadDocument();
+
+			doc.Entities.Add(line);
+
+			CadObject l = doc.GetCadObject(line.Handle);
+
+			//Assert layer
+			Assert.Equal(line.Layer, layer);
+			Assert.False(0 == layer.Handle);
+		}
+
+		[Fact]
+		public void RemoveCadObject()
+		{
+			Line line = new Line();
+			CadDocument doc = new CadDocument();
+
+			doc.Entities.Add(line);
+
+			CadObject l = doc.RemoveCadObject(line.Handle);
+
+			//Assert removed element
 			Assert.NotNull(l);
 			Assert.Equal(line, l);
 			Assert.False(0 == l.Handle);

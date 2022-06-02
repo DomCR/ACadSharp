@@ -715,7 +715,7 @@ namespace ACadSharp.Header
 		/// System variable HANDSEED
 		/// </remarks>
 		[CadSystemVariable("$HANDSEED", 5)]
-		public ulong HandleSeed { get; internal set; } = 0x27;
+		public ulong HandleSeed { get; internal set; } = 0x0;
 
 		/// <summary>
 		/// Local date/time of drawing creation (see Special Handling of Date/Time Variables)

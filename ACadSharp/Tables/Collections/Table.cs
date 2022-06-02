@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.IO.Templates;
+using CSUtilities.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,8 +23,6 @@ namespace ACadSharp.Tables.Collections
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 70)]
 		public int Count => this._entries.Count;
-
-		public bool IsReadOnly => false;
 
 		public T this[string name]
 		{
@@ -74,9 +73,16 @@ namespace ACadSharp.Tables.Collections
 			return this._entries.Values.GetEnumerator();
 		}
 
-		public bool Remove(T item)
+		public CadObject Remove(string key)
 		{
-			return this._entries.Remove(item.Name);
+			if (this._entries.Remove(key, out T item))
+			{
+				item.Owner = null;
+				OnRemove?.Invoke(this, new ReferenceChangedEventArgs(item));
+				return item;
+			}
+
+			return null;
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()

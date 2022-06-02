@@ -110,7 +110,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Collection with all the entities in the drawing
 		/// </summary>
-		public CadObjectCollection<Entity> ModelEntities { get { return this.BlockRecords[BlockRecord.ModelSpaceName].Entities; } }
+		public CadObjectCollection<Entity> Entities { get { return this.BlockRecords[BlockRecord.ModelSpaceName].Entities; } }
 
 		/// <summary>
 		/// Model space block record containing the drawing
@@ -216,6 +216,11 @@ namespace ACadSharp
 			return null;
 		}
 
+		public CadObject RemoveCadObject(ulong handle)
+		{
+			throw new NotImplementedException();
+		}
+
 		private void addCadObject(CadObject cadObject)
 		{
 			if (cadObject.Document != null)
@@ -237,9 +242,13 @@ namespace ACadSharp
 			this._cadObjects.Add(cadObject.Handle, cadObject);
 			cadObject.OnReferenceChange += this.onReferenceChanged;
 
-			//TODO: Add the dictionary
 			if (cadObject.XDictionary != null)
 				this.RegisterCollection(cadObject.XDictionary);
+
+			if(cadObject is Entity e)
+			{
+				//if (this.Layers[e.Layer.Name] != null)
+			}
 
 			switch (cadObject)
 			{
