@@ -12,10 +12,33 @@ namespace ACadSharp.IO.Templates
 
 		public ulong BlockHandle { get; set; }
 
+		public string BlockName { get; set; }
+
+		public string StyleName { get; set; }
+
 		public CadDimensionTemplate() : base(new DimensionPlaceholder()) { }
 
-		public CadDimensionTemplate(Dimension dimension) : base(dimension)
+		public CadDimensionTemplate(Dimension dimension) : base(dimension) { }
+
+		public override bool AddName(int dxfcode, string name)
 		{
+			bool value = base.AddName(dxfcode, name);
+			if (value)
+				return value;
+
+			switch (dxfcode)
+			{
+				case 2:
+					this.BlockName = name;
+					value = true;
+					break;
+				case 3:
+					this.StyleName = name;
+					value = true;
+					break;
+			}
+
+			return value;
 		}
 
 		public override void Build(CadDocumentBuilder builder)
