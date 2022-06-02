@@ -6,19 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ACadSharp.IO.DXF.DxfStreamReader
+namespace ACadSharp.IO.DXF
 {
 	internal abstract class DxfReaderBase : IDxfStreamReader
 	{
-		public DxfCode LastDxfCode { get; private set; }
+		public DxfCode LastDxfCode { get; protected set; }
 
-		public GroupCodeValueType LastGroupCodeValue { get; private set; }
+		public GroupCodeValueType LastGroupCodeValue { get; protected set; }
 
 		public int LastCode { get { return (int)this.LastDxfCode; } }
 
-		public object LastValue { get; private set; }
+		public object LastValue { get; protected set; }
 
-		public int Position { get; private set; }
+		public int Position { get; protected set; }
 
 		public string LastValueAsString { get { return this.LastValue.ToString(); } }
 
@@ -37,11 +37,6 @@ namespace ACadSharp.IO.DXF.DxfStreamReader
 		public byte[] LastValueAsBinaryChunk { get { return this.LastValue as byte[]; } }
 
 		protected abstract Stream _baseStream { get; }
-
-		public DxfReaderBase()
-		{
-			this.start();
-		}
 
 		public Tuple<DxfCode, object> ReadNext()
 		{
@@ -71,7 +66,6 @@ namespace ACadSharp.IO.DXF.DxfStreamReader
 			this.LastValue = string.Empty;
 
 			this._baseStream.Position = 0;
-			//this._baseStream.DiscardBufferedData();
 
 			this.Position = 0;
 		}
