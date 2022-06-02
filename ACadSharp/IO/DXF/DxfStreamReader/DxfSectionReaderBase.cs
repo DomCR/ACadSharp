@@ -337,7 +337,7 @@ namespace ACadSharp.IO.DXF
 				//Check for an extended data code
 				if (this._reader.LastDxfCode == DxfCode.ExtendedDataRegAppName)
 				{
-					this.readExtendedData(template);
+					this.readExtendedData(template.EDataTemplateByAppName);
 					continue;
 				}
 				else if (this._reader.LastDxfCode >= DxfCode.ExtendedDataAsciiString)
@@ -418,10 +418,10 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readExtendedData(CadTemplate template)
+		protected void readExtendedData(Dictionary<string, ExtendedData> edata)
 		{
 			ExtendedData extendedData = new ExtendedData();
-			template.EDataTemplateByAppName.Add(this._reader.LastValueAsString, extendedData);
+			edata.Add(this._reader.LastValueAsString, extendedData);
 
 			this._reader.ReadNext();
 
@@ -429,7 +429,7 @@ namespace ACadSharp.IO.DXF
 			{
 				if (this._reader.LastDxfCode == DxfCode.ExtendedDataRegAppName)
 				{
-					this.readExtendedData(template);
+					this.readExtendedData(edata);
 					break;
 				}
 
@@ -541,7 +541,7 @@ namespace ACadSharp.IO.DXF
 						}
 						else if (this._reader.LastDxfCode >= DxfCode.ExtendedDataAsciiString)
 						{
-							this.readExtendedData(hatch);
+							this.readExtendedData(template.EDataTemplateByAppName);
 							this._reader.ReadNext();
 							continue;
 						}
