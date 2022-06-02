@@ -20,7 +20,9 @@ namespace ACadSharp.IO.Templates
 
 		public List<ulong> ReactorsHandles { get; set; } = new List<ulong>();
 
-		public Dictionary<ulong, ExtendedData> EDataTemplate { get; } = new Dictionary<ulong, ExtendedData>();
+		public Dictionary<ulong, ExtendedData> EDataTemplate { get; set; } = new Dictionary<ulong, ExtendedData>();
+
+		public Dictionary<string, ExtendedData> EDataTemplateByAppName { get; set; } = new Dictionary<string, ExtendedData>();
 
 		public CadTemplate(CadObject cadObject)
 		{
@@ -60,7 +62,7 @@ namespace ACadSharp.IO.Templates
 			{
 				if (builder.TryGetCadObject(item.Key, out AppId app))
 				{
-
+					this.CadObject.ExtendedData.Add(app, item.Value);
 				}
 			}
 		}

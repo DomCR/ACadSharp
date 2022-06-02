@@ -335,9 +335,14 @@ namespace ACadSharp.IO.DXF
 				&& this._reader.LastDxfCode != DxfCode.Subclass)
 			{
 				//Check for an extended data code
-				if (this._reader.LastDxfCode >= DxfCode.ExtendedDataAsciiString)
+				if (this._reader.LastDxfCode == DxfCode.ExtendedDataRegAppName)
 				{
-					this.readExtendedData(cadObject);
+					this.readExtendedData(template.EDataTemplateByAppName);
+					continue;
+				}
+				else if (this._reader.LastDxfCode >= DxfCode.ExtendedDataAsciiString)
+				{
+					this._notification?.Invoke(null, new NotificationEventArgs($"Extended data should start witth : {DxfCode.ExtendedDataRegAppName}"));
 					this._reader.ReadNext();
 					continue;
 				}
@@ -413,9 +418,25 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readExtendedData(CadObject cadObject)
+		protected void readExtendedData(Dictionary<string, ExtendedData> edata)
 		{
-			//TODO: Handle extended data 
+			ExtendedData extendedData = new ExtendedData();
+			edata.Add(this._reader.LastValueAsString, extendedData);
+
+			this._reader.ReadNext();
+
+			while (this._reader.LastDxfCode >= DxfCode.ExtendedDataAsciiString)
+			{
+				if (this._reader.LastDxfCode == DxfCode.ExtendedDataRegAppName)
+				{
+					this.readExtendedData(edata);
+					break;
+				}
+
+				extendedData.Data.Add(new ExtendedDataRecord(this._reader.LastDxfCode, this._reader.LastValue));
+
+				this._reader.ReadNext();
+			}
 		}
 
 		protected void readHatch(Hatch hatch, CadHatchTemplate template)
@@ -520,7 +541,7 @@ namespace ACadSharp.IO.DXF
 						}
 						else if (this._reader.LastDxfCode >= DxfCode.ExtendedDataAsciiString)
 						{
-							this.readExtendedData(hatch);
+							this.readExtendedData(template.EDataTemplateByAppName);
 							this._reader.ReadNext();
 							continue;
 						}
