@@ -25,8 +25,6 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableView;
 
-		//TODO: finish View documentation
-
 		/// <summary>
 		/// View height (in DCS)
 		/// </summary>
@@ -67,13 +65,13 @@ namespace ACadSharp.Tables
 		/// View mode (see VIEWMODE system variable)
 		/// </summary>
 		[DxfCodeValue(71)]
-		public byte ViewMode { get; set; }
+		public ViewModeType ViewMode { get; set; }
 
 		/// <summary>
 		/// 1 if there is a UCS associated to this view; 0 otherwise
 		/// </summary>
 		[DxfCodeValue(72)]
-		public bool IsUcsAssociated { get; set; }
+		public bool IsUcsAssociated { get; set; } = false;
 
 		/// <summary>
 		/// 1 if the camera is plottable
@@ -90,8 +88,8 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// View center point (in DCS)
 		/// </summary>
-		[DxfCodeValue(10, 20, 30)]
-		public XYZ Center { get; set; }
+		[DxfCodeValue(10, 20)]
+		public XY Center { get; set; }
 
 		/// <summary>
 		/// View direction from target (in WCS)
@@ -105,17 +103,23 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(12, 22, 32)]
 		public XYZ Target { get; set; }
 
-		//332	Soft-pointer ID/handle to background object (optional)
-
-		//334	Soft-pointer ID/handle to live section object (optional)
-
 		/// <summary>
 		/// Visual style object (optional)
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 348)]
 		public VisualStyle VisualStyle { get; set; }
 
+		public XYZ UcsOrigin { get; set; }
+		public XYZ UcsXAxis { get; set; }
+		public XYZ UcsYAxis { get; set; }
+		public double UcsElevation { get; set; }
+		public OrthographicType UcsOrthographicType { get; set; }
+
 		//361	Sun hard ownership ID
+
+		//332	Soft-pointer ID/handle to background object (optional)
+
+		//334	Soft-pointer ID/handle to live section object (optional)
 
 		public View() : base() { }
 
