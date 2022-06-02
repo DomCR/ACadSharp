@@ -80,7 +80,7 @@ namespace ACadSharp.IO.DXF
 					case 340:
 					//Dimension table has the handles of the styles at the begining
 					default:
-						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}."));
+						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}."));
 						break;
 				}
 
@@ -114,7 +114,7 @@ namespace ACadSharp.IO.DXF
 						template.OwnerHandle = this._reader.LastValueAsHandle;
 						break;
 					default:
-						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}."));
+						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}."));
 						break;
 				}
 
@@ -174,7 +174,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadEntityTemplate(new Solid());
 					break;
 				case DxfFileToken.EntityText:
-					template = new CadEntityTemplate(new TextEntity());
+					template = new DwgTextEntityTemplate(new TextEntity());
 					break;
 				case DxfFileToken.EntityVertex:
 					template = new CadEntityTemplate(new Vertex2D());
@@ -338,7 +338,7 @@ namespace ACadSharp.IO.DXF
 				else if (dxfProperty.ReferenceType == DxfReferenceType.Name)
 				{
 					if (!template.AddName(this._reader.LastCode, this._reader.LastValueAsString))
-						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf named referenced code {this._reader.LastCode} not implemented in the {template.GetType().Name} for {typeof(T)} | value : {this._reader.LastValueAsHandle}"));
+						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf named referenced code {this._reader.LastCode} not implemented in the {template.GetType().Name} for {typeof(T)} | value : {this._reader.LastValueAsString}"));
 				}
 				else if (dxfProperty.ReferenceType == DxfReferenceType.Count)
 				{
@@ -458,7 +458,7 @@ namespace ACadSharp.IO.DXF
 						GradientColor colorByIndex = hatch.GradientColor.Colors.LastOrDefault();
 						if (colorByIndex != null)
 						{
-							colorByIndex.Color = new Color(this._reader.LastValueAsShort);
+							colorByIndex.Color = new Color((short)this._reader.LastValueAsShort);
 						}
 						break;
 					case 421:

@@ -6,28 +6,36 @@ namespace ACadSharp.IO.DXF
 {
 	internal interface IDxfStreamReader
 	{
-		[Obsolete]
-		bool EndSectionFound { get; }
 		DxfCode LastDxfCode { get; }
+
 		GroupCodeValueType LastGroupCodeValue { get; }
+		
 		int LastCode { get; }
+		
 		object LastValue { get; }
 
 		/// <summary>
 		/// Current line or offset in the file
 		/// </summary>
-		int Line { get; }
+		int Position { get; }
 
 		/// <summary>
 		/// Last value read in the dxf file without any transformation
 		/// </summary>
 		string LastValueAsString { get; }
+
 		bool LastValueAsBool { get; }
-		short LastValueAsShort { get; }
+		
+		ushort LastValueAsShort { get; }
+		
 		int LastValueAsInt { get; }
+		
 		long LastValueAsLong { get; }
+		
 		double LastValueAsDouble { get; }
+		
 		ulong LastValueAsHandle { get; }
+		
 		byte[] LastValueAsBinaryChunk { get; }
 
 		/// <summary>
@@ -36,6 +44,6 @@ namespace ACadSharp.IO.DXF
 		/// <param name="dxfEntry"></param>
 		void Find(string dxfEntry);
 
-		Tuple<DxfCode, object> ReadNext();
+		void ReadNext();
 	}
 }
