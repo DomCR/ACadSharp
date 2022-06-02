@@ -344,6 +344,11 @@ namespace ACadSharp.IO.DXF
 				{
 					//Do nothing just marks the amount
 				}
+				else if(dxfProperty.ReferenceType == DxfReferenceType.Unprocess)
+				{
+					this._reader.ReadNext();
+					continue;
+				}
 				else
 				{
 					switch (this._reader.LastGroupCodeValue)
