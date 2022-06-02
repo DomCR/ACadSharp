@@ -58,7 +58,6 @@ The dwg/dxf readers are not yet fully implemented, the NotificationHandler will 
 - LWPOLYLINE
 - POLYLINE_PFACE
 - LWPOLYLINE
-- DIMENSION
 - ACAD_TABLE
 - WIPEOUT
 - LEADER
