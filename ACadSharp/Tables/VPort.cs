@@ -80,13 +80,13 @@ namespace ACadSharp.Tables
 		/// View height
 		/// </summary>
 		[DxfCodeValue(40)]  //In the web docs the value is 45
-		public double ViewHeight { get; set; }
+		public double ViewHeight { get; set; } = 10;
 
 		/// <summary>
 		/// Aspect ratio
 		/// </summary>
 		[DxfCodeValue(41)]
-		public double AspectRatio { get; set; }
+		public double AspectRatio { get; set; } = 1;
 
 		/// <summary>
 		/// Lens length

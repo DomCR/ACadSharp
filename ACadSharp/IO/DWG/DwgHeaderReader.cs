@@ -283,7 +283,7 @@ namespace ACadSharp.IO.DWG
 			//BS : ISOLINES
 			header.SurfaceIsolineCount = sreader.ReadBitShort();
 			//BS : CMLJUST
-			header.CurrentMultilineJustification = (Entities.TextVerticalAlignment)sreader.ReadBitShort();
+			header.CurrentMultilineJustification = (Entities.VerticalAlignmentType)sreader.ReadBitShort();
 			//BS : TEXTQLTY
 			header.TextQuality = sreader.ReadBitShort();
 			//BD : LTSCALE
@@ -396,23 +396,23 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//3BD: INSBASE(PSPACE)
-			header.PaperSpaceUcs.PaperSpaceInsertionBase = sreader.Read3BitDouble();
+			header._paperSpaceUcs.PaperSpaceInsertionBase = sreader.Read3BitDouble();
 			//3BD: EXTMIN(PSPACE)
-			header.PaperSpaceUcs.PaperSpaceExtMin = sreader.Read3BitDouble();
+			header._paperSpaceUcs.PaperSpaceExtMin = sreader.Read3BitDouble();
 			//3BD: EXTMAX(PSPACE)
-			header.PaperSpaceUcs.PaperSpaceExtMax = sreader.Read3BitDouble();
+			header._paperSpaceUcs.PaperSpaceExtMax = sreader.Read3BitDouble();
 			//2RD: LIMMIN(PSPACE)
-			header.PaperSpaceUcs.PaperSpaceLimitsMin = sreader.Read2RawDouble();
+			header._paperSpaceUcs.PaperSpaceLimitsMin = sreader.Read2RawDouble();
 			//2RD: LIMMAX(PSPACE)
-			header.PaperSpaceUcs.PaperSpaceLimitsMax = sreader.Read2RawDouble();
+			header._paperSpaceUcs.PaperSpaceLimitsMax = sreader.Read2RawDouble();
 			//BD: ELEVATION(PSPACE)
-			header.PaperSpaceUcs.Elevation = sreader.ReadBitDouble();
+			header._paperSpaceUcs.Elevation = sreader.ReadBitDouble();
 			//3BD: UCSORG(PSPACE)
-			header.PaperSpaceUcs.Origin = sreader.Read3BitDouble();
+			header.PaperSpaceUcsOrigin = sreader.Read3BitDouble();
 			//3BD: UCSXDIR(PSPACE)
-			header.PaperSpaceUcs.XAxis = sreader.Read3BitDouble();
+			header.PaperSpaceUcsXAxis = sreader.Read3BitDouble();
 			//3BD: UCSYDIR(PSPACE)
-			header.PaperSpaceUcs.YAxis = sreader.Read3BitDouble();
+			header._paperSpaceUcs.YAxis = sreader.Read3BitDouble();
 
 			//H: UCSNAME (PSPACE) (hard pointer)
 			objectPointers.UCSNAME_PSPACE = sreader.HandleReference();
@@ -430,17 +430,17 @@ namespace ACadSharp.IO.DWG
 				objectPointers.PUCSBASE = sreader.HandleReference();
 
 				//3BD: PUCSORGTOP
-				header.PaperSpaceUcs.OrthographicTopDOrigin = sreader.Read3BitDouble();
+				header._paperSpaceUcs.OrthographicTopDOrigin = sreader.Read3BitDouble();
 				//3BD: PUCSORGBOTTOM
-				header.PaperSpaceUcs.OrthographicBottomDOrigin = sreader.Read3BitDouble();
+				header._paperSpaceUcs.OrthographicBottomDOrigin = sreader.Read3BitDouble();
 				//3BD: PUCSORGLEFT
-				header.PaperSpaceUcs.OrthographicLeftDOrigin = sreader.Read3BitDouble();
+				header._paperSpaceUcs.OrthographicLeftDOrigin = sreader.Read3BitDouble();
 				//3BD: PUCSORGRIGHT
-				header.PaperSpaceUcs.OrthographicRightDOrigin = sreader.Read3BitDouble();
+				header._paperSpaceUcs.OrthographicRightDOrigin = sreader.Read3BitDouble();
 				//3BD: PUCSORGFRONT
-				header.PaperSpaceUcs.OrthographicFrontDOrigin = sreader.Read3BitDouble();
+				header._paperSpaceUcs.OrthographicFrontDOrigin = sreader.Read3BitDouble();
 				//3BD: PUCSORGBACK
-				header.PaperSpaceUcs.OrthographicBackDOrigin = sreader.Read3BitDouble();
+				header._paperSpaceUcs.OrthographicBackDOrigin = sreader.Read3BitDouble();
 			}
 
 			//Common:
@@ -699,7 +699,7 @@ namespace ACadSharp.IO.DWG
 				//BS : DIMALTTD
 				header.DimensionStyleOverrides.AlternateUnitToleranceDecimalPlaces = sreader.ReadBitShort();
 				//BS : DIMAUNIT
-				header.DimensionStyleOverrides.AngularDimensionDecimalPlaces = sreader.ReadBitShort();
+				header.DimensionStyleOverrides.AngularUnit = (AngularUnitFormat)sreader.ReadBitShort();
 				//BS : DIMFRAC
 				header.DimensionStyleOverrides.FractionFormat = (Tables.FractionFormat)sreader.ReadBitShort();
 				//BS : DIMLUNIT
@@ -868,24 +868,24 @@ namespace ACadSharp.IO.DWG
 				//BL: Flags:
 				int flags = sreader.ReadBitLong();
 				//CELWEIGHT Flags & 0x001F
-				header.CurrentEntityLineWeight = (short)(flags & 0x1F);
+				header.CurrentEntityLineWeight = (LineweightType)(flags & 0x1F);
 				//ENDCAPS Flags & 0x0060
 				header.EndCaps = (short)(flags & 0x60);
 				//JOINSTYLE Flags & 0x0180
 				header.JoinStyle = (short)(flags & 0x180);
 				//LWDISPLAY!(Flags & 0x0200)
-				header.DisplayLineWeight = (short)(flags & 0x200);
+				header.DisplayLineWeight = (flags & 0x200) == 1;
 				//XEDIT!(Flags & 0x0400)
 				header.XEdit = (short)(flags & 0x400);
 				//EXTNAMES Flags & 0x0800
-				header.ExtendedNames = (short)(flags & 0x800);
+				header.ExtendedNames = (flags & 0x800) == 1;
 				//PSTYLEMODE Flags & 0x2000
 				header.PlotStyleMode = (short)(flags & 0x2000);
 				//OLESTARTUP Flags & 0x4000
 				header.LoadOLEObject = (short)(flags & 0x4000);
 
 				//BS: INSUNITS
-				header.InsUnits = sreader.ReadBitShort();
+				header.InsUnits = (UnitsType)sreader.ReadBitShort();
 				//BS : CEPSNTYPE
 				header.CurrentEntityPlotStyleType = sreader.ReadBitShort();
 

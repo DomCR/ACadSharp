@@ -1,0 +1,24 @@
+#name: Publish NuGet package
+
+#on:
+#  push:
+#    tags:
+#      - '*'
+
+#jobs:
+#  build:
+
+#    runs-on: windows-latest
+
+#    steps:
+#    - name: Checkout
+#      run: git config --global core.autocrlf true
+#    - uses: actions/checkout@v2
+#      with: 
+#        submodules: true
+#    - name: Restore dependencies
+#      run: dotnet restore
+#    - name: Build NuGet package
+#      run: dotnet pack ./ACadSharp.sln -c Release -o packages
+#    - name: Publish NuGet package
+#      run: dotnet nuget push .\packages\ACadSharp*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json

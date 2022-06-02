@@ -39,7 +39,15 @@ namespace ACadSharp.IO.DXF
 
 		protected void writeCommonObjectData(CadObject cadObject)
 		{
-			this._writer.Write(DxfCode.Handle, cadObject.Handle);
+			if (cadObject is DimensionStyle)
+			{
+				this._writer.Write(DxfCode.DimVarHandle, cadObject.Handle);
+			}
+			else
+			{
+				this._writer.Write(DxfCode.Handle, cadObject.Handle);
+			}
+
 			this._writer.Write(DxfCode.SoftPointerId, cadObject.Owner.Handle);
 
 			//TODO: Write exended data
@@ -85,7 +93,17 @@ namespace ACadSharp.IO.DXF
 		protected void writeMappedObject<T>(T e)
 			where T : CadObject
 		{
-			DxfMap map = DxfMap.Create<T>();
+			//TODO: Finish write implementation
+			if (e is Hatch
+				|| e is MLine
+				|| e is Spline
+				|| e is Leader
+				)
+			{
+				return;
+			}
+
+			DxfMap map = DxfMap.Create(e.GetType());
 
 			this._writer.Write(DxfCode.Start, e.ObjectName);
 

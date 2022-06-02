@@ -83,7 +83,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Style of this text entity.
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Handle, 7)]
+		[DxfCodeValue(DxfReferenceType.Name, 7)]
 		public TextStyle Style { get; set; } = TextStyle.Default;
 
 		/// <summary>
@@ -117,7 +117,7 @@ namespace ACadSharp.Entities
 		/// Vertical text justification type.
 		/// </summary>
 		[DxfCodeValue(73)]
-		public virtual TextVerticalAlignment VerticalAlignment { get; set; } = TextVerticalAlignment.Baseline;
+		public virtual TextVerticalAlignmentType VerticalAlignment { get; set; } = TextVerticalAlignmentType.Baseline;
 
 		public TextEntity() : base() { }
 	}

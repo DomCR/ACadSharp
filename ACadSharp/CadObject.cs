@@ -34,16 +34,22 @@ namespace ACadSharp
 		[DxfCodeValue(DxfReferenceType.Handle, 330)]
 		public IHandledCadObject Owner { get; internal set; }
 
-		//TODO: CadDictionary for the CadObjects
+		/// <summary>
+		/// Object dictionary
+		/// </summary>
 		public CadDictionary XDictionary
 		{
 			get { return this._xdictionary; }
 			set
 			{
-				//if (this._document != null)
-				//	this._document.RegisterCollection(value);
+				if (value == null)
+					return;
 
 				this._xdictionary = value;
+				this._xdictionary.Owner = this;
+
+				if (this.Document != null)
+					this.Document.RegisterCollection(this._xdictionary);
 			}
 		}
 
@@ -58,16 +64,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Document where this element belongs
 		/// </summary>
-		public virtual CadDocument Document
-		{
-			get { return this._document; }
-			internal set
-			{
-				this._document = value;
-			}
-		}
-
-		private CadDocument _document = null;
+		public virtual CadDocument Document { get; internal set; }
 
 		private CadDictionary _xdictionary = null;
 

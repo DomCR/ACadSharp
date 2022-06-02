@@ -21,7 +21,7 @@ namespace ACadSharp.Tests
 
 			var d = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.ManifestModule.Name == "ACadSharp.dll");
 
-			foreach (var item in d.GetTypes().Where(i => !i.IsAbstract))
+			foreach (var item in d.GetTypes().Where(i => !i.IsAbstract && i.IsPublic))
 			{
 				if (item.IsSubclassOf(typeof(Entity)) || item.IsSubclassOf(typeof(TableEntry)))
 				{

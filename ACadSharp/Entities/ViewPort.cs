@@ -129,7 +129,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Frozen layer object ID/handle(multiple entries may exist)
 		/// </summary>
-		[DxfCodeValue(331)]
+		[DxfCodeValue(DxfReferenceType.Ignored, 331)]	//TODO: explore how to write list values
 		public List<Layer> FrozenLayers { get; private set; }
 
 		/// <summary>

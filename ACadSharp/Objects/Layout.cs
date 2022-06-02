@@ -137,5 +137,11 @@ namespace ACadSharp.Objects
 		{
 			this.Name = name;
 		}
+
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return $"{this.ObjectName}:{this.Name}";
+		}
 	}
 }

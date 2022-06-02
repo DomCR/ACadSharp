@@ -47,20 +47,9 @@ namespace ACadSharp.IO.Templates
 
 		public virtual void Build(CadDocumentBuilder builder)
 		{
-			if (false)
-				if (this.OwnerHandle.HasValue)
-				{
-					if (builder.TryGetCadObject(this.OwnerHandle.Value, out CadObject owner))
-						this.CadObject.Owner = owner;
-				}
-
 			if (builder.TryGetCadObject(this.XDictHandle, out CadDictionary cadDictionary))
 			{
 				this.CadObject.XDictionary = cadDictionary;
-			}
-			else if (this.XDictHandle.HasValue && this.XDictHandle.Value != 0)
-			{
-				builder.NotificationHandler?.Invoke(this.CadObject, new NotificationEventArgs($"Dictionary couldn't be found, handle : {this.XDictHandle}"));
 			}
 
 			foreach (ulong handle in this.ReactorsHandles)

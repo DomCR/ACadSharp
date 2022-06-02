@@ -21,6 +21,9 @@ namespace ACadSharp.Entities
 				/// <summary>
 				/// Radius
 				/// </summary>
+				/// <remarks>
+				/// For the ellispe this is the length of minor axis (percentage of major axis length)
+				/// </remarks>
 				[DxfCodeValue(40)]
 				public double Radius { get; set; }
 
