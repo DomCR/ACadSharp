@@ -36,7 +36,7 @@ namespace ACadSharp.IO.DWG
 	{
 		private long _objectInitialPos = 0;
 
-		private ushort _size;
+		private uint _size;
 
 		/// <summary>
 		/// During the object reading the handles will be added at the queue.
@@ -140,7 +140,7 @@ namespace ACadSharp.IO.DWG
 			this._crcReader.Position = offset;
 
 			//MS : Size of object, not including the CRC
-			this._size = (ushort)this._crcReader.ReadModularShort();
+			this._size = (uint)this._crcReader.ReadModularShort();
 
 			if (this._size <= 0U)
 				return type;
@@ -3096,9 +3096,130 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readView()
 		{
+			View view = new View();
+			CadViewTemplate template = new CadViewTemplate(view);
 
+			this.readCommonNonEntityData(template);
 
-			return null;
+			//Common:
+			//Entry name TV 2
+			view.Name = this._textReader.ReadVariableText();
+
+			this.readXrefDependantBit(view);
+
+			//View height BD 40
+			view.Height = this._objectReader.ReadBitDouble();
+			//View width BD 41
+			view.Width = this._objectReader.ReadBitDouble();
+			//View center 2RD 10(Not bit - pair coded.)
+			view.Center = this._objectReader.Read2RawDouble();
+			//Target 3BD 12
+			view.Target = this._objectReader.Read3BitDouble();
+			//View dir 3BD 11 DXF doc suggests from target toward camera.
+			view.Direction = this._objectReader.Read3BitDouble();
+			//Twist angle BD 50 Radians
+			view.Angle = this._objectReader.ReadBitDouble();
+			//Lens length BD 42
+			view.LensLength = this._objectReader.ReadBitDouble();
+			//Front clip BD 43
+			view.FrontClipping = this._objectReader.ReadBitDouble();
+			//Back clip BD 44
+			view.BackClipping = this._objectReader.ReadBitDouble();
+
+			//View mode X 71 4 bits: 0123
+			//Note that only bits 0, 1, 2, and 4 of the 71 can be specified -- not bit 3 (8).
+			//0 : 71's bit 0 (1)
+			if (this._objectReader.ReadBit())
+				view.ViewMode |= ViewModeType.PerspectiveView;
+			//1 : 71's bit 1 (2)
+			if (this._objectReader.ReadBit())
+				view.ViewMode |= ViewModeType.FrontClipping;
+			//2 : 71's bit 2 (4)
+			if (this._objectReader.ReadBit())
+				view.ViewMode |= ViewModeType.BackClipping;
+			//3 : OPPOSITE of 71's bit 4 (16)
+			if (this._objectReader.ReadBit())
+				view.ViewMode |= ViewModeType.FrontClippingZ;
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Render Mode RC 281
+				view.RenderMode = (RenderMode)this._objectReader.ReadByte();
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Use default lights B ? Default value is true
+				this._mergedReaders.ReadBit();
+				//Default lighting RC ? Default value is 1
+				this._mergedReaders.ReadByte();
+				//Brightness BD ? Default value is 0
+				this._mergedReaders.ReadBitDouble();
+				//Contrast BD ? Default value is 0
+				this._mergedReaders.ReadBitDouble();
+				//Abient color CMC? Default value is AutoCAD indexed color 250
+				this._mergedReaders.ReadCmColor();
+			}
+
+			//Common:
+			//Pspace flag B 70 Bit 0(1) of the 70 - group.
+			if (this._objectReader.ReadBit())
+				view.Flags |= (StandardFlags)0b1;
+
+			if (this.R2000Plus)
+			{
+				view.IsUcsAssociated = this._objectReader.ReadBit();
+				if (view.IsUcsAssociated)
+				{
+					//Origin 3BD 10 This and next 4 R2000 items are present only if 72 value is 1.
+					view.UcsOrigin = this._objectReader.Read3BitDouble();
+					//X-direction 3BD 11
+					view.UcsXAxis = this._objectReader.Read3BitDouble();
+					//Y-direction 3BD 12
+					view.UcsYAxis = this._objectReader.Read3BitDouble();
+					//Elevation BD 146
+					view.UcsElevation = this._objectReader.ReadBitDouble();
+					//OrthographicViewType BS 79
+					view.UcsOrthographicType = (OrthographicType)this._objectReader.ReadBitShort();
+				}
+			}
+
+			//Common:
+			//Handle refs H view control object (soft pointer)
+			this.handleReference();
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Camera plottable B 73
+				view.IsPlottable = this._objectReader.ReadBit();
+
+				//Background handle H 332 soft pointer
+				this.handleReference();
+				//Visual style H 348 hard pointer
+				this.handleReference();
+				//Sun H 361 hard owner
+				this.handleReference();
+			}
+
+			if (this.R2000Plus && view.IsUcsAssociated)
+			{
+				//Base UCS Handle H 346 hard pointer
+				template.UcsHandle = this.handleReference();
+				//Named UCS Handle H 345 hard pointer
+				template.NamedUcsHandle = this.handleReference();
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Live section H 334 soft pointer
+				this.handleReference();
+			}
+
+			return template;
 		}
 
 		private CadTemplate readUcs()

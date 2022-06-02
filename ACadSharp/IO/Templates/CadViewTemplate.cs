@@ -6,6 +6,10 @@ namespace ACadSharp.IO.Templates
 	{
 		public ulong? VisualStyleHandle { get; set; }
 
+		public ulong? NamedUcsHandle { get; set; }
+
+		public ulong? UcsHandle { get; set; }
+
 		public CadViewTemplate(View entry) : base(entry) { }
 
 		public override bool AddHandle(int dxfcode, ulong handle)

@@ -452,17 +452,19 @@ namespace ACadSharp.IO.DWG
 			while (!flag)
 			{
 				//Read 2 more bytes
-				byte ub1 = ReadByte();
-				byte ub2 = ReadByte();
+				b1 = ReadByte();
+				b2 = ReadByte();
 
 				//Check the flag
-				flag = (ub2 & 0b10000000) == 0;
-				int secondShift = shift + 8;
+				flag = (b2 & 0b10000000) == 0;
 
 				//Set the value in little endian
-				value = value | ub1 << shift | (b2 & 0b1111111) << secondShift;
+				value |= b1 << shift;
+				shift += 8;
+				value |= (b2 & 0b1111111) << shift;
+
 				//Update the shift
-				shift = secondShift + 7;
+				shift += 7;
 			}
 
 			return value;
