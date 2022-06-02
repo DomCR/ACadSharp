@@ -1639,7 +1639,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readDimOrdinate()
 		{
 			DimensionOrdinate dimension = new DimensionOrdinate();
-			DwgDimensionTemplate template = new DwgDimensionTemplate(dimension);
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
 
 			this.readCommonDimensionData(template);
 
@@ -1659,7 +1659,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readDimLinear()
 		{
 			DimensionLinear dimension = new DimensionLinear();
-			DwgDimensionTemplate template = new DwgDimensionTemplate(dimension);
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
 
 			this.readCommonDimensionData(template);
 
@@ -1676,7 +1676,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readDimAligned()
 		{
 			DimensionLinear dimension = new DimensionLinear();
-			DwgDimensionTemplate template = new DwgDimensionTemplate(dimension);
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
 
 			this.readCommonDimensionData(template);
 
@@ -1690,7 +1690,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readDimAngular3pt()
 		{
 			DimensionAngular3Pt dimension = new DimensionAngular3Pt();
-			DwgDimensionTemplate template = new DwgDimensionTemplate(dimension);
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
 
 			this.readCommonDimensionData(template);
 
@@ -1712,7 +1712,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readDimLine2pt()
 		{
 			DimensionAngular2Line dimension = new DimensionAngular2Line();
-			DwgDimensionTemplate template = new DwgDimensionTemplate(dimension);
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
 
 			this.readCommonDimensionData(template);
 
@@ -1738,7 +1738,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readDimRadius()
 		{
 			DimensionRadius dimension = new DimensionRadius();
-			DwgDimensionTemplate template = new DwgDimensionTemplate(dimension);
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
 
 			this.readCommonDimensionData(template);
 
@@ -1758,7 +1758,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readDimDiameter()
 		{
 			DimensionDiameter dimension = new DimensionDiameter();
-			DwgDimensionTemplate template = new DwgDimensionTemplate(dimension);
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
 
 			this.readCommonDimensionData(template);
 
@@ -1775,7 +1775,7 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private void readCommonDimensionData(DwgDimensionTemplate template)
+		private void readCommonDimensionData(CadDimensionTemplate template)
 		{
 			this.readCommonEntityData(template);
 
@@ -1859,7 +1859,7 @@ namespace ACadSharp.IO.DWG
 			dimension.InsertionPoint = new XYZ((double)pt.X, (double)pt.Y, elevation);
 		}
 
-		private void readCommonDimensionAlignedData(DwgDimensionTemplate template)
+		private void readCommonDimensionAlignedData(CadDimensionTemplate template)
 		{
 			DimensionAligned dimension = (DimensionAligned)template.CadObject;
 
@@ -1875,7 +1875,7 @@ namespace ACadSharp.IO.DWG
 			dimension.ExtLineRotation = this._objectReader.ReadBitDouble();
 		}
 
-		private void readCommonDimensionHandles(DwgDimensionTemplate template)
+		private void readCommonDimensionHandles(CadDimensionTemplate template)
 		{
 			//Common Entity Handle Data
 			//H 3 DIMSTYLE(hard pointer)

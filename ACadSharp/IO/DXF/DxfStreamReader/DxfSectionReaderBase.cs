@@ -140,6 +140,9 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityCircle:
 					template = new CadEntityTemplate(new Circle());
 					break;
+				case DxfFileToken.EntityDimension:
+					template = new CadDimensionTemplate();
+					break;
 				case DxfFileToken.EntityEllipse:
 					template = new CadEntityTemplate(new Ellipse());
 					break;
@@ -218,6 +221,37 @@ namespace ACadSharp.IO.DXF
 						break;
 					case DxfSubclassMarker.Circle:
 						this.readMapped<Circle>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.Dimension:
+						this.readMapped<Dimension>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.AlignedDimension:
+						(template as CadDimensionTemplate).SetDimensionObject(new DimensionAligned());
+						this.readMapped<DimensionAligned>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.LinearDimension:
+						(template as CadDimensionTemplate).SetDimensionObject(new DimensionLinear());
+						this.readMapped<DimensionLinear>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.RadialDimension:
+						(template as CadDimensionTemplate).SetDimensionObject(new DimensionRadius());
+						this.readMapped<DimensionRadius>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.DiametricDimension:
+						(template as CadDimensionTemplate).SetDimensionObject(new DimensionDiameter());
+						this.readMapped<DimensionDiameter>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.Angular3PointDimension:
+						(template as CadDimensionTemplate).SetDimensionObject(new DimensionAngular3Pt());
+						this.readMapped<DimensionAngular3Pt>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.Angular2LineDimension:
+						(template as CadDimensionTemplate).SetDimensionObject(new DimensionAngular2Line());
+						this.readMapped<DimensionAngular2Line>(template.CadObject, template);
+						break;
+					case DxfSubclassMarker.OrdinateDimension:
+						(template as CadDimensionTemplate).SetDimensionObject(new DimensionOrdinate());
+						this.readMapped<DimensionOrdinate>(template.CadObject, template);
 						break;
 					case DxfSubclassMarker.Ellipse:
 						this.readMapped<Ellipse>(template.CadObject, template);
