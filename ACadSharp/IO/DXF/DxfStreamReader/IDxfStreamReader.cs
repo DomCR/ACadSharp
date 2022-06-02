@@ -44,6 +44,6 @@ namespace ACadSharp.IO.DXF
 		/// <param name="dxfEntry"></param>
 		void Find(string dxfEntry);
 
-		Tuple<DxfCode, object> ReadNext();
+		void ReadNext();
 	}
 }

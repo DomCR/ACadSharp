@@ -18,7 +18,7 @@ namespace ACadSharp.IO.DXF
 
 		public object LastValue { get; protected set; }
 
-		public int Position { get; protected set; }
+		public virtual int Position { get; protected set; }
 
 		public string LastValueAsString { get { return this.LastValue.ToString(); } }
 
@@ -38,15 +38,11 @@ namespace ACadSharp.IO.DXF
 
 		protected abstract Stream _baseStream { get; }
 
-		public Tuple<DxfCode, object> ReadNext()
+		public virtual void ReadNext()
 		{
 			this.LastDxfCode = this.readCode();
 			this.LastGroupCodeValue = GroupCodeValue.TransformValue(this.LastCode);
 			this.LastValue = this.transformValue(this.LastGroupCodeValue);
-
-			Tuple<DxfCode, object> pair = new Tuple<DxfCode, object>(this.LastDxfCode, this.LastValue);
-
-			return pair;
 		}
 
 		public void Find(string dxfEntry)

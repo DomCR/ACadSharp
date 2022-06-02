@@ -8,122 +8,79 @@ using System.Text;
 
 namespace ACadSharp.IO.DXF
 {
-	internal class DxfBinaryReader : BinaryReader, IDxfStreamReader
+	internal class DxfBinaryReader : DxfReaderBase, IDxfStreamReader
 	{
-		public DxfCode LastDxfCode { get; private set; }
-		public GroupCodeValueType LastGroupCodeValue { get; private set; }
-		public int LastCode { get { return (int)this.LastDxfCode; } }
-		public object LastValue { get; private set; }
-		public int Position { get { return (int)this.BaseStream.Position; } }
+		public override int Position { get { return (int)this._baseStream.Position; } }
 
-		/// <inheritdoc/>
-		public string LastValueAsString { get; private set; }
+		protected override Stream _baseStream { get { return this._stream.BaseStream; } }
 
-		public bool LastValueAsBool { get { return this.lineAsBool(this.LastValueAsString); } }
+		private Encoding _encoding;
 
-		public ushort LastValueAsShort { get { return Convert.ToUInt16(this.LastValue); } }
-
-		public int LastValueAsInt { get { return this.lineAsInt(this.LastValueAsString); } }
-
-		public long LastValueAsLong { get { return this.lineAsLong(this.LastValueAsString); } }
-
-		public double LastValueAsDouble { get { return this.lineAsDouble(this.LastValueAsString); } }
-
-		public ulong LastValueAsHandle { get { return (ulong)this.LastValue; } }
-
-		public byte[] LastValueAsBinaryChunk { get { return this.LastValue as byte[]; } }
-
-		public Encoding Encoding { get; set; }
+		private BinaryReader _stream;
 
 		public DxfBinaryReader(Stream stream) : this(stream, Encoding.ASCII) { }
 
-		public DxfBinaryReader(Stream stream, Encoding encoding) : base(stream, encoding)
+		public DxfBinaryReader(Stream stream, Encoding encoding)
 		{
+			this._encoding = encoding;
+			this._stream = new BinaryReader(stream, this._encoding);
+
 			this.start();
-			this.Encoding = encoding;
 		}
 
-		public void Find(string dxfEntry)
+		protected override void start()
 		{
-			this.start();
+			base.start();
 
-			do
-			{
-				this.ReadNext();
-			}
-			while (this.LastValueAsString != dxfEntry && (this.LastValueAsString != DxfFileToken.EndOfFile));
-		}
-
-		public Tuple<DxfCode, object> ReadNext()
-		{
-			this.LastDxfCode = this.readCode();
-			this.LastGroupCodeValue = GroupCodeValue.TransformValue(this.LastCode);
-			this.LastValue = this.transformValue(this.LastGroupCodeValue);
-
-			Tuple<DxfCode, object> pair = new Tuple<DxfCode, object>(this.LastDxfCode, this.LastValue);
-
-			return pair;
-		}
-
-		private void start()
-		{
-
-			this.LastDxfCode = DxfCode.Invalid;
-			this.LastValue = string.Empty;
-
-			this.BaseStream.Position = 0;
-
-			byte[] sentinel = this.ReadBytes(22);
+			byte[] sentinel = this._stream.ReadBytes(22);
 			string s = Encoding.ASCII.GetString(sentinel);
 		}
 
-		private bool lineAsBool(string str)
+		protected override string readStringLine()
 		{
-			if (byte.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out byte result))
+			byte b = this._stream.ReadByte();
+			List<byte> bytes = new List<byte>();
+
+			while (b != 0)
 			{
-				return result > 0;
+				bytes.Add(b);
+				b = this._stream.ReadByte();
 			}
 
-			return false;
+			return this._encoding.GetString(bytes.ToArray(), 0, bytes.Count);
 		}
-		private double lineAsDouble(string str)
+
+		protected override DxfCode readCode()
 		{
-			if (double.TryParse(str, NumberStyles.Float, CultureInfo.InvariantCulture, out double result))
-			{
-				return result;
-			}
-
-			return 0.0;
+			return (DxfCode)this._stream.ReadInt16();
 		}
-		private short lineAsShort(string str)
+
+		protected override bool lineAsBool()
 		{
-			if (short.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out short result))
-			{
-				return result;
-			}
-
-			return 0;
+			return this._stream.ReadByte() > 0;
 		}
-		private int lineAsInt(string str)
+
+		protected override double lineAsDouble()
 		{
-			if (int.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out int result))
-			{
-				return result;
-			}
-
-			return 0;
+			return this._stream.ReadDouble();
 		}
-		private long lineAsLong(string str)
+
+		protected override short lineAsShort()
 		{
-			if (long.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out long result))
-			{
-				return result;
-			}
-
-			return 0;
+			return this._stream.ReadInt16();
 		}
 
-		private ulong lineAsHandle()
+		protected override int lineAsInt()
+		{
+			return this._stream.ReadInt32();
+		}
+
+		protected override long lineAsLong()
+		{
+			return this._stream.ReadInt64();
+		}
+
+		protected override ulong lineAsHandle()
 		{
 			var str = this.readStringLine();
 
@@ -135,65 +92,10 @@ namespace ACadSharp.IO.DXF
 			return 0;
 		}
 
-		private byte[] lineAsBinaryChunk()
+		protected override byte[] lineAsBinaryChunk()
 		{
-			byte length = this.ReadByte();
-			return this.ReadBytes(length);
-		}
-
-		protected DxfCode readCode()
-		{
-			return (DxfCode)this.ReadInt16();
-		}
-
-		private object transformValue(GroupCodeValueType code)
-		{
-			switch (code)
-			{
-				case GroupCodeValueType.String:
-				case GroupCodeValueType.Comment:
-				case GroupCodeValueType.ExtendedDataString:
-					return this.readStringLine();
-				case GroupCodeValueType.Point3D:
-				case GroupCodeValueType.Double:
-				case GroupCodeValueType.ExtendedDataDouble:
-					return this.ReadDouble();
-				case GroupCodeValueType.Int16:
-				case GroupCodeValueType.ExtendedDataInt16:
-					return this.ReadInt16();
-				case GroupCodeValueType.Int32:
-				case GroupCodeValueType.ExtendedDataInt32:
-					return this.ReadInt32();
-				case GroupCodeValueType.Int64:
-					return this.ReadInt64();
-				case GroupCodeValueType.Handle:
-				case GroupCodeValueType.ObjectId:
-				case GroupCodeValueType.ExtendedDataHandle:
-					return this.lineAsHandle();
-				case GroupCodeValueType.Bool:
-					return this.ReadByte() > 0;
-				case GroupCodeValueType.Chunk:
-				case GroupCodeValueType.ExtendedDataChunk:
-					return this.lineAsBinaryChunk();
-				case GroupCodeValueType.None:
-				default:
-					throw new DxfException((int)code, this.Position);
-			}
-		}
-
-		private string readStringLine()
-		{
-			byte b = this.ReadByte();
-			List<byte> bytes = new List<byte>();
-
-			while (b != 0)
-			{
-				bytes.Add(b);
-				b = this.ReadByte();
-			}
-
-			this.LastValueAsString = this.Encoding.GetString(bytes.ToArray(), 0, bytes.Count);
-			return this.LastValueAsString;
+			byte length = this._stream.ReadByte();
+			return this._stream.ReadBytes(length);
 		}
 	}
 }

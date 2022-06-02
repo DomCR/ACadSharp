@@ -24,10 +24,10 @@ namespace ACadSharp.IO.DXF
 			this.start();
 		}
 
-		protected override string readStringLine()
+		public override void ReadNext()
 		{
+			base.ReadNext();
 			this.Position++;
-			return this._stream.ReadLine();
 		}
 
 		protected override void start()
@@ -35,6 +35,26 @@ namespace ACadSharp.IO.DXF
 			base.start();
 
 			this._stream.DiscardBufferedData();
+		}
+
+		protected override string readStringLine()
+		{
+			this.Position++;
+			return this._stream.ReadLine();
+		}
+
+		protected override DxfCode readCode()
+		{
+			string line = this.readStringLine();
+
+			if (int.TryParse(line, NumberStyles.Integer, CultureInfo.InvariantCulture, out int value))
+			{
+				return (DxfCode)value;
+			}
+
+			this.Position++;
+
+			return DxfCode.Invalid;
 		}
 
 		protected override bool lineAsBool()
@@ -131,18 +151,6 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return bytes;
-		}
-
-		protected override DxfCode readCode()
-		{
-			string line = this.readStringLine();
-
-			if (int.TryParse(line, NumberStyles.Integer, CultureInfo.InvariantCulture, out int value))
-			{
-				return (DxfCode)value;
-			}
-
-			return DxfCode.Invalid;
 		}
 	}
 }
