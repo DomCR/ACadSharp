@@ -17,7 +17,7 @@ namespace ACadSharp.IO.DXF
 		/// <summary>
 		/// Current line or offset in the file
 		/// </summary>
-		int Line { get; }
+		int Position { get; }
 
 		/// <summary>
 		/// Last value read in the dxf file without any transformation
@@ -26,7 +26,7 @@ namespace ACadSharp.IO.DXF
 
 		bool LastValueAsBool { get; }
 		
-		short LastValueAsShort { get; }
+		ushort LastValueAsShort { get; }
 		
 		int LastValueAsInt { get; }
 		

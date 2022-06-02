@@ -26,7 +26,7 @@ namespace ACadSharp.IO.DXF
 				if (this._reader.LastValueAsString == DxfFileToken.Block)
 					this.readBlock();
 				else
-					throw new DxfException($"Unexpected token at the begining of a table: {this._reader.LastValueAsString}", this._reader.Line);
+					throw new DxfException($"Unexpected token at the begining of a table: {this._reader.LastValueAsString}", this._reader.Position);
 			}
 		}
 

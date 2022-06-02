@@ -14,17 +14,23 @@ namespace ACadSharp.IO.DXF
 		public GroupCodeValueType LastGroupCodeValue { get; private set; }
 		public int LastCode { get { return (int)this.LastDxfCode; } }
 		public object LastValue { get; private set; }
-		public int Line { get { return (int)this.BaseStream.Position; } }
+		public int Position { get { return (int)this.BaseStream.Position; } }
 
 		/// <inheritdoc/>
 		public string LastValueAsString { get; private set; }
 
 		public bool LastValueAsBool { get { return this.lineAsBool(this.LastValueAsString); } }
-		public short LastValueAsShort { get { return this.lineAsShort(this.LastValueAsString); } }
+
+		public ushort LastValueAsShort { get { return Convert.ToUInt16(this.LastValue); } }
+
 		public int LastValueAsInt { get { return this.lineAsInt(this.LastValueAsString); } }
+
 		public long LastValueAsLong { get { return this.lineAsLong(this.LastValueAsString); } }
+
 		public double LastValueAsDouble { get { return this.lineAsDouble(this.LastValueAsString); } }
-		public ulong LastValueAsHandle { get { return this.lineAsHandle(this.LastValueAsString); } }
+
+		public ulong LastValueAsHandle { get { return (ulong)this.LastValue; } }
+
 		public byte[] LastValueAsBinaryChunk { get { return this.LastValue as byte[]; } }
 
 		public Encoding Encoding { get; set; }
@@ -51,7 +57,6 @@ namespace ACadSharp.IO.DXF
 		public Tuple<DxfCode, object> ReadNext()
 		{
 			this.LastDxfCode = this.readCode();
-			//this.LastValueAsString = this.ReadLine();
 			this.LastGroupCodeValue = GroupCodeValue.TransformValue(this.LastCode);
 			this.LastValue = this.transformValue(this.LastGroupCodeValue);
 
@@ -118,8 +123,10 @@ namespace ACadSharp.IO.DXF
 			return 0;
 		}
 
-		private ulong lineAsHandle(string str)
+		private ulong lineAsHandle()
 		{
+			var str = this.readStringLine();
+
 			if (ulong.TryParse(str, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong result))
 			{
 				return result;
@@ -134,7 +141,7 @@ namespace ACadSharp.IO.DXF
 			return this.ReadBytes(length);
 		}
 
-		private DxfCode readCode()
+		protected DxfCode readCode()
 		{
 			return (DxfCode)this.ReadInt16();
 		}
@@ -162,7 +169,7 @@ namespace ACadSharp.IO.DXF
 				case GroupCodeValueType.Handle:
 				case GroupCodeValueType.ObjectId:
 				case GroupCodeValueType.ExtendedDataHandle:
-					return this.lineAsHandle(this.readStringLine());
+					return this.lineAsHandle();
 				case GroupCodeValueType.Bool:
 					return this.ReadByte() > 0;
 				case GroupCodeValueType.Chunk:
@@ -170,7 +177,7 @@ namespace ACadSharp.IO.DXF
 					return this.lineAsBinaryChunk();
 				case GroupCodeValueType.None:
 				default:
-					throw new DxfException((int)code, this.Line);
+					throw new DxfException((int)code, this.Position);
 			}
 		}
 

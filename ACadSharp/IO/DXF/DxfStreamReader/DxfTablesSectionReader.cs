@@ -27,13 +27,13 @@ namespace ACadSharp.IO.DXF
 				if (this._reader.LastValueAsString == DxfFileToken.TableEntry)
 					this.readTable();
 				else
-					throw new DxfException($"Unexpected token at the begining of a table: {this._reader.LastValueAsString}", this._reader.Line);
+					throw new DxfException($"Unexpected token at the begining of a table: {this._reader.LastValueAsString}", this._reader.Position);
 
 
 				if (this._reader.LastValueAsString == DxfFileToken.EndTable)
 					this._reader.ReadNext();
 				else
-					throw new DxfException($"Unexpected token at the end of a table: {this._reader.LastValueAsString}", this._reader.Line);
+					throw new DxfException($"Unexpected token at the end of a table: {this._reader.LastValueAsString}", this._reader.Position);
 			}
 		}
 
@@ -69,7 +69,7 @@ namespace ACadSharp.IO.DXF
 						}
 						break;
 					default:
-						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Line}."));
+						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}."));
 						break;
 				}
 
