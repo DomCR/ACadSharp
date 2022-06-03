@@ -1,10 +1,5 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.IO;
-using ACadSharp.IO.DXF;
-using System;
-using System.Diagnostics;
+﻿using ACadSharp.IO.DXF;
 using System.IO;
-using System.Text;
 using Xunit;
 using Xunit.Abstractions;
 
