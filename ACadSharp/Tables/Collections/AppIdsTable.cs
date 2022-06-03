@@ -1,6 +1,4 @@
-﻿using ACadSharp.IO.Templates;
-
-namespace ACadSharp.Tables.Collections
+﻿namespace ACadSharp.Tables.Collections
 {
 	public class AppIdsTable : Table<AppId>
 	{
@@ -9,6 +7,8 @@ namespace ACadSharp.Tables.Collections
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableAppId;
+
+		protected override string[] _defaultEntries { get { return new string[] { AppId.DefaultName }; } }
 
 		internal AppIdsTable() : base() { }
 

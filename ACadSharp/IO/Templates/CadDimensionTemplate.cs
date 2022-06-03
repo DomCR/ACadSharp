@@ -67,6 +67,7 @@ namespace ACadSharp.IO.Templates
 		{
 			dimensionAligned.Handle = this.CadObject.Handle;
 			dimensionAligned.Owner = this.CadObject.Owner;
+
 			dimensionAligned.XDictionary = this.CadObject.XDictionary;
 			//dimensionAligned.Reactors = this.CadObject.Reactors;
 			//dimensionAligned.ExtendedData = this.CadObject.ExtendedData;

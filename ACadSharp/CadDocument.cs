@@ -103,14 +103,14 @@ namespace ACadSharp
 			{
 				this._rootDictionary = value;
 				this._rootDictionary.Owner = this;
-				this.RegisterCollection(_rootDictionary);
+				this.RegisterCollection(this._rootDictionary);
 			}
 		}
 
 		/// <summary>
 		/// Collection with all the entities in the drawing
 		/// </summary>
-		public CadObjectCollection<Entity> Entities { get { return this.BlockRecords[BlockRecord.ModelSpaceName].Entities; } }
+		public CadObjectCollection<Entity> Entities { get { return this.ModelSpace.Entities; } }
 
 		/// <summary>
 		/// Model space block record containing the drawing
@@ -130,9 +130,6 @@ namespace ACadSharp
 		internal CadDocument(bool createDefaults)
 		{
 			this._cadObjects.Add(this.Handle, this);
-
-			//Initalize viewports only for management 
-			//this.Viewports = new ViewportCollection(this);
 
 			if (createDefaults)
 			{
@@ -163,13 +160,6 @@ namespace ACadSharp
 				//Default variables
 				this.AppIds.Add(AppId.Default);
 
-				//Blocks
-				BlockRecord model = BlockRecord.ModelSpace;
-				model.Layout = modelLayout;
-				this.BlockRecords.Add(model);
-
-				this.BlockRecords.Add(BlockRecord.PaperSpace);
-
 				this.LineTypes.Add(LineType.ByLayer);
 				this.LineTypes.Add(LineType.ByBlock);
 				this.LineTypes.Add(LineType.Continuous);
@@ -181,6 +171,13 @@ namespace ACadSharp
 				this.DimensionStyles.Add(DimensionStyle.Default);
 
 				this.VPorts.Add(VPort.Default);
+
+				//Blocks
+				BlockRecord model = BlockRecord.ModelSpace;
+				model.Layout = modelLayout;
+				this.BlockRecords.Add(model);
+
+				this.BlockRecords.Add(BlockRecord.PaperSpace);
 			}
 		}
 
@@ -216,9 +213,17 @@ namespace ACadSharp
 			return null;
 		}
 
-		public CadObject RemoveCadObject(ulong handle)
+		public bool TryGetCadObject<T>(ulong handle, out T cadObject)
+			where T : CadObject
 		{
-			throw new NotImplementedException();
+			cadObject = null;
+			if (this._cadObjects.TryGetValue(handle, out IHandledCadObject obj))
+			{
+				cadObject = obj as T;
+				return true;
+			}
+
+			return false;
 		}
 
 		private void addCadObject(CadObject cadObject)
@@ -245,9 +250,16 @@ namespace ACadSharp
 			if (cadObject.XDictionary != null)
 				this.RegisterCollection(cadObject.XDictionary);
 
-			if(cadObject is Entity e)
+			if (cadObject is Entity e)
 			{
-				//if (this.Layers[e.Layer.Name] != null)
+				if (this.Layers.TryGetValue(e.Layer.Name, out Layer layer))
+				{
+					e.Layer = layer;
+				}
+				else
+				{
+					this.Layers.Add(e.Layer);
+				}
 			}
 
 			switch (cadObject)
@@ -277,6 +289,23 @@ namespace ACadSharp
 			{
 				this.addCadObject(e.Item);
 			}
+		}
+
+		private void onRemoveCadObject(object sender, ReferenceChangedEventArgs e)
+		{
+			if (!this.TryGetCadObject(e.Item.Handle, out CadObject cadObject) || !this._cadObjects.Remove(e.Item.Handle))
+			{
+				return;
+			}
+
+			cadObject.Handle = 0;
+			cadObject.Document = null;
+			cadObject.OnReferenceChange -= this.onReferenceChanged;
+
+			if (cadObject.XDictionary != null)
+				this.UnregisterCollection(cadObject.XDictionary);
+
+			throw new NotImplementedException();
 		}
 
 		internal void RegisterCollection<T>(IObservableCollection<T> collection, bool addElements = true)
@@ -343,6 +372,12 @@ namespace ACadSharp
 					}
 				}
 			}
+		}
+
+		internal void UnregisterCollection<T>(IObservableCollection<T> collection, bool addElements = true)
+			where T : CadObject
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

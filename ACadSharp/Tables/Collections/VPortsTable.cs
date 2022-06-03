@@ -10,6 +10,7 @@ namespace ACadSharp.Tables.Collections
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableVport;
 
+		protected override string[] _defaultEntries { get { return new string[] { VPort.DefaultName }; } }
 
 		internal VPortsTable() : base() { }
 

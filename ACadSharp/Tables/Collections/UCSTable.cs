@@ -10,6 +10,8 @@ namespace ACadSharp.Tables.Collections
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableUcs;
 
+		protected override string[] _defaultEntries { get { return new string[] { }; } }
+
 		internal UCSTable() : base() { }
 
 		internal UCSTable(CadDocument document) : base(document) { }

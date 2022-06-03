@@ -16,9 +16,10 @@ namespace ACadSharp.Tables.Collections
 		public event EventHandler<ReferenceChangedEventArgs> OnAdd;
 		public event EventHandler<ReferenceChangedEventArgs> OnRemove;
 
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableEntry;
 
-		/// <summary>
+				/// <summary>
 		/// Gets the number of entries in this table
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 70)]
@@ -31,6 +32,8 @@ namespace ACadSharp.Tables.Collections
 				return this._entries.TryGetValue(name, out T item) ? item : null;
 			}
 		}
+
+		protected abstract string[] _defaultEntries { get; }
 
 		protected readonly Dictionary<string, T> _entries = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
 
@@ -58,16 +61,17 @@ namespace ACadSharp.Tables.Collections
 			}
 		}
 
+		public bool TryGetValue(string key, out T item)
+		{
+			return this._entries.TryGetValue(key, out item);
+		}
+
 		public bool Contains(T item)
 		{
 			return this._entries.Values.Contains(item);
 		}
 
-		public void CopyTo(T[] array, int arrayIndex)
-		{
-			this._entries.Values.CopyTo(array, arrayIndex);
-		}
-
+		/// <inheritdoc/>
 		public IEnumerator<T> GetEnumerator()
 		{
 			return this._entries.Values.GetEnumerator();
@@ -75,6 +79,9 @@ namespace ACadSharp.Tables.Collections
 
 		public CadObject Remove(string key)
 		{
+			if (this._defaultEntries.Contains(key))
+				return null;
+
 			if (this._entries.Remove(key, out T item))
 			{
 				item.Owner = null;
@@ -85,6 +92,7 @@ namespace ACadSharp.Tables.Collections
 			return null;
 		}
 
+		/// <inheritdoc/>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return this._entries.Values.GetEnumerator();

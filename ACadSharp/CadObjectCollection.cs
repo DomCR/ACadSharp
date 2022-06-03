@@ -38,9 +38,16 @@ namespace ACadSharp
 			}
 		}
 
-		public bool Remove(T item)
+		public T Remove(T item)
 		{
-			throw new NotImplementedException();
+			if (!this._entries.Remove(item))
+				return null;
+
+			item.Owner = this.Owner;
+
+			OnRemove?.Invoke(this, new ReferenceChangedEventArgs(item));
+
+			return item;
 		}
 
 		public IEnumerator<T> GetEnumerator()

@@ -72,6 +72,7 @@ namespace ACadSharp.Tests
 			//Assert layer
 			Assert.Equal(line.Layer, layer);
 			Assert.False(0 == layer.Handle);
+			Assert.Equal(layer, doc.Layers[layer.Name]);
 		}
 
 		[Fact]
@@ -82,7 +83,7 @@ namespace ACadSharp.Tests
 
 			doc.Entities.Add(line);
 
-			CadObject l = doc.RemoveCadObject(line.Handle);
+			var l = doc.Entities.Remove(line);
 
 			//Assert removed element
 			Assert.NotNull(l);

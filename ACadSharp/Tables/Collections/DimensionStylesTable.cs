@@ -10,6 +10,8 @@ namespace ACadSharp.Tables.Collections
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableDimstyle;
 
+		protected override string[] _defaultEntries { get { return new string[] { DimensionStyle.DefaultName }; } }
+
 		internal DimensionStylesTable() : base() { }
 
 		internal DimensionStylesTable(CadDocument document) : base(document) { }
