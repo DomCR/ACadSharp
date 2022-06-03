@@ -8,7 +8,7 @@ namespace ACadSharp.IO.DWG
 	/// <summary>
 	/// Util class to read the cad header.
 	/// </summary>
-	internal class DwgHeaderReader : DwgSectionReader
+	internal class DwgHeaderReader : DwgSectionIO
 	{
 		private IDwgStreamReader _mainReader;
 

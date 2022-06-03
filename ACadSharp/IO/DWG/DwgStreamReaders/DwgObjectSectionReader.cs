@@ -32,7 +32,7 @@ namespace ACadSharp.IO.DWG
 	 * name clash. To complicate matters more, files also exist with table records with duplicate
 	 * names. This is incorrect, and the software should rename the record to be unique upon reading.
 	 */
-	internal class DwgObjectSectionReader : DwgSectionReader
+	internal class DwgObjectSectionReader : DwgSectionIO
 	{
 		private long _objectInitialPos = 0;
 

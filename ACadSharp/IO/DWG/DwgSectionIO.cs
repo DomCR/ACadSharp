@@ -1,6 +1,6 @@
 ﻿namespace ACadSharp.IO.DWG
 {
-	internal abstract class DwgSectionReader
+	internal abstract class DwgSectionIO
 	{
 		/// <summary>
 		/// R13-R14 Only
@@ -41,7 +41,7 @@
 
 		protected readonly ACadVersion _version;
 
-		public DwgSectionReader(ACadVersion version)
+		public DwgSectionIO(ACadVersion version)
 		{
 			_version = version;
 
