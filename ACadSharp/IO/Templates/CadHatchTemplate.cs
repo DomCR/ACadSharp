@@ -7,30 +7,17 @@ namespace ACadSharp.IO.Templates
 {
 	internal partial class CadHatchTemplate : CadEntityTemplate
 	{
-		public string HatchPatternName;
+		public string HatchPatternName { get; set; }
 
 		public List<CadBoundaryPathTemplate> PathTempaltes = new List<CadBoundaryPathTemplate>();
 
 		public CadHatchTemplate(Hatch hatch) : base(hatch) { }
 
-		public override bool AddName(int dxfcode, string name)
-		{
-			bool value = base.AddName(dxfcode, name);
-
-			switch (dxfcode)
-			{
-				case 2:
-					this.HatchPatternName = name;
-					value = true;
-					break;
-			}
-
-			return value;
-		}
-
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
+
+			//TODO: Finish the hatch template
 
 			foreach (CadBoundaryPathTemplate t in PathTempaltes)
 			{

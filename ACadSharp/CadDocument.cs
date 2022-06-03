@@ -189,11 +189,22 @@ namespace ACadSharp
 		/// </summary>
 		public CadDocument() : this(true) { }
 
+		/// <summary>
+		/// Gets an object in the document by it's handle
+		/// </summary>
+		/// <param name="handle"></param>
+		/// <returns>the cadObject or null if doesn't exists in the document</returns>
 		public CadObject GetCadObject(ulong handle)
 		{
 			return this.GetCadObject<CadObject>(handle);
 		}
 
+		/// <summary>
+		/// Gets an object in the document by it's handle
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="handle"></param>
+		/// <returns>the cadObject or null if doesn't exists in the document</returns>
 		public T GetCadObject<T>(ulong handle)
 			where T : CadObject
 		{

@@ -52,22 +52,17 @@ The dwg/dxf readers are not yet fully implemented, the NotificationHandler will 
 - POLYLINE_PFACE
 - LWPOLYLINE
 - ACAD_PROXY_OBJECT
-- VIEW
 
 ##### Dxf reader entities not implemented
 
 - LWPOLYLINE
 - POLYLINE_PFACE
 - LWPOLYLINE
-- DIMENSION
 - ACAD_TABLE
-- VIEW
-- SPLINE
 - WIPEOUT
 - LEADER
 - 3DFACE
 - MESH
-- HATCH
 
 ##### Long term 
 

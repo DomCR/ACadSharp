@@ -822,7 +822,7 @@ namespace ACadSharp.Header
 		/// System variable UCSYDIR
 		/// </remarks>
 		[CadSystemVariable("$UCSYDIR", 10, 20, 30)]
-		public XYZ PaperSpaceUcsYAYis
+		public XYZ PaperSpaceUcsYAxis
 		{
 			get { return this._paperSpaceUcs.YAxis; }
 			set

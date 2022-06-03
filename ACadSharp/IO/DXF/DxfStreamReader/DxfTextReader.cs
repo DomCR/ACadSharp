@@ -1,91 +1,66 @@
 ﻿using ACadSharp.Exceptions;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
 
 namespace ACadSharp.IO.DXF
 {
-	internal class DxfTextReader : StreamReader, IDxfStreamReader
+	internal class DxfTextReader : DxfReaderBase, IDxfStreamReader
 	{
-		public bool EndSectionFound { get; private set; } = false;
-		public DxfCode LastDxfCode { get; private set; }
-		public GroupCodeValueType LastGroupCodeValue { get; private set; }
-		public int LastCode { get { return (int)this.LastDxfCode; } }
-		public object LastValue { get; private set; }
-		public int Line { get; private set; }
+		protected override Stream _baseStream { get { return this._stream.BaseStream; } }
 
-		/// <inheritdoc/>
-		public string LastValueAsString { get; set; }
-		public bool LastValueAsBool { get { return this.lineAsBool(this.LastValueAsString); } }
-		public short LastValueAsShort { get { return this.lineAsShort(this.LastValueAsString); } }
-		public int LastValueAsInt { get { return this.lineAsInt(this.LastValueAsString); } }
-		public long LastValueAsLong { get { return this.lineAsLong(this.LastValueAsString); } }
-		public double LastValueAsDouble { get { return this.lineAsDouble(this.LastValueAsString); } }
-		public ulong LastValueAsHandle { get { return this.lineAsHandle(this.LastValueAsString); } }
-		public byte[] LastValueAsBinaryChunk { get { return this.lineAsBinaryChunk(this.LastValueAsString); } }
+		private StreamReader _stream;
 
-
-		public DxfTextReader(Stream stream) : base(stream)
+		public DxfTextReader(Stream stream)
 		{
-			this.start();
-		}
-		public DxfTextReader(Stream stream, Encoding encoding) : base(stream, encoding)
-		{
+			this._stream = new StreamReader(stream);
 			this.start();
 		}
 
-		public void Find(string dxfEntry)
+		public DxfTextReader(Stream stream, Encoding encoding)
 		{
+			this._stream = new StreamReader(stream, encoding);
 			this.start();
+		}
 
-			do
+		public override void ReadNext()
+		{
+			base.ReadNext();
+			this.Position++;
+		}
+
+		protected override void start()
+		{
+			base.start();
+
+			this._stream.DiscardBufferedData();
+		}
+
+		protected override string readStringLine()
+		{
+			this.Position++;
+			return this._stream.ReadLine();
+		}
+
+		protected override DxfCode readCode()
+		{
+			string line = this.readStringLine();
+
+			if (int.TryParse(line, NumberStyles.Integer, CultureInfo.InvariantCulture, out int value))
 			{
-				this.ReadNext();
+				return (DxfCode)value;
 			}
-			while (this.LastValueAsString != dxfEntry && (this.LastValueAsString != DxfFileToken.EndOfFile));
 
-			//Reset the end section flag
-			this.EndSectionFound = false;
+			this.Position++;
+
+			return DxfCode.Invalid;
 		}
 
-		public Tuple<DxfCode, object> ReadNext()
+		protected override bool lineAsBool()
 		{
-			this.LastDxfCode = this.readCode();
-			this.LastValueAsString = this.ReadLine();
-			this.LastGroupCodeValue = GroupCodeValue.TransformValue(this.LastCode);
-			this.LastValue = this.transformValue(this.LastGroupCodeValue, this.LastValueAsString);
+			var str = this.readStringLine();
 
-			//Check for the end of the section
-			if (this.LastValueAsString == DxfFileToken.EndSection)
-				this.EndSectionFound = true;
-
-			Tuple<DxfCode, object> pair = new Tuple<DxfCode, object>(this.LastDxfCode, this.LastValue);
-
-			return pair;
-		}
-
-		public override string ReadLine()
-		{
-			this.Line++;
-			return base.ReadLine();
-		}
-
-		private void start()
-		{
-			this.LastDxfCode = DxfCode.Invalid;
-			this.LastValue = string.Empty;
-			this.EndSectionFound = false;
-
-			this.BaseStream.Position = 0;
-			this.DiscardBufferedData();
-
-			this.Line = 0;
-		}
-		private bool lineAsBool(string str)
-		{
 			if (byte.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out byte result))
 			{
 				return result > 0;
@@ -93,8 +68,11 @@ namespace ACadSharp.IO.DXF
 
 			return false;
 		}
-		private double lineAsDouble(string str)
+
+		protected override double lineAsDouble()
 		{
+			var str = this.readStringLine();
+
 			if (double.TryParse(str, NumberStyles.Float, CultureInfo.InvariantCulture, out double result))
 			{
 				return result;
@@ -102,8 +80,11 @@ namespace ACadSharp.IO.DXF
 
 			return 0.0;
 		}
-		private short lineAsShort(string str)
+
+		protected override short lineAsShort()
 		{
+			var str = this.readStringLine();
+
 			if (short.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out short result))
 			{
 				return result;
@@ -111,8 +92,11 @@ namespace ACadSharp.IO.DXF
 
 			return 0;
 		}
-		private int lineAsInt(string str)
+
+		protected override int lineAsInt()
 		{
+			var str = this.readStringLine();
+
 			if (int.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out int result))
 			{
 				return result;
@@ -120,8 +104,11 @@ namespace ACadSharp.IO.DXF
 
 			return 0;
 		}
-		private long lineAsLong(string str)
+
+		protected override long lineAsLong()
 		{
+			var str = this.readStringLine();
+
 			if (long.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out long result))
 			{
 				return result;
@@ -129,8 +116,11 @@ namespace ACadSharp.IO.DXF
 
 			return 0;
 		}
-		private ulong lineAsHandle(string str)
+
+		protected override ulong lineAsHandle()
 		{
+			var str = this.readStringLine();
+
 			if (ulong.TryParse(str, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong result))
 			{
 				return result;
@@ -138,8 +128,11 @@ namespace ACadSharp.IO.DXF
 
 			return 0;
 		}
-		private byte[] lineAsBinaryChunk(string str)
+
+		protected override byte[] lineAsBinaryChunk()
 		{
+			var str = this.readStringLine();
+
 			byte[] bytes = new byte[str.Length];
 
 			for (int i = 0; i < str.Length; i++)
@@ -158,53 +151,6 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return bytes;
-		}
-
-		private DxfCode readCode()
-		{
-			string line = this.ReadLine();
-
-			if (int.TryParse(line, NumberStyles.Integer, CultureInfo.InvariantCulture, out int value))
-			{
-				return (DxfCode)value;
-			}
-
-			return DxfCode.Invalid;
-		}
-
-		private object transformValue(GroupCodeValueType code, string strVal)
-		{
-			switch (code)
-			{
-				case GroupCodeValueType.String:
-				case GroupCodeValueType.Comment:
-				case GroupCodeValueType.ExtendedDataString:
-					return strVal;
-				case GroupCodeValueType.Point3D:
-				case GroupCodeValueType.Double:
-				case GroupCodeValueType.ExtendedDataDouble:
-					return this.lineAsDouble(strVal);
-				case GroupCodeValueType.Int16:
-				case GroupCodeValueType.ExtendedDataInt16:
-					return this.lineAsShort(strVal);
-				case GroupCodeValueType.Int32:
-				case GroupCodeValueType.ExtendedDataInt32:
-					return this.lineAsInt(strVal);
-				case GroupCodeValueType.Int64:
-					return this.lineAsLong(strVal);
-				case GroupCodeValueType.Handle:
-				case GroupCodeValueType.ObjectId:
-				case GroupCodeValueType.ExtendedDataHandle:
-					return this.lineAsHandle(strVal);
-				case GroupCodeValueType.Bool:
-					return this.lineAsBool(strVal);
-				case GroupCodeValueType.Chunk:
-				case GroupCodeValueType.ExtendedDataChunk:
-					return this.lineAsBinaryChunk(strVal);
-				case GroupCodeValueType.None:
-				default:
-					throw new DxfException((int)code, this.Line);
-			}
 		}
 	}
 }
