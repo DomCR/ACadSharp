@@ -1,4 +1,4 @@
-## ACadSharp ![Build&Test](https://github.com/DomCr/ACadSharp/actions/workflows/build_n_test.yml/badge.svg) ![License](https://img.shields.io/github/license/DomCr/ACadSharp) ![nuget](https://img.shields.io/nuget/v/Acadsharp)
+﻿## ACadSharp ![Build&Test](https://github.com/DomCr/ACadSharp/actions/workflows/build_n_test.yml/badge.svg) ![License](https://img.shields.io/github/license/DomCr/ACadSharp) ![nuget](https://img.shields.io/nuget/v/Acadsharp)
 
 C# library to read/write cad files like dxf/dwg.
 
@@ -66,7 +66,7 @@ The dwg/dxf readers are not yet fully implemented, the NotificationHandler will 
 
 ##### Long term 
 
-- DwgWriter
+- DwgWriter - 🚧 [In development](https://github.com/DomCR/ACadSharp/tree/DwgWriter)
 
 Contributing
 ------------
