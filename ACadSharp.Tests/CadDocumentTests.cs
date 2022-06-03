@@ -67,11 +67,12 @@ namespace ACadSharp.Tests
 
 			doc.Entities.Add(line);
 
-			CadObject l = doc.GetCadObject(line.Handle);
+			Line l = doc.GetCadObject<Line>(line.Handle);
 
 			//Assert layer
-			Assert.Equal(line.Layer, layer);
+			Assert.Equal(l.Layer, layer);
 			Assert.False(0 == layer.Handle);
+			Assert.NotNull(doc.Layers[layer.Name]);
 			Assert.Equal(layer, doc.Layers[layer.Name]);
 		}
 
@@ -88,8 +89,12 @@ namespace ACadSharp.Tests
 			//Assert removed element
 			Assert.NotNull(l);
 			Assert.Equal(line, l);
-			Assert.False(0 == l.Handle);
+			Assert.True(0 == l.Handle);
 			Assert.Equal(line.Handle, l.Handle);
+
+			//The layer still in the document
+			Assert.False(0 == l.Layer.Handle);
+			Assert.NotNull(l.Layer.Document);
 		}
 
 		[Fact]

@@ -272,6 +272,32 @@ namespace ACadSharp
 			}
 		}
 
+		private void removeCadObject(CadObject cadObject)
+		{
+			if (!this.TryGetCadObject(cadObject.Handle, out CadObject obj) || !this._cadObjects.Remove(cadObject.Handle))
+			{
+				return;
+			}
+
+			cadObject.Handle = 0;
+			cadObject.Document = null;
+			cadObject.OnReferenceChange -= this.onReferenceChanged;
+
+			if (cadObject.XDictionary != null)
+				this.UnregisterCollection(cadObject.XDictionary);
+
+			switch (cadObject)
+			{
+				case BlockRecord record:
+					this.UnregisterCollection(record.Entities);
+					this.removeCadObject(record.BlockEnd);
+					this.removeCadObject(record.BlockEntity);
+					break;
+			}
+
+			//throw new NotImplementedException();
+		}
+
 		private void onReferenceChanged(object sender, ReferenceChangedEventArgs e)
 		{
 			//TODO: Should remove the old one??
@@ -291,21 +317,16 @@ namespace ACadSharp
 			}
 		}
 
-		private void onRemoveCadObject(object sender, ReferenceChangedEventArgs e)
+		private void onRemove(object sender, ReferenceChangedEventArgs e)
 		{
-			if (!this.TryGetCadObject(e.Item.Handle, out CadObject cadObject) || !this._cadObjects.Remove(e.Item.Handle))
+			if (e.Item is CadDictionary dictionary)
 			{
-				return;
+				this.UnregisterCollection(dictionary);
 			}
-
-			cadObject.Handle = 0;
-			cadObject.Document = null;
-			cadObject.OnReferenceChange -= this.onReferenceChanged;
-
-			if (cadObject.XDictionary != null)
-				this.UnregisterCollection(cadObject.XDictionary);
-
-			throw new NotImplementedException();
+			else
+			{
+				this.removeCadObject(e.Item);
+			}
 		}
 
 		internal void RegisterCollection<T>(IObservableCollection<T> collection, bool addElements = true)
@@ -352,6 +373,7 @@ namespace ACadSharp
 			}
 
 			collection.OnAdd += this.onAdd;
+			collection.OnRemove += this.onRemove;
 
 			if (collection is CadObject cadObject)
 			{
@@ -377,6 +399,9 @@ namespace ACadSharp
 		internal void UnregisterCollection<T>(IObservableCollection<T> collection, bool addElements = true)
 			where T : CadObject
 		{
+			collection.OnAdd -= this.onAdd;
+			collection.OnRemove -= this.onRemove;
+
 			throw new NotImplementedException();
 		}
 	}
