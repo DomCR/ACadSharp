@@ -43,7 +43,7 @@ namespace ACadSharp
 			if (!this._entries.Remove(item))
 				return null;
 
-			item.Owner = this.Owner;
+			item.Owner = null;
 
 			OnRemove?.Invoke(this, new ReferenceChangedEventArgs(item));
 

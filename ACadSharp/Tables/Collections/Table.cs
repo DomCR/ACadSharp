@@ -77,7 +77,7 @@ namespace ACadSharp.Tables.Collections
 			return this._entries.Values.GetEnumerator();
 		}
 
-		public CadObject Remove(string key)
+		public T Remove(string key)
 		{
 			if (this._defaultEntries.Contains(key))
 				return null;

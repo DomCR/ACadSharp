@@ -114,8 +114,6 @@ namespace ACadSharp
 		{
 			if (copy.XDictionary != null)
 				copy.XDictionary = CreateCopy(this.XDictionary);
-
-			throw new NotImplementedException();
 		}
 	}
 }

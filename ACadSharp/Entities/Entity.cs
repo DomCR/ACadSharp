@@ -77,5 +77,13 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Entity() : base() { }
+
+		protected override void createCopy(CadObject copy)
+		{
+			base.createCopy(copy);
+
+			Entity e = copy as Entity;
+			e.Layer = CadObject.CreateCopy(this.Layer);
+		}
 	}
 }
