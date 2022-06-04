@@ -84,5 +84,14 @@ namespace ACadSharp.Tables
 			if (string.IsNullOrEmpty(name))
 				throw new ArgumentNullException(nameof(name), "Layer must have a name.");
 		}
+
+		protected override void createCopy(CadObject copy)
+		{
+			base.createCopy(copy);
+
+			Layer l = copy as Layer;
+
+			
+		}
 	}
 }

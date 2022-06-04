@@ -11,9 +11,9 @@ namespace ACadSharp.Tests
 		[Fact]
 		public void CreateCopyTest()
 		{
-			Line line = new Line();
+			Circle c = new Circle();
 
-			var copy = CadObject.CreateCopy(line);
+			var copy = c.Clone();
 
 		}
 	}

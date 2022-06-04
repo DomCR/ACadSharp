@@ -30,7 +30,7 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableAppId;
 
-		public AppId() : this(DefaultName) { }
+		internal AppId() : base() { }
 
 		public AppId(string name) : base(name)
 		{

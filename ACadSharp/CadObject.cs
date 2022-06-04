@@ -76,29 +76,6 @@ namespace ACadSharp
 		/// </summary>
 		public CadObject() { }
 
-		/// <summary>
-		/// Creates a copy of an especific CadObject
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="cadObject"></param>
-		/// <remarks>
-		/// The copy will be unlinked from any document and owner in case these are not null
-		/// </remarks>
-		/// <returns></returns>
-		/// <exception cref="NotImplementedException"></exception>
-		public static T CreateCopy<T>(T cadObject)
-			where T : CadObject, new()
-		{
-			T value = new T();
-
-			cadObject.createCopy(value);
-
-			//TODO: use dxfmap???
-
-			throw new NotImplementedException();
-			return value;
-		}
-
 		/// <inheritdoc/>
 		public override string ToString()
 		{
@@ -112,8 +89,7 @@ namespace ACadSharp
 
 		protected virtual void createCopy(CadObject copy)
 		{
-			if (copy.XDictionary != null)
-				copy.XDictionary = CreateCopy(this.XDictionary);
+			//TODO: copy ExtendedData, Reactors, XDictionary needed ??
 		}
 	}
 }
