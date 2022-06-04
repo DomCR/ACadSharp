@@ -83,7 +83,7 @@ namespace ACadSharp.Entities
 			base.createCopy(copy);
 
 			Entity e = copy as Entity;
-			e.Layer = CadObject.CreateCopy(this.Layer);
+			//e.Layer = CadObject.CreateCopy(this.Layer);
 		}
 	}
 }
