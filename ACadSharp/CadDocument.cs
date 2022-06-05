@@ -258,7 +258,18 @@ namespace ACadSharp
 				}
 				else
 				{
+					//Add the layer if it does not exist
 					this.Layers.Add(e.Layer);
+				}
+
+				if (this.LineTypes.TryGetValue(e.LineType.Name, out LineType lineType))
+				{
+					e.LineType = lineType;
+				}
+				else
+				{
+					//Add the LineType if it does not exist
+					this.LineTypes.Add(e.LineType);
 				}
 			}
 
