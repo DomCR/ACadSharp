@@ -36,11 +36,18 @@ namespace ACadSharp.IO.DWG
 
 		public void Write()
 		{
-			//0xCF,0x7B,0x1F,0x23,0xFD,0xDE,0x38,0xA9,0x5F,0x7C,0x68,0xB8,0x4E,0x6D,0x33,0x5F
-			_swbegin.WriteBytes(DwgSectionDefinition.StartSentinels[DwgSectionDefinition.Header]);
 
 			this._stream.Write(this._msbegin.GetBuffer(), 0, (int)_msbegin.Length);
 			this._stream.Write(this._msmain.GetBuffer(), 0, (int)_msmain.Length);
+		}
+
+		public void writeSectionBegin()
+		{
+			//0xCF,0x7B,0x1F,0x23,0xFD,0xDE,0x38,0xA9,0x5F,0x7C,0x68,0xB8,0x4E,0x6D,0x33,0x5F
+			_swbegin.WriteBytes(DwgSectionDefinition.StartSentinels[DwgSectionDefinition.Header]);
+
+			//RL : Size of the section.
+			_swbegin.WriteRawLong(this._msmain.Length);
 		}
 	}
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CSUtilities.Converters;
+using CSUtilities.IO;
+using System;
 using System.IO;
 using System.Text;
 
@@ -9,21 +11,22 @@ namespace ACadSharp.IO.DWG
 		Stream Stream { get; }
 
 		void WriteBytes(byte[] bytes);
+
+		public void WriteInt(int value);
+
+		public void WriteRawLong(long value);
 	}
 
-	internal abstract class DwgStreamWriter : IDwgStreamWriter
+	internal abstract class DwgStreamWriter : StreamIO, IDwgStreamWriter
 	{
-		public Stream Stream { get; }
-
 		public Encoding Encoding { get; }
 
 		public int BitShift { get; private set; } = 0;
 
 		private byte _lastByte;
 
-		public DwgStreamWriter(Stream stream, Encoding encoding)
+		public DwgStreamWriter(Stream stream, Encoding encoding) : base(stream)
 		{
-			this.Stream = stream;
 			this.Encoding = encoding;
 		}
 
@@ -64,6 +67,16 @@ namespace ACadSharp.IO.DWG
 			}
 
 			return null;
+		}
+
+		public void WriteInt(int value)
+		{
+			this.Write(value, LittleEndianConverter.Instance);
+		}
+
+		public void WriteRawLong(long value)
+		{
+			this.Write(value, LittleEndianConverter.Instance);
 		}
 
 		public void WriteBytes(byte[] arr)
