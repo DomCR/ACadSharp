@@ -56,7 +56,7 @@ namespace ACadSharp.Header
 			}
 		}
 
-		public ACadVersion Version { get; set; } = ACadVersion.AC1032;
+		public ACadVersion Version { get; set; } = ACadVersion.AC1018;
 
 		/// <summary>
 		/// Maintenance version number(should be ignored)

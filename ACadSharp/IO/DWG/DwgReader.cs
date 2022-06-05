@@ -1287,8 +1287,6 @@ namespace ACadSharp.IO.DWG
 
 		private Stream getSectionBuffer18(DwgFileHeader18 fileheader, string sectionName)
 		{
-			Stream stream = null;
-
 			if (!fileheader.Descriptors.TryGetValue(sectionName, out DwgSectionDescriptor descriptor))
 				return null;
 
@@ -1330,9 +1328,7 @@ namespace ACadSharp.IO.DWG
 
 			//Reset the stream
 			memoryStream.Position = 0L;
-			stream = memoryStream;
-
-			return stream;
+			return memoryStream;
 		}
 
 		private void decryptHeaderDataSection(DwgLocalSectionMap section, IDwgStreamReader sreader)
