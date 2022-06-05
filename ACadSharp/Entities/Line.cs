@@ -49,5 +49,17 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Line() : base() { }
+
+		protected override void createCopy(CadObject copy)
+		{
+			base.createCopy(copy);
+
+			Line c = copy as Line;
+
+			c.Normal = this.Normal;
+			c.Thickness = this.Thickness;
+			c.StartPoint = this.StartPoint;
+			c.EndPoint = this.EndPoint;
+		}
 	}
 }

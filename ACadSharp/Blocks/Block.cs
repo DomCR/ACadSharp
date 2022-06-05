@@ -59,6 +59,8 @@ namespace ACadSharp.Blocks
 		[DxfCodeValue(4)]
 		public string Comments { get; set; }
 
+		public Block() : base() { }
+
 		public Block(BlockRecord record) : base()
 		{
 			this.Owner = record;

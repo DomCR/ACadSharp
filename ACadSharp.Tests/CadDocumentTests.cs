@@ -77,6 +77,23 @@ namespace ACadSharp.Tests
 		}
 
 		[Fact]
+		public void DetachedEntityClone()
+		{
+			Line line = new Line();
+			CadDocument doc = new CadDocument();
+
+			doc.Entities.Add(line);
+
+			Line clone = (Line)doc.GetCadObject<Line>(line.Handle).Clone();
+
+			//Assert clone
+			Assert.NotEqual(clone, line);
+			Assert.True(0 == clone.Handle);
+			Assert.Null(clone.Document);
+			Assert.Null(clone.Owner);
+		}
+
+		[Fact]
 		public void RemoveCadObject()
 		{
 			Line line = new Line();
@@ -103,9 +120,9 @@ namespace ACadSharp.Tests
 			Line line = new Line();
 			CadDocument doc = new CadDocument();
 
-			doc.BlockRecords[BlockRecord.ModelSpaceName].Entities.Add(line);
+			doc.Entities.Add(line);
 
-			Assert.Throws<ArgumentException>(() => doc.BlockRecords[BlockRecord.ModelSpaceName].Entities.Add(line));
+			Assert.Throws<ArgumentException>(() => doc.Entities.Add(line));
 		}
 	}
 }

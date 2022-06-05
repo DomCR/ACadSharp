@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Tests.Common;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,12 +10,13 @@ namespace ACadSharp.Tests
 	public class CadObjectTests
 	{
 		[Fact]
-		public void CreateCopyTest()
+		public void CloneTest()
 		{
 			Circle c = new Circle();
 
-			var copy = c.Clone();
+			Circle copy = c.Clone() as Circle;
 
+			CadObjectTestUtils.AssertEntityClone(c, copy);
 		}
 	}
 }

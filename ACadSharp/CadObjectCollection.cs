@@ -10,7 +10,11 @@ namespace ACadSharp
 		public event EventHandler<ReferenceChangedEventArgs> OnAdd;
 		public event EventHandler<ReferenceChangedEventArgs> OnRemove;
 
+		public T this[int index] { get { return this._entries[index]; } }
+
 		public CadObject Owner { get; }
+
+		public int Count { get { return this._entries.Count; } }
 
 		private readonly List<T> _entries = new List<T>();
 
@@ -21,6 +25,9 @@ namespace ACadSharp
 
 		public void Add(T item)
 		{
+			if (item.Owner != null)
+				throw new ArgumentException($"Item {item.GetType().FullName} already has an owner", nameof(item));
+
 			if (this._entries.Contains(item))
 				throw new ArgumentException($"Item {item.GetType().FullName} is already in the collection", nameof(item));
 
