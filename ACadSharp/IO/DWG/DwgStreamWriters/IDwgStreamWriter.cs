@@ -6,6 +6,9 @@ using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
+	/// <summary>
+	/// Writer equivalent to reader <see cref="IDwgStreamReader"/>
+	/// </summary>
 	internal interface IDwgStreamWriter
 	{
 		Stream Stream { get; }
@@ -15,8 +18,15 @@ namespace ACadSharp.IO.DWG
 		public void WriteInt(int value);
 
 		public void WriteRawLong(long value);
+
+		void WriteBitDouble(double value);
+
+		void WriteVariableText(string value);
 	}
 
+	/// <summary>
+	/// Writer equivalent to reader <see cref="DwgStreamReader"/>
+	/// </summary>
 	internal abstract class DwgStreamWriter : StreamIO, IDwgStreamWriter
 	{
 		public Encoding Encoding { get; }
@@ -76,7 +86,7 @@ namespace ACadSharp.IO.DWG
 
 		public void WriteRawLong(long value)
 		{
-			this.Write(value, LittleEndianConverter.Instance);
+			this.Write((int)value, LittleEndianConverter.Instance);
 		}
 
 		public void WriteBytes(byte[] arr)
@@ -89,6 +99,7 @@ namespace ACadSharp.IO.DWG
 				}
 				return;
 			}
+
 			int num = 8 - this.BitShift;
 			foreach (byte b in arr)
 			{
@@ -96,12 +107,112 @@ namespace ACadSharp.IO.DWG
 				this._lastByte = (byte)(b << num);
 			}
 		}
+
+		public void WriteBitShort(short value)
+		{
+			if (value == 0)
+			{
+				this.Write2Bits(2);
+			}
+			else if (value > 0 && value < 256)
+			{
+				this.Write2Bits(1);
+				this.WriteByte((byte)value);
+			}
+			else if (value == 256)
+			{
+				this.Write2Bits(3);
+			}
+			else
+			{
+				this.Write2Bits(0);
+				this.WriteByte((byte)value);
+				this.WriteByte((byte)(value >> 8));
+			}
+		}
+
+		public void WriteBitDouble(double value)
+		{
+			if (value == 0.0)
+			{
+				this.Write2Bits(2);
+				return;
+			}
+			
+			if (value == 1.0)
+			{
+				this.Write2Bits(1);
+				return;
+			}
+
+			this.Write2Bits(0);
+			this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
+		}
+
+		public virtual void WriteVariableText(string value)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Write2Bits(byte value)
+		{
+			if (this.BitShift < 6)
+			{
+				this._lastByte |= (byte)(value << 6 - this.BitShift);
+				this.BitShift += 2;
+			}
+			else if (this.BitShift == 6)
+			{
+				this._lastByte |= value;
+				this.Stream.WriteByte(this._lastByte);
+				this.resetShift();
+			}
+			else
+			{
+				this._lastByte |= (byte)(value >> 1);
+				this.Stream.WriteByte(this._lastByte);
+				this._lastByte = (byte)(value << 7);
+				this.BitShift = 1;
+			}
+		}
+
+		public void WriteByte(byte value)
+		{
+			if (this.BitShift == 0)
+			{
+				this.Stream.WriteByte(value);
+				return;
+			}
+
+			int shift = 8 - this.BitShift;
+			this.Stream.WriteByte((byte)(this._lastByte | (value >> this.BitShift)));
+			this._lastByte = (byte)(value << shift);
+		}
+
+		private void resetShift()
+		{
+			this.BitShift = 0;
+			this._lastByte = 0;
+		}
 	}
 
 	internal class DwgStreamWriterAC18 : DwgStreamWriter
 	{
 		public DwgStreamWriterAC18(Stream stream, Encoding encoding) : base(stream, encoding)
 		{
+		}
+
+		public override void WriteVariableText(string value)
+		{
+			if (string.IsNullOrEmpty(value))
+			{
+				base.WriteBitShort(0);
+				return;
+			}
+
+			byte[] bytes = base.Encoding.GetBytes(value);
+			base.WriteBitShort((short)bytes.Length);
+			base.WriteBytes(bytes);
 		}
 	}
 }

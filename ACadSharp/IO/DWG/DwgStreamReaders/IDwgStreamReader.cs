@@ -60,7 +60,7 @@ namespace ACadSharp.IO.DWG
 		/// <summary>
 		/// Shift to perform after reading a single bit.
 		/// </summary>
-		int BitShift { get; set; }
+		int BitShift { get; }
 
 		/// <summary>
 		/// Current stream position.

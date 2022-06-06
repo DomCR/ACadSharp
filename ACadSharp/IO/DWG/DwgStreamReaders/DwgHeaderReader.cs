@@ -72,15 +72,15 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//BD : Unknown, default value 412148564080.0
-			double unknownbd = sreader.ReadBitDouble();
+			double unknownbd1 = sreader.ReadBitDouble();
 			//BD: Unknown, default value 1.0
-			unknownbd = sreader.ReadBitDouble();
+			double unknownbd2 = sreader.ReadBitDouble();
 			//BD: Unknown, default value 1.0
-			unknownbd = sreader.ReadBitDouble();
+			double unknownbd3 = sreader.ReadBitDouble();
 			//BD: Unknown, default value 1.0
-			unknownbd = sreader.ReadBitDouble();
+			double unknownbd4 = sreader.ReadBitDouble();
 			//TV: Unknown text string, default "m"
-			var unknowntv = sreader.ReadVariableText();
+			string unknowntv = sreader.ReadVariableText();
 			//TV: Unknown text string, default ""
 			unknowntv = sreader.ReadVariableText();
 			//TV: Unknown text string, default ""

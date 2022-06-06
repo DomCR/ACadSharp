@@ -14,7 +14,7 @@ namespace ACadSharp.IO.DWG
 		public Encoding Encoding { get; set; } = Encoding.Default;
 
 		/// <inheritdoc/>
-		public int BitShift { get; set; }
+		public int BitShift { get; private set; }
 
 		/// <inheritdoc/>
 		public override long Position

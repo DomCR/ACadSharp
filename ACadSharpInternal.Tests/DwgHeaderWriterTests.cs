@@ -22,7 +22,7 @@ namespace ACadSharpInternal.Tests
 
 			DwgHeaderReader reader = new DwgHeaderReader(ACadVersion.AC1018);
 			IDwgStreamReader sreader = DwgStreamReader.GetStreamHandler(ACadVersion.AC1018, stream, true);
-			reader.Read(sreader, 0, out _);
+			var header = reader.Read(sreader, 0, out _);
 		}
 	}
 }
