@@ -1,11 +1,9 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using CSUtilities.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ACadSharp.Tables.Collections
 {
@@ -19,7 +17,7 @@ namespace ACadSharp.Tables.Collections
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableEntry;
 
-				/// <summary>
+		/// <summary>
 		/// Gets the number of entries in this table
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 70)]
@@ -45,6 +43,11 @@ namespace ACadSharp.Tables.Collections
 			document.RegisterCollection(this);
 		}
 
+		/// <summary>
+		/// Add a <see cref="TableEntry"/> to the collection, this method triggers <see cref="OnAdd"/>
+		/// </summary>
+		/// <param name="item"></param>
+		/// <exception cref="ArgumentException"></exception>
 		public virtual void Add(T item)
 		{
 			if (string.IsNullOrEmpty(item.Name))
@@ -53,6 +56,10 @@ namespace ACadSharp.Tables.Collections
 			this.add(item.Name, item);
 		}
 
+		/// <summary>
+		/// Add multiple <see cref="TableEntry"/> to the collection, this method triggers <see cref="OnAdd"/>
+		/// </summary>
+		/// <param name="items"></param>
 		public void AddRange(IEnumerable<T> items)
 		{
 			foreach (var item in items)
@@ -66,9 +73,9 @@ namespace ACadSharp.Tables.Collections
 			return this._entries.TryGetValue(key, out item);
 		}
 
-		public bool Contains(T item)
+		public bool Contains(string key)
 		{
-			return this._entries.Values.Contains(item);
+			return this._entries.ContainsKey(key);
 		}
 
 		/// <inheritdoc/>
@@ -77,6 +84,11 @@ namespace ACadSharp.Tables.Collections
 			return this._entries.Values.GetEnumerator();
 		}
 
+		/// <summary>
+		/// Removes a <see cref="TableEntry"/> from the collection, this method triggers <see cref="OnRemove"/>
+		/// </summary>
+		/// <param name="key">key in the table</param>
+		/// <returns>The removed <see cref="TableEntry"/></returns>
 		public T Remove(string key)
 		{
 			if (this._defaultEntries.Contains(key))
