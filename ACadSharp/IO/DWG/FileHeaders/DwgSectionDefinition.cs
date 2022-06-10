@@ -32,6 +32,17 @@ namespace ACadSharp.IO.DWG
 			},
 		};
 
+		public static Dictionary<string, byte[]> EndSentinels = new Dictionary<string, byte[]>()
+		{
+			{
+				Header,
+				new byte[16]
+				{
+					0x30,0x84,0xE0,0xDC,0x02,0x21,0xC7,0x56,0xA0,0x83,0x97,0x47,0xB1,0x92,0xCC,0xA0
+				}
+			}
+		};
+
 		public static int GetSectionLocatorByName(string name)
 		{
 			switch (name)

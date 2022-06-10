@@ -26,11 +26,11 @@ namespace ACadSharp.Tables
 
 		//TODO: finish UCS documentation
 
-		public XYZ PaperSpaceInsertionBase { get; set; }
-		public XYZ PaperSpaceExtMin { get; set; }
-		public XYZ PaperSpaceExtMax { get; set; }
-		public XY PaperSpaceLimitsMin { get; set; }
-		public XY PaperSpaceLimitsMax { get; set; }
+		public XYZ InsertionBase { get; set; }
+		public XYZ ExtMin { get; set; }
+		public XYZ ExtMax { get; set; }
+		public XY LimitsMin { get; set; }
+		public XY LimitsMax { get; set; }
 
 		/// <summary>
 		/// Elevation
