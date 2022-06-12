@@ -25,6 +25,8 @@ namespace ACadSharp.Tests.IO.DXF
 				wr.Write();
 			}
 
+			this._output.WriteLine("Writer successful");
+
 			using (var re = new DxfReader(path, this.onNotification))
 			{
 				CadDocument readed = re.Read();
@@ -33,7 +35,7 @@ namespace ACadSharp.Tests.IO.DXF
 			this.checkDocumentInAutocad(Path.GetFullPath(path));
 		}
 
-		[Fact(Skip = "Not implemented")]
+		[Fact]
 		public void WriteBinaryTest()
 		{
 			CadDocument doc = new CadDocument();
@@ -43,6 +45,8 @@ namespace ACadSharp.Tests.IO.DXF
 			{
 				wr.Write();
 			}
+
+			this._output.WriteLine("Writer successful");
 
 			using (var re = new DxfReader(path, this.onNotification))
 			{
