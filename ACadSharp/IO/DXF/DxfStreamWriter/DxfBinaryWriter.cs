@@ -73,7 +73,7 @@ namespace ACadSharp.IO.DXF
 					this._stream.Write('\0');
 					return;
 				case GroupCodeValueType.Bool:
-					this._stream.Write(Convert.ToInt16(value));
+					this._stream.Write(Convert.ToByte(value));
 					return;
 				case GroupCodeValueType.Chunk:
 				case GroupCodeValueType.ExtendedDataChunk:
