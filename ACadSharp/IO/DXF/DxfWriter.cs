@@ -38,7 +38,7 @@ namespace ACadSharp.IO.DXF
 
 			if (binary)
 			{
-				throw new NotImplementedException();
+				this._writer = new DxfBinaryWriter(new BinaryWriter(stream, encoding));
 			}
 			else
 			{
