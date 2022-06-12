@@ -20,13 +20,15 @@ namespace ACadSharp.Tables
 	[DxfSubClass(DxfSubclassMarker.VPort)]
 	public class VPort : TableEntry
 	{
+		public const string DefaultName = "*Active";
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.VPORT;
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableVport;
 
-		public static VPort Default { get { return new VPort("*Active"); } }
+		public static VPort Default { get { return new VPort(DefaultName); } }
 
 		/// <summary>
 		/// Lower-left corner of viewport

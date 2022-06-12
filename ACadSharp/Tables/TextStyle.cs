@@ -17,6 +17,8 @@ namespace ACadSharp.Tables
 	[DxfSubClass(DxfSubclassMarker.TextStyle)]
 	public class TextStyle : TableEntry
 	{
+		public const string DefaultName = "Standard";
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.STYLE;
 
@@ -26,7 +28,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Default text style.
 		/// </summary>
-		public static TextStyle Default { get { return new TextStyle("Standard"); } }
+		public static TextStyle Default { get { return new TextStyle(DefaultName); } }
 
 		/// <summary>
 		/// Style state flags.

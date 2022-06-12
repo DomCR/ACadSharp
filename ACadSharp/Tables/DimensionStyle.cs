@@ -25,7 +25,9 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableDimstyle;
 
-		public static DimensionStyle Default { get { return new DimensionStyle("Standard"); } }
+		public const string DefaultName = "Standard";
+
+		public static DimensionStyle Default { get { return new DimensionStyle(DefaultName); } }
 
 		/// <summary>
 		/// DIMPOST

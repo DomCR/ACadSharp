@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -9,7 +10,7 @@ namespace ACadSharp.Entities
 	/// The standard class for a basic CAD entity.
 	/// </summary>
 	[DxfSubClass(DxfSubclassMarker.Entity)]
-	public abstract class Entity : CadObject
+	public abstract class Entity : CadObject, ICloneable
 	{
 		/// <summary>
 		/// Specifies the layer for an object.
@@ -65,7 +66,7 @@ namespace ACadSharp.Entities
 		/// The special name BYBLOCK indicates a floating linetype (optional)
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 6)]
-		public LineType LineType { get; set; }
+		public LineType LineType { get; set; } = LineType.ByLayer;
 
 		/// <summary>
 		/// Material object (present if not BYLAYER)
@@ -77,5 +78,31 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Entity() : base() { }
+
+		/// <inheritdoc/>
+		public object Clone()
+		{
+			var clone = Activator.CreateInstance(this.GetType());
+
+			this.createCopy(clone as CadObject);
+
+			return clone;
+		}
+
+		protected override void createCopy(CadObject copy)
+		{
+			base.createCopy(copy);
+
+			Entity e = copy as Entity;
+
+			e.Layer = (Layer)this.Layer.Clone();
+			e.Color = this.Color;
+			e.Lineweight = this.Lineweight;
+			e.LinetypeScale = this.LinetypeScale;
+			e.IsInvisible = this.IsInvisible;
+			e.Transparency = this.Transparency;
+			e.LineType = (LineType)this.LineType.Clone();
+			//e.Material = (Material)(this.Material?.Clone());
+		}
 	}
 }

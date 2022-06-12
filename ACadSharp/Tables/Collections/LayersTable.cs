@@ -1,10 +1,4 @@
-﻿using ACadSharp.IO.Templates;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ACadSharp.Tables.Collections
+﻿namespace ACadSharp.Tables.Collections
 {
 	public class LayersTable : Table<Layer>
 	{
@@ -13,6 +7,8 @@ namespace ACadSharp.Tables.Collections
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableLayer;
+
+		protected override string[] _defaultEntries { get { return new string[] { Layer.DefaultName }; } }
 
 		internal LayersTable() { }
 

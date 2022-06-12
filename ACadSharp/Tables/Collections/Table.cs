@@ -1,10 +1,9 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
+using CSUtilities.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ACadSharp.Tables.Collections
 {
@@ -15,6 +14,7 @@ namespace ACadSharp.Tables.Collections
 		public event EventHandler<ReferenceChangedEventArgs> OnAdd;
 		public event EventHandler<ReferenceChangedEventArgs> OnRemove;
 
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableEntry;
 
 		/// <summary>
@@ -23,8 +23,6 @@ namespace ACadSharp.Tables.Collections
 		[DxfCodeValue(DxfReferenceType.Count, 70)]
 		public int Count => this._entries.Count;
 
-		public bool IsReadOnly => false;
-
 		public T this[string name]
 		{
 			get
@@ -32,6 +30,8 @@ namespace ACadSharp.Tables.Collections
 				return this._entries.TryGetValue(name, out T item) ? item : null;
 			}
 		}
+
+		protected abstract string[] _defaultEntries { get; }
 
 		protected readonly Dictionary<string, T> _entries = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
 
@@ -43,6 +43,11 @@ namespace ACadSharp.Tables.Collections
 			document.RegisterCollection(this);
 		}
 
+		/// <summary>
+		/// Add a <see cref="TableEntry"/> to the collection, this method triggers <see cref="OnAdd"/>
+		/// </summary>
+		/// <param name="item"></param>
+		/// <exception cref="ArgumentException"></exception>
 		public virtual void Add(T item)
 		{
 			if (string.IsNullOrEmpty(item.Name))
@@ -51,6 +56,10 @@ namespace ACadSharp.Tables.Collections
 			this.add(item.Name, item);
 		}
 
+		/// <summary>
+		/// Add multiple <see cref="TableEntry"/> to the collection, this method triggers <see cref="OnAdd"/>
+		/// </summary>
+		/// <param name="items"></param>
 		public void AddRange(IEnumerable<T> items)
 		{
 			foreach (var item in items)
@@ -59,26 +68,43 @@ namespace ACadSharp.Tables.Collections
 			}
 		}
 
-		public bool Contains(T item)
+		public bool TryGetValue(string key, out T item)
 		{
-			return this._entries.Values.Contains(item);
+			return this._entries.TryGetValue(key, out item);
 		}
 
-		public void CopyTo(T[] array, int arrayIndex)
+		public bool Contains(string key)
 		{
-			this._entries.Values.CopyTo(array, arrayIndex);
+			return this._entries.ContainsKey(key);
 		}
 
+		/// <inheritdoc/>
 		public IEnumerator<T> GetEnumerator()
 		{
 			return this._entries.Values.GetEnumerator();
 		}
 
-		public bool Remove(T item)
+		/// <summary>
+		/// Removes a <see cref="TableEntry"/> from the collection, this method triggers <see cref="OnRemove"/>
+		/// </summary>
+		/// <param name="key">key in the table</param>
+		/// <returns>The removed <see cref="TableEntry"/></returns>
+		public T Remove(string key)
 		{
-			return this._entries.Remove(item.Name);
+			if (this._defaultEntries.Contains(key))
+				return null;
+
+			if (this._entries.Remove(key, out T item))
+			{
+				item.Owner = null;
+				OnRemove?.Invoke(this, new ReferenceChangedEventArgs(item));
+				return item;
+			}
+
+			return null;
 		}
 
+		/// <inheritdoc/>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return this._entries.Values.GetEnumerator();
