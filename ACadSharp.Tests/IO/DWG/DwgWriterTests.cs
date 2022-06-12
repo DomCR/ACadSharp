@@ -9,7 +9,7 @@ namespace ACadSharp.Tests.IO.DWG
 	{
 		public DwgWriterTests(ITestOutputHelper output) : base(output) { }
 
-		[Fact]
+		[Fact(Skip = "Not implemented")]
 		public void WriteTest()
 		{
 			CadDocument doc = new CadDocument();
