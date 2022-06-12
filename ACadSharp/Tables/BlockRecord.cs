@@ -1,7 +1,5 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Types.Units;
-using ACadSharp.IO.Templates;
-using System;
 using ACadSharp.Objects;
 using ACadSharp.Blocks;
 using ACadSharp.Entities;
@@ -88,7 +86,7 @@ namespace ACadSharp.Tables
 		public BlockEnd BlockEnd
 		{
 			get { return _blockEnd; }
-			set
+			internal set
 			{
 				this._blockEnd = value;
 				this._blockEnd.Owner = this;
@@ -100,13 +98,33 @@ namespace ACadSharp.Tables
 
 		private BlockEnd _blockEnd;
 
-		public BlockRecord() : this(null) { }
+		internal BlockRecord() : this(null) { }
 
 		public BlockRecord(string name) : base(name)
 		{
 			this.BlockEntity = new Block(this);
 			this.BlockEnd = new BlockEnd(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
+		}
+
+		protected override void createCopy(CadObject copy)
+		{
+			base.createCopy(copy);
+
+			BlockRecord bl = copy as BlockRecord;
+
+			bl.Units = this.Units;
+			bl.IsExplodable = this.IsExplodable;
+			bl.CanScale = this.CanScale;
+			bl.Preview = this.Preview;
+			//bl.Layout = this.Layout?.Clone();
+			bl.BlockEntity = (Block)this.BlockEntity.Clone();
+			bl.BlockEnd = (BlockEnd)this.BlockEnd.Clone();
+
+			foreach (var item in this.Entities)
+			{
+				bl.Entities.Add((Entity)item.Clone());
+			}
 		}
 	}
 }

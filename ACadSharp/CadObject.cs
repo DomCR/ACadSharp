@@ -2,11 +2,12 @@
 using ACadSharp.Objects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace ACadSharp
 {
+	/// <summary>
+	/// Represents an element in a CadDocument
+	/// </summary>
 	public abstract class CadObject : IHandledCadObject
 	{
 		public event EventHandler<ReferenceChangedEventArgs> OnReferenceChange;
@@ -40,7 +41,7 @@ namespace ACadSharp
 		public CadDictionary XDictionary
 		{
 			get { return this._xdictionary; }
-			set
+			internal set
 			{
 				if (value == null)
 					return;
@@ -54,11 +55,13 @@ namespace ACadSharp
 		}
 
 		/// <summary>
-		/// Objects that are attached to this entity
+		/// Objects that are attached to this object
 		/// </summary>
 		public Dictionary<ulong, CadObject> Reactors { get; } = new Dictionary<ulong, CadObject>();
 
-		//TODO: Extended data
+		/// <summary>
+		/// Extended data attached to this object
+		/// </summary>
 		public ExtendedDataDictionary ExtendedData { get; } = new ExtendedDataDictionary();
 
 		/// <summary>
@@ -73,15 +76,20 @@ namespace ACadSharp
 		/// </summary>
 		public CadObject() { }
 
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return $"{this.ObjectName}:{this.ObjectType}";
+		}
+
 		protected void onReferenceChange(ReferenceChangedEventArgs args)
 		{
 			OnReferenceChange?.Invoke(this, args);
 		}
 
-		/// <inheritdoc/>
-		public override string ToString()
+		protected virtual void createCopy(CadObject copy)
 		{
-			return $"{this.ObjectName}:{this.ObjectType}";
+			//TODO: copy ExtendedData, Reactors, XDictionary needed ??
 		}
 	}
 }

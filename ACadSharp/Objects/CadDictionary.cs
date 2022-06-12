@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using CSUtilities.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -137,6 +138,12 @@ namespace ACadSharp.Objects
 			return root;
 		}
 
+		/// <summary>
+		/// Add a <see cref="CadObject"/> to the collection, this method triggers <see cref="OnAdd"/>
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		/// <exception cref="ArgumentException"></exception>
 		public void Add(string key, CadObject value)
 		{
 			if (_entries.Values.Contains(value))
@@ -146,6 +153,23 @@ namespace ACadSharp.Objects
 			value.Owner = this;
 
 			OnAdd?.Invoke(this, new ReferenceChangedEventArgs(value));
+		}
+
+		/// <summary>
+		/// Removes a <see cref="CadObject"/> from the collection, this method triggers <see cref="OnRemove"/>
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns>The removed <see cref="CadObject"/></returns>
+		public CadObject Remove(string key)
+		{
+			if (this._entries.Remove(key, out CadObject item))
+			{
+				item.Owner = null;
+				OnRemove?.Invoke(this, new ReferenceChangedEventArgs(item));
+				return item;
+			}
+
+			return null;
 		}
 
 		public IEnumerator<CadObject> GetEnumerator()

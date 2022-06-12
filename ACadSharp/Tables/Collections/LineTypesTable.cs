@@ -10,7 +10,20 @@ namespace ACadSharp.Tables.Collections
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableLinetype;
 
-		internal LineTypesTable( ) : base() { }
+		protected override string[] _defaultEntries
+		{
+			get
+			{
+				return new string[]
+				{
+					LineType.ByLayerName,
+					LineType.ByBlockName,
+					LineType.ContinuousName
+				};
+			}
+		}
+
+		internal LineTypesTable() : base() { }
 
 		internal LineTypesTable(CadDocument document) : base(document) { }
 	}

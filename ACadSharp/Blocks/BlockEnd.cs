@@ -19,6 +19,8 @@ namespace ACadSharp.Blocks
 
 		public override ObjectType ObjectType => ObjectType.ENDBLK;
 
+		public BlockEnd() : base() { }
+
 		public BlockEnd(BlockRecord record) : base()
 		{
 			this.Owner = record;

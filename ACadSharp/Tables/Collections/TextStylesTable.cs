@@ -1,7 +1,4 @@
-﻿using ACadSharp.IO.Templates;
-using System;
-
-namespace ACadSharp.Tables.Collections
+﻿namespace ACadSharp.Tables.Collections
 {
 	public class TextStylesTable : Table<TextStyle>
 	{
@@ -10,6 +7,8 @@ namespace ACadSharp.Tables.Collections
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableStyle;
+
+		protected override string[] _defaultEntries { get { return new string[] { TextStyle.DefaultName }; } }
 
 		internal TextStylesTable() : base() { }
 

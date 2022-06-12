@@ -17,6 +17,12 @@ namespace ACadSharp.Tables
 	[DxfSubClass(DxfSubclassMarker.Linetype)]
 	public class LineType : TableEntry
 	{
+		public const string ByLayerName = "ByLayer";
+
+		public const string ByBlockName = "ByBlock";
+
+		public const string ContinuousName = "Continuous";
+
 		public static LineType ByLayer { get { return new LineType("ByLayer"); } }
 
 		public static LineType ByBlock { get { return new LineType("ByBlock"); } }

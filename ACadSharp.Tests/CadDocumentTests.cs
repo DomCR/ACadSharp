@@ -44,7 +44,7 @@ namespace ACadSharp.Tests
 			Line line = new Line();
 			CadDocument doc = new CadDocument();
 
-			doc.BlockRecords[BlockRecord.ModelSpaceName].Entities.Add(line);
+			doc.Entities.Add(line);
 
 			CadObject l = doc.GetCadObject(line.Handle);
 
@@ -56,14 +56,73 @@ namespace ACadSharp.Tests
 		}
 
 		[Fact]
+		public void AddCadObjectWithNewLayer()
+		{
+			Line line = new Line();
+			Layer layer = new Layer("test_layer");
+
+			line.Layer = layer;
+
+			CadDocument doc = new CadDocument();
+
+			doc.Entities.Add(line);
+
+			Line l = doc.GetCadObject<Line>(line.Handle);
+
+			//Assert layer
+			Assert.Equal(l.Layer, layer);
+			Assert.False(0 == layer.Handle);
+			Assert.NotNull(doc.Layers[layer.Name]);
+			Assert.Equal(layer, doc.Layers[layer.Name]);
+		}
+
+		[Fact]
+		public void DetachedEntityClone()
+		{
+			Line line = new Line();
+			CadDocument doc = new CadDocument();
+
+			doc.Entities.Add(line);
+
+			Line clone = (Line)doc.GetCadObject<Line>(line.Handle).Clone();
+
+			//Assert clone
+			Assert.NotEqual(clone, line);
+			Assert.True(0 == clone.Handle);
+			Assert.Null(clone.Document);
+			Assert.Null(clone.Owner);
+		}
+
+		[Fact]
+		public void RemoveCadObject()
+		{
+			Line line = new Line();
+			CadDocument doc = new CadDocument();
+
+			doc.Entities.Add(line);
+
+			var l = doc.Entities.Remove(line);
+
+			//Assert removed element
+			Assert.NotNull(l);
+			Assert.Equal(line, l);
+			Assert.True(0 == l.Handle);
+			Assert.Equal(line.Handle, l.Handle);
+
+			//The layer still in the document
+			Assert.False(0 == l.Layer.Handle);
+			Assert.NotNull(l.Layer.Document);
+		}
+
+		[Fact]
 		public void NotAllowDuplicate()
 		{
 			Line line = new Line();
 			CadDocument doc = new CadDocument();
 
-			doc.BlockRecords[BlockRecord.ModelSpaceName].Entities.Add(line);
+			doc.Entities.Add(line);
 
-			Assert.Throws<ArgumentException>(() => doc.BlockRecords[BlockRecord.ModelSpaceName].Entities.Add(line));
+			Assert.Throws<ArgumentException>(() => doc.Entities.Add(line));
 		}
 	}
 }
