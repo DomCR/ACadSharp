@@ -149,9 +149,9 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityLine:
 					template = new CadEntityTemplate(new Line());
 					break;
-				//case DxfFileToken.EntityLwPolyline:
-				//	//template = new CadEntityTemplate(new Line());
-				//	break;
+				case DxfFileToken.EntityLwPolyline:
+					template = new CadEntityTemplate(new LwPolyline());
+					break;
 				case DxfFileToken.EntityHatch:
 					template = new CadHatchTemplate(new Hatch());
 					break;
@@ -268,6 +268,9 @@ namespace ACadSharp.IO.DXF
 					case DxfSubclassMarker.Line:
 						this.readMapped<Line>(template.CadObject, template);
 						break;
+					case DxfSubclassMarker.LwPolyline:
+						this.readMapped<LwPolyline>(template.CadObject, template);
+						break;
 					case DxfSubclassMarker.MLine:
 						this.readMapped<MLine>(template.CadObject, template);
 						break;
@@ -383,7 +386,7 @@ namespace ACadSharp.IO.DXF
 				{
 					//Do nothing just marks the amount
 				}
-				else if(dxfProperty.ReferenceType == DxfReferenceType.Unprocess)
+				else if (dxfProperty.ReferenceType == DxfReferenceType.Unprocess)
 				{
 					this._reader.ReadNext();
 					continue;
