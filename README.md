@@ -55,7 +55,6 @@ The dwg/dxf readers are not yet fully implemented, the NotificationHandler will 
 
 ##### Dxf reader entities not implemented
 
-- LWPOLYLINE
 - POLYLINE_PFACE
 - LWPOLYLINE
 - ACAD_TABLE
