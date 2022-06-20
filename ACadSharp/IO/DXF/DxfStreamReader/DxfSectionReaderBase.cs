@@ -150,7 +150,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadEntityTemplate(new Line());
 					break;
 				case DxfFileToken.EntityLwPolyline:
-					template = new CadEntityTemplate(new LwPolyline());
+					template = new CadLwPolylineTemplate();
 					break;
 				case DxfFileToken.EntityHatch:
 					template = new CadHatchTemplate(new Hatch());
