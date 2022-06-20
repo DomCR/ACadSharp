@@ -1,23 +1,18 @@
-﻿using ACadSharp.Types;
-using CSUtilities.Converters;
-using CSUtilities.Text;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 
 namespace ACadSharp.IO.DWG
 {
-	internal class DwgStreamReaderAC12 : DwgStreamReader
+	internal class DwgStreamReaderAC12 : DwgStreamReaderBase
 	{
 		public DwgStreamReaderAC12(Stream stream, bool resetPosition) : base(stream, resetPosition) { }
+	
 		public override string ReadVariableText()
 		{
-			short length = ReadBitShort();
+			short length = this.ReadBitShort();
 			string str;
 			if (length > 0)
 			{
-				str = ReadString(length, Encoding).Replace("\0", "");
+				str = this.ReadString(length, this.Encoding).Replace("\0", "");
 			}
 			else
 				str = string.Empty;

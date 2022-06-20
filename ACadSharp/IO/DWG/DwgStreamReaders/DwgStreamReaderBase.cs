@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
-	internal abstract class DwgStreamReader : StreamIO, IDwgStreamReader
+	internal abstract class DwgStreamReaderBase : StreamIO, IDwgStreamReader
 	{
 		/// <inheritdoc/>
 		public Encoding Encoding { get; set; } = Encoding.Default;
@@ -31,7 +31,7 @@ namespace ACadSharp.IO.DWG
 
 		protected byte _lastByte;
 
-		public DwgStreamReader(Stream stream, bool resetPosition) : base(stream, resetPosition)
+		public DwgStreamReaderBase(Stream stream, bool resetPosition) : base(stream, resetPosition)
 		{
 		}
 
@@ -903,7 +903,15 @@ namespace ACadSharp.IO.DWG
 			double unixTime = (jdate - 2440587.5) * 86400;
 
 			DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Local);
-			dtDateTime = dtDateTime.AddSeconds(unixTime).ToLocalTime();
+
+			try
+			{
+				dtDateTime = dtDateTime.AddSeconds(unixTime).ToLocalTime();
+			}
+			catch (Exception)
+			{
+				dtDateTime = DateTime.MinValue;
+			}
 
 			return dtDateTime.AddMilliseconds(miliseconds);
 		}

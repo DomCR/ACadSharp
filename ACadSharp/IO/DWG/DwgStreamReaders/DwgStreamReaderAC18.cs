@@ -8,9 +8,10 @@ namespace ACadSharp.IO.DWG
 	internal class DwgStreamReaderAC18 : DwgStreamReaderAC15
 	{
 		public DwgStreamReaderAC18(Stream stream, bool resetPosition) : base(stream, resetPosition) { }
+		
 		public override string ReadTextUnicode()
 		{
-			short textLength = ReadShort<LittleEndianConverter>();
+			short textLength = this.ReadShort<LittleEndianConverter>();
 			string value;
 			if (textLength == 0)
 			{
@@ -19,7 +20,7 @@ namespace ACadSharp.IO.DWG
 			else
 			{
 				//Read the string and get rid of the empty bytes
-				value = ReadString(textLength,
+				value = this.ReadString(textLength,
 					TextEncoding.GetListedEncoding(CodePage.Windows1252))
 					.Replace("\0", "");
 			}
@@ -31,21 +32,20 @@ namespace ACadSharp.IO.DWG
 		{
 			//CMC:
 			//BS: color index(always 0)
-			short colorIndex = ReadBitShort();
+			short colorIndex = this.ReadBitShort();
 			//BL: RGB value
-			int rgb = ReadBitLong();
+			int rgb = this.ReadBitLong();
 
-			byte id = ReadByte();
-
-			string colorName = string.Empty;
 			//RC: Color Byte(&1 => color name follows(TV),
+			byte id = this.ReadByte();
+			string colorName = string.Empty;
 			if ((id & 1) == 1)
-				colorName = ReadVariableText();
+				colorName = this.ReadVariableText();
 
 			string bookName = string.Empty;
 			//&2 => book name follows(TV))
 			if ((id & 2) == 2)
-				bookName = ReadVariableText();
+				bookName = this.ReadVariableText();
 
 			//TODO: Finish the color implementation
 			return new Color();
@@ -59,7 +59,7 @@ namespace ACadSharp.IO.DWG
 			flag = false;
 
 			//BS : color number: flags + color index
-			short size = ReadBitShort();
+			short size = this.ReadBitShort();
 
 			if (size != 0)
 			{
@@ -77,7 +77,7 @@ namespace ACadSharp.IO.DWG
 				{
 					//Next value is a BS containing the RGB value(last 24 bits).
 					color = new Color();
-					color.Index = (short)ReadBitLong();
+					color.Index = (short)this.ReadBitLong();
 				}
 				else
 				{
@@ -92,7 +92,7 @@ namespace ACadSharp.IO.DWG
 
 					//0x2000: color is followed by a transparency BL.
 					transparency = (flags & 0x2000U) <= 0U ? Transparency.ByLayer
-						: new Transparency((short)ReadBitLong());
+						: new Transparency((short)this.ReadBitLong());
 				}
 				catch (Exception)
 				{

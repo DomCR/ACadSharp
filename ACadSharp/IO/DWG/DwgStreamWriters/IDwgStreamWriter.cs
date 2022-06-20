@@ -40,8 +40,6 @@ namespace ACadSharp.IO.DWG
 
 		void Write2RawDouble(XY value);
 
-		void WriteRawChar(char value);
-
 		void WriteByte(byte value);
 
 		void HandleReference(CadObject cadObject);
@@ -58,7 +56,7 @@ namespace ACadSharp.IO.DWG
 	}
 
 	/// <summary>
-	/// Writer equivalent to reader <see cref="DwgStreamReader"/>
+	/// Writer equivalent to reader <see cref="DwgStreamReaderBase"/>
 	/// </summary>
 	internal abstract class DwgStreamWriter : StreamIO, IDwgStreamWriter
 	{
@@ -206,7 +204,17 @@ namespace ACadSharp.IO.DWG
 
 		public virtual void WriteVariableText(string value)
 		{
-			throw new NotImplementedException();
+			if (string.IsNullOrEmpty(value))
+			{
+				this.WriteBitShort(0);
+				return;
+			}
+
+			byte[] bytes = this.Encoding.GetBytes(value);
+			this.WriteBitShort((short)(bytes.Length + 1));
+			this.WriteBytes(bytes);
+
+			this.WriteByte(0);
 		}
 
 		public void Write2Bits(byte value)
@@ -284,7 +292,11 @@ namespace ACadSharp.IO.DWG
 			this.WriteBitLong(value.Milliseconds);
 		}
 
-		public abstract void WriteCmColor(Color value);
+		public virtual void WriteCmColor(Color value)
+		{
+			//R15 and earlier: BS color index
+			this.WriteBitShort(value.Index);
+		}
 
 		public void Write3BitDouble(XYZ value)
 		{
@@ -295,15 +307,16 @@ namespace ACadSharp.IO.DWG
 
 		public void Write2RawDouble(XY value)
 		{
-			throw new NotImplementedException();
-		}
-
-		public void WriteRawChar(char value)
-		{
-			throw new NotImplementedException();
+			this.WriteRawDouble(value.X);
+			this.WriteRawDouble(value.Y);
 		}
 
 		public void WriteRawShort(ushort value)
+		{
+			this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
+		}
+
+		public void WriteRawDouble(double value)
 		{
 			this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
 		}
@@ -443,11 +456,6 @@ namespace ACadSharp.IO.DWG
 		{
 		}
 
-		public override void WriteCmColor(Color value)
-		{
-			throw new NotImplementedException();
-		}
-
 		public override void WriteVariableText(string value)
 		{
 			if (string.IsNullOrEmpty(value))
@@ -459,6 +467,24 @@ namespace ACadSharp.IO.DWG
 			byte[] bytes = base.Encoding.GetBytes(value);
 			base.WriteBitShort((short)bytes.Length);
 			base.WriteBytes(bytes);
+		}
+
+		public override void WriteCmColor(Color value)
+		{
+			//TODO: Finish writer color implementation
+
+			//CMC:
+			//BS: color index(always 0)
+			this.WriteBitShort(0);
+
+			//BL: RGB value
+			this.WriteBitLong(0);
+
+			//RC: Color Byte
+			this.WriteByte(0);
+
+			//(&1 => color name follows(TV),
+			//&2 => book name follows(TV))
 		}
 	}
 }

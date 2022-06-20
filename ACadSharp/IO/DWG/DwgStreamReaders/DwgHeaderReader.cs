@@ -16,8 +16,7 @@ namespace ACadSharp.IO.DWG
 		{
 		}
 
-		public CadHeader Read(IDwgStreamReader sreader,
-			int acadMaintenanceVersion, out DwgHeaderHandlesCollection objectPointers)
+		public CadHeader Read(IDwgStreamReader sreader, int acadMaintenanceVersion, out DwgHeaderHandlesCollection objectPointers)
 		{
 			//Save the parameter handler in a local variable
 			_mainReader = sreader;
@@ -49,14 +48,14 @@ namespace ACadSharp.IO.DWG
 				long lastPositionInBits = initialPos + sizeInBits - 1L;
 
 				//Setup the text handler for versions 2007 and above
-				IDwgStreamReader textReader = DwgStreamReader.GetStreamHandler(_version,
+				IDwgStreamReader textReader = DwgStreamReaderBase.GetStreamHandler(_version,
 					//Create a copy of the stream
 					new StreamIO(sreader.Stream, true).Stream);
 				//Set the position and use the flag
 				textReader.SetPositionByFlag(lastPositionInBits);
 
 				//Setup the handler for the references for versions 2007 and above
-				IDwgStreamReader referenceReader = DwgStreamReader.GetStreamHandler(_version,
+				IDwgStreamReader referenceReader = DwgStreamReaderBase.GetStreamHandler(_version,
 					//Create a copy of the stream
 					new StreamIO(sreader.Stream, true).Stream);
 				//Set the position and jump the flag
@@ -1022,12 +1021,21 @@ namespace ACadSharp.IO.DWG
 				header.ShadowPlaneLocation = sreader.ReadBitDouble();
 			}
 
-			//Set the position at the end of the section
-			_mainReader.SetPositionInBits(initialPos + size * 8);
-			_mainReader.ResetShift();
+			try
+			{
+				//Not fully necessary for the integrity of the data
 
-			//Ending sentinel: 0x30,0x84,0xE0,0xDC,0x02,0x21,0xC7,0x56,0xA0,0x83,0x97,0x47,0xB1,0x92,0xCC,0xA0
-			var endsn = _mainReader.ReadSentinel();
+				//Set the position at the end of the section
+				_mainReader.SetPositionInBits(initialPos + size * 8);
+				_mainReader.ResetShift();
+
+				//Ending sentinel: 0x30,0x84,0xE0,0xDC,0x02,0x21,0xC7,0x56,0xA0,0x83,0x97,0x47,0xB1,0x92,0xCC,0xA0
+				var endsn = _mainReader.ReadSentinel();
+			}
+			catch (System.Exception)
+			{
+				//TODO: Notify header reader exception
+			}
 
 			return header;
 		}
