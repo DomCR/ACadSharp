@@ -1,21 +1,24 @@
 ﻿using ACadSharp;
 using ACadSharp.IO.DWG;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ACadSharpInternal.Tests
 {
-	public class DwgHeaderWriterTests
+	public class DwgHeaderWriterTests : DwgSectionWriterTestBase
 	{
-		[Fact()]
-		public void WriteTest()
+		public DwgHeaderWriterTests(ITestOutputHelper output) : base(output)
+		{
+		}
+
+		[Theory]
+		[MemberData(nameof(DwgVersions))]
+		public void WriteTest(ACadVersion version)
 		{
 			Stream stream = new MemoryStream();
 			CadDocument document = new CadDocument();
-			document.Header.Version = ACadVersion.AC1018;
+			document.Header.Version = version;
 
 			DwgHeaderWriter writer = new DwgHeaderWriter(stream, document);
 			writer.Write();
