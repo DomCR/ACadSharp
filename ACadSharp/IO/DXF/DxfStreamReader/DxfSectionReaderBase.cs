@@ -542,7 +542,6 @@ namespace ACadSharp.IO.DXF
 						else if (this._reader.LastDxfCode >= DxfCode.ExtendedDataAsciiString)
 						{
 							this.readExtendedData(template.EDataTemplateByAppName);
-							this._reader.ReadNext();
 							continue;
 						}
 						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code : {this._reader.LastCode} with value : {this._reader.LastValue} for subclass {DxfSubclassMarker.Hatch}"));
