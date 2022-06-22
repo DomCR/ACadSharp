@@ -48,7 +48,6 @@ The dwg/dxf readers are not yet fully implemented, the NotificationHandler will 
 
 - ACDBPLACEHOLDER
 - VP_ENT_HDR
-- LWPOLYLINE
 - POLYLINE_PFACE
 - ACAD_PROXY_OBJECT
 - MESH
