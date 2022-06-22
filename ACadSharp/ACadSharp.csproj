@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net5.0;net48;netstandard2.1</TargetFrameworks>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>latest</LangVersion>
     <Authors>DomCr</Authors>
     <PackageId>ACadSharp</PackageId>
     <PackageTags>C# Dwg Dxf Autocad</PackageTags>

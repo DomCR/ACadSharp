@@ -928,7 +928,7 @@ namespace ACadSharp.IO.DWG
 				case "LAYER_INDEX":
 					break;
 				case "LAYOUT":
-					template = readLayout();
+					template = this.readLayout();
 					break;
 				case "LWPLINE":
 				case "MATERIAL":
@@ -952,7 +952,7 @@ namespace ACadSharp.IO.DWG
 				case "WIPEOUTVARIABLES":
 					break;
 				case "XRECORD":
-					template = readXRecord();
+					template = this.readXRecord();
 					break;
 				default:
 					break;
@@ -3089,7 +3089,7 @@ namespace ACadSharp.IO.DWG
 				this.handleReference();
 			}
 
-			_builder.LineTypes.Add(ltype.Name, ltype);
+			this._builder.LineTypes.Add(ltype.Name, ltype);
 
 			return template;
 		}
@@ -3959,7 +3959,107 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readLWPolyline()
 		{
-			return null;
+			LwPolyline lwPolyline = new LwPolyline();
+			CadEntityTemplate template = new CadEntityTemplate(lwPolyline);
+
+			try
+			{
+				this.readCommonEntityData(template);
+
+				//B : bytes containing the LWPOLYLINE entity data.
+				//This excludes the common entity data.
+				//More specifically: it starts at the LWPOLYLINE flags (BS), and ends with the width array (BD).
+
+				short flags = this._objectReader.ReadBitShort();
+				if ((flags & 0x100) != 0)
+					lwPolyline.Flags |= LwPolylineFlags.Plinegen;
+				if ((flags & 0x200) != 0)
+					lwPolyline.Flags |= LwPolylineFlags.Closed;
+
+				if ((flags & 4u) != 0)
+				{
+					lwPolyline.ConstantWidth = this._objectReader.ReadBitDouble();
+				}
+
+				if ((flags & 8u) != 0)
+				{
+					lwPolyline.Elevation = this._objectReader.ReadBitDouble();
+				}
+
+				if ((flags & 2u) != 0)
+				{
+					lwPolyline.Thickness = this._objectReader.ReadBitDouble();
+				}
+
+				if ((flags & (true ? 1u : 0u)) != 0)
+				{
+					lwPolyline.Normal = this._objectReader.Read3BitDouble();
+				}
+
+				int nvertices = this._objectReader.ReadBitLong();
+				int nbulges = 0;
+
+				if (((uint)flags & 0x10u) != 0)
+				{
+					nbulges = this._objectReader.ReadBitLong();
+				}
+				int nids = 0;
+				if (((uint)flags & 0x400u) != 0)
+				{
+					nids = this._objectReader.ReadBitLong();
+				}
+
+				int ndiffwidth = 0;
+				if (((uint)flags & 0x20u) != 0)
+				{
+					ndiffwidth = this._objectReader.ReadBitLong();
+				}
+
+				if (this.R13_14Only)
+				{
+					for (int i = 0; i < nvertices; i++)
+					{
+						Vertex2D v = new Vertex2D();
+						XY loc = this._objectReader.Read2RawDouble();
+						lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
+					}
+				}
+
+				if (this.R2000Plus && nvertices > 0)
+				{
+					XY loc = this._objectReader.Read2RawDouble();
+					lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
+					for (int j = 1; j < nvertices; j++)
+					{
+						loc = this._objectReader.Read2BitDoubleWithDefault(loc);
+						lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
+					}
+				}
+
+				for (int k = 0; k < nbulges; k++)
+				{
+					lwPolyline.Vertices[k].Bulge = this._objectReader.ReadBitDouble();
+				}
+
+				for (int l = 0; l < nids; l++)
+				{
+					lwPolyline.Vertices[l].Id = this._objectReader.ReadBitLong();
+				}
+
+				for (int m = 0; m < ndiffwidth; m++)
+				{
+					LwPolyline.Vertex vertex = lwPolyline.Vertices[m];
+					vertex.StartWidth = this._objectReader.ReadBitDouble();
+					vertex.EndWidth = this._objectReader.ReadBitDouble();
+				}
+			}
+			catch (System.Exception ex)
+			{
+				this._builder.NotificationHandler?.Invoke(null, new NotificationEventArgs($"Exception while reading LwPolyline: {ex.GetType().FullName}"));
+				return template;
+			}
+
+			return template;
 		}
 
 		private CadTemplate readHatch()

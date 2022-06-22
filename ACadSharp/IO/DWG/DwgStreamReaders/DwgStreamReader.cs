@@ -597,6 +597,14 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
+		public XY Read2BitDoubleWithDefault(XY defValues)
+		{
+			return new XY(
+				ReadBitDoubleWithDefault(defValues.X),
+				ReadBitDoubleWithDefault(defValues.Y));
+		}
+
+		/// <inheritdoc/>
 		public XYZ Read3BitDoubleWithDefault(XYZ defValues)
 		{
 			return new XYZ(
