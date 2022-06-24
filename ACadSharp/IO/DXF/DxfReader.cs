@@ -16,14 +16,14 @@ namespace ACadSharp.IO.DXF
 		private IDxfStreamReader _reader;
 		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DxfReader" /> class.
+		/// Initializes a new instance of the <see cref="DxfReader"/> class
 		/// </summary>
-		/// <param name="filename">The filename of the file to open.</param>
+		/// <param name="filename">The file to open.</param>
 		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
 		public DxfReader(string filename, NotificationEventHandler notification = null) : base(filename, notification) { }
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DxfReader" /> class.
+		/// Initializes a new instance of the <see cref="DxfReader"/> class
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
 		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
