@@ -107,7 +107,7 @@ namespace ACadSharp.IO.DWG
 		/// <summary>
 		/// Read all the entities, tables and objects in the file.
 		/// </summary>
-		public void Read(NotificationEventHandler notificationEvent = null)
+		public void Read()
 		{
 			//Read each handle in the header
 			while (this._handles.Any())
@@ -124,7 +124,7 @@ namespace ACadSharp.IO.DWG
 				ObjectType type = this.getEntityType(offset);
 
 				//Read the object
-				CadTemplate template = this.readObject(type, notificationEvent);
+				CadTemplate template = this.readObject(type);
 
 				//Add the template to the list to be processed
 				if (template != null)
@@ -569,7 +569,7 @@ namespace ACadSharp.IO.DWG
 						break;
 					default:
 						this._objectReader.ReadBytes((int)(endPos - this._objectReader.Position));
-						this._builder.NotificationHandler?.Invoke(null, new NotificationEventArgs($"Unknown code for extended data: {dxfCode}"));
+						this._builder.Notify(new NotificationEventArgs($"Unknown code for extended data: {dxfCode}"));
 						return data;
 				}
 
@@ -4055,7 +4055,7 @@ namespace ACadSharp.IO.DWG
 			}
 			catch (System.Exception ex)
 			{
-				this._builder.NotificationHandler?.Invoke(null, new NotificationEventArgs($"Exception while reading LwPolyline: {ex.GetType().FullName}"));
+				this._builder.Notify(new NotificationEventArgs($"Exception while reading LwPolyline: {ex.GetType().FullName}"));
 				return template;
 			}
 
