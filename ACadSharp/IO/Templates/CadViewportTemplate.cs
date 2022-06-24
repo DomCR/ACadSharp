@@ -6,19 +6,19 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgViewportTemplate : CadEntityTemplate
+	internal class CadViewportTemplate : CadEntityTemplate
 	{
 		public ulong? ViewportHeaderHandle { get; set; }
 
 		public ulong? BoundaryHandle { get; set; }
-		
+
 		public ulong? NamedUcsHandle { get; set; }
-		
+
 		public ulong? BaseUcsHandle { get; set; }
-		
+
 		public List<ulong> FrozenLayerHandles { get; set; } = new List<ulong>();
-		
-		public DwgViewportTemplate(Viewport entity) : base(entity) { }
+
+		public CadViewportTemplate(Viewport entity) : base(entity) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{
@@ -28,7 +28,7 @@ namespace ACadSharp.IO.Templates
 
 			if (this.ViewportHeaderHandle.HasValue && this.ViewportHeaderHandle > 0)
 			{
-				builder.NotificationHandler?.Invoke(null, new NotificationEventArgs($"ViewportHeaderHandle not implemented for Viewport, handle {this.ViewportHeaderHandle}"));
+				builder.Notify(new NotificationEventArgs($"ViewportHeaderHandle not implemented for Viewport, handle {this.ViewportHeaderHandle}"));
 			}
 
 			if (this.BoundaryHandle.HasValue && this.BoundaryHandle > 0)
@@ -41,12 +41,12 @@ namespace ACadSharp.IO.Templates
 
 			if (this.NamedUcsHandle.HasValue && this.NamedUcsHandle > 0)
 			{
-				builder.NotificationHandler?.Invoke(null, new NotificationEventArgs($"Named ucs not implemented for Viewport, handle {this.NamedUcsHandle}"));
+				builder.Notify(new NotificationEventArgs($"Named ucs not implemented for Viewport, handle {this.NamedUcsHandle}"));
 			}
 
 			if (this.BaseUcsHandle.HasValue && this.BaseUcsHandle > 0)
 			{
-				builder.NotificationHandler?.Invoke(null, new NotificationEventArgs($"Base ucs not implemented for Viewport, handle {this.BaseUcsHandle}"));
+				builder.Notify(new NotificationEventArgs($"Base ucs not implemented for Viewport, handle {this.BaseUcsHandle}"));
 			}
 
 			foreach (var handle in this.FrozenLayerHandles)

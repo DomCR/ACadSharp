@@ -98,9 +98,7 @@ namespace ACadSharp.IO.Templates
 
 			if (this.LtypeControlHandle.HasValue && this.LtypeControlHandle.Value > 0)
 			{
-				builder.NotificationHandler?.Invoke(
-					this.CadObject,
-					new NotificationEventArgs($"LtypeControlHandle not assigned : {this.LtypeControlHandle}"));
+				builder.Notify(new NotificationEventArgs($"LtypeControlHandle not assigned : {this.LtypeControlHandle}"));
 			}
 		}
 	}
