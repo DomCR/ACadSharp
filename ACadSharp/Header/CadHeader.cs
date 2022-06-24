@@ -249,29 +249,38 @@ namespace ACadSharp.Header
 		public bool RetainXRefDependentVisibilitySettings { get; set; }
 
 		/// <summary>
-		/// 
+		/// Controls the display of silhouette curves of body objects in Wireframe mode:
 		/// </summary>
 		/// <remarks>
 		/// System variable DISPSILH
 		/// </remarks>
+		[CadSystemVariable("$DISPSILH", DxfCode.Int16)]
 		public bool DisplaySilhouetteCurves { get; set; }
 
 		/// <summary>
 		/// 
-		/// System variable PELLIPSE (not present in DXF)
 		/// </summary>
+		/// <remarks>
+		/// System variable PELLIPSE (not present in DXF)
+		/// </remarks>
 		public bool CreateEllipseAsPolyline { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable PROXYGRAPHICS
+		/// Controls the saving of proxy object images
 		/// </summary>
+		/// <remarks>
+		/// System variable PROXYGRAPHICS
+		/// </remarks>
+		[CadSystemVariable("$PROXYGRAPHICS", DxfCode.Int16)]
 		public bool ProxyGraphics { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable TREEDEPTH
+		/// Specifies the maximum depth of the spatial index
 		/// </summary>
+		/// <remarks>
+		/// System variable TREEDEPTH
+		/// </remarks>
+		[CadSystemVariable("$TREEDEPTH", DxfCode.Int16)]
 		public short SpatialIndexMaxTreeDepth { get; set; }
 
 		/// <summary>
