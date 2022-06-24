@@ -27,16 +27,11 @@ namespace ACadSharp.IO.DXF
 
 		protected readonly IDxfStreamReader _reader;
 		protected readonly DxfDocumentBuilder _builder;
-		protected readonly NotificationEventHandler _notification;
 
-		public DxfSectionReaderBase(
-			IDxfStreamReader reader,
-			DxfDocumentBuilder builder,
-			NotificationEventHandler notification = null)
+		public DxfSectionReaderBase(IDxfStreamReader reader, DxfDocumentBuilder builder)
 		{
 			this._reader = reader;
 			this._builder = builder;
-			this._notification = notification;
 		}
 
 		public abstract void Read();
@@ -80,7 +75,7 @@ namespace ACadSharp.IO.DXF
 					case 340:
 					//Dimension table has the handles of the styles at the begining
 					default:
-						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}."));
+						this._builder.Notify(new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}."));
 						break;
 				}
 
@@ -114,7 +109,7 @@ namespace ACadSharp.IO.DXF
 						template.OwnerHandle = this._reader.LastValueAsHandle;
 						break;
 					default:
-						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}."));
+						this._builder.Notify(new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}."));
 						break;
 				}
 
@@ -183,7 +178,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadEntityTemplate(new Vertex2D());
 					break;
 				case DxfFileToken.EntityViewport:
-					template = new DwgViewportTemplate(new Viewport());
+					template = new CadViewportTemplate(new Viewport());
 					break;
 				case DxfFileToken.EntityXline:
 					template = new CadEntityTemplate(new XLine());
@@ -192,7 +187,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadSplineTemplate(new Spline());
 					break;
 				default:
-					this._notification?.Invoke(null, new NotificationEventArgs($"Entity not implemented: {this._reader.LastValueAsString}"));
+					this._builder.Notify(new NotificationEventArgs($"Entity not implemented: {this._reader.LastValueAsString}"));
 					do
 					{
 						this._reader.ReadNext();
@@ -316,7 +311,7 @@ namespace ACadSharp.IO.DXF
 						this.readMapped<Spline>(template.CadObject, template);
 						break;
 					default:
-						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}"));
+						this._builder.Notify(new NotificationEventArgs($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}"));
 						while (this._reader.LastDxfCode != DxfCode.Start)
 							this._reader.ReadNext();
 						break;
@@ -345,7 +340,7 @@ namespace ACadSharp.IO.DXF
 				}
 				else if (this._reader.LastDxfCode >= DxfCode.ExtendedDataAsciiString)
 				{
-					this._notification?.Invoke(null, new NotificationEventArgs($"Extended data should start witth : {DxfCode.ExtendedDataRegAppName}"));
+					this._builder.Notify(new NotificationEventArgs($"Extended data should start witth : {DxfCode.ExtendedDataRegAppName}"));
 					this._reader.ReadNext();
 					continue;
 				}
@@ -366,7 +361,7 @@ namespace ACadSharp.IO.DXF
 				if (!map.DxfProperties.TryGetValue(this._reader.LastCode, out DxfProperty dxfProperty))
 				{
 					if (!template.CheckDxfCode(this._reader.LastCode, this._reader.LastValue))
-						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf code {this._reader.LastCode} not found in map for {typeof(T)} | value : {this._reader.LastValueAsString}"));
+						this._builder.Notify(new NotificationEventArgs($"Dxf code {this._reader.LastCode} not found in map for {typeof(T)} | value : {this._reader.LastValueAsString}"));
 
 					this._reader.ReadNext();
 					continue;
@@ -375,12 +370,12 @@ namespace ACadSharp.IO.DXF
 				if (dxfProperty.ReferenceType == DxfReferenceType.Handle)
 				{
 					if (!template.AddHandle(this._reader.LastCode, this._reader.LastValueAsHandle))
-						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf referenced code {this._reader.LastCode} not implemented in the {template.GetType().Name} for {typeof(T)} | value : {this._reader.LastValueAsHandle}"));
+						this._builder.Notify(new NotificationEventArgs($"Dxf referenced code {this._reader.LastCode} not implemented in the {template.GetType().Name} for {typeof(T)} | value : {this._reader.LastValueAsHandle}"));
 				}
 				else if (dxfProperty.ReferenceType == DxfReferenceType.Name)
 				{
 					if (!template.AddName(this._reader.LastCode, this._reader.LastValueAsString))
-						this._notification?.Invoke(null, new NotificationEventArgs($"Dxf named referenced code {this._reader.LastCode} not implemented in the {template.GetType().Name} for {typeof(T)} | value : {this._reader.LastValueAsString}"));
+						this._builder.Notify(new NotificationEventArgs($"Dxf named referenced code {this._reader.LastCode} not implemented in the {template.GetType().Name} for {typeof(T)} | value : {this._reader.LastValueAsString}"));
 				}
 				else if (dxfProperty.ReferenceType == DxfReferenceType.Count)
 				{
@@ -406,13 +401,13 @@ namespace ACadSharp.IO.DXF
 							dxfProperty.SetValue(this._reader.LastCode, cadObject, this._reader.LastValue);
 							break;
 						case GroupCodeValueType.Comment:
-							this._notification?.Invoke(null, new NotificationEventArgs($"Comment in the file :  {this._reader.LastValueAsString}"));
+							this._builder.Notify(new NotificationEventArgs($"Comment in the file :  {this._reader.LastValueAsString}"));
 							break;
 						case GroupCodeValueType.Handle:
 						case GroupCodeValueType.ObjectId:
 						case GroupCodeValueType.None:
 						default:
-							this._notification?.Invoke(null, new NotificationEventArgs($"Group Code not handled {this._reader.LastGroupCodeValue} for {typeof(T)}, code : {this._reader.LastCode} | value : {this._reader.LastValueAsString}"));
+							this._builder.Notify(new NotificationEventArgs($"Group Code not handled {this._reader.LastGroupCodeValue} for {typeof(T)}, code : {this._reader.LastCode} | value : {this._reader.LastValueAsString}"));
 							break;
 					}
 				}
@@ -547,7 +542,7 @@ namespace ACadSharp.IO.DXF
 							this.readExtendedData(template.EDataTemplateByAppName);
 							continue;
 						}
-						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf code : {this._reader.LastCode} with value : {this._reader.LastValue} for subclass {DxfSubclassMarker.Hatch}"));
+						this._builder.Notify(new NotificationEventArgs($"Unhandeled dxf code : {this._reader.LastCode} with value : {this._reader.LastValue} for subclass {DxfSubclassMarker.Hatch}"));
 						break;
 				}
 
@@ -564,7 +559,7 @@ namespace ACadSharp.IO.DXF
 			{
 				if (this._reader.LastCode != 92)
 				{
-					this._notification?.Invoke(null, new NotificationEventArgs($"Boundary path should start with code 92 but was {this._reader.LastCode}"));
+					this._builder.Notify(new NotificationEventArgs($"Boundary path should start with code 92 but was {this._reader.LastCode}"));
 					break;
 				}
 
@@ -582,7 +577,7 @@ namespace ACadSharp.IO.DXF
 			if (template.Path.Flags.HasFlag(BoundaryPathFlags.Polyline))
 			{
 				Hatch.BoundaryPath.Edge pl = new Hatch.BoundaryPath.Polyline();
-				this._notification?.Invoke(null, new NotificationEventArgs($"Hatch.BoundaryPath.Polyline not implemented"));
+				this._builder.Notify(new NotificationEventArgs($"Hatch.BoundaryPath.Polyline not implemented"));
 
 				return null;
 			}
@@ -592,7 +587,7 @@ namespace ACadSharp.IO.DXF
 
 				if (this._reader.LastCode != 93)
 				{
-					this._notification?.Invoke(null, new NotificationEventArgs($"Edge Boundary path should start with code 93 but was {this._reader.LastCode}"));
+					this._builder.Notify(new NotificationEventArgs($"Edge Boundary path should start with code 93 but was {this._reader.LastCode}"));
 					return null;
 				}
 
@@ -638,7 +633,7 @@ namespace ACadSharp.IO.DXF
 		{
 			if (this._reader.LastCode != 72)
 			{
-				this._notification?.Invoke(null, new NotificationEventArgs($"Edge Boundary path should should define the type with code 72 but was {this._reader.LastCode}"));
+				this._builder.Notify(new NotificationEventArgs($"Edge Boundary path should should define the type with code 72 but was {this._reader.LastCode}"));
 				return null;
 			}
 

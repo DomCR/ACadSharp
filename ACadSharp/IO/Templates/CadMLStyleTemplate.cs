@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgMLStyleTemplate : CadTemplate<MLStyle>
+	internal class CadMLStyleTemplate : CadTemplate<MLStyle>
 	{
 		public class ElementTemplate : ICadObjectTemplate
 		{
@@ -46,9 +46,7 @@ namespace ACadSharp.IO.Templates
 						catch (System.Exception)
 						{
 							//TODO: Implement get linetype by index
-							builder.NotificationHandler?.Invoke(
-								this.Element,
-								new NotificationEventArgs($"Linetype not assigned, index {LinetypeIndex}"));
+							builder.Notify(new NotificationEventArgs($"Linetype not assigned, index {LinetypeIndex}"));
 						}
 					}
 				}
@@ -57,7 +55,7 @@ namespace ACadSharp.IO.Templates
 
 		public List<ElementTemplate> ElementTemplates { get; set; } = new List<ElementTemplate>();
 
-		public DwgMLStyleTemplate(MLStyle mlStyle) : base(mlStyle) { }
+		public CadMLStyleTemplate(MLStyle mlStyle) : base(mlStyle) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{
