@@ -94,11 +94,7 @@ namespace ACadSharp.IO.DXF
 			where T : CadObject
 		{
 			//TODO: Finish write implementation
-			if (e is Hatch
-				|| e is MLine
-				|| e is Spline
-				|| e is Leader
-				)
+			if (e is Hatch)
 			{
 				return;
 			}
