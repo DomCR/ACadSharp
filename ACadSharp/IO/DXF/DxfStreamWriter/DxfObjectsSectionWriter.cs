@@ -15,7 +15,7 @@ namespace ACadSharp.IO.DXF
 		{
 			while (this.Holder.Objects.Any())
 			{
-				CadObject item = this.Holder.Objects.Dequeue(); 
+				CadObject item = this.Holder.Objects.Dequeue();
 
 				this.writeObject(item);
 			}
@@ -35,6 +35,7 @@ namespace ACadSharp.IO.DXF
 					this.writeMappedObject<Layout>(layout);
 					break;
 				default:
+					this.Notify($"Object not implemented : {typeof(T).Name}");
 					break;
 			}
 		}

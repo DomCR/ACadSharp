@@ -22,10 +22,13 @@ namespace ACadSharp.Tests.IO.DXF
 
 			using (var wr = new DxfWriter(path, doc, false))
 			{
+				wr.OnNotification += this.onNotification;
 				wr.Write();
 			}
 
+			this._output.WriteLine(string.Empty);
 			this._output.WriteLine("Writer successful");
+			this._output.WriteLine(string.Empty);
 
 			using (var re = new DxfReader(path, this.onNotification))
 			{
@@ -43,10 +46,13 @@ namespace ACadSharp.Tests.IO.DXF
 
 			using (var wr = new DxfWriter(path, doc, true))
 			{
+				wr.OnNotification += this.onNotification;
 				wr.Write();
 			}
 
+			this._output.WriteLine(string.Empty);
 			this._output.WriteLine("Writer successful");
+			this._output.WriteLine(string.Empty);
 
 			using (var re = new DxfReader(path, this.onNotification))
 			{

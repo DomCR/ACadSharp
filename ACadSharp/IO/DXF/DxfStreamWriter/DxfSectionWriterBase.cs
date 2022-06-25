@@ -39,9 +39,9 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(DxfCode.Start, DxfFileToken.EndSection);
 		}
 
-		public void Notify(NotificationEventArgs e)
+		public void Notify(string message)
 		{
-			this.OnNotification?.Invoke(this, e);
+			this.OnNotification?.Invoke(this, new NotificationEventArgs(message));
 		}
 
 		protected void writeCommonObjectData(CadObject cadObject)
@@ -90,7 +90,14 @@ namespace ACadSharp.IO.DXF
 
 					object value = v.Value.GetValue(v.Key, cadObject);
 					if (value == null)
+					{
 						continue;
+					}
+
+					if (v.Value.ReferenceType.HasFlag(DxfReferenceType.Count))
+					{
+						this.Notify($"counter value for : {map.Name} | {v.Key} not implemented");
+					}
 
 					this._writer.Write(v.Key, value);
 				}
@@ -114,7 +121,7 @@ namespace ACadSharp.IO.DXF
 
 			this.writeMap(map, e);
 		}
-		
+
 		protected abstract void writeSection();
 	}
 }
