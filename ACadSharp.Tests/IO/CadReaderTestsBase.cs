@@ -22,7 +22,7 @@ namespace ACadSharp.Tests.IO
 		{
 			using (T reader = (T)Activator.CreateInstance(typeof(T), test, null))
 			{
-				reader.OnNotificationHandler += this.onNotification;
+				reader.OnNotification += this.onNotification;
 				CadHeader header = reader.ReadHeader();
 			}
 		}
@@ -74,7 +74,7 @@ namespace ACadSharp.Tests.IO
 
 			using (T reader = (T)Activator.CreateInstance(typeof(T), path, null))
 			{
-				reader.OnNotificationHandler += this.onNotification;
+				reader.OnNotification += this.onNotification;
 				doc = reader.Read();
 			}
 

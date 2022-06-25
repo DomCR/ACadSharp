@@ -1,27 +1,18 @@
-﻿using ACadSharp.Classes;
-using ACadSharp.Exceptions;
-using ACadSharp.Header;
-using ACadSharp.IO.DWG;
-using CSUtilities.Converters;
+﻿using ACadSharp.Header;
 using CSUtilities.IO;
-using CSUtilities.Text;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace ACadSharp.IO
 {
 	public abstract class CadReaderBase : ICadReader
 	{
-		public event NotificationEventHandler OnNotificationHandler;
+		public event NotificationEventHandler OnNotification;
 
 		internal readonly StreamIO _fileStream;
 
 		protected CadReaderBase(NotificationEventHandler notification)
 		{
-			this.OnNotificationHandler += notification;
+			this.OnNotification += notification;
 		}
 
 		protected CadReaderBase(string filename, NotificationEventHandler notification = null) : this(notification)
@@ -48,7 +39,7 @@ namespace ACadSharp.IO
 
 		protected void triggerNotification(object sender, NotificationEventArgs e)
 		{
-			this.OnNotificationHandler?.Invoke(this, e);
+			this.OnNotification?.Invoke(this, e);
 		}
 	}
 }
