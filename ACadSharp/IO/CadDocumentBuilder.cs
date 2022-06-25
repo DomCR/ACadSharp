@@ -1,17 +1,13 @@
-﻿using ACadSharp.Blocks;
-using ACadSharp.IO.DWG;
-using ACadSharp.IO.Templates;
+﻿using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ACadSharp.IO
 {
 	internal abstract class CadDocumentBuilder
 	{
-		public event NotificationEventHandler OnNotificationHandler;
+		public event NotificationEventHandler OnNotification;
 
 		public CadDocument DocumentToBuild { get; }
 
@@ -22,10 +18,9 @@ namespace ACadSharp.IO
 
 		protected Dictionary<ulong, CadObject> cadObjects = new Dictionary<ulong, CadObject>();
 
-		public CadDocumentBuilder(CadDocument document, NotificationEventHandler notification = null)
+		public CadDocumentBuilder(CadDocument document)
 		{
 			this.DocumentToBuild = document;
-			this.OnNotificationHandler = notification;
 		}
 
 		public virtual void BuildDocument()
@@ -114,7 +109,7 @@ namespace ACadSharp.IO
 
 		public void Notify(NotificationEventArgs e)
 		{
-			this.OnNotificationHandler?.Invoke(this, e);
+			this.OnNotification?.Invoke(this, e);
 		}
 	}
 }

@@ -10,7 +10,7 @@ namespace ACadSharp.IO.DXF
 	{
 		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new Dictionary<ulong, ICadTableTemplate>();
 
-		public DxfDocumentBuilder(CadDocument document, NotificationEventHandler notification = null) : base(document, notification) { }
+		public DxfDocumentBuilder(CadDocument document) : base(document) { }
 
 		public override void BuildDocument()
 		{

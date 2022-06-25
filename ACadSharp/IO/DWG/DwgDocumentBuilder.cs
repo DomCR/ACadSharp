@@ -1,9 +1,5 @@
 ﻿using ACadSharp.IO.Templates;
-using ACadSharp.Tables;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
@@ -17,8 +13,8 @@ namespace ACadSharp.IO.DWG
 
 		public List<CadDictionaryTemplate> CadDictionaryTemplates { get; set; } = new List<CadDictionaryTemplate>();
 
-		public DwgDocumentBuilder(CadDocument document, DwgReaderFlags flags, NotificationEventHandler notification = null)
-			: base(document, notification)
+		public DwgDocumentBuilder(CadDocument document, DwgReaderFlags flags)
+			: base(document)
 		{
 			this.Flags = flags;
 		}
