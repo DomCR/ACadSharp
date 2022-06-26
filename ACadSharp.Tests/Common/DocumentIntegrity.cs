@@ -83,9 +83,10 @@ namespace ACadSharp.Tests.Common
 
 		public void AssertDocumentTree(CadDocument doc)
 		{
+			this._document = doc;
 			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(File.ReadAllText(_documentTree));
 
-			this.assertTable(doc.BlockRecords, tree.BlocksTable, doc.Header.Version >= ACadVersion.AC1021);
+			this.assertTable(doc.BlockRecords, tree.BlocksTable);
 		}
 
 		private void assertTable<T>(CadDocument doc, Table<T> table)
@@ -97,7 +98,7 @@ namespace ACadSharp.Tests.Common
 			Assert.Equal(doc, table.Document);
 			Assert.Equal(doc, table.Owner);
 
-			Assert.True(table.Handle != 0);
+			Assert.True(table.Handle != 0, "Table does not have a handle assigned");
 
 			CadObject t = doc.GetCadObject(table.Handle);
 			Assert.Equal(t, table);
@@ -111,21 +112,21 @@ namespace ACadSharp.Tests.Common
 			}
 		}
 
-		private void assertTable<T>(Table<T> table, Node node, bool assertDictionary)
+		private void assertTable<T>(Table<T> table, TableNode node)
 			where T : TableEntry
 		{
-			this.assertObject(table, node, assertDictionary);
+			this.assertObject(table, node);
 
 			foreach (T entry in table)
 			{
-				Node child = node.GetByHandle(entry.Handle);
+				TableEntryNode child = node.GetEntry(entry.Handle);
 				if (child == null)
 				{
-					this.Output.WriteLine($"Table entry not found in the tree {entry.Handle} | {entry.Name}");
+					this.Output.WriteLine($"[{node.ACadName}] entry not found in the tree {entry.Handle} | {entry.Name}");
 					continue;
 				}
 
-				this.assertObject(entry, child, assertDictionary);
+				this.assertObject(entry, child);
 			}
 
 			foreach (Node c in node.Children)
@@ -133,12 +134,12 @@ namespace ACadSharp.Tests.Common
 
 			}
 		}
-		private void assertObject(CadObject co, Node node, bool assertDictionary)
+		private void assertObject(CadObject co, Node node)
 		{
 			Assert.True(co.Handle == node.Handle);
 			Assert.True(co.Owner.Handle == node.OwnerHandle);
 
-			if (co.XDictionary != null && assertDictionary)
+			if (co.XDictionary != null && this._document.Header.Version >= ACadVersion.AC1021)
 			{
 				Assert.True(co.XDictionary.Handle == node.DictionaryHandle);
 				Assert.True(co.XDictionary.Owner == co);
@@ -150,19 +151,19 @@ namespace ACadSharp.Tests.Common
 			switch (co)
 			{
 				case BlockRecord record:
-					this.assertCollection(record.Entities, node, assertDictionary);
+					this.assertCollection(record.Entities, node);
 					break;
 				default:
 					break;
 			}
 		}
 
-		private void assertCollection(IEnumerable<CadObject> collection, Node node, bool assertDictionary)
+		private void assertCollection(IEnumerable<CadObject> collection, Node node)
 		{
 			//Check the actual elements in the collection
 			foreach (CadObject entry in collection)
 			{
-				Node child = node.GetByHandle(entry.Handle);
+				Node child = node.GetChild(entry.Handle);
 
 				if (child == null)
 				{
@@ -170,7 +171,7 @@ namespace ACadSharp.Tests.Common
 					continue;
 				}
 
-				this.assertObject(entry, child, assertDictionary);
+				this.assertObject(entry, child);
 			}
 
 			//Look for missing elements
