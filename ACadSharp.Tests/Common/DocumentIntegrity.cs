@@ -18,6 +18,8 @@ namespace ACadSharp.Tests.Common
 
 		private const string _documentTree = "../../../../ACadSharp.Tests/Data/document_tree.json";
 
+		private CadDocument _document;
+
 		public DocumentIntegrity(ITestOutputHelper output)
 		{
 			this.Output = output;
@@ -118,9 +120,17 @@ namespace ACadSharp.Tests.Common
 			{
 				Node child = node.GetByHandle(entry.Handle);
 				if (child == null)
+				{
+					this.Output.WriteLine($"Table entry not found in the tree {entry.Handle} | {entry.Name}");
 					continue;
+				}
 
 				this.assertObject(entry, child, assertDictionary);
+			}
+
+			foreach (Node c in node.Children)
+			{
+
 			}
 		}
 		private void assertObject(CadObject co, Node node, bool assertDictionary)
@@ -153,8 +163,12 @@ namespace ACadSharp.Tests.Common
 			foreach (CadObject entry in collection)
 			{
 				Node child = node.GetByHandle(entry.Handle);
+
 				if (child == null)
+				{
+					this.Output.WriteLine($"Handle not found in collection : {entry.Handle}");
 					continue;
+				}
 
 				this.assertObject(entry, child, assertDictionary);
 			}
@@ -164,7 +178,7 @@ namespace ACadSharp.Tests.Common
 			{
 				var o = collection.FirstOrDefault(x => x.Handle == n.Handle);
 				if (o == null)
-					this.Output?.WriteLine($"Owner : {n.OwnerHandle} missing object with handle : {n.Handle}");
+					this.Output.WriteLine($"Missing object in collection with handle with handle : {n.Handle} | owner handle : {n.OwnerHandle}");
 			}
 		}
 

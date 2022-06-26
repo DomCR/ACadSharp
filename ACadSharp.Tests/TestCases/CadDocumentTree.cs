@@ -7,7 +7,23 @@ namespace ACadSharp.Tests.TestCases
 {
 	public class CadDocumentTree
 	{
+		public Node AppIdsTable { get; set; }
+
 		public Node BlocksTable { get; set; }
+
+		public Node DimensionStylesTable { get; set; }
+
+		public Node LayersTable { get; set; }
+
+		public Node LineTypesTable { get; set; }
+
+		public Node TextStylesTable { get; set; }
+
+		public Node UCSsTable { get; set; }
+
+		public Node ViewsTable { get; set; }
+
+		public Node VPortsTable { get; set; }
 	}
 
 	public class Node
@@ -26,5 +42,10 @@ namespace ACadSharp.Tests.TestCases
 		{
 			return this.Children.FirstOrDefault(x => x.Handle == handle);
 		}
+	}
+
+	public class TableEntryNode : Node
+	{
+		public string Name { get; set; }
 	}
 }

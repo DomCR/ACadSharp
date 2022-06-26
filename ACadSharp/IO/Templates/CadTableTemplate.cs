@@ -31,7 +31,7 @@ namespace ACadSharp.IO.Templates
 				}
 				catch (Exception)
 				{
-					builder.Notify(new NotificationEventArgs($"Entry not found [handle : {handle}] [type : {typeof(T)}]"));
+					builder.Notify(new NotificationEventArgs($"Error adding the entry [handle : {handle}] [type : {typeof(T)}]"));
 				}
 			}
 		}

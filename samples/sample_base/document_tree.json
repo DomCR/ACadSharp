@@ -1,4 +1,132 @@
 {
+  "AppIdsTable": {
+    "ObjectType": 66,
+    "Handle": 9,
+    "OwnerHandle": 0,
+    "DictionaryHandle": 0,
+    "Children": [
+      {
+        "Name": "ACAD",
+        "ObjectType": 0,
+        "Handle": 18,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "AcadAnnoPO",
+        "ObjectType": 0,
+        "Handle": 221,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "AcadAnnotative",
+        "ObjectType": 0,
+        "Handle": 222,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "ACAD_DSTYLE_DIMJAG",
+        "ObjectType": 0,
+        "Handle": 223,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "ACAD_DSTYLE_DIMTALN",
+        "ObjectType": 0,
+        "Handle": 224,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "ACAD_MLEADERVER",
+        "ObjectType": 0,
+        "Handle": 263,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "ACAD_NAV_VCDISPLAY",
+        "ObjectType": 0,
+        "Handle": 422,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "ACAD_PSEXT",
+        "ObjectType": 0,
+        "Handle": 579,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "AcAecLayerStandard",
+        "ObjectType": 0,
+        "Handle": 630,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "AcCmTransparency",
+        "ObjectType": 0,
+        "Handle": 631,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "ACAD_EXEMPT_FROM_CAD_STANDARDS",
+        "ObjectType": 0,
+        "Handle": 704,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "GradientColor1ACI",
+        "ObjectType": 0,
+        "Handle": 856,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "GradientColor2ACI",
+        "ObjectType": 0,
+        "Handle": 857,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "ACAD_DSTYLE_DIMRADIAL_EXTENSION",
+        "ObjectType": 0,
+        "Handle": 1237,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "AcDbDynamicBlockGUID",
+        "ObjectType": 0,
+        "Handle": 1786,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      }
+    ]
+  },
   "BlocksTable": {
     "ObjectType": 48,
     "Handle": 1,
@@ -6,6 +134,7 @@
     "DictionaryHandle": 0,
     "Children": [
       {
+        "Name": "*Model_Space",
         "ObjectType": 0,
         "Handle": 31,
         "OwnerHandle": 1,
@@ -581,6 +710,7 @@
         ]
       },
       {
+        "Name": "*Paper_Space",
         "ObjectType": 0,
         "Handle": 88,
         "OwnerHandle": 1,
@@ -603,6 +733,7 @@
         ]
       },
       {
+        "Name": "*Paper_Space0",
         "ObjectType": 0,
         "Handle": 93,
         "OwnerHandle": 1,
@@ -625,6 +756,7 @@
         ]
       },
       {
+        "Name": "*Paper_Space1",
         "ObjectType": 0,
         "Handle": 601,
         "OwnerHandle": 1,
@@ -647,6 +779,7 @@
         ]
       },
       {
+        "Name": "_ArchTick",
         "ObjectType": 0,
         "Handle": 1188,
         "OwnerHandle": 1,
@@ -662,6 +795,7 @@
         ]
       },
       {
+        "Name": "*D13",
         "ObjectType": 0,
         "Handle": 1321,
         "OwnerHandle": 1,
@@ -733,6 +867,7 @@
         ]
       },
       {
+        "Name": "*D14",
         "ObjectType": 0,
         "Handle": 1333,
         "OwnerHandle": 1,
@@ -811,6 +946,7 @@
         ]
       },
       {
+        "Name": "*D15",
         "ObjectType": 0,
         "Handle": 1346,
         "OwnerHandle": 1,
@@ -896,6 +1032,7 @@
         ]
       },
       {
+        "Name": "*D16",
         "ObjectType": 0,
         "Handle": 1360,
         "OwnerHandle": 1,
@@ -953,6 +1090,7 @@
         ]
       },
       {
+        "Name": "*D17",
         "ObjectType": 0,
         "Handle": 1370,
         "OwnerHandle": 1,
@@ -1010,6 +1148,7 @@
         ]
       },
       {
+        "Name": "*D18",
         "ObjectType": 0,
         "Handle": 1380,
         "OwnerHandle": 1,
@@ -1081,6 +1220,7 @@
         ]
       },
       {
+        "Name": "*T19",
         "ObjectType": 0,
         "Handle": 1392,
         "OwnerHandle": 1,
@@ -1285,6 +1425,7 @@
         ]
       },
       {
+        "Name": "*D20",
         "ObjectType": 0,
         "Handle": 1453,
         "OwnerHandle": 1,
@@ -1335,6 +1476,7 @@
         ]
       },
       {
+        "Name": "*D21",
         "ObjectType": 0,
         "Handle": 1462,
         "OwnerHandle": 1,
@@ -1378,6 +1520,7 @@
         ]
       },
       {
+        "Name": "MyBlock",
         "ObjectType": 0,
         "Handle": 1778,
         "OwnerHandle": 1,
@@ -1412,6 +1555,333 @@
             "Children": []
           }
         ]
+      }
+    ]
+  },
+  "DimensionStylesTable": {
+    "ObjectType": 68,
+    "Handle": 10,
+    "OwnerHandle": 0,
+    "DictionaryHandle": 0,
+    "Children": [
+      {
+        "Name": "Standard",
+        "ObjectType": 0,
+        "Handle": 39,
+        "OwnerHandle": 10,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Annotative",
+        "ObjectType": 0,
+        "Handle": 225,
+        "OwnerHandle": 10,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "ISO-25",
+        "ObjectType": 0,
+        "Handle": 922,
+        "OwnerHandle": 10,
+        "DictionaryHandle": 0,
+        "Children": []
+      }
+    ]
+  },
+  "LayersTable": {
+    "ObjectType": 50,
+    "Handle": 2,
+    "OwnerHandle": 0,
+    "DictionaryHandle": 0,
+    "Children": [
+      {
+        "Name": "0",
+        "ObjectType": 0,
+        "Handle": 16,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 230,
+        "Children": []
+      },
+      {
+        "Name": "Layer1",
+        "ObjectType": 0,
+        "Handle": 629,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Layer_Off",
+        "ObjectType": 0,
+        "Handle": 632,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Layer_Freeze",
+        "ObjectType": 0,
+        "Handle": 633,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Layer_Lock",
+        "ObjectType": 0,
+        "Handle": 634,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Layer_NoPlot",
+        "ObjectType": 0,
+        "Handle": 635,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Layer_color_80",
+        "ObjectType": 0,
+        "Handle": 636,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Layer_Lt_dash",
+        "ObjectType": 0,
+        "Handle": 637,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Layer_lw_035",
+        "ObjectType": 0,
+        "Handle": 641,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Layer_transp_70",
+        "ObjectType": 0,
+        "Handle": 642,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Layer_vp_freeze",
+        "ObjectType": 0,
+        "Handle": 643,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Layer_desc",
+        "ObjectType": 0,
+        "Handle": 644,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Layer_true_color",
+        "ObjectType": 0,
+        "Handle": 645,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Layer_color_book",
+        "ObjectType": 0,
+        "Handle": 646,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Defpoints",
+        "ObjectType": 0,
+        "Handle": 1234,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Layer2",
+        "ObjectType": 0,
+        "Handle": 1235,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 1236,
+        "Children": []
+      }
+    ]
+  },
+  "LineTypesTable": {
+    "ObjectType": 56,
+    "Handle": 5,
+    "OwnerHandle": 0,
+    "DictionaryHandle": 0,
+    "Children": [
+      {
+        "Name": "ByBlock",
+        "ObjectType": 0,
+        "Handle": 20,
+        "OwnerHandle": 5,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "ByLayer",
+        "ObjectType": 0,
+        "Handle": 21,
+        "OwnerHandle": 5,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Continuous",
+        "ObjectType": 0,
+        "Handle": 22,
+        "OwnerHandle": 5,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "ACAD_ISO02W100",
+        "ObjectType": 0,
+        "Handle": 640,
+        "OwnerHandle": 5,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "GAS_LINE",
+        "ObjectType": 0,
+        "Handle": 1714,
+        "OwnerHandle": 5,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "TRACKS",
+        "ObjectType": 0,
+        "Handle": 1727,
+        "OwnerHandle": 5,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "ZIGZAG",
+        "ObjectType": 0,
+        "Handle": 1740,
+        "OwnerHandle": 5,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "BATTING",
+        "ObjectType": 0,
+        "Handle": 1753,
+        "OwnerHandle": 5,
+        "DictionaryHandle": 0,
+        "Children": []
+      }
+    ]
+  },
+  "TextStylesTable": {
+    "ObjectType": 52,
+    "Handle": 3,
+    "OwnerHandle": 0,
+    "DictionaryHandle": 0,
+    "Children": [
+      {
+        "Name": "Standard",
+        "ObjectType": 0,
+        "Handle": 17,
+        "OwnerHandle": 3,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "Annotative",
+        "ObjectType": 0,
+        "Handle": 220,
+        "OwnerHandle": 3,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "",
+        "ObjectType": 0,
+        "Handle": 639,
+        "OwnerHandle": 3,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "custom_text_style",
+        "ObjectType": 0,
+        "Handle": 921,
+        "OwnerHandle": 3,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "MyTextStyle",
+        "ObjectType": 0,
+        "Handle": 1033,
+        "OwnerHandle": 3,
+        "DictionaryHandle": 0,
+        "Children": []
+      }
+    ]
+  },
+  "UCSsTable": {
+    "ObjectType": 62,
+    "Handle": 7,
+    "OwnerHandle": 0,
+    "DictionaryHandle": 0,
+    "Children": []
+  },
+  "ViewsTable": {
+    "ObjectType": 60,
+    "Handle": 6,
+    "OwnerHandle": 0,
+    "DictionaryHandle": 0,
+    "Children": [
+      {
+        "Name": "view_custom",
+        "ObjectType": 0,
+        "Handle": 770,
+        "OwnerHandle": 6,
+        "DictionaryHandle": 771,
+        "Children": []
+      }
+    ]
+  },
+  "VPortsTable": {
+    "ObjectType": 64,
+    "Handle": 8,
+    "OwnerHandle": 0,
+    "DictionaryHandle": 0,
+    "Children": [
+      {
+        "Name": "*Active",
+        "ObjectType": 0,
+        "Handle": 148,
+        "OwnerHandle": 8,
+        "DictionaryHandle": 0,
+        "Children": []
       }
     ]
   }
