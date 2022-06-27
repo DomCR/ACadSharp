@@ -117,9 +117,22 @@ namespace ACadSharp.Tests.Common
 		{
 			this.assertObject(table, node);
 
+			//By handle
 			foreach (T entry in table)
 			{
 				TableEntryNode child = node.GetEntry(entry.Handle);
+				if (child == null)
+				{
+					this.Output.WriteLine($"[{node.ACadName}] entry not found in the tree {entry.Handle} | {entry.Name}");
+					continue;
+				}
+
+				this.assertObject(entry, child);
+			}
+
+			foreach (T entry in table)
+			{
+				TableEntryNode child = node.GetEntry(entry.Name);
 				if (child == null)
 				{
 					this.Output.WriteLine($"[{node.ACadName}] entry not found in the tree {entry.Handle} | {entry.Name}");
@@ -136,7 +149,7 @@ namespace ACadSharp.Tests.Common
 		}
 		private void assertObject(CadObject co, Node node)
 		{
-			Assert.True(co.Handle == node.Handle);
+			Assert.True(co.Handle == node.Handle, $"[{co.GetType().FullName}] handle does not match, expected : {node.Handle} but was : {co.Handle}");
 			Assert.True(co.Owner.Handle == node.OwnerHandle);
 
 			if (co.XDictionary != null && this._document.Header.Version >= ACadVersion.AC1021)
