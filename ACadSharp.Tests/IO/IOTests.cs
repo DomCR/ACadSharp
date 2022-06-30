@@ -19,7 +19,7 @@ namespace ACadSharp.Tests.IO
 		[MemberData(nameof(DwgFilePaths))]
 		public void DwgToDxf(string test)
 		{
-			CadDocument doc = DwgReader.Read(test, this.onNotification);
+			CadDocument doc = DwgReader.Read(test);
 
 			string file = Path.GetFileNameWithoutExtension(test);
 
@@ -29,6 +29,8 @@ namespace ACadSharp.Tests.IO
 			{
 				writer.Write();
 			}
+
+			this.checkDocumentInAutocad(Path.GetFullPath(pathOut));
 		}
 	}
 }

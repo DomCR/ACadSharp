@@ -1993,7 +1993,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable DIMTFILLCLR
 		/// </remarks>
-		[CadSystemVariable("$DIMTFILLCLR", 62)]
+		[CadSystemVariable(DxfReferenceType.Ignored, "$DIMTFILLCLR", 62)]
 		public Color DimensionTextBackgroundColor
 		{
 			get { return this.DimensionStyleOverrides.TextBackgroundColor; }
