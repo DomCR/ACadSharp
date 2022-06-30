@@ -72,5 +72,6 @@
 		public const string Group = "AcDbGroup";
 		public const string Layout = "AcDbLayout";
 		public const string PlotSettings = "AcDbPlotSettings";
+		public const string DictionaryVariables = "DictionaryVariables";
 	}
 }

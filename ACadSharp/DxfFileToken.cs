@@ -91,6 +91,7 @@
 
 		public const string ObjectsSection = "OBJECTS";
 		public const string ObjectDictionary = "DICTIONARY";
+		public const string ObjectDictionaryVar = "DICTIONARYVAR";
 		public const string ObjectPlotSettings = "PLOTSETTINGS";
 		public const string ObjectLayout = "LAYOUT";
 		public const string ObjectMLStyle = "MLINESTYLE";

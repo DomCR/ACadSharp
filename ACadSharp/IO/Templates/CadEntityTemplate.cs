@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
 using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
