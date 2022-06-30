@@ -912,6 +912,8 @@ namespace ACadSharp.IO.DWG
 					template = this.readDwgColor();
 					break;
 				case "DICTIONARYVAR":
+					template = this.readDictionaryVar();
+					break;
 				case "DICTIONARYWDFLT":
 				case "FIELD":
 					break;
@@ -2397,6 +2399,22 @@ namespace ACadSharp.IO.DWG
 
 				template.Entries.Add(name, handle);
 			}
+
+			return template;
+		}
+
+		private CadTemplate readDictionaryVar()
+		{
+			DictionaryVariable dictvar = new DictionaryVariable();
+			CadTemplate<DictionaryVariable> template = new CadTemplate<DictionaryVariable>(dictvar);
+
+			this.readCommonNonEntityData(template);
+
+			//Intval RC an integer value
+			this._objectReader.ReadByte();
+
+			//BS a string
+			dictvar.Value = this._textReader.ReadVariableText();
 
 			return template;
 		}
