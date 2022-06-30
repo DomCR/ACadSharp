@@ -3247,7 +3247,7 @@ namespace ACadSharp.IO.DWG
 			{
 				//Elevation BD 146
 				ucs.Elevation = this._objectReader.ReadBitDouble();
-				//OrthographicViewType BS 79
+				//OrthographicViewType BS 79	//dxf docs: 79	Always 0
 				ucs.OrthographicViewType = (OrthographicType)this._objectReader.ReadBitShort();
 				//OrthographicType BS 71
 				ucs.OrthographicType = (OrthographicType)this._objectReader.ReadBitShort();

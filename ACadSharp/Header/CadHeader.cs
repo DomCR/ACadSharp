@@ -790,14 +790,7 @@ namespace ACadSharp.Header
 		/// System variable PINSBASE
 		/// </remarks>
 		[CadSystemVariable("$PINSBASE", 10, 20, 30)]
-		public XYZ PaperSpaceInsertionBase
-		{
-			get { return this.PaperSpaceUcs.InsertionBase; }
-			set
-			{
-				this.PaperSpaceUcs.InsertionBase = value;
-			}
-		}
+		public XYZ PaperSpaceInsertionBase { get; set; }
 
 		/// <summary>
 		/// X, Y, and Z drawing extents lower-left corner (in WCS)
@@ -806,14 +799,7 @@ namespace ACadSharp.Header
 		/// System variable PEXTMIN
 		/// </remarks>
 		[CadSystemVariable("$PEXTMIN", 10, 20, 30)]
-		public XYZ PaperSpaceExtMin
-		{
-			get { return this.PaperSpaceUcs.ExtMin; }
-			set
-			{
-				this.PaperSpaceUcs.ExtMin = value;
-			}
-		}
+		public XYZ PaperSpaceExtMin { get; set; }
 
 		/// <summary>
 		/// X, Y, and Z drawing extents upper-right corner(in WCS)
@@ -822,14 +808,7 @@ namespace ACadSharp.Header
 		/// System variable PEXTMAX
 		/// </remarks>
 		[CadSystemVariable("$PEXTMAX", 10, 20, 30)]
-		public XYZ PaperSpaceExtMax
-		{
-			get { return this.PaperSpaceUcs.ExtMax; }
-			set
-			{
-				this.PaperSpaceUcs.ExtMax = value;
-			}
-		}
+		public XYZ PaperSpaceExtMax { get; set; }
 
 		/// <summary>
 		/// XY drawing limits lower-left corner(in WCS)
@@ -838,14 +817,7 @@ namespace ACadSharp.Header
 		/// System variable PLIMMIN
 		/// </remarks>
 		[CadSystemVariable("$PLIMMIN", 10, 20)]
-		public XY PaperSpaceLimitsMin
-		{
-			get { return this.PaperSpaceUcs.LimitsMin; }
-			set
-			{
-				this.PaperSpaceUcs.LimitsMin = value;
-			}
-		}
+		public XY PaperSpaceLimitsMin { get; set; }
 
 		/// <summary>
 		/// XY drawing limits upper-right corner (in WCS)
@@ -854,14 +826,7 @@ namespace ACadSharp.Header
 		/// System variable PLIMMAX
 		/// </remarks>
 		[CadSystemVariable("$PLIMMAX", 10, 20)]
-		public XY PaperSpaceLimitsMax
-		{
-			get { return this.PaperSpaceUcs.LimitsMax; }
-			set
-			{
-				this.PaperSpaceUcs.LimitsMax = value;
-			}
-		}
+		public XY PaperSpaceLimitsMax { get; set; }
 
 		/// <summary>
 		/// Current elevation set by ELEV command
@@ -934,14 +899,7 @@ namespace ACadSharp.Header
 		/// System variable PUCSORGTOP
 		/// </remarks>
 		[CadSystemVariable("$PUCSORGTOP", 10, 20, 30)]
-		public XYZ PaperSpaceOrthographicTopDOrigin
-		{
-			get { return this.PaperSpaceUcs.OrthographicTopDOrigin; }
-			set
-			{
-				this.PaperSpaceUcs.OrthographicTopDOrigin = value;
-			}
-		}
+		public XYZ PaperSpaceOrthographicTopDOrigin { get; set; }
 
 		/// <summary>
 		/// Point which becomes the new UCS origin after changing paper space UCS to BOTTOM when PUCSBASE is set to WORLD
@@ -950,14 +908,7 @@ namespace ACadSharp.Header
 		/// System variable PUCSORGBOTTOM
 		/// </remarks>
 		[CadSystemVariable("$PUCSORGBOTTOM", 10, 20, 30)]
-		public XYZ PaperSpaceOrthographicBottomDOrigin
-		{
-			get { return this.PaperSpaceUcs.OrthographicBottomDOrigin; }
-			set
-			{
-				this.PaperSpaceUcs.OrthographicBottomDOrigin = value;
-			}
-		}
+		public XYZ PaperSpaceOrthographicBottomDOrigin { get; set; }
 
 		/// <summary>
 		/// Point which becomes the new UCS origin after changing paper space UCS to LEFT when PUCSBASE is set to WORLD
@@ -966,14 +917,7 @@ namespace ACadSharp.Header
 		/// System variable PUCSORGLEFT
 		/// </remarks>
 		[CadSystemVariable("$PUCSORGLEFT", 10, 20, 30)]
-		public XYZ PaperSpaceOrthographicLeftDOrigin
-		{
-			get { return this.PaperSpaceUcs.OrthographicLeftDOrigin; }
-			set
-			{
-				this.PaperSpaceUcs.OrthographicLeftDOrigin = value;
-			}
-		}
+		public XYZ PaperSpaceOrthographicLeftDOrigin { get; set; }
 
 		/// <summary>
 		/// Point which becomes the new UCS origin after changing paper space UCS to RIGHT when PUCSBASE is set to WORLD
@@ -982,14 +926,7 @@ namespace ACadSharp.Header
 		/// System variable PUCSORGRIGHT
 		/// </remarks>
 		[CadSystemVariable("$PUCSORGRIGHT", 10, 20, 30)]
-		public XYZ PaperSpaceOrthographicRightDOrigin
-		{
-			get { return this.PaperSpaceUcs.OrthographicRightDOrigin; }
-			set
-			{
-				this.PaperSpaceUcs.OrthographicRightDOrigin = value;
-			}
-		}
+		public XYZ PaperSpaceOrthographicRightDOrigin { get; set; }
 
 		/// <summary>
 		/// Point which becomes the new UCS origin after changing paper space UCS to FRONT when PUCSBASE is set to WORLD
@@ -998,14 +935,7 @@ namespace ACadSharp.Header
 		/// System variable PUCSORGFRONT
 		/// </remarks>
 		[CadSystemVariable("$PUCSORGFRONT", 10, 20, 30)]
-		public XYZ PaperSpaceOrthographicFrontDOrigin
-		{
-			get { return this.PaperSpaceUcs.OrthographicFrontDOrigin; }
-			set
-			{
-				this.PaperSpaceUcs.OrthographicFrontDOrigin = value;
-			}
-		}
+		public XYZ PaperSpaceOrthographicFrontDOrigin { get; set; }
 
 		/// <summary>
 		/// Point which becomes the new UCS origin after changing paper space UCS to BACK when PUCSBASE is set to WORLD
@@ -1014,14 +944,7 @@ namespace ACadSharp.Header
 		/// System variable PUCSORGBACK
 		/// </remarks>
 		[CadSystemVariable("$PUCSORGBACK", 10, 20, 30)]
-		public XYZ PaperSpaceOrthographicBackDOrigin
-		{
-			get { return this.PaperSpaceUcs.OrthographicBackDOrigin; }
-			set
-			{
-				this.PaperSpaceUcs.OrthographicBackDOrigin = value;
-			}
-		}
+		public XYZ PaperSpaceOrthographicBackDOrigin { get; set; }
 
 		/// <summary>
 		/// Point which becomes the new UCS origin after changing model space UCS to TOP when PUCSBASE is set to WORLD
@@ -1030,14 +953,7 @@ namespace ACadSharp.Header
 		/// System variable UCSORGTOP
 		/// </remarks>
 		[CadSystemVariable("$UCSORGTOP", 10, 20, 30)]
-		public XYZ ModelSpaceOrthographicTopDOrigin
-		{
-			get { return this.ModelSpace.OrthographicTopDOrigin; }
-			set
-			{
-				this.ModelSpace.OrthographicTopDOrigin = value;
-			}
-		}
+		public XYZ ModelSpaceOrthographicTopDOrigin { get; set; }
 
 		/// <summary>
 		/// Point which becomes the new UCS origin after changing model space UCS to BOTTOM when PUCSBASE is set to WORLD
@@ -1046,14 +962,7 @@ namespace ACadSharp.Header
 		/// System variable UCSORGBOTTOM
 		/// </remarks>
 		[CadSystemVariable("$UCSORGBOTTOM", 10, 20, 30)]
-		public XYZ ModelSpaceOrthographicBottomDOrigin
-		{
-			get { return this.ModelSpace.OrthographicBottomDOrigin; }
-			set
-			{
-				this.ModelSpace.OrthographicBottomDOrigin = value;
-			}
-		}
+		public XYZ ModelSpaceOrthographicBottomDOrigin { get; set; }
 
 		/// <summary>
 		/// Point which becomes the new UCS origin after changing model space UCS to LEFT when PUCSBASE is set to WORLD
@@ -1062,14 +971,7 @@ namespace ACadSharp.Header
 		/// System variable UCSORGLEFT
 		/// </remarks>
 		[CadSystemVariable("$UCSORGLEFT", 10, 20, 30)]
-		public XYZ ModelSpaceOrthographicLeftDOrigin
-		{
-			get { return this.ModelSpace.OrthographicLeftDOrigin; }
-			set
-			{
-				this.ModelSpace.OrthographicLeftDOrigin = value;
-			}
-		}
+		public XYZ ModelSpaceOrthographicLeftDOrigin { get; set; }
 
 		/// <summary>
 		/// Point which becomes the new UCS origin after changing model space UCS to RIGHT when PUCSBASE is set to WORLD
@@ -1078,14 +980,7 @@ namespace ACadSharp.Header
 		/// System variable UCSORGRIGHT
 		/// </remarks>
 		[CadSystemVariable("$UCSORGRIGHT", 10, 20, 30)]
-		public XYZ ModelSpaceOrthographicRightDOrigin
-		{
-			get { return this.ModelSpace.OrthographicRightDOrigin; }
-			set
-			{
-				this.ModelSpace.OrthographicRightDOrigin = value;
-			}
-		}
+		public XYZ ModelSpaceOrthographicRightDOrigin { get; set; }
 
 		/// <summary>
 		/// Point which becomes the new UCS origin after changing model space UCS to FRONT when PUCSBASE is set to WORLD
@@ -1094,14 +989,7 @@ namespace ACadSharp.Header
 		/// System variable UCSORGFRONT
 		/// </remarks>
 		[CadSystemVariable("$UCSORGFRONT", 10, 20, 30)]
-		public XYZ ModelSpaceOrthographicFrontDOrigin
-		{
-			get { return this.ModelSpace.OrthographicFrontDOrigin; }
-			set
-			{
-				this.ModelSpace.OrthographicFrontDOrigin = value;
-			}
-		}
+		public XYZ ModelSpaceOrthographicFrontDOrigin { get; set; }
 
 		/// <summary>
 		/// Point which becomes the new UCS origin after changing model space UCS to BACK when PUCSBASE is set to WORLD
@@ -1110,14 +998,7 @@ namespace ACadSharp.Header
 		/// System variable UCSORGBACK
 		/// </remarks>
 		[CadSystemVariable("$UCSORGBACK", 10, 20, 30)]
-		public XYZ ModelSpaceOrthographicBackDOrigin
-		{
-			get { return this.ModelSpace.OrthographicBackDOrigin; }
-			set
-			{
-				this.ModelSpace.OrthographicBackDOrigin = value;
-			}
-		}
+		public XYZ ModelSpaceOrthographicBackDOrigin { get; set; }
 
 		/// <summary>
 		/// Insertion base set by BASE command(in WCS)
@@ -1126,14 +1007,7 @@ namespace ACadSharp.Header
 		/// System variable INSBASE
 		/// </remarks>
 		[CadSystemVariable("$INSBASE", 10, 20, 30)]
-		public XYZ ModelSpaceInsertionBase
-		{
-			get { return this.ModelSpace.InsertionBase; }
-			set
-			{
-				this.ModelSpace.InsertionBase = value;
-			}
-		}
+		public XYZ ModelSpaceInsertionBase { get; set; }
 
 		/// <summary>
 		/// X, Y, and Z drawing extents lower-left corner (in WCS)
@@ -1142,14 +1016,7 @@ namespace ACadSharp.Header
 		/// System variable EXTMIN
 		/// </remarks>
 		[CadSystemVariable("$EXTMIN", 10, 20, 30)]
-		public XYZ ModelSpaceExtMin
-		{
-			get { return this.ModelSpace.ExtMin; }
-			set
-			{
-				this.ModelSpace.ExtMin = value;
-			}
-		}
+		public XYZ ModelSpaceExtMin { get; set; }
 
 		/// <summary>
 		/// X, Y, and Z drawing extents upper-right corner(in WCS)
@@ -1158,14 +1025,7 @@ namespace ACadSharp.Header
 		/// System variable EXTMAX
 		/// </remarks>
 		[CadSystemVariable("$EXTMAX", 10, 20, 30)]
-		public XYZ ModelSpaceExtMax
-		{
-			get { return this.ModelSpace.ExtMax; }
-			set
-			{
-				this.ModelSpace.ExtMax = value;
-			}
-		}
+		public XYZ ModelSpaceExtMax { get; set; }
 
 		/// <summary>
 		/// XY drawing limits lower-left corner (in WCS)
@@ -1174,14 +1034,7 @@ namespace ACadSharp.Header
 		/// System variable LIMMIN
 		/// </remarks>
 		[CadSystemVariable("$LIMMIN", 10, 20)]
-		public XY ModelSpaceLimitsMin
-		{
-			get { return this.ModelSpace.LimitsMin; }
-			set
-			{
-				this.ModelSpace.LimitsMin = value;
-			}
-		}
+		public XY ModelSpaceLimitsMin { get; set; }
 
 		/// <summary>
 		/// XY drawing limits upper-right corner (in WCS)
@@ -1190,14 +1043,7 @@ namespace ACadSharp.Header
 		/// System variable LIMMAX
 		/// </remarks>
 		[CadSystemVariable("$LIMMAX", 10, 20)]
-		public XY ModelSpaceLimitsMax
-		{
-			get { return this.ModelSpace.LimitsMax; }
-			set
-			{
-				this.ModelSpace.LimitsMax = value;
-			}
-		}
+		public XY ModelSpaceLimitsMax { get; set; }
 
 		/// <summary>
 		/// Current elevation set by ELEV command
