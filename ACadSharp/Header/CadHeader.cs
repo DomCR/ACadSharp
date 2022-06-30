@@ -56,7 +56,7 @@ namespace ACadSharp.Header
 			}
 		}
 
-		public ACadVersion Version { get; set; } = ACadVersion.AC1032;
+		public ACadVersion Version { get; set; } = ACadVersion.AC1018;
 
 		/// <summary>
 		/// Maintenance version number(should be ignored)
@@ -249,38 +249,29 @@ namespace ACadSharp.Header
 		public bool RetainXRefDependentVisibilitySettings { get; set; }
 
 		/// <summary>
-		/// Controls the display of silhouette curves of body objects in Wireframe mode:
+		/// 
 		/// </summary>
 		/// <remarks>
 		/// System variable DISPSILH
 		/// </remarks>
-		[CadSystemVariable("$DISPSILH", DxfCode.Int16)]
 		public bool DisplaySilhouetteCurves { get; set; }
 
 		/// <summary>
 		/// 
-		/// </summary>
-		/// <remarks>
 		/// System variable PELLIPSE (not present in DXF)
-		/// </remarks>
+		/// </summary>
 		public bool CreateEllipseAsPolyline { get; set; }
 
 		/// <summary>
-		/// Controls the saving of proxy object images
-		/// </summary>
-		/// <remarks>
+		/// 
 		/// System variable PROXYGRAPHICS
-		/// </remarks>
-		[CadSystemVariable("$PROXYGRAPHICS", DxfCode.Int16)]
+		/// </summary>
 		public bool ProxyGraphics { get; set; }
 
 		/// <summary>
-		/// Specifies the maximum depth of the spatial index
-		/// </summary>
-		/// <remarks>
+		/// 
 		/// System variable TREEDEPTH
-		/// </remarks>
-		[CadSystemVariable("$TREEDEPTH", DxfCode.Int16)]
+		/// </summary>
 		public short SpatialIndexMaxTreeDepth { get; set; }
 
 		/// <summary>
@@ -482,21 +473,21 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$TEXTSTYLE", 7)]
 		public string TextStyleName
 		{
-			get { return this.TextStyle.Name; }
+			get { return this.CurrentTextStyle.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this.TextStyle = this.Document.TextStyles[value];
+					this.CurrentTextStyle = this.Document.TextStyles[value];
 				}
 				else
 				{
-					this.TextStyle = new TextStyle(value);
+					this.CurrentTextStyle = new TextStyle(value);
 				}
 			}
 		}
 
-		public TextStyle TextStyle { get; private set; } = TextStyle.Default;
+		public TextStyle CurrentTextStyle { get; private set; } = TextStyle.Default;
 
 		/// <summary>
 		/// Current layer name
@@ -521,8 +512,6 @@ namespace ACadSharp.Header
 			}
 		}
 
-		public Layer CurrentLayer { get; private set; } = Layer.Default;
-
 		/// <summary>
 		/// Entity linetype name, or BYBLOCK or BYLAYER
 		/// </summary>
@@ -532,21 +521,21 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$CELTYPE", 6)]
 		public string LineTypeName
 		{
-			get { return this.CurrentLType.Name; }
+			get { return this.CurrentLineType.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this.CurrentLType = this.Document.LineTypes[value];
+					this.CurrentLineType = this.Document.LineTypes[value];
 				}
 				else
 				{
-					this.CurrentLType = new LineType(value);
+					this.CurrentLineType = new LineType(value);
 				}
 			}
 		}
 
-		public LineType CurrentLType { get; private set; } = LineType.ByLayer;
+		public LineType CurrentLineType { get; private set; } = LineType.ByLayer;
 
 		/// <summary>
 		/// Current multiline style name
@@ -556,6 +545,8 @@ namespace ACadSharp.Header
 		/// </remarks>
 		[CadSystemVariable("$CMLSTYLE", 2)]
 		public string MultilineStyleName { get; set; } = "Standard";
+
+		//TODO: Header MLStyle
 		//{
 		//	get { return this.CurrentLType.Name; }
 		//	set
@@ -793,18 +784,296 @@ namespace ACadSharp.Header
 		public double ViewportDefaultViewScaleFactor { get; set; }
 
 		/// <summary>
+		/// Insertion base set by BASE command(in WCS)
+		/// </summary>
+		/// <remarks>
+		/// System variable PINSBASE
+		/// </remarks>
+		[CadSystemVariable("$PINSBASE", 10, 20, 30)]
+		public XYZ PaperSpaceInsertionBase { get; set; }
+
+		/// <summary>
+		/// X, Y, and Z drawing extents lower-left corner (in WCS)
+		/// </summary>
+		/// <remarks>
+		/// System variable PEXTMIN
+		/// </remarks>
+		[CadSystemVariable("$PEXTMIN", 10, 20, 30)]
+		public XYZ PaperSpaceExtMin { get; set; }
+
+		/// <summary>
+		/// X, Y, and Z drawing extents upper-right corner(in WCS)
+		/// </summary>
+		/// <remarks>
+		/// System variable PEXTMAX
+		/// </remarks>
+		[CadSystemVariable("$PEXTMAX", 10, 20, 30)]
+		public XYZ PaperSpaceExtMax { get; set; }
+
+		/// <summary>
+		/// XY drawing limits lower-left corner(in WCS)
+		/// </summary>
+		/// <remarks>
+		/// System variable PLIMMIN
+		/// </remarks>
+		[CadSystemVariable("$PLIMMIN", 10, 20)]
+		public XY PaperSpaceLimitsMin { get; set; }
+
+		/// <summary>
+		/// XY drawing limits upper-right corner (in WCS)
+		/// </summary>
+		/// <remarks>
+		/// System variable PLIMMAX
+		/// </remarks>
+		[CadSystemVariable("$PLIMMAX", 10, 20)]
+		public XY PaperSpaceLimitsMax { get; set; }
+
+		/// <summary>
+		/// Current elevation set by ELEV command
+		/// </summary>
+		/// <remarks>
+		/// System variable PELEVATION
+		/// </remarks>
+		[CadSystemVariable("$PELEVATION", 40)]
+		public double PaperSpaceElevation
+		{
+			get { return this.PaperSpaceUcs.Elevation; }
+			set
+			{
+				this.PaperSpaceUcs.Elevation = value;
+			}
+		}
+
+		/// <summary>
 		/// Origin of current UCS (in WCS)
+		/// </summary>
+		/// <remarks>
+		/// System variable PUCSORG
+		/// </remarks>
+		[CadSystemVariable("$PUCSORG", 10, 20, 30)]
+		public XYZ PaperSpaceUcsOrigin
+		{
+			get { return this.PaperSpaceUcs.Origin; }
+			set
+			{
+				this.PaperSpaceUcs.Origin = value;
+			}
+		}
+
+		/// <summary>
+		/// Direction of the current UCS X axis (in WCS)
+		/// </summary>
+		/// <remarks>
+		/// System variable PUCSXDIR
+		/// </remarks>
+		[CadSystemVariable("$PUCSXDIR", 10, 20, 30)]
+		public XYZ PaperSpaceUcsXAxis
+		{
+			get { return this.PaperSpaceUcs.XAxis; }
+			set
+			{
+				this.PaperSpaceUcs.XAxis = value;
+			}
+		}
+
+		/// <summary>
+		/// Direction of the current UCS Y aYis (in WCS)
+		/// </summary>
+		/// <remarks>
+		/// System variable PUCSYDIR
+		/// </remarks>
+		[CadSystemVariable("$PUCSYDIR", 10, 20, 30)]
+		public XYZ PaperSpaceUcsYAxis
+		{
+			get { return this.PaperSpaceUcs.YAxis; }
+			set
+			{
+				this.PaperSpaceUcs.YAxis = value;
+			}
+		}
+
+		/// <summary>
+		/// Point which becomes the new UCS origin after changing paper space UCS to TOP when PUCSBASE is set to WORLD
+		/// </summary>
+		/// <remarks>
+		/// System variable PUCSORGTOP
+		/// </remarks>
+		[CadSystemVariable("$PUCSORGTOP", 10, 20, 30)]
+		public XYZ PaperSpaceOrthographicTopDOrigin { get; set; }
+
+		/// <summary>
+		/// Point which becomes the new UCS origin after changing paper space UCS to BOTTOM when PUCSBASE is set to WORLD
+		/// </summary>
+		/// <remarks>
+		/// System variable PUCSORGBOTTOM
+		/// </remarks>
+		[CadSystemVariable("$PUCSORGBOTTOM", 10, 20, 30)]
+		public XYZ PaperSpaceOrthographicBottomDOrigin { get; set; }
+
+		/// <summary>
+		/// Point which becomes the new UCS origin after changing paper space UCS to LEFT when PUCSBASE is set to WORLD
+		/// </summary>
+		/// <remarks>
+		/// System variable PUCSORGLEFT
+		/// </remarks>
+		[CadSystemVariable("$PUCSORGLEFT", 10, 20, 30)]
+		public XYZ PaperSpaceOrthographicLeftDOrigin { get; set; }
+
+		/// <summary>
+		/// Point which becomes the new UCS origin after changing paper space UCS to RIGHT when PUCSBASE is set to WORLD
+		/// </summary>
+		/// <remarks>
+		/// System variable PUCSORGRIGHT
+		/// </remarks>
+		[CadSystemVariable("$PUCSORGRIGHT", 10, 20, 30)]
+		public XYZ PaperSpaceOrthographicRightDOrigin { get; set; }
+
+		/// <summary>
+		/// Point which becomes the new UCS origin after changing paper space UCS to FRONT when PUCSBASE is set to WORLD
+		/// </summary>
+		/// <remarks>
+		/// System variable PUCSORGFRONT
+		/// </remarks>
+		[CadSystemVariable("$PUCSORGFRONT", 10, 20, 30)]
+		public XYZ PaperSpaceOrthographicFrontDOrigin { get; set; }
+
+		/// <summary>
+		/// Point which becomes the new UCS origin after changing paper space UCS to BACK when PUCSBASE is set to WORLD
+		/// </summary>
+		/// <remarks>
+		/// System variable PUCSORGBACK
+		/// </remarks>
+		[CadSystemVariable("$PUCSORGBACK", 10, 20, 30)]
+		public XYZ PaperSpaceOrthographicBackDOrigin { get; set; }
+
+		/// <summary>
+		/// Point which becomes the new UCS origin after changing model space UCS to TOP when PUCSBASE is set to WORLD
+		/// </summary>
+		/// <remarks>
+		/// System variable UCSORGTOP
+		/// </remarks>
+		[CadSystemVariable("$UCSORGTOP", 10, 20, 30)]
+		public XYZ ModelSpaceOrthographicTopDOrigin { get; set; }
+
+		/// <summary>
+		/// Point which becomes the new UCS origin after changing model space UCS to BOTTOM when PUCSBASE is set to WORLD
+		/// </summary>
+		/// <remarks>
+		/// System variable UCSORGBOTTOM
+		/// </remarks>
+		[CadSystemVariable("$UCSORGBOTTOM", 10, 20, 30)]
+		public XYZ ModelSpaceOrthographicBottomDOrigin { get; set; }
+
+		/// <summary>
+		/// Point which becomes the new UCS origin after changing model space UCS to LEFT when PUCSBASE is set to WORLD
+		/// </summary>
+		/// <remarks>
+		/// System variable UCSORGLEFT
+		/// </remarks>
+		[CadSystemVariable("$UCSORGLEFT", 10, 20, 30)]
+		public XYZ ModelSpaceOrthographicLeftDOrigin { get; set; }
+
+		/// <summary>
+		/// Point which becomes the new UCS origin after changing model space UCS to RIGHT when PUCSBASE is set to WORLD
+		/// </summary>
+		/// <remarks>
+		/// System variable UCSORGRIGHT
+		/// </remarks>
+		[CadSystemVariable("$UCSORGRIGHT", 10, 20, 30)]
+		public XYZ ModelSpaceOrthographicRightDOrigin { get; set; }
+
+		/// <summary>
+		/// Point which becomes the new UCS origin after changing model space UCS to FRONT when PUCSBASE is set to WORLD
+		/// </summary>
+		/// <remarks>
+		/// System variable UCSORGFRONT
+		/// </remarks>
+		[CadSystemVariable("$UCSORGFRONT", 10, 20, 30)]
+		public XYZ ModelSpaceOrthographicFrontDOrigin { get; set; }
+
+		/// <summary>
+		/// Point which becomes the new UCS origin after changing model space UCS to BACK when PUCSBASE is set to WORLD
+		/// </summary>
+		/// <remarks>
+		/// System variable UCSORGBACK
+		/// </remarks>
+		[CadSystemVariable("$UCSORGBACK", 10, 20, 30)]
+		public XYZ ModelSpaceOrthographicBackDOrigin { get; set; }
+
+		/// <summary>
+		/// Insertion base set by BASE command(in WCS)
+		/// </summary>
+		/// <remarks>
+		/// System variable INSBASE
+		/// </remarks>
+		[CadSystemVariable("$INSBASE", 10, 20, 30)]
+		public XYZ ModelSpaceInsertionBase { get; set; }
+
+		/// <summary>
+		/// X, Y, and Z drawing extents lower-left corner (in WCS)
+		/// </summary>
+		/// <remarks>
+		/// System variable EXTMIN
+		/// </remarks>
+		[CadSystemVariable("$EXTMIN", 10, 20, 30)]
+		public XYZ ModelSpaceExtMin { get; set; }
+
+		/// <summary>
+		/// X, Y, and Z drawing extents upper-right corner(in WCS)
+		/// </summary>
+		/// <remarks>
+		/// System variable EXTMAX
+		/// </remarks>
+		[CadSystemVariable("$EXTMAX", 10, 20, 30)]
+		public XYZ ModelSpaceExtMax { get; set; }
+
+		/// <summary>
+		/// XY drawing limits lower-left corner (in WCS)
+		/// </summary>
+		/// <remarks>
+		/// System variable LIMMIN
+		/// </remarks>
+		[CadSystemVariable("$LIMMIN", 10, 20)]
+		public XY ModelSpaceLimitsMin { get; set; }
+
+		/// <summary>
+		/// XY drawing limits upper-right corner (in WCS)
+		/// </summary>
+		/// <remarks>
+		/// System variable LIMMAX
+		/// </remarks>
+		[CadSystemVariable("$LIMMAX", 10, 20)]
+		public XY ModelSpaceLimitsMax { get; set; }
+
+		/// <summary>
+		/// Current elevation set by ELEV command
+		/// </summary>
+		/// <remarks>
+		/// System variable ELEVATION
+		/// </remarks>
+		[CadSystemVariable("$ELEVATION", 40)]
+		public double Elevation
+		{
+			get { return this.ModelSpace.Elevation; }
+			set
+			{
+				this.ModelSpace.Elevation = value;
+			}
+		}
+
+		/// <summary>
+		/// Origin of current UCS(in WCS)
 		/// </summary>
 		/// <remarks>
 		/// System variable UCSORG
 		/// </remarks>
 		[CadSystemVariable("$UCSORG", 10, 20, 30)]
-		public XYZ PaperSpaceUcsOrigin
+		public XYZ ModelSpaceOrigin
 		{
-			get { return this._paperSpaceUcs.Origin; }
+			get { return this.ModelSpace.Origin; }
 			set
 			{
-				this._paperSpaceUcs.Origin = value;
+				this.ModelSpace.Origin = value;
 			}
 		}
 
@@ -815,74 +1084,30 @@ namespace ACadSharp.Header
 		/// System variable UCSXDIR
 		/// </remarks>
 		[CadSystemVariable("$UCSXDIR", 10, 20, 30)]
-		public XYZ PaperSpaceUcsXAxis
+		public XYZ ModelSpaceXAxis
 		{
-			get { return this._paperSpaceUcs.XAxis; }
+			get { return this.ModelSpace.XAxis; }
 			set
 			{
-				this._paperSpaceUcs.XAxis = value;
+				this.ModelSpace.XAxis = value;
 			}
 		}
 
 		/// <summary>
-		/// Direction of the current UCS Y aYis (in WCS)
+		/// Direction of the current UCS Y axis (in WCS)
 		/// </summary>
 		/// <remarks>
 		/// System variable UCSYDIR
 		/// </remarks>
 		[CadSystemVariable("$UCSYDIR", 10, 20, 30)]
-		public XYZ PaperSpaceUcsYAxis
+		public XYZ ModelSpaceYAxis
 		{
-			get { return this._paperSpaceUcs.YAxis; }
+			get { return this.ModelSpace.YAxis; }
 			set
 			{
-				this._paperSpaceUcs.YAxis = value;
+				this.ModelSpace.YAxis = value;
 			}
 		}
-
-		[Obsolete("Will convert to private")]
-		public UCS _paperSpaceUcs { get; set; } = new UCS();
-
-		/// <summary>
-		/// System variable INSBASE.
-		/// Insertion base set by BASE command(in WCS)
-		/// </summary>
-		[CadSystemVariable("$INSBASE", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
-		public XYZ InsertionBase { get; set; } = new XYZ();
-
-		/// <summary>
-		/// System variable EXTMIN.
-		/// X, Y, and Z drawing extents lower-left corner (in WCS)
-		/// </summary>
-		[CadSystemVariable("$EXTMIN", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
-		public XYZ ExtMin { get; set; }
-
-		/// <summary>
-		/// System variable EXTMAX
-		/// X, Y, and Z drawing extents upper-right corner(in WCS)
-		/// </summary>
-		[CadSystemVariable("$EXTMAX", DxfCode.XCoordinate, DxfCode.YCoordinate, DxfCode.ZCoordinate)]
-		public XYZ ExtMax { get; set; }
-
-		/// <summary>
-		/// XY drawing limits lower-left corner (in WCS)
-		/// </summary>
-		/// <remarks>
-		/// System variable LIMMIN
-		/// </remarks>
-		[CadSystemVariable("$LIMMIN", DxfCode.XCoordinate, DxfCode.YCoordinate)]
-		public XY LimitsMin { get; set; }
-
-		/// <summary>
-		/// XY drawing limits upper-right corner (in WCS)
-		/// </summary>
-		/// <remarks>
-		/// System variable LIMMAX
-		/// </remarks>
-		[CadSystemVariable("$LIMMAX", DxfCode.XCoordinate, DxfCode.YCoordinate)]
-		public XY LimitsMax { get; set; }
-
-		public double Elevation { get; set; }
 
 		/// <summary>
 		/// Arrow block name
@@ -932,7 +1157,7 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$LWDISPLAY", 290)]
 		public bool DisplayLineWeight { get; set; } = false;
 
-		public short XEdit { get; set; }
+		public bool XEdit { get; set; }
 
 		/// <summary>
 		/// Controls symbol table naming:<br/>
@@ -946,7 +1171,7 @@ namespace ACadSharp.Header
 		public bool ExtendedNames { get; set; } = true;
 
 		public short PlotStyleMode { get; set; }
-		public short LoadOLEObject { get; set; }
+		public bool LoadOLEObject { get; set; }
 
 		/// <summary>
 		/// Default drawing units for AutoCAD DesignCenter blocks
@@ -1020,7 +1245,6 @@ namespace ACadSharp.Header
 
 		public CadDocument Document { get; internal set; }
 
-		public UCS Ucs { get; set; } = new UCS();
 
 
 		/// <summary>
@@ -1398,6 +1622,19 @@ namespace ACadSharp.Header
 			}
 		}
 
+		/// <remarks>
+		/// System variable DIMFIT
+		/// </remarks>
+		[CadSystemVariable("$DIMFIT", 70)]
+		public char DimensionFit
+		{
+			get { return this.DimensionStyleOverrides.DimensionFit; }
+			set
+			{
+				this.DimensionStyleOverrides.DimensionFit = value;
+			}
+		}
+
 		/// <summary>
 		/// Controls suppression of zeros for alternate unit dimension values
 		/// </summary>
@@ -1527,6 +1764,22 @@ namespace ACadSharp.Header
 		}
 
 		/// <summary>
+		/// Undocumented
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMARCSYM
+		/// </remarks>
+		[CadSystemVariable("$DIMARCSYM", 70)]
+		public ArcLengthSymbolPosition DimensionArcLengthSymbolPosition
+		{
+			get { return this.DimensionStyleOverrides.ArcLengthSymbolPosition; }
+			set
+			{
+				this.DimensionStyleOverrides.ArcLengthSymbolPosition = value;
+			}
+		}
+
+		/// <summary>
 		/// Use separate arrow blocks if nonzero
 		/// </summary>
 		/// <remarks>
@@ -1555,6 +1808,22 @@ namespace ACadSharp.Header
 			set
 			{
 				this.DimensionStyleOverrides.CenterMarkSize = value;
+			}
+		}
+
+		/// <summary>
+		/// Dimensioning tick size
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMTSZ
+		/// </remarks>
+		[CadSystemVariable("$DIMTSZ", 40)]
+		public double DimensionTickSize
+		{
+			get { return this.DimensionStyleOverrides.TickSize; }
+			set
+			{
+				this.DimensionStyleOverrides.TickSize = value;
 			}
 		}
 
@@ -1690,6 +1959,54 @@ namespace ACadSharp.Header
 		/// Undocumented
 		/// </summary>
 		/// <remarks>
+		/// System variable DIMJOGANG
+		/// </remarks>
+		[CadSystemVariable("$DIMJOGANG", 40)]
+		public double DimensionJoggedRadiusDimensionTransverseSegmentAngle
+		{
+			get { return this.DimensionStyleOverrides.JoggedRadiusDimensionTransverseSegmentAngle; }
+			set
+			{
+				this.DimensionStyleOverrides.JoggedRadiusDimensionTransverseSegmentAngle = value;
+			}
+		}
+
+		/// <summary>
+		/// Undocumented
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMTFILL
+		/// </remarks>
+		[CadSystemVariable("$DIMTFILL", 70)]
+		public DimensionTextBackgroundFillMode DimensionTextBackgroundFillMode
+		{
+			get { return this.DimensionStyleOverrides.TextBackgroundFillMode; }
+			set
+			{
+				this.DimensionStyleOverrides.TextBackgroundFillMode = value;
+			}
+		}
+
+		/// <summary>
+		/// Undocumented
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMTFILLCLR
+		/// </remarks>
+		[CadSystemVariable(DxfReferenceType.Ignored, "$DIMTFILLCLR", 62)]
+		public Color DimensionTextBackgroundColor
+		{
+			get { return this.DimensionStyleOverrides.TextBackgroundColor; }
+			set
+			{
+				this.DimensionStyleOverrides.TextBackgroundColor = value;
+			}
+		}
+
+		/// <summary>
+		/// Undocumented
+		/// </summary>
+		/// <remarks>
 		/// System variable DIMGAP
 		/// </remarks>
 		[CadSystemVariable("$DIMGAP", 40)]
@@ -1715,6 +2032,22 @@ namespace ACadSharp.Header
 			set
 			{
 				this.DimensionStyleOverrides.LinearScaleFactor = value;
+			}
+		}
+
+		/// <summary>
+		/// Text vertical position
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMTVP
+		/// </remarks>
+		[CadSystemVariable("$DIMTVP", 40)]
+		public double DimensionTextVerticalPosition
+		{
+			get { return this.DimensionStyleOverrides.TextVerticalPosition; }
+			set
+			{
+				this.DimensionStyleOverrides.TextVerticalPosition = value;
 			}
 		}
 
@@ -1843,6 +2176,22 @@ namespace ACadSharp.Header
 			set
 			{
 				this.DimensionStyleOverrides.TextVerticalAlignment = value;
+			}
+		}
+
+		/// <summary>
+		/// Controls suppression of zeros for alternate unit dimension values
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMUNIT
+		/// </remarks>
+		[CadSystemVariable("$DIMUNIT", 70)]
+		public short DimensionUnit
+		{
+			get { return this.DimensionStyleOverrides.DimensionUnit; }
+			set
+			{
+				this.DimensionStyleOverrides.DimensionUnit = value;
 			}
 		}
 
@@ -2010,6 +2359,70 @@ namespace ACadSharp.Header
 		/// Undocumented
 		/// </summary>
 		/// <remarks>
+		/// System variable DIMALTMZF
+		/// </remarks>
+		[CadSystemVariable("$DIMALTMZF", 40)]
+		public double DimensionAltMzf
+		{
+			get { return this.DimensionStyleOverrides.AltMzf; }
+			set
+			{
+				this.DimensionStyleOverrides.AltMzf = value;
+			}
+		}
+
+		/// <summary>
+		/// Undocumented
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMALTMZS
+		/// </remarks>
+		[CadSystemVariable("$DIMALTMZS", 6)]
+		public string DimensionAltMzs
+		{
+			get { return this.DimensionStyleOverrides.AltMzs; }
+			set
+			{
+				this.DimensionStyleOverrides.AltMzs = value;
+			}
+		}
+
+		/// <summary>
+		/// Undocumented
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMMZF
+		/// </remarks>
+		[CadSystemVariable("$DIMMZF", 40)]
+		public double DimensionMzf
+		{
+			get { return this.DimensionStyleOverrides.Mzf; }
+			set
+			{
+				this.DimensionStyleOverrides.Mzf = value;
+			}
+		}
+
+		/// <summary>
+		/// Undocumented
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMMZS
+		/// </remarks>
+		[CadSystemVariable("$DIMMZS", 6)]
+		public string DimensionMzs
+		{
+			get { return this.DimensionStyleOverrides.Mzs; }
+			set
+			{
+				this.DimensionStyleOverrides.Mzs = value;
+			}
+		}
+
+		/// <summary>
+		/// Undocumented
+		/// </summary>
+		/// <remarks>
 		/// System variable DIMLTYPE
 		/// </remarks>
 		[CadSystemVariable("$DIMLTYPE", 6)]
@@ -2033,7 +2446,13 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMLTEX2", 6)]
 		public string DimensionTex2 { get; set; } = "ByBlock";
 
+		public Layer CurrentLayer { get; private set; } = Layer.Default;
+
 		public DimensionStyle DimensionStyleOverrides { get; private set; } = DimensionStyle.Default;
+
+		public UCS ModelSpace { get; private set; } = new UCS();
+
+		public UCS PaperSpaceUcs { get; private set; } = new UCS();
 
 		public CadHeader() { }
 

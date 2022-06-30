@@ -41,6 +41,9 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.ObjectLayout:
 					template = new CadLayoutTemplate(new Layout());
 					break;
+				case DxfFileToken.ObjectDictionaryVar:
+					template = new CadTemplate<DictionaryVariable>(new DictionaryVariable());
+					break;
 				case DxfFileToken.TableXRecord:
 					template = new CadXRecordTemplate(new XRecrod());
 					break;
@@ -63,6 +66,9 @@ namespace ACadSharp.IO.DXF
 			{
 				switch (this._reader.LastValueAsString)
 				{
+					case DxfSubclassMarker.DictionaryVariables:
+						this.readMapped<DictionaryVariable>(template.CadObject, template);
+						break;
 					case DxfSubclassMarker.Layout:
 						this.readMapped<Layout>(template.CadObject, template);
 						break;

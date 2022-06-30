@@ -30,6 +30,8 @@ namespace ACadSharp.Tests.IO
 				writer.OnNotification += this.onNotification;
 				writer.Write();
 			}
+
+			this.checkDocumentInAutocad(Path.GetFullPath(pathOut));
 		}
 	}
 }

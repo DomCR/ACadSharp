@@ -912,6 +912,8 @@ namespace ACadSharp.IO.DWG
 					template = this.readDwgColor();
 					break;
 				case "DICTIONARYVAR":
+					template = this.readDictionaryVar();
+					break;
 				case "DICTIONARYWDFLT":
 				case "FIELD":
 					break;
@@ -2401,6 +2403,22 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private CadTemplate readDictionaryVar()
+		{
+			DictionaryVariable dictvar = new DictionaryVariable();
+			CadTemplate<DictionaryVariable> template = new CadTemplate<DictionaryVariable>(dictvar);
+
+			this.readCommonNonEntityData(template);
+
+			//Intval RC an integer value
+			this._objectReader.ReadByte();
+
+			//BS a string
+			dictvar.Value = this._textReader.ReadVariableText();
+
+			return template;
+		}
+
 		private CadTemplate readMText()
 		{
 			MText mtext = new MText();
@@ -3247,7 +3265,7 @@ namespace ACadSharp.IO.DWG
 			{
 				//Elevation BD 146
 				ucs.Elevation = this._objectReader.ReadBitDouble();
-				//OrthographicViewType BS 79
+				//OrthographicViewType BS 79	//dxf docs: 79	Always 0
 				ucs.OrthographicViewType = (OrthographicType)this._objectReader.ReadBitShort();
 				//OrthographicType BS 71
 				ucs.OrthographicType = (OrthographicType)this._objectReader.ReadBitShort();

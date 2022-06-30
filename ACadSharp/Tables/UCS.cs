@@ -1,9 +1,5 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using CSMath;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Tables
 {
@@ -23,14 +19,6 @@ namespace ACadSharp.Tables
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableUcs;
-
-		//TODO: finish UCS documentation
-
-		public XYZ PaperSpaceInsertionBase { get; set; }
-		public XYZ PaperSpaceExtMin { get; set; }
-		public XYZ PaperSpaceExtMax { get; set; }
-		public XY PaperSpaceLimitsMin { get; set; }
-		public XY PaperSpaceLimitsMax { get; set; }
 
 		/// <summary>
 		/// Elevation
@@ -56,14 +44,17 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(12, 22, 32)]
 		public XYZ YAxis { get; set; } = XYZ.AxisY;
 
-		public XYZ OrthographicTopDOrigin { get; set; }
-		public XYZ OrthographicBottomDOrigin { get; set; }
-		public XYZ OrthographicLeftDOrigin { get; set; }
-		public XYZ OrthographicRightDOrigin { get; set; }
-		public XYZ OrthographicFrontDOrigin { get; set; }
-		public XYZ OrthographicBackDOrigin { get; set; }
-		public OrthographicType OrthographicViewType { get; internal set; }
-		public OrthographicType OrthographicType { get; internal set; }
+		/// <summary>
+		/// Always 0
+		/// </summary>
+		[DxfCodeValue(79)]
+		public OrthographicType OrthographicViewType { get; set; }
+
+		/// <summary>
+		/// Orthographic type
+		/// </summary>
+		[DxfCodeValue(71)]
+		public OrthographicType OrthographicType { get; set; }
 
 		public UCS() : base() { }
 	}

@@ -57,7 +57,7 @@ namespace ACadSharp.Tests.IO
 
 		public virtual void AssertDocumentTree(string test)
 		{
-			CadDocument doc = this.getDocument(test);
+			CadDocument doc = this.getDocument(test, false);
 
 			this._docIntegrity.AssertDocumentTree(doc);
 		}
@@ -67,14 +67,18 @@ namespace ACadSharp.Tests.IO
 			this._documents.Clear();
 		}
 
-		protected CadDocument getDocument(string path)
+		protected CadDocument getDocument(string path, bool addEvent = true)
 		{
 			if (_documents.TryGetValue(path, out var doc))
 				return doc;
 
 			using (T reader = (T)Activator.CreateInstance(typeof(T), path, null))
 			{
-				reader.OnNotification += this.onNotification;
+				if (addEvent)
+				{
+					reader.OnNotification += this.onNotification;
+				}
+
 				doc = reader.Read();
 			}
 
