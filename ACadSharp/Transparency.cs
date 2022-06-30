@@ -25,6 +25,7 @@ namespace ACadSharp
 		{
 			get { return _value == -1; }
 		}
+		
 		/// <summary>
 		/// Defines if the transparency is defined by block.
 		/// </summary>
@@ -32,6 +33,7 @@ namespace ACadSharp
 		{
 			get { return _value == 100; }
 		}
+
 		/// <summary>
 		/// Gets or sets the transparency value.
 		/// </summary>
@@ -66,7 +68,40 @@ namespace ACadSharp
 		public Transparency(short value)
 		{
 			_value = -1;
-			Value = value;
+			this.Value = value;
+		}
+
+		/// <summary>
+		/// Gets the transparency value within range of a valid value
+		/// </summary>
+		/// <param name="value">A transparency value</param>
+		/// <returns>A <see cref="Transparency"></see></returns>
+		public static Transparency FromValue(int value)
+		{
+			byte[] bytes = BitConverter.GetBytes(value);
+			short alpha = (short)(100 - (bytes[0] / 255.0) * 100);
+
+			if (alpha == -1)
+			{
+				return ByLayer;
+			}
+
+			if (alpha == 100)
+			{
+				return ByBlock;
+			}
+
+			if (alpha < 0)
+			{
+				return new Transparency(0);
+			}
+
+			if (alpha > 90)
+			{
+				return new Transparency(90);
+			}
+
+			return new Transparency(alpha);
 		}
 	}
 }
