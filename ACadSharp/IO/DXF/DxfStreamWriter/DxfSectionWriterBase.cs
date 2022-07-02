@@ -4,6 +4,7 @@ using ACadSharp.IO.DXF;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.DXF
@@ -84,6 +85,9 @@ namespace ACadSharp.IO.DXF
 
 				foreach (KeyValuePair<int, DxfProperty> v in item.Value.DxfProperties)
 				{
+					int code = v.Key;
+					DxfProperty prop = v.Value;
+
 					if (v.Value.ReferenceType.HasFlag(DxfReferenceType.Ignored)
 						|| v.Value.ReferenceType.HasFlag(DxfReferenceType.Optional))
 						continue;
@@ -94,13 +98,23 @@ namespace ACadSharp.IO.DXF
 						continue;
 					}
 
+					this._writer.Write(v.Key, value);
+
 					if (v.Value.ReferenceType.HasFlag(DxfReferenceType.Count))
 					{
 						this.Notify($"counter value for : {map.Name} | {v.Key} not implemented");
-					}
 
-					this._writer.Write(v.Key, value);
+						this.writeCollection((IEnumerable)prop.GetValue(cadObject));
+					}
 				}
+			}
+		}
+
+		protected void writeCollection(IEnumerable arr)
+		{
+			foreach (var item in arr)
+			{
+
 			}
 		}
 
