@@ -131,7 +131,11 @@ namespace ACadSharp.IO.DXF
 			where T : CadObject
 		{
 			//TODO: Finish write implementation
-			if (e is Hatch)
+			if (
+				e is Hatch
+				|| e is MText
+				|| e is AttributeDefinition
+				)
 			{
 				return;
 			}
