@@ -399,7 +399,9 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			//Lineweight RC 370
-			entity.Lineweight = (LineweightType)this._objectReader.ReadByte();
+			byte v = this._objectReader.ReadByte();
+			//TODO: LineweightType reading, strange values, ex : 29
+			entity.Lineweight = LineweightType.Default;
 		}
 
 		private void readCommonNonEntityData(CadTemplate template)
