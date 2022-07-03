@@ -23,8 +23,8 @@ namespace ACadSharpInternal.Tests
 			DwgHeaderWriter writer = new DwgHeaderWriter(stream, document);
 			writer.Write();
 
-			DwgHeaderReader reader = new DwgHeaderReader(ACadVersion.AC1018);
-			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(ACadVersion.AC1018, stream, true);
+			DwgHeaderReader reader = new DwgHeaderReader(version);
+			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, true);
 			var header = reader.Read(sreader, 0, out _);
 		}
 	}

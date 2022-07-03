@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using ACadSharp.Entities;
+using System.IO;
 using System.Text;
 
 namespace ACadSharp.IO.DWG
@@ -29,6 +30,11 @@ namespace ACadSharp.IO.DWG
 		}
 
 		public void Write()
+		{
+
+		}
+
+		private void writeCommonEntityData(Entity entity)
 		{
 
 		}

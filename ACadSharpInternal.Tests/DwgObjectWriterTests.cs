@@ -22,6 +22,18 @@ namespace ACadSharpInternal.Tests
 
 			DwgObjectWriter writer = new DwgObjectWriter(stream, document);
 			writer.Write();
+
+			DwgDocumentBuilder builder = new DwgDocumentBuilder(document, DwgReaderFlags.None);
+			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, true);
+			DwgObjectSectionReader reader = new DwgObjectSectionReader
+				(
+				version,
+				builder,
+				sreader,
+				null,
+				null,
+				null
+				);
 		}
 	}
 }
