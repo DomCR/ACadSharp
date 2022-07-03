@@ -115,7 +115,7 @@ namespace ACadSharp.Entities
 		public double TextWidth { get; set; }
 
 		//76	Number of vertices in leader(ignored for OPEN)
-		[DxfCodeValue(76)]
+		[DxfCodeValue(DxfReferenceType.Count, 76)]
 		//10	Vertex coordinates(one entry for each vertex)
 		//20, 30	DXF: Y and Z values of vertex coordinates
 		public List<XYZ> Vertices { get; set; } = new List<XYZ>();

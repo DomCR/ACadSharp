@@ -102,8 +102,6 @@ namespace ACadSharp.IO.DXF
 
 					if (v.Value.ReferenceType.HasFlag(DxfReferenceType.Count))
 					{
-						this.Notify($"counter value for : {map.Name} | {v.Key} not implemented");
-
 						this.writeCollection((IEnumerable)prop.GetValue(cadObject));
 					}
 				}
@@ -114,7 +112,18 @@ namespace ACadSharp.IO.DXF
 		{
 			foreach (var item in arr)
 			{
-
+				switch (item)
+				{
+					case LineType.Segment segment:
+						this.writeSegment(segment);
+						break;
+					case LwPolyline.Vertex vertex:
+						this.writeLwVertex(vertex);
+						break;
+					default:
+						this.Notify($"counter value for : {item.GetType().FullName} not implemented");
+						break;
+				}
 			}
 		}
 
@@ -137,5 +146,39 @@ namespace ACadSharp.IO.DXF
 		}
 
 		protected abstract void writeSection();
+
+		private void writeSegment(LineType.Segment segment)
+		{
+			this._writer.Write(49, segment.Length);
+
+			this._writer.Write(74, (short)segment.Shapeflag);
+
+			if ((short)segment.Shapeflag == 0)
+				return;
+
+			this._writer.Write(75, segment.ShapeNumber);
+			this._writer.Write(340, segment.Style.Handle);
+			this._writer.Write(46, segment.Scale);
+			this._writer.Write(50, segment.Rotation);
+			this._writer.Write(44, segment.Offset.X);
+			this._writer.Write(45, segment.Offset.Y);
+
+			if (segment.Shapeflag.HasFlag(LinetypeShapeFlags.Text))
+			{
+				this._writer.Write(9, string.IsNullOrEmpty(segment.Text) ? string.Empty : segment.Text);
+			}
+		}
+
+		private void writeLwVertex(LwPolyline.Vertex v)
+		{
+			this._writer.Write(10, v.Location.X);
+			this._writer.Write(20, v.Location.Y);
+			this._writer.Write(40, v.StartWidth);
+			this._writer.Write(41, v.EndWidth);
+			this._writer.Write(42, v.Bulge);
+			this._writer.Write(70, (short)v.Flags);
+			this._writer.Write(50, v.CurveTangent);
+			this._writer.Write(91, v.Id);
+		}
 	}
 }

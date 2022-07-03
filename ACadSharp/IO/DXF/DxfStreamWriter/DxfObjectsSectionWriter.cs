@@ -35,7 +35,7 @@ namespace ACadSharp.IO.DXF
 					this.writeMappedObject<Layout>(layout);
 					break;
 				default:
-					this.Notify($"Object not implemented : {typeof(T).Name}");
+					this.Notify($"Object not implemented : {co.GetType().FullName}");
 					break;
 			}
 		}

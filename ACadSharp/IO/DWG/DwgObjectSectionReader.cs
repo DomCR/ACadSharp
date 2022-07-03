@@ -3052,30 +3052,30 @@ namespace ACadSharp.IO.DWG
 			bool isText = false;
 			for (int i = 0; i < ndashes; i++)
 			{
-				LineTypeSegment segment = new LineTypeSegment();
+				CadLineTypeTemplate.SegmentTemplate segment = new CadLineTypeTemplate.SegmentTemplate();
 
 				//Dash length BD 49 Dash or dot specifier.
-				segment.Length = this._objectReader.ReadBitDouble();
+				segment.Segment.Length = this._objectReader.ReadBitDouble();
 				//Complex shapecode BS 75 Shape number if shapeflag is 2, or index into the string area if shapeflag is 4.
-				short shapecode = this._objectReader.ReadBitShort();
+				segment.Segment.ShapeNumber = this._objectReader.ReadBitShort();
 
 				//X - offset RD 44 (0.0 for a simple dash.)
 				//Y - offset RD 45(0.0 for a simple dash.)
 				XY offset = new XY(this._objectReader.ReadDouble(), this._objectReader.ReadDouble());
-				segment.Offset = offset;
+				segment.Segment.Offset = offset;
 
 				//Scale BD 46 (1.0 for a simple dash.)
-				segment.Scale = this._objectReader.ReadBitDouble();
+				segment.Segment.Scale = this._objectReader.ReadBitDouble();
 				//Rotation BD 50 (0.0 for a simple dash.)
-				segment.Rotation = this._objectReader.ReadBitDouble();
+				segment.Segment.Rotation = this._objectReader.ReadBitDouble();
 				//Shapeflag BS 74 bit coded:
-				segment.Shapeflag = (LinetypeShapeFlags)this._objectReader.ReadBitShort();
+				segment.Segment.Shapeflag = (LinetypeShapeFlags)this._objectReader.ReadBitShort();
 
-				if (segment.Shapeflag.HasFlag(LinetypeShapeFlags.Text))
+				if (segment.Segment.Shapeflag.HasFlag(LinetypeShapeFlags.Text))
 					isText = true;
 
 				//Add the segment to the type
-				ltype.Segments.Add(segment);
+				template.SegmentTemplates.Add(segment);
 			}
 
 			//R2004 and earlier:
@@ -3103,8 +3103,7 @@ namespace ACadSharp.IO.DWG
 			//340 shapefile for dash/shape (1 each) (hard pointer)
 			for (int i = 0; i < ndashes; i++)
 			{
-				//TODO: Implement the dashes handles
-				this.handleReference();
+				template.SegmentTemplates[i].StyleHandle = this.handleReference();
 			}
 
 			this._builder.LineTypes.Add(ltype.Name, ltype);
