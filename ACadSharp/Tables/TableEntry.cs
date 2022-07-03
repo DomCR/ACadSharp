@@ -1,8 +1,5 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Tables
 {

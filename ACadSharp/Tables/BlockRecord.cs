@@ -59,9 +59,12 @@ namespace ACadSharp.Tables
 		public bool CanScale { get; set; } = true;
 
 		/// <summary>
-		/// DXF: Binary data for bitmap preview(optional)
+		/// DXF: Binary data for bitmap preview
 		/// </summary>
-		[DxfCodeValue(310)]
+		/// <remarks>
+		/// Optional
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Optional, 310)]
 		public byte[] Preview { get; set; }
 
 		/// <summary>
