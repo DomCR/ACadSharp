@@ -114,10 +114,11 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(41)]
 		public double TextWidth { get; set; }
 
-		//76	Number of vertices in leader(ignored for OPEN)
+		/// <summary>
+		/// Vertices in leader
+		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 76)]
-		//10	Vertex coordinates(one entry for each vertex)
-		//20, 30	DXF: Y and Z values of vertex coordinates
+		[DxfCollectionCodeValue(10, 20, 30)]
 		public List<XYZ> Vertices { get; set; } = new List<XYZ>();
 
 		//77	Color to use if leader's DIMCLRD = BYBLOCK

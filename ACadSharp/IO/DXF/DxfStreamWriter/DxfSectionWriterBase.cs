@@ -3,6 +3,7 @@ using ACadSharp.Entities;
 using ACadSharp.IO.DXF;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using CSMath;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -88,8 +89,8 @@ namespace ACadSharp.IO.DXF
 					int code = v.Key;
 					DxfProperty prop = v.Value;
 
-					if (v.Value.ReferenceType.HasFlag(DxfReferenceType.Ignored)
-						|| v.Value.ReferenceType.HasFlag(DxfReferenceType.Optional))
+					if (prop.ReferenceType.HasFlag(DxfReferenceType.Ignored)
+						|| prop.ReferenceType.HasFlag(DxfReferenceType.Optional))
 						continue;
 
 					object value = v.Value.GetValue(v.Key, cadObject);
@@ -100,7 +101,7 @@ namespace ACadSharp.IO.DXF
 
 					this._writer.Write(v.Key, value);
 
-					if (v.Value.ReferenceType.HasFlag(DxfReferenceType.Count))
+					if (prop.ReferenceType.HasFlag(DxfReferenceType.Count))
 					{
 						this.writeCollection((IEnumerable)prop.GetValue(cadObject));
 					}
@@ -114,11 +115,19 @@ namespace ACadSharp.IO.DXF
 			{
 				switch (item)
 				{
+					case double d:
+						break;
+					case XY xy:
+						break;
+					case XYZ xyz:
+						break;
 					case LineType.Segment segment:
 						this.writeSegment(segment);
 						break;
 					case LwPolyline.Vertex vertex:
 						this.writeLwVertex(vertex);
+						break;
+					case MLine.Vertex vertex:
 						break;
 					default:
 						this.Notify($"counter value for : {item.GetType().FullName} not implemented");
