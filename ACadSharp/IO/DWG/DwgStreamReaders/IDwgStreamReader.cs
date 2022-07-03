@@ -217,6 +217,13 @@ namespace ACadSharp.IO.DWG
 		byte[] ReadSentinel();
 
 		/// <summary>
+		/// 2DD : 2D point as 2DD, needing 2 default values
+		/// </summary>
+		/// <param name="defValues"></param>
+		/// <returns></returns>
+		XY Read2BitDoubleWithDefault(XY defValues);
+
+		/// <summary>
 		/// 3DD : 3D point as 3 DD, needing 3 default values
 		/// </summary>
 		/// <returns></returns>

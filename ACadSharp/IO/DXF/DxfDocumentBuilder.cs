@@ -56,13 +56,13 @@ namespace ACadSharp.IO.DXF
 						insert.Attributes.Add(att);
 						break;
 					default:
-						this.NotificationHandler?.Invoke(null, new NotificationEventArgs($"Owner {owner.GetType().Name} with handle {owner.Handle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}"));
+						this.Notify(new NotificationEventArgs($"Owner {owner.GetType().Name} with handle {owner.Handle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}"));
 						break;
 				}
 			}
 			else
 			{
-				this.NotificationHandler?.Invoke(null, new NotificationEventArgs($"Owner {template.OwnerHandle} not found for {template.GetType().FullName} with handle {template.CadObject.Handle}"));
+				this.Notify(new NotificationEventArgs($"Owner {template.OwnerHandle} not found for {template.GetType().FullName} with handle {template.CadObject.Handle}"));
 			}
 		}
 	}

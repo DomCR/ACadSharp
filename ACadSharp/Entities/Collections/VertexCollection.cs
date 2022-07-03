@@ -8,6 +8,7 @@ namespace ACadSharp.Entities.Collections
 	public class VertexCollection : IEntityCollection<Vertex>
 	{
 		public int Count => _vertices.Count;
+		
 		public bool IsReadOnly => false;
 
 		public Dictionary<ulong, Vertex> _vertices = new Dictionary<ulong, Vertex>();

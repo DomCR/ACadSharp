@@ -3,7 +3,7 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgDimensionStyleTemplate : CadTemplate<DimensionStyle>
+	internal class CadDimensionStyleTemplate : CadTemplate<DimensionStyle>
 	{
 		public string DIMBL_Name { get; internal set; }
 		public string DIMBLK1_Name { get; internal set; }
@@ -17,7 +17,7 @@ namespace ACadSharp.IO.Templates
 		public ulong Dimltex1 { get; internal set; }
 		public ulong Dimltex2 { get; internal set; }
 
-		public DwgDimensionStyleTemplate(DimensionStyle dimStyle) : base(dimStyle) { }
+		public CadDimensionStyleTemplate(DimensionStyle dimStyle) : base(dimStyle) { }
 
 		public override bool AddHandle(int dxfcode, ulong handle)
 		{
@@ -66,17 +66,17 @@ namespace ACadSharp.IO.Templates
 
 			if (!string.IsNullOrWhiteSpace(DIMBL_Name))
 			{
-				builder.NotificationHandler?.Invoke(this.CadObject, new NotificationEventArgs($"DwgDimensionStyleTemplate does not implement the dimension block for : {DIMBL_Name}"));
+				builder.Notify(new NotificationEventArgs($"DwgDimensionStyleTemplate does not implement the dimension block for : {DIMBL_Name}"));
 			}
 
 			if (!string.IsNullOrWhiteSpace(DIMBLK1_Name))
 			{
-				builder.NotificationHandler?.Invoke(this.CadObject, new NotificationEventArgs($"DwgDimensionStyleTemplate does not implement the dimension block for : {DIMBLK1_Name}"));
+				builder.Notify(new NotificationEventArgs($"DwgDimensionStyleTemplate does not implement the dimension block for : {DIMBLK1_Name}"));
 			}
 
 			if (!string.IsNullOrWhiteSpace(DIMBLK2_Name))
 			{
-				builder.NotificationHandler?.Invoke(this.CadObject, new NotificationEventArgs($"DwgDimensionStyleTemplate does not implement the dimension block for : {DIMBLK2_Name}"));
+				builder.Notify(new NotificationEventArgs($"DwgDimensionStyleTemplate does not implement the dimension block for : {DIMBLK2_Name}"));
 			}
 		}
 	}

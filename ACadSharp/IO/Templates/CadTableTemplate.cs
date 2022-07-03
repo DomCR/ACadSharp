@@ -1,17 +1,16 @@
-﻿using ACadSharp.IO.DWG;
-using ACadSharp.Tables;
+﻿using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgTableTemplate<T> : CadTemplate<Table<T>>, ICadTableTemplate
+	internal class CadTableTemplate<T> : CadTemplate<Table<T>>, ICadTableTemplate
 		where T : TableEntry
 	{
 		public List<ulong> EntryHandles { get; } = new List<ulong>();
 
-		public DwgTableTemplate(Table<T> tableControl) : base(tableControl) { }
+		public CadTableTemplate(Table<T> tableControl) : base(tableControl) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{
@@ -28,15 +27,11 @@ namespace ACadSharp.IO.Templates
 				}
 				catch (ArgumentException ex)
 				{
-					builder.NotificationHandler?.Invoke(
-						entry,
-						new NotificationEventArgs(ex.Message));
+					builder.Notify(new NotificationEventArgs(ex.Message));
 				}
 				catch (Exception)
 				{
-					builder.NotificationHandler?.Invoke(
-						entry,
-						new NotificationEventArgs($"Entry not found [handle : {handle}] [type : {typeof(T)}]"));
+					builder.Notify(new NotificationEventArgs($"Error adding the entry [handle : {handle}] [type : {typeof(T)}]"));
 				}
 			}
 		}

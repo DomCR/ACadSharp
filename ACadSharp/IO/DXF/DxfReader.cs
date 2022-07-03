@@ -14,16 +14,16 @@ namespace ACadSharp.IO.DXF
 		private CadDocument _document;
 		private DxfDocumentBuilder _builder;
 		private IDxfStreamReader _reader;
-		
+
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DxfReader" /> class.
+		/// Initializes a new instance of the <see cref="DxfReader"/> class
 		/// </summary>
-		/// <param name="filename">The filename of the file to open.</param>
+		/// <param name="filename">The file to open.</param>
 		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
 		public DxfReader(string filename, NotificationEventHandler notification = null) : base(filename, notification) { }
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DxfReader" /> class.
+		/// Initializes a new instance of the <see cref="DxfReader"/> class
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
 		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
@@ -104,7 +104,8 @@ namespace ACadSharp.IO.DXF
 		public override CadDocument Read()
 		{
 			this._document = new CadDocument(false);
-			this._builder = new DxfDocumentBuilder(this._document, this.OnNotificationHandler);
+			this._builder = new DxfDocumentBuilder(this._document);
+			this._builder.OnNotificationHandler += this.triggerNotification;
 
 			this._reader = this._reader ?? this.getReader();
 
@@ -141,7 +142,7 @@ namespace ACadSharp.IO.DXF
 						this.readObjects();
 						break;
 					default:
-						this.OnNotificationHandler(this, new NotificationEventArgs($"Section not implemented {this._reader.LastValueAsString}"));
+						this.triggerNotification(this, new NotificationEventArgs($"Section not implemented {this._reader.LastValueAsString}"));
 						break;
 				}
 
@@ -280,10 +281,7 @@ namespace ACadSharp.IO.DXF
 			//Get the needed handler
 			this._reader = this.goToSection(DxfFileToken.TablesSection);
 
-			DxfTablesSectionReader reader = new DxfTablesSectionReader(
-				this._reader,
-				this._builder,
-				this.OnNotificationHandler);
+			DxfTablesSectionReader reader = new DxfTablesSectionReader(this._reader, this._builder);
 
 			reader.Read();
 		}
@@ -298,10 +296,7 @@ namespace ACadSharp.IO.DXF
 			//Get the needed handler
 			this._reader = this.goToSection(DxfFileToken.BlocksSection);
 
-			DxfBlockSectionReader reader = new DxfBlockSectionReader(
-				this._reader,
-				this._builder,
-				this.OnNotificationHandler);
+			DxfBlockSectionReader reader = new DxfBlockSectionReader(this._reader, this._builder);
 
 			reader.Read();
 		}
@@ -314,10 +309,7 @@ namespace ACadSharp.IO.DXF
 			//Get the needed handler
 			this._reader = this.goToSection(DxfFileToken.EntitiesSection);
 
-			DxfEntitiesSectionReader reader = new DxfEntitiesSectionReader(
-				this._reader,
-				this._builder,
-				this.OnNotificationHandler);
+			DxfEntitiesSectionReader reader = new DxfEntitiesSectionReader(this._reader, this._builder);
 
 			reader.Read();
 		}
@@ -330,10 +322,7 @@ namespace ACadSharp.IO.DXF
 			//Get the needed handler
 			this._reader = this.goToSection(DxfFileToken.ObjectsSection);
 
-			DxfObjectsSectionReader reader = new DxfObjectsSectionReader(
-				this._reader,
-				this._builder,
-				this.OnNotificationHandler);
+			DxfObjectsSectionReader reader = new DxfObjectsSectionReader(this._reader, this._builder);
 
 			reader.Read();
 		}

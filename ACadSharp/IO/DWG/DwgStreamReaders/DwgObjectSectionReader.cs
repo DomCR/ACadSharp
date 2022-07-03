@@ -107,7 +107,7 @@ namespace ACadSharp.IO.DWG
 		/// <summary>
 		/// Read all the entities, tables and objects in the file.
 		/// </summary>
-		public void Read(NotificationEventHandler notificationEvent = null)
+		public void Read()
 		{
 			//Read each handle in the header
 			while (this._handles.Any())
@@ -124,7 +124,7 @@ namespace ACadSharp.IO.DWG
 				ObjectType type = this.getEntityType(offset);
 
 				//Read the object
-				CadTemplate template = this.readObject(type, notificationEvent);
+				CadTemplate template = this.readObject(type);
 
 				//Add the template to the list to be processed
 				if (template != null)
@@ -569,7 +569,7 @@ namespace ACadSharp.IO.DWG
 						break;
 					default:
 						this._objectReader.ReadBytes((int)(endPos - this._objectReader.Position));
-						this._builder.NotificationHandler?.Invoke(null, new NotificationEventArgs($"Unknown code for extended data: {dxfCode}"));
+						this._builder.Notify(new NotificationEventArgs($"Unknown code for extended data: {dxfCode}"));
 						return data;
 				}
 
@@ -638,7 +638,7 @@ namespace ACadSharp.IO.DWG
 
 		#region Object readers
 
-		private CadTemplate readObject(ObjectType type, NotificationEventHandler notifications = null)
+		private CadTemplate readObject(ObjectType type)
 		{
 			CadTemplate template = null;
 
@@ -869,7 +869,7 @@ namespace ACadSharp.IO.DWG
 					catch (System.Exception)
 					{
 						//Xrecord don't seem stable enough
-						notifications?.Invoke(null, new NotificationEventArgs($"Failed to read xrecord"));
+						this._builder.Notify(new NotificationEventArgs($"Failed to read xrecord"));
 					}
 					break;
 				case ObjectType.ACDBPLACEHOLDER:
@@ -884,16 +884,16 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.ACAD_PROXY_OBJECT:
 					break;
 				default:
-					return this.readUnlistedType((short)type, notifications);
+					return this.readUnlistedType((short)type);
 			}
 
 			if (template == null)
-				notifications?.Invoke(null, new NotificationEventArgs($"Object type not implemented: {type}", NotificationType.NotImplemented));
+				this._builder.Notify(new NotificationEventArgs($"Object type not implemented: {type}", NotificationType.NotImplemented));
 
 			return template;
 		}
 
-		private CadTemplate readUnlistedType(short classNumber, NotificationEventHandler notifications = null)
+		private CadTemplate readUnlistedType(short classNumber)
 		{
 			if (!this._classes.TryGetValue(classNumber, out DxfClass c))
 				return null;
@@ -912,6 +912,8 @@ namespace ACadSharp.IO.DWG
 					template = this.readDwgColor();
 					break;
 				case "DICTIONARYVAR":
+					template = this.readDictionaryVar();
+					break;
 				case "DICTIONARYWDFLT":
 				case "FIELD":
 					break;
@@ -928,7 +930,7 @@ namespace ACadSharp.IO.DWG
 				case "LAYER_INDEX":
 					break;
 				case "LAYOUT":
-					template = readLayout();
+					template = this.readLayout();
 					break;
 				case "LWPLINE":
 				case "MATERIAL":
@@ -952,14 +954,14 @@ namespace ACadSharp.IO.DWG
 				case "WIPEOUTVARIABLES":
 					break;
 				case "XRECORD":
-					template = readXRecord();
+					template = this.readXRecord();
 					break;
 				default:
 					break;
 			}
 
 			if (template == null)
-				notifications?.Invoke(c, new NotificationEventArgs($"Unlisted object not implemented, DXF name: {c.DxfName}"));
+				this._builder.Notify(new NotificationEventArgs($"Unlisted object not implemented, DXF name: {c.DxfName}"));
 
 			return template;
 		}
@@ -1170,11 +1172,11 @@ namespace ACadSharp.IO.DWG
 
 		#endregion Text entities
 
-		private CadTemplate readDocumentTable<T>(Table<T> table, DwgTableTemplate<T> template = null)
+		private CadTemplate readDocumentTable<T>(Table<T> table, CadTableTemplate<T> template = null)
 			where T : TableEntry
 		{
 			if (template == null)
-				template = new DwgTableTemplate<T>(table);
+				template = new CadTableTemplate<T>(table);
 
 			this.readCommonNonEntityData(template);
 
@@ -2048,7 +2050,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readViewport()
 		{
 			Viewport viewport = new Viewport();
-			DwgViewportTemplate template = new DwgViewportTemplate(viewport);
+			CadViewportTemplate template = new CadViewportTemplate(viewport);
 
 			//Common Entity Data
 			this.readCommonEntityData(template);
@@ -2397,6 +2399,22 @@ namespace ACadSharp.IO.DWG
 
 				template.Entries.Add(name, handle);
 			}
+
+			return template;
+		}
+
+		private CadTemplate readDictionaryVar()
+		{
+			DictionaryVariable dictvar = new DictionaryVariable();
+			CadTemplate<DictionaryVariable> template = new CadTemplate<DictionaryVariable>(dictvar);
+
+			this.readCommonNonEntityData(template);
+
+			//Intval RC an integer value
+			this._objectReader.ReadByte();
+
+			//BS a string
+			dictvar.Value = this._textReader.ReadVariableText();
 
 			return template;
 		}
@@ -2996,7 +3014,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readLTypeControlObject()
 		{
-			DwgTableTemplate<LineType> template = new DwgTableTemplate<LineType>(
+			CadTableTemplate<LineType> template = new CadTableTemplate<LineType>(
 				new LineTypesTable());
 
 			this.readDocumentTable(template.CadObject, template);
@@ -3089,7 +3107,7 @@ namespace ACadSharp.IO.DWG
 				this.handleReference();
 			}
 
-			_builder.LineTypes.Add(ltype.Name, ltype);
+			this._builder.LineTypes.Add(ltype.Name, ltype);
 
 			return template;
 		}
@@ -3247,7 +3265,7 @@ namespace ACadSharp.IO.DWG
 			{
 				//Elevation BD 146
 				ucs.Elevation = this._objectReader.ReadBitDouble();
-				//OrthographicViewType BS 79
+				//OrthographicViewType BS 79	//dxf docs: 79	Always 0
 				ucs.OrthographicViewType = (OrthographicType)this._objectReader.ReadBitShort();
 				//OrthographicType BS 71
 				ucs.OrthographicType = (OrthographicType)this._objectReader.ReadBitShort();
@@ -3468,7 +3486,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readDimStyle()
 		{
 			DimensionStyle dimStyle = new DimensionStyle();
-			DwgDimensionStyleTemplate template = new DwgDimensionStyleTemplate(dimStyle);
+			CadDimensionStyleTemplate template = new CadDimensionStyleTemplate(dimStyle);
 
 			this.readCommonNonEntityData(template);
 
@@ -3882,7 +3900,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readMLStyle()
 		{
 			MLStyle mlineStyle = new MLStyle();
-			DwgMLStyleTemplate template = new DwgMLStyleTemplate(mlineStyle);
+			CadMLStyleTemplate template = new CadMLStyleTemplate(mlineStyle);
 
 			this.readCommonNonEntityData(template);
 
@@ -3934,7 +3952,7 @@ namespace ACadSharp.IO.DWG
 			for (int i = 0; i < nlines; ++i)
 			{
 				MLStyle.Element element = new MLStyle.Element();
-				DwgMLStyleTemplate.ElementTemplate elementTemplate = new DwgMLStyleTemplate.ElementTemplate(element);
+				CadMLStyleTemplate.ElementTemplate elementTemplate = new CadMLStyleTemplate.ElementTemplate(element);
 
 				//Offset BD Offset of this segment
 				element.Offset = this._objectReader.ReadBitDouble();
@@ -3959,7 +3977,107 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readLWPolyline()
 		{
-			return null;
+			LwPolyline lwPolyline = new LwPolyline();
+			CadEntityTemplate template = new CadEntityTemplate(lwPolyline);
+
+			try
+			{
+				this.readCommonEntityData(template);
+
+				//B : bytes containing the LWPOLYLINE entity data.
+				//This excludes the common entity data.
+				//More specifically: it starts at the LWPOLYLINE flags (BS), and ends with the width array (BD).
+
+				short flags = this._objectReader.ReadBitShort();
+				if ((flags & 0x100) != 0)
+					lwPolyline.Flags |= LwPolylineFlags.Plinegen;
+				if ((flags & 0x200) != 0)
+					lwPolyline.Flags |= LwPolylineFlags.Closed;
+
+				if ((flags & 4u) != 0)
+				{
+					lwPolyline.ConstantWidth = this._objectReader.ReadBitDouble();
+				}
+
+				if ((flags & 8u) != 0)
+				{
+					lwPolyline.Elevation = this._objectReader.ReadBitDouble();
+				}
+
+				if ((flags & 2u) != 0)
+				{
+					lwPolyline.Thickness = this._objectReader.ReadBitDouble();
+				}
+
+				if ((flags & (true ? 1u : 0u)) != 0)
+				{
+					lwPolyline.Normal = this._objectReader.Read3BitDouble();
+				}
+
+				int nvertices = this._objectReader.ReadBitLong();
+				int nbulges = 0;
+
+				if (((uint)flags & 0x10u) != 0)
+				{
+					nbulges = this._objectReader.ReadBitLong();
+				}
+				int nids = 0;
+				if (((uint)flags & 0x400u) != 0)
+				{
+					nids = this._objectReader.ReadBitLong();
+				}
+
+				int ndiffwidth = 0;
+				if (((uint)flags & 0x20u) != 0)
+				{
+					ndiffwidth = this._objectReader.ReadBitLong();
+				}
+
+				if (this.R13_14Only)
+				{
+					for (int i = 0; i < nvertices; i++)
+					{
+						Vertex2D v = new Vertex2D();
+						XY loc = this._objectReader.Read2RawDouble();
+						lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
+					}
+				}
+
+				if (this.R2000Plus && nvertices > 0)
+				{
+					XY loc = this._objectReader.Read2RawDouble();
+					lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
+					for (int j = 1; j < nvertices; j++)
+					{
+						loc = this._objectReader.Read2BitDoubleWithDefault(loc);
+						lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
+					}
+				}
+
+				for (int k = 0; k < nbulges; k++)
+				{
+					lwPolyline.Vertices[k].Bulge = this._objectReader.ReadBitDouble();
+				}
+
+				for (int l = 0; l < nids; l++)
+				{
+					lwPolyline.Vertices[l].Id = this._objectReader.ReadBitLong();
+				}
+
+				for (int m = 0; m < ndiffwidth; m++)
+				{
+					LwPolyline.Vertex vertex = lwPolyline.Vertices[m];
+					vertex.StartWidth = this._objectReader.ReadBitDouble();
+					vertex.EndWidth = this._objectReader.ReadBitDouble();
+				}
+			}
+			catch (System.Exception ex)
+			{
+				this._builder.Notify(new NotificationEventArgs($"Exception while reading LwPolyline: {ex.GetType().FullName}"));
+				return template;
+			}
+
+			return template;
 		}
 
 		private CadTemplate readHatch()

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgBlockCtrlObjectTemplate : DwgTableTemplate<BlockRecord>
+	internal class DwgBlockCtrlObjectTemplate : CadTableTemplate<BlockRecord>
 	{
 		public ulong? ModelSpaceHandle { get; set; }
 

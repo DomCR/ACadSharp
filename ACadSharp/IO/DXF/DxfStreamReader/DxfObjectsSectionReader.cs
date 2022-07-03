@@ -7,8 +7,8 @@ namespace ACadSharp.IO.DXF
 {
 	internal class DxfObjectsSectionReader : DxfSectionReaderBase
 	{
-		public DxfObjectsSectionReader(IDxfStreamReader reader, DxfDocumentBuilder builder, NotificationEventHandler notification = null)
-			: base(reader, builder, notification)
+		public DxfObjectsSectionReader(IDxfStreamReader reader, DxfDocumentBuilder builder)
+			: base(reader, builder)
 		{
 		}
 
@@ -41,11 +41,14 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.ObjectLayout:
 					template = new CadLayoutTemplate(new Layout());
 					break;
+				case DxfFileToken.ObjectDictionaryVar:
+					template = new CadTemplate<DictionaryVariable>(new DictionaryVariable());
+					break;
 				case DxfFileToken.TableXRecord:
 					template = new CadXRecordTemplate(new XRecrod());
 					break;
 				default:
-					this._notification?.Invoke(null, new NotificationEventArgs($"Object not implemented: {this._reader.LastValueAsString}"));
+					this._builder.Notify(new NotificationEventArgs($"Object not implemented: {this._reader.LastValueAsString}"));
 					do
 					{
 						this._reader.ReadNext();
@@ -63,6 +66,9 @@ namespace ACadSharp.IO.DXF
 			{
 				switch (this._reader.LastValueAsString)
 				{
+					case DxfSubclassMarker.DictionaryVariables:
+						this.readMapped<DictionaryVariable>(template.CadObject, template);
+						break;
 					case DxfSubclassMarker.Layout:
 						this.readMapped<Layout>(template.CadObject, template);
 						break;
@@ -73,7 +79,7 @@ namespace ACadSharp.IO.DXF
 						this.readMapped<XRecrod>(template.CadObject, template);
 						break;
 					default:
-						this._notification?.Invoke(null, new NotificationEventArgs($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}"));
+						this._builder.Notify(new NotificationEventArgs($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}"));
 						while (this._reader.LastDxfCode != DxfCode.Start)
 							this._reader.ReadNext();
 						break;
@@ -119,7 +125,7 @@ namespace ACadSharp.IO.DXF
 						template.Entries[lastKey] = this._reader.LastValueAsHandle;
 						break;
 					default:
-						this._notification?.Invoke(null, new NotificationEventArgs($"Group Code not handled {this._reader.LastGroupCodeValue} for {typeof(CadDictionary)}, code : {this._reader.LastCode} | value : {this._reader.LastValueAsString}"));
+						this._builder.Notify(new NotificationEventArgs($"Group Code not handled {this._reader.LastGroupCodeValue} for {typeof(CadDictionary)}, code : {this._reader.LastCode} | value : {this._reader.LastValueAsString}"));
 						break;
 				}
 

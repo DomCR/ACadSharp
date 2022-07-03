@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities.Collections;
 using CSMath;
+using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -13,7 +15,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityLwPolyline)]
 	[DxfSubClass(DxfSubclassMarker.LwPolyline)]
-	public class LwPolyline : Entity
+	public partial class LwPolyline : Entity
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.LWPOLYLINE;
@@ -25,7 +27,7 @@ namespace ACadSharp.Entities
 		/// Polyline flag (bit-coded)
 		/// </summary>
 		[DxfCodeValue(70)]
-		public PolylineFlags Flags { get; set; }
+		public LwPolylineFlags Flags { get; set; }
 
 		/// <summary>
 		/// Constant width
@@ -34,7 +36,7 @@ namespace ACadSharp.Entities
 		/// Not used if variable width (codes 40 and/or 41) is set
 		/// </remarks>
 		[DxfCodeValue(43)]
-		public double Width { get; set; } = 0.0;
+		public double ConstantWidth { get; set; } = 0.0;
 
 		/// <summary>
 		/// The current elevation of the object.
@@ -55,12 +57,9 @@ namespace ACadSharp.Entities
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 		/// <summary>
-		/// Vertices that form this polyline.
+		/// Vertices that form this LwPolyline
 		/// </summary>
-		/// <remarks>
-		/// Each <see cref="Vertex"/> has it's own unique handle.
-		/// </remarks>
-		[DxfCodeValue(90)]
-		public VertexCollection Vertices { get; set; } = new VertexCollection();
+		[DxfCodeValue(DxfReferenceType.Count, 90)]
+		public List<Vertex> Vertices { get; set; } = new List<Vertex>();
 	}
 }

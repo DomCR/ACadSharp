@@ -48,16 +48,13 @@ The dwg/dxf readers are not yet fully implemented, the NotificationHandler will 
 
 - ACDBPLACEHOLDER
 - VP_ENT_HDR
-- LWPOLYLINE
 - POLYLINE_PFACE
-- LWPOLYLINE
 - ACAD_PROXY_OBJECT
+- MESH
 
 ##### Dxf reader entities not implemented
 
-- LWPOLYLINE
 - POLYLINE_PFACE
-- LWPOLYLINE
 - ACAD_TABLE
 - WIPEOUT
 - LEADER

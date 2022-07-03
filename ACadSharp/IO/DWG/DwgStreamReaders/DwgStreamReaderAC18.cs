@@ -86,15 +86,18 @@ namespace ACadSharp.IO.DWG
 					color.Index = (short)(size & 0b111111111111);
 				}
 
-				try
+				//0x2000: color is followed by a transparency BL
+				if ((flags & 0x2000U) > 0U)
 				{
-					//TODO: Fix wrong values, like 102
 
-					//0x2000: color is followed by a transparency BL.
-					transparency = (flags & 0x2000U) <= 0U ? Transparency.ByLayer
-						: new Transparency((short)this.ReadBitLong());
+					//The first byte represents the transparency type:
+					//0 = BYLAYER,
+					//1 = BYBLOCK,
+					//3 = the transparency value in the last byte.
+					int value = this.ReadBitLong();
+					transparency = Transparency.FromValue(value);
 				}
-				catch (Exception)
+				else
 				{
 					transparency = Transparency.ByLayer;
 				}

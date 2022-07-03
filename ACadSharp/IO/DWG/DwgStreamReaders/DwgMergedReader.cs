@@ -134,6 +134,12 @@ namespace ACadSharp.IO.DWG
 		{
 			throw new NotImplementedException();
 		}
+
+		public XY Read2BitDoubleWithDefault(XY defValues)
+		{
+			return _defaultReader.Read2BitDoubleWithDefault(defValues);
+		}
+
 		public XYZ Read3BitDoubleWithDefault(XYZ defValues)
 		{
 			return _defaultReader.Read3BitDoubleWithDefault(defValues);

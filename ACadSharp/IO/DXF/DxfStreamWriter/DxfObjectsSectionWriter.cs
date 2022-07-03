@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using ACadSharp.Objects;
+using System.Linq;
 
 namespace ACadSharp.IO.DXF
 {
@@ -14,9 +15,50 @@ namespace ACadSharp.IO.DXF
 		{
 			while (this.Holder.Objects.Any())
 			{
-				CadObject item = this.Holder.Objects.Dequeue(); 
+				CadObject item = this.Holder.Objects.Dequeue();
 
 				this.writeObject(item);
+			}
+		}
+
+		private void writeObject<T>(T co)
+			where T : CadObject
+		{
+			switch (co)
+			{
+				case CadDictionary cadDictionary:
+					this.writeDictionary(cadDictionary);
+					return;
+				case Layout layout:
+					this.writeMappedObject<Layout>(layout);
+					break;
+				default:
+					break;
+			}
+		}
+
+		private void writeDictionary(CadDictionary e)
+		{
+			this._writer.Write(DxfCode.Start, e.ObjectName);
+
+			this.writeCommonObjectData(e);
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Dictionary);
+
+			this._writer.Write(280, e.HardOwnerFlag);
+			this._writer.Write(281, (int)e.ClonningFlags);
+
+			System.Diagnostics.Debug.Assert(e.EntryNames.Length == e.EntryHandles.Length);
+			for (int i = 0; i < e.EntryNames.Length; i++)
+			{
+				this._writer.Write(3, e.EntryNames[i]);
+				this._writer.Write(350, e.EntryHandles[i]);
+			}
+
+			//Add the entries as objects
+			foreach (CadObject item in e)
+			{
+				this.Holder.Objects.Enqueue(item);
 			}
 		}
 	}

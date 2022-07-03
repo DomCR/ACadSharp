@@ -10,8 +10,8 @@ namespace ACadSharp.IO.DXF
 {
 	internal class DxfBlockSectionReader : DxfSectionReaderBase
 	{
-		public DxfBlockSectionReader(IDxfStreamReader reader, DxfDocumentBuilder builder, NotificationEventHandler notification = null)
-			: base(reader, builder, notification)
+		public DxfBlockSectionReader(IDxfStreamReader reader, DxfDocumentBuilder builder)
+			: base(reader, builder)
 		{
 		}
 
