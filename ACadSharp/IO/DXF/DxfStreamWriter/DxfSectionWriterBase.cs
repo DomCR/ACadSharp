@@ -103,23 +103,26 @@ namespace ACadSharp.IO.DXF
 
 					if (prop.ReferenceType.HasFlag(DxfReferenceType.Count))
 					{
-						this.writeCollection((IEnumerable)prop.GetValue(cadObject));
+						this.writeCollection((IEnumerable)prop.GetValue(cadObject), prop.GetCollectionCodes());
 					}
 				}
 			}
 		}
 
-		protected void writeCollection(IEnumerable arr)
+		protected void writeCollection(IEnumerable arr, DxfCode[] codes)
 		{
 			foreach (var item in arr)
 			{
 				switch (item)
 				{
 					case double d:
+						this.writeDoubles(codes, d);
 						break;
 					case XY xy:
+						this.writeDoubles(codes, xy.GetComponents());
 						break;
 					case XYZ xyz:
+						this.writeDoubles(codes, xyz.GetComponents());
 						break;
 					case LineType.Segment segment:
 						this.writeSegment(segment);
@@ -128,6 +131,10 @@ namespace ACadSharp.IO.DXF
 						this.writeLwVertex(vertex);
 						break;
 					case MLine.Vertex vertex:
+						this.writeLwVertex(vertex);
+						break;
+					case AttributeEntity att:
+						this.writeMappedObject(att);
 						break;
 					default:
 						this.Notify($"counter value for : {item.GetType().FullName} not implemented");
@@ -160,6 +167,14 @@ namespace ACadSharp.IO.DXF
 
 		protected abstract void writeSection();
 
+		private void writeDoubles(DxfCode[] codes, params double[] arr)
+		{
+			for (int i = 0; i < arr.Length; i++)
+			{
+				this._writer.Write(codes[i], arr[i]);
+			}
+		}
+
 		private void writeSegment(LineType.Segment segment)
 		{
 			this._writer.Write(49, segment.Length);
@@ -180,6 +195,21 @@ namespace ACadSharp.IO.DXF
 			{
 				this._writer.Write(9, string.IsNullOrEmpty(segment.Text) ? string.Empty : segment.Text);
 			}
+		}
+
+		private void writeLwVertex(MLine.Vertex v)
+		{
+			this._writer.Write(11, v.Position.X);
+			this._writer.Write(21, v.Position.Y);
+			this._writer.Write(31, v.Position.Z);
+
+			this._writer.Write(12, v.Direction.X);
+			this._writer.Write(22, v.Direction.Y);
+			this._writer.Write(32, v.Direction.Z);
+
+			this._writer.Write(13, v.Miter.X);
+			this._writer.Write(23, v.Miter.Y);
+			this._writer.Write(33, v.Miter.Z);
 		}
 
 		private void writeLwVertex(LwPolyline.Vertex v)
