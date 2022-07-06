@@ -111,6 +111,8 @@ namespace ACadSharp.IO.DXF
 
 		protected void writeCollection(IEnumerable arr, DxfCode[] codes)
 		{
+			bool seqend = false;
+
 			foreach (var item in arr)
 			{
 				switch (item)
@@ -140,6 +142,11 @@ namespace ACadSharp.IO.DXF
 						this.Notify($"counter value for : {item.GetType().FullName} not implemented");
 						break;
 				}
+			}
+
+			if (seqend)
+			{
+
 			}
 		}
 
@@ -222,6 +229,11 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(70, (short)v.Flags);
 			this._writer.Write(50, v.CurveTangent);
 			this._writer.Write(91, v.Id);
+		}
+
+		private void writeSeqend()
+		{
+
 		}
 	}
 }
