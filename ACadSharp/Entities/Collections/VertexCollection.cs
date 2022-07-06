@@ -5,6 +5,7 @@ using System.Text;
 
 namespace ACadSharp.Entities.Collections
 {
+	[Obsolete]
 	public class VertexCollection : IEntityCollection<Vertex>
 	{
 		public int Count => _vertices.Count;

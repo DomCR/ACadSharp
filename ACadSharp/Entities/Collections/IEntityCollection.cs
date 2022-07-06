@@ -5,6 +5,7 @@ using System.Text;
 
 namespace ACadSharp.Entities.Collections
 {
+	[Obsolete]
 	public interface IEntityCollection<T> : ICollection<Entity>
 		where T : Entity
 	{

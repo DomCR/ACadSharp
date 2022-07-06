@@ -151,7 +151,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadHatchTemplate(new Hatch());
 					break;
 				case DxfFileToken.EntityInsert:
-					template = new DwgInsertTemplate(new Insert());
+					template = new CadInsertTemplate(new Insert());
 					break;
 				case DxfFileToken.EntityMText:
 					template = new DwgTextEntityTemplate(new MText());
