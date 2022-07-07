@@ -64,8 +64,7 @@ namespace ACadSharp.Tests.IO
 
 		protected void checkDocumentInAutocad(string path)
 		{
-			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null || 
-				!File.Exists("\"D:\\Programs\\Autodesk\\AutoCAD 2023\\accoreconsole.exe\""))
+			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null)
 				return;
 
 			System.Diagnostics.Process process = new System.Diagnostics.Process();

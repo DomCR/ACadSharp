@@ -155,6 +155,7 @@ namespace ACadSharp.IO.DXF
 			if (
 				e is Hatch
 				|| e is MText
+				|| e is Insert
 				|| e is AttributeDefinition
 				)
 			{
