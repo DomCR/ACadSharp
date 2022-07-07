@@ -2,14 +2,11 @@
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
-using System.Collections.Generic;
 
 namespace ACadSharp.IO.DXF
 {
 	internal class DxfDocumentBuilder : CadDocumentBuilder
 	{
-		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new Dictionary<ulong, ICadTableTemplate>();
-
 		public DxfDocumentBuilder(CadDocument document, NotificationEventHandler notification = null) : base(document, notification) { }
 
 		public override void BuildDocument()
@@ -26,12 +23,6 @@ namespace ACadSharp.IO.DXF
 			}
 
 			base.BuildDocument();
-		}
-
-		public void AddTableTemplate(ICadTableTemplate tableTemplate)
-		{
-			this.tableTemplates[tableTemplate.CadObject.Handle] = tableTemplate;
-			this.cadObjects[tableTemplate.CadObject.Handle] = tableTemplate.CadObject;
 		}
 
 		private void assignOwners(CadTemplate template)
