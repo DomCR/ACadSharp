@@ -93,8 +93,8 @@ namespace ACadSharp.IO.DXF
 					this._builder.DocumentToBuild.RegisterCollection((AppIdsTable)template.CadObject);
 					break;
 				case DxfFileToken.TableBlockRecord:
-					template = new DwgBlockCtrlObjectTemplate(new BlockRecordsTable());
-					this.readEntries((DwgBlockCtrlObjectTemplate)template);
+					template = new CadBlockCtrlObjectTemplate(new BlockRecordsTable());
+					this.readEntries((CadBlockCtrlObjectTemplate)template);
 					template.CadObject.Handle = handle;
 					this._builder.DocumentToBuild.RegisterCollection((BlockRecordsTable)template.CadObject);
 					break;

@@ -1,12 +1,10 @@
-﻿using ACadSharp.Blocks;
-using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
+﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class DwgInsertTemplate : CadEntityTemplate
+	internal class CadInsertTemplate : CadEntityTemplate
 	{
 		public bool HasAtts { get; set; }
 
@@ -20,11 +18,11 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? EndAttributeHandle { get; set; }
 
-		public ulong SeqendHandle { get; set; }
+		public ulong? SeqendHandle { get; set; }
 
 		public List<ulong> OwnedHandles { get; set; } = new List<ulong>();
 
-		public DwgInsertTemplate(Insert insert) : base(insert) { }
+		public CadInsertTemplate(Insert insert) : base(insert) { }
 
 		public override bool AddName(int dxfcode, string name)
 		{
@@ -70,7 +68,10 @@ namespace ACadSharp.IO.Templates
 				}
 			}
 
-			//TODO: DwgInsertTemplate SeqendHandle??
+			if(builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
+			{
+				insert.Attributes.Seqend = seqend;
+			}
 		}
 	}
 }
