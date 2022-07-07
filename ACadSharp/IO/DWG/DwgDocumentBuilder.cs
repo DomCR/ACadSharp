@@ -1,10 +1,6 @@
 ﻿using ACadSharp.IO.Templates;
-using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
@@ -33,8 +29,6 @@ namespace ACadSharp.IO.DWG
 		public VPortsTable VPorts { get; set; }
 
 		public List<CadBlockRecordTemplate> BlockRecordTemplates { get; set; } = new List<CadBlockRecordTemplate>();
-
-		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new Dictionary<ulong, ICadTableTemplate>();
 
 		public DwgDocumentBuilder(CadDocument document, DwgReaderFlags flags, NotificationEventHandler notification = null)
 			: base(document, notification)
@@ -66,12 +60,6 @@ namespace ACadSharp.IO.DWG
 			this.DocumentToBuild.RegisterCollection(BlockRecords);
 
 			base.BuildDocument();
-		}
-
-		public void AddTableTemplate(ICadTableTemplate tableTemplate)
-		{
-			this.tableTemplates[tableTemplate.CadObject.Handle] = tableTemplate;
-			this.cadObjects[tableTemplate.CadObject.Handle] = tableTemplate.CadObject;
 		}
 	}
 }
