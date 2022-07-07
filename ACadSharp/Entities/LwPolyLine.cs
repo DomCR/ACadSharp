@@ -1,7 +1,5 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Entities.Collections;
 using CSMath;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
