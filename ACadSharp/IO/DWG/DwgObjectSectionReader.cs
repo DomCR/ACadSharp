@@ -971,7 +971,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readText()
 		{
 			TextEntity text = new TextEntity();
-			DwgTextEntityTemplate template = new DwgTextEntityTemplate(text);
+			CadTextEntityTemplate template = new CadTextEntityTemplate(text);
 
 			this.readCommonTextData(template);
 
@@ -981,7 +981,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readAttribute()
 		{
 			AttributeEntity att = new AttributeEntity();
-			DwgTextEntityTemplate template = new DwgTextEntityTemplate(att);
+			CadTextEntityTemplate template = new CadTextEntityTemplate(att);
 
 			this.readCommonTextData(template);
 
@@ -993,7 +993,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readAttributeDefinition()
 		{
 			AttributeDefinition attdef = new AttributeDefinition();
-			DwgTextEntityTemplate template = new DwgTextEntityTemplate(attdef);
+			CadTextEntityTemplate template = new CadTextEntityTemplate(attdef);
 
 			this.readCommonTextData(template);
 
@@ -1011,7 +1011,7 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private void readCommonTextData(DwgTextEntityTemplate template)
+		private void readCommonTextData(CadTextEntityTemplate template)
 		{
 			this.readCommonEntityData(template);
 
@@ -2422,7 +2422,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readMText()
 		{
 			MText mtext = new MText();
-			DwgTextEntityTemplate template = new DwgTextEntityTemplate(mtext);
+			CadTextEntityTemplate template = new CadTextEntityTemplate(mtext);
 
 			this.readCommonEntityData(template);
 

@@ -52,8 +52,14 @@ namespace ACadSharp.IO.DXF
 					case Polyline pline when template.CadObject is Vertex v:
 						pline.Vertices.Add(v);
 						break;
+					case Polyline pline when template.CadObject is Seqend seqend:
+						pline.Vertices.Seqend = seqend;
+						break;
 					case Insert insert when template.CadObject is AttributeEntity att:
 						insert.Attributes.Add(att);
+						break;
+					case Insert insert when template.CadObject is Seqend seqend:
+						insert.Attributes.Seqend = seqend;
 						break;
 					default:
 						this.Notify(new NotificationEventArgs($"Owner {owner.GetType().Name} with handle {owner.Handle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}"));
