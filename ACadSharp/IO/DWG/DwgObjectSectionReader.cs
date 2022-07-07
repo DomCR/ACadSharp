@@ -971,7 +971,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readText()
 		{
 			TextEntity text = new TextEntity();
-			DwgTextEntityTemplate template = new DwgTextEntityTemplate(text);
+			CadTextEntityTemplate template = new CadTextEntityTemplate(text);
 
 			this.readCommonTextData(template);
 
@@ -981,7 +981,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readAttribute()
 		{
 			AttributeEntity att = new AttributeEntity();
-			DwgTextEntityTemplate template = new DwgTextEntityTemplate(att);
+			CadTextEntityTemplate template = new CadTextEntityTemplate(att);
 
 			this.readCommonTextData(template);
 
@@ -993,7 +993,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readAttributeDefinition()
 		{
 			AttributeDefinition attdef = new AttributeDefinition();
-			DwgTextEntityTemplate template = new DwgTextEntityTemplate(attdef);
+			CadTextEntityTemplate template = new CadTextEntityTemplate(attdef);
 
 			this.readCommonTextData(template);
 
@@ -1011,7 +1011,7 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private void readCommonTextData(DwgTextEntityTemplate template)
+		private void readCommonTextData(CadTextEntityTemplate template)
 		{
 			this.readCommonEntityData(template);
 
@@ -1232,7 +1232,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readInsert()
 		{
-			DwgInsertTemplate template = new DwgInsertTemplate(new Insert());
+			CadInsertTemplate template = new CadInsertTemplate(new Insert());
 
 			this.readInsertCommonData(template);
 			this.readInsertCommonHandles(template);
@@ -1243,7 +1243,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readMInsert()
 		{
 			Insert insert = new Insert();
-			DwgInsertTemplate template = new DwgInsertTemplate(insert);
+			CadInsertTemplate template = new CadInsertTemplate(insert);
 
 			this.readInsertCommonData(template);
 
@@ -1262,7 +1262,7 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private void readInsertCommonData(DwgInsertTemplate template)
+		private void readInsertCommonData(CadInsertTemplate template)
 		{
 			Insert insert = template.CadObject as Insert;
 
@@ -1332,7 +1332,7 @@ namespace ACadSharp.IO.DWG
 				template.OwnedObjectsCount = this._objectReader.ReadBitLong();
 		}
 
-		private void readInsertCommonHandles(DwgInsertTemplate template)
+		private void readInsertCommonHandles(CadInsertTemplate template)
 		{
 			//Common:
 			//Common Entity Handle Data
@@ -2422,7 +2422,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readMText()
 		{
 			MText mtext = new MText();
-			DwgTextEntityTemplate template = new DwgTextEntityTemplate(mtext);
+			CadTextEntityTemplate template = new CadTextEntityTemplate(mtext);
 
 			this.readCommonEntityData(template);
 
@@ -2733,7 +2733,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readBlockControlObject()
 		{
-			DwgBlockCtrlObjectTemplate template = new DwgBlockCtrlObjectTemplate(
+			CadBlockCtrlObjectTemplate template = new CadBlockCtrlObjectTemplate(
 				new BlockRecordsTable());
 
 			this.readDocumentTable(template.CadObject, template);

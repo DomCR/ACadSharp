@@ -1,9 +1,5 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Entities.Collections;
-using ACadSharp.IO.Templates;
 using CSMath;
-using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -66,8 +62,12 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// Each <see cref="Vertex"/> has it's own unique handle.
 		/// </remarks>
-		public VertexCollection Vertices { get; set; } = new VertexCollection();
+		public SeqendCollection<Vertex> Vertices { get; set; }
 
-		public Polyline() : base() { }
+		public Polyline() : base()
+		{
+			this.Vertices = new SeqendCollection<Vertex>(this);
+		}
 	}
+
 }

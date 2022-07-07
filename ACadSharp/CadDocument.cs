@@ -280,6 +280,9 @@ namespace ACadSharp
 					this.addCadObject(record.BlockEnd);
 					this.addCadObject(record.BlockEntity);
 					break;
+				case Insert insert:
+					this.RegisterCollection(insert.Attributes);
+					break;
 			}
 		}
 
@@ -389,6 +392,11 @@ namespace ACadSharp
 			if (collection is CadObject cadObject)
 			{
 				this.addCadObject(cadObject);
+			}
+
+			if (collection is ISeqendColleciton seqendColleciton)
+			{
+				this.addCadObject(seqendColleciton.Seqend);
 			}
 
 			if (addElements)

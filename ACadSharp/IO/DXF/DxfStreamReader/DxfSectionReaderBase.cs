@@ -124,10 +124,10 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.LastValueAsString)
 			{
 				case DxfFileToken.EntityAttribute:
-					template = new DwgTextEntityTemplate(new AttributeEntity());
+					template = new CadTextEntityTemplate(new AttributeEntity());
 					break;
 				case DxfFileToken.EntityAttributeDefinition:
-					template = new DwgTextEntityTemplate(new AttributeDefinition());
+					template = new CadTextEntityTemplate(new AttributeDefinition());
 					break;
 				case DxfFileToken.EntityArc:
 					template = new CadEntityTemplate(new Arc());
@@ -151,10 +151,10 @@ namespace ACadSharp.IO.DXF
 					template = new CadHatchTemplate(new Hatch());
 					break;
 				case DxfFileToken.EntityInsert:
-					template = new DwgInsertTemplate(new Insert());
+					template = new CadInsertTemplate(new Insert());
 					break;
 				case DxfFileToken.EntityMText:
-					template = new DwgTextEntityTemplate(new MText());
+					template = new CadTextEntityTemplate(new MText());
 					break;
 				case DxfFileToken.EntityMLine:
 					template = new CadMLineTemplate(new MLine());
@@ -168,11 +168,14 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityRay:
 					template = new CadEntityTemplate(new Ray());
 					break;
+				case DxfFileToken.EndSequence:
+					template = new CadEntityTemplate(new Seqend());
+					break;
 				case DxfFileToken.EntitySolid:
 					template = new CadEntityTemplate(new Solid());
 					break;
 				case DxfFileToken.EntityText:
-					template = new DwgTextEntityTemplate(new TextEntity());
+					template = new CadTextEntityTemplate(new TextEntity());
 					break;
 				case DxfFileToken.EntityVertex:
 					template = new CadEntityTemplate(new Vertex2D());
