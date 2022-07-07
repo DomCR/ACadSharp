@@ -14,7 +14,27 @@ namespace ACadSharp.IO.DWG
 
 		public DwgHeaderHandlesCollection HeaderHandles { get; set; }
 
+		public AppIdsTable AppIds { get; set; }
+
+		public BlockRecordsTable BlockRecords { get; set; }
+
+		public DimensionStylesTable DimensionStyles { get; set; }
+
+		public LayersTable Layers { get; set; }
+
+		public LineTypesTable LineTypesTable { get; set; }
+
+		public TextStylesTable TextStyles { get; set; }
+
+		public UCSTable UCSs { get; set; }
+
+		public ViewsTable Views { get; set; }
+
+		public VPortsTable VPorts { get; set; }
+
 		public List<CadBlockRecordTemplate> BlockRecordTemplates { get; set; } = new List<CadBlockRecordTemplate>();
+
+		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new Dictionary<ulong, ICadTableTemplate>();
 
 		public DwgDocumentBuilder(CadDocument document, DwgReaderFlags flags, NotificationEventHandler notification = null)
 			: base(document, notification)
@@ -30,13 +50,28 @@ namespace ACadSharp.IO.DWG
 				item.SetBlockToRecord(this);
 			}
 
+			foreach (ICadTableTemplate template in this.tableTemplates.Values)
+			{
+				template.Build(this);
+			}
+
+			this.DocumentToBuild.RegisterCollection(AppIds);
+			this.DocumentToBuild.RegisterCollection(Layers);
+			this.DocumentToBuild.RegisterCollection(LineTypesTable);
+			this.DocumentToBuild.RegisterCollection(TextStyles);
+			this.DocumentToBuild.RegisterCollection(UCSs);
+			this.DocumentToBuild.RegisterCollection(Views);
+			this.DocumentToBuild.RegisterCollection(DimensionStyles);
+			this.DocumentToBuild.RegisterCollection(VPorts);
+			this.DocumentToBuild.RegisterCollection(BlockRecords);
+
 			base.BuildDocument();
 		}
 
-		protected CadTableTemplate<T> getTableTemplate<T>()
-			where T : TableEntry
+		public void AddTableTemplate(ICadTableTemplate tableTemplate)
 		{
-			return templates.Values.OfType<CadTableTemplate<T>>().FirstOrDefault();
+			this.tableTemplates[tableTemplate.CadObject.Handle] = tableTemplate;
+			this.cadObjects[tableTemplate.CadObject.Handle] = tableTemplate.CadObject;
 		}
 	}
 }
