@@ -18,7 +18,9 @@ namespace ACadSharp.IO
 
 		protected Dictionary<ulong, CadObject> cadObjects = new Dictionary<ulong, CadObject>();
 
-		public CadDocumentBuilder(CadDocument document)
+		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new Dictionary<ulong, ICadTableTemplate>();
+
+		public CadDocumentBuilder(CadDocument document, NotificationEventHandler notification = null)
 		{
 			this.DocumentToBuild = document;
 		}
@@ -29,6 +31,12 @@ namespace ACadSharp.IO
 			{
 				template.Build(this);
 			}
+		}
+
+		public void AddTableTemplate(ICadTableTemplate tableTemplate)
+		{
+			this.tableTemplates[tableTemplate.CadObject.Handle] = tableTemplate;
+			this.cadObjects[tableTemplate.CadObject.Handle] = tableTemplate.CadObject;
 		}
 
 		public void AddTemplate(CadTemplate template)
