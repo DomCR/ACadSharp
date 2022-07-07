@@ -28,7 +28,7 @@ namespace ACadSharp.Entities
 		//		if the value of attributes-follow flag is 1, a series of 
 		//		attribute entities is expected to follow the insert, terminated by a seqend entity
 		[DxfCodeValue(DxfReferenceType.Count, 66)]
-		public CadObjectCollection<AttributeEntity> Attributes { get; set; }
+		public SeqendCollection<AttributeEntity> Attributes { get; set; }
 
 		/// <summary>
 		///  Gets the insert block definition
@@ -89,7 +89,7 @@ namespace ACadSharp.Entities
 
 		public Insert() : base()
 		{
-			this.Attributes = new CadObjectCollection<AttributeEntity>(this);
+			this.Attributes = new SeqendCollection<AttributeEntity>(this);
 		}
 	}
 }

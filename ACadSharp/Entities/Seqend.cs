@@ -11,8 +11,10 @@ namespace ACadSharp.Entities
 	[DxfName(DxfFileToken.EntitySeqend)]
 	public class Seqend : Entity
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.SEQEND;
 
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntitySeqend;
 	}
 }
