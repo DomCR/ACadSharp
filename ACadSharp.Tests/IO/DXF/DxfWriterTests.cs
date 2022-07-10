@@ -14,11 +14,14 @@ namespace ACadSharp.Tests.IO.DXF
 	{
 		public DxfWriterTests(ITestOutputHelper output) : base(output) { }
 
-		[Fact]
-		public void WriteAsciiTest()
+		[Theory]
+		[MemberData(nameof(Versions))]
+		public void WriteAsciiTest(ACadVersion version)
 		{
 			CadDocument doc = new CadDocument();
-			string path = Path.Combine(_samplesOutFolder, "out_empty_sample_ascii.dxf");
+			doc.Header.Version = version;
+
+			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}_ascii.dxf");
 
 			using (var wr = new DxfWriter(path, doc, false))
 			{
@@ -38,11 +41,14 @@ namespace ACadSharp.Tests.IO.DXF
 			this.checkDocumentInAutocad(Path.GetFullPath(path));
 		}
 
-		[Fact]
-		public void WriteBinaryTest()
+		[Theory]
+		[MemberData(nameof(Versions))]
+		public void WriteBinaryTest(ACadVersion version)
 		{
 			CadDocument doc = new CadDocument();
-			string path = Path.Combine(_samplesOutFolder, "out_empty_sample_binary.dxf");
+			doc.Header.Version = version;
+
+			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}_binary.dxf");
 
 			using (var wr = new DxfWriter(path, doc, true))
 			{
@@ -60,6 +66,26 @@ namespace ACadSharp.Tests.IO.DXF
 			}
 
 			this.checkDocumentInAutocad(path);
+		}
+
+		[Theory]
+		[MemberData(nameof(Versions))]
+		public void WriteDocumentWithEntitiesTest(ACadVersion version)
+		{
+			CadDocument doc = new CadDocument();
+			doc.Header.Version = version;
+
+			var pt = new Point();
+
+			doc.Entities.Add(pt);
+
+			string path = Path.Combine(_samplesOutFolder, $"out_sample_{version}_ascii.dxf");
+
+			using (var wr = new DxfWriter(path, doc, false))
+			{
+				wr.OnNotification += this.onNotification;
+				wr.Write();
+			}
 		}
 	}
 }

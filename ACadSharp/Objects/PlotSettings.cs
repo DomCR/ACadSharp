@@ -121,20 +121,44 @@ namespace ACadSharp.Objects
 		/// </summary>
 		public double PrintScale
 		{
-			get { return NumeratorScale / DenominatorScale; }
+			get { return this.NumeratorScale / this.DenominatorScale; }
 		}
 
 		/// <summary>
 		/// Numerator of custom print scale: real world(paper) units
 		/// </summary>
 		[DxfCodeValue(142)]
-		public double NumeratorScale { get; set; }
+		public double NumeratorScale
+		{
+			get { return this._numeratorScale; }
+			set
+			{
+				if (value <= 0.0)
+				{
+					throw new ArgumentOutOfRangeException(nameof(this.NumeratorScale), value, "Value must be greater than zero");
+				}
+
+				this._numeratorScale = value;
+			}
+		}
 
 		/// <summary>
 		/// Denominator of custom print scale: drawing units
 		/// </summary>
 		[DxfCodeValue(143)]
-		public double DenominatorScale { get; set; }
+		public double DenominatorScale
+		{
+			get { return this._denominatorScale; }
+			set
+			{
+				if (value <= 0.0)
+				{
+					throw new ArgumentOutOfRangeException(nameof(this.DenominatorScale), value, "Value must be greater than zero");
+				}
+
+				this._denominatorScale = value;
+			}
+		}
 
 		/// <summary>
 		/// Plot layout flags
@@ -196,15 +220,14 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(78)]
 		public short ShadePlotDPI
 		{
-			get { return _shadePlotDPI; }
+			get { return this._shadePlotDPI; }
 			set
 			{
 				if (value < 100 || value > 32767)
 					throw new ArgumentOutOfRangeException(nameof(value), value, "The valid shade plot DPI values range from 100 to 23767.");
-				_shadePlotDPI = value;
+				this._shadePlotDPI = value;
 			}
 		}
-		private short _shadePlotDPI = 300;
 
 		/// <summary>
 		/// A floating point scale factor that represents the standard scale value specified in code 75.
@@ -234,5 +257,11 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Ignored, 333)]
 		public ulong ShadePlotIDHandle { get; set; }
+
+		private short _shadePlotDPI = 300;
+
+		private double _numeratorScale = 1.0d;
+
+		private double _denominatorScale = 1.0d;
 	}
 }

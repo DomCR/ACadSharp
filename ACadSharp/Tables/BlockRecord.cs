@@ -71,7 +71,15 @@ namespace ACadSharp.Tables
 		/// Associated Layout
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public Layout Layout { get; set; }  //TODO: Assign the block layout (if there is one)
+		public Layout Layout
+		{
+			get { return _layout; }
+			set
+			{
+				this._layout = value;
+				this._layout.AssociatedBlock = this;
+			}
+		}
 
 		public CadObjectCollection<Entity> Entities { get; set; }
 
@@ -100,6 +108,8 @@ namespace ACadSharp.Tables
 		private Block _blockEntity;
 
 		private BlockEnd _blockEnd;
+
+		private Layout _layout;
 
 		internal BlockRecord() : this(null) { }
 
