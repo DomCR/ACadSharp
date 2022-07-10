@@ -155,7 +155,9 @@ namespace ACadSharp
 
 				//Entries
 				Layout modelLayout = Layout.Default;
+				Layout paperLayout = new Layout("Layout1");
 				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(Layout.LayoutModelName, modelLayout);
+				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(paperLayout.Name, paperLayout);
 
 				//Default variables
 				this.AppIds.Add(AppId.Default);

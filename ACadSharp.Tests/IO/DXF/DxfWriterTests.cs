@@ -75,9 +75,15 @@ namespace ACadSharp.Tests.IO.DXF
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 
-			var pt = new Point();
+			Point pt = new Point();
+			Line ln = new Line
+			{
+				StartPoint = new CSMath.XYZ(0, 0, 0),
+				EndPoint = new CSMath.XYZ(10, 10, 0)
+			};
 
 			doc.Entities.Add(pt);
+			doc.Entities.Add(ln);
 
 			string path = Path.Combine(_samplesOutFolder, $"out_sample_{version}_ascii.dxf");
 

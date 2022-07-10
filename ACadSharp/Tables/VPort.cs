@@ -46,7 +46,7 @@ namespace ACadSharp.Tables
 		/// View center point(in DCS)
 		/// </summary>
 		[DxfCodeValue(12, 22)]
-		public XY Center { get; set; }
+		public XY Center { get; set; } = XY.Zero;
 
 		/// <summary>
 		/// Snap base point(in DCS)
@@ -58,25 +58,32 @@ namespace ACadSharp.Tables
 		/// Snap spacing X and Y
 		/// </summary>
 		[DxfCodeValue(14, 24)]
-		public XY SnapSpacing { get; set; }
+		public XY SnapSpacing { get; set; } = new XY(0.5, 0.5);
 
 		/// <summary>
 		/// Grid spacing X and Y
 		/// </summary>
 		[DxfCodeValue(15, 25)]
-		public XY GridSpacing { get; set; }
+		public XY GridSpacing { get; set; } = new XY(10, 10);
 
 		/// <summary>
 		/// View direction from target point(in WCS)
 		/// </summary>
 		[DxfCodeValue(16, 26, 36)]
-		public XYZ Direction { get; set; }
+		public XYZ Direction
+		{
+			get { return this._direction; }
+			set
+			{
+				this._direction = value.Normalize();
+			}
+		}
 
 		/// <summary>
 		/// View target point(in WCS)
 		/// </summary>
 		[DxfCodeValue(17, 27, 37)]
-		public XYZ Target { get; set; }
+		public XYZ Target { get; set; } = XYZ.Zero;
 
 		/// <summary>
 		/// View height
@@ -88,7 +95,7 @@ namespace ACadSharp.Tables
 		/// Aspect ratio
 		/// </summary>
 		[DxfCodeValue(41)]
-		public double AspectRatio { get; set; } = 1;
+		public double AspectRatio { get; set; } = 1.0d;
 
 		/// <summary>
 		/// Lens length
@@ -160,7 +167,7 @@ namespace ACadSharp.Tables
 		/// Grid on/off
 		/// </summary>
 		[DxfCodeValue(76)]
-		public bool ShowGrid { get; set; }
+		public bool ShowGrid { get; set; } = true;
 
 		/// <summary>
 		/// Snap style
@@ -280,6 +287,8 @@ namespace ACadSharp.Tables
 		/// </summary>
 		[DxfCodeValue(63, 421, 431)]
 		public Color AmbientColor { get; set; }
+
+		private XYZ _direction = XYZ.AxisZ;
 
 		public VPort() : this(null) { }
 

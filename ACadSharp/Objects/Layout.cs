@@ -92,13 +92,13 @@ namespace ACadSharp.Objects
 		/// UCS X-axis
 		/// </summary>
 		[DxfCodeValue(16, 26, 36)]
-		public XYZ XAxis { get; set; }
+		public XYZ XAxis { get; set; } = XYZ.AxisX;
 
 		/// <summary>
 		/// UCS Y-axis
 		/// </summary>
 		[DxfCodeValue(17, 27, 37)]
-		public XYZ YAxis { get; set; }
+		public XYZ YAxis { get; set; } = XYZ.AxisY;
 
 		/// <summary>
 		/// Orthographic type of UCS

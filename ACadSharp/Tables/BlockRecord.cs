@@ -49,13 +49,13 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Specifies whether the block can be exploded
 		/// </summary>
-		[DxfCodeValue(280)]
+		[DxfCodeValue(DxfReferenceType.Optional, 280)]
 		public bool IsExplodable { get; set; }
 
 		/// <summary>
 		/// Specifies the scaling allowed for the block
 		/// </summary>
-		[DxfCodeValue(281)]
+		[DxfCodeValue(DxfReferenceType.Optional, 281)]
 		public bool CanScale { get; set; } = true;
 
 		/// <summary>
