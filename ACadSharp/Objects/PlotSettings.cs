@@ -164,7 +164,7 @@ namespace ACadSharp.Objects
 		/// Plot layout flags
 		/// </summary>
 		[DxfCodeValue(70)]
-		public PlotFlags Flags { get; set; }
+		public PlotFlags PlotFlags { get; set; }
 
 		/// <summary>
 		/// Plot paper units.

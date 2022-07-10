@@ -46,7 +46,7 @@ namespace ACadSharp.Entities
 		/// Viewport ID
 		/// </summary>
 		[DxfCodeValue(69)]
-		public short Id { get; set; }
+		public short Id { get; set; } = 1;
 
 		/// <summary>
 		/// View center point(in DCS)

@@ -309,6 +309,9 @@ namespace ACadSharp
 					this.removeCadObject(record.BlockEnd);
 					this.removeCadObject(record.BlockEntity);
 					break;
+				case Insert insert:
+					this.UnregisterCollection(insert.Attributes);
+					break;
 			}
 
 			//throw new NotImplementedException();
@@ -316,32 +319,38 @@ namespace ACadSharp
 
 		private void onReferenceChanged(object sender, ReferenceChangedEventArgs e)
 		{
-			//TODO: Should remove the old one??
+			if (e.Current != null)
+			{
+				this.addCadObject(e.Current);
+			}
 
-			this.addCadObject(e.Item);
+			if (e.Old != null)
+			{
+				this.removeCadObject(e.Old);
+			}
 		}
 
 		private void onAdd(object sender, ReferenceChangedEventArgs e)
 		{
-			if (e.Item is CadDictionary dictionary)
+			if (e.Current is CadDictionary dictionary)
 			{
 				this.RegisterCollection(dictionary);
 			}
 			else
 			{
-				this.addCadObject(e.Item);
+				this.addCadObject(e.Current);
 			}
 		}
 
 		private void onRemove(object sender, ReferenceChangedEventArgs e)
 		{
-			if (e.Item is CadDictionary dictionary)
+			if (e.Current is CadDictionary dictionary)
 			{
 				this.UnregisterCollection(dictionary);
 			}
 			else
 			{
-				this.removeCadObject(e.Item);
+				this.removeCadObject(e.Current);
 			}
 		}
 

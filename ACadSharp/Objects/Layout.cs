@@ -36,9 +36,10 @@ namespace ACadSharp.Objects
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Layout flags.
+		/// Layout flags
 		/// </summary>
-		public new LayoutFlags Flags { get; set; }
+		[DxfCodeValue(70)]
+		public LayoutFlags LayoutFlags { get; set; }
 
 		/// <summary>
 		/// Tab order.This number is an ordinal indicating this layout's ordering in the tab control that is attached to the drawing window. Note that the “Model” tab always appears as the first tab regardless of its tab order
@@ -110,13 +111,45 @@ namespace ACadSharp.Objects
 		/// The associated paper space block table record
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 330)]
-		public BlockRecord AssociatedBlock { get; internal set; }
+		public BlockRecord AssociatedBlock
+		{
+			get { return this._blockRecord; }
+			internal set
+			{
+				this._blockRecord = value;
+				if (this._blockRecord == null)
+					return;
+
+				if (this._blockRecord.Name.Equals(BlockRecord.ModelSpaceName, System.StringComparison.OrdinalIgnoreCase))
+				{
+					this.Viewport = null;
+					base.PlotFlags =
+						PlotFlags.Initializing |
+						PlotFlags.UpdatePaper |
+						PlotFlags.ModelType |
+						PlotFlags.DrawViewportsFirst |
+						PlotFlags.PrintLineweights |
+						PlotFlags.PlotPlotStyles |
+						PlotFlags.UseStandardScale;
+				}
+				else
+				{
+					this.Viewport = new Viewport();
+					this.Viewport.ViewCenter = new XY(50.0, 100.0);
+					this.Viewport.Status =
+						ViewportStatusFlags.AdaptiveGridDisplay |
+						ViewportStatusFlags.DisplayGridBeyondDrawingLimits |
+						ViewportStatusFlags.CurrentlyAlwaysEnabled |
+						ViewportStatusFlags.UcsIconVisibility;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Viewport that was last active in this layout when the layout was current
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 331)]
-		public Viewport Viewport { get; set; }
+		public Viewport Viewport { get; internal set; }
 
 		/// <summary>
 		/// Layout's UCS
@@ -130,6 +163,8 @@ namespace ACadSharp.Objects
 		//333	Shade plot ID
 
 		public List<Viewport> Viewports { get; } = new List<Viewport>();
+
+		private BlockRecord _blockRecord;
 
 		public Layout() : this(null) { }
 

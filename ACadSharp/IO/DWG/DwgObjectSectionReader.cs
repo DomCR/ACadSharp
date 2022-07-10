@@ -4470,7 +4470,7 @@ namespace ACadSharp.IO.DWG
 			//Tab order BL 71 layout tab order
 			layout.TabOrder = this._objectReader.ReadBitLong();
 			//Flag BS 70 layout flags
-			layout.Flags = (LayoutFlags)this._objectReader.ReadBitShort();
+			layout.LayoutFlags = (LayoutFlags)this._objectReader.ReadBitShort();
 			//Ucs origin 3BD 13 layout ucs origin
 			layout.Origin = this._objectReader.Read3BitDouble();
 			//Limmin 2RD 10 layout minimum limits
@@ -4527,7 +4527,7 @@ namespace ACadSharp.IO.DWG
 			//Printer / Config TV 2 plotsettings printer or configuration file
 			plot.SystemPrinterName = this._textReader.ReadVariableText();
 			//Plot layout flags BS 70 plotsettings plot layout flag
-			plot.Flags = (PlotFlags)this._objectReader.ReadBitShort();
+			plot.PlotFlags = (PlotFlags)this._objectReader.ReadBitShort();
 
 			PaperMargin margin = new PaperMargin()
 			{
