@@ -156,7 +156,9 @@ namespace ACadSharp.IO.DXF
 				e is Hatch
 				|| e is MText
 				|| e is Insert
+				|| e is TextEntity
 				|| e is AttributeDefinition
+				|| e is Dimension
 				)
 			{
 				return;
