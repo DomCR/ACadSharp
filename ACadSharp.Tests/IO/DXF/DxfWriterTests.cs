@@ -16,7 +16,7 @@ namespace ACadSharp.Tests.IO.DXF
 
 		[Theory]
 		[MemberData(nameof(Versions))]
-		public void WriteAsciiTest(ACadVersion version)
+		public void WriteEmptyAsciiTest(ACadVersion version)
 		{
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
@@ -43,7 +43,7 @@ namespace ACadSharp.Tests.IO.DXF
 
 		[Theory]
 		[MemberData(nameof(Versions))]
-		public void WriteBinaryTest(ACadVersion version)
+		public void WriteEmptyBinaryTest(ACadVersion version)
 		{
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;

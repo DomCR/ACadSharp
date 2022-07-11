@@ -202,8 +202,9 @@ namespace ACadSharp.Tests.Common
 		private void documentObjectNotNull<T>(CadDocument doc, T o)
 			where T : CadObject
 		{
-			Assert.True(doc.GetCadObject(o.Handle) != null, $"Object of type {typeof(T)} | {o.Handle} not found in the doucment");
-
+			CadObject cobj = doc.GetCadObject(o.Handle);
+			Assert.True(cobj != null, $"Object of type {typeof(T)} | {o.Handle} not found in the doucment");
+			Assert.NotNull(cobj.Document);
 		}
 
 		private void notNull<T>(T o, string info)
@@ -214,7 +215,9 @@ namespace ACadSharp.Tests.Common
 		private void entryNotNull<T>(Table<T> table, string entry)
 			where T : TableEntry
 		{
-			Assert.True(table[entry] != null, $"Entry with name {entry} is null for thable {table}");
+			var record = table[entry];
+			Assert.True(record != null, $"Entry with name {entry} is null for thable {table}");
+			Assert.NotNull(record.Document);
 		}
 	}
 }

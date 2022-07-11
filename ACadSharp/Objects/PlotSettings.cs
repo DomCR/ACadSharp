@@ -27,7 +27,7 @@ namespace ACadSharp.Objects
 		/// Page Setup name
 		/// </summary>
 		[DxfCodeValue(1)]
-		public string PageName { get; set; }
+		public string PageName { get; set; } = "none_device";
 
 		/// <summary>
 		/// Name of system printer or plot configuration file
@@ -39,7 +39,7 @@ namespace ACadSharp.Objects
 		/// Paper size
 		/// </summary>
 		[DxfCodeValue(4)]
-		public string PaperSize { get; set; }
+		public string PaperSize { get; set; } = "ISO_A4_(210.00_x_297.00_MM)";
 
 		/// <summary>
 		/// Plot view name
@@ -48,27 +48,27 @@ namespace ACadSharp.Objects
 		public string PlotViewName { get; set; }
 
 		/// <summary>
-		/// Gets or set the size, in millimeters, of unprintable margins of paper
+		/// Size, in millimeters, of unprintable margins of paper
 		/// </summary>
 		[DxfCodeValue(40, 41, 42, 43)]
-		public PaperMargin UnprintableMargin { get; set; }
+		public PaperMargin UnprintableMargin { get; set; } = new PaperMargin(7.5, 20.0, 7.5, 20.0);
 
 		/// <summary>
 		/// Physical paper width in millimeters
 		/// </summary>
 		[DxfCodeValue(44)]
-		public double PaperWidth { get; set; }
+		public double PaperWidth { get; set; } = 210.0;
 
 		/// <summary>
 		/// Physical paper height in millimeters
 		/// </summary>
 		[DxfCodeValue(45)]
-		public double PaperHeight { get; set; }
+		public double PaperHeight { get; set; } = 297.0;
 
 		/// <summary>
 		///Plot origin in millimeters
 		/// </summary>
-		public XY PlotOrigin { get; set; }
+		public XY PlotOrigin { get; set; } = XY.Zero;
 
 		/// <summary>
 		/// Plot origin: X value of origin offset in millimeters
@@ -164,13 +164,13 @@ namespace ACadSharp.Objects
 		/// Plot layout flags
 		/// </summary>
 		[DxfCodeValue(70)]
-		public PlotFlags PlotFlags { get; set; }
+		public PlotFlags PlotFlags { get; set; } = PlotFlags.DrawViewportsFirst | PlotFlags.PrintLineweights | PlotFlags.PlotPlotStyles | PlotFlags.UseStandardScale;
 
 		/// <summary>
 		/// Plot paper units.
 		/// </summary>
 		[DxfCodeValue(72)]
-		public PlotPaperUnits PaperUnits { get; set; }
+		public PlotPaperUnits PaperUnits { get; set; } = PlotPaperUnits.Milimeters;
 
 		/// <summary>
 		/// Plot paper units.
@@ -182,7 +182,7 @@ namespace ACadSharp.Objects
 		/// Portion of paper space to output to the media
 		/// </summary>
 		[DxfCodeValue(74)]
-		public PlotType PlotType { get; set; }
+		public PlotType PlotType { get; set; } = PlotType.DrawingExtents;
 
 		/// <summary>
 		/// Current style sheet
@@ -233,7 +233,7 @@ namespace ACadSharp.Objects
 		/// A floating point scale factor that represents the standard scale value specified in code 75.
 		/// </summary>
 		[DxfCodeValue(147)]
-		public double StandardScale { get; set; }
+		public double StandardScale { get; set; } = 1.0d;
 
 		/// <summary>
 		/// Paper image origin

@@ -179,7 +179,9 @@ namespace ACadSharp
 				model.Layout = modelLayout;
 				this.BlockRecords.Add(model);
 
-				this.BlockRecords.Add(BlockRecord.PaperSpace);
+				BlockRecord pspace = BlockRecord.PaperSpace;
+				pspace.Layout = paperLayout;
+				this.BlockRecords.Add(pspace);
 			}
 		}
 

@@ -51,13 +51,13 @@ namespace ACadSharp.Objects
 		/// Minimum limits for this layout (defined by LIMMIN while this layout is current)
 		/// </summary>
 		[DxfCodeValue(10, 20)]
-		public XY MinLimits { get; set; }
+		public XY MinLimits { get; set; } = new XY(-20.0, -7.5);
 
 		/// <summary>
 		/// Maximum limits for this layout(defined by LIMMAX while this layout is current)
 		/// </summary>
 		[DxfCodeValue(11, 21)]
-		public XY MaxLimits { get; set; }
+		public XY MaxLimits { get; set; } = new XY(277.0, 202.5);
 
 		/// <summary>
 		/// Insertion base point for this layout(defined by INSBASE while this layout is current) 
@@ -69,13 +69,13 @@ namespace ACadSharp.Objects
 		/// Minimum extents for this layout(defined by EXTMIN while this layout is current)
 		/// </summary>
 		[DxfCodeValue(14, 24, 34)]
-		public XYZ MinExtents { get; set; }
+		public XYZ MinExtents { get; set; } = new XYZ(25.7, 19.5, 0.0);
 
 		/// <summary>
 		/// Maximum extents for this layout(defined by EXTMAX while this layout is current)
 		/// </summary>
 		[DxfCodeValue(15, 25, 35)]
-		public XYZ MaxExtents { get; set; }
+		public XYZ MaxExtents { get; set; } = new XYZ(231.3, 175.5, 0.0);
 
 		/// <summary>
 		/// Layout elevation
@@ -87,7 +87,7 @@ namespace ACadSharp.Objects
 		/// UCS origin
 		/// </summary>
 		[DxfCodeValue(13, 23, 33)]
-		public XYZ Origin { get; set; }
+		public XYZ Origin { get; set; } = XYZ.Zero;
 
 		/// <summary>
 		/// UCS X-axis
