@@ -1,11 +1,7 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Entities;
-using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using CSMath;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Tables
 {
