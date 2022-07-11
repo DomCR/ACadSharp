@@ -2,6 +2,7 @@
 using ACadSharp.IO;
 using ACadSharp.IO.DXF;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -75,15 +76,28 @@ namespace ACadSharp.Tests.IO.DXF
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 
-			Point pt = new Point();
-			Line ln = new Line
+			List<Entity> entities = new List<Entity>
 			{
-				StartPoint = new CSMath.XYZ(0, 0, 0),
-				EndPoint = new CSMath.XYZ(10, 10, 0)
+				new Point
+				{
+					Location = new CSMath.XYZ(0, 10, 0)
+				},
+				new Line
+				{
+					StartPoint = new CSMath.XYZ(0, 0, 0),
+					EndPoint = new CSMath.XYZ(10, 10, 0)
+				},
+				new Arc
+				{
+					Center = new CSMath.XYZ(0, 5, 0),
+					Radius = 20,
+					StartAngle = 1,
+					EndAngle = 2
+				}
 			};
 
-			doc.Entities.Add(pt);
-			doc.Entities.Add(ln);
+
+			doc.Entities.AddRange(entities);
 
 			string path = Path.Combine(_samplesOutFolder, $"out_sample_{version}_ascii.dxf");
 
