@@ -100,7 +100,8 @@ namespace ACadSharp.Tests.IO
 					string li = l.Replace("\0", "");
 					if (!string.IsNullOrEmpty(li))
 					{
-						if (li.Contains("Invalid or incomplete DXF input -- drawing discarded."))
+						if (li.Contains("Invalid or incomplete DXF input -- drawing discarded.")
+							|| li.Contains("error", StringComparison.OrdinalIgnoreCase))
 						{
 							testPassed = false;
 						}

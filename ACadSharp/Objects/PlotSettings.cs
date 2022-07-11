@@ -51,19 +51,19 @@ namespace ACadSharp.Objects
 		/// Size, in millimeters, of unprintable margins of paper
 		/// </summary>
 		[DxfCodeValue(40, 41, 42, 43)]
-		public PaperMargin UnprintableMargin { get; set; } = new PaperMargin(7.5, 20.0, 7.5, 20.0);
+		public PaperMargin UnprintableMargin { get; set; } 
 
 		/// <summary>
 		/// Physical paper width in millimeters
 		/// </summary>
 		[DxfCodeValue(44)]
-		public double PaperWidth { get; set; } = 210.0;
+		public double PaperWidth { get; set; }
 
 		/// <summary>
 		/// Physical paper height in millimeters
 		/// </summary>
 		[DxfCodeValue(45)]
-		public double PaperHeight { get; set; } = 297.0;
+		public double PaperHeight { get; set; } 
 
 		/// <summary>
 		///Plot origin in millimeters
