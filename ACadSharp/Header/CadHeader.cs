@@ -323,7 +323,7 @@ namespace ACadSharp.Header
 		/// System variable ATTMODE
 		/// </remarks>
 		[CadSystemVariable("$ATTMODE", 70)]
-		public AttributeVisibilityMode AttributeVisibility { get; set; }
+		public AttributeVisibilityMode AttributeVisibility { get; set; } = AttributeVisibilityMode.Normal;
 
 		/// <summary>
 		/// Point display mode
