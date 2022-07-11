@@ -24,8 +24,6 @@ namespace ACadSharp.IO.DXF
 		protected void writeObject<T>(T co)
 			where T : CadObject
 		{
-			DxfMap map = null;
-
 			switch (co)
 			{
 				case CadDictionary cadDictionary:
