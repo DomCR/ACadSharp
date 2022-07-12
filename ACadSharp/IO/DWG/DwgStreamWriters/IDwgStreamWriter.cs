@@ -53,12 +53,20 @@ namespace ACadSharp.IO.DWG
 		void WriteSpearShift();
 
 		void WriteRawShort(ushort value);
+
+		void WriteRawDouble(double value);
+
+		void ReadBitThickness(double thickness);
+
+		void ReadBitExtrusion(XYZ normal);
+
+		void WriteBitDoubleWithDefault(double x1, double x2);
 	}
 
 	/// <summary>
 	/// Writer equivalent to reader <see cref="DwgStreamReaderBase"/>
 	/// </summary>
-	internal abstract class DwgStreamWriter : StreamIO, IDwgStreamWriter
+	internal abstract class DwgStreamWriterBase : StreamIO, IDwgStreamWriter
 	{
 		public Encoding Encoding { get; }
 
@@ -66,7 +74,7 @@ namespace ACadSharp.IO.DWG
 
 		private byte _lastByte;
 
-		public DwgStreamWriter(Stream stream, Encoding encoding) : base(stream)
+		public DwgStreamWriterBase(Stream stream, Encoding encoding) : base(stream)
 		{
 			this.Encoding = encoding;
 		}
@@ -448,9 +456,24 @@ namespace ACadSharp.IO.DWG
 			jdate = date.Day + (int)System.Math.Floor((153.0 * (double)(month + 12 * day - 3) + 2.0) / 5.0) + 365 * year + (int)System.Math.Floor((double)year / 4.0) - (int)System.Math.Floor((double)year / 100.0) + (int)System.Math.Floor((double)year / 400.0) - 32045;
 			miliseconds = date.Millisecond + date.Second * 1000 + date.Minute * 60000 + date.Hour * 3600000;
 		}
+
+		public void ReadBitThickness(double thickness)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void ReadBitExtrusion(XYZ normal)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void WriteBitDoubleWithDefault(double x1, double x2)
+		{
+			throw new NotImplementedException();
+		}
 	}
 
-	internal class DwgStreamWriterAC18 : DwgStreamWriter
+	internal class DwgStreamWriterAC18 : DwgStreamWriterBase
 	{
 		public DwgStreamWriterAC18(Stream stream, Encoding encoding) : base(stream, encoding)
 		{

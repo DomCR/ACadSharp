@@ -31,7 +31,7 @@ namespace ACadSharpInternal.Tests
 				builder,
 				sreader,
 				null,
-				null,
+				writer.Map,
 				null
 				);
 		}

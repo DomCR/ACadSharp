@@ -32,8 +32,8 @@ namespace ACadSharp.IO.DWG
 			this._msbegin = new MemoryStream();
 			this._msmain = new MemoryStream();
 
-			this._swbegin = DwgStreamWriter.GetStreamHandler(document.Header.Version, this._msbegin, Encoding.Default);
-			this._writer = DwgStreamWriter.GetStreamHandler(document.Header.Version, _msmain, Encoding.Default);
+			this._swbegin = DwgStreamWriterBase.GetStreamHandler(document.Header.Version, this._msbegin, Encoding.Default);
+			this._writer = DwgStreamWriterBase.GetStreamHandler(document.Header.Version, _msmain, Encoding.Default);
 		}
 
 		public void Write()
