@@ -8,7 +8,7 @@ namespace ACadSharp.IO.Templates
 	{
 		public ulong? FirstVertexHandle { get; internal set; }
 		public ulong? LastVertexHandle { get; internal set; }
-		public ulong SeqendHandle { get; internal set; }
+		public ulong? SeqendHandle { get; internal set; }
 		public List<ulong> VertexHandles { get; set; } = new List<ulong>();
 
 		public CadPolyLineTemplate() : base(new PolyLinePlaceholder()) { }
@@ -34,7 +34,10 @@ namespace ACadSharp.IO.Templates
 				}
 			}
 
-			//TODO: DwgPolyLineTemplate SeqendHandle??
+			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
+			{
+				polyLine.Vertices.Seqend = seqend;
+			}
 		}
 
 		public void SetPolyLineObject(Polyline polyLine)

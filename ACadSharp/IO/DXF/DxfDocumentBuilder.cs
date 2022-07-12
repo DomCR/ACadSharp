@@ -2,14 +2,11 @@
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
-using System.Collections.Generic;
 
 namespace ACadSharp.IO.DXF
 {
 	internal class DxfDocumentBuilder : CadDocumentBuilder
 	{
-		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new Dictionary<ulong, ICadTableTemplate>();
-
 		public DxfDocumentBuilder(CadDocument document, NotificationEventHandler notification = null) : base(document, notification) { }
 
 		public override void BuildDocument()
@@ -26,12 +23,6 @@ namespace ACadSharp.IO.DXF
 			}
 
 			base.BuildDocument();
-		}
-
-		public void AddTableTemplate(ICadTableTemplate tableTemplate)
-		{
-			this.tableTemplates[tableTemplate.CadObject.Handle] = tableTemplate;
-			this.cadObjects[tableTemplate.CadObject.Handle] = tableTemplate.CadObject;
 		}
 
 		private void assignOwners(CadTemplate template)
@@ -52,8 +43,14 @@ namespace ACadSharp.IO.DXF
 					case Polyline pline when template.CadObject is Vertex v:
 						pline.Vertices.Add(v);
 						break;
+					case Polyline pline when template.CadObject is Seqend seqend:
+						pline.Vertices.Seqend = seqend;
+						break;
 					case Insert insert when template.CadObject is AttributeEntity att:
 						insert.Attributes.Add(att);
+						break;
+					case Insert insert when template.CadObject is Seqend seqend:
+						insert.Attributes.Seqend = seqend;
 						break;
 					default:
 						this.Notify(new NotificationEventArgs($"Owner {owner.GetType().Name} with handle {owner.Handle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}"));
