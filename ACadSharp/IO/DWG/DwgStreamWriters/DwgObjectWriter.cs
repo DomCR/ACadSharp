@@ -93,9 +93,9 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Thickness BT 39
-			this._writer.ReadBitThickness(line.Thickness);
+			this._writer.WriteBitThickness(line.Thickness);
 			//Extrusion BE 210
-			this._writer.ReadBitExtrusion(line.Normal);
+			this._writer.WriteBitExtrusion(line.Normal);
 		}
 	}
 }

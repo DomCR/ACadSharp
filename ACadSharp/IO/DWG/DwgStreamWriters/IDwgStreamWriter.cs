@@ -56,11 +56,11 @@ namespace ACadSharp.IO.DWG
 
 		void WriteRawDouble(double value);
 
-		void ReadBitThickness(double thickness);
+		void WriteBitThickness(double thickness);
 
-		void ReadBitExtrusion(XYZ normal);
+		void WriteBitExtrusion(XYZ normal);
 
-		void WriteBitDoubleWithDefault(double x1, double x2);
+		void WriteBitDoubleWithDefault(double def, double value);
 	}
 
 	/// <summary>
@@ -143,6 +143,27 @@ namespace ACadSharp.IO.DWG
 			foreach (byte b in arr)
 			{
 				this.Stream.WriteByte((byte)(this._lastByte | (b >> this.BitShift)));
+				this._lastByte = (byte)(b << num);
+			}
+		}
+
+		public void WriteBytes(byte[] arr, int initialIndex, int length)
+		{
+			if (this.BitShift == 0)
+			{
+				for (int i = 0, j = initialIndex; i < length; i++, j++)
+				{
+					this.WriteByte(arr[j]);
+				}
+
+				return;
+			}
+
+			int num = 8 - this.BitShift;
+			for (int i = 0, j = initialIndex; i < length; i++, j++)
+			{
+				byte b = arr[j];
+				this.WriteByte((byte)(this._lastByte | (b >> this.BitShift)));
 				this._lastByte = (byte)(b << num);
 			}
 		}
@@ -457,25 +478,71 @@ namespace ACadSharp.IO.DWG
 			miliseconds = date.Millisecond + date.Second * 1000 + date.Minute * 60000 + date.Hour * 3600000;
 		}
 
-		public void ReadBitThickness(double thickness)
+		public virtual void WriteBitThickness(double thickness)
 		{
-			throw new NotImplementedException();
+			//For R13-R14, this is a BD.
+			this.WriteBitDouble(thickness);
 		}
 
-		public void ReadBitExtrusion(XYZ normal)
+		public virtual void WriteBitExtrusion(XYZ normal)
 		{
-			throw new NotImplementedException();
+			//For R13-R14 this is 3BD.
+			this.Write3BitDouble(normal);
 		}
 
-		public void WriteBitDoubleWithDefault(double x1, double x2)
+		public void WriteBitDoubleWithDefault(double def, double value)
 		{
-			throw new NotImplementedException();
+			if (def == value)
+			{
+				//00 No more data present, use the value of the default double.
+				this.Write2Bits(0);
+				return;
+			}
+
+			byte[] defBytes = LittleEndianConverter.Instance.GetBytes(def);
+			byte[] valueBytes = LittleEndianConverter.Instance.GetBytes(value);
+
+			//Compare the 2 sets of bytes by it's simetry
+			int first = 0;
+			int last = 7;
+			while (last >= 0 && defBytes[last] == valueBytes[last])
+			{
+				first++;
+				last--;
+			}
+
+			if (first >= 4)
+			{
+				//01 4 bytes of data are present. The result is the default double, with the 4 data bytes patched in
+				//replacing the first 4 bytes of the default double(assuming little endian).
+				this.Write2Bits(1);
+				this.WriteBytes(defBytes, 0, 4);
+			}
+			else if (first >= 2)
+			{
+				//10 6 bytes of data are present. The result is the default double, with the first 2 data bytes patched in
+				//replacing bytes 5 and 6 of the default double, and the last 4 data bytes patched in replacing the first 4
+				//bytes of the default double(assuming little endian).
+				this.Write2Bits(2);
+				this.WriteByte(defBytes[4]);
+				this.WriteByte(defBytes[5]);
+				this.WriteByte(defBytes[0]);
+				this.WriteByte(defBytes[1]);
+				this.WriteByte(defBytes[2]);
+				this.WriteByte(defBytes[3]);
+			}
+			else
+			{
+				//11 A full RD follows.
+				this.Write2Bits(3);
+				this.WriteBytes(defBytes);
+			}
 		}
 	}
 
-	internal class DwgStreamWriterAC18 : DwgStreamWriterBase
+	internal class DwgStreamWriterAC12 : DwgStreamWriterBase
 	{
-		public DwgStreamWriterAC18(Stream stream, Encoding encoding) : base(stream, encoding)
+		public DwgStreamWriterAC12(Stream stream, Encoding encoding) : base(stream, encoding)
 		{
 		}
 
@@ -490,6 +557,52 @@ namespace ACadSharp.IO.DWG
 			byte[] bytes = base.Encoding.GetBytes(value);
 			base.WriteBitShort((short)bytes.Length);
 			base.WriteBytes(bytes);
+		}
+	}
+
+	internal class DwgStreamWriterAC15 : DwgStreamWriterAC12
+	{
+		public DwgStreamWriterAC15(Stream stream, Encoding encoding) : base(stream, encoding)
+		{
+		}
+
+		public override void WriteBitExtrusion(XYZ normal)
+		{
+			//For R2000, this is a single bit, followed optionally by 3BD.
+			if (normal == XYZ.AxisZ)
+			{
+				//If the single bit is 1, 
+				//the extrusion value is assumed to be 0,0,1 and no explicit extrusion is stored.
+				base.WriteBit(value: true);
+				return;
+			}
+
+			//If the single bit is 0, 
+			base.WriteBit(value: false);
+			//then it will be followed by 3BD.
+			base.Write3BitDouble(normal);
+		}
+
+		public override void WriteBitThickness(double thickness)
+		{
+			//For R2000+, this is a single bit followed optionally by a BD. 
+			//If the bit is one, the thickness value is assumed to be 0.0. 
+			//If the bit is 0, then a BD that represents the thickness follows.
+			if (thickness == 0.0)
+			{
+				base.WriteBit(value: true);
+				return;
+			}
+
+			base.WriteBit(value: false);
+			base.WriteBitDouble(thickness);
+		}
+	}
+
+	internal class DwgStreamWriterAC18 : DwgStreamWriterAC15
+	{
+		public DwgStreamWriterAC18(Stream stream, Encoding encoding) : base(stream, encoding)
+		{
 		}
 
 		public override void WriteCmColor(Color value)
