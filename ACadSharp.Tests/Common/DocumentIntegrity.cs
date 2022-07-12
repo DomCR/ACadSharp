@@ -61,7 +61,7 @@ namespace ACadSharp.Tests.Common
 
 			//Assert Model layout
 			var layout = doc.Layouts.FirstOrDefault(l => l.Name == "Model");
-			Assert.NotNull(layout);
+			this.notNull(layout, "Layout Model is null");
 			Assert.True(layout.AssociatedBlock == doc.ModelSpace);
 		}
 
@@ -203,11 +203,11 @@ namespace ACadSharp.Tests.Common
 			where T : CadObject
 		{
 			CadObject cobj = doc.GetCadObject(o.Handle);
-			Assert.True(cobj != null, $"Object of type {typeof(T)} | {o.Handle} not found in the doucment");
-			Assert.NotNull(cobj.Document);
+			this.notNull(cobj, $"Object of type {typeof(T)} | {o.Handle} not found in the document");
+			this.notNull(cobj.Document, $"Document is null for object with handle: {cobj.Handle}");
 		}
 
-		private void notNull<T>(T o, string info)
+		private void notNull<T>(T o, string info = null)
 		{
 			Assert.True(o != null, $"Object of type {typeof(T)} should not be null:  {info}");
 		}

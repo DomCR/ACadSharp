@@ -32,6 +32,12 @@ namespace ACadSharp.IO.DXF
 				case Layout layout:
 					this.writeMappedObject<Layout>(layout);
 					break;
+				case DictionaryVariable dictvar:
+					this.writeMappedObject<DictionaryVariable>(dictvar);
+					break;
+				case XRecrod record:
+					this.writeXRecord(record);
+					break;
 				default:
 					this.Notify($"Object not implemented : {co.GetType().FullName}");
 					break;
@@ -60,6 +66,20 @@ namespace ACadSharp.IO.DXF
 			foreach (CadObject item in e)
 			{
 				this.Holder.Objects.Enqueue(item);
+			}
+		}
+
+		protected void writeXRecord(XRecrod e)
+		{
+			this._writer.Write(DxfCode.Start, e.ObjectName);
+
+			this.writeCommonObjectData(e);
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XRecord);
+
+			foreach (var item in e.Entries)
+			{
+				this._writer.Write(item.Code, item.Value);
 			}
 		}
 	}
