@@ -231,26 +231,27 @@ namespace ACadSharp.IO.DWG
 			return value;
 		}
 
-		/// <summary>
-		/// Read the common entity format.
-		/// </summary>
-		/// <param name="template"></param>
-		private void readCommonEntityData(CadEntityTemplate template)
+		private void readCommonData(CadTemplate template)
 		{
-			//Get the cad object as an entity
-			Entity entity = template.CadObject;
-
 			if (this._version >= ACadVersion.AC1015 && this._version < ACadVersion.AC1024)
 				//Obj size RL size of object in bits, not including end handles
 				this.updateHandleReader();
 
 			//Common:
 			//Handle H 5 code 0, length followed by the handle bytes.
-			ulong handle = this._objectReader.HandleReference();
-			entity.Handle = handle;
+			template.CadObject.Handle = this._objectReader.HandleReference();
 
 			//Extended object data, if any
 			this.readExtendedData(template);
+		}
+
+		// Read the common entity format.
+		private void readCommonEntityData(CadEntityTemplate template)
+		{
+			//Get the cad object as an entity
+			Entity entity = template.CadObject;
+
+			this.readCommonData(template);
 
 			//Graphic present Flag B 1 if a graphic is present
 			if (this._objectReader.ReadBit())
@@ -414,17 +415,7 @@ namespace ACadSharp.IO.DWG
 
 		private void readCommonNonEntityData(CadTemplate template)
 		{
-			if (this._version >= ACadVersion.AC1015 && this._version < ACadVersion.AC1024)
-				//Obj size RL size of object in bits, not including end handles
-				this.updateHandleReader();
-
-			//Common:
-			//Handle H 5 code 0, length followed by the handle bytes.
-			ulong handle = this._objectReader.HandleReference();
-			template.CadObject.Handle = handle;
-
-			//Extended object data, if any
-			this.readExtendedData(template);
+			this.readCommonData(template);
 
 			//R13-R14 Only:
 			//Obj size RL size of object in bits, not including end handles

@@ -1,4 +1,7 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
+using CSUtilities.Converters;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -12,10 +15,8 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		public Dictionary<ulong, long> Map { get; } = new Dictionary<ulong, long>();
 
-		private MemoryStream _msbegin;
 		private MemoryStream _msmain;
 
-		private IDwgStreamWriter _swbegin;
 		private IDwgStreamWriter _writer;
 
 		private Stream _stream;
@@ -27,27 +28,165 @@ namespace ACadSharp.IO.DWG
 			this._stream = stream;
 			this._document = document;
 
-			this._msbegin = new MemoryStream();
 			this._msmain = new MemoryStream();
-
-			this._swbegin = DwgStreamWriterBase.GetStreamHandler(document.Header.Version, this._msbegin, Encoding.Default);
-			this._writer = DwgStreamWriterBase.GetStreamHandler(document.Header.Version, _msmain, Encoding.Default);
+			this._writer = DwgStreamWriterBase.GetStreamHandler(document.Header.Version, this._msmain, Encoding.Default);
 		}
 
 		public void Write()
 		{
-
+			this.writeTables();
 		}
 
 		private void registerObject(CadObject cadObject)
 		{
 			this._writer.WriteSpearShift();
+
+			//Set the position to the entity to find
 			long position = this._stream.Position;
+			CRC8StreamHandler crc = new CRC8StreamHandler(this._stream, 0xC0C1);
+
+			//MS : Size of object, not including the CRC
+			uint size = (uint)this._msmain.Length;
+			this.writeSize(crc, size);
+
+			//R2010+:
+			if (this.R2010Plus)
+			{
+				long sizeb = (this._msmain.Length << 3) - this._writer.PositionInBitsValue;
+				this.writeSizeInBits(this._msmain, (ulong)sizeb);
+			}
+
+			//Write the object in the stream
+			crc.Write(this._msmain.GetBuffer(), 0, (int)this._msmain.Length);
+			crc.Write(LittleEndianConverter.Instance.GetBytes(crc.Seed), 0, 2);
 
 			this.Map.Add(cadObject.Handle, position);
 		}
 
+		private void writeSize(Stream stream, uint size)
+		{
+			// This value is only read in IDwgStreamReader.ReadModularShort()
+			// this should do the trick to write the modular short
+
+			if (size >= 0b1000000000000000)
+			{
+				stream.WriteByte((byte)(size & 0b11111111));
+				stream.WriteByte((byte)(((size >> 8) & 0b1111111) | 0b10000000));
+				stream.WriteByte((byte)((size >> 15) & 0b11111111));
+				stream.WriteByte((byte)((size >> 23) & 0b11111111));
+			}
+			else
+			{
+				stream.WriteByte((byte)(size & 0b11111111));
+				stream.WriteByte((byte)((size >> 8) & 0b11111111));
+			}
+		}
+
+		private void writeSizeInBits(Stream stream, ulong size)
+		{
+			// This value is only read in IDwgStreamReader.ReadModularChar()
+			// this should do the trick to write the modular char
+
+			if (size == 0)
+			{
+				stream.WriteByte(0);
+				return;
+			}
+
+			ulong shift = size >> 7;
+			while (size != 0)
+			{
+				byte b = (byte)(size & 0b1111111);
+				if (shift != 0)
+				{
+					b = (byte)(b | 0b10000000);
+				}
+
+				stream.WriteByte(b);
+				size = shift;
+				shift = size >> 7;
+			}
+		}
+
+		private void writeTables()
+		{
+			this.writeBlockControl();
+		}
+
+		private void writeBlockControl()
+		{
+
+			this.writeCommonNonEntityData(this._document.BlockRecords);
+
+			//*MODEL_SPACE and *PAPER_SPACE(hard owner).
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.ModelSpace);
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.PaperSpace);
+
+			this.registerObject(this._document.BlockRecords);
+		}
+
+		private void writeCommonNonEntityData<T>(Table<T> table)
+			where T : TableEntry
+		{
+			this.writeCommonData(table);
+		}
+
 		private void writeCommonEntityData(Entity entity)
+		{
+
+		}
+
+		private void writeCommonData(CadObject cadObject)
+		{
+			//Reset the current stream to re-write a new object in it
+			this._writer.ResetStream();
+
+			switch (cadObject.ObjectType)
+			{
+				//TODO: Invalid type codes, what to do??
+				case ObjectType.UNLISTED:
+				case ObjectType.INVALID:
+				case ObjectType.UNUSED:
+					return;
+				default:
+					this._writer.WriteObjectType(cadObject.ObjectType);
+					break;
+			}
+
+			if (this._version >= ACadVersion.AC1015 && this._version < ACadVersion.AC1024)
+				//Obj size RL size of object in bits, not including end handles
+				this.updateHandleWriter();
+
+			//Common:
+			//Handle H 5 code 0, length followed by the handle bytes.
+			this._writer.HandleReference(cadObject);
+
+			//Extended object data, if any
+			this.writeExtendedData(cadObject.ExtendedData);
+
+			//R13-R14 Only:
+			//Obj size RL size of object in bits, not including end handles
+			if (this.R13_14Only)
+				this.updateHandleWriter();
+
+			//[Owner ref handle (soft pointer)]
+			this._writer.HandleReference(cadObject.Owner.Handle);
+
+			//write the cad object reactors
+			this.writeReactors(cadObject.Reactors);
+		}
+
+		private void updateHandleWriter()
+		{
+
+		}
+
+		private void writeExtendedData(ExtendedDataDictionary data)
+		{
+
+		}
+
+		private void writeReactors(Dictionary<ulong, CadObject> reactors)
 		{
 
 		}
@@ -96,6 +235,8 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitThickness(line.Thickness);
 			//Extrusion BE 210
 			this._writer.WriteBitExtrusion(line.Normal);
+
+			this.registerObject(line);
 		}
 	}
 }

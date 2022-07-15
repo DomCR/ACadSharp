@@ -325,7 +325,8 @@ namespace ACadSharp.IO.DWG
 		{
 			int shift = 0;
 			byte lastByte = this.ReadByte();
-			//REmove the flag
+
+			//Remove the flag
 			ulong value = (ulong)(lastByte & 0b01111111);
 
 			if ((lastByte & 0b10000000) != 0)

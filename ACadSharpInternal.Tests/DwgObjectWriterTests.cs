@@ -1,5 +1,6 @@
 ﻿using ACadSharp;
 using ACadSharp.IO.DWG;
+using System.Collections.Generic;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
@@ -23,14 +24,22 @@ namespace ACadSharpInternal.Tests
 			DwgObjectWriter writer = new DwgObjectWriter(stream, document);
 			writer.Write();
 
-			DwgDocumentBuilder builder = new DwgDocumentBuilder(document, DwgReaderFlags.None);
+			var handles = new Queue<ulong>();
+			handles.Enqueue(document.BlockRecords.Handle);
+
+			Assert.True(writer.Map.ContainsKey(document.BlockRecords.Handle));
+
+			CadDocument docResult = new CadDocument();
+			docResult.Header.Version = version;
+
+			DwgDocumentBuilder builder = new DwgDocumentBuilder(docResult, DwgReaderFlags.None);
 			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, true);
 			DwgObjectSectionReader reader = new DwgObjectSectionReader
 				(
 				version,
 				builder,
 				sreader,
-				null,
+				handles,
 				writer.Map,
 				null
 				);
