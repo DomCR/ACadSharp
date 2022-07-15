@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ACadSharp.Header;
+using ACadSharp.Tables;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
@@ -10,13 +12,26 @@ namespace ACadSharp.Tests.Header
 		[Fact]
 		public void CadHeaderDefaultTest()
 		{
-			throw new NotImplementedException();
+			CadHeader header = new CadHeader();
+
+			Assert.NotNull(header.CurrentLayer);
+			Assert.True(header.CurrentLayer.Name == header.LayerName);
+			Assert.True(header.CurrentLayer.Name == Layer.DefaultName);
+			Assert.True(header.CurrentLayer.Handle == 0);
+			Assert.Null(header.CurrentLayer.Owner);
 		}
 
 		[Fact]
 		public void CadHeaderWithDocumentTest()
 		{
-			throw new NotImplementedException();
+			CadDocument document = new CadDocument();
+			CadHeader header = new CadHeader(document);
+
+			Assert.NotNull(header.CurrentLayer);
+			Assert.True(header.CurrentLayer.Name == header.LayerName, "Name does not match");
+			Assert.True(header.CurrentLayer.Name == Layer.DefaultName, "Name does not match");
+			Assert.True(header.CurrentLayer.Handle == document.Layers[header.LayerName].Handle, "Handle does not match");
+			Assert.Equal(document.Layers, header.CurrentLayer.Owner);
 		}
 	}
 }
