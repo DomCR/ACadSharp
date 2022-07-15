@@ -24,8 +24,6 @@ namespace ACadSharp.Header
 
 		//TODO : Finish the header documentation
 
-		#region Header System Variables
-
 		/// <summary>
 		/// The AutoCAD drawing database version number.
 		/// </summary>
@@ -1241,12 +1239,6 @@ namespace ACadSharp.Header
 		public double ShadowPlaneLocation { get; set; }
 		public string StyleSheetName { get; set; }
 
-		#endregion
-
-		public CadDocument Document { get; internal set; }
-
-
-
 		/// <summary>
 		/// Dimension style name
 		/// </summary>
@@ -2454,7 +2446,14 @@ namespace ACadSharp.Header
 
 		public UCS PaperSpaceUcs { get; private set; } = new UCS();
 
-		public CadHeader() { }
+		public CadDocument Document { get; internal set; }
+
+		public CadHeader() : this(ACadVersion.AC1018) { }
+
+		public CadHeader(CadDocument document) : this(ACadVersion.AC1018)
+		{
+			this.Document = document;
+		}
 
 		public CadHeader(ACadVersion version)
 		{

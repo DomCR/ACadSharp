@@ -134,7 +134,7 @@ namespace ACadSharp
 			if (createDefaults)
 			{
 				//Header and summary
-				this.Header = new CadHeader();
+				this.Header = new CadHeader(this);
 				this.SummaryInfo = new CadSummaryInfo();
 
 				//The order of the elements is rellevant for the handles assignation
