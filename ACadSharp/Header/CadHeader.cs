@@ -496,16 +496,16 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$CLAYER", 8)]
 		public string LayerName
 		{
-			get { return this.CurrentLayer.Name; }
+			get { return this._currentLayer.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this.CurrentLayer = this.Document.Layers[value];
+					this._currentLayer = this.Document.Layers[value];
 				}
 				else
 				{
-					this.CurrentLayer = new Layer(value);
+					this._currentLayer = new Layer(value);
 				}
 			}
 		}
@@ -2438,7 +2438,24 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMLTEX2", 6)]
 		public string DimensionTex2 { get; set; } = "ByBlock";
 
-		public Layer CurrentLayer { get; private set; } = Layer.Default;
+		public Layer CurrentLayer
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._currentLayer;
+				}
+				else
+				{
+					return this.Document.Layers[this.LayerName];
+				}
+			}
+			private set
+			{
+				this._currentLayer = value;
+			}
+		}
 
 		public DimensionStyle DimensionStyleOverrides { get; private set; } = DimensionStyle.Default;
 
@@ -2447,6 +2464,8 @@ namespace ACadSharp.Header
 		public UCS PaperSpaceUcs { get; private set; } = new UCS();
 
 		public CadDocument Document { get; internal set; }
+
+		private Layer _currentLayer = Layer.Default;
 
 		public CadHeader() : this(ACadVersion.AC1018) { }
 

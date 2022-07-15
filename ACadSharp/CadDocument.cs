@@ -25,7 +25,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Contains all the header variables for this document.
 		/// </summary>
-		public CadHeader Header { get; set; }
+		public CadHeader Header { get; internal set; }
 
 		/// <summary>
 		/// Accesses drawing properties such as the Title, Subject, Author, and Keywords properties
