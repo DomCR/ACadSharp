@@ -38,7 +38,7 @@ namespace ACadSharp.IO.DXF
 						//Entries of the dictionary are assigned in the template
 						break;
 					case BlockRecord record when template.CadObject is Viewport viewport:
-						//TODO: Assign the viewport to the layout
+						record.Viewports.Add(viewport);
 						break;
 					case BlockRecord record when template.CadObject is Entity entity:
 						record.Entities.Add(entity);

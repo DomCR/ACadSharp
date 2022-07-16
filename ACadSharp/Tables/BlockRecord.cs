@@ -81,6 +81,8 @@ namespace ACadSharp.Tables
 			}
 		}
 
+		public CadObjectCollection<Viewport> Viewports { get; set; }
+
 		public CadObjectCollection<Entity> Entities { get; set; }
 
 		public Block BlockEntity
@@ -122,6 +124,7 @@ namespace ACadSharp.Tables
 			this.BlockEntity = new Block(this);
 			this.BlockEnd = new BlockEnd(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
+			this.Viewports = new CadObjectCollection<Viewport>(this);
 		}
 
 		protected override void createCopy(CadObject copy)

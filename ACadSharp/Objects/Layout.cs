@@ -4,6 +4,7 @@ using ACadSharp.Entities;
 using ACadSharp.Tables;
 using CSMath;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ACadSharp.Objects
@@ -149,7 +150,20 @@ namespace ACadSharp.Objects
 		/// Viewport that was last active in this layout when the layout was current
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 331)]
-		public Viewport Viewport { get; internal set; }	//TODO: The owner of the viewports is the blockrecord
+		public Viewport Viewport
+		{
+			get
+			{
+				if (this._lastViewport == null)
+					return this.Viewports?.FirstOrDefault();
+				else
+					return this._lastViewport;
+			}
+			internal set
+			{
+				this._lastViewport = value;
+			}
+		}
 
 		/// <summary>
 		/// Layout's UCS
@@ -162,7 +176,11 @@ namespace ACadSharp.Objects
 
 		//333	Shade plot ID
 
-		public List<Viewport> Viewports { get; } = new List<Viewport>();
+		public IEnumerable<Viewport> Viewports { get { return this.AssociatedBlock?.Viewports; } }
+
+		private Viewport _lastViewport;
+
+		private BlockRecord _blockRecord;
 
 		private BlockRecord _blockRecord;
 
