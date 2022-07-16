@@ -15,7 +15,7 @@ namespace ACadSharp.Tests.IO
 		{
 		}
 
-		[Theory]
+		[Theory(Skip = "Not implemented")]
 		[MemberData(nameof(DwgFilePaths))]
 		public void DwgToDxf(string test)
 		{
