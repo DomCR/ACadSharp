@@ -29,29 +29,6 @@ namespace ACadSharp.IO.Templates
 
 		public CadLineTypeTemplate(LineType entry) : base(entry) { }
 
-		public override bool AddHandle(int dxfcode, ulong handle)
-		{
-			bool found = base.AddHandle(dxfcode, handle);
-			if (found)
-				return found;
-
-			switch (dxfcode)
-			{
-				case 340:
-					var last = this.SegmentTemplates.LastOrDefault();
-					if (last != null)
-					{
-						last.StyleHandle = handle;
-					}
-					found = true;
-					break;
-				default:
-					break;
-			}
-
-			return found;
-		}
-
 		public override bool CheckDxfCode(int dxfcode, object value)
 		{
 			bool found = base.CheckDxfCode(dxfcode, value);
@@ -99,6 +76,10 @@ namespace ACadSharp.IO.Templates
 					break;
 				case 50:
 					template.Segment.Rotation = (double)value;
+					found = true;
+					break;
+				case 340:
+					template.StyleHandle = (ulong)value;
 					found = true;
 					break;
 				default:
