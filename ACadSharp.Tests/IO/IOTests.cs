@@ -38,7 +38,7 @@ namespace ACadSharp.Tests.IO
 			CadDocument doc = DxfReader.Read(test);
 
 			string file = Path.GetFileNameWithoutExtension(test);
-
+			// Viewports are wrong!
 			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_rewrite_out.dxf");
 
 			using (DxfWriter writer = new DxfWriter(pathOut, doc, false))

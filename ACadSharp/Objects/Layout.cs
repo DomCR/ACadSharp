@@ -149,7 +149,7 @@ namespace ACadSharp.Objects
 		/// Viewport that was last active in this layout when the layout was current
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 331)]
-		public Viewport Viewport { get; internal set; }
+		public Viewport Viewport { get; internal set; }	//TODO: The owner of the viewports is the blockrecord
 
 		/// <summary>
 		/// Layout's UCS
