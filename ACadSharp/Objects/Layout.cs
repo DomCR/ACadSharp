@@ -182,8 +182,6 @@ namespace ACadSharp.Objects
 
 		private BlockRecord _blockRecord;
 
-		private BlockRecord _blockRecord;
-
 		public Layout() : this(null) { }
 
 		public Layout(string name) : base()
