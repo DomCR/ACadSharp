@@ -70,6 +70,8 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public Layout Layout { get; set; }  //TODO: Assign the block layout (if there is one)
 
+		public CadObjectCollection<Viewport> Viewports { get; set; }
+
 		public CadObjectCollection<Entity> Entities { get; set; }
 
 		public Block BlockEntity
@@ -105,6 +107,7 @@ namespace ACadSharp.Tables
 			this.BlockEntity = new Block(this);
 			this.BlockEnd = new BlockEnd(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
+			this.Viewports = new CadObjectCollection<Viewport>(this);
 		}
 
 		protected override void createCopy(CadObject copy)
