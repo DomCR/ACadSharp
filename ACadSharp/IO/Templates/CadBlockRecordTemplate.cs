@@ -66,7 +66,16 @@ namespace ACadSharp.IO.Templates
 				{
 					if (builder.TryGetCadObject<Entity>(handle, out Entity child))
 					{
-						this.CadObject.Entities.Add(child);
+						switch (child)
+						{
+							case Viewport viewport:
+								this.CadObject.Viewports.Add(viewport);
+								break;
+							default:
+								this.CadObject.Entities.Add(child);
+								break;
+						}
+
 					}
 				}
 			}

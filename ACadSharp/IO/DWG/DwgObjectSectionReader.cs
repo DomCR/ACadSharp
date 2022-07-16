@@ -4526,7 +4526,7 @@ namespace ACadSharp.IO.DWG
 			//Printer / Config TV 2 plotsettings printer or configuration file
 			plot.SystemPrinterName = this._textReader.ReadVariableText();
 			//Plot layout flags BS 70 plotsettings plot layout flag
-			plot.Flags = (PlotFlags)this._objectReader.ReadBitShort();
+			plot.PlotFlags = (PlotFlags)this._objectReader.ReadBitShort();
 
 			PaperMargin margin = new PaperMargin()
 			{
