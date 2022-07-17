@@ -38,6 +38,11 @@ namespace ACadSharp.IO.DWG
 
 		public void Write()
 		{
+			//R2013+:
+			if (R2013Plus)
+				//BLL : Variabele REQUIREDVERSIONS, default value 0, read only.
+				this._writer.WriteBitLong(0);
+
 			//Common:
 			//BD : Unknown, default value 412148564080.0
 			this._writer.WriteBitDouble(412148564080.0);
@@ -73,6 +78,7 @@ namespace ACadSharp.IO.DWG
 			if (R2004Pre)
 			{
 				//H : Handle of the current viewport entity header (hard pointer)
+				this._writer.HandleReference(0);
 			}
 
 			//Common:

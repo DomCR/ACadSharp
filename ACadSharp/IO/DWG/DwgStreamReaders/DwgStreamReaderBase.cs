@@ -589,7 +589,18 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
-		public abstract string ReadVariableText();
+		public virtual string ReadVariableText()
+		{
+			short length = this.ReadBitShort();
+			string str;
+			if (length > 0)
+			{
+				str = this.ReadString(length, this.Encoding).Replace("\0", "");
+			}
+			else
+				str = string.Empty;
+			return str;
+		}
 
 		/// <inheritdoc/>
 		public byte[] ReadSentinel()

@@ -21,6 +21,7 @@ namespace ACadSharpInternal.Tests
 				ACadVersion.AC1014,
 				ACadVersion.AC1015,
 				ACadVersion.AC1018,
+				ACadVersion.AC1021,
 				ACadVersion.AC1024,
 				ACadVersion.AC1027,
 				ACadVersion.AC1032,

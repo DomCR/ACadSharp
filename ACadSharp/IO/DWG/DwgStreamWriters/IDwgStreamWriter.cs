@@ -115,14 +115,13 @@ namespace ACadSharp.IO.DWG
 					throw new NotSupportedException($"Dwg version not supported: {version}");
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
-				//return new DwgStreamReaderAC12(stream, resetPositon);
+					return new DwgStreamWriterAC12(stream, encoding);
 				case ACadVersion.AC1015:
-					//return new DwgStreamReaderAC15(stream, resetPositon);
-					throw new NotSupportedException($"Dwg version not supported: {version}");
+					return new DwgStreamWriterAC15(stream, encoding);
 				case ACadVersion.AC1018:
 					return new DwgStreamWriterAC18(stream, encoding);
 				case ACadVersion.AC1021:
-				//return new DwgStreamReaderAC21(stream, resetPositon);
+					return new DwgStreamWriterAC21(stream, encoding);
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
@@ -262,10 +261,8 @@ namespace ACadSharp.IO.DWG
 			}
 
 			byte[] bytes = this.Encoding.GetBytes(value);
-			this.WriteBitShort((short)(bytes.Length + 1));
+			this.WriteBitShort((short)bytes.Length);
 			this.WriteBytes(bytes);
-
-			this.WriteByte(0);
 		}
 
 		public void Write2Bits(byte value)
@@ -580,19 +577,6 @@ namespace ACadSharp.IO.DWG
 		public DwgStreamWriterAC12(Stream stream, Encoding encoding) : base(stream, encoding)
 		{
 		}
-
-		public override void WriteVariableText(string value)
-		{
-			if (string.IsNullOrEmpty(value))
-			{
-				base.WriteBitShort(0);
-				return;
-			}
-
-			byte[] bytes = base.Encoding.GetBytes(value);
-			base.WriteBitShort((short)bytes.Length);
-			base.WriteBytes(bytes);
-		}
 	}
 
 	internal class DwgStreamWriterAC15 : DwgStreamWriterAC12
@@ -656,6 +640,13 @@ namespace ACadSharp.IO.DWG
 
 			//(&1 => color name follows(TV),
 			//&2 => book name follows(TV))
+		}
+	}
+
+	internal class DwgStreamWriterAC21: DwgStreamWriterAC18
+	{
+		public DwgStreamWriterAC21(Stream stream, Encoding encoding) : base(stream, encoding)
+		{
 		}
 	}
 }
