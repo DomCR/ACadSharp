@@ -47,7 +47,11 @@ namespace ACadSharp.IO.Templates
 
 			foreach (var handle in this.ViewportHandles)
 			{
-				this.CadObject.Viewports.Add(builder.GetCadObject<Viewport>(handle));
+				if (builder.TryGetCadObject<Viewport>(handle, out Viewport vp))
+				{
+					//Is repeated, the viewports are already in the entities list in the BLOCK_RECORD
+					// if(this.CadObject.AssociatedBlock.Viewports.Contains(vp))
+				}
 			}
 		}
 	}

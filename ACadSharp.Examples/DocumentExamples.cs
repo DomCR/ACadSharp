@@ -20,10 +20,7 @@ namespace ACadSharp.Examples
 			CadDocument doc = DwgReader.Read(file);
 
 			// Get the model space where all the drawing entities are
-			BlockRecord modelSpace = doc.BlockRecords["*Model_Space"];
-
-			// Get all the entities in the model space
-			return modelSpace.Entities;
+			return doc.Entities;
 		}
 
 		/// <summary>
@@ -36,11 +33,8 @@ namespace ACadSharp.Examples
 		{
 			CadDocument doc = DwgReader.Read(file);
 
-			// Get the model space where all the drawing entities are
-			BlockRecord modelSpace = doc.BlockRecords["*Model_Space"];
-
 			// Get the insert instance that is using the block that you are looking for
-			return modelSpace.Entities.OfType<Insert>().Where(e => e.Block.Name == blockname);
+			return doc.Entities.OfType<Insert>().Where(e => e.Block.Name == blockname);
 		}
 
 		/// <summary>
@@ -64,8 +58,8 @@ namespace ACadSharp.Examples
 				EndPoint = new CSMath.XYZ(5, 5, 0)
 			};
 
-			doc.BlockRecords["*Model_Space"].Entities.Add(pt);
-			doc.BlockRecords["*Model_Space"].Entities.Add(line);
+			doc.Entities.Add(pt);
+			doc.Entities.Add(line);
 		}
 	}
 }
