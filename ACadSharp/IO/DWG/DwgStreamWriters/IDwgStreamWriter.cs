@@ -67,7 +67,16 @@ namespace ACadSharp.IO.DWG
 		void WriteBitDoubleWithDefault(double def, double value);
 
 		void ResetStream();
+
+		void UpdatePositonWriter();
 	}
+
+	/*
+	internal class DwgMergedWriter : IDwgStreamWriter
+	{
+
+	}
+	*/
 
 	/// <summary>
 	/// Writer equivalent to reader <see cref="DwgStreamReaderBase"/>
@@ -540,6 +549,12 @@ namespace ACadSharp.IO.DWG
 			this._stream.Position = 0L;
 			this.resetShift();
 			this._stream.SetLength(0L);
+		}
+
+		public void UpdatePositonWriter()
+		{
+			long result = this._stream.Position * 8 + this.BitShift;
+			this.WriteRawLong(0);
 		}
 
 		private void dateToJulian(DateTime date, out int jdate, out int miliseconds)

@@ -2,6 +2,7 @@
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSUtilities.Converters;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -35,6 +36,55 @@ namespace ACadSharp.IO.DWG
 		public void Write()
 		{
 			this.writeTables();
+		}
+
+		private IDwgStreamWriter createWriter()
+		{
+			switch (this._document.Header.Version)
+			{
+				case ACadVersion.Unknown:
+					break;
+				case ACadVersion.MC0_0:
+					break;
+				case ACadVersion.AC1_2:
+					break;
+				case ACadVersion.AC1_4:
+					break;
+				case ACadVersion.AC1_50:
+					break;
+				case ACadVersion.AC2_10:
+					break;
+				case ACadVersion.AC1002:
+					break;
+				case ACadVersion.AC1003:
+					break;
+				case ACadVersion.AC1004:
+					break;
+				case ACadVersion.AC1006:
+					break;
+				case ACadVersion.AC1009:
+					break;
+				case ACadVersion.AC1012:
+					break;
+				case ACadVersion.AC1014:
+					break;
+				case ACadVersion.AC1015:
+					break;
+				case ACadVersion.AC1018:
+					break;
+				case ACadVersion.AC1021:
+					break;
+				case ACadVersion.AC1024:
+					break;
+				case ACadVersion.AC1027:
+					break;
+				case ACadVersion.AC1032:
+					break;
+				default:
+					break;
+			}
+
+			throw new NotImplementedException();
 		}
 
 		private void registerObject(CadObject cadObject)
@@ -115,8 +165,14 @@ namespace ACadSharp.IO.DWG
 
 		private void writeBlockControl()
 		{
-
 			this.writeCommonNonEntityData(this._document.BlockRecords);
+
+			this._writer.WriteBitLong(this._document.BlockRecords.Count);
+
+			foreach (var item in this._document.BlockRecords)
+			{
+				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
+			}
 
 			//*MODEL_SPACE and *PAPER_SPACE(hard owner).
 			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.ModelSpace);
@@ -155,7 +211,7 @@ namespace ACadSharp.IO.DWG
 
 			if (this._version >= ACadVersion.AC1015 && this._version < ACadVersion.AC1024)
 				//Obj size RL size of object in bits, not including end handles
-				this.updateHandleWriter();
+				this._writer.UpdatePositonWriter();
 
 			//Common:
 			//Handle H 5 code 0, length followed by the handle bytes.
@@ -167,7 +223,7 @@ namespace ACadSharp.IO.DWG
 			//R13-R14 Only:
 			//Obj size RL size of object in bits, not including end handles
 			if (this.R13_14Only)
-				this.updateHandleWriter();
+				this._writer.UpdatePositonWriter();
 
 			//[Owner ref handle (soft pointer)]
 			this._writer.HandleReference(cadObject.Owner.Handle);
@@ -176,14 +232,10 @@ namespace ACadSharp.IO.DWG
 			this.writeReactorsAndDictionaryHandle(cadObject);
 		}
 
-		private void updateHandleWriter()
-		{
-
-		}
-
 		private void writeExtendedData(ExtendedDataDictionary data)
 		{
-
+			//EED size BS size of extended entity data, if any
+			this._writer.WriteBitShort(0);
 		}
 
 		private void writeReactorsAndDictionaryHandle(CadObject cadObject)
@@ -206,7 +258,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//R2013+:
-			if (R2013Plus)
+			if (this.R2013Plus)
 			{
 				//Has DS binary data B If 1 then this object has associated binary data stored in the data store
 				this._writer.WriteBit(false);

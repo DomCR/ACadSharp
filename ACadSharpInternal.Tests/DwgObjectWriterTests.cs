@@ -41,8 +41,9 @@ namespace ACadSharpInternal.Tests
 				sreader,
 				handles,
 				writer.Map,
-				null
+				new ACadSharp.Classes.DxfClassCollection()
 				);
+			reader.Read();
 		}
 	}
 }
