@@ -298,7 +298,7 @@ namespace ACadSharp.IO.DWG
 				template.OwnerHandle = this._handlesReader.HandleReference(entity.Handle);
 
 			//Numreactors BL number of persistent reactors attached to this object
-			this.readReactors(template);
+			this.readReactorsAndDictionaryHandle(template);
 
 			//R13-R14 Only:
 			if (this.R13_14Only)
@@ -426,7 +426,7 @@ namespace ACadSharp.IO.DWG
 			template.OwnerHandle = this.handleReference(template.CadObject.Handle);
 
 			//Read the cad object reactors
-			this.readReactors(template);
+			this.readReactorsAndDictionaryHandle(template);
 		}
 
 		private void readXrefDependantBit(TableEntry entry)
@@ -581,7 +581,7 @@ namespace ACadSharp.IO.DWG
 		}
 
 		// Add the reactors to the template.
-		private void readReactors(CadTemplate template)
+		private void readReactorsAndDictionaryHandle(CadTemplate template)
 		{
 			//Numreactors S number of reactors in this object
 			int numberOfReactors = this._objectReader.ReadBitLong();
@@ -593,7 +593,7 @@ namespace ACadSharp.IO.DWG
 
 			bool flag = false;
 			//R2004+:
-			if (this._version >= ACadVersion.AC1018)
+			if (R2004Plus)
 				/*XDic Missing Flag
 				 * B
 				 * If 1, no XDictionary handle is stored for this object,
@@ -605,12 +605,12 @@ namespace ACadSharp.IO.DWG
 				//xdicobjhandle(hard owner)
 				template.XDictHandle = this.handleReference();
 
-			if (this._version <= ACadVersion.AC1024)
-				return;
-
 			//R2013+:
-			//Has DS binary data B If 1 then this object has associated binary data stored in the data store
-			this._objectReader.ReadBit();
+			if (R2013Plus)
+			{
+				//Has DS binary data B If 1 then this object has associated binary data stored in the data store
+				this._objectReader.ReadBit();
+			}
 		}
 
 		/// <summary>

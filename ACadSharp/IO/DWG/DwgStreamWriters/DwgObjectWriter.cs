@@ -173,7 +173,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.HandleReference(cadObject.Owner.Handle);
 
 			//write the cad object reactors
-			this.writeReactors(cadObject.Reactors);
+			this.writeReactorsAndDictionaryHandle(cadObject);
 		}
 
 		private void updateHandleWriter()
@@ -186,9 +186,31 @@ namespace ACadSharp.IO.DWG
 
 		}
 
-		private void writeReactors(Dictionary<ulong, CadObject> reactors)
+		private void writeReactorsAndDictionaryHandle(CadObject cadObject)
 		{
+			//TODO: Write reactors and dictionary
 
+			//Numreactors S number of reactors in this object
+			this._writer.WriteBitLong(0);
+
+			//for (int i = 0; i < 0; ++i)
+			//	//[Reactors (soft pointer)]
+			//	template.CadObject.Reactors.Add(this.handleReference(), null);
+
+			//R2004+:
+			if (this.R2004Plus)
+			{
+				_writer.WriteBit(false);
+				//_writer.WriteBit(cadObject.XDictionary == null);
+				//this._writer.HandleReference(DwgReferenceType.HardOwnership, cadObject.XDictionary);
+			}
+
+			//R2013+:
+			if (R2013Plus)
+			{
+				//Has DS binary data B If 1 then this object has associated binary data stored in the data store
+				this._writer.WriteBit(false);
+			}
 		}
 
 		private void writeLine(Line line)
