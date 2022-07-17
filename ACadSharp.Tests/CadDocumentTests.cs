@@ -91,6 +91,9 @@ namespace ACadSharp.Tests
 			Assert.True(0 == clone.Handle);
 			Assert.Null(clone.Document);
 			Assert.Null(clone.Owner);
+
+			Assert.Null(clone.Layer.Document);
+			Assert.Null(clone.LineType.Document);
 		}
 
 		[Fact]
@@ -110,8 +113,8 @@ namespace ACadSharp.Tests
 			Assert.Equal(line.Handle, l.Handle);
 
 			//The layer still in the document
-			Assert.False(0 == l.Layer.Handle);
-			Assert.NotNull(l.Layer.Document);
+			Assert.True(0 == l.Layer.Handle);
+			Assert.Null(l.Layer.Document);
 		}
 
 		[Fact]
