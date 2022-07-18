@@ -300,6 +300,13 @@ namespace ACadSharp
 			if (cadObject.XDictionary != null)
 				this.UnregisterCollection(cadObject.XDictionary);
 
+			if (cadObject is Entity e)
+			{
+				//TODO: Replace for clones
+				e.Layer = new Layer(e.Layer.Name);
+				e.LineType = new LineType(e.LineType.Name);
+			}
+
 			switch (cadObject)
 			{
 				case BlockRecord record:
