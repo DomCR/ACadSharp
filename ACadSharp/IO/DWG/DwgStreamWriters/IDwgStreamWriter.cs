@@ -71,13 +71,6 @@ namespace ACadSharp.IO.DWG
 		void UpdatePositonWriter();
 	}
 
-	/*
-	internal class DwgMergedWriter : IDwgStreamWriter
-	{
-
-	}
-	*/
-
 	/// <summary>
 	/// Writer equivalent to reader <see cref="DwgStreamReaderBase"/>
 	/// </summary>
@@ -125,13 +118,61 @@ namespace ACadSharp.IO.DWG
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
-					//return new DwgStreamReaderAC24(stream, resetPositon);
-					throw new NotSupportedException($"Dwg version not supported: {version}");
+				//return new DwgStreamReaderAC24(stream, resetPositon);
 				default:
-					break;
+					throw new NotSupportedException($"Dwg version not supported: {version}");
 			}
+		}
 
-			return null;
+		public static IDwgStreamWriter GetMergedWriter(ACadVersion version, Stream stream, Encoding encoding)
+		{
+			switch (version)
+			{
+				case ACadVersion.Unknown:
+					throw new Exception();
+				case ACadVersion.MC0_0:
+				case ACadVersion.AC1_2:
+				case ACadVersion.AC1_4:
+				case ACadVersion.AC1_50:
+				case ACadVersion.AC2_10:
+				case ACadVersion.AC1002:
+				case ACadVersion.AC1003:
+				case ACadVersion.AC1004:
+				case ACadVersion.AC1006:
+				case ACadVersion.AC1009:
+					throw new NotSupportedException($"Dwg version not supported: {version}");
+				case ACadVersion.AC1012:
+				case ACadVersion.AC1014:
+					return new DwgmMergedStreamWriter(
+						stream, 
+						new DwgStreamWriterAC12(stream, encoding),
+						new DwgStreamWriterAC12(new MemoryStream(), encoding),
+						new DwgStreamWriterAC12(new MemoryStream(), encoding));
+				case ACadVersion.AC1015:
+					return new DwgmMergedStreamWriter(
+							stream,
+							new DwgStreamWriterAC15(stream, encoding),
+							new DwgStreamWriterAC15(new MemoryStream(), encoding),
+							new DwgStreamWriterAC15(new MemoryStream(), encoding));
+				case ACadVersion.AC1018:
+					return new DwgmMergedStreamWriter(
+							stream,
+							new DwgStreamWriterAC18(stream, encoding),
+							new DwgStreamWriterAC18(new MemoryStream(), encoding),
+							new DwgStreamWriterAC18(new MemoryStream(), encoding));
+				case ACadVersion.AC1021:
+					return new DwgmMergedStreamWriter(
+							stream,
+							new DwgStreamWriterAC21(stream, encoding),
+							new DwgStreamWriterAC21(new MemoryStream(), encoding),
+							new DwgStreamWriterAC21(new MemoryStream(), encoding));
+				case ACadVersion.AC1024:
+				case ACadVersion.AC1027:
+				case ACadVersion.AC1032:
+				//return new DwgStreamReaderAC24(stream, resetPositon);
+				default:
+					throw new NotSupportedException($"Dwg version not supported: {version}");
+			}
 		}
 
 		public void WriteInt(int value)
@@ -643,7 +684,7 @@ namespace ACadSharp.IO.DWG
 		}
 	}
 
-	internal class DwgStreamWriterAC21: DwgStreamWriterAC18
+	internal class DwgStreamWriterAC21 : DwgStreamWriterAC18
 	{
 		public DwgStreamWriterAC21(Stream stream, Encoding encoding) : base(stream, encoding)
 		{

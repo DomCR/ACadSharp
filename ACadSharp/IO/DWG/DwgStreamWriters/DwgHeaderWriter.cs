@@ -1,12 +1,7 @@
 ﻿using ACadSharp.Header;
 using ACadSharp.Objects;
-using ACadSharp.Tables;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ACadSharp.IO.DWG
 {
@@ -21,27 +16,36 @@ namespace ACadSharp.IO.DWG
 		private Stream _stream;
 
 		private CadDocument _document;
-		private CadHeader header;
+		private CadHeader _header;
 
 		public DwgHeaderWriter(Stream stream, CadDocument document) : base(document.Header.Version)
 		{
 			this._stream = stream;
 			this._document = document;
-			this.header = document.Header;
+			this._header = document.Header;
 
 			this._msbegin = new MemoryStream();
 			this._msmain = new MemoryStream();
 
-			this._swbegin = DwgStreamWriterBase.GetStreamHandler(document.Header.Version, this._msbegin, Encoding.Default);
-			this._writer = DwgStreamWriterBase.GetStreamHandler(document.Header.Version, _msmain, Encoding.Default);
+			this._swbegin = DwgStreamWriterBase.GetStreamHandler(this._document.Header.Version, this._msbegin, Encoding.Default);
+			this._writer = DwgStreamWriterBase.GetStreamHandler(this._document.Header.Version, this._msmain, Encoding.Default);
 		}
 
 		public void Write()
 		{
+			//+R2007 Only:
+			if (this.R2007Plus)
+			{
+				//Setup the writers
+				this._writer = DwgStreamWriterBase.GetMergedWriter(this._document.Header.Version, this._msmain, Encoding.Default);
+			}
+
 			//R2013+:
-			if (R2013Plus)
+			if (this.R2013Plus)
+			{
 				//BLL : Variabele REQUIREDVERSIONS, default value 0, read only.
 				this._writer.WriteBitLong(0);
+			}
 
 			//Common:
 			//BD : Unknown, default value 412148564080.0
@@ -68,14 +72,14 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitLong(0);
 
 			//R13-R14 Only:
-			if (R13_14Only)
+			if (this.R13_14Only)
 			{
 				//BS : Unknown short, default value 0
 				this._writer.WriteBitShort(0);
 			}
 
 			//Pre-2004 Only:
-			if (R2004Pre)
+			if (this.R2004Pre)
 			{
 				//H : Handle of the current viewport entity header (hard pointer)
 				this._writer.HandleReference(0);
@@ -83,811 +87,811 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//B: DIMASO
-			_writer.WriteBit(header.AssociatedDimensions);
+			this._writer.WriteBit(this._header.AssociatedDimensions);
 			//B: DIMSHO
-			_writer.WriteBit(header.UpdateDimensionsWhileDragging);
+			this._writer.WriteBit(this._header.UpdateDimensionsWhileDragging);
 
 			//R13-R14 Only:
-			if (R13_14Only)
+			if (this.R13_14Only)
 			{
 				//B : DIMSAV Undocumented.
-				_writer.WriteBit(header.DIMSAV);
+				this._writer.WriteBit(this._header.DIMSAV);
 			}
 
 			//Common:
 			//B: PLINEGEN
-			_writer.WriteBit(header.PolylineLineTypeGeneration);
+			this._writer.WriteBit(this._header.PolylineLineTypeGeneration);
 			//B : ORTHOMODE
-			_writer.WriteBit(header.OrthoMode);
+			this._writer.WriteBit(this._header.OrthoMode);
 			//B: REGENMODE
-			_writer.WriteBit(header.RegenerationMode);
+			this._writer.WriteBit(this._header.RegenerationMode);
 			//B : FILLMODE
-			_writer.WriteBit(header.FillMode);
+			this._writer.WriteBit(this._header.FillMode);
 			//B : QTEXTMODE
-			_writer.WriteBit(header.QuickTextMode);
+			this._writer.WriteBit(this._header.QuickTextMode);
 			//B : PSLTSCALE
-			_writer.WriteBit(header.PaperSpaceLineTypeScaling == SpaceLineTypeScaling.Normal);
+			this._writer.WriteBit(this._header.PaperSpaceLineTypeScaling == SpaceLineTypeScaling.Normal);
 			//B : LIMCHECK
-			_writer.WriteBit(header.LimitCheckingOn);
+			this._writer.WriteBit(this._header.LimitCheckingOn);
 
 			//R13-R14 Only (stored in registry from R15 onwards):
-			if (R13_14Only)
+			if (this.R13_14Only)
 				//B : BLIPMODE
-				_writer.WriteBit(header.BlipMode);
+				this._writer.WriteBit(this._header.BlipMode);
 
 			//R2004+:
-			if (R2004Plus)
+			if (this.R2004Plus)
 				//B : Undocumented
-				_writer.WriteBit(false);
+				this._writer.WriteBit(false);
 
 			//Common:
 			//B: USRTIMER(User timer on / off).
-			_writer.WriteBit(header.UserTimer);
+			this._writer.WriteBit(this._header.UserTimer);
 			//B : SKPOLY
-			_writer.WriteBit(header.SketchPolylines);
+			this._writer.WriteBit(this._header.SketchPolylines);
 			//B : ANGDIR
-			_writer.WriteBit(header.AngularDirection != Types.Units.AngularDirection.CounterClockWise);
+			this._writer.WriteBit(this._header.AngularDirection != Types.Units.AngularDirection.CounterClockWise);
 			//B : SPLFRAME
-			_writer.WriteBit(header.ShowSplineControlPoints);
+			this._writer.WriteBit(this._header.ShowSplineControlPoints);
 
 			//R13-R14 Only (stored in registry from R15 onwards):
-			if (R13_14Only)
+			if (this.R13_14Only)
 			{
 				//B : ATTREQ
-				_writer.WriteBit(false);
+				this._writer.WriteBit(false);
 				//B : ATTDIA
-				_writer.WriteBit(false);
+				this._writer.WriteBit(false);
 			}
 
 			//Common:
 			//B: MIRRTEXT
-			_writer.WriteBit(header.MirrorText);
+			this._writer.WriteBit(this._header.MirrorText);
 			//B : WORLDVIEW
-			_writer.WriteBit(header.WorldView);
+			this._writer.WriteBit(this._header.WorldView);
 
 			//R13 - R14 Only:
-			if (R13_14Only)
+			if (this.R13_14Only)
 			{
 				//B: WIREFRAME Undocumented.
-				_writer.WriteBit(false);
+				this._writer.WriteBit(false);
 			}
 
 			//Common:
 			//B: TILEMODE
-			_writer.WriteBit(header.ShowModelSpace);
+			this._writer.WriteBit(this._header.ShowModelSpace);
 			//B : PLIMCHECK
-			_writer.WriteBit(header.PaperSpaceLimitsChecking);
+			this._writer.WriteBit(this._header.PaperSpaceLimitsChecking);
 			//B : VISRETAIN
-			_writer.WriteBit(header.RetainXRefDependentVisibilitySettings);
+			this._writer.WriteBit(this._header.RetainXRefDependentVisibilitySettings);
 
 			//R13 - R14 Only(stored in registry from R15 onwards):
-			if (R13_14Only)
+			if (this.R13_14Only)
 			{
 				//B : DELOBJ
-				_writer.WriteBit(false);
+				this._writer.WriteBit(false);
 			}
 
 			//Common:
 			//B: DISPSILH
-			_writer.WriteBit(header.DisplaySilhouetteCurves);
+			this._writer.WriteBit(this._header.DisplaySilhouetteCurves);
 			//B : PELLIPSE(not present in DXF)
-			_writer.WriteBit(header.CreateEllipseAsPolyline);
+			this._writer.WriteBit(this._header.CreateEllipseAsPolyline);
 			//BS: PROXYGRAPHICS
-			_writer.WriteBitShort((short)(this.header.ProxyGraphics ? 1 : 0));
+			this._writer.WriteBitShort((short)(this._header.ProxyGraphics ? 1 : 0));
 
 			//R13-R14 Only (stored in registry from R15 onwards):
-			if (R13_14Only)
+			if (this.R13_14Only)
 			{
 				//BS : DRAGMODE
-				_writer.WriteBitShort(0);
+				this._writer.WriteBitShort(0);
 			}
 
 			//Common:
 			//BS: TREEDEPTH
-			_writer.WriteBitShort(header.SpatialIndexMaxTreeDepth);
+			this._writer.WriteBitShort(this._header.SpatialIndexMaxTreeDepth);
 			//BS : LUNITS
-			_writer.WriteBitShort((short)header.LinearUnitFormat);
+			this._writer.WriteBitShort((short)this._header.LinearUnitFormat);
 			//BS : LUPREC
-			_writer.WriteBitShort(header.LinearUnitPrecision);
+			this._writer.WriteBitShort(this._header.LinearUnitPrecision);
 			//BS : AUNITS
-			_writer.WriteBitShort((short)header.AngularUnit);
+			this._writer.WriteBitShort((short)this._header.AngularUnit);
 			//BS : AUPREC
-			_writer.WriteBitShort(header.AngularUnitPrecision);
+			this._writer.WriteBitShort(this._header.AngularUnitPrecision);
 
 			//R13 - R14 Only Only(stored in registry from R15 onwards):
-			if (R13_14Only)
+			if (this.R13_14Only)
 				//BS: OSMODE
-				_writer.WriteBitShort((short)header.ObjectSnapMode);
+				this._writer.WriteBitShort((short)this._header.ObjectSnapMode);
 
 			//Common:
 			//BS: ATTMODE
-			_writer.WriteBitShort((short)header.AttributeVisibility);
+			this._writer.WriteBitShort((short)this._header.AttributeVisibility);
 
 			//R13 - R14 Only Only(stored in registry from R15 onwards):
-			if (R13_14Only)
+			if (this.R13_14Only)
 			{
 				//BS: COORDS
-				_writer.WriteBitShort(0);
+				this._writer.WriteBitShort(0);
 			}
 
 			//Common:
 			//BS: PDMODE
-			_writer.WriteBitShort(header.PointDisplayMode);
+			this._writer.WriteBitShort(this._header.PointDisplayMode);
 
 			//R13 - R14 Only Only(stored in registry from R15 onwards):
-			if (R13_14Only)
+			if (this.R13_14Only)
 			{
 				//BS: PICKSTYLE
-				_writer.WriteBitShort(0);
+				this._writer.WriteBitShort(0);
 			}
 
 			//R2004 +:
-			if (R2004Plus)
+			if (this.R2004Plus)
 			{
 				//BL: Unknown
-				_writer.WriteBitLong(0);
+				this._writer.WriteBitLong(0);
 				//BL: Unknown
-				_writer.WriteBitLong(0);
+				this._writer.WriteBitLong(0);
 				//BL: Unknown
-				_writer.WriteBitLong(0);
+				this._writer.WriteBitLong(0);
 			}
 
 			//Common:
 			//BS : USERI1
-			_writer.WriteBitShort(header.UserShort1);
+			this._writer.WriteBitShort(this._header.UserShort1);
 			//BS : USERI2
-			_writer.WriteBitShort(header.UserShort2);
+			this._writer.WriteBitShort(this._header.UserShort2);
 			//BS : USERI3
-			_writer.WriteBitShort(header.UserShort3);
+			this._writer.WriteBitShort(this._header.UserShort3);
 			//BS : USERI4
-			_writer.WriteBitShort(header.UserShort4);
+			this._writer.WriteBitShort(this._header.UserShort4);
 			//BS : USERI5
-			_writer.WriteBitShort(header.UserShort5);
+			this._writer.WriteBitShort(this._header.UserShort5);
 
 			//BS: SPLINESEGS
-			_writer.WriteBitShort(header.NumberOfSplineSegments);
+			this._writer.WriteBitShort(this._header.NumberOfSplineSegments);
 			//BS : SURFU
-			_writer.WriteBitShort(header.SurfaceDensityU);
+			this._writer.WriteBitShort(this._header.SurfaceDensityU);
 			//BS : SURFV
-			_writer.WriteBitShort(header.SurfaceDensityV);
+			this._writer.WriteBitShort(this._header.SurfaceDensityV);
 			//BS : SURFTYPE
-			_writer.WriteBitShort(header.SurfaceType);
+			this._writer.WriteBitShort(this._header.SurfaceType);
 			//BS : SURFTAB1
-			_writer.WriteBitShort(header.SurfaceMeshTabulationCount1);
+			this._writer.WriteBitShort(this._header.SurfaceMeshTabulationCount1);
 			//BS : SURFTAB2
-			_writer.WriteBitShort(header.SurfaceMeshTabulationCount2);
+			this._writer.WriteBitShort(this._header.SurfaceMeshTabulationCount2);
 			//BS : SPLINETYPE
-			_writer.WriteBitShort((short)header.SplineType);
+			this._writer.WriteBitShort((short)this._header.SplineType);
 			//BS : SHADEDGE
-			_writer.WriteBitShort((short)header.ShadeEdge);
+			this._writer.WriteBitShort((short)this._header.ShadeEdge);
 			//BS : SHADEDIF
-			_writer.WriteBitShort(header.ShadeDiffuseToAmbientPercentage);
+			this._writer.WriteBitShort(this._header.ShadeDiffuseToAmbientPercentage);
 			//BS: UNITMODE
-			_writer.WriteBitShort(header.UnitMode);
+			this._writer.WriteBitShort(this._header.UnitMode);
 			//BS : MAXACTVP
-			_writer.WriteBitShort(header.MaxViewportCount);
+			this._writer.WriteBitShort(this._header.MaxViewportCount);
 			//BS : ISOLINES
-			_writer.WriteBitShort(header.SurfaceIsolineCount);
+			this._writer.WriteBitShort(this._header.SurfaceIsolineCount);
 			//BS : CMLJUST
-			_writer.WriteBitShort((short)header.CurrentMultilineJustification);
+			this._writer.WriteBitShort((short)this._header.CurrentMultilineJustification);
 			//BS : TEXTQLTY
-			_writer.WriteBitShort(header.TextQuality);
+			this._writer.WriteBitShort(this._header.TextQuality);
 			//BD : LTSCALE
-			_writer.WriteBitDouble(header.LineTypeScale);
+			this._writer.WriteBitDouble(this._header.LineTypeScale);
 			//BD : TEXTSIZE
-			_writer.WriteBitDouble(header.TextHeightDefault);
+			this._writer.WriteBitDouble(this._header.TextHeightDefault);
 			//BD : TRACEWID
-			_writer.WriteBitDouble(header.TraceWidthDefault);
+			this._writer.WriteBitDouble(this._header.TraceWidthDefault);
 			//BD : SKETCHINC
-			_writer.WriteBitDouble(header.SketchIncrement);
+			this._writer.WriteBitDouble(this._header.SketchIncrement);
 			//BD : FILLETRAD
-			_writer.WriteBitDouble(header.FilletRadius);
+			this._writer.WriteBitDouble(this._header.FilletRadius);
 			//BD : THICKNESS
-			_writer.WriteBitDouble(header.ThicknessDefault);
+			this._writer.WriteBitDouble(this._header.ThicknessDefault);
 			//BD : ANGBASE
-			_writer.WriteBitDouble(header.AngleBase);
+			this._writer.WriteBitDouble(this._header.AngleBase);
 			//BD : PDSIZE
-			_writer.WriteBitDouble(header.PointDisplaySize);
+			this._writer.WriteBitDouble(this._header.PointDisplaySize);
 			//BD : PLINEWID
-			_writer.WriteBitDouble(header.PolylineWidthDefault);
+			this._writer.WriteBitDouble(this._header.PolylineWidthDefault);
 			//BD : USERR1
-			_writer.WriteBitDouble(header.UserDouble1);
+			this._writer.WriteBitDouble(this._header.UserDouble1);
 			//BD : USERR2
-			_writer.WriteBitDouble(header.UserDouble2);
+			this._writer.WriteBitDouble(this._header.UserDouble2);
 			//BD : USERR3
-			_writer.WriteBitDouble(header.UserDouble3);
+			this._writer.WriteBitDouble(this._header.UserDouble3);
 			//BD : USERR4
-			_writer.WriteBitDouble(header.UserDouble4);
+			this._writer.WriteBitDouble(this._header.UserDouble4);
 			//BD : USERR5
-			_writer.WriteBitDouble(header.UserDouble5);
+			this._writer.WriteBitDouble(this._header.UserDouble5);
 			//BD : CHAMFERA
-			_writer.WriteBitDouble(header.ChamferDistance1);
+			this._writer.WriteBitDouble(this._header.ChamferDistance1);
 			//BD : CHAMFERB
-			_writer.WriteBitDouble(header.ChamferDistance2);
+			this._writer.WriteBitDouble(this._header.ChamferDistance2);
 			//BD : CHAMFERC
-			_writer.WriteBitDouble(header.ChamferLength);
+			this._writer.WriteBitDouble(this._header.ChamferLength);
 			//BD : CHAMFERD
-			_writer.WriteBitDouble(header.ChamferAngle);
+			this._writer.WriteBitDouble(this._header.ChamferAngle);
 			//BD : FACETRES
-			_writer.WriteBitDouble(header.FacetResolution);
+			this._writer.WriteBitDouble(this._header.FacetResolution);
 			//BD : CMLSCALE
-			_writer.WriteBitDouble(header.CurrentMultilineScale);
+			this._writer.WriteBitDouble(this._header.CurrentMultilineScale);
 			//BD : CELTSCALE
-			_writer.WriteBitDouble(header.CurrentEntityLinetypeScale);
+			this._writer.WriteBitDouble(this._header.CurrentEntityLinetypeScale);
 
 			//TV: MENUNAME
-			_writer.WriteVariableText(header.MenuFileName);
+			this._writer.WriteVariableText(this._header.MenuFileName);
 
 			//Common:
 			//BL: TDCREATE(Julian day)
 			//BL: TDCREATE(Milliseconds into the day)
-			_writer.WriteDateTime(header.CreateDateTime);
+			this._writer.WriteDateTime(this._header.CreateDateTime);
 			//BL: TDUPDATE(Julian day)
 			//BL: TDUPDATE(Milliseconds into the day)
-			_writer.WriteDateTime(header.UpdateDateTime);
+			this._writer.WriteDateTime(this._header.UpdateDateTime);
 
 			//R2004 +:
-			if (R2004Plus)
+			if (this.R2004Plus)
 			{
 				//BL : Unknown
-				_writer.WriteBitLong(0);
+				this._writer.WriteBitLong(0);
 				//BL : Unknown
-				_writer.WriteBitLong(0);
+				this._writer.WriteBitLong(0);
 				//BL : Unknown
-				_writer.WriteBitLong(0);
+				this._writer.WriteBitLong(0);
 			}
 
 			//Common:
 			//BL: TDINDWG(Days)
 			//BL: TDINDWG(Milliseconds into the day)
-			_writer.WriteTimeSpan(header.TotalEditingTime);
+			this._writer.WriteTimeSpan(this._header.TotalEditingTime);
 			//BL: TDUSRTIMER(Days)
 			//BL: TDUSRTIMER(Milliseconds into the day)
-			_writer.WriteTimeSpan(header.UserElapsedTimeSpan);
+			this._writer.WriteTimeSpan(this._header.UserElapsedTimeSpan);
 
 			//CMC : CECOLOR
-			_writer.WriteCmColor(header.CurrentEntityColor);
+			this._writer.WriteCmColor(this._header.CurrentEntityColor);
 
 			//H : HANDSEED The next handle, with an 8-bit length specifier preceding the handle
 			//bytes (standard hex handle form) (code 0). The HANDSEED is not part of the handle
 			//stream, but of the normal data stream (relevant for R21 and later).
-			_writer.HandleReference(header.HandleSeed);
+			this._writer.HandleReference(this._header.HandleSeed);
 
 			//H : CLAYER (hard pointer)
-			_writer.HandleReference(DwgReferenceType.HardPointer, header.CurrentLayer);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.CurrentLayer);
 
 			//H: TEXTSTYLE(hard pointer)
-			_writer.HandleReference(DwgReferenceType.HardPointer, header.CurrentTextStyle);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.CurrentTextStyle);
 
 			//H: CELTYPE(hard pointer)
-			_writer.HandleReference(DwgReferenceType.HardPointer, header.CurrentLineType);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.CurrentLineType);
 
 			//R2007 + Only:
-			if (R2007Plus)
+			if (this.R2007Plus)
 			{
 				//H: CMATERIAL(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 			}
 
 			//Common:
 			//H: DIMSTYLE (hard pointer)
-			_writer.HandleReference(DwgReferenceType.HardPointer, header.DimensionStyleOverrides);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.DimensionStyleOverrides);
 
 			//H: CMLSTYLE (hard pointer)
-			_writer.HandleReference(DwgReferenceType.HardPointer, null);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 
 			//R2000+ Only:
-			if (R2000Plus)
+			if (this.R2000Plus)
 			{
 				//BD: PSVPSCALE
-				_writer.WriteBitDouble(header.ViewportDefaultViewScaleFactor);
+				this._writer.WriteBitDouble(this._header.ViewportDefaultViewScaleFactor);
 			}
 
 			//Common:
 			//3BD: INSBASE(PSPACE)
-			_writer.Write3BitDouble(header.PaperSpaceInsertionBase);
+			this._writer.Write3BitDouble(this._header.PaperSpaceInsertionBase);
 			//3BD: EXTMIN(PSPACE)
-			_writer.Write3BitDouble(header.PaperSpaceExtMin);
+			this._writer.Write3BitDouble(this._header.PaperSpaceExtMin);
 			//3BD: EXTMAX(PSPACE)
-			_writer.Write3BitDouble(header.PaperSpaceExtMax);
+			this._writer.Write3BitDouble(this._header.PaperSpaceExtMax);
 			//2RD: LIMMIN(PSPACE)
-			_writer.Write2RawDouble(header.PaperSpaceLimitsMin);
+			this._writer.Write2RawDouble(this._header.PaperSpaceLimitsMin);
 			//2RD: LIMMAX(PSPACE)
-			_writer.Write2RawDouble(header.PaperSpaceLimitsMax);
+			this._writer.Write2RawDouble(this._header.PaperSpaceLimitsMax);
 			//BD: ELEVATION(PSPACE)
-			_writer.WriteBitDouble(header.PaperSpaceElevation);
+			this._writer.WriteBitDouble(this._header.PaperSpaceElevation);
 			//3BD: UCSORG(PSPACE)
-			_writer.Write3BitDouble(header.PaperSpaceUcsOrigin);
+			this._writer.Write3BitDouble(this._header.PaperSpaceUcsOrigin);
 			//3BD: UCSXDIR(PSPACE)
-			_writer.Write3BitDouble(header.PaperSpaceUcsXAxis);
+			this._writer.Write3BitDouble(this._header.PaperSpaceUcsXAxis);
 			//3BD: UCSYDIR(PSPACE)
-			_writer.Write3BitDouble(header.PaperSpaceUcsYAxis);
+			this._writer.Write3BitDouble(this._header.PaperSpaceUcsYAxis);
 
 			//H: UCSNAME (PSPACE) (hard pointer)
-			_writer.HandleReference(DwgReferenceType.HardPointer, header.PaperSpaceUcs);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.PaperSpaceUcs);
 
 			//R2000+ Only:
-			if (R2000Plus)
+			if (this.R2000Plus)
 			{
 				//H : PUCSORTHOREF (hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 
 				//BS : PUCSORTHOVIEW	??
-				_writer.WriteBitShort(0);
+				this._writer.WriteBitShort(0);
 
 				//H: PUCSBASE(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 
 				//3BD: PUCSORGTOP
-				_writer.Write3BitDouble(header.PaperSpaceOrthographicTopDOrigin);
+				this._writer.Write3BitDouble(this._header.PaperSpaceOrthographicTopDOrigin);
 				//3BD: PUCSORGBOTTOM
-				_writer.Write3BitDouble(header.PaperSpaceOrthographicBottomDOrigin);
+				this._writer.Write3BitDouble(this._header.PaperSpaceOrthographicBottomDOrigin);
 				//3BD: PUCSORGLEFT
-				_writer.Write3BitDouble(header.PaperSpaceOrthographicLeftDOrigin);
+				this._writer.Write3BitDouble(this._header.PaperSpaceOrthographicLeftDOrigin);
 				//3BD: PUCSORGRIGHT
-				_writer.Write3BitDouble(header.PaperSpaceOrthographicRightDOrigin);
+				this._writer.Write3BitDouble(this._header.PaperSpaceOrthographicRightDOrigin);
 				//3BD: PUCSORGFRONT
-				_writer.Write3BitDouble(header.PaperSpaceOrthographicFrontDOrigin);
+				this._writer.Write3BitDouble(this._header.PaperSpaceOrthographicFrontDOrigin);
 				//3BD: PUCSORGBACK
-				_writer.Write3BitDouble(header.PaperSpaceOrthographicBackDOrigin);
+				this._writer.Write3BitDouble(this._header.PaperSpaceOrthographicBackDOrigin);
 			}
 
 			//Common:
 			//3BD: INSBASE(MSPACE)
-			_writer.Write3BitDouble(header.ModelSpaceInsertionBase);
+			this._writer.Write3BitDouble(this._header.ModelSpaceInsertionBase);
 			//3BD: EXTMIN(MSPACE)
-			_writer.Write3BitDouble(header.ModelSpaceExtMin);
+			this._writer.Write3BitDouble(this._header.ModelSpaceExtMin);
 			//3BD: EXTMAX(MSPACE)
-			_writer.Write3BitDouble(header.ModelSpaceExtMax);
+			this._writer.Write3BitDouble(this._header.ModelSpaceExtMax);
 			//2RD: LIMMIN(MSPACE)
-			_writer.Write2RawDouble(header.ModelSpaceLimitsMin);
+			this._writer.Write2RawDouble(this._header.ModelSpaceLimitsMin);
 			//2RD: LIMMAX(MSPACE)
-			_writer.Write2RawDouble(header.ModelSpaceLimitsMax);
+			this._writer.Write2RawDouble(this._header.ModelSpaceLimitsMax);
 			//BD: ELEVATION(MSPACE)
-			_writer.WriteBitDouble(header.Elevation);
+			this._writer.WriteBitDouble(this._header.Elevation);
 			//3BD: UCSORG(MSPACE)
-			_writer.Write3BitDouble(header.ModelSpaceOrigin);
+			this._writer.Write3BitDouble(this._header.ModelSpaceOrigin);
 			//3BD: UCSXDIR(MSPACE)
-			_writer.Write3BitDouble(header.ModelSpaceXAxis);
+			this._writer.Write3BitDouble(this._header.ModelSpaceXAxis);
 			//3BD: UCSYDIR(MSPACE)
-			_writer.Write3BitDouble(header.ModelSpaceYAxis);
+			this._writer.Write3BitDouble(this._header.ModelSpaceYAxis);
 
 			//H: UCSNAME(MSPACE)(hard pointer)
-			_writer.HandleReference(DwgReferenceType.HardPointer, header.ModelSpace);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.ModelSpace);
 
 			//R2000 + Only:
-			if (R2000Plus)
+			if (this.R2000Plus)
 			{
 				//H: UCSORTHOREF(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 
 				//BS: UCSORTHOVIEW	??
-				_writer.WriteBitShort(0);
+				this._writer.WriteBitShort(0);
 
 				//H : UCSBASE(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 
 				//3BD: UCSORGTOP
-				_writer.Write3BitDouble(header.ModelSpaceOrthographicTopDOrigin);
+				this._writer.Write3BitDouble(this._header.ModelSpaceOrthographicTopDOrigin);
 				//3BD: UCSORGBOTTOM
-				_writer.Write3BitDouble(header.ModelSpaceOrthographicBottomDOrigin);
+				this._writer.Write3BitDouble(this._header.ModelSpaceOrthographicBottomDOrigin);
 				//3BD: UCSORGLEFT
-				_writer.Write3BitDouble(header.ModelSpaceOrthographicLeftDOrigin);
+				this._writer.Write3BitDouble(this._header.ModelSpaceOrthographicLeftDOrigin);
 				//3BD: UCSORGRIGHT
-				_writer.Write3BitDouble(header.ModelSpaceOrthographicRightDOrigin);
+				this._writer.Write3BitDouble(this._header.ModelSpaceOrthographicRightDOrigin);
 				//3BD: UCSORGFRONT
-				_writer.Write3BitDouble(header.ModelSpaceOrthographicFrontDOrigin);
+				this._writer.Write3BitDouble(this._header.ModelSpaceOrthographicFrontDOrigin);
 				//3BD: UCSORGBACK
-				_writer.Write3BitDouble(header.ModelSpaceOrthographicBackDOrigin);
+				this._writer.Write3BitDouble(this._header.ModelSpaceOrthographicBackDOrigin);
 
 				//TV : DIMPOST
-				_writer.WriteVariableText(header.DimensionPostFix);
+				this._writer.WriteVariableText(this._header.DimensionPostFix);
 				//TV : DIMAPOST
-				_writer.WriteVariableText(header.DimensionAlternateDimensioningSuffix);
+				this._writer.WriteVariableText(this._header.DimensionAlternateDimensioningSuffix);
 			}
 
 			//R13-R14 Only:
-			if (R13_14Only)
+			if (this.R13_14Only)
 			{
 				//B: DIMTOL
-				_writer.WriteBit(header.DimensionGenerateTolerances);
+				this._writer.WriteBit(this._header.DimensionGenerateTolerances);
 				//B : DIMLIM
-				_writer.WriteBit(header.DimensionLimitsGeneration);
+				this._writer.WriteBit(this._header.DimensionLimitsGeneration);
 				//B : DIMTIH
-				_writer.WriteBit(header.DimensionTextInsideHorizontal);
+				this._writer.WriteBit(this._header.DimensionTextInsideHorizontal);
 				//B : DIMTOH
-				_writer.WriteBit(header.DimensionTextOutsideHorizontal);
+				this._writer.WriteBit(this._header.DimensionTextOutsideHorizontal);
 				//B : DIMSE1
-				_writer.WriteBit(header.DimensionSuppressFirstExtensionLine);
+				this._writer.WriteBit(this._header.DimensionSuppressFirstExtensionLine);
 				//B : DIMSE2
-				_writer.WriteBit(header.DimensionSuppressSecondExtensionLine);
+				this._writer.WriteBit(this._header.DimensionSuppressSecondExtensionLine);
 				//B : DIMALT
-				_writer.WriteBit(header.DimensionAlternateUnitDimensioning);
+				this._writer.WriteBit(this._header.DimensionAlternateUnitDimensioning);
 				//B : DIMTOFL
-				_writer.WriteBit(header.DimensionTextOutsideExtensions);
+				this._writer.WriteBit(this._header.DimensionTextOutsideExtensions);
 				//B : DIMSAH
-				_writer.WriteBit(header.DimensionSeparateArrowBlocks);
+				this._writer.WriteBit(this._header.DimensionSeparateArrowBlocks);
 				//B : DIMTIX
-				_writer.WriteBit(header.DimensionTextInsideExtensions);
+				this._writer.WriteBit(this._header.DimensionTextInsideExtensions);
 				//B : DIMSOXD
-				_writer.WriteBit(header.DimensionSuppressOutsideExtensions);
+				this._writer.WriteBit(this._header.DimensionSuppressOutsideExtensions);
 				//RC : DIMALTD
-				_writer.WriteByte((byte)header.DimensionAlternateUnitDecimalPlaces);
+				this._writer.WriteByte((byte)this._header.DimensionAlternateUnitDecimalPlaces);
 				//RC : DIMZIN
-				_writer.WriteByte((byte)header.DimensionZeroHandling);
+				this._writer.WriteByte((byte)this._header.DimensionZeroHandling);
 				//B : DIMSD1
-				_writer.WriteBit(header.DimensionSuppressFirstDimensionLine);
+				this._writer.WriteBit(this._header.DimensionSuppressFirstDimensionLine);
 				//B : DIMSD2
-				_writer.WriteBit(header.DimensionSuppressSecondDimensionLine);
+				this._writer.WriteBit(this._header.DimensionSuppressSecondDimensionLine);
 				//RC : DIMTOLJ
-				_writer.WriteByte((byte)header.DimensionToleranceAlignment);
+				this._writer.WriteByte((byte)this._header.DimensionToleranceAlignment);
 				//RC : DIMJUST
-				_writer.WriteByte((byte)header.DimensionTextHorizontalAlignment);
+				this._writer.WriteByte((byte)this._header.DimensionTextHorizontalAlignment);
 				//RC : DIMFIT
-				_writer.WriteByte((byte)header.DimensionFit);
+				this._writer.WriteByte((byte)this._header.DimensionFit);
 				//B : DIMUPT
-				_writer.WriteBit(header.DimensionCursorUpdate);
+				this._writer.WriteBit(this._header.DimensionCursorUpdate);
 				//RC : DIMTZIN
-				_writer.WriteByte((byte)header.DimensionToleranceZeroHandling);
+				this._writer.WriteByte((byte)this._header.DimensionToleranceZeroHandling);
 				//RC: DIMALTZ
-				_writer.WriteByte((byte)header.DimensionAlternateUnitZeroHandling);
+				this._writer.WriteByte((byte)this._header.DimensionAlternateUnitZeroHandling);
 				//RC : DIMALTTZ
-				_writer.WriteByte((byte)header.DimensionAlternateUnitToleranceZeroHandling);
+				this._writer.WriteByte((byte)this._header.DimensionAlternateUnitToleranceZeroHandling);
 				//RC : DIMTAD
-				_writer.WriteByte((byte)header.DimensionTextVerticalAlignment);
+				this._writer.WriteByte((byte)this._header.DimensionTextVerticalAlignment);
 				//BS : DIMUNIT
-				_writer.WriteBitShort(header.DimensionUnit);
+				this._writer.WriteBitShort(this._header.DimensionUnit);
 				//BS : DIMAUNIT
-				_writer.WriteBitShort(header.DimensionAngularDimensionDecimalPlaces);
+				this._writer.WriteBitShort(this._header.DimensionAngularDimensionDecimalPlaces);
 				//BS : DIMDEC
-				_writer.WriteBitShort(header.DimensionDecimalPlaces);
+				this._writer.WriteBitShort(this._header.DimensionDecimalPlaces);
 				//BS : DIMTDEC
-				_writer.WriteBitShort(header.DimensionToleranceDecimalPlaces);
+				this._writer.WriteBitShort(this._header.DimensionToleranceDecimalPlaces);
 				//BS : DIMALTU
-				_writer.WriteBitShort((short)header.DimensionAlternateUnitFormat);
+				this._writer.WriteBitShort((short)this._header.DimensionAlternateUnitFormat);
 				//BS : DIMALTTD
-				_writer.WriteBitShort(header.DimensionAlternateUnitToleranceDecimalPlaces);
+				this._writer.WriteBitShort(this._header.DimensionAlternateUnitToleranceDecimalPlaces);
 
 				//H : DIMTXSTY(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, header.DimensionStyleOverrides);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.DimensionStyleOverrides);
 			}
 
 			//Common:
 			//BD: DIMSCALE
-			_writer.WriteBitDouble(header.DimensionScaleFactor);
+			this._writer.WriteBitDouble(this._header.DimensionScaleFactor);
 			//BD : DIMASZ
-			_writer.WriteBitDouble(header.DimensionArrowSize);
+			this._writer.WriteBitDouble(this._header.DimensionArrowSize);
 			//BD : DIMEXO
-			_writer.WriteBitDouble(header.DimensionExtensionLineOffset);
+			this._writer.WriteBitDouble(this._header.DimensionExtensionLineOffset);
 			//BD : DIMDLI
-			_writer.WriteBitDouble(header.DimensionLineIncrement);
+			this._writer.WriteBitDouble(this._header.DimensionLineIncrement);
 			//BD : DIMEXE
-			_writer.WriteBitDouble(header.DimensionExtensionLineExtension);
+			this._writer.WriteBitDouble(this._header.DimensionExtensionLineExtension);
 			//BD : DIMRND
-			_writer.WriteBitDouble(header.DimensionRounding);
+			this._writer.WriteBitDouble(this._header.DimensionRounding);
 			//BD : DIMDLE
-			_writer.WriteBitDouble(header.DimensionLineExtension);
+			this._writer.WriteBitDouble(this._header.DimensionLineExtension);
 			//BD : DIMTP
-			_writer.WriteBitDouble(header.DimensionPlusTolerance);
+			this._writer.WriteBitDouble(this._header.DimensionPlusTolerance);
 			//BD : DIMTM
-			_writer.WriteBitDouble(header.DimensionMinusTolerance);
+			this._writer.WriteBitDouble(this._header.DimensionMinusTolerance);
 
 			//R2007 + Only:
-			if (R2007Plus)
+			if (this.R2007Plus)
 			{
 				//BD: DIMFXL
-				_writer.WriteBitDouble(header.DimensionFixedExtensionLineLength);
+				this._writer.WriteBitDouble(this._header.DimensionFixedExtensionLineLength);
 				//BD : DIMJOGANG
-				_writer.WriteBitDouble(header.DimensionJoggedRadiusDimensionTransverseSegmentAngle);
+				this._writer.WriteBitDouble(this._header.DimensionJoggedRadiusDimensionTransverseSegmentAngle);
 				//BS : DIMTFILL
-				_writer.WriteBitShort((short)header.DimensionTextBackgroundFillMode);
+				this._writer.WriteBitShort((short)this._header.DimensionTextBackgroundFillMode);
 				//CMC : DIMTFILLCLR
-				_writer.WriteCmColor(header.DimensionTextBackgroundColor);
+				this._writer.WriteCmColor(this._header.DimensionTextBackgroundColor);
 			}
 
 			//R2000 + Only:
-			if (R2000Plus)
+			if (this.R2000Plus)
 			{
 				//B: DIMTOL
-				_writer.WriteBit(header.DimensionGenerateTolerances);
+				this._writer.WriteBit(this._header.DimensionGenerateTolerances);
 				//B : DIMLIM
-				_writer.WriteBit(header.DimensionLimitsGeneration);
+				this._writer.WriteBit(this._header.DimensionLimitsGeneration);
 				//B : DIMTIH
-				_writer.WriteBit(header.DimensionTextInsideHorizontal);
+				this._writer.WriteBit(this._header.DimensionTextInsideHorizontal);
 				//B : DIMTOH
-				_writer.WriteBit(header.DimensionTextOutsideHorizontal);
+				this._writer.WriteBit(this._header.DimensionTextOutsideHorizontal);
 				//B : DIMSE1
-				_writer.WriteBit(header.DimensionSuppressFirstExtensionLine);
+				this._writer.WriteBit(this._header.DimensionSuppressFirstExtensionLine);
 				//B : DIMSE2
-				_writer.WriteBit(header.DimensionSuppressSecondExtensionLine);
+				this._writer.WriteBit(this._header.DimensionSuppressSecondExtensionLine);
 				//BS : DIMTAD
-				_writer.WriteBitShort((short)header.DimensionTextVerticalAlignment);
+				this._writer.WriteBitShort((short)this._header.DimensionTextVerticalAlignment);
 				//BS : DIMZIN
-				_writer.WriteBitShort((short)header.DimensionZeroHandling);
+				this._writer.WriteBitShort((short)this._header.DimensionZeroHandling);
 				//BS : DIMAZIN
-				_writer.WriteBitShort((short)header.DimensionAngularZeroHandling);
+				this._writer.WriteBitShort((short)this._header.DimensionAngularZeroHandling);
 			}
 
 			//R2007 + Only:
-			if (R2007Plus)
+			if (this.R2007Plus)
 			{
 				//BS: DIMARCSYM
-				_writer.WriteBitShort((short)header.DimensionArcLengthSymbolPosition);
+				this._writer.WriteBitShort((short)this._header.DimensionArcLengthSymbolPosition);
 			}
 
 			//Common:
 			//BD: DIMTXT
-			_writer.WriteBitDouble(header.DimensionTextHeight);
+			this._writer.WriteBitDouble(this._header.DimensionTextHeight);
 			//BD : DIMCEN
-			_writer.WriteBitDouble(header.DimensionCenterMarkSize);
+			this._writer.WriteBitDouble(this._header.DimensionCenterMarkSize);
 			//BD: DIMTSZ
-			_writer.WriteBitDouble(header.DimensionTickSize);
+			this._writer.WriteBitDouble(this._header.DimensionTickSize);
 			//BD : DIMALTF
-			_writer.WriteBitDouble(header.DimensionAlternateUnitScaleFactor);
+			this._writer.WriteBitDouble(this._header.DimensionAlternateUnitScaleFactor);
 			//BD : DIMLFAC
-			_writer.WriteBitDouble(header.DimensionLinearScaleFactor);
+			this._writer.WriteBitDouble(this._header.DimensionLinearScaleFactor);
 			//BD : DIMTVP
-			_writer.WriteBitDouble(header.DimensionTextVerticalPosition);
+			this._writer.WriteBitDouble(this._header.DimensionTextVerticalPosition);
 			//BD : DIMTFAC
-			_writer.WriteBitDouble(header.DimensionToleranceScaleFactor);
+			this._writer.WriteBitDouble(this._header.DimensionToleranceScaleFactor);
 			//BD : DIMGAP
-			_writer.WriteBitDouble(header.DimensionLineGap);
+			this._writer.WriteBitDouble(this._header.DimensionLineGap);
 
 			//R13 - R14 Only:
-			if (R13_14Only)
+			if (this.R13_14Only)
 			{
 				//T: DIMPOST
-				_writer.WriteVariableText(header.DimensionPostFix);
+				this._writer.WriteVariableText(this._header.DimensionPostFix);
 				//T : DIMAPOST
-				_writer.WriteVariableText(header.DimensionAlternateDimensioningSuffix);
+				this._writer.WriteVariableText(this._header.DimensionAlternateDimensioningSuffix);
 				//T : DIMBLK
-				_writer.WriteVariableText(header.DimensionBlockName);
+				this._writer.WriteVariableText(this._header.DimensionBlockName);
 				//T : DIMBLK1
-				_writer.WriteVariableText(header.DimensionBlockNameFirst);
+				this._writer.WriteVariableText(this._header.DimensionBlockNameFirst);
 				//T : DIMBLK2
-				_writer.WriteVariableText(header.DimensionBlockNameSecond);
+				this._writer.WriteVariableText(this._header.DimensionBlockNameSecond);
 			}
 
 			//R2000 + Only:
-			if (R2000Plus)
+			if (this.R2000Plus)
 			{
 				//BD: DIMALTRND
-				_writer.WriteBitDouble(header.DimensionAlternateUnitRounding);
+				this._writer.WriteBitDouble(this._header.DimensionAlternateUnitRounding);
 				//B : DIMALT
-				_writer.WriteBit(header.DimensionAlternateUnitDimensioning);
+				this._writer.WriteBit(this._header.DimensionAlternateUnitDimensioning);
 				//BS : DIMALTD
-				_writer.WriteBitShort(header.DimensionAlternateUnitDecimalPlaces);
+				this._writer.WriteBitShort(this._header.DimensionAlternateUnitDecimalPlaces);
 				//B : DIMTOFL
-				_writer.WriteBit(header.DimensionTextOutsideExtensions);
+				this._writer.WriteBit(this._header.DimensionTextOutsideExtensions);
 				//B : DIMSAH
-				_writer.WriteBit(header.DimensionSeparateArrowBlocks);
+				this._writer.WriteBit(this._header.DimensionSeparateArrowBlocks);
 				//B : DIMTIX
-				_writer.WriteBit(header.DimensionTextInsideExtensions);
+				this._writer.WriteBit(this._header.DimensionTextInsideExtensions);
 				//B : DIMSOXD
-				_writer.WriteBit(header.DimensionSuppressOutsideExtensions);
+				this._writer.WriteBit(this._header.DimensionSuppressOutsideExtensions);
 			}
 
 			//Common:
 			//CMC: DIMCLRD
-			_writer.WriteCmColor(header.DimensionLineColor);
+			this._writer.WriteCmColor(this._header.DimensionLineColor);
 			//CMC : DIMCLRE
-			_writer.WriteCmColor(header.DimensionExtensionLineColor);
+			this._writer.WriteCmColor(this._header.DimensionExtensionLineColor);
 			//CMC : DIMCLRT
-			_writer.WriteCmColor(header.DimensionTextColor);
+			this._writer.WriteCmColor(this._header.DimensionTextColor);
 
 			//R2000 + Only:
-			if (R2000Plus)
+			if (this.R2000Plus)
 			{
 				//BS: DIMADEC
-				_writer.WriteBitShort(header.DimensionAngularDimensionDecimalPlaces);
+				this._writer.WriteBitShort(this._header.DimensionAngularDimensionDecimalPlaces);
 				//BS : DIMDEC
-				_writer.WriteBitShort(header.DimensionDecimalPlaces);
+				this._writer.WriteBitShort(this._header.DimensionDecimalPlaces);
 				//BS : DIMTDEC
-				_writer.WriteBitShort(header.DimensionToleranceDecimalPlaces);
+				this._writer.WriteBitShort(this._header.DimensionToleranceDecimalPlaces);
 				//BS : DIMALTU
-				_writer.WriteBitShort((short)header.DimensionAlternateUnitFormat);
+				this._writer.WriteBitShort((short)this._header.DimensionAlternateUnitFormat);
 				//BS : DIMALTTD
-				_writer.WriteBitShort(header.DimensionAlternateUnitToleranceDecimalPlaces);
+				this._writer.WriteBitShort(this._header.DimensionAlternateUnitToleranceDecimalPlaces);
 				//BS : DIMAUNIT
-				_writer.WriteBitShort((short)header.DimensionAngularUnit);
+				this._writer.WriteBitShort((short)this._header.DimensionAngularUnit);
 				//BS : DIMFRAC
-				_writer.WriteBitShort((short)header.DimensionFractionFormat);
+				this._writer.WriteBitShort((short)this._header.DimensionFractionFormat);
 				//BS : DIMLUNIT
-				_writer.WriteBitShort((short)header.DimensionLinearUnitFormat);
+				this._writer.WriteBitShort((short)this._header.DimensionLinearUnitFormat);
 				//BS : DIMDSEP
-				_writer.WriteBitShort((short)header.DimensionDecimalSeparator);
+				this._writer.WriteBitShort((short)this._header.DimensionDecimalSeparator);
 				//BS : DIMTMOVE
-				_writer.WriteBitShort((short)header.DimensionTextMovement);
+				this._writer.WriteBitShort((short)this._header.DimensionTextMovement);
 				//BS : DIMJUST
-				_writer.WriteBitShort((short)header.DimensionTextHorizontalAlignment);
+				this._writer.WriteBitShort((short)this._header.DimensionTextHorizontalAlignment);
 				//B : DIMSD1
-				_writer.WriteBit(header.DimensionSuppressFirstExtensionLine);
+				this._writer.WriteBit(this._header.DimensionSuppressFirstExtensionLine);
 				//B : DIMSD2
-				_writer.WriteBit(header.DimensionSuppressSecondExtensionLine);
+				this._writer.WriteBit(this._header.DimensionSuppressSecondExtensionLine);
 				//BS : DIMTOLJ
-				_writer.WriteBitShort((short)header.DimensionToleranceAlignment);
+				this._writer.WriteBitShort((short)this._header.DimensionToleranceAlignment);
 				//BS : DIMTZIN
-				_writer.WriteBitShort((short)header.DimensionToleranceZeroHandling);
+				this._writer.WriteBitShort((short)this._header.DimensionToleranceZeroHandling);
 				//BS: DIMALTZ
-				_writer.WriteBitShort((short)header.DimensionAlternateUnitZeroHandling);
+				this._writer.WriteBitShort((short)this._header.DimensionAlternateUnitZeroHandling);
 				//BS : DIMALTTZ
-				_writer.WriteBitShort((short)header.DimensionAlternateUnitToleranceZeroHandling);
+				this._writer.WriteBitShort((short)this._header.DimensionAlternateUnitToleranceZeroHandling);
 				//B : DIMUPT
-				_writer.WriteBit(header.DimensionCursorUpdate);
+				this._writer.WriteBit(this._header.DimensionCursorUpdate);
 				//BS : DIMATFIT
-				_writer.WriteBitShort(header.DimensionDimensionTextArrowFit);
+				this._writer.WriteBitShort(this._header.DimensionDimensionTextArrowFit);
 			}
 
 			//R2007 + Only:
-			if (R2007Plus)
+			if (this.R2007Plus)
 			{
 				//B: DIMFXLON
-				_writer.WriteBit(header.DimensionIsExtensionLineLengthFixed);
+				this._writer.WriteBit(this._header.DimensionIsExtensionLineLengthFixed);
 			}
 
 			//R2010 + Only:
-			if (R2010Plus)
+			if (this.R2010Plus)
 			{
 				//B: DIMTXTDIRECTION
-				_writer.WriteBit(header.DimensionTextDirection == Tables.TextDirection.RightToLeft);
+				this._writer.WriteBit(this._header.DimensionTextDirection == Tables.TextDirection.RightToLeft);
 				//BD : DIMALTMZF
-				_writer.WriteBitDouble(header.DimensionAltMzf);
+				this._writer.WriteBitDouble(this._header.DimensionAltMzf);
 				//T : DIMALTMZS
-				_writer.WriteVariableText(header.DimensionAltMzs);
+				this._writer.WriteVariableText(this._header.DimensionAltMzs);
 				//BD : DIMMZF
-				_writer.WriteBitDouble(header.DimensionMzf);
+				this._writer.WriteBitDouble(this._header.DimensionMzf);
 				//T : DIMMZS
-				_writer.WriteVariableText(header.DimensionMzs);
+				this._writer.WriteVariableText(this._header.DimensionMzs);
 			}
 
 			//R2000 + Only:
-			if (R2000Plus)
+			if (this.R2000Plus)
 			{
 				//H: DIMTXSTY(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 				//H: DIMLDRBLK(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 				//H: DIMBLK(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 				//H: DIMBLK1(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 				//H: DIMBLK2(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 			}
 
 			//R2007+ Only:
-			if (R2007Plus)
+			if (this.R2007Plus)
 			{
 				//H : DIMLTYPE (hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 				//H: DIMLTEX1(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 				//H: DIMLTEX2(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 			}
 
 			//R2000+ Only:
-			if (R2000Plus)
+			if (this.R2000Plus)
 			{
 				//BS: DIMLWD
-				_writer.WriteBitShort((short)header.DimensionLineWeight);
+				this._writer.WriteBitShort((short)this._header.DimensionLineWeight);
 				//BS : DIMLWE
-				_writer.WriteBitShort((short)header.ExtensionLineWeight);
+				this._writer.WriteBitShort((short)this._header.ExtensionLineWeight);
 			}
 
 			//H: BLOCK CONTROL OBJECT(hard owner)
-			_writer.HandleReference(DwgReferenceType.HardOwnership, _document.BlockRecords);
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.BlockRecords);
 			//H: LAYER CONTROL OBJECT(hard owner)
-			_writer.HandleReference(DwgReferenceType.HardOwnership, _document.Layers);
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.Layers);
 			//H: STYLE CONTROL OBJECT(hard owner)
-			_writer.HandleReference(DwgReferenceType.HardOwnership, _document.TextStyles);
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.TextStyles);
 			//H: LINETYPE CONTROL OBJECT(hard owner)
-			_writer.HandleReference(DwgReferenceType.HardOwnership, _document.LineTypes);
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.LineTypes);
 			//H: VIEW CONTROL OBJECT(hard owner)
-			_writer.HandleReference(DwgReferenceType.HardOwnership, _document.Views);
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.Views);
 			//H: UCS CONTROL OBJECT(hard owner)
-			_writer.HandleReference(DwgReferenceType.HardOwnership, _document.UCSs);
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.UCSs);
 			//H: VPORT CONTROL OBJECT(hard owner)
-			_writer.HandleReference(DwgReferenceType.HardOwnership, _document.VPorts);
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.VPorts);
 			//H: APPID CONTROL OBJECT(hard owner)
-			_writer.HandleReference(DwgReferenceType.HardOwnership, _document.AppIds);
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.AppIds);
 			//H: DIMSTYLE CONTROL OBJECT(hard owner)
-			_writer.HandleReference(DwgReferenceType.HardOwnership, _document.DimensionStyles);
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.DimensionStyles);
 
 			//R13 - R15 Only:
-			if (R13_15Only)
+			if (this.R13_15Only)
 			{
 				//H: VIEWPORT ENTITY HEADER CONTROL OBJECT(hard owner)
-				_writer.HandleReference(DwgReferenceType.HardOwnership, null);
+				this._writer.HandleReference(DwgReferenceType.HardOwnership, null);
 			}
 
 			//Common:
 			//H: DICTIONARY(ACAD_GROUP)(hard pointer)
-			_writer.HandleReference(DwgReferenceType.HardPointer, null);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 			//H: DICTIONARY(ACAD_MLINESTYLE)(hard pointer)
-			_writer.HandleReference(DwgReferenceType.HardPointer, null);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 
 			//H : DICTIONARY (NAMED OBJECTS) (hard owner)
-			_writer.HandleReference(DwgReferenceType.HardOwnership, _document.RootDictionary);
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.RootDictionary);
 
 			//R2000+ Only:
-			if (R2000Plus)
+			if (this.R2000Plus)
 			{
 				//BS: TSTACKALIGN, default = 1(not present in DXF)
-				_writer.WriteBitShort(header.StackedTextAlignment);
+				this._writer.WriteBitShort(this._header.StackedTextAlignment);
 				//BS: TSTACKSIZE, default = 70(not present in DXF)
-				_writer.WriteBitShort(header.StackedTextSizePercentage);
+				this._writer.WriteBitShort(this._header.StackedTextSizePercentage);
 
 				//TV: HYPERLINKBASE
-				_writer.WriteVariableText(header.HyperLinkBase);
+				this._writer.WriteVariableText(this._header.HyperLinkBase);
 				//TV : STYLESHEET
-				_writer.WriteVariableText(header.StyleSheetName);
+				this._writer.WriteVariableText(this._header.StyleSheetName);
 
 				//H : DICTIONARY(LAYOUTS)(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, _document.RootDictionary[CadDictionary.AcadLayout]);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.RootDictionary[CadDictionary.AcadLayout]);
 				//H: DICTIONARY(PLOTSETTINGS)(hard pointer)
 				//_writer.HandleReference(DwgReferenceType.HardPointer, _document.RootDictionary[CadDictionary.AcadPlotSettings]);
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 				//H: DICTIONARY(PLOTSTYLES)(hard pointer)
 				//_writer.HandleReference(DwgReferenceType.HardPointer, _document.RootDictionary[CadDictionary.AcadPlotStyleName]);
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 			}
 
 			//R2004 +:
-			if (R2004Plus)
+			if (this.R2004Plus)
 			{
 				//H: DICTIONARY (MATERIALS) (hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 				//H: DICTIONARY (COLORS) (hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 			}
 
 			//R2007 +:
-			if (R2007Plus)
+			if (this.R2007Plus)
 			{
 				//H: DICTIONARY(VISUALSTYLE)(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 
 				//R2013+:
 				if (this.R2013Plus)
 					//H : UNKNOWN (hard pointer)	//DICTIONARY_VISUALSTYLE
-					_writer.HandleReference(DwgReferenceType.HardPointer, null);
+					this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 			}
 
 			//R2000 +:
-			if (R2000Plus)
+			if (this.R2000Plus)
 			{
 				//BL: Flags:
 
 				//CELWEIGHT Flags & 0x001F
-				int flags = ((int)this.header.CurrentEntityLineWeight & 0x1F) |
+				int flags = ((int)this._header.CurrentEntityLineWeight & 0x1F) |
 							//ENDCAPS Flags & 0x0060
-							(this.header.EndCaps << 0x5) |
+							(this._header.EndCaps << 0x5) |
 							//JOINSTYLE Flags & 0x0180
-							(this.header.JoinStyle << 0x7);
+							(this._header.JoinStyle << 0x7);
 
 				//LWDISPLAY!(Flags & 0x0200)
-				if (!this.header.DisplayLineWeight)
+				if (!this._header.DisplayLineWeight)
 				{
 					flags |= 0x200;
 				}
 				//XEDIT!(Flags & 0x0400)
-				if (!this.header.XEdit)
+				if (!this._header.XEdit)
 				{
 					flags |= 0x400;
 				}
 				//EXTNAMES Flags & 0x0800
-				if (this.header.ExtendedNames)
+				if (this._header.ExtendedNames)
 				{
 					flags |= 0x800;
 				}
 				//PSTYLEMODE Flags & 0x2000
-				if (this.header.PlotStyleMode == 1)
+				if (this._header.PlotStyleMode == 1)
 				{
 					flags |= 0x2000;
 				}
 				//OLESTARTUP Flags & 0x4000
-				if (this.header.LoadOLEObject)
+				if (this._header.LoadOLEObject)
 				{
 					flags |= 0x4000;
 				}
@@ -895,159 +899,159 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitLong(flags);
 
 				//BS: INSUNITS
-				_writer.WriteBitShort((short)header.InsUnits);
+				this._writer.WriteBitShort((short)this._header.InsUnits);
 				//BS : CEPSNTYPE
-				_writer.WriteBitShort(header.CurrentEntityPlotStyleType);
+				this._writer.WriteBitShort(this._header.CurrentEntityPlotStyleType);
 
-				if (header.CurrentEntityPlotStyleType == 3)
+				if (this._header.CurrentEntityPlotStyleType == 3)
 				{
 					//H: CPSNID(present only if CEPSNTYPE == 3) (hard pointer)
-					_writer.HandleReference(DwgReferenceType.HardPointer, null);
+					this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 				}
 
 				//TV: FINGERPRINTGUID
-				_writer.WriteVariableText(header.FingerPrintGuid);
+				this._writer.WriteVariableText(this._header.FingerPrintGuid);
 				//TV : VERSIONGUID
-				_writer.WriteVariableText(header.VersionGuid);
+				this._writer.WriteVariableText(this._header.VersionGuid);
 			}
 
 			//R2004 +:
-			if (R2004Plus)
+			if (this.R2004Plus)
 			{
 				//RC: SORTENTS
-				_writer.WriteByte((byte)header.EntitySortingFlags);
+				this._writer.WriteByte((byte)this._header.EntitySortingFlags);
 				//RC : INDEXCTL
-				_writer.WriteByte(header.IndexCreationFlags);
+				this._writer.WriteByte(this._header.IndexCreationFlags);
 				//RC : HIDETEXT
-				_writer.WriteByte(header.HideText);
+				this._writer.WriteByte(this._header.HideText);
 				//RC : XCLIPFRAME, before R2010 the value can be 0 or 1 only.
-				_writer.WriteByte(header.ExternalReferenceClippingBoundaryType);
+				this._writer.WriteByte(this._header.ExternalReferenceClippingBoundaryType);
 				//RC : DIMASSOC
-				_writer.WriteByte((byte)header.DimensionAssociativity);
+				this._writer.WriteByte((byte)this._header.DimensionAssociativity);
 				//RC : HALOGAP
-				_writer.WriteByte(header.HaloGapPercentage);
+				this._writer.WriteByte(this._header.HaloGapPercentage);
 				//BS : OBSCUREDCOLOR
-				_writer.WriteBitShort(header.ObscuredColor.Index);
+				this._writer.WriteBitShort(this._header.ObscuredColor.Index);
 				//BS : INTERSECTIONCOLOR
-				_writer.WriteBitShort(header.InterfereColor.Index);
+				this._writer.WriteBitShort(this._header.InterfereColor.Index);
 				//RC : OBSCUREDLTYPE
-				_writer.WriteByte(header.ObscuredType);
+				this._writer.WriteByte(this._header.ObscuredType);
 				//RC: INTERSECTIONDISPLAY
-				_writer.WriteByte(header.IntersectionDisplay);
+				this._writer.WriteByte(this._header.IntersectionDisplay);
 
 				//TV : PROJECTNAME
-				_writer.WriteVariableText(header.ProjectName);
+				this._writer.WriteVariableText(this._header.ProjectName);
 			}
 
 			//Common:
 			//H: BLOCK_RECORD(*PAPER_SPACE)(hard pointer)
-			_writer.HandleReference(DwgReferenceType.HardPointer, _document.PaperSpace);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.PaperSpace);
 			//H: BLOCK_RECORD(*MODEL_SPACE)(hard pointer)
-			_writer.HandleReference(DwgReferenceType.HardPointer, _document.ModelSpace);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.ModelSpace);
 			//H: LTYPE(BYLAYER)(hard pointer)
-			_writer.HandleReference(DwgReferenceType.HardPointer, _document.LineTypes["ByLayer"]);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.LineTypes["ByLayer"]);
 			//H: LTYPE(BYBLOCK)(hard pointer)
-			_writer.HandleReference(DwgReferenceType.HardPointer, _document.LineTypes["ByBlock"]);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.LineTypes["ByBlock"]);
 			//H: LTYPE(CONTINUOUS)(hard pointer)
-			_writer.HandleReference(DwgReferenceType.HardPointer, _document.LineTypes["Continuous"]);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.LineTypes["Continuous"]);
 
 			//R2007 +:
-			if (R2007Plus)
+			if (this.R2007Plus)
 			{
 				//B: CAMERADISPLAY
-				_writer.WriteBit(header.CameraDisplayObjects);
+				this._writer.WriteBit(this._header.CameraDisplayObjects);
 
 				//BL : unknown
-				_writer.WriteBitLong(0);
+				this._writer.WriteBitLong(0);
 				//BL : unknown
-				_writer.WriteBitLong(0);
+				this._writer.WriteBitLong(0);
 				//BD : unknown
-				_writer.WriteBitDouble(0);
+				this._writer.WriteBitDouble(0);
 
 				//BD : STEPSPERSEC
-				_writer.WriteBitDouble(header.StepsPerSecond);
+				this._writer.WriteBitDouble(this._header.StepsPerSecond);
 				//BD : STEPSIZE
-				_writer.WriteBitDouble(header.StepSize);
+				this._writer.WriteBitDouble(this._header.StepSize);
 				//BD : 3DDWFPREC
-				_writer.WriteBitDouble(header.Dw3DPrecision);
+				this._writer.WriteBitDouble(this._header.Dw3DPrecision);
 				//BD : LENSLENGTH
-				_writer.WriteBitDouble(header.LensLength);
+				this._writer.WriteBitDouble(this._header.LensLength);
 				//BD : CAMERAHEIGHT
-				_writer.WriteBitDouble(header.CameraHeight);
+				this._writer.WriteBitDouble(this._header.CameraHeight);
 				//RC : SOLIDHIST
-				_writer.WriteByte((byte)header.SolidsRetainHistory);
+				this._writer.WriteByte((byte)this._header.SolidsRetainHistory);
 				//RC : SHOWHIST
-				_writer.WriteByte((byte)header.ShowSolidsHistory);
+				this._writer.WriteByte((byte)this._header.ShowSolidsHistory);
 				//BD : PSOLWIDTH
-				_writer.WriteBitDouble(header.SweptSolidWidth);
+				this._writer.WriteBitDouble(this._header.SweptSolidWidth);
 				//BD : PSOLHEIGHT
-				_writer.WriteBitDouble(header.SweptSolidHeight);
+				this._writer.WriteBitDouble(this._header.SweptSolidHeight);
 				//BD : LOFTANG1
-				_writer.WriteBitDouble(header.DraftAngleFirstCrossSection);
+				this._writer.WriteBitDouble(this._header.DraftAngleFirstCrossSection);
 				//BD : LOFTANG2
-				_writer.WriteBitDouble(header.DraftAngleSecondCrossSection);
+				this._writer.WriteBitDouble(this._header.DraftAngleSecondCrossSection);
 				//BD : LOFTMAG1
-				_writer.WriteBitDouble(header.DraftMagnitudeFirstCrossSection);
+				this._writer.WriteBitDouble(this._header.DraftMagnitudeFirstCrossSection);
 				//BD : LOFTMAG2
-				_writer.WriteBitDouble(header.DraftMagnitudeSecondCrossSection);
+				this._writer.WriteBitDouble(this._header.DraftMagnitudeSecondCrossSection);
 				//BS : LOFTPARAM
-				_writer.WriteBitShort(header.SolidLoftedShape);
+				this._writer.WriteBitShort(this._header.SolidLoftedShape);
 				//RC : LOFTNORMALS
-				_writer.WriteByte((byte)header.LoftedObjectNormals);
+				this._writer.WriteByte((byte)this._header.LoftedObjectNormals);
 				//BD : LATITUDE
-				_writer.WriteBitDouble(header.Latitude);
+				this._writer.WriteBitDouble(this._header.Latitude);
 				//BD : LONGITUDE
-				_writer.WriteBitDouble(header.Longitude);
+				this._writer.WriteBitDouble(this._header.Longitude);
 				//BD : NORTHDIRECTION
-				_writer.WriteBitDouble(header.NorthDirection);
+				this._writer.WriteBitDouble(this._header.NorthDirection);
 				//BL : TIMEZONE
-				_writer.WriteBitLong(header.TimeZone);
+				this._writer.WriteBitLong(this._header.TimeZone);
 				//RC : LIGHTGLYPHDISPLAY
-				_writer.WriteByte((byte)header.DisplayLightGlyphs);
+				this._writer.WriteByte((byte)this._header.DisplayLightGlyphs);
 				//RC : TILEMODELIGHTSYNCH	??
-				_writer.WriteByte((byte)'0');
+				this._writer.WriteByte((byte)'0');
 				//RC : DWFFRAME
-				_writer.WriteByte((byte)header.DwgUnderlayFramesVisibility);
+				this._writer.WriteByte((byte)this._header.DwgUnderlayFramesVisibility);
 				//RC : DGNFRAME
-				_writer.WriteByte((byte)header.DgnUnderlayFramesVisibility);
+				this._writer.WriteByte((byte)this._header.DgnUnderlayFramesVisibility);
 
 				//B : unknown
-				_writer.WriteBit(false);
+				this._writer.WriteBit(false);
 
 				//CMC : INTERFERECOLOR
-				_writer.WriteCmColor(header.InterfereColor);
+				this._writer.WriteCmColor(this._header.InterfereColor);
 
 				//H : INTERFEREOBJVS(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 				//H: INTERFEREVPVS(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 				//H: DRAGVS(hard pointer)
-				_writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 
 				//RC: CSHADOW
-				_writer.WriteByte(header.ShadowMode);
+				this._writer.WriteByte(this._header.ShadowMode);
 				//BD : unknown
-				_writer.WriteBitDouble(header.ShadowPlaneLocation);
+				this._writer.WriteBitDouble(this._header.ShadowPlaneLocation);
 			}
 
 			//R14 +:
-			if (this.header.Version >= ACadVersion.AC1014)
+			if (this._header.Version >= ACadVersion.AC1014)
 			{
 				//BS : unknown short(type 5 / 6 only) these do not seem to be required,
-				_writer.WriteBitShort(-1);
+				this._writer.WriteBitShort(-1);
 				//BS : unknown short(type 5 / 6 only) even for type 5.
-				_writer.WriteBitShort(-1);
+				this._writer.WriteBitShort(-1);
 				//BS : unknown short(type 5 / 6 only)
-				_writer.WriteBitShort(-1);
+				this._writer.WriteBitShort(-1);
 				//BS : unknown short(type 5 / 6 only)
-				_writer.WriteBitShort(-1);
+				this._writer.WriteBitShort(-1);
 
 				if (this.R2004Plus)
 				{
 					//This file versions seem to finish with this values
-					_writer.WriteBitLong(0);
-					_writer.WriteBitLong(0);
-					_writer.WriteBit(false);
+					this._writer.WriteBitLong(0);
+					this._writer.WriteBitLong(0);
+					this._writer.WriteBit(false);
 				}
 			}
 
@@ -1055,10 +1059,10 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//RS : CRC for the data section, starting after the sentinel.Use 0xC0C1 for the initial value.
-			_writer.WriteRawShort(0xC0C1);
+			this._writer.WriteRawShort(0xC0C1);
 
 			//Ending sentinel: 0x30,0x84,0xE0,0xDC,0x02,0x21,0xC7,0x56,0xA0,0x83,0x97,0x47,0xB1,0x92,0xCC,0xA0
-			_writer.WriteBytes(DwgSectionDefinition.EndSentinels[DwgSectionDefinition.Header]);
+			this._writer.WriteBytes(DwgSectionDefinition.EndSentinels[DwgSectionDefinition.Header]);
 
 			//Write the size and merge the streams
 			this.writeSectionBegin();
@@ -1068,16 +1072,16 @@ namespace ACadSharp.IO.DWG
 		private void writeSectionBegin()
 		{
 			//0xCF,0x7B,0x1F,0x23,0xFD,0xDE,0x38,0xA9,0x5F,0x7C,0x68,0xB8,0x4E,0x6D,0x33,0x5F
-			_swbegin.WriteBytes(DwgSectionDefinition.StartSentinels[DwgSectionDefinition.Header]);
+			this._swbegin.WriteBytes(DwgSectionDefinition.StartSentinels[DwgSectionDefinition.Header]);
 
 			//RL : Size of the section.
-			_swbegin.WriteRawLong(this._msmain.Length);
+			this._swbegin.WriteRawLong(this._msmain.Length);
 		}
 
 		private void mergeStreams()
 		{
-			this._stream.Write(this._msbegin.GetBuffer(), 0, (int)_msbegin.Length);
-			this._stream.Write(this._msmain.GetBuffer(), 0, (int)_msmain.Length);
+			this._stream.Write(this._msbegin.GetBuffer(), 0, (int)this._msbegin.Length);
+			this._stream.Write(this._msmain.GetBuffer(), 0, (int)this._msmain.Length);
 		}
 	}
 }
