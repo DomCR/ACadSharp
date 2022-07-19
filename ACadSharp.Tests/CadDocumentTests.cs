@@ -104,7 +104,7 @@ namespace ACadSharp.Tests
 
 			doc.Entities.Add(line);
 
-			var l = doc.Entities.Remove(line);
+			Entity l = doc.Entities.Remove(line);
 
 			//Assert removed element
 			Assert.NotNull(l);
@@ -112,9 +112,10 @@ namespace ACadSharp.Tests
 			Assert.True(0 == l.Handle);
 			Assert.Equal(line.Handle, l.Handle);
 
-			//The layer still in the document
 			Assert.True(0 == l.Layer.Handle);
 			Assert.Null(l.Layer.Document);
+			Assert.True(0 == l.LineType.Handle);
+			Assert.Null(l.LineType.Document);
 		}
 
 		[Fact]
