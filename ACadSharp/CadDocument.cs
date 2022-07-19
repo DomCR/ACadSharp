@@ -300,6 +300,13 @@ namespace ACadSharp
 			if (cadObject.XDictionary != null)
 				this.UnregisterCollection(cadObject.XDictionary);
 
+			if (cadObject is Entity e)
+			{
+				//TODO: Replace for clones
+				e.Layer = new Layer(e.Layer.Name);
+				e.LineType = new LineType(e.LineType.Name);
+			}
+
 			switch (cadObject)
 			{
 				case BlockRecord record:
@@ -415,13 +422,50 @@ namespace ACadSharp
 			}
 		}
 
-		internal void UnregisterCollection<T>(IObservableCollection<T> collection, bool addElements = true)
+		internal void UnregisterCollection<T>(IObservableCollection<T> collection, bool removeElements = true)
 			where T : CadObject
 		{
+			switch (collection)
+			{
+				case AppIdsTable:
+				case BlockRecordsTable:
+				case DimensionStylesTable:
+				case LayersTable:
+				case LineTypesTable:
+				case TextStylesTable:
+				case UCSTable:
+				case ViewsTable:
+				case VPortsTable:
+					throw new InvalidOperationException($"The collection {collection.GetType()} cannot be removed from a document.");
+			}
+
 			collection.OnAdd -= this.onAdd;
 			collection.OnRemove -= this.onRemove;
 
-			throw new NotImplementedException();
+			if (collection is CadObject cadObject)
+			{
+				this.removeCadObject(cadObject);
+			}
+
+			if (collection is ISeqendColleciton seqendColleciton)
+			{
+				this.removeCadObject(seqendColleciton.Seqend);
+			}
+
+			if (removeElements)
+			{
+				foreach (T item in collection)
+				{
+					if (item is CadDictionary dictionary)
+					{
+						this.UnregisterCollection(dictionary);
+					}
+					else
+					{
+						this.removeCadObject(item);
+					}
+				}
+			}
 		}
 	}
 }

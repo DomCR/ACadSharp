@@ -67,7 +67,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Document where this element belongs
 		/// </summary>
-		public virtual CadDocument Document { get; internal set; }
+		public CadDocument Document { get; internal set; }
 
 		private CadDictionary _xdictionary = null;
 
