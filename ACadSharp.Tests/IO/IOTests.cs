@@ -1,7 +1,9 @@
-﻿using ACadSharp.IO.DWG;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO.DWG;
 using ACadSharp.IO.DXF;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
