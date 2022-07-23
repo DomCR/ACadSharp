@@ -38,6 +38,7 @@ namespace ACadSharp.IO.DWG
 			{
 				//Setup the writers
 				this._writer = DwgStreamWriterBase.GetMergedWriter(this._document.Header.Version, this._msmain, Encoding.Default);
+				this._writer.SavePositonForSize();
 			}
 
 			//R2013+:

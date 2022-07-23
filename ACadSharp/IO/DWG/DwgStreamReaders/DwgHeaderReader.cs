@@ -38,12 +38,12 @@ namespace ACadSharp.IO.DWG
 			}
 
 			long initialPos = sreader.PositionInBits();
-
+			
 			//+R2007 Only:
 			if (R2007Plus)
 			{
 				//RL : Size in bits
-				long sizeInBits = sreader.ReadRawLong();
+				long sizeInBits = sreader.ReadRawLong();    //2372
 
 				long lastPositionInBits = initialPos + sizeInBits - 1L;
 

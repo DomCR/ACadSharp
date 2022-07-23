@@ -8,13 +8,15 @@ namespace ACadSharp.IO.DWG
 	{
 		public Stream Stream { get; }
 
-		public long PositionInBitsValue { get; }
+		public long PositionInBits { get; private set; }
 
 		public IDwgStreamWriter MainWriter { get; }
 
 		public IDwgStreamWriter TextWriter { get; }
 
 		public IDwgStreamWriter HandleWriter { get; }
+
+		private bool _savedPosition;
 
 		public DwgmMergedStreamWriter(Stream stream, IDwgStreamWriter main, IDwgStreamWriter textwriter, IDwgStreamWriter handlewriter)
 		{
@@ -51,9 +53,12 @@ namespace ACadSharp.IO.DWG
 			this.HandleWriter.ResetStream();
 		}
 
-		public void UpdatePositonWriter()
+		public void SavePositonForSize()
 		{
-			throw new NotImplementedException();
+			this._savedPosition = true;
+			this.PositionInBits = this.MainWriter.PositionInBits;
+			//Save this position for the size in bits
+			this.WriteRawLong(0);
 		}
 
 		public void Write2RawDouble(XY value)
@@ -148,7 +153,53 @@ namespace ACadSharp.IO.DWG
 
 		public void WriteSpearShift()
 		{
-			throw new NotImplementedException();
+			long mainSizeBits = this.MainWriter.PositionInBits;
+			long textSizeBits = this.TextWriter.PositionInBits;
+
+			this.MainWriter.WriteSpearShift();
+
+			if (this._savedPosition)
+			{
+				int mainTextTotalBits = (int)(mainSizeBits + textSizeBits + 1);
+				if (textSizeBits > 0)
+				{
+					mainTextTotalBits += 16;
+					if (textSizeBits >= 0x8000)
+					{
+						mainTextTotalBits += 16;
+						if (textSizeBits >= 0x40000000)
+						{
+							mainTextTotalBits += 16;
+						}
+					}
+				}
+
+				this.MainWriter.SetPositionInBits(0);
+				//Write the total size in bits
+				this.MainWriter.WriteRawLong(mainTextTotalBits);
+				this.MainWriter.WriteShiftValue();
+			}
+
+			this.MainWriter.SetPositionInBits(mainSizeBits);
+
+			if (textSizeBits > 0)
+			{
+				this.TextWriter.WriteSpearShift();
+				this.MainWriter.WriteBytes(((System.IO.MemoryStream)this.TextWriter.Stream).GetBuffer());
+				this.MainWriter.WriteSpearShift();
+				this.MainWriter.SetPositionInBits(mainSizeBits + textSizeBits);
+				this.MainWriter.SetPositionByFlag(textSizeBits);
+				this.MainWriter.WriteBit(value: true);
+			}
+			else
+			{
+				this.MainWriter.WriteBit(value: false);
+			}
+
+			this.HandleWriter.WriteSpearShift();
+			//this.PositionInBitsValue = this.MainWriter.PositionInBits();
+			this.MainWriter.WriteBytes(((System.IO.MemoryStream)this.HandleWriter.Stream).GetBuffer());
+			this.MainWriter.WriteSpearShift();
 		}
 
 		public void WriteTimeSpan(TimeSpan value)
@@ -159,6 +210,21 @@ namespace ACadSharp.IO.DWG
 		public void WriteVariableText(string value)
 		{
 			this.TextWriter.WriteVariableText(value);
+		}
+
+		public void SetPositionInBits(long posInBits)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void SetPositionByFlag(long pos)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void WriteShiftValue()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

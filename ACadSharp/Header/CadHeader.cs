@@ -1184,9 +1184,9 @@ namespace ACadSharp.Header
 
 		public short CurrentEntityPlotStyleType { get; set; }
 
-		public string FingerPrintGuid { get; set; }
+		public string FingerPrintGuid { get; set; } = Guid.NewGuid().ToString();
 
-		public string VersionGuid { get; set; }
+		public string VersionGuid { get; set; } = Guid.NewGuid().ToString();
 
 		public ObjectSortingFlags EntitySortingFlags { get; set; }
 

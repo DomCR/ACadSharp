@@ -847,7 +847,7 @@ namespace ACadSharp.IO.DWG
 			this.SetPositionInBits(length);
 
 			//short should be read at location endbit – 128 (bits)
-			strDataSize = this.ReadUShort();
+			strDataSize = this.ReadUShort();    //680	Wrong value = 5696
 
 			//If this short has the 0x8000 bit set,
 			//then decrement endbit by an additional 16 bytes,

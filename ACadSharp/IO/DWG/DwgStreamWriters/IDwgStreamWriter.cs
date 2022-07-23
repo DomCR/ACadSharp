@@ -14,7 +14,7 @@ namespace ACadSharp.IO.DWG
 	{
 		Stream Stream { get; }
 
-		long PositionInBitsValue { get; }
+		long PositionInBits { get; }
 
 		void WriteBytes(byte[] bytes);
 
@@ -68,7 +68,10 @@ namespace ACadSharp.IO.DWG
 
 		void ResetStream();
 
-		void UpdatePositonWriter();
+		void SavePositonForSize();
+		void SetPositionInBits(long posInBits);
+		void SetPositionByFlag(long pos);
+		void WriteShiftValue();
 	}
 
 	/// <summary>
@@ -76,7 +79,7 @@ namespace ACadSharp.IO.DWG
 	/// </summary>
 	internal abstract class DwgStreamWriterBase : StreamIO, IDwgStreamWriter
 	{
-		public long PositionInBitsValue { get; }
+		public long PositionInBits { get { return this.Position * 8 + this.BitShift; } }
 
 		public Encoding Encoding { get; }
 
@@ -144,7 +147,7 @@ namespace ACadSharp.IO.DWG
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 					return new DwgmMergedStreamWriter(
-						stream, 
+						stream,
 						new DwgStreamWriterAC12(stream, encoding),
 						new DwgStreamWriterAC12(new MemoryStream(), encoding),
 						new DwgStreamWriterAC12(new MemoryStream(), encoding));
@@ -589,10 +592,62 @@ namespace ACadSharp.IO.DWG
 			this._stream.SetLength(0L);
 		}
 
-		public void UpdatePositonWriter()
+		public void SavePositonForSize()
 		{
-			long result = this._stream.Position * 8 + this.BitShift;
 			this.WriteRawLong(0);
+		}
+
+		public void SetPositionByFlag(long pos)
+		{
+			if (pos >= 0x8000)
+			{
+				if (pos >= 0x40000000)
+				{
+					throw new Exception();
+				}
+
+				base.Write((ushort)((pos >> 15) & 0xFFFF), LittleEndianConverter.Instance);
+				base.Write((ushort)((pos & 0x7FFF) | 0x8000), LittleEndianConverter.Instance);
+			}
+			else
+			{//5696
+				base.Write((ushort)pos, LittleEndianConverter.Instance);//680
+			}
+		}
+
+		public void SetPositionInBits(long posInBits)
+		{
+			long position = posInBits / 8;
+			this.BitShift = (int)(posInBits % 8);
+			this._stream.Position = position;
+
+			if (this.BitShift > 0)
+			{
+				int value = this._stream.ReadByte();
+				if (value < 0)
+				{
+					throw new EndOfStreamException();
+				}
+				this._lastByte = (byte)value;
+			}
+			else
+			{
+				this._lastByte = 0;
+			}
+
+			this._stream.Position = position;
+		}
+
+		public void WriteShiftValue()
+		{
+			if (this.BitShift > 0)
+			{
+				long position = this._stream.Position;
+				int lastValue = this._stream.ReadByte();
+				byte currValue = (byte)(this._lastByte | ((byte)lastValue & (0b11111111 >> this.BitShift)));
+				this._stream.Position = position;
+				this._stream.WriteByte(currValue);
+			}
 		}
 
 		private void dateToJulian(DateTime date, out int jdate, out int miliseconds)

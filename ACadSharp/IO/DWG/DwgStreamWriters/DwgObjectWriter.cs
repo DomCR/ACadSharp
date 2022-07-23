@@ -102,7 +102,7 @@ namespace ACadSharp.IO.DWG
 			//R2010+:
 			if (this.R2010Plus)
 			{
-				long sizeb = (this._msmain.Length << 3) - this._writer.PositionInBitsValue;
+				long sizeb = (this._msmain.Length << 3) - this._writer.PositionInBits;
 				this.writeSizeInBits(this._msmain, (ulong)sizeb);
 			}
 
@@ -211,7 +211,7 @@ namespace ACadSharp.IO.DWG
 
 			if (this._version >= ACadVersion.AC1015 && this._version < ACadVersion.AC1024)
 				//Obj size RL size of object in bits, not including end handles
-				this._writer.UpdatePositonWriter();
+				this._writer.SavePositonForSize();
 
 			//Common:
 			//Handle H 5 code 0, length followed by the handle bytes.
@@ -223,7 +223,7 @@ namespace ACadSharp.IO.DWG
 			//R13-R14 Only:
 			//Obj size RL size of object in bits, not including end handles
 			if (this.R13_14Only)
-				this._writer.UpdatePositonWriter();
+				this._writer.SavePositonForSize();
 
 			//[Owner ref handle (soft pointer)]
 			this._writer.HandleReference(cadObject.Owner.Handle);
