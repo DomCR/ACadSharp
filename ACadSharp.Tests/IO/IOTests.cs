@@ -13,6 +13,17 @@ namespace ACadSharp.Tests.IO
 		{
 		}
 
+		[Fact]
+		public void EmptyDwgToDxf()
+		{
+			string inPath = Path.Combine($"{_samplesFolder}", "sample_base", "empty.dwg");
+			CadDocument doc = DwgReader.Read(inPath);
+
+			string file = Path.GetFileNameWithoutExtension(inPath);
+			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_out.dxf");
+			this.writeDxfFile(pathOut, doc, true);
+		}
+
 		[Theory]
 		[MemberData(nameof(DwgFilePaths))]
 		public void DwgToDxf(string test)
