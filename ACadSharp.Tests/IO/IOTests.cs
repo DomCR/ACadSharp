@@ -1,9 +1,7 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
+﻿using ACadSharp.IO.DWG;
 using ACadSharp.IO.DXF;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -45,7 +43,7 @@ namespace ACadSharp.Tests.IO
 			CadDocument doc = DwgReader.Read(test);
 
 			CadDocument transfer = new CadDocument();
-			doc.Header.Version = doc.Header.Version;
+			transfer.Header.Version = doc.Header.Version;
 
 			List<Entities.Entity> entities = new List<Entities.Entity>(doc.Entities);
 			foreach (var item in entities)
