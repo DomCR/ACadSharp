@@ -1,6 +1,7 @@
 ﻿using ACadSharp.IO.Templates;
 using ACadSharp.Tables.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.IO.DWG
 {
@@ -30,8 +31,8 @@ namespace ACadSharp.IO.DWG
 
 		public List<CadBlockRecordTemplate> BlockRecordTemplates { get; set; } = new List<CadBlockRecordTemplate>();
 
-		public DwgDocumentBuilder(CadDocument document, DwgReaderFlags flags, NotificationEventHandler notification = null)
-			: base(document, notification)
+		public DwgDocumentBuilder(CadDocument document, DwgReaderFlags flags)
+			: base(document)
 		{
 			this.Flags = flags;
 		}

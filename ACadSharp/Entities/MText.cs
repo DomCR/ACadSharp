@@ -1,9 +1,6 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using CSMath;
-using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -150,7 +147,7 @@ namespace ACadSharp.Entities
 		/// Background fill setting
 		/// </summary>
 		[DxfCodeValue(90)]
-		public BackgroundFillFlags BackgroundFillFlags { get; set; }
+		public BackgroundFillFlags BackgroundFillFlags { get; set; } = BackgroundFillFlags.None;
 
 		/// <summary>
 		/// Determines how much border there is around the text.

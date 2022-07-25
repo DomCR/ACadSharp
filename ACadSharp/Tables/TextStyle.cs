@@ -33,7 +33,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Style state flags.
 		/// </summary>
-		public new StyleFlags Flags { get; set; }
+		public new StyleFlags Flags { get { return (StyleFlags)base.Flags; } set { base.Flags = (StandardFlags)value; } }
 
 		/// <summary>
 		/// Fixed text height; 0 if not fixed

@@ -409,7 +409,9 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			//Lineweight RC 370
-			entity.Lineweight = (LineweightType)this._objectReader.ReadByte();
+			byte v = this._objectReader.ReadByte();
+			//TODO: LineweightType reading, strange values, ex : 29
+			entity.Lineweight = LineweightType.Default;
 		}
 
 		private void readCommonNonEntityData(CadTemplate template)
@@ -3069,30 +3071,30 @@ namespace ACadSharp.IO.DWG
 			bool isText = false;
 			for (int i = 0; i < ndashes; i++)
 			{
-				LineTypeSegment segment = new LineTypeSegment();
+				CadLineTypeTemplate.SegmentTemplate segment = new CadLineTypeTemplate.SegmentTemplate();
 
 				//Dash length BD 49 Dash or dot specifier.
-				segment.Length = this._objectReader.ReadBitDouble();
+				segment.Segment.Length = this._objectReader.ReadBitDouble();
 				//Complex shapecode BS 75 Shape number if shapeflag is 2, or index into the string area if shapeflag is 4.
-				short shapecode = this._objectReader.ReadBitShort();
+				segment.Segment.ShapeNumber = this._objectReader.ReadBitShort();
 
 				//X - offset RD 44 (0.0 for a simple dash.)
 				//Y - offset RD 45(0.0 for a simple dash.)
 				XY offset = new XY(this._objectReader.ReadDouble(), this._objectReader.ReadDouble());
-				segment.Offset = offset;
+				segment.Segment.Offset = offset;
 
 				//Scale BD 46 (1.0 for a simple dash.)
-				segment.Scale = this._objectReader.ReadBitDouble();
+				segment.Segment.Scale = this._objectReader.ReadBitDouble();
 				//Rotation BD 50 (0.0 for a simple dash.)
-				segment.Rotation = this._objectReader.ReadBitDouble();
+				segment.Segment.Rotation = this._objectReader.ReadBitDouble();
 				//Shapeflag BS 74 bit coded:
-				segment.Shapeflag = (LinetypeShapeFlags)this._objectReader.ReadBitShort();
+				segment.Segment.Shapeflag = (LinetypeShapeFlags)this._objectReader.ReadBitShort();
 
-				if (segment.Shapeflag.HasFlag(LinetypeShapeFlags.Text))
+				if (segment.Segment.Shapeflag.HasFlag(LinetypeShapeFlags.Text))
 					isText = true;
 
 				//Add the segment to the type
-				ltype.Segments.Add(segment);
+				template.SegmentTemplates.Add(segment);
 			}
 
 			//R2004 and earlier:
@@ -3120,8 +3122,7 @@ namespace ACadSharp.IO.DWG
 			//340 shapefile for dash/shape (1 each) (hard pointer)
 			for (int i = 0; i < ndashes; i++)
 			{
-				//TODO: Implement the dashes handles
-				this.handleReference();
+				template.SegmentTemplates[i].StyleHandle = this.handleReference();
 			}
 
 			this._builder.LineTypes.Add(ltype.Name, ltype);
@@ -4469,7 +4470,7 @@ namespace ACadSharp.IO.DWG
 			//Tab order BL 71 layout tab order
 			layout.TabOrder = this._objectReader.ReadBitLong();
 			//Flag BS 70 layout flags
-			layout.Flags = (LayoutFlags)this._objectReader.ReadBitShort();
+			layout.LayoutFlags = (LayoutFlags)this._objectReader.ReadBitShort();
 			//Ucs origin 3BD 13 layout ucs origin
 			layout.Origin = this._objectReader.Read3BitDouble();
 			//Limmin 2RD 10 layout minimum limits

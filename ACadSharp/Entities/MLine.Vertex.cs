@@ -32,20 +32,18 @@ namespace ACadSharp.Entities
 
 			public class Segment
 			{
-				//74	Number of parameters for this element (repeats for each element in segment)
 				/// <summary>
 				/// Element parameters
 				/// </summary>
 				[DxfCodeValue(DxfReferenceType.Count, 74)]
-				//41	Element parameters(repeats based on previous code 74)
+				[DxfCollectionCodeValue(41)]
 				public List<double> Parameters { get; set; } = new List<double>();
 
 				/// <summary>
 				/// Area fill parameters
 				/// </summary>
-				//75	Number of area fill parameters for this element(repeats for each element in segment)
-				//42	Area fill parameters(repeats based on previous code 75)
 				[DxfCodeValue(DxfReferenceType.Count, 75)]
+				[DxfCollectionCodeValue(42)]
 				public List<double> AreaFillParameters { get; set; } = new List<double>();
 
 			}

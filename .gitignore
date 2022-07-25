@@ -349,6 +349,7 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
+/local
 /samples/local
 /local
 /samples/out

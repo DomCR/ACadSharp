@@ -37,7 +37,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Layer state flags.
 		/// </summary>
-		public new LayerFlags Flags { get; set; }
+		public new LayerFlags Flags { get { return (LayerFlags)base.Flags; } set { base.Flags = (StandardFlags)value; } }
 
 		/// <summary>
 		/// Specifies the Color of an object.
@@ -61,7 +61,7 @@ namespace ACadSharp.Tables
 		/// Specifies the lineweight of an individual object or the default lineweight for the drawing.
 		/// </summary>
 		[DxfCodeValue(370)]
-		public LineweightType LineWeight { get; set; }
+		public LineweightType LineWeight { get; set; } = LineweightType.Default;
 
 		/// <summary>
 		/// PlotStyleName object
@@ -91,7 +91,7 @@ namespace ACadSharp.Tables
 
 			Layer l = copy as Layer;
 
-			
+
 		}
 	}
 }

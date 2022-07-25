@@ -27,7 +27,7 @@ namespace ACadSharp.Objects
 		/// Page Setup name
 		/// </summary>
 		[DxfCodeValue(1)]
-		public string PageName { get; set; }
+		public string PageName { get; set; } = "none_device";
 
 		/// <summary>
 		/// Name of system printer or plot configuration file
@@ -39,7 +39,7 @@ namespace ACadSharp.Objects
 		/// Paper size
 		/// </summary>
 		[DxfCodeValue(4)]
-		public string PaperSize { get; set; }
+		public string PaperSize { get; set; } = "ISO_A4_(210.00_x_297.00_MM)";
 
 		/// <summary>
 		/// Plot view name
@@ -48,10 +48,10 @@ namespace ACadSharp.Objects
 		public string PlotViewName { get; set; }
 
 		/// <summary>
-		/// Gets or set the size, in millimeters, of unprintable margins of paper
+		/// Size, in millimeters, of unprintable margins of paper
 		/// </summary>
 		[DxfCodeValue(40, 41, 42, 43)]
-		public PaperMargin UnprintableMargin { get; set; }
+		public PaperMargin UnprintableMargin { get; set; } 
 
 		/// <summary>
 		/// Physical paper width in millimeters
@@ -63,12 +63,12 @@ namespace ACadSharp.Objects
 		/// Physical paper height in millimeters
 		/// </summary>
 		[DxfCodeValue(45)]
-		public double PaperHeight { get; set; }
+		public double PaperHeight { get; set; } 
 
 		/// <summary>
 		///Plot origin in millimeters
 		/// </summary>
-		public XY PlotOrigin { get; set; }
+		public XY PlotOrigin { get; set; } = XY.Zero;
 
 		/// <summary>
 		/// Plot origin: X value of origin offset in millimeters
@@ -121,32 +121,56 @@ namespace ACadSharp.Objects
 		/// </summary>
 		public double PrintScale
 		{
-			get { return NumeratorScale / DenominatorScale; }
+			get { return this.NumeratorScale / this.DenominatorScale; }
 		}
 
 		/// <summary>
 		/// Numerator of custom print scale: real world(paper) units
 		/// </summary>
 		[DxfCodeValue(142)]
-		public double NumeratorScale { get; set; }
+		public double NumeratorScale
+		{
+			get { return this._numeratorScale; }
+			set
+			{
+				if (value <= 0.0)
+				{
+					throw new ArgumentOutOfRangeException(nameof(this.NumeratorScale), value, "Value must be greater than zero");
+				}
+
+				this._numeratorScale = value;
+			}
+		}
 
 		/// <summary>
 		/// Denominator of custom print scale: drawing units
 		/// </summary>
 		[DxfCodeValue(143)]
-		public double DenominatorScale { get; set; }
+		public double DenominatorScale
+		{
+			get { return this._denominatorScale; }
+			set
+			{
+				if (value <= 0.0)
+				{
+					throw new ArgumentOutOfRangeException(nameof(this.DenominatorScale), value, "Value must be greater than zero");
+				}
+
+				this._denominatorScale = value;
+			}
+		}
 
 		/// <summary>
 		/// Plot layout flags
 		/// </summary>
 		[DxfCodeValue(70)]
-		public PlotFlags PlotFlags { get; set; }
+		public PlotFlags PlotFlags { get; set; } = PlotFlags.DrawViewportsFirst | PlotFlags.PrintLineweights | PlotFlags.PlotPlotStyles | PlotFlags.UseStandardScale;
 
 		/// <summary>
 		/// Plot paper units.
 		/// </summary>
 		[DxfCodeValue(72)]
-		public PlotPaperUnits PaperUnits { get; set; }
+		public PlotPaperUnits PaperUnits { get; set; } = PlotPaperUnits.Milimeters;
 
 		/// <summary>
 		/// Plot paper units.
@@ -158,7 +182,7 @@ namespace ACadSharp.Objects
 		/// Portion of paper space to output to the media
 		/// </summary>
 		[DxfCodeValue(74)]
-		public PlotType PlotType { get; set; }
+		public PlotType PlotType { get; set; } = PlotType.DrawingExtents;
 
 		/// <summary>
 		/// Current style sheet
@@ -196,21 +220,20 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(78)]
 		public short ShadePlotDPI
 		{
-			get { return _shadePlotDPI; }
+			get { return this._shadePlotDPI; }
 			set
 			{
 				if (value < 100 || value > 32767)
 					throw new ArgumentOutOfRangeException(nameof(value), value, "The valid shade plot DPI values range from 100 to 23767.");
-				_shadePlotDPI = value;
+				this._shadePlotDPI = value;
 			}
 		}
-		private short _shadePlotDPI = 300;
 
 		/// <summary>
 		/// A floating point scale factor that represents the standard scale value specified in code 75.
 		/// </summary>
 		[DxfCodeValue(147)]
-		public double StandardScale { get; set; }
+		public double StandardScale { get; set; } = 1.0d;
 
 		/// <summary>
 		/// Paper image origin
@@ -234,5 +257,11 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Ignored, 333)]
 		public ulong ShadePlotIDHandle { get; set; }
+
+		private short _shadePlotDPI = 300;
+
+		private double _numeratorScale = 1.0d;
+
+		private double _denominatorScale = 1.0d;
 	}
 }

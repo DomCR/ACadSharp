@@ -258,7 +258,8 @@ namespace ACadSharp
 				{
 					case 62:
 					case 70:
-						return color.Index;
+						//return color.Index;
+						return 0;
 					case 420:
 						// true color
 						break;

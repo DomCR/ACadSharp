@@ -7,7 +7,7 @@ namespace ACadSharp.IO
 {
 	internal abstract class CadDocumentBuilder
 	{
-		public event NotificationEventHandler OnNotificationHandler;
+		public event NotificationEventHandler OnNotification;
 
 		public CadDocument DocumentToBuild { get; }
 
@@ -23,7 +23,6 @@ namespace ACadSharp.IO
 		public CadDocumentBuilder(CadDocument document, NotificationEventHandler notification = null)
 		{
 			this.DocumentToBuild = document;
-			this.OnNotificationHandler = notification;
 		}
 
 		public virtual void BuildDocument()
@@ -118,7 +117,7 @@ namespace ACadSharp.IO
 
 		public void Notify(NotificationEventArgs e)
 		{
-			this.OnNotificationHandler?.Invoke(this, e);
+			this.OnNotification?.Invoke(this, e);
 		}
 	}
 }

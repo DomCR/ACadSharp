@@ -59,7 +59,10 @@ namespace ACadSharp.Tests.Common
 
 			this.entryNotNull(doc.VPorts, "*Active");
 
-			this.notNull(doc.Layouts.FirstOrDefault(l => l.Name == "Model"), "Model");
+			//Assert Model layout
+			var layout = doc.Layouts.FirstOrDefault(l => l.Name == "Model");
+			this.notNull(layout, "Layout Model is null");
+			Assert.True(layout.AssociatedBlock == doc.ModelSpace);
 		}
 
 		public void AssertBlockRecords(CadDocument doc)
@@ -199,11 +202,12 @@ namespace ACadSharp.Tests.Common
 		private void documentObjectNotNull<T>(CadDocument doc, T o)
 			where T : CadObject
 		{
-			Assert.True(doc.GetCadObject(o.Handle) != null, $"Object of type {typeof(T)} | {o.Handle} not found in the doucment");
-
+			CadObject cobj = doc.GetCadObject(o.Handle);
+			this.notNull(cobj, $"Object of type {typeof(T)} | {o.Handle} not found in the document");
+			this.notNull(cobj.Document, $"Document is null for object with handle: {cobj.Handle}");
 		}
 
-		private void notNull<T>(T o, string info)
+		private void notNull<T>(T o, string info = null)
 		{
 			Assert.True(o != null, $"Object of type {typeof(T)} should not be null:  {info}");
 		}
@@ -211,7 +215,9 @@ namespace ACadSharp.Tests.Common
 		private void entryNotNull<T>(Table<T> table, string entry)
 			where T : TableEntry
 		{
-			Assert.True(table[entry] != null, $"Entry with name {entry} is null for thable {table}");
+			var record = table[entry];
+			Assert.True(record != null, $"Entry with name {entry} is null for thable {table}");
+			Assert.NotNull(record.Document);
 		}
 	}
 }
