@@ -839,7 +839,7 @@ namespace ACadSharp.IO.DWG
 
 		#endregion Stream pointer control
 
-		protected virtual void applyFlagToPosition(long lastPos, out long length, out long strDataSize)
+		protected void applyFlagToPosition(long lastPos, out long length, out long strDataSize)
 		{
 			//If 1, then the “endbit” location should be decremented by 16 bytes
 
@@ -847,7 +847,7 @@ namespace ACadSharp.IO.DWG
 			this.SetPositionInBits(length);
 
 			//short should be read at location endbit – 128 (bits)
-			strDataSize = this.ReadUShort();    //680	Wrong value = 5696
+			strDataSize = this.ReadUShort();
 
 			//If this short has the 0x8000 bit set,
 			//then decrement endbit by an additional 16 bytes,

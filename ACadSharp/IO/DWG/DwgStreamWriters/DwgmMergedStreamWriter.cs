@@ -98,6 +98,11 @@ namespace ACadSharp.IO.DWG
 			this.MainWriter.WriteBitLong(value);
 		}
 
+		public void WriteBitLongLong(long value)
+		{
+			this.MainWriter.WriteBitLongLong(value);
+		}
+
 		public void WriteBitShort(short value)
 		{
 			this.MainWriter.WriteBitShort(value);
@@ -187,7 +192,7 @@ namespace ACadSharp.IO.DWG
 			if (textSizeBits > 0)
 			{
 				this.TextWriter.WriteSpearShift();
-				this.MainWriter.WriteBytes(((System.IO.MemoryStream)this.TextWriter.Stream).GetBuffer());
+				this.MainWriter.WriteBytes(((MemoryStream)this.TextWriter.Stream).GetBuffer());
 				this.MainWriter.WriteSpearShift();
 				this.MainWriter.SetPositionInBits(mainSizeBits + textSizeBits);
 				this.MainWriter.SetPositionByFlag(textSizeBits);
@@ -199,8 +204,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			this.HandleWriter.WriteSpearShift();
-			//this.PositionInBitsValue = this.MainWriter.PositionInBits();
-			this.MainWriter.WriteBytes(((System.IO.MemoryStream)this.HandleWriter.Stream).GetBuffer());
+			this.MainWriter.WriteBytes(((MemoryStream)this.HandleWriter.Stream).GetBuffer());
 			this.MainWriter.WriteSpearShift();
 		}
 

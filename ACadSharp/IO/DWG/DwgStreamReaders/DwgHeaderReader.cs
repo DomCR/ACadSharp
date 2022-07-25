@@ -38,12 +38,12 @@ namespace ACadSharp.IO.DWG
 			}
 
 			long initialPos = sreader.PositionInBits();
-			
+
 			//+R2007 Only:
 			if (R2007Plus)
 			{
 				//RL : Size in bits
-				long sizeInBits = sreader.ReadRawLong();    //2372
+				long sizeInBits = sreader.ReadRawLong();
 
 				long lastPositionInBits = initialPos + sizeInBits - 1L;
 
@@ -66,8 +66,10 @@ namespace ACadSharp.IO.DWG
 
 			//R2013+:
 			if (R2013Plus)
+			{
 				//BLL : Variabele REQUIREDVERSIONS, default value 0, read only.
 				header.RequiredVersions = sreader.ReadBitLongLong();
+			}
 
 			//Common:
 			//BD : Unknown, default value 412148564080.0
@@ -859,8 +861,10 @@ namespace ACadSharp.IO.DWG
 
 				//R2013+:
 				if (this.R2013Plus)
+				{
 					//H : UNKNOWN (hard pointer)
 					objectPointers.DICTIONARY_VISUALSTYLE = sreader.HandleReference();
+				}
 			}
 
 			//R2000 +:

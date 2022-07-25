@@ -45,7 +45,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2013Plus)
 			{
 				//BLL : Variabele REQUIREDVERSIONS, default value 0, read only.
-				this._writer.WriteBitLong(0);
+				this._writer.WriteBitLongLong(0);
 			}
 
 			//Common:
@@ -855,8 +855,10 @@ namespace ACadSharp.IO.DWG
 
 				//R2013+:
 				if (this.R2013Plus)
+				{
 					//H : UNKNOWN (hard pointer)	//DICTIONARY_VISUALSTYLE
 					this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				}
 			}
 
 			//R2000 +:
@@ -1077,6 +1079,13 @@ namespace ACadSharp.IO.DWG
 
 			//RL : Size of the section.
 			this._swbegin.WriteRawLong(this._msmain.Length);
+
+			//R2010/R2013 (only present if the maintenance version is greater than 3!) or R2018+:
+			if (R2010Plus && 0 > 3 || R2018Plus)
+			{
+				//Unknown (4 byte long), might be part of a 64-bit size.
+				_swbegin.WriteRawLong(0);
+			}
 		}
 
 		private void mergeStreams()
