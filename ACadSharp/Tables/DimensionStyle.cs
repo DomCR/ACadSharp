@@ -410,7 +410,7 @@ namespace ACadSharp.Tables
 		/// DIMDSEP
 		/// </summary>
 		[DxfCodeValue(278)]
-		public char DecimalSeparator { get; set; }
+		public char DecimalSeparator { get; set; } = '.';
 
 		/// <summary>
 		/// DIMTMOVE

@@ -2,6 +2,7 @@
 using ACadSharp.Entities;
 using ACadSharp.Tables;
 using System;
+using System.Linq;
 
 namespace ACadSharp.IO.DXF
 {
@@ -37,16 +38,16 @@ namespace ACadSharp.IO.DXF
 
 		private void processEntities(BlockRecord b)
 		{
-			if (b.Name == BlockRecord.ModelSpaceName)
+			if (b.Name == BlockRecord.ModelSpaceName || b.Name == BlockRecord.PaperSpaceName)
 			{
-				foreach (Entity e in b.Entities)
+				foreach (Entity e in b.Entities.Concat(b.Viewports))
 				{
 					this.Holder.Entities.Enqueue(e);
 				}
 			}
 			else
 			{
-				foreach (Entity e in b.Entities)
+				foreach (Entity e in b.Entities.Concat(b.Viewports))
 				{
 					this.writeMappedObject(e);
 				}

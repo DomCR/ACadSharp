@@ -155,7 +155,9 @@ namespace ACadSharp
 
 				//Entries
 				Layout modelLayout = Layout.Default;
+				Layout paperLayout = new Layout("Layout1");
 				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(Layout.LayoutModelName, modelLayout);
+				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(paperLayout.Name, paperLayout);
 
 				//Default variables
 				this.AppIds.Add(AppId.Default);
@@ -177,7 +179,9 @@ namespace ACadSharp
 				model.Layout = modelLayout;
 				this.BlockRecords.Add(model);
 
-				this.BlockRecords.Add(BlockRecord.PaperSpace);
+				BlockRecord pspace = BlockRecord.PaperSpace;
+				pspace.Layout = paperLayout;
+				this.BlockRecords.Add(pspace);
 			}
 		}
 
@@ -300,12 +304,22 @@ namespace ACadSharp
 			if (cadObject.XDictionary != null)
 				this.UnregisterCollection(cadObject.XDictionary);
 
+			if (cadObject is Entity e)
+			{
+				//TODO: Replace for clones
+				e.Layer = new Layer(e.Layer.Name);
+				e.LineType = new LineType(e.LineType.Name);
+			}
+
 			switch (cadObject)
 			{
 				case BlockRecord record:
 					this.UnregisterCollection(record.Entities);
 					this.removeCadObject(record.BlockEnd);
 					this.removeCadObject(record.BlockEntity);
+					break;
+				case Insert insert:
+					this.UnregisterCollection(insert.Attributes);
 					break;
 			}
 
@@ -314,32 +328,38 @@ namespace ACadSharp
 
 		private void onReferenceChanged(object sender, ReferenceChangedEventArgs e)
 		{
-			//TODO: Should remove the old one??
+			if (e.Current != null)
+			{
+				this.addCadObject(e.Current);
+			}
 
-			this.addCadObject(e.Item);
+			if (e.Old != null)
+			{
+				this.removeCadObject(e.Old);
+			}
 		}
 
 		private void onAdd(object sender, ReferenceChangedEventArgs e)
 		{
-			if (e.Item is CadDictionary dictionary)
+			if (e.Current is CadDictionary dictionary)
 			{
 				this.RegisterCollection(dictionary);
 			}
 			else
 			{
-				this.addCadObject(e.Item);
+				this.addCadObject(e.Current);
 			}
 		}
 
 		private void onRemove(object sender, ReferenceChangedEventArgs e)
 		{
-			if (e.Item is CadDictionary dictionary)
+			if (e.Current is CadDictionary dictionary)
 			{
 				this.UnregisterCollection(dictionary);
 			}
 			else
 			{
-				this.removeCadObject(e.Item);
+				this.removeCadObject(e.Current);
 			}
 		}
 
@@ -415,13 +435,50 @@ namespace ACadSharp
 			}
 		}
 
-		internal void UnregisterCollection<T>(IObservableCollection<T> collection, bool addElements = true)
+		internal void UnregisterCollection<T>(IObservableCollection<T> collection, bool removeElements = true)
 			where T : CadObject
 		{
+			switch (collection)
+			{
+				case AppIdsTable:
+				case BlockRecordsTable:
+				case DimensionStylesTable:
+				case LayersTable:
+				case LineTypesTable:
+				case TextStylesTable:
+				case UCSTable:
+				case ViewsTable:
+				case VPortsTable:
+					throw new InvalidOperationException($"The collection {collection.GetType()} cannot be removed from a document.");
+			}
+
 			collection.OnAdd -= this.onAdd;
 			collection.OnRemove -= this.onRemove;
 
-			throw new NotImplementedException();
+			if (collection is CadObject cadObject)
+			{
+				this.removeCadObject(cadObject);
+			}
+
+			if (collection is ISeqendColleciton seqendColleciton)
+			{
+				this.removeCadObject(seqendColleciton.Seqend);
+			}
+
+			if (removeElements)
+			{
+				foreach (T item in collection)
+				{
+					if (item is CadDictionary dictionary)
+					{
+						this.UnregisterCollection(dictionary);
+					}
+					else
+					{
+						this.removeCadObject(item);
+					}
+				}
+			}
 		}
 	}
 }

@@ -49,26 +49,39 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Specifies whether the block can be exploded
 		/// </summary>
-		[DxfCodeValue(280)]
+		[DxfCodeValue(DxfReferenceType.Optional, 280)]
 		public bool IsExplodable { get; set; }
 
 		/// <summary>
 		/// Specifies the scaling allowed for the block
 		/// </summary>
-		[DxfCodeValue(281)]
+		[DxfCodeValue(DxfReferenceType.Optional, 281)]
 		public bool CanScale { get; set; } = true;
 
 		/// <summary>
-		/// DXF: Binary data for bitmap preview(optional)
+		/// DXF: Binary data for bitmap preview
 		/// </summary>
-		[DxfCodeValue(310)]
+		/// <remarks>
+		/// Optional
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Optional, 310)]
 		public byte[] Preview { get; set; }
 
 		/// <summary>
 		/// Associated Layout
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public Layout Layout { get; set; }  //TODO: Assign the block layout (if there is one)
+		public Layout Layout
+		{
+			get { return _layout; }
+			set
+			{
+				this._layout = value;
+				this._layout.AssociatedBlock = this;
+			}
+		}
+
+		public CadObjectCollection<Viewport> Viewports { get; set; }
 
 		public CadObjectCollection<Entity> Entities { get; set; }
 
@@ -77,9 +90,11 @@ namespace ACadSharp.Tables
 			get { return _blockEntity; }
 			set
 			{
+				ReferenceChangedEventArgs args = new ReferenceChangedEventArgs(value, this._blockEntity);
+
 				this._blockEntity = value;
 				this._blockEntity.Owner = this;
-				this.onReferenceChange(new ReferenceChangedEventArgs(this._blockEntity));
+				this.onReferenceChange(args);
 			}
 		}
 
@@ -88,15 +103,19 @@ namespace ACadSharp.Tables
 			get { return _blockEnd; }
 			internal set
 			{
+				ReferenceChangedEventArgs args = new ReferenceChangedEventArgs(value, this._blockEnd);
+
 				this._blockEnd = value;
 				this._blockEnd.Owner = this;
-				this.onReferenceChange(new ReferenceChangedEventArgs(this._blockEnd));
+				this.onReferenceChange(args);
 			}
 		}
 
 		private Block _blockEntity;
 
 		private BlockEnd _blockEnd;
+
+		private Layout _layout;
 
 		internal BlockRecord() : this(null) { }
 
@@ -105,6 +124,7 @@ namespace ACadSharp.Tables
 			this.BlockEntity = new Block(this);
 			this.BlockEnd = new BlockEnd(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
+			this.Viewports = new CadObjectCollection<Viewport>(this);
 		}
 
 		protected override void createCopy(CadObject copy)

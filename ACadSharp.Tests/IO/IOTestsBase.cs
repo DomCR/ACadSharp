@@ -2,6 +2,7 @@
 using ACadSharp.Tests.Common;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -19,6 +20,8 @@ namespace ACadSharp.Tests.IO
 		public static TheoryData<string> DxfAsciiFiles { get; }
 
 		public static TheoryData<string> DxfBinaryFiles { get; }
+
+		public static TheoryData<ACadVersion> Versions { get; }
 
 		protected readonly ITestOutputHelper _output;
 
@@ -43,6 +46,12 @@ namespace ACadSharp.Tests.IO
 			{
 				DxfBinaryFiles.Add(file);
 			}
+
+			Versions = new TheoryData<ACadVersion>();
+			Versions.Add(ACadVersion.AC1021);
+			Versions.Add(ACadVersion.AC1024);
+			Versions.Add(ACadVersion.AC1027);
+			Versions.Add(ACadVersion.AC1032);
 
 			//Create folder, necessary in workflow
 			if (!Directory.Exists(_samplesOutFolder))
@@ -73,7 +82,7 @@ namespace ACadSharp.Tests.IO
 			{
 				process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
 				process.StartInfo.FileName = "\"D:\\Programs\\Autodesk\\AutoCAD 2023\\accoreconsole.exe\"";
-				process.StartInfo.Arguments = $"/i \"{ Path.Combine(_samplesFolder, "sample_base/empty.dwg")}\" /l en - US";
+				process.StartInfo.Arguments = $"/i \"{Path.Combine(_samplesFolder, "sample_base/empty.dwg")}\" /l en - US";
 				process.StartInfo.UseShellExecute = false;
 				process.StartInfo.RedirectStandardOutput = true;
 				process.StartInfo.RedirectStandardInput = true;
@@ -91,7 +100,8 @@ namespace ACadSharp.Tests.IO
 					string li = l.Replace("\0", "");
 					if (!string.IsNullOrEmpty(li))
 					{
-						if (li.Contains("Invalid or incomplete DXF input -- drawing discarded."))
+						if (li.Contains("Invalid or incomplete DXF input -- drawing discarded.")
+							|| li.Contains("error", StringComparison.OrdinalIgnoreCase))
 						{
 							testPassed = false;
 						}

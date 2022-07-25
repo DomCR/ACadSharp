@@ -5,13 +5,24 @@ namespace ACadSharp
 	public class ReferenceChangedEventArgs : EventArgs
 	{
 		/// <summary>
-		/// Object that is being added or removed from the collection
+		/// Current value
 		/// </summary>
-		public CadObject Item { get; }
+		public CadObject Current { get; }
 
-		public ReferenceChangedEventArgs(CadObject item)
+		/// <summary>
+		/// Old value for the object
+		/// </summary>
+		public CadObject Old { get; }
+
+		public ReferenceChangedEventArgs(CadObject curr)
 		{
-			this.Item = item;
+			this.Current = curr;
+		}
+
+		public ReferenceChangedEventArgs(CadObject curr, CadObject old)
+		{
+			this.Current = curr;
+			this.Old = old;
 		}
 	}
 }
