@@ -12,6 +12,8 @@ namespace ACadSharp.IO.DWG
 	/// </summary>
 	internal interface IDwgStreamWriter
 	{
+		IDwgStreamWriter Main { get; }
+
 		Stream Stream { get; }
 
 		long PositionInBits { get; }
@@ -79,6 +81,8 @@ namespace ACadSharp.IO.DWG
 	/// </summary>
 	internal abstract class DwgStreamWriterBase : StreamIO, IDwgStreamWriter
 	{
+		public IDwgStreamWriter Main { get { return this; } }
+
 		public long PositionInBits { get { return this.Position * 8 + this.BitShift; } }
 
 		public Encoding Encoding { get; }
@@ -606,12 +610,12 @@ namespace ACadSharp.IO.DWG
 					throw new Exception();
 				}
 
-				base.Write((ushort)((pos >> 15) & 0xFFFF), LittleEndianConverter.Instance);
-				base.Write((ushort)((pos & 0x7FFF) | 0x8000), LittleEndianConverter.Instance);
+				this.WriteBytes(LittleEndianConverter.Instance.GetBytes((ushort)((pos >> 15) & 0xFFFF)));
+				this.WriteBytes(LittleEndianConverter.Instance.GetBytes((ushort)((pos & 0x7FFF) | 0x8000)));
 			}
 			else
-			{//5696
-				base.Write((ushort)pos, LittleEndianConverter.Instance);//680
+			{
+				this.WriteBytes(LittleEndianConverter.Instance.GetBytes((ushort)pos));
 			}
 		}
 
@@ -743,6 +747,17 @@ namespace ACadSharp.IO.DWG
 	{
 		public DwgStreamWriterAC21(Stream stream, Encoding encoding) : base(stream, encoding)
 		{
+		}
+
+		public override void WriteVariableText(string value)
+		{
+			if (string.IsNullOrEmpty(value))
+			{
+				base.WriteBitShort(0);
+				return;
+			}
+			base.WriteBitShort((short)value.Length);
+			base.WriteBytes(System.Text.Encoding.Unicode.GetBytes(value));
 		}
 	}
 }

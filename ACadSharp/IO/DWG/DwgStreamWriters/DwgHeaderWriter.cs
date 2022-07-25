@@ -356,7 +356,7 @@ namespace ACadSharp.IO.DWG
 			//H : HANDSEED The next handle, with an 8-bit length specifier preceding the handle
 			//bytes (standard hex handle form) (code 0). The HANDSEED is not part of the handle
 			//stream, but of the normal data stream (relevant for R21 and later).
-			this._writer.HandleReference(this._header.HandleSeed);
+			this._writer.Main.HandleReference(this._header.HandleSeed);
 
 			//H : CLAYER (hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.CurrentLayer);

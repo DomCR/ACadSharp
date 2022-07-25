@@ -6,6 +6,8 @@ namespace ACadSharp.IO.DWG
 {
 	internal class DwgmMergedStreamWriter : IDwgStreamWriter
 	{
+		public IDwgStreamWriter Main { get { return this.MainWriter; } }
+
 		public Stream Stream { get; }
 
 		public long PositionInBits { get; private set; }
