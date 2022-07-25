@@ -1,11 +1,7 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Entities;
-using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using CSMath;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Tables
 {
@@ -34,19 +30,19 @@ namespace ACadSharp.Tables
 		/// Lower-left corner of viewport
 		/// </summary>
 		[DxfCodeValue(10, 20)]
-		public XY BottomLeft { get; set; }
+		public XY BottomLeft { get; set; } = XY.Zero;
 
 		/// <summary>
 		/// Upper-right corner of viewport
 		/// </summary>
 		[DxfCodeValue(11, 21)]
-		public XY TopRight { get; set; }
+		public XY TopRight { get; set; } = new XY(1, 1);
 
 		/// <summary>
 		/// View center point(in DCS)
 		/// </summary>
 		[DxfCodeValue(12, 22)]
-		public XY Center { get; set; }
+		public XY Center { get; set; } = XY.Zero;
 
 		/// <summary>
 		/// Snap base point(in DCS)
@@ -58,25 +54,32 @@ namespace ACadSharp.Tables
 		/// Snap spacing X and Y
 		/// </summary>
 		[DxfCodeValue(14, 24)]
-		public XY SnapSpacing { get; set; }
+		public XY SnapSpacing { get; set; } = new XY(0.5, 0.5);
 
 		/// <summary>
 		/// Grid spacing X and Y
 		/// </summary>
 		[DxfCodeValue(15, 25)]
-		public XY GridSpacing { get; set; }
+		public XY GridSpacing { get; set; } = new XY(10, 10);
 
 		/// <summary>
 		/// View direction from target point(in WCS)
 		/// </summary>
 		[DxfCodeValue(16, 26, 36)]
-		public XYZ Direction { get; set; }
+		public XYZ Direction
+		{
+			get { return this._direction; }
+			set
+			{
+				this._direction = value.Normalize();
+			}
+		}
 
 		/// <summary>
 		/// View target point(in WCS)
 		/// </summary>
 		[DxfCodeValue(17, 27, 37)]
-		public XYZ Target { get; set; }
+		public XYZ Target { get; set; } = XYZ.Zero;
 
 		/// <summary>
 		/// View height
@@ -88,19 +91,19 @@ namespace ACadSharp.Tables
 		/// Aspect ratio
 		/// </summary>
 		[DxfCodeValue(41)]
-		public double AspectRatio { get; set; } = 1;
+		public double AspectRatio { get; set; } = 1.0d;
 
 		/// <summary>
 		/// Lens length
 		/// </summary>
 		[DxfCodeValue(42)]
-		public double LensLength { get; set; }
+		public double LensLength { get; set; } = 50.0d;
 
 		/// <summary>
 		/// Front clipping plane(offset from target point)
 		/// </summary>
 		[DxfCodeValue(43)]
-		public double FrontClippingPlane { get; set; }
+		public double FrontClippingPlane { get; set; } = 0.0d;
 
 		/// <summary>
 		/// Back clipping plane(offset from target point)
@@ -124,7 +127,7 @@ namespace ACadSharp.Tables
 		/// Circle sides
 		/// </summary>
 		[DxfCodeValue(72)]
-		public short CircleZoomPercent { get; set; }
+		public short CircleZoomPercent { get; set; } = 1000;
 
 		//331 or 441
 
@@ -148,7 +151,7 @@ namespace ACadSharp.Tables
 		/// UCSICON setting
 		/// </summary>
 		[DxfCodeValue(74)]
-		public UscIconType UcsIconDisplay { get; set; }
+		public UscIconType UcsIconDisplay { get; set; } = UscIconType.OnOrigin;
 
 		/// <summary>
 		/// Snap on/off
@@ -160,7 +163,7 @@ namespace ACadSharp.Tables
 		/// Grid on/off
 		/// </summary>
 		[DxfCodeValue(76)]
-		public bool ShowGrid { get; set; }
+		public bool ShowGrid { get; set; } = true;
 
 		/// <summary>
 		/// Snap style
@@ -178,19 +181,19 @@ namespace ACadSharp.Tables
 		/// UCS origin
 		/// </summary>
 		[DxfCodeValue(110, 120, 130)]
-		public XYZ Origin { get; set; }
+		public XYZ Origin { get; set; } = XYZ.Zero;
 
 		/// <summary>
 		/// UCS X-axis
 		/// </summary>
 		[DxfCodeValue(111, 121, 131)]
-		public XYZ XAxis { get; set; }
+		public XYZ XAxis { get; set; } = XYZ.AxisX;
 
 		/// <summary>
 		/// UCS Y-axis
 		/// </summary>
 		[DxfCodeValue(112, 122, 132)]
-		public XYZ YAxis { get; set; }
+		public XYZ YAxis { get; set; } = XYZ.AxisY;
 
 		/// <summary>
 		/// Named Ucs
@@ -229,13 +232,13 @@ namespace ACadSharp.Tables
 		/// Grid flags
 		/// </summary>
 		[DxfCodeValue(60)]
-		public GridFlags GridFlags { get; set; }
+		public GridFlags GridFlags { get; set; } = GridFlags._1 | GridFlags._2;
 
 		/// <summary>
 		/// Major grid lines
 		/// </summary>
 		[DxfCodeValue(61)]
-		public short MinorGridLinesPerMajorGridLine { get; set; }
+		public short MinorGridLinesPerMajorGridLine { get; set; } = 5;
 
 
 		//332	Soft-pointer ID/handle to background object (optional)
@@ -255,13 +258,13 @@ namespace ACadSharp.Tables
 		/// Default Lighting On flag
 		/// </summary>
 		[DxfCodeValue(292)]
-		public bool UseDefaultLighting { get; set; }
+		public bool UseDefaultLighting { get; set; } = true;
 
 		/// <summary>
 		/// Default Lighting type
 		/// </summary>
 		[DxfCodeValue(282)]
-		public DefaultLightingType DefaultLighting { get; set; }
+		public DefaultLightingType DefaultLighting { get; set; } = DefaultLightingType.TwoDistantLights;
 
 		/// <summary>
 		/// Brightness
@@ -280,6 +283,8 @@ namespace ACadSharp.Tables
 		/// </summary>
 		[DxfCodeValue(63, 421, 431)]
 		public Color AmbientColor { get; set; }
+
+		private XYZ _direction = XYZ.AxisZ;
 
 		public VPort() : this(null) { }
 

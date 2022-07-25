@@ -28,7 +28,7 @@ namespace ACadSharp.Entities
 		/// Do not modify this field without also updating the associated entry in the MLINESTYLE dictionary
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Name, 2)]
-		public string MlStyleName { get { return this.MLStyle?.Name; } }
+		public MLStyle MlStyleName { get { return this.MLStyle; } set{ this.MLStyle = value; } }    //TODO: Fix duplicated MLStyle
 
 		/// <summary>
 		/// MLINESTYLE object

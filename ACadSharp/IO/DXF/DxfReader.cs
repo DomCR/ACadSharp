@@ -105,7 +105,7 @@ namespace ACadSharp.IO.DXF
 		{
 			this._document = new CadDocument(false);
 			this._builder = new DxfDocumentBuilder(this._document);
-			this._builder.OnNotificationHandler += this.triggerNotification;
+			this._builder.OnNotification += this.triggerNotification;
 
 			this._reader = this._reader ?? this.getReader();
 

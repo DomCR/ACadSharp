@@ -33,5 +33,10 @@ namespace ACadSharp
 
 			this._assignedCode = code;
 		}
+
+		public DxfCode[] GetCollectionCodes()
+		{
+			return this._property.GetCustomAttribute<DxfCollectionCodeValueAttribute>()?.ValueCodes;
+		}
 	}
 }

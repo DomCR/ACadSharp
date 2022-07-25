@@ -1,6 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Tables;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Objects
@@ -14,7 +12,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectMLStyle)]
 	[DxfSubClass(DxfSubclassMarker.MLineStyle)]
-	public partial class MLStyle : CadObject
+	public partial class MLStyle : CadObject, INamedCadObject
 	{
 		public override ObjectType ObjectType => ObjectType.MLINESTYLE;
 

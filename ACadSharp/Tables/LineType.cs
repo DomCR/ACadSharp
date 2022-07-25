@@ -15,7 +15,7 @@ namespace ACadSharp.Tables
 	/// </remarks>
 	[DxfName(DxfFileToken.TableLinetype)]
 	[DxfSubClass(DxfSubclassMarker.Linetype)]
-	public class LineType : TableEntry
+	public partial class LineType : TableEntry
 	{
 		public const string ByLayerName = "ByLayer";
 
@@ -54,32 +54,33 @@ namespace ACadSharp.Tables
 		/// value is always 65, the ASCII code for A
 		/// </value>
 		[DxfCodeValue(72)]
-		public char Alignment { get; set; } = 'A';
+		public char Alignment { get; internal set; } = 'A';
 
 		/// <summary>
 		/// Linetype Segments
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 73)]
-		public List<LineTypeSegment> Segments { get; set; } = new List<LineTypeSegment>();
+		public IEnumerable<Segment> Segments { get { return this._segments; } }
 
-		//74	Complex linetype element type(one per element). Default is 0 (no embedded shape/text)
-		//The following codes are bit values:
-		//1 = If set, code 50 specifies an absolute rotation; if not set, code 50 specifies a relative rotation
-		//2 = Embedded element is a text string
-		//4 = Embedded element is a shape
+		///// <summary>
+		///// Pointer to STYLE object (one per element if code 74 > 0)
+		///// </summary>
+		//[DxfCodeValue(DxfReferenceType.Handle, 340)]
+		//public TextStyle Style { get; set; }
 
-		//75	Shape number(one per element) if code 74 specifies an embedded shape
-		//If code 74 specifies an embedded text string, this value is set to 0
-		//If code 74 is set to 0, code 75 is omitted
-
-		/// <summary>
-		/// Pointer to STYLE object (one per element if code 74 > 0)
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public TextStyle Style { get; set; }
+		private List<Segment> _segments = new List<Segment>();
 
 		public LineType() : base() { }
 
 		public LineType(string name) : base(name) { }
+
+		public void AddSegment(Segment segment)
+		{
+			if (segment.LineType != null)
+				throw new ArgumentException($"Segment has already a Linetype: {segment.LineType.Name}");
+
+			segment.LineType = this;
+			this._segments.Add(segment);
+		}
 	}
 }

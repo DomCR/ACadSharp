@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp
 {
+	[Obsolete]
 	public class LayoutCollection : IObservableCollection<Layout>
 	{
 		public event EventHandler<ReferenceChangedEventArgs> OnAdd;

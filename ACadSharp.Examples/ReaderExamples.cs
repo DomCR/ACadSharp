@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO;
+﻿using ACadSharp.Examples.Common;
+using ACadSharp.IO;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DXF;
 using System;
@@ -13,7 +14,7 @@ namespace ACadSharp.Examples
 		/// <param name="file">dxf file path</param>
 		public static void ReadDxf(string file)
 		{
-			using (DxfReader reader = new DxfReader(file, onNotification))
+			using (DxfReader reader = new DxfReader(file, NotificationHelper.LogConsoleNotification))
 			{
 				CadDocument doc = reader.Read();
 			}
@@ -25,16 +26,10 @@ namespace ACadSharp.Examples
 		/// <param name="file">dwg file path</param>
 		public static void ReadDwg(string file)
 		{
-			using (DwgReader reader = new DwgReader(file, onNotification))
+			using (DwgReader reader = new DwgReader(file, NotificationHelper.LogConsoleNotification))
 			{
 				CadDocument doc = reader.Read();
 			}
-		}
-
-		private static void onNotification(object sender, NotificationEventArgs e)
-		{
-			//Write in the console all the messages
-			Console.WriteLine(e.Message);
 		}
 	}
 }

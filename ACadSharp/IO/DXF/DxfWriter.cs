@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ACadSharp.IO.DXF
 {
-	public class DxfWriter : IDisposable
+	public class DxfWriter : CadWriterBase
 	{
 		private CadDocument _document;
 		private IDxfStreamWriter _writer;
@@ -68,7 +68,7 @@ namespace ACadSharp.IO.DXF
 		}
 
 		/// <inheritdoc/>
-		public void Dispose()
+		public override void Dispose()
 		{
 			this._writer.Dispose();
 		}
@@ -103,32 +103,50 @@ namespace ACadSharp.IO.DXF
 
 		private void writeHeader()
 		{
-			new DxfHeaderSectionWriter(this._writer, this._document, this._objectHolder).Write();
+			var writer = new DxfHeaderSectionWriter(this._writer, this._document, this._objectHolder);
+			writer.OnNotification += this.triggerNotification;
+
+			writer.Write();
 		}
 
 		private void writeDxfClasses()
 		{
-			new DxfDxfClassesSectionWriter(this._writer, this._document, this._objectHolder).Write();
+			var writer = new DxfDxfClassesSectionWriter(this._writer, this._document, this._objectHolder);
+			writer.OnNotification += this.triggerNotification;
+
+			writer.Write();
 		}
 
 		private void writeTables()
 		{
-			new DxfTablesSectionWriter(this._writer, this._document, this._objectHolder).Write();
+			var writer = new DxfTablesSectionWriter(this._writer, this._document, this._objectHolder);
+			writer.OnNotification += this.triggerNotification;
+
+			writer.Write();
 		}
 
 		private void writeBlocks()
 		{
-			new DxfBlocksSectionWriter(this._writer, this._document, this._objectHolder).Write();
+			var writer = new DxfBlocksSectionWriter(this._writer, this._document, this._objectHolder);
+			writer.OnNotification += this.triggerNotification;
+
+			writer.Write();
 		}
 
 		private void writeEntities()
 		{
-			new DxfEntitiesSectionWriter(this._writer, this._document, this._objectHolder).Write();
+			var writer = new DxfEntitiesSectionWriter(this._writer, this._document, this._objectHolder);
+			writer.OnNotification += this.triggerNotification;
+
+			writer.Write();
 		}
 
 		private void writeObjects()
 		{
-			new DxfObjectsSectionWriter(this._writer, this._document, this._objectHolder).Write();
+			var writer = new DxfObjectsSectionWriter(this._writer, this._document, this._objectHolder);
+			writer.OnNotification += this.triggerNotification;
+
+			writer.Write();
 		}
 
 		private void writeACDSData()

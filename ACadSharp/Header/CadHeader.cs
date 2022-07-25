@@ -323,7 +323,7 @@ namespace ACadSharp.Header
 		/// System variable ATTMODE
 		/// </remarks>
 		[CadSystemVariable("$ATTMODE", 70)]
-		public AttributeVisibilityMode AttributeVisibility { get; set; }
+		public AttributeVisibilityMode AttributeVisibility { get; set; } = AttributeVisibilityMode.Normal;
 
 		/// <summary>
 		/// Point display mode
@@ -359,11 +359,16 @@ namespace ACadSharp.Header
 		/// System variable USERI5
 		/// </summary>
 		public short UserShort5 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable SPLINESEGS
+		/// Undocumented
 		/// </summary>
-		public short NumberOfSplineSegments { get; set; }
+		/// <remarks>
+		/// System variable SPLINESEGS
+		/// </remarks>
+		[CadSystemVariable("$SPLINESEGS", 70)]
+		public short NumberOfSplineSegments { get; set; } = 8;
+
 		/// <summary>
 		/// 
 		/// System variable 
@@ -606,7 +611,7 @@ namespace ACadSharp.Header
 		/// System variable PDSIZE
 		/// </remarks>
 		[CadSystemVariable("$PDSIZE", 40)]
-		public double PointDisplaySize { get; set; }
+		public double PointDisplaySize { get; set; } = 0.0d;
 
 		/// <summary>
 		/// 
@@ -790,7 +795,7 @@ namespace ACadSharp.Header
 		/// System variable PINSBASE
 		/// </remarks>
 		[CadSystemVariable("$PINSBASE", 10, 20, 30)]
-		public XYZ PaperSpaceInsertionBase { get; set; }
+		public XYZ PaperSpaceInsertionBase { get; set; } = XYZ.Zero;
 
 		/// <summary>
 		/// X, Y, and Z drawing extents lower-left corner (in WCS)

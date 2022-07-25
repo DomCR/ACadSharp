@@ -90,7 +90,7 @@ namespace ACadSharp.IO.DWG
 		{
 			this._document = new CadDocument(false);
 			this._builder = new DwgDocumentBuilder(this._document, this.Flags);
-			this._builder.OnNotificationHandler += this.triggerNotification;
+			this._builder.OnNotification += this.triggerNotification;
 
 			//Read the file header
 			this.readFileHeader();

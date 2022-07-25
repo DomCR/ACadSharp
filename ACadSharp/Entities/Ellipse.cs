@@ -29,40 +29,40 @@ namespace ACadSharp.Entities
 		public double Thickness { get; set; } = 0.0;
 
 		/// <summary>
-		/// Specifies the three-dimensional normal unit vector for the object.
+		/// Extrusion direction
 		/// </summary>
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 		/// <summary>
-		/// Specifies the center of an arc, circle, ellipse, view, or viewport.
+		/// Center point (in WCS)
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ Center { get; set; } = XYZ.Zero;
-		
+
 		/// <summary>
-		/// A 3D coordinate representing the endpoint of the object.
+		/// Endpoint of major axis, relative to the center (in WCS)
 		/// </summary>
 		[DxfCodeValue(11, 21, 31)]
 		public XYZ EndPoint { get; set; } = XYZ.Zero;
-		
+
 		/// <summary>
-		/// Specifies the major to minor axis ratio of an ellipse.
+		/// Ratio of minor axis to major axis
 		/// </summary>
 		[DxfCodeValue(40)]
 		public double RadiusRatio { get; set; } = 0.0;
-		
+
 		/// <summary>
-		/// Specifies the start parameter for an ellipse.
+		/// Start parameter
 		/// </summary>
 		/// <value>
 		/// The valid range is 0 to 2 * PI.
 		/// </value>
 		[DxfCodeValue(41)]
 		public double StartParameter { get; set; } = 0.0;
-		
+
 		/// <summary>
-		/// Specifies the end parameter for an ellipse.
+		/// End parameter
 		/// </summary>
 		/// <value>
 		/// The valid range is 0 to 2 * PI.
