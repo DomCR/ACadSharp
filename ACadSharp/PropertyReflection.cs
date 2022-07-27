@@ -2,10 +2,10 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using LinqExpression = System.Linq.Expressions.Expression;
 
 
 namespace ACadSharp
@@ -41,17 +41,17 @@ namespace ACadSharp
                 var eventLogCustomType = property.DeclaringType;
                 var propertyType = property.PropertyType;
 
-                var instance = LinqExpression.Parameter(typeof(TClass));
+                var instance = Expression.Parameter(typeof(TClass));
 
                 Func<TClass, object> getter = null;
                 var getMethod = property.GetGetMethod(true);
                 if (getMethod != null)
                 {
                     getter =
-                        LinqExpression.Lambda<Func<TClass, object>>(
-                                LinqExpression.Convert(
-                                    LinqExpression.Call(
-                                        LinqExpression.Convert(instance, eventLogCustomType),
+                        Expression.Lambda<Func<TClass, object>>(
+                                Expression.Convert(
+                                    Expression.Call(
+                                        Expression.Convert(instance, eventLogCustomType),
                                         getMethod),
                                     typeof(object)),
                                 instance)
@@ -62,13 +62,13 @@ namespace ACadSharp
                 var setMethod = property.GetSetMethod(true);
                 if (setMethod != null)
                 {
-                    var parameter = LinqExpression.Parameter(typeof(object));
+                    var parameter = Expression.Parameter(typeof(object));
                     setter =
-                        LinqExpression.Lambda<Action<TClass, object>>(
-                                LinqExpression.Call(
-                                    LinqExpression.Convert(instance, eventLogCustomType),
+                        Expression.Lambda<Action<TClass, object>>(
+                                Expression.Call(
+                                    Expression.Convert(instance, eventLogCustomType),
                                     setMethod,
-                                    LinqExpression.Convert(parameter, propertyType)),
+                                    Expression.Convert(parameter, propertyType)),
                                 instance, parameter)
                             .Compile();
                 }
