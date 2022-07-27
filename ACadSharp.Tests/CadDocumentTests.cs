@@ -119,6 +119,44 @@ namespace ACadSharp.Tests
 		}
 
 		[Fact]
+		public void RemoveLayer()
+		{
+			string layerName = "custom_layer";
+			Line line = new Line();
+			line.Layer = new Layer(layerName);
+			CadDocument doc = new CadDocument();
+
+			doc.Entities.Add(line);
+
+			Layer l = doc.Layers.Remove(layerName);
+
+			//Assert removed element
+			Assert.False(doc.Layers.Contains(layerName));
+			Assert.Null(l.Document);
+			Assert.True(l.Handle == 0);
+			Assert.Equal(doc.Layers[Layer.DefaultName], line.Layer);
+		}
+
+		[Fact]
+		public void RemoveLineType()
+		{
+			string ltypeName = "custom_ltype";
+			Line line = new Line();
+			line.LineType = new LineType(ltypeName);
+			CadDocument doc = new CadDocument();
+
+			doc.Entities.Add(line);
+
+			LineType ltype = doc.LineTypes.Remove(ltypeName);
+
+			//Assert removed element
+			Assert.False(doc.Layers.Contains(ltypeName));
+			Assert.Null(ltype.Document);
+			Assert.True(ltype.Handle == 0);
+			Assert.Equal(doc.LineTypes[LineType.ByBlockName], line.LineType);
+		}
+
+		[Fact]
 		public void NotAllowDuplicate()
 		{
 			Line line = new Line();
