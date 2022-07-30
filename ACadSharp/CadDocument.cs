@@ -361,6 +361,17 @@ namespace ACadSharp
 			{
 				this.removeCadObject(e.Current);
 			}
+
+			//TODO: Unreference all elements linked layers and linetypes and change them for the default one
+			if(e.Current is LineType)
+			{
+				// Should iterate throgh all the entities or all the entities should have an event??
+			}
+
+			if (e.Current is Layer)
+			{
+
+			}
 		}
 
 		internal void RegisterCollection<T>(IObservableCollection<T> collection, bool addElements = true)
