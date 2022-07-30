@@ -2459,12 +2459,19 @@ namespace ACadSharp.Header
 
 		public UCS PaperSpaceUcs { get; private set; } = new UCS();
 
+        private readonly static PropertyExpression<CadHeader, CadSystemVariableAttribute> _propertyCache;
+
 		public CadHeader() { }
 
 		public CadHeader(ACadVersion version)
 		{
 			this.Version = version;
 		}
+        static CadHeader()
+        {
+            _propertyCache = new PropertyExpression<CadHeader, CadSystemVariableAttribute>(
+                (info, attribute) => attribute.Name);
+        }
 
 		public static Dictionary<string, CadSystemVariable> GetHeaderMap()
 		{
@@ -2481,71 +2488,44 @@ namespace ACadSharp.Header
 			return map;
 		}
 
-		public void SetValue(string systemvar, params object[] values)
-		{
-			foreach (PropertyInfo p in this.GetType().GetProperties())
-			{
-				CadSystemVariableAttribute att = p.GetCustomAttribute<CadSystemVariableAttribute>();
-				if (att == null || att.Name != systemvar)
-					continue;
+        public void SetValue(string systemvar, params object[] values)
+        {
+            var prop = _propertyCache.GetProperty(systemvar);
 
-				object build = null;
-				ConstructorInfo constr = p.PropertyType.GetConstructor(values.Select(o => o.GetType()).ToArray());
+            ConstructorInfo constr = prop.Property.PropertyType.GetConstructor(values.Select(o => o.GetType()).ToArray());
 
-				if (p.PropertyType.IsEnum)
-				{
-					int v = Convert.ToInt32(values.First());
-					build = Enum.ToObject(p.PropertyType, v);
-				}
-				else if (p.PropertyType.IsEquivalentTo(typeof(DateTime)))
-				{
-					double jvalue = (double)values.First();
+            if (prop.Property.PropertyType.IsEnum)
+            {
+                int v = Convert.ToInt32(values.First());
+                prop.Setter(this, Enum.ToObject(prop.Property.PropertyType, v));
+            }
+            else if (prop.Property.PropertyType.IsEquivalentTo(typeof(DateTime)))
+            {
+                double jvalue = (double)values.First();
 
-					build = CadUtils.FromJulianCalendar((double)values.First());
-				}
-				else if (p.PropertyType.IsEquivalentTo(typeof(TimeSpan)))
-				{
-					double jvalue = (double)values.First();
-
-					build = CadUtils.EditingTime((double)values.First());
-				}
-				else if (constr == null)
-				{
-					build = Convert.ChangeType(values.First(), p.PropertyType);
-				}
-				else
-				{
-					build = Activator.CreateInstance(p.PropertyType, values);
-				}
-
-				//Set the value if it has any
-				if (build != null)
-				{
-					p.SetValue(this, build);
-					break;
-				}
+                prop.Setter(this, CadUtils.FromJulianCalendar((double)values.First()));
 			}
-		}
+            else if (prop.Property.PropertyType.IsEquivalentTo(typeof(TimeSpan)))
+            {
+                double jvalue = (double)values.First();
 
-		public object GetValue(string systemvar)
-		{
-			object value = null;
-
-			foreach (PropertyInfo p in this.GetType().GetProperties())
-			{
-				CadSystemVariableAttribute att = p.GetCustomAttribute<CadSystemVariableAttribute>();
-				if (att == null)
-					continue;
-
-				if (att.Name == systemvar)
-				{
-					value = p.GetValue(this);
-					break;
-				}
+                prop.Setter(this, CadUtils.EditingTime((double)values.First()));
 			}
+            else if (constr == null)
+            {
+                prop.Setter(this, Convert.ChangeType(values.First(), prop.Property.PropertyType));
+            }
+            else
+            {
+                prop.Setter(this, Activator.CreateInstance(prop.Property.PropertyType, values));
+            }
+        }
 
-			return value;
-		}
+        public object GetValue(string systemvar)
+		{
+            var prop = _propertyCache.GetProperty(systemvar);
+            return prop.Getter(this);
+        }
 
 		/// <summary>
 		/// Get the primitive values in each dxf code
