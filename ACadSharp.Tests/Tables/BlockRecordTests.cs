@@ -3,6 +3,7 @@ using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -78,9 +79,15 @@ namespace ACadSharp.Tables.Tests
 
 			CadObjectTestUtils.AssertTableEntryClone(record, clone);
 
+			// Copy the state of the entities to an array as this is now using a HashMap for performance
+			// and cannot be accessed via indexes.
+
+            var recordEntities = record.Entities.ToArray();
+            var cloneEntities = clone.Entities.ToArray();
+
 			for (int i = 0; i < record.Entities.Count; i++)
 			{
-				CadObjectTestUtils.AssertEntityClone(record.Entities[i], clone.Entities[i], true);
+				CadObjectTestUtils.AssertEntityClone(recordEntities[i], cloneEntities[i], true);
 			}
 		}
 	}
