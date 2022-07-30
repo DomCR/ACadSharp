@@ -1187,9 +1187,23 @@ namespace ACadSharp.Header
 
 		public short CurrentEntityPlotStyleType { get; set; }
 
-		public string FingerPrintGuid { get; set; }
+		/// <summary>
+		/// Set at creation time, uniquely identifies a particular drawing
+		/// </summary>
+		/// <remarks>
+		/// System variable FINGERPRINTGUID
+		/// </remarks>
+		[CadSystemVariable("$FINGERPRINTGUID", 2)]
+		public string FingerPrintGuid { get; internal set; }
 
-		public string VersionGuid { get; set; }
+		/// <summary>
+		/// Uniquely identifies a particular version of a drawing. Updated when the drawing is modified
+		/// </summary>
+		/// <remarks>
+		/// System variable VERSIONGUID
+		/// </remarks>
+		[CadSystemVariable("$VERSIONGUID", 2)]
+		public string VersionGuid { get; internal set; }
 
 		public ObjectSortingFlags EntitySortingFlags { get; set; }
 
