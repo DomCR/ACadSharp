@@ -30,61 +30,12 @@ namespace ACadSharp.IO.DWG
 			this._document = document;
 
 			this._msmain = new MemoryStream();
-			this._writer = DwgStreamWriterBase.GetStreamHandler(document.Header.Version, this._msmain, Encoding.Default);
+			this._writer = DwgStreamWriterBase.GetMergedWriter(document.Header.Version, this._msmain, Encoding.Default);
 		}
 
 		public void Write()
 		{
 			this.writeTables();
-		}
-
-		private IDwgStreamWriter createWriter()
-		{
-			switch (this._document.Header.Version)
-			{
-				case ACadVersion.Unknown:
-					break;
-				case ACadVersion.MC0_0:
-					break;
-				case ACadVersion.AC1_2:
-					break;
-				case ACadVersion.AC1_4:
-					break;
-				case ACadVersion.AC1_50:
-					break;
-				case ACadVersion.AC2_10:
-					break;
-				case ACadVersion.AC1002:
-					break;
-				case ACadVersion.AC1003:
-					break;
-				case ACadVersion.AC1004:
-					break;
-				case ACadVersion.AC1006:
-					break;
-				case ACadVersion.AC1009:
-					break;
-				case ACadVersion.AC1012:
-					break;
-				case ACadVersion.AC1014:
-					break;
-				case ACadVersion.AC1015:
-					break;
-				case ACadVersion.AC1018:
-					break;
-				case ACadVersion.AC1021:
-					break;
-				case ACadVersion.AC1024:
-					break;
-				case ACadVersion.AC1027:
-					break;
-				case ACadVersion.AC1032:
-					break;
-				default:
-					break;
-			}
-
-			throw new NotImplementedException();
 		}
 
 		private void registerObject(CadObject cadObject)

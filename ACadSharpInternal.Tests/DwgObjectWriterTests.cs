@@ -1,5 +1,6 @@
 ﻿using ACadSharp;
 using ACadSharp.IO.DWG;
+using ACadSharp.Tables.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Xunit;
@@ -29,8 +30,7 @@ namespace ACadSharpInternal.Tests
 
 			Assert.True(writer.Map.ContainsKey(document.BlockRecords.Handle));
 
-			CadDocument docResult = new CadDocument();
-			docResult.Header.Version = version;
+			CadDocument docResult = new CadDocument(false);
 
 			DwgDocumentBuilder builder = new DwgDocumentBuilder(docResult, DwgReaderFlags.None);
 			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, true);
@@ -44,6 +44,10 @@ namespace ACadSharpInternal.Tests
 				new ACadSharp.Classes.DxfClassCollection()
 				);
 			reader.Read();
+
+			builder.TryGetCadObject<BlockRecordsTable>(document.BlockRecords.Handle, out BlockRecordsTable blockRecords);
+			Assert.NotNull(blockRecords);
+			Assert.True(blockRecords.Handle == document.BlockRecords.Handle);
 		}
 	}
 }
