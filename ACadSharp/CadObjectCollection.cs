@@ -12,13 +12,14 @@ namespace ACadSharp
 
 		public event EventHandler<ReferenceChangedEventArgs> OnRemove;
 
-		public T this[int index] { get { return this._entries[index]; } }
+		// TODO: Investigate adding this back with a HashSet.
+		//public T this[int index] { get { return this._entries[index]; } }
 
 		public CadObject Owner { get; }
 
 		public int Count { get { return this._entries.Count; } }
 
-		private readonly List<T> _entries = new List<T>();
+		private readonly HashSet<T> _entries = new HashSet<T>();
 
 		public CadObjectCollection(CadObject owner)
 		{
