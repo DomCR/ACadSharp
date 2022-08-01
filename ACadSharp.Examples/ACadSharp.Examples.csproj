@@ -6,12 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="_samples\**" />
-    <EmbeddedResource Remove="_samples\**" />
-    <None Remove="_samples\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ACadSharp\ACadSharp.csproj" />
   </ItemGroup>
 

@@ -118,7 +118,7 @@ namespace ACadSharp.Tests
 			Assert.Null(l.LineType.Document);
 		}
 
-		[Fact]
+		[Fact(Skip = "Implementation in branch : table-operations")]
 		public void RemoveLayer()
 		{
 			string layerName = "custom_layer";
@@ -137,7 +137,7 @@ namespace ACadSharp.Tests
 			Assert.Equal(doc.Layers[Layer.DefaultName], line.Layer);
 		}
 
-		[Fact]
+		[Fact(Skip = "Implementation in branch : table-operations")]
 		public void RemoveLineType()
 		{
 			string ltypeName = "custom_ltype";
