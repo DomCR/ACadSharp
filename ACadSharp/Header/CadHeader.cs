@@ -1194,7 +1194,7 @@ namespace ACadSharp.Header
 		/// System variable FINGERPRINTGUID
 		/// </remarks>
 		[CadSystemVariable("$FINGERPRINTGUID", 2)]
-		public string FingerPrintGuid { get; internal set; }
+		public string FingerPrintGuid { get; internal set; } = Guid.NewGuid().ToString();
 
 		/// <summary>
 		/// Uniquely identifies a particular version of a drawing. Updated when the drawing is modified
@@ -1203,7 +1203,7 @@ namespace ACadSharp.Header
 		/// System variable VERSIONGUID
 		/// </remarks>
 		[CadSystemVariable("$VERSIONGUID", 2)]
-		public string VersionGuid { get; internal set; }
+		public string VersionGuid { get; internal set; } = Guid.NewGuid().ToString();
 
 		public ObjectSortingFlags EntitySortingFlags { get; set; }
 
