@@ -11,6 +11,8 @@ namespace ACadSharp.IO.DXF
 {
 	public class DxfReader : CadReaderBase
 	{
+		public DxfReaderConfiguration Configuration { get; set; } = new DxfReaderConfiguration();
+
 		private CadDocument _document;
 		private DxfDocumentBuilder _builder;
 		private IDxfStreamReader _reader;
@@ -193,6 +195,17 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return header;
+		}
+
+		/// <inheritdoc/>
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			if (this.Configuration.ClearChache)
+			{
+				DxfMap.ClearCache();
+			}
 		}
 
 		#region DxfClasses

@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Header;
-using ACadSharp.IO;
 using ACadSharp.IO.DXF;
 using ACadSharp.Tests.Common;
 using System;

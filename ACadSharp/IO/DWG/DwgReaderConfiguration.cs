@@ -1,12 +1,7 @@
 ﻿namespace ACadSharp.IO
 {
-	public class CadReaderConfiguration
+	public class DwgReaderConfiguration
 	{
-		/// <summary>
-		/// Clears the cache after the reading
-		/// </summary>
-		public bool ClearChache { get; set; } = true;
-
 		/// <summary>
 		/// Use the Standard Cycling Redundancy Check to verify the integrity of the file.
 		/// </summary>
