@@ -10,5 +10,10 @@
 		/// if this flag is enabled the reader will perform this verification to detect any possible error, but it will greatly increase the reading time.
 		/// </remarks>
 		public bool CrcCheck { get; set; } = false;
+
+		/// <summary>
+		/// The reader will try to continue when an exception is found, unless this setting is true
+		/// </summary>
+		public bool StopAtExceptions { get; set; } = false;
 	}
 }
