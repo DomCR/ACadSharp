@@ -14,6 +14,6 @@
 		/// <summary>
 		/// The reader will try to continue when an exception is found, unless this setting is true
 		/// </summary>
-		public bool StopAtExceptions { get; set; } = false;
+		public bool StopAtExceptions { get; set; } = false;	//TODO: Implement the exception handling
 	}
 }
