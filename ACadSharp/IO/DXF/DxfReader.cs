@@ -173,7 +173,7 @@ namespace ACadSharp.IO.DXF
 
 				if (this._reader.LastValueAsString == null || !headerMap.TryGetValue(currVar, out var data))
 				{
-					this._builder.Notify(new NotificationEventArgs($"Header variable not implemented {currVar}", NotificationType.NotImplemented));
+					this.triggerNotification(this, new NotificationEventArgs($"Header variable not implemented {currVar}", NotificationType.NotImplemented));
 					this._reader.ReadNext();
 					continue;
 				}
