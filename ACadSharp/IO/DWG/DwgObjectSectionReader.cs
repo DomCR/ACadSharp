@@ -4300,6 +4300,8 @@ namespace ACadSharp.IO.DWG
 						//Add the vertex
 						pline.Vertices.Add(new XY(vertex.X, vertex.Y));
 					}
+
+					pathTemplate.Path.Edges.Add(pline);
 				}
 
 				//numboundaryobjhandles BL 97 Number of boundary object handles for this path
