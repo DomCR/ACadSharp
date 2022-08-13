@@ -191,7 +191,8 @@ namespace ACadSharp.IO.DWG
 			{
 				//Create a handler section reader
 				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, new StreamIO(this._crcStream, true).Stream);
-				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
+				var a = this._crcReader.PositionInBits();
+				this._objectReader.SetPositionInBits(a);
 
 				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new StreamIO(this._crcStream, true).Stream);
 				this._textReader = this._objectReader;

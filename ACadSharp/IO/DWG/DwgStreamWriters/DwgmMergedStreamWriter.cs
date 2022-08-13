@@ -181,7 +181,7 @@ namespace ACadSharp.IO.DWG
 					}
 				}
 
-				this.MainWriter.SetPositionInBits(0);
+				this.MainWriter.SetPositionInBits(this.PositionInBits);
 				//Write the total size in bits
 				this.MainWriter.WriteRawLong(mainTextTotalBits);
 				this.MainWriter.WriteShiftValue();

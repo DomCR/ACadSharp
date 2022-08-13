@@ -22,7 +22,7 @@ namespace ACadSharpInternal.Tests
 			CadDocument document = new CadDocument();
 			document.Header.Version = version;
 
-			DwgObjectWriter writer = new DwgObjectWriter(stream, document);
+			DwgObjectSectionWriter writer = new DwgObjectSectionWriter(stream, document);
 			writer.Write();
 
 			var handles = new Queue<ulong>();

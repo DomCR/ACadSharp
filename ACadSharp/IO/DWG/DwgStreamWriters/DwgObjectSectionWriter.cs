@@ -9,7 +9,7 @@ using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
-	internal class DwgObjectWriter : DwgSectionIO
+	internal class DwgObjectSectionWriter : DwgSectionIO
 	{
 		/// <summary>
 		/// Key : handle | Value : Offset
@@ -24,7 +24,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadDocument _document;
 
-		public DwgObjectWriter(Stream stream, CadDocument document) : base(document.Header.Version)
+		public DwgObjectSectionWriter(Stream stream, CadDocument document) : base(document.Header.Version)
 		{
 			this._stream = stream;
 			this._document = document;
@@ -47,7 +47,7 @@ namespace ACadSharp.IO.DWG
 			CRC8StreamHandler crc = new CRC8StreamHandler(this._stream, 0xC0C1);
 
 			//MS : Size of object, not including the CRC
-			uint size = (uint)this._msmain.Length;
+			uint size = (uint)this._msmain.Length;	//264
 			this.writeSize(crc, size);
 
 			//R2010+:
@@ -154,7 +154,7 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.UNLISTED:
 				case ObjectType.INVALID:
 				case ObjectType.UNUSED:
-					return;
+					throw new NotImplementedException();
 				default:
 					this._writer.WriteObjectType(cadObject.ObjectType);
 					break;
