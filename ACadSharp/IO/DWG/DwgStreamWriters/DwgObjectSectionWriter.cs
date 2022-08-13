@@ -166,7 +166,7 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Handle H 5 code 0, length followed by the handle bytes.
-			this._writer.HandleReference(cadObject);
+			this._writer.Main.HandleReference(cadObject);
 
 			//Extended object data, if any
 			this.writeExtendedData(cadObject.ExtendedData);
@@ -177,7 +177,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.SavePositonForSize();
 
 			//[Owner ref handle (soft pointer)]
-			this._writer.HandleReference(cadObject.Owner.Handle);
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, cadObject.Owner.Handle);
 
 			//write the cad object reactors
 			this.writeReactorsAndDictionaryHandle(cadObject);

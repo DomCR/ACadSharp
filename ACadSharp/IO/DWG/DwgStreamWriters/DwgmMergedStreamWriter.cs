@@ -196,11 +196,11 @@ namespace ACadSharp.IO.DWG
 				this.MainWriter.WriteSpearShift();
 				this.MainWriter.SetPositionInBits(mainSizeBits + textSizeBits);
 				this.MainWriter.SetPositionByFlag(textSizeBits);
-				this.MainWriter.WriteBit(value: true);
+				this.MainWriter.WriteBit(true);
 			}
 			else
 			{
-				this.MainWriter.WriteBit(value: false);
+				this.MainWriter.WriteBit(false);
 			}
 
 			this.HandleWriter.WriteSpearShift();
