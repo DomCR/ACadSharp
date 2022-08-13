@@ -60,7 +60,7 @@ namespace ACadSharp.IO.DWG
 			this._savedPosition = true;
 			this.PositionInBits = this.MainWriter.PositionInBits;
 			//Save this position for the size in bits
-			this.WriteRawLong(0);
+			this.MainWriter.WriteRawLong(0);
 		}
 
 		public void Write2RawDouble(XY value)
