@@ -47,7 +47,7 @@ namespace ACadSharp.IO.DWG
 			CRC8StreamHandler crc = new CRC8StreamHandler(this._stream, 0xC0C1);
 
 			//MS : Size of object, not including the CRC
-			uint size = (uint)this._msmain.Length;	//264
+			uint size = (uint)this._msmain.Length;  //264
 			this.writeSize(crc, size);
 
 			//R2010+:
@@ -118,10 +118,13 @@ namespace ACadSharp.IO.DWG
 		{
 			this.writeCommonNonEntityData(this._document.BlockRecords);
 
+			//Common:
+			//Numentries BL 70
 			this._writer.WriteBitLong(this._document.BlockRecords.Count);
 
 			foreach (var item in this._document.BlockRecords)
 			{
+				//Handle refs H NULL(soft pointer)
 				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
 			}
 

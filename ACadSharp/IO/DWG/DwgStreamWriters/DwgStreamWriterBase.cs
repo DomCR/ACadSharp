@@ -129,9 +129,7 @@ namespace ACadSharp.IO.DWG
 
 		public void WriteRawLong(long value)
 		{
-			byte[] arr = LittleEndianConverter.Instance.GetBytes((int)value);
-
-			this.WriteBytes(arr);
+			this.WriteBytes(LittleEndianConverter.Instance.GetBytes((int)value));
 		}
 
 		public void WriteBytes(byte[] arr)

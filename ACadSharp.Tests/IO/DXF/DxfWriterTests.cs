@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO.DXF;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO.DXF;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
