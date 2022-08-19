@@ -159,7 +159,6 @@ namespace ACadSharp.IO.DXF
 				|| e is TextEntity
 				|| e is AttributeDefinition
 				|| e is Dimension
-				|| e is Polyline
 				|| e is LwPolyline
 				|| e is MLine
 				)
