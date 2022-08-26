@@ -53,8 +53,9 @@ namespace ACadSharp.Tests.Common
 				case Line line:
 					RandomizeLine(line);
 					break;
-				case Polyline2D:
-					return e;
+				case Polyline2D pl2d:
+					RandomizePolyline2D(pl2d);
+					break;
 				default:
 					throw new NotImplementedException();
 			}
@@ -72,9 +73,24 @@ namespace ACadSharp.Tests.Common
 			RandomizeEntity(line);
 
 			line.Thickness = _random.NextDouble();
-			line.Normal = _random.NextXYZ();
+			// line.Normal = _random.NextXYZ();	//Entity becomes invisible if has a different value
 			line.StartPoint = _random.NextXYZ();
 			line.EndPoint = _random.NextXYZ();
+		}
+
+		public static void RandomizePolyline2D(Polyline2D pline)
+		{
+			RandomizeEntity(pline);
+
+			int nv = _random.Next(2, int.MaxValue);
+			for (int i = 0; i < nv; i++)
+			{
+				Vertex2D v = new Vertex2D();
+
+				v.Location = _random.NextXYZ();
+
+				pline.Vertices.Add(v);
+			}
 		}
 	}
 }
