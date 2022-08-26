@@ -87,6 +87,7 @@ namespace ACadSharp.Tests.Common
 			{
 				Vertex2D v = new Vertex2D();
 
+				v.Id = i;
 				v.Location = _random.NextXYZ();
 
 				pline.Vertices.Add(v);

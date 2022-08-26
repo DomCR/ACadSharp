@@ -287,6 +287,9 @@ namespace ACadSharp
 				case Insert insert:
 					this.RegisterCollection(insert.Attributes);
 					break;
+				case Polyline pline:
+					this.RegisterCollection(pline.Vertices);
+					break;
 			}
 		}
 
@@ -320,6 +323,9 @@ namespace ACadSharp
 					break;
 				case Insert insert:
 					this.UnregisterCollection(insert.Attributes);
+					break;
+				case Polyline pline:
+					this.UnregisterCollection(pline.Vertices);
 					break;
 			}
 
