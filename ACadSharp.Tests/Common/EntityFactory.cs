@@ -82,7 +82,7 @@ namespace ACadSharp.Tests.Common
 		{
 			RandomizeEntity(pline);
 
-			int nv = _random.Next(2, int.MaxValue);
+			int nv = _random.Next(2, 100);
 			for (int i = 0; i < nv; i++)
 			{
 				Vertex2D v = new Vertex2D();
