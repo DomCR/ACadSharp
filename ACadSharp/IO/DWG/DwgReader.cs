@@ -9,8 +9,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using ACadSharp.Exceptions;
+using ACadSharp.IO.DWG;
 
-namespace ACadSharp.IO.DWG
+namespace ACadSharp.IO
 {
 	public class DwgReader : CadReaderBase
 	{

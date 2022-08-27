@@ -1,8 +1,8 @@
-﻿using System;
+﻿using ACadSharp.IO.DXF;
 using System.IO;
 using System.Text;
 
-namespace ACadSharp.IO.DXF
+namespace ACadSharp.IO
 {
 	public class DxfWriter : CadWriterBase
 	{

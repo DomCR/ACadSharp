@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Examples.Common;
-using ACadSharp.IO.DWG;
-using ACadSharp.IO.DXF;
+using ACadSharp.IO;
 using System;
 
 namespace ACadSharp.Examples

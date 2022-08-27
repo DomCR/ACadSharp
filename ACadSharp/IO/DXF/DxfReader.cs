@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Header;
+using ACadSharp.IO.DXF;
 using CSUtilities.IO;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-namespace ACadSharp.IO.DXF
+namespace ACadSharp.IO
 {
 	public class DxfReader : CadReaderBase
 	{
