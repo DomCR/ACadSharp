@@ -82,29 +82,34 @@ namespace ACadSharp.IO.DXF
 		{
 			foreach (var item in map.SubClasses)
 			{
-				this._writer.Write(DxfCode.Subclass, item.Key);
+				writeClassMap(item.Value, cadObject);
+			}
+		}
 
-				foreach (KeyValuePair<int, DxfProperty> v in item.Value.DxfProperties)
+		protected void writeClassMap(DxfClassMap cmap, CadObject cadObject)
+		{
+			this._writer.Write(DxfCode.Subclass, cmap.Name);
+
+			foreach (KeyValuePair<int, DxfProperty> v in cmap.DxfProperties)
+			{
+				int code = v.Key;
+				DxfProperty prop = v.Value;
+
+				if (prop.ReferenceType.HasFlag(DxfReferenceType.Ignored)
+					|| prop.ReferenceType.HasFlag(DxfReferenceType.Optional))
+					continue;
+
+				object value = v.Value.GetValue(v.Key, cadObject);
+				if (value == null)
 				{
-					int code = v.Key;
-					DxfProperty prop = v.Value;
+					continue;
+				}
 
-					if (prop.ReferenceType.HasFlag(DxfReferenceType.Ignored)
-						|| prop.ReferenceType.HasFlag(DxfReferenceType.Optional))
-						continue;
+				this._writer.Write(v.Key, value);
 
-					object value = v.Value.GetValue(v.Key, cadObject);
-					if (value == null)
-					{
-						continue;
-					}
-
-					this._writer.Write(v.Key, value);
-
-					if (prop.ReferenceType.HasFlag(DxfReferenceType.Count))
-					{
-						this.writeCollection((IEnumerable)prop.GetValue(cadObject), prop.GetCollectionCodes());
-					}
+				if (prop.ReferenceType.HasFlag(DxfReferenceType.Count))
+				{
+					this.writeCollection((IEnumerable)prop.GetValue(cadObject), prop.GetCollectionCodes());
 				}
 			}
 		}
@@ -154,19 +159,23 @@ namespace ACadSharp.IO.DXF
 		protected void writeMappedObject<T>(T e)
 			where T : CadObject
 		{
-			//TODO: Finish write implementation
-			if (
-				e is Hatch
-				|| e is MText
-				|| e is Insert
-				|| e is TextEntity
-				|| e is AttributeDefinition
-				|| e is Dimension
-				|| e is LwPolyline
-				|| e is MLine
-				)
+			switch (e)
 			{
-				return;
+				//TODO: Finish write implementation
+				case Hatch:
+				case MText:
+				case Insert:
+				case TextEntity:
+				case Dimension:
+				case LwPolyline:
+				case MLine:
+					this.Notify($"mapped object : {e.GetType().FullName} not implemented");
+					return;
+				case Polyline polyline:
+					this.writePolyline(polyline);
+					return;
+				default:
+					break;
 			}
 
 			DxfMap map = DxfMap.Create(e.GetType());
@@ -176,15 +185,6 @@ namespace ACadSharp.IO.DXF
 			this.writeCommonObjectData(e);
 
 			this.writeMap(map, e);
-
-			switch (e)
-			{
-				case Polyline polyline:
-					this.writeCollection(polyline.Vertices);
-					break;
-				default:
-					break;
-			}
 		}
 
 		protected abstract void writeSection();
@@ -244,6 +244,41 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(70, (short)v.Flags);
 			this._writer.Write(50, v.CurveTangent);
 			this._writer.Write(91, v.Id);
+		}
+
+		private void writePolyline(Polyline polyline)
+		{
+			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
+			DxfClassMap plineMap = null;
+
+			this._writer.Write(DxfCode.Start, polyline.ObjectName);
+
+			this.writeCommonObjectData(polyline);
+
+			this.writeClassMap(entityMap, polyline);
+
+			switch (polyline)
+			{
+				case Polyline2D:
+					plineMap = DxfClassMap.Create<Polyline2D>();
+					this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Polyline);
+					break;
+				case Polyline3D:
+					plineMap = DxfClassMap.Create<Polyline3D>();
+					this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Polyline3d);
+					break;
+			}
+
+			//Remove elevation
+			plineMap.DxfProperties.Remove(30);
+
+			this._writer.Write(DxfCode.XCoordinate, 0);
+			this._writer.Write(DxfCode.YCoordinate, 0);
+			this._writer.Write(DxfCode.ZCoordinate, polyline.Elevation);
+			
+			this.writeClassMap(plineMap, polyline);
+
+			this.writeCollection(polyline.Vertices);
 		}
 
 		private void writeVertex(Vertex v)
