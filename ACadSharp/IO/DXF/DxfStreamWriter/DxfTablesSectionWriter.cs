@@ -51,8 +51,6 @@ namespace ACadSharp.IO.DXF
 
 				this.writeCommonObjectData(entry);
 
-				// this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.TableRecord);
-
 				this.writeMap(map, entry);
 			}
 

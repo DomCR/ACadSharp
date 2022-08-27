@@ -255,21 +255,6 @@ namespace ACadSharp.IO.DXF
 			this.writeCommonObjectData(v);
 
 			this.writeMap(map, v);
-			//this._writer.Write(10, v.Location.X);
-			//this._writer.Write(20, v.Location.Y);
-			//this._writer.Write(30, v.Location.Z);
-
-			//this._writer.Write(40, v.StartWidth);
-			//this._writer.Write(41, v.EndWidth);
-			//this._writer.Write(42, v.Bulge);
-			//this._writer.Write(50, v.CurveTangent);
-			//this._writer.Write(70, (short)v.Flags);
-			//this._writer.Write(91, v.Id);
-		}
-
-		private void writeSeqend(Seqend seqend)
-		{
-
 		}
 	}
 }
