@@ -250,6 +250,8 @@ namespace ACadSharp.IO.DXF
 		{
 			DxfMap map = DxfMap.Create(v.GetType());
 
+			this._writer.Write(DxfCode.Start, v.ObjectName);
+
 			this.writeCommonObjectData(v);
 
 			this.writeMap(map, v);

@@ -17,10 +17,10 @@ namespace ACadSharp
 {
 	public class DxfMap : DxfMapBase
 	{
-        /// <summary>
-        /// Cache of created DXF mapped classes.
-        /// </summary>
-        private static readonly ConcurrentDictionary<Type, DxfMap> _cache = new ConcurrentDictionary<Type, DxfMap>();
+		/// <summary>
+		/// Cache of created DXF mapped classes.
+		/// </summary>
+		private static readonly ConcurrentDictionary<Type, DxfMap> _cache = new ConcurrentDictionary<Type, DxfMap>();
 
 		public Dictionary<string, DxfClassMap> SubClasses { get; private set; } = new Dictionary<string, DxfClassMap>();
 
@@ -45,69 +45,74 @@ namespace ACadSharp
 		//TODO: change to public? Using the type parameter does not constraing the use of the method
 		internal static DxfMap Create(Type type)
 		{
-            if (!_cache.TryGetValue(type, out var map))
-            {
-                map = new DxfMap();
-                bool isDimensionStyle = false;
+			if (!_cache.TryGetValue(type, out var map))
+			{
+				map = new DxfMap();
+				bool isDimensionStyle = false;
 
-                DxfNameAttribute dxf = type.GetCustomAttribute<DxfNameAttribute>();
+				DxfNameAttribute dxf = type.GetCustomAttribute<DxfNameAttribute>();
 
-                map.Name = dxf.Name;
+				map.Name = dxf.Name;
 
-                for (Type t = type; t != null; t = t.BaseType)
-                {
-                    DxfSubClassAttribute subclass = t.GetCustomAttribute<DxfSubClassAttribute>();
+				for (Type t = type; t != null; t = t.BaseType)
+				{
+					DxfSubClassAttribute subclass = t.GetCustomAttribute<DxfSubClassAttribute>();
 
-                    if (t.Equals(typeof(DimensionStyle)))
-                    {
-                        isDimensionStyle = true;
-                    }
+					if (t.Equals(typeof(DimensionStyle)))
+					{
+						isDimensionStyle = true;
+					}
 
-                    if (t.Equals(typeof(CadObject)))
-                    {
-                        addClassProperties(map, t);
-                        break;
-                    }
-                    else if (subclass != null && subclass.IsEmpty)
-                    {
-                        DxfClassMap classMap = map.SubClasses.Last().Value;
+					if (t.Equals(typeof(CadObject)))
+					{
+						addClassProperties(map, t);
+						break;
+					}
+					else if (subclass != null && subclass.IsEmpty)
+					{
+						DxfClassMap classMap = map.SubClasses.Last().Value;
 
-                        addClassProperties(classMap, t);
-                    }
-                    else if (t.GetCustomAttribute<DxfSubClassAttribute>() != null)
-                    {
-                        DxfClassMap classMap = new DxfClassMap();
-                        classMap.Name = t.GetCustomAttribute<DxfSubClassAttribute>().ClassName;
+						addClassProperties(classMap, t);
 
-                        addClassProperties(classMap, t);
+						if (subclass.ClassName != null)
+						{
+							map.SubClasses.Add(subclass.ClassName, new DxfClassMap(subclass.ClassName));
+						}
+					}
+					else if (t.GetCustomAttribute<DxfSubClassAttribute>() != null)
+					{
+						DxfClassMap classMap = new DxfClassMap();
+						classMap.Name = subclass.ClassName;
 
-                        map.SubClasses.Add(classMap.Name, classMap);
-                    }
-                }
+						addClassProperties(classMap, t);
 
-                if (isDimensionStyle)
-                {
-                    //TODO: Dimensions use the 105 instead of the 5... try to find a better fix
-                    map.DxfProperties.Add(105, map.DxfProperties[5]);
-                    map.DxfProperties.Remove(5);
-                }
+						map.SubClasses.Add(classMap.Name, classMap);
+					}
+				}
 
-                map.SubClasses =
-                    new Dictionary<string, DxfClassMap>(map.SubClasses.Reverse()
-                        .ToDictionary(o => o.Key, o => o.Value));
+				if (isDimensionStyle)
+				{
+					//TODO: Dimensions use the 105 instead of the 5... try to find a better fix
+					map.DxfProperties.Add(105, map.DxfProperties[5]);
+					map.DxfProperties.Remove(5);
+				}
 
-                _cache.TryAdd(type, map);
-            }
+				map.SubClasses =
+					new Dictionary<string, DxfClassMap>(map.SubClasses.Reverse()
+						.ToDictionary(o => o.Key, o => o.Value));
 
-            return map;
+				_cache.TryAdd(type, map);
+			}
+
+			return map;
 		}
 
-        /// <summary>
-        /// Clears the map cache.
-        /// </summary>
-        public void ClearCache()
-        {
-            _cache.Clear();
-        }
+		/// <summary>
+		/// Clears the map cache.
+		/// </summary>
+		public void ClearCache()
+		{
+			_cache.Clear();
+		}
 	}
 }
