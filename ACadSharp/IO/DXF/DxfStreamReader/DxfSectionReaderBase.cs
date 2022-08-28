@@ -278,9 +278,11 @@ namespace ACadSharp.IO.DXF
 					case DxfSubclassMarker.Point:
 						this.readMapped<Point>(template.CadObject, template);
 						break;
-					//case DxfSubclassMarker.PolyfaceMesh:
-					//	this.readMapped<PolyLine2D>(template.CadObject, template);
-					//	break;
+					case DxfSubclassMarker.PolyfaceMesh:
+						this._builder.Notify(new NotificationEventArgs($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}"));
+						while (this._reader.LastDxfCode != DxfCode.Start)
+							this._reader.ReadNext();
+						return null;
 					case DxfSubclassMarker.Polyline:
 						(template as CadPolyLineTemplate).SetPolyLineObject(new Polyline2D());
 						this.readMapped<Polyline2D>(template.CadObject, template);
