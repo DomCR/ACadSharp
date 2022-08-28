@@ -63,12 +63,11 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// Each <see cref="Vertex"/> has it's own unique handle.
 		/// </remarks>
-		public SeqendCollection<Vertex> Vertices { get; set; }
+		public SeqendCollection<Vertex> Vertices { get; }
 
 		public Polyline() : base()
 		{
 			this.Vertices = new SeqendCollection<Vertex>(this);
 		}
 	}
-
 }

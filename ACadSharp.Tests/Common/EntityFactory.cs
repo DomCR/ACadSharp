@@ -54,7 +54,10 @@ namespace ACadSharp.Tests.Common
 					RandomizeLine(line);
 					break;
 				case Polyline2D pl2d:
-					RandomizePolyline2D(pl2d);
+					RandomizePolyline(pl2d);
+					break;
+				case Polyline3D pl3d:
+					RandomizePolyline(pl3d);
 					break;
 				default:
 					throw new NotImplementedException();
@@ -78,14 +81,24 @@ namespace ACadSharp.Tests.Common
 			line.EndPoint = _random.NextXYZ();
 		}
 
-		public static void RandomizePolyline2D(Polyline2D pline)
+		public static void RandomizePolyline(Polyline pline)
 		{
 			RandomizeEntity(pline);
 
 			int nv = _random.Next(2, 100);
 			for (int i = 0; i < nv; i++)
 			{
-				Vertex2D v = new Vertex2D();
+				Vertex v = null;
+
+				switch (pline)
+				{
+					case Polyline2D:
+						v = new Vertex2D();
+						break;
+					case Polyline3D:
+						v = new Vertex3D();
+						break;
+				}
 
 				v.Id = i;
 				v.Location = _random.NextXYZ();

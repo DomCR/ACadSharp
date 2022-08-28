@@ -261,22 +261,20 @@ namespace ACadSharp.IO.DXF
 			{
 				case Polyline2D:
 					plineMap = DxfClassMap.Create<Polyline2D>();
-					this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Polyline);
 					break;
 				case Polyline3D:
 					plineMap = DxfClassMap.Create<Polyline3D>();
-					this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Polyline3d);
 					break;
 			}
 
 			//Remove elevation
 			plineMap.DxfProperties.Remove(30);
+						
+			this.writeClassMap(plineMap, polyline);
 
 			this._writer.Write(DxfCode.XCoordinate, 0);
 			this._writer.Write(DxfCode.YCoordinate, 0);
 			this._writer.Write(DxfCode.ZCoordinate, polyline.Elevation);
-			
-			this.writeClassMap(plineMap, polyline);
 
 			this.writeCollection(polyline.Vertices);
 		}

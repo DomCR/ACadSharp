@@ -85,6 +85,7 @@ namespace ACadSharp.Tests.IO.DXF
 				},
 				EntityFactory.Create<Line>(),
 				EntityFactory.Create<Polyline2D>(),
+				EntityFactory.Create<Polyline3D>(),
 				new Line
 				{
 					StartPoint = new CSMath.XYZ(0, 0, 0),
