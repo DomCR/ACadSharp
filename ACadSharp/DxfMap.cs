@@ -106,7 +106,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Clears the map cache.
 		/// </summary>
-		public void ClearCache()
+		public static void ClearCache()
 		{
 			_cache.Clear();
 		}
