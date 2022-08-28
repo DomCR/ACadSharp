@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Header;
+using ACadSharp.IO.DXF;
 using CSUtilities.IO;
 using System;
 using System.Collections.Generic;
@@ -7,10 +8,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-namespace ACadSharp.IO.DXF
+namespace ACadSharp.IO
 {
 	public class DxfReader : CadReaderBase
 	{
+		public DxfReaderConfiguration Configuration { get; set; } = new DxfReaderConfiguration();
+
 		private CadDocument _document;
 		private DxfDocumentBuilder _builder;
 		private IDxfStreamReader _reader;
@@ -193,6 +196,17 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return header;
+		}
+
+		/// <inheritdoc/>
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			if (this.Configuration.ClearChache)
+			{
+				DxfMap.ClearCache();
+			}
 		}
 
 		#region DxfClasses

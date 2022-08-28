@@ -95,7 +95,7 @@ namespace ACadSharp.IO.DWG
 
 			//Initialize the crc stream
 			//RS : CRC for the data section, starting after the sentinel. Use 0xC0C1 for the initial value
-			if (this._builder.Flags.HasFlag(DwgReaderFlags.CheckCrc))
+			if (this._builder.Configuration.CrcCheck)
 				this._crcStream = new CRC8StreamHandler(this._reader.Stream, 0xC0C1);
 			else
 				this._crcStream = this._reader.Stream;

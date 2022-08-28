@@ -1,5 +1,4 @@
-﻿using ACadSharp.IO.DWG;
-using ACadSharp.IO.DXF;
+﻿using ACadSharp.IO;
 using System.Collections.Generic;
 using System.IO;
 using Xunit;

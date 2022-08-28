@@ -1,17 +1,11 @@
-﻿using ACadSharp;
-using ACadSharp.Attributes;
+﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
-using ACadSharp.Objects;
 using ACadSharp.Tables;
-using CSMath;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ACadSharp
 {
@@ -45,64 +39,66 @@ namespace ACadSharp
 		//TODO: change to public? Using the type parameter does not constraing the use of the method
 		internal static DxfMap Create(Type type)
 		{
-			if (!_cache.TryGetValue(type, out var map))
+			if (_cache.TryGetValue(type, out var map))
 			{
-				map = new DxfMap();
-				bool isDimensionStyle = false;
-
-				DxfNameAttribute dxf = type.GetCustomAttribute<DxfNameAttribute>();
-
-				map.Name = dxf.Name;
-
-				for (Type t = type; t != null; t = t.BaseType)
-				{
-					DxfSubClassAttribute subclass = t.GetCustomAttribute<DxfSubClassAttribute>();
-
-					if (t.Equals(typeof(DimensionStyle)))
-					{
-						isDimensionStyle = true;
-					}
-
-					if (t.Equals(typeof(CadObject)))
-					{
-						addClassProperties(map, t);
-						break;
-					}
-					else if (subclass != null && subclass.IsEmpty)
-					{
-						DxfClassMap classMap = map.SubClasses.Last().Value;
-
-						addClassProperties(classMap, t);
-
-						if (subclass.ClassName != null)
-						{
-							map.SubClasses.Add(subclass.ClassName, new DxfClassMap(subclass.ClassName));
-						}
-					}
-					else if (t.GetCustomAttribute<DxfSubClassAttribute>() != null)
-					{
-						DxfClassMap classMap = new DxfClassMap();
-						classMap.Name = subclass.ClassName;
-
-						addClassProperties(classMap, t);
-
-						map.SubClasses.Add(classMap.Name, classMap);
-					}
-				}
-
-				if (isDimensionStyle)
-				{
-					//TODO: Dimensions use the 105 instead of the 5... try to find a better fix
-					map.DxfProperties.Add(105, map.DxfProperties[5]);
-					map.DxfProperties.Remove(5);
-				}
-
-				map.SubClasses =
-					new Dictionary<string, DxfClassMap>(map.SubClasses.Reverse()
-						.ToDictionary(o => o.Key, o => o.Value));
-
-				_cache.TryAdd(type, map);
+				return map;
 			}
+
+			map = new DxfMap();
+			bool isDimensionStyle = false;
+
+			DxfNameAttribute dxf = type.GetCustomAttribute<DxfNameAttribute>();
+
+			map.Name = dxf.Name;
+
+			for (Type t = type; t != null; t = t.BaseType)
+			{
+				DxfSubClassAttribute subclass = t.GetCustomAttribute<DxfSubClassAttribute>();
+
+				if (t.Equals(typeof(DimensionStyle)))
+				{
+					isDimensionStyle = true;
+				}
+
+				if (t.Equals(typeof(CadObject)))
+				{
+					addClassProperties(map, t);
+					break;
+				}
+				else if (subclass != null && subclass.IsEmpty)
+				{
+					DxfClassMap classMap = map.SubClasses.Last().Value;
+
+					addClassProperties(classMap, t);
+
+					if (subclass.ClassName != null)
+					{
+						map.SubClasses.Add(subclass.ClassName, new DxfClassMap(subclass.ClassName));
+					}
+				}
+				else if (t.GetCustomAttribute<DxfSubClassAttribute>() != null)
+				{
+					DxfClassMap classMap = new DxfClassMap();
+					classMap.Name = subclass.ClassName;
+
+					addClassProperties(classMap, t);
+
+					map.SubClasses.Add(classMap.Name, classMap);
+				}
+			}
+
+			if (isDimensionStyle)
+			{
+				//TODO: Dimensions use the 105 instead of the 5... try to find a better fix
+				map.DxfProperties.Add(105, map.DxfProperties[5]);
+				map.DxfProperties.Remove(5);
+			}
+
+			map.SubClasses =
+				new Dictionary<string, DxfClassMap>(map.SubClasses.Reverse()
+					.ToDictionary(o => o.Key, o => o.Value));
+
+			_cache.TryAdd(type, map);
 
 			return map;
 		}
@@ -110,7 +106,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Clears the map cache.
 		/// </summary>
-		public void ClearCache()
+		public static void ClearCache()
 		{
 			_cache.Clear();
 		}

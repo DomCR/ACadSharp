@@ -32,7 +32,7 @@ namespace ACadSharp.IO
 		public abstract CadHeader ReadHeader();
 
 		/// <inheritdoc/>
-		public void Dispose()
+		public virtual void Dispose()
 		{
 			this._fileStream.Dispose();
 		}
