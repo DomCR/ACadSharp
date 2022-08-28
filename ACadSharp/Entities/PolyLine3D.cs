@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -15,5 +16,19 @@ namespace ACadSharp.Entities
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.POLYLINE_3D;
+
+		public Polyline3D() : base()
+		{
+			this.Vertices.OnAdd += this.verticesOnAdd;
+		}
+
+		private void verticesOnAdd(object sender, ReferenceChangedEventArgs e)
+		{
+			if (e.Current is not Vertex3D)
+			{
+				this.Vertices.Remove((Vertex)e.Current);
+				throw new ArgumentException($"Wrong vertex type for {DxfSubclassMarker.Polyline3d}");
+			}
+		}
 	}
 }
