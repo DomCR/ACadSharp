@@ -178,7 +178,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadTextEntityTemplate(new TextEntity());
 					break;
 				case DxfFileToken.EntityVertex:
-					template = new CadEntityTemplate(new Vertex2D());
+					template = new CadVertexTemplate();
 					break;
 				case DxfFileToken.EntityViewport:
 					template = new CadViewportTemplate(new Viewport());
@@ -289,7 +289,12 @@ namespace ACadSharp.IO.DXF
 						(template as CadPolyLineTemplate).SetPolyLineObject(new Polyline3D());
 						this.readMapped<Polyline3D>(template.CadObject, template);
 						break;
+					case DxfSubclassMarker.PolylineVertex:
+						(template as CadVertexTemplate).SetVertexObject(new Vertex2D());
+						this.readMapped<Vertex2D>(template.CadObject, template);
+						break;
 					case DxfSubclassMarker.Polyline3dVertex:
+						(template as CadVertexTemplate).SetVertexObject(new Vertex3D());
 						this.readMapped<Vertex3D>(template.CadObject, template);
 						break;
 					case DxfSubclassMarker.Ray:
