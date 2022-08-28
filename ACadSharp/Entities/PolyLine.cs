@@ -7,7 +7,8 @@ namespace ACadSharp.Entities
 	/// Represents a <see cref="Polyline"/> entity
 	/// </summary>
 	[DxfName(DxfFileToken.EntityPolyline)]
-	public abstract class Polyline : Entity //TODO: Create an abstract task, split in 2d and 3d
+	[DxfSubClass(null, true)]
+	public abstract class Polyline : Entity
 	{
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityPolyline;
@@ -62,12 +63,11 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// Each <see cref="Vertex"/> has it's own unique handle.
 		/// </remarks>
-		public SeqendCollection<Vertex> Vertices { get; set; }
+		public SeqendCollection<Vertex> Vertices { get; }
 
 		public Polyline() : base()
 		{
 			this.Vertices = new SeqendCollection<Vertex>(this);
 		}
 	}
-
 }

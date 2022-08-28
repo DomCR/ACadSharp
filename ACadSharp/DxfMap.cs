@@ -70,11 +70,16 @@ namespace ACadSharp
 					DxfClassMap classMap = map.SubClasses.Last().Value;
 
 					addClassProperties(classMap, t);
+
+					if (subclass.ClassName != null)
+					{
+						map.SubClasses.Add(subclass.ClassName, new DxfClassMap(subclass.ClassName));
+					}
 				}
 				else if (t.GetCustomAttribute<DxfSubClassAttribute>() != null)
 				{
 					DxfClassMap classMap = new DxfClassMap();
-					classMap.Name = t.GetCustomAttribute<DxfSubClassAttribute>().ClassName;
+					classMap.Name = subclass.ClassName;
 
 					addClassProperties(classMap, t);
 
@@ -101,7 +106,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Clears the map cache.
 		/// </summary>
-		public static void ClearCache()
+		public void ClearCache()
 		{
 			_cache.Clear();
 		}
