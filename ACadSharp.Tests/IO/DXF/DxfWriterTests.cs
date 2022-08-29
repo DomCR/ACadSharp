@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.DXF;
+using ACadSharp.Tests.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -80,6 +81,9 @@ namespace ACadSharp.Tests.IO.DXF
 				{
 					Location = new CSMath.XYZ(0, 10, 0)
 				},
+				EntityFactory.Create<Line>(),
+				EntityFactory.Create<Polyline2D>(),
+				EntityFactory.Create<Polyline3D>(),
 				new Line
 				{
 					StartPoint = new CSMath.XYZ(0, 0, 0),
@@ -104,6 +108,8 @@ namespace ACadSharp.Tests.IO.DXF
 				wr.OnNotification += this.onNotification;
 				wr.Write();
 			}
+
+			this.checkDocumentInAutocad(path);
 		}
 	}
 }

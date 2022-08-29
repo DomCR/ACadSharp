@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Header;
 using ACadSharp.IO;
-using ACadSharp.IO.DWG;
 using ACadSharp.Tests.Common;
 using System;
 using System.Collections.Generic;
@@ -60,9 +59,10 @@ namespace ACadSharp.Tests.IO.DWG
 		[MemberData(nameof(DwgFilePaths))]
 		public void ReadCrcEnabledTest(string test)
 		{
-			DwgReaderFlags flags = DwgReaderFlags.CheckCrc;
+			DwgReaderConfiguration configuration = new DwgReaderConfiguration();
+			configuration.CrcCheck = true;
 
-			CadDocument doc = DwgReader.Read(test, flags, this.onNotification);
+			CadDocument doc = DwgReader.Read(test, configuration, this.onNotification);
 		}
 	}
 }

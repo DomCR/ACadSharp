@@ -1,16 +1,7 @@
-﻿using System;
-
-namespace ACadSharp.IO.DWG
+﻿namespace ACadSharp.IO
 {
-	[Obsolete]
-	[Flags]
-	public enum DwgReaderFlags
+	public class DwgReaderConfiguration
 	{
-		/// <summary>
-		/// None
-		/// </summary>
-		None = 0,
-
 		/// <summary>
 		/// Use the Standard Cycling Redundancy Check to verify the integrity of the file.
 		/// </summary>
@@ -18,6 +9,11 @@ namespace ACadSharp.IO.DWG
 		/// DWG file format uses a modification of a standard Cyclic Redundancy Check as an error detecting mechanism, 
 		/// if this flag is enabled the reader will perform this verification to detect any possible error, but it will greatly increase the reading time.
 		/// </remarks>
-		CheckCrc = 1,
+		public bool CrcCheck { get; set; } = false;
+
+		/// <summary>
+		/// The reader will try to continue when an exception is found, unless this setting is true
+		/// </summary>
+		public bool StopAtExceptions { get; set; } = false;	//TODO: Implement the exception handling
 	}
 }

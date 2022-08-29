@@ -134,7 +134,17 @@ namespace ACadSharp.Tests
 					DxfMap.Create<Point>();
 					break;
 				case DxfFileToken.EntityPolyline:
-					DxfMap.Create<Polyline>();
+					switch (subclass.ClassName)
+					{
+						case DxfSubclassMarker.Polyline:
+							DxfMap.Create<Polyline2D>();
+							break;
+						case DxfSubclassMarker.Polyline3d:
+							DxfMap.Create<Polyline3D>();
+							break;
+						default:
+							throw new NotImplementedException($"Test not implemented for type {t.Name}");
+					}
 					break;
 				case DxfFileToken.EntityRay:
 					DxfMap.Create<Ray>();
@@ -192,6 +202,24 @@ namespace ACadSharp.Tests
 				default:
 					throw new NotImplementedException($"Test not implemented for type {t.Name}");
 			}
+		}
+
+		[Fact]
+		public void TableEntryMapTest()
+		{
+			var map = DxfMap.Create<AppId>();
+
+			Assert.True(map.SubClasses.ContainsKey(DxfSubclassMarker.TableRecord));
+			Assert.True(map.SubClasses.ContainsKey(DxfSubclassMarker.ApplicationId));
+		}
+
+		[Fact]
+		public void PolylineMapTest()
+		{
+			var map = DxfMap.Create<Polyline2D>();
+
+			Assert.True(map.SubClasses.ContainsKey(DxfSubclassMarker.Entity));
+			Assert.True(map.SubClasses.ContainsKey(DxfSubclassMarker.Polyline));
 		}
 	}
 }

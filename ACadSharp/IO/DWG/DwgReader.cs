@@ -9,12 +9,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using ACadSharp.Exceptions;
+using ACadSharp.IO.DWG;
 
-namespace ACadSharp.IO.DWG
+namespace ACadSharp.IO
 {
 	public class DwgReader : CadReaderBase
 	{
-		public DwgReaderFlags Flags { get; set; }
+		public DwgReaderConfiguration Configuration { get; set; } = new DwgReaderConfiguration();
 
 		private DwgDocumentBuilder _builder;
 
@@ -62,23 +63,23 @@ namespace ACadSharp.IO.DWG
 		/// <returns></returns>
 		public static CadDocument Read(string filename, NotificationEventHandler notification = null)
 		{
-			return DwgReader.Read(filename, DwgReaderFlags.None, notification);
+			return Read(filename, new DwgReaderConfiguration(), notification);
 		}
 
 		/// <summary>
 		/// Read a dwg document from a file
 		/// </summary>
 		/// <param name="filename"></param>
-		/// <param name="flags"></param>
+		/// <param name="configuration"></param>
 		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
 		/// <returns></returns>
-		public static CadDocument Read(string filename, DwgReaderFlags flags, NotificationEventHandler notification = null)
+		public static CadDocument Read(string filename, DwgReaderConfiguration configuration, NotificationEventHandler notification = null)
 		{
 			CadDocument doc = null;
 
 			using (DwgReader reader = new DwgReader(filename, notification))
 			{
-				reader.Flags = flags;
+				reader.Configuration = configuration;
 				doc = reader.Read();
 			}
 
@@ -89,7 +90,7 @@ namespace ACadSharp.IO.DWG
 		public override CadDocument Read()
 		{
 			this._document = new CadDocument(false);
-			this._builder = new DwgDocumentBuilder(this._document, this.Flags);
+			this._builder = new DwgDocumentBuilder(this._document, this.Configuration);
 			this._builder.OnNotification += this.triggerNotification;
 
 			//Read the file header
@@ -919,7 +920,7 @@ namespace ACadSharp.IO.DWG
 			while (pageDataStream.Position < pageDataStream.Length)
 			{
 				long size = pageDataStream.ReadLong();
-				long id = System.Math.Abs(pageDataStream.ReadLong());
+				long id = Math.Abs(pageDataStream.ReadLong());
 				fileheader.Records.Add((int)id, new DwgSectionLocatorRecord((int)id, (int)offset, (int)size));
 
 				//Add the size to the current offset
@@ -1441,7 +1442,7 @@ namespace ACadSharp.IO.DWG
 				int cindex = n;
 				if (n < encoded.Length)
 				{
-					int size = System.Math.Min(length, blockSize);
+					int size = Math.Min(length, blockSize);
 					length -= size;
 					int offset = index + size;
 					while (index < offset)

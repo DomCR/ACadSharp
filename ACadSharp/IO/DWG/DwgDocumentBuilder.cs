@@ -1,13 +1,12 @@
 ﻿using ACadSharp.IO.Templates;
 using ACadSharp.Tables.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ACadSharp.IO.DWG
 {
 	internal class DwgDocumentBuilder : CadDocumentBuilder
 	{
-		public DwgReaderFlags Flags { get; set; }
+		public DwgReaderConfiguration Configuration { get; } = new DwgReaderConfiguration();
 
 		public DwgHeaderHandlesCollection HeaderHandles { get; set; }
 
@@ -31,10 +30,10 @@ namespace ACadSharp.IO.DWG
 
 		public List<CadBlockRecordTemplate> BlockRecordTemplates { get; set; } = new List<CadBlockRecordTemplate>();
 
-		public DwgDocumentBuilder(CadDocument document, DwgReaderFlags flags)
+		public DwgDocumentBuilder(CadDocument document, DwgReaderConfiguration configuration)
 			: base(document)
 		{
-			this.Flags = flags;
+			this.Configuration = configuration;
 		}
 
 		public override void BuildDocument()
