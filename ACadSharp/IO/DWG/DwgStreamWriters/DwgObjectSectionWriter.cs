@@ -48,6 +48,7 @@ namespace ACadSharp.IO.DWG
 
 			//MS : Size of object, not including the CRC
 			uint size = (uint)this._msmain.Length;
+			long sizeb = (this._msmain.Length << 3) - this._writer.PositionInBits;
 			this.writeSize(crc, size);
 
 			//R2010+:
@@ -56,7 +57,6 @@ namespace ACadSharp.IO.DWG
 				//MC : Size in bits of the handle stream (unsigned, 0x40 is not interpreted as sign).
 				//This includes the padding bits at the end of the handle stream
 				//(the padding bits make sure the object stream ends on a byte boundary).
-				long sizeb = (this._msmain.Length << 3) - this._writer.PositionInBits;
 				this.writeSizeInBits(this._msmain, (ulong)sizeb);
 			}
 

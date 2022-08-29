@@ -535,7 +535,7 @@ namespace ACadSharp.IO.DWG
 			byte[] raw = new byte[length];
 			byte[] arr = new byte[8];
 
-			if (this.Stream.Read(raw, 0, length) < length) //Error in header reader
+			if (this.Stream.Read(raw, 0, length) < length)
 				throw new EndOfStreamException();
 
 			if (this.BitShift == 0)
