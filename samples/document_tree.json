@@ -120,6 +120,22 @@
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
+      },
+      {
+        "Name": "AcadAnnotativeDecomposition",
+        "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
+        "Handle": 2006,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "ACAD_SPLINE_DATA",
+        "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
+        "Handle": 2077,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
       }
     ],
     "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTable",
@@ -134,6 +150,7 @@
         "Entities": [
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -151,6 +168,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -168,6 +186,7 @@
           },
           {
             "LayerName": "Layer_Lock",
+            "LayerHandle": 634,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -185,6 +204,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -202,6 +222,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -219,6 +240,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -236,6 +258,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -253,6 +276,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -270,6 +294,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -287,6 +312,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -304,6 +330,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -321,6 +348,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -338,6 +366,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -355,6 +384,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -372,6 +402,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -389,6 +420,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -406,6 +438,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -423,6 +456,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -440,6 +474,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -457,6 +492,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -474,6 +510,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -491,6 +528,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -508,6 +546,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -525,6 +564,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -542,6 +582,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -559,6 +600,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -576,6 +618,7 @@
           },
           {
             "LayerName": "Layer_color_80",
+            "LayerHandle": 636,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -593,6 +636,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -610,6 +654,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -627,6 +672,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -644,6 +690,7 @@
           },
           {
             "LayerName": "Layer_true_color",
+            "LayerHandle": 645,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -661,6 +708,7 @@
           },
           {
             "LayerName": "Layer_true_color",
+            "LayerHandle": 645,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -678,6 +726,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -695,6 +744,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -712,6 +762,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -729,6 +780,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -746,6 +798,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -763,6 +816,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -780,6 +834,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -797,6 +852,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -814,6 +870,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -831,6 +888,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -848,6 +906,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -865,6 +924,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -882,6 +942,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -899,6 +960,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -916,6 +978,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -933,6 +996,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -950,6 +1014,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -967,6 +1032,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -984,6 +1050,7 @@
           },
           {
             "LayerName": "Layer2",
+            "LayerHandle": 1235,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1001,6 +1068,7 @@
           },
           {
             "LayerName": "Layer2",
+            "LayerHandle": 1235,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1018,6 +1086,7 @@
           },
           {
             "LayerName": "Layer2",
+            "LayerHandle": 1235,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1035,6 +1104,7 @@
           },
           {
             "LayerName": "Layer2",
+            "LayerHandle": 1235,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1052,6 +1122,7 @@
           },
           {
             "LayerName": "Layer2",
+            "LayerHandle": 1235,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1069,6 +1140,7 @@
           },
           {
             "LayerName": "Layer2",
+            "LayerHandle": 1235,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1086,6 +1158,7 @@
           },
           {
             "LayerName": "Layer2",
+            "LayerHandle": 1235,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1103,6 +1176,7 @@
           },
           {
             "LayerName": "Layer2",
+            "LayerHandle": 1235,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1120,6 +1194,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1137,6 +1212,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1154,6 +1230,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1171,6 +1248,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1188,6 +1266,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1205,6 +1284,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1222,6 +1302,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1239,6 +1320,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1256,6 +1338,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1273,6 +1356,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1290,6 +1374,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1307,6 +1392,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1324,6 +1410,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1341,6 +1428,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1358,6 +1446,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1375,6 +1464,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1392,6 +1482,7 @@
           },
           {
             "LayerName": "Layer_Lt_dash",
+            "LayerHandle": 637,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1409,6 +1500,7 @@
           },
           {
             "LayerName": "Layer_Lt_dash",
+            "LayerHandle": 637,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1426,6 +1518,7 @@
           },
           {
             "LayerName": "Layer_Lt_dash",
+            "LayerHandle": 637,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1443,6 +1536,7 @@
           },
           {
             "LayerName": "Layer_Lt_dash",
+            "LayerHandle": 637,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1460,6 +1554,7 @@
           },
           {
             "LayerName": "Layer_Lt_dash",
+            "LayerHandle": 637,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1477,6 +1572,7 @@
           },
           {
             "LayerName": "Layer_Lt_dash",
+            "LayerHandle": 637,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1494,6 +1590,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1521,6 +1618,7 @@
         "Entities": [
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1538,6 +1636,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1565,6 +1664,7 @@
         "Entities": [
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1582,6 +1682,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1609,6 +1710,7 @@
         "Entities": [
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1626,6 +1728,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1653,6 +1756,7 @@
         "Entities": [
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1680,6 +1784,7 @@
         "Entities": [
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1697,6 +1802,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1714,6 +1820,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1731,6 +1838,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1748,6 +1856,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1765,6 +1874,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1782,6 +1892,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1799,6 +1910,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1816,6 +1928,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1832,7 +1945,7 @@
             "Children": []
           }
         ],
-        "Name": "*D13",
+        "Name": "*D3",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1321,
         "OwnerHandle": 1,
@@ -1843,6 +1956,7 @@
         "Entities": [
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1860,6 +1974,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1877,6 +1992,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1894,6 +2010,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1911,6 +2028,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1928,6 +2046,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1945,6 +2064,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1962,6 +2082,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1979,6 +2100,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -1996,6 +2118,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2012,7 +2135,7 @@
             "Children": []
           }
         ],
-        "Name": "*D14",
+        "Name": "*D4",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1333,
         "OwnerHandle": 1,
@@ -2023,6 +2146,7 @@
         "Entities": [
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2040,6 +2164,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2057,6 +2182,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2074,6 +2200,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2091,6 +2218,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2108,6 +2236,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2125,6 +2254,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2142,6 +2272,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2159,6 +2290,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2176,6 +2308,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2193,6 +2326,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2209,7 +2343,7 @@
             "Children": []
           }
         ],
-        "Name": "*D15",
+        "Name": "*D5",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1346,
         "OwnerHandle": 1,
@@ -2220,6 +2354,7 @@
         "Entities": [
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2237,6 +2372,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2254,6 +2390,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2271,6 +2408,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2288,6 +2426,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2305,6 +2444,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2322,6 +2462,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2338,7 +2479,7 @@
             "Children": []
           }
         ],
-        "Name": "*D16",
+        "Name": "*D6",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1360,
         "OwnerHandle": 1,
@@ -2349,6 +2490,7 @@
         "Entities": [
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2366,6 +2508,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2383,6 +2526,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2400,6 +2544,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2417,6 +2562,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2434,6 +2580,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2451,6 +2598,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2467,7 +2615,7 @@
             "Children": []
           }
         ],
-        "Name": "*D17",
+        "Name": "*D7",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1370,
         "OwnerHandle": 1,
@@ -2478,6 +2626,7 @@
         "Entities": [
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2495,6 +2644,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2512,6 +2662,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2529,6 +2680,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2546,6 +2698,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2563,6 +2716,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2580,6 +2734,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2597,6 +2752,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2614,6 +2770,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2630,7 +2787,7 @@
             "Children": []
           }
         ],
-        "Name": "*D18",
+        "Name": "*D8",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1380,
         "OwnerHandle": 1,
@@ -2641,6 +2798,7 @@
         "Entities": [
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2658,6 +2816,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2675,6 +2834,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2692,6 +2852,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2709,6 +2870,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2726,6 +2888,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2743,6 +2906,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2760,6 +2924,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2777,6 +2942,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2794,6 +2960,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2811,6 +2978,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2828,6 +2996,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2845,6 +3014,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2862,6 +3032,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2879,6 +3050,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2896,6 +3068,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2913,6 +3086,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2930,6 +3104,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2947,6 +3122,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2964,6 +3140,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2981,6 +3158,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -2998,6 +3176,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3015,6 +3194,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3032,6 +3212,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3049,6 +3230,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3066,6 +3248,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3083,6 +3266,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3100,6 +3284,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": true,
             "Transparency": {
               "IsByLayer": false,
@@ -3116,7 +3301,7 @@
             "Children": []
           }
         ],
-        "Name": "*T19",
+        "Name": "*T9",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1392,
         "OwnerHandle": 1,
@@ -3127,6 +3312,7 @@
         "Entities": [
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3144,6 +3330,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3161,6 +3348,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3178,6 +3366,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3195,6 +3384,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3212,6 +3402,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3228,7 +3419,7 @@
             "Children": []
           }
         ],
-        "Name": "*D20",
+        "Name": "*D10",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1453,
         "OwnerHandle": 1,
@@ -3239,6 +3430,7 @@
         "Entities": [
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3256,6 +3448,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3273,6 +3466,7 @@
           },
           {
             "LayerName": "Layer1",
+            "LayerHandle": 629,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3290,6 +3484,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3307,6 +3502,7 @@
           },
           {
             "LayerName": "Defpoints",
+            "LayerHandle": 1234,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3323,7 +3519,7 @@
             "Children": []
           }
         ],
-        "Name": "*D21",
+        "Name": "*D11",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1462,
         "OwnerHandle": 1,
@@ -3334,6 +3530,7 @@
         "Entities": [
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3351,6 +3548,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3368,6 +3566,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,
@@ -3385,6 +3584,7 @@
           },
           {
             "LayerName": "0",
+            "LayerHandle": 16,
             "IsInvisible": false,
             "Transparency": {
               "IsByLayer": false,

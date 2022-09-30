@@ -1,6 +1,7 @@
-﻿using ACadSharp.Tables;
+﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
-using ACadSharp.Tests.TestCases;
+using ACadSharp.Tests.TestModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -90,6 +91,7 @@ namespace ACadSharp.Tests.Common
 			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(File.ReadAllText(_documentTree));
 
 			this.assertTable(doc.BlockRecords, tree.BlocksTable);
+			this.assertTable(doc.Layers, tree.LayersTable);
 		}
 
 		private void assertTable<T>(CadDocument doc, Table<T> table)
@@ -115,8 +117,9 @@ namespace ACadSharp.Tests.Common
 			}
 		}
 
-		private void assertTable<T>(Table<T> table, TableNode node)
+		private void assertTable<T, R>(Table<T> table, TableNode<R> node)
 			where T : TableEntry
+			where R : TableEntryNode
 		{
 			this.assertObject(table, node);
 
@@ -126,30 +129,27 @@ namespace ACadSharp.Tests.Common
 				TableEntryNode child = node.GetEntry(entry.Handle);
 				if (child == null)
 				{
-					this.Output.WriteLine($"[{node.ACadName}] entry not found in the tree {entry.Handle} | {entry.Name}");
+					this.Output.WriteLine($"[{node.ACadName}] entry not found in the tree handle: {entry.Handle}");
 					continue;
 				}
 
 				this.assertObject(entry, child);
 			}
 
+			//By name
 			foreach (T entry in table)
 			{
 				TableEntryNode child = node.GetEntry(entry.Name);
 				if (child == null)
 				{
-					this.Output.WriteLine($"[{node.ACadName}] entry not found in the tree {entry.Handle} | {entry.Name}");
+					this.Output.WriteLine($"[{node.ACadName}] entry not found in the tree name: {entry.Name}");
 					continue;
 				}
 
 				this.assertObject(entry, child);
 			}
-
-			foreach (Node c in node.Children)
-			{
-
-			}
 		}
+
 		private void assertObject(CadObject co, Node node)
 		{
 			Assert.True(co.Handle == node.Handle, $"[{co.GetType().FullName}] handle does not match, expected : {node.Handle} but was : {co.Handle}");
@@ -166,20 +166,38 @@ namespace ACadSharp.Tests.Common
 
 			switch (co)
 			{
-				case BlockRecord record:
-					this.assertCollection(record.Entities, node);
+				case BlockRecord record when node is BlockRecordNode blockRecordNode:
+					this.assertCollection(record.Entities, blockRecordNode.Entities);
+					break;
+				case Entity entity when node is EntityNode enode:
+					this.assertEntity(entity, enode);
 					break;
 				default:
 					break;
 			}
 		}
 
-		private void assertCollection(IEnumerable<CadObject> collection, Node node)
+		private void assertEntity(Entity entity, EntityNode node)
+		{
+			if (this._document.Header.Version > ACadVersion.AC1021)	//TODO: For TextEntity the default layer is changed for "0 @ 1"
+				Assert.Equal(entity.Layer.Name, node.LayerName);
+
+			//TODO: fix entity property assertion
+			/*
+			Assert.Equal(entity.IsInvisible, node.IsInvisible);
+			//Assert.Equal(entity.Transparency, node.Transparency);
+			Assert.Equal(entity.LineType.Name, node.LinetypeName);
+			Assert.Equal(entity.LinetypeScale, node.LinetypeScale);
+			Assert.Equal(entity.LineWeight, node.LineWeight);
+			*/
+		}
+
+		private void assertCollection(IEnumerable<CadObject> collection, IEnumerable<Node> node)
 		{
 			//Check the actual elements in the collection
 			foreach (CadObject entry in collection)
 			{
-				Node child = node.GetChild(entry.Handle);
+				Node child = node.FirstOrDefault(x => x.Handle == entry.Handle);
 
 				if (child == null)
 				{
@@ -191,11 +209,11 @@ namespace ACadSharp.Tests.Common
 			}
 
 			//Look for missing elements
-			foreach (Node n in node.Children)
+			foreach (Node n in node)
 			{
 				var o = collection.FirstOrDefault(x => x.Handle == n.Handle);
 				if (o == null)
-					this.Output.WriteLine($"Missing object in collection with handle with handle : {n.Handle} | owner handle : {n.OwnerHandle}");
+					this.Output.WriteLine($"Missing object in {n.ACadName} collection with handle : {n.Handle} | owner handle : {n.OwnerHandle}");
 			}
 		}
 

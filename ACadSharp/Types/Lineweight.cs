@@ -2,26 +2,33 @@
 {
 	public enum LineweightType : short
 	{
+		ByDIPs = -4,
+
 		/// <summary>
 		/// Default lineweight.
 		/// </summary>
 		Default = -3,
+
 		/// <summary>
 		/// Lineweight defined by block.
 		/// </summary>
 		ByBlock = -2,
+
 		/// <summary>
 		/// Lineweight defined by layer.
 		/// </summary>
 		ByLayer = -1,
+
 		/// <summary>
 		/// Lineweight value 0.00 mm (hairline).
 		/// </summary>
 		W0 = 0,
+
 		/// <summary>
 		/// Lineweight value 0.05 mm.
 		/// </summary>
 		W5 = 5,
+
 		/// <summary>
 		/// Lineweight value 0.09 mm.
 		/// </summary>
