@@ -157,7 +157,7 @@ namespace ACadSharp.IO.Templates
 			//polyLine.ExtendedData = this.CadObject.ExtendedData;
 
 			vertex.Color = this.CadObject.Color;
-			vertex.Lineweight = this.CadObject.Lineweight;
+			vertex.LineWeight = this.CadObject.LineWeight;
 			vertex.LinetypeScale = this.CadObject.LinetypeScale;
 			vertex.IsInvisible = this.CadObject.IsInvisible;
 			vertex.Transparency = this.CadObject.Transparency;
