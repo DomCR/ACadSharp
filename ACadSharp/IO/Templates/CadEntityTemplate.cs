@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
+using System;
 
 namespace ACadSharp.IO.Templates
 {
@@ -82,8 +83,19 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			if (this.LayerHandle.HasValue && builder.TryGetCadObject<Layer>(this.LayerHandle.Value, out Layer layer))
+			Layer layer;
+			if (builder.TryGetCadObject<Layer>(this.LayerHandle, out layer))
+			{
 				this.CadObject.Layer = layer;
+			}
+			else if (!string.IsNullOrEmpty(LayerName) && builder.DocumentToBuild.Layers.TryGetValue(this.LayerName, out layer))
+			{
+				this.CadObject.Layer = layer;
+			}
+			else
+			{
+				builder.Notify($"Could not assign the layer to entity | handle : {this.LayerHandle} | name : {LayerName}", NotificationType.Warning);
+			}
 
 			//Handle the line type for this entity
 			if (this.LtypeFlags.HasValue)

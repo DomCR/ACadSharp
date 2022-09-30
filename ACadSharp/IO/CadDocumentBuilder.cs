@@ -119,5 +119,10 @@ namespace ACadSharp.IO
 		{
 			this.OnNotification?.Invoke(this, e);
 		}
+
+		public void Notify(string message, NotificationType notificationType = NotificationType.None)
+		{
+			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType));
+		}
 	}
 }

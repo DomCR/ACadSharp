@@ -11,12 +11,14 @@ namespace ACadSharp.IO
 		NotImplemented = -1,
 		None = 0,
 		NotSupported = 1,
-		Error = 2,
+		Warning = 2,
+		Error = 3,
 	}
 
 	public class NotificationEventArgs : EventArgs
 	{
 		public string Message { get; }
+
 		public NotificationType NotificationType { get; set; }
 
 		public NotificationEventArgs(string message, NotificationType notificationType = NotificationType.None)

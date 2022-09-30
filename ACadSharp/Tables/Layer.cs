@@ -40,9 +40,12 @@ namespace ACadSharp.Tables
 		public new LayerFlags Flags { get { return (LayerFlags)base.Flags; } set { base.Flags = (StandardFlags)value; } }
 
 		/// <summary>
-		/// Specifies the Color of an object.
+		/// Color
 		/// </summary>
-		[DxfCodeValue(62, 420, 430)]
+		/// <remarks>
+		/// if the index is negative, layer is off
+		/// </remarks>
+		[DxfCodeValue(62)]
 		public Color Color { get; set; }
 
 		/// <summary>

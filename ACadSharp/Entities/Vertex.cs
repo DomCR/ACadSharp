@@ -57,7 +57,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Vertex identifier
 		/// </summary>
-		[DxfCodeValue(91)]
+		[DxfCodeValue(DxfReferenceType.Ignored, 91)]	//TODO: for some versions this code is invalid
 		public int Id { get; set; }
 
 		public Vertex() : base() { }

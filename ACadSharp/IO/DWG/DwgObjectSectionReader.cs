@@ -95,7 +95,7 @@ namespace ACadSharp.IO.DWG
 
 			//Initialize the crc stream
 			//RS : CRC for the data section, starting after the sentinel. Use 0xC0C1 for the initial value
-			if (this._builder.Flags.HasFlag(DwgReaderFlags.CheckCrc))
+			if (this._builder.Configuration.CrcCheck)
 				this._crcStream = new CRC8StreamHandler(this._reader.Stream, 0xC0C1);
 			else
 				this._crcStream = this._reader.Stream;
@@ -411,7 +411,7 @@ namespace ACadSharp.IO.DWG
 			//Lineweight RC 370
 			byte v = this._objectReader.ReadByte();
 			//TODO: LineweightType reading, strange values, ex : 29
-			entity.Lineweight = LineweightType.Default;
+			entity.LineWeight = LineweightType.Default;
 		}
 
 		private void readCommonNonEntityData(CadTemplate template)
@@ -4300,6 +4300,8 @@ namespace ACadSharp.IO.DWG
 						//Add the vertex
 						pline.Vertices.Add(new XY(vertex.X, vertex.Y));
 					}
+
+					pathTemplate.Path.Edges.Add(pline);
 				}
 
 				//numboundaryobjhandles BL 97 Number of boundary object handles for this path
