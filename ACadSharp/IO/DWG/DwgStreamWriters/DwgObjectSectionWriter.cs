@@ -16,6 +16,8 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		public Dictionary<ulong, long> Map { get; } = new Dictionary<ulong, long>();
 
+		private Queue<CadObject> _objects = new Queue<CadObject>();
+
 		private MemoryStream _msmain;
 
 		private IDwgStreamWriter _writer;
@@ -36,6 +38,8 @@ namespace ACadSharp.IO.DWG
 		public void Write()
 		{
 			this.writeTables();
+
+			this.writeObjects();
 		}
 
 		private void registerObject(CadObject cadObject)
@@ -117,7 +121,15 @@ namespace ACadSharp.IO.DWG
 			this.writeBlockControl();
 		}
 
-		private void writeBlockControl()
+		private void writeObjects()
+		{
+			while (false)
+			{
+
+			}
+		}
+
+		private void writeTable()
 		{
 			this.writeCommonNonEntityData(this._document.BlockRecords);
 
@@ -138,14 +150,50 @@ namespace ACadSharp.IO.DWG
 			this.registerObject(this._document.BlockRecords);
 		}
 
+		private void writeBlockControl()
+		{
+			this.writeTable();
+
+			foreach (BlockRecord record in this._document.BlockRecords)
+			{
+				this.writeBlockRecord(record);
+			}
+		}
+
 		private void writeCommonNonEntityData<T>(Table<T> table)
 			where T : TableEntry
 		{
 			this.writeCommonData(table);
+
+			//R13-R14 Only:
+			//Obj size RL size of object in bits, not including end handles
+			if (this.R13_14Only)
+				this._writer.SavePositonForSize();
+
+			//[Owner ref handle (soft pointer)]
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, table.Owner.Handle);
+
+			//write the cad object reactors
+			this.writeReactorsAndDictionaryHandle(table);
 		}
 
 		private void writeCommonEntityData(Entity entity)
 		{
+			this.writeCommonData(entity);
+
+			//Graphic present Flag B 1 if a graphic is present
+			this._writer.WriteBit(false);
+
+			//R13 - R14 Only:
+			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1014)
+			{
+				this._writer.SavePositonForSize();
+			}
+
+			//FE: Entity mode(entmode). Generally, this indicates whether or not the owner
+			byte entmode = 0;
+			this._writer.Write2Bits(entmode);
+
 
 		}
 
@@ -176,17 +224,6 @@ namespace ACadSharp.IO.DWG
 
 			//Extended object data, if any
 			this.writeExtendedData(cadObject.ExtendedData);
-
-			//R13-R14 Only:
-			//Obj size RL size of object in bits, not including end handles
-			if (this.R13_14Only)
-				this._writer.SavePositonForSize();
-
-			//[Owner ref handle (soft pointer)]
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, cadObject.Owner.Handle);
-
-			//write the cad object reactors
-			this.writeReactorsAndDictionaryHandle(cadObject);
 		}
 
 		private void writeExtendedData(ExtendedDataDictionary data)
@@ -219,6 +256,14 @@ namespace ACadSharp.IO.DWG
 			{
 				//Has DS binary data B If 1 then this object has associated binary data stored in the data store
 				this._writer.WriteBit(false);
+			}
+		}
+
+		private void writeBlockRecord(BlockRecord record)
+		{
+			foreach (var item in record.Entities)
+			{
+				this._objects.Enqueue(item);
 			}
 		}
 
@@ -268,6 +313,22 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitExtrusion(line.Normal);
 
 			this.registerObject(line);
+		}
+
+		private void writePoint(Point point)
+		{
+			this.writeCommonEntityData(point);
+
+			//Point 3BD 10
+			this._writer.Write3BitDouble(point.Location);
+			//Thickness BT 39
+			this._writer.WriteBitThickness(point.Thickness);
+			//Extrusion BE 210
+			this._writer.WriteBitExtrusion(point.Normal);
+			//X - axis ang BD 50 See DXF documentation
+			this._writer.WriteBitDouble(point.Rotation);
+
+			this.registerObject(point);
 		}
 	}
 }
