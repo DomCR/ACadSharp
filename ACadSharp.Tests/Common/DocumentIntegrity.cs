@@ -91,6 +91,7 @@ namespace ACadSharp.Tests.Common
 			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(File.ReadAllText(_documentTree));
 
 			this.assertTable(doc.BlockRecords, tree.BlocksTable);
+			this.assertTable(doc.Layers, tree.LayersTable);
 		}
 
 		private void assertTable<T>(CadDocument doc, Table<T> table)
@@ -128,7 +129,7 @@ namespace ACadSharp.Tests.Common
 				TableEntryNode child = node.GetEntry(entry.Handle);
 				if (child == null)
 				{
-					this.Output.WriteLine($"[{node.ACadName}] entry not found in the tree {entry.Handle} | {entry.Name}");
+					this.Output.WriteLine($"[{node.ACadName}] entry not found in the tree handle: {entry.Handle}");
 					continue;
 				}
 
@@ -141,7 +142,7 @@ namespace ACadSharp.Tests.Common
 				TableEntryNode child = node.GetEntry(entry.Name);
 				if (child == null)
 				{
-					this.Output.WriteLine($"[{node.ACadName}] entry not found in the tree {entry.Handle} | {entry.Name}");
+					this.Output.WriteLine($"[{node.ACadName}] entry not found in the tree name: {entry.Name}");
 					continue;
 				}
 

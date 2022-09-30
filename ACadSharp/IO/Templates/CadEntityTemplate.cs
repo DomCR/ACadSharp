@@ -83,8 +83,19 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			if (this.LayerHandle.HasValue && builder.TryGetCadObject<Layer>(this.LayerHandle.Value, out Layer layer))
+			Layer layer;
+			if (builder.TryGetCadObject<Layer>(this.LayerHandle, out layer))
+			{
 				this.CadObject.Layer = layer;
+			}
+			else if (!string.IsNullOrEmpty(LayerName) && builder.DocumentToBuild.Layers.TryGetValue(this.LayerName, out layer))
+			{
+				this.CadObject.Layer = layer;
+			}
+			else
+			{
+				builder.Notify($"Could not assign the layer to entity | handle : {this.LayerHandle} | name : {LayerName}", NotificationType.Warning);
+			}
 
 			//Handle the line type for this entity
 			if (this.LtypeFlags.HasValue)
@@ -137,47 +148,6 @@ namespace ACadSharp.IO.Templates
 		private void applyLineType(CadDocumentBuilder builder)
 		{
 			this.CadObject.LineType = builder.GetCadObject<LineType>(this.LineTypeHandle.Value);
-		}
-	}
-
-	internal class CadVertexTemplate : CadEntityTemplate
-	{
-		public CadVertexTemplate() : base(new VertexPlaceholder())
-		{
-		}
-
-		internal void SetVertexObject(Vertex vertex)
-		{
-			vertex.Handle = this.CadObject.Handle;
-			vertex.Owner = this.CadObject.Owner;
-
-			vertex.XDictionary = this.CadObject.XDictionary;
-
-			//polyLine.Reactors = this.CadObject.Reactors;
-			//polyLine.ExtendedData = this.CadObject.ExtendedData;
-
-			vertex.Color = this.CadObject.Color;
-			vertex.LineWeight = this.CadObject.LineWeight;
-			vertex.LinetypeScale = this.CadObject.LinetypeScale;
-			vertex.IsInvisible = this.CadObject.IsInvisible;
-			vertex.Transparency = this.CadObject.Transparency;
-
-			VertexPlaceholder placeholder = this.CadObject as VertexPlaceholder;
-
-			vertex.Location = placeholder.Location;
-			vertex.StartWidth = placeholder.StartWidth;
-			vertex.EndWidth = placeholder.EndWidth;
-			vertex.Bulge = placeholder.Bulge;
-			vertex.Flags = placeholder.Flags;
-			vertex.CurveTangent = placeholder.CurveTangent;
-			vertex.Id = placeholder.Id;
-
-			this.CadObject = vertex;
-		}
-
-		public class VertexPlaceholder : Vertex
-		{
-			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
 		}
 	}
 }
