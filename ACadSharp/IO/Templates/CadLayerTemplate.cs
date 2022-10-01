@@ -11,7 +11,7 @@ namespace ACadSharp.IO.Templates
 
 		public ulong MaterialHandle { get; set; }
 
-		public ulong LineTypeHandle { get; set; }
+		public ulong? LineTypeHandle { get; set; }
 
 		public string LineTypeName { get; set; }
 
@@ -88,7 +88,14 @@ namespace ACadSharp.IO.Templates
 
 			var c = builder.GetCadObject(this.MaterialHandle);
 
-			this.CadObject.LineType = builder.GetCadObject<LineType>(this.LineTypeHandle);
+			if (builder.TryGetCadObject<LineType>(this.LineTypeHandle, out LineType lineType))
+			{
+				this.CadObject.LineType = lineType;
+			}
+			else
+			{
+
+			}
 		}
 	}
 }

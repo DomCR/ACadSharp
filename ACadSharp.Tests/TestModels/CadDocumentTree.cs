@@ -13,7 +13,7 @@ namespace ACadSharp.Tests.TestModels
 
 		public TableNode<TableEntryNode> DimensionStylesTable { get; set; }
 
-		public TableNode<TableEntryNode> LayersTable { get; set; }
+		public TableNode<LayerNode> LayersTable { get; set; }
 
 		public TableNode<TableEntryNode> LineTypesTable { get; set; }
 
@@ -93,5 +93,14 @@ namespace ACadSharp.Tests.TestModels
 	public class BlockRecordNode : TableEntryNode
 	{
 		public List<EntityNode> Entities { get; set; } = new List<EntityNode>();
+	}
+
+	public class LayerNode : TableEntryNode
+	{
+		public string LinetypeName { get; set; }
+
+		public LineweightType LineWeight { get; set; }
+
+		public Color Color { get; set; }
 	}
 }

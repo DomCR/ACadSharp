@@ -172,6 +172,9 @@ namespace ACadSharp.Tests.Common
 				case Entity entity when node is EntityNode enode:
 					this.assertEntity(entity, enode);
 					break;
+				case Layer layer when node is LayerNode lnode:
+					this.assertLayer(layer, lnode);
+					break;
 				default:
 					break;
 			}
@@ -182,12 +185,20 @@ namespace ACadSharp.Tests.Common
 			if (this._document.Header.Version > ACadVersion.AC1021)	//TODO: For TextEntity the default layer is changed for "0 @ 1"
 				Assert.Equal(entity.Layer.Name, node.LayerName);
 
-			//TODO: fix entity property assertion
 			Assert.Equal(entity.IsInvisible, node.IsInvisible);
 			//Assert.Equal(entity.Transparency, node.Transparency);
 			Assert.Equal(entity.LineType.Name, node.LinetypeName);
 			Assert.Equal(entity.LinetypeScale, node.LinetypeScale);
+
 			Assert.Equal(entity.LineWeight, node.LineWeight);
+		}
+
+		private void assertLayer(Layer layer, LayerNode node)
+		{
+			//Assert.Equal(entity.Transparency, node.Transparency);
+			Assert.Equal(layer.LineType.Name, node.LinetypeName);
+
+			Assert.Equal(layer.LineWeight, node.LineWeight);
 		}
 
 		private void assertCollection(IEnumerable<CadObject> collection, IEnumerable<Node> node)
