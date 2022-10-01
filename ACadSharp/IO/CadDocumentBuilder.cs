@@ -29,6 +29,11 @@ namespace ACadSharp.IO
 		{
 			foreach (CadTemplate template in this.templates.Values)
 			{
+				if(template is CadLayerTemplate)
+				{
+
+				}
+
 				template.Build(this);
 			}
 		}
