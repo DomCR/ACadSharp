@@ -94,7 +94,12 @@ namespace ACadSharp.Tables
 
 			Layer l = copy as Layer;
 
-
+			l.Color = this.Color;
+			l.LineType = (LineType)this.LineType.Clone();
+			l.PlotFlag = this.PlotFlag;
+			l.LineWeight = this.LineWeight;
+			l.PlotStyleName = this.PlotStyleName;
+			//l.Material = this.Material.Clone();
 		}
 	}
 }
