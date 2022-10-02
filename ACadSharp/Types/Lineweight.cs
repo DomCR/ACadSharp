@@ -116,6 +116,6 @@
 		/// <summary>
 		/// Lineweight value 2.11 mm.
 		/// </summary>
-		W211 = 211,
+		W211 = 211
 	}
 }

@@ -1508,6 +1508,74 @@
             "OwnerHandle": 31,
             "DictionaryHandle": 0,
             "Children": []
+          },
+          {
+            "LayerName": "Layer2",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBText",
+            "Handle": 1878,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "LayerName": "Layer_color_80",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBText",
+            "Handle": 1879,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 1880,
+            "Children": []
+          },
+          {
+            "LayerName": "Layer_true_color",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBText",
+            "Handle": 1884,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "LayerName": "Layer_color_book",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBText",
+            "Handle": 1885,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 1886,
+            "Children": []
           }
         ],
         "Name": "*Model_Space",
@@ -1832,7 +1900,7 @@
             "Children": []
           }
         ],
-        "Name": "*D13",
+        "Name": "*D3",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1321,
         "OwnerHandle": 1,
@@ -2012,7 +2080,7 @@
             "Children": []
           }
         ],
-        "Name": "*D14",
+        "Name": "*D4",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1333,
         "OwnerHandle": 1,
@@ -2209,7 +2277,7 @@
             "Children": []
           }
         ],
-        "Name": "*D15",
+        "Name": "*D5",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1346,
         "OwnerHandle": 1,
@@ -2338,7 +2406,7 @@
             "Children": []
           }
         ],
-        "Name": "*D16",
+        "Name": "*D6",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1360,
         "OwnerHandle": 1,
@@ -2467,7 +2535,7 @@
             "Children": []
           }
         ],
-        "Name": "*D17",
+        "Name": "*D7",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1370,
         "OwnerHandle": 1,
@@ -2630,7 +2698,7 @@
             "Children": []
           }
         ],
-        "Name": "*D18",
+        "Name": "*D8",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1380,
         "OwnerHandle": 1,
@@ -3116,7 +3184,7 @@
             "Children": []
           }
         ],
-        "Name": "*T19",
+        "Name": "*T9",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1392,
         "OwnerHandle": 1,
@@ -3228,7 +3296,7 @@
             "Children": []
           }
         ],
-        "Name": "*D20",
+        "Name": "*D10",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1453,
         "OwnerHandle": 1,
@@ -3323,7 +3391,7 @@
             "Children": []
           }
         ],
-        "Name": "*D21",
+        "Name": "*D11",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 1462,
         "OwnerHandle": 1,
@@ -3451,6 +3519,13 @@
   "LayersTable": {
     "Entries": [
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "0",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 16,
@@ -3459,6 +3534,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer1",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 629,
@@ -3467,6 +3549,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_Off",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 632,
@@ -3475,6 +3564,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_Freeze",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 633,
@@ -3483,6 +3579,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_Lock",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 634,
@@ -3491,6 +3594,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_NoPlot",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 635,
@@ -3499,6 +3609,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_color_80",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 636,
@@ -3507,6 +3624,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "ACAD_ISO02W100",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_Lt_dash",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 637,
@@ -3515,6 +3639,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": 35,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_lw_035",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 641,
@@ -3523,6 +3654,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_transp_70",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 642,
@@ -3531,6 +3669,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_vp_freeze",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 643,
@@ -3539,6 +3684,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_desc",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 644,
@@ -3547,6 +3699,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_true_color",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 645,
@@ -3555,6 +3714,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_color_book",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 646,
@@ -3563,6 +3729,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Defpoints",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 1234,
@@ -3571,11 +3744,33 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer2",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 1235,
         "OwnerHandle": 2,
         "DictionaryHandle": 1236,
+        "Children": []
+      },
+      {
+        "LinetypeName": "Continuous",
+        "LineWeight": 50,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
+        "Name": "Layer_lw_050",
+        "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
+        "Handle": 1889,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 0,
         "Children": []
       }
     ],

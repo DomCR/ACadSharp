@@ -409,9 +409,7 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			//Lineweight RC 370
-			byte v = this._objectReader.ReadByte();
-			//TODO: LineweightType reading, strange values, ex : 29
-			entity.LineWeight = LineweightType.Default;
+			entity.LineWeight = DwgLineWeightConverter.ToValue(this._objectReader.ReadByte());
 		}
 
 		private void readCommonNonEntityData(CadTemplate template)
@@ -2910,7 +2908,6 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Entry name TV 2
 			layer.Name = this._textReader.ReadVariableText();
-			//layer.Name = m_objectReader.ReadVariableText();
 
 			this.readXrefDependantBit(template.CadObject);
 
@@ -2956,7 +2953,8 @@ namespace ACadSharp.IO.DWG
 				layer.PlotFlag = ((uint)values & 0b10000) > 0;
 
 				//and lineweight (mask with 0x03E0)
-				layer.LineWeight = (LineweightType)((values & 0x3E0) >> 5);
+				byte lineweight = (byte)((values & 0x3E0) >> 5);
+				layer.LineWeight = DwgLineWeightConverter.ToValue(lineweight);
 			}
 
 			//Common:
