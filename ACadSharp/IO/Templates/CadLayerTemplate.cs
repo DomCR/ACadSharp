@@ -1,4 +1,5 @@
 ﻿using ACadSharp.IO.DWG;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
@@ -11,7 +12,7 @@ namespace ACadSharp.IO.Templates
 
 		public ulong MaterialHandle { get; set; }
 
-		public ulong LineTypeHandle { get; set; }
+		public ulong? LineTypeHandle { get; set; }
 
 		public string LineTypeName { get; set; }
 
@@ -82,13 +83,30 @@ namespace ACadSharp.IO.Templates
 
 			base.Build(builder);
 
-			var a = builder.GetCadObject(this.LayerControlHandle);
-
 			//this.CadObject.PlotStyleName = builder.GetCadObject(PlotStyleHandle);
 
-			var c = builder.GetCadObject(this.MaterialHandle);
+			if (builder.TryGetCadObject(this.MaterialHandle, out Material material))
+			{
 
-			this.CadObject.LineType = builder.GetCadObject<LineType>(this.LineTypeHandle);
+			}
+			else
+			{
+				// builder.Notify($"Linetype with handle {this.LineTypeHandle} could not be found for layer {this.CadObject.Name}", NotificationType.Warning);
+			}
+
+			LineType lineType;
+			if (builder.TryGetCadObject(this.LineTypeHandle, out lineType))
+			{
+				this.CadObject.LineType = lineType;
+			}
+			else if (!string.IsNullOrEmpty(this.LineTypeName) && builder.DocumentToBuild.LineTypes.TryGetValue(this.LineTypeName, out lineType))
+			{
+				this.CadObject.LineType = lineType;
+			}
+			else
+			{
+				builder.Notify($"Linetype with handle {this.LineTypeHandle} could not be found for layer {this.CadObject.Name}", NotificationType.Warning);
+			}
 		}
 	}
 }
