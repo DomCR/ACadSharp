@@ -8,9 +8,9 @@ namespace ACadSharp
 	public class CadObjectCollection<T> : IObservableCollection<T>
 		where T : CadObject
 	{
-		public event EventHandler<ReferenceChangedEventArgs> OnAdd;
+		public event EventHandler<CollectionChangedEventArgs> OnAdd;
 
-		public event EventHandler<ReferenceChangedEventArgs> OnRemove;
+		public event EventHandler<CollectionChangedEventArgs> OnRemove;
 
 		// TODO: Investigate adding this back with a HashSet.
 		//public T this[int index] { get { return this._entries[index]; } }
@@ -42,7 +42,7 @@ namespace ACadSharp
 			this._entries.Add(item);
 			item.Owner = this.Owner;
 
-			OnAdd?.Invoke(this, new ReferenceChangedEventArgs(item));
+			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
 		}
 
 		/// <summary>
@@ -69,7 +69,7 @@ namespace ACadSharp
 
 			item.Owner = null;
 
-			OnRemove?.Invoke(this, new ReferenceChangedEventArgs(item));
+			OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));
 
 			return item;
 		}

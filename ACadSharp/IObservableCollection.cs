@@ -6,8 +6,8 @@ namespace ACadSharp
 	public interface IObservableCollection<T> : IEnumerable<T>
 		where T : CadObject
 	{
-		event EventHandler<ReferenceChangedEventArgs> OnAdd;
+		event EventHandler<CollectionChangedEventArgs> OnAdd;
 
-		event EventHandler<ReferenceChangedEventArgs> OnRemove;
+		event EventHandler<CollectionChangedEventArgs> OnRemove;
 	}
 }

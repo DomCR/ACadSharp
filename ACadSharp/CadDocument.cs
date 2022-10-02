@@ -345,27 +345,27 @@ namespace ACadSharp
 			}
 		}
 
-		private void onAdd(object sender, ReferenceChangedEventArgs e)
+		private void onAdd(object sender, CollectionChangedEventArgs e)
 		{
-			if (e.Current is CadDictionary dictionary)
+			if (e.Item is CadDictionary dictionary)
 			{
 				this.RegisterCollection(dictionary);
 			}
 			else
 			{
-				this.addCadObject(e.Current);
+				this.addCadObject(e.Item);
 			}
 		}
 
-		private void onRemove(object sender, ReferenceChangedEventArgs e)
+		private void onRemove(object sender, CollectionChangedEventArgs e)
 		{
-			if (e.Current is CadDictionary dictionary)
+			if (e.Item is CadDictionary dictionary)
 			{
 				this.UnregisterCollection(dictionary);
 			}
 			else
 			{
-				this.removeCadObject(e.Current);
+				this.removeCadObject(e.Item);
 			}
 		}
 
