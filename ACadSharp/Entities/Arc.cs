@@ -36,5 +36,15 @@ namespace ACadSharp.Entities
 		public double EndAngle { get; set; } = 180.0;
 
 		public Arc() : base() { }
+
+		protected override void createCopy(CadObject copy)
+		{
+			base.createCopy(copy);
+
+			Arc c = copy as Arc;
+
+			c.StartAngle = this.StartAngle;
+			c.EndAngle = this.EndAngle;
+		}
 	}
 }
