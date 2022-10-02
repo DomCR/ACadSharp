@@ -33,7 +33,7 @@ namespace ACadSharp.Entities
 		/// Specifies the lineweight of an individual object or the default lineweight for the drawing.
 		/// </summary>
 		[DxfCodeValue(370)]
-		public LineweightType LineWeight { get; set; } = LineweightType.Default;
+		public LineweightType LineWeight { get; set; } = LineweightType.ByLayer;
 
 		/// <summary>
 		/// Linetype scale for this entity.
