@@ -22,11 +22,11 @@ namespace ACadSharp.Entities
 			this.Vertices.OnAdd += this.verticesOnAdd;
 		}
 
-		private void verticesOnAdd(object sender, ReferenceChangedEventArgs e)
+		private void verticesOnAdd(object sender, CollectionChangedEventArgs e)
 		{
-			if (e.Current is not Vertex3D)
+			if (e.Item is not Vertex3D)
 			{
-				this.Vertices.Remove((Vertex)e.Current);
+				this.Vertices.Remove((Vertex)e.Item);
 				throw new ArgumentException($"Wrong vertex type for {DxfSubclassMarker.Polyline3d}");
 			}
 		}
