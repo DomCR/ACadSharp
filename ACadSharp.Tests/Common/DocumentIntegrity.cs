@@ -182,23 +182,30 @@ namespace ACadSharp.Tests.Common
 
 		private void assertEntity(Entity entity, EntityNode node)
 		{
-			if (this._document.Header.Version > ACadVersion.AC1021)	//TODO: For TextEntity the default layer is changed for "0 @ 1"
+			if (this._document.Header.Version > ACadVersion.AC1021) //TODO: For TextEntity the default layer is changed for "0 @ 1"
 				Assert.Equal(entity.Layer.Name, node.LayerName);
 
-			Assert.Equal(entity.IsInvisible, node.IsInvisible);
+
 			//Assert.Equal(entity.Transparency, node.Transparency);
-			Assert.Equal(entity.LineType.Name, node.LinetypeName);
+			Assert.Equal(entity.LineType.Name, node.LinetypeName, ignoreCase: true);
 			Assert.Equal(entity.LinetypeScale, node.LinetypeScale);
 
-			Assert.Equal(entity.LineWeight, node.LineWeight);
+			if (this._document.Header.Version > ACadVersion.AC1014)
+			{
+				Assert.Equal(entity.IsInvisible, node.IsInvisible);
+				Assert.Equal(entity.LineWeight, node.LineWeight);
+			}
 		}
 
 		private void assertLayer(Layer layer, LayerNode node)
 		{
 			//Assert.Equal(entity.Transparency, node.Transparency);
-			Assert.Equal(layer.LineType.Name, node.LinetypeName);
+			Assert.Equal(layer.LineType.Name, node.LinetypeName, ignoreCase: true);
 
-			Assert.Equal(layer.LineWeight, node.LineWeight);
+			if (this._document.Header.Version > ACadVersion.AC1014)
+			{
+				Assert.Equal(layer.LineWeight, node.LineWeight);
+			}
 		}
 
 		private void assertCollection(IEnumerable<CadObject> collection, IEnumerable<Node> node)
