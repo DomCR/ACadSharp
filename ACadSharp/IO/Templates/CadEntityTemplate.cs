@@ -126,10 +126,13 @@ namespace ACadSharp.IO.Templates
 			{
 				applyLineType(builder);
 			}
+			else if (!string.IsNullOrEmpty(LtypeName) && builder.DocumentToBuild.LineTypes.TryGetValue(this.LtypeName, out LineType ltype))
+			{
+				this.CadObject.LineType = ltype;
+			}
 			else
 			{
-				//TODO: Dxf sets the linetype by name
-				// this.CadObject.LineType = builder.LineTypes["ByLayer"];
+				builder.Notify($"Could not assign the line type to entity | handle : {this.LineTypeHandle} | name : {LtypeName}", NotificationType.Warning);
 			}
 
 			if (this.ColorHandle.HasValue)
