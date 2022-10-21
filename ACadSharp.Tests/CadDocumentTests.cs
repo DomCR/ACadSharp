@@ -13,7 +13,19 @@ namespace ACadSharp.Tests
 {
 	public class CadDocumentTests
 	{
+		public static readonly TheoryData<Type> EntityTypes;
+
 		protected readonly DocumentIntegrity _docIntegrity;
+
+		static CadDocumentTests()
+		{
+			EntityTypes = new TheoryData<Type>();
+
+			foreach (var item in DataFactory.GetTypes<Entity>())
+			{
+				EntityTypes.Add(item);
+			}
+		}
 
 		public CadDocumentTests(ITestOutputHelper output)
 		{
@@ -76,18 +88,19 @@ namespace ACadSharp.Tests
 			Assert.Equal(layer, doc.Layers[layer.Name]);
 		}
 
-		[Fact]
-		public void DetachedEntityClone()
+		[Theory]
+		[MemberData(nameof(EntityTypes))]
+		public void DetachedEntityClone(Type entityType)
 		{
-			Line line = new Line();
+			Entity entity = (Entity)Activator.CreateInstance(entityType);
 			CadDocument doc = new CadDocument();
 
-			doc.Entities.Add(line);
+			doc.Entities.Add(entity);
 
-			Line clone = (Line)doc.GetCadObject<Line>(line.Handle).Clone();
+			Entity clone = (Entity)doc.GetCadObject<Entity>(entity.Handle).Clone();
 
 			//Assert clone
-			Assert.NotEqual(clone, line);
+			Assert.NotEqual(clone, entity);
 			Assert.True(0 == clone.Handle);
 			Assert.Null(clone.Document);
 			Assert.Null(clone.Owner);
