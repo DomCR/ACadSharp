@@ -10,6 +10,8 @@ namespace ACadSharp.IO.DWG
 
 		public Stream Stream { get; }
 
+		public long SavedPositionInBits { get; private set; }
+
 		public long PositionInBits { get; private set; }
 
 		public IDwgStreamWriter MainWriter { get; }
@@ -209,6 +211,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			this.HandleWriter.WriteSpearShift();
+			this.SavedPositionInBits = this.MainWriter.PositionInBits;
 			this.MainWriter.WriteBytes(((MemoryStream)this.HandleWriter.Stream).GetBuffer());
 			this.MainWriter.WriteSpearShift();
 		}

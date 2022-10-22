@@ -166,6 +166,8 @@ namespace ACadSharp.IO.DWG
 				//(the padding bits make sure the object stream ends on a byte boundary).
 				ulong handleSize = this._crcReader.ReadModularChar();
 
+				var a = (ulong)this._crcReader.PositionInBits();
+
 				//Find the handles offset
 				ulong handleSectionOffset = (ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize;
 

@@ -15,6 +15,8 @@ namespace ACadSharp.IO.DWG
 
 		long PositionInBits { get; }
 
+		long SavedPositionInBits { get; }
+
 		void WriteBytes(byte[] bytes);
 
 		void WriteInt(int value);

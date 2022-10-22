@@ -16,6 +16,8 @@ namespace ACadSharp.IO.DWG
 
 		public long PositionInBits { get { return this.Position * 8 + this.BitShift; } }
 
+		public long SavedPositionInBits { get; } = 0;
+
 		public Encoding Encoding { get; }
 
 		public int BitShift { get; private set; } = 0;

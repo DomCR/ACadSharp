@@ -52,7 +52,7 @@ namespace ACadSharp.IO.DWG
 
 			//MS : Size of object, not including the CRC
 			uint size = (uint)this._msmain.Length;
-			long sizeb = (this._msmain.Length << 3) - this._writer.PositionInBits;
+			long sizeb = (this._msmain.Length << 3) - this._writer.SavedPositionInBits;
 			this.writeSize(crc, size);
 
 			//R2010+:
@@ -246,7 +246,7 @@ namespace ACadSharp.IO.DWG
 			//R2004+:
 			if (this.R2004Plus)
 			{
-				_writer.WriteBit(false);
+				_writer.WriteBit(true);
 				//_writer.WriteBit(cadObject.XDictionary == null);
 				//this._writer.HandleReference(DwgReferenceType.HardOwnership, cadObject.XDictionary);
 			}
