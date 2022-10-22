@@ -78,6 +78,11 @@ namespace ACadSharp.IO.DWG
 			this.MainWriter.WriteBit(value);
 		}
 
+		public void Write2Bits(byte value)
+		{
+			this.MainWriter.Write2Bits(value);
+		}
+
 		public void WriteBitDouble(double value)
 		{
 			this.MainWriter.WriteBitDouble(value);

@@ -33,6 +33,8 @@ namespace ACadSharp.IO.DWG
 
 		void WriteBit(bool value);
 
+		void Write2Bits(byte value);
+
 		void WriteBitShort(short value);
 
 		void WriteDateTime(DateTime value);
