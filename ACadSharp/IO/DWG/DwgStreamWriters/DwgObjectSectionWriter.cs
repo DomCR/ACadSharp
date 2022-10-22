@@ -191,10 +191,23 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//FE: Entity mode(entmode). Generally, this indicates whether or not the owner
-			byte entmode = 0;
+			//relative handle reference is present.The values go as follows:
+
+			//00 : The owner relative handle reference is present.
+			//Applies to the following:
+			//VERTEX, ATTRIB, and SEQEND.
+			//BLOCK, ENDBLK, and the defining entities in all
+			//block defs except *MODEL_SPACE and *PAPER_SPACE.
+
+			//01 : PSPACE entity without a owner relative handle ref.
+			//10 : MSPACE entity without a owner relative handle ref.
+			//11 : Not used.
+			byte entmode = getEntMode(entity);
 			this._writer.Write2Bits(entmode);
-
-
+			if (entmode == 0)
+			{
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, entity.Owner.Handle);
+			}
 		}
 
 		private void writeCommonData(CadObject cadObject)
@@ -265,6 +278,21 @@ namespace ACadSharp.IO.DWG
 			{
 				this._objects.Enqueue(item);
 			}
+		}
+
+		private byte getEntMode(Entity entity)
+		{
+			if (entity.Owner.Handle == this._document.PaperSpace.Handle)
+			{
+				return 0b01;
+			}
+
+			if (entity.Owner.Handle == this._document.ModelSpace.Handle)
+			{
+				return 0b10;
+			}
+
+			return 0;
 		}
 
 		private void writeLine(Line line)
