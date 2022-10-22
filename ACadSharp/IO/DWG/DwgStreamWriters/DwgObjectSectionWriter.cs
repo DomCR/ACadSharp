@@ -61,7 +61,7 @@ namespace ACadSharp.IO.DWG
 				//MC : Size in bits of the handle stream (unsigned, 0x40 is not interpreted as sign).
 				//This includes the padding bits at the end of the handle stream
 				//(the padding bits make sure the object stream ends on a byte boundary).
-				this.writeSizeInBits(this._msmain, (ulong)sizeb);
+				this.writeSizeInBits(crc, (ulong)sizeb);
 			}
 
 			//Write the object in the stream

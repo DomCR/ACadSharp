@@ -560,7 +560,6 @@ namespace ACadSharp.IO.DWG
 
 		public void SetPositionByFlag(long pos)
 		{
-			//WARNING: reverse engineered
 			if (pos >= 0x8000)
 			{
 				if (pos >= 0x40000000)
