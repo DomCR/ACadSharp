@@ -131,13 +131,18 @@
   "BlocksTable": {
     "Entries": [
       {
-        "Name": "*Model_Space",
-        "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
-        "Handle": 31,
-        "OwnerHandle": 1,
-        "DictionaryHandle": 349,
-        "Children": [
+        "Entities": [
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 654,
             "OwnerHandle": 31,
@@ -145,6 +150,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 664,
             "OwnerHandle": 31,
@@ -152,6 +167,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer_Lock",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "Continuous",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 665,
             "OwnerHandle": 31,
@@ -159,6 +184,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 2.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 666,
             "OwnerHandle": 31,
@@ -166,6 +201,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ACAD_ISO02W100",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 667,
             "OwnerHandle": 31,
@@ -173,6 +218,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 668,
             "OwnerHandle": 31,
@@ -180,6 +235,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 711,
             "OwnerHandle": 31,
@@ -187,6 +252,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ACAD_ISO02W100",
+            "LinetypeScale": 1.0,
+            "LineWeight": 13,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 719,
             "OwnerHandle": 31,
@@ -194,6 +269,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Polyline",
             "Handle": 738,
             "OwnerHandle": 31,
@@ -201,6 +286,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Polyline",
             "Handle": 739,
             "OwnerHandle": 31,
@@ -208,6 +303,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Polyline",
             "Handle": 740,
             "OwnerHandle": 31,
@@ -215,6 +320,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Polyline",
             "Handle": 741,
             "OwnerHandle": 31,
@@ -222,6 +337,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Circle",
             "Handle": 799,
             "OwnerHandle": 31,
@@ -229,6 +354,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Arc",
             "Handle": 800,
             "OwnerHandle": 31,
@@ -236,6 +371,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Ellipse",
             "Handle": 801,
             "OwnerHandle": 31,
@@ -243,6 +388,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Face",
             "Handle": 802,
             "OwnerHandle": 31,
@@ -250,6 +405,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.SubDMesh",
             "Handle": 835,
             "OwnerHandle": 31,
@@ -257,6 +422,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Polyline",
             "Handle": 851,
             "OwnerHandle": 31,
@@ -264,6 +439,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Hatch",
             "Handle": 858,
             "OwnerHandle": 31,
@@ -271,6 +456,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Polyline",
             "Handle": 859,
             "OwnerHandle": 31,
@@ -278,6 +473,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Polyline",
             "Handle": 876,
             "OwnerHandle": 31,
@@ -285,6 +490,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Hatch",
             "Handle": 878,
             "OwnerHandle": 31,
@@ -292,6 +507,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Polyline",
             "Handle": 879,
             "OwnerHandle": 31,
@@ -299,6 +524,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Hatch",
             "Handle": 881,
             "OwnerHandle": 31,
@@ -306,6 +541,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Polyline",
             "Handle": 882,
             "OwnerHandle": 31,
@@ -313,6 +558,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Hatch",
             "Handle": 886,
             "OwnerHandle": 31,
@@ -320,6 +575,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer_color_80",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.SubDMesh",
             "Handle": 896,
             "OwnerHandle": 31,
@@ -327,6 +592,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Xline",
             "Handle": 905,
             "OwnerHandle": 31,
@@ -334,6 +609,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Ray",
             "Handle": 906,
             "OwnerHandle": 31,
@@ -341,6 +626,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Mline",
             "Handle": 907,
             "OwnerHandle": 31,
@@ -348,6 +643,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer_true_color",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Mline",
             "Handle": 933,
             "OwnerHandle": 31,
@@ -355,6 +660,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer_true_color",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Mline",
             "Handle": 934,
             "OwnerHandle": 31,
@@ -362,6 +677,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBText",
             "Handle": 953,
             "OwnerHandle": 31,
@@ -369,6 +694,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBText",
             "Handle": 954,
             "OwnerHandle": 31,
@@ -376,6 +711,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBText",
             "Handle": 975,
             "OwnerHandle": 31,
@@ -383,6 +728,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBText",
             "Handle": 976,
             "OwnerHandle": 31,
@@ -390,6 +745,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1004,
             "OwnerHandle": 31,
@@ -397,6 +762,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1013,
             "OwnerHandle": 31,
@@ -404,6 +779,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1014,
             "OwnerHandle": 31,
@@ -411,6 +796,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.PolyFaceMesh",
             "Handle": 1058,
             "OwnerHandle": 31,
@@ -418,6 +813,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Polyline3d",
             "Handle": 1067,
             "OwnerHandle": 31,
@@ -425,6 +830,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid",
             "Handle": 1074,
             "OwnerHandle": 31,
@@ -432,6 +847,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Spline",
             "Handle": 1075,
             "OwnerHandle": 31,
@@ -439,6 +864,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Spline",
             "Handle": 1076,
             "OwnerHandle": 31,
@@ -446,6 +881,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Wipeout",
             "Handle": 1101,
             "OwnerHandle": 31,
@@ -453,6 +898,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Leader",
             "Handle": 1298,
             "OwnerHandle": 31,
@@ -460,6 +915,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1299,
             "OwnerHandle": 31,
@@ -467,6 +932,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.RotatedDimension",
             "Handle": 1300,
             "OwnerHandle": 31,
@@ -474,6 +949,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Point3AngularDimension",
             "Handle": 1301,
             "OwnerHandle": 31,
@@ -481,6 +966,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.LineAngularDimension2",
             "Handle": 1302,
             "OwnerHandle": 31,
@@ -488,6 +983,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer2",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1303,
             "OwnerHandle": 31,
@@ -495,6 +1000,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer2",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1304,
             "OwnerHandle": 31,
@@ -502,6 +1017,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer2",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1305,
             "OwnerHandle": 31,
@@ -509,6 +1034,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer2",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1306,
             "OwnerHandle": 31,
@@ -516,6 +1051,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer2",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1307,
             "OwnerHandle": 31,
@@ -523,6 +1068,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer2",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1308,
             "OwnerHandle": 31,
@@ -530,6 +1085,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer2",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Circle",
             "Handle": 1309,
             "OwnerHandle": 31,
@@ -537,6 +1102,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer2",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Circle",
             "Handle": 1310,
             "OwnerHandle": 31,
@@ -544,6 +1119,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.RadialDimension",
             "Handle": 1311,
             "OwnerHandle": 31,
@@ -551,6 +1136,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DiametricDimension",
             "Handle": 1314,
             "OwnerHandle": 31,
@@ -558,6 +1153,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.OrdinateDimension",
             "Handle": 1317,
             "OwnerHandle": 31,
@@ -565,6 +1170,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.OrdinateDimension",
             "Handle": 1318,
             "OwnerHandle": 31,
@@ -572,6 +1187,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.AlignedDimension",
             "Handle": 1319,
             "OwnerHandle": 31,
@@ -579,6 +1204,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Table",
             "Handle": 1320,
             "OwnerHandle": 31,
@@ -586,6 +1221,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "GAS_LINE",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1684,
             "OwnerHandle": 31,
@@ -593,6 +1238,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "TRACKS",
+            "LinetypeScale": 1.0,
+            "LineWeight": 13,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1685,
             "OwnerHandle": 31,
@@ -600,6 +1255,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ZIGZAG",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1686,
             "OwnerHandle": 31,
@@ -607,6 +1272,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "BATTING",
+            "LinetypeScale": 1.0,
+            "LineWeight": 13,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1687,
             "OwnerHandle": 31,
@@ -614,6 +1289,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1688,
             "OwnerHandle": 31,
@@ -621,6 +1306,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ACAD_ISO02W100",
+            "LinetypeScale": 1.0,
+            "LineWeight": 13,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1689,
             "OwnerHandle": 31,
@@ -628,6 +1323,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1690,
             "OwnerHandle": 31,
@@ -635,6 +1340,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ACAD_ISO02W100",
+            "LinetypeScale": 1.0,
+            "LineWeight": 13,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1691,
             "OwnerHandle": 31,
@@ -642,6 +1357,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1692,
             "OwnerHandle": 31,
@@ -649,6 +1374,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ACAD_ISO02W100",
+            "LinetypeScale": 1.0,
+            "LineWeight": 13,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1693,
             "OwnerHandle": 31,
@@ -656,6 +1391,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer_Lt_dash",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1695,
             "OwnerHandle": 31,
@@ -663,6 +1408,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer_Lt_dash",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ACAD_ISO02W100",
+            "LinetypeScale": 1.0,
+            "LineWeight": 13,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1696,
             "OwnerHandle": 31,
@@ -670,6 +1425,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer_Lt_dash",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1697,
             "OwnerHandle": 31,
@@ -677,6 +1442,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer_Lt_dash",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ACAD_ISO02W100",
+            "LinetypeScale": 1.0,
+            "LineWeight": 13,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1698,
             "OwnerHandle": 31,
@@ -684,6 +1459,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer_Lt_dash",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1699,
             "OwnerHandle": 31,
@@ -691,6 +1476,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer_Lt_dash",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ACAD_ISO02W100",
+            "LinetypeScale": 1.0,
+            "LineWeight": 13,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1700,
             "OwnerHandle": 31,
@@ -698,22 +1493,111 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockReference",
             "Handle": 1796,
             "OwnerHandle": 31,
             "DictionaryHandle": 0,
             "Children": []
+          },
+          {
+            "LayerName": "Layer2",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBText",
+            "Handle": 1878,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "LayerName": "Layer_color_80",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBText",
+            "Handle": 1879,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 1880,
+            "Children": []
+          },
+          {
+            "LayerName": "Layer_true_color",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBText",
+            "Handle": 1884,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "LayerName": "Layer_color_book",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBText",
+            "Handle": 1885,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 1886,
+            "Children": []
           }
-        ]
+        ],
+        "Name": "*Model_Space",
+        "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
+        "Handle": 31,
+        "OwnerHandle": 1,
+        "DictionaryHandle": 349,
+        "Children": []
       },
       {
-        "Name": "*Paper_Space",
-        "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
-        "Handle": 88,
-        "OwnerHandle": 1,
-        "DictionaryHandle": 0,
-        "Children": [
+        "Entities": [
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Viewport",
             "Handle": 576,
             "OwnerHandle": 88,
@@ -721,22 +1605,43 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Viewport",
             "Handle": 581,
             "OwnerHandle": 88,
             "DictionaryHandle": 582,
             "Children": []
           }
-        ]
-      },
-      {
-        "Name": "*Paper_Space0",
+        ],
+        "Name": "*Paper_Space",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
-        "Handle": 93,
+        "Handle": 88,
         "OwnerHandle": 1,
         "DictionaryHandle": 0,
-        "Children": [
+        "Children": []
+      },
+      {
+        "Entities": [
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Viewport",
             "Handle": 594,
             "OwnerHandle": 93,
@@ -744,22 +1649,43 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Viewport",
             "Handle": 598,
             "OwnerHandle": 93,
             "DictionaryHandle": 599,
             "Children": []
           }
-        ]
-      },
-      {
-        "Name": "*Paper_Space1",
+        ],
+        "Name": "*Paper_Space0",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
-        "Handle": 601,
+        "Handle": 93,
         "OwnerHandle": 1,
         "DictionaryHandle": 0,
-        "Children": [
+        "Children": []
+      },
+      {
+        "Entities": [
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Viewport",
             "Handle": 615,
             "OwnerHandle": 601,
@@ -767,38 +1693,70 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Viewport",
             "Handle": 619,
             "OwnerHandle": 601,
             "DictionaryHandle": 620,
             "Children": []
           }
-        ]
-      },
-      {
-        "Name": "_ArchTick",
+        ],
+        "Name": "*Paper_Space1",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
-        "Handle": 1188,
+        "Handle": 601,
         "OwnerHandle": 1,
         "DictionaryHandle": 0,
-        "Children": [
+        "Children": []
+      },
+      {
+        "Entities": [
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Polyline",
             "Handle": 1190,
             "OwnerHandle": 1188,
             "DictionaryHandle": 0,
             "Children": []
           }
-        ]
-      },
-      {
-        "Name": "*D13",
+        ],
+        "Name": "_ArchTick",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
-        "Handle": 1321,
+        "Handle": 1188,
         "OwnerHandle": 1,
         "DictionaryHandle": 0,
-        "Children": [
+        "Children": []
+      },
+      {
+        "Entities": [
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1574,
             "OwnerHandle": 1321,
@@ -806,6 +1764,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1575,
             "OwnerHandle": 1321,
@@ -813,6 +1781,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1576,
             "OwnerHandle": 1321,
@@ -820,6 +1798,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid",
             "Handle": 1577,
             "OwnerHandle": 1321,
@@ -827,6 +1815,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid",
             "Handle": 1578,
             "OwnerHandle": 1321,
@@ -834,6 +1832,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1579,
             "OwnerHandle": 1321,
@@ -841,6 +1849,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1580,
             "OwnerHandle": 1321,
@@ -848,6 +1866,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1581,
             "OwnerHandle": 1321,
@@ -855,22 +1883,43 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1582,
             "OwnerHandle": 1321,
             "DictionaryHandle": 0,
             "Children": []
           }
-        ]
-      },
-      {
-        "Name": "*D14",
+        ],
+        "Name": "*D3",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
-        "Handle": 1333,
+        "Handle": 1321,
         "OwnerHandle": 1,
         "DictionaryHandle": 0,
-        "Children": [
+        "Children": []
+      },
+      {
+        "Entities": [
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1583,
             "OwnerHandle": 1333,
@@ -878,6 +1927,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1584,
             "OwnerHandle": 1333,
@@ -885,6 +1944,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Arc",
             "Handle": 1585,
             "OwnerHandle": 1333,
@@ -892,6 +1961,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid",
             "Handle": 1586,
             "OwnerHandle": 1333,
@@ -899,6 +1978,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid",
             "Handle": 1587,
             "OwnerHandle": 1333,
@@ -906,6 +1995,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1588,
             "OwnerHandle": 1333,
@@ -913,6 +2012,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1589,
             "OwnerHandle": 1333,
@@ -920,6 +2029,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1590,
             "OwnerHandle": 1333,
@@ -927,6 +2046,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1591,
             "OwnerHandle": 1333,
@@ -934,22 +2063,43 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1592,
             "OwnerHandle": 1333,
             "DictionaryHandle": 0,
             "Children": []
           }
-        ]
-      },
-      {
-        "Name": "*D15",
+        ],
+        "Name": "*D4",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
-        "Handle": 1346,
+        "Handle": 1333,
         "OwnerHandle": 1,
         "DictionaryHandle": 0,
-        "Children": [
+        "Children": []
+      },
+      {
+        "Entities": [
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1593,
             "OwnerHandle": 1346,
@@ -957,6 +2107,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1594,
             "OwnerHandle": 1346,
@@ -964,6 +2124,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Arc",
             "Handle": 1595,
             "OwnerHandle": 1346,
@@ -971,6 +2141,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid",
             "Handle": 1596,
             "OwnerHandle": 1346,
@@ -978,6 +2158,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid",
             "Handle": 1597,
             "OwnerHandle": 1346,
@@ -985,6 +2175,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1598,
             "OwnerHandle": 1346,
@@ -992,6 +2192,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1599,
             "OwnerHandle": 1346,
@@ -999,6 +2209,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1600,
             "OwnerHandle": 1346,
@@ -1006,6 +2226,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1601,
             "OwnerHandle": 1346,
@@ -1013,6 +2243,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1602,
             "OwnerHandle": 1346,
@@ -1020,22 +2260,43 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1603,
             "OwnerHandle": 1346,
             "DictionaryHandle": 0,
             "Children": []
           }
-        ]
-      },
-      {
-        "Name": "*D16",
+        ],
+        "Name": "*D5",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
-        "Handle": 1360,
+        "Handle": 1346,
         "OwnerHandle": 1,
         "DictionaryHandle": 0,
-        "Children": [
+        "Children": []
+      },
+      {
+        "Entities": [
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1615,
             "OwnerHandle": 1360,
@@ -1043,6 +2304,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1616,
             "OwnerHandle": 1360,
@@ -1050,6 +2321,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1617,
             "OwnerHandle": 1360,
@@ -1057,6 +2338,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1618,
             "OwnerHandle": 1360,
@@ -1064,6 +2355,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1619,
             "OwnerHandle": 1360,
@@ -1071,6 +2372,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1620,
             "OwnerHandle": 1360,
@@ -1078,22 +2389,43 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1621,
             "OwnerHandle": 1360,
             "DictionaryHandle": 0,
             "Children": []
           }
-        ]
-      },
-      {
-        "Name": "*D17",
+        ],
+        "Name": "*D6",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
-        "Handle": 1370,
+        "Handle": 1360,
         "OwnerHandle": 1,
         "DictionaryHandle": 0,
-        "Children": [
+        "Children": []
+      },
+      {
+        "Entities": [
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1622,
             "OwnerHandle": 1370,
@@ -1101,6 +2433,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1623,
             "OwnerHandle": 1370,
@@ -1108,6 +2450,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1624,
             "OwnerHandle": 1370,
@@ -1115,6 +2467,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1625,
             "OwnerHandle": 1370,
@@ -1122,6 +2484,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1626,
             "OwnerHandle": 1370,
@@ -1129,6 +2501,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1627,
             "OwnerHandle": 1370,
@@ -1136,22 +2518,43 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1628,
             "OwnerHandle": 1370,
             "DictionaryHandle": 0,
             "Children": []
           }
-        ]
-      },
-      {
-        "Name": "*D18",
+        ],
+        "Name": "*D7",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
-        "Handle": 1380,
+        "Handle": 1370,
         "OwnerHandle": 1,
         "DictionaryHandle": 0,
-        "Children": [
+        "Children": []
+      },
+      {
+        "Entities": [
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1629,
             "OwnerHandle": 1380,
@@ -1159,6 +2562,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1630,
             "OwnerHandle": 1380,
@@ -1166,6 +2579,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1631,
             "OwnerHandle": 1380,
@@ -1173,6 +2596,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockReference",
             "Handle": 1632,
             "OwnerHandle": 1380,
@@ -1180,6 +2613,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockReference",
             "Handle": 1633,
             "OwnerHandle": 1380,
@@ -1187,6 +2630,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1634,
             "OwnerHandle": 1380,
@@ -1194,6 +2647,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1635,
             "OwnerHandle": 1380,
@@ -1201,6 +2664,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1636,
             "OwnerHandle": 1380,
@@ -1208,22 +2681,43 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1637,
             "OwnerHandle": 1380,
             "DictionaryHandle": 0,
             "Children": []
           }
-        ]
-      },
-      {
-        "Name": "*T19",
+        ],
+        "Name": "*D8",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
-        "Handle": 1392,
+        "Handle": 1380,
         "OwnerHandle": 1,
         "DictionaryHandle": 0,
-        "Children": [
+        "Children": []
+      },
+      {
+        "Entities": [
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid",
             "Handle": 1393,
             "OwnerHandle": 1392,
@@ -1231,6 +2725,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1394,
             "OwnerHandle": 1392,
@@ -1238,6 +2742,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1395,
             "OwnerHandle": 1392,
@@ -1245,6 +2759,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1396,
             "OwnerHandle": 1392,
@@ -1252,6 +2776,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1397,
             "OwnerHandle": 1392,
@@ -1259,6 +2793,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1398,
             "OwnerHandle": 1392,
@@ -1266,6 +2810,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1399,
             "OwnerHandle": 1392,
@@ -1273,6 +2827,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1400,
             "OwnerHandle": 1392,
@@ -1280,6 +2844,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1401,
             "OwnerHandle": 1392,
@@ -1287,6 +2861,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1402,
             "OwnerHandle": 1392,
@@ -1294,6 +2878,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1403,
             "OwnerHandle": 1392,
@@ -1301,6 +2895,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1404,
             "OwnerHandle": 1392,
@@ -1308,6 +2912,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1405,
             "OwnerHandle": 1392,
@@ -1315,6 +2929,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": 40,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1406,
             "OwnerHandle": 1392,
@@ -1322,6 +2946,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": 40,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1407,
             "OwnerHandle": 1392,
@@ -1329,6 +2963,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1408,
             "OwnerHandle": 1392,
@@ -1336,6 +2980,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1409,
             "OwnerHandle": 1392,
@@ -1343,6 +2997,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1410,
             "OwnerHandle": 1392,
@@ -1350,6 +3014,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": 40,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1411,
             "OwnerHandle": 1392,
@@ -1357,6 +3031,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1412,
             "OwnerHandle": 1392,
@@ -1364,6 +3048,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1413,
             "OwnerHandle": 1392,
@@ -1371,6 +3065,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1414,
             "OwnerHandle": 1392,
@@ -1378,6 +3082,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1415,
             "OwnerHandle": 1392,
@@ -1385,6 +3099,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1416,
             "OwnerHandle": 1392,
@@ -1392,6 +3116,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1417,
             "OwnerHandle": 1392,
@@ -1399,6 +3133,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": 40,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1418,
             "OwnerHandle": 1392,
@@ -1406,6 +3150,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByBlock",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1419,
             "OwnerHandle": 1392,
@@ -1413,22 +3167,43 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": true,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": 0,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1420,
             "OwnerHandle": 1392,
             "DictionaryHandle": 0,
             "Children": []
           }
-        ]
-      },
-      {
-        "Name": "*D20",
+        ],
+        "Name": "*T9",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
-        "Handle": 1453,
+        "Handle": 1392,
         "OwnerHandle": 1,
         "DictionaryHandle": 0,
-        "Children": [
+        "Children": []
+      },
+      {
+        "Entities": [
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1638,
             "OwnerHandle": 1453,
@@ -1436,6 +3211,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1639,
             "OwnerHandle": 1453,
@@ -1443,6 +3228,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1640,
             "OwnerHandle": 1453,
@@ -1450,6 +3245,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid",
             "Handle": 1641,
             "OwnerHandle": 1453,
@@ -1457,6 +3262,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1642,
             "OwnerHandle": 1453,
@@ -1464,22 +3279,43 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1643,
             "OwnerHandle": 1453,
             "DictionaryHandle": 0,
             "Children": []
           }
-        ]
-      },
-      {
-        "Name": "*D21",
+        ],
+        "Name": "*D10",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
-        "Handle": 1462,
+        "Handle": 1453,
         "OwnerHandle": 1,
         "DictionaryHandle": 0,
-        "Children": [
+        "Children": []
+      },
+      {
+        "Entities": [
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -2,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1610,
             "OwnerHandle": 1462,
@@ -1487,6 +3323,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1611,
             "OwnerHandle": 1462,
@@ -1494,6 +3340,16 @@
             "Children": []
           },
           {
+            "LayerName": "Layer1",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid",
             "Handle": 1612,
             "OwnerHandle": 1462,
@@ -1501,6 +3357,16 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1613,
             "OwnerHandle": 1462,
@@ -1508,22 +3374,43 @@
             "Children": []
           },
           {
+            "LayerName": "Defpoints",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
             "Handle": 1614,
             "OwnerHandle": 1462,
             "DictionaryHandle": 0,
             "Children": []
           }
-        ]
+        ],
+        "Name": "*D11",
+        "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
+        "Handle": 1462,
+        "OwnerHandle": 1,
+        "DictionaryHandle": 0,
+        "Children": []
       },
       {
-        "Name": "MyBlock",
-        "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
-        "Handle": 1778,
-        "OwnerHandle": 1,
-        "DictionaryHandle": 1779,
-        "Children": [
+        "Entities": [
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1781,
             "OwnerHandle": 1778,
@@ -1531,6 +3418,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
             "Handle": 1782,
             "OwnerHandle": 1778,
@@ -1538,6 +3435,16 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Circle",
             "Handle": 1783,
             "OwnerHandle": 1778,
@@ -1545,13 +3452,29 @@
             "Children": []
           },
           {
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.AttributeDefinition",
             "Handle": 1784,
             "OwnerHandle": 1778,
             "DictionaryHandle": 0,
             "Children": []
           }
-        ]
+        ],
+        "Name": "MyBlock",
+        "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
+        "Handle": 1778,
+        "OwnerHandle": 1,
+        "DictionaryHandle": 1779,
+        "Children": []
       }
     ],
     "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTable",
@@ -1596,6 +3519,13 @@
   "LayersTable": {
     "Entries": [
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "0",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 16,
@@ -1604,6 +3534,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer1",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 629,
@@ -1612,6 +3549,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_Off",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 632,
@@ -1620,6 +3564,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_Freeze",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 633,
@@ -1628,6 +3579,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_Lock",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 634,
@@ -1636,6 +3594,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_NoPlot",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 635,
@@ -1644,6 +3609,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_color_80",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 636,
@@ -1652,6 +3624,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "ACAD_ISO02W100",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_Lt_dash",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 637,
@@ -1660,6 +3639,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": 35,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_lw_035",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 641,
@@ -1668,6 +3654,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_transp_70",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 642,
@@ -1676,6 +3669,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_vp_freeze",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 643,
@@ -1684,6 +3684,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_desc",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 644,
@@ -1692,6 +3699,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_true_color",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 645,
@@ -1700,6 +3714,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer_color_book",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 646,
@@ -1708,6 +3729,13 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Defpoints",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 1234,
@@ -1716,18 +3744,40 @@
         "Children": []
       },
       {
+        "LinetypeName": "Continuous",
+        "LineWeight": -3,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
         "Name": "Layer2",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
         "Handle": 1235,
         "OwnerHandle": 2,
         "DictionaryHandle": 1236,
         "Children": []
+      },
+      {
+        "LinetypeName": "Continuous",
+        "LineWeight": 50,
+        "Color": {
+          "IsByLayer": false,
+          "IsByBlock": true,
+          "Index": 0
+        },
+        "Name": "Layer_lw_050",
+        "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
+        "Handle": 1889,
+        "OwnerHandle": 2,
+        "DictionaryHandle": 0,
+        "Children": []
       }
     ],
     "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTable",
     "Handle": 2,
     "OwnerHandle": 0,
-    "DictionaryHandle": 0,
+    "DictionaryHandle": 398,
     "Children": []
   },
   "LineTypesTable": {
