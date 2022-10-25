@@ -25,6 +25,7 @@ namespace ACadSharpInternal.Tests
 			document.Header.Version = version;
 
 			DwgObjectSectionWriter writer = new DwgObjectSectionWriter(stream, document);
+			writer.OnNotification += onNotification;
 			writer.Write();
 
 			var handles = new Queue<ulong>(writer.Map.Select(o => o.Key));

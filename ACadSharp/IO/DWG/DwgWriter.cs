@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ACadSharp.IO.DWG
 {
-	public class DwgWriter : IDisposable
+	public class DwgWriter : CadWriterBase
 	{
 		private CadDocument _document;
 
@@ -39,8 +39,9 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
-		public void Dispose()
+		public override void Dispose()
 		{
+
 		}
 	}
 }

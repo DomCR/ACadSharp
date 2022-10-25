@@ -11,6 +11,8 @@ namespace ACadSharp.IO.DWG
 {
 	internal class DwgObjectSectionWriter : DwgSectionIO
 	{
+		public event NotificationEventHandler OnNotification;
+
 		/// <summary>
 		/// Key : handle | Value : Offset
 		/// </summary>
@@ -38,8 +40,6 @@ namespace ACadSharp.IO.DWG
 		public void Write()
 		{
 			this.writeTables();
-
-			this.writeObjects();
 		}
 
 		private void registerObject(CadObject cadObject)
@@ -122,12 +122,17 @@ namespace ACadSharp.IO.DWG
 			this.writeLayerControl();
 		}
 
-		private void writeObjects()
+		private void writeObject<T>(T cadObject)
+			where T : CadObject
 		{
-			while (false)
+			switch (cadObject.ObjectType)
 			{
 
+				default:
+					break;
 			}
+
+			this.registerObject(cadObject);
 		}
 
 		private void writeBlockControl()

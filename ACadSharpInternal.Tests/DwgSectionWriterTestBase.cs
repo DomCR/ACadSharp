@@ -1,7 +1,5 @@
 ﻿using ACadSharp;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ACadSharp.IO;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -31,6 +29,11 @@ namespace ACadSharpInternal.Tests
 		public DwgSectionWriterTestBase(ITestOutputHelper output)
 		{
 			this._output = output;
+		}
+
+		protected void onNotification(object sender, NotificationEventArgs e)
+		{
+			_output.WriteLine(e.Message);
 		}
 	}
 }
