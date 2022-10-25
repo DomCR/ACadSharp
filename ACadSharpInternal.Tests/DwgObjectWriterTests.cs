@@ -1,8 +1,10 @@
 ﻿using ACadSharp;
 using ACadSharp.IO.DWG;
+using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -25,8 +27,7 @@ namespace ACadSharpInternal.Tests
 			DwgObjectSectionWriter writer = new DwgObjectSectionWriter(stream, document);
 			writer.Write();
 
-			var handles = new Queue<ulong>();
-			handles.Enqueue(document.BlockRecords.Handle);
+			var handles = new Queue<ulong>(writer.Map.Select(o => o.Key));
 
 			Assert.True(writer.Map.ContainsKey(document.BlockRecords.Handle));
 
@@ -45,9 +46,15 @@ namespace ACadSharpInternal.Tests
 				);
 			reader.Read();
 
-			builder.TryGetCadObject<BlockRecordsTable>(document.BlockRecords.Handle, out BlockRecordsTable blockRecords);
-			Assert.NotNull(blockRecords);
-			Assert.True(blockRecords.Handle == document.BlockRecords.Handle);
+			assertTable(builder.BlockRecords, document.BlockRecords);
+			assertTable(builder.Layers, document.Layers);
+		}
+
+		private void assertTable<T>(Table<T> expected, Table<T> actual)
+			where T : TableEntry
+		{
+			Assert.NotNull(expected);
+			Assert.Equal(expected.Handle, actual.Handle);
 		}
 	}
 }

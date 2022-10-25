@@ -119,6 +119,7 @@ namespace ACadSharp.IO.DWG
 		private void writeTables()
 		{
 			this.writeBlockControl();
+			this.writeLayerControl();
 		}
 
 		private void writeObjects()
@@ -129,19 +130,9 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private void writeTable()
+		private void writeBlockControl()
 		{
-			this.writeCommonNonEntityData(this._document.BlockRecords);
-
-			//Common:
-			//Numentries BL 70
-			this._writer.WriteBitLong(this._document.BlockRecords.Count);
-
-			foreach (var item in this._document.BlockRecords)
-			{
-				//Handle refs H NULL(soft pointer)
-				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
-			}
+			this.writeTable(this._document.BlockRecords);
 
 			//*MODEL_SPACE and *PAPER_SPACE(hard owner).
 			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.ModelSpace);
@@ -150,13 +141,36 @@ namespace ACadSharp.IO.DWG
 			this.registerObject(this._document.BlockRecords);
 		}
 
-		private void writeBlockControl()
+		private void writeLayerControl()
 		{
-			this.writeTable();
+			this.writeTable(this._document.Layers);
 
-			foreach (BlockRecord record in this._document.BlockRecords)
+			this.registerObject(this._document.Layers);
+
+			foreach (var item in this._document.Layers)
 			{
-				this.writeBlockRecord(record);
+				this.writeLayer(item);
+			}
+		}
+
+		private void writeLayer(Layer layer)
+		{
+
+		}
+
+		private void writeTable<T>(Table<T> table)
+			where T : TableEntry
+		{
+			this.writeCommonNonEntityData(table);
+
+			//Common:
+			//Numentries BL 70
+			this._writer.WriteBitLong(table.Count);
+
+			foreach (var item in table)
+			{
+				//Handle refs H NULL(soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
 			}
 		}
 
@@ -208,6 +222,62 @@ namespace ACadSharp.IO.DWG
 			{
 				this._writer.HandleReference(DwgReferenceType.SoftPointer, entity.Owner.Handle);
 			}
+
+			this.writeReactorsAndDictionaryHandle(entity);
+
+			//R13-R14 Only:
+			if (this.R13_14Only)
+			{
+				//8 LAYER (hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, entity.Layer.Handle);
+
+				//Isbylayerlt B 1 if bylayer linetype, else 0
+				bool isbylayerlt = entity.LineType.Name == LineType.ByLayerName;
+				this._writer.WriteBit(isbylayerlt);
+				if (isbylayerlt)
+					//6 [LTYPE (hard pointer)] (present if Isbylayerlt is 0)
+					this._writer.HandleReference(DwgReferenceType.HardPointer, entity.LineType.Handle);
+			}
+
+			//R13-R2000 Only:
+			//previous/next handles present if Nolinks is 0.
+			//Nolinks B 1 if major links are assumed +1, -1, else 0 For R2004+this always has value 1 (links are not used)
+			bool hasLinks = true;
+			if (!this.R2004Plus)
+			{
+				//TODO: Process the entities for before and after
+
+				////[PREVIOUS ENTITY (relative soft pointer)]
+				//template.PrevEntity = this.handleReference(entity.Handle);
+				////[NEXT ENTITY (relative soft pointer)]
+				//template.NextEntity = this.handleReference(entity.Handle);
+				//this._writer.WriteBit(hasLinks);
+
+				throw new NotImplementedException();
+			}
+
+#if false
+
+			//Color	CMC(B)	62
+			this._writer.WriteEnColor(entity.Color, entity.Transparency);
+
+			//R2004+:
+			if ((this._version >= ACadVersion.AC1018) && colorFlag)
+				//[Color book color handle (hard pointer)]
+				template.ColorHandle = this.handleReference();
+
+			//Ltype scale	BD	48
+			this._writer.WriteBitDouble(entity.LinetypeScale);
+
+			if (!(this._version >= ACadVersion.AC1015))
+			{
+				//Common:
+				//Invisibility BS 60
+				entity.IsInvisible = (this._objectReader.ReadBitShort() & 1) == 0;
+
+				return;
+			} 
+#endif
 		}
 
 		private void writeCommonData(CadObject cadObject)
@@ -269,14 +339,6 @@ namespace ACadSharp.IO.DWG
 			{
 				//Has DS binary data B If 1 then this object has associated binary data stored in the data store
 				this._writer.WriteBit(false);
-			}
-		}
-
-		private void writeBlockRecord(BlockRecord record)
-		{
-			foreach (var item in record.Entities)
-			{
-				this._objects.Enqueue(item);
 			}
 		}
 
