@@ -47,8 +47,10 @@ namespace ACadSharpInternal.Tests
 				);
 			reader.Read();
 
-			assertTable(builder.BlockRecords, document.BlockRecords);
-			assertTable(builder.Layers, document.Layers);
+			builder.BuildTables();
+
+			assertTable(document.BlockRecords, builder.BlockRecords);
+			assertTable(document.Layers, builder.Layers);
 		}
 
 		private void assertTable<T>(Table<T> expected, Table<T> actual)
@@ -56,6 +58,11 @@ namespace ACadSharpInternal.Tests
 		{
 			Assert.NotNull(expected);
 			Assert.Equal(expected.Handle, actual.Handle);
+
+			foreach (T entry in actual)
+			{
+				Assert.NotNull(expected[entry.Name]);
+			}
 		}
 	}
 }

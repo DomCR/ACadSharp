@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using System;
 
 namespace ACadSharp.IO.DWG
 {
@@ -50,6 +51,32 @@ namespace ACadSharp.IO.DWG
 					}
 					return IndexedValue[b];
 			}
+		}
+
+		public static byte ToIndex(LineweightType value)
+		{
+			byte result = 0;
+			switch (value)
+			{
+				case LineweightType.Default:
+					result = 31;
+					break;
+				case LineweightType.ByBlock:
+					result = 30;
+					break;
+				case LineweightType.ByLayer:
+					result = 29;
+					break;
+				default:
+					result = (byte)Array.IndexOf(IndexedValue, value);
+					if (result < 0)
+					{
+						result = 31;
+					}
+					break;
+			}
+
+			return result;
 		}
 	}
 }

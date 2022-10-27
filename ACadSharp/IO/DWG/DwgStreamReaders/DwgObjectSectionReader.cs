@@ -2976,9 +2976,11 @@ namespace ACadSharp.IO.DWG
 			//H 6 linetype (hard pointer)
 			template.LineTypeHandle = this.handleReference();
 
-			//H Unknown handle (hard pointer). Always seems to be NULL.
-			//Some times is not...
-			//handleReference();
+			if (R2013Plus)
+			{
+				//H Unknown handle (hard pointer). Always seems to be NULL.
+				handleReference();
+			}
 
 			return template;
 		}

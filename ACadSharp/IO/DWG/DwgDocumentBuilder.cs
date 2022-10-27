@@ -44,10 +44,7 @@ namespace ACadSharp.IO.DWG
 				item.SetBlockToRecord(this);
 			}
 
-			foreach (ICadTableTemplate template in this.tableTemplates.Values)
-			{
-				template.Build(this);
-			}
+			this.BuildTables();
 
 			this.DocumentToBuild.RegisterCollection(AppIds);
 			this.DocumentToBuild.RegisterCollection(Layers);
@@ -60,6 +57,14 @@ namespace ACadSharp.IO.DWG
 			this.DocumentToBuild.RegisterCollection(BlockRecords);
 
 			base.BuildDocument();
+		}
+
+		public void BuildTables()
+		{
+			foreach (ICadTableTemplate template in this.tableTemplates.Values)
+			{
+				template.Build(this);
+			}
 		}
 	}
 }

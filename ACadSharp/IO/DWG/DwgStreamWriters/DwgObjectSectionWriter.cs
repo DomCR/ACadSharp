@@ -116,6 +116,30 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
+		private void writeXrefDependantBit(TableEntry entry)
+		{
+			if (this.R2007Plus)
+			{
+				//xrefindex+1 BS 70 subtract one from this value when read.
+				//After that, -1 indicates that this reference did not come from an xref,
+				//otherwise this value indicates the index of the blockheader for the xref from which this came.
+				this._writer.WriteBitShort((short)(entry.Flags.HasFlag(StandardFlags.XrefDependent) ? 0b100000000 : 0));
+			}
+			else
+			{
+				//64-flag B 70 The 64-bit of the 70 group.
+				this._writer.WriteBit(entry.Flags.HasFlag(StandardFlags.Referenced));
+
+				//xrefindex + 1 BS 70 subtract one from this value when read.
+				//After that, -1 indicates that this reference did not come from an xref,
+				//otherwise this value indicates the index of the blockheader for the xref from which this came.
+				this._writer.WriteBitShort(0);
+
+				//Xdep B 70 dependent on an xref. (16 bit)
+				this._writer.WriteBit(entry.Flags.HasFlag(StandardFlags.XrefDependent));
+			}
+		}
+
 		private void writeTables()
 		{
 			this.writeBlockControl();
@@ -160,7 +184,89 @@ namespace ACadSharp.IO.DWG
 
 		private void writeLayer(Layer layer)
 		{
+			this.writeCommonNonEntityData(layer);
 
+			//Common:
+			//Entry name TV 2
+			this._writer.WriteVariableText(layer.Name);
+
+			this.writeXrefDependantBit(layer);
+
+			//R13-R14 Only:
+			if (this.R13_14Only)
+			{
+				//Frozen B 70 if frozen (1 bit)
+				this._writer.WriteBit(layer.Flags.HasFlag(LayerFlags.Frozen));
+				//On B if on.
+				this._writer.WriteBit(layer.IsOn);
+				//Frz in new B 70 if frozen by default in new viewports (2 bit)
+				this._writer.WriteBit(layer.Flags.HasFlag(LayerFlags.FrozenNewViewports));
+				//Locked B 70 if locked (4 bit)
+				this._writer.WriteBit(layer.Flags.HasFlag(LayerFlags.Locked));
+			}
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//and lineweight (mask with 0x03E0)
+				short values = (short)(DwgLineWeightConverter.ToIndex(layer.LineWeight) << 5);
+
+				//contains frozen (1 bit),
+				values |= (short)LayerFlags.Frozen;
+
+				//on (2 bit)
+				if (layer.IsOn)
+					values |= 0b10;
+
+				//frozen by default in new viewports (4 bit)
+				values |= (short)LayerFlags.FrozenNewViewports;
+
+				//locked (8 bit)
+				values |= (short)LayerFlags.Locked;
+
+				//plotting flag (16 bit),
+				if (layer.PlotFlag)
+					values |= 0b10000;
+
+				//Values BS 70,290,370
+				this._writer.WriteBitShort(values);
+			}
+
+			//Common:
+			//Color CMC 62
+			this._writer.WriteCmColor(layer.Color);
+
+			//Handle refs H Layer control (soft pointer)
+			//[Reactors(soft pointer)]
+			//xdicobjhandle(hard owner)
+			//External reference block handle(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.Layers);
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//H 390 Plotstyle (hard pointer), by default points to PLACEHOLDER with handle 0x0f.
+				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//H 347 Material
+				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+			}
+
+			//Common:
+			//H 6 linetype (hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, layer.LineType.Handle);
+
+			if (R2013Plus)
+			{
+				//H Unknown handle (hard pointer). Always seems to be NULL.
+				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+			}
+
+			this.registerObject(layer);
 		}
 
 		private void writeTable<T>(Table<T> table)
@@ -179,10 +285,9 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private void writeCommonNonEntityData<T>(Table<T> table)
-			where T : TableEntry
+		private void writeCommonNonEntityData(CadObject cadObject)
 		{
-			this.writeCommonData(table);
+			this.writeCommonData(cadObject);
 
 			//R13-R14 Only:
 			//Obj size RL size of object in bits, not including end handles
@@ -190,10 +295,10 @@ namespace ACadSharp.IO.DWG
 				this._writer.SavePositonForSize();
 
 			//[Owner ref handle (soft pointer)]
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, table.Owner.Handle);
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, cadObject.Owner.Handle);
 
 			//write the cad object reactors
-			this.writeReactorsAndDictionaryHandle(table);
+			this.writeReactorsAndDictionaryHandle(cadObject);
 		}
 
 		private void writeCommonEntityData(Entity entity)
@@ -424,6 +529,11 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(point.Rotation);
 
 			this.registerObject(point);
+		}
+
+		private void Notify(string message, NotificationType type)
+		{
+			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, type));
 		}
 	}
 }
