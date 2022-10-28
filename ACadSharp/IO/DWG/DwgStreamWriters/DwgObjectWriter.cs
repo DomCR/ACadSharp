@@ -5,6 +5,7 @@ using CSUtilities.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection.Emit;
 using System.Text;
 
 namespace ACadSharp.IO.DWG
@@ -47,11 +48,11 @@ namespace ACadSharp.IO.DWG
 			this.writeTable(this._document.AppIds);
 			this.writeTable(this._document.Layers);
 			this.writeTable(this._document.LineTypes);
-			this.writeTable(this._document.TextStyles);
-			this.writeTable(this._document.UCSs);
-			this.writeTable(this._document.Views);
-			this.writeTable(this._document.DimensionStyles);
-			this.writeTable(this._document.VPorts);
+			//this.writeTable(this._document.TextStyles);
+			//this.writeTable(this._document.UCSs);
+			//this.writeTable(this._document.Views);
+			//this.writeTable(this._document.DimensionStyles);
+			//this.writeTable(this._document.VPorts);
 			this.writeBlockControl();
 		}
 
@@ -64,6 +65,89 @@ namespace ACadSharp.IO.DWG
 			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.PaperSpace);
 
 			this.registerObject(this._document.BlockRecords);
+
+			this.writeEntries(this._document.BlockRecords);
+		}
+
+		private void writeTable<T>(Table<T> table, bool register = true)
+		where T : TableEntry
+		{
+			this.writeCommonNonEntityData(table);
+
+			//Common:
+			//Numentries BL 70
+			this._writer.WriteBitLong(table.Count);
+
+			foreach (var item in table)
+			{
+				//Handle refs H NULL(soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
+			}
+
+			if (!register)
+				return;
+
+			this.registerObject(table);
+
+			this.writeEntries(table);
+		}
+
+		public void writeEntries<T>(Table<T> table)
+			where T : TableEntry
+		{
+			foreach (var entry in table)
+			{
+				switch (entry)
+				{
+					case AppId app:
+						this.writeAppId(app);
+						break;
+					case BlockRecord blkRecord:
+						this.writeBlockRecord(blkRecord);
+						break;
+					case Layer layer:
+						this.writeLayer(layer);
+						break;
+					case LineType ltype:
+					//this.writeLineType(ltype);
+					//break;
+					default:
+						this.Notify($"Table entry not implemented : {entry.GetType().FullName}", NotificationType.NotImplemented);
+						break;
+				}
+			}
+		}
+
+		private void writeAppId(AppId app)
+		{
+			this.writeCommonNonEntityData(app);
+
+			//Common:
+			//Entry name TV 2
+			this._writer.WriteVariableText(app.Name);
+
+			this.writeXrefDependantBit(app);
+
+			//Unknown RC 71 Undoc'd 71-group; doesn't even appear in DXF or an entget if it's 0.
+			this._writer.WriteByte(0);
+			//Handle refs H The app control(soft pointer)
+			//[Reactors(soft pointer)]
+			//xdicobjhandle(hard owner)
+			//External reference block handle(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.AppIds);
+
+			this.registerObject(app);
+		}
+
+		private void writeBlockRecord(BlockRecord blkRecord)
+		{
+			this.writeCommonNonEntityData(blkRecord);
+
+			//Common:
+			//Entry name TV 2
+			this._writer.WriteVariableText(blkRecord.Name);
+
+			this.registerObject(blkRecord);
 		}
 
 		private void writeLayer(Layer layer)
@@ -121,10 +205,10 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteCmColor(layer.Color);
 
 			//Handle refs H Layer control (soft pointer)
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.Layers);
 			//[Reactors(soft pointer)]
 			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.Layers);
 
 			//R2000+:
 			if (this.R2000Plus)
@@ -153,45 +237,17 @@ namespace ACadSharp.IO.DWG
 			this.registerObject(layer);
 		}
 
-		private void writeTable<T>(Table<T> table, bool register = true)
-			where T : TableEntry
+		private void writeLineType(LineType ltype)
 		{
-			this.writeCommonNonEntityData(table);
+			this.writeCommonNonEntityData(ltype);
 
 			//Common:
-			//Numentries BL 70
-			this._writer.WriteBitLong(table.Count);
+			//Entry name TV 2
+			this._writer.WriteVariableText(ltype.Name);
 
-			foreach (var item in table)
-			{
-				//Handle refs H NULL(soft pointer)
-				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
-			}
+			this.writeXrefDependantBit(ltype);
 
-			if (register)
-				this.registerObject(table);
-
-			this.writeEntries(table);
-		}
-
-		public void writeEntries<T>(Table<T> table)
-			where T : TableEntry
-		{
-			foreach (var entry in table)
-			{
-				switch (entry)
-				{
-					//case AppId app:
-					//	this.writeAppId(app);
-					//	break;
-					case Layer layer:
-						this.writeLayer(layer);
-						break;
-					default:
-						this.Notify($"Table entry not implemented : {entry.GetType().FullName}", NotificationType.NotImplemented);
-						break;
-				}
-			}
+			this.registerObject(ltype);
 		}
 
 		private void writeLine(Line line)

@@ -226,7 +226,7 @@ namespace ACadSharp.IO.DWG
 			//Read the handle
 			ulong value = this._handlesReader.HandleReference(handle);
 
-			if (!this._builder.TryGetObjectTemplate(value, out CadTemplate _) && !this._handles.Contains(value) && value != 0)
+			if (!this._builder.TryGetCadObject(value, out CadObject _) && !this._handles.Contains(value) && value != 0)
 				//Add the value to the handles queue to be processed
 				this._handles.Enqueue(value);
 
@@ -2955,10 +2955,10 @@ namespace ACadSharp.IO.DWG
 			layer.Color = this._mergedReaders.ReadCmColor();
 
 			//Handle refs H Layer control (soft pointer)
+			template.LayerControlHandle = this.handleReference();
 			//[Reactors(soft pointer)]
 			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)
-			template.LayerControlHandle = this.handleReference();
 
 			//R2000+:
 			if (this.R2000Plus)
