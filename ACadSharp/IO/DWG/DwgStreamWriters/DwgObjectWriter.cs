@@ -1,10 +1,13 @@
-﻿using ACadSharp.Entities;
+﻿using ACadSharp.Blocks;
+using ACadSharp.Entities;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using ACadSharp.Types.Units;
 using CSUtilities.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 
@@ -141,13 +144,160 @@ namespace ACadSharp.IO.DWG
 
 		private void writeBlockRecord(BlockRecord blkRecord)
 		{
-			this.writeCommonNonEntityData(blkRecord);
+			this.writeBlock(blkRecord.BlockEntity);
+
+			this.writeBlockHeader(blkRecord);
+
+			this.writeBlockEnd(blkRecord.BlockEnd);
+		}
+
+		private void writeBlockHeader(BlockRecord record)
+		{
+			this.writeCommonNonEntityData(record);
 
 			//Common:
 			//Entry name TV 2
-			this._writer.WriteVariableText(blkRecord.Name);
+			//Warning: names ended with a number are not readed in this method
+			this._writer.WriteVariableText(record.Name);
 
-			this.registerObject(blkRecord);
+			this.writeXrefDependantBit(record);
+
+			//Anonymous B 1 if this is an anonymous block (1 bit)
+			this._writer.WriteBit(record.Flags.HasFlag(BlockTypeFlags.Anonymous));
+
+			//Hasatts B 1 if block contains attdefs (2 bit)
+			this._writer.WriteBit(record.HasAttributes);
+
+			//Blkisxref B 1 if block is xref (4 bit)
+			this._writer.WriteBit(record.Flags.HasFlag(BlockTypeFlags.XRef));
+
+			//Xrefoverlaid B 1 if an overlaid xref (8 bit)
+			this._writer.WriteBit(record.Flags.HasFlag(BlockTypeFlags.XRefOverlay));
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Loaded Bit B 0 indicates loaded for an xref
+				this._writer.WriteBit(record.Flags.HasFlag(BlockTypeFlags.XRef));
+			}
+
+			//R2004+:
+			if (this.R2004Plus
+				&& !record.Flags.HasFlag(BlockTypeFlags.XRef)
+				&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
+			{
+				//Owned Object Count BL Number of objects owned by this object.
+				_writer.WriteBitLong(record.Entities.Count);
+			}
+
+			//Common:
+			//Base pt 3BD 10 Base point of block.
+			this._writer.Write3BitDouble(record.BlockEntity.BasePoint);
+			//Xref pname TV 1 Xref pathname. That's right: DXF 1 AND 3!
+			//3 1 appears in a tblnext/ search elist; 3 appears in an entget.
+			this._writer.WriteVariableText(record.BlockEntity.XrefPath);
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Insert Count RC A sequence of zero or more non-zero RC’s, followed by a terminating 0 RC.The total number of these indicates how many insert handles will be present.
+				foreach (var item in this._document.Entities.OfType<Insert>()
+					.Where(i => i.Block.Name == record.Name))
+				{
+					this._writer.WriteByte(1);
+				}
+
+				this._writer.WriteByte(0);
+
+				//Block Description TV 4 Block description.
+				this._writer.WriteVariableText(record.BlockEntity.Comments);
+
+				//Size of preview data BL Indicates number of bytes of data following.
+				this._writer.WriteBitLong(0);
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Insert units BS 70
+				this._writer.WriteBitShort((short)record.Units);
+				//Explodable B 280
+				this._writer.WriteBit(record.IsExplodable);
+				//Block scaling RC 281
+				this._writer.WriteByte((byte)(record.CanScale ? 1u : 0u));
+			}
+
+			//NULL(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+			//BLOCK entity. (hard owner)
+			//Block begin object
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, record.BlockEntity);
+
+			//R13-R2000:
+			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015
+					&& !record.Flags.HasFlag(BlockTypeFlags.XRef)
+					&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
+			{
+				if (record.Entities.Any())
+				{
+					//first entity in the def. (soft pointer)
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, record.Entities.First());
+					//last entity in the def. (soft pointer)
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, record.Entities.Last());
+				}
+				else
+				{
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, 0);
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, 0);
+				}
+			}
+
+			//R2004+:
+			if (this.R2004Plus)
+			{
+				foreach (var item in record.Entities)
+				{
+					//H[ENTITY(hard owner)] Repeats “Owned Object Count” times.
+					this._writer.HandleReference(DwgReferenceType.HardOwnership, item);
+				}
+			}
+
+			//Common:
+			//ENDBLK entity. (hard owner)
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, record.BlockEnd);
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				foreach (var item in this._document.Entities.OfType<Insert>()
+					.Where(i => i.Block.Name == record.Name))
+				{
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, item);
+				}
+
+				//Layout Handle H(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardOwnership, record.Layout);
+			}
+
+			this.registerObject(record);
+		}
+
+		private void writeBlock(Block block)
+		{
+			this.writeCommonEntityData(block);
+
+			//Common:
+			//Entry name TV 2
+			this._writer.WriteVariableText(block.Name);
+
+			this.registerObject(block);
+		}
+
+		private void writeBlockEnd(BlockEnd blkEnd)
+		{
+			this.writeCommonEntityData(blkEnd);
+
+			this.registerObject(blkEnd);
 		}
 
 		private void writeLayer(Layer layer)

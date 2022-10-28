@@ -3,6 +3,7 @@ using ACadSharp.Types.Units;
 using ACadSharp.Objects;
 using ACadSharp.Blocks;
 using ACadSharp.Entities;
+using System.Linq;
 
 namespace ACadSharp.Tables
 {
@@ -78,6 +79,14 @@ namespace ACadSharp.Tables
 			{
 				this._layout = value;
 				this._layout.AssociatedBlock = this;
+			}
+		}
+
+		public bool HasAttributes
+		{
+			get
+			{
+				return this.Entities.OfType<AttributeDefinition>().Any();
 			}
 		}
 
