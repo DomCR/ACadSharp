@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
+using static ACadSharp.Objects.XRecrod;
 
 namespace ACadSharp.IO.DWG
 {
@@ -163,6 +164,11 @@ namespace ACadSharp.IO.DWG
 			this.writeBlockHeader(blkRecord);
 
 			this.writeBlockEnd(blkRecord.BlockEnd);
+
+			foreach (Entity e in blkRecord.Entities)
+			{
+				this.writeEntity(e);
+			}
 		}
 
 		private void writeBlockHeader(BlockRecord record)
@@ -412,6 +418,16 @@ namespace ACadSharp.IO.DWG
 			this.writeXrefDependantBit(ltype);
 
 			this.registerObject(ltype);
+		}
+
+		private void writeEntity(Entity entity)
+		{
+			switch (entity)
+			{
+				default:
+					this.Notify($"Entity not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
+					break;
+			}
 		}
 
 		private void writeLine(Line line)
