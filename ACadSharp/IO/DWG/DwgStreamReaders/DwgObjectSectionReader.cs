@@ -363,7 +363,7 @@ namespace ACadSharp.IO.DWG
 				template.LineTypeHandle = this.handleReference();
 
 			//R2007+:
-			if (this._version >= ACadVersion.AC1021)
+			if (R2007Plus)
 			{
 				//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present at end of object
 				if (this._objectReader.Read2Bits() == 3)
@@ -385,7 +385,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//R2007 +:
-			if (this._version > ACadVersion.AC1021)
+			if (R2010Plus)
 			{
 				//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present at end of object
 				if (this._objectReader.ReadBit())

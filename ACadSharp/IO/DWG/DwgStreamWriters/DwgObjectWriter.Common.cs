@@ -189,14 +189,14 @@ namespace ACadSharp.IO.DWG
 			if (this.R13_14Only)
 			{
 				//8 LAYER (hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, entity.Layer.Handle);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, entity.Layer);
 
 				//Isbylayerlt B 1 if bylayer linetype, else 0
 				bool isbylayerlt = entity.LineType.Name == LineType.ByLayerName;
 				this._writer.WriteBit(isbylayerlt);
 				if (isbylayerlt)
 					//6 [LTYPE (hard pointer)] (present if Isbylayerlt is 0)
-					this._writer.HandleReference(DwgReferenceType.HardPointer, entity.LineType.Handle);
+					this._writer.HandleReference(DwgReferenceType.HardPointer, entity.LineType);
 			}
 
 			//R13-R2000 Only:
@@ -216,15 +216,15 @@ namespace ACadSharp.IO.DWG
 				throw new NotImplementedException();
 			}
 
-#if false
-
 			//Color	CMC(B)	62
-			this._writer.WriteEnColor(entity.Color, entity.Transparency);
+			this._writer.WriteBitShort(0);
+			//TODO: Implement write en color
+			//this._writer.WriteEnColor(entity.Color, entity.Transparency);
 
 			//R2004+:
-			if ((this._version >= ACadVersion.AC1018) && colorFlag)
-				//[Color book color handle (hard pointer)]
-				template.ColorHandle = this.handleReference();
+			//if ((this._version >= ACadVersion.AC1018) && colorFlag)
+			//	//[Color book color handle (hard pointer)]
+			//	template.ColorHandle = this.handleReference();
 
 			//Ltype scale	BD	48
 			this._writer.WriteBitDouble(entity.LinetypeScale);
@@ -233,11 +233,81 @@ namespace ACadSharp.IO.DWG
 			{
 				//Common:
 				//Invisibility BS 60
-				entity.IsInvisible = (this._objectReader.ReadBitShort() & 1) == 0;
+				this._writer.WriteBitShort((short)(entity.IsInvisible ? 1 : 0));
 
 				return;
-			} 
-#endif
+			}
+
+			//R2000+:
+			//8 LAYER (hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, entity.Layer);
+
+			if (entity.LineType.Name == LineType.ByLayerName)
+			{
+				//Ltype flags BB 00 = bylayer,
+				this._writer.Write2Bits(0b00);
+			}
+			else if (entity.LineType.Name == LineType.ByBlockName)
+			{
+				//01 = byblock,
+				this._writer.Write2Bits(0b01);
+			}
+			else if (entity.LineType.Name == LineType.ContinuousName)
+			{
+				//10 = continous,
+				this._writer.Write2Bits(0b10);
+			}
+			else
+			{
+				//11 = linetype handle present at end of object
+				this._writer.Write2Bits(0b11);
+				//6 [LTYPE (hard pointer)] present if linetype flags were 11
+				this._writer.HandleReference(DwgReferenceType.HardPointer, entity.LineType);
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present at end of object
+				this._writer.Write2Bits(0b00);
+
+				//Shadow flags RC
+				this._writer.WriteByte(0);
+			}
+
+			//R2000 +:
+			//Plotstyle flags	BB	00 = bylayer, 01 = byblock, 11 = plotstyle handle present at end of object
+			this._writer.Write2Bits(0b00);
+			{
+				//PLOTSTYLE (hard pointer) present if plotstyle flags were 11
+			}
+
+			//R2007 +:
+			if (this._version > ACadVersion.AC1021)
+			{
+				//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present at end of object
+				this._writer.WriteBit(false);
+				{
+					//If has full visual style, the full visual style handle (hard pointer).
+				}
+				this._writer.WriteBit(false);
+				{
+					//If has full visual style, the full visual style handle (hard pointer).
+				}
+				//Shadow flags RC
+				this._writer.WriteBit(false);
+				{
+					//If has full visual style, the full visual style handle (hard pointer).
+				}
+			}
+
+			//Common:
+			//Invisibility BS 60
+			this._writer.WriteBitShort((short)(entity.IsInvisible ? 1 : 0));
+
+			//R2000+:
+			//Lineweight RC 370
+			this._writer.WriteByte(DwgLineWeightConverter.ToIndex(entity.LineWeight));
 		}
 
 		private void writeExtendedData(ExtendedDataDictionary data)
