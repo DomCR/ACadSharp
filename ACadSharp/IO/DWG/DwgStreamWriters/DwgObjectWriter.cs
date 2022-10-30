@@ -1,18 +1,12 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
-using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
-using ACadSharp.Types.Units;
-using CSMath;
-using CSUtilities.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection.Emit;
 using System.Text;
-using static ACadSharp.Objects.XRecrod;
 
 namespace ACadSharp.IO.DWG
 {
@@ -46,17 +40,12 @@ namespace ACadSharp.IO.DWG
 
 		public void Write()
 		{
-			this.writeTables();
-		}
-
-		private void writeTables()
-		{
 			this.writeTable(this._document.AppIds);
 			this.writeTable(this._document.Layers);
 			this.writeTable(this._document.LineTypes);
-			//this.writeTable(this._document.TextStyles);
-			//this.writeTable(this._document.UCSs);
-			//this.writeTable(this._document.Views);
+			this.writeTable(this._document.TextStyles);
+			this.writeTable(this._document.UCSs);
+			this.writeTable(this._document.Views);
 			//this.writeTable(this._document.DimensionStyles);
 			//this.writeTable(this._document.VPorts);
 			this.writeBlockControl();
@@ -90,7 +79,7 @@ namespace ACadSharp.IO.DWG
 		}
 
 		private void writeTable<T>(Table<T> table, bool register = true)
-		where T : TableEntry
+			where T : TableEntry
 		{
 			this.writeCommonNonEntityData(table);
 
@@ -130,6 +119,15 @@ namespace ACadSharp.IO.DWG
 						break;
 					case LineType ltype:
 						this.writeLineType(ltype);
+						break;
+					case TextStyle tstyle:
+						this.writeTextStyle(tstyle);
+						break;
+					case UCS ucs:
+						this.writeUCS(ucs);
+						break;
+					case View view:
+						this.writeView(view);
 						break;
 					default:
 						this.Notify($"Table entry not implemented : {entry.GetType().FullName}", NotificationType.NotImplemented);
@@ -491,6 +489,206 @@ namespace ACadSharp.IO.DWG
 			}
 
 			this.registerObject(ltype);
+		}
+
+		private void writeTextStyle(TextStyle style)
+		{
+			this.writeCommonNonEntityData(style);
+
+			//Common:
+			//Entry name TV 2
+			this._writer.WriteVariableText(style.Name);
+
+			this.writeXrefDependantBit(style);
+
+			//shape file B 1 if a shape file rather than a font (1 bit)
+			this._writer.WriteBit(style.Flags.HasFlag(StyleFlags.IsShape));
+
+			//Vertical B 1 if vertical (4 bit of flag)
+			this._writer.WriteBit(style.Flags.HasFlag(StyleFlags.VerticalText));
+			//Fixed height BD 40
+			this._writer.WriteBitDouble(style.Height);
+			//Width factor BD 41
+			this._writer.WriteBitDouble(style.Width);
+			//Oblique ang BD 50
+			this._writer.WriteBitDouble(style.ObliqueAngle);
+			//Generation RC 71 Generation flags (not bit-pair coded).
+			this._writer.WriteByte((byte)style.MirrorFlag);
+			//Last height BD 42
+			this._writer.WriteBitDouble(style.LastHeight);
+			//Font name TV 3
+			this._writer.WriteVariableText(style.Filename);
+			//Bigfont name TV 4
+			this._writer.WriteVariableText(style.BigFontFilename);
+
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.TextStyles);
+
+			this.registerObject(style);
+		}
+
+		private void writeUCS(UCS ucs)
+		{
+			this.writeCommonNonEntityData(ucs);
+
+			//Common:
+			//Entry name TV 2
+			this._writer.WriteVariableText(ucs.Name);
+
+			this.writeXrefDependantBit(ucs);
+
+			//Origin 3BD 10
+			this._writer.Write3BitDouble(ucs.Origin);
+			//X - direction 3BD 11
+			this._writer.Write3BitDouble(ucs.XAxis);
+			//Y - direction 3BD 12
+			this._writer.Write3BitDouble(ucs.YAxis);
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Elevation BD 146
+				this._writer.WriteBitDouble(ucs.Elevation);
+				//OrthographicViewType BS 79	//dxf docs: 79	Always 0
+				this._writer.WriteBitShort((short)ucs.OrthographicViewType);
+				//OrthographicType BS 71
+				this._writer.WriteBitShort((short)ucs.OrthographicType);
+			}
+
+			//Common:
+			//Handle refs H ucs control object (soft pointer)
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.UCSs);
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//Base UCS Handle H 346 hard pointer
+				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+				//Named UCS Handle H -hard pointer, not present in DXF
+				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+			}
+
+			this.registerObject(ucs);
+		}
+
+		private void writeView(View view)
+		{
+			this.writeCommonNonEntityData(view);
+
+			//Common:
+			//Entry name TV 2
+			this._writer.WriteVariableText(view.Name);
+
+			this.writeXrefDependantBit(view);
+
+			//View height BD 40
+			this._writer.WriteBitDouble(view.Height);
+			//View width BD 41
+			this._writer.WriteBitDouble(view.Width);
+			//View center 2RD 10(Not bit - pair coded.)
+			this._writer.Write2RawDouble(view.Center);
+			//Target 3BD 12
+			this._writer.Write3BitDouble(view.Target);
+			//View dir 3BD 11 DXF doc suggests from target toward camera.
+			this._writer.Write3BitDouble(view.Direction);
+			//Twist angle BD 50 Radians
+			this._writer.WriteBitDouble(view.Angle);
+			//Lens length BD 42
+			this._writer.WriteBitDouble(view.LensLength);
+			//Front clip BD 43
+			this._writer.WriteBitDouble(view.FrontClipping);
+			//Back clip BD 44
+			this._writer.WriteBitDouble(view.BackClipping);
+
+			//View mode X 71 4 bits: 0123
+			//Note that only bits 0, 1, 2, and 4 of the 71 can be specified -- not bit 3 (8).
+			//0 : 71's bit 0 (1)
+			this._writer.WriteBit(view.ViewMode.HasFlag(ViewModeType.PerspectiveView));
+			//1 : 71's bit 1 (2)
+			this._writer.WriteBit(view.ViewMode.HasFlag(ViewModeType.FrontClipping));
+			//2 : 71's bit 2 (4)
+			this._writer.WriteBit(view.ViewMode.HasFlag(ViewModeType.BackClipping));
+			//3 : OPPOSITE of 71's bit 4 (16)
+			this._writer.WriteBit(view.ViewMode.HasFlag(ViewModeType.FrontClippingZ));
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Render Mode RC 281
+				this._writer.WriteByte((byte)view.RenderMode);
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Use default lights B ? Default value is true
+				this._writer.WriteBit(true);
+				//Default lighting RC ? Default value is 1
+				this._writer.WriteByte(1);
+				//Brightness BD ? Default value is 0
+				this._writer.WriteBitDouble(0.0);
+				//Contrast BD ? Default value is 0
+				this._writer.WriteBitDouble(0.0);
+				//Abient color CMC? Default value is AutoCAD indexed color 250
+				this._writer.WriteCmColor(new Color(250));
+			}
+
+			//Common:
+			//Pspace flag B 70 Bit 0(1) of the 70 - group.
+			this._writer.WriteBit(view.Flags.HasFlag((StandardFlags)0b1));
+
+			if (this.R2000Plus)
+			{
+				this._writer.WriteBit(view.IsUcsAssociated);
+				if (view.IsUcsAssociated)
+				{
+					//Origin 3BD 10 This and next 4 R2000 items are present only if 72 value is 1.
+					this._writer.Write3BitDouble(view.UcsOrigin);
+					//X-direction 3BD 11
+					this._writer.Write3BitDouble(view.UcsXAxis);
+					//Y-direction 3BD 12
+					this._writer.Write3BitDouble(view.UcsYAxis);
+					//Elevation BD 146
+					this._writer.WriteBitDouble(view.UcsElevation);
+					//OrthographicViewType BS 79
+					this._writer.WriteBitShort((short)view.UcsOrthographicType);
+				}
+			}
+
+			//Common:
+			//Handle refs H view control object (soft pointer)
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.Views);
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Camera plottable B 73
+				this._writer.WriteBit(view.IsPlottable);
+
+				//Background handle H 332 soft pointer
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, 0);
+				//Visual style H 348 hard pointer
+				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+				//Sun H 361 hard owner
+				this._writer.HandleReference(DwgReferenceType.HardOwnership, 0);
+			}
+
+			if (this.R2000Plus && view.IsUcsAssociated)
+			{
+				//TODO: Implement ucs reference for view
+				//Base UCS Handle H 346 hard pointer
+				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+				//Named UCS Handle H 345 hard pointer
+				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Live section H 334 soft pointer
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, 0);
+			}
+
+			this.registerObject(view);
 		}
 
 		private void writeEntity(Entity entity)
