@@ -33,7 +33,7 @@ namespace ACadSharp.Tables
 		public static BlockRecord PaperSpace { get { return new BlockRecord(PaperSpaceName); } }
 
 		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.BLOCK;
+		public override ObjectType ObjectType => ObjectType.BLOCK_HEADER;
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableBlockRecord;

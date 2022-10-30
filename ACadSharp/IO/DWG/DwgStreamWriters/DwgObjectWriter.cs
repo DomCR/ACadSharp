@@ -61,7 +61,21 @@ namespace ACadSharp.IO.DWG
 
 		private void writeBlockControl()
 		{
-			this.writeTable(this._document.BlockRecords, false);
+			this.writeCommonNonEntityData(this._document.BlockRecords);
+
+			//Common:
+			//Numentries BL 70
+			this._writer.WriteBitLong(this._document.BlockRecords.Count - 2);
+
+			foreach (var item in this._document.BlockRecords)
+			{
+				if (item.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase)
+					|| item.Name.Equals(BlockRecord.PaperSpaceName, StringComparison.OrdinalIgnoreCase))
+				{
+					//Handle refs H NULL(soft pointer)
+					this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
+				}
+			}
 
 			//*MODEL_SPACE and *PAPER_SPACE(hard owner).
 			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.ModelSpace);
