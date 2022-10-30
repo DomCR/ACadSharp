@@ -28,5 +28,12 @@ namespace ACadSharp.IO.Templates
 
 			return value;
 		}
+
+		public override void Build(CadDocumentBuilder builder)
+		{
+			base.Build(builder);
+
+			//TODO: assign ucs and named ucs to view
+		}
 	}
 }
