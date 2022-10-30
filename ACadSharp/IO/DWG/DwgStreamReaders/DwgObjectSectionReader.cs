@@ -3099,7 +3099,7 @@ namespace ACadSharp.IO.DWG
 			//R2007+:
 			if (this.R2007Plus && isText)
 			{
-				byte[] textarea = this._objectReader.ReadBytes(256);
+				byte[] textarea = this._objectReader.ReadBytes(512);
 				//TODO: Read the line type text area
 			}
 

@@ -49,13 +49,13 @@ namespace ACadSharpInternal.Tests
 
 			assertTable(document.AppIds, builder.AppIds);
 			assertTable(document.Layers, builder.Layers);
-			//assertTable(document.LineTypes, builder.LineTypesTable);
+			assertTable(document.LineTypes, builder.LineTypesTable);
 			//assertTable(document.TextStyles, builder.TextStyles);
 			//assertTable(document.UCSs, builder.UCSs);
 			//assertTable(document.Views, builder.Views);
 			//assertTable(document.DimensionStyles, builder.DimensionStyles);
 			//assertTable(document.VPorts, builder.VPorts);
-			//assertTable(document.BlockRecords, builder.BlockRecords);
+			assertTable(document.BlockRecords, builder.BlockRecords);
 		}
 
 		private void assertTable<T>(Table<T> expected, Table<T> actual)

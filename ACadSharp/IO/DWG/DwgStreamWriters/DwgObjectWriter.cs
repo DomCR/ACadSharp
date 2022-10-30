@@ -1,8 +1,10 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
+using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Types.Units;
+using CSMath;
 using CSUtilities.Converters;
 using System;
 using System.Collections.Generic;
@@ -127,8 +129,8 @@ namespace ACadSharp.IO.DWG
 						this.writeLayer(layer);
 						break;
 					case LineType ltype:
-					//this.writeLineType(ltype);
-					//break;
+						this.writeLineType(ltype);
+						break;
 					default:
 						this.Notify($"Table entry not implemented : {entry.GetType().FullName}", NotificationType.NotImplemented);
 						break;
@@ -416,6 +418,77 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteVariableText(ltype.Name);
 
 			this.writeXrefDependantBit(ltype);
+
+			//Description TV 3
+			this._writer.WriteVariableText(ltype.Description);
+			//Pattern Len BD 40
+			this._writer.WriteBitDouble(ltype.PatternLen);
+			//Alignment RC 72 Always 'A'.
+			this._writer.WriteByte((byte)ltype.Alignment);
+
+			//Numdashes RC 73 The number of repetitions of the 49...74 data.
+			this._writer.WriteByte((byte)ltype.Segments.Count());
+			bool isText = false;
+			foreach (LineType.Segment segment in ltype.Segments)
+			{
+				//Dash length BD 49 Dash or dot specifier.
+				this._writer.WriteBitDouble(segment.Length);
+				//Complex shapecode BS 75 Shape number if shapeflag is 2, or index into the string area if shapeflag is 4.
+				this._writer.WriteBitShort(segment.ShapeNumber);
+
+				//X - offset RD 44 (0.0 for a simple dash.)
+				//Y - offset RD 45(0.0 for a simple dash.)
+				this._writer.WriteBitDouble(segment.Offset.X);
+				this._writer.WriteBitDouble(segment.Offset.Y);
+
+				//Scale BD 46 (1.0 for a simple dash.)
+				this._writer.WriteBitDouble(segment.Scale);
+				//Rotation BD 50 (0.0 for a simple dash.)
+				this._writer.WriteBitDouble(segment.Rotation);
+				//Shapeflag BS 74 bit coded:
+				this._writer.WriteBitShort((short)segment.Shapeflag);
+
+				if (segment.Shapeflag.HasFlag(LinetypeShapeFlags.Text))
+					isText = true;
+			}
+
+			//R2004 and earlier:
+			if (this._version <= ACadVersion.AC1018)
+			{
+				//Strings area X 9 256 bytes of text area. The complex dashes that have text use this area via the 75-group indices. It's basically a pile of 0-terminated strings.
+				//First byte is always 0 for R13 and data starts at byte 1.
+				//In R14 it is not a valid data start from byte 0.
+				//(The 9 - group is undocumented.)
+				for (int i = 0; i < 256; i++)
+				{
+					//TODO: Write the line type text area
+					this._writer.WriteByte(0);
+				}
+			}
+
+			//R2007+:
+			if (this.R2007Plus && isText)
+			{
+				for (int i = 0; i < 512; i++)
+				{
+					//TODO: Write the line type text area
+					this._writer.WriteByte(0);
+				}
+				//TODO: Read the line type text area
+			}
+
+			//Common:
+			//Handle refs H Ltype control(soft pointer)
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.LineTypes);
+			//[Reactors (soft pointer)]
+			//xdicobjhandle(hard owner)
+			//External reference block handle(hard pointer)
+
+			foreach (var segment in ltype.Segments)
+			{
+				//340 shapefile for dash/shape (1 each) (hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+			}
 
 			this.registerObject(ltype);
 		}
