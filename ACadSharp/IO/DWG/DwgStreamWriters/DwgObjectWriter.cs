@@ -2,6 +2,7 @@
 using ACadSharp.Entities;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using ACadSharp.Types.Units;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -128,6 +129,9 @@ namespace ACadSharp.IO.DWG
 						break;
 					case View view:
 						this.writeView(view);
+						break;
+					case DimensionStyle dstyle:
+						this.writeDimensionStyle(dstyle);
 						break;
 					default:
 						this.Notify($"Table entry not implemented : {entry.GetType().FullName}", NotificationType.NotImplemented);
@@ -689,6 +693,352 @@ namespace ACadSharp.IO.DWG
 			}
 
 			this.registerObject(view);
+		}
+
+		private void writeDimensionStyle(DimensionStyle dimStyle)
+		{
+			this.writeCommonNonEntityData(dimStyle);
+
+			//Common:
+			//Entry name TV 2
+			this._writer.WriteVariableText(dimStyle.Name);
+
+			this.writeXrefDependantBit(dimStyle);
+
+			//R13 & R14 Only:
+			if (this.R13_14Only)
+			{
+				//DIMTOL B 71
+				this._writer.WriteBit(dimStyle.GenerateTolerances);
+				//DIMLIM B 72
+				this._writer.WriteBit(dimStyle.LimitsGeneration);
+				//DIMTIH B 73
+				this._writer.WriteBit(dimStyle.TextOutsideHorizontal);
+				//DIMTOH B 74
+				this._writer.WriteBit(dimStyle.SuppressFirstExtensionLine);
+				//DIMSE1 B 75
+				this._writer.WriteBit(dimStyle.SuppressSecondExtensionLine);
+				//DIMSE2 B 76
+				this._writer.WriteBit(dimStyle.TextInsideHorizontal);
+				//DIMALT B 170
+				this._writer.WriteBit(dimStyle.AlternateUnitDimensioning);
+				//DIMTOFL B 172
+				this._writer.WriteBit(dimStyle.TextOutsideExtensions);
+				//DIMSAH B 173
+				this._writer.WriteBit(dimStyle.SeparateArrowBlocks);
+				//DIMTIX B 174
+				this._writer.WriteBit(dimStyle.TextInsideExtensions);
+				//DIMSOXD B 175
+				this._writer.WriteBit(dimStyle.SuppressOutsideExtensions);
+				//DIMALTD RC 171
+				this._writer.WriteByte((byte)dimStyle.AlternateUnitDecimalPlaces);
+				//DIMZIN RC 78
+				this._writer.WriteByte((byte)dimStyle.ZeroHandling);
+				//DIMSD1 B 281
+				this._writer.WriteBit(dimStyle.SuppressFirstDimensionLine);
+				//DIMSD2 B 282
+				this._writer.WriteBit(dimStyle.SuppressSecondDimensionLine);
+				//DIMTOLJ RC 283
+				this._writer.WriteByte((byte)dimStyle.ToleranceAlignment);
+				//DIMJUST RC 280
+				this._writer.WriteByte((byte)dimStyle.TextHorizontalAlignment);
+				//DIMFIT RC 287
+				this._writer.WriteByte((byte)dimStyle.DimensionFit);
+				//DIMUPT B 288
+				this._writer.WriteBit(dimStyle.CursorUpdate);
+				//DIMTZIN RC 284
+				this._writer.WriteByte((byte)dimStyle.ToleranceZeroHandling);
+				//DIMALTZ RC 285
+				this._writer.WriteByte((byte)dimStyle.AlternateUnitZeroHandling);
+				//DIMALTTZ RC 286
+				this._writer.WriteByte((byte)dimStyle.AlternateUnitToleranceZeroHandling);
+				//DIMTAD RC 77
+				this._writer.WriteByte((byte)dimStyle.TextVerticalAlignment);
+				//DIMUNIT BS 270
+				this._writer.WriteBitShort(dimStyle.DimensionUnit);
+				//DIMAUNIT BS 275
+				this._writer.WriteBitShort((short)dimStyle.AngularUnit);
+				//DIMDEC BS 271
+				this._writer.WriteBitShort(dimStyle.DecimalPlaces);
+				//DIMTDEC BS 272
+				this._writer.WriteBitShort(dimStyle.ToleranceDecimalPlaces);
+				//DIMALTU BS 273
+				this._writer.WriteBitShort((short)dimStyle.AlternateUnitFormat);
+				//DIMALTTD BS 274
+				this._writer.WriteBitShort(dimStyle.AlternateUnitToleranceDecimalPlaces);
+				//DIMSCALE BD 40
+				this._writer.WriteBitDouble(dimStyle.ScaleFactor);
+				//DIMASZ BD 41
+				this._writer.WriteBitDouble(dimStyle.ArrowSize);
+				//DIMEXO BD 42
+				this._writer.WriteBitDouble(dimStyle.ExtensionLineOffset);
+				//DIMDLI BD 43
+				this._writer.WriteBitDouble(dimStyle.DimensionLineIncrement);
+				//DIMEXE BD 44
+				this._writer.WriteBitDouble(dimStyle.ExtensionLineExtension);
+				//DIMRND BD 45
+				this._writer.WriteBitDouble(dimStyle.Rounding);
+				//DIMDLE BD 46
+				this._writer.WriteBitDouble(dimStyle.DimensionLineExtension);
+				//DIMTP BD 47
+				this._writer.WriteBitDouble(dimStyle.PlusTolerance);
+				//DIMTM BD 48
+				this._writer.WriteBitDouble(dimStyle.MinusTolerance);
+				//DIMTXT BD 140
+				this._writer.WriteBitDouble(dimStyle.TextHeight);
+				//DIMCEN BD 141
+				this._writer.WriteBitDouble(dimStyle.CenterMarkSize);
+				//DIMTSZ BD 142
+				this._writer.WriteBitDouble(dimStyle.TickSize);
+				//DIMALTF BD 143
+				this._writer.WriteBitDouble(dimStyle.AlternateUnitScaleFactor);
+				//DIMLFAC BD 144
+				this._writer.WriteBitDouble(dimStyle.LinearScaleFactor);
+				//DIMTVP BD 145
+				this._writer.WriteBitDouble(dimStyle.TextVerticalPosition);
+				//DIMTFAC BD 146
+				this._writer.WriteBitDouble(dimStyle.ToleranceScaleFactor);
+				//DIMGAP BD 147
+				this._writer.WriteBitDouble(dimStyle.DimensionLineGap);
+
+				//DIMPOST T 3
+				this._writer.WriteVariableText(dimStyle.PostFix);
+				//DIMAPOST T 4
+				this._writer.WriteVariableText(dimStyle.AlternateDimensioningSuffix);
+
+				//DIMBLK T 5
+				this._writer.WriteVariableText(dimStyle.ArrowBlock?.Name);
+				//DIMBLK1 T 6
+				this._writer.WriteVariableText(dimStyle.DimArrow1?.Name);
+				//DIMBLK2 T 7
+				this._writer.WriteVariableText(dimStyle.DimArrow2?.Name);
+
+				//DIMCLRD BS 176
+				this._writer.WriteCmColor(dimStyle.DimensionLineColor);
+				//DIMCLRE BS 177
+				this._writer.WriteCmColor(dimStyle.ExtensionLineColor);
+				//DIMCLRT BS 178
+				this._writer.WriteCmColor(dimStyle.TextColor);
+			}
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//DIMPOST TV 3
+				this._writer.WriteVariableText(dimStyle.PostFix);
+				//DIMAPOST TV 4
+				this._writer.WriteVariableText(dimStyle.AlternateDimensioningSuffix);
+				//DIMSCALE BD 40
+				this._writer.WriteBitDouble(dimStyle.ScaleFactor);
+				//DIMASZ BD 41
+				this._writer.WriteBitDouble(dimStyle.ArrowSize);
+				//DIMEXO BD 42
+				this._writer.WriteBitDouble(dimStyle.ExtensionLineOffset);
+				//DIMDLI BD 43
+				this._writer.WriteBitDouble(dimStyle.DimensionLineIncrement);
+				//DIMEXE BD 44
+				this._writer.WriteBitDouble(dimStyle.ExtensionLineExtension);
+				//DIMRND BD 45
+				this._writer.WriteBitDouble(dimStyle.Rounding);
+				//DIMDLE BD 46
+				this._writer.WriteBitDouble(dimStyle.DimensionLineExtension);
+				//DIMTP BD 47
+				this._writer.WriteBitDouble(dimStyle.PlusTolerance);
+				//DIMTM BD 48
+				this._writer.WriteBitDouble(dimStyle.MinusTolerance);
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//DIMFXL BD 49
+				this._writer.WriteBitDouble(dimStyle.FixedExtensionLineLength);
+				//DIMJOGANG BD 50
+				this._writer.WriteBitDouble(dimStyle.JoggedRadiusDimensionTransverseSegmentAngle);
+				//DIMTFILL BS 69
+				this._writer.WriteBitShort((short)dimStyle.TextBackgroundFillMode);
+				//DIMTFILLCLR CMC 70
+				this._writer.WriteCmColor(dimStyle.TextBackgroundColor);
+			}
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//DIMTOL B 71
+				this._writer.WriteBit(dimStyle.GenerateTolerances);
+				//DIMLIM B 72
+				this._writer.WriteBit(dimStyle.LimitsGeneration);
+				//DIMTIH B 73
+				this._writer.WriteBit(dimStyle.TextInsideHorizontal);
+				//DIMTOH B 74
+				this._writer.WriteBit(dimStyle.TextOutsideHorizontal);
+				//DIMSE1 B 75
+				this._writer.WriteBit(dimStyle.SuppressFirstExtensionLine);
+				//DIMSE2 B 76
+				this._writer.WriteBit(dimStyle.SuppressSecondExtensionLine);
+				//DIMTAD BS 77
+				this._writer.WriteBitShort((short)dimStyle.TextVerticalAlignment);
+				//DIMZIN BS 78
+				this._writer.WriteBitShort((short)dimStyle.ZeroHandling);
+				//DIMAZIN BS 79
+				this._writer.WriteBitShort((short)dimStyle.AngularZeroHandling);
+			}
+
+			//R2007 +:
+			if (this.R2007Plus)
+			{
+				//DIMARCSYM BS 90
+				this._writer.WriteBitShort((short)dimStyle.ArcLengthSymbolPosition);
+			}
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//DIMTXT BD 140
+				this._writer.WriteBitDouble(dimStyle.TextHeight);
+				//DIMCEN BD 141
+				this._writer.WriteBitDouble(dimStyle.CenterMarkSize);
+				//DIMTSZ BD 142
+				this._writer.WriteBitDouble(dimStyle.TickSize);
+				//DIMALTF BD 143
+				this._writer.WriteBitDouble(dimStyle.AlternateUnitScaleFactor);
+				//DIMLFAC BD 144
+				this._writer.WriteBitDouble(dimStyle.LinearScaleFactor);
+				//DIMTVP BD 145																					  
+				this._writer.WriteBitDouble(dimStyle.TextVerticalPosition);
+				//DIMTFAC BD 146																				  
+				this._writer.WriteBitDouble(dimStyle.ToleranceScaleFactor);
+				//DIMGAP BD 147																					  
+				this._writer.WriteBitDouble(dimStyle.DimensionLineGap);
+				//DIMALTRND BD 148																				  
+				this._writer.WriteBitDouble(dimStyle.AlternateUnitRounding);
+				//DIMALT B 170																					  
+				this._writer.WriteBit(dimStyle.AlternateUnitDimensioning);
+				//DIMALTD BS 171																				  
+				this._writer.WriteBitShort(dimStyle.AlternateUnitDecimalPlaces);
+				//DIMTOFL B 172																					  
+				this._writer.WriteBit(dimStyle.TextOutsideExtensions);
+				//DIMSAH B 173																					  
+				this._writer.WriteBit(dimStyle.SeparateArrowBlocks);
+				//DIMTIX B 174																					  
+				this._writer.WriteBit(dimStyle.TextInsideExtensions);
+				//DIMSOXD B 175																					  
+				this._writer.WriteBit(dimStyle.SuppressOutsideExtensions);
+				//DIMCLRD BS 176																				  
+				this._writer.WriteCmColor(dimStyle.DimensionLineColor);
+				//DIMCLRE BS 177																				  
+				this._writer.WriteCmColor(dimStyle.ExtensionLineColor);
+				//DIMCLRT BS 178																				  
+				this._writer.WriteCmColor(dimStyle.TextColor);
+				//DIMADEC BS 179																				  
+				this._writer.WriteBitShort(dimStyle.AngularDimensionDecimalPlaces);
+				//DIMDEC BS 271																					  
+				this._writer.WriteBitShort(dimStyle.DecimalPlaces);
+				//DIMTDEC BS 272																				  
+				this._writer.WriteBitShort(dimStyle.ToleranceDecimalPlaces);
+				//DIMALTU BS 273																				  
+				this._writer.WriteBitShort((short)dimStyle.AlternateUnitFormat);
+				//DIMALTTD BS 274																				  
+				this._writer.WriteBitShort(dimStyle.AlternateUnitToleranceDecimalPlaces);
+				//DIMAUNIT BS 275																				  
+				this._writer.WriteBitShort((short)dimStyle.AngularUnit);
+				//DIMFRAC BS 276																				  
+				this._writer.WriteBitShort((short)dimStyle.FractionFormat);
+				//DIMLUNIT BS 277																				  
+				this._writer.WriteBitShort((short)dimStyle.LinearUnitFormat);
+				//DIMDSEP BS 278																				  
+				this._writer.WriteBitShort((short)dimStyle.DecimalSeparator);
+				//DIMTMOVE BS 279																				  
+				this._writer.WriteBitShort((short)dimStyle.TextMovement);
+				//DIMJUST BS 280																				  
+				this._writer.WriteBitShort((short)dimStyle.TextHorizontalAlignment);
+				//DIMSD1 B 281																					  
+				this._writer.WriteBit(dimStyle.SuppressFirstDimensionLine);
+				//DIMSD2 B 282																					  
+				this._writer.WriteBit(dimStyle.SuppressSecondDimensionLine);
+				//DIMTOLJ BS 283																				  
+				this._writer.WriteBitShort((short)dimStyle.ToleranceAlignment);
+				//DIMTZIN BS 284																				  
+				this._writer.WriteBitShort((short)dimStyle.ToleranceZeroHandling);
+				//DIMALTZ BS 285																				  
+				this._writer.WriteBitShort((short)dimStyle.AlternateUnitZeroHandling);
+				//DIMALTTZ BS 286																				  
+				this._writer.WriteBitShort((short)dimStyle.AlternateUnitToleranceZeroHandling);
+				//DIMUPT B 288																					  
+				this._writer.WriteBit(dimStyle.CursorUpdate);
+				//DIMFIT BS 287
+				this._writer.WriteBitShort(3);
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//DIMFXLON B 290
+				this._writer.WriteBit(dimStyle.IsExtensionLineLengthFixed);
+			}
+
+			//R2010+:
+			if (this.R2010Plus)
+			{
+				//DIMTXTDIRECTION B 295
+				this._writer.WriteBit(dimStyle.TextDirection == TextDirection.RightToLeft);
+				//DIMALTMZF BD ?
+				this._writer.WriteBitDouble(dimStyle.AltMzf);
+				//DIMALTMZS T ?
+				this._writer.WriteVariableText(dimStyle.AltMzs);
+				//DIMMZF BD ?
+				this._writer.WriteBitDouble(dimStyle.Mzf);
+				//DIMMZS T ?
+				this._writer.WriteVariableText(dimStyle.Mzs);
+			}
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//DIMLWD BS 371
+				this._writer.WriteBitShort((short)dimStyle.DimensionLineWeight);
+				//DIMLWE BS 372
+				this._writer.WriteBitShort((short)dimStyle.ExtensionLineWeight);
+			}
+
+			//Common:
+			//Unknown B 70 Seems to set the 0 - bit(1) of the 70 - group.
+			this._writer.WriteBit(false);
+
+			//Handle refs H Dimstyle control(soft pointer)
+			//[Reactors(soft pointer)]
+			//xdicobjhandle(hard owner)
+
+			//External reference block handle(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+			//340 shapefile(DIMTXSTY)(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.Style);
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//341 leader block(DIMLDRBLK) (hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.LeaderArrow);
+				//342 dimblk(DIMBLK)(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+				//343 dimblk1(DIMBLK1)(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.DimArrow1);
+				//344 dimblk2(DIMBLK2)(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.DimArrow2);
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//345 dimltype(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+				//346 dimltex1(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+				//347 dimltex2(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+			}
+
+			this.registerObject(dimStyle);
 		}
 
 		private void writeEntity(Entity entity)
