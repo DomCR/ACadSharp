@@ -4,9 +4,37 @@ using System.IO;
 
 namespace ACadSharp.IO.DWG
 {
+	internal class DwgmMergedStreamWriterAC21 : DwgmMergedStreamWriter, IDwgStreamWriter
+	{
+		public DwgmMergedStreamWriterAC21(Stream stream, IDwgStreamWriter main, IDwgStreamWriter textwriter)
+			: base(stream, main, textwriter, main)
+		{
+		}
+
+		public override void WriteSpearShift()
+		{
+			if (this._savedPosition)
+			{
+				this.Main.WriteSpearShift();
+				this.Main.SetPositionInBits(this.PositionInBits);
+				this.Main.WriteRawLong(this.Main.PositionInBits);
+				this.Main.WriteShiftValue();
+				this.Main.SetPositionInBits(this.Main.PositionInBits);
+			}
+
+			this.HandleWriter.WriteSpearShift();
+			this.Main.WriteBytes(((MemoryStream)this.HandleWriter.Stream).GetBuffer());
+			this.Main.WriteSpearShift();
+		}
+	}
+
 	internal class DwgmMergedStreamWriter : IDwgStreamWriter
 	{
-		public IDwgStreamWriter Main { get { return this.MainWriter; } }
+		public IDwgStreamWriter Main { get; }
+
+		public IDwgStreamWriter TextWriter { get; }
+
+		public IDwgStreamWriter HandleWriter { get; }
 
 		public Stream Stream { get; }
 
@@ -14,18 +42,12 @@ namespace ACadSharp.IO.DWG
 
 		public long PositionInBits { get; private set; }
 
-		public IDwgStreamWriter MainWriter { get; }
-
-		public IDwgStreamWriter TextWriter { get; }
-
-		public IDwgStreamWriter HandleWriter { get; }
-
-		private bool _savedPosition;
+		protected bool _savedPosition;
 
 		public DwgmMergedStreamWriter(Stream stream, IDwgStreamWriter main, IDwgStreamWriter textwriter, IDwgStreamWriter handlewriter)
 		{
 			this.Stream = stream;
-			this.MainWriter = main;
+			this.Main = main;
 			this.TextWriter = textwriter;
 			this.HandleWriter = handlewriter;
 		}
@@ -52,7 +74,7 @@ namespace ACadSharp.IO.DWG
 
 		public void ResetStream()
 		{
-			this.MainWriter.ResetStream();
+			this.Main.ResetStream();
 			this.TextWriter.ResetStream();
 			this.HandleWriter.ResetStream();
 		}
@@ -60,117 +82,117 @@ namespace ACadSharp.IO.DWG
 		public void SavePositonForSize()
 		{
 			this._savedPosition = true;
-			this.PositionInBits = this.MainWriter.PositionInBits;
+			this.PositionInBits = this.Main.PositionInBits;
 			//Save this position for the size in bits
-			this.MainWriter.WriteRawLong(0);
+			this.Main.WriteRawLong(0);
 		}
 
 		public void Write2RawDouble(XY value)
 		{
-			this.MainWriter.Write2RawDouble(value);
+			this.Main.Write2RawDouble(value);
 		}
 
 		public void Write3BitDouble(XYZ value)
 		{
-			this.MainWriter.Write3BitDouble(value);
+			this.Main.Write3BitDouble(value);
 		}
 
 		public void WriteBit(bool value)
 		{
-			this.MainWriter.WriteBit(value);
+			this.Main.WriteBit(value);
 		}
 
 		public void Write2Bits(byte value)
 		{
-			this.MainWriter.Write2Bits(value);
+			this.Main.Write2Bits(value);
 		}
 
 		public void WriteBitDouble(double value)
 		{
-			this.MainWriter.WriteBitDouble(value);
+			this.Main.WriteBitDouble(value);
 		}
 
 		public void WriteBitDoubleWithDefault(double def, double value)
 		{
-			this.MainWriter.WriteBitDoubleWithDefault(def, value);
+			this.Main.WriteBitDoubleWithDefault(def, value);
 		}
 
 		public void WriteBitExtrusion(XYZ value)
 		{
-			this.MainWriter.WriteBitExtrusion(value);
+			this.Main.WriteBitExtrusion(value);
 		}
 
 		public void WriteBitLong(int value)
 		{
-			this.MainWriter.WriteBitLong(value);
+			this.Main.WriteBitLong(value);
 		}
 
 		public void WriteBitLongLong(long value)
 		{
-			this.MainWriter.WriteBitLongLong(value);
+			this.Main.WriteBitLongLong(value);
 		}
 
 		public void WriteBitShort(short value)
 		{
-			this.MainWriter.WriteBitShort(value);
+			this.Main.WriteBitShort(value);
 		}
 
 		public void WriteBitThickness(double value)
 		{
-			this.MainWriter.WriteBitThickness(value);
+			this.Main.WriteBitThickness(value);
 		}
 
 		public void WriteByte(byte value)
 		{
-			this.MainWriter.WriteByte(value);
+			this.Main.WriteByte(value);
 		}
 
 		public void WriteBytes(byte[] bytes)
 		{
-			this.MainWriter.WriteBytes(bytes);
+			this.Main.WriteBytes(bytes);
 		}
 
 		public void WriteCmColor(Color value)
 		{
-			this.MainWriter.WriteCmColor(value);
+			this.Main.WriteCmColor(value);
 		}
 
 		public void WriteDateTime(DateTime value)
 		{
-			this.MainWriter.WriteDateTime(value);
+			this.Main.WriteDateTime(value);
 		}
 
 		public void WriteInt(int value)
 		{
-			this.MainWriter.WriteInt(value);
+			this.Main.WriteInt(value);
 		}
 
 		public void WriteObjectType(ObjectType value)
 		{
-			this.MainWriter.WriteObjectType(value);
+			this.Main.WriteObjectType(value);
 		}
 
 		public void WriteRawDouble(double value)
 		{
-			this.MainWriter.WriteRawDouble(value);
+			this.Main.WriteRawDouble(value);
 		}
 
 		public void WriteRawLong(long value)
 		{
-			this.MainWriter.WriteRawLong(value);
+			this.Main.WriteRawLong(value);
 		}
 
 		public void WriteRawShort(ushort value)
 		{
-			this.MainWriter.WriteRawShort(value);
+			this.Main.WriteRawShort(value);
 		}
 
-		public void WriteSpearShift()
+		public virtual void WriteSpearShift()
 		{
-			long mainSizeBits = this.MainWriter.PositionInBits;
+			long mainSizeBits = this.Main.PositionInBits;
 			long textSizeBits = this.TextWriter.PositionInBits;
 
-			this.MainWriter.WriteSpearShift();
+			this.Main.WriteSpearShift();
 
 			if (this._savedPosition)
 			{
@@ -188,37 +210,37 @@ namespace ACadSharp.IO.DWG
 					}
 				}
 
-				this.MainWriter.SetPositionInBits(this.PositionInBits);
+				this.Main.SetPositionInBits(this.PositionInBits);
 				//Write the total size in bits
-				this.MainWriter.WriteRawLong(mainTextTotalBits);
-				this.MainWriter.WriteShiftValue();
+				this.Main.WriteRawLong(mainTextTotalBits);
+				this.Main.WriteShiftValue();
 			}
 
-			this.MainWriter.SetPositionInBits(mainSizeBits);
+			this.Main.SetPositionInBits(mainSizeBits);
 
 			if (textSizeBits > 0)
 			{
 				this.TextWriter.WriteSpearShift();
-				this.MainWriter.WriteBytes(((MemoryStream)this.TextWriter.Stream).GetBuffer());
-				this.MainWriter.WriteSpearShift();
-				this.MainWriter.SetPositionInBits(mainSizeBits + textSizeBits);
-				this.MainWriter.SetPositionByFlag(textSizeBits);
-				this.MainWriter.WriteBit(true);
+				this.Main.WriteBytes(((MemoryStream)this.TextWriter.Stream).GetBuffer());
+				this.Main.WriteSpearShift();
+				this.Main.SetPositionInBits(mainSizeBits + textSizeBits);
+				this.Main.SetPositionByFlag(textSizeBits);
+				this.Main.WriteBit(true);
 			}
 			else
 			{
-				this.MainWriter.WriteBit(false);
+				this.Main.WriteBit(false);
 			}
 
 			this.HandleWriter.WriteSpearShift();
-			this.SavedPositionInBits = this.MainWriter.PositionInBits;
-			this.MainWriter.WriteBytes(((MemoryStream)this.HandleWriter.Stream).GetBuffer());
-			this.MainWriter.WriteSpearShift();
+			this.SavedPositionInBits = this.Main.PositionInBits;
+			this.Main.WriteBytes(((MemoryStream)this.HandleWriter.Stream).GetBuffer());
+			this.Main.WriteSpearShift();
 		}
 
 		public void WriteTimeSpan(TimeSpan value)
 		{
-			this.MainWriter.WriteTimeSpan(value);
+			this.Main.WriteTimeSpan(value);
 		}
 
 		public void WriteVariableText(string value)

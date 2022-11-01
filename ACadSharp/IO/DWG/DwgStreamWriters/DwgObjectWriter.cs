@@ -30,6 +30,10 @@ namespace ACadSharp.IO.DWG
 
 		private CadDocument _document;
 
+		private Entity _prev;
+
+		private Entity _next;
+
 		public DwgObjectWriter(Stream stream, CadDocument document) : base(document.Header.Version)
 		{
 			this._stream = stream;

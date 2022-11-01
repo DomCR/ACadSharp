@@ -212,8 +212,15 @@ namespace ACadSharp.IO.DWG
 				////[NEXT ENTITY (relative soft pointer)]
 				//template.NextEntity = this.handleReference(entity.Handle);
 				//this._writer.WriteBit(hasLinks);
+				hasLinks = _prev != null
+					&& _prev.Handle == entity.Handle - 1
+					&& _next != null
+					&& _next.Handle == entity.Handle + 1;
 
-				throw new NotImplementedException();
+				this._writer.WriteBit(hasLinks);
+
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, _prev);
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, _next);
 			}
 
 			//Color	CMC(B)	62
