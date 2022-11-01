@@ -106,7 +106,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Visual style object (optional)
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Handle, 348)]
+		[DxfCodeValue(DxfReferenceType.Handle | DxfReferenceType.Optional, 348)]
 		public VisualStyle VisualStyle { get; set; }
 
 		/// <summary>
@@ -148,6 +148,8 @@ namespace ACadSharp.Tables
 		//345	ID/handle of AcDbUCSTableRecord if UCS is a named UCS.If not present, then UCS is unnamed(appears only if code 72 is set to 1)
 
 		//346	ID/handle of AcDbUCSTableRecord of base UCS if UCS is orthographic(79 code is non-zero). If not present and 79 code is non-zero, then base UCS is taken to be WORLD(appears only if code 72 is set to 1)
+		[DxfCodeValue(DxfReferenceType.Handle | DxfReferenceType.Optional, 345)]
+		public UCS UCS { get; set; }
 
 		public View() : base() { }
 

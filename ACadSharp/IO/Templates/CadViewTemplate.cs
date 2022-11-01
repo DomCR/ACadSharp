@@ -1,4 +1,5 @@
-﻿using ACadSharp.Tables;
+﻿using ACadSharp.Objects;
+using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
@@ -33,7 +34,20 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			//TODO: assign ucs and named ucs to view
+			if (builder.TryGetCadObject(this.UcsHandle, out UCS ucs))
+			{
+				this.CadObject.UCS = ucs;
+			}
+
+			if (builder.TryGetCadObject(this.NamedUcsHandle, out UCS namedUcs))
+			{
+				this.CadObject.UCS = namedUcs;
+			}
+
+			if (builder.TryGetCadObject(this.VisualStyleHandle, out VisualStyle vstyle))
+			{
+				this.CadObject.VisualStyle = vstyle;
+			}
 		}
 	}
 }
