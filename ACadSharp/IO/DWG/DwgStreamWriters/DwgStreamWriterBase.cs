@@ -83,17 +83,17 @@ namespace ACadSharp.IO.DWG
 					throw new NotSupportedException($"Dwg version not supported: {version}");
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
-					return new DwgmMergedStreamWriterAC21(
+					return new DwgmMergedStreamWriterAC14(
 						stream,
 						new DwgStreamWriterAC12(stream, encoding),
 						new DwgStreamWriterAC12(new MemoryStream(), encoding));
 				case ACadVersion.AC1015:
-					return new DwgmMergedStreamWriterAC21(
+					return new DwgmMergedStreamWriterAC14(
 							stream,
 							new DwgStreamWriterAC15(stream, encoding),
 							new DwgStreamWriterAC15(new MemoryStream(), encoding));
 				case ACadVersion.AC1018:
-					return new DwgmMergedStreamWriterAC21(
+					return new DwgmMergedStreamWriterAC14(
 							stream,
 							new DwgStreamWriterAC18(stream, encoding),
 							new DwgStreamWriterAC18(new MemoryStream(), encoding));

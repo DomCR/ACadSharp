@@ -205,21 +205,16 @@ namespace ACadSharp.IO.DWG
 			bool hasLinks = true;
 			if (!this.R2004Plus)
 			{
-				//TODO: Process the entities for before and after
-
-				////[PREVIOUS ENTITY (relative soft pointer)]
-				//template.PrevEntity = this.handleReference(entity.Handle);
-				////[NEXT ENTITY (relative soft pointer)]
-				//template.NextEntity = this.handleReference(entity.Handle);
-				//this._writer.WriteBit(hasLinks);
 				hasLinks = _prev != null
-					&& _prev.Handle == entity.Handle - 1
-					&& _next != null
-					&& _next.Handle == entity.Handle + 1;
+						&& _prev.Handle == entity.Handle - 1
+						&& _next != null
+						&& _next.Handle == entity.Handle + 1;
 
 				this._writer.WriteBit(hasLinks);
 
+				////[PREVIOUS ENTITY (relative soft pointer)]
 				this._writer.HandleReference(DwgReferenceType.SoftPointer, _prev);
+				////[NEXT ENTITY (relative soft pointer)]
 				this._writer.HandleReference(DwgReferenceType.SoftPointer, _next);
 			}
 
