@@ -1,5 +1,7 @@
 ﻿using ACadSharp.Examples.Common;
 using ACadSharp.IO;
+using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
 using System;
 
 namespace ACadSharp.Examples
@@ -15,6 +17,8 @@ namespace ACadSharp.Examples
 			{
 				doc = reader.Read();
 			}
+
+			ExploreDocument(doc);
 		}
 
 		/// <summary>
@@ -23,12 +27,37 @@ namespace ACadSharp.Examples
 		/// <param name="doc"></param>
 		static void ExploreDocument(CadDocument doc)
 		{
+			Console.WriteLine();
 			Console.WriteLine("SUMMARY INFO:");
+			Console.WriteLine($"\tTitle: {doc.SummaryInfo.Title}");
+			Console.WriteLine($"\tSubject: {doc.SummaryInfo.Subject}");
+			Console.WriteLine($"\tAuthor: {doc.SummaryInfo.Author}");
+			Console.WriteLine($"\tKeywords: {doc.SummaryInfo.Keywords}");
+			Console.WriteLine($"\tComments: {doc.SummaryInfo.Comments}");
+			Console.WriteLine($"\tLastSavedBy: {doc.SummaryInfo.LastSavedBy}");
+			Console.WriteLine($"\tRevisionNumber: {doc.SummaryInfo.RevisionNumber}");
+			Console.WriteLine($"\tHyperlinkBase: {doc.SummaryInfo.HyperlinkBase}");
+			Console.WriteLine($"\tCreatedDate: {doc.SummaryInfo.CreatedDate}");
+			Console.WriteLine($"\tModifiedDate: {doc.SummaryInfo.ModifiedDate}");
 
+			ExploreTable(doc.AppIds);
+			ExploreTable(doc.BlockRecords);
+			ExploreTable(doc.DimensionStyles);
+			ExploreTable(doc.Layers);
+			ExploreTable(doc.LineTypes);
+			ExploreTable(doc.TextStyles);
+			ExploreTable(doc.UCSs);
+			ExploreTable(doc.Views);
+			ExploreTable(doc.VPorts);
+		}
 
-			foreach (var item in doc.AppIds)
+		static void ExploreTable<T>(Table<T> table)
+			where T : TableEntry
+		{
+			Console.WriteLine($"{table.ObjectName}");
+			foreach (var item in table)
 			{
-
+				Console.WriteLine($"\tName: {item.Name}");
 			}
 		}
 	}
