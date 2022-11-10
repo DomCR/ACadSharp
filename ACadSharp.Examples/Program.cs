@@ -3,6 +3,7 @@ using ACadSharp.IO;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
+using System.Linq;
 
 namespace ACadSharp.Examples
 {
@@ -13,7 +14,7 @@ namespace ACadSharp.Examples
 		static void Main(string[] args)
 		{
 			CadDocument doc;
-			using (DwgReader reader = new DwgReader(file, NotificationHelper.LogConsoleNotification))
+			using (DwgReader reader = new DwgReader(file))
 			{
 				doc = reader.Read();
 			}
@@ -58,6 +59,15 @@ namespace ACadSharp.Examples
 			foreach (var item in table)
 			{
 				Console.WriteLine($"\tName: {item.Name}");
+
+				if (item.Name == BlockRecord.ModelSpaceName && item is BlockRecord model)
+				{
+					Console.WriteLine($"\t\tEntities in the model:");
+					foreach (var e in model.Entities.GroupBy(i => i.GetType().FullName))
+					{
+						Console.WriteLine($"\t\t{e.Key}: {e.Count()}");
+					}
+				}
 			}
 		}
 	}
