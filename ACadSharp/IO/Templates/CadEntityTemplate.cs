@@ -115,10 +115,7 @@ namespace ACadSharp.IO.Templates
 						this.CadObject.LineType = builder.LineTypes["Continuous"];
 						break;
 					case 3:
-						if (this.LineTypeHandle.HasValue)
-						{
-							applyLineType(builder);
-						}
+						applyLineType(builder);
 						break;
 				}
 			}
@@ -130,7 +127,7 @@ namespace ACadSharp.IO.Templates
 			{
 				this.CadObject.LineType = ltype;
 			}
-			else
+			else if (!string.IsNullOrEmpty(LtypeName) || this.LineTypeHandle.HasValue)
 			{
 				builder.Notify($"Could not assign the line type to entity | handle : {this.LineTypeHandle} | name : {LtypeName}", NotificationType.Warning);
 			}
@@ -150,7 +147,10 @@ namespace ACadSharp.IO.Templates
 
 		private void applyLineType(CadDocumentBuilder builder)
 		{
-			this.CadObject.LineType = builder.GetCadObject<LineType>(this.LineTypeHandle.Value);
+			if (builder.TryGetCadObject<LineType>(this.LineTypeHandle, out LineType ltype))
+			{
+				this.CadObject.LineType = ltype;
+			}
 		}
 	}
 }
