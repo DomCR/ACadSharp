@@ -336,6 +336,11 @@ namespace ACadSharp.IO.DWG
 				//_writer.WriteBit(cadObject.XDictionary == null);
 				//this._writer.HandleReference(DwgReferenceType.HardOwnership, cadObject.XDictionary);
 			}
+			else
+			{
+				//xdicobjhandle(hard owner)
+				this._writer.HandleReference(DwgReferenceType.HardOwnership, cadObject.XDictionary);
+			}
 
 			//R2013+:
 			if (this.R2013Plus)
