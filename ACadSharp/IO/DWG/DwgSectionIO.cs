@@ -2,6 +2,8 @@
 {
 	internal abstract class DwgSectionIO
 	{
+		public event NotificationEventHandler OnNotification;
+
 		/// <summary>
 		/// R13-R14 Only
 		/// </summary>
@@ -54,6 +56,11 @@
 			R2010Plus = version >= ACadVersion.AC1024;
 			R2013Plus = version >= ACadVersion.AC1027;
 			R2018Plus = version >= ACadVersion.AC1032;
+		}
+
+		protected void Notify(string message, NotificationType type)
+		{
+			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, type));
 		}
 	}
 }

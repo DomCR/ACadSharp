@@ -13,8 +13,6 @@ namespace ACadSharp.IO.DWG
 {
 	internal partial class DwgObjectWriter : DwgSectionIO
 	{
-		public event NotificationEventHandler OnNotification;
-
 		/// <summary>
 		/// Key : handle | Value : Offset
 		/// </summary>
@@ -1117,11 +1115,6 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(point.Rotation);
 
 			this.registerObject(point);
-		}
-
-		private void Notify(string message, NotificationType type)
-		{
-			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, type));
 		}
 	}
 }
