@@ -365,6 +365,8 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		private Dictionary<ulong, long> readHandles()
 		{
+			//TODO: Use the class DwgHandleReader to read this section
+
 			this._fileHeader = this._fileHeader ?? this.readFileHeader();
 
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Handles);

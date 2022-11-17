@@ -1,10 +1,7 @@
 ﻿using ACadSharp;
 using ACadSharp.IO.DWG;
-using ACadSharp.IO.DWG.DwgStreamWriters;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -21,13 +18,23 @@ namespace ACadSharpInternal.Tests
 		public void WriteTest(ACadVersion version)
 		{
 			MemoryStream stream = new MemoryStream();
-			var map = this.generateMap();
+			var imap = this.generateMap();
 
-			DwgHandleWriter writer = new DwgHandleWriter(stream, map);
+			DwgHandleWriter writer = new DwgHandleWriter(version, stream, imap);
 			writer.Write();
 
 			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, true);
+			DwgHandleReader reader = new DwgHandleReader(sreader, version);
+			reader.OnNotification += onNotification;
 
+			var outmap = reader.Read();
+
+			foreach (KeyValuePair<ulong, ulong> item in outmap)
+			{
+				Assert.True(imap.ContainsKey(item.Key));
+				Assert.Equal(item.Value, imap[item.Key]);
+				Assert.Equal(0, 0);
+			}
 		}
 
 		private Dictionary<ulong, ulong> generateMap()

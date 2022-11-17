@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using CSUtilities.Converters;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace ACadSharp.IO.DWG.DwgStreamWriters
+namespace ACadSharp.IO.DWG
 {
 	/*
 	 * WARNING: Reverse method from DwgReader.readHandles() simplified
 	 */
-	internal class DwgHandleWriter
+	internal class DwgHandleWriter : DwgSectionIO
 	{
 		private MemoryStream _stream;
 
@@ -15,7 +16,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 		private int initialValue;
 
-		public DwgHandleWriter(MemoryStream stream, Dictionary<ulong, ulong> map)
+		public DwgHandleWriter(ACadVersion version, MemoryStream stream, Dictionary<ulong, ulong> map) : base(version)
 		{
 			this._stream = stream;
 
