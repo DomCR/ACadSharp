@@ -33,6 +33,8 @@ namespace ACadSharp.IO.DWG
 
 		void WriteVariableText(string value);
 
+		void WriteTextUnicode(string value);
+
 		void WriteBit(bool value);
 
 		void Write2Bits(byte value);

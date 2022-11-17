@@ -199,8 +199,10 @@ namespace ACadSharp.IO
 
 			//{0x1F,0x25,0x6D,0x07,0xD4,0x36,0x28,0x28,0x9D,0x57,0xCA,0x3F,0x9D,0x44,0x10,0x2B }
 			byte[] sentinel = sectionHandler.ReadSentinel();
+			
 			//overall size	RL	overall size of image area
 			long overallSize = sectionHandler.ReadRawLong();
+
 			//imagespresent RC counter indicating what is present here
 			byte imagespresent = (byte)sectionHandler.ReadRawChar();
 

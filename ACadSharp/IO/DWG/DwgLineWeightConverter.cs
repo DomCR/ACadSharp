@@ -1,8 +1,8 @@
-﻿using ACadSharp.Entities;
-using System;
+﻿using System;
 
 namespace ACadSharp.IO.DWG
 {
+	[Obsolete("Use CadUtils instead")]
 	internal static class DwgLineWeightConverter
 	{
 		public static readonly LineweightType[] IndexedValue = new LineweightType[]

@@ -27,6 +27,7 @@ namespace ACadSharp.IO.DWG
 		public Dictionary<string, DwgSectionDescriptor> Descriptors { get; set; } = new Dictionary<string, DwgSectionDescriptor>();
 
 		public DwgFileHeader18() : base() { }
+
 		public DwgFileHeader18(ACadVersion version) : base(version) { }
 
 	}

@@ -43,10 +43,8 @@ namespace ACadSharp.IO
 			this._document = document;
 		}
 
-		/// <summary>
-		/// Write the <see cref="CadDocument"/>
-		/// </summary>
-		public void Write()
+		/// <inheritdoc/>
+		public override void Write()
 		{
 			this._objectHolder.Objects.Enqueue(_document.RootDictionary);
 

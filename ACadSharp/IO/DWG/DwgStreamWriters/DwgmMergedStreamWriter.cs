@@ -224,6 +224,11 @@ namespace ACadSharp.IO.DWG
 			this.TextWriter.WriteVariableText(value);
 		}
 
+		public void WriteTextUnicode(string value)
+		{
+			this.TextWriter.WriteTextUnicode(value);
+		}
+
 		public void SetPositionInBits(long posInBits)
 		{
 			throw new NotImplementedException();
