@@ -271,22 +271,10 @@ namespace ACadSharp.IO.DWG
 
 		public virtual void WriteTextUnicode(string value)
 		{
-			if (string.IsNullOrEmpty(value))
-			{
-				this.WriteRawShort(0);
-				this.WriteByte((byte)this.Encoding.CodePage);
-				return;
-			}
-
-			if (value.Length > short.MaxValue)
-			{
-				throw new System.ArgumentOutOfRangeException();
-			}
-
-			byte[] bytes = this.Encoding.GetBytes(value);
-			this.WriteRawShort((ushort)bytes.Length);
-			this.WriteByte((byte)this.Encoding.CodePage);
-			this.WriteBytes(bytes, 0, bytes.Length);
+			byte[] bytes = this.Encoding.GetBytes(string.IsNullOrEmpty(value) ? string.Empty : value);
+			this.WriteRawShort((ushort)(bytes.Length + 1));
+			this._stream.Write(bytes, 0, bytes.Length);
+			this._stream.WriteByte(0);
 		}
 
 		public void Write2Bits(byte value)

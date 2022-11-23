@@ -53,6 +53,11 @@ namespace ACadSharp.IO.DWG
 			this.Descriptors.Add(name, new DwgSectionDescriptor(name));
 		}
 
+		public void AddSection(DwgSectionDescriptor descriptor)
+		{
+			this.Descriptors.Add(descriptor.Name, descriptor);
+		}
+
 		public override DwgSectionDescriptor GetDescriptor(string name)
 		{
 			return this.Descriptors[name];

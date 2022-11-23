@@ -630,8 +630,7 @@ namespace ACadSharp.IO
 			//Get the page size
 			this.getPageHeaderData(sreader, out _, out long decompressedSize, out _, out _, out _);
 			//Get the descompressed stream to read the records
-			StreamIO decompressed = new StreamIO(
-				Dwg2004LZ77.Decompress(sreader.Stream, decompressedSize));
+			StreamIO decompressed = new StreamIO(Dwg2004LZ77.Decompress(sreader.Stream, decompressedSize));
 
 			//Section size
 			int total = 0x100;
@@ -1317,7 +1316,7 @@ namespace ACadSharp.IO
 					IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(fileheader.AcadVersion, this._fileStream.Stream);
 					sreader.Position = section.Seeker;
 					//Get the header data
-					this.decryptHeaderDataSection(section, sreader);
+					this.decryptDataSection(section, sreader);
 
 					if (descriptor.IsCompressed)
 					{
@@ -1339,7 +1338,7 @@ namespace ACadSharp.IO
 			return memoryStream;
 		}
 
-		private void decryptHeaderDataSection(DwgLocalSectionMap section, IDwgStreamReader sreader)
+		private void decryptDataSection(DwgLocalSectionMap section, IDwgStreamReader sreader)
 		{
 			int secMask = 0x4164536B ^ (int)sreader.Position;
 

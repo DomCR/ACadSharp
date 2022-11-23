@@ -24,6 +24,7 @@ namespace ACadSharp.IO.DWG
 					TextEncoding.GetListedEncoding(CodePage.Windows1252))
 					.Replace("\0", "");
 			}
+
 			return value;
 		}
 

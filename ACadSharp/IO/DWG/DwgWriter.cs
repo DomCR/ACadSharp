@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO.DWG.DwgStreamWriters;
+﻿using ACadSharp.IO.DWG;
+using ACadSharp.IO.DWG.DwgStreamWriters;
 using CSUtilities.Converters;
 using CSUtilities.IO;
 using CSUtilities.Text;
@@ -7,7 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace ACadSharp.IO.DWG
+namespace ACadSharp.IO
 {
 	public class DwgWriter : CadWriterBase
 	{
@@ -33,7 +34,6 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <param name="document"></param>
-		/// <exception cref="NotImplementedException">Binary writer not implemented</exception>
 		public DwgWriter(string filename, CadDocument document)
 			: this(File.Create(filename), document)
 		{
@@ -44,7 +44,6 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <param name="document"></param>
-		/// <exception cref="NotImplementedException">Binary writer not implemented</exception>
 		public DwgWriter(Stream stream, CadDocument document)
 		{
 			this._stream = new StreamIO(stream);
@@ -53,19 +52,21 @@ namespace ACadSharp.IO.DWG
 
 			this._writer = DwgStreamWriterBase.GetStreamHandler(_version, this._stream.Stream, Encoding.Default);
 
-			this._fileHeaderWriter = new DwgFileHeaderWriterAC18(stream, _version);
+			this._fileHeaderWriter = new DwgFileHeaderWriterAC18(document, stream, _version);
 		}
 
 		/// <inheritdoc/>
 		public override void Write()
 		{
+			//this._fileHeaderWriter.CreateSection("", new System.IO.MemoryStream(), true);
+
 			this.writeHeader();
 			//this.writeClasses();
 			//this.writeEmptySection();
 			this.writeSummaryInfo();
 			this.writePreview();
 			//this.writeVBASection();
-			//this.writeAppInfo();
+			this.writeAppInfo();
 			//this.writeFileDepList();
 			//this.writeRevHistory();
 			//this.writeSecurity();
@@ -76,153 +77,19 @@ namespace ACadSharp.IO.DWG
 			//this.writePrototype();
 			//this.writeAuxHeader();
 
-			this.writeFileHeader();
+			//this.writeFileHeader();
+
+			this._fileHeaderWriter.WriteDescriptors();
+
+			this._fileHeaderWriter.WriteRecords();
+
+			this._fileHeaderWriter.WriteFileMetaData();
 		}
 
 		/// <inheritdoc/>
 		public override void Dispose()
 		{
 			this._stream.Dispose();
-		}
-
-		private void createSectionDescriptor(string name, MemoryStream stream, bool isCompressed)
-		{
-			DwgSectionDescriptor descriptor = new DwgSectionDescriptor(name);
-			descriptor.CompressedSize = (ulong)stream.Length;
-			descriptor.CompressedCode = isCompressed ? 2 : 1;
-
-			int nlocalSections = (int)(stream.Length / (long)descriptor.DecompressedSize);
-
-			byte[] buffer = stream.GetBuffer();
-			ulong offset = 0uL;
-			for (int i = 0; i < nlocalSections; i++)
-			{
-				this.craeteLocalSection(
-					descriptor,
-					descriptor.PageType,
-					(int)descriptor.DecompressedSize,
-					buffer,
-					offset,
-					descriptor.DecompressedSize,
-					isCompressed);
-				offset += (ulong)descriptor.DecompressedSize;
-			}
-
-			//Check if there are spear bytes or the section is just too small to divide
-			ulong spearBytes = (ulong)(stream.Length % (long)descriptor.DecompressedSize);
-			if (spearBytes > 0)
-			{
-				this.craeteLocalSection(
-					descriptor,
-					descriptor.PageType,
-					(int)descriptor.DecompressedSize,
-					buffer,
-					offset,
-					spearBytes,
-					isCompressed);
-			}
-
-			this._fileHeader.AddSection(name);
-		}
-
-		private void craeteLocalSection(DwgSectionDescriptor descriptor, long pageSize, int decompressedSize, byte[] buffer, ulong offset, ulong totalSize, bool isCompressed)
-		{
-			DwgLocalSectionMap localMap = new DwgLocalSectionMap();
-			MemoryStream mainStream = new System.IO.MemoryStream();
-
-			mainStream.Write(buffer, (int)offset, (int)totalSize);
-
-			int diff = decompressedSize - (int)totalSize;
-			for (int j = 0; j < diff; j++)
-			{
-				mainStream.WriteByte(0);
-			}
-
-			if (isCompressed)
-			{
-				System.IO.MemoryStream holder = new System.IO.MemoryStream(decompressedSize);
-				holder.Write(mainStream.GetBuffer(), (int)offset, (int)totalSize);
-
-				throw new NotImplementedException();
-				//Dwg2004LZ77.Encode(holder.GetBuffer(), 0, decompressedSize, mainStream);
-			}
-
-			//Save position for the local section
-			long position = this._stream.Position;
-			int compressDiff = DwgCheckSumCalculator.CompressionCalculator((int)mainStream.Length);
-
-			localMap.PageNumber = this._localSectionsMaps.Count + 1;
-			localMap.Offset = offset;
-			localMap.Seeker = position;
-			//localMap.ODA = 0;
-			localMap.CompressedSize = (ulong)mainStream.Length;
-			localMap.DecompressedSize = totalSize;
-			localMap.PageSize = (long)localMap.CompressedSize + 32 + compressDiff;
-			localMap.Checksum = 0u;
-
-			System.IO.MemoryStream checkSumStream = new System.IO.MemoryStream(32);
-			this.writeHeaderDataSection(checkSumStream, descriptor, localMap, (int)pageSize);
-			localMap.Checksum = DwgCheckSumCalculator.Calculate(0, checkSumStream.GetBuffer(), 0, (int)checkSumStream.Length);
-			checkSumStream.SetLength(0L);
-			checkSumStream.Position = 0L;
-
-			this.writeHeaderDataSection(checkSumStream, descriptor, localMap, (int)pageSize);
-
-			this.applyMask(checkSumStream.GetBuffer(), 0, (int)checkSumStream.Length);
-
-			this._stream.Stream.Write(checkSumStream.GetBuffer(), 0, (int)checkSumStream.Length);
-			this._stream.Stream.Write(mainStream.GetBuffer(), 0, (int)mainStream.Length);
-
-			if (isCompressed)
-			{
-				this._stream.Stream.Write(DwgCheckSumCalculator.MagicSequence, 0, compressDiff);
-			}
-			else if (compressDiff != 0)
-			{
-				throw new System.Exception();
-			}
-
-			if (localMap.PageNumber > 0)
-			{
-				descriptor.PageCount++;
-			}
-
-			descriptor.LocalSections.Add(localMap);
-			this._localSectionsMaps.Add(localMap);
-		}
-
-		private void writeHeaderDataSection(Stream stream, DwgSectionDescriptor descriptor, DwgLocalSectionMap map, int size)
-		{
-			var writer = DwgStreamWriterBase.GetStreamHandler(_version, stream, Encoding.Default);
-			//0x00	4	Section page type, since it’s always a data section: 0x4163043b
-			writer.WriteInt(size);
-			//0x04	4	Section number
-			writer.WriteInt(descriptor.SectionId);
-			//0x08	4	Data size (compressed)
-			writer.WriteInt((int)map.CompressedSize);
-			//0x0C	4	Page Size (decompressed)
-			writer.WriteInt((int)map.PageSize);
-			//0x10	4	Start Offset (in the decompressed buffer)
-			writer.WriteRawLong((long)map.Offset);
-			//0x18	4	Data Checksum (section page checksum calculated from compressed data bytes, with seed 0)
-			writer.WriteInt((int)map.Checksum);
-			//0x1C	4	Unknown (ODA writes a 0)
-			writer.WriteInt(0);
-		}
-
-		private void applyMask(byte[] buffer, int offset, int length)
-		{
-			byte[] bytes = LittleEndianConverter.Instance.GetBytes(0x4164536B ^ (int)this._stream.Position);
-			int diff = offset + length;
-			while (offset < diff)
-			{
-				for (int i = 0; i < 4; i++)
-				{
-					buffer[offset + i] ^= bytes[i];
-				}
-
-				offset += 4;
-			}
 		}
 
 		private void writeHeader()
@@ -232,15 +99,7 @@ namespace ACadSharp.IO.DWG
 			writer.OnNotification += triggerNotification;
 			writer.Write();
 
-			if (this._version < ACadVersion.AC1018)
-			{
-				//TODO: Create the process for section record
-				throw new NotImplementedException();
-			}
-			else
-			{
-				this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Header, stream, false);
-			}
+			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Header, stream, true);
 		}
 
 		private void writeSummaryInfo()
@@ -282,7 +141,7 @@ namespace ACadSharp.IO.DWG
 			writer.WriteInt(0);
 			writer.WriteInt(0);
 
-			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Header, stream, false);
+			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.SummaryInfo, stream, false, 256);
 		}
 
 		private void writePreview()
@@ -291,7 +150,16 @@ namespace ACadSharp.IO.DWG
 			DwgPreviewWriter writer = new DwgPreviewWriter(this._version, stream);
 			writer.Write();
 
-			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Header, stream, false);
+			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Preview, stream, false, 1024);
+		}
+
+		private void writeAppInfo()
+		{
+			MemoryStream stream = new MemoryStream();
+			DwgAppInfodWriter writer = new DwgAppInfodWriter(this._version, stream);
+			writer.Write();
+
+			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.AppInfo, stream, false, 128);
 		}
 
 		private void writeFileHeader()
@@ -332,7 +200,7 @@ namespace ACadSharp.IO.DWG
 			swriter.WriteInt(0x00000080);
 
 			//0x2C	0x54	0x00 bytes
-			swriter.WriteInt(((int)this._descriptors[DwgSectionDefinition.AppInfo].LocalSections[0].Seeker + 32));
+			swriter.WriteInt((int)this._descriptors[DwgSectionDefinition.AppInfo].LocalSections[0].Seeker + 32);
 			//Get to offset 0x80
 			swriter.WriteBytes(new byte[80]);
 

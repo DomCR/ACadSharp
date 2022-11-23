@@ -35,5 +35,10 @@
 		{
 			return position >= this.Seeker && position < this.Seeker + this.Size;
 		}
+
+		public override string ToString()
+		{
+			return $"Number : {this.Number} | Seeker : {this.Seeker} | Size : {this.Size}";
+		}
 	}
 }

@@ -31,5 +31,53 @@ namespace ACadSharp.Tests.IO.DWG
 
 			//this.checkDocumentInAutocad(Path.GetFullPath(path));
 		}
+
+		[Theory]
+		[MemberData(nameof(Versions))]
+		public void WriteSummaryTest(ACadVersion version)
+		{
+			CadDocument doc = new CadDocument();
+			doc.Header.Version = version;
+			doc.SummaryInfo = new CadSummaryInfo
+			{
+				Author = "ACadSharp"
+			};
+
+			MemoryStream stream = new MemoryStream();
+
+			using (var wr = new DwgWriter(stream, doc))
+			{
+				wr.Write();
+			}
+
+			stream = new MemoryStream(stream.ToArray());
+
+			using (var re = new DwgReader(stream, this.onNotification))
+			{
+				CadSummaryInfo info = re.ReadSummaryInfo();
+			}
+		}
+
+		[Theory]
+		[MemberData(nameof(Versions))]
+		public void WriteHeaderTest(ACadVersion version)
+		{
+			CadDocument doc = new CadDocument();
+			doc.Header.Version = version;
+
+			MemoryStream stream = new MemoryStream();
+
+			using (var wr = new DwgWriter(stream, doc))
+			{
+				wr.Write();
+			}
+
+			stream = new MemoryStream(stream.ToArray());
+
+			using (var re = new DwgReader(stream, this.onNotification))
+			{
+				Header.CadHeader header = re.ReadHeader();
+			}
+		}
 	}
 }
