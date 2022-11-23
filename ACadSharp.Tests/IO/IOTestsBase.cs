@@ -48,6 +48,7 @@ namespace ACadSharp.Tests.IO
 			}
 
 			Versions = new TheoryData<ACadVersion>();
+			Versions.Add(ACadVersion.AC1018);
 			Versions.Add(ACadVersion.AC1021);
 			Versions.Add(ACadVersion.AC1024);
 			Versions.Add(ACadVersion.AC1027);

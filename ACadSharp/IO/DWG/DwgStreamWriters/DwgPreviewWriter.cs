@@ -1,4 +1,8 @@
-﻿namespace ACadSharp.IO.DWG
+﻿using CSUtilities.IO;
+using System.IO;
+using System.Text;
+
+namespace ACadSharp.IO.DWG
 {
 	internal class DwgPreviewWriter : DwgSectionIO
 	{
@@ -14,9 +18,9 @@
 			0xE0, 0xDA, 0x92, 0xF8, 0x2B, 0xC9, 0xD7, 0xD7, 0x62, 0xA8, 0x35, 0xC0, 0x62, 0xBB, 0xEF, 0xD4
 		};
 
-		public DwgPreviewWriter(ACadVersion version, IDwgStreamWriter swriter) : base(version)
+		public DwgPreviewWriter(ACadVersion version, Stream stream) : base(version)
 		{
-			this._swriter = swriter;
+			this._swriter = DwgStreamWriterBase.GetStreamHandler(version, stream, Encoding.Default);
 		}
 
 		public void Write()

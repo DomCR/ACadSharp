@@ -10,10 +10,13 @@ namespace ACadSharp.Tests.IO.DWG
 	{
 		public DwgWriterTests(ITestOutputHelper output) : base(output) { }
 
-		[Fact(Skip = "Not implemented")]
-		public void WriteTest()
+		[Theory]
+		[MemberData(nameof(Versions))]
+		public void WriteTest(ACadVersion version)
 		{
 			CadDocument doc = new CadDocument();
+			doc.Header.Version = version;
+
 			string path = Path.Combine(_samplesOutFolder, "out_empty_sample.dwg");
 
 			using (var wr = new DwgWriter(path, doc))
@@ -26,7 +29,7 @@ namespace ACadSharp.Tests.IO.DWG
 				CadDocument readed = re.Read();
 			}
 
-			this.checkDocumentInAutocad(Path.GetFullPath(path));
+			//this.checkDocumentInAutocad(Path.GetFullPath(path));
 		}
 	}
 }

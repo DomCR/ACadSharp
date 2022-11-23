@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Header;
 using CSUtilities.IO;
+using System;
 using System.IO;
 
 namespace ACadSharp.IO
@@ -37,9 +38,15 @@ namespace ACadSharp.IO
 			this._fileStream.Dispose();
 		}
 
+		[Obsolete]
 		protected void triggerNotification(object sender, NotificationEventArgs e)
 		{
 			this.OnNotification?.Invoke(this, e);
+		}
+
+		protected void triggerNotification(string message, NotificationType notificationType)
+		{
+			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType));
 		}
 	}
 }

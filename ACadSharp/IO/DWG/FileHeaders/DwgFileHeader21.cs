@@ -1,6 +1,6 @@
 ﻿namespace ACadSharp.IO.DWG
 {
-	internal class DwgFileHeader21 : DwgFileHeader18
+	internal class DwgFileHeader21 : DwgFileHeaderAC18
 	{
 		public Dwg21CompressedMetadata CompressedMetadata { get; set; }
 		

@@ -1,23 +1,23 @@
-﻿using CSUtilities.Text;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace ACadSharp.IO.DWG
 {
 	internal abstract class DwgFileHeader
 	{
 		public ACadVersion AcadVersion { get; }
+
 		public long PreviewAddress { get; set; } = -1;
+
 		public int AcadMaintenanceVersion { get; set; }
 
 		public DwgFileHeader() { }
+
 		public DwgFileHeader(ACadVersion version)
 		{
 			AcadVersion = version;
 		}
 
-		public static DwgFileHeader GetFileHeader(ACadVersion version)
+		public static DwgFileHeader CreateFileHeader(ACadVersion version)
 		{
 			switch (version)
 			{
@@ -39,19 +39,23 @@ namespace ACadSharp.IO.DWG
 				case ACadVersion.AC1015:
 					return new DwgFileHeader15(version);
 				case ACadVersion.AC1018:
-					return new DwgFileHeader18(version);
+					return new DwgFileHeaderAC18(version);
 				case ACadVersion.AC1021:
 					return new DwgFileHeader21(version);
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
 					//Check if it works...
-					return new DwgFileHeader18(version);
+					return new DwgFileHeaderAC18(version);
 				default:
 					break;
 			}
 
 			return null;
 		}
+
+		public abstract void AddSection(string name);
+
+		public abstract DwgSectionDescriptor GetDescriptor(string name);
 	}
 }

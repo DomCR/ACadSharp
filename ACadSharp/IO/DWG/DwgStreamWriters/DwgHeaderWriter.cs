@@ -37,8 +37,8 @@ namespace ACadSharp.IO.DWG
 			this._msbegin = new MemoryStream();
 			this._msmain = new MemoryStream();
 
-			this._swbegin = DwgStreamWriterBase.GetStreamHandler(this._document.Header.Version, this._msbegin, Encoding.Default);
-			this._writer = DwgStreamWriterBase.GetStreamHandler(this._document.Header.Version, this._msmain, Encoding.Default);
+			this._swbegin = DwgStreamWriterBase.GetStreamHandler(_version, this._msbegin, Encoding.Default);
+			this._writer = DwgStreamWriterBase.GetStreamHandler(_version, this._msmain, Encoding.Default);
 		}
 
 		public void Write()
@@ -47,7 +47,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2007Plus)
 			{
 				//Setup the writers
-				this._writer = DwgStreamWriterBase.GetMergedWriter(this._document.Header.Version, this._msmain, Encoding.Default);
+				this._writer = DwgStreamWriterBase.GetMergedWriter(_version, this._msmain, Encoding.Default);
 				this._writer.SavePositonForSize();
 			}
 

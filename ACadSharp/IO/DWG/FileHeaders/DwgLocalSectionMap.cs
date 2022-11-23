@@ -12,5 +12,6 @@
 		public ulong Checksum { get; internal set; }
 		public ulong CRC { get; internal set; }
 		public long PageSize { get; internal set; }
+		public uint ODA { get; internal set; }
 	}
 }
