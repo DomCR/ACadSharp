@@ -49,8 +49,8 @@ namespace ACadSharp.IO.DWG
 			this.writeTable(this._document.TextStyles);
 			this.writeTable(this._document.UCSs);
 			this.writeTable(this._document.Views);
-			this.writeTable(this._document.DimensionStyles);
-			//this.writeTable(this._document.VPorts);
+			this.writeTable(this._document.DimensionStyles, writeEntries: !this.R2007Plus);
+			this.writeTable(this._document.VPorts);
 			this.writeBlockControl();
 		}
 
@@ -81,7 +81,7 @@ namespace ACadSharp.IO.DWG
 			this.writeEntries(this._document.BlockRecords);
 		}
 
-		private void writeTable<T>(Table<T> table, bool register = true)
+		private void writeTable<T>(Table<T> table, bool register = true, bool writeEntries = true)
 			where T : TableEntry
 		{
 			this.writeCommonNonEntityData(table);
@@ -96,12 +96,11 @@ namespace ACadSharp.IO.DWG
 				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
 			}
 
-			if (!register)
-				return;
+			if (register)
+				this.registerObject(table);
 
-			this.registerObject(table);
-
-			this.writeEntries(table);
+			if (writeEntries)
+				this.writeEntries(table);
 		}
 
 		public void writeEntries<T>(Table<T> table)

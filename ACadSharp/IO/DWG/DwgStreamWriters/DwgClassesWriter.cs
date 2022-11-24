@@ -99,7 +99,7 @@ namespace ACadSharp.IO.DWG
 				|| this._model.Header.Version > ACadVersion.AC1027)
 			{
 				//RL : unknown, possibly the high 32 bits of a 64-bit size?
-				swriter.Write((int)0);
+				swriter.Write((int)0);	//TODO: Define endian order!!!
 			}
 
 			//Write the section

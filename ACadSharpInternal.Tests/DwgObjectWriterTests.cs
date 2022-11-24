@@ -53,7 +53,7 @@ namespace ACadSharpInternal.Tests
 			assertTable(document.TextStyles, builder.TextStyles);
 			assertTable(document.UCSs, builder.UCSs);
 			assertTable(document.Views, builder.Views);
-			//assertTable(document.DimensionStyles, builder.DimensionStyles);
+			assertTable(document.DimensionStyles, builder.DimensionStyles);
 			//assertTable(document.VPorts, builder.VPorts);
 			assertTable(document.BlockRecords, builder.BlockRecords);
 		}
@@ -63,6 +63,8 @@ namespace ACadSharpInternal.Tests
 		{
 			Assert.NotNull(expected);
 			Assert.Equal(expected.Handle, actual.Handle);
+
+			Assert.Equal(expected.Count, actual.Count);
 
 			foreach (T entry in actual)
 			{

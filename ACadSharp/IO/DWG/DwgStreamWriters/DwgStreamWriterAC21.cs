@@ -17,7 +17,7 @@ namespace ACadSharp.IO.DWG
 				return;
 			}
 			base.WriteBitShort((short)value.Length);
-			base.WriteBytes(System.Text.Encoding.Unicode.GetBytes(value));
+			base.WriteBytes(Encoding.Unicode.GetBytes(value));
 		}
 	}
 }
