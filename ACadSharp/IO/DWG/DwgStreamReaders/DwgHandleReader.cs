@@ -12,10 +12,10 @@ namespace ACadSharp.IO.DWG
 			this._sreader = sreader;
 		}
 
-		public Dictionary<ulong, ulong> Read()
+		public Dictionary<ulong, long> Read()
 		{
 			//Handle map, handle | loc
-			Dictionary<ulong, ulong> objectMap = new Dictionary<ulong, ulong>();
+			Dictionary<ulong, long> objectMap = new Dictionary<ulong, long>();
 
 			//Repeat until section size==2 (the last empty (except the CRC) section):
 			while (true)
@@ -52,7 +52,7 @@ namespace ACadSharp.IO.DWG
 
 					if (offset > 0)
 					{
-						objectMap[lasthandle] = (ulong)lastloc;
+						objectMap[lasthandle] = lastloc;
 					}
 					else
 					{

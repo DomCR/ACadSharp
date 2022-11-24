@@ -29,7 +29,7 @@ namespace ACadSharpInternal.Tests
 
 			var outmap = reader.Read();
 
-			foreach (KeyValuePair<ulong, ulong> item in outmap)
+			foreach (KeyValuePair<ulong, long> item in outmap)
 			{
 				Assert.True(imap.ContainsKey(item.Key));
 				Assert.Equal(item.Value, imap[item.Key]);
@@ -37,9 +37,9 @@ namespace ACadSharpInternal.Tests
 			}
 		}
 
-		private Dictionary<ulong, ulong> generateMap()
+		private Dictionary<ulong, long> generateMap()
 		{
-			Dictionary<ulong, ulong> map = new Dictionary<ulong, ulong>();
+			Dictionary<ulong, long> map = new Dictionary<ulong, long>();
 
 			//Copy from the object writer test
 			map.Add(9, 0);
