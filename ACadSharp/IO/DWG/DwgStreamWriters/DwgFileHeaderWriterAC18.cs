@@ -1,6 +1,7 @@
 ﻿using CSUtilities.Converters;
 using CSUtilities.IO;
 using CSUtilities.Text;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -15,7 +16,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 		private ACadVersion _version;
 
-		private List<DwgLocalSectionMap> _localSectionsMaps = new List<DwgLocalSectionMap>();
+		private List<DwgLocalSectionMap> _localSectionMaps = new List<DwgLocalSectionMap>();
 
 		private DwgFileHeaderAC18 _fileHeader;
 
@@ -91,9 +92,9 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 		public void WriteDescriptors()
 		{
-			this._localSectionsMaps.Add(null);
+			this._localSectionMaps.Add(null);
 
-			this._fileHeader.SectionArrayPageSize = (uint)(this._localSectionsMaps.Count + 2);
+			this._fileHeader.SectionArrayPageSize = (uint)(this._localSectionMaps.Count + 2);
 			this._fileHeader.GapArraySize = 0u;
 			this._fileHeader.SectionPageMapId = this._fileHeader.SectionArrayPageSize;
 			this._fileHeader.SectionMapId = this._fileHeader.SectionArrayPageSize - 1;
@@ -175,17 +176,17 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			LocalSectionHolderAC18 section = new LocalSectionHolderAC18(0x41630E3B);
 			this.addSection(section);
 
-			int counter = this._localSectionsMaps.Count * 8;
+			int counter = this._localSectionMaps.Count * 8;
 			section.Seeker = this._stream.Position;
 			int size = counter + DwgCheckSumCalculator.CompressionCalculator(counter);
 			section.Size = size;
 
-			MemoryStream memoryStream = new MemoryStream();
+			MemoryStream stream = new MemoryStream();
 			//DwgStreamIO writer = DwgStreamIO.CraeteStream(memoryStream, this.Version, this.Encoding);
 			//var writer = DwgStreamWriterBase.GetStreamHandler(_version, memoryStream, Encoding.Default);
-			StreamIO writer = new StreamIO(memoryStream);
+			StreamIO writer = new StreamIO(stream);
 
-			foreach (DwgLocalSectionMap item in this._localSectionsMaps)
+			foreach (DwgLocalSectionMap item in this._localSectionMaps)
 			{
 				if (item != null)
 				{
@@ -196,13 +197,13 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 				}
 			}
 
-			this.compressSection(section, memoryStream);
+			this.compressSection(section, stream);
 
-			DwgLocalSectionMap last = this._localSectionsMaps[this._localSectionsMaps.Count - 1];
+			DwgLocalSectionMap last = this._localSectionMaps[this._localSectionMaps.Count - 1];
 			this._fileHeader.LastPageId = last.PageNumber;
 			this._fileHeader.LastSectionAddr = (ulong)(last.Seeker + size - 256);
 			this._fileHeader.GapAmount = 0u;
-			this._fileHeader.SectionAmount = (uint)(this._localSectionsMaps.Count - 1);
+			this._fileHeader.SectionAmount = (uint)(this._localSectionMaps.Count - 1);
 			this._fileHeader.PageMapAddress = (ulong)section.Seeker;
 		}
 
@@ -278,48 +279,48 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 		private void writeFileHeader(MemoryStream stream)
 		{
-			CRC32StreamHandler crcStream = new CRC32StreamHandler(stream, 0u);
-			StreamIO headerStream = new StreamIO(crcStream);
+			CRC32StreamHandler crc = new CRC32StreamHandler(stream, 0u);
+			StreamIO stram = new StreamIO(crc);
 
 			//0x00	12	“AcFssFcAJMB” file ID string
-			crcStream.Write(TextEncoding.GetListedEncoding(CodePage.Windows1252).GetBytes("AcFssFcAJMB\0"), 0, 12);
+			crc.Write(TextEncoding.GetListedEncoding(CodePage.Windows1252).GetBytes("AcFssFcAJMB\0"), 0, 12);
 			//0x0C	4	0x00(long)
-			headerStream.Write(0, LittleEndianConverter.Instance);
+			stram.Write(0, LittleEndianConverter.Instance);
 			//0x10	4	0x6c(long)
-			headerStream.Write(0x6c, LittleEndianConverter.Instance);
+			stram.Write(0x6c, LittleEndianConverter.Instance);
 			//0x14	4	0x04(long)
-			headerStream.Write(0x04, LittleEndianConverter.Instance);
+			stram.Write(0x04, LittleEndianConverter.Instance);
 
-			headerStream.Write(_fileHeader.RootTreeNodeGap, LittleEndianConverter.Instance);
-			headerStream.Write(_fileHeader.LeftGap, LittleEndianConverter.Instance);
-			headerStream.Write(_fileHeader.RigthGap, LittleEndianConverter.Instance);
-			headerStream.Write(1, LittleEndianConverter.Instance);
-			headerStream.Write(_fileHeader.LastPageId, LittleEndianConverter.Instance);
+			stram.Write(_fileHeader.RootTreeNodeGap, LittleEndianConverter.Instance);
+			stram.Write(_fileHeader.LeftGap, LittleEndianConverter.Instance);
+			stram.Write(_fileHeader.RigthGap, LittleEndianConverter.Instance);
+			stram.Write(1, LittleEndianConverter.Instance);
+			stram.Write(_fileHeader.LastPageId, LittleEndianConverter.Instance);
 
 			//0x2C	8	Last section page end address
-			headerStream.Write<ulong>(_fileHeader.LastSectionAddr, LittleEndianConverter.Instance);
-			headerStream.Write<ulong>(_fileHeader.SecondHeaderAddr, LittleEndianConverter.Instance);
-			headerStream.Write(_fileHeader.GapAmount, LittleEndianConverter.Instance);
-			headerStream.Write(_fileHeader.SectionAmount, LittleEndianConverter.Instance);
+			stram.Write<ulong>(_fileHeader.LastSectionAddr, LittleEndianConverter.Instance);
+			stram.Write<ulong>(_fileHeader.SecondHeaderAddr, LittleEndianConverter.Instance);
+			stram.Write(_fileHeader.GapAmount, LittleEndianConverter.Instance);
+			stram.Write(_fileHeader.SectionAmount, LittleEndianConverter.Instance);
 
-			headerStream.Write(0x20, LittleEndianConverter.Instance);
-			headerStream.Write(0x80, LittleEndianConverter.Instance);
-			headerStream.Write(0x40, LittleEndianConverter.Instance);
+			stram.Write(0x20, LittleEndianConverter.Instance);
+			stram.Write(0x80, LittleEndianConverter.Instance);
+			stram.Write(0x40, LittleEndianConverter.Instance);
 
-			headerStream.Write(_fileHeader.SectionPageMapId, LittleEndianConverter.Instance);
-			headerStream.Write<ulong>(_fileHeader.PageMapAddress - 256, LittleEndianConverter.Instance);
-			headerStream.Write(_fileHeader.SectionMapId, LittleEndianConverter.Instance);
-			headerStream.Write(_fileHeader.SectionArrayPageSize, LittleEndianConverter.Instance);
-			headerStream.Write(_fileHeader.GapArraySize, LittleEndianConverter.Instance);
+			stram.Write(_fileHeader.SectionPageMapId, LittleEndianConverter.Instance);
+			stram.Write<ulong>(_fileHeader.PageMapAddress - 256, LittleEndianConverter.Instance);
+			stram.Write(_fileHeader.SectionMapId, LittleEndianConverter.Instance);
+			stram.Write(_fileHeader.SectionArrayPageSize, LittleEndianConverter.Instance);
+			stram.Write(_fileHeader.GapArraySize, LittleEndianConverter.Instance);
 
-			long position = crcStream.Position;
-			headerStream.Write(0u);
+			long position = crc.Position;
+			stram.Write(0u);
 
-			uint seed = crcStream.Seed;
-			crcStream.Position = position;
-			headerStream.Write(seed);
+			uint seed = crc.Seed;
+			crc.Position = position;
+			stram.Write(seed);
 
-			crcStream.Flush();
+			crc.Flush();
 
 			this.applyMagicSequence(stream);
 		}
@@ -335,8 +336,8 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 		private void addSection(LocalSectionHolderAC18 section)
 		{
-			section.PageNumber = this._localSectionsMaps.Count + 1;
-			this._localSectionsMaps.Add(section);
+			section.PageNumber = this._localSectionMaps.Count + 1;
+			this._localSectionMaps.Add(section);
 		}
 
 		private LocalSectionHolderAC18 compressName(int map, MemoryStream stream)
@@ -423,7 +424,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			//Save position for the local section
 			long position = this._stream.Position;
 
-			localMap.PageNumber = this._localSectionsMaps.Count + 1;
+			localMap.PageNumber = this._localSectionMaps.Count + 1;
 			localMap.Offset = offset;
 			localMap.Seeker = position;
 			//Just 0
@@ -464,7 +465,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 			localMap.Size = this._stream.Position - position;
 			descriptor.LocalSections.Add(localMap);
-			this._localSectionsMaps.Add(localMap);
+			this._localSectionMaps.Add(localMap);
 		}
 
 		private void writeDataSection(Stream stream, DwgSectionDescriptor descriptor, DwgLocalSectionMap map, int size)
@@ -509,6 +510,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			}
 		}
 
+		[Obsolete("Use the LocalSectionMap fields")]
 		internal class LocalSectionHolderAC18 : DwgLocalSectionMap
 		{
 			public int SectionMap { get; set; }
