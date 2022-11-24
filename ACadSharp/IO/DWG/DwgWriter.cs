@@ -1,9 +1,6 @@
 ﻿using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamWriters;
-using CSUtilities.Converters;
 using CSUtilities.IO;
-using CSUtilities.Text;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -24,10 +21,7 @@ namespace ACadSharp.IO
 
 		private CadDocument _document;
 
-		[Obsolete]
-		private Dictionary<string, DwgSectionDescriptor> _descriptors = new Dictionary<string, DwgSectionDescriptor>();
-
-		private List<DwgLocalSectionMap> _localSectionsMaps = new List<DwgLocalSectionMap>();
+		private Dictionary<ulong, long> _handlesMap = new Dictionary<ulong, long>();
 
 		/// <summary>
 		/// 
@@ -58,10 +52,8 @@ namespace ACadSharp.IO
 		/// <inheritdoc/>
 		public override void Write()
 		{
-			//this._fileHeaderWriter.CreateSection("", new System.IO.MemoryStream(), true);
-
 			this.writeHeader();
-			//this.writeClasses();
+			this.writeClasses();
 			//this.writeEmptySection();
 			this.writeSummaryInfo();
 			this.writePreview();
@@ -70,14 +62,12 @@ namespace ACadSharp.IO
 			//this.writeFileDepList();
 			//this.writeRevHistory();
 			//this.writeSecurity();
-			//this.writeObjects();
+			this.writeObjects();
 			//this.writeObjFreeSpace();
 			//this.writeTemplate();
-			//this.writeHandles();
+			this.writeHandles();
 			//this.writePrototype();
 			//this.writeAuxHeader();
-
-			//this.writeFileHeader();
 
 			this._fileHeaderWriter.WriteDescriptors();
 
@@ -100,6 +90,15 @@ namespace ACadSharp.IO
 			writer.Write();
 
 			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Header, stream, true);
+		}
+
+		private void writeClasses()
+		{
+			MemoryStream stream = new MemoryStream();
+			DwgClassesWriter writer = new DwgClassesWriter(this._document, this._version, stream);
+			writer.Write();
+
+			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Classes, stream, false);
 		}
 
 		private void writeSummaryInfo()
@@ -162,91 +161,23 @@ namespace ACadSharp.IO
 			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.AppInfo, stream, false, 128);
 		}
 
-		private void writeFileHeader()
+		private void writeObjects()
 		{
-			IDwgStreamWriter swriter = DwgStreamWriterBase.GetStreamHandler(_version, this._stream.Stream, Encoding.Default);
+			MemoryStream stream = new MemoryStream();
+			DwgObjectWriter writer = new DwgObjectWriter(stream, this._document);
+			writer.Write();
+			this._handlesMap = writer.Map;
 
-			//5 bytes of 0x00 
-			swriter.WriteBytes(new byte[5]);
-
-			//0x0B	1	Maintenance release version
-			swriter.WriteByte((byte)this._document.Header.MaintenanceVersion);
-			//0x0C	1	Byte 0x00, 0x01, or 0x03
-			swriter.WriteByte(0x03);
-			//0x0D	4	Preview address(long), points to the image page + page header size(0x20).
-			swriter.WriteRawLong(this._descriptors[DwgSectionDefinition.Preview].LocalSections[0].Seeker + 0x20);
-			//0x11	1	Dwg version (Acad version that writes the file)
-			swriter.WriteByte((byte)this._version);
-			//0x12	1	Application maintenance release version(Acad maintenance version that writes the file)
-			swriter.WriteByte(0);   //Read from examples
-
-			//0x13	2	Codepage
-			swriter.WriteRawShort((ushort)CodePage.Windows1252);
-
-			//Advance empty bytes 
-			//0x15	3	3 0x00 bytes
-			swriter.WriteBytes(new byte[3]);
-
-			//0x18	4	SecurityType (long), see R2004 meta data, the definition is the same, paragraph 4.1.
-			swriter.WriteInt(0);
-			//0x1C	4	Unknown long
-			swriter.WriteInt(0);
-			//0x20	4	Summary info Address in stream
-			swriter.WriteInt((int)(this._descriptors[DwgSectionDefinition.SummaryInfo].LocalSections[0].Seeker + 32));
-			//0x24	4	VBA Project Addr(0 if not present)
-			swriter.WriteInt(0);
-
-			//0x28	4	0x00000080
-			swriter.WriteInt(0x00000080);
-
-			//0x2C	0x54	0x00 bytes
-			swriter.WriteInt((int)this._descriptors[DwgSectionDefinition.AppInfo].LocalSections[0].Seeker + 32);
-			//Get to offset 0x80
-			swriter.WriteBytes(new byte[80]);
-
-
-			System.IO.MemoryStream fileHeaderStream = new System.IO.MemoryStream();
-			this.writeFileHeaderAC18(fileHeaderStream, (DwgFileHeaderAC18)this._fileHeader);
-
-			this._stream.Stream.Write(fileHeaderStream.GetBuffer(), 0, (int)fileHeaderStream.Length);
-			this._stream.Stream.Write(DwgCheckSumCalculator.MagicSequence, 236, 20);
+			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.AcDbObjects, stream, true);
 		}
 
-		private void writeFileHeaderAC18(MemoryStream stream, DwgFileHeaderAC18 fileheader)
+		private void writeHandles()
 		{
-			//0x00	12	“AcFssFcAJMB” file ID string
-			CRC32StreamHandler crcStream = new CRC32StreamHandler(stream, 0u);
-			StreamIO headerStream = new StreamIO(crcStream);
+			MemoryStream stream = new MemoryStream();
+			DwgHandleWriter writer = new DwgHandleWriter(this._version, stream, this._handlesMap);
+			writer.Write();
 
-			crcStream.Write(TextEncoding.GetListedEncoding(CodePage.Windows1252).GetBytes("AcFssFcAJMB\0"), 0, 12);
-			//0x0C	4	0x00(long)
-			headerStream.Write<int>(0, LittleEndianConverter.Instance);
-			//0x10	4	0x6c(long)
-			headerStream.Write<int>(0x6c, LittleEndianConverter.Instance);
-			//0x14	4	0x04(long)
-			headerStream.Write<int>(0x04, LittleEndianConverter.Instance);
-
-			headerStream.Write<int>(fileheader.RootTreeNodeGap, LittleEndianConverter.Instance);
-			headerStream.Write<int>(fileheader.LeftGap, LittleEndianConverter.Instance);
-			headerStream.Write<int>(fileheader.RigthGap, LittleEndianConverter.Instance);
-			headerStream.Write<int>(1, LittleEndianConverter.Instance);
-			headerStream.Write<int>(fileheader.LastPageId, LittleEndianConverter.Instance);
-
-			//0x2C	8	Last section page end address
-			headerStream.Write(fileheader.LastSectionAddr, LittleEndianConverter.Instance);
-			headerStream.Write(fileheader.SecondHeaderAddr, LittleEndianConverter.Instance);
-			headerStream.Write(fileheader.GapAmount, LittleEndianConverter.Instance);
-			headerStream.Write(fileheader.SectionAmount, LittleEndianConverter.Instance);
-
-			headerStream.Write<int>(0x20, LittleEndianConverter.Instance);
-			headerStream.Write<int>(0x80, LittleEndianConverter.Instance);
-			headerStream.Write<int>(0x40, LittleEndianConverter.Instance);
-
-			headerStream.Write(fileheader.SectionPageMapId, LittleEndianConverter.Instance);
-			headerStream.Write(fileheader.PageMapAddress - 256, LittleEndianConverter.Instance);
-			headerStream.Write(fileheader.SectionMapId, LittleEndianConverter.Instance);
-			headerStream.Write(fileheader.SectionArrayPageSize, LittleEndianConverter.Instance);
-			headerStream.Write(fileheader.GapArraySize, LittleEndianConverter.Instance);
+			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Handles, stream, true);
 		}
 	}
 }

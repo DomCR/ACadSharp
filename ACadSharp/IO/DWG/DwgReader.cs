@@ -346,12 +346,12 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
 				case ACadVersion.AC1018:
-					return this.readClasses15(sreader);
+					return this.readClassesAC18(sreader);
 				case ACadVersion.AC1021:
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
-					return this.readClasses18(sreader);
+					return this.readClassesAC21(sreader);
 				default:
 					return null;
 			}
@@ -1075,7 +1075,7 @@ namespace ACadSharp.IO
 
 		#region Classes section methods
 
-		private DxfClassCollection readClasses15(IDwgStreamReader sreader)
+		private DxfClassCollection readClassesAC18(IDwgStreamReader sreader)
 		{
 			//SN : 0x8D 0xA1 0xC4 0xB8 0xC4 0xA9 0xF8 0xC5 0xC0 0xDC 0xF4 0x5F 0xE7 0xCF 0xB6 0x8A
 			byte[] sn = sreader.ReadSentinel();
@@ -1111,7 +1111,7 @@ namespace ACadSharp.IO
 				//TV : classdxfname
 				dxfClass.DxfName = sreader.ReadVariableText();
 				//B : wasazombie
-				dxfClass.WasAProxy = sreader.ReadBit();
+				dxfClass.WasZombie = sreader.ReadBit();
 				//BS : itemclassid -- 0x1F2 for classes which produce entities, 0x1F3 for classes which produce objects.
 				dxfClass.ItemClassId = sreader.ReadBitShort();
 
@@ -1131,23 +1131,27 @@ namespace ACadSharp.IO
 
 				classes.Add(dxfClass);
 			}
+
 			//RS: CRC
 			short crc = sreader.ReadShort();
+			
 			//0x72,0x5E,0x3B,0x47,0x3B,0x56,0x07,0x3A,0x3F,0x23,0x0B,0xA0,0x18,0x30,0x49,0x75
 			byte[] endsn = sreader.ReadSentinel();
 
 			return classes;
 		}
 
-		private DxfClassCollection readClasses18(IDwgStreamReader sreader)
+		private DxfClassCollection readClassesAC21(IDwgStreamReader sreader)
 		{
 			//SN : 0x8D 0xA1 0xC4 0xB8 0xC4 0xA9 0xF8 0xC5 0xC0 0xDC 0xF4 0x5F 0xE7 0xCF 0xB6 0x8A
 			byte[] sn = sreader.ReadSentinel();
-			//RL : size of class data area.
+
+			//RL : size of class data area
 			long size = sreader.ReadRawLong();
 
 			//R2010+ (only present if the maintenance version is greater than 3!)
-			if (this._fileHeader.AcadVersion >= ACadVersion.AC1024 && this._fileHeader.AcadMaintenanceVersion > 3
+			if (this._fileHeader.AcadVersion >= ACadVersion.AC1024 
+				&& this._fileHeader.AcadMaintenanceVersion > 3
 				|| this._fileHeader.AcadVersion > ACadVersion.AC1027)
 			{
 				//RL : unknown, possibly the high 32 bits of a 64-bit size?
@@ -1175,7 +1179,7 @@ namespace ACadSharp.IO
 				dxfClass.ProxyFlags = (ProxyFlags)sreader.ReadBitShort();
 
 				//B : wasazombie
-				dxfClass.WasAProxy = sreader.ReadBit();
+				dxfClass.WasZombie = sreader.ReadBit();
 				//BS : itemclassid-- 0x1F2 for classes which produce entities, 0x1F3 for classes which produce objects.
 				dxfClass.ItemClassId = sreader.ReadBitShort();
 

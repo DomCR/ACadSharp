@@ -12,11 +12,11 @@ namespace ACadSharp.IO.DWG
 	{
 		private MemoryStream _stream;
 
-		private Dictionary<ulong, ulong> _handleMap;
+		private Dictionary<ulong, long> _handleMap;
 
 		private int initialValue;
 
-		public DwgHandleWriter(ACadVersion version, MemoryStream stream, Dictionary<ulong, ulong> map) : base(version)
+		public DwgHandleWriter(ACadVersion version, MemoryStream stream, Dictionary<ulong, long> map) : base(version)
 		{
 			this._stream = stream;
 
@@ -26,7 +26,7 @@ namespace ACadSharp.IO.DWG
 				this._handleMap.Add(item.Key, item.Value);
 			}
 #else
-			this._handleMap = new Dictionary<ulong, ulong>(map.OrderBy(o => o.Key));
+			this._handleMap = new Dictionary<ulong, long>(map.OrderBy(o => o.Key));
 #endif
 			this.initialValue = 0;
 		}
