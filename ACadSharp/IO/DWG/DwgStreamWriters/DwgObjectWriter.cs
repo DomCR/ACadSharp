@@ -49,7 +49,7 @@ namespace ACadSharp.IO.DWG
 			this.writeTable(this._document.TextStyles);
 			this.writeTable(this._document.UCSs);
 			this.writeTable(this._document.Views);
-			//this.writeTable(this._document.DimensionStyles);
+			this.writeTable(this._document.DimensionStyles);
 			//this.writeTable(this._document.VPorts);
 			this.writeBlockControl();
 		}
