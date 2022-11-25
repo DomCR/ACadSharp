@@ -2,7 +2,6 @@
 using ACadSharp.Entities;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
-using ACadSharp.Types.Units;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -49,9 +48,10 @@ namespace ACadSharp.IO.DWG
 			this.writeTable(this._document.TextStyles);
 			this.writeTable(this._document.UCSs);
 			this.writeTable(this._document.Views);
-			this.writeTable(this._document.DimensionStyles, writeEntries: !this.R2007Plus);
 			this.writeTable(this._document.VPorts);
 			this.writeBlockControl();
+			//For some reason the dimension must be writen the last
+			this.writeTable(this._document.DimensionStyles);
 		}
 
 		private void writeBlockControl()
@@ -826,7 +826,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//DIMPOST TV 3
-				this._writer.WriteVariableText(dimStyle.PostFix);
+				//this._writer.WriteVariableText(dimStyle.PostFix);
 				//DIMAPOST TV 4
 				this._writer.WriteVariableText(dimStyle.AlternateDimensioningSuffix);
 				//DIMSCALE BD 40
@@ -1021,7 +1021,7 @@ namespace ACadSharp.IO.DWG
 				//341 leader block(DIMLDRBLK) (hard pointer)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.LeaderArrow);
 				//342 dimblk(DIMBLK)(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.ArrowBlock);
 				//343 dimblk1(DIMBLK1)(hard pointer)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.DimArrow1);
 				//344 dimblk2(DIMBLK2)(hard pointer)
