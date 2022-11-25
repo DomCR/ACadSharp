@@ -54,7 +54,7 @@ namespace ACadSharpInternal.Tests
 			assertTable(document.UCSs, builder.UCSs);
 			assertTable(document.Views, builder.Views);
 			assertTable(document.DimensionStyles, builder.DimensionStyles);
-			//assertTable(document.VPorts, builder.VPorts);
+			assertTable(document.VPorts, builder.VPorts);
 			assertTable(document.BlockRecords, builder.BlockRecords);
 		}
 

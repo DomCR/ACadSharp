@@ -134,6 +134,9 @@ namespace ACadSharp.IO.DWG
 					case DimensionStyle dstyle:
 						this.writeDimensionStyle(dstyle);
 						break;
+					case VPort vport:
+						this.writeVPort(vport);
+						break;
 					default:
 						this.Notify($"Table entry not implemented : {entry.GetType().FullName}", NotificationType.NotImplemented);
 						break;
@@ -1040,6 +1043,181 @@ namespace ACadSharp.IO.DWG
 			}
 
 			this.registerObject(dimStyle);
+		}
+
+		private void writeVPort(VPort vport)
+		{
+			this.writeCommonNonEntityData(vport);
+
+			//Common:
+			//Entry name TV 2
+			this._writer.WriteVariableText(vport.Name);
+
+			this.writeXrefDependantBit(vport);
+
+			//View height BD 40
+			this._writer.WriteBitDouble(vport.ViewHeight);
+			//Aspect ratio BD 41 The number stored here is actually the aspect ratio times the view height (40),
+			//so this number must be divided by the 40-value to produce the aspect ratio that entget gives.
+			//(R13 quirk; R12 has just the aspect ratio.)
+			this._writer.WriteBitDouble(vport.AspectRatio * vport.ViewHeight);
+			//View Center 2RD 12 DCS. (If it's plan view, add the view target (17) to get the WCS coordinates.
+			//Careful! Sometimes you have to SAVE/OPEN to update the .dwg file.) Note that it's WSC in R12.
+			this._writer.Write2RawDouble(vport.Center);
+			//View target 3BD 17
+			this._writer.Write3BitDouble(vport.Target);
+			//View dir 3BD 16
+			this._writer.Write3BitDouble(vport.Direction);
+			//View twist BD 51
+			this._writer.WriteBitDouble(vport.TwistAngle);
+			//Lens length BD 42
+			this._writer.WriteBitDouble(vport.LensLength);
+			//Front clip BD 43
+			this._writer.WriteBitDouble(vport.FrontClippingPlane);
+			//Back clip BD 44
+			this._writer.WriteBitDouble(vport.BackClippingPlane);
+
+			//View mode X 71 4 bits: 0123
+			//Note that only bits 0, 1, 2, and 4 are given here; see UCSFOLLOW below for bit 3(8) of the 71.
+			//0 : 71's bit 0 (1)
+			this._writer.WriteBit(vport.ViewMode.HasFlag(ViewModeType.PerspectiveView));
+			//1 : 71's bit 1 (2)
+			this._writer.WriteBit(vport.ViewMode.HasFlag(ViewModeType.FrontClipping));
+			//2 : 71's bit 2 (4)
+			this._writer.WriteBit(vport.ViewMode.HasFlag(ViewModeType.BackClipping));
+			//3 : OPPOSITE of 71's bit 4 (16)
+			this._writer.WriteBit(vport.ViewMode.HasFlag(ViewModeType.FrontClippingZ));
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Render Mode RC 281
+				this._writer.WriteByte((byte)vport.RenderMode);
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Use default lights B 292
+				this._writer.WriteBit(vport.UseDefaultLighting);
+				//Default lighting type RC 282
+				this._writer.WriteByte((byte)vport.DefaultLighting);
+				//Brightness BD 141
+				this._writer.WriteBitDouble(vport.Brightness);
+				//Constrast BD 142
+				this._writer.WriteBitDouble(vport.Contrast);
+				//Ambient Color CMC 63
+				this._writer.WriteCmColor(vport.AmbientColor);
+			}
+
+			//Common:
+			//Lower left 2RD 10 In fractions of screen width and height.
+			this._writer.Write2RawDouble(vport.BottomLeft);
+			//Upper right 2RD 11 In fractions of screen width and height.
+			this._writer.Write2RawDouble(vport.TopRight);
+
+			//UCSFOLLOW B 71 UCSFOLLOW. Bit 3 (8) of the 71-group.
+			this._writer.WriteBit(vport.ViewMode.HasFlag(ViewModeType.Follow));
+
+			//Circle zoom BS 72 Circle zoom percent.
+			this._writer.WriteBitShort(vport.CircleZoomPercent);
+
+			//Fast zoom B 73
+			this._writer.WriteBit(true);
+
+			//UCSICON X 74 2 bits: 01
+			//0 : 74's bit 0 (1)
+			this._writer.WriteBit(vport.UcsIconDisplay.HasFlag(UscIconType.OnLower));
+
+			//1 : 74's bit 1 (2)
+			this._writer.WriteBit(vport.UcsIconDisplay.HasFlag(UscIconType.OnOrigin));
+
+			//Grid on/off B 76
+			this._writer.WriteBit(vport.ShowGrid);
+			//Grd spacing 2RD 15
+			this._writer.Write2RawDouble(vport.GridSpacing);
+			//Snap on/off B 75
+			this._writer.WriteBit(vport.SnapOn);
+
+			//Snap style B 77
+			this._writer.WriteBit(vport.IsometricSnap);
+
+			//Snap isopair BS 78
+			this._writer.WriteBitShort(vport.SnapIsoPair);
+			//Snap rot BD 50
+			this._writer.WriteBitDouble(vport.SnapRotation);
+			//Snap base 2RD 13
+			this._writer.Write2RawDouble(vport.SnapBasePoint);
+			//Snp spacing 2RD 14
+			this._writer.Write2RawDouble(vport.SnapSpacing);
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Unknown B
+				this._writer.WriteBit(false);
+
+				//UCS per Viewport B 71
+				this._writer.WriteBit(true);
+				//UCS Origin 3BD 110
+				this._writer.Write3BitDouble(vport.Origin);
+				//UCS X Axis 3BD 111
+				this._writer.Write3BitDouble(vport.XAxis);
+				//UCS Y Axis 3BD 112
+				this._writer.Write3BitDouble(vport.YAxis);
+				//UCS Elevation BD 146
+				this._writer.WriteBitDouble(vport.Elevation);
+				//UCS Orthographic type BS 79
+				this._writer.WriteBitShort((short)vport.OrthographicType);
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Grid flags BS 60
+				this._writer.WriteBitShort((short)vport.GridFlags);
+				//Grid major BS 61
+				this._writer.WriteBitShort(vport.MinorGridLinesPerMajorGridLine);
+			}
+
+			//Common:
+			//Handle refs H Vport control(soft pointer)
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.VPorts);
+			//[Reactors(soft pointer)]
+			//xdicobjhandle(hard owner)
+			//External reference block handle(hard pointer)
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Background handle H 332 soft pointer
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, 0);
+				//Visual Style handle H 348 hard pointer
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, 0);
+				//Sun handle H 361 hard owner
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, 0);
+			}
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				if (vport.OrthographicType == OrthographicType.None)
+				{
+					//Named UCS Handle H 345 hard pointer
+					this._writer.HandleReference(DwgReferenceType.HardPointer, vport.NamedUcs);
+					//Base UCS Handle H 346 hard pointer
+					this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+				}
+				else
+				{
+					//Named UCS Handle H 345 hard pointer
+					this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+					//Base UCS Handle H 346 hard pointer
+					this._writer.HandleReference(DwgReferenceType.HardPointer, vport.BaseUcs);
+				}
+			}
+
+			this.registerObject(vport);
 		}
 
 		private void writeEntity(Entity entity)
