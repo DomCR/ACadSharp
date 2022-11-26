@@ -54,17 +54,17 @@ namespace ACadSharp.IO
 		{
 			this.writeHeader();
 			this.writeClasses();
-			//this.writeEmptySection();
+			this.writeEmptySection();
 			this.writeSummaryInfo();
 			this.writePreview();
 			//this.writeVBASection();
 			this.writeAppInfo();
 			//this.writeFileDepList();
-			//this.writeRevHistory();
+			this.writeRevHistory();
 			//this.writeSecurity();
 			this.writeObjects();
-			//this.writeObjFreeSpace();
-			//this.writeTemplate();
+			this.writeObjFreeSpace();
+			this.writeTemplate();
 			this.writeHandles();
 			//this.writePrototype();
 			this.writeAuxHeader();
@@ -90,6 +90,11 @@ namespace ACadSharp.IO
 			writer.Write();
 
 			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Header, stream, true);
+		}
+
+		private void writeEmptySection()
+		{
+			this._fileHeaderWriter.CreateSection(string.Empty, new MemoryStream(), true);
 		}
 
 		private void writeClasses()
@@ -161,6 +166,16 @@ namespace ACadSharp.IO
 			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.AppInfo, stream, false, 128);
 		}
 
+		private void writeRevHistory()
+		{
+			MemoryStream stream = new MemoryStream();
+			StreamIO obj = new StreamIO(stream);
+			obj.Write<uint>(0);
+			obj.Write<uint>(0);
+			obj.Write<uint>(0);
+			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.RevHistory, stream, true);
+		}
+
 		private void writeObjects()
 		{
 			MemoryStream stream = new MemoryStream();
@@ -169,6 +184,67 @@ namespace ACadSharp.IO
 			this._handlesMap = writer.Map;
 
 			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.AcDbObjects, stream, true);
+		}
+
+		private void writeObjFreeSpace()
+		{
+			MemoryStream stream = new MemoryStream();
+			StreamIO writer = new StreamIO(stream);
+
+			//Int32	4	0
+			writer.Write<int>(0);
+			//UInt32	4	Approximate number of objects in the drawing(number of handles).
+			writer.Write<uint>((uint)this._handlesMap.Count);
+
+			//Julian datetime	8	If version > R14 then system variable TDUPDATE otherwise TDUUPDATE.
+			if (_version >= ACadVersion.AC1015)
+			{
+				CadUtils.DateToJulian(this._document.Header.UniversalUpdateDateTime, out int jdate, out int mili);
+				writer.Write<int>(jdate);
+				writer.Write<int>(mili);
+			}
+			else
+			{
+				CadUtils.DateToJulian(this._document.Header.UpdateDateTime, out int jdate, out int mili);
+				writer.Write<int>(jdate);
+				writer.Write<int>(mili);
+			}
+
+			//UInt32	4	Offset of the objects section in the stream.
+			writer.Write<uint>(0);
+			//UInt8	1	Number of 64 - bit values that follow(ODA writes 4).
+			writer.Write<ushort>(4);
+			//UInt32	4	ODA writes 0x00000032
+			writer.Write<uint>(0x00000032);
+			//UInt32	4	ODA writes 0x00000000
+			writer.Write<uint>(0x00000000);
+			//UInt32	4	ODA writes 0x00000064
+			writer.Write<uint>(0x00000064);
+			//UInt32	4	ODA writes 0x00000000
+			writer.Write<uint>(0x00000000);
+			//UInt32	4	ODA writes 0x00000200
+			writer.Write<uint>(0x00000200);
+			//UInt32	4	ODA writes 0x00000000
+			writer.Write<uint>(0x00000000);
+			//UInt32	4	ODA writes 0xffffffff
+			writer.Write<uint>(0xffffffff);
+			//UInt32	4	ODA writes 0x00000000
+			writer.Write<uint>(0x00000000);
+
+			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.ObjFreeSpace, stream, true);
+		}
+
+		private void writeTemplate()
+		{
+			MemoryStream stream = new MemoryStream();
+			StreamIO writer = new StreamIO(stream);
+
+			//Int16	2	Template description string length in bytes(the ODA always writes 0 here).
+			writer.Write<short>(0);
+			//UInt16	2	MEASUREMENT system variable(0 = English, 1 = Metric).
+			writer.Write<ushort>((ushort)1);
+
+			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Template, stream, true);
 		}
 
 		private void writeHandles()

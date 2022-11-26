@@ -42,6 +42,13 @@ namespace ACadSharp.IO.DWG
 
 		public void Write()
 		{
+			//For R18 and later the section data (right after the page header) starts with a
+			//RL value of 0x0dca (meaning unknown).
+			if (this.R2004Plus)
+			{
+				this._writer.WriteRawLong(0xDCA);
+			}
+
 			this.writeTable(this._document.AppIds);
 			this.writeTable(this._document.Layers);
 			this.writeTable(this._document.LineTypes);
