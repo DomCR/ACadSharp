@@ -72,7 +72,7 @@ namespace ACadSharp.Tests.IO
 			_output.WriteLine(e.Message);
 		}
 
-		protected void checkDocumentInAutocad(string path)
+		protected void checkDxfDocumentInAutocad(string path)
 		{
 			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null)
 				return;
@@ -93,6 +93,63 @@ namespace ACadSharp.Tests.IO
 
 				process.StandardInput.WriteLine($"_DXFIN");
 				process.StandardInput.WriteLine($"{path}");
+
+				string l = process.StandardOutput.ReadLine();
+				bool testPassed = true;
+				while (!process.StandardOutput.EndOfStream)
+				{
+					string li = l.Replace("\0", "");
+					if (!string.IsNullOrEmpty(li))
+					{
+						if (li.Contains("Invalid or incomplete DXF input -- drawing discarded.")
+							|| li.Contains("error", StringComparison.OrdinalIgnoreCase))
+						{
+							testPassed = false;
+						}
+
+						_output.WriteLine(li);
+					}
+
+					var t = process.StandardOutput.ReadLineAsync();
+
+					//The last line gets into an infinite loop
+					if (t.Wait(1000))
+					{
+						l = t.Result;
+					}
+					else
+					{
+						break;
+					}
+				}
+
+				if (!testPassed)
+					throw new Exception("File loading with accoreconsole failed");
+			}
+			finally
+			{
+				process.Kill();
+			}
+		}
+
+		protected void checkDwgDocumentInAutocad(string path)
+		{
+			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null)
+				return;
+
+			System.Diagnostics.Process process = new System.Diagnostics.Process();
+
+			try
+			{
+				process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+				process.StartInfo.FileName = "\"D:\\Programs\\Autodesk\\AutoCAD 2023\\accoreconsole.exe\"";
+				process.StartInfo.Arguments = $"/i \"{path}\" /l en - US";
+				process.StartInfo.UseShellExecute = false;
+				process.StartInfo.RedirectStandardOutput = true;
+				process.StartInfo.RedirectStandardInput = true;
+				process.StartInfo.StandardOutputEncoding = Encoding.ASCII;
+
+				Assert.True(process.Start());
 
 				string l = process.StandardOutput.ReadLine();
 				bool testPassed = true;

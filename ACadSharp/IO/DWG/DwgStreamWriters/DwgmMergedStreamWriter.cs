@@ -158,6 +158,11 @@ namespace ACadSharp.IO.DWG
 			this.Main.WriteRawLong(value);
 		}
 
+		public void WriteRawShort(short value)
+		{
+			this.Main.WriteRawShort(value);
+		}
+
 		public void WriteRawShort(ushort value)
 		{
 			this.Main.WriteRawShort(value);

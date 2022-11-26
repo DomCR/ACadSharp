@@ -63,6 +63,8 @@ namespace ACadSharp.IO.DWG
 
 		void WriteSpearShift();
 
+		void WriteRawShort(short value);
+
 		void WriteRawShort(ushort value);
 
 		void WriteRawDouble(double value);

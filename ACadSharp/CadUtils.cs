@@ -180,5 +180,22 @@ namespace ACadSharp
 
 			return new TimeSpan(days, hours, minutes, seconds, milliseconds);
 		}
+
+		public static void DateToJulian(DateTime date, out int jdate, out int miliseconds)
+		{
+			if (date < new DateTime(1, 1, 1, 12, 0, 0))
+			{
+				jdate = 0;
+				miliseconds = 0;
+				return;
+			}
+
+			date = date.AddHours(-12.0);
+			int day = (int)Math.Floor((14.0 - date.Month) / 12.0);
+			int year = date.Year + 4800 - day;
+			int month = date.Month;
+			jdate = date.Day + (int)System.Math.Floor((153.0 * (double)(month + 12 * day - 3) + 2.0) / 5.0) + 365 * year + (int)System.Math.Floor((double)year / 4.0) - (int)System.Math.Floor((double)year / 100.0) + (int)System.Math.Floor((double)year / 400.0) - 32045;
+			miliseconds = date.Millisecond + date.Second * 1000 + date.Minute * 60000 + date.Hour * 3600000;
+		}
 	}
 }

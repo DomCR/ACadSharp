@@ -341,7 +341,8 @@ namespace ACadSharp.IO.DWG
 
 		public void WriteDateTime(DateTime value)
 		{
-			this.dateToJulian(value, out int jdate, out int miliseconds);
+			CadUtils.DateToJulian(value, out int jdate, out int miliseconds);
+
 			this.WriteBitLong(jdate);
 			this.WriteBitLong(miliseconds);
 		}
@@ -369,6 +370,11 @@ namespace ACadSharp.IO.DWG
 		{
 			this.WriteRawDouble(value.X);
 			this.WriteRawDouble(value.Y);
+		}
+
+		public void WriteRawShort(short value)
+		{
+			this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
 		}
 
 		public void WriteRawShort(ushort value)
@@ -627,23 +633,6 @@ namespace ACadSharp.IO.DWG
 			this.WriteBit((value & 4) != 0);
 			this.WriteBit((value & 2) != 0);
 			this.WriteBit((value & 1) != 0);
-		}
-
-		private void dateToJulian(DateTime date, out int jdate, out int miliseconds)
-		{
-			if (date < new DateTime(1, 1, 1, 12, 0, 0))
-			{
-				jdate = 0;
-				miliseconds = 0;
-				return;
-			}
-
-			date = date.AddHours(-12.0);
-			int day = (int)Math.Floor((14.0 - (double)date.Month) / 12.0);
-			int year = date.Year + 4800 - day;
-			int month = date.Month;
-			jdate = date.Day + (int)System.Math.Floor((153.0 * (double)(month + 12 * day - 3) + 2.0) / 5.0) + 365 * year + (int)System.Math.Floor((double)year / 4.0) - (int)System.Math.Floor((double)year / 100.0) + (int)System.Math.Floor((double)year / 400.0) - 32045;
-			miliseconds = date.Millisecond + date.Second * 1000 + date.Minute * 60000 + date.Hour * 3600000;
 		}
 	}
 }

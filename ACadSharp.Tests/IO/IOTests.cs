@@ -75,7 +75,7 @@ namespace ACadSharp.Tests.IO
 			}
 
 			if (check)
-				this.checkDocumentInAutocad(Path.GetFullPath(file));
+				this.checkDxfDocumentInAutocad(Path.GetFullPath(file));
 		}
 	}
 }

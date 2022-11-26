@@ -17,7 +17,7 @@ namespace ACadSharp.Tests.IO.DWG
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 
-			string path = Path.Combine(_samplesOutFolder, "out_empty_sample.dwg");
+			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}.dwg");
 
 			using (var wr = new DwgWriter(path, doc))
 			{
@@ -29,7 +29,7 @@ namespace ACadSharp.Tests.IO.DWG
 				CadDocument readed = re.Read();
 			}
 
-			//this.checkDocumentInAutocad(Path.GetFullPath(path));
+			this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
 		}
 
 		[Theory]

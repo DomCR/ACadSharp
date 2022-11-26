@@ -67,7 +67,7 @@ namespace ACadSharp.IO
 			//this.writeTemplate();
 			this.writeHandles();
 			//this.writePrototype();
-			//this.writeAuxHeader();
+			this.writeAuxHeader();
 
 			this._fileHeaderWriter.WriteDescriptors();
 
@@ -178,6 +178,15 @@ namespace ACadSharp.IO
 			writer.Write();
 
 			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Handles, stream, true);
+		}
+
+		private void writeAuxHeader()
+		{
+			MemoryStream stream = new MemoryStream();
+			DwgAuxHeaderWriter writer = new DwgAuxHeaderWriter(stream, this._document.Header);
+			writer.Write();
+
+			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.AuxHeader, stream, true);
 		}
 	}
 }
