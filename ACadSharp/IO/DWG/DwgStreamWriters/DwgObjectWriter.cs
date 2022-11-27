@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
@@ -17,8 +16,6 @@ namespace ACadSharp.IO.DWG
 		/// Key : handle | Value : Offset
 		/// </summary>
 		public Dictionary<ulong, long> Map { get; } = new Dictionary<ulong, long>();
-
-		private Queue<CadObject> _objects = new Queue<CadObject>();
 
 		private MemoryStream _msmain;
 
@@ -60,6 +57,8 @@ namespace ACadSharp.IO.DWG
 			this.writeBlockControl();
 			//For some reason the dimension must be writen the last
 			this.writeTable(this._document.DimensionStyles);
+
+			this.writeBlocks();
 		}
 
 		private void writeBlockControl()
@@ -152,6 +151,31 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
+		public void writeBlocks()
+		{
+			foreach (BlockRecord blkRecord in this._document.BlockRecords)
+			{
+				this.writeBlockBegin(blkRecord.BlockEntity);
+
+				this._prev = null;
+				this._next = null;
+				Entity[] arr = blkRecord.Entities.Concat(blkRecord.Viewports).ToArray();
+				for (int i = 0; i < arr.Length; i++)
+				{
+					this._prev = arr.ElementAtOrDefault(i - 1);
+					Entity e = arr[i];
+					this._next = arr.ElementAtOrDefault(i + 1);
+
+					this.writeEntity(e);
+				}
+
+				this._prev = null;
+				this._next = null;
+
+				this.writeBlockEnd(blkRecord.BlockEnd);
+			}
+		}
+
 		private void writeAppId(AppId app)
 		{
 			this.writeCommonNonEntityData(app);
@@ -175,26 +199,7 @@ namespace ACadSharp.IO.DWG
 
 		private void writeBlockRecord(BlockRecord blkRecord)
 		{
-			this.writeBlock(blkRecord.BlockEntity);
-
 			this.writeBlockHeader(blkRecord);
-
-			this._prev = null;
-			this._next = null;
-			Entity[] arr = blkRecord.Entities.Concat(blkRecord.Viewports).ToArray();
-			for (int i = 0; i < arr.Length; i++)
-			{
-				this._prev = arr.ElementAtOrDefault(i - 1);
-				Entity e = arr[i];
-				this._next = arr.ElementAtOrDefault(i + 1);
-
-				this.writeEntity(e);
-			}
-
-			this._prev = null;
-			this._next = null;
-
-			this.writeBlockEnd(blkRecord.BlockEnd);
 		}
 
 		private void writeBlockHeader(BlockRecord record)
@@ -328,7 +333,7 @@ namespace ACadSharp.IO.DWG
 			this.registerObject(record);
 		}
 
-		private void writeBlock(Block block)
+		private void writeBlockBegin(Block block)
 		{
 			this.writeCommonEntityData(block);
 
