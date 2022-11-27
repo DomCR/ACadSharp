@@ -65,7 +65,7 @@ namespace ACadSharp.Header
 		/// System variable ACADMAINTVER.
 		/// </remarks>
 		[CadSystemVariable(DxfReferenceType.Ignored, "$ACADMAINTVER", 70)]
-		public short MaintenanceVersion { get; internal set; }
+		public short MaintenanceVersion { get; internal set; } = 0;
 
 		/// <summary>
 		/// Drawing code page; set to the system code page when a new drawing is created,
