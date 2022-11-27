@@ -1,12 +1,14 @@
-﻿using System;
+﻿using CSUtilities.Text;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ACadSharp
 {
 	internal static class CadUtils
 	{
-		public static readonly LineweightType[] IndexedValue = new LineweightType[]
+		private static readonly LineweightType[] IndexedValue = new LineweightType[]
 		{
 				 LineweightType.W0,
 				 LineweightType.W5,
@@ -32,6 +34,55 @@ namespace ACadSharp
 				 LineweightType.W158,
 				 LineweightType.W200,
 				 LineweightType.W211
+		};
+
+		private static readonly CodePage[] _pageCodes = new CodePage[]
+		{
+			CodePage.Unknown,
+			CodePage.Usascii,
+			CodePage.Iso88591,
+			CodePage.Iso88592,
+			CodePage.Iso88593,
+			CodePage.Iso88594,
+			CodePage.Iso88595,
+			CodePage.Iso88596,
+			CodePage.Iso88597,
+			CodePage.Iso88598,
+			CodePage.Iso88599,
+			CodePage.Ibm437,
+			CodePage.Ibm850,
+			CodePage.Ibm852,
+			CodePage.Ibm855,
+			CodePage.Ibm857,
+			CodePage.Ibm860,
+			CodePage.Ibm861,
+			CodePage.Ibm863,
+			CodePage.Ibm864,
+			CodePage.Ibm865,
+			CodePage.Ibm869,
+			CodePage.Shift_jis,
+			CodePage.Macintosh,
+			CodePage.big5,
+			CodePage.Ksc5601,
+			CodePage.Johab,
+			CodePage.Cp866,
+			CodePage.Windows1250,
+			CodePage.Windows1251,
+			CodePage.Windows1252,
+			CodePage.Gb2312,
+			CodePage.Windows1253,
+			CodePage.Windows1254,
+			CodePage.Windows1255,
+			CodePage.Windows1256,
+			CodePage.Windows1257,
+			CodePage.Windows874,
+			CodePage.Shift_jis,
+			CodePage.Gb2312,
+			CodePage.Ksc5601,
+			CodePage.big5,
+			CodePage.Johab,
+			CodePage.Utf16,
+			CodePage.Windows1258
 		};
 
 		public static LineweightType ToValue(byte b)
@@ -78,6 +129,16 @@ namespace ACadSharp
 			}
 
 			return result;
+		}
+
+		public static CodePage GetCodePage(int value)
+		{
+			return _pageCodes.ElementAtOrDefault(value);
+		}
+
+		public static int GetCodeIndex(CodePage code)
+		{
+			return _pageCodes.ToList().IndexOf(code);
 		}
 
 		public static ACadVersion GetVersionFromName(string name)
