@@ -212,9 +212,9 @@ namespace ACadSharp.IO.DWG
 
 				this._writer.WriteBit(hasLinks);
 
-				////[PREVIOUS ENTITY (relative soft pointer)]
+				//[PREVIOUS ENTITY (relative soft pointer)]
 				this._writer.HandleReference(DwgReferenceType.SoftPointer, _prev);
-				////[NEXT ENTITY (relative soft pointer)]
+				//[NEXT ENTITY (relative soft pointer)]
 				this._writer.HandleReference(DwgReferenceType.SoftPointer, _next);
 			}
 

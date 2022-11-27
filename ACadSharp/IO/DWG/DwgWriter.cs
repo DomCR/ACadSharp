@@ -55,7 +55,7 @@ namespace ACadSharp.IO
 			this.writePreview();
 			//this.writeVBASection();
 			this.writeAppInfo();
-			//this.writeFileDepList();
+			this.writeFileDepList();
 			this.writeRevHistory();
 			//this.writeSecurity();
 			this.writeObjects();
@@ -162,13 +162,45 @@ namespace ACadSharp.IO
 			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.AppInfo, stream, false, 128);
 		}
 
+		private void writeFileDepList()
+		{
+			MemoryStream stream = new MemoryStream();
+			StreamIO swriter = new StreamIO(stream);
+			swriter.Write<uint>(0);
+			swriter.Write<uint>(0);
+			//nt32	4	Feature count(ftc)
+
+			//String32	ftc * (4 + n)	Feature name list.A feature name is one of the following:
+			/*
+			 * “Acad: XRef” (for block table record)
+			 * “Acad: Image” (for image definition)
+			 * “Acad: PlotConfig” (for plotsetting)
+			 * “Acad: Text” (for text style)
+			*/
+			//Int32	4	File count
+
+			//Then follows an array of features(repeated file count times). The feature name + the full filename constitute the lookup key of a file dependency:
+
+			//String32	4 + n	Full filename
+			//String32	4 + n	Found path, path at which file was found
+			//String32	4 + n	Fingerprint GUID(applies to xref’s only)
+			//String32	4 + n	Version GUID(applies to xref’s only)
+			//Int32	4	Feature index in the feature list above.
+			//Int32	4	Timestamp(Seconds since 1 / 1 / 1980)
+			//Int32	4	Filesize
+			//Int16	2	Affects graphics(1 = true, 0 = false)
+			//Int32	4	Reference count
+
+			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.FileDepList, stream, false, 0x80);
+		}
+
 		private void writeRevHistory()
 		{
 			MemoryStream stream = new MemoryStream();
-			StreamIO obj = new StreamIO(stream);
-			obj.Write<uint>(0);
-			obj.Write<uint>(0);
-			obj.Write<uint>(0);
+			StreamIO swriter = new StreamIO(stream);
+			swriter.Write<uint>(0);
+			swriter.Write<uint>(0);
+			swriter.Write<uint>(0);
 			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.RevHistory, stream, true);
 		}
 

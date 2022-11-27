@@ -179,12 +179,22 @@ namespace ACadSharp.IO.DWG
 
 			this.writeBlockHeader(blkRecord);
 
-			this.writeBlockEnd(blkRecord.BlockEnd);
-
-			foreach (Entity e in blkRecord.Entities)
+			this._prev = null;
+			this._next = null;
+			Entity[] arr = blkRecord.Entities.Concat(blkRecord.Viewports).ToArray();
+			for (int i = 0; i < arr.Length; i++)
 			{
+				this._prev = arr.ElementAtOrDefault(i - 1);
+				Entity e = arr[i];
+				this._next = arr.ElementAtOrDefault(i + 1);
+
 				this.writeEntity(e);
 			}
+
+			this._prev = null;
+			this._next = null;
+
+			this.writeBlockEnd(blkRecord.BlockEnd);
 		}
 
 		private void writeBlockHeader(BlockRecord record)
@@ -223,7 +233,7 @@ namespace ACadSharp.IO.DWG
 				&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 			{
 				//Owned Object Count BL Number of objects owned by this object.
-				_writer.WriteBitLong(record.Entities.Count);
+				_writer.WriteBitLong(record.Entities.Concat(record.Viewports).Count());
 			}
 
 			//Common:
@@ -1232,6 +1242,9 @@ namespace ACadSharp.IO.DWG
 		{
 			switch (entity)
 			{
+				case Line l:
+					this.writeLine(l);
+					break;
 				default:
 					this.Notify($"Entity not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					break;
