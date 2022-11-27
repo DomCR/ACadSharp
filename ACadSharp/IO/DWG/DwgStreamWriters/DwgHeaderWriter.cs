@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Header;
 using ACadSharp.Objects;
+using CSUtilities.Text;
 using System.IO;
 using System.Text;
 
@@ -37,8 +38,8 @@ namespace ACadSharp.IO.DWG
 			this._msbegin = new MemoryStream();
 			this._msmain = new MemoryStream();
 
-			this._swbegin = DwgStreamWriterBase.GetStreamHandler(_version, this._msbegin, Encoding.Default);
-			this._writer = DwgStreamWriterBase.GetStreamHandler(_version, this._msmain, Encoding.Default);
+			this._swbegin = DwgStreamWriterBase.GetStreamHandler(_version, this._msbegin, TextEncoding.Windows1252());
+			this._writer = DwgStreamWriterBase.GetStreamHandler(_version, this._msmain, TextEncoding.Windows1252());
 		}
 
 		public void Write()
@@ -47,7 +48,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2007Plus)
 			{
 				//Setup the writers
-				this._writer = DwgStreamWriterBase.GetMergedWriter(_version, this._msmain, Encoding.Default);
+				this._writer = DwgStreamWriterBase.GetMergedWriter(_version, this._msmain, TextEncoding.Windows1252());
 				this._writer.SavePositonForSize();
 			}
 

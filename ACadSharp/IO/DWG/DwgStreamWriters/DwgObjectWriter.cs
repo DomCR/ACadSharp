@@ -2,6 +2,7 @@
 using ACadSharp.Entities;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,7 +38,7 @@ namespace ACadSharp.IO.DWG
 			this._document = document;
 
 			this._msmain = new MemoryStream();
-			this._writer = DwgStreamWriterBase.GetMergedWriter(document.Header.Version, this._msmain, Encoding.Default);
+			this._writer = DwgStreamWriterBase.GetMergedWriter(document.Header.Version, this._msmain, TextEncoding.Windows1252());
 		}
 
 		public void Write()

@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Header;
+using CSUtilities.Text;
 using System.IO;
 using System.Text;
 
@@ -19,7 +20,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 		public void Write()
 		{
-			IDwgStreamWriter writer = DwgStreamWriterBase.GetStreamHandler(this._version, this._stream, Encoding.Default);
+			IDwgStreamWriter writer = DwgStreamWriterBase.GetStreamHandler(this._version, this._stream, TextEncoding.Windows1252());
 
 			//RC: 0xff 0x77 0x01
 			writer.WriteByte(0xFF);

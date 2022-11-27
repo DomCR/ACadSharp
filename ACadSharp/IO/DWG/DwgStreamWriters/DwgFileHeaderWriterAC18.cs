@@ -20,11 +20,14 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 		private DwgFileHeaderAC18 _fileHeader;
 
+		private Encoding _encoding;
+
 		public DwgFileHeaderWriterAC18(CadDocument document, Stream stream, ACadVersion version)
 		{
 			this._document = document;
 			this._stream = stream;
 			this._version = version;
+			this._encoding = TextEncoding.Windows1252();
 			this._fileHeader = new DwgFileHeaderAC18();
 
 			// File header info
@@ -101,7 +104,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 			MemoryStream stream = new MemoryStream();
 			//DwgStreamIO swriter = DwgStreamIO.CraeteStream(stream, this._version, this.Encoding);
-			var swriter = DwgStreamWriterBase.GetStreamHandler(_version, stream, Encoding.Default);
+			var swriter = DwgStreamWriterBase.GetStreamHandler(_version, stream, _encoding);
 
 			//0x00	4	Number of section descriptions(NumDescriptions)
 			swriter.WriteInt(this._fileHeader.Descriptors.Count);
@@ -134,17 +137,17 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 				swriter.WriteInt(descriptors.Encrypted);
 
 				//0x20	64	Section Name(string)
-				byte[] array = new byte[64];
+				byte[] nameArr = new byte[64];
 				if (!string.IsNullOrEmpty(descriptors.Name))
 				{
 					byte[] bytes = Encoding.ASCII.GetBytes(descriptors.Name);
-					int num = System.Math.Min(bytes.Length, array.Length);
-					for (int i = 0; i < num; i++)
+					int length = Math.Min(bytes.Length, nameArr.Length);
+					for (int i = 0; i < length; i++)
 					{
-						array[i] = bytes[i];
+						nameArr[i] = bytes[i];
 					}
 				}
-				stream.Write(array, 0, array.Length);
+				stream.Write(nameArr, 0, nameArr.Length);
 
 				foreach (DwgLocalSectionMap localMap in descriptors.LocalSections)
 				{
@@ -182,8 +185,6 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			section.Size = size;
 
 			MemoryStream stream = new MemoryStream();
-			//DwgStreamIO writer = DwgStreamIO.CraeteStream(memoryStream, this.Version, this.Encoding);
-			//var writer = DwgStreamWriterBase.GetStreamHandler(_version, memoryStream, Encoding.Default);
 			StreamIO writer = new StreamIO(stream);
 
 			foreach (DwgLocalSectionMap item in this._localSectionMaps)
@@ -209,8 +210,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 		public void WriteFileMetaData()
 		{
-			//DwgStreamIO writer = DwgStreamIO.CraeteStream(this._stream, this.Version, this.Encoding);
-			var writer = DwgStreamWriterBase.GetStreamHandler(_version, this._stream, Encoding.Default);
+			var writer = DwgStreamWriterBase.GetStreamHandler(_version, this._stream, _encoding);
 
 			this._fileHeader.SecondHeaderAddr = (ulong)this._stream.Position;
 
@@ -238,10 +238,11 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 			//0x11	1	Dwg version (Acad version that writes the file)
 			this._stream.WriteByte((byte)this._version);
-
+			//0x12	1	Application maintenance release version(Acad maintenance version that writes the file)
 			this._stream.WriteByte(0);
 
-			writer.WriteRawShort((ushort)CodePage.Windows1252);
+			//0x13	2	Codepage
+			writer.WriteRawShort(30);
 
 			this._stream.Write(new byte[3], 0, 3);
 
@@ -376,7 +377,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 		private void writePageHeaderData(LocalSectionHolderAC18 section, Stream stream)
 		{
-			var writer = DwgStreamWriterBase.GetStreamHandler(_version, stream, Encoding.Default);
+			var writer = DwgStreamWriterBase.GetStreamHandler(_version, stream, _encoding);
 
 			//0x00	4	Section page type:
 			//Section page map: 0x41630e3b
@@ -470,7 +471,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 		private void writeDataSection(Stream stream, DwgSectionDescriptor descriptor, DwgLocalSectionMap map, int size)
 		{
-			var writer = DwgStreamWriterBase.GetStreamHandler(_version, stream, Encoding.Default);
+			var writer = DwgStreamWriterBase.GetStreamHandler(_version, stream, _encoding);
 			//0x00	4	Section page type, since it’s always a data section: 0x4163043b
 			writer.WriteInt(size);
 			//0x04	4	Section number

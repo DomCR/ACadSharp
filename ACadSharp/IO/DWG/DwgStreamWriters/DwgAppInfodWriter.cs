@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using CSUtilities.Text;
+using System.IO;
 using System.Text;
 
 namespace ACadSharp.IO.DWG
@@ -11,7 +12,7 @@ namespace ACadSharp.IO.DWG
 
 		public DwgAppInfodWriter(ACadVersion version, Stream stream) : base(version)
 		{
-			this.writer = DwgStreamWriterBase.GetStreamHandler(version, stream, Encoding.Default);
+			this.writer = DwgStreamWriterBase.GetStreamHandler(version, stream, TextEncoding.Windows1252());
 		}
 
 		public void Write()
