@@ -13,8 +13,6 @@ namespace ACadSharp.IO
 
 		private StreamIO _stream;
 
-		private IDwgStreamWriter _writer;
-
 		private DwgFileHeader _fileHeader;
 
 		private DwgFileHeaderWriterAC18 _fileHeaderWriter;
@@ -43,8 +41,6 @@ namespace ACadSharp.IO
 			this._stream = new StreamIO(stream);
 			this._document = document;
 			this._fileHeader = DwgFileHeader.CreateFileHeader(_version);
-
-			this._writer = DwgStreamWriterBase.GetStreamHandler(_version, this._stream.Stream, Encoding.Default);
 
 			this._fileHeaderWriter = new DwgFileHeaderWriterAC18(document, stream, _version);
 		}
