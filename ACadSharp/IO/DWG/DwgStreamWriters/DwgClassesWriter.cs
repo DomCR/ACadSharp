@@ -14,7 +14,7 @@ namespace ACadSharp.IO.DWG
 
 		private IDwgStreamWriter _startWriter;
 
-		private IDwgStreamWriter _endWriter;
+		private IDwgStreamWriter _writer;
 
 		private readonly byte[] _startSentinel = new byte[16]
 		{
@@ -32,14 +32,14 @@ namespace ACadSharp.IO.DWG
 			this._startWriter = DwgStreamWriterBase.GetStreamHandler(version, stream, TextEncoding.Windows1252());
 
 			this._sectionStream = new MemoryStream();
-			this._endWriter = DwgStreamWriterBase.GetStreamHandler(version, _sectionStream, TextEncoding.Windows1252());
+			this._writer = DwgStreamWriterBase.GetStreamHandler(version, _sectionStream, TextEncoding.Windows1252());
 		}
 
 		public void Write()
 		{
 			if (R2007Plus)
 			{
-				this._endWriter.SavePositonForSize();
+				this._writer.SavePositonForSize();
 			}
 
 			short maxClassNumber = 0;
@@ -51,37 +51,37 @@ namespace ACadSharp.IO.DWG
 			if (this.R2004Plus)
 			{
 				//BS : Maxiumum class number
-				this._endWriter.WriteBitShort(maxClassNumber);
+				this._writer.WriteBitShort(maxClassNumber);
 				//RC: 0x00
-				this._endWriter.WriteByte(0);
+				this._writer.WriteByte(0);
 				//RC: 0x00
-				this._endWriter.WriteByte(0);
+				this._writer.WriteByte(0);
 				//B : true
-				this._endWriter.WriteBit(true);
+				this._writer.WriteBit(true);
 			}
 
 			foreach (var c in this._model.Classes)
 			{
-				this._endWriter.WriteBitShort(c.ClassNumber);
-				this._endWriter.WriteBitShort((short)c.ProxyFlags);
-				this._endWriter.WriteVariableText(c.ApplicationName);
-				this._endWriter.WriteVariableText(c.CppClassName);
-				this._endWriter.WriteVariableText(c.DxfName);
-				this._endWriter.WriteBit(c.WasZombie);
-				this._endWriter.WriteBitShort(c.ItemClassId);
+				this._writer.WriteBitShort(c.ClassNumber);
+				this._writer.WriteBitShort((short)c.ProxyFlags);
+				this._writer.WriteVariableText(c.ApplicationName);
+				this._writer.WriteVariableText(c.CppClassName);
+				this._writer.WriteVariableText(c.DxfName);
+				this._writer.WriteBit(c.WasZombie);
+				this._writer.WriteBitShort(c.ItemClassId);
 
 				if (this.R2004Plus)
 				{
 					//BL : Number of objects created of this type in the current DB(DXF 91).
-					this._endWriter.WriteBitLong(1);
-					this._endWriter.WriteBitShort((short)this._model.Header.Version);
-					this._endWriter.WriteBitShort(this._model.Header.MaintenanceVersion);
-					this._endWriter.WriteBitLong(0);
-					this._endWriter.WriteBitLong(0);
+					this._writer.WriteBitLong(1);
+					this._writer.WriteBitShort((short)this._model.Header.Version);
+					this._writer.WriteBitShort(this._model.Header.MaintenanceVersion);
+					this._writer.WriteBitLong(0);
+					this._writer.WriteBitLong(0);
 				}
 			}
 
-			this._endWriter.WriteSpearShift();
+			this._writer.WriteSpearShift();
 
 			this.writeSizeAndCrc();
 		}
@@ -104,7 +104,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Write the section
-			this._startWriter.WriteBytes(this._sectionStream.GetBuffer());
+			swriter.Stream.Write(this._sectionStream.GetBuffer(), 0, (int)this._sectionStream.Length);
 
 			//RS: CRC
 			this._startWriter.WriteRawShort(crc.Seed);
