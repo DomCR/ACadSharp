@@ -4,15 +4,15 @@ using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
-	internal class DwgAppInfodWriter : DwgSectionIO
+	internal class DwgAppInfoWriter : DwgSectionIO
 	{
 		private IDwgStreamWriter writer;
 
 		private byte[] _emptyArr = new byte[16];
 
-		public DwgAppInfodWriter(ACadVersion version, Stream stream) : base(version)
+		public DwgAppInfoWriter(ACadVersion version, Stream stream) : base(version)
 		{
-			this.writer = DwgStreamWriterBase.GetStreamHandler(version, stream, TextEncoding.Windows1252());
+			this.writer = DwgStreamWriterBase.GetStreamHandler(version, stream, Encoding.Unicode);
 		}
 
 		public void Write()

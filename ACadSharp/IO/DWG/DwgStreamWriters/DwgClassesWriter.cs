@@ -1,4 +1,5 @@
 ﻿using CSUtilities.IO;
+using CSUtilities.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -28,10 +29,10 @@ namespace ACadSharp.IO.DWG
 		public DwgClassesWriter(CadDocument document, ACadVersion version, Stream stream) : base(version)
 		{
 			this._model = document;
-			this._startWriter = DwgStreamWriterBase.GetStreamHandler(version, stream, Encoding.Default);
+			this._startWriter = DwgStreamWriterBase.GetStreamHandler(version, stream, TextEncoding.Windows1252());
 
 			this._sectionStream = new MemoryStream();
-			this._endWriter = DwgStreamWriterBase.GetStreamHandler(version, _sectionStream, Encoding.Default);
+			this._endWriter = DwgStreamWriterBase.GetStreamHandler(version, _sectionStream, TextEncoding.Windows1252());
 		}
 
 		public void Write()
@@ -99,7 +100,7 @@ namespace ACadSharp.IO.DWG
 				|| this._model.Header.Version > ACadVersion.AC1027)
 			{
 				//RL : unknown, possibly the high 32 bits of a 64-bit size?
-				swriter.Write((int)0);	//TODO: Define endian order!!!
+				swriter.Write((int)0);  //TODO: Define endian order!!!
 			}
 
 			//Write the section

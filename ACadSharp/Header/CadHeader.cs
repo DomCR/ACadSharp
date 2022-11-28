@@ -269,10 +269,13 @@ namespace ACadSharp.Header
 		public bool ProxyGraphics { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable TREEDEPTH
+		/// Specifies the maximum depth of the spatial index
 		/// </summary>
-		public short SpatialIndexMaxTreeDepth { get; set; }
+		/// <remarks>
+		/// System variable TREEDEPTH
+		/// </remarks>
+		[CadSystemVariable("$TREEDEPTH", 70)]
+		public short SpatialIndexMaxTreeDepth { get; set; } = 3020;
 
 		/// <summary>
 		/// Units format for coordinates and distances
@@ -707,11 +710,11 @@ namespace ACadSharp.Header
 		/// <summary>
 		/// Name of menu file
 		/// </summary>
-		/// <remarks>		
+		/// <remarks>
 		/// System variable MENU
 		/// </remarks>
 		[CadSystemVariable("$MENU", 1)]
-		public string MenuFileName { get; set; } = string.Empty;
+		public string MenuFileName { get; set; } = ".";
 
 		/// <summary>
 		/// Next available handle

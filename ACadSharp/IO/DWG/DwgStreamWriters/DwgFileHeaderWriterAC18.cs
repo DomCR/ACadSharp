@@ -259,7 +259,14 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			//0x28	4	0x00000080
 			writer.WriteInt(128);
 
-			writer.WriteInt((int)this._fileHeader.Descriptors[DwgSectionDefinition.AppInfo].LocalSections[0].Seeker + 32);
+			if (this._fileHeader.Descriptors.ContainsKey(DwgSectionDefinition.AppInfo))
+			{
+				writer.WriteInt((int)this._fileHeader.Descriptors[DwgSectionDefinition.AppInfo].LocalSections[0].Seeker + 32);
+			}
+			else
+			{
+				writer.WriteInt(0);
+			}
 
 			byte[] array = new byte[80];
 

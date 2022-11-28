@@ -1,6 +1,7 @@
 ﻿using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamWriters;
 using CSUtilities.IO;
+using CSUtilities.Text;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -81,7 +82,7 @@ namespace ACadSharp.IO
 		private void writeHeader()
 		{
 			MemoryStream stream = new MemoryStream();
-			DwgHeaderWriter writer = new DwgHeaderWriter(stream, this._document);
+			DWG.DwgHeaderWriter writer = new DWG.DwgHeaderWriter(stream, this._document);
 			writer.OnNotification += triggerNotification;
 			writer.Write();
 
@@ -110,38 +111,42 @@ namespace ACadSharp.IO
 				return;
 
 			MemoryStream stream = new MemoryStream();
-			var writer = DwgStreamWriterBase.GetStreamHandler(_version, stream, Encoding.Default);
+			var sss = ACadSharp.IO.DWG.DwgSecret.DwgStreamIO.CraeteStream(stream, this._version, TextEncoding.Windows1252());
 
-			CadSummaryInfo info = this._document.SummaryInfo;
+			ACadSharp.IO.DWG.DwgSecret.DwgSummaryWriter.Write(sss, _document.SummaryInfo);
 
-			writer.WriteTextUnicode(info.Title);
-			writer.WriteTextUnicode(info.Subject);
-			writer.WriteTextUnicode(info.Author);
-			writer.WriteTextUnicode(info.Keywords);
-			writer.WriteTextUnicode(info.Comments);
-			writer.WriteTextUnicode(info.LastSavedBy);
-			writer.WriteTextUnicode(info.RevisionNumber);
-			writer.WriteTextUnicode(info.HyperlinkBase);
+			//var writer = DwgStreamWriterBase.GetStreamHandler(_version, stream, TextEncoding.Windows1252());
 
-			//?	8	Total editing time(ODA writes two zero Int32’s)
-			writer.WriteInt(0);
-			writer.WriteInt(0);
+			//CadSummaryInfo info = this._document.SummaryInfo;
 
-			writer.WriteDateTime(info.CreatedDate);
-			writer.WriteDateTime(info.ModifiedDate);
+			//writer.WriteTextUnicode(info.Title);
+			//writer.WriteTextUnicode(info.Subject);
+			//writer.WriteTextUnicode(info.Author);
+			//writer.WriteTextUnicode(info.Keywords);
+			//writer.WriteTextUnicode(info.Comments);
+			//writer.WriteTextUnicode(info.LastSavedBy);
+			//writer.WriteTextUnicode(info.RevisionNumber);
+			//writer.WriteTextUnicode(info.HyperlinkBase);
 
-			//Int16	2 + 2 * (2 + n)	Property count, followed by PropertyCount key/value string pairs.
-			writer.WriteRawShort((ushort)info.Properties.Count);
-			foreach (KeyValuePair<string, string> property in info.Properties)
-			{
-				writer.WriteTextUnicode(property.Key);
-				writer.WriteTextUnicode(property.Value);
-			}
+			////?	8	Total editing time(ODA writes two zero Int32’s)
+			//writer.WriteInt(0);
+			//writer.WriteInt(0);
 
-			writer.WriteInt(0);
-			writer.WriteInt(0);
+			//writer.WriteDateTime(info.CreatedDate);
+			//writer.WriteDateTime(info.ModifiedDate);
 
-			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.SummaryInfo, stream, false, 256);
+			////Int16	2 + 2 * (2 + n)	Property count, followed by PropertyCount key/value string pairs.
+			//writer.WriteRawShort((ushort)info.Properties.Count);
+			//foreach (KeyValuePair<string, string> property in info.Properties)
+			//{
+			//	writer.WriteTextUnicode(property.Key);
+			//	writer.WriteTextUnicode(property.Value);
+			//}
+
+			//writer.WriteInt(0);
+			//writer.WriteInt(0);
+
+			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.SummaryInfo, stream, false, 0x100);
 		}
 
 		private void writePreview()
@@ -156,7 +161,7 @@ namespace ACadSharp.IO
 		private void writeAppInfo()
 		{
 			MemoryStream stream = new MemoryStream();
-			DwgAppInfodWriter writer = new DwgAppInfodWriter(this._version, stream);
+			DwgAppInfoWriter writer = new DwgAppInfoWriter(this._version, stream);
 			writer.Write();
 
 			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.AppInfo, stream, false, 128);
