@@ -45,11 +45,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 				this._stream.WriteByte(0);
 			}
 
-			if (this._version < ACadVersion.AC1032)
-			{
-				this._fileHeader.AddSection(DwgSectionDefinition.FileDepList);
-			}
-
+			this._fileHeader.AddSection(DwgSectionDefinition.FileDepList);
 			this._fileHeader.AddSection(DwgSectionDefinition.AppInfo);
 			this._fileHeader.AddSection(DwgSectionDefinition.Preview);
 			this._fileHeader.AddSection(DwgSectionDefinition.SummaryInfo);
@@ -144,7 +140,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			}
 
 			//Section map: 0x4163003b
-			LocalSectionHolderAC18 sectionHolder = this.compressName(0x4163003B, stream);
+			DwgLocalSectionMap sectionHolder = this.compressName(0x4163003B, stream);
 			int count = DwgCheckSumCalculator.CompressionCalculator((int)(this._stream.Position - sectionHolder.Seeker));
 			this._stream.Write(DwgCheckSumCalculator.MagicSequence, 0, count);
 			sectionHolder.Size = this._stream.Position - sectionHolder.Seeker;
@@ -157,7 +153,11 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			this.writeMagicNumber();
 
 			//Section page map: 0x41630e3b
-			LocalSectionHolderAC18 section = new LocalSectionHolderAC18(0x41630E3B);
+			DwgLocalSectionMap section = new DwgLocalSectionMap
+			{
+				SectionMap = 0x41630E3B
+			};
+
 			this.addSection(section);
 
 			int counter = this._localSectionsMaps.Count * 8;
@@ -195,11 +195,11 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 			this._fileHeader.SecondHeaderAddr = (ulong)this._stream.Position;
 
-			MemoryStream fileHeaderStream = new MemoryStream();
+			MemoryStream stream = new MemoryStream();
 
-			this.writeFileHeader(fileHeaderStream);
+			this.writeFileHeader(stream);
 
-			this._stream.Write(fileHeaderStream.GetBuffer(), 0, (int)fileHeaderStream.Length);
+			this._stream.Write(stream.GetBuffer(), 0, (int)stream.Length);
 
 			////0x00	6	“ACXXXX” version string
 			this._stream.Position = 0L;
@@ -208,11 +208,6 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			//5 bytes of 0x00 
 			this._stream.Write(new byte[5], 0, 5);
 
-			if (this._document.Header.Version == ACadVersion.AC1018
-				&& this._document.Header.MaintenanceVersion == 1)
-			{
-				throw new Exception();
-			}
 			//0x0B	1	Maintenance release version
 			this._stream.WriteByte((byte)this._document.Header.MaintenanceVersion);
 
@@ -254,18 +249,8 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			//0x30	0x80	0x00 bytes
 			byte[] array = new byte[80];
 
-			if (this._version > ACadVersion.AC1027)
-			{
-				//Observed while debugging the files
-				array[1] = 13;
-				array[4] = 2;
-				array[8] = 51;
-				array[12] = 4;
-				array[16] = 4;
-			}
-
 			this._stream.Write(array, 0, 80);
-			this._stream.Write(fileHeaderStream.GetBuffer(), 0, (int)fileHeaderStream.Length);
+			this._stream.Write(stream.GetBuffer(), 0, (int)stream.Length);
 			this._stream.Write(DwgCheckSumCalculator.MagicSequence, 236, 20);
 		}
 
@@ -324,7 +309,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			swriter.Write<uint>(this._fileHeader.GapArraySize);
 
 			long position = crcStream.Position;
-			swriter.Write(0u);
+			swriter.Write<uint>(0u);
 
 			uint seed = crcStream.Seed;
 			crcStream.Position = position;
@@ -333,7 +318,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			//			calculation is done including the 4 CRC bytes that are 
 			//			initially zero! So the CRC calculation takes into account 
 			//			all of the 0x6c bytes of the data in this table.
-			swriter.Write(seed);
+			swriter.Write<uint>(seed);
 
 			crcStream.Flush();
 
@@ -349,15 +334,18 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			}
 		}
 
-		private void addSection(LocalSectionHolderAC18 section)
+		private void addSection(DwgLocalSectionMap section)
 		{
 			section.PageNumber = this._localSectionsMaps.Count + 1;
 			this._localSectionsMaps.Add(section);
 		}
 
-		private LocalSectionHolderAC18 compressName(int map, MemoryStream stream)
+		private DwgLocalSectionMap compressName(int map, MemoryStream stream)
 		{
-			LocalSectionHolderAC18 holder = new LocalSectionHolderAC18(map);
+			DwgLocalSectionMap holder = new DwgLocalSectionMap
+			{
+				SectionMap = map
+			};
 
 			this.writeMagicNumber();
 
@@ -368,43 +356,41 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			return holder;
 		}
 
-		private void compressSection(LocalSectionHolderAC18 section, MemoryStream stream)
+		private void compressSection(DwgLocalSectionMap section, MemoryStream stream)
 		{
-			section.Decompressed = (int)stream.Length;
-			DwgLZ77AC18Decompressor compressor = new DwgLZ77AC18Decompressor();
+			section.DecompressedSize = (ulong)stream.Length;
+			DwgLZ77Compressor compressor = new DwgLZ77Compressor();
 
 			MemoryStream main = new MemoryStream();
-
 			compressor.Compress(stream.GetBuffer(), 0, (int)stream.Length, main);
 
-			section.CompDataSize = (int)main.Length;
+			section.CompressedSize = (ulong)main.Length;
 
 			MemoryStream checkSumHolder = new MemoryStream();
 			this.writePageHeaderData(section, checkSumHolder);
-			section.CheckSum = DwgCheckSumCalculator.Calculate(0u, checkSumHolder.GetBuffer(), 0, (int)checkSumHolder.Length);
-			section.CheckSum = DwgCheckSumCalculator.Calculate(section.CheckSum, main.GetBuffer(), 0, (int)main.Length);
+			section.Checksum = DwgCheckSumCalculator.Calculate(0u, checkSumHolder.GetBuffer(), 0, (int)checkSumHolder.Length);
+			section.Checksum = DwgCheckSumCalculator.Calculate((uint)section.Checksum, main.GetBuffer(), 0, (int)main.Length);
 			this.writePageHeaderData(section, this._stream);
 
 			this._stream.Write(main.GetBuffer(), 0, (int)main.Length);
-			this.writePageHeaderData(new LocalSectionHolderAC18(section.SectionMap), this._stream);
 		}
 
-		private void writePageHeaderData(LocalSectionHolderAC18 section, Stream stream)
+		private void writePageHeaderData(DwgLocalSectionMap section, Stream stream)
 		{
 			StreamIO writer = new StreamIO(stream);
 
 			//0x00	4	Section page type:
 			//Section page map: 0x41630e3b
 			//Section map: 0x4163003b
-			writer.Write(section.SectionMap);
+			writer.Write<int>(section.SectionMap);
 			//0x04	4	Decompressed size of the data that follows
-			writer.Write(section.Decompressed);
+			writer.Write<int>((int)section.DecompressedSize);
 			//0x08	4	Compressed size of the data that follows(CompDataSize)
-			writer.Write(section.CompDataSize);
+			writer.Write<int>((int)section.CompressedSize);
 			//0x0C	4	Compression type(0x02)
-			writer.Write(section.Compression);
+			writer.Write<int>(section.Compression);
 			//0x10	4	Section page checksum
-			writer.Write(section.CheckSum);
+			writer.Write<uint>((uint)section.Checksum);
 		}
 
 		public void CreateSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400)
@@ -436,44 +422,6 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			if (spearBytes > 0 && !checkEmptyBytes(buffer, offset, (ulong)spearBytes))
 			{
 				this.craeteLocalSection(descriptor, 0x4163043B, (int)descriptor.DecompressedSize, buffer, offset, spearBytes, isCompressed);
-				nlocalSections++;
-			}
-		}
-
-		public void CreateSection(DwgSectionDescriptor descriptor, MemoryStream stream, bool isCompressed)
-		{
-			descriptor.CompressedSize = (ulong)stream.Length;
-			descriptor.CompressedCode = ((!isCompressed) ? 1 : 2);
-
-			int nlocalSections = (int)(stream.Length / (int)descriptor.DecompressedSize);
-
-			byte[] buffer = stream.GetBuffer();
-			ulong offset = 0uL;
-			for (int i = 0; i < nlocalSections; i++)
-			{
-				this.craeteLocalSection(
-					descriptor,
-					0x4163043B,
-					(int)descriptor.DecompressedSize,
-					buffer,
-					offset,
-					(int)descriptor.DecompressedSize,
-					isCompressed);
-
-				offset += (ulong)descriptor.DecompressedSize;
-			}
-
-			int spearBytes = (int)(stream.Length % (int)descriptor.DecompressedSize);
-			if (spearBytes > 0 && !checkEmptyBytes(buffer, offset, (ulong)spearBytes))
-			{
-				this.craeteLocalSection(
-					descriptor,
-					0x4163043B,
-					(int)descriptor.DecompressedSize,
-					buffer,
-					offset,
-					spearBytes,
-					isCompressed);
 			}
 		}
 
@@ -508,7 +456,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 					holder.WriteByte(0);
 				}
 
-				new DwgLZ77AC18Decompressor().Compress(holder.GetBuffer(), 0, decompressedSize, mainStream);
+				new DwgLZ77Compressor().Compress(holder.GetBuffer(), 0, decompressedSize, mainStream);
 			}
 			else
 			{
@@ -609,25 +557,6 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			for (int i = 0; i < (int)(this._stream.Position % 0x20); i++)
 			{
 				this._stream.WriteByte(DwgCheckSumCalculator.MagicSequence[i]);
-			}
-		}
-
-		[Obsolete("Use the LocalSectionMap fields")]
-		internal class LocalSectionHolderAC18 : DwgLocalSectionMap
-		{
-			public int SectionMap { get; set; }
-
-			public int Decompressed { get; set; }
-
-			public int CompDataSize { get; set; }
-
-			public int Compression { get; set; } = 2;
-
-			public uint CheckSum { get; set; }
-
-			public LocalSectionHolderAC18(int value)
-			{
-				this.SectionMap = value;
 			}
 		}
 	}

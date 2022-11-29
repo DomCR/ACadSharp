@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ACadSharp.IO.DWG
+﻿namespace ACadSharp.IO.DWG
 {
-	internal class DwgLZ77AC18Decompressor
+	internal class DwgLZ77Compressor
 	{
 		private byte[] _source;
 
