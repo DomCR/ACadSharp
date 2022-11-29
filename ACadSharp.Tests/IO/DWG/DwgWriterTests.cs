@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
-using ACadSharp.IO.DWG;
 using System;
 using System.IO;
 using Xunit;
@@ -14,16 +13,10 @@ namespace ACadSharp.Tests.IO.DWG
 
 		[Theory]
 		[MemberData(nameof(Versions))]
-		public void WriteTest(ACadVersion version)
+		public void WriteEmptyTest(ACadVersion version)
 		{
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
-			Line l = new Line
-			{
-				StartPoint = new CSMath.XYZ(),
-				EndPoint = new CSMath.XYZ(100, 100, 0)
-			};
-			doc.Entities.Add(l);
 
 			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}.dwg");
 

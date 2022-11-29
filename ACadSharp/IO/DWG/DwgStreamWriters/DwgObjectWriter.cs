@@ -1250,6 +1250,9 @@ namespace ACadSharp.IO.DWG
 				case Line l:
 					this.writeLine(l);
 					break;
+				case Point p:
+					this.writePoint(p);
+					break;
 				default:
 					this.Notify($"Entity not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					break;
