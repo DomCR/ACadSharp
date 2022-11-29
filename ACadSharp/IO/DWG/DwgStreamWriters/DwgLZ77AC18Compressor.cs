@@ -1,6 +1,6 @@
 ﻿namespace ACadSharp.IO.DWG
 {
-	internal class DwgLZ77Compressor
+	internal class DwgLZ77AC18Compressor
 	{
 		private byte[] _source;
 

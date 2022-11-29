@@ -359,7 +359,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 		private void compressSection(DwgLocalSectionMap section, MemoryStream stream)
 		{
 			section.DecompressedSize = (ulong)stream.Length;
-			DwgLZ77Compressor compressor = new DwgLZ77Compressor();
+			DwgLZ77AC18Compressor compressor = new DwgLZ77AC18Compressor();
 
 			MemoryStream main = new MemoryStream();
 			compressor.Compress(stream.GetBuffer(), 0, (int)stream.Length, main);
@@ -456,7 +456,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 					holder.WriteByte(0);
 				}
 
-				new DwgLZ77Compressor().Compress(holder.GetBuffer(), 0, decompressedSize, mainStream);
+				new DwgLZ77AC18Compressor().Compress(holder.GetBuffer(), 0, decompressedSize, mainStream);
 			}
 			else
 			{
