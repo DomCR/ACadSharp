@@ -44,7 +44,7 @@ WIP
 
 The dwg/dxf readers are not yet fully implemented, the NotificationHandler will send a message to inform about the objects that could not be readed or any other error in the process.
 
-##### Dwg entities not implemented
+### Dwg entities not implemented
 
 - ACDBPLACEHOLDER
 - VP_ENT_HDR
@@ -52,7 +52,7 @@ The dwg/dxf readers are not yet fully implemented, the NotificationHandler will 
 - ACAD_PROXY_OBJECT
 - MESH
 
-##### Dxf reader entities not implemented
+### Dxf reader entities not implemented
 
 - POLYLINE_PFACE
 - ACAD_TABLE
@@ -61,9 +61,18 @@ The dwg/dxf readers are not yet fully implemented, the NotificationHandler will 
 - 3DFACE
 - MESH
 
-##### Long term 
+### Dwg Writer 
 
-- DwgWriter - 🚧 [In development](https://github.com/DomCR/ACadSharp/tree/DwgWriter)
+ACadSharp has the first `DwgWriter` in an early alpha.
+
+Compatible versions:
+
+- AC1018 - AutoCAD 2004/2005/2006
+
+The right now the writer only has capability to write points and lines in the `*Model_space` and it does not write all the information for the different objects in the document such as dictionaries, extended data or reactors.
+
+**IMPORTANT NOTE** when you open a file writen by ACadSharp with Autocad the following message will appear: *The drawing file requires recovery* press on Recover and it will open the file normally.
+Due to this process this may cause a **loss of information on the file**.
 
 Contributing
 ------------
