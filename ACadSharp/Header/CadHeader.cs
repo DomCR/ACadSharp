@@ -146,11 +146,13 @@ namespace ACadSharp.Header
 		public bool RegenerationMode { get; set; }
 
 		/// <summary>
-		/// System variable FILLMODE.
 		/// Fill mode on if nonzero
 		/// </summary>
+		/// <remarks>
+		/// System variable FILLMODE.
+		/// </remarks>
 		[CadSystemVariable("$FILLMODE", DxfCode.Int16)]
-		public bool FillMode { get; set; }
+		public bool FillMode { get; set; } = true;
 
 		/// <summary>
 		/// Quick Text mode on if nonzero

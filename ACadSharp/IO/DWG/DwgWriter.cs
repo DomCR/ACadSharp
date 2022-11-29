@@ -2,9 +2,9 @@
 using ACadSharp.IO.DWG.DwgStreamWriters;
 using CSUtilities.IO;
 using CSUtilities.Text;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace ACadSharp.IO
 {
@@ -12,11 +12,11 @@ namespace ACadSharp.IO
 	{
 		private ACadVersion _version { get { return this._document.Header.Version; } }
 
-		private StreamIO _stream;
+		private Stream _stream;
 
 		private DwgFileHeader _fileHeader;
 
-		private DwgFileHeaderWriterAC18 _fileHeaderWriter;
+		private IDwgFileHeaderWriter _fileHeaderWriter;
 
 		private CadDocument _document;
 
@@ -39,19 +39,21 @@ namespace ACadSharp.IO
 		/// <param name="document"></param>
 		public DwgWriter(Stream stream, CadDocument document)
 		{
-			this._stream = new StreamIO(stream);
+			this._stream = stream;
 			this._document = document;
 			this._fileHeader = DwgFileHeader.CreateFileHeader(_version);
-
-			this._fileHeaderWriter = new DwgFileHeaderWriterAC18(document, stream, _version);
 		}
 
 		/// <inheritdoc/>
 		public override void Write()
 		{
+			this.getFileHeaderWriter();
+
+			this._fileHeaderWriter.Init();
+
 			this.writeHeader();
 			this.writeClasses();
-			this.writeEmptySection();
+			//this.writeEmptySection();
 			this.writeSummaryInfo();
 			this.writePreview();
 			//this.writeVBASection();
@@ -66,17 +68,45 @@ namespace ACadSharp.IO
 			//this.writePrototype();
 			this.writeAuxHeader();
 
-			this._fileHeaderWriter.WriteDescriptors();
-
-			this._fileHeaderWriter.WriteRecords();
-
-			this._fileHeaderWriter.WriteFileMetaData();
+			this._fileHeaderWriter.WriteFile();
 		}
 
 		/// <inheritdoc/>
 		public override void Dispose()
 		{
 			this._stream.Dispose();
+		}
+
+		private void getFileHeaderWriter()
+		{
+			switch (this._document.Header.Version)
+			{
+				case ACadVersion.MC0_0:
+				case ACadVersion.AC1_2:
+				case ACadVersion.AC1_4:
+				case ACadVersion.AC1_50:
+				case ACadVersion.AC2_10:
+				case ACadVersion.AC1002:
+				case ACadVersion.AC1003:
+				case ACadVersion.AC1004:
+				case ACadVersion.AC1006:
+				case ACadVersion.AC1009:
+				case ACadVersion.AC1012:
+				case ACadVersion.AC1014:
+				case ACadVersion.AC1015:
+					throw new NotSupportedException($"Version: {this._document.Header.Version} is not supported");
+				case ACadVersion.AC1018:
+					this._fileHeaderWriter = new DwgFileHeaderWriterAC18(_stream, _document);
+					break;
+				case ACadVersion.AC1021:
+				case ACadVersion.AC1024:
+				case ACadVersion.AC1027:
+				case ACadVersion.AC1032:
+					throw new NotSupportedException($"Version: {this._document.Header.Version} is not supported");
+				case ACadVersion.Unknown:
+				default:
+					throw new NotSupportedException($"Unknown version: {this._document.Header.Version} is not supported");
+			}
 		}
 
 		private void writeHeader()
@@ -111,40 +141,36 @@ namespace ACadSharp.IO
 				return;
 
 			MemoryStream stream = new MemoryStream();
-			var sss = ACadSharp.IO.DWG.DwgSecret.DwgStreamIO.CraeteStream(stream, this._version, TextEncoding.Windows1252());
+			var writer = DwgStreamWriterBase.GetStreamHandler(_version, stream, TextEncoding.Windows1252());
 
-			ACadSharp.IO.DWG.DwgSecret.DwgSummaryWriter.Write(sss, _document.SummaryInfo);
+			CadSummaryInfo info = this._document.SummaryInfo;
 
-			//var writer = DwgStreamWriterBase.GetStreamHandler(_version, stream, TextEncoding.Windows1252());
+			writer.WriteTextUnicode(info.Title);
+			writer.WriteTextUnicode(info.Subject);
+			writer.WriteTextUnicode(info.Author);
+			writer.WriteTextUnicode(info.Keywords);
+			writer.WriteTextUnicode(info.Comments);
+			writer.WriteTextUnicode(info.LastSavedBy);
+			writer.WriteTextUnicode(info.RevisionNumber);
+			writer.WriteTextUnicode(info.HyperlinkBase);
 
-			//CadSummaryInfo info = this._document.SummaryInfo;
+			//?	8	Total editing time(ODA writes two zero Int32’s)
+			writer.WriteInt(0);
+			writer.WriteInt(0);
 
-			//writer.WriteTextUnicode(info.Title);
-			//writer.WriteTextUnicode(info.Subject);
-			//writer.WriteTextUnicode(info.Author);
-			//writer.WriteTextUnicode(info.Keywords);
-			//writer.WriteTextUnicode(info.Comments);
-			//writer.WriteTextUnicode(info.LastSavedBy);
-			//writer.WriteTextUnicode(info.RevisionNumber);
-			//writer.WriteTextUnicode(info.HyperlinkBase);
+			writer.Write8BitJulianDate(info.CreatedDate);
+			writer.Write8BitJulianDate(info.ModifiedDate);
 
-			////?	8	Total editing time(ODA writes two zero Int32’s)
-			//writer.WriteInt(0);
-			//writer.WriteInt(0);
+			//Int16	2 + 2 * (2 + n)	Property count, followed by PropertyCount key/value string pairs.
+			writer.WriteRawShort((ushort)info.Properties.Count);
+			foreach (KeyValuePair<string, string> property in info.Properties)
+			{
+				writer.WriteTextUnicode(property.Key);
+				writer.WriteTextUnicode(property.Value);
+			}
 
-			//writer.WriteDateTime(info.CreatedDate);
-			//writer.WriteDateTime(info.ModifiedDate);
-
-			////Int16	2 + 2 * (2 + n)	Property count, followed by PropertyCount key/value string pairs.
-			//writer.WriteRawShort((ushort)info.Properties.Count);
-			//foreach (KeyValuePair<string, string> property in info.Properties)
-			//{
-			//	writer.WriteTextUnicode(property.Key);
-			//	writer.WriteTextUnicode(property.Value);
-			//}
-
-			//writer.WriteInt(0);
-			//writer.WriteInt(0);
+			writer.WriteInt(0);
+			writer.WriteInt(0);
 
 			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.SummaryInfo, stream, false, 0x100);
 		}
@@ -173,6 +199,7 @@ namespace ACadSharp.IO
 			StreamIO swriter = new StreamIO(stream);
 			swriter.Write<uint>(0);
 			swriter.Write<uint>(0);
+
 			//nt32	4	Feature count(ftc)
 
 			//String32	ftc * (4 + n)	Feature name list.A feature name is one of the following:

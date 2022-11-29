@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Header;
 using ACadSharp.Objects;
+using CSUtilities.IO;
 using CSUtilities.Text;
 using System.IO;
 using System.Text;
@@ -1071,38 +1072,36 @@ namespace ACadSharp.IO.DWG
 
 			this._writer.WriteSpearShift();
 
-			//Common:
-			//RS : CRC for the data section, starting after the sentinel.Use 0xC0C1 for the initial value.
-			this._writer.WriteRawShort(0xC0C1);
-
-			//Ending sentinel: 0x30,0x84,0xE0,0xDC,0x02,0x21,0xC7,0x56,0xA0,0x83,0x97,0x47,0xB1,0x92,0xCC,0xA0
-			this._writer.WriteBytes(this._endSentinel);
-
 			//Write the size and merge the streams
-			this.writeSectionBegin();
-			this.mergeStreams();
+			this.writeSizeAndCrc();
 		}
 
-		private void writeSectionBegin()
+		private void writeSizeAndCrc()
 		{
 			//0xCF,0x7B,0x1F,0x23,0xFD,0xDE,0x38,0xA9,0x5F,0x7C,0x68,0xB8,0x4E,0x6D,0x33,0x5F
-			this._swbegin.WriteBytes(this._startSentinel);
+			this._stream.Write(this._startSentinel, 0, this._startSentinel.Length);
+
+			CRC8StreamHandler crc = new CRC8StreamHandler(this._stream, 0xC0C1);
+			StreamIO swriter = new StreamIO(crc);
 
 			//RL : Size of the section.
-			this._swbegin.WriteRawLong(this._msmain.Length);
+			swriter.Write((int)this._msmain.Length);
 
 			//R2010/R2013 (only present if the maintenance version is greater than 3!) or R2018+:
-			if (R2010Plus && 0 > 3 || R2018Plus)
+			if (R2010Plus && _header.MaintenanceVersion > 3 || R2018Plus)
 			{
 				//Unknown (4 byte long), might be part of a 64-bit size.
-				_swbegin.WriteRawLong(0);
+				swriter.Write<int>(0);
 			}
-		}
 
-		private void mergeStreams()
-		{
-			this._stream.Write(this._msbegin.GetBuffer(), 0, (int)this._msbegin.Length);
-			this._stream.Write(this._msmain.GetBuffer(), 0, (int)this._msmain.Length);
+			crc.Write(this._msmain.GetBuffer(), 0, (int)this._msmain.Length);
+
+			//Common:
+			//RS : CRC for the data section, starting after the sentinel.Use 0xC0C1 for the initial value.
+			swriter.Write<ushort>(crc.Seed);
+
+			//Ending sentinel: 0x30,0x84,0xE0,0xDC,0x02,0x21,0xC7,0x56,0xA0,0x83,0x97,0x47,0xB1,0x92,0xCC,0xA0
+			this._stream.Write(this._endSentinel, 0, this._endSentinel.Length);
 		}
 	}
 }

@@ -582,7 +582,7 @@ namespace ACadSharp.IO
 			headerStream.ReadInt<LittleEndianConverter>();
 			//0x14	4	0x04(long)
 			headerStream.ReadInt<LittleEndianConverter>();
-			//0x18	4	Root tree node gap	
+			//0x18	4	Root tree node gap
 			fileheader.RootTreeNodeGap = headerStream.ReadInt<LittleEndianConverter>();
 			//0x1C	4	Lowermost left tree node gap
 			fileheader.LeftGap = headerStream.ReadInt<LittleEndianConverter>();
@@ -592,10 +592,12 @@ namespace ACadSharp.IO
 			headerStream.ReadInt<LittleEndianConverter>();
 			//0x28	4	Last section page Id
 			fileheader.LastPageId = headerStream.ReadInt<LittleEndianConverter>();
+
 			//0x2C	8	Last section page end address
 			fileheader.LastSectionAddr = headerStream.ReadULong<LittleEndianConverter>();
 			//0x34	8	Second header data address pointing to the repeated header data at the end of the file
 			fileheader.SecondHeaderAddr = headerStream.ReadULong<LittleEndianConverter>();
+
 			//0x3C	4	Gap amount
 			fileheader.GapAmount = headerStream.ReadUInt<LittleEndianConverter>();
 			//0x40	4	Section page amount
@@ -604,20 +606,20 @@ namespace ACadSharp.IO
 			headerStream.ReadInt<LittleEndianConverter>();
 			//0x48	4	0x80(long)
 			headerStream.ReadInt<LittleEndianConverter>();
-			//0x4C	4	0x40(long)	
+			//0x4C	4	0x40(long)
 			headerStream.ReadInt<LittleEndianConverter>();
 			//0x50	4	Section Page Map Id
 			fileheader.SectionPageMapId = headerStream.ReadUInt<LittleEndianConverter>();
 			//0x54	8	Section Page Map address(add 0x100 to this value)
 			fileheader.PageMapAddress = headerStream.ReadULong<LittleEndianConverter>() + 256UL;
-			//0x5C	4	Section Map Id	
+			//0x5C	4	Section Map Id
 			fileheader.SectionMapId = headerStream.ReadUInt<LittleEndianConverter>();
 			//0x60	4	Section page array size
 			fileheader.SectionArrayPageSize = headerStream.ReadUInt<LittleEndianConverter>();
 			//0x64	4	Gap array size
 			fileheader.GapArraySize = headerStream.ReadUInt<LittleEndianConverter>();
 			//0x68	4	CRC32(long).See paragraph 2.14.2 for the 32 - bit CRC calculation, 
-			//			the seed is zero.Note that the CRC 
+			//			the seed is zero. Note that the CRC 
 			//			calculation is done including the 4 CRC bytes that are 
 			//			initially zero! So the CRC calculation takes into account 
 			//			all of the 0x6c bytes of the data in this table.
@@ -1065,9 +1067,11 @@ namespace ACadSharp.IO
 			//0x28	4	0x00000080
 			sreader.ReadRawLong();
 
-			//0x2C	0x54	0x00 bytes
+			//0x2C	4	App info Address in stream
 			sreader.ReadRawLong();
+
 			//Get to offset 0x80
+			//0x30	0x80	0x00 bytes
 			sreader.Advance(80);
 		}
 

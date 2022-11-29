@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Header;
 using CSUtilities.Text;
 using System.IO;
-using System.Text;
 
 namespace ACadSharp.IO.DWG.DwgStreamWriters
 {
@@ -9,7 +8,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 	{
 		private CadHeader _header;
 
-		private System.IO.MemoryStream _stream;
+		private MemoryStream _stream;
 
 		public DwgAuxHeaderWriter(MemoryStream stream, CadHeader header)
 			: base(header.Version)
@@ -95,14 +94,10 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			writer.WriteRawLong(0);
 
 			//TD: TDCREATE(creation datetime)
-			CadUtils.DateToJulian(this._header.CreateDateTime, out int jdate, out int miliseconds);
-			writer.WriteRawLong(jdate);
-			writer.WriteRawLong(miliseconds);
+			writer.Write8BitJulianDate(this._header.CreateDateTime);
 
 			//TD: TDUPDATE(update datetime)
-			CadUtils.DateToJulian(this._header.UpdateDateTime, out jdate, out miliseconds);
-			writer.WriteRawLong(jdate);
-			writer.WriteRawLong(miliseconds);
+			writer.Write8BitJulianDate(this._header.UpdateDateTime);
 
 			int handseed = -1;
 			if (this._header.HandleSeed <= 0x7FFFFFFF)

@@ -353,6 +353,13 @@ namespace ACadSharp.IO.DWG
 			this.WriteBitLong(value.Milliseconds);
 		}
 
+		public void Write8BitJulianDate(DateTime value)
+		{
+			CadUtils.DateToJulian(value, out int jdate, out int miliseconds);
+			this.WriteRawLong(jdate);
+			this.WriteRawLong(miliseconds);
+		}
+
 		public virtual void WriteCmColor(Color value)
 		{
 			//R15 and earlier: BS color index

@@ -43,6 +43,8 @@ namespace ACadSharp.IO.DWG
 
 		void WriteDateTime(DateTime value);
 
+		void Write8BitJulianDate(DateTime value);
+
 		void WriteTimeSpan(TimeSpan value);
 
 		void WriteCmColor(Color value);

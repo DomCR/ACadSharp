@@ -138,6 +138,11 @@ namespace ACadSharp.IO.DWG
 			this.Main.WriteDateTime(value);
 		}
 
+		public void Write8BitJulianDate(DateTime value)
+		{
+			this.Main.Write8BitJulianDate(value);
+		}
+
 		public void WriteInt(int value)
 		{
 			this.Main.WriteInt(value);

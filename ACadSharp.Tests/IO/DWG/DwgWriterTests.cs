@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
 using ACadSharp.IO.DWG;
+using System;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
@@ -28,7 +29,15 @@ namespace ACadSharp.Tests.IO.DWG
 
 			using (var wr = new DwgWriter(path, doc))
 			{
-				wr.Write();
+				if (version == ACadVersion.AC1018)
+				{
+					wr.Write();
+				}
+				else
+				{
+					Assert.Throws<NotSupportedException>(() => wr.Write());
+					return;
+				}
 			}
 
 			using (var re = new DwgReader(path, this.onNotification))
@@ -36,7 +45,7 @@ namespace ACadSharp.Tests.IO.DWG
 				CadDocument readed = re.Read();
 			}
 
-			this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
+			//this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
 		}
 
 		[Theory]
@@ -54,7 +63,15 @@ namespace ACadSharp.Tests.IO.DWG
 
 			using (var wr = new DwgWriter(stream, doc))
 			{
-				wr.Write();
+				if (version == ACadVersion.AC1018)
+				{
+					wr.Write();
+				}
+				else
+				{
+					Assert.Throws<NotSupportedException>(() => wr.Write());
+					return;
+				}
 			}
 
 			stream = new MemoryStream(stream.ToArray());
@@ -76,7 +93,15 @@ namespace ACadSharp.Tests.IO.DWG
 
 			using (var wr = new DwgWriter(stream, doc))
 			{
-				wr.Write();
+				if (version == ACadVersion.AC1018)
+				{
+					wr.Write();
+				}
+				else
+				{
+					Assert.Throws<NotSupportedException>(() => wr.Write());
+					return;
+				}
 			}
 
 			stream = new MemoryStream(stream.ToArray());
