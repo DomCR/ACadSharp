@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
+using ACadSharp.Tests.Common;
 using System;
 using System.IO;
 using Xunit;
@@ -17,6 +18,38 @@ namespace ACadSharp.Tests.IO.DWG
 		{
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
+
+			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}.dwg");
+
+			using (var wr = new DwgWriter(path, doc))
+			{
+				if (version == ACadVersion.AC1018)
+				{
+					wr.Write();
+				}
+				else
+				{
+					Assert.Throws<NotSupportedException>(() => wr.Write());
+					return;
+				}
+			}
+
+			using (var re = new DwgReader(path, this.onNotification))
+			{
+				CadDocument readed = re.Read();
+			}
+
+			//this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
+		}
+
+		[Theory]
+		[MemberData(nameof(Versions))]
+		public void WriteTest(ACadVersion version)
+		{
+			CadDocument doc = new CadDocument();
+			doc.Header.Version = version;
+
+			addEntities(doc);
 
 			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}.dwg");
 
@@ -103,6 +136,12 @@ namespace ACadSharp.Tests.IO.DWG
 			{
 				Header.CadHeader header = re.ReadHeader();
 			}
+		}
+
+		private void addEntities(CadDocument doc)
+		{
+			doc.Entities.Add(EntityFactory.Create<Point>());
+			doc.Entities.Add(EntityFactory.Create<Line>());
 		}
 	}
 }
