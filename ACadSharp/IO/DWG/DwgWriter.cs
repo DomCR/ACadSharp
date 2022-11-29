@@ -119,11 +119,6 @@ namespace ACadSharp.IO
 			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Header, stream, true);
 		}
 
-		private void writeEmptySection()
-		{
-			this._fileHeaderWriter.CreateSection(string.Empty, new MemoryStream(), true);
-		}
-
 		private void writeClasses()
 		{
 			MemoryStream stream = new MemoryStream();
