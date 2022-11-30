@@ -6,15 +6,15 @@ using Xunit.Abstractions;
 
 namespace ACadSharp.Tests.IO
 {
-	public class UserSamplesReader : IOTestsBase
+	public class StressSamplesReader : IOTestsBase
 	{
 		public static TheoryData<string> UserDwgFilePaths { get; }
 
 		public static TheoryData<string> UserDxfFiles { get; }
 
-		static UserSamplesReader()
+		static StressSamplesReader()
 		{
-			string path = Path.Combine(_samplesFolder, "local", "user_files");
+			string path = Path.Combine(_samplesFolder, "local", "stress");
 			UserDwgFilePaths = new TheoryData<string>();
 			UserDxfFiles = new TheoryData<string>();
 
@@ -46,7 +46,7 @@ namespace ACadSharp.Tests.IO
 			}
 		}
 
-		public UserSamplesReader(ITestOutputHelper output) : base(output)
+		public StressSamplesReader(ITestOutputHelper output) : base(output)
 		{
 		}
 
