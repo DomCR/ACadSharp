@@ -75,7 +75,7 @@ namespace ACadSharp.IO.DXF
 					case 340:
 					//Dimension table has the handles of the styles at the begining
 					default:
-						this._builder.Notify(new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}."));
+						this._builder.Notify($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}.");
 						break;
 				}
 
@@ -109,7 +109,7 @@ namespace ACadSharp.IO.DXF
 						template.OwnerHandle = this._reader.LastValueAsHandle;
 						break;
 					default:
-						this._builder.Notify(new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}."));
+						this._builder.Notify($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}.");
 						break;
 				}
 
@@ -190,7 +190,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadSplineTemplate(new Spline());
 					break;
 				default:
-					this._builder.Notify(new NotificationEventArgs($"Entity not implemented: {this._reader.LastValueAsString}"));
+					this._builder.Notify(($"Entity not implemented: {this._reader.LastValueAsString}"), NotificationType.NotImplemented);
 					do
 					{
 						this._reader.ReadNext();
@@ -279,7 +279,7 @@ namespace ACadSharp.IO.DXF
 						this.readMapped<Point>(template.CadObject, template);
 						break;
 					case DxfSubclassMarker.PolyfaceMesh:
-						this._builder.Notify(new NotificationEventArgs($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}"));
+						this._builder.Notify($"dxf entity subclass not implemented {this._reader.LastValueAsString}", NotificationType.NotImplemented);
 						while (this._reader.LastDxfCode != DxfCode.Start)
 							this._reader.ReadNext();
 						return null;
@@ -321,7 +321,7 @@ namespace ACadSharp.IO.DXF
 						this.readMapped<Spline>(template.CadObject, template);
 						break;
 					default:
-						this._builder.Notify(new NotificationEventArgs($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}"));
+						this._builder.Notify($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}");
 						while (this._reader.LastDxfCode != DxfCode.Start)
 							this._reader.ReadNext();
 						break;
@@ -411,7 +411,7 @@ namespace ACadSharp.IO.DXF
 							dxfProperty.SetValue(this._reader.LastCode, cadObject, this._reader.LastValue);
 							break;
 						case GroupCodeValueType.Comment:
-							this._builder.Notify(new NotificationEventArgs($"Comment in the file :  {this._reader.LastValueAsString}"));
+							this._builder.Notify(($"Comment in the file :  {this._reader.LastValueAsString}"));
 							break;
 						case GroupCodeValueType.Handle:
 						case GroupCodeValueType.ObjectId:
