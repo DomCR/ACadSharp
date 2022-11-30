@@ -13,6 +13,8 @@ namespace ACadSharp.IO
 
 		public Dictionary<string, LineType> LineTypes { get; } = new Dictionary<string, LineType>(StringComparer.OrdinalIgnoreCase);
 
+		public CadReaderConfiguration Configuration { get; }
+
 		// Stores all the templates to build the document, some of the elements can be null due a missing implementation
 		protected Dictionary<ulong, CadTemplate> templates = new Dictionary<ulong, CadTemplate>();
 
@@ -20,9 +22,10 @@ namespace ACadSharp.IO
 
 		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new Dictionary<ulong, ICadTableTemplate>();
 
-		public CadDocumentBuilder(CadDocument document, NotificationEventHandler notification = null)
+		public CadDocumentBuilder(CadDocument document, CadReaderConfiguration configuration)
 		{
 			this.DocumentToBuild = document;
+			this.Configuration = configuration;
 		}
 
 		public virtual void BuildDocument()
@@ -115,14 +118,15 @@ namespace ACadSharp.IO
 			return false;
 		}
 
+		[Obsolete]
 		public void Notify(NotificationEventArgs e)
 		{
 			this.OnNotification?.Invoke(this, e);
 		}
 
-		public void Notify(string message, NotificationType notificationType = NotificationType.None)
+		public void Notify(string message, NotificationType notificationType = NotificationType.None, Exception exception = null)
 		{
-			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType));
+			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, exception));
 		}
 	}
 }

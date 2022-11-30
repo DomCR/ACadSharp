@@ -6,7 +6,7 @@ namespace ACadSharp.IO.DWG
 {
 	internal class DwgDocumentBuilder : CadDocumentBuilder
 	{
-		public DwgReaderConfiguration Configuration { get; } = new DwgReaderConfiguration();
+		public new DwgReaderConfiguration Configuration { get { return this.Configuration; } }
 
 		public DwgHeaderHandlesCollection HeaderHandles { get; set; }
 
@@ -31,9 +31,8 @@ namespace ACadSharp.IO.DWG
 		public List<CadBlockRecordTemplate> BlockRecordTemplates { get; set; } = new List<CadBlockRecordTemplate>();
 
 		public DwgDocumentBuilder(CadDocument document, DwgReaderConfiguration configuration)
-			: base(document)
+			: base(document, configuration)
 		{
-			this.Configuration = configuration;
 		}
 
 		public override void BuildDocument()

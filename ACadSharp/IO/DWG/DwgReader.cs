@@ -1263,7 +1263,6 @@ namespace ACadSharp.IO
 				streamHandler.Encoding = encoding;
 
 			return streamHandler;
-			//return sectionStream;
 		}
 
 		private Stream getSectionBuffer15(DwgFileHeader15 fileheader, string sectionName)
