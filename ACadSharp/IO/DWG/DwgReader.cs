@@ -491,7 +491,6 @@ namespace ACadSharp.IO
 				.Select(a => a.Value));
 
 			DwgObjectSectionReader sectionReader = new DwgObjectSectionReader(
-				this._fileHeader.AcadVersion,
 				this._builder,
 				sreader,
 				objectHandles,
