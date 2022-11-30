@@ -11,6 +11,7 @@ using CSUtilities.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System;
 
 namespace ACadSharp.IO.DWG
 {
@@ -123,8 +124,21 @@ namespace ACadSharp.IO.DWG
 				//Get the object type
 				ObjectType type = this.getEntityType(offset);
 
-				//Read the object
-				CadTemplate template = this.readObject(type);
+				CadTemplate template = null;
+
+				try
+				{
+					//Read the object
+					template = this.readObject(type);
+				}
+				catch (Exception ex)
+				{
+					if (!this._builder.Configuration.Failsafe)
+						throw;
+
+					this._builder.Notify($"Could not read {type} with handle: {handle}", NotificationType.Error, ex);
+					continue;
+				}
 
 				//Add the template to the list to be processed
 				if (template == null)
@@ -579,7 +593,7 @@ namespace ACadSharp.IO.DWG
 						break;
 					default:
 						this._objectReader.ReadBytes((int)(endPos - this._objectReader.Position));
-						this._builder.Notify(new NotificationEventArgs($"Unknown code for extended data: {dxfCode}"));
+						this._builder.Notify($"Unknown code for extended data: {dxfCode}", NotificationType.Warning);
 						return data;
 				}
 
@@ -881,15 +895,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readHatch();
 					break;
 				case ObjectType.XRECORD:
-					try
-					{
-						template = this.readXRecord();
-					}
-					catch (System.Exception)
-					{
-						//Xrecord don't seem stable enough
-						this._builder.Notify(new NotificationEventArgs($"Failed to read xrecord"));
-					}
+					template = this.readXRecord();
 					break;
 				case ObjectType.ACDBPLACEHOLDER:
 					break;
@@ -907,7 +913,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			if (template == null)
-				this._builder.Notify(new NotificationEventArgs($"Object type not implemented: {type}", NotificationType.NotImplemented));
+				this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
 
 			return template;
 		}
@@ -980,7 +986,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			if (template == null)
-				this._builder.Notify(new NotificationEventArgs($"Unlisted object not implemented, DXF name: {c.DxfName}"));
+				this._builder.Notify($"Unlisted object not implemented, DXF name: {c.DxfName}", NotificationType.NotImplemented);
 
 			return template;
 		}
