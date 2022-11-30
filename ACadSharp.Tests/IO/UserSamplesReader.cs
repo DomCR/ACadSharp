@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -18,15 +19,33 @@ namespace ACadSharp.Tests.IO
 		{
 			string path = Path.Combine(_samplesFolder, "local", "user_files");
 			UserDwgFilePaths = new TheoryData<string>();
+			UserDxfFiles = new TheoryData<string>();
+
+			if (!Directory.Exists(path))
+			{
+				UserDwgFilePaths.Add(string.Empty);
+				UserDxfFiles.Add(string.Empty);
+				return;
+			}
+
 			foreach (string file in Directory.GetFiles(path, $"*.dwg"))
 			{
 				UserDwgFilePaths.Add(file);
 			}
 
-			UserDxfFiles = new TheoryData<string>();
 			foreach (string file in Directory.GetFiles(path, $"*.dxf"))
 			{
 				UserDxfFiles.Add(file);
+			}
+
+			if (!UserDwgFilePaths.Any())
+			{
+				UserDwgFilePaths.Add(string.Empty);
+			}
+
+			if (!UserDxfFiles.Any())
+			{
+				UserDxfFiles.Add(string.Empty);
 			}
 		}
 
@@ -38,6 +57,9 @@ namespace ACadSharp.Tests.IO
 		[MemberData(nameof(UserDwgFilePaths))]
 		public void ReadUserDwg(string test)
 		{
+			if (string.IsNullOrEmpty(test))
+				return;
+
 			CadDocument doc = DwgReader.Read(test, this.onNotification);
 		}
 
@@ -45,6 +67,9 @@ namespace ACadSharp.Tests.IO
 		[MemberData(nameof(UserDxfFiles))]
 		public void ReadUserDxf(string test)
 		{
+			if (string.IsNullOrEmpty(test))
+				return;
+
 			CadDocument doc = DxfReader.Read(test, this.onNotification);
 		}
 	}
