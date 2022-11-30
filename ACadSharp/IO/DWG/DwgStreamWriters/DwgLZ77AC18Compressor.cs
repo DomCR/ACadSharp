@@ -1,10 +1,13 @@
-﻿namespace ACadSharp.IO.DWG
+﻿using System;
+using System.IO;
+
+namespace ACadSharp.IO.DWG
 {
 	internal class DwgLZ77AC18Compressor
 	{
 		private byte[] _source;
 
-		private System.IO.Stream _dest;
+		private Stream _dest;
 
 		private int[] _block = new int[0x8000];
 
@@ -16,15 +19,18 @@
 
 		private int _totalOffset;
 
-		public void Compress(byte[] source, int offset, int totalSize, System.IO.Stream dest)
+		public DwgLZ77AC18Compressor()
 		{
-			this._source = source;
-			this._dest = dest;
-
 			for (int i = this._block.Length - 1; i >= 0; i--)
 			{
 				this._block[i] = -1;
 			}
+		}
+
+		public void Compress(byte[] source, int offset, int totalSize, Stream dest)
+		{
+			this._source = source;
+			this._dest = dest;
 
 			this._initialOffset = offset;
 			this._totalOffset = this._initialOffset + totalSize;
@@ -84,7 +90,7 @@
 		{
 			if (len <= 0)
 			{
-				throw new System.ArgumentException();
+				throw new ArgumentException();
 			}
 
 			while (len > 0xFF)
@@ -100,12 +106,12 @@
 		{
 			if (compressionOffset <= 0)
 			{
-				throw new System.ArgumentException();
+				throw new ArgumentException();
 			}
 
 			if (value <= 0)
 			{
-				throw new System.ArgumentException();
+				throw new ArgumentException();
 			}
 
 			if (compressionOffset <= value)
@@ -141,13 +147,7 @@
 		{
 			int curr = 0;
 			int next = 0;
-			if (compressionOffset < 0xF && matchPosition <= 0x400)
-			{
-				matchPosition--;
-				curr = (compressionOffset + 1 << 4) | ((matchPosition & 0b11) << 2);
-				next = matchPosition >> 2;
-			}
-			else
+			if (compressionOffset >= 0xF || matchPosition > 0x400)
 			{
 				if (matchPosition <= 0x4000)
 				{
@@ -164,6 +164,12 @@
 
 				next = matchPosition >> 6;
 			}
+			else
+			{
+				matchPosition--;
+				curr = (compressionOffset + 1 << 4) | ((matchPosition & 0b11) << 2);
+				next = matchPosition >> 2;
+			}
 
 			if (mask < 4)
 			{
@@ -177,30 +183,36 @@
 		private bool compressChunk(ref int offset, ref int matchPos)
 		{
 			offset = 0;
-			byte b = this._source[this._currPosition];
-			byte b2 = this._source[this._currPosition + 1];
-			byte b3 = this._source[this._currPosition + 2];
-			byte b4 = this._source[this._currPosition + 3];
 
-			int valueIndex = applyByteCompression(b, b2, b3, b4);
+			int valueIndex = applyByteCompression(
+				this._source[this._currPosition],
+				this._source[this._currPosition + 1],
+				this._source[this._currPosition + 2],
+				this._source[this._currPosition + 3]);
+
 			int value = this._block[valueIndex];
 
 			matchPos = this._currPosition - value;
 
 			if (value >= this._initialOffset && matchPos <= 0xBFFF)
 			{
-				if (matchPos > 0x400 && b4 != this._source[value + 3])
+				if (matchPos > 0x400 && this._source[this._currPosition + 3] != this._source[value + 3])
 				{
 					valueIndex = (valueIndex & 0x7FF) ^ 0b100000000011111;
 					value = this._block[valueIndex];
 					matchPos = this._currPosition - value;
-					if (value < this._initialOffset || matchPos > 0xBFFF || (matchPos > 0x400 && b4 != this._source[value + 3]))
+					if (value < this._initialOffset ||
+						matchPos > 0xBFFF ||
+						(matchPos > 0x400 && 
+						this._source[this._currPosition + 3] != this._source[value + 3]))
 					{
 						this._block[valueIndex] = this._currPosition;
 						return false;
 					}
 				}
-				if (b == this._source[value] && b2 == this._source[value + 1] && b3 == this._source[value + 2])
+				if (this._source[this._currPosition] == this._source[value] && 
+					this._source[this._currPosition + 1] == this._source[value + 1] && 
+					this._source[this._currPosition + 2] == this._source[value + 2])
 				{
 					offset = 3;
 					int index = value + 3;
@@ -211,6 +223,7 @@
 					}
 				}
 			}
+
 			this._block[valueIndex] = this._currPosition;
 			return offset >= 3;
 		}
