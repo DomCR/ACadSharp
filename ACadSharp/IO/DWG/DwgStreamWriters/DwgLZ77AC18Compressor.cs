@@ -80,12 +80,6 @@ namespace ACadSharp.IO.DWG
 			dest.WriteByte(0);
 		}
 
-		private int applyByteCompression(byte b1, byte b2, byte b3, byte b4)
-		{
-			int v = (((((b4 << 6) ^ b3) << 5) ^ b2) << 5) ^ b1;
-			return (v + (v >> 5)) & 0x7FFF;
-		}
-
 		private void writeLen(int len)
 		{
 			if (len <= 0)
@@ -184,11 +178,11 @@ namespace ACadSharp.IO.DWG
 		{
 			offset = 0;
 
-			int valueIndex = applyByteCompression(
-				this._source[this._currPosition],
-				this._source[this._currPosition + 1],
-				this._source[this._currPosition + 2],
-				this._source[this._currPosition + 3]);
+			int v1 = this._source[this._currPosition + 3] << 6;
+			int v2 = v1 ^ this._source[this._currPosition + 2];
+			int v3 = v2 << 5 ^ this._source[this._currPosition + 1];
+			int v4 = v3 << 5 ^ this._source[this._currPosition];
+			int valueIndex = (v4 + (v4 >> 5)) & 0x7FFF;
 
 			int value = this._block[valueIndex];
 
