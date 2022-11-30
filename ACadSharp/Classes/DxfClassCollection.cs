@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ACadSharp.Classes
 {
@@ -16,6 +15,9 @@ namespace ACadSharp.Classes
 
 		public void Add(DxfClass item)
 		{
+			if (_list.ContainsKey(item.DxfName))
+				return;
+
 			_list.Add(item.DxfName, item);
 		}
 
@@ -41,7 +43,7 @@ namespace ACadSharp.Classes
 
 		public bool Remove(DxfClass item)
 		{
-			throw new NotImplementedException();
+			return this._list.Remove(item.DxfName);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
