@@ -20,7 +20,20 @@ namespace ACadSharp.IO.DXF
 			//Loop until the section ends
 			while (this._reader.LastValueAsString != DxfFileToken.EndSection)
 			{
-				CadTemplate template = this.readObject();
+				CadTemplate template = null;
+
+				try
+				{
+					template = this.readObject();
+				}
+				catch (Exception)
+				{
+					if (!this._builder.Configuration.Failsafe)
+						throw;
+
+					while (this._reader.LastDxfCode != DxfCode.Start)
+						this._reader.ReadNext();
+				}
 
 				if (template == null)
 					continue;
@@ -48,7 +61,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadXRecordTemplate(new XRecrod());
 					break;
 				default:
-					this._builder.Notify(new NotificationEventArgs($"Object not implemented: {this._reader.LastValueAsString}"));
+					this._builder.Notify($"Object not implemented: {this._reader.LastValueAsString}", NotificationType.NotImplemented);
 					do
 					{
 						this._reader.ReadNext();
@@ -79,7 +92,7 @@ namespace ACadSharp.IO.DXF
 						this.readMapped<XRecrod>(template.CadObject, template);
 						break;
 					default:
-						this._builder.Notify(new NotificationEventArgs($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}"));
+						this._builder.Notify($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}");
 						while (this._reader.LastDxfCode != DxfCode.Start)
 							this._reader.ReadNext();
 						break;
@@ -125,7 +138,7 @@ namespace ACadSharp.IO.DXF
 						template.Entries[lastKey] = this._reader.LastValueAsHandle;
 						break;
 					default:
-						this._builder.Notify(new NotificationEventArgs($"Group Code not handled {this._reader.LastGroupCodeValue} for {typeof(CadDictionary)}, code : {this._reader.LastCode} | value : {this._reader.LastValueAsString}"));
+						this._builder.Notify($"Group Code not handled {this._reader.LastGroupCodeValue} for {typeof(CadDictionary)}, code : {this._reader.LastCode} | value : {this._reader.LastValueAsString}");
 						break;
 				}
 

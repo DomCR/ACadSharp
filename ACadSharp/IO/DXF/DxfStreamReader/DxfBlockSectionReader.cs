@@ -3,6 +3,7 @@ using ACadSharp.Entities;
 using ACadSharp.Exceptions;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -62,7 +63,20 @@ namespace ACadSharp.IO.DXF
 
 			while (this._reader.LastValueAsString != DxfFileToken.EndBlock)
 			{
-				CadEntityTemplate entityTemplate = this.readEntity();
+				CadEntityTemplate entityTemplate = null;
+
+				try
+				{
+					entityTemplate = this.readEntity();
+				}
+				catch (Exception)
+				{
+					if (!this._builder.Configuration.Failsafe)
+						throw;
+
+					while (this._reader.LastDxfCode != DxfCode.Start)
+						this._reader.ReadNext();
+				}
 
 				if (entityTemplate == null)
 					continue;
