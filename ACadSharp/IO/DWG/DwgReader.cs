@@ -707,7 +707,6 @@ namespace ACadSharp.IO
 				//0x20	64	Section Name(string)
 				descriptor.Name = decompressedStream.ReadString(64).Split('\0')[0];
 
-				ulong currPosition = 0;
 				//Following this, the following (local) section page map data will be present
 				for (int j = 0; j < descriptor.PageCount; ++j)
 				{
@@ -726,32 +725,7 @@ namespace ACadSharp.IO
 					//Maximum section page size appears to be 0x7400 bytes in the normal case.
 					//If a logical section of the file (the database objects, for example) exceeds this size, then it is broken up into pages of size 0x7400.
 
-					//Add empty local section to fill the gap between them
-					for (; currPosition < localmap.Offset; currPosition += descriptor.DecompressedSize)
-					{
-						DwgLocalSectionMap emptySection = new DwgLocalSectionMap();
-						emptySection.IsEmpty = true;
-						emptySection.PageNumber = 0;
-						emptySection.CompressedSize = 0;
-						emptySection.Offset = currPosition;
-						emptySection.DecompressedSize = descriptor.DecompressedSize;
-						descriptor.LocalSections.Add(emptySection);
-					}
-
 					descriptor.LocalSections.Add(localmap);
-					currPosition += descriptor.DecompressedSize;
-				}
-
-				//Add empty local section to fill the gap between the descriptors
-				for (; currPosition < descriptor.CompressedSize; currPosition += descriptor.DecompressedSize)
-				{
-					DwgLocalSectionMap emptySection = new DwgLocalSectionMap();
-					emptySection.IsEmpty = true;
-					emptySection.PageNumber = 0;
-					emptySection.CompressedSize = 0;
-					emptySection.Offset = currPosition;
-					emptySection.DecompressedSize = descriptor.DecompressedSize;
-					descriptor.LocalSections.Add(emptySection);
 				}
 
 				//Get the final size for the local section
@@ -911,7 +885,7 @@ namespace ACadSharp.IO
 				fileheader.CompressedMetadata.PagesMapSizeCompressed,
 				fileheader.CompressedMetadata.PagesMapSizeUncompressed,
 				fileheader.CompressedMetadata.PagesMapCorrectionFactor,
-				239, sreader.Stream);
+				0xEF, sreader.Stream);
 
 			//Read the page data
 			StreamIO pageDataStream = new StreamIO(arr);
@@ -1433,6 +1407,7 @@ namespace ACadSharp.IO
 		/// Apply a simple reed Solomon decoding to a byte array.
 		/// </summary>
 		/// <param name="encoded"></param>
+		/// <param name="buffer"></param>
 		/// <param name="factor"></param>
 		/// <param name="blockSize"></param>
 		private void reedSolomonDecoding(byte[] encoded, byte[] buffer, int factor, int blockSize)
