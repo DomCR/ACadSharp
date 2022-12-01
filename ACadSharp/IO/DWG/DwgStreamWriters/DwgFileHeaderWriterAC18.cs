@@ -481,9 +481,9 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			long position = this._stream.Position;
 
 			DwgLocalSectionMap localMap = new DwgLocalSectionMap();
-			localMap.PageNumber = this._localSectionsMaps.Count + 1;
 			localMap.Offset = offset;
 			localMap.Seeker = position;
+			localMap.PageNumber = this._localSectionsMaps.Count + 1;
 			localMap.ODA = DwgCheckSumCalculator.Calculate(0u, mainStream.GetBuffer(), 0, (int)mainStream.Length);
 
 			int compressDiff = DwgCheckSumCalculator.CompressionCalculator((int)mainStream.Length);
