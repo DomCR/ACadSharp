@@ -44,19 +44,6 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			{
 				this._stream.WriteByte(0);
 			}
-
-			this._fileHeader.AddSection(DwgSectionDefinition.FileDepList);
-			this._fileHeader.AddSection(DwgSectionDefinition.AppInfo);
-			this._fileHeader.AddSection(DwgSectionDefinition.Preview);
-			this._fileHeader.AddSection(DwgSectionDefinition.SummaryInfo);
-			this._fileHeader.AddSection(DwgSectionDefinition.RevHistory);
-			this._fileHeader.AddSection(DwgSectionDefinition.AcDbObjects);
-			this._fileHeader.AddSection(DwgSectionDefinition.ObjFreeSpace);
-			this._fileHeader.AddSection(DwgSectionDefinition.Template);
-			this._fileHeader.AddSection(DwgSectionDefinition.Handles);
-			this._fileHeader.AddSection(DwgSectionDefinition.Classes);
-			this._fileHeader.AddSection(DwgSectionDefinition.AuxHeader);
-			this._fileHeader.AddSection(DwgSectionDefinition.Header);
 		}
 
 		public void WriteFile()
@@ -68,10 +55,140 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 			this.writeDescriptors();
 
-			this.WriteRecords();
+			this.writeRecords();
 
-			this.WriteFileMetaData();
+			this.writeFileMetaData();
 		}
+
+		public void CreateSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400)
+		{
+			DwgSectionDescriptor descriptor = new DwgSectionDescriptor(name);
+			this._fileHeader.AddSection(descriptor);
+			descriptor.DecompressedSize = (ulong)decompsize;
+
+			descriptor.CompressedSize = (ulong)stream.Length;
+			descriptor.CompressedCode = ((!isCompressed) ? 1 : 2);
+
+			int nlocalSections = (int)(stream.Length / (int)descriptor.DecompressedSize);
+
+			byte[] buffer = stream.GetBuffer();
+			ulong offset = 0uL;
+			for (int i = 0; i < nlocalSections; i++)
+			{
+				this.craeteLocalSection(
+					descriptor,
+					(int)descriptor.DecompressedSize,
+					buffer,
+					offset,
+					(int)descriptor.DecompressedSize,
+					isCompressed);
+				offset += (ulong)descriptor.DecompressedSize;
+			}
+
+			int spearBytes = (int)(stream.Length % (int)descriptor.DecompressedSize);
+			if (spearBytes > 0 && !checkEmptyBytes(buffer, offset, (ulong)spearBytes))
+			{
+				this.craeteLocalSection(
+					descriptor,
+					(int)descriptor.DecompressedSize,
+					buffer, offset,
+					spearBytes,
+					isCompressed);
+			}
+		}
+
+		public bool checkEmptyBytes(byte[] buffer, ulong offset, ulong spearBytes)
+		{
+			bool result = true;
+			ulong num = offset + spearBytes;
+
+			for (ulong i = offset; i < num; i++)
+			{
+				if (buffer[i] != 0)
+				{
+					result = false;
+					break;
+				}
+			}
+
+			return result;
+		}
+
+		private void craeteLocalSection(DwgSectionDescriptor descriptor, int decompressedSize, byte[] buffer, ulong offset, int totalSize, bool isCompressed)
+		{
+			MemoryStream mainStream = new MemoryStream();
+
+			if (isCompressed)
+			{
+				MemoryStream holder = new MemoryStream(decompressedSize);
+				holder.Write(buffer, (int)offset, totalSize);
+				int diff = decompressedSize - totalSize;
+				for (int i = 0; i < diff; i++)
+				{
+					holder.WriteByte(0);
+				}
+
+				new DwgLZ77AC18Compressor().Compress(holder.GetBuffer(), 0, decompressedSize, mainStream);
+			}
+			else
+			{
+				mainStream.Write(buffer, (int)offset, totalSize);
+				int diff = decompressedSize - totalSize;
+				for (int j = 0; j < diff; j++)
+				{
+					mainStream.WriteByte(0);
+				}
+			}
+
+			this.writeMagicNumber();
+
+			//Save position for the local section
+			long position = this._stream.Position;
+
+			DwgLocalSectionMap localMap = new DwgLocalSectionMap();
+			localMap.Offset = offset;
+			localMap.Seeker = position;
+			localMap.PageNumber = this._localSectionsMaps.Count + 1;
+			localMap.ODA = DwgCheckSumCalculator.Calculate(0u, mainStream.GetBuffer(), 0, (int)mainStream.Length);
+
+			int compressDiff = DwgCheckSumCalculator.CompressionCalculator((int)mainStream.Length);
+			localMap.CompressedSize = (ulong)mainStream.Length;
+			localMap.DecompressedSize = (ulong)totalSize;
+			localMap.PageSize = (long)localMap.CompressedSize + 32 + compressDiff;
+			localMap.Checksum = 0u;
+
+			MemoryStream checkSumStream = new MemoryStream(32);
+			this.writeDataSection(checkSumStream, descriptor, localMap, (int)descriptor.PageType);
+			localMap.Checksum = DwgCheckSumCalculator.Calculate(localMap.ODA, checkSumStream.GetBuffer(), 0, (int)checkSumStream.Length);
+			checkSumStream.SetLength(0L);
+			checkSumStream.Position = 0L;
+
+			this.writeDataSection(checkSumStream, descriptor, localMap, (int)descriptor.PageType);
+
+			this.applyMask(checkSumStream.GetBuffer(), 0, (int)checkSumStream.Length);
+
+			this._stream.Write(checkSumStream.GetBuffer(), 0, (int)checkSumStream.Length);
+			this._stream.Write(mainStream.GetBuffer(), 0, (int)mainStream.Length);
+
+			if (isCompressed)
+			{
+				this._stream.Write(DwgCheckSumCalculator.MagicSequence, 0, compressDiff);
+			}
+			else if (compressDiff != 0)
+			{
+				throw new Exception();
+			}
+
+			if (localMap.PageNumber > 0)
+			{
+				descriptor.PageCount++;
+			}
+
+			localMap.Size = this._stream.Position - position;
+			descriptor.LocalSections.Add(localMap);
+			this._localSectionsMaps.Add(localMap);
+		}
+
 
 		private void writeDescriptors()
 		{
@@ -152,7 +269,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			this.addSection(sectionHolder);
 		}
 
-		public void WriteRecords()
+		public void writeRecords()
 		{
 			this.writeMagicNumber();
 
@@ -193,7 +310,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			this._fileHeader.PageMapAddress = (ulong)section.Seeker;
 		}
 
-		public void WriteFileMetaData()
+		public void writeFileMetaData()
 		{
 			StreamIO writer = new StreamIO(this._stream);
 
@@ -395,135 +512,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			//0x10	4	Section page checksum
 			writer.Write<uint>((uint)section.Checksum);
 		}
-
-		public void CreateSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400)
-		{
-			DwgSectionDescriptor descriptor = this._descriptors[name];
-			descriptor.DecompressedSize = (ulong)decompsize;
-
-			descriptor.CompressedSize = (ulong)stream.Length;
-			descriptor.CompressedCode = ((!isCompressed) ? 1 : 2);
-
-			int nlocalSections = (int)(stream.Length / (int)descriptor.DecompressedSize);
-
-			byte[] buffer = stream.GetBuffer();
-			ulong offset = 0uL;
-			for (int i = 0; i < nlocalSections; i++)
-			{
-				this.craeteLocalSection(
-					descriptor,
-					(int)descriptor.DecompressedSize,
-					buffer,
-					offset,
-					(int)descriptor.DecompressedSize,
-					isCompressed);
-				offset += (ulong)descriptor.DecompressedSize;
-			}
-
-			int spearBytes = (int)(stream.Length % (int)descriptor.DecompressedSize);
-			if (spearBytes > 0 && !checkEmptyBytes(buffer, offset, (ulong)spearBytes))
-			{
-				this.craeteLocalSection(
-					descriptor, 
-					(int)descriptor.DecompressedSize, 
-					buffer, offset,
-					spearBytes,
-					isCompressed);
-			}
-		}
-
-		public bool checkEmptyBytes(byte[] buffer, ulong offset, ulong spearBytes)
-		{
-			bool result = true;
-			ulong num = offset + spearBytes;
-
-			for (ulong i = offset; i < num; i++)
-			{
-				if (buffer[i] != 0)
-				{
-					result = false;
-					break;
-				}
-			}
-
-			return result;
-		}
-
-		private void craeteLocalSection(DwgSectionDescriptor descriptor, int decompressedSize, byte[] buffer, ulong offset, int totalSize, bool isCompressed)
-		{
-			MemoryStream mainStream = new MemoryStream();
-
-			if (isCompressed)
-			{
-				MemoryStream holder = new MemoryStream(decompressedSize);
-				holder.Write(buffer, (int)offset, totalSize);
-				int diff = decompressedSize - totalSize;
-				for (int i = 0; i < diff; i++)
-				{
-					holder.WriteByte(0);
-				}
-
-				new DwgLZ77AC18Compressor().Compress(holder.GetBuffer(), 0, decompressedSize, mainStream);
-			}
-			else
-			{
-				mainStream.Write(buffer, (int)offset, totalSize);
-				int diff = decompressedSize - totalSize;
-				for (int j = 0; j < diff; j++)
-				{
-					mainStream.WriteByte(0);
-				}
-			}
-
-			this.writeMagicNumber();
-
-			//Save position for the local section
-			long position = this._stream.Position;
-
-			DwgLocalSectionMap localMap = new DwgLocalSectionMap();
-			localMap.Offset = offset;
-			localMap.Seeker = position;
-			localMap.PageNumber = this._localSectionsMaps.Count + 1;
-			localMap.ODA = DwgCheckSumCalculator.Calculate(0u, mainStream.GetBuffer(), 0, (int)mainStream.Length);
-
-			int compressDiff = DwgCheckSumCalculator.CompressionCalculator((int)mainStream.Length);
-			localMap.CompressedSize = (ulong)mainStream.Length;
-			localMap.DecompressedSize = (ulong)totalSize;
-			localMap.PageSize = (long)localMap.CompressedSize + 32 + compressDiff;
-			localMap.Checksum = 0u;
-
-			MemoryStream checkSumStream = new MemoryStream(32);
-			this.writeDataSection(checkSumStream, descriptor, localMap, (int)descriptor.PageType);
-			localMap.Checksum = DwgCheckSumCalculator.Calculate(localMap.ODA, checkSumStream.GetBuffer(), 0, (int)checkSumStream.Length);
-			checkSumStream.SetLength(0L);
-			checkSumStream.Position = 0L;
-
-			this.writeDataSection(checkSumStream, descriptor, localMap, (int)descriptor.PageType);
-
-			this.applyMask(checkSumStream.GetBuffer(), 0, (int)checkSumStream.Length);
-
-			this._stream.Write(checkSumStream.GetBuffer(), 0, (int)checkSumStream.Length);
-			this._stream.Write(mainStream.GetBuffer(), 0, (int)mainStream.Length);
-
-			if (isCompressed)
-			{
-				this._stream.Write(DwgCheckSumCalculator.MagicSequence, 0, compressDiff);
-			}
-			else if (compressDiff != 0)
-			{
-				throw new Exception();
-			}
-
-			if (localMap.PageNumber > 0)
-			{
-				descriptor.PageCount++;
-			}
-
-			localMap.Size = this._stream.Position - position;
-			descriptor.LocalSections.Add(localMap);
-			this._localSectionsMaps.Add(localMap);
-		}
-
+				
 		private void writeDataSection(Stream stream, DwgSectionDescriptor descriptor, DwgLocalSectionMap map, int size)
 		{
 			StreamIO writer = new StreamIO(stream);
