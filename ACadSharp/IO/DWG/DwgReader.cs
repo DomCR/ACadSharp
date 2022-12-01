@@ -523,8 +523,7 @@ namespace ACadSharp.IO
 			//Bytes at 0x13 and 0x14 are a raw short indicating the value of the code page for this drawing file.
 			sreader.ReadBytes(2);
 
-			//TODO: Wrong encoding code, fix the index coding
-			fileheader.DrawingCodePage = (CodePage)sreader.ReadShort();
+			fileheader.DrawingCodePage = CadUtils.GetCodePage(sreader.ReadShort());
 			sreader.Encoding = TextEncoding.GetListedEncoding(fileheader.DrawingCodePage);
 
 			int nRecords = (int)sreader.ReadRawLong();
@@ -564,13 +563,14 @@ namespace ACadSharp.IO
 			//AD 4F 14 F2 44 40 66 D0 6B C4 30 B7
 
 			StreamIO headerStream = new StreamIO(new CRC32StreamHandler(sreader.ReadBytes(0x6C), 0U)); //108
+			headerStream.Encoding = TextEncoding.GetListedEncoding(CodePage.Windows1252);
 
 			sreader.ReadBytes(20);  //CHECK IF IS USEFUL
 
 			#region Read header encrypted data
 
 			//0x00	12	“AcFssFcAJMB” file ID string
-			string fileId = headerStream.ReadString(12, TextEncoding.GetListedEncoding(CodePage.Windows1252));
+			string fileId = headerStream.ReadString(12);
 			if (fileId != "AcFssFcAJMB\0")
 			{
 				this.triggerNotification($"File validation failed, id should be : AcFssFcAJMB\0, but is : {fileId}", NotificationType.Warning);
@@ -673,24 +673,25 @@ namespace ACadSharp.IO
 			sreader.Position = fileheader.Records[(int)fileheader.SectionMapId].Seeker;
 			//Get the page size
 			this.getPageHeaderData(sreader, out _, out decompressedSize, out _, out _, out _);
-			StreamIO streamIO = new StreamIO(Dwg2004LZ77.Decompress(sreader.Stream, decompressedSize));
+			StreamIO decompressedStream = new StreamIO(Dwg2004LZ77.Decompress(sreader.Stream, decompressedSize));
+			decompressedStream.Encoding = TextEncoding.GetListedEncoding(CodePage.Windows1252);
 
 			//0x00	4	Number of section descriptions(NumDescriptions)
-			int ndescriptions = streamIO.ReadInt<LittleEndianConverter>();
+			int ndescriptions = decompressedStream.ReadInt<LittleEndianConverter>();
 			//0x04	4	0x02 (long)
-			streamIO.ReadInt<LittleEndianConverter>();
+			decompressedStream.ReadInt<LittleEndianConverter>();
 			//0x08	4	0x00007400 (long)
-			streamIO.ReadInt<LittleEndianConverter>();
+			decompressedStream.ReadInt<LittleEndianConverter>();
 			//0x0C	4	0x00 (long)
-			streamIO.ReadInt<LittleEndianConverter>();
+			decompressedStream.ReadInt<LittleEndianConverter>();
 			//0x10	4	Unknown (long), ODA writes NumDescriptions here.
-			streamIO.ReadInt<LittleEndianConverter>();
+			decompressedStream.ReadInt<LittleEndianConverter>();
 
 			for (int i = 0; i < ndescriptions; ++i)
 			{
 				DwgSectionDescriptor descriptor = new DwgSectionDescriptor();
 				//0x00	8	Size of section(OdUInt64)
-				descriptor.CompressedSize = streamIO.ReadULong();
+				descriptor.CompressedSize = decompressedStream.ReadULong();
 				/*0x08	4	Page count(PageCount). Note that there can be more pages than PageCount,
 							as PageCount is just the number of pages written to file.
 							If a page contains zeroes only, that page is not written to file.
@@ -700,31 +701,30 @@ namespace ACadSharp.IO
 							decompressed size of the pages is not equal to the section’s size, add more zero 
 							pages to the section until this condition is met.
 				*/
-				descriptor.PageCount = streamIO.ReadInt<LittleEndianConverter>();
+				descriptor.PageCount = decompressedStream.ReadInt<LittleEndianConverter>();
 				//0x0C	4	Max Decompressed Size of a section page of this type(normally 0x7400)
-				descriptor.DecompressedSize = (ulong)streamIO.ReadInt<LittleEndianConverter>();
+				descriptor.DecompressedSize = (ulong)decompressedStream.ReadInt<LittleEndianConverter>();
 				//0x10	4	Unknown(long)
-				streamIO.ReadInt<LittleEndianConverter>();
+				decompressedStream.ReadInt<LittleEndianConverter>();
 				//0x14	4	Compressed(1 = no, 2 = yes, normally 2)
-				descriptor.CompressedCode = streamIO.ReadInt<LittleEndianConverter>();
+				descriptor.CompressedCode = decompressedStream.ReadInt<LittleEndianConverter>();
 				//0x18	4	Section Id(starts at 0). The first section(empty section) is numbered 0, consecutive sections are numbered descending from(the number of sections – 1) down to 1.
-				descriptor.SectionId = streamIO.ReadInt<LittleEndianConverter>();
+				descriptor.SectionId = decompressedStream.ReadInt<LittleEndianConverter>();
 				//0x1C	4	Encrypted(0 = no, 1 = yes, 2 = unknown)
-				descriptor.Encrypted = streamIO.ReadInt<LittleEndianConverter>();
+				descriptor.Encrypted = decompressedStream.ReadInt<LittleEndianConverter>();
 				//0x20	64	Section Name(string)
-				descriptor.Name = streamIO.ReadString(64, TextEncoding.GetListedEncoding(CodePage.Windows1252)).Split('\0')[0];
+				descriptor.Name = decompressedStream.ReadString(64).Split('\0')[0];
 
-				ulong currPosition = 0;
 				//Following this, the following (local) section page map data will be present
 				for (int j = 0; j < descriptor.PageCount; ++j)
 				{
 					DwgLocalSectionMap localmap = new DwgLocalSectionMap();
 					//0x00	4	Page number(index into SectionPageMap), starts at 1
-					localmap.PageNumber = streamIO.ReadInt<LittleEndianConverter>();
+					localmap.PageNumber = decompressedStream.ReadInt<LittleEndianConverter>();
 					//0x04	4	Data size for this page(compressed size).
-					localmap.CompressedSize = (ulong)streamIO.ReadInt<LittleEndianConverter>();
+					localmap.CompressedSize = (ulong)decompressedStream.ReadInt<LittleEndianConverter>();
 					//0x08	8	Start offset for this page(OdUInt64).If this start offset is smaller than the sum of the decompressed size of all previous pages, then this page is to be preceded by zero pages until this condition is met.
-					localmap.Offset = streamIO.ReadULong();
+					localmap.Offset = decompressedStream.ReadULong();
 
 					//same decompressed size and seeker (temporal values)
 					localmap.DecompressedSize = descriptor.DecompressedSize;
@@ -733,32 +733,7 @@ namespace ACadSharp.IO
 					//Maximum section page size appears to be 0x7400 bytes in the normal case.
 					//If a logical section of the file (the database objects, for example) exceeds this size, then it is broken up into pages of size 0x7400.
 
-					//Add empty local section to fill the gap between them
-					for (; currPosition < localmap.Offset; currPosition += descriptor.DecompressedSize)
-					{
-						DwgLocalSectionMap emptySection = new DwgLocalSectionMap();
-						emptySection.IsEmpty = true;
-						emptySection.PageNumber = 0;
-						emptySection.CompressedSize = 0;
-						emptySection.Offset = currPosition;
-						emptySection.DecompressedSize = descriptor.DecompressedSize;
-						descriptor.LocalSections.Add(emptySection);
-					}
-
 					descriptor.LocalSections.Add(localmap);
-					currPosition += descriptor.DecompressedSize;
-				}
-
-				//Add empty local section to fill the gap between the descriptors
-				for (; currPosition < descriptor.CompressedSize; currPosition += descriptor.DecompressedSize)
-				{
-					DwgLocalSectionMap emptySection = new DwgLocalSectionMap();
-					emptySection.IsEmpty = true;
-					emptySection.PageNumber = 0;
-					emptySection.CompressedSize = 0;
-					emptySection.Offset = currPosition;
-					emptySection.DecompressedSize = descriptor.DecompressedSize;
-					descriptor.LocalSections.Add(emptySection);
 				}
 
 				//Get the final size for the local section
@@ -918,7 +893,7 @@ namespace ACadSharp.IO
 				fileheader.CompressedMetadata.PagesMapSizeCompressed,
 				fileheader.CompressedMetadata.PagesMapSizeUncompressed,
 				fileheader.CompressedMetadata.PagesMapCorrectionFactor,
-				239, sreader.Stream);
+				0xEF, sreader.Stream);
 
 			//Read the page data
 			StreamIO pageDataStream = new StreamIO(arr);
@@ -1048,7 +1023,7 @@ namespace ACadSharp.IO
 			fileheader.AppReleaseVersion = sreader.ReadByte();
 
 			//0x13	2	Codepage
-			fileheader.DrawingCodePage = (CodePage)sreader.ReadShort();
+			fileheader.DrawingCodePage = CadUtils.GetCodePage(sreader.ReadShort());
 			sreader.Encoding = TextEncoding.GetListedEncoding(fileheader.DrawingCodePage);
 
 			//Advance empty bytes 
@@ -1276,7 +1251,6 @@ namespace ACadSharp.IO
 				streamHandler.Encoding = encoding;
 
 			return streamHandler;
-			//return sectionStream;
 		}
 
 		private Stream getSectionBuffer15(DwgFileHeader15 fileheader, string sectionName)
@@ -1443,6 +1417,7 @@ namespace ACadSharp.IO
 		/// Apply a simple reed Solomon decoding to a byte array.
 		/// </summary>
 		/// <param name="encoded"></param>
+		/// <param name="buffer"></param>
 		/// <param name="factor"></param>
 		/// <param name="blockSize"></param>
 		private void reedSolomonDecoding(byte[] encoded, byte[] buffer, int factor, int blockSize)

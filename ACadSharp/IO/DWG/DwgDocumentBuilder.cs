@@ -6,7 +6,7 @@ namespace ACadSharp.IO.DWG
 {
 	internal class DwgDocumentBuilder : CadDocumentBuilder
 	{
-		public DwgReaderConfiguration Configuration { get; } = new DwgReaderConfiguration();
+		public DwgReaderConfiguration Configuration { get; }
 
 		public DwgHeaderHandlesCollection HeaderHandles { get; set; }
 

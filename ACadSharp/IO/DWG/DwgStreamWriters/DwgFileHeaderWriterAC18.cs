@@ -61,8 +61,8 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 		public void WriteFile()
 		{
-			this._fileHeader.SectionArrayPageSize = (uint)(this._localSectionsMaps.Count + 2);
 			this._fileHeader.GapArraySize = 0u;
+			this._fileHeader.SectionArrayPageSize = (uint)(this._localSectionsMaps.Count + 2);
 			this._fileHeader.SectionPageMapId = this._fileHeader.SectionArrayPageSize;
 			this._fileHeader.SectionMapId = this._fileHeader.SectionArrayPageSize - 1;
 
@@ -186,9 +186,9 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			this.compressSection(section, stream);
 
 			DwgLocalSectionMap last = this._localSectionsMaps[this._localSectionsMaps.Count - 1];
+			this._fileHeader.GapAmount = 0u;
 			this._fileHeader.LastPageId = last.PageNumber;
 			this._fileHeader.LastSectionAddr = (ulong)(last.Seeker + size - 256);
-			this._fileHeader.GapAmount = 0u;
 			this._fileHeader.SectionAmount = (uint)(this._localSectionsMaps.Count - 1);
 			this._fileHeader.PageMapAddress = (ulong)section.Seeker;
 		}

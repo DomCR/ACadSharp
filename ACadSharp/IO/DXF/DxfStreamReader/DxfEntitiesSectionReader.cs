@@ -1,7 +1,4 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.Exceptions;
-using ACadSharp.IO.Templates;
-using ACadSharp.Tables;
+﻿using ACadSharp.IO.Templates;
 using System;
 
 namespace ACadSharp.IO.DXF
@@ -21,7 +18,20 @@ namespace ACadSharp.IO.DXF
 			//Loop until the section ends
 			while (this._reader.LastValueAsString != DxfFileToken.EndSection)
 			{
-				CadEntityTemplate template = this.readEntity();
+				CadEntityTemplate template = null;
+
+				try
+				{
+					template = this.readEntity();
+				}
+				catch (Exception)
+				{
+					if (!this._builder.Configuration.Failsafe)
+						throw;
+
+					while (this._reader.LastDxfCode != DxfCode.Start)
+						this._reader.ReadNext();
+				}
 
 				if (template == null)
 					continue;

@@ -107,7 +107,7 @@ namespace ACadSharp.IO
 		public override CadDocument Read()
 		{
 			this._document = new CadDocument(false);
-			this._builder = new DxfDocumentBuilder(this._document);
+			this._builder = new DxfDocumentBuilder(this._document, this.Configuration);
 			this._builder.OnNotification += this.triggerNotification;
 
 			this._reader = this._reader ?? this.getReader();
