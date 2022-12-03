@@ -25,8 +25,9 @@ namespace ACadSharp.IO.DWG
 
 		public DxfClassCollection Read(IDwgStreamReader sreader)
 		{
+			DxfClassCollection classes = new DxfClassCollection();
+
 			//SN : 0x8D 0xA1 0xC4 0xB8 0xC4 0xA9 0xF8 0xC5 0xC0 0xDC 0xF4 0x5F 0xE7 0xCF 0xB6 0x8A
-			//byte[] sn = sreader.ReadSentinel();
 			if (!this.checkSentinel(sreader, this._startSentinel))
 			{
 				throw new System.Exception();
@@ -45,18 +46,18 @@ namespace ACadSharp.IO.DWG
 				long unknown = sreader.ReadRawLong();
 			}
 
-			long initialPos = sreader.PositionInBits();
-
+			long flagPos = 0;
 			//+R2007 Only:
 			if (R2007Plus)
 			{
-				long flagPos = sreader.PositionInBits() + sreader.ReadRawLong() - 1L;
-				long offset = sreader.PositionInBits();
+				//Setup readers
+				flagPos = sreader.PositionInBits() + sreader.ReadRawLong() - 1L;
+				long savedOffset = sreader.PositionInBits();
 				endSection = sreader.SetPositionByFlag(flagPos);
 
-				sreader.SetPositionInBits(offset);
+				sreader.SetPositionInBits(savedOffset);
 
-				//Setup the text handler for versions 2007 and above
+				//Setup the text reader for versions 2007 and above
 				IDwgStreamReader textReader = DwgStreamReader.GetStreamHandler(_version,
 					//Create a copy of the stream
 					new StreamIO(sreader.Stream, true).Stream);
@@ -83,9 +84,8 @@ namespace ACadSharp.IO.DWG
 				sreader.ReadBit();
 			}
 
-			DxfClassCollection classes = new DxfClassCollection();
 			//We read sets of these until we exhaust the data.
-			while (sreader.PositionInBits() < endSection)
+			while (getCurrPos(sreader) < endSection)
 			{
 				DxfClass dxfClass = new DxfClass();
 				//BS : classnum
@@ -137,18 +137,33 @@ namespace ACadSharp.IO.DWG
 				classes.Add(dxfClass);
 			}
 
+			if (R2007Plus)
+			{
+				sreader.SetPositionInBits(flagPos + 1);
+			}
+
 			//RS: CRC
-			short crc = sreader.ReadShort();
+			sreader.ResetShift();
 
 			//0x72,0x5E,0x3B,0x47,0x3B,0x56,0x07,0x3A,0x3F,0x23,0x0B,0xA0,0x18,0x30,0x49,0x75
-			//byte[] endsn = sreader.ReadSentinel();
-			sreader.ResetShift();
 			if (!this.checkSentinel(sreader, this._endSentinel))
 			{
 				throw new System.Exception();
 			}
 
 			return classes;
+		}
+
+		private long getCurrPos(IDwgStreamReader sreader)
+		{
+			if (R2007Plus)
+			{
+				return sreader.PositionInBits();
+			}
+			else
+			{
+				return sreader.Position;
+			}
 		}
 	}
 }

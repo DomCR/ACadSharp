@@ -324,7 +324,8 @@ namespace ACadSharp.IO
 
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Classes);
 
-			return new DwgClassesReader(this._fileHeader.AcadVersion, this._fileHeader).Read(sreader);
+			var reader = new DwgClassesReader(this._fileHeader.AcadVersion, this._fileHeader);
+			return reader.Read(sreader);
 
 			//R13 R15
 			switch (this._fileHeader.AcadVersion)
@@ -1076,12 +1077,14 @@ namespace ACadSharp.IO
 				dxfClass.ClassNumber = sreader.ReadBitShort();
 				//BS : version – in R14, becomes a flag indicating whether objects can be moved, edited, etc.
 				dxfClass.ProxyFlags = (ProxyFlags)sreader.ReadBitShort();
+				
 				//TV : appname
 				dxfClass.ApplicationName = sreader.ReadVariableText();
 				//TV: cplusplusclassname
 				dxfClass.CppClassName = sreader.ReadVariableText();
 				//TV : classdxfname
 				dxfClass.DxfName = sreader.ReadVariableText();
+
 				//B : wasazombie
 				dxfClass.WasAProxy = sreader.ReadBit();
 				//BS : itemclassid -- 0x1F2 for classes which produce entities, 0x1F3 for classes which produce objects.
@@ -1103,6 +1106,7 @@ namespace ACadSharp.IO
 
 				classes.Add(dxfClass);
 			}
+
 			//RS: CRC
 			short crc = sreader.ReadShort();
 
@@ -1186,7 +1190,7 @@ namespace ACadSharp.IO
 				classes.Add(dxfClass);
 			}
 
-			return classes;	//AC1021	26
+			return classes; //26	26	26	26
 		}
 		#endregion
 
