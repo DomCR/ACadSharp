@@ -19,5 +19,15 @@ namespace ACadSharp.IO.DWG
 			base.WriteBitShort((short)value.Length);
 			base.WriteBytes(Encoding.Unicode.GetBytes(value));
 		}
+
+		public override void WriteTextUnicode(string value)
+		{
+			this.WriteRawShort((short)(value.Length + 1));
+			byte[] bytes = Encoding.Unicode.GetBytes(value);
+
+			this.WriteBytes(bytes);
+			base.Stream.WriteByte(0);
+			base.Stream.WriteByte(0);
+		}
 	}
 }

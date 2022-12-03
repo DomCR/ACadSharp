@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Exceptions;
 using ACadSharp.IO;
 using ACadSharp.Tests.Common;
 using System;
@@ -23,13 +24,13 @@ namespace ACadSharp.Tests.IO.DWG
 
 			using (var wr = new DwgWriter(path, doc))
 			{
-				if (version == ACadVersion.AC1018)
+				if (isSupportedVersion(version))
 				{
 					wr.Write();
 				}
 				else
 				{
-					Assert.Throws<NotSupportedException>(() => wr.Write());
+					Assert.Throws<DwgNotSupportedException>(() => wr.Write());
 					return;
 				}
 			}
@@ -55,13 +56,13 @@ namespace ACadSharp.Tests.IO.DWG
 
 			using (var wr = new DwgWriter(path, doc))
 			{
-				if (version == ACadVersion.AC1018)
+				if (isSupportedVersion(version))
 				{
 					wr.Write();
 				}
 				else
 				{
-					Assert.Throws<NotSupportedException>(() => wr.Write());
+					Assert.Throws<DwgNotSupportedException>(() => wr.Write());
 					return;
 				}
 			}
@@ -82,6 +83,7 @@ namespace ACadSharp.Tests.IO.DWG
 			doc.Header.Version = version;
 			doc.SummaryInfo = new CadSummaryInfo
 			{
+				Title = "This is a random title",
 				Author = "ACadSharp"
 			};
 
@@ -89,13 +91,13 @@ namespace ACadSharp.Tests.IO.DWG
 
 			using (var wr = new DwgWriter(stream, doc))
 			{
-				if (version == ACadVersion.AC1018)
+				if (isSupportedVersion(version))
 				{
 					wr.Write();
 				}
 				else
 				{
-					Assert.Throws<NotSupportedException>(() => wr.Write());
+					Assert.Throws<DwgNotSupportedException>(() => wr.Write());
 					return;
 				}
 			}
@@ -105,6 +107,8 @@ namespace ACadSharp.Tests.IO.DWG
 			using (var re = new DwgReader(stream, this.onNotification))
 			{
 				CadSummaryInfo info = re.ReadSummaryInfo();
+
+				Assert.Equal(doc.SummaryInfo.Title, info.Title);
 			}
 		}
 
@@ -119,13 +123,13 @@ namespace ACadSharp.Tests.IO.DWG
 
 			using (var wr = new DwgWriter(stream, doc))
 			{
-				if (version == ACadVersion.AC1018)
+				if (isSupportedVersion(version))
 				{
 					wr.Write();
 				}
 				else
 				{
-					Assert.Throws<NotSupportedException>(() => wr.Write());
+					Assert.Throws<DwgNotSupportedException>(() => wr.Write());
 					return;
 				}
 			}
@@ -142,6 +146,38 @@ namespace ACadSharp.Tests.IO.DWG
 		{
 			doc.Entities.Add(EntityFactory.Create<Point>());
 			doc.Entities.Add(EntityFactory.Create<Line>());
+		}
+
+		private bool isSupportedVersion(ACadVersion version)
+		{
+			switch (version)
+			{
+				case ACadVersion.MC0_0:
+				case ACadVersion.AC1_2:
+				case ACadVersion.AC1_4:
+				case ACadVersion.AC1_50:
+				case ACadVersion.AC2_10:
+				case ACadVersion.AC1002:
+				case ACadVersion.AC1003:
+				case ACadVersion.AC1004:
+				case ACadVersion.AC1006:
+				case ACadVersion.AC1009:
+				case ACadVersion.AC1012:
+				case ACadVersion.AC1014:
+				case ACadVersion.AC1015:
+					return false;
+				case ACadVersion.AC1018:
+					return true;
+				case ACadVersion.AC1021:
+					return false;
+				case ACadVersion.AC1024:
+				case ACadVersion.AC1027:
+				case ACadVersion.AC1032:
+					return true;
+				case ACadVersion.Unknown:
+				default:
+					return false;
+			}
 		}
 	}
 }

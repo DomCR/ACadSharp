@@ -31,11 +31,11 @@ namespace ACadSharpInternal.Tests
 			var handles = new Queue<ulong>(writer.Map.Select(o => o.Key));
 
 			CadDocument docResult = new CadDocument(false);
+			docResult.Header = new ACadSharp.Header.CadHeader();
 
 			DwgDocumentBuilder builder = new DwgDocumentBuilder(docResult, new ACadSharp.IO.DwgReaderConfiguration());
 			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, true);
-			DwgObjectSectionReader reader = new DwgObjectSectionReader
-				(
+			DwgObjectSectionReader reader = new DwgObjectSectionReader(
 				version,
 				builder,
 				sreader,

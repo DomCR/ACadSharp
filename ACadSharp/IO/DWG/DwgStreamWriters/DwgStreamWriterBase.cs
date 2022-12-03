@@ -131,7 +131,7 @@ namespace ACadSharp.IO.DWG
 			this.WriteBytes(LittleEndianConverter.Instance.GetBytes((int)value));
 		}
 
-		public void WriteBytes(byte[] arr)
+		public override void WriteBytes(byte[] arr)
 		{
 			if (this.BitShift == 0)
 			{
