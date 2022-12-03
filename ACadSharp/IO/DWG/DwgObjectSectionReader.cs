@@ -85,11 +85,12 @@ namespace ACadSharp.IO.DWG
 		private readonly byte[] _buffer;
 
 		public DwgObjectSectionReader(
+			ACadVersion version,
 			DwgDocumentBuilder builder,
 			IDwgStreamReader reader,
 			Queue<ulong> handles,
 			Dictionary<ulong, long> handleMap,
-			DxfClassCollection classes) : base(builder.DocumentToBuild.Header.Version)
+			DxfClassCollection classes) : base(version)
 		{
 			this._builder = builder;
 
@@ -112,7 +113,7 @@ namespace ACadSharp.IO.DWG
             this._crcStream.Position = 0L;
 
             //Setup the entity handler
-            this._crcReader = DwgStreamReader.GetStreamHandler(this._version, this._crcStream);
+            this._crcReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._crcStream);
 		}
 
 		/// <summary>

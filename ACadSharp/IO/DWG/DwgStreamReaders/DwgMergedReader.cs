@@ -26,7 +26,7 @@ namespace ACadSharp.IO.DWG
 		}
 		public Stream Stream => throw new InvalidOperationException();
 		public int BitShift { get => throw new InvalidOperationException(); set => throw new InvalidOperationException(); }
-		public long Position { get => throw new InvalidOperationException(); set => throw new InvalidOperationException(); }
+		public long Position { get => this._defaultReader.Position; set => throw new InvalidOperationException(); }
 		public bool IsEmpty { get; } = false;
 
 		private IDwgStreamReader _defaultReader;
@@ -67,7 +67,7 @@ namespace ACadSharp.IO.DWG
 
 		public long PositionInBits()
 		{
-			throw new InvalidOperationException();
+			return _defaultReader.PositionInBits();
 		}
 
 		public byte Read2Bits()
@@ -254,7 +254,7 @@ namespace ACadSharp.IO.DWG
 
 		public short ReadShort()
 		{
-			throw new NotImplementedException();
+			return this._defaultReader.ReadShort();
 		}
 
 		public short ReadShort<T>() where T : IEndianConverter, new()

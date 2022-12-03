@@ -324,6 +324,8 @@ namespace ACadSharp.IO
 
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Classes);
 
+			return new DwgClassesReader(this._fileHeader.AcadVersion, this._fileHeader).Read(sreader);
+
 			//R13 R15
 			switch (this._fileHeader.AcadVersion)
 			{
@@ -491,6 +493,7 @@ namespace ACadSharp.IO
 				.Select(a => a.Value));
 
 			DwgObjectSectionReader sectionReader = new DwgObjectSectionReader(
+				this._fileHeader.AcadVersion,
 				this._builder,
 				sreader,
 				objectHandles,
@@ -1102,6 +1105,7 @@ namespace ACadSharp.IO
 			}
 			//RS: CRC
 			short crc = sreader.ReadShort();
+
 			//0x72,0x5E,0x3B,0x47,0x3B,0x56,0x07,0x3A,0x3F,0x23,0x0B,0xA0,0x18,0x30,0x49,0x75
 			byte[] endsn = sreader.ReadSentinel();
 
@@ -1116,7 +1120,8 @@ namespace ACadSharp.IO
 			long size = sreader.ReadRawLong();
 
 			//R2010+ (only present if the maintenance version is greater than 3!)
-			if (this._fileHeader.AcadVersion >= ACadVersion.AC1024 && this._fileHeader.AcadMaintenanceVersion > 3
+			if (this._fileHeader.AcadVersion >= ACadVersion.AC1024
+				&& this._fileHeader.AcadMaintenanceVersion > 3
 				|| this._fileHeader.AcadVersion > ACadVersion.AC1027)
 			{
 				//RL : unknown, possibly the high 32 bits of a 64-bit size?
@@ -1150,6 +1155,7 @@ namespace ACadSharp.IO
 
 				//BL : Number of objects created of this type in the current DB(DXF 91).
 				dxfClass.InstanceCount = sreader.ReadBitLong();
+
 				//BS : Dwg Version
 				sreader.ReadBitLong();
 				//BS : Maintenance release version.
@@ -1180,7 +1186,7 @@ namespace ACadSharp.IO
 				classes.Add(dxfClass);
 			}
 
-			return classes;
+			return classes;	//AC1021	26
 		}
 		#endregion
 

@@ -55,5 +55,21 @@
 			R2013Plus = version >= ACadVersion.AC1027;
 			R2018Plus = version >= ACadVersion.AC1032;
 		}
+
+		protected bool checkSentinel(IDwgStreamReader sreader, byte[] expected)
+		{
+			var sn = sreader.ReadSentinel();
+
+			if (expected.Length != sn.Length)
+				return false;
+
+			for (int i = 0; i < expected.Length; i++)
+			{
+				if (sn[i] != expected[i])
+					return false;
+			}
+
+			return true;
+		}
 	}
 }
