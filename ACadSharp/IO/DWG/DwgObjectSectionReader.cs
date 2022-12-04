@@ -448,7 +448,7 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			//Lineweight RC 370
-			entity.LineWeight = DwgLineWeightConverter.ToValue(this._objectReader.ReadByte());
+			entity.LineWeight = CadUtils.ToValue(this._objectReader.ReadByte());
 		}
 
 		private void readCommonNonEntityData(CadTemplate template)
@@ -2985,7 +2985,7 @@ namespace ACadSharp.IO.DWG
 
 				//and lineweight (mask with 0x03E0)
 				byte lineweight = (byte)((values & 0x3E0) >> 5);
-				layer.LineWeight = DwgLineWeightConverter.ToValue(lineweight);
+				layer.LineWeight = CadUtils.ToValue(lineweight);
 			}
 
 			//Common:
