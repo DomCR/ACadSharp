@@ -326,6 +326,8 @@ namespace ACadSharp.IO
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Classes);
 
 			var reader = new DwgClassesReader(this._fileHeader.AcadVersion, this._fileHeader);
+			reader.OnNotification += triggerNotification;
+
 			return reader.Read(sreader);
 		}
 
@@ -343,58 +345,10 @@ namespace ACadSharp.IO
 
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Handles);
 
-			//Handle map, handle | loc
-			Dictionary<ulong, long> objectMap = new Dictionary<ulong, long>();
+			var handleReader = new DwgHandleReader(sreader, this._fileHeader.AcadVersion);
+			handleReader.OnNotification += triggerNotification;
 
-			//Repeat until section size==2 (the last empty (except the CRC) section):
-			while (true)
-			{
-				//Set the "last handle" to all 0 and the "last loc" to 0L;
-				ulong lasthandle = 0;
-				long lastloc = 0;
-
-				//Short: size of this section. Note this is in BIGENDIAN order (MSB first)
-				int size = sreader.ReadShort<BigEndianConverter>();
-
-				if (size == 2)
-					break;
-
-				long startPos = sreader.Position;
-				int maxSectionOffset = size - 2;
-				//Note that each section is cut off at a maximum length of 2032.
-				if (maxSectionOffset > 2032)
-					maxSectionOffset = 2032;
-
-				long lastPosition = startPos + maxSectionOffset;
-
-				//Repeat until out of data for this section:
-				while (sreader.Position < lastPosition)
-				{
-					//offset of this handle from last handle as modular char.
-					ulong offset = sreader.ReadModularChar();
-					lasthandle += offset;
-
-					//offset of location in file from last loc as modular char. (note
-					//that location offsets can be negative, if the terminating byte
-					//has the 4 bit set).
-					lastloc += sreader.ReadSignedModularChar();
-
-					if (offset > 0)
-					{
-						objectMap[lasthandle] = lastloc;
-					}
-					else
-					{
-						//0 offset, wrong reference
-						this.triggerNotification(this, new NotificationEventArgs($"Warning: readHandles, negative offset: {offset}"));
-					}
-				}
-
-				//CRC (most significant byte followed by least significant byte)
-				uint crc = ((uint)sreader.ReadByte() << 8) + sreader.ReadByte();
-			}
-
-			return objectMap;
+			return handleReader.Read();
 		}
 
 		/// <summary>
