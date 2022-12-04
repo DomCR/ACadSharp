@@ -3,18 +3,9 @@ using CSUtilities.IO;
 
 namespace ACadSharp.IO.DWG
 {
-	internal class DwgClassesReader : DwgSectionReader
+	internal class DwgClassesReader : DwgSectionIO
 	{
-
-		private readonly byte[] _startSentinel = new byte[16]
-		{
-			0x8D, 0xA1, 0xC4, 0xB8, 0xC4, 0xA9, 0xF8, 0xC5, 0xC0, 0xDC, 0xF4, 0x5F, 0xE7, 0xCF, 0xB6, 0x8A
-		};
-
-		private readonly byte[] _endSentinel = new byte[16]
-		{
-			0x72, 0x5E, 0x3B, 0x47, 0x3B, 0x56, 0x07, 0x3A, 0x3F, 0x23, 0x0B, 0xA0, 0x18, 0x30, 0x49, 0x75
-		};
+		public override string SectionName { get { return DwgSectionDefinition.Classes; } }
 
 		private DwgFileHeader _fileHeader;
 
@@ -28,10 +19,7 @@ namespace ACadSharp.IO.DWG
 			DxfClassCollection classes = new DxfClassCollection();
 
 			//SN : 0x8D 0xA1 0xC4 0xB8 0xC4 0xA9 0xF8 0xC5 0xC0 0xDC 0xF4 0x5F 0xE7 0xCF 0xB6 0x8A
-			if (!this.checkSentinel(sreader, this._startSentinel))
-			{
-				throw new System.Exception();
-			}
+			this.checkSentinel(sreader, DwgSectionDefinition.StartSentinels[SectionName]);
 
 			//RL : size of class data area
 			long size = sreader.ReadRawLong();
@@ -101,7 +89,7 @@ namespace ACadSharp.IO.DWG
 				dxfClass.DxfName = sreader.ReadVariableText();
 
 				//B : wasazombie
-				dxfClass.WasAProxy = sreader.ReadBit();
+				dxfClass.WasZombie = sreader.ReadBit();
 				//BS : itemclassid -- 0x1F2 for classes which produce entities, 0x1F3 for classes which produce objects.
 				dxfClass.ItemClassId = sreader.ReadBitShort();
 
@@ -146,10 +134,7 @@ namespace ACadSharp.IO.DWG
 			sreader.ResetShift();
 
 			//0x72,0x5E,0x3B,0x47,0x3B,0x56,0x07,0x3A,0x3F,0x23,0x0B,0xA0,0x18,0x30,0x49,0x75
-			if (!this.checkSentinel(sreader, this._endSentinel))
-			{
-				throw new System.Exception();
-			}
+			this.checkSentinel(sreader, DwgSectionDefinition.EndSentinels[SectionName]);
 
 			return classes;
 		}

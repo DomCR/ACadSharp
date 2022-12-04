@@ -270,7 +270,7 @@ namespace ACadSharp.IO
 						break;
 					//Was-a-proxy flag. Set to 1 if class was not loaded when this DXF file was created, and 0 otherwise
 					case 280:
-						curr.WasAProxy = this._reader.LastValueAsBool;
+						curr.WasZombie = this._reader.LastValueAsBool;
 						break;
 					//Is - an - entity flag.
 					case 281:
