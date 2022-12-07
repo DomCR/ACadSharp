@@ -10,7 +10,7 @@ namespace ACadSharp.Entities
 	/// The standard class for a basic CAD entity.
 	/// </summary>
 	[DxfSubClass(DxfSubclassMarker.Entity)]
-	public abstract class Entity : CadObject, ICloneable
+	public abstract class Entity : CadObject, ICloneable, IEntity
 	{
 		/// <summary>
 		/// Specifies the layer for an object.
@@ -61,10 +61,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(440)]
 		public Transparency Transparency { get; set; }
 
-		/// <summary>
-		/// Linetype name (present if not BYLAYER). 
-		/// The special name BYBLOCK indicates a floating linetype (optional)
-		/// </summary>
+		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name, 6)]
 		public LineType LineType { get; set; } = LineType.ByLayer;
 
@@ -78,6 +75,36 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Entity() : base() { }
+
+		/// <inheritdoc/>
+		public void MatchProperties(IEntity entity)
+		{
+			if (entity is null)
+			{
+				throw new ArgumentNullException(nameof(entity));
+			}
+
+			if (entity.Handle == 0)
+			{
+				entity.Layer = (Layer)this.Layer.Clone();
+				entity.Color = this.Color;
+				entity.LineWeight = this.LineWeight;
+				entity.LinetypeScale = this.LinetypeScale;
+				entity.IsInvisible = this.IsInvisible;
+				entity.Transparency = this.Transparency;
+				entity.LineType = (LineType)this.LineType.Clone();
+			}
+			else
+			{
+				entity.Layer = this.Layer;
+				entity.Color = this.Color;
+				entity.LineWeight = this.LineWeight;
+				entity.LinetypeScale = this.LinetypeScale;
+				entity.IsInvisible = this.IsInvisible;
+				entity.Transparency = this.Transparency;
+				entity.LineType = this.LineType;
+			}
+		}
 
 		/// <inheritdoc/>
 		public object Clone()
@@ -104,5 +131,32 @@ namespace ACadSharp.Entities
 			e.LineType = (LineType)this.LineType.Clone();
 			//e.Material = (Material)(this.Material?.Clone());
 		}
+	}
+
+	public interface IEntity : IHandledCadObject
+	{
+		Layer Layer { get; set; }
+		
+		Color Color { get; set; }
+		
+		LineweightType LineWeight { get; set; }
+		
+		double LinetypeScale { get; set; }
+		
+		bool IsInvisible { get; set; }
+		
+		Transparency Transparency { get; set; }
+
+		/// <summary>
+		/// Linetype name (present if not BYLAYER). 
+		/// The special name BYBLOCK indicates a floating linetype (optional)
+		/// </summary>
+		LineType LineType { get; set; }
+
+		/// <summary>
+		/// Match entity properties to another entity
+		/// </summary>
+		/// <param name="entity"></param>
+		void MatchProperties(IEntity entity);
 	}
 }
