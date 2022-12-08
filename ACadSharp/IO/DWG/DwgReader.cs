@@ -444,12 +444,13 @@ namespace ACadSharp.IO
 			//At 0x0D is a seeker (4 byte long absolute address) for the beginning sentinel of the image data.
 			fileheader.PreviewAddress = sreader.ReadInt();
 
-			//Bytes at 0x13 and 0x14 are a raw short indicating the value of the code page for this drawing file.
 			sreader.ReadBytes(2);
 
+			//Bytes at 0x13 and 0x14 are a raw short indicating the value of the code page for this drawing file.
 			fileheader.DrawingCodePage = CadUtils.GetCodePage(sreader.ReadShort());
 			sreader.Encoding = TextEncoding.GetListedEncoding(fileheader.DrawingCodePage);
 
+			//At 0x15 is a long that tells how many sets of recno/seeker/length records follow.
 			int nRecords = (int)sreader.ReadRawLong();
 			for (int i = 0; i < nRecords; ++i)
 			{
@@ -462,6 +463,7 @@ namespace ACadSharp.IO
 				fileheader.Records.Add(record.Number, record);
 			}
 
+			//RS : CRC for BOF to this point.
 			sreader.ResetShift();
 		}
 
