@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -20,6 +21,11 @@ namespace ACadSharp.Entities
 		public Polyline2D() : base()
 		{
 			this.Vertices.OnAdd += this.verticesOnAdd;
+		}
+
+		public override IEnumerable<Entity> Explode()
+		{
+			return Polyline.explode(this);
 		}
 
 		private void verticesOnAdd(object sender, ReferenceChangedEventArgs e)
