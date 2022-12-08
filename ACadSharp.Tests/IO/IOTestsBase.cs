@@ -130,5 +130,26 @@ namespace ACadSharp.Tests.IO
 				process.Kill();
 			}
 		}
+
+		protected static void loadSamples(string folder, string ext, TheoryData<string> files)
+		{
+			string path = Path.Combine(_samplesFolder, "local", folder);
+
+			if (!Directory.Exists(path))
+			{
+				files.Add(string.Empty);
+				return;
+			}
+
+			foreach (string file in Directory.GetFiles(path, $"*.{ext}"))
+			{
+				files.Add(file);
+			}
+
+			if (!files.Any())
+			{
+				files.Add(string.Empty);
+			}
+		}
 	}
 }
