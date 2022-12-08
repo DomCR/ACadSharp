@@ -10,10 +10,16 @@ using Xunit.Abstractions;
 
 namespace ACadSharp.Tests.IO.Issues
 {
-	public class Issue_62 : LocalSampleTests
+	public class Issue_62 : IOTestsBase
 	{
+		public static TheoryData<string> IssueDwgFile { get; } = new TheoryData<string>();
+
+		public static TheoryData<string> IssueDxfFiles { get; } = new TheoryData<string>();
+
 		public Issue_62(ITestOutputHelper output) : base(output)
 		{
+			loadSamples("issue_files", "dwg", IssueDwgFile);
+			loadSamples("issue_files", "dxf", IssueDxfFiles);
 		}
 
 		[Theory]
@@ -28,7 +34,7 @@ namespace ACadSharp.Tests.IO.Issues
 
 			foreach (LwPolyline pl in doc.Entities)
 			{
-
+				pl.Explode();
 			}
 		
 		}

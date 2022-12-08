@@ -16,7 +16,9 @@ namespace ACadSharp.Entities
 		XYZ Normal { get; }
 
 		double Thickness { get; }
+#if NET48
 
+#else
 		IEnumerable<Entity> Explode()
 		{
 			List<Entity> entities = new List<Entity>();
@@ -84,5 +86,6 @@ namespace ACadSharp.Entities
 
 			return entities;
 		}
+#endif
 	}
 }

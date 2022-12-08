@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -69,5 +71,14 @@ namespace ACadSharp.Entities
 		}
 
 		IEnumerable<IVertex> IPolyline.Vertices { get { return this.Vertices; } }
+
+#if NET48
+
+#else
+		public IEnumerable<Entity> Explode()
+		{
+			return ((IPolyline)this).Explode();
+		}
+#endif
 	}
 }

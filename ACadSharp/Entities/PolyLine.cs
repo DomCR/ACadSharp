@@ -69,11 +69,28 @@ namespace ACadSharp.Entities
 		/// </remarks>
 		public SeqendCollection<Vertex> Vertices { get; }
 
+		public bool IsClosed
+		{
+			get
+			{
+				return this.Flags.HasFlag(PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM) || this.Flags.HasFlag(PolylineFlags.ClosedPolygonMeshInN);
+			}
+		}
+
 		IEnumerable<IVertex> IPolyline.Vertices { get { return this.Vertices; } }
 
 		public Polyline() : base()
 		{
 			this.Vertices = new SeqendCollection<Vertex>(this);
 		}
+
+#if NET48
+
+#else
+		public IEnumerable<Entity> Explode()
+		{
+			return ((IPolyline)this).Explode();
+		}
+#endif
 	}
 }
