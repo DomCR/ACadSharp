@@ -17,10 +17,10 @@ namespace ACadSharp.Entities
 
 		double Thickness { get; }
 
-#if NET48
+#if true
 		IEnumerable<Entity> Explode();
 #else
-		IEnumerable<Entity> explode()
+		IEnumerable<Entity> Explode()
 		{
 			List<Entity> entities = new List<Entity>();
 

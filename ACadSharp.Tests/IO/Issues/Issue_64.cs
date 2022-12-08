@@ -16,10 +16,14 @@ namespace ACadSharp.Tests.IO.Issues
 
 		public static TheoryData<string> IssueDxfFiles { get; } = new TheoryData<string>();
 
-		public Issue_62(ITestOutputHelper output) : base(output)
+		static Issue_62()
 		{
 			loadSamples("issue_files", "dwg", IssueDwgFile);
 			loadSamples("issue_files", "dxf", IssueDxfFiles);
+		}
+
+		public Issue_62(ITestOutputHelper output) : base(output)
+		{
 		}
 
 		[Theory]
@@ -36,7 +40,7 @@ namespace ACadSharp.Tests.IO.Issues
 			{
 				pl.Explode();
 			}
-		
+
 		}
 	}
 }

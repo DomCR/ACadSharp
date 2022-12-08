@@ -25,7 +25,7 @@ namespace ACadSharp.Entities
 			this.Vertices.OnAdd += this.verticesOnAdd;
 		}
 
-#if NET48
+#if true
 		public override IEnumerable<Entity> Explode()
 		{
 			return Polyline.explode(this);

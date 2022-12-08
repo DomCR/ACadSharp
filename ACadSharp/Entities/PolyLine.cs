@@ -85,7 +85,7 @@ namespace ACadSharp.Entities
 			this.Vertices = new SeqendCollection<Vertex>(this);
 		}
 
-#if NET48
+#if true
 		public abstract IEnumerable<Entity> Explode();
 
 		internal static IEnumerable<Entity> explode(IPolyline polyline)
@@ -109,6 +109,9 @@ namespace ACadSharp.Entities
 				Entity e = null;
 				if (curr.Bulge == 0)
 				{
+					XYZ start = new XYZ(curr.Location.GetComponents());
+					XYZ end = new XYZ(next.Location.GetComponents());
+
 					//Is a line
 					e = new Line
 					{
@@ -156,9 +159,9 @@ namespace ACadSharp.Entities
 			return entities;
 		}
 #else
-		public IEnumerable<Entity> explode()
+		public IEnumerable<Entity> Explode()
 		{
-			return ((IPolyline)this).explode();
+			return ((IPolyline)this).Explode();
 		}
 #endif
 	}
