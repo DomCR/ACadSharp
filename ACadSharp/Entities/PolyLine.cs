@@ -117,31 +117,13 @@ namespace ACadSharp.Entities
 					XY p1 = new XY(curr.Location.GetComponents());
 					XY p2 = new XY(next.Location.GetComponents());
 
-					XY center = MathUtils.GetCenter(p1, p2, curr.Bulge, out double r);
-
-					double startAngle;
-					double endAngle;
-					if (curr.Bulge > 0)
-					{
-						startAngle = p2.Substract(center).GetAngle();
-						endAngle = p1.Substract(center).GetAngle();
-					}
-					else
-					{
-						startAngle = p1.Substract(center).GetAngle();
-						endAngle = p2.Substract(center).GetAngle();
-					}
-
 					//Is an arc
-					e = new Arc
-					{
-						Center = new XYZ(center.X, center.Y, polyline.Elevation),
-						Normal = polyline.Normal,
-						Radius = r,
-						StartAngle = startAngle,
-						EndAngle = endAngle,
-						Thickness = polyline.Thickness,
-					};
+					Arc arc = Arc.CreateFromBulge(p1, p2, curr.Bulge);
+					arc.Center = new XYZ(arc.Center.X, arc.Center.Y, polyline.Elevation);
+					arc.Normal = polyline.Normal;
+					arc.Thickness = polyline.Thickness;
+
+					e = arc;
 				}
 
 				polyline.MatchProperties(e);
