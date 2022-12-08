@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -21,6 +22,13 @@ namespace ACadSharp.Entities
 		{
 			this.Vertices.OnAdd += this.verticesOnAdd;
 		}
+
+#if NET48
+		public override IEnumerable<Entity> Explode()
+		{
+			throw new NotImplementedException();
+		}
+#endif
 
 		private void verticesOnAdd(object sender, ReferenceChangedEventArgs e)
 		{

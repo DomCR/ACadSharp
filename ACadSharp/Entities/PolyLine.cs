@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -85,11 +86,79 @@ namespace ACadSharp.Entities
 		}
 
 #if NET48
+		public abstract IEnumerable<Entity> Explode();
 
-#else
-		public IEnumerable<Entity> Explode()
+		internal static IEnumerable<Entity> explode(IPolyline polyline)
 		{
-			return ((IPolyline)this).Explode();
+			List<Entity> entities = new List<Entity>();
+
+			for (int i = 0; i < polyline.Vertices.Count(); i++)
+			{
+				IVertex curr = polyline.Vertices.ElementAt(i);
+				IVertex next = polyline.Vertices.ElementAtOrDefault(i + 1);
+
+				if (next == null && polyline.IsClosed)
+				{
+					next = polyline.Vertices.First();
+				}
+				else if (next == null)
+				{
+					break;
+				}
+
+				Entity e = null;
+				if (curr.Bulge == 0)
+				{
+					//Is a line
+					e = new Line
+					{
+						StartPoint = new XYZ(curr.Location.GetComponents()),
+						EndPoint = new XYZ(next.Location.GetComponents())
+					};
+				}
+				else
+				{
+					XY p1 = new XY(curr.Location.GetComponents());
+					XY p2 = new XY(next.Location.GetComponents());
+
+					XY center = MathUtils.GetCenter(p1, p2, curr.Bulge, out double r);
+
+					double startAngle;
+					double endAngle;
+					if (curr.Bulge > 0)
+					{
+						startAngle = p2.Substract(center).GetAngle();
+						endAngle = p1.Substract(center).GetAngle();
+					}
+					else
+					{
+						startAngle = p1.Substract(center).GetAngle();
+						endAngle = p2.Substract(center).GetAngle();
+					}
+
+					//Is an arc
+					e = new Arc
+					{
+						Center = new XYZ(center.X, center.Y, polyline.Elevation),
+						Normal = polyline.Normal,
+						Radius = r,
+						StartAngle = startAngle,
+						EndAngle = endAngle,
+						Thickness = polyline.Thickness,
+					};
+				}
+
+				polyline.MatchProperties(e);
+
+				entities.Add(e);
+			}
+
+			return entities;
+		}
+#else
+		public IEnumerable<Entity> explode()
+		{
+			return ((IPolyline)this).explode();
 		}
 #endif
 	}

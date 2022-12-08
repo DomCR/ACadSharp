@@ -73,11 +73,14 @@ namespace ACadSharp.Entities
 		IEnumerable<IVertex> IPolyline.Vertices { get { return this.Vertices; } }
 
 #if NET48
-
-#else
 		public IEnumerable<Entity> Explode()
 		{
-			return ((IPolyline)this).Explode();
+			return Polyline.explode(this);
+		}
+#else
+		public IEnumerable<Entity> explode()
+		{
+			return ((IPolyline)this).explode();
 		}
 #endif
 	}
