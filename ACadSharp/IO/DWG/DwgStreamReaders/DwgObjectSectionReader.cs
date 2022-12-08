@@ -112,7 +112,7 @@ namespace ACadSharp.IO.DWG
             this._crcStream.Position = 0L;
 
             //Setup the entity handler
-            this._crcReader = DwgStreamReader.GetStreamHandler(this._version, this._crcStream);
+            this._crcReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._crcStream);
 		}
 
 		/// <summary>
