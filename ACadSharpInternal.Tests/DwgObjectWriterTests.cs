@@ -32,11 +32,11 @@ namespace ACadSharpInternal.Tests
 
 			CadDocument docResult = new CadDocument(false);
 			docResult.Header = new ACadSharp.Header.CadHeader();
+			docResult.Header.Version = version;
 
 			DwgDocumentBuilder builder = new DwgDocumentBuilder(docResult, new ACadSharp.IO.DwgReaderConfiguration());
 			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, true);
 			DwgObjectSectionReader reader = new DwgObjectSectionReader(
-				version,
 				builder,
 				sreader,
 				handles,
