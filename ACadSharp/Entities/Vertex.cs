@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using CSMath;
 
 namespace ACadSharp.Entities
@@ -8,7 +7,7 @@ namespace ACadSharp.Entities
 	/// Represents a base for <see cref="Vertex2D"/> and <see cref="Vertex3D"/>
 	/// </summary>
 	[DxfSubClass(DxfSubclassMarker.Vertex, true)]
-	public abstract class Vertex : Entity
+	public abstract class Vertex : Entity, IVertex
 	{
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityVertex;
@@ -59,6 +58,8 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Ignored, 91)]	//TODO: for some versions this code is invalid
 		public int Id { get; set; }
+
+		IVector IVertex.Location { get { return this.Location; } }
 
 		public Vertex() : base() { }
 	}

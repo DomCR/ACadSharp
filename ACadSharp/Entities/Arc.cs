@@ -45,11 +45,11 @@ namespace ACadSharp.Entities
 		/// <param name="pt2"></param>
 		/// <param name="bulge"></param>
 		/// <returns></returns>
-		/// <exception cref="System.NotImplementedException"></exception>
+		/// <exception cref="NotImplementedException"></exception>
 		public static Arc CreateFromBulge(XYZ pt1, XYZ pt2, double bulge)
 		{
 			//Needs a plane of reference in case is in 3D
-			throw new System.NotImplementedException();
+			throw new NotImplementedException();
 		}
 	}
 }
