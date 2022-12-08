@@ -23,12 +23,11 @@ namespace ACadSharp.Entities
 			this.Vertices.OnAdd += this.verticesOnAdd;
 		}
 
-#if true
+		/// <exception cref="NotImplementedException"></exception>
 		public override IEnumerable<Entity> Explode()
 		{
-			throw new NotImplementedException();
+			return Polyline.explode(this);
 		}
-#endif
 
 		private void verticesOnAdd(object sender, ReferenceChangedEventArgs e)
 		{
@@ -36,6 +35,10 @@ namespace ACadSharp.Entities
 			{
 				this.Vertices.Remove((Vertex)e.Current);
 				throw new ArgumentException($"Wrong vertex type for {DxfSubclassMarker.Polyline3d}");
+			}
+			else if (e.Current is Vertex3D v && v.Bulge != 0)
+			{
+				throw new ArgumentException($"Bulge value cannot be different than 0 for a Vertex3D in a 3D Polyline");
 			}
 		}
 	}

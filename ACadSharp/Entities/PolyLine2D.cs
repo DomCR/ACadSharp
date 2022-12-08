@@ -1,8 +1,6 @@
 ﻿using ACadSharp.Attributes;
-using CSMath;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -25,12 +23,11 @@ namespace ACadSharp.Entities
 			this.Vertices.OnAdd += this.verticesOnAdd;
 		}
 
-#if true
 		public override IEnumerable<Entity> Explode()
 		{
 			return Polyline.explode(this);
 		}
-#endif
+
 		private void verticesOnAdd(object sender, ReferenceChangedEventArgs e)
 		{
 			if (e.Current is not Vertex2D)

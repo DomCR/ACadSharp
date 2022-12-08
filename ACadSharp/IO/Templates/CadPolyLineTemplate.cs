@@ -64,12 +64,10 @@ namespace ACadSharp.IO.Templates
 		{
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
 
-#if true
 			public override IEnumerable<Entity> Explode()
 			{
 				throw new NotImplementedException();
 			}
-#endif
 		}
 	}
 }

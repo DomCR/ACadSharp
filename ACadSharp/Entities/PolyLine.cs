@@ -15,21 +15,15 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityPolyline;
 
-		/// <summary>
-		/// The current elevation of the object.
-		/// </summary>
+		/// <inheritdoc/>
 		[DxfCodeValue(30)]
 		public double Elevation { get; set; } = 0.0;
 
-		/// <summary>
-		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
-		/// </summary>
+		/// <inheritdoc/>
 		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;
 
-		/// <summary>
-		/// Specifies the three-dimensional normal unit vector for the object.
-		/// </summary>
+		/// <inheritdoc/>
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
