@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -34,11 +36,11 @@ namespace ACadSharp.Tests.IO.Issues
 				Path.GetFileNameWithoutExtension(test) != "issue_62")
 				return;
 
-			CadDocument doc = DwgReader.Read(test, this.onNotification);
+			CadDocument doc = DwgReader.Read(test);
 
-			foreach (LwPolyline pl in doc.Entities)
+			foreach (LwPolyline pl in doc.Entities.OfType<LwPolyline>())
 			{
-				pl.Explode();
+				IEnumerable<Entity> entities = pl.Explode();
 			}
 
 		}

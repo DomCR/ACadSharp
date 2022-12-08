@@ -85,11 +85,11 @@ namespace ACadSharp.Entities
 			this.Vertices = new SeqendCollection<Vertex>(this);
 		}
 
-#if true
 		public abstract IEnumerable<Entity> Explode();
 
 		internal static IEnumerable<Entity> explode(IPolyline polyline)
 		{
+			//Generic explode method for Polyline2D and LwPolyline
 			List<Entity> entities = new List<Entity>();
 
 			for (int i = 0; i < polyline.Vertices.Count(); i++)
@@ -109,14 +109,13 @@ namespace ACadSharp.Entities
 				Entity e = null;
 				if (curr.Bulge == 0)
 				{
-					XYZ start = new XYZ(curr.Location.GetComponents());
-					XYZ end = new XYZ(next.Location.GetComponents());
-
 					//Is a line
 					e = new Line
 					{
-						StartPoint = new XYZ(curr.Location.GetComponents()),
-						EndPoint = new XYZ(next.Location.GetComponents())
+						StartPoint = XYZ.CreateFrom(curr.Location.GetComponents()),
+						EndPoint = XYZ.CreateFrom(next.Location.GetComponents()),
+						Normal = polyline.Normal,
+						Thickness = polyline.Thickness,
 					};
 				}
 				else
@@ -158,11 +157,5 @@ namespace ACadSharp.Entities
 
 			return entities;
 		}
-#else
-		public IEnumerable<Entity> Explode()
-		{
-			return ((IPolyline)this).Explode();
-		}
-#endif
 	}
 }

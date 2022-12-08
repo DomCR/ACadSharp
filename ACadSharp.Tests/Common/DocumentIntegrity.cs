@@ -78,7 +78,7 @@ namespace ACadSharp.Tests.Common
 
 				this.documentObjectNotNull(doc, br.BlockEnd);
 
-				foreach (Entities.Entity e in br.Entities)
+				foreach (Entity e in br.Entities)
 				{
 					this.documentObjectNotNull(doc, e);
 				}
