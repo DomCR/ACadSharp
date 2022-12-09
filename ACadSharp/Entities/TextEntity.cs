@@ -2,6 +2,8 @@
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using CSMath;
+using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -27,11 +29,8 @@ namespace ACadSharp.Entities
 		public double Thickness { get; set; } = 0.0;
 
 		/// <summary>
-		/// A 3D WCS coordinate representing the insertion or origin point.
+		/// First alignment point(in OCS)
 		/// </summary>
-		/// <remarks>
-		/// This property is read-only except for text whose Alignment property is set to acAlignmentLeft, acAlignmentAligned, or acAlignmentFit. To position text whose justification is other than left, aligned, or fit, use the TextAlignmentPoint property.
-		/// </remarks>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ InsertPoint { get; set; } = XYZ.Zero;
 
@@ -42,7 +41,16 @@ namespace ACadSharp.Entities
 		/// This must be a positive, non-negative number.
 		/// </value>
 		[DxfCodeValue(40)]
-		public double Height { get; set; } = 0.0;
+		public double Height
+		{
+			get => _height; set
+			{
+				if (value < 0)
+					throw new ArgumentOutOfRangeException("Height value cannot be negative.");
+				else
+					this._height = value;
+			}
+		}
 
 		/// <summary>
 		/// Specifies the text string for the entity.
@@ -51,7 +59,20 @@ namespace ACadSharp.Entities
 		/// The maximum length is 256 characters.
 		/// </value>
 		[DxfCodeValue(1)]
-		public string Value { get; set; } = string.Empty;
+		public string Value
+		{
+			get
+			{
+				return _value;
+			}
+			set
+			{
+				if (value.Length > 256)
+					throw new ArgumentException($"Text length cannot be supiror than 256, current: {value.Length}");
+				else
+					this._value = value;
+			}
+		}
 
 		/// <summary>
 		/// Specifies the rotation angle for the object.
@@ -99,10 +120,10 @@ namespace ACadSharp.Entities
 		public TextHorizontalAlignment HorizontalAlignment { get; set; } = TextHorizontalAlignment.Left;
 
 		/// <summary>
-		/// A 3D WCS coordinate representing the alignment point of the object.
+		/// Second alignment point (in OCS) 
 		/// </summary>
 		/// <remarks>
-		/// This property will be reset to 0, 0, 0 and will become read-only when the Alignment property is set to acAlignmentLeft. To position text whose justification is left, fit, or aligned, use the InsertionPoint property.
+		/// This value is meaningful only if the value of a 72 or 73 group is nonzero (if the justification is anything other than baseline/left)
 		/// </remarks>
 		[DxfCodeValue(11, 21, 31)]
 		public XYZ AlignmentPoint { get; set; } = XYZ.Zero;
@@ -117,7 +138,11 @@ namespace ACadSharp.Entities
 		/// Vertical text justification type.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional, 73)]
-		public virtual TextVerticalAlignmentType VerticalAlignment { get; set; } = TextVerticalAlignmentType.Baseline;
+		public TextVerticalAlignmentType VerticalAlignment { get; set; } = TextVerticalAlignmentType.Baseline;
+
+		private string _value = string.Empty;
+
+		private double _height = 0.0;
 
 		public TextEntity() : base() { }
 	}
