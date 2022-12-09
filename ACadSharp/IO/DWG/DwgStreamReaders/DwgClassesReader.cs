@@ -46,7 +46,7 @@ namespace ACadSharp.IO.DWG
 				sreader.SetPositionInBits(savedOffset);
 
 				//Setup the text reader for versions 2007 and above
-				IDwgStreamReader textReader = DwgStreamReader.GetStreamHandler(_version,
+				IDwgStreamReader textReader = DwgStreamReaderBase.GetStreamHandler(_version,
 					//Create a copy of the stream
 					new StreamIO(sreader.Stream, true).Stream);
 				//Set the position and use the flag

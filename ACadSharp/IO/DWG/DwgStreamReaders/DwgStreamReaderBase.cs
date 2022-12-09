@@ -7,7 +7,7 @@ using System.IO;
 
 namespace ACadSharp.IO.DWG
 {
-	internal abstract class DwgStreamReader : StreamIO, IDwgStreamReader
+	internal abstract class DwgStreamReaderBase : StreamIO, IDwgStreamReader
 	{
 		/// <inheritdoc/>
 		public int BitShift { get; set; }
@@ -27,7 +27,7 @@ namespace ACadSharp.IO.DWG
 
 		protected byte _lastByte;
 
-		public DwgStreamReader(Stream stream, bool resetPosition) : base(stream, resetPosition)
+		public DwgStreamReaderBase(Stream stream, bool resetPosition) : base(stream, resetPosition)
 		{
 		}
 

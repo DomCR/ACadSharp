@@ -194,7 +194,7 @@ namespace ACadSharp.IO
 			if (this._fileHeader.PreviewAddress < 0)
 				return null;
 
-			IDwgStreamReader sectionHandler = DwgStreamReader.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
+			IDwgStreamReader sectionHandler = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
 			sectionHandler.Position = this._fileHeader.PreviewAddress;
 
 			//{0x1F,0x25,0x6D,0x07,0xD4,0x36,0x28,0x28,0x9D,0x57,0xCA,0x3F,0x9D,0x44,0x10,0x2B }
@@ -270,7 +270,7 @@ namespace ACadSharp.IO
 			DwgFileHeader fileHeader = DwgFileHeader.GetFileHeader(version);
 
 			//Get the stream reader
-			IDwgStreamReader sreader = DwgStreamReader.GetStreamHandler(fileHeader.AcadVersion, this._fileStream.Stream);
+			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(fileHeader.AcadVersion, this._fileStream.Stream);
 
 			//Read the file header
 			switch (fileHeader.AcadVersion)
@@ -406,7 +406,7 @@ namespace ACadSharp.IO
 			IDwgStreamReader sreader = null;
 			if (this._fileHeader.AcadVersion <= ACadVersion.AC1015)
 			{
-				sreader = DwgStreamReader.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
+				sreader = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
 				sreader.Position = this.readObjFreeSpace();
 			}
 			else
@@ -1019,7 +1019,7 @@ namespace ACadSharp.IO
 			if (sectionStream == null)
 				return null;
 
-			IDwgStreamReader streamHandler = DwgStreamReader.GetStreamHandler(this._fileHeader.AcadVersion, sectionStream);
+			IDwgStreamReader streamHandler = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, sectionStream);
 
 			//Set the encoding if needed
 			if (encoding != null)
@@ -1072,7 +1072,7 @@ namespace ACadSharp.IO
 				else
 				{
 					//Get the page section header
-					IDwgStreamReader sreader = DwgStreamReader.GetStreamHandler(fileheader.AcadVersion, this._fileStream.Stream);
+					IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(fileheader.AcadVersion, this._fileStream.Stream);
 					sreader.Position = section.Seeker;
 					//Get the header data
 					this.decryptHeaderDataSection(section, sreader);

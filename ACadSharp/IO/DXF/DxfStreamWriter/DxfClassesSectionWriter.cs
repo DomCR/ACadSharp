@@ -1,10 +1,10 @@
 ﻿namespace ACadSharp.IO.DXF
 {
-	internal class DxfDxfClassesSectionWriter : DxfSectionWriterBase
+	internal class DxfClassesSectionWriter : DxfSectionWriterBase
 	{
 		public override string SectionName { get { return DxfFileToken.ClassesSection; } }
 
-		public DxfDxfClassesSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder) : base(writer, document, holder)
+		public DxfClassesSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder) : base(writer, document, holder)
 		{
 		}
 

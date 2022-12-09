@@ -50,14 +50,14 @@ namespace ACadSharp.IO.DWG
 				long lastPositionInBits = initialPos + sizeInBits - 1L;
 
 				//Setup the text handler for versions 2007 and above
-				IDwgStreamReader textReader = DwgStreamReader.GetStreamHandler(_version,
+				IDwgStreamReader textReader = DwgStreamReaderBase.GetStreamHandler(_version,
 					//Create a copy of the stream
 					new StreamIO(_reader.Stream, true).Stream);
 				//Set the position and use the flag
 				textReader.SetPositionByFlag(lastPositionInBits);
 
 				//Setup the handler for the references for versions 2007 and above
-				IDwgStreamReader referenceReader = DwgStreamReader.GetStreamHandler(_version,
+				IDwgStreamReader referenceReader = DwgStreamReaderBase.GetStreamHandler(_version,
 					//Create a copy of the stream
 					new StreamIO(_reader.Stream, true).Stream);
 				//Set the position and jump the flag
