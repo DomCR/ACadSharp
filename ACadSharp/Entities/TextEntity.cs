@@ -81,7 +81,15 @@ namespace ACadSharp.Entities
 		/// The rotation angle in radians.
 		/// </value>
 		[DxfCodeValue(50)]
-		public double Rotation { get; set; } = 0.0;
+		public double Rotation
+		{
+			get => _rotation;
+			set
+			{
+				_rotation = value;
+				this.AlignmentPoint = new XYZ(Math.Cos(_rotation), Math.Sin(_rotation), 0.0);
+			}
+		}
 
 		/// <summary>
 		/// Relative X scale factor—widt
@@ -126,7 +134,14 @@ namespace ACadSharp.Entities
 		/// This value is meaningful only if the value of a 72 or 73 group is nonzero (if the justification is anything other than baseline/left)
 		/// </remarks>
 		[DxfCodeValue(11, 21, 31)]
-		public XYZ AlignmentPoint { get; set; } = XYZ.Zero;
+		public XYZ AlignmentPoint
+		{
+			get => _alignmentPoint;
+			set
+			{
+				_alignmentPoint = value;
+			}
+		}
 
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
@@ -143,6 +158,9 @@ namespace ACadSharp.Entities
 		private string _value = string.Empty;
 
 		private double _height = 0.0;
+
+		private XYZ _alignmentPoint = XYZ.Zero;
+		private double _rotation = 0.0;
 
 		public TextEntity() : base() { }
 	}
