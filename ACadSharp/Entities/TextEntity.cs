@@ -133,13 +133,14 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// This value is meaningful only if the value of a 72 or 73 group is nonzero (if the justification is anything other than baseline/left)
 		/// </remarks>
-		[DxfCodeValue(11, 21, 31)]
+		[DxfCodeValue(DxfReferenceType.Optional, 11, 21, 31)]
 		public XYZ AlignmentPoint
 		{
 			get => _alignmentPoint;
 			set
 			{
 				_alignmentPoint = value;
+				this._rotation = new XY(this._alignmentPoint.X, this._alignmentPoint.Y).GetAngle();
 			}
 		}
 
@@ -160,6 +161,7 @@ namespace ACadSharp.Entities
 		private double _height = 0.0;
 
 		private XYZ _alignmentPoint = XYZ.Zero;
+
 		private double _rotation = 0.0;
 
 		public TextEntity() : base() { }
