@@ -130,7 +130,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadTextEntityTemplate(new AttributeDefinition());
 					break;
 				case DxfFileToken.EntityArc:
-					template = new CadEntityTemplate(new Arc());
+					template = new CadArcTemplate(new Arc());
 					break;
 				case DxfFileToken.EntityCircle:
 					template = new CadEntityTemplate(new Circle());

@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
 using System.Collections.Generic;
+using ACadSharp.IO.DXF;
 
 namespace ACadSharp.IO.Templates
 {
@@ -47,7 +48,8 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			Insert insert = this.CadObject as Insert;
+            if (!(this.CadObject is Insert insert))
+                return;
 
 			if (builder.TryGetCadObject(this.BlockHeaderHandle, out BlockRecord block))
 			{
@@ -72,6 +74,11 @@ namespace ACadSharp.IO.Templates
 			{
 				insert.Attributes.Seqend = seqend;
 			}
+
+            if (builder is DxfDocumentBuilder)
+            {
+                insert.Rotation *= MathUtils.DegToRad;
+            }
 		}
 	}
 }

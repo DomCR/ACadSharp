@@ -1588,7 +1588,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readArc()
 		{
 			Arc arc = new Arc();
-			CadEntityTemplate template = new CadEntityTemplate(arc);
+			CadEntityTemplate template = new CadArcTemplate(arc);
 
 			this.readCommonEntityData(template);
 
