@@ -87,7 +87,7 @@ namespace ACadSharp.Entities
 			set
 			{
 				_rotation = value;
-				this.AlignmentPoint = new XYZ(Math.Cos(_rotation), Math.Sin(_rotation), 0.0);
+                //this._alignmentPoint = new XYZ(Math.Cos(_rotation), Math.Sin(_rotation), 0.0);
 			}
 		}
 
@@ -140,7 +140,7 @@ namespace ACadSharp.Entities
 			set
 			{
 				_alignmentPoint = value;
-				this._rotation = new XY(this._alignmentPoint.X, this._alignmentPoint.Y).GetAngle();
+				//this._rotation = new XY(this._alignmentPoint.X, this._alignmentPoint.Y).GetAngle();
 			}
 		}
 
