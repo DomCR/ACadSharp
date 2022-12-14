@@ -1,4 +1,5 @@
-﻿using ACadSharp.Examples.Common;
+﻿using ACadSharp.Entities;
+using ACadSharp.Examples.Common;
 using ACadSharp.IO;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;

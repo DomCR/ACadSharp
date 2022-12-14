@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using Xunit;
 using Xunit.Abstractions;
+using static System.Environment;
 
 namespace ACadSharp.Tests.IO
 {
@@ -22,6 +23,7 @@ namespace ACadSharp.Tests.IO
 		public static TheoryData<string> DxfBinaryFiles { get; }
 
 		public static TheoryData<ACadVersion> Versions { get; }
+		public static string AcCoreConsolePath { get; }
 
 		protected readonly ITestOutputHelper _output;
 
@@ -59,6 +61,41 @@ namespace ACadSharp.Tests.IO
 			{
 				Directory.CreateDirectory(_samplesOutFolder);
 			}
+
+			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") == null)
+			{
+				var acCoreConsolePath = @"D:\Programs\Autodesk\AutoCAD 2023\accoreconsole.exe";
+
+				if (!File.Exists(acCoreConsolePath))
+				{
+					var programFiles = Environment.GetFolderPath(SpecialFolder.ProgramFiles);
+					var autoCadPath = Path.Combine(programFiles, "Autodesk");
+					
+					var baseAutoCadPaths = new string[]
+					{
+						"AutoCAD 2023",
+						"AutoCAD LT 2023",
+						"AutoCAD 2022",
+						"AutoCAD LT 2022",
+						"AutoCAD 2021",
+						"AutoCAD LT 2021",
+					};
+
+					for (var i = 0; i < baseAutoCadPaths.Length; i++)
+					{
+						var consolePath = Path.Combine(autoCadPath, baseAutoCadPaths[i], "accoreconsole.exe");
+						if (File.Exists(consolePath))
+						{
+							AcCoreConsolePath = consolePath;
+							break;
+						}
+					}
+				}
+				else
+				{
+					AcCoreConsolePath = acCoreConsolePath;
+				}
+			}
 		}
 
 		public IOTestsBase(ITestOutputHelper output)
@@ -82,7 +119,7 @@ namespace ACadSharp.Tests.IO
 			try
 			{
 				process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-				process.StartInfo.FileName = "\"D:\\Programs\\Autodesk\\AutoCAD 2023\\accoreconsole.exe\"";
+				process.StartInfo.FileName = AcCoreConsolePath;
 				process.StartInfo.Arguments = $"/i \"{Path.Combine(_samplesFolder, "sample_base/empty.dwg")}\" /l en - US";
 				process.StartInfo.UseShellExecute = false;
 				process.StartInfo.RedirectStandardOutput = true;
@@ -186,6 +223,27 @@ namespace ACadSharp.Tests.IO
 			finally
 			{
 				process.Kill();
+			}
+		}
+
+		protected static void loadSamples(string folder, string ext, TheoryData<string> files)
+		{
+			string path = Path.Combine(_samplesFolder, "local", folder);
+
+			if (!Directory.Exists(path))
+			{
+				files.Add(string.Empty);
+				return;
+			}
+
+			foreach (string file in Directory.GetFiles(path, $"*.{ext}"))
+			{
+				files.Add(file);
+			}
+
+			if (!files.Any())
+			{
+				files.Add(string.Empty);
 			}
 		}
 	}

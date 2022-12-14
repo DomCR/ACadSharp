@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO;
 using System.Collections.Generic;
 using System.IO;
 using Xunit;
@@ -54,10 +55,10 @@ namespace ACadSharp.Tests.IO
 			CadDocument transfer = new CadDocument();
 			transfer.Header.Version = doc.Header.Version;
 
-			List<Entities.Entity> entities = new List<Entities.Entity>(doc.Entities);
+			List<Entity> entities = new List<Entity>(doc.Entities);
 			foreach (var item in entities)
 			{
-				Entities.Entity e = doc.Entities.Remove(item);
+				Entity e = doc.Entities.Remove(item);
 				transfer.Entities.Add(e);
 			}
 
