@@ -4,8 +4,18 @@ using System;
 namespace ACadSharp
 {
 	public static class MathUtils
-	{
-		public static XY GetCenter(XY start, XY end, double bulge)
+    {
+		/// <summary>
+		/// Factor for converting radians to degrees.
+		/// </summary>
+        public const double RadToDeg = (180 / Math.PI);
+
+		/// <summary>
+		/// Factor for converting degrees to radians.
+		/// </summary>
+        public const double DegToRad = (Math.PI / 180);
+
+        public static XY GetCenter(XY start, XY end, double bulge)
 		{
 			return GetCenter(start, end, bulge, out _);
 		}
