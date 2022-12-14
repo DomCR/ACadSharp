@@ -10,10 +10,10 @@
 		/// </summary>
 		Baseline = 0,
 
-		/// <summary>
-		/// Top
-		/// </summary>
-		Top = 1,
+        /// <summary>
+        /// Bottom
+        /// </summary>
+        Bottom = 1,
 
 		/// <summary>
 		/// Middle
@@ -21,8 +21,8 @@
 		Middle = 2,
 
 		/// <summary>
-		/// Bottom
+		/// Top
 		/// </summary>
-		Bottom = 3,
+		Top = 3,
 	}
 }
