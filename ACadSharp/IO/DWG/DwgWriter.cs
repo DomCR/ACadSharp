@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO.DWG;
+﻿using ACadSharp.Exceptions;
+using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamWriters;
 using CSUtilities.IO;
 using CSUtilities.Text;
@@ -94,7 +95,7 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
-					throw new NotSupportedException($"Version: {this._document.Header.Version} is not supported");
+					throw new DwgNotSupportedException(this._document.Header.Version);
 				case ACadVersion.AC1018:
 					this._fileHeaderWriter = new DwgFileHeaderWriterAC18(_stream, _document);
 					break;
@@ -102,10 +103,10 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
-					throw new NotSupportedException($"Version: {this._document.Header.Version} is not supported");
+					throw new DwgNotSupportedException(this._document.Header.Version);
 				case ACadVersion.Unknown:
 				default:
-					throw new NotSupportedException($"Unknown version: {this._document.Header.Version} is not supported");
+					throw new DwgNotSupportedException();
 			}
 		}
 

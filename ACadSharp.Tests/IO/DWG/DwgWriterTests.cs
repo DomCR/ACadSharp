@@ -173,7 +173,7 @@ namespace ACadSharp.Tests.IO.DWG
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
-					return true;
+					return false;
 				case ACadVersion.Unknown:
 				default:
 					return false;
