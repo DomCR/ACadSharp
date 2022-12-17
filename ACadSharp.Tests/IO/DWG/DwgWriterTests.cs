@@ -52,7 +52,7 @@ namespace ACadSharp.Tests.IO.DWG
 
 			addEntities(doc);
 
-			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}.dwg");
+			string path = Path.Combine(_samplesOutFolder, $"out_sample_{version}.dwg");
 
 			using (var wr = new DwgWriter(path, doc))
 			{
@@ -169,8 +169,9 @@ namespace ACadSharp.Tests.IO.DWG
 				case ACadVersion.AC1018:
 					return true;
 				case ACadVersion.AC1021:
-					return false;
+					return true;
 				case ACadVersion.AC1024:
+					return true;
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
 					return false;
