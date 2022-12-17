@@ -8,7 +8,7 @@ namespace ACadSharp.IO.DWG
 {
 	internal class DwgClassesWriter : DwgSectionIO
 	{
-		private CadDocument _model;
+		private CadDocument _document;
 
 		private MemoryStream _sectionStream;
 
@@ -28,7 +28,7 @@ namespace ACadSharp.IO.DWG
 
 		public DwgClassesWriter(CadDocument document, ACadVersion version, Stream stream) : base(version)
 		{
-			this._model = document;
+			this._document = document;
 			this._startWriter = DwgStreamWriterBase.GetStreamHandler(version, stream, TextEncoding.Windows1252());
 
 			this._sectionStream = new MemoryStream();
@@ -43,9 +43,9 @@ namespace ACadSharp.IO.DWG
 			}
 
 			short maxClassNumber = 0;
-			if (this._model.Classes.Any())
+			if (this._document.Classes.Any())
 			{
-				maxClassNumber = this._model.Classes.Max(c => c.ClassNumber);
+				maxClassNumber = this._document.Classes.Max(c => c.ClassNumber);
 			}
 
 			if (this.R2004Plus)
@@ -60,23 +60,34 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBit(true);
 			}
 
-			foreach (var c in this._model.Classes)
+			foreach (var c in this._document.Classes)
 			{
+				//BS : classnum
 				this._writer.WriteBitShort(c.ClassNumber);
+				//BS : version – in R14, becomes a flag indicating whether objects can be moved, edited, etc.
 				this._writer.WriteBitShort((short)c.ProxyFlags);
+				//TV : appname
 				this._writer.WriteVariableText(c.ApplicationName);
+				//TV: cplusplusclassname
 				this._writer.WriteVariableText(c.CppClassName);
+				//TV : classdxfname
 				this._writer.WriteVariableText(c.DxfName);
+				//B : wasazombie
 				this._writer.WriteBit(c.WasZombie);
+				//BS : itemclassid -- 0x1F2 for classes which produce entities, 0x1F3 for classes which produce objects.
 				this._writer.WriteBitShort(c.ItemClassId);
 
 				if (this.R2004Plus)
 				{
 					//BL : Number of objects created of this type in the current DB(DXF 91).
-					this._writer.WriteBitLong(1);
-					this._writer.WriteBitShort((short)this._model.Header.Version);
-					this._writer.WriteBitShort(this._model.Header.MaintenanceVersion);
+					this._writer.WriteBitLong(c.InstanceCount);
+					//BS : Dwg Version
+					this._writer.WriteBitShort((short)this._document.Header.Version);
+					//BS : Maintenance release version.
+					this._writer.WriteBitShort(this._document.Header.MaintenanceVersion);
+					//BL : Unknown(normally 0L)
 					this._writer.WriteBitLong(0);
+					//BL : Unknown(normally 0L)
 					this._writer.WriteBitLong(0);
 				}
 			}
@@ -88,16 +99,18 @@ namespace ACadSharp.IO.DWG
 
 		private void writeSizeAndCrc()
 		{
+			//SN : 0x8D 0xA1 0xC4 0xB8 0xC4 0xA9 0xF8 0xC5 0xC0 0xDC 0xF4 0x5F 0xE7 0xCF 0xB6 0x8A
 			this._startWriter.WriteBytes(_startSentinel);
 
 			CRC8StreamHandler crc = new CRC8StreamHandler(this._startWriter.Stream, 0xC0C1);
 			StreamIO swriter = new StreamIO(crc);
 
+			//RL : size of class data area.
 			swriter.Write((int)this._sectionStream.Length);
 
-			if (this._model.Header.Version >= ACadVersion.AC1024
-				&& this._model.Header.MaintenanceVersion > 3
-				|| this._model.Header.Version > ACadVersion.AC1027)
+			if (this._document.Header.Version >= ACadVersion.AC1024
+				&& this._document.Header.MaintenanceVersion > 3
+				|| this._document.Header.Version > ACadVersion.AC1027)
 			{
 				//RL : unknown, possibly the high 32 bits of a 64-bit size?
 				swriter.Write((int)0);  //TODO: Define endian order!!!
