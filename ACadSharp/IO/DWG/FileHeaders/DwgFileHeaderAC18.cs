@@ -2,7 +2,7 @@
 
 namespace ACadSharp.IO.DWG
 {
-	internal class DwgFileHeaderAC18 : DwgFileHeader15
+	internal class DwgFileHeaderAC18 : DwgFileHeaderAC15
 	{
 		public byte DwgVersion { get; set; }
 
@@ -16,7 +16,7 @@ namespace ACadSharp.IO.DWG
 
 		public int RootTreeNodeGap { get; set; }
 
-		public uint GapArraySize { get; set; }
+		public uint GapArraySize { get; set; } = 0;
 
 		public uint CRCSeed { get; set; }
 

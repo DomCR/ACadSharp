@@ -8,34 +8,15 @@ using System.Text;
 
 namespace ACadSharp.IO.DWG.DwgStreamWriters
 {
-	internal class DwgFileHeaderWriterAC18 : IDwgFileHeaderWriter
+	internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase, IDwgFileHeaderWriter
 	{
-		public ACadVersion _version;
-
-		private Encoding _encoding;
-
-		private Stream _stream;
-
-		private DwgFileHeaderAC18 _fileHeader = new DwgFileHeaderAC18();
+		public new DwgFileHeaderAC18 _fileHeader { get; } = new DwgFileHeaderAC18();
 
 		private List<DwgLocalSectionMap> _localSectionsMaps = new List<DwgLocalSectionMap>();
 
-		private CadDocument _document;
-
 		private Dictionary<string, DwgSectionDescriptor> _descriptors { get { return this._fileHeader.Descriptors; } }
 
-		public DwgFileHeaderWriterAC18(Stream stream, CadDocument model)
-		{
-			if (!stream.CanSeek || !stream.CanWrite)
-			{
-				throw new ArgumentException();
-			}
-
-			this._document = model;
-			this._stream = stream;
-			this._version = model.Header.Version;
-			this._encoding = TextEncoding.Windows1252();
-		}
+		public DwgFileHeaderWriterAC18(Stream stream, CadDocument model) : base(stream, model) { }
 
 		public void Init()
 		{
@@ -48,7 +29,6 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 		public void WriteFile()
 		{
-			this._fileHeader.GapArraySize = 0u;
 			this._fileHeader.SectionArrayPageSize = (uint)(this._localSectionsMaps.Count + 2);
 			this._fileHeader.SectionPageMapId = this._fileHeader.SectionArrayPageSize;
 			this._fileHeader.SectionMapId = this._fileHeader.SectionArrayPageSize - 1;
@@ -512,7 +492,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			//0x10	4	Section page checksum
 			writer.Write<uint>((uint)section.Checksum);
 		}
-				
+
 		private void writeDataSection(Stream stream, DwgSectionDescriptor descriptor, DwgLocalSectionMap map, int size)
 		{
 			StreamIO writer = new StreamIO(stream);

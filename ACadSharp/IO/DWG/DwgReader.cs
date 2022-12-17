@@ -261,7 +261,7 @@ namespace ACadSharp.IO
 		/// Read the file header data.
 		/// </summary>
 		/// <returns></returns>
-		private DwgFileHeader readFileHeader()
+		internal DwgFileHeader readFileHeader()
 		{
 			//Reset the stream position at the begining
 			this._fileStream.Position = 0L;
@@ -292,13 +292,13 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
-					this.readFileHeaderAC15(fileHeader as DwgFileHeader15, sreader);
+					this.readFileHeaderAC15(fileHeader as DwgFileHeaderAC15, sreader);
 					break;
 				case ACadVersion.AC1018:
 					this.readFileHeaderAC18(fileHeader as DwgFileHeaderAC18, sreader);
 					break;
 				case ACadVersion.AC1021:
-					this.readFileHeaderAC21(fileHeader as DwgFileHeader21, sreader);
+					this.readFileHeaderAC21(fileHeader as DwgFileHeaderAC21, sreader);
 					break;
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
@@ -511,7 +511,7 @@ namespace ACadSharp.IO
 		/// </summary>
 		/// <param name="fileheader">File header to read</param>
 		/// <param name="sreader"></param>
-		private void readFileHeaderAC15(DwgFileHeader15 fileheader, IDwgStreamReader sreader)
+		private void readFileHeaderAC15(DwgFileHeaderAC15 fileheader, IDwgStreamReader sreader)
 		{
 			//The next 7 starting at offset 0x06 are to be six bytes of 0 
 			//(in R14, 5 0’s and the ACADMAINTVER variable) and a byte of 1.
@@ -773,7 +773,7 @@ namespace ACadSharp.IO
 		/// </summary>
 		/// <param name="fileheader">File header to read</param>
 		/// <param name="sreader"></param>
-		private void readFileHeaderAC21(DwgFileHeader21 fileheader, IDwgStreamReader sreader)
+		private void readFileHeaderAC21(DwgFileHeaderAC21 fileheader, IDwgStreamReader sreader)
 		{
 			this.readFileMetaData(fileheader, sreader);
 
@@ -851,7 +851,7 @@ namespace ACadSharp.IO
 				//0x80	8	PagesMapCrcUncompressed
 				PagesMapCrcUncompressed = decompressed.ReadULong(),
 				//0x88	8	Unknown(normally 0xf800, 63488)
-				Unknown0x800 = decompressed.ReadULong(),
+				Unknown0xF800 = decompressed.ReadULong(),
 				//0x90	8	Unknown(normally 4)
 				Unknown4 = decompressed.ReadULong(),
 				//0x98	8	Unknown(normally 1)
@@ -954,7 +954,7 @@ namespace ACadSharp.IO
 				}
 
 				ulong currentOffset = 0;
-				for (int index = 0; index < section.PageCount; ++index)
+				for (int i = 0; i < section.PageCount; ++i)
 				{
 					DwgLocalSectionMap page = new DwgLocalSectionMap();
 					//8	Page data offset.If a page’s data offset is 
@@ -976,6 +976,8 @@ namespace ACadSharp.IO
 					//8	Page CRC
 					page.CRC = sectionMapStream.ReadULong<LittleEndianConverter>();
 
+#if false
+//this code it doesn't take any effect on the reading
 					//Create an empty page to fill the gap
 					if (currentOffset < page.Offset)
 					{
@@ -989,7 +991,7 @@ namespace ACadSharp.IO
 						//Add the empty local section to the current descriptor
 						section.LocalSections.Add(emptyPage);
 					}
-
+#endif
 					//Add the page to the section
 					section.LocalSections.Add(page);
 					//Move the offset
@@ -1112,7 +1114,7 @@ namespace ACadSharp.IO
 
 			//RS: CRC
 			short crc = sreader.ReadShort();
-			
+
 			//0x72,0x5E,0x3B,0x47,0x3B,0x56,0x07,0x3A,0x3F,0x23,0x0B,0xA0,0x18,0x30,0x49,0x75
 			byte[] endsn = sreader.ReadSentinel();
 
@@ -1128,7 +1130,7 @@ namespace ACadSharp.IO
 			long size = sreader.ReadRawLong();
 
 			//R2010+ (only present if the maintenance version is greater than 3!)
-			if (this._fileHeader.AcadVersion >= ACadVersion.AC1024 
+			if (this._fileHeader.AcadVersion >= ACadVersion.AC1024
 				&& this._fileHeader.AcadMaintenanceVersion > 3
 				|| this._fileHeader.AcadVersion > ACadVersion.AC1027)
 			{
@@ -1220,14 +1222,14 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
-					sectionStream = this.getSectionBuffer15(this._fileHeader as DwgFileHeader15, sectionName);
-					encoding = TextEncoding.GetListedEncoding((this._fileHeader as DwgFileHeader15).DrawingCodePage);
+					sectionStream = this.getSectionBuffer15(this._fileHeader as DwgFileHeaderAC15, sectionName);
+					encoding = TextEncoding.GetListedEncoding((this._fileHeader as DwgFileHeaderAC15).DrawingCodePage);
 					break;
 				case ACadVersion.AC1018:
 					sectionStream = this.getSectionBuffer18(this._fileHeader as DwgFileHeaderAC18, sectionName);
 					break;
 				case ACadVersion.AC1021:
-					sectionStream = this.getSectionBuffer21(this._fileHeader as DwgFileHeader21, sectionName);
+					sectionStream = this.getSectionBuffer21(this._fileHeader as DwgFileHeaderAC21, sectionName);
 					break;
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
@@ -1252,7 +1254,7 @@ namespace ACadSharp.IO
 			return streamHandler;
 		}
 
-		private Stream getSectionBuffer15(DwgFileHeader15 fileheader, string sectionName)
+		private Stream getSectionBuffer15(DwgFileHeaderAC15 fileheader, string sectionName)
 		{
 			Stream stream = null;
 
@@ -1343,7 +1345,7 @@ namespace ACadSharp.IO
 			var oda = (uint)(sreader.ReadRawLong() ^ secMask);
 		}
 
-		private Stream getSectionBuffer21(DwgFileHeader21 fileheader, string sectionName)
+		private Stream getSectionBuffer21(DwgFileHeaderAC21 fileheader, string sectionName)
 		{
 			Stream stream = null;
 

@@ -37,11 +37,11 @@ namespace ACadSharp.IO.DWG
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
-					return new DwgFileHeader15(version);
+					return new DwgFileHeaderAC15(version);
 				case ACadVersion.AC1018:
 					return new DwgFileHeaderAC18(version);
 				case ACadVersion.AC1021:
-					return new DwgFileHeader21(version);
+					return new DwgFileHeaderAC21(version);
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
