@@ -18,7 +18,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 		public DwgFileHeaderWriterAC18(Stream stream, CadDocument model) : base(stream, model) { }
 
-		public void Init()
+		public virtual void Init()
 		{
 			// File header info
 			for (int i = 0; i < 0x100; i++)
@@ -290,7 +290,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			this._fileHeader.PageMapAddress = (ulong)section.Seeker;
 		}
 
-		public void writeFileMetaData()
+		protected void writeFileMetaData()
 		{
 			StreamIO writer = new StreamIO(this._stream);
 
@@ -335,7 +335,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			writer.Write(0);
 
 			//0x20	4	Summary info Address in stream
-			writer.Write((uint)((int)this._descriptors[DwgSectionDefinition.SummaryInfo].LocalSections[0].Seeker + 32));
+			writer.Write((uint)((int)this._descriptors[DwgSectionDefinition.SummaryInfo].LocalSections[0].Seeker + 0x20));
 
 			//0x24	4	VBA Project Addr(0 if not present)
 			writer.Write(0u);
@@ -344,7 +344,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			writer.Write<int>(0x00000080);
 
 			//0x2C	4	App info Address in stream
-			writer.Write((uint)((int)this._descriptors[DwgSectionDefinition.AppInfo].LocalSections[0].Seeker + 32));
+			writer.Write((uint)((int)this._descriptors[DwgSectionDefinition.AppInfo].LocalSections[0].Seeker + 0x20));
 
 			//0x30	0x80	0x00 bytes
 			byte[] array = new byte[80];
