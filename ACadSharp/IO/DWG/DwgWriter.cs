@@ -103,9 +103,9 @@ namespace ACadSharp.IO
 					this._fileHeaderWriter = new DwgFileHeaderWriterAC21(_stream, _document);
 					break;
 				case ACadVersion.AC1024:
+				case ACadVersion.AC1027:
 					this._fileHeaderWriter = new DwgFileHeaderWriterAC18(_stream, _document);
 					break;
-				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
 					throw new DwgNotSupportedException(this._document.Header.Version);
 				case ACadVersion.Unknown:

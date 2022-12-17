@@ -52,6 +52,18 @@ namespace ACadSharp.Tests.IO.DWG
 
 			addEntities(doc);
 
+			doc.Classes.Add(new Classes.DxfClass
+			{
+				ClassNumber = 500,
+				CppClassName = "AcDbDictionaryWithDefault",
+				DxfName = "ACDBDICTIONARYWDFLT",
+				InstanceCount = 0,
+				IsAnEntity = false,
+				ItemClassId = 499,
+				ProxyFlags = Classes.ProxyFlags.None,
+				WasZombie = false,
+			});
+
 			string path = Path.Combine(_samplesOutFolder, $"out_sample_{version}.dwg");
 
 			using (var wr = new DwgWriter(path, doc))
@@ -171,8 +183,8 @@ namespace ACadSharp.Tests.IO.DWG
 				case ACadVersion.AC1021:
 					return true;
 				case ACadVersion.AC1024:
-					return true;
 				case ACadVersion.AC1027:
+					return true;
 				case ACadVersion.AC1032:
 					return false;
 				case ACadVersion.Unknown:
