@@ -1,6 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Classes
 {
@@ -11,6 +9,7 @@ namespace ACadSharp.Classes
 		/// </summary>
 		[DxfCodeValue(1)]
 		public string DxfName { get; set; }
+
 		/// <summary>
 		/// C++ class name. Used to bind with software that defines object class behavior; always unique
 		/// </summary>

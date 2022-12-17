@@ -18,6 +18,11 @@ namespace ACadSharp.Classes
 			if (_list.ContainsKey(item.DxfName))
 				return;
 
+			if(item.DxfName == "HATCH")
+			{
+
+			}
+
 			_list.Add(item.DxfName, item);
 		}
 
