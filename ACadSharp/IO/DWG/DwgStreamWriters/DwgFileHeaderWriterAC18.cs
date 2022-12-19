@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ACadSharp.IO.DWG.DwgStreamWriters
 {
-	internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase, IDwgFileHeaderWriter
+	internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase
 	{
 		public new DwgFileHeaderAC18 _fileHeader { get; } = new DwgFileHeaderAC18();
 
@@ -18,7 +18,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 		public DwgFileHeaderWriterAC18(Stream stream, CadDocument model) : base(stream, model) { }
 
-		public virtual void Init()
+		public override void Init()
 		{
 			// File header info
 			for (int i = 0; i < 0x100; i++)
@@ -27,7 +27,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			}
 		}
 
-		public void WriteFile()
+		public override void WriteFile()
 		{
 			this._fileHeader.SectionArrayPageSize = (uint)(this._localSectionsMaps.Count + 2);
 			this._fileHeader.SectionPageMapId = this._fileHeader.SectionArrayPageSize;
@@ -40,7 +40,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			this.writeFileMetaData();
 		}
 
-		public void CreateSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400)
+		public override void CreateSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400)
 		{
 			DwgSectionDescriptor descriptor = new DwgSectionDescriptor(name);
 			this._fileHeader.AddSection(descriptor);
@@ -168,7 +168,6 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			descriptor.LocalSections.Add(localMap);
 			this._localSectionsMaps.Add(localMap);
 		}
-
 
 		private void writeDescriptors()
 		{

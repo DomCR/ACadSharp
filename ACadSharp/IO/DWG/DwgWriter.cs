@@ -50,6 +50,12 @@ namespace ACadSharp.IO
 		{
 			this.getFileHeaderWriter();
 
+			if (this._fileHeaderWriter is DwgFileHeaderWriterAC15)
+			{
+				this._fileHeaderWriter.WriteFile();
+				return;
+			}
+
 			this._fileHeaderWriter.Init();
 
 			this.writeHeader();
@@ -92,10 +98,12 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1004:
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
+					throw new DwgNotSupportedException(this._document.Header.Version);
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
-					throw new DwgNotSupportedException(this._document.Header.Version);
+					this._fileHeaderWriter = new DwgFileHeaderWriterAC15(_stream, _document);
+					break;
 				case ACadVersion.AC1018:
 					this._fileHeaderWriter = new DwgFileHeaderWriterAC18(_stream, _document);
 					break;

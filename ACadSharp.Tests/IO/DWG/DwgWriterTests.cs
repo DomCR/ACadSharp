@@ -55,11 +55,11 @@ namespace ACadSharp.Tests.IO.DWG
 			doc.Classes.Add(new Classes.DxfClass
 			{
 				ClassNumber = 500,
-				CppClassName = "AcDbDictionaryWithDefault",
-				DxfName = "ACDBDICTIONARYWDFLT",
+				CppClassName = "AcDbArcDimension",
+				DxfName = "ARC_DIMENSION",
 				InstanceCount = 0,
 				IsAnEntity = false,
-				ItemClassId = 499,
+				ItemClassId = 498,
 				ProxyFlags = Classes.ProxyFlags.None,
 				WasZombie = false,
 			});
@@ -96,7 +96,10 @@ namespace ACadSharp.Tests.IO.DWG
 			doc.SummaryInfo = new CadSummaryInfo
 			{
 				Title = "This is a random title",
-				Author = "ACadSharp"
+				Subject = "This is a subject",
+				Author = "ACadSharp",
+				Keywords = "My Keyworks",
+				Comments = "This is my comment"
 			};
 
 			MemoryStream stream = new MemoryStream();
@@ -121,6 +124,10 @@ namespace ACadSharp.Tests.IO.DWG
 				CadSummaryInfo info = re.ReadSummaryInfo();
 
 				Assert.Equal(doc.SummaryInfo.Title, info.Title);
+				Assert.Equal(doc.SummaryInfo.Subject, info.Subject);
+				Assert.Equal(doc.SummaryInfo.Author, info.Author);
+				Assert.Equal(doc.SummaryInfo.Keywords, info.Keywords);
+				Assert.Equal(doc.SummaryInfo.Comments, info.Comments);
 			}
 		}
 
@@ -175,6 +182,7 @@ namespace ACadSharp.Tests.IO.DWG
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
 				case ACadVersion.AC1012:
+					return true;
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
 					return false;

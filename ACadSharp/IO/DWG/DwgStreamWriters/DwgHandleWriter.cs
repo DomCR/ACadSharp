@@ -14,8 +14,9 @@ namespace ACadSharp.IO.DWG
 
 		private Dictionary<ulong, long> _handleMap;
 
-		private int initialValue;
-
+		/// <param name="version"></param>
+		/// <param name="stream"></param>
+		/// <param name="map"></param>
 		public DwgHandleWriter(ACadVersion version, MemoryStream stream, Dictionary<ulong, long> map) : base(version)
 		{
 			this._stream = stream;
@@ -28,10 +29,10 @@ namespace ACadSharp.IO.DWG
 #else
 			this._handleMap = new Dictionary<ulong, long>(map.OrderBy(o => o.Key));
 #endif
-			this.initialValue = 0;
 		}
 
-		public void Write()
+		/// <param name="sectionOffset">For R18 the offset is relative, for earlier is absolute</param>
+		public void Write(int sectionOffset = 0)
 		{
 			byte[] array = new byte[10];
 			byte[] array2 = new byte[5];
@@ -47,7 +48,7 @@ namespace ACadSharp.IO.DWG
 			foreach (var pair in this._handleMap)
 			{
 				ulong handleOff = pair.Key - offset;
-				long lastLoc = (long)pair.Value + this.initialValue;
+				long lastLoc = (long)pair.Value + sectionOffset;
 				long locDiff = lastLoc - initialLoc;
 
 				int offsetSize = modularShortToValue(handleOff, array);
