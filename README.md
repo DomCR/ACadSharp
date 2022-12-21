@@ -67,7 +67,11 @@ ACadSharp has the first `DwgWriter` in an early alpha.
 
 Compatible versions:
 
-- AC1018 - AutoCAD 2004/2005/2006
+- AC1014 - Release 14, 14.01 (LT97/LT98) - (WIP)
+    - Produces a valid file but the entities are not in the model.
+- AC1015 - AutoCAD 2000/2000i/2002
+    - This version depens on the implementation of VP_ENT_HDR to work properly with the different `Viewports`
+- AC1018 - AutoCAD 2004/2005/2006 (MOST STABLE - RECOMENDED)
 
 The right now the writer only has capability to write points and lines in the `*Model_space` and it does not write all the information for the different objects in the document such as dictionaries, extended data or reactors.
 

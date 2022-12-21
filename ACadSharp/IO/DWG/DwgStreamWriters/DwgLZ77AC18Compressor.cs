@@ -3,11 +3,6 @@ using System.IO;
 
 namespace ACadSharp.IO.DWG
 {
-	internal interface ICompressor
-	{
-		void Compress(byte[] source, int offset, int totalSize, Stream dest);
-	}
-
 	internal class DwgLZ77AC18Compressor : ICompressor
 	{
 		private byte[] _source;

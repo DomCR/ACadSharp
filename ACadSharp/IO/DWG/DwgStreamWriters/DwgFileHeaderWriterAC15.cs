@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace ACadSharp.IO.DWG.DwgStreamWriters
+namespace ACadSharp.IO.DWG
 {
 	/*
 	HEADER
@@ -44,7 +44,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			}
 		}
 
-		private readonly int _fileHeaderSize = 0x61;
+		protected override int _fileHeaderSize { get { return 0x61; } }
 
 		private readonly Dictionary<string, (DwgSectionLocatorRecord, MemoryStream)> _records;
 

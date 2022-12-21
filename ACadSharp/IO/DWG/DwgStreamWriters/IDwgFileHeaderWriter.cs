@@ -1,4 +1,4 @@
-﻿namespace ACadSharp.IO.DWG.DwgStreamWriters
+﻿namespace ACadSharp.IO.DWG
 {
 	internal interface IDwgFileHeaderWriter
 	{
