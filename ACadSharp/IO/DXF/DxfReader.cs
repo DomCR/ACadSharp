@@ -108,7 +108,7 @@ namespace ACadSharp.IO
 		{
 			this._document = new CadDocument(false);
 			this._builder = new DxfDocumentBuilder(this._document, this.Configuration);
-			this._builder.OnNotification += this.triggerNotification;
+			this._builder.OnNotification += this.onNotificationEvent;
 
 			this._reader = this._reader ?? this.getReader();
 
@@ -145,7 +145,7 @@ namespace ACadSharp.IO
 						this.readObjects();
 						break;
 					default:
-						this.triggerNotification(this, new NotificationEventArgs($"Section not implemented {this._reader.LastValueAsString}"));
+						this.triggerNotification(($"Section not implemented {this._reader.LastValueAsString}"), NotificationType.NotImplemented);
 						break;
 				}
 

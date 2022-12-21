@@ -62,23 +62,28 @@ namespace ACadSharp.IO.DWG
 			R2018Plus = version >= ACadVersion.AC1032;
 		}
 
-		protected bool checkSentinel(IDwgStreamReader sreader, byte[] expected)
+		public static bool CheckSentinel(byte[] actual, byte[] expected)
 		{
-			var sn = sreader.ReadSentinel();
-
-			if (expected.Length != sn.Length)
+			if (expected.Length != actual.Length)
 				return false;
 
 			for (int i = 0; i < expected.Length; i++)
 			{
-				if (sn[i] != expected[i])
+				if (actual[i] != expected[i])
 				{
-					this.notify($"Invalid section sentinel found int {SectionName}", NotificationType.Warning);
 					return false;
 				}
 			}
 
 			return true;
+		}
+
+		protected void checkSentinel(IDwgStreamReader sreader, byte[] expected)
+		{
+			var sn = sreader.ReadSentinel();
+
+			if (!CheckSentinel(sn, expected))
+				this.notify($"Invalid section sentinel found in {SectionName}", NotificationType.Warning);
 		}
 
 		protected void notify(string message, NotificationType type, Exception ex = null)

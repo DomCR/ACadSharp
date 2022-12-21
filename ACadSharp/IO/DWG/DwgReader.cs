@@ -91,10 +91,10 @@ namespace ACadSharp.IO
 		{
 			this._document = new CadDocument(false);
 			this._builder = new DwgDocumentBuilder(this._document, this.Configuration);
-			this._builder.OnNotification += this.triggerNotification;
+			this._builder.OnNotification += this.onNotificationEvent;
 
 			//Read the file header
-			this.readFileHeader();
+			this._fileHeader = this.readFileHeader();
 
 			this._document.SummaryInfo = this.ReadSummaryInfo();
 			this._document.Header = this.ReadHeader();
@@ -246,7 +246,7 @@ namespace ACadSharp.IO
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Header);
 
 			DwgHeaderReader hreader = new DwgHeaderReader(this._fileHeader.AcadVersion, sreader);
-			hreader.OnNotification += triggerNotification;
+			hreader.OnNotification += onNotificationEvent;
 
 			CadHeader header = hreader.Read(this._fileHeader.AcadMaintenanceVersion, out DwgHeaderHandlesCollection headerHandles);
 
@@ -326,7 +326,7 @@ namespace ACadSharp.IO
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Classes);
 
 			var reader = new DwgClassesReader(this._fileHeader.AcadVersion, this._fileHeader);
-			reader.OnNotification += triggerNotification;
+			reader.OnNotification += onNotificationEvent;
 
 			return reader.Read(sreader);
 		}
@@ -346,7 +346,7 @@ namespace ACadSharp.IO
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Handles);
 
 			var handleReader = new DwgHandleReader(sreader, this._fileHeader.AcadVersion);
-			handleReader.OnNotification += triggerNotification;
+			handleReader.OnNotification += onNotificationEvent;
 
 			return handleReader.Read();
 		}
@@ -407,7 +407,8 @@ namespace ACadSharp.IO
 			if (this._fileHeader.AcadVersion <= ACadVersion.AC1015)
 			{
 				sreader = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
-				sreader.Position = this.readObjFreeSpace();
+				//Handles are in absolute offset for this versions
+				sreader.Position = 0;
 			}
 			else
 			{
@@ -460,11 +461,17 @@ namespace ACadSharp.IO
 				record.Seeker = sreader.ReadRawLong();
 				record.Size = sreader.ReadRawLong();
 
-				fileheader.Records.Add(record.Number, record);
+				fileheader.Records.Add(record.Number.Value, record);
 			}
 
 			//RS : CRC for BOF to this point.
 			sreader.ResetShift();
+
+			var sn = sreader.ReadSentinel();
+			if (!DwgSectionIO.CheckSentinel(sn, DwgFileHeader15.EndSentinel))
+			{
+				this.triggerNotification($"Invalid section sentinel found in FileHeader", NotificationType.Warning);
+			}
 		}
 
 		/// <summary>
@@ -570,7 +577,7 @@ namespace ACadSharp.IO
 				if (record.Number >= 0)
 				{
 					record.Seeker = num;
-					fileheader.Records.Add(record.Number, record);
+					fileheader.Records.Add(record.Number.Value, record);
 				}
 				else
 				{
@@ -1039,7 +1046,7 @@ namespace ACadSharp.IO
 				//There is no section for this version
 				return null;
 
-			if (fileheader.Records.TryGetValue(sectionLocator, out DwgSectionLocatorRecord record))
+			if (fileheader.Records.TryGetValue(sectionLocator.Value, out DwgSectionLocatorRecord record))
 			{
 				//set the stream position
 				stream = this._fileStream.Stream;
