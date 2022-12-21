@@ -6,10 +6,6 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 	{
 		public DwgFileHeaderWriterAC21(Stream stream, CadDocument model) : base(stream, model)
 		{
-		}
-
-		public override void Init()
-		{
 			// File header info
 			for (int i = 0; i < 0x480; i++)
 			{

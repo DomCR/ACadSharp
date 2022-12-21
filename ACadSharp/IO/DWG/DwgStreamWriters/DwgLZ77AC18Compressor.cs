@@ -3,7 +3,12 @@ using System.IO;
 
 namespace ACadSharp.IO.DWG
 {
-	internal class DwgLZ77AC18Compressor
+	internal interface ICompressor
+	{
+		void Compress(byte[] source, int offset, int totalSize, Stream dest);
+	}
+
+	internal class DwgLZ77AC18Compressor : ICompressor
 	{
 		private byte[] _source;
 
@@ -21,14 +26,12 @@ namespace ACadSharp.IO.DWG
 
 		public DwgLZ77AC18Compressor()
 		{
-			for (int i = this._block.Length - 1; i >= 0; i--)
-			{
-				this._block[i] = -1;
-			}
 		}
 
 		public void Compress(byte[] source, int offset, int totalSize, Stream dest)
 		{
+			this.restartBlock();
+
 			this._source = source;
 			this._dest = dest;
 
@@ -80,6 +83,14 @@ namespace ACadSharp.IO.DWG
 			dest.WriteByte(0);
 		}
 
+		private void restartBlock()
+		{
+			for (int i = this._block.Length - 1; i >= 0; i--)
+			{
+				this._block[i] = -1;
+			}
+		}
+
 		private void writeLen(int len)
 		{
 			if (len <= 0)
@@ -122,18 +133,19 @@ namespace ACadSharp.IO.DWG
 
 		private void writeLiteralLength(int length)
 		{
-			if (length > 0)
+			if (length <= 0)
+				return;
+
+
+			if (length > 3)
 			{
-				if (length > 3)
-				{
-					this.writeOpCode(0, length - 1, 0x11);
-				}
-				int num = this._currOffset;
-				for (int i = 0; i < length; i++)
-				{
-					this._dest.WriteByte(this._source[num]);
-					num++;
-				}
+				this.writeOpCode(0, length - 1, 0x11);
+			}
+			int num = this._currOffset;
+			for (int i = 0; i < length; i++)
+			{
+				this._dest.WriteByte(this._source[num]);
+				num++;
 			}
 		}
 
@@ -141,26 +153,29 @@ namespace ACadSharp.IO.DWG
 		{
 			int curr = 0;
 			int next = 0;
-			if (compressionOffset >= 0xF || matchPosition > 0x400)
+			if (compressionOffset >= 0x0F || matchPosition > 0x400)
 			{
 				if (matchPosition <= 0x4000)
 				{
 					matchPosition--;
+					//compressedBytes is read as the next Long Compression Offset + 0x21
 					this.writeOpCode(0x20, compressionOffset, 0x21);
 				}
 				else
 				{
 					matchPosition -= 0x4000;
-					this.writeOpCode(0x10 | ((matchPosition >> 11) & 8), compressionOffset, 0x9);
+					//compressedBytes is read as the next Long Compression Offset, with 9 added
+					this.writeOpCode(0x10 | ((matchPosition >> 11) & 8), compressionOffset, 0x09);
 				}
 
+				//offset = (firstByte >> 2) | (readByte() << 6))
 				curr = (matchPosition & 0xFF) << 2;
-
 				next = matchPosition >> 6;
 			}
 			else
 			{
 				matchPosition--;
+				//compressedBytes = ((opcode1 & 0xF0) >> 4) – 1
 				curr = (compressionOffset + 1 << 4) | ((matchPosition & 0b11) << 2);
 				next = matchPosition >> 2;
 			}
@@ -197,15 +212,15 @@ namespace ACadSharp.IO.DWG
 					matchPos = this._currPosition - value;
 					if (value < this._initialOffset ||
 						matchPos > 0xBFFF ||
-						(matchPos > 0x400 && 
+						(matchPos > 0x400 &&
 						this._source[this._currPosition + 3] != this._source[value + 3]))
 					{
 						this._block[valueIndex] = this._currPosition;
 						return false;
 					}
 				}
-				if (this._source[this._currPosition] == this._source[value] && 
-					this._source[this._currPosition + 1] == this._source[value + 1] && 
+				if (this._source[this._currPosition] == this._source[value] &&
+					this._source[this._currPosition + 1] == this._source[value + 1] &&
 					this._source[this._currPosition + 2] == this._source[value + 2])
 				{
 					offset = 3;

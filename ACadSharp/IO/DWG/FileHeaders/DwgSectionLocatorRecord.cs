@@ -1,11 +1,13 @@
-﻿namespace ACadSharp.IO.DWG
+﻿using System.IO;
+
+namespace ACadSharp.IO.DWG
 {
 	internal class DwgSectionLocatorRecord
 	{
 		/// <summary>
 		/// Number of the record or id.
 		/// </summary>
-		public int Number { get; set; }
+		public int? Number { get; set; }
 
 		/// <summary>
 		/// Offset where the record is.
@@ -19,10 +21,15 @@
 
 		public DwgSectionLocatorRecord() { }
 
-		public DwgSectionLocatorRecord(int number, int offset, int size)
+		public DwgSectionLocatorRecord(int? number)
 		{
 			this.Number = number;
-			this.Seeker = offset;
+		}
+
+		public DwgSectionLocatorRecord(int? number, int seeker, int size)
+		{
+			this.Number = number;
+			this.Seeker = seeker;
 			this.Size = size;
 		}
 

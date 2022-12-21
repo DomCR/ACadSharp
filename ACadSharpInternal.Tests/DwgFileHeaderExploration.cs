@@ -46,7 +46,6 @@ namespace ACadSharpInternal.Tests
 		{
 			printVar(nameof(fh.AcadVersion), fh.AcadVersion);
 			printVar(nameof(fh.AcadMaintenanceVersion), fh.AcadMaintenanceVersion);
-			printVar(nameof(fh.AcadMaintenanceVersion), fh.AcadMaintenanceVersion);
 
 			if (fh is DwgFileHeaderAC15 fh15)
 			{
@@ -106,14 +105,13 @@ namespace ACadSharpInternal.Tests
 
 		private void printVar(string name, object value)
 		{
-			this._output.WriteLine($"{name}:{value}");
+			this._output.WriteLine($"{name}\t{value}");
 		}
 	}
 }
 
 /*
     AcadVersion:AC1014
-    AcadMaintenanceVersion:0
     AcadMaintenanceVersion:0
     DrawingCodePage:Windows1252
     --- Records:
@@ -135,7 +133,6 @@ namespace ACadSharpInternal.Tests
     --- end records
 
 	AcadVersion:AC1015
-	AcadMaintenanceVersion:0
 	AcadMaintenanceVersion:0
 	DrawingCodePage:Windows1252
 	--- Records:
@@ -160,7 +157,6 @@ namespace ACadSharpInternal.Tests
 	--- end records
 
 AcadVersion:AC1018
-    AcadMaintenanceVersion:104
     AcadMaintenanceVersion:104
     DrawingCodePage:Windows1252
     --- Records:

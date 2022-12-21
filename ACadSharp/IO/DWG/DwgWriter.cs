@@ -50,14 +50,6 @@ namespace ACadSharp.IO
 		{
 			this.getFileHeaderWriter();
 
-			if (this._fileHeaderWriter is DwgFileHeaderWriterAC15)
-			{
-				this._fileHeaderWriter.WriteFile();
-				return;
-			}
-
-			this._fileHeaderWriter.Init();
-
 			this.writeHeader();
 			this.writeClasses();
 			//this.writeEmptySection();
@@ -68,12 +60,14 @@ namespace ACadSharp.IO
 			this.writeFileDepList();
 			this.writeRevHistory();
 			//this.writeSecurity();
+			this.writeAuxHeader();
 			this.writeObjects();
 			this.writeObjFreeSpace();
 			this.writeTemplate();
-			this.writeHandles();
 			//this.writePrototype();
-			this.writeAuxHeader();
+
+			//Write in the last place to avoid conflicts with versions < AC1018
+			this.writeHandles();
 
 			this._fileHeaderWriter.WriteFile();
 		}
@@ -98,8 +92,8 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1004:
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
-					throw new DwgNotSupportedException(this._document.Header.Version);
 				case ACadVersion.AC1012:
+					throw new DwgNotSupportedException(this._document.Header.Version);
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
 					this._fileHeaderWriter = new DwgFileHeaderWriterAC15(_stream, _document);
@@ -108,14 +102,15 @@ namespace ACadSharp.IO
 					this._fileHeaderWriter = new DwgFileHeaderWriterAC18(_stream, _document);
 					break;
 				case ACadVersion.AC1021:
-					this._fileHeaderWriter = new DwgFileHeaderWriterAC21(_stream, _document);
-					break;
+					throw new DwgNotSupportedException(this._document.Header.Version);
+					//this._fileHeaderWriter = new DwgFileHeaderWriterAC21(_stream, _document);
+					//break;
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
-					this._fileHeaderWriter = new DwgFileHeaderWriterAC18(_stream, _document);
-					break;
 				case ACadVersion.AC1032:
 					throw new DwgNotSupportedException(this._document.Header.Version);
+					//this._fileHeaderWriter = new DwgFileHeaderWriterAC18(_stream, _document);
+					//break;
 				case ACadVersion.Unknown:
 				default:
 					throw new DwgNotSupportedException();
@@ -129,7 +124,7 @@ namespace ACadSharp.IO
 			writer.OnNotification += triggerNotification;
 			writer.Write();
 
-			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Header, stream, true);
+			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Header, stream, true);
 		}
 
 		private void writeClasses()
@@ -138,7 +133,7 @@ namespace ACadSharp.IO
 			DwgClassesWriter writer = new DwgClassesWriter(this._document, this._version, stream);
 			writer.Write();
 
-			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Classes, stream, false);
+			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Classes, stream, false);
 		}
 
 		private void writeSummaryInfo()
@@ -180,7 +175,7 @@ namespace ACadSharp.IO
 			writer.WriteInt(0);
 			writer.WriteInt(0);
 
-			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.SummaryInfo, stream, false, 0x100);
+			this._fileHeaderWriter.AddSection(DwgSectionDefinition.SummaryInfo, stream, false, 0x100);
 		}
 
 		private void writePreview()
@@ -189,26 +184,31 @@ namespace ACadSharp.IO
 			DwgPreviewWriter writer = new DwgPreviewWriter(this._version, stream);
 			writer.Write();
 
-			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Preview, stream, false, 1024);
+			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, false, 0x400);
 		}
 
 		private void writeAppInfo()
 		{
+			if (this._fileHeader.AcadVersion < ACadVersion.AC1018)
+				return;
+
 			MemoryStream stream = new MemoryStream();
 			DwgAppInfoWriter writer = new DwgAppInfoWriter(this._version, stream);
 			writer.Write();
 
-			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.AppInfo, stream, false, 128);
+			this._fileHeaderWriter.AddSection(DwgSectionDefinition.AppInfo, stream, false, 0x80);
 		}
 
 		private void writeFileDepList()
 		{
+			if (this._fileHeader.AcadVersion < ACadVersion.AC1018)
+				return;
+
 			MemoryStream stream = new MemoryStream();
 			StreamIO swriter = new StreamIO(stream);
-			swriter.Write<uint>(0);
-			swriter.Write<uint>(0);
 
 			//nt32	4	Feature count(ftc)
+			swriter.Write<uint>(0);
 
 			//String32	ftc * (4 + n)	Feature name list.A feature name is one of the following:
 			/*
@@ -217,7 +217,9 @@ namespace ACadSharp.IO
 			 * “Acad: PlotConfig” (for plotsetting)
 			 * “Acad: Text” (for text style)
 			*/
+
 			//Int32	4	File count
+			swriter.Write<uint>(0);
 
 			//Then follows an array of features(repeated file count times). The feature name + the full filename constitute the lookup key of a file dependency:
 
@@ -231,17 +233,20 @@ namespace ACadSharp.IO
 			//Int16	2	Affects graphics(1 = true, 0 = false)
 			//Int32	4	Reference count
 
-			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.FileDepList, stream, false, 0x80);
+			this._fileHeaderWriter.AddSection(DwgSectionDefinition.FileDepList, stream, false, 0x80);
 		}
 
 		private void writeRevHistory()
 		{
+			if (this._fileHeader.AcadVersion < ACadVersion.AC1018)
+				return;
+
 			MemoryStream stream = new MemoryStream();
 			StreamIO swriter = new StreamIO(stream);
 			swriter.Write<uint>(0);
 			swriter.Write<uint>(0);
 			swriter.Write<uint>(0);
-			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.RevHistory, stream, true);
+			this._fileHeaderWriter.AddSection(DwgSectionDefinition.RevHistory, stream, true);
 		}
 
 		private void writeObjects()
@@ -251,7 +256,7 @@ namespace ACadSharp.IO
 			writer.Write();
 			this._handlesMap = writer.Map;
 
-			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.AcDbObjects, stream, true);
+			this._fileHeaderWriter.AddSection(DwgSectionDefinition.AcDbObjects, stream, true);
 		}
 
 		private void writeObjFreeSpace()
@@ -279,9 +284,10 @@ namespace ACadSharp.IO
 			}
 
 			//UInt32	4	Offset of the objects section in the stream.
-			writer.Write<uint>(0);
+			writer.Write<uint>(0);  //It may be the cause of failure for version AC1024
+
 			//UInt8	1	Number of 64 - bit values that follow(ODA writes 4).
-			writer.Write<ushort>(4);
+			writer.Stream.WriteByte(4);
 			//UInt32	4	ODA writes 0x00000032
 			writer.Write<uint>(0x00000032);
 			//UInt32	4	ODA writes 0x00000000
@@ -299,7 +305,7 @@ namespace ACadSharp.IO
 			//UInt32	4	ODA writes 0x00000000
 			writer.Write<uint>(0x00000000);
 
-			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.ObjFreeSpace, stream, true);
+			this._fileHeaderWriter.AddSection(DwgSectionDefinition.ObjFreeSpace, stream, true);
 		}
 
 		private void writeTemplate()
@@ -312,16 +318,16 @@ namespace ACadSharp.IO
 			//UInt16	2	MEASUREMENT system variable(0 = English, 1 = Metric).
 			writer.Write<ushort>((ushort)1);
 
-			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Template, stream, true);
+			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Template, stream, true);
 		}
 
 		private void writeHandles()
 		{
 			MemoryStream stream = new MemoryStream();
 			DwgHandleWriter writer = new DwgHandleWriter(this._version, stream, this._handlesMap);
-			writer.Write();
+			writer.Write(this._fileHeaderWriter.HandleSectionOffset);
 
-			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.Handles, stream, true);
+			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Handles, stream, true);
 		}
 
 		private void writeAuxHeader()
@@ -330,7 +336,7 @@ namespace ACadSharp.IO
 			DwgAuxHeaderWriter writer = new DwgAuxHeaderWriter(stream, this._document.Header);
 			writer.Write();
 
-			this._fileHeaderWriter.CreateSection(DwgSectionDefinition.AuxHeader, stream, true);
+			this._fileHeaderWriter.AddSection(DwgSectionDefinition.AuxHeader, stream, true);
 		}
 	}
 }

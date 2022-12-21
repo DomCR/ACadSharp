@@ -752,7 +752,7 @@ namespace ACadSharp.Header
 		/// System variable TDUPDATE
 		/// </remarks>
 		[CadSystemVariable("$TDUPDATE", 40)]
-		public DateTime UpdateDateTime { get; set; }
+		public DateTime UpdateDateTime { get; set; } = DateTime.Now;
 
 		/// <summary>
 		/// Universal date/time of the last update/save(see Special Handling of Date/Time Variables)
@@ -761,7 +761,7 @@ namespace ACadSharp.Header
 		/// System variable TDUUPDATE
 		/// </remarks>
 		[CadSystemVariable("$TDUUPDATE", 40)]
-		public DateTime UniversalUpdateDateTime { get; set; }
+		public DateTime UniversalUpdateDateTime { get; set; } = DateTime.UtcNow;
 
 		/// <summary>
 		/// Cumulative editing time for this drawing(see Special Handling of Date/Time Variables)

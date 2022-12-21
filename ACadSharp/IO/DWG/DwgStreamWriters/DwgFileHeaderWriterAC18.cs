@@ -10,15 +10,17 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 {
 	internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase
 	{
-		public new DwgFileHeaderAC18 _fileHeader { get; } = new DwgFileHeaderAC18();
+		public override int HandleSectionOffset { get { return 0; } }
+
+		protected new DwgFileHeaderAC18 _fileHeader { get; } = new DwgFileHeaderAC18();
+
+		protected ICompressor _compressor = new DwgLZ77AC18Compressor();
 
 		private List<DwgLocalSectionMap> _localSectionsMaps = new List<DwgLocalSectionMap>();
 
 		private Dictionary<string, DwgSectionDescriptor> _descriptors { get { return this._fileHeader.Descriptors; } }
 
-		public DwgFileHeaderWriterAC18(Stream stream, CadDocument model) : base(stream, model) { }
-
-		public override void Init()
+		public DwgFileHeaderWriterAC18(Stream stream, CadDocument model) : base(stream, model)
 		{
 			// File header info
 			for (int i = 0; i < 0x100; i++)
@@ -40,7 +42,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			this.writeFileMetaData();
 		}
 
-		public override void CreateSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400)
+		public override void AddSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400)
 		{
 			DwgSectionDescriptor descriptor = new DwgSectionDescriptor(name);
 			this._fileHeader.AddSection(descriptor);
@@ -108,7 +110,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 					holder.WriteByte(0);
 				}
 
-				new DwgLZ77AC18Compressor().Compress(holder.GetBuffer(), 0, decompressedSize, mainStream);
+				this._compressor.Compress(holder.GetBuffer(), 0, decompressedSize, mainStream);
 			}
 			else
 			{
@@ -458,10 +460,9 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 		private void compressSection(DwgLocalSectionMap section, MemoryStream stream)
 		{
 			section.DecompressedSize = (ulong)stream.Length;
-			DwgLZ77AC18Compressor compressor = new DwgLZ77AC18Compressor();
-
+			
 			MemoryStream main = new MemoryStream();
-			compressor.Compress(stream.GetBuffer(), 0, (int)stream.Length, main);
+			this._compressor.Compress(stream.GetBuffer(), 0, (int)stream.Length, main);
 
 			section.CompressedSize = (ulong)main.Length;
 

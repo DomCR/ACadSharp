@@ -182,17 +182,14 @@ namespace ACadSharp.Tests.IO.DWG
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
 				case ACadVersion.AC1012:
-					return true;
+					return false;
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
-					return false;
 				case ACadVersion.AC1018:
 					return true;
 				case ACadVersion.AC1021:
-					return true;
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
-					return true;
 				case ACadVersion.AC1032:
 					return false;
 				case ACadVersion.Unknown:

@@ -483,6 +483,7 @@ namespace ACadSharp.IO
 			if (this._fileHeader.AcadVersion <= ACadVersion.AC1015)
 			{
 				sreader = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
+				//Not needed, handles are in absolute offset for this versions
 				sreader.Position = this.readObjFreeSpace();
 			}
 			else
@@ -519,9 +520,10 @@ namespace ACadSharp.IO
 			//At 0x0D is a seeker (4 byte long absolute address) for the beginning sentinel of the image data.
 			fileheader.PreviewAddress = sreader.ReadInt();
 
-			//Bytes at 0x13 and 0x14 are a raw short indicating the value of the code page for this drawing file.
+			//Undocumented Bytes at 0x11 and 0x12
 			sreader.ReadBytes(2);
 
+			//Bytes at 0x13 and 0x14 are a raw short indicating the value of the code page for this drawing file.
 			fileheader.DrawingCodePage = CadUtils.GetCodePage(sreader.ReadShort());
 			sreader.Encoding = TextEncoding.GetListedEncoding(fileheader.DrawingCodePage);
 
@@ -534,10 +536,13 @@ namespace ACadSharp.IO
 				record.Seeker = sreader.ReadRawLong();
 				record.Size = sreader.ReadRawLong();
 
-				fileheader.Records.Add(record.Number, record);
+				fileheader.Records.Add(record.Number.Value, record);
 			}
 
 			sreader.ResetShift();
+
+			//0x95,0xA0,0x4E,0x28,0x99,0x82,0x1A,0xE5,0x5E,0x41,0xE0,0x5F,0x9D,0x3A,0x4D,0x00
+			var sn = sreader.ReadSentinel();
 		}
 
 		/// <summary>
@@ -646,7 +651,7 @@ namespace ACadSharp.IO
 				if (record.Number >= 0)
 				{
 					record.Seeker = total;
-					fileheader.Records.Add(record.Number, record);
+					fileheader.Records.Add(record.Number.Value, record);
 				}
 				else
 				{
@@ -1261,11 +1266,11 @@ namespace ACadSharp.IO
 			//Get the section locator
 			var sectionLocator = DwgSectionDefinition.GetSectionLocatorByName(sectionName);
 
-			if (sectionLocator < 0)
+			if (!sectionLocator.HasValue)
 				//There is no section for this version
 				return null;
 
-			if (fileheader.Records.TryGetValue(sectionLocator, out DwgSectionLocatorRecord record))
+			if (fileheader.Records.TryGetValue(sectionLocator.Value, out DwgSectionLocatorRecord record))
 			{
 				//set the stream position
 				stream = this._fileStream.Stream;

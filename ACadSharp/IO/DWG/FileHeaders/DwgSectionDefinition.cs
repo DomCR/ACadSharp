@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ACadSharp.IO.DWG
+﻿namespace ACadSharp.IO.DWG
 {
 	internal static class DwgSectionDefinition
 	{
@@ -18,26 +15,26 @@ namespace ACadSharp.IO.DWG
 		public const string Preview = "AcDb:Preview";
 		public const string RevHistory = "AcDb:RevHistory";
 
-		public static int GetSectionLocatorByName(string name)
+		public static int? GetSectionLocatorByName(string name)
 		{
 			switch (name)
 			{
-				case "AcDb:Header":
+				case Header:
 					return 0;
-				case "AcDb:Classes":
+				case Classes:
 					return 1;
-				case "AcDb:Handles":
+				case Handles:
 					return 2;
-				case "AcDb:ObjFreeSpace":
+				case ObjFreeSpace:
 					return 3;
-				case "AcDb:Template":
+				case Template:
 					return 4;
 				//No record id for this sections
-				case "AcDb:SummaryInfo":
-				case "AcDb:AcDbObjects":
-				case "AcDb:FileDepList":
+				case SummaryInfo:
+				case AcDbObjects:
+				case FileDepList:
 				default:
-					return -1;
+					return null;
 			}
 		}
 	}
