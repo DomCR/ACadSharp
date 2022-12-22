@@ -52,18 +52,6 @@ namespace ACadSharp.Tests.IO.DWG
 
 			addEntities(doc);
 
-			doc.Classes.Add(new Classes.DxfClass
-			{
-				ClassNumber = 500,
-				CppClassName = "AcDbArcDimension",
-				DxfName = "ARC_DIMENSION",
-				InstanceCount = 0,
-				IsAnEntity = false,
-				ItemClassId = 498,
-				ProxyFlags = Classes.ProxyFlags.None,
-				WasZombie = false,
-			});
-
 			string path = Path.Combine(_samplesOutFolder, $"out_sample_{version}.dwg");
 
 			using (var wr = new DwgWriter(path, doc))
@@ -91,6 +79,9 @@ namespace ACadSharp.Tests.IO.DWG
 		[MemberData(nameof(Versions))]
 		public void WriteSummaryTest(ACadVersion version)
 		{
+			if (version <= ACadVersion.AC1015)
+				return;
+
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 			doc.SummaryInfo = new CadSummaryInfo
