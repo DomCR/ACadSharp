@@ -8,17 +8,17 @@ namespace ACadSharp.IO.DWG
 		/// Number of the record or id.
 		/// </summary>
 		public int? Number { get; set; }
-
+		
 		/// <summary>
 		/// Offset where the record is.
 		/// </summary>
 		public long Seeker { get; set; }
-
+		
 		/// <summary>
 		/// Size in bytes of this record.
 		/// </summary>
 		public long Size { get; set; }
-
+		
 		public DwgSectionLocatorRecord() { }
 
 		public DwgSectionLocatorRecord(int? number)

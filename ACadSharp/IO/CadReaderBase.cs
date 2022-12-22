@@ -38,8 +38,12 @@ namespace ACadSharp.IO
 			this._fileStream.Dispose();
 		}
 
-		[Obsolete]
-		protected void triggerNotification(object sender, NotificationEventArgs e)
+		protected void triggerNotification(string message, NotificationType notificationType)
+		{
+			this.onNotificationEvent(null, new NotificationEventArgs(message, notificationType));
+		}
+
+		protected void onNotificationEvent(object sender, NotificationEventArgs e)
 		{
 			this.OnNotification?.Invoke(this, e);
 		}

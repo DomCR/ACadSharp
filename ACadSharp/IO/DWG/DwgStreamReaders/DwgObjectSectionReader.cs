@@ -35,6 +35,8 @@ namespace ACadSharp.IO.DWG
 	 */
 	internal class DwgObjectSectionReader : DwgSectionIO
 	{
+		public override string SectionName { get { return DwgSectionDefinition.AcDbObjects; } }
+
 		private long _objectInitialPos = 0;
 
 		private uint _size;
@@ -85,11 +87,12 @@ namespace ACadSharp.IO.DWG
 		private readonly byte[] _buffer;
 
 		public DwgObjectSectionReader(
+			ACadVersion version,
 			DwgDocumentBuilder builder,
 			IDwgStreamReader reader,
 			Queue<ulong> handles,
 			Dictionary<ulong, long> handleMap,
-			DxfClassCollection classes) : base(builder.DocumentToBuild.Header.Version)
+			DxfClassCollection classes) : base(version)
 		{
 			this._builder = builder;
 
@@ -446,7 +449,7 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			//Lineweight RC 370
-			entity.LineWeight = DwgLineWeightConverter.ToValue(this._objectReader.ReadByte());
+			entity.LineWeight = CadUtils.ToValue(this._objectReader.ReadByte());
 		}
 
 		private void readCommonNonEntityData(CadTemplate template)
@@ -2973,7 +2976,7 @@ namespace ACadSharp.IO.DWG
 
 				//and lineweight (mask with 0x03E0)
 				byte lineweight = (byte)((values & 0x3E0) >> 5);
-				layer.LineWeight = DwgLineWeightConverter.ToValue(lineweight);
+				layer.LineWeight = CadUtils.ToValue(lineweight);
 			}
 
 			//Common:

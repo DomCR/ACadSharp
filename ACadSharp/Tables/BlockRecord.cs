@@ -82,6 +82,9 @@ namespace ACadSharp.Tables
 			}
 		}
 
+		/// <summary>
+		/// Flag indicating if the Block has Attributes attached
+		/// </summary>
 		public bool HasAttributes
 		{
 			get

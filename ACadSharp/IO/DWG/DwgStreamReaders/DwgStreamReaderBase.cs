@@ -4,17 +4,13 @@ using CSUtilities.IO;
 using CSUtilities.Text;
 using System;
 using System.IO;
-using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
 	internal abstract class DwgStreamReaderBase : StreamIO, IDwgStreamReader
 	{
 		/// <inheritdoc/>
-		public Encoding Encoding { get; set; } = Encoding.Default;
-
-		/// <inheritdoc/>
-		public int BitShift { get; private set; }
+		public int BitShift { get; set; }
 
 		/// <inheritdoc/>
 		public override long Position
@@ -77,17 +73,17 @@ namespace ACadSharp.IO.DWG
 			if (this.BitShift == 0)
 			{
 				//No need to apply the shift
-				this._lastByte = base.ReadByte();
+				_lastByte = base.ReadByte();
 
-				return this._lastByte;
+				return _lastByte;
 			}
 
 			//Get the last bits from the last readed byte
-			byte lastValues = (byte)((uint)this._lastByte << this.BitShift);
+			byte lastValues = (byte)((uint)_lastByte << BitShift);
 
-			this._lastByte = base.ReadByte();
+			_lastByte = base.ReadByte();
 
-			return (byte)(lastValues | (uint)(byte)((uint)this._lastByte >> 8 - this.BitShift));
+			return (byte)(lastValues | (uint)(byte)((uint)_lastByte >> 8 - BitShift));
 		}
 
 		public override byte[] ReadBytes(int length)

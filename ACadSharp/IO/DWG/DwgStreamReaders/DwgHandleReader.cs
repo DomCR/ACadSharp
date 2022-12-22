@@ -5,6 +5,8 @@ namespace ACadSharp.IO.DWG
 {
 	internal class DwgHandleReader : DwgSectionIO
 	{
+		public override string SectionName { get { return DwgSectionDefinition.Handles; } }
+
 		private IDwgStreamReader _sreader;
 
 		public DwgHandleReader(IDwgStreamReader sreader, ACadVersion version) : base(version)
@@ -57,7 +59,7 @@ namespace ACadSharp.IO.DWG
 					else
 					{
 						//0 offset, wrong reference
-						this.Notify($"Negative offset: {offset} for the handle: {lasthandle}", NotificationType.Warning);
+						this.notify($"Negative offset: {offset} for the handle: {lasthandle}", NotificationType.Warning);
 					}
 				}
 

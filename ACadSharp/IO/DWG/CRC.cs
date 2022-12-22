@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ACadSharp.IO.DWG
+﻿namespace ACadSharp.IO.DWG
 {
 	internal class CRC
 	{
