@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Types.Units;
 using ACadSharp.Header;
-
 using CSUtilities.IO;
 
 namespace ACadSharp.IO.DWG
@@ -69,7 +68,6 @@ namespace ACadSharp.IO.DWG
 
 			//R2013+:
 			if (R2013Plus)
-			{
 				//BLL : Variabele REQUIREDVERSIONS, default value 0, read only.
 				header.RequiredVersions = _reader.ReadBitLongLong();
 
@@ -863,7 +861,6 @@ namespace ACadSharp.IO.DWG
 
 				//R2013+:
 				if (this.R2013Plus)
-				{
 					//H : UNKNOWN (hard pointer)
 					objectPointers.DICTIONARY_VISUALSTYLE = _reader.HandleReference();
 			}
