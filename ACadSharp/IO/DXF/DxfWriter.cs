@@ -111,7 +111,7 @@ namespace ACadSharp.IO
 
 		private void writeDxfClasses()
 		{
-			var writer = new DxfDxfClassesSectionWriter(this._writer, this._document, this._objectHolder);
+			var writer = new DxfClassesSectionWriter(this._writer, this._document, this._objectHolder);
 			writer.OnNotification += this.triggerNotification;
 
 			writer.Write();

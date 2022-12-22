@@ -65,7 +65,7 @@ namespace ACadSharp.Header
 		/// System variable ACADMAINTVER.
 		/// </remarks>
 		[CadSystemVariable(DxfReferenceType.Ignored, "$ACADMAINTVER", 70)]
-		public short MaintenanceVersion { get; set; }
+		public short MaintenanceVersion { get; internal set; } = 0;
 
 		/// <summary>
 		/// Drawing code page; set to the system code page when a new drawing is created,
@@ -150,7 +150,7 @@ namespace ACadSharp.Header
 		/// Fill mode on if nonzero
 		/// </summary>
 		[CadSystemVariable("$FILLMODE", DxfCode.Int16)]
-		public bool FillMode { get; set; }
+		public bool FillMode { get; set; } = true;
 
 		/// <summary>
 		/// Quick Text mode on if nonzero
@@ -269,10 +269,13 @@ namespace ACadSharp.Header
 		public bool ProxyGraphics { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable TREEDEPTH
+		/// Specifies the maximum depth of the spatial index
 		/// </summary>
-		public short SpatialIndexMaxTreeDepth { get; set; }
+		/// <remarks>
+		/// System variable TREEDEPTH
+		/// </remarks>
+		[CadSystemVariable("$TREEDEPTH", 70)]
+		public short SpatialIndexMaxTreeDepth { get; set; } = 3020;
 
 		/// <summary>
 		/// Units format for coordinates and distances
@@ -707,7 +710,7 @@ namespace ACadSharp.Header
 		/// <summary>
 		/// Name of menu file
 		/// </summary>
-		/// <remarks>		
+		/// <remarks>
 		/// System variable MENU
 		/// </remarks>
 		[CadSystemVariable("$MENU", 1)]
@@ -1189,9 +1192,9 @@ namespace ACadSharp.Header
 
 		public short CurrentEntityPlotStyleType { get; set; }
 
-		public string FingerPrintGuid { get; set; }
+		public string FingerPrintGuid { get; internal set; } = Guid.NewGuid().ToString();
 
-		public string VersionGuid { get; set; }
+		public string VersionGuid { get; internal set; } = Guid.NewGuid().ToString();
 
 		public ObjectSortingFlags EntitySortingFlags { get; set; }
 

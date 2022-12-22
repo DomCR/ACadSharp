@@ -33,8 +33,10 @@ namespace ACadSharp.IO.DWG
 	 * name clash. To complicate matters more, files also exist with table records with duplicate
 	 * names. This is incorrect, and the software should rename the record to be unique upon reading.
 	 */
-	internal class DwgObjectSectionReader : DwgSectionReader
+	internal class DwgObjectSectionReader : DwgSectionIO
 	{
+		public override string SectionName { get { return DwgSectionDefinition.AcDbObjects; } }
+
 		private long _objectInitialPos = 0;
 
 		private uint _size;
@@ -85,11 +87,12 @@ namespace ACadSharp.IO.DWG
 		private readonly byte[] _buffer;
 
 		public DwgObjectSectionReader(
+			ACadVersion version,
 			DwgDocumentBuilder builder,
 			IDwgStreamReader reader,
 			Queue<ulong> handles,
 			Dictionary<ulong, long> handleMap,
-			DxfClassCollection classes) : base(builder.DocumentToBuild.Header.Version)
+			DxfClassCollection classes) : base(version)
 		{
 			this._builder = builder;
 
@@ -112,7 +115,7 @@ namespace ACadSharp.IO.DWG
             this._crcStream.Position = 0L;
 
             //Setup the entity handler
-            this._crcReader = DwgStreamReader.GetStreamHandler(this._version, this._crcStream);
+            this._crcReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._crcStream);
 		}
 
 		/// <summary>
@@ -198,7 +201,7 @@ namespace ACadSharp.IO.DWG
 				ulong handleSectionOffset = (ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize;
 
 				//Create a handler section reader
-				this._objectReader = DwgStreamReader.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
 				//set the initial posiltion and get the object type
@@ -207,11 +210,11 @@ namespace ACadSharp.IO.DWG
 
 
 				//Create a handler section reader
-				this._handlesReader = DwgStreamReader.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
 				this._handlesReader.SetPositionInBits((long)handleSectionOffset);
 
 				//Create a text section reader
-				this._textReader = DwgStreamReader.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
 				this._textReader.SetPositionByFlag((long)handleSectionOffset - 1);
 
 				this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
@@ -219,10 +222,10 @@ namespace ACadSharp.IO.DWG
 			else
 			{
 				//Create a handler section reader
-				this._objectReader = DwgStreamReader.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
-				this._handlesReader = DwgStreamReader.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
 				this._textReader = this._objectReader;
 
 				//set the initial posiltion and get the object type
@@ -445,7 +448,7 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			//Lineweight RC 370
-			entity.LineWeight = DwgLineWeightConverter.ToValue(this._objectReader.ReadByte());
+			entity.LineWeight = CadUtils.ToValue(this._objectReader.ReadByte());
 		}
 
 		private void readCommonNonEntityData(CadTemplate template)
@@ -672,7 +675,7 @@ namespace ACadSharp.IO.DWG
 
 			if (this._version == ACadVersion.AC1021)
 			{
-				this._textReader = DwgStreamReader.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
 				//"endbit" of the pre-handles section.
 				this._textReader.SetPositionByFlag(size + this._objectInitialPos - 1);
 			}
@@ -2982,7 +2985,7 @@ namespace ACadSharp.IO.DWG
 
 				//and lineweight (mask with 0x03E0)
 				byte lineweight = (byte)((values & 0x3E0) >> 5);
-				layer.LineWeight = DwgLineWeightConverter.ToValue(lineweight);
+				layer.LineWeight = CadUtils.ToValue(lineweight);
 			}
 
 			//Common:

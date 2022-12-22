@@ -4,15 +4,11 @@ using CSUtilities.IO;
 using CSUtilities.Text;
 using System;
 using System.IO;
-using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
-	internal abstract class DwgStreamReader : StreamIO, IDwgStreamReader
+	internal abstract class DwgStreamReaderBase : StreamIO, IDwgStreamReader
 	{
-		/// <inheritdoc/>
-		public Encoding Encoding { get; set; } = Encoding.Default;
-
 		/// <inheritdoc/>
 		public int BitShift { get; set; }
 
@@ -29,9 +25,9 @@ namespace ACadSharp.IO.DWG
 
 		public bool IsEmpty { get; private set; } = false;
 
-		protected byte m_lastByte;
+		protected byte _lastByte;
 
-		public DwgStreamReader(Stream stream, bool resetPosition) : base(stream, resetPosition)
+		public DwgStreamReaderBase(Stream stream, bool resetPosition) : base(stream, resetPosition)
 		{
 		}
 
@@ -77,17 +73,17 @@ namespace ACadSharp.IO.DWG
 			if (BitShift == 0)
 			{
 				//No need to apply the shift
-				m_lastByte = base.ReadByte();
+				_lastByte = base.ReadByte();
 
-				return m_lastByte;
+				return _lastByte;
 			}
 
 			//Get the last bits from the last readed byte
-			byte lastValues = (byte)((uint)m_lastByte << BitShift);
+			byte lastValues = (byte)((uint)_lastByte << BitShift);
 
-			m_lastByte = base.ReadByte();
+			_lastByte = base.ReadByte();
 
-			return (byte)(lastValues | (uint)(byte)((uint)m_lastByte >> 8 - BitShift));
+			return (byte)(lastValues | (uint)(byte)((uint)_lastByte >> 8 - BitShift));
 		}
 
 		public override byte[] ReadBytes(int length)
@@ -135,12 +131,12 @@ namespace ACadSharp.IO.DWG
 			if (BitShift == 0)
 			{
 				AdvanceByte();
-				bool result = (m_lastByte & 128) == 128;
+				bool result = (_lastByte & 128) == 128;
 				BitShift = 1;
 				return result;
 			}
 
-			bool value = (m_lastByte << BitShift & 128) == 128;
+			bool value = (_lastByte << BitShift & 128) == 128;
 
 			++BitShift;
 			BitShift &= 7;
@@ -161,19 +157,19 @@ namespace ACadSharp.IO.DWG
 			if (BitShift == 0)
 			{
 				AdvanceByte();
-				value = (byte)((uint)m_lastByte >> 6);
+				value = (byte)((uint)_lastByte >> 6);
 				BitShift = 2;
 			}
 			else if (BitShift == 7)
 			{
-				byte lastValue = (byte)(m_lastByte << 1 & 2);
+				byte lastValue = (byte)(_lastByte << 1 & 2);
 				AdvanceByte();
-				value = (byte)(lastValue | (uint)(byte)((uint)m_lastByte >> 7));
+				value = (byte)(lastValue | (uint)(byte)((uint)_lastByte >> 7));
 				BitShift = 1;
 			}
 			else
 			{
-				value = (byte)(m_lastByte >> 6 - BitShift & 3);
+				value = (byte)(_lastByte >> 6 - BitShift & 3);
 				++BitShift;
 				++BitShift;
 				BitShift &= 7;
@@ -197,7 +193,7 @@ namespace ACadSharp.IO.DWG
 					if (BitShift == 0)
 					{
 						AdvanceByte();
-						value = m_lastByte;
+						value = _lastByte;
 						break;
 					}
 					value = applyShiftToLasByte();
@@ -237,7 +233,7 @@ namespace ACadSharp.IO.DWG
 					if (BitShift == 0)
 					{
 						AdvanceByte();
-						value = m_lastByte;
+						value = _lastByte;
 						break;
 					}
 					value = applyShiftToLasByte();
@@ -359,19 +355,19 @@ namespace ACadSharp.IO.DWG
 				AdvanceByte();
 
 				//Check if the current byte
-				if ((m_lastByte & 0b10000000) == 0) //Check the flag
+				if ((_lastByte & 0b10000000) == 0) //Check the flag
 				{
 					//Drop the flags
-					value = m_lastByte & 0b00111111;
+					value = _lastByte & 0b00111111;
 
 					//Check the sign flag
-					if ((m_lastByte & 0b01000000) > 0U)
+					if ((_lastByte & 0b01000000) > 0U)
 						value = -value;
 				}
 				else
 				{
 					int totalShift = 0;
-					int sum = m_lastByte & sbyte.MaxValue;
+					int sum = _lastByte & sbyte.MaxValue;
 					while (true)
 					{
 						//Shift to apply
@@ -379,17 +375,17 @@ namespace ACadSharp.IO.DWG
 						AdvanceByte();
 
 						//Check if the highest byte is 0
-						if ((m_lastByte & 0b10000000) != 0)
-							sum |= (m_lastByte & sbyte.MaxValue) << totalShift;
+						if ((_lastByte & 0b10000000) != 0)
+							sum |= (_lastByte & sbyte.MaxValue) << totalShift;
 						else
 							break;
 					}
 
 					//Drop the flags at the las byte, and add it's value
-					value = sum | (m_lastByte & 0b00111111) << totalShift;
+					value = sum | (_lastByte & 0b00111111) << totalShift;
 
 					//Check the sign flag
-					if ((m_lastByte & 0b01000000) > 0U)
+					if ((_lastByte & 0b01000000) > 0U)
 						value = -value;
 				}
 			}
@@ -549,11 +545,11 @@ namespace ACadSharp.IO.DWG
 				for (int i = 0; i < length; ++i)
 				{
 					//Get the last byte value
-					byte lastByteValue = (byte)((uint)m_lastByte << BitShift);
+					byte lastByteValue = (byte)((uint)_lastByte << BitShift);
 					//Save the last byte
-					m_lastByte = raw[i];
+					_lastByte = raw[i];
 					//Add the value of the next byte to the current
-					byte value = (byte)(lastByteValue | (uint)(byte)((uint)m_lastByte >> shift));
+					byte value = (byte)(lastByteValue | (uint)(byte)((uint)_lastByte >> shift));
 					//Save the value into the array
 					arr[length - 1 - i] = value;
 				}
@@ -670,29 +666,29 @@ namespace ACadSharp.IO.DWG
 					if (BitShift == 0)
 					{
 						AdvanceByte();
-						arr[0] = m_lastByte;
+						arr[0] = _lastByte;
 						AdvanceByte();
-						arr[1] = m_lastByte;
+						arr[1] = _lastByte;
 						AdvanceByte();
-						arr[2] = m_lastByte;
+						arr[2] = _lastByte;
 						AdvanceByte();
-						arr[3] = m_lastByte;
+						arr[3] = _lastByte;
 					}
 					else
 					{
 						int shift = 8 - BitShift;
-						arr[0] = (byte)((uint)m_lastByte << BitShift);
+						arr[0] = (byte)((uint)_lastByte << BitShift);
 						AdvanceByte();
-						arr[0] |= (byte)((uint)m_lastByte >> shift);
-						arr[1] = (byte)((uint)m_lastByte << BitShift);
+						arr[0] |= (byte)((uint)_lastByte >> shift);
+						arr[1] = (byte)((uint)_lastByte << BitShift);
 						AdvanceByte();
-						arr[1] |= (byte)((uint)m_lastByte >> shift);
-						arr[2] = (byte)((uint)m_lastByte << BitShift);
+						arr[1] |= (byte)((uint)_lastByte >> shift);
+						arr[2] = (byte)((uint)_lastByte << BitShift);
 						AdvanceByte();
-						arr[2] |= (byte)((uint)m_lastByte >> shift);
-						arr[3] = (byte)((uint)m_lastByte << BitShift);
+						arr[2] |= (byte)((uint)_lastByte >> shift);
+						arr[3] = (byte)((uint)_lastByte << BitShift);
 						AdvanceByte();
-						arr[3] |= (byte)((uint)m_lastByte >> shift);
+						arr[3] |= (byte)((uint)_lastByte >> shift);
 					}
 					return LittleEndianConverter.Instance.ToDouble(arr);
 				//10 6 bytes of data are present. The result is the default double, with the first 2 data bytes patched in
@@ -702,38 +698,38 @@ namespace ACadSharp.IO.DWG
 					if (BitShift == 0)
 					{
 						AdvanceByte();
-						arr[4] = m_lastByte;
+						arr[4] = _lastByte;
 						AdvanceByte();
-						arr[5] = m_lastByte;
+						arr[5] = _lastByte;
 						AdvanceByte();
-						arr[0] = m_lastByte;
+						arr[0] = _lastByte;
 						AdvanceByte();
-						arr[1] = m_lastByte;
+						arr[1] = _lastByte;
 						AdvanceByte();
-						arr[2] = m_lastByte;
+						arr[2] = _lastByte;
 						AdvanceByte();
-						arr[3] = m_lastByte;
+						arr[3] = _lastByte;
 					}
 					else
 					{
-						arr[4] = (byte)((uint)m_lastByte << BitShift);
+						arr[4] = (byte)((uint)_lastByte << BitShift);
 						AdvanceByte();
-						arr[4] |= (byte)((uint)m_lastByte >> 8 - BitShift);
-						arr[5] = (byte)((uint)m_lastByte << BitShift);
+						arr[4] |= (byte)((uint)_lastByte >> 8 - BitShift);
+						arr[5] = (byte)((uint)_lastByte << BitShift);
 						AdvanceByte();
-						arr[5] |= (byte)((uint)m_lastByte >> 8 - BitShift);
-						arr[0] = (byte)((uint)m_lastByte << BitShift);
+						arr[5] |= (byte)((uint)_lastByte >> 8 - BitShift);
+						arr[0] = (byte)((uint)_lastByte << BitShift);
 						AdvanceByte();
-						arr[0] |= (byte)((uint)m_lastByte >> 8 - BitShift);
-						arr[1] = (byte)((uint)m_lastByte << BitShift);
+						arr[0] |= (byte)((uint)_lastByte >> 8 - BitShift);
+						arr[1] = (byte)((uint)_lastByte << BitShift);
 						AdvanceByte();
-						arr[1] |= (byte)((uint)m_lastByte >> 8 - BitShift);
-						arr[2] = (byte)((uint)m_lastByte << BitShift);
+						arr[1] |= (byte)((uint)_lastByte >> 8 - BitShift);
+						arr[2] = (byte)((uint)_lastByte << BitShift);
 						AdvanceByte();
-						arr[2] |= (byte)((uint)m_lastByte >> 8 - BitShift);
-						arr[3] = (byte)((uint)m_lastByte << BitShift);
+						arr[2] |= (byte)((uint)_lastByte >> 8 - BitShift);
+						arr[3] = (byte)((uint)_lastByte << BitShift);
 						AdvanceByte();
-						arr[3] |= (byte)((uint)m_lastByte >> 8 - BitShift);
+						arr[3] |= (byte)((uint)_lastByte >> 8 - BitShift);
 					}
 					return LittleEndianConverter.Instance.ToDouble(arr);
 				//11 A full RD follows.
@@ -799,7 +795,7 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public void AdvanceByte()
 		{
-			m_lastByte = base.ReadByte();
+			_lastByte = base.ReadByte();
 		}
 
 		/// <inheritdoc/>
@@ -819,10 +815,10 @@ namespace ACadSharp.IO.DWG
 				BitShift = 0;
 
 			AdvanceByte();
-			ushort num = m_lastByte;
+			ushort spear = _lastByte;
 			AdvanceByte();
 
-			return (ushort)(num | (uint)(ushort)((uint)m_lastByte << 8));
+			return (ushort)(spear | (uint)(ushort)((uint)_lastByte << 8));
 		}
 
 		#endregion Stream pointer control
@@ -862,11 +858,11 @@ namespace ACadSharp.IO.DWG
 
 		protected byte applyShiftToLasByte()
 		{
-			byte value = (byte)((uint)m_lastByte << BitShift);
+			byte value = (byte)((uint)_lastByte << BitShift);
 
 			AdvanceByte();
 
-			return (byte)((uint)value | (byte)((uint)m_lastByte >> 8 - BitShift));
+			return (byte)((uint)value | (byte)((uint)_lastByte >> 8 - BitShift));
 		}
 
 		private void applyShiftToArr(int length, byte[] arr)
@@ -882,11 +878,11 @@ namespace ACadSharp.IO.DWG
 			for (int i = 0; i < length; ++i)
 			{
 				//Get the last byte value
-				byte lastByteValue = (byte)((uint)m_lastByte << BitShift);
+				byte lastByteValue = (byte)((uint)_lastByte << BitShift);
 				//Save the last byte
-				m_lastByte = arr[i];
+				_lastByte = arr[i];
 				//Add the value of the next byte to the current
-				byte value = (byte)(lastByteValue | (uint)(byte)((uint)m_lastByte >> shift));
+				byte value = (byte)(lastByteValue | (uint)(byte)((uint)_lastByte >> shift));
 				//Save the value into the array
 				arr[i] = value;
 			}

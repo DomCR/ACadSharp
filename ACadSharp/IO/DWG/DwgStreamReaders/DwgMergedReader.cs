@@ -17,27 +17,33 @@ namespace ACadSharp.IO.DWG
 	{
 		public Encoding Encoding
 		{
-			get => _defaultReader.Encoding; set
+			get => _mainReader.Encoding; set
 			{
-				_defaultReader.Encoding = value;
-				_textHandler.Encoding = value;
-				_referenceHander.Encoding = value;
+				_mainReader.Encoding = value;
+				_textReader.Encoding = value;
+				_handleReader.Encoding = value;
 			}
 		}
+		
 		public Stream Stream => throw new InvalidOperationException();
+		
 		public int BitShift { get => throw new InvalidOperationException(); set => throw new InvalidOperationException(); }
-		public long Position { get => throw new InvalidOperationException(); set => throw new InvalidOperationException(); }
+		
+		public long Position { get => this._mainReader.Position; set => throw new InvalidOperationException(); }
+		
 		public bool IsEmpty { get; } = false;
 
-		private IDwgStreamReader _defaultReader;
-		private IDwgStreamReader _textHandler;
-		private IDwgStreamReader _referenceHander;
+		private IDwgStreamReader _mainReader;
+	
+		private IDwgStreamReader _textReader;
+		
+		private IDwgStreamReader _handleReader;
 
-		public DwgMergedReader(IDwgStreamReader defaultHandler, IDwgStreamReader textHandler, IDwgStreamReader referenceHandler)
+		public DwgMergedReader(IDwgStreamReader manReader, IDwgStreamReader textReader, IDwgStreamReader handleReader)
 		{
-			_defaultReader = defaultHandler;
-			_textHandler = textHandler;
-			_referenceHander = referenceHandler;
+			_mainReader = manReader;
+			_textReader = textReader;
+			_handleReader = handleReader;
 		}
 
 		public void Advance(int offset)
@@ -52,82 +58,82 @@ namespace ACadSharp.IO.DWG
 
 		public ulong HandleReference()
 		{
-			return _referenceHander.HandleReference();
+			return _handleReader.HandleReference();
 		}
 
 		public ulong HandleReference(ulong referenceHandle)
 		{
-			return _referenceHander.HandleReference(referenceHandle);
+			return _handleReader.HandleReference(referenceHandle);
 		}
 
 		public ulong HandleReference(ulong referenceHandle, out DwgReferenceType reference)
 		{
-			return _referenceHander.HandleReference(referenceHandle, out reference);
+			return _handleReader.HandleReference(referenceHandle, out reference);
 		}
 
 		public long PositionInBits()
 		{
-			throw new InvalidOperationException();
+			return _mainReader.PositionInBits();
 		}
 
 		public byte Read2Bits()
 		{
-			return _defaultReader.Read2Bits();
+			return _mainReader.Read2Bits();
 		}
 
 		public XY Read2RawDouble()
 		{
-			return _defaultReader.Read2RawDouble();
+			return _mainReader.Read2RawDouble();
 		}
 
 		public XYZ Read3BitDouble()
 		{
-			return _defaultReader.Read3BitDouble();
+			return _mainReader.Read3BitDouble();
 		}
 
 		public bool ReadBit()
 		{
-			return _defaultReader.ReadBit();
+			return _mainReader.ReadBit();
 		}
 
 		public short ReadBitAsShort()
 		{
-			return _defaultReader.ReadBitAsShort();
+			return _mainReader.ReadBitAsShort();
 		}
 
 		public double ReadBitDouble()
 		{
-			return _defaultReader.ReadBitDouble();
+			return _mainReader.ReadBitDouble();
 		}
 
 		public XY Read2BitDouble()
 		{
-			return _defaultReader.Read2BitDouble();
+			return _mainReader.Read2BitDouble();
 		}
 
 		public int ReadBitLong()
 		{
-			return _defaultReader.ReadBitLong();
+			return _mainReader.ReadBitLong();
 		}
 
 		public long ReadBitLongLong()
 		{
-			return _defaultReader.ReadBitLongLong();
+			return _mainReader.ReadBitLongLong();
 		}
 
 		public short ReadBitShort()
 		{
-			return _defaultReader.ReadBitShort();
+			return _mainReader.ReadBitShort();
 		}
 
 		public bool ReadBitShortAsBool()
 		{
-			return _defaultReader.ReadBitShortAsBool();
+			return _mainReader.ReadBitShortAsBool();
 		}
 
 		public byte ReadByte()
 		{
-			return _defaultReader.ReadByte();
+			return _mainReader.ReadByte();
 		}
 
 		public byte[] ReadBytes(int length)
@@ -137,18 +143,18 @@ namespace ACadSharp.IO.DWG
 
 		public XY Read2BitDoubleWithDefault(XY defValues)
 		{
-			return _defaultReader.Read2BitDoubleWithDefault(defValues);
+			return _mainReader.Read2BitDoubleWithDefault(defValues);
 		}
 
 		public XYZ Read3BitDoubleWithDefault(XYZ defValues)
 		{
-			return _defaultReader.Read3BitDoubleWithDefault(defValues);
+			return _mainReader.Read3BitDoubleWithDefault(defValues);
 		}
 
 		public Color ReadCmColor()
 		{
-			if (!(_defaultReader is DwgStreamReaderAC18))
-				return _defaultReader.ReadCmColor();
+			if (!(_mainReader is DwgStreamReaderAC18))
+				return _mainReader.ReadCmColor();
 
 			//To read a color in this version file needs to access to the
 			//string data section at the same time.
@@ -177,7 +183,7 @@ namespace ACadSharp.IO.DWG
 
 		public Color ReadEnColor(out Transparency transparency, out bool flag)
 		{
-			return _defaultReader.ReadEnColor(out transparency, out flag);
+			return _mainReader.ReadEnColor(out transparency, out flag);
 		}
 
 		public DateTime Read8BitJulianDate()
@@ -187,7 +193,7 @@ namespace ACadSharp.IO.DWG
 
 		public DateTime ReadDateTime()
 		{
-			return _defaultReader.ReadDateTime();
+			return _mainReader.ReadDateTime();
 		}
 
 		public double ReadDouble()
@@ -224,22 +230,22 @@ namespace ACadSharp.IO.DWG
 
 		public XYZ ReadBitExtrusion()
 		{
-			return _defaultReader.ReadBitExtrusion();
+			return _mainReader.ReadBitExtrusion();
 		}
 
 		public double ReadBitDoubleWithDefault(double def)
 		{
-			return _defaultReader.ReadBitDoubleWithDefault(def);
+			return _mainReader.ReadBitDoubleWithDefault(def);
 		}
 
 		public double ReadBitThickness()
 		{
-			return _defaultReader.ReadBitThickness();
+			return _mainReader.ReadBitThickness();
 		}
 
 		public char ReadRawChar()
 		{
-			return _defaultReader.ReadRawChar();
+			return _mainReader.ReadRawChar();
 		}
 
 		public long ReadRawLong()
@@ -249,12 +255,12 @@ namespace ACadSharp.IO.DWG
 
 		public byte[] ReadSentinel()
 		{
-			return _defaultReader.ReadSentinel();
+			return _mainReader.ReadSentinel();
 		}
 
 		public short ReadShort()
 		{
-			throw new NotImplementedException();
+			return this._mainReader.ReadShort();
 		}
 
 		public short ReadShort<T>() where T : IEndianConverter, new()
@@ -265,15 +271,15 @@ namespace ACadSharp.IO.DWG
 		public string ReadTextUnicode()
 		{
 			//Handle the text section if is empty
-			if (_textHandler.IsEmpty)
+			if (_textReader.IsEmpty)
 				return string.Empty;
 
-			return _textHandler.ReadTextUnicode();
+			return _textReader.ReadTextUnicode();
 		}
 
 		public TimeSpan ReadTimeSpan()
 		{
-			return _defaultReader.ReadTimeSpan();
+			return _mainReader.ReadTimeSpan();
 		}
 
 		public uint ReadUInt()
@@ -284,20 +290,20 @@ namespace ACadSharp.IO.DWG
 		public string ReadVariableText()
 		{
 			//Handle the text section if is empty
-			if (_textHandler.IsEmpty)
+			if (_textReader.IsEmpty)
 				return string.Empty;
 
-			return _textHandler.ReadVariableText();
+			return _textReader.ReadVariableText();
 		}
 
 		public ushort ResetShift()
 		{
-			throw new InvalidOperationException();
+			return this._mainReader.ResetShift();
 		}
 
 		public void SetPositionInBits(long positon)
 		{
-			throw new InvalidOperationException();
+			this._mainReader.SetPositionInBits(positon);
 		}
 
 		public long SetPositionByFlag(long position)
