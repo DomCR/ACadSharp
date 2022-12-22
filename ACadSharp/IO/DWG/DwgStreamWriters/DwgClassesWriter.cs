@@ -8,6 +8,8 @@ namespace ACadSharp.IO.DWG
 {
 	internal class DwgClassesWriter : DwgSectionIO
 	{
+		public override string SectionName => DwgSectionDefinition.Classes;
+
 		private CadDocument _document;
 
 		private MemoryStream _sectionStream;

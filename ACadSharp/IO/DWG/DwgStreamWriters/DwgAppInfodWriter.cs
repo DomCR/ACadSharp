@@ -1,11 +1,12 @@
-﻿using CSUtilities.Text;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
 	internal class DwgAppInfoWriter : DwgSectionIO
 	{
+		public override string SectionName => DwgSectionDefinition.AppInfo;
+
 		private IDwgStreamWriter writer;
 
 		private byte[] _emptyArr = new byte[16];

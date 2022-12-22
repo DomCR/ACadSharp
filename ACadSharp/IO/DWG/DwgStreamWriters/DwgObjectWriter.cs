@@ -145,7 +145,7 @@ namespace ACadSharp.IO.DWG
 						this.writeVPort(vport);
 						break;
 					default:
-						this.Notify($"Table entry not implemented : {entry.GetType().FullName}", NotificationType.NotImplemented);
+						this.notify($"Table entry not implemented : {entry.GetType().FullName}", NotificationType.NotImplemented);
 						break;
 				}
 			}
@@ -378,7 +378,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//and lineweight (mask with 0x03E0)
-				short values = (short)(DwgLineWeightConverter.ToIndex(layer.LineWeight) << 5);
+				short values = (short)(CadUtils.ToIndex(layer.LineWeight) << 5);
 
 				//contains frozen (1 bit),
 				values |= (short)LayerFlags.Frozen;
@@ -1254,7 +1254,7 @@ namespace ACadSharp.IO.DWG
 					this.writePoint(p);
 					break;
 				default:
-					this.Notify($"Entity not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
+					this.notify($"Entity not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					break;
 			}
 		}

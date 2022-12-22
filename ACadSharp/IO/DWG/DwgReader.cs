@@ -471,7 +471,7 @@ namespace ACadSharp.IO
 			sreader.ResetShift();
 
 			var sn = sreader.ReadSentinel();
-			if (!DwgSectionIO.CheckSentinel(sn, DwgFileHeader15.EndSentinel))
+			if (!DwgSectionIO.CheckSentinel(sn, DwgFileHeaderAC15.EndSentinel))
 			{
 				this.triggerNotification($"Invalid section sentinel found in FileHeader", NotificationType.Warning);
 			}

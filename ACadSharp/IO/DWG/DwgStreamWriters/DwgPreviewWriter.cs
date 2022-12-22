@@ -7,6 +7,8 @@ namespace ACadSharp.IO.DWG
 {
 	internal class DwgPreviewWriter : DwgSectionIO
 	{
+		public override string SectionName => DwgSectionDefinition.Preview;
+
 		private IDwgStreamWriter _swriter;
 
 		private readonly byte[] _startSentinel = new byte[16]

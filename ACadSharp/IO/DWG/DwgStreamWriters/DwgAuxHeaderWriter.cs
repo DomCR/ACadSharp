@@ -6,6 +6,8 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 {
 	internal class DwgAuxHeaderWriter : DwgSectionIO
 	{
+		public override string SectionName => DwgSectionDefinition.AuxHeader;
+
 		private CadHeader _header;
 
 		private MemoryStream _stream;

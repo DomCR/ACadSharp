@@ -8,6 +8,8 @@ namespace ACadSharp.IO.DWG
 {
 	internal partial class DwgObjectWriter : DwgSectionIO
 	{
+		public override string SectionName => DwgSectionDefinition.AcDbObjects;
+
 		private void registerObject(CadObject cadObject)
 		{
 			this._writer.WriteSpearShift();
@@ -309,7 +311,7 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			//Lineweight RC 370
-			this._writer.WriteByte(DwgLineWeightConverter.ToIndex(entity.LineWeight));
+			this._writer.WriteByte(CadUtils.ToIndex(entity.LineWeight));
 		}
 
 		private void writeExtendedData(ExtendedDataDictionary data)

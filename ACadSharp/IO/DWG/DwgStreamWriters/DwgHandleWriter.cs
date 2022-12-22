@@ -1,5 +1,4 @@
-﻿using CSUtilities.Converters;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -10,6 +9,8 @@ namespace ACadSharp.IO.DWG
 	 */
 	internal class DwgHandleWriter : DwgSectionIO
 	{
+		public override string SectionName => DwgSectionDefinition.Handles;
+
 		private MemoryStream _stream;
 
 		private Dictionary<ulong, long> _handleMap;

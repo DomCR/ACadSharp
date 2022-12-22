@@ -47,10 +47,5 @@ namespace ACadSharp.IO
 		{
 			this.OnNotification?.Invoke(this, e);
 		}
-
-		protected void triggerNotification(string message, NotificationType notificationType)
-		{
-			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType));
-		}
 	}
 }

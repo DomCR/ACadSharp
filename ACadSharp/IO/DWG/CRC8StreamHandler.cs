@@ -41,7 +41,7 @@ namespace ACadSharp.IO.DWG
 			int length = offset + count;
 
 			for (int index = offset; index < length; ++index)
-				this.Seed = this.decode(this.Seed, buffer[index]);
+				this.Seed = decode(this.Seed, buffer[index]);
 
 			return nbytes;
 		}
@@ -57,7 +57,7 @@ namespace ACadSharp.IO.DWG
 			int length = offset + count;
 
 			for (int index = offset; index < length; ++index)
-				this.Seed = this.decode(this.Seed, buffer[index]);
+				this.Seed = decode(this.Seed, buffer[index]);
 
 			this._stream.Write(buffer, offset, count);
 		}
