@@ -268,26 +268,27 @@ namespace ACadSharp.IO.DWG
 			return value;
 		}
 
-		/// <summary>
-		/// Read the common entity format.
-		/// </summary>
-		/// <param name="template"></param>
-		private void readCommonEntityData(CadEntityTemplate template)
+		private void readCommonData(CadTemplate template)
 		{
-			//Get the cad object as an entity
-			Entity entity = template.CadObject;
-
 			if (this._version >= ACadVersion.AC1015 && this._version < ACadVersion.AC1024)
 				//Obj size RL size of object in bits, not including end handles
 				this.updateHandleReader();
 
 			//Common:
 			//Handle H 5 code 0, length followed by the handle bytes.
-			ulong handle = this._objectReader.HandleReference();
-			entity.Handle = handle;
+			template.CadObject.Handle = this._objectReader.HandleReference();
 
 			//Extended object data, if any
 			this.readExtendedData(template);
+		}
+
+		// Read the common entity format.
+		private void readCommonEntityData(CadEntityTemplate template)
+		{
+			//Get the cad object as an entity
+			Entity entity = template.CadObject;
+
+			this.readCommonData(template);
 
 			//Graphic present Flag B 1 if a graphic is present
 			if (this._objectReader.ReadBit())
@@ -334,7 +335,7 @@ namespace ACadSharp.IO.DWG
 				template.OwnerHandle = this._handlesReader.HandleReference(entity.Handle);
 
 			//Numreactors BL number of persistent reactors attached to this object
-			this.readReactors(template);
+			this.readReactorsAndDictionaryHandle(template);
 
 			//R13-R14 Only:
 			if (this.R13_14Only)
@@ -399,7 +400,7 @@ namespace ACadSharp.IO.DWG
 				template.LineTypeHandle = this.handleReference();
 
 			//R2007+:
-			if (this._version >= ACadVersion.AC1021)
+			if (R2007Plus)
 			{
 				//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present at end of object
 				if (this._objectReader.Read2Bits() == 3)
@@ -421,7 +422,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//R2007 +:
-			if (this._version > ACadVersion.AC1021)
+			if (R2010Plus)
 			{
 				//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present at end of object
 				if (this._objectReader.ReadBit())
@@ -453,17 +454,7 @@ namespace ACadSharp.IO.DWG
 
 		private void readCommonNonEntityData(CadTemplate template)
 		{
-			if (this._version >= ACadVersion.AC1015 && this._version < ACadVersion.AC1024)
-				//Obj size RL size of object in bits, not including end handles
-				this.updateHandleReader();
-
-			//Common:
-			//Handle H 5 code 0, length followed by the handle bytes.
-			ulong handle = this._objectReader.HandleReference();
-			template.CadObject.Handle = handle;
-
-			//Extended object data, if any
-			this.readExtendedData(template);
+			this.readCommonData(template);
 
 			//R13-R14 Only:
 			//Obj size RL size of object in bits, not including end handles
@@ -474,7 +465,7 @@ namespace ACadSharp.IO.DWG
 			template.OwnerHandle = this.handleReference(template.CadObject.Handle);
 
 			//Read the cad object reactors
-			this.readReactors(template);
+			this.readReactorsAndDictionaryHandle(template);
 		}
 
 		private void readXrefDependantBit(TableEntry entry)
@@ -629,7 +620,7 @@ namespace ACadSharp.IO.DWG
 		}
 
 		// Add the reactors to the template.
-		private void readReactors(CadTemplate template)
+		private void readReactorsAndDictionaryHandle(CadTemplate template)
 		{
 			//Numreactors S number of reactors in this object
 			int numberOfReactors = this._objectReader.ReadBitLong();
@@ -641,7 +632,7 @@ namespace ACadSharp.IO.DWG
 
 			bool flag = false;
 			//R2004+:
-			if (this._version >= ACadVersion.AC1018)
+			if (R2004Plus)
 				/*XDic Missing Flag
 				 * B
 				 * If 1, no XDictionary handle is stored for this object,
@@ -653,12 +644,12 @@ namespace ACadSharp.IO.DWG
 				//xdicobjhandle(hard owner)
 				template.XDictHandle = this.handleReference();
 
-			if (this._version <= ACadVersion.AC1024)
-				return;
-
 			//R2013+:
-			//Has DS binary data B If 1 then this object has associated binary data stored in the data store
-			this._objectReader.ReadBit();
+			if (R2013Plus)
+			{
+				//Has DS binary data B If 1 then this object has associated binary data stored in the data store
+				this._objectReader.ReadBit();
+			}
 		}
 
 		/// <summary>
@@ -2993,10 +2984,10 @@ namespace ACadSharp.IO.DWG
 			layer.Color = this._mergedReaders.ReadCmColor();
 
 			//Handle refs H Layer control (soft pointer)
+			template.LayerControlHandle = this.handleReference();
 			//[Reactors(soft pointer)]
 			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)
-			template.LayerControlHandle = this.handleReference();
 
 			//R2000+:
 			if (this.R2000Plus)
@@ -3014,9 +3005,11 @@ namespace ACadSharp.IO.DWG
 			//H 6 linetype (hard pointer)
 			template.LineTypeHandle = this.handleReference();
 
-			//H Unknown handle (hard pointer). Always seems to be NULL.
-			//Some times is not...
-			//handleReference();
+			if (R2013Plus)
+			{
+				//H Unknown handle (hard pointer). Always seems to be NULL.
+				handleReference();
+			}
 
 			return template;
 		}
@@ -3137,7 +3130,7 @@ namespace ACadSharp.IO.DWG
 			//R2007+:
 			if (this.R2007Plus && isText)
 			{
-				byte[] textarea = this._objectReader.ReadBytes(256);
+				byte[] textarea = this._objectReader.ReadBytes(512);
 				//TODO: Read the line type text area
 			}
 

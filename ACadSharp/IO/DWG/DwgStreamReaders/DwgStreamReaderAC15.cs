@@ -6,6 +6,7 @@ namespace ACadSharp.IO.DWG
 	internal class DwgStreamReaderAC15 : DwgStreamReaderAC12
 	{
 		public DwgStreamReaderAC15(Stream stream, bool resetPosition) : base(stream, resetPosition) { }
+	
 		public override XYZ ReadBitExtrusion()
 		{
 			//For R2000, this is a single bit, followed optionally by 3BD.
@@ -15,6 +16,7 @@ namespace ACadSharp.IO.DWG
 			//then it will be followed by 3BD.
 			return ReadBit() ? XYZ.AxisZ : Read3BitDouble();
 		}
+	
 		public override double ReadBitThickness()
 		{
 			//For R2000+, this is a single bit followed optionally by a BD. 

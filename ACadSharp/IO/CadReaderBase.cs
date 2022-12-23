@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Header;
 using CSUtilities.IO;
+using System;
 using System.IO;
 
 namespace ACadSharp.IO

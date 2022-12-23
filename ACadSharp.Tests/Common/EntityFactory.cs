@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Entities;
-using CSMath;
 using System;
 
 namespace ACadSharp.Tests.Common
@@ -53,6 +52,9 @@ namespace ACadSharp.Tests.Common
 				case Line line:
 					RandomizeLine(line);
 					break;
+				case Point point:
+					RandomizePoint(point);
+					break;
 				case Polyline2D pl2d:
 					RandomizePolyline(pl2d);
 					break;
@@ -79,6 +81,15 @@ namespace ACadSharp.Tests.Common
 			// line.Normal = _random.NextXYZ();	//Entity becomes invisible if has a different value
 			line.StartPoint = _random.NextXYZ();
 			line.EndPoint = _random.NextXYZ();
+		}
+
+		public static void RandomizePoint(Point point)
+		{
+			RandomizeEntity(point);
+
+			point.Thickness = _random.NextDouble();
+			// line.Normal = _random.NextXYZ();	//Entity becomes invisible if has a different value
+			point.Location = _random.NextXYZ();
 		}
 
 		public static void RandomizePolyline(Polyline pline)

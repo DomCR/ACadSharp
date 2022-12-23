@@ -91,7 +91,7 @@ namespace ACadSharp.IO.DWG
 					opcode1 = copy(litCount, src, dst);
 			}
 		}
-
+		
 		private static byte copy(int count, Stream src, Stream dst)
 		{
 			for (int i = 0; i < count; ++i)
@@ -113,7 +113,7 @@ namespace ACadSharp.IO.DWG
 				for (lastByte = (byte)src.ReadByte(); lastByte == 0; lastByte = (byte)src.ReadByte())
 					lowbits += byte.MaxValue;  //0xFF
 
-				lowbits += 15 + lastByte;
+				lowbits += 0xF + lastByte;
 			}
 			return lowbits;
 		}
