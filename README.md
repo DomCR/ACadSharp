@@ -2,7 +2,7 @@
 
 C# library to read/write cad files like dxf/dwg.
 
-#### Compatible Dwg/Dxf versions:
+### Compatible Dwg/Dxf versions:
 
 - [ ] Release 1.1 
 - [ ] Release 1.2
@@ -23,7 +23,7 @@ C# library to read/write cad files like dxf/dwg.
 - [x] AC1027 - AutoCAD 2013/2014/2015/2016/2017
 - [x] AC1032 - AutoCAD 2018/2019/2020
 
-#### Code Example
+### Code Example
 
 ```c#
 public static void Main()
