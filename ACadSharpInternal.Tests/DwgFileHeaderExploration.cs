@@ -29,7 +29,7 @@ namespace ACadSharpInternal.Tests
 			this._output = output;
 		}
 
-		[Theory]
+		[Theory(Skip = "Only to be used in local")]
 		[MemberData(nameof(DwgFilePaths))]
 		public void PrintFileHeaderInfo(string test)
 		{
