@@ -55,6 +55,9 @@ namespace ACadSharp.Tests.Common
 				case Circle circle:
 					RandomizeCircle(circle);
 					break;
+				case Ellipse ellipse:
+					RandomizeEllipse(ellipse);
+					break;
 				case Line line:
 					RandomizeLine(line);
 					break;
@@ -95,6 +98,19 @@ namespace ACadSharp.Tests.Common
 			circle.Center = _random.NextXYZ();
 			circle.Thickness = _random.NextDouble();
 			circle.Radius = _random.NextDouble();
+		}
+
+		public static void RandomizeEllipse(Ellipse ellipse)
+		{
+			RandomizeEntity(ellipse);
+
+			// circle.Normal = _random.NextXYZ();	//Entity becomes invisible if has a different value
+			ellipse.Center = _random.NextXYZ();
+			ellipse.Thickness = _random.NextDouble();
+			ellipse.EndPoint = _random.NextXYZ();
+			ellipse.RadiusRatio = _random.NextDouble();
+			ellipse.StartParameter = _random.NextDouble();
+			ellipse.EndParameter = _random.NextDouble();
 		}
 
 		public static void RandomizeLine(Line line)

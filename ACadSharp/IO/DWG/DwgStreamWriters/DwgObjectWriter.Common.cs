@@ -237,7 +237,7 @@ namespace ACadSharp.IO.DWG
 			{
 				//Common:
 				//Invisibility BS 60
-				this._writer.WriteBitShort((short)(entity.IsInvisible ? 1 : 0));
+				this._writer.WriteBitShort((short)(entity.IsInvisible ? 0 : 1));
 
 				return;
 			}

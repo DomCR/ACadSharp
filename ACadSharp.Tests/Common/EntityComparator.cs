@@ -38,7 +38,7 @@ namespace ACadSharp.Tests.Common
 
 		public static void IsEqual(Arc expected, Arc actual, bool compareLinks = false)
 		{
-			IsEqual((Circle)expected, (Circle)actual);
+			IsEqual((Circle)expected, (Circle)actual, compareLinks);
 
 			Assert.IsTrue(expected.StartAngle == actual.StartAngle, "Different StartAngle");
 			Assert.IsTrue(expected.EndAngle == actual.EndAngle, "Different EndAngle");
@@ -46,12 +46,32 @@ namespace ACadSharp.Tests.Common
 
 		public static void IsEqual(Circle expected, Circle actual, bool compareLinks = false)
 		{
-			IsEqual((Entity)expected, (Entity)actual);
+			IsEqual((Entity)expected, (Entity)actual, compareLinks);
 
 			Assert.IsTrue(expected.Normal == actual.Normal, "Different Normal");
 			Assert.IsTrue(expected.Thickness == actual.Thickness, "Different Thickness");
 			Assert.IsTrue(expected.Center == actual.Center, "Different Center");
 			Assert.IsTrue(expected.Radius == actual.Radius, "Different Radius");
+		}
+
+		public static void IsEqual(Line expected, Line actual, bool compareLinks = false)
+		{
+			IsEqual((Entity)expected, (Entity)actual, compareLinks);
+
+			Assert.IsTrue(expected.Normal == actual.Normal, "Different Normal");
+			Assert.IsTrue(expected.Thickness == actual.Thickness, "Different Thickness");
+			Assert.IsTrue(expected.StartPoint == actual.StartPoint, "Different StartPoint");
+			Assert.IsTrue(expected.EndPoint == actual.EndPoint, "Different EndPoint");
+		}
+
+		public static void IsEqual(Point expected, Point actual, bool compareLinks = false)
+		{
+			IsEqual((Entity)expected, (Entity)actual, compareLinks);
+
+			Assert.IsTrue(expected.Normal == actual.Normal, "Different Normal");
+			Assert.IsTrue(expected.Thickness == actual.Thickness, "Different Thickness");
+			Assert.IsTrue(expected.Location == actual.Location, "Different Location");
+			Assert.IsTrue(expected.Rotation == actual.Rotation, "Different Rotation");
 		}
 	}
 }

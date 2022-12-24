@@ -1,9 +1,4 @@
 ﻿using ACadSharp.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ACadSharp.IO.DWG
 {
@@ -11,6 +6,8 @@ namespace ACadSharp.IO.DWG
 	{
 		private void writeEntity(Entity entity)
 		{
+			this.writeCommonEntityData(entity);
+
 			switch (entity)
 			{
 				case Arc arc:
@@ -18,6 +15,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case Circle circle:
 					this.writeCircle(circle);
+					break;
+				case Ellipse ellipse:
+					this.writeEllipse(ellipse);
 					break;
 				case Line l:
 					this.writeLine(l);
@@ -27,14 +27,14 @@ namespace ACadSharp.IO.DWG
 					break;
 				default:
 					this.notify($"Entity not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
-					break;
+					return;
 			}
+
+			this.registerObject(entity);
 		}
 
 		private void writeArc(Arc arc)
 		{
-			this.writeCommonEntityData(arc);
-
 			//this.writeCircle(arc);
 			this._writer.Write3BitDouble(arc.Center);
 			this._writer.WriteBitDouble(arc.Radius);
@@ -43,27 +43,28 @@ namespace ACadSharp.IO.DWG
 
 			this._writer.WriteBitDouble(arc.StartAngle);
 			this._writer.WriteBitDouble(arc.EndAngle);
-
-			this.registerObject(arc);
 		}
 
 		private void writeCircle(Circle circle)
 		{
-			this.writeCommonEntityData(circle);
-
 			this._writer.Write3BitDouble(circle.Center);
 			this._writer.WriteBitDouble(circle.Radius);
 			this._writer.WriteBitThickness(circle.Thickness);
 			this._writer.WriteBitExtrusion(circle.Normal);
-
-			this.registerObject(circle);
 		}
 
+		private void writeEllipse(Ellipse ellipse)
+		{
+			this._writer.Write3BitDouble(ellipse.Center);
+			this._writer.Write3BitDouble(ellipse.EndPoint);
+			this._writer.Write3BitDouble(ellipse.Normal);
+			this._writer.WriteBitDouble(ellipse.RadiusRatio);
+			this._writer.WriteBitDouble(ellipse.StartParameter);
+			this._writer.WriteBitDouble(ellipse.EndParameter);
+		}
 
 		private void writeLine(Line line)
 		{
-			this.writeCommonEntityData(line);
-
 			//R13-R14 Only:
 			if (this.R13_14Only)
 			{
@@ -104,14 +105,10 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitThickness(line.Thickness);
 			//Extrusion BE 210
 			this._writer.WriteBitExtrusion(line.Normal);
-
-			this.registerObject(line);
 		}
 
 		private void writePoint(Point point)
 		{
-			this.writeCommonEntityData(point);
-
 			//Point 3BD 10
 			this._writer.Write3BitDouble(point.Location);
 			//Thickness BT 39
@@ -120,8 +117,6 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitExtrusion(point.Normal);
 			//X - axis ang BD 50 See DXF documentation
 			this._writer.WriteBitDouble(point.Rotation);
-
-			this.registerObject(point);
 		}
 	}
 }

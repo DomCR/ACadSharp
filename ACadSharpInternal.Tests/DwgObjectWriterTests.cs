@@ -51,6 +51,7 @@ namespace ACadSharpInternal.Tests
 
 			document.Entities.Add(EntityFactory.Create<Arc>());
 			document.Entities.Add(EntityFactory.Create<Circle>());
+			document.Entities.Add(EntityFactory.Create<Ellipse>());
 			document.Entities.Add(EntityFactory.Create<Line>());
 			document.Entities.Add(EntityFactory.Create<Point>());
 
@@ -69,8 +70,14 @@ namespace ACadSharpInternal.Tests
 					case Circle circle:
 						EntityComparator.IsEqual(circle, (Circle)e);
 						break;
+					case Ellipse ellipse:
+						EntityComparator.IsEqual(ellipse, (Ellipse)e);
+						break;
 					case Line line:
 						EntityComparator.IsEqual(line, (Line)e);
+						break;
+					case Point point:
+						EntityComparator.IsEqual(point, (Point)e);
 						break;
 					default:
 						break;
