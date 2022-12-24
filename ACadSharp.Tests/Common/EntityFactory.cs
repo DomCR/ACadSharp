@@ -49,6 +49,12 @@ namespace ACadSharp.Tests.Common
 
 			switch (e)
 			{
+				case Arc arc:
+					RandomizeArc(arc);
+					break;
+				case Circle circle:
+					RandomizeCircle(circle);
+					break;
 				case Line line:
 					RandomizeLine(line);
 					break;
@@ -71,6 +77,24 @@ namespace ACadSharp.Tests.Common
 		public static void RandomizeEntity(Entity entity)
 		{
 			entity.Color = _random.NextColor();
+		}
+
+		public static void RandomizeArc(Arc arc)
+		{
+			RandomizeCircle(arc);
+
+			arc.StartAngle = _random.NextDouble();
+			arc.EndAngle = _random.NextDouble();
+		}
+
+		public static void RandomizeCircle(Circle circle)
+		{
+			RandomizeEntity(circle);
+
+			// circle.Normal = _random.NextXYZ();	//Entity becomes invisible if has a different value
+			circle.Center = _random.NextXYZ();
+			circle.Thickness = _random.NextDouble();
+			circle.Radius = _random.NextDouble();
 		}
 
 		public static void RandomizeLine(Line line)

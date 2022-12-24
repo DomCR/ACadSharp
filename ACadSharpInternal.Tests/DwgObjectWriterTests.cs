@@ -1,7 +1,11 @@
 ﻿using ACadSharp;
+using ACadSharp.Entities;
+using ACadSharp.IO;
 using ACadSharp.IO.DWG;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using ACadSharp.Tests.Common;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,33 +22,12 @@ namespace ACadSharpInternal.Tests
 
 		[Theory]
 		[MemberData(nameof(DwgVersions))]
-		public void WriteTest(ACadVersion version)
+		public void WriteEmptyDocumentTest(ACadVersion version)
 		{
-			Stream stream = new MemoryStream();
 			CadDocument document = new CadDocument();
 			document.Header.Version = version;
 
-			DwgObjectWriter writer = new DwgObjectWriter(stream, document);
-			writer.OnNotification += onNotification;
-			writer.Write();
-
-			var handles = new Queue<ulong>(writer.Map.Select(o => o.Key));
-
-			CadDocument docResult = new CadDocument(false);
-			docResult.Header = new ACadSharp.Header.CadHeader();
-			docResult.Header.Version = version;
-
-			DwgDocumentBuilder builder = new DwgDocumentBuilder(docResult, new ACadSharp.IO.DwgReaderConfiguration());
-			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, true);
-			DwgObjectSectionReader reader = new DwgObjectSectionReader(
-				docResult.Header.Version,
-				builder,
-				sreader,
-				handles,
-				writer.Map,
-				new ACadSharp.Classes.DxfClassCollection()
-				);
-			reader.Read();
+			DwgDocumentBuilder builder = this.writeInfo(document);
 
 			builder.BuildTables();
 
@@ -57,6 +40,21 @@ namespace ACadSharpInternal.Tests
 			assertTable(document.DimensionStyles, builder.DimensionStyles);
 			assertTable(document.VPorts, builder.VPorts);
 			assertTable(document.BlockRecords, builder.BlockRecords);
+		}
+
+		[Theory]
+		[MemberData(nameof(DwgVersions))]
+		public void EntitiesTest(ACadVersion version)
+		{
+			CadDocument document = new CadDocument();
+			document.Header.Version = version;
+
+			document.Entities.Add(EntityFactory.Create<Arc>());
+			document.Entities.Add(EntityFactory.Create<Circle>());
+			document.Entities.Add(EntityFactory.Create<Line>());
+			document.Entities.Add(EntityFactory.Create<Point>());
+
+			DwgDocumentBuilder builder = this.writeInfo(document);
 		}
 
 		private void assertTable<T>(Table<T> expected, Table<T> actual)
@@ -76,6 +74,42 @@ namespace ACadSharpInternal.Tests
 			{
 				Assert.NotNull(actual[entry.Name]);
 			}
+		}
+
+		private DwgDocumentBuilder writeInfo(CadDocument docToWrite)
+		{
+			Stream stream = new MemoryStream();
+
+			DwgObjectWriter writer = new DwgObjectWriter(stream, docToWrite);
+			writer.OnNotification += onNotification;
+			writer.Write();
+
+			var handles = new Queue<ulong>(writer.Map.Select(o => o.Key));
+
+			CadDocument docResult = new CadDocument(false);
+			docResult.Header = new ACadSharp.Header.CadHeader();
+			docResult.Header.Version = docToWrite.Header.Version;
+
+			DwgDocumentBuilder builder = new DwgDocumentBuilder(docResult, new ACadSharp.IO.DwgReaderConfiguration());
+			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(docToWrite.Header.Version, stream, true);
+			DwgObjectSectionReader reader = new DwgObjectSectionReader(
+				docResult.Header.Version,
+				builder,
+				sreader,
+				handles,
+				writer.Map,
+				new ACadSharp.Classes.DxfClassCollection()
+				);
+			reader.Read();
+
+			return builder;
+		}
+
+		protected override void onNotification(object sender, NotificationEventArgs e)
+		{
+			Assert.False(e.NotificationType == NotificationType.NotImplemented);
+
+			base.onNotification(sender, e);
 		}
 	}
 }
