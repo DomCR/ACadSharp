@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Compile Include="..\ACadSharp.Tests\Common\CSMathRandom.cs" Link="Common\CSMathRandom.cs" />
+    <Compile Include="..\ACadSharp.Tests\Common\EntityComparator.cs" Link="Common\EntityComparator.cs" />
     <Compile Include="..\ACadSharp.Tests\Common\EntityFactory.cs" Link="Common\EntityFactory.cs" />
   </ItemGroup>
 

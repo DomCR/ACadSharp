@@ -55,6 +55,27 @@ namespace ACadSharpInternal.Tests
 			document.Entities.Add(EntityFactory.Create<Point>());
 
 			DwgDocumentBuilder builder = this.writeInfo(document);
+
+			foreach (Entity item in document.Entities)
+			{
+				var e = builder.GetCadObject(item.Handle);
+				Assert.NotNull(e);
+
+				switch (item)
+				{
+					case Arc arc:
+						EntityComparator.IsEqual(arc, (Arc)e);
+						break;
+					case Circle circle:
+						EntityComparator.IsEqual(circle, (Circle)e);
+						break;
+					case Line line:
+						EntityComparator.IsEqual(line, (Line)e);
+						break;
+					default:
+						break;
+				}
+			}
 		}
 
 		private void assertTable<T>(Table<T> expected, Table<T> actual)
