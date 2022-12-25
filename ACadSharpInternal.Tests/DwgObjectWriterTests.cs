@@ -54,6 +54,7 @@ namespace ACadSharpInternal.Tests
 			document.Entities.Add(EntityFactory.Create<Ellipse>());
 			document.Entities.Add(EntityFactory.Create<Line>());
 			document.Entities.Add(EntityFactory.Create<Point>());
+			document.Entities.Add(EntityFactory.Create<TextEntity>());
 
 			DwgDocumentBuilder builder = this.writeInfo(document);
 
@@ -78,6 +79,9 @@ namespace ACadSharpInternal.Tests
 						break;
 					case Point point:
 						EntityComparator.IsEqual(point, (Point)e);
+						break;
+					case TextEntity text:
+						EntityComparator.IsEqual(text, (TextEntity)e);
 						break;
 					default:
 						break;
@@ -135,7 +139,7 @@ namespace ACadSharpInternal.Tests
 
 		protected override void onNotification(object sender, NotificationEventArgs e)
 		{
-			Assert.False(e.NotificationType == NotificationType.NotImplemented);
+			Assert.False(e.NotificationType == NotificationType.NotImplemented, e.Message);
 
 			base.onNotification(sender, e);
 		}

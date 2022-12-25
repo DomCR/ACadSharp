@@ -73,5 +73,23 @@ namespace ACadSharp.Tests.Common
 			Assert.IsTrue(expected.Location == actual.Location, "Different Location");
 			Assert.IsTrue(expected.Rotation == actual.Rotation, "Different Rotation");
 		}
+
+		public static void IsEqual(TextEntity expected, TextEntity actual, bool compareLinks = false)
+		{
+			IsEqual((Entity)expected, (Entity)actual, compareLinks);
+
+			Assert.IsTrue(expected.Normal == actual.Normal, "Different Normal");
+			Assert.IsTrue(expected.Thickness == actual.Thickness, "Different Thickness");
+			Assert.IsTrue(expected.InsertPoint == actual.InsertPoint, "Different InsertPoint");
+			Assert.IsTrue(expected.AlignmentPoint == actual.AlignmentPoint, "Different AlignmentPoint");
+			Assert.IsTrue(expected.Rotation == actual.Rotation, "Different Rotation");
+			Assert.IsTrue(expected.Height == actual.Height, "Different Height");
+			Assert.IsTrue(expected.Value == actual.Value, "Different Value");
+			Assert.IsTrue(expected.WidthFactor == actual.WidthFactor, "Different WidthFactor");
+			Assert.IsTrue(expected.ObliqueAngle == actual.ObliqueAngle, "Different ObliqueAngle");
+			Assert.IsTrue(expected.Mirror == actual.Mirror, "Different Mirror");
+			Assert.IsTrue(expected.HorizontalAlignment == actual.HorizontalAlignment, "Different HorizontalAlignment");
+			Assert.IsTrue(expected.VerticalAlignment == actual.VerticalAlignment, "Different HorizontalAlignment");
+		}
 	}
 }

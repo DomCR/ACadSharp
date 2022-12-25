@@ -70,6 +70,9 @@ namespace ACadSharp.Tests.Common
 				case Polyline3D pl3d:
 					RandomizePolyline(pl3d);
 					break;
+				case TextEntity text:
+					RandomizeText(text);
+					break;
 				default:
 					throw new NotImplementedException();
 			}
@@ -156,6 +159,24 @@ namespace ACadSharp.Tests.Common
 
 				pline.Vertices.Add(v);
 			}
+		}
+
+		public static void RandomizeText(TextEntity text)
+		{
+			RandomizeEntity(text);
+
+			text.Thickness = _random.NextDouble();
+			text.InsertPoint = _random.NextXYZ();
+			text.AlignmentPoint = _random.NextXYZ();
+			text.Height = _random.NextDouble();
+			text.Value = _random.RandomString(10);
+			text.Rotation = _random.NextDouble();
+			text.WidthFactor = _random.NextDouble();
+			text.ObliqueAngle = _random.NextDouble();
+
+			text.Mirror = (TextMirrorFlag)_random.Next(0, 4);
+			text.HorizontalAlignment = (TextHorizontalAlignment)_random.Next(0, 5);
+			text.VerticalAlignment = (TextVerticalAlignmentType)_random.Next(0, 3);
 		}
 	}
 }

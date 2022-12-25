@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using CSMath;
 
 namespace ACadSharp.IO.DWG
 {
@@ -24,6 +25,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case Point p:
 					this.writePoint(p);
+					break;
+				case TextEntity text:
+					this.writeTextEntity(text);
 					break;
 				default:
 					this.notify($"Entity not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
@@ -117,6 +121,136 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitExtrusion(point.Normal);
 			//X - axis ang BD 50 See DXF documentation
 			this._writer.WriteBitDouble(point.Rotation);
+		}
+
+		private void writeTextEntity(TextEntity text)
+		{
+			//R13-14 Only:
+			if (this.R13_14Only)
+			{
+				//Elevation BD ---
+				this._writer.WriteBitDouble(text.InsertPoint.Z);
+				//Insertion pt 2RD 10
+				this._writer.WriteRawDouble(text.InsertPoint.X);
+				this._writer.WriteRawDouble(text.InsertPoint.Y);
+
+				//Alignment pt 2RD 11
+				this._writer.WriteRawDouble(text.AlignmentPoint.X);
+				this._writer.WriteRawDouble(text.AlignmentPoint.Y);
+
+				//Extrusion 3BD 210
+				this._writer.Write3BitDouble(text.Normal);
+				//Thickness BD 39
+				this._writer.WriteBitDouble(text.Thickness);
+				//Oblique ang BD 51
+				this._writer.WriteBitDouble(text.ObliqueAngle);
+				//Rotation ang BD 50
+				this._writer.WriteBitDouble(text.Rotation);
+				//Height BD 40
+				this._writer.WriteBitDouble(text.Height);
+				//Width factor BD 41
+				this._writer.WriteBitDouble(text.WidthFactor);
+				//Text value TV 1
+				this._writer.WriteVariableText(text.Value);
+				//Generation BS 71
+				this._writer.WriteBitShort((short)text.Mirror);
+				//Horiz align. BS 72
+				this._writer.WriteBitShort((short)text.HorizontalAlignment);
+				//Vert align. BS 73
+				this._writer.WriteBitShort((short)text.VerticalAlignment);
+
+			}
+			else
+			{
+				//DataFlags RC Used to determine presence of subsquent data
+				byte dataFlags = 0;
+
+				if (text.InsertPoint.Z == 0.0)
+				{
+					dataFlags = (byte)(dataFlags | 0b1);
+				}
+				if (text.AlignmentPoint == XYZ.Zero)
+				{
+					dataFlags = (byte)(dataFlags | 0b10);
+				}
+				if (text.ObliqueAngle == 0.0)
+				{
+					dataFlags = (byte)(dataFlags | 0b100);
+				}
+				if (text.Rotation == 0.0)
+				{
+					dataFlags = (byte)(dataFlags | 0b1000);
+				}
+				if (text.WidthFactor == 1.0)
+				{
+					dataFlags = (byte)(dataFlags | 0b10000);
+				}
+				if (text.Mirror == TextMirrorFlag.None)
+				{
+					dataFlags = (byte)(dataFlags | 0b100000);
+				}
+				if (text.HorizontalAlignment == TextHorizontalAlignment.Left)
+				{
+					dataFlags = (byte)(dataFlags | 0b1000000);
+				}
+				if (text.VerticalAlignment == TextVerticalAlignmentType.Baseline)
+				{
+					dataFlags = (byte)(dataFlags | 0b10000000);
+				}
+
+				this._writer.WriteByte(dataFlags);
+
+				//Elevation RD --- present if !(DataFlags & 0x01)
+				if ((dataFlags & 0b1) == 0)
+					this._writer.WriteRawDouble(text.InsertPoint.Z);
+
+				//Insertion pt 2RD 10
+				this._writer.WriteRawDouble(text.InsertPoint.X);
+				this._writer.WriteRawDouble(text.InsertPoint.Y);
+
+				//Alignment pt 2DD 11 present if !(DataFlags & 0x02), use 10 & 20 values for 2 default values.
+				if ((dataFlags & 0x2) == 0)
+				{
+					this._writer.WriteBitDoubleWithDefault(text.AlignmentPoint.X, text.InsertPoint.X);
+					this._writer.WriteBitDoubleWithDefault(text.AlignmentPoint.Y, text.InsertPoint.Y);
+				}
+
+				//Extrusion BE 210
+				this._writer.WriteBitExtrusion(text.Normal);
+				//Thickness BT 39
+				this._writer.WriteBitThickness(text.Thickness);
+
+				//Oblique ang RD 51 present if !(DataFlags & 0x04)
+				if ((dataFlags & 0x4) == 0)
+					this._writer.WriteRawDouble(text.ObliqueAngle);
+				//Rotation ang RD 50 present if !(DataFlags & 0x08)
+				if ((dataFlags & 0x8) == 0)
+					this._writer.WriteRawDouble(text.Rotation);
+
+				//Height RD 40
+				this._writer.WriteRawDouble(text.Height);
+
+				//Width factor RD 41 present if !(DataFlags & 0x10)
+				if ((dataFlags & 0x10) == 0)
+					this._writer.WriteRawDouble(text.WidthFactor);
+
+				//Text value TV 1
+				this._writer.WriteVariableText(text.Value);
+
+				//Generation BS 71 present if !(DataFlags & 0x20)
+				if ((dataFlags & 0x20) == 0)
+					this._writer.WriteBitShort((short)text.Mirror);
+				//Horiz align. BS 72 present if !(DataFlags & 0x40)
+				if ((dataFlags & 0x40) == 0)
+					this._writer.WriteBitShort((short)text.HorizontalAlignment);
+				//Vert align. BS 73 present if !(DataFlags & 0x80)
+				if ((dataFlags & 0x80) == 0)
+					this._writer.WriteBitShort((short)text.VerticalAlignment);
+			}
+
+			//Common:
+			//Common Entity Handle Data H 7 STYLE(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, text.Style);
 		}
 	}
 }
