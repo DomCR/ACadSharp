@@ -5,12 +5,6 @@
 //See LICENSE file in the project root for full license information.
 #endregion
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp
 {
