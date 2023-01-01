@@ -142,7 +142,7 @@ namespace ACadSharp.Tests.IO
 					if (!string.IsNullOrEmpty(li))
 					{
 						if (li.Contains("Invalid or incomplete DXF input -- drawing discarded.")
-							|| li.Contains("error", StringComparison.OrdinalIgnoreCase))
+							|| li.IndexOf("error", StringComparison.OrdinalIgnoreCase) != -1)
 						{
 							testPassed = false;
 						}
@@ -199,7 +199,7 @@ namespace ACadSharp.Tests.IO
 					if (!string.IsNullOrEmpty(li))
 					{
 						if (li.Contains("Invalid or incomplete DXF input -- drawing discarded.")
-							|| li.Contains("error", StringComparison.OrdinalIgnoreCase))
+							|| li.IndexOf("error", StringComparison.OrdinalIgnoreCase) != -1)
 						{
 							testPassed = false;
 						}

@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -88,9 +89,12 @@ namespace ACadSharp.Tests.Common
 		public void AssertDocumentTree(CadDocument doc)
 		{
 			this._document = doc;
+#if NETFRAMEWORK
+            CadDocumentTree tree = Newtonsoft.Json.JsonConvert.DeserializeObject<CadDocumentTree>(File.ReadAllText(_documentTree));
+#else
 			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(File.ReadAllText(_documentTree));
-
-			this.assertTable(doc.BlockRecords, tree.BlocksTable);
+#endif
+            this.assertTable(doc.BlockRecords, tree.BlocksTable);
 			this.assertTable(doc.Layers, tree.LayersTable);
 		}
 
