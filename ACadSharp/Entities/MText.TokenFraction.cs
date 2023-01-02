@@ -42,6 +42,7 @@ namespace ACadSharp.Entities
             {
                 Numerator = new[] { numerator.AsMemory() };
                 Denominator = new[] { denominator.AsMemory() };
+                DividerType = divider;
             }
 
 

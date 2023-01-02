@@ -12,14 +12,14 @@ namespace ACadSharp.Tests.Entities
         {
         }
 
-        public MTextFormatsTestData(string Input, MText.Token[]? Expected)
+        public MTextFormatsTestData(string text, MText.Token[]? parsed)
         {
-            this.Input = Input;
-            this.Expected = Expected;
+            this.Text = text;
+            this.Parsed = parsed;
         }
 
-        public string Input { get; set; }
-        public MText.Token[]? Expected { get; set; }
+        public string Text { get; set; }
+        public MText.Token[]? Parsed { get; set; }
 
         public virtual bool Equals(MTextFormatsTestData? other)
         {
@@ -33,8 +33,8 @@ namespace ACadSharp.Tests.Entities
                 return true;
             }
 
-            return Input == other.Input
-                   && Expected?.Equals(other.Expected) == true;
+            return Text == other.Text
+                   && Parsed?.Equals(other.Parsed) == true;
         }
     }
 }

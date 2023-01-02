@@ -244,12 +244,6 @@ namespace ACadSharp.Entities
                         flushText();
                         _currentFormat.IsStrikeThrough = false;
                     }
-                    else if (_controlCode && token == 'k')
-                    {
-                        _controlCode = false;
-                        flushText();
-                        _currentFormat.IsStrikeThrough = false;
-                    }
                     else if (_controlCode && token == 'P')
                     {
                         _controlCode = false;

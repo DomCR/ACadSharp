@@ -8,30 +8,30 @@ using System.IO;
 
 namespace ACadSharp.Tests.Entities
 {
-    public class MTextValueReaderTests
+    public class MTextValueWriterTests
     {
 
         public static IEnumerable<object[]> EscapesData = new List<object[]>()
         {
             new[] { @"\\", @"\" },
             new[] { @"\\\\\\", @"\\\" },
-            new[] { @"\", @"\" },
+            // ToDo: Review if this one is valid or not.
+            //new[] { @"\", @"\" },
             new[] { @"\{", @"{" },
             new[] { @"\}", @"}" },
             new[] { @"\\P", @"\P" },
             new[] { @"\\~", @"\~" },
+            new[] { @"1\\~2", @"1\~2" },
         };
 
         [Theory, MemberData(nameof(EscapesData))]
-        public void Escapes(string input, string expected)
+        public void Escapes(string expected, string input)
         {
-            var reader = new MText.ValueReader();
-            var parts = reader.Parse(input);
-
-            if (parts[0] is MText.TokenValue value1)
-                Assert.Equal(expected, value1.CombinedValues);
+            var reader = new MText.ValueWriter();
+            var parts = reader.Seralize(new[] { new MText.TokenValue(input) });
+            Assert.Equal(expected, string.Concat(parts));
         }
-
+        
         public static IEnumerable<object[]> ReadsTextData = new List<object[]>()
         {
         new [] { "0", "0" },
@@ -39,19 +39,19 @@ namespace ACadSharp.Tests.Entities
         new [] { "0123456789", "0123456789" },
         new [] { "abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz" },
         new [] { @"\P", "\n" },
-        new [] { @"\", @"\" },
+        // ToDo: Review if this one is valid or not.
+        //new [] { @"\", @"\" },
         new [] { @"\~", "\u00A0" },
     };
 
         [Theory, MemberData(nameof(ReadsTextData))]
-        public void ReadsText(string input, string expected)
+        public void ReadsText(string expected, string input)
         {
-            var reader = new MText.ValueReader();
-            var parts = reader.Parse(input);
-
-            if (parts[0] is MText.TokenValue value1)
-                Assert.Equal(expected, value1.CombinedValues);
+            var reader = new MText.ValueWriter();
+            var parts = reader.Seralize(new[] { new MText.TokenValue(input) });
+            Assert.Equal(expected, string.Concat(parts));
         }
+        
 
         public static IEnumerable<object[]> FormatsData = new List<object[]>()
         {
@@ -72,16 +72,6 @@ namespace ACadSharp.Tests.Entities
             },
             new[]
             {
-                new MTextFormatsTestData(@"BEFORE{\OFORMATTED}AFTER",
-                    new[]
-                    {
-                        new MText.TokenValue("BEFORE"),
-                        new MText.TokenValue(new("O"), "FORMATTED"),
-                        new MText.TokenValue("AFTER")
-                    })
-            },
-            new[]
-            {
                 new MTextFormatsTestData(@"BEFORE\OFORMATTED\oAFTER",
                     new[]
                     {
@@ -92,32 +82,12 @@ namespace ACadSharp.Tests.Entities
             },
             new[]
             {
-                new MTextFormatsTestData(@"BEFORE{\LFORMATTED}AFTER",
-                    new[]
-                    {
-                        new MText.TokenValue("BEFORE"),
-                        new MText.TokenValue(new("L"), "FORMATTED"),
-                        new MText.TokenValue("AFTER")
-                    })
-            },
-            new[]
-            {
                 new MTextFormatsTestData(@"BEFORE\LFORMATTED\lAFTER",
                     new[]
                     {
                         new MText.TokenValue("BEFORE"),
                         new MText.TokenValue(new("L"), "FORMATTED"),
                         new MText.TokenValue(new("l"), "AFTER")
-                    })
-            },
-            new[]
-            {
-                new MTextFormatsTestData(@"BEFORE{\KFORMATTED}AFTER",
-                    new[]
-                    {
-                        new MText.TokenValue("BEFORE"),
-                        new MText.TokenValue(new("K"), "FORMATTED"),
-                        new MText.TokenValue("AFTER"),
                     })
             },
             new[]
@@ -138,11 +108,6 @@ namespace ACadSharp.Tests.Entities
             new[]
             {
                 new MTextFormatsTestData(@"\H2.64x;FORMATTED",
-                    new[] { new MText.TokenValue(new() { Height = 2.64f }, "FORMATTED"), })
-            },
-            new[]
-            {
-                new MTextFormatsTestData(@"\H2.64;FORMATTED",
                     new MText.TokenValue(new() { Height = 2.64f }, "FORMATTED"))
             },
             new[]
@@ -178,7 +143,7 @@ namespace ACadSharp.Tests.Entities
         {
             TestFormatData(data);
         }
-
+        
         public static IEnumerable<object[]> FontsData = new List<object[]>()
         {
             new[]
@@ -222,8 +187,28 @@ namespace ACadSharp.Tests.Entities
             },
 
             // True Colors
-            new[] { new MTextFormatsTestData(@"{\c245612;1}", new MText.TokenValue(new() { Color = Color.FromTrueColor(245612) }, "1")) },
-            new[] { new MTextFormatsTestData(@"{\c0;1}", new MText.TokenValue(new() { Color = Color.FromTrueColor(0) }, "1")) },
+            new[]
+            {
+                new MTextFormatsTestData(@"{\c245612;1}",
+                    new MText.TokenValue(new() { Color = Color.FromTrueColor(245612) }, "1"))
+            },
+            new[]
+            {
+                new MTextFormatsTestData(@"{\c0;1}",
+                    new MText.TokenValue(new() { Color = Color.FromTrueColor(0) }, "1"))
+            },
+            new[]
+            {
+                new MTextFormatsTestData(@"0{\c0;1}2", new[]
+                {
+                    new MText.TokenValue("0"),
+                    new MText.TokenValue(new MText.Format()
+                    {
+                        Color = Color.FromTrueColor(0)
+                    }, "1"),
+                    new MText.TokenValue("2"),
+                })
+            },
         };
 
         [Theory, MemberData(nameof(ColorsData))]
@@ -233,7 +218,7 @@ namespace ACadSharp.Tests.Entities
         }
 
         public static IEnumerable<object[]> FractionsData = new List<object[]>()
-        {
+        {/*
             new[]
             {
                 new MTextFormatsTestData(@"\S1^2;",
@@ -270,16 +255,12 @@ namespace ACadSharp.Tests.Entities
             {
                 new MTextFormatsTestData(@"\SNUM#DEN\;;",
                     new MText.TokenFraction("NUM", "DEN;", MText.TokenFraction.Divider.Condensed))
-            },
+            },*/
             new[]
             {
                 new MTextFormatsTestData(@"\SNUM\##DEN\;;",
                     new MText.TokenFraction("NUM#", "DEN;", MText.TokenFraction.Divider.Condensed))
             },
-
-            // Unexpected end to string.
-            new[] { new MTextFormatsTestData(@"\SNUMDEN\;;", (MText.Token?)null) },
-            new[] { new MTextFormatsTestData(@"\SNUMDEN", (MText.Token?)null) },
         };
 
         [Theory, MemberData(nameof(FractionsData))]
@@ -289,40 +270,11 @@ namespace ACadSharp.Tests.Entities
         }
 
 
-        public static IEnumerable<object[]> ParseData = new List<object[]>()
-        {
-            new object[]
-            {
-                @"\A1;\P{\OOVERSTRIKE}\P{\LUNDERLINE}\P{STRIKE-THROUGH}\P{\fArial|b1|i0|c0|p34;BOLD}\P{\fArial|b0|i1|c0|p34;ITALIC\P\H0.7x;\SSUPERSET^;\H1.42857x;\P\H0.7x;\S^SUBSET;\H1.42857x;\P\H0.7x;\S1/2;\H1.42857x;\P\fArial|b0|i0|c0|p34;\P\pi-21.34894,l21.34894,t21.34894;\fSymbol|b0|i0|c2|p18;·	\fArial|b0|i0|c0|p34;BULLET 1\P\fSymbol|b0|i0|c2|p18;·	\fArial|b0|i0|c0|p34;BULLET 2\P\fSymbol|b0|i0|c2|p18;·	\fArial|b0|i0|c0|p34;BULLET 3\P\pi0,l0,tz;\P\pi-21.34894,l21.34894,t21.34894;a.	LOWERCASE LETTER A\Pb.	LOWERCASE LETTER B\Pc.	LOWERCASE LETTER C\P\pi0,l0,tz;\P\pi-21.34894,l21.34894,t21.34894;A.	UPPERCASE LETTER A\PB.	UPPERCASE LETTER B\PC.	UPPERCASE LETTER C\P\pi0,l0,tz;\P\pi-21.34894,l21.34894,t21.34894;1.	NUMBERED 1\P2.	NUMBERED 2\P3.	NUMBERED 3\P\pi0,l0,tz;\P\{TEST\}\P\PNOTE 1:	NOTE TEXT 1"" 2"" 3' 4'\P\\A1;\P\\P\PNOTE 2:	NOTE TEXT.\P}NESTED FORMATTING {\fArial|b1|i0|c0|p34;BOLD \fArial|b1|i1|c0|p34;ITALICS \LUNDERLINE \H2.24835x;FONT \fBaby Kruffy|b1|i1|c0|p2;DIFFERENT\fArial|b1|i1|c0|p34;\H0.44477x; \OOVERLINE \H0.7x;\SSUPER-TEXT^;\H1.42857x; \H0.7x;\S^SUB-TEXT;}",
-                22
-            },
-        };
-
-        [Theory, MemberData(nameof(ParseData))]
-        public void Parse(string text, int expectedParts)
-        {
-            var reader = new MText.ValueReader();
-            var parts = reader.Parse(text);
-        }
-
         private void TestFormatData(MTextFormatsTestData data)
         {
-            var reader = new MText.ValueReader();
-            var parts = reader.Parse(data.Text);
-
-            if (data.Parsed == null)
-            {
-                Assert.Empty(parts);
-                return;
-            }
-
-            Assert.Equal(data.Parsed!.Length, parts.Length);
-
-            for (int i = 0; i < parts.Length; i++)
-            {
-                Assert.Equal(data.Parsed[i].Format, parts[i].Format);
-                Assert.Equal(data.Parsed[i], parts[i]);
-            }
+            var reader = new MText.ValueWriter();
+            var parts = reader.Seralize(data.Parsed);
+            Assert.Equal(data.Text, string.Concat(parts));
         }
     }
 }

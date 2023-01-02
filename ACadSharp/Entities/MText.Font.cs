@@ -6,7 +6,7 @@ namespace ACadSharp.Entities
     {
         public class Font
         {
-            public ReadOnlyMemory<char> FontFamily { get; set; }
+            public ReadOnlyMemory<char> FontFamily { get; set; } = default;
             public bool IsBold { get; set; } = false;
             public bool IsItalic { get; set; } = false;
             public int CodePage { get; set; } = 0;

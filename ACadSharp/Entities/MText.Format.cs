@@ -17,13 +17,14 @@ namespace ACadSharp.Entities
             public bool? IsUnderline { get; set; } = null;
             public bool? IsOverline { get; set; } = null;
             public bool? IsStrikeThrough { get; set; } = null;
-            public Font Font { get; }
+
+            public readonly Font Font;
             public float? Height { get; set; } = null;
             public float? Width { get; set; } = null;
             public float? Obliquing { get; set; } = null;
             public float? Tracking { get; set; } = null;
-            public Alignment? Align { get; set; } = Alignment.Center;
-            public Color? Color { get; set; }
+            public Alignment? Align { get; set; } = null;
+            public Color? Color { get; set; } = null;
             public List<ReadOnlyMemory<char>> Paragraph { get; } = new List<ReadOnlyMemory<char>>();
 
             public Format()
@@ -112,40 +113,6 @@ namespace ACadSharp.Entities
                 if (other == null)
                     return false;
 
-                var paragraphsEqual = false;
-
-                if (Nullable.Equals(Paragraph, other.Paragraph))
-                {
-                    paragraphsEqual = true;
-                }
-                else
-                {
-                    if (Paragraph != null 
-                        && other.Paragraph != null 
-                        && Paragraph.Count == other.Paragraph.Count)
-                    {
-                        if (Paragraph.Count == 0)
-                        {
-                            paragraphsEqual = true;
-                        }
-                        else
-                        {
-                            for (int i = 0; i < Paragraph.Count; i++)
-                            {
-                                if (Paragraph[i].Span.SequenceEqual(other.Paragraph[i].Span))
-                                {
-                                    paragraphsEqual = true;
-                                }
-                                else
-                                {
-                                    paragraphsEqual = false;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                }
                 return
                     Nullable.Equals(IsUnderline, other.IsUnderline)
                     && Nullable.Equals(IsOverline, other.IsOverline)
@@ -157,7 +124,47 @@ namespace ACadSharp.Entities
                     && Nullable.Equals(Align, other.Align)
                     && Color.Equals(other.Color)
                     && Font.Equals(other.Font)
-                    && paragraphsEqual;
+                    && AreParagraphsEqual(other.Paragraph);
+            }
+
+            public bool AreParagraphsEqual(List<ReadOnlyMemory<char>>? other)
+            {
+                
+                if (Nullable.Equals(Paragraph, other))
+                {
+                    return true;
+                }
+                else
+                {
+                    if (Paragraph != null
+                        && other != null
+                        && Paragraph.Count == other.Count)
+                    {
+                        if (Paragraph.Count == 0)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            bool paragraphsEqual = false;
+                            for (int i = 0; i < Paragraph.Count; i++)
+                            {
+                                if (Paragraph[i].Span.SequenceEqual(other[i].Span))
+                                {
+                                    paragraphsEqual = true;
+                                }
+                                else
+                                {
+                                    paragraphsEqual = false;
+                                    break;
+                                }
+                            }
+
+                            return paragraphsEqual;
+                        }
+                    }
+                    return false;
+                }
             }
 
             public override string ToString()
