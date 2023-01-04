@@ -373,7 +373,7 @@ namespace ACadSharp
         /// <param name="g">Green</param>
         /// <param name="b">Blue</param>
         /// <returns>Approximate AutoCad RGB color.</returns>
-        public static byte ApproxColor(byte r, byte g, byte b)
+        public static byte ApproxIndex(byte r, byte g, byte b)
         {
             var prevDist = -1;
             for (var i = 0; i < _indexRgb.Length; i++)
@@ -390,6 +390,15 @@ namespace ACadSharp
             }
 
             return 0;
+        }
+
+        /// <summary>
+        /// Returns the RGP color code which matches the passed indexed color.
+        /// </summary>
+        /// <returns>Approximate RGB color from AutoCAD's indexed color.</returns>
+        public static ReadOnlySpan<byte> GetIndexRGB(int index)
+        {
+            return _indexRgb[index].AsSpan();
         }
 
         public ReadOnlySpan<byte> GetTrueColorRgb()
