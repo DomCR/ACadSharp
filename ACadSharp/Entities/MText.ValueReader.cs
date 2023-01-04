@@ -117,7 +117,50 @@ namespace ACadSharp.Entities
                 while (true)
                 {
                     var token = spanText[_position];
-                    if (token == '\\')
+                    if (token == '%' 
+                        && canAdvance(2) 
+                        && spanText[_position + 1] == '%')
+                    {
+                        _controlCode = false;
+                        token = spanText[_position + 2];
+                        if (token == 'D' || token == 'd')
+                        {
+                            charBufferSpan[0] = '°';
+                            flushText(_charBuffer);
+                        }   
+                        else if (token == 'P' || token == 'p')
+                        {
+                            charBufferSpan[0] = '±';
+                            flushText(_charBuffer);
+                        } 
+                        else if (token == 'C' || token == 'c')
+                        {
+                            charBufferSpan[0] = 'Ø';
+                            flushText(_charBuffer);
+                        }
+                        else if (token == '%')
+                        {
+                            charBufferSpan[0] = '%';
+                            flushText(_charBuffer);
+                        }
+                        else
+                        {
+                            pushTextEnd();
+                            continue;
+                        }
+
+                        if (canAdvance(3))
+                        {
+                            _position += 3;
+                            continue;
+                        }
+                        else
+                        {
+                            // If we can't advance 3, we are at the end.
+                            return true;
+                        }
+                    }
+                    else if (token == '\\')
                     {
                         if (_controlCode)
                             _mainBuffer.Add(_content.Slice(_position, 1));
@@ -248,16 +291,14 @@ namespace ACadSharp.Entities
                     {
                         _controlCode = false;
                         charBufferSpan[0] = '\n';
-                        _mainBuffer.Add(_charBuffer);
-                        flushText();
+                        flushText(_charBuffer);
                     }  
                     else if (_controlCode && token == '~')
                     {
                         // Non Breaking Space
                         _controlCode = false;
                         charBufferSpan[0] = '\u00A0';
-                        _mainBuffer.Add(_charBuffer);
-                        flushText();
+                        flushText(_charBuffer);
                     }
                     else if (!_controlCode && token == '{')
                     {
@@ -568,6 +609,7 @@ namespace ACadSharp.Entities
                 
                 bool numeratorSet = false;
                 bool fractionEscaped = false;
+                bool dividerSet = false;
 
                 // Advance once.
                 if (!tryAdvance())
@@ -616,6 +658,18 @@ namespace ACadSharp.Entities
 
                         if (!numeratorSet)
                         {
+                            if (!dividerSet)
+                            {
+                                dividerSet = true;
+                                _flushFractionValue.DividerType = token switch
+                                {
+                                    '^' => TokenFraction.Divider.Stacked,
+                                    '#' => TokenFraction.Divider.Condensed,
+                                    '/' => TokenFraction.Divider.FractionBar,
+                                    _ => TokenFraction.Divider.FractionBar
+                                };
+                            }
+
                             _flushFractionValue.Numerator = buffer;
 
                             // If we are at the end and can't advance, then the fraction is broken.
@@ -675,7 +729,7 @@ namespace ACadSharp.Entities
             /// <summary>
             /// Flushes the text to the visitor with the current formatting.
             /// </summary>
-            private void flushText()
+            private void flushText(ReadOnlyMemory<char>? append = null)
             {
                 if (_textValueEnd > _textValueStart)
                 {
@@ -683,6 +737,9 @@ namespace ACadSharp.Entities
                     _textValueStart = -1;
                     _textValueEnd = -1;
                 }
+
+                if(append != null)
+                    _mainBuffer.Add(append.Value);
 
                 if (_mainBuffer.Count > 0)
                 {
@@ -709,9 +766,9 @@ namespace ACadSharp.Entities
             /// Checks to see if it is possible to advance the position in the reader.
             /// </summary>
             /// <returns>True if the end has not been reached.  False otherwise.</returns>
-            private bool canAdvance()
+            private bool canAdvance(int advanceAmount = 1)
             {
-                return _position + 1 < _length;
+                return _position + advanceAmount < _length;
             }
 
             public void Dispose()
