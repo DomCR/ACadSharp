@@ -13,11 +13,18 @@ namespace ACadSharp.Tests.Entities
         }
 
         public MTextFormatsTestData(string text, MText.Token[]? parsed)
+            :this(text, parsed, null)
+        {
+        }
+
+        public MTextFormatsTestData(string text, MText.Token[]? parsed, MText.Format? format)
         {
             this.Text = text;
             this.Parsed = parsed;
+            this.Format = format;
         }
 
+        public MText.Format? Format { get; set; }
         public string Text { get; set; }
         public MText.Token[]? Parsed { get; set; }
 

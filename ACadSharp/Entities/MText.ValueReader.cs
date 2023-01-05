@@ -16,6 +16,8 @@ namespace ACadSharp.Entities
         /// </remarks>
         /// <seealso>
         /// https://www.cadforum.cz/en/text-formatting-codes-in-mtext-objects-tip8640
+        /// https://knowledge.autodesk.com/support/autocad-lt/learn-explore/caas/CloudHelp/cloudhelp/2019/ENU/AutoCAD-LT/files/GUID-7D8BB40F-5C4E-4AE5-BD75-9ED7112E5967-htm.html
+        /// https://knowledge.autodesk.com/support/autocad-lt/learn-explore/caas/CloudHelp/cloudhelp/2019/ENU/AutoCAD-LT/files/GUID-6F59DA4A-A790-4316-A79C-2CCE723A30CA-htm.html
         /// </seealso>
         public class ValueReader : IDisposable
         {
@@ -47,16 +49,22 @@ namespace ACadSharp.Entities
             /// <remarks>Not thread safe.</remarks>
             public Token[] Parse(string content)
             {
-                return Parse(content.AsMemory());
+                return Parse(content, null);
+            }
+
+            public Token[] Parse(string content, Format? baseFormat)
+            {
+                return Parse(content.AsMemory(), baseFormat);
             }
 
             /// <summary>
             /// Parses the passed contest value.
             /// </summary>
             /// <param name="content">Content to parse.</param>
+            /// <param name="baseFormat">This is the base format that will be used.</param>
             /// <returns>Parsed token list.  This is not a zero copy parsing process.</returns>
             /// <remarks>Not thread safe.</remarks>
-            public Token[] Parse(ReadOnlyMemory<char> content)
+            public Token[] Parse(ReadOnlyMemory<char> content, Format? baseFormat)
             {
                 var list = new List<Token>();
                 Walk(token =>
@@ -85,7 +93,7 @@ namespace ACadSharp.Entities
                         });
                     }
 
-                }, content);
+                }, content, baseFormat);
 
                 return list.ToArray();
             }
@@ -103,6 +111,24 @@ namespace ACadSharp.Entities
             /// </remarks>
             public bool Walk(Action<Token> visitor, ReadOnlyMemory<char> content)
             {
+                _currentFormat?.Reset();
+                return Walk(visitor, content, _currentFormat);
+            }
+
+            /// <summary>
+            /// Walks the content as it is being parsed.  The visitor is passed tokens to use.
+            /// </summary>
+            /// <param name="visitor">Visitor to walk through the data as it is read.</param>
+            /// <param name="content">Content to walk through.</param>
+            /// <param name="baseFormat">This is the base format that will be used.</param>
+            /// <returns>True on successful read.  False otherwise.</returns>
+            /// <remarks>
+            /// Walking is a zero copy parsing process.  This means that the content of the tokens
+            /// are not guaranteed to be valid beyond the return of the visitor.
+            /// Not Thread Safe.
+            /// </remarks>
+            public bool Walk(Action<Token> visitor, ReadOnlyMemory<char> content, Format? baseFormat)
+            {
                 _content = content;
                 _visitor = visitor;
                 _textValueStart = -1;
@@ -110,6 +136,7 @@ namespace ACadSharp.Entities
                 _length = _content.Length;
                 _controlCode = false;
                 _position = 0;
+                _currentFormat = baseFormat;
                 setNewCurrentFormat();
 
                 var spanText = _content.Span;
@@ -130,12 +157,14 @@ namespace ACadSharp.Entities
                         }   
                         else if (token == 'P' || token == 'p')
                         {
-                            charBufferSpan[0] = '±';
+                            // ± (PLUS-MINUS SIGN)
+                            charBufferSpan[0] = '\u00B1';
                             flushText(_charBuffer);
                         } 
                         else if (token == 'C' || token == 'c')
                         {
-                            charBufferSpan[0] = 'Ø';
+                            // Ø (LATIN CAPITAL LETTER O WITH STROKE)
+                            charBufferSpan[0] = '\u00D8';
                             flushText(_charBuffer);
                         }
                         else if (token == '%')
@@ -216,10 +245,17 @@ namespace ACadSharp.Entities
                     {
                         _controlCode = false;
                         flushText();
-                        if (!tryParseControlCodeFloat(spanText, out var value))
+                        if (!tryParseControlCodeFloatWithX(spanText, out var value, out bool relative))
                             return false;
 
-                        _currentFormat.Height = value;
+                        if (relative)
+                        {
+                            _currentFormat.Height *= value;
+                        }
+                        else
+                        {
+                            _currentFormat.Height = value;
+                        }
                     }
                     else if (_controlCode && token == 'Q')
                     {
@@ -340,18 +376,26 @@ namespace ACadSharp.Entities
 
             private void setNewCurrentFormat()
             {
+                Format newFormat;
 #if NETFRAMEWORK
                 if (_freeFormatStates.Count > 0)
                 {
-                    _currentFormat = _freeFormatStates.Pop();
+                    newFormat = _freeFormatStates.Pop();
                 }
                 else
 #else
-                if (!_freeFormatStates.TryPop(out _currentFormat))
+                if (!_freeFormatStates.TryPop(out newFormat))
 #endif
                 {
-                    _currentFormat = new Format();
+                    newFormat = new Format();
                 }
+                // Copy the formatting from the current format to the new format.
+                if (_currentFormat != null)
+                {
+                    newFormat.OverrideFrom(_currentFormat);
+                }
+
+                _currentFormat = newFormat;
             }
 
             /// <summary>
@@ -419,9 +463,11 @@ namespace ACadSharp.Entities
             /// </summary>
             /// <param name="spanText">Text to read from.</param>
             /// <param name="value">Parsed value.  Invalid data on failure.</param>
+            /// <param name="trailingX">True if there is a training X</param>
             /// <returns>True on success, false otherwise.</returns>
-            private bool tryParseControlCodeFloat(ReadOnlySpan<char> spanText, out float value)
+            private bool tryParseControlCodeFloatWithX(ReadOnlySpan<char> spanText, out float value, out bool trailingX)
             {
+                trailingX = false;
                 if (!tryGetControlCodeValue(spanText, out var content))
                 {
                     value = -1;
@@ -431,7 +477,35 @@ namespace ACadSharp.Entities
                 // Sometimes there is an "x" at the end of the float value.  Remove it.
                 // ReSharper disable once UseIndexFromEndExpression
                 if (content[content.Length - 1] == 'x')
+                {
+                    trailingX = true;
                     content = content.Slice(0, content.Length - 1);
+                }
+
+#if NETFRAMEWORK
+                // Fallback when the enum can't parse a span directly.
+                if (float.TryParse(content.ToString(), out value))
+                    return true;
+#else
+                if (float.TryParse(content, out value))
+                    return true;
+#endif
+                return false;
+            }
+
+            /// <summary>
+            /// Tries to parse a float from the control code value.
+            /// </summary>
+            /// <param name="spanText">Text to read from.</param>
+            /// <param name="value">Parsed value.  Invalid data on failure.</param>
+            /// <returns>True on success, false otherwise.</returns>
+            private bool tryParseControlCodeFloat(ReadOnlySpan<char> spanText, out float value)
+            {
+                if (!tryGetControlCodeValue(spanText, out var content))
+                {
+                    value = -1;
+                    return false;
+                }
 
 #if NETFRAMEWORK
                 // Fallback when the enum can't parse a span directly.

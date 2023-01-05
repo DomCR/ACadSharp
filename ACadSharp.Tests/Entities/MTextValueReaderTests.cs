@@ -154,11 +154,27 @@ namespace ACadSharp.Tests.Entities
             new[]
             {
                 new MTextFormatsTestData(@"\H2.64x;FORMATTED",
-                    new[] { new MText.TokenValue(new() { Height = 2.64f }, "FORMATTED"), })
+                    new[] { new MText.TokenValue(new() { Height = 2.64f }, "FORMATTED"), }, new MText.Format()
+                    {
+                        Height = 1f
+                    })
+            },
+            new[]
+            {
+                new MTextFormatsTestData(@"{\H4;{\H2.64x;FORMATTED}}",
+                    new[]
+                    {
+                        new MText.TokenValue(new() { Height = 10.56f }, "FORMATTED"),
+                    }, new MText.Format() { Height = 1f })
             },
             new[]
             {
                 new MTextFormatsTestData(@"\H2.64;FORMATTED",
+                    new MText.TokenValue(new() { Height = 2.64f }, "FORMATTED"))
+            },
+            new[]
+            {
+                new MTextFormatsTestData(@"{\H4;{\H2.64;FORMATTED}}",
                     new MText.TokenValue(new() { Height = 2.64f }, "FORMATTED"))
             },
             new[]
@@ -332,7 +348,7 @@ namespace ACadSharp.Tests.Entities
         private void TestFormatData(MTextFormatsTestData data)
         {
             var reader = new MText.ValueReader();
-            var parts = reader.Parse(data.Text);
+            var parts = reader.Parse(data.Text, data.Format);
 
             if (data.Parsed == null)
             {
