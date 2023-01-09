@@ -8,7 +8,7 @@ using System;
 
 namespace ACadSharp
 {
-    public readonly struct Color
+    public readonly struct Color : IEquatable<Color>
     {
         private static readonly byte[][] _indexRgb = new byte[][]
         {
