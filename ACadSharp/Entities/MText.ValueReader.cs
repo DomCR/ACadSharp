@@ -247,6 +247,7 @@ namespace ACadSharp.Entities
                         flushText();
                         if (!tryParseControlCodeFloatWithX(spanText, out var value, out bool relative))
                             return false;
+                        _currentFormat.IsHeightRelative = relative;
 
                         if (relative)
                         {

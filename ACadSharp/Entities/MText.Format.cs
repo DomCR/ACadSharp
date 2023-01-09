@@ -20,6 +20,7 @@ namespace ACadSharp.Entities
 
             public readonly Font Font;
             public float? Height { get; set; } = null;
+            public bool IsHeightRelative { get; set; }
             public float? Width { get; set; } = null;
             public float? Obliquing { get; set; } = null;
             public float? Tracking { get; set; } = null;
@@ -31,21 +32,6 @@ namespace ACadSharp.Entities
             {
                 Font = new Font();
             }
-
-            /*public Format(Format original)
-            {
-                IsUnderline = original.IsUnderline;
-                IsOverline = original.IsOverline;
-                IsStrikeThrough = original.IsStrikeThrough;
-                Font = new Font(original.Font);
-                Height = original.Height;
-                Width = original.Width;
-                Obliquing = original.Obliquing;
-                Tracking = original.Tracking;
-                Align = original.Align;
-                Color = original.Color;
-                Paragraph = original.Paragraph;
-            }*/
 
             internal Format(string formats)
             {
@@ -78,6 +64,7 @@ namespace ACadSharp.Entities
                 IsStrikeThrough = source.IsStrikeThrough;
                 Font.OverrideFrom(source.Font);
                 Height = source.Height;
+                IsHeightRelative = source.IsHeightRelative;
                 Width = source.Width;
                 Obliquing = source.Obliquing;
                 Tracking = source.Tracking;
@@ -94,6 +81,7 @@ namespace ACadSharp.Entities
                 IsStrikeThrough = null;
                 Font.Reset();
                 Height = null;
+                IsHeightRelative = false;
                 Width = null;
                 Obliquing = null;
                 Tracking = null;
@@ -118,6 +106,7 @@ namespace ACadSharp.Entities
                     && Nullable.Equals(IsOverline, other.IsOverline)
                     && Nullable.Equals(IsStrikeThrough, other.IsStrikeThrough)
                     && Nullable.Equals(Height, other.Height)
+                    && IsHeightRelative == other.IsHeightRelative
                     && Nullable.Equals(Width, other.Width)
                     && Nullable.Equals(Obliquing, other.Obliquing)
                     && Nullable.Equals(Tracking, other.Tracking)
@@ -170,7 +159,7 @@ namespace ACadSharp.Entities
             public override string ToString()
             {
                 return
-                    $"U:{IsUnderline}; O:{IsOverline}; S:{IsStrikeThrough}; H:{Height}; W: {Width}; Align: {Align}; Color: {Color}; Font: {Font} ";
+                    $"U:{IsUnderline}; O:{IsOverline}; S:{IsStrikeThrough}; H:{Height}{(IsHeightRelative ? "x" : "")}; W: {Width}; Align: {Align}; Color: {Color}; Font: {Font} ";
             }
             private string[]? DeepCopyArray(string[]? array)
             {
