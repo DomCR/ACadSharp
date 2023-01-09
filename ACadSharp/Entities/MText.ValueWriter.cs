@@ -25,8 +25,8 @@ namespace ACadSharp.Entities
             private readonly Format _defaultFormat = new Format();
             private Format _currentFormat;
             private Stack<Format> _formatStack = new Stack<Format>();
-            //                                                      ⌄0         ⌄10       ⌄20       ⌄30       ⌄40  
-            private static readonly ReadOnlyMemory<char> _tokens = @"\\P\~\{\}\A0;\A1;\A2;\L\l\O\o\K\k\p\;,\S\#\^\/".AsMemory();
+            //                                                      ⌄0         ⌄10       ⌄20       ⌄30       ⌄40       ⌄50               
+            private static readonly ReadOnlyMemory<char> _tokens = @"\\P\~\{\}\A0;\A1;\A2;\L\l\O\o\K\k\p\;,\S\#\^\/x;%%D%%P%%C".AsMemory();
             private static readonly ReadOnlyMemory<char> _tokenEscapeCharacter = _tokens.Slice(0, 1);
             private static readonly ReadOnlyMemory<char> _tokenEscapedNewLine = _tokens.Slice(1, 2);
             private static readonly ReadOnlyMemory<char> _tokenEscapedNbs = _tokens.Slice(3, 2);
@@ -45,7 +45,7 @@ namespace ACadSharp.Entities
             private static readonly ReadOnlyMemory<char> _tokenControlCodeK = _tokens.Slice(29, 2);
             private static readonly ReadOnlyMemory<char> _tokenControlCodeKOut = _tokens.Slice(31, 2);
             private static readonly ReadOnlyMemory<char> _tokenControlParagraph = _tokens.Slice(33, 2);
-            private static readonly ReadOnlyMemory<char> _tokenEscapedSemiColon = _tokens.Slice(35, 1);
+            private static readonly ReadOnlyMemory<char> _tokenEscapedSemiColon = _tokens.Slice(35, 2);
             private static readonly ReadOnlyMemory<char> _tokenSemiColon = _tokens.Slice(36, 1);
             private static readonly ReadOnlyMemory<char> _tokenComma = _tokens.Slice(37, 1);
 
@@ -56,6 +56,13 @@ namespace ACadSharp.Entities
             private static readonly ReadOnlyMemory<char> _tokenFractionEscapedCondensed = _tokens.Slice(40, 2);
             private static readonly ReadOnlyMemory<char> _tokenFractionEscapedStacked = _tokens.Slice(42, 2);
             private static readonly ReadOnlyMemory<char> _tokenFractionEscapedFractionBar = _tokens.Slice(44, 2);
+
+            private static readonly ReadOnlyMemory<char> _tokenRelativeHeightTrailer = _tokens.Slice(46, 2);
+
+            private static readonly ReadOnlyMemory<char> _tokenDegrees = _tokens.Slice(48, 3);
+            private static readonly ReadOnlyMemory<char> _tokenPlusMinus = _tokens.Slice(51, 3);
+            private static readonly ReadOnlyMemory<char> _tokenDiameter = _tokens.Slice(54, 3);
+
             private int _lastConsumedPosition;
             private int _position;
             private ReadOnlyMemory<char> _values;
@@ -130,25 +137,41 @@ namespace ACadSharp.Entities
             private void WriteContents(ReadOnlyMemory<char> values, bool fractionEscapes = false)
             {
                 var spanValues = values.Span;
+                _values = values;
+
                 for (_position = 0; _position < spanValues.Length; _position++)
                 {
-                    if (spanValues[_position] == '\\')
+                    char token = spanValues[_position];
+                    if (token == '\\')
                     {
                         AppendCharacter(_tokenEscapeCharacter);
                     }
-                    else if (spanValues[_position] == '\n')
+                    else if (token == '\n')
                     {
                         ReplaceCharacter(_tokenEscapedNewLine);
                     }
-                    else if (spanValues[_position] == '\u00A0')
+                    else if (token == '\u00A0') 
                     {
+                        // Non Breaking Space
                         ReplaceCharacter(_tokenEscapedNbs);
                     }
-                    else if (spanValues[_position] == '{')
+                    else if (token == '°') 
+                    {
+                        ReplaceCharacter(_tokenDegrees);
+                    }
+                    else if (token == '±')
+                    {
+                        ReplaceCharacter(_tokenPlusMinus);
+                    }  
+                    else if (token == 'Ø')
+                    {
+                        ReplaceCharacter(_tokenDiameter);
+                    }
+                    else if (token == '{')
                     {
                         ReplaceCharacter(_tokenEscapedOpenBrace);
                     }
-                    else if (spanValues[_position] == '}')
+                    else if (token == '}')
                     {
                         ReplaceCharacter(_tokenEscapedClosedBrace);
                     }
@@ -156,19 +179,19 @@ namespace ACadSharp.Entities
                     {
                         if (fractionEscapes)
                         {
-                            if (spanValues[_position] == '#')
+                            if (token == '#')
                             {
                                 ReplaceCharacter(_tokenFractionEscapedCondensed);
                             }
-                            else if (spanValues[_position] == '/')
+                            else if (token == '/')
                             {
                                 ReplaceCharacter(_tokenFractionEscapedFractionBar);
                             }
-                            else if (spanValues[_position] == '^')
+                            else if (token == '^')
                             {
                                 ReplaceCharacter(_tokenFractionEscapedStacked);
                             }
-                            else if (spanValues[_position] == ';')
+                            else if (token == ';')
                             {
                                 ReplaceCharacter(_tokenEscapedSemiColon);
                             }
@@ -191,7 +214,7 @@ namespace ACadSharp.Entities
             {
                 var writeLength = _position - _lastConsumedPosition;
                 if (writeLength > 0 )
-                    _outputList.Add(_values.Slice(_lastConsumedPosition + 1, writeLength));
+                    _outputList.Add(_values.Slice(_lastConsumedPosition, writeLength));
 
                 _outputList.Add(replaceWith);
                 _lastConsumedPosition = _position + 1;
@@ -273,12 +296,13 @@ namespace ACadSharp.Entities
                     // determine if we can round to a whole number
                     if (Math.Abs(newFormat.Height.Value % 1) <= (float.Epsilon * 100))
                     {
-                        _outputList.Add($"\\H{(int)newFormat.Height}x;".AsMemory());
+                        _outputList.Add($"\\H{(int)newFormat.Height}".AsMemory());
                     }
                     else
                     {
-                        _outputList.Add($"\\H{newFormat.Height:###0.0#}x;".AsMemory());
+                        _outputList.Add($"\\H{newFormat.Height:###0.0#}".AsMemory());
                     }
+                    _outputList.Add(newFormat.IsHeightRelative ? _tokenRelativeHeightTrailer : _tokenSemiColon);
                 }
 
                 if (newFormat.Color != null)

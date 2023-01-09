@@ -14,9 +14,9 @@ namespace ACadSharp.Entities
                 Top = 2
             }
 
-            public bool? IsUnderline { get; set; } = null;
-            public bool? IsOverline { get; set; } = null;
-            public bool? IsStrikeThrough { get; set; } = null;
+            public bool IsUnderline { get; set; } = false;
+            public bool IsOverline { get; set; } = false;
+            public bool IsStrikeThrough { get; set; } = false;
 
             public readonly Font Font;
             public float? Height { get; set; } = null;
@@ -76,9 +76,9 @@ namespace ACadSharp.Entities
 
             public void Reset()
             {
-                IsUnderline = null;
-                IsOverline = null;
-                IsStrikeThrough = null;
+                IsUnderline = false;
+                IsOverline = false;
+                IsStrikeThrough = false;
                 Font.Reset();
                 Height = null;
                 IsHeightRelative = false;
@@ -102,9 +102,9 @@ namespace ACadSharp.Entities
                     return false;
 
                 return
-                    Nullable.Equals(IsUnderline, other.IsUnderline)
-                    && Nullable.Equals(IsOverline, other.IsOverline)
-                    && Nullable.Equals(IsStrikeThrough, other.IsStrikeThrough)
+                    IsUnderline == other.IsUnderline
+                    && IsOverline == other.IsOverline
+                    && IsStrikeThrough == other.IsStrikeThrough
                     && Nullable.Equals(Height, other.Height)
                     && IsHeightRelative == other.IsHeightRelative
                     && Nullable.Equals(Width, other.Width)

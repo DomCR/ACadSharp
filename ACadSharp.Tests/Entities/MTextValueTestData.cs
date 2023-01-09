@@ -13,16 +13,33 @@ namespace ACadSharp.Tests.Entities
         public class FormatData
         {
             public FormatData(string input, MText.Token? expected)
-                : this(input, expected == null ? null : new[] { expected })
+                : this(new []{ input }, expected == null ? null : new[] { expected })
+            {
+            }
+
+            public FormatData(string[] input, MText.Token? expected)
+                : this(input , expected == null ? null : new[] { expected })
             {
             }
 
             public FormatData(string encoded, MText.Token[]? decoded)
+                : this(new string[]{ encoded }, decoded, null)
+            {
+            }
+
+            public FormatData(string[] encoded, MText.Token[]? decoded)
                 : this(encoded, decoded, null)
             {
             }
 
+
             public FormatData(string encoded, MText.Token[]? decoded, MText.Format? format)
+                : this(new []{ encoded }, decoded, format)
+            {
+
+            }
+
+            public FormatData(string[] encoded, MText.Token[]? decoded, MText.Format? format)
             {
                 this.Encoded = encoded;
                 this.Decoded = decoded;
@@ -30,7 +47,7 @@ namespace ACadSharp.Tests.Entities
             }
 
             public MText.Format? Format { get; set; }
-            public string Encoded { get; set; }
+            public string[] Encoded { get; set; }
             public MText.Token[]? Decoded { get; set; }
 
             public virtual bool Equals(FormatData? other)
@@ -53,12 +70,17 @@ namespace ACadSharp.Tests.Entities
         public class TextData
         {
             public TextData(string encoded, string decoded)
+                :this (new []{ encoded }, decoded)
+            {
+
+            }
+            public TextData(string[] encoded, string decoded)
             {
                 this.Encoded = encoded;
                 this.Decoded = decoded;
             }
 
-            public string Encoded { get; }
+            public string[] Encoded { get; }
             public string Decoded { get; }
         }
 
@@ -66,13 +88,12 @@ namespace ACadSharp.Tests.Entities
         {
             new[] { new TextData(@"\\", @"\") },
             new[] { new TextData(@"\\\\\\", @"\\\") },
-            new[] { new TextData(@"\", @"\") },
             new[] { new TextData(@"\{", @"{") },
             new[] { new TextData(@"\}", @"}") },
             new[] { new TextData(@"\\P", @"\P") },
             new[] { new TextData(@"\\~", @"\~") },
         };
-        
+
         public static IEnumerable<object[]> ReadsTextData = new List<object[]>()
         {
             new[] { new TextData("0", "0") },
@@ -81,23 +102,22 @@ namespace ACadSharp.Tests.Entities
             new[] { new TextData("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz") },
             new[] { new TextData(@"\P", "\n") },
             new[] { new TextData(@"1\P2", "1\n2") },
-            new[] { new TextData(@"\", @"\") },
             new[] { new TextData(@"\~", "\u00A0") },
             new[] { new TextData(@"1\~2", "1\u00A02") },
             new[] { new TextData(@"%%", "%%") },
-            new[] { new TextData(@"%%%", "%") },
-            new[] { new TextData(@"%%d", "°") },
-            new[] { new TextData(@"1%%d", "1°") },
-            new[] { new TextData(@"1%%d2", "1°2") },
-            new[] { new TextData(@"1%%D2", "1°2") },
-            new[] { new TextData(@"%%p", "±") },
-            new[] { new TextData(@"1%%p", "1±") },
-            new[] { new TextData(@"1%%p2", "1±2") },
-            new[] { new TextData(@"1%%P2", "1±2") },
-            new[] { new TextData(@"%%c", "Ø") },
-            new[] { new TextData(@"1%%c", "1Ø") },
-            new[] { new TextData(@"1%%c2", "1Ø2") },
-            new[] { new TextData(@"1%%C2", "1Ø2") },
+            new[] { new TextData(@"%", "%") },
+            new[] { new TextData(new[] { @"%%d" , @"%%D" }, "°") },
+            new[] { new TextData(new[] { @"1%%d", @"1%%D" }, "1°") },
+            new[] { new TextData(new[] { @"1%%d2", @"1%%D2" }, "1°2") },
+            new[] { new TextData(new[] { @"%%d2", @"%%D2" }, "°2") },
+            new[] { new TextData(new[] { @"%%p" , @"%%P" }, "±") },
+            new[] { new TextData(new[] { @"1%%p", @"1%%P" }, "1±") },
+            new[] { new TextData(new[] { @"1%%p2", @"1%%P2" }, "1±2") },
+            new[] { new TextData(new[] { @"%%p2", @"%%P2" }, "±2") },
+            new[] { new TextData(new[] { @"%%c" , @"%%C" }, "Ø") },
+            new[] { new TextData(new[] { @"1%%c", @"1%%C" }, "1Ø") },
+            new[] { new TextData(new[] { @"1%%c2", @"1%%C2" }, "1Ø2") },
+            new[] { new TextData(new[] { @"%%c2", @"%%C2" }, "Ø2") },
         };
 
         public static IEnumerable<object[]> FormatsData = new List<object[]>()
@@ -119,37 +139,25 @@ namespace ACadSharp.Tests.Entities
             },
             new[]
             {
-                new FormatData(@"BEFORE{\OFORMATTED}AFTER",
+                new FormatData(new []
+                    {
+                        @"BEFORE{\OFORMATTED}AFTER",
+                        @"BEFORE\OFORMATTED\oAFTER",
+                    },
                     new[]
                     {
                         new MText.TokenValue("BEFORE"),
                         new MText.TokenValue(new("O"), "FORMATTED"),
-                        new MText.TokenValue("AFTER")
+                        new MText.TokenValue(new("o"),"AFTER")
                     })
             },
             new[]
             {
-                new FormatData(@"BEFORE\OFORMATTED\oAFTER",
-                    new[]
+                new FormatData(new[]
                     {
-                        new MText.TokenValue("BEFORE"),
-                        new MText.TokenValue(new("O"), "FORMATTED"),
-                        new MText.TokenValue(new("o"), "AFTER")
-                    })
-            },
-            new[]
-            {
-                new FormatData(@"BEFORE{\LFORMATTED}AFTER",
-                    new[]
-                    {
-                        new MText.TokenValue("BEFORE"),
-                        new MText.TokenValue(new("L"), "FORMATTED"),
-                        new MText.TokenValue("AFTER")
-                    })
-            },
-            new[]
-            {
-                new FormatData(@"BEFORE\LFORMATTED\lAFTER",
+                        @"BEFORE{\LFORMATTED}AFTER",
+                        @"BEFORE\LFORMATTED\lAFTER"
+                    },
                     new[]
                     {
                         new MText.TokenValue("BEFORE"),
@@ -159,17 +167,10 @@ namespace ACadSharp.Tests.Entities
             },
             new[]
             {
-                new FormatData(@"BEFORE{\KFORMATTED}AFTER",
-                    new[]
-                    {
-                        new MText.TokenValue("BEFORE"),
-                        new MText.TokenValue(new("K"), "FORMATTED"),
-                        new MText.TokenValue("AFTER"),
-                    })
-            },
-            new[]
-            {
-                new FormatData(@"BEFORE\KFORMATTED\kAFTER",
+                new FormatData(new [] {
+                        @"BEFORE{\KFORMATTED}AFTER",
+                        @"BEFORE\KFORMATTED\kAFTER"
+                    },
                     new[]
                     {
                         new MText.TokenValue("BEFORE"),
@@ -192,7 +193,11 @@ namespace ACadSharp.Tests.Entities
             },
             new[]
             {
-                new FormatData(@"{\H4;{\H2.64x;FORMATTED}}",
+                new FormatData(new []
+                    {
+                        @"{\H4;{\H2.64x;FORMATTED}}",
+                        @"\H10.56x;FORMATTED"
+                    },
                     new[]
                     {
                         new MText.TokenValue(new() { Height = 10.56f, IsHeightRelative = true }, "FORMATTED"),
@@ -205,7 +210,11 @@ namespace ACadSharp.Tests.Entities
             },
             new[]
             {
-                new FormatData(@"{\H4;{\H2.64;FORMATTED}}",
+                new FormatData(new []
+                    {
+                        @"{\H4;{\H2.64;FORMATTED}}",
+                        @"\H2.64;FORMATTED",
+                    },
                     new MText.TokenValue(new() { Height = 2.64f }, "FORMATTED"))
             },
             new[]
@@ -317,7 +326,7 @@ namespace ACadSharp.Tests.Entities
                 new FormatData(@"\SNUM#DEN;",
                     new MText.TokenFraction("NUM", "DEN", MText.TokenFraction.Divider.Condensed))
             },
-
+            
             // Escapes
             new[]
             {

@@ -10,20 +10,28 @@ namespace ACadSharp.Tests.Entities
         public void Escapes(MTextValueTestData.TextData data)
         {
             var reader = new MText.ValueReader();
-            var parts = reader.Parse(data.Encoded);
 
-            if (parts[0] is MText.TokenValue value1)
-                Assert.Equal(data.Decoded, value1.CombinedValues);
+            for (int i = 0; i < data.Encoded.Length; i++)
+            {
+                var parts = reader.Parse(data.Encoded[i]);
+
+                if (parts[0] is MText.TokenValue value1)
+                    Assert.Equal(data.Decoded, value1.CombinedValues);
+            }
+
         }
 
         [Theory, MemberData(nameof(MTextValueTestData.ReadsTextData), MemberType = typeof(MTextValueTestData))]
         public void ReadsText(MTextValueTestData.TextData data)
         {
             var reader = new MText.ValueReader();
-            var parts = reader.Parse(data.Encoded);
+            for (int i = 0; i < data.Encoded.Length; i++)
+            {
+                var parts = reader.Parse(data.Encoded[i]);
 
-            var combined = parts.OfType<MText.TokenValue>().Select(t => t.CombinedValues);
-            Assert.Equal(data.Decoded, string.Concat(combined));
+                var combined = parts.OfType<MText.TokenValue>().Select(t => t.CombinedValues);
+                Assert.Equal(data.Decoded, string.Concat(combined));
+            }
         }
 
         [Theory, MemberData(nameof(MTextValueTestData.FormatsData), MemberType = typeof(MTextValueTestData))]
@@ -61,21 +69,26 @@ namespace ACadSharp.Tests.Entities
         private void TestFormatData(MTextValueTestData.FormatData data)
         {
             var reader = new MText.ValueReader();
-            var parts = reader.Parse(data.Encoded, data.Format);
 
-            if (data.Decoded == null)
+            for (int i = 0; i < data.Encoded.Length; i++)
             {
-                Assert.Empty(parts);
-                return;
+                var parts = reader.Parse(data.Encoded[i], data.Format);
+
+                if (data.Decoded == null)
+                {
+                    Assert.Empty(parts);
+                    return;
+                }
+
+                Assert.Equal(data.Decoded!.Length, parts.Length);
+
+                for (int j = 0; j < parts.Length; j++)
+                {
+                    Assert.Equal(data.Decoded[j].Format, parts[j].Format);
+                    Assert.Equal(data.Decoded[j], parts[j]);
+                }
             }
 
-            Assert.Equal(data.Decoded!.Length, parts.Length);
-
-            for (int i = 0; i < parts.Length; i++)
-            {
-                Assert.Equal(data.Decoded[i].Format, parts[i].Format);
-                Assert.Equal(data.Decoded[i], parts[i]);
-            }
         }
     }
 }
