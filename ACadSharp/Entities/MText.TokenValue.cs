@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+﻿#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -6,43 +6,78 @@ namespace ACadSharp.Entities
 {
     public partial class MText
     {
+        /// <summary>
+        /// Contains a formatted value.
+        /// </summary>
         public class TokenValue : Token
         {
-            public IReadOnlyList<ReadOnlyMemory<char>> Values { get; internal set; }
-            public string CombinedValues => string.Concat(Values);
+            /// <summary>
+            /// Contains all the token values.  Will normally be multiple splices of memory.
+            /// </summary>
+            /// <remarks>Does not allocate.</remarks>
+            public IReadOnlyList<ReadOnlyMemory<char>>? Values { get; internal set; }
 
+            /// <summary>
+            /// Helper method which will combine all the <see cref="Values"/> into a single new string.
+            /// </summary>
+            /// <remarks>Allocates.</remarks>
+            public string CombinedValues => Values == null ? string.Empty : string.Concat(Values);
+
+            /// <summary>
+            /// Creates a blank token value for holding a list of memory.
+            /// </summary>
             public TokenValue()
             {
             }
 
-            public TokenValue(MText.Format fontState, ReadOnlyMemory<char> value)
-                : base(fontState)
+            /// <summary>
+            /// Creates a token value with the passed parameters for it's starting state.
+            /// </summary>
+            /// <param name="format">Current Format of the value.</param>
+            /// <param name="value">Single value this token contains.</param>
+            public TokenValue(MText.Format format, ReadOnlyMemory<char> value)
+                : base(format)
             {
                 Values = new[] { value };
             }
 
-            public TokenValue(MText.Format fontState, ReadOnlyMemory<char>[] values)
-                : base(fontState)
+            /// <summary>
+            /// Creates a token value with the passed parameters for it's starting state.
+            /// </summary>
+            /// <param name="format">Current Format of the value.</param>
+            /// <param name="values">Multiple values this token contains.</param>
+            public TokenValue(MText.Format format, ReadOnlyMemory<char>[] values)
+                : base(format)
             {
                 Values = values;
             }
-            internal TokenValue(MText.Format fontState, string value)
-                : base(fontState)
+
+            /// <summary>
+            /// Creates a token value with the passed parameters for it's starting state.  Used for testing.
+            /// </summary>
+            /// <param name="format">Current Format of the value.</param>
+            /// <param name="value">String value this token contains.</param>
+            internal TokenValue(MText.Format format, string value)
+                : base(format)
             {
                 Values = new[] { value.AsMemory() };
             }
 
+            /// <summary>
+            /// Creates a token value with the passed parameters for it's starting state.  Used for testing.
+            /// </summary>
+            /// <param name="value">String value this token contains.</param>
             internal TokenValue(string value)
                 : base(new MText.Format())
             {
                 Values = new[] { value.AsMemory() };
             }
 
+
             public override string ToString()
             {
                 return CombinedValues;
             }
-
 
             public override bool Equals(object? obj)
             {
@@ -63,8 +98,15 @@ namespace ACadSharp.Entities
 
                 return ((TokenValue)obj).CombinedValues == CombinedValues;
             }
+
+            public override int GetHashCode()
+            {
+#if NETFRAMEWORK
+                return base.GetHashCode();
+#else
+                return HashCode.Combine(Format, Values);
+#endif
+            }
         }
-
-
     }
 }

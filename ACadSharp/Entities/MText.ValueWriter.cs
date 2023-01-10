@@ -1,30 +1,23 @@
-﻿using ACadSharp.Attributes;
+﻿#nullable enable
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace ACadSharp.Entities
 {
     public partial class MText
     {
         /// <summary>
-        /// Zero copy reader to parse AutoCAD M-Text value entries and return tokens.
+        /// Writer which takes Tokens and serializes it.
         /// </summary>
-        /// <remarks>
-        /// Main goal of this reader is to be a zero copy reader.
-        /// This class is NOT thread safe, but is designed to be re-used.
-        /// </remarks>
-        /// <seealso>
-        /// https://www.cadforum.cz/en/text-formatting-codes-in-mtext-objects-tip8640
-        /// </seealso>
         public class ValueWriter
         {
             private List<ReadOnlyMemory<char>> _outputList = null!;
             private readonly Format _defaultFormat = new Format();
-            private Format _currentFormat;
-            private Stack<Format> _formatStack = new Stack<Format>();
+            private Format? _currentFormat;
+
+            // Tokens used to prevent memory allocation during serialization.
             //                                                      ⌄0         ⌄10       ⌄20       ⌄30       ⌄40       ⌄50               
             private static readonly ReadOnlyMemory<char> _tokens = @"\\P\~\{\}\A0;\A1;\A2;\L\l\O\o\K\k\p\;,\S\#\^\/x;%%D%%P%%C".AsMemory();
             private static readonly ReadOnlyMemory<char> _tokenEscapeCharacter = _tokens.Slice(0, 1);
@@ -66,25 +59,31 @@ namespace ACadSharp.Entities
             private int _lastConsumedPosition;
             private int _position;
             private ReadOnlyMemory<char> _values;
-            private bool _closeFormat = false;
+            private bool _closeFormat;
 
-
-            public IReadOnlyList<ReadOnlyMemory<char>> Seralize(MText.Token[] tokens)
+            /// <summary>
+            /// Serializes the tokens into a list of memory.
+            /// </summary>
+            /// <param name="tokens"></param>
+            /// <returns></returns>
+            public IReadOnlyList<ReadOnlyMemory<char>> Seralize(Token[] tokens)
             {
+                _lastConsumedPosition = 0;
+                _position = 0;
                 _currentFormat = _defaultFormat;
                 _outputList = new List<ReadOnlyMemory<char>>((int)(tokens.Length * 1.5));
 
                 foreach (var token in tokens)
                 {
-                    OutputAnyFormatChanges(token.Format);
+                    outputAnyFormatChanges(token.Format);
 
-                    if (token is MText.TokenValue tokenValue)
+                    if (token is TokenValue tokenValue)
                     {
-                        WriteTokenValue(tokenValue);
+                        writeTokenValue(tokenValue);
                     }
-                    else if (token is MText.TokenFraction tokenFraction)
+                    else if (token is TokenFraction tokenFraction)
                     {
-                        WriteTokenFraction(tokenFraction);
+                        writeTokenFraction(tokenFraction);
                     }
 
                     if (_closeFormat)
@@ -95,17 +94,26 @@ namespace ACadSharp.Entities
                     }
                 }
 
+                _values = null;
                 return _outputList;
             }
 
-            private void WriteTokenFraction(TokenFraction tokenFraction)
+            /// <summary>
+            /// Writes out the fraction token.
+            /// </summary>
+            /// <param name="tokenFraction">Token to write.</param>
+            /// <exception cref="ArgumentOutOfRangeException"></exception>
+            private void writeTokenFraction(TokenFraction tokenFraction)
             {
                 _outputList.Add(_tokenFraction);
 
-                for (int i = 0; i < tokenFraction.Numerator.Count; i++)
+                if (tokenFraction.Numerator != null)
                 {
-                    _lastConsumedPosition = 0;
-                    WriteContents(tokenFraction.Numerator[i], true);
+                    for (var i = 0; i < tokenFraction.Numerator.Count; i++)
+                    {
+                        _lastConsumedPosition = 0;
+                        writeContents(tokenFraction.Numerator[i], true);
+                    }
                 }
 
                 _outputList.Add(tokenFraction.DividerType switch {
@@ -115,26 +123,32 @@ namespace ACadSharp.Entities
                     _ => throw new ArgumentOutOfRangeException()
                 });
 
-                for (int i = 0; i < tokenFraction.Denominator.Count; i++)
+                if (tokenFraction.Denominator != null)
                 {
-                    _lastConsumedPosition = 0;
-                    WriteContents(tokenFraction.Denominator[i], true);
+                    for (var i = 0; i < tokenFraction.Denominator.Count; i++)
+                    {
+                        _lastConsumedPosition = 0;
+                        writeContents(tokenFraction.Denominator[i], true);
+                    }
                 }
+
                 _outputList.Add(_tokenSemiColon);
 
             }
 
-            private void WriteTokenValue(TokenValue tokenValue)
+            private void writeTokenValue(TokenValue tokenValue)
             {
+                if (tokenValue.Values == null)
+                    return;
+
                 for (int i = 0; i < tokenValue.Values.Count; i++)
                 {
                     _lastConsumedPosition = 0;
-
-                    WriteContents(tokenValue.Values[i]);
+                    writeContents(tokenValue.Values[i]);
                 }
             }
 
-            private void WriteContents(ReadOnlyMemory<char> values, bool fractionEscapes = false)
+            private void writeContents(ReadOnlyMemory<char> values, bool fractionEscapes = false)
             {
                 var spanValues = values.Span;
                 _values = values;
@@ -144,36 +158,36 @@ namespace ACadSharp.Entities
                     char token = spanValues[_position];
                     if (token == '\\')
                     {
-                        AppendCharacter(_tokenEscapeCharacter);
+                        appendCharacter(_tokenEscapeCharacter);
                     }
                     else if (token == '\n')
                     {
-                        ReplaceCharacter(_tokenEscapedNewLine);
+                        replaceCharacter(_tokenEscapedNewLine);
                     }
                     else if (token == '\u00A0') 
                     {
                         // Non Breaking Space
-                        ReplaceCharacter(_tokenEscapedNbs);
+                        replaceCharacter(_tokenEscapedNbs);
                     }
                     else if (token == '°') 
                     {
-                        ReplaceCharacter(_tokenDegrees);
+                        replaceCharacter(_tokenDegrees);
                     }
                     else if (token == '±')
                     {
-                        ReplaceCharacter(_tokenPlusMinus);
+                        replaceCharacter(_tokenPlusMinus);
                     }  
                     else if (token == 'Ø')
                     {
-                        ReplaceCharacter(_tokenDiameter);
+                        replaceCharacter(_tokenDiameter);
                     }
                     else if (token == '{')
                     {
-                        ReplaceCharacter(_tokenEscapedOpenBrace);
+                        replaceCharacter(_tokenEscapedOpenBrace);
                     }
                     else if (token == '}')
                     {
-                        ReplaceCharacter(_tokenEscapedClosedBrace);
+                        replaceCharacter(_tokenEscapedClosedBrace);
                     }
                     else
                     {
@@ -181,19 +195,19 @@ namespace ACadSharp.Entities
                         {
                             if (token == '#')
                             {
-                                ReplaceCharacter(_tokenFractionEscapedCondensed);
+                                replaceCharacter(_tokenFractionEscapedCondensed);
                             }
                             else if (token == '/')
                             {
-                                ReplaceCharacter(_tokenFractionEscapedFractionBar);
+                                replaceCharacter(_tokenFractionEscapedFractionBar);
                             }
                             else if (token == '^')
                             {
-                                ReplaceCharacter(_tokenFractionEscapedStacked);
+                                replaceCharacter(_tokenFractionEscapedStacked);
                             }
                             else if (token == ';')
                             {
-                                ReplaceCharacter(_tokenEscapedSemiColon);
+                                replaceCharacter(_tokenEscapedSemiColon);
                             }
                         }
                     }
@@ -210,7 +224,7 @@ namespace ACadSharp.Entities
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            private void ReplaceCharacter(ReadOnlyMemory<char> replaceWith)
+            private void replaceCharacter(ReadOnlyMemory<char> replaceWith)
             {
                 var writeLength = _position - _lastConsumedPosition;
                 if (writeLength > 0 )
@@ -220,7 +234,7 @@ namespace ACadSharp.Entities
                 _lastConsumedPosition = _position + 1;
             }
 
-            private void AppendCharacter(ReadOnlyMemory<char> appendCharacter)
+            private void appendCharacter(ReadOnlyMemory<char> appendCharacter)
             {
                 var writeLength = _position - _lastConsumedPosition;
                 if (writeLength > 0)
@@ -230,8 +244,12 @@ namespace ACadSharp.Entities
                 _lastConsumedPosition = _position;
             }
 
-            private void OutputAnyFormatChanges(Format newFormat)
+            [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
+            private void outputAnyFormatChanges(Format? newFormat)
             {
+                if (newFormat == null || _currentFormat == null)
+                    throw new InvalidOperationException("Format can't be null");
+
                 if (_currentFormat.Align != newFormat.Align)
                 {
                     _outputList.Add(newFormat.Align switch
@@ -246,21 +264,21 @@ namespace ACadSharp.Entities
 
                 if (_currentFormat.IsUnderline != newFormat.IsUnderline)
                 {
-                    _outputList.Add(newFormat?.IsUnderline == true 
+                    _outputList.Add(newFormat.IsUnderline 
                         ? _tokenControlCodeL 
                         : _tokenControlCodeLOut);
                 }
 
                 if (_currentFormat.IsOverline != newFormat.IsOverline)
                 {
-                    _outputList.Add(newFormat?.IsOverline == true
+                    _outputList.Add(newFormat.IsOverline
                         ? _tokenControlCodeO
                         : _tokenControlCodeOOut);
                 }
 
                 if (_currentFormat.IsStrikeThrough != newFormat.IsStrikeThrough)
                 {
-                    _outputList.Add(newFormat?.IsStrikeThrough == true
+                    _outputList.Add(newFormat.IsStrikeThrough
                         ? _tokenControlCodeK
                         : _tokenControlCodeKOut);
                 }
@@ -268,40 +286,25 @@ namespace ACadSharp.Entities
                 if (_currentFormat.Tracking != newFormat.Tracking && newFormat.Tracking != null)
                 {
                     // determine if we can round to a whole number
-                    if (Math.Abs(newFormat.Tracking.Value % 1) <= (float.Epsilon * 100))
-                    {
-                        _outputList.Add($"\\T{(int)newFormat.Tracking};".AsMemory());
-                    }
-                    else
-                    {
-                        _outputList.Add($"\\T{newFormat.Tracking:###0.0#};".AsMemory());
-                    }
+                    _outputList.Add(Math.Abs(newFormat.Tracking.Value % 1) <= (float.Epsilon * 100)
+                        ? $"\\T{(int)newFormat.Tracking};".AsMemory()
+                        : $"\\T{newFormat.Tracking:###0.0#};".AsMemory());
                 }
 
                 if (_currentFormat.Obliquing != newFormat.Obliquing && newFormat.Obliquing != null)
                 {
                     // determine if we can round to a whole number
-                    if (Math.Abs(newFormat.Obliquing.Value % 1) <= (float.Epsilon * 100))
-                    {
-                        _outputList.Add($"\\Q{(int)newFormat.Obliquing};".AsMemory());
-                    }
-                    else
-                    {
-                        _outputList.Add($"\\Q{newFormat.Obliquing:###0.0#};".AsMemory());
-                    }
+                    _outputList.Add(Math.Abs(newFormat.Obliquing.Value % 1) <= (float.Epsilon * 100)
+                        ? $"\\Q{(int)newFormat.Obliquing};".AsMemory()
+                        : $"\\Q{newFormat.Obliquing:###0.0#};".AsMemory());
                 }
 
                 if (_currentFormat.Height != newFormat.Height && newFormat.Height != null)
                 {
                     // determine if we can round to a whole number
-                    if (Math.Abs(newFormat.Height.Value % 1) <= (float.Epsilon * 100))
-                    {
-                        _outputList.Add($"\\H{(int)newFormat.Height}".AsMemory());
-                    }
-                    else
-                    {
-                        _outputList.Add($"\\H{newFormat.Height:###0.0#}".AsMemory());
-                    }
+                    _outputList.Add(Math.Abs(newFormat.Height.Value % 1) <= (float.Epsilon * 100)
+                        ? $"\\H{(int)newFormat.Height}".AsMemory()
+                        : $"\\H{newFormat.Height:###0.0#}".AsMemory());
                     _outputList.Add(newFormat.IsHeightRelative ? _tokenRelativeHeightTrailer : _tokenSemiColon);
                 }
 
@@ -317,7 +320,7 @@ namespace ACadSharp.Entities
 
                 if (!_currentFormat.Font.Equals(newFormat.Font))
                 {
-                    _outputList.Add($"{{\\f".AsMemory());
+                    _outputList.Add("{\\f".AsMemory());
                     _outputList.Add(newFormat.Font.FontFamily);
                     var bold = newFormat.Font.IsBold ? '1' : '0';
                     var italic = newFormat.Font.IsItalic ? '1' : '0';
@@ -326,7 +329,7 @@ namespace ACadSharp.Entities
                     _closeFormat = true;
                 }
 
-                if (newFormat.Paragraph != null && newFormat.AreParagraphsEqual(_currentFormat.Paragraph) == false)
+                if (newFormat.AreParagraphsEqual(_currentFormat.Paragraph) == false)
                 {
                     _outputList.Add(_tokenControlParagraph);
 

@@ -13,7 +13,7 @@ namespace ACadSharp.Tests.Entities
 
             for (int i = 0; i < data.Encoded.Length; i++)
             {
-                var parts = reader.Parse(data.Encoded[i]);
+                var parts = reader.Deserialize(data.Encoded[i]);
 
                 if (parts[0] is MText.TokenValue value1)
                     Assert.Equal(data.Decoded, value1.CombinedValues);
@@ -27,7 +27,7 @@ namespace ACadSharp.Tests.Entities
             var reader = new MText.ValueReader();
             for (int i = 0; i < data.Encoded.Length; i++)
             {
-                var parts = reader.Parse(data.Encoded[i]);
+                var parts = reader.Deserialize(data.Encoded[i]);
 
                 var combined = parts.OfType<MText.TokenValue>().Select(t => t.CombinedValues);
                 Assert.Equal(data.Decoded, string.Concat(combined));
@@ -37,42 +37,42 @@ namespace ACadSharp.Tests.Entities
         [Theory, MemberData(nameof(MTextValueTestData.FormatsData), MemberType = typeof(MTextValueTestData))]
         public void Formats(MTextValueTestData.FormatData data)
         {
-            TestFormatData(data);
+            testFormatData(data);
         }
 
         [Theory, MemberData(nameof(MTextValueTestData.FontsData), MemberType = typeof(MTextValueTestData))]
         public void Fonts(MTextValueTestData.FormatData data)
         {
-            TestFormatData(data);
+            testFormatData(data);
         }
 
         [Theory, MemberData(nameof(MTextValueTestData.ColorsData), MemberType = typeof(MTextValueTestData))]
         public void Colors(MTextValueTestData.FormatData data)
         {
-            TestFormatData(data);
+            testFormatData(data);
         }
 
         [Theory, MemberData(nameof(MTextValueTestData.FractionsData), MemberType = typeof(MTextValueTestData))]
         public void Fractions(MTextValueTestData.FormatData data)
         {
-            TestFormatData(data);
+            testFormatData(data);
         }
 
 
         [Theory, MemberData(nameof(MTextValueTestData.ParseData), MemberType = typeof(MTextValueTestData))]
-        public void Parse(string text, int expectedParts)
+        public void Deserializes(string text, int expectedParts)
         {
             var reader = new MText.ValueReader();
-            var parts = reader.Parse(text);
+            reader.Deserialize(text);
         }
 
-        private void TestFormatData(MTextValueTestData.FormatData data)
+        private static void testFormatData(MTextValueTestData.FormatData data)
         {
             var reader = new MText.ValueReader();
 
             for (int i = 0; i < data.Encoded.Length; i++)
             {
-                var parts = reader.Parse(data.Encoded[i], data.Format);
+                var parts = reader.Deserialize(data.Encoded[i], data.Format);
 
                 if (data.Decoded == null)
                 {

@@ -1,10 +1,7 @@
 ﻿using System;
 using ACadSharp.Entities;
-using CSMath;
-using System.Collections.Generic;
 using System.Linq;
 using Xunit;
-using System.IO;
 
 namespace ACadSharp.Tests.Entities
 {
@@ -53,7 +50,7 @@ namespace ACadSharp.Tests.Entities
         private void TestTextData(MTextValueTestData.TextData data)
         {
             var reader = new MText.ValueWriter();
-            var parts = reader.Seralize(new[] { new MText.TokenValue(data.Decoded) });
+            var parts = reader.Seralize(new MText.Token[] { new MText.TokenValue(data.Decoded) });
             var concatParts = string.Concat(parts);
             for (int i = 0; i < data.Encoded.Length; i++)
             {
@@ -69,6 +66,9 @@ namespace ACadSharp.Tests.Entities
 
         private void TestFormatData(MTextValueTestData.FormatData data)
         {
+            if (data.Decoded == null)
+                throw new InvalidOperationException();
+
             var reader = new MText.ValueWriter();
             var parts = reader.Seralize(data.Decoded);
 

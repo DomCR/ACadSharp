@@ -1,19 +1,30 @@
-﻿using ACadSharp.Attributes;
-using System.Collections.Generic;
-
+﻿#nullable enable
 namespace ACadSharp.Entities
 {
     public partial class MText
     {
+        /// <summary>
+        /// Base token containing a format.
+        /// </summary>
         public abstract class Token
         {
-            public MText.Format Format { get; internal set; }
+            /// <summary>
+            /// Format this token uses to render.
+            /// </summary>
+            public Format? Format { get; internal set; }
 
-            protected Token(MText.Format format)
+            /// <summary>
+            /// Creates a token with the specified format.
+            /// </summary>
+            /// <param name="format">Format this token uses.</param>
+            protected Token(Format format)
             {
                 Format = format;
             }
 
+            /// <summary>
+            /// Creates a blank token format.
+            /// </summary>
             protected Token()
             {
             }

@@ -1,10 +1,7 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using ACadSharp.Entities;
-using CSMath;
 using System.Collections.Generic;
-using System.Linq;
-using Xunit;
-using System.IO;
 
 namespace ACadSharp.Tests.Entities
 {
@@ -23,7 +20,7 @@ namespace ACadSharp.Tests.Entities
             }
 
             public FormatData(string encoded, MText.Token[]? decoded)
-                : this(new string[]{ encoded }, decoded, null)
+                : this(new[]{ encoded }, decoded, null)
             {
             }
 
@@ -86,129 +83,129 @@ namespace ACadSharp.Tests.Entities
 
         public static IEnumerable<object[]> EscapesData = new List<object[]>()
         {
-            new[] { new TextData(@"\\", @"\") },
-            new[] { new TextData(@"\\\\\\", @"\\\") },
-            new[] { new TextData(@"\{", @"{") },
-            new[] { new TextData(@"\}", @"}") },
-            new[] { new TextData(@"\\P", @"\P") },
-            new[] { new TextData(@"\\~", @"\~") },
+            new object[] { new TextData(@"\\", @"\") },
+            new object[] { new TextData(@"\\\\\\", @"\\\") },
+            new object[] { new TextData(@"\{", @"{") },
+            new object[] { new TextData(@"\}", @"}") },
+            new object[] { new TextData(@"\\P", @"\P") },
+            new object[] { new TextData(@"\\~", @"\~") },
         };
 
         public static IEnumerable<object[]> ReadsTextData = new List<object[]>()
         {
-            new[] { new TextData("0", "0") },
-            new[] { new TextData("a", "a") },
-            new[] { new TextData("0123456789", "0123456789") },
-            new[] { new TextData("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz") },
-            new[] { new TextData(@"\P", "\n") },
-            new[] { new TextData(@"1\P2", "1\n2") },
-            new[] { new TextData(@"\~", "\u00A0") },
-            new[] { new TextData(@"1\~2", "1\u00A02") },
-            new[] { new TextData(@"%%", "%%") },
-            new[] { new TextData(@"%", "%") },
-            new[] { new TextData(new[] { @"%%d" , @"%%D" }, "°") },
-            new[] { new TextData(new[] { @"1%%d", @"1%%D" }, "1°") },
-            new[] { new TextData(new[] { @"1%%d2", @"1%%D2" }, "1°2") },
-            new[] { new TextData(new[] { @"%%d2", @"%%D2" }, "°2") },
-            new[] { new TextData(new[] { @"%%p" , @"%%P" }, "±") },
-            new[] { new TextData(new[] { @"1%%p", @"1%%P" }, "1±") },
-            new[] { new TextData(new[] { @"1%%p2", @"1%%P2" }, "1±2") },
-            new[] { new TextData(new[] { @"%%p2", @"%%P2" }, "±2") },
-            new[] { new TextData(new[] { @"%%c" , @"%%C" }, "Ø") },
-            new[] { new TextData(new[] { @"1%%c", @"1%%C" }, "1Ø") },
-            new[] { new TextData(new[] { @"1%%c2", @"1%%C2" }, "1Ø2") },
-            new[] { new TextData(new[] { @"%%c2", @"%%C2" }, "Ø2") },
+            new object[] { new TextData("0", "0") },
+            new object[] { new TextData("a", "a") },
+            new object[] { new TextData("0123456789", "0123456789") },
+            new object[] { new TextData("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz") },
+            new object[] { new TextData(@"\P", "\n") },
+            new object[] { new TextData(@"1\P2", "1\n2") },
+            new object[] { new TextData(@"\~", "\u00A0") },
+            new object[] { new TextData(@"1\~2", "1\u00A02") },
+            new object[] { new TextData(@"%%", "%%") },
+            new object[] { new TextData(@"%", "%") },
+            new object[] { new TextData(new[] { @"%%d" , @"%%D" }, "°") },
+            new object[] { new TextData(new[] { @"1%%d", @"1%%D" }, "1°") },
+            new object[] { new TextData(new[] { @"1%%d2", @"1%%D2" }, "1°2") },
+            new object[] { new TextData(new[] { @"%%d2", @"%%D2" }, "°2") },
+            new object[] { new TextData(new[] { @"%%p" , @"%%P" }, "±") },
+            new object[] { new TextData(new[] { @"1%%p", @"1%%P" }, "1±") },
+            new object[] { new TextData(new[] { @"1%%p2", @"1%%P2" }, "1±2") },
+            new object[] { new TextData(new[] { @"%%p2", @"%%P2" }, "±2") },
+            new object[] { new TextData(new[] { @"%%c" , @"%%C" }, "Ø") },
+            new object[] { new TextData(new[] { @"1%%c", @"1%%C" }, "1Ø") },
+            new object[] { new TextData(new[] { @"1%%c2", @"1%%C2" }, "1Ø2") },
+            new object[] { new TextData(new[] { @"%%c2", @"%%C2" }, "Ø2") },
         };
 
         public static IEnumerable<object[]> FormatsData = new List<object[]>()
         {
-            new[]
+            new object[]
             {
                 new FormatData(@"\A0;BOTTOM",
                     new MText.TokenValue(new() { Align = MText.Format.Alignment.Bottom }, "BOTTOM"))
             },
-            new[]
+            new object[]
             {
                 new FormatData(@"\A1;CENTER",
                     new MText.TokenValue(new() { Align = MText.Format.Alignment.Center }, "CENTER"))
             },
-            new[]
+            new object[]
             {
                 new FormatData(@"\A2;TOP",
                     new MText.TokenValue(new() { Align = MText.Format.Alignment.Top }, "TOP"))
             },
-            new[]
+            new object[]
             {
                 new FormatData(new []
                     {
                         @"BEFORE{\OFORMATTED}AFTER",
                         @"BEFORE\OFORMATTED\oAFTER",
                     },
-                    new[]
+                    new MText.Token[]
                     {
                         new MText.TokenValue("BEFORE"),
                         new MText.TokenValue(new("O"), "FORMATTED"),
                         new MText.TokenValue(new("o"),"AFTER")
                     })
             },
-            new[]
+            new object[]
             {
                 new FormatData(new[]
                     {
                         @"BEFORE{\LFORMATTED}AFTER",
                         @"BEFORE\LFORMATTED\lAFTER"
                     },
-                    new[]
+                    new MText.Token[]
                     {
                         new MText.TokenValue("BEFORE"),
                         new MText.TokenValue(new("L"), "FORMATTED"),
                         new MText.TokenValue(new("l"), "AFTER")
                     })
             },
-            new[]
+            new object[]
             {
                 new FormatData(new [] {
                         @"BEFORE{\KFORMATTED}AFTER",
                         @"BEFORE\KFORMATTED\kAFTER"
                     },
-                    new[]
+                    new MText.Token[]
                     {
                         new MText.TokenValue("BEFORE"),
                         new MText.TokenValue(new("K"), "FORMATTED"),
                         new MText.TokenValue(new("k"), "AFTER"),
                     })
             },
-            new[]
+            new object[]
             {
                 new FormatData(@"BEFORE\T2;FORMATTED",
-                    new[] { new MText.TokenValue("BEFORE"), new MText.TokenValue(new() { Tracking = 2 }, "FORMATTED") })
+                    new MText.Token[] { new MText.TokenValue("BEFORE"), new MText.TokenValue(new() { Tracking = 2 }, "FORMATTED") })
             },
-            new[]
+            new object[]
             {
                 new FormatData(@"\H2.64x;FORMATTED",
-                    new[] { new MText.TokenValue(new() { Height = 2.64f, IsHeightRelative = true}, "FORMATTED"), }, new MText.Format()
+                    new MText.Token[] { new MText.TokenValue(new() { Height = 2.64f, IsHeightRelative = true}, "FORMATTED"), }, new MText.Format()
                     {
                         Height = 1f
                     })
             },
-            new[]
+            new object[]
             {
                 new FormatData(new []
                     {
                         @"{\H4;{\H2.64x;FORMATTED}}",
                         @"\H10.56x;FORMATTED"
                     },
-                    new[]
+                    new MText.Token[]
                     {
                         new MText.TokenValue(new() { Height = 10.56f, IsHeightRelative = true }, "FORMATTED"),
                     }, new MText.Format() { Height = 1f })
             },
-            new[]
+            new object[]
             {
                 new FormatData(@"\H2.64;FORMATTED",
                     new MText.TokenValue(new() { Height = 2.64f }, "FORMATTED"))
             },
-            new[]
+            new object[]
             {
                 new FormatData(new []
                     {
@@ -217,17 +214,17 @@ namespace ACadSharp.Tests.Entities
                     },
                     new MText.TokenValue(new() { Height = 2.64f }, "FORMATTED"))
             },
-            new[]
+            new object[]
             {
                 new FormatData(@"\T1.8;FORMATTED",
                     new MText.TokenValue(new() { Tracking = 1.8f }, "FORMATTED"))
             },
-            new[]
+            new object[]
             {
                 new FormatData(@"\Q14.84;FORMATTED",
                     new MText.TokenValue(new() { Obliquing = 14.84f }, "FORMATTED"))
             },
-            new[]
+            new object[]
             {
                 new FormatData(@"\pt128.09,405.62,526.60;FORMATTED",
                     new MText.TokenValue(new()
@@ -235,7 +232,7 @@ namespace ACadSharp.Tests.Entities
                         Paragraph = { "t128.09".AsMemory(), "405.62".AsMemory(), "526.60".AsMemory() }
                     }, "FORMATTED"))
             },
-            new[]
+            new object[]
             {
                 new FormatData(@"\pi-70.76154,l70.76154,t70.76154;FORMATTED",
                     new MText.TokenValue(new()
@@ -243,9 +240,9 @@ namespace ACadSharp.Tests.Entities
                         Paragraph = { "i-70.76154".AsMemory(), "l70.76154".AsMemory(), "t70.76154".AsMemory() }
                     }, "FORMATTED"))
             },
-            new[]
+            new object[]
             {
-                new FormatData(@"1\P2", new []
+                new FormatData(@"1\P2", new MText.Token[]
                 {
                     new MText.TokenValue("1\n"),
                     new MText.TokenValue("2"),
@@ -255,10 +252,10 @@ namespace ACadSharp.Tests.Entities
 
         public static IEnumerable<object[]> FontsData = new List<object[]>()
         {
-            new[]
+            new object[]
             {
                 new FormatData(@"{\fArial|b0|i1|c22|p123;FORMAT}AFTER",
-                    new[]
+                    new MText.Token[]
                     {
                         new MText.TokenValue(new MText.Format()
                         {
@@ -278,11 +275,11 @@ namespace ACadSharp.Tests.Entities
 
         public static IEnumerable<object[]> ColorsData = new List<object[]>()
         {
-            new[] { new FormatData(@"{\C1;1}", new MText.TokenValue(new() { Color = new Color(1) }, "1")) },
-            new[]
+            new object[] { new FormatData(@"{\C1;1}", new MText.TokenValue(new() { Color = new Color(1) }, "1")) },
+            new object[]
             {
                 new FormatData(@"{\C184;1}NORMAL",
-                    new[]
+                    new MText.Token[]
                     {
                         new MText.TokenValue(new() { Color = new Color(184) }, "1"),
                         new MText.TokenValue("NORMAL")
@@ -290,58 +287,92 @@ namespace ACadSharp.Tests.Entities
             },
 
             // True Colors
-            new[] { new FormatData(@"{\c245612;1}", new MText.TokenValue(new() { Color = Color.FromTrueColor(245612) }, "1")) },
-            new[] { new FormatData(@"{\c0;1}", new MText.TokenValue(new() { Color = Color.FromTrueColor(0) }, "1")) },
+            new object[] { new FormatData(@"{\c245612;1}", new MText.TokenValue(new() { Color = Color.FromTrueColor(245612) }, "1")) },
+            new object[] { new FormatData(@"{\c0;1}", new MText.TokenValue(new() { Color = Color.FromTrueColor(0) }, "1")) },
         };
 
         public static IEnumerable<object[]> FractionsData = new List<object[]>()
         {
-            new[]
+            new object[]
             {
                 new FormatData(@"\S1^2;",
                     new MText.TokenFraction("1", "2", MText.TokenFraction.Divider.Stacked))
             },
-            new[]
+            new object[]
             {
                 new FormatData(@"\S1/2;",
                     new MText.TokenFraction("1", "2", MText.TokenFraction.Divider.FractionBar))
             },
-            new[]
+            new object[]
             {
                 new FormatData(@"\S1#2;",
                     new MText.TokenFraction("1", "2", MText.TokenFraction.Divider.Condensed))
             },
-            new[]
+            new object[]
             {
                 new FormatData(@"\SNUM^DEN;",
                     new MText.TokenFraction("NUM", "DEN", MText.TokenFraction.Divider.Stacked))
             },
-            new[]
+            new object[]
             {
                 new FormatData(@"\SNUM/DEN;",
                     new MText.TokenFraction("NUM", "DEN", MText.TokenFraction.Divider.FractionBar))
             },
-            new[]
+            new object[]
             {
                 new FormatData(@"\SNUM#DEN;",
                     new MText.TokenFraction("NUM", "DEN", MText.TokenFraction.Divider.Condensed))
             },
             
             // Escapes
-            new[]
+            new object[]
             {
                 new FormatData(@"\SNUM#DEN\;;",
                     new MText.TokenFraction("NUM", "DEN;", MText.TokenFraction.Divider.Condensed))
             },
-            new[]
+            new object[]
             {
                 new FormatData(@"\SNUM\##DEN\;;",
                     new MText.TokenFraction("NUM#", "DEN;", MText.TokenFraction.Divider.Condensed))
             },
 
+            //Empty Numerator
+            new object[]
+            {
+                new FormatData(@"\S^DEN;",
+                    new MText.TokenFraction("", "DEN", MText.TokenFraction.Divider.Stacked))
+            },
+            new object[]
+            {
+                new FormatData(@"\S/DEN;",
+                    new MText.TokenFraction("", "DEN", MText.TokenFraction.Divider.FractionBar))
+            },
+            new object[]
+            {
+                new FormatData(@"\S#DEN;",
+                    new MText.TokenFraction("", "DEN", MText.TokenFraction.Divider.Condensed))
+            },
+
+            // Empty Denominator
+            new object[]
+            {
+                new FormatData(@"\SNUM^;",
+                    new MText.TokenFraction("NUM", "", MText.TokenFraction.Divider.Stacked))
+            },
+            new object[]
+            {
+                new FormatData(@"\SNUM/;",
+                    new MText.TokenFraction("NUM", "", MText.TokenFraction.Divider.FractionBar))
+            },
+            new object[]
+            {
+                new FormatData(@"\SNUM#;",
+                    new MText.TokenFraction("NUM", "", MText.TokenFraction.Divider.Condensed))
+            },
+
             // Unexpected end to string.
-            new[] { new FormatData(@"\SNUMDEN\;;", (MText.Token?)null) },
-            new[] { new FormatData(@"\SNUMDEN", (MText.Token?)null) },
+            new object[] { new FormatData(@"\SNUMDEN\;;", (MText.Token?)null) },
+            new object[] { new FormatData(@"\SNUMDEN", (MText.Token?)null) },
         };
 
         public static IEnumerable<object[]> ParseData = new List<object[]>()

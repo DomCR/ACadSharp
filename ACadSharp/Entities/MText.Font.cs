@@ -1,31 +1,62 @@
-﻿using System;
+﻿#nullable enable
+using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ACadSharp.Entities
 {
     public partial class MText
     {
+        /// <summary>
+        /// Font used by MText Tokens.
+        /// </summary>
         public class Font
         {
-            public ReadOnlyMemory<char> FontFamily { get; set; } = default;
-            public bool IsBold { get; set; } = false;
-            public bool IsItalic { get; set; } = false;
-            public int CodePage { get; set; } = 0;
-            public int Pitch { get; set; } = 0;
+            /// <summary>
+            /// Tet Font Family.
+            /// </summary>
+            public ReadOnlyMemory<char> FontFamily { get; set; }
 
+            /// <summary>
+            /// Bold Text
+            /// </summary>
+            public bool IsBold { get; set; }
+
+            /// <summary>
+            /// Italic text.
+            /// </summary>
+            public bool IsItalic { get; set; }
+
+            /// <summary>
+            /// Code page for the text.
+            /// </summary>
+            public int CodePage { get; set; }
+
+            /// <summary>
+            /// Text pitch.
+            /// </summary>
+            public int Pitch { get; set; }
+
+            /// <summary>
+            /// Creates a blank font.
+            /// </summary>
             public Font()
             {
                 
             }
 
+            /// <summary>
+            /// Creates a font with the contents of the passed font.
+            /// </summary>
+            /// <param name="original">Original font to copy from.</param>
             public Font(Font original)
             {
-                FontFamily = original.FontFamily;
-                IsBold = original.IsBold;
-                IsItalic = original.IsItalic;
-                CodePage = original.CodePage;
-                Pitch = original.Pitch;
+                OverrideFrom(original);
             }
 
+            /// <summary>
+            /// Creates a font with the passed formats.  Used for testing.
+            /// </summary>
+            /// <param name="formats">Formats to use.</param>
             internal Font(string formats)
             {
                 // Used only for testing
@@ -42,6 +73,10 @@ namespace ACadSharp.Entities
                     IsItalic = false;
             }
 
+            /// <summary>
+            /// Overrides this font with the passed font contents.
+            /// </summary>
+            /// <param name="source">Source font to copy from.</param>
             public void OverrideFrom(Font source)
             {
                 FontFamily = source.FontFamily;
@@ -51,6 +86,9 @@ namespace ACadSharp.Entities
                 Pitch = source.Pitch;
             }
 
+            /// <summary>
+            /// Resets this font to the default values.
+            /// </summary>
             public void Reset()
             {
                 FontFamily = default;
@@ -59,16 +97,19 @@ namespace ACadSharp.Entities
                 CodePage = 0;
                 Pitch = 0;
             }
-
-
-            public override bool Equals(object obj)
+            public override bool Equals(object? obj)
             {
                 return Equals(obj as Font);
             }
 
-            public bool Equals(Font other)
+            /// <summary>
+            /// Checks to see if the passed font equals this font.
+            /// </summary>
+            /// <param name="other">Other font to compare to.</param>
+            /// <returns>True of the fonts are equal, false otherwise.</returns>
+            public bool Equals(Font? other)
             {
-                if(other == null)
+                if (other == null)
                     return false;
 
                 return
@@ -79,11 +120,22 @@ namespace ACadSharp.Entities
                     && Pitch == other.Pitch;
             }
 
+            [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
+            public override int GetHashCode()
+            {
+#if NETFRAMEWORK
+                return base.GetHashCode();
+#else
+                return HashCode.Combine(FontFamily, IsBold, IsItalic, CodePage, Pitch);
+#endif
+            }
+
             public override string ToString()
             {
                 return
                     $"F:{FontFamily}; B:{IsBold}; I:{IsItalic}; C:{CodePage}; P:{Pitch};";
             }
+
         }
     }
 }
