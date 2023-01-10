@@ -567,7 +567,7 @@ namespace ACadSharp.Entities
 #endif
                 // Parse the number in reverse order
                 bool isLeadingZero = true;
-                Span<uint> outputArray = stackalloc uint[7];
+                Span<uint> outputArray = stackalloc uint[20];
                 int outPosition = 0;
                 while (valueLong != 0 || nbDecimals >= 0)
                 {

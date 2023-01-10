@@ -49,8 +49,8 @@ namespace ACadSharp.Tests.Entities
 
         private void TestTextData(MTextValueTestData.TextData data)
         {
-            var reader = new MText.ValueWriter();
-            var parts = reader.Serialize(new MText.Token[] { new MText.TokenValue(data.Decoded) });
+            var writer = new MText.ValueWriter();
+            var parts = writer.Serialize(new MText.Token[] { new MText.TokenValue(data.Decoded) });
             var concatParts = string.Concat(parts);
             for (int i = 0; i < data.Encoded.Length; i++)
             {
