@@ -21,7 +21,7 @@ namespace ACadSharp.Entities
             private Format? _currentFormat;
             // Tokens used to prevent memory allocation during serialization.
             //                                                      ⌄0         ⌄10       ⌄20       ⌄30       ⌄40       ⌄50       ⌄60       ⌄70       ⌄80       ⌄90   
-            private static readonly ReadOnlyMemory<char> _tokens = @"\\P\~\{\}\A0;\A1;\A2;\L\l\O\o\K\k\p\;,\S\#\^\/x;%%D%%P%%C{\f|b0|b1|i0|i1|c|p\T\Q\H{\c{\C0123456789.".AsMemory();
+            private static readonly ReadOnlyMemory<char> _tokens = @"\\P\~\{\}\A0;\A1;\A2;\L\l\O\o\K\k\p\;,\S\#\^\/x;%%D%%P%%C{\f|b0|b1|i0|i1|c|p\T\Q\H{\c{\C0123456789.-".AsMemory();
             private static readonly ReadOnlyMemory<char> _tokenEscapeCharacter = _tokens.Slice(0, 1);
             private static readonly ReadOnlyMemory<char> _tokenEscapedNewLine = _tokens.Slice(1, 2);
             private static readonly ReadOnlyMemory<char> _tokenEscapedNbs = _tokens.Slice(3, 2);
@@ -87,6 +87,7 @@ namespace ACadSharp.Entities
             private static readonly ReadOnlyMemory<char> _token9 = _tokens.Slice(97, 1);
 
             private static readonly ReadOnlyMemory<char> _tokenPeriod = _tokens.Slice(98, 1);
+            private static readonly ReadOnlyMemory<char> _tokenNegative = _tokens.Slice(99, 1);
 
             private int _lastConsumedPosition;
             private int _position;
@@ -530,11 +531,14 @@ namespace ACadSharp.Entities
                 return digits;
             }
 
-            public void outputFloat(float value)
+            /// <summary>
+            /// Outputs a float to the visitor.
+            /// </summary>
+            /// <param name="value">Float value to output</param>
+            /// <exception cref="ArgumentOutOfRangeException"></exception>
+            /// <seealso>https://stackoverflow.com/a/41254697</seealso>
+            private void outputFloat(float value)
             {
-                if (value < 0)
-                    throw new ArgumentOutOfRangeException(nameof(value), "Value must be positive.");
-
                 // Handle the 0 case
                 if (value == 0)
                 {
@@ -542,6 +546,12 @@ namespace ACadSharp.Entities
                     return;
                 }
 
+                bool isNegative = value < 0;
+                // Handle the negative case
+                if (isNegative)
+                {
+                    value = -value;
+                }
 
                 // Get the 7 meaningful digits as a long
                 int nbDecimals = 0;
@@ -557,7 +567,7 @@ namespace ACadSharp.Entities
 #endif
                 // Parse the number in reverse order
                 bool isLeadingZero = true;
-                Span<uint> outputArray = stackalloc uint[nbDecimals];
+                Span<uint> outputArray = stackalloc uint[7];
                 int outPosition = 0;
                 while (valueLong != 0 || nbDecimals >= 0)
                 {
@@ -577,6 +587,9 @@ namespace ACadSharp.Entities
 
                     valueLong /= 10;
                 }
+
+                if (isNegative)
+                    _visitor!.Invoke(_tokenNegative);
 
                 for (int i = outPosition - 1; i >= 0; i--)
                     outputNumber(outputArray[i]);

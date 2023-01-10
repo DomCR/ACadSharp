@@ -226,6 +226,11 @@ namespace ACadSharp.Tests.Entities
             },
             new object[]
             {
+                new FormatData(@"\Q-14.84;FORMATTED",
+                    new MText.TokenValue(new() { Obliquing = -14.84f }, "FORMATTED"))
+            },
+            new object[]
+            {
                 new FormatData(@"\pt128.09,405.62,526.60;FORMATTED",
                     new MText.TokenValue(new()
                     {
