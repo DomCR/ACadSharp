@@ -1,8 +1,11 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace ACadSharp.Entities
 {
@@ -13,13 +16,12 @@ namespace ACadSharp.Entities
         /// </summary>
         public class ValueWriter
         {
-            private List<ReadOnlyMemory<char>> _outputList = null!;
+            //private List<ReadOnlyMemory<char>> _outputList = null!;
             private readonly Format _defaultFormat = new Format();
             private Format? _currentFormat;
-
             // Tokens used to prevent memory allocation during serialization.
-            //                                                      ⌄0         ⌄10       ⌄20       ⌄30       ⌄40       ⌄50               
-            private static readonly ReadOnlyMemory<char> _tokens = @"\\P\~\{\}\A0;\A1;\A2;\L\l\O\o\K\k\p\;,\S\#\^\/x;%%D%%P%%C".AsMemory();
+            //                                                      ⌄0         ⌄10       ⌄20       ⌄30       ⌄40       ⌄50       ⌄60       ⌄70       ⌄80       ⌄90   
+            private static readonly ReadOnlyMemory<char> _tokens = @"\\P\~\{\}\A0;\A1;\A2;\L\l\O\o\K\k\p\;,\S\#\^\/x;%%D%%P%%C{\f|b0|b1|i0|i1|c|p\T\Q\H{\c{\C0123456789.".AsMemory();
             private static readonly ReadOnlyMemory<char> _tokenEscapeCharacter = _tokens.Slice(0, 1);
             private static readonly ReadOnlyMemory<char> _tokenEscapedNewLine = _tokens.Slice(1, 2);
             private static readonly ReadOnlyMemory<char> _tokenEscapedNbs = _tokens.Slice(3, 2);
@@ -56,22 +58,74 @@ namespace ACadSharp.Entities
             private static readonly ReadOnlyMemory<char> _tokenPlusMinus = _tokens.Slice(51, 3);
             private static readonly ReadOnlyMemory<char> _tokenDiameter = _tokens.Slice(54, 3);
 
+            private static readonly ReadOnlyMemory<char> _tokenFontStart = _tokens.Slice(57, 3);
+
+            private static readonly ReadOnlyMemory<char> _tokenFontBold0 = _tokens.Slice(60, 3);
+            private static readonly ReadOnlyMemory<char> _tokenFontBold1 = _tokens.Slice(63, 3);
+
+            private static readonly ReadOnlyMemory<char> _tokenFontItalic0 = _tokens.Slice(66, 3);
+            private static readonly ReadOnlyMemory<char> _tokenFontItalic1 = _tokens.Slice(69, 3);
+
+            private static readonly ReadOnlyMemory<char> _tokenFontCodePageStart = _tokens.Slice(72, 2);
+            private static readonly ReadOnlyMemory<char> _tokenFontPitchStart = _tokens.Slice(74, 2);
+
+            private static readonly ReadOnlyMemory<char> _tokenTextTracking = _tokens.Slice(76, 2);
+            private static readonly ReadOnlyMemory<char> _tokenTextObliquing = _tokens.Slice(78, 2);
+            private static readonly ReadOnlyMemory<char> _tokenTextHeight = _tokens.Slice(80, 2);
+            private static readonly ReadOnlyMemory<char> _tokenTextColorTrue = _tokens.Slice(82, 3);
+            private static readonly ReadOnlyMemory<char> _tokenTextColorIndex = _tokens.Slice(85, 3);
+
+            private static readonly ReadOnlyMemory<char> _token0 = _tokens.Slice(88, 1);
+            private static readonly ReadOnlyMemory<char> _token1 = _tokens.Slice(89, 1);
+            private static readonly ReadOnlyMemory<char> _token2 = _tokens.Slice(90, 1);
+            private static readonly ReadOnlyMemory<char> _token3 = _tokens.Slice(91, 1);
+            private static readonly ReadOnlyMemory<char> _token4 = _tokens.Slice(92, 1);
+            private static readonly ReadOnlyMemory<char> _token5 = _tokens.Slice(93, 1);
+            private static readonly ReadOnlyMemory<char> _token6 = _tokens.Slice(94, 1);
+            private static readonly ReadOnlyMemory<char> _token7 = _tokens.Slice(95, 1);
+            private static readonly ReadOnlyMemory<char> _token8 = _tokens.Slice(96, 1);
+            private static readonly ReadOnlyMemory<char> _token9 = _tokens.Slice(97, 1);
+
+            private static readonly ReadOnlyMemory<char> _tokenPeriod = _tokens.Slice(98, 1);
+
             private int _lastConsumedPosition;
             private int _position;
             private ReadOnlyMemory<char> _values;
             private bool _closeFormat;
+            private Walker? _visitor;
+
+            public delegate void Walker(in ReadOnlyMemory<char> walk);
 
             /// <summary>
             /// Serializes the tokens into a list of memory.
             /// </summary>
-            /// <param name="tokens"></param>
-            /// <returns></returns>
-            public IReadOnlyList<ReadOnlyMemory<char>> Seralize(Token[] tokens)
+            /// <param name="tokens">Tokens to Serialize</param>
+            /// <returns>List of memory</returns>
+            public StringBuilder Serialize(Token[] tokens)
             {
+                var stringBuilder = new StringBuilder();
+
+                void Visitor(in ReadOnlyMemory<char> value)
+                {
+                    stringBuilder.Append(value);
+                }
+
+                SerializeWalker(Visitor, tokens);
+
+                return stringBuilder;
+            }
+
+            /// <summary>
+            /// Walks through the tokens while serializing.
+            /// </summary>
+            /// <param name="visitor">Visitor to walk through the output.</param>
+            /// <param name="tokens">Tokens to serialize.</param>
+            public void SerializeWalker(in Walker visitor, Token[] tokens)
+            {
+                _visitor = visitor;
                 _lastConsumedPosition = 0;
                 _position = 0;
                 _currentFormat = _defaultFormat;
-                _outputList = new List<ReadOnlyMemory<char>>((int)(tokens.Length * 1.5));
 
                 foreach (var token in tokens)
                 {
@@ -88,14 +142,14 @@ namespace ACadSharp.Entities
 
                     if (_closeFormat)
                     {
-                        _outputList.Add(_tokenClosedBrace);
+                        _visitor!.Invoke(_tokenClosedBrace);
                         _currentFormat = _defaultFormat;
                         _closeFormat = false;
                     }
                 }
 
+                _visitor = null;
                 _values = null;
-                return _outputList;
             }
 
             /// <summary>
@@ -105,7 +159,7 @@ namespace ACadSharp.Entities
             /// <exception cref="ArgumentOutOfRangeException"></exception>
             private void writeTokenFraction(TokenFraction tokenFraction)
             {
-                _outputList.Add(_tokenFraction);
+                _visitor!.Invoke(_tokenFraction);
 
                 if (tokenFraction.Numerator != null)
                 {
@@ -116,7 +170,7 @@ namespace ACadSharp.Entities
                     }
                 }
 
-                _outputList.Add(tokenFraction.DividerType switch {
+                _visitor!.Invoke(tokenFraction.DividerType switch {
                     TokenFraction.Divider.Stacked => _tokenFractionStacked,
                     TokenFraction.Divider.FractionBar => _tokenFractionFractionBar,
                     TokenFraction.Divider.Condensed => _tokenFractionCondensed,
@@ -132,7 +186,7 @@ namespace ACadSharp.Entities
                     }
                 }
 
-                _outputList.Add(_tokenSemiColon);
+                _visitor!.Invoke(_tokenSemiColon);
 
             }
 
@@ -217,7 +271,7 @@ namespace ACadSharp.Entities
                 {
                     // If the lastWritePosition is zero, this is a special case for when nothing has been transformed in the value.
                     // and we can just output the entire Memory<char>
-                    _outputList.Add(_lastConsumedPosition == 0
+                    _visitor!.Invoke(_lastConsumedPosition == 0
                         ? values
                         : _values.Slice(_lastConsumedPosition, _position - _lastConsumedPosition));
                 }
@@ -228,9 +282,9 @@ namespace ACadSharp.Entities
             {
                 var writeLength = _position - _lastConsumedPosition;
                 if (writeLength > 0 )
-                    _outputList.Add(_values.Slice(_lastConsumedPosition, writeLength));
+                    _visitor!.Invoke(_values.Slice(_lastConsumedPosition, writeLength));
 
-                _outputList.Add(replaceWith);
+                _visitor!.Invoke(replaceWith);
                 _lastConsumedPosition = _position + 1;
             }
 
@@ -238,9 +292,9 @@ namespace ACadSharp.Entities
             {
                 var writeLength = _position - _lastConsumedPosition;
                 if (writeLength > 0)
-                    _outputList.Add(_values.Slice(_lastConsumedPosition, writeLength));
+                    _visitor!.Invoke(_values.Slice(_lastConsumedPosition, writeLength));
 
-                _outputList.Add(appendCharacter);
+                _visitor!.Invoke(appendCharacter);
                 _lastConsumedPosition = _position;
             }
 
@@ -252,7 +306,7 @@ namespace ACadSharp.Entities
 
                 if (_currentFormat.Align != newFormat.Align)
                 {
-                    _outputList.Add(newFormat.Align switch
+                    _visitor!.Invoke(newFormat.Align switch
                     {
                         Format.Alignment.Bottom => _tokenAlignmentBottom,
                         Format.Alignment.Center => _tokenAlignmentCenter,
@@ -264,89 +318,268 @@ namespace ACadSharp.Entities
 
                 if (_currentFormat.IsUnderline != newFormat.IsUnderline)
                 {
-                    _outputList.Add(newFormat.IsUnderline 
+                    _visitor!.Invoke(newFormat.IsUnderline 
                         ? _tokenControlCodeL 
                         : _tokenControlCodeLOut);
                 }
 
                 if (_currentFormat.IsOverline != newFormat.IsOverline)
                 {
-                    _outputList.Add(newFormat.IsOverline
+                    _visitor!.Invoke(newFormat.IsOverline
                         ? _tokenControlCodeO
                         : _tokenControlCodeOOut);
                 }
 
                 if (_currentFormat.IsStrikeThrough != newFormat.IsStrikeThrough)
                 {
-                    _outputList.Add(newFormat.IsStrikeThrough
+                    _visitor!.Invoke(newFormat.IsStrikeThrough
                         ? _tokenControlCodeK
                         : _tokenControlCodeKOut);
                 }
 
                 if (_currentFormat.Tracking != newFormat.Tracking && newFormat.Tracking != null)
                 {
-                    // determine if we can round to a whole number
-                    _outputList.Add(Math.Abs(newFormat.Tracking.Value % 1) <= (float.Epsilon * 100)
-                        ? $"\\T{(int)newFormat.Tracking};".AsMemory()
-                        : $"\\T{newFormat.Tracking:###0.0#};".AsMemory());
+                    _visitor!.Invoke(_tokenTextTracking);
+                    outputFloatRoundedIfCloseToInteger(newFormat.Tracking.Value);
+                    _visitor!.Invoke(_tokenSemiColon);
                 }
 
                 if (_currentFormat.Obliquing != newFormat.Obliquing && newFormat.Obliquing != null)
                 {
-                    // determine if we can round to a whole number
-                    _outputList.Add(Math.Abs(newFormat.Obliquing.Value % 1) <= (float.Epsilon * 100)
-                        ? $"\\Q{(int)newFormat.Obliquing};".AsMemory()
-                        : $"\\Q{newFormat.Obliquing:###0.0#};".AsMemory());
+                    _visitor!.Invoke(_tokenTextObliquing);
+                    outputFloatRoundedIfCloseToInteger(newFormat.Obliquing.Value);
+                    _visitor!.Invoke(_tokenSemiColon);
                 }
 
                 if (_currentFormat.Height != newFormat.Height && newFormat.Height != null)
                 {
-                    // determine if we can round to a whole number
-                    _outputList.Add(Math.Abs(newFormat.Height.Value % 1) <= (float.Epsilon * 100)
-                        ? $"\\H{(int)newFormat.Height}".AsMemory()
-                        : $"\\H{newFormat.Height:###0.0#}".AsMemory());
-                    _outputList.Add(newFormat.IsHeightRelative ? _tokenRelativeHeightTrailer : _tokenSemiColon);
+                    _visitor!.Invoke(_tokenTextHeight);
+                    outputFloatRoundedIfCloseToInteger(newFormat.Height.Value);
+                    _visitor!.Invoke(newFormat.IsHeightRelative ? _tokenRelativeHeightTrailer : _tokenSemiColon);
                 }
 
                 if (newFormat.Color != null)
                 {
                     var value = newFormat.Color.Value;
-                    _outputList.Add(value.IsTrueColor
-                        ? $"{{\\c{value.TrueColor};".AsMemory()
-                        : $"{{\\C{value.Index};".AsMemory());
+                    if (value.IsTrueColor)
+                    {
+                        _visitor!.Invoke(_tokenTextColorTrue);
+                        //_visitor!.Invoke(value.TrueColor.ToString().AsMemory());
+                        outputUint((uint)value.TrueColor);
+                    }
+                    else
+                    {
+                        _visitor!.Invoke(_tokenTextColorIndex);
+                        outputUint((uint)value.Index);
+                        //_visitor!.Invoke(value.Index.ToString().AsMemory());
+                    }
 
+                    _visitor!.Invoke(_tokenSemiColon);
                     _closeFormat = true;
                 }
 
                 if (!_currentFormat.Font.Equals(newFormat.Font))
                 {
-                    _outputList.Add("{\\f".AsMemory());
-                    _outputList.Add(newFormat.Font.FontFamily);
-                    var bold = newFormat.Font.IsBold ? '1' : '0';
-                    var italic = newFormat.Font.IsItalic ? '1' : '0';
-                    _outputList.Add($"|b{bold}|i{italic}|c{newFormat.Font.CodePage}|p{newFormat.Font.Pitch};".AsMemory());
+                    _visitor!.Invoke(_tokenFontStart);
+                    _visitor!.Invoke(newFormat.Font.FontFamily);
+                    _visitor!.Invoke(newFormat.Font.IsBold ? _tokenFontBold1 : _tokenFontBold0);
+                    _visitor!.Invoke(newFormat.Font.IsItalic ? _tokenFontItalic1 : _tokenFontItalic0);
+                    _visitor!.Invoke(_tokenFontCodePageStart);
+                    //_visitor!.Invoke(newFormat.Font.CodePage.ToString().AsMemory());
+                    outputUint((uint)newFormat.Font.CodePage);
+                    _visitor!.Invoke(_tokenFontPitchStart);
+                    //_visitor!.Invoke(newFormat.Font.Pitch.ToString().AsMemory());
+                    outputUint((uint)newFormat.Font.Pitch);
+                    _visitor!.Invoke(_tokenSemiColon);
 
                     _closeFormat = true;
                 }
 
                 if (newFormat.AreParagraphsEqual(_currentFormat.Paragraph) == false)
                 {
-                    _outputList.Add(_tokenControlParagraph);
+                    _visitor!.Invoke(_tokenControlParagraph);
 
                     var count = newFormat.Paragraph.Count;
                     for (int i = 0; i < count; i++)
                     {
-                        _outputList.Add(newFormat.Paragraph[i]);
+                        _visitor!.Invoke(newFormat.Paragraph[i]);
                         if (i + 1 != count)
                         {
-                            _outputList.Add(_tokenComma);
+                            _visitor!.Invoke(_tokenComma);
                         }
                     }
 
-                    _outputList.Add(_tokenSemiColon);
+                    _visitor!.Invoke(_tokenSemiColon);
                 }
 
                 _currentFormat = newFormat;
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void outputFloatRoundedIfCloseToInteger(float value)
+            {
+                if (Math.Abs(value % 1) <= (float.Epsilon * 100))
+                    outputUint((uint)value);
+                else
+                    outputFloat(value);
+                //_visitor!.Invoke(value.ToString("###0.0#").AsMemory());
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void outputUint(uint value)
+            {
+                int bufferLength = countDigits(value);
+                if (bufferLength == 1)
+                {
+                    outputNumber(value);
+                    return;
+                }
+
+                Span<uint> outputArray = stackalloc uint[bufferLength];
+                var position = bufferLength - 1;
+                do
+                {
+                    (value, outputArray[position--]) = divRem(value, 10);
+                } while (value != 0);
+
+                for (int i = 0; i < bufferLength; i++)
+                    outputNumber(outputArray[i]);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void outputNumber(uint value)
+            {
+                switch (value)
+                {
+                    case 0:
+                        _visitor?.Invoke(_token0);
+                        break;
+                    case 1:
+                        _visitor?.Invoke(_token1);
+                        break;
+                    case 2:
+                        _visitor?.Invoke(_token2);
+                        break;
+                    case 3:
+                        _visitor?.Invoke(_token3);
+                        break;
+                    case 4:
+                        _visitor?.Invoke(_token4);
+                        break;
+                    case 5:
+                        _visitor?.Invoke(_token5);
+                        break;
+                    case 6:
+                        _visitor?.Invoke(_token6);
+                        break;
+                    case 7:
+                        _visitor?.Invoke(_token7);
+                        break;
+                    case 8:
+                        _visitor?.Invoke(_token8);
+                        break;
+                    case 9:
+                        _visitor?.Invoke(_token9);
+                        break;
+                    case 10:
+                        // Special case for the period.
+                        _visitor?.Invoke(_tokenPeriod);
+                        break;
+                }
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private static (uint Quotient, uint Remainder) divRem(uint left, uint right)
+            {
+                uint quotient = left / right;
+                return (quotient, left - (quotient * right));
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private static int countDigits(uint value)
+            {
+                int digits = 1;
+                if (value >= 100000)
+                {
+                    value /= 100000;
+                    digits += 5;
+                }
+
+                if (value < 10)
+                {
+                    // no-op
+                }
+                else if (value < 100)
+                {
+                    digits++;
+                }
+                else if (value < 1000)
+                {
+                    digits += 2;
+                }
+                else if (value < 10000)
+                {
+                    digits += 3;
+                }
+                else
+                {
+                    Debug.Assert(value < 100000);
+                    digits += 4;
+                }
+
+                return digits;
+            }
+
+            public void outputFloat(float value)
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(value), "Value must be positive.");
+
+                // Handle the 0 case
+                if (value == 0)
+                {
+                    _visitor!.Invoke(_token0);
+                    return;
+                }
+
+
+                // Get the 7 meaningful digits as a long
+                int nbDecimals = 0;
+                while (value < 1000000)
+                {
+                    value *= 10;
+                    nbDecimals++;
+                }
+#if NETFRAMEWORK
+                long valueLong = (long)System.Math.Round(value);
+#else
+                long valueLong = (long)System.MathF.Round(value);
+#endif
+                // Parse the number in reverse order
+                bool isLeadingZero = true;
+                Span<uint> outputArray = stackalloc uint[nbDecimals];
+                int outPosition = 0;
+                while (valueLong != 0 || nbDecimals >= 0)
+                {
+                    // We stop removing leading 0 when non-0 or decimal digit
+                    if (valueLong % 10 != 0 || nbDecimals <= 0)
+                        isLeadingZero = false;
+
+                    // Write the last digit (unless a leading zero)
+                    if (!isLeadingZero)
+                        outputArray[outPosition++] = (uint)(valueLong % 10);
+                        //m_buffer[m_bufferPos + (nbChars++)] = (char)('0' + );
+
+                    // Add the decimal point
+                    if (--nbDecimals == 0 && !isLeadingZero)
+                        outputArray[outPosition++] = 10;
+                        //m_buffer[m_bufferPos + (nbChars++)] = '.';
+
+                    valueLong /= 10;
+                }
+
+                for (int i = outPosition - 1; i >= 0; i--)
+                    outputNumber(outputArray[i]);
             }
         }
     }

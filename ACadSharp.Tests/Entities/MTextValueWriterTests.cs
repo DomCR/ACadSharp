@@ -50,7 +50,7 @@ namespace ACadSharp.Tests.Entities
         private void TestTextData(MTextValueTestData.TextData data)
         {
             var reader = new MText.ValueWriter();
-            var parts = reader.Seralize(new MText.Token[] { new MText.TokenValue(data.Decoded) });
+            var parts = reader.Serialize(new MText.Token[] { new MText.TokenValue(data.Decoded) });
             var concatParts = string.Concat(parts);
             for (int i = 0; i < data.Encoded.Length; i++)
             {
@@ -70,7 +70,7 @@ namespace ACadSharp.Tests.Entities
                 throw new InvalidOperationException();
 
             var reader = new MText.ValueWriter();
-            var parts = reader.Seralize(data.Decoded);
+            var parts = reader.Serialize(data.Decoded);
 
             var concatParts = string.Concat(parts);
             for (int i = 0; i < data.Encoded.Length; i++)

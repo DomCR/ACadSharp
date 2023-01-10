@@ -67,7 +67,7 @@ namespace ACadSharp.Entities
             public Token[] Deserialize(ReadOnlyMemory<char> content, Format? baseFormat)
             {
                 var list = new List<Token>();
-                Walk(token =>
+                DeserializeWalker(token =>
                 {
                     var copiedFormat = new Format();
                     copiedFormat.OverrideFrom(token.Format);
@@ -109,10 +109,10 @@ namespace ACadSharp.Entities
             /// are not guaranteed to be valid beyond the return of the visitor.
             /// Not Thread Safe.
             /// </remarks>
-            public bool Walk(Action<Token> visitor, ReadOnlyMemory<char> content)
+            public bool DeserializeWalker(Action<Token> visitor, ReadOnlyMemory<char> content)
             {
                 _currentFormat?.Reset();
-                return Walk(visitor, content, _currentFormat);
+                return DeserializeWalker(visitor, content, _currentFormat);
             }
 
             /// <summary>
@@ -127,7 +127,7 @@ namespace ACadSharp.Entities
             /// are not guaranteed to be valid beyond the return of the visitor.
             /// Not Thread Safe.
             /// </remarks>
-            public bool Walk(Action<Token> visitor, ReadOnlyMemory<char> content, Format? baseFormat)
+            public bool DeserializeWalker(Action<Token> visitor, ReadOnlyMemory<char> content, Format? baseFormat)
             {
                 _content = content;
                 _visitor = visitor;
