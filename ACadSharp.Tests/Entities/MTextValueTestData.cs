@@ -253,6 +253,22 @@ namespace ACadSharp.Tests.Entities
                     new MText.TokenValue("2"),
                 })
             },
+            new object[]
+            {
+                new FormatData(@"{\C165;\fArial|b0|i0|c0|p0;FORMATTED}", new MText.Token[]
+                {
+                    new MText.TokenValue(new MText.Format()
+                    {
+                        Color = new Color(165),
+                        Font =
+                        {
+                            FontFamily = "Arial".AsMemory(),
+                            CodePage = 0,
+                            Pitch = 0
+                        }
+                    }, "FORMATTED")
+                })
+            },
         };
 
         public static IEnumerable<object[]> FontsData = new List<object[]>()

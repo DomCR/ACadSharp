@@ -21,7 +21,7 @@ namespace ACadSharp.Entities
             private Format? _currentFormat;
             // Tokens used to prevent memory allocation during serialization.
             //                                                      ⌄0         ⌄10       ⌄20       ⌄30       ⌄40       ⌄50       ⌄60       ⌄70       ⌄80       ⌄90   
-            private static readonly ReadOnlyMemory<char> _tokens = @"\\P\~\{\}\A0;\A1;\A2;\L\l\O\o\K\k\p\;,\S\#\^\/x;%%D%%P%%C{\f|b0|b1|i0|i1|c|p\T\Q\H{\c{\C0123456789.-".AsMemory();
+            private static readonly ReadOnlyMemory<char> _tokens = @"\\P\~\{\}\A0;\A1;\A2;\L\l\O\o\K\k\p\;,\S\#\^\/x;%%D%%P%%C{\f|b0|b1|i0|i1|c|p\T\Q\H{\c{\C0123456789.-\W".AsMemory();
             private static readonly ReadOnlyMemory<char> _tokenEscapeCharacter = _tokens.Slice(0, 1);
             private static readonly ReadOnlyMemory<char> _tokenEscapedNewLine = _tokens.Slice(1, 2);
             private static readonly ReadOnlyMemory<char> _tokenEscapedNbs = _tokens.Slice(3, 2);
@@ -58,7 +58,8 @@ namespace ACadSharp.Entities
             private static readonly ReadOnlyMemory<char> _tokenPlusMinus = _tokens.Slice(51, 3);
             private static readonly ReadOnlyMemory<char> _tokenDiameter = _tokens.Slice(54, 3);
 
-            private static readonly ReadOnlyMemory<char> _tokenFontStart = _tokens.Slice(57, 3);
+            private static readonly ReadOnlyMemory<char> _tokenFontStartBracket = _tokens.Slice(57, 3);
+            private static readonly ReadOnlyMemory<char> _tokenFontStart = _tokens.Slice(58, 2);
 
             private static readonly ReadOnlyMemory<char> _tokenFontBold0 = _tokens.Slice(60, 3);
             private static readonly ReadOnlyMemory<char> _tokenFontBold1 = _tokens.Slice(63, 3);
@@ -72,8 +73,10 @@ namespace ACadSharp.Entities
             private static readonly ReadOnlyMemory<char> _tokenTextTracking = _tokens.Slice(76, 2);
             private static readonly ReadOnlyMemory<char> _tokenTextObliquing = _tokens.Slice(78, 2);
             private static readonly ReadOnlyMemory<char> _tokenTextHeight = _tokens.Slice(80, 2);
-            private static readonly ReadOnlyMemory<char> _tokenTextColorTrue = _tokens.Slice(82, 3);
-            private static readonly ReadOnlyMemory<char> _tokenTextColorIndex = _tokens.Slice(85, 3);
+            private static readonly ReadOnlyMemory<char> _tokenTextColorTrueBracket = _tokens.Slice(82, 3);
+            private static readonly ReadOnlyMemory<char> _tokenTextColorTrue = _tokens.Slice(83, 2);
+            private static readonly ReadOnlyMemory<char> _tokenTextColorIndexBracket = _tokens.Slice(85, 3);
+            private static readonly ReadOnlyMemory<char> _tokenTextColorIndex = _tokens.Slice(86, 2);
 
             private static readonly ReadOnlyMemory<char> _token0 = _tokens.Slice(88, 1);
             private static readonly ReadOnlyMemory<char> _token1 = _tokens.Slice(89, 1);
@@ -89,10 +92,12 @@ namespace ACadSharp.Entities
             private static readonly ReadOnlyMemory<char> _tokenPeriod = _tokens.Slice(98, 1);
             private static readonly ReadOnlyMemory<char> _tokenNegative = _tokens.Slice(99, 1);
 
+            private static readonly ReadOnlyMemory<char> _tokenWidth = _tokens.Slice(100, 2);
+
             private int _lastConsumedPosition;
             private int _position;
             private ReadOnlyMemory<char> _values;
-            private bool _closeFormat;
+            private int _closeFormatCount;
             private Walker? _visitor;
 
             public delegate void Walker(in ReadOnlyMemory<char> walk);
@@ -127,6 +132,7 @@ namespace ACadSharp.Entities
                 _lastConsumedPosition = 0;
                 _position = 0;
                 _currentFormat = _defaultFormat;
+                _closeFormatCount = 0;
 
                 foreach (var token in tokens)
                 {
@@ -141,11 +147,13 @@ namespace ACadSharp.Entities
                         writeTokenFraction(tokenFraction);
                     }
 
-                    if (_closeFormat)
+                    if (_closeFormatCount > 0)
                     {
-                        _visitor!.Invoke(_tokenClosedBrace);
+                        for (int i = 0; i < _closeFormatCount; i++)
+                            _visitor!.Invoke(_tokenClosedBrace);
+
                         _currentFormat = _defaultFormat;
-                        _closeFormat = false;
+                        _closeFormatCount = 0;
                     }
                 }
 
@@ -352,6 +360,13 @@ namespace ACadSharp.Entities
                     _visitor!.Invoke(_tokenSemiColon);
                 }
 
+                if (_currentFormat.Width != newFormat.Width && newFormat.Width != null)
+                {
+                    _visitor!.Invoke(_tokenWidth);
+                    outputFloatRoundedIfCloseToInteger(newFormat.Width.Value);
+                    _visitor!.Invoke(_tokenSemiColon);
+                }
+
                 if (_currentFormat.Height != newFormat.Height && newFormat.Height != null)
                 {
                     _visitor!.Invoke(_tokenTextHeight);
@@ -364,24 +379,47 @@ namespace ACadSharp.Entities
                     var value = newFormat.Color.Value;
                     if (value.IsTrueColor)
                     {
-                        _visitor!.Invoke(_tokenTextColorTrue);
-                        //_visitor!.Invoke(value.TrueColor.ToString().AsMemory());
+                        if (_closeFormatCount == 0)
+                        {
+                            _visitor!.Invoke(_tokenTextColorTrueBracket);
+                            _closeFormatCount++;
+                        }
+                        else
+                        {
+                            _visitor!.Invoke(_tokenTextColorTrue);
+                        }
+
                         outputUint((uint)value.TrueColor);
                     }
                     else
                     {
-                        _visitor!.Invoke(_tokenTextColorIndex);
+                        if (_closeFormatCount == 0)
+                        {
+                            _visitor!.Invoke(_tokenTextColorIndexBracket);
+                            _closeFormatCount++;
+                        }
+                        else
+                        {
+                            _visitor!.Invoke(_tokenTextColorIndex);
+                        }
                         outputUint((uint)value.Index);
-                        //_visitor!.Invoke(value.Index.ToString().AsMemory());
                     }
 
                     _visitor!.Invoke(_tokenSemiColon);
-                    _closeFormat = true;
                 }
 
                 if (!_currentFormat.Font.Equals(newFormat.Font))
                 {
-                    _visitor!.Invoke(_tokenFontStart);
+                    if (_closeFormatCount == 0)
+                    {
+                        _visitor!.Invoke(_tokenFontStartBracket);
+                        _closeFormatCount++;
+                    }
+                    else
+                    {
+                        _visitor!.Invoke(_tokenFontStart);
+                    }
+                    
                     _visitor!.Invoke(newFormat.Font.FontFamily);
                     _visitor!.Invoke(newFormat.Font.IsBold ? _tokenFontBold1 : _tokenFontBold0);
                     _visitor!.Invoke(newFormat.Font.IsItalic ? _tokenFontItalic1 : _tokenFontItalic0);
@@ -392,8 +430,6 @@ namespace ACadSharp.Entities
                     //_visitor!.Invoke(newFormat.Font.Pitch.ToString().AsMemory());
                     outputUint((uint)newFormat.Font.Pitch);
                     _visitor!.Invoke(_tokenSemiColon);
-
-                    _closeFormat = true;
                 }
 
                 if (newFormat.AreParagraphsEqual(_currentFormat.Paragraph) == false)
@@ -555,16 +591,13 @@ namespace ACadSharp.Entities
 
                 // Get the 7 meaningful digits as a long
                 int nbDecimals = 0;
-                while (value < 1000000)
+                while (value < 10000000)
                 {
                     value *= 10;
                     nbDecimals++;
                 }
-#if NETFRAMEWORK
+
                 long valueLong = (long)System.Math.Round(value);
-#else
-                long valueLong = (long)System.MathF.Round(value);
-#endif
                 // Parse the number in reverse order
                 bool isLeadingZero = true;
                 Span<uint> outputArray = stackalloc uint[20];
@@ -578,12 +611,10 @@ namespace ACadSharp.Entities
                     // Write the last digit (unless a leading zero)
                     if (!isLeadingZero)
                         outputArray[outPosition++] = (uint)(valueLong % 10);
-                        //m_buffer[m_bufferPos + (nbChars++)] = (char)('0' + );
 
                     // Add the decimal point
                     if (--nbDecimals == 0 && !isLeadingZero)
                         outputArray[outPosition++] = 10;
-                        //m_buffer[m_bufferPos + (nbChars++)] = '.';
 
                     valueLong /= 10;
                 }

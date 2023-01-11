@@ -12,6 +12,11 @@ namespace ACadSharp.Entities
         /// </summary>
         public class Format
         {
+            private float? _height;
+            private float? _width;
+            private float? _obliquing;
+            private float? _tracking;
+
             /// <summary>
             /// Text alignments
             /// </summary>
@@ -51,12 +56,16 @@ namespace ACadSharp.Entities
             /// <summary>
             /// Font to use for the token.
             /// </summary>
-            public readonly Font Font;
+            public Font Font { get; } = new Font();
 
             /// <summary>
             /// Text height of the token.
             /// </summary>
-            public float? Height { get; set; }
+            public float? Height
+            {
+                get => _height;
+                set => _height = value;
+            }
 
             /// <summary>
             /// True if the passed height is a relative height.
@@ -66,17 +75,29 @@ namespace ACadSharp.Entities
             /// <summary>
             /// Text width.
             /// </summary>
-            public float? Width { get; set; }
+            public float? Width
+            {
+                get => _width;
+                set => _width = value;
+            }
 
             /// <summary>
             /// Text Obliquing
             /// </summary>
-            public float? Obliquing { get; set; }
+            public float? Obliquing
+            {
+                get => _obliquing;
+                set => _obliquing = value;
+            }
 
             /// <summary>
             /// Text Tracking
             /// </summary>
-            public float? Tracking { get; set; }
+            public float? Tracking
+            {
+                get => _tracking;
+                set => _tracking = value;
+            }
 
             /// <summary>
             /// Vertical text alignment.
@@ -98,7 +119,6 @@ namespace ACadSharp.Entities
             /// </summary>
             public Format()
             {
-                Font = new Font();
             }
 
             /// <summary>
@@ -125,8 +145,6 @@ namespace ACadSharp.Entities
 
                 if (formats.Contains("k"))
                     IsStrikeThrough = false;
-
-                Font = new Font();
             }
 
             /// <summary>
