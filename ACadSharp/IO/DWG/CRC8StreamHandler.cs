@@ -25,14 +25,14 @@ namespace ACadSharp.IO.DWG
 			set => this._stream.Position = value;
 		}
 
-		private Stream _stream;
+		public ushort Seed { get; private set; }
 
-		private ushort _seed;
+		private Stream _stream;
 
 		public CRC8StreamHandler(Stream stream, ushort seed)
 		{
 			this._stream = stream;
-			this._seed = seed;
+			this.Seed = seed;
 		}
 
 		public override int Read(byte[] buffer, int offset, int count)
@@ -41,7 +41,7 @@ namespace ACadSharp.IO.DWG
 			int length = offset + count;
 
 			for (int index = offset; index < length; ++index)
-				this._seed = this.decode(this._seed, buffer[index]);
+				this.Seed = decode(this.Seed, buffer[index]);
 
 			return nbytes;
 		}
@@ -57,12 +57,26 @@ namespace ACadSharp.IO.DWG
 			int length = offset + count;
 
 			for (int index = offset; index < length; ++index)
-				this._seed = this.decode(this._seed, buffer[index]);
+				this.Seed = decode(this.Seed, buffer[index]);
 
 			this._stream.Write(buffer, offset, count);
 		}
 
-		private ushort decode(ushort key, byte value)
+		public static ushort GetCRCValue(ushort seed, byte[] buffer, long startPos, long endPos)
+		{
+			ushort currValue = seed;
+			int index = (int)startPos;
+
+			while (endPos-- > 0)
+			{
+				currValue = CRC8StreamHandler.decode(currValue, buffer[index]);
+				index++;
+			}
+
+			return currValue;
+		}
+
+		private static ushort decode(ushort key, byte value)
 		{
 			int index = value ^ (byte)key;
 			key = (ushort)((uint)key >> 8 ^ CRC.CrcTable[index]);

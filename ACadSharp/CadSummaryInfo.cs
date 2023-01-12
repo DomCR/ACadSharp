@@ -6,16 +6,26 @@ namespace ACadSharp
 {
 	public class CadSummaryInfo
 	{
-		public string Title { get; set; }
-		public string Subject { get; set; }
-		public string Author { get; set; }
-		public string Keywords { get; set; }
-		public string Comments { get; set; }
-		public string LastSavedBy { get; set; }
-		public string RevisionNumber { get; set; }
-		public string HyperlinkBase { get; set; }
-		public DateTime CreatedDate { get; set; }
-		public DateTime ModifiedDate { get; set; }
+		public string Title { get; set; } = string.Empty;
+
+		public string Subject { get; set; } = string.Empty;
+
+		public string Author { get; set; } = string.Empty;
+
+		public string Keywords { get; set; } = string.Empty;
+
+		public string Comments { get; set; } = string.Empty;
+
+		public string LastSavedBy { get; set; } = string.Empty;
+
+		public string RevisionNumber { get; set; } = string.Empty;
+
+		public string HyperlinkBase { get; set; } = string.Empty;
+
+		public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+		public DateTime ModifiedDate { get; set; } = DateTime.Now;
+
 		public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
 	}
 }

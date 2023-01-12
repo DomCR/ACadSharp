@@ -3,6 +3,7 @@ using ACadSharp.Types.Units;
 using ACadSharp.Objects;
 using ACadSharp.Blocks;
 using ACadSharp.Entities;
+using System.Linq;
 
 namespace ACadSharp.Tables
 {
@@ -32,7 +33,7 @@ namespace ACadSharp.Tables
 		public static BlockRecord PaperSpace { get { return new BlockRecord(PaperSpaceName); } }
 
 		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.BLOCK;
+		public override ObjectType ObjectType => ObjectType.BLOCK_HEADER;
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableBlockRecord;
@@ -78,6 +79,17 @@ namespace ACadSharp.Tables
 			{
 				this._layout = value;
 				this._layout.AssociatedBlock = this;
+			}
+		}
+
+		/// <summary>
+		/// Flag indicating if the Block has Attributes attached
+		/// </summary>
+		public bool HasAttributes
+		{
+			get
+			{
+				return this.Entities.OfType<AttributeDefinition>().Any();
 			}
 		}
 

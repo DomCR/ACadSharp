@@ -33,8 +33,10 @@ namespace ACadSharp.IO.DWG
 	 * name clash. To complicate matters more, files also exist with table records with duplicate
 	 * names. This is incorrect, and the software should rename the record to be unique upon reading.
 	 */
-	internal class DwgObjectSectionReader : DwgSectionReader
+	internal class DwgObjectSectionReader : DwgSectionIO
 	{
+		public override string SectionName { get { return DwgSectionDefinition.AcDbObjects; } }
+
 		private long _objectInitialPos = 0;
 
 		private uint _size;
@@ -85,11 +87,12 @@ namespace ACadSharp.IO.DWG
 		private readonly byte[] _buffer;
 
 		public DwgObjectSectionReader(
+			ACadVersion version,
 			DwgDocumentBuilder builder,
 			IDwgStreamReader reader,
 			Queue<ulong> handles,
 			Dictionary<ulong, long> handleMap,
-			DxfClassCollection classes) : base(builder.DocumentToBuild.Header.Version)
+			DxfClassCollection classes) : base(version)
 		{
 			this._builder = builder;
 
@@ -112,7 +115,7 @@ namespace ACadSharp.IO.DWG
             this._crcStream.Position = 0L;
 
             //Setup the entity handler
-            this._crcReader = DwgStreamReader.GetStreamHandler(this._version, this._crcStream);
+            this._crcReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._crcStream);
 		}
 
 		/// <summary>
@@ -198,7 +201,7 @@ namespace ACadSharp.IO.DWG
 				ulong handleSectionOffset = (ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize;
 
 				//Create a handler section reader
-				this._objectReader = DwgStreamReader.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
 				//set the initial posiltion and get the object type
@@ -207,11 +210,11 @@ namespace ACadSharp.IO.DWG
 
 
 				//Create a handler section reader
-				this._handlesReader = DwgStreamReader.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
 				this._handlesReader.SetPositionInBits((long)handleSectionOffset);
 
 				//Create a text section reader
-				this._textReader = DwgStreamReader.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
 				this._textReader.SetPositionByFlag((long)handleSectionOffset - 1);
 
 				this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
@@ -219,10 +222,10 @@ namespace ACadSharp.IO.DWG
 			else
 			{
 				//Create a handler section reader
-				this._objectReader = DwgStreamReader.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
-				this._handlesReader = DwgStreamReader.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
 				this._textReader = this._objectReader;
 
 				//set the initial posiltion and get the object type
@@ -265,26 +268,27 @@ namespace ACadSharp.IO.DWG
 			return value;
 		}
 
-		/// <summary>
-		/// Read the common entity format.
-		/// </summary>
-		/// <param name="template"></param>
-		private void readCommonEntityData(CadEntityTemplate template)
+		private void readCommonData(CadTemplate template)
 		{
-			//Get the cad object as an entity
-			Entity entity = template.CadObject;
-
 			if (this._version >= ACadVersion.AC1015 && this._version < ACadVersion.AC1024)
 				//Obj size RL size of object in bits, not including end handles
 				this.updateHandleReader();
 
 			//Common:
 			//Handle H 5 code 0, length followed by the handle bytes.
-			ulong handle = this._objectReader.HandleReference();
-			entity.Handle = handle;
+			template.CadObject.Handle = this._objectReader.HandleReference();
 
 			//Extended object data, if any
 			this.readExtendedData(template);
+		}
+
+		// Read the common entity format.
+		private void readCommonEntityData(CadEntityTemplate template)
+		{
+			//Get the cad object as an entity
+			Entity entity = template.CadObject;
+
+			this.readCommonData(template);
 
 			//Graphic present Flag B 1 if a graphic is present
 			if (this._objectReader.ReadBit())
@@ -331,7 +335,7 @@ namespace ACadSharp.IO.DWG
 				template.OwnerHandle = this._handlesReader.HandleReference(entity.Handle);
 
 			//Numreactors BL number of persistent reactors attached to this object
-			this.readReactors(template);
+			this.readReactorsAndDictionaryHandle(template);
 
 			//R13-R14 Only:
 			if (this.R13_14Only)
@@ -396,7 +400,7 @@ namespace ACadSharp.IO.DWG
 				template.LineTypeHandle = this.handleReference();
 
 			//R2007+:
-			if (this._version >= ACadVersion.AC1021)
+			if (R2007Plus)
 			{
 				//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present at end of object
 				if (this._objectReader.Read2Bits() == 3)
@@ -418,7 +422,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//R2007 +:
-			if (this._version > ACadVersion.AC1021)
+			if (R2010Plus)
 			{
 				//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present at end of object
 				if (this._objectReader.ReadBit())
@@ -445,22 +449,12 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			//Lineweight RC 370
-			entity.LineWeight = DwgLineWeightConverter.ToValue(this._objectReader.ReadByte());
+			entity.LineWeight = CadUtils.ToValue(this._objectReader.ReadByte());
 		}
 
 		private void readCommonNonEntityData(CadTemplate template)
 		{
-			if (this._version >= ACadVersion.AC1015 && this._version < ACadVersion.AC1024)
-				//Obj size RL size of object in bits, not including end handles
-				this.updateHandleReader();
-
-			//Common:
-			//Handle H 5 code 0, length followed by the handle bytes.
-			ulong handle = this._objectReader.HandleReference();
-			template.CadObject.Handle = handle;
-
-			//Extended object data, if any
-			this.readExtendedData(template);
+			this.readCommonData(template);
 
 			//R13-R14 Only:
 			//Obj size RL size of object in bits, not including end handles
@@ -471,7 +465,7 @@ namespace ACadSharp.IO.DWG
 			template.OwnerHandle = this.handleReference(template.CadObject.Handle);
 
 			//Read the cad object reactors
-			this.readReactors(template);
+			this.readReactorsAndDictionaryHandle(template);
 		}
 
 		private void readXrefDependantBit(TableEntry entry)
@@ -626,7 +620,7 @@ namespace ACadSharp.IO.DWG
 		}
 
 		// Add the reactors to the template.
-		private void readReactors(CadTemplate template)
+		private void readReactorsAndDictionaryHandle(CadTemplate template)
 		{
 			//Numreactors S number of reactors in this object
 			int numberOfReactors = this._objectReader.ReadBitLong();
@@ -638,7 +632,7 @@ namespace ACadSharp.IO.DWG
 
 			bool flag = false;
 			//R2004+:
-			if (this._version >= ACadVersion.AC1018)
+			if (R2004Plus)
 				/*XDic Missing Flag
 				 * B
 				 * If 1, no XDictionary handle is stored for this object,
@@ -650,12 +644,12 @@ namespace ACadSharp.IO.DWG
 				//xdicobjhandle(hard owner)
 				template.XDictHandle = this.handleReference();
 
-			if (this._version <= ACadVersion.AC1024)
-				return;
-
 			//R2013+:
-			//Has DS binary data B If 1 then this object has associated binary data stored in the data store
-			this._objectReader.ReadBit();
+			if (R2013Plus)
+			{
+				//Has DS binary data B If 1 then this object has associated binary data stored in the data store
+				this._objectReader.ReadBit();
+			}
 		}
 
 		/// <summary>
@@ -672,7 +666,7 @@ namespace ACadSharp.IO.DWG
 
 			if (this._version == ACadVersion.AC1021)
 			{
-				this._textReader = DwgStreamReader.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
 				//"endbit" of the pre-handles section.
 				this._textReader.SetPositionByFlag(size + this._objectInitialPos - 1);
 			}
@@ -2982,7 +2976,7 @@ namespace ACadSharp.IO.DWG
 
 				//and lineweight (mask with 0x03E0)
 				byte lineweight = (byte)((values & 0x3E0) >> 5);
-				layer.LineWeight = DwgLineWeightConverter.ToValue(lineweight);
+				layer.LineWeight = CadUtils.ToValue(lineweight);
 			}
 
 			//Common:
@@ -2990,10 +2984,10 @@ namespace ACadSharp.IO.DWG
 			layer.Color = this._mergedReaders.ReadCmColor();
 
 			//Handle refs H Layer control (soft pointer)
+			template.LayerControlHandle = this.handleReference();
 			//[Reactors(soft pointer)]
 			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)
-			template.LayerControlHandle = this.handleReference();
 
 			//R2000+:
 			if (this.R2000Plus)
@@ -3011,9 +3005,11 @@ namespace ACadSharp.IO.DWG
 			//H 6 linetype (hard pointer)
 			template.LineTypeHandle = this.handleReference();
 
-			//H Unknown handle (hard pointer). Always seems to be NULL.
-			//Some times is not...
-			//handleReference();
+			if (R2013Plus)
+			{
+				//H Unknown handle (hard pointer). Always seems to be NULL.
+				handleReference();
+			}
 
 			return template;
 		}
@@ -3134,7 +3130,7 @@ namespace ACadSharp.IO.DWG
 			//R2007+:
 			if (this.R2007Plus && isText)
 			{
-				byte[] textarea = this._objectReader.ReadBytes(256);
+				byte[] textarea = this._objectReader.ReadBytes(512);
 				//TODO: Read the line type text area
 			}
 

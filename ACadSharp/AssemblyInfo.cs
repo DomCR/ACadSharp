@@ -17,4 +17,4 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("aa6052a6-647a-498d-86d0-4cce487747a9")]
 
-//[assembly: InternalsVisibleTo("ACadSharp.Tests")]
+[assembly: InternalsVisibleTo("ACadSharpInternal.Tests")]

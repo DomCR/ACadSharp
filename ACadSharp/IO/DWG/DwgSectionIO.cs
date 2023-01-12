@@ -1,7 +1,13 @@
-﻿namespace ACadSharp.IO.DWG
+﻿using System;
+
+namespace ACadSharp.IO.DWG
 {
-	internal abstract class DwgSectionReader
+	internal abstract class DwgSectionIO
 	{
+		public event NotificationEventHandler OnNotification;
+
+		public abstract string SectionName { get; }
+
 		/// <summary>
 		/// R13-R14 Only
 		/// </summary>
@@ -41,7 +47,7 @@
 
 		protected readonly ACadVersion _version;
 
-		public DwgSectionReader(ACadVersion version)
+		public DwgSectionIO(ACadVersion version)
 		{
 			_version = version;
 
@@ -54,6 +60,35 @@
 			R2010Plus = version >= ACadVersion.AC1024;
 			R2013Plus = version >= ACadVersion.AC1027;
 			R2018Plus = version >= ACadVersion.AC1032;
+		}
+
+		public static bool CheckSentinel(byte[] actual, byte[] expected)
+		{
+			if (expected.Length != actual.Length)
+				return false;
+
+			for (int i = 0; i < expected.Length; i++)
+			{
+				if (actual[i] != expected[i])
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		protected void checkSentinel(IDwgStreamReader sreader, byte[] expected)
+		{
+			var sn = sreader.ReadSentinel();
+
+			if (!CheckSentinel(sn, expected))
+				this.notify($"Invalid section sentinel found in {SectionName}", NotificationType.Warning);
+		}
+
+		protected void notify(string message, NotificationType type, Exception ex = null)
+		{
+			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, type, ex));
 		}
 	}
 }

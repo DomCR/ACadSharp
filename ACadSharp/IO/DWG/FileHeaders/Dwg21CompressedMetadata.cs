@@ -20,7 +20,7 @@
 		public ulong Unknow0x20 { get; set; } = 32;
 		public ulong Unknow0x40 { get; set; } = 64;
 		public ulong PagesMapCrcUncompressed { get; set; }
-		public ulong Unknown0x800 { get; set; } = 63488;
+		public ulong Unknown0xF800 { get; set; } = 0xF800;
 		public ulong Unknown4 { get; set; } = 4;
 		public ulong Unknown1 { get; set; } = 1;
 		public ulong SectionsAmount { get; set; }

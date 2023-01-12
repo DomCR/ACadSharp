@@ -8,6 +8,7 @@ namespace ACadSharp.IO.DWG
 	internal class DwgStreamReaderAC18 : DwgStreamReaderAC15
 	{
 		public DwgStreamReaderAC18(Stream stream, bool resetPosition) : base(stream, resetPosition) { }
+		
 		public override string ReadTextUnicode()
 		{
 			short textLength = this.ReadShort<LittleEndianConverter>();
@@ -23,6 +24,7 @@ namespace ACadSharp.IO.DWG
 					TextEncoding.GetListedEncoding(CodePage.Windows1252))
 					.Replace("\0", "");
 			}
+
 			return value;
 		}
 
@@ -35,10 +37,9 @@ namespace ACadSharp.IO.DWG
 			//BL: RGB value
 			int rgb = this.ReadBitLong();
 
-			byte id = this.ReadByte();
-
-			string colorName = string.Empty;
 			//RC: Color Byte(&1 => color name follows(TV),
+			byte id = this.ReadByte();
+			string colorName = string.Empty;
 			if ((id & 1) == 1)
 				colorName = this.ReadVariableText();
 

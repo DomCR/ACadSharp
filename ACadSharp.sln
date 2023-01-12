@@ -20,6 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACadSharp.Tests", "ACadShar
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "reference", "reference", "{B86AD482-05C4-400E-9CAE-7B96AD6B0C3E}"
 	ProjectSection(SolutionItems) = preProject
+		reference\ACadFileExploration.xlsx = reference\ACadFileExploration.xlsx
 		reference\autocad_2012_pdf_dxf-reference_enu.pdf = reference\autocad_2012_pdf_dxf-reference_enu.pdf
 		reference\OpenDesign_Specification_for_.dwg_files.pdf = reference\OpenDesign_Specification_for_.dwg_files.pdf
 	EndProjectSection
@@ -42,6 +43,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CSMath", "CSUtilities\CSMat
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{824FC7E8-4401-428C-87E7-2EA8A78D54BB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACadSharpInternal.Tests", "ACadSharpInternal.Tests\ACadSharpInternal.Tests.csproj", "{F426C904-7F30-4069-A6F2-2578B0E262E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +63,10 @@ Global
 		{3503AFF9-E9C1-46F4-8E40-81D3035093DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3503AFF9-E9C1-46F4-8E40-81D3035093DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3503AFF9-E9C1-46F4-8E40-81D3035093DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F426C904-7F30-4069-A6F2-2578B0E262E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F426C904-7F30-4069-A6F2-2578B0E262E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F426C904-7F30-4069-A6F2-2578B0E262E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F426C904-7F30-4069-A6F2-2578B0E262E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
