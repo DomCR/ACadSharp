@@ -77,14 +77,12 @@ namespace ACadSharp.IO.DWG
 				else if ((flags & 0x8000) > 0)
 				{
 					//Next value is a BS containing the RGB value(last 24 bits).
-					color = new Color();
-					color.Index = (short)this.ReadBitLong();
+					color = new Color((short)this.ReadBitLong());
 				}
 				else
 				{
-					color = new Color();
 					//Color index: if no flags were set, the color is looked up by the color number (ACI color).
-					color.Index = (short)(size & 0b111111111111);
+					color = new Color((short)(size & 0b111111111111));
 				}
 
 				//0x2000: color is followed by a transparency BL
