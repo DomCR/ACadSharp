@@ -11,209 +11,177 @@ using Newtonsoft.Json.Serialization;
 
 namespace ACadSharp.Tests.Entities
 {
-    public class MTextValueReaderWriterTests
-    {
-        private readonly ITestOutputHelper _output;
-        private readonly Random _random;
-        private readonly JsonSerializerSettings _jsonSettings;
+	public class MTextValueReaderWriterTests
+	{
+		private readonly ITestOutputHelper _output;
+		private readonly Random _random;
+		private readonly JsonSerializerSettings _jsonSettings;
+		class MemoryConverter : JsonConverter
+		{
+			public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+			{
+				writer.WriteValue(value.ToString());
+			}
 
-        class RoundedDecimalJsonConverter : JsonConverter
-        {
-            public override bool CanRead => false;
+			public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+				JsonSerializer serializer)
+			{
+				if (existingValue is string valueString)
+					return valueString.AsMemory();
 
-            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-            {
-                throw new NotImplementedException("Unnecessary because CanRead is false. The type will skip the converter.");
-            }
+				return null;
+			}
 
-            public override bool CanConvert(Type objectType)
-            {
-                return (objectType == typeof(float?) || objectType == typeof(double?));
-            }
+			public override bool CanConvert(Type objectType)
+			{
+				return objectType == typeof(ReadOnlyMemory<char>);
+			}
+		}
 
-            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-            {
-                if(value is float valueFloat)
-                    writer.WriteValue(Math.Truncate(valueFloat * 10000) / 10000);
-                else if (value is double valueDouble)
-                    writer.WriteValue(Math.Truncate(valueDouble * 10000) / 10000);
-            }
-        }
+		public MTextValueReaderWriterTests(ITestOutputHelper output)
+		{
+			this._output = output;
+			this._random = new Random();
+			this._jsonSettings = new JsonSerializerSettings
+			{
+				Converters =
+				{
+					new MemoryConverter()
+				},
+			};
 
-        class WritablePropertiesOnlyResolver : DefaultContractResolver
-        {
-            protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-            {
-                IList<JsonProperty> props = base.CreateProperties(type, memberSerialization);
+		}
 
-                if (type == typeof(Color))
-                {
-                    var p = props.Where(p =>
-                    {
-                        return p.PropertyName == "TrueColor"
-                               || p.PropertyName == "Index";
-                    }).ToList();
+		[Fact]
+		public void SerializedTokensMatchDeserialized()
+		{
+			var writer = new MText.ValueWriter();
+			var reader = new MText.ValueReader();
 
-                    return p;
-                }
+			for (int j = 0; j < 200; j++)
+			{
+				var source = this.randomTokens(1, 50);
+				var serialized = writer.Serialize(source).ToString();
+				var deserialized = reader.Deserialize(serialized);
 
-                return props.Where(p =>
-                {
-                    return !p.PropertyName.EndsWith("Combined")
-                           && p.PropertyName != "CombinedValues";
-                }).ToList();
-            }
-        }
-
-        class MemoryConverter : JsonConverter
-        {
-            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-            {
-                writer.WriteValue(value.ToString());
-            }
-
-            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-            {
-                if (existingValue is string valueString)
-                    return valueString.AsMemory();
-
-                return null;
-            }
-
-            public override bool CanConvert(Type objectType)
-            {
-                return objectType == typeof(ReadOnlyMemory<char>);
-            }
-        }
-
-        public MTextValueReaderWriterTests(ITestOutputHelper output)
-        {
-            _output = output;
-            _random = new Random();
-            _jsonSettings = new JsonSerializerSettings
-            {
-                ContractResolver = new WritablePropertiesOnlyResolver(),
-                Converters =
-                {
-                    new MemoryConverter(),
-                    new RoundedDecimalJsonConverter()
-                },
-                
-                //Formatting = Formatting.Indented
-            };
-
-        }
-
-        [Fact]
-        public void RandomTokenTests()
-        {
-            var writer = new MText.ValueWriter();
-            var reader = new MText.ValueReader();
-            
-            for (int j = 0; j < 2000; j++)
-            {
-                var source = RandomTokens(1, 2);
-                var sourceJson = JsonConvert.SerializeObject(source, _jsonSettings);
-                var serialized = writer.Serialize(source).ToString();
-
-                var deserialized = reader.Deserialize(serialized);
-                var deserializedJson = JsonConvert.SerializeObject(deserialized, _jsonSettings);
-
-                try
-                {
-                    Assert.Equal(sourceJson, deserializedJson);
-                }
-                catch (Exception e)
-                {
-                    _output.WriteLine("Source JSON:");
-                    _output.WriteLine(sourceJson);
-
-                    _output.WriteLine("Serialized:");
-                    _output.WriteLine(serialized);
-
-                    _output.WriteLine("Deserialized JSON:");
-                    _output.WriteLine(deserializedJson);
-                }
-                
-                Assert.Equal(source.Length, deserialized.Length);
-            }
-
-        }
+				this.assertTokensEqual(source, deserialized);
+			}
+		}
 
 
+		private MText.Token[] randomTokens(int min, int max)
+		{
+			var tokenCount = this._random.Next(min, max);
+			var tokens = new List<MText.Token>(tokenCount);
 
-        private MText.Token[] RandomTokens(int min, int max)
-        {
-            var tokenCount = _random.Next(min, max);
-            var tokens = new List<MText.Token>(tokenCount);
+			for (int i = 0; i < tokenCount; i++)
+			{
+				if (this._random.Next(0, 10) < 8)
+				{
+					tokens.Add(new MText.TokenValue(this.randomFormat(), randomString().AsMemory()));
+				}
+				else
+				{
+					tokens.Add(new MText.TokenFraction(
+						this.randomFormat(), this._random.Next(0, 2) == 0 ? randomString() : null, this._random.Next(0, 2) == 0 ? randomString() : null,
+						(MText.TokenFraction.Divider)this._random.Next(0, 3)));
+				}
+			}
 
-            for (int i = 0; i < tokenCount; i++)
-            {
-                if (_random.Next(0, 10) < 8)
-                {
-                    tokens.Add(new MText.TokenValue(RandomFormat(), RandomString().AsMemory()));
-                }
-                else
-                {
-                    tokens.Add(new MText.TokenFraction(
-                        RandomFormat(),
-                        _random.Next(0, 2) == 0 ? RandomString() : null,
-                        _random.Next(0, 2) == 0 ? RandomString() : null,
-                        (MText.TokenFraction.Divider)_random.Next(0, 3)));
-                }
-            }
+			return tokens.ToArray();
+		}
 
-            return tokens.ToArray();
-        }
+		private MText.Format randomFormat()
+		{
+			var format = new MText.Format()
+			{
+				//IsHeightRelative = Convert.ToBoolean(_random.Next(0, 2)),
+				IsOverline = Convert.ToBoolean(this._random.Next(0, 2)),
+				IsStrikeThrough = Convert.ToBoolean(this._random.Next(0, 2)),
+				IsUnderline = Convert.ToBoolean(this._random.Next(0, 2)),
+			};
 
-        private MText.Format RandomFormat()
-        {
-            var format = new MText.Format()
-            {
-                //IsHeightRelative = Convert.ToBoolean(_random.Next(0, 2)),
-                IsOverline = Convert.ToBoolean(_random.Next(0, 2)),
-                IsStrikeThrough = Convert.ToBoolean(_random.Next(0, 2)),
-                IsUnderline = Convert.ToBoolean(_random.Next(0, 2)),
-            };
+			if (this._random.Next(0, 2) == 0)
+				format.Align = (MText.Format.Alignment)this._random.Next(0, 3);
 
-            if (_random.Next(0, 2) == 0)
-                format.Align = (MText.Format.Alignment)_random.Next(0, 3);
+			//if (_random.Next(0, 2) == 0)
+			//    format.Height = (float)Math.Round((_random.NextDouble() * 60), 4);
 
-            //if (_random.Next(0, 2) == 0)
-            //    format.Height = (float)Math.Round((_random.NextDouble() * 60), 4);
+			if (this._random.Next(0, 2) == 0)
+				format.Obliquing = (float)(this._random.NextDouble() * 20 * (this._random.Next(0, 2) == 0 ? -1 : 1));
 
-            if (_random.Next(0, 2) == 0)
-                format.Obliquing = (float)(_random.NextDouble() * 20 * (_random.Next(0, 2) == 0 ? -1 : 1));
+			if (this._random.Next(0, 2) == 0)
+				format.Tracking = (float)(this._random.NextDouble() * 5);
 
-            if (_random.Next(0, 2) == 0)
-                format.Tracking = (float)(_random.NextDouble() * 5);
+			if (this._random.Next(0, 1) == 0)
+				format.Width = (float)(this._random.NextDouble() * 4);
 
-            if (_random.Next(0, 1) == 0)
-                format.Width = (float)(_random.NextDouble() * 4);
+			if (this._random.Next(0, 2) == 0)
+				format.Color = this._random.Next(0, 2) == 0
+					? Color.FromTrueColor(this._random.Next(0, 1 << 24))
+					: new Color((short)this._random.Next(0, 257));
 
-            if (_random.Next(0, 2) == 0)
-                format.Color = _random.Next(0, 2) == 0
-                    ? Color.FromTrueColor(_random.Next(0, 1 << 24))
-                    : new Color((short)_random.Next(0, 257));
+			var paragraphCount = this._random.Next(0, 5);
+			for (int i = 0; i < paragraphCount; i++)
+			{
+				format.Paragraph.Add(randomString().AsMemory());
+			}
 
-            var paragraphCount = _random.Next(0, 5);
-            for (int i = 0; i < paragraphCount; i++)
-            {
-                format.Paragraph.Add(RandomString().AsMemory());
-            }
+			format.Font.IsItalic = Convert.ToBoolean(this._random.Next(0, 2));
+			format.Font.IsBold = Convert.ToBoolean(this._random.Next(0, 2));
+			format.Font.CodePage = this._random.Next(0, 256);
+			format.Font.FontFamily = randomString().AsMemory();
+			format.Font.Pitch = this._random.Next(0, 10);
 
-            format.Font.IsItalic = Convert.ToBoolean(_random.Next(0, 2));
-            format.Font.IsBold = Convert.ToBoolean(_random.Next(0, 2));
-            format.Font.CodePage = _random.Next(0, 256);
-            format.Font.FontFamily = RandomString().AsMemory();
-            format.Font.Pitch = _random.Next(0, 10);
+			return format;
+		}
 
-            return format;
-        }
+		private static string randomString()
+		{
+			return Path.GetRandomFileName();
+		}
 
-        public static string RandomString()
-        {
-            return Path.GetRandomFileName();
-        }
-    }
+
+		private void assertTokensEqual(MText.Token[] expected, MText.Token[] actual)
+		{
+			Assert.Equal(expected.Length, actual.Length);
+
+			for (int i = 0; i < expected.Length; i++)
+			{
+				// Format
+				if (!Nullable.Equals(expected[i].Format, actual[i].Format))
+				{
+					this.outputJson(expected, actual);
+				}
+
+				if (expected[i] is MText.TokenValue expectedValue
+				    && actual[i] is MText.TokenValue actualValue
+				    && expectedValue.Equals(actualValue))
+				{
+					return;
+				}
+				else if (expected[i] is MText.TokenFraction expectedFraction
+				         && actual[i] is MText.TokenFraction actualFraction
+				         && expectedFraction.Equals(actualFraction))
+				{
+					return;
+				}
+				else
+				{
+					this.outputJson(expected, actual);
+				}
+			}
+		}
+
+		private void outputJson(MText.Token[] expected, MText.Token[] actual)
+		{
+			var expectedJson = JsonConvert.SerializeObject(expected, this._jsonSettings);
+			var otherJson = JsonConvert.SerializeObject(actual, this._jsonSettings);
+			this._output.WriteLine("Expected:");
+			this._output.WriteLine(expectedJson);
+			this._output.WriteLine("Actual:");
+			this._output.WriteLine(otherJson);
+			Assert.Equal(expectedJson, otherJson);
+		}
+	}
 }
