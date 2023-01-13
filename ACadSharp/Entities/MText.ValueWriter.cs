@@ -9,8 +9,17 @@ namespace ACadSharp.Entities
 	public partial class MText
 	{
 		/// <summary>
-		/// Writer which takes Tokens and serializes it.
+		/// Zero copy writer to serialize AutoCAD M-Text value entries and from MText tokens.
 		/// </summary>
+		/// <remarks>
+		/// Main goal of this writer is to be a zero copy serializer.
+		/// This class is NOT thread safe, but is designed to be re-used.
+		/// </remarks>
+		/// <seealso>
+		/// https://www.cadforum.cz/en/text-formatting-codes-in-mtext-objects-tip8640
+		/// https://knowledge.autodesk.com/support/autocad-lt/learn-explore/caas/CloudHelp/cloudhelp/2019/ENU/AutoCAD-LT/files/GUID-7D8BB40F-5C4E-4AE5-BD75-9ED7112E5967-htm.html
+		/// https://knowledge.autodesk.com/support/autocad-lt/learn-explore/caas/CloudHelp/cloudhelp/2019/ENU/AutoCAD-LT/files/GUID-6F59DA4A-A790-4316-A79C-2CCE723A30CA-htm.html
+		/// </seealso>
 		public class ValueWriter
 		{
 			//private List<ReadOnlyMemory<char>> _outputList = null!;
@@ -104,10 +113,11 @@ namespace ACadSharp.Entities
 			public delegate void Walker(in ReadOnlyMemory<char> walk);
 
 			/// <summary>
-			/// Serializes the tokens into a list of memory.
+			/// Serializes the passed contest tokens into a string representation.
 			/// </summary>
 			/// <param name="tokens">Tokens to Serialize</param>
-			/// <returns>List of memory</returns>
+			/// <returns>StringBuilder with the content of the serialized tokens.</returns>
+			/// <remarks>Not thread safe.</remarks>
 			public StringBuilder Serialize(Token[] tokens)
 			{
 				var stringBuilder = new StringBuilder();
@@ -123,10 +133,15 @@ namespace ACadSharp.Entities
 			}
 
 			/// <summary>
-			/// Walks through the tokens while serializing.
+			/// Walks the content as it is being serialized.  The visitor is passed the output as it is written.
 			/// </summary>
-			/// <param name="visitor">Visitor to walk through the output.</param>
-			/// <param name="tokens">Tokens to serialize.</param>
+			/// <param name="visitor">Visitor to walk through the data as it is read.</param>
+			/// <param name="tokens">Tokens to Serialize</param>
+			/// <remarks>
+			/// Walking is a zero copy serializing process.  This means that the content of the tokens
+			/// are not guaranteed to be valid beyond the return of the visitor.
+			/// Not Thread Safe.
+			/// </remarks>
 			public void SerializeWalker(in Walker visitor, Token[] tokens)
 			{
 				this._visitor = visitor;
@@ -200,6 +215,10 @@ namespace ACadSharp.Entities
 
 			}
 
+			/// <summary>
+			/// Writes the passed token to the output.
+			/// </summary>
+			/// <param name="tokenValue">Token to write.</param>
 			private void writeTokenValue(TokenValue tokenValue)
 			{
 				if (tokenValue.Values == null)
@@ -212,6 +231,11 @@ namespace ACadSharp.Entities
 				}
 			}
 
+			/// <summary>
+			/// Writes the passed contents and escapes/translates as required.
+			/// </summary>
+			/// <param name="values">Values to write.</param>
+			/// <param name="fractionEscapes">If true, escapes any passed special characters used for fractions.</param>
 			private void writeContents(ReadOnlyMemory<char> values, bool fractionEscapes = false)
 			{
 				var spanValues = values.Span;
@@ -287,6 +311,10 @@ namespace ACadSharp.Entities
 				}
 			}
 
+			/// <summary>
+			/// Replaces the current character with the passed values.
+			/// </summary>
+			/// <param name="replaceWith">Values to replace the current character with.</param>
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			private void replaceCharacter(ReadOnlyMemory<char> replaceWith)
 			{
@@ -297,12 +325,16 @@ namespace ACadSharp.Entities
 				this._lastConsumedPosition = this._position + 1;
 			}
 
-			private void appendCharacter(ReadOnlyMemory<char> appendCharacter)
+			/// <summary>
+			/// Appends the current character with the passed values.
+			/// </summary>
+			/// <param name="append">Values to append to the current position of the writer.</param>
+			private void appendCharacter(ReadOnlyMemory<char> append)
 			{
 				var writeLength = this._position - this._lastConsumedPosition;
 				if (writeLength > 0) this._visitor!.Invoke(this._values.Slice(this._lastConsumedPosition, writeLength));
 
-				this._visitor!.Invoke(appendCharacter);
+				this._visitor!.Invoke(append);
 				this._lastConsumedPosition = this._position;
 			}
 
@@ -452,6 +484,10 @@ namespace ACadSharp.Entities
 				this._currentFormat = newFormat;
 			}
 
+			/// <summary>
+			/// Outputs the string representation of a given unsigned integer value.
+			/// </summary>
+			/// <param name="value">The value to output the string representation of.</param>
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			private void outputUint(uint value)
 			{
@@ -472,6 +508,10 @@ namespace ACadSharp.Entities
 				for (int i = 0; i < bufferLength; i++) this.outputNumber(outputArray[i]);
 			}
 
+			/// <summary>
+			/// Outputs the string representation of a given unsigned integer value using a visitor pattern.
+			/// </summary>
+			/// <param name="value">The value to output the string representation of.</param>
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			private void outputNumber(uint value)
 			{
@@ -514,6 +554,12 @@ namespace ACadSharp.Entities
 				}
 			}
 
+			/// <summary>
+			/// Calculates the quotient and remainder of a division operation between two unsigned integers.
+			/// </summary>
+			/// <param name="left">The dividend of the division operation.</param>
+			/// <param name="right">The divisor of the division operation.</param>
+			/// <returns>A tuple containing the quotient and remainder of the division operation.</returns>
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			private static (uint Quotient, uint Remainder) divRem(uint left, uint right)
 			{
@@ -521,6 +567,11 @@ namespace ACadSharp.Entities
 				return (quotient, left - (quotient * right));
 			}
 
+			/// <summary>
+			/// Counts the number of digits in a given unsigned integer value.
+			/// </summary>
+			/// <param name="value">The value to count the digits of.</param>
+			/// <returns>The number of digits in the given value.</returns>
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			private static int countDigits(uint value)
 			{

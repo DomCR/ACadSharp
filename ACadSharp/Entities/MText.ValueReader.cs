@@ -8,7 +8,7 @@ namespace ACadSharp.Entities
 	public partial class MText
 	{
 		/// <summary>
-		/// Zero copy reader to parse AutoCAD M-Text value entries and return tokens.
+		/// Zero copy reader to deserialize AutoCAD M-Text value entries and return tokens.
 		/// </summary>
 		/// <remarks>
 		/// Main goal of this reader is to be a zero copy reader.
@@ -42,27 +42,35 @@ namespace ACadSharp.Entities
 			private readonly Memory<char> _charBuffer = new Memory<char>(new char[1]);
 
 			/// <summary>
-			/// Deserializes the passed contest value.
+			/// Deserializes the passed content value.
 			/// </summary>
-			/// <param name="content">Content to parse.</param>
-			/// <returns>Parsed token list.  This is not a zero copy parsing process.</returns>
+			/// <param name="content">Content to deserialize.</param>
+			/// <returns>Deserialized token list.  This is not a zero copy parsing process.</returns>
 			/// <remarks>Not thread safe.</remarks>
 			public Token[] Deserialize(string content)
 			{
 				return this.Deserialize(content, null);
 			}
 
+
+			/// <summary>
+			/// Deserializes the passed content value.
+			/// </summary>
+			/// <param name="content">Content to deserialize.</param>
+			/// <param name="baseFormat">This is the base format that will be used.</param>
+			/// <returns>Deserialized token list.  This is not a zero copy parsing process.</returns>
+			/// <remarks>Not thread safe.</remarks>
 			public Token[] Deserialize(string content, Format? baseFormat)
 			{
 				return this.Deserialize(content.AsMemory(), baseFormat);
 			}
 
 			/// <summary>
-			/// Deserializes the passed contest value.
+			/// Deserializes the passed content value.
 			/// </summary>
-			/// <param name="content">Content to parse.</param>
+			/// <param name="content">Content to deserialize.</param>
 			/// <param name="baseFormat">This is the base format that will be used.</param>
-			/// <returns>Parsed token list.  This is not a zero copy parsing process.</returns>
+			/// <returns>Deserialized token list.  This is not a zero copy parsing process.</returns>
 			/// <remarks>Not thread safe.</remarks>
 			public Token[] Deserialize(ReadOnlyMemory<char> content, Format? baseFormat)
 			{
@@ -452,7 +460,7 @@ namespace ACadSharp.Entities
 			/// Tries to parse an int from the control code value.
 			/// </summary>
 			/// <param name="spanText">Text to read from.</param>
-			/// <param name="value">Parsed value.  Invalid data on failure.</param>
+			/// <param name="value">Deserialized value.  Invalid data on failure.</param>
 			/// <returns>True on success, false otherwise.</returns>
 			private bool tryParseControlCodeInt(ReadOnlySpan<char> spanText, out int value)
 			{
@@ -477,7 +485,7 @@ namespace ACadSharp.Entities
 			/// Tries to parse a float from the control code value.
 			/// </summary>
 			/// <param name="spanText">Text to read from.</param>
-			/// <param name="value">Parsed value.  Invalid data on failure.</param>
+			/// <param name="value">Deserialized value.  Invalid data on failure.</param>
 			/// <param name="trailingX">True if there is a training X</param>
 			/// <returns>True on success, false otherwise.</returns>
 			private bool tryParseControlCodeFloatWithX(ReadOnlySpan<char> spanText, out float value, out bool trailingX)
@@ -512,7 +520,7 @@ namespace ACadSharp.Entities
 			/// Tries to parse a float from the control code value.
 			/// </summary>
 			/// <param name="spanText">Text to read from.</param>
-			/// <param name="value">Parsed value.  Invalid data on failure.</param>
+			/// <param name="value">Deserialized value.  Invalid data on failure.</param>
 			/// <returns>True on success, false otherwise.</returns>
 			private bool tryParseControlCodeFloat(ReadOnlySpan<char> spanText, out float value)
 			{
