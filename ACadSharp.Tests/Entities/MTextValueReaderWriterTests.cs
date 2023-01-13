@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using ACadSharp.Entities;
-using System.Linq;
 using Xunit;
 using System.IO;
 using Xunit.Abstractions;
-using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace ACadSharp.Tests.Entities
 {
@@ -16,6 +13,7 @@ namespace ACadSharp.Tests.Entities
 		private readonly ITestOutputHelper _output;
 		private readonly Random _random;
 		private readonly JsonSerializerSettings _jsonSettings;
+
 		class MemoryConverter : JsonConverter
 		{
 			public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
@@ -58,7 +56,7 @@ namespace ACadSharp.Tests.Entities
 			var writer = new MText.ValueWriter();
 			var reader = new MText.ValueReader();
 
-			for (int j = 0; j < 200; j++)
+			for (int j = 0; j < 1000; j++)
 			{
 				var source = this.randomTokens(1, 50);
 				var serialized = writer.Serialize(source).ToString();
@@ -83,7 +81,8 @@ namespace ACadSharp.Tests.Entities
 				else
 				{
 					tokens.Add(new MText.TokenFraction(
-						this.randomFormat(), this._random.Next(0, 2) == 0 ? randomString() : null, this._random.Next(0, 2) == 0 ? randomString() : null,
+						this.randomFormat(), this._random.Next(0, 2) == 0 ? randomString() : null,
+						this._random.Next(0, 2) == 0 ? randomString() : null,
 						(MText.TokenFraction.Divider)this._random.Next(0, 3)));
 				}
 			}
@@ -104,8 +103,8 @@ namespace ACadSharp.Tests.Entities
 			if (this._random.Next(0, 2) == 0)
 				format.Align = (MText.Format.Alignment)this._random.Next(0, 3);
 
-			//if (_random.Next(0, 2) == 0)
-			//    format.Height = (float)Math.Round((_random.NextDouble() * 60), 4);
+			if (this._random.Next(0, 2) == 0)
+				format.Height = (float)Math.Round((this._random.NextDouble() * 60), 4);
 
 			if (this._random.Next(0, 2) == 0)
 				format.Obliquing = (float)(this._random.NextDouble() * 20 * (this._random.Next(0, 2) == 0 ? -1 : 1));
@@ -113,7 +112,7 @@ namespace ACadSharp.Tests.Entities
 			if (this._random.Next(0, 2) == 0)
 				format.Tracking = (float)(this._random.NextDouble() * 5);
 
-			if (this._random.Next(0, 1) == 0)
+			if (this._random.Next(0, 2) == 0)
 				format.Width = (float)(this._random.NextDouble() * 4);
 
 			if (this._random.Next(0, 2) == 0)
@@ -149,7 +148,7 @@ namespace ACadSharp.Tests.Entities
 			for (int i = 0; i < expected.Length; i++)
 			{
 				// Format
-				if (!Nullable.Equals(expected[i].Format, actual[i].Format))
+				if (!Equals(expected[i].Format, actual[i].Format))
 				{
 					this.outputJson(expected, actual);
 				}
