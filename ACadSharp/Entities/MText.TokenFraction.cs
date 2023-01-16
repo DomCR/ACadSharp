@@ -105,12 +105,12 @@ namespace ACadSharp.Entities
 				return this.equals((TokenFraction)obj);
 			}
 
-			[SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
 			public override int GetHashCode()
 			{
 #if NETFRAMEWORK
                 return base.GetHashCode();
 #else
+				// ReSharper disable all NonReadonlyMemberInGetHashCode
 				return HashCode.Combine(this.Numerator, this.Denominator, (int)this.DividerType, this.Format);
 #endif
 			}

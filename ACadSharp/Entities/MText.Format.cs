@@ -193,12 +193,12 @@ namespace ACadSharp.Entities
 				       && this.AreParagraphsEqual(other.Paragraph);
 			}
 
-			[SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
 			public override int GetHashCode()
 			{
 #if NETFRAMEWORK
                 return base.GetHashCode();
 #else
+				// ReSharper disable all NonReadonlyMemberInGetHashCode
 				var hashCode = new HashCode();
 				hashCode.Add(this.Font);
 				hashCode.Add(this.IsUnderline);

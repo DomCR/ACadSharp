@@ -1,6 +1,5 @@
 ﻿#nullable enable
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace ACadSharp.Entities
 {
@@ -42,15 +41,6 @@ namespace ACadSharp.Entities
 			public Font()
 			{
 
-			}
-
-			/// <summary>
-			/// Creates a font with the contents of the passed font.
-			/// </summary>
-			/// <param name="original">Original font to copy from.</param>
-			public Font(Font original)
-			{
-				this.OverrideFrom(original);
 			}
 
 			/// <summary>
@@ -101,12 +91,12 @@ namespace ACadSharp.Entities
 					&& this.Pitch == other.Pitch;
 			}
 
-			[SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
 			public override int GetHashCode()
 			{
 #if NETFRAMEWORK
                 return base.GetHashCode();
 #else
+				// ReSharper disable all NonReadonlyMemberInGetHashCode
 				return HashCode.Combine(this.FontFamily, this.IsBold, this.IsItalic, this.CodePage, this.Pitch);
 #endif
 			}
