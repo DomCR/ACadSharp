@@ -1,6 +1,5 @@
 ﻿#nullable enable
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -338,7 +337,6 @@ namespace ACadSharp.Entities
 				this._lastConsumedPosition = this._position;
 			}
 
-			[SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
 			private void outputAnyFormatChanges(Format? newFormat)
 			{
 				if (newFormat == null || this._currentFormat == null)
@@ -377,6 +375,7 @@ namespace ACadSharp.Entities
 						: _tokenControlCodeKOut);
 				}
 
+				// ReSharper disable all CompareOfFloatsByEqualityOperator
 				if (this._currentFormat.Tracking != newFormat.Tracking && newFormat.Tracking != null)
 				{
 					this._visitor!.Invoke(_tokenTextTracking);
@@ -464,7 +463,7 @@ namespace ACadSharp.Entities
 					this._visitor!.Invoke(_tokenSemiColon);
 				}
 
-				if (newFormat.AreParagraphsEqual(this._currentFormat.Paragraph) == false)
+				if (Token.AreSequencesEqual(newFormat.Paragraph, this._currentFormat.Paragraph) == false)
 				{
 					this._visitor!.Invoke(_tokenControlParagraph);
 

@@ -9,7 +9,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Contains a formatted value.
 		/// </summary>
-		public class TokenValue : Token
+		public class TokenValue : Token, IEquatable<TokenValue>
 		{
 			/// <summary>
 			/// Contains all the token values.  Will normally be multiple splices of memory.
@@ -59,22 +59,17 @@ namespace ACadSharp.Entities
 
 			public override bool Equals(object? obj)
 			{
-				if (ReferenceEquals(null, obj))
-				{
+				return this.Equals(obj as TokenValue);
+			}
+
+
+			public bool Equals(TokenValue? other)
+			{
+				if (other == null)
 					return false;
-				}
 
-				if (ReferenceEquals(this, obj))
-				{
-					return true;
-				}
-
-				if (obj.GetType() != this.GetType())
-				{
-					return false;
-				}
-
-				return ((TokenValue)obj).CombinedValues == this.CombinedValues;
+				return Token.AreSequencesEqual(this.Values, other.Values)
+				       && this.Format?.Equals(other.Format) == true;
 			}
 
 			public override int GetHashCode()
@@ -82,6 +77,7 @@ namespace ACadSharp.Entities
 #if NETFRAMEWORK
                 return base.GetHashCode();
 #else
+				// ReSharper disable all NonReadonlyMemberInGetHashCode
 				return HashCode.Combine(this.Format, this.Values);
 #endif
 			}

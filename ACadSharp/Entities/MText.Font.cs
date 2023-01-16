@@ -8,7 +8,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Font used by MText Tokens.
 		/// </summary>
-		public class Font
+		public class Font : IEquatable<Font>
 		{
 			/// <summary>
 			/// Tet Font Family.

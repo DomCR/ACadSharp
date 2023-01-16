@@ -1,16 +1,15 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace ACadSharp.Entities
 {
-	public partial class MText
+	public partial class MText 
 	{
 		/// <summary>
 		/// Contains a formatted fraction value.
 		/// </summary>
-		public class TokenFraction : Token
+		public class TokenFraction : Token, IEquatable<TokenFraction>
 		{
 			/// <summary>
 			/// Type of divisor used to split the Numerator and Denominator.
@@ -77,32 +76,20 @@ namespace ACadSharp.Entities
 				: base(format)
 			{
 			}
-
-			protected bool equals(TokenFraction other)
-			{
-				return this.NumeratorCombined == other.NumeratorCombined
-				       && this.DenominatorCombined == other.DenominatorCombined
-				       && this.DividerType == other.DividerType;
-			}
-
 			public override bool Equals(object? obj)
 			{
-				if (ReferenceEquals(null, obj))
-				{
+				return this.Equals(obj as TokenFraction);
+			}
+
+			public bool Equals(TokenFraction? other)
+			{
+				if (other == null)
 					return false;
-				}
-
-				if (ReferenceEquals(this, obj))
-				{
-					return true;
-				}
-
-				if (obj.GetType() != this.GetType())
-				{
-					return false;
-				}
-
-				return this.equals((TokenFraction)obj);
+				
+				return Token.AreSequencesEqual(this.Numerator, other.Numerator)
+				       && Token.AreSequencesEqual(this.Denominator, other.Denominator)
+					   && this.DividerType == other.DividerType
+				       && this.Format?.Equals(other.Format) == true;
 			}
 
 			public override int GetHashCode()

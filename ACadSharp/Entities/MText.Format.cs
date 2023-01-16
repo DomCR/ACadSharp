@@ -1,7 +1,6 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace ACadSharp.Entities
 {
@@ -10,7 +9,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Format used by MText Tokens.
 		/// </summary>
-		public class Format
+		public class Format : IEquatable<Format>
 		{
 			private float? _height;
 			private float? _width;
@@ -164,6 +163,11 @@ namespace ACadSharp.Entities
 				this.Paragraph.Clear();
 			}
 
+			/// <summary>
+			/// Checks to see if the passed object equals this format.
+			/// </summary>
+			/// <param name="obj">Other object to compare to.</param>
+			/// <returns>True of the formats are equal, false otherwise.</returns>
 			public override bool Equals(object? obj)
 			{
 				return this.Equals(obj as Format);
@@ -190,7 +194,7 @@ namespace ACadSharp.Entities
 				       && Nullable.Equals(this.Align, other.Align)
 				       && this.Color.Equals(other.Color)
 				       && this.Font.Equals(other.Font)
-				       && this.AreParagraphsEqual(other.Paragraph);
+				       && Token.AreSequencesEqual(this.Paragraph, other.Paragraph);
 			}
 
 			public override int GetHashCode()
@@ -220,50 +224,6 @@ namespace ACadSharp.Entities
 			{
 				return
 					$"U:{this.IsUnderline}; O:{this.IsOverline}; S:{this.IsStrikeThrough}; H:{this.Height}{(this.IsHeightRelative ? "x" : "")}; W: {this.Width}; Align: {this.Align}; Color: {this.Color}; Font: {this.Font} ";
-			}
-
-			/// <summary>
-			/// Checks to see if the passed format's contents are equal to this format.
-			/// </summary>
-			/// <param name="other">Other format to compare to.</param>
-			/// <returns>True of the formats are equal, false otherwise.</returns>
-			internal bool AreParagraphsEqual(List<ReadOnlyMemory<char>>? other)
-			{
-
-				if (Nullable.Equals(this.Paragraph, other))
-				{
-					return true;
-				}
-				else
-				{
-					if (other != null && this.Paragraph.Count == other.Count)
-					{
-						if (this.Paragraph.Count == 0)
-						{
-							return true;
-						}
-						else
-						{
-							bool paragraphsEqual = false;
-							for (int i = 0; i < this.Paragraph.Count; i++)
-							{
-								if (this.Paragraph[i].Span.SequenceEqual(other[i].Span))
-								{
-									paragraphsEqual = true;
-								}
-								else
-								{
-									paragraphsEqual = false;
-									break;
-								}
-							}
-
-							return paragraphsEqual;
-						}
-					}
-
-					return false;
-				}
 			}
 
 			private static bool isApproximateEqual(float? source, float? other, float precision = 0.1f)
