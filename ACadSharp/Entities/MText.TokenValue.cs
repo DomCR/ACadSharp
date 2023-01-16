@@ -15,7 +15,7 @@ namespace ACadSharp.Entities
 			/// Contains all the token values.  Will normally be multiple splices of memory.
 			/// </summary>
 			/// <remarks>Does not allocate.</remarks>
-			public IReadOnlyList<ReadOnlyMemory<char>>? Values { get; internal set; }
+			public IReadOnlyList<ReadOnlyMemory<char>>? Values { get; set; }
 
 			/// <summary>
 			/// Helper method which will combine all the <see cref="Values"/> into a single new string.
@@ -51,28 +51,6 @@ namespace ACadSharp.Entities
 			{
 				this.Values = values;
 			}
-
-			/// <summary>
-			/// Creates a token value with the passed parameters for it's starting state.  Used for testing.
-			/// </summary>
-			/// <param name="format">Current Format of the value.</param>
-			/// <param name="value">String value this token contains.</param>
-			internal TokenValue(Format format, string value)
-				: base(format)
-			{
-				this.Values = new[] { value.AsMemory() };
-			}
-
-			/// <summary>
-			/// Creates a token value with the passed parameters for it's starting state.  Used for testing.
-			/// </summary>
-			/// <param name="value">String value this token contains.</param>
-			internal TokenValue(string value)
-				: base(new Format())
-			{
-				this.Values = new[] { value.AsMemory() };
-			}
-
 
 			public override string ToString()
 			{

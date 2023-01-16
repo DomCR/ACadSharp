@@ -54,22 +54,6 @@ namespace ACadSharp.Entities
 			}
 
 			/// <summary>
-			/// Creates a font with the passed formats.  Used for testing.
-			/// </summary>
-			/// <param name="formats">Formats to use.</param>
-			internal Font(string formats)
-			{
-				// Used only for testing
-				if (formats.Contains("B")) this.IsBold = true;
-
-				if (formats.Contains("I")) this.IsItalic = true;
-
-				if (formats.Contains("b")) this.IsBold = false;
-
-				if (formats.Contains("i")) this.IsItalic = false;
-			}
-
-			/// <summary>
 			/// Overrides this font with the passed font contents.
 			/// </summary>
 			/// <param name="source">Source font to copy from.</param>

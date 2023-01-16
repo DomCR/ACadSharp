@@ -7,6 +7,82 @@ namespace ACadSharp.Tests.Entities
 {
 	public class MTextValueTestData
 	{
+		/// <summary>
+		/// Creates a token value with the passed parameters for it's starting state.  Used for testing.
+		/// </summary>
+		/// <param name="format">Current Format of the value.</param>
+		/// <param name="value">String value this token contains.</param>
+		public static MText.TokenValue CreateTokenValue(MText.Format format, string value)
+		{
+			return new MText.TokenValue(format, value.AsMemory());
+		}
+
+		/// <summary>
+		/// Creates a token value with the passed parameters for it's starting state.  Used for testing.
+		/// </summary>
+		/// <param name="value">String value this token contains.</param>
+		public static MText.TokenValue CreateTokenValue(string value)
+		{
+			return new MText.TokenValue(new MText.Format(), value.AsMemory());
+		}
+
+		/// <summary>
+		/// Creates a format with the specified simple formats.  Testing use onle.
+		/// </summary>
+		/// <param name="formats">Format string to use.</param>
+		public static MText.Format CreateFormat(string formats)
+		{
+			var format = new MText.Format();
+			// Used only for testing
+			if (formats.Contains("L"))
+				format.IsUnderline = true;
+
+			if (formats.Contains("O"))
+				format.IsOverline = true;
+
+			if (formats.Contains("K"))
+				format.IsStrikeThrough = true;
+
+			if (formats.Contains("l"))
+				format.IsUnderline = false;
+
+			if (formats.Contains("o"))
+				format.IsOverline = false;
+
+			if (formats.Contains("k"))
+				format.IsStrikeThrough = false;
+
+			return format;
+		}
+
+		/// <summary>
+		/// Creates a fraction token with the passed parameters for it's starting state. Used for testing.
+		/// </summary>
+		/// <param name="numerator">Numerator to set.</param>
+		/// <param name="denominator">Denominator to set.</param>
+		/// <param name="divider">Divisor to set.</param>
+		public static MText.TokenFraction CreateTokenFraction(string? numerator, string? denominator, MText.TokenFraction.Divider divider)
+		{
+			return CreateTokenFraction(new MText.Format(), numerator, denominator, divider);
+		}
+
+		/// <summary>
+		/// Creates a fraction token with the passed parameters for it's starting state. Used for testing.
+		/// </summary>
+		/// <param name="format">Format to set.</param>
+		/// <param name="numerator">Numerator to set.</param>
+		/// <param name="denominator">Denominator to set.</param>
+		/// <param name="divider">Divisor to set.</param>
+		public static MText.TokenFraction CreateTokenFraction(MText.Format format, string? numerator, string? denominator, MText.TokenFraction.Divider divider)
+		{
+			return new MText.TokenFraction(format)
+			{
+				Numerator = new[] { numerator.AsMemory() },
+				Denominator = new[] { denominator.AsMemory() },
+				DividerType = divider
+			};
+		}
+
 		public class FormatData
 		{
 			public FormatData(string input, MText.Token? expected)
@@ -123,17 +199,17 @@ namespace ACadSharp.Tests.Entities
 			new object[]
 			{
 				new FormatData(@"\A0;BOTTOM",
-					new MText.TokenValue(new() { Align = MText.Format.Alignment.Bottom }, "BOTTOM"))
+					CreateTokenValue(new() { Align = MText.Format.Alignment.Bottom }, "BOTTOM"))
 			},
 			new object[]
 			{
 				new FormatData(@"\A1;CENTER",
-					new MText.TokenValue(new() { Align = MText.Format.Alignment.Center }, "CENTER"))
+					CreateTokenValue(new() { Align = MText.Format.Alignment.Center }, "CENTER"))
 			},
 			new object[]
 			{
 				new FormatData(@"\A2;TOP",
-					new MText.TokenValue(new() { Align = MText.Format.Alignment.Top }, "TOP"))
+					CreateTokenValue(new() { Align = MText.Format.Alignment.Top }, "TOP"))
 			},
 			new object[]
 			{
@@ -144,9 +220,9 @@ namespace ACadSharp.Tests.Entities
 					},
 					new MText.Token[]
 					{
-						new MText.TokenValue("BEFORE"),
-						new MText.TokenValue(new("O"), "FORMATTED"),
-						new MText.TokenValue(new("o"), "AFTER")
+						CreateTokenValue("BEFORE"),
+						CreateTokenValue(CreateFormat("O"), "FORMATTED"),
+						CreateTokenValue(CreateFormat("o"), "AFTER")
 					})
 			},
 			new object[]
@@ -158,9 +234,9 @@ namespace ACadSharp.Tests.Entities
 					},
 					new MText.Token[]
 					{
-						new MText.TokenValue("BEFORE"),
-						new MText.TokenValue(new("L"), "FORMATTED"),
-						new MText.TokenValue(new("l"), "AFTER")
+						CreateTokenValue("BEFORE"),
+						CreateTokenValue(CreateFormat("L"), "FORMATTED"),
+						CreateTokenValue(CreateFormat("l"), "AFTER")
 					})
 			},
 			new object[]
@@ -172,22 +248,22 @@ namespace ACadSharp.Tests.Entities
 					},
 					new MText.Token[]
 					{
-						new MText.TokenValue("BEFORE"),
-						new MText.TokenValue(new("K"), "FORMATTED"),
-						new MText.TokenValue(new("k"), "AFTER"),
+						CreateTokenValue("BEFORE"),
+						CreateTokenValue(CreateFormat("K"), "FORMATTED"),
+						CreateTokenValue(CreateFormat("k"), "AFTER"),
 					})
 			},
 			new object[]
 			{
 				new FormatData(@"BEFORE\T2;FORMATTED",
 					new MText.Token[]
-						{ new MText.TokenValue("BEFORE"), new MText.TokenValue(new() { Tracking = 2 }, "FORMATTED") })
+						{ CreateTokenValue("BEFORE"), CreateTokenValue(new() { Tracking = 2 }, "FORMATTED") })
 			},
 			new object[]
 			{
 				new FormatData(@"\H2.64x;FORMATTED",
 					new MText.Token[]
-						{ new MText.TokenValue(new() { Height = 2.64f, IsHeightRelative = true }, "FORMATTED"), },
+						{ CreateTokenValue(new() { Height = 2.64f, IsHeightRelative = true }, "FORMATTED"), },
 					new MText.Format()
 					{
 						Height = 1f
@@ -202,13 +278,13 @@ namespace ACadSharp.Tests.Entities
 					},
 					new MText.Token[]
 					{
-						new MText.TokenValue(new() { Height = 10.56f, IsHeightRelative = true }, "FORMATTED"),
+						CreateTokenValue(new() { Height = 10.56f, IsHeightRelative = true }, "FORMATTED"),
 					}, new MText.Format() { Height = 1f })
 			},
 			new object[]
 			{
 				new FormatData(@"\H2.64;FORMATTED",
-					new MText.TokenValue(new() { Height = 2.64f }, "FORMATTED"))
+					CreateTokenValue(new() { Height = 2.64f }, "FORMATTED"))
 			},
 			new object[]
 			{
@@ -217,27 +293,27 @@ namespace ACadSharp.Tests.Entities
 						@"{\H4;{\H2.64;FORMATTED}}",
 						@"\H2.64;FORMATTED",
 					},
-					new MText.TokenValue(new() { Height = 2.64f }, "FORMATTED"))
+					CreateTokenValue(new() { Height = 2.64f }, "FORMATTED"))
 			},
 			new object[]
 			{
 				new FormatData(@"\T1.8;FORMATTED",
-					new MText.TokenValue(new() { Tracking = 1.8f }, "FORMATTED"))
+					CreateTokenValue(new() { Tracking = 1.8f }, "FORMATTED"))
 			},
 			new object[]
 			{
 				new FormatData(@"\Q14.84;FORMATTED",
-					new MText.TokenValue(new() { Obliquing = 14.84f }, "FORMATTED"))
+					CreateTokenValue(new() { Obliquing = 14.84f }, "FORMATTED"))
 			},
 			new object[]
 			{
 				new FormatData(@"\Q-14.84;FORMATTED",
-					new MText.TokenValue(new() { Obliquing = -14.84f }, "FORMATTED"))
+					CreateTokenValue(new() { Obliquing = -14.84f }, "FORMATTED"))
 			},
 			new object[]
 			{
 				new FormatData(@"\pt128.09,405.62,526.60;FORMATTED",
-					new MText.TokenValue(new()
+					CreateTokenValue(new()
 					{
 						Paragraph = { "t128.09".AsMemory(), "405.62".AsMemory(), "526.60".AsMemory() }
 					}, "FORMATTED"))
@@ -245,7 +321,7 @@ namespace ACadSharp.Tests.Entities
 			new object[]
 			{
 				new FormatData(@"\pi-70.76154,l70.76154,t70.76154;FORMATTED",
-					new MText.TokenValue(new()
+					CreateTokenValue(new()
 					{
 						Paragraph = { "i-70.76154".AsMemory(), "l70.76154".AsMemory(), "t70.76154".AsMemory() }
 					}, "FORMATTED"))
@@ -254,15 +330,15 @@ namespace ACadSharp.Tests.Entities
 			{
 				new FormatData(@"1\P2", new MText.Token[]
 				{
-					new MText.TokenValue("1\n"),
-					new MText.TokenValue("2"),
+					CreateTokenValue("1\n"),
+					CreateTokenValue("2"),
 				})
 			},
 			new object[]
 			{
 				new FormatData(@"{\C165;\fArial|b0|i0|c0|p0;FORMATTED}", new MText.Token[]
 				{
-					new MText.TokenValue(new MText.Format()
+					CreateTokenValue(new MText.Format()
 					{
 						Color = new Color(165),
 						Font =
@@ -283,7 +359,7 @@ namespace ACadSharp.Tests.Entities
 				new FormatData(@"{\fArial|b0|i1|c22|p123;FORMAT}AFTER",
 					new MText.Token[]
 					{
-						new MText.TokenValue(new MText.Format()
+						CreateTokenValue(new MText.Format()
 						{
 							Font =
 							{
@@ -294,21 +370,21 @@ namespace ACadSharp.Tests.Entities
 								Pitch = 123
 							}
 						}, "FORMAT"),
-						new MText.TokenValue("AFTER"),
+						CreateTokenValue("AFTER"),
 					})
 			},
 		};
 
 		public static IEnumerable<object[]> ColorsData = new List<object[]>()
 		{
-			new object[] { new FormatData(@"{\C1;1}", new MText.TokenValue(new() { Color = new Color(1) }, "1")) },
+			new object[] { new FormatData(@"{\C1;1}", CreateTokenValue(new() { Color = new Color(1) }, "1")) },
 			new object[]
 			{
 				new FormatData(@"{\C184;1}NORMAL",
 					new MText.Token[]
 					{
-						new MText.TokenValue(new() { Color = new Color(184) }, "1"),
-						new MText.TokenValue("NORMAL")
+						CreateTokenValue(new() { Color = new Color(184) }, "1"),
+						CreateTokenValue("NORMAL")
 					})
 			},
 
@@ -316,10 +392,10 @@ namespace ACadSharp.Tests.Entities
 			new object[]
 			{
 				new FormatData(@"{\c245612;1}",
-					new MText.TokenValue(new() { Color = Color.FromTrueColor(245612) }, "1"))
+					CreateTokenValue(new() { Color = Color.FromTrueColor(245612) }, "1"))
 			},
 			new object[]
-				{ new FormatData(@"{\c0;1}", new MText.TokenValue(new() { Color = Color.FromTrueColor(0) }, "1")) },
+				{ new FormatData(@"{\c0;1}", CreateTokenValue(new() { Color = Color.FromTrueColor(0) }, "1")) },
 		};
 
 		public static IEnumerable<object[]> FractionsData = new List<object[]>()
@@ -327,78 +403,78 @@ namespace ACadSharp.Tests.Entities
 			new object[]
 			{
 				new FormatData(@"\S1^2;",
-					new MText.TokenFraction("1", "2", MText.TokenFraction.Divider.Stacked))
+					CreateTokenFraction("1", "2", MText.TokenFraction.Divider.Stacked))
 			},
 			new object[]
 			{
 				new FormatData(@"\S1/2;",
-					new MText.TokenFraction("1", "2", MText.TokenFraction.Divider.FractionBar))
+					CreateTokenFraction("1", "2", MText.TokenFraction.Divider.FractionBar))
 			},
 			new object[]
 			{
 				new FormatData(@"\S1#2;",
-					new MText.TokenFraction("1", "2", MText.TokenFraction.Divider.Condensed))
+					CreateTokenFraction("1", "2", MText.TokenFraction.Divider.Condensed))
 			},
 			new object[]
 			{
 				new FormatData(@"\SNUM^DEN;",
-					new MText.TokenFraction("NUM", "DEN", MText.TokenFraction.Divider.Stacked))
+					CreateTokenFraction("NUM", "DEN", MText.TokenFraction.Divider.Stacked))
 			},
 			new object[]
 			{
 				new FormatData(@"\SNUM/DEN;",
-					new MText.TokenFraction("NUM", "DEN", MText.TokenFraction.Divider.FractionBar))
+					CreateTokenFraction("NUM", "DEN", MText.TokenFraction.Divider.FractionBar))
 			},
 			new object[]
 			{
 				new FormatData(@"\SNUM#DEN;",
-					new MText.TokenFraction("NUM", "DEN", MText.TokenFraction.Divider.Condensed))
+					CreateTokenFraction("NUM", "DEN", MText.TokenFraction.Divider.Condensed))
 			},
 
 			// Escapes
 			new object[]
 			{
 				new FormatData(@"\SNUM#DEN\;;",
-					new MText.TokenFraction("NUM", "DEN;", MText.TokenFraction.Divider.Condensed))
+					CreateTokenFraction("NUM", "DEN;", MText.TokenFraction.Divider.Condensed))
 			},
 			new object[]
 			{
 				new FormatData(@"\SNUM\##DEN\;;",
-					new MText.TokenFraction("NUM#", "DEN;", MText.TokenFraction.Divider.Condensed))
+					CreateTokenFraction("NUM#", "DEN;", MText.TokenFraction.Divider.Condensed))
 			},
 
 			//Empty Numerator
 			new object[]
 			{
 				new FormatData(@"\S^DEN;",
-					new MText.TokenFraction("", "DEN", MText.TokenFraction.Divider.Stacked))
+					CreateTokenFraction("", "DEN", MText.TokenFraction.Divider.Stacked))
 			},
 			new object[]
 			{
 				new FormatData(@"\S/DEN;",
-					new MText.TokenFraction("", "DEN", MText.TokenFraction.Divider.FractionBar))
+					CreateTokenFraction("", "DEN", MText.TokenFraction.Divider.FractionBar))
 			},
 			new object[]
 			{
 				new FormatData(@"\S#DEN;",
-					new MText.TokenFraction("", "DEN", MText.TokenFraction.Divider.Condensed))
+					CreateTokenFraction("", "DEN", MText.TokenFraction.Divider.Condensed))
 			},
 
 			// Empty Denominator
 			new object[]
 			{
 				new FormatData(@"\SNUM^;",
-					new MText.TokenFraction("NUM", "", MText.TokenFraction.Divider.Stacked))
+					CreateTokenFraction("NUM", "", MText.TokenFraction.Divider.Stacked))
 			},
 			new object[]
 			{
 				new FormatData(@"\SNUM/;",
-					new MText.TokenFraction("NUM", "", MText.TokenFraction.Divider.FractionBar))
+					CreateTokenFraction("NUM", "", MText.TokenFraction.Divider.FractionBar))
 			},
 			new object[]
 			{
 				new FormatData(@"\SNUM#;",
-					new MText.TokenFraction("NUM", "", MText.TokenFraction.Divider.Condensed))
+					CreateTokenFraction("NUM", "", MText.TokenFraction.Divider.Condensed))
 			},
 
 			// Unexpected end to string.

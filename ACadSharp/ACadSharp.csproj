@@ -14,11 +14,6 @@
     <Description>C# library to read/write cad files like dxf/dwg.</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>ACadSharp.Tests</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
 
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

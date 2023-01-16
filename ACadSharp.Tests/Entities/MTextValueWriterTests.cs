@@ -50,7 +50,7 @@ namespace ACadSharp.Tests.Entities
 		private void testTextData(MTextValueTestData.TextData data)
 		{
 			var writer = new MText.ValueWriter();
-			var parts = writer.Serialize(new MText.Token[] { new MText.TokenValue(data.Decoded) });
+			var parts = writer.Serialize(new MText.Token[] { MTextValueTestData.CreateTokenValue(data.Decoded) });
 			var concatParts = string.Concat(parts);
 			for (int i = 0; i < data.Encoded.Length; i++)
 			{

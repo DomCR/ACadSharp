@@ -37,7 +37,7 @@ namespace ACadSharp.Entities
 			/// Contains all the numerator token values.  Will normally be multiple splices of memory.
 			/// </summary>
 			/// <remarks>Does not allocate.</remarks>
-			public IReadOnlyList<ReadOnlyMemory<char>>? Numerator { get; internal set; }
+			public IReadOnlyList<ReadOnlyMemory<char>>? Numerator { get; set; }
 
 			/// <summary>
 			/// Helper method which will combine all the <see cref="Numerator"/> into a single new string.
@@ -49,7 +49,7 @@ namespace ACadSharp.Entities
 			/// Contains all the denominator token values.  Will normally be multiple splices of memory.
 			/// </summary>
 			/// <remarks>Does not allocate.</remarks>
-			public IReadOnlyList<ReadOnlyMemory<char>>? Denominator { get; internal set; }
+			public IReadOnlyList<ReadOnlyMemory<char>>? Denominator { get; set; }
 
 			/// <summary>
 			/// Helper method which will combine all the <see cref="Denominator"/> into a single new string.
@@ -76,33 +76,6 @@ namespace ACadSharp.Entities
 			public TokenFraction(Format format)
 				: base(format)
 			{
-			}
-
-
-			/// <summary>
-			/// Creates a fraction token with the passed parameters for it's starting state. Used for testing.
-			/// </summary>
-			/// <param name="numerator">Numerator to set.</param>
-			/// <param name="denominator">Denominator to set.</param>
-			/// <param name="divider">Divisor to set.</param>
-			internal TokenFraction(string? numerator, string? denominator, Divider divider)
-				: this(new Format(), numerator, denominator, divider)
-			{
-			}
-
-			/// <summary>
-			/// Creates a fraction token with the passed parameters for it's starting state. Used for testing.
-			/// </summary>
-			/// <param name="format">Format to set.</param>
-			/// <param name="numerator">Numerator to set.</param>
-			/// <param name="denominator">Denominator to set.</param>
-			/// <param name="divider">Divisor to set.</param>
-			internal TokenFraction(Format format, string? numerator, string? denominator, Divider divider)
-				: base(format)
-			{
-				this.Numerator = new[] { numerator.AsMemory() };
-				this.Denominator = new[] { denominator.AsMemory() };
-				this.DividerType = divider;
 			}
 
 			protected bool equals(TokenFraction other)

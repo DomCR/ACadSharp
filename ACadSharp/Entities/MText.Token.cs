@@ -11,7 +11,7 @@ namespace ACadSharp.Entities
 			/// <summary>
 			/// Format this token uses to render.
 			/// </summary>
-			public Format? Format { get; internal set; }
+			public Format? Format { get; set; }
 
 			/// <summary>
 			/// Creates a token with the specified format.

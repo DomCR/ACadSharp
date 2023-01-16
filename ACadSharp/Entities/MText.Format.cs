@@ -122,26 +122,6 @@ namespace ACadSharp.Entities
 			}
 
 			/// <summary>
-			/// Creates a format with the specified simple formats.  Testing use onle.
-			/// </summary>
-			/// <param name="formats">Format string to use.</param>
-			internal Format(string formats)
-			{
-				// Used only for testing
-				if (formats.Contains("L")) this.IsUnderline = true;
-
-				if (formats.Contains("O")) this.IsOverline = true;
-
-				if (formats.Contains("K")) this.IsStrikeThrough = true;
-
-				if (formats.Contains("l")) this.IsUnderline = false;
-
-				if (formats.Contains("o")) this.IsOverline = false;
-
-				if (formats.Contains("k")) this.IsStrikeThrough = false;
-			}
-
-			/// <summary>
 			/// Overrides the current format values with the passed format
 			/// </summary>
 			/// <param name="source">Source format to copy from.</param>

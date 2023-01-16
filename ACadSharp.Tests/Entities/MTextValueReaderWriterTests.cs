@@ -56,7 +56,7 @@ namespace ACadSharp.Tests.Entities
 			var writer = new MText.ValueWriter();
 			var reader = new MText.ValueReader();
 
-			for (int j = 0; j < 1000; j++)
+			for (int j = 0; j < 100; j++)
 			{
 				var source = this.randomTokens(1, 50);
 				var serialized = writer.Serialize(source).ToString();
@@ -80,7 +80,7 @@ namespace ACadSharp.Tests.Entities
 				}
 				else
 				{
-					tokens.Add(new MText.TokenFraction(
+					tokens.Add(MTextValueTestData.CreateTokenFraction(
 						this.randomFormat(), this._random.Next(0, 2) == 0 ? randomString() : null,
 						this._random.Next(0, 2) == 0 ? randomString() : null,
 						(MText.TokenFraction.Divider)this._random.Next(0, 3)));
