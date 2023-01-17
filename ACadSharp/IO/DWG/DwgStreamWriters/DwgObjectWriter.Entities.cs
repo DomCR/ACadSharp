@@ -252,5 +252,147 @@ namespace ACadSharp.IO.DWG
 			//Common Entity Handle Data H 7 STYLE(hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, text.Style);
 		}
+
+		private void writeMText(MText mtext)
+		{
+
+			//Insertion pt3 BD 10 First picked point. (Location relative to text depends on attachment point (71).)
+			this._writer.Write3BitDouble(mtext.InsertPoint);
+			//Extrusion 3BD 210 Undocumented; appears in DXF and entget, but ACAD doesn't even bother to adjust it to unit length.
+			this._writer.Write3BitDouble(mtext.Normal);
+			//X-axis dir 3BD 11 Apparently the text x-axis vector. (Why not just a rotation?) ACAD maintains it as a unit vector.
+			this._writer.Write3BitDouble(mtext.AlignmentPoint);
+			//Rect width BD 41 Reference rectangle width (width picked by the user).
+			this._writer.WriteBitDouble(mtext.RectangleWitdth);
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				this._writer.WriteBitDouble(mtext.RectangleHeight);
+			}
+
+			//Common:
+			//Text height BD 40 Undocumented
+			this._writer.WriteBitDouble(mtext.Height);
+			//Attachment BS 71 Similar to justification; see DXF doc
+			this._writer.WriteBitShort((short)mtext.AttachmentPoint);
+			//Drawing dir BS 72 Left to right, etc.; see DXF doc
+			this._writer.WriteBitShort((short)mtext.DrawingDirection);
+
+			//TODO: Check undocumented values for MText
+			//Extents ht BD ---Undocumented and not present in DXF or entget
+			this._writer.WriteBitDouble(0);
+			//Extents wid BD ---Undocumented and not present in DXF or entget
+			this._writer.WriteBitDouble(0);
+
+			//Text TV 1 All text in one long string (Autocad format)
+			this._writer.WriteVariableText(mtext.Value);
+
+			//H 7 STYLE (hard pointer)
+			this._writer.HandleReference(mtext.Style);
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Linespacing Style BS 73
+				this._writer.WriteBitShort((short)mtext.LineSpacingStyle);
+				//Linespacing Factor BD 44
+				this._writer.WriteBitDouble(mtext.LineSpacing);
+				//Unknown bit B
+				this._writer.WriteBit(false);
+			}
+
+			//R2004+:
+			if (this.R2004Plus)
+			{
+				//Background flags BL 90 0 = no background, 1 = background fill, 2 = background fill with drawing fill color, 0x10 = text frame (R2018+)
+				this._writer.WriteBitLong((int)mtext.BackgroundFillFlags);
+
+				//background flags has bit 0x01 set, or in case of R2018 bit 0x10:
+				if ((mtext.BackgroundFillFlags & BackgroundFillFlags.UseBackgroundFillColor)
+					!= BackgroundFillFlags.None
+					|| this._version > ACadVersion.AC1027
+					&& (mtext.BackgroundFillFlags & BackgroundFillFlags.TextFrame) > 0)
+				{
+					//Background scale factor	BL 45 default = 1.5
+					this._writer.WriteBitDouble(mtext.BackgroundScale);
+					//Background color CMC 63
+					this._writer.WriteCmColor(mtext.BackgroundColor);
+					//Background transparency BL 441
+					this._writer.WriteBitLong(mtext.BackgroundTransparency.Value);
+				}
+			}
+
+			//R2018+
+			if (!this.R2018Plus)
+				return;
+
+			//Is NOT annotative B
+			this._writer.WriteBit(!mtext.IsAnnotative);
+
+			//IF MTEXT is not annotative
+			if (mtext.IsAnnotative)
+			{
+				return;
+			}
+
+			throw new System.NotImplementedException("Annotative MText not implemented for the writer");
+			//TODO: missing values depending on the reader to get them and process to be able to write
+#if false
+			//Version BS Default 0
+			this._writer.WriteBitShort(0);
+			//Default flag B Default true
+			this._writer.WriteBit(true);
+
+			//BEGIN REDUNDANT FIELDS(see above for descriptions)
+			//Registered application H Hard pointer
+			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+
+			//TODO: finish Mtext Writer, save redundant fields??
+
+			//Attachment point BL
+			AttachmentPointType attachmentPoint = (AttachmentPointType)this._writer.WriteBitLong();
+			//X - axis dir 3BD 10
+			this._writer.Write3BitDouble();
+			//Insertion point 3BD 11
+			this._writer.Write3BitDouble();
+			//Rect width BD 40
+			this._writer.WriteBitDouble();
+			//Rect height BD 41
+			this._writer.WriteBitDouble();
+			//Extents width BD 42
+			this._writer.WriteBitDouble();
+			//Extents height BD 43
+			this._writer.WriteBitDouble();
+			//END REDUNDANT FIELDS
+
+			//Column type BS 71 0 = No columns, 1 = static columns, 2 = dynamic columns
+			this._writer.WriteBitShort((short)mtext.Column.ColumnType);
+			//IF Has Columns data(column type is not 0)
+			if (mtext.Column.ColumnType != ColumnType.NoColumns)
+			{
+				//Column height count BL 72
+				int count = this._writer.WriteBitLong();
+				//Columnn width BD 44
+				mtext.Column.ColumnWidth = this._writer.WriteBitDouble();
+				//Gutter BD 45
+				mtext.Column.ColumnGutter = this._writer.WriteBitDouble();
+				//Auto height? B 73
+				mtext.Column.ColumnAutoHeight = this._writer.WriteBit();
+				//Flow reversed? B 74
+				mtext.Column.ColumnFlowReversed = this._writer.WriteBit();
+
+				//IF not auto height and column type is dynamic columns
+				if (!mtext.Column.ColumnAutoHeight && mtext.Column.ColumnType == ColumnType.DynamicColumns && count > 0)
+				{
+					for (int i = 0; i < count; ++i)
+					{
+						//Column height BD 46
+						mtext.Column.ColumnHeights.Add(this._writer.WriteBitDouble());
+					}
+				}
+			}
+#endif
+		}
 	}
 }
