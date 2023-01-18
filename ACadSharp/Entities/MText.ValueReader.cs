@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace ACadSharp.Entities
@@ -38,6 +39,8 @@ namespace ACadSharp.Entities
 			private readonly List<ReadOnlyMemory<char>> _secondBuffer = new List<ReadOnlyMemory<char>>(8);
 			private Action<Token>? _visitor;
 			private bool _controlCode;
+
+			private static readonly NumberFormatInfo _currentNumberFormat = NumberFormatInfo.InvariantInfo;
 
 			private readonly Memory<char> _charBuffer = new Memory<char>(new char[1]);
 
@@ -202,169 +205,166 @@ namespace ACadSharp.Entities
 					}
 					else if (token == '\\')
 					{
-						if (this._controlCode) this._mainBuffer.Add(this._content.Slice(this._position, 1));
+						if (this._controlCode) 
+							this._mainBuffer.Add(this._content.Slice(this._position, 1));
 
 						this._controlCode = !this._controlCode;
 					}
-					else if (this._controlCode && token == 'A')
+					else
 					{
-						this._controlCode = false;
-						this.flushText();
-						if (!this.tryParseEnum<Format.Alignment>(spanText, out var value))
-							return false;
-
-						this._currentFormat.Align = value;
-					}
-					else if (this._controlCode && token == 'C')
-					{
-						this._controlCode = false;
-						this.flushText();
-						if (!this.tryParseControlCodeInt(spanText, out var value))
-							return false;
-
-						this._currentFormat.Color = new Color((short)value);
-					}
-					else if (this._controlCode && token == 'c')
-					{
-						this._controlCode = false;
-						this.flushText();
-						if (!this.tryParseControlCodeInt(spanText, out var value))
-							return false;
-
-						this._currentFormat.Color = Color.FromTrueColor(value);
-					}
-					else if (this._controlCode && token == 'T')
-					{
-						this._controlCode = false;
-						this.flushText();
-						if (!this.tryParseControlCodeFloat(spanText, out var value))
-							return false;
-
-						this._currentFormat.Tracking = value;
-					}
-					else if (this._controlCode && token == 'W')
-					{
-						this._controlCode = false;
-						this.flushText();
-						if (!this.tryParseControlCodeFloat(spanText, out var value))
-							return false;
-
-						this._currentFormat.Width = value;
-					}
-					else if (this._controlCode && token == 'H')
-					{
-						this._controlCode = false;
-						this.flushText();
-						if (!this.tryParseControlCodeFloatWithX(spanText, out var value, out bool relative))
-							return false;
-						this._currentFormat.IsHeightRelative = relative;
-
-						if (relative)
+						if (this._controlCode)
 						{
-							this._currentFormat.Height *= value;
+							this._controlCode = false;
+							if (token == 'A')
+							{
+
+								this.flushText();
+								if (!this.tryParseEnum<Format.Alignment>(spanText, out var value))
+									return false;
+
+								this._currentFormat.Align = value;
+							}
+							else if (token == 'C')
+							{
+								this.flushText();
+								if (!this.tryParseControlCodeInt(spanText, out var value))
+									return false;
+
+								this._currentFormat.Color = new Color((short)value);
+							}
+							else if (token == 'c')
+							{
+								this.flushText();
+								if (!this.tryParseControlCodeInt(spanText, out var value))
+									return false;
+
+								this._currentFormat.Color = Color.FromTrueColor(value);
+							}
+							else if (token == 'T')
+							{
+								this.flushText();
+								if (!this.tryParseControlCodeFloat(spanText, out var value))
+									return false;
+
+								this._currentFormat.Tracking = value;
+							}
+							else if (token == 'W')
+							{
+								this.flushText();
+								if (!this.tryParseControlCodeFloat(spanText, out var value))
+									return false;
+
+								this._currentFormat.Width = value;
+							}
+							else if (token == 'H')
+							{
+								this.flushText();
+								if (!this.tryParseControlCodeFloatWithX(spanText, out var value, out bool relative))
+									return false;
+								this._currentFormat.IsHeightRelative = relative;
+
+								if (relative)
+								{
+									this._currentFormat.Height *= value;
+								}
+								else
+								{
+									this._currentFormat.Height = value;
+								}
+							}
+							else if (token == 'Q')
+							{
+								this.flushText();
+								if (!this.tryParseControlCodeFloat(spanText, out var value))
+									return false;
+
+								this._currentFormat.Obliquing = value;
+							}
+							else if (token == 'p')
+							{
+								this.flushText();
+								if (!this.trySetParagraphCodes(spanText))
+									return false;
+							}
+							else if (token == 'f')
+							{
+								this.flushText();
+								if (!this.trySetFontCodes(spanText))
+									return false;
+							}
+							else if (token == 'S')
+							{
+								this.flushText();
+								if (!this.tryParseFraction(spanText))
+									return false;
+							}
+							else if (token == 'L')
+							{
+								this.flushText();
+								this._currentFormat.IsUnderline = true;
+							}
+							else if (token == 'l')
+							{
+								this.flushText();
+								this._currentFormat.IsUnderline = false;
+							}
+							else if (token == 'O')
+							{
+								this.flushText();
+								this._currentFormat.IsOverline = true;
+							}
+							else if (token == 'o')
+							{
+								this.flushText();
+								this._currentFormat.IsOverline = false;
+							}
+							else if (token == 'K')
+							{
+								this.flushText();
+								this._currentFormat.IsStrikeThrough = true;
+							}
+							else if (token == 'k')
+							{
+								this.flushText();
+								this._currentFormat.IsStrikeThrough = false;
+							}
+							else if (token == 'P')
+							{
+								charBufferSpan[0] = '\n';
+								this.flushText(this._charBuffer);
+							}
+							else if (token == '~')
+							{
+								// Non Breaking Space
+								charBufferSpan[0] = '\u00A0';
+								this.flushText(this._charBuffer);
+							}
+							else
+							{
+								this.pushTextEnd();
+							}
 						}
 						else
 						{
-							this._currentFormat.Height = value;
+							if (token == '{')
+							{
+								this.flushText();
+								this._fontStateStack.Push(this._currentFormat);
+								this.setNewCurrentFormat();
+
+							}
+							else if (token == '}')
+							{
+								this.flushText();
+								this._currentFormat.Reset();
+								this._freeFormatStates.Push(this._currentFormat);
+								this._currentFormat = this._fontStateStack.Pop();
+							}
+							else
+							{
+								this.pushTextEnd();
+							}
 						}
-					}
-					else if (this._controlCode && token == 'Q')
-					{
-						this._controlCode = false;
-						this.flushText();
-						if (!this.tryParseControlCodeFloat(spanText, out var value))
-							return false;
-
-						this._currentFormat.Obliquing = value;
-					}
-					else if (this._controlCode && token == 'p')
-					{
-						this._controlCode = false;
-						this.flushText();
-						if (!this.trySetParagraphCodes(spanText))
-							return false;
-					}
-					else if (this._controlCode && token == 'f')
-					{
-						this._controlCode = false;
-						this.flushText();
-						if (!this.trySetFontCodes(spanText))
-							return false;
-					}
-					else if (this._controlCode && token == 'S')
-					{
-						this._controlCode = false;
-						this.flushText();
-						if (!this.tryParseFraction(spanText))
-							return false;
-					}
-					else if (this._controlCode && token == 'L')
-					{
-						this._controlCode = false;
-						this.flushText();
-						this._currentFormat.IsUnderline = true;
-					}
-					else if (this._controlCode && token == 'l')
-					{
-						this._controlCode = false;
-						this.flushText();
-						this._currentFormat.IsUnderline = false;
-					}
-					else if (this._controlCode && token == 'O')
-					{
-						this._controlCode = false;
-						this.flushText();
-						this._currentFormat.IsOverline = true;
-					}
-					else if (this._controlCode && token == 'o')
-					{
-						this._controlCode = false;
-						this.flushText();
-						this._currentFormat.IsOverline = false;
-					}
-					else if (this._controlCode && token == 'K')
-					{
-						this._controlCode = false;
-						this.flushText();
-						this._currentFormat.IsStrikeThrough = true;
-					}
-					else if (this._controlCode && token == 'k')
-					{
-						this._controlCode = false;
-						this.flushText();
-						this._currentFormat.IsStrikeThrough = false;
-					}
-					else if (this._controlCode && token == 'P')
-					{
-						this._controlCode = false;
-						charBufferSpan[0] = '\n';
-						this.flushText(this._charBuffer);
-					}
-					else if (this._controlCode && token == '~')
-					{
-						// Non Breaking Space
-						this._controlCode = false;
-						charBufferSpan[0] = '\u00A0';
-						this.flushText(this._charBuffer);
-					}
-					else if (!this._controlCode && token == '{')
-					{
-						this.flushText();
-						this._fontStateStack.Push(this._currentFormat);
-						this.setNewCurrentFormat();
-
-					}
-					else if (!this._controlCode && token == '}')
-					{
-						this.flushText();
-						this._currentFormat.Reset();
-						this._freeFormatStates.Push(this._currentFormat);
-						this._currentFormat = this._fontStateStack.Pop();
-					}
-					else
-					{
-						this._controlCode = false;
-						this.pushTextEnd();
 					}
 
 					// See if we are at the end of the string.
@@ -436,21 +436,16 @@ namespace ACadSharp.Entities
 					return false;
 				}
 
-#if NET6_0_OR_GREATER
-				if (Enum.TryParse(content, out value))
-					return true;
-#elif NETSTANDARD2_1_OR_GREATER
-
+#if NETFRAMEWORK
 				// Fallback when the enum can't parse a span directly.
-				if (int.TryParse(content, out var intValue))
+				if (Enum.TryParse(content.ToString(), false, out value))
+					return true;
+#else
+				if (int.TryParse(content, NumberStyles.None, _currentNumberFormat, out var intValue))
 				{
 					value = Unsafe.As<int, TEnum>(ref intValue);
 					return true;
 				}
-#else
-				// Fallback when the enum can't parse a span directly.
-				if (Enum.TryParse(content.ToString(), out value))
-					return true;
 #endif
 				value = default;
 				return false;
@@ -472,10 +467,10 @@ namespace ACadSharp.Entities
 
 #if NETFRAMEWORK
 				// Fallback when the enum can't parse a span directly.
-				if (int.TryParse(content.ToString(), out value))
+				if (int.TryParse(content.ToString(), NumberStyles.None, _currentNumberFormat, out value))
 					return true;
 #else
-				if (int.TryParse(content, out value))
+				if (int.TryParse(content, NumberStyles.None, _currentNumberFormat, out value))
 					return true;
 #endif
 				return false;
@@ -507,10 +502,10 @@ namespace ACadSharp.Entities
 
 #if NETFRAMEWORK
 				// Fallback when the enum can't parse a span directly.
-				if (float.TryParse(content.ToString(), out value))
+				if (float.TryParse(content.ToString(), NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, _currentNumberFormat, out value))
 					return true;
 #else
-				if (float.TryParse(content, out value))
+				if (float.TryParse(content, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, _currentNumberFormat, out value))
 					return true;
 #endif
 				return false;
@@ -532,10 +527,10 @@ namespace ACadSharp.Entities
 
 #if NETFRAMEWORK
 				// Fallback when the enum can't parse a span directly.
-				if (float.TryParse(content.ToString(), out value))
+				if (float.TryParse(content.ToString(), NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, _currentNumberFormat, out value))
 					return true;
 #else
-				if (float.TryParse(content, out value))
+				if (float.TryParse(content, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, _currentNumberFormat, out value))
 					return true;
 #endif
 				return false;
@@ -617,10 +612,10 @@ namespace ACadSharp.Entities
 								case 'c':
 									slice = content.Slice(startIndex, i - startIndex);
 #if NETFRAMEWORK
-									if (!int.TryParse(slice.ToString(), out var codePage))
+									if (!int.TryParse(slice.ToString(), NumberStyles.None, _currentNumberFormat, out var codePage))
 										return false;
 #else
-									if (!int.TryParse(slice, out var codePage))
+									if (!int.TryParse(slice, NumberStyles.None, _currentNumberFormat, out var codePage))
 										return false;
 #endif
 
@@ -630,10 +625,10 @@ namespace ACadSharp.Entities
 								case 'p':
 									slice = content.Slice(startIndex, i - startIndex);
 #if NETFRAMEWORK
-									if (!int.TryParse(slice.ToString(), out var pitch))
+									if (!int.TryParse(slice.ToString(), NumberStyles.None, _currentNumberFormat, out var pitch))
 										return false;
 #else
-									if (!int.TryParse(slice, out var pitch))
+									if (!int.TryParse(slice, NumberStyles.None, _currentNumberFormat, out var pitch))
 										return false;
 #endif
 									this._currentFormat.Font.Pitch = pitch;

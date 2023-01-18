@@ -226,7 +226,7 @@ namespace ACadSharp.Entities
 					$"U:{this.IsUnderline}; O:{this.IsOverline}; S:{this.IsStrikeThrough}; H:{this.Height}{(this.IsHeightRelative ? "x" : "")}; W: {this.Width}; Align: {this.Align}; Color: {this.Color}; Font: {this.Font} ";
 			}
 
-			private static bool isApproximateEqual(float? source, float? other, float precision = 0.1f)
+			private static bool isApproximateEqual(float? source, float? other, float precision = 0.0001f)
 			{
 				// Both values are null
 				if (source == null && other == null)

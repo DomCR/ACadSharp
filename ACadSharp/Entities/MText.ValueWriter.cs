@@ -99,10 +99,11 @@ namespace ACadSharp.Entities
 			private static readonly ReadOnlyMemory<char> _token9 = _tokens.Slice(97, 1);
 
 			private static readonly ReadOnlyMemory<char> _tokenPeriod = _tokens.Slice(98, 1);
-			private static readonly ReadOnlyMemory<char> _tokenNegative = _tokens.Slice(99, 1);
+			//private static readonly ReadOnlyMemory<char> _tokenNegative = _tokens.Slice(99, 1);
 
 			private static readonly ReadOnlyMemory<char> _tokenWidth = _tokens.Slice(100, 2);
 
+			private readonly Memory<char> _numberBuffer = new Memory<char>(new char[24]);
 			private int _lastConsumedPosition;
 			private int _position;
 			private ReadOnlyMemory<char> _values;
@@ -493,66 +494,67 @@ namespace ACadSharp.Entities
 				int bufferLength = countDigits(value);
 				if (bufferLength == 1)
 				{
-					this.outputNumber(value);
+					switch (value)
+					{
+						case 0:
+							this._visitor?.Invoke(_token0);
+							break;
+						case 1:
+							this._visitor?.Invoke(_token1);
+							break;
+						case 2:
+							this._visitor?.Invoke(_token2);
+							break;
+						case 3:
+							this._visitor?.Invoke(_token3);
+							break;
+						case 4:
+							this._visitor?.Invoke(_token4);
+							break;
+						case 5:
+							this._visitor?.Invoke(_token5);
+							break;
+						case 6:
+							this._visitor?.Invoke(_token6);
+							break;
+						case 7:
+							this._visitor?.Invoke(_token7);
+							break;
+						case 8:
+							this._visitor?.Invoke(_token8);
+							break;
+						case 9:
+							this._visitor?.Invoke(_token9);
+							break;
+					}
 					return;
 				}
 
-				Span<uint> outputArray = stackalloc uint[bufferLength];
+				var numberSpan = this._numberBuffer.Span;
 				var position = bufferLength - 1;
 				do
 				{
-					(value, outputArray[position--]) = divRem(value, 10);
+					(value, var integer) = divRem(value, 10);
+
+					numberSpan[position--] = integer switch
+					{
+						0 => '0',
+						1 => '1',
+						2 => '2',
+						3 => '3',
+						4 => '4',
+						5 => '5',
+						6 => '6',
+						7 => '7',
+						8 => '8',
+						9 => '9',
+						_ => throw new ArgumentOutOfRangeException()
+					};
 				} while (value != 0);
 
-				for (int i = 0; i < bufferLength; i++) this.outputNumber(outputArray[i]);
+				this._visitor?.Invoke(this._numberBuffer.Slice(0, bufferLength));
 			}
-
-			/// <summary>
-			/// Outputs the string representation of a given unsigned integer value using a visitor pattern.
-			/// </summary>
-			/// <param name="value">The value to output the string representation of.</param>
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			private void outputNumber(uint value)
-			{
-				switch (value)
-				{
-					case 0:
-						this._visitor?.Invoke(_token0);
-						break;
-					case 1:
-						this._visitor?.Invoke(_token1);
-						break;
-					case 2:
-						this._visitor?.Invoke(_token2);
-						break;
-					case 3:
-						this._visitor?.Invoke(_token3);
-						break;
-					case 4:
-						this._visitor?.Invoke(_token4);
-						break;
-					case 5:
-						this._visitor?.Invoke(_token5);
-						break;
-					case 6:
-						this._visitor?.Invoke(_token6);
-						break;
-					case 7:
-						this._visitor?.Invoke(_token7);
-						break;
-					case 8:
-						this._visitor?.Invoke(_token8);
-						break;
-					case 9:
-						this._visitor?.Invoke(_token9);
-						break;
-					case 10:
-						// Special case for the period.
-						this._visitor?.Invoke(_tokenPeriod);
-						break;
-				}
-			}
-
+			
 			/// <summary>
 			/// Calculates the quotient and remainder of a division operation between two unsigned integers.
 			/// </summary>
@@ -610,7 +612,6 @@ namespace ACadSharp.Entities
 			/// </summary>
 			/// <param name="value">Float value to output</param>
 			/// <exception cref="ArgumentOutOfRangeException"></exception>
-			/// <seealso>https://stackoverflow.com/a/41254697</seealso>
 			private void outputFloat(float value)
 			{
 				// Handle the 0 case
@@ -620,45 +621,19 @@ namespace ACadSharp.Entities
 					return;
 				}
 
-				bool isNegative = value < 0;
-				// Handle the negative case
-				if (isNegative)
-				{
-					value = -value;
-				}
 
-				int nbDecimals = 0;
-				while (value < 10000000)
-				{
-					value *= 10;
-					nbDecimals++;
-				}
+#if NETFRAMEWORK
+				value = (float)(Math.Truncate(value * 10000) / 10000f);
+				this._visitor!.Invoke(Math.Round(value, 4, MidpointRounding.ToEven).ToString("G").AsMemory());
+#else
+				var numberSpan = this._numberBuffer.Span;
+				// Round the values.
+				value = MathF.Truncate(value * 10000) / 10000f;
+				if (!value.TryFormat(numberSpan, out var charsWritten))
+					throw new InvalidOperationException("Can't format float.");
 
-				long valueLong = (long)Math.Round(value);
-				// Parse the number in reverse order
-				bool isLeadingZero = true;
-				Span<uint> outputArray = stackalloc uint[20];
-				int outPosition = 0;
-				while (valueLong != 0 || nbDecimals >= 0)
-				{
-					// We stop removing leading 0 when non-0 or decimal digit
-					if (valueLong % 10 != 0 || nbDecimals <= 0)
-						isLeadingZero = false;
-
-					// Write the last digit (unless a leading zero)
-					if (!isLeadingZero)
-						outputArray[outPosition++] = (uint)(valueLong % 10);
-
-					// Add the decimal point
-					if (--nbDecimals == 0 && !isLeadingZero)
-						outputArray[outPosition++] = 10;
-
-					valueLong /= 10;
-				}
-
-				if (isNegative) this._visitor!.Invoke(_tokenNegative);
-
-				for (int i = outPosition - 1; i >= 0; i--) this.outputNumber(outputArray[i]);
+				this._visitor!.Invoke(this._numberBuffer.Slice(0, charsWritten));
+#endif
 			}
 		}
 	}
