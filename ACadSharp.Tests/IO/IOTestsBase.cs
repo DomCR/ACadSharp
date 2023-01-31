@@ -60,15 +60,17 @@ namespace ACadSharp.Tests.IO
 				DxfBinaryFiles.Add(file);
 			}
 
-			Versions = new TheoryData<ACadVersion>();
-			Versions.Add(ACadVersion.AC1012);
-			Versions.Add(ACadVersion.AC1014);
-			Versions.Add(ACadVersion.AC1015);
-			Versions.Add(ACadVersion.AC1018);
-			Versions.Add(ACadVersion.AC1021);
-			Versions.Add(ACadVersion.AC1024);
-			Versions.Add(ACadVersion.AC1027);
-			Versions.Add(ACadVersion.AC1032);
+			Versions = new TheoryData<ACadVersion>
+			{
+				ACadVersion.AC1012,
+				ACadVersion.AC1014,
+				ACadVersion.AC1015,
+				ACadVersion.AC1018,
+				ACadVersion.AC1021,
+				ACadVersion.AC1024,
+				ACadVersion.AC1027,
+				ACadVersion.AC1032
+			};
 
 			//Create folder, necessary in workflow
 			if (!Directory.Exists(_samplesOutFolder))
