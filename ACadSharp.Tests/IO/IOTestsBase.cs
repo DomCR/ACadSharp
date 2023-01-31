@@ -23,7 +23,18 @@ namespace ACadSharp.Tests.IO
 		public static TheoryData<string> DxfBinaryFiles { get; }
 
 		public static TheoryData<ACadVersion> Versions { get; }
+
 		public static string AcCoreConsolePath { get; }
+
+		protected readonly DwgReaderConfiguration _dwgConfiguration = new DwgReaderConfiguration
+		{
+			Failsafe = false
+		};
+
+		protected readonly DxfReaderConfiguration _dxfConfiguration = new DxfReaderConfiguration
+		{
+			
+		};
 
 		protected readonly ITestOutputHelper _output;
 
@@ -73,7 +84,7 @@ namespace ACadSharp.Tests.IO
 				{
 					var programFiles = Environment.GetFolderPath(SpecialFolder.ProgramFiles);
 					var autoCadPath = Path.Combine(programFiles, "Autodesk");
-					
+
 					var baseAutoCadPaths = new string[]
 					{
 						"AutoCAD 2023",

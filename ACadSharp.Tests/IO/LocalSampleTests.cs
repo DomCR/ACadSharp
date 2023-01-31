@@ -35,7 +35,7 @@ namespace ACadSharp.Tests.IO
 			if (string.IsNullOrEmpty(test))
 				return;
 
-			CadDocument doc = DwgReader.Read(test, this.onNotification);
+			CadDocument doc = DwgReader.Read(test, this._dwgConfiguration, this.onNotification);
 		}
 
 		[Theory]
@@ -55,7 +55,7 @@ namespace ACadSharp.Tests.IO
 			if (string.IsNullOrEmpty(test))
 				return;
 
-			CadDocument doc = DwgReader.Read(test, this.onNotification);
+			CadDocument doc = DwgReader.Read(test, this._dwgConfiguration, this.onNotification);
 		}
 
 		[Theory]

@@ -124,59 +124,12 @@ namespace ACadSharp.IO
 			if (this._fileHeader.AcadVersion < ACadVersion.AC1018)
 				return null;
 
-			IDwgStreamReader reader = this.getSectionStream("AcDb:SummaryInfo");
+			IDwgStreamReader reader = this.getSectionStream(DwgSectionDefinition.SummaryInfo);
 			if (reader == null)
 				return null;
 
-			CadSummaryInfo summary = new CadSummaryInfo();
-
-			//This section contains summary information about the drawing. 
-			//Strings are encoded as a 16-bit length, followed by the character bytes (0-terminated).
-
-			//String	2 + n	Title
-			summary.Title = reader.ReadTextUnicode();
-			//String	2 + n	Subject
-			summary.Subject = reader.ReadTextUnicode();
-			//String	2 + n	Author
-			summary.Author = reader.ReadTextUnicode();
-			//String	2 + n	Keywords
-			summary.Keywords = reader.ReadTextUnicode();
-			//String	2 + n	Comments
-			summary.Comments = reader.ReadTextUnicode();
-			//String	2 + n	LastSavedBy
-			summary.LastSavedBy = reader.ReadTextUnicode();
-			//String	2 + n	RevisionNumber
-			summary.RevisionNumber = reader.ReadTextUnicode();
-			//String	2 + n	RevisionNumber
-			summary.HyperlinkBase = reader.ReadTextUnicode();
-
-			//?	8	Total editing time(ODA writes two zero Int32’s)
-			reader.ReadInt();
-			reader.ReadInt();
-
-			//Julian date	8	Create date time
-			summary.CreatedDate = reader.Read8BitJulianDate();  //{12/13/2006 01:38:03}
-
-			//Julian date	8	Modified date timez
-			summary.ModifiedDate = reader.Read8BitJulianDate();
-
-			//Int16	2 + 2 * (2 + n)	Property count, followed by PropertyCount key/value string pairs.
-			short nproperties = reader.ReadShort();
-			for (int i = 0; i < nproperties; i++)
-			{
-				string propName = reader.ReadTextUnicode();
-				string propValue = reader.ReadTextUnicode();
-
-				//Add the property
-				summary.Properties.Add(propName, propValue);
-			}
-
-			//Int32	4	Unknown(write 0)
-			reader.ReadInt();
-			//Int32	4	Unknown(write 0)
-			reader.ReadInt();
-
-			return summary;
+			DwgSummaryInfoReader summaryReader = new DwgSummaryInfoReader(this._fileHeader.AcadVersion, reader);
+			return summaryReader.Read();
 		}
 
 		/// <summary>
