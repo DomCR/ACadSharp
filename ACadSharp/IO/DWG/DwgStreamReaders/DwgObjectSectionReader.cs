@@ -513,6 +513,11 @@ namespace ACadSharp.IO.DWG
 				ulong appHandle = this._objectReader.HandleReference();
 				long endPos = this._objectReader.Position + size;
 
+				if(template.CadObject.Handle == 240)
+				{
+
+				}
+
 				//template.ExtendedData
 				ExtendedData edata = this.readExtendedDataRecords(endPos);
 

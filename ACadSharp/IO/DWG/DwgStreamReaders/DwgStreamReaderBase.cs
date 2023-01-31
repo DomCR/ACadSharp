@@ -520,7 +520,7 @@ namespace ACadSharp.IO.DWG
 			}
 			else
 			{
-				throw new Exception();
+				throw new Exceptions.DwgException($"DwgStreamReader exception, incorrect reference code with value: {code}");
 			}
 
 			return initialPos;

@@ -1,32 +1,10 @@
-﻿using CSUtilities.Converters;
-using CSUtilities.Text;
-using System;
-using System.IO;
+﻿using System.IO;
 
 namespace ACadSharp.IO.DWG
 {
 	internal class DwgStreamReaderAC18 : DwgStreamReaderAC15
 	{
 		public DwgStreamReaderAC18(Stream stream, bool resetPosition) : base(stream, resetPosition) { }
-		
-		public override string ReadTextUnicode()
-		{
-			short textLength = this.ReadShort<LittleEndianConverter>();
-			string value;
-			if (textLength == 0)
-			{
-				value = string.Empty;
-			}
-			else
-			{
-				//Read the string and get rid of the empty bytes
-				value = this.ReadString(textLength,
-					TextEncoding.GetListedEncoding(CodePage.Windows1252))
-					.Replace("\0", "");
-			}
-
-			return value;
-		}
 
 		/// <inheritdoc/>
 		public override Color ReadCmColor()
