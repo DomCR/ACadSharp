@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
 using System;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.Entities
 {

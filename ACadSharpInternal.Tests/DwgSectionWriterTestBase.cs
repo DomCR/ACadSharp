@@ -31,7 +31,7 @@ namespace ACadSharpInternal.Tests
 			this._output = output;
 		}
 
-		protected void onNotification(object sender, NotificationEventArgs e)
+		protected virtual void onNotification(object sender, NotificationEventArgs e)
 		{
 			_output.WriteLine(e.Message);
 		}

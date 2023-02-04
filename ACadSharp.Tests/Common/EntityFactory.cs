@@ -49,6 +49,15 @@ namespace ACadSharp.Tests.Common
 
 			switch (e)
 			{
+				case Arc arc:
+					RandomizeArc(arc);
+					break;
+				case Circle circle:
+					RandomizeCircle(circle);
+					break;
+				case Ellipse ellipse:
+					RandomizeEllipse(ellipse);
+					break;
 				case Line line:
 					RandomizeLine(line);
 					break;
@@ -61,6 +70,9 @@ namespace ACadSharp.Tests.Common
 				case Polyline3D pl3d:
 					RandomizePolyline(pl3d);
 					break;
+				case TextEntity text:
+					RandomizeText(text);
+					break;
 				default:
 					throw new NotImplementedException();
 			}
@@ -71,6 +83,37 @@ namespace ACadSharp.Tests.Common
 		public static void RandomizeEntity(Entity entity)
 		{
 			entity.Color = _random.NextColor();
+		}
+
+		public static void RandomizeArc(Arc arc)
+		{
+			RandomizeCircle(arc);
+
+			arc.StartAngle = _random.NextDouble();
+			arc.EndAngle = _random.NextDouble();
+		}
+
+		public static void RandomizeCircle(Circle circle)
+		{
+			RandomizeEntity(circle);
+
+			// circle.Normal = _random.NextXYZ();	//Entity becomes invisible if has a different value
+			circle.Center = _random.NextXYZ();
+			circle.Thickness = _random.NextDouble();
+			circle.Radius = _random.NextDouble();
+		}
+
+		public static void RandomizeEllipse(Ellipse ellipse)
+		{
+			RandomizeEntity(ellipse);
+
+			// circle.Normal = _random.NextXYZ();	//Entity becomes invisible if has a different value
+			ellipse.Center = _random.NextXYZ();
+			ellipse.Thickness = _random.NextDouble();
+			ellipse.EndPoint = _random.NextXYZ();
+			ellipse.RadiusRatio = _random.NextDouble();
+			ellipse.StartParameter = _random.NextDouble();
+			ellipse.EndParameter = _random.NextDouble();
 		}
 
 		public static void RandomizeLine(Line line)
@@ -116,6 +159,24 @@ namespace ACadSharp.Tests.Common
 
 				pline.Vertices.Add(v);
 			}
+		}
+
+		public static void RandomizeText(TextEntity text)
+		{
+			RandomizeEntity(text);
+
+			text.Thickness = _random.NextDouble();
+			text.InsertPoint = _random.NextXYZ();
+			text.AlignmentPoint = _random.NextXYZ();
+			text.Height = _random.NextDouble();
+			text.Value = _random.RandomString(10);
+			text.Rotation = _random.NextDouble();
+			text.WidthFactor = _random.NextDouble();
+			text.ObliqueAngle = _random.NextDouble();
+
+			text.Mirror = (TextMirrorFlag)_random.Next(0, 4);
+			text.HorizontalAlignment = (TextHorizontalAlignment)_random.Next(0, 5);
+			text.VerticalAlignment = (TextVerticalAlignmentType)_random.Next(0, 3);
 		}
 	}
 }

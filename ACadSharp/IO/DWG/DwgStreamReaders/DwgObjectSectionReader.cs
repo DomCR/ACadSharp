@@ -1067,7 +1067,7 @@ namespace ACadSharp.IO.DWG
 			XY pt = new XY();
 
 			//R13-14 Only:
-			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1014)
+			if (this.R13_14Only)
 			{
 				//Elevation BD ---
 				elevation = this._objectReader.ReadBitDouble();
