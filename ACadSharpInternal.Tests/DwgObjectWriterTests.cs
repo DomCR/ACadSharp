@@ -56,6 +56,14 @@ namespace ACadSharpInternal.Tests
 			document.Entities.Add(EntityFactory.Create<Point>());
 			document.Entities.Add(EntityFactory.Create<TextEntity>());
 
+			document.Entities.Add(EntityFactory.Create<DimensionAligned>());
+			document.Entities.Add(EntityFactory.Create<DimensionLinear>());
+			document.Entities.Add(EntityFactory.Create<DimensionRadius>());
+			document.Entities.Add(EntityFactory.Create<DimensionAngular2Line>());
+			document.Entities.Add(EntityFactory.Create<DimensionAngular3Pt>());
+			document.Entities.Add(EntityFactory.Create<DimensionDiameter>());
+			document.Entities.Add(EntityFactory.Create<DimensionOrdinate>());
+
 			DwgDocumentBuilder builder = this.writeInfo(document);
 
 			foreach (Entity item in document.Entities)
