@@ -44,7 +44,7 @@ WIP
 
 The dwg/dxf readers are not yet fully implemented, the NotificationHandler will send a message to inform about the objects that could not be readed or any other error in the process.
 
-### Dwg entities not implemented
+### Dwg reader entities not implemented
 
 - ACDBPLACEHOLDER
 - VP_ENT_HDR
