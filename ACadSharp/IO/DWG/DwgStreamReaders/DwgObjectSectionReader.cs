@@ -1196,20 +1196,20 @@ namespace ACadSharp.IO.DWG
 					//are written, starting from the Entmode
 					//(entity mode). The owner handle can be 0.
 
-					//TODO: Read MText data
-					System.Diagnostics.Debug.Fail("Reader not implemented for MText attribute.");
-					return;
-
 					short dataSize = this._objectReader.ReadBitShort();
 					if (dataSize > 0)
 					{
 						//Annotative data bytes RC Byte array with length Annotative data size.
-						this._objectReader.Advance(dataSize);
+						var data = this._objectReader.ReadBytes(dataSize);
 						//Registered application H Hard pointer.
-						this.handleReference();
+						var appHanlde = this.handleReference();	//What to do??
 						//Unknown BS 72? Value 0.
 						this._objectReader.ReadBitShort();
 					}
+					att.Tag = this._mergedReaders.ReadVariableText();
+					length = this._mergedReaders.ReadBitShort();
+					att.Flags = (AttributeFlags)this._mergedReaders.ReadByte();
+					att.IsReallyLocked = this._mergedReaders.ReadBit();
 					break;
 				default:
 					break;
