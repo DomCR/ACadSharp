@@ -313,6 +313,7 @@ namespace ACadSharp
 		/// </summary>
 		public bool IsTrueColor => _color >= (1 << 30);
 
+
 		/// <summary>
 		/// Represents the actual stored color.  Either a True Color or an indexed color.
 		/// </summary>
@@ -415,8 +416,10 @@ namespace ACadSharp
 			{
 				return new ReadOnlySpan<byte>(BitConverter.GetBytes(_color), 0, 3);
 			}
-
-			return default;
+			else
+			{
+				return Color.GetIndexRGB(this.Index);
+			}
 		}
 
 		public bool Equals(Color other)
