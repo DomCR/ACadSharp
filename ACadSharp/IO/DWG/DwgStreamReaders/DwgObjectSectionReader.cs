@@ -109,13 +109,13 @@ namespace ACadSharp.IO.DWG
 			else
 				this._crcStream = this._reader.Stream;
 
-            this._crcStreamBuffer = new byte[_crcStream.Length];
-            _crcStream.Read(this._crcStreamBuffer, 0, this._crcStreamBuffer.Length);
+			this._crcStreamBuffer = new byte[_crcStream.Length];
+			_crcStream.Read(this._crcStreamBuffer, 0, this._crcStreamBuffer.Length);
 
-            this._crcStream.Position = 0L;
+			this._crcStream.Position = 0L;
 
-            //Setup the entity handler
-            this._crcReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._crcStream);
+			//Setup the entity handler
+			this._crcReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._crcStream);
 		}
 
 		/// <summary>
@@ -513,7 +513,7 @@ namespace ACadSharp.IO.DWG
 				ulong appHandle = this._objectReader.HandleReference();
 				long endPos = this._objectReader.Position + size;
 
-				if(template.CadObject.Handle == 240)
+				if (template.CadObject.Handle == 240)
 				{
 
 				}
@@ -1170,49 +1170,49 @@ namespace ACadSharp.IO.DWG
 			//R2018+:
 			if (this.R2018Plus)
 			{
-				AttributeType type = (AttributeType)this._objectReader.ReadByte();
+				att.AttributeType = (AttributeType)this._objectReader.ReadByte();
+			}
 
-				switch (type)
-				{
-					case AttributeType.SingleLine:
-						//Common:
-						//Tag TV 2
-						att.Tag = this._textReader.ReadVariableText();
-						//Field length BS 73 unused
-						short length = this._objectReader.ReadBitShort();
-						//Flags RC 70 NOT bit-pair - coded.
-						att.Flags = (AttributeFlags)this._objectReader.ReadByte();
-						//R2007 +:
-						if (this.R2007Plus)
-							//Lock position flag B 280
-							att.IsReallyLocked = this._objectReader.ReadBit();
+			switch (att.AttributeType)
+			{
+				case AttributeType.SingleLine:
+					//Common:
+					//Tag TV 2
+					att.Tag = this._textReader.ReadVariableText();
+					//Field length BS 73 unused
+					short length = this._objectReader.ReadBitShort();
+					//Flags RC 70 NOT bit-pair - coded.
+					att.Flags = (AttributeFlags)this._objectReader.ReadByte();
+					//R2007 +:
+					if (this.R2007Plus)
+						//Lock position flag B 280
+						att.IsReallyLocked = this._objectReader.ReadBit();
 
-						break;
-					case AttributeType.MultiLine:
-					case AttributeType.ConstantMultiLine:
-						//Attribute type is multi line
-						//MTEXT fields … Here all fields of an embedded MTEXT object
-						//are written, starting from the Entmode
-						//(entity mode). The owner handle can be 0.
+					break;
+				case AttributeType.MultiLine:
+				case AttributeType.ConstantMultiLine:
+					//Attribute type is multi line
+					//MTEXT fields … Here all fields of an embedded MTEXT object
+					//are written, starting from the Entmode
+					//(entity mode). The owner handle can be 0.
 
-						//TODO: Read MText data
-						System.Diagnostics.Debug.Fail("Reader not implemented for MText attribute.");
-						return;
-
-						short dataSize = this._objectReader.ReadBitShort();
-						if (dataSize > 0)
-						{
-							//Annotative data bytes RC Byte array with length Annotative data size.
-							this._objectReader.Advance(dataSize);
-							//Registered application H Hard pointer.
-							this.handleReference();
-							//Unknown BS 72? Value 0.
-							this._objectReader.ReadBitShort();
-						}
-						break;
-					default:
-						break;
-				}
+					short dataSize = this._objectReader.ReadBitShort();
+					if (dataSize > 0)
+					{
+						//Annotative data bytes RC Byte array with length Annotative data size.
+						var data = this._objectReader.ReadBytes(dataSize);
+						//Registered application H Hard pointer.
+						var appHanlde = this.handleReference();	//What to do??
+						//Unknown BS 72? Value 0.
+						this._objectReader.ReadBitShort();
+					}
+					att.Tag = this._mergedReaders.ReadVariableText();
+					length = this._mergedReaders.ReadBitShort();
+					att.Flags = (AttributeFlags)this._mergedReaders.ReadByte();
+					att.IsReallyLocked = this._mergedReaders.ReadBit();
+					break;
+				default:
+					break;
 			}
 		}
 
