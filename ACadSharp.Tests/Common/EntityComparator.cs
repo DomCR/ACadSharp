@@ -1,8 +1,5 @@
 ﻿using ACadSharp.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Tests.Common
 {
@@ -40,8 +37,8 @@ namespace ACadSharp.Tests.Common
 		{
 			IsEqual((Circle)expected, (Circle)actual, compareLinks);
 
-			Assert.IsTrue(expected.StartAngle == actual.StartAngle, "Different StartAngle");
-			Assert.IsTrue(expected.EndAngle == actual.EndAngle, "Different EndAngle");
+			AssertUtils.AreEqual(expected.StartAngle, actual.StartAngle, TestVariables.Delta, nameof(actual.StartAngle));
+			AssertUtils.AreEqual(expected.EndAngle, actual.EndAngle, nameof(actual.EndAngle));
 		}
 
 		public static void IsEqual(Circle expected, Circle actual, bool compareLinks = false)
@@ -81,7 +78,7 @@ namespace ACadSharp.Tests.Common
 			Assert.IsTrue(expected.Normal == actual.Normal, "Different Normal");
 			Assert.IsTrue(expected.Thickness == actual.Thickness, "Different Thickness");
 			Assert.IsTrue(expected.InsertPoint == actual.InsertPoint, "Different InsertPoint");
-			Assert.IsTrue(expected.AlignmentPoint == actual.AlignmentPoint, "Different AlignmentPoint");
+			Assert.AreEqual(expected.AlignmentPoint, actual.AlignmentPoint, "Different AlignmentPoint");
 			Assert.IsTrue(expected.Rotation == actual.Rotation, "Different Rotation");
 			Assert.IsTrue(expected.Height == actual.Height, "Different Height");
 			Assert.IsTrue(expected.Value == actual.Value, "Different Value");
