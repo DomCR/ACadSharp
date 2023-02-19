@@ -77,7 +77,7 @@ namespace ACadSharp.Tests.Common
 			AssertUtils.AreEqual(expected.Normal, actual.Normal, nameof(actual.Normal));
 			AssertUtils.AreEqual(expected.Thickness, actual.Thickness, nameof(actual.Thickness));
 			AssertUtils.AreEqual(expected.InsertPoint, actual.InsertPoint, nameof(actual.InsertPoint));
-			Assert.AreEqual(expected.AlignmentPoint, actual.AlignmentPoint, nameof(actual.AlignmentPoint));
+			AssertUtils.AreEqual(expected.AlignmentPoint, actual.AlignmentPoint, nameof(actual.AlignmentPoint));
 			AssertUtils.AreEqual(expected.Rotation, actual.Rotation, nameof(actual.Rotation));
 			AssertUtils.AreEqual(expected.Height, actual.Height, nameof(actual.Height));
 			AssertUtils.AreEqual(expected.Value, actual.Value, nameof(actual.Value));
