@@ -140,7 +140,7 @@ namespace ACadSharp.Tests.Common
 			dimension.TextMiddlePoint = _random.NextXYZ();
 			dimension.InsertionPoint = _random.NextXYZ();
 			dimension.LineSpacingFactor = _random.NextDouble();
-			dimension.Measurement = _random.NextDouble();
+			//dimension.Measurement = _random.NextDouble();
 			dimension.Text = _random.RandomString(10);
 			dimension.TextRotation = _random.NextDouble();
 			dimension.HorizontalDirection = _random.NextDouble();
