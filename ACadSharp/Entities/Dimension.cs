@@ -2,11 +2,6 @@
 using ACadSharp.Blocks;
 using ACadSharp.Tables;
 using CSMath;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ACadSharp.Entities
 {

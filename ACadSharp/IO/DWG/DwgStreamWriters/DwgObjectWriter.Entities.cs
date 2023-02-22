@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using CSMath;
+using System;
 
 namespace ACadSharp.IO.DWG
 {
@@ -16,6 +17,35 @@ namespace ACadSharp.IO.DWG
 					break;
 				case Circle circle:
 					this.writeCircle(circle);
+					break;
+				case Dimension dimension:
+					this.writeCommonDimensionData(dimension);
+					switch (dimension)
+					{
+						case DimensionLinear linear:
+							writeDimensionLinear(linear);
+							break;
+						case DimensionAligned aligned:
+							writeDimensionAligned(aligned);
+							break;
+						case DimensionRadius radius:
+							writeDimensionRadius(radius);
+							break;
+						case DimensionAngular2Line angular2Line:
+							writeDimensionAngular2Line(angular2Line);
+							break;
+						case DimensionAngular3Pt angular3pt:
+							writeDimensionAngular3Pt(angular3pt);
+							break;
+						case DimensionDiameter diamenter:
+							writeDimensionDiameter(diamenter);
+							break;
+						case DimensionOrdinate ordinate:
+							writeDimensionOrdinate(ordinate);
+							break;
+							//default:
+							//	throw new NotImplementedException();
+					}
 					break;
 				case Ellipse ellipse:
 					this.writeEllipse(ellipse);
@@ -55,6 +85,163 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(circle.Radius);
 			this._writer.WriteBitThickness(circle.Thickness);
 			this._writer.WriteBitExtrusion(circle.Normal);
+		}
+
+		private void writeCommonDimensionData(Dimension dimension)
+		{
+			//R2010:
+			if (this.R2010Plus)
+			{
+				//Version RC 280 0 = R2010
+				this._writer.WriteByte(dimension.Version);
+			}
+
+			//Common:
+			//Extrusion 3BD 210
+			this._writer.Write3BitDouble(dimension.Normal);
+			//Text midpt 2RD 11 See DXF documentation.
+			this._writer.Write2RawDouble((XY)dimension.TextMiddlePoint);
+			//Elevation BD 11 Z - coord for the ECS points(11, 12, 16).
+			//12 (The 16 remains (0,0,0) in entgets of this entity,
+			//since the 16 is not used in this type of dimension
+			//and is not present in the binary form here.)
+			this._writer.WriteBitDouble(dimension.InsertionPoint.Z);
+
+			this._writer.WriteByte(0);
+
+			//User text TV 1
+			this._writer.WriteVariableText(dimension.Text);
+
+			//Text rot BD 53 See DXF documentation.
+			this._writer.WriteBitDouble(dimension.TextRotation);
+			//Horiz dir BD 51 See DXF documentation.
+			this._writer.WriteBitDouble(dimension.HorizontalDirection);
+
+			//Ins X - scale BD 41 Undoc'd. These apply to the insertion of the
+			//Ins Y - scale BD 42 anonymous block. None of them can be
+			//Ins Z - scale BD 43 dealt with via entget/entmake/entmod.
+			this._writer.Write3BitDouble(new XYZ());
+			//Ins rotation BD 54 The last 2(43 and 54) are reported by DXFOUT(when not default values).
+			//ALL OF THEM can be set via DXFIN, however.
+			this._writer.WriteBitDouble(0);
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//Attachment Point BS 71
+				this._writer.WriteBitShort((short)dimension.AttachmentPoint);
+				//Linespacing Style BS 72
+				this._writer.WriteBitShort((short)dimension.LineSpacingStyle);
+				//Linespacing Factor BD 41
+				this._writer.WriteBitDouble(dimension.LineSpacingFactor);
+				//Actual Measurement BD 42
+				this._writer.WriteBitDouble(dimension.Measurement);
+			}
+
+			//R2007 +:
+			if (this.R2007Plus)
+			{
+				//Unknown B 73
+				this._writer.WriteBit(value: false);
+				//Flip arrow1 B 74
+				this._writer.WriteBit(value: false);
+				//Flip arrow2 B 75
+				this._writer.WriteBit(value: false);
+			}
+
+			//Common:
+			//12 - pt 2RD 12 See DXF documentation.
+			this._writer.Write2RawDouble((XY)dimension.InsertionPoint);
+
+			//Common Entity Handle Data
+			//H 3 DIMSTYLE(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, dimension.Style);
+			//H 2 anonymous BLOCK(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, dimension.Block);
+		}
+
+		private void writeDimensionLinear(DimensionLinear dimension)
+		{
+			writeDimensionAligned(dimension);
+
+			//Dim rot BD 50 Linear dimension rotation; see DXF documentation.
+			this._writer.WriteBitDouble(dimension.Rotation);
+		}
+
+		private void writeDimensionAligned(DimensionAligned dimension)
+		{
+			//Common:
+			//13 - pt 3BD 13 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.FirstPoint);
+			//14 - pt 3BD 14 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.SecondPoint);
+			//10 - pt 3BD 10 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.DefinitionPoint);
+
+			//Ext ln rot BD 52 Extension line rotation; see DXF documentation.
+			this._writer.WriteBitDouble(dimension.ExtLineRotation);
+		}
+
+		private void writeDimensionRadius(DimensionRadius dimension)
+		{
+			//Common:
+			//10 - pt 3BD 10 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.DefinitionPoint);
+			//15-pt 3BD 15 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.AngleVertex);
+			//Leader len D 40 Leader length.
+			this._writer.WriteBitDouble(dimension.LeaderLength);
+		}
+
+		private void writeDimensionAngular2Line(DimensionAngular2Line dimension)
+		{
+			//Common:
+			//16-pt 2RD 16 See DXF documentation.
+			this._writer.Write2RawDouble((XY)dimension.DimensionArc);
+
+			//13 - pt 3BD 13 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.FirstPoint);
+			//14 - pt 3BD 14 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.SecondPoint);
+			//15-pt 3BD 15 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.AngleVertex);
+			//10 - pt 3BD 10 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.DefinitionPoint);
+		}
+
+		private void writeDimensionAngular3Pt(DimensionAngular3Pt dimension)
+		{
+			//Common:
+			//10 - pt 3BD 10 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.DefinitionPoint);
+			//13 - pt 3BD 13 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.FirstPoint);
+			//14 - pt 3BD 14 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.SecondPoint);
+			//15-pt 3BD 15 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.AngleVertex);
+		}
+
+		private void writeDimensionDiameter(DimensionDiameter dimension)
+		{
+			//Common:
+			//10 - pt 3BD 10 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.DefinitionPoint);
+			//15-pt 3BD 15 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.AngleVertex);
+			//Leader len D 40 Leader length.
+			this._writer.WriteBitDouble(dimension.LeaderLength);
+		}
+
+		private void writeDimensionOrdinate(DimensionOrdinate dimension)
+		{
+			//Common:
+			//10 - pt 3BD 10 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.DefinitionPoint);
+			//13 - pt 3BD 13 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.FeatureLocation);
+			//14 - pt 3BD 14 See DXF documentation.
+			this._writer.Write3BitDouble(dimension.LeaderEndpoint);
 		}
 
 		private void writeEllipse(Ellipse ellipse)
