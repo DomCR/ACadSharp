@@ -7,9 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\ACadSharp.Tests\Common\AssertUtils.cs" Link="Common\AssertUtils.cs" />
     <Compile Include="..\ACadSharp.Tests\Common\CSMathRandom.cs" Link="Common\CSMathRandom.cs" />
     <Compile Include="..\ACadSharp.Tests\Common\EntityComparator.cs" Link="Common\EntityComparator.cs" />
     <Compile Include="..\ACadSharp.Tests\Common\EntityFactory.cs" Link="Common\EntityFactory.cs" />
+    <Compile Include="..\ACadSharp.Tests\TestVariables.cs" Link="TestVariables.cs" />
   </ItemGroup>
 
   <ItemGroup>
