@@ -97,7 +97,7 @@ namespace ACadSharp.Entities
 		/// optional; read-only value
 		/// </remarks>
 		[DxfCodeValue(42)]
-		public double Measurement { get; set; }
+		public double Measurement { get; internal set; }
 
 		/// <summary>
 		/// Dimension text explicitly entered by the user

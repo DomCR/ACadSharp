@@ -55,6 +55,36 @@ namespace ACadSharp.Tests.Common
 				case Circle circle:
 					RandomizeCircle(circle);
 					break;
+				case Dimension dimension:
+					RandomizeDimension(dimension);
+					switch (dimension)
+					{
+						case DimensionLinear linear:
+							RandomizeDimensionAligned(linear);
+							RandomizeDimensionLinear(linear);
+							break;
+						case DimensionAligned aligned:
+							RandomizeDimensionAligned(aligned);
+							break;
+						case DimensionRadius radius:
+							RandomizeDimensionRadius(radius);
+							break;
+						case DimensionAngular2Line angular2Line:
+							RandomizeDimensionAngular2Line(angular2Line);
+							break;
+						case DimensionAngular3Pt angular3pt:
+							RandomizeDimension3Pt(angular3pt);
+							break;
+						case DimensionDiameter diamenter:
+							RandomizeDimensionDiameter(diamenter);
+							break;
+						case DimensionOrdinate ordinate:
+							RandomizeDimensionOrdinate(ordinate);
+							break;
+						default:
+							throw new NotImplementedException();
+					}
+					break;
 				case Ellipse ellipse:
 					RandomizeEllipse(ellipse);
 					break;
@@ -101,6 +131,64 @@ namespace ACadSharp.Tests.Common
 			circle.Center = _random.NextXYZ();
 			circle.Thickness = _random.NextDouble();
 			circle.Radius = _random.NextDouble();
+		}
+
+		public static void RandomizeDimension(Dimension dimension)
+		{
+			dimension.Block = null;
+			dimension.DefinitionPoint = _random.NextXYZ();
+			dimension.TextMiddlePoint = _random.NextXYZ();
+			dimension.InsertionPoint = _random.NextXYZ();
+			dimension.LineSpacingFactor = _random.NextDouble();
+			dimension.Measurement = _random.NextDouble();
+			dimension.Text = _random.RandomString(10);
+			dimension.TextRotation = _random.NextDouble();
+			dimension.HorizontalDirection = _random.NextDouble();
+		}
+
+		public static void RandomizeDimensionAligned(DimensionAligned dimension)
+		{
+			dimension.FirstPoint = _random.NextXYZ();
+			dimension.SecondPoint = _random.NextXYZ();
+			dimension.ExtLineRotation = _random.NextDouble();
+		}
+
+		public static void RandomizeDimensionLinear(DimensionLinear dimension)
+		{
+			dimension.Rotation = _random.NextDouble();
+		}
+
+		public static void RandomizeDimensionRadius(DimensionRadius dimension)
+		{
+			dimension.AngleVertex = _random.NextXYZ();
+			dimension.LeaderLength = _random.NextDouble();
+		}
+
+		public static void RandomizeDimensionAngular2Line(DimensionAngular2Line dimension)
+		{
+			dimension.FirstPoint = _random.NextXYZ();
+			dimension.SecondPoint = _random.NextXYZ();
+			dimension.AngleVertex = _random.NextXYZ();
+			dimension.DimensionArc = _random.NextXYZ();
+		}
+
+		public static void RandomizeDimension3Pt(DimensionAngular3Pt dimension)
+		{
+			dimension.FirstPoint = _random.NextXYZ();
+			dimension.SecondPoint = _random.NextXYZ();
+			dimension.AngleVertex = _random.NextXYZ();
+		}
+
+		public static void RandomizeDimensionDiameter(DimensionDiameter dimension)
+		{
+			dimension.AngleVertex = _random.NextXYZ();
+			dimension.LeaderLength = _random.NextDouble();
+		}
+
+		public static void RandomizeDimensionOrdinate(DimensionOrdinate dimension)
+		{
+			dimension.FeatureLocation = _random.NextXYZ();
+			dimension.LeaderEndpoint = _random.NextXYZ();
 		}
 
 		public static void RandomizeEllipse(Ellipse ellipse)
