@@ -1852,9 +1852,10 @@ namespace ACadSharp.IO.DWG
 			//Bit 1 : Same as bit 5(32) of the 70(but 32 is not doc'd by ACAD).
 			//The actual 70 - group value comes from 3 things:
 			//6 for being an ordinate DIMENSION, plus whatever bits "Flags 1" and "Flags 2" specify.
-			byte dimensionType = this._objectReader.ReadByte();//TODO: set dimension type
 
-			// if (!this.ModelBuilder.IsDxf21Superior)
+			///<see cref="DwgObjectWriter.writeCommonDimensionData"></see>
+			//TODO: set dimension type
+			byte dimensionType = this._objectReader.ReadByte();
 
 			//User text TV 1
 			dimension.Text = this._textReader.ReadVariableText();
@@ -1864,6 +1865,7 @@ namespace ACadSharp.IO.DWG
 			//Horiz dir BD 51 See DXF documentation.
 			dimension.HorizontalDirection = this._objectReader.ReadBitDouble();
 
+			///<see cref="DwgObjectWriter.writeCommonDimensionData"></see>
 			//TODO: readDimension insert scale and rotation not implemented
 
 			//Ins X - scale BD 41 Undoc'd. These apply to the insertion of the
@@ -1921,6 +1923,7 @@ namespace ACadSharp.IO.DWG
 			dimension.ExtLineRotation = this._objectReader.ReadBitDouble();
 		}
 
+		[Obsolete("Can be moved to the common dimension data")]
 		private void readCommonDimensionHandles(CadDimensionTemplate template)
 		{
 			//Common Entity Handle Data

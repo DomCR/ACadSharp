@@ -12,7 +12,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityDimension)]
 	[DxfSubClass(DxfSubclassMarker.Angular3PointDimension)]
-	public class DimensionAngular3Pt: Dimension
+	public class DimensionAngular3Pt : Dimension
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.DIMENSION_ANG_3_Pt;
