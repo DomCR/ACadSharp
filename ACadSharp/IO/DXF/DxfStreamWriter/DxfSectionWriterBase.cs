@@ -257,7 +257,9 @@ namespace ACadSharp.IO.DXF
 
 		private void writeInsert(Insert insert)
 		{
-			//throw new NotImplementedException(insert.GetType().FullName);
+#if TEST
+			throw new NotImplementedException(insert.GetType().FullName);
+#endif
 		}
 
 		private void writeLwPolyline(LwPolyline polyline)
@@ -311,7 +313,9 @@ namespace ACadSharp.IO.DXF
 
 		private void writeTextEntity(TextEntity text)
 		{
-			//throw new NotImplementedException(text.GetType().FullName);
+#if TEST
+			throw new NotImplementedException(text.GetType().FullName);
+#endif
 		}
 
 		private void writeVertex(Vertex v)
