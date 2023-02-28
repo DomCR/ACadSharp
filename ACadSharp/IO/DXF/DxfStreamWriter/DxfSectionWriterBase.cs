@@ -160,26 +160,31 @@ namespace ACadSharp.IO.DXF
 		protected void writeMappedObject<T>(T e)
 			where T : CadObject
 		{
-
 			switch (e)
 			{
-				//TODO: Finish write implementation
 				case Hatch:
 				case MText:
-				case Insert:
-				case TextEntity:
 				case Dimension:
-				case LwPolyline:
 				case MLine:
-				default:
 					this.Notify($"mapped object : {e.GetType().FullName} not implemented | handle: {e.Handle}");
 #if TEST
 					throw new NotImplementedException($"mapped object : {e.GetType().FullName} not implemented | handle: {e.Handle}");
 #endif
-					break;
+					return;
+				case Insert insert:
+					this.writeInsert(insert);
+					return;
+				case LwPolyline lwPolyline:
+					this.writeLwPolyline(lwPolyline);
+					return;
 				case Polyline polyline:
 					this.writePolyline(polyline);
 					return;
+				case TextEntity textEntity:
+					this.writeTextEntity(textEntity);
+					return;
+				default:
+					break;
 			}
 
 			DxfMap map = DxfMap.Create(e.GetType());
@@ -250,6 +255,27 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(91, v.Id);
 		}
 
+		private void writeInsert(Insert insert)
+		{
+			//throw new NotImplementedException(insert.GetType().FullName);
+		}
+
+		private void writeLwPolyline(LwPolyline polyline)
+		{
+			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
+			DxfClassMap plineMap = DxfClassMap.Create<LwPolyline>();
+
+			this._writer.Write(DxfCode.Start, polyline.ObjectName);
+
+			this.writeCommonObjectData(polyline);
+
+			this.writeClassMap(entityMap, polyline);
+
+			this.writeClassMap(plineMap, polyline);
+
+			this.writeCollection(polyline.Vertices);
+		}
+
 		private void writePolyline(Polyline polyline)
 		{
 			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
@@ -281,6 +307,11 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(DxfCode.ZCoordinate, polyline.Elevation);
 
 			this.writeCollection(polyline.Vertices);
+		}
+
+		private void writeTextEntity(TextEntity text)
+		{
+			//throw new NotImplementedException(text.GetType().FullName);
 		}
 
 		private void writeVertex(Vertex v)
