@@ -7,6 +7,7 @@ using CSMath;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ACadSharp.IO.DXF
 {
@@ -159,6 +160,7 @@ namespace ACadSharp.IO.DXF
 		protected void writeMappedObject<T>(T e)
 			where T : CadObject
 		{
+
 			switch (e)
 			{
 				//TODO: Finish write implementation
@@ -169,13 +171,15 @@ namespace ACadSharp.IO.DXF
 				case Dimension:
 				case LwPolyline:
 				case MLine:
-					this.Notify($"mapped object : {e.GetType().FullName} not implemented");
-					return;
+				default:
+					this.Notify($"mapped object : {e.GetType().FullName} not implemented | handle: {e.Handle}");
+#if TEST
+					throw new NotImplementedException($"mapped object : {e.GetType().FullName} not implemented | handle: {e.Handle}");
+#endif
+					break;
 				case Polyline polyline:
 					this.writePolyline(polyline);
 					return;
-				default:
-					break;
 			}
 
 			DxfMap map = DxfMap.Create(e.GetType());
@@ -269,7 +273,7 @@ namespace ACadSharp.IO.DXF
 
 			//Remove elevation
 			plineMap.DxfProperties.Remove(30);
-						
+
 			this.writeClassMap(plineMap, polyline);
 
 			this._writer.Write(DxfCode.XCoordinate, 0);
