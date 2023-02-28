@@ -1,9 +1,6 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Blocks;
-using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using CSMath;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -75,15 +72,27 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
+		/// <summary>
+		/// Column count
+		/// </summary>
 		[DxfCodeValue(70)]
 		public ushort ColumnCount { get; set; } = 1;
 
+		/// <summary>
+		/// Row count
+		/// </summary>
 		[DxfCodeValue(71)]
 		public ushort RowCount { get; set; } = 1;
 
+		/// <summary>
+		/// Column spacing
+		/// </summary>
 		[DxfCodeValue(44)]
 		public double ColumnSpacing { get; set; } = 0;
 
+		/// <summary>
+		/// Row spacing
+		/// </summary>
 		[DxfCodeValue(45)]
 		public double RowSpacing { get; set; } = 0;
 
