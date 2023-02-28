@@ -313,9 +313,37 @@ namespace ACadSharp.IO.DXF
 
 		private void writeTextEntity(TextEntity text)
 		{
-#if TEST
-			throw new NotImplementedException(text.GetType().FullName);
-#endif
+			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
+			DxfClassMap textMap = DxfClassMap.Create<TextEntity>();
+
+			this._writer.Write(DxfCode.Start, text.ObjectName);
+
+			this.writeCommonObjectData(text);
+
+			this.writeClassMap(entityMap, text);
+
+			this.writeClassMap(textMap, text);
+
+			if (text is not AttributeBase)
+			{
+				this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Text);
+			}
+			else
+			{
+				DxfClassMap attMap = null;
+
+				switch (text)
+				{
+					case AttributeEntity:
+						attMap = DxfClassMap.Create<AttributeEntity>();
+						break;
+					case AttributeDefinition:
+						attMap = DxfClassMap.Create<AttributeDefinition>();
+						break;
+				}
+
+				this.writeClassMap(attMap, text);
+			}
 		}
 
 		private void writeVertex(Vertex v)

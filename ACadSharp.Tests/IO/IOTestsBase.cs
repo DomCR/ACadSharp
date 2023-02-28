@@ -127,8 +127,6 @@ namespace ACadSharp.Tests.IO
 
 		protected void checkDxfDocumentInAutocad(string path)
 		{
-			return;
-
 			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null)
 				return;
 

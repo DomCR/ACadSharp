@@ -1,9 +1,7 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using CSMath;
 using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
