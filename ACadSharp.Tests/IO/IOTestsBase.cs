@@ -184,6 +184,7 @@ namespace ACadSharp.Tests.IO
 			finally
 			{
 				process.Kill();
+				process.Dispose();
 			}
 		}
 

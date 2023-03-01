@@ -334,11 +334,62 @@ namespace ACadSharp.IO.DXF
 
 			this.writeClassMap(entityMap, text);
 
-			this.writeClassMap(textMap, text);
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Text);
+
+			this._writer.Write(1, text.Value);
+
+			this._writer.Write(10, text.InsertPoint.X);
+			this._writer.Write(20, text.InsertPoint.Y);
+			this._writer.Write(30, text.InsertPoint.Z);
+
+			this._writer.Write(40, text.Height);
+
+			if (text.WidthFactor != 1.0)
+			{
+				this._writer.Write(41, text.WidthFactor);
+			}
+
+			if (text.Rotation != 0.0)
+			{
+				this._writer.Write(50, text.Rotation);
+			}
+
+			if (text.ObliqueAngle != 0.0)
+			{
+				this._writer.Write(51, text.ObliqueAngle);
+			}
+
+			if (text.Style != null)
+			{
+				//TODO: Implement text style in the writer
+				//this._writer.Write(7, text.Style.Name);
+			}
+
+			this._writer.Write(11, text.AlignmentPoint.X);
+			this._writer.Write(21, text.AlignmentPoint.Y);
+			this._writer.Write(31, text.AlignmentPoint.Z);
+
+			this._writer.Write(210, text.Normal.X);
+			this._writer.Write(220, text.Normal.Y);
+			this._writer.Write(230, text.Normal.Z);
 
 			if (text is not AttributeBase)
 			{
+				if (text.Mirror != 0)
+				{
+					this._writer.Write(71, text.Mirror);
+				}
+				if (text.HorizontalAlignment != 0)
+				{
+					this._writer.Write(72, text.HorizontalAlignment);
+				}
+
 				this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Text);
+
+				if (text.VerticalAlignment != 0)
+				{
+					this._writer.Write(73, text.VerticalAlignment);
+				}
 			}
 			else
 			{
