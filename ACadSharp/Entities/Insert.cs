@@ -24,11 +24,11 @@ namespace ACadSharp.Entities
 		//66	Variable attributes-follow flag(optional; default = 0); 
 		//		if the value of attributes-follow flag is 1, a series of 
 		//		attribute entities is expected to follow the insert, terminated by a seqend entity
-		[DxfCodeValue(DxfReferenceType.Count, 66)]
+		[DxfCodeValue(DxfReferenceType.Ignored, 66)]
 		public SeqendCollection<AttributeEntity> Attributes { get; set; }
 
 		/// <summary>
-		///  Gets the insert block definition
+		/// Gets the insert block definition
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 2)]
 		public BlockRecord Block { get; set; }

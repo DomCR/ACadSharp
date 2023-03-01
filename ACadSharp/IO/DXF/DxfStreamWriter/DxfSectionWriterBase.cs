@@ -1,13 +1,9 @@
-﻿using ACadSharp.Blocks;
-using ACadSharp.Entities;
-using ACadSharp.IO.DXF;
-using ACadSharp.Objects;
+﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
 using CSMath;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 
 namespace ACadSharp.IO.DXF
 {
@@ -257,9 +253,25 @@ namespace ACadSharp.IO.DXF
 
 		private void writeInsert(Insert insert)
 		{
-#if TEST
-			throw new NotImplementedException(insert.GetType().FullName);
-#endif
+			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
+			DxfClassMap insertMap = DxfClassMap.Create<Insert>();
+
+			this._writer.Write(DxfCode.Start, insert.ObjectName);
+
+			this.writeCommonObjectData(insert);
+
+			this.writeClassMap(entityMap, insert);
+
+			this.writeClassMap(insertMap, insert);
+
+			//this._writer.Write(66, 0);
+
+			//if (insert.Attributes.Any())
+			if (false)
+			{
+				this._writer.Write(66, 1);
+				this.writeCollection(insert.Attributes);
+			}
 		}
 
 		private void writeLwPolyline(LwPolyline polyline)
