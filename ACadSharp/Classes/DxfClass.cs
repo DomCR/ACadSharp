@@ -56,6 +56,10 @@ namespace ACadSharp.Classes
 		/// </summary>
 		public short ItemClassId { get; set; }
 
+		public ACadVersion DwgVersion { get; set; }
+
+		public short MaintenanceVersion { get; set; }
+
 		/// <inheritdoc/>
 		public override string ToString()
 		{

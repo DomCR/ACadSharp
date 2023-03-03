@@ -14,7 +14,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityHatch)]
 	[DxfSubClass(DxfSubclassMarker.Hatch)]
-	public partial class Hatch : Entity, IDxfDefinedClass
+	public partial class Hatch : Entity
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.HATCH;
@@ -125,21 +125,5 @@ namespace ACadSharp.Entities
 		public List<BoundaryPath> Paths { get; set; } = new List<BoundaryPath>();
 
 		public Hatch() : base() { }
-
-		/// <inheritdoc/>
-		public DxfClass GetDxfClass()
-		{
-			//Not present in all the files, version dependant, only in AC1014
-			return new DxfClass
-			{
-				DxfName = this.ObjectName,
-				CppClassName = DxfSubclassMarker.Hatch,
-				ProxyFlags = ProxyFlags.None,
-				WasAProxy = false,
-				IsAnEntity = true,
-				ClassNumber = 528,
-				ItemClassId = 498
-			};
-		}
 	}
 }
