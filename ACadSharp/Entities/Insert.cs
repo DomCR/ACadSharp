@@ -1,9 +1,6 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Blocks;
-using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using CSMath;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -27,11 +24,11 @@ namespace ACadSharp.Entities
 		//66	Variable attributes-follow flag(optional; default = 0); 
 		//		if the value of attributes-follow flag is 1, a series of 
 		//		attribute entities is expected to follow the insert, terminated by a seqend entity
-		[DxfCodeValue(DxfReferenceType.Count, 66)]
+		[DxfCodeValue(DxfReferenceType.Ignored, 66)]
 		public SeqendCollection<AttributeEntity> Attributes { get; set; }
 
 		/// <summary>
-		///  Gets the insert block definition
+		/// Gets the insert block definition
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 2)]
 		public BlockRecord Block { get; set; }
@@ -75,15 +72,27 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
+		/// <summary>
+		/// Column count
+		/// </summary>
 		[DxfCodeValue(70)]
 		public ushort ColumnCount { get; set; } = 1;
 
+		/// <summary>
+		/// Row count
+		/// </summary>
 		[DxfCodeValue(71)]
 		public ushort RowCount { get; set; } = 1;
 
+		/// <summary>
+		/// Column spacing
+		/// </summary>
 		[DxfCodeValue(44)]
 		public double ColumnSpacing { get; set; } = 0;
 
+		/// <summary>
+		/// Row spacing
+		/// </summary>
 		[DxfCodeValue(45)]
 		public double RowSpacing { get; set; } = 0;
 

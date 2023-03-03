@@ -91,6 +91,9 @@ namespace ACadSharp.Tests.Common
 				case Line line:
 					RandomizeLine(line);
 					break;
+				case LwPolyline lwPolyline:
+					RandomizeLwPolyline(lwPolyline);
+					break;
 				case Point point:
 					RandomizePoint(point);
 					break;
@@ -212,6 +215,29 @@ namespace ACadSharp.Tests.Common
 			// line.Normal = _random.NextXYZ();	//Entity becomes invisible if has a different value
 			line.StartPoint = _random.NextXYZ();
 			line.EndPoint = _random.NextXYZ();
+		}
+
+		public static void RandomizeLwPolyline(LwPolyline lwPolyline)
+		{
+			RandomizeEntity(lwPolyline);
+
+			lwPolyline.Thickness = _random.NextDouble();
+			// line.Normal = _random.NextXYZ();	//Entity becomes invisible if has a different value
+			lwPolyline.ConstantWidth = _random.NextDouble();
+			lwPolyline.Elevation = _random.NextDouble();
+
+			for (int i = 0; i < _random.NextShort(); i++)
+			{
+				lwPolyline.Vertices.Add(new LwPolyline.Vertex
+				{
+					Location = _random.NextXY(),
+					StartWidth = _random.NextDouble(),
+					EndWidth = _random.NextDouble(),
+					Bulge = _random.NextDouble(),
+					CurveTangent = _random.NextDouble(),
+					Id = i
+				});
+			}
 		}
 
 		public static void RandomizePoint(Point point)
