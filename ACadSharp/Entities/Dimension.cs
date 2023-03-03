@@ -2,11 +2,6 @@
 using ACadSharp.Blocks;
 using ACadSharp.Tables;
 using CSMath;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ACadSharp.Entities
 {
@@ -97,7 +92,7 @@ namespace ACadSharp.Entities
 		/// optional; read-only value
 		/// </remarks>
 		[DxfCodeValue(42)]
-		public double Measurement { get; set; }
+		public double Measurement { get; internal set; }
 
 		/// <summary>
 		/// Dimension text explicitly entered by the user

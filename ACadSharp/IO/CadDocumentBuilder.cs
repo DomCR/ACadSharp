@@ -2,6 +2,7 @@
 using ACadSharp.Tables;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.IO
 {
@@ -79,11 +80,11 @@ namespace ACadSharp.IO
 				return false;
 			}
 
-			if (this.templates.TryGetValue(handle.Value, out CadTemplate template))
+			if (this.cadObjects.TryGetValue(handle.Value, out CadObject obj))
 			{
-				if (template?.CadObject is T)
+				if (obj is T)
 				{
-					value = (T)template.CadObject;
+					value = (T)obj;
 					return true;
 				}
 			}

@@ -1,9 +1,4 @@
-﻿using ACadSharp.Header;
-using ACadSharp.IO;
-using ACadSharp.Tests.Common;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using ACadSharp.IO;
 using Xunit;
 using Xunit.Abstractions;
 
