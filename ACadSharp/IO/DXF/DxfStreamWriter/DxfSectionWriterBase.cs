@@ -176,7 +176,7 @@ namespace ACadSharp.IO.DXF
 #if TEST
 					throw new NotImplementedException($"mapped object : {e.GetType().FullName} not implemented | handle: {e.Handle}");
 #endif
-					break;
+					return;
 				case Polyline polyline:
 					this.writePolyline(polyline);
 					return;
