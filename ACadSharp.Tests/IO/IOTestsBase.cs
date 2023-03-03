@@ -33,7 +33,7 @@ namespace ACadSharp.Tests.IO
 
 		protected readonly DxfReaderConfiguration _dxfConfiguration = new DxfReaderConfiguration
 		{
-			
+
 		};
 
 		protected readonly ITestOutputHelper _output;
@@ -78,39 +78,41 @@ namespace ACadSharp.Tests.IO
 				Directory.CreateDirectory(_samplesOutFolder);
 			}
 
-			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") == null)
+			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null)
 			{
-				var acCoreConsolePath = @"D:\Programs\Autodesk\AutoCAD 2023\accoreconsole.exe";
+				return;
+			}
 
-				if (!File.Exists(acCoreConsolePath))
+			var acCoreConsolePath = @"D:\Programs\Autodesk\AutoCAD 2023\accoreconsole.exe";
+
+			if (!File.Exists(acCoreConsolePath))
+			{
+				var programFiles = Environment.GetFolderPath(SpecialFolder.ProgramFiles);
+				var autoCadPath = Path.Combine(programFiles, "Autodesk");
+
+				var baseAutoCadPaths = new string[]
 				{
-					var programFiles = Environment.GetFolderPath(SpecialFolder.ProgramFiles);
-					var autoCadPath = Path.Combine(programFiles, "Autodesk");
-
-					var baseAutoCadPaths = new string[]
-					{
 						"AutoCAD 2023",
 						"AutoCAD LT 2023",
 						"AutoCAD 2022",
 						"AutoCAD LT 2022",
 						"AutoCAD 2021",
 						"AutoCAD LT 2021",
-					};
+				};
 
-					for (var i = 0; i < baseAutoCadPaths.Length; i++)
+				for (var i = 0; i < baseAutoCadPaths.Length; i++)
+				{
+					var consolePath = Path.Combine(autoCadPath, baseAutoCadPaths[i], "accoreconsole.exe");
+					if (File.Exists(consolePath))
 					{
-						var consolePath = Path.Combine(autoCadPath, baseAutoCadPaths[i], "accoreconsole.exe");
-						if (File.Exists(consolePath))
-						{
-							AcCoreConsolePath = consolePath;
-							break;
-						}
+						AcCoreConsolePath = consolePath;
+						break;
 					}
 				}
-				else
-				{
-					AcCoreConsolePath = acCoreConsolePath;
-				}
+			}
+			else
+			{
+				AcCoreConsolePath = acCoreConsolePath;
 			}
 		}
 
@@ -182,6 +184,7 @@ namespace ACadSharp.Tests.IO
 			finally
 			{
 				process.Kill();
+				process.Dispose();
 			}
 		}
 
@@ -238,6 +241,7 @@ namespace ACadSharp.Tests.IO
 			}
 			finally
 			{
+				process.WaitForExit();
 				process.Kill();
 			}
 		}

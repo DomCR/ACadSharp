@@ -78,25 +78,13 @@ namespace ACadSharp.Tests.IO.DXF
 
 			List<Entity> entities = new List<Entity>
 			{
-				new Point
-				{
-					Location = new CSMath.XYZ(0, 10, 0)
-				},
+				EntityFactory.Create<Point>(),
 				EntityFactory.Create<Line>(),
 				EntityFactory.Create<Polyline2D>(),
 				EntityFactory.Create<Polyline3D>(),
-				new Line
-				{
-					StartPoint = new CSMath.XYZ(0, 0, 0),
-					EndPoint = new CSMath.XYZ(10, 10, 0)
-				},
-				new Arc
-				{
-					Center = new CSMath.XYZ(0, 5, 0),
-					Radius = 20,
-					StartAngle = 1,
-					EndAngle = 2
-				}
+				EntityFactory.Create<Line>(),
+				EntityFactory.Create<Arc>(),
+				EntityFactory.Create<LwPolyline>(),
 			};
 
 

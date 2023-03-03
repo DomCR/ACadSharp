@@ -1,9 +1,7 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using CSMath;
 using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -112,7 +110,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Style of this text entity.
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Name, 7)]
+		[DxfCodeValue(DxfReferenceType.Name, 7)]	//Optional
 		public TextStyle Style { get; set; } = TextStyle.Default;
 
 		/// <summary>
