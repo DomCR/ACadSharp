@@ -1,5 +1,4 @@
-﻿using ACadSharp.Blocks;
-using ACadSharp.Classes;
+﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Header;
 using ACadSharp.Objects;
@@ -8,7 +7,6 @@ using ACadSharp.Tables.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ACadSharp
 {

@@ -13,17 +13,368 @@ namespace ACadSharp.Classes
 
 		public Dictionary<string, DxfClass> _list = new Dictionary<string, DxfClass>();
 
+		public static void UpdateDxfClasses(CadDocument doc)
+		{
+			//AcDbDictionaryWithDefault
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbDictionaryWithDefault",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = (ACadVersion)22,
+				DxfName = "ACDBDICTIONARYWDFLT",
+				ItemClassId = 499,
+				MaintenanceVersion = 42,
+				ProxyFlags = ProxyFlags.R13FormatProxy,
+				WasZombie = false,
+			});
+
+			//AcDbPlaceHolder
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbPlaceHolder",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = (ACadVersion)0,
+				DxfName = "ACDBPLACEHOLDER",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.None,
+				WasZombie = false,
+			});
+
+			//AcDbLayout
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbLayout",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = (ACadVersion)0,
+				DxfName = "LAYOUT",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.None,
+				WasZombie = false,
+			});
+
+			//AcDbDictionaryVar
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbDictionaryVar",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = (ACadVersion)20,
+				DxfName = "DICTIONARYVAR",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.None,
+				WasZombie = false,
+			});
+
+			//AcDbTableStyle
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbTableStyle",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1018,
+				DxfName = "TABLESTYLE",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = (ProxyFlags)4095,
+				WasZombie = false,
+			});
+
+			//AcDbMaterial
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbMaterial",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = 0,
+				DxfName = "MATERIAL",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+
+			//AcDbVisualStyle
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbVisualStyle",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1021,
+				DxfName = "VISUALSTYLE",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = (ProxyFlags)4095,
+				WasZombie = false,
+			});
+
+			//AcDbScale
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbScale",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1021,
+				DxfName = "SCALE",
+				ItemClassId = 499,
+				MaintenanceVersion = 1,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+
+			//AcDbMLeaderStyle
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbMLeaderStyle",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1021,
+				DxfName = "MLEADERSTYLE",
+				ItemClassId = 499,
+				MaintenanceVersion = 25,
+				ProxyFlags = (ProxyFlags)4095,
+				WasZombie = false,
+			});
+
+			//AcDbCellStyleMap
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbCellStyleMap",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1021,
+				DxfName = "CELLSTYLEMAP",
+				ItemClassId = 499,
+				MaintenanceVersion = 25,
+				ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+
+			//ExAcXREFPanelObject
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "ExAcXREFPanelObject",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = 0,
+				DxfName = "EXACXREFPANELOBJECT",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+
+			//AcDbImpNonPersistentObjectsCollection
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbImpNonPersistentObjectsCollection",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = 0,
+				DxfName = "NPOCOLLECTION",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+
+			//AcDbLayerIndex
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbLayerIndex",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = 0,
+				DxfName = "LAYER_INDEX",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.None,
+				WasZombie = false,
+			});
+
+			//AcDbSpatialIndex
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbSpatialIndex",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = 0,
+				DxfName = "SPATIAL_INDEX",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.None,
+				WasZombie = false,
+			});
+
+			//AcDbIdBuffer
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbIdBuffer",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1014,
+				DxfName = "IDBUFFER",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.R13FormatProxy,
+				WasZombie = false,
+			});
+
+			//AcDbSectionViewStyle
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbSectionViewStyle",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = 0,
+				DxfName = "ACDBSECTIONVIEWSTYLE",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+
+			//AcDbDetailViewStyle
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbDetailViewStyle",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = 0,
+				DxfName = "ACDBDETAILVIEWSTYLE",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+
+			//AcDbSubDMesh
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbSubDMesh",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = 0,
+				DxfName = "MESH",
+				ItemClassId = 498,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.None,
+				WasZombie = false,
+			});
+
+			//AcDbSortentsTable
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbSortentsTable",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1014,
+				DxfName = "SORTENTSTABLE",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.None,
+				WasZombie = false,
+			});
+
+			//AcDbTextObjectContextData
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbTextObjectContextData",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = 0,
+				DxfName = "ACDB_TEXTOBJECTCONTEXTDATA_CLASS",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+
+			//AcDbWipeout
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				ApplicationName = "WipeOut|Product Desc: Object Enabler for WipeOut entity | Company: Autodesk, Inc. | WEB Address: www.autodesk.com",
+				CppClassName = "AcDbWipeout",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1015,
+				DxfName = "WIPEOUT",
+				ItemClassId = 498,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.TransformAllowed | ProxyFlags.ColorChangeAllowed | ProxyFlags.LayerChangeAllowed | ProxyFlags.LinetypeChangeAllowed | ProxyFlags.LinetypeScaleChangeAllowed | ProxyFlags.VisibilityChangeAllowed | ProxyFlags.R13FormatProxy,
+				WasZombie = false,
+			});
+
+			//AcDbWipeoutVariables
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				ApplicationName = "WipeOut|Product Desc: Object Enabler for WipeOut entity | Company: Autodesk, Inc. | WEB Address: www.autodesk.com",
+				CppClassName = "AcDbWipeoutVariables",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1015,
+				DxfName = "WIPEOUTVARIABLES",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.R13FormatProxy,
+				WasZombie = false,
+			});
+
+			//AcDbDimAssoc
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				ApplicationName = "AcDbDimAssoc | Product Desc: AcDim ARX App For Dimension | Company: Autodesk, Inc. | WEB Address: www.autodesk.com",
+				CppClassName = "AcDbDimAssoc",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = 0,
+				DxfName = "DIMASSOC",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.None,
+				WasZombie = false,
+			});
+
+			//AcDbTable
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbTable",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1018,
+				DxfName = "ACAD_TABLE",
+				ItemClassId = 498,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+
+			//AcDbTableContent
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbTableContent",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1018,
+				DxfName = "TABLECONTENT",
+				ItemClassId = 499,
+				MaintenanceVersion = 21,
+				ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+
+			//AcDbTableGeometry
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = "AcDbTableGeometry",
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = 0,
+				DxfName = "TABLEGEOMETRY",
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+		}
+
 		public void Add(DxfClass item)
 		{
 			if (_list.ContainsKey(item.DxfName))
 				return;
 
-			if(item.DxfName == "HATCH")
+			_list.Add(item.DxfName, item);
+		}
+
+		public void AddOrUpdate(DxfClass item)
+		{
+			if (_list.TryGetValue(item.DxfName, out DxfClass result))
 			{
 
 			}
-
-			_list.Add(item.DxfName, item);
+			else
+			{
+				_list.Add(item.DxfName, item);
+			}
 		}
 
 		public void Clear()
