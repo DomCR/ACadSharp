@@ -6,7 +6,6 @@ namespace ACadSharp.IO
 {
 	public class DxfWriter : CadWriterBase
 	{
-		private CadDocument _document;
 		private IDxfStreamWriter _writer;
 		private CadObjectHolder _objectHolder = new CadObjectHolder();
 
@@ -27,7 +26,7 @@ namespace ACadSharp.IO
 		/// <param name="stream">The stream to write into</param>
 		/// <param name="document"></param>
 		/// <param name="binary"></param>
-		public DxfWriter(Stream stream, CadDocument document, bool binary)
+		public DxfWriter(Stream stream, CadDocument document, bool binary) : base(document)
 		{
 			var encoding = new UTF8Encoding(false);
 
@@ -39,8 +38,6 @@ namespace ACadSharp.IO
 			{
 				this._writer = new DxfAsciiWriter(new StreamWriter(stream, encoding));
 			}
-
-			this._document = document;
 		}
 
 		/// <inheritdoc/>

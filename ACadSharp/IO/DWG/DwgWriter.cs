@@ -19,8 +19,6 @@ namespace ACadSharp.IO
 
 		private IDwgFileHeaderWriter _fileHeaderWriter;
 
-		private CadDocument _document;
-
 		private Dictionary<ulong, long> _handlesMap = new Dictionary<ulong, long>();
 
 		/// <summary>
@@ -38,10 +36,9 @@ namespace ACadSharp.IO
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <param name="document"></param>
-		public DwgWriter(Stream stream, CadDocument document)
+		public DwgWriter(Stream stream, CadDocument document) : base(document)
 		{
 			this._stream = stream;
-			this._document = document;
 			this._fileHeader = DwgFileHeader.CreateFileHeader(_version);
 		}
 

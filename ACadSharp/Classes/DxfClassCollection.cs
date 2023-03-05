@@ -7,11 +7,11 @@ namespace ACadSharp.Classes
 {
 	public class DxfClassCollection : ICollection<DxfClass>
 	{
-		public int Count => _list.Count;
+		public int Count { get { return this._entries.Count; } }
 
 		public bool IsReadOnly => false;
 
-		public Dictionary<string, DxfClass> _list = new Dictionary<string, DxfClass>();
+		public Dictionary<string, DxfClass> _entries = new Dictionary<string, DxfClass>();
 
 		public static void UpdateDxfClasses(CadDocument doc)
 		{
@@ -359,32 +359,32 @@ namespace ACadSharp.Classes
 
 		public void Add(DxfClass item)
 		{
-			if (_list.ContainsKey(item.DxfName))
+			if (_entries.ContainsKey(item.DxfName))
 				return;
 
-			_list.Add(item.DxfName, item);
+			_entries.Add(item.DxfName, item);
 		}
 
 		public void AddOrUpdate(DxfClass item)
 		{
-			if (_list.TryGetValue(item.DxfName, out DxfClass result))
+			if (_entries.TryGetValue(item.DxfName, out DxfClass result))
 			{
-
+				result.InstanceCount = item.InstanceCount;
 			}
 			else
 			{
-				_list.Add(item.DxfName, item);
+				_entries.Add(item.DxfName, item);
 			}
 		}
 
 		public void Clear()
 		{
-			_list.Clear();
+			_entries.Clear();
 		}
 
 		public bool Contains(DxfClass item)
 		{
-			return _list.Values.Contains(item);
+			return _entries.Values.Contains(item);
 		}
 
 		public void CopyTo(DxfClass[] array, int arrayIndex)
@@ -394,17 +394,17 @@ namespace ACadSharp.Classes
 
 		public IEnumerator<DxfClass> GetEnumerator()
 		{
-			return _list.Values.GetEnumerator();
+			return _entries.Values.GetEnumerator();
 		}
 
 		public bool Remove(DxfClass item)
 		{
-			return this._list.Remove(item.DxfName);
+			return this._entries.Remove(item.DxfName);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return this._list.Values.GetEnumerator();
+			return this._entries.Values.GetEnumerator();
 		}
 	}
 }
