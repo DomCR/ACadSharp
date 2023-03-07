@@ -1,0 +1,132 @@
+
+Customization file loaded successfully. Customization Group: ACAD
+Customization file loaded successfully. Customization Group: CUSTOM
+Customization file loaded successfully. Customization Group: MODELDOC
+Customization file loaded successfully. Customization Group: EXPRESS
+Customization file loaded successfully. Customization Group: APPMANAGER
+Customization file loaded successfully. Customization Group: FEATUREDAPPS
+Scanning completed.
+
+Reconstructing handle table from objects.
+Scanning for objects  99% done
+ 23     objects found.
+Scanning for objects completed.
+Recover: error eWrongObjectType reading Header.
+Missing AcDbRegAppTable
+
+Recover: error 15 opening Named Objects Dictionary.
+Created new NOD.
+Missing AcDbLinetypeTable
+
+Missing AcDbLayerTable
+
+Missing AcDbBlockTable
+
+Missing AcDbTextStyleTable
+
+Missing AcDbViewTable
+
+Missing AcDbUCSTable
+
+Missing AcDbViewportTable
+
+Missing AcDbDimStyleTable
+
+Missing AcDbVXTable
+
+
+Reading handle E object type AcDbRegAppTableRecord
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle 5 object type AcDbLinetypeTable
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle F object type AcDbLinetypeTableRecord
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle 10 object type AcDbLinetypeTableRecord
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle 11 object type AcDbLinetypeTableRecord
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle 12 object type AcDbLayerTableRecord
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle 1 object type AcDbBlockTable
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle 16 object type AcDbBlockTableRecord
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle 19 object type AcDbBlockTableRecord
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle 15 object type AcDbViewportTableRecord
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle 3 object type AcDbDimStyleTable
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle 14 object type AcDbDimStyleTableRecord
+Error 67 (eDwgObjectImproperlyRead)                       Object discarded
+
+
+    Salvaged database from drawing.
+
+
+Auditing Header
+
+
+Auditing Tables
+
+
+Auditing Entities Pass 1
+
+Layer                         "0" missing
+AcDbLayerTableRecord: "0"   Index 1                     0
+AcDbTextStyleTableRecord: "Standard"
+                     Scale Factor Not in Range          1.0
+Pass 1 100     objects audited
+Auditing Entities Pass 2
+
+RegApp                       ACAD missing
+AcDbRegAppTableRecord: "ACAD"
+                            Index 1                     0
+RegApp                       ACAD missing
+Pass 2 100     objects auditedAcDbLayerTableRecord: "AUDIT_I_230307104130-4"
+                                  Not in Table          Added
+
+Layer zero name found at incorrect index.
+  Changed to "AUDIT_I_230307104130-5".
+AcDbRegAppTableRecord: "AUDIT_I_230307104130-6"
+                                  Not in Table          Added
+
+Auditing Blocks
+
+
+ 0       Blocks audited
+
+
+
+Auditing AcDsRecords
+
+
+Total errors found 12 fixed 12
+
+Erased 12 objects
+
+
+Opening an AutoCAD 2000 format file.
+Regenerating model.
+
+
+**** System Variable Changed ****
+1 of the monitored system variables has changed from the preferred value. Use SYSVARMONITOR command to view changes.
+
+_netload D:/Albert DC/Documents/Visual Studio 2022/Repos/ACadSharp/ACadTestGenerator/bin/Debug/ACadTestGenerator.DLL
+AutoCAD menu utilities loaded.*Cancel*
+
+Command: *Cancel*
+_RIBBON
+*Cancel*
+COMMANDLINE
+properties
+*Cancel*
+
+
+
+Autodesk DWG.  This file is a TrustedDWG last saved by an Autodesk application or Autodesk licensed application.
+
+Command:
+
+Command:
