@@ -46,7 +46,6 @@ The dwg/dxf readers are not yet fully implemented, the NotificationHandler will 
 
 ### Dwg reader entities not implemented
 
-- ACDBPLACEHOLDER
 - VP_ENT_HDR
 - POLYLINE_PFACE
 - ACAD_PROXY_OBJECT

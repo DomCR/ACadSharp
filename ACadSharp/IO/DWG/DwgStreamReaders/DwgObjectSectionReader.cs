@@ -950,6 +950,8 @@ namespace ACadSharp.IO.DWG
 			switch (c.DxfName)
 			{
 				case "ACDBDICTIONARYWDFLT":
+					template = this.readDictionaryWithDefault();
+					break;
 				case "ACDBDETAILVIEWSTYLE":
 				case "ACDBSECTIONVIEWSTYLE":
 				case "ACAD_TABLE":
@@ -2413,11 +2415,31 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private CadTemplate readDictionaryWithDefault()
+		{
+			CadDictionaryWithDefault dictionary = new CadDictionaryWithDefault();
+			CadDictionaryWithDefaultTemplate template = new CadDictionaryWithDefaultTemplate(dictionary);
+
+			this.readCommonDictionary(template);
+
+			//H 7 Default entry (hard pointer)
+			template.DefaultEntryHandle = this.handleReference();
+
+			return template;
+		}
+
 		private CadTemplate readDictionary()
 		{
 			CadDictionary cadDictionary = new CadDictionary();
 			CadDictionaryTemplate template = new CadDictionaryTemplate(cadDictionary);
 
+			this.readCommonDictionary(template);
+
+			return template;
+		}
+
+		private void readCommonDictionary(CadDictionaryTemplate template)
+		{
 			this.readCommonNonEntityData(template);
 
 			//Common:
@@ -2434,9 +2456,9 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//Cloning flag BS 281
-				cadDictionary.ClonningFlags = (DictionaryCloningFlags)this._objectReader.ReadBitShort();
+				template.CadObject.ClonningFlags = (DictionaryCloningFlags)this._objectReader.ReadBitShort();
 				//Hard Owner flag RC 280
-				cadDictionary.HardOwnerFlag = this._objectReader.ReadByte() > 0;
+				template.CadObject.HardOwnerFlag = this._objectReader.ReadByte() > 0;
 			}
 
 			//Common:
@@ -2452,8 +2474,6 @@ namespace ACadSharp.IO.DWG
 
 				template.Entries.Add(name, handle);
 			}
-
-			return template;
 		}
 
 		private CadTemplate readDictionaryVar()
