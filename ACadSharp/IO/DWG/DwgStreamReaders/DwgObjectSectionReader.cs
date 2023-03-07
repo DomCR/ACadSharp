@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System;
+using System.Xml.Linq;
 
 namespace ACadSharp.IO.DWG
 {
@@ -984,9 +985,14 @@ namespace ACadSharp.IO.DWG
 				case "MLEADERSTYLE":
 				case "OLE2FRAME":
 				case "PLACEHOLDER":
+					template = this.readPlaceHolder();
+					break;
 				case "PLOTSETTINGS":
 				case "RASTERVARIABLES":
+					break;
 				case "SCALE":
+					template = this.readScale();
+					break;
 				case "SORTENTSTABLE":
 				case "SPATIAL_FILTER":
 				case "SPATIAL_INDEX":
@@ -4492,6 +4498,27 @@ namespace ACadSharp.IO.DWG
 			CadTemplate<AcdbPlaceHolder> template = new CadTemplate<AcdbPlaceHolder>(new AcdbPlaceHolder());
 
 			this.readCommonNonEntityData(template);
+
+			return template;
+		}
+
+		private CadTemplate readScale()
+		{
+			Scale scale = new Scale();
+			CadTemplate<Scale> template = new CadTemplate<Scale>(scale);
+
+			this.readCommonNonEntityData(template);
+
+			//BS	70	Unknown(ODA writes 0).
+			scale.Unknown = _mergedReaders.ReadBitShort();
+			//TV	300	Name
+			scale.Name = _mergedReaders.ReadVariableText();
+			//BD	140	Paper units(numerator)
+			scale.PaperUnits = _mergedReaders.ReadBitDouble();
+			//BD	141	Drawing units(denominator, divided by 10).
+			scale.DrawingUnits = _mergedReaders.ReadBitDouble();
+			//B	290	Has unit scale
+			scale.IsUnitScale = _mergedReaders.ReadBit();
 
 			return template;
 		}
