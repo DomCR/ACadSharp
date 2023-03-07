@@ -521,7 +521,7 @@ namespace ACadSharp.IO
 			//Get the page size
 			this.getPageHeaderData(sreader, out _, out long decompressedSize, out _, out _, out _);
 			//Get the descompressed stream to read the records
-			StreamIO decompressed = new StreamIO(Dwg2004LZ77.Decompress(sreader.Stream, decompressedSize));
+			StreamIO decompressed = new StreamIO(DwgLZ77AC18Decompressor.Decompress(sreader.Stream, decompressedSize));
 
 			//Section size
 			int total = 0x100;
@@ -562,7 +562,7 @@ namespace ACadSharp.IO
 			sreader.Position = fileheader.Records[(int)fileheader.SectionMapId].Seeker;
 			//Get the page size
 			this.getPageHeaderData(sreader, out _, out decompressedSize, out _, out _, out _);
-			StreamIO decompressedStream = new StreamIO(Dwg2004LZ77.Decompress(sreader.Stream, decompressedSize));
+			StreamIO decompressedStream = new StreamIO(DwgLZ77AC18Decompressor.Decompress(sreader.Stream, decompressedSize));
 			decompressedStream.Encoding = TextEncoding.GetListedEncoding(CodePage.Windows1252);
 
 			//0x00	4	Number of section descriptions(NumDescriptions)
@@ -697,7 +697,7 @@ namespace ACadSharp.IO
 			//If ComprLen is positive, the ComprLen bytes of data are compressed
 			else
 			{
-				DwgR21LZ77.Decompress(decodedData, 32U, (uint)comprLen, buffer);
+				DwgLZ77AC21Decompressor.Decompress(decodedData, 32U, (uint)comprLen, buffer);
 			}
 
 			//Get the descompressed stream to read the records
@@ -1048,7 +1048,7 @@ namespace ACadSharp.IO
 					if (descriptor.IsCompressed)
 					{
 						//Page is compressed
-						Dwg2004LZ77.DecompressToDest(this._fileStream.Stream, memoryStream);
+						DwgLZ77AC18Decompressor.DecompressToDest(this._fileStream.Stream, memoryStream);
 					}
 					else
 					{
@@ -1144,7 +1144,7 @@ namespace ACadSharp.IO
 					{
 						//Page is compressed
 						byte[] arr = new byte[page.DecompressedSize];
-						DwgR21LZ77.Decompress(pageBytes, 0U, (uint)page.CompressedSize, arr);
+						DwgLZ77AC21Decompressor.Decompress(pageBytes, 0U, (uint)page.CompressedSize, arr);
 						pageBytes = arr;
 					}
 
@@ -1221,7 +1221,7 @@ namespace ACadSharp.IO
 
 			byte[] decompressedData = new byte[uncompressedSize];
 
-			DwgR21LZ77.Decompress(compressedData, 0U, (uint)compressedSize, decompressedData);
+			DwgLZ77AC21Decompressor.Decompress(compressedData, 0U, (uint)compressedSize, decompressedData);
 
 			return decompressedData;
 		}

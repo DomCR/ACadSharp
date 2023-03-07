@@ -7,7 +7,6 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSMath;
-using CSUtilities.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -919,6 +918,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readXRecord();
 					break;
 				case ObjectType.ACDBPLACEHOLDER:
+					template = this.readPlaceHolder();
 					break;
 				case ObjectType.VBA_PROJECT:
 					break;
@@ -1202,8 +1202,8 @@ namespace ACadSharp.IO.DWG
 						//Annotative data bytes RC Byte array with length Annotative data size.
 						var data = this._objectReader.ReadBytes(dataSize);
 						//Registered application H Hard pointer.
-						var appHanlde = this.handleReference();	//What to do??
-						//Unknown BS 72? Value 0.
+						var appHanlde = this.handleReference(); //What to do??
+																//Unknown BS 72? Value 0.
 						this._objectReader.ReadBitShort();
 					}
 					att.Tag = this._mergedReaders.ReadVariableText();
@@ -4483,6 +4483,15 @@ namespace ACadSharp.IO.DWG
 				//objid object handles, as many as you can read until you run out of data
 				this.handleReference();
 			}
+
+			return template;
+		}
+
+		private CadTemplate readPlaceHolder()
+		{
+			CadTemplate<AcdbPlaceHolder> template = new CadTemplate<AcdbPlaceHolder>(new AcdbPlaceHolder());
+
+			this.readCommonNonEntityData(template);
 
 			return template;
 		}

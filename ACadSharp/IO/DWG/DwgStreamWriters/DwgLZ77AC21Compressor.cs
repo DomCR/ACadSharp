@@ -3,7 +3,7 @@
 namespace ACadSharp.IO.DWG
 {
 	/// <summary>
-	/// <see cref="DwgR21LZ77"/>
+	/// <see cref="DwgLZ77AC21Decompressor"/>
 	/// </summary>
 	internal class DwgLZ77AC21Compressor : ICompressor
 	{
