@@ -8,16 +8,27 @@ namespace ACadSharp.IO
 
 		protected CadDocument _document;
 
+		public CadWriterBase(CadDocument document)
+		{
+			this._document = document;
+		}
+
+		/// <inheritdoc/>
+		public void Write(bool validate)
+		{
+			if (validate)
+			{
+				this.validateDocument();
+			}
+
+			this.Write();
+		}
+
 		/// <inheritdoc/>
 		public abstract void Write();
 
 		/// <inheritdoc/>
 		public abstract void Dispose();
-
-		public CadWriterBase(CadDocument document)
-		{
-			this._document = document;
-		}
 
 		protected void validateDocument()
 		{

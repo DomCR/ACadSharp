@@ -110,7 +110,7 @@ namespace ACadSharp.IO.DWG
 				this.writeEntries(table);
 		}
 
-		public void writeEntries<T>(Table<T> table)
+		private void writeEntries<T>(Table<T> table)
 			where T : TableEntry
 		{
 			foreach (var entry in table)
@@ -151,7 +151,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		public void writeBlocks()
+		private void writeBlocks()
 		{
 			foreach (BlockRecord blkRecord in this._document.BlockRecords)
 			{

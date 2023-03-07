@@ -1,0 +1,400 @@
+Class dictionary           id 743 Unexpectedly unused   Filled with dummy
+Class dictionary           id 744 Unexpectedly unused   Filled with dummy
+Class dictionary           id 745 Unexpectedly unused   Filled with dummy
+Class dictionary           id 746 Unexpectedly unused   Filled with dummy
+Class dictionary           id 747 Unexpectedly unused   Filled with dummy
+Class dictionary           id 748 Unexpectedly unused   Filled with dummy
+Class dictionary           id 749 Unexpectedly unused   Filled with dummy
+Class dictionary           id 750 Unexpectedly unused   Filled with dummy
+Class dictionary           id 751 Unexpectedly unused   Filled with dummy
+Class dictionary           id 752 Unexpectedly unused   Filled with dummy
+Class dictionary           id 753 Unexpectedly unused   Filled with dummy
+Class dictionary           id 754 Unexpectedly unused   Filled with dummy
+Class dictionary           id 755 Unexpectedly unused   Filled with dummy
+Class dictionary           id 756 Unexpectedly unused   Filled with dummy
+Class dictionary           id 757 Unexpectedly unused   Filled with dummy
+Class dictionary           id 758 Unexpectedly unused   Filled with dummy
+Class dictionary           id 759 Unexpectedly unused   Filled with dummy
+Class dictionary           id 760 Unexpectedly unused   Filled with dummy
+Class dictionary           id 761 Unexpectedly unused   Filled with dummy
+Class dictionary           id 762 Unexpectedly unused   Filled with dummy
+Class dictionary           id 763 Unexpectedly unused   Filled with dummy
+Class dictionary           id 764 Unexpectedly unused   Filled with dummy
+Class dictionary           id 765 Unexpectedly unused   Filled with dummy
+Class dictionary           id 766 Unexpectedly unused   Filled with dummy
+Class dictionary           id 767 Unexpectedly unused   Filled with dummy
+Class dictionary           id 768 Unexpectedly unused   Filled with dummy
+Class dictionary           id 769 Unexpectedly unused   Filled with dummy
+Class dictionary           id 770 Unexpectedly unused   Filled with dummy
+Class dictionary           id 771 Unexpectedly unused   Filled with dummy
+Class dictionary           id 772 Unexpectedly unused   Filled with dummy
+Class dictionary           id 773 Unexpectedly unused   Filled with dummy
+Class dictionary           id 774 Unexpectedly unused   Filled with dummy
+Class dictionary           id 775 Unexpectedly unused   Filled with dummy
+Class dictionary           id 776 Unexpectedly unused   Filled with dummy
+Class dictionary           id 777 Unexpectedly unused   Filled with dummy
+Class dictionary           id 778 Unexpectedly unused   Filled with dummy
+Class dictionary           id 779 Unexpectedly unused   Filled with dummy
+Class dictionary           id 780 Unexpectedly unused   Filled with dummy
+Class dictionary           id 781 Unexpectedly unused   Filled with dummy
+Class dictionary           id 782 Unexpectedly unused   Filled with dummy
+Class dictionary           id 783 Unexpectedly unused   Filled with dummy
+Class dictionary           id 784 Unexpectedly unused   Filled with dummy
+Class dictionary           id 785 Unexpectedly unused   Filled with dummy
+Class dictionary           id 786 Unexpectedly unused   Filled with dummy
+Class dictionary           id 787 Unexpectedly unused   Filled with dummy
+Class dictionary           id 788 Unexpectedly unused   Filled with dummy
+Class dictionary           id 789 Unexpectedly unused   Filled with dummy
+Class dictionary           id 790 Unexpectedly unused   Filled with dummy
+Class dictionary           id 791 Unexpectedly unused   Filled with dummy
+Class dictionary           id 792 Unexpectedly unused   Filled with dummy
+Class dictionary           id 793 Unexpectedly unused   Filled with dummy
+Class dictionary           id 794 Unexpectedly unused   Filled with dummy
+Class dictionary           id 795 Unexpectedly unused   Filled with dummy
+Class dictionary           id 796 Unexpectedly unused   Filled with dummy
+Class dictionary           id 797 Unexpectedly unused   Filled with dummy
+Class dictionary           id 798 Unexpectedly unused   Filled with dummy
+Class dictionary           id 799 Unexpectedly unused   Filled with dummy
+Class dictionary           id 800 Unexpectedly unused   Filled with dummy
+Class dictionary           id 801 Unexpectedly unused   Filled with dummy
+Class dictionary           id 802 Unexpectedly unused   Filled with dummy
+Class dictionary           id 803 Unexpectedly unused   Filled with dummy
+Class dictionary           id 804 Unexpectedly unused   Filled with dummy
+Class dictionary           id 805 Unexpectedly unused   Filled with dummy
+Class dictionary           id 806 Unexpectedly unused   Filled with dummy
+Class dictionary           id 807 Unexpectedly unused   Filled with dummy
+Class dictionary           id 808 Unexpectedly unused   Filled with dummy
+Class dictionary           id 809 Unexpectedly unused   Filled with dummy
+Class dictionary           id 810 Unexpectedly unused   Filled with dummy
+Class dictionary           id 811 Unexpectedly unused   Filled with dummy
+Class dictionary           id 812 Unexpectedly unused   Filled with dummy
+Class dictionary           id 813 Unexpectedly unused   Filled with dummy
+Class dictionary           id 814 Unexpectedly unused   Filled with dummy
+Class dictionary           id 815 Unexpectedly unused   Filled with dummy
+Class dictionary           id 816 Unexpectedly unused   Filled with dummy
+Class dictionary           id 817 Unexpectedly unused   Filled with dummy
+Class dictionary           id 818 Unexpectedly unused   Filled with dummy
+Class dictionary           id 819 Unexpectedly unused   Filled with dummy
+Class dictionary           id 820 Unexpectedly unused   Filled with dummy
+Class dictionary           id 821 Unexpectedly unused   Filled with dummy
+Class dictionary           id 822 Unexpectedly unused   Filled with dummy
+Class dictionary           id 823 Unexpectedly unused   Filled with dummy
+Class dictionary           id 824 Unexpectedly unused   Filled with dummy
+Class dictionary           id 825 Unexpectedly unused   Filled with dummy
+Class dictionary           id 826 Unexpectedly unused   Filled with dummy
+Class dictionary           id 827 Unexpectedly unused   Filled with dummy
+Class dictionary           id 828 Unexpectedly unused   Filled with dummy
+Class dictionary           id 829 Unexpectedly unused   Filled with dummy
+Class dictionary           id 830 Unexpectedly unused   Filled with dummy
+Class dictionary           id 831 Unexpectedly unused   Filled with dummy
+Class dictionary           id 832 Unexpectedly unused   Filled with dummy
+Class dictionary           id 833 Unexpectedly unused   Filled with dummy
+Class dictionary           id 834 Unexpectedly unused   Filled with dummy
+Class dictionary           id 835 Unexpectedly unused   Filled with dummy
+Class dictionary           id 836 Unexpectedly unused   Filled with dummy
+Class dictionary           id 837 Unexpectedly unused   Filled with dummy
+Class dictionary           id 838 Unexpectedly unused   Filled with dummy
+Class dictionary           id 839 Unexpectedly unused   Filled with dummy
+Class dictionary           id 840 Unexpectedly unused   Filled with dummy
+Class dictionary           id 841 Unexpectedly unused   Filled with dummy
+Class dictionary           id 842 Unexpectedly unused   Filled with dummy
+Class dictionary           id 843 Unexpectedly unused   Filled with dummy
+Class dictionary           id 844 Unexpectedly unused   Filled with dummy
+Class dictionary           id 845 Unexpectedly unused   Filled with dummy
+Class dictionary           id 846 Unexpectedly unused   Filled with dummy
+Class dictionary           id 847 Unexpectedly unused   Filled with dummy
+Class dictionary           id 848 Unexpectedly unused   Filled with dummy
+Class dictionary           id 849 Unexpectedly unused   Filled with dummy
+Class dictionary           id 850 Unexpectedly unused   Filled with dummy
+Class dictionary           id 851 Unexpectedly unused   Filled with dummy
+Class dictionary           id 852 Unexpectedly unused   Filled with dummy
+Class dictionary           id 853 Unexpectedly unused   Filled with dummy
+Class dictionary           id 854 Unexpectedly unused   Filled with dummy
+Class dictionary           id 855 Unexpectedly unused   Filled with dummy
+Class dictionary           id 856 Unexpectedly unused   Filled with dummy
+Class dictionary           id 857 Unexpectedly unused   Filled with dummy
+Class dictionary           id 858 Unexpectedly unused   Filled with dummy
+Class dictionary           id 859 Unexpectedly unused   Filled with dummy
+Class dictionary           id 860 Unexpectedly unused   Filled with dummy
+Class dictionary           id 861 Unexpectedly unused   Filled with dummy
+Class dictionary           id 862 Unexpectedly unused   Filled with dummy
+Class dictionary           id 863 Unexpectedly unused   Filled with dummy
+Class dictionary           id 864 Unexpectedly unused   Filled with dummy
+Class dictionary           id 865 Unexpectedly unused   Filled with dummy
+Class dictionary           id 866 Unexpectedly unused   Filled with dummy
+Class dictionary           id 867 Unexpectedly unused   Filled with dummy
+Class dictionary           id 868 Unexpectedly unused   Filled with dummy
+Class dictionary           id 869 Unexpectedly unused   Filled with dummy
+Class dictionary           id 870 Unexpectedly unused   Filled with dummy
+Class dictionary           id 871 Unexpectedly unused   Filled with dummy
+Class dictionary           id 872 Unexpectedly unused   Filled with dummy
+Class dictionary           id 873 Unexpectedly unused   Filled with dummy
+Class dictionary           id 874 Unexpectedly unused   Filled with dummy
+Class dictionary           id 875 Unexpectedly unused   Filled with dummy
+Class dictionary           id 876 Unexpectedly unused   Filled with dummy
+Class dictionary           id 877 Unexpectedly unused   Filled with dummy
+Class dictionary           id 878 Unexpectedly unused   Filled with dummy
+Class dictionary           id 879 Unexpectedly unused   Filled with dummy
+Class dictionary           id 880 Unexpectedly unused   Filled with dummy
+Class dictionary           id 881 Unexpectedly unused   Filled with dummy
+Class dictionary           id 882 Unexpectedly unused   Filled with dummy
+Class dictionary           id 883 Unexpectedly unused   Filled with dummy
+Class dictionary           id 884 Unexpectedly unused   Filled with dummy
+Class dictionary           id 885 Unexpectedly unused   Filled with dummy
+Class dictionary           id 886 Unexpectedly unused   Filled with dummy
+Class dictionary           id 887 Unexpectedly unused   Filled with dummy
+Class dictionary           id 888 Unexpectedly unused   Filled with dummy
+Class dictionary           id 889 Unexpectedly unused   Filled with dummy
+Class dictionary           id 890 Unexpectedly unused   Filled with dummy
+Class dictionary           id 891 Unexpectedly unused   Filled with dummy
+Class dictionary           id 892 Unexpectedly unused   Filled with dummy
+Class dictionary           id 893 Unexpectedly unused   Filled with dummy
+Class dictionary           id 894 Unexpectedly unused   Filled with dummy
+Class dictionary           id 895 Unexpectedly unused   Filled with dummy
+Class dictionary           id 896 Unexpectedly unused   Filled with dummy
+Class dictionary           id 897 Unexpectedly unused   Filled with dummy
+Class dictionary           id 898 Unexpectedly unused   Filled with dummy
+Class dictionary           id 899 Unexpectedly unused   Filled with dummy
+Class dictionary           id 900 Unexpectedly unused   Filled with dummy
+Class dictionary           id 901 Unexpectedly unused   Filled with dummy
+Class dictionary           id 902 Unexpectedly unused   Filled with dummy
+Class dictionary           id 903 Unexpectedly unused   Filled with dummy
+Class dictionary           id 904 Unexpectedly unused   Filled with dummy
+Class dictionary           id 905 Unexpectedly unused   Filled with dummy
+Class dictionary           id 906 Unexpectedly unused   Filled with dummy
+Class dictionary           id 907 Unexpectedly unused   Filled with dummy
+Class dictionary           id 908 Unexpectedly unused   Filled with dummy
+Class dictionary           id 909 Unexpectedly unused   Filled with dummy
+Class dictionary           id 910 Unexpectedly unused   Filled with dummy
+Class dictionary           id 911 Unexpectedly unused   Filled with dummy
+Class dictionary           id 912 Unexpectedly unused   Filled with dummy
+Class dictionary           id 913 Unexpectedly unused   Filled with dummy
+Class dictionary           id 914 Unexpectedly unused   Filled with dummy
+Class dictionary           id 915 Unexpectedly unused   Filled with dummy
+Class dictionary           id 916 Unexpectedly unused   Filled with dummy
+Class dictionary           id 917 Unexpectedly unused   Filled with dummy
+Class dictionary           id 918 Unexpectedly unused   Filled with dummy
+Class dictionary           id 919 Unexpectedly unused   Filled with dummy
+Class dictionary           id 920 Unexpectedly unused   Filled with dummy
+Class dictionary           id 921 Unexpectedly unused   Filled with dummy
+Class dictionary           id 922 Unexpectedly unused   Filled with dummy
+Class dictionary           id 923 Unexpectedly unused   Filled with dummy
+Class dictionary           id 924 Unexpectedly unused   Filled with dummy
+Class dictionary           id 925 Unexpectedly unused   Filled with dummy
+Class dictionary           id 926 Unexpectedly unused   Filled with dummy
+Class dictionary           id 927 Unexpectedly unused   Filled with dummy
+Class dictionary           id 928 Unexpectedly unused   Filled with dummy
+Class dictionary           id 929 Unexpectedly unused   Filled with dummy
+Class dictionary           id 930 Unexpectedly unused   Filled with dummy
+Class dictionary           id 931 Unexpectedly unused   Filled with dummy
+Class dictionary           id 932 Unexpectedly unused   Filled with dummy
+Class dictionary           id 933 Unexpectedly unused   Filled with dummy
+Class dictionary           id 934 Unexpectedly unused   Filled with dummy
+Class dictionary           id 935 Unexpectedly unused   Filled with dummy
+Class dictionary           id 936 Unexpectedly unused   Filled with dummy
+Class dictionary           id 937 Unexpectedly unused   Filled with dummy
+Class dictionary           id 938 Unexpectedly unused   Filled with dummy
+Class dictionary           id 939 Unexpectedly unused   Filled with dummy
+Class dictionary           id 940 Unexpectedly unused   Filled with dummy
+Class dictionary           id 941 Unexpectedly unused   Filled with dummy
+Class dictionary           id 942 Unexpectedly unused   Filled with dummy
+Class dictionary           id 943 Unexpectedly unused   Filled with dummy
+Class dictionary           id 944 Unexpectedly unused   Filled with dummy
+Class dictionary           id 945 Unexpectedly unused   Filled with dummy
+Class dictionary           id 946 Unexpectedly unused   Filled with dummy
+Class dictionary           id 947 Unexpectedly unused   Filled with dummy
+Class dictionary           id 948 Unexpectedly unused   Filled with dummy
+Class dictionary           id 949 Unexpectedly unused   Filled with dummy
+Class dictionary           id 950 Unexpectedly unused   Filled with dummy
+Class dictionary           id 951 Unexpectedly unused   Filled with dummy
+Class dictionary           id 952 Unexpectedly unused   Filled with dummy
+Class dictionary           id 953 Unexpectedly unused   Filled with dummy
+Class dictionary           id 954 Unexpectedly unused   Filled with dummy
+Class dictionary           id 955 Unexpectedly unused   Filled with dummy
+Class dictionary           id 956 Unexpectedly unused   Filled with dummy
+Class dictionary           id 957 Unexpectedly unused   Filled with dummy
+Class dictionary           id 958 Unexpectedly unused   Filled with dummy
+Class dictionary           id 959 Unexpectedly unused   Filled with dummy
+Class dictionary           id 960 Unexpectedly unused   Filled with dummy
+Class dictionary           id 961 Unexpectedly unused   Filled with dummy
+Class dictionary           id 962 Unexpectedly unused   Filled with dummy
+Class dictionary           id 963 Unexpectedly unused   Filled with dummy
+Class dictionary           id 964 Unexpectedly unused   Filled with dummy
+Class dictionary           id 965 Unexpectedly unused   Filled with dummy
+Class dictionary           id 966 Unexpectedly unused   Filled with dummy
+Class dictionary           id 967 Unexpectedly unused   Filled with dummy
+Class dictionary           id 968 Unexpectedly unused   Filled with dummy
+Class dictionary           id 969 Unexpectedly unused   Filled with dummy
+Class dictionary           id 970 Unexpectedly unused   Filled with dummy
+Class dictionary           id 971 Unexpectedly unused   Filled with dummy
+Class dictionary           id 972 Unexpectedly unused   Filled with dummy
+Class dictionary           id 973 Unexpectedly unused   Filled with dummy
+Class dictionary           id 974 Unexpectedly unused   Filled with dummy
+Class dictionary           id 975 Unexpectedly unused   Filled with dummy
+Class dictionary           id 976 Unexpectedly unused   Filled with dummy
+Class dictionary           id 977 Unexpectedly unused   Filled with dummy
+Class dictionary           id 978 Unexpectedly unused   Filled with dummy
+Class dictionary           id 979 Unexpectedly unused   Filled with dummy
+Class dictionary           id 980 Unexpectedly unused   Filled with dummy
+Class dictionary           id 981 Unexpectedly unused   Filled with dummy
+Class dictionary           id 982 Unexpectedly unused   Filled with dummy
+Class dictionary           id 983 Unexpectedly unused   Filled with dummy
+Class dictionary           id 984 Unexpectedly unused   Filled with dummy
+Class dictionary           id 985 Unexpectedly unused   Filled with dummy
+Class dictionary           id 986 Unexpectedly unused   Filled with dummy
+Class dictionary           id 987 Unexpectedly unused   Filled with dummy
+Class dictionary           id 988 Unexpectedly unused   Filled with dummy
+Class dictionary           id 989 Unexpectedly unused   Filled with dummy
+Class dictionary           id 990 Unexpectedly unused   Filled with dummy
+Class dictionary           id 991 Unexpectedly unused   Filled with dummy
+Class dictionary           id 992 Unexpectedly unused   Filled with dummy
+Class dictionary           id 993 Unexpectedly unused   Filled with dummy
+Class dictionary           id 994 Unexpectedly unused   Filled with dummy
+Class dictionary           id 995 Unexpectedly unused   Filled with dummy
+Class dictionary           id 996 Unexpectedly unused   Filled with dummy
+Class dictionary           id 997 Unexpectedly unused   Filled with dummy
+Class dictionary           id 998 Unexpectedly unused   Filled with dummy
+Class dictionary           id 999 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1000 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1001 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1002 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1003 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1004 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1005 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1006 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1007 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1008 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1009 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1010 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1011 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1012 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1013 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1014 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1015 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1016 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1017 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1018 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1019 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1020 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1021 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1022 Unexpectedly unused   Filled with dummy
+Class dictionary          id 1023 Unexpectedly unused   Filled with dummy
+
+Validating objects in the handle table.
+Valid objects 25     Invalid objects 0
+Validating objects completed.
+Missing AcDbRegAppTable
+
+Recover: error 15 opening Named Objects Dictionary.
+Created new NOD.Reading handle 5 object type AcDbLinetypeTable
+      Error 34 (eWrongObjectType)                       Object discarded
+
+Missing AcDbLinetypeTable
+Reading handle 1 object type AcDbBlockTable
+      Error 34 (eWrongObjectType)                       Object discarded
+
+Missing AcDbBlockTable
+Reading handle 3 object type AcDbDimStyleTable
+      Error 34 (eWrongObjectType)                       Object discarded
+
+Missing AcDbDimStyleTable
+Reading handle E object type AcDbRegAppTableRecord
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle F object type AcDbLinetypeTableRecord
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle 10 object type AcDbLinetypeTableRecord
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle 11 object type AcDbLinetypeTableRecord
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle 12 object type AcDbLayerTableRecord
+      Error 34 (eWrongObjectType)                       Object discarded
+
+Replacing layer table record at index 0.
+Reading handle 16 object type AcDbBlockTableRecord
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle 19 object type AcDbBlockTableRecord
+      Error 34 (eWrongObjectType)                       Object discarded
+Reading handle 15 object type AcDbViewportTableRecord
+      Error 34 (eWrongObjectType)                       Object discarded
+
+Replacing viewport configuration table record at index 0.
+Reading handle 14 object type AcDbDimStyleTableRecord
+Error 67 (eDwgObjectImproperlyRead)                       Object discarded
+
+
+    Salvaged database from drawing.
+
+
+Auditing Header
+
+ MAXACTVP   0                    2 - 32767               64
+ SPLINETYPE 0                    5 - 6                   6
+ SURFTAB1   0                    2 - 32767               6
+ SURFTAB2   0                    2 - 32767               6
+ SURFTYPE   0                    5,6,8                   6
+ SURFU      0                    2 - 200                 6
+ SURFV      0                    2 - 200                 6
+ DIMTFAC     0.00                 0.00                    1.00
+ DIMALTF     0.00                 0.00                   25.40
+ DIMLFAC     0.00                 0.00                    1.00
+ DIMTXT      0.00                 0.00                    0.18
+ DIMALTU    0                    1 - 8                   0
+
+Error found in auditing header variables
+
+
+Auditing Tables
+
+AcDbLayerTableRecord: "0"   Index 1                     0
+
+Auditing Entities Pass 1
+
+AcDbTextStyleTableRecord: "Standard"
+                     Scale Factor Not in Range          1.0
+Pass 1 100     objects audited
+Auditing Entities Pass 2
+
+AcDbLayerTableRecord: "$RECOVER_230307081320-3"
+                                  Not in Table          Added
+RegApp                       ACAD missing
+Pass 2 100     objects audited
+Auditing Blocks
+
+
+ 0       Blocks audited
+
+
+
+Auditing AcDsRecords
+
+
+Total errors found 21 fixed 21
+
+Erased 12 objects
+
+
+Opening an AutoCAD 2004/LT 2004 format file.
+Regenerating layout.
+Regenerating layout.
+
+
+**** System Variable Changed ****
+1 of the monitored system variables has changed from the preferred value. Use SYSVARMONITOR command to view changes.
+
+_netload D:/Albert DC/Documents/Visual Studio 2022/Repos/ACadSharp/ACadTestGenerator/bin/Debug/ACadTestGenerator.DLL
+AutoCAD menu utilities loaded.*Cancel*
+
+Command: *Cancel*
+_RIBBON
+*Cancel*
+COMMANDLINE
+properties
+*Cancel*
+
+
+
+Autodesk DWG.  This file is a TrustedDWG last saved by an Autodesk application or Autodesk licensed application.
+
+Command:
+
+Command:
