@@ -771,7 +771,7 @@ namespace ACadSharp.IO.DWG
 					template = this.read3dFace();
 					break;
 				case ObjectType.POLYLINE_PFACE:
-					template = this.readPolylinePface();
+					template = this.readPolyfaceMesh();
 					break;
 				case ObjectType.POLYLINE_MESH:
 					template = this.readPolylineMesh();
@@ -2019,9 +2019,44 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadTemplate readPolylinePface()
+		private CadTemplate readPolyfaceMesh()
 		{
-			return null;
+			CadPolyfaceMeshTemplate template = new CadPolyfaceMeshTemplate(new PolyfaceMesh());
+
+			//Common Entity Data
+			this.readCommonEntityData(template);
+
+			//Numverts BS 71 Number of vertices in the mesh.
+			short nvertices = this._objectReader.ReadBitShort();
+			//Numfaces BS 72 Number of faces
+			short nfaces = this._objectReader.ReadBitShort();
+
+			//R2004 +:
+			if (this.R2004Plus)
+			{
+				//Owned Object Count BL Number of objects owned by this object.
+				int ownedVertices = this._objectReader.ReadBitLong();
+				//H[VERTEX(soft pointer)] Repeats “Owned Object Count” times.
+				for (int i = 0; i < ownedVertices; i++)
+				{
+					template.VerticesHandles.Add(this.handleReference());
+				}
+			}
+
+			//R13 - R2000:
+			if (this.R13_15Only)
+			{
+				//H first VERTEX(soft pointer)
+				template.FirstVerticeHandle = this.handleReference();
+				//H last VERTEX(soft pointer)
+				template.LastVerticeHandle = this.handleReference();
+			}
+
+			//Common:
+			//H SEQEND(hard owner)
+			template.SeqendHandle = this.handleReference();
+
+			return template;
 		}
 
 		private CadTemplate readPolylineMesh()
