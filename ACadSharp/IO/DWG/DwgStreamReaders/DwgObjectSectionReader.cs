@@ -983,6 +983,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "LWPLINE":
 				case "MATERIAL":
+					break;
+				case "MESH":
+					break;
 				case "MLEADER":
 				case "MLEADERSTYLE":
 				case "OLE2FRAME":
