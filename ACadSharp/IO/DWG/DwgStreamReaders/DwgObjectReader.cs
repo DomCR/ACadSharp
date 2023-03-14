@@ -1004,7 +1004,9 @@ namespace ACadSharp.IO.DWG
 				case "TABLESTYLE":
 				case "TABLESTYLES":
 				case "VBA_PROJECT":
+					break;
 				case "VISUALSTYLE":
+					template = this.readVisualStyle();
 					break;
 				case "WIPEOUT":
 					template = this.readWipeout();
@@ -4466,6 +4468,18 @@ namespace ACadSharp.IO.DWG
 			}
 
 			return template;
+		}
+
+		private CadTemplate readVisualStyle()
+		{
+			VisualStyle visualStyle = new VisualStyle();
+			CadTemplate<VisualStyle> template = new CadTemplate<VisualStyle>(visualStyle);
+
+			this.readCommonNonEntityData(template);
+
+			//TODO: VisualStyle exploration needed
+
+			return null;
 		}
 
 		private CadTemplate readWipeout()
