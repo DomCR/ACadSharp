@@ -4477,7 +4477,12 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			//TODO: VisualStyle exploration needed
+			//WARNING: this object is not documented, the fields have been found using exploration methods and matching them with the dxf file
+
+			visualStyle.Description = this._textReader.ReadVariableText();
+
+			var objValues = DwgStreamReaderBase.Explore(_objectReader);
+			var textValues = DwgStreamReaderBase.Explore(_textReader);
 
 			return null;
 		}
@@ -4489,7 +4494,19 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonEntityData(template);
 
-			//TODO: Wipeout exploration needed
+			//WARNING: this object is not documented, the fields have been found using exploration methods and matching them with the dxf file
+
+			wipeout.ClassVersion = this._objectReader.ReadBitLong();
+		
+			wipeout.InsertPoint = this._objectReader.Read3BitDouble();
+			wipeout.UVector = this._objectReader.Read3BitDouble();
+			wipeout.VVector = this._objectReader.Read3BitDouble();
+
+			wipeout.Size = this._objectReader.Read2RawDouble();
+
+			var objValues = DwgStreamReaderBase.Explore(_objectReader);
+			var textValues = DwgStreamReaderBase.Explore(_textReader);
+			var handlesValues = DwgStreamReaderBase.Explore(_handlesReader);
 
 			return null;
 		}

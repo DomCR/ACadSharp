@@ -28,9 +28,7 @@ namespace ACadSharp.Objects
 
 		//70	Type
 
-		//71
-
-		//Face lighting model
+		//71	Face lighting model
 
 		//0 =Invisible
 
