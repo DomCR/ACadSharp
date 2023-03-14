@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System;
-using System.Xml.Linq;
 
 namespace ACadSharp.IO.DWG
 {
@@ -33,7 +32,7 @@ namespace ACadSharp.IO.DWG
 	 * name clash. To complicate matters more, files also exist with table records with duplicate
 	 * names. This is incorrect, and the software should rename the record to be unique upon reading.
 	 */
-	internal class DwgObjectSectionReader : DwgSectionIO
+	internal partial class DwgObjectReader : DwgSectionIO
 	{
 		public override string SectionName { get { return DwgSectionDefinition.AcDbObjects; } }
 
@@ -86,7 +85,7 @@ namespace ACadSharp.IO.DWG
 
 		private readonly byte[] _buffer;
 
-		public DwgObjectSectionReader(
+		public DwgObjectReader(
 			ACadVersion version,
 			DwgDocumentBuilder builder,
 			IDwgStreamReader reader,
@@ -1006,7 +1005,10 @@ namespace ACadSharp.IO.DWG
 				case "TABLESTYLES":
 				case "VBA_PROJECT":
 				case "VISUALSTYLE":
+					break;
 				case "WIPEOUT":
+					template = this.readWipeout();
+					break;
 				case "WIPEOUTVARIABLE":
 				case "WIPEOUTVARIABLES":
 					break;
@@ -4464,6 +4466,18 @@ namespace ACadSharp.IO.DWG
 			}
 
 			return template;
+		}
+
+		private CadTemplate readWipeout()
+		{
+			Wipeout wipeout = new Wipeout();
+			CadEntityTemplate template = new CadEntityTemplate(wipeout);
+
+			this.readCommonEntityData(template);
+
+			//TODO: Wipeout exploration needed
+
+			return null;
 		}
 
 		private CadTemplate readXRecord()
