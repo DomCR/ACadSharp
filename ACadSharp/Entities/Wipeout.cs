@@ -1,10 +1,11 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
-	[System.Flags]
+	[Flags]
 	public enum ImageDisplayFlags : short
 	{
 		/// <summary>
@@ -27,6 +28,21 @@ namespace ACadSharp.Entities
 		/// Transparency is on
 		/// </summary>
 		TransparencyIsOn = 8
+	}
+
+	/// <summary>
+	/// Clipping boundary type
+	/// </summary>
+	public enum ClipType : short
+	{
+		/// <summary>
+		/// Rectangular
+		/// </summary>
+		Rectangular = 1,
+		/// <summary>
+		/// Polygonal
+		/// </summary>
+		Polygonal = 2
 	}
 
 	/// <summary>
@@ -84,9 +100,11 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(70)]
 		public ImageDisplayFlags Flags { get; set; }
 
-		//280	Clipping state: 0 = Off; 1 = On
+		/// <summary>
+		/// Clipping state
+		/// </summary>
 		[DxfCodeValue(280)]
-		public bool Clipping { get; set; }
+		public bool ClippingState { get; set; }
 
 		/// <summary>
 		/// Brightness
@@ -100,7 +118,7 @@ namespace ACadSharp.Entities
 			get { return this._brightness; }
 			set
 			{
-				if (value >= 0 || value <= 100)
+				if (value < 0 || value > 100)
 				{
 					throw new ArgumentException($"Invalid Brightness value: {value}, must be in range 0-100");
 				}
@@ -121,7 +139,7 @@ namespace ACadSharp.Entities
 			get { return this._contrast; }
 			set
 			{
-				if (value >= 0 || value <= 100)
+				if (value < 0 || value > 100)
 				{
 					throw new ArgumentException($"Invalid Brightness value: {value}, must be in range 0-100");
 				}
@@ -142,7 +160,7 @@ namespace ACadSharp.Entities
 			get { return this._fade; }
 			set
 			{
-				if (value >= 0 || value <= 100)
+				if (value < 0 || value > 100)
 				{
 					throw new ArgumentException($"Invalid Brightness value: {value}, must be in range 0-100");
 				}
@@ -151,10 +169,17 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		//71	Clipping boundary type. 1 = Rectangular; 2 = Polygonal
+		/// <summary>
+		/// Clipping boundary type
+		/// </summary>
+		[DxfCodeValue(71)]
+		public ClipType ClipType { get; set; }
 
-		//91	Number of clip boundary vertices that follow
-
+		/// <summary>
+		/// Clip boundary vertices
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Count, 91)]
+		public List<XY> ClipBoundaryVertices { get; set; } = new List<XY>();
 		//14	Clip boundary vertex(in OCS)
 		//DXF: X value; APP: 2D point(multiple entries)
 		//NOTE 1) For rectangular clip boundary type, two opposite corners must be specified.Default is (-0.5,-0.5), (size.x-0.5, size.y-0.5). 2) For polygonal clip boundary type, three or more vertices must be specified.Polygonal vertices must be listed sequentially
