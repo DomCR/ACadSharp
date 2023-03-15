@@ -65,6 +65,7 @@
 		public const string AttributeDefinition = "AcDbAttributeDefinition";
 		public const string Dictionary = "AcDbDictionary";
 		public const string DictionaryWithDefault = "AcDbDictionaryWithDefault";
+		public const string VisualStyle = "AcDbVisualStyle";
 		public const string XRecord = "AcDbXrecord";
 		public const string RasterImage = "AcDbRasterImage";
 		public const string RasterImageDef = "AcDbRasterImageDef";

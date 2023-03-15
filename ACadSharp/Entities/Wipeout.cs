@@ -1,13 +1,7 @@
 ﻿using ACadSharp.Attributes;
-using static System.Net.Mime.MediaTypeNames;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Drawing;
-using System.Numerics;
-using System.Security.Claims;
-using System.Threading;
-using System;
 using CSMath;
+using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -51,66 +45,112 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(12, 22, 32)]
 		public XYZ VVector { get; set; }
 
-		//13	Image size in pixels
-		//DXF: U value; APP: 2D point(U and V values)
-		//23	DXF: V value of image size in pixels
+		/// <summary>
+		/// Image size in pixels
+		/// </summary>
+		/// <remarks>
+		/// 2D point(U and V values)
+		/// </remarks>
 		[DxfCodeValue(13, 23)]
 		public XY Size { get; set; }
 
-		//340
+		/// <summary>
+		/// Image display properties
+		/// </summary>
+		[DxfCodeValue(70)]
+		public ImageDisplayFlags Flags { get; set; }
 
-		//Hard reference to imagedef object
+		/// <summary>
+		/// Clipping state
+		/// </summary>
+		[DxfCodeValue(280)]
+		public bool ClippingState { get; set; }
 
-		//70
+		/// <summary>
+		/// Brightness
+		/// </summary>
+		/// <remarks>
+		/// 0-100; default = 50
+		/// </remarks>
+		[DxfCodeValue(281)]
+		public byte Brightness
+		{
+			get { return this._brightness; }
+			set
+			{
+				if (value < 0 || value > 100)
+				{
+					throw new ArgumentException($"Invalid Brightness value: {value}, must be in range 0-100");
+				}
 
-		//Image display properties:
+				this._brightness = value;
+			}
+		}
 
-		//1 = Show image
+		/// <summary>
+		/// Contrast
+		/// </summary>
+		/// <remarks>
+		/// 0-100; default = 50
+		/// </remarks>
+		[DxfCodeValue(282)]
+		public byte Contrast
+		{
+			get { return this._contrast; }
+			set
+			{
+				if (value < 0 || value > 100)
+				{
+					throw new ArgumentException($"Invalid Brightness value: {value}, must be in range 0-100");
+				}
 
-		//2 = Show image when not aligned with screen
+				this._contrast = value;
+			}
+		}
 
-		//4 = Use clipping boundary
+		/// <summary>
+		/// Fade
+		/// </summary>
+		/// <remarks>
+		/// 0-100; default = 0
+		/// </remarks>
+		[DxfCodeValue(283)]
+		public byte Fade
+		{
+			get { return this._fade; }
+			set
+			{
+				if (value < 0 || value > 100)
+				{
+					throw new ArgumentException($"Invalid Brightness value: {value}, must be in range 0-100");
+				}
 
-		//8 = Transparency is on
+				this._fade = value;
+			}
+		}
 
-		//280
+		/// <summary>
+		/// Clipping boundary type
+		/// </summary>
+		[DxfCodeValue(71)]
+		public ClipType ClipType { get; set; }
 
-		//Clipping state: 0 = Off; 1 = On
-
-		//281
-
-		//Brightness value(0-100; default = 50)
-
-		//282
-
-		//Contrast value(0-100; default = 50)
-
-		//283
-
-		//Fade value(0-100; default = 0)
-
-		//360
-
-		//Hard reference to imagedef_reactor object
-
-		//71
-
-		//Clipping boundary type. 1 = Rectangular; 2 = Polygonal
-
-		//91
-
-		//Number of clip boundary vertices that follow
-
-		//14
-
-		//Clip boundary vertex(in OCS)
-
+		/// <summary>
+		/// Clip boundary vertices
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Count, 91)]
+		public List<XY> ClipBoundaryVertices { get; set; } = new List<XY>();
+		//14	Clip boundary vertex(in OCS)
 		//DXF: X value; APP: 2D point(multiple entries)
-
 		//NOTE 1) For rectangular clip boundary type, two opposite corners must be specified.Default is (-0.5,-0.5), (size.x-0.5, size.y-0.5). 2) For polygonal clip boundary type, three or more vertices must be specified.Polygonal vertices must be listed sequentially
+		//24	DXF: Y value of clip boundary vertex(in OCS) (multiple entries)
 
-		//24
+		//340	Hard reference to imagedef object
 
-		//DXF: Y value of clip boundary vertex(in OCS) (multiple entries)
+		//360	Hard reference to imagedef_reactor object
+
+		private byte _brightness = 50;
+		private byte _contrast = 50;
+		private byte _fade = 0;
 	}
 }

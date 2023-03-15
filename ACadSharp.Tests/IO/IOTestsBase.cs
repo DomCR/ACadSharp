@@ -125,6 +125,10 @@ namespace ACadSharp.Tests.IO
 		protected void onNotification(object sender, NotificationEventArgs e)
 		{
 			_output.WriteLine(e.Message);
+			if (e.Exception != null)
+			{
+				_output.WriteLine(e.Exception.ToString());
+			}
 		}
 
 		protected void checkDxfDocumentInAutocad(string path)
