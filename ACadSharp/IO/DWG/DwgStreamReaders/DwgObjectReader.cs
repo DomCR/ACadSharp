@@ -152,7 +152,15 @@ namespace ACadSharp.IO.DWG
 					if (!this._builder.Configuration.Failsafe)
 						throw;
 
-					this._builder.Notify($"Could not read {type} with handle: {handle}", NotificationType.Error, ex);
+					if (this._classes.TryGetValue((short)type, out DxfClass dxf))
+					{
+						this._builder.Notify($"Could not read {dxf.DxfName} number {dxf.ClassNumber} with handle: {handle}", NotificationType.Error, ex);
+					}
+					else
+					{
+						this._builder.Notify($"Could not read {type} with handle: {handle}", NotificationType.Error, ex);
+					}
+
 					continue;
 				}
 
@@ -305,7 +313,7 @@ namespace ACadSharp.IO.DWG
 				//Common:
 				//X: The graphic image
 				//entityHandler.CadObject.JumpGraphicImage(this, entityHandler, graphicImageSize);
-				this._mergedReaders.Advance((int)graphicImageSize);
+				this._objectReader.Advance((int)graphicImageSize);
 			}
 
 			//R13 - R14 Only:
@@ -4478,7 +4486,15 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			//TODO: VisualStyle exploration needed
+			//WARNING: this object is not documented, the fields have been found using exploration methods and matching them with the dxf file
+
+			visualStyle.Description = this._textReader.ReadVariableText();
+			visualStyle.Type = this._objectReader.ReadBitLong();
+
+#if TEST
+			var objValues = DwgStreamReaderBase.Explore(_objectReader);
+			var textValues = DwgStreamReaderBase.Explore(_textReader);
+#endif
 
 			return null;
 		}
@@ -4486,13 +4502,54 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readWipeout()
 		{
 			Wipeout wipeout = new Wipeout();
-			CadEntityTemplate template = new CadEntityTemplate(wipeout);
+			CadWipeoutTemplate template = new CadWipeoutTemplate(wipeout);
 
 			this.readCommonEntityData(template);
 
-			//TODO: Wipeout exploration needed
+			//WARNING: this object is not documented, the fields have been found using exploration methods and matching them with the dxf file
 
-			return null;
+			wipeout.ClassVersion = this._objectReader.ReadBitLong();
+
+			wipeout.InsertPoint = this._objectReader.Read3BitDouble();
+			wipeout.UVector = this._objectReader.Read3BitDouble();
+			wipeout.VVector = this._objectReader.Read3BitDouble();
+
+			wipeout.Size = this._objectReader.Read2RawDouble();
+
+			wipeout.Flags = (ImageDisplayFlags)this._objectReader.ReadBitShort();
+			wipeout.ClippingState = this._objectReader.ReadBit();
+			wipeout.Brightness = this._objectReader.ReadByte();
+			wipeout.Contrast = this._objectReader.ReadByte();
+			wipeout.Fade = this._objectReader.ReadByte();
+
+			if (this._version > ACadVersion.AC1021)
+			{
+				//Unknown bit
+				this._objectReader.ReadBit();
+			}
+
+			wipeout.ClipType = (ClipType)this._objectReader.ReadBitShort();
+			switch (wipeout.ClipType)
+			{
+				case ClipType.Rectangular:
+					wipeout.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
+					wipeout.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
+					break;
+				case ClipType.Polygonal:
+					int nvertices = this._objectReader.ReadBitLong();
+					for (int i = 0; i < nvertices; i++)
+					{
+						wipeout.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
+					}
+					break;
+				default:
+					break;
+			}
+
+			template.ImgHandle_1 = this.handleReference();
+			template.ImgHandle_2 = this.handleReference();
+
+			return template;
 		}
 
 		private CadTemplate readXRecord()
