@@ -374,7 +374,7 @@ namespace ACadSharp.IO
 				.Where(o => o.HasValue)
 				.Select(a => a.Value));
 
-			DwgObjectSectionReader sectionReader = new DwgObjectSectionReader(
+			DwgObjectReader sectionReader = new DwgObjectReader(
 				this._fileHeader.AcadVersion,
 				this._builder,
 				sreader,

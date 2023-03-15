@@ -984,6 +984,7 @@ namespace ACadSharp.IO.DWG
 				case "MATERIAL":
 					break;
 				case "MESH":
+					template = this.readMesh();
 					break;
 				case "MLEADER":
 				case "MLEADERSTYLE":
@@ -4577,6 +4578,11 @@ namespace ACadSharp.IO.DWG
 			}
 
 			return template;
+		}
+
+		private CadTemplate readMesh()
+		{
+			return null;
 		}
 
 		private CadTemplate readPlaceHolder()
