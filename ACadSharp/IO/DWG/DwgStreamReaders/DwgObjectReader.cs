@@ -4488,6 +4488,7 @@ namespace ACadSharp.IO.DWG
 			//WARNING: this object is not documented, the fields have been found using exploration methods and matching them with the dxf file
 
 			visualStyle.Description = this._textReader.ReadVariableText();
+			visualStyle.Type = this._objectReader.ReadBitLong();
 
 #if TEST
 			var objValues = DwgStreamReaderBase.Explore(_objectReader);

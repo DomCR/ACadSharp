@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using System;
 
 namespace ACadSharp.Objects
 {
@@ -26,80 +25,74 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(2)]
 		public string Description { get; set; }
 
-		//70	Type
+		/// <summary>
+		/// Type
+		/// </summary>
+		[DxfCodeValue(70)]
+		public int Type { get; set; }
 
 		//71	Face lighting model
-
 		//0 =Invisible
-
 		//1 = Visible
-
 		//2 = Phong
-
 		//3 = Gooch
+		[DxfCodeValue(71)]
+		public FaceLightingModelType FaceLightingModel { get; set; }
 
-		//72
-
-		//Face lighting quality
-
+		//72	Face lighting quality
 		//0 = No lighting
-
 		//1 = Per face lighting
-
 		//2 = Per vertex lighting
+		[DxfCodeValue(72)]
+		public FaceLightingQualityType FaceLightingQuality { get; set; }
 
-		//73
-
-		//Face color mode
-
+		//73	Face color mode
 		//0 = No color
-
 		//1 = Object color
-
 		//2 = Background color
-
 		//3 = Custom color
-
 		//4 = Mono color
-
 		//5 = Tinted
-
 		//6 = Desaturated
+		[DxfCodeValue(73)]
+		public FaceColorMode FaceColorMode { get; set; }
 
 		//90
-
 		//Face modifiers
-
 		//0 = No modifiers
-
 		//1 = Opacity
-
 		//2 = Specular
+		[DxfCodeValue(90)]
+		public FaceModifierType FaceModifiers { get; set; }
 
-		//40
+		/// <summary>
+		/// Face opacity level
+		/// </summary>
+		[DxfCodeValue(40)]
+		public double FaceOpacityLevel { get; set; }
 
-		//Face opacity level
+		/// <summary>
+		/// Face specular level
+		/// </summary>
+		[DxfCodeValue(41)]
+		public double FaceSpecularLevel { get; set; }
 
-		//41
+		/// <summary>
+		/// Color
+		/// </summary>
+		[DxfCodeValue(62, 63)]
+		public Color Color { get; set; }
 
-		//Face specular level
-
-		//62, 63
-
-		//Color
-
-		//421
-
-		//Face style mono color
+		/// <summary>
+		/// Face style mono color
+		/// </summary>
+		[DxfCodeValue(421)]
+		public Color FaceStyleMonoColor { get; set; }
 
 		//74
-
 		//Edge style model
-
 		//0 = No edges
-
 		//1 = Isolines
-
 		//2 = Facet edges
 
 		//91
@@ -178,16 +171,10 @@ namespace ACadSharp.Objects
 
 		//Display style display settings
 
-		//44
+		//44	Brightness
 
-		//Brightness
+		//173	Shadow type
 
-		//173
-
-		//Shadow type
-
-		//291
-
-		//Internal use only flag
+		//291	Internal use only flag
 	}
 }
