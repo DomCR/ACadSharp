@@ -25,6 +25,16 @@ namespace ACadSharp.IO.DXF
 			this._stream.Dispose();
 		}
 
+		public void Flush()
+		{
+			this._stream.Flush();
+		}
+
+		public void Close()
+		{
+			this._stream.Close();
+		}
+
 		public void Write(DxfCode code, object value)
 		{
 			this.Write((int)code, value);

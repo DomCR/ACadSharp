@@ -64,11 +64,11 @@ namespace ACadSharp.IO
 
 			this._writer.Write(DxfCode.Start, DxfFileToken.EndOfFile);
 
-			this._writer.Stream.Flush();
+			this._writer.Flush();
 
 			if (this.CloseStream)
 			{
-				this._writer.Stream.Close();
+				this._writer.Close();
 			}
 		}
 
