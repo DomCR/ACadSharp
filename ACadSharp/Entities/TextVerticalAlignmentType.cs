@@ -11,9 +11,9 @@
 		Baseline = 0,
 
 		/// <summary>
-		/// Top
+		/// Bottom
 		/// </summary>
-		Top = 1,
+		Bottom = 1,
 
 		/// <summary>
 		/// Middle
@@ -21,8 +21,8 @@
 		Middle = 2,
 
 		/// <summary>
-		/// Bottom
+		/// Top
 		/// </summary>
-		Bottom = 3,
+		Top = 3,
 	}
 }

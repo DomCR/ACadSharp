@@ -53,7 +53,7 @@ namespace ACadSharp.Entities
 		//[DxfCodeValue(280)]
 		//TODO: Check the dxf code of Attribute type.
 		//Missmatch between Autodesk documentation and OpenDesign
-		public AttributeType AttributeType { get; set; }
+		public AttributeType AttributeType { get; set; } = AttributeType.SingleLine;
 
 		//Missmatch between Autodesk documentation and OpenDesign
 		public bool IsReallyLocked { get; set; }

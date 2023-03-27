@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -24,9 +25,6 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// A 3D WCS coordinate representing the insertion or origin point.
 		/// </summary>
-		/// <remarks>
-		/// This property is read-only except for text whose Alignment property is set to acAlignmentLeft, acAlignmentAligned, or acAlignmentFit. To position text whose justification is other than left, aligned, or fit, use the TextAlignmentPoint property.
-		/// </remarks>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ InsertPoint { get; set; } = XYZ.Zero;
 
@@ -43,7 +41,16 @@ namespace ACadSharp.Entities
 		/// This must be a positive, non-negative number.
 		/// </value>
 		[DxfCodeValue(40)]
-		public double Height { get; set; } = 0.0;
+		public double Height
+		{
+			get => _height; set
+			{
+				if (value < 0)
+					throw new ArgumentOutOfRangeException("Height value cannot be negative.");
+				else
+					this._height = value;
+			}
+		}
 
 		/// <summary>
 		/// Reference rectangle width
@@ -91,13 +98,21 @@ namespace ACadSharp.Entities
 		public TextStyle Style { get; set; } = TextStyle.Default;
 
 		/// <summary>
-		/// A 3D WCS coordinate representing the alignment point of the object.
+		/// X-axis direction vector(in WCS)
 		/// </summary>
 		/// <remarks>
-		/// This property will be reset to 0, 0, 0 and will become read-only when the Alignment property is set to acAlignmentLeft. To position text whose justification is left, fit, or aligned, use the InsertionPoint property.
+		/// A group code 50 (rotation angle in radians) passed as DXF input is converted to the equivalent direction vector (if both a code 50 and codes 11, 21, 31 are passed, the last one wins). This is provided as a convenience for conversions from text objects
 		/// </remarks>
 		[DxfCodeValue(11, 21, 31)]
-		public XYZ AlignmentPoint { get; set; } = XYZ.Zero;
+		public XYZ AlignmentPoint
+		{
+			get => _alignmentPoint;
+			set
+			{
+				_alignmentPoint = value;
+				this._rotation = new XY(this._alignmentPoint.X, this._alignmentPoint.Y).GetAngle();
+			}
+		}
 
 		/// <summary>
 		/// Horizontal width of the characters that make up the mtext entity.
@@ -126,7 +141,15 @@ namespace ACadSharp.Entities
 		/// The rotation angle in radians.
 		/// </value>
 		[DxfCodeValue(50)]
-		public double Rotation { get; set; } = 0.0;
+		public double Rotation
+		{
+			get => _rotation;
+			set
+			{
+				_rotation = value;
+				this.AlignmentPoint = new XYZ(Math.Cos(_rotation), Math.Sin(_rotation), 0.0);
+			}
+		}
 
 		/// <summary>
 		/// Mtext line spacing style 
@@ -165,12 +188,21 @@ namespace ACadSharp.Entities
 		public Color BackgroundColor { get; set; }
 
 		/// <summary>
-		///
+		/// Transparency of background fill color
 		/// </summary>
+		/// <remarks>
+		/// not implemented (By Autocad)
+		/// </remarks>
 		[DxfCodeValue(441)]
 		public Transparency BackgroundTransparency { get; set; }
 
 		public bool IsAnnotative { get; set; }
+
+		private double _height = 0.0;
+
+		private XYZ _alignmentPoint = XYZ.Zero;
+
+		private double _rotation = 0.0;
 
 		public TextColumn Column { get; set; } = new TextColumn();
 

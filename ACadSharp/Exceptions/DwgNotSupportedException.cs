@@ -3,7 +3,7 @@
 namespace ACadSharp.Exceptions
 {
 	[Serializable]
-	public class DwgNotSupportedException : Exception
+	public class DwgNotSupportedException : NotSupportedException
 	{
 		public DwgNotSupportedException() : base($"Dwg version not recognised") { }
 

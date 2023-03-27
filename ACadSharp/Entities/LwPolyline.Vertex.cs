@@ -5,7 +5,7 @@ namespace ACadSharp.Entities
 {
 	public partial class LwPolyline
 	{
-		public class Vertex
+		public class Vertex : IVertex
 		{
 			/// <summary>
 			/// Vertex coordinates (in OCS)
@@ -48,6 +48,8 @@ namespace ACadSharp.Entities
 			/// </summary>
 			[DxfCodeValue(91)]
 			public int Id { get; set; } = 0;
+
+			IVector IVertex.Location { get { return this.Location; } }
 
 			public Vertex() { }
 

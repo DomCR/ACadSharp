@@ -7,7 +7,12 @@ namespace ACadSharp.IO.DXF
 {
 	internal class DxfDocumentBuilder : CadDocumentBuilder
 	{
-		public DxfDocumentBuilder(CadDocument document, NotificationEventHandler notification = null) : base(document, notification) { }
+		public DxfReaderConfiguration Configuration { get; }
+
+		public DxfDocumentBuilder(CadDocument document, DxfReaderConfiguration configuration) : base(document)
+		{
+			this.Configuration = configuration;
+		}
 
 		public override void BuildDocument()
 		{

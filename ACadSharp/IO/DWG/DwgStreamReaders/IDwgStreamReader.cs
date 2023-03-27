@@ -51,19 +51,22 @@ namespace ACadSharp.IO.DWG
 		/// Encoding used to read the text.
 		/// </summary>
 		Encoding Encoding { get; set; }
+
 		/// <summary>
 		/// Stream that will be read.
 		/// </summary>
 		Stream Stream { get; }
-		//uint Length { get; set; }
+
 		/// <summary>
 		/// Shift to perform after reading a single bit.
 		/// </summary>
-		int BitShift { get; set; }
+		int BitShift { get; }
+
 		/// <summary>
 		/// Current stream position.
 		/// </summary>
 		long Position { get; set; }
+
 		/// <summary>
 		/// Indicates that the handler is empty of information.
 		/// </summary>

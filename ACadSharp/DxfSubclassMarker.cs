@@ -43,7 +43,7 @@
 		public const string Polyline = "AcDb2dPolyline";
 		public const string Leader = "AcDbLeader";
 		public const string LwPolyline = "AcDbPolyline";
-		public const string PolylineVertex = "AcDb2dVertex ";
+		public const string PolylineVertex = "AcDb2dVertex";
 		public const string Polyline3d = "AcDb3dPolyline";
 		public const string Polyline3dVertex = "AcDb3dPolylineVertex";
 		public const string PolyfaceMesh = "AcDbPolyFaceMesh";
