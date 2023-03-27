@@ -84,6 +84,36 @@ namespace ACadSharp.IO
 			this._stream.Dispose();
 		}
 
+		/// <summary>
+		/// Write a <see cref="CadDocument"/> into a file
+		/// </summary>
+		/// <param name="filename"></param>
+		/// <param name="document"></param>
+		/// <param name="notification"></param>
+		public static void Write(string filename, CadDocument document, NotificationEventHandler notification = null)
+		{
+			using (DwgWriter writer = new DwgWriter(filename, document))
+			{
+				writer.OnNotification += notification;
+				writer.Write();
+			}
+		}
+
+		/// <summary>
+		/// Write a <see cref="CadDocument"/> intio a <see cref="Stream"/>
+		/// </summary>
+		/// <param name="stream"></param>
+		/// <param name="document"></param>
+		/// <param name="notification"></param>
+		public static void Write(Stream stream, CadDocument document, NotificationEventHandler notification = null)
+		{
+			using (DwgWriter writer = new DwgWriter(stream, document))
+			{
+				writer.OnNotification += notification;
+				writer.Write();
+			}
+		}
+
 		private void getFileHeaderWriter()
 		{
 			switch (this._document.Header.Version)
@@ -109,14 +139,14 @@ namespace ACadSharp.IO
 					break;
 				case ACadVersion.AC1021:
 					throw new DwgNotSupportedException(this._document.Header.Version);
-					//this._fileHeaderWriter = new DwgFileHeaderWriterAC21(_stream, _document);
-					//break;
+				//this._fileHeaderWriter = new DwgFileHeaderWriterAC21(_stream, _document);
+				//break;
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
 					throw new DwgNotSupportedException(this._document.Header.Version);
-					//this._fileHeaderWriter = new DwgFileHeaderWriterAC18(_stream, _document);
-					//break;
+				//this._fileHeaderWriter = new DwgFileHeaderWriterAC18(_stream, _document);
+				//break;
 				case ACadVersion.Unknown:
 				default:
 					throw new DwgNotSupportedException();
