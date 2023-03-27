@@ -96,9 +96,14 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(45)]
 		public double RowSpacing { get; set; } = 0;
 
-		public Insert() : base()
+		internal Insert() : base()
 		{
 			this.Attributes = new SeqendCollection<AttributeEntity>(this);
+		}
+
+		public Insert(BlockRecord block) : this()
+		{
+			this.Block = block;
 		}
 	}
 }
