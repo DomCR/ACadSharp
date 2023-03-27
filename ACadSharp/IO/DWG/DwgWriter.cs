@@ -3,7 +3,6 @@ using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamWriters;
 using CSUtilities.IO;
 using CSUtilities.Text;
-using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -70,6 +69,13 @@ namespace ACadSharp.IO
 			this.writeHandles();
 
 			this._fileHeaderWriter.WriteFile();
+
+			this._stream.Flush();
+
+			if (this.CloseStream)
+			{
+				this._stream.Close();
+			}
 		}
 
 		/// <inheritdoc/>
