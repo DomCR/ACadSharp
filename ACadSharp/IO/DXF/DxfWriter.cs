@@ -63,6 +63,13 @@ namespace ACadSharp.IO
 			this.writeACDSData();
 
 			this._writer.Write(DxfCode.Start, DxfFileToken.EndOfFile);
+
+			this._writer.Flush();
+
+			if (this.CloseStream)
+			{
+				this._writer.Close();
+			}
 		}
 
 		/// <inheritdoc/>
