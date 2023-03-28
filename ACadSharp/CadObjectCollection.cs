@@ -1,5 +1,4 @@
-﻿using ACadSharp.Entities;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -12,11 +11,14 @@ namespace ACadSharp
 
 		public event EventHandler<CollectionChangedEventArgs> OnRemove;
 
-		// TODO: Investigate adding this back with a HashSet.
-		//public T this[int index] { get { return this._entries[index]; } }
-
+		/// <summary>
+		/// Owner of the collection
+		/// </summary>
 		public CadObject Owner { get; }
 
+		/// <summary>
+		/// Gets the number of elements that are contained in the collection
+		/// </summary>
 		public int Count { get { return this._entries.Count; } }
 
 		private readonly HashSet<T> _entries = new HashSet<T>();
@@ -31,8 +33,11 @@ namespace ACadSharp
 		/// </summary>
 		/// <param name="item"></param>
 		/// <exception cref="ArgumentException"></exception>
+		/// <exception cref="ArgumentNullException"></exception>
 		public void Add(T item)
 		{
+			if (item is null) throw new ArgumentNullException(nameof(item));
+
 			if (item.Owner != null)
 				throw new ArgumentException($"Item {item.GetType().FullName} already has an owner", nameof(item));
 

@@ -330,20 +330,8 @@ namespace ACadSharp
 
 		private void onReferenceChanged(object sender, ReferenceChangedEventArgs e)
 		{
-			if (e.RemoveOld)
-			{
-				this.removeCadObject(e.Old);
-			}
-
-			if (this.TryGetCadObject(e.Current.Handle, out CadObject existing))
-			{
-				this.addCadObject(e.Current);
-			}
-
-			if (e.Old != null)
-			{
-				this.removeCadObject(e.Old);
-			}
+			this.addCadObject(e.Current);
+			this.removeCadObject(e.Old);
 		}
 
 		private void onAdd(object sender, CollectionChangedEventArgs e)
