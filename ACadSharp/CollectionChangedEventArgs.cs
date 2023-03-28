@@ -9,9 +9,9 @@ namespace ACadSharp
 		/// </summary>
 		public CadObject Item { get; }
 
-		public CollectionChangedEventArgs(CadObject curr)
+		public CollectionChangedEventArgs(CadObject item)
 		{
-			this.Item = curr;
+			this.Item = item;
 		}
 	}
 }

@@ -104,9 +104,10 @@ namespace ACadSharp.Tables
 			{
 				ReferenceChangedEventArgs args = new ReferenceChangedEventArgs(value, this._blockEntity);
 
+				this.onReferenceChange(args);
+
 				this._blockEntity = value;
 				this._blockEntity.Owner = this;
-				this.onReferenceChange(args);
 			}
 		}
 
@@ -117,9 +118,10 @@ namespace ACadSharp.Tables
 			{
 				ReferenceChangedEventArgs args = new ReferenceChangedEventArgs(value, this._blockEnd);
 
+				this.onReferenceChange(args);
+
 				this._blockEnd = value;
 				this._blockEnd.Owner = this;
-				this.onReferenceChange(args);
 			}
 		}
 

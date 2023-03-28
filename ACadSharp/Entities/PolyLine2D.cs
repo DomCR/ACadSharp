@@ -28,7 +28,7 @@ namespace ACadSharp.Entities
 			return Polyline.explode(this);
 		}
 
-		private void verticesOnAdd(object sender, ReferenceChangedEventArgs e)
+		private void verticesOnAdd(object sender, CollectionChangedEventArgs e)
 		{
 			if (e.Item is not Vertex2D)
 			{

@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
 using System;
 
 namespace ACadSharp.Entities
@@ -14,7 +15,26 @@ namespace ACadSharp.Entities
 	{
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name, 8)]
-		public Layer Layer { get; set; } = Layer.Default;
+		public Layer Layer
+		{
+			get { return this._layer; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._layer = this.updateTable(value, this.Document.Layers);
+				}
+				else
+				{
+					this._layer = value;
+				}
+			}
+		}
 
 		/// <inheritdoc/>
 		[DxfCodeValue(62, 420, 430)]
@@ -38,11 +58,34 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name, 6)]
-		public LineType LineType { get; set; } = LineType.ByLayer;
+		public LineType LineType
+		{
+			get { return this._lineType; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._lineType = this.updateTable(value, this.Document.LineTypes);
+				}
+				else
+				{
+					this._lineType = value;
+				}
+			}
+		}
 
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Handle, 347)]
 		public Material Material { get; set; }
+
+		private Layer _layer = Layer.Default;
+
+		private LineType _lineType = LineType.ByLayer;
 
 		/// <summary>
 		/// Default constructor
@@ -87,6 +130,20 @@ namespace ACadSharp.Entities
 			this.createCopy(clone as CadObject);
 
 			return clone;
+		}
+
+		protected T updateTable<T>(T entry, Table<T> table)
+			where T : TableEntry
+		{
+			if (table.TryGetValue(entry.Name, out T existing))
+			{
+				return existing;
+			}
+			else
+			{
+				table.Add(entry);
+				return entry;
+			}
 		}
 
 		protected override void createCopy(CadObject copy)

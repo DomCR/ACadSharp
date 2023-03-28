@@ -249,7 +249,7 @@ namespace ACadSharp
 			}
 
 			this._cadObjects.Add(cadObject.Handle, cadObject);
-			cadObject.OnReferenceChange += this.onReferenceChanged;
+			cadObject.OnReferenceChanged += this.onReferenceChanged;
 
 			if (cadObject.XDictionary != null)
 				this.RegisterCollection(cadObject.XDictionary);
@@ -302,7 +302,7 @@ namespace ACadSharp
 
 			cadObject.Handle = 0;
 			cadObject.Document = null;
-			cadObject.OnReferenceChange -= this.onReferenceChanged;
+			cadObject.OnReferenceChanged -= this.onReferenceChanged;
 
 			if (cadObject.XDictionary != null)
 				this.UnregisterCollection(cadObject.XDictionary);
@@ -329,12 +329,22 @@ namespace ACadSharp
 					break;
 			}
 
+			if (cadObject is TableEntry entry)
+			{
+				throw new NotImplementedException();
+			}
+
 			//throw new NotImplementedException();
 		}
 
 		private void onReferenceChanged(object sender, ReferenceChangedEventArgs e)
 		{
-			if (e.Current != null)
+			if (e.RemoveOld)
+			{
+				this.removeCadObject(e.Old);
+			}
+
+			if (this.TryGetCadObject(e.Current.Handle, out CadObject existing))
 			{
 				this.addCadObject(e.Current);
 			}
