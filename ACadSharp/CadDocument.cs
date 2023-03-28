@@ -284,6 +284,14 @@ namespace ACadSharp
 					break;
 				case Insert insert:
 					this.RegisterCollection(insert.Attributes);
+					if (this.BlockRecords.TryGetValue(insert.Block.Name, out BlockRecord blk))
+					{
+						insert.Block = blk;
+					}
+					else
+					{
+						this.BlockRecords.Add(insert.Block);
+					}
 					break;
 				case Polyline pline:
 					this.RegisterCollection(pline.Vertices);

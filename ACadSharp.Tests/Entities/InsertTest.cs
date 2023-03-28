@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
+using System.Linq;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities
@@ -35,23 +36,39 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
+		public void AddInsertToDocumentWithExistingBlock()
+		{
+			CadDocument document = new CadDocument();
+			BlockRecord record = new BlockRecord(_blockName);
+
+			document.BlockRecords.Add(record);
+
+			Insert insert = new Insert(record);
+
+			document.Entities.Add(insert);
+
+			Assert.Equal(document, insert.Document);
+			Assert.Equal(document, insert.Block.Document);
+			Assert.True(document.BlockRecords.Contains(_blockName));
+		}
+
+		[Fact(Skip = "Feature to be implemented")]
 		public void ChangeBlock()
 		{
 			BlockRecord record = new BlockRecord(_blockName);
 			BlockRecord record2 = new BlockRecord(_blockName);
 			Insert insert = new Insert(record);
-			
-			insert.Block = record2;
 		}
 
 		[Fact]
 		public void LinkedAttributes()
 		{
 			BlockRecord record = new BlockRecord(_blockName);
-			BlockRecord record2 = new BlockRecord(_blockName);
+			record.Entities.Add(new AttributeDefinition());
+
 			Insert insert = new Insert(record);
 
-
+			Assert.True(record.AttributeDefinitions.Count() == insert.Attributes.Count);
 		}
 	}
 }

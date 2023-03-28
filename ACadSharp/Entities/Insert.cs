@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
+using System;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -37,7 +39,7 @@ namespace ACadSharp.Entities
 		/// Gets the insert block definition
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 2)]
-		public BlockRecord Block { get; set; }
+		public BlockRecord Block { get; internal set; }
 
 		/// <summary>
 		/// A 3D WCS coordinate representing the insertion or origin point.
@@ -102,19 +104,33 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(45)]
 		public double RowSpacing { get; set; } = 0;
 
-		internal Insert() : base()
+		internal Insert(bool onAdd = true) : base()
 		{
 			this.Attributes = new SeqendCollection<AttributeEntity>(this);
-			this.Attributes.OnAdd += this.attributesOnAdd;
+
+			if (onAdd)
+			{
+				this.Attributes.OnAdd += this.attributesOnAdd;
+			}
 		}
 
-		public Insert(BlockRecord block) : this()
+		public Insert(BlockRecord block) : this(false)
 		{
 			this.Block = block;
 			foreach (AttributeDefinition attdef in block.AttributeDefinitions)
 			{
 				this.Attributes.Add(new AttributeEntity(attdef));
 			}
+
+			this.Attributes.OnAdd += this.attributesOnAdd;
+		}
+
+		/// <summary>
+		/// Updates all attribute definitions contained in the block reference as Attribute entitites in the insert
+		/// </summary>
+		public void UpdateAttributes()
+		{
+			throw new NotImplementedException();
 		}
 
 		private void attributesOnAdd(object sender, CollectionChangedEventArgs e)
