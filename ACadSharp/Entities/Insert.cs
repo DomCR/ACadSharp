@@ -21,11 +21,17 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityInsert;
 
+		/// <summary>
+		/// Attributes from the block reference
+		/// </summary>
+		/// <remarks>
+		/// If an attribute should be added in this collection a definition will be added into the block reference as well
+		/// </remarks>
 		//66	Variable attributes-follow flag(optional; default = 0); 
 		//		if the value of attributes-follow flag is 1, a series of 
 		//		attribute entities is expected to follow the insert, terminated by a seqend entity
 		[DxfCodeValue(DxfReferenceType.Ignored, 66)]
-		public SeqendCollection<AttributeEntity> Attributes { get; set; }
+		public SeqendCollection<AttributeEntity> Attributes { get; }
 
 		/// <summary>
 		/// Gets the insert block definition
@@ -99,11 +105,21 @@ namespace ACadSharp.Entities
 		internal Insert() : base()
 		{
 			this.Attributes = new SeqendCollection<AttributeEntity>(this);
+			this.Attributes.OnAdd += this.attributesOnAdd;
 		}
 
 		public Insert(BlockRecord block) : this()
 		{
 			this.Block = block;
+			foreach (AttributeDefinition attdef in block.AttributeDefinitions)
+			{
+				this.Attributes.Add(new AttributeEntity(attdef));
+			}
+		}
+
+		private void attributesOnAdd(object sender, CollectionChangedEventArgs e)
+		{
+			this.Block.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));
 		}
 	}
 }
