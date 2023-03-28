@@ -93,9 +93,9 @@ namespace ACadSharp.Tables
 			}
 		}
 
-		public CadObjectCollection<Viewport> Viewports { get; set; }
+		public CadObjectCollection<Viewport> Viewports { get; }
 
-		public CadObjectCollection<Entity> Entities { get; set; }
+		public CadObjectCollection<Entity> Entities { get; }
 
 		public Block BlockEntity
 		{
