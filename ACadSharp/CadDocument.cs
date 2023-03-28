@@ -1,5 +1,4 @@
-﻿using ACadSharp.Blocks;
-using ACadSharp.Classes;
+﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Header;
 using ACadSharp.Objects;
@@ -8,7 +7,6 @@ using ACadSharp.Tables.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ACadSharp
 {
@@ -249,7 +247,7 @@ namespace ACadSharp
 			}
 
 			this._cadObjects.Add(cadObject.Handle, cadObject);
-			cadObject.OnReferenceChange += this.onReferenceChanged;
+			cadObject.OnReferenceChanged += this.onReferenceChanged;
 
 			if (cadObject.XDictionary != null)
 				this.RegisterCollection(cadObject.XDictionary);
@@ -287,6 +285,9 @@ namespace ACadSharp
 				case Insert insert:
 					this.RegisterCollection(insert.Attributes);
 					break;
+				case Polyline pline:
+					this.RegisterCollection(pline.Vertices);
+					break;
 			}
 		}
 
@@ -299,7 +300,7 @@ namespace ACadSharp
 
 			cadObject.Handle = 0;
 			cadObject.Document = null;
-			cadObject.OnReferenceChange -= this.onReferenceChanged;
+			cadObject.OnReferenceChanged -= this.onReferenceChanged;
 
 			if (cadObject.XDictionary != null)
 				this.UnregisterCollection(cadObject.XDictionary);
@@ -321,45 +322,39 @@ namespace ACadSharp
 				case Insert insert:
 					this.UnregisterCollection(insert.Attributes);
 					break;
+				case Polyline pline:
+					this.UnregisterCollection(pline.Vertices);
+					break;
 			}
-
-			//throw new NotImplementedException();
 		}
 
 		private void onReferenceChanged(object sender, ReferenceChangedEventArgs e)
 		{
-			if (e.Current != null)
-			{
-				this.addCadObject(e.Current);
-			}
-
-			if (e.Old != null)
-			{
-				this.removeCadObject(e.Old);
-			}
+			this.addCadObject(e.Current);
+			this.removeCadObject(e.Old);
 		}
 
-		private void onAdd(object sender, ReferenceChangedEventArgs e)
+		private void onAdd(object sender, CollectionChangedEventArgs e)
 		{
-			if (e.Current is CadDictionary dictionary)
+			if (e.Item is CadDictionary dictionary)
 			{
 				this.RegisterCollection(dictionary);
 			}
 			else
 			{
-				this.addCadObject(e.Current);
+				this.addCadObject(e.Item);
 			}
 		}
 
-		private void onRemove(object sender, ReferenceChangedEventArgs e)
+		private void onRemove(object sender, CollectionChangedEventArgs e)
 		{
-			if (e.Current is CadDictionary dictionary)
+			if (e.Item is CadDictionary dictionary)
 			{
 				this.UnregisterCollection(dictionary);
 			}
 			else
 			{
-				this.removeCadObject(e.Current);
+				this.removeCadObject(e.Item);
 			}
 		}
 

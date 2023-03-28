@@ -18,6 +18,12 @@ namespace ACadSharp.IO.Templates
 			base.Build(builder);
 
 			//TODO: Finish the hatch template
+			Hatch hatch = CadObject as Hatch;
+
+			if (!string.IsNullOrEmpty(this.HatchPatternName))
+			{
+
+			}
 
 			foreach (CadBoundaryPathTemplate t in PathTempaltes)
 			{

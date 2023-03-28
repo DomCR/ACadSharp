@@ -24,6 +24,7 @@ namespace ACadSharp.IO.DWG
 
 			return memoryStream;
 		}
+
 		/// <summary>
 		/// Decompress a compressed source stream.
 		/// </summary>
@@ -81,7 +82,7 @@ namespace ACadSharp.IO.DWG
 				if (litCount == 0)
 				{
 					opcode1 = (byte)src.ReadByte();
-					if ((opcode1 & 240) == 0)
+					if ((opcode1 & 0b11110000) == 0)
 						litCount = literalCount(opcode1, src) + 3;
 				}
 
@@ -90,6 +91,7 @@ namespace ACadSharp.IO.DWG
 					opcode1 = copy(litCount, src, dst);
 			}
 		}
+		
 		private static byte copy(int count, Stream src, Stream dst)
 		{
 			for (int i = 0; i < count; ++i)
@@ -100,6 +102,7 @@ namespace ACadSharp.IO.DWG
 
 			return (byte)src.ReadByte();
 		}
+
 		private static int literalCount(int code, Stream src)
 		{
 			int lowbits = code & 0b1111;
@@ -110,10 +113,11 @@ namespace ACadSharp.IO.DWG
 				for (lastByte = (byte)src.ReadByte(); lastByte == 0; lastByte = (byte)src.ReadByte())
 					lowbits += byte.MaxValue;  //0xFF
 
-				lowbits += 15 + lastByte;
+				lowbits += 0xF + lastByte;
 			}
 			return lowbits;
 		}
+
 		private static int readCompressedBytes(int opcode1, int validBits, Stream compressed)
 		{
 			int compressedBytes = opcode1 & validBits;
@@ -130,6 +134,7 @@ namespace ACadSharp.IO.DWG
 
 			return compressedBytes + 2;
 		}
+
 		private static int twoByteOffset(ref int offset, int addedValue, Stream stream)
 		{
 			int firstByte = stream.ReadByte();

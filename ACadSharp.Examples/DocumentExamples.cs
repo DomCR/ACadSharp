@@ -1,5 +1,5 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
+using ACadSharp.IO;
 using ACadSharp.Tables;
 using System;
 using System.Collections.Generic;

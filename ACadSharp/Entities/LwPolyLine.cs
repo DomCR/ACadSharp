@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -13,7 +15,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityLwPolyline)]
 	[DxfSubClass(DxfSubclassMarker.LwPolyline)]
-	public partial class LwPolyline : Entity
+	public partial class LwPolyline : Entity, IPolyline
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.LWPOLYLINE;
@@ -59,5 +61,20 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 90)]
 		public List<Vertex> Vertices { get; set; } = new List<Vertex>();
+
+		public bool IsClosed
+		{
+			get
+			{
+				return this.Flags.HasFlag(LwPolylineFlags.Closed);
+			}
+		}
+
+		IEnumerable<IVertex> IPolyline.Vertices { get { return this.Vertices; } }
+
+		public IEnumerable<Entity> Explode()
+		{
+			return Polyline.explode(this);
+		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Header;
+using ACadSharp.IO.DXF;
 using CSUtilities.IO;
 using System;
 using System.Collections.Generic;
@@ -7,10 +8,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-namespace ACadSharp.IO.DXF
+namespace ACadSharp.IO
 {
 	public class DxfReader : CadReaderBase
 	{
+		public DxfReaderConfiguration Configuration { get; set; } = new DxfReaderConfiguration();
+
 		private CadDocument _document;
 		private DxfDocumentBuilder _builder;
 		private IDxfStreamReader _reader;
@@ -104,8 +107,8 @@ namespace ACadSharp.IO.DXF
 		public override CadDocument Read()
 		{
 			this._document = new CadDocument(false);
-			this._builder = new DxfDocumentBuilder(this._document);
-			this._builder.OnNotification += this.triggerNotification;
+			this._builder = new DxfDocumentBuilder(this._document, this.Configuration);
+			this._builder.OnNotification += this.onNotificationEvent;
 
 			this._reader = this._reader ?? this.getReader();
 
@@ -142,7 +145,7 @@ namespace ACadSharp.IO.DXF
 						this.readObjects();
 						break;
 					default:
-						this.triggerNotification(this, new NotificationEventArgs($"Section not implemented {this._reader.LastValueAsString}"));
+						this.triggerNotification(($"Section not implemented {this._reader.LastValueAsString}"), NotificationType.NotImplemented);
 						break;
 				}
 
@@ -193,6 +196,17 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return header;
+		}
+
+		/// <inheritdoc/>
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			if (this.Configuration.ClearChache)
+			{
+				DxfMap.ClearCache();
+			}
 		}
 
 		#region DxfClasses
@@ -256,7 +270,7 @@ namespace ACadSharp.IO.DXF
 						break;
 					//Was-a-proxy flag. Set to 1 if class was not loaded when this DXF file was created, and 0 otherwise
 					case 280:
-						curr.WasAProxy = this._reader.LastValueAsBool;
+						curr.WasZombie = this._reader.LastValueAsBool;
 						break;
 					//Is - an - entity flag.
 					case 281:

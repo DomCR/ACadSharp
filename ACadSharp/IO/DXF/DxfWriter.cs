@@ -1,8 +1,8 @@
-﻿using System;
+﻿using ACadSharp.IO.DXF;
 using System.IO;
 using System.Text;
 
-namespace ACadSharp.IO.DXF
+namespace ACadSharp.IO
 {
 	public class DxfWriter : CadWriterBase
 	{
@@ -43,10 +43,8 @@ namespace ACadSharp.IO.DXF
 			this._document = document;
 		}
 
-		/// <summary>
-		/// Write the <see cref="CadDocument"/>
-		/// </summary>
-		public void Write()
+		/// <inheritdoc/>
+		public override void Write()
 		{
 			this._objectHolder.Objects.Enqueue(_document.RootDictionary);
 
@@ -79,10 +77,12 @@ namespace ACadSharp.IO.DXF
 		/// <param name="filename"></param>
 		/// <param name="document"></param>
 		/// <param name="binary"></param>
-		public static void Write(string filename, CadDocument document, bool binary)
+		/// <param name="notification"></param>
+		public static void Write(string filename, CadDocument document, bool binary, NotificationEventHandler notification = null)
 		{
 			using (DxfWriter writer = new DxfWriter(filename, document, binary))
 			{
+				writer.OnNotification += notification;
 				writer.Write();
 			}
 		}
@@ -93,10 +93,11 @@ namespace ACadSharp.IO.DXF
 		/// <param name="stream"></param>
 		/// <param name="document"></param>
 		/// <param name="binary"></param>
-		public static void Write(Stream stream, CadDocument document, bool binary)
+		public static void Write(Stream stream, CadDocument document, bool binary, NotificationEventHandler notification = null)
 		{
 			using (DxfWriter writer = new DxfWriter(stream, document, binary))
 			{
+				writer.OnNotification += notification;
 				writer.Write();
 			}
 		}
@@ -111,7 +112,7 @@ namespace ACadSharp.IO.DXF
 
 		private void writeDxfClasses()
 		{
-			var writer = new DxfDxfClassesSectionWriter(this._writer, this._document, this._objectHolder);
+			var writer = new DxfClassesSectionWriter(this._writer, this._document, this._objectHolder);
 			writer.OnNotification += this.triggerNotification;
 
 			writer.Write();

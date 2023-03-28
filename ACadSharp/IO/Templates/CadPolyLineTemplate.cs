@@ -1,5 +1,5 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
@@ -51,7 +51,7 @@ namespace ACadSharp.IO.Templates
 			//polyLine.ExtendedData = this.CadObject.ExtendedData;
 
 			polyLine.Color = this.CadObject.Color;
-			polyLine.Lineweight = this.CadObject.Lineweight;
+			polyLine.LineWeight = this.CadObject.LineWeight;
 			polyLine.LinetypeScale = this.CadObject.LinetypeScale;
 			polyLine.IsInvisible = this.CadObject.IsInvisible;
 			polyLine.Transparency = this.CadObject.Transparency;
@@ -62,6 +62,11 @@ namespace ACadSharp.IO.Templates
 		public class PolyLinePlaceholder : Polyline
 		{
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
+
+			public override IEnumerable<Entity> Explode()
+			{
+				throw new NotImplementedException();
+			}
 		}
 	}
 }

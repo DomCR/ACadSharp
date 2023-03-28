@@ -63,7 +63,7 @@ namespace ACadSharp.Header
 		/// System variable ACADMAINTVER.
 		/// </remarks>
 		[CadSystemVariable(DxfReferenceType.Ignored, "$ACADMAINTVER", 70)]
-		public short MaintenanceVersion { get; set; }
+		public short MaintenanceVersion { get; internal set; } = 0;
 
 		/// <summary>
 		/// Drawing code page; set to the system code page when a new drawing is created,
@@ -144,11 +144,13 @@ namespace ACadSharp.Header
 		public bool RegenerationMode { get; set; }
 
 		/// <summary>
-		/// System variable FILLMODE.
 		/// Fill mode on if nonzero
 		/// </summary>
+		/// <remarks>
+		/// System variable FILLMODE.
+		/// </remarks>
 		[CadSystemVariable("$FILLMODE", DxfCode.Int16)]
-		public bool FillMode { get; set; }
+		public bool FillMode { get; set; } = true;
 
 		/// <summary>
 		/// Quick Text mode on if nonzero
@@ -267,10 +269,13 @@ namespace ACadSharp.Header
 		public bool ProxyGraphics { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable TREEDEPTH
+		/// Specifies the maximum depth of the spatial index
 		/// </summary>
-		public short SpatialIndexMaxTreeDepth { get; set; }
+		/// <remarks>
+		/// System variable TREEDEPTH
+		/// </remarks>
+		[CadSystemVariable("$TREEDEPTH", 70)]
+		public short SpatialIndexMaxTreeDepth { get; set; } = 3020;
 
 		/// <summary>
 		/// Units format for coordinates and distances
@@ -705,11 +710,11 @@ namespace ACadSharp.Header
 		/// <summary>
 		/// Name of menu file
 		/// </summary>
-		/// <remarks>		
+		/// <remarks>
 		/// System variable MENU
 		/// </remarks>
 		[CadSystemVariable("$MENU", 1)]
-		public string MenuFileName { get; set; } = string.Empty;
+		public string MenuFileName { get; set; } = ".";
 
 		/// <summary>
 		/// Next available handle
@@ -745,7 +750,7 @@ namespace ACadSharp.Header
 		/// System variable TDUPDATE
 		/// </remarks>
 		[CadSystemVariable("$TDUPDATE", 40)]
-		public DateTime UpdateDateTime { get; set; }
+		public DateTime UpdateDateTime { get; set; } = DateTime.Now;
 
 		/// <summary>
 		/// Universal date/time of the last update/save(see Special Handling of Date/Time Variables)
@@ -754,7 +759,7 @@ namespace ACadSharp.Header
 		/// System variable TDUUPDATE
 		/// </remarks>
 		[CadSystemVariable("$TDUUPDATE", 40)]
-		public DateTime UniversalUpdateDateTime { get; set; }
+		public DateTime UniversalUpdateDateTime { get; set; } = DateTime.UtcNow;
 
 		/// <summary>
 		/// Cumulative editing time for this drawing(see Special Handling of Date/Time Variables)

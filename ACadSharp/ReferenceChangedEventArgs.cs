@@ -14,11 +14,6 @@ namespace ACadSharp
 		/// </summary>
 		public CadObject Old { get; }
 
-		public ReferenceChangedEventArgs(CadObject curr)
-		{
-			this.Current = curr;
-		}
-
 		public ReferenceChangedEventArgs(CadObject curr, CadObject old)
 		{
 			this.Current = curr;

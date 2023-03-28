@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
+using System;
 
 namespace ACadSharp.IO.Templates
 {
@@ -82,8 +83,19 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			if (this.LayerHandle.HasValue && builder.TryGetCadObject<Layer>(this.LayerHandle.Value, out Layer layer))
+			Layer layer;
+			if (builder.TryGetCadObject<Layer>(this.LayerHandle, out layer))
+			{
 				this.CadObject.Layer = layer;
+			}
+			else if (!string.IsNullOrEmpty(LayerName) && builder.DocumentToBuild.Layers.TryGetValue(this.LayerName, out layer))
+			{
+				this.CadObject.Layer = layer;
+			}
+			else
+			{
+				builder.Notify($"Could not assign the layer to entity | handle : {this.LayerHandle} | name : {LayerName}", NotificationType.Warning);
+			}
 
 			//Handle the line type for this entity
 			if (this.LtypeFlags.HasValue)
@@ -103,10 +115,7 @@ namespace ACadSharp.IO.Templates
 						this.CadObject.LineType = builder.LineTypes["Continuous"];
 						break;
 					case 3:
-						if (this.LineTypeHandle.HasValue)
-						{
-							applyLineType(builder);
-						}
+						applyLineType(builder);
 						break;
 				}
 			}
@@ -114,10 +123,13 @@ namespace ACadSharp.IO.Templates
 			{
 				applyLineType(builder);
 			}
-			else
+			else if (!string.IsNullOrEmpty(LtypeName) && builder.DocumentToBuild.LineTypes.TryGetValue(this.LtypeName, out LineType ltype))
 			{
-				//TODO: Dxf sets the linetype by name
-				// this.CadObject.LineType = builder.LineTypes["ByLayer"];
+				this.CadObject.LineType = ltype;
+			}
+			else if (!string.IsNullOrEmpty(LtypeName) || this.LineTypeHandle.HasValue)
+			{
+				builder.Notify($"Could not assign the line type to entity | handle : {this.LineTypeHandle} | name : {LtypeName}", NotificationType.Warning);
 			}
 
 			if (this.ColorHandle.HasValue)
@@ -135,7 +147,10 @@ namespace ACadSharp.IO.Templates
 
 		private void applyLineType(CadDocumentBuilder builder)
 		{
-			this.CadObject.LineType = builder.GetCadObject<LineType>(this.LineTypeHandle.Value);
+			if (builder.TryGetCadObject<LineType>(this.LineTypeHandle, out LineType ltype))
+			{
+				this.CadObject.LineType = ltype;
+			}
 		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Header;
 using CSUtilities.IO;
+using System;
 using System.IO;
 
 namespace ACadSharp.IO
@@ -32,12 +33,17 @@ namespace ACadSharp.IO
 		public abstract CadHeader ReadHeader();
 
 		/// <inheritdoc/>
-		public void Dispose()
+		public virtual void Dispose()
 		{
 			this._fileStream.Dispose();
 		}
 
-		protected void triggerNotification(object sender, NotificationEventArgs e)
+		protected void triggerNotification(string message, NotificationType notificationType)
+		{
+			this.onNotificationEvent(null, new NotificationEventArgs(message, notificationType));
+		}
+
+		protected void onNotificationEvent(object sender, NotificationEventArgs e)
 		{
 			this.OnNotification?.Invoke(this, e);
 		}

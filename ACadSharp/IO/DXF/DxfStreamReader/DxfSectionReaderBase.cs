@@ -75,7 +75,7 @@ namespace ACadSharp.IO.DXF
 					case 340:
 					//Dimension table has the handles of the styles at the begining
 					default:
-						this._builder.Notify(new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}."));
+						this._builder.Notify($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}.");
 						break;
 				}
 
@@ -109,7 +109,7 @@ namespace ACadSharp.IO.DXF
 						template.OwnerHandle = this._reader.LastValueAsHandle;
 						break;
 					default:
-						this._builder.Notify(new NotificationEventArgs($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}."));
+						this._builder.Notify($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}.");
 						break;
 				}
 
@@ -130,7 +130,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadTextEntityTemplate(new AttributeDefinition());
 					break;
 				case DxfFileToken.EntityArc:
-					template = new CadEntityTemplate(new Arc());
+					template = new CadArcTemplate(new Arc());
 					break;
 				case DxfFileToken.EntityCircle:
 					template = new CadEntityTemplate(new Circle());
@@ -178,7 +178,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadTextEntityTemplate(new TextEntity());
 					break;
 				case DxfFileToken.EntityVertex:
-					template = new CadEntityTemplate(new Vertex2D());
+					template = new CadVertexTemplate();
 					break;
 				case DxfFileToken.EntityViewport:
 					template = new CadViewportTemplate(new Viewport());
@@ -190,7 +190,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadSplineTemplate(new Spline());
 					break;
 				default:
-					this._builder.Notify(new NotificationEventArgs($"Entity not implemented: {this._reader.LastValueAsString}"));
+					this._builder.Notify(($"Entity not implemented: {this._reader.LastValueAsString}"), NotificationType.NotImplemented);
 					do
 					{
 						this._reader.ReadNext();
@@ -278,9 +278,11 @@ namespace ACadSharp.IO.DXF
 					case DxfSubclassMarker.Point:
 						this.readMapped<Point>(template.CadObject, template);
 						break;
-					//case DxfSubclassMarker.PolyfaceMesh:
-					//	this.readMapped<PolyLine2D>(template.CadObject, template);
-					//	break;
+					case DxfSubclassMarker.PolyfaceMesh:
+						this._builder.Notify($"dxf entity subclass not implemented {this._reader.LastValueAsString}", NotificationType.NotImplemented);
+						while (this._reader.LastDxfCode != DxfCode.Start)
+							this._reader.ReadNext();
+						return null;
 					case DxfSubclassMarker.Polyline:
 						(template as CadPolyLineTemplate).SetPolyLineObject(new Polyline2D());
 						this.readMapped<Polyline2D>(template.CadObject, template);
@@ -289,7 +291,12 @@ namespace ACadSharp.IO.DXF
 						(template as CadPolyLineTemplate).SetPolyLineObject(new Polyline3D());
 						this.readMapped<Polyline3D>(template.CadObject, template);
 						break;
+					case DxfSubclassMarker.PolylineVertex:
+						(template as CadVertexTemplate).SetVertexObject(new Vertex2D());
+						this.readMapped<Vertex2D>(template.CadObject, template);
+						break;
 					case DxfSubclassMarker.Polyline3dVertex:
+						(template as CadVertexTemplate).SetVertexObject(new Vertex3D());
 						this.readMapped<Vertex3D>(template.CadObject, template);
 						break;
 					case DxfSubclassMarker.Ray:
@@ -314,7 +321,7 @@ namespace ACadSharp.IO.DXF
 						this.readMapped<Spline>(template.CadObject, template);
 						break;
 					default:
-						this._builder.Notify(new NotificationEventArgs($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}"));
+						this._builder.Notify($"Unhandeled dxf entity subclass {this._reader.LastValueAsString}");
 						while (this._reader.LastDxfCode != DxfCode.Start)
 							this._reader.ReadNext();
 						break;
@@ -404,7 +411,7 @@ namespace ACadSharp.IO.DXF
 							dxfProperty.SetValue(this._reader.LastCode, cadObject, this._reader.LastValue);
 							break;
 						case GroupCodeValueType.Comment:
-							this._builder.Notify(new NotificationEventArgs($"Comment in the file :  {this._reader.LastValueAsString}"));
+							this._builder.Notify(($"Comment in the file :  {this._reader.LastValueAsString}"));
 							break;
 						case GroupCodeValueType.Handle:
 						case GroupCodeValueType.ObjectId:

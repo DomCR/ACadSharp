@@ -5,6 +5,8 @@ using System;
 
 namespace ACadSharp.Tables
 {
+	//TODO: Implement UCS for VPORT
+
 	/// <summary>
 	/// Represents a <see cref="VPort"/> table entry
 	/// </summary>

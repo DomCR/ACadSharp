@@ -73,7 +73,7 @@ namespace ACadSharp.IO.Templates
 			//dimensionAligned.ExtendedData = this.CadObject.ExtendedData;
 
 			dimensionAligned.Color = this.CadObject.Color;
-			dimensionAligned.Lineweight = this.CadObject.Lineweight;
+			dimensionAligned.LineWeight = this.CadObject.LineWeight;
 			dimensionAligned.LinetypeScale = this.CadObject.LinetypeScale;
 			dimensionAligned.IsInvisible = this.CadObject.IsInvisible;
 			dimensionAligned.Transparency = this.CadObject.Transparency;
