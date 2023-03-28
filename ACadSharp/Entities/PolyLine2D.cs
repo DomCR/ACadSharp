@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -22,11 +23,16 @@ namespace ACadSharp.Entities
 			this.Vertices.OnAdd += this.verticesOnAdd;
 		}
 
-		private void verticesOnAdd(object sender, ReferenceChangedEventArgs e)
+		public override IEnumerable<Entity> Explode()
 		{
-			if (e.Current is not Vertex2D)
+			return Polyline.explode(this);
+		}
+
+		private void verticesOnAdd(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item is not Vertex2D)
 			{
-				this.Vertices.Remove((Vertex)e.Current);
+				this.Vertices.Remove((Vertex)e.Item);
 				throw new ArgumentException($"Wrong vertex type for {DxfSubclassMarker.Polyline}");
 			}
 		}

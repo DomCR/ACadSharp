@@ -7,8 +7,8 @@ namespace ACadSharp
 {
 	public class ViewportCollection : CadObject, IObservableCollection<Viewport>
 	{
-		public event EventHandler<ReferenceChangedEventArgs> OnAdd;
-		public event EventHandler<ReferenceChangedEventArgs> OnRemove;
+		public event EventHandler<CollectionChangedEventArgs> OnAdd;
+		public event EventHandler<CollectionChangedEventArgs> OnRemove;
 
 		public override ObjectType ObjectType => ObjectType.VP_ENT_HDR_CTRL_OBJ;
 
@@ -24,7 +24,7 @@ namespace ACadSharp
 			this._entries.Add(item.Handle, item);
 			item.Owner = this.Owner;
 
-			OnAdd?.Invoke(this, new ReferenceChangedEventArgs(item));
+			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
 		}
 
 		public void AddRange(IEnumerable<Viewport> items)

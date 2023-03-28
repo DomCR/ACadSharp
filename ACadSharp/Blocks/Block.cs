@@ -1,10 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
-using ACadSharp.Tables.Collections;
 using CSMath;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Blocks
 {
