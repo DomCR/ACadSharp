@@ -28,11 +28,11 @@ namespace ACadSharp.Entities
 			return Polyline.explode(this);
 		}
 
-		private void verticesOnAdd(object sender, ReferenceChangedEventArgs e)
+		private void verticesOnAdd(object sender, CollectionChangedEventArgs e)
 		{
-			if (e.Current is not Vertex2D)
+			if (e.Item is not Vertex2D)
 			{
-				this.Vertices.Remove((Vertex)e.Current);
+				this.Vertices.Remove((Vertex)e.Item);
 				throw new ArgumentException($"Wrong vertex type for {DxfSubclassMarker.Polyline}");
 			}
 		}

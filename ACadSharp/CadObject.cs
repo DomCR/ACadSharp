@@ -10,7 +10,7 @@ namespace ACadSharp
 	/// </summary>
 	public abstract class CadObject : IHandledCadObject
 	{
-		public event EventHandler<ReferenceChangedEventArgs> OnReferenceChange;
+		public event EventHandler<ReferenceChangedEventArgs> OnReferenceChanged;
 
 		/// <summary>
 		/// Get the object type
@@ -84,7 +84,7 @@ namespace ACadSharp
 
 		protected void onReferenceChange(ReferenceChangedEventArgs args)
 		{
-			OnReferenceChange?.Invoke(this, args);
+			OnReferenceChanged?.Invoke(this, args);
 		}
 
 		protected virtual void createCopy(CadObject copy)
