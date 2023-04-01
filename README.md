@@ -39,6 +39,8 @@ private static void onNotification(object sender, NotificationEventArgs e)
 }
 ```
 
+For more examples [check](https://github.com/DomCR/ACadSharp/tree/master/ACadSharp.Examples).
+
 WIP
 ---
 
