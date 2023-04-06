@@ -24,10 +24,26 @@ namespace ACadSharp.IO.DXF
 			//Loop until the section ends
 			while (this._reader.LastValueAsString != DxfFileToken.EndSection)
 			{
-				if (this._reader.LastValueAsString == DxfFileToken.Block)
-					this.readBlock();
-				else
-					throw new DxfException($"Unexpected token at the begining of a table: {this._reader.LastValueAsString}", this._reader.Position);
+				try
+				{
+					if (this._reader.LastValueAsString == DxfFileToken.Block)
+						this.readBlock();
+					else
+						throw new DxfException($"Unexpected token at the BLOCKS table: {this._reader.LastValueAsString}", this._reader.Position);
+				}
+				catch (Exception ex)
+				{
+					if (!this._builder.Configuration.Failsafe)
+						throw;
+
+					this._builder.Notify($"Error while reading a block at line {this._reader.Position}", NotificationType.Error, ex);
+
+					while (!(this._reader.LastDxfCode == DxfCode.Start && this._reader.LastValueAsString == DxfFileToken.EndSection)
+							&& !(this._reader.LastDxfCode == DxfCode.Start && this._reader.LastValueAsString == DxfFileToken.Block))
+					{
+						this._reader.ReadNext();
+					}
+				}
 			}
 		}
 
@@ -42,7 +58,7 @@ namespace ACadSharp.IO.DXF
 
 			if (!this._builder.TryGetCadObject(ownerHandle, out BlockRecord record))
 			{
-				throw new DxfException($"Block with handle {handle} and name {name} doesn't have a record");
+				throw new DxfException($"Block Record {ownerHandle} not found for Block {handle} | {name}");
 			}
 
 			//Assign the handle to the entity
@@ -69,10 +85,12 @@ namespace ACadSharp.IO.DXF
 				{
 					entityTemplate = this.readEntity();
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
 					if (!this._builder.Configuration.Failsafe)
 						throw;
+
+					this._builder.Notify($"Error while reading a block with name {record.Name} at line {this._reader.Position}", NotificationType.Error, ex);
 
 					while (this._reader.LastDxfCode != DxfCode.Start)
 						this._reader.ReadNext();
