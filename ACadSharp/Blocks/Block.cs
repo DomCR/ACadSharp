@@ -56,7 +56,7 @@ namespace ACadSharp.Blocks
 		[DxfCodeValue(4)]
 		public string Comments { get; set; }
 
-		public Block() : base() { }
+		internal Block() : base() { }
 
 		public Block(BlockRecord record) : base()
 		{

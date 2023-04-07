@@ -54,28 +54,44 @@ namespace ACadSharp.IO.DXF
 			//Read the table name
 			this._reader.ReadNext();
 
+			Block blckEntity = null;
+			CadEntityTemplate template = null;
+
 			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors);
 
-			if (!this._builder.TryGetCadObject(ownerHandle, out BlockRecord record))
+			if (this._builder.TryGetCadObject(ownerHandle, out BlockRecord record))
 			{
-				throw new DxfException($"Block Record {ownerHandle} not found for Block {handle} | {name}");
+				blckEntity = record.BlockEntity;
+			}
+			else
+			{
+				this._builder.Notify($"Block Record {ownerHandle} not found for Block {handle} | {name}", NotificationType.Warning);
 			}
 
 			//Assign the handle to the entity
-			record.BlockEntity.Handle = handle;
-
-			CadEntityTemplate template = new CadEntityTemplate(record.BlockEntity);
+			blckEntity.Handle = handle;
+			template = new CadEntityTemplate(blckEntity);
 			template.OwnerHandle = ownerHandle;
 			template.XDictHandle = xdictHandle;
 			template.ReactorsHandles = reactors;
 
 			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.Entity);
 
-			this.readMapped<Entity>(record.BlockEntity, template);
+			this.readMapped<Entity>(blckEntity, template);
 
 			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.BlockBegin);
 
-			this.readMapped<Block>(record.BlockEntity, template);
+			this.readMapped<Block>(blckEntity, template);
+
+			if (record == null && this._builder.DocumentToBuild.BlockRecords.TryGetValue(blckEntity.Name, out record))
+			{
+				record.BlockEntity = blckEntity;
+				this._builder.Notify($"Block record find by name {blckEntity.Name}", NotificationType.None);
+			}
+			else if (record == null)
+			{
+				throw new DxfException($"Could not find the block record for {blckEntity.Name} and handle {blckEntity.Handle}");
+			}
 
 			while (this._reader.LastValueAsString != DxfFileToken.EndBlock)
 			{
