@@ -116,7 +116,10 @@ namespace ACadSharp.Entities
 
 		public Insert(BlockRecord block) : this(false)
 		{
-			this.Block = block;
+			if(block is null) throw new ArgumentNullException(nameof(block));
+
+			this.Block = (BlockRecord)block.Clone();
+
 			foreach (AttributeDefinition attdef in block.AttributeDefinitions)
 			{
 				this.Attributes.Add(new AttributeEntity(attdef));

@@ -32,7 +32,24 @@ namespace ACadSharp.Tests.Entities
 
 			Assert.Equal(document, insert.Document);
 			Assert.Equal(document, insert.Block.Document);
+			Assert.Equal(record, insert.Block);
+			Assert.True(insert.Handle != 0);
 			Assert.True(document.BlockRecords.Contains(_blockName));
+		}
+
+		[Fact]
+		public void CreateUnlinkedInsert()
+		{
+			CadDocument document = new CadDocument();
+			BlockRecord record = new BlockRecord(_blockName);
+
+			document.BlockRecords.Add(record);
+
+			Insert insert = new Insert(record);
+
+			Assert.Null(insert.Document);
+			Assert.Null(insert.Block.Document);
+			Assert.NotEqual(record, insert.Block);
 		}
 
 		[Fact]
@@ -50,14 +67,6 @@ namespace ACadSharp.Tests.Entities
 			Assert.Equal(document, insert.Document);
 			Assert.Equal(document, insert.Block.Document);
 			Assert.True(document.BlockRecords.Contains(_blockName));
-		}
-
-		[Fact(Skip = "Feature to be implemented")]
-		public void ChangeBlock()
-		{
-			BlockRecord record = new BlockRecord(_blockName);
-			BlockRecord record2 = new BlockRecord(_blockName);
-			Insert insert = new Insert(record);
 		}
 
 		[Fact]
