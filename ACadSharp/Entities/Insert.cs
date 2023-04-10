@@ -114,6 +114,11 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <summary>
+		/// Constructor to reference an insert to a block record
+		/// </summary>
+		/// <param name="block">Block Record to reference</param>
+		/// <exception cref="ArgumentNullException"></exception>
 		public Insert(BlockRecord block) : this(false)
 		{
 			if (block is null) throw new ArgumentNullException(nameof(block));
@@ -138,6 +143,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Updates all attribute definitions contained in the block reference as Attribute entitites in the insert
 		/// </summary>
+		/// <exception cref="NotImplementedException"></exception>
 		public void UpdateAttributes()
 		{
 			throw new NotImplementedException();
