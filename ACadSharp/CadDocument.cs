@@ -284,6 +284,11 @@ namespace ACadSharp
 					break;
 				case Insert insert:
 					this.RegisterCollection(insert.Attributes);
+					
+					//Should only be triggered for internal use
+					if (insert.Block == null)
+						break;
+
 					if (this.BlockRecords.TryGetValue(insert.Block.Name, out BlockRecord blk))
 					{
 						insert.Block = blk;
