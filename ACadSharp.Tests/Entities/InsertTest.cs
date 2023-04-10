@@ -32,6 +32,7 @@ namespace ACadSharp.Tests.Entities
 
 			Assert.Equal(document, insert.Document);
 			Assert.Equal(document, insert.Block.Document);
+			Assert.Equal(record.Name, insert.Block.Name);
 			Assert.Equal(record, insert.Block);
 			Assert.True(insert.Handle != 0);
 			Assert.True(document.BlockRecords.Contains(_blockName));
