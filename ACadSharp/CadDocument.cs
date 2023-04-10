@@ -333,6 +333,7 @@ namespace ACadSharp
 					this.removeCadObject(record.BlockEntity);
 					break;
 				case Insert insert:
+					insert.Block = (BlockRecord)insert.Block.Clone();
 					this.UnregisterCollection(insert.Attributes);
 					break;
 				case Polyline pline:
