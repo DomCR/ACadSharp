@@ -29,7 +29,20 @@ namespace ACadSharp.Entities
 		/// Cannot contain spaces
 		/// </value> 
 		[DxfCodeValue(2)]
-		public string Tag { get; set; }
+		public string Tag
+		{
+			get { return this._tag; }
+			set
+			{
+				if (value == null)
+					throw new System.ArgumentNullException(nameof(value));
+
+				if (value.Contains(" "))
+					throw new System.ArgumentException($"Attribute Tag {value} cannot contain spaces", nameof(value));
+
+				this._tag = value;
+			}
+		}
 
 		/// <summary>
 		/// Attribute flags
@@ -48,7 +61,7 @@ namespace ACadSharp.Entities
 		//Missmatch between Autodesk documentation and OpenDesign
 		public bool IsReallyLocked { get; set; }
 
-		private string _tag;
+		private string _tag = string.Empty;
 
 		public AttributeBase() : base() { }
 

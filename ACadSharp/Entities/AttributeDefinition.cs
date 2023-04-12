@@ -23,7 +23,7 @@ namespace ACadSharp.Entities
 		/// Prompt text for this attribute.
 		/// </summary>
 		[DxfCodeValue(3)]
-		public string Prompt { get; internal set; }
+		public string Prompt { get; set; } = string.Empty;
 
 		public AttributeDefinition() : base() { }
 
