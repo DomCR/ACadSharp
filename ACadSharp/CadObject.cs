@@ -8,7 +8,7 @@ namespace ACadSharp
 	/// <summary>
 	/// Represents an element in a CadDocument
 	/// </summary>
-	public abstract class CadObject : IHandledCadObject
+	public abstract class CadObject : /*ICloneable<CadObject>,*/ IHandledCadObject
 	{
 		public event EventHandler<ReferenceChangedEventArgs> OnReferenceChanged;
 
@@ -91,5 +91,12 @@ namespace ACadSharp
 		{
 			//TODO: copy ExtendedData, Reactors, XDictionary needed ??
 		}
+
+		// public abstract CadObject Clone();
+
+		//object ICloneable.Clone()
+		//{
+		//	return this.Clone();
+		//}
 	}
 }

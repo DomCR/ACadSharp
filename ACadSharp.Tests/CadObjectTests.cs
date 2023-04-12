@@ -23,10 +23,10 @@ namespace ACadSharp.Tests
 		[MemberData(nameof(EntityTypes))]
 		public void Clone(Type entityType)
 		{
-			Entity entity = (Entity)Activator.CreateInstance(entityType);
-			Entity copy = (Entity)Activator.CreateInstance(entityType);
+			Entity entity = EntityFactory.Create(entityType);
+			Entity clone = (Entity)entity.Clone();
 
-			CadObjectTestUtils.AssertEntityClone(entity, copy);
+			CadObjectTestUtils.AssertEntityClone(entity, clone);
 		}
 	}
 }

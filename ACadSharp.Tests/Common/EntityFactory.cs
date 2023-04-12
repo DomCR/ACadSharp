@@ -33,6 +33,16 @@ namespace ACadSharp.Tests.Common
 			return new T();
 		}
 
+		public static Entity Create(Type type, bool randomize = true)
+		{
+			object e = Activator.CreateInstance(type);
+
+			if (!randomize)
+				return (Entity)e;
+
+			return (Entity)map(e);
+		}
+
 		/// <summary>
 		/// Create a default entity
 		/// </summary>
@@ -47,6 +57,74 @@ namespace ACadSharp.Tests.Common
 			if (!randomize)
 				return e;
 
+			switch (e)
+			{
+				case Arc arc:
+					RandomizeArc(arc);
+					break;
+				case Circle circle:
+					RandomizeCircle(circle);
+					break;
+				case Dimension dimension:
+					RandomizeDimension(dimension);
+					switch (dimension)
+					{
+						case DimensionLinear linear:
+							RandomizeDimensionAligned(linear);
+							RandomizeDimensionLinear(linear);
+							break;
+						case DimensionAligned aligned:
+							RandomizeDimensionAligned(aligned);
+							break;
+						case DimensionRadius radius:
+							RandomizeDimensionRadius(radius);
+							break;
+						case DimensionAngular2Line angular2Line:
+							RandomizeDimensionAngular2Line(angular2Line);
+							break;
+						case DimensionAngular3Pt angular3pt:
+							RandomizeDimension3Pt(angular3pt);
+							break;
+						case DimensionDiameter diamenter:
+							RandomizeDimensionDiameter(diamenter);
+							break;
+						case DimensionOrdinate ordinate:
+							RandomizeDimensionOrdinate(ordinate);
+							break;
+						default:
+							throw new NotImplementedException();
+					}
+					break;
+				case Ellipse ellipse:
+					RandomizeEllipse(ellipse);
+					break;
+				case Line line:
+					RandomizeLine(line);
+					break;
+				case LwPolyline lwPolyline:
+					RandomizeLwPolyline(lwPolyline);
+					break;
+				case Point point:
+					RandomizePoint(point);
+					break;
+				case Polyline2D pl2d:
+					RandomizePolyline(pl2d);
+					break;
+				case Polyline3D pl3d:
+					RandomizePolyline(pl3d);
+					break;
+				case TextEntity text:
+					RandomizeText(text);
+					break;
+				default:
+					throw new NotImplementedException();
+			}
+
+			return e;
+		}
+
+		private static T map<T>(T e)
+		{
 			switch (e)
 			{
 				case Arc arc:

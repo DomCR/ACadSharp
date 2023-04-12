@@ -11,7 +11,7 @@ namespace ACadSharp.Entities
 	/// The standard class for a basic CAD entity.
 	/// </summary>
 	[DxfSubClass(DxfSubclassMarker.Entity)]
-	public abstract class Entity : CadObject, ICloneable, IEntity
+	public abstract class Entity : CadObject, IEntity
 	{
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name, 8)]
@@ -119,13 +119,13 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public object Clone()
+		public Entity Clone()
 		{
-			var clone = Activator.CreateInstance(this.GetType());
+			object clone = Activator.CreateInstance(this.GetType());
 
 			this.createCopy(clone as CadObject);
 
-			return clone;
+			return (Entity)clone;
 		}
 
 		protected T updateTable<T>(T entry, Table<T> table)
