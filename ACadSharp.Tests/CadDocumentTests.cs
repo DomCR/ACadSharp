@@ -124,8 +124,6 @@ namespace ACadSharp.Tests
 			Assert.Equal(lineType, doc.LineTypes[lineType.Name]);
 		}
 
-		[Fact]
-		public void DetachedEntityClone()
 		[Theory]
 		[MemberData(nameof(EntityTypes))]
 		public void DetachedEntityClone(Type entityType)
