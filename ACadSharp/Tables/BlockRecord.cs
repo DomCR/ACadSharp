@@ -4,6 +4,7 @@ using ACadSharp.Objects;
 using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace ACadSharp.Tables
 {
@@ -79,6 +80,17 @@ namespace ACadSharp.Tables
 			{
 				this._layout = value;
 				this._layout.AssociatedBlock = this;
+			}
+		}
+
+		/// <summary>
+		/// Attribute definitions in this block
+		/// </summary>
+		public IEnumerable<AttributeDefinition> AttributeDefinitions
+		{
+			get
+			{
+				return this.Entities.OfType<AttributeDefinition>();
 			}
 		}
 
