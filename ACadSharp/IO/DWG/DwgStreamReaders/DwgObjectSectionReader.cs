@@ -987,7 +987,10 @@ namespace ACadSharp.IO.DWG
 				case "PLOTSETTINGS":
 				case "RASTERVARIABLES":
 				case "SCALE":
+					break;
 				case "SORTENTSTABLE":
+					template = this.readSortentsTable();
+					break;
 				case "SPATIAL_FILTER":
 				case "SPATIAL_INDEX":
 				case "TABLEGEOMETRY":
@@ -4400,6 +4403,34 @@ namespace ACadSharp.IO.DWG
 			}
 
 			return template;
+		}
+
+		private CadTemplate readSortentsTable()
+		{
+			SortEntitiesTable sortTable = new SortEntitiesTable();
+			CadSortensTableTemplate template = new CadSortensTableTemplate(sortTable);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Numentries BL number of entries
+			int numentries = this._mergedReaders.ReadBitLong();
+			//Sorthandle H
+			for (int i = 0; i < numentries; i++)
+			{
+				//Sort handle(numentries of these, CODE 0, i.e.part of the main bit stream, not of the handle bit stream!).
+				//The sort handle does not have to point to an entity (but it can).
+				//This is just the handle used for determining the drawing order of the entity specified by the entity handle in the handle bit stream.
+				//When the sortentstable doesn’t have a
+				//mapping from entity handle to sort handle, then the entity’s own handle is used for sorting.
+				ulong second = this._objectReader.HandleReference();
+				ulong first = this.handleReference();
+			}
+
+			//owner handle (soft pointer)
+			template.BlockOwnerHandle = this.handleReference();
+
+			throw new NotImplementedException();
 		}
 
 		private CadTemplate readXRecord()

@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Blocks;
 
 namespace ACadSharp.Objects
 {
@@ -18,6 +19,7 @@ namespace ACadSharp.Objects
 		public override string ObjectName => DxfFileToken.ObjectSortEntsTable;
 
 		//330	Soft-pointer ID/handle to owner(currently only the* MODEL_SPACE or* PAPER_SPACE blocks)
+		public Block BlockOwner { get; internal set; }
 
 		//331	Soft-pointer ID/handle to an entity(zero or more entries may exist)
 
