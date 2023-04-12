@@ -1,7 +1,5 @@
 ﻿using ACadSharp.IO;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Examples
 {
@@ -28,10 +26,10 @@ namespace ACadSharp.Examples
 			doc.Header.Version = doc.Header.Version;
 
 			//Nove the entities to the created document
-			List<Entities.Entity> entities = new List<Entities.Entity>(doc.Entities);
+			List<ACadSharp.Entities.Entity> entities = new List<ACadSharp.Entities.Entity>(doc.Entities);
 			foreach (var item in entities)
 			{
-				Entities.Entity e = doc.Entities.Remove(item);
+				ACadSharp.Entities.Entity e = doc.Entities.Remove(item);
 				transfer.Entities.Add(e);
 			}
 

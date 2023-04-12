@@ -7,9 +7,10 @@ namespace ACadSharp.IO.DWG
 	internal class DwgStreamReaderAC21 : DwgStreamReaderAC18
 	{
 		public DwgStreamReaderAC21(Stream stream, bool resetPosition) : base(stream, resetPosition) { }
+		
 		public override string ReadTextUnicode()
 		{
-			short textLength = ReadShort<LittleEndianConverter>();
+			short textLength = this.ReadShort<LittleEndianConverter>();
 			string value;
 			if (textLength == 0)
 			{
@@ -20,13 +21,14 @@ namespace ACadSharp.IO.DWG
 				//Correct the text length by shifting 1 bit
 				short length = (short)(textLength << 1);
 				//Read the string and get rid of the empty bytes
-				value = ReadString(length, Encoding.Unicode).Replace("\0", "");
+				value = this.ReadString(length, Encoding.Unicode).Replace("\0", "");
 			}
 			return value;
 		}
+	
 		public override string ReadVariableText()
 		{
-			int textLength = ReadBitShort();
+			int textLength = this.ReadBitShort();
 			string value;
 			if (textLength == 0)
 			{
@@ -37,7 +39,7 @@ namespace ACadSharp.IO.DWG
 				//Correct the text length by shifting 1 bit
 				short length = (short)(textLength << 1);
 				//Read the string and get rid of the empty bytes
-				value = ReadString(length, Encoding.Unicode).Replace("\0", "");
+				value = this.ReadString(length, Encoding.Unicode).Replace("\0", "");
 			}
 			return value;
 		}

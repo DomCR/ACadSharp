@@ -52,34 +52,34 @@
 		/// <summary>
 		/// Release 13 (LT95)
 		/// </summary>
-		AC1012,
+		AC1012 = 19,
 		/// <summary>
 		/// Release 14, 14.01 (LT97/LT98)
 		/// </summary>
-		AC1014,
+		AC1014 = 21,
 		/// <summary>
 		/// AutoCAD 2000/2000i/2002
 		/// </summary>
-		AC1015,
+		AC1015 = 23,
 		/// <summary>
 		/// AutoCAD 2004/2005/2006
 		/// </summary>
-		AC1018,
+		AC1018 = 25,
 		/// <summary>
 		/// AutoCAD 2007/2008/2009
 		/// </summary>
-		AC1021,
+		AC1021 = 27,
 		/// <summary>
 		/// AutoCAD 2010/2011/2012
 		/// </summary>
-		AC1024, 
+		AC1024 = 29, 
 		/// <summary>
 		/// AutoCAD 2013/2014/2015/2016/2017
 		/// </summary>
-		AC1027, 
+		AC1027 = 31, 
 		/// <summary>
 		/// AutoCAD 2018/2019/2020
 		/// </summary>
-		AC1032, 
+		AC1032 = 33 
 	}
 }

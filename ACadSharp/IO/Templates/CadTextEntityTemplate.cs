@@ -1,4 +1,6 @@
-﻿using ACadSharp.Entities;
+﻿using System;
+using ACadSharp.Entities;
+using ACadSharp.IO.DXF;
 using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
@@ -21,7 +23,7 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
-		public override void Build(CadDocumentBuilder builder)
+        public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
@@ -29,6 +31,12 @@ namespace ACadSharp.IO.Templates
 			{
 				case TextEntity text:
 					text.Style = builder.GetCadObject<TextStyle>(this.StyleHandle);
+
+                    // When the rotation is read in a DXF, the value is in decimal, but when the value
+                    // is read in a DWG, it is in radians.  Convert only on DXFs. Issue #80
+                    if (builder is DxfDocumentBuilder)
+                        text.Rotation *= MathUtils.DegToRad;
+
 					break;
 				case MText mtext:
 					mtext.Style = builder.GetCadObject<TextStyle>(this.StyleHandle);

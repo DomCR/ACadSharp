@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using CSMath;
 
 namespace ACadSharp.Entities
@@ -8,7 +7,7 @@ namespace ACadSharp.Entities
 	/// Represents a base for <see cref="Vertex2D"/> and <see cref="Vertex3D"/>
 	/// </summary>
 	[DxfSubClass(DxfSubclassMarker.Vertex, true)]
-	public abstract class Vertex : Entity
+	public abstract class Vertex : Entity, IVertex
 	{
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityVertex;
@@ -31,9 +30,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Optional, 41)]
 		public double EndWidth { get; set; } = 0.0;
 
-		/// <summary>
-		/// The bulge is the tangent of one fourth the included angle for an arc segment, made negative if the arc goes clockwise from the start point to the endpoint.A bulge of 0 indicates a straight segment, and a bulge of 1 is a semicircle
-		/// </summary>
+		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Optional, 42)]
 		public double Bulge { get; set; } = 0.0;
 
@@ -59,6 +56,8 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Ignored, 91)]	//TODO: for some versions this code is invalid
 		public int Id { get; set; }
+
+		IVector IVertex.Location { get { return this.Location; } }
 
 		public Vertex() : base() { }
 	}

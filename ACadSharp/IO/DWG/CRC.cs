@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ACadSharp.IO.DWG
+﻿namespace ACadSharp.IO.DWG
 {
 	internal class CRC
 	{
@@ -119,9 +115,9 @@ namespace ACadSharp.IO.DWG
 		public static ushort ApplyCrc8(ushort dx, byte[] arr)
 		{
 			ushort retval = dx;
-			for (int index = 0; index < arr.Length; ++index)
+			for (int i = 0; i < arr.Length; ++i)
 			{
-				byte al = (byte)(arr[index] ^ (uint)(byte)(retval & (uint)byte.MaxValue));
+				byte al = (byte)(arr[i] ^ (uint)(byte)(retval & (uint)byte.MaxValue));
 				retval = (ushort)((ushort)(retval >> 8 & byte.MaxValue) ^ (uint)CrcTable[al & byte.MaxValue]);
 			}
 			return retval;

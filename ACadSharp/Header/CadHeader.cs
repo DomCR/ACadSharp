@@ -65,7 +65,7 @@ namespace ACadSharp.Header
 		/// System variable ACADMAINTVER.
 		/// </remarks>
 		[CadSystemVariable(DxfReferenceType.Ignored, "$ACADMAINTVER", 70)]
-		public short MaintenanceVersion { get; set; }
+		public short MaintenanceVersion { get; internal set; } = 0;
 
 		/// <summary>
 		/// Drawing code page; set to the system code page when a new drawing is created,
@@ -146,11 +146,13 @@ namespace ACadSharp.Header
 		public bool RegenerationMode { get; set; }
 
 		/// <summary>
-		/// System variable FILLMODE.
 		/// Fill mode on if nonzero
 		/// </summary>
+		/// <remarks>
+		/// System variable FILLMODE.
+		/// </remarks>
 		[CadSystemVariable("$FILLMODE", DxfCode.Int16)]
-		public bool FillMode { get; set; }
+		public bool FillMode { get; set; } = true;
 
 		/// <summary>
 		/// Quick Text mode on if nonzero
@@ -269,10 +271,13 @@ namespace ACadSharp.Header
 		public bool ProxyGraphics { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable TREEDEPTH
+		/// Specifies the maximum depth of the spatial index
 		/// </summary>
-		public short SpatialIndexMaxTreeDepth { get; set; }
+		/// <remarks>
+		/// System variable TREEDEPTH
+		/// </remarks>
+		[CadSystemVariable("$TREEDEPTH", 70)]
+		public short SpatialIndexMaxTreeDepth { get; set; } = 3020;
 
 		/// <summary>
 		/// Units format for coordinates and distances
@@ -707,11 +712,11 @@ namespace ACadSharp.Header
 		/// <summary>
 		/// Name of menu file
 		/// </summary>
-		/// <remarks>		
+		/// <remarks>
 		/// System variable MENU
 		/// </remarks>
 		[CadSystemVariable("$MENU", 1)]
-		public string MenuFileName { get; set; } = string.Empty;
+		public string MenuFileName { get; set; } = ".";
 
 		/// <summary>
 		/// Next available handle
@@ -747,7 +752,7 @@ namespace ACadSharp.Header
 		/// System variable TDUPDATE
 		/// </remarks>
 		[CadSystemVariable("$TDUPDATE", 40)]
-		public DateTime UpdateDateTime { get; set; }
+		public DateTime UpdateDateTime { get; set; } = DateTime.Now;
 
 		/// <summary>
 		/// Universal date/time of the last update/save(see Special Handling of Date/Time Variables)
@@ -756,7 +761,7 @@ namespace ACadSharp.Header
 		/// System variable TDUUPDATE
 		/// </remarks>
 		[CadSystemVariable("$TDUUPDATE", 40)]
-		public DateTime UniversalUpdateDateTime { get; set; }
+		public DateTime UniversalUpdateDateTime { get; set; } = DateTime.UtcNow;
 
 		/// <summary>
 		/// Cumulative editing time for this drawing(see Special Handling of Date/Time Variables)
@@ -1189,9 +1194,9 @@ namespace ACadSharp.Header
 
 		public short CurrentEntityPlotStyleType { get; set; }
 
-		public string FingerPrintGuid { get; set; }
+		public string FingerPrintGuid { get; set; } = Guid.NewGuid().ToString();
 
-		public string VersionGuid { get; set; }
+		public string VersionGuid { get; set; } = Guid.NewGuid().ToString();
 
 		public ObjectSortingFlags EntitySortingFlags { get; set; }
 
@@ -2459,7 +2464,7 @@ namespace ACadSharp.Header
 
 		public UCS PaperSpaceUcs { get; private set; } = new UCS();
 
-        private readonly static PropertyExpression<CadHeader, CadSystemVariableAttribute> _propertyCache;
+		private readonly static PropertyExpression<CadHeader, CadSystemVariableAttribute> _propertyCache;
 
 		public CadHeader() { }
 
@@ -2467,11 +2472,11 @@ namespace ACadSharp.Header
 		{
 			this.Version = version;
 		}
-        static CadHeader()
-        {
-            _propertyCache = new PropertyExpression<CadHeader, CadSystemVariableAttribute>(
-                (info, attribute) => attribute.Name);
-        }
+		static CadHeader()
+		{
+			_propertyCache = new PropertyExpression<CadHeader, CadSystemVariableAttribute>(
+				(info, attribute) => attribute.Name);
+		}
 
 		public static Dictionary<string, CadSystemVariable> GetHeaderMap()
 		{
@@ -2488,44 +2493,44 @@ namespace ACadSharp.Header
 			return map;
 		}
 
-        public void SetValue(string systemvar, params object[] values)
-        {
-            var prop = _propertyCache.GetProperty(systemvar);
-
-            ConstructorInfo constr = prop.Property.PropertyType.GetConstructor(values.Select(o => o.GetType()).ToArray());
-
-            if (prop.Property.PropertyType.IsEnum)
-            {
-                int v = Convert.ToInt32(values.First());
-                prop.Setter(this, Enum.ToObject(prop.Property.PropertyType, v));
-            }
-            else if (prop.Property.PropertyType.IsEquivalentTo(typeof(DateTime)))
-            {
-                double jvalue = (double)values.First();
-
-                prop.Setter(this, CadUtils.FromJulianCalendar((double)values.First()));
-			}
-            else if (prop.Property.PropertyType.IsEquivalentTo(typeof(TimeSpan)))
-            {
-                double jvalue = (double)values.First();
-
-                prop.Setter(this, CadUtils.EditingTime((double)values.First()));
-			}
-            else if (constr == null)
-            {
-                prop.Setter(this, Convert.ChangeType(values.First(), prop.Property.PropertyType));
-            }
-            else
-            {
-                prop.Setter(this, Activator.CreateInstance(prop.Property.PropertyType, values));
-            }
-        }
-
-        public object GetValue(string systemvar)
+		public void SetValue(string systemvar, params object[] values)
 		{
-            var prop = _propertyCache.GetProperty(systemvar);
-            return prop.Getter(this);
-        }
+			var prop = _propertyCache.GetProperty(systemvar);
+
+			ConstructorInfo constr = prop.Property.PropertyType.GetConstructor(values.Select(o => o.GetType()).ToArray());
+
+			if (prop.Property.PropertyType.IsEnum)
+			{
+				int v = Convert.ToInt32(values.First());
+				prop.Setter(this, Enum.ToObject(prop.Property.PropertyType, v));
+			}
+			else if (prop.Property.PropertyType.IsEquivalentTo(typeof(DateTime)))
+			{
+				double jvalue = (double)values.First();
+
+				prop.Setter(this, CadUtils.FromJulianCalendar((double)values.First()));
+			}
+			else if (prop.Property.PropertyType.IsEquivalentTo(typeof(TimeSpan)))
+			{
+				double jvalue = (double)values.First();
+
+				prop.Setter(this, CadUtils.EditingTime((double)values.First()));
+			}
+			else if (constr == null)
+			{
+				prop.Setter(this, Convert.ChangeType(values.First(), prop.Property.PropertyType));
+			}
+			else
+			{
+				prop.Setter(this, Activator.CreateInstance(prop.Property.PropertyType, values));
+			}
+		}
+
+		public object GetValue(string systemvar)
+		{
+			var prop = _propertyCache.GetProperty(systemvar);
+			return prop.Getter(this);
+		}
 
 		/// <summary>
 		/// Get the primitive values in each dxf code

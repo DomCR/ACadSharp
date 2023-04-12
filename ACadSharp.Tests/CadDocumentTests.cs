@@ -1,8 +1,4 @@
-﻿using ACadSharp;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ACadSharp.Tables.Collections;
+﻿using System;
 using ACadSharp.Tables;
 using Xunit;
 using ACadSharp.Tests.Common;
@@ -88,6 +84,48 @@ namespace ACadSharp.Tests
 			Assert.Equal(layer, doc.Layers[layer.Name]);
 		}
 
+		[Fact]
+		public void ChangeEntityLayer()
+		{
+			Line line = new Line();
+			Layer layer = new Layer("test_layer");
+
+			CadDocument doc = new CadDocument();
+
+			doc.Entities.Add(line);
+
+			Line l = doc.GetCadObject<Line>(line.Handle);
+			l.Layer = layer;
+
+			//Assert layer
+			Assert.Equal(l.Layer, layer);
+			Assert.False(0 == layer.Handle);
+			Assert.NotNull(doc.Layers[layer.Name]);
+			Assert.Equal(layer, doc.Layers[layer.Name]);
+		}
+
+		[Fact]
+		public void ChangeEntityLineType()
+		{
+			Line line = new Line();
+			LineType lineType = new LineType("test_linetype");
+
+			CadDocument doc = new CadDocument();
+
+			doc.Entities.Add(line);
+
+			Line l = doc.GetCadObject<Line>(line.Handle);
+			l.LineType = lineType;
+
+			//Assert layer
+			Assert.Equal(l.LineType, lineType);
+			Assert.False(0 == lineType.Handle);
+			Assert.NotNull(doc.LineTypes[lineType.Name]);
+			Assert.Equal(lineType, doc.LineTypes[lineType.Name]);
+		}
+
+		[Fact]
+		public void DetachedEntityClone()
 		[Theory]
 		[MemberData(nameof(EntityTypes))]
 		public void DetachedEntityClone(Type entityType)

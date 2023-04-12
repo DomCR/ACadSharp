@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net5.0;net48;netstandard2.1</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
     <Authors>DomCr</Authors>
     <PackageId>ACadSharp</PackageId>
     <PackageTags>C# Dwg Dxf Autocad</PackageTags>
@@ -12,13 +11,13 @@
     <PackageProjectUrl>https://github.com/DomCR/ACadSharp</PackageProjectUrl>
     <Copyright>Copyright (c) 2022 Albert Domenech</Copyright>
     <Description>C# library to read/write cad files like dxf/dwg.</Description>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.3.6-alpha</Version>
+    <Version>1.4.2-alpha</Version>
   </PropertyGroup>
 
   <Import Project="..\CSUtilities\CSMath\CSMath.projitems" Label="Shared" />
@@ -30,6 +29,10 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.5.5" Condition="'$(TargetFramework)' == 'net48'" />
   </ItemGroup>
 
 </Project>

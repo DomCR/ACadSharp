@@ -45,10 +45,23 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		public static CadDocument Read(Stream stream, NotificationEventHandler notification = null)
 		{
+			return Read(stream, new DwgReaderConfiguration(), notification);
+		}
+
+		/// <summary>
+		/// Read a dwg document in a stream.
+		/// </summary>
+		/// <param name="stream"></param>
+		/// <param name="configuration"></param>
+		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
+		/// <returns></returns>
+		public static CadDocument Read(Stream stream, DwgReaderConfiguration configuration, NotificationEventHandler notification = null)
+		{
 			CadDocument doc = null;
 
 			using (DwgReader reader = new DwgReader(stream, notification))
 			{
+				reader.Configuration = configuration;
 				doc = reader.Read();
 			}
 
@@ -91,10 +104,10 @@ namespace ACadSharp.IO
 		{
 			this._document = new CadDocument(false);
 			this._builder = new DwgDocumentBuilder(this._document, this.Configuration);
-			this._builder.OnNotification += this.triggerNotification;
+			this._builder.OnNotification += this.onNotificationEvent;
 
 			//Read the file header
-			this.readFileHeader();
+			this._fileHeader = this.readFileHeader();
 
 			this._document.SummaryInfo = this.ReadSummaryInfo();
 			this._document.Header = this.ReadHeader();
@@ -124,59 +137,12 @@ namespace ACadSharp.IO
 			if (this._fileHeader.AcadVersion < ACadVersion.AC1018)
 				return null;
 
-			IDwgStreamReader reader = this.getSectionStream("AcDb:SummaryInfo");
+			IDwgStreamReader reader = this.getSectionStream(DwgSectionDefinition.SummaryInfo);
 			if (reader == null)
 				return null;
 
-			CadSummaryInfo summary = new CadSummaryInfo();
-
-			//This section contains summary information about the drawing. 
-			//Strings are encoded as a 16-bit length, followed by the character bytes (0-terminated).
-
-			//String	2 + n	Title
-			summary.Title = reader.ReadTextUnicode();
-			//String	2 + n	Subject
-			summary.Subject = reader.ReadTextUnicode();
-			//String	2 + n	Author
-			summary.Author = reader.ReadTextUnicode();
-			//String	2 + n	Keywords
-			summary.Keywords = reader.ReadTextUnicode();
-			//String	2 + n	Comments
-			summary.Comments = reader.ReadTextUnicode();
-			//String	2 + n	LastSavedBy
-			summary.LastSavedBy = reader.ReadTextUnicode();
-			//String	2 + n	RevisionNumber
-			summary.RevisionNumber = reader.ReadTextUnicode();
-			//String	2 + n	RevisionNumber
-			summary.HyperlinkBase = reader.ReadTextUnicode();
-
-			//?	8	Total editing time(ODA writes two zero Int32’s)
-			reader.ReadInt();
-			reader.ReadInt();
-
-			//Julian date	8	Create date time
-			summary.CreatedDate = reader.Read8BitJulianDate();  //{12/13/2006 01:38:03}
-
-			//Julian date	8	Modified date timez
-			summary.ModifiedDate = reader.Read8BitJulianDate();
-
-			//Int16	2 + 2 * (2 + n)	Property count, followed by PropertyCount key/value string pairs.
-			short nproperties = reader.ReadShort();
-			for (int i = 0; i < nproperties; i++)
-			{
-				string propName = reader.ReadTextUnicode();
-				string propValue = reader.ReadTextUnicode();
-
-				//Add the property
-				summary.Properties.Add(propName, propValue);
-			}
-
-			//Int32	4	Unknown(write 0)
-			reader.ReadInt();
-			//Int32	4	Unknown(write 0)
-			reader.ReadInt();
-
-			return summary;
+			DwgSummaryInfoReader summaryReader = new DwgSummaryInfoReader(this._fileHeader.AcadVersion, reader);
+			return summaryReader.Read();
 		}
 
 		/// <summary>
@@ -194,13 +160,15 @@ namespace ACadSharp.IO
 			if (this._fileHeader.PreviewAddress < 0)
 				return null;
 
-			IDwgStreamReader sectionHandler = DwgStreamReader.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
+			IDwgStreamReader sectionHandler = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
 			sectionHandler.Position = this._fileHeader.PreviewAddress;
 
 			//{0x1F,0x25,0x6D,0x07,0xD4,0x36,0x28,0x28,0x9D,0x57,0xCA,0x3F,0x9D,0x44,0x10,0x2B }
 			byte[] sentinel = sectionHandler.ReadSentinel();
+
 			//overall size	RL	overall size of image area
 			long overallSize = sectionHandler.ReadRawLong();
+
 			//imagespresent RC counter indicating what is present here
 			byte imagespresent = (byte)sectionHandler.ReadRawChar();
 
@@ -245,9 +213,10 @@ namespace ACadSharp.IO
 			this._fileHeader = this._fileHeader ?? this.readFileHeader();
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Header);
 
-			DwgHeaderReader hreader = new DwgHeaderReader(this._fileHeader.AcadVersion);
+			DwgHeaderReader hreader = new DwgHeaderReader(this._fileHeader.AcadVersion, sreader);
+			hreader.OnNotification += onNotificationEvent;
 
-			CadHeader header = hreader.Read(sreader, this._fileHeader.AcadMaintenanceVersion, out DwgHeaderHandlesCollection headerHandles);
+			CadHeader header = hreader.Read(this._fileHeader.AcadMaintenanceVersion, out DwgHeaderHandlesCollection headerHandles);
 
 			if (this._builder != null)
 				this._builder.HeaderHandles = headerHandles;
@@ -259,17 +228,17 @@ namespace ACadSharp.IO
 		/// Read the file header data.
 		/// </summary>
 		/// <returns></returns>
-		private DwgFileHeader readFileHeader()
+		internal DwgFileHeader readFileHeader()
 		{
 			//Reset the stream position at the begining
 			this._fileStream.Position = 0L;
 
 			//0x00	6	“ACXXXX” version string
 			ACadVersion version = CadUtils.GetVersionFromName(this._fileStream.ReadString(6, Encoding.ASCII));
-			DwgFileHeader fileHeader = DwgFileHeader.GetFileHeader(version);
+			DwgFileHeader fileHeader = DwgFileHeader.CreateFileHeader(version);
 
 			//Get the stream reader
-			IDwgStreamReader sreader = DwgStreamReader.GetStreamHandler(fileHeader.AcadVersion, this._fileStream.Stream);
+			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(fileHeader.AcadVersion, this._fileStream.Stream);
 
 			//Read the file header
 			switch (fileHeader.AcadVersion)
@@ -290,19 +259,19 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
-					this.readFileHeaderAC15(fileHeader as DwgFileHeader15, sreader);
+					this.readFileHeaderAC15(fileHeader as DwgFileHeaderAC15, sreader);
 					break;
 				case ACadVersion.AC1018:
-					this.readFileHeaderAC18(fileHeader as DwgFileHeader18, sreader);
+					this.readFileHeaderAC18(fileHeader as DwgFileHeaderAC18, sreader);
 					break;
 				case ACadVersion.AC1021:
-					this.readFileHeaderAC21(fileHeader as DwgFileHeader21, sreader);
+					this.readFileHeaderAC21(fileHeader as DwgFileHeaderAC21, sreader);
 					break;
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
 					//Check if it works...
-					this.readFileHeaderAC18(fileHeader as DwgFileHeader18, sreader);
+					this.readFileHeaderAC18(fileHeader as DwgFileHeaderAC18, sreader);
 					break;
 				default:
 					break;
@@ -324,35 +293,10 @@ namespace ACadSharp.IO
 
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Classes);
 
-			//R13 R15
-			switch (this._fileHeader.AcadVersion)
-			{
-				case ACadVersion.Unknown:
-					throw new DwgNotSupportedException();
-				case ACadVersion.MC0_0:
-				case ACadVersion.AC1_2:
-				case ACadVersion.AC1_4:
-				case ACadVersion.AC1_50:
-				case ACadVersion.AC2_10:
-				case ACadVersion.AC1002:
-				case ACadVersion.AC1003:
-				case ACadVersion.AC1004:
-				case ACadVersion.AC1006:
-				case ACadVersion.AC1009:
-					throw new DwgNotSupportedException(this._fileHeader.AcadVersion);
-				case ACadVersion.AC1012:
-				case ACadVersion.AC1014:
-				case ACadVersion.AC1015:
-				case ACadVersion.AC1018:
-					return this.readClasses15(sreader);
-				case ACadVersion.AC1021:
-				case ACadVersion.AC1024:
-				case ACadVersion.AC1027:
-				case ACadVersion.AC1032:
-					return this.readClasses18(sreader);
-				default:
-					return null;
-			}
+			var reader = new DwgClassesReader(this._fileHeader.AcadVersion, this._fileHeader);
+			reader.OnNotification += onNotificationEvent;
+
+			return reader.Read(sreader);
 		}
 
 		/// <summary>
@@ -369,58 +313,10 @@ namespace ACadSharp.IO
 
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Handles);
 
-			//Handle map, handle | loc
-			Dictionary<ulong, long> objectMap = new Dictionary<ulong, long>();
+			var handleReader = new DwgHandleReader(sreader, this._fileHeader.AcadVersion);
+			handleReader.OnNotification += onNotificationEvent;
 
-			//Repeat until section size==2 (the last empty (except the CRC) section):
-			while (true)
-			{
-				//Set the "last handle" to all 0 and the "last loc" to 0L;
-				ulong lasthandle = 0;
-				long lastloc = 0;
-
-				//Short: size of this section. Note this is in BIGENDIAN order (MSB first)
-				int size = sreader.ReadShort<BigEndianConverter>();
-
-				if (size == 2)
-					break;
-
-				long startPos = sreader.Position;
-				int maxSectionOffset = size - 2;
-				//Note that each section is cut off at a maximum length of 2032.
-				if (maxSectionOffset > 2032)
-					maxSectionOffset = 2032;
-
-				long lastPosition = startPos + maxSectionOffset;
-
-				//Repeat until out of data for this section:
-				while (sreader.Position < lastPosition)
-				{
-					//offset of this handle from last handle as modular char.
-					ulong offset = sreader.ReadModularChar();
-					lasthandle += offset;
-
-					//offset of location in file from last loc as modular char. (note
-					//that location offsets can be negative, if the terminating byte
-					//has the 4 bit set).
-					lastloc += sreader.ReadSignedModularChar();
-
-					if (offset > 0)
-					{
-						objectMap[lasthandle] = lastloc;
-					}
-					else
-					{
-						//0 offset, wrong reference
-						this.triggerNotification(this, new NotificationEventArgs($"Warning: readHandles, negative offset: {offset}"));
-					}
-				}
-
-				//CRC (most significant byte followed by least significant byte)
-				uint crc = ((uint)sreader.ReadByte() << 8) + sreader.ReadByte();
-			}
-
-			return objectMap;
+			return handleReader.Read();
 		}
 
 		/// <summary>
@@ -478,8 +374,9 @@ namespace ACadSharp.IO
 			IDwgStreamReader sreader = null;
 			if (this._fileHeader.AcadVersion <= ACadVersion.AC1015)
 			{
-				sreader = DwgStreamReader.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
-				sreader.Position = this.readObjFreeSpace();
+				sreader = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
+				//Handles are in absolute offset for this versions
+				sreader.Position = 0;
 			}
 			else
 			{
@@ -508,7 +405,7 @@ namespace ACadSharp.IO
 		/// </summary>
 		/// <param name="fileheader">File header to read</param>
 		/// <param name="sreader"></param>
-		private void readFileHeaderAC15(DwgFileHeader15 fileheader, IDwgStreamReader sreader)
+		private void readFileHeaderAC15(DwgFileHeaderAC15 fileheader, IDwgStreamReader sreader)
 		{
 			//The next 7 starting at offset 0x06 are to be six bytes of 0 
 			//(in R14, 5 0’s and the ACADMAINTVER variable) and a byte of 1.
@@ -516,13 +413,14 @@ namespace ACadSharp.IO
 			//At 0x0D is a seeker (4 byte long absolute address) for the beginning sentinel of the image data.
 			fileheader.PreviewAddress = sreader.ReadInt();
 
-			//Bytes at 0x13 and 0x14 are a raw short indicating the value of the code page for this drawing file.
+			//Undocumented Bytes at 0x11 and 0x12
 			sreader.ReadBytes(2);
 
-			//TODO: Wrong encoding code, fix the index coding
-			fileheader.DrawingCodePage = (CodePage)sreader.ReadShort();
+			//Bytes at 0x13 and 0x14 are a raw short indicating the value of the code page for this drawing file.
+			fileheader.DrawingCodePage = CadUtils.GetCodePage(sreader.ReadShort());
 			sreader.Encoding = TextEncoding.GetListedEncoding(fileheader.DrawingCodePage);
 
+			//At 0x15 is a long that tells how many sets of recno/seeker/length records follow.
 			int nRecords = (int)sreader.ReadRawLong();
 			for (int i = 0; i < nRecords; ++i)
 			{
@@ -532,10 +430,17 @@ namespace ACadSharp.IO
 				record.Seeker = sreader.ReadRawLong();
 				record.Size = sreader.ReadRawLong();
 
-				fileheader.Records.Add(record.Number, record);
+				fileheader.Records.Add(record.Number.Value, record);
 			}
 
+			//RS : CRC for BOF to this point.
 			sreader.ResetShift();
+
+			var sn = sreader.ReadSentinel();
+			if (!DwgSectionIO.CheckSentinel(sn, DwgFileHeaderAC15.EndSentinel))
+			{
+				this.triggerNotification($"Invalid section sentinel found in FileHeader", NotificationType.Warning);
+			}
 		}
 
 		/// <summary>
@@ -543,7 +448,7 @@ namespace ACadSharp.IO
 		/// </summary>
 		/// <param name="fileheader">File header to read</param>
 		/// <param name="sreader"></param>
-		private void readFileHeaderAC18(DwgFileHeader18 fileheader, IDwgStreamReader sreader)
+		private void readFileHeaderAC18(DwgFileHeaderAC18 fileheader, IDwgStreamReader sreader)
 		{
 			this.readFileMetaData(fileheader, sreader);
 
@@ -560,15 +465,18 @@ namespace ACadSharp.IO
 			//AD 4F 14 F2 44 40 66 D0 6B C4 30 B7
 
 			StreamIO headerStream = new StreamIO(new CRC32StreamHandler(sreader.ReadBytes(0x6C), 0U)); //108
+			headerStream.Encoding = TextEncoding.GetListedEncoding(CodePage.Windows1252);
 
 			sreader.ReadBytes(20);  //CHECK IF IS USEFUL
 
 			#region Read header encrypted data
 
 			//0x00	12	“AcFssFcAJMB” file ID string
-			string fileId = headerStream.ReadString(12, TextEncoding.GetListedEncoding(CodePage.Windows1252));
+			string fileId = headerStream.ReadString(12);
 			if (fileId != "AcFssFcAJMB\0")
-				throw new DwgException($"File validation failed, id should be : AcFssFcAJMB\0, but is : {fileId}");
+			{
+				this.triggerNotification($"File validation failed, id should be : AcFssFcAJMB\0, but is : {fileId}", NotificationType.Warning);
+			}
 
 			//0x0C	4	0x00(long)
 			headerStream.ReadInt<LittleEndianConverter>();
@@ -576,7 +484,7 @@ namespace ACadSharp.IO
 			headerStream.ReadInt<LittleEndianConverter>();
 			//0x14	4	0x04(long)
 			headerStream.ReadInt<LittleEndianConverter>();
-			//0x18	4	Root tree node gap	
+			//0x18	4	Root tree node gap
 			fileheader.RootTreeNodeGap = headerStream.ReadInt<LittleEndianConverter>();
 			//0x1C	4	Lowermost left tree node gap
 			fileheader.LeftGap = headerStream.ReadInt<LittleEndianConverter>();
@@ -586,32 +494,34 @@ namespace ACadSharp.IO
 			headerStream.ReadInt<LittleEndianConverter>();
 			//0x28	4	Last section page Id
 			fileheader.LastPageId = headerStream.ReadInt<LittleEndianConverter>();
+
 			//0x2C	8	Last section page end address
-			fileheader.LastSectionAddr = (long)headerStream.ReadULong<LittleEndianConverter>();
+			fileheader.LastSectionAddr = headerStream.ReadULong<LittleEndianConverter>();
 			//0x34	8	Second header data address pointing to the repeated header data at the end of the file
 			fileheader.SecondHeaderAddr = headerStream.ReadULong<LittleEndianConverter>();
+
 			//0x3C	4	Gap amount
-			fileheader.GapAmount = (int)headerStream.ReadUInt<LittleEndianConverter>();
+			fileheader.GapAmount = headerStream.ReadUInt<LittleEndianConverter>();
 			//0x40	4	Section page amount
-			fileheader.SectionAmount = (int)headerStream.ReadUInt<LittleEndianConverter>();
+			fileheader.SectionAmount = headerStream.ReadUInt<LittleEndianConverter>();
 			//0x44	4	0x20(long)
 			headerStream.ReadInt<LittleEndianConverter>();
 			//0x48	4	0x80(long)
 			headerStream.ReadInt<LittleEndianConverter>();
-			//0x4C	4	0x40(long)	
+			//0x4C	4	0x40(long)
 			headerStream.ReadInt<LittleEndianConverter>();
 			//0x50	4	Section Page Map Id
 			fileheader.SectionPageMapId = headerStream.ReadUInt<LittleEndianConverter>();
 			//0x54	8	Section Page Map address(add 0x100 to this value)
 			fileheader.PageMapAddress = headerStream.ReadULong<LittleEndianConverter>() + 256UL;
-			//0x5C	4	Section Map Id	
+			//0x5C	4	Section Map Id
 			fileheader.SectionMapId = headerStream.ReadUInt<LittleEndianConverter>();
 			//0x60	4	Section page array size
 			fileheader.SectionArrayPageSize = headerStream.ReadUInt<LittleEndianConverter>();
 			//0x64	4	Gap array size
-			fileheader.GapArraySize = (int)headerStream.ReadUInt<LittleEndianConverter>();
+			fileheader.GapArraySize = headerStream.ReadUInt<LittleEndianConverter>();
 			//0x68	4	CRC32(long).See paragraph 2.14.2 for the 32 - bit CRC calculation, 
-			//			the seed is zero.Note that the CRC 
+			//			the seed is zero. Note that the CRC 
 			//			calculation is done including the 4 CRC bytes that are 
 			//			initially zero! So the CRC calculation takes into account 
 			//			all of the 0x6c bytes of the data in this table.
@@ -624,11 +534,10 @@ namespace ACadSharp.IO
 			//Get the page size
 			this.getPageHeaderData(sreader, out _, out long decompressedSize, out _, out _, out _);
 			//Get the descompressed stream to read the records
-			StreamIO decompressed = new StreamIO(
-				Dwg2004LZ77.Decompress(sreader.Stream, decompressedSize));
+			StreamIO decompressed = new StreamIO(Dwg2004LZ77.Decompress(sreader.Stream, decompressedSize));
 
 			//Section size
-			int num = 0x100;
+			int total = 0x100;
 			while (decompressed.Position < decompressed.Length)
 			{
 				DwgSectionLocatorRecord record = new DwgSectionLocatorRecord();
@@ -639,8 +548,8 @@ namespace ACadSharp.IO
 
 				if (record.Number >= 0)
 				{
-					record.Seeker = num;
-					fileheader.Records.Add(record.Number, record);
+					record.Seeker = total;
+					fileheader.Records.Add(record.Number.Value, record);
 				}
 				else
 				{
@@ -657,7 +566,7 @@ namespace ACadSharp.IO
 					decompressed.ReadInt();
 				}
 
-				num += (int)record.Size;
+				total += (int)record.Size;
 			}
 			#endregion
 
@@ -666,24 +575,25 @@ namespace ACadSharp.IO
 			sreader.Position = fileheader.Records[(int)fileheader.SectionMapId].Seeker;
 			//Get the page size
 			this.getPageHeaderData(sreader, out _, out decompressedSize, out _, out _, out _);
-			StreamIO streamIO = new StreamIO(Dwg2004LZ77.Decompress(sreader.Stream, decompressedSize));
+			StreamIO decompressedStream = new StreamIO(Dwg2004LZ77.Decompress(sreader.Stream, decompressedSize));
+			decompressedStream.Encoding = TextEncoding.GetListedEncoding(CodePage.Windows1252);
 
 			//0x00	4	Number of section descriptions(NumDescriptions)
-			int ndescriptions = streamIO.ReadInt<LittleEndianConverter>();
+			int ndescriptions = decompressedStream.ReadInt<LittleEndianConverter>();
 			//0x04	4	0x02 (long)
-			streamIO.ReadInt<LittleEndianConverter>();
+			decompressedStream.ReadInt<LittleEndianConverter>();
 			//0x08	4	0x00007400 (long)
-			streamIO.ReadInt<LittleEndianConverter>();
+			decompressedStream.ReadInt<LittleEndianConverter>();
 			//0x0C	4	0x00 (long)
-			streamIO.ReadInt<LittleEndianConverter>();
+			decompressedStream.ReadInt<LittleEndianConverter>();
 			//0x10	4	Unknown (long), ODA writes NumDescriptions here.
-			streamIO.ReadInt<LittleEndianConverter>();
+			decompressedStream.ReadInt<LittleEndianConverter>();
 
 			for (int i = 0; i < ndescriptions; ++i)
 			{
 				DwgSectionDescriptor descriptor = new DwgSectionDescriptor();
 				//0x00	8	Size of section(OdUInt64)
-				descriptor.CompressedSize = streamIO.ReadULong();
+				descriptor.CompressedSize = decompressedStream.ReadULong();
 				/*0x08	4	Page count(PageCount). Note that there can be more pages than PageCount,
 							as PageCount is just the number of pages written to file.
 							If a page contains zeroes only, that page is not written to file.
@@ -693,31 +603,30 @@ namespace ACadSharp.IO
 							decompressed size of the pages is not equal to the section’s size, add more zero 
 							pages to the section until this condition is met.
 				*/
-				descriptor.PageCount = streamIO.ReadInt<LittleEndianConverter>();
+				descriptor.PageCount = decompressedStream.ReadInt<LittleEndianConverter>();
 				//0x0C	4	Max Decompressed Size of a section page of this type(normally 0x7400)
-				descriptor.DecompressedSize = (ulong)streamIO.ReadInt<LittleEndianConverter>();
+				descriptor.DecompressedSize = (ulong)decompressedStream.ReadInt<LittleEndianConverter>();
 				//0x10	4	Unknown(long)
-				streamIO.ReadInt<LittleEndianConverter>();
+				decompressedStream.ReadInt<LittleEndianConverter>();
 				//0x14	4	Compressed(1 = no, 2 = yes, normally 2)
-				descriptor.CompressedCode = streamIO.ReadInt<LittleEndianConverter>();
+				descriptor.CompressedCode = decompressedStream.ReadInt<LittleEndianConverter>();
 				//0x18	4	Section Id(starts at 0). The first section(empty section) is numbered 0, consecutive sections are numbered descending from(the number of sections – 1) down to 1.
-				descriptor.SectionId = streamIO.ReadInt<LittleEndianConverter>();
+				descriptor.SectionId = decompressedStream.ReadInt<LittleEndianConverter>();
 				//0x1C	4	Encrypted(0 = no, 1 = yes, 2 = unknown)
-				descriptor.Encrypted = streamIO.ReadInt<LittleEndianConverter>();
+				descriptor.Encrypted = decompressedStream.ReadInt<LittleEndianConverter>();
 				//0x20	64	Section Name(string)
-				descriptor.Name = streamIO.ReadString(64, TextEncoding.GetListedEncoding(CodePage.Windows1252)).Split('\0')[0];
+				descriptor.Name = decompressedStream.ReadString(64).Split('\0')[0];
 
-				ulong currPosition = 0;
 				//Following this, the following (local) section page map data will be present
 				for (int j = 0; j < descriptor.PageCount; ++j)
 				{
 					DwgLocalSectionMap localmap = new DwgLocalSectionMap();
 					//0x00	4	Page number(index into SectionPageMap), starts at 1
-					localmap.PageNumber = streamIO.ReadInt<LittleEndianConverter>();
+					localmap.PageNumber = decompressedStream.ReadInt<LittleEndianConverter>();
 					//0x04	4	Data size for this page(compressed size).
-					localmap.CompressedSize = (ulong)streamIO.ReadInt<LittleEndianConverter>();
+					localmap.CompressedSize = (ulong)decompressedStream.ReadInt<LittleEndianConverter>();
 					//0x08	8	Start offset for this page(OdUInt64).If this start offset is smaller than the sum of the decompressed size of all previous pages, then this page is to be preceded by zero pages until this condition is met.
-					localmap.Offset = streamIO.ReadULong();
+					localmap.Offset = decompressedStream.ReadULong();
 
 					//same decompressed size and seeker (temporal values)
 					localmap.DecompressedSize = descriptor.DecompressedSize;
@@ -726,32 +635,7 @@ namespace ACadSharp.IO
 					//Maximum section page size appears to be 0x7400 bytes in the normal case.
 					//If a logical section of the file (the database objects, for example) exceeds this size, then it is broken up into pages of size 0x7400.
 
-					//Add empty local section to fill the gap between them
-					for (; currPosition < localmap.Offset; currPosition += descriptor.DecompressedSize)
-					{
-						DwgLocalSectionMap emptySection = new DwgLocalSectionMap();
-						emptySection.IsEmpty = true;
-						emptySection.PageNumber = 0;
-						emptySection.CompressedSize = 0;
-						emptySection.Offset = currPosition;
-						emptySection.DecompressedSize = descriptor.DecompressedSize;
-						descriptor.LocalSections.Add(emptySection);
-					}
-
 					descriptor.LocalSections.Add(localmap);
-					currPosition += descriptor.DecompressedSize;
-				}
-
-				//Add empty local section to fill the gap between the descriptors
-				for (; currPosition < descriptor.CompressedSize; currPosition += descriptor.DecompressedSize)
-				{
-					DwgLocalSectionMap emptySection = new DwgLocalSectionMap();
-					emptySection.IsEmpty = true;
-					emptySection.PageNumber = 0;
-					emptySection.CompressedSize = 0;
-					emptySection.Offset = currPosition;
-					emptySection.DecompressedSize = descriptor.DecompressedSize;
-					descriptor.LocalSections.Add(emptySection);
 				}
 
 				//Get the final size for the local section
@@ -792,7 +676,7 @@ namespace ACadSharp.IO
 		/// </summary>
 		/// <param name="fileheader">File header to read</param>
 		/// <param name="sreader"></param>
-		private void readFileHeaderAC21(DwgFileHeader21 fileheader, IDwgStreamReader sreader)
+		private void readFileHeaderAC21(DwgFileHeaderAC21 fileheader, IDwgStreamReader sreader)
 		{
 			this.readFileMetaData(fileheader, sreader);
 
@@ -836,8 +720,8 @@ namespace ACadSharp.IO
 			fileheader.CompressedMetadata = new Dwg21CompressedMetadata()
 			{
 				//0x00	8	Header size (normally 0x70)
-				HeaderSize = decompressed.ReadULong(),  //debug: 112
-														//0x08	8	File size
+				HeaderSize = decompressed.ReadULong(),
+				//0x08	8	File size
 				FileSize = decompressed.ReadULong(),
 				//0x10	8	PagesMapCrcCompressed
 				PagesMapCrcCompressed = decompressed.ReadULong(),
@@ -870,7 +754,7 @@ namespace ACadSharp.IO
 				//0x80	8	PagesMapCrcUncompressed
 				PagesMapCrcUncompressed = decompressed.ReadULong(),
 				//0x88	8	Unknown(normally 0xf800, 63488)
-				Unknown0x800 = decompressed.ReadULong(),
+				Unknown0xF800 = decompressed.ReadULong(),
 				//0x90	8	Unknown(normally 4)
 				Unknown4 = decompressed.ReadULong(),
 				//0x98	8	Unknown(normally 1)
@@ -911,7 +795,7 @@ namespace ACadSharp.IO
 				fileheader.CompressedMetadata.PagesMapSizeCompressed,
 				fileheader.CompressedMetadata.PagesMapSizeUncompressed,
 				fileheader.CompressedMetadata.PagesMapCorrectionFactor,
-				239, sreader.Stream);
+				0xEF, sreader.Stream);
 
 			//Read the page data
 			StreamIO pageDataStream = new StreamIO(arr);
@@ -973,7 +857,7 @@ namespace ACadSharp.IO
 				}
 
 				ulong currentOffset = 0;
-				for (int index = 0; index < section.PageCount; ++index)
+				for (int i = 0; i < section.PageCount; ++i)
 				{
 					DwgLocalSectionMap page = new DwgLocalSectionMap();
 					//8	Page data offset.If a page’s data offset is 
@@ -983,18 +867,20 @@ namespace ACadSharp.IO
 					//	difference between these two numbers.
 					page.Offset = sectionMapStream.ReadULong<LittleEndianConverter>();
 					//8	Page Size
-					page.Size = sectionMapStream.ReadLong<LittleEndianConverter>(); //1408
-																					//8	Page Id
-					page.PageNumber = (int)sectionMapStream.ReadLong<LittleEndianConverter>();  //6
-																								//8	Page Uncompressed Size
+					page.Size = sectionMapStream.ReadLong<LittleEndianConverter>();
+					//8	Page Id
+					page.PageNumber = (int)sectionMapStream.ReadLong<LittleEndianConverter>();
+					//8	Page Uncompressed Size
 					page.DecompressedSize = sectionMapStream.ReadULong<LittleEndianConverter>();
 					//8	Page Compressed Size
 					page.CompressedSize = sectionMapStream.ReadULong<LittleEndianConverter>();
-					//8	Page Compressed Size
+					//8	Page Checksum
 					page.Checksum = sectionMapStream.ReadULong<LittleEndianConverter>();
-					//8	Page Compressed Size
+					//8	Page CRC
 					page.CRC = sectionMapStream.ReadULong<LittleEndianConverter>();
 
+#if false
+//this code it doesn't take any effect on the reading
 					//Create an empty page to fill the gap
 					if (currentOffset < page.Offset)
 					{
@@ -1008,7 +894,7 @@ namespace ACadSharp.IO
 						//Add the empty local section to the current descriptor
 						section.LocalSections.Add(emptyPage);
 					}
-
+#endif
 					//Add the page to the section
 					section.LocalSections.Add(page);
 					//Move the offset
@@ -1024,7 +910,7 @@ namespace ACadSharp.IO
 		/// </summary>
 		/// <param name="fileheader">File header where the data will be stored</param>
 		/// <param name="sreader"></param>
-		private void readFileMetaData(DwgFileHeader18 fileheader, IDwgStreamReader sreader)
+		private void readFileMetaData(DwgFileHeaderAC18 fileheader, IDwgStreamReader sreader)
 		{
 			//5 bytes of 0x00 
 			sreader.Advance(5);
@@ -1041,7 +927,7 @@ namespace ACadSharp.IO
 			fileheader.AppReleaseVersion = sreader.ReadByte();
 
 			//0x13	2	Codepage
-			fileheader.DrawingCodePage = (CodePage)sreader.ReadShort();
+			fileheader.DrawingCodePage = CadUtils.GetCodePage(sreader.ReadShort());
 			sreader.Encoding = TextEncoding.GetListedEncoding(fileheader.DrawingCodePage);
 
 			//Advance empty bytes 
@@ -1060,154 +946,14 @@ namespace ACadSharp.IO
 			//0x28	4	0x00000080
 			sreader.ReadRawLong();
 
-			//0x2C	0x54	0x00 bytes
+			//0x2C	4	App info Address in stream
 			sreader.ReadRawLong();
+
 			//Get to offset 0x80
+			//0x30	0x80	0x00 bytes
 			sreader.Advance(80);
 		}
 
-		#endregion
-
-		#region Classes section methods
-
-		private DxfClassCollection readClasses15(IDwgStreamReader sreader)
-		{
-			//SN : 0x8D 0xA1 0xC4 0xB8 0xC4 0xA9 0xF8 0xC5 0xC0 0xDC 0xF4 0x5F 0xE7 0xCF 0xB6 0x8A
-			byte[] sn = sreader.ReadSentinel();
-			//RL : size of class data area.
-			long size = sreader.ReadRawLong();
-			long endSection = sreader.Position + size;
-
-			if (this._fileHeader.AcadVersion == ACadVersion.AC1018)
-			{
-				//BS : Maxiumum class number
-				sreader.ReadBitShort();
-				//RC: 0x00
-				sreader.ReadRawChar();
-				//RC: 0x00
-				sreader.ReadRawChar();
-				//B : true
-				sreader.ReadBit();
-			}
-
-			DxfClassCollection classes = new DxfClassCollection();
-			//We read sets of these until we exhaust the data.
-			while (sreader.Position < endSection)
-			{
-				DxfClass dxfClass = new DxfClass();
-				//BS : classnum
-				dxfClass.ClassNumber = sreader.ReadBitShort();
-				//BS : version – in R14, becomes a flag indicating whether objects can be moved, edited, etc.
-				dxfClass.ProxyFlags = (ProxyFlags)sreader.ReadBitShort();
-				//TV : appname
-				dxfClass.ApplicationName = sreader.ReadVariableText();
-				//TV: cplusplusclassname
-				dxfClass.CppClassName = sreader.ReadVariableText();
-				//TV : classdxfname
-				dxfClass.DxfName = sreader.ReadVariableText();
-				//B : wasazombie
-				dxfClass.WasAProxy = sreader.ReadBit();
-				//BS : itemclassid -- 0x1F2 for classes which produce entities, 0x1F3 for classes which produce objects.
-				dxfClass.ItemClassId = sreader.ReadBitShort();
-
-				if (this._fileHeader.AcadVersion == ACadVersion.AC1018)
-				{
-					//BL : Number of objects created of this type in the current DB(DXF 91).
-					sreader.ReadBitLong();
-					//BS : Dwg Version
-					sreader.ReadBitShort();
-					//BS : Maintenance release version.
-					sreader.ReadBitShort();
-					//BL : Unknown(normally 0L)
-					sreader.ReadBitLong();
-					//BL : Unknown(normally 0L)
-					sreader.ReadBitLong();
-				}
-
-				classes.Add(dxfClass);
-			}
-			//RS: CRC
-			short crc = sreader.ReadShort();
-			//0x72,0x5E,0x3B,0x47,0x3B,0x56,0x07,0x3A,0x3F,0x23,0x0B,0xA0,0x18,0x30,0x49,0x75
-			byte[] endsn = sreader.ReadSentinel();
-
-			return classes;
-		}
-
-		private DxfClassCollection readClasses18(IDwgStreamReader sreader)
-		{
-			//SN : 0x8D 0xA1 0xC4 0xB8 0xC4 0xA9 0xF8 0xC5 0xC0 0xDC 0xF4 0x5F 0xE7 0xCF 0xB6 0x8A
-			byte[] sn = sreader.ReadSentinel();
-			//RL : size of class data area.
-			long size = sreader.ReadRawLong();
-
-			//R2010+ (only present if the maintenance version is greater than 3!)
-			if (this._fileHeader.AcadVersion >= ACadVersion.AC1024 && this._fileHeader.AcadMaintenanceVersion > 3
-				|| this._fileHeader.AcadVersion > ACadVersion.AC1027)
-			{
-				//RL : unknown, possibly the high 32 bits of a 64-bit size?
-				long unknown = sreader.ReadRawLong();
-			}
-
-			long flagPos = sreader.PositionInBits() + sreader.ReadRawLong() - 1L;
-			long offset = sreader.PositionInBits();
-			long endSection = sreader.SetPositionByFlag(flagPos);
-
-			sreader.SetPositionInBits(offset);
-
-			//BL: 0x00
-			sreader.ReadBitLong();
-			//B : flag - to find the data string at the end of the section
-			sreader.ReadBit();
-
-			List<DxfClass> classesHolder = new List<DxfClass>();
-			while (sreader.PositionInBits() < endSection)
-			{
-				DxfClass dxfClass = new DxfClass();
-				//BS: classnum
-				dxfClass.ClassNumber = sreader.ReadBitShort();
-				//BS : Proxy flags:
-				dxfClass.ProxyFlags = (ProxyFlags)sreader.ReadBitShort();
-
-				//B : wasazombie
-				dxfClass.WasAProxy = sreader.ReadBit();
-				//BS : itemclassid-- 0x1F2 for classes which produce entities, 0x1F3 for classes which produce objects.
-				dxfClass.ItemClassId = sreader.ReadBitShort();
-
-				//BL : Number of objects created of this type in the current DB(DXF 91).
-				dxfClass.InstanceCount = sreader.ReadBitLong();
-				//BS : Dwg Version
-				sreader.ReadBitLong();
-				//BS : Maintenance release version.
-				sreader.ReadBitLong();
-				//BL : Unknown(normally 0L)
-				sreader.ReadBitLong();
-				//BL : Unknown(normally 0L)
-				sreader.ReadBitLong();
-
-				classesHolder.Add(dxfClass);
-			}
-
-			//Set the position 
-			sreader.SetPositionInBits(endSection);
-
-			DxfClassCollection classes = new DxfClassCollection();
-			//Read the names (in same order)
-			//X : String stream data
-			foreach (DxfClass dxfClass in classesHolder)
-			{
-				//TV: appname
-				dxfClass.ApplicationName = sreader.ReadVariableText();
-				//TV : cplusplusclassname
-				dxfClass.CppClassName = sreader.ReadVariableText();
-				//TV : classdxfname
-				dxfClass.DxfName = sreader.ReadVariableText();
-
-				classes.Add(dxfClass);
-			}
-
-			return classes;
-		}
 		#endregion
 
 		private IDwgStreamReader getSectionStream(string sectionName)
@@ -1233,20 +979,20 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
-					sectionStream = this.getSectionBuffer15(this._fileHeader as DwgFileHeader15, sectionName);
-					encoding = TextEncoding.GetListedEncoding((this._fileHeader as DwgFileHeader15).DrawingCodePage);
+					sectionStream = this.getSectionBuffer15(this._fileHeader as DwgFileHeaderAC15, sectionName);
+					encoding = TextEncoding.GetListedEncoding((this._fileHeader as DwgFileHeaderAC15).DrawingCodePage);
 					break;
 				case ACadVersion.AC1018:
-					sectionStream = this.getSectionBuffer18(this._fileHeader as DwgFileHeader18, sectionName);
+					sectionStream = this.getSectionBuffer18(this._fileHeader as DwgFileHeaderAC18, sectionName);
 					break;
 				case ACadVersion.AC1021:
-					sectionStream = this.getSectionBuffer21(this._fileHeader as DwgFileHeader21, sectionName);
+					sectionStream = this.getSectionBuffer21(this._fileHeader as DwgFileHeaderAC21, sectionName);
 					break;
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
 					//Check if it works...
-					sectionStream = this.getSectionBuffer18(this._fileHeader as DwgFileHeader18, sectionName);
+					sectionStream = this.getSectionBuffer18(this._fileHeader as DwgFileHeaderAC18, sectionName);
 					break;
 				default:
 					break;
@@ -1256,28 +1002,27 @@ namespace ACadSharp.IO
 			if (sectionStream == null)
 				return null;
 
-			IDwgStreamReader streamHandler = DwgStreamReader.GetStreamHandler(this._fileHeader.AcadVersion, sectionStream);
+			IDwgStreamReader streamHandler = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, sectionStream);
 
 			//Set the encoding if needed
 			if (encoding != null)
 				streamHandler.Encoding = encoding;
 
 			return streamHandler;
-			//return sectionStream;
 		}
 
-		private Stream getSectionBuffer15(DwgFileHeader15 fileheader, string sectionName)
+		private Stream getSectionBuffer15(DwgFileHeaderAC15 fileheader, string sectionName)
 		{
 			Stream stream = null;
 
 			//Get the section locator
 			var sectionLocator = DwgSectionDefinition.GetSectionLocatorByName(sectionName);
 
-			if (sectionLocator < 0)
+			if (!sectionLocator.HasValue)
 				//There is no section for this version
 				return null;
 
-			if (fileheader.Records.TryGetValue(sectionLocator, out DwgSectionLocatorRecord record))
+			if (fileheader.Records.TryGetValue(sectionLocator.Value, out DwgSectionLocatorRecord record))
 			{
 				//set the stream position
 				stream = this._fileStream.Stream;
@@ -1287,10 +1032,8 @@ namespace ACadSharp.IO
 			return stream;
 		}
 
-		private Stream getSectionBuffer18(DwgFileHeader18 fileheader, string sectionName)
+		private Stream getSectionBuffer18(DwgFileHeaderAC18 fileheader, string sectionName)
 		{
-			Stream stream = null;
-
 			if (!fileheader.Descriptors.TryGetValue(sectionName, out DwgSectionDescriptor descriptor))
 				return null;
 
@@ -1310,10 +1053,10 @@ namespace ACadSharp.IO
 				else
 				{
 					//Get the page section header
-					IDwgStreamReader sreader = DwgStreamReader.GetStreamHandler(fileheader.AcadVersion, this._fileStream.Stream);
+					IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(fileheader.AcadVersion, this._fileStream.Stream);
 					sreader.Position = section.Seeker;
 					//Get the header data
-					this.decryptHeaderDataSection(section, sreader);
+					this.decryptDataSection(section, sreader);
 
 					if (descriptor.IsCompressed)
 					{
@@ -1332,12 +1075,10 @@ namespace ACadSharp.IO
 
 			//Reset the stream
 			memoryStream.Position = 0L;
-			stream = memoryStream;
-
-			return stream;
+			return memoryStream;
 		}
 
-		private void decryptHeaderDataSection(DwgLocalSectionMap section, IDwgStreamReader sreader)
+		private void decryptDataSection(DwgLocalSectionMap section, IDwgStreamReader sreader)
 		{
 			int secMask = 0x4164536B ^ (int)sreader.Position;
 
@@ -1361,7 +1102,7 @@ namespace ACadSharp.IO
 			var oda = (uint)(sreader.ReadRawLong() ^ secMask);
 		}
 
-		private Stream getSectionBuffer21(DwgFileHeader21 fileheader, string sectionName)
+		private Stream getSectionBuffer21(DwgFileHeaderAC21 fileheader, string sectionName)
 		{
 			Stream stream = null;
 
@@ -1434,6 +1175,7 @@ namespace ACadSharp.IO
 		/// Apply a simple reed Solomon decoding to a byte array.
 		/// </summary>
 		/// <param name="encoded"></param>
+		/// <param name="buffer"></param>
 		/// <param name="factor"></param>
 		/// <param name="blockSize"></param>
 		private void reedSolomonDecoding(byte[] encoded, byte[] buffer, int factor, int blockSize)

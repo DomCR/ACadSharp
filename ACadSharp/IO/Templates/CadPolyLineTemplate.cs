@@ -1,5 +1,5 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
@@ -62,6 +62,11 @@ namespace ACadSharp.IO.Templates
 		public class PolyLinePlaceholder : Polyline
 		{
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
+
+			public override IEnumerable<Entity> Explode()
+			{
+				throw new NotImplementedException();
+			}
 		}
 	}
 }

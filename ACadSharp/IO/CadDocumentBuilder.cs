@@ -2,6 +2,7 @@
 using ACadSharp.Tables;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.IO
 {
@@ -13,6 +14,8 @@ namespace ACadSharp.IO
 
 		public Dictionary<string, LineType> LineTypes { get; } = new Dictionary<string, LineType>(StringComparer.OrdinalIgnoreCase);
 
+		//public CadReaderConfiguration Configuration { get; }
+
 		// Stores all the templates to build the document, some of the elements can be null due a missing implementation
 		protected Dictionary<ulong, CadTemplate> templates = new Dictionary<ulong, CadTemplate>();
 
@@ -20,7 +23,7 @@ namespace ACadSharp.IO
 
 		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new Dictionary<ulong, ICadTableTemplate>();
 
-		public CadDocumentBuilder(CadDocument document, NotificationEventHandler notification = null)
+		public CadDocumentBuilder(CadDocument document)
 		{
 			this.DocumentToBuild = document;
 		}
@@ -77,11 +80,11 @@ namespace ACadSharp.IO
 				return false;
 			}
 
-			if (this.templates.TryGetValue(handle.Value, out CadTemplate template))
+			if (this.cadObjects.TryGetValue(handle.Value, out CadObject obj))
 			{
-				if (template?.CadObject is T)
+				if (obj is T)
 				{
-					value = (T)template.CadObject;
+					value = (T)obj;
 					return true;
 				}
 			}
@@ -115,14 +118,15 @@ namespace ACadSharp.IO
 			return false;
 		}
 
+		[Obsolete]
 		public void Notify(NotificationEventArgs e)
 		{
 			this.OnNotification?.Invoke(this, e);
 		}
 
-		public void Notify(string message, NotificationType notificationType = NotificationType.None)
+		public void Notify(string message, NotificationType notificationType = NotificationType.None, Exception exception = null)
 		{
-			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType));
+			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, exception));
 		}
 	}
 }

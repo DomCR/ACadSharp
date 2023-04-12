@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -40,7 +39,7 @@ namespace ACadSharp.Tests.IO.DXF
 				CadDocument readed = re.Read();
 			}
 
-			this.checkDocumentInAutocad(Path.GetFullPath(path));
+			this.checkDxfDocumentInAutocad(Path.GetFullPath(path));
 		}
 
 		[Theory]
@@ -67,7 +66,7 @@ namespace ACadSharp.Tests.IO.DXF
 				CadDocument readed = re.Read();
 			}
 
-			this.checkDocumentInAutocad(path);
+			this.checkDxfDocumentInAutocad(path);
 		}
 
 		[Theory]
@@ -79,25 +78,13 @@ namespace ACadSharp.Tests.IO.DXF
 
 			List<Entity> entities = new List<Entity>
 			{
-				new Point
-				{
-					Location = new CSMath.XYZ(0, 10, 0)
-				},
+				EntityFactory.Create<Point>(),
 				EntityFactory.Create<Line>(),
 				EntityFactory.Create<Polyline2D>(),
 				EntityFactory.Create<Polyline3D>(),
-				new Line
-				{
-					StartPoint = new CSMath.XYZ(0, 0, 0),
-					EndPoint = new CSMath.XYZ(10, 10, 0)
-				},
-				new Arc
-				{
-					Center = new CSMath.XYZ(0, 5, 0),
-					Radius = 20,
-					StartAngle = 1,
-					EndAngle = 2
-				}
+				EntityFactory.Create<Line>(),
+				EntityFactory.Create<Arc>(),
+				EntityFactory.Create<LwPolyline>(),
 			};
 
 
@@ -111,7 +98,7 @@ namespace ACadSharp.Tests.IO.DXF
 				wr.Write();
 			}
 
-			this.checkDocumentInAutocad(path);
+			this.checkDxfDocumentInAutocad(path);
 		}
 	}
 }

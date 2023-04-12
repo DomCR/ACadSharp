@@ -13,7 +13,7 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
 		}
 
 		public class DwgColor : CadObject
