@@ -1,8 +1,6 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using CSMath;
-using System.Collections.Generic;
-using System.Text;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -15,7 +13,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityCircle)]
 	[DxfSubClass(DxfSubclassMarker.Circle)]
-	public class Circle : Entity
+	public class Circle : Entity, ICloneable<Circle>
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.CIRCLE;
@@ -51,6 +49,16 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Circle() : base() { }
+
+		public Circle CloneT()
+		{
+			throw new NotImplementedException();
+		}
+
+		public override object Clone()
+		{
+			return this.CloneT();
+		}
 
 		protected override void createCopy(CadObject copy)
 		{

@@ -61,6 +61,11 @@ namespace ACadSharp.IO.Templates
 		public class DimensionPlaceholder : Dimension
 		{
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
+
+			public override object Clone()
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		public void SetDimensionObject(Dimension dimensionAligned)

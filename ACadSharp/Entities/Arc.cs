@@ -13,7 +13,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityArc)]
 	[DxfSubClass(DxfSubclassMarker.Arc)]
-	public class Arc : Circle
+	public class Arc : Circle, ICloneable<Arc>
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.ARC;
@@ -69,6 +69,15 @@ namespace ACadSharp.Entities
 				StartAngle = startAngle,
 				EndAngle = endAngle,
 			};
+		}
+
+		public new Arc CloneT()
+		{
+			Arc copy = new Arc();
+
+			this.createCopy(copy);
+
+			return copy;
 		}
 
 		protected override void createCopy(CadObject copy)

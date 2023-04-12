@@ -26,14 +26,7 @@ namespace ACadSharp.Tables
 		}
 
 		/// <inheritdoc/>
-		public object Clone()
-		{
-			var clone = Activator.CreateInstance(this.GetType(), this.Name);
-
-			this.createCopy(clone as CadObject);
-
-			return clone;
-		}
+		public abstract object Clone();
 
 		/// <inheritdoc/>
 		public override string ToString()

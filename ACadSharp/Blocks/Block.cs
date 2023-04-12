@@ -62,5 +62,10 @@ namespace ACadSharp.Blocks
 		{
 			this.Owner = record;
 		}
+
+		public override object Clone()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

@@ -28,5 +28,14 @@ namespace ACadSharp.Tests
 
 			CadObjectTestUtils.AssertEntityClone(entity, clone);
 		}
+
+		[Fact]
+		public void CloneArc()
+		{
+			Arc arc = new Arc();
+			Arc a = arc.CloneT();
+
+
+		}
 	}
 }
