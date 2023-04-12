@@ -43,8 +43,9 @@ namespace ACadSharp.IO.DWG
 						case DimensionOrdinate ordinate:
 							writeDimensionOrdinate(ordinate);
 							break;
-							//default:
-							//	throw new NotImplementedException();
+						default:
+							this.notify($"Dimension not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
+							return;
 					}
 					break;
 				case Ellipse ellipse:
