@@ -51,6 +51,8 @@ namespace ACadSharp.IO.DWG
 				case Ellipse ellipse:
 					this.writeEllipse(ellipse);
 					break;
+				case Insert insert:
+					throw new NotImplementedException();
 				case Line l:
 					this.writeLine(l);
 					break;
