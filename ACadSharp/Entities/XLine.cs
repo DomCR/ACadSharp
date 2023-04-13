@@ -34,7 +34,7 @@ namespace ACadSharp.Entities
 
 		public XLine() : base() { }
 
-		public override object Clone()
+		public override Entity Clone()
 		{
 			throw new System.NotImplementedException();
 		}

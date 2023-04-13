@@ -162,9 +162,9 @@ namespace ACadSharp.Tables
 			this.Viewports = new CadObjectCollection<Viewport>(this);
 		}
 
-		protected override void createCopy(CadObject copy)
+		protected override void mapClone(CadObject copy)
 		{
-			base.createCopy(copy);
+			base.mapClone(copy);
 
 			BlockRecord bl = copy as BlockRecord;
 
@@ -182,9 +182,11 @@ namespace ACadSharp.Tables
 			}
 		}
 
-		public override object Clone()
+		public override TableEntry Clone()
 		{
-			throw new System.NotImplementedException();
+			BlockRecord clone = new BlockRecord(this.Name);
+			this.mapClone(clone);
+			return clone;
 		}
 	}
 }

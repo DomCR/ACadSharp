@@ -85,27 +85,20 @@ namespace ACadSharp.Tables
 				throw new ArgumentNullException(nameof(name), "Layer must have a name.");
 		}
 
-		protected override void createCopy(CadObject copy)
+		public override TableEntry Clone()
 		{
-			base.createCopy(copy);
+			Layer clone = new Layer(this.Name);
 
-			Layer l = copy as Layer;
-
-			l.Color = this.Color;
-			l.LineType = (LineType)this.LineType.Clone();
-			l.PlotFlag = this.PlotFlag;
-			l.LineWeight = this.LineWeight;
-			l.PlotStyleName = this.PlotStyleName;
+			clone.Color = this.Color;
+			clone.LineType = (LineType)this.LineType.Clone();
+			clone.PlotFlag = this.PlotFlag;
+			clone.LineWeight = this.LineWeight;
+			clone.PlotStyleName = this.PlotStyleName;
 			//l.Material = this.Material.Clone();
-		}
 
-		public override object Clone()
-		{
-			Layer layer = new Layer(this.Name);
+			base.mapClone(clone);
 
-			this.createCopy(layer);
-
-			return layer;
+			return clone;
 		}
 	}
 }

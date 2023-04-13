@@ -154,7 +154,7 @@ namespace ACadSharp.Entities
 			this.Block.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));
 		}
 
-		public override object Clone()
+		public override Entity Clone()
 		{
 			throw new NotImplementedException();
 		}

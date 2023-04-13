@@ -49,9 +49,9 @@ namespace ACadSharp.Entities
 		/// </summary>
 		public Line() : base() { }
 
-		protected override void createCopy(CadObject copy)
+		protected override void mapClone(CadObject copy)
 		{
-			base.createCopy(copy);
+			base.mapClone(copy);
 
 			Line c = copy as Line;
 
@@ -61,7 +61,7 @@ namespace ACadSharp.Entities
 			c.EndPoint = this.EndPoint;
 		}
 
-		public override object Clone()
+		public override Entity Clone()
 		{
 			throw new System.NotImplementedException();
 		}

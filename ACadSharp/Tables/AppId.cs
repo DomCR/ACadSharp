@@ -38,7 +38,7 @@ namespace ACadSharp.Tables
 				throw new ArgumentNullException(nameof(name), "App id must have a name.");
 		}
 
-		public override object Clone()
+		public override TableEntry Clone()
 		{
 			throw new NotImplementedException();
 		}

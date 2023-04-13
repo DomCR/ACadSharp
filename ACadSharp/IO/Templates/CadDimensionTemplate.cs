@@ -62,7 +62,7 @@ namespace ACadSharp.IO.Templates
 		{
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
 
-			public override object Clone()
+			public override Entity Clone()
 			{
 				throw new NotImplementedException();
 			}

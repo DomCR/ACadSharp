@@ -50,7 +50,7 @@ namespace ACadSharp.Entities
 
 		public Point() : base() { }
 
-		public override object Clone()
+		public override Entity Clone()
 		{
 			throw new System.NotImplementedException();
 		}

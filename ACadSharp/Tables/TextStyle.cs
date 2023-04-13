@@ -1,8 +1,5 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
-using ACadSharp.IO.Templates;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Tables
 {
@@ -90,9 +87,23 @@ namespace ACadSharp.Tables
 
 		public TextStyle(string name) : base(name) { }
 
-		public override object Clone()
+		/// <inheritdoc/>
+		public override TableEntry Clone()
 		{
-			throw new System.NotImplementedException();
+			TextStyle clone = new TextStyle(this.Name);
+
+			clone.Height = this.Height;
+			clone.Width = this.Width;
+			clone.ObliqueAngle = this.ObliqueAngle;
+			clone.MirrorFlag = this.MirrorFlag;
+			clone.LastHeight = this.LastHeight;
+			clone.Filename = this.Filename;
+			clone.BigFontFilename = this.BigFontFilename;
+			clone.TrueType = this.TrueType;
+
+			base.mapClone(clone);
+
+			return clone;
 		}
 	}
 }

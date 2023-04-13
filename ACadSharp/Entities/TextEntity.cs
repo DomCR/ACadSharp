@@ -164,7 +164,7 @@ namespace ACadSharp.Entities
 
 		public TextEntity() : base() { }
 
-		public override object Clone()
+		public override Entity Clone()
 		{
 			throw new NotImplementedException();
 		}

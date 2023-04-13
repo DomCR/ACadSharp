@@ -38,7 +38,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(15, 25, 35)]
 		public XYZ AngleVertex { get; set; }
 
-		public override object Clone()
+		public override Entity Clone()
 		{
 			throw new System.NotImplementedException();
 		}

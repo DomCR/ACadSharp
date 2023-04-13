@@ -292,7 +292,7 @@ namespace ACadSharp.Tables
 
 		public VPort(string name) : base(name) { }
 
-		public override object Clone()
+		public override TableEntry Clone()
 		{
 			throw new NotImplementedException();
 		}

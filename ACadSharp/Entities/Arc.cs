@@ -71,18 +71,18 @@ namespace ACadSharp.Entities
 			};
 		}
 
-		public override object Clone()
+		public override Entity Clone()
 		{
 			Arc copy = new Arc();
 
-			this.createCopy(copy);
+			this.mapClone(copy);
 
 			return copy;
 		}
 
-		protected override void createCopy(CadObject copy)
+		protected override void mapClone(CadObject copy)
 		{
-			base.createCopy(copy);
+			base.mapClone(copy);
 
 			Arc c = copy as Arc;
 

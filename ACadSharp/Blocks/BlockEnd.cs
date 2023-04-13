@@ -26,9 +26,13 @@ namespace ACadSharp.Blocks
 			this.Owner = record;
 		}
 
-		public override object Clone()
+		/// <inheritdoc/>
+		public override Entity Clone()
 		{
-			throw new System.NotImplementedException();
+			BlockEnd clone = new BlockEnd((BlockRecord)(this.Owner as BlockRecord).Clone());
+
+			this.mapClone(clone);
+			return clone;
 		}
 	}
 }

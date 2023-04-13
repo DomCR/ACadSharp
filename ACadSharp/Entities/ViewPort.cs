@@ -286,7 +286,7 @@ namespace ACadSharp.Entities
 
 		public Viewport() : base() { }
 
-		public override object Clone()
+		public override Entity Clone()
 		{
 			throw new System.NotImplementedException();
 		}

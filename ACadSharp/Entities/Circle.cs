@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
-using System;
 
 namespace ACadSharp.Entities
 {
@@ -50,14 +49,16 @@ namespace ACadSharp.Entities
 		/// </summary>
 		public Circle() : base() { }
 
-		public override object Clone()
+		public override Entity Clone()
 		{
-			throw new NotImplementedException();
+			Circle clone = new Circle();
+			this.mapClone(clone);
+			return clone;
 		}
 
-		protected override void createCopy(CadObject copy)
+		protected override void mapClone(CadObject copy)
 		{
-			base.createCopy(copy);
+			base.mapClone(copy);
 
 			Circle c = copy as Circle;
 

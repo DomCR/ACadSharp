@@ -106,7 +106,7 @@ namespace ACadSharp.Entities
 
 		public Spline() : base() { }
 
-		public override object Clone()
+		public override Entity Clone()
 		{
 			throw new NotImplementedException();
 		}

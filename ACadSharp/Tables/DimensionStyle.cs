@@ -1,9 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Types.Units;
-using ACadSharp.IO.Templates;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ACadSharp.Blocks;
 
 namespace ACadSharp.Tables
@@ -506,7 +503,7 @@ namespace ACadSharp.Tables
 
 		public DimensionStyle(string name) : base(name) { }
 
-		public override object Clone()
+		public override TableEntry Clone()
 		{
 			throw new NotImplementedException();
 		}

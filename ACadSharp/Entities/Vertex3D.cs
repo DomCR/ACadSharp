@@ -15,7 +15,7 @@ namespace ACadSharp.Entities
 	{
 		public override ObjectType ObjectType => ObjectType.VERTEX_3D;
 
-		public override object Clone()
+		public override Entity Clone()
 		{
 			throw new System.NotImplementedException();
 		}

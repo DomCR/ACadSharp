@@ -122,7 +122,7 @@ namespace ACadSharp.Entities
 		/// Creates a new object that is a copy of the current instance.
 		/// </summary>
 		/// <returns>A new object that is a copy of this instance.</returns>
-		public abstract object Clone();
+		public abstract Entity Clone();
 
 		protected T updateTable<T>(T entry, Table<T> table)
 			where T : TableEntry
@@ -138,9 +138,9 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		protected override void createCopy(CadObject copy)
+		protected override void mapClone(CadObject copy)
 		{
-			base.createCopy(copy);
+			base.mapClone(copy);
 
 			Entity e = copy as Entity;
 

@@ -87,7 +87,7 @@ namespace ACadSharp
 			OnReferenceChanged?.Invoke(this, args);
 		}
 
-		protected virtual void createCopy(CadObject copy)
+		protected virtual void mapClone(CadObject copy)
 		{
 			//TODO: copy ExtendedData, Reactors, XDictionary needed ??
 		}

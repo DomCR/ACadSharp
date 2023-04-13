@@ -149,7 +149,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(213, 223, 233)]
 		public XYZ AnnotationOffset { get; set; } = XYZ.Zero;
 
-		public override object Clone()
+		public override Entity Clone()
 		{
 			throw new System.NotImplementedException();
 		}

@@ -153,7 +153,7 @@ namespace ACadSharp.Tables
 
 		public View(string name) : base(name) { }
 
-		public override object Clone()
+		public override TableEntry Clone()
 		{
 			throw new NotImplementedException();
 		}

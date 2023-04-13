@@ -5,7 +5,7 @@ namespace ACadSharp.Entities
 {
 	public partial class LwPolyline
 	{
-		public override object Clone()
+		public override Entity Clone()
 		{
 			throw new System.NotImplementedException();
 		}

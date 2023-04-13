@@ -56,7 +56,7 @@ namespace ACadSharp.Entities
 
 		public Face3D() : base() { }
 
-		public override object Clone()
+		public override Entity Clone()
 		{
 			throw new System.NotImplementedException();
 		}

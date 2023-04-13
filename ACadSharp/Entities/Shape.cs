@@ -75,7 +75,7 @@ namespace ACadSharp.Entities
 
 		public Shape() : base() { }
 
-		public override object Clone()
+		public override Entity Clone()
 		{
 			throw new NotImplementedException();
 		}

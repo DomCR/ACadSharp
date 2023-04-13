@@ -37,7 +37,7 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		public override object Clone()
+		public override Entity Clone()
 		{
 			throw new NotImplementedException();
 		}

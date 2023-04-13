@@ -29,7 +29,7 @@ namespace ACadSharp.Tables
 		/// Creates a new object that is a copy of the current instance.
 		/// </summary>
 		/// <returns>A new object that is a copy of this instance.</returns>
-		public abstract object Clone();
+		public abstract TableEntry Clone();
 
 		/// <inheritdoc/>
 		public override string ToString()
@@ -37,11 +37,11 @@ namespace ACadSharp.Tables
 			return $"{this.ObjectName}:{this.Name}";
 		}
 
-		protected override void createCopy(CadObject copy)
+		protected override void mapClone(CadObject clone)
 		{
-			base.createCopy(copy);
+			base.mapClone(clone);
 
-			TableEntry te = copy as TableEntry;
+			TableEntry te = clone as TableEntry;
 
 			te.Name = this.Name;
 			te.Flags = this.Flags;
