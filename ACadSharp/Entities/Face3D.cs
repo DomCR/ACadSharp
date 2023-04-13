@@ -55,5 +55,10 @@ namespace ACadSharp.Entities
 		public InvisibleEdgeFlags Flags { get; set; }
 
 		public Face3D() : base() { }
+
+		public override object Clone()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

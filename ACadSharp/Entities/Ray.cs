@@ -28,5 +28,10 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(11, 21, 31)]
 		public XYZ Direction { get; set; } = XYZ.Zero;
+
+		public override object Clone()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

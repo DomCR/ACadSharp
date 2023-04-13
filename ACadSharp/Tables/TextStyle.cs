@@ -89,6 +89,11 @@ namespace ACadSharp.Tables
 		internal TextStyle() : base() { }
 
 		public TextStyle(string name) : base(name) { }
+
+		public override object Clone()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }
 

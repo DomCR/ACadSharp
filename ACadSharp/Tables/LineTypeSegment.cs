@@ -62,6 +62,21 @@ namespace ACadSharp.Tables
 			/// Line type where this segment belongs
 			/// </summary>
 			public LineType LineType { get; internal set; }
+
+			public LineType.Segment Clone()
+			{
+				Segment clone = new Segment();
+				clone.Length = this.Length;
+				clone.Shapeflag = this.Shapeflag;
+				clone.ShapeNumber = this.ShapeNumber;
+				clone.Offset = this.Offset;
+				clone.Rotation = this.Rotation;
+				clone.Scale = this.Scale;
+				clone.Text = this.Text;
+				clone.Style = this.Style;
+
+				return clone;
+			}
 		}
 	}
 }

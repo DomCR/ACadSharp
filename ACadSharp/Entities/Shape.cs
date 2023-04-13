@@ -74,5 +74,10 @@ namespace ACadSharp.Entities
 		public XYZ Extrusion { get; set; } = XYZ.AxisZ;
 
 		public Shape() : base() { }
+
+		public override object Clone()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

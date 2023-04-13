@@ -13,7 +13,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityCircle)]
 	[DxfSubClass(DxfSubclassMarker.Circle)]
-	public class Circle : Entity, ICloneable<Circle>
+	public class Circle : Entity
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.CIRCLE;
@@ -50,14 +50,9 @@ namespace ACadSharp.Entities
 		/// </summary>
 		public Circle() : base() { }
 
-		public Circle CloneT()
-		{
-			throw new NotImplementedException();
-		}
-
 		public override object Clone()
 		{
-			return this.CloneT();
+			throw new NotImplementedException();
 		}
 
 		protected override void createCopy(CadObject copy)

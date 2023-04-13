@@ -74,5 +74,10 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Ellipse() : base() { }
+
+		public override object Clone()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

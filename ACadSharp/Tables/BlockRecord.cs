@@ -181,5 +181,10 @@ namespace ACadSharp.Tables
 				bl.Entities.Add((Entity)item.Clone());
 			}
 		}
+
+		public override object Clone()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

@@ -1,9 +1,6 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Tables
 {
@@ -100,6 +97,15 @@ namespace ACadSharp.Tables
 			l.LineWeight = this.LineWeight;
 			l.PlotStyleName = this.PlotStyleName;
 			//l.Material = this.Material.Clone();
+		}
+
+		public override object Clone()
+		{
+			Layer layer = new Layer(this.Name);
+
+			this.createCopy(layer);
+
+			return layer;
 		}
 	}
 }

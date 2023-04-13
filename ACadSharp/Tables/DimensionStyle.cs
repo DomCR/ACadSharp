@@ -505,5 +505,10 @@ namespace ACadSharp.Tables
 		public DimensionStyle() : this(null) { }
 
 		public DimensionStyle(string name) : base(name) { }
+
+		public override object Clone()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

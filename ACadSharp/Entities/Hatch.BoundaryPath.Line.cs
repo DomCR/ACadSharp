@@ -5,6 +5,11 @@ namespace ACadSharp.Entities
 {
 	public partial class Hatch
 	{
+		public override object Clone()
+		{
+			throw new System.NotImplementedException();
+		}
+
 		public partial class BoundaryPath
 		{
 			public class Line : Edge

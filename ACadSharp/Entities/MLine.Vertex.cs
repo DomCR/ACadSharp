@@ -6,6 +6,11 @@ namespace ACadSharp.Entities
 {
 	public partial class MLine
 	{
+		public override object Clone()
+		{
+			throw new System.NotImplementedException();
+		}
+
 		public class Vertex
 		{
 			/// <summary>

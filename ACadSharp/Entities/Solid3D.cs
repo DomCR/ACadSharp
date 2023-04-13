@@ -18,5 +18,10 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.Entity3DSolid;
+
+		public override object Clone()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

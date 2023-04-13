@@ -152,5 +152,10 @@ namespace ACadSharp.Tables
 		public View() : base() { }
 
 		public View(string name) : base(name) { }
+
+		public override object Clone()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

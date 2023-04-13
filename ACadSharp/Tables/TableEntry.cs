@@ -4,7 +4,7 @@ using System;
 namespace ACadSharp.Tables
 {
 	[DxfSubClass(DxfSubclassMarker.TableRecord, true)]
-	public abstract class TableEntry : CadObject, INamedCadObject, ICloneable
+	public abstract class TableEntry : CadObject, INamedCadObject
 	{
 		/// <summary>
 		/// Specifies the name of the object
@@ -25,7 +25,10 @@ namespace ACadSharp.Tables
 			this.Name = name;
 		}
 
-		/// <inheritdoc/>
+		/// <summary>
+		/// Creates a new object that is a copy of the current instance.
+		/// </summary>
+		/// <returns>A new object that is a copy of this instance.</returns>
 		public abstract object Clone();
 
 		/// <inheritdoc/>

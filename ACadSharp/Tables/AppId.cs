@@ -37,5 +37,10 @@ namespace ACadSharp.Tables
 			if (string.IsNullOrEmpty(name))
 				throw new ArgumentNullException(nameof(name), "App id must have a name.");
 		}
+
+		public override object Clone()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

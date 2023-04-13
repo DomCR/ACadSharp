@@ -163,5 +163,10 @@ namespace ACadSharp.Entities
 		private double _rotation = 0.0;
 
 		public TextEntity() : base() { }
+
+		public override object Clone()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

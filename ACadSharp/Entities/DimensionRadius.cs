@@ -31,5 +31,10 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(40)]
 		public double LeaderLength { get; set; }
+
+		public override object Clone()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

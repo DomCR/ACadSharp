@@ -148,5 +148,10 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(213, 223, 233)]
 		public XYZ AnnotationOffset { get; set; } = XYZ.Zero;
+
+		public override object Clone()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

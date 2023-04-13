@@ -60,5 +60,10 @@ namespace ACadSharp.Entities
 			c.StartPoint = this.StartPoint;
 			c.EndPoint = this.EndPoint;
 		}
+
+		public override object Clone()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

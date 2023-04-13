@@ -41,5 +41,10 @@ namespace ACadSharp.Entities
 				throw new ArgumentException($"Bulge value cannot be different than 0 for a Vertex3D in a 3D Polyline");
 			}
 		}
+
+		public override object Clone()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

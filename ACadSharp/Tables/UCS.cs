@@ -57,5 +57,10 @@ namespace ACadSharp.Tables
 		public OrthographicType OrthographicType { get; set; }
 
 		public UCS() : base() { }
+
+		public override object Clone()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

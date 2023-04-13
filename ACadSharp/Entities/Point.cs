@@ -49,5 +49,10 @@ namespace ACadSharp.Entities
 		public double Rotation { get; set; } = 0.0;
 
 		public Point() : base() { }
+
+		public override object Clone()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }
