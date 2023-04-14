@@ -70,21 +70,29 @@ namespace ACadSharp.Blocks
 			this.Owner = record;
 		}
 
+		/// <inheritdoc/>
+		/// <remarks>
+		/// Cloning a block will also unatach it from the record
+		/// </remarks>
 		public override Entity Clone()
 		{
-			throw new System.NotImplementedException();
-
-			BlockRecord record = (BlockRecord)this.Owner.Clone();
-
-			Block clone = record.BlockEntity;
-			clone.Flags = this.Flags;
-			clone.BasePoint = this.BasePoint;
-			clone.XrefPath = this.XrefPath;
-			clone.Comments = this.Comments;
+			Block clone = new Block(new BlockRecord(this.Owner.Name));
 
 			this.mapClone(clone);
 
 			return clone;
+		}
+
+		protected override void mapClone(CadObject clone)
+		{
+			base.mapClone(clone);
+
+			Block block = clone as Block;
+
+			block.Flags = this.Flags;
+			block.BasePoint = this.BasePoint;
+			block.XrefPath = this.XrefPath;
+			block.Comments = this.Comments;
 		}
 	}
 }
