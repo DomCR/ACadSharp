@@ -17,6 +17,24 @@ namespace ACadSharp.Tests.Common
 			return (short)Next(short.MinValue, short.MaxValue);
 		}
 
+		public T Next<T>()
+			where T : struct
+		{
+			T value = default(T);
+
+			switch (value)
+			{
+				case bool:
+					return (T)Convert.ChangeType(this.Next(0, 1) == 1, typeof(T));
+				case byte:
+					return (T)Convert.ChangeType(this.Next(byte.MinValue, byte.MaxValue), typeof(T));
+				case short:
+					return (T)Convert.ChangeType(this.Next(short.MinValue, short.MaxValue), typeof(T));
+			}
+
+			return value;
+		}
+
 		public XY NextXY()
 		{
 			return new XY(this.NextDouble(), this.NextDouble());

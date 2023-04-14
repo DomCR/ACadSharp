@@ -23,6 +23,11 @@ namespace ACadSharp.Blocks
 		public override string ObjectName => DxfFileToken.Block;
 
 		/// <summary>
+		/// Block record that owns this entity
+		/// </summary>
+		public new BlockRecord Owner { get; internal set; }
+
+		/// <summary>
 		/// Specifies the name of the object.
 		/// </summary>
 		[DxfCodeValue(2, 3)]
@@ -56,7 +61,9 @@ namespace ACadSharp.Blocks
 		[DxfCodeValue(4)]
 		public string Comments { get; set; }
 
-		public Block() : base() { }
+		internal Block()
+		{
+		}
 
 		public Block(BlockRecord record) : base()
 		{
@@ -66,6 +73,18 @@ namespace ACadSharp.Blocks
 		public override Entity Clone()
 		{
 			throw new System.NotImplementedException();
+
+			BlockRecord record = (BlockRecord)this.Owner.Clone();
+
+			Block clone = record.BlockEntity;
+			clone.Flags = this.Flags;
+			clone.BasePoint = this.BasePoint;
+			clone.XrefPath = this.XrefPath;
+			clone.Comments = this.Comments;
+
+			this.mapClone(clone);
+
+			return clone;
 		}
 	}
 }

@@ -138,11 +138,11 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		protected override void mapClone(CadObject copy)
+		protected override void mapClone(CadObject clone)
 		{
-			base.mapClone(copy);
+			base.mapClone(clone);
 
-			Entity e = copy as Entity;
+			Entity e = clone as Entity;
 
 			e.Layer = (Layer)this.Layer.Clone();
 			e.Color = this.Color;

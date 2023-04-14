@@ -52,7 +52,22 @@ namespace ACadSharp.Entities
 
 		public override Entity Clone()
 		{
-			throw new System.NotImplementedException();
+			Point clone = new Point();
+			this.mapClone(clone);
+			return clone;
+		}
+
+		protected override void mapClone(CadObject clone)
+		{
+			base.mapClone(clone);
+
+
+			Point c = clone as Point;
+
+			c.Normal = this.Normal;
+			c.Thickness = this.Thickness;
+			c.Location = this.Location;
+			c.Rotation = this.Rotation;
 		}
 	}
 }

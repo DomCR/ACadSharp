@@ -162,6 +162,16 @@ namespace ACadSharp.Tables
 			this.Viewports = new CadObjectCollection<Viewport>(this);
 		}
 
+		/// <inheritdoc/>
+		public override TableEntry Clone()
+		{
+			BlockRecord clone = new BlockRecord(this.Name);
+			
+			this.mapClone(clone);
+
+			return clone;
+		}
+
 		protected override void mapClone(CadObject copy)
 		{
 			base.mapClone(copy);
@@ -173,20 +183,15 @@ namespace ACadSharp.Tables
 			bl.CanScale = this.CanScale;
 			bl.Preview = this.Preview;
 			//bl.Layout = this.Layout?.Clone();
+
 			bl.BlockEntity = (Block)this.BlockEntity.Clone();
+			
 			bl.BlockEnd = (BlockEnd)this.BlockEnd.Clone();
 
 			foreach (var item in this.Entities)
 			{
-				bl.Entities.Add((Entity)item.Clone());
+				bl.Entities.Add(item.Clone());
 			}
-		}
-
-		public override TableEntry Clone()
-		{
-			BlockRecord clone = new BlockRecord(this.Name);
-			this.mapClone(clone);
-			return clone;
 		}
 	}
 }

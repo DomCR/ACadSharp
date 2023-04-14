@@ -49,21 +49,23 @@ namespace ACadSharp.Entities
 		/// </summary>
 		public Line() : base() { }
 
-		protected override void mapClone(CadObject copy)
+		public override Entity Clone()
 		{
-			base.mapClone(copy);
+			Line clone = new Line();
+			this.mapClone(clone);
+			return clone;
+		}
 
-			Line c = copy as Line;
+		protected override void mapClone(CadObject clone)
+		{
+			base.mapClone(clone);
+
+			Line c = clone as Line;
 
 			c.Normal = this.Normal;
 			c.Thickness = this.Thickness;
 			c.StartPoint = this.StartPoint;
 			c.EndPoint = this.EndPoint;
-		}
-
-		public override Entity Clone()
-		{
-			throw new System.NotImplementedException();
 		}
 	}
 }
