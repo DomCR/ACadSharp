@@ -119,7 +119,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public object Clone()
+		public virtual object Clone()
 		{
 			var clone = Activator.CreateInstance(this.GetType());
 

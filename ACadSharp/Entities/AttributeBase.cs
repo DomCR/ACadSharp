@@ -26,7 +26,7 @@ namespace ACadSharp.Entities
 		/// Specifies the tag string of the object
 		/// </summary>
 		/// <value>
-		/// Cannot contain spaces
+		/// Cannot contain spaces (not applied)
 		/// </value> 
 		[DxfCodeValue(2)]
 		public string Tag
@@ -34,6 +34,10 @@ namespace ACadSharp.Entities
 			get { return this._tag; }
 			set
 			{
+				this._tag = value;
+				return;
+
+				//TODO: explore AttributeBase tag constrain
 				if (value == null)
 					throw new System.ArgumentNullException(nameof(value));
 
