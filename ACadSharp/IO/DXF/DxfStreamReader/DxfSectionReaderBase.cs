@@ -109,7 +109,7 @@ namespace ACadSharp.IO.DXF
 						template.OwnerHandle = this._reader.LastValueAsHandle;
 						break;
 					default:
-						this._builder.Notify($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}.");
+						this._builder.Notify($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}.", NotificationType.None);
 						break;
 				}
 

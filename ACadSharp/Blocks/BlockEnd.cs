@@ -19,11 +19,18 @@ namespace ACadSharp.Blocks
 
 		public override ObjectType ObjectType => ObjectType.ENDBLK;
 
-		public BlockEnd() : base() { }
-
 		public BlockEnd(BlockRecord record) : base()
 		{
 			this.Owner = record;
+		}
+
+		/// <inheritdoc/>
+		public override object Clone()
+		{
+			BlockEnd clone = new BlockEnd(new BlockRecord(((BlockRecord)this.Owner).Name));
+
+			this.createCopy(clone);
+			return clone;
 		}
 	}
 }
