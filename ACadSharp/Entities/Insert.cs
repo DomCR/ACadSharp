@@ -149,6 +149,34 @@ namespace ACadSharp.Entities
 			throw new NotImplementedException();
 		}
 
+		/// <inheritdoc/>
+		public override object Clone()
+		{
+			Insert clone = new Insert((BlockRecord)this.Block.Clone());
+
+			this.createCopy(clone);
+
+			return clone;
+		}
+
+		protected override void createCopy(CadObject clone)
+		{
+			base.createCopy(clone);
+
+			Insert c = clone as Insert;
+
+			c.Normal = this.Normal;
+			c.InsertPoint = this.InsertPoint;
+			c.XScale = this.XScale;
+			c.YScale = this.YScale;
+			c.ZScale = this.ZScale;
+			c.Rotation = this.Rotation;
+			c.ColumnCount = this.ColumnCount;
+			c.RowCount = this.RowCount;
+			c.ColumnSpacing = this.ColumnSpacing;
+			c.RowSpacing = this.RowSpacing;
+		}
+
 		private void attributesOnAdd(object sender, CollectionChangedEventArgs e)
 		{
 			this.Block.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));

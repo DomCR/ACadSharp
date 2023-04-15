@@ -121,7 +121,7 @@ namespace ACadSharp.Tables
 		public Block BlockEntity
 		{
 			get { return _blockEntity; }
-			set
+			internal set
 			{
 				ReferenceChangedEventArgs args = new ReferenceChangedEventArgs(value, this._blockEntity);
 
@@ -173,13 +173,16 @@ namespace ACadSharp.Tables
 			bl.CanScale = this.CanScale;
 			bl.Preview = this.Preview;
 			//bl.Layout = this.Layout?.Clone();
-			bl.BlockEntity = (Block)this.BlockEntity.Clone();
-			bl.BlockEnd = (BlockEnd)this.BlockEnd.Clone();
 
 			foreach (var item in this.Entities)
 			{
 				bl.Entities.Add((Entity)item.Clone());
 			}
+
+			bl.BlockEntity = (Block)this.BlockEntity.Clone();
+			bl.BlockEntity.Owner = this;
+			bl.BlockEnd = (BlockEnd)this.BlockEnd.Clone();
+			bl.BlockEnd.Owner = this;
 		}
 	}
 }
