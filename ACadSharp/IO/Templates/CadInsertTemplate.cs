@@ -48,8 +48,8 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-            if (!(this.CadObject is Insert insert))
-                return;
+			if (!(this.CadObject is Insert insert))
+				return;
 
 			if (builder.TryGetCadObject(this.BlockHeaderHandle, out BlockRecord block))
 			{
@@ -58,27 +58,29 @@ namespace ACadSharp.IO.Templates
 
 			if (this.FirstAttributeHandle.HasValue)
 			{
-				var attributes = getEntitiesCollection<Entities.AttributeEntity>(builder, FirstAttributeHandle.Value, EndAttributeHandle.Value);
+				var attributes = getEntitiesCollection<AttributeEntity>(builder, FirstAttributeHandle.Value, EndAttributeHandle.Value);
 				insert.Attributes.AddRange(attributes);
 			}
 			else
 			{
 				foreach (ulong handle in this.OwnedHandles)
 				{
-					var att = builder.GetCadObject<Entities.AttributeEntity>(handle);
-					insert.Attributes.Add(att);
+					if (builder.TryGetCadObject<AttributeEntity>(handle, out AttributeEntity att))
+					{
+						insert.Attributes.Add(att);
+					}
 				}
 			}
 
-			if(builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
+			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
 			{
 				insert.Attributes.Seqend = seqend;
 			}
 
-            if (builder is DxfDocumentBuilder)
-            {
-                insert.Rotation *= MathUtils.DegToRad;
-            }
+			if (builder is DxfDocumentBuilder)
+			{
+				insert.Rotation *= MathUtils.DegToRad;
+			}
 		}
 	}
 }

@@ -103,23 +103,19 @@ namespace ACadSharp.Entities
 			if (entity.Handle == 0)
 			{
 				entity.Layer = (Layer)this.Layer.Clone();
-				entity.Color = this.Color;
-				entity.LineWeight = this.LineWeight;
-				entity.LinetypeScale = this.LinetypeScale;
-				entity.IsInvisible = this.IsInvisible;
-				entity.Transparency = this.Transparency;
 				entity.LineType = (LineType)this.LineType.Clone();
 			}
 			else
 			{
 				entity.Layer = this.Layer;
-				entity.Color = this.Color;
-				entity.LineWeight = this.LineWeight;
-				entity.LinetypeScale = this.LinetypeScale;
-				entity.IsInvisible = this.IsInvisible;
-				entity.Transparency = this.Transparency;
 				entity.LineType = this.LineType;
 			}
+
+			entity.Color = this.Color;
+			entity.LineWeight = this.LineWeight;
+			entity.LinetypeScale = this.LinetypeScale;
+			entity.IsInvisible = this.IsInvisible;
+			entity.Transparency = this.Transparency;
 		}
 
 		/// <inheritdoc/>
