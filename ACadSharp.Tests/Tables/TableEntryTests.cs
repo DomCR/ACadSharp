@@ -1,8 +1,9 @@
-﻿using ACadSharp.Tests.Common;
+﻿using ACadSharp.Tables;
+using ACadSharp.Tests.Common;
 using System;
 using Xunit;
 
-namespace ACadSharp.Tables.Tests
+namespace ACadSharp.Tests.Tables
 {
 	public class TableEntryTests
 	{

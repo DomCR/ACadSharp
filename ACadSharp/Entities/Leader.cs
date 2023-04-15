@@ -64,9 +64,11 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityLeader;
 
-		//3	Dimension style name
+		/// <summary>
+		/// Dimension Style
+		/// </summary>
 		[DxfCodeValue(3)]
-		public DimensionStyle Style { get; set; } = new DimensionStyle();
+		public DimensionStyle Style { get; set; } = DimensionStyle.Default;
 
 		/// <summary>
 		/// Arrowhead flag

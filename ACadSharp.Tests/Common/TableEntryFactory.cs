@@ -40,6 +40,11 @@ namespace ACadSharp.Tests.Common
 		{
 			switch (entry)
 			{
+				case AppId app:
+					break;
+					case DimensionStyle dimensionStyle:
+					RandomizeDimensionStyle(dimensionStyle);
+					break;
 				case BlockRecord record:
 					RandomizeBlockRecord(record);
 					break;
@@ -52,6 +57,12 @@ namespace ACadSharp.Tests.Common
 		{
 			record.IsExplodable = _random.Next<bool>();
 			record.CanScale = _random.Next<bool>();
+		}
+
+		public static void RandomizeDimensionStyle(DimensionStyle dimStyle)
+		{
+			dimStyle.PostFix = _random.RandomString(2);
+			dimStyle.AlternateDimensioningSuffix = _random.RandomString(2);
 		}
 	}
 }

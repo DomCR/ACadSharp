@@ -40,7 +40,9 @@ namespace ACadSharp.Tables
 
 		public override TableEntry Clone()
 		{
-			throw new NotImplementedException();
+			AppId clone = new AppId(this.Name);
+			this.mapClone(clone);
+			return clone;
 		}
 	}
 }

@@ -29,7 +29,7 @@ namespace ACadSharp.Blocks
 		/// <inheritdoc/>
 		public override Entity Clone()
 		{
-			BlockEnd clone = new BlockEnd((BlockRecord)(this.Owner as BlockRecord).Clone());
+			BlockEnd clone = new BlockEnd(new BlockRecord((this.Owner as BlockRecord).Name));
 
 			this.mapClone(clone);
 			return clone;
