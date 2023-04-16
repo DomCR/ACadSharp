@@ -14,10 +14,5 @@ namespace ACadSharp.Entities
 	public class Vertex2D : Vertex
 	{
 		public override ObjectType ObjectType => ObjectType.VERTEX_2D;
-
-		public override Entity Clone()
-		{
-			throw new System.NotImplementedException();
-		}
 	}
 }

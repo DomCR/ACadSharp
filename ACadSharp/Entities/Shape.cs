@@ -1,10 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ACadSharp.Entities
 {
@@ -74,10 +70,5 @@ namespace ACadSharp.Entities
 		public XYZ Extrusion { get; set; } = XYZ.AxisZ;
 
 		public Shape() : base() { }
-
-		public override Entity Clone()
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

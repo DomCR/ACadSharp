@@ -43,10 +43,5 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(16, 26, 36)]
 		public XYZ DimensionArc { get; set; }
-
-		public override Entity Clone()
-		{
-			throw new System.NotImplementedException();
-		}
 	}
 }

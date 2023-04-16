@@ -49,25 +49,5 @@ namespace ACadSharp.Entities
 		public double Rotation { get; set; } = 0.0;
 
 		public Point() : base() { }
-
-		public override Entity Clone()
-		{
-			Point clone = new Point();
-			this.mapClone(clone);
-			return clone;
-		}
-
-		protected override void mapClone(CadObject clone)
-		{
-			base.mapClone(clone);
-
-
-			Point c = clone as Point;
-
-			c.Normal = this.Normal;
-			c.Thickness = this.Thickness;
-			c.Location = this.Location;
-			c.Rotation = this.Rotation;
-		}
 	}
 }

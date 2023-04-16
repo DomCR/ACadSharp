@@ -85,19 +85,24 @@ namespace ACadSharp.Tables
 		public override TableEntry Clone()
 		{
 			LineType clone = new LineType(this.Name);
+			this.mapClone(clone);
+			return clone;
+		}
 
-			clone.Description = this.Description;
-			clone.PatternLen = this.PatternLen;
-			clone.Alignment = this.Alignment;
+		protected override void mapClone(CadObject clone)
+		{
+			base.mapClone(clone);
+
+			LineType lt = (LineType) clone;
+
+			lt.Description = this.Description;
+			lt.PatternLen = this.PatternLen;
+			lt.Alignment = this.Alignment;
 
 			foreach (var segment in this._segments)
 			{
-				clone.AddSegment(segment.Clone());
+				lt.AddSegment(segment.Clone());
 			}
-
-			base.mapClone(clone);
-
-			return clone;
 		}
 	}
 }

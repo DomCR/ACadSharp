@@ -118,11 +118,17 @@ namespace ACadSharp.Entities
 			entity.Transparency = this.Transparency;
 		}
 
-		/// <summary>
-		/// Creates a new object that is a copy of the current instance.
-		/// </summary>
-		/// <returns>A new object that is a copy of this instance.</returns>
-		public abstract Entity Clone();
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			Entity clone = (Entity)base.Clone();
+
+			clone.Layer = (Layer)this.Layer.Clone();
+			clone.LineType = (LineType)this.LineType.Clone();
+			clone.Material = (Material)this.Material?.Clone();
+
+			return clone;
+		}
 
 		protected T updateTable<T>(T entry, Table<T> table)
 			where T : TableEntry

@@ -39,7 +39,7 @@ namespace ACadSharp.Entities
 		/// Gets the insert block definition
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 2)]
-		public BlockRecord Block { get; internal set; }
+		public BlockRecord Block { get { return this.Owner as BlockRecord; } internal set { this.Owner = value; } }
 
 		/// <summary>
 		/// A 3D WCS coordinate representing the insertion or origin point.
@@ -150,36 +150,22 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public override Entity Clone()
+		public override CadObject Clone()
 		{
-			Insert clone = new Insert((BlockRecord)this.Block.Clone());
+			Insert clone = (Insert)base.Clone();
 
-			this.mapClone(clone);
-			
+			clone.Owner = (this.Owner as BlockRecord).Clone();
+			foreach (var att in Attributes)
+			{
+				clone.Attributes.Add((AttributeEntity)att.Clone());
+			}
+
 			return clone;
 		}
 
 		private void attributesOnAdd(object sender, CollectionChangedEventArgs e)
 		{
 			this.Block.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));
-		}
-
-		protected override void mapClone(CadObject clone)
-		{
-			base.mapClone(clone);
-
-			Insert c = clone as Insert;
-
-			c.Normal = this.Normal;
-			c.InsertPoint = this.InsertPoint;
-			c.XScale = this.XScale;
-			c.YScale = this.YScale;
-			c.ZScale = this.ZScale;
-			c.Rotation = this.Rotation;
-			c.ColumnCount = this.ColumnCount;
-			c.RowCount = this.RowCount;
-			c.ColumnSpacing = this.ColumnSpacing;
-			c.RowSpacing = this.RowSpacing;
 		}
 	}
 }

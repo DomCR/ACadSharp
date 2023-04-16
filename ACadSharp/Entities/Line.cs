@@ -48,24 +48,5 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Line() : base() { }
-
-		public override Entity Clone()
-		{
-			Line clone = new Line();
-			this.mapClone(clone);
-			return clone;
-		}
-
-		protected override void mapClone(CadObject clone)
-		{
-			base.mapClone(clone);
-
-			Line c = clone as Line;
-
-			c.Normal = this.Normal;
-			c.Thickness = this.Thickness;
-			c.StartPoint = this.StartPoint;
-			c.EndPoint = this.EndPoint;
-		}
 	}
 }

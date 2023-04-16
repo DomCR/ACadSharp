@@ -36,10 +36,5 @@ namespace ACadSharp.Entities
 				throw new ArgumentException($"Wrong vertex type for {DxfSubclassMarker.Polyline}");
 			}
 		}
-
-		public override Entity Clone()
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

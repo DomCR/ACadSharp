@@ -47,10 +47,5 @@ namespace ACadSharp.Entities
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 		public Solid() : base() { }
-
-		public override Entity Clone()
-		{
-			throw new System.NotImplementedException();
-		}
 	}
 }

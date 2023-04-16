@@ -76,6 +76,28 @@ namespace ACadSharp
 		/// </summary>
 		public CadObject() { }
 
+		/// <summary>
+		/// Creates a new object that is a copy of the current instance.
+		/// </summary>
+		/// <remarks>
+		/// The copy will be unatached from the document or any reference
+		/// </remarks>
+		/// <returns>A new object that is a copy of this instance.</returns>
+		public virtual CadObject Clone()
+		{
+			CadObject clone = (CadObject)this.MemberwiseClone();
+
+			clone.Handle = 0;
+			clone.Document = null;
+
+			//Collections
+			clone.Reactors.Clear();
+			clone.XDictionary = null;
+			clone.ExtendedData.Clear();
+
+			return clone;
+		}
+
 		/// <inheritdoc/>
 		public override string ToString()
 		{
@@ -87,6 +109,7 @@ namespace ACadSharp
 			OnReferenceChanged?.Invoke(this, args);
 		}
 
+		[Obsolete("Use memberwiseclone")]
 		protected virtual void mapClone(CadObject clone)
 		{
 			//TODO: copy ExtendedData, Reactors, XDictionary needed ??

@@ -42,7 +42,7 @@ namespace ACadSharp.Tests.Common
 			{
 				case AppId app:
 					break;
-					case DimensionStyle dimensionStyle:
+				case DimensionStyle dimensionStyle:
 					RandomizeDimensionStyle(dimensionStyle);
 					break;
 				case BlockRecord record:

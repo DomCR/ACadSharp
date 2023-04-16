@@ -2,6 +2,7 @@
 using ACadSharp.Entities;
 using ACadSharp.Tables;
 using System;
+using System.Linq;
 
 namespace ACadSharp.Tests.Common
 {
@@ -37,6 +38,10 @@ namespace ACadSharp.Tests.Common
 			{
 				e = new Block(TableEntryFactory.Create<BlockRecord>());
 			}
+			else if (type == typeof(BlockEnd))
+			{
+				e = new BlockEnd(TableEntryFactory.Create<BlockRecord>());
+			}
 			else
 			{
 				e = Activator.CreateInstance(type);
@@ -50,6 +55,15 @@ namespace ACadSharp.Tests.Common
 
 		private static T map<T>(T e)
 		{
+			foreach (var p in e.GetType()
+				.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
+				.Where(o => o.CanWrite && !o.PropertyType.IsClass && !o.PropertyType.IsEnum && !o.PropertyType.IsInterface))
+			{
+				p.SetValue(e, _random.Next(p.PropertyType));
+			}
+
+			return e;
+
 			switch (e)
 			{
 				case Arc arc:

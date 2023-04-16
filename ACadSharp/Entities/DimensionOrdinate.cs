@@ -33,10 +33,5 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(14, 24, 34)]
 		public XYZ LeaderEndpoint { get; set; }
-
-		public override Entity Clone()
-		{
-			throw new System.NotImplementedException();
-		}
 	}
 }

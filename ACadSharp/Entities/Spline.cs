@@ -105,10 +105,5 @@ namespace ACadSharp.Entities
 		internal KnotParameterization KnotParameterization { get; set; }
 
 		public Spline() : base() { }
-
-		public override Entity Clone()
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

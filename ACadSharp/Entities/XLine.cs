@@ -33,10 +33,5 @@ namespace ACadSharp.Entities
 		public XYZ Direction { get; set; }
 
 		public XLine() : base() { }
-
-		public override Entity Clone()
-		{
-			throw new System.NotImplementedException();
-		}
 	}
 }

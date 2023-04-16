@@ -39,10 +39,5 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(52)]
 		public double ExtLineRotation { get; set; }
-
-		public override Entity Clone()
-		{
-			throw new System.NotImplementedException();
-		}
 	}
 }

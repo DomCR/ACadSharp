@@ -63,11 +63,6 @@ namespace ACadSharp.IO.Templates
 		{
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
 
-			public override Entity Clone()
-			{
-				throw new NotImplementedException();
-			}
-
 			public override IEnumerable<Entity> Explode()
 			{
 				throw new NotImplementedException();

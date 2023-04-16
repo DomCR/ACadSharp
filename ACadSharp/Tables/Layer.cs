@@ -88,17 +88,22 @@ namespace ACadSharp.Tables
 		public override TableEntry Clone()
 		{
 			Layer clone = new Layer(this.Name);
+			this.mapClone(clone);
+			return clone;
+		}
 
-			clone.Color = this.Color;
-			clone.LineType = (LineType)this.LineType.Clone();
-			clone.PlotFlag = this.PlotFlag;
-			clone.LineWeight = this.LineWeight;
-			clone.PlotStyleName = this.PlotStyleName;
-			//l.Material = this.Material.Clone();
-
+		protected override void mapClone(CadObject clone)
+		{
 			base.mapClone(clone);
 
-			return clone;
+			Layer layer = (Layer)clone;
+
+			layer.Color = this.Color;
+			layer.LineType = (LineType)this.LineType.Clone();
+			layer.PlotFlag = this.PlotFlag;
+			layer.LineWeight = this.LineWeight;
+			layer.PlotStyleName = this.PlotStyleName;
+			//l.Material = this.Material.Clone();
 		}
 	}
 }

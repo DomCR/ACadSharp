@@ -74,23 +74,5 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Ellipse() : base() { }
-
-		/// <inheritdoc/>
-		public override Entity Clone()
-		{
-			Ellipse clone = new Ellipse();
-
-			clone.Thickness = this.Thickness;
-			clone.Normal = this.Normal;
-			clone.Center = this.Center;
-			clone.EndPoint = this.EndPoint;
-			clone.RadiusRatio = this.RadiusRatio;
-			clone.StartParameter = this.StartParameter;
-			clone.EndParameter = this.EndParameter;
-
-			base.mapClone(clone);
-
-			return clone;
-		}
 	}
 }

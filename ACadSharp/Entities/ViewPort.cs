@@ -3,7 +3,6 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Entities
 {
@@ -286,9 +285,13 @@ namespace ACadSharp.Entities
 
 		public Viewport() : base() { }
 
-		public override Entity Clone()
+		public override CadObject Clone()
 		{
-			throw new System.NotImplementedException();
+			Viewport clone = (Viewport)base.Clone();
+
+			clone.VisualStyle = (VisualStyle)this.VisualStyle?.Clone();
+
+			return clone;
 		}
 	}
 }

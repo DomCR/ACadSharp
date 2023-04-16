@@ -85,7 +85,7 @@ namespace ACadSharp.Tests.Tables
 
 			for (int i = 0; i < record.Entities.Count; i++)
 			{
-				CadObjectTestUtils.AssertEntityClone(recordEntities[i], cloneEntities[i], true);
+				CadObjectTestUtils.AssertEntityClone(recordEntities[i], cloneEntities[i]);
 			}
 		}
 	}

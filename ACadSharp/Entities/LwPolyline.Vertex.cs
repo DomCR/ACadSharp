@@ -5,11 +5,6 @@ namespace ACadSharp.Entities
 {
 	public partial class LwPolyline
 	{
-		public override Entity Clone()
-		{
-			throw new System.NotImplementedException();
-		}
-
 		public class Vertex : IVertex
 		{
 			/// <summary>

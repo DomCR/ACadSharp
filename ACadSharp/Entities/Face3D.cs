@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using CSMath;
 
 namespace ACadSharp.Entities
@@ -55,10 +54,5 @@ namespace ACadSharp.Entities
 		public InvisibleEdgeFlags Flags { get; set; }
 
 		public Face3D() : base() { }
-
-		public override Entity Clone()
-		{
-			throw new System.NotImplementedException();
-		}
 	}
 }

@@ -16,10 +16,5 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntitySeqend;
-
-		public override Entity Clone()
-		{
-			throw new System.NotImplementedException();
-		}
 	}
 }

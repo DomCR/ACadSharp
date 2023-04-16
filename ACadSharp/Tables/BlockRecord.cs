@@ -186,7 +186,7 @@ namespace ACadSharp.Tables
 
 			foreach (var item in this.Entities)
 			{
-				bl.Entities.Add(item.Clone());
+				bl.Entities.Add((Entity)item.Clone());
 			}
 
 			bl.BlockEntity = (Block)this.BlockEntity.Clone();

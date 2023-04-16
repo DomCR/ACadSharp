@@ -4,8 +4,8 @@
 	/// 
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public interface ICloneable<T> : System.ICloneable
+	public interface ICloneable<T>
 	{
-		T CloneT();
+		T Clone();
 	}
 }

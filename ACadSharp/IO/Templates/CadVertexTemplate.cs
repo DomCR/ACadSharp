@@ -40,11 +40,6 @@ namespace ACadSharp.IO.Templates
 		public class VertexPlaceholder : Vertex
 		{
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
-
-			public override Entity Clone()
-			{
-				throw new System.NotImplementedException();
-			}
 		}
 	}
 }

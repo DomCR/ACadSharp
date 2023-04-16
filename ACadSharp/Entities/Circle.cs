@@ -48,24 +48,5 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Circle() : base() { }
-
-		public override Entity Clone()
-		{
-			Circle clone = new Circle();
-			this.mapClone(clone);
-			return clone;
-		}
-
-		protected override void mapClone(CadObject copy)
-		{
-			base.mapClone(copy);
-
-			Circle c = copy as Circle;
-
-			c.Normal = this.Normal;
-			c.Thickness = this.Thickness;
-			c.Center = this.Center;
-			c.Radius = this.Radius;
-		}
 	}
 }

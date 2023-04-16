@@ -6,48 +6,6 @@ using System.Collections.Generic;
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Leader creation type
-	/// </summary>
-	public enum LeaderCreationType : short
-	{
-		/// <summary>
-		/// Created with text annotation
-		/// </summary>
-		CreatedWithTextAnnotation = 0,
-
-		/// <summary>
-		/// Created with tolerance annotation
-		/// </summary>
-		CreatedWithToleranceAnnotation = 1,
-
-		/// <summary>
-		/// Created with block reference annotation
-		/// </summary>
-		CreatedWithBlockReferenceAnnotation = 2,
-
-		/// <summary>
-		/// Created without any annotation
-		/// </summary>
-		CreatedWithoutAnnotation = 3
-	}
-
-	/// <summary>
-	/// Controls the way the leader is drawn.
-	/// </summary>
-	public enum LeaderPathType
-	{
-		/// <summary>
-		/// Draws the leader line as a set of straight line segments
-		/// </summary>
-		StraightLineSegments = 0,
-
-		/// <summary>
-		/// Draws the leader line as a spline
-		/// </summary>
-		Spline = 1
-	}
-
-	/// <summary>
 	/// Represents a <see cref="Leader"/> entity.
 	/// </summary>
 	/// <remarks>
@@ -151,9 +109,11 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(213, 223, 233)]
 		public XYZ AnnotationOffset { get; set; } = XYZ.Zero;
 
-		public override Entity Clone()
+		public override CadObject Clone()
 		{
-			throw new System.NotImplementedException();
+			Leader clone = (Leader)base.Clone();
+			clone.Style = (DimensionStyle)(this.Style?.Clone());
+			return clone;
 		}
 	}
 }

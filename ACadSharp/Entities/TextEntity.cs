@@ -110,7 +110,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Style of this text entity.
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Name, 7)]	//Optional
+		[DxfCodeValue(DxfReferenceType.Name, 7)]    //Optional
 		public TextStyle Style { get; set; } = TextStyle.Default;
 
 		/// <summary>
@@ -164,9 +164,11 @@ namespace ACadSharp.Entities
 
 		public TextEntity() : base() { }
 
-		public override Entity Clone()
+		public override CadObject Clone()
 		{
-			throw new NotImplementedException();
+			TextEntity clone = (TextEntity)base.Clone();
+			clone.Style = (TextStyle)this.Style.Clone();
+			return clone;
 		}
 	}
 }

@@ -26,5 +26,10 @@ namespace ACadSharp.Entities
 		{
 			Name = name;
 		}
+
+		public HatchPattern Clone()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }
