@@ -14,8 +14,6 @@ namespace ACadSharp.IO
 
 		public Dictionary<string, LineType> LineTypes { get; } = new Dictionary<string, LineType>(StringComparer.OrdinalIgnoreCase);
 
-		//public CadReaderConfiguration Configuration { get; }
-
 		// Stores all the templates to build the document, some of the elements can be null due a missing implementation
 		protected Dictionary<ulong, CadTemplate> templates = new Dictionary<ulong, CadTemplate>();
 

@@ -23,13 +23,18 @@ namespace ACadSharp.Blocks
 		public override string ObjectName => DxfFileToken.Block;
 
 		/// <summary>
+		/// Block record that owns this entity
+		/// </summary>
+		public BlockRecord BlockOwner { get { return this.Owner as BlockRecord; } }
+
+		/// <summary>
 		/// Specifies the name of the object.
 		/// </summary>
 		[DxfCodeValue(2, 3)]
 		public string Name
 		{
-			get { return (this.Owner as BlockRecord).Name; }
-			set { (this.Owner as BlockRecord).Name = value; }
+			get { return BlockOwner.Name; }
+			set { BlockOwner.Name = value; }
 		}
 
 		/// <summary>

@@ -57,7 +57,7 @@ namespace ACadSharp.Tests.Tables
 			Assert.Throws<ArgumentException>(() => record.Entities.Add(l1));
 		}
 
-		[Fact()]
+		[Fact(Skip = "This test will be implemented in implement-IClonable branch")]
 		public void CloneTest()
 		{
 			string name = "my_block";

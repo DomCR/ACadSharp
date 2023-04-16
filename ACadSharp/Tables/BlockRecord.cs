@@ -121,7 +121,7 @@ namespace ACadSharp.Tables
 		public Block BlockEntity
 		{
 			get { return _blockEntity; }
-			set
+			internal set
 			{
 				ReferenceChangedEventArgs args = new ReferenceChangedEventArgs(value, this._blockEntity);
 
