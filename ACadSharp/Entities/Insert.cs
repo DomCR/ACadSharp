@@ -39,7 +39,7 @@ namespace ACadSharp.Entities
 		/// Gets the insert block definition
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 2)]
-		public BlockRecord Block { get { return this.Owner as BlockRecord; } internal set { this.Owner = value; } }
+		public BlockRecord Block { get; internal set; }
 
 		/// <summary>
 		/// A 3D WCS coordinate representing the insertion or origin point.
@@ -154,7 +154,7 @@ namespace ACadSharp.Entities
 		{
 			Insert clone = (Insert)base.Clone();
 
-			clone.Owner = (this.Owner as BlockRecord).Clone();
+			clone.Block = (BlockRecord)this.Block.Clone();
 			foreach (var att in Attributes)
 			{
 				clone.Attributes.Add((AttributeEntity)att.Clone());

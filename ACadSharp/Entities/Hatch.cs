@@ -139,7 +139,7 @@ namespace ACadSharp.Entities
 				clone.Paths.Add(item.Clone());
 			}
 
-			throw new System.NotImplementedException();
+			return clone;
 		}
 	}
 }

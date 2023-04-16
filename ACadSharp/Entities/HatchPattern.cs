@@ -1,4 +1,5 @@
 ﻿using CSMath;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -14,6 +15,13 @@ namespace ACadSharp.Entities
 			public XY BasePoint { get; internal set; }
 			public XY Offset { get; internal set; }
 			public List<double> DashLengths { get; set; } = new List<double>();
+
+			public Line Clone()
+			{
+				Line clone = (Line)this.MemberwiseClone();
+				clone.DashLengths = new List<double>(this.DashLengths);
+				return clone;
+			}
 		}
 
 		public string Name { get; set; }
@@ -29,7 +37,15 @@ namespace ACadSharp.Entities
 
 		public HatchPattern Clone()
 		{
-			throw new System.NotImplementedException();
+			HatchPattern clone = (HatchPattern)this.MemberwiseClone();
+
+			clone.Lines.Clear();
+			foreach (var item in this.Lines)
+			{
+				clone.Lines.Add(item.Clone());
+			}
+
+			return clone;
 		}
 	}
 }

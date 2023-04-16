@@ -17,7 +17,6 @@ namespace ACadSharp.Tests.Entities
 			}
 		}
 
-
 		[Theory]
 		[MemberData(nameof(EntityTypes))]
 		public void Clone(Type entityType)

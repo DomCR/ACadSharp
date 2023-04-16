@@ -72,7 +72,15 @@ namespace ACadSharp.Entities
 
 		public HatchGradientPattern Clone()
 		{
-			throw new System.NotImplementedException();
+			HatchGradientPattern clone = (HatchGradientPattern)this.MemberwiseClone();
+
+			clone.Colors.Clear();
+			foreach (var item in this.Colors)
+			{
+				clone.Colors.Add(item.Clone());
+			}
+
+			return clone;
 		}
 	}
 }

@@ -89,6 +89,7 @@ namespace ACadSharp
 
 			clone.Handle = 0;
 			clone.Document = null;
+			clone.Owner = null;
 
 			//Collections
 			clone.Reactors.Clear();

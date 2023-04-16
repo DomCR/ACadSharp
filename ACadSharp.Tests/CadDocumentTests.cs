@@ -4,6 +4,7 @@ using Xunit;
 using ACadSharp.Tests.Common;
 using ACadSharp.Entities;
 using Xunit.Abstractions;
+using ACadSharp.Blocks;
 
 namespace ACadSharp.Tests
 {
@@ -19,6 +20,9 @@ namespace ACadSharp.Tests
 
 			foreach (var item in DataFactory.GetTypes<Entity>())
 			{
+				if (item == typeof(Block) || item == typeof(BlockEnd))
+					continue;
+
 				EntityTypes.Add(item);
 			}
 		}
@@ -128,7 +132,7 @@ namespace ACadSharp.Tests
 		[MemberData(nameof(EntityTypes))]
 		public void DetachedEntityClone(Type entityType)
 		{
-			Entity entity = (Entity)Activator.CreateInstance(entityType);
+			Entity entity = EntityFactory.Create(entityType);
 			CadDocument doc = new CadDocument();
 
 			doc.Entities.Add(entity);
@@ -140,7 +144,6 @@ namespace ACadSharp.Tests
 			Assert.True(0 == clone.Handle);
 			Assert.Null(clone.Document);
 			Assert.Null(clone.Owner);
-
 			Assert.Null(clone.Layer.Document);
 			Assert.Null(clone.LineType.Document);
 		}

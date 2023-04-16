@@ -18,5 +18,10 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(421)]
 		public Color Color { get; set; }
+
+		public GradientColor Clone()
+		{
+			return (GradientColor)this.MemberwiseClone();
+		}
 	}
 }
