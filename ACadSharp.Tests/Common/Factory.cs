@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
+using System;
+using System.Linq;
 
 namespace ACadSharp.Tests.Common
 {
@@ -26,6 +29,11 @@ namespace ACadSharp.Tests.Common
 			_random = new CSMathRandom();
 		}
 
+		public static CadObject CreateObject(Type type, bool randomize = true)
+		{
+			return createObject(type, type, randomize);
+		}
+
 		protected static T map<T>(T e)
 		{
 			foreach (var p in e.GetType()
@@ -37,5 +45,25 @@ namespace ACadSharp.Tests.Common
 
 			return e;
 		}
+
+		private static CadObject createObject(Type type, Type original, bool randomize)
+		{
+			if (type == null)
+			{
+				return null;
+			}
+
+			if (type.BaseType == typeof(Entity))
+			{
+				return EntityFactory.Create(original, randomize);
+			}
+			else if (type.BaseType == typeof(TableEntry))
+			{
+				return TableEntryFactory.Create(original, randomize: randomize);
+			}
+
+			return createObject(type.BaseType, original, randomize);
+		}
+
 	}
 }
