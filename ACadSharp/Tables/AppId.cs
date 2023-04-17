@@ -37,14 +37,5 @@ namespace ACadSharp.Tables
 			if (string.IsNullOrEmpty(name))
 				throw new ArgumentNullException(nameof(name), "App id must have a name.");
 		}
-
-		public override TableEntry Clone()
-		{
-			return (TableEntry)MemberwiseClone();
-
-			AppId clone = new AppId(this.Name);
-			this.mapClone(clone);
-			return clone;
-		}
 	}
 }

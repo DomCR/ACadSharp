@@ -86,25 +86,6 @@ namespace ACadSharp.Tables
 		internal TextStyle() : base() { }
 
 		public TextStyle(string name) : base(name) { }
-
-		/// <inheritdoc/>
-		public override TableEntry Clone()
-		{
-			TextStyle clone = new TextStyle(this.Name);
-
-			clone.Height = this.Height;
-			clone.Width = this.Width;
-			clone.ObliqueAngle = this.ObliqueAngle;
-			clone.MirrorFlag = this.MirrorFlag;
-			clone.LastHeight = this.LastHeight;
-			clone.Filename = this.Filename;
-			clone.BigFontFilename = this.BigFontFilename;
-			clone.TrueType = this.TrueType;
-
-			base.mapClone(clone);
-
-			return clone;
-		}
 	}
 }
 

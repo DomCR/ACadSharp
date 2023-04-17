@@ -65,16 +65,9 @@ namespace ACadSharp.Tables
 
 			public LineType.Segment Clone()
 			{
-				Segment clone = new Segment();
-				clone.Length = this.Length;
-				clone.Shapeflag = this.Shapeflag;
-				clone.ShapeNumber = this.ShapeNumber;
-				clone.Offset = this.Offset;
-				clone.Rotation = this.Rotation;
-				clone.Scale = this.Scale;
-				clone.Text = this.Text;
-				clone.Style = this.Style;
-
+				Segment clone = MemberwiseClone() as Segment;
+				clone.Style = (TextStyle)(this.Style?.Clone());
+				clone.LineType = (LineType)(this.LineType?.Clone());
 				return clone;
 			}
 		}

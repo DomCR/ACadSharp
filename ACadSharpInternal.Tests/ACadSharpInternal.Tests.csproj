@@ -10,6 +10,7 @@
     <Compile Include="..\ACadSharp.Tests\Common\CSMathRandom.cs" Link="Common\CSMathRandom.cs" />
     <Compile Include="..\ACadSharp.Tests\Common\EntityComparator.cs" Link="Common\EntityComparator.cs" />
     <Compile Include="..\ACadSharp.Tests\Common\EntityFactory.cs" Link="Common\EntityFactory.cs" />
+    <Compile Include="..\ACadSharp.Tests\Common\Factory.cs" Link="Common\Factory.cs" />
     <Compile Include="..\ACadSharp.Tests\Common\TableEntryFactory.cs" Link="Common\TableEntryFactory.cs" />
     <Compile Include="..\ACadSharp.Tests\TestVariables.cs" Link="TestVariables.cs" />
   </ItemGroup>

@@ -82,27 +82,17 @@ namespace ACadSharp.Tables
 		}
 
 		/// <inheritdoc/>
-		public override TableEntry Clone()
+		public override CadObject Clone()
 		{
 			LineType clone = new LineType(this.Name);
-			this.mapClone(clone);
-			return clone;
-		}
 
-		protected override void mapClone(CadObject clone)
-		{
-			base.mapClone(clone);
-
-			LineType lt = (LineType) clone;
-
-			lt.Description = this.Description;
-			lt.PatternLen = this.PatternLen;
-			lt.Alignment = this.Alignment;
-
+			clone._segments.Clear();
 			foreach (var segment in this._segments)
 			{
-				lt.AddSegment(segment.Clone());
+				clone.AddSegment(segment.Clone());
 			}
+
+			return clone;
 		}
 	}
 }

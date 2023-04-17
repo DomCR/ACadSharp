@@ -20,7 +20,6 @@ namespace ACadSharp.Tests.Common
 
 		public static TableEntry Create(Type type, string name = null, bool randomize = true)
 		{
-
 			if (string.IsNullOrEmpty(name))
 			{
 				name = _random.RandomString(10);
@@ -31,27 +30,27 @@ namespace ACadSharp.Tests.Common
 			if (!randomize)
 				return (TableEntry)entry;
 
-			map((TableEntry)entry);
+			map(entry);
 
 			return (TableEntry)entry;
 		}
 
-		private static void map(TableEntry entry)
-		{
-			switch (entry)
-			{
-				case AppId app:
-					break;
-				case DimensionStyle dimensionStyle:
-					RandomizeDimensionStyle(dimensionStyle);
-					break;
-				case BlockRecord record:
-					RandomizeBlockRecord(record);
-					break;
-				default:
-					throw new NotImplementedException();
-			}
-		}
+		//private static void map(TableEntry entry)
+		//{
+		//	switch (entry)
+		//	{
+		//		case AppId app:
+		//			break;
+		//		case DimensionStyle dimensionStyle:
+		//			RandomizeDimensionStyle(dimensionStyle);
+		//			break;
+		//		case BlockRecord record:
+		//			RandomizeBlockRecord(record);
+		//			break;
+		//		default:
+		//			throw new NotImplementedException();
+		//	}
+		//}
 
 		public static void RandomizeBlockRecord(BlockRecord record)
 		{

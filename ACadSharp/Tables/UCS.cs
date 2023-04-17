@@ -58,9 +58,6 @@ namespace ACadSharp.Tables
 
 		public UCS() : base() { }
 
-		public override TableEntry Clone()
-		{
-			throw new System.NotImplementedException();
-		}
+		public UCS(string name) : base(name) { }
 	}
 }

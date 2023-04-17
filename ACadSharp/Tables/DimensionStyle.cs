@@ -504,95 +504,15 @@ namespace ACadSharp.Tables
 		public DimensionStyle(string name) : base(name) { }
 
 		/// <inheritdoc/>
-		public override TableEntry Clone()
+		public override CadObject Clone()
 		{
 			DimensionStyle clone = new DimensionStyle(this.Name);
-			this.mapClone(clone);
+			clone.Style = (TextStyle)this.Style?.Clone();
+			clone.LeaderArrow = (Block)this.LeaderArrow?.Clone();
+			clone.ArrowBlock = (Block)this.ArrowBlock?.Clone();
+			clone.DimArrow1 = (Block)this.DimArrow1?.Clone();
+			clone.DimArrow2 = (Block)this.DimArrow2?.Clone();
 			return clone;
-		}
-
-		protected override void mapClone(CadObject clone)
-		{
-			base.mapClone(clone);
-
-			DimensionStyle style = (DimensionStyle)clone;
-
-			style.PostFix = this.PostFix;
-			style.AlternateDimensioningSuffix = this.AlternateDimensioningSuffix;
-			style.GenerateTolerances = this.GenerateTolerances;
-			style.LimitsGeneration = this.LimitsGeneration;
-			style.TextInsideHorizontal = this.TextInsideHorizontal;
-			style.TextOutsideExtensions = this.TextOutsideExtensions;
-			style.SuppressFirstExtensionLine = this.SuppressFirstExtensionLine;
-			style.SuppressSecondExtensionLine = this.SuppressSecondExtensionLine;
-			style.AlternateUnitDimensioning = this.AlternateUnitDimensioning;
-			style.TextOutsideExtensions = this.TextOutsideExtensions;
-			style.SeparateArrowBlocks = this.SeparateArrowBlocks;
-			style.TextInsideExtensions = this.TextInsideExtensions;
-			style.SuppressOutsideExtensions = this.SuppressOutsideExtensions;
-			style.AlternateUnitDecimalPlaces = this.AlternateUnitDecimalPlaces;
-			style.ZeroHandling = this.ZeroHandling;
-			style.SuppressFirstDimensionLine = this.SuppressFirstDimensionLine;
-			style.SuppressSecondDimensionLine = this.SuppressSecondDimensionLine;
-			style.ToleranceAlignment = this.ToleranceAlignment;
-			style.TextHorizontalAlignment = this.TextHorizontalAlignment;
-			style.DimensionFit = this.DimensionFit;
-			style.CursorUpdate = this.CursorUpdate;
-			style.ToleranceZeroHandling = this.ToleranceZeroHandling;
-			style.AlternateUnitZeroHandling = this.AlternateUnitZeroHandling;
-			style.AngularDimensionDecimalPlaces = this.AngularDimensionDecimalPlaces;
-			style.AlternateUnitToleranceZeroHandling = this.AlternateUnitToleranceZeroHandling;
-			style.TextVerticalAlignment = this.TextVerticalAlignment;
-			style.DimensionUnit = this.DimensionUnit;
-			style.AngularUnit = this.AngularUnit;
-			style.DecimalPlaces = this.DecimalPlaces;
-			style.ToleranceDecimalPlaces = this.ToleranceDecimalPlaces;
-			style.AlternateUnitFormat = this.AlternateUnitFormat;
-			style.AlternateUnitToleranceDecimalPlaces = this.AlternateUnitToleranceDecimalPlaces;
-			style.ScaleFactor = this.ScaleFactor;
-			style.ArrowSize = this.ArrowSize;
-			style.ExtensionLineOffset = this.ExtensionLineOffset;
-			style.DimensionLineIncrement = this.DimensionLineIncrement;
-			style.ExtensionLineExtension = this.ExtensionLineExtension;
-			style.Rounding = this.Rounding;
-			style.DimensionLineExtension = this.DimensionLineExtension;
-			style.PlusTolerance = this.PlusTolerance;
-			style.MinusTolerance = this.MinusTolerance;
-			style.FixedExtensionLineLength = this.FixedExtensionLineLength;
-			style.JoggedRadiusDimensionTransverseSegmentAngle = this.JoggedRadiusDimensionTransverseSegmentAngle;
-			style.TextBackgroundFillMode = this.TextBackgroundFillMode;
-			style.TextBackgroundColor = this.TextBackgroundColor;
-			style.AngularZeroHandling = this.AngularZeroHandling;
-			style.ArcLengthSymbolPosition = this.ArcLengthSymbolPosition;
-			style.TextHeight = this.TextHeight;
-			style.CenterMarkSize = this.CenterMarkSize;
-			style.TickSize = this.TickSize;
-			style.AlternateUnitScaleFactor = this.AlternateUnitScaleFactor;
-			style.LinearScaleFactor = this.LinearScaleFactor;
-			style.TextVerticalPosition = this.TextVerticalPosition;
-			style.ToleranceScaleFactor = this.ToleranceScaleFactor;
-			style.DimensionLineGap = this.DimensionLineGap;
-			style.AlternateUnitRounding = this.AlternateUnitRounding;
-			style.DimensionLineColor = this.DimensionLineColor;
-			style.TextColor = this.TextColor;
-			style.FractionFormat = this.FractionFormat;
-			style.LinearUnitFormat = this.LinearUnitFormat;
-			style.DecimalSeparator = this.DecimalSeparator;
-			style.TextMovement = this.TextMovement;
-			style.IsExtensionLineLengthFixed = this.IsExtensionLineLengthFixed;
-			style.TextDirection = this.TextDirection;
-			style.AltMzf = this.AltMzf;
-			style.Mzf = this.Mzf;
-			style.DimensionLineWeight = this.DimensionLineWeight;
-			style.ExtensionLineWeight = this.ExtensionLineWeight;
-			style.AltMzs = this.AltMzs;
-			style.Mzs = this.Mzs;
-			style.DimensionTextArrowFit = this.DimensionTextArrowFit;
-			style.Style = (TextStyle)this.Style?.Clone();
-			style.LeaderArrow = (Block)this.LeaderArrow?.Clone();
-			style.ArrowBlock = (Block)this.ArrowBlock?.Clone();
-			style.DimArrow1 = (Block)this.DimArrow1?.Clone();
-			style.DimArrow2 = (Block)this.DimArrow2?.Clone();
 		}
 	}
 }

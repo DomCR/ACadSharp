@@ -2,7 +2,6 @@
 using ACadSharp.Entities;
 using ACadSharp.Tables;
 using System;
-using System.Linq;
 
 namespace ACadSharp.Tests.Common
 {
@@ -50,87 +49,7 @@ namespace ACadSharp.Tests.Common
 			if (!randomize)
 				return (Entity)e;
 
-			return (Entity)map(e);
-		}
-
-		private static T map<T>(T e)
-		{
-			foreach (var p in e.GetType()
-				.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
-				.Where(o => o.CanWrite && !o.PropertyType.IsClass && !o.PropertyType.IsEnum && !o.PropertyType.IsInterface))
-			{
-				p.SetValue(e, _random.Next(p.PropertyType));
-			}
-
-			return e;
-
-			switch (e)
-			{
-				case Arc arc:
-					RandomizeArc(arc);
-					break;
-				case Block block:
-					RandomizeBlock(block);
-					break;
-				case Circle circle:
-					RandomizeCircle(circle);
-					break;
-				case Dimension dimension:
-					RandomizeDimension(dimension);
-					switch (dimension)
-					{
-						case DimensionLinear linear:
-							RandomizeDimensionAligned(linear);
-							RandomizeDimensionLinear(linear);
-							break;
-						case DimensionAligned aligned:
-							RandomizeDimensionAligned(aligned);
-							break;
-						case DimensionRadius radius:
-							RandomizeDimensionRadius(radius);
-							break;
-						case DimensionAngular2Line angular2Line:
-							RandomizeDimensionAngular2Line(angular2Line);
-							break;
-						case DimensionAngular3Pt angular3pt:
-							RandomizeDimension3Pt(angular3pt);
-							break;
-						case DimensionDiameter diamenter:
-							RandomizeDimensionDiameter(diamenter);
-							break;
-						case DimensionOrdinate ordinate:
-							RandomizeDimensionOrdinate(ordinate);
-							break;
-						default:
-							throw new NotImplementedException();
-					}
-					break;
-				case Ellipse ellipse:
-					RandomizeEllipse(ellipse);
-					break;
-				case Line line:
-					RandomizeLine(line);
-					break;
-				case LwPolyline lwPolyline:
-					RandomizeLwPolyline(lwPolyline);
-					break;
-				case Point point:
-					RandomizePoint(point);
-					break;
-				case Polyline2D pl2d:
-					RandomizePolyline(pl2d);
-					break;
-				case Polyline3D pl3d:
-					RandomizePolyline(pl3d);
-					break;
-				case TextEntity text:
-					RandomizeText(text);
-					break;
-				default:
-					throw new NotImplementedException();
-			}
-
-			return e;
+			return (Entity)Factory.map(e);
 		}
 
 		public static void RandomizeEntity(Entity entity)

@@ -72,6 +72,8 @@ namespace ACadSharp.Tests.Common
 					return (T)Convert.ChangeType(this.Next(0, 1) == 1, typeof(bool));
 				case byte:
 					return (T)Convert.ChangeType(this.Next(byte.MinValue, byte.MaxValue), typeof(byte));
+				case char:
+					return (T)Convert.ChangeType(this.Next(byte.MinValue, byte.MaxValue), typeof(char));
 				case short:
 					return (T)Convert.ChangeType(this.Next(short.MinValue, short.MaxValue), typeof(short));
 				case ushort:

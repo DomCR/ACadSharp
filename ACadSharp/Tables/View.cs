@@ -1,10 +1,6 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using CSMath;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Tables
 {
@@ -153,9 +149,12 @@ namespace ACadSharp.Tables
 
 		public View(string name) : base(name) { }
 
-		public override TableEntry Clone()
+		public override CadObject Clone()
 		{
-			throw new NotImplementedException();
-		}
+			View clone = (View)base.Clone();
+
+			clone.VisualStyle = (VisualStyle)(this.VisualStyle?.Clone());
+
+			return clone;}
 	}
 }

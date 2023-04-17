@@ -292,9 +292,12 @@ namespace ACadSharp.Tables
 
 		public VPort(string name) : base(name) { }
 
-		public override TableEntry Clone()
+		public override CadObject Clone()
 		{
-			throw new NotImplementedException();
+			VPort clone = (VPort)base.Clone();
+			clone.BaseUcs = (UCS)(this.BaseUcs?.Clone());
+			clone.NamedUcs = (UCS)(this.NamedUcs?.Clone());
+			return clone;
 		}
 	}
 }

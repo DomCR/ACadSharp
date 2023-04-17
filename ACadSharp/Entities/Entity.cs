@@ -143,21 +143,5 @@ namespace ACadSharp.Entities
 				return entry;
 			}
 		}
-
-		protected override void mapClone(CadObject clone)
-		{
-			base.mapClone(clone);
-
-			Entity e = clone as Entity;
-
-			e.Layer = (Layer)this.Layer.Clone();
-			e.Color = this.Color;
-			e.LineWeight = this.LineWeight;
-			e.LinetypeScale = this.LinetypeScale;
-			e.IsInvisible = this.IsInvisible;
-			e.Transparency = this.Transparency;
-			e.LineType = (LineType)this.LineType.Clone();
-			//e.Material = (Material)(this.Material?.Clone());
-		}
 	}
 }

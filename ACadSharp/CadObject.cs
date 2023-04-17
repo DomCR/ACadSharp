@@ -109,11 +109,5 @@ namespace ACadSharp
 		{
 			OnReferenceChanged?.Invoke(this, args);
 		}
-
-		[Obsolete("Use memberwiseclone")]
-		protected virtual void mapClone(CadObject clone)
-		{
-			//TODO: copy ExtendedData, Reactors, XDictionary needed ??
-		}
 	}
 }
