@@ -93,7 +93,7 @@ namespace ACadSharp
 
 			//Collections
 			clone.Reactors.Clear();
-			clone.XDictionary = null;
+			clone.XDictionary = new CadDictionary();
 			clone.ExtendedData.Clear();
 
 			return clone;
