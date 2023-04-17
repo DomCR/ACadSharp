@@ -87,6 +87,8 @@ namespace ACadSharp
 		{
 			CadObject clone = (CadObject)this.MemberwiseClone();
 
+			clone.OnReferenceChanged = null;
+
 			clone.Handle = 0;
 			clone.Document = null;
 			clone.Owner = null;
