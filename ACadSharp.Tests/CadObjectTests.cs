@@ -1,22 +1,48 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.Tests.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using Xunit;
+using ACadSharp.Tests.Common;
+using ACadSharp.Tables.Collections;
 
 namespace ACadSharp.Tests
 {
 	public class CadObjectTests
 	{
-		[Fact]
-		public void CloneTest()
+		public static readonly TheoryData<Type> ACadTypes = new TheoryData<Type>();
+
+		static CadObjectTests()
 		{
-			Circle c = new Circle();
+			foreach (Type item in DataFactory.GetTypes<CadObject>())
+			{
+				ACadTypes.Add(item);
+			}
+		}
 
-			Circle copy = c.Clone() as Circle;
+		[Theory(Skip = "Factory refactor needed")]
+		[MemberData(nameof(ACadTypes))]
+		public void Clone(Type t)
+		{
+			CadObject cadObject = Factory.CreateObject(t);
+			CadObject clone = (CadObject)cadObject.Clone();
 
-			CadObjectTestUtils.AssertEntityClone(c, copy);
+			CadObjectTestUtils.AssertClone(cadObject, clone);
+		}
+
+		[Theory(Skip = "Factory refactor needed")]
+		[MemberData(nameof(ACadTypes))]
+		public void CloneUnattachEvent(Type t)
+		{
+			CadObject cadObject = Factory.CreateObject(t);
+			cadObject.OnReferenceChanged += this.cadObject_OnReferenceChanged;
+
+			CadObject clone = (CadObject)cadObject.Clone();
+
+			CadObjectTestUtils.AssertClone(cadObject, clone);
+		}
+
+		private void cadObject_OnReferenceChanged(object sender, ReferenceChangedEventArgs e)
+		{
+			//The clone must not have any attachment
+			throw new InvalidOperationException();
 		}
 	}
 }

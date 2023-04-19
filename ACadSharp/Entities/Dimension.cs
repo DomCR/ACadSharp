@@ -131,8 +131,17 @@ namespace ACadSharp.Entities
 		/// Dimension style
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 3)]
-		public DimensionStyle Style { get; set; }
+		public DimensionStyle Style { get; set; } = DimensionStyle.Default;
 
 		private string _text;
+
+		public override CadObject Clone()
+		{
+			Dimension clone = (Dimension)base.Clone();
+
+			clone.Style = (DimensionStyle)(this.Style?.Clone());
+
+			return clone;
+		}
 	}
 }

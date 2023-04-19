@@ -86,12 +86,6 @@ namespace ACadSharp
 		public Layout[] Layouts { get { return this._cadObjects.Values.OfType<Layout>().ToArray(); } }   //TODO: Layouts have to go to the designed dictionary or blocks
 
 		/// <summary>
-		/// The collection of all viewports in the drawing
-		/// </summary>
-		[Obsolete("Viewports are only used by the R14 versions of dwg")]
-		public ViewportCollection Viewports { get; private set; }
-
-		/// <summary>
 		/// Root dictionary of the document
 		/// </summary>
 		public CadDictionary RootDictionary
