@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System;
 using System.Linq;
@@ -51,6 +52,23 @@ namespace ACadSharp.Tests.Common
 			if (type == null)
 			{
 				return null;
+			}
+
+			if (type == typeof(XRecrod)
+				|| type == typeof(PlotSettings)
+				|| type == typeof(Material)
+				|| type == typeof(MLStyle)
+				|| type == typeof(Layout)
+				|| type == typeof(Group)
+				|| type == typeof(CadDictionary)
+				|| type == typeof(DictionaryVariable)
+				|| type == typeof(VisualStyle))
+			{
+				object o = Activator.CreateInstance(type);
+				if (!randomize)
+					return (CadObject)o;
+
+				return (CadObject)Factory.map(o);
 			}
 
 			if (type.BaseType == typeof(Entity))

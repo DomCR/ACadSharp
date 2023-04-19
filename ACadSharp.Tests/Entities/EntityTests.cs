@@ -26,5 +26,23 @@ namespace ACadSharp.Tests.Entities
 
 			CadObjectTestUtils.AssertEntityClone(entity, clone);
 		}
+
+		[Theory]
+		[MemberData(nameof(EntityTypes))]
+		public void CloneUnattachEvent(Type t)
+		{
+			Entity entity = EntityFactory.Create(t);
+			entity.OnReferenceChanged += this.entity_OnReferenceChanged;
+
+			Entity clone = (Entity)entity.Clone();
+
+			CadObjectTestUtils.AssertEntityClone(entity, clone);
+		}
+
+		private void entity_OnReferenceChanged(object sender, ReferenceChangedEventArgs e)
+		{
+			//The clone must not have any attachment
+			throw new InvalidOperationException();
+		}
 	}
 }

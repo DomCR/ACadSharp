@@ -1,4 +1,5 @@
-﻿using CSMath;
+﻿using ACadSharp.Objects;
+using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -96,6 +97,8 @@ namespace ACadSharp.Tests.Common
 					return (T)Convert.ChangeType(NextColor(), typeof(Color));
 				case Transparency:
 					return (T)Convert.ChangeType(new Transparency(), typeof(Transparency));
+				case PaperMargin:
+					return (T)Convert.ChangeType(new PaperMargin(), typeof(PaperMargin));
 				default:
 					throw new NotImplementedException();
 			}
