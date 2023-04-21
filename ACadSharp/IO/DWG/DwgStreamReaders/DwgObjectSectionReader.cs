@@ -4423,14 +4423,14 @@ namespace ACadSharp.IO.DWG
 				//This is just the handle used for determining the drawing order of the entity specified by the entity handle in the handle bit stream.
 				//When the sortentstable doesn’t have a
 				//mapping from entity handle to sort handle, then the entity’s own handle is used for sorting.
-				ulong second = this._objectReader.HandleReference();
-				ulong first = this.handleReference();
+				ulong sortHandle = this._objectReader.HandleReference();
+				ulong entityHandle = this.handleReference();
 			}
 
 			//owner handle (soft pointer)
 			template.BlockOwnerHandle = this.handleReference();
 
-			throw new NotImplementedException();
+			return template;
 		}
 
 		private CadTemplate readXRecord()
