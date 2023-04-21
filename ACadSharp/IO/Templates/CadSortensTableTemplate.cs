@@ -1,4 +1,6 @@
-﻿using ACadSharp.Objects;
+﻿using ACadSharp.Blocks;
+using ACadSharp.Objects;
+using ACadSharp.Tables;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
@@ -7,7 +9,7 @@ namespace ACadSharp.IO.Templates
 	{
 		public ulong? BlockOwnerHandle { get; set; }
 
-		public List<(ulong, ulong)> Values { get; } = new List<(ulong, ulong)> ();
+		public List<(ulong, ulong)> Values { get; } = new List<(ulong, ulong)>();
 
 		public CadSortensTableTemplate(SortEntitiesTable cadObject) : base(cadObject)
 		{
@@ -17,14 +19,26 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			if(builder.TryGetCadObject(BlockOwnerHandle,out CadObject owner))
+			if (builder.TryGetCadObject(BlockOwnerHandle, out CadObject owner))
 			{
-
+				// Not always a block
+				if (owner is BlockRecord record)
+				{
+					this.CadObject.BlockOwner = record;
+				}
+				else if (owner is null)
+				{
+					builder.Notify($"Block owner for SortEntitiesTable {this.CadObject.Handle} not found", NotificationType.Warning);
+				}
+				else
+				{
+					builder.Notify($"Block owner for SortEntitiesTable {this.CadObject.Handle} is not a block {owner.GetType().FullName} | {owner.Handle}", NotificationType.Warning);
+				}
 			}
 
-			foreach (var item in Values)
+			foreach ((ulong, ulong) pair in Values)
 			{
-
+				
 			}
 		}
 	}

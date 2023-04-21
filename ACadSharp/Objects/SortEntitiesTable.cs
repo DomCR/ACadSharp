@@ -1,5 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Blocks;
+using ACadSharp.Entities;
+using ACadSharp.Tables;
 
 namespace ACadSharp.Objects
 {
@@ -14,15 +16,33 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.SortentsTable)]
 	public class SortEntitiesTable : CadObject
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectSortEntsTable;
 
-		//330	Soft-pointer ID/handle to owner(currently only the* MODEL_SPACE or* PAPER_SPACE blocks)
-		public Block BlockOwner { get; internal set; }
+		/// <summary>
+		/// Block owner where the table is applied
+		/// </summary>
+		[DxfCodeValue(330)]
+		public BlockRecord BlockOwner { get; internal set; }
 
-		//331	Soft-pointer ID/handle to an entity(zero or more entries may exist)
+		public class Sorter
+		{
+			/// <summary>
+			/// Sort handle
+			/// </summary>
+			[DxfCodeValue(5)]
+			public ulong SortHandle { get; set; }
 
-		//5	Sort handle(zero or more entries may exist)
+			/// <summary>
+			/// Soft-pointer ID/handle to an entity
+			/// </summary>
+			[DxfCodeValue(331)]
+			public Entity Entity { get; set; }
+
+			public Sorter() { }
+		}
 	}
 }
