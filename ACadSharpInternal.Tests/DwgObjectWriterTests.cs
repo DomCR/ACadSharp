@@ -52,6 +52,7 @@ namespace ACadSharpInternal.Tests
 			document.Entities.Add(EntityFactory.Create<Arc>());
 			document.Entities.Add(EntityFactory.Create<Circle>());
 			document.Entities.Add(EntityFactory.Create<Ellipse>());
+			document.Entities.Add(EntityFactory.Create(typeof(Insert)));
 			document.Entities.Add(EntityFactory.Create<Line>());
 			document.Entities.Add(EntityFactory.Create<Point>());
 			document.Entities.Add(EntityFactory.Create<TextEntity>());
