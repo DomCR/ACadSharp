@@ -1,6 +1,4 @@
-﻿using ACadSharp.IO.Templates;
-
-namespace ACadSharp.Tables.Collections
+﻿namespace ACadSharp.Tables.Collections
 {
 	public class UCSTable : Table<UCS>
 	{

@@ -63,6 +63,14 @@ namespace ACadSharp
 		}
 
 		/// <summary>
+		/// Removes all elements from the Collection
+		/// </summary>
+		public void Clear()
+		{
+			this._entries.Clear();
+		}
+
+		/// <summary>
 		/// Removes a <see cref="CadObject"/> from the collection, this method triggers <see cref="OnRemove"/>
 		/// </summary>
 		/// <param name="item"></param>

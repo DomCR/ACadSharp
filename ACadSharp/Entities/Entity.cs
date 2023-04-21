@@ -11,7 +11,7 @@ namespace ACadSharp.Entities
 	/// The standard class for a basic CAD entity.
 	/// </summary>
 	[DxfSubClass(DxfSubclassMarker.Entity)]
-	public abstract class Entity : CadObject, ICloneable, IEntity
+	public abstract class Entity : CadObject, IEntity
 	{
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name, 8)]
@@ -119,11 +119,13 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public object Clone()
+		public override CadObject Clone()
 		{
-			var clone = Activator.CreateInstance(this.GetType());
+			Entity clone = (Entity)base.Clone();
 
-			this.createCopy(clone as CadObject);
+			clone.Layer = (Layer)this.Layer.Clone();
+			clone.LineType = (LineType)this.LineType.Clone();
+			clone.Material = (Material)this.Material?.Clone();
 
 			return clone;
 		}
@@ -140,22 +142,6 @@ namespace ACadSharp.Entities
 				table.Add(entry);
 				return entry;
 			}
-		}
-
-		protected override void createCopy(CadObject copy)
-		{
-			base.createCopy(copy);
-
-			Entity e = copy as Entity;
-
-			e.Layer = (Layer)this.Layer.Clone();
-			e.Color = this.Color;
-			e.LineWeight = this.LineWeight;
-			e.LinetypeScale = this.LinetypeScale;
-			e.IsInvisible = this.IsInvisible;
-			e.Transparency = this.Transparency;
-			e.LineType = (LineType)this.LineType.Clone();
-			//e.Material = (Material)(this.Material?.Clone());
 		}
 	}
 }

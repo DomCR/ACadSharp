@@ -3881,8 +3881,7 @@ namespace ACadSharp.IO.DWG
 		{
 			return null;
 
-			DwgViewportEntityControlTemplate template = new DwgViewportEntityControlTemplate(
-				this._builder.DocumentToBuild.Viewports);
+			DwgViewportEntityControlTemplate template = new DwgViewportEntityControlTemplate();
 
 			this.readCommonNonEntityData(template);
 

@@ -149,6 +149,20 @@ namespace ACadSharp.Entities
 			throw new NotImplementedException();
 		}
 
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			Insert clone = (Insert)base.Clone();
+
+			clone.Block = (BlockRecord)this.Block.Clone();
+			foreach (var att in Attributes)
+			{
+				clone.Attributes.Add((AttributeEntity)att.Clone());
+			}
+
+			return clone;
+		}
+
 		private void attributesOnAdd(object sender, CollectionChangedEventArgs e)
 		{
 			this.Block.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));

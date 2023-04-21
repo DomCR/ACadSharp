@@ -1,6 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Types;
-using ACadSharp.IO.Templates;
 using System;
 using System.Collections.Generic;
 
@@ -81,6 +79,20 @@ namespace ACadSharp.Tables
 
 			segment.LineType = this;
 			this._segments.Add(segment);
+		}
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			LineType clone = new LineType(this.Name);
+
+			clone._segments.Clear();
+			foreach (var segment in this._segments)
+			{
+				clone.AddSegment(segment.Clone());
+			}
+
+			return clone;
 		}
 	}
 }

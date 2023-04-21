@@ -73,5 +73,21 @@ namespace ACadSharp.Entities
 		public List<Vertex> Vertices { get; set; } = new List<Vertex>();
 
 		public MLine() : base() { }
+
+		public override CadObject Clone()
+		{
+			MLine clone = (MLine)base.Clone();
+
+			clone.MlStyleName = (MLStyle)(this.MlStyleName?.Clone());
+			clone.MLStyle = (MLStyle)(this.MLStyle?.Clone());
+
+			clone.Vertices.Clear();
+			foreach (var item in this.Vertices)
+			{
+				clone.Vertices.Add(item.Clone());
+			}
+
+			return clone;
+		}
 	}
 }
