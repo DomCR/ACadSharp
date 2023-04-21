@@ -12,9 +12,9 @@ namespace ACadSharp.IO.Templates
 
 		public List<(ulong, ulong)> Values { get; } = new List<(ulong, ulong)>();
 
-		public CadSortensTableTemplate(SortEntitiesTable cadObject) : base(cadObject)
-		{
-		}
+		public CadSortensTableTemplate() : base(new SortEntitiesTable()) { }
+
+		public CadSortensTableTemplate(SortEntitiesTable cadObject) : base(cadObject) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{

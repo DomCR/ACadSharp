@@ -28,8 +28,7 @@
 		public const string TableStyle = "STYLE";
 		public const string TableUcs = "UCS";
 		public const string TableView = "VIEW";
-		public const string TableVport = "VPORT"; 
-		public const string TableXRecord = "XRECORD"; 
+		public const string TableVport = "VPORT";
 
 		#endregion
 
@@ -89,6 +88,8 @@
 
 		#endregion
 
+		#region Objects
+
 		public const string ObjectsSection = "OBJECTS";
 		public const string ObjectDictionary = "DICTIONARY";
 		public const string ObjectDictionaryVar = "DICTIONARYVAR";
@@ -97,5 +98,8 @@
 		public const string ObjectMLStyle = "MLINESTYLE";
 		public const string ObjectVisualStyle = "VISUALSTYLE";
 		public const string ObjectSortEntsTable = "SORTENTSTABLE";
+		public const string ObjectXRecord = "XRECORD";
+
+		#endregion
 	}
 }
