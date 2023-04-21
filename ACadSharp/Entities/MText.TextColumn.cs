@@ -48,6 +48,11 @@ namespace ACadSharp.Entities
 			/// </summary>
 			[DxfCodeValue(50)]
 			public List<double> ColumnHeights { get; } = new List<double>();
+
+			public TextColumn Clone()
+			{
+				return this.MemberwiseClone() as TextColumn;
+			}
 		}
 	}
 }

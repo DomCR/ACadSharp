@@ -76,6 +76,31 @@ namespace ACadSharp
 		/// </summary>
 		public CadObject() { }
 
+		/// <summary>
+		/// Creates a new object that is a copy of the current instance.
+		/// </summary>
+		/// <remarks>
+		/// The copy will be unatached from the document or any reference
+		/// </remarks>
+		/// <returns>A new object that is a copy of this instance.</returns>
+		public virtual CadObject Clone()
+		{
+			CadObject clone = (CadObject)this.MemberwiseClone();
+
+			clone.OnReferenceChanged = null;
+
+			clone.Handle = 0;
+			clone.Document = null;
+			clone.Owner = null;
+
+			//Collections
+			clone.Reactors.Clear();
+			clone.XDictionary = new CadDictionary();
+			clone.ExtendedData.Clear();
+
+			return clone;
+		}
+
 		/// <inheritdoc/>
 		public override string ToString()
 		{
@@ -85,11 +110,6 @@ namespace ACadSharp
 		protected void onReferenceChange(ReferenceChangedEventArgs args)
 		{
 			OnReferenceChanged?.Invoke(this, args);
-		}
-
-		protected virtual void createCopy(CadObject copy)
-		{
-			//TODO: copy ExtendedData, Reactors, XDictionary needed ??
 		}
 	}
 }

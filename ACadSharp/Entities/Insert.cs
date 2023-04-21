@@ -150,31 +150,17 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public override object Clone()
+		public override CadObject Clone()
 		{
-			Insert clone = new Insert((BlockRecord)this.Block.Clone());
+			Insert clone = (Insert)base.Clone();
 
-			this.createCopy(clone);
+			clone.Block = (BlockRecord)this.Block.Clone();
+			foreach (var att in Attributes)
+			{
+				clone.Attributes.Add((AttributeEntity)att.Clone());
+			}
 
 			return clone;
-		}
-
-		protected override void createCopy(CadObject clone)
-		{
-			base.createCopy(clone);
-
-			Insert c = clone as Insert;
-
-			c.Normal = this.Normal;
-			c.InsertPoint = this.InsertPoint;
-			c.XScale = this.XScale;
-			c.YScale = this.YScale;
-			c.ZScale = this.ZScale;
-			c.Rotation = this.Rotation;
-			c.ColumnCount = this.ColumnCount;
-			c.RowCount = this.RowCount;
-			c.ColumnSpacing = this.ColumnSpacing;
-			c.RowSpacing = this.RowSpacing;
 		}
 
 		private void attributesOnAdd(object sender, CollectionChangedEventArgs e)

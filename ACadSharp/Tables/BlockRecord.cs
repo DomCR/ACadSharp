@@ -79,6 +79,10 @@ namespace ACadSharp.Tables
 			set
 			{
 				this._layout = value;
+
+				if (value == null)
+					return;
+
 				this._layout.AssociatedBlock = this;
 			}
 		}
@@ -162,27 +166,35 @@ namespace ACadSharp.Tables
 			this.Viewports = new CadObjectCollection<Viewport>(this);
 		}
 
-		protected override void createCopy(CadObject copy)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		/// <exception cref="System.NotImplementedException"></exception>
+		public SortEntitiesTable CreateSortEntitiesTable()
 		{
-			base.createCopy(copy);
+			throw new System.NotImplementedException();
+		}
 
-			BlockRecord bl = copy as BlockRecord;
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			BlockRecord clone = (BlockRecord)base.Clone();
 
-			bl.Units = this.Units;
-			bl.IsExplodable = this.IsExplodable;
-			bl.CanScale = this.CanScale;
-			bl.Preview = this.Preview;
-			//bl.Layout = this.Layout?.Clone();
+			clone.Layout = (Layout)(this.Layout?.Clone());
 
+			clone.Entities.Clear();
 			foreach (var item in this.Entities)
 			{
-				bl.Entities.Add((Entity)item.Clone());
+				clone.Entities.Add((Entity)item.Clone());
 			}
 
-			bl.BlockEntity = (Block)this.BlockEntity.Clone();
-			bl.BlockEntity.Owner = this;
-			bl.BlockEnd = (BlockEnd)this.BlockEnd.Clone();
-			bl.BlockEnd.Owner = this;
+			clone.BlockEntity = (Block)this.BlockEntity.Clone();
+			clone.BlockEntity.Owner = this;
+			clone.BlockEnd = (BlockEnd)this.BlockEnd.Clone();
+			clone.BlockEnd.Owner = this;
+
+			return clone;
 		}
 	}
 }

@@ -196,6 +196,8 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(441)]
 		public Transparency BackgroundTransparency { get; set; }
 
+		public TextColumn Column { get; set; } = new TextColumn();
+
 		public bool IsAnnotative { get; set; }
 
 		private double _height = 0.0;
@@ -204,8 +206,16 @@ namespace ACadSharp.Entities
 
 		private double _rotation = 0.0;
 
-		public TextColumn Column { get; set; } = new TextColumn();
-
 		public MText() : base() { }
+
+		public override CadObject Clone()
+		{
+			MText clone = (MText)base.Clone();
+
+			clone.Style = (TextStyle)(this.Style?.Clone());
+			clone.Column = this.Column?.Clone();
+
+			return clone;
+		}
 	}
 }

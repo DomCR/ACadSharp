@@ -57,5 +57,7 @@ namespace ACadSharp.Tables
 		public OrthographicType OrthographicType { get; set; }
 
 		public UCS() : base() { }
+
+		public UCS(string name) : base(name) { }
 	}
 }

@@ -61,6 +61,10 @@ namespace ACadSharp.Blocks
 		[DxfCodeValue(4)]
 		public string Comments { get; set; }
 
+		internal Block()
+		{
+		}
+
 		public Block(BlockRecord record) : base()
 		{
 			this.Owner = record;
@@ -70,25 +74,13 @@ namespace ACadSharp.Blocks
 		/// <remarks>
 		/// Cloning a block will also unatach it from the record
 		/// </remarks>
-		public override object Clone()
+		public override CadObject Clone()
 		{
-			Block clone = new Block(new BlockRecord(this.BlockOwner.Name));
+			Block clone = (Block)base.Clone();
 
-			this.createCopy(clone);
+			clone.Owner = new BlockRecord(this.Name);
 
 			return clone;
-		}
-
-		protected override void createCopy(CadObject clone)
-		{
-			base.createCopy(clone);
-
-			Block block = clone as Block;
-
-			block.Flags = this.Flags;
-			block.BasePoint = this.BasePoint;
-			block.XrefPath = this.XrefPath;
-			block.Comments = this.Comments;
 		}
 	}
 }

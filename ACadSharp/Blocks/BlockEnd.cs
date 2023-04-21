@@ -25,11 +25,10 @@ namespace ACadSharp.Blocks
 		}
 
 		/// <inheritdoc/>
-		public override object Clone()
+		public override CadObject Clone()
 		{
-			BlockEnd clone = new BlockEnd(new BlockRecord(((BlockRecord)this.Owner).Name));
-
-			this.createCopy(clone);
+			BlockEnd clone = (BlockEnd)base.Clone();
+			clone.Owner = new BlockRecord((this.Owner as BlockRecord).Name);
 			return clone;
 		}
 	}
