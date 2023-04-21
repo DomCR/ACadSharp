@@ -5,7 +5,6 @@ using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using System.Linq;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace ACadSharp.Tables
 {
@@ -165,6 +164,16 @@ namespace ACadSharp.Tables
 			this.BlockEnd = new BlockEnd(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
 			this.Viewports = new CadObjectCollection<Viewport>(this);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		/// <exception cref="System.NotImplementedException"></exception>
+		public SortEntitiesTable CreateSortEntitiesTable()
+		{
+			throw new System.NotImplementedException();
 		}
 
 		/// <inheritdoc/>

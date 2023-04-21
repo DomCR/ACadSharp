@@ -4424,6 +4424,8 @@ namespace ACadSharp.IO.DWG
 				//mapping from entity handle to sort handle, then the entity’s own handle is used for sorting.
 				ulong sortHandle = this._objectReader.HandleReference();
 				ulong entityHandle = this.handleReference();
+
+				template.Values.Add((sortHandle, entityHandle));
 			}
 
 			//owner handle (soft pointer)

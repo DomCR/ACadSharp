@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Blocks;
+using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Collections.Generic;
@@ -38,7 +39,19 @@ namespace ACadSharp.IO.Templates
 
 			foreach ((ulong, ulong) pair in Values)
 			{
-				
+				if (builder.TryGetCadObject(pair.Item2, out Entity entity))
+				{
+					SortEntitiesTable.Sorter sorter = new SortEntitiesTable.Sorter
+					{
+						SortHandle = pair.Item1,
+						Entity = entity
+					};
+					this.CadObject.Sorters.Add(sorter);
+				}
+				else
+				{
+					builder.Notify($"Entity in SortEntitiesTable {this.CadObject.Handle} not found {pair.Item2}", NotificationType.Warning);
+				}
 			}
 		}
 	}

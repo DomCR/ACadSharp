@@ -2,6 +2,7 @@
 using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
+using System.Collections.Generic;
 
 namespace ACadSharp.Objects
 {
@@ -27,6 +28,8 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(330)]
 		public BlockRecord BlockOwner { get; internal set; }
+
+		public List<Sorter> Sorters { get; } = new List<Sorter>();
 
 		public class Sorter
 		{
