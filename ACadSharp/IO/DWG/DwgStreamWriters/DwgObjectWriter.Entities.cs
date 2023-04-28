@@ -52,7 +52,8 @@ namespace ACadSharp.IO.DWG
 					this.writeEllipse(ellipse);
 					break;
 				case Insert insert:
-					throw new NotImplementedException();
+					this.writeInsert(insert);
+					break;
 				case Line l:
 					this.writeLine(l);
 					break;
@@ -255,6 +256,11 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(ellipse.RadiusRatio);
 			this._writer.WriteBitDouble(ellipse.StartParameter);
 			this._writer.WriteBitDouble(ellipse.EndParameter);
+		}
+
+		private void writeInsert(Insert insert)
+		{
+			throw new NotImplementedException();
 		}
 
 		private void writeLine(Line line)
