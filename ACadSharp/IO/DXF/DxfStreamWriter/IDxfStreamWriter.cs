@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 
 namespace ACadSharp.IO.DXF
 {
@@ -9,5 +8,9 @@ namespace ACadSharp.IO.DXF
 		void Write(DxfCode code, object value);
 
 		void Write(int code, object value);
+
+		void Flush();
+
+		void Close();
 	}
 }

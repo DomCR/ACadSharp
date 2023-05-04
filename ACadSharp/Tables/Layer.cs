@@ -1,9 +1,6 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Tables
 {
@@ -88,13 +85,12 @@ namespace ACadSharp.Tables
 				throw new ArgumentNullException(nameof(name), "Layer must have a name.");
 		}
 
-		protected override void createCopy(CadObject copy)
+		public override CadObject Clone()
 		{
-			base.createCopy(copy);
-
-			Layer l = copy as Layer;
-
-
+			Layer clone = new Layer(this.Name);
+			clone.LineType = (LineType)this.LineType.Clone();
+			clone.Material = (Material)(this.Material?.Clone());
+			return clone;
 		}
 	}
 }

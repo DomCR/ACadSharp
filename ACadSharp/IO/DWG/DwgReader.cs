@@ -45,10 +45,23 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		public static CadDocument Read(Stream stream, NotificationEventHandler notification = null)
 		{
+			return Read(stream, new DwgReaderConfiguration(), notification);
+		}
+
+		/// <summary>
+		/// Read a dwg document in a stream.
+		/// </summary>
+		/// <param name="stream"></param>
+		/// <param name="configuration"></param>
+		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
+		/// <returns></returns>
+		public static CadDocument Read(Stream stream, DwgReaderConfiguration configuration, NotificationEventHandler notification = null)
+		{
 			CadDocument doc = null;
 
 			using (DwgReader reader = new DwgReader(stream, notification))
 			{
+				reader.Configuration = configuration;
 				doc = reader.Read();
 			}
 

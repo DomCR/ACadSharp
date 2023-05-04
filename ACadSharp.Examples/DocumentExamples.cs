@@ -1,10 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
-using ACadSharp.Tables;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ACadSharp.Examples
 {
@@ -24,7 +21,7 @@ namespace ACadSharp.Examples
 		}
 
 		/// <summary>
-		/// Get all the blocks in the model
+		/// Get all the instances of an specific block in the model
 		/// </summary>
 		/// <param name="file"></param>
 		/// <param name="blockname"></param>

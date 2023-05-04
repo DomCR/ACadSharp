@@ -1,32 +1,12 @@
-﻿using ACadSharp.Entities;
+﻿using ACadSharp.Blocks;
+using ACadSharp.Entities;
+using ACadSharp.Tables;
 using System;
 
 namespace ACadSharp.Tests.Common
 {
-	public static class EntityFactory
+	public class EntityFactory : Factory
 	{
-		public static int Seed
-		{
-			get
-			{
-				return _seed;
-			}
-			set
-			{
-				_seed = value;
-				_random = new CSMathRandom(_seed);
-			}
-		}
-
-		private static int _seed;
-
-		private static CSMathRandom _random;
-
-		static EntityFactory()
-		{
-			_random = new CSMathRandom();
-		}
-
 		public static T CreateDefault<T>()
 			where T : Entity, new()
 		{
@@ -42,75 +22,34 @@ namespace ACadSharp.Tests.Common
 		public static T Create<T>(bool randomize = true)
 			where T : Entity, new()
 		{
-			T e = new();
+			return (T)Create(typeof(T), randomize);
+		}
 
-			if (!randomize)
-				return e;
+		public static Entity Create(Type type, bool randomize = true)
+		{
+			object e = null;
 
-			switch (e)
+			if (type == typeof(Insert))
 			{
-				case Arc arc:
-					RandomizeArc(arc);
-					break;
-				case Circle circle:
-					RandomizeCircle(circle);
-					break;
-				case Dimension dimension:
-					RandomizeDimension(dimension);
-					switch (dimension)
-					{
-						case DimensionLinear linear:
-							RandomizeDimensionAligned(linear);
-							RandomizeDimensionLinear(linear);
-							break;
-						case DimensionAligned aligned:
-							RandomizeDimensionAligned(aligned);
-							break;
-						case DimensionRadius radius:
-							RandomizeDimensionRadius(radius);
-							break;
-						case DimensionAngular2Line angular2Line:
-							RandomizeDimensionAngular2Line(angular2Line);
-							break;
-						case DimensionAngular3Pt angular3pt:
-							RandomizeDimension3Pt(angular3pt);
-							break;
-						case DimensionDiameter diamenter:
-							RandomizeDimensionDiameter(diamenter);
-							break;
-						case DimensionOrdinate ordinate:
-							RandomizeDimensionOrdinate(ordinate);
-							break;
-						default:
-							throw new NotImplementedException();
-					}
-					break;
-				case Ellipse ellipse:
-					RandomizeEllipse(ellipse);
-					break;
-				case Line line:
-					RandomizeLine(line);
-					break;
-				case LwPolyline lwPolyline:
-					RandomizeLwPolyline(lwPolyline);
-					break;
-				case Point point:
-					RandomizePoint(point);
-					break;
-				case Polyline2D pl2d:
-					RandomizePolyline(pl2d);
-					break;
-				case Polyline3D pl3d:
-					RandomizePolyline(pl3d);
-					break;
-				case TextEntity text:
-					RandomizeText(text);
-					break;
-				default:
-					throw new NotImplementedException();
+				e = new Insert(TableEntryFactory.Create<BlockRecord>());
+			}
+			else if (type == typeof(Block))
+			{
+				e = new Block(TableEntryFactory.Create<BlockRecord>());
+			}
+			else if (type == typeof(BlockEnd))
+			{
+				e = new BlockEnd(TableEntryFactory.Create<BlockRecord>());
+			}
+			else
+			{
+				e = Activator.CreateInstance(type);
 			}
 
-			return e;
+			if (!randomize)
+				return (Entity)e;
+
+			return (Entity)Factory.map(e);
 		}
 
 		public static void RandomizeEntity(Entity entity)
@@ -124,6 +63,15 @@ namespace ACadSharp.Tests.Common
 
 			arc.StartAngle = _random.NextDouble();
 			arc.EndAngle = _random.NextDouble();
+		}
+
+		public static void RandomizeBlock(Block block)
+		{
+			RandomizeEntity(block);
+
+			block.BasePoint = _random.NextXYZ();
+			//block.XrefPath = _random.RandomString(10);
+			block.Comments = _random.RandomString(10);
 		}
 
 		public static void RandomizeCircle(Circle circle)

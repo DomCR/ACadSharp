@@ -1,14 +1,4 @@
-﻿#region copyright
-//Copyright 2021, Albert Domenech.
-//All rights reserved. 
-//This source code is licensed under the MIT license. 
-//See LICENSE file in the project root for full license information.
-#endregion
-using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ACadSharp.Attributes;
 
 namespace ACadSharp.Entities
 {
@@ -36,10 +26,27 @@ namespace ACadSharp.Entities
 		/// Specifies the tag string of the object
 		/// </summary>
 		/// <value>
-		/// Cannot contain spaces
+		/// Cannot contain spaces (not applied)
 		/// </value> 
 		[DxfCodeValue(2)]
-		public string Tag { get; set; }
+		public string Tag
+		{
+			get { return this._tag; }
+			set
+			{
+				this._tag = value;
+				return;
+
+				//TODO: explore AttributeBase tag constrain
+				if (value == null)
+					throw new System.ArgumentNullException(nameof(value));
+
+				if (value.Contains(" "))
+					throw new System.ArgumentException($"Attribute Tag {value} cannot contain spaces", nameof(value));
+
+				this._tag = value;
+			}
+		}
 
 		/// <summary>
 		/// Attribute flags
@@ -58,6 +65,33 @@ namespace ACadSharp.Entities
 		//Missmatch between Autodesk documentation and OpenDesign
 		public bool IsReallyLocked { get; set; }
 
+		private string _tag = string.Empty;
+
 		public AttributeBase() : base() { }
+
+		protected void matchAttributeProperties(AttributeBase src)
+		{
+			src.MatchProperties(this);
+
+			this.Thickness = src.Thickness;
+			this.InsertPoint = src.InsertPoint;
+			this.Height = src.Height;
+			this.Value = src.Value;
+			this.Rotation = src.Rotation;
+			this.WidthFactor = src.WidthFactor;
+			this.ObliqueAngle = src.ObliqueAngle;
+			this.Style = (Tables.TextStyle)src.Style.Clone();
+			this.Mirror = src.Mirror;
+			this.HorizontalAlignment = src.HorizontalAlignment;
+			this.AlignmentPoint = src.AlignmentPoint;
+			this.Normal = src.Normal;
+			this.VerticalAlignment = src.VerticalAlignment;
+
+			this.Version = src.Version;
+			this.Tag = src.Tag;
+			this.Flags = src.Flags;
+			this.AttributeType = src.AttributeType;
+			this.IsReallyLocked = src.IsReallyLocked;
+		}
 	}
 }

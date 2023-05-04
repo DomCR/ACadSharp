@@ -1,7 +1,6 @@
 ﻿using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using System;
-using System.Linq;
 
 namespace ACadSharp.IO.DXF
 {
@@ -57,7 +56,10 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.ObjectDictionaryVar:
 					template = new CadTemplate<DictionaryVariable>(new DictionaryVariable());
 					break;
-				case DxfFileToken.TableXRecord:
+				case DxfFileToken.ObjectSortEntsTable:
+					this.readSortentsTable();
+					break;
+				case DxfFileToken.ObjectXRecord:
 					template = new CadXRecordTemplate(new XRecrod());
 					break;
 				default:
@@ -140,6 +142,53 @@ namespace ACadSharp.IO.DXF
 					default:
 						this._builder.Notify($"Group Code not handled {this._reader.LastGroupCodeValue} for {typeof(CadDictionary)}, code : {this._reader.LastCode} | value : {this._reader.LastValueAsString}");
 						break;
+				}
+
+				this._reader.ReadNext();
+			}
+
+			return template;
+		}
+
+		private CadTemplate readSortentsTable()
+		{
+			SortEntitiesTable sortTable = new SortEntitiesTable();
+			CadSortensTableTemplate template = new CadSortensTableTemplate(sortTable);
+
+			//Jump the 0 marker
+			this._reader.ReadNext();
+
+			this.readCommonObjectData(template);
+
+			System.Diagnostics.Debug.Assert(DxfSubclassMarker.SortentsTable == this._reader.LastValueAsString);
+
+			//Jump the 100 marker
+			this._reader.ReadNext();
+
+			(ulong?, ulong?) pair = (null, null);
+
+			while (this._reader.LastDxfCode != DxfCode.Start)
+			{
+				switch (this._reader.LastCode)
+				{
+					case 5:
+						pair.Item1 = this._reader.LastValueAsHandle;
+						break;
+					case 330:
+						template.BlockOwnerHandle = this._reader.LastValueAsHandle;
+						break;
+					case 331:
+						pair.Item2 = this._reader.LastValueAsHandle;
+						break;
+					default:
+						this._builder.Notify($"Group Code not handled {this._reader.LastGroupCodeValue} for {typeof(SortEntitiesTable)}, code : {this._reader.LastCode} | value : {this._reader.LastValueAsString}");
+						break;
+				}
+
+				if (pair.Item1.HasValue && pair.Item2.HasValue)
+				{
+					template.Values.Add((pair.Item1.Value, pair.Item2.Value));
+					pair = (null, null);
 				}
 
 				this._reader.ReadNext();
