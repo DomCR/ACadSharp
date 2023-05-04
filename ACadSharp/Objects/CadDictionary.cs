@@ -19,8 +19,8 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.Dictionary)]
 	public class CadDictionary : CadObject, IObservableCollection<CadObject>
 	{
-		public event EventHandler<ReferenceChangedEventArgs> OnAdd;
-		public event EventHandler<ReferenceChangedEventArgs> OnRemove;
+		public event EventHandler<CollectionChangedEventArgs> OnAdd;
+		public event EventHandler<CollectionChangedEventArgs> OnRemove;
 
 		#region Root dictionary entries
 
@@ -152,7 +152,7 @@ namespace ACadSharp.Objects
 			this._entries.Add(key, value);
 			value.Owner = this;
 
-			OnAdd?.Invoke(this, new ReferenceChangedEventArgs(value));
+			OnAdd?.Invoke(this, new CollectionChangedEventArgs(value));
 		}
 
 		/// <summary>
@@ -165,7 +165,7 @@ namespace ACadSharp.Objects
 			if (this._entries.Remove(key, out CadObject item))
 			{
 				item.Owner = null;
-				OnRemove?.Invoke(this, new ReferenceChangedEventArgs(item));
+				OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));
 				return item;
 			}
 

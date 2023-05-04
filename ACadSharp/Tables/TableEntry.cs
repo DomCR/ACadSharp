@@ -4,7 +4,7 @@ using System;
 namespace ACadSharp.Tables
 {
 	[DxfSubClass(DxfSubclassMarker.TableRecord, true)]
-	public abstract class TableEntry : CadObject, INamedCadObject, ICloneable
+	public abstract class TableEntry : CadObject, INamedCadObject
 	{
 		/// <summary>
 		/// Specifies the name of the object
@@ -26,29 +26,9 @@ namespace ACadSharp.Tables
 		}
 
 		/// <inheritdoc/>
-		public object Clone()
-		{
-			var clone = Activator.CreateInstance(this.GetType(), this.Name);
-
-			this.createCopy(clone as CadObject);
-
-			return clone;
-		}
-
-		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{this.ObjectName}:{this.Name}";
-		}
-
-		protected override void createCopy(CadObject copy)
-		{
-			base.createCopy(copy);
-
-			TableEntry te = copy as TableEntry;
-
-			te.Name = this.Name;
-			te.Flags = this.Flags;
 		}
 	}
 }

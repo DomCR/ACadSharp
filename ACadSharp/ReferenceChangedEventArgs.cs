@@ -2,7 +2,6 @@
 
 namespace ACadSharp
 {
-	// TODO: Add an eventargs for adding and removing from lists??
 	public class ReferenceChangedEventArgs : EventArgs
 	{
 		/// <summary>
@@ -14,11 +13,6 @@ namespace ACadSharp
 		/// Old value for the object
 		/// </summary>
 		public CadObject Old { get; }
-
-		public ReferenceChangedEventArgs(CadObject curr)
-		{
-			this.Current = curr;
-		}
 
 		public ReferenceChangedEventArgs(CadObject curr, CadObject old)
 		{

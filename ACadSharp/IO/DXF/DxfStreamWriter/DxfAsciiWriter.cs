@@ -26,9 +26,17 @@ namespace ACadSharp.IO.DXF
 		/// <inheritdoc/>
 		public void Dispose()
 		{
-			this._stream.Flush();
-			this._stream.Close();
 			this._stream.Dispose();
+		}
+
+		public void Flush()
+		{
+			this._stream.Flush();
+		}
+
+		public void Close()
+		{
+			this._stream.Close();
 		}
 
 		private void writeDxfCode(int code)

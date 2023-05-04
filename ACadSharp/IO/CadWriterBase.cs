@@ -4,6 +4,14 @@
 	{
 		public event NotificationEventHandler OnNotification;
 
+		/// <summary>
+		/// Notifies the writer to close the stream once the operation is completed
+		/// </summary>
+		/// <value>
+		/// true
+		/// </value>
+		public bool CloseStream { get; set; } = true;
+
 		/// <inheritdoc/>
 		public abstract void Write();
 

@@ -13,6 +13,11 @@ namespace ACadSharp
 		{
 			this._data.Add(app, edata);
 		}
+
+		public void Clear()
+		{
+			this._data.Clear();
+		}
 	}
 
 	public class ExtendedData

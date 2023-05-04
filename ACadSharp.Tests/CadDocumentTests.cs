@@ -1,19 +1,31 @@
-﻿using ACadSharp;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ACadSharp.Tables.Collections;
+﻿using System;
 using ACadSharp.Tables;
 using Xunit;
 using ACadSharp.Tests.Common;
 using ACadSharp.Entities;
 using Xunit.Abstractions;
+using ACadSharp.Blocks;
 
 namespace ACadSharp.Tests
 {
 	public class CadDocumentTests
 	{
+		public static readonly TheoryData<Type> EntityTypes;
+
 		protected readonly DocumentIntegrity _docIntegrity;
+
+		static CadDocumentTests()
+		{
+			EntityTypes = new TheoryData<Type>();
+
+			foreach (var item in DataFactory.GetTypes<Entity>())
+			{
+				if (item == typeof(Block) || item == typeof(BlockEnd))
+					continue;
+
+				EntityTypes.Add(item);
+			}
+		}
 
 		public CadDocumentTests(ITestOutputHelper output)
 		{
@@ -77,21 +89,61 @@ namespace ACadSharp.Tests
 		}
 
 		[Fact]
-		public void DetachedEntityClone()
+		public void ChangeEntityLayer()
 		{
 			Line line = new Line();
+			Layer layer = new Layer("test_layer");
+
 			CadDocument doc = new CadDocument();
 
 			doc.Entities.Add(line);
 
-			Line clone = (Line)doc.GetCadObject<Line>(line.Handle).Clone();
+			Line l = doc.GetCadObject<Line>(line.Handle);
+			l.Layer = layer;
+
+			//Assert layer
+			Assert.Equal(l.Layer, layer);
+			Assert.False(0 == layer.Handle);
+			Assert.NotNull(doc.Layers[layer.Name]);
+			Assert.Equal(layer, doc.Layers[layer.Name]);
+		}
+
+		[Fact]
+		public void ChangeEntityLineType()
+		{
+			Line line = new Line();
+			LineType lineType = new LineType("test_linetype");
+
+			CadDocument doc = new CadDocument();
+
+			doc.Entities.Add(line);
+
+			Line l = doc.GetCadObject<Line>(line.Handle);
+			l.LineType = lineType;
+
+			//Assert layer
+			Assert.Equal(l.LineType, lineType);
+			Assert.False(0 == lineType.Handle);
+			Assert.NotNull(doc.LineTypes[lineType.Name]);
+			Assert.Equal(lineType, doc.LineTypes[lineType.Name]);
+		}
+
+		[Theory]
+		[MemberData(nameof(EntityTypes))]
+		public void DetachedEntityClone(Type entityType)
+		{
+			Entity entity = EntityFactory.Create(entityType);
+			CadDocument doc = new CadDocument();
+
+			doc.Entities.Add(entity);
+
+			Entity clone = (Entity)doc.GetCadObject<Entity>(entity.Handle).Clone();
 
 			//Assert clone
-			Assert.NotEqual(clone, line);
+			Assert.NotEqual(clone, entity);
 			Assert.True(0 == clone.Handle);
 			Assert.Null(clone.Document);
 			Assert.Null(clone.Owner);
-
 			Assert.Null(clone.Layer.Document);
 			Assert.Null(clone.LineType.Document);
 		}

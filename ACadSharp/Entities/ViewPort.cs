@@ -3,7 +3,6 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Entities
 {
@@ -285,5 +284,14 @@ namespace ACadSharp.Entities
 		//Soft pointer reference to viewport object (for layer VP property override)
 
 		public Viewport() : base() { }
+
+		public override CadObject Clone()
+		{
+			Viewport clone = (Viewport)base.Clone();
+
+			clone.VisualStyle = (VisualStyle)this.VisualStyle?.Clone();
+
+			return clone;
+		}
 	}
 }

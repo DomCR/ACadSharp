@@ -63,6 +63,13 @@ namespace ACadSharp.IO
 			this.writeACDSData();
 
 			this._writer.Write(DxfCode.Start, DxfFileToken.EndOfFile);
+
+			this._writer.Flush();
+
+			if (this.CloseStream)
+			{
+				this._writer.Close();
+			}
 		}
 
 		/// <inheritdoc/>
@@ -77,10 +84,12 @@ namespace ACadSharp.IO
 		/// <param name="filename"></param>
 		/// <param name="document"></param>
 		/// <param name="binary"></param>
-		public static void Write(string filename, CadDocument document, bool binary)
+		/// <param name="notification"></param>
+		public static void Write(string filename, CadDocument document, bool binary, NotificationEventHandler notification = null)
 		{
 			using (DxfWriter writer = new DxfWriter(filename, document, binary))
 			{
+				writer.OnNotification += notification;
 				writer.Write();
 			}
 		}
@@ -91,10 +100,11 @@ namespace ACadSharp.IO
 		/// <param name="stream"></param>
 		/// <param name="document"></param>
 		/// <param name="binary"></param>
-		public static void Write(Stream stream, CadDocument document, bool binary)
+		public static void Write(Stream stream, CadDocument document, bool binary, NotificationEventHandler notification = null)
 		{
 			using (DxfWriter writer = new DxfWriter(stream, document, binary))
 			{
+				writer.OnNotification += notification;
 				writer.Write();
 			}
 		}
