@@ -7,6 +7,7 @@ using CSMath;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 
 namespace ACadSharp.IO.DXF
 {
@@ -174,6 +175,9 @@ namespace ACadSharp.IO.DXF
 				case Polyline polyline:
 					this.writePolyline(polyline);
 					return;
+				case Arc arc:
+					this.writeArc(arc);
+					return;
 				default:
 					break;
 			}
@@ -188,6 +192,24 @@ namespace ACadSharp.IO.DXF
 		}
 
 		protected abstract void writeSection();
+
+		private void writeArc(Arc arc)
+		{
+			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
+			DxfClassMap circleMap = DxfClassMap.Create<Circle>();
+
+			this._writer.Write(DxfCode.Start, arc.ObjectName);
+
+			this.writeCommonObjectData(arc);
+
+			this.writeClassMap(entityMap, arc);
+
+			this.writeClassMap(circleMap, arc);
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Arc);
+			this._writer.Write(50, arc.StartAngle * MathUtils.RadToDeg);
+			this._writer.Write(51, arc.EndAngle * MathUtils.RadToDeg);
+		}
 
 		private void writeDoubles(DxfCode[] codes, params double[] arr)
 		{
@@ -269,7 +291,7 @@ namespace ACadSharp.IO.DXF
 
 			//Remove elevation
 			plineMap.DxfProperties.Remove(30);
-						
+
 			this.writeClassMap(plineMap, polyline);
 
 			this._writer.Write(DxfCode.XCoordinate, 0);

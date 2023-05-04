@@ -1,4 +1,5 @@
 ﻿using ACadSharp.IO;
+using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -34,6 +35,12 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test, this._dwgConfiguration, this.onNotification);
+
+			string path = $"{test}.out.dxf";
+			using(DxfWriter writer = new DxfWriter(path,doc, false))
+			{
+				writer.Write();
+			}
 		}
 
 		[Theory]
