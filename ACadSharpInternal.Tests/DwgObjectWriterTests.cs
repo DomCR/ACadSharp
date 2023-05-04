@@ -132,7 +132,7 @@ namespace ACadSharpInternal.Tests
 
 			DwgDocumentBuilder builder = new DwgDocumentBuilder(docResult, new ACadSharp.IO.DwgReaderConfiguration());
 			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(docToWrite.Header.Version, stream, true);
-			DwgObjectSectionReader reader = new DwgObjectSectionReader(
+			DwgObjectReader reader = new DwgObjectReader(
 				docResult.Header.Version,
 				builder,
 				sreader,
