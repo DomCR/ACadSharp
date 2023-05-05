@@ -14,6 +14,21 @@ namespace ACadSharp
 			this._data.Add(app, edata);
 		}
 
+		public ExtendedData Get(AppId app)
+		{
+			return this._data[app];
+		}
+
+		public bool TryGet(AppId app, out ExtendedData value)
+		{
+			return this._data.TryGetValue(app, out value);
+		}
+
+		public bool ContainsKey(AppId app)
+		{
+			return this._data.ContainsKey(app);
+		}
+
 		public void Clear()
 		{
 			this._data.Clear();
