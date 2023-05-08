@@ -98,6 +98,11 @@ namespace ACadSharp.IO.DXF
 					continue;
 				}
 
+				if (prop.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
+				{
+					value = (double)value * MathUtils.RadToDeg;
+				}
+
 				this._writer.Write(v.Key, value);
 
 				if (prop.ReferenceType.HasFlag(DxfReferenceType.Count))
@@ -420,5 +425,5 @@ namespace ACadSharp.IO.DXF
 		{
 			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, ex));
 		}
-}
+	}
 }
