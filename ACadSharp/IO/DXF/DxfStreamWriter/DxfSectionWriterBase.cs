@@ -180,6 +180,9 @@ namespace ACadSharp.IO.DXF
 				case TextEntity textEntity:
 					this.writeTextEntity(textEntity);
 					return;
+				case Arc arc:
+					this.writeArc(arc);
+					return;
 				default:
 					break;
 			}
@@ -194,6 +197,24 @@ namespace ACadSharp.IO.DXF
 		}
 
 		protected abstract void writeSection();
+
+		private void writeArc(Arc arc)
+		{
+			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
+			DxfClassMap circleMap = DxfClassMap.Create<Circle>();
+
+			this._writer.Write(DxfCode.Start, arc.ObjectName);
+
+			this.writeCommonObjectData(arc);
+
+			this.writeClassMap(entityMap, arc);
+
+			this.writeClassMap(circleMap, arc);
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Arc);
+			this._writer.Write(50, arc.StartAngle * MathUtils.RadToDeg);
+			this._writer.Write(51, arc.EndAngle * MathUtils.RadToDeg);
+		}
 
 		private void writeDoubles(DxfCode[] codes, params double[] arr)
 		{
