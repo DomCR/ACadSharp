@@ -72,7 +72,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Hatch pattern angle (pattern fill only)
 		/// </summary>
-		[DxfCodeValue(52)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 52)]
 		public double PatternAngle { get { return Pattern.Angle; } set { Pattern.Angle = value; } }
 
 		/// <summary>
