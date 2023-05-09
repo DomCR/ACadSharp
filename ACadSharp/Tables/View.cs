@@ -54,7 +54,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Twist angle
 		/// </summary>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Angle { get; set; }
 
 		/// <summary>

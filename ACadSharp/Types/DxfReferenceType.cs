@@ -41,6 +41,11 @@ namespace ACadSharp
 		/// </summary>
 		Ignored = 16,
 
-		Unprocess = 32
+		/// <summary>
+		/// Value is an angle and must be converted when convinient
+		/// </summary>
+		IsAngle = 32,
+
+		Unprocess = 64
 	}
 }
