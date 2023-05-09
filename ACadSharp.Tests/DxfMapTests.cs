@@ -199,6 +199,9 @@ namespace ACadSharp.Tests
 				case DxfFileToken.TableVport:
 					DxfMap.Create<VPort>();
 					break;
+				case DxfFileToken.EntityWipeout:
+					DxfMap.Create<Wipeout>();
+					break;
 				case DxfFileToken.EntityXline:
 					DxfMap.Create<XLine>();
 					break;
