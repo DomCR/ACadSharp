@@ -133,6 +133,9 @@ namespace ACadSharp.Tests
 				case DxfFileToken.EntityPoint:
 					DxfMap.Create<Point>();
 					break;
+				case DxfFileToken.EntityPolyFaceMesh:
+					DxfMap.Create<PolyfaceMesh>();
+					break;
 				case DxfFileToken.EntityPolyline:
 					switch (subclass.ClassName)
 					{

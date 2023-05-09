@@ -67,6 +67,7 @@
 		public const string EntityOle2Frame = "OLE2FRAME";
 		public const string EntityPoint = "POINT";
 		public const string EntityPolyline = "POLYLINE";
+		public const string EntityPolyFaceMesh = "PFACE";
 		public const string EntityRay = "RAY";
 		public const string EntityRegion = "REGION";
 		public const string EntitySection = "SECTION";
