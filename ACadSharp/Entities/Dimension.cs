@@ -115,14 +115,14 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// Optional
 		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.Optional, 53)]
+		[DxfCodeValue(DxfReferenceType.Optional | DxfReferenceType.IsAngle, 53)]
 		public double TextRotation { get; set; }
 
 		/// <summary>
 		/// All dimension types have an optional 51 group code, which indicates the horizontal direction for the dimension entity.The dimension entity determines the orientation of dimension text and lines for horizontal, vertical, and rotated linear dimensions
 		/// This group value is the negative of the angle between the OCS X axis and the UCS X axis. It is always in the XY plane of the OCS
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 51)]
+		[DxfCodeValue(DxfReferenceType.Optional| DxfReferenceType.IsAngle, 51)]
 		public double HorizontalDirection { get; set; }
 
 		//This group value is the negative of the angle between the OCS X axis and the UCS X axis.It is always in the XY plane of the OCS

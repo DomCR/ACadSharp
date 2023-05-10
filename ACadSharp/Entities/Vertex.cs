@@ -43,7 +43,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Curve fit tangent direction
 		/// </summary>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double CurveTangent { get; set; }
 
 		//71 Polyface mesh vertex index(optional; present only if nonzero)

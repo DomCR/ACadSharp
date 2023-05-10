@@ -46,14 +46,14 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Start angle
 		/// </summary>
-		[DxfCodeValue(51)]
-		public double StartAngle { get; set; } = 90;
+		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
+		public double StartAngle { get; set; } = System.Math.PI / 2;
 
 		/// <summary>
 		/// End angle
 		/// </summary>
-		[DxfCodeValue(52)]
-		public double EndAngle { get; set; } = 90;
+		[DxfCodeValue(DxfReferenceType.IsAngle, 52)]
+		public double EndAngle { get; set; } = System.Math.PI / 2;
 
 		//71	Number of elements
 		public List<MLStyle.Element> Elements { get; } = new List<Element>();
