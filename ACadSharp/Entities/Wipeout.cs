@@ -138,12 +138,12 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Clip boundary vertices
 		/// </summary>
+		/// <remarks>
+		/// For rectangular clip boundary type, two opposite corners must be specified.Default is (-0.5,-0.5), (size.x-0.5, size.y-0.5). 2) For polygonal clip boundary type, three or more vertices must be specified.Polygonal vertices must be listed sequentially
+		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Count, 91)]
+		[DxfCollectionCodeValue(14, 24)]
 		public List<XY> ClipBoundaryVertices { get; set; } = new List<XY>();
-		//14	Clip boundary vertex(in OCS)
-		//DXF: X value; APP: 2D point(multiple entries)
-		//NOTE 1) For rectangular clip boundary type, two opposite corners must be specified.Default is (-0.5,-0.5), (size.x-0.5, size.y-0.5). 2) For polygonal clip boundary type, three or more vertices must be specified.Polygonal vertices must be listed sequentially
-		//24	DXF: Y value of clip boundary vertex(in OCS) (multiple entries)
 
 		//340	Hard reference to imagedef object
 
