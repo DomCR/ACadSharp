@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ACadSharp.IO
@@ -176,7 +177,7 @@ namespace ACadSharp.IO
 
 				if (this._reader.LastValueAsString == null || !headerMap.TryGetValue(currVar, out var data))
 				{
-					//this.OnNotificationHandler?.Invoke(this, new NotificationEventArgs($"Header variable not implemented {currVar}"));
+					this.triggerNotification($"Header variable not implemented {currVar}", NotificationType.NotImplemented);
 					this._reader.ReadNext();
 					continue;
 				}
@@ -189,8 +190,15 @@ namespace ACadSharp.IO
 					parameters[i] = this._reader.LastValue;
 				}
 
-				//Set the header value by name
-				header.SetValue(currVar, parameters);
+				try
+				{
+					//Set the header value by name
+					header.SetValue(currVar, parameters);
+				}
+				catch (Exception ex)
+				{
+					this.triggerNotification($"Invalid value for header variable {currVar} | {parameters.FirstOrDefault()}", NotificationType.Warning, ex);
+				}
 
 				this._reader.ReadNext();
 			}

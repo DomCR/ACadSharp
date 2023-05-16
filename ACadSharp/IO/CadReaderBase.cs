@@ -38,9 +38,9 @@ namespace ACadSharp.IO
 			this._fileStream.Dispose();
 		}
 
-		protected void triggerNotification(string message, NotificationType notificationType)
+		protected void triggerNotification(string message, NotificationType notificationType, Exception ex = null)
 		{
-			this.onNotificationEvent(null, new NotificationEventArgs(message, notificationType));
+			this.onNotificationEvent(null, new NotificationEventArgs(message, notificationType, ex));
 		}
 
 		protected void onNotificationEvent(object sender, NotificationEventArgs e)
