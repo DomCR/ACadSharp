@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ACadSharp.IO
@@ -189,8 +190,15 @@ namespace ACadSharp.IO
 					parameters[i] = this._reader.LastValue;
 				}
 
-				//Set the header value by name
-				header.SetValue(currVar, parameters);
+				try
+				{
+					//Set the header value by name
+					header.SetValue(currVar, parameters);
+				}
+				catch (Exception ex)
+				{
+					this.triggerNotification($"Invalid value for header variable {currVar} | {parameters.FirstOrDefault()}", NotificationType.Warning, ex);
+				}
 
 				this._reader.ReadNext();
 			}
