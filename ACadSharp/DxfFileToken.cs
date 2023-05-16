@@ -42,6 +42,7 @@
 		public const string Entity3DFace = "3DFACE";
 		public const string Entity3DSolid = "3DSOLID";
 		public const string EntityProxyEntity = "ACAD_PROXY_ENTITY";
+		public const string EntityACadTable = "ACAD_TABLE";
 		public const string EntityArc = "ARC";
 		public const string EntityAttributeDefinition = "ATTDEF";
 		public const string EntityAttribute = "ATTRIB";

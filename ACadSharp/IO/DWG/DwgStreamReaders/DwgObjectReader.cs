@@ -961,7 +961,10 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "ACDBDETAILVIEWSTYLE":
 				case "ACDBSECTIONVIEWSTYLE":
+					break;
 				case "ACAD_TABLE":
+					template = this.readAcadTable();
+					break;
 				case "CELLSTYLEMAP":
 					break;
 				case "DBCOLOR":
@@ -2466,6 +2469,11 @@ namespace ACadSharp.IO.DWG
 			xline.Direction = this._objectReader.Read3BitDouble();
 
 			return template;
+		}
+
+		private CadTemplate readAcadTable()
+		{
+			return null;
 		}
 
 		private CadTemplate readDictionaryWithDefault()
