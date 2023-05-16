@@ -91,6 +91,13 @@ namespace ACadSharp.IO
 			return false;
 		}
 
+		public bool TryGetTableEntry<T>(string name, out T entry)
+			where T : TableEntry
+		{
+			entry = cadObjects.Values.OfType<T>().FirstOrDefault(e => e.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+			return entry != null;
+		}
+
 		public T GetObjectTemplate<T>(ulong handle) where T : CadTemplate
 		{
 			if (this.templates.TryGetValue(handle, out CadTemplate builder))
