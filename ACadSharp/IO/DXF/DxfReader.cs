@@ -177,7 +177,9 @@ namespace ACadSharp.IO
 
 				if (this._reader.LastValueAsString == null || !headerMap.TryGetValue(currVar, out var data))
 				{
+#if TEST
 					this.triggerNotification($"Header variable not implemented {currVar}", NotificationType.NotImplemented);
+#endif
 					this._reader.ReadNext();
 					continue;
 				}
