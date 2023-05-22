@@ -928,7 +928,7 @@ namespace ACadSharp.IO
 
 			//0x13	2	Codepage
 			fileheader.DrawingCodePage = CadUtils.GetCodePage(sreader.ReadShort());
-			sreader.Encoding = TextEncoding.GetListedEncoding(fileheader.DrawingCodePage);
+			sreader.Encoding = getListedEncoding((int)fileheader.DrawingCodePage);
 
 			//Advance empty bytes 
 			//0x15	3	3 0x00 bytes

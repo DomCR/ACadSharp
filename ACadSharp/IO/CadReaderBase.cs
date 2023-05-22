@@ -1,7 +1,9 @@
 ﻿using ACadSharp.Header;
 using CSUtilities.IO;
+using CSUtilities.Text;
 using System;
 using System.IO;
+using System.Text;
 
 namespace ACadSharp.IO
 {
@@ -36,6 +38,23 @@ namespace ACadSharp.IO
 		public virtual void Dispose()
 		{
 			this._fileStream.Dispose();
+		}
+
+		protected Encoding getListedEncoding(int code)
+		{
+			try
+			{
+#if !NET48
+				Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+#endif
+				return Encoding.GetEncoding(code);
+			}
+			catch (Exception ex)
+			{
+				this.triggerNotification($"Encoding with codee {code} not found, using Windows-1252 as default", NotificationType.Warning, ex);
+			}
+
+			return TextEncoding.Windows1252();
 		}
 
 		protected void triggerNotification(string message, NotificationType notificationType, Exception ex = null)
