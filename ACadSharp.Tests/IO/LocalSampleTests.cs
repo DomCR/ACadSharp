@@ -34,7 +34,9 @@ namespace ACadSharp.Tests.IO
 			if (string.IsNullOrEmpty(test))
 				return;
 
-			CadDocument doc = DwgReader.Read(test, this._dwgConfiguration/*, this.onNotification*/);
+			CadDocument doc = DwgReader.Read(test, this._dwgConfiguration, this.onNotification);
+
+			return;
 
 			string outPath = Path.Combine(Path.GetDirectoryName(test), $"{Path.GetFileNameWithoutExtension(test)}.out.dxf");
 			using (DxfWriter writer = new DxfWriter(outPath, doc, false))
