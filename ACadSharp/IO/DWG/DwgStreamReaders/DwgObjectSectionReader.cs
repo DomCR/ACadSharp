@@ -259,7 +259,7 @@ namespace ACadSharp.IO.DWG
 			if (!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
 				!this._handles.Contains(value) &&
 				value != 0 &&
-				!this._readedObjects.ContainsKey(handle))
+				!this._readedObjects.ContainsKey(value))
 			{
 				//Add the value to the handles queue to be processed
 				this._handles.Enqueue(value);
