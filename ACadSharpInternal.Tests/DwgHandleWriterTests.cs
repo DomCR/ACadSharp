@@ -23,7 +23,7 @@ namespace ACadSharpInternal.Tests
 			DwgHandleWriter writer = new DwgHandleWriter(version, stream, imap);
 			writer.Write();
 
-			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, true);
+			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, resetPositon: true);
 			DwgHandleReader reader = new DwgHandleReader(sreader, version);
 			reader.OnNotification += onNotification;
 
