@@ -45,7 +45,7 @@ namespace ACadSharp.IO
 			try
 			{
 #if !NET48
-				Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+				Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 #endif
 				return Encoding.GetEncoding(code);
 			}

@@ -420,7 +420,7 @@ namespace ACadSharp.IO
 
 			//Bytes at 0x13 and 0x14 are a raw short indicating the value of the code page for this drawing file.
 			fileheader.DrawingCodePage = CadUtils.GetCodePage(sreader.ReadShort());
-			sreader.Encoding = TextEncoding.GetListedEncoding(fileheader.DrawingCodePage);
+			this._encoding = TextEncoding.GetListedEncoding(fileheader.DrawingCodePage);
 
 			//At 0x15 is a long that tells how many sets of recno/seeker/length records follow.
 			int nRecords = (int)sreader.ReadRawLong();
@@ -930,7 +930,7 @@ namespace ACadSharp.IO
 
 			//0x13	2	Codepage
 			fileheader.DrawingCodePage = CadUtils.GetCodePage(sreader.ReadShort());
-			sreader.Encoding = getListedEncoding((int)fileheader.DrawingCodePage);
+			this._encoding = sreader.Encoding = getListedEncoding((int)fileheader.DrawingCodePage);
 
 			//Advance empty bytes 
 			//0x15	3	3 0x00 bytes
@@ -961,7 +961,7 @@ namespace ACadSharp.IO
 		private IDwgStreamReader getSectionStream(string sectionName)
 		{
 			Stream sectionStream = null;
-			Encoding encoding = null;
+
 			//Get the section buffer
 			switch (this._fileHeader.AcadVersion)
 			{
@@ -982,7 +982,7 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
 					sectionStream = this.getSectionBuffer15(this._fileHeader as DwgFileHeaderAC15, sectionName);
-					encoding = TextEncoding.GetListedEncoding((this._fileHeader as DwgFileHeaderAC15).DrawingCodePage);
+					//encoding = TextEncoding.GetListedEncoding((this._fileHeader as DwgFileHeaderAC15).DrawingCodePage);
 					break;
 				case ACadVersion.AC1018:
 					sectionStream = this.getSectionBuffer18(this._fileHeader as DwgFileHeaderAC18, sectionName);
@@ -1007,8 +1007,7 @@ namespace ACadSharp.IO
 			IDwgStreamReader streamHandler = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, sectionStream);
 
 			//Set the encoding if needed
-			if (encoding != null)
-				streamHandler.Encoding = encoding;
+			streamHandler.Encoding = this._encoding;
 
 			return streamHandler;
 		}
