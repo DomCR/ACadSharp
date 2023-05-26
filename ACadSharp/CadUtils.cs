@@ -1,12 +1,84 @@
 ﻿using CSUtilities.Text;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ACadSharp
 {
 	internal static class CadUtils
 	{
-		private static readonly LineweightType[] IndexedValue = new LineweightType[]
+		private static Dictionary<string, CodePage> _dxfEncodingMap = new Dictionary<string, CodePage>
+		{
+			{"gb2312"    ,CodePage.Gb2312},
+			{"kcs5601"   ,CodePage.Ksc5601},
+			{"ascii"     ,CodePage.Usascii},
+			{"big5"      ,CodePage.big5},
+			{"johab"     ,CodePage.Johab},
+			{"mac-roman" ,CodePage.Xmacromanian},
+			{"dos437"    ,CodePage.Ibm437},
+			{"dos850"    ,CodePage.Ibm850},
+			{"dos852"    ,CodePage.Ibm852},
+			{"dos737"    ,CodePage.Ibm737},
+			{"dos866"    ,CodePage.Cp866},
+			{"dos855"    ,CodePage.Ibm855},
+			{"dos857"    ,CodePage.Ibm857},
+			{"dos860"    ,CodePage.Ibm860},
+			{"dos861"    ,CodePage.Ibm861},
+			{"dos863"    ,CodePage.Ibm863},
+			{"dos864"    ,CodePage.Ibm864},
+			{"dos865"    ,CodePage.Ibm865},
+			{"dos869"    ,CodePage.Ibm869},
+			{"dos720"    ,CodePage.Dos720},
+			{"dos775"    ,CodePage.Ibm775},
+			{"dos932"    ,CodePage.Shift_jis},
+			{"dos950"    ,CodePage.big5},
+			{"ansi_874"  ,CodePage.Windows874},
+			{"ansi_932"  ,CodePage.Shift_jis},
+			{"ansi_936"  ,CodePage.Gb2312},
+			{"ansi_950"  ,CodePage.big5},
+			{"ansi_1250" ,CodePage.Windows1250},
+			{"ansi1250"  ,CodePage.Windows1250},
+			{"ansi_1251" ,CodePage.Windows1251},
+			{"ansi1251"  ,CodePage.Windows1251},
+			{"ansi_1252" ,CodePage.Windows1252},
+			{"ansi1252"  ,CodePage.Windows1252},
+			{"ansi_1253" ,CodePage.Windows1253},
+			{"ansi1253"  ,CodePage.Windows1253},
+			{"ansi_1254" ,CodePage.Windows1254},
+			{"ansi1254"  ,CodePage.Windows1254},
+			{"ansi_1255" ,CodePage.Windows1255},
+			{"ansi1255"  ,CodePage.Windows1255},
+			{"ansi_1256" ,CodePage.Windows1256},
+			{"ansi1256"  ,CodePage.Windows1256},
+			{"ansi_1257" ,CodePage.Windows1257},
+			{"ansi1257"  ,CodePage.Windows1257},
+			{"iso8859-1" ,CodePage.Iso88591},
+			{"iso88591"  ,CodePage.Iso88591},
+			{"iso8859-2" ,CodePage.Iso88592},
+			{"iso88592"  ,CodePage.Iso88592},
+			{"iso8859-3" ,CodePage.Iso88593},
+			{"iso88593"  ,CodePage.Iso88593},
+			{"iso8859-4" ,CodePage.Iso88594},
+			{"iso88594"  ,CodePage.Iso88594},
+			{"iso8859-5" ,CodePage.Iso88595},
+			{"iso88595"  ,CodePage.Iso88595},
+			{"iso8859-6" ,CodePage.Iso88596},
+			{"iso88596"  ,CodePage.Iso88596},
+			{"iso8859-7" ,CodePage.Iso88597},
+			{"iso88597"  ,CodePage.Iso88597},
+			{"iso8859-8" ,CodePage.Iso88598},
+			{"iso88598"  ,CodePage.Iso88598},
+			{"iso8859-9" ,CodePage.Iso88599},
+			{"iso88599"  ,CodePage.Iso88599},
+			{"iso8859-10",CodePage.Iso885910},
+			{"iso885910" ,CodePage.Iso885910},
+			{"iso8859-13",CodePage.Iso885913},
+			{"iso885913" ,CodePage.Iso885913},
+			{"iso885915" ,CodePage.Iso885915},
+			{"iso8859-15",CodePage.Iso885915},
+		};
+
+		private static readonly LineweightType[] _indexedValue = new LineweightType[]
 		{
 				 LineweightType.W0,
 				 LineweightType.W5,
@@ -95,11 +167,11 @@ namespace ACadSharp
 				case 31:
 					return LineweightType.Default;
 				default:
-					if (b < 0 || b >= IndexedValue.Length)
+					if (b < 0 || b >= _indexedValue.Length)
 					{
 						return LineweightType.Default;
 					}
-					return IndexedValue[b];
+					return _indexedValue[b];
 			}
 		}
 
@@ -118,7 +190,7 @@ namespace ACadSharp
 					result = 29;
 					break;
 				default:
-					result = (byte)Array.IndexOf(IndexedValue, value);
+					result = (byte)Array.IndexOf(_indexedValue, value);
 					if (result < 0)
 					{
 						result = 31;
@@ -127,6 +199,18 @@ namespace ACadSharp
 			}
 
 			return result;
+		}
+
+		public static CodePage GetCodePage(string value)
+		{
+			if (_dxfEncodingMap.TryGetValue(value, out CodePage code))
+			{
+				return code;
+			}
+			else
+			{
+				return CodePage.Unknown;
+			}
 		}
 
 		public static CodePage GetCodePage(int value)

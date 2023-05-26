@@ -175,6 +175,11 @@ namespace ACadSharp.IO
 				//Get the current header variable
 				string currVar = this._reader.LastValueAsString;
 
+				if (currVar.Equals("$DWGCODEPAGE", StringComparison.InvariantCultureIgnoreCase))
+				{
+
+				}
+
 				if (this._reader.LastValueAsString == null || !headerMap.TryGetValue(currVar, out var data))
 				{
 #if TEST
@@ -354,7 +359,7 @@ namespace ACadSharp.IO
 		/// <summary>
 		/// Read the THUMBNAILIMAGE section of the DXF file.
 		/// </summary>
-		private void ReadThumbnailImage()
+		private void readThumbnailImage()
 		{
 			throw new NotImplementedException();
 		}
