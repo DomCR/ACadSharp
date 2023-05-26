@@ -11,6 +11,8 @@ namespace ACadSharp.IO
 	{
 		public event NotificationEventHandler OnNotification;
 
+		protected Encoding _encoding = Encoding.Default;
+
 		internal readonly StreamIO _fileStream;
 
 		protected CadReaderBase(NotificationEventHandler notification)

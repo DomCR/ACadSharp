@@ -2,6 +2,7 @@
 using ACadSharp.Header;
 using ACadSharp.IO.DXF;
 using CSUtilities.IO;
+using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -177,7 +178,16 @@ namespace ACadSharp.IO
 
 				if (currVar.Equals("$DWGCODEPAGE", StringComparison.InvariantCultureIgnoreCase))
 				{
+					this._reader.ReadNext();
 
+					string encoding = this._reader.LastValueAsString;
+
+					CodePage code = CadUtils.GetCodePage(encoding);
+					this._encoding = this.getListedEncoding((int)code);
+
+					header.CodePage = encoding;
+
+					continue;
 				}
 
 				if (this._reader.LastValueAsString == null || !headerMap.TryGetValue(currVar, out var data))
@@ -366,6 +376,8 @@ namespace ACadSharp.IO
 
 		private IDxfStreamReader getReader()
 		{
+			Encoding encoding = this._encoding;
+
 			if (this.IsBinary())
 			{
 				return new DxfBinaryReader(this._fileStream.Stream, Encoding.ASCII);

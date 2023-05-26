@@ -17,8 +17,6 @@ namespace ACadSharp.IO
 	{
 		public DwgReaderConfiguration Configuration { get; set; } = new DwgReaderConfiguration();
 
-		private Encoding _encoding = Encoding.Default;
-
 		private DwgDocumentBuilder _builder;
 
 		private DwgFileHeader _fileHeader;
