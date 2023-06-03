@@ -67,5 +67,32 @@ namespace ACadSharp.Tests.IO.DXF
 		{
 			base.AssertDocumentTree(test);
 		}
+
+		[Theory]
+		[MemberData(nameof(DxfAsciiFiles))]
+		[MemberData(nameof(DxfBinaryFiles))]
+		public void IsBinaryTest(string test)
+		{
+			if (test.Contains("ascii", System.StringComparison.OrdinalIgnoreCase))
+			{
+				Assert.False(DxfReader.IsBinary(test));
+			}
+			else
+			{
+				Assert.True(DxfReader.IsBinary(test));
+			}
+
+			using (DxfReader reader = new DxfReader(test))
+			{
+				if (test.Contains("ascii", System.StringComparison.OrdinalIgnoreCase))
+				{
+					Assert.False(reader.IsBinary());
+				}
+				else
+				{
+					Assert.True(reader.IsBinary());
+				}
+			}
+		}
 	}
 }
