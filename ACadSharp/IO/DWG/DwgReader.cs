@@ -21,8 +21,6 @@ namespace ACadSharp.IO
 
 		private DwgFileHeader _fileHeader;
 
-		private CadDocument _document;
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DwgReader"/> class.
 		/// </summary>
@@ -211,12 +209,17 @@ namespace ACadSharp.IO
 		public override CadHeader ReadHeader()
 		{
 			this._fileHeader = this._fileHeader ?? this.readFileHeader();
+
+			CadHeader header = new CadHeader();
+			header.Version = this._fileHeader.AcadVersion;
+			header.CodePage = CadUtils.GetCodePageName(this._fileHeader.DrawingCodePage);
+
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Header);
 
-			DwgHeaderReader hreader = new DwgHeaderReader(this._fileHeader.AcadVersion, sreader);
-			hreader.OnNotification += onNotificationEvent;
+			DwgHeaderReader hReader = new DwgHeaderReader(this._fileHeader.AcadVersion, sreader, header);
+			hReader.OnNotification += onNotificationEvent;
 
-			CadHeader header = hreader.Read(this._fileHeader.AcadMaintenanceVersion, out DwgHeaderHandlesCollection headerHandles);
+			hReader.Read(this._fileHeader.AcadMaintenanceVersion, out DwgHeaderHandlesCollection headerHandles);
 
 			if (this._builder != null)
 				this._builder.HeaderHandles = headerHandles;

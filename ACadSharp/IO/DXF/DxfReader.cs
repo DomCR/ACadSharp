@@ -16,7 +16,6 @@ namespace ACadSharp.IO
 	{
 		public DxfReaderConfiguration Configuration { get; set; } = new DxfReaderConfiguration();
 
-		private CadDocument _document;
 		private DxfDocumentBuilder _builder;
 		private IDxfStreamReader _reader;
 

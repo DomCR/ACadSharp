@@ -213,6 +213,11 @@ namespace ACadSharp
 			}
 		}
 
+		public static string GetCodePageName(CodePage value)
+		{
+			return _dxfEncodingMap.FirstOrDefault(o => o.Value == value).Key;
+		}
+
 		public static CodePage GetCodePage(int value)
 		{
 			return _pageCodes.ElementAtOrDefault(value);

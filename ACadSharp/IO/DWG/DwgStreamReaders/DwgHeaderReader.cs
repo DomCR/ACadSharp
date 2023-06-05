@@ -13,9 +13,12 @@ namespace ACadSharp.IO.DWG
 
 		private IDwgStreamReader _reader;
 
-		public DwgHeaderReader(ACadVersion version, IDwgStreamReader reader) : base(version)
+		private CadHeader _header;
+
+		public DwgHeaderReader(ACadVersion version, IDwgStreamReader reader, CadHeader header) : base(version)
 		{
 			this._reader = reader;
+			this._header = header;
 		}
 
 		public CadHeader Read(int acadMaintenanceVersion, out DwgHeaderHandlesCollection objectPointers)
