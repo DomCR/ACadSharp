@@ -1,4 +1,5 @@
 ﻿using ACadSharp;
+using ACadSharp.Header;
 using ACadSharp.IO.DWG;
 using System.IO;
 using Xunit;
@@ -24,8 +25,9 @@ namespace ACadSharpInternal.Tests
 			writer.Write();
 
 			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, resetPositon: true);
-			DwgHeaderReader reader = new DwgHeaderReader(version, sreader);
-			var header = reader.Read(0, out _);
+			var header = new CadHeader();
+			DwgHeaderReader reader = new DwgHeaderReader(version, sreader, header);
+			reader.Read(0, out _);
 		}
 	}
 }
