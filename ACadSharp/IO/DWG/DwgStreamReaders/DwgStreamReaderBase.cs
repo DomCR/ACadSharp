@@ -789,7 +789,17 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public TimeSpan ReadTimeSpan()
 		{
-			return new TimeSpan(this.ReadBitLong(), 0, this.ReadBitLong() / 1000);
+			long hours = this.ReadBitLong();
+			long milliseconds = this.ReadBitLong();
+
+			// Handle potential overflow
+			if (hours < 0 || hours > TimeSpan.MaxValue.TotalHours || milliseconds < 0 || milliseconds > TimeSpan.MaxValue.TotalMilliseconds)
+			{
+				return TimeSpan.FromHours(0) + TimeSpan.FromMilliseconds(0);
+
+			}
+
+			return TimeSpan.FromHours(hours) + TimeSpan.FromMilliseconds(milliseconds);
 		}
 
 		#region Stream pointer control
