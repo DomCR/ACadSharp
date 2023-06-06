@@ -211,7 +211,6 @@ namespace ACadSharp.IO
 			this._fileHeader = this._fileHeader ?? this.readFileHeader();
 
 			CadHeader header = new CadHeader();
-			header.Version = this._fileHeader.AcadVersion;
 			header.CodePage = CadUtils.GetCodePageName(this._fileHeader.DrawingCodePage);
 
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Header);
