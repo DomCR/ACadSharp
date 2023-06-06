@@ -203,7 +203,7 @@ namespace ACadSharp
 
 		public static CodePage GetCodePage(string value)
 		{
-			if (_dxfEncodingMap.TryGetValue(value, out CodePage code))
+			if (_dxfEncodingMap.TryGetValue(value.ToLower(), out CodePage code))
 			{
 				return code;
 			}
