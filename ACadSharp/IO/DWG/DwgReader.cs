@@ -420,7 +420,7 @@ namespace ACadSharp.IO
 
 			//Bytes at 0x13 and 0x14 are a raw short indicating the value of the code page for this drawing file.
 			fileheader.DrawingCodePage = CadUtils.GetCodePage(sreader.ReadShort());
-			this._encoding = TextEncoding.GetListedEncoding(fileheader.DrawingCodePage);
+			this._encoding = getListedEncoding((int)fileheader.DrawingCodePage);
 
 			//At 0x15 is a long that tells how many sets of recno/seeker/length records follow.
 			int nRecords = (int)sreader.ReadRawLong();
