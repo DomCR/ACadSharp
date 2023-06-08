@@ -1,5 +1,8 @@
 ﻿using ACadSharp.Exceptions;
+using ACadSharp.IO.DWG;
+using CSUtilities.Text;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.IO.DWG
 {
@@ -10,6 +13,8 @@ namespace ACadSharp.IO.DWG
 		public long PreviewAddress { get; set; } = -1;
 
 		public int AcadMaintenanceVersion { get; set; }
+
+		public CodePage DrawingCodePage { get; set; }
 
 		public DwgFileHeader() { }
 

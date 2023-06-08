@@ -1,10 +1,6 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using CSMath;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Tables
 {
@@ -58,7 +54,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Twist angle
 		/// </summary>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Angle { get; set; }
 
 		/// <summary>
@@ -152,5 +148,13 @@ namespace ACadSharp.Tables
 		public View() : base() { }
 
 		public View(string name) : base(name) { }
+
+		public override CadObject Clone()
+		{
+			View clone = (View)base.Clone();
+
+			clone.VisualStyle = (VisualStyle)(this.VisualStyle?.Clone());
+
+			return clone;}
 	}
 }

@@ -72,7 +72,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Hatch pattern angle (pattern fill only)
 		/// </summary>
-		[DxfCodeValue(52)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 52)]
 		public double PatternAngle { get { return Pattern.Angle; } set { Pattern.Angle = value; } }
 
 		/// <summary>
@@ -125,5 +125,21 @@ namespace ACadSharp.Entities
 		public List<BoundaryPath> Paths { get; set; } = new List<BoundaryPath>();
 
 		public Hatch() : base() { }
+
+		public override CadObject Clone()
+		{
+			Hatch clone = base.Clone() as Hatch;
+
+			clone.GradientColor = this.GradientColor?.Clone();
+			clone.Pattern = this.Pattern?.Clone();
+
+			clone.Paths.Clear();
+			foreach (BoundaryPath item in this.Paths)
+			{
+				clone.Paths.Add(item.Clone());
+			}
+
+			return clone;
+		}
 	}
 }

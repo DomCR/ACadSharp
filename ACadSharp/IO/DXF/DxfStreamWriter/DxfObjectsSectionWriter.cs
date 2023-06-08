@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Objects;
+using System;
 using System.Linq;
 
 namespace ACadSharp.IO.DXF
@@ -35,11 +36,14 @@ namespace ACadSharp.IO.DXF
 				case DictionaryVariable dictvar:
 					this.writeMappedObject<DictionaryVariable>(dictvar);
 					break;
+				case SortEntitiesTable sortensTable:
+					this.writeSortentsTable(sortensTable);
+					break;
 				case XRecrod record:
 					this.writeXRecord(record);
 					break;
 				default:
-					this.Notify($"Object not implemented : {co.GetType().FullName}");
+					this.notify($"Object not implemented : {co.GetType().FullName}");
 					break;
 			}
 		}
@@ -67,6 +71,26 @@ namespace ACadSharp.IO.DXF
 			{
 				this.Holder.Objects.Enqueue(item);
 			}
+		}
+
+		private void writeSortentsTable(SortEntitiesTable e)
+		{
+			if (e.BlockOwner == null)
+			{
+				//In some cases the block onwer is null in the files, this has to be checked
+				this.notify("SortEntitiesTable with handle {e.Handle} has no block owner", NotificationType.Warning);
+				return;
+			}
+
+			this._writer.Write(DxfCode.Start, e.ObjectName);
+
+			this.writeCommonObjectData(e);
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XRecord);
+
+			this._writer.Write(330, e.BlockOwner.Handle);
+
+
 		}
 
 		protected void writeXRecord(XRecrod e)

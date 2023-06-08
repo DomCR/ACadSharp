@@ -3,7 +3,6 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Entities
 {
@@ -111,13 +110,13 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Snap angle
 		/// </summary>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double SnapAngle { get; set; }
 
 		/// <summary>
 		/// View twist angle
 		/// </summary>
-		[DxfCodeValue(51)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double TwistAngle { get; set; }
 
 		/// <summary>
@@ -285,5 +284,14 @@ namespace ACadSharp.Entities
 		//Soft pointer reference to viewport object (for layer VP property override)
 
 		public Viewport() : base() { }
+
+		public override CadObject Clone()
+		{
+			Viewport clone = (Viewport)base.Clone();
+
+			clone.VisualStyle = (VisualStyle)this.VisualStyle?.Clone();
+
+			return clone;
+		}
 	}
 }

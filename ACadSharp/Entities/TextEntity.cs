@@ -78,7 +78,7 @@ namespace ACadSharp.Entities
 		/// <value>
 		/// The rotation angle in radians.
 		/// </value>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation
 		{
 			get => _rotation;
@@ -104,13 +104,13 @@ namespace ACadSharp.Entities
 		/// <value>
 		/// The angle in radians within the range of -85 to +85 degrees. A positive angle denotes a lean to the right; a negative value will have 2*PI added to it to convert it to its positive equivalent.
 		/// </value>
-		[DxfCodeValue(51)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double ObliqueAngle { get; set; } = 0.0;
 
 		/// <summary>
 		/// Style of this text entity.
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Name, 7)]	//Optional
+		[DxfCodeValue(DxfReferenceType.Name, 7)]    //Optional
 		public TextStyle Style { get; set; } = TextStyle.Default;
 
 		/// <summary>
@@ -163,5 +163,12 @@ namespace ACadSharp.Entities
 		private double _rotation = 0.0;
 
 		public TextEntity() : base() { }
+
+		public override CadObject Clone()
+		{
+			TextEntity clone = (TextEntity)base.Clone();
+			clone.Style = (TextStyle)this.Style.Clone();
+			return clone;
+		}
 	}
 }

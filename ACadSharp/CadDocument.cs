@@ -86,12 +86,6 @@ namespace ACadSharp
 		public Layout[] Layouts { get { return this._cadObjects.Values.OfType<Layout>().ToArray(); } }   //TODO: Layouts have to go to the designed dictionary or blocks
 
 		/// <summary>
-		/// The collection of all viewports in the drawing
-		/// </summary>
-		[Obsolete("Viewports are only used by the R14 versions of dwg")]
-		public ViewportCollection Viewports { get; private set; }
-
-		/// <summary>
 		/// Root dictionary of the document
 		/// </summary>
 		public CadDictionary RootDictionary
@@ -284,6 +278,19 @@ namespace ACadSharp
 					break;
 				case Insert insert:
 					this.RegisterCollection(insert.Attributes);
+					
+					//Should only be triggered for internal use
+					if (insert.Block == null)
+						break;
+
+					if (this.BlockRecords.TryGetValue(insert.Block.Name, out BlockRecord blk))
+					{
+						insert.Block = blk;
+					}
+					else
+					{
+						this.BlockRecords.Add(insert.Block);
+					}
 					break;
 				case Polyline pline:
 					this.RegisterCollection(pline.Vertices);
@@ -320,6 +327,7 @@ namespace ACadSharp
 					this.removeCadObject(record.BlockEntity);
 					break;
 				case Insert insert:
+					insert.Block = (BlockRecord)insert.Block.Clone();
 					this.UnregisterCollection(insert.Attributes);
 					break;
 				case Polyline pline:

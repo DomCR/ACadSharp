@@ -1,8 +1,5 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
-using ACadSharp.IO.Templates;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Tables
 {
@@ -53,7 +50,7 @@ namespace ACadSharp.Tables
 		/// <value>
 		/// The angle in radians within the range of -85 to +85 degrees. A positive angle denotes a lean to the right; a negative value will have 2*PI added to it to convert it to its positive equivalent.
 		/// </value>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double ObliqueAngle { get; set; } = 0.0;
 
 		/// <summary>

@@ -14,8 +14,6 @@ namespace ACadSharp.IO
 
 		public Dictionary<string, LineType> LineTypes { get; } = new Dictionary<string, LineType>(StringComparer.OrdinalIgnoreCase);
 
-		//public CadReaderConfiguration Configuration { get; }
-
 		// Stores all the templates to build the document, some of the elements can be null due a missing implementation
 		protected Dictionary<ulong, CadTemplate> templates = new Dictionary<ulong, CadTemplate>();
 
@@ -91,6 +89,13 @@ namespace ACadSharp.IO
 
 			value = null;
 			return false;
+		}
+
+		public bool TryGetTableEntry<T>(string name, out T entry)
+			where T : TableEntry
+		{
+			entry = cadObjects.Values.OfType<T>().FirstOrDefault(e => e.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+			return entry != null;
 		}
 
 		public T GetObjectTemplate<T>(ulong handle) where T : CadTemplate

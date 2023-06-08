@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 
 namespace ACadSharp.Entities
 {
@@ -24,5 +23,10 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public AttributeEntity() : base() { }
+
+		public AttributeEntity(AttributeDefinition definition) : this()
+		{
+			this.matchAttributeProperties(definition);
+		}
 	}
 }

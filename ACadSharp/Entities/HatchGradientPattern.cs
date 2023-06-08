@@ -69,23 +69,18 @@ namespace ACadSharp.Entities
 		{
 			this.Name = name;
 		}
-	}
 
-	public class GradientColor
-	{
-		/// <summary>
-		/// Gradient value
-		/// </summary>
-		/// <value>
-		/// The value must be in the range 0-1
-		/// </value>
-		[DxfCodeValue(463)]
-		public double Value { get; set; }
+		public HatchGradientPattern Clone()
+		{
+			HatchGradientPattern clone = (HatchGradientPattern)this.MemberwiseClone();
 
-		/// <summary>
-		/// Color for this gradient
-		/// </summary>
-		[DxfCodeValue(421)]
-		public Color Color { get; set; }
+			clone.Colors.Clear();
+			foreach (var item in this.Colors)
+			{
+				clone.Colors.Add(item.Clone());
+			}
+
+			return clone;
+		}
 	}
 }

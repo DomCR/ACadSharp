@@ -1,9 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Types.Units;
-using ACadSharp.IO.Templates;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ACadSharp.Blocks;
 
 namespace ACadSharp.Tables
@@ -456,7 +453,7 @@ namespace ACadSharp.Tables
 		/// DIMTXSTY
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public TextStyle Style { get; set; }
+		public TextStyle Style { get; set; } = TextStyle.Default;
 
 		/// <summary>
 		/// Arrowhead block for leaders
@@ -502,8 +499,20 @@ namespace ACadSharp.Tables
 
 		private double _arrowSize = 0.18;
 
-		public DimensionStyle() : this(null) { }
+		internal DimensionStyle() : base() { }
 
 		public DimensionStyle(string name) : base(name) { }
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			DimensionStyle clone = new DimensionStyle(this.Name);
+			clone.Style = (TextStyle)this.Style?.Clone();
+			clone.LeaderArrow = (Block)this.LeaderArrow?.Clone();
+			clone.ArrowBlock = (Block)this.ArrowBlock?.Clone();
+			clone.DimArrow1 = (Block)this.DimArrow1?.Clone();
+			clone.DimArrow2 = (Block)this.DimArrow2?.Clone();
+			return clone;
+		}
 	}
 }
