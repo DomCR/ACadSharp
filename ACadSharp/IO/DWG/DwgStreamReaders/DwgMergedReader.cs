@@ -153,6 +153,8 @@ namespace ACadSharp.IO.DWG
 
 		public Color ReadCmColor()
 		{
+			
+
 			if (!(_mainReader is DwgStreamReaderAC18))
 				return _mainReader.ReadCmColor();
 
@@ -162,8 +164,10 @@ namespace ACadSharp.IO.DWG
 			//CMC:
 			//BS: color index(always 0)
 			short colorIndex = ReadBitShort();
+			
 			//BL: RGB value
 			int rgb = ReadBitLong();
+			Color color = GetColor(rgb);
 
 			//RC : Color Byte
 			byte id = ReadByte();
@@ -178,7 +182,30 @@ namespace ACadSharp.IO.DWG
 			if ((id & 2) == 2)
 				bookName = ReadVariableText();
 
-			return new Color(colorIndex);
+			return color;
+		}
+
+		public Color GetColor (int blColor)
+		{
+			byte[] values = BitConverter.GetBytes(blColor);
+			//if (!BitConverter.IsLittleEndian) Array.Reverse(values);
+			byte r = values[2];
+			byte g = values[1];
+			byte b = values[0];
+			byte acadColorIndex = values[0];
+
+			if (r == 0 && g == 0)
+			{
+				// AutoCAD indexed color
+				var trueColor = Color.GetIndexRGB(acadColorIndex);
+				return  new Color(acadColorIndex);
+			}
+			else
+			{
+				// True color
+				return new Color(r, g, b);
+			}
+
 		}
 
 		public Color ReadEnColor(out Transparency transparency, out bool flag)

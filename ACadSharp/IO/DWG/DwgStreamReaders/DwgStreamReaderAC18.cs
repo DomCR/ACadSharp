@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace ACadSharp.IO.DWG
 {
@@ -55,7 +56,13 @@ namespace ACadSharp.IO.DWG
 				else if ((flags & 0x8000) > 0)
 				{
 					//Next value is a BS containing the RGB value(last 24 bits).
-					color = new Color((short)this.ReadBitLong());
+					var blColor = this.ReadBitLong();
+					byte[] values = BitConverter.GetBytes(blColor);
+					byte r = values[2];
+					byte g = values[1];
+					byte b = values[0];
+					color = new Color(r, g, b);	
+					
 				}
 				else
 				{
