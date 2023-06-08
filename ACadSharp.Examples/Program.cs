@@ -14,54 +14,11 @@ namespace ACadSharp.Examples
 
 		static void Main(string[] args)
 		{
-			CadDocument docc = new CadDocument();
+			CadDocument doc = new CadDocument();
 
 			using (DwgReader reader = new DwgReader(_file))
 			{
-				docc = reader.Read();
-			}
-
-			CadDocument doc = new CadDocument();
-			doc.Header.Version = ACadVersion.AC1018;
-
-			BlockRecord record = new BlockRecord("my_block");
-			record.Entities.Add(new Circle()
-			{
-				Center = new CSMath.XYZ(),
-				Radius = 5
-			});
-			record.Entities.Add(new Line()
-			{
-				StartPoint = new CSMath.XYZ(),
-				EndPoint = CSMath.XYZ.AxisX
-			});
-
-			doc.BlockRecords.Add((BlockRecord)docc.BlockRecords["MyBlock"].Clone());
-			doc.BlockRecords.Add(record);
-
-			Insert insert = new Insert(record);
-
-			doc.Entities.Add(insert);
-			doc.Entities.Add(new Insert(doc.BlockRecords["MyBlock"]));
-
-			using (DxfWriter writer = new DxfWriter("D:\\Albert DC\\Desktop\\test\\insert_test.dxf", doc, false))
-			{
-				writer.Write();
-			}
-
-			using (DwgWriter writer = new DwgWriter("D:\\Albert DC\\Desktop\\test\\insert_test.dwg", doc))
-			{
-				writer.Write();
-			}
-
-			using (DxfReader reader = new DxfReader("D:\\Albert DC\\Desktop\\test\\insert_test.dxf"))
-			{
-				reader.Configuration = new DxfReaderConfiguration
-				{
-					Failsafe = true
-				};
-				reader.OnNotification += NotificationHelper.LogConsoleNotification;
-				var test = reader.Read();
+				doc = reader.Read();
 			}
 
 			exploreDocument(doc);
