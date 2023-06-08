@@ -10,18 +10,9 @@ using System.Reflection;
 
 namespace ACadSharp.Header
 {
-	public enum AttributeVisibilityMode
-	{
-		None = 0,
-		Normal = 1,
-		All = 2
-	}
-
 	public class CadHeader
 	{
 		//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
-
-		//TODO : Finish the header documentation
 
 		/// <summary>
 		/// The AutoCAD drawing database version number.
@@ -337,29 +328,48 @@ namespace ACadSharp.Header
 		public short PointDisplayMode { get; set; }
 
 		/// <summary>
-		/// 
+		/// Integer variable intended for use by third-party developers
+		/// </summary>
+		/// <remarks>
 		/// System variable USERI1
-		/// </summary>
+		/// </remarks>
+		[CadSystemVariable("$USERI1", 70)]
 		public short UserShort1 { get; set; }
+
 		/// <summary>
-		/// 
+		/// Integer variable intended for use by third-party developers
+		/// </summary>
+		/// <remarks>
 		/// System variable USERI2
-		/// </summary>
+		/// </remarks>
+		[CadSystemVariable("$USERI2", 70)]
 		public short UserShort2 { get; set; }
+
 		/// <summary>
-		/// 
+		/// Integer variable intended for use by third-party developers
+		/// </summary>
+		/// <remarks>
 		/// System variable USERI3
-		/// </summary>
+		/// </remarks>
+		[CadSystemVariable("$USERI3", 70)]
 		public short UserShort3 { get; set; }
+
 		/// <summary>
-		/// 
+		/// Integer variable intended for use by third-party developers
+		/// </summary>
+		/// <remarks>
 		/// System variable USERI4
-		/// </summary>
+		/// </remarks>
+		[CadSystemVariable("$USERI4", 70)]
 		public short UserShort4 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable USERI5
+		/// Integer variable intended for use by third-party developers
 		/// </summary>
+		/// <remarks>
+		/// System variable USERI5
+		/// </remarks>
+		[CadSystemVariable("$USERI5", 70)]
 		public short UserShort5 { get; set; }
 
 		/// <summary>
@@ -620,30 +630,50 @@ namespace ACadSharp.Header
 		/// System variable 
 		/// </summary>
 		public double PolylineWidthDefault { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Real variable intended for use by third-party developers
 		/// </summary>
+		/// <remarks>
+		/// System variable $USERR1
+		/// </remarks>
+		[CadSystemVariable("$USERR1", 40)]
 		public double UserDouble1 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Real variable intended for use by third-party developers
 		/// </summary>
+		/// <remarks>
+		/// System variable $USERR2
+		/// </remarks>
+		[CadSystemVariable("$USERR2", 40)]
 		public double UserDouble2 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Real variable intended for use by third-party developers
 		/// </summary>
+		/// <remarks>
+		/// System variable $USERR3
+		/// </remarks>
+		[CadSystemVariable("$USERR3", 40)]
 		public double UserDouble3 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Real variable intended for use by third-party developers
 		/// </summary>
+		/// <remarks>
+		/// System variable $USERR4
+		/// </remarks>
+		[CadSystemVariable("$USERR4", 40)]
 		public double UserDouble4 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Real variable intended for use by third-party developers
 		/// </summary>
+		/// <remarks>
+		/// System variable $USERR5
+		/// </remarks>
+		[CadSystemVariable("$USERR5", 40)]
 		public double UserDouble5 { get; set; }
 
 		/// <summary>
@@ -1135,9 +1165,20 @@ namespace ACadSharp.Header
 		public string ArrowBlockName { get; set; } = string.Empty;
 
 		public string DimensionBlockNameFirst { get; set; }
+
 		public string DimensionBlockNameSecond { get; set; }
+
 		public short StackedTextAlignment { get; set; }
+
 		public short StackedTextSizePercentage { get; set; }
+
+		/// <summary>
+		/// Path for all relative hyperlinks in the drawing. If null, the drawing path is used
+		/// </summary>
+		/// <remarks>
+		/// System variable HYPERLINKBASE
+		/// </remarks>
+		[CadSystemVariable("$HYPERLINKBASE", 1)]
 		public string HyperLinkBase { get; set; }
 
 		/// <summary>

@@ -44,26 +44,6 @@ Header variable not implemented $DISPSILH
     Header variable not implemented 
     Header variable not implemented $PUCSORTHOVIEW
     Header variable not implemented 0
-    Header variable not implemented $USERI1
-    Header variable not implemented 0
-    Header variable not implemented $USERI2
-    Header variable not implemented 0
-    Header variable not implemented $USERI3
-    Header variable not implemented 0
-    Header variable not implemented $USERI4
-    Header variable not implemented 0
-    Header variable not implemented $USERI5
-    Header variable not implemented 0
-    Header variable not implemented $USERR1
-    Header variable not implemented 0
-    Header variable not implemented $USERR2
-    Header variable not implemented 0
-    Header variable not implemented $USERR3
-    Header variable not implemented 0
-    Header variable not implemented $USERR4
-    Header variable not implemented 0
-    Header variable not implemented $USERR5
-    Header variable not implemented 0
     Header variable not implemented $SHADEDGE
     Header variable not implemented 3
     Header variable not implemented $MAXACTVP
