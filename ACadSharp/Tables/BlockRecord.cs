@@ -190,9 +190,9 @@ namespace ACadSharp.Tables
 			}
 
 			clone.BlockEntity = (Block)this.BlockEntity.Clone();
-			clone.BlockEntity.Owner = this;
+			clone.BlockEntity.Owner = clone;
 			clone.BlockEnd = (BlockEnd)this.BlockEnd.Clone();
-			clone.BlockEnd.Owner = this;
+			clone.BlockEnd.Owner = clone;
 
 			return clone;
 		}

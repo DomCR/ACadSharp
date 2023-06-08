@@ -57,7 +57,7 @@ namespace ACadSharp.Tests.Tables
 			Assert.Throws<ArgumentException>(() => record.Entities.Add(l1));
 		}
 
-		[Fact(Skip = "This test will be implemented in implement-IClonable branch")]
+		[Fact()]
 		public void CloneTest()
 		{
 			string name = "my_block";
@@ -77,8 +77,7 @@ namespace ACadSharp.Tests.Tables
 
 			CadObjectTestUtils.AssertTableEntryClone(record, clone);
 
-			// Copy the state of the entities to an array as this is now using a HashMap for performance
-			// and cannot be accessed via indexes.
+			Assert.NotEqual(clone.BlockEntity.Owner, record);
 
 			var recordEntities = record.Entities.ToArray();
 			var cloneEntities = clone.Entities.ToArray();
