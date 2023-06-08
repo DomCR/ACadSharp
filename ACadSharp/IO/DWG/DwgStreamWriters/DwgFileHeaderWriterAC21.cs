@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
@@ -8,7 +9,7 @@ namespace ACadSharp.IO.DWG
 
 		protected override ICompressor compressor => new DwgLZ77AC21Compressor();
 
-		public DwgFileHeaderWriterAC21(Stream stream, CadDocument model) : base(stream, model)
+		public DwgFileHeaderWriterAC21(Stream stream, Encoding encoding, CadDocument model) : base(stream, encoding, model)
 		{
 		}
 
