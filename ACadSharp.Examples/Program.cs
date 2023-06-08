@@ -1,6 +1,4 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.Examples.Common;
-using ACadSharp.IO;
+﻿using ACadSharp.IO;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
@@ -14,8 +12,7 @@ namespace ACadSharp.Examples
 
 		static void Main(string[] args)
 		{
-			CadDocument doc = new CadDocument();
-
+			CadDocument doc;
 			using (DwgReader reader = new DwgReader(_file))
 			{
 				doc = reader.Read();
