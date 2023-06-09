@@ -3,13 +3,10 @@ using ACadSharp.Entities;
 using ACadSharp.Tables;
 using ACadSharp.Types.Units;
 using CSMath;
-using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Reflection;
-using System.Reflection.Emit;
 
 namespace ACadSharp.Header
 {
@@ -1434,10 +1431,22 @@ namespace ACadSharp.Header
 		public byte HaloGapPercentage { get; set; }
 
 		public Color ObscuredColor { get; set; }
+
 		public Color InterfereColor { get; set; }
+
 		public byte ObscuredType { get; set; }
+
 		public byte IntersectionDisplay { get; set; }
+
+		/// <summary>
+		/// Assigns a project name to the current drawing. Used when an external reference or image is not found on its original path. The project name points to a section in the registry that can contain one or more search paths for each project name defined. Project names and their search directories are created from the Files tab of the Options dialog box
+		/// </summary>
+		/// <remarks>
+		/// System variable PROJECTNAME
+		/// </remarks>
+		[CadSystemVariable("$PROJECTNAME", 1)]
 		public string ProjectName { get; set; }
+
 		public bool CameraDisplayObjects { get; set; }
 		public double StepsPerSecond { get; set; }
 		public double StepSize { get; set; }
@@ -1454,8 +1463,25 @@ namespace ACadSharp.Header
 		public double DraftMagnitudeSecondCrossSection { get; set; }
 		public short SolidLoftedShape { get; set; }
 		public char LoftedObjectNormals { get; set; }
-		public double Latitude { get; set; }
-		public double Longitude { get; set; }
+
+		/// <summary>
+		/// Specifies the latitude of the drawing model in decimal format
+		/// </summary>
+		/// <remarks>
+		/// System variable LATITUDE
+		/// </remarks>
+		[CadSystemVariable("$LATITUDE", 40)]
+		public double Latitude { get; set; } = 37.7950d;
+
+		/// <summary>
+		/// Specifies the longitude of the drawing model in decimal format
+		/// </summary>
+		/// <remarks>
+		/// System variable LONGITUDE
+		/// </remarks>
+		[CadSystemVariable("$LONGITUDE", 40)]
+		public double Longitude { get; set; } = -122.394d;
+
 		public double NorthDirection { get; set; }
 		public int TimeZone { get; set; }
 		public char DisplayLightGlyphs { get; set; }

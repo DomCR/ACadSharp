@@ -902,9 +902,9 @@ namespace ACadSharp.IO.DWG
 				//BS: INSUNITS
 				this._writer.WriteBitShort((short)this._header.InsUnits);
 				//BS : CEPSNTYPE
-				this._writer.WriteBitShort(this._header.CurrentEntityPlotStyle);
+				this._writer.WriteBitShort((short)this._header.CurrentEntityPlotStyle);
 
-				if (this._header.CurrentEntityPlotStyle == 3)
+				if (this._header.CurrentEntityPlotStyle == EntityPlotStyleType.ByObjectId)
 				{
 					//H: CPSNID(present only if CEPSNTYPE == 3) (hard pointer)
 					this._writer.HandleReference(DwgReferenceType.HardPointer, null);
@@ -922,7 +922,7 @@ namespace ACadSharp.IO.DWG
 				//RC: SORTENTS
 				this._writer.WriteByte((byte)this._header.EntitySortingFlags);
 				//RC : INDEXCTL
-				this._writer.WriteByte(this._header.IndexCreationFlags);
+				this._writer.WriteByte((byte)this._header.IndexCreationFlags);
 				//RC : HIDETEXT
 				this._writer.WriteByte(this._header.HideText);
 				//RC : XCLIPFRAME, before R2010 the value can be 0 or 1 only.
