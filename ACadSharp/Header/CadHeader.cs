@@ -253,7 +253,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable PELLIPSE (not present in DXF)
 		/// </remarks>
-		[Obsolete("Not present in dxf or documentation")]
+		//[Obsolete("Not present in dxf or documentation")]
 		public bool CreateEllipseAsPolyline { get; set; }
 
 		/// <summary>
@@ -772,8 +772,10 @@ namespace ACadSharp.Header
 
 		/// <summary>
 		/// 
-		/// System variable 
 		/// </summary>
+		/// <remarks>
+		/// System variable FACETRES
+		/// </remarks>
 		public double FacetResolution { get; set; }
 
 		/// <summary>
@@ -858,9 +860,12 @@ namespace ACadSharp.Header
 		public TimeSpan TotalEditingTime { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// User-elapsed timer
 		/// </summary>
+		/// <remarks>
+		/// System variable TDUSRTIMER
+		/// </remarks>
+		[CadSystemVariable("$TDUSRTIMER", 40)]
 		public TimeSpan UserElapsedTimeSpan { get; set; }
 
 		/// <summary>
@@ -873,9 +878,12 @@ namespace ACadSharp.Header
 		public Color CurrentEntityColor { get; set; } = Color.ByLayer;
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// View scale factor for new viewports
 		/// </summary>
+		/// <remarks>
+		/// System variable PSVPSCALE
+		/// </remarks>
+		[CadSystemVariable("$PSVPSCALE", 40)]
 		public double ViewportDefaultViewScaleFactor { get; set; }
 
 		/// <summary>
