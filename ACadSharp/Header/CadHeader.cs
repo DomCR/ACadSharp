@@ -91,13 +91,13 @@ namespace ACadSharp.Header
 		/// System variable DIMASO <br/>
 		/// Obsolete; see DIMASSOC
 		/// </remarks>
-		[CadSystemVariable("$DIMASO", DxfCode.Int16)]
+		[CadSystemVariable("$DIMASO", 70)]
 		public bool AssociatedDimensions { get; set; } = true;
 
 		/// <summary>
 		/// System variable DIMSHO
 		/// </summary>
-		[CadSystemVariable("$DIMSHO", DxfCode.Int16)]
+		[CadSystemVariable("$DIMSHO", 70)]
 		public bool UpdateDimensionsWhileDragging { get; set; } = true;
 
 		/// <summary>
@@ -123,14 +123,14 @@ namespace ACadSharp.Header
 		/// System variable ORTHOMODE.
 		/// Ortho mode on if nonzero.
 		/// </summary>
-		[CadSystemVariable("$ORTHOMODE", DxfCode.Int16)]
+		[CadSystemVariable("$ORTHOMODE", 70)]
 		public bool OrthoMode { get; set; }
 
 		/// <summary>
 		/// System variable REGENMODE.
 		/// REGENAUTO mode on if nonzero
 		/// </summary>
-		[CadSystemVariable("$REGENMODE", DxfCode.Int16)]
+		[CadSystemVariable("$REGENMODE", 70)]
 		public bool RegenerationMode { get; set; }
 
 		/// <summary>
@@ -139,7 +139,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable FILLMODE.
 		/// </remarks>
-		[CadSystemVariable("$FILLMODE", DxfCode.Int16)]
+		[CadSystemVariable("$FILLMODE", 70)]
 		public bool FillMode { get; set; } = true;
 
 		/// <summary>
@@ -148,7 +148,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable QTEXTMODE.
 		/// </remarks>
-		[CadSystemVariable("$QTEXTMODE", DxfCode.Int16)]
+		[CadSystemVariable("$QTEXTMODE", 70)]
 		public bool QuickTextMode { get; set; }
 
 		/// <summary>
@@ -157,76 +157,76 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable PSLTSCALE.
 		/// </remarks>
-		[CadSystemVariable("$PSLTSCALE", DxfCode.Int16)]
+		[CadSystemVariable("$PSLTSCALE", 70)]
 		public SpaceLineTypeScaling PaperSpaceLineTypeScaling { get; set; } = SpaceLineTypeScaling.Normal;
 
 		/// <summary>
 		/// Nonzero if limits checking is on
 		/// System variable LIMCHECK.
 		/// </summary>
-		[CadSystemVariable("$LIMCHECK", DxfCode.Int16)]
+		[CadSystemVariable("$LIMCHECK", 70)]
 		public bool LimitCheckingOn { get; set; }
 
 		/// <summary>
 		/// System variable BLIPMODE	??
 		/// </summary>
-		[CadSystemVariable("$BLIPMODE", DxfCode.Int16)]
+		[CadSystemVariable("$BLIPMODE", 70)]
 		public bool BlipMode { get; set; }
 
 		/// <summary>
 		/// Controls the user timer for the drawing
 		/// System variable USRTIMER
 		/// </summary>
-		[CadSystemVariable("$USRTIMER", DxfCode.Int16)]
+		[CadSystemVariable("$USRTIMER", 70)]
 		public bool UserTimer { get; set; }
 
 		/// <summary>
 		/// Determines the object type created by the SKETCH command
 		/// System variable SKPOLY
 		/// </summary>
-		[CadSystemVariable("$SKPOLY", DxfCode.Int16)]
+		[CadSystemVariable("$SKPOLY", 70)]
 		public bool SketchPolylines { get; set; }
 
 		/// <summary>
 		/// Represents angular direction.
 		/// System variable ANGDIR
 		/// </summary>
-		[CadSystemVariable("$ANGDIR", DxfCode.Int16)]
+		[CadSystemVariable("$ANGDIR", 70)]
 		public AngularDirection AngularDirection { get; set; } = AngularDirection.ClockWise;
 
 		/// <summary>
 		/// Controls the display of helixes and smoothed mesh objects.
 		/// System variable SPLFRAME
 		/// </summary>
-		[CadSystemVariable("$SPLFRAME", DxfCode.Int16)]
+		[CadSystemVariable("$SPLFRAME", 70)]
 		public bool ShowSplineControlPoints { get; set; }
 
 		/// <summary>
 		/// Mirror text if nonzero <br/>
 		/// System variable MIRRTEXT
 		/// </summary>
-		[CadSystemVariable("$MIRRTEXT", DxfCode.Int16)]
+		[CadSystemVariable("$MIRRTEXT", 70)]
 		public bool MirrorText { get; set; } = false;
 
 		/// <summary>
 		/// Determines whether input for the DVIEW and VPOINT command evaluated as relative to the WCS or current UCS <br/>
 		/// System variable WORLDVIEW
 		/// </summary>
-		[CadSystemVariable("$WORLDVIEW", DxfCode.Int16)]
+		[CadSystemVariable("$WORLDVIEW", 70)]
 		public bool WorldView { get; set; }
 
 		/// <summary>
 		/// 1 for previous release compatibility mode; 0 otherwise <br/>
 		/// System variable TILEMODE
 		/// </summary>
-		[CadSystemVariable("$TILEMODE", DxfCode.Int16)]
+		[CadSystemVariable("$TILEMODE", 70)]
 		public bool ShowModelSpace { get; set; }
 
 		/// <summary>
 		/// Limits checking in paper space when nonzero <br/>
 		/// System variable PLIMCHECK
 		/// </summary>
-		[CadSystemVariable("$PLIMCHECK", DxfCode.Int16)]
+		[CadSystemVariable("$PLIMCHECK", 70)]
 		public bool PaperSpaceLimitsChecking { get; set; }
 
 		/// <summary>
@@ -235,27 +235,34 @@ namespace ACadSharp.Header
 		/// 1 = Retain xref-dependent visibility settings <br/>
 		/// System variable VISRETAIN
 		/// </summary>
-		[CadSystemVariable("$VISRETAIN", DxfCode.Int16)]
+		[CadSystemVariable("$VISRETAIN", 70)]
 		public bool RetainXRefDependentVisibilitySettings { get; set; }
+
+		/// <summary>
+		/// Controls the display of silhouette curves of body objects in Wireframe mode
+		/// </summary>
+		/// <remarks>
+		/// System variable DISPSILH
+		/// </remarks>
+		[CadSystemVariable("$DISPSILH", 70)]
+		public bool DisplaySilhouetteCurves { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <remarks>
-		/// System variable DISPSILH
-		/// </remarks>
-		public bool DisplaySilhouetteCurves { get; set; }
-
-		/// <summary>
-		/// 
 		/// System variable PELLIPSE (not present in DXF)
-		/// </summary>
+		/// </remarks>
+		[Obsolete("Not present in dxf or documentation")]
 		public bool CreateEllipseAsPolyline { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable PROXYGRAPHICS
+		/// Controls the saving of proxy object images
 		/// </summary>
+		/// <remarks>
+		/// System variable PROXYGRAPHICS
+		/// </remarks>
+		[CadSystemVariable("$PROXYGRAPHICS", 70)]
 		public bool ProxyGraphics { get; set; }
 
 		/// <summary>
@@ -304,9 +311,11 @@ namespace ACadSharp.Header
 		public short AngularUnitPrecision { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable OSMODE
+		/// Sets running object snaps, only for R13 - R14
 		/// </summary>
+		/// <remarks>
+		/// System variable OSMODE
+		/// </remarks>
 		public ObjectSnapMode ObjectSnapMode { get; set; }
 
 		/// <summary>
@@ -382,41 +391,66 @@ namespace ACadSharp.Header
 		public short NumberOfSplineSegments { get; set; } = 8;
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Surface density (for PEDIT Smooth) in M direction
 		/// </summary>
-		public short SurfaceDensityU { get; set; }
-		/// <summary>
-		/// 
+		/// <remarks>
 		/// System variable SURFU
+		/// </remarks>
+		[CadSystemVariable("$SURFU", 70)]
+		public short SurfaceDensityU { get; set; }
+
+		/// <summary>
+		/// Surface density(for PEDIT Smooth) in N direction
 		/// </summary>
+		/// <remarks>
+		/// System variable SURFV
+		/// </remarks>
+		[CadSystemVariable("$SURFV", 70)]
 		public short SurfaceDensityV { get; set; }
+
 		/// <summary>
-		/// 
+		/// Surface type for PEDIT Smooth
+		/// </summary>
+		/// <remarks>
 		/// System variable SURFTYPE
-		/// </summary>
+		/// </remarks>
+		[CadSystemVariable("$SURFTYPE", 70)]
 		public short SurfaceType { get; set; }
+
 		/// <summary>
-		/// 
+		/// Number of mesh tabulations in first direction
+		/// </summary>
+		/// <remarks>
 		/// System variable SURFTAB1
-		/// </summary>
+		/// </remarks>
+		[CadSystemVariable("$SURFTAB1", 70)]
 		public short SurfaceMeshTabulationCount1 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable SURFTAB2
+		/// Number of mesh tabulations in second direction
 		/// </summary>
+		/// <remarks>
+		/// System variable SURFTAB2
+		/// </remarks>
+		[CadSystemVariable("$SURFTAB2", 70)]
 		public short SurfaceMeshTabulationCount2 { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable SPLINETYPE
+		/// Spline curve type for PEDIT Spline
 		/// </summary>
+		/// <remarks>
+		/// System variable SPLINETYPE
+		/// </remarks>
+		[CadSystemVariable("$SPLINETYPE", 70)]
 		public SplineType SplineType { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable SHADEDGE
+		/// Controls the shading of edges
 		/// </summary>
+		/// <remarks>
+		/// System variable SHADEDGE
+		/// </remarks>
+		[CadSystemVariable("$SHADEDGE", 70)]
 		public ShadeEdgeType ShadeEdge { get; set; }
 
 		/// <summary>
@@ -432,20 +466,29 @@ namespace ACadSharp.Header
 		public short ShadeDiffuseToAmbientPercentage { get; set; } = 70;
 
 		/// <summary>
-		/// 
+		/// Low bit set = Display fractions, feet-and-inches, and surveyor's angles in input format
+		/// </summary>
+		/// <remarks>
 		/// System variable UNITMODE
-		/// </summary>
+		/// </remarks>
+		[CadSystemVariable("$UNITMODE", 70)]
 		public short UnitMode { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable MAXACTVP
+		/// Sets maximum number of viewports to be regenerated
 		/// </summary>
+		/// <remarks>
+		/// System variable MAXACTVP
+		/// </remarks>
+		[CadSystemVariable("$MAXACTVP", 70)]
 		public short MaxViewportCount { get; set; }
 
 		/// <summary>
 		/// 
-		/// System variable ISOLINES
 		/// </summary>
+		/// <remarks>
+		/// System variable ISOLINES
+		/// </remarks>
 		public short SurfaceIsolineCount { get; set; }
 
 		/// <summary>
@@ -459,8 +502,10 @@ namespace ACadSharp.Header
 
 		/// <summary>
 		/// 
-		/// System variable 
 		/// </summary>
+		/// <remarks>
+		/// System variable TEXTQLTY
+		/// </remarks>
 		public short TextQuality { get; set; }
 
 		/// <summary>
@@ -513,7 +558,7 @@ namespace ACadSharp.Header
 		/// System variable CLAYER
 		/// </remarks>
 		[CadSystemVariable("$CLAYER", 8)]
-		public string LayerName
+		public string CurrentLayerName
 		{
 			get { return this._currentLayer.Name; }
 			set
@@ -536,7 +581,7 @@ namespace ACadSharp.Header
 		/// System variable CELTYPE
 		/// </remarks>
 		[CadSystemVariable("$CELTYPE", 6)]
-		public string LineTypeName
+		public string CurrentLineTypeName
 		{
 			get { return this.CurrentLineType.Name; }
 			set
@@ -561,7 +606,7 @@ namespace ACadSharp.Header
 		/// System variable CMLSTYLE
 		/// </remarks>
 		[CadSystemVariable("$CMLSTYLE", 2)]
-		public string MultilineStyleName { get; set; } = "Standard";
+		public string MultilineStyleName { get; internal set; } = "Standard";
 
 		//TODO: Header MLStyle
 		//{
@@ -591,20 +636,30 @@ namespace ACadSharp.Header
 		public double TraceWidthDefault { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Sketch record increment
 		/// </summary>
+		/// <remarks>
+		/// System variable SKETCHINC
+		/// </remarks>
+		[CadSystemVariable("$SKETCHINC", 40)]
 		public double SketchIncrement { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Sketch record increment
 		/// </summary>
+		/// <remarks>
+		/// System variable FILLETRAD
+		/// </remarks>
+		[CadSystemVariable("$FILLETRAD", 40)]
 		public double FilletRadius { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Current thickness set by ELEV command
 		/// </summary>
+		/// <remarks>
+		/// System variable THICKNESS
+		/// </remarks>
+		[CadSystemVariable("$THICKNESS", 40)]
 		public double ThicknessDefault { get; set; }
 
 		/// <summary>
@@ -626,9 +681,12 @@ namespace ACadSharp.Header
 		public double PointDisplaySize { get; set; } = 0.0d;
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Default polyline width
 		/// </summary>
+		/// <remarks>
+		/// System variable PLINEWID
+		/// </remarks>
+		[CadSystemVariable("$PLINEWID", 40)]
 		public double PolylineWidthDefault { get; set; }
 
 		/// <summary>
@@ -2512,7 +2570,7 @@ namespace ACadSharp.Header
 				}
 				else
 				{
-					return this.Document.Layers[this.LayerName];
+					return this.Document.Layers[this.CurrentLayerName];
 				}
 			}
 			private set
@@ -2552,6 +2610,10 @@ namespace ACadSharp.Header
 			this.Version = version;
 		}
 
+		/// <summary>
+		/// Gets a map of all the system variables and it's codes
+		/// </summary>
+		/// <returns></returns>
 		public static Dictionary<string, CadSystemVariable> GetHeaderMap()
 		{
 			Dictionary<string, CadSystemVariable> map = new Dictionary<string, CadSystemVariable>();
@@ -2567,6 +2629,11 @@ namespace ACadSharp.Header
 			return map;
 		}
 
+		/// <summary>
+		/// Set a valueo of a system variable by name
+		/// </summary>
+		/// <param name="systemvar">name of the system var</param>
+		/// <param name="values">parameters for the constructor of the value</param>
 		public void SetValue(string systemvar, params object[] values)
 		{
 			var prop = _propertyCache.GetProperty(systemvar);

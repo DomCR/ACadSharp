@@ -220,8 +220,10 @@ namespace ACadSharp.IO.DWG
 
 			//R13 - R14 Only Only(stored in registry from R15 onwards):
 			if (R13_14Only)
+			{
 				//BS: OSMODE
 				_header.ObjectSnapMode = (ObjectSnapMode)_reader.ReadBitShort();
+			}
 
 			//Common:
 			//BS: ATTMODE

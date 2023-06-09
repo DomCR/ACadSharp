@@ -15,7 +15,7 @@ namespace ACadSharp.Tests.Header
 			CadHeader header = new CadHeader();
 
 			Assert.NotNull(header.CurrentLayer);
-			Assert.True(header.CurrentLayer.Name == header.LayerName);
+			Assert.True(header.CurrentLayer.Name == header.CurrentLayerName);
 			Assert.True(header.CurrentLayer.Name == Layer.DefaultName);
 			Assert.True(header.CurrentLayer.Handle == 0);
 			Assert.Null(header.CurrentLayer.Owner);
@@ -28,9 +28,9 @@ namespace ACadSharp.Tests.Header
 			CadHeader header = new CadHeader(document);
 
 			Assert.NotNull(header.CurrentLayer);
-			Assert.True(header.CurrentLayer.Name == header.LayerName, "Name does not match");
+			Assert.True(header.CurrentLayer.Name == header.CurrentLayerName, "Name does not match");
 			Assert.True(header.CurrentLayer.Name == Layer.DefaultName, "Name does not match");
-			Assert.True(header.CurrentLayer.Handle == document.Layers[header.LayerName].Handle, "Handle does not match");
+			Assert.True(header.CurrentLayer.Handle == document.Layers[header.CurrentLayerName].Handle, "Handle does not match");
 			Assert.Equal(document.Layers, header.CurrentLayer.Owner);
 		}
 	}
