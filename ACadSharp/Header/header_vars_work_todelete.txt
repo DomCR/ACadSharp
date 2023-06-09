@@ -1,33 +1,5 @@
-Header variable not implemented $DISPSILH
-    Header variable not implemented 0
-    Header variable not implemented $DIMBLK1
-    Header variable not implemented 
-    Header variable not implemented $DIMBLK2
-    Header variable not implemented 
     Header variable not implemented $DIMTXSTY
     Header variable not implemented Standard
-    Header variable not implemented $SKETCHINC
-    Header variable not implemented 0.1
-    Header variable not implemented $FILLETRAD
-    Header variable not implemented 0
-    Header variable not implemented $THICKNESS
-    Header variable not implemented 0
-    Header variable not implemented $TDUSRTIMER
-    Header variable not implemented 0.0995717593
-    Header variable not implemented $PLINEWID
-    Header variable not implemented 5.080563928030537
-    Header variable not implemented $SPLINETYPE
-    Header variable not implemented 6
-    Header variable not implemented $SURFTAB1
-    Header variable not implemented 6
-    Header variable not implemented $SURFTAB2
-    Header variable not implemented 6
-    Header variable not implemented $SURFTYPE
-    Header variable not implemented 6
-    Header variable not implemented $SURFU
-    Header variable not implemented 6
-    Header variable not implemented $SURFV
-    Header variable not implemented 6
     Header variable not implemented $UCSBASE
     Header variable not implemented 
     Header variable not implemented $UCSNAME
@@ -44,34 +16,10 @@ Header variable not implemented $DISPSILH
     Header variable not implemented 
     Header variable not implemented $PUCSORTHOVIEW
     Header variable not implemented 0
-    Header variable not implemented $SHADEDGE
-    Header variable not implemented 3
-    Header variable not implemented $MAXACTVP
-    Header variable not implemented 64
-    Header variable not implemented $UNITMODE
-    Header variable not implemented 0
-    Header variable not implemented $TREEDEPTH
-    Header variable not implemented 3020
-    Header variable not implemented $PROXYGRAPHICS
-    Header variable not implemented 1
     Header variable not implemented $MEASUREMENT
     Header variable not implemented 0
-    Header variable not implemented $ENDCAPS
-    Header variable not implemented 0
-    Header variable not implemented $JOINSTYLE
-    Header variable not implemented 0
-    Header variable not implemented $HYPERLINKBASE
-    Header variable not implemented 
     Header variable not implemented $STYLESHEET
     Header variable not implemented 
-    Header variable not implemented $XEDIT
-    Header variable not implemented True
-    Header variable not implemented $CEPSNTYPE
-    Header variable not implemented 0
-    Header variable not implemented $PSTYLEMODE
-    Header variable not implemented True
-    Header variable not implemented $PSVPSCALE
-    Header variable not implemented 0
     Header variable not implemented $OLESTARTUP
     Header variable not implemented False
     Header variable not implemented $SORTENTS

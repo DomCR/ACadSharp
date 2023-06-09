@@ -895,9 +895,9 @@ namespace ACadSharp.IO.DWG
 				//BS: INSUNITS
 				_header.InsUnits = (UnitsType)_reader.ReadBitShort();
 				//BS : CEPSNTYPE
-				_header.CurrentEntityPlotStyleType = _reader.ReadBitShort();
+				_header.CurrentEntityPlotStyle = (EntityPlotStyleType)_reader.ReadBitShort();
 
-				if (_header.CurrentEntityPlotStyleType == 3)
+				if (_header.CurrentEntityPlotStyle == EntityPlotStyleType.ByObjectId)
 				{
 					//H: CPSNID(present only if CEPSNTYPE == 3) (hard pointer)
 					objectPointers.CPSNID = _reader.HandleReference();
@@ -915,7 +915,7 @@ namespace ACadSharp.IO.DWG
 				//RC: SORTENTS
 				_header.EntitySortingFlags = (ObjectSortingFlags)_reader.ReadByte();
 				//RC : INDEXCTL
-				_header.IndexCreationFlags = _reader.ReadByte();
+				_header.IndexCreationFlags = (IndexCreationFlags)_reader.ReadByte();
 				//RC : HIDETEXT
 				_header.HideText = _reader.ReadByte();
 				//RC : XCLIPFRAME, before R2010 the value can be 0 or 1 only.

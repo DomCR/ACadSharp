@@ -3,10 +3,13 @@ using ACadSharp.Entities;
 using ACadSharp.Tables;
 using ACadSharp.Types.Units;
 using CSMath;
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace ACadSharp.Header
 {
@@ -1230,13 +1233,33 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMLDRBLK", 1)]
 		public string ArrowBlockName { get; set; } = string.Empty;
 
+		/// <summary>
+		/// First arrow block name
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMBLK1
+		/// </remarks>
+		[CadSystemVariable("$DIMBLK1", 1)]
 		public string DimensionBlockNameFirst { get; set; }
 
+		/// <summary>
+		/// Second arrow block name
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMBLK2
+		/// </remarks>
+		[CadSystemVariable("$DIMBLK2", 1)]
 		public string DimensionBlockNameSecond { get; set; }
 
-		public short StackedTextAlignment { get; set; }
+		/// <remarks>
+		/// System variable TSTACKALIGN, default = 1(not present in DXF)
+		/// </remarks>
+		public short StackedTextAlignment { get; internal set; } = 1;
 
-		public short StackedTextSizePercentage { get; set; }
+		/// <remarks>
+		/// TSTACKSIZE, default = 70(not present in DXF)
+		/// </remarks>
+		public short StackedTextSizePercentage { get; internal set; } = 70;
 
 		/// <summary>
 		/// Path for all relative hyperlinks in the drawing. If null, the drawing path is used
@@ -1256,8 +1279,22 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$CELWEIGHT", 370)]
 		public LineweightType CurrentEntityLineWeight { get; set; } = LineweightType.ByLayer;
 
+		/// <summary>
+		/// Lineweight endcaps setting for new objects
+		/// </summary>
+		/// <remarks>
+		/// System variable ENDCAPS
+		/// </remarks>
+		[CadSystemVariable("$ENDCAPS", 280)]
 		public short EndCaps { get; set; }
 
+		/// <summary>
+		/// Lineweight joint setting for new objects
+		/// </summary>
+		/// <remarks>
+		/// System variable JOINSTYLE
+		/// </remarks>
+		[CadSystemVariable("$JOINSTYLE", 280)]
 		public short JoinStyle { get; set; }
 
 		/// <summary>
@@ -1271,6 +1308,13 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$LWDISPLAY", 290)]
 		public bool DisplayLineWeight { get; set; } = false;
 
+		/// <summary>
+		/// Controls whether the current drawing can be edited in-place when being referenced by another drawing
+		/// </summary>
+		/// <remarks>
+		/// System variable XEDIT
+		/// </remarks>
+		[CadSystemVariable("$XEDIT", 290)]
 		public bool XEdit { get; set; }
 
 		/// <summary>
@@ -1284,7 +1328,19 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$EXTNAMES", 290)]
 		public bool ExtendedNames { get; set; } = true;
 
+		/// <summary>
+		/// Indicates whether the current drawing is in a Color-Dependent or Named Plot Style mode
+		/// </summary>
+		/// <remarks>
+		/// System variable PSTYLEMODE
+		/// </remarks>
+		[CadSystemVariable("$PSTYLEMODE", 290)]
 		public short PlotStyleMode { get; set; }
+
+		/// <remarks>
+		/// System variable OLESTARTUP
+		/// </remarks>
+		//[CadSystemVariable("$OLESTARTUP", 290)]
 		public bool LoadOLEObject { get; set; }
 
 		/// <summary>
@@ -1296,7 +1352,14 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$INSUNITS", 70)]
 		public UnitsType InsUnits { get; set; } = UnitsType.Unitless;
 
-		public short CurrentEntityPlotStyleType { get; set; }
+		/// <summary>
+		/// Plot style type of new objects
+		/// </summary>
+		/// <remarks>
+		/// System variable CEPSNTYPE
+		/// </remarks>
+		[CadSystemVariable("$CEPSNTYPE", 380)]
+		public EntityPlotStyleType CurrentEntityPlotStyle { get; set; }
 
 		/// <summary>
 		/// Set at creation time, uniquely identifies a particular drawing
@@ -1316,12 +1379,40 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$VERSIONGUID", 2)]
 		public string VersionGuid { get; internal set; } = Guid.NewGuid().ToString();
 
+		/// <summary>
+		/// Controls the object sorting methods
+		/// </summary>
+		/// <remarks>
+		/// System variable SORTENTS
+		/// </remarks>
+		[CadSystemVariable("$SORTENTS", 280)]
 		public ObjectSortingFlags EntitySortingFlags { get; set; }
 
-		public byte IndexCreationFlags { get; set; }
+		/// <summary>
+		/// Controls whether layer and spatial indexes are created and saved in drawing files
+		/// </summary>
+		/// <remarks>
+		/// System variable INDEXCTL
+		/// </remarks>
+		[CadSystemVariable("$INDEXCTL", 280)]
+		public IndexCreationFlags IndexCreationFlags { get; set; }
 
+		/// <summary>
+		/// Specifies HIDETEXT system variable
+		/// </summary>
+		/// <remarks>
+		/// System variable HIDETEXT
+		/// </remarks>
+		[CadSystemVariable("$HIDETEXT", 290)]
 		public byte HideText { get; set; }
 
+		/// <summary>
+		/// Controls the visibility of xref clipping boundaries
+		/// </summary>
+		/// <remarks>
+		/// System variable XCLIPFRAME
+		/// </remarks>
+		[CadSystemVariable("$XCLIPFRAME", 290)]
 		public byte ExternalReferenceClippingBoundaryType { get; set; }
 
 		/// <summary>
@@ -1330,13 +1421,18 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable DIMASSOC
 		/// </remarks>
-		[CadSystemVariable("$DIMASSOC", DxfCode.Int8)]
+		[CadSystemVariable("$DIMASSOC", 280)]
 		public DimensionAssociation DimensionAssociativity { get; set; } = DimensionAssociation.CreateExplodedDimensions;
 
+		/// <summary>
+		/// Specifies a gap to be displayed where an object is hidden by another object; the value is specified as a percent of one unit and is independent of the zoom level.A haloed line is shortened at the point where it is hidden when HIDE or the Hidden option of SHADEMODE is used
+		/// </summary>
 		/// <remarks>
 		/// System variable HALOGAP
 		/// </remarks>
+		[CadSystemVariable("$HALOGAP", 280)]
 		public byte HaloGapPercentage { get; set; }
+
 		public Color ObscuredColor { get; set; }
 		public Color InterfereColor { get; set; }
 		public byte ObscuredType { get; set; }

@@ -902,9 +902,9 @@ namespace ACadSharp.IO.DWG
 				//BS: INSUNITS
 				this._writer.WriteBitShort((short)this._header.InsUnits);
 				//BS : CEPSNTYPE
-				this._writer.WriteBitShort(this._header.CurrentEntityPlotStyleType);
+				this._writer.WriteBitShort(this._header.CurrentEntityPlotStyle);
 
-				if (this._header.CurrentEntityPlotStyleType == 3)
+				if (this._header.CurrentEntityPlotStyle == 3)
 				{
 					//H: CPSNID(present only if CEPSNTYPE == 3) (hard pointer)
 					this._writer.HandleReference(DwgReferenceType.HardPointer, null);
