@@ -109,6 +109,15 @@ namespace ACadSharp.Header
 		public bool DIMSAV { get; set; }
 
 		/// <summary>
+		/// Sets drawing units
+		/// </summary>
+		/// <remarks>
+		/// System variable MEASUREMENT
+		/// </remarks>
+		[CadSystemVariable("$ORTHOMODE", 70)]
+		public byte MeasurementUnits { get; set; }
+
+		/// <summary>
 		/// Governs the generation of linetype patterns around the vertices of a 2D polyline:<br/>
 		/// 1 = Linetype is generated in a continuous pattern around vertices of the polyline<br/>
 		/// 0 = Each segment of the polyline starts and ends with a dash
@@ -1600,6 +1609,29 @@ namespace ACadSharp.Header
 		public string StyleSheetName { get; set; }
 
 		/// <summary>
+		/// Dimension text style
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMTXSTY
+		/// </remarks>
+		[CadSystemVariable("$DIMTXSTY", 2)]
+		public string DimensionTextStyleName
+		{
+			get { return this.DimensionTextStyle.Name; }
+			set
+			{
+				if (this.Document != null)
+				{
+					this.DimensionTextStyle = this.Document.TextStyles[value];
+				}
+				else
+				{
+					this.DimensionTextStyle = new TextStyle(value);
+				}
+			}
+		}
+
+		/// <summary>
 		/// Dimension style name
 		/// </summary>
 		/// <remarks>
@@ -2816,6 +2848,8 @@ namespace ACadSharp.Header
 				this._currentLayer = value;
 			}
 		}
+
+		public TextStyle DimensionTextStyle { get; private set; } = TextStyle.Default;
 
 		public DimensionStyle DimensionStyleOverrides { get; private set; } = DimensionStyle.Default;
 
