@@ -115,7 +115,7 @@ namespace ACadSharp.Header
 		/// System variable MEASUREMENT
 		/// </remarks>
 		[CadSystemVariable("$ORTHOMODE", 70)]
-		public byte MeasurementUnits { get; set; }
+		public MeasurementUnits MeasurementUnits { get; set; }
 
 		/// <summary>
 		/// Governs the generation of linetype patterns around the vertices of a 2D polyline:<br/>
