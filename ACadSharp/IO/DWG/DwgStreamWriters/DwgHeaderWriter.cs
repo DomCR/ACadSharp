@@ -456,7 +456,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.Write3BitDouble(this._header.ModelSpaceYAxis);
 
 			//H: UCSNAME(MSPACE)(hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.ModelSpace);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.ModelSpaceUcs);
 
 			//R2000 + Only:
 			if (this.R2000Plus)
@@ -1030,7 +1030,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 
 				//RC: CSHADOW
-				this._writer.WriteByte(this._header.ShadowMode);
+				this._writer.WriteByte((byte)this._header.ShadowMode);
 				//BD : unknown
 				this._writer.WriteBitDouble(this._header.ShadowPlaneLocation);
 			}

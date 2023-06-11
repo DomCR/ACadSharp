@@ -948,6 +948,38 @@ namespace ACadSharp.Header
 		}
 
 		/// <summary>
+		/// Name of the UCS that defines the origin and orientation of orthographic UCS settings (paper space only)
+		/// </summary>
+		/// <remarks>
+		/// System variable PUCSBASE
+		/// </remarks>
+		[CadSystemVariable("$PUCSBASE", 2)]
+		public string PaperSpaceBaseName
+		{
+			get { return this.PaperSpaceUcsBase.Name; }
+			set
+			{
+				this.PaperSpaceUcsBase.Name = value;
+			}
+		}
+
+		/// <summary>
+		/// Current paper space UCS name
+		/// </summary>
+		/// <remarks>
+		/// System variable PUCSNAME
+		/// </remarks>
+		[CadSystemVariable("$PUCSNAME", 2)]
+		public string PaperSpaceName
+		{
+			get { return this.PaperSpaceUcs.Name; }
+			set
+			{
+				this.PaperSpaceUcs.Name = value;
+			}
+		}
+
+		/// <summary>
 		/// Origin of current UCS (in WCS)
 		/// </summary>
 		/// <remarks>
@@ -1149,6 +1181,38 @@ namespace ACadSharp.Header
 		public XY ModelSpaceLimitsMax { get; set; }
 
 		/// <summary>
+		/// Name of the UCS that defines the origin and orientation of orthographic UCS settings
+		/// </summary>
+		/// <remarks>
+		/// System variable UCSBASE
+		/// </remarks>
+		[CadSystemVariable("$UCSBASE", 2)]
+		public string UcsBaseName
+		{
+			get { return this.ModelSpaceUcsBase.Name; }
+			set
+			{
+				this.ModelSpaceUcsBase.Name = value;
+			}
+		}
+
+		/// <summary>
+		/// Name of current UCS
+		/// </summary>
+		/// <remarks>
+		/// System variable UCSNAME
+		/// </remarks>
+		[CadSystemVariable("$UCSNAME", 2)]
+		public string UcsName
+		{
+			get { return this.ModelSpaceUcs.Name; }
+			set
+			{
+				this.ModelSpaceUcs.Name = value;
+			}
+		}
+
+		/// <summary>
 		/// Current elevation set by ELEV command
 		/// </summary>
 		/// <remarks>
@@ -1157,10 +1221,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$ELEVATION", 40)]
 		public double Elevation
 		{
-			get { return this.ModelSpace.Elevation; }
+			get { return this.ModelSpaceUcs.Elevation; }
 			set
 			{
-				this.ModelSpace.Elevation = value;
+				this.ModelSpaceUcs.Elevation = value;
 			}
 		}
 
@@ -1173,10 +1237,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$UCSORG", 10, 20, 30)]
 		public XYZ ModelSpaceOrigin
 		{
-			get { return this.ModelSpace.Origin; }
+			get { return this.ModelSpaceUcs.Origin; }
 			set
 			{
-				this.ModelSpace.Origin = value;
+				this.ModelSpaceUcs.Origin = value;
 			}
 		}
 
@@ -1189,10 +1253,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$UCSXDIR", 10, 20, 30)]
 		public XYZ ModelSpaceXAxis
 		{
-			get { return this.ModelSpace.XAxis; }
+			get { return this.ModelSpaceUcs.XAxis; }
 			set
 			{
-				this.ModelSpace.XAxis = value;
+				this.ModelSpaceUcs.XAxis = value;
 			}
 		}
 
@@ -1205,10 +1269,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$UCSYDIR", 10, 20, 30)]
 		public XYZ ModelSpaceYAxis
 		{
-			get { return this.ModelSpace.YAxis; }
+			get { return this.ModelSpaceUcs.YAxis; }
 			set
 			{
-				this.ModelSpace.YAxis = value;
+				this.ModelSpaceUcs.YAxis = value;
 			}
 		}
 
@@ -1432,6 +1496,13 @@ namespace ACadSharp.Header
 
 		public Color ObscuredColor { get; set; }
 
+		/// <summary>
+		/// Represents the ACI color index of the "interference objects" created during the INTERFERE command. Default value is 1
+		/// </summary>
+		/// <remarks>
+		/// System variable INTERFERECOLOR
+		/// </remarks>
+		[CadSystemVariable("$INTERFERECOLOR", 62)]
 		public Color InterfereColor { get; set; }
 
 		public byte ObscuredType { get; set; }
@@ -1482,13 +1553,50 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$LONGITUDE", 40)]
 		public double Longitude { get; set; } = -122.394d;
 
+		/// <remarks>
+		/// System variable NORTHDIRECTION
+		/// </remarks>
+		[CadSystemVariable("$NORTHDIRECTION", 40)]
 		public double NorthDirection { get; set; }
+
+		/// <remarks>
+		/// System variable TIMEZONE
+		/// </remarks>
+		[CadSystemVariable("$TIMEZONE", 70)]
 		public int TimeZone { get; set; }
+		
 		public char DisplayLightGlyphs { get; set; }
+
+		/// <remarks>
+		/// System variable DWFFRAME
+		/// </remarks>
+		[CadSystemVariable("$DWFFRAME", 280)]
 		public char DwgUnderlayFramesVisibility { get; set; }
+
+		/// <remarks>
+		/// System variable DGNFRAME
+		/// </remarks>
+		[CadSystemVariable("$DGNFRAME", 280)]
 		public char DgnUnderlayFramesVisibility { get; set; }
-		public byte ShadowMode { get; set; }
+
+		/// <summary>
+		/// Shadow mode for a 3D object
+		/// </summary>
+		/// <remarks>
+		/// System variable CSHADOW
+		/// </remarks>
+		[CadSystemVariable("$CSHADOW", 280)]
+		public ShadowMode ShadowMode { get; set; }
+
+		/// <summary>
+		/// Location of the ground shadow plane. This is a Z axis ordinate
+		/// </summary>
+		/// <remarks>
+		/// System variable SHADOWPLANELOCATION
+		/// </remarks>
+		[CadSystemVariable("$SHADOWPLANELOCATION", 40)]
 		public double ShadowPlaneLocation { get; set; }
+
 		public string StyleSheetName { get; set; }
 
 		/// <summary>
@@ -2711,10 +2819,13 @@ namespace ACadSharp.Header
 
 		public DimensionStyle DimensionStyleOverrides { get; private set; } = DimensionStyle.Default;
 
-		public UCS ModelSpace { get; private set; } = new UCS();
+		public UCS ModelSpaceUcs { get; private set; } = new UCS();
+
+		public UCS ModelSpaceUcsBase { get; private set; } = new UCS();
 
 		public UCS PaperSpaceUcs { get; private set; } = new UCS();
 
+		public UCS PaperSpaceUcsBase { get; private set; } = new UCS();
 
 		public CadDocument Document { get; internal set; }
 

@@ -1023,8 +1023,8 @@ namespace ACadSharp.IO.DWG
 				objectPointers.DRAGVS = _reader.HandleReference();
 
 				//RC: CSHADOW
-				_header.ShadowMode = _reader.ReadByte();
-				//BD : unknown
+				_header.ShadowMode = (ShadowMode)_reader.ReadByte();
+				//BD : SHADOWPLANELOCATION
 				_header.ShadowPlaneLocation = _reader.ReadBitDouble();
 			}
 

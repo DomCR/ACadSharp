@@ -1,17 +1,8 @@
-    Header variable not implemented $DIMTXSTY
-    Header variable not implemented Standard
-    Header variable not implemented $UCSBASE
-    Header variable not implemented 
-    Header variable not implemented $UCSNAME
-    Header variable not implemented 
-    Header variable not implemented $UCSORTHOREF
+Header variable not implemented $DIMTXSTY
+        Header variable not implemented $UCSORTHOREF
     Header variable not implemented 
     Header variable not implemented $UCSORTHOVIEW
     Header variable not implemented 0
-    Header variable not implemented $PUCSBASE
-    Header variable not implemented 
-    Header variable not implemented $PUCSNAME
-    Header variable not implemented 
     Header variable not implemented $PUCSORTHOREF
     Header variable not implemented 
     Header variable not implemented $PUCSORTHOVIEW
@@ -22,16 +13,6 @@
     Header variable not implemented 
     Header variable not implemented $OLESTARTUP
     Header variable not implemented False
-    Header variable not implemented $SORTENTS
-    Header variable not implemented 127
-    Header variable not implemented $INDEXCTL
-    Header variable not implemented 0
-    Header variable not implemented $HIDETEXT
-    Header variable not implemented 1
-    Header variable not implemented $XCLIPFRAME
-    Header variable not implemented 2
-    Header variable not implemented $HALOGAP
-    Header variable not implemented 0
     Header variable not implemented $OBSCOLOR
     Header variable not implemented 257
     Header variable not implemented $OBSLTYPE
@@ -40,8 +21,6 @@
     Header variable not implemented 0
     Header variable not implemented $INTERSECTIONCOLOR
     Header variable not implemented 257
-    Header variable not implemented $PROJECTNAME
-    Header variable not implemented 
     Header variable not implemented $CAMERADISPLAY
     Header variable not implemented False
     Header variable not implemented $LENSLENGTH
@@ -69,15 +48,6 @@
     Header variable not implemented $LOFTPARAM
     Header variable not implemented 7
     Header variable not implemented $LOFTNORMALS
-    Header variable not implemented 1
-    Header variable not implemented $LATITUDE
-    Header variable not implemented 37.795
-    Header variable not implemented $LONGITUDE
-    Header variable not implemented -122.394
-    Header variable not implemented $NORTHDIRECTION
-    Header variable not implemented 0
-    Header variable not implemented $TIMEZONE
-    Header variable not implemented -8000
     Header variable not implemented $LIGHTGLYPHDISPLAY
     Header variable not implemented 1
     Header variable not implemented $TILEMODELIGHTSYNCH
@@ -87,20 +57,9 @@
     Header variable not implemented $SOLIDHIST
     Header variable not implemented 0
     Header variable not implemented $SHOWHIST
-    Header variable not implemented 1
-    Header variable not implemented $DWFFRAME
-    Header variable not implemented 2
-    Header variable not implemented $DGNFRAME
-    Header variable not implemented 0
     Header variable not implemented $REALWORLDSCALE
     Header variable not implemented True
-    Header variable not implemented $INTERFERECOLOR
-    Header variable not implemented 1
     Header variable not implemented $INTERFEREOBJVS
     Header variable not implemented 163
     Header variable not implemented $INTERFEREVPVS
     Header variable not implemented 160
-    Header variable not implemented $CSHADOW
-    Header variable not implemented 0
-    Header variable not implemented $SHADOWPLANELOCATION
-    Header variable not implemented 0
