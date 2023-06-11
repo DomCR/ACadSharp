@@ -24,7 +24,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// The start angle in radians.
 		/// </summary>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double StartAngle { get; set; } = 0.0;
 
 		/// <summary>
@@ -33,7 +33,7 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// Use 6.28 radians to specify a closed circle or ellipse.
 		/// </remarks>
-		[DxfCodeValue(51)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double EndAngle { get; set; } = Math.PI;
 
 		public Arc() : base() { }

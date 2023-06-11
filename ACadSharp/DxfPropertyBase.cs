@@ -159,12 +159,6 @@ namespace ACadSharp
 			}
 		}
 
-		public object GetValue<TCadObject>(TCadObject obj)
-			where TCadObject : CadObject
-		{
-			return this._property.GetValue(obj);
-		}
-
 		public object GetValue<TCadObject>(int code, TCadObject obj)
 		{
 			switch (this._attributeData.ReferenceType)

@@ -7,16 +7,16 @@ namespace ACadSharp.Objects
 	/// Represents a <see cref="XRecrod"/> object
 	/// </summary>
 	/// <remarks>
-	/// Object name <see cref="DxfFileToken.TableXRecord"/> <br/>
+	/// Object name <see cref="DxfFileToken.ObjectXRecord"/> <br/>
 	/// Dxf class name <see cref="DxfSubclassMarker.XRecord"/>
 	/// </remarks>
-	[DxfName(DxfFileToken.TableXRecord)]
+	[DxfName(DxfFileToken.ObjectXRecord)]
 	[DxfSubClass(DxfSubclassMarker.XRecord)]
 	public class XRecrod : CadObject
 	{
 		public override ObjectType ObjectType => ObjectType.XRECORD;
 
-		public override string ObjectName => DxfFileToken.TableXRecord;
+		public override string ObjectName => DxfFileToken.ObjectXRecord;
 
 		/// <summary>
 		/// Duplicate record cloning flag (determines how to merge duplicate entries)

@@ -201,7 +201,7 @@ namespace ACadSharp.IO.DWG
 				ulong handleSectionOffset = (ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize;
 
 				//Create a handler section reader
-				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
 				//set the initial posiltion and get the object type
@@ -210,11 +210,11 @@ namespace ACadSharp.IO.DWG
 
 
 				//Create a handler section reader
-				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
 				this._handlesReader.SetPositionInBits((long)handleSectionOffset);
 
 				//Create a text section reader
-				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
 				this._textReader.SetPositionByFlag((long)handleSectionOffset - 1);
 
 				this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
@@ -222,10 +222,10 @@ namespace ACadSharp.IO.DWG
 			else
 			{
 				//Create a handler section reader
-				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
-				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
 				this._textReader = this._objectReader;
 
 				//set the initial posiltion and get the object type
@@ -259,7 +259,7 @@ namespace ACadSharp.IO.DWG
 			if (!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
 				!this._handles.Contains(value) &&
 				value != 0 &&
-				!this._readedObjects.ContainsKey(handle))
+				!this._readedObjects.ContainsKey(value))
 			{
 				//Add the value to the handles queue to be processed
 				this._handles.Enqueue(value);
@@ -671,7 +671,7 @@ namespace ACadSharp.IO.DWG
 
 			if (this._version == ACadVersion.AC1021)
 			{
-				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer));
+				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
 				//"endbit" of the pre-handles section.
 				this._textReader.SetPositionByFlag(size + this._objectInitialPos - 1);
 			}
@@ -987,7 +987,10 @@ namespace ACadSharp.IO.DWG
 				case "PLOTSETTINGS":
 				case "RASTERVARIABLES":
 				case "SCALE":
+					break;
 				case "SORTENTSTABLE":
+					template = this.readSortentsTable();
+					break;
 				case "SPATIAL_FILTER":
 				case "SPATIAL_INDEX":
 				case "TABLEGEOMETRY":
@@ -3878,8 +3881,7 @@ namespace ACadSharp.IO.DWG
 		{
 			return null;
 
-			DwgViewportEntityControlTemplate template = new DwgViewportEntityControlTemplate(
-				this._builder.DocumentToBuild.Viewports);
+			DwgViewportEntityControlTemplate template = new DwgViewportEntityControlTemplate();
 
 			this.readCommonNonEntityData(template);
 
@@ -4398,6 +4400,36 @@ namespace ACadSharp.IO.DWG
 				XY spt = this._objectReader.Read2RawDouble();
 				hatch.SeedPoints.Add(spt);
 			}
+
+			return template;
+		}
+
+		private CadTemplate readSortentsTable()
+		{
+			SortEntitiesTable sortTable = new SortEntitiesTable();
+			CadSortensTableTemplate template = new CadSortensTableTemplate(sortTable);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Numentries BL number of entries
+			int numentries = this._mergedReaders.ReadBitLong();
+			//Sorthandle H
+			for (int i = 0; i < numentries; i++)
+			{
+				//Sort handle(numentries of these, CODE 0, i.e.part of the main bit stream, not of the handle bit stream!).
+				//The sort handle does not have to point to an entity (but it can).
+				//This is just the handle used for determining the drawing order of the entity specified by the entity handle in the handle bit stream.
+				//When the sortentstable doesn’t have a
+				//mapping from entity handle to sort handle, then the entity’s own handle is used for sorting.
+				ulong sortHandle = this._objectReader.HandleReference();
+				ulong entityHandle = this.handleReference();
+
+				template.Values.Add((sortHandle, entityHandle));
+			}
+
+			//owner handle (soft pointer)
+			template.BlockOwnerHandle = this.handleReference();
 
 			return template;
 		}

@@ -23,7 +23,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Contains all the header variables for this document.
 		/// </summary>
-		public CadHeader Header { get; set; }
+		public CadHeader Header { get; internal set; }
 
 		/// <summary>
 		/// Accesses drawing properties such as the Title, Subject, Author, and Keywords properties
@@ -86,12 +86,6 @@ namespace ACadSharp
 		public Layout[] Layouts { get { return this._cadObjects.Values.OfType<Layout>().ToArray(); } }   //TODO: Layouts have to go to the designed dictionary or blocks
 
 		/// <summary>
-		/// The collection of all viewports in the drawing
-		/// </summary>
-		[Obsolete("Viewports are only used by the R14 versions of dwg")]
-		public ViewportCollection Viewports { get; private set; }
-
-		/// <summary>
 		/// Root dictionary of the document
 		/// </summary>
 		public CadDictionary RootDictionary
@@ -132,7 +126,7 @@ namespace ACadSharp
 			if (createDefaults)
 			{
 				//Header and summary
-				this.Header = new CadHeader();
+				this.Header = new CadHeader(this);
 				this.SummaryInfo = new CadSummaryInfo();
 
 				//The order of the elements is rellevant for the handles assignation
@@ -186,7 +180,19 @@ namespace ACadSharp
 		/// <summary>
 		/// Creates a document with the default objects
 		/// </summary>
-		public CadDocument() : this(true) { }
+		/// <remarks>
+		/// Default version <see cref="ACadVersion.AC1018"/>
+		/// </remarks>
+		public CadDocument() : this(ACadVersion.AC1018) { }
+
+		/// <summary>
+		/// Creates a document with the default objects and a specific version
+		/// </summary>
+		/// <param name="version">Version of the document</param>
+		public CadDocument(ACadVersion version) : this(true)
+		{
+			this.Header.Version = version;
+		}
 
 		/// <summary>
 		/// Gets an object in the document by it's handle
@@ -284,6 +290,19 @@ namespace ACadSharp
 					break;
 				case Insert insert:
 					this.RegisterCollection(insert.Attributes);
+
+					//Should only be triggered for internal use
+					if (insert.Block == null)
+						break;
+
+					if (this.BlockRecords.TryGetValue(insert.Block.Name, out BlockRecord blk))
+					{
+						insert.Block = blk;
+					}
+					else
+					{
+						this.BlockRecords.Add(insert.Block);
+					}
 					break;
 				case Polyline pline:
 					this.RegisterCollection(pline.Vertices);
@@ -320,6 +339,7 @@ namespace ACadSharp
 					this.removeCadObject(record.BlockEntity);
 					break;
 				case Insert insert:
+					insert.Block = (BlockRecord)insert.Block.Clone();
 					this.UnregisterCollection(insert.Attributes);
 					break;
 				case Polyline pline:

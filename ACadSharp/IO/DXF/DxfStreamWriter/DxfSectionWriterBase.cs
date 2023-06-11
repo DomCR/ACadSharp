@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
 using CSMath;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,11 +37,6 @@ namespace ACadSharp.IO.DXF
 			this.writeSection();
 
 			this._writer.Write(DxfCode.Start, DxfFileToken.EndSection);
-		}
-
-		public void Notify(string message)
-		{
-			this.OnNotification?.Invoke(this, new NotificationEventArgs(message));
 		}
 
 		protected void writeCommonObjectData(CadObject cadObject)
@@ -102,6 +98,11 @@ namespace ACadSharp.IO.DXF
 					continue;
 				}
 
+				if (prop.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
+				{
+					value = (double)value * MathUtils.RadToDeg;
+				}
+
 				this._writer.Write(v.Key, value);
 
 				if (prop.ReferenceType.HasFlag(DxfReferenceType.Count))
@@ -142,7 +143,7 @@ namespace ACadSharp.IO.DXF
 						this.writeVertex(vertex);
 						break;
 					default:
-						this.Notify($"counter value for : {item.GetType().FullName} not implemented");
+						this.notify($"counter value for : {item.GetType().FullName} not implemented");
 						break;
 				}
 			}
@@ -162,7 +163,7 @@ namespace ACadSharp.IO.DXF
 				case MText:
 				case Dimension:
 				case MLine:
-					this.Notify($"mapped object : {e.GetType().FullName} not implemented | handle: {e.Handle}");
+					this.notify($"mapped object : {e.GetType().FullName} not implemented | handle: {e.Handle}");
 #if TEST
 					throw new NotImplementedException($"mapped object : {e.GetType().FullName} not implemented | handle: {e.Handle}");
 #endif
@@ -179,6 +180,9 @@ namespace ACadSharp.IO.DXF
 				case TextEntity textEntity:
 					this.writeTextEntity(textEntity);
 					return;
+				case Arc arc:
+					this.writeArc(arc);
+					return;
 				default:
 					break;
 			}
@@ -193,6 +197,24 @@ namespace ACadSharp.IO.DXF
 		}
 
 		protected abstract void writeSection();
+
+		private void writeArc(Arc arc)
+		{
+			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
+			DxfClassMap circleMap = DxfClassMap.Create<Circle>();
+
+			this._writer.Write(DxfCode.Start, arc.ObjectName);
+
+			this.writeCommonObjectData(arc);
+
+			this.writeClassMap(entityMap, arc);
+
+			this.writeClassMap(circleMap, arc);
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Arc);
+			this._writer.Write(50, arc.StartAngle * MathUtils.RadToDeg);
+			this._writer.Write(51, arc.EndAngle * MathUtils.RadToDeg);
+		}
 
 		private void writeDoubles(DxfCode[] codes, params double[] arr)
 		{
@@ -418,6 +440,11 @@ namespace ACadSharp.IO.DXF
 			this.writeCommonObjectData(v);
 
 			this.writeMap(map, v);
+		}
+
+		protected void notify(string message, NotificationType notificationType = NotificationType.None, Exception ex = null)
+		{
+			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, ex));
 		}
 	}
 }

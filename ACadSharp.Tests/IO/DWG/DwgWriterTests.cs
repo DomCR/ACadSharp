@@ -1,8 +1,8 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Exceptions;
+using ACadSharp.Header;
 using ACadSharp.IO;
 using ACadSharp.Tests.Common;
-using System;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
@@ -148,7 +148,7 @@ namespace ACadSharp.Tests.IO.DWG
 
 			using (var re = new DwgReader(stream, this.onNotification))
 			{
-				Header.CadHeader header = re.ReadHeader();
+				CadHeader header = re.ReadHeader();
 			}
 		}
 

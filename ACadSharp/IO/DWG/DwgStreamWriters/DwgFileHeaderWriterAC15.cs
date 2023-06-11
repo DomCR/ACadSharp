@@ -53,7 +53,7 @@ namespace ACadSharp.IO.DWG
 			0x95,0xA0,0x4E,0x28,0x99,0x82,0x1A,0xE5,0x5E,0x41,0xE0,0x5F,0x9D,0x3A,0x4D,0x00
 		};
 
-		public DwgFileHeaderWriterAC15(Stream stream, CadDocument model) : base(stream, model)
+		public DwgFileHeaderWriterAC15(Stream stream, Encoding encoding, CadDocument model) : base(stream, encoding, model)
 		{
 			_records = new Dictionary<string, (DwgSectionLocatorRecord, MemoryStream)>
 			{
@@ -110,7 +110,8 @@ namespace ACadSharp.IO.DWG
 			writer.WriteByte(0x19);
 
 			//Bytes at 0x13 and 0x14 are a raw short indicating the value of the code page for this drawing file.
-			writer.WriteBytes(LittleEndianConverter.Instance.GetBytes((short)30));
+
+			writer.WriteBytes(LittleEndianConverter.Instance.GetBytes(this.getFileCodePage()));
 			writer.WriteBytes(LittleEndianConverter.Instance.GetBytes(6));
 
 			foreach (var item in this._records.Values.Select(r => r.Item1))

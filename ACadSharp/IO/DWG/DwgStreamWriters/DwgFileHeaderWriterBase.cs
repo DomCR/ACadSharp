@@ -22,7 +22,7 @@ namespace ACadSharp.IO.DWG
 
 		protected CadDocument _document;
 
-		public DwgFileHeaderWriterBase(Stream stream, CadDocument model)
+		public DwgFileHeaderWriterBase(Stream stream, Encoding encoding, CadDocument model)
 		{
 			if (!stream.CanSeek || !stream.CanWrite)
 			{
@@ -32,12 +32,25 @@ namespace ACadSharp.IO.DWG
 			this._document = model;
 			this._stream = stream;
 			this._version = model.Header.Version;
-			this._encoding = TextEncoding.Windows1252();
+			this._encoding = encoding;
 		}
 
 		public abstract void AddSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400);
 
 		public abstract void WriteFile();
+
+		protected ushort getFileCodePage()
+		{
+			ushort codePage = (ushort)CadUtils.GetCodeIndex(CadUtils.GetCodePage(_document.Header.CodePage));
+			if (codePage < 1)
+			{
+				return 30;
+			}
+			else
+			{
+				return codePage;
+			}
+		}
 
 		protected void applyMask(byte[] buffer, int offset, int length)
 		{

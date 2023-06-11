@@ -2,10 +2,12 @@
 using ACadSharp.Header;
 using ACadSharp.IO.DXF;
 using CSUtilities.IO;
+using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ACadSharp.IO
@@ -14,7 +16,6 @@ namespace ACadSharp.IO
 	{
 		public DxfReaderConfiguration Configuration { get; set; } = new DxfReaderConfiguration();
 
-		private CadDocument _document;
 		private DxfDocumentBuilder _builder;
 		private IDxfStreamReader _reader;
 
@@ -48,23 +49,30 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		public static bool IsBinary(string filename)
 		{
-			return IsBinary(new StreamIO(filename).Stream);
+			Stream stream = File.OpenRead(filename);
+			bool result = IsBinary(stream);
+
+			stream.Close();
+
+			return result;
 		}
 
 		/// <summary>
 		/// Check if the file format is in binary.
 		/// </summary>
 		/// <param name="stream"></param>
+		/// <param name="resetPos"></param>
 		/// <returns></returns>
-		public static bool IsBinary(Stream stream)
+		public static bool IsBinary(Stream stream, bool resetPos = false)
 		{
-			string sentinel = "AutoCAD Binary DXF";
-
 			StreamIO sio = new StreamIO(stream);
 			sio.Position = 0;
-			string sn = sio.ReadString(sentinel.Length);
+			string sn = sio.ReadString(DxfBinaryReader.Sentinel.Length);
 
-			return sn == sentinel;
+			if (resetPos)
+				stream.Position = 0;
+
+			return sn == DxfBinaryReader.Sentinel;
 		}
 
 		/// <summary>
@@ -176,7 +184,9 @@ namespace ACadSharp.IO
 
 				if (this._reader.LastValueAsString == null || !headerMap.TryGetValue(currVar, out var data))
 				{
-					//this.OnNotificationHandler?.Invoke(this, new NotificationEventArgs($"Header variable not implemented {currVar}"));
+#if TEST
+					this.triggerNotification($"Header variable not implemented {currVar}", NotificationType.NotImplemented);
+#endif
 					this._reader.ReadNext();
 					continue;
 				}
@@ -189,8 +199,16 @@ namespace ACadSharp.IO
 					parameters[i] = this._reader.LastValue;
 				}
 
-				//Set the header value by name
-				header.SetValue(currVar, parameters);
+				try
+				{
+					//Set the header value by name
+					header.SetValue(currVar, parameters);
+				}
+				catch (Exception ex)
+				{
+					this.triggerNotification($"Invalid value for header variable {currVar} | {parameters.FirstOrDefault()}", NotificationType.Warning, ex);
+				}
+
 
 				this._reader.ReadNext();
 			}
@@ -344,23 +362,61 @@ namespace ACadSharp.IO
 		/// <summary>
 		/// Read the THUMBNAILIMAGE section of the DXF file.
 		/// </summary>
-		private void ReadThumbnailImage()
+		private void readThumbnailImage()
 		{
 			throw new NotImplementedException();
 		}
 
 		private IDxfStreamReader getReader()
 		{
-			if (this.IsBinary())
+			IDxfStreamReader tmpReader = null;
+
+			bool isBinary = this.IsBinary();
+			if (isBinary)
 			{
-				return new DxfBinaryReader(this._fileStream.Stream, Encoding.ASCII);
+				tmpReader = new DxfBinaryReader(this._fileStream.Stream, Encoding.ASCII);
 			}
 			else
-				return new DxfTextReader(this._fileStream.Stream);
+			{
+				tmpReader = new DxfTextReader(this._fileStream.Stream);
+			}
 
-			//TODO: Setup encoding
-			//AutoCAD 2007 DXF and later format - UTF-8
-			//AutoCAD 2004 DXF and earlier format - Plain ASCII and CIF
+			tmpReader.Find(DxfFileToken.HeaderSection);
+
+			while (tmpReader.LastValueAsString != DxfFileToken.EndSection)
+			{
+				if (tmpReader.LastValueAsString == "$ACADVER")
+				{
+					tmpReader.ReadNext();
+					var version = CadUtils.GetVersionFromName(tmpReader.LastValueAsString);
+					if (version >= ACadVersion.AC1021)
+					{
+						this._encoding = Encoding.UTF8;
+						break;
+					}
+				}
+				else if (tmpReader.LastValueAsString == "$DWGCODEPAGE")
+				{
+					tmpReader.ReadNext();
+
+					string encoding = tmpReader.LastValueAsString;
+
+					CodePage code = CadUtils.GetCodePage(encoding.ToLower());
+					this._encoding = this.getListedEncoding((int)code);
+					break;
+				}
+
+				tmpReader.ReadNext();
+			}
+
+			if (isBinary)
+			{
+				return new DxfBinaryReader(this._fileStream.Stream, this._encoding);
+			}
+			else
+			{
+				return new DxfTextReader(this._fileStream.Stream, this._encoding);
+			}
 		}
 
 		private IDxfStreamReader goToSection(string sectionName)

@@ -30,6 +30,22 @@ namespace ACadSharp.Entities
 			[DxfCodeValue(DxfReferenceType.Count, 73)]
 			public List<Segment> Segments { get; set; } = new List<Segment>();
 
+			public Vertex Clone()
+			{
+				Vertex clone = (Vertex)this.MemberwiseClone();
+
+				clone.Segments.Clear();
+				foreach (var item in this.Segments)
+				{
+					var seg = new Segment();
+					seg.Parameters.AddRange(item.Parameters);
+					seg.AreaFillParameters.AddRange(item.AreaFillParameters);
+					clone.Segments.Add(seg);
+				}
+
+				return clone;
+			}
+
 			public class Segment
 			{
 				/// <summary>

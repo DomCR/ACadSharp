@@ -1,8 +1,5 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using CSMath;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Entities
 {
@@ -51,17 +48,5 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Circle() : base() { }
-
-		protected override void createCopy(CadObject copy)
-		{
-			base.createCopy(copy);
-
-			Circle c = copy as Circle;
-
-			c.Normal = this.Normal;
-			c.Thickness = this.Thickness;
-			c.Center = this.Center;
-			c.Radius = this.Radius;
-		}
 	}
 }

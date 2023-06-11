@@ -69,6 +69,7 @@
 		public const string RasterImageDef = "AcDbRasterImageDef";
 		public const string RasterImageDefReactor = "AcDbRasterImageDefReactor";
 		public const string RasterVariables = "AcDbRasterVariables";
+		public const string SortentsTable = "AcDbSortentsTable";
 		public const string Group = "AcDbGroup";
 		public const string Layout = "AcDbLayout";
 		public const string PlotSettings = "AcDbPlotSettings";
