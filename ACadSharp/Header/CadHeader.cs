@@ -114,7 +114,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable MEASUREMENT
 		/// </remarks>
-		[CadSystemVariable("$ORTHOMODE", 70)]
+		[CadSystemVariable("$MEASUREMENT", 70)]
 		public MeasurementUnits MeasurementUnits { get; set; }
 
 		/// <summary>
