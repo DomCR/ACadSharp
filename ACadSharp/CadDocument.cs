@@ -234,14 +234,14 @@ namespace ACadSharp
 			return false;
 		}
 
-		private void addCadObject(CadObject cadObject)
+		internal void AddCadObject(CadObject cadObject)
 		{
 			if (cadObject.Document != null)
 			{
 				throw new ArgumentException($"The item with handle {cadObject.Handle} is already assigned to a document");
 			}
 
-			cadObject.Document = this;
+			cadObject.AssignDocument(this);
 
 			if (cadObject.Handle == 0 || this._cadObjects.ContainsKey(cadObject.Handle))
 			{
@@ -254,9 +254,6 @@ namespace ACadSharp
 
 			this._cadObjects.Add(cadObject.Handle, cadObject);
 			cadObject.OnReferenceChanged += this.onReferenceChanged;
-
-			if (cadObject.XDictionary != null)
-				this.RegisterCollection(cadObject.XDictionary);
 
 			if (cadObject is Entity e)
 			{
@@ -285,8 +282,8 @@ namespace ACadSharp
 			{
 				case BlockRecord record:
 					this.RegisterCollection(record.Entities);
-					this.addCadObject(record.BlockEnd);
-					this.addCadObject(record.BlockEntity);
+					this.AddCadObject(record.BlockEntity);
+					this.AddCadObject(record.BlockEnd);
 					break;
 				case Insert insert:
 					this.RegisterCollection(insert.Attributes);
@@ -318,7 +315,7 @@ namespace ACadSharp
 			}
 
 			cadObject.Handle = 0;
-			cadObject.Document = null;
+			cadObject.UnassignDocument();
 			cadObject.OnReferenceChanged -= this.onReferenceChanged;
 
 			if (cadObject.XDictionary != null)
@@ -326,9 +323,8 @@ namespace ACadSharp
 
 			if (cadObject is Entity e)
 			{
-				//TODO: Replace for clones
-				e.Layer = new Layer(e.Layer.Name);
-				e.LineType = new LineType(e.LineType.Name);
+				e.Layer = (Layer)e.Layer.Clone();
+				e.LineType = (LineType)e.LineType.Clone();
 			}
 
 			switch (cadObject)
@@ -348,9 +344,10 @@ namespace ACadSharp
 			}
 		}
 
+		[Obsolete]
 		private void onReferenceChanged(object sender, ReferenceChangedEventArgs e)
 		{
-			this.addCadObject(e.Current);
+			this.AddCadObject(e.Current);
 			this.removeCadObject(e.Old);
 		}
 
@@ -362,7 +359,7 @@ namespace ACadSharp
 			}
 			else
 			{
-				this.addCadObject(e.Item);
+				this.AddCadObject(e.Item);
 			}
 		}
 
@@ -375,17 +372,6 @@ namespace ACadSharp
 			else
 			{
 				this.removeCadObject(e.Item);
-			}
-
-			//TODO: Unreference all elements linked layers and linetypes and change them for the default one
-			if(e.Current is LineType)
-			{
-				// Should iterate throgh all the entities or all the entities should have an event??
-			}
-
-			if (e.Current is Layer)
-			{
-
 			}
 		}
 
@@ -437,12 +423,12 @@ namespace ACadSharp
 
 			if (collection is CadObject cadObject)
 			{
-				this.addCadObject(cadObject);
+				this.AddCadObject(cadObject);
 			}
 
 			if (collection is ISeqendColleciton seqendColleciton)
 			{
-				this.addCadObject(seqendColleciton.Seqend);
+				this.AddCadObject(seqendColleciton.Seqend);
 			}
 
 			if (addElements)
@@ -455,7 +441,7 @@ namespace ACadSharp
 					}
 					else
 					{
-						this.addCadObject(item);
+						this.AddCadObject(item);
 					}
 				}
 			}

@@ -205,7 +205,7 @@ namespace ACadSharp.Tests
 			Assert.False(doc.Layers.Contains(ltypeName));
 			Assert.Null(ltype.Document);
 			Assert.True(ltype.Handle == 0);
-			Assert.Equal(doc.LineTypes[LineType.ByBlockName], line.LineType);
+			Assert.Equal(doc.LineTypes[LineType.ByLayerName], line.LineType);
 		}
 
 		[Fact]

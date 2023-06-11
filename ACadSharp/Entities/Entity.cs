@@ -6,7 +6,6 @@ using System;
 
 namespace ACadSharp.Entities
 {
-
 	/// <summary>
 	/// The standard class for a basic CAD entity.
 	/// </summary>
@@ -141,6 +140,38 @@ namespace ACadSharp.Entities
 			{
 				table.Add(entry);
 				return entry;
+			}
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._layer = this.updateTable(this.Layer, doc.Layers);
+			this._lineType = this.updateTable(this.LineType, doc.LineTypes);
+
+			doc.Layers.OnRemove += this.tableOnRemove;
+			doc.LineTypes.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Layer = (Layer)this.Layer.Clone();
+			this.LineType = (LineType)this.LineType.Clone();
+
+			base.UnassignDocument();
+		}
+
+		private void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this.Layer))
+			{
+				this.Layer = this.Document.Layers[Layer.DefaultName];
+			}
+
+			if (e.Item.Equals(this.LineType))
+			{
+				this.LineType = this.Document.LineTypes[LineType.ByLayerName];
 			}
 		}
 	}

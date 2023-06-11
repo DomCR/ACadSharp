@@ -67,7 +67,11 @@ namespace ACadSharp
 		/// <summary>
 		/// Document where this element belongs
 		/// </summary>
-		public CadDocument Document { get; internal set; }
+		public CadDocument Document
+		{
+			get;
+			private set;
+		}
 
 		private CadDictionary _xdictionary = null;
 
@@ -90,7 +94,7 @@ namespace ACadSharp
 			clone.OnReferenceChanged = null;
 
 			clone.Handle = 0;
-			clone.Document = null;
+			clone.UnassignDocument();
 			clone.Owner = null;
 
 			//Collections
@@ -110,6 +114,22 @@ namespace ACadSharp
 		protected void onReferenceChange(ReferenceChangedEventArgs args)
 		{
 			OnReferenceChanged?.Invoke(this, args);
+		}
+
+		internal virtual void AssignDocument(CadDocument doc)
+		{
+			this.Document = doc;
+
+			if (this.XDictionary != null)
+				doc.RegisterCollection(this.XDictionary);
+		}
+
+		internal virtual void UnassignDocument()
+		{
+			this.Document = null;
+
+			if (this.XDictionary != null)
+				this.Document.UnregisterCollection(this.XDictionary);
 		}
 	}
 }
