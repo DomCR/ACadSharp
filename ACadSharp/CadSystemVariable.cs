@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Header;
 using System.Reflection;
 
 namespace ACadSharp
@@ -9,6 +10,12 @@ namespace ACadSharp
 
 		public CadSystemVariable(PropertyInfo property) : base(property)
 		{
+		}
+
+		public object GetValue<THeader>(THeader obj)
+			where THeader : CadHeader
+		{
+			return this._property.GetValue(obj);
 		}
 	}
 }
