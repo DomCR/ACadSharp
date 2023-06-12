@@ -46,6 +46,8 @@ namespace ACadSharp.IO.DWG
 
 			this.BuildTables();
 
+			base.BuildDocument();
+
 			this.DocumentToBuild.RegisterCollection(AppIds);
 			this.DocumentToBuild.RegisterCollection(Layers);
 			this.DocumentToBuild.RegisterCollection(LineTypesTable);
@@ -55,8 +57,6 @@ namespace ACadSharp.IO.DWG
 			this.DocumentToBuild.RegisterCollection(DimensionStyles);
 			this.DocumentToBuild.RegisterCollection(VPorts);
 			this.DocumentToBuild.RegisterCollection(BlockRecords);
-
-			base.BuildDocument();
 		}
 
 		public void BuildTables()

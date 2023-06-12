@@ -264,7 +264,8 @@ namespace ACadSharp
 
 		internal void RemoveCadObject(CadObject cadObject)
 		{
-			if (!this.TryGetCadObject(cadObject.Handle, out CadObject obj) || !this._cadObjects.Remove(cadObject.Handle))
+			if (!this.TryGetCadObject(cadObject.Handle, out CadObject obj)
+				|| !this._cadObjects.Remove(cadObject.Handle))
 			{
 				return;
 			}

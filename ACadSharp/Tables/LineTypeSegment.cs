@@ -67,7 +67,7 @@ namespace ACadSharp.Tables
 			{
 				Segment clone = MemberwiseClone() as Segment;
 				clone.Style = (TextStyle)(this.Style?.Clone());
-				clone.LineType = (LineType)(this.LineType?.Clone());
+				clone.LineType = null;
 				return clone;
 			}
 		}

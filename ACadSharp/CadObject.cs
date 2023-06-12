@@ -95,9 +95,7 @@ namespace ACadSharp
 			clone.OnReferenceChanged = null;
 			clone.Handle = 0;
 
-			if (this.Document != null)
-				clone.UnassignDocument();
-
+			clone.Document = null;
 			clone.Owner = null;
 
 			//Collections
@@ -129,12 +127,12 @@ namespace ACadSharp
 
 		internal virtual void UnassignDocument()
 		{
-			this.Document = null;
+			if (this.XDictionary != null)
+				this.Document.UnregisterCollection(this.XDictionary);
 
 			this.Handle = 0;
 
-			if (this.XDictionary != null)
-				this.Document.UnregisterCollection(this.XDictionary);
+			this.Document = null;
 		}
 	}
 }
