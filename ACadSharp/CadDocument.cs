@@ -273,13 +273,6 @@ namespace ACadSharp
 			cadObject.UnassignDocument();
 		}
 
-		[Obsolete]
-		private void onReferenceChanged(object sender, ReferenceChangedEventArgs e)
-		{
-			this.AddCadObject(e.Current);
-			this.RemoveCadObject(e.Old);
-		}
-
 		private void onAdd(object sender, CollectionChangedEventArgs e)
 		{
 			if (e.Item is CadDictionary dictionary)

@@ -10,9 +10,6 @@ namespace ACadSharp
 	/// </summary>
 	public abstract class CadObject : IHandledCadObject
 	{
-		[Obsolete]
-		public event EventHandler<ReferenceChangedEventArgs> OnReferenceChanged;
-
 		/// <summary>
 		/// Get the object type
 		/// </summary>
@@ -92,7 +89,6 @@ namespace ACadSharp
 		{
 			CadObject clone = (CadObject)this.MemberwiseClone();
 
-			clone.OnReferenceChanged = null;
 			clone.Handle = 0;
 
 			clone.Document = null;
@@ -110,11 +106,6 @@ namespace ACadSharp
 		public override string ToString()
 		{
 			return $"{this.ObjectName}:{this.ObjectType}";
-		}
-
-		protected void onReferenceChange(ReferenceChangedEventArgs args)
-		{
-			OnReferenceChanged?.Invoke(this, args);
 		}
 
 		internal virtual void AssignDocument(CadDocument doc)
