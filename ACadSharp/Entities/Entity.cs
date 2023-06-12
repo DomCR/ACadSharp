@@ -156,10 +156,13 @@ namespace ACadSharp.Entities
 
 		internal override void UnassignDocument()
 		{
-			this.Layer = (Layer)this.Layer.Clone();
-			this.LineType = (LineType)this.LineType.Clone();
+			this.Document.Layers.OnRemove -= this.tableOnRemove;
+			this.Document.LineTypes.OnRemove -= this.tableOnRemove;
 
 			base.UnassignDocument();
+
+			this.Layer = (Layer)this.Layer.Clone();
+			this.LineType = (LineType)this.LineType.Clone();
 		}
 
 		private void tableOnRemove(object sender, CollectionChangedEventArgs e)

@@ -127,10 +127,6 @@ namespace ACadSharp.Tables
 			get { return _blockEntity; }
 			internal set
 			{
-				ReferenceChangedEventArgs args = new ReferenceChangedEventArgs(value, this._blockEntity);
-
-				this.onReferenceChange(args);
-
 				this._blockEntity = value;
 				this._blockEntity.Owner = this;
 			}
@@ -141,10 +137,6 @@ namespace ACadSharp.Tables
 			get { return _blockEnd; }
 			internal set
 			{
-				ReferenceChangedEventArgs args = new ReferenceChangedEventArgs(value, this._blockEnd);
-
-				this.onReferenceChange(args);
-
 				this._blockEnd = value;
 				this._blockEnd.Owner = this;
 			}
@@ -195,6 +187,24 @@ namespace ACadSharp.Tables
 			clone.BlockEnd.Owner = clone;
 
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			doc.RegisterCollection(this.Entities);
+			doc.AddCadObject(this.BlockEntity);
+			doc.AddCadObject(this.BlockEnd);
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.UnregisterCollection(this.Entities);
+			this.Document.RemoveCadObject(this.BlockEnd);
+			this.Document.RemoveCadObject(this.BlockEntity);
+				
+			base.UnassignDocument();
 		}
 	}
 }

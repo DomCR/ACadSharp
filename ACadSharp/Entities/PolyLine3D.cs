@@ -26,7 +26,7 @@ namespace ACadSharp.Entities
 		/// <exception cref="NotImplementedException"></exception>
 		public override IEnumerable<Entity> Explode()
 		{
-			return Polyline.explode(this);
+			return Polyline.Explode(this);
 		}
 
 		private void verticesOnAdd(object sender, CollectionChangedEventArgs e)

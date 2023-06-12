@@ -10,6 +10,7 @@ namespace ACadSharp
 	/// </summary>
 	public abstract class CadObject : IHandledCadObject
 	{
+		[Obsolete]
 		public event EventHandler<ReferenceChangedEventArgs> OnReferenceChanged;
 
 		/// <summary>
@@ -92,9 +93,11 @@ namespace ACadSharp
 			CadObject clone = (CadObject)this.MemberwiseClone();
 
 			clone.OnReferenceChanged = null;
-
 			clone.Handle = 0;
-			clone.UnassignDocument();
+
+			if (this.Document != null)
+				clone.UnassignDocument();
+
 			clone.Owner = null;
 
 			//Collections
@@ -127,6 +130,8 @@ namespace ACadSharp
 		internal virtual void UnassignDocument()
 		{
 			this.Document = null;
+
+			this.Handle = 0;
 
 			if (this.XDictionary != null)
 				this.Document.UnregisterCollection(this.XDictionary);

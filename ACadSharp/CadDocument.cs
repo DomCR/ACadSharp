@@ -221,6 +221,13 @@ namespace ACadSharp
 			return null;
 		}
 
+		/// <summary>
+		/// Gets an object in the document by it's handle
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="handle"></param>
+		/// <param name="cadObject"></param>
+		/// <returns></returns>
 		public bool TryGetCadObject<T>(ulong handle, out T cadObject)
 			where T : CadObject
 		{
@@ -253,102 +260,23 @@ namespace ACadSharp
 			}
 
 			this._cadObjects.Add(cadObject.Handle, cadObject);
-			cadObject.OnReferenceChanged += this.onReferenceChanged;
-
-			if (cadObject is Entity e)
-			{
-				if (this.Layers.TryGetValue(e.Layer.Name, out Layer layer))
-				{
-					e.Layer = layer;
-				}
-				else
-				{
-					//Add the layer if it does not exist
-					this.Layers.Add(e.Layer);
-				}
-
-				if (this.LineTypes.TryGetValue(e.LineType.Name, out LineType lineType))
-				{
-					e.LineType = lineType;
-				}
-				else
-				{
-					//Add the LineType if it does not exist
-					this.LineTypes.Add(e.LineType);
-				}
-			}
-
-			switch (cadObject)
-			{
-				case BlockRecord record:
-					this.RegisterCollection(record.Entities);
-					this.AddCadObject(record.BlockEntity);
-					this.AddCadObject(record.BlockEnd);
-					break;
-				case Insert insert:
-					this.RegisterCollection(insert.Attributes);
-
-					//Should only be triggered for internal use
-					if (insert.Block == null)
-						break;
-
-					if (this.BlockRecords.TryGetValue(insert.Block.Name, out BlockRecord blk))
-					{
-						insert.Block = blk;
-					}
-					else
-					{
-						this.BlockRecords.Add(insert.Block);
-					}
-					break;
-				case Polyline pline:
-					this.RegisterCollection(pline.Vertices);
-					break;
-			}
 		}
 
-		private void removeCadObject(CadObject cadObject)
+		internal void RemoveCadObject(CadObject cadObject)
 		{
 			if (!this.TryGetCadObject(cadObject.Handle, out CadObject obj) || !this._cadObjects.Remove(cadObject.Handle))
 			{
 				return;
 			}
 
-			cadObject.Handle = 0;
 			cadObject.UnassignDocument();
-			cadObject.OnReferenceChanged -= this.onReferenceChanged;
-
-			if (cadObject.XDictionary != null)
-				this.UnregisterCollection(cadObject.XDictionary);
-
-			if (cadObject is Entity e)
-			{
-				e.Layer = (Layer)e.Layer.Clone();
-				e.LineType = (LineType)e.LineType.Clone();
-			}
-
-			switch (cadObject)
-			{
-				case BlockRecord record:
-					this.UnregisterCollection(record.Entities);
-					this.removeCadObject(record.BlockEnd);
-					this.removeCadObject(record.BlockEntity);
-					break;
-				case Insert insert:
-					insert.Block = (BlockRecord)insert.Block.Clone();
-					this.UnregisterCollection(insert.Attributes);
-					break;
-				case Polyline pline:
-					this.UnregisterCollection(pline.Vertices);
-					break;
-			}
 		}
 
 		[Obsolete]
 		private void onReferenceChanged(object sender, ReferenceChangedEventArgs e)
 		{
 			this.AddCadObject(e.Current);
-			this.removeCadObject(e.Old);
+			this.RemoveCadObject(e.Old);
 		}
 
 		private void onAdd(object sender, CollectionChangedEventArgs e)
@@ -371,7 +299,7 @@ namespace ACadSharp
 			}
 			else
 			{
-				this.removeCadObject(e.Item);
+				this.RemoveCadObject(e.Item);
 			}
 		}
 
@@ -469,12 +397,12 @@ namespace ACadSharp
 
 			if (collection is CadObject cadObject)
 			{
-				this.removeCadObject(cadObject);
+				this.RemoveCadObject(cadObject);
 			}
 
 			if (collection is ISeqendColleciton seqendColleciton)
 			{
-				this.removeCadObject(seqendColleciton.Seqend);
+				this.RemoveCadObject(seqendColleciton.Seqend);
 			}
 
 			if (removeElements)
@@ -487,7 +415,7 @@ namespace ACadSharp
 					}
 					else
 					{
-						this.removeCadObject(item);
+						this.RemoveCadObject(item);
 					}
 				}
 			}
