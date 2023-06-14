@@ -173,9 +173,7 @@ namespace ACadSharp.IO.DXF
 				switch (name)
 				{
 					case DxfFileToken.TableAppId:
-						AppId appid = new AppId();
-						template = new CadTableEntryTemplate<AppId>(appid);
-						this.readMapped<AppId>(appid, template);
+						template = this.readAppId();
 						break;
 					case DxfFileToken.TableBlockRecord:
 						BlockRecord record = new BlockRecord();
@@ -188,9 +186,7 @@ namespace ACadSharp.IO.DXF
 						this.readMapped<DimensionStyle>(dimStyle, template);
 						break;
 					case DxfFileToken.TableLayer:
-						Layer layer = new Layer();
-						template = new CadLayerTemplate(layer);
-						this.readMapped<Layer>(layer, template);
+						template = this.readLayer();
 						break;
 					case DxfFileToken.TableLinetype:
 						LineType ltype = new LineType();
@@ -233,6 +229,63 @@ namespace ACadSharp.IO.DXF
 				//Add the object and the template to the builder
 				this._builder.AddTemplate(template);
 			}
+		}
+
+		private void readCommonTableEntryCodes<T>(CadTableEntryTemplate<T> template)
+			where T : TableEntry
+		{
+			switch (this._reader.LastCode)
+			{
+				case 2:
+					template.CadObject.Name = this._reader.LastValueAsString;
+					break;
+				case 70:
+					template.CadObject.Flags = (StandardFlags)this._reader.LastValueAsShort;
+					break;
+				default:
+					this.readCommonCodes(template);
+					break;
+			}
+		}
+
+		private CadTemplate readAppId()
+		{
+			AppId appid = new AppId();
+			CadTableEntryTemplate<AppId> template = new CadTableEntryTemplate<AppId>(appid);
+
+			while (this._reader.LastDxfCode != DxfCode.Start)
+			{
+				switch (this._reader.LastCode)
+				{
+					default:
+						this.readCommonTableEntryCodes(template);
+						break;
+				}
+
+				this._reader.ReadNext();
+			}
+
+			return template;
+		}
+
+		private CadTemplate readLayer()
+		{
+			Layer layer = new Layer();
+			CadTableEntryTemplate<Layer> template = new CadTableEntryTemplate<Layer>(layer);
+
+			while (this._reader.LastDxfCode != DxfCode.Start)
+			{
+				switch (this._reader.LastCode)
+				{
+					default:
+						this.readCommonTableEntryCodes(template);
+						break;
+				}
+
+				this._reader.ReadNext();
+			}
+
+			return template;
 		}
 	}
 }

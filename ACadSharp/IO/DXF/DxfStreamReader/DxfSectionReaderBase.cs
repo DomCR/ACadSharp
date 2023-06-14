@@ -117,6 +117,23 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		protected void readCommonCodes(CadTemplate template)
+		{
+			switch (this._reader.LastCode)
+			{
+				//Start of application - defined group
+				case 102:
+					this.readDefinedGroups(template);
+					break;
+				case 1001:
+					this.readExtendedData(template.EDataTemplateByAppName);
+					break;
+				default:
+					this._builder.Notify($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}.", NotificationType.None);
+					break;
+			}
+		}
+
 		protected CadEntityTemplate readEntity()
 		{
 			CadEntityTemplate template = null;
