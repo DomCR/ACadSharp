@@ -20,7 +20,9 @@ namespace ACadSharp.IO.DXF
 
 		public bool LastValueAsBool { get { return Convert.ToBoolean(this.LastValue); } }
 
-		public ushort LastValueAsShort { get { return Convert.ToUInt16(this.LastValue); } }
+		public short LastValueAsShort { get { return Convert.ToInt16(this.LastValue); } }
+
+		public ushort LastValueAsUShort { get { return Convert.ToUInt16(this.LastValue); } }
 
 		public int LastValueAsInt { get { return Convert.ToInt32(this.LastValue); } }
 

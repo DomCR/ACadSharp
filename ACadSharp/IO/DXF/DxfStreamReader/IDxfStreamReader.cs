@@ -25,8 +25,10 @@ namespace ACadSharp.IO.DXF
 		string LastValueAsString { get; }
 
 		bool LastValueAsBool { get; }
-		
-		ushort LastValueAsShort { get; }
+
+		short LastValueAsShort { get; }
+
+		ushort LastValueAsUShort { get; }
 		
 		int LastValueAsInt { get; }
 		

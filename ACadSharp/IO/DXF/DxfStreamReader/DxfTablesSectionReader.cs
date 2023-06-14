@@ -5,11 +5,15 @@ using ACadSharp.Tables.Collections;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using static ACadSharp.IO.Templates.CadLineTypeTemplate;
 
 namespace ACadSharp.IO.DXF
 {
 	internal class DxfTablesSectionReader : DxfSectionReaderBase
 	{
+		public delegate bool ReadEntryDelegate<T>(CadTableEntryTemplate<T> template) where T : TableEntry;
+
 		public DxfTablesSectionReader(IDxfStreamReader reader, DxfDocumentBuilder builder)
 			: base(reader, builder)
 		{
@@ -186,12 +190,11 @@ namespace ACadSharp.IO.DXF
 						this.readMapped<DimensionStyle>(dimStyle, template);
 						break;
 					case DxfFileToken.TableLayer:
-						template = this.readLayer();
+						template = this.readTableEntry<Layer>(new CadLayerTemplate(), this.readLayer);
 						break;
 					case DxfFileToken.TableLinetype:
-						LineType ltype = new LineType();
-						template = new CadLineTypeTemplate(ltype);
-						this.readMapped<LineType>(ltype, template);
+						LineType lineType = new LineType();
+						template = this.readTableEntry<LineType>(new CadLineTypeTemplate(), this.readLineType);
 						break;
 					case DxfFileToken.TableStyle:
 						TextStyle style = new TextStyle();
@@ -231,19 +234,39 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readCommonTableEntryCodes<T>(CadTableEntryTemplate<T> template)
+		private CadTemplate readTableEntry<T>(CadTableEntryTemplate<T> template, ReadEntryDelegate<T> readEntry)
 			where T : TableEntry
 		{
+			while (this._reader.LastDxfCode != DxfCode.Start)
+			{
+				if (!readEntry(template))
+				{
+					this.readCommonTableEntryCodes(template, out bool isExtendedData);
+					if (isExtendedData)
+						continue;
+				}
+
+				if (this._reader.LastDxfCode != DxfCode.Start)
+					this._reader.ReadNext();
+			}
+
+			return template;
+		}
+
+		private void readCommonTableEntryCodes<T>(CadTableEntryTemplate<T> template, out bool isExtendedData)
+			where T : TableEntry
+		{
+			isExtendedData = false;
 			switch (this._reader.LastCode)
 			{
 				case 2:
 					template.CadObject.Name = this._reader.LastValueAsString;
 					break;
 				case 70:
-					template.CadObject.Flags = (StandardFlags)this._reader.LastValueAsShort;
+					template.CadObject.Flags = (StandardFlags)this._reader.LastValueAsUShort;
 					break;
 				default:
-					this.readCommonCodes(template);
+					this.readCommonCodes(template, out isExtendedData);
 					break;
 			}
 		}
@@ -251,6 +274,7 @@ namespace ACadSharp.IO.DXF
 		private CadTemplate readAppId()
 		{
 			AppId appid = new AppId();
+			DxfMap map = DxfMap.Create<AppId>();
 			CadTableEntryTemplate<AppId> template = new CadTableEntryTemplate<AppId>(appid);
 
 			while (this._reader.LastDxfCode != DxfCode.Start)
@@ -258,7 +282,9 @@ namespace ACadSharp.IO.DXF
 				switch (this._reader.LastCode)
 				{
 					default:
-						this.readCommonTableEntryCodes(template);
+						this.readCommonTableEntryCodes(template, out bool isExtendedData);
+						if (isExtendedData)
+							continue;
 						break;
 				}
 
@@ -268,17 +294,118 @@ namespace ACadSharp.IO.DXF
 			return template;
 		}
 
-		private CadTemplate readLayer()
+		private bool readLayer(CadTableEntryTemplate<Layer> template)
 		{
-			Layer layer = new Layer();
-			CadTableEntryTemplate<Layer> template = new CadTableEntryTemplate<Layer>(layer);
+			CadLayerTemplate tmp = (CadLayerTemplate)template;
 
-			while (this._reader.LastDxfCode != DxfCode.Start)
+			switch (this._reader.LastCode)
+			{
+				case 6:
+					tmp.LineTypeName = this._reader.LastValueAsString;
+					return true;
+				case 62:
+					short index = this._reader.LastValueAsShort;
+					if (index < 0)
+					{
+						template.CadObject.IsOn = false;
+						index = Math.Abs(index);
+					}
+
+					template.CadObject.Color = new Color(index);
+					return true;
+				case 290:
+					template.CadObject.PlotFlag = this._reader.LastValueAsBool;
+					return true;
+				case 347:
+					tmp.MaterialHandle = this._reader.LastValueAsHandle;
+					return true;
+				case 348:
+					//Unknown code value, always 0
+					return true;
+				case 370:
+					template.CadObject.LineWeight = (LineweightType)this._reader.LastValueAsShort;
+					return true;
+				case 390:
+					template.CadObject.PlotStyleName = this._reader.LastValueAsHandle;
+					return true;
+				case 420:
+					template.CadObject.Color = Color.FromTrueColor(this._reader.LastValueAsInt);
+					return true;
+				case 430:
+					tmp.TrueColorName = this._reader.LastValueAsString;
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		private bool readLineType(CadTableEntryTemplate<LineType> template)
+		{
+			CadLineTypeTemplate tmp = (CadLineTypeTemplate)template;
+
+			switch (this._reader.LastCode)
+			{
+				case 3:
+					template.CadObject.Description = this._reader.LastValueAsString;
+					return true;
+				case 40:
+					template.CadObject.PatternLen = this._reader.LastValueAsDouble;
+					return true;
+				case 49:
+					do
+					{
+						tmp.SegmentTemplates.Add(this.readLineTypeSegment());
+					}
+					while (this._reader.LastCode == 49);
+					return true;
+				case 72:
+					template.CadObject.Alignment = (char)this._reader.LastValueAsUShort;
+					return true;
+				case 73:
+					//n segments 
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		private CadLineTypeTemplate.SegmentTemplate readLineTypeSegment()
+		{
+			SegmentTemplate template = new SegmentTemplate();
+			template.Segment.Length = this._reader.LastValueAsDouble;
+
+			//Jump the 49 code
+			this._reader.ReadNext();
+
+			while (this._reader.LastCode != 49 && this._reader.LastCode != 0)
 			{
 				switch (this._reader.LastCode)
 				{
+					case 9:
+						template.Segment.Text = this._reader.LastValueAsString;
+						break;
+					case 44:
+						template.Segment.Offset = new CSMath.XY(this._reader.LastValueAsDouble, template.Segment.Offset.Y);
+						break;
+					case 45:
+						template.Segment.Offset = new CSMath.XY(template.Segment.Offset.X, this._reader.LastValueAsDouble);
+						break;
+					case 46:
+						template.Segment.Scale = this._reader.LastValueAsDouble;
+						break;
+					case 50:
+						template.Segment.Rotation = this._reader.LastValueAsDouble * MathUtils.DegToRad;
+						break;
+					case 74:
+						template.Segment.Shapeflag = (LinetypeShapeFlags)this._reader.LastValueAsUShort;
+						break;
+					case 75:
+						template.Segment.ShapeNumber = (short)this._reader.LastValueAsInt;
+						break;
+					case 340:
+						break;
 					default:
-						this.readCommonTableEntryCodes(template);
+						this._builder.Notify($"[LineTypeSegment] Unhandeled dxf code {this._reader.LastCode} with value {this._reader.LastValueAsString}, positon {this._reader.Position}", NotificationType.None);
 						break;
 				}
 

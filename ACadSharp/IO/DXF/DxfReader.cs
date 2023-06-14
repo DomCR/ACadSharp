@@ -272,7 +272,7 @@ namespace ACadSharp.IO
 						break;
 					//Proxy capabilities flag.
 					case 90:
-						curr.ProxyFlags = (ProxyFlags)this._reader.LastValueAsShort;
+						curr.ProxyFlags = (ProxyFlags)this._reader.LastValueAsUShort;
 						break;
 					//Instance count for a custom class
 					case 91:

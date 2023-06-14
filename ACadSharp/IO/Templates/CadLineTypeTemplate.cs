@@ -27,6 +27,8 @@ namespace ACadSharp.IO.Templates
 
 		private List<int> _readedCodes = new List<int>();
 
+		public CadLineTypeTemplate() : base(new LineType()) { }
+
 		public CadLineTypeTemplate(LineType entry) : base(entry) { }
 
 		public override bool CheckDxfCode(int dxfcode, object value)

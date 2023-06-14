@@ -156,7 +156,7 @@ namespace ACadSharp.IO.DXF
 						}
 						break;
 					case 70:
-						blckEntity.Flags = (BlockTypeFlags)this._reader.LastValueAsShort;
+						blckEntity.Flags = (BlockTypeFlags)this._reader.LastValueAsUShort;
 						break;
 					case 10:
 						blckEntity.BasePoint = new XYZ(this._reader.LastValueAsDouble, blckEntity.BasePoint.Y, blckEntity.BasePoint.Z);

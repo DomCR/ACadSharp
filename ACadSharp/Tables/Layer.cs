@@ -42,7 +42,7 @@ namespace ACadSharp.Tables
 		/// <remarks>
 		/// if the index is negative, layer is off
 		/// </remarks>
-		[DxfCodeValue(62)]
+		[DxfCodeValue(62, 420, 430)]
 		public Color Color { get; set; }
 
 		/// <summary>

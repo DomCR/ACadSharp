@@ -117,19 +117,25 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		protected void readCommonCodes(CadTemplate template)
+		protected void readCommonCodes(CadTemplate template, out bool isExtendedData)
 		{
+			isExtendedData = false;
+
 			switch (this._reader.LastCode)
 			{
+				//Check with mapper
+				case 100:
+					break;
 				//Start of application - defined group
 				case 102:
 					this.readDefinedGroups(template);
 					break;
 				case 1001:
+					isExtendedData = true;
 					this.readExtendedData(template.EDataTemplateByAppName);
 					break;
 				default:
-					this._builder.Notify($"Unhandeled dxf code {this._reader.LastCode} at line {this._reader.Position}.", NotificationType.None);
+					this._builder.Notify($"[{template.CadObject.ObjectName}] Unhandeled dxf code {this._reader.LastCode} with value {this._reader.LastValueAsString}", NotificationType.None);
 					break;
 			}
 		}
@@ -550,7 +556,7 @@ namespace ACadSharp.IO.DXF
 						GradientColor colorByIndex = hatch.GradientColor.Colors.LastOrDefault();
 						if (colorByIndex != null)
 						{
-							colorByIndex.Color = new Color((short)this._reader.LastValueAsShort);
+							colorByIndex.Color = new Color((short)this._reader.LastValueAsUShort);
 						}
 						break;
 					case 421:
