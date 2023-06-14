@@ -41,7 +41,13 @@ namespace ACadSharp.Tests.Common
 				.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
 				.Where(o => o.CanWrite && !o.PropertyType.IsClass && !o.PropertyType.IsEnum && !o.PropertyType.IsInterface))
 			{
-				p.SetValue(e, _random.Next(p.PropertyType));
+				try
+				{
+					p.SetValue(e, _random.Next(p.PropertyType));
+				}
+				catch (Exception)
+				{
+				}
 			}
 
 			return e;
