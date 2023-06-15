@@ -177,7 +177,7 @@ namespace ACadSharp.IO.DXF
 				switch (name)
 				{
 					case DxfFileToken.TableAppId:
-						template = this.readAppId();
+						template = this.readTableEntry<AppId>(new CadTableEntryTemplate<AppId>(new AppId()), this.readAppId);
 						break;
 					case DxfFileToken.TableBlockRecord:
 						BlockRecord record = new BlockRecord();
@@ -185,15 +185,12 @@ namespace ACadSharp.IO.DXF
 						this.readMapped<BlockRecord>(record, template);
 						break;
 					case DxfFileToken.TableDimstyle:
-						DimensionStyle dimStyle = new DimensionStyle();
-						template = new CadDimensionStyleTemplate(dimStyle);
-						this.readMapped<DimensionStyle>(dimStyle, template);
+						template = this.readTableEntry<DimensionStyle>(new CadDimensionStyleTemplate(), this.readDimensionStyle);
 						break;
 					case DxfFileToken.TableLayer:
 						template = this.readTableEntry<Layer>(new CadLayerTemplate(), this.readLayer);
 						break;
 					case DxfFileToken.TableLinetype:
-						LineType lineType = new LineType();
 						template = this.readTableEntry<LineType>(new CadLineTypeTemplate(), this.readLineType);
 						break;
 					case DxfFileToken.TableStyle:
@@ -271,27 +268,39 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private CadTemplate readAppId()
+		private bool readAppId(CadTableEntryTemplate<AppId> template)
 		{
-			AppId appid = new AppId();
-			DxfMap map = DxfMap.Create<AppId>();
-			CadTableEntryTemplate<AppId> template = new CadTableEntryTemplate<AppId>(appid);
-
-			while (this._reader.LastDxfCode != DxfCode.Start)
+			switch (this._reader.LastCode)
 			{
-				switch (this._reader.LastCode)
-				{
-					default:
-						this.readCommonTableEntryCodes(template, out bool isExtendedData);
-						if (isExtendedData)
-							continue;
-						break;
-				}
-
-				this._reader.ReadNext();
+				default:
+					return false;
 			}
+		}
 
-			return template;
+		private bool readDimensionStyle(CadTableEntryTemplate<DimensionStyle> template)
+		{
+			CadDimensionStyleTemplate tmp = (CadDimensionStyleTemplate)template;
+
+			switch (this._reader.LastCode)
+			{
+				case 3:
+					template.CadObject.PostFix = this._reader.LastValueAsString;
+					return true;
+				case 4:
+					template.CadObject.AlternateDimensioningSuffix = this._reader.LastValueAsString;
+					return true;
+				case 71:
+					template.CadObject.GenerateTolerances = this._reader.LastValueAsBool;
+					return true;
+				case 72:
+					template.CadObject.LimitsGeneration = this._reader.LastValueAsBool;
+					return true;
+				case 73:
+					template.CadObject.TextInsideHorizontal = this._reader.LastValueAsBool;
+					return true;
+				default:
+					return false;
+			}
 		}
 
 		private bool readLayer(CadTableEntryTemplate<Layer> template)

@@ -3,7 +3,7 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadDimensionStyleTemplate : CadTemplate<DimensionStyle>
+	internal class CadDimensionStyleTemplate : CadTableEntryTemplate<DimensionStyle>
 	{
 		public string DIMBL_Name { get; internal set; }
 		public string DIMBLK1_Name { get; internal set; }
@@ -16,6 +16,8 @@ namespace ACadSharp.IO.Templates
 		public ulong Dimltype { get; internal set; }
 		public ulong Dimltex1 { get; internal set; }
 		public ulong Dimltex2 { get; internal set; }
+
+		public CadDimensionStyleTemplate() : base(new DimensionStyle()) { }
 
 		public CadDimensionStyleTemplate(DimensionStyle dimStyle) : base(dimStyle) { }
 
