@@ -117,7 +117,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		protected void readCommonCodes(CadTemplate template, out bool isExtendedData)
+		protected void readCommonCodes(CadTemplate template, out bool isExtendedData, DxfMap map = null)
 		{
 			isExtendedData = false;
 
@@ -125,6 +125,8 @@ namespace ACadSharp.IO.DXF
 			{
 				//Check with mapper
 				case 100:
+					if (map != null && !map.SubClasses.ContainsKey(this._reader.ValueAsString))
+						this._builder.Notify($"[{template.CadObject.ObjectName}] Unidentified subclass {this._reader.ValueAsString}", NotificationType.Warning);
 					break;
 				//Start of application - defined group
 				case 102:
@@ -881,14 +883,21 @@ namespace ACadSharp.IO.DXF
 			this._reader.ReadNext();
 		}
 
-		protected void assignCurrentValue(CadObject cadObject, DxfMap map)
+		protected void assignCurrentValue(CadObject cadObject, DxfClassMap map)
 		{
 			try
 			{
 				//Use this method only if the value is not a link between objects
 				if (map.DxfProperties.TryGetValue(this._reader.Code, out DxfProperty dxfProperty))
 				{
-					dxfProperty.SetValue(this._reader.Code, cadObject, this._reader.Value);
+					object value = this._reader.Value;
+
+					if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
+					{
+						value = (double)value * MathUtils.DegToRad;
+					}
+
+					dxfProperty.SetValue(this._reader.Code, cadObject, value);
 				}
 				else
 				{

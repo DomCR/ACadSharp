@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Dynamic;
 using static ACadSharp.IO.Templates.CadLineTypeTemplate;
 
 namespace ACadSharp.IO.DXF
@@ -201,9 +202,7 @@ namespace ACadSharp.IO.DXF
 						template = this.readTableEntry(new CadUcsTemplate(), this.readUcs);
 						break;
 					case DxfFileToken.TableView:
-						View view = new View();
-						template = new CadViewTemplate(view);
-						this.readMapped<View>(view, template);
+						template = this.readTableEntry(new CadViewTemplate(), this.readView);
 						break;
 					case DxfFileToken.TableVport:
 						VPort vport = new VPort();
@@ -662,7 +661,7 @@ namespace ACadSharp.IO.DXF
 
 		private bool readUcs(CadTableEntryTemplate<UCS> template)
 		{
-			DxfMap map = DxfMap.Create<UCS>();
+			DxfClassMap map = DxfClassMap.Create<UCS>();
 
 			switch (this._reader.Code)
 			{
@@ -679,6 +678,42 @@ namespace ACadSharp.IO.DXF
 				case 79:
 				case 146:
 					this.assignCurrentValue(template.CadObject, map);
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		private bool readView(CadTableEntryTemplate<View> template)
+		{
+			CadViewTemplate tmp = template as CadViewTemplate;
+			DxfClassMap map = DxfClassMap.Create<View>();
+
+			switch (this._reader.Code)
+			{
+				case 10:
+				case 20:
+				case 11:
+				case 21:
+				case 31:
+				case 12:
+				case 22:
+				case 32:
+				case 40:
+				case 41:
+				case 42:
+				case 43:
+				case 44:
+				case 50:
+				case 71:
+				case 72:
+				case 73:
+				case 79:
+				case 281:
+					this.assignCurrentValue(template.CadObject, map);
+					return true;
+				case 348:
+					tmp.VisualStyleHandle = this._reader.ValueAsHandle;
 					return true;
 				default:
 					return false;
