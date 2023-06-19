@@ -33,6 +33,18 @@ namespace ACadSharp.Tables
 		public new StyleFlags Flags { get { return (StyleFlags)base.Flags; } set { base.Flags = (StandardFlags)value; } }
 
 		/// <summary>
+		/// Primary font file name.
+		/// </summary>
+		[DxfCodeValue(3)]
+		public string Filename { get; set; } = "arial.ttf";
+
+		/// <summary>
+		/// Bigfont file name; blank if none.
+		/// </summary>
+		[DxfCodeValue(4)]
+		public string BigFontFilename { get; set; }
+
+		/// <summary>
 		/// Fixed text height; 0 if not fixed
 		/// </summary>
 		[DxfCodeValue(40)]
@@ -43,6 +55,12 @@ namespace ACadSharp.Tables
 		/// </summary>
 		[DxfCodeValue(41)]
 		public double Width { get; set; }
+
+		/// <summary>
+		/// Last height used.
+		/// </summary>
+		[DxfCodeValue(42)]
+		public double LastHeight { get; set; }
 
 		/// <summary>
 		/// Specifies the oblique angle of the object.
@@ -58,24 +76,6 @@ namespace ACadSharp.Tables
 		/// </summary>
 		[DxfCodeValue(71)]
 		public TextMirrorFlag MirrorFlag { get; set; } = TextMirrorFlag.None;
-
-		/// <summary>
-		/// Last height used.
-		/// </summary>
-		[DxfCodeValue(42)]
-		public double LastHeight { get; set; }
-
-		/// <summary>
-		/// Primary font file name.
-		/// </summary>
-		[DxfCodeValue(3)]
-		public string Filename { get; set; } = "arial.ttf";
-
-		/// <summary>
-		/// Bigfont file name; blank if none.
-		/// </summary>
-		[DxfCodeValue(4)]
-		public string BigFontFilename { get; set; }
 
 		/// <summary>
 		/// A long value which contains a truetype font’s pitch and family, character set, and italic and bold flags

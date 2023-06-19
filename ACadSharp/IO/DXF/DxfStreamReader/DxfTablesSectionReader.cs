@@ -528,7 +528,6 @@ namespace ACadSharp.IO.DXF
 						template.CadObject.IsOn = false;
 						index = Math.Abs(index);
 					}
-
 					template.CadObject.Color = new Color(index);
 					return true;
 				case 290:
@@ -591,14 +590,26 @@ namespace ACadSharp.IO.DXF
 		{
 			switch (this._reader.Code)
 			{
+				case 3:
+					template.CadObject.Filename = this._reader.ValueAsString;
+					return true;
+				case 4:
+					template.CadObject.BigFontFilename = this._reader.ValueAsString;
+					return true;
 				case 40:
 					template.CadObject.Height = this._reader.ValueAsDouble;
 					return true;
 				case 41:
 					template.CadObject.Width = this._reader.ValueAsDouble;
 					return true;
+				case 42:
+					template.CadObject.LastHeight = this._reader.ValueAsDouble;
+					return true;
 				case 50:
 					template.CadObject.ObliqueAngle = this._reader.ValueAsAngle;
+					return true;
+				case 71:
+					template.CadObject.MirrorFlag = (Entities.TextMirrorFlag)this._reader.ValueAsShort;
 					return true;
 				default:
 					return false;
