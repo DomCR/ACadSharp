@@ -2,6 +2,7 @@
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using ACadSharp.Types.Units;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -69,7 +70,7 @@ namespace ACadSharp.IO.DXF
 					case 100 when this._reader.LastValueAsString == DxfSubclassMarker.DimensionStyleTable:
 						while (this._reader.LastDxfCode != DxfCode.Start)
 						{
-							//Dimstyle has the code 71 for the count of entries
+							//template.CadObject has the code 71 for the count of entries
 							//Also has 340 codes for each entry with the handles
 							this._reader.ReadNext();
 						}
@@ -289,6 +290,54 @@ namespace ACadSharp.IO.DXF
 				case 4:
 					template.CadObject.AlternateDimensioningSuffix = this._reader.LastValueAsString;
 					return true;
+				case 5:
+					//5	DIMBLK(obsolete, now object ID)
+					tmp.DIMBL_Name = this._reader.LastValueAsString;
+					return true;
+				case 6:
+					//6	DIMBLK1(obsolete, now object ID)
+					tmp.DIMBLK1_Name = this._reader.LastValueAsString;
+					return true;
+				case 7:
+					//7	DIMBLK2(obsolete, now object ID)
+					tmp.DIMBLK2_Name = this._reader.LastValueAsString;
+					return true;
+				case 40:
+					template.CadObject.ScaleFactor = this._reader.LastValueAsDouble;
+					return true;
+				case 41:
+					template.CadObject.ArrowSize = this._reader.LastValueAsDouble;
+					return true;
+				case 42:
+					template.CadObject.ExtensionLineOffset = this._reader.LastValueAsDouble;
+					return true;
+				case 43:
+					template.CadObject.DimensionLineIncrement = this._reader.LastValueAsDouble;
+					return true;
+				case 44:
+					template.CadObject.ExtensionLineExtension = this._reader.LastValueAsDouble;
+					return true;
+				case 45:
+					template.CadObject.Rounding = this._reader.LastValueAsDouble;
+					return true;
+				case 46:
+					template.CadObject.DimensionLineExtension = this._reader.LastValueAsDouble;
+					return true;
+				case 47:
+					template.CadObject.PlusTolerance = this._reader.LastValueAsDouble;
+					return true;
+				case 48:
+					template.CadObject.MinusTolerance = this._reader.LastValueAsDouble;
+					return true;
+				case 49:
+					template.CadObject.FixedExtensionLineLength = this._reader.LastValueAsDouble;
+					return true;
+				case 50:
+					template.CadObject.JoggedRadiusDimensionTransverseSegmentAngle = this._reader.LastValueAsDouble;
+					return true;
+				case 69:
+					template.CadObject.TextBackgroundFillMode = (DimensionTextBackgroundFillMode)this._reader.LastValueAsShort;
+					return true;
 				case 71:
 					template.CadObject.GenerateTolerances = this._reader.LastValueAsBool;
 					return true;
@@ -297,6 +346,168 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 73:
 					template.CadObject.TextInsideHorizontal = this._reader.LastValueAsBool;
+					return true;
+				case 74:
+					template.CadObject.TextOutsideHorizontal = this._reader.LastValueAsBool;
+					return true;
+				case 75:
+					template.CadObject.SuppressFirstExtensionLine = this._reader.LastValueAsBool;
+					return true;
+				case 76:
+					template.CadObject.SuppressSecondExtensionLine = this._reader.LastValueAsBool;
+					return true;
+				case 77:
+					template.CadObject.TextVerticalAlignment = (DimensionTextVerticalAlignment)this._reader.LastValueAsShort;
+					return true;
+				case 78:
+					template.CadObject.ZeroHandling = (ZeroHandling)this._reader.LastValueAsShort;
+					return true;
+				case 79:
+					template.CadObject.AngularZeroHandling = (ZeroHandling)this._reader.LastValueAsShort;
+					return true;
+				case 90:
+					template.CadObject.ArcLengthSymbolPosition = (ArcLengthSymbolPosition)(int)this._reader.LastValueAsShort;
+					return true;
+				case 140:
+					template.CadObject.TextHeight = this._reader.LastValueAsDouble;
+					return true;
+				case 141:
+					template.CadObject.CenterMarkSize = this._reader.LastValueAsDouble;
+					return true;
+				case 142:
+					template.CadObject.TickSize = this._reader.LastValueAsDouble;
+					return true;
+				case 143:
+					template.CadObject.AlternateUnitScaleFactor = this._reader.LastValueAsDouble;
+					return true;
+				case 144:
+					template.CadObject.LinearScaleFactor = this._reader.LastValueAsDouble;
+					return true;
+				case 145:
+					template.CadObject.TextVerticalPosition = this._reader.LastValueAsDouble;
+					return true;
+				case 146:
+					template.CadObject.ToleranceScaleFactor = this._reader.LastValueAsDouble;
+					return true;
+				case 147:
+					template.CadObject.DimensionLineGap = this._reader.LastValueAsDouble;
+					return true;
+				case 148:
+					template.CadObject.AlternateUnitRounding = this._reader.LastValueAsDouble;
+					return true;
+				case 170:
+					template.CadObject.AlternateUnitDimensioning = this._reader.LastValueAsBool;
+					return true;
+				case 171:
+					template.CadObject.AlternateUnitDecimalPlaces = this._reader.LastValueAsShort;
+					return true;
+				case 172:
+					template.CadObject.TextOutsideExtensions = this._reader.LastValueAsBool;
+					return true;
+				case 173:
+					template.CadObject.SeparateArrowBlocks = this._reader.LastValueAsBool;
+					return true;
+				case 174:
+					template.CadObject.TextInsideExtensions = this._reader.LastValueAsBool;
+					return true;
+				case 175:
+					template.CadObject.SuppressOutsideExtensions = this._reader.LastValueAsBool;
+					return true;
+				case 176:
+					template.CadObject.DimensionLineColor = new Color(this._reader.LastValueAsShort);
+					return true;
+				case 177:
+					template.CadObject.ExtensionLineColor = new Color(this._reader.LastValueAsShort);
+					return true;
+				case 178:
+					template.CadObject.TextColor = new Color(this._reader.LastValueAsShort);
+					return true;
+				case 179:
+					template.CadObject.AngularDimensionDecimalPlaces = this._reader.LastValueAsShort;
+					return true;
+				case 270:
+					template.CadObject.LinearUnitFormat = (LinearUnitFormat)this._reader.LastValueAsShort;
+					return true;
+				case 271:
+					template.CadObject.DecimalPlaces = this._reader.LastValueAsShort;
+					return true;
+				case 272:
+					template.CadObject.ToleranceDecimalPlaces = this._reader.LastValueAsShort;
+					return true;
+				case 273:
+					template.CadObject.AlternateUnitFormat = (LinearUnitFormat)this._reader.LastValueAsShort;
+					return true;
+				case 274:
+					template.CadObject.AlternateUnitToleranceDecimalPlaces = this._reader.LastValueAsShort;
+					return true;
+				case 275:
+					template.CadObject.AngularUnit = (AngularUnitFormat)this._reader.LastValueAsShort;
+					return true;
+				case 276:
+					template.CadObject.FractionFormat = (FractionFormat)this._reader.LastValueAsShort;
+					return true;
+				case 277:
+					template.CadObject.LinearUnitFormat = (LinearUnitFormat)this._reader.LastValueAsShort;
+					return true;
+				case 278:
+					template.CadObject.DecimalSeparator = (char)this._reader.LastValueAsShort;
+					return true;
+				case 279:
+					template.CadObject.TextMovement = (Tables.TextMovement)this._reader.LastValueAsShort;
+					return true;
+				case 280:
+					template.CadObject.TextHorizontalAlignment = (DimensionTextHorizontalAlignment)this._reader.LastValueAsShort;
+					return true;
+				case 281:
+					template.CadObject.SuppressFirstDimensionLine = this._reader.LastValueAsBool;
+					return true;
+				case 282:
+					template.CadObject.SuppressSecondDimensionLine = this._reader.LastValueAsBool;
+					return true;
+				case 283:
+					template.CadObject.ToleranceAlignment = (ToleranceAlignment)this._reader.LastValueAsShort;
+					return true;
+				case 284:
+					template.CadObject.ToleranceZeroHandling = (ZeroHandling)this._reader.LastValueAsShort;
+					return true;
+				case 285:
+					template.CadObject.AlternateUnitZeroHandling = (ZeroHandling)this._reader.LastValueAsShort;
+					return true;
+				case 286:
+					template.CadObject.AlternateUnitToleranceZeroHandling = (ZeroHandling)(byte)this._reader.LastValueAsShort;
+					return true;
+				case 287:
+					template.CadObject.DimensionFit = (char)this._reader.LastValueAsShort;
+					return true;
+				case 288:
+					template.CadObject.CursorUpdate = this._reader.LastValueAsBool;
+					return true;
+				case 289:
+					template.CadObject.DimensionTextArrowFit = this._reader.LastValueAsShort;
+					return true;
+				case 290:
+					template.CadObject.IsExtensionLineLengthFixed = this._reader.LastValueAsBool;
+					return true;
+				case 340:
+					tmp.TextStyleHandle = this._reader.LastValueAsHandle;
+					return true;
+				case 341:
+					tmp.DIMLDRBLK = this._reader.LastValueAsHandle;
+					return true;
+				case 342:
+					tmp.DIMBLK = this._reader.LastValueAsHandle;
+					return true;
+				case 343:
+					tmp.DIMBLK1 = this._reader.LastValueAsHandle;
+					return true;
+				case 344:
+					tmp.DIMBLK2 = this._reader.LastValueAsHandle;
+					return true;
+				case 371:
+					template.CadObject.DimensionLineWeight = (LineweightType)this._reader.LastValueAsShort;
+					return true;
+				case 372:
+					template.CadObject.ExtensionLineWeight = (LineweightType)this._reader.LastValueAsShort;
 					return true;
 				default:
 					return false;

@@ -3848,7 +3848,7 @@ namespace ACadSharp.IO.DWG
 			//External reference block handle(hard pointer)
 			long block = (long)this.handleReference();
 			//340 shapefile(DIMTXSTY)(hard pointer)
-			template.DIMTXSTY = this.handleReference();
+			template.TextStyleHandle = this.handleReference();
 
 			//R2000+:
 			if (this.R2000Plus)
