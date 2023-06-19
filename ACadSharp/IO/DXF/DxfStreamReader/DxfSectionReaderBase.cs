@@ -878,8 +878,34 @@ namespace ACadSharp.IO.DXF
 					while (this._reader.DxfCode != DxfCode.ControlString);
 					break;
 			}
-
 			this._reader.ReadNext();
+		}
+
+		protected void assignCurrentValue(CadObject cadObject, DxfMap map)
+		{
+			try
+			{
+				//Use this method only if the value is not a link between objects
+				if (map.DxfProperties.TryGetValue(this._reader.Code, out DxfProperty dxfProperty))
+				{
+					dxfProperty.SetValue(this._reader.Code, cadObject, this._reader.Value);
+				}
+				else
+				{
+					this._builder.Notify($"[{cadObject.ObjectName}] Dxf code {this._reader.Code} not found", NotificationType.Warning);
+				}
+			}
+			catch (Exception ex)
+			{
+				if (!_builder.Configuration.Failsafe)
+				{
+					throw ex;
+				}
+				else
+				{
+					this._builder.Notify("", NotificationType.Error, ex);
+				}
+			}
 		}
 	}
 }

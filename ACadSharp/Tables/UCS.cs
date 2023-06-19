@@ -45,16 +45,16 @@ namespace ACadSharp.Tables
 		public XYZ YAxis { get; set; } = XYZ.AxisY;
 
 		/// <summary>
-		/// Always 0
-		/// </summary>
-		[DxfCodeValue(79)]
-		public OrthographicType OrthographicViewType { get; set; }
-
-		/// <summary>
 		/// Orthographic type
 		/// </summary>
 		[DxfCodeValue(71)]
 		public OrthographicType OrthographicType { get; set; }
+
+		/// <summary>
+		/// Always 0
+		/// </summary>
+		[DxfCodeValue(79)]
+		public OrthographicType OrthographicViewType { get; set; }
 
 		public UCS() : base() { }
 

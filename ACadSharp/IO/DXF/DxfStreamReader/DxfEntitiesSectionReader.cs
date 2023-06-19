@@ -24,10 +24,12 @@ namespace ACadSharp.IO.DXF
 				{
 					template = this.readEntity();
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
 					if (!this._builder.Configuration.Failsafe)
 						throw;
+
+					this._builder.Notify($"Error while reading an entity at line {this._reader.Position}", NotificationType.Error, ex);
 
 					while (this._reader.DxfCode != DxfCode.Start)
 						this._reader.ReadNext();

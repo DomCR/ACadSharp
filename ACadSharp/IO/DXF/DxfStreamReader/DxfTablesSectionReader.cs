@@ -79,7 +79,7 @@ namespace ACadSharp.IO.DXF
 						this.readExtendedData(edata);
 						break;
 					default:
-						this._builder.Notify(new NotificationEventArgs($"Unhandeled dxf code {this._reader.Code} at line {this._reader.Position}."));
+						this._builder.Notify($"Unhandeled dxf code {this._reader.Code} at line {this._reader.Position}.");
 						break;
 				}
 
@@ -198,9 +198,7 @@ namespace ACadSharp.IO.DXF
 						template = this.readTableEntry(new CadTableEntryTemplate<TextStyle>(new TextStyle()), this.readTextStyle);
 						break;
 					case DxfFileToken.TableUcs:
-						UCS ucs = new UCS();
-						template = new CadUcsTemplate(ucs);
-						this.readMapped<UCS>(ucs, template);
+						template = this.readTableEntry(new CadUcsTemplate(), this.readUcs);
 						break;
 					case DxfFileToken.TableView:
 						View view = new View();
@@ -586,36 +584,6 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private bool readTextStyle(CadTableEntryTemplate<TextStyle> template)
-		{
-			switch (this._reader.Code)
-			{
-				case 3:
-					template.CadObject.Filename = this._reader.ValueAsString;
-					return true;
-				case 4:
-					template.CadObject.BigFontFilename = this._reader.ValueAsString;
-					return true;
-				case 40:
-					template.CadObject.Height = this._reader.ValueAsDouble;
-					return true;
-				case 41:
-					template.CadObject.Width = this._reader.ValueAsDouble;
-					return true;
-				case 42:
-					template.CadObject.LastHeight = this._reader.ValueAsDouble;
-					return true;
-				case 50:
-					template.CadObject.ObliqueAngle = this._reader.ValueAsAngle;
-					return true;
-				case 71:
-					template.CadObject.MirrorFlag = (Entities.TextMirrorFlag)this._reader.ValueAsShort;
-					return true;
-				default:
-					return false;
-			}
-		}
-
 		private SegmentTemplate readLineTypeSegment()
 		{
 			SegmentTemplate template = new SegmentTemplate();
@@ -660,6 +628,61 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return template;
+		}
+
+		private bool readTextStyle(CadTableEntryTemplate<TextStyle> template)
+		{
+			switch (this._reader.Code)
+			{
+				case 3:
+					template.CadObject.Filename = this._reader.ValueAsString;
+					return true;
+				case 4:
+					template.CadObject.BigFontFilename = this._reader.ValueAsString;
+					return true;
+				case 40:
+					template.CadObject.Height = this._reader.ValueAsDouble;
+					return true;
+				case 41:
+					template.CadObject.Width = this._reader.ValueAsDouble;
+					return true;
+				case 42:
+					template.CadObject.LastHeight = this._reader.ValueAsDouble;
+					return true;
+				case 50:
+					template.CadObject.ObliqueAngle = this._reader.ValueAsAngle;
+					return true;
+				case 71:
+					template.CadObject.MirrorFlag = (Entities.TextMirrorFlag)this._reader.ValueAsShort;
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		private bool readUcs(CadTableEntryTemplate<UCS> template)
+		{
+			DxfMap map = DxfMap.Create<UCS>();
+
+			switch (this._reader.Code)
+			{
+				case 10:
+				case 20:
+				case 30:
+				case 11:
+				case 21:
+				case 31:
+				case 12:
+				case 22:
+				case 32:
+				case 71:
+				case 79:
+				case 146:
+					this.assignCurrentValue(template.CadObject, map);
+					return true;
+				default:
+					return false;
+			}
 		}
 	}
 }

@@ -25,10 +25,12 @@ namespace ACadSharp.IO.DXF
 				{
 					template = this.readObject();
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
 					if (!this._builder.Configuration.Failsafe)
 						throw;
+
+					this._builder.Notify($"Error while reading an object at line {this._reader.Position}", NotificationType.Error, ex);
 
 					while (this._reader.DxfCode != DxfCode.Start)
 						this._reader.ReadNext();
@@ -57,8 +59,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadTemplate<DictionaryVariable>(new DictionaryVariable());
 					break;
 				case DxfFileToken.ObjectSortEntsTable:
-					this.readSortentsTable();
-					break;
+					return this.readSortentsTable();
 				case DxfFileToken.ObjectXRecord:
 					template = new CadXRecordTemplate(new XRecrod());
 					break;
