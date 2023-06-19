@@ -6,41 +6,43 @@ namespace ACadSharp.IO.DXF
 {
 	internal abstract class DxfReaderBase : IDxfStreamReader
 	{
-		public DxfCode LastDxfCode { get; protected set; }
+		public DxfCode DxfCode { get; protected set; }
 
-		public GroupCodeValueType LastGroupCodeValue { get; protected set; }
+		public GroupCodeValueType GroupCodeValue { get; protected set; }
 
-		public int LastCode { get { return (int)this.LastDxfCode; } }
+		public int Code { get { return (int)this.DxfCode; } }
 
-		public object LastValue { get; protected set; }
+		public object Value { get; protected set; }
 
 		public virtual int Position { get; protected set; }
 
-		public string LastValueAsString { get { return this.LastValue.ToString(); } }
+		public string ValueAsString { get { return this.Value.ToString(); } }
 
-		public bool LastValueAsBool { get { return Convert.ToBoolean(this.LastValue); } }
+		public bool ValueAsBool { get { return Convert.ToBoolean(this.Value); } }
 
-		public short LastValueAsShort { get { return Convert.ToInt16(this.LastValue); } }
+		public short ValueAsShort { get { return Convert.ToInt16(this.Value); } }
 
-		public ushort LastValueAsUShort { get { return Convert.ToUInt16(this.LastValue); } }
+		public ushort ValueAsUShort { get { return Convert.ToUInt16(this.Value); } }
 
-		public int LastValueAsInt { get { return Convert.ToInt32(this.LastValue); } }
+		public int ValueAsInt { get { return Convert.ToInt32(this.Value); } }
 
-		public long LastValueAsLong { get { return Convert.ToInt64(this.LastValue); } }
+		public long ValueAsLong { get { return Convert.ToInt64(this.Value); } }
 
-		public double LastValueAsDouble { get { return (double)this.LastValue; } }
+		public double ValueAsDouble { get { return (double)this.Value; } }
 
-		public ulong LastValueAsHandle { get { return (ulong)this.LastValue; } }
+		public double ValueAsAngle { get { return (double)((double)this.Value * MathUtils.DegToRad); } }
 
-		public byte[] LastValueAsBinaryChunk { get { return this.LastValue as byte[]; } }
+		public ulong ValueAsHandle { get { return (ulong)this.Value; } }
+
+		public byte[] ValueAsBinaryChunk { get { return this.Value as byte[]; } }
 
 		protected abstract Stream _baseStream { get; }
 
 		public virtual void ReadNext()
 		{
-			this.LastDxfCode = this.readCode();
-			this.LastGroupCodeValue = GroupCodeValue.TransformValue(this.LastCode);
-			this.LastValue = this.transformValue(this.LastGroupCodeValue);
+			this.DxfCode = this.readCode();
+			this.GroupCodeValue = ACadSharp.GroupCodeValue.TransformValue(this.Code);
+			this.Value = this.transformValue(this.GroupCodeValue);
 		}
 
 		public void Find(string dxfEntry)
@@ -51,13 +53,13 @@ namespace ACadSharp.IO.DXF
 			{
 				this.ReadNext();
 			}
-			while (this.LastValueAsString != dxfEntry && (this.LastValueAsString != DxfFileToken.EndOfFile));
+			while (this.ValueAsString != dxfEntry && (this.ValueAsString != DxfFileToken.EndOfFile));
 		}
 
 		protected virtual void start()
 		{
-			this.LastDxfCode = DxfCode.Invalid;
-			this.LastValue = string.Empty;
+			this.DxfCode = DxfCode.Invalid;
+			this.Value = string.Empty;
 
 			this._baseStream.Position = 0;
 

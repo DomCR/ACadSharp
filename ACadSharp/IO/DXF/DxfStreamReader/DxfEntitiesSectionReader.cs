@@ -16,7 +16,7 @@ namespace ACadSharp.IO.DXF
 			this._reader.ReadNext();
 
 			//Loop until the section ends
-			while (this._reader.LastValueAsString != DxfFileToken.EndSection)
+			while (this._reader.ValueAsString != DxfFileToken.EndSection)
 			{
 				CadEntityTemplate template = null;
 
@@ -29,7 +29,7 @@ namespace ACadSharp.IO.DXF
 					if (!this._builder.Configuration.Failsafe)
 						throw;
 
-					while (this._reader.LastDxfCode != DxfCode.Start)
+					while (this._reader.DxfCode != DxfCode.Start)
 						this._reader.ReadNext();
 				}
 
