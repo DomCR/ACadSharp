@@ -1,11 +1,13 @@
 ﻿using ACadSharp.Attributes;
-using System;
 
 namespace ACadSharp.Tables
 {
 	[DxfSubClass(DxfSubclassMarker.TableRecord, true)]
 	public abstract class TableEntry : CadObject, INamedCadObject
 	{
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.TableRecord;
+
 		/// <summary>
 		/// Specifies the name of the object
 		/// </summary>

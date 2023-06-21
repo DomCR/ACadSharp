@@ -21,6 +21,9 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableView;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.View;
+
 		/// <summary>
 		/// View height (in DCS)
 		/// </summary>

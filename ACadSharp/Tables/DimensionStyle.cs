@@ -16,15 +16,18 @@ namespace ACadSharp.Tables
 	[DxfSubClass(DxfSubclassMarker.DimensionStyle)]
 	public class DimensionStyle : TableEntry
 	{
+		public const string DefaultName = "Standard";
+
+		public static DimensionStyle Default { get { return new DimensionStyle(DefaultName); } }
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.DIMSTYLE;
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableDimstyle;
 
-		public const string DefaultName = "Standard";
-
-		public static DimensionStyle Default { get { return new DimensionStyle(DefaultName); } }
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.DimensionStyle;
 
 		/// <summary>
 		/// DIMPOST

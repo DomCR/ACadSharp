@@ -31,6 +31,9 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableLayer;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Layer;
+
 		/// <summary>
 		/// Layer state flags.
 		/// </summary>

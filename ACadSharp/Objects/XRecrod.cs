@@ -14,9 +14,14 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.XRecord)]
 	public class XRecrod : CadObject
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.XRECORD;
 
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectXRecord;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.XRecord;
 
 		/// <summary>
 		/// Duplicate record cloning flag (determines how to merge duplicate entries)

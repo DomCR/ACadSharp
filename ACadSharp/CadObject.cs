@@ -22,6 +22,11 @@ namespace ACadSharp
 		/// </summary>
 		public virtual string ObjectName { get; } = DxfFileToken.Undefined;
 
+		/// <summary>
+		/// Object Subclass marker
+		/// </summary>
+		public abstract string SubclassMarker { get; }
+
 		/// <inheritdoc/>
 		/// <remarks>
 		/// If the value is 0 the object is not assigned to a document or a parent

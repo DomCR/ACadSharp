@@ -890,7 +890,9 @@ namespace ACadSharp.IO.DXF
 				//Use this method only if the value is not a link between objects
 				if (map.DxfProperties.TryGetValue(this._reader.Code, out DxfProperty dxfProperty))
 				{
-					if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Handle | DxfReferenceType.Name))
+					if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Handle)
+						|| dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Name)
+						|| dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Count))
 					{
 						return false;
 					}

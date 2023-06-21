@@ -20,6 +20,9 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableUcs;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Ucs;
+
 		/// <summary>
 		/// Elevation
 		/// </summary>

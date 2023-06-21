@@ -22,6 +22,9 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableStyle;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.TextStyle;
+
 		/// <summary>
 		/// Default text style.
 		/// </summary>

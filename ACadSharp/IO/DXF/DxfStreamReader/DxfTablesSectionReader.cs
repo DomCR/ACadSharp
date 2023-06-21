@@ -14,7 +14,7 @@ namespace ACadSharp.IO.DXF
 {
 	internal class DxfTablesSectionReader : DxfSectionReaderBase
 	{
-		public delegate bool ReadEntryDelegate<T>(CadTableEntryTemplate<T> template) where T : TableEntry;
+		public delegate bool ReadEntryDelegate<T>(CadTableEntryTemplate<T> template, DxfClassMap map) where T : TableEntry;
 
 		public DxfTablesSectionReader(IDxfStreamReader reader, DxfDocumentBuilder builder)
 			: base(reader, builder)
@@ -230,11 +230,13 @@ namespace ACadSharp.IO.DXF
 		private CadTemplate readTableEntry<T>(CadTableEntryTemplate<T> template, ReadEntryDelegate<T> readEntry)
 			where T : TableEntry
 		{
+			DxfMap map = DxfMap.Create<T>();
+
 			while (this._reader.DxfCode != DxfCode.Start)
 			{
-				if (!readEntry(template))
+				if (!readEntry(template, map.SubClasses[template.CadObject.SubclassMarker]))
 				{
-					this.readCommonTableEntryCodes(template, out bool isExtendedData);
+					this.readCommonTableEntryCodes(template, out bool isExtendedData, map);
 					if (isExtendedData)
 						continue;
 				}
@@ -246,7 +248,7 @@ namespace ACadSharp.IO.DXF
 			return template;
 		}
 
-		private void readCommonTableEntryCodes<T>(CadTableEntryTemplate<T> template, out bool isExtendedData)
+		private void readCommonTableEntryCodes<T>(CadTableEntryTemplate<T> template, out bool isExtendedData, DxfMap map = null)
 			where T : TableEntry
 		{
 			isExtendedData = false;
@@ -259,13 +261,15 @@ namespace ACadSharp.IO.DXF
 					template.CadObject.Flags = (StandardFlags)this._reader.ValueAsUShort;
 					break;
 				default:
-					this.readCommonCodes(template, out isExtendedData);
+					this.readCommonCodes(template, out isExtendedData, map);
 					break;
 			}
 		}
 
-		private bool readAppId(CadTableEntryTemplate<AppId> template)
+		private bool readAppId(CadTableEntryTemplate<AppId> template, DxfClassMap map)
 		{
+			Debug.Assert(map.Name == DxfSubclassMarker.ApplicationId);
+
 			switch (this._reader.Code)
 			{
 				default:
@@ -273,8 +277,10 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private bool readDimensionStyle(CadTableEntryTemplate<DimensionStyle> template)
+		private bool readDimensionStyle(CadTableEntryTemplate<DimensionStyle> template, DxfClassMap map)
 		{
+			Debug.Assert(map.Name == DxfSubclassMarker.DimensionStyle);
+
 			CadDimensionStyleTemplate tmp = (CadDimensionStyleTemplate)template;
 
 			switch (this._reader.Code)
@@ -509,8 +515,10 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private bool readLayer(CadTableEntryTemplate<Layer> template)
+		private bool readLayer(CadTableEntryTemplate<Layer> template, DxfClassMap map)
 		{
+			Debug.Assert(map.Name == DxfSubclassMarker.Layer);
+
 			CadLayerTemplate tmp = (CadLayerTemplate)template;
 
 			switch (this._reader.Code)
@@ -527,17 +535,11 @@ namespace ACadSharp.IO.DXF
 					}
 					template.CadObject.Color = new Color(index);
 					return true;
-				case 290:
-					template.CadObject.PlotFlag = this._reader.ValueAsBool;
-					return true;
 				case 347:
 					tmp.MaterialHandle = this._reader.ValueAsHandle;
 					return true;
 				case 348:
 					//Unknown code value, always 0
-					return true;
-				case 370:
-					template.CadObject.LineWeight = (LineweightType)this._reader.ValueAsShort;
 					return true;
 				case 390:
 					template.CadObject.PlotStyleName = this._reader.ValueAsHandle;
@@ -549,22 +551,18 @@ namespace ACadSharp.IO.DXF
 					tmp.TrueColorName = this._reader.ValueAsString;
 					return true;
 				default:
-					return false;
+					return this.tryAssignCurrentValue(template.CadObject, map);
 			}
 		}
 
-		private bool readLineType(CadTableEntryTemplate<LineType> template)
+		private bool readLineType(CadTableEntryTemplate<LineType> template, DxfClassMap map)
 		{
+			Debug.Assert(map.Name == DxfSubclassMarker.Linetype);
+
 			CadLineTypeTemplate tmp = (CadLineTypeTemplate)template;
 
 			switch (this._reader.Code)
 			{
-				case 3:
-					template.CadObject.Description = this._reader.ValueAsString;
-					return true;
-				case 40:
-					template.CadObject.PatternLen = this._reader.ValueAsDouble;
-					return true;
 				case 49:
 					do
 					{
@@ -572,14 +570,11 @@ namespace ACadSharp.IO.DXF
 					}
 					while (this._reader.Code == 49);
 					return true;
-				case 72:
-					template.CadObject.Alignment = (char)this._reader.ValueAsUShort;
-					return true;
 				case 73:
-					//n segments 
+					//number of segments
 					return true;
 				default:
-					return false;
+					return this.tryAssignCurrentValue(template.CadObject, map);
 			}
 		}
 
@@ -629,39 +624,9 @@ namespace ACadSharp.IO.DXF
 			return template;
 		}
 
-		private bool readTextStyle(CadTableEntryTemplate<TextStyle> template)
+		private bool readTextStyle(CadTableEntryTemplate<TextStyle> template, DxfClassMap map)
 		{
-			switch (this._reader.Code)
-			{
-				case 3:
-					template.CadObject.Filename = this._reader.ValueAsString;
-					return true;
-				case 4:
-					template.CadObject.BigFontFilename = this._reader.ValueAsString;
-					return true;
-				case 40:
-					template.CadObject.Height = this._reader.ValueAsDouble;
-					return true;
-				case 41:
-					template.CadObject.Width = this._reader.ValueAsDouble;
-					return true;
-				case 42:
-					template.CadObject.LastHeight = this._reader.ValueAsDouble;
-					return true;
-				case 50:
-					template.CadObject.ObliqueAngle = this._reader.ValueAsAngle;
-					return true;
-				case 71:
-					template.CadObject.MirrorFlag = (Entities.TextMirrorFlag)this._reader.ValueAsShort;
-					return true;
-				default:
-					return false;
-			}
-		}
-
-		private bool readUcs(CadTableEntryTemplate<UCS> template)
-		{
-			DxfClassMap map = DxfClassMap.Create<UCS>();
+			Debug.Assert(map.Name == DxfSubclassMarker.TextStyle);
 
 			switch (this._reader.Code)
 			{
@@ -670,10 +635,22 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private bool readView(CadTableEntryTemplate<View> template)
+		private bool readUcs(CadTableEntryTemplate<UCS> template, DxfClassMap map)
 		{
+			Debug.Assert(map.Name == DxfSubclassMarker.Ucs);
+
+			switch (this._reader.Code)
+			{
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map);
+			}
+		}
+
+		private bool readView(CadTableEntryTemplate<View> template, DxfClassMap map)
+		{
+			Debug.Assert(map.Name == DxfSubclassMarker.View);
+
 			CadViewTemplate tmp = template as CadViewTemplate;
-			DxfClassMap map = DxfClassMap.Create<View>();
 
 			switch (this._reader.Code)
 			{

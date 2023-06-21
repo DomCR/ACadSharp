@@ -97,6 +97,9 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectDictionary;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Dictionary;
+
 		/// <summary>
 		/// indicates that elements of the dictionary are to be treated as hard-owned.
 		/// </summary>

@@ -17,6 +17,9 @@ namespace ACadSharp.Tables.Collections
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableEntry;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Table;
+
 		/// <summary>
 		/// Gets the number of entries in this table
 		/// </summary>
