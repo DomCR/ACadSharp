@@ -22,7 +22,7 @@ namespace ACadSharp.IO.DWG
 
 		private Dictionary<string, DwgSectionDescriptor> _descriptors { get { return this._fileHeader.Descriptors; } }
 
-		public DwgFileHeaderWriterAC18(Stream stream, CadDocument model) : base(stream, model)
+		public DwgFileHeaderWriterAC18(Stream stream, Encoding encoding, CadDocument document) : base(stream, encoding, document)
 		{
 			// File header info
 			for (int i = 0; i < this._fileHeaderSize; i++)
@@ -315,9 +315,8 @@ namespace ACadSharp.IO.DWG
 			//0x12	1	Application maintenance release version(Acad maintenance version that writes the file)
 			this._stream.WriteByte((byte)_document.Header.MaintenanceVersion);
 
-			//TODO: Write CodePage
 			//0x13	2	Codepage
-			writer.Write<ushort>(30);
+			writer.Write<ushort>(this.getFileCodePage());
 			//0x15	3	3 0x00 bytes
 			this._stream.Write(new byte[3], 0, 3);
 

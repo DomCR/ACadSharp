@@ -34,6 +34,12 @@ namespace ACadSharp
 			this._assignedCode = code;
 		}
 
+		public object GetValue<TCadObject>(TCadObject obj)
+			where TCadObject : CadObject
+		{
+			return this._property.GetValue(obj);
+		}
+
 		public DxfCode[] GetCollectionCodes()
 		{
 			return this._property.GetCustomAttribute<DxfCollectionCodeValueAttribute>()?.ValueCodes;

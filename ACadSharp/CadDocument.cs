@@ -23,7 +23,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Contains all the header variables for this document.
 		/// </summary>
-		public CadHeader Header { get; set; }
+		public CadHeader Header { get; internal set; }
 
 		/// <summary>
 		/// Accesses drawing properties such as the Title, Subject, Author, and Keywords properties
@@ -126,7 +126,7 @@ namespace ACadSharp
 			if (createDefaults)
 			{
 				//Header and summary
-				this.Header = new CadHeader();
+				this.Header = new CadHeader(this);
 				this.SummaryInfo = new CadSummaryInfo();
 
 				//The order of the elements is rellevant for the handles assignation
@@ -180,7 +180,19 @@ namespace ACadSharp
 		/// <summary>
 		/// Creates a document with the default objects
 		/// </summary>
-		public CadDocument() : this(true) { }
+		/// <remarks>
+		/// Default version <see cref="ACadVersion.AC1018"/>
+		/// </remarks>
+		public CadDocument() : this(ACadVersion.AC1018) { }
+
+		/// <summary>
+		/// Creates a document with the default objects and a specific version
+		/// </summary>
+		/// <param name="version">Version of the document</param>
+		public CadDocument(ACadVersion version) : this(true)
+		{
+			this.Header.Version = version;
+		}
 
 		/// <summary>
 		/// Gets an object in the document by it's handle
@@ -278,7 +290,7 @@ namespace ACadSharp
 					break;
 				case Insert insert:
 					this.RegisterCollection(insert.Attributes);
-					
+
 					//Should only be triggered for internal use
 					if (insert.Block == null)
 						break;
