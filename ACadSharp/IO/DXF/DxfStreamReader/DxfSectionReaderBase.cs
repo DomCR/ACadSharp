@@ -395,7 +395,13 @@ namespace ACadSharp.IO.DXF
 
 		private bool readArc(CadEntityTemplate<Arc> template, DxfClassMap map)
 		{
-			throw new NotImplementedException();
+			Debug.Assert(map.Name == DxfSubclassMarker.Arc);
+
+			switch (this._reader.Code)
+			{
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map);
+			}
 		}
 
 		protected void readMapped<T>(CadObject cadObject, CadTemplate template)
@@ -661,7 +667,7 @@ namespace ACadSharp.IO.DXF
 			if (template.Path.Flags.HasFlag(BoundaryPathFlags.Polyline))
 			{
 				Hatch.BoundaryPath.Edge pl = new Hatch.BoundaryPath.Polyline();
-				this._builder.Notify(new NotificationEventArgs($"Hatch.BoundaryPath.Polyline not implemented"));
+				this._builder.Notify($"Hatch.BoundaryPath.Polyline not implemented", NotificationType.Error);
 
 				return null;
 			}
