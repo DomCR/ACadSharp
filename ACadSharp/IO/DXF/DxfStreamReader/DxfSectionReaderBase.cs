@@ -10,6 +10,8 @@ namespace ACadSharp.IO.DXF
 {
 	internal abstract class DxfSectionReaderBase
 	{
+		public delegate bool ReadEntityDelegate<T>(CadEntityTemplate<T> template, DxfClassMap map) where T : Entity, new();
+
 		/// <summary>
 		/// Object reactors, list of handles
 		/// </summary>
@@ -155,8 +157,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadTextEntityTemplate(new AttributeDefinition());
 					break;
 				case DxfFileToken.EntityArc:
-					template = new CadArcTemplate(new Arc());
-					break;
+					return this.readEntityCodes(new CadEntityTemplate<Arc>(), readArc);
 				case DxfFileToken.EntityCircle:
 					template = new CadEntityTemplate(new Circle());
 					break;
@@ -354,6 +355,47 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return template;
+		}
+
+		protected CadEntityTemplate readEntityCodes<T>(CadEntityTemplate<T> template, ReadEntityDelegate<T> readEntity)
+			where T : Entity, new()
+		{
+			this._reader.ReadNext();
+
+			DxfMap map = DxfMap.Create<T>();
+
+			Debug.Assert(template.CadObject.SubclassMarker != DxfSubclassMarker.Entity);
+
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				if (!readEntity(template, map.SubClasses[template.CadObject.SubclassMarker]))
+				{
+					this.readCommonEntityCodes(template, out bool isExtendedData, map);
+					if (isExtendedData)
+						continue;
+				}
+
+				if (this._reader.DxfCode != DxfCode.Start)
+					this._reader.ReadNext();
+			}
+
+			return template;
+		}
+
+		protected void readCommonEntityCodes(CadEntityTemplate template, out bool isExtendedData, DxfMap map = null)
+		{
+			DxfClassMap entityMap = map.SubClasses[DxfSubclassMarker.Entity];
+
+			isExtendedData = false;
+			if (!this.tryAssignCurrentValue(template.CadObject, entityMap))
+			{
+				this.readCommonCodes(template, out isExtendedData, map);
+			}
+		}
+
+		private bool readArc(CadEntityTemplate<Arc> template, DxfClassMap map)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected void readMapped<T>(CadObject cadObject, CadTemplate template)
@@ -917,7 +959,7 @@ namespace ACadSharp.IO.DXF
 				}
 				else
 				{
-					this._builder.Notify("", NotificationType.Error, ex);
+					this._builder.Notify("An error occurred while assiging a property using mapper", NotificationType.Error, ex);
 				}
 			}
 

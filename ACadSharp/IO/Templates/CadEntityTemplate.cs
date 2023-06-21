@@ -153,4 +153,16 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 	}
+
+	internal class CadEntityTemplate<T> : CadEntityTemplate
+			where T : Entity, new()
+	{
+		public new T CadObject { get { return (T)base.CadObject; } set { base.CadObject = value; } }
+
+		public CadEntityTemplate() : base(new T()) { }
+
+		public CadEntityTemplate(T entity) : base(entity)
+		{
+		}
+	}
 }

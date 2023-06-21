@@ -124,6 +124,11 @@ namespace ACadSharp.Tests.IO
 
 		protected void onNotification(object sender, NotificationEventArgs e)
 		{
+			if(e.NotificationType == NotificationType.Error)
+			{
+				throw e.Exception;
+			}
+
 			_output.WriteLine(e.Message);
 		}
 
