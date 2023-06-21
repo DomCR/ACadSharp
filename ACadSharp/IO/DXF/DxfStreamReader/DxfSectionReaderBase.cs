@@ -450,21 +450,21 @@ namespace ACadSharp.IO.DXF
 					continue;
 				}
 
-				if (dxfProperty.ReferenceType == DxfReferenceType.Handle)
+				if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Handle))
 				{
 					if (!template.AddHandle(this._reader.Code, this._reader.ValueAsHandle))
 						this._builder.Notify($"Dxf referenced code {this._reader.Code} not implemented in the {template.GetType().Name} for {typeof(T)} | value : {this._reader.ValueAsHandle}");
 				}
-				else if (dxfProperty.ReferenceType == DxfReferenceType.Name)
+				else if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Name))
 				{
 					if (!template.AddName(this._reader.Code, this._reader.ValueAsString))
 						this._builder.Notify($"Dxf named referenced code {this._reader.Code} not implemented in the {template.GetType().Name} for {typeof(T)} | value : {this._reader.ValueAsString}");
 				}
-				else if (dxfProperty.ReferenceType == DxfReferenceType.Count)
+				else if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Count))
 				{
 					//Do nothing just marks the amount
 				}
-				else if (dxfProperty.ReferenceType == DxfReferenceType.Unprocess)
+				else if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Unprocess) || dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Ignored))
 				{
 					this._reader.ReadNext();
 					continue;
