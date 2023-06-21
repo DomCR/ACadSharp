@@ -883,13 +883,18 @@ namespace ACadSharp.IO.DXF
 			this._reader.ReadNext();
 		}
 
-		protected void assignCurrentValue(CadObject cadObject, DxfClassMap map)
+		protected bool tryAssignCurrentValue(CadObject cadObject, DxfClassMap map)
 		{
 			try
 			{
 				//Use this method only if the value is not a link between objects
 				if (map.DxfProperties.TryGetValue(this._reader.Code, out DxfProperty dxfProperty))
 				{
+					if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Handle | DxfReferenceType.Name))
+					{
+						return false;
+					}
+
 					object value = this._reader.Value;
 
 					if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
@@ -898,10 +903,8 @@ namespace ACadSharp.IO.DXF
 					}
 
 					dxfProperty.SetValue(this._reader.Code, cadObject, value);
-				}
-				else
-				{
-					this._builder.Notify($"[{cadObject.ObjectName}] Dxf code {this._reader.Code} not found", NotificationType.Warning);
+
+					return true;
 				}
 			}
 			catch (Exception ex)
@@ -915,6 +918,8 @@ namespace ACadSharp.IO.DXF
 					this._builder.Notify("", NotificationType.Error, ex);
 				}
 			}
+
+			return false;
 		}
 	}
 }

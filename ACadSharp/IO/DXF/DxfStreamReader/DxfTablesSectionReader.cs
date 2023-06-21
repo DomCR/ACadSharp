@@ -665,22 +665,8 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
-				case 10:
-				case 20:
-				case 30:
-				case 11:
-				case 21:
-				case 31:
-				case 12:
-				case 22:
-				case 32:
-				case 71:
-				case 79:
-				case 146:
-					this.assignCurrentValue(template.CadObject, map);
-					return true;
 				default:
-					return false;
+					return this.tryAssignCurrentValue(template.CadObject, map);
 			}
 		}
 
@@ -691,32 +677,11 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
-				case 10:
-				case 20:
-				case 11:
-				case 21:
-				case 31:
-				case 12:
-				case 22:
-				case 32:
-				case 40:
-				case 41:
-				case 42:
-				case 43:
-				case 44:
-				case 50:
-				case 71:
-				case 72:
-				case 73:
-				case 79:
-				case 281:
-					this.assignCurrentValue(template.CadObject, map);
-					return true;
 				case 348:
 					tmp.VisualStyleHandle = this._reader.ValueAsHandle;
 					return true;
 				default:
-					return false;
+					return this.tryAssignCurrentValue(template.CadObject, map);
 			}
 		}
 	}
