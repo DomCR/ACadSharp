@@ -187,8 +187,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadInsertTemplate(new Insert());
 					break;
 				case DxfFileToken.EntityMText:
-					template = new CadTextEntityTemplate(new MText());
-					break;
+					return this.readEntityCodes<MText>(new CadTextEntityTemplate(new MText()), readTextEntity);
 				case DxfFileToken.EntityMLine:
 					template = new CadMLineTemplate(new MLine());
 					break;
@@ -443,6 +442,26 @@ namespace ACadSharp.IO.DXF
 		}
 
 		private bool readTextEntity(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			string mapName = string.IsNullOrEmpty(subclass) ? template.CadObject.SubclassMarker : subclass;
+			CadTextEntityTemplate tmp = template as CadTextEntityTemplate;
+
+			switch (this._reader.Code)
+			{
+				//TODO: Implement multiline text def codes
+				case 70:
+				case 74:
+				case 101:
+					return true;
+				case 7:
+					tmp.StyleName = this._reader.ValueAsString;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[mapName]);
+			}
+		}
+
+		private bool readMText(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
 			string mapName = string.IsNullOrEmpty(subclass) ? template.CadObject.SubclassMarker : subclass;
 			CadTextEntityTemplate tmp = template as CadTextEntityTemplate;
