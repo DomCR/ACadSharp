@@ -10,7 +10,7 @@ namespace ACadSharp.IO.DXF
 {
 	internal abstract class DxfSectionReaderBase
 	{
-		public delegate bool ReadEntityDelegate<T>(CadEntityTemplate<T> template, DxfClassMap map) where T : Entity, new();
+		public delegate bool ReadEntityDelegate<T>(CadEntityTemplate template, DxfMap map, string subclass = null) where T : Entity;
 
 		/// <summary>
 		/// Object reactors, list of handles
@@ -125,6 +125,10 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				//Handle
+				case 5:
+					template.CadObject.Handle = this._reader.ValueAsHandle;
+					break;
 				//Check with mapper
 				case 100:
 					if (map != null && !map.SubClasses.ContainsKey(this._reader.ValueAsString))
@@ -133,6 +137,10 @@ namespace ACadSharp.IO.DXF
 				//Start of application - defined group
 				case 102:
 					this.readDefinedGroups(template);
+					break;
+				//Soft - pointer ID / handle to owner BLOCK_RECORD object
+				case 330:
+					template.OwnerHandle = this._reader.ValueAsHandle;
 					break;
 				case 1001:
 					isExtendedData = true;
@@ -154,22 +162,21 @@ namespace ACadSharp.IO.DXF
 					template = new CadTextEntityTemplate(new AttributeEntity());
 					break;
 				case DxfFileToken.EntityAttributeDefinition:
-					template = new CadTextEntityTemplate(new AttributeDefinition());
-					break;
+					return this.readEntityCodes<AttributeDefinition>(new CadTextEntityTemplate(new AttributeDefinition()), readAttributeDefinition);
 				case DxfFileToken.EntityArc:
-					return this.readEntityCodes(new CadEntityTemplate<Arc>(), readArc);
+					return this.readEntityCodes<Arc>(new CadEntityTemplate<Arc>(), readArc);
 				case DxfFileToken.EntityCircle:
-					template = new CadEntityTemplate(new Circle());
-					break;
+					return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), readSubclassMap);
 				case DxfFileToken.EntityDimension:
 					template = new CadDimensionTemplate();
+					//return this.readEntityCodes<Dimension>(new CadDimensionTemplate(), readDimension);
 					break;
+				case DxfFileToken.Entity3DFace:
+					return this.readEntityCodes<Face3D>(new CadEntityTemplate<Face3D>(), readSubclassMap);
 				case DxfFileToken.EntityEllipse:
-					template = new CadEntityTemplate(new Ellipse());
-					break;
+					return this.readEntityCodes<Ellipse>(new CadEntityTemplate<Ellipse>(), readSubclassMap);
 				case DxfFileToken.EntityLine:
-					template = new CadEntityTemplate(new Line());
-					break;
+					return this.readEntityCodes<Line>(new CadEntityTemplate<Line>(), readSubclassMap);
 				case DxfFileToken.EntityLwPolyline:
 					template = new CadLwPolylineTemplate();
 					break;
@@ -207,8 +214,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadVertexTemplate();
 					break;
 				case DxfFileToken.EntityViewport:
-					template = new CadViewportTemplate(new Viewport());
-					break;
+					return this.readEntityCodes<Viewport>(new CadViewportTemplate(), this.readViewport);
 				case DxfFileToken.EntityXline:
 					template = new CadEntityTemplate(new XLine());
 					break;
@@ -357,18 +363,16 @@ namespace ACadSharp.IO.DXF
 			return template;
 		}
 
-		protected CadEntityTemplate readEntityCodes<T>(CadEntityTemplate<T> template, ReadEntityDelegate<T> readEntity)
-			where T : Entity, new()
+		protected CadEntityTemplate readEntityCodes<T>(CadEntityTemplate template, ReadEntityDelegate<T> readEntity)
+			where T : Entity
 		{
 			this._reader.ReadNext();
 
 			DxfMap map = DxfMap.Create<T>();
 
-			Debug.Assert(template.CadObject.SubclassMarker != DxfSubclassMarker.Entity);
-
 			while (this._reader.DxfCode != DxfCode.Start)
 			{
-				if (!readEntity(template, map.SubClasses[template.CadObject.SubclassMarker]))
+				if (!readEntity(template, map))
 				{
 					this.readCommonEntityCodes(template, out bool isExtendedData, map);
 					if (isExtendedData)
@@ -384,23 +388,112 @@ namespace ACadSharp.IO.DXF
 
 		protected void readCommonEntityCodes(CadEntityTemplate template, out bool isExtendedData, DxfMap map = null)
 		{
-			DxfClassMap entityMap = map.SubClasses[DxfSubclassMarker.Entity];
-
 			isExtendedData = false;
-			if (!this.tryAssignCurrentValue(template.CadObject, entityMap))
+			switch (this._reader.Code)
 			{
-				this.readCommonCodes(template, out isExtendedData, map);
+				case 6:
+					template.LineTypeName = this._reader.ValueAsString;
+					break;
+				case 8:
+					template.LayerName = this._reader.ValueAsString;
+					break;
+				case 347:
+					template.MaterialHandle = this._reader.ValueAsHandle;
+					break;
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Entity]))
+					{
+						this.readCommonCodes(template, out isExtendedData, map);
+					}
+					break;
 			}
 		}
 
-		private bool readArc(CadEntityTemplate<Arc> template, DxfClassMap map)
+		private bool readArc(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
-			Debug.Assert(map.Name == DxfSubclassMarker.Arc);
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Arc]))
+					{
+						return this.readSubclassMap(template, map, DxfSubclassMarker.Circle);
+					}
+					return true;
+			}
+		}
+
+		private bool readAttributeDefinition(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			DxfClassMap emap = map.SubClasses[template.CadObject.SubclassMarker];
+			CadTextEntityTemplate tmp = template as CadTextEntityTemplate;
+
+			switch (this._reader.Code)
+			{
+				//TODO: Implement multiline attribute def codes
+				case 44:
+				case 46:
+				case 101:
+					return true;
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, emap))
+					{
+						return this.readTextEntity(template, map, DxfSubclassMarker.Text);
+					}
+					return true;
+			}
+		}
+
+		private bool readTextEntity(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			string mapName = string.IsNullOrEmpty(subclass) ? template.CadObject.SubclassMarker : subclass;
 
 			switch (this._reader.Code)
 			{
 				default:
-					return this.tryAssignCurrentValue(template.CadObject, map);
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[mapName]);
+			}
+		}
+
+		private bool readDimension(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			DxfClassMap dimMap = map.SubClasses[DxfSubclassMarker.Dimension];
+
+			switch (this._reader.Code)
+			{
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, dimMap);
+			}
+		}
+
+		private bool readViewport(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadViewportTemplate tmp = template as CadViewportTemplate;
+
+			switch (this._reader.Code)
+			{
+				//Undocumented
+				case 67:
+				case 68:
+					return true;
+				case 69:
+					tmp.ViewportId = this._reader.ValueAsShort;
+					return true;
+				case 348:
+					tmp.VisualStyleHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Viewport]);
+			}
+		}
+
+		private bool readSubclassMap(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			string mapName = string.IsNullOrEmpty(subclass) ? template.CadObject.SubclassMarker : subclass;
+
+			switch (this._reader.Code)
+			{
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[mapName]);
 			}
 		}
 

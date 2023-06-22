@@ -18,12 +18,6 @@ namespace ACadSharp
 
 		public Dictionary<string, DxfClassMap> SubClasses { get; private set; } = new Dictionary<string, DxfClassMap>();
 
-		public static CadObject Build<T>()
-			where T : CadObject
-		{
-			throw new NotImplementedException();
-		}
-
 		/// <summary>
 		/// Creates a dxf map for an <see cref="Entity"/> or a <see cref="TableEntry"/>
 		/// </summary>

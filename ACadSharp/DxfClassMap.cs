@@ -66,5 +66,10 @@ namespace ACadSharp
 		{
 			_cache.Clear();
 		}
+
+		public override string ToString()
+		{
+			return $"DxfClassMap:{this.Name}";
+		}
 	}
 }

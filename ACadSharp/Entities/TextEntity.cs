@@ -16,9 +16,14 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Text)]
 	public class TextEntity : Entity
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.TEXT;
 
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityText;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Text;
 
 		/// <summary>
 		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.

@@ -16,7 +16,7 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? LineTypeHandle { get; set; }
 
-		public string LtypeName { get; set; }
+		public string LineTypeName { get; set; }
 
 		public ulong? PrevEntity { get; set; }
 
@@ -67,7 +67,7 @@ namespace ACadSharp.IO.Templates
 			switch (dxfcode)
 			{
 				case 6:
-					this.LtypeName = name;
+					this.LineTypeName = name;
 					value = true;
 					break;
 				case 8:
@@ -123,13 +123,13 @@ namespace ACadSharp.IO.Templates
 			{
 				applyLineType(builder);
 			}
-			else if (!string.IsNullOrEmpty(LtypeName) && builder.DocumentToBuild.LineTypes.TryGetValue(this.LtypeName, out LineType ltype))
+			else if (!string.IsNullOrEmpty(LineTypeName) && builder.DocumentToBuild.LineTypes.TryGetValue(this.LineTypeName, out LineType ltype))
 			{
 				this.CadObject.LineType = ltype;
 			}
-			else if (!string.IsNullOrEmpty(LtypeName) || this.LineTypeHandle.HasValue)
+			else if (!string.IsNullOrEmpty(LineTypeName) || this.LineTypeHandle.HasValue)
 			{
-				builder.Notify($"Could not assign the line type to entity | handle : {this.LineTypeHandle} | name : {LtypeName}", NotificationType.Warning);
+				builder.Notify($"Could not assign the line type to entity | handle : {this.LineTypeHandle} | name : {LineTypeName}", NotificationType.Warning);
 			}
 
 			if (this.ColorHandle.HasValue)

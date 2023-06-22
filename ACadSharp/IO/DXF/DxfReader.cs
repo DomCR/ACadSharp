@@ -383,23 +383,23 @@ namespace ACadSharp.IO
 
 			tmpReader.Find(DxfFileToken.HeaderSection);
 
-			while (tmpReader.LastValueAsString != DxfFileToken.EndSection)
+			while (tmpReader.ValueAsString != DxfFileToken.EndSection)
 			{
-				if (tmpReader.LastValueAsString == "$ACADVER")
+				if (tmpReader.ValueAsString == "$ACADVER")
 				{
 					tmpReader.ReadNext();
-					var version = CadUtils.GetVersionFromName(tmpReader.LastValueAsString);
+					var version = CadUtils.GetVersionFromName(tmpReader.ValueAsString);
 					if (version >= ACadVersion.AC1021)
 					{
 						this._encoding = Encoding.UTF8;
 						break;
 					}
 				}
-				else if (tmpReader.LastValueAsString == "$DWGCODEPAGE")
+				else if (tmpReader.ValueAsString == "$DWGCODEPAGE")
 				{
 					tmpReader.ReadNext();
 
-					string encoding = tmpReader.LastValueAsString;
+					string encoding = tmpReader.ValueAsString;
 
 					CodePage code = CadUtils.GetCodePage(encoding.ToLower());
 					this._encoding = this.getListedEncoding((int)code);
