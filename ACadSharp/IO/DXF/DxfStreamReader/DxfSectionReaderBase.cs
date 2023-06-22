@@ -208,8 +208,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadEntityTemplate(new Solid());
 					break;
 				case DxfFileToken.EntityText:
-					template = new CadTextEntityTemplate(new TextEntity());
-					break;
+					return this.readEntityCodes<TextEntity>(new CadTextEntityTemplate(new TextEntity()), readTextEntity);
 				case DxfFileToken.EntityVertex:
 					template = new CadVertexTemplate();
 					break;
@@ -446,9 +445,13 @@ namespace ACadSharp.IO.DXF
 		private bool readTextEntity(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
 			string mapName = string.IsNullOrEmpty(subclass) ? template.CadObject.SubclassMarker : subclass;
+			CadTextEntityTemplate tmp = template as CadTextEntityTemplate;
 
 			switch (this._reader.Code)
 			{
+				case 7:
+					tmp.StyleName = this._reader.ValueAsString;
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[mapName]);
 			}
