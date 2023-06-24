@@ -192,14 +192,13 @@ namespace ACadSharp.IO.DXF
 					template = new CadMLineTemplate(new MLine());
 					break;
 				case DxfFileToken.EntityPoint:
-					template = new CadEntityTemplate(new Point());
-					break;
+					//template = new CadEntityTemplate(new Point());
+					return this.readEntityCodes<Point>(new CadEntityTemplate<Point>(), readSubclassMap);
 				case DxfFileToken.EntityPolyline:
 					template = new CadPolyLineTemplate();
 					break;
 				case DxfFileToken.EntityRay:
-					template = new CadEntityTemplate(new Ray());
-					break;
+					return this.readEntityCodes<Ray>(new CadEntityTemplate<Ray>(), readSubclassMap);
 				case DxfFileToken.EndSequence:
 					template = new CadEntityTemplate(new Seqend());
 					break;
@@ -453,21 +452,6 @@ namespace ACadSharp.IO.DXF
 				case 74:
 				case 101:
 					return true;
-				case 7:
-					tmp.StyleName = this._reader.ValueAsString;
-					return true;
-				default:
-					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[mapName]);
-			}
-		}
-
-		private bool readMText(CadEntityTemplate template, DxfMap map, string subclass = null)
-		{
-			string mapName = string.IsNullOrEmpty(subclass) ? template.CadObject.SubclassMarker : subclass;
-			CadTextEntityTemplate tmp = template as CadTextEntityTemplate;
-
-			switch (this._reader.Code)
-			{
 				case 7:
 					tmp.StyleName = this._reader.ValueAsString;
 					return true;
