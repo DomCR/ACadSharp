@@ -192,16 +192,13 @@ namespace ACadSharp.IO.DXF
 					template = new CadMLineTemplate(new MLine());
 					break;
 				case DxfFileToken.EntityPoint:
-					//template = new CadEntityTemplate(new Point());
 					return this.readEntityCodes<Point>(new CadEntityTemplate<Point>(), readSubclassMap);
 				case DxfFileToken.EntityPolyline:
-					template = new CadPolyLineTemplate();
-					break;
+					return this.readEntityCodes<Entity>(new CadPolyLineTemplate(), readPolyline);
 				case DxfFileToken.EntityRay:
 					return this.readEntityCodes<Ray>(new CadEntityTemplate<Ray>(), readSubclassMap);
 				case DxfFileToken.EndSequence:
-					template = new CadEntityTemplate(new Seqend());
-					break;
+					return this.readEntityCodes<Seqend>(new CadEntityTemplate<Seqend>(), readSubclassMap);
 				case DxfFileToken.EntitySolid:
 					template = new CadEntityTemplate(new Solid());
 					break;
@@ -468,6 +465,50 @@ namespace ACadSharp.IO.DXF
 			{
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, dimMap);
+			}
+		}
+
+		private bool readPolyline(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadPolyLineTemplate tmp = template as CadPolyLineTemplate;
+
+			switch (this._reader.Code)
+			{
+				//DXF: always 0
+				//APP: a “dummy” point; the X and Y values are always 0, and the Z value is the polyline's elevation (in OCS when 2D, WCS when 3D)
+				case 10:
+				case 20:
+				//Obsolete; formerly an “entities follow flag” (optional; ignore if present)
+				case 66:
+				//Polygon mesh M vertex count (optional; default = 0)
+				case 71:
+				//Polygon mesh N vertex count(optional; default = 0)
+				case 72:
+				//Smooth surface M density(optional; default = 0)
+				case 73:
+				//Smooth surface N density (optional; default = 0)
+				case 74:
+					return true;
+				case 100:
+					switch (this._reader.ValueAsString)
+					{
+						case DxfSubclassMarker.Polyline:
+							tmp.SetPolyLineObject(new Polyline2D());
+							map.SubClasses.Add(DxfSubclassMarker.Polyline, DxfClassMap.Create<Polyline2D>());
+							return true;
+						case DxfSubclassMarker.Polyline3d:
+							tmp.SetPolyLineObject(new Polyline3D());
+							map.SubClasses.Add(DxfSubclassMarker.Polyline3d, DxfClassMap.Create<Polyline3D>());
+							return true;
+						case DxfSubclassMarker.PolyfaceMesh:
+							tmp.SetPolyLineObject(new PolyFaceMesh());
+							map.SubClasses.Add(DxfSubclassMarker.PolyfaceMesh, DxfClassMap.Create<PolyFaceMesh>());
+							return true;
+						default:
+							return false;
+					}
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
 		}
 

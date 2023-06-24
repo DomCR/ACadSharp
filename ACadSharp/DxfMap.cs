@@ -43,7 +43,7 @@ namespace ACadSharp
 
 			DxfNameAttribute dxf = type.GetCustomAttribute<DxfNameAttribute>();
 
-			map.Name = dxf.Name;
+			map.Name = dxf?.Name;
 
 			for (Type t = type; t != null; t = t.BaseType)
 			{
