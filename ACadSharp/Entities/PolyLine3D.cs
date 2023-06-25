@@ -19,7 +19,7 @@ namespace ACadSharp.Entities
 		public override ObjectType ObjectType => ObjectType.POLYLINE_3D;
 
 		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Polyline;
+		public override string SubclassMarker => DxfSubclassMarker.Polyline3d;
 
 		public Polyline3D() : base()
 		{

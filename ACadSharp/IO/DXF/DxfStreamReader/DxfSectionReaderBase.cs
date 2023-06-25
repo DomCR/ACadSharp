@@ -517,6 +517,12 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				//Polyface mesh vertex index
+				case 71:
+				case 72:
+				case 73:
+				case 74:
+					return true;
 				case 100:
 					switch (this._reader.ValueAsString)
 					{
@@ -534,6 +540,10 @@ namespace ACadSharp.IO.DXF
 							tmp.SetVertexObject(new VertexFaceMesh());
 							map.SubClasses.Add(DxfSubclassMarker.PolyfaceMeshVertex, DxfClassMap.Create<VertexFaceMesh>());
 							return true;
+						case DxfSubclassMarker.PolyfaceMeshFace:
+							tmp.SetVertexObject(new VertexFaceRecord());
+							map.SubClasses.Add(DxfSubclassMarker.PolyfaceMeshFace, DxfClassMap.Create<VertexFaceRecord>());
+							return true;
 						default:
 							return false;
 					}
@@ -541,7 +551,6 @@ namespace ACadSharp.IO.DXF
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
 		}
-
 
 		private bool readViewport(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
