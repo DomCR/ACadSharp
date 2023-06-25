@@ -205,8 +205,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityText:
 					return this.readEntityCodes<TextEntity>(new CadTextEntityTemplate(new TextEntity()), readTextEntity);
 				case DxfFileToken.EntityVertex:
-					template = new CadVertexTemplate();
-					break;
+					return this.readEntityCodes<Entity>(new CadVertexTemplate(), readVertex);
 				case DxfFileToken.EntityViewport:
 					return this.readEntityCodes<Viewport>(new CadViewportTemplate(), this.readViewport);
 				case DxfFileToken.EntityXline:
@@ -511,6 +510,38 @@ namespace ACadSharp.IO.DXF
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
 		}
+
+		private bool readVertex(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadVertexTemplate tmp = template as CadVertexTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 100:
+					switch (this._reader.ValueAsString)
+					{
+						case DxfSubclassMarker.Vertex:
+							return true;
+						case DxfSubclassMarker.PolylineVertex:
+							tmp.SetVertexObject(new Vertex2D());
+							map.SubClasses.Add(DxfSubclassMarker.PolylineVertex, DxfClassMap.Create<Vertex2D>());
+							return true;
+						case DxfSubclassMarker.Polyline3dVertex:
+							tmp.SetVertexObject(new Vertex3D());
+							map.SubClasses.Add(DxfSubclassMarker.Polyline3dVertex, DxfClassMap.Create<Vertex3D>());
+							return true;
+						case DxfSubclassMarker.PolyfaceMeshVertex:
+							tmp.SetVertexObject(new VertexFaceMesh());
+							map.SubClasses.Add(DxfSubclassMarker.PolyfaceMeshVertex, DxfClassMap.Create<VertexFaceMesh>());
+							return true;
+						default:
+							return false;
+					}
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
 
 		private bool readViewport(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{

@@ -11,12 +11,12 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityVertex)]
 	[DxfSubClass(DxfSubclassMarker.PolylineVertex)]
-	public class Vertex2D : Vertex
+	public class VertexFaceMesh : Vertex
 	{
 		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.VERTEX_2D;
+		public override ObjectType ObjectType => ObjectType.VERTEX_PFACE;
 
 		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.PolylineVertex;
+		public override string SubclassMarker => DxfSubclassMarker.PolyfaceMeshVertex;
 	}
 }

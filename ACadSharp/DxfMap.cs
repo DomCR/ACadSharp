@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace ACadSharp
 {
@@ -33,7 +34,7 @@ namespace ACadSharp
 		//TODO: change to public? Using the type parameter does not constraing the use of the method
 		internal static DxfMap Create(Type type)
 		{
-			if (_cache.TryGetValue(type, out var map))
+			if (tryGetFromCache(type, out var map))
 			{
 				return map;
 			}
@@ -103,6 +104,31 @@ namespace ACadSharp
 		public static void ClearCache()
 		{
 			_cache.Clear();
+		}
+
+		private static bool tryGetFromCache(Type type, out DxfMap map)
+		{
+			map = null;
+
+			if (_cache.TryGetValue(type, out var curr))
+			{
+				map = new DxfMap();
+				map.Name = curr.Name;
+
+				foreach (var p in curr.DxfProperties)
+				{
+					map.DxfProperties.Add(p.Key, p.Value);
+				}
+
+				foreach (var sub in curr.SubClasses)
+				{
+					map.SubClasses.Add(sub.Key, sub.Value);
+				}
+
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

@@ -15,7 +15,7 @@ namespace ACadSharp.Entities
 	public class PolyFaceMesh : Polyline
 	{
 		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.UNLISTED;
+		public override ObjectType ObjectType => ObjectType.UNLISTED;   //TODO: Investigate the PolyfaceMesh ObjectType code
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.PolyfaceMesh;
