@@ -2,8 +2,10 @@
 using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
+using ACadSharp.Tests.Common;
 using System;
 using System.Collections.Generic;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -38,6 +40,12 @@ namespace ACadSharp.Tests
 			DxfSubClassAttribute subclass = t.GetCustomAttribute<DxfSubClassAttribute>();
 
 			Assert.NotNull(att);
+
+			if (subclass != null)
+			{
+				CadObject obj = Factory.CreateObject(t);
+				Assert.True(obj.SubclassMarker == subclass.ClassName);
+			}
 
 			switch (att.Name)
 			{

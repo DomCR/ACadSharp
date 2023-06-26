@@ -200,8 +200,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EndSequence:
 					return this.readEntityCodes<Seqend>(new CadEntityTemplate<Seqend>(), readSubclassMap);
 				case DxfFileToken.EntitySolid:
-					template = new CadEntityTemplate(new Solid());
-					break;
+					return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), readSubclassMap);
 				case DxfFileToken.EntityText:
 					return this.readEntityCodes<TextEntity>(new CadTextEntityTemplate(new TextEntity()), readTextEntity);
 				case DxfFileToken.EntityVertex:
@@ -504,7 +503,7 @@ namespace ACadSharp.IO.DXF
 							tmp.SetDimensionObject(new DimensionOrdinate());
 							map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionOrdinate>());
 							return true;
-									default:
+						default:
 							return false;
 					}
 				default:
