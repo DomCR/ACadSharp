@@ -16,6 +16,9 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Dimension)]
 	public abstract class Dimension : Entity
 	{
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Dimension;
+
 		/// <summary>
 		/// Version number
 		/// </summary>

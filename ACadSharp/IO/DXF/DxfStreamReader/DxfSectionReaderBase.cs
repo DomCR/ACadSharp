@@ -67,7 +67,7 @@ namespace ACadSharp.IO.DXF
 					//Start of application - defined group
 					case 102:
 						this.readDefinedGroups(out xdictHandle, out reactors);
-						continue;
+						break;
 					//Soft - pointer ID / handle to owner BLOCK_RECORD object
 					case 330:
 						ownerHandle = this._reader.ValueAsHandle;
@@ -105,7 +105,7 @@ namespace ACadSharp.IO.DXF
 					//Start of application - defined group
 					case 102:
 						this.readDefinedGroups(template);
-						continue;
+						break;
 					//Soft - pointer ID / handle to owner BLOCK_RECORD object
 					case 330:
 						template.OwnerHandle = this._reader.ValueAsHandle;
@@ -147,7 +147,7 @@ namespace ACadSharp.IO.DXF
 					this.readExtendedData(template.EDataTemplateByAppName);
 					break;
 				default:
-					this._builder.Notify($"[{template.CadObject.ObjectName}] Unhandeled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
+					this._builder.Notify($"[{template.CadObject.SubclassMarker}] Unhandeled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
 					break;
 			}
 		}
@@ -168,8 +168,8 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityCircle:
 					return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), readSubclassMap);
 				case DxfFileToken.EntityDimension:
+					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(), readDimension);
 					template = new CadDimensionTemplate();
-					//return this.readEntityCodes<Dimension>(new CadDimensionTemplate(), readDimension);
 					break;
 				case DxfFileToken.Entity3DFace:
 					return this.readEntityCodes<Face3D>(new CadEntityTemplate<Face3D>(), readSubclassMap);
@@ -458,12 +458,57 @@ namespace ACadSharp.IO.DXF
 
 		private bool readDimension(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
-			DxfClassMap dimMap = map.SubClasses[DxfSubclassMarker.Dimension];
+			CadDimensionTemplate tmp = template as CadDimensionTemplate;
 
 			switch (this._reader.Code)
 			{
+				case 2:
+					tmp.BlockName = this._reader.ValueAsString;
+					return true;
+				case 3:
+					tmp.StyleName = this._reader.ValueAsString;
+					return true;
+				//Undocumented codes
+				case 73:
+				case 74:
+				case 75:
+				case 90:
+				case 361:
+					return true;
+				case 100:
+					switch (this._reader.ValueAsString)
+					{
+						case DxfSubclassMarker.Dimension:
+							return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Dimension]);
+						case DxfSubclassMarker.AlignedDimension:
+							tmp.SetDimensionObject(new DimensionAligned());
+							map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionAligned>());
+							return true;
+						case DxfSubclassMarker.DiametricDimension:
+							tmp.SetDimensionObject(new DimensionDiameter());
+							map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionDiameter>());
+							return true;
+						case DxfSubclassMarker.Angular2LineDimension:
+							tmp.SetDimensionObject(new DimensionAngular2Line());
+							map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionAngular2Line>());
+							return true;
+						case DxfSubclassMarker.Angular3PointDimension:
+							tmp.SetDimensionObject(new DimensionAngular3Pt());
+							map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionAngular3Pt>());
+							return true;
+						case DxfSubclassMarker.RadialDimension:
+							tmp.SetDimensionObject(new DimensionRadius());
+							map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionRadius>());
+							return true;
+						case DxfSubclassMarker.OrdinateDimension:
+							tmp.SetDimensionObject(new DimensionOrdinate());
+							map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionOrdinate>());
+							return true;
+									default:
+							return false;
+					}
 				default:
-					return this.tryAssignCurrentValue(template.CadObject, dimMap);
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
 		}
 
@@ -612,6 +657,7 @@ namespace ACadSharp.IO.DXF
 					if (!template.CheckDxfCode(this._reader.Code, this._reader.Value))
 					{
 						this.readDefinedGroups(template);
+						this._reader.ReadNext();
 					}
 					else
 					{
@@ -1097,8 +1143,10 @@ namespace ACadSharp.IO.DXF
 					xdictHandle = this._reader.ValueAsHandle;
 					this._reader.ReadNext();
 					Debug.Assert(this._reader.DxfCode == DxfCode.ControlString);
-					break;
+					return;
 				case DxfSectionReaderBase.ReactorsToken:
+					reactors = readReactors();
+					break;
 				case DxfSectionReaderBase.BlkRefToken:
 				default:
 					do
@@ -1106,9 +1154,22 @@ namespace ACadSharp.IO.DXF
 						this._reader.ReadNext();
 					}
 					while (this._reader.DxfCode != DxfCode.ControlString);
-					break;
+					return;
 			}
+		}
+
+		private List<ulong> readReactors()
+		{
+			List<ulong> reactors = new List<ulong>();
+
 			this._reader.ReadNext();
+
+			while (this._reader.DxfCode != DxfCode.ControlString)
+			{
+				this._reader.ReadNext();
+			}
+
+			return reactors;
 		}
 
 		protected bool tryAssignCurrentValue(CadObject cadObject, DxfClassMap map)

@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace ACadSharp
 {
@@ -95,6 +94,11 @@ namespace ACadSharp
 
 			_cache.TryAdd(type, map);
 
+			if (tryGetFromCache(type, out map))
+			{
+				return map;
+			}
+
 			return map;
 		}
 
@@ -104,6 +108,12 @@ namespace ACadSharp
 		public static void ClearCache()
 		{
 			_cache.Clear();
+		}
+
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return $"DxfMap:{this.Name}";
 		}
 
 		private static bool tryGetFromCache(Type type, out DxfMap map)
