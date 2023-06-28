@@ -75,5 +75,6 @@
 		public const string PlotSettings = "AcDbPlotSettings";
 		public const string DictionaryVariables = "DictionaryVariables";
 		public const string VisualStyle = "AcDbVisualStyle";
+		public const string Scale = "AcDbScale";
 	}
 }
