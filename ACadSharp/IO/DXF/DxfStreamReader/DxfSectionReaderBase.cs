@@ -156,8 +156,6 @@ namespace ACadSharp.IO.DXF
 
 		protected CadEntityTemplate readEntity()
 		{
-			CadEntityTemplate template = null;
-
 			switch (this._reader.ValueAsString)
 			{
 				case DxfFileToken.EntityAttribute:
@@ -179,8 +177,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityLwPolyline:
 					return this.readEntityCodes<LwPolyline>(new CadEntityTemplate<LwPolyline>(), readLwPolyline);
 				case DxfFileToken.EntityHatch:
-					template = new CadHatchTemplate(new Hatch());
-					break;
+					return this.readEntityCodes<Hatch>(new CadHatchTemplate(), readHatch);
 				case DxfFileToken.EntityInsert:
 					return this.readEntityCodes<Insert>(new CadInsertTemplate(), readInsert);
 				case DxfFileToken.EntityMText:
@@ -216,137 +213,6 @@ namespace ACadSharp.IO.DXF
 					while (this._reader.DxfCode != DxfCode.Start);
 					return null;
 			}
-
-			//Jump the 0 marker
-			this._reader.ReadNext();
-
-			this.readCommonObjectData(template);
-
-			while (this._reader.DxfCode == DxfCode.Subclass)
-			{
-				switch (this._reader.ValueAsString)
-				{
-					case DxfSubclassMarker.Attribute:
-						this.readMapped<AttributeEntity>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.AttributeDefinition:
-						this.readMapped<AttributeDefinition>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Arc:
-						this.readMapped<Arc>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Circle:
-						this.readMapped<Circle>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Dimension:
-						this.readMapped<Dimension>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.AlignedDimension:
-						(template as CadDimensionTemplate).SetDimensionObject(new DimensionAligned());
-						this.readMapped<DimensionAligned>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.LinearDimension:
-						(template as CadDimensionTemplate).SetDimensionObject(new DimensionLinear());
-						this.readMapped<DimensionLinear>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.RadialDimension:
-						(template as CadDimensionTemplate).SetDimensionObject(new DimensionRadius());
-						this.readMapped<DimensionRadius>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.DiametricDimension:
-						(template as CadDimensionTemplate).SetDimensionObject(new DimensionDiameter());
-						this.readMapped<DimensionDiameter>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Angular3PointDimension:
-						(template as CadDimensionTemplate).SetDimensionObject(new DimensionAngular3Pt());
-						this.readMapped<DimensionAngular3Pt>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Angular2LineDimension:
-						(template as CadDimensionTemplate).SetDimensionObject(new DimensionAngular2Line());
-						this.readMapped<DimensionAngular2Line>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.OrdinateDimension:
-						(template as CadDimensionTemplate).SetDimensionObject(new DimensionOrdinate());
-						this.readMapped<DimensionOrdinate>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Ellipse:
-						this.readMapped<Ellipse>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Entity:
-						this.readMapped<Entity>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Hatch:
-						this.readHatch((Hatch)template.CadObject, (CadHatchTemplate)template);
-						break;
-					case DxfSubclassMarker.Insert:
-						this.readMapped<Insert>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Line:
-						this.readMapped<Line>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.LwPolyline:
-						this.readMapped<LwPolyline>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.MLine:
-						this.readMapped<MLine>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.MText:
-						this.readMapped<MText>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Point:
-						this.readMapped<Point>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.PolyfaceMesh:
-						this._builder.Notify($"dxf entity subclass not implemented {this._reader.ValueAsString}", NotificationType.NotImplemented);
-						while (this._reader.DxfCode != DxfCode.Start)
-							this._reader.ReadNext();
-						return null;
-					case DxfSubclassMarker.Polyline:
-						(template as CadPolyLineTemplate).SetPolyLineObject(new Polyline2D());
-						this.readMapped<Polyline2D>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Polyline3d:
-						(template as CadPolyLineTemplate).SetPolyLineObject(new Polyline3D());
-						this.readMapped<Polyline3D>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.PolylineVertex:
-						(template as CadVertexTemplate).SetVertexObject(new Vertex2D());
-						this.readMapped<Vertex2D>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Polyline3dVertex:
-						(template as CadVertexTemplate).SetVertexObject(new Vertex3D());
-						this.readMapped<Vertex3D>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Ray:
-						this.readMapped<Ray>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Text:
-						this.readMapped<TextEntity>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Trace:
-						this.readMapped<Solid>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Vertex:
-						this.readMapped<Vertex>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Viewport:
-						this.readMapped<Viewport>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.XLine:
-						this.readMapped<XLine>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Spline:
-						this.readMapped<Spline>(template.CadObject, template);
-						break;
-					default:
-						this._builder.Notify($"Unhandeled dxf entity subclass {this._reader.ValueAsString}");
-						while (this._reader.DxfCode != DxfCode.Start)
-							this._reader.ReadNext();
-						break;
-				}
-			}
-
-			return template;
 		}
 
 		protected CadEntityTemplate readEntityCodes<T>(CadEntityTemplate template, ReadEntityDelegate<T> readEntity)
@@ -502,6 +368,106 @@ namespace ACadSharp.IO.DXF
 					}
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		protected bool readHatch(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadHatchTemplate tmp = template as CadHatchTemplate;
+			Hatch hatch = tmp.CadObject;
+
+			bool isFirstSeed = true;
+			XY seedPoint = new XY();
+
+			switch (this._reader.Code)
+			{
+				case 2:
+					tmp.HatchPatternName = this._reader.ValueAsString;
+					return true;
+				case 10:
+					seedPoint.X = this._reader.ValueAsDouble;
+					return true;
+				case 20:
+					if (!isFirstSeed)
+					{
+						seedPoint.Y = this._reader.ValueAsDouble;
+						hatch.SeedPoints.Add(seedPoint);
+					}
+					return true;
+				case 30:
+					hatch.Elevation = this._reader.ValueAsDouble;
+					isFirstSeed = false;
+					return true;
+				//TODO: Check hatch undocumented codes
+				case 43:
+				case 44:
+				case 45:
+				case 46:
+				case 49:
+				case 53:
+				case 79:
+				case 90:
+					return true;
+				//Information about the hatch pattern
+				case 75:
+					return true;
+				//Number of pattern definition lines
+				case 78:
+					return true;
+				//Number of boundary paths (loops)
+				case 91:
+					this.readLoops(hatch, tmp, this._reader.ValueAsInt);
+					return true;
+				//Number of seed points
+				case 98:
+					return true;
+				case 450:
+					hatch.GradientColor.Enabled = this._reader.ValueAsBool;
+					return true;
+				case 451:
+					hatch.GradientColor.Reserved = this._reader.ValueAsInt;
+					return true;
+				case 452:
+					hatch.GradientColor.IsSingleColorGradient = this._reader.ValueAsBool;
+					return true;
+				case 453:
+					//Number of colors
+					return true;
+				case 460:
+					hatch.GradientColor.Angle = this._reader.ValueAsDouble;
+					return true;
+				case 461:
+					hatch.GradientColor.Shift = this._reader.ValueAsDouble;
+					return true;
+				case 462:
+					hatch.GradientColor.ColorTint = this._reader.ValueAsDouble;
+					return true;
+				case 463:
+					GradientColor gradient = new GradientColor();
+					gradient.Value = this._reader.ValueAsDouble;
+					hatch.GradientColor.Colors.Add(gradient);
+					return true;
+				case 63:
+					GradientColor colorByIndex = hatch.GradientColor.Colors.LastOrDefault();
+					if (colorByIndex != null)
+					{
+						colorByIndex.Color = new Color((short)this._reader.ValueAsUShort);
+					}
+					return true;
+				case 421:
+					GradientColor colorByRgb = hatch.GradientColor.Colors.LastOrDefault();
+					if (colorByRgb != null)
+					{
+						//TODO: Hatch assign color by true color
+						//TODO: Is always duplicated by 63, is it needed??
+						//colorByRgb.Color = new Color(this._reader.LastValueAsShort);
+					}
+					return true;
+				case 470:
+					hatch.GradientColor.Name = this._reader.ValueAsString;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
 			}
 		}
 

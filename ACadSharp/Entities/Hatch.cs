@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using CSMath;
 using System.Collections.Generic;
 
@@ -21,6 +20,9 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityHatch;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Hatch;
 
 		/// <summary>
 		/// The current elevation of the object.
