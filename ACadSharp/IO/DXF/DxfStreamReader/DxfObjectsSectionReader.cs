@@ -6,6 +6,8 @@ namespace ACadSharp.IO.DXF
 {
 	internal class DxfObjectsSectionReader : DxfSectionReaderBase
 	{
+		public delegate bool ReadObjectDelegate<T>(CadTemplate template, DxfMap map, string subclass = null) where T : CadObject;
+
 		public DxfObjectsSectionReader(IDxfStreamReader reader, DxfDocumentBuilder builder)
 			: base(reader, builder)
 		{
@@ -53,8 +55,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.ObjectDictionary:
 					return this.readDictionary();
 				case DxfFileToken.ObjectLayout:
-					template = new CadLayoutTemplate(new Layout());
-					break;
+					return this.readObjectCodes<Layout>(new CadLayoutTemplate(), readLayout);
 				case DxfFileToken.ObjectDictionaryVar:
 					template = new CadTemplate<DictionaryVariable>(new DictionaryVariable());
 					break;
@@ -103,6 +104,38 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return template;
+		}
+
+		protected CadTemplate readObjectCodes<T>(CadTemplate template, ReadObjectDelegate<T> readEntity)
+			where T : CadObject
+		{
+			this._reader.ReadNext();
+
+			DxfMap map = DxfMap.Create<T>();
+
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				if (!readEntity(template, map))
+				{
+					this.readCommonCodes(template, out bool isExtendedData, map);
+					if (isExtendedData)
+						continue;
+				}
+
+				if (this._reader.DxfCode != DxfCode.Start)
+					this._reader.ReadNext();
+			}
+
+			return template;
+		}
+
+		private bool readLayout(CadTemplate template, DxfMap map, string subclass = null)
+		{
+			switch (this._reader.Code)
+			{
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
+			}
 		}
 
 		private CadTemplate readDictionary()

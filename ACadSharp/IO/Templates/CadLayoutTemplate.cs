@@ -19,6 +19,8 @@ namespace ACadSharp.IO.Templates
 
 		public List<ulong> ViewportHandles { get; set; } = new List<ulong>();
 
+		public CadLayoutTemplate() : base(new Layout()) { }
+
 		public CadLayoutTemplate(Layout layout) : base(layout) { }
 
 		public override void Build(CadDocumentBuilder builder)
