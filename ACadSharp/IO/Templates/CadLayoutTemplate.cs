@@ -1,6 +1,4 @@
-﻿using ACadSharp.Blocks;
-using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
+﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Collections.Generic;
@@ -16,6 +14,8 @@ namespace ACadSharp.IO.Templates
 		public ulong? BaseUcsHandle { get; set; }
 
 		public ulong? NamesUcsHandle { get; set; }
+
+		public ulong? LasActiveViewportHandle { get; set; }
 
 		public List<ulong> ViewportHandles { get; set; } = new List<ulong>();
 

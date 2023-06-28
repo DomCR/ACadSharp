@@ -6,7 +6,7 @@ namespace ACadSharp.IO.DXF
 {
 	internal class DxfObjectsSectionReader : DxfSectionReaderBase
 	{
-		public delegate bool ReadObjectDelegate<T>(CadTemplate template, DxfMap map, string subclass = null) where T : CadObject;
+		public delegate bool ReadObjectDelegate<T>(CadTemplate template, DxfMap map) where T : CadObject;
 
 		public DxfObjectsSectionReader(IDxfStreamReader reader, DxfDocumentBuilder builder)
 			: base(reader, builder)
@@ -129,12 +129,33 @@ namespace ACadSharp.IO.DXF
 			return template;
 		}
 
-		private bool readLayout(CadTemplate template, DxfMap map, string subclass = null)
+		private bool readPlotSettings(CadTemplate template, DxfMap map)
 		{
 			switch (this._reader.Code)
 			{
 				default:
-					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.PlotSettings]);
+			}
+		}
+
+		private bool readLayout(CadTemplate template, DxfMap map)
+		{
+			CadLayoutTemplate tmp = template as CadLayoutTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 330:
+					tmp.PaperSpaceBlockHandle = this._reader.ValueAsHandle;
+					return true;
+				case 331:
+					tmp.LasActiveViewportHandle = (this._reader.ValueAsHandle);
+					return true;
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Layout]))
+					{
+						return this.readPlotSettings(template, map);
+					}
+					return true;
 			}
 		}
 
