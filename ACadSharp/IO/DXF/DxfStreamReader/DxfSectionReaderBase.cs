@@ -2,9 +2,11 @@
 using ACadSharp.IO.Templates;
 using CSMath;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 
 namespace ACadSharp.IO.DXF
 {
@@ -175,8 +177,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityLine:
 					return this.readEntityCodes<Line>(new CadEntityTemplate<Line>(), readSubclassMap);
 				case DxfFileToken.EntityLwPolyline:
-					template = new CadLwPolylineTemplate();
-					break;
+					return this.readEntityCodes<LwPolyline>(new CadEntityTemplate<LwPolyline>(), readLwPolyline);
 				case DxfFileToken.EntityHatch:
 					template = new CadHatchTemplate(new Hatch());
 					break;
@@ -186,7 +187,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityMText:
 					return this.readEntityCodes<MText>(new CadTextEntityTemplate(new MText()), readTextEntity);
 				case DxfFileToken.EntityMLine:
-					return this.readEntityCodes<MLine>(new CadEntityTemplate<MLine>(), readSubclassMap);
+					return this.readEntityCodes<MLine>(new CadMLineTemplate(), readMLine);
 				case DxfFileToken.EntityPoint:
 					return this.readEntityCodes<Point>(new CadEntityTemplate<Point>(), readSubclassMap);
 				case DxfFileToken.EntityPolyline:
@@ -547,6 +548,84 @@ namespace ACadSharp.IO.DXF
 					}
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readLwPolyline(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadEntityTemplate<LwPolyline> tmp = template as CadEntityTemplate<LwPolyline>;
+
+			LwPolyline.Vertex last = tmp.CadObject.Vertices.LastOrDefault();
+
+			switch (this._reader.Code)
+			{
+				case 10:
+					tmp.CadObject.Vertices.Add(new LwPolyline.Vertex(new XY(this._reader.ValueAsDouble, 0)));
+					return true;
+				case 20:
+					if (last is not null)
+					{
+						last.Location = new XY(last.Location.X, this._reader.ValueAsDouble);
+					}
+					return true;
+				case 40:
+					if (last is not null)
+					{
+						last.StartWidth = this._reader.ValueAsDouble;
+					}
+					return true;
+				case 41:
+					if (last is not null)
+					{
+						last.EndWidth = this._reader.ValueAsDouble;
+					}
+					return true;
+				case 42:
+					if (last is not null)
+					{
+						last.Bulge = this._reader.ValueAsDouble;
+					}
+					return true;
+				case 90:
+					//Vertex count
+					return true;
+				case 91:
+					if (last is not null)
+					{
+						last.Id = this._reader.ValueAsInt;
+					}
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readMLine(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadMLineTemplate tmp = template as CadMLineTemplate;
+
+			switch (this._reader.Code)
+			{
+				// String of up to 32 characters. The name of the style used for this mline. An entry for this style must exist in the MLINESTYLE dictionary.
+				// Do not modify this field without also updating the associated entry in the MLINESTYLE dictionary
+				case 2:
+					tmp.MLineStyleName = this._reader.ValueAsString;
+					return true;
+				case 72:
+					tmp.NVertex = this._reader.ValueAsInt;
+					return true;
+				case 73:
+					tmp.NElements = this._reader.ValueAsInt;
+					return true;
+				case 340:
+					tmp.MLineStyleHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					if (!tmp.TryReadVertex(this._reader.Code, this._reader.Value))
+					{
+						return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+					}
+					return true;
 			}
 		}
 
