@@ -159,8 +159,7 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.ValueAsString)
 			{
 				case DxfFileToken.EntityAttribute:
-					template = new CadTextEntityTemplate(new AttributeEntity());
-					break;
+					return this.readEntityCodes<AttributeEntity>(new CadTextEntityTemplate(new AttributeEntity()), readAttributeDefinition);
 				case DxfFileToken.EntityAttributeDefinition:
 					return this.readEntityCodes<AttributeDefinition>(new CadTextEntityTemplate(new AttributeDefinition()), readAttributeDefinition);
 				case DxfFileToken.EntityArc:
@@ -169,8 +168,6 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), readSubclassMap);
 				case DxfFileToken.EntityDimension:
 					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(), readDimension);
-					template = new CadDimensionTemplate();
-					break;
 				case DxfFileToken.Entity3DFace:
 					return this.readEntityCodes<Face3D>(new CadEntityTemplate<Face3D>(), readSubclassMap);
 				case DxfFileToken.EntityEllipse:
@@ -189,8 +186,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityMText:
 					return this.readEntityCodes<MText>(new CadTextEntityTemplate(new MText()), readTextEntity);
 				case DxfFileToken.EntityMLine:
-					template = new CadMLineTemplate(new MLine());
-					break;
+					return this.readEntityCodes<MLine>(new CadEntityTemplate<MLine>(), readSubclassMap);
 				case DxfFileToken.EntityPoint:
 					return this.readEntityCodes<Point>(new CadEntityTemplate<Point>(), readSubclassMap);
 				case DxfFileToken.EntityPolyline:
@@ -208,8 +204,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityViewport:
 					return this.readEntityCodes<Viewport>(new CadViewportTemplate(), this.readViewport);
 				case DxfFileToken.EntityXline:
-					template = new CadEntityTemplate(new XLine());
-					break;
+					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), readSubclassMap);
 				case DxfFileToken.EntitySpline:
 					template = new CadSplineTemplate(new Spline());
 					break;
