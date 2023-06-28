@@ -22,6 +22,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntitySpline;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Spline;
+
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
 		/// </summary>

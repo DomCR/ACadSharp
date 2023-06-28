@@ -23,6 +23,8 @@ namespace ACadSharp.IO.Templates
 
 		public List<ulong> OwnedHandles { get; set; } = new List<ulong>();
 
+		public CadInsertTemplate() : base(new Insert()) { }
+
 		public CadInsertTemplate(Insert insert) : base(insert) { }
 
 		public override bool AddName(int dxfcode, string name)

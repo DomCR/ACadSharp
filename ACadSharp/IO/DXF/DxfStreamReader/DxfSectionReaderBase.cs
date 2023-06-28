@@ -182,8 +182,7 @@ namespace ACadSharp.IO.DXF
 					template = new CadHatchTemplate(new Hatch());
 					break;
 				case DxfFileToken.EntityInsert:
-					template = new CadInsertTemplate(new Insert());
-					break;
+					return this.readEntityCodes<Insert>(new CadInsertTemplate(), readInsert);
 				case DxfFileToken.EntityMText:
 					return this.readEntityCodes<MText>(new CadTextEntityTemplate(new MText()), readTextEntity);
 				case DxfFileToken.EntityMLine:
@@ -207,8 +206,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityXline:
 					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), readSubclassMap);
 				case DxfFileToken.EntitySpline:
-					template = new CadSplineTemplate(new Spline());
-					break;
+					return this.readEntityCodes<Spline>(new CadSplineTemplate(), readSpline);
 				default:
 					this._builder.Notify($"Entity not implemented: {this._reader.ValueAsString}", NotificationType.NotImplemented);
 					do
@@ -507,6 +505,22 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		private bool readInsert(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadInsertTemplate tmp = template as CadInsertTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 2:
+					tmp.BlockName = this._reader.ValueAsString;
+					return true;
+				case 66:
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
 		private bool readPolyline(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
 			CadPolyLineTemplate tmp = template as CadPolyLineTemplate;
@@ -626,6 +640,43 @@ namespace ACadSharp.IO.DXF
 						return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 					}
 					return true;
+			}
+		}
+
+		private bool readSpline(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadSplineTemplate tmp = template as CadSplineTemplate;
+
+			XYZ controlPoint;
+
+			switch (this._reader.Code)
+			{
+				case 10:
+					controlPoint = new CSMath.XYZ(this._reader.ValueAsDouble, 0, 0);
+					tmp.CadObject.ControlPoints.Add(controlPoint);
+					return true;
+				case 20:
+					controlPoint = tmp.CadObject.ControlPoints.LastOrDefault();
+					controlPoint.Y = this._reader.ValueAsDouble;
+					tmp.CadObject.ControlPoints[tmp.CadObject.ControlPoints.Count - 1] = controlPoint;
+					return true;
+				case 30:
+					controlPoint = tmp.CadObject.ControlPoints.LastOrDefault();
+					controlPoint.Z = this._reader.ValueAsDouble;
+					tmp.CadObject.ControlPoints[tmp.CadObject.ControlPoints.Count - 1] = controlPoint;
+					return true;
+				case 40:
+					tmp.CadObject.Knots.Add(this._reader.ValueAsDouble);
+					return true;
+				case 41:
+					tmp.CadObject.Weights.Add(this._reader.ValueAsDouble);
+					return true;
+				case 72:
+				case 73:
+				case 74:
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
 		}
 
