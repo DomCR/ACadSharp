@@ -39,6 +39,9 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableBlockRecord;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.BlockRecord;
+
 		/// <summary>
 		/// Block insertion units
 		/// </summary>

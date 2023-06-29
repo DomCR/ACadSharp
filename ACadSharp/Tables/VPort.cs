@@ -26,6 +26,9 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableVport;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.VPort;
+
 		public static VPort Default { get { return new VPort(DefaultName); } }
 
 		/// <summary>
