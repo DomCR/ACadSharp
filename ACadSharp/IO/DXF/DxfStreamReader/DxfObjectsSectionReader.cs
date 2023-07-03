@@ -62,8 +62,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.ObjectSortEntsTable:
 					return this.readSortentsTable();
 				case DxfFileToken.ObjectXRecord:
-					template = new CadXRecordTemplate(new XRecrod());
-					break;
+					return this.readObjectCodes<XRecrod>(new CadXRecordTemplate(), readXRecord);
 				default:
 					this._builder.Notify($"Object not implemented: {this._reader.ValueAsString}", NotificationType.NotImplemented);
 					do
@@ -156,6 +155,34 @@ namespace ACadSharp.IO.DXF
 						return this.readPlotSettings(template, map);
 					}
 					return true;
+			}
+		}
+
+		private bool readXRecord(CadTemplate template, DxfMap map)
+		{
+			CadXRecordTemplate tmp = template as CadXRecordTemplate;
+
+			//TODO: Finsih cadXrecordtemplate
+
+			switch (this._reader.Code)
+			{
+				case 100 when this._reader.ValueAsString == DxfSubclassMarker.XRecord:
+					this.readXRecordEntries(tmp.CadObject);
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.XRecord]);
+			}
+		}
+
+		private void readXRecordEntries(XRecrod recrod)
+		{
+			this._reader.ReadNext();
+
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				recrod.Entries.Add(new XRecrod.Entry(this._reader.Code, this._reader.Value));
+
+				this._reader.ReadNext();
 			}
 		}
 

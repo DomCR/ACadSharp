@@ -4,6 +4,8 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadXRecordTemplate : CadTemplate<XRecrod>
 	{
+		public CadXRecordTemplate() : base(new XRecrod()) { }
+
 		public CadXRecordTemplate(XRecrod cadObject) : base(cadObject) { }
 
 		public override bool CheckDxfCode(int dxfcode, object value)
