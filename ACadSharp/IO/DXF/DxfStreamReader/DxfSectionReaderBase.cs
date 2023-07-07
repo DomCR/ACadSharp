@@ -165,15 +165,15 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityArc:
 					return this.readEntityCodes<Arc>(new CadEntityTemplate<Arc>(), readArc);
 				case DxfFileToken.EntityCircle:
-					return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), readSubclassMap);
+					return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), readEntitySubclassMap);
 				case DxfFileToken.EntityDimension:
 					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(), readDimension);
 				case DxfFileToken.Entity3DFace:
-					return this.readEntityCodes<Face3D>(new CadEntityTemplate<Face3D>(), readSubclassMap);
+					return this.readEntityCodes<Face3D>(new CadEntityTemplate<Face3D>(), readEntitySubclassMap);
 				case DxfFileToken.EntityEllipse:
-					return this.readEntityCodes<Ellipse>(new CadEntityTemplate<Ellipse>(), readSubclassMap);
+					return this.readEntityCodes<Ellipse>(new CadEntityTemplate<Ellipse>(), readEntitySubclassMap);
 				case DxfFileToken.EntityLine:
-					return this.readEntityCodes<Line>(new CadEntityTemplate<Line>(), readSubclassMap);
+					return this.readEntityCodes<Line>(new CadEntityTemplate<Line>(), readEntitySubclassMap);
 				case DxfFileToken.EntityLwPolyline:
 					return this.readEntityCodes<LwPolyline>(new CadEntityTemplate<LwPolyline>(), readLwPolyline);
 				case DxfFileToken.EntityHatch:
@@ -185,15 +185,15 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityMLine:
 					return this.readEntityCodes<MLine>(new CadMLineTemplate(), readMLine);
 				case DxfFileToken.EntityPoint:
-					return this.readEntityCodes<Point>(new CadEntityTemplate<Point>(), readSubclassMap);
+					return this.readEntityCodes<Point>(new CadEntityTemplate<Point>(), readEntitySubclassMap);
 				case DxfFileToken.EntityPolyline:
 					return this.readEntityCodes<Entity>(new CadPolyLineTemplate(), readPolyline);
 				case DxfFileToken.EntityRay:
-					return this.readEntityCodes<Ray>(new CadEntityTemplate<Ray>(), readSubclassMap);
+					return this.readEntityCodes<Ray>(new CadEntityTemplate<Ray>(), readEntitySubclassMap);
 				case DxfFileToken.EndSequence:
-					return this.readEntityCodes<Seqend>(new CadEntityTemplate<Seqend>(), readSubclassMap);
+					return this.readEntityCodes<Seqend>(new CadEntityTemplate<Seqend>(), readEntitySubclassMap);
 				case DxfFileToken.EntitySolid:
-					return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), readSubclassMap);
+					return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), readEntitySubclassMap);
 				case DxfFileToken.EntityText:
 					return this.readEntityCodes<TextEntity>(new CadTextEntityTemplate(new TextEntity()), readTextEntity);
 				case DxfFileToken.EntityVertex:
@@ -201,7 +201,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityViewport:
 					return this.readEntityCodes<Viewport>(new CadViewportTemplate(), this.readViewport);
 				case DxfFileToken.EntityXline:
-					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), readSubclassMap);
+					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), readEntitySubclassMap);
 				case DxfFileToken.EntitySpline:
 					return this.readEntityCodes<Spline>(new CadSplineTemplate(), readSpline);
 				default:
@@ -268,7 +268,7 @@ namespace ACadSharp.IO.DXF
 				default:
 					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Arc]))
 					{
-						return this.readSubclassMap(template, map, DxfSubclassMarker.Circle);
+						return this.readEntitySubclassMap(template, map, DxfSubclassMarker.Circle);
 					}
 					return true;
 			}
@@ -708,7 +708,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private bool readSubclassMap(CadEntityTemplate template, DxfMap map, string subclass = null)
+		private bool readEntitySubclassMap(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
 			string mapName = string.IsNullOrEmpty(subclass) ? template.CadObject.SubclassMarker : subclass;
 

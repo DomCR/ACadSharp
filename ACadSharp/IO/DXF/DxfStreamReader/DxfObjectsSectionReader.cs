@@ -48,8 +48,6 @@ namespace ACadSharp.IO.DXF
 
 		private CadTemplate readObject()
 		{
-			CadTemplate template = null;
-
 			switch (this._reader.ValueAsString)
 			{
 				case DxfFileToken.ObjectDictionary:
@@ -57,8 +55,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.ObjectLayout:
 					return this.readObjectCodes<Layout>(new CadLayoutTemplate(), readLayout);
 				case DxfFileToken.ObjectDictionaryVar:
-					template = new CadTemplate<DictionaryVariable>(new DictionaryVariable());
-					break;
+					return this.readObjectCodes<DictionaryVariable>(new CadTemplate<DictionaryVariable>(new DictionaryVariable()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectSortEntsTable:
 					return this.readSortentsTable();
 				case DxfFileToken.ObjectXRecord:
@@ -72,37 +69,6 @@ namespace ACadSharp.IO.DXF
 					while (this._reader.DxfCode != DxfCode.Start);
 					return null;
 			}
-
-			//Jump the 0 marker
-			this._reader.ReadNext();
-
-			this.readCommonObjectData(template);
-
-			while (this._reader.DxfCode == DxfCode.Subclass)
-			{
-				switch (this._reader.ValueAsString)
-				{
-					case DxfSubclassMarker.DictionaryVariables:
-						this.readMapped<DictionaryVariable>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.Layout:
-						this.readMapped<Layout>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.PlotSettings:
-						this.readMapped<PlotSettings>(template.CadObject, template);
-						break;
-					case DxfSubclassMarker.XRecord:
-						this.readMapped<XRecrod>(template.CadObject, template);
-						break;
-					default:
-						this._builder.Notify($"Unhandeled dxf entity subclass {this._reader.ValueAsString}");
-						while (this._reader.DxfCode != DxfCode.Start)
-							this._reader.ReadNext();
-						break;
-				}
-			}
-
-			return template;
 		}
 
 		protected CadTemplate readObjectCodes<T>(CadTemplate template, ReadObjectDelegate<T> readEntity)
@@ -126,6 +92,15 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return template;
+		}
+
+		private bool readObjectSubclassMap(CadTemplate template, DxfMap map)
+		{
+			switch (this._reader.Code)
+			{
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
+			}
 		}
 
 		private bool readPlotSettings(CadTemplate template, DxfMap map)
