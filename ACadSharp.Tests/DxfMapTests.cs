@@ -124,6 +124,9 @@ namespace ACadSharp.Tests
 				case DxfFileToken.EntityLwPolyline:
 					DxfMap.Create<LwPolyline>();
 					break;
+				case DxfFileToken.EntityMesh:
+					DxfMap.Create<Mesh>();
+					break;
 				case DxfFileToken.EntityMLine:
 					DxfMap.Create<MLine>();
 					break;
@@ -132,6 +135,9 @@ namespace ACadSharp.Tests
 					break;
 				case DxfFileToken.EntityPoint:
 					DxfMap.Create<Point>();
+					break;
+				case DxfFileToken.EntityPolyFaceMesh:
+					DxfMap.Create<PolyfaceMesh>();
 					break;
 				case DxfFileToken.EntityPolyline:
 					switch (subclass.ClassName)
@@ -183,6 +189,9 @@ namespace ACadSharp.Tests
 						case DxfSubclassMarker.Polyline3dVertex:
 							DxfMap.Create<Vertex3D>();
 							break;
+						case DxfSubclassMarker.PolyfaceMeshFace:
+							DxfMap.Create<FaceMesh>();
+							break;
 						default:
 							throw new NotImplementedException($"Test not implemented for type {t.Name}");
 					}
@@ -195,6 +204,9 @@ namespace ACadSharp.Tests
 					break;
 				case DxfFileToken.TableVport:
 					DxfMap.Create<VPort>();
+					break;
+				case DxfFileToken.EntityWipeout:
+					DxfMap.Create<Wipeout>();
 					break;
 				case DxfFileToken.EntityXline:
 					DxfMap.Create<XLine>();
