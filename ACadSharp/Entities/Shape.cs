@@ -48,7 +48,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Rotation angle
 		/// </summary>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation { get; set; } = 0;
 
 		/// <summary>
@@ -60,7 +60,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Oblique angle
 		/// </summary>
-		[DxfCodeValue(51)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double ObliqueAngle { get; set; } = 0;
 
 		/// <summary>

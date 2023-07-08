@@ -7,6 +7,8 @@ namespace ACadSharp.IO.DXF
 {
 	internal class DxfBinaryReader : DxfReaderBase, IDxfStreamReader
 	{
+		public const string Sentinel = "AutoCAD Binary DXF";
+
 		public override int Position { get { return (int)this._baseStream.Position; } }
 
 		protected override Stream _baseStream { get { return this._stream.BaseStream; } }

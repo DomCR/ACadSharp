@@ -110,13 +110,13 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Snap angle
 		/// </summary>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double SnapAngle { get; set; }
 
 		/// <summary>
 		/// View twist angle
 		/// </summary>
-		[DxfCodeValue(51)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double TwistAngle { get; set; }
 
 		/// <summary>

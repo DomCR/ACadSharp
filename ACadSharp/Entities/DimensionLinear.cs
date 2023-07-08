@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using CSMath;
 
 namespace ACadSharp.Entities
 {
@@ -18,12 +17,10 @@ namespace ACadSharp.Entities
 
 		public override string ObjectName => DxfFileToken.EntityDimension;
 
-		//100	Subclass marker(AcDbAlignedDimension)
-
 		/// <summary>
 		/// Angle of rotated, horizontal, or vertical dimensions
 		/// </summary>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation { get; set; }
 	}
 }

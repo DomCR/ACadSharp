@@ -116,13 +116,13 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Snap rotation angle
 		/// </summary>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double SnapRotation { get; set; }
 
 		/// <summary>
 		/// View twist angle
 		/// </summary>
-		[DxfCodeValue(51)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double TwistAngle { get; set; }
 
 		/// <summary>

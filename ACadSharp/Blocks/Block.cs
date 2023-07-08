@@ -33,8 +33,8 @@ namespace ACadSharp.Blocks
 		[DxfCodeValue(2, 3)]
 		public string Name
 		{
-			get { return BlockOwner.Name; }
-			set { BlockOwner.Name = value; }
+			get { return this.BlockOwner.Name; }
+			set { this.BlockOwner.Name = value; }
 		}
 
 		/// <summary>

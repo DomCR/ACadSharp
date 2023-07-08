@@ -13,17 +13,20 @@ namespace ACadSharp.IO.DWG
 
 		private IDwgStreamReader _reader;
 
-		public DwgHeaderReader(ACadVersion version, IDwgStreamReader reader) : base(version)
+		private CadHeader _header;
+
+		public DwgHeaderReader(ACadVersion version, IDwgStreamReader reader, CadHeader header) : base(version)
 		{
 			this._reader = reader;
+			this._header = header;
+			this._header.Version = version;
 		}
 
-		public CadHeader Read(int acadMaintenanceVersion, out DwgHeaderHandlesCollection objectPointers)
+		public void Read(int acadMaintenanceVersion, out DwgHeaderHandlesCollection objectPointers)
 		{
 			//Save the parameter handler in a local variable
 			IDwgStreamReader mainreader = _reader;
 
-			CadHeader header = new CadHeader(_version);
 			objectPointers = new DwgHeaderHandlesCollection();
 
 			//0xCF,0x7B,0x1F,0x23,0xFD,0xDE,0x38,0xA9,0x5F,0x7C,0x68,0xB8,0x4E,0x6D,0x33,0x5F
@@ -69,7 +72,7 @@ namespace ACadSharp.IO.DWG
 			//R2013+:
 			if (R2013Plus)
 				//BLL : Variabele REQUIREDVERSIONS, default value 0, read only.
-				header.RequiredVersions = _reader.ReadBitLongLong();
+				_header.RequiredVersions = _reader.ReadBitLongLong();
 
 			//Common:
 			//BD : Unknown, default value 412148564080.0
@@ -109,37 +112,37 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//B: DIMASO
-			header.AssociatedDimensions = _reader.ReadBit();
+			_header.AssociatedDimensions = _reader.ReadBit();
 			//B: DIMSHO
-			header.UpdateDimensionsWhileDragging = _reader.ReadBit();
+			_header.UpdateDimensionsWhileDragging = _reader.ReadBit();
 
 			//R13-R14 Only:
 			if (R13_14Only)
 			{
 				//B : DIMSAV Undocumented.
-				header.DIMSAV = _reader.ReadBit();
+				_header.DIMSAV = _reader.ReadBit();
 			}
 
 			//Common:
 			//B: PLINEGEN
-			header.PolylineLineTypeGeneration = _reader.ReadBit();
+			_header.PolylineLineTypeGeneration = _reader.ReadBit();
 			//B : ORTHOMODE
-			header.OrthoMode = _reader.ReadBit();
+			_header.OrthoMode = _reader.ReadBit();
 			//B: REGENMODE
-			header.RegenerationMode = _reader.ReadBit();
+			_header.RegenerationMode = _reader.ReadBit();
 			//B : FILLMODE
-			header.FillMode = _reader.ReadBit();
+			_header.FillMode = _reader.ReadBit();
 			//B : QTEXTMODE
-			header.QuickTextMode = _reader.ReadBit();
+			_header.QuickTextMode = _reader.ReadBit();
 			//B : PSLTSCALE
-			header.PaperSpaceLineTypeScaling = _reader.ReadBit() ? SpaceLineTypeScaling.Normal : SpaceLineTypeScaling.Viewport;
+			_header.PaperSpaceLineTypeScaling = _reader.ReadBit() ? SpaceLineTypeScaling.Normal : SpaceLineTypeScaling.Viewport;
 			//B : LIMCHECK
-			header.LimitCheckingOn = _reader.ReadBit();
+			_header.LimitCheckingOn = _reader.ReadBit();
 
 			//R13-R14 Only (stored in registry from R15 onwards):
 			if (R13_14Only)
 				//B : BLIPMODE
-				header.BlipMode = _reader.ReadBit();
+				_header.BlipMode = _reader.ReadBit();
 			//R2004+:
 			if (R2004Plus)
 				//B : Undocumented
@@ -147,13 +150,13 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//B: USRTIMER(User timer on / off).
-			header.UserTimer = _reader.ReadBit();
+			_header.UserTimer = _reader.ReadBit();
 			//B : SKPOLY
-			header.SketchPolylines = _reader.ReadBit();
+			_header.SketchPolylines = _reader.ReadBit();
 			//B : ANGDIR
-			header.AngularDirection = (AngularDirection)_reader.ReadBitAsShort();
+			_header.AngularDirection = (AngularDirection)_reader.ReadBitAsShort();
 			//B : SPLFRAME
-			header.ShowSplineControlPoints = _reader.ReadBit();
+			_header.ShowSplineControlPoints = _reader.ReadBit();
 
 			//R13-R14 Only (stored in registry from R15 onwards):
 			if (R13_14Only)
@@ -166,9 +169,9 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//B: MIRRTEXT
-			header.MirrorText = _reader.ReadBit();
+			_header.MirrorText = _reader.ReadBit();
 			//B : WORLDVIEW
-			header.WorldView = _reader.ReadBit();
+			_header.WorldView = _reader.ReadBit();
 
 			//R13 - R14 Only:
 			if (R13_14Only)
@@ -177,11 +180,11 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//B: TILEMODE
-			header.ShowModelSpace = _reader.ReadBit();
+			_header.ShowModelSpace = _reader.ReadBit();
 			//B : PLIMCHECK
-			header.PaperSpaceLimitsChecking = _reader.ReadBit();
+			_header.PaperSpaceLimitsChecking = _reader.ReadBit();
 			//B : VISRETAIN
-			header.RetainXRefDependentVisibilitySettings = _reader.ReadBit();
+			_header.RetainXRefDependentVisibilitySettings = _reader.ReadBit();
 
 			//R13 - R14 Only(stored in registry from R15 onwards):
 			if (R13_14Only)
@@ -190,11 +193,11 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//B: DISPSILH
-			header.DisplaySilhouetteCurves = _reader.ReadBit();
+			_header.DisplaySilhouetteCurves = _reader.ReadBit();
 			//B : PELLIPSE(not present in DXF)
-			header.CreateEllipseAsPolyline = _reader.ReadBit();
+			_header.CreateEllipseAsPolyline = _reader.ReadBit();
 			//BS: PROXYGRAPHICS
-			header.ProxyGraphics = _reader.ReadBitShortAsBool();
+			_header.ProxyGraphics = _reader.ReadBitShortAsBool();
 
 			//R13-R14 Only (stored in registry from R15 onwards):
 			if (R13_14Only)
@@ -205,24 +208,26 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//BS: TREEDEPTH
-			header.SpatialIndexMaxTreeDepth = _reader.ReadBitShort();
+			_header.SpatialIndexMaxTreeDepth = _reader.ReadBitShort();
 			//BS : LUNITS
-			header.LinearUnitFormat = (LinearUnitFormat)_reader.ReadBitShort();
+			_header.LinearUnitFormat = (LinearUnitFormat)_reader.ReadBitShort();
 			//BS : LUPREC
-			header.LinearUnitPrecision = _reader.ReadBitShort();
+			_header.LinearUnitPrecision = _reader.ReadBitShort();
 			//BS : AUNITS
-			header.AngularUnit = (AngularUnitFormat)_reader.ReadBitShort();
+			_header.AngularUnit = (AngularUnitFormat)_reader.ReadBitShort();
 			//BS : AUPREC
-			header.AngularUnitPrecision = _reader.ReadBitShort();
+			_header.AngularUnitPrecision = _reader.ReadBitShort();
 
 			//R13 - R14 Only Only(stored in registry from R15 onwards):
 			if (R13_14Only)
+			{
 				//BS: OSMODE
-				header.ObjectSnapMode = (ObjectSnapMode)_reader.ReadBitShort();
+				_header.ObjectSnapMode = (ObjectSnapMode)_reader.ReadBitShort();
+			}
 
 			//Common:
 			//BS: ATTMODE
-			header.AttributeVisibility = (AttributeVisibilityMode)_reader.ReadBitShort();
+			_header.AttributeVisibility = (AttributeVisibilityMode)_reader.ReadBitShort();
 
 			//R13 - R14 Only Only(stored in registry from R15 onwards):
 			if (R13_14Only)
@@ -231,7 +236,7 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//BS: PDMODE
-			header.PointDisplayMode = _reader.ReadBitShort();
+			_header.PointDisplayMode = _reader.ReadBitShort();
 
 			//R13 - R14 Only Only(stored in registry from R15 onwards):
 			if (R13_14Only)
@@ -251,97 +256,97 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//BS : USERI1
-			header.UserShort1 = _reader.ReadBitShort();
+			_header.UserShort1 = _reader.ReadBitShort();
 			//BS : USERI2
-			header.UserShort2 = _reader.ReadBitShort();
+			_header.UserShort2 = _reader.ReadBitShort();
 			//BS : USERI3
-			header.UserShort3 = _reader.ReadBitShort();
+			_header.UserShort3 = _reader.ReadBitShort();
 			//BS : USERI4
-			header.UserShort4 = _reader.ReadBitShort();
+			_header.UserShort4 = _reader.ReadBitShort();
 			//BS : USERI5
-			header.UserShort5 = _reader.ReadBitShort();
+			_header.UserShort5 = _reader.ReadBitShort();
 
 			//BS: SPLINESEGS
-			header.NumberOfSplineSegments = _reader.ReadBitShort();
+			_header.NumberOfSplineSegments = _reader.ReadBitShort();
 			//BS : SURFU
-			header.SurfaceDensityU = _reader.ReadBitShort();
+			_header.SurfaceDensityU = _reader.ReadBitShort();
 			//BS : SURFV
-			header.SurfaceDensityV = _reader.ReadBitShort();
+			_header.SurfaceDensityV = _reader.ReadBitShort();
 			//BS : SURFTYPE
-			header.SurfaceType = _reader.ReadBitShort();
+			_header.SurfaceType = _reader.ReadBitShort();
 			//BS : SURFTAB1
-			header.SurfaceMeshTabulationCount1 = _reader.ReadBitShort();
+			_header.SurfaceMeshTabulationCount1 = _reader.ReadBitShort();
 			//BS : SURFTAB2
-			header.SurfaceMeshTabulationCount2 = _reader.ReadBitShort();
+			_header.SurfaceMeshTabulationCount2 = _reader.ReadBitShort();
 			//BS : SPLINETYPE
-			header.SplineType = (SplineType)_reader.ReadBitShort();
+			_header.SplineType = (SplineType)_reader.ReadBitShort();
 			//BS : SHADEDGE
-			header.ShadeEdge = (ShadeEdgeType)_reader.ReadBitShort();
+			_header.ShadeEdge = (ShadeEdgeType)_reader.ReadBitShort();
 			//BS : SHADEDIF
-			header.ShadeDiffuseToAmbientPercentage = _reader.ReadBitShort();
+			_header.ShadeDiffuseToAmbientPercentage = _reader.ReadBitShort();
 			//BS: UNITMODE
-			header.UnitMode = _reader.ReadBitShort();
+			_header.UnitMode = _reader.ReadBitShort();
 			//BS : MAXACTVP
-			header.MaxViewportCount = _reader.ReadBitShort();
+			_header.MaxViewportCount = _reader.ReadBitShort();
 			//BS : ISOLINES
-			header.SurfaceIsolineCount = _reader.ReadBitShort();
+			_header.SurfaceIsolineCount = _reader.ReadBitShort();
 			//BS : CMLJUST
-			header.CurrentMultilineJustification = (Entities.VerticalAlignmentType)_reader.ReadBitShort();
+			_header.CurrentMultilineJustification = (Entities.VerticalAlignmentType)_reader.ReadBitShort();
 			//BS : TEXTQLTY
-			header.TextQuality = _reader.ReadBitShort();
+			_header.TextQuality = _reader.ReadBitShort();
 			//BD : LTSCALE
-			header.LineTypeScale = _reader.ReadBitDouble();
+			_header.LineTypeScale = _reader.ReadBitDouble();
 			//BD : TEXTSIZE
-			header.TextHeightDefault = _reader.ReadBitDouble();
+			_header.TextHeightDefault = _reader.ReadBitDouble();
 			//BD : TRACEWID
-			header.TraceWidthDefault = _reader.ReadBitDouble();
+			_header.TraceWidthDefault = _reader.ReadBitDouble();
 			//BD : SKETCHINC
-			header.SketchIncrement = _reader.ReadBitDouble();
+			_header.SketchIncrement = _reader.ReadBitDouble();
 			//BD : FILLETRAD
-			header.FilletRadius = _reader.ReadBitDouble();
+			_header.FilletRadius = _reader.ReadBitDouble();
 			//BD : THICKNESS
-			header.ThicknessDefault = _reader.ReadBitDouble();
+			_header.ThicknessDefault = _reader.ReadBitDouble();
 			//BD : ANGBASE
-			header.AngleBase = _reader.ReadBitDouble();
+			_header.AngleBase = _reader.ReadBitDouble();
 			//BD : PDSIZE
-			header.PointDisplaySize = _reader.ReadBitDouble();
+			_header.PointDisplaySize = _reader.ReadBitDouble();
 			//BD : PLINEWID
-			header.PolylineWidthDefault = _reader.ReadBitDouble();
+			_header.PolylineWidthDefault = _reader.ReadBitDouble();
 			//BD : USERR1
-			header.UserDouble1 = _reader.ReadBitDouble();
+			_header.UserDouble1 = _reader.ReadBitDouble();
 			//BD : USERR2
-			header.UserDouble2 = _reader.ReadBitDouble();
+			_header.UserDouble2 = _reader.ReadBitDouble();
 			//BD : USERR3
-			header.UserDouble3 = _reader.ReadBitDouble();
+			_header.UserDouble3 = _reader.ReadBitDouble();
 			//BD : USERR4
-			header.UserDouble4 = _reader.ReadBitDouble();
+			_header.UserDouble4 = _reader.ReadBitDouble();
 			//BD : USERR5
-			header.UserDouble5 = _reader.ReadBitDouble();
+			_header.UserDouble5 = _reader.ReadBitDouble();
 			//BD : CHAMFERA
-			header.ChamferDistance1 = _reader.ReadBitDouble();
+			_header.ChamferDistance1 = _reader.ReadBitDouble();
 			//BD : CHAMFERB
-			header.ChamferDistance2 = _reader.ReadBitDouble();
+			_header.ChamferDistance2 = _reader.ReadBitDouble();
 			//BD : CHAMFERC
-			header.ChamferLength = _reader.ReadBitDouble();
+			_header.ChamferLength = _reader.ReadBitDouble();
 			//BD : CHAMFERD
-			header.ChamferAngle = _reader.ReadBitDouble();
+			_header.ChamferAngle = _reader.ReadBitDouble();
 			//BD : FACETRES
-			header.FacetResolution = _reader.ReadBitDouble();
+			_header.FacetResolution = _reader.ReadBitDouble();
 			//BD : CMLSCALE
-			header.CurrentMultilineScale = _reader.ReadBitDouble();
+			_header.CurrentMultilineScale = _reader.ReadBitDouble();
 			//BD : CELTSCALE
-			header.CurrentEntityLinetypeScale = _reader.ReadBitDouble();
+			_header.CurrentEntityLinetypeScale = _reader.ReadBitDouble();
 
 			//TV: MENUNAME
-			header.MenuFileName = _reader.ReadVariableText();
+			_header.MenuFileName = _reader.ReadVariableText();
 
 			//Common:
 			//BL: TDCREATE(Julian day)
 			//BL: TDCREATE(Milliseconds into the day)
-			header.CreateDateTime = _reader.ReadDateTime();
+			_header.CreateDateTime = _reader.ReadDateTime();
 			//BL: TDUPDATE(Julian day)
 			//BL: TDUPDATE(Milliseconds into the day)
-			header.UpdateDateTime = _reader.ReadDateTime();
+			_header.UpdateDateTime = _reader.ReadDateTime();
 
 			//R2004 +:
 			if (R2004Plus)
@@ -357,18 +362,18 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//BL: TDINDWG(Days)
 			//BL: TDINDWG(Milliseconds into the day)
-			header.TotalEditingTime = _reader.ReadTimeSpan();
+			_header.TotalEditingTime = _reader.ReadTimeSpan();
 			//BL: TDUSRTIMER(Days)
 			//BL: TDUSRTIMER(Milliseconds into the day)
-			header.UserElapsedTimeSpan = _reader.ReadTimeSpan();
+			_header.UserElapsedTimeSpan = _reader.ReadTimeSpan();
 
 			//CMC : CECOLOR
-			header.CurrentEntityColor = _reader.ReadCmColor();
+			_header.CurrentEntityColor = _reader.ReadCmColor();
 
 			//H : HANDSEED The next handle, with an 8-bit length specifier preceding the handle
 			//bytes (standard hex handle form) (code 0). The HANDSEED is not part of the handle
 			//stream, but of the normal data stream (relevant for R21 and later).
-			header.HandleSeed = mainreader.HandleReference();
+			_header.HandleSeed = mainreader.HandleReference();
 
 			//H : CLAYER (hard pointer)
 			objectPointers.CLAYER = _reader.HandleReference();
@@ -394,28 +399,28 @@ namespace ACadSharp.IO.DWG
 			if (R2000Plus)
 			{
 				//BD: PSVPSCALE
-				header.ViewportDefaultViewScaleFactor = _reader.ReadBitDouble();
+				_header.ViewportDefaultViewScaleFactor = _reader.ReadBitDouble();
 			}
 
 			//Common:
 			//3BD: INSBASE(PSPACE)
-			header.PaperSpaceInsertionBase = _reader.Read3BitDouble();
+			_header.PaperSpaceInsertionBase = _reader.Read3BitDouble();
 			//3BD: EXTMIN(PSPACE)
-			header.PaperSpaceExtMin = _reader.Read3BitDouble();
+			_header.PaperSpaceExtMin = _reader.Read3BitDouble();
 			//3BD: EXTMAX(PSPACE)
-			header.PaperSpaceExtMax = _reader.Read3BitDouble();
+			_header.PaperSpaceExtMax = _reader.Read3BitDouble();
 			//2RD: LIMMIN(PSPACE)
-			header.PaperSpaceLimitsMin = _reader.Read2RawDouble();
+			_header.PaperSpaceLimitsMin = _reader.Read2RawDouble();
 			//2RD: LIMMAX(PSPACE)
-			header.PaperSpaceLimitsMax = _reader.Read2RawDouble();
+			_header.PaperSpaceLimitsMax = _reader.Read2RawDouble();
 			//BD: ELEVATION(PSPACE)
-			header.PaperSpaceElevation = _reader.ReadBitDouble();
+			_header.PaperSpaceElevation = _reader.ReadBitDouble();
 			//3BD: UCSORG(PSPACE)
-			header.PaperSpaceUcsOrigin = _reader.Read3BitDouble();
+			_header.PaperSpaceUcsOrigin = _reader.Read3BitDouble();
 			//3BD: UCSXDIR(PSPACE)
-			header.PaperSpaceUcsXAxis = _reader.Read3BitDouble();
+			_header.PaperSpaceUcsXAxis = _reader.Read3BitDouble();
 			//3BD: UCSYDIR(PSPACE)
-			header.PaperSpaceUcsYAxis = _reader.Read3BitDouble();
+			_header.PaperSpaceUcsYAxis = _reader.Read3BitDouble();
 
 			//H: UCSNAME (PSPACE) (hard pointer)
 			objectPointers.UCSNAME_PSPACE = _reader.HandleReference();
@@ -433,38 +438,38 @@ namespace ACadSharp.IO.DWG
 				objectPointers.PUCSBASE = _reader.HandleReference();
 
 				//3BD: PUCSORGTOP
-				header.PaperSpaceOrthographicTopDOrigin = _reader.Read3BitDouble();
+				_header.PaperSpaceOrthographicTopDOrigin = _reader.Read3BitDouble();
 				//3BD: PUCSORGBOTTOM
-				header.PaperSpaceOrthographicBottomDOrigin = _reader.Read3BitDouble();
+				_header.PaperSpaceOrthographicBottomDOrigin = _reader.Read3BitDouble();
 				//3BD: PUCSORGLEFT
-				header.PaperSpaceOrthographicLeftDOrigin = _reader.Read3BitDouble();
+				_header.PaperSpaceOrthographicLeftDOrigin = _reader.Read3BitDouble();
 				//3BD: PUCSORGRIGHT
-				header.PaperSpaceOrthographicRightDOrigin = _reader.Read3BitDouble();
+				_header.PaperSpaceOrthographicRightDOrigin = _reader.Read3BitDouble();
 				//3BD: PUCSORGFRONT
-				header.PaperSpaceOrthographicFrontDOrigin = _reader.Read3BitDouble();
+				_header.PaperSpaceOrthographicFrontDOrigin = _reader.Read3BitDouble();
 				//3BD: PUCSORGBACK
-				header.PaperSpaceOrthographicBackDOrigin = _reader.Read3BitDouble();
+				_header.PaperSpaceOrthographicBackDOrigin = _reader.Read3BitDouble();
 			}
 
 			//Common:
 			//3BD: INSBASE(MSPACE)
-			header.ModelSpaceInsertionBase = _reader.Read3BitDouble();
+			_header.ModelSpaceInsertionBase = _reader.Read3BitDouble();
 			//3BD: EXTMIN(MSPACE)
-			header.ModelSpaceExtMin = _reader.Read3BitDouble();
+			_header.ModelSpaceExtMin = _reader.Read3BitDouble();
 			//3BD: EXTMAX(MSPACE)
-			header.ModelSpaceExtMax = _reader.Read3BitDouble();
+			_header.ModelSpaceExtMax = _reader.Read3BitDouble();
 			//2RD: LIMMIN(MSPACE)
-			header.ModelSpaceLimitsMin = _reader.Read2RawDouble();
+			_header.ModelSpaceLimitsMin = _reader.Read2RawDouble();
 			//2RD: LIMMAX(MSPACE)
-			header.ModelSpaceLimitsMax = _reader.Read2RawDouble();
+			_header.ModelSpaceLimitsMax = _reader.Read2RawDouble();
 			//BD: ELEVATION(MSPACE)
-			header.Elevation = _reader.ReadBitDouble();
+			_header.Elevation = _reader.ReadBitDouble();
 			//3BD: UCSORG(MSPACE)
-			header.ModelSpaceOrigin = _reader.Read3BitDouble();
+			_header.ModelSpaceOrigin = _reader.Read3BitDouble();
 			//3BD: UCSXDIR(MSPACE)
-			header.ModelSpaceXAxis = _reader.Read3BitDouble();
+			_header.ModelSpaceXAxis = _reader.Read3BitDouble();
 			//3BD: UCSYDIR(MSPACE)
-			header.ModelSpaceYAxis = _reader.Read3BitDouble();
+			_header.ModelSpaceYAxis = _reader.Read3BitDouble();
 
 			//H: UCSNAME(MSPACE)(hard pointer)
 			objectPointers.UCSNAME_MSPACE = _reader.HandleReference();
@@ -482,275 +487,275 @@ namespace ACadSharp.IO.DWG
 				objectPointers.UCSBASE = _reader.HandleReference();
 
 				//3BD: UCSORGTOP
-				header.ModelSpaceOrthographicTopDOrigin = _reader.Read3BitDouble();
+				_header.ModelSpaceOrthographicTopDOrigin = _reader.Read3BitDouble();
 				//3BD: UCSORGBOTTOM
-				header.ModelSpaceOrthographicBottomDOrigin = _reader.Read3BitDouble();
+				_header.ModelSpaceOrthographicBottomDOrigin = _reader.Read3BitDouble();
 				//3BD: UCSORGLEFT
-				header.ModelSpaceOrthographicLeftDOrigin = _reader.Read3BitDouble();
+				_header.ModelSpaceOrthographicLeftDOrigin = _reader.Read3BitDouble();
 				//3BD: UCSORGRIGHT
-				header.ModelSpaceOrthographicRightDOrigin = _reader.Read3BitDouble();
+				_header.ModelSpaceOrthographicRightDOrigin = _reader.Read3BitDouble();
 				//3BD: UCSORGFRONT
-				header.ModelSpaceOrthographicFrontDOrigin = _reader.Read3BitDouble();
+				_header.ModelSpaceOrthographicFrontDOrigin = _reader.Read3BitDouble();
 				//3BD: UCSORGBACK
-				header.ModelSpaceOrthographicBackDOrigin = _reader.Read3BitDouble();
+				_header.ModelSpaceOrthographicBackDOrigin = _reader.Read3BitDouble();
 
 				//TV : DIMPOST
-				header.DimensionPostFix = _reader.ReadVariableText();
+				_header.DimensionPostFix = _reader.ReadVariableText();
 				//TV : DIMAPOST
-				header.DimensionAlternateDimensioningSuffix = _reader.ReadVariableText();
+				_header.DimensionAlternateDimensioningSuffix = _reader.ReadVariableText();
 			}
 
 			//R13-R14 Only:
 			if (R13_14Only)
 			{
 				//B: DIMTOL
-				header.DimensionGenerateTolerances = _reader.ReadBit();
+				_header.DimensionGenerateTolerances = _reader.ReadBit();
 				//B : DIMLIM
-				header.DimensionLimitsGeneration = _reader.ReadBit();
+				_header.DimensionLimitsGeneration = _reader.ReadBit();
 				//B : DIMTIH
-				header.DimensionTextInsideHorizontal = _reader.ReadBit();
+				_header.DimensionTextInsideHorizontal = _reader.ReadBit();
 				//B : DIMTOH
-				header.DimensionTextOutsideHorizontal = _reader.ReadBit();
+				_header.DimensionTextOutsideHorizontal = _reader.ReadBit();
 				//B : DIMSE1
-				header.DimensionSuppressFirstExtensionLine = _reader.ReadBit();
+				_header.DimensionSuppressFirstExtensionLine = _reader.ReadBit();
 				//B : DIMSE2
-				header.DimensionSuppressSecondExtensionLine = _reader.ReadBit();
+				_header.DimensionSuppressSecondExtensionLine = _reader.ReadBit();
 				//B : DIMALT
-				header.DimensionAlternateUnitDimensioning = _reader.ReadBit();
+				_header.DimensionAlternateUnitDimensioning = _reader.ReadBit();
 				//B : DIMTOFL
-				header.DimensionTextOutsideExtensions = _reader.ReadBit();
+				_header.DimensionTextOutsideExtensions = _reader.ReadBit();
 				//B : DIMSAH
-				header.DimensionSeparateArrowBlocks = _reader.ReadBit();
+				_header.DimensionSeparateArrowBlocks = _reader.ReadBit();
 				//B : DIMTIX
-				header.DimensionTextInsideExtensions = _reader.ReadBit();
+				_header.DimensionTextInsideExtensions = _reader.ReadBit();
 				//B : DIMSOXD
-				header.DimensionSuppressOutsideExtensions = _reader.ReadBit();
+				_header.DimensionSuppressOutsideExtensions = _reader.ReadBit();
 				//RC : DIMALTD
-				header.DimensionAlternateUnitDecimalPlaces = (short)_reader.ReadRawChar();
+				_header.DimensionAlternateUnitDecimalPlaces = (short)_reader.ReadRawChar();
 				//RC : DIMZIN
-				header.DimensionZeroHandling = (Tables.ZeroHandling)_reader.ReadRawChar();
+				_header.DimensionZeroHandling = (Tables.ZeroHandling)_reader.ReadRawChar();
 				//B : DIMSD1
-				header.DimensionSuppressFirstDimensionLine = _reader.ReadBit();
+				_header.DimensionSuppressFirstDimensionLine = _reader.ReadBit();
 				//B : DIMSD2
-				header.DimensionSuppressSecondDimensionLine = _reader.ReadBit();
+				_header.DimensionSuppressSecondDimensionLine = _reader.ReadBit();
 				//RC : DIMTOLJ
-				header.DimensionToleranceAlignment = (Tables.ToleranceAlignment)_reader.ReadRawChar();
+				_header.DimensionToleranceAlignment = (Tables.ToleranceAlignment)_reader.ReadRawChar();
 				//RC : DIMJUST
-				header.DimensionTextHorizontalAlignment = (Tables.DimensionTextHorizontalAlignment)_reader.ReadRawChar();
+				_header.DimensionTextHorizontalAlignment = (Tables.DimensionTextHorizontalAlignment)_reader.ReadRawChar();
 				//RC : DIMFIT
-				header.DimensionFit = _reader.ReadRawChar();
+				_header.DimensionFit = _reader.ReadRawChar();
 				//B : DIMUPT
-				header.DimensionCursorUpdate = _reader.ReadBit();
+				_header.DimensionCursorUpdate = _reader.ReadBit();
 				//RC : DIMTZIN
-				header.DimensionToleranceZeroHandling = (Tables.ZeroHandling)_reader.ReadRawChar();
+				_header.DimensionToleranceZeroHandling = (Tables.ZeroHandling)_reader.ReadRawChar();
 				//RC: DIMALTZ
-				header.DimensionAlternateUnitZeroHandling = (Tables.ZeroHandling)_reader.ReadRawChar();
+				_header.DimensionAlternateUnitZeroHandling = (Tables.ZeroHandling)_reader.ReadRawChar();
 				//RC : DIMALTTZ
-				header.DimensionAlternateUnitToleranceZeroHandling = (Tables.ZeroHandling)_reader.ReadRawChar();
+				_header.DimensionAlternateUnitToleranceZeroHandling = (Tables.ZeroHandling)_reader.ReadRawChar();
 				//RC : DIMTAD
-				header.DimensionTextVerticalAlignment = (Tables.DimensionTextVerticalAlignment)_reader.ReadRawChar();
+				_header.DimensionTextVerticalAlignment = (Tables.DimensionTextVerticalAlignment)_reader.ReadRawChar();
 				//BS : DIMUNIT
-				header.DimensionUnit = _reader.ReadBitShort();
+				_header.DimensionUnit = _reader.ReadBitShort();
 				//BS : DIMAUNIT
-				header.DimensionAngularDimensionDecimalPlaces = _reader.ReadBitShort();
+				_header.DimensionAngularDimensionDecimalPlaces = _reader.ReadBitShort();
 				//BS : DIMDEC
-				header.DimensionDecimalPlaces = _reader.ReadBitShort();
+				_header.DimensionDecimalPlaces = _reader.ReadBitShort();
 				//BS : DIMTDEC
-				header.DimensionToleranceDecimalPlaces = _reader.ReadBitShort();
+				_header.DimensionToleranceDecimalPlaces = _reader.ReadBitShort();
 				//BS : DIMALTU
-				header.DimensionAlternateUnitFormat = (LinearUnitFormat)_reader.ReadBitShort();
+				_header.DimensionAlternateUnitFormat = (LinearUnitFormat)_reader.ReadBitShort();
 				//BS : DIMALTTD
-				header.DimensionAlternateUnitToleranceDecimalPlaces = _reader.ReadBitShort();
+				_header.DimensionAlternateUnitToleranceDecimalPlaces = _reader.ReadBitShort();
 				//H : DIMTXSTY(hard pointer)
 				objectPointers.DIMTXSTY = _reader.HandleReference();
 			}
 
 			//Common:
 			//BD: DIMSCALE
-			header.DimensionScaleFactor = _reader.ReadBitDouble();
+			_header.DimensionScaleFactor = _reader.ReadBitDouble();
 			//BD : DIMASZ
-			header.DimensionArrowSize = _reader.ReadBitDouble();
+			_header.DimensionArrowSize = _reader.ReadBitDouble();
 			//BD : DIMEXO
-			header.DimensionExtensionLineOffset = _reader.ReadBitDouble();
+			_header.DimensionExtensionLineOffset = _reader.ReadBitDouble();
 			//BD : DIMDLI
-			header.DimensionLineIncrement = _reader.ReadBitDouble();
+			_header.DimensionLineIncrement = _reader.ReadBitDouble();
 			//BD : DIMEXE
-			header.DimensionExtensionLineExtension = _reader.ReadBitDouble();
+			_header.DimensionExtensionLineExtension = _reader.ReadBitDouble();
 			//BD : DIMRND
-			header.DimensionRounding = _reader.ReadBitDouble();
+			_header.DimensionRounding = _reader.ReadBitDouble();
 			//BD : DIMDLE
-			header.DimensionLineExtension = _reader.ReadBitDouble();
+			_header.DimensionLineExtension = _reader.ReadBitDouble();
 			//BD : DIMTP
-			header.DimensionPlusTolerance = _reader.ReadBitDouble();
+			_header.DimensionPlusTolerance = _reader.ReadBitDouble();
 			//BD : DIMTM
-			header.DimensionMinusTolerance = _reader.ReadBitDouble();
+			_header.DimensionMinusTolerance = _reader.ReadBitDouble();
 
 			//R2007 + Only:
 			if (R2007Plus)
 			{
 				//BD: DIMFXL
-				header.DimensionFixedExtensionLineLength = _reader.ReadBitDouble();
+				_header.DimensionFixedExtensionLineLength = _reader.ReadBitDouble();
 				//BD : DIMJOGANG
-				header.DimensionJoggedRadiusDimensionTransverseSegmentAngle = _reader.ReadBitDouble();
+				_header.DimensionJoggedRadiusDimensionTransverseSegmentAngle = _reader.ReadBitDouble();
 				//BS : DIMTFILL
-				header.DimensionTextBackgroundFillMode = (Tables.DimensionTextBackgroundFillMode)_reader.ReadBitShort();
+				_header.DimensionTextBackgroundFillMode = (Tables.DimensionTextBackgroundFillMode)_reader.ReadBitShort();
 				//CMC : DIMTFILLCLR
-				header.DimensionTextBackgroundColor = _reader.ReadCmColor();
+				_header.DimensionTextBackgroundColor = _reader.ReadCmColor();
 			}
 
 			//R2000 + Only:
 			if (R2000Plus)
 			{
 				//B: DIMTOL
-				header.DimensionGenerateTolerances = _reader.ReadBit();
+				_header.DimensionGenerateTolerances = _reader.ReadBit();
 				//B : DIMLIM
-				header.DimensionLimitsGeneration = _reader.ReadBit();
+				_header.DimensionLimitsGeneration = _reader.ReadBit();
 				//B : DIMTIH
-				header.DimensionTextInsideHorizontal = _reader.ReadBit();
+				_header.DimensionTextInsideHorizontal = _reader.ReadBit();
 				//B : DIMTOH
-				header.DimensionTextOutsideHorizontal = _reader.ReadBit();
+				_header.DimensionTextOutsideHorizontal = _reader.ReadBit();
 				//B : DIMSE1
-				header.DimensionSuppressFirstExtensionLine = _reader.ReadBit();
+				_header.DimensionSuppressFirstExtensionLine = _reader.ReadBit();
 				//B : DIMSE2
-				header.DimensionSuppressSecondExtensionLine = _reader.ReadBit();
+				_header.DimensionSuppressSecondExtensionLine = _reader.ReadBit();
 				//BS : DIMTAD
-				header.DimensionTextVerticalAlignment = (Tables.DimensionTextVerticalAlignment)(char)_reader.ReadBitShort();
+				_header.DimensionTextVerticalAlignment = (Tables.DimensionTextVerticalAlignment)(char)_reader.ReadBitShort();
 				//BS : DIMZIN
-				header.DimensionZeroHandling = (Tables.ZeroHandling)(char)_reader.ReadBitShort();
+				_header.DimensionZeroHandling = (Tables.ZeroHandling)(char)_reader.ReadBitShort();
 				//BS : DIMAZIN
-				header.DimensionAngularZeroHandling = (Tables.ZeroHandling)_reader.ReadBitShort();
+				_header.DimensionAngularZeroHandling = (Tables.ZeroHandling)_reader.ReadBitShort();
 			}
 
 			//R2007 + Only:
 			if (R2007Plus)
 			{
 				//BS: DIMARCSYM
-				header.DimensionArcLengthSymbolPosition = (Tables.ArcLengthSymbolPosition)_reader.ReadBitShort();
+				_header.DimensionArcLengthSymbolPosition = (Tables.ArcLengthSymbolPosition)_reader.ReadBitShort();
 			}
 
 			//Common:
 			//BD: DIMTXT
-			header.DimensionTextHeight = _reader.ReadBitDouble();
+			_header.DimensionTextHeight = _reader.ReadBitDouble();
 			//BD : DIMCEN
-			header.DimensionCenterMarkSize = _reader.ReadBitDouble();
+			_header.DimensionCenterMarkSize = _reader.ReadBitDouble();
 			//BD: DIMTSZ
-			header.DimensionTickSize = _reader.ReadBitDouble();
+			_header.DimensionTickSize = _reader.ReadBitDouble();
 			//BD : DIMALTF
-			header.DimensionAlternateUnitScaleFactor = _reader.ReadBitDouble();
+			_header.DimensionAlternateUnitScaleFactor = _reader.ReadBitDouble();
 			//BD : DIMLFAC
-			header.DimensionLinearScaleFactor = _reader.ReadBitDouble();
+			_header.DimensionLinearScaleFactor = _reader.ReadBitDouble();
 			//BD : DIMTVP
-			header.DimensionTextVerticalPosition = _reader.ReadBitDouble();
+			_header.DimensionTextVerticalPosition = _reader.ReadBitDouble();
 			//BD : DIMTFAC
-			header.DimensionToleranceScaleFactor = _reader.ReadBitDouble();
+			_header.DimensionToleranceScaleFactor = _reader.ReadBitDouble();
 			//BD : DIMGAP
-			header.DimensionLineGap = _reader.ReadBitDouble();
+			_header.DimensionLineGap = _reader.ReadBitDouble();
 
 			//R13 - R14 Only:
 			if (R13_14Only)
 			{
 				//T: DIMPOST
-				header.DimensionPostFix = _reader.ReadVariableText();
+				_header.DimensionPostFix = _reader.ReadVariableText();
 				//T : DIMAPOST
-				header.DimensionAlternateDimensioningSuffix = _reader.ReadVariableText();
+				_header.DimensionAlternateDimensioningSuffix = _reader.ReadVariableText();
 				//T : DIMBLK
-				header.DimensionBlockName = _reader.ReadVariableText();
+				_header.DimensionBlockName = _reader.ReadVariableText();
 				//T : DIMBLK1
-				header.DimensionBlockNameFirst = _reader.ReadVariableText();
+				_header.DimensionBlockNameFirst = _reader.ReadVariableText();
 				//T : DIMBLK2
-				header.DimensionBlockNameSecond = _reader.ReadVariableText();
+				_header.DimensionBlockNameSecond = _reader.ReadVariableText();
 			}
 
 			//R2000 + Only:
 			if (R2000Plus)
 			{
 				//BD: DIMALTRND
-				header.DimensionAlternateUnitRounding = _reader.ReadBitDouble();
+				_header.DimensionAlternateUnitRounding = _reader.ReadBitDouble();
 				//B : DIMALT
-				header.DimensionAlternateUnitDimensioning = _reader.ReadBit();
+				_header.DimensionAlternateUnitDimensioning = _reader.ReadBit();
 				//BS : DIMALTD
-				header.DimensionAlternateUnitDecimalPlaces = (short)(char)_reader.ReadBitShort();
+				_header.DimensionAlternateUnitDecimalPlaces = (short)(char)_reader.ReadBitShort();
 				//B : DIMTOFL
-				header.DimensionTextOutsideExtensions = _reader.ReadBit();
+				_header.DimensionTextOutsideExtensions = _reader.ReadBit();
 				//B : DIMSAH
-				header.DimensionSeparateArrowBlocks = _reader.ReadBit();
+				_header.DimensionSeparateArrowBlocks = _reader.ReadBit();
 				//B : DIMTIX
-				header.DimensionTextInsideExtensions = _reader.ReadBit();
+				_header.DimensionTextInsideExtensions = _reader.ReadBit();
 				//B : DIMSOXD
-				header.DimensionSuppressOutsideExtensions = _reader.ReadBit();
+				_header.DimensionSuppressOutsideExtensions = _reader.ReadBit();
 			}
 
 			//Common:
 			//CMC: DIMCLRD
-			header.DimensionLineColor = _reader.ReadCmColor();
+			_header.DimensionLineColor = _reader.ReadCmColor();
 			//CMC : DIMCLRE
-			header.DimensionExtensionLineColor = _reader.ReadCmColor();
+			_header.DimensionExtensionLineColor = _reader.ReadCmColor();
 			//CMC : DIMCLRT
-			header.DimensionTextColor = _reader.ReadCmColor();
+			_header.DimensionTextColor = _reader.ReadCmColor();
 
 			//R2000 + Only:
 			if (R2000Plus)
 			{
 				//BS: DIMADEC
-				header.DimensionAngularDimensionDecimalPlaces = _reader.ReadBitShort();
+				_header.DimensionAngularDimensionDecimalPlaces = _reader.ReadBitShort();
 				//BS : DIMDEC
-				header.DimensionDecimalPlaces = _reader.ReadBitShort();
+				_header.DimensionDecimalPlaces = _reader.ReadBitShort();
 				//BS : DIMTDEC
-				header.DimensionToleranceDecimalPlaces = _reader.ReadBitShort();
+				_header.DimensionToleranceDecimalPlaces = _reader.ReadBitShort();
 				//BS : DIMALTU
-				header.DimensionAlternateUnitFormat = (LinearUnitFormat)_reader.ReadBitShort();
+				_header.DimensionAlternateUnitFormat = (LinearUnitFormat)_reader.ReadBitShort();
 				//BS : DIMALTTD
-				header.DimensionAlternateUnitToleranceDecimalPlaces = _reader.ReadBitShort();
+				_header.DimensionAlternateUnitToleranceDecimalPlaces = _reader.ReadBitShort();
 				//BS : DIMAUNIT
-				header.DimensionAngularUnit = (AngularUnitFormat)_reader.ReadBitShort();
+				_header.DimensionAngularUnit = (AngularUnitFormat)_reader.ReadBitShort();
 				//BS : DIMFRAC
-				header.DimensionFractionFormat = (Tables.FractionFormat)_reader.ReadBitShort();
+				_header.DimensionFractionFormat = (Tables.FractionFormat)_reader.ReadBitShort();
 				//BS : DIMLUNIT
-				header.DimensionLinearUnitFormat = (LinearUnitFormat)_reader.ReadBitShort();
+				_header.DimensionLinearUnitFormat = (LinearUnitFormat)_reader.ReadBitShort();
 				//BS : DIMDSEP
-				header.DimensionDecimalSeparator = (char)_reader.ReadBitShort();
+				_header.DimensionDecimalSeparator = (char)_reader.ReadBitShort();
 				//BS : DIMTMOVE
-				header.DimensionTextMovement = (Tables.TextMovement)_reader.ReadBitShort();
+				_header.DimensionTextMovement = (Tables.TextMovement)_reader.ReadBitShort();
 				//BS : DIMJUST
-				header.DimensionTextHorizontalAlignment = (Tables.DimensionTextHorizontalAlignment)(char)_reader.ReadBitShort();
+				_header.DimensionTextHorizontalAlignment = (Tables.DimensionTextHorizontalAlignment)(char)_reader.ReadBitShort();
 				//B : DIMSD1
-				header.DimensionSuppressFirstExtensionLine = _reader.ReadBit();
+				_header.DimensionSuppressFirstExtensionLine = _reader.ReadBit();
 				//B : DIMSD2
-				header.DimensionSuppressSecondExtensionLine = _reader.ReadBit();
+				_header.DimensionSuppressSecondExtensionLine = _reader.ReadBit();
 				//BS : DIMTOLJ
-				header.DimensionToleranceAlignment = (Tables.ToleranceAlignment)(char)_reader.ReadBitShort();
+				_header.DimensionToleranceAlignment = (Tables.ToleranceAlignment)(char)_reader.ReadBitShort();
 				//BS : DIMTZIN
-				header.DimensionToleranceZeroHandling = (Tables.ZeroHandling)(char)_reader.ReadBitShort();
+				_header.DimensionToleranceZeroHandling = (Tables.ZeroHandling)(char)_reader.ReadBitShort();
 				//BS: DIMALTZ
-				header.DimensionAlternateUnitZeroHandling = (Tables.ZeroHandling)(char)_reader.ReadBitShort();
+				_header.DimensionAlternateUnitZeroHandling = (Tables.ZeroHandling)(char)_reader.ReadBitShort();
 				//BS : DIMALTTZ
-				header.DimensionAlternateUnitToleranceZeroHandling = (Tables.ZeroHandling)(char)_reader.ReadBitShort();
+				_header.DimensionAlternateUnitToleranceZeroHandling = (Tables.ZeroHandling)(char)_reader.ReadBitShort();
 				//B : DIMUPT
-				header.DimensionCursorUpdate = _reader.ReadBit();
+				_header.DimensionCursorUpdate = _reader.ReadBit();
 				//BS : DIMATFIT
-				header.DimensionDimensionTextArrowFit = _reader.ReadBitShort();
+				_header.DimensionDimensionTextArrowFit = _reader.ReadBitShort();
 			}
 
 			//R2007 + Only:
 			if (R2007Plus)
 			{
 				//B: DIMFXLON
-				header.DimensionIsExtensionLineLengthFixed = _reader.ReadBit();
+				_header.DimensionIsExtensionLineLengthFixed = _reader.ReadBit();
 			}
 
 			//R2010 + Only:
 			if (R2010Plus)
 			{
 				//B: DIMTXTDIRECTION
-				header.DimensionTextDirection = _reader.ReadBit() ? Tables.TextDirection.RightToLeft : Tables.TextDirection.LeftToRight;
+				_header.DimensionTextDirection = _reader.ReadBit() ? Tables.TextDirection.RightToLeft : Tables.TextDirection.LeftToRight;
 				//BD : DIMALTMZF
-				header.DimensionAltMzf = _reader.ReadBitDouble();
+				_header.DimensionAltMzf = _reader.ReadBitDouble();
 				//T : DIMALTMZS
-				header.DimensionAltMzs = _reader.ReadVariableText();
+				_header.DimensionAltMzs = _reader.ReadVariableText();
 				//BD : DIMMZF
-				header.DimensionMzf = _reader.ReadBitDouble();
+				_header.DimensionMzf = _reader.ReadBitDouble();
 				//T : DIMMZS
-				header.DimensionMzs = _reader.ReadVariableText();
+				_header.DimensionMzs = _reader.ReadVariableText();
 			}
 
 			//R2000 + Only:
@@ -783,9 +788,9 @@ namespace ACadSharp.IO.DWG
 			if (R2000Plus)
 			{
 				//BS: DIMLWD
-				header.DimensionLineWeight = (LineweightType)_reader.ReadBitShort();
+				_header.DimensionLineWeight = (LineweightType)_reader.ReadBitShort();
 				//BS : DIMLWE
-				header.ExtensionLineWeight = (LineweightType)_reader.ReadBitShort();
+				_header.ExtensionLineWeight = (LineweightType)_reader.ReadBitShort();
 			}
 
 			//H: BLOCK CONTROL OBJECT(hard owner)
@@ -827,14 +832,14 @@ namespace ACadSharp.IO.DWG
 			if (R2000Plus)
 			{
 				//BS: TSTACKALIGN, default = 1(not present in DXF)
-				header.StackedTextAlignment = _reader.ReadBitShort();
+				_header.StackedTextAlignment = _reader.ReadBitShort();
 				//BS: TSTACKSIZE, default = 70(not present in DXF)
-				header.StackedTextSizePercentage = _reader.ReadBitShort();
+				_header.StackedTextSizePercentage = _reader.ReadBitShort();
 
 				//TV: HYPERLINKBASE
-				header.HyperLinkBase = _reader.ReadVariableText();
+				_header.HyperLinkBase = _reader.ReadVariableText();
 				//TV : STYLESHEET
-				header.StyleSheetName = _reader.ReadVariableText();
+				_header.StyleSheetName = _reader.ReadVariableText();
 
 				//H : DICTIONARY(LAYOUTS)(hard pointer)
 				objectPointers.DICTIONARY_LAYOUTS = _reader.HandleReference();
@@ -871,65 +876,65 @@ namespace ACadSharp.IO.DWG
 				//BL: Flags:
 				int flags = _reader.ReadBitLong();
 				//CELWEIGHT Flags & 0x001F
-				header.CurrentEntityLineWeight = (LineweightType)(flags & 0x1F);
+				_header.CurrentEntityLineWeight = (LineweightType)(flags & 0x1F);
 				//ENDCAPS Flags & 0x0060
-				header.EndCaps = (short)(flags & 0x60);
+				_header.EndCaps = (short)(flags & 0x60);
 				//JOINSTYLE Flags & 0x0180
-				header.JoinStyle = (short)(flags & 0x180);
+				_header.JoinStyle = (short)(flags & 0x180);
 				//LWDISPLAY!(Flags & 0x0200)
-				header.DisplayLineWeight = (flags & 0x200) == 1;
+				_header.DisplayLineWeight = (flags & 0x200) == 1;
 				//XEDIT!(Flags & 0x0400)
-				header.XEdit = (short)(flags & 0x400) == 1;
+				_header.XEdit = (short)(flags & 0x400) == 1;
 				//EXTNAMES Flags & 0x0800
-				header.ExtendedNames = (flags & 0x800) == 1;
+				_header.ExtendedNames = (flags & 0x800) == 1;
 				//PSTYLEMODE Flags & 0x2000
-				header.PlotStyleMode = (short)(flags & 0x2000);
+				_header.PlotStyleMode = (short)(flags & 0x2000);
 				//OLESTARTUP Flags & 0x4000
-				header.LoadOLEObject = (flags & 0x4000) == 1;
+				_header.LoadOLEObject = (flags & 0x4000) == 1;
 
 				//BS: INSUNITS
-				header.InsUnits = (UnitsType)_reader.ReadBitShort();
+				_header.InsUnits = (UnitsType)_reader.ReadBitShort();
 				//BS : CEPSNTYPE
-				header.CurrentEntityPlotStyleType = _reader.ReadBitShort();
+				_header.CurrentEntityPlotStyle = (EntityPlotStyleType)_reader.ReadBitShort();
 
-				if (header.CurrentEntityPlotStyleType == 3)
+				if (_header.CurrentEntityPlotStyle == EntityPlotStyleType.ByObjectId)
 				{
 					//H: CPSNID(present only if CEPSNTYPE == 3) (hard pointer)
 					objectPointers.CPSNID = _reader.HandleReference();
 				}
 
 				//TV: FINGERPRINTGUID
-				header.FingerPrintGuid = _reader.ReadVariableText();
+				_header.FingerPrintGuid = _reader.ReadVariableText();
 				//TV : VERSIONGUID
-				header.VersionGuid = _reader.ReadVariableText();
+				_header.VersionGuid = _reader.ReadVariableText();
 			}
 
 			//R2004 +:
 			if (R2004Plus)
 			{
 				//RC: SORTENTS
-				header.EntitySortingFlags = (ObjectSortingFlags)_reader.ReadByte();
+				_header.EntitySortingFlags = (ObjectSortingFlags)_reader.ReadByte();
 				//RC : INDEXCTL
-				header.IndexCreationFlags = _reader.ReadByte();
+				_header.IndexCreationFlags = (IndexCreationFlags)_reader.ReadByte();
 				//RC : HIDETEXT
-				header.HideText = _reader.ReadByte();
+				_header.HideText = _reader.ReadByte();
 				//RC : XCLIPFRAME, before R2010 the value can be 0 or 1 only.
-				header.ExternalReferenceClippingBoundaryType = _reader.ReadByte();
+				_header.ExternalReferenceClippingBoundaryType = _reader.ReadByte();
 				//RC : DIMASSOC
-				header.DimensionAssociativity = (DimensionAssociation)_reader.ReadByte();
+				_header.DimensionAssociativity = (DimensionAssociation)_reader.ReadByte();
 				//RC : HALOGAP
-				header.HaloGapPercentage = _reader.ReadByte();
+				_header.HaloGapPercentage = _reader.ReadByte();
 				//BS : OBSCUREDCOLOR
-				header.ObscuredColor = new Color(_reader.ReadBitShort());
+				_header.ObscuredColor = new Color(_reader.ReadBitShort());
 				//BS : INTERSECTIONCOLOR
-				header.InterfereColor = new Color(_reader.ReadBitShort());
+				_header.InterfereColor = new Color(_reader.ReadBitShort());
 				//RC : OBSCUREDLTYPE
-				header.ObscuredType = _reader.ReadByte();
+				_header.ObscuredType = _reader.ReadByte();
 				//RC: INTERSECTIONDISPLAY
-				header.IntersectionDisplay = _reader.ReadByte();
+				_header.IntersectionDisplay = _reader.ReadByte();
 
 				//TV : PROJECTNAME
-				header.ProjectName = _reader.ReadVariableText();
+				_header.ProjectName = _reader.ReadVariableText();
 			}
 
 			//Common:
@@ -948,7 +953,7 @@ namespace ACadSharp.IO.DWG
 			if (R2007Plus)
 			{
 				//B: CAMERADISPLAY
-				header.CameraDisplayObjects = _reader.ReadBit();
+				_header.CameraDisplayObjects = _reader.ReadBit();
 
 				//BL : unknown
 				_reader.ReadBitLong();
@@ -958,57 +963,57 @@ namespace ACadSharp.IO.DWG
 				_reader.ReadBitDouble();
 
 				//BD : STEPSPERSEC
-				header.StepsPerSecond = _reader.ReadBitDouble();
+				_header.StepsPerSecond = _reader.ReadBitDouble();
 				//BD : STEPSIZE
-				header.StepSize = _reader.ReadBitDouble();
+				_header.StepSize = _reader.ReadBitDouble();
 				//BD : 3DDWFPREC
-				header.Dw3DPrecision = _reader.ReadBitDouble();
+				_header.Dw3DPrecision = _reader.ReadBitDouble();
 				//BD : LENSLENGTH
-				header.LensLength = _reader.ReadBitDouble();
+				_header.LensLength = _reader.ReadBitDouble();
 				//BD : CAMERAHEIGHT
-				header.CameraHeight = _reader.ReadBitDouble();
+				_header.CameraHeight = _reader.ReadBitDouble();
 				//RC : SOLIDHIST
-				header.SolidsRetainHistory = _reader.ReadRawChar();
+				_header.SolidsRetainHistory = _reader.ReadRawChar();
 				//RC : SHOWHIST
-				header.ShowSolidsHistory = _reader.ReadRawChar();
+				_header.ShowSolidsHistory = _reader.ReadRawChar();
 				//BD : PSOLWIDTH
-				header.SweptSolidWidth = _reader.ReadBitDouble();
+				_header.SweptSolidWidth = _reader.ReadBitDouble();
 				//BD : PSOLHEIGHT
-				header.SweptSolidHeight = _reader.ReadBitDouble();
+				_header.SweptSolidHeight = _reader.ReadBitDouble();
 				//BD : LOFTANG1
-				header.DraftAngleFirstCrossSection = _reader.ReadBitDouble();
+				_header.DraftAngleFirstCrossSection = _reader.ReadBitDouble();
 				//BD : LOFTANG2
-				header.DraftAngleSecondCrossSection = _reader.ReadBitDouble();
+				_header.DraftAngleSecondCrossSection = _reader.ReadBitDouble();
 				//BD : LOFTMAG1
-				header.DraftMagnitudeFirstCrossSection = _reader.ReadBitDouble();
+				_header.DraftMagnitudeFirstCrossSection = _reader.ReadBitDouble();
 				//BD : LOFTMAG2
-				header.DraftMagnitudeSecondCrossSection = _reader.ReadBitDouble();
+				_header.DraftMagnitudeSecondCrossSection = _reader.ReadBitDouble();
 				//BS : LOFTPARAM
-				header.SolidLoftedShape = _reader.ReadBitShort();
+				_header.SolidLoftedShape = _reader.ReadBitShort();
 				//RC : LOFTNORMALS
-				header.LoftedObjectNormals = _reader.ReadRawChar();
+				_header.LoftedObjectNormals = _reader.ReadRawChar();
 				//BD : LATITUDE
-				header.Latitude = _reader.ReadBitDouble();
+				_header.Latitude = _reader.ReadBitDouble();
 				//BD : LONGITUDE
-				header.Longitude = _reader.ReadBitDouble();
+				_header.Longitude = _reader.ReadBitDouble();
 				//BD : NORTHDIRECTION
-				header.NorthDirection = _reader.ReadBitDouble();
+				_header.NorthDirection = _reader.ReadBitDouble();
 				//BL : TIMEZONE
-				header.TimeZone = _reader.ReadBitLong();
+				_header.TimeZone = _reader.ReadBitLong();
 				//RC : LIGHTGLYPHDISPLAY
-				header.DisplayLightGlyphs = _reader.ReadRawChar();
+				_header.DisplayLightGlyphs = _reader.ReadRawChar();
 				//RC : TILEMODELIGHTSYNCH	??
 				_reader.ReadRawChar();
 				//RC : DWFFRAME
-				header.DwgUnderlayFramesVisibility = _reader.ReadRawChar();
+				_header.DwgUnderlayFramesVisibility = _reader.ReadRawChar();
 				//RC : DGNFRAME
-				header.DgnUnderlayFramesVisibility = _reader.ReadRawChar();
+				_header.DgnUnderlayFramesVisibility = _reader.ReadRawChar();
 
 				//B : unknown
 				_reader.ReadBit();
 
 				//CMC : INTERFERECOLOR
-				header.InterfereColor = _reader.ReadCmColor();
+				_header.InterfereColor = _reader.ReadCmColor();
 
 				//H : INTERFEREOBJVS(hard pointer)
 				objectPointers.INTERFEREOBJVS = _reader.HandleReference();
@@ -1018,9 +1023,9 @@ namespace ACadSharp.IO.DWG
 				objectPointers.DRAGVS = _reader.HandleReference();
 
 				//RC: CSHADOW
-				header.ShadowMode = _reader.ReadByte();
-				//BD : unknown
-				header.ShadowPlaneLocation = _reader.ReadBitDouble();
+				_header.ShadowMode = (ShadowMode)_reader.ReadByte();
+				//BD : SHADOWPLANELOCATION
+				_header.ShadowPlaneLocation = _reader.ReadBitDouble();
 			}
 
 			try
@@ -1038,8 +1043,6 @@ namespace ACadSharp.IO.DWG
 			{
 				this.notify($"An error ocurred at the end of the Header reading", NotificationType.Error, ex);
 			}
-
-			return header;
 		}
 	}
 }

@@ -28,68 +28,37 @@ namespace ACadSharp.Entities
 		public short Version { get; internal set; }
 
 		//72 "Blend Crease" property
-
 		//0 = Turn off
-
 		//1 = Turn on
 
-		//91
+		//91	Number of subdivision level
 
-		//Number of subdivision level
+		//92	Vertex count of level 0
 
-		//92
+		//10	Vertex position
 
-		//Vertex count of level 0
+		//93	Size of face list of level 0
 
-		//10
+		//90	Face list item
 
-		//Vertex position
+		//94	Edge count of level 0
 
-		//93
+		//90	Vertex index of each edge
 
-		//Size of face list of level 0
+		//95	Edge crease count of level 0
 
-		//90
+		//140	Edge create value
 
-		//Face list item
+		//90	Count of sub-entity which property has been overridden
 
-		//94
+		//91	Sub-entity marker
 
-		//Edge count of level 0
+		//92	Count of property was overridden
 
-		//90
-
-		//Vertex index of each edge
-		//95
-
-		//Edge crease count of level 0
-
-		//140
-
-		//Edge create value
-
-		//90
-
-		//Count of sub-entity which property has been overridden
-
-		//91
-
-		//Sub-entity marker
-
-		//92
-
-		//Count of property was overridden
-
-		//90
-
-		//Property type
-
+		//90	Property type
 		//0 = Color
-
 		//1 = Material
-
 		//2 = Transparency
-
 		//3 = Material mapper
 	}
 }

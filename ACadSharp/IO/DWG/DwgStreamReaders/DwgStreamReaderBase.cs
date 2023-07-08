@@ -5,6 +5,7 @@ using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
@@ -32,8 +33,10 @@ namespace ACadSharp.IO.DWG
 		{
 		}
 
-		public static IDwgStreamReader GetStreamHandler(ACadVersion version, Stream stream, bool resetPositon = false)
+		public static IDwgStreamReader GetStreamHandler(ACadVersion version, Stream stream, Encoding encoding = null, bool resetPositon = false)
 		{
+			IDwgStreamReader reader = null;
+
 			switch (version)
 			{
 				case ACadVersion.Unknown:
@@ -51,22 +54,32 @@ namespace ACadSharp.IO.DWG
 					throw new NotSupportedException($"Dwg version not supported: {version}");
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
-					return new DwgStreamReaderAC12(stream, resetPositon);
+					reader = new DwgStreamReaderAC12(stream, resetPositon);
+					break;
 				case ACadVersion.AC1015:
-					return new DwgStreamReaderAC15(stream, resetPositon);
+					reader = new DwgStreamReaderAC15(stream, resetPositon);
+					break;
 				case ACadVersion.AC1018:
-					return new DwgStreamReaderAC18(stream, resetPositon);
+					reader = new DwgStreamReaderAC18(stream, resetPositon);
+					break;
 				case ACadVersion.AC1021:
-					return new DwgStreamReaderAC21(stream, resetPositon);
+					reader = new DwgStreamReaderAC21(stream, resetPositon);
+					break;
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
-					return new DwgStreamReaderAC24(stream, resetPositon);
-				default:
+					reader = new DwgStreamReaderAC24(stream, resetPositon);
 					break;
+				default:
+					throw new NotSupportedException($"Dwg version not supported: {version}");
 			}
 
-			return null;
+			if (encoding != null)
+			{
+				reader.Encoding = encoding;
+			}
+
+			return reader;
 		}
 
 #if TEST
@@ -825,7 +838,17 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public TimeSpan ReadTimeSpan()
 		{
-			return new TimeSpan(this.ReadBitLong(), 0, this.ReadBitLong() / 1000);
+			long hours = this.ReadBitLong();
+			long milliseconds = this.ReadBitLong();
+
+			// Handle potential overflow
+			if (hours < 0 || hours > TimeSpan.MaxValue.TotalHours || milliseconds < 0 || milliseconds > TimeSpan.MaxValue.TotalMilliseconds)
+			{
+				return TimeSpan.FromHours(0) + TimeSpan.FromMilliseconds(0);
+
+			}
+
+			return TimeSpan.FromHours(hours) + TimeSpan.FromMilliseconds(milliseconds);
 		}
 
 		#region Stream pointer control
