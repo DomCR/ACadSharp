@@ -1,6 +1,7 @@
 ﻿using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using System;
+using System.Linq;
 
 namespace ACadSharp.IO.DXF
 {
@@ -51,7 +52,7 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.ValueAsString)
 			{
 				case DxfFileToken.ObjectDictionary:
-					return this.readDictionary();
+					return this.readObjectCodes<CadDictionary>(new CadDictionaryTemplate(), readDictionary);
 				case DxfFileToken.ObjectLayout:
 					return this.readObjectCodes<Layout>(new CadLayoutTemplate(), readLayout);
 				case DxfFileToken.ObjectDictionaryVar:
@@ -161,50 +162,29 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private CadTemplate readDictionary()
+		private bool readDictionary(CadTemplate template, DxfMap map)
 		{
 			CadDictionary cadDictionary = new CadDictionary();
-			CadDictionaryTemplate template = new CadDictionaryTemplate(cadDictionary);
+			CadDictionaryTemplate tmp = template as CadDictionaryTemplate;
 
-			string lastKey = null;
-
-			//Jump the 0 marker
-			this._reader.ReadNext();
-
-			this.readCommonObjectData(template);
-
-			System.Diagnostics.Debug.Assert(DxfSubclassMarker.Dictionary == this._reader.ValueAsString);
-
-			//Jump the 100 marker
-			this._reader.ReadNext();
-
-			while (this._reader.DxfCode != DxfCode.Start)
+			switch (this._reader.Code)
 			{
-				switch (this._reader.Code)
-				{
-					case 280:
-						cadDictionary.HardOwnerFlag = this._reader.ValueAsBool;
-						break;
-					case 281:
-						cadDictionary.ClonningFlags = (DictionaryCloningFlags)this._reader.Value;
-						break;
-					case 3:
-						lastKey = this._reader.ValueAsString;
-						template.Entries.Add(lastKey, null);
-						break;
-					case 350: // Soft-owner ID/handle to entry object 
-					case 360: // Hard-owner ID/handle to entry object
-						template.Entries[lastKey] = this._reader.ValueAsHandle;
-						break;
-					default:
-						this._builder.Notify($"Group Code not handled {this._reader.GroupCodeValue} for {typeof(CadDictionary)}, code : {this._reader.Code} | value : {this._reader.ValueAsString}");
-						break;
-				}
-
-				this._reader.ReadNext();
+				case 280:
+					cadDictionary.HardOwnerFlag = this._reader.ValueAsBool;
+					return true;
+				case 281:
+					cadDictionary.ClonningFlags = (DictionaryCloningFlags)this._reader.Value;
+					return true;
+				case 3:
+					tmp.Entries.Add(this._reader.ValueAsString, null);
+					return true;
+				case 350: // Soft-owner ID/handle to entry object 
+				case 360: // Hard-owner ID/handle to entry object
+					tmp.Entries[tmp.Entries.LastOrDefault().Key] = this._reader.ValueAsHandle;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Dictionary]);
 			}
-
-			return template;
 		}
 
 		private CadTemplate readSortentsTable()

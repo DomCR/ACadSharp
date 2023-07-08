@@ -327,6 +327,12 @@ namespace ACadSharp.IO.DXF
 				case 3:
 					tmp.StyleName = this._reader.ValueAsString;
 					return true;
+				case 50:
+					var dim = new DimensionLinear();
+					tmp.SetDimensionObject(dim);
+					dim.Rotation = this._reader.ValueAsDouble;
+					map.SubClasses.Add(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
+					return true;
 				//Undocumented codes
 				case 73:
 				case 74:
@@ -362,6 +368,8 @@ namespace ACadSharp.IO.DXF
 						case DxfSubclassMarker.OrdinateDimension:
 							tmp.SetDimensionObject(new DimensionOrdinate());
 							map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionOrdinate>());
+							return true;
+						case DxfSubclassMarker.LinearDimension:
 							return true;
 						default:
 							return false;
