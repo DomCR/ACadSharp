@@ -131,7 +131,7 @@ namespace ACadSharpInternal.Tests
 			docResult.Header.Version = docToWrite.Header.Version;
 
 			DwgDocumentBuilder builder = new DwgDocumentBuilder(docResult, new ACadSharp.IO.DwgReaderConfiguration());
-			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(docToWrite.Header.Version, stream, true);
+			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(docToWrite.Header.Version, stream, resetPositon: true);
 			DwgObjectReader reader = new DwgObjectReader(
 				docResult.Header.Version,
 				builder,
