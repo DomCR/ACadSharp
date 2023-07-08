@@ -124,6 +124,9 @@ namespace ACadSharp.Tests
 				case DxfFileToken.EntityLwPolyline:
 					DxfMap.Create<LwPolyline>();
 					break;
+				case DxfFileToken.EntityMesh:
+					DxfMap.Create<Mesh>();
+					break;
 				case DxfFileToken.EntityMLine:
 					DxfMap.Create<MLine>();
 					break;
