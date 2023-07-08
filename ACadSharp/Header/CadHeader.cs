@@ -1473,7 +1473,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable HIDETEXT
 		/// </remarks>
-		[CadSystemVariable("$HIDETEXT", 290)]
+		[CadSystemVariable("$HIDETEXT", 280)]	//note: mismatch with docs, code 290
 		public byte HideText { get; set; }
 
 		/// <summary>
@@ -1482,7 +1482,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable XCLIPFRAME
 		/// </remarks>
-		[CadSystemVariable("$XCLIPFRAME", 290)]
+		[CadSystemVariable("$XCLIPFRAME", 280)]	//note: mismatch with docs, code 290
 		public byte ExternalReferenceClippingBoundaryType { get; set; }
 
 		/// <summary>
@@ -1614,7 +1614,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable DIMTXSTY
 		/// </remarks>
-		[CadSystemVariable("$DIMTXSTY", 2)]
+		[CadSystemVariable("$DIMTXSTY", 7)]
 		public string DimensionTextStyleName
 		{
 			get { return this.DimensionTextStyle.Name; }
