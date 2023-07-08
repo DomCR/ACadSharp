@@ -21,9 +21,12 @@ namespace ACadSharp.Entities
 
 		public SeqendCollection<Vertex3D> Vertices { get; }
 
+		public SeqendCollection<FaceMesh> Faces { get; }
+
 		public PolyfaceMesh()
 		{
 			this.Vertices = new SeqendCollection<Vertex3D>(this);
+			this.Faces = new SeqendCollection<FaceMesh>(this);
 		}
 	}
 }

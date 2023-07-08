@@ -135,6 +135,11 @@ namespace ACadSharp.IO.DWG
 					continue;
 				}
 
+				if (handle == 1064)
+				{
+
+				}
+
 				//Get the object type
 				ObjectType type = this.getEntityType(offset);
 				//Save the object to avoid infinite loops while reading
@@ -1494,19 +1499,19 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readPfaceVertex()
 		{
-			Vertex2D vertex = new Vertex2D();
-			CadEntityTemplate template = new CadEntityTemplate(vertex);
+			FaceMesh face = new FaceMesh();
+			CadEntityTemplate template = new CadEntityTemplate(face);
 
 			this.readCommonEntityData(template);
 
 			//Vert index BS 71 1 - based vertex index(see DXF doc)
-			this._objectReader.ReadBitShort();
+			face.Index1 = this._objectReader.ReadBitShort();
 			//Vert index BS 72 1 - based vertex index(see DXF doc)
-			this._objectReader.ReadBitShort();
+			face.Index2 = this._objectReader.ReadBitShort();
 			//Vert index BS 73 1 - based vertex index(see DXF doc)
-			this._objectReader.ReadBitShort();
+			face.Index3 = this._objectReader.ReadBitShort();
 			//Vert index BS 74 1 - based vertex index(see DXF doc)
-			this._objectReader.ReadBitShort();
+			face.Index4 = this._objectReader.ReadBitShort();
 
 			return template;
 		}

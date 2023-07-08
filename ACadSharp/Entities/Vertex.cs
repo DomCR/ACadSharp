@@ -46,11 +46,6 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double CurveTangent { get; set; }
 
-		//71 Polyface mesh vertex index(optional; present only if nonzero)
-		//72 Polyface mesh vertex index(optional; present only if nonzero)
-		//73 Polyface mesh vertex index(optional; present only if nonzero)
-		//74 Polyface mesh vertex index(optional; present only if nonzero)
-
 		/// <summary>
 		/// Vertex identifier
 		/// </summary>

@@ -5,8 +5,6 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadPolyfaceMeshTemplate : CadEntityTemplate
 	{
-		public CadPolyfaceMeshTemplate(PolyfaceMesh polyfaceMesh) : base(polyfaceMesh) { }
-
 		public ulong? FirstVerticeHandle { get; set; }
 
 		public ulong? LastVerticeHandle { get; set; }
@@ -14,6 +12,8 @@ namespace ACadSharp.IO.Templates
 		public List<ulong> VerticesHandles { get; set; } = new List<ulong>();
 
 		public ulong SeqendHandle { get; set; }
+
+		public CadPolyfaceMeshTemplate(PolyfaceMesh polyfaceMesh) : base(polyfaceMesh) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{
@@ -23,16 +23,19 @@ namespace ACadSharp.IO.Templates
 
 			if (this.FirstVerticeHandle.HasValue)
 			{
-				var vertices = this.getEntitiesCollection<Vertex3D>(builder, this.FirstVerticeHandle.Value, this.LastVerticeHandle.Value);
-				polyfaceMesh.Vertices.AddRange(vertices);
+				IEnumerable<Entity> vertices = this.getEntitiesCollection<Entity>(builder, this.FirstVerticeHandle.Value, this.LastVerticeHandle.Value);
+				foreach (var item in vertices)
+				{
+					this.addItemToPolyface(item, builder);
+				}
 			}
 			else
 			{
-				foreach (ulong handle in VerticesHandles)
+				foreach (ulong handle in this.VerticesHandles)
 				{
-					if (builder.TryGetCadObject<Vertex3D>(handle, out Vertex3D v3))
+					if (builder.TryGetCadObject<CadObject>(handle, out CadObject item))
 					{
-						polyfaceMesh.Vertices.Add(v3);
+						this.addItemToPolyface(item, builder);
 					}
 				}
 			}
@@ -40,6 +43,24 @@ namespace ACadSharp.IO.Templates
 			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
 			{
 				polyfaceMesh.Vertices.Seqend = seqend;
+			}
+		}
+
+		private void addItemToPolyface(CadObject item, CadDocumentBuilder builder)
+		{
+			PolyfaceMesh polyfaceMesh = (PolyfaceMesh)this.CadObject;
+
+			if (item is Vertex3D v3)
+			{
+				polyfaceMesh.Vertices.Add(v3);
+			}
+			else if (item is FaceMesh face)
+			{
+				polyfaceMesh.Faces.Add(face);
+			}
+			else
+			{
+				builder.Notify($"Unidentified type for PolyfaceMesh {item.GetType().FullName}");
 			}
 		}
 	}
