@@ -130,6 +130,10 @@ namespace ACadSharp.Tests.IO
 			}
 
 			_output.WriteLine(e.Message);
+			if (e.Exception != null)
+			{
+				_output.WriteLine(e.Exception.ToString());
+			}
 		}
 
 		protected void checkDxfDocumentInAutocad(string path)

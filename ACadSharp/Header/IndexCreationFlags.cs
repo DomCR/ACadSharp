@@ -9,18 +9,18 @@
 		/// <summary>
 		/// No indexes are created
 		/// </summary>
-		NoIndex = 0x0,
+		NoIndex = 0b0,
 		/// <summary>
 		/// Layer index is created
 		/// </summary>
-		LayerIndex = 0x1,
+		LayerIndex = 0b1,
 		/// <summary>
 		/// Spatial index is created
 		/// </summary>
-		SpatialIndex = 0x2,
+		SpatialIndex = 0b10,
 		/// <summary>
 		/// Layer and spatial indexes are created
 		/// </summary>
-		LayerAndSpatialIndex = 0x3
+		LayerAndSpatialIndex = 0b11
 	}
 }

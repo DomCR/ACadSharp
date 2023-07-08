@@ -1,6 +1,6 @@
 ﻿namespace ACadSharp.IO.DWG
 {
-	internal static class DwgR21LZ77
+	internal static class DwgLZ77AC21Decompressor
 	{
 		private delegate void copyDelegate(byte[] src, uint srcIndex, byte[] dst, uint dstIndex);
 
