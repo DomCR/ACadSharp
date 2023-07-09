@@ -97,6 +97,7 @@
 		public const string ObjectAcdbPlaceHolder = "ACDBPLACEHOLDER";
 		public const string ObjectDictionaryVar = "DICTIONARYVAR";
 		public const string ObjectPlotSettings = "PLOTSETTINGS";
+		public const string ObjectPlaceholder = "ACDBPLACEHOLDER";
 		public const string ObjectLayout = "LAYOUT";
 		public const string ObjectMLStyle = "MLINESTYLE";
 		public const string ObjectVisualStyle = "VISUALSTYLE";

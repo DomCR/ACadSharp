@@ -22,10 +22,34 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Scale;
 
-		public short Unknown { get; set; }
+		/// <summary>
+		/// Unknown
+		/// </summary>
+		[DxfCodeValue(70)]
+		public short Unknown { get; internal set; }
+
+		/// <summary>
+		/// Name
+		/// </summary>
+		[DxfCodeValue(300)]
 		public string Name { get; set; }
+
+		/// <summary>
+		/// Group description.
+		/// </summary>
+		[DxfCodeValue(140)]
 		public double PaperUnits { get; set; }
+
+		/// <summary>
+		/// Group description.
+		/// </summary>
+		[DxfCodeValue(141)]
 		public double DrawingUnits { get; set; }
+
+		/// <summary>
+		/// Group description.
+		/// </summary>
+		[DxfCodeValue(290)]
 		public bool IsUnitScale { get; set; }
 	}
 }

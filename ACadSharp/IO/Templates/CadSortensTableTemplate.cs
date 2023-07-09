@@ -10,7 +10,7 @@ namespace ACadSharp.IO.Templates
 	{
 		public ulong? BlockOwnerHandle { get; set; }
 
-		public List<(ulong, ulong)> Values { get; } = new List<(ulong, ulong)>();
+		public List<(ulong?, ulong?)> Values { get; } = new List<(ulong?, ulong?)>();
 
 		public CadSortensTableTemplate() : base(new SortEntitiesTable()) { }
 
@@ -37,13 +37,13 @@ namespace ACadSharp.IO.Templates
 				}
 			}
 
-			foreach ((ulong, ulong) pair in Values)
+			foreach ((ulong?, ulong?) pair in Values)
 			{
 				if (builder.TryGetCadObject(pair.Item2, out Entity entity))
 				{
 					SortEntitiesTable.Sorter sorter = new SortEntitiesTable.Sorter
 					{
-						SortHandle = pair.Item1,
+						SortHandle = pair.Item1.Value,
 						Entity = entity
 					};
 					this.CadObject.Sorters.Add(sorter);

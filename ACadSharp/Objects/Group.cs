@@ -24,7 +24,7 @@ namespace ACadSharp.Objects
 		public override string SubclassMarker => DxfSubclassMarker.Group;
 
 		/// <summary>
-		/// Group description.
+		/// Group description
 		/// </summary>
 		[DxfCodeValue(300)]
 		public string Description { get; set; }

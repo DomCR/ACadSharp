@@ -54,7 +54,7 @@ namespace ACadSharp.IO.Templates
 			{
 				polyfaceMesh.Vertices.Add(v3);
 			}
-			else if (item is FaceMesh face)
+			else if (item is VertexFaceRecord face)
 			{
 				polyfaceMesh.Faces.Add(face);
 			}

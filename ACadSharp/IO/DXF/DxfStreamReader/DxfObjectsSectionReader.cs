@@ -59,6 +59,10 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<DictionaryVariable>(new CadTemplate<DictionaryVariable>(new DictionaryVariable()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectSortEntsTable:
 					return this.readSortentsTable();
+				case DxfFileToken.ObjectScale:
+					return this.readObjectCodes<Scale>(new CadTemplate<Scale>(new Scale()), this.readObjectSubclassMap);
+				case DxfFileToken.ObjectVisualStyle:
+					return this.readObjectCodes<VisualStyle>(new CadTemplate<VisualStyle>(new VisualStyle()), this.readVisualStyle);
 				case DxfFileToken.ObjectXRecord:
 					return this.readObjectCodes<XRecrod>(new CadXRecordTemplate(), readXRecord);
 				default:
@@ -131,6 +135,20 @@ namespace ACadSharp.IO.DXF
 						return this.readPlotSettings(template, map);
 					}
 					return true;
+			}
+		}
+
+		private bool readVisualStyle(CadTemplate template, DxfMap map)
+		{
+			switch (this._reader.Code)
+			{
+				// Undocumented codes
+				case 176:
+				case 177:
+				case 420:
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.VisualStyle]);
 			}
 		}
 

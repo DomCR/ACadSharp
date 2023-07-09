@@ -157,7 +157,7 @@ namespace ACadSharp.Tests
 							DxfMap.Create<Polyline3D>();
 							break;
 						case DxfSubclassMarker.PolyfaceMesh:
-							DxfMap.Create<PolyFaceMesh>();
+							DxfMap.Create<PolyfaceMesh>();
 							break;
 						default:
 							throw new NotImplementedException($"Test not implemented for type {t.Name}");
@@ -205,9 +205,6 @@ namespace ACadSharp.Tests
 							break;
 						case DxfSubclassMarker.PolyfaceMeshFace:
 							DxfMap.Create<VertexFaceRecord>();
-							break;
-						case DxfSubclassMarker.PolyfaceMeshFace:
-							DxfMap.Create<FaceMesh>();
 							break;
 						default:
 							throw new NotImplementedException($"Test not implemented for type {t.Name}");

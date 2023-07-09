@@ -135,11 +135,6 @@ namespace ACadSharp.IO.DWG
 					continue;
 				}
 
-				if (handle == 1064)
-				{
-
-				}
-
 				//Get the object type
 				ObjectType type = this.getEntityType(offset);
 				//Save the object to avoid infinite loops while reading
@@ -1002,7 +997,8 @@ namespace ACadSharp.IO.DWG
 				case "MLEADER":
 				case "MLEADERSTYLE":
 				case "OLE2FRAME":
-				case "PLACEHOLDER":
+					break;
+				case "ACDBPLACEHOLDER":
 					template = this.readPlaceHolder();
 					break;
 				case "PLOTSETTINGS":
@@ -1499,7 +1495,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readPfaceVertex()
 		{
-			FaceMesh face = new FaceMesh();
+			VertexFaceRecord face = new VertexFaceRecord();
 			CadEntityTemplate template = new CadEntityTemplate(face);
 
 			this.readCommonEntityData(template);

@@ -3,6 +3,7 @@
 	public static class DxfSubclassMarker
 	{
 		public const string ApplicationId = "AcDbRegAppTableRecord";
+		public const string AcDbPlaceHolder = "AcDbPlaceHolder";
 		public const string Table = "AcDbSymbolTable";
 		public const string TableRecord = "AcDbSymbolTableRecord";
 		public const string Layer = "AcDbLayerTableRecord";
@@ -76,7 +77,6 @@
 		public const string Layout = "AcDbLayout";
 		public const string PlotSettings = "AcDbPlotSettings";
 		public const string DictionaryVariables = "DictionaryVariables";
-		public const string VisualStyle = "AcDbVisualStyle";
 		public const string Scale = "AcDbScale";
 	}
 }
