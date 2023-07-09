@@ -19,6 +19,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityPolyFaceMesh;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.PolyfaceMesh;
+
 		public SeqendCollection<Vertex3D> Vertices { get; }
 
 		public SeqendCollection<VertexFaceRecord> Faces { get; }
