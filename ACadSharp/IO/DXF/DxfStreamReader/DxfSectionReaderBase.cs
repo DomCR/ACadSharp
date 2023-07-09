@@ -527,10 +527,10 @@ namespace ACadSharp.IO.DXF
 							tmp.SetPolyLineObject(new Polyline3D());
 							map.SubClasses.Add(DxfSubclassMarker.Polyline3d, DxfClassMap.Create<Polyline3D>());
 							return true;
-						//case DxfSubclassMarker.PolyfaceMesh:
-						//	tmp.SetPolyLineObject(new PolyfaceMesh());
-						//	map.SubClasses.Add(DxfSubclassMarker.PolyfaceMesh, DxfClassMap.Create<PolyfaceMesh>());
-						//	return true;
+						case DxfSubclassMarker.PolyfaceMesh:
+							tmp.SetPolyLineObject(new PolyfaceMesh());
+							map.SubClasses.Add(DxfSubclassMarker.PolyfaceMesh, DxfClassMap.Create<PolyfaceMesh>());
+							return true;
 						default:
 							return false;
 					}

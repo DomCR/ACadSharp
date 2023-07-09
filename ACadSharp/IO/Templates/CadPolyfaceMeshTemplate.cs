@@ -11,7 +11,7 @@ namespace ACadSharp.IO.Templates
 
 		public List<ulong> VerticesHandles { get; set; } = new List<ulong>();
 
-		public ulong SeqendHandle { get; set; }
+		public ulong? SeqendHandle { get; set; }
 
 		public CadPolyfaceMeshTemplate(PolyfaceMesh polyfaceMesh) : base(polyfaceMesh) { }
 

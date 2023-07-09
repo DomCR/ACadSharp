@@ -7,8 +7,11 @@ namespace ACadSharp.IO.Templates
 	internal class CadPolyLineTemplate : CadEntityTemplate
 	{
 		public ulong? FirstVertexHandle { get; internal set; }
+
 		public ulong? LastVertexHandle { get; internal set; }
+
 		public ulong? SeqendHandle { get; internal set; }
+
 		public List<ulong> VertexHandles { get; set; } = new List<ulong>();
 
 		public CadPolyLineTemplate() : base(new PolyLinePlaceholder()) { }
@@ -28,9 +31,16 @@ namespace ACadSharp.IO.Templates
 			}
 			else
 			{
-				foreach (var handle in this.VertexHandles)
+				if (this.CadObject is PolyfaceMesh mesh)
 				{
-					polyLine.Vertices.Add(builder.GetCadObject<Vertex>(handle));
+					this.buildPolyfaceMesh(mesh, builder);
+				}
+				else
+				{
+					foreach (var handle in this.VertexHandles)
+					{
+						polyLine.Vertices.Add(builder.GetCadObject<Vertex>(handle));
+					}
 				}
 			}
 
@@ -59,7 +69,25 @@ namespace ACadSharp.IO.Templates
 			this.CadObject = polyLine;
 		}
 
-		public class PolyLinePlaceholder : Polyline
+		private void buildPolyfaceMesh(PolyfaceMesh polyfaceMesh, CadDocumentBuilder builder)
+		{
+			foreach (var handle in this.VertexHandles)
+			{
+				if (builder.TryGetCadObject(handle, out Entity e))
+				{
+					if (e is Vertex3D v)
+					{
+						polyfaceMesh.Vertices.Add(v);
+					}
+					else if (e is VertexFaceRecord r)
+					{
+						polyfaceMesh.Faces.Add(r);
+					}
+				}
+			}
+		}
+
+		internal class PolyLinePlaceholder : Polyline
 		{
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
 
