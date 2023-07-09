@@ -1426,7 +1426,7 @@ namespace ACadSharp.IO.DWG
 			{
 				for (int i = 0; i < template.OwnedObjectsCount; ++i)
 					//H[ATTRIB(hard owner)] Repeats “Owned Object Count” times.
-					template.OwnedHandles.Add(this.handleReference());
+					template.AttributesHandles.Add(this.handleReference());
 			}
 
 			//Common:

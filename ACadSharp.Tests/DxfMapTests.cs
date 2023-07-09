@@ -32,7 +32,7 @@ namespace ACadSharp.Tests
 			}
 		}
 
-		[Theory]
+		[Theory(Skip = "Moved to internal")]
 		[MemberData(nameof(Types))]
 		public void CreateMapTest(Type t)
 		{

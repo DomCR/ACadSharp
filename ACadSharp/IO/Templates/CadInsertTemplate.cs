@@ -21,30 +21,11 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? SeqendHandle { get; set; }
 
-		public List<ulong> OwnedHandles { get; set; } = new List<ulong>();
+		public List<ulong> AttributesHandles { get; set; } = new List<ulong>();
 
 		public CadInsertTemplate() : base(new Insert()) { }
 
 		public CadInsertTemplate(Insert insert) : base(insert) { }
-
-		public override bool AddName(int dxfcode, string name)
-		{
-			bool value = base.AddName(dxfcode, name);
-			if (value)
-				return value;
-
-			switch (dxfcode)
-			{
-				case 2:
-					this.BlockName = name;
-					value = true;
-					break;
-				default:
-					break;
-			}
-
-			return value;
-		}
 
 		public override void Build(CadDocumentBuilder builder)
 		{
@@ -65,7 +46,7 @@ namespace ACadSharp.IO.Templates
 			}
 			else
 			{
-				foreach (ulong handle in this.OwnedHandles)
+				foreach (ulong handle in this.AttributesHandles)
 				{
 					if (builder.TryGetCadObject<AttributeEntity>(handle, out AttributeEntity att))
 					{
