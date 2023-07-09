@@ -728,9 +728,11 @@ namespace ACadSharp.IO.DWG
 					template = this.readVertex2D();
 					break;
 				case ObjectType.VERTEX_3D:
+					template = this.readVertex3D(new Vertex3D());
+					break;
 				case ObjectType.VERTEX_MESH:
 				case ObjectType.VERTEX_PFACE:
-					template = this.readVertex3D();
+					template = this.readVertex3D(new VertexFaceMesh());
 					break;
 				case ObjectType.VERTEX_PFACE_FACE:
 					template = this.readPfaceVertex();
@@ -1478,9 +1480,8 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadTemplate readVertex3D()
+		private CadTemplate readVertex3D(Vertex vertex)
 		{
-			Vertex3D vertex = new Vertex3D();
 			CadEntityTemplate template = new CadEntityTemplate(vertex);
 
 			this.readCommonEntityData(template);
