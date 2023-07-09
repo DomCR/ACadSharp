@@ -6,6 +6,8 @@ namespace ACadSharp.IO.Templates
 	{
 		public ulong? DefaultEntryHandle { get; set; }
 
+		public CadDictionaryWithDefaultTemplate() : base(new CadDictionaryWithDefault()) { }
+
 		public CadDictionaryWithDefaultTemplate(CadDictionaryWithDefault dictionary) : base(dictionary) { }
 
 		public override void Build(CadDocumentBuilder builder)

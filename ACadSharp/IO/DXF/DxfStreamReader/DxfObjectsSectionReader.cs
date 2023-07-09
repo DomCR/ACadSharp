@@ -53,6 +53,8 @@ namespace ACadSharp.IO.DXF
 			{
 				case DxfFileToken.ObjectDictionary:
 					return this.readObjectCodes<CadDictionary>(new CadDictionaryTemplate(), readDictionary);
+				case DxfFileToken.ObjectDictionaryWithDefault:
+					return this.readObjectCodes<CadDictionaryWithDefault>(new CadDictionaryWithDefaultTemplate(), this.readDictionaryWithDefault);
 				case DxfFileToken.ObjectLayout:
 					return this.readObjectCodes<Layout>(new CadLayoutTemplate(), readLayout);
 				case DxfFileToken.ObjectDictionaryVar:
@@ -202,6 +204,24 @@ namespace ACadSharp.IO.DXF
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Dictionary]);
+			}
+		}
+
+		private bool readDictionaryWithDefault(CadTemplate template, DxfMap map)
+		{
+			CadDictionaryWithDefaultTemplate tmp = template as CadDictionaryWithDefaultTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 340:
+					tmp.DefaultEntryHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.DictionaryWithDefault]))
+					{
+						return readDictionary(template, map);
+					}
+					return true;
 			}
 		}
 
