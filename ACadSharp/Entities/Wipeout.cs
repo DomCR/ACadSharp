@@ -19,6 +19,12 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityWipeout;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Wipeout;
+
 		//100	Subclass marker(AcDbRasterImage)
 
 		/// <summary>

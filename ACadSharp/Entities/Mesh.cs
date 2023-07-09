@@ -21,6 +21,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityMesh;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Mesh;
+
 		/// <summary>
 		/// Version number
 		/// </summary>
