@@ -731,6 +731,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readVertex3D(new Vertex3D());
 					break;
 				case ObjectType.VERTEX_MESH:
+					break;
 				case ObjectType.VERTEX_PFACE:
 					template = this.readVertex3D(new VertexFaceMesh());
 					break;
