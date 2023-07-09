@@ -50,7 +50,7 @@ namespace ACadSharp.IO.Templates
 		{
 			PolyfaceMesh polyfaceMesh = (PolyfaceMesh)this.CadObject;
 
-			if (item is Vertex3D v3)
+			if (item is VertexFaceMesh v3)
 			{
 				polyfaceMesh.Vertices.Add(v3);
 			}

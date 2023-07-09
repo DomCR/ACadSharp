@@ -75,13 +75,17 @@ namespace ACadSharp.IO.Templates
 			{
 				if (builder.TryGetCadObject(handle, out Entity e))
 				{
-					if (e is Vertex3D v)
+					if (e is VertexFaceMesh v3)
 					{
-						polyfaceMesh.Vertices.Add(v);
+						polyfaceMesh.Vertices.Add(v3);
 					}
-					else if (e is VertexFaceRecord r)
+					else if (e is VertexFaceRecord face)
 					{
-						polyfaceMesh.Faces.Add(r);
+						polyfaceMesh.Faces.Add(face);
+					}
+					else
+					{
+						builder.Notify($"Unidentified type for PolyfaceMesh {e.GetType().FullName}");
 					}
 				}
 			}
