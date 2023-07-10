@@ -48,8 +48,6 @@ namespace ACadSharp.IO.DXF
 			xdictHandle = null;
 			reactors = new List<ulong>();
 
-			bool handleNotFound = true;
-
 			if (this._reader.DxfCode == DxfCode.Start
 					|| this._reader.DxfCode == DxfCode.Subclass)
 				this._reader.ReadNext();
@@ -68,7 +66,6 @@ namespace ACadSharp.IO.DXF
 					case 5:
 					case 105:
 						handle = this._reader.ValueAsHandle;
-						handleNotFound = false;
 						break;
 					//Start of application - defined group
 					case 102:
@@ -89,11 +86,9 @@ namespace ACadSharp.IO.DXF
 
 				this._reader.ReadNext();
 			}
-
-			//if (handleNotFound) //TODO: Set exception for no handle
-			//	throw new Exception();
 		}
 
+		[Obsolete]
 		protected void readCommonObjectData(CadTemplate template)
 		{
 			while (this._reader.DxfCode != DxfCode.Subclass)
@@ -191,7 +186,16 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityPoint:
 					return this.readEntityCodes<Point>(new CadEntityTemplate<Point>(), readEntitySubclassMap);
 				case DxfFileToken.EntityPolyline:
-					return this.readEntityCodes<Entity>(new CadPolyLineTemplate(), readPolyline);
+					var template = this.readEntityCodes<Entity>(new CadPolyLineTemplate(), readPolyline);
+					if (template.CadObject is CadPolyLineTemplate.PolyLinePlaceholder)
+					{
+						this._builder.Notify($"[{DxfFileToken.EntityPolyline}] Subclass not found, entity discarded", NotificationType.Warning);
+						return null;
+					}
+					else
+					{
+						return template;
+					}
 				case DxfFileToken.EntityRay:
 					return this.readEntityCodes<Ray>(new CadEntityTemplate<Ray>(), readEntitySubclassMap);
 				case DxfFileToken.EndSequence:
@@ -252,6 +256,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case 8:
 					template.LayerName = this._reader.ValueAsString;
+					break;
+				//Absent or zero indicates entity is in model space. 1 indicates entity is in paper space (optional).
+				case 67:
 					break;
 				case 347:
 					template.MaterialHandle = this._reader.ValueAsHandle;

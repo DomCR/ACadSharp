@@ -53,13 +53,6 @@ namespace ACadSharp.IO.Templates
 		public void SetPolyLineObject(Polyline polyLine)
 		{
 			polyLine.Handle = this.CadObject.Handle;
-			polyLine.Owner = this.CadObject.Owner;
-
-			polyLine.XDictionary = this.CadObject.XDictionary;
-
-			//polyLine.Reactors = this.CadObject.Reactors;
-			//polyLine.ExtendedData = this.CadObject.ExtendedData;
-
 			polyLine.Color = this.CadObject.Color;
 			polyLine.LineWeight = this.CadObject.LineWeight;
 			polyLine.LinetypeScale = this.CadObject.LinetypeScale;
