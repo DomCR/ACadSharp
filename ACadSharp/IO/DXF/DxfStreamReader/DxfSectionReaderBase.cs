@@ -50,13 +50,17 @@ namespace ACadSharp.IO.DXF
 
 			bool handleNotFound = true;
 
+			if (this._reader.DxfCode == DxfCode.Start
+					|| this._reader.DxfCode == DxfCode.Subclass)
+				this._reader.ReadNext();
+
 			//Loop until the common data end
-			while (this._reader.DxfCode != DxfCode.Subclass)
+			while (this._reader.DxfCode != DxfCode.Start
+					&& this._reader.DxfCode != DxfCode.Subclass)
 			{
 				switch (this._reader.Code)
 				{
 					//Table name
-					case 0:
 					case 2:
 						name = this._reader.ValueAsString;
 						break;
@@ -86,8 +90,8 @@ namespace ACadSharp.IO.DXF
 				this._reader.ReadNext();
 			}
 
-			if (handleNotFound) //TODO: Set exception for no handle
-				throw new Exception();
+			//if (handleNotFound) //TODO: Set exception for no handle
+			//	throw new Exception();
 		}
 
 		protected void readCommonObjectData(CadTemplate template)

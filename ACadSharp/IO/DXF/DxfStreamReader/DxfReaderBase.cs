@@ -56,6 +56,11 @@ namespace ACadSharp.IO.DXF
 			while (this.ValueAsString != dxfEntry && (this.ValueAsString != DxfFileToken.EndOfFile));
 		}
 
+		public override string ToString()
+		{
+			return $"{Code} | {Value}";
+		}
+
 		protected virtual void start()
 		{
 			this.DxfCode = DxfCode.Invalid;

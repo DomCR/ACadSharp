@@ -6,8 +6,6 @@ using ACadSharp.Types.Units;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using System.Dynamic;
 using static ACadSharp.IO.Templates.CadLineTypeTemplate;
 
 namespace ACadSharp.IO.DXF
@@ -56,37 +54,43 @@ namespace ACadSharp.IO.DXF
 
 			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors);
 
-			Debug.Assert(this._reader.ValueAsString == DxfSubclassMarker.Table);
-
-			this._reader.ReadNext();
-
-			while (this._reader.DxfCode != DxfCode.Start)
+			if (this._reader.DxfCode == DxfCode.Subclass)
 			{
-				switch (this._reader.Code)
+				while (this._reader.DxfCode != DxfCode.Start)
 				{
-					//Maximum number of entries in table
-					case 70:
-						nentries = this._reader.ValueAsInt;
+					switch (this._reader.Code)
+					{
+						//Maximum number of entries in table
+						case 70:
+							nentries = this._reader.ValueAsInt;
+							break;
+						case 100 when this._reader.ValueAsString == DxfSubclassMarker.DimensionStyleTable:
+							while (this._reader.DxfCode != DxfCode.Start)
+							{
+								//template.CadObject has the code 71 for the count of entries
+								//Also has 340 codes for each entry with the handles
+								this._reader.ReadNext();
+							}
+							break;
+						case 100:
+							Debug.Assert(this._reader.ValueAsString == DxfSubclassMarker.Table);
+							break;
+						case 1001:
+							this.readExtendedData(edata);
+							break;
+						default:
+							this._builder.Notify($"Unhandeled dxf code {this._reader.Code} at line {this._reader.Position}.");
+							break;
+					}
+
+					if (this._reader.DxfCode == DxfCode.Start)
 						break;
-					case 100 when this._reader.ValueAsString == DxfSubclassMarker.DimensionStyleTable:
-						while (this._reader.DxfCode != DxfCode.Start)
-						{
-							//template.CadObject has the code 71 for the count of entries
-							//Also has 340 codes for each entry with the handles
-							this._reader.ReadNext();
-						}
-						break;
-					case 1001:
-						this.readExtendedData(edata);
-						break;
-					default:
-						this._builder.Notify($"Unhandeled dxf code {this._reader.Code} at line {this._reader.Position}.");
-						break;
+
+					this._reader.ReadNext();
 				}
-
-				if (this._reader.DxfCode == DxfCode.Start)
-					break;
-
+			}
+			else
+			{
 				this._reader.ReadNext();
 			}
 
@@ -167,24 +171,20 @@ namespace ACadSharp.IO.DXF
 			//Read all the entries until the end of the table
 			while (this._reader.ValueAsString != DxfFileToken.EndTable)
 			{
-				this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors);
-
-				Debug.Assert(this._reader.ValueAsString == DxfSubclassMarker.TableRecord, $"Expected: {DxfSubclassMarker.TableRecord} but was {this._reader.ValueAsString}");
+				//this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors);
 
 				this._reader.ReadNext();
 
 				CadTemplate template = null;
 
 				//Get the entry
-				switch (name)
+				switch (tableTemplate.CadObject.ObjectName)
 				{
 					case DxfFileToken.TableAppId:
 						template = this.readTableEntry(new CadTableEntryTemplate<AppId>(new AppId()), this.readAppId);
 						break;
 					case DxfFileToken.TableBlockRecord:
-						BlockRecord record = new BlockRecord();
-						template = new CadBlockRecordTemplate(record);
-						this.readMapped<BlockRecord>(record, template);
+						template = this.readTableEntry(new CadBlockRecordTemplate(), this.readBlockRecord);
 						break;
 					case DxfFileToken.TableDimstyle:
 						template = this.readTableEntry(new CadDimensionStyleTemplate(), this.readDimensionStyle);
@@ -205,20 +205,18 @@ namespace ACadSharp.IO.DXF
 						template = this.readTableEntry(new CadViewTemplate(), this.readView);
 						break;
 					case DxfFileToken.TableVport:
-						VPort vport = new VPort();
-						template = new CadVPortTemplate(vport);
-						this.readMapped<VPort>(vport, template);
+						template = this.readTableEntry(new CadVPortTemplate(), this.readVPort);
 						break;
 					default:
-						Debug.Fail($"Unhandeled table {name}.");
+						Debug.Fail($"Unhandeled table {tableTemplate.CadObject.ObjectName}.");
 						break;
 				}
 
-				//Setup the common fields
-				template.CadObject.Handle = handle;
-				template.OwnerHandle = ownerHandle;
-				template.XDictHandle = xdictHandle;
-				template.ReactorsHandles = reactors;
+				////Setup the common fields
+				//template.CadObject.Handle = handle;
+				//template.OwnerHandle = ownerHandle;
+				//template.XDictHandle = xdictHandle;
+				//template.ReactorsHandles = reactors;
 
 				tableTemplate.EntryHandles.Add(template.CadObject.Handle);
 
@@ -260,6 +258,9 @@ namespace ACadSharp.IO.DXF
 				case 70:
 					template.CadObject.Flags = (StandardFlags)this._reader.ValueAsUShort;
 					break;
+				case 100:
+					Debug.Assert(map.SubClasses.ContainsKey(this._reader.ValueAsString));
+					break;
 				default:
 					this.readCommonCodes(template, out isExtendedData, map);
 					break;
@@ -273,7 +274,21 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.Code)
 			{
 				default:
-					return false;
+					return this.tryAssignCurrentValue(template.CadObject, map);
+			}
+		}
+
+		private bool readBlockRecord(CadTableEntryTemplate<BlockRecord> template, DxfClassMap map)
+		{
+			CadBlockRecordTemplate tmp = (CadBlockRecordTemplate)template;
+
+			switch (this._reader.Code)
+			{
+				case 340:
+					tmp.LayoutHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map);
 			}
 		}
 
@@ -368,6 +383,9 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 90:
 					template.CadObject.ArcLengthSymbolPosition = (ArcLengthSymbolPosition)(int)this._reader.ValueAsShort;
+					return true;
+				case 105:
+					template.CadObject.Handle = this._reader.ValueAsHandle;
 					return true;
 				case 140:
 					template.CadObject.TextHeight = this._reader.ValueAsDouble;
@@ -656,6 +674,26 @@ namespace ACadSharp.IO.DXF
 			{
 				case 348:
 					tmp.VisualStyleHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map);
+			}
+		}
+
+		private bool readVPort(CadTableEntryTemplate<VPort> template, DxfClassMap map)
+		{
+			Debug.Assert(map.Name == DxfSubclassMarker.VPort);
+
+			CadVPortTemplate tmp = template as CadVPortTemplate;
+
+			switch (this._reader.Code)
+			{
+				//NOTE: Undocumented codes
+				case 65:
+				case 73:
+					return true;
+				case 348:
+					tmp.StyleHandle = this._reader.ValueAsHandle;
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map);
