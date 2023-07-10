@@ -22,6 +22,9 @@ namespace ACadSharp.Blocks
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.Block;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.BlockBegin;
+
 		/// <summary>
 		/// Block record that owns this entity
 		/// </summary>

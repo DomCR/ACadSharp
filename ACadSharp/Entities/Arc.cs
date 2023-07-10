@@ -21,6 +21,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityArc;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Arc;
+
 		/// <summary>
 		/// The start angle in radians.
 		/// </summary>

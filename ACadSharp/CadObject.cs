@@ -20,7 +20,12 @@ namespace ACadSharp
 		/// <summary>
 		/// The AutoCAD class name of an object
 		/// </summary>
-		public virtual string ObjectName { get; } = DxfFileToken.Undefined;
+		public virtual string ObjectName { get; }	//TODO: make abstract
+
+		/// <summary>
+		/// Object Subclass marker
+		/// </summary>
+		public abstract string SubclassMarker { get; }
 
 		/// <inheritdoc/>
 		/// <remarks>

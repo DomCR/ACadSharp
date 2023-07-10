@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using CSMath;
 
 namespace ACadSharp.Entities
@@ -20,6 +19,9 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntitySolid;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Solid;
 
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ FirstCorner { get; set; }

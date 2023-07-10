@@ -5,7 +5,7 @@ namespace ACadSharp.IO.DWG
 	/// <summary>
 	/// Variation of the algorithm LZ77 used in 2004 DWG files.
 	/// </summary>
-	internal static class Dwg2004LZ77
+	internal static class DwgLZ77AC18Decompressor
 	{
 		/// <summary>
 		/// Decompress a stream with a specific decompressed size.

@@ -33,6 +33,9 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableLinetype;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Linetype;
+
 		/// <summary>
 		/// Descriptive text for linetype
 		/// </summary>

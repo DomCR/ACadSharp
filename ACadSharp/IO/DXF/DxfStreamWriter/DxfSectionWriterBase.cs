@@ -174,6 +174,11 @@ namespace ACadSharp.IO.DXF
 					this.writeLwPolyline(lwPolyline);
 					return;
 				case Polyline polyline:
+
+					//TODO: Implement write for PolyfaceMesh
+					if (polyline is PolyfaceMesh)
+						return;
+
 					this.writePolyline(polyline);
 					return;
 				case TextEntity textEntity:
@@ -233,7 +238,12 @@ namespace ACadSharp.IO.DXF
 				return;
 
 			this._writer.Write(75, segment.ShapeNumber);
-			this._writer.Write(340, segment.Style.Handle);
+			
+			if (segment.Style != null)
+			{
+				this._writer.Write(340, segment.Style.Handle);
+			}
+			
 			this._writer.Write(46, segment.Scale);
 			this._writer.Write(50, segment.Rotation);
 			this._writer.Write(44, segment.Offset.X);
