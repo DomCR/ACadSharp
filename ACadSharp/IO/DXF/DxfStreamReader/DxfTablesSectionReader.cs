@@ -173,8 +173,6 @@ namespace ACadSharp.IO.DXF
 			//Read all the entries until the end of the table
 			while (this._reader.ValueAsString != DxfFileToken.EndTable)
 			{
-				//this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors);
-
 				this._reader.ReadNext();
 
 				CadTemplate template = null;
@@ -213,12 +211,6 @@ namespace ACadSharp.IO.DXF
 						Debug.Fail($"Unhandeled table {tableTemplate.CadObject.ObjectName}.");
 						break;
 				}
-
-				////Setup the common fields
-				//template.CadObject.Handle = handle;
-				//template.OwnerHandle = ownerHandle;
-				//template.XDictHandle = xdictHandle;
-				//template.ReactorsHandles = reactors;
 
 				tableTemplate.EntryHandles.Add(template.CadObject.Handle);
 
@@ -748,10 +740,11 @@ namespace ACadSharp.IO.DXF
 		private void createDefaultTable<T>(Table<T> table)
 			where T : TableEntry
 		{
-			this._builder.Notify($"Table [{table.GetType().FullName}] not found in document, creating default", NotificationType.Warning);
+			//TODO: Validate tables in the document
+			this._builder.Notify($"Table [{table.GetType().FullName}] not found in document", NotificationType.Warning);
 
-			this._builder.DocumentToBuild.RegisterCollection(table);
-			table.CreateDefaultEntries();
+			//this._builder.DocumentToBuild.RegisterCollection(table);
+			//table.CreateDefaultEntries();
 		}
 	}
 }

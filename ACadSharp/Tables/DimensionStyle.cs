@@ -326,7 +326,7 @@ namespace ACadSharp.Tables
 		/// DIMTXT
 		/// </summary>
 		[DxfCodeValue(140)]
-		public double TextHeight { get; set; }
+		public double TextHeight { get; set; } = 0.18;
 
 		/// <summary>
 		/// DIMCEN
