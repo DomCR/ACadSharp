@@ -107,6 +107,20 @@ namespace ACadSharp.Tables.Collections
 			return null;
 		}
 
+		/// <summary>
+		/// Create the default entries for the table if they don't exist
+		/// </summary>
+		public void CreateDefaultEntries()
+		{
+			foreach (string entry in this._defaultEntries)
+			{
+				if (this.Contains(entry))
+					continue;
+
+				this.Add((T)Activator.CreateInstance(typeof(T), new object[] { entry }));
+			}
+		}
+
 		/// <inheritdoc/>
 		IEnumerator IEnumerable.GetEnumerator()
 		{

@@ -12,13 +12,27 @@ namespace ACadSharp.Tables
 		/// Specifies the name of the object
 		/// </summary>
 		[DxfCodeValue(2)]
-		public string Name { get; set; }
+		public string Name
+		{
+			get { return this._name; }
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+				{
+					// throw new System.ArgumentNullException(nameof(value), $"Table entry [{this.GetType().FullName}] must have a name");
+				}
+
+				this._name = value;
+			}
+		}
 
 		/// <summary>
 		/// Standard flags
 		/// </summary>
 		[DxfCodeValue(70)]
 		public StandardFlags Flags { get; set; }
+
+		private string _name;
 
 		internal TableEntry() { }
 

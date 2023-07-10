@@ -291,7 +291,7 @@ namespace ACadSharp.Tables
 
 		private XYZ _direction = XYZ.AxisZ;
 
-		public VPort() : this(null) { }
+		public VPort() : base() { }
 
 		public VPort(string name) : base(name) { }
 

@@ -101,7 +101,11 @@ namespace ACadSharp.IO.DXF
 
 			if (record == null)
 			{
-				throw new DxfException($"Could not find the block record for {name} and handle {blckEntity.Handle}");
+				record = new BlockRecord(name);
+				record.BlockEntity = blckEntity;
+
+				this._builder.DocumentToBuild.BlockRecords.Add(record);
+				//throw new DxfException($"Could not find the block record for {name} and handle {blckEntity.Handle}");
 			}
 
 			while (this._reader.ValueAsString != DxfFileToken.EndBlock)

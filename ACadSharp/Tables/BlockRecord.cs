@@ -159,7 +159,13 @@ namespace ACadSharp.Tables
 
 		private Layout _layout;
 
-		internal BlockRecord() : this(null) { }
+		internal BlockRecord() : base()
+		{
+			this.BlockEntity = new Block(this);
+			this.BlockEnd = new BlockEnd(this);
+			this.Entities = new CadObjectCollection<Entity>(this);
+			this.Viewports = new CadObjectCollection<Viewport>(this);
+		}
 
 		public BlockRecord(string name) : base(name)
 		{
