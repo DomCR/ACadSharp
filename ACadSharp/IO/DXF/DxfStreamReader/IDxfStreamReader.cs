@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ACadSharp.IO.DXF
+﻿namespace ACadSharp.IO.DXF
 {
 	internal interface IDxfStreamReader
 	{
-		DxfCode LastDxfCode { get; }
+		DxfCode DxfCode { get; }
 
-		GroupCodeValueType LastGroupCodeValue { get; }
+		GroupCodeValueType GroupCodeValue { get; }
 		
-		int LastCode { get; }
+		int Code { get; }
 		
-		object LastValue { get; }
+		object Value { get; }
 
 		/// <summary>
 		/// Current line or offset in the file
@@ -22,21 +18,25 @@ namespace ACadSharp.IO.DXF
 		/// <summary>
 		/// Last value read in the dxf file without any transformation
 		/// </summary>
-		string LastValueAsString { get; }
+		string ValueAsString { get; }
 
-		bool LastValueAsBool { get; }
+		bool ValueAsBool { get; }
+
+		short ValueAsShort { get; }
+
+		ushort ValueAsUShort { get; }
 		
-		ushort LastValueAsShort { get; }
+		int ValueAsInt { get; }
 		
-		int LastValueAsInt { get; }
+		long ValueAsLong { get; }
 		
-		long LastValueAsLong { get; }
+		double ValueAsDouble { get; }
+
+		double ValueAsAngle { get; }
 		
-		double LastValueAsDouble { get; }
+		ulong ValueAsHandle { get; }
 		
-		ulong LastValueAsHandle { get; }
-		
-		byte[] LastValueAsBinaryChunk { get; }
+		byte[] ValueAsBinaryChunk { get; }
 
 		/// <summary>
 		/// Find a dxf entry in the file.

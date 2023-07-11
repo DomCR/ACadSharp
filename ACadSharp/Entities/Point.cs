@@ -20,6 +20,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityPoint;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Point;
+
 		/// <summary>
 		/// Point location(in WCS)
 		/// </summary>

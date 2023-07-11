@@ -2,8 +2,10 @@
 using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
+using ACadSharp.Tests.Common;
 using System;
 using System.Collections.Generic;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -30,7 +32,7 @@ namespace ACadSharp.Tests
 			}
 		}
 
-		[Theory]
+		[Theory(Skip = "Moved to internal")]
 		[MemberData(nameof(Types))]
 		public void CreateMapTest(Type t)
 		{
@@ -38,6 +40,12 @@ namespace ACadSharp.Tests
 			DxfSubClassAttribute subclass = t.GetCustomAttribute<DxfSubClassAttribute>();
 
 			Assert.NotNull(att);
+
+			if (subclass != null)
+			{
+				CadObject obj = Factory.CreateObject(t);
+				Assert.True(obj.SubclassMarker == subclass.ClassName);
+			}
 
 			switch (att.Name)
 			{
@@ -148,6 +156,9 @@ namespace ACadSharp.Tests
 						case DxfSubclassMarker.Polyline3d:
 							DxfMap.Create<Polyline3D>();
 							break;
+						case DxfSubclassMarker.PolyfaceMesh:
+							DxfMap.Create<PolyfaceMesh>();
+							break;
 						default:
 							throw new NotImplementedException($"Test not implemented for type {t.Name}");
 					}
@@ -189,8 +200,11 @@ namespace ACadSharp.Tests
 						case DxfSubclassMarker.Polyline3dVertex:
 							DxfMap.Create<Vertex3D>();
 							break;
+						case DxfSubclassMarker.PolyfaceMeshVertex:
+							DxfMap.Create<VertexFaceMesh>();
+							break;
 						case DxfSubclassMarker.PolyfaceMeshFace:
-							DxfMap.Create<FaceMesh>();
+							DxfMap.Create<VertexFaceRecord>();
 							break;
 						default:
 							throw new NotImplementedException($"Test not implemented for type {t.Name}");

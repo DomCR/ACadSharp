@@ -1,7 +1,5 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
 using ACadSharp.Tables;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
@@ -16,7 +14,13 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? BaseUcsHandle { get; set; }
 
+		public ulong? VisualStyleHandle { get; set; }
+
+		public short? ViewportId { get; internal set; }
+
 		public List<ulong> FrozenLayerHandles { get; set; } = new List<ulong>();
+
+		public CadViewportTemplate() : base(new Viewport()) { }
 
 		public CadViewportTemplate(Viewport entity) : base(entity) { }
 

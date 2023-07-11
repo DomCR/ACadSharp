@@ -20,6 +20,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityCircle;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Circle;
+		
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
 		/// </summary>

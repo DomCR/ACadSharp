@@ -11,7 +11,7 @@ namespace ACadSharp.IO.Templates
 
 		public List<ulong> VerticesHandles { get; set; } = new List<ulong>();
 
-		public ulong SeqendHandle { get; set; }
+		public ulong? SeqendHandle { get; set; }
 
 		public CadPolyfaceMeshTemplate(PolyfaceMesh polyfaceMesh) : base(polyfaceMesh) { }
 
@@ -50,11 +50,11 @@ namespace ACadSharp.IO.Templates
 		{
 			PolyfaceMesh polyfaceMesh = (PolyfaceMesh)this.CadObject;
 
-			if (item is Vertex3D v3)
+			if (item is VertexFaceMesh v3)
 			{
 				polyfaceMesh.Vertices.Add(v3);
 			}
-			else if (item is FaceMesh face)
+			else if (item is VertexFaceRecord face)
 			{
 				polyfaceMesh.Faces.Add(face);
 			}

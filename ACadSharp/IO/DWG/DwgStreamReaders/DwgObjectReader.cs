@@ -135,11 +135,6 @@ namespace ACadSharp.IO.DWG
 					continue;
 				}
 
-				if (handle == 1064)
-				{
-
-				}
-
 				//Get the object type
 				ObjectType type = this.getEntityType(offset);
 				//Save the object to avoid infinite loops while reading
@@ -733,9 +728,12 @@ namespace ACadSharp.IO.DWG
 					template = this.readVertex2D();
 					break;
 				case ObjectType.VERTEX_3D:
+					template = this.readVertex3D(new Vertex3D());
+					break;
 				case ObjectType.VERTEX_MESH:
+					break;
 				case ObjectType.VERTEX_PFACE:
-					template = this.readVertex3D();
+					template = this.readVertex3D(new VertexFaceMesh());
 					break;
 				case ObjectType.VERTEX_PFACE_FACE:
 					template = this.readPfaceVertex();
@@ -1002,7 +1000,8 @@ namespace ACadSharp.IO.DWG
 				case "MLEADER":
 				case "MLEADERSTYLE":
 				case "OLE2FRAME":
-				case "PLACEHOLDER":
+					break;
+				case "ACDBPLACEHOLDER":
 					template = this.readPlaceHolder();
 					break;
 				case "PLOTSETTINGS":
@@ -1430,7 +1429,7 @@ namespace ACadSharp.IO.DWG
 			{
 				for (int i = 0; i < template.OwnedObjectsCount; ++i)
 					//H[ATTRIB(hard owner)] Repeats “Owned Object Count” times.
-					template.OwnedHandles.Add(this.handleReference());
+					template.AttributesHandles.Add(this.handleReference());
 			}
 
 			//Common:
@@ -1482,9 +1481,8 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadTemplate readVertex3D()
+		private CadTemplate readVertex3D(Vertex vertex)
 		{
-			Vertex3D vertex = new Vertex3D();
 			CadEntityTemplate template = new CadEntityTemplate(vertex);
 
 			this.readCommonEntityData(template);
@@ -1499,7 +1497,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readPfaceVertex()
 		{
-			FaceMesh face = new FaceMesh();
+			VertexFaceRecord face = new VertexFaceRecord();
 			CadEntityTemplate template = new CadEntityTemplate(face);
 
 			this.readCommonEntityData(template);
@@ -3115,7 +3113,9 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Entry name TV 2
-			style.Name = this._textReader.ReadVariableText();
+			string name = this._textReader.ReadVariableText();
+			if (!string.IsNullOrWhiteSpace(name))
+				style.Name = name;
 
 			this.readXrefDependantBit(template.CadObject);
 
@@ -3137,6 +3137,8 @@ namespace ACadSharp.IO.DWG
 			style.LastHeight = this._objectReader.ReadBitDouble();
 			//Font name TV 3
 			style.Filename = this._textReader.ReadVariableText();
+			if (string.IsNullOrWhiteSpace(name))
+				style.Name = style.Filename;
 			//Bigfont name TV 4
 			style.BigFontFilename = this._textReader.ReadVariableText();
 
@@ -3929,7 +3931,7 @@ namespace ACadSharp.IO.DWG
 			//External reference block handle(hard pointer)
 			long block = (long)this.handleReference();
 			//340 shapefile(DIMTXSTY)(hard pointer)
-			template.DIMTXSTY = this.handleReference();
+			template.TextStyleHandle = this.handleReference();
 
 			//R2000+:
 			if (this.R2000Plus)

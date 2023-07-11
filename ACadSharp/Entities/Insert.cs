@@ -2,7 +2,6 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
-using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -22,6 +21,9 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityInsert;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Insert;
 
 		/// <summary>
 		/// Attributes from the block reference
@@ -165,7 +167,8 @@ namespace ACadSharp.Entities
 
 		private void attributesOnAdd(object sender, CollectionChangedEventArgs e)
 		{
-			this.Block.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));
+			//TODO: Fix the relation between insert and block
+			this.Block?.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));
 		}
 	}
 }

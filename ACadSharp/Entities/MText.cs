@@ -22,6 +22,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityMText;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.MText;
+
 		/// <summary>
 		/// A 3D WCS coordinate representing the insertion or origin point.
 		/// </summary>
@@ -140,7 +143,7 @@ namespace ACadSharp.Entities
 		/// <value>
 		/// The rotation angle in radians.
 		/// </value>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation
 		{
 			get => _rotation;

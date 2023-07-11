@@ -19,6 +19,9 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectDictionaryVar;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.DictionaryVariables;
+
 		/// <summary>
 		/// Value of variable
 		/// </summary>

@@ -14,6 +14,9 @@ namespace ACadSharp.Entities
 	public abstract class Entity : CadObject, IEntity
 	{
 		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Entity;
+
+		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name, 8)]
 		public Layer Layer
 		{

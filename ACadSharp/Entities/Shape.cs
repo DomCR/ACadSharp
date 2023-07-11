@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
-using System;
 
 namespace ACadSharp.Entities
 {
@@ -20,6 +19,9 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityShape;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Shape;
 
 		/// <summary>
 		/// Thickness

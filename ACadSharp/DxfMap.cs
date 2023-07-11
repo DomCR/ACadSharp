@@ -18,12 +18,6 @@ namespace ACadSharp
 
 		public Dictionary<string, DxfClassMap> SubClasses { get; private set; } = new Dictionary<string, DxfClassMap>();
 
-		public static CadObject Build<T>()
-			where T : CadObject
-		{
-			throw new NotImplementedException();
-		}
-
 		/// <summary>
 		/// Creates a dxf map for an <see cref="Entity"/> or a <see cref="TableEntry"/>
 		/// </summary>
@@ -39,7 +33,7 @@ namespace ACadSharp
 		//TODO: change to public? Using the type parameter does not constraing the use of the method
 		internal static DxfMap Create(Type type)
 		{
-			if (_cache.TryGetValue(type, out var map))
+			if (tryGetFromCache(type, out var map))
 			{
 				return map;
 			}
@@ -49,7 +43,7 @@ namespace ACadSharp
 
 			DxfNameAttribute dxf = type.GetCustomAttribute<DxfNameAttribute>();
 
-			map.Name = dxf.Name;
+			map.Name = dxf?.Name;
 
 			for (Type t = type; t != null; t = t.BaseType)
 			{
@@ -100,6 +94,11 @@ namespace ACadSharp
 
 			_cache.TryAdd(type, map);
 
+			if (tryGetFromCache(type, out map))
+			{
+				return map;
+			}
+
 			return map;
 		}
 
@@ -109,6 +108,37 @@ namespace ACadSharp
 		public static void ClearCache()
 		{
 			_cache.Clear();
+		}
+
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return $"DxfMap:{this.Name}";
+		}
+
+		private static bool tryGetFromCache(Type type, out DxfMap map)
+		{
+			map = null;
+
+			if (_cache.TryGetValue(type, out var curr))
+			{
+				map = new DxfMap();
+				map.Name = curr.Name;
+
+				foreach (var p in curr.DxfProperties)
+				{
+					map.DxfProperties.Add(p.Key, p.Value);
+				}
+
+				foreach (var sub in curr.SubClasses)
+				{
+					map.SubClasses.Add(sub.Key, sub.Value);
+				}
+
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

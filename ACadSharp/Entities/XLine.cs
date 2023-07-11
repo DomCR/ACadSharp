@@ -20,6 +20,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityXline;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.XLine;
+
 		/// <summary>
 		/// First point(in WCS)
 		/// </summary>

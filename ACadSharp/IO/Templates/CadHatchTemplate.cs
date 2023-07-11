@@ -1,15 +1,15 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal partial class CadHatchTemplate : CadEntityTemplate
+	internal partial class CadHatchTemplate : CadEntityTemplate<Hatch>
 	{
 		public string HatchPatternName { get; set; }
 
 		public List<CadBoundaryPathTemplate> PathTempaltes = new List<CadBoundaryPathTemplate>();
+
+		public CadHatchTemplate() : base(new Hatch()) { }
 
 		public CadHatchTemplate(Hatch hatch) : base(hatch) { }
 

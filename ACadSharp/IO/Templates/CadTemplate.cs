@@ -29,16 +29,19 @@ namespace ACadSharp.IO.Templates
 			this.CadObject = cadObject;
 		}
 
+		[Obsolete]
 		public virtual bool AddHandle(int dxfcode, ulong handle)
 		{
 			return false;
 		}
 
+		[Obsolete]
 		public virtual bool AddName(int dxfcode, string name)
 		{
 			return false;
 		}
 
+		[Obsolete]
 		public virtual bool CheckDxfCode(int dxfcode, object value)
 		{
 			//Will return true if the code is used by the template

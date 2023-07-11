@@ -1,11 +1,9 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
 using CSMath;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ACadSharp.Objects
 {
@@ -29,6 +27,9 @@ namespace ACadSharp.Objects
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectLayout;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Layout;
 
 		/// <summary>
 		/// Layout name

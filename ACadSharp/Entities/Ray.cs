@@ -14,8 +14,14 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Ray)]
 	public class Ray : Entity
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.RAY;
+
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityRay;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Ray;
 
 		/// <summary>
 		/// Start point(in WCS)

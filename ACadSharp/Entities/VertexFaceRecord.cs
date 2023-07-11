@@ -3,21 +3,21 @@
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Represents a <see cref="FaceMesh"/> entity.
+	/// Represents a <see cref="VertexFaceRecord"/> entity
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.EntityVertex"/> <br/>
-	/// Dxf class name <see cref="DxfSubclassMarker.PolyfaceMeshFace"/>
+	/// Dxf class name <see cref="DxfSubclassMarker.PolyfaceMeshVertex"/>
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityVertex)]
 	[DxfSubClass(DxfSubclassMarker.PolyfaceMeshFace)]
-	public class FaceMesh : Entity
+	public class VertexFaceRecord : Vertex
 	{
 		/// <inheritdoc/>
-		public override ObjectType ObjectType { get { return ObjectType.VERTEX_PFACE_FACE; } }
+		public override ObjectType ObjectType => ObjectType.VERTEX_PFACE_FACE;
 
 		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityVertex;
+		public override string SubclassMarker => DxfSubclassMarker.PolyfaceMeshFace;
 
 		/// <summary>
 		/// Vert index BS 71 1 - based vertex index(see DXF doc)
