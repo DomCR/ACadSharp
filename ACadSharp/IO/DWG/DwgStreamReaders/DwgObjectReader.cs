@@ -4325,7 +4325,7 @@ namespace ACadSharp.IO.DWG
 									//endpoint 2RD 11 endpoint of major axis
 									MajorAxisEndPoint = this._objectReader.Read2RawDouble(),
 									//minormajoratio BD 40 ratio of minor to major axis
-									Radius = this._objectReader.ReadBitDouble(),
+									MinorToMajorRatio = this._objectReader.ReadBitDouble(),
 									//startangle BD 50 start angle
 									StartAngle = this._objectReader.ReadBitDouble(),
 									//endangle BD 51 endangle
