@@ -36,7 +36,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Table);
 
-			this._writer.Write(DxfCode.Int16, table.Count);
+			this._writer.Write(70, table.Count);
 
 			if (!string.IsNullOrEmpty(subclass))
 			{
