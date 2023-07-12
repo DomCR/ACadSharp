@@ -640,7 +640,7 @@ namespace ACadSharp.IO.DWG
 			//Add the reactors to the template
 			for (int i = 0; i < numberOfReactors; ++i)
 				//[Reactors (soft pointer)]
-				template.CadObject.Reactors.Add(this.handleReference(), null);
+				template.ReactorsHandles.Add(this.handleReference());
 
 			bool flag = false;
 			//R2004+:
