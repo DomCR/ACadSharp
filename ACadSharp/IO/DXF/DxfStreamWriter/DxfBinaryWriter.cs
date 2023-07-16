@@ -4,7 +4,7 @@ using System.IO;
 
 namespace ACadSharp.IO.DXF
 {
-	internal class DxfBinaryWriter : IDxfStreamWriter
+	internal class DxfBinaryWriter : DxfStreamWriterBase
 	{
 		private BinaryWriter _stream;
 
@@ -17,34 +17,27 @@ namespace ACadSharp.IO.DXF
 			this._stream.Write(sentinel);
 		}
 
-		/// <inheritdoc/>
-		public void Dispose()
+		public override void Dispose()
 		{
 			this._stream.Dispose();
 		}
 
-		public void Flush()
+		public override void Flush()
 		{
 			this._stream.Flush();
 		}
 
-		public void Close()
+		public override void Close()
 		{
 			this._stream.Close();
 		}
 
-		public void Write(DxfCode code, object value)
-		{
-			this.Write((int)code, value);
-		}
-
-		public void Write(int code, object value)
+		protected override void writeDxfCode(int code)
 		{
 			this._stream.Write((short)code);
-			this.writeValue(code, value);
 		}
 
-		private void writeValue(int code, object value)
+		protected override void writeValue(int code, object value)
 		{
 			GroupCodeValueType groupCode = GroupCodeValue.TransformValue(code);
 

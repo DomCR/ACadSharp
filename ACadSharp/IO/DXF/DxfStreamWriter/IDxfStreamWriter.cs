@@ -7,7 +7,11 @@ namespace ACadSharp.IO.DXF
 	{
 		void Write(DxfCode code, object value);
 
+		void Write(DxfCode code, object value, DxfClassMap map);
+
 		void Write(int code, object value);
+
+		void Write(int code, object value, DxfClassMap map);
 
 		void Flush();
 
