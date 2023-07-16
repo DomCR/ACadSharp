@@ -45,16 +45,90 @@ namespace ACadSharp.IO.DXF
 
 			foreach (T entry in table)
 			{
-				DxfMap map = DxfMap.Create<T>();
-
-				this._writer.Write(DxfCode.Start, entry.ObjectName);
-
-				this.writeCommonObjectData(entry);
-
-				this.writeMap(map, entry);
+				writeEntry(entry);
 			}
 
 			this._writer.Write(DxfCode.Start, DxfFileToken.EndTable);
+		}
+
+		private void writeEntry<T>(T entry)
+			where T : TableEntry
+		{
+			DxfMap map = DxfMap.Create<T>();
+
+			this._writer.Write(DxfCode.Start, entry.ObjectName);
+
+			this.writeCommonObjectData(entry);
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.TableRecord);
+
+			switch (entry)
+			{
+				case LineType ltype:
+					this.writeLineType(ltype, map.SubClasses[ltype.SubclassMarker]);
+					break;
+				default:
+					this.writeClassMap(map.SubClasses[entry.SubclassMarker], entry);
+					break;
+			}
+
+			this.writeExtendedData(entry);
+		}
+
+		private void writeCommonEntryCodes<T>(T entry)
+			where T : TableEntry
+		{
+			this._writer.Write(DxfCode.Subclass, entry.SubclassMarker);
+			this._writer.Write(DxfCode.SymbolTableName, entry.Name);
+			this._writer.Write(70, entry.Flags);
+		}
+
+		private void writeLineType(LineType linetype, DxfClassMap map)
+		{
+			this.writeCommonEntryCodes(linetype);
+
+			this._writer.Write(3, linetype.Description, map);
+
+			this._writer.Write(72, (short)linetype.Alignment, map);
+			this._writer.Write(73, (short)linetype.Segments.Count(), map);
+			this._writer.Write(40, linetype.PatternLen);
+
+			foreach (LineType.Segment s in linetype.Segments)
+			{
+				this._writer.Write(49, s.Length);
+				this._writer.Write(74, (short)s.Shapeflag);
+
+				if (s.Shapeflag != LinetypeShapeFlags.None)
+				{
+					if (s.Shapeflag.HasFlag(LinetypeShapeFlags.Shape))
+					{
+						this._writer.Write(75, s.ShapeNumber);
+					}
+					if (s.Shapeflag.HasFlag(LinetypeShapeFlags.Text))
+					{
+						this._writer.Write(75, (short)0);
+					}
+
+					if (s.Style == null)
+					{
+						this._writer.Write(340, 0uL);
+					}
+					else
+					{
+						this._writer.Write(340, s.Style.Handle);
+					}
+
+					this._writer.Write(46, s.Scale);
+					this._writer.Write(50, s.Rotation * MathUtils.DegToRad);
+					this._writer.Write(44, s.Offset.X);
+					this._writer.Write(45, s.Offset.Y);
+
+					if (!string.IsNullOrEmpty(s.Text))
+					{
+						this._writer.Write(9, s.Text);
+					}
+				}
+			}
 		}
 	}
 }

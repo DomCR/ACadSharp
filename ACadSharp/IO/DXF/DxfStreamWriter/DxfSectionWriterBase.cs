@@ -70,6 +70,11 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		protected void writeExtendedData(CadObject cadObject)
+		{
+
+		}
+
 		protected void writeMap(DxfMap map, CadObject cadObject)
 		{
 			foreach (var item in map.SubClasses)

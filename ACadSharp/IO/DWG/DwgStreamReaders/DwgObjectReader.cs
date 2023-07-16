@@ -3177,7 +3177,7 @@ namespace ACadSharp.IO.DWG
 			//Description TV 3
 			ltype.Description = this._textReader.ReadVariableText();
 			//Pattern Len BD 40
-			ltype.PatternLen = this._objectReader.ReadBitDouble();
+			template.TotalLen = this._objectReader.ReadBitDouble();
 			//Alignment RC 72 Always 'A'.
 			ltype.Alignment = this._objectReader.ReadRawChar();
 
