@@ -70,7 +70,7 @@ namespace ACadSharp.Tables
 		/// PlotStyleName object
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Unprocess, 390)]
-		public ulong PlotStyleName { get; set; } = 0;   //Note: The handle points to an ACDBPLACEHOLDER
+		public ulong PlotStyleName { get; internal set; } = 0;   //Note: The handle points to an ACDBPLACEHOLDER
 
 		/// <summary>
 		/// Hard-pointer ID/handle to Material object

@@ -19,6 +19,18 @@
 			this.Write(code, value, null);
 		}
 
+		public void WriteHandle(int code, CadObject value, DxfClassMap map)
+		{
+			if (value == null)
+			{
+				this.Write(code, 0, map);
+			}
+			else
+			{
+				this.Write(code, value.Handle, map);
+			}
+		}
+
 		public void Write(int code, object value, DxfClassMap map)
 		{
 			if (map != null && map.DxfProperties.TryGetValue(code, out DxfProperty prop))
