@@ -275,7 +275,21 @@ namespace ACadSharp.IO.DXF
 
 		private void writeTextStyle(TextStyle textStyle, DxfClassMap map)
 		{
-			throw new NotImplementedException();
+			if (!string.IsNullOrEmpty(textStyle.Filename))
+			{
+				this._writer.Write(3, textStyle.Filename, map);
+			}
+
+			if (!string.IsNullOrEmpty(textStyle.BigFontFilename))
+			{
+				this._writer.Write(4, textStyle.BigFontFilename);
+			}
+
+			this._writer.Write(40, textStyle.Height, map);
+			this._writer.Write(41, textStyle.Width, map);
+			this._writer.Write(42, textStyle.LastHeight, map);
+			this._writer.Write(50, textStyle.ObliqueAngle, map);
+			this._writer.Write(71, textStyle.MirrorFlag, map);
 		}
 
 		private void writeUcs(UCS ucs, DxfClassMap map)
