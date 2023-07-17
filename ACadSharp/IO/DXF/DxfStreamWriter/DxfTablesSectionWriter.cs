@@ -294,7 +294,21 @@ namespace ACadSharp.IO.DXF
 
 		private void writeUcs(UCS ucs, DxfClassMap map)
 		{
-			throw new NotImplementedException();
+			this._writer.Write(10, ucs.Origin.X, map);
+			this._writer.Write(20, ucs.Origin.Y, map);
+			this._writer.Write(30, ucs.Origin.Z, map);
+
+			this._writer.Write(11, ucs.XAxis.X, map);
+			this._writer.Write(21, ucs.XAxis.Y, map);
+			this._writer.Write(31, ucs.XAxis.Z, map);
+
+			this._writer.Write(12, ucs.YAxis.X, map);
+			this._writer.Write(22, ucs.YAxis.Y, map);
+			this._writer.Write(32, ucs.YAxis.Z, map);
+
+			this._writer.Write(71, ucs.OrthographicType, map);
+			this._writer.Write(79, ucs.OrthographicViewType, map);
+			this._writer.Write(146, ucs.Elevation, map);
 		}
 
 		private void writeView(View view, DxfClassMap map)
