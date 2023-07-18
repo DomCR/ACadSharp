@@ -32,7 +32,7 @@
 		{
 			if (value == null)
 			{
-				this.Write(code, 0, map);
+				this.Write(code, (ulong)0, map);
 			}
 			else
 			{
@@ -42,6 +42,11 @@
 
 		public void Write(int code, object value, DxfClassMap map)
 		{
+			if (value == null)
+			{
+				return;
+			}
+
 			if (map != null && map.DxfProperties.TryGetValue(code, out DxfProperty prop))
 			{
 				if (prop.ReferenceType.HasFlag(DxfReferenceType.Optional) && !WriteOptional)

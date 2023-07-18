@@ -93,8 +93,10 @@ namespace ACadSharp.IO.DXF
 				case VPort vport:
 					this.writeVPort(vport, map.SubClasses[vport.SubclassMarker]);
 					break;
+#if TEST
 				default:
 					throw new NotImplementedException();
+#endif
 			}
 
 			this.writeExtendedData(entry);
@@ -222,9 +224,11 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(6, layer.LineType.Name, map);
 
 			this._writer.Write(290, layer.PlotFlag, map);
+
 			this._writer.Write(370, (short)layer.LineWeight, map);
 
 			//this._writer.Write(390, layer.PlotStyleName, map);
+			this._writer.Write(390, (ulong)0, map);
 		}
 
 		private void writeLineType(LineType linetype, DxfClassMap map)
