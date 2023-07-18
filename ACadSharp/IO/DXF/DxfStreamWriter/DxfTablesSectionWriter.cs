@@ -341,7 +341,27 @@ namespace ACadSharp.IO.DXF
 
 		private void writeVPort(VPort vport, DxfClassMap map)
 		{
-			throw new NotImplementedException();
+			this._writer.Write(10, vport.BottomLeft, map);
+
+			this._writer.Write(11, vport.TopRight, map);
+
+			this._writer.Write(12, vport.Center, map);
+
+			this._writer.Write(13, vport.SnapBasePoint, map);
+
+			this._writer.Write(14, vport.SnapSpacing, map);
+
+			this._writer.Write(15, vport.GridSpacing, map);
+
+			this._writer.Write(16, vport.Direction, map);
+
+			this._writer.Write(17, vport.Target, map);
+
+			this._writer.Write(40, vport.ViewHeight);
+			this._writer.Write(41, vport.AspectRatio);
+
+			this._writer.Write(75, vport.SnapOn ? (short)1 : (short)0);
+			this._writer.Write(76, vport.ShowGrid ? (short)1 : (short)0);
 		}
 	}
 }
