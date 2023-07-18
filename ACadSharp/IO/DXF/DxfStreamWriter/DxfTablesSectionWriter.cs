@@ -313,7 +313,30 @@ namespace ACadSharp.IO.DXF
 
 		private void writeView(View view, DxfClassMap map)
 		{
-			throw new NotImplementedException();
+			this._writer.Write(40, view.Height, map);
+			this._writer.Write(41, view.Width, map);
+
+			this._writer.Write(42, view.LensLength, map);
+			this._writer.Write(43, view.FrontClipping, map);
+			this._writer.Write(44, view.BackClipping, map);
+
+			this._writer.Write(10, view.Center, map);
+			this._writer.Write(11, view.Direction, map);
+			this._writer.Write(12, view.Target, map);
+
+			this._writer.Write(50, view.Angle, map);
+
+			this._writer.Write(71, (short)view.ViewMode);
+			this._writer.Write(72, view.IsUcsAssociated, map);
+			this._writer.Write(79, (short)view.UcsOrthographicType);
+
+			this._writer.Write(281, (byte)view.RenderMode);
+
+			this._writer.Write(110, view.UcsOrigin);
+			this._writer.Write(111, view.UcsXAxis);
+			this._writer.Write(112, view.UcsYAxis);
+
+			this._writer.Write(146, view.UcsElevation);
 		}
 
 		private void writeVPort(VPort vport, DxfClassMap map)

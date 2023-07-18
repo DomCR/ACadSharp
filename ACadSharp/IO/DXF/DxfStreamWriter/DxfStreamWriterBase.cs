@@ -19,6 +19,15 @@
 			this.Write(code, value, null);
 		}
 
+		public void Write(int code, CSMath.IVector value, DxfClassMap map)
+		{
+			double[] comp = value.GetComponents();
+			for (int i = 0; i < comp.Length; i++)
+			{
+				this.Write(code + i * 10, comp[i], map);
+			}
+		}
+
 		public void WriteHandle(int code, CadObject value, DxfClassMap map)
 		{
 			if (value == null)
