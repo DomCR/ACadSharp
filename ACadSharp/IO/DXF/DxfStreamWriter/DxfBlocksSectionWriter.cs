@@ -16,24 +16,26 @@ namespace ACadSharp.IO.DXF
 		{
 			foreach (BlockRecord b in this._document.BlockRecords)
 			{
-				DxfMap map = DxfMap.Create<Block>();
-
-				this._writer.Write(DxfCode.Start, b.BlockEntity.ObjectName);
-
-				this.writeCommonObjectData(b.BlockEntity);
-
-				this.writeMap(map, b.BlockEntity);
-
-				this.processEntities(b);
-
-				DxfMap bendmap = DxfMap.Create<BlockEnd>();
-
-				this._writer.Write(DxfCode.Start, b.BlockEnd.ObjectName);
-
-				this.writeCommonObjectData(b.BlockEnd);
-
-				this.writeMap(bendmap, b.BlockEnd);
+				writeBlock(b);
 			}
+		}
+
+		private void writeBlock(BlockRecord block)
+		{
+			DxfMap map = DxfMap.Create<Block>();
+			DxfClassMap blockMap = map.SubClasses[block.SubclassMarker];
+
+			this._writer.Write(DxfCode.Start, block.BlockEntity.ObjectName);
+
+			this.writeCommonObjectData(block.BlockEntity);
+
+			//this.writeMap(map, b.BlockEntity);
+			this.writeCommonEntity(block.BlockEntity);
+
+			this._writer.Write(DxfCode.BlockName, block.Name, blockMap);
+
+			this.processEntities(block);
+
 		}
 
 		private void processEntities(BlockRecord b)
@@ -52,6 +54,18 @@ namespace ACadSharp.IO.DXF
 					this.writeMappedObject(e);
 				}
 			}
+		}
+
+		private void writeBlockEnd(BlockEnd block)
+		{
+
+			DxfMap bendmap = DxfMap.Create<BlockEnd>();
+
+			this._writer.Write(DxfCode.Start, block.ObjectName);
+
+			this.writeCommonObjectData(block);
+
+			this.writeMap(bendmap, block);
 		}
 	}
 }

@@ -75,6 +75,42 @@ namespace ACadSharp.IO.DXF
 
 		}
 
+		protected void writeCommonEntity(Entity entity)
+		{
+			DxfClassMap map = DxfClassMap.Create<Entity>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Entity);
+
+			this._writer.Write(8, entity.Layer.Name);
+
+			this._writer.Write(6, entity.LineType.Name);
+			this._writer.Write(62, entity.Color.Index);
+
+			this._writer.Write(62, entity.Color.Index);
+
+			if (entity.Color.IsTrueColor)
+			{
+				this._writer.Write(420, entity.Color.TrueColor);
+			}
+
+			if (entity.Transparency.Value >= 0)
+			{
+				//this._writer.Write(440, entity.Transparency.Value);
+			}
+
+			this._writer.Write(48, entity.LinetypeScale, map);
+
+			this._writer.Write(60, entity.IsInvisible ? (short)1 : (short)0, map);
+
+			// Write if the layout is paperspace
+			if (false)
+			{
+				this._writer.Write(67, (short)1);
+			}
+
+			this._writer.Write(370, entity.LineWeight);
+		}
+
 		protected void writeMap(DxfMap map, CadObject cadObject)
 		{
 			foreach (var item in map.SubClasses)
@@ -243,12 +279,12 @@ namespace ACadSharp.IO.DXF
 				return;
 
 			this._writer.Write(75, segment.ShapeNumber);
-			
+
 			if (segment.Style != null)
 			{
 				this._writer.Write(340, segment.Style.Handle);
 			}
-			
+
 			this._writer.Write(46, segment.Scale);
 			this._writer.Write(50, segment.Rotation);
 			this._writer.Write(44, segment.Offset.X);
