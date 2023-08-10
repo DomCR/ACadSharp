@@ -7,7 +7,10 @@ namespace ACadSharp.IO
 {
 	public class DxfWriterOptions
 	{
-		private static readonly string[] _mainVariables = new string[]
+		/// <summary>
+		/// Variables that must be writen in a dxf file
+		/// </summary>
+		public static readonly string[] Variables = new string[]
 		{
 			"$ACADVER",
 			"$DWGCODEPAGE",
@@ -48,7 +51,7 @@ namespace ACadSharp.IO
 			"$TDUCREATE",
 			"$TDUPDATE",
 			"$TDUUPDATE",
-			"$TDUPDATE",
+			"$TDINDWG",
 		};
 
 		/// <summary>
@@ -71,12 +74,15 @@ namespace ACadSharp.IO
 
 		public DxfWriterOptions()
 		{
-			this._headerVariables = new HashSet<string>(_mainVariables);
+			this._headerVariables = new HashSet<string>(Variables);
 		}
 
 		/// <summary>
-		/// 
+		/// Add a Header variable name to be added in the dxf document
 		/// </summary>
+		/// <remarks>
+		/// The name of the variable must exist in <see cref="CadHeader.GetHeaderMap"/>
+		/// </remarks>
 		/// <param name="name"></param>
 		/// <exception cref="ArgumentException"></exception>
 		public void AddHeaderVariable(string name)
@@ -91,9 +97,18 @@ namespace ACadSharp.IO
 			this._headerVariables.Add(name);
 		}
 
+		/// <summary>
+		/// Remove a Header variable name so is not added in the dxf document
+		/// </summary>
+		/// <remarks>
+		/// The name cannot be a in the <see cref="Variables"/> list
+		/// </remarks>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentException"></exception>
 		public bool RemoveHeaderVariable(string name)
 		{
-			if (_mainVariables.Select(v => v.ToLowerInvariant()).Contains(name.ToLowerInvariant()))
+			if (Variables.Select(v => v.ToLowerInvariant()).Contains(name.ToLowerInvariant()))
 			{
 				throw new ArgumentException($"The variable {name} cannot be removed from the set", nameof(name));
 			}
