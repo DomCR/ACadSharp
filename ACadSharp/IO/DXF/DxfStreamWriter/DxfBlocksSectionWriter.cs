@@ -23,19 +23,19 @@ namespace ACadSharp.IO.DXF
 		private void writeBlock(BlockRecord block)
 		{
 			DxfMap map = DxfMap.Create<Block>();
-			DxfClassMap blockMap = map.SubClasses[block.SubclassMarker];
+			DxfClassMap blockMap = map.SubClasses[block.BlockEntity.SubclassMarker];
 
 			this._writer.Write(DxfCode.Start, block.BlockEntity.ObjectName);
 
 			this.writeCommonObjectData(block.BlockEntity);
 
-			//this.writeMap(map, b.BlockEntity);
 			this.writeCommonEntity(block.BlockEntity);
 
 			this._writer.Write(DxfCode.BlockName, block.Name, blockMap);
 
 			this.processEntities(block);
 
+			this.writeBlockEnd(block.BlockEnd);
 		}
 
 		private void processEntities(BlockRecord b)
@@ -58,7 +58,6 @@ namespace ACadSharp.IO.DXF
 
 		private void writeBlockEnd(BlockEnd block)
 		{
-
 			DxfMap bendmap = DxfMap.Create<BlockEnd>();
 
 			this._writer.Write(DxfCode.Start, block.ObjectName);
