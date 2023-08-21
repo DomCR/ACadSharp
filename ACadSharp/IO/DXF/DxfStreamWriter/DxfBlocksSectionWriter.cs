@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
-using System;
 using System.Linq;
 
 namespace ACadSharp.IO.DXF
@@ -58,13 +57,13 @@ namespace ACadSharp.IO.DXF
 
 		private void writeBlockEnd(BlockEnd block)
 		{
-			DxfMap bendmap = DxfMap.Create<BlockEnd>();
-
 			this._writer.Write(DxfCode.Start, block.ObjectName);
 
 			this.writeCommonObjectData(block);
 
-			this.writeMap(bendmap, block);
+			this.writeCommonEntity(block);
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.BlockEnd);
 		}
 	}
 }
