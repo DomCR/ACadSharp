@@ -72,10 +72,9 @@ namespace ACadSharp.IO.DXF
 
 		protected void writeExtendedData(CadObject cadObject)
 		{
-
 		}
 
-		protected void writeCommonEntity(Entity entity)
+		protected void writeCommonEntityData(Entity entity)
 		{
 			DxfClassMap map = DxfClassMap.Create<Entity>();
 
@@ -84,13 +83,15 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(8, entity.Layer.Name);
 
 			this._writer.Write(6, entity.LineType.Name);
-			this._writer.Write(62, entity.Color.Index);
 
-			this._writer.Write(62, entity.Color.Index);
 
 			if (entity.Color.IsTrueColor)
 			{
 				this._writer.Write(420, entity.Color.TrueColor);
+			}
+			else
+			{
+				this._writer.Write(62, entity.Color.Index);
 			}
 
 			if (entity.Transparency.Value >= 0)
@@ -111,6 +112,27 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(370, entity.LineWeight);
 		}
 
+		protected void writeEntity<T>(T entity)
+			where T : Entity
+		{
+			this._writer.Write(DxfCode.Start, entity.ObjectName);
+
+			this.writeCommonObjectData(entity);
+
+			this.writeCommonEntityData(entity);
+
+			switch (entity)
+			{
+				case Arc arc:
+					this.writeArc(arc);
+					return;
+				case Circle circle:
+					this.writeCircle(circle);
+					return;
+			}
+		}
+
+		[Obsolete]
 		protected void writeMap(DxfMap map, CadObject cadObject)
 		{
 			foreach (var item in map.SubClasses)
@@ -119,6 +141,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		[Obsolete]
 		protected void writeClassMap(DxfClassMap cmap, CadObject cadObject)
 		{
 			this._writer.Write(DxfCode.Subclass, cmap.Name);
@@ -152,6 +175,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		[Obsolete]
 		protected void writeCollection(IEnumerable arr, DxfCode[] codes = null)
 		{
 			foreach (var item in arr)
@@ -194,6 +218,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		[Obsolete]
 		protected void writeMappedObject<T>(T e)
 			where T : CadObject
 		{
@@ -245,20 +270,29 @@ namespace ACadSharp.IO.DXF
 
 		private void writeArc(Arc arc)
 		{
-			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
-			DxfClassMap circleMap = DxfClassMap.Create<Circle>();
+			DxfClassMap map = DxfClassMap.Create<Arc>();
 
-			this._writer.Write(DxfCode.Start, arc.ObjectName);
-
-			this.writeCommonObjectData(arc);
-
-			this.writeClassMap(entityMap, arc);
-
-			this.writeClassMap(circleMap, arc);
+			this.writeCircle(arc);
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Arc);
-			this._writer.Write(50, arc.StartAngle * MathUtils.RadToDeg);
-			this._writer.Write(51, arc.EndAngle * MathUtils.RadToDeg);
+
+			this._writer.Write(50, arc.StartAngle, map);
+			this._writer.Write(51, arc.EndAngle, map);
+		}
+
+
+		private void writeCircle(Circle circle)
+		{
+			DxfClassMap map = DxfClassMap.Create<Circle>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Circle);
+
+			this._writer.Write(10, circle.Center, map);
+
+			this._writer.Write(39, circle.Thickness, map);
+			this._writer.Write(40, circle.Radius, map);
+
+			this._writer.Write(210, circle.Normal, map);
 		}
 
 		private void writeDoubles(DxfCode[] codes, params double[] arr)

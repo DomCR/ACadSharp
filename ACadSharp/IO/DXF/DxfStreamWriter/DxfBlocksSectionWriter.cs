@@ -15,26 +15,35 @@ namespace ACadSharp.IO.DXF
 		{
 			foreach (BlockRecord b in this._document.BlockRecords)
 			{
-				writeBlock(b);
+				this.writeBlock(b.BlockEntity);
+				this.processEntities(b);
+				this.writeBlockEnd(b.BlockEnd);
 			}
 		}
 
-		private void writeBlock(BlockRecord block)
+		private void writeBlock(Block block)
 		{
-			DxfMap map = DxfMap.Create<Block>();
-			DxfClassMap blockMap = map.SubClasses[block.BlockEntity.SubclassMarker];
+			DxfClassMap map = DxfClassMap.Create<Block>();
 
-			this._writer.Write(DxfCode.Start, block.BlockEntity.ObjectName);
+			this._writer.Write(DxfCode.Start, block.ObjectName);
 
-			this.writeCommonObjectData(block.BlockEntity);
+			this.writeCommonObjectData(block);
 
-			this.writeCommonEntity(block.BlockEntity);
+			this.writeCommonEntityData(block);
 
-			this._writer.Write(DxfCode.BlockName, block.Name, blockMap);
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.BlockBegin);
 
-			this.processEntities(block);
+			if (!string.IsNullOrEmpty(block.XrefPath))
+			{
+				this._writer.Write(1, block.XrefPath, map);
+			}
+			this._writer.Write(2, block.Name, map);
+			this._writer.Write(70, (short)block.Flags, map);
 
-			this.writeBlockEnd(block.BlockEnd);
+			this._writer.Write(10, block.BasePoint, map);
+		
+			this._writer.Write(3, block.Name, map);
+			this._writer.Write(4, block.Comments, map);
 		}
 
 		private void processEntities(BlockRecord b)
@@ -50,7 +59,7 @@ namespace ACadSharp.IO.DXF
 			{
 				foreach (Entity e in b.Entities.Concat(b.Viewports))
 				{
-					this.writeMappedObject(e);
+					this.writeEntity(e);
 				}
 			}
 		}
@@ -61,7 +70,9 @@ namespace ACadSharp.IO.DXF
 
 			this.writeCommonObjectData(block);
 
-			this.writeCommonEntity(block);
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Entity);
+
+			this._writer.Write(8, block.Layer.Name);
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.BlockEnd);
 		}
