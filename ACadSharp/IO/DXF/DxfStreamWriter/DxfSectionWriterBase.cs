@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.DXF
 {
-	internal abstract class DxfSectionWriterBase
+	internal abstract partial class DxfSectionWriterBase
 	{
 		public event NotificationEventHandler OnNotification;
 
@@ -112,25 +112,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(370, entity.LineWeight);
 		}
 
-		protected void writeEntity<T>(T entity)
-			where T : Entity
-		{
-			this._writer.Write(DxfCode.Start, entity.ObjectName);
 
-			this.writeCommonObjectData(entity);
-
-			this.writeCommonEntityData(entity);
-
-			switch (entity)
-			{
-				case Arc arc:
-					this.writeArc(arc);
-					return;
-				case Circle circle:
-					this.writeCircle(circle);
-					return;
-			}
-		}
 
 		[Obsolete]
 		protected void writeMap(DxfMap map, CadObject cadObject)
@@ -268,33 +250,6 @@ namespace ACadSharp.IO.DXF
 
 		protected abstract void writeSection();
 
-		private void writeArc(Arc arc)
-		{
-			DxfClassMap map = DxfClassMap.Create<Arc>();
-
-			this.writeCircle(arc);
-
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Arc);
-
-			this._writer.Write(50, arc.StartAngle, map);
-			this._writer.Write(51, arc.EndAngle, map);
-		}
-
-
-		private void writeCircle(Circle circle)
-		{
-			DxfClassMap map = DxfClassMap.Create<Circle>();
-
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Circle);
-
-			this._writer.Write(10, circle.Center, map);
-
-			this._writer.Write(39, circle.Thickness, map);
-			this._writer.Write(40, circle.Radius, map);
-
-			this._writer.Write(210, circle.Normal, map);
-		}
-
 		private void writeDoubles(DxfCode[] codes, params double[] arr)
 		{
 			for (int i = 0; i < arr.Length; i++)
@@ -392,39 +347,6 @@ namespace ACadSharp.IO.DXF
 			this.writeClassMap(entityMap, polyline);
 
 			this.writeClassMap(plineMap, polyline);
-
-			this.writeCollection(polyline.Vertices);
-		}
-
-		private void writePolyline(Polyline polyline)
-		{
-			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
-			DxfClassMap plineMap = null;
-
-			this._writer.Write(DxfCode.Start, polyline.ObjectName);
-
-			this.writeCommonObjectData(polyline);
-
-			this.writeClassMap(entityMap, polyline);
-
-			switch (polyline)
-			{
-				case Polyline2D:
-					plineMap = DxfClassMap.Create<Polyline2D>();
-					break;
-				case Polyline3D:
-					plineMap = DxfClassMap.Create<Polyline3D>();
-					break;
-			}
-
-			//Remove elevation
-			plineMap.DxfProperties.Remove(30);
-
-			this.writeClassMap(plineMap, polyline);
-
-			this._writer.Write(DxfCode.XCoordinate, 0);
-			this._writer.Write(DxfCode.YCoordinate, 0);
-			this._writer.Write(DxfCode.ZCoordinate, polyline.Elevation);
 
 			this.writeCollection(polyline.Vertices);
 		}
