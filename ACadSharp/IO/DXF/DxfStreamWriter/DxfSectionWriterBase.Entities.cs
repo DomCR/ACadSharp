@@ -28,11 +28,20 @@ namespace ACadSharp.IO.DXF
 				case Line line:
 					this.writeLine(line);
 					break;
+				case LwPolyline lwPolyline:
+					this.writeLwPolyline(lwPolyline);
+					break;
 				case Point point:
 					this.writePoint(point);
 					break;
 				case Polyline polyline:
 					this.writePolyline(polyline);
+					break;
+				case TextEntity text:
+					this.writeTextEntity(text);
+					break;
+				case Vertex vertex:
+					this.writeVertex(vertex);
 					break;
 				default:
 					throw new NotImplementedException($"Entity not implemented {entity.GetType().FullName}");
@@ -98,6 +107,29 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(210, line.Normal, map);
 		}
 
+		private void writeLwPolyline(LwPolyline polyline)
+		{
+			DxfClassMap map = DxfClassMap.Create<LwPolyline>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.LwPolyline);
+
+			this._writer.Write(90, polyline.Vertices.Count);
+			this._writer.Write(70, (short)polyline.Flags);
+
+			this._writer.Write(38, polyline.Elevation);
+			this._writer.Write(39, polyline.Thickness);
+
+			foreach (LwPolyline.Vertex v in polyline.Vertices)
+			{
+				this._writer.Write(10, v.Location);
+				this._writer.Write(40, v.StartWidth);
+				this._writer.Write(41, v.EndWidth);
+				this._writer.Write(42, v.Bulge);
+			}
+
+			this._writer.Write(210, polyline.Normal, map);
+		}
+
 		private void writePoint(Point line)
 		{
 			DxfClassMap map = DxfClassMap.Create<Point>();
@@ -115,35 +147,142 @@ namespace ACadSharp.IO.DXF
 
 		private void writePolyline(Polyline polyline)
 		{
-			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
-			DxfClassMap plineMap = null;
-
-			this._writer.Write(DxfCode.Start, polyline.ObjectName);
-
-			this.writeCommonObjectData(polyline);
-
-			this.writeClassMap(entityMap, polyline);
+			DxfClassMap map;
 
 			switch (polyline)
 			{
 				case Polyline2D:
-					plineMap = DxfClassMap.Create<Polyline2D>();
+					map = DxfClassMap.Create<Polyline2D>();
 					break;
 				case Polyline3D:
-					plineMap = DxfClassMap.Create<Polyline3D>();
+					map = DxfClassMap.Create<Polyline3D>();
 					break;
+				default:
+					throw new NotImplementedException($"Polyline not implemented {polyline.GetType().FullName}");
 			}
 
-			//Remove elevation
-			plineMap.DxfProperties.Remove(30);
-
-			this.writeClassMap(plineMap, polyline);
+			this._writer.Write(DxfCode.Subclass, polyline.SubclassMarker);
 
 			this._writer.Write(DxfCode.XCoordinate, 0);
 			this._writer.Write(DxfCode.YCoordinate, 0);
 			this._writer.Write(DxfCode.ZCoordinate, polyline.Elevation);
 
-			this.writeCollection(polyline.Vertices);
+			this._writer.Write(70, (short)polyline.Flags, map);
+			this._writer.Write(75, (short)polyline.SmoothSurface, map);
+
+			this._writer.Write(210, polyline.Normal, map);
+
+			foreach (Vertex v in polyline.Vertices)
+			{
+				this.writeEntity(v);
+			}
+
+			this.writeSeqend(polyline.Vertices.Seqend);
+		}
+
+		private void writeSeqend(Seqend seqend)
+		{
+			this._writer.Write(0, seqend.ObjectName);
+			this._writer.Write(5, seqend.Handle);
+			this._writer.Write(330, seqend.Owner.Handle);
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Entity);
+			this._writer.Write(8, seqend.Layer.Name);
+		}
+
+		private void writeTextEntity(TextEntity text)
+		{
+			DxfClassMap map = DxfClassMap.Create<TextEntity>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Text);
+
+			this._writer.Write(1, text.Value, map);
+
+			this._writer.Write(10, text.InsertPoint, map);
+
+			this._writer.Write(40, text.Height, map);
+
+			if (text.WidthFactor != 1.0)
+			{
+				this._writer.Write(41, text.WidthFactor, map);
+			}
+
+			if (text.Rotation != 0.0)
+			{
+				this._writer.Write(50, text.Rotation, map);
+			}
+
+			if (text.ObliqueAngle != 0.0)
+			{
+				this._writer.Write(51, text.ObliqueAngle, map);
+			}
+
+			if (text.Style != null)
+			{
+				//TODO: Implement text style in the writer
+				//this._writer.Write(7, text.Style.Name);
+			}
+
+			this._writer.Write(11, text.AlignmentPoint, map);
+
+			this._writer.Write(210, text.Normal, map);
+
+			if (text.Mirror != 0)
+			{
+				this._writer.Write(71, text.Mirror, map);
+			}
+			if (text.HorizontalAlignment != 0)
+			{
+				this._writer.Write(72, text.HorizontalAlignment, map);
+			}
+
+			if (text.GetType() == typeof(TextEntity))
+			{
+				this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Text);
+
+				if (text.VerticalAlignment != 0)
+				{
+					this._writer.Write(73, text.VerticalAlignment, map);
+				}
+			}
+
+			if (text is AttributeBase)
+			{
+				switch (text)
+				{
+					case AttributeEntity att:
+						this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Attribute);
+						this.writeAttributeBase(att);
+						break;
+					case AttributeDefinition attdef:
+						this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.AttributeDefinition);
+						this._writer.Write(3, attdef.Prompt, DxfClassMap.Create<AttributeDefinition>());
+						this.writeAttributeBase(attdef);
+						break;
+					default:
+						throw new ArgumentException($"Unknown AttributeBase type {text.GetType().FullName}");
+				}
+			}
+		}
+
+		private void writeAttributeBase(AttributeBase att)
+		{
+			this._writer.Write(2, att.Tag);
+			
+			this._writer.Write(70, (short)att.Flags);
+			this._writer.Write(73, (short)0);
+
+			if (att.VerticalAlignment != 0)
+			{
+				this._writer.Write(74, (short)att.VerticalAlignment);
+			}
+		}
+
+		private void writeVertex(Vertex v)
+		{
+			DxfClassMap map = DxfClassMap.Create<Vertex>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Vertex);
+
 		}
 	}
 }

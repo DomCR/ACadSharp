@@ -24,6 +24,7 @@ namespace ACadSharp
 		public SeqendCollection(CadObject owner) : base(owner)
 		{
 			this.Seqend = new Seqend();
+			this.Seqend.Owner = owner;
 		}
 	}
 }

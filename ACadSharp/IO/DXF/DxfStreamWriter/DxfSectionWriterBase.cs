@@ -112,8 +112,6 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(370, entity.LineWeight);
 		}
 
-
-
 		[Obsolete]
 		protected void writeMap(DxfMap map, CadObject cadObject)
 		{
@@ -333,119 +331,6 @@ namespace ACadSharp.IO.DXF
 				this._writer.Write(66, 1);
 				this.writeCollection(insert.Attributes);
 			}
-		}
-
-		private void writeLwPolyline(LwPolyline polyline)
-		{
-			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
-			DxfClassMap plineMap = DxfClassMap.Create<LwPolyline>();
-
-			this._writer.Write(DxfCode.Start, polyline.ObjectName);
-
-			this.writeCommonObjectData(polyline);
-
-			this.writeClassMap(entityMap, polyline);
-
-			this.writeClassMap(plineMap, polyline);
-
-			this.writeCollection(polyline.Vertices);
-		}
-
-		private void writeTextEntity(TextEntity text)
-		{
-			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
-			DxfClassMap textMap = DxfClassMap.Create<TextEntity>();
-
-			this._writer.Write(DxfCode.Start, text.ObjectName);
-
-			this.writeCommonObjectData(text);
-
-			this.writeClassMap(entityMap, text);
-
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Text);
-
-			this._writer.Write(1, text.Value);
-
-			this._writer.Write(10, text.InsertPoint.X);
-			this._writer.Write(20, text.InsertPoint.Y);
-			this._writer.Write(30, text.InsertPoint.Z);
-
-			this._writer.Write(40, text.Height);
-
-			if (text.WidthFactor != 1.0)
-			{
-				this._writer.Write(41, text.WidthFactor);
-			}
-
-			if (text.Rotation != 0.0)
-			{
-				this._writer.Write(50, text.Rotation);
-			}
-
-			if (text.ObliqueAngle != 0.0)
-			{
-				this._writer.Write(51, text.ObliqueAngle);
-			}
-
-			if (text.Style != null)
-			{
-				//TODO: Implement text style in the writer
-				//this._writer.Write(7, text.Style.Name);
-			}
-
-			this._writer.Write(11, text.AlignmentPoint.X);
-			this._writer.Write(21, text.AlignmentPoint.Y);
-			this._writer.Write(31, text.AlignmentPoint.Z);
-
-			this._writer.Write(210, text.Normal.X);
-			this._writer.Write(220, text.Normal.Y);
-			this._writer.Write(230, text.Normal.Z);
-
-			if (text is not AttributeBase)
-			{
-				if (text.Mirror != 0)
-				{
-					this._writer.Write(71, text.Mirror);
-				}
-				if (text.HorizontalAlignment != 0)
-				{
-					this._writer.Write(72, text.HorizontalAlignment);
-				}
-
-				this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Text);
-
-				if (text.VerticalAlignment != 0)
-				{
-					this._writer.Write(73, text.VerticalAlignment);
-				}
-			}
-			else
-			{
-				DxfClassMap attMap = null;
-
-				switch (text)
-				{
-					case AttributeEntity:
-						attMap = DxfClassMap.Create<AttributeEntity>();
-						break;
-					case AttributeDefinition:
-						attMap = DxfClassMap.Create<AttributeDefinition>();
-						break;
-				}
-
-				this.writeClassMap(attMap, text);
-			}
-		}
-
-		private void writeVertex(Vertex v)
-		{
-			DxfMap map = DxfMap.Create(v.GetType());
-
-			this._writer.Write(DxfCode.Start, v.ObjectName);
-
-			this.writeCommonObjectData(v);
-
-			this.writeMap(map, v);
 		}
 
 		protected void notify(string message, NotificationType notificationType = NotificationType.None, Exception ex = null)
