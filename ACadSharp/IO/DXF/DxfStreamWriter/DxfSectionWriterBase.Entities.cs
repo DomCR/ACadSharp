@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using System;
+using System.Linq;
 
 namespace ACadSharp.IO.DXF
 {
@@ -24,6 +25,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case Ellipse ellipse:
 					this.writeEllipse(ellipse);
+					break;
+				case Insert insert:
+					this.writeInsert(insert);
 					break;
 				case Line line:
 					this.writeLine(line);
@@ -90,6 +94,46 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(40, ellipse.RadiusRatio, map);
 			this._writer.Write(41, ellipse.StartParameter, map);
 			this._writer.Write(42, ellipse.EndParameter, map);
+		}
+
+		private void writeInsert(Insert insert)
+		{
+			DxfClassMap map = DxfClassMap.Create<Insert>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Insert);
+
+			this._writer.Write(2, insert.Block.Name, map);
+
+			this._writer.Write(10, insert.InsertPoint, map);
+
+			this._writer.Write(41, insert.XScale, map);
+			this._writer.Write(42, insert.YScale, map);
+			this._writer.Write(43, insert.ZScale, map);
+
+			this._writer.Write(50, insert.Rotation, map);
+
+
+			this._writer.Write(70, (short)insert.ColumnCount);
+			this._writer.Write(71, (short)insert.RowCount);
+
+			this._writer.Write(44, insert.ColumnSpacing);
+			this._writer.Write(45, insert.RowSpacing);
+
+			this._writer.Write(210, insert.Normal, map);
+
+			if (insert.HasAttributes)
+			{
+				this._writer.Write(66, 1);
+
+				//WARNING: Write extended data before attributes
+
+				foreach (var att in insert.Attributes)
+				{
+					this.writeEntity(att);
+				}
+
+				this.writeSeqend(insert.Attributes.Seqend);
+			}
 		}
 
 		private void writeLine(Line line)

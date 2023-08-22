@@ -310,29 +310,6 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(91, v.Id);
 		}
 
-		private void writeInsert(Insert insert)
-		{
-			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
-			DxfClassMap insertMap = DxfClassMap.Create<Insert>();
-
-			this._writer.Write(DxfCode.Start, insert.ObjectName);
-
-			this.writeCommonObjectData(insert);
-
-			this.writeClassMap(entityMap, insert);
-
-			this.writeClassMap(insertMap, insert);
-
-			//this._writer.Write(66, 0);
-
-			//if (insert.Attributes.Any())
-			if (false)
-			{
-				this._writer.Write(66, 1);
-				this.writeCollection(insert.Attributes);
-			}
-		}
-
 		protected void notify(string message, NotificationType notificationType = NotificationType.None, Exception ex = null)
 		{
 			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, ex));
