@@ -267,7 +267,7 @@ namespace ACadSharp.IO.DXF
 		private void writeAttributeBase(AttributeBase att)
 		{
 			this._writer.Write(2, att.Tag);
-			
+
 			this._writer.Write(70, (short)att.Flags);
 			this._writer.Write(73, (short)0);
 
@@ -282,7 +282,17 @@ namespace ACadSharp.IO.DXF
 			DxfClassMap map = DxfClassMap.Create<Vertex>();
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Vertex);
+			this._writer.Write(DxfCode.Subclass, v.SubclassMarker);
 
+			this._writer.Write(10, v.Location, map);
+
+			this._writer.Write(40, v.StartWidth, map);
+			this._writer.Write(41, v.EndWidth, map);
+			this._writer.Write(42, v.Bulge, map);
+
+			this._writer.Write(70, v.Flags, map);
+
+			this._writer.Write(50, v.CurveTangent, map);
 		}
 	}
 }
