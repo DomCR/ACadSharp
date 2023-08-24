@@ -47,6 +47,9 @@ namespace ACadSharp.IO.DXF
 				case LwPolyline lwPolyline:
 					this.writeLwPolyline(lwPolyline);
 					break;
+				case MText mtext:
+					this.writeMText(mtext);
+					break;
 				case Point point:
 					this.writePoint(point);
 					break;
@@ -298,6 +301,46 @@ namespace ACadSharp.IO.DXF
 			}
 
 			this._writer.Write(210, polyline.Normal, map);
+		}
+
+		private void writeMText(MText mtext)
+		{
+			DxfClassMap map = DxfClassMap.Create<MText>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.MText);
+
+			this._writer.Write(10, mtext.InsertPoint, map);
+
+			this._writer.Write(11, mtext.AlignmentPoint, map);
+
+			this._writer.Write(210, mtext.Normal, map);
+
+			this._writer.Write(1, mtext.Value, map);
+
+			if (string.IsNullOrEmpty(mtext.AdditionalText))
+			{
+				for (int i = 0; i < mtext.AdditionalText.Length; i += 250)
+					this._writer.Write(3, mtext.AdditionalText.Substring(i, 250), map);
+			}
+
+			this._writer.Write(40, mtext.Height, map);
+			this._writer.Write(41, mtext.RectangleWidth, map);
+			this._writer.Write(44, mtext.LineSpacing, map);
+			this._writer.Write(45, mtext.BackgroundScale, map);
+			if (this.Version >= ACadVersion.AC1021)
+			{
+				this._writer.Write(46, mtext.ReferenceRectangleHeight, map);
+			}
+
+			this._writer.Write(71, (short)mtext.AttachmentPoint, map);
+			this._writer.Write(72, (short)mtext.DrawingDirection, map);
+			this._writer.Write(73, (short)mtext.LineSpacingStyle, map);
+
+			if (mtext.Style != null)
+			{
+				//TODO: Implement text style in the writer
+				//this._writer.Write(7, text.Style.Name);
+			}
 		}
 
 		private void writePoint(Point line)

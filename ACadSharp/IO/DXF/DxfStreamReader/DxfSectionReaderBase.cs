@@ -314,6 +314,9 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.Code)
 			{
 				//TODO: Implement multiline text def codes
+				case 3 when tmp.CadObject is MText mtext:
+					mtext.AdditionalText.Concat(this._reader.ValueAsString);
+					return true;
 				case 70:
 				case 74:
 				case 101:

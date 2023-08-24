@@ -13,6 +13,8 @@ namespace ACadSharp.IO.DXF
 
 		public abstract string SectionName { get; }
 
+		public ACadVersion Version { get { return this._document.Header.Version; } }
+
 		public CadObjectHolder Holder { get; }
 
 		protected IDxfStreamWriter _writer;

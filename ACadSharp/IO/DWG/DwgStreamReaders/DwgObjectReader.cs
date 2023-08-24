@@ -2562,13 +2562,13 @@ namespace ACadSharp.IO.DWG
 			//X-axis dir 3BD 11 Apparently the text x-axis vector. (Why not just a rotation?) ACAD maintains it as a unit vector.
 			mtext.AlignmentPoint = this._objectReader.Read3BitDouble();
 			//Rect width BD 41 Reference rectangle width (width picked by the user).
-			mtext.RectangleWitdth = this._objectReader.ReadBitDouble();
+			mtext.RectangleWidth = this._objectReader.ReadBitDouble();
 
 			//R2007+:
 			if (this.R2007Plus)
 			{
 				//Rect height BD 46 Reference rectangle height.
-				mtext.RectangleHeight = this._objectReader.ReadBitDouble();
+				mtext.ReferenceRectangleHeight = this._objectReader.ReadBitDouble();
 			}
 
 			//Common:
