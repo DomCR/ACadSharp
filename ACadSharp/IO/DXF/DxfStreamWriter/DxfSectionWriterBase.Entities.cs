@@ -66,6 +66,9 @@ namespace ACadSharp.IO.DXF
 				case Vertex vertex:
 					this.writeVertex(vertex);
 					break;
+				case Viewport viewport:
+					this.writeViewport(viewport);
+					break;
 				default:
 					throw new NotImplementedException($"Entity not implemented {entity.GetType().FullName}");
 			}
@@ -646,6 +649,61 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(70, v.Flags, map);
 
 			this._writer.Write(50, v.CurveTangent, map);
+		}
+
+		private void writeViewport(Viewport vp)
+		{
+			DxfClassMap map = DxfClassMap.Create<Viewport>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Viewport);
+
+			this._writer.Write(10, vp.Center, map);
+
+			this._writer.Write(40, vp.Width, map);
+			this._writer.Write(41, vp.Height, map);
+
+			this._writer.Write(69, vp.Id, map);
+
+			this._writer.Write(12, vp.ViewCenter, map);
+
+			this._writer.Write(13, vp.SnapBase, map);
+
+			this._writer.Write(14, vp.SnapSpacing, map);
+
+			this._writer.Write(15, vp.GridSpacing, map);
+
+			this._writer.Write(16, vp.ViewDirection, map);
+
+			this._writer.Write(17, vp.ViewTarget, map);
+
+			this._writer.Write(42, vp.LensLength, map);
+
+			this._writer.Write(43, vp.FrontClipPlane, map);
+			this._writer.Write(44, vp.BackClipPlane, map);
+			this._writer.Write(45, vp.ViewHeight, map);
+
+			this._writer.Write(50, vp.SnapAngle, map);
+			this._writer.Write(51, vp.TwistAngle, map);
+
+			this._writer.Write(72, vp.CircleZoomPercent, map);
+
+			foreach (var layer in vp.FrozenLayers)
+			{
+				this._writer.Write(331, layer.Handle, map);
+			}
+
+			this._writer.Write(90, (int)vp.Status, map);
+
+			if (vp.Boundary != null)
+			{
+				this._writer.Write(340, vp.Boundary.Handle, map);
+			}
+
+			this._writer.Write(110, vp.UcsOrigin, map);
+
+			this._writer.Write(111, vp.UcsXAxis, map);
+
+			this._writer.Write(112, vp.UcsYAxis, map);
 		}
 	}
 }
