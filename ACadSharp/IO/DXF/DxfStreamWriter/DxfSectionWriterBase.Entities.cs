@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using CSMath;
 using System;
 using System.Linq;
 
@@ -9,6 +10,14 @@ namespace ACadSharp.IO.DXF
 		protected void writeEntity<T>(T entity)
 			where T : Entity
 		{
+			//TODO: Implement complex entities in a separated branch
+			switch (entity)
+			{
+				case Hatch:
+					this.notify($"Entity type not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
+					return;
+			}
+
 			this._writer.Write(DxfCode.Start, entity.ObjectName);
 
 			this.writeCommonObjectData(entity);
@@ -25,6 +34,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case Ellipse ellipse:
 					this.writeEllipse(ellipse);
+					break;
+				case Hatch hatch:
+					this.writeHatch(hatch);
 					break;
 				case Insert insert:
 					this.writeInsert(insert);
@@ -78,11 +90,125 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(210, circle.Normal, map);
 		}
 
+		private void writeHatch(Hatch hatch)
+		{
+			DxfClassMap map = DxfClassMap.Create<Hatch>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Hatch);
+
+			this._writer.Write(10, 0, map);
+			this._writer.Write(20, 0, map);
+			this._writer.Write(30, hatch.Elevation, map);
+
+			this._writer.Write(210, hatch.Normal.X, map);
+
+			this._writer.Write(2, hatch.Pattern.Name, map);
+
+			this._writer.Write(70, hatch.IsSolid ? (short)1 : (short)0, map);
+			this._writer.Write(71, hatch.IsAssociative ? (short)1 : (short)0, map);
+
+			this._writer.Write(91, hatch.Paths.Count, map);
+			foreach (var path in hatch.Paths)
+			{
+				this.writeBoundaryPath(path);
+			}
+
+			this.writeHatchPattern(hatch.Pattern);
+		}
+
+		private void writeBoundaryPath(Hatch.BoundaryPath path)
+		{
+			this._writer.Write(92, (int)path.Flags);
+
+			if (!path.Flags.HasFlag(BoundaryPathFlags.Polyline))
+			{
+				this._writer.Write(93, path.Edges.Count);
+			}
+
+			foreach (Hatch.BoundaryPath.Edge edge in path.Edges)
+			{
+				this.writeHatchBoundaryPathEdge(edge);
+			}
+
+			//TODO: Check how this entities are handled
+			this._writer.Write(97, path.Entities.Count);
+			foreach (Entity entity in path.Entities)
+			{
+				this._writer.Write(330, entity.Handle);
+			}
+		}
+
+		private void writeHatchBoundaryPathEdge(Hatch.BoundaryPath.Edge edge)
+		{
+			this._writer.Write(72, edge.Type);
+
+			switch (edge)
+			{
+				case Hatch.BoundaryPath.Arc arc:
+					this._writer.Write(10, arc.Center);
+					this._writer.Write(40, arc.Radius);
+					this._writer.Write(50, arc.StartAngle);
+					this._writer.Write(51, arc.EndAngle);
+					this._writer.Write(73, arc.CounterClockWise ? (short)1 : (short)0);
+					break;
+				case Hatch.BoundaryPath.Ellipse ellipse:
+					this._writer.Write(10, ellipse.Center);
+					this._writer.Write(11, ellipse.MajorAxisEndPoint);
+					this._writer.Write(40, ellipse.MinorToMajorRatio);
+					this._writer.Write(50, ellipse.StartAngle);
+					this._writer.Write(51, ellipse.EndAngle);
+					this._writer.Write(73, ellipse.CounterClockWise ? (short)1 : (short)0);
+					break;
+				case Hatch.BoundaryPath.Line line:
+					this._writer.Write(10, line.Start);
+					this._writer.Write(11, line.End);
+					break;
+				case Hatch.BoundaryPath.Polyline poly:
+					this._writer.Write(73, poly.IsClosed ? (short)1 : (short)0);
+					this._writer.Write(93, poly.Vertices.Count);
+					foreach (var vertex in poly.Vertices)
+					{
+						this._writer.Write(10, vertex);
+					}
+					break;
+				case Hatch.BoundaryPath.Spline spline:
+					this._writer.Write(73, spline.Rational ? (short)1 : (short)0);
+					this._writer.Write(74, spline.Periodic ? (short)1 : (short)0);
+
+					this._writer.Write(94, (int)spline.Degree);
+					this._writer.Write(95, spline.Knots.Count);
+					this._writer.Write(96, spline.ControlPoints.Count);
+
+					foreach (double knot in spline.Knots)
+					{
+						this._writer.Write(40, knot);
+					}
+
+					foreach (var point in spline.ControlPoints)
+					{
+						this._writer.Write(10, point.X);
+						this._writer.Write(20, point.Y);
+						if (spline.Rational)
+						{
+							this._writer.Write(42, point.Z);
+						}
+					}
+					break;
+				default:
+					throw new ArgumentException($"Unknown Hatch.BoundaryPath.Edge type {edge.GetType().FullName}");
+			}
+		}
+
+		private void writeHatchPattern(HatchPattern pattern)
+		{
+			//TODO: Hatch pattern need a refactor and a proper implementation
+		}
+
 		private void writeEllipse(Ellipse ellipse)
 		{
 			DxfClassMap map = DxfClassMap.Create<Ellipse>();
 
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Circle);
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Ellipse);
 
 			this._writer.Write(10, ellipse.Center, map);
 
