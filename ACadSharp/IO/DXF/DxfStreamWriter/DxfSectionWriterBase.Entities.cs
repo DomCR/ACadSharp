@@ -60,6 +60,9 @@ namespace ACadSharp.IO.DXF
 				case Polyline polyline:
 					this.writePolyline(polyline);
 					break;
+				case Solid solid:
+					this.writeSolid(solid);
+					break;
 				case TextEntity text:
 					this.writeTextEntity(text);
 					break;
@@ -545,6 +548,22 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(330, seqend.Owner.Handle);
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Entity);
 			this._writer.Write(8, seqend.Layer.Name);
+		}
+
+		private void writeSolid(Solid solid)
+		{
+			DxfClassMap map = DxfClassMap.Create<Solid>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Solid);
+
+			this._writer.Write(10, solid.FirstCorner, map);
+			this._writer.Write(11, solid.SecondCorner, map);
+			this._writer.Write(12, solid.ThirdCorner, map);
+			this._writer.Write(13, solid.FourthCorner, map);
+
+			this._writer.Write(39, solid.Thickness, map);
+
+			this._writer.Write(210, solid.Normal, map);
 		}
 
 		private void writeTextEntity(TextEntity text)
