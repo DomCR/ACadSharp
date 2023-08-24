@@ -2,6 +2,7 @@
 using CSMath;
 using System;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace ACadSharp.IO.DXF
 {
@@ -31,6 +32,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case Circle circle:
 					this.writeCircle(circle);
+					break;
+				case Dimension dimension:
+					this.writeDimension(dimension);
 					break;
 				case Ellipse ellipse:
 					this.writeEllipse(ellipse);
@@ -91,6 +95,142 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(40, circle.Radius, map);
 
 			this._writer.Write(210, circle.Normal, map);
+		}
+
+		private void writeDimension(Dimension dim)
+		{
+			DxfClassMap map = DxfClassMap.Create<Dimension>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Dimension);
+
+			if (dim.Block != null)
+			{
+				this._writer.Write(2, dim.Block.Name, map);
+			}
+
+			this._writer.Write(10, dim.DefinitionPoint, map);
+			this._writer.Write(11, dim.TextMiddlePoint, map);
+
+			this._writer.Write(53, dim.TextRotation, map);
+			this._writer.Write(70, (short)dim.DimensionType, map);
+			this._writer.Write(71, (short)dim.AttachmentPoint, map);
+			this._writer.Write(72, (short)dim.LineSpacingStyle, map);
+			this._writer.Write(41, dim.LineSpacingFactor, map);
+
+			if (string.IsNullOrEmpty(dim.Text))
+			{
+				this._writer.Write(1, (dim.Text), map);
+			}
+
+			this._writer.Write(210, dim.Normal, map);
+
+			if (dim.Style != null)
+			{
+				this._writer.Write(3, dim.Style.Name, map);
+			}
+
+			switch (dim)
+			{
+				case DimensionAligned aligned:
+					this.writeDimensionAligned(aligned);
+					break;
+				case DimensionRadius radius:
+					this.writeDimensionRadius(radius);
+					break;
+				case DimensionDiameter diameter:
+					this.writeDimensionDiameter(diameter);
+					break;
+				case DimensionAngular2Line angular2Line:
+					this.writeDimensionAngular2Line(angular2Line);
+					break;
+				case DimensionAngular3Pt angular3Pt:
+					this.writeDimensionAngular3Pt(angular3Pt);
+					break;
+				case DimensionOrdinate ordinate:
+					this.writeDimensionOrdinate(ordinate);
+					break;
+				default:
+					throw new NotImplementedException($"Dimension type not implemented {dim.GetType().FullName}");
+			}
+		}
+
+		private void writeDimensionAligned(DimensionAligned aligned)
+		{
+			DxfClassMap map = DxfClassMap.Create<DimensionAligned>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Dimension);
+
+			this._writer.Write(13, aligned.FirstPoint, map);
+			this._writer.Write(14, aligned.SecondPoint, map);
+
+			if (aligned is DimensionLinear linear)
+			{
+				this.writeDimensionLinear(linear);
+			}
+		}
+
+		private void writeDimensionLinear(DimensionLinear linear)
+		{
+			DxfClassMap map = DxfClassMap.Create<DimensionLinear>();
+
+			this._writer.Write(50, linear.Rotation, map);
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.LinearDimension);
+		}
+
+		private void writeDimensionRadius(DimensionRadius radius)
+		{
+			DxfClassMap map = DxfClassMap.Create<DimensionRadius>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.RadialDimension);
+
+			this._writer.Write(15, radius.AngleVertex, map);
+
+			this._writer.Write(40, radius.LeaderLength, map);
+		}
+
+		private void writeDimensionDiameter(DimensionDiameter diameter)
+		{
+			DxfClassMap map = DxfClassMap.Create<DimensionDiameter>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.DiametricDimension);
+
+			this._writer.Write(15, diameter.AngleVertex, map);
+
+			this._writer.Write(40, diameter.LeaderLength, map);
+		}
+
+		private void writeDimensionAngular2Line(DimensionAngular2Line angular2Line)
+		{
+			DxfClassMap map = DxfClassMap.Create<DimensionAngular2Line>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Angular2LineDimension);
+
+			this._writer.Write(13, angular2Line.FirstPoint, map);
+			this._writer.Write(14, angular2Line.SecondPoint, map);
+			this._writer.Write(15, angular2Line.AngleVertex, map);
+			this._writer.Write(16, angular2Line.DimensionArc, map);
+		}
+
+		private void writeDimensionAngular3Pt(DimensionAngular3Pt angular3Pt)
+		{
+			DxfClassMap map = DxfClassMap.Create<DimensionAngular3Pt>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Angular3PointDimension);
+
+			this._writer.Write(13, angular3Pt.FirstPoint, map);
+			this._writer.Write(14, angular3Pt.SecondPoint, map);
+			this._writer.Write(15, angular3Pt.AngleVertex, map);
+		}
+
+		private void writeDimensionOrdinate(DimensionOrdinate ordinate)
+		{
+			DxfClassMap map = DxfClassMap.Create<DimensionOrdinate>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.OrdinateDimension);
+
+			this._writer.Write(13, ordinate.FeatureLocation, map);
+			this._writer.Write(14, ordinate.LeaderEndpoint, map);
 		}
 
 		private void writeHatch(Hatch hatch)
