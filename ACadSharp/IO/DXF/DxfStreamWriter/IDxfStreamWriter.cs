@@ -18,6 +18,8 @@ namespace ACadSharp.IO.DXF
 
 		void WriteHandle(int code, CadObject value, DxfClassMap map = null);
 
+		void WriteName(int code, INamedCadObject value, DxfClassMap map = null);
+
 		void Flush();
 
 		void Close();

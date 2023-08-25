@@ -51,6 +51,9 @@ namespace ACadSharp.IO.DXF
 				case LwPolyline lwPolyline:
 					this.writeLwPolyline(lwPolyline);
 					break;
+				case MLine mline:
+					this.writeMLine(mline);
+					break;
 				case MText mtext:
 					this.writeMText(mtext);
 					break;
@@ -111,10 +114,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Dimension);
 
-			if (dim.Block != null)
-			{
-				this._writer.Write(2, dim.Block.Name, map);
-			}
+			this._writer.WriteName(2, dim.Block, map);
 
 			this._writer.Write(10, dim.DefinitionPoint, map);
 			this._writer.Write(11, dim.TextMiddlePoint, map);
@@ -127,15 +127,12 @@ namespace ACadSharp.IO.DXF
 
 			if (string.IsNullOrEmpty(dim.Text))
 			{
-				this._writer.Write(1, (dim.Text), map);
+				this._writer.Write(1, dim.Text, map);
 			}
 
 			this._writer.Write(210, dim.Normal, map);
 
-			if (dim.Style != null)
-			{
-				this._writer.Write(3, dim.Style.Name, map);
-			}
+			this._writer.WriteName(3, dim.Style, map);
 
 			switch (dim)
 			{
@@ -285,7 +282,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(97, path.Entities.Count);
 			foreach (Entity entity in path.Entities)
 			{
-				this._writer.Write(330, entity.Handle);
+				this._writer.WriteHandle(330, entity);
 			}
 		}
 
@@ -449,6 +446,49 @@ namespace ACadSharp.IO.DXF
 			}
 
 			this._writer.Write(210, polyline.Normal, map);
+		}
+
+		private void writeMLine(MLine mLine)
+		{
+			DxfClassMap map = DxfClassMap.Create<MLine>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.MLine);
+
+			//Style has to references
+			this._writer.WriteName(2, mLine.MLStyle, map);
+			this._writer.WriteHandle(340, mLine.MLStyle, map);
+
+			this._writer.Write(40, mLine.ScaleFactor);
+
+			this._writer.Write(70, (short)mLine.Justification);
+			this._writer.Write(71, (short)mLine.Flags);
+			this._writer.Write(72, (short)mLine.Vertices.Count);
+			this._writer.Write(73, (short)mLine.MLStyle.Elements.Count);
+
+			this._writer.Write(10, mLine.StartPoint, map);
+
+			this._writer.Write(210, mLine.Normal);
+
+			foreach (var v in mLine.Vertices)
+			{
+				this._writer.Write(11, v.Position,map);
+				this._writer.Write(12, v.Direction,map);
+				this._writer.Write(13, v.Miter, map);
+
+				foreach (var s in v.Segments)
+				{
+					this._writer.Write(74, (short)s.Parameters.Count);
+					foreach (double parameter in s.Parameters)
+					{
+						this._writer.Write(41, parameter);
+					}
+					this._writer.Write(75, (short)s.AreaFillParameters.Count);
+					foreach (double areaFillParameter in s.AreaFillParameters)
+					{
+						this._writer.Write(42, areaFillParameter);
+					}
+				}
+			}
 		}
 
 		private void writeMText(MText mtext)

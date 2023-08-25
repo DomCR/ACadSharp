@@ -40,6 +40,14 @@
 			}
 		}
 
+		public void WriteName(int code, INamedCadObject value, DxfClassMap map)
+		{
+			if (value != null)
+			{
+				this.Write(code, value.Name, map);
+			}
+		}
+
 		public void Write(int code, object value, DxfClassMap map)
 		{
 			if (value == null)

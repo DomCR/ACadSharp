@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
 using CSMath;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -27,6 +26,7 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.MLine;
 
 		/// <summary>
+		/// MLine Style
 		/// </summary>
 		/// <remarks>
 		/// Name reference: <br/>
@@ -64,7 +64,7 @@ namespace ACadSharp.Entities
 		/// Extrusion direction
 		/// </summary>
 		[DxfCodeValue(210, 220, 230)]
-		public XYZ Extrusion { get; set; } = XYZ.AxisZ;
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 		/// <summary>
 		/// Vertices in the MLine
