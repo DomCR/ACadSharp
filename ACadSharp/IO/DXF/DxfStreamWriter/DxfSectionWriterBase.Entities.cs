@@ -66,6 +66,9 @@ namespace ACadSharp.IO.DXF
 				case Solid solid:
 					this.writeSolid(solid);
 					break;
+				case Spline spline:
+					this.writeSpline(spline);
+					break;
 				case TextEntity text:
 					this.writeTextEntity(text);
 					break;
@@ -471,8 +474,8 @@ namespace ACadSharp.IO.DXF
 
 			foreach (var v in mLine.Vertices)
 			{
-				this._writer.Write(11, v.Position,map);
-				this._writer.Write(12, v.Direction,map);
+				this._writer.Write(11, v.Position, map);
+				this._writer.Write(12, v.Direction, map);
 				this._writer.Write(13, v.Miter, map);
 
 				foreach (var s in v.Segments)
@@ -604,6 +607,52 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(39, solid.Thickness, map);
 
 			this._writer.Write(210, solid.Normal, map);
+		}
+
+		private void writeSpline(Spline spline)
+		{
+			DxfClassMap map = DxfClassMap.Create<Spline>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Spline);
+
+			if (spline.Flags.HasFlag(SplineFlags.Planar))
+			{
+				this._writer.Write(210, spline.Normal, map);
+			}
+
+			this._writer.Write(70, (short)spline.Flags, map);
+			this._writer.Write(71, (short)spline.Degree, map);
+			this._writer.Write(72, (short)spline.Knots.Count, map);
+			this._writer.Write(73, (short)spline.ControlPoints.Count, map);
+
+			if (spline.FitPoints.Any())
+			{
+				this._writer.Write(74, (short)spline.FitPoints.Count, map);
+			}
+
+			this._writer.Write(42, spline.KnotTolerance, map);
+			this._writer.Write(43, spline.ControlPointTolerance, map);
+			this._writer.Write(44, spline.FitTolerance, map);
+
+			this._writer.Write(12, spline.StartTangent, map);
+			this._writer.Write(13, spline.EndTangent, map);
+
+			foreach (double knot in spline.Knots)
+			{
+				this._writer.Write(40, knot, map);
+			}
+			foreach (double weight in spline.Weights)
+			{
+				this._writer.Write(41, weight, map);
+			}
+			foreach (var cp in spline.ControlPoints)
+			{
+				this._writer.Write(10, cp, map);
+			}
+			foreach (var fp in spline.FitPoints)
+			{
+				this._writer.Write(11, fp, map);
+			}
 		}
 
 		private void writeTextEntity(TextEntity text)
