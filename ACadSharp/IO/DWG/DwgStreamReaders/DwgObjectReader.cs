@@ -1585,7 +1585,11 @@ namespace ACadSharp.IO.DWG
 			//Flags RC 70 NOT DIRECTLY THE 70. Bit-coded (76543210):
 			//0 : Closed(70 bit 0(1))
 			//(Set 70 bit 3(8) because this is a 3D POLYLINE.)
-			bool closed = (this._objectReader.ReadByte() & 1U) > 0U;
+			pline.Flags |= PolylineFlags.Polyline3D;
+			if ((this._objectReader.ReadByte() & 1U) > 0U)
+			{
+				pline.Flags |= PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM;
+			}
 
 			//R2004+:
 			if (this.R2004Plus)
