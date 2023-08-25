@@ -78,6 +78,9 @@ namespace ACadSharp.IO.DXF
 				case Viewport viewport:
 					this.writeViewport(viewport);
 					break;
+				case Wipeout wipeout:
+					this.writeWipeout(wipeout);
+					break;
 				default:
 					throw new NotImplementedException($"Entity not implemented {entity.GetType().FullName}");
 			}
@@ -814,6 +817,48 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(111, vp.UcsXAxis, map);
 
 			this._writer.Write(112, vp.UcsYAxis, map);
+		}
+
+		private void writeWipeout(Wipeout wipeout)
+		{
+			DxfClassMap map = DxfClassMap.Create<Wipeout>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Wipeout);
+
+			this._writer.Write(90, wipeout.ClassVersion, map);
+
+			this._writer.Write(10, wipeout.InsertPoint, map);
+			this._writer.Write(11, wipeout.UVector, map);
+			this._writer.Write(12, wipeout.VVector, map);
+			this._writer.Write(13, wipeout.Size, map);
+
+			this._writer.Write(70, (short)wipeout.Flags, map);
+
+			this._writer.Write(280, wipeout.ClippingState, map);
+			this._writer.Write(281, wipeout.Brightness, map);
+			this._writer.Write(282, wipeout.Contrast, map);
+			this._writer.Write(283, wipeout.Fade, map);
+
+			this._writer.Write(71, (short)wipeout.ClipType, map);
+
+			if (wipeout.ClipType == ClipType.Polygonal)
+			{
+				this._writer.Write(91, wipeout.ClipBoundaryVertices.Count + 1, map);
+				foreach (XY bv in wipeout.ClipBoundaryVertices)
+				{
+					this._writer.Write(14, bv, map);
+				}
+
+				this._writer.Write(14, wipeout.ClipBoundaryVertices.First(), map);
+			}
+			else
+			{
+				this._writer.Write(91, wipeout.ClipBoundaryVertices.Count, map);
+				foreach (XY bv in wipeout.ClipBoundaryVertices)
+				{
+					this._writer.Write(14, bv, map);
+				}
+			}
 		}
 	}
 }
