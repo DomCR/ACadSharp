@@ -2,7 +2,6 @@
 using CSMath;
 using System;
 using System.Linq;
-using System.Security.Cryptography;
 
 namespace ACadSharp.IO.DXF
 {
@@ -15,6 +14,12 @@ namespace ACadSharp.IO.DXF
 			switch (entity)
 			{
 				case Hatch:
+				case Leader:
+				case Mesh:
+				case Ray:
+				case Shape:
+				case Solid3D:
+				case XLine:
 					this.notify($"Entity type not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return;
 			}
