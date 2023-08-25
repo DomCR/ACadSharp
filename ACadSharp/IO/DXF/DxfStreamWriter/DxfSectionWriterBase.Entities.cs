@@ -39,6 +39,9 @@ namespace ACadSharp.IO.DXF
 				case Ellipse ellipse:
 					this.writeEllipse(ellipse);
 					break;
+				case Face3D face3D:
+					this.writeFace3D(face3D);
+					break;
 				case Hatch hatch:
 					this.writeHatch(hatch);
 					break;
@@ -374,6 +377,20 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(40, ellipse.RadiusRatio, map);
 			this._writer.Write(41, ellipse.StartParameter, map);
 			this._writer.Write(42, ellipse.EndParameter, map);
+		}
+
+		private void writeFace3D(Face3D face)
+		{
+			DxfClassMap map = DxfClassMap.Create<Face3D>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Face3d);
+
+			this._writer.Write(10, face.FirstCorner, map);
+			this._writer.Write(11, face.SecondCorner, map);
+			this._writer.Write(12, face.ThirdCorner, map);
+			this._writer.Write(13, face.FourthCorner, map);
+
+			this._writer.Write(70, (short)face.Flags, map);
 		}
 
 		private void writeInsert(Insert insert)
