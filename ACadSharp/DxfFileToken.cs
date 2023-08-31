@@ -104,6 +104,8 @@
 		public const string ObjectScale = "SCALE";
 		public const string ObjectSortEntsTable = "SORTENTSTABLE";
 		public const string ObjectXRecord = "XRECORD";
+		public const string ObjectEvalGraph = "ACAD_EVALUATION_GRAPH";
+		public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
 
 		#endregion
 	}
