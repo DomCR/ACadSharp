@@ -25,6 +25,12 @@ namespace ACadSharp.IO.DXF
 		protected void writeObject<T>(T co)
 			where T : CadObject
 		{
+			switch (co)
+			{
+				case SortEntitiesTable:
+					return;
+			}
+
 			this._writer.Write(DxfCode.Start, co.ObjectName);
 
 			this.writeCommonObjectData(co);
@@ -41,7 +47,7 @@ namespace ACadSharp.IO.DXF
 					this.writePlotSettings(plotSettings);
 					break;
 				case DictionaryVariable dictvar:
-					this.writeMappedObject<DictionaryVariable>(dictvar);
+					this.writeDictionaryVariable(dictvar);
 					break;
 				case SortEntitiesTable sortensTable:
 					//this.writeSortentsTable(sortensTable);
@@ -73,6 +79,16 @@ namespace ACadSharp.IO.DXF
 			{
 				this.Holder.Objects.Enqueue(item);
 			}
+		}
+
+		protected void writeDictionaryVariable(DictionaryVariable dictvar)
+		{
+			DxfClassMap map = DxfClassMap.Create<DictionaryVariable>();
+
+			this._writer.Write(100, DxfSubclassMarker.DictionaryVariables);
+
+			this._writer.Write(280, dictvar.Value, map);
+			this._writer.Write(1, dictvar.ObjectSchemaNumber, map);
 		}
 
 		protected void writePlotSettings(PlotSettings plot)
