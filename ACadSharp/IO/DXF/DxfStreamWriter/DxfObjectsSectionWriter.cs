@@ -25,13 +25,20 @@ namespace ACadSharp.IO.DXF
 		protected void writeObject<T>(T co)
 			where T : CadObject
 		{
+			this._writer.Write(DxfCode.Start, co.ObjectName);
+
+			this.writeCommonObjectData(co);
+
 			switch (co)
 			{
 				case CadDictionary cadDictionary:
 					this.writeDictionary(cadDictionary);
 					return;
 				case Layout layout:
-					this.writeMappedObject<Layout>(layout);
+					this.writeLayout(layout);
+					break;
+				case PlotSettings plotSettings:
+					this.writePlotSettings(plotSettings);
 					break;
 				case DictionaryVariable dictvar:
 					this.writeMappedObject<DictionaryVariable>(dictvar);
@@ -43,17 +50,12 @@ namespace ACadSharp.IO.DXF
 					this.writeXRecord(record);
 					break;
 				default:
-					this.notify($"Object not implemented : {co.GetType().FullName}");
-					break;
+					throw new NotImplementedException($"Object not implemented : {co.GetType().FullName}");
 			}
 		}
 
 		protected void writeDictionary(CadDictionary e)
 		{
-			this._writer.Write(DxfCode.Start, e.ObjectName);
-
-			this.writeCommonObjectData(e);
-
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Dictionary);
 
 			this._writer.Write(280, e.HardOwnerFlag);
@@ -73,6 +75,80 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		protected void writePlotSettings(PlotSettings plot)
+		{
+			DxfClassMap map = DxfClassMap.Create<PlotSettings>();
+
+			this._writer.Write(100, DxfSubclassMarker.PlotSettings);
+
+			this._writer.Write(1, (plot.PageName), map);
+			this._writer.Write(2, (plot.SystemPrinterName), map);
+
+			this._writer.Write(4, (plot.PaperSize), map);
+
+			this._writer.Write(6, (plot.PlotViewName), map);
+			this._writer.Write(7, (plot.StyleSheet), map);
+
+			this._writer.Write(40, plot.UnprintableMargin.Left, map);
+			this._writer.Write(41, plot.UnprintableMargin.Bottom, map);
+			this._writer.Write(42, plot.UnprintableMargin.Right, map);
+			this._writer.Write(43, plot.UnprintableMargin.Top, map);
+			this._writer.Write(44, plot.PaperWidth, map);
+			this._writer.Write(45, plot.PaperHeight, map);
+			this._writer.Write(46, plot.PlotOriginX, map);
+			this._writer.Write(47, plot.PlotOriginY, map);
+			this._writer.Write(48, plot.WindowLowerLeftX, map);
+			this._writer.Write(49, plot.WindowLowerLeftY, map);
+
+			this._writer.Write(140, plot.WindowUpperLeftX, map);
+			this._writer.Write(141, plot.WindowUpperLeftY, map);
+			this._writer.Write(142, plot.NumeratorScale, map);
+			this._writer.Write(143, plot.DenominatorScale, map);
+
+			this._writer.Write(70, (short)plot.Flags, map);
+
+			this._writer.Write(72, (short)plot.PaperUnits, map);
+			this._writer.Write(73, (short)plot.PaperRotation, map);
+			this._writer.Write(74, (short)plot.PlotType, map);
+			this._writer.Write(75, plot.ScaledFit, map);
+			this._writer.Write(76, (short)plot.ShadePlotMode, map);
+			this._writer.Write(77, (short)plot.ShadePlotResolutionMode, map);
+			this._writer.Write(78, plot.ShadePlotDPI, map);
+			this._writer.Write(147, plot.PrintScale, map);
+
+			this._writer.Write(148, plot.PaperImageOrigin.X, map);
+			this._writer.Write(149, plot.PaperImageOrigin.Y, map);
+		}
+
+		protected void writeLayout(Layout layout)
+		{
+			DxfClassMap map = DxfClassMap.Create<Layout>();
+
+			this.writePlotSettings(layout);
+
+			this._writer.Write(100, DxfSubclassMarker.Layout);
+
+			this._writer.Write(1, layout.Name, map);
+
+			//this._writer.Write(70, (short) 1,map);
+			this._writer.Write(71, layout.TabOrder, map);
+
+			this._writer.Write(10, layout.MinLimits, map);
+			this._writer.Write(11, layout.MaxLimits, map);
+			this._writer.Write(12, layout.InsertionBasePoint, map);
+			this._writer.Write(13, layout.Origin, map);
+			this._writer.Write(14, layout.MinExtents, map);
+			this._writer.Write(15, layout.MaxExtents, map);
+			this._writer.Write(16, layout.XAxis, map);
+			this._writer.Write(17, layout.YAxis, map);
+
+			this._writer.Write(146, layout.Elevation, map);
+
+			this._writer.Write(76, (short)0, map);
+
+			this._writer.WriteHandle(330, layout.AssociatedBlock.Owner, map);
+		}
+
 		private void writeSortentsTable(SortEntitiesTable e)
 		{
 			if (e.BlockOwner == null)
@@ -89,16 +165,10 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XRecord);
 
 			this._writer.Write(330, e.BlockOwner.Handle);
-
-
 		}
 
 		protected void writeXRecord(XRecrod e)
 		{
-			this._writer.Write(DxfCode.Start, e.ObjectName);
-
-			this.writeCommonObjectData(e);
-
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XRecord);
 
 			foreach (var item in e.Entries)

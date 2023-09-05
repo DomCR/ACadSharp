@@ -4782,7 +4782,7 @@ namespace ACadSharp.IO.DWG
 			//Printer / Config TV 2 plotsettings printer or configuration file
 			plot.SystemPrinterName = this._textReader.ReadVariableText();
 			//Plot layout flags BS 70 plotsettings plot layout flag
-			plot.PlotFlags = (PlotFlags)this._objectReader.ReadBitShort();
+			plot.Flags = (PlotFlags)this._objectReader.ReadBitShort();
 
 			PaperMargin margin = new PaperMargin()
 			{
@@ -4806,7 +4806,9 @@ namespace ACadSharp.IO.DWG
 			plot.PaperSize = this._textReader.ReadVariableText();
 
 			//Plot origin 2BD 46,47 plotsettings origin offset in millimeters
-			plot.PlotOrigin = this._objectReader.Read2BitDouble();
+			var plotOrigin = this._objectReader.Read2BitDouble();
+			plot.PlotOriginX = plotOrigin.X;
+			plot.PlotOriginY = plotOrigin.Y;
 			//Paper units BS 72 plotsettings plot paper units
 			plot.PaperUnits = (PlotPaperUnits)this._objectReader.ReadBitShort();
 			//Plot rotation BS 73 plotsettings plot rotation
@@ -4815,9 +4817,13 @@ namespace ACadSharp.IO.DWG
 			plot.PlotType = (PlotType)this._objectReader.ReadBitShort();
 
 			//Window min 2BD 48,49 plotsettings plot window area lower left
-			plot.WindowLowerLeft = this._objectReader.Read2BitDouble();
+			var windowLowerLeft = this._objectReader.Read2BitDouble();
+			plot.WindowLowerLeftX = windowLowerLeft.X;
+			plot.WindowLowerLeftY = windowLowerLeft.Y;
 			//Window max 2BD 140,141 plotsettings plot window area upper right
-			plot.WindowUpperLeft = this._objectReader.Read2BitDouble();
+			var windowUpperLeft = this._objectReader.Read2BitDouble();
+			plot.WindowUpperLeftX = windowUpperLeft.X;
+			plot.WindowUpperLeftY = windowUpperLeft.Y;
 
 			//R13 - R2000 Only:
 			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)

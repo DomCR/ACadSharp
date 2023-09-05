@@ -28,7 +28,7 @@
 			}
 		}
 
-		public void WriteHandle(int code, CadObject value, DxfClassMap map)
+		public void WriteHandle(int code, IHandledCadObject value, DxfClassMap map)
 		{
 			if (value == null)
 			{
