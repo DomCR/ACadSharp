@@ -27,7 +27,13 @@ namespace ACadSharp.IO.DXF
 		{
 			switch (co)
 			{
+				case AcdbPlaceHolder:
+				case Group:
+				case Material:
 				case SortEntitiesTable:
+				case Scale:
+				case VisualStyle:
+					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
 			}
 
@@ -92,8 +98,8 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(100, DxfSubclassMarker.DictionaryVariables);
 
-			this._writer.Write(280, dictvar.Value, map);
-			this._writer.Write(1, dictvar.ObjectSchemaNumber, map);
+			this._writer.Write(1, dictvar.Value, map);
+			this._writer.Write(280, dictvar.ObjectSchemaNumber, map);
 		}
 
 		protected void writePlotSettings(PlotSettings plot)
