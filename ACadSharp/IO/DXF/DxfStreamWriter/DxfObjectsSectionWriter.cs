@@ -40,14 +40,17 @@ namespace ACadSharp.IO.DXF
 				case CadDictionary cadDictionary:
 					this.writeDictionary(cadDictionary);
 					return;
+				case DictionaryVariable dictvar:
+					this.writeDictionaryVariable(dictvar);
+					break;
 				case Layout layout:
 					this.writeLayout(layout);
 					break;
+				case MLStyle mlStyle:
+					this.writeMLStyle(mlStyle);
+					break;
 				case PlotSettings plotSettings:
 					this.writePlotSettings(plotSettings);
-					break;
-				case DictionaryVariable dictvar:
-					this.writeDictionaryVariable(dictvar);
 					break;
 				case SortEntitiesTable sortensTable:
 					//this.writeSortentsTable(sortensTable);
@@ -58,6 +61,8 @@ namespace ACadSharp.IO.DXF
 				default:
 					throw new NotImplementedException($"Object not implemented : {co.GetType().FullName}");
 			}
+
+			this.writeExtendedData(co);
 		}
 
 		protected void writeDictionary(CadDictionary e)
@@ -97,13 +102,13 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(100, DxfSubclassMarker.PlotSettings);
 
-			this._writer.Write(1, (plot.PageName), map);
-			this._writer.Write(2, (plot.SystemPrinterName), map);
+			this._writer.Write(1, plot.PageName, map);
+			this._writer.Write(2, plot.SystemPrinterName, map);
 
-			this._writer.Write(4, (plot.PaperSize), map);
+			this._writer.Write(4, plot.PaperSize, map);
 
-			this._writer.Write(6, (plot.PlotViewName), map);
-			this._writer.Write(7, (plot.StyleSheet), map);
+			this._writer.Write(6, plot.PlotViewName, map);
+			this._writer.Write(7, plot.StyleSheet, map);
 
 			this._writer.Write(40, plot.UnprintableMargin.Left, map);
 			this._writer.Write(41, plot.UnprintableMargin.Bottom, map);
@@ -163,6 +168,31 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(76, (short)0, map);
 
 			this._writer.WriteHandle(330, layout.AssociatedBlock.Owner, map);
+		}
+
+		protected void writeMLStyle(MLStyle style)
+		{
+			DxfClassMap map = DxfClassMap.Create<MLStyle>();
+
+			this._writer.Write(100, DxfSubclassMarker.MLineStyle);
+
+			this._writer.Write(2, style.Name, map);
+
+			this._writer.Write(70, (short)style.Flags, map);
+
+			this._writer.Write(3, style.Description, map);
+
+			this._writer.Write(62, style.FillColor.Index, map);
+
+			this._writer.Write(51, style.StartAngle, map);
+			this._writer.Write(52, style.EndAngle, map);
+			this._writer.Write(71, (short)style.Elements.Count, map);
+			foreach (MLStyle.Element element in style.Elements)
+			{
+				this._writer.Write(49, element.Offset, map);
+				this._writer.Write(62, element.Color.Index, map);
+				this._writer.Write(6, element.LineType.Name, map);
+			}
 		}
 
 		private void writeSortentsTable(SortEntitiesTable e)
