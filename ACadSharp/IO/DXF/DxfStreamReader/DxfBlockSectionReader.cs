@@ -66,6 +66,7 @@ namespace ACadSharp.IO.DXF
 				{
 					case 2:
 					case 3:
+						// TODO: check for alternative names "$MODEL_SPACE" or the add them to the default *ModelSpace
 						name = this._reader.ValueAsString;
 						if (record == null && this._builder.TryGetTableEntry(name, out record))
 						{
