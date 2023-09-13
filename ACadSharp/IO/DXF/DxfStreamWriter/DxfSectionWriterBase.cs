@@ -83,7 +83,6 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(6, entity.LineType.Name);
 
-
 			if (entity.Color.IsTrueColor)
 			{
 				this._writer.Write(420, entity.Color.TrueColor);
