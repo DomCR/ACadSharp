@@ -15,9 +15,7 @@ namespace ACadSharp.IO.DXF
 			{
 				case Hatch:
 				case Mesh:
-				case Shape:
 				case Solid3D:
-				case XLine:
 					this.notify($"Entity type not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return;
 			}
@@ -95,6 +93,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case Wipeout wipeout:
 					this.writeWipeout(wipeout);
+					break;
+				case XLine xline:
+					this.writeXLine(xline);
 					break;
 				default:
 					throw new NotImplementedException($"Entity not implemented {entity.GetType().FullName}");
@@ -954,6 +955,16 @@ namespace ACadSharp.IO.DXF
 					this._writer.Write(14, bv, map);
 				}
 			}
+		}
+
+		private void writeXLine(XLine xline)
+		{
+			DxfClassMap map = DxfClassMap.Create<XLine>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XLine);
+
+			this._writer.Write(10, xline.FirstPoint, map);
+			this._writer.Write(11, xline.Direction, map);
 		}
 	}
 }
