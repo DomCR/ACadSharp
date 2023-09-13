@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Entities;
 using System.Collections.Generic;
 
 namespace ACadSharp.Objects
@@ -29,12 +30,22 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(300)]
 		public string Description { get; set; }
 
-		//70	“Unnamed” flag: 1 = Unnamed; 0 = Named
+		/// <summary>
+		/// If the group has an automatic generated name
+		/// </summary>
+		[DxfCodeValue(71)]
+		public bool IsUnnamed { get; set; }
 
+		/// <summary>
+		/// If the group is selectable
+		/// </summary>
 		[DxfCodeValue(71)]
 		public bool Selectable { get; set; }
 
 		//340	Hard-pointer handle to entity in group(one entry per object)
-		public Dictionary<ulong, CadObject> Members { get; set; } = new Dictionary<ulong, CadObject>();
+		/// <summary>
+		/// Entities in this group
+		/// </summary>
+		public Dictionary<ulong, Entity> Entities { get; set; } = new();
 	}
 }

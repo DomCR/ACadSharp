@@ -1,4 +1,5 @@
-﻿using ACadSharp.Objects;
+﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using System;
 using System.Linq;
 
@@ -48,6 +49,9 @@ namespace ACadSharp.IO.DXF
 					return;
 				case DictionaryVariable dictvar:
 					this.writeDictionaryVariable(dictvar);
+					break;
+				case Group group:
+					this.writeGroup(group); 
 					break;
 				case Layout layout:
 					this.writeLayout(layout);
@@ -145,6 +149,20 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(148, plot.PaperImageOrigin.X, map);
 			this._writer.Write(149, plot.PaperImageOrigin.Y, map);
+		}
+
+		protected void writeGroup(Group group)
+		{
+			this._writer.Write(100, DxfSubclassMarker.Group);
+
+			this._writer.Write(300, group.Description);
+			this._writer.Write(70, group.IsUnnamed ? (short)1 : (short)0);
+			this._writer.Write(71, group.Selectable ? (short)1 : (short)0);
+
+			foreach (Entity entity in group.Entities.Values)
+			{
+				this._writer.WriteHandle(340, entity);
+			}
 		}
 
 		protected void writeLayout(Layout layout)

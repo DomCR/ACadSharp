@@ -4017,7 +4017,7 @@ namespace ACadSharp.IO.DWG
 			group.Description = this._textReader.ReadVariableText();
 
 			//Unnamed BS 1 if group has no name
-			this._objectReader.ReadBitShort();
+			group.IsUnnamed = this._objectReader.ReadBitShort() > 0;
 			//Selectable BS 1 if group selectable
 			group.Selectable = this._objectReader.ReadBitShort() > 0;
 
