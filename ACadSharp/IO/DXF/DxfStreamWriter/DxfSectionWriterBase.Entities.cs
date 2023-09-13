@@ -15,7 +15,6 @@ namespace ACadSharp.IO.DXF
 			{
 				case Hatch:
 				case Mesh:
-				case Ray:
 				case Shape:
 				case Solid3D:
 				case XLine:
@@ -72,6 +71,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case Polyline polyline:
 					this.writePolyline(polyline);
+					break;
+				case Ray ray:
+					this.writeRay(ray);
 					break;
 				case Solid solid:
 					this.writeSolid(solid);
@@ -651,6 +653,17 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(330, seqend.Owner.Handle);
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Entity);
 			this._writer.Write(8, seqend.Layer.Name);
+		}
+
+		private void writeRay(Ray ray)
+		{
+			DxfClassMap map = DxfClassMap.Create<Ray>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Ray);
+
+			this._writer.Write(10, ray.StartPoint, map);
+
+			this._writer.Write(11, ray.Direction, map);
 		}
 
 		private void writeSolid(Solid solid)
