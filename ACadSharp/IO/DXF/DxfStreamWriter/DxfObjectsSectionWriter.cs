@@ -29,7 +29,6 @@ namespace ACadSharp.IO.DXF
 			switch (co)
 			{
 				case AcdbPlaceHolder:
-				case Group:
 				case Material:
 				case SortEntitiesTable:
 				case Scale:
