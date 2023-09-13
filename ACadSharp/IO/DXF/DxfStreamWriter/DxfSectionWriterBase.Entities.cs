@@ -627,6 +627,9 @@ namespace ACadSharp.IO.DXF
 				case Polyline3D:
 					map = DxfClassMap.Create<Polyline3D>();
 					break;
+				case PolyfaceMesh:
+					map = DxfClassMap.Create<PolyfaceMesh>();
+					break;
 				default:
 					throw new NotImplementedException($"Polyline not implemented {polyline.GetType().FullName}");
 			}
