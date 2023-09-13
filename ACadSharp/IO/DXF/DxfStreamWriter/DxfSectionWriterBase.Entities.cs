@@ -14,7 +14,6 @@ namespace ACadSharp.IO.DXF
 			switch (entity)
 			{
 				case Hatch:
-				case Mesh:
 				case Ray:
 				case Shape:
 				case Solid3D:
@@ -60,6 +59,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case LwPolyline lwPolyline:
 					this.writeLwPolyline(lwPolyline);
+					break;
+				case Mesh mesh:
+					this.writeMesh(mesh);
 					break;
 				case MLine mline:
 					this.writeMLine(mline);
@@ -509,6 +511,15 @@ namespace ACadSharp.IO.DXF
 			}
 
 			this._writer.Write(210, polyline.Normal, map);
+		}
+
+		private void writeMesh(Mesh mesh)
+		{
+			DxfClassMap map = DxfClassMap.Create<Mesh>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Mesh);
+
+			this._writer.Write(71, (short)mesh.Version, map);
 		}
 
 		private void writeMLine(MLine mLine)
