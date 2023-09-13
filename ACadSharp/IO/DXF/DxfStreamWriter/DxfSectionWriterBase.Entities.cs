@@ -75,6 +75,9 @@ namespace ACadSharp.IO.DXF
 				case Ray ray:
 					this.writeRay(ray);
 					break;
+				case Shape shape:
+					this.writeShape(shape);
+					break;
 				case Solid solid:
 					this.writeSolid(solid);
 					break;
@@ -664,6 +667,28 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(10, ray.StartPoint, map);
 
 			this._writer.Write(11, ray.Direction, map);
+		}
+
+		private void writeShape(Shape shape)
+		{
+			DxfClassMap map = DxfClassMap.Create<Shape>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Shape);
+
+			this._writer.Write(39, shape.Thickness, map);
+
+			this._writer.Write(10, shape.InsertionPoint, map);
+
+			this._writer.Write(40, shape.Size, map);
+
+			this._writer.Write(2, shape.Name, map);
+
+			this._writer.Write(50, shape.Rotation, map);
+
+			this._writer.Write(41, shape.RelativeXScale, map);
+			this._writer.Write(51, shape.ObliqueAngle, map);
+
+			this._writer.Write(210, shape.Normal, map);
 		}
 
 		private void writeSolid(Solid solid)

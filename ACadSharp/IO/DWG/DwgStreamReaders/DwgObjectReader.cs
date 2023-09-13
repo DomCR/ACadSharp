@@ -2150,7 +2150,7 @@ namespace ACadSharp.IO.DWG
 			template.ShapeIndex = (ushort)this._objectReader.ReadBitShort();
 
 			//Extrusion 3BD 210
-			shape.Extrusion = this._objectReader.Read3BitDouble();
+			shape.Normal = this._objectReader.Read3BitDouble();
 
 			//H SHAPEFILE (hard pointer)
 			template.ShapeFileHandle = this.handleReference();

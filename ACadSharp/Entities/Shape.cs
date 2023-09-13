@@ -32,7 +32,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Insertion point (in WCS)
 		/// </summary>
-		[DxfCodeValue(10,20,30)]
+		[DxfCodeValue(10, 20, 30)]
 		public XYZ InsertionPoint { get; set; }
 
 		/// <summary>
@@ -69,7 +69,7 @@ namespace ACadSharp.Entities
 		/// Extrusion direction
 		/// </summary>
 		[DxfCodeValue(210, 220, 230)]
-		public XYZ Extrusion { get; set; } = XYZ.AxisZ;
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 		public Shape() : base() { }
 	}
