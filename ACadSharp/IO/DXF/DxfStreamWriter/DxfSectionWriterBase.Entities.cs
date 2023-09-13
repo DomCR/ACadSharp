@@ -14,7 +14,6 @@ namespace ACadSharp.IO.DXF
 			switch (entity)
 			{
 				case Hatch:
-				case Leader:
 				case Mesh:
 				case Ray:
 				case Shape:
@@ -52,6 +51,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case Insert insert:
 					this.writeInsert(insert);
+					break;
+				case Leader leader:
+					this.writeLeader(leader);
 					break;
 				case Line line:
 					this.writeLine(line);
@@ -436,6 +438,39 @@ namespace ACadSharp.IO.DXF
 
 				this.writeSeqend(insert.Attributes.Seqend);
 			}
+		}
+
+		private void writeLeader(Leader leader)
+		{
+			DxfClassMap map = DxfClassMap.Create<Leader>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Leader);
+
+			this._writer.WriteName(3, leader.Style, map);
+
+			this._writer.Write(71, leader.ArrowHeadEnabled ? (short)1 : (short)0, map);
+			this._writer.Write(72, (short)leader.PathType, map);
+			this._writer.Write(73, (short)leader.CreationType, map);
+			this._writer.Write(74, leader.HookLineDirection ? (short)1 : (short)0, map);
+			this._writer.Write(75, leader.HasHookline ? (short)1 : (short)0, map);
+
+			this._writer.Write(40, leader.TextHeight, map);
+			this._writer.Write(41, leader.TextWidth, map);
+
+			this._writer.Write(76, leader.Vertices.Count, map);
+			foreach (var vertex in leader.Vertices)
+			{
+				this._writer.Write(10, vertex, map);
+			}
+
+			//this._writer.Write(77, leader,map);
+			//this._writer.Write(340, leader.Annotation,map);
+
+			this._writer.Write(210, leader.Normal, map);
+
+			this._writer.Write(211, leader.HorizontalDirection, map);
+			this._writer.Write(212, leader.BlockOffset, map);
+			this._writer.Write(213, leader.AnnotationOffset, map);
 		}
 
 		private void writeLine(Line line)
