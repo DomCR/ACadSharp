@@ -532,7 +532,11 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(70, (short)mLine.Justification);
 			this._writer.Write(71, (short)mLine.Flags);
 			this._writer.Write(72, (short)mLine.Vertices.Count);
-			this._writer.Write(73, (short)mLine.MLStyle.Elements.Count);
+
+			if (mLine.MLStyle != null)
+			{
+				this._writer.Write(73, (short)mLine.MLStyle.Elements.Count);
+			}
 
 			this._writer.Write(10, mLine.StartPoint, map);
 
