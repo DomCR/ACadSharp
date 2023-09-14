@@ -268,11 +268,7 @@ namespace ACadSharp.IO.DXF
 					this._writer.Write(50, s.Rotation * MathUtils.DegToRad);
 					this._writer.Write(44, s.Offset.X);
 					this._writer.Write(45, s.Offset.Y);
-
-					if (!string.IsNullOrEmpty(s.Text))
-					{
-						this._writer.Write(9, s.Text);
-					}
+					this._writer.Write(9, s.Text);
 				}
 			}
 		}

@@ -16,6 +16,7 @@ namespace ACadSharp.IO.DXF
 				case Hatch:
 				case Mesh:
 				case MLine:
+				case MText:
 				case Solid3D:
 					this.notify($"Entity type not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return;
@@ -186,7 +187,7 @@ namespace ACadSharp.IO.DXF
 		{
 			DxfClassMap map = DxfClassMap.Create<DimensionAligned>();
 
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Dimension);
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.AlignedDimension);
 
 			this._writer.Write(13, aligned.FirstPoint, map);
 			this._writer.Write(14, aligned.SecondPoint, map);
@@ -612,7 +613,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(44, mtext.LineSpacing, map);
 			this._writer.Write(45, mtext.BackgroundScale, map);
-		
+
 			this._writer.Write(210, mtext.Normal, map);
 		}
 
