@@ -429,7 +429,7 @@ namespace ACadSharp
 				this.addCadObject(cadObject);
 			}
 
-			if (collection is ISeqendColleciton seqendColleciton)
+			if (collection is ISeqendCollection seqendColleciton)
 			{
 				this.addCadObject(seqendColleciton.Seqend);
 			}
@@ -475,7 +475,7 @@ namespace ACadSharp
 				this.removeCadObject(cadObject);
 			}
 
-			if (collection is ISeqendColleciton seqendColleciton)
+			if (collection is ISeqendCollection seqendColleciton)
 			{
 				this.removeCadObject(seqendColleciton.Seqend);
 			}

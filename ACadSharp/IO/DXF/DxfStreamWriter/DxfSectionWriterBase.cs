@@ -148,7 +148,7 @@ namespace ACadSharp.IO.DXF
 				}
 			}
 
-			if (arr is ISeqendColleciton colleciton)
+			if (arr is ISeqendCollection colleciton)
 			{
 				this.writeMappedObject(colleciton.Seqend);
 			}

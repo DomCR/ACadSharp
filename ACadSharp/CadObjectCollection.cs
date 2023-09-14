@@ -21,7 +21,7 @@ namespace ACadSharp
 		/// </summary>
 		public int Count { get { return this._entries.Count; } }
 
-		private readonly HashSet<T> _entries = new HashSet<T>();
+		protected readonly HashSet<T> _entries = new HashSet<T>();
 
 		public CadObjectCollection(CadObject owner)
 		{

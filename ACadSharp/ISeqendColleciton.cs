@@ -2,7 +2,7 @@
 
 namespace ACadSharp
 {
-	public interface ISeqendColleciton
+	public interface ISeqendCollection
 	{
 		Seqend Seqend { get; }
 	}
