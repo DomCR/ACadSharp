@@ -171,7 +171,7 @@ namespace ACadSharp.Entities
 		private void attributesOnAdd(object sender, CollectionChangedEventArgs e)
 		{
 			//TODO: Fix the relation between insert and block
-			this.Block?.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));
+			//this.Block?.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));
 		}
 	}
 }
