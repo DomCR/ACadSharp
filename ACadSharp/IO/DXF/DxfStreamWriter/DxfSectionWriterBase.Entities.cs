@@ -573,9 +573,16 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(10, mtext.InsertPoint, map);
 
-			this._writer.Write(11, mtext.AlignmentPoint, map);
+			this._writer.Write(40, mtext.Height, map);
+			this._writer.Write(41, mtext.RectangleWidth, map);
 
-			this._writer.Write(210, mtext.Normal, map);
+			if (this.Version >= ACadVersion.AC1021)
+			{
+				this._writer.Write(46, mtext.ReferenceRectangleHeight, map);
+			}
+
+			this._writer.Write(71, (short)mtext.AttachmentPoint, map);
+			this._writer.Write(72, (short)mtext.DrawingDirection, map);
 
 			this._writer.Write(1, mtext.Value, map);
 
@@ -585,24 +592,28 @@ namespace ACadSharp.IO.DXF
 					this._writer.Write(3, mtext.AdditionalText.Substring(i, 250), map);
 			}
 
-			this._writer.Write(40, mtext.Height, map);
-			this._writer.Write(41, mtext.RectangleWidth, map);
-			this._writer.Write(44, mtext.LineSpacing, map);
-			this._writer.Write(45, mtext.BackgroundScale, map);
-			if (this.Version >= ACadVersion.AC1021)
-			{
-				this._writer.Write(46, mtext.ReferenceRectangleHeight, map);
-			}
+			this._writer.WriteName(7, mtext.Style);
 
-			this._writer.Write(71, (short)mtext.AttachmentPoint, map);
-			this._writer.Write(72, (short)mtext.DrawingDirection, map);
 			this._writer.Write(73, (short)mtext.LineSpacingStyle, map);
 
-			if (mtext.Style != null)
+			this._writer.Write(11, mtext.AlignmentPoint, map);
+
+			if (this.Version >= ACadVersion.AC1018)
 			{
-				//TODO: Implement text style in the writer
-				//this._writer.Write(7, text.Style.Name);
+				this._writer.Write(90, (int)mtext.BackgroundFillFlags, map);
+				if (mtext.BackgroundFillFlags.HasFlag(BackgroundFillFlags.UseBackgroundFillColor))
+				{
+					//this._writer.Write(63, mtext.BackgroundColor, map);
+					this._writer.Write(45, mtext.BackgroundScale, map);
+					//Transparency of background fill color (not implemented)
+					//this._writer.Write(441, mtext.BackgroundTransparency, map);
+				}
 			}
+
+			this._writer.Write(44, mtext.LineSpacing, map);
+			this._writer.Write(45, mtext.BackgroundScale, map);
+		
+			this._writer.Write(210, mtext.Normal, map);
 		}
 
 		private void writePoint(Point line)
