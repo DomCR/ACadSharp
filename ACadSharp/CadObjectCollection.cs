@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp
 {
@@ -21,7 +22,7 @@ namespace ACadSharp
 		/// </summary>
 		public int Count { get { return this._entries.Count; } }
 
-		private readonly HashSet<T> _entries = new HashSet<T>();
+		protected readonly HashSet<T> _entries = new HashSet<T>();
 
 		public CadObjectCollection(CadObject owner)
 		{
@@ -67,6 +68,11 @@ namespace ACadSharp
 		/// </summary>
 		public void Clear()
 		{
+			Queue<T> q = new Queue<T>(this._entries.ToList());
+			while (this._entries.Any())
+			{
+				this._entries.Remove(q.Dequeue());
+			}
 			this._entries.Clear();
 		}
 
