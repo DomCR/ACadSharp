@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using System.Linq;
 
 namespace ACadSharp
 {
@@ -6,12 +7,18 @@ namespace ACadSharp
 	/// Represents a collection of <see cref="CadObject"/> ended by a <see cref="Entities.Seqend"/> entity
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class SeqendCollection<T> : CadObjectCollection<T>, ISeqendColleciton
+	public class SeqendCollection<T> : CadObjectCollection<T>, ISeqendCollection
 		where T : CadObject
 	{
 		public Seqend Seqend
 		{
-			get { return _seqend; }
+			get
+			{
+				if (this._entries.Any())
+					return this._seqend;
+				else
+					return null;
+			}
 			internal set
 			{
 				this._seqend = value;
@@ -23,8 +30,7 @@ namespace ACadSharp
 
 		public SeqendCollection(CadObject owner) : base(owner)
 		{
-			this.Seqend = new Seqend();
-			this.Seqend.Owner = owner;
+			this._seqend = new Seqend(owner);
 		}
 	}
 }
