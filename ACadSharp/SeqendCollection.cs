@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using System;
 using System.Linq;
 
 namespace ACadSharp
@@ -10,6 +11,10 @@ namespace ACadSharp
 	public class SeqendCollection<T> : CadObjectCollection<T>, ISeqendCollection
 		where T : CadObject
 	{
+		public event EventHandler<CollectionChangedEventArgs> OnSeqendAdded;
+
+		public event EventHandler<CollectionChangedEventArgs> OnSeqendRemoved;
+
 		public Seqend Seqend
 		{
 			get
@@ -32,6 +37,23 @@ namespace ACadSharp
 		{
 			this._seqend = new Seqend();
 			this._seqend.Owner = owner;
+		}
+
+		public override void Add(T item)
+		{
+			bool addSeqend = false;
+			if (!this._entries.Any())
+			{
+				addSeqend = true;
+			}
+
+			base.Add(item);
+
+			// The add could fail due an Exception
+			if (addSeqend && this._entries.Any())
+			{
+				this.OnSeqendAdded?.Invoke(this, new CollectionChangedEventArgs(this._seqend));
+			}
 		}
 	}
 }
