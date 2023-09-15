@@ -170,6 +170,16 @@ namespace ACadSharp.Tests
 			Assert.Null(l.LineType.Document);
 		}
 
+		[Fact]
+		public void Get0HandleObject()
+		{
+			CadDocument doc = new CadDocument();
+
+			Assert.Null(doc.GetCadObject(0));
+			Assert.False(doc.TryGetCadObject(0, out CadObject cadObject));
+			Assert.Null(cadObject);
+		}
+
 		[Fact(Skip = "Implementation in branch : table-operations")]
 		public void RemoveLayer()
 		{

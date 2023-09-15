@@ -98,6 +98,11 @@ namespace ACadSharp.IO.DXF
 			}
 
 			this._writer.Write(48, entity.LinetypeScale, map);
+			if (arr is ISeqendCollection collection && collection.Seqend != null)
+			{
+				this.writeMappedObject(collection.Seqend);
+			}
+		}
 
 			this._writer.Write(60, entity.IsInvisible ? (short)1 : (short)0, map);
 

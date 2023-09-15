@@ -24,6 +24,11 @@ namespace ACadSharp.IO.Templates
 
 			Polyline polyLine = this.CadObject as Polyline;
 
+			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
+			{
+				polyLine.Vertices.Seqend = seqend;
+			}
+
 			if (this.FirstVertexHandle.HasValue)
 			{
 				IEnumerable<Vertex> vertices = this.getEntitiesCollection<Vertex>(builder, this.FirstVertexHandle.Value, this.LastVertexHandle.Value);
@@ -42,11 +47,6 @@ namespace ACadSharp.IO.Templates
 						polyLine.Vertices.Add(builder.GetCadObject<Vertex>(handle));
 					}
 				}
-			}
-
-			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
-			{
-				polyLine.Vertices.Seqend = seqend;
 			}
 		}
 
