@@ -148,9 +148,9 @@ namespace ACadSharp.IO.DXF
 				}
 			}
 
-			if (arr is ISeqendCollection colleciton)
+			if (arr is ISeqendCollection collection && collection.Seqend != null)
 			{
-				this.writeMappedObject(colleciton.Seqend);
+				this.writeMappedObject(collection.Seqend);
 			}
 		}
 
@@ -239,12 +239,12 @@ namespace ACadSharp.IO.DXF
 				return;
 
 			this._writer.Write(75, segment.ShapeNumber);
-			
+
 			if (segment.Style != null)
 			{
 				this._writer.Write(340, segment.Style.Handle);
 			}
-			
+
 			this._writer.Write(46, segment.Scale);
 			this._writer.Write(50, segment.Rotation);
 			this._writer.Write(44, segment.Offset.X);
