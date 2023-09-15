@@ -585,12 +585,6 @@ namespace ACadSharp.IO.DXF
 						last.Bulge = this._reader.ValueAsDouble;
 					}
 					return true;
-				case 50:
-					if (last is not null)
-					{
-						last.CurveTangent = this._reader.ValueAsDouble;
-					}
-					return true;
 				case 90:
 					//Vertex count
 					return true;

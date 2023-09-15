@@ -11,8 +11,6 @@ namespace ACadSharp.IO
 		/// </summary>
 		public bool IsBinary { get; }
 
-		public DxfWriterOptions Options { get; set; } = new DxfWriterOptions();
-
 		private IDxfStreamWriter _writer;
 		private CadObjectHolder _objectHolder = new CadObjectHolder();
 
@@ -122,7 +120,7 @@ namespace ACadSharp.IO
 
 		private void writeHeader()
 		{
-			var writer = new DxfHeaderSectionWriter(this._writer, this._document, this._objectHolder, this.Options);
+			var writer = new DxfHeaderSectionWriter(this._writer, this._document, this._objectHolder);
 			writer.OnNotification += this.triggerNotification;
 
 			writer.Write();

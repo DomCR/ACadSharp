@@ -37,7 +37,7 @@ namespace ACadSharp.IO.DXF
 					this.writeMappedObject<DictionaryVariable>(dictvar);
 					break;
 				case SortEntitiesTable sortensTable:
-					//this.writeSortentsTable(sortensTable);
+					this.writeSortentsTable(sortensTable);
 					break;
 				case XRecrod record:
 					this.writeXRecord(record);
