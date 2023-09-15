@@ -39,6 +39,7 @@ namespace ACadSharp
 			this._seqend.Owner = owner;
 		}
 
+		/// <inheritdoc/>
 		public override void Add(T item)
 		{
 			bool addSeqend = false;
@@ -54,6 +55,18 @@ namespace ACadSharp
 			{
 				this.OnSeqendAdded?.Invoke(this, new CollectionChangedEventArgs(this._seqend));
 			}
+		}
+
+		/// <inheritdoc/>
+		public override T Remove(T item)
+		{
+			var e = base.Remove(item);
+			if(e != null)
+			{
+				this.OnSeqendRemoved?.Invoke(this, new CollectionChangedEventArgs(this._seqend));
+			}
+
+			return e;
 		}
 	}
 }
