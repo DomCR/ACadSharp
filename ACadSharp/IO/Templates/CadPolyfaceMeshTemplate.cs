@@ -21,6 +21,11 @@ namespace ACadSharp.IO.Templates
 
 			PolyfaceMesh polyfaceMesh = (PolyfaceMesh)this.CadObject;
 
+			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
+			{
+				polyfaceMesh.Vertices.Seqend = seqend;
+			}
+
 			if (this.FirstVerticeHandle.HasValue)
 			{
 				IEnumerable<Entity> vertices = this.getEntitiesCollection<Entity>(builder, this.FirstVerticeHandle.Value, this.LastVerticeHandle.Value);
@@ -38,11 +43,6 @@ namespace ACadSharp.IO.Templates
 						this.addItemToPolyface(item, builder);
 					}
 				}
-			}
-
-			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
-			{
-				polyfaceMesh.Vertices.Seqend = seqend;
 			}
 		}
 
