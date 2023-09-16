@@ -127,7 +127,6 @@ namespace ACadSharp
 				this.Document.UnregisterCollection(this.XDictionary);
 
 			this.Handle = 0;
-
 			this.Document = null;
 		}
 	}

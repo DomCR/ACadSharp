@@ -168,7 +168,7 @@ namespace ACadSharp.Entities
 			this.LineType = (LineType)this.LineType.Clone();
 		}
 
-		private void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
 		{
 			if (e.Item.Equals(this.Layer))
 			{
