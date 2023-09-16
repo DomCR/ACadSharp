@@ -22,6 +22,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityLeader;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Leader;
+
 		/// <summary>
 		/// Dimension Style
 		/// </summary>

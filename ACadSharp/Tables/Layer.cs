@@ -31,6 +31,9 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableLayer;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Layer;
+
 		/// <summary>
 		/// Layer state flags.
 		/// </summary>
@@ -42,7 +45,7 @@ namespace ACadSharp.Tables
 		/// <remarks>
 		/// if the index is negative, layer is off
 		/// </remarks>
-		[DxfCodeValue(62)]
+		[DxfCodeValue(62, 420, 430)]
 		public Color Color { get; set; }
 
 		/// <summary>

@@ -20,6 +20,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityLine;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Line;
+
 		/// <summary>
 		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
 		/// </summary>

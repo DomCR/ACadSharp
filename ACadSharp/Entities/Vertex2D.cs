@@ -13,6 +13,10 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.PolylineVertex)]
 	public class Vertex2D : Vertex
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.VERTEX_2D;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.PolylineVertex;
 	}
 }

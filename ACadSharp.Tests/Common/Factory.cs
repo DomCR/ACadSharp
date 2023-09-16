@@ -45,9 +45,7 @@ namespace ACadSharp.Tests.Common
 				{
 					p.SetValue(e, _random.Next(p.PropertyType));
 				}
-				catch (Exception)
-				{
-				}
+				catch (Exception) { }
 			}
 
 			return e;

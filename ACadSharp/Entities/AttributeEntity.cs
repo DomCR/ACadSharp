@@ -19,6 +19,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityAttribute;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Attribute;
+
 		/// <summary>
 		/// Default constructor
 		/// </summary>

@@ -18,6 +18,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.POLYLINE_2D;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Polyline;
+
 		public Polyline2D() : base()
 		{
 			this.Vertices.OnAdd += this.verticesOnAdd;

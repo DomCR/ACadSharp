@@ -1,8 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Objects
 {
@@ -22,6 +20,9 @@ namespace ACadSharp.Objects
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectPlotSettings;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.PlotSettings;
 
 		/// <summary>
 		/// Page Setup name

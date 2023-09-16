@@ -20,6 +20,7 @@ namespace ACadSharp.IO.Templates
 		{
 			public override ObjectType ObjectType => ObjectType.INVALID;
 			public Color Color { get; set; }
+			public override string SubclassMarker { get; }
 		}
 	}
 }

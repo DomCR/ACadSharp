@@ -18,12 +18,14 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.POLYLINE_3D;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Polyline3d;
+
 		public Polyline3D() : base()
 		{
 			this.Vertices.OnAdd += this.verticesOnAdd;
 		}
 
-		/// <exception cref="NotImplementedException"></exception>
 		public override IEnumerable<Entity> Explode()
 		{
 			return Polyline.Explode(this);

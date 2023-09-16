@@ -1,8 +1,5 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Tables
 {
@@ -29,6 +26,9 @@ namespace ACadSharp.Tables
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableAppId;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.ApplicationId;
 
 		internal AppId() : base() { }
 

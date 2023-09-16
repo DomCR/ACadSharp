@@ -1,13 +1,9 @@
 ﻿using ACadSharp.Blocks;
-using ACadSharp.Entities;
 using ACadSharp.Exceptions;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
-using CSMath;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
 
 namespace ACadSharp.IO.DXF
 {
@@ -24,14 +20,14 @@ namespace ACadSharp.IO.DXF
 			this._reader.ReadNext();
 
 			//Loop until the section ends
-			while (this._reader.LastValueAsString != DxfFileToken.EndSection)
+			while (this._reader.ValueAsString != DxfFileToken.EndSection)
 			{
 				try
 				{
-					if (this._reader.LastValueAsString == DxfFileToken.Block)
+					if (this._reader.ValueAsString == DxfFileToken.Block)
 						this.readBlock();
 					else
-						throw new DxfException($"Unexpected token at the BLOCKS table: {this._reader.LastValueAsString}", this._reader.Position);
+						throw new DxfException($"Unexpected token at the BLOCKS table: {this._reader.ValueAsString}", this._reader.Position);
 				}
 				catch (Exception ex)
 				{
@@ -40,8 +36,8 @@ namespace ACadSharp.IO.DXF
 
 					this._builder.Notify($"Error while reading a block at line {this._reader.Position}", NotificationType.Error, ex);
 
-					while (!(this._reader.LastDxfCode == DxfCode.Start && this._reader.LastValueAsString == DxfFileToken.EndSection)
-							&& !(this._reader.LastDxfCode == DxfCode.Start && this._reader.LastValueAsString == DxfFileToken.Block))
+					while (!(this._reader.DxfCode == DxfCode.Start && this._reader.ValueAsString == DxfFileToken.EndSection)
+							&& !(this._reader.DxfCode == DxfCode.Start && this._reader.ValueAsString == DxfFileToken.Block))
 					{
 						this._reader.ReadNext();
 					}
@@ -51,53 +47,68 @@ namespace ACadSharp.IO.DXF
 
 		private void readBlock()
 		{
-			Debug.Assert(this._reader.LastValueAsString == DxfFileToken.Block);
+			Debug.Assert(this._reader.ValueAsString == DxfFileToken.Block);
 
 			//Read the table name
 			this._reader.ReadNext();
 
-			Block blckEntity = null;
-			CadEntityTemplate template = null;
+			DxfMap map = DxfMap.Create<Block>();
 
-			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors);
+			Block blckEntity = new Block();
+			CadEntityTemplate template = new CadEntityTemplate(blckEntity);
 
-			if (this._builder.TryGetCadObject(ownerHandle, out BlockRecord record))
+			string name = null;
+			BlockRecord record = null;
+
+			while (this._reader.DxfCode != DxfCode.Start)
 			{
-				blckEntity = record.BlockEntity;
+				switch (this._reader.Code)
+				{
+					case 2:
+					case 3:
+						name = this._reader.ValueAsString;
+						if (record == null && this._builder.TryGetTableEntry(name, out record))
+						{
+							record.BlockEntity = blckEntity;
+						}
+						else if (record == null)
+						{
+							this._builder.Notify($"Block record [{name}] not found at line {this._reader.Position}", NotificationType.Warning);
+						}
+						break;
+					case 330:
+						if (record == null && this._builder.TryGetCadObject(this._reader.ValueAsHandle, out record))
+						{
+							record.BlockEntity = blckEntity;
+						}
+						else if (record == null)
+						{
+							this._builder.Notify($"Block record with handle [{this._reader.ValueAsString}] not found at line {this._reader.Position}", NotificationType.Warning);
+						}
+						break;
+					default:
+						if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockBegin]))
+						{
+							this.readCommonEntityCodes(template, out bool isExtendedData, map);
+							if (isExtendedData)
+								continue;
+						}
+						break;
+				}
+
+				this._reader.ReadNext();
 			}
-			else
+
+			if (record == null)
 			{
-				blckEntity = new Block();
-				this._builder.Notify($"Block Record {ownerHandle} not found for Block {handle} | {name}", NotificationType.Warning);
+				//record = new BlockRecord(name);
+				//record.BlockEntity = blckEntity;
+
+				//this._builder.DocumentToBuild.BlockRecords.Add(record);
+				throw new DxfException($"Could not find the block record for {name} and handle {blckEntity.Handle}");
 			}
 
-			//Assign the handle to the entity
-			blckEntity.Handle = handle;
-			template = new CadEntityTemplate(blckEntity);
-			template.OwnerHandle = ownerHandle;
-			template.XDictHandle = xdictHandle;
-			template.ReactorsHandles = reactors;
-
-			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.Entity);
-
-			this.readMapped<Entity>(blckEntity, template);
-
-			Debug.Assert(this._reader.LastValueAsString == DxfSubclassMarker.BlockBegin);
-
-			//this.readMapped<Block>(blckEntity, template);
-			this.readBlockBegin(blckEntity);
-
-			if (record == null && this._builder.DocumentToBuild.BlockRecords.TryGetValue(blckEntity.Name, out record))
-			{
-				record.BlockEntity = blckEntity;
-				this._builder.Notify($"Block record find by name {blckEntity.Name}", NotificationType.None);
-			}
-			else if (record == null)
-			{
-				throw new DxfException($"Could not find the block record for {blckEntity.Name} and handle {blckEntity.Handle}");
-			}
-
-			while (this._reader.LastValueAsString != DxfFileToken.EndBlock)
+			while (this._reader.ValueAsString != DxfFileToken.EndBlock)
 			{
 				CadEntityTemplate entityTemplate = null;
 
@@ -112,7 +123,7 @@ namespace ACadSharp.IO.DXF
 
 					this._builder.Notify($"Error while reading a block with name {record.Name} at line {this._reader.Position}", NotificationType.Error, ex);
 
-					while (this._reader.LastDxfCode != DxfCode.Start)
+					while (this._reader.DxfCode != DxfCode.Start)
 						this._reader.ReadNext();
 				}
 
@@ -128,63 +139,32 @@ namespace ACadSharp.IO.DXF
 			this._builder.AddTemplate(template);
 		}
 
-		private void readBlockBegin(Block blckEntity)
+		private void readBlockEnd(BlockEnd block)
 		{
-			this._reader.ReadNext();
+			DxfMap map = DxfMap.Create<BlockEnd>();
+			CadEntityTemplate template = new CadEntityTemplate(block);
 
-			while (this._reader.LastDxfCode != DxfCode.Start
-				&& this._reader.LastDxfCode != DxfCode.Subclass)
+			if (this._reader.DxfCode == DxfCode.Start)
 			{
-				switch (this._reader.LastCode)
+				this._reader.ReadNext();
+			}
+
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				switch (this._reader.Code)
 				{
-					case 1:
-						blckEntity.XrefPath = this._reader.LastValueAsString;
-						break;
-					case 4:
-						blckEntity.Comments = this._reader.LastValueAsString;
-						break;
-					case 2:
-					case 3:
-						if (blckEntity.Owner == null && this._builder.TryGetTableEntry(this._reader.LastValueAsString, out BlockRecord record))
-						{
-							record.BlockEntity = blckEntity;
-							this._builder.Notify($"Block record find by name {blckEntity.Name}", NotificationType.None);
-						}
-						else if (blckEntity.Owner == null)
-						{
-							throw new DxfException($"Could not find the block record for {blckEntity.Name} and handle {blckEntity.Handle}");
-						}
-						break;
-					case 70:
-						blckEntity.Flags = (BlockTypeFlags)this._reader.LastValueAsShort;
-						break;
-					case 10:
-						blckEntity.BasePoint = new XYZ(this._reader.LastValueAsDouble, blckEntity.BasePoint.Y, blckEntity.BasePoint.Z);
-						break;
-					case 20:
-						blckEntity.BasePoint = new XYZ(blckEntity.BasePoint.X, this._reader.LastValueAsDouble, blckEntity.BasePoint.Z);
-						break;
-					case 30:
-						blckEntity.BasePoint = new XYZ(blckEntity.BasePoint.X, blckEntity.BasePoint.Y, this._reader.LastValueAsDouble);
-						break;
 					default:
-						this._builder.Notify($"Unhandeled dxf code : {this._reader.LastCode} with value : {this._reader.LastValue} for subclass {DxfSubclassMarker.BlockBegin}");
+						if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockEnd]))
+						{
+							this.readCommonEntityCodes(template, out bool isExtendedData, map);
+							if (isExtendedData)
+								continue;
+						}
 						break;
 				}
 
 				this._reader.ReadNext();
 			}
-		}
-
-		private void readBlockEnd(BlockEnd block)
-		{
-			CadEntityTemplate template = new CadEntityTemplate(block);
-
-			this.readCommonObjectData(template);
-
-			this.readMapped<Entity>(block, template);
-
-			this.readMapped<BlockEnd>(block, template);
 
 			this._builder.AddTemplate(template);
 		}

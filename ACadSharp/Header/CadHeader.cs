@@ -406,7 +406,7 @@ namespace ACadSharp.Header
 		/// System variable SURFU
 		/// </remarks>
 		[CadSystemVariable("$SURFU", 70)]
-		public short SurfaceDensityU { get; set; }
+		public short SurfaceDensityU { get; set; } = 6;
 
 		/// <summary>
 		/// Surface density(for PEDIT Smooth) in N direction
@@ -415,7 +415,7 @@ namespace ACadSharp.Header
 		/// System variable SURFV
 		/// </remarks>
 		[CadSystemVariable("$SURFV", 70)]
-		public short SurfaceDensityV { get; set; }
+		public short SurfaceDensityV { get; set; } = 6;
 
 		/// <summary>
 		/// Surface type for PEDIT Smooth
@@ -678,7 +678,7 @@ namespace ACadSharp.Header
 		/// System variable ANGBASE
 		/// </remarks>
 		[CadSystemVariable("$ANGBASE", 50)]
-		public double AngleBase { get; set; }
+		public double AngleBase { get; set; } = 0.0;
 
 		/// <summary>
 		/// Point display size
@@ -866,7 +866,7 @@ namespace ACadSharp.Header
 		/// System variable TDINDWG
 		/// </remarks>
 		[CadSystemVariable("$TDINDWG", 40)]
-		public TimeSpan TotalEditingTime { get; set; }
+		public TimeSpan TotalEditingTime { get; set; } = new TimeSpan();
 
 		/// <summary>
 		/// User-elapsed timer
@@ -1151,7 +1151,7 @@ namespace ACadSharp.Header
 		/// System variable INSBASE
 		/// </remarks>
 		[CadSystemVariable("$INSBASE", 10, 20, 30)]
-		public XYZ ModelSpaceInsertionBase { get; set; }
+		public XYZ ModelSpaceInsertionBase { get; set; } = XYZ.Zero;
 
 		/// <summary>
 		/// X, Y, and Z drawing extents lower-left corner (in WCS)
@@ -1473,7 +1473,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable HIDETEXT
 		/// </remarks>
-		[CadSystemVariable("$HIDETEXT", 290)]
+		[CadSystemVariable("$HIDETEXT", 280)]   //note: mismatch with docs, code 290
 		public byte HideText { get; set; }
 
 		/// <summary>
@@ -1482,7 +1482,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable XCLIPFRAME
 		/// </remarks>
-		[CadSystemVariable("$XCLIPFRAME", 290)]
+		[CadSystemVariable("$XCLIPFRAME", 280)] //note: mismatch with docs, code 290
 		public byte ExternalReferenceClippingBoundaryType { get; set; }
 
 		/// <summary>
@@ -1573,7 +1573,7 @@ namespace ACadSharp.Header
 		/// </remarks>
 		[CadSystemVariable("$TIMEZONE", 70)]
 		public int TimeZone { get; set; }
-		
+
 		public char DisplayLightGlyphs { get; set; }
 
 		/// <remarks>
@@ -1614,7 +1614,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable DIMTXSTY
 		/// </remarks>
-		[CadSystemVariable("$DIMTXSTY", 2)]
+		[CadSystemVariable("$DIMTXSTY", 7)]
 		public string DimensionTextStyleName
 		{
 			get { return this.DimensionTextStyle.Name; }

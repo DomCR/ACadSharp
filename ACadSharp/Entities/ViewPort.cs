@@ -23,6 +23,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityViewport;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Viewport;
+
 		/// <summary>
 		/// Center point(in WCS)
 		/// </summary>

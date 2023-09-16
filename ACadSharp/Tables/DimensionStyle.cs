@@ -16,15 +16,18 @@ namespace ACadSharp.Tables
 	[DxfSubClass(DxfSubclassMarker.DimensionStyle)]
 	public class DimensionStyle : TableEntry
 	{
+		public const string DefaultName = "Standard";
+
+		public static DimensionStyle Default { get { return new DimensionStyle(DefaultName); } }
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.DIMSTYLE;
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableDimstyle;
 
-		public const string DefaultName = "Standard";
-
-		public static DimensionStyle Default { get { return new DimensionStyle(DefaultName); } }
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.DimensionStyle;
 
 		/// <summary>
 		/// DIMPOST
@@ -75,10 +78,28 @@ namespace ACadSharp.Tables
 		public bool SuppressSecondExtensionLine { get; set; }
 
 		/// <summary>
+		/// DIMTAD
+		/// </summary>
+		[DxfCodeValue(77)]
+		public DimensionTextVerticalAlignment TextVerticalAlignment { get; set; }
+
+		/// <summary>
+		/// DIMZIN
+		/// </summary>
+		[DxfCodeValue(78)]
+		public ZeroHandling ZeroHandling { get; set; }
+
+		/// <summary>
 		/// DIMALT
 		/// </summary>
 		[DxfCodeValue(170)]
 		public bool AlternateUnitDimensioning { get; set; }
+
+		/// <summary>
+		/// DIMALTD
+		/// </summary>
+		[DxfCodeValue(171)]
+		public short AlternateUnitDecimalPlaces { get; set; }
 
 		/// <summary>
 		/// DIMTOFL
@@ -105,16 +126,16 @@ namespace ACadSharp.Tables
 		public bool SuppressOutsideExtensions { get; set; }
 
 		/// <summary>
-		/// DIMALTD
+		/// DIMADEC
 		/// </summary>
-		[DxfCodeValue(171)]
-		public short AlternateUnitDecimalPlaces { get; set; }
+		[DxfCodeValue(179)]
+		public short AngularDimensionDecimalPlaces { get; set; }
 
 		/// <summary>
-		/// DIMZIN
+		/// DIMJUST
 		/// </summary>
-		[DxfCodeValue(78)]
-		public ZeroHandling ZeroHandling { get; set; }
+		[DxfCodeValue(280)]
+		public DimensionTextHorizontalAlignment TextHorizontalAlignment { get; set; }
 
 		/// <summary>
 		/// DIMSD1
@@ -135,10 +156,16 @@ namespace ACadSharp.Tables
 		public ToleranceAlignment ToleranceAlignment { get; set; }
 
 		/// <summary>
-		/// DIMJUST
+		/// DIMTZIN
 		/// </summary>
-		[DxfCodeValue(280)]
-		public DimensionTextHorizontalAlignment TextHorizontalAlignment { get; set; }
+		[DxfCodeValue(284)]
+		public ZeroHandling ToleranceZeroHandling { get; set; }
+
+		/// <summary>
+		/// DIMALTZ
+		/// </summary>
+		[DxfCodeValue(285)]
+		public ZeroHandling AlternateUnitZeroHandling { get; set; }
 
 		/// <summary>
 		/// DIMFIT
@@ -153,34 +180,10 @@ namespace ACadSharp.Tables
 		public bool CursorUpdate { get; set; }
 
 		/// <summary>
-		/// DIMTZIN
-		/// </summary>
-		[DxfCodeValue(284)]
-		public ZeroHandling ToleranceZeroHandling { get; set; }
-
-		/// <summary>
-		/// DIMALTZ
-		/// </summary>
-		[DxfCodeValue(285)]
-		public ZeroHandling AlternateUnitZeroHandling { get; set; }
-
-		/// <summary>
-		/// DIMADEC
-		/// </summary>
-		[DxfCodeValue(179)]
-		public short AngularDimensionDecimalPlaces { get; set; }
-
-		/// <summary>
 		/// DIMALTTZ
 		/// </summary>
 		[DxfCodeValue(286)]
 		public ZeroHandling AlternateUnitToleranceZeroHandling { get; set; }
-
-		/// <summary>
-		/// DIMTAD
-		/// </summary>
-		[DxfCodeValue(77)]
-		public DimensionTextVerticalAlignment TextVerticalAlignment { get; set; }
 
 		/// <summary>
 		/// DIMUNIT (obsolete, now use DIMLUNIT AND DIMFRAC)
@@ -323,7 +326,7 @@ namespace ACadSharp.Tables
 		/// DIMTXT
 		/// </summary>
 		[DxfCodeValue(140)]
-		public double TextHeight { get; set; }
+		public double TextHeight { get; set; } = 0.18;
 
 		/// <summary>
 		/// DIMCEN
@@ -492,7 +495,7 @@ namespace ACadSharp.Tables
 		/// Arrowhead block for the second end of the dimension line
 		/// </summary>
 		/// <remarks>
-		/// DIMBLK1
+		/// DIMBLK2
 		/// </remarks>
 		[DxfCodeValue(344)]
 		public Block DimArrow2 { get; set; }
