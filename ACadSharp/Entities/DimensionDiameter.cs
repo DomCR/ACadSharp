@@ -34,5 +34,7 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(40)]
 		public double LeaderLength { get; set; }
+
+		public DimensionDiameter() : base(DimensionType.Diameter) { }
 	}
 }

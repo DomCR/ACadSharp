@@ -59,7 +59,14 @@ namespace ACadSharp.Entities
 		/// Dimension type
 		/// </summary>
 		[DxfCodeValue(70)]
-		public DimensionType DimensionType { get; set; }
+		public DimensionType Flags
+		{
+			get
+			{
+				var flags = this._flags | DimensionType.BlockReference;
+				return flags;
+			}
+		}
 
 		/// <summary>
 		/// Attachment point
@@ -125,7 +132,7 @@ namespace ACadSharp.Entities
 		/// All dimension types have an optional 51 group code, which indicates the horizontal direction for the dimension entity.The dimension entity determines the orientation of dimension text and lines for horizontal, vertical, and rotated linear dimensions
 		/// This group value is the negative of the angle between the OCS X axis and the UCS X axis. It is always in the XY plane of the OCS
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional| DxfReferenceType.IsAngle, 51)]
+		[DxfCodeValue(DxfReferenceType.Optional | DxfReferenceType.IsAngle, 51)]
 		public double HorizontalDirection { get; set; }
 
 		//This group value is the negative of the angle between the OCS X axis and the UCS X axis.It is always in the XY plane of the OCS
@@ -137,6 +144,13 @@ namespace ACadSharp.Entities
 		public DimensionStyle Style { get; set; } = DimensionStyle.Default;
 
 		private string _text;
+
+		private readonly DimensionType _flags;
+
+		protected Dimension(DimensionType type)
+		{
+			this._flags = type;
+		}
 
 		public override CadObject Clone()
 		{

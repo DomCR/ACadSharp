@@ -61,6 +61,8 @@ namespace ACadSharp.IO.Templates
 		public class DimensionPlaceholder : Dimension
 		{
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
+
+			public DimensionPlaceholder() : base(DimensionType.Linear) { }
 		}
 
 		public void SetDimensionObject(Dimension dimensionAligned)
@@ -85,7 +87,6 @@ namespace ACadSharp.IO.Templates
 			dimensionAligned.TextMiddlePoint = dimension.TextMiddlePoint;
 			dimensionAligned.InsertionPoint = dimension.InsertionPoint;
 			dimensionAligned.Normal = dimension.Normal;
-			dimensionAligned.DimensionType = dimension.DimensionType;
 			dimensionAligned.AttachmentPoint = dimension.AttachmentPoint;
 			dimensionAligned.LineSpacingStyle = dimension.LineSpacingStyle;
 			dimensionAligned.LineSpacingFactor = dimension.LineSpacingFactor;

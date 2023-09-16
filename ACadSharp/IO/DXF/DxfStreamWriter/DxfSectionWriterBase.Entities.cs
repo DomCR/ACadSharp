@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
 using CSMath;
 using System;
 using System.Linq;
@@ -144,7 +145,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(11, dim.TextMiddlePoint, map);
 
 			this._writer.Write(53, dim.TextRotation, map);
-			this._writer.Write(70, (short)dim.DimensionType, map);
+			this._writer.Write(70, (short)dim.Flags, map);
 			this._writer.Write(71, (short)dim.AttachmentPoint, map);
 			this._writer.Write(72, (short)dim.LineSpacingStyle, map);
 			this._writer.Write(41, dim.LineSpacingFactor, map);
