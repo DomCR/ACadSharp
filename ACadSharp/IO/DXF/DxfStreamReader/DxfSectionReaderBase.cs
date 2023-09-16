@@ -14,21 +14,6 @@ namespace ACadSharp.IO.DXF
 	{
 		public delegate bool ReadEntityDelegate<T>(CadEntityTemplate template, DxfMap map, string subclass = null) where T : Entity;
 
-		/// <summary>
-		/// Object reactors, list of handles
-		/// </summary>
-		public const string ReactorsToken = "{ACAD_REACTORS";
-
-		/// <summary>
-		/// Handle for the xdictionary
-		/// </summary>
-		public const string DictionaryToken = "{ACAD_XDICTIONARY";
-
-		/// <summary>
-		/// Block references
-		/// </summary>
-		public const string BlkRefToken = "{BLKREFS";
-
 		protected readonly IDxfStreamReader _reader;
 		protected readonly DxfDocumentBuilder _builder;
 
@@ -1256,16 +1241,16 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.ValueAsString)
 			{
-				case DxfSectionReaderBase.DictionaryToken:
+				case DxfFileToken.DictionaryToken:
 					this._reader.ReadNext();
 					xdictHandle = this._reader.ValueAsHandle;
 					this._reader.ReadNext();
 					Debug.Assert(this._reader.DxfCode == DxfCode.ControlString);
 					return;
-				case DxfSectionReaderBase.ReactorsToken:
+				case DxfFileToken.ReactorsToken:
 					reactors = readReactors();
 					break;
-				case DxfSectionReaderBase.BlkRefToken:
+				case DxfFileToken.BlkRefToken:
 				default:
 					do
 					{
