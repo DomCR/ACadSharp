@@ -4210,7 +4210,7 @@ namespace ACadSharp.IO.DWG
 			}
 			catch (System.Exception ex)
 			{
-				this._builder.Notify(new NotificationEventArgs($"Exception while reading LwPolyline: {ex.GetType().FullName}"));
+				this._builder.Notify($"Exception while reading LwPolyline: {ex.GetType().FullName}", NotificationType.Error, ex);
 				return template;
 			}
 

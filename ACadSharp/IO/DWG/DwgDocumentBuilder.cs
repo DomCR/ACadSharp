@@ -1,4 +1,5 @@
 ﻿using ACadSharp.IO.Templates;
+using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System.Collections.Generic;
 
@@ -9,24 +10,6 @@ namespace ACadSharp.IO.DWG
 		public DwgReaderConfiguration Configuration { get; }
 
 		public DwgHeaderHandlesCollection HeaderHandles { get; set; }
-
-		public AppIdsTable AppIds { get; set; }
-
-		public BlockRecordsTable BlockRecords { get; set; }
-
-		public DimensionStylesTable DimensionStyles { get; set; }
-
-		public LayersTable Layers { get; set; }
-
-		public LineTypesTable LineTypesTable { get; set; }
-
-		public TextStylesTable TextStyles { get; set; }
-
-		public UCSTable UCSs { get; set; }
-
-		public ViewsTable Views { get; set; }
-
-		public VPortsTable VPorts { get; set; }
 
 		public List<CadBlockRecordTemplate> BlockRecordTemplates { get; set; } = new List<CadBlockRecordTemplate>();
 
@@ -44,27 +27,19 @@ namespace ACadSharp.IO.DWG
 				item.SetBlockToRecord(this);
 			}
 
-			this.DocumentToBuild.RegisterCollection(AppIds);
-			this.DocumentToBuild.RegisterCollection(Layers);
-			this.DocumentToBuild.RegisterCollection(LineTypesTable);
-			this.DocumentToBuild.RegisterCollection(TextStyles);
-			this.DocumentToBuild.RegisterCollection(UCSs);
-			this.DocumentToBuild.RegisterCollection(Views);
-			this.DocumentToBuild.RegisterCollection(DimensionStyles);
-			this.DocumentToBuild.RegisterCollection(VPorts);
-			this.DocumentToBuild.RegisterCollection(BlockRecords);
+			this.RegisterTables();
 
-			this.BuildTables();
+			this.BuildTable(this.AppIds);
+			this.BuildTable(this.LineTypesTable);
+			this.BuildTable(this.Layers);
+			this.BuildTable(this.TextStyles);
+			this.BuildTable(this.UCSs);
+			this.BuildTable(this.Views);
+			this.BuildTable(this.DimensionStyles);
+			this.BuildTable(this.VPorts);
+			this.BuildTable(this.BlockRecords);
 
 			base.BuildDocument();
-		}
-
-		public void BuildTables()
-		{
-			foreach (ICadTableTemplate template in this.tableTemplates.Values)
-			{
-				template.Build(this);
-			}
 		}
 	}
 }
