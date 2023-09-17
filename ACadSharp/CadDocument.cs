@@ -359,7 +359,7 @@ namespace ACadSharp
 
 				if (seqendColleciton.Seqend != null)
 				{
-					this.addCadObject(seqendColleciton.Seqend);
+					this.AddCadObject(seqendColleciton.Seqend);
 				}
 			}
 
@@ -411,7 +411,7 @@ namespace ACadSharp
 
 				if (seqendColleciton.Seqend != null)
 				{
-					this.removeCadObject(seqendColleciton.Seqend);
+					this.RemoveCadObject(seqendColleciton.Seqend);
 				}
 			}
 
