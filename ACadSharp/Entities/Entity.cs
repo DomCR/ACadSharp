@@ -132,20 +132,6 @@ namespace ACadSharp.Entities
 			return clone;
 		}
 
-		protected T updateTable<T>(T entry, Table<T> table)
-			where T : TableEntry
-		{
-			if (table.TryGetValue(entry.Name, out T existing))
-			{
-				return existing;
-			}
-			else
-			{
-				table.Add(entry);
-				return entry;
-			}
-		}
-
 		internal override void AssignDocument(CadDocument doc)
 		{
 			base.AssignDocument(doc);

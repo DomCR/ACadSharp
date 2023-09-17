@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
-using System;
+using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
 using System.Collections.Generic;
 
 namespace ACadSharp
@@ -128,6 +129,20 @@ namespace ACadSharp
 
 			this.Handle = 0;
 			this.Document = null;
+		}
+
+		protected T updateTable<T>(T entry, Table<T> table)
+			where T : TableEntry
+		{
+			if (table.TryGetValue(entry.Name, out T existing))
+			{
+				return existing;
+			}
+			else
+			{
+				table.Add(entry);
+				return entry;
+			}
 		}
 	}
 }
