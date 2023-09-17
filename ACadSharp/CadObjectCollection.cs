@@ -1,6 +1,8 @@
-﻿using System;
+﻿using CSUtilities.Extensions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp
 {
@@ -21,7 +23,7 @@ namespace ACadSharp
 		/// </summary>
 		public int Count { get { return this._entries.Count; } }
 
-		private readonly HashSet<T> _entries = new HashSet<T>();
+		protected readonly HashSet<T> _entries = new HashSet<T>();
 
 		public CadObjectCollection(CadObject owner)
 		{
@@ -34,7 +36,7 @@ namespace ACadSharp
 		/// <param name="item"></param>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="ArgumentNullException"></exception>
-		public void Add(T item)
+		public virtual void Add(T item)
 		{
 			if (item is null) throw new ArgumentNullException(nameof(item));
 
@@ -67,7 +69,11 @@ namespace ACadSharp
 		/// </summary>
 		public void Clear()
 		{
-			this._entries.Clear();
+			Queue<T> q = new(this._entries.ToList());
+			while (q.TryDequeue(out T entry))
+			{
+				this.Remove(entry);
+			}
 		}
 
 		/// <summary>
@@ -75,7 +81,7 @@ namespace ACadSharp
 		/// </summary>
 		/// <param name="item"></param>
 		/// <returns>The removed <see cref="CadObject"/></returns>
-		public T Remove(T item)
+		public virtual T Remove(T item)
 		{
 			if (!this._entries.Remove(item))
 				return null;

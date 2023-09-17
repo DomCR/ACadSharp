@@ -171,6 +171,16 @@ namespace ACadSharp.Tests
 		}
 
 		[Fact]
+		public void Get0HandleObject()
+		{
+			CadDocument doc = new CadDocument();
+
+			Assert.Null(doc.GetCadObject(0));
+			Assert.False(doc.TryGetCadObject(0, out CadObject cadObject));
+			Assert.Null(cadObject);
+		}
+
+		[Fact]
 		public void RemoveLayer()
 		{
 			string layerName = "custom_layer";
