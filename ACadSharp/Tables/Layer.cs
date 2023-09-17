@@ -84,8 +84,6 @@ namespace ACadSharp.Tables
 
 		public Layer(string name) : base(name)
 		{
-			if (string.IsNullOrEmpty(name))
-				throw new ArgumentNullException(nameof(name), "Layer must have a name.");
 		}
 
 		public override CadObject Clone()

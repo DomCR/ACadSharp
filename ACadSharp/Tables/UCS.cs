@@ -59,7 +59,7 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(79)]
 		public OrthographicType OrthographicViewType { get; set; }
 
-		public UCS() : base() { }
+		internal UCS() : base() { }
 
 		public UCS(string name) : base(name) { }
 	}
