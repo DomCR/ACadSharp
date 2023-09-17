@@ -44,6 +44,11 @@ namespace ACadSharp.IO.Templates
 				insert.Block = block;
 			}
 
+			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
+			{
+				insert.Attributes.Seqend = seqend;
+			}
+
 			if (this.FirstAttributeHandle.HasValue)
 			{
 				var attributes = getEntitiesCollection<AttributeEntity>(builder, FirstAttributeHandle.Value, EndAttributeHandle.Value);
@@ -58,11 +63,6 @@ namespace ACadSharp.IO.Templates
 						insert.Attributes.Add(att);
 					}
 				}
-			}
-
-			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
-			{
-				insert.Attributes.Seqend = seqend;
 			}
 		}
 	}

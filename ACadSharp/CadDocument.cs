@@ -225,6 +225,10 @@ namespace ACadSharp
 			where T : CadObject
 		{
 			cadObject = null;
+
+			if (handle == this.Handle)
+				return false;
+
 			if (this._cadObjects.TryGetValue(handle, out IHandledCadObject obj))
 			{
 				cadObject = obj as T;
@@ -429,9 +433,15 @@ namespace ACadSharp
 				this.addCadObject(cadObject);
 			}
 
-			if (collection is ISeqendColleciton seqendColleciton)
+			if (collection is ISeqendCollection seqendColleciton)
 			{
-				this.addCadObject(seqendColleciton.Seqend);
+				seqendColleciton.OnSeqendAdded += this.onAdd;
+				seqendColleciton.OnSeqendRemoved += this.onRemove;
+
+				if (seqendColleciton.Seqend != null)
+				{
+					this.addCadObject(seqendColleciton.Seqend);
+				}
 			}
 
 			if (addElements)
@@ -475,9 +485,15 @@ namespace ACadSharp
 				this.removeCadObject(cadObject);
 			}
 
-			if (collection is ISeqendColleciton seqendColleciton)
+			if (collection is ISeqendCollection seqendColleciton)
 			{
-				this.removeCadObject(seqendColleciton.Seqend);
+				seqendColleciton.OnSeqendAdded -= this.onAdd;
+				seqendColleciton.OnSeqendRemoved -= this.onRemove;
+
+				if (seqendColleciton.Seqend != null)
+				{
+					this.removeCadObject(seqendColleciton.Seqend);
+				}
 			}
 
 			if (removeElements)
