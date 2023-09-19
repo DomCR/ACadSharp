@@ -30,7 +30,7 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <remarks>
 		/// Name reference: <br/>
-		/// String of up to 32 characters.The name of the style used for this mline.An entry for this style must exist in the MLINESTYLE dictionary.
+		/// String of up to 32 characters.The name of the style used for this mline. An entry for this style must exist in the MLINESTYLE dictionary.
 		/// Do not modify this field without also updating the associated entry in the MLINESTYLE dictionary
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle | DxfReferenceType.Name, 340)]
