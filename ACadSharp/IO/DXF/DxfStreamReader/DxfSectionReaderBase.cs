@@ -332,6 +332,9 @@ namespace ACadSharp.IO.DXF
 					dim.Rotation = this._reader.ValueAsDouble;
 					map.SubClasses.Add(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
 					return true;
+				case 70:
+					//Flags do not have set
+					return true;
 				//Undocumented codes
 				case 73:
 				case 74:
