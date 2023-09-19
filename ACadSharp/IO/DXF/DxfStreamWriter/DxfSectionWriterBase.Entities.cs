@@ -663,12 +663,15 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(210, polyline.Normal, map);
 
-			foreach (Vertex v in polyline.Vertices)
+			if (polyline.Vertices.Any())
 			{
-				this.writeEntity(v);
-			}
+				foreach (Vertex v in polyline.Vertices)
+				{
+					this.writeEntity(v);
+				}
 
-			this.writeSeqend(polyline.Vertices.Seqend);
+				this.writeSeqend(polyline.Vertices.Seqend);
+			}
 		}
 
 		private void writeSeqend(Seqend seqend)
