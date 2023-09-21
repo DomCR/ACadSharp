@@ -245,14 +245,12 @@ namespace ACadSharp
 			return false;
 		}
 
-		internal void AddCadObject(CadObject cadObject)
+		private void AddCadObject(CadObject cadObject)
 		{
 			if (cadObject.Document != null)
 			{
 				throw new ArgumentException($"The item with handle {cadObject.Handle} is already assigned to a document");
 			}
-
-			cadObject.AssignDocument(this);
 
 			if (cadObject.Handle == 0 || this._cadObjects.ContainsKey(cadObject.Handle))
 			{
@@ -263,10 +261,18 @@ namespace ACadSharp
 				cadObject.Handle = nextHandle;
 			}
 
+			cadObject.AssignDocument(this);
+
+			if (cadObject is BlockRecord record)
+			{
+				this.AddCadObject(record.BlockEntity);
+				this.AddCadObject(record.BlockEnd);
+			}
+
 			this._cadObjects.Add(cadObject.Handle, cadObject);
 		}
 
-		internal void RemoveCadObject(CadObject cadObject)
+		private void RemoveCadObject(CadObject cadObject)
 		{
 			if (!this.TryGetCadObject(cadObject.Handle, out CadObject _)
 				|| !this._cadObjects.Remove(cadObject.Handle))

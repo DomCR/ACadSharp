@@ -203,16 +203,12 @@ namespace ACadSharp.Tables
 			base.AssignDocument(doc);
 
 			doc.RegisterCollection(this.Entities);
-			doc.AddCadObject(this.BlockEntity);
-			doc.AddCadObject(this.BlockEnd);
 		}
 
 		internal override void UnassignDocument()
 		{
 			this.Document.UnregisterCollection(this.Entities);
-			this.Document.RemoveCadObject(this.BlockEnd);
-			this.Document.RemoveCadObject(this.BlockEntity);
-				
+
 			base.UnassignDocument();
 		}
 	}
