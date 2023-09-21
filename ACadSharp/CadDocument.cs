@@ -371,7 +371,7 @@ namespace ACadSharp
 				}
 				else
 				{
-					this.addCadObject(item);
+					this.AddCadObject(item);
 				}
 			}
 		}
@@ -420,7 +420,7 @@ namespace ACadSharp
 				}
 				else
 				{
-					this.removeCadObject(item);
+					this.RemoveCadObject(item);
 				}
 			}
 		}
