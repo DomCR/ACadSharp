@@ -29,7 +29,7 @@ namespace ACadSharpInternal.Tests
 
 			DwgDocumentBuilder builder = this.writeInfo(document);
 
-			builder.BuildTables();
+			builder.RegisterTables();
 
 			assertTable(document.AppIds, builder.AppIds);
 			assertTable(document.Layers, builder.Layers);
