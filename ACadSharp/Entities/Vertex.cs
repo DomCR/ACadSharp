@@ -4,7 +4,7 @@ using CSMath;
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Represents a base for <see cref="Vertex2D"/> and <see cref="Vertex3D"/>
+	/// Represents a base type for Vertex entities
 	/// </summary>
 	[DxfSubClass(DxfSubclassMarker.Vertex, true)]
 	public abstract class Vertex : Entity, IVertex

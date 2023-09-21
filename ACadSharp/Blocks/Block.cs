@@ -56,7 +56,7 @@ namespace ACadSharp.Blocks
 		/// Gets the path of the block, document, application, or external reference.
 		/// </summary>
 		[DxfCodeValue(1)]
-		public string XrefPath { get; internal set; }
+		public string XrefPath { get; set; }
 
 		/// <summary>
 		/// Specifies the comments for the block or drawing.

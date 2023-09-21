@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
-using System;
 using System.Linq;
 
 namespace ACadSharp.IO.DXF
@@ -16,24 +15,35 @@ namespace ACadSharp.IO.DXF
 		{
 			foreach (BlockRecord b in this._document.BlockRecords)
 			{
-				DxfMap map = DxfMap.Create<Block>();
-
-				this._writer.Write(DxfCode.Start, b.BlockEntity.ObjectName);
-
-				this.writeCommonObjectData(b.BlockEntity);
-
-				this.writeMap(map, b.BlockEntity);
-
+				this.writeBlock(b.BlockEntity);
 				this.processEntities(b);
-
-				DxfMap bendmap = DxfMap.Create<BlockEnd>();
-
-				this._writer.Write(DxfCode.Start, b.BlockEnd.ObjectName);
-
-				this.writeCommonObjectData(b.BlockEnd);
-
-				this.writeMap(bendmap, b.BlockEnd);
+				this.writeBlockEnd(b.BlockEnd);
 			}
+		}
+
+		private void writeBlock(Block block)
+		{
+			DxfClassMap map = DxfClassMap.Create<Block>();
+
+			this._writer.Write(DxfCode.Start, block.ObjectName);
+
+			this.writeCommonObjectData(block);
+
+			this.writeCommonEntityData(block);
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.BlockBegin);
+
+			if (!string.IsNullOrEmpty(block.XrefPath))
+			{
+				this._writer.Write(1, block.XrefPath, map);
+			}
+			this._writer.Write(2, block.Name, map);
+			this._writer.Write(70, (short)block.Flags, map);
+
+			this._writer.Write(10, block.BasePoint, map);
+		
+			this._writer.Write(3, block.Name, map);
+			this._writer.Write(4, block.Comments, map);
 		}
 
 		private void processEntities(BlockRecord b)
@@ -49,9 +59,22 @@ namespace ACadSharp.IO.DXF
 			{
 				foreach (Entity e in b.Entities.Concat(b.Viewports))
 				{
-					this.writeMappedObject(e);
+					this.writeEntity(e);
 				}
 			}
+		}
+
+		private void writeBlockEnd(BlockEnd block)
+		{
+			this._writer.Write(DxfCode.Start, block.ObjectName);
+
+			this.writeCommonObjectData(block);
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Entity);
+
+			this._writer.Write(8, block.Layer.Name);
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.BlockEnd);
 		}
 	}
 }

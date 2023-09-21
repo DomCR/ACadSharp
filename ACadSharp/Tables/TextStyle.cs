@@ -42,7 +42,7 @@ namespace ACadSharp.Tables
 		public string Filename { get; set; } = "arial.ttf";
 
 		/// <summary>
-		/// Bigfont file name; blank if none.
+		/// Bigfont file name, blank if none.
 		/// </summary>
 		[DxfCodeValue(4)]
 		public string BigFontFilename { get; set; }

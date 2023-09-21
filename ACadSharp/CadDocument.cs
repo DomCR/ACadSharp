@@ -382,7 +382,7 @@ namespace ACadSharp
 			}
 		}
 
-		internal void RegisterCollection<T>(IObservableCollection<T> collection, bool addElements = true)
+		internal void RegisterCollection<T>(IObservableCollection<T> collection)
 			where T : CadObject
 		{
 			switch (collection)
@@ -444,23 +444,20 @@ namespace ACadSharp
 				}
 			}
 
-			if (addElements)
+			foreach (T item in collection)
 			{
-				foreach (T item in collection)
+				if (item is CadDictionary dictionary)
 				{
-					if (item is CadDictionary dictionary)
-					{
-						this.RegisterCollection(dictionary);
-					}
-					else
-					{
-						this.addCadObject(item);
-					}
+					this.RegisterCollection(dictionary);
+				}
+				else
+				{
+					this.addCadObject(item);
 				}
 			}
 		}
 
-		internal void UnregisterCollection<T>(IObservableCollection<T> collection, bool removeElements = true)
+		internal void UnregisterCollection<T>(IObservableCollection<T> collection)
 			where T : CadObject
 		{
 			switch (collection)
@@ -496,18 +493,15 @@ namespace ACadSharp
 				}
 			}
 
-			if (removeElements)
+			foreach (T item in collection)
 			{
-				foreach (T item in collection)
+				if (item is CadDictionary dictionary)
 				{
-					if (item is CadDictionary dictionary)
-					{
-						this.UnregisterCollection(dictionary);
-					}
-					else
-					{
-						this.removeCadObject(item);
-					}
+					this.UnregisterCollection(dictionary);
+				}
+				else
+				{
+					this.removeCadObject(item);
 				}
 			}
 		}
