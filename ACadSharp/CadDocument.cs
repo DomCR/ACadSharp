@@ -261,7 +261,7 @@ namespace ACadSharp
 				cadObject.Handle = nextHandle;
 			}
 
-			cadObject.AssignDocument(this);
+			this._cadObjects.Add(cadObject.Handle, cadObject);
 
 			if (cadObject is BlockRecord record)
 			{
@@ -269,7 +269,7 @@ namespace ACadSharp
 				this.addCadObject(record.BlockEnd);
 			}
 
-			this._cadObjects.Add(cadObject.Handle, cadObject);
+			cadObject.AssignDocument(this);
 		}
 
 		private void removeCadObject(CadObject cadObject)
