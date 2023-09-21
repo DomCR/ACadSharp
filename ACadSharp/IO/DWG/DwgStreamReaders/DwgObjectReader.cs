@@ -166,10 +166,9 @@ namespace ACadSharp.IO.DWG
 
 				//Add the template to the list to be processed
 				if (template == null)
-				{
+					continue;
 
-				}
-				else if (template is ICadTableTemplate tableTemplate)
+				if (template is ICadTableTemplate tableTemplate)
 				{
 					this._builder.AddTableTemplate(tableTemplate);
 				}
