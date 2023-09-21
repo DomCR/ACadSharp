@@ -2532,6 +2532,9 @@ namespace ACadSharp.IO.DWG
 				//itemhandles (soft owner)
 				ulong handle = this.handleReference();
 
+				if (handle == 0 || string.IsNullOrEmpty(name))
+					continue;
+
 				template.Entries.Add(name, handle);
 			}
 		}
