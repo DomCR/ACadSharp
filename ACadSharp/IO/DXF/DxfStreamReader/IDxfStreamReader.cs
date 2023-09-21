@@ -20,6 +20,8 @@
 		/// </summary>
 		string ValueAsString { get; }
 
+		string ValueRaw { get; }
+
 		bool ValueAsBool { get; }
 
 		short ValueAsShort { get; }

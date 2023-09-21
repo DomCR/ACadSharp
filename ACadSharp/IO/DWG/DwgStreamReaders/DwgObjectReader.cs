@@ -2154,7 +2154,7 @@ namespace ACadSharp.IO.DWG
 			template.ShapeIndex = (ushort)this._objectReader.ReadBitShort();
 
 			//Extrusion 3BD 210
-			shape.Extrusion = this._objectReader.Read3BitDouble();
+			shape.Normal = this._objectReader.Read3BitDouble();
 
 			//H SHAPEFILE (hard pointer)
 			template.ShapeFileHandle = this.handleReference();
@@ -2566,13 +2566,13 @@ namespace ACadSharp.IO.DWG
 			//X-axis dir 3BD 11 Apparently the text x-axis vector. (Why not just a rotation?) ACAD maintains it as a unit vector.
 			mtext.AlignmentPoint = this._objectReader.Read3BitDouble();
 			//Rect width BD 41 Reference rectangle width (width picked by the user).
-			mtext.RectangleWitdth = this._objectReader.ReadBitDouble();
+			mtext.RectangleWidth = this._objectReader.ReadBitDouble();
 
 			//R2007+:
 			if (this.R2007Plus)
 			{
 				//Rect height BD 46 Reference rectangle height.
-				mtext.RectangleHeight = this._objectReader.ReadBitDouble();
+				mtext.ReferenceRectangleHeight = this._objectReader.ReadBitDouble();
 			}
 
 			//Common:
@@ -2811,7 +2811,7 @@ namespace ACadSharp.IO.DWG
 			//Base point 3BD 10
 			mline.StartPoint = this._objectReader.Read3BitDouble();
 			//Extrusion 3BD 210 etc.
-			mline.Extrusion = this._objectReader.Read3BitDouble();
+			mline.Normal = this._objectReader.Read3BitDouble();
 
 			//Openclosed BS open (1), closed(3)
 			mline.Flags |= this._objectReader.ReadBitShort() == 3 ? MLineFlags.Closed : MLineFlags.Has;
@@ -3181,7 +3181,7 @@ namespace ACadSharp.IO.DWG
 			//Description TV 3
 			ltype.Description = this._textReader.ReadVariableText();
 			//Pattern Len BD 40
-			ltype.PatternLen = this._objectReader.ReadBitDouble();
+			template.TotalLen = this._objectReader.ReadBitDouble();
 			//Alignment RC 72 Always 'A'.
 			ltype.Alignment = this._objectReader.ReadRawChar();
 
@@ -4021,7 +4021,7 @@ namespace ACadSharp.IO.DWG
 			group.Description = this._textReader.ReadVariableText();
 
 			//Unnamed BS 1 if group has no name
-			this._objectReader.ReadBitShort();
+			group.IsUnnamed = this._objectReader.ReadBitShort() > 0;
 			//Selectable BS 1 if group selectable
 			group.Selectable = this._objectReader.ReadBitShort() > 0;
 
@@ -4786,7 +4786,7 @@ namespace ACadSharp.IO.DWG
 			//Printer / Config TV 2 plotsettings printer or configuration file
 			plot.SystemPrinterName = this._textReader.ReadVariableText();
 			//Plot layout flags BS 70 plotsettings plot layout flag
-			plot.PlotFlags = (PlotFlags)this._objectReader.ReadBitShort();
+			plot.Flags = (PlotFlags)this._objectReader.ReadBitShort();
 
 			PaperMargin margin = new PaperMargin()
 			{
@@ -4810,7 +4810,9 @@ namespace ACadSharp.IO.DWG
 			plot.PaperSize = this._textReader.ReadVariableText();
 
 			//Plot origin 2BD 46,47 plotsettings origin offset in millimeters
-			plot.PlotOrigin = this._objectReader.Read2BitDouble();
+			var plotOrigin = this._objectReader.Read2BitDouble();
+			plot.PlotOriginX = plotOrigin.X;
+			plot.PlotOriginY = plotOrigin.Y;
 			//Paper units BS 72 plotsettings plot paper units
 			plot.PaperUnits = (PlotPaperUnits)this._objectReader.ReadBitShort();
 			//Plot rotation BS 73 plotsettings plot rotation
@@ -4819,9 +4821,13 @@ namespace ACadSharp.IO.DWG
 			plot.PlotType = (PlotType)this._objectReader.ReadBitShort();
 
 			//Window min 2BD 48,49 plotsettings plot window area lower left
-			plot.WindowLowerLeft = this._objectReader.Read2BitDouble();
+			var windowLowerLeft = this._objectReader.Read2BitDouble();
+			plot.WindowLowerLeftX = windowLowerLeft.X;
+			plot.WindowLowerLeftY = windowLowerLeft.Y;
 			//Window max 2BD 140,141 plotsettings plot window area upper right
-			plot.WindowUpperLeft = this._objectReader.Read2BitDouble();
+			var windowUpperLeft = this._objectReader.Read2BitDouble();
+			plot.WindowUpperLeftX = windowUpperLeft.X;
+			plot.WindowUpperLeftY = windowUpperLeft.Y;
 
 			//R13 - R2000 Only:
 			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)

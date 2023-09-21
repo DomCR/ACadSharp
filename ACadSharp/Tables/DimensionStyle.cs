@@ -295,7 +295,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// DIMJOGANG
 		/// </summary>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double JoggedRadiusDimensionTransverseSegmentAngle { get; set; }
 
 		/// <summary>
@@ -449,7 +449,10 @@ namespace ACadSharp.Tables
 		public string AltMzs { get; set; }
 		public string Mzs { get; set; }
 
-		//289	DIMATFIT
+		/// <summary>
+		/// DIMATFIT
+		/// </summary>
+		[DxfCodeValue(289)]
 		public short DimensionTextArrowFit { get; set; }
 
 		/// <summary>

@@ -311,7 +311,13 @@ namespace ACadSharp
 		/// <summary>
 		/// True if the stored color is a true color.  False if the color is an indexed color.
 		/// </summary>
-		public bool IsTrueColor => _color >= (1 << 30);
+		public bool IsTrueColor
+		{
+			get
+			{
+				return _color > 256 || _color < 0;
+			}
+		}
 
 		/// <summary>
 		/// Represents the actual stored color.  Either a True Color or an indexed color.

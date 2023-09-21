@@ -575,6 +575,9 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				case 40:
+					tmp.TotalLen = this._reader.ValueAsDouble;
+					return true;
 				case 49:
 					do
 					{

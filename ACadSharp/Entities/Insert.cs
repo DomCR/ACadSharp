@@ -28,18 +28,6 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.Insert;
 
 		/// <summary>
-		/// Attributes from the block reference
-		/// </summary>
-		/// <remarks>
-		/// If an attribute should be added in this collection a definition will be added into the block reference as well
-		/// </remarks>
-		//66	Variable attributes-follow flag(optional; default = 0); 
-		//		if the value of attributes-follow flag is 1, a series of 
-		//		attribute entities is expected to follow the insert, terminated by a seqend entity
-		[DxfCodeValue(DxfReferenceType.Ignored, 66)]
-		public SeqendCollection<AttributeEntity> Attributes { get; }
-
-		/// <summary>
 		/// Gets the insert block definition
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 2)]
@@ -107,6 +95,20 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(45)]
 		public double RowSpacing { get; set; } = 0;
+
+		/// <summary>
+		/// True if the insert has attribute entities in it
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Ignored, 66)]
+		public bool HasAttributes { get { return this.Attributes.Any(); } }
+
+		/// <summary>
+		/// Attributes from the block reference
+		/// </summary>
+		/// <remarks>
+		/// If an attribute should be added in this collection a definition will be added into the block reference as well
+		/// </remarks>
+		public SeqendCollection<AttributeEntity> Attributes { get; }
 
 		internal Insert(bool onAdd = true) : base()
 		{
@@ -198,7 +200,7 @@ namespace ACadSharp.Entities
 		private void attributesOnAdd(object sender, CollectionChangedEventArgs e)
 		{
 			//TODO: Fix the relation between insert and block
-			this.Block?.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));
+			//this.Block?.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));
 		}
 	}
 }

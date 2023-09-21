@@ -60,7 +60,14 @@ namespace ACadSharp.Entities
 		/// Dimension type
 		/// </summary>
 		[DxfCodeValue(70)]
-		public DimensionType DimensionType { get; set; }
+		public DimensionType Flags
+		{
+			get
+			{
+				var flags = this._flags | DimensionType.BlockReference;
+				return flags;
+			}
+		}
 
 		/// <summary>
 		/// Attachment point
@@ -157,6 +164,13 @@ namespace ACadSharp.Entities
 		}
 
 		private string _text;
+
+		private readonly DimensionType _flags;
+
+		protected Dimension(DimensionType type)
+		{
+			this._flags = type;
+		}
 
 		private DimensionStyle _style = DimensionStyle.Default;
 

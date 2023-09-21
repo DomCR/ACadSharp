@@ -16,12 +16,12 @@ namespace ACadSharp.Tables
 	public class Layer : TableEntry
 	{
 		/// <summary>
-		/// Default layer 0, it will always exist in a file.
+		/// Default layer 0, it will always exist in a file
 		/// </summary>
 		public const string DefaultName = "0";
 
 		/// <summary>
-		/// Default layer in all cad formats, it will always exist in a file.
+		/// Default layer in all cad formats, it will always exist in a file
 		/// </summary>
 		public static Layer Default { get { return new Layer(DefaultName); } }
 
@@ -89,7 +89,7 @@ namespace ACadSharp.Tables
 		/// PlotStyleName object
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Unprocess, 390)]
-		public ulong PlotStyleName { get; set; } = 0;   //Note: The handle points to an ACDBPLACEHOLDER
+		public ulong PlotStyleName { get; internal set; } = 0;   //Note: The handle points to an ACDBPLACEHOLDER
 
 		/// <summary>
 		/// Hard-pointer ID/handle to Material object

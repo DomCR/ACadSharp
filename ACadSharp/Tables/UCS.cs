@@ -24,12 +24,6 @@ namespace ACadSharp.Tables
 		public override string SubclassMarker => DxfSubclassMarker.Ucs;
 
 		/// <summary>
-		/// Elevation
-		/// </summary>
-		[DxfCodeValue(146)]
-		public double Elevation { get; set; }
-
-		/// <summary>
 		/// Origin (in WCS)
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
@@ -58,6 +52,12 @@ namespace ACadSharp.Tables
 		/// </summary>
 		[DxfCodeValue(79)]
 		public OrthographicType OrthographicViewType { get; set; }
+
+		/// <summary>
+		/// Elevation
+		/// </summary>
+		[DxfCodeValue(146)]
+		public double Elevation { get; set; }
 
 		internal UCS() : base() { }
 

@@ -2,6 +2,7 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -59,13 +60,13 @@ namespace ACadSharp.Entities
 		/// Reference rectangle width
 		/// </summary>
 		[DxfCodeValue(41)]
-		public double RectangleWitdth { get; set; }
+		public double RectangleWidth { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		[DxfCodeValue(46)]
-		public double RectangleHeight { get; set; }
+		public double ReferenceRectangleHeight { get; set; }
 
 		/// <summary>
 		/// Attachment point
@@ -89,9 +90,9 @@ namespace ACadSharp.Entities
 		public string Value { get; set; } = string.Empty;
 
 		/// <summary>
-		/// Additional text(always in 250-character chunks) (optional)
+		/// Additional text (always in 250-character chunks)
 		/// </summary>
-		[DxfCodeValue(3)]
+		[DxfCodeValue(DxfReferenceType.Optional, 3)]
 		public string AdditionalText { get; set; } = string.Empty;
 
 		/// <summary>
