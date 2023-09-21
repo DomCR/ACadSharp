@@ -245,7 +245,7 @@ namespace ACadSharp
 			return false;
 		}
 
-		private void AddCadObject(CadObject cadObject)
+		private void addCadObject(CadObject cadObject)
 		{
 			if (cadObject.Document != null)
 			{
@@ -265,14 +265,14 @@ namespace ACadSharp
 
 			if (cadObject is BlockRecord record)
 			{
-				this.AddCadObject(record.BlockEntity);
-				this.AddCadObject(record.BlockEnd);
+				this.addCadObject(record.BlockEntity);
+				this.addCadObject(record.BlockEnd);
 			}
 
 			this._cadObjects.Add(cadObject.Handle, cadObject);
 		}
 
-		private void RemoveCadObject(CadObject cadObject)
+		private void removeCadObject(CadObject cadObject)
 		{
 			if (!this.TryGetCadObject(cadObject.Handle, out CadObject _)
 				|| !this._cadObjects.Remove(cadObject.Handle))
@@ -291,7 +291,7 @@ namespace ACadSharp
 			}
 			else
 			{
-				this.AddCadObject(e.Item);
+				this.addCadObject(e.Item);
 			}
 		}
 
@@ -303,7 +303,7 @@ namespace ACadSharp
 			}
 			else
 			{
-				this.RemoveCadObject(e.Item);
+				this.removeCadObject(e.Item);
 			}
 		}
 
@@ -355,7 +355,7 @@ namespace ACadSharp
 
 			if (collection is CadObject cadObject)
 			{
-				this.AddCadObject(cadObject);
+				this.addCadObject(cadObject);
 			}
 
 			if (collection is ISeqendCollection seqendColleciton)
@@ -365,7 +365,7 @@ namespace ACadSharp
 
 				if (seqendColleciton.Seqend != null)
 				{
-					this.AddCadObject(seqendColleciton.Seqend);
+					this.addCadObject(seqendColleciton.Seqend);
 				}
 			}
 
@@ -377,7 +377,7 @@ namespace ACadSharp
 				}
 				else
 				{
-					this.AddCadObject(item);
+					this.addCadObject(item);
 				}
 			}
 		}
@@ -404,7 +404,7 @@ namespace ACadSharp
 
 			if (collection is CadObject cadObject)
 			{
-				this.RemoveCadObject(cadObject);
+				this.removeCadObject(cadObject);
 			}
 
 			if (collection is ISeqendCollection seqendColleciton)
@@ -414,7 +414,7 @@ namespace ACadSharp
 
 				if (seqendColleciton.Seqend != null)
 				{
-					this.RemoveCadObject(seqendColleciton.Seqend);
+					this.removeCadObject(seqendColleciton.Seqend);
 				}
 			}
 
@@ -426,7 +426,7 @@ namespace ACadSharp
 				}
 				else
 				{
-					this.RemoveCadObject(item);
+					this.removeCadObject(item);
 				}
 			}
 		}
