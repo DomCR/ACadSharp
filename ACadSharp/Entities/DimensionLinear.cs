@@ -27,5 +27,7 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation { get; set; }
+
+		public DimensionLinear() : base(DimensionType.Linear) { }
 	}
 }

@@ -14,6 +14,21 @@
 		public const string ClassesSection = "CLASSES";
 		public const string ClassEntry = "CLASS";
 
+		/// <summary>
+		/// Object reactors, list of handles
+		/// </summary>
+		public const string ReactorsToken = "{ACAD_REACTORS";
+
+		/// <summary>
+		/// Handle for the xdictionary
+		/// </summary>
+		public const string DictionaryToken = "{ACAD_XDICTIONARY";
+
+		/// <summary>
+		/// Block references
+		/// </summary>
+		public const string BlkRefToken = "{BLKREFS";
+
 		#region Tables
 
 		public const string TablesSection = "TABLES";
@@ -105,8 +120,6 @@
 		public const string ObjectSortEntsTable = "SORTENTSTABLE";
 		public const string ObjectXRecord = "XRECORD";
 		public const string ObjectMLeaderContextData = "CONTEXT_DATA";
-		public const string ObjectEvalGraph = "ACAD_EVALUATION_GRAPH";
-		public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
 
 		#endregion
 	}

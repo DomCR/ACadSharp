@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Tables
 {
@@ -46,7 +47,13 @@ namespace ACadSharp.Tables
 		/// Total pattern length
 		/// </summary>
 		[DxfCodeValue(40)]
-		public double PatternLen { get; set; }
+		public double PatternLen
+		{
+			get
+			{
+				return this.Segments.Sum(s => Math.Abs(s.Length));
+			}
+		}
 
 		/// <summary>
 		/// Alignment code

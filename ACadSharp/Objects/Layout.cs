@@ -125,7 +125,7 @@ namespace ACadSharp.Objects
 				if (this._blockRecord.Name.Equals(BlockRecord.ModelSpaceName, System.StringComparison.OrdinalIgnoreCase))
 				{
 					this.Viewport = null;
-					base.PlotFlags =
+					base.Flags =
 						PlotFlags.Initializing |
 						PlotFlags.UpdatePaper |
 						PlotFlags.ModelType |

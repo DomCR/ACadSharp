@@ -225,6 +225,10 @@ namespace ACadSharp
 			where T : CadObject
 		{
 			cadObject = null;
+
+			if (handle == this.Handle)
+				return false;
+
 			if (this._cadObjects.TryGetValue(handle, out IHandledCadObject obj))
 			{
 				cadObject = obj as T;
@@ -378,7 +382,7 @@ namespace ACadSharp
 			}
 		}
 
-		internal void RegisterCollection<T>(IObservableCollection<T> collection, bool addElements = true)
+		internal void RegisterCollection<T>(IObservableCollection<T> collection)
 			where T : CadObject
 		{
 			switch (collection)
@@ -429,28 +433,31 @@ namespace ACadSharp
 				this.addCadObject(cadObject);
 			}
 
-			if (collection is ISeqendColleciton seqendColleciton)
+			if (collection is ISeqendCollection seqendColleciton)
 			{
-				this.addCadObject(seqendColleciton.Seqend);
+				seqendColleciton.OnSeqendAdded += this.onAdd;
+				seqendColleciton.OnSeqendRemoved += this.onRemove;
+
+				if (seqendColleciton.Seqend != null)
+				{
+					this.addCadObject(seqendColleciton.Seqend);
+				}
 			}
 
-			if (addElements)
+			foreach (T item in collection)
 			{
-				foreach (T item in collection)
+				if (item is CadDictionary dictionary)
 				{
-					if (item is CadDictionary dictionary)
-					{
-						this.RegisterCollection(dictionary);
-					}
-					else
-					{
-						this.addCadObject(item);
-					}
+					this.RegisterCollection(dictionary);
+				}
+				else
+				{
+					this.addCadObject(item);
 				}
 			}
 		}
 
-		internal void UnregisterCollection<T>(IObservableCollection<T> collection, bool removeElements = true)
+		internal void UnregisterCollection<T>(IObservableCollection<T> collection)
 			where T : CadObject
 		{
 			switch (collection)
@@ -475,23 +482,26 @@ namespace ACadSharp
 				this.removeCadObject(cadObject);
 			}
 
-			if (collection is ISeqendColleciton seqendColleciton)
+			if (collection is ISeqendCollection seqendColleciton)
 			{
-				this.removeCadObject(seqendColleciton.Seqend);
+				seqendColleciton.OnSeqendAdded -= this.onAdd;
+				seqendColleciton.OnSeqendRemoved -= this.onRemove;
+
+				if (seqendColleciton.Seqend != null)
+				{
+					this.removeCadObject(seqendColleciton.Seqend);
+				}
 			}
 
-			if (removeElements)
+			foreach (T item in collection)
 			{
-				foreach (T item in collection)
+				if (item is CadDictionary dictionary)
 				{
-					if (item is CadDictionary dictionary)
-					{
-						this.UnregisterCollection(dictionary);
-					}
-					else
-					{
-						this.removeCadObject(item);
-					}
+					this.UnregisterCollection(dictionary);
+				}
+				else
+				{
+					this.removeCadObject(item);
 				}
 			}
 		}

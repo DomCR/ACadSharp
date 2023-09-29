@@ -14,21 +14,6 @@ namespace ACadSharp.IO.DXF
 	{
 		public delegate bool ReadEntityDelegate<T>(CadEntityTemplate template, DxfMap map, string subclass = null) where T : Entity;
 
-		/// <summary>
-		/// Object reactors, list of handles
-		/// </summary>
-		public const string ReactorsToken = "{ACAD_REACTORS";
-
-		/// <summary>
-		/// Handle for the xdictionary
-		/// </summary>
-		public const string DictionaryToken = "{ACAD_XDICTIONARY";
-
-		/// <summary>
-		/// Block references
-		/// </summary>
-		public const string BlkRefToken = "{BLKREFS";
-
 		protected readonly IDxfStreamReader _reader;
 		protected readonly DxfDocumentBuilder _builder;
 
@@ -314,6 +299,9 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.Code)
 			{
 				//TODO: Implement multiline text def codes
+				case 3 when tmp.CadObject is MText mtext:
+					mtext.AdditionalText.Concat(this._reader.ValueAsString);
+					return true;
 				case 70:
 				case 74:
 				case 101:
@@ -343,6 +331,9 @@ namespace ACadSharp.IO.DXF
 					tmp.SetDimensionObject(dim);
 					dim.Rotation = this._reader.ValueAsDouble;
 					map.SubClasses.Add(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
+					return true;
+				case 70:
+					//Flags do not have set
 					return true;
 				//Undocumented codes
 				case 73:
@@ -583,6 +574,12 @@ namespace ACadSharp.IO.DXF
 					if (last is not null)
 					{
 						last.Bulge = this._reader.ValueAsDouble;
+					}
+					return true;
+				case 50:
+					if (last is not null)
+					{
+						last.CurveTangent = this._reader.ValueAsDouble;
 					}
 					return true;
 				case 90:
@@ -1247,16 +1244,16 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.ValueAsString)
 			{
-				case DxfSectionReaderBase.DictionaryToken:
+				case DxfFileToken.DictionaryToken:
 					this._reader.ReadNext();
 					xdictHandle = this._reader.ValueAsHandle;
 					this._reader.ReadNext();
 					Debug.Assert(this._reader.DxfCode == DxfCode.ControlString);
 					return;
-				case DxfSectionReaderBase.ReactorsToken:
+				case DxfFileToken.ReactorsToken:
 					reactors = readReactors();
 					break;
-				case DxfSectionReaderBase.BlkRefToken:
+				case DxfFileToken.BlkRefToken:
 				default:
 					do
 					{

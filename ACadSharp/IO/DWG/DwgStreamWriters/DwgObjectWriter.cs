@@ -151,7 +151,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		public void writeBlocks()
+		private void writeBlocks()
 		{
 			foreach (BlockRecord blkRecord in this._document.BlockRecords)
 			{

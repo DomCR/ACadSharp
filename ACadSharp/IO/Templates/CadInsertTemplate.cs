@@ -34,9 +34,19 @@ namespace ACadSharp.IO.Templates
 			if (!(this.CadObject is Insert insert))
 				return;
 
-			if (builder.TryGetCadObject(this.BlockHeaderHandle, out BlockRecord block))
+			BlockRecord block;
+			if (builder.TryGetCadObject(this.BlockHeaderHandle, out block))
 			{
 				insert.Block = block;
+			}
+			else if (!string.IsNullOrEmpty(this.BlockName) && builder.TryGetTableEntry(this.BlockName, out block))
+			{
+				insert.Block = block;
+			}
+
+			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
+			{
+				insert.Attributes.Seqend = seqend;
 			}
 
 			if (this.FirstAttributeHandle.HasValue)
@@ -53,16 +63,6 @@ namespace ACadSharp.IO.Templates
 						insert.Attributes.Add(att);
 					}
 				}
-			}
-
-			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
-			{
-				insert.Attributes.Seqend = seqend;
-			}
-
-			if (builder is DxfDocumentBuilder)
-			{
-				insert.Rotation *= MathUtils.DegToRad;
 			}
 		}
 	}

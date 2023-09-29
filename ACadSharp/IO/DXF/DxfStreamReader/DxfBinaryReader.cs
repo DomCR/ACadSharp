@@ -46,7 +46,8 @@ namespace ACadSharp.IO.DXF
 				b = this._stream.ReadByte();
 			}
 
-			return this._encoding.GetString(bytes.ToArray(), 0, bytes.Count);
+			this.ValueRaw = this._encoding.GetString(bytes.ToArray(), 0, bytes.Count);
+			return this.ValueRaw;
 		}
 
 		protected override DxfCode readCode()
