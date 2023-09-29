@@ -26,9 +26,7 @@ namespace ACadSharp.Entities {
 
 
 		/// <summary>
-		/// TODO Do we need this class to represent a list of arrow heads
-		/// associated with this multi leader?
-		/// Do these properties exist?
+		/// Represents an associated arrow head, with the arrowhead index.
 		/// </summary>
 		public class ArrowheadAssociation {
 
@@ -281,26 +279,35 @@ namespace ACadSharp.Entities {
 		public double ScaleFactor { get; set; }
 
 		/// <summary>
-		/// Text attachment direction for MText contents
-		/// 	0 = Horizontal
-		/// 	1 = Vertical
+		/// Text attachment direction for MText contents.
 		/// </summary>
+		/// <value>
+		/// A <see cref="TextAttachmentDirectionType"/> having the values
+		///     0 = Horizontal,
+		/// 	1 = Vertical
+		/// </value>
 		[DxfCodeValue(271)]
 		public TextAttachmentDirectionType TextAttachmentDirection { get; set; }
 
 		/// <summary>
-		/// Bottom text attachment direction
+		/// Bottom text attachment direction.
+		/// </summary>
+		/// <value>
+		/// A <see cref="TextAttachmentType"/> having the values
 		/// 	9 = Center
 		/// 	10 = Underline and Center
-		/// </summary>
+		/// </value>
 		[DxfCodeValue(272)]
 		public TextAttachmentType TextBottomAttachment { get; set; }
 
 		/// <summary>
-		/// 	Top text attachment direction
+		/// 	Top text attachment direction.
+		/// </summary>
+		/// <value>
+		/// A <see cref="TextAttachmentType"/> having the values
 		/// 	9 = Center
 		/// 	10 = Underline and Center
-		/// </summary>
+		/// </value>
 		[DxfCodeValue(273)]
 		public TextAttachmentType TextTopAttachment { get; set; }
 

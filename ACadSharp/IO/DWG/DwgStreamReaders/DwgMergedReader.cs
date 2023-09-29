@@ -48,7 +48,7 @@ namespace ACadSharp.IO.DWG
 
 		public void Advance(int offset)
 		{
-			throw new InvalidOperationException();
+			_mainReader.Advance(offset);
 		}
 
 		public void AdvanceByte()
