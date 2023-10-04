@@ -284,7 +284,7 @@ namespace ACadSharp.IO.DXF
 				this.writeBoundaryPath(path);
 			}
 
-			this.writeHatchPattern(hatch.Pattern);
+			this.writeHatchPattern(hatch, hatch.Pattern);
 		}
 
 		private void writeBoundaryPath(Hatch.BoundaryPath path)
@@ -370,9 +370,12 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void writeHatchPattern(HatchPattern pattern)
+		private void writeHatchPattern(Hatch hatch, HatchPattern pattern)
 		{
 			//TODO: Hatch pattern need a refactor and a proper implementation
+			this._writer.Write(75, (short)hatch.Style);
+			this._writer.Write(76, (short)hatch.PatternType);
+
 		}
 
 		private void writeEllipse(Ellipse ellipse)
