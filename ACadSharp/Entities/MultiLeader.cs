@@ -24,6 +24,8 @@ namespace ACadSharp.Entities {
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityMLeader;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.MLeader;
 
 		// TODO
 		// We ommit this class because we assumed that the multileader
@@ -343,6 +345,8 @@ namespace ACadSharp.Entities {
 		public override CadObject Clone()
 		{
 			MultiLeader clone = (MultiLeader)base.Clone();
+
+			clone.ContextData = (MultiLeaderAnnotContext)clone.Clone();
 
 			return clone;
 		}
