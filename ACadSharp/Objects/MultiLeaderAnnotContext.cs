@@ -332,5 +332,10 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(272)]
 		public TextAttachmentType TextBottomAttachment { get; set; }
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public MultiLeaderAnnotContext() : base() { }
 	}
 }
