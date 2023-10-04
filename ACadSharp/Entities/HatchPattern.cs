@@ -10,6 +10,10 @@ namespace ACadSharp.Entities
 
 		public class Line
 		{
+			/// <summary>
+			/// Pattern line angle
+			/// </summary>
+			[DxfCodeValue(DxfReferenceType.IsAngle, 53)]
 			public double Angle { get; internal set; }
 
 			/// <summary>
