@@ -22,6 +22,9 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityMLeaderStyle;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.MLeaderStyle;
+
 		/// <summary>
 		/// Content Type
 		/// </summary>
