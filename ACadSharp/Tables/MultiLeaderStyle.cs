@@ -292,6 +292,11 @@ namespace ACadSharp.Tables
 		/// </summary>
 		public MultiLeaderStyle() : base() { }
 
+		public MultiLeaderStyle(string name) : this()
+		{
+			Name = name;
+		}
+
 		public override CadObject Clone() {
 			MultiLeaderStyle clone = (MultiLeaderStyle)base.Clone();
 

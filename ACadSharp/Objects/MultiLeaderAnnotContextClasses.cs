@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using ACadSharp.Attributes;
 using ACadSharp.Tables;
@@ -18,7 +19,7 @@ namespace ACadSharp.Objects
 		/// Represents a leader root
 		/// 302	DXF: “LEADER{“
 		/// </summary>
-		public class LeaderRoot {
+		public class LeaderRoot : ICloneable {
 
 			public LeaderRoot() { }
 
@@ -71,6 +72,23 @@ namespace ACadSharp.Objects
 			/// </summary>
 
 			public TextAttachmentDirectionType AttachmentDirection { get; internal set; }
+
+			public object Clone()
+			{
+				LeaderRoot clone = (LeaderRoot)this.MemberwiseClone();
+
+				foreach (var breakStartEndPoint in BreakStartEndPointsPairs)
+				{
+					clone.BreakStartEndPointsPairs.Add((StartEndPointPair)breakStartEndPoint.Clone());
+				}
+
+				foreach (var line in Lines)
+				{
+					clone.Lines.Add((LeaderLine)line.Clone());
+				}
+
+				return clone;
+			}
 		}
 
 		/// <summary>
@@ -78,7 +96,7 @@ namespace ACadSharp.Objects
 		/// 3BD	11	Start Point
 		/// 3BD	12	End point
 		/// </summary>
-		public struct StartEndPointPair {
+		public struct StartEndPointPair : ICloneable {
 			public StartEndPointPair(XYZ startPoint, XYZ endPoint) {
 				StartPoint = startPoint;
 				EndPoint = endPoint;
@@ -96,6 +114,10 @@ namespace ACadSharp.Objects
 			[DxfCodeValue(13)]
 			public XYZ EndPoint { get; private set; }
 
+			public object Clone()
+			{
+				return this.MemberwiseClone();
+			}
 		}
 
 
@@ -103,7 +125,7 @@ namespace ACadSharp.Objects
 		///	Represents a leader line
 		///	304	DXF: “LEADER_LINE{“
 		/// </summary>
-		public class LeaderLine {
+		public class LeaderLine : ICloneable {
 
 			public LeaderLine() { }
 
@@ -179,6 +201,23 @@ namespace ACadSharp.Objects
 			/// 32 = arrow symbol (handle)
 			/// </value>
 			public LeaderLinePropertOverrideFlags OverrideFlags { get; set; }
+
+			public object Clone()
+			{
+				LeaderLine clone = (LeaderLine)this.MemberwiseClone();
+
+				foreach (var point in Points)
+				{
+					clone.Points.Add(point);
+				}
+
+				foreach (var startEndPoint in StartEndPoints)
+				{
+					clone.StartEndPoints.Add((StartEndPointPair)startEndPoint.Clone());
+				}
+
+				return clone;
+			}
 		}
 	}
 }

@@ -337,5 +337,17 @@ namespace ACadSharp.Objects
 		/// Default constructor
 		/// </summary>
 		public MultiLeaderAnnotContext() : base() { }
+
+		public override CadObject Clone()
+		{
+			MultiLeaderAnnotContext clone = (MultiLeaderAnnotContext)base.Clone();
+
+			foreach (var leaderRoot in LeaderRoots)
+			{
+				clone.LeaderRoots.Add((LeaderRoot)leaderRoot.Clone());
+			}
+
+			return clone;
+		}
 	}
 }
