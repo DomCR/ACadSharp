@@ -25,6 +25,16 @@ namespace ACadSharp.Entities {
 		public override string ObjectName => DxfFileToken.EntityMLeader;
 
 
+		// TODO
+		// We ommit this class because we assumed that the multileader
+		// does not have a list of arrow heads associated (see below).
+		// According to the OpenDesign_Specification_for_.dwg_files
+		// each arrowhead shall be associated with an IsDefault flag
+		// having the group code 94. This means the type of the field
+		// is BL instead of B.
+		// According to the DXF refence the 94 group code refers to
+		// the index of the arrow head.
+		/*
 		/// <summary>
 		/// Represents an associated arrow head, with the arrowhead index.
 		/// </summary>
@@ -42,8 +52,9 @@ namespace ACadSharp.Entities {
 			/// Arrowhead ID
 			/// </summary>
 			[DxfCodeValue(345)]
-			public object Arrowhead { get; set; }
+			public BlockRecord Arrowhead { get; set; }
 		}
+		*/
 
 
 		/// <summary>
@@ -89,7 +100,6 @@ namespace ACadSharp.Entities {
 
 		/// <summary>
 		/// Property Override Flag
-		/// TODO Do the flags 
 		/// </summary>
 		[DxfCodeValue(90)]
 		public MultiLeaderPropertyOverrideFlags PropertyOverrideFlags { get; set; }
@@ -106,16 +116,16 @@ namespace ACadSharp.Entities {
 		[DxfCodeValue(91)]
 		public Color LineColor { get; set; }
 
+		//  TODO Additional Line Type? see Entity.LineType.
 		/// <summary>
 		/// Leader Line Type
-		/// TODO Additional Line Type? see Entity.LineType.
 		/// </summary>
 		[DxfCodeValue(341)]
 		public LineType LeaderLineType { get; set; }
 
+		//  TODO Additional Line Weight? see Entity.LineWeight.
 		/// <summary>
 		/// Leader Line Weight
-		/// TODO Additional Line Weight? see Entity.LineWeight.
 		/// </summary>
 		[DxfCodeValue(171)]
 		public LineweightType LeaderLineWeight { get; set; }
@@ -142,7 +152,7 @@ namespace ACadSharp.Entities {
 		/// Arrowhead ID
 		/// </summary>
 		[DxfCodeValue(342)]
-		public object Arrowhead { get; set; }
+		public BlockRecord Arrowhead { get; set; }
 
 		/// <summary>
 		/// Arrowhead Size
@@ -150,8 +160,9 @@ namespace ACadSharp.Entities {
 		[DxfCodeValue(42)]
 		public double ArrowheadSize { get; set; }
 
+		//	TODO  similar to Leader.CreationType, aka AnnotationType
 		/// <summary>
-		/// Content Type (similar to Leader.CreationType, aka AnnotationType)
+		/// Content Type
 		/// </summary>
 		[DxfCodeValue(172)]
 		public LeaderContentType ContentType { get; set; }
@@ -171,9 +182,9 @@ namespace ACadSharp.Entities {
 		[DxfCodeValue(173)]
 		public TextAttachmentType TextLeftAttachment { get; set; }
 
+		//  TODO Property Name
 		/// <summary>
 		/// Text Right Attachement Type
-		/// TODO Property Name
 		/// </summary>
 		[DxfCodeValue(95)]
 		public TextAttachmentType TextRightAttachment { get; set; }
@@ -243,9 +254,22 @@ namespace ACadSharp.Entities {
 		[DxfCodeValue(293)]
 		public bool EnableAnnotationScale { get; set; }
 
+		//	TODO According to the OpenDesign_Specification_for_.dwg_files
+		//	a list of arror head AND a list of block attributes can occur.
+		//	If both list are empty it ist expected that two BL-field should
+		//	occur yielding count=0 for both lists. But when we read two
+		//	BL-fields we get out of sync. If we read one BL-field everything
+		//	works fine.
+		//	We do not understand what a list of arroheads can be used for,
+		//	and we do not know how to create such a list.
+		//	The documentation for arrowheads list in OpenDesign_Specification_for_.dwg_files
+		//	and the DXF Reference are contracicting.
+		//	Decision:
+		//		Ommit the Arrowheads property,
+		//		try to keep the block attributes.
 
-		public IList<ArrowheadAssociation> Arrowheads { get; } = new List<ArrowheadAssociation>();
-		 
+		//  public IList<ArrowheadAssociation> Arrowheads { get; } = new List<ArrowheadAssociation>();
+
 
 		///<subject>
 		/// Gets a list of <see cref="BlockAttribute"/> objects representing

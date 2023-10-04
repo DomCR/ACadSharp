@@ -261,10 +261,9 @@ namespace ACadSharp.Objects
 
 		/// <summary>
 		/// H	341	AcDbBlockTableRecord handle (soft pointer)
-		/// TODO
 		/// </summary>
 		[DxfCodeValue(341)]
-		public object BlockRecord { get; set; }
+		public BlockRecord ContentsBlock { get; set; }
 
 		//3BD		14		Normal vector
 		//3BD		15		Location

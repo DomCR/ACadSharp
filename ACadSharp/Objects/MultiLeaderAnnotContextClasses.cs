@@ -169,13 +169,15 @@ namespace ACadSharp.Objects
 
 			/// <summary>
 			/// BL 93 Override flags
+			/// </summary>
+			/// <value>
 			/// 1 = leader type,
 			/// 2 = line color,
 			/// 4 = line type,
 			/// 8 = line weight,
 			/// 16 = arrow size,
 			/// 32 = arrow symbol (handle)
-			/// </summary>
+			/// </value>
 			public LeaderLinePropertOverrideFlags OverrideFlags { get; set; }
 		}
 	}
