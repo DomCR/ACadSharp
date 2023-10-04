@@ -287,6 +287,11 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(273)]
 		public TextAttachmentType TextTopAttachment { get; set; }
 
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public MultiLeaderStyle() : base() { }
+
 		public override CadObject Clone() {
 			MultiLeaderStyle clone = (MultiLeaderStyle)base.Clone();
 
