@@ -61,7 +61,7 @@ namespace ACadSharp.IO.Templates
 			}
 			if (builder.TryGetCadObject(this.AnnotContextBlockRecordHandle, out BlockRecord annotContextBlockRecord))
 			{
-				annotContext.BlockRecord = annotContextBlockRecord;
+				annotContext.ContentsBlock = annotContextBlockRecord;
 			}
 
 			if (builder.TryGetCadObject(this.LeaderStyleHandle, out MultiLeaderStyle leaderStyle))
