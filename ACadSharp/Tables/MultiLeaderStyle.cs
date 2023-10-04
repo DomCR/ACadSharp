@@ -116,7 +116,7 @@ namespace ACadSharp.Tables
 		/// Arrowhead ID is Block?
 		/// </summary>
 		[DxfCodeValue(341)]
-		public object Arrowhead { get; set; }
+		public BlockRecord Arrowhead { get; set; }
 
 		/// <summary>
 		/// Arrowhead Size
@@ -125,7 +125,7 @@ namespace ACadSharp.Tables
 		public double ArrowheadSize { get; set; }
 
 		/// <summary>
-		/// 	Default MText Contents
+		/// Default MText Contents
 		/// </summary>
 		[DxfCodeValue(300)]
 		public string DefaultTextContents { get; set; }
