@@ -69,6 +69,9 @@ namespace ACadSharp.IO.DWG
 				case Point p:
 					this.writePoint(p);
 					break;
+				case Ray ray:
+					this.writeRay(ray);
+					break;
 				case TextEntity text:
 					this.writeTextEntity(text);
 					break;
@@ -508,6 +511,14 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitExtrusion(point.Normal);
 			//X - axis ang BD 50 See DXF documentation
 			this._writer.WriteBitDouble(point.Rotation);
+		}
+
+		private void writeRay(Ray ray)
+		{
+			//Point 3BD 10
+			this._writer.Write3BitDouble(ray.StartPoint);
+			//Vector 3BD 11
+			this._writer.Write3BitDouble(ray.Direction);
 		}
 
 		private void writeTextEntity(TextEntity text)
