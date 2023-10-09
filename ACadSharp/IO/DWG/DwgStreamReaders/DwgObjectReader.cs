@@ -4133,17 +4133,17 @@ namespace ACadSharp.IO.DWG
 				if ((flags & 0x200) != 0)
 					lwPolyline.Flags |= LwPolylineFlags.Closed;
 
-				if ((flags & 4u) != 0)
+				if ((flags & 0x4u) != 0)
 				{
 					lwPolyline.ConstantWidth = this._objectReader.ReadBitDouble();
 				}
 
-				if ((flags & 8u) != 0)
+				if ((flags & 0x8u) != 0)
 				{
 					lwPolyline.Elevation = this._objectReader.ReadBitDouble();
 				}
 
-				if ((flags & 2u) != 0)
+				if ((flags & 0x2u) != 0)
 				{
 					lwPolyline.Thickness = this._objectReader.ReadBitDouble();
 				}
@@ -4156,18 +4156,19 @@ namespace ACadSharp.IO.DWG
 				int nvertices = this._objectReader.ReadBitLong();
 				int nbulges = 0;
 
-				if (((uint)flags & 0x10u) != 0)
+				if (((uint)flags & 0x10) != 0)
 				{
 					nbulges = this._objectReader.ReadBitLong();
 				}
+
 				int nids = 0;
-				if (((uint)flags & 0x400u) != 0)
+				if (((uint)flags & 0x400) != 0)
 				{
 					nids = this._objectReader.ReadBitLong();
 				}
 
 				int ndiffwidth = 0;
-				if (((uint)flags & 0x20u) != 0)
+				if (((uint)flags & 0x20) != 0)
 				{
 					ndiffwidth = this._objectReader.ReadBitLong();
 				}

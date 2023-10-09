@@ -53,6 +53,9 @@ namespace ACadSharp.IO.DWG
 				case Line l:
 					this.writeLine(l);
 					break;
+				case LwPolyline lwpolyline:
+					this.writeLwPolyline(lwpolyline);
+					break;
 				case Point p:
 					this.writePoint(p);
 					break;
@@ -252,6 +255,137 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(ellipse.RadiusRatio);
 			this._writer.WriteBitDouble(ellipse.StartParameter);
 			this._writer.WriteBitDouble(ellipse.EndParameter);
+		}
+
+		private void writeLwPolyline(LwPolyline lwPolyline)
+		{
+			bool nbulges = false;
+			bool ndiffwidth = false;
+			foreach (LwPolyline.Vertex item in lwPolyline.Vertices)
+			{
+				if (!nbulges && item.Bulge != 0.0)
+				{
+					nbulges = true;
+				}
+				if (!ndiffwidth && (item.StartWidth != 0.0 || item.EndWidth != 0.0))
+				{
+					ndiffwidth = true;
+				}
+			}
+
+			short flags = 0;
+
+			if (lwPolyline.Flags.HasFlag(LwPolylineFlags.Plinegen))
+			{
+				flags = (short)(flags | 0x100);
+			}
+
+			if (lwPolyline.Flags.HasFlag(LwPolylineFlags.Closed))
+			{
+				flags = (short)(flags | 0x200);
+			}
+
+			if (lwPolyline.ConstantWidth != 0.0)
+			{
+				flags = (short)(flags | 0x4);
+			}
+			
+			if (lwPolyline.Elevation != 0.0)
+			{
+				flags = (short)(flags | 0x8);
+			}
+			
+			if (lwPolyline.Thickness != 0.0)
+			{
+				flags = (short)(flags | 2);
+			}
+
+			if (lwPolyline.Normal != XYZ.AxisZ)
+			{
+				flags = (short)(flags | 1);
+			}
+
+			if (nbulges)
+			{
+				flags = (short)(flags | 0x10);
+			}
+			//Skip ids, not necessary
+			if (ndiffwidth)
+			{
+				flags = (short)(flags | 0x20);
+			}
+			
+			//B : bytes containing the LWPOLYLINE entity data.
+			//This excludes the common entity data.
+			//More specifically: it starts at the LWPOLYLINE flags (BS), and ends with the width array (BD).
+			this._writer.WriteBitShort(flags);
+
+			if (lwPolyline.ConstantWidth != 0.0)
+			{
+				this._writer.WriteBitDouble(lwPolyline.ConstantWidth);
+			}
+			if (lwPolyline.Elevation != 0.0)
+			{
+				this._writer.WriteBitDouble(lwPolyline.Elevation);
+			}
+			if (lwPolyline.Thickness != 0.0)
+			{
+				this._writer.WriteBitDouble(lwPolyline.Thickness);
+			}
+			if (lwPolyline.Normal != XYZ.AxisZ)
+			{
+				this._writer.Write3BitDouble(lwPolyline.Normal);
+			}
+
+			this._writer.WriteBitLong(lwPolyline.Vertices.Count);
+			
+			if (nbulges)
+			{
+				this._writer.WriteBitLong(lwPolyline.Vertices.Count);
+			}
+
+			if (ndiffwidth)
+			{
+				this._writer.WriteBitLong(lwPolyline.Vertices.Count);
+			}
+
+			if (this.R13_14Only)
+			{
+				for (int i = 0; i < lwPolyline.Vertices.Count; i++)
+				{
+					this._writer.Write2RawDouble(lwPolyline.Vertices[i].Location);
+				}
+			}
+
+			if (this.R2000Plus && lwPolyline.Vertices.Count > 0)
+			{
+				LwPolyline.Vertex vertex = lwPolyline.Vertices[0];
+				this._writer.Write2RawDouble(vertex.Location);
+				for (int j = 1; j < lwPolyline.Vertices.Count; j++)
+				{
+					LwPolyline.Vertex vertex2 = lwPolyline.Vertices[j];
+					this._writer.WriteBitDoubleWithDefault(vertex2.Location.X, vertex.Location.X);
+					this._writer.WriteBitDoubleWithDefault(vertex2.Location.Y, vertex.Location.Y);
+					vertex = vertex2;
+				}
+			}
+
+			if (nbulges)
+			{
+				for (int k = 0; k < lwPolyline.Vertices.Count; k++)
+				{
+					this._writer.WriteBitDouble(lwPolyline.Vertices[k].Bulge);
+				}
+			}
+
+			if (ndiffwidth)
+			{
+				for (int l = 0; l < lwPolyline.Vertices.Count; l++)
+				{
+					this._writer.WriteBitDouble(lwPolyline.Vertices[l].StartWidth);
+					this._writer.WriteBitDouble(lwPolyline.Vertices[l].EndWidth);
+				}
+			}
 		}
 
 		private void writeLine(Line line)
