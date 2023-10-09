@@ -13,7 +13,6 @@ namespace ACadSharp.IO.DXF
 			//TODO: Implement complex entities in a separated branch
 			switch (entity)
 			{
-				case Dimension:
 				case Mesh:
 				case MLine:
 				case MText:
