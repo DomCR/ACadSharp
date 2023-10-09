@@ -517,6 +517,19 @@ namespace ACadSharp.IO.DWG
 			this.Write3BitDouble(normal);
 		}
 
+		public void Write2BitDoubleWithDefault(XY def, XY value)
+		{
+			this.WriteBitDoubleWithDefault(def.X, value.X);
+			this.WriteBitDoubleWithDefault(def.Y, value.Y);
+		}
+
+		public void Write3BitDoubleWithDefault(XYZ def, XYZ value)
+		{
+			this.WriteBitDoubleWithDefault(def.X, value.X);
+			this.WriteBitDoubleWithDefault(def.Y, value.Y);
+			this.WriteBitDoubleWithDefault(def.Z, value.Z);
+		}
+
 		public void WriteBitDoubleWithDefault(double def, double value)
 		{
 			if (def == value)

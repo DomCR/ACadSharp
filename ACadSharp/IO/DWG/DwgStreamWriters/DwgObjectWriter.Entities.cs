@@ -50,6 +50,9 @@ namespace ACadSharp.IO.DWG
 				case Ellipse ellipse:
 					this.writeEllipse(ellipse);
 					break;
+				case Face3D face3D:
+					this.writeFace3D(face3D);
+					break;
 				case Line l:
 					this.writeLine(l);
 					break;
@@ -257,6 +260,60 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(ellipse.EndParameter);
 		}
 
+		private void writeFace3D(Face3D face)
+		{
+			//R13 - R14 Only:
+			if (this.R13_14Only)
+			{
+				//1st corner 3BD 10
+				this._writer.Write3BitDouble(face.FirstCorner);
+				//2nd corner 3BD 11
+				this._writer.Write3BitDouble(face.SecondCorner);
+				//3rd corner 3BD 12
+				this._writer.Write3BitDouble(face.ThirdCorner);
+				//4th corner 3BD 13
+				this._writer.Write3BitDouble(face.FourthCorner);
+				//Invis flags BS 70 Invisible edge flags
+				this._writer.WriteBitShort((short)face.Flags);
+			}
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				bool noFlags = face.Flags == InvisibleEdgeFlags.None;
+				//Has no flag ind. B
+				this._writer.WriteBit(noFlags);
+
+				bool zIsZero = face.FirstCorner.Z == 0.0;
+				//Z is zero bit B
+				this._writer.WriteBit(zIsZero);
+
+				//1st corner x RD 10
+				this._writer.WriteRawDouble(face.FirstCorner.X);
+				//1st corner y RD 20
+				this._writer.WriteRawDouble(face.FirstCorner.Y);
+
+				if (!zIsZero)
+				{
+					//1st corner z RD 30 Present only if “Z is zero bit” is 0.
+					this._writer.WriteRawDouble(face.FirstCorner.Z);
+				}
+
+				//2nd corner 3DD 11 Use 10 value as default point
+				this._writer.Write3BitDoubleWithDefault(face.SecondCorner, face.FirstCorner);
+				//3rd corner 3DD 12 Use 11 value as default point
+				this._writer.Write3BitDoubleWithDefault(face.ThirdCorner, face.SecondCorner);
+				//4th corner 3DD 13 Use 12 value as default point
+				this._writer.Write3BitDoubleWithDefault(face.FourthCorner, face.ThirdCorner);
+
+				//Invis flags BS 70 Present it “Has no flag ind.” is 0.
+				if (!noFlags)
+				{
+					this._writer.WriteBitShort((short)face.Flags);
+				}
+			}
+		}
+
 		private void writeLwPolyline(LwPolyline lwPolyline)
 		{
 			bool nbulges = false;
@@ -289,12 +346,12 @@ namespace ACadSharp.IO.DWG
 			{
 				flags = (short)(flags | 0x4);
 			}
-			
+
 			if (lwPolyline.Elevation != 0.0)
 			{
 				flags = (short)(flags | 0x8);
 			}
-			
+
 			if (lwPolyline.Thickness != 0.0)
 			{
 				flags = (short)(flags | 2);
@@ -314,7 +371,7 @@ namespace ACadSharp.IO.DWG
 			{
 				flags = (short)(flags | 0x20);
 			}
-			
+
 			//B : bytes containing the LWPOLYLINE entity data.
 			//This excludes the common entity data.
 			//More specifically: it starts at the LWPOLYLINE flags (BS), and ends with the width array (BD).
@@ -338,7 +395,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			this._writer.WriteBitLong(lwPolyline.Vertices.Count);
-			
+
 			if (nbulges)
 			{
 				this._writer.WriteBitLong(lwPolyline.Vertices.Count);
@@ -359,14 +416,13 @@ namespace ACadSharp.IO.DWG
 
 			if (this.R2000Plus && lwPolyline.Vertices.Count > 0)
 			{
-				LwPolyline.Vertex vertex = lwPolyline.Vertices[0];
-				this._writer.Write2RawDouble(vertex.Location);
+				LwPolyline.Vertex last = lwPolyline.Vertices[0];
+				this._writer.Write2RawDouble(last.Location);
 				for (int j = 1; j < lwPolyline.Vertices.Count; j++)
 				{
-					LwPolyline.Vertex vertex2 = lwPolyline.Vertices[j];
-					this._writer.WriteBitDoubleWithDefault(vertex2.Location.X, vertex.Location.X);
-					this._writer.WriteBitDoubleWithDefault(vertex2.Location.Y, vertex.Location.Y);
-					vertex = vertex2;
+					LwPolyline.Vertex curr = lwPolyline.Vertices[j];
+					this._writer.Write2BitDoubleWithDefault(curr.Location, last.Location);
+					last = curr;
 				}
 			}
 
