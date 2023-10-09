@@ -6,6 +6,6 @@
 
 		public const int DecimalPrecision = 5;
 
-		public const bool AutocadConsoleCheck = false;
+		public const bool AutocadConsoleCheck = true;
 	}
 }
