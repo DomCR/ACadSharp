@@ -166,10 +166,9 @@ namespace ACadSharp.IO.DWG
 
 				//Add the template to the list to be processed
 				if (template == null)
-				{
+					continue;
 
-				}
-				else if (template is ICadTableTemplate tableTemplate)
+				if (template is ICadTableTemplate tableTemplate)
 				{
 					this._builder.AddTableTemplate(tableTemplate);
 				}
@@ -2532,6 +2531,9 @@ namespace ACadSharp.IO.DWG
 				//itemhandles (soft owner)
 				ulong handle = this.handleReference();
 
+				if (handle == 0 || string.IsNullOrEmpty(name))
+					continue;
+
 				template.Entries.Add(name, handle);
 			}
 		}
@@ -4210,7 +4212,7 @@ namespace ACadSharp.IO.DWG
 			}
 			catch (System.Exception ex)
 			{
-				this._builder.Notify(new NotificationEventArgs($"Exception while reading LwPolyline: {ex.GetType().FullName}"));
+				this._builder.Notify($"Exception while reading LwPolyline: {ex.GetType().FullName}", NotificationType.Error, ex);
 				return template;
 			}
 

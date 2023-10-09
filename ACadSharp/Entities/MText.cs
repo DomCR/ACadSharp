@@ -99,7 +99,26 @@ namespace ACadSharp.Entities
 		/// Style of this text entity.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 7)]
-		public TextStyle Style { get; set; } = TextStyle.Default;
+		public TextStyle Style
+		{
+			get { return this._style; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._style = this.updateTable(value, this.Document.TextStyles);
+				}
+				else
+				{
+					this._style = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// X-axis direction vector(in WCS)
@@ -210,6 +229,8 @@ namespace ACadSharp.Entities
 
 		private double _rotation = 0.0;
 
+		private TextStyle _style = TextStyle.Default;
+
 		public MText() : base() { }
 
 		public override CadObject Clone()
@@ -220,6 +241,34 @@ namespace ACadSharp.Entities
 			clone.Column = this.Column?.Clone();
 
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._style = this.updateTable(this.Style, doc.TextStyles);
+
+			doc.DimensionStyles.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
+
+			base.UnassignDocument();
+
+			this.Style = (TextStyle)this.Style.Clone();
+		}
+
+		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			base.tableOnRemove(sender, e);
+
+			if (e.Item.Equals(this.Style))
+			{
+				this.Style = this.Document.TextStyles[TextStyle.DefaultName];
+			}
 		}
 	}
 }

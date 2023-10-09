@@ -26,23 +26,5 @@ namespace ACadSharp.Tests
 
 			CadObjectTestUtils.AssertClone(cadObject, clone);
 		}
-
-		[Theory(Skip = "Factory refactor needed")]
-		[MemberData(nameof(ACadTypes))]
-		public void CloneUnattachEvent(Type t)
-		{
-			CadObject cadObject = Factory.CreateObject(t);
-			cadObject.OnReferenceChanged += this.cadObject_OnReferenceChanged;
-
-			CadObject clone = (CadObject)cadObject.Clone();
-
-			CadObjectTestUtils.AssertClone(cadObject, clone);
-		}
-
-		private void cadObject_OnReferenceChanged(object sender, ReferenceChangedEventArgs e)
-		{
-			//The clone must not have any attachment
-			throw new InvalidOperationException();
-		}
 	}
 }

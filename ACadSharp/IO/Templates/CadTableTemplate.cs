@@ -27,11 +27,11 @@ namespace ACadSharp.IO.Templates
 				}
 				catch (ArgumentException ex)
 				{
-					builder.Notify(new NotificationEventArgs(ex.Message));
+					builder.Notify(ex.Message, NotificationType.Warning);
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
-					builder.Notify(new NotificationEventArgs($"Error adding the entry [handle : {handle}] [type : {typeof(T)}]"));
+					builder.Notify($"Error adding the entry [handle : {handle}] [type : {typeof(T)}]", NotificationType.Error, ex);
 				}
 			}
 		}

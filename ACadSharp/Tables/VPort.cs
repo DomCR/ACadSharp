@@ -256,7 +256,7 @@ namespace ACadSharp.Tables
 		/// <remarks>
 		/// (optional)
 		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.Handle, 348)]
+		[DxfCodeValue(DxfReferenceType.Handle | DxfReferenceType.Optional, 348)]
 		public VisualStyle VisualStyle { get; set; }
 
 		/// <summary>
