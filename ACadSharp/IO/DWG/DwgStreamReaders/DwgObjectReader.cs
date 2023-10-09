@@ -4438,9 +4438,9 @@ namespace ACadSharp.IO.DWG
 			#endregion Read the boundary path data
 
 			//style BS 75 style of hatch 0==odd parity, 1==outermost, 2==whole area
-			hatch.HatchStyle = (HatchStyleType)this._objectReader.ReadBitShort();
+			hatch.Style = (HatchStyleType)this._objectReader.ReadBitShort();
 			//patterntype BS 76 pattern type 0==user-defined, 1==predefined, 2==custom
-			hatch.HatchPatternType = (HatchPatternType)this._objectReader.ReadBitShort();
+			hatch.PatternType = (HatchPatternType)this._objectReader.ReadBitShort();
 
 			if (!hatch.IsSolid)
 			{
