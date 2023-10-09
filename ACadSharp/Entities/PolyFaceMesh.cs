@@ -24,12 +24,12 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.PolyfaceMesh;
 
-		public SeqendCollection<VertexFaceRecord> Faces { get; }
+		public CadObjectCollection<VertexFaceRecord> Faces { get; }
 
 		public PolyfaceMesh()
 		{
 			this.Vertices.OnAdd += this.verticesOnAdd;
-			this.Faces = new SeqendCollection<VertexFaceRecord>(this);
+			this.Faces = new CadObjectCollection<VertexFaceRecord>(this);
 		}
 
 		public override IEnumerable<Entity> Explode()
@@ -44,6 +44,18 @@ namespace ACadSharp.Entities
 				this.Vertices.Remove((Vertex)e.Item);
 				throw new ArgumentException($"Wrong vertex type {e.Item.SubclassMarker} for {this.SubclassMarker}");
 			}
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+			doc.RegisterCollection(this.Faces);
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.UnregisterCollection(this.Faces);
+			base.UnassignDocument();
 		}
 	}
 }

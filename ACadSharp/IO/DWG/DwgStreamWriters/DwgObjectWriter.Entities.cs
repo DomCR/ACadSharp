@@ -74,6 +74,9 @@ namespace ACadSharp.IO.DWG
 				case Point p:
 					this.writePoint(p);
 					break;
+				case PolyfaceMesh faceMesh:
+					this.writePolyfaceMesh(faceMesh);
+					break;
 				case Ray ray:
 					this.writeRay(ray);
 					break;
@@ -577,6 +580,61 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitExtrusion(point.Normal);
 			//X - axis ang BD 50 See DXF documentation
 			this._writer.WriteBitDouble(point.Rotation);
+		}
+
+		private void writePolyfaceMesh(PolyfaceMesh fm)
+		{
+			//Numverts BS 71 Number of vertices in the mesh.
+			this._writer.WriteBitShort((short)fm.Vertices.Count);
+			//Numfaces BS 72 Number of faces
+			this._writer.WriteBitShort((short)fm.Faces.Count);
+
+			//R2004 +:
+			if (this.R2004Plus)
+			{
+				//Owned Object Count BL Number of objects owned by this object.
+				this._writer.WriteBitLong(fm.Vertices.Count + fm.Faces.Count);
+				foreach (var v in fm.Vertices)
+				{
+					//H[VERTEX(soft pointer)] Repeats “Owned Object Count” times.
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, v);
+				}
+				foreach (var f in fm.Faces)
+				{
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, f);
+				}
+			}
+
+			//R13 - R2000:
+			if (this.R13_15Only)
+			{
+				CadObject first = fm.Vertices.FirstOrDefault();
+				if (first == null)
+				{
+					first = fm.Faces.FirstOrDefault();
+				}
+				CadObject last = fm.Vertices.LastOrDefault();
+				if (last == null)
+				{
+					last = fm.Faces.LastOrDefault();
+				}
+
+				//H first VERTEX(soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, first);
+				//H last VERTEX(soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, last);
+			}
+
+			//Common:
+			//H SEQEND(hard owner)
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, fm.Vertices.Seqend);
+
+			this.writePolyfaceMesh(fm);
+		}
+
+		private void writePolyfaceMeshEntities(PolyfaceMesh fm)
+		{
+
 		}
 
 		private void writeRay(Ray ray)

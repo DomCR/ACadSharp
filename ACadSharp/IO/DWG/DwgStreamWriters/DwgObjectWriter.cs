@@ -153,6 +153,7 @@ namespace ACadSharp.IO.DWG
 
 		private void writeBlocks()
 		{
+			//TODO: Seqend are missing...
 			foreach (BlockRecord blkRecord in this._document.BlockRecords)
 			{
 				this.writeBlockBegin(blkRecord.BlockEntity);
