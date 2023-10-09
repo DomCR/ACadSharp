@@ -23,28 +23,28 @@ namespace ACadSharp.IO.DWG
 					switch (dimension)
 					{
 						case DimensionLinear linear:
-							writeDimensionLinear(linear);
+							this.writeDimensionLinear(linear);
 							break;
 						case DimensionAligned aligned:
-							writeDimensionAligned(aligned);
+							this.writeDimensionAligned(aligned);
 							break;
 						case DimensionRadius radius:
-							writeDimensionRadius(radius);
+							this.writeDimensionRadius(radius);
 							break;
 						case DimensionAngular2Line angular2Line:
-							writeDimensionAngular2Line(angular2Line);
+							this.writeDimensionAngular2Line(angular2Line);
 							break;
 						case DimensionAngular3Pt angular3pt:
-							writeDimensionAngular3Pt(angular3pt);
+							this.writeDimensionAngular3Pt(angular3pt);
 							break;
 						case DimensionDiameter diamenter:
-							writeDimensionDiameter(diamenter);
+							this.writeDimensionDiameter(diamenter);
 							break;
 						case DimensionOrdinate ordinate:
-							writeDimensionOrdinate(ordinate);
+							this.writeDimensionOrdinate(ordinate);
 							break;
-							//default:
-							//	throw new NotImplementedException();
+						default:
+							throw new NotImplementedException($"Dimension not implemented : {entity.GetType().FullName}");
 					}
 					break;
 				case Ellipse ellipse:
@@ -61,7 +61,7 @@ namespace ACadSharp.IO.DWG
 					break;
 				default:
 					this.notify($"Entity not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
-					return;
+					throw new NotImplementedException($"Entity not implemented : {entity.GetType().FullName}");
 			}
 
 			this.registerObject(entity);
@@ -162,7 +162,7 @@ namespace ACadSharp.IO.DWG
 
 		private void writeDimensionLinear(DimensionLinear dimension)
 		{
-			writeDimensionAligned(dimension);
+			this.writeDimensionAligned(dimension);
 
 			//Dim rot BD 50 Linear dimension rotation; see DXF documentation.
 			this._writer.WriteBitDouble(dimension.Rotation);
