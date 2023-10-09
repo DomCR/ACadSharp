@@ -292,6 +292,8 @@ namespace ACadSharp.IO.DXF
 			{
 				this._writer.Write(10, spoint);
 			}
+
+			//TODO: Implement HatchGradientPattern
 		}
 
 		private void writeBoundaryPath(Hatch.BoundaryPath path)
@@ -390,15 +392,15 @@ namespace ACadSharp.IO.DXF
 				this._writer.Write(78, (short)pattern.Lines.Count);
 				foreach (HatchPattern.Line line in pattern.Lines)
 				{
-					_writer.Write(53, line.Angle * (180.0 / System.Math.PI));
-					_writer.Write(43, line.BasePoint.X);
-					_writer.Write(44, line.BasePoint.Y);
-					_writer.Write(45, line.Offset.X);
-					_writer.Write(46, line.Offset.Y);
-					_writer.Write(79, (short)line.DashLengths.Count);
+					this._writer.Write(53, line.Angle * (180.0 / System.Math.PI));
+					this._writer.Write(43, line.BasePoint.X);
+					this._writer.Write(44, line.BasePoint.Y);
+					this._writer.Write(45, line.Offset.X);
+					this._writer.Write(46, line.Offset.Y);
+					this._writer.Write(79, (short)line.DashLengths.Count);
 					foreach (double dashLength in line.DashLengths)
 					{
-						_writer.Write(49, dashLength);
+						this._writer.Write(49, dashLength);
 					}
 				}
 			}
