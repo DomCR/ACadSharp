@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using CSMath;
 using System;
+using System.Linq;
 
 namespace ACadSharp.IO.DWG
 {
@@ -12,6 +13,7 @@ namespace ACadSharp.IO.DWG
 			switch (entity)
 			{
 				case Hatch:
+				case MText:
 					return;
 			}
 
@@ -65,6 +67,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case LwPolyline lwpolyline:
 					this.writeLwPolyline(lwpolyline);
+					break;
+				case MLine mLine:
+					this.writeMLine(mLine);
 					break;
 				case Point p:
 					this.writePoint(p);
@@ -325,6 +330,67 @@ namespace ACadSharp.IO.DWG
 					this._writer.WriteBitShort((short)face.Flags);
 				}
 			}
+		}
+
+		private void writeMLine(MLine mline)
+		{
+			//Scale BD 40
+			this._writer.WriteBitDouble(mline.ScaleFactor);
+			//Just EC top (0), bottom(2), or center(1)
+			this._writer.WriteByte((byte)mline.Justification);
+			//Base point 3BD 10
+			this._writer.Write3BitDouble(mline.StartPoint);
+			//Extrusion 3BD 210 etc.
+			this._writer.Write3BitDouble(mline.Normal);
+
+			//Openclosed BS open (1), closed(3)
+			this._writer.WriteBitShort((short)(mline.Flags.HasFlag(MLineFlags.Closed) ? 3 : 1));
+
+			int nlines = 0;
+			if (mline.Vertices.Count > 0)
+			{
+				nlines = mline.Vertices.First().Segments.Count;
+			}
+			//Linesinstyle RC 73
+			this._writer.WriteByte((byte)nlines);
+
+			//Numverts BS 72
+			this._writer.WriteBitShort((short)mline.Vertices.Count);
+
+			foreach (var v in mline.Vertices)
+			{
+				//vertex 3BD
+				this._writer.Write3BitDouble(v.Position);
+				//vertex direction 3BD
+				this._writer.Write3BitDouble(v.Direction);
+				//miter direction 3BD
+				this._writer.Write3BitDouble(v.Miter);
+
+				// All the Vertices must have the same number of segments
+				for (int i = 0; i < nlines; i++)
+				{
+					var element = v.Segments[i];
+
+					//numsegparms BS
+					this._writer.WriteBitShort((short)element.Parameters.Count);
+					foreach (double p in element.Parameters)
+					{
+						//segparm BD segment parameter
+						this._writer.WriteBitDouble(p);
+					}
+
+					//numareafillparms BS
+					this._writer.WriteBitShort((short)element.AreaFillParameters.Count);
+					foreach (double afp in element.AreaFillParameters)
+					{
+						//areafillparm BD area fill parameter
+						this._writer.WriteBitDouble(afp);
+					}
+				}
+			}
+
+			//H mline style oject handle (hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, mline.MLStyle);
 		}
 
 		private void writeLwPolyline(LwPolyline lwPolyline)
