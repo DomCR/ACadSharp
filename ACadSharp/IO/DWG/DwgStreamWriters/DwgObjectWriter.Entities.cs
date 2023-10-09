@@ -8,6 +8,13 @@ namespace ACadSharp.IO.DWG
 	{
 		private void writeEntity(Entity entity)
 		{
+			//Ignored Entities
+			switch (entity)
+			{
+				case Hatch:
+					return;
+			}
+
 			this.writeCommonEntityData(entity);
 
 			switch (entity)
