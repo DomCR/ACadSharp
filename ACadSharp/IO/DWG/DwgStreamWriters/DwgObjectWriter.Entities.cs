@@ -72,6 +72,9 @@ namespace ACadSharp.IO.DWG
 				case TextEntity text:
 					this.writeTextEntity(text);
 					break;
+				case XLine xline:
+					this.writeXLine(xline);
+					break;
 				default:
 					this.notify($"Entity not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					throw new NotImplementedException($"Entity not implemented : {entity.GetType().FullName}");
@@ -777,6 +780,14 @@ namespace ACadSharp.IO.DWG
 				}
 			}
 #endif
+		}
+
+		private void writeXLine(XLine xline)
+		{
+			//3 RD: a point on the construction line
+			this._writer.Write3BitDouble(xline.FirstPoint);
+			//3 RD : another point
+			this._writer.Write3BitDouble(xline.Direction);
 		}
 	}
 }
