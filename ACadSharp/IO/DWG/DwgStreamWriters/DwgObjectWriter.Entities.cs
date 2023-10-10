@@ -78,17 +78,28 @@ namespace ACadSharp.IO.DWG
 				case PolyfaceMesh faceMesh:
 					this.writePolyfaceMesh(faceMesh);
 					break;
+				case Polyline3D pline3d:
+					this.writePolyline3D(pline3d);
+					break;
 				case Ray ray:
 					this.writeRay(ray);
 					break;
 				case TextEntity text:
 					this.writeTextEntity(text);
 					break;
-				case VertexFaceRecord faceRecord:
-					this.writeFaceRecord(faceRecord);
-					break;
-				case VertexFaceMesh vertex:
-					this.writeVertex(vertex);
+				case Vertex vertex:
+					switch (vertex)
+					{
+						case VertexFaceRecord faceRecord:
+							this.writeFaceRecord(faceRecord);
+							break;
+						case Vertex3D:
+						case VertexFaceMesh:
+							this.writeVertex(vertex);
+							break;
+						default:
+							throw new NotImplementedException($"Vertex not implemented : {entity.GetType().FullName}");
+					}
 					break;
 				case XLine xline:
 					this.writeXLine(xline);
@@ -634,6 +645,7 @@ namespace ACadSharp.IO.DWG
 			this.writePolyfaceMeshEntities(fm);
 		}
 
+		[Obsolete("Use writeChildEntities instead")]
 		private void writePolyfaceMeshEntities(PolyfaceMesh fm)
 		{
 			Entity prevHolder = this._prev;
@@ -685,8 +697,55 @@ namespace ACadSharp.IO.DWG
 			this._next = nextHolder;
 		}
 
+		private void writePolyline3D(Polyline3D pline)
+		{
+			//Flags RC 70 NOT DIRECTLY THE 75. Bit-coded (76543210):
+			//75 0 : Splined(75 value is 5)
+			//1 : Splined(75 value is 6)
+			//Should assign pline.SmoothSurface ??
+			this._writer.WriteByte(0);
+
+			//Flags RC 70 NOT DIRECTLY THE 70. Bit-coded (76543210):
+			//0 : Closed(70 bit 0(1))
+			//(Set 70 bit 3(8) because this is a 3D POLYLINE.)
+			this._writer.WriteByte((byte)(pline.Flags.HasFlag(PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM) ? 1 : 0));
+
+			//R2004+:
+			if (this.R2004Plus)
+			{
+				//Owned Object Count BL Number of objects owned by this object.
+				this._writer.WriteBitLong(pline.Vertices.Count);
+
+				foreach (var vertex in pline.Vertices)
+				{
+					this._writer.HandleReference(DwgReferenceType.HardOwnership, vertex);
+				}
+			}
+
+			//R13-R2000:
+			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)
+			{
+				//H first VERTEX (soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, pline.Vertices.FirstOrDefault());
+				//H last VERTEX (soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, pline.Vertices.LastOrDefault());
+			}
+
+			//Common:
+			//H SEQEND(hard owner)
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, pline.Vertices.Seqend);
+
+			this.writeChildEntities(pline.Vertices);
+
+			this.writeSeqend(pline.Vertices.Seqend);
+		}
+
 		private void writeSeqend(Seqend seqend)
 		{
+			//for empty list seqend is null
+			if (seqend == null)
+				return;
+
 			//Seqend does not have links for AC1015 or before (causes errors)
 			Entity prevHolder = this._prev;
 			Entity nextHolder = this._next;
@@ -1010,6 +1069,32 @@ namespace ACadSharp.IO.DWG
 			this._writer.Write3BitDouble(xline.FirstPoint);
 			//3 RD : another point
 			this._writer.Write3BitDouble(xline.Direction);
+		}
+
+		private void writeChildEntities(IEnumerable<Entity> entities)
+		{
+			if (!entities.Any())
+				return;
+
+			Entity prevHolder = this._prev;
+			Entity nextHolder = this._next;
+			this._prev = null;
+			this._next = null;
+
+			Entity curr = entities.First();
+			for (int i = 1; i < entities.Count(); i++)
+			{
+				this._next = entities.ElementAt(i);
+				this.writeEntity(curr);
+				this._prev = curr;
+				curr = this._next;
+			}
+
+			this._next = null;
+			this.writeEntity(curr);
+
+			this._prev = prevHolder;
+			this._next = nextHolder;
 		}
 	}
 }

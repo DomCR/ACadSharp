@@ -1569,12 +1569,15 @@ namespace ACadSharp.IO.DWG
 			this.readCommonEntityData(template);
 
 			//Flags RC 70 NOT DIRECTLY THE 75. Bit-coded (76543210):
-			byte num1 = this._objectReader.ReadByte();
+			byte flags = this._objectReader.ReadByte();
+
 			//75 0 : Splined(75 value is 5)
 			//1 : Splined(75 value is 6)
-			bool splined = ((uint)num1 & 0b1) > 0;
+			bool splined = ((uint)flags & 0b1) > 0;
+			//Should assign pline.SmoothSurface ??
+
 			//(If either is set, set 70 bit 2(4) to indicate splined.)
-			bool splined1 = ((uint)num1 & 0b10) > 0;
+			bool splined1 = ((uint)flags & 0b10) > 0;
 
 			if (splined | splined1)
 			{
