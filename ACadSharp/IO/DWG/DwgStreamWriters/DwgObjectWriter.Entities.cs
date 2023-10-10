@@ -87,6 +87,9 @@ namespace ACadSharp.IO.DWG
 				case Solid solid:
 					this.writeSolid(solid);
 					break;
+				case Spline spline:
+					this.writeSpline(spline);
+					break;
 				case TextEntity text:
 					this.writeTextEntity(text);
 					break;
@@ -787,6 +790,106 @@ namespace ACadSharp.IO.DWG
 
 			//Extrusion BE 210
 			this._writer.WriteBitExtrusion(solid.Normal);
+		}
+
+		private void writeSpline(Spline spline)
+		{
+			int scenario;
+			//R2013+:
+			if (this.R2013Plus)
+			{
+				//The scenario flag becomes 1 if the knot parameter is Custom or has no fit data, otherwise 2.
+				if (spline.KnotParameterization == KnotParameterization.Custom || spline.FitPoints.Count == 0)
+				{
+					scenario = 1;
+				}
+				else
+				{
+					scenario = 2;
+				}
+
+				this._writer.WriteBitLong(scenario);
+				this._writer.WriteBitLong((int)spline.Flags1);
+				this._writer.WriteBitLong((int)spline.KnotParameterization);
+			}
+			else
+			{
+				scenario = (spline.FitPoints.Count <= 0) ? 1 : 2;
+				if (scenario == 2 && spline.KnotParameterization != 0)
+				{
+					scenario = 1;
+				}
+
+				//Scenario BL a flag which is 2 for fitpts only, 1 for ctrlpts/knots.
+				this._writer.WriteBitLong(scenario);
+			}
+
+			//Common:
+			//Degree BL degree of this spline
+			this._writer.WriteBitLong(spline.Degree);
+
+			bool flag = spline.Weights.Count > 0;
+			switch (scenario)
+			{
+				case 1:
+					{
+						//Rational B flag bit 2
+						this._writer.WriteBit(spline.Flags.HasFlag(SplineFlags.Rational));
+						//Closed B flag bit 0
+						this._writer.WriteBit(spline.Flags.HasFlag(SplineFlags.Closed));
+						//Periodic B flag bit 1
+						this._writer.WriteBit(spline.Flags.HasFlag(SplineFlags.Periodic));
+
+						//Knot tol BD 42
+						this._writer.WriteBitDouble(spline.KnotTolerance);
+						//Ctrl tol BD 43
+						this._writer.WriteBitDouble(spline.ControlPointTolerance);
+
+						//Numknots BL 72 This is stored as a LONG
+						this._writer.WriteBitLong(spline.Knots.Count);
+						//Numctrlpts BL 73 Number of 10's (and 41's, if weighted) that follow.
+						this._writer.WriteBitLong(spline.ControlPoints.Count);
+
+						//Weight B Seems to be an echo of the 4 bit on the flag for "weights present".
+						this._writer.WriteBit(flag);
+
+						foreach (double k in spline.Knots)
+						{
+							//Knot BD knot value
+							this._writer.WriteBitDouble(k);
+						}
+
+						for (int i = 0; i < spline.ControlPoints.Count; i++)
+						{
+							//Control pt 3BD 10
+							this._writer.Write3BitDouble(spline.ControlPoints[i]);
+							if (flag)
+							{
+								//Weight D 41 if present as indicated by 4 bit on flag
+								this._writer.WriteBitDouble(spline.Weights[i]);
+							}
+						}
+						break;
+					}
+				case 2:
+					{
+						//Fit Tol BD 44
+						this._writer.WriteBitDouble(spline.FitTolerance);
+						//Beg tan vec 3BD 12 Beginning tangent direction vector (normalized).
+						this._writer.Write3BitDouble(spline.StartTangent);
+						//End tan vec 3BD 13 Ending tangent direction vector (normalized).
+						this._writer.Write3BitDouble(spline.EndTangent);
+						//num fit pts BL 74 Number of fit points.
+						this._writer.WriteBitLong(spline.FitPoints.Count);
+
+						foreach (XYZ fp in spline.FitPoints)
+						{
+							//Fit pt 3BD
+							this._writer.Write3BitDouble(fp);
+						}
+						break;
+					}
+			}
 		}
 
 		private void writeRay(Ray ray)

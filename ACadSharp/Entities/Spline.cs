@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -44,7 +43,7 @@ namespace ACadSharp.Entities
 		/// Degree of the spline curve
 		/// </summary>
 		[DxfCodeValue(71)]
-		public double Degree { get; set; }
+		public int Degree { get; set; }
 
 		/// <summary>
 		/// Number of knots

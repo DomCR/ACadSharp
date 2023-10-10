@@ -2363,7 +2363,7 @@ namespace ACadSharp.IO.DWG
 				//The scenario flag becomes 1 if the knot parameter is Custom or has no fit data, otherwise 2.
 				spline.KnotParameterization = (KnotParameterization)this._mergedReaders.ReadBitLong();
 
-				scenario = ((spline.KnotParameterization == KnotParameterization.Custom || (spline.Flags1 & SplineFlags1.UseKnotParameter) == 0) ? 1 : 2);
+				scenario = (spline.KnotParameterization == KnotParameterization.Custom || (spline.Flags1 & SplineFlags1.UseKnotParameter) == 0) ? 1 : 2;
 			}
 			else if (scenario == 2)
 			{
@@ -2385,18 +2385,6 @@ namespace ACadSharp.IO.DWG
 			bool flag = false;
 			switch (scenario)
 			{
-				case 2:
-					//Fit Tol BD 44
-					spline.FitTolerance = this._objectReader.ReadBitDouble();
-					//Beg tan vec 3BD 12 Beginning tangent direction vector (normalized).
-					spline.StartTangent = this._objectReader.Read3BitDouble();
-					//End tan vec 3BD 13 Ending tangent direction vector (normalized).
-					spline.EndTangent = this._objectReader.Read3BitDouble();
-					//num fit pts BL 74 Number of fit points.
-					//Stored as a LONG, although it is defined in DXF as a short.
-					//You can see this if you create a spline with >=256 fit points
-					numfitpts = this._objectReader.ReadBitLong();
-					break;
 				case 1:
 					//Rational B flag bit 2
 					if (this._objectReader.ReadBit())
@@ -2422,7 +2410,20 @@ namespace ACadSharp.IO.DWG
 					//Weight B Seems to be an echo of the 4 bit on the flag for "weights present".
 					flag = this._objectReader.ReadBit();
 					break;
+				case 2:
+					//Fit Tol BD 44
+					spline.FitTolerance = this._objectReader.ReadBitDouble();
+					//Beg tan vec 3BD 12 Beginning tangent direction vector (normalized).
+					spline.StartTangent = this._objectReader.Read3BitDouble();
+					//End tan vec 3BD 13 Ending tangent direction vector (normalized).
+					spline.EndTangent = this._objectReader.Read3BitDouble();
+					//num fit pts BL 74 Number of fit points.
+					//Stored as a LONG, although it is defined in DXF as a short.
+					//You can see this if you create a spline with >=256 fit points
+					numfitpts = this._objectReader.ReadBitLong();
+					break;
 			}
+
 			for (int i = 0; i < numknots; i++)
 			{
 				//Knot BD knot value
