@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using CSMath;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ACadSharp.IO.DWG
@@ -82,6 +83,12 @@ namespace ACadSharp.IO.DWG
 					break;
 				case TextEntity text:
 					this.writeTextEntity(text);
+					break;
+				case VertexFaceRecord faceRecord:
+					this.writeFaceRecord(faceRecord);
+					break;
+				case VertexFaceMesh vertex:
+					this.writeVertex(vertex);
 					break;
 				case XLine xline:
 					this.writeXLine(xline);
@@ -608,16 +615,11 @@ namespace ACadSharp.IO.DWG
 			//R13 - R2000:
 			if (this.R13_15Only)
 			{
-				CadObject first = fm.Vertices.FirstOrDefault();
-				if (first == null)
-				{
-					first = fm.Faces.FirstOrDefault();
-				}
-				CadObject last = fm.Vertices.LastOrDefault();
-				if (last == null)
-				{
-					last = fm.Faces.LastOrDefault();
-				}
+				List<CadObject> child = new List<CadObject>(fm.Vertices);
+				child.AddRange(fm.Faces);
+
+				CadObject first = child.FirstOrDefault();
+				CadObject last = child.LastOrDefault();
 
 				//H first VERTEX(soft pointer)
 				this._writer.HandleReference(DwgReferenceType.SoftPointer, first);
@@ -629,12 +631,73 @@ namespace ACadSharp.IO.DWG
 			//H SEQEND(hard owner)
 			this._writer.HandleReference(DwgReferenceType.SoftPointer, fm.Vertices.Seqend);
 
-			this.writePolyfaceMesh(fm);
+			this.writePolyfaceMeshEntities(fm);
 		}
 
 		private void writePolyfaceMeshEntities(PolyfaceMesh fm)
 		{
+			Entity prevHolder = this._prev;
+			Entity nextHolder = this._next;
 
+			this._prev = null;
+			if (fm.Vertices.Any())
+			{
+				Vertex currVertex = fm.Vertices.First();
+				for (int i = 1; i < fm.Vertices.Count; i++)
+				{
+					Vertex nextVertex = (Vertex)(this._next = fm.Vertices[i]);
+
+					// To avoid issues is better to enforce the flags
+					currVertex.Flags = VertexFlags.PolygonMesh3D | VertexFlags.PolyfaceMeshVertex;
+					this.writeEntity(currVertex);
+
+					this._prev = currVertex;
+					currVertex = nextVertex;
+				}
+
+				// Get the next entity for the last vertex, the first Face
+				this._next = fm.Faces.FirstOrDefault();
+
+				// To avoid issues is better to enforce the flags
+				currVertex.Flags = VertexFlags.PolygonMesh3D | VertexFlags.PolyfaceMeshVertex;
+				this.writeEntity(currVertex);
+
+				this._prev = currVertex;
+			}
+
+			if (fm.Faces.Any())
+			{
+				VertexFaceRecord currFace = fm.Faces.First();
+				for (int j = 1; j < fm.Faces.Count; j++)
+				{
+					VertexFaceRecord nextFace = (VertexFaceRecord)(this._next = fm.Faces[j]);
+					this.writeEntity(currFace);
+					this._prev = currFace;
+					currFace = nextFace;
+				}
+				this._next = null;
+				this.writeEntity(currFace);
+			}
+
+			this.writeSeqend(fm.Vertices.Seqend);
+
+			this._prev = prevHolder;
+			this._next = nextHolder;
+		}
+
+		private void writeSeqend(Seqend seqend)
+		{
+			//Seqend does not have links for AC1015 or before (causes errors)
+			Entity prevHolder = this._prev;
+			Entity nextHolder = this._next;
+			this._prev = null;
+			this._next = null;
+
+			this.writeCommonEntityData(seqend);
+			this.registerObject(seqend);
+
+			this._prev = prevHolder;
+			this._next = nextHolder;
 		}
 
 		private void writeRay(Ray ray)
@@ -915,6 +978,30 @@ namespace ACadSharp.IO.DWG
 				}
 			}
 #endif
+		}
+
+		private void writeFaceRecord(VertexFaceRecord face)
+		{
+			this.writeCommonEntityData(face);
+
+			//Vert index BS 71 1 - based vertex index(see DXF doc)
+			this._writer.WriteBitShort(face.Index1);
+			//Vert index BS 72 1 - based vertex index(see DXF doc)
+			this._writer.WriteBitShort(face.Index2);
+			//Vert index BS 73 1 - based vertex index(see DXF doc)
+			this._writer.WriteBitShort(face.Index3);
+			//Vert index BS 74 1 - based vertex index(see DXF doc)
+			this._writer.WriteBitShort(face.Index4);
+		}
+
+		private void writeVertex(Vertex vertex)
+		{
+			this.writeCommonEntityData(vertex);
+
+			//Flags EC 70 NOT bit-pair-coded.
+			this._writer.WriteByte((byte)vertex.Flags);
+			//Point 3BD 10
+			this._writer.Write3BitDouble(vertex.Location);
 		}
 
 		private void writeXLine(XLine xline)
