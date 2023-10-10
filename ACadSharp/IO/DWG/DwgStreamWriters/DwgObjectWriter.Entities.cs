@@ -13,8 +13,11 @@ namespace ACadSharp.IO.DWG
 			//Ignored Entities
 			switch (entity)
 			{
+
 				case Hatch:
 				case MText:
+				//Unlisted
+				case Wipeout:
 					return;
 			}
 
@@ -62,6 +65,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case Face3D face3D:
 					this.writeFace3D(face3D);
+					break;
+				case Leader l:
+					this.writeLeader(l);
 					break;
 				case Line l:
 					this.writeLine(l);
@@ -548,6 +554,11 @@ namespace ACadSharp.IO.DWG
 					this._writer.WriteBitDouble(lwPolyline.Vertices[l].EndWidth);
 				}
 			}
+		}
+
+		private void writeLeader(Leader leader)
+		{
+
 		}
 
 		private void writeLine(Line line)
