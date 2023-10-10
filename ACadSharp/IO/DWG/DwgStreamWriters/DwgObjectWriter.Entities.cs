@@ -558,7 +558,96 @@ namespace ACadSharp.IO.DWG
 
 		private void writeLeader(Leader leader)
 		{
+			//Unknown bit B --- Always seems to be 0.
+			this._writer.WriteBit(false);
 
+			//Annot type BS --- Annotation type (NOT bit-coded):
+			this._writer.WriteBitShort((short)leader.CreationType);
+			//path type BS ---
+			this._writer.WriteBitShort((short)leader.PathType);
+
+			//numpts BL --- number of points
+			this._writer.WriteBitLong(leader.Vertices.Count);
+			foreach (XYZ v in leader.Vertices)
+			{
+				//point 3BD 10 As many as counter above specifies.
+				this._writer.Write3BitDouble(v);
+			}
+
+			//Origin 3BD --- The leader plane origin (by default it’s the first point).
+			this._writer.Write3BitDouble(leader.Vertices.FirstOrDefault());
+			//Extrusion 3BD 210
+			this._writer.Write3BitDouble(leader.Normal);
+			//x direction 3BD 211
+			this._writer.Write3BitDouble(leader.HorizontalDirection);
+			//offsettoblockinspt 3BD 212 Used when the BLOCK option is used. Seems to be an unused feature.
+			this._writer.Write3BitDouble(leader.BlockOffset);
+
+			//R14+:
+			if (this._version >= ACadVersion.AC1014)
+			{
+				//Endptproj 3BD --- A non-planar leader gives a point that projects the endpoint back to the annotation.
+				this._writer.Write3BitDouble(leader.AnnotationOffset);
+			}
+
+			//R13-R14 Only:
+			if (this.R13_14Only)
+			{
+				//DIMGAP BD --- The value of DIMGAP in the associated DIMSTYLE at the time of creation, multiplied by the dimscale in that dimstyle.
+				this._writer.WriteBitDouble(leader.Style.DimensionLineGap);
+			}
+
+
+			//Common:
+			if (this._version <= ACadVersion.AC1021)
+			{
+				//Box height BD 40 MTEXT extents height. (A text box is slightly taller, probably by some DIMvar amount.)
+				this._writer.WriteBitDouble(leader.TextHeight);
+				//Box width BD 41 MTEXT extents width. (A text box is slightly wider, probably by some DIMvar amount.)
+				this._writer.WriteBitDouble(leader.TextWidth);
+			}
+
+			//Hooklineonxdir B hook line is on x direction if 1
+			this._writer.WriteBit(leader.HookLineDirection);
+			//Arrowheadon B arrowhead on indicator
+			this._writer.WriteBit(leader.ArrowHeadEnabled);
+
+			//R13-R14 Only:
+			if (this.R13_14Only)
+			{
+				//Arrowheadtype BS arrowhead type
+				this._writer.WriteBitShort(0);
+				//Dimasz BD DIMASZ at the time of creation, multiplied by DIMSCALE
+				this._writer.WriteBitDouble(leader.Style.ArrowSize * leader.Style.ScaleFactor);
+				//Unknown B
+				this._writer.WriteBit(false);
+				//Unknown B
+				this._writer.WriteBit(false);
+				//Unknown BS
+				this._writer.WriteBitShort(0);
+				//Byblockcolor BS
+				this._writer.WriteBitShort(0);
+				//Unknown B
+				this._writer.WriteBit(false);
+				//Unknown B
+				this._writer.WriteBit(false);
+			}
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Unknown BS
+				this._writer.WriteBitShort(0);
+				//Unknown B
+				this._writer.WriteBit(false);
+				//Unknown B
+				this._writer.WriteBit(false);
+			}
+
+			//H 340 Associated annotation
+			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+			//H 2 DIMSTYLE (hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, leader.Style);
 		}
 
 		private void writeLine(Line line)

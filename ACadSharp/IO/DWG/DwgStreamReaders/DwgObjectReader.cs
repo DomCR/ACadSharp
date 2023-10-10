@@ -2724,9 +2724,10 @@ namespace ACadSharp.IO.DWG
 				leader.Vertices.Add(this._objectReader.Read3BitDouble());
 			}
 
-			//Origin 3BD --- The leader plane origin (by default it’s the first point).
-			this._objectReader.Read3BitDouble();    //Is necessary to store this value?
-													//Extrusion 3BD 210
+			//Origin 3BD --- The leader plane origin (by default it’s the first point)
+			//Is necessary to store this value?
+			this._objectReader.Read3BitDouble();
+			//Extrusion 3BD 210
 			leader.Normal = this._objectReader.Read3BitDouble();
 			//x direction 3BD 211
 			leader.HorizontalDirection = this._objectReader.Read3BitDouble();
