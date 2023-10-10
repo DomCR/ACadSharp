@@ -84,6 +84,9 @@ namespace ACadSharp.IO.DWG
 				case Ray ray:
 					this.writeRay(ray);
 					break;
+				case Solid solid:
+					this.writeSolid(solid);
+					break;
 				case TextEntity text:
 					this.writeTextEntity(text);
 					break;
@@ -757,6 +760,33 @@ namespace ACadSharp.IO.DWG
 
 			this._prev = prevHolder;
 			this._next = nextHolder;
+		}
+
+		private void writeSolid(Solid solid)
+		{
+			this.writeCommonEntityData(solid);
+
+			//Thickness BT 39
+			this._writer.WriteBitThickness(solid.Thickness);
+
+			//Elevation BD ---Z for 10 - 13.
+			this._writer.WriteBitDouble((double)solid.FirstCorner.Z);
+
+			//1st corner 2RD 10
+			this._writer.WriteRawDouble(solid.FirstCorner.X);
+			this._writer.WriteRawDouble(solid.FirstCorner.Y);
+			//2nd corner 2RD 11
+			this._writer.WriteRawDouble(solid.SecondCorner.X);
+			this._writer.WriteRawDouble(solid.SecondCorner.Y);
+			//3rd corner 2RD 12
+			this._writer.WriteRawDouble(solid.ThirdCorner.X);
+			this._writer.WriteRawDouble(solid.ThirdCorner.Y);
+			//4th corner 2RD 13
+			this._writer.WriteRawDouble(solid.FirstCorner.X);
+			this._writer.WriteRawDouble(solid.FirstCorner.Y);
+
+			//Extrusion BE 210
+			this._writer.WriteBitExtrusion(solid.Normal);
 		}
 
 		private void writeRay(Ray ray)
