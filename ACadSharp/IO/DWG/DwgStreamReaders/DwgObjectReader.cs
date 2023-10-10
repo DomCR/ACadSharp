@@ -169,10 +169,9 @@ namespace ACadSharp.IO.DWG
 
 				//Add the template to the list to be processed
 				if (template == null)
-				{
+					continue;
 
-				}
-				else if (template is ICadTableTemplate tableTemplate)
+				if (template is ICadTableTemplate tableTemplate)
 				{
 					this._builder.AddTableTemplate(tableTemplate);
 				}
@@ -2540,6 +2539,9 @@ namespace ACadSharp.IO.DWG
 				//itemhandles (soft owner)
 				ulong handle = this.handleReference();
 
+				if (handle == 0 || string.IsNullOrEmpty(name))
+					continue;
+
 				template.Entries.Add(name, handle);
 			}
 		}
@@ -4786,7 +4788,7 @@ namespace ACadSharp.IO.DWG
 			}
 			catch (System.Exception ex)
 			{
-				this._builder.Notify(new NotificationEventArgs($"Exception while reading LwPolyline: {ex.GetType().FullName}"));
+				this._builder.Notify($"Exception while reading LwPolyline: {ex.GetType().FullName}", NotificationType.Error, ex);
 				return template;
 			}
 
@@ -5014,9 +5016,9 @@ namespace ACadSharp.IO.DWG
 			#endregion Read the boundary path data
 
 			//style BS 75 style of hatch 0==odd parity, 1==outermost, 2==whole area
-			hatch.HatchStyle = (HatchStyleType)this._objectReader.ReadBitShort();
+			hatch.Style = (HatchStyleType)this._objectReader.ReadBitShort();
 			//patterntype BS 76 pattern type 0==user-defined, 1==predefined, 2==custom
-			hatch.HatchPatternType = (HatchPatternType)this._objectReader.ReadBitShort();
+			hatch.PatternType = (HatchPatternType)this._objectReader.ReadBitShort();
 
 			if (!hatch.IsSolid)
 			{

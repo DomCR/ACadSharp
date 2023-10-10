@@ -87,5 +87,39 @@ namespace ACadSharp.Tests.Tables
 				CadObjectTestUtils.AssertEntityClone(recordEntities[i], cloneEntities[i]);
 			}
 		}
+
+		[Fact()]
+		public void CloneInDocumentTest()
+		{
+			string name = "my_block";
+			BlockRecord record = new BlockRecord(name);
+			CadDocument doc = new CadDocument();
+
+			doc.BlockRecords.Add(record);
+
+			Assert.NotNull(record.Document);
+			Assert.NotNull(record.BlockEntity.Document);
+			Assert.NotNull(record.BlockEnd.Document);
+		}
+
+		[Fact()]
+		public void CloneDetachDocumentTest()
+		{
+			string name = "my_block";
+			BlockRecord record = new BlockRecord(name);
+			CadDocument doc = new CadDocument();
+
+			doc.BlockRecords.Add(record);
+
+			BlockRecord clone = (BlockRecord)record.Clone();
+
+			Assert.Null(clone.Document);
+			Assert.Null(clone.BlockEntity.Document);
+			Assert.Null(clone.BlockEnd.Document);
+
+			Assert.NotNull(record.Document);
+			Assert.NotNull(record.BlockEntity.Document);
+			Assert.NotNull(record.BlockEnd.Document);
+		}
 	}
 }

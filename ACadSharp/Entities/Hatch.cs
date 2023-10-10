@@ -63,13 +63,13 @@ namespace ACadSharp.Entities
 		/// Hatch style
 		/// </summary>
 		[DxfCodeValue(75)]
-		public HatchStyleType HatchStyle { get; set; }
+		public HatchStyleType Style { get; set; }
 
 		/// <summary>
 		/// Hatch pattern type
 		/// </summary>
 		[DxfCodeValue(76)]
-		public HatchPatternType HatchPatternType { get; set; }
+		public HatchPatternType PatternType { get; set; }
 
 		/// <summary>
 		/// Hatch pattern angle (pattern fill only)
@@ -125,6 +125,8 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 91)]
 		public List<BoundaryPath> Paths { get; set; } = new List<BoundaryPath>();
+
+		private HatchPattern _pattern = HatchPattern.Solid;
 
 		public Hatch() : base() { }
 

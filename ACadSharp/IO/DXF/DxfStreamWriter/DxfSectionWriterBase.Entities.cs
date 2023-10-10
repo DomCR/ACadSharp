@@ -272,7 +272,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(20, 0, map);
 			this._writer.Write(30, hatch.Elevation, map);
 
-			this._writer.Write(210, hatch.Normal.X, map);
+			this._writer.Write(210, hatch.Normal, map);
 
 			this._writer.Write(2, hatch.Pattern.Name, map);
 
@@ -285,7 +285,15 @@ namespace ACadSharp.IO.DXF
 				this.writeBoundaryPath(path);
 			}
 
-			this.writeHatchPattern(hatch.Pattern);
+			this.writeHatchPattern(hatch, hatch.Pattern);
+
+			this._writer.Write(98, hatch.SeedPoints.Count);
+			foreach (XY spoint in hatch.SeedPoints)
+			{
+				this._writer.Write(10, spoint);
+			}
+
+			//TODO: Implement HatchGradientPattern
 		}
 
 		private void writeBoundaryPath(Hatch.BoundaryPath path)
@@ -371,9 +379,31 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void writeHatchPattern(HatchPattern pattern)
+		private void writeHatchPattern(Hatch hatch, HatchPattern pattern)
 		{
-			//TODO: Hatch pattern need a refactor and a proper implementation
+			this._writer.Write(75, (short)hatch.Style);
+			this._writer.Write(76, (short)hatch.PatternType);
+
+			if (!hatch.IsSolid)
+			{
+				this._writer.Write(52, pattern.Angle * MathUtils.RadToDeg);
+				this._writer.Write(41, pattern.Scale);
+				this._writer.Write(77, (short)(hatch.IsDouble ? 1 : 0));
+				this._writer.Write(78, (short)pattern.Lines.Count);
+				foreach (HatchPattern.Line line in pattern.Lines)
+				{
+					this._writer.Write(53, line.Angle * (180.0 / System.Math.PI));
+					this._writer.Write(43, line.BasePoint.X);
+					this._writer.Write(44, line.BasePoint.Y);
+					this._writer.Write(45, line.Offset.X);
+					this._writer.Write(46, line.Offset.Y);
+					this._writer.Write(79, (short)line.DashLengths.Count);
+					foreach (double dashLength in line.DashLengths)
+					{
+						this._writer.Write(49, dashLength);
+					}
+				}
+			}
 		}
 
 		private void writeEllipse(Ellipse ellipse)
@@ -414,7 +444,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Insert);
 
-			this._writer.Write(2, insert.Block.Name, map);
+			this._writer.WriteName(2, insert.Block, map);
 
 			this._writer.Write(10, insert.InsertPoint, map);
 

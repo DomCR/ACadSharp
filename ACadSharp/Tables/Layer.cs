@@ -52,7 +52,26 @@ namespace ACadSharp.Tables
 		/// The linetype of an object. The default linetype is the linetype of the layer (ByLayer).
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 6)]
-		public LineType LineType { get; set; } = LineType.Continuous;
+		public LineType LineType
+		{
+			get { return this._lineType; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._lineType = this.updateTable(value, this.Document.LineTypes);
+				}
+				else
+				{
+					this._lineType = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Specifies if the layer is plottable.
@@ -80,20 +99,45 @@ namespace ACadSharp.Tables
 
 		public bool IsOn { get; set; }  //TODO: Is the same as PlotFlag???
 
+		private LineType _lineType = LineType.Continuous;
+
 		internal Layer() : base() { }
 
-		public Layer(string name) : base(name)
-		{
-			if (string.IsNullOrEmpty(name))
-				throw new ArgumentNullException(nameof(name), "Layer must have a name.");
-		}
+		public Layer(string name) : base(name) { }
 
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			Layer clone = new Layer(this.Name);
 			clone.LineType = (LineType)this.LineType.Clone();
 			clone.Material = (Material)(this.Material?.Clone());
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._lineType = this.updateTable(this.LineType, doc.LineTypes);
+
+			doc.LineTypes.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.LineTypes.OnRemove -= this.tableOnRemove;
+
+			base.UnassignDocument();
+
+			this.LineType = (LineType)this.LineType.Clone();
+		}
+
+		protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this.LineType))
+			{
+				this.LineType = this.Document.LineTypes[LineType.ContinuousName];
+			}
 		}
 	}
 }

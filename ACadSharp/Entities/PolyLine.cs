@@ -81,7 +81,7 @@ namespace ACadSharp.Entities
 
 		public abstract IEnumerable<Entity> Explode();
 
-		internal static IEnumerable<Entity> explode(IPolyline polyline)
+		internal static IEnumerable<Entity> Explode(IPolyline polyline)
 		{
 			//Generic explode method for Polyline2D and LwPolyline
 			List<Entity> entities = new List<Entity>();
@@ -132,6 +132,18 @@ namespace ACadSharp.Entities
 			}
 
 			return entities;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+			doc.RegisterCollection(this.Vertices);
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.UnregisterCollection(this.Vertices);
+			base.UnassignDocument();
 		}
 	}
 }
