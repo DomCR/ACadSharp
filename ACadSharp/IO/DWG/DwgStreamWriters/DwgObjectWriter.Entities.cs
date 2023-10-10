@@ -13,8 +13,8 @@ namespace ACadSharp.IO.DWG
 			//Ignored Entities
 			switch (entity)
 			{
-
 				case Hatch:
+				case Insert:
 				case MText:
 				//Unlisted
 				case Wipeout:
