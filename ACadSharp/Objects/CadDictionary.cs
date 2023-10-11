@@ -133,10 +133,21 @@ namespace ACadSharp.Objects
 		/// <returns></returns>
 		public static CadDictionary CreateRoot()
 		{
-			//TODO: finish root dictionary implementation
 			CadDictionary root = new CadDictionary
 			{
-				{ AcadLayout, new CadDictionary() }
+				{ AcadColor, new CadDictionary() },
+				{ AcadGroup, new CadDictionary() },
+				{ AcadLayout, new CadDictionary() },
+				{ AcadMaterial, new CadDictionary() },
+				{ AcadSortEnts, new CadDictionary() },
+				{ AcadMLeaderStyle, new CadDictionary() },
+				{ AcadMLineStyle, new CadDictionary() },
+				{ AcadTableStyle, new CadDictionary() },
+				{ AcadPlotSettings, new CadDictionary() },
+				{ VariableDictionary, new CadDictionary() },
+				{ AcadPlotStyleName, new CadDictionary() },
+				{ AcadScaleList, new CadDictionary() },
+				{ AcadVisualStyle, new CadDictionary() },
 			};
 
 			return root;
@@ -150,7 +161,7 @@ namespace ACadSharp.Objects
 		/// <exception cref="ArgumentException"></exception>
 		public void Add(string key, CadObject value)
 		{
-			if (_entries.Values.Contains(value))
+			if (this._entries.Values.Contains(value))
 				throw new ArgumentException($"Dictionary already contains {value.GetType().FullName}", nameof(value));
 
 			this._entries.Add(key, value);
