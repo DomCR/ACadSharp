@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSUtilities.Text;
@@ -12,10 +13,14 @@ namespace ACadSharp.IO.DWG
 {
 	internal partial class DwgObjectWriter : DwgSectionIO
 	{
+		public override string SectionName => DwgSectionDefinition.AcDbObjects;
+
 		/// <summary>
 		/// Key : handle | Value : Offset
 		/// </summary>
 		public Dictionary<ulong, long> Map { get; } = new Dictionary<ulong, long>();
+
+		private Dictionary<ulong, CadDictionary> _dictionaries = new();
 
 		private MemoryStream _msmain;
 
