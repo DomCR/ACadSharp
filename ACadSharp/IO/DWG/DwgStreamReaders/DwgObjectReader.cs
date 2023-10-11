@@ -1569,12 +1569,15 @@ namespace ACadSharp.IO.DWG
 			this.readCommonEntityData(template);
 
 			//Flags RC 70 NOT DIRECTLY THE 75. Bit-coded (76543210):
-			byte num1 = this._objectReader.ReadByte();
+			byte flags = this._objectReader.ReadByte();
+
 			//75 0 : Splined(75 value is 5)
 			//1 : Splined(75 value is 6)
-			bool splined = ((uint)num1 & 0b1) > 0;
+			bool splined = ((uint)flags & 0b1) > 0;
+			//Should assign pline.SmoothSurface ??
+
 			//(If either is set, set 70 bit 2(4) to indicate splined.)
-			bool splined1 = ((uint)num1 & 0b10) > 0;
+			bool splined1 = ((uint)flags & 0b10) > 0;
 
 			if (splined | splined1)
 			{
@@ -2360,7 +2363,7 @@ namespace ACadSharp.IO.DWG
 				//The scenario flag becomes 1 if the knot parameter is Custom or has no fit data, otherwise 2.
 				spline.KnotParameterization = (KnotParameterization)this._mergedReaders.ReadBitLong();
 
-				scenario = ((spline.KnotParameterization == KnotParameterization.Custom || (spline.Flags1 & SplineFlags1.UseKnotParameter) == 0) ? 1 : 2);
+				scenario = (spline.KnotParameterization == KnotParameterization.Custom || (spline.Flags1 & SplineFlags1.UseKnotParameter) == 0) ? 1 : 2;
 			}
 			else if (scenario == 2)
 			{
@@ -2382,18 +2385,6 @@ namespace ACadSharp.IO.DWG
 			bool flag = false;
 			switch (scenario)
 			{
-				case 2:
-					//Fit Tol BD 44
-					spline.FitTolerance = this._objectReader.ReadBitDouble();
-					//Beg tan vec 3BD 12 Beginning tangent direction vector (normalized).
-					spline.StartTangent = this._objectReader.Read3BitDouble();
-					//End tan vec 3BD 13 Ending tangent direction vector (normalized).
-					spline.EndTangent = this._objectReader.Read3BitDouble();
-					//num fit pts BL 74 Number of fit points.
-					//Stored as a LONG, although it is defined in DXF as a short.
-					//You can see this if you create a spline with >=256 fit points
-					numfitpts = this._objectReader.ReadBitLong();
-					break;
 				case 1:
 					//Rational B flag bit 2
 					if (this._objectReader.ReadBit())
@@ -2419,7 +2410,20 @@ namespace ACadSharp.IO.DWG
 					//Weight B Seems to be an echo of the 4 bit on the flag for "weights present".
 					flag = this._objectReader.ReadBit();
 					break;
+				case 2:
+					//Fit Tol BD 44
+					spline.FitTolerance = this._objectReader.ReadBitDouble();
+					//Beg tan vec 3BD 12 Beginning tangent direction vector (normalized).
+					spline.StartTangent = this._objectReader.Read3BitDouble();
+					//End tan vec 3BD 13 Ending tangent direction vector (normalized).
+					spline.EndTangent = this._objectReader.Read3BitDouble();
+					//num fit pts BL 74 Number of fit points.
+					//Stored as a LONG, although it is defined in DXF as a short.
+					//You can see this if you create a spline with >=256 fit points
+					numfitpts = this._objectReader.ReadBitLong();
+					break;
 			}
+
 			for (int i = 0; i < numknots; i++)
 			{
 				//Knot BD knot value
@@ -2720,9 +2724,10 @@ namespace ACadSharp.IO.DWG
 				leader.Vertices.Add(this._objectReader.Read3BitDouble());
 			}
 
-			//Origin 3BD --- The leader plane origin (by default it’s the first point).
-			this._objectReader.Read3BitDouble();    //Is necessary to store this value?
-													//Extrusion 3BD 210
+			//Origin 3BD --- The leader plane origin (by default it’s the first point)
+			//Is necessary to store this value?
+			this._objectReader.Read3BitDouble();
+			//Extrusion 3BD 210
 			leader.Normal = this._objectReader.Read3BitDouble();
 			//x direction 3BD 211
 			leader.HorizontalDirection = this._objectReader.Read3BitDouble();
@@ -4133,17 +4138,17 @@ namespace ACadSharp.IO.DWG
 				if ((flags & 0x200) != 0)
 					lwPolyline.Flags |= LwPolylineFlags.Closed;
 
-				if ((flags & 4u) != 0)
+				if ((flags & 0x4u) != 0)
 				{
 					lwPolyline.ConstantWidth = this._objectReader.ReadBitDouble();
 				}
 
-				if ((flags & 8u) != 0)
+				if ((flags & 0x8u) != 0)
 				{
 					lwPolyline.Elevation = this._objectReader.ReadBitDouble();
 				}
 
-				if ((flags & 2u) != 0)
+				if ((flags & 0x2u) != 0)
 				{
 					lwPolyline.Thickness = this._objectReader.ReadBitDouble();
 				}
@@ -4156,18 +4161,19 @@ namespace ACadSharp.IO.DWG
 				int nvertices = this._objectReader.ReadBitLong();
 				int nbulges = 0;
 
-				if (((uint)flags & 0x10u) != 0)
+				if (((uint)flags & 0x10) != 0)
 				{
 					nbulges = this._objectReader.ReadBitLong();
 				}
+
 				int nids = 0;
-				if (((uint)flags & 0x400u) != 0)
+				if (((uint)flags & 0x400) != 0)
 				{
 					nids = this._objectReader.ReadBitLong();
 				}
 
 				int ndiffwidth = 0;
-				if (((uint)flags & 0x20u) != 0)
+				if (((uint)flags & 0x20) != 0)
 				{
 					ndiffwidth = this._objectReader.ReadBitLong();
 				}
