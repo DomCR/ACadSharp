@@ -83,7 +83,7 @@ namespace ACadSharp
 		/// <summary>
 		/// The collection of all layouts in the drawing
 		/// </summary>
-		public Layout[] Layouts { get { return this._cadObjects.Values.OfType<Layout>().ToArray(); } }   //TODO: Layouts have to go to the designed dictionary or blocks
+		public IEnumerable<Layout> Layouts { get { return this._rootDictionary.GetEntry<CadDictionary>(CadDictionary.AcadLayout).Cast<Layout>(); } }
 
 		/// <summary>
 		/// Root dictionary of the document

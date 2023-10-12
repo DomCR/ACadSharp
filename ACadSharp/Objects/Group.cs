@@ -25,6 +25,11 @@ namespace ACadSharp.Objects
 		public override string SubclassMarker => DxfSubclassMarker.Group;
 
 		/// <summary>
+		/// Name in which this group is stored in the document
+		/// </summary>
+		public string Name { get; internal set; }
+
+		/// <summary>
 		/// Group description
 		/// </summary>
 		[DxfCodeValue(300)]
