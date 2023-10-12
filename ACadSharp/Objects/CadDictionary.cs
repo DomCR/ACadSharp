@@ -187,6 +187,26 @@ namespace ACadSharp.Objects
 			return null;
 		}
 
+		public T GetEntry<T>(string name)
+			where T : CadObject
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool TryGetEntry<T>(string name, out T entry)
+		where T : CadObject
+		{
+			throw new NotImplementedException();
+		}
+
+		public IEnumerable<(string, CadObject)> GetEntries()
+		{
+			foreach (var item in this._entries)
+			{
+				yield return (item.Key, item.Value);
+			}
+		}
+
 		public IEnumerator<CadObject> GetEnumerator()
 		{
 			return this._entries.Values.GetEnumerator();
