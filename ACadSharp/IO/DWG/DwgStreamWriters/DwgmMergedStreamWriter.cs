@@ -68,6 +68,11 @@ namespace ACadSharp.IO.DWG
 			this.Main.Write2RawDouble(value);
 		}
 
+		public void Write2BitDouble(XY value)
+		{
+			this.Main.Write2BitDouble(value);
+		}
+
 		public void Write3BitDouble(XYZ value)
 		{
 			this.Main.Write3BitDouble(value);
