@@ -22,6 +22,8 @@ namespace ACadSharp.IO.DWG
 
 		private Dictionary<ulong, CadDictionary> _dictionaries = new();
 
+		private Queue<CadObject> _objects = new();
+
 		private MemoryStream _msmain;
 
 		private IDwgStreamWriter _writer;
@@ -52,6 +54,8 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteRawLong(0xDCA);
 			}
 
+			this._objects.Enqueue(this._document.RootDictionary);
+
 			this.writeTable(this._document.AppIds);
 			this.writeTable(this._document.Layers);
 			this.writeTable(this._document.LineTypes);
@@ -65,7 +69,7 @@ namespace ACadSharp.IO.DWG
 
 			this.writeBlocks();
 
-			this.writeDictionaries();
+			this.writeObjects();
 		}
 
 		private void writeBlockControl()
@@ -1248,51 +1252,6 @@ namespace ACadSharp.IO.DWG
 			}
 
 			this.registerObject(vport);
-		}
-
-		private void writeDictionaries()
-		{
-			foreach (var item in this._dictionaries.Values)
-			{
-				this.writeDictionary(item);
-			}
-		}
-
-		private void writeDictionary(CadDictionary dictionary)
-		{
-			this.writeCommonNonEntityData(dictionary);
-
-			//Common:
-			//Numitems L number of dictonary items
-			this._writer.WriteBitLong(dictionary.Count());
-
-			//R14 Only:
-			if (this._version == ACadVersion.AC1014)
-			{
-				//Unknown R14 RC Unknown R14 byte, has always been 0
-				this._writer.WriteByte(0);
-			}
-
-			//R2000 +:
-			if (this.R2000Plus)
-			{
-				//Cloning flag BS 281
-				this._writer.WriteBitShort((short)dictionary.ClonningFlags);
-				this._writer.WriteByte((byte)(dictionary.HardOwnerFlag ? 1u : 0u));
-			}
-
-			//Common:
-			foreach (var name in dictionary.EntryNames)
-			{
-				this._writer.WriteVariableText(name);
-			}
-
-			foreach (var handle in dictionary.EntryHandles)
-			{
-				this._writer.HandleReference(DwgReferenceType.SoftOwnership, handle);
-			}
-
-			this.registerObject(dictionary);
 		}
 	}
 }

@@ -359,6 +359,7 @@ namespace ACadSharp.IO.DWG
 			if (!noDictionary)
 			{
 				_dictionaries.Add(cadObject.XDictionary.Handle, cadObject.XDictionary);
+				_objects.Enqueue(cadObject.XDictionary);
 			}
 		}
 
