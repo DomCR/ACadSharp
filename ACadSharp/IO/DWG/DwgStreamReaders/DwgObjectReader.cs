@@ -4605,7 +4605,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readXRecord()
 		{
-			XRecrod xRecord = new XRecrod();
+			XRecord xRecord = new XRecord();
 			CadXRecordTemplate template = new CadXRecordTemplate(xRecord);
 
 			this.readCommonNonEntityData(template);
@@ -4634,10 +4634,10 @@ namespace ACadSharp.IO.DWG
 					case GroupCodeValueType.None:
 						break;
 					case GroupCodeValueType.String:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadTextUnicode()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadTextUnicode()));
 						break;
 					case GroupCodeValueType.Point3D:
-						xRecord.Entries.Add(new XRecrod.Entry(code,
+						xRecord.Entries.Add(new XRecord.Entry(code,
 							new XYZ(
 								this._objectReader.ReadDouble(),
 								this._objectReader.ReadDouble(),
@@ -4645,25 +4645,25 @@ namespace ACadSharp.IO.DWG
 								)));
 						break;
 					case GroupCodeValueType.Double:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadDouble()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadDouble()));
 						break;
 					case GroupCodeValueType.Int16:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadShort()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadShort()));
 						break;
 					case GroupCodeValueType.Int32:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadRawLong()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawLong()));
 						break;
 					case GroupCodeValueType.Int64:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadRawLong()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawLong()));
 						break;
 					case GroupCodeValueType.Handle:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadTextUnicode()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadTextUnicode()));
 						break;
 					case GroupCodeValueType.Bool:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadByte() > 0));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadByte() > 0));
 						break;
 					case GroupCodeValueType.Chunk:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadBytes(this._objectReader.ReadByte())));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadBytes(this._objectReader.ReadByte())));
 						break;
 					default:
 						break;

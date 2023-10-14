@@ -2,10 +2,10 @@
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadXRecordTemplate : CadTemplate<XRecrod>
+	internal class CadXRecordTemplate : CadTemplate<XRecord>
 	{
-		public CadXRecordTemplate() : base(new XRecrod()) { }
+		public CadXRecordTemplate() : base(new XRecord()) { }
 
-		public CadXRecordTemplate(XRecrod cadObject) : base(cadObject) { }
+		public CadXRecordTemplate(XRecord cadObject) : base(cadObject) { }
 	}
 }

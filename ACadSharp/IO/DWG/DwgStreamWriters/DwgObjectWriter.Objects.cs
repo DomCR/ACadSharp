@@ -13,12 +13,25 @@ namespace ACadSharp.IO.DWG
 			{
 				CadObject obj = this._objects.Dequeue();
 
-				this.writeObject(obj);
+						this.writeObject(obj);
 			}
 		}
 
 		private void writeObject(CadObject obj)
 		{
+			switch (obj)
+			{
+				case AcdbPlaceHolder:
+				case DictionaryVariable:
+				case Group:
+				case Layout:
+				case MLStyle:
+				case Scale:
+				case SortEntitiesTable:
+				case XRecord:
+					return;
+			}
+
 			this.writeCommonNonEntityData(obj);
 
 			switch (obj)
@@ -26,8 +39,8 @@ namespace ACadSharp.IO.DWG
 				case CadDictionary dictionary:
 					this.writeDictionary(dictionary);
 					break;
-				case XRecrod recrod:
-					this.xRecord(recrod);
+				case XRecord record:
+					this.writeXRecord(record);
 					break;
 				default:
 					throw new NotImplementedException($"Object not implemented : {obj.GetType().FullName}");
@@ -79,9 +92,14 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private void writeXRecrod(XRecrod recrod)
+		private void writeXRecord(XRecord xrecord)
 		{
+			//Common:
+			//Numdatabytes BL number of databytes
+		}
 
+		private void writeXRecordEntry(XRecord.Entry entry)
+		{			
 		}
 	}
 }
