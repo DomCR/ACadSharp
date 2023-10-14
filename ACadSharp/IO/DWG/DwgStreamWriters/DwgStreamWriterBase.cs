@@ -366,6 +366,12 @@ namespace ACadSharp.IO.DWG
 			this.WriteBitShort(value.Index);
 		}
 
+		public void Write2BitDouble(XY value)
+		{
+			this.WriteBitDouble(value.X);
+			this.WriteBitDouble(value.Y);
+		}
+
 		public void Write3BitDouble(XYZ value)
 		{
 			this.WriteBitDouble(value.X);

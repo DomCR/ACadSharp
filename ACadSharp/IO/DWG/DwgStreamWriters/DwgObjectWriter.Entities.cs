@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using CSMath;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,7 +14,6 @@ namespace ACadSharp.IO.DWG
 			//Ignored Entities
 			switch (entity)
 			{
-				case Hatch:
 				case Insert:
 				case MText:
 				//Unlisted
@@ -65,6 +65,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case Face3D face3D:
 					this.writeFace3D(face3D);
+					break;
+				case Hatch hatch:
+					this.writeHatch(hatch);
 					break;
 				case Leader l:
 					this.writeLeader(l);
@@ -556,6 +559,240 @@ namespace ACadSharp.IO.DWG
 					this._writer.WriteBitDouble(lwPolyline.Vertices[l].StartWidth);
 					this._writer.WriteBitDouble(lwPolyline.Vertices[l].EndWidth);
 				}
+			}
+		}
+
+		private void writeHatch(Hatch hatch)
+		{
+			//R2004+:
+			if (this.R2004Plus)
+			{
+				HatchGradientPattern gradient = hatch.GradientColor; //TODO: set default ?? HatchGradientPattern.Default;
+
+				//Is Gradient Fill BL 450 Non-zero indicates a gradient fill is used.
+				this._writer.WriteBitLong(gradient.Enabled ? 1 : 0);
+
+				//Reserved BL 451
+				this._writer.WriteBitLong(gradient.Reserved);
+				//Gradient Angle BD 460
+				this._writer.WriteBitDouble(gradient.Angle);
+				//Gradient Shift BD 461
+				this._writer.WriteBitDouble(gradient.Shift);
+				//Single Color Grad.BL 452
+				this._writer.WriteBitLong(gradient.IsSingleColorGradient ? 1 : 0);
+				//Gradient Tint BD 462
+				this._writer.WriteBitDouble(gradient.ColorTint);
+
+				//# of Gradient Colors BL 453
+				this._writer.WriteBitLong(gradient.Colors.Count);
+				foreach (GradientColor color in gradient.Colors)
+				{
+					//Gradient Value double BD 463
+					this._writer.WriteBitDouble(color.Value);
+					//RGB Color
+					this._writer.WriteCmColor(color.Color);
+				}
+
+				//Gradient Name TV 470
+				this._writer.WriteVariableText(gradient.Name);
+			}
+
+			//Common:
+			//Z coord BD 30 X, Y always 0.0
+			this._writer.WriteBitDouble(hatch.Elevation);
+			//Extrusion 3BD 210
+			this._writer.Write3BitDouble(hatch.Normal);
+			//Name TV 2 name of hatch
+			this._writer.WriteVariableText(hatch.Pattern.Name);
+			//Solidfill B 70 1 if solidfill, else 0
+			this._writer.WriteBit(hatch.IsSolid);
+			//Associative B 71 1 if associative, else 0
+			this._writer.WriteBit(hatch.IsAssociative);
+
+			//Numpaths BL 91 Number of paths enclosing the hatch
+			this._writer.WriteBitLong(hatch.Paths.Count);
+			bool hasDerivedBoundary = false;
+			foreach (Hatch.BoundaryPath boundaryPath in hatch.Paths)
+			{
+				//Pathflag BL 92 Path flag
+				this._writer.WriteBitLong((int)boundaryPath.Flags);
+
+				if (boundaryPath.Flags.HasFlag(BoundaryPathFlags.Derived))
+				{
+					hasDerivedBoundary = true;
+				}
+
+				if (boundaryPath.Flags.HasFlag(BoundaryPathFlags.Polyline))
+				{
+					//TODO: Polyline may need to be treated different than the regular edges
+					Hatch.BoundaryPath.Polyline pline = boundaryPath.Edges.First() as Hatch.BoundaryPath.Polyline;
+
+					//bulgespresent B 72 bulges are present if 1
+					this._writer.WriteBit(pline.HasBulge);
+					//closed B 73 1 if closed
+					this._writer.WriteBit(pline.IsClosed);
+
+					//numpathsegs BL 91 number of path segments
+					this._writer.WriteBitLong(pline.Vertices.Count);
+					foreach (var vertex in pline.Vertices)
+					{
+						this._writer.Write2RawDouble(vertex);
+						if (pline.HasBulge)
+						{
+							this._writer.WriteBitDouble(pline.Bulge);
+						}
+					}
+				}
+				else
+				{
+					//Numpathsegs BL 93 number of segments in this path
+					this._writer.WriteBitLong(boundaryPath.Edges.Count);
+					foreach (var edge in boundaryPath.Edges)
+					{
+						//pathtypestatus RC 72 type of path
+						this._writer.WriteByte((byte)edge.Type);
+
+						switch (edge)
+						{
+							case Hatch.BoundaryPath.Line line:
+								//pt0 2RD 10 first endpoint
+								this._writer.Write2RawDouble(line.Start);
+								//pt1 2RD 11 second endpoint
+								this._writer.Write2RawDouble(line.End);
+								break;
+							case Hatch.BoundaryPath.Arc arc:
+								//pt0 2RD 10 center
+								this._writer.Write2RawDouble(arc.Center);
+								//radius BD 40 radius
+								this._writer.WriteBitDouble(arc.Radius);
+								//startangle BD 50 start angle
+								this._writer.WriteBitDouble(arc.StartAngle);
+								//endangle BD 51 endangle
+								this._writer.WriteBitDouble(arc.EndAngle);
+								//isccw B 73 1 if counter clockwise, otherwise 0
+								this._writer.WriteBit(arc.CounterClockWise);
+								break;
+							case Hatch.BoundaryPath.Ellipse ellispe:
+								//pt0 2RD 10 center
+								this._writer.Write2RawDouble(ellispe.Center);
+								//endpoint 2RD 11 endpoint of major axis
+								this._writer.Write2RawDouble(ellispe.MajorAxisEndPoint);
+								//minormajoratio BD 40 ratio of minor to major axis
+								this._writer.WriteBitDouble(ellispe.MinorToMajorRatio);
+								//startangle BD 50 start angle
+								this._writer.WriteBitDouble(ellispe.StartAngle);
+								//endangle BD 51 endangle
+								this._writer.WriteBitDouble(ellispe.EndAngle);
+								//isccw B 73 1 if counter clockwise; otherwise 0
+								this._writer.WriteBit(ellispe.CounterClockWise);
+								break;
+							case Hatch.BoundaryPath.Spline splineEdge:
+								//degree BL 94 degree of the spline
+								this._writer.WriteBitLong(splineEdge.Degree);
+								//isrational B 73 1 if rational(has weights), else 0
+								this._writer.WriteBit(splineEdge.Rational);
+								//isperiodic B 74 1 if periodic, else 0
+								this._writer.WriteBit(splineEdge.Periodic);
+
+								//numknots BL 95 number of knots
+								this._writer.WriteBitLong(splineEdge.Knots.Count);
+								//numctlpts BL 96 number of control points
+								this._writer.WriteBitLong(splineEdge.ControlPoints.Count);
+								foreach (double k in splineEdge.Knots)
+								{
+									//knot BD 40 knot value
+									this._writer.WriteBitDouble(k);
+								}
+
+								for (int p = 0; p < splineEdge.ControlPoints.Count; ++p)
+								{
+									//pt0 2RD 10 control point
+									this._writer.Write2RawDouble((XY)splineEdge.ControlPoints[p]);
+
+									if (splineEdge.Rational)
+										//weight BD 40 weight
+										this._writer.WriteBitDouble(splineEdge.ControlPoints[p].Z);
+								}
+
+								//R24:
+								if (this.R2010Plus)
+								{
+									//Numfitpoints BL 97 number of fit points
+									this._writer.WriteBitLong(splineEdge.FitPoints.Count);
+									if (splineEdge.FitPoints.Any())
+									{
+										foreach (XY fp in splineEdge.FitPoints)
+										{
+											//Fitpoint 2RD 11
+											this._writer.Write2RawDouble(fp);
+										}
+
+										//Start tangent 2RD 12
+										this._writer.Write2RawDouble(splineEdge.StartTangent);
+										//End tangent 2RD 13
+										this._writer.Write2RawDouble(splineEdge.EndTangent);
+									}
+								}
+								break;
+							default:
+								throw new ArgumentException($"Unrecognized Boundary type: {boundaryPath.GetType().FullName}");
+						}
+					}
+				}
+
+				//numboundaryobjhandles BL 97 Number of boundary object handles for this path
+				this._writer.WriteBitLong(boundaryPath.Entities.Count);
+				foreach (Entity e in boundaryPath.Entities)
+				{
+					//boundaryhandle H 330 boundary handle(soft pointer)
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, e);
+				}
+			}
+
+			//style BS 75 style of hatch 0==odd parity, 1==outermost, 2==whole area
+			this._writer.WriteBitShort((short)hatch.Style);
+			//patterntype BS 76 pattern type 0==user-defined, 1==predefined, 2==custom
+			this._writer.WriteBitShort((short)hatch.PatternType);
+
+			if (!hatch.IsSolid)
+			{
+				HatchPattern pattern = hatch.Pattern;
+				this._writer.WriteBitDouble(hatch.PatternAngle);
+				this._writer.WriteBitDouble(hatch.PatternScale);
+				this._writer.WriteBit(hatch.IsDouble);
+
+				_writer.WriteBitShort((short)pattern.Lines.Count);
+				foreach (var line in pattern.Lines)
+				{
+					//angle BD 53 line angle
+					_writer.WriteBitDouble(line.Angle);
+					//pt0 2BD 43 / 44 pattern through this point(X, Y)
+					_writer.Write2BitDouble(line.BasePoint);
+					//offset 2BD 45 / 56 pattern line offset
+					_writer.Write2BitDouble(line.Offset);
+
+					//  numdashes BS 79 number of dash length items
+					_writer.WriteBitShort((short)line.DashLengths.Count);
+					foreach (double dl in line.DashLengths)
+					{
+						//dashlength BD 49 dash length
+						_writer.WriteBitDouble(dl);
+					}
+				}
+			}
+
+			if (hasDerivedBoundary)
+			{
+				//pixelsize BD 47 pixel size
+				this._writer.WriteBitDouble(hatch.PixelSize);
+			}
+
+			//numseedpoints BL 98 number of seed points
+			this._writer.WriteBitLong(hatch.SeedPoints.Count);
+			foreach (XY sp in hatch.SeedPoints)
+			{
+				//pt0 2RD 10 seed point
+				this._writer.Write2RawDouble(sp);
 			}
 		}
 

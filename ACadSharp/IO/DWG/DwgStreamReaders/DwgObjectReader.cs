@@ -4433,7 +4433,6 @@ namespace ACadSharp.IO.DWG
 
 				//numboundaryobjhandles BL 97 Number of boundary object handles for this path
 				int numboundaryobjhandles = this._objectReader.ReadBitLong();
-
 				for (int h = 0; h < numboundaryobjhandles; h++)
 				{
 					//boundaryhandle H 330 boundary handle(soft pointer)
