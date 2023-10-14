@@ -2272,7 +2272,8 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				for (int i = 0; i < frozenLayerCount; ++i)
-					//H 341 Frozen Layer Handles(use count from above)(hard pointer until R2000, soft pointer from R2004 onwards)
+					//H 341 Frozen Layer Handles(use count from above)
+					//(hard pointer until R2000, soft pointer from R2004 onwards)
 					template.FrozenLayerHandles.Add(this.handleReference());
 
 				//H 340 Clip boundary handle(soft pointer)
@@ -2922,9 +2923,10 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			if (this.R2000Plus)
+			{
 				//Loaded Bit B 0 indicates loaded for an xref
-				if (this._objectReader.ReadBit())
-					block.Flags |= BlockTypeFlags.XRef;
+				this._objectReader.ReadBit();
+			}
 
 			//R2004+:
 			int nownedObjects = 0;
@@ -2946,7 +2948,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//Insert Count RC A sequence of zero or more non-zero RC’s, followed by a terminating 0 RC.The total number of these indicates how many insert handles will be present.
-				for (byte i = this._objectReader.ReadByte(); i > 0; i = this._objectReader.ReadByte())
+				for (byte i = this._objectReader.ReadByte(); i != 0; i = this._objectReader.ReadByte())
 					++insertCount;
 
 				//Block Description TV 4 Block description.
