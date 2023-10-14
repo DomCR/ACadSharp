@@ -26,6 +26,17 @@ namespace ACadSharp.Tests.IO
 
 		[Theory]
 		[MemberData(nameof(DwgFilePaths))]
+		public void DwgToDwg(string test)
+		{
+			CadDocument doc = DwgReader.Read(test);
+
+			string file = Path.GetFileNameWithoutExtension(test);
+			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_out.dwg");
+			this.writeDwgFile(pathOut, doc, true);
+		}
+
+		[Theory]
+		[MemberData(nameof(DwgFilePaths))]
 		public void DwgToDxf(string test)
 		{
 			CadDocument doc = DwgReader.Read(test);

@@ -113,6 +113,9 @@ namespace ACadSharp.IO.DWG
 							throw new NotImplementedException($"Vertex not implemented : {entity.GetType().FullName}");
 					}
 					break;
+				case Viewport viewport:
+					this.writeViewport(viewport);
+					break;
 				case XLine xline:
 					this.writeXLine(xline);
 					break;
@@ -1294,6 +1297,158 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteByte((byte)vertex.Flags);
 			//Point 3BD 10
 			this._writer.Write3BitDouble(vertex.Location);
+		}
+
+		private void writeViewport(Viewport viewport)
+		{
+			//Center 3BD 10
+			this._writer.Write3BitDouble(viewport.Center);
+			//Width BD 40
+			this._writer.WriteBitDouble(viewport.Width);
+			//Height BD 41
+			this._writer.WriteBitDouble(viewport.Height);
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//View Target 3BD 17
+				this._writer.Write3BitDouble(viewport.ViewTarget);
+				//View Direction 3BD 16
+				this._writer.Write3BitDouble(viewport.ViewDirection);
+				//View Twist Angle BD 51
+				this._writer.WriteBitDouble(viewport.TwistAngle);
+				//View Height BD 45
+				this._writer.WriteBitDouble(viewport.ViewHeight);
+				//Lens Length BD 42
+				this._writer.WriteBitDouble(viewport.LensLength);
+				//Front Clip Z BD 43
+				this._writer.WriteBitDouble(viewport.FrontClipPlane);
+				//Back Clip Z BD 44
+				this._writer.WriteBitDouble(viewport.BackClipPlane);
+				//Snap Angle BD 50
+				this._writer.WriteBitDouble(viewport.SnapAngle);
+				//View Center 2RD 12
+				this._writer.Write2RawDouble(viewport.ViewCenter);
+				//Snap Base 2RD 13
+				this._writer.Write2RawDouble(viewport.SnapBase);
+				//Snap Spacing 2RD 14
+				this._writer.Write2RawDouble(viewport.SnapSpacing);
+				//Grid Spacing 2RD 15
+				this._writer.Write2RawDouble(viewport.GridSpacing);
+				//Circle Zoom BS 72
+				this._writer.WriteBitShort(viewport.CircleZoomPercent);
+			}
+
+			//R2007 +:
+			if (this.R2007Plus)
+			{
+				//Grid Major BS 61
+				this._writer.WriteBitShort(viewport.MajorGridLineFrequency);
+			}
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//Frozen Layer Count BL
+				this._writer.WriteBitLong(viewport.FrozenLayers.Count);
+				//Status Flags BL 90
+				this._writer.WriteBitLong((int)viewport.Status);
+				//Style Sheet TV 1
+				this._writer.WriteVariableText(string.Empty);   //This is never used
+																//Render Mode RC 281
+				this._writer.WriteByte((byte)viewport.RenderMode);
+				//UCS at origin B 74
+				this._writer.WriteBit(viewport.DisplayUcsIcon);
+				//UCS per Viewport B 71
+				this._writer.WriteBit(viewport.UcsPerViewport);
+				//UCS Origin 3BD 110
+				this._writer.Write3BitDouble(viewport.UcsOrigin);
+				//UCS X Axis 3BD 111
+				this._writer.Write3BitDouble(viewport.UcsXAxis);
+				//UCS Y Axis 3BD 112
+				this._writer.Write3BitDouble(viewport.UcsYAxis);
+				//UCS Elevation BD 146
+				this._writer.WriteBitDouble(viewport.Elevation);
+				//UCS Ortho View Type BS 79
+				this._writer.WriteBitShort((short)viewport.UcsOrthographicType);
+			}
+
+			//R2004 +:
+			if (this.R2004Plus)
+			{
+				//ShadePlot Mode BS 170
+				this._writer.WriteBitShort((short)viewport.ShadePlotMode);
+			}
+
+			//R2007 +:
+			if (this.R2007Plus)
+			{
+				//Use def. lights B 292
+				this._writer.WriteBit(viewport.UseDefaultLighting);
+				//Def.lighting type RC 282
+				this._writer.WriteByte((byte)viewport.DefaultLightingType);
+				//Brightness BD 141
+				this._writer.WriteBitDouble(viewport.Brightness);
+				//Contrast BD 142
+				this._writer.WriteBitDouble(viewport.Constrast);
+				//Ambient light color CMC 63
+				this._writer.WriteCmColor(viewport.AmbientLightColor);
+			}
+
+			//R13 - R14 Only:
+			if (this.R13_14Only)
+			{
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+			}
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				foreach (var layer in viewport.FrozenLayers)
+				{
+					if (this.R2004Plus)
+					{
+						//H 341 Frozen Layer Handles(use count from above)
+						//(hard pointer until R2000, soft pointer from R2004 onwards)
+						this._writer.HandleReference(DwgReferenceType.SoftPointer, layer);
+					}
+					else
+					{
+						this._writer.HandleReference(DwgReferenceType.HardPointer, layer);
+					}
+				}
+
+				//H 340 Clip boundary handle(soft pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, viewport.Boundary);
+			}
+
+			//R2000:
+			if (this._version == ACadVersion.AC1015)
+			{
+				//H VIEWPORT ENT HEADER((hard pointer))
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+			}
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//TODO: Implement viewport UCS
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+			}
+
+			//R2007 +:
+			if (this.R2007Plus)
+			{
+				//H 332 Background(soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
+				//H 348 Visual Style(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				//H 333 Shadeplot ID(soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
+				//H 361 Sun(hard owner)
+				this._writer.HandleReference(DwgReferenceType.HardOwnership, null);
+			}
 		}
 
 		private void writeXLine(XLine xline)
