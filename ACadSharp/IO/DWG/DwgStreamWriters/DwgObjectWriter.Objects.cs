@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Objects;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ACadSharp.IO.DWG
@@ -18,20 +19,25 @@ namespace ACadSharp.IO.DWG
 
 		private void writeObject(CadObject obj)
 		{
+			this.writeCommonNonEntityData(obj);
+
 			switch (obj)
 			{
 				case CadDictionary dictionary:
 					this.writeDictionary(dictionary);
 					break;
+				case XRecrod recrod:
+					this.xRecord(recrod);
+					break;
 				default:
 					throw new NotImplementedException($"Object not implemented : {obj.GetType().FullName}");
 			}
+
+			this.registerObject(obj);
 		}
 
 		private void writeDictionary(CadDictionary dictionary)
 		{
-			this.writeCommonNonEntityData(dictionary);
-
 			//Common:
 			//Numitems L number of dictonary items
 			this._writer.WriteBitLong(dictionary.Count());
@@ -62,8 +68,6 @@ namespace ACadSharp.IO.DWG
 				this._writer.HandleReference(DwgReferenceType.SoftOwnership, handle);
 			}
 
-			this.registerObject(dictionary);
-
 			this.addEntriesToWriter(dictionary);
 		}
 
@@ -73,6 +77,11 @@ namespace ACadSharp.IO.DWG
 			{
 				this._objects.Enqueue(e);
 			}
+		}
+
+		private void writeXRecrod(XRecrod recrod)
+		{
+
 		}
 	}
 }
