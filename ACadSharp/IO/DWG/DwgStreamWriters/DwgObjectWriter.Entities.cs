@@ -11,6 +11,8 @@ namespace ACadSharp.IO.DWG
 	{
 		private void writeEntity(Entity entity)
 		{
+			bool registerEntity = true;
+
 			//Ignored Entities
 			switch (entity)
 			{
@@ -85,9 +87,11 @@ namespace ACadSharp.IO.DWG
 					this.writePoint(p);
 					break;
 				case PolyfaceMesh faceMesh:
+					registerEntity = false;
 					this.writePolyfaceMesh(faceMesh);
 					break;
 				case Polyline3D pline3d:
+					registerEntity = false;
 					this.writePolyline3D(pline3d);
 					break;
 				case Ray ray:
@@ -127,7 +131,8 @@ namespace ACadSharp.IO.DWG
 					throw new NotImplementedException($"Entity not implemented : {entity.GetType().FullName}");
 			}
 
-			this.registerObject(entity);
+			if (registerEntity)
+				this.registerObject(entity);
 		}
 
 		private void writeArc(Arc arc)
@@ -987,6 +992,8 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//H SEQEND(hard owner)
 			this._writer.HandleReference(DwgReferenceType.SoftPointer, fm.Vertices.Seqend);
+
+			this.registerObject(fm);
 
 			this.writePolyfaceMeshEntities(fm);
 		}
