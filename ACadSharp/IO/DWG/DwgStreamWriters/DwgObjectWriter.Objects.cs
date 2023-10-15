@@ -13,7 +13,7 @@ namespace ACadSharp.IO.DWG
 			{
 				CadObject obj = this._objects.Dequeue();
 
-						this.writeObject(obj);
+				this.writeObject(obj);
 			}
 		}
 
@@ -21,7 +21,6 @@ namespace ACadSharp.IO.DWG
 		{
 			switch (obj)
 			{
-				case AcdbPlaceHolder:
 				case DictionaryVariable:
 				case Layout:
 				case MLStyle:
@@ -35,6 +34,9 @@ namespace ACadSharp.IO.DWG
 
 			switch (obj)
 			{
+				case AcdbPlaceHolder acdbPlaceHolder:
+					this.writeAcdbPlaceHolder(acdbPlaceHolder);
+					break;
 				case CadDictionary dictionary:
 					this.writeDictionary(dictionary);
 					break;
@@ -49,6 +51,10 @@ namespace ACadSharp.IO.DWG
 			}
 
 			this.registerObject(obj);
+		}
+
+		private void writeAcdbPlaceHolder(AcdbPlaceHolder acdbPlaceHolder)
+		{
 		}
 
 		private void writeDictionary(CadDictionary dictionary)
@@ -120,7 +126,7 @@ namespace ACadSharp.IO.DWG
 		}
 
 		private void writeXRecordEntry(XRecord.Entry entry)
-		{			
+		{
 		}
 	}
 }
