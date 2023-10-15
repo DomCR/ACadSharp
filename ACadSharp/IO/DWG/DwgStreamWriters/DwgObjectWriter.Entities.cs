@@ -109,6 +109,9 @@ namespace ACadSharp.IO.DWG
 				case Vertex vertex:
 					switch (vertex)
 					{
+						case Vertex2D vertex2D:
+							this.writeVertex2D(vertex2D);
+							break;
 						case VertexFaceRecord faceRecord:
 							this.writeFaceRecord(faceRecord);
 							break;
@@ -1531,6 +1534,44 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitShort(face.Index3);
 			//Vert index BS 74 1 - based vertex index(see DXF doc)
 			this._writer.WriteBitShort(face.Index4);
+		}
+
+		private void writeVertex2D(Vertex2D vertex)
+		{
+			//Flags EC 70 NOT bit-pair-coded.
+			this._writer.WriteByte((byte)(vertex.Flags));
+
+			//Point 3BD 10 NOTE THAT THE Z SEEMS TO ALWAYS BE 0.0! The Z must be taken from the 2D POLYLINE elevation.
+			this._writer.WriteBitDouble(vertex.Location.X);
+			this._writer.WriteBitDouble(vertex.Location.Y);
+			this._writer.WriteBitDouble(0.0);
+
+			//Start width BD 40 If it's negative, use the abs val for start AND end widths (and note that no end width will be present).
+			//This is a compression trick for cases where the start and end widths are identical and non-0.
+			if (vertex.StartWidth != 0.0 && vertex.EndWidth == vertex.StartWidth)
+			{
+				this._writer.WriteBitDouble(0.0 - (double)vertex.StartWidth);
+			}
+			else
+			{
+				this._writer.WriteBitDouble(vertex.StartWidth);
+				//End width BD 41 Not present if the start width is < 0.0; see above.
+				this._writer.WriteBitDouble(vertex.EndWidth);
+			}
+
+			//Bulge BD 42
+			this._writer.WriteBitDouble(vertex.Bulge);
+
+			//R2010+:
+			if (this.R2010Plus)
+			{
+				//Vertex ID BL 91
+				this._writer.WriteBitLong(vertex.Id);
+			}
+
+			//Common:
+			//Tangent dir BD 50
+			this._writer.WriteBitDouble(vertex.CurveTangent);
 		}
 
 		private void writeVertex(Vertex vertex)
