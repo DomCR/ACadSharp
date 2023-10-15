@@ -4037,7 +4037,7 @@ namespace ACadSharp.IO.DWG
 			//Numhandles BL # objhandles in this group
 			int numhandles = this._objectReader.ReadBitLong();
 			for (int index = 0; index < numhandles; ++index)
-				//Handle refs H parenthandle (soft pointer)
+				//the entries in the group(hard pointer)
 				template.Handles.Add(this.handleReference());
 
 			return template;

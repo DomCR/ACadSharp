@@ -23,7 +23,6 @@ namespace ACadSharp.IO.DWG
 			{
 				case AcdbPlaceHolder:
 				case DictionaryVariable:
-				case Group:
 				case Layout:
 				case MLStyle:
 				case Scale:
@@ -38,6 +37,9 @@ namespace ACadSharp.IO.DWG
 			{
 				case CadDictionary dictionary:
 					this.writeDictionary(dictionary);
+					break;
+				case Group group:
+					this.writeGroup(group);
 					break;
 				case XRecord record:
 					this.writeXRecord(record);
@@ -89,6 +91,25 @@ namespace ACadSharp.IO.DWG
 			foreach (CadObject e in dictionary)
 			{
 				this._objects.Enqueue(e);
+			}
+		}
+
+		private void writeGroup(Group group)
+		{
+			//Str TV name of group
+			this._writer.WriteVariableText(group.Description);
+
+			//Unnamed BS 1 if group has no name
+			this._writer.WriteBitShort((short)(group.IsUnnamed ? 1 : 0));
+			//Selectable BS 1 if group selectable
+			this._writer.WriteBitShort((short)(group.Selectable ? 1 : 0));
+
+			//Numhandles BL # objhandles in this group
+			this._writer.WriteBitLong(group.Entities.Count);
+			foreach (ulong h in group.Entities.Keys)
+			{
+				//the entries in the group(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, h);
 			}
 		}
 
