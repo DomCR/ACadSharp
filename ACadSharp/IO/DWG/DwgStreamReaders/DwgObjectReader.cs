@@ -4819,9 +4819,9 @@ namespace ACadSharp.IO.DWG
 			plot.PaperSize = this._textReader.ReadVariableText();
 
 			//Plot origin 2BD 46,47 plotsettings origin offset in millimeters
-			var plotOrigin = this._objectReader.Read2BitDouble();
-			plot.PlotOriginX = plotOrigin.X;
-			plot.PlotOriginY = plotOrigin.Y;
+			plot.PlotOriginX = this._objectReader.ReadBitDouble();
+			plot.PlotOriginY = this._objectReader.ReadBitDouble();
+
 			//Paper units BS 72 plotsettings plot paper units
 			plot.PaperUnits = (PlotPaperUnits)this._objectReader.ReadBitShort();
 			//Plot rotation BS 73 plotsettings plot rotation
@@ -4830,13 +4830,11 @@ namespace ACadSharp.IO.DWG
 			plot.PlotType = (PlotType)this._objectReader.ReadBitShort();
 
 			//Window min 2BD 48,49 plotsettings plot window area lower left
-			var windowLowerLeft = this._objectReader.Read2BitDouble();
-			plot.WindowLowerLeftX = windowLowerLeft.X;
-			plot.WindowLowerLeftY = windowLowerLeft.Y;
+			plot.WindowLowerLeftX = this._objectReader.ReadBitDouble();
+			plot.WindowLowerLeftY = this._objectReader.ReadBitDouble();
 			//Window max 2BD 140,141 plotsettings plot window area upper right
-			var windowUpperLeft = this._objectReader.Read2BitDouble();
-			plot.WindowUpperLeftX = windowUpperLeft.X;
-			plot.WindowUpperLeftY = windowUpperLeft.Y;
+			plot.WindowUpperLeftX = this._objectReader.ReadBitDouble();
+			plot.WindowUpperLeftY = this._objectReader.ReadBitDouble();
 
 			//R13 - R2000 Only:
 			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)

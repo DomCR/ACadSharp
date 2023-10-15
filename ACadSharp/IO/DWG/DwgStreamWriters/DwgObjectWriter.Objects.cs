@@ -22,7 +22,6 @@ namespace ACadSharp.IO.DWG
 			switch (obj)
 			{
 				case DictionaryVariable:
-				case Layout:
 				case MLStyle:
 				case Scale:
 				case SortEntitiesTable:
@@ -42,6 +41,12 @@ namespace ACadSharp.IO.DWG
 					break;
 				case Group group:
 					this.writeGroup(group);
+					break;
+				case Layout layout:
+					this.writeLayout(layout);
+					break;
+				case PlotSettings plotsettings:
+					this.writePlotSettings(plotsettings);
 					break;
 				case XRecord record:
 					this.writeXRecord(record);
@@ -116,6 +121,99 @@ namespace ACadSharp.IO.DWG
 			{
 				//the entries in the group(hard pointer)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, h);
+			}
+		}
+
+		private void writeLayout(Layout layout)
+		{
+			this.writePlotSettings(layout);
+		}
+
+		private void writePlotSettings(PlotSettings plot)
+		{
+			//Common:
+			//Page setup name TV 1 plotsettings page setup name
+			this._writer.WriteVariableText(plot.PageName);
+			//Printer / Config TV 2 plotsettings printer or configuration file
+			this._writer.WriteVariableText(plot.SystemPrinterName);
+			//Plot layout flags BS 70 plotsettings plot layout flag
+			this._writer.WriteBitShort((short)plot.Flags);
+
+			//Left Margin BD 40 plotsettings left margin in millimeters
+			this._writer.WriteBitDouble(plot.UnprintableMargin.Left);
+			//Bottom Margin BD 41 plotsettings bottom margin in millimeters
+			this._writer.WriteBitDouble(plot.UnprintableMargin.Bottom);
+			//Right Margin BD 42 plotsettings right margin in millimeters
+			this._writer.WriteBitDouble(plot.UnprintableMargin.Right);
+			//Top Margin BD 43 plotsettings top margin in millimeters
+			this._writer.WriteBitDouble(plot.UnprintableMargin.Top);
+
+			//Paper Width BD 44 plotsettings paper width in millimeters
+			this._writer.WriteBitDouble(plot.PaperWidth);
+			//Paper Height BD 45 plotsettings paper height in millimeters
+			this._writer.WriteBitDouble(plot.PaperHeight);
+
+			//Paper Size TV 4 plotsettings paper size
+			this._writer.WriteVariableText(plot.PaperSize);
+
+			//Plot origin 2BD 46,47 plotsettings origin offset in millimeters
+			this._writer.WriteBitDouble(plot.PlotOriginX);
+			this._writer.WriteBitDouble(plot.PlotOriginY);
+
+			//Paper units BS 72 plotsettings plot paper units
+			this._writer.WriteBitShort((short)plot.PaperUnits);
+			//Plot rotation BS 73 plotsettings plot rotation
+			this._writer.WriteBitShort((short)plot.PaperRotation);
+			//Plot type BS 74 plotsettings plot type
+			this._writer.WriteBitShort((short)plot.PlotType);
+
+			//Window min 2BD 48,49 plotsettings plot window area lower left
+			this._writer.WriteBitDouble(plot.WindowLowerLeftX);
+			this._writer.WriteBitDouble(plot.WindowLowerLeftY);
+			//Window max 2BD 140,141 plotsettings plot window area upper right
+			this._writer.WriteBitDouble(plot.WindowUpperLeftX);
+			this._writer.WriteBitDouble(plot.WindowUpperLeftY);
+
+			//R13 - R2000 Only:
+			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)
+			{
+				//Plot view name T 6 plotsettings plot view name
+				this._writer.WriteVariableText(plot.PlotViewName);
+			}
+
+			//Common:
+			//Real world units BD 142 plotsettings numerator of custom print scale
+			this._writer.WriteBitDouble(plot.NumeratorScale);
+			//Drawing units BD 143 plotsettings denominator of custom print scale
+			this._writer.WriteBitDouble(plot.DenominatorScale);
+			//Current style sheet TV 7 plotsettings current style sheet
+			this._writer.WriteVariableText(plot.StyleSheet);
+			//Scale type BS 75 plotsettings standard scale type
+			this._writer.WriteBitShort((short)plot.ScaledFit);
+			//Scale factor BD 147 plotsettings scale factor
+			this._writer.WriteBitDouble(plot.StandardScale);
+			//Paper image origin 2BD 148,149 plotsettings paper image origin
+			this._writer.Write2BitDouble(plot.PaperImageOrigin);
+
+			//R2004+:
+			if (this.R2004Plus)
+			{
+				//Shade plot mode BS 76
+				this._writer.WriteBitShort((short)plot.ShadePlotMode);
+				//Shade plot res.Level BS 77
+				this._writer.WriteBitShort((short)plot.ShadePlotResolutionMode);
+				//Shade plot custom DPI BS 78
+				this._writer.WriteBitShort(plot.ShadePlotDPI);
+
+				//6 plot view handle(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+			}
+
+			//R2007 +:
+			if (this.R2007Plus)
+			{
+				//Visual Style handle(soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
 			}
 		}
 
