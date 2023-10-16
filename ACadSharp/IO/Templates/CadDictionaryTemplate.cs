@@ -19,13 +19,13 @@ namespace ACadSharp.IO.Templates
 
 			if (this.OwnerHandle.HasValue
 				&& this.OwnerHandle == 0
-				&& builder.DocumentToBuild.RootDictionary == null
-				&& builder is DwgDocumentBuilder dwgBuilder)
+				&& builder.DocumentToBuild.RootDictionary == null)
 			{
-				//There is no way to find the root dictionary, dwg does not provide an explicit handle for it
-				//the only way to check for the root dictionary is to try to find the handles that belong to it
-
-				List<ulong?> rootHandles = new() {
+				if (builder is DwgDocumentBuilder dwgBuilder)
+				{
+					//There is no way to find the root dictionary, dwg does not provide an explicit handle for it
+					//the only way to check for the root dictionary is to try to find the handles that belong to it
+					List<ulong?> rootHandles = new() {
 					dwgBuilder.HeaderHandles.DICTIONARY_ACAD_GROUP,
 					dwgBuilder.HeaderHandles.DICTIONARY_ACAD_MLINESTYLE,
 					dwgBuilder.HeaderHandles.DICTIONARY_COLORS,
@@ -37,13 +37,18 @@ namespace ACadSharp.IO.Templates
 					dwgBuilder.HeaderHandles.DICTIONARY_VISUALSTYLE,
 				};
 
-				foreach (ulong handle in rootHandles.Where(h => h.HasValue).Select(v => (ulong)v))
-				{
-					if (this.Entries.ContainsValue(handle))
+					foreach (ulong handle in rootHandles.Where(h => h.HasValue).Select(v => (ulong)v))
 					{
-						builder.DocumentToBuild.RootDictionary = this.CadObject;
-						break;
+						if (this.Entries.ContainsValue(handle))
+						{
+							builder.DocumentToBuild.RootDictionary = this.CadObject;
+							break;
+						}
 					}
+				}
+				else
+				{
+					builder.DocumentToBuild.RootDictionary = this.CadObject;
 				}
 			}
 
