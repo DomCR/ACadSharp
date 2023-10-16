@@ -330,7 +330,112 @@ namespace ACadSharp.IO.DWG
 
 		private void writeInsert(Insert insert)
 		{
-			throw new NotImplementedException();
+			//Ins pt 3BD 10
+			this._writer.Write3BitDouble(insert.InsertPoint);
+
+			//R13-R14 Only:
+			if (this.R13_14Only)
+			{
+				//X Scale BD 41
+				this._writer.WriteBitDouble(insert.XScale);
+				//Y Scale BD 42
+				this._writer.WriteBitDouble(insert.YScale);
+				//Z Scale BD 43
+				this._writer.WriteBitDouble(insert.ZScale);
+			}
+
+			//R2000 + Only:
+			if (this.R2000Plus)
+			{
+				//Data flags BB
+				//Scale Data Varies with Data flags:
+				if (insert.XScale == 1.0 && insert.YScale == 1.0 && insert.ZScale == 1.0)
+				{
+					//11 - scale is (1.0, 1.0, 1.0), no data stored.
+					this._writer.Write2Bits(3);
+				}
+				else if (insert.XScale == insert.YScale && insert.XScale == insert.ZScale)
+				{
+					//10 – 41 value stored as a RD, and 42 & 43 values are not stored, assumed equal to 41 value.
+					this._writer.Write2Bits(2);
+					this._writer.WriteRawDouble(insert.XScale);
+				}
+				else if (insert.XScale == 1.0)
+				{
+					//01 – 41 value is 1.0, 2 DD’s are present, each using 1.0 as the default value, representing the 42 and 43 values.
+					this._writer.Write2Bits(1);
+					this._writer.WriteBitDoubleWithDefault(insert.YScale, 1.0);
+					this._writer.WriteBitDoubleWithDefault(insert.ZScale, 1.0);
+				}
+				else
+				{
+					//00 – 41 value stored as a RD, followed by a 42 value stored as DD (use 41 for default value), and a 43 value stored as a DD(use 41 value for default value).
+					this._writer.Write2Bits(0);
+					this._writer.WriteRawDouble(insert.XScale);
+					this._writer.WriteBitDoubleWithDefault(insert.YScale, insert.XScale);
+					this._writer.WriteBitDoubleWithDefault(insert.ZScale, insert.XScale);
+				}
+			}
+
+			//Common:
+			//Rotation BD 50
+			this._writer.WriteBitDouble(insert.Rotation);
+			//Extrusion 3BD 210
+			this._writer.Write3BitDouble(insert.Normal);
+			//Has ATTRIBs B 66 Single bit; 1 if ATTRIBs follow.
+			this._writer.WriteBit(insert.HasAttributes);
+
+			//R2004+:
+			if (this.R2004Plus && insert.HasAttributes)
+			{
+				//Owned Object Count BL Number of objects owned by this object.
+				this._writer.WriteBitLong(insert.Attributes.Count);
+			}
+
+			if (insert.ObjectType == ObjectType.MINSERT)
+			{
+				//Common:
+				//Numcols BS 70
+				this._writer.WriteBitShort((short)insert.ColumnCount);
+				//Numrows BS 71
+				this._writer.WriteBitShort((short)insert.RowCount);
+				//Col spacing BD 44
+				this._writer.WriteBitDouble(insert.ColumnSpacing);
+				//Row spacing BD 45
+				this._writer.WriteBitDouble(insert.RowSpacing);
+			}
+
+			//Common:
+			//Common Entity Handle Data
+			//H 2 BLOCK HEADER(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, insert.Block);
+
+			if (!insert.HasAttributes)
+			{
+				return;
+			}
+
+			//R13 - R2000:
+			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)
+			{
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, insert.Attributes.First());
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, insert.Attributes.Last());
+			}
+			//R2004+:
+			else if (this.R2004Plus)
+			{
+				foreach (AttributeEntity att in insert.Attributes)
+				{
+					//H[ATTRIB(hard owner)] Repeats “Owned Object Count” times.
+					this._writer.HandleReference(DwgReferenceType.HardOwnership, att);
+				}
+			}
+
+			//Common:
+			//H[SEQEND(hard owner)] if 66 bit set
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, insert.Attributes.Seqend);
+
+			//TODO: Write attributes...
 		}
 
 		private void writeFace3D(Face3D face)
