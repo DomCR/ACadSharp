@@ -95,20 +95,24 @@ namespace ACadSharp.IO.DWG
 				case Point p:
 					this.writePoint(p);
 					break;
-				case PolyfaceMesh faceMesh:
-					this.writePolyfaceMesh(faceMesh);
-
-					children.AddRange(faceMesh.Vertices);
-					children.AddRange(faceMesh.Faces);
-
-					seqend = faceMesh.Vertices.Seqend;
-					break;
-				case Polyline3D pline3d:
-					this.writePolyline3D(pline3d);
-
-					children.AddRange(pline3d.Vertices);
-
-					seqend = pline3d.Vertices.Seqend;
+				case Polyline pline:
+					switch (pline)
+					{
+						case PolyfaceMesh faceMesh:
+							this.writePolyfaceMesh(faceMesh);
+							children.AddRange(faceMesh.Faces);
+							break;
+						case Polyline2D pline2d:
+							this.writePolyline2D(pline2d);
+							break;
+						case Polyline3D pline3d:
+							this.writePolyline3D(pline3d);
+							break;
+						default:
+							throw new NotImplementedException($"Polyline not implemented : {entity.GetType().FullName}");
+					}
+					children.AddRange(pline.Vertices);
+					seqend = pline.Vertices.Seqend;
 					break;
 				case Ray ray:
 					this.writeRay(ray);
@@ -157,11 +161,7 @@ namespace ACadSharp.IO.DWG
 
 		private void writeArc(Arc arc)
 		{
-			//this.writeCircle(arc);
-			this._writer.Write3BitDouble(arc.Center);
-			this._writer.WriteBitDouble(arc.Radius);
-			this._writer.WriteBitThickness(arc.Thickness);
-			this._writer.WriteBitExtrusion(arc.Normal);
+			this.writeCircle(arc);
 
 			this._writer.WriteBitDouble(arc.StartAngle);
 			this._writer.WriteBitDouble(arc.EndAngle);
@@ -1120,6 +1120,49 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//H SEQEND(hard owner)
 			this._writer.HandleReference(DwgReferenceType.SoftPointer, fm.Vertices.Seqend);
+		}
+
+		private void writePolyline2D(Polyline2D pline)
+		{
+			//Flags BS 70
+			this._writer.WriteBitShort((short)pline.Flags);
+			//Curve type BS 75 Curve and smooth surface type.
+			this._writer.WriteBitShort((short)pline.SmoothSurface);
+			//Start width BD 40 Default start width
+			this._writer.WriteBitDouble(pline.StartWidth);
+			//End width BD 41 Default end width
+			this._writer.WriteBitDouble(pline.EndWidth);
+			//Thickness BT 39
+			this._writer.WriteBitThickness(pline.Thickness);
+			//Elevation BD 10 The 10-pt is (0,0,elev)
+			this._writer.WriteBitDouble(pline.Elevation);
+			//Extrusion BE 210
+			this._writer.WriteBitExtrusion(pline.Normal);
+
+			int count = pline.Vertices.Count;
+			//R2004+:
+			if (this.R2004Plus)
+			{
+				//Owned Object Count BL Number of objects owned by this object.
+				this._writer.WriteBitLong(count);
+				for (int i = 0; i < count; i++)
+				{
+					this._writer.HandleReference(DwgReferenceType.HardOwnership, pline.Vertices[i]);
+				}
+			}
+
+			//R13-R2000:
+			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)
+			{
+				//H first VERTEX (soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, pline.Vertices.FirstOrDefault());
+				//H last VERTEX (soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, pline.Vertices.LastOrDefault());
+			}
+
+			//Common:
+			//H SEQEND(hard owner)
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, pline.Vertices.Seqend);
 		}
 
 		private void writePolyline3D(Polyline3D pline)
