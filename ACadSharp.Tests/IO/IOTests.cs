@@ -137,5 +137,17 @@ namespace ACadSharp.Tests.IO
 			if (check)
 				this.checkDxfDocumentInAutocad(Path.GetFullPath(file));
 		}
+
+		private void writeDwgFile(string file, CadDocument doc)
+		{
+			if (doc.Header.Version > ACadVersion.AC1018)
+				return;
+
+			using (DwgWriter writer = new DwgWriter(file, doc))
+			{
+				writer.OnNotification += this.onNotification;
+				writer.Write();
+			}
+		}
 	}
 }

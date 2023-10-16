@@ -1400,7 +1400,7 @@ namespace ACadSharp.IO.DWG
 			template.OwnedObjectsCount = 0;
 
 			//R2004+:
-			if (this.R2004Plus & template.HasAtts)
+			if (this.R2004Plus && template.HasAtts)
 				//Owned Object Count BL Number of objects owned by this object.
 				template.OwnedObjectsCount = this._objectReader.ReadBitLong();
 		}
