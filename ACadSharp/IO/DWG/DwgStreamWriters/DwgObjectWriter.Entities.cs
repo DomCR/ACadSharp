@@ -69,6 +69,10 @@ namespace ACadSharp.IO.DWG
 					break;
 				case Insert insert:
 					this.writeInsert(insert);
+
+					children.AddRange(insert.Attributes);
+
+					seqend = insert.Attributes.Seqend;
 					break;
 				case Face3D face3D:
 					this.writeFace3D(face3D);
@@ -444,8 +448,6 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//H[SEQEND(hard owner)] if 66 bit set
 			this._writer.HandleReference(DwgReferenceType.HardOwnership, insert.Attributes.Seqend);
-
-			//TODO: Write attributes...
 		}
 
 		private void writeFace3D(Face3D face)
