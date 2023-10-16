@@ -346,6 +346,10 @@ namespace ACadSharp.Entities {
 		{
 			MultiLeader clone = (MultiLeader)base.Clone();
 
+			clone.Style = (MultiLeaderStyle)this.Style?.Clone();
+			clone.LineType = (LineType)this.LineType?.Clone();
+			clone.TextStyle = (TextStyle)this.TextStyle?.Clone();
+
 			clone.ContextData = (MultiLeaderAnnotContext)clone.Clone();
 
 			foreach (var att in BlockAttributes)

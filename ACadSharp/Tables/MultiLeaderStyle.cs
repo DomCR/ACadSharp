@@ -266,30 +266,18 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Text attachment direction for MText contents
 		/// </summary>
-		/// <value>
-		/// 	0 = Horizontal
-		/// 	1 = Vertical
-		/// </value>
 		[DxfCodeValue(271)]
 		public TextAttachmentDirectionType TextAttachmentDirection { get; set; }
 
 		/// <summary>
 		/// Bottom text attachment direction
 		/// </summary>
-		/// <value>
-		/// 	9 = Center
-		/// 	10 = Underline and Center
-		/// </value>
 		[DxfCodeValue(272)]
 		public TextAttachmentType TextBottomAttachment { get; set; }
 
 		/// <summary>
 		/// 	Top text attachment direction
 		/// </summary>
-		/// <value>
-		/// 	9 = Center
-		/// 	10 = Underline and Center
-		/// </value>
 		[DxfCodeValue(273)]
 		public TextAttachmentType TextTopAttachment { get; set; }
 
