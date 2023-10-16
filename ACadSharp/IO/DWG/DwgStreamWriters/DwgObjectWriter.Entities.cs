@@ -11,7 +11,6 @@ namespace ACadSharp.IO.DWG
 	{
 		private void writeEntity(Entity entity)
 		{
-			bool registerEntity = true;
 			List<Entity> children = new List<Entity>();
 			Seqend seqend = null;
 
