@@ -18,6 +18,8 @@ namespace ACadSharp.IO.DWG
 			//Ignored Entities
 			switch (entity)
 			{
+				case AttributeDefinition:
+				case AttributeBase:
 				case MText:
 				//Unlisted
 				case Wipeout:
