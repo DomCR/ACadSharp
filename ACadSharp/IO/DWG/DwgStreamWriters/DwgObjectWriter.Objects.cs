@@ -127,6 +127,67 @@ namespace ACadSharp.IO.DWG
 		private void writeLayout(Layout layout)
 		{
 			this.writePlotSettings(layout);
+
+			//Common:
+			//Layout name TV 1 layout name
+			this._writer.WriteVariableText(layout.Name);
+			//Tab order BL 71 layout tab order
+			this._writer.WriteBitLong(layout.TabOrder);
+			//Flag BS 70 layout flags
+			this._writer.WriteBitShort((short)layout.LayoutFlags);
+			//Ucs origin 3BD 13 layout ucs origin
+			this._writer.Write3BitDouble(layout.Origin);
+			//Limmin 2RD 10 layout minimum limits
+			this._writer.Write2RawDouble(layout.MinLimits);
+			//Limmax 2RD 11 layout maximum limits
+			this._writer.Write2RawDouble(layout.MinLimits);
+			//Inspoint 3BD 12 layout insertion base point
+			this._writer.Write3BitDouble(layout.InsertionBasePoint);
+			this._writer.Write3BitDouble(layout.XAxis);
+			this._writer.Write3BitDouble(layout.YAxis);
+			this._writer.WriteBitDouble(layout.Elevation);
+			this._writer.WriteBitShort((short)layout.UcsOrthographicType);
+			this._writer.Write3BitDouble(layout.MinExtents);
+			this._writer.Write3BitDouble(layout.MaxExtents);
+
+			//R2004 +:
+			if (this.R2004Plus)
+			{
+				//Viewport count RL # of viewports in this layout
+				this._writer.WriteBitLong(layout.Viewports.Count());
+			}
+
+			//Common:
+			//330 associated paperspace block record handle(soft pointer)
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, layout.AssociatedBlock);
+			//331 last active viewport handle(soft pointer)
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, layout.Viewport);
+
+			//If not present and 76 code is non-zero, then base UCS is taken to be WORLD
+			if (layout.UcsOrthographicType == OrthographicType.None)
+			{
+				//346 base ucs handle(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				//345 named ucs handle(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, layout.UCS);
+			}
+			else
+			{
+				//346 base ucs handle(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, layout.BaseUCS);
+				//345 named ucs handle(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+			}
+
+			//R2004+:
+			if (this.R2004Plus)
+			{
+				foreach (Entities.Viewport viewport in layout.Viewports)
+				{
+					//Viewport handle(repeats Viewport count times) (soft pointer)
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, viewport);
+				}
+			}
 		}
 
 		private void writePlotSettings(PlotSettings plot)
