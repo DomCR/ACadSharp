@@ -6,13 +6,15 @@ using System;
 
 namespace ACadSharp.Entities
 {
-
 	/// <summary>
 	/// The standard class for a basic CAD entity.
 	/// </summary>
 	[DxfSubClass(DxfSubclassMarker.Entity)]
 	public abstract class Entity : CadObject, IEntity
 	{
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Entity;
+
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name, 8)]
 		public Layer Layer
@@ -130,17 +132,38 @@ namespace ACadSharp.Entities
 			return clone;
 		}
 
-		protected T updateTable<T>(T entry, Table<T> table)
-			where T : TableEntry
+		internal override void AssignDocument(CadDocument doc)
 		{
-			if (table.TryGetValue(entry.Name, out T existing))
+			base.AssignDocument(doc);
+
+			this._layer = this.updateTable(this.Layer, doc.Layers);
+			this._lineType = this.updateTable(this.LineType, doc.LineTypes);
+
+			doc.Layers.OnRemove += this.tableOnRemove;
+			doc.LineTypes.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.Layers.OnRemove -= this.tableOnRemove;
+			this.Document.LineTypes.OnRemove -= this.tableOnRemove;
+
+			base.UnassignDocument();
+
+			this.Layer = (Layer)this.Layer.Clone();
+			this.LineType = (LineType)this.LineType.Clone();
+		}
+
+		protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this.Layer))
 			{
-				return existing;
+				this.Layer = this.Document.Layers[Layer.DefaultName];
 			}
-			else
+
+			if (e.Item.Equals(this.LineType))
 			{
-				table.Add(entry);
-				return entry;
+				this.LineType = this.Document.LineTypes[LineType.ByLayerName];
 			}
 		}
 	}

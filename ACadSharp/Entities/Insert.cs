@@ -2,6 +2,7 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ACadSharp.Entities
@@ -23,17 +24,8 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityInsert;
 
-		/// <summary>
-		/// Attributes from the block reference
-		/// </summary>
-		/// <remarks>
-		/// If an attribute should be added in this collection a definition will be added into the block reference as well
-		/// </remarks>
-		//66	Variable attributes-follow flag(optional; default = 0); 
-		//		if the value of attributes-follow flag is 1, a series of 
-		//		attribute entities is expected to follow the insert, terminated by a seqend entity
-		[DxfCodeValue(DxfReferenceType.Ignored, 66)]
-		public SeqendCollection<AttributeEntity> Attributes { get; }
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Insert;
 
 		/// <summary>
 		/// Gets the insert block definition
@@ -104,6 +96,20 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(45)]
 		public double RowSpacing { get; set; } = 0;
 
+		/// <summary>
+		/// True if the insert has attribute entities in it
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Ignored, 66)]
+		public bool HasAttributes { get { return this.Attributes.Any(); } }
+
+		/// <summary>
+		/// Attributes from the block reference
+		/// </summary>
+		/// <remarks>
+		/// If an attribute should be added in this collection a definition will be added into the block reference as well
+		/// </remarks>
+		public SeqendCollection<AttributeEntity> Attributes { get; }
+
 		internal Insert(bool onAdd = true) : base()
 		{
 			this.Attributes = new SeqendCollection<AttributeEntity>(this);
@@ -163,9 +169,38 @@ namespace ACadSharp.Entities
 			return clone;
 		}
 
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			doc.RegisterCollection(this.Attributes);
+
+			//Should only be triggered for internal use
+			if (this.Block == null)
+				return;
+
+			if (doc.BlockRecords.TryGetValue(this.Block.Name, out BlockRecord blk))
+			{
+				this.Block = blk;
+			}
+			else
+			{
+				doc.BlockRecords.Add(this.Block);
+			}
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Block = (BlockRecord)this.Block.Clone();
+			this.Document.UnregisterCollection(this.Attributes);
+
+			base.UnassignDocument();
+		}
+
 		private void attributesOnAdd(object sender, CollectionChangedEventArgs e)
 		{
-			this.Block.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));
+			//TODO: Fix the relation between insert and block
+			//this.Block?.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));
 		}
 	}
 }

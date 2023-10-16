@@ -14,9 +14,24 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.MLineStyle)]
 	public partial class MLStyle : CadObject, INamedCadObject
 	{
+		/// <summary>
+		/// Default multiline style name
+		/// </summary>
+		public const string DefaultName = "Standard";
+
+		/// <summary>
+		/// Gets the default MLine style
+		/// </summary>
+		public static MLStyle Default { get { return new MLStyle(DefaultName); } }
+
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.MLINESTYLE;
 
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectMLStyle;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.MLineStyle;
 
 		/// <summary>
 		/// Mline style name
@@ -39,7 +54,9 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(3)]
 		public string Description { get; set; }
 
-		//62	Fill color(integer, default = 256)
+		/// <summary>
+		/// Fill color
+		/// </summary>
 		[DxfCodeValue(62)]
 		public Color FillColor { get; set; } = Color.ByLayer;
 
@@ -55,7 +72,17 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(DxfReferenceType.IsAngle, 52)]
 		public double EndAngle { get; set; } = System.Math.PI / 2;
 
-		//71	Number of elements
+		/// <summary>
+		/// Elements in the style
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Count, 71)]
 		public List<MLStyle.Element> Elements { get; } = new List<Element>();
+
+		internal MLStyle() { }
+
+		public MLStyle(string name)
+		{
+			this.Name = name;
+		}
 	}
 }

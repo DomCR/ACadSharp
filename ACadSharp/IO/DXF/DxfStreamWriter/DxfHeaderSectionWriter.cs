@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using ACadSharp.Header;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.IO.DXF
 {
@@ -6,17 +8,28 @@ namespace ACadSharp.IO.DXF
 	{
 		public override string SectionName { get { return DxfFileToken.HeaderSection; } }
 
-		public DxfHeaderSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder) : base(writer, document, holder)
+		public CadHeader Header { get { return this._document.Header; } }
+
+		public DxfWriterOptions Options { get; }
+
+		public DxfHeaderSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder, DxfWriterOptions options) : base(writer, document, holder)
 		{
+			this.Options = options;
 		}
 
 		protected override void writeSection()
 		{
-			Dictionary<string, CadSystemVariable> map = Header.CadHeader.GetHeaderMap();
+			Dictionary<string, CadSystemVariable> map = CadHeader.GetHeaderMap();
 
 			foreach (KeyValuePair<string, CadSystemVariable> item in map)
 			{
+				if (!this.Options.WriteAllHeaderVariables && !this.Options.HeaderVariables.Contains(item.Key))
+					continue;
+
 				if (item.Value.ReferenceType.HasFlag(DxfReferenceType.Ignored))
+					continue;
+
+				if (item.Value.GetValue(this.Header) == null)
 					continue;
 
 				this._writer.Write(DxfCode.CLShapeText, item.Key);

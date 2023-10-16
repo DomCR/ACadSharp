@@ -119,7 +119,9 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.UNLISTED:
 				case ObjectType.INVALID:
 				case ObjectType.UNUSED:
-					throw new NotImplementedException();
+					this.notify($"CadObject type: {cadObject.ObjectType} fullname: {cadObject.GetType().FullName}", NotificationType.NotImplemented);
+					return;
+					throw new NotImplementedException($"CadObject type: {cadObject.ObjectType} fullname: {cadObject.GetType().FullName}");
 				default:
 					this._writer.WriteObjectType(cadObject.ObjectType);
 					break;

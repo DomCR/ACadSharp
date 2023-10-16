@@ -16,7 +16,7 @@ namespace ACadSharp.IO.DXF
 			this._reader.ReadNext();
 
 			//Loop until the section ends
-			while (this._reader.LastValueAsString != DxfFileToken.EndSection)
+			while (this._reader.ValueAsString != DxfFileToken.EndSection)
 			{
 				CadEntityTemplate template = null;
 
@@ -24,12 +24,14 @@ namespace ACadSharp.IO.DXF
 				{
 					template = this.readEntity();
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
 					if (!this._builder.Configuration.Failsafe)
 						throw;
 
-					while (this._reader.LastDxfCode != DxfCode.Start)
+					this._builder.Notify($"Error while reading an entity at line {this._reader.Position}", NotificationType.Error, ex);
+
+					while (this._reader.DxfCode != DxfCode.Start)
 						this._reader.ReadNext();
 				}
 

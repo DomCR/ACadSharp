@@ -2,6 +2,7 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -21,6 +22,9 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityMText;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.MText;
 
 		/// <summary>
 		/// A 3D WCS coordinate representing the insertion or origin point.
@@ -56,13 +60,13 @@ namespace ACadSharp.Entities
 		/// Reference rectangle width
 		/// </summary>
 		[DxfCodeValue(41)]
-		public double RectangleWitdth { get; set; }
+		public double RectangleWidth { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		[DxfCodeValue(46)]
-		public double RectangleHeight { get; set; }
+		public double ReferenceRectangleHeight { get; set; }
 
 		/// <summary>
 		/// Attachment point
@@ -86,16 +90,35 @@ namespace ACadSharp.Entities
 		public string Value { get; set; } = string.Empty;
 
 		/// <summary>
-		/// Additional text(always in 250-character chunks) (optional)
+		/// Additional text (always in 250-character chunks)
 		/// </summary>
-		[DxfCodeValue(3)]
+		[DxfCodeValue(DxfReferenceType.Optional, 3)]
 		public string AdditionalText { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Style of this text entity.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 7)]
-		public TextStyle Style { get; set; } = TextStyle.Default;
+		public TextStyle Style
+		{
+			get { return this._style; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._style = this.updateTable(value, this.Document.TextStyles);
+				}
+				else
+				{
+					this._style = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// X-axis direction vector(in WCS)
@@ -140,7 +163,7 @@ namespace ACadSharp.Entities
 		/// <value>
 		/// The rotation angle in radians.
 		/// </value>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation
 		{
 			get => _rotation;
@@ -206,6 +229,8 @@ namespace ACadSharp.Entities
 
 		private double _rotation = 0.0;
 
+		private TextStyle _style = TextStyle.Default;
+
 		public MText() : base() { }
 
 		public override CadObject Clone()
@@ -216,6 +241,34 @@ namespace ACadSharp.Entities
 			clone.Column = this.Column?.Clone();
 
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._style = this.updateTable(this.Style, doc.TextStyles);
+
+			doc.DimensionStyles.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
+
+			base.UnassignDocument();
+
+			this.Style = (TextStyle)this.Style.Clone();
+		}
+
+		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			base.tableOnRemove(sender, e);
+
+			if (e.Item.Equals(this.Style))
+			{
+				this.Style = this.Document.TextStyles[TextStyle.DefaultName];
+			}
 		}
 	}
 }

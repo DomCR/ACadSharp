@@ -26,6 +26,17 @@ namespace ACadSharp.Tests.IO
 
 		[Theory]
 		[MemberData(nameof(DwgFilePaths))]
+		public void DwgToDwg(string test)
+		{
+			CadDocument doc = DwgReader.Read(test);
+
+			string file = Path.GetFileNameWithoutExtension(test);
+			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_out.dwg");
+			this.writeDwgFile(pathOut, doc, true);
+		}
+
+		[Theory]
+		[MemberData(nameof(DwgFilePaths))]
 		public void DwgToDxf(string test)
 		{
 			CadDocument doc = DwgReader.Read(test);
@@ -48,7 +59,28 @@ namespace ACadSharp.Tests.IO
 
 		[Theory]
 		[MemberData(nameof(DwgFilePaths))]
-		public void DwgEntitiesToNewDxfFile(string test)
+		public void DwgEntitiesToDwgFile(string test)
+		{
+			CadDocument doc = DwgReader.Read(test);
+
+			CadDocument transfer = new CadDocument();
+			transfer.Header.Version = doc.Header.Version;
+
+			List<Entity> entities = new List<Entity>(doc.Entities);
+			foreach (var item in entities)
+			{
+				Entity e = doc.Entities.Remove(item);
+				transfer.Entities.Add(e);
+			}
+
+			string file = Path.GetFileNameWithoutExtension(test);
+			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_moved_out.dwg");
+			this.writeDwgFile(pathOut, transfer, false);
+		}
+
+		[Theory]
+		[MemberData(nameof(DwgFilePaths))]
+		public void DwgEntitiesToDxfFile(string test)
 		{
 			CadDocument doc = DwgReader.Read(test);
 
@@ -67,36 +99,31 @@ namespace ACadSharp.Tests.IO
 			this.writeDxfFile(pathOut, transfer, true);
 		}
 
-		[Theory]
-		[MemberData(nameof(DwgFilePaths))]
-		public void DwgEntitiesToNewDwgFile(string test)
+		private void writeCadFile(string file, CadWriterBase writer, bool check)
 		{
-			CadDocument doc = DwgReader.Read(test);
-
-			CadDocument transfer = new CadDocument();
-			transfer.Header.Version = doc.Header.Version;
-
-			List<Entity> entities = new List<Entity>(doc.Entities);
-			foreach (var item in entities)
+			using (writer)
 			{
-				Entity e = doc.Entities.Remove(item);
-				transfer.Entities.Add(e);
+				writer.OnNotification += this.onNotification;
+				writer.Write();
 			}
 
-			string file = Path.GetFileNameWithoutExtension(test);
-			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_moved_out.dwg");
-			this.writeDwgFile(pathOut, transfer);
+			if (check)
+				this.checkDxfDocumentInAutocad(Path.GetFullPath(file));
 		}
 
-		[Theory]
-		[MemberData(nameof(DwgFilePaths))]
-		public void RewriteDwgFile(string test)
+		private void writeDwgFile(string file, CadDocument doc, bool check)
 		{
-			CadDocument doc = DwgReader.Read(test);
+			if (doc.Header.Version < ACadVersion.AC1014 || doc.Header.Version > ACadVersion.AC1018)
+				return;
 
-			string file = Path.GetFileNameWithoutExtension(test);
-			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_rewrite_out.dxf");
-			this.writeDwgFile(pathOut, doc);
+			using (DwgWriter writer = new DwgWriter(file, doc))
+			{
+				writer.OnNotification += this.onNotification;
+				writer.Write();
+			}
+
+			if (true)
+				this.checkDwgDocumentInAutocad(Path.GetFullPath(file));
 		}
 
 		private void writeDxfFile(string file, CadDocument doc, bool check)

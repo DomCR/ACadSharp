@@ -1,8 +1,8 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Exceptions;
+using ACadSharp.Header;
 using ACadSharp.IO;
 using ACadSharp.Tests.Common;
-using System;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
@@ -11,7 +11,18 @@ namespace ACadSharp.Tests.IO.DWG
 {
 	public class DwgWriterTests : IOTestsBase
 	{
+		public static TheoryData<Entity> Entities { get; }
+
 		public DwgWriterTests(ITestOutputHelper output) : base(output) { }
+
+		static DwgWriterTests()
+		{
+			Entities = new TheoryData<Entity>
+			{
+				EntityFactory.Create<Point>(),
+				EntityFactory.Create<Line>(),
+			};
+		}
 
 		[Theory]
 		[MemberData(nameof(Versions))]
@@ -41,6 +52,13 @@ namespace ACadSharp.Tests.IO.DWG
 			}
 
 			//this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
+		}
+
+		[Theory]
+		[MemberData(nameof(Entities))]
+		public void WriteSingleEntityFile(Entity entity)
+		{
+
 		}
 
 		[Theory]
@@ -148,7 +166,7 @@ namespace ACadSharp.Tests.IO.DWG
 
 			using (var re = new DwgReader(stream, this.onNotification))
 			{
-				Header.CadHeader header = re.ReadHeader();
+				CadHeader header = re.ReadHeader();
 			}
 		}
 

@@ -22,6 +22,9 @@ namespace ACadSharp.Blocks
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.Block;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.BlockBegin;
+
 		/// <summary>
 		/// Block record that owns this entity
 		/// </summary>
@@ -33,8 +36,8 @@ namespace ACadSharp.Blocks
 		[DxfCodeValue(2, 3)]
 		public string Name
 		{
-			get { return BlockOwner.Name; }
-			set { BlockOwner.Name = value; }
+			get { return this.BlockOwner.Name; }
+			set { this.BlockOwner.Name = value; }
 		}
 
 		/// <summary>
@@ -53,7 +56,7 @@ namespace ACadSharp.Blocks
 		/// Gets the path of the block, document, application, or external reference.
 		/// </summary>
 		[DxfCodeValue(1)]
-		public string XrefPath { get; internal set; }
+		public string XrefPath { get; set; }
 
 		/// <summary>
 		/// Specifies the comments for the block or drawing.

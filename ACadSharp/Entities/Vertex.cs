@@ -4,7 +4,7 @@ using CSMath;
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Represents a base for <see cref="Vertex2D"/> and <see cref="Vertex3D"/>
+	/// Represents a base type for Vertex entities
 	/// </summary>
 	[DxfSubClass(DxfSubclassMarker.Vertex, true)]
 	public abstract class Vertex : Entity, IVertex
@@ -45,11 +45,6 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double CurveTangent { get; set; }
-
-		//71 Polyface mesh vertex index(optional; present only if nonzero)
-		//72 Polyface mesh vertex index(optional; present only if nonzero)
-		//73 Polyface mesh vertex index(optional; present only if nonzero)
-		//74 Polyface mesh vertex index(optional; present only if nonzero)
 
 		/// <summary>
 		/// Vertex identifier

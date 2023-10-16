@@ -21,8 +21,6 @@ namespace ACadSharp.IO
 
 		private DwgFileHeader _fileHeader;
 
-		private CadDocument _document;
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DwgReader"/> class.
 		/// </summary>
@@ -211,12 +209,16 @@ namespace ACadSharp.IO
 		public override CadHeader ReadHeader()
 		{
 			this._fileHeader = this._fileHeader ?? this.readFileHeader();
+
+			CadHeader header = new CadHeader();
+			header.CodePage = CadUtils.GetCodePageName(this._fileHeader.DrawingCodePage);
+
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Header);
 
-			DwgHeaderReader hreader = new DwgHeaderReader(this._fileHeader.AcadVersion, sreader);
-			hreader.OnNotification += onNotificationEvent;
+			DwgHeaderReader hReader = new DwgHeaderReader(this._fileHeader.AcadVersion, sreader, header);
+			hReader.OnNotification += onNotificationEvent;
 
-			CadHeader header = hreader.Read(this._fileHeader.AcadMaintenanceVersion, out DwgHeaderHandlesCollection headerHandles);
+			hReader.Read(this._fileHeader.AcadMaintenanceVersion, out DwgHeaderHandlesCollection headerHandles);
 
 			if (this._builder != null)
 				this._builder.HeaderHandles = headerHandles;
@@ -387,7 +389,7 @@ namespace ACadSharp.IO
 				.Where(o => o.HasValue)
 				.Select(a => a.Value));
 
-			DwgObjectSectionReader sectionReader = new DwgObjectSectionReader(
+			DwgObjectReader sectionReader = new DwgObjectReader(
 				this._fileHeader.AcadVersion,
 				this._builder,
 				sreader,
@@ -418,7 +420,7 @@ namespace ACadSharp.IO
 
 			//Bytes at 0x13 and 0x14 are a raw short indicating the value of the code page for this drawing file.
 			fileheader.DrawingCodePage = CadUtils.GetCodePage(sreader.ReadShort());
-			sreader.Encoding = TextEncoding.GetListedEncoding(fileheader.DrawingCodePage);
+			this._encoding = getListedEncoding((int)fileheader.DrawingCodePage);
 
 			//At 0x15 is a long that tells how many sets of recno/seeker/length records follow.
 			int nRecords = (int)sreader.ReadRawLong();
@@ -534,7 +536,7 @@ namespace ACadSharp.IO
 			//Get the page size
 			this.getPageHeaderData(sreader, out _, out long decompressedSize, out _, out _, out _);
 			//Get the descompressed stream to read the records
-			StreamIO decompressed = new StreamIO(Dwg2004LZ77.Decompress(sreader.Stream, decompressedSize));
+			StreamIO decompressed = new StreamIO(DwgLZ77AC18Decompressor.Decompress(sreader.Stream, decompressedSize));
 
 			//Section size
 			int total = 0x100;
@@ -575,7 +577,7 @@ namespace ACadSharp.IO
 			sreader.Position = fileheader.Records[(int)fileheader.SectionMapId].Seeker;
 			//Get the page size
 			this.getPageHeaderData(sreader, out _, out decompressedSize, out _, out _, out _);
-			StreamIO decompressedStream = new StreamIO(Dwg2004LZ77.Decompress(sreader.Stream, decompressedSize));
+			StreamIO decompressedStream = new StreamIO(DwgLZ77AC18Decompressor.Decompress(sreader.Stream, decompressedSize));
 			decompressedStream.Encoding = TextEncoding.GetListedEncoding(CodePage.Windows1252);
 
 			//0x00	4	Number of section descriptions(NumDescriptions)
@@ -710,7 +712,7 @@ namespace ACadSharp.IO
 			//If ComprLen is positive, the ComprLen bytes of data are compressed
 			else
 			{
-				DwgR21LZ77.Decompress(decodedData, 32U, (uint)comprLen, buffer);
+				DwgLZ77AC21Decompressor.Decompress(decodedData, 32U, (uint)comprLen, buffer);
 			}
 
 			//Get the descompressed stream to read the records
@@ -928,7 +930,7 @@ namespace ACadSharp.IO
 
 			//0x13	2	Codepage
 			fileheader.DrawingCodePage = CadUtils.GetCodePage(sreader.ReadShort());
-			sreader.Encoding = TextEncoding.GetListedEncoding(fileheader.DrawingCodePage);
+			this._encoding = sreader.Encoding = getListedEncoding((int)fileheader.DrawingCodePage);
 
 			//Advance empty bytes 
 			//0x15	3	3 0x00 bytes
@@ -959,7 +961,7 @@ namespace ACadSharp.IO
 		private IDwgStreamReader getSectionStream(string sectionName)
 		{
 			Stream sectionStream = null;
-			Encoding encoding = null;
+
 			//Get the section buffer
 			switch (this._fileHeader.AcadVersion)
 			{
@@ -980,7 +982,7 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
 					sectionStream = this.getSectionBuffer15(this._fileHeader as DwgFileHeaderAC15, sectionName);
-					encoding = TextEncoding.GetListedEncoding((this._fileHeader as DwgFileHeaderAC15).DrawingCodePage);
+					//encoding = TextEncoding.GetListedEncoding((this._fileHeader as DwgFileHeaderAC15).DrawingCodePage);
 					break;
 				case ACadVersion.AC1018:
 					sectionStream = this.getSectionBuffer18(this._fileHeader as DwgFileHeaderAC18, sectionName);
@@ -1005,8 +1007,7 @@ namespace ACadSharp.IO
 			IDwgStreamReader streamHandler = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, sectionStream);
 
 			//Set the encoding if needed
-			if (encoding != null)
-				streamHandler.Encoding = encoding;
+			streamHandler.Encoding = this._encoding;
 
 			return streamHandler;
 		}
@@ -1061,7 +1062,7 @@ namespace ACadSharp.IO
 					if (descriptor.IsCompressed)
 					{
 						//Page is compressed
-						Dwg2004LZ77.DecompressToDest(this._fileStream.Stream, memoryStream);
+						DwgLZ77AC18Decompressor.DecompressToDest(this._fileStream.Stream, memoryStream);
 					}
 					else
 					{
@@ -1157,7 +1158,7 @@ namespace ACadSharp.IO
 					{
 						//Page is compressed
 						byte[] arr = new byte[page.DecompressedSize];
-						DwgR21LZ77.Decompress(pageBytes, 0U, (uint)page.CompressedSize, arr);
+						DwgLZ77AC21Decompressor.Decompress(pageBytes, 0U, (uint)page.CompressedSize, arr);
 						pageBytes = arr;
 					}
 
@@ -1234,7 +1235,7 @@ namespace ACadSharp.IO
 
 			byte[] decompressedData = new byte[uncompressedSize];
 
-			DwgR21LZ77.Decompress(compressedData, 0U, (uint)compressedSize, decompressedData);
+			DwgLZ77AC21Decompressor.Decompress(compressedData, 0U, (uint)compressedSize, decompressedData);
 
 			return decompressedData;
 		}

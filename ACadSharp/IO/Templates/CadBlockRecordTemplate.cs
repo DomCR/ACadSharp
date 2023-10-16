@@ -24,6 +24,8 @@ namespace ACadSharp.IO.Templates
 
 		public string LayerName { get; set; }
 
+		public CadBlockRecordTemplate() : base(new BlockRecord()) { }
+
 		public CadBlockRecordTemplate(BlockRecord block) : base(block) { }
 
 		public override bool AddHandle(int dxfcode, ulong handle)

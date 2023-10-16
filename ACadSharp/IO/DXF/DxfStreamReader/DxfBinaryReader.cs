@@ -7,6 +7,8 @@ namespace ACadSharp.IO.DXF
 {
 	internal class DxfBinaryReader : DxfReaderBase, IDxfStreamReader
 	{
+		public const string Sentinel = "AutoCAD Binary DXF";
+
 		public override int Position { get { return (int)this._baseStream.Position; } }
 
 		protected override Stream _baseStream { get { return this._stream.BaseStream; } }
@@ -44,7 +46,8 @@ namespace ACadSharp.IO.DXF
 				b = this._stream.ReadByte();
 			}
 
-			return this._encoding.GetString(bytes.ToArray(), 0, bytes.Count);
+			this.ValueRaw = this._encoding.GetString(bytes.ToArray(), 0, bytes.Count);
+			return this.ValueRaw;
 		}
 
 		protected override DxfCode readCode()

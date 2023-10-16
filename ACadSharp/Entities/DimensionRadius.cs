@@ -20,6 +20,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityDimension;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.RadialDimension;
+
 		/// <summary>
 		/// Definition point for diameter, radius, and angular dimensions(in WCS)
 		/// </summary>
@@ -31,5 +34,7 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(40)]
 		public double LeaderLength { get; set; }
+
+		public DimensionRadius() : base(DimensionType.Radius) { }
 	}
 }

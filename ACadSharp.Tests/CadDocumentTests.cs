@@ -170,7 +170,17 @@ namespace ACadSharp.Tests
 			Assert.Null(l.LineType.Document);
 		}
 
-		[Fact(Skip = "Implementation in branch : table-operations")]
+		[Fact]
+		public void Get0HandleObject()
+		{
+			CadDocument doc = new CadDocument();
+
+			Assert.Null(doc.GetCadObject(0));
+			Assert.False(doc.TryGetCadObject(0, out CadObject cadObject));
+			Assert.Null(cadObject);
+		}
+
+		[Fact]
 		public void RemoveLayer()
 		{
 			string layerName = "custom_layer";
@@ -189,7 +199,7 @@ namespace ACadSharp.Tests
 			Assert.Equal(doc.Layers[Layer.DefaultName], line.Layer);
 		}
 
-		[Fact(Skip = "Implementation in branch : table-operations")]
+		[Fact]
 		public void RemoveLineType()
 		{
 			string ltypeName = "custom_ltype";
@@ -205,7 +215,7 @@ namespace ACadSharp.Tests
 			Assert.False(doc.Layers.Contains(ltypeName));
 			Assert.Null(ltype.Document);
 			Assert.True(ltype.Handle == 0);
-			Assert.Equal(doc.LineTypes[LineType.ByBlockName], line.LineType);
+			Assert.Equal(doc.LineTypes[LineType.ByLayerName], line.LineType);
 		}
 
 		[Fact]

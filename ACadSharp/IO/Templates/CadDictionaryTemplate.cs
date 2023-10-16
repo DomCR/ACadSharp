@@ -7,6 +7,8 @@ namespace ACadSharp.IO.Templates
 	{
 		public Dictionary<string, ulong?> Entries { get; set; } = new Dictionary<string, ulong?>();
 
+		public CadDictionaryTemplate() : base(new CadDictionary()) { }
+
 		public CadDictionaryTemplate(CadDictionary dictionary) : base(dictionary) { }
 
 		public override void Build(CadDocumentBuilder builder)
