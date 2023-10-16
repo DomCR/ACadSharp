@@ -33,11 +33,11 @@ namespace ACadSharp {
 		/// <summary>
 		/// Override <see cref="P:MultiLeaderAnnotContext.LeaderLine.ArrowSize" /> property (16 = arrow size)
 		/// </summary>
-		ArrowSize = 16,
+		ArrowheadSize = 16,
 
 		/// <summary>
 		/// Override <see cref="P:MultiLeaderAnnotContext.LeaderLine.ArrowSymbol" /> property 32 = arrow symbol(handle)
 		/// </summary>
-		ArrowSymbol = 32,
+		Arrowhead = 32,
 	}
 }

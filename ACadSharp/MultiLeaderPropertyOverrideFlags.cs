@@ -11,7 +11,7 @@ namespace ACadSharp {
 		None = 0,
 
 		/// <summary>
-		/// 
+		/// PathType property / 1
 		/// </summary>
 		PathType = 0x1,
 
@@ -21,7 +21,7 @@ namespace ACadSharp {
 		LineColor = 0x2,
 
 		/// <summary>
-		/// LeaderLineType property	/1 << 2
+		/// LeaderLineType property	/ 1 << 2
 		/// </summary>
 		LeaderLineType = 0x4,
 
@@ -36,7 +36,7 @@ namespace ACadSharp {
 		EnableLanding = 0x10,
 
 		/// <summary>
-		/// / 1 << 5
+		/// LandingGap property / 1 << 5
 		/// </summary>
 		LandingGap = 0x20,
 

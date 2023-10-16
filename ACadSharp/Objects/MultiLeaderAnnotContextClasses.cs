@@ -182,12 +182,12 @@ namespace ACadSharp.Objects
 			/// <summary>
 			/// BD 40 Arrow size
 			/// </summary>
-			public double ArrowSize { get; set; }
+			public double ArrowheadSize { get; set; }
 
 			/// <summary>
 			/// H 341 Arrow symbol handle (hard pointer)
 			/// </summary>
-			public object ArrowSymbol { get; set; }
+			public BlockRecord Arrowhead { get; set; }
 
 			/// <summary>
 			/// BL 93 Override flags

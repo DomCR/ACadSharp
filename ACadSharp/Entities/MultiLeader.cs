@@ -219,10 +219,10 @@ namespace ACadSharp.Entities {
 		#region Block Content Properties
 
 		/// <summary>
-		/// Block Content ID (optional) Type = Block?
+		/// Block Content ID (optional) Type = BlockRecord
 		/// </summary>
 		[DxfCodeValue(344)]
-		public object BlockContent { get; set; }
+		public BlockRecord BlockContent { get; set; }
 
 		/// <summary>
 		/// Block Content Color

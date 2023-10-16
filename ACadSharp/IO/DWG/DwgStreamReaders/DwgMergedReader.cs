@@ -178,7 +178,14 @@ namespace ACadSharp.IO.DWG
 			if ((id & 2) == 2)
 				bookName = ReadVariableText();
 
-			return new Color(colorIndex);
+			byte b = (byte)(rgb & 0xFF);
+			byte g = (byte)((rgb >> 8) & 0xFF);
+			byte r = (byte)((rgb >> 16) & 0xFF);
+			byte a = (byte)((rgb >> 24) & 0xFF);
+
+			Color c = new Color(new byte[] { r, g, b });
+
+			return c;
 		}
 
 		public Color ReadEnColor(out Transparency transparency, out bool flag)

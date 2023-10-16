@@ -263,7 +263,7 @@ namespace ACadSharp.Objects
 		/// H	341	AcDbBlockTableRecord handle (soft pointer)
 		/// </summary>
 		[DxfCodeValue(341)]
-		public BlockRecord ContentsBlock { get; set; }
+		public BlockRecord BlockContent { get; set; }
 
 		//3BD		14		Normal vector
 		//3BD		15		Location
@@ -272,7 +272,7 @@ namespace ACadSharp.Objects
 		/// 3BD	16	Scale vector
 		/// </summary>
 		[DxfCodeValue(16)]
-		public XYZ BlockScaleVector { get; set; }
+		public XYZ BlockContentScale { get; set; }
 
 		//BD		46		Rotation (radians)
 
@@ -280,7 +280,7 @@ namespace ACadSharp.Objects
 		/// CMC	93	Block color
 		/// </summary>
 		[DxfCodeValue(93)]
-		public Color BlockColor { get; set; }
+		public Color BlockContentColor { get; set; }
 
 		//BD (16)	47		16 doubles containg the complete transformation matrix. Order of transformation is:
 		//	- Rotation,

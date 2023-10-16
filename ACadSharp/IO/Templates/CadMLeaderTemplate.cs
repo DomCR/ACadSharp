@@ -61,7 +61,7 @@ namespace ACadSharp.IO.Templates
 			}
 			if (builder.TryGetCadObject(this.AnnotContextBlockRecordHandle, out BlockRecord annotContextBlockRecord))
 			{
-				annotContext.ContentsBlock = annotContextBlockRecord;
+				annotContext.BlockContent = annotContextBlockRecord;
 			}
 
 			if (builder.TryGetCadObject(this.LeaderStyleHandle, out MultiLeaderStyle leaderStyle))
@@ -105,9 +105,9 @@ namespace ACadSharp.IO.Templates
 				{
 					leaderLine.LineType = leaderLinelineType;
 				}
-				if (builder.TryGetCadObject(leaderLineSubTemplate.ArrowSymbolHandle, out CadObject arrowSymbol))
+				if (builder.TryGetCadObject(leaderLineSubTemplate.ArrowSymbolHandle, out BlockRecord arrowhead))
 				{
-					leaderLine.ArrowSymbol = arrowSymbol;
+					leaderLine.Arrowhead = arrowhead;
 				}
 			}
 		}

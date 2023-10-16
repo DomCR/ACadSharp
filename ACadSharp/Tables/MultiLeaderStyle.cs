@@ -6,7 +6,7 @@ using CSMath;
 namespace ACadSharp.Tables
 {
 	/// <summary>
-	/// Represents a <see cref="MultiLeaderStyle"/> entity.
+	/// Represents a <see cref="MultiLeaderStyle"/> table entry.
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.EntityMLeaderStyle"/> <br/>
@@ -197,7 +197,7 @@ namespace ACadSharp.Tables
 		/// Block Content ID
 		/// </summary>
 		[DxfCodeValue(343)]
-		public object BlockContent { get; set; }
+		public BlockRecord BlockContent { get; set; }
 
 		/// <summary>
 		/// Block Content Color
@@ -265,25 +265,31 @@ namespace ACadSharp.Tables
 
 		/// <summary>
 		/// Text attachment direction for MText contents
+		/// </summary>
+		/// <value>
 		/// 	0 = Horizontal
 		/// 	1 = Vertical
-		/// </summary>
+		/// </value>
 		[DxfCodeValue(271)]
 		public TextAttachmentDirectionType TextAttachmentDirection { get; set; }
 
 		/// <summary>
 		/// Bottom text attachment direction
+		/// </summary>
+		/// <value>
 		/// 	9 = Center
 		/// 	10 = Underline and Center
-		/// </summary>
+		/// </value>
 		[DxfCodeValue(272)]
 		public TextAttachmentType TextBottomAttachment { get; set; }
 
 		/// <summary>
 		/// 	Top text attachment direction
+		/// </summary>
+		/// <value>
 		/// 	9 = Center
 		/// 	10 = Underline and Center
-		/// </summary>
+		/// </value>
 		[DxfCodeValue(273)]
 		public TextAttachmentType TextTopAttachment { get; set; }
 
