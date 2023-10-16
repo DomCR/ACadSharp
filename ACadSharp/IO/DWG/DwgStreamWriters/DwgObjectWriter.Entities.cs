@@ -12,6 +12,8 @@ namespace ACadSharp.IO.DWG
 		private void writeEntity(Entity entity)
 		{
 			bool registerEntity = true;
+			List<Entity> children = new List<Entity>();
+			Seqend seqend = null;
 
 			//Ignored Entities
 			switch (entity)
@@ -90,12 +92,19 @@ namespace ACadSharp.IO.DWG
 					this.writePoint(p);
 					break;
 				case PolyfaceMesh faceMesh:
-					registerEntity = false;
 					this.writePolyfaceMesh(faceMesh);
+
+					children.AddRange(faceMesh.Vertices);
+					children.AddRange(faceMesh.Faces);
+
+					seqend = faceMesh.Vertices.Seqend;
 					break;
 				case Polyline3D pline3d:
-					registerEntity = false;
 					this.writePolyline3D(pline3d);
+
+					children.AddRange(pline3d.Vertices);
+
+					seqend = pline3d.Vertices.Seqend;
 					break;
 				case Ray ray:
 					this.writeRay(ray);
@@ -137,8 +146,9 @@ namespace ACadSharp.IO.DWG
 					throw new NotImplementedException($"Entity not implemented : {entity.GetType().FullName}");
 			}
 
-			if (registerEntity)
-				this.registerObject(entity);
+			this.registerObject(entity);
+
+			this.writeChildEntities(children, seqend);
 		}
 
 		private void writeArc(Arc arc)
@@ -1108,62 +1118,6 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//H SEQEND(hard owner)
 			this._writer.HandleReference(DwgReferenceType.SoftPointer, fm.Vertices.Seqend);
-
-			this.registerObject(fm);
-
-			this.writePolyfaceMeshEntities(fm);
-		}
-
-		[Obsolete("Use writeChildEntities instead")]
-		private void writePolyfaceMeshEntities(PolyfaceMesh fm)
-		{
-			Entity prevHolder = this._prev;
-			Entity nextHolder = this._next;
-
-			this._prev = null;
-			if (fm.Vertices.Any())
-			{
-				Vertex currVertex = fm.Vertices.First();
-				for (int i = 1; i < fm.Vertices.Count; i++)
-				{
-					Vertex nextVertex = (Vertex)(this._next = fm.Vertices[i]);
-
-					// To avoid issues is better to enforce the flags
-					currVertex.Flags = VertexFlags.PolygonMesh3D | VertexFlags.PolyfaceMeshVertex;
-					this.writeEntity(currVertex);
-
-					this._prev = currVertex;
-					currVertex = nextVertex;
-				}
-
-				// Get the next entity for the last vertex, the first Face
-				this._next = fm.Faces.FirstOrDefault();
-
-				// To avoid issues is better to enforce the flags
-				currVertex.Flags = VertexFlags.PolygonMesh3D | VertexFlags.PolyfaceMeshVertex;
-				this.writeEntity(currVertex);
-
-				this._prev = currVertex;
-			}
-
-			if (fm.Faces.Any())
-			{
-				VertexFaceRecord currFace = fm.Faces.First();
-				for (int j = 1; j < fm.Faces.Count; j++)
-				{
-					VertexFaceRecord nextFace = (VertexFaceRecord)(this._next = fm.Faces[j]);
-					this.writeEntity(currFace);
-					this._prev = currFace;
-					currFace = nextFace;
-				}
-				this._next = null;
-				this.writeEntity(currFace);
-			}
-
-			this.writeSeqend(fm.Vertices.Seqend);
-
-			this._prev = prevHolder;
-			this._next = nextHolder;
 		}
 
 		private void writePolyline3D(Polyline3D pline)
@@ -1203,10 +1157,6 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//H SEQEND(hard owner)
 			this._writer.HandleReference(DwgReferenceType.HardOwnership, pline.Vertices.Seqend);
-
-			this.writeChildEntities(pline.Vertices);
-
-			this.writeSeqend(pline.Vertices.Seqend);
 		}
 
 		private void writeSeqend(Seqend seqend)
@@ -1857,7 +1807,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.Write3BitDouble(xline.Direction);
 		}
 
-		private void writeChildEntities(IEnumerable<Entity> entities)
+		private void writeChildEntities(IEnumerable<Entity> entities, Seqend seqend)
 		{
 			if (!entities.Any())
 				return;
@@ -1881,6 +1831,11 @@ namespace ACadSharp.IO.DWG
 
 			this._prev = prevHolder;
 			this._next = nextHolder;
+
+			if (seqend != null)
+			{
+				this.writeSeqend(seqend);
+			}
 		}
 	}
 }
