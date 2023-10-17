@@ -124,7 +124,7 @@ namespace ACadSharp.Tests.IO
 				writer.Write();
 			}
 
-			if (true)
+			if (check)
 				this.checkDwgDocumentInAutocad(Path.GetFullPath(file));
 		}
 

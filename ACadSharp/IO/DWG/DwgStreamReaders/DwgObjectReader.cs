@@ -3081,8 +3081,9 @@ namespace ACadSharp.IO.DWG
 			//Color CMC 62
 			layer.Color = this._mergedReaders.ReadCmColor();
 
-			//Handle refs H Layer control (soft pointer)
+			//TODO: This is not the Layer control handle
 			template.LayerControlHandle = this.handleReference();
+			//Handle refs H Layer control (soft pointer)
 			//[Reactors(soft pointer)]
 			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)
