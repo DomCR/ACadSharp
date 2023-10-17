@@ -185,11 +185,18 @@ namespace ACadSharp.IO.DWG
 			this.writeCommonAttData(att);
 		}
 
-		private void writeAttDefinition(AttributeDefinition att)
+		private void writeAttDefinition(AttributeDefinition attdef)
 		{
-			this.writeCommonAttData(att);
+			this.writeCommonAttData(attdef);
 
-			throw new NotImplementedException();
+			//R2010+:
+			if (this.R2010Plus)
+				//Version RC ?		Repeated??
+				this._writer.WriteByte(attdef.Version);
+
+			//Common:
+			//Prompt TV 3
+			this._writer.WriteVariableText(attdef.Prompt);
 		}
 
 		private void writeCommonAttData(AttributeBase att)
@@ -208,7 +215,7 @@ namespace ACadSharp.IO.DWG
 			{
 				this._writer.WriteByte((byte)att.AttributeType);
 
-				if(att.AttributeType == AttributeType.MultiLine || att.AttributeType == AttributeType.ConstantMultiLine)
+				if (att.AttributeType == AttributeType.MultiLine || att.AttributeType == AttributeType.ConstantMultiLine)
 				{
 					throw new NotImplementedException("Multiple line Attribute not implemented");
 				}
