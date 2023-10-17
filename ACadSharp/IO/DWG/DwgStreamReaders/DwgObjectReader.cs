@@ -1193,8 +1193,10 @@ namespace ACadSharp.IO.DWG
 		{
 			//R2010+:
 			if (this.R2010Plus)
+			{
 				//Version RC ?
 				att.Version = this._objectReader.ReadByte();
+			}
 
 			//R2018+:
 			if (this.R2018Plus)
@@ -1204,27 +1206,12 @@ namespace ACadSharp.IO.DWG
 
 			switch (att.AttributeType)
 			{
-				case AttributeType.SingleLine:
-					//Common:
-					//Tag TV 2
-					att.Tag = this._textReader.ReadVariableText();
-					//Field length BS 73 unused
-					short length = this._objectReader.ReadBitShort();
-					//Flags RC 70 NOT bit-pair - coded.
-					att.Flags = (AttributeFlags)this._objectReader.ReadByte();
-					//R2007 +:
-					if (this.R2007Plus)
-						//Lock position flag B 280
-						att.IsReallyLocked = this._objectReader.ReadBit();
-
-					break;
 				case AttributeType.MultiLine:
 				case AttributeType.ConstantMultiLine:
 					//Attribute type is multi line
 					//MTEXT fields … Here all fields of an embedded MTEXT object
 					//are written, starting from the Entmode
 					//(entity mode). The owner handle can be 0.
-
 					short dataSize = this._objectReader.ReadBitShort();
 					if (dataSize > 0)
 					{
@@ -1235,13 +1222,21 @@ namespace ACadSharp.IO.DWG
 																//Unknown BS 72? Value 0.
 						this._objectReader.ReadBitShort();
 					}
-					att.Tag = this._mergedReaders.ReadVariableText();
-					length = this._mergedReaders.ReadBitShort();
-					att.Flags = (AttributeFlags)this._mergedReaders.ReadByte();
-					att.IsReallyLocked = this._mergedReaders.ReadBit();
 					break;
-				default:
-					break;
+			}
+
+			//Common:
+			//Tag TV 2
+			att.Tag = this._textReader.ReadVariableText();
+			//Field length BS 73 unused
+			short length = this._objectReader.ReadBitShort();
+			//Flags RC 70 NOT bit-pair - coded.
+			att.Flags = (AttributeFlags)this._objectReader.ReadByte();
+			//R2007 +:
+			if (this.R2007Plus)
+			{
+				//Lock position flag B 280
+				att.IsReallyLocked = this._objectReader.ReadBit();
 			}
 		}
 

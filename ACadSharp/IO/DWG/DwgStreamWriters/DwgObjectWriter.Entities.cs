@@ -17,6 +17,7 @@ namespace ACadSharp.IO.DWG
 			//Ignored Entities
 			switch (entity)
 			{
+				case AttributeEntity:
 				case AttributeDefinition:
 				case AttributeBase:
 				case MText:
@@ -124,7 +125,20 @@ namespace ACadSharp.IO.DWG
 					this.writeSpline(spline);
 					break;
 				case TextEntity text:
-					this.writeTextEntity(text);
+					switch (text)
+					{
+						case AttributeEntity att:
+							this.writeAttribute(att);
+							break;
+						case AttributeDefinition attdef:
+							this.writeAttDefinition(attdef);
+							break;
+						case TextEntity textEntity:
+							this.writeTextEntity(textEntity);
+							break;
+						default:
+							throw new NotImplementedException($"Entity not implemented : {entity.GetType().FullName}");
+					}
 					break;
 				case Vertex vertex:
 					switch (vertex)
@@ -150,7 +164,6 @@ namespace ACadSharp.IO.DWG
 					this.writeXLine(xline);
 					break;
 				default:
-					this.notify($"Entity not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					throw new NotImplementedException($"Entity not implemented : {entity.GetType().FullName}");
 			}
 
@@ -165,6 +178,56 @@ namespace ACadSharp.IO.DWG
 
 			this._writer.WriteBitDouble(arc.StartAngle);
 			this._writer.WriteBitDouble(arc.EndAngle);
+		}
+
+		private void writeAttribute(AttributeEntity att)
+		{
+			this.writeCommonAttData(att);
+		}
+
+		private void writeAttDefinition(AttributeDefinition att)
+		{
+			this.writeCommonAttData(att);
+
+			throw new NotImplementedException();
+		}
+
+		private void writeCommonAttData(AttributeBase att)
+		{
+			this.writeTextEntity(att);
+
+			//R2010+:
+			if (this.R2010Plus)
+			{
+				//Version RC ?
+				this._writer.WriteByte(att.Version);
+			}
+
+			//R2018+:
+			if (this.R2018Plus)
+			{
+				this._writer.WriteByte((byte)att.AttributeType);
+
+				if(att.AttributeType == AttributeType.MultiLine || att.AttributeType == AttributeType.ConstantMultiLine)
+				{
+					throw new NotImplementedException("Multiple line Attribute not implemented");
+				}
+			}
+
+			//Common:
+			//Tag TV 2
+			this._writer.WriteVariableText(att.Tag);
+			//Field length BS 73 unused
+			this._writer.WriteBitShort(0);
+			//Flags RC 70 NOT bit-pair - coded.
+			this._writer.WriteByte((byte)att.Flags);
+
+			//R2007 +:
+			if (this.R2007Plus)
+			{
+				//Lock position flag B 280
+				this._writer.WriteBit(att.IsReallyLocked);
+			}
 		}
 
 		private void writeCircle(Circle circle)
