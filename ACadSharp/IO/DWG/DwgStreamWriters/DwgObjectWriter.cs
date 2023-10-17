@@ -416,8 +416,9 @@ namespace ACadSharp.IO.DWG
 			//Color CMC 62
 			this._writer.WriteCmColor(layer.Color);
 
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
+
 			//Handle refs H Layer control (soft pointer)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.Layers);
 			//[Reactors(soft pointer)]
 			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)

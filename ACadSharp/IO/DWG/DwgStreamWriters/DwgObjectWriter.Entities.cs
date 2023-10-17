@@ -11,10 +11,15 @@ namespace ACadSharp.IO.DWG
 	{
 		private void writeEntity(Entity entity)
 		{
+			List<Entity> children = new List<Entity>();
+			Seqend seqend = null;
+
 			//Ignored Entities
 			switch (entity)
 			{
-				case Insert:
+				case AttributeEntity:
+				case AttributeDefinition:
+				case AttributeBase:
 				case MText:
 				//Unlisted
 				case Wipeout:
@@ -63,6 +68,13 @@ namespace ACadSharp.IO.DWG
 				case Ellipse ellipse:
 					this.writeEllipse(ellipse);
 					break;
+				case Insert insert:
+					this.writeInsert(insert);
+
+					children.AddRange(insert.Attributes);
+
+					seqend = insert.Attributes.Seqend;
+					break;
 				case Face3D face3D:
 					this.writeFace3D(face3D);
 					break;
@@ -84,11 +96,24 @@ namespace ACadSharp.IO.DWG
 				case Point p:
 					this.writePoint(p);
 					break;
-				case PolyfaceMesh faceMesh:
-					this.writePolyfaceMesh(faceMesh);
-					break;
-				case Polyline3D pline3d:
-					this.writePolyline3D(pline3d);
+				case Polyline pline:
+					switch (pline)
+					{
+						case PolyfaceMesh faceMesh:
+							this.writePolyfaceMesh(faceMesh);
+							children.AddRange(faceMesh.Faces);
+							break;
+						case Polyline2D pline2d:
+							this.writePolyline2D(pline2d);
+							break;
+						case Polyline3D pline3d:
+							this.writePolyline3D(pline3d);
+							break;
+						default:
+							throw new NotImplementedException($"Polyline not implemented : {entity.GetType().FullName}");
+					}
+					children.AddRange(pline.Vertices);
+					seqend = pline.Vertices.Seqend;
 					break;
 				case Ray ray:
 					this.writeRay(ray);
@@ -100,11 +125,27 @@ namespace ACadSharp.IO.DWG
 					this.writeSpline(spline);
 					break;
 				case TextEntity text:
-					this.writeTextEntity(text);
+					switch (text)
+					{
+						case AttributeEntity att:
+							this.writeAttribute(att);
+							break;
+						case AttributeDefinition attdef:
+							this.writeAttDefinition(attdef);
+							break;
+						case TextEntity textEntity:
+							this.writeTextEntity(textEntity);
+							break;
+						default:
+							throw new NotImplementedException($"Entity not implemented : {entity.GetType().FullName}");
+					}
 					break;
 				case Vertex vertex:
 					switch (vertex)
 					{
+						case Vertex2D vertex2D:
+							this.writeVertex2D(vertex2D);
+							break;
 						case VertexFaceRecord faceRecord:
 							this.writeFaceRecord(faceRecord);
 							break;
@@ -123,23 +164,77 @@ namespace ACadSharp.IO.DWG
 					this.writeXLine(xline);
 					break;
 				default:
-					this.notify($"Entity not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					throw new NotImplementedException($"Entity not implemented : {entity.GetType().FullName}");
 			}
 
 			this.registerObject(entity);
+
+			this.writeChildEntities(children, seqend);
 		}
 
 		private void writeArc(Arc arc)
 		{
-			//this.writeCircle(arc);
-			this._writer.Write3BitDouble(arc.Center);
-			this._writer.WriteBitDouble(arc.Radius);
-			this._writer.WriteBitThickness(arc.Thickness);
-			this._writer.WriteBitExtrusion(arc.Normal);
+			this.writeCircle(arc);
 
 			this._writer.WriteBitDouble(arc.StartAngle);
 			this._writer.WriteBitDouble(arc.EndAngle);
+		}
+
+		private void writeAttribute(AttributeEntity att)
+		{
+			this.writeCommonAttData(att);
+		}
+
+		private void writeAttDefinition(AttributeDefinition attdef)
+		{
+			this.writeCommonAttData(attdef);
+
+			//R2010+:
+			if (this.R2010Plus)
+				//Version RC ?		Repeated??
+				this._writer.WriteByte(attdef.Version);
+
+			//Common:
+			//Prompt TV 3
+			this._writer.WriteVariableText(attdef.Prompt);
+		}
+
+		private void writeCommonAttData(AttributeBase att)
+		{
+			this.writeTextEntity(att);
+
+			//R2010+:
+			if (this.R2010Plus)
+			{
+				//Version RC ?
+				this._writer.WriteByte(att.Version);
+			}
+
+			//R2018+:
+			if (this.R2018Plus)
+			{
+				this._writer.WriteByte((byte)att.AttributeType);
+
+				if (att.AttributeType == AttributeType.MultiLine || att.AttributeType == AttributeType.ConstantMultiLine)
+				{
+					throw new NotImplementedException("Multiple line Attribute not implemented");
+				}
+			}
+
+			//Common:
+			//Tag TV 2
+			this._writer.WriteVariableText(att.Tag);
+			//Field length BS 73 unused
+			this._writer.WriteBitShort(0);
+			//Flags RC 70 NOT bit-pair - coded.
+			this._writer.WriteByte((byte)att.Flags);
+
+			//R2007 +:
+			if (this.R2007Plus)
+			{
+				//Lock position flag B 280
+				this._writer.WriteBit(att.IsReallyLocked);
+			}
 		}
 
 		private void writeCircle(Circle circle)
@@ -315,6 +410,114 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(ellipse.RadiusRatio);
 			this._writer.WriteBitDouble(ellipse.StartParameter);
 			this._writer.WriteBitDouble(ellipse.EndParameter);
+		}
+
+		private void writeInsert(Insert insert)
+		{
+			//Ins pt 3BD 10
+			this._writer.Write3BitDouble(insert.InsertPoint);
+
+			//R13-R14 Only:
+			if (this.R13_14Only)
+			{
+				//X Scale BD 41
+				this._writer.WriteBitDouble(insert.XScale);
+				//Y Scale BD 42
+				this._writer.WriteBitDouble(insert.YScale);
+				//Z Scale BD 43
+				this._writer.WriteBitDouble(insert.ZScale);
+			}
+
+			//R2000 + Only:
+			if (this.R2000Plus)
+			{
+				//Data flags BB
+				//Scale Data Varies with Data flags:
+				if (insert.XScale == 1.0 && insert.YScale == 1.0 && insert.ZScale == 1.0)
+				{
+					//11 - scale is (1.0, 1.0, 1.0), no data stored.
+					this._writer.Write2Bits(3);
+				}
+				else if (insert.XScale == insert.YScale && insert.XScale == insert.ZScale)
+				{
+					//10 – 41 value stored as a RD, and 42 & 43 values are not stored, assumed equal to 41 value.
+					this._writer.Write2Bits(2);
+					this._writer.WriteRawDouble(insert.XScale);
+				}
+				else if (insert.XScale == 1.0)
+				{
+					//01 – 41 value is 1.0, 2 DD’s are present, each using 1.0 as the default value, representing the 42 and 43 values.
+					this._writer.Write2Bits(1);
+					this._writer.WriteBitDoubleWithDefault(insert.YScale, 1.0);
+					this._writer.WriteBitDoubleWithDefault(insert.ZScale, 1.0);
+				}
+				else
+				{
+					//00 – 41 value stored as a RD, followed by a 42 value stored as DD (use 41 for default value), and a 43 value stored as a DD(use 41 value for default value).
+					this._writer.Write2Bits(0);
+					this._writer.WriteRawDouble(insert.XScale);
+					this._writer.WriteBitDoubleWithDefault(insert.YScale, insert.XScale);
+					this._writer.WriteBitDoubleWithDefault(insert.ZScale, insert.XScale);
+				}
+			}
+
+			//Common:
+			//Rotation BD 50
+			this._writer.WriteBitDouble(insert.Rotation);
+			//Extrusion 3BD 210
+			this._writer.Write3BitDouble(insert.Normal);
+			//Has ATTRIBs B 66 Single bit; 1 if ATTRIBs follow.
+			this._writer.WriteBit(insert.HasAttributes);
+
+			//R2004+:
+			if (this.R2004Plus && insert.HasAttributes)
+			{
+				//Owned Object Count BL Number of objects owned by this object.
+				this._writer.WriteBitLong(insert.Attributes.Count);
+			}
+
+			if (insert.ObjectType == ObjectType.MINSERT)
+			{
+				//Common:
+				//Numcols BS 70
+				this._writer.WriteBitShort((short)insert.ColumnCount);
+				//Numrows BS 71
+				this._writer.WriteBitShort((short)insert.RowCount);
+				//Col spacing BD 44
+				this._writer.WriteBitDouble(insert.ColumnSpacing);
+				//Row spacing BD 45
+				this._writer.WriteBitDouble(insert.RowSpacing);
+			}
+
+			//Common:
+			//Common Entity Handle Data
+			//H 2 BLOCK HEADER(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, insert.Block);
+
+			if (!insert.HasAttributes)
+			{
+				return;
+			}
+
+			//R13 - R2000:
+			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)
+			{
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, insert.Attributes.First());
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, insert.Attributes.Last());
+			}
+			//R2004+:
+			else if (this.R2004Plus)
+			{
+				foreach (AttributeEntity att in insert.Attributes)
+				{
+					//H[ATTRIB(hard owner)] Repeats “Owned Object Count” times.
+					this._writer.HandleReference(DwgReferenceType.HardOwnership, att);
+				}
+			}
+
+			//Common:
+			//H[SEQEND(hard owner)] if 66 bit set
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, insert.Attributes.Seqend);
 		}
 
 		private void writeFace3D(Face3D face)
@@ -987,60 +1190,49 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//H SEQEND(hard owner)
 			this._writer.HandleReference(DwgReferenceType.SoftPointer, fm.Vertices.Seqend);
-
-			this.writePolyfaceMeshEntities(fm);
 		}
 
-		[Obsolete("Use writeChildEntities instead")]
-		private void writePolyfaceMeshEntities(PolyfaceMesh fm)
+		private void writePolyline2D(Polyline2D pline)
 		{
-			Entity prevHolder = this._prev;
-			Entity nextHolder = this._next;
+			//Flags BS 70
+			this._writer.WriteBitShort((short)pline.Flags);
+			//Curve type BS 75 Curve and smooth surface type.
+			this._writer.WriteBitShort((short)pline.SmoothSurface);
+			//Start width BD 40 Default start width
+			this._writer.WriteBitDouble(pline.StartWidth);
+			//End width BD 41 Default end width
+			this._writer.WriteBitDouble(pline.EndWidth);
+			//Thickness BT 39
+			this._writer.WriteBitThickness(pline.Thickness);
+			//Elevation BD 10 The 10-pt is (0,0,elev)
+			this._writer.WriteBitDouble(pline.Elevation);
+			//Extrusion BE 210
+			this._writer.WriteBitExtrusion(pline.Normal);
 
-			this._prev = null;
-			if (fm.Vertices.Any())
+			int count = pline.Vertices.Count;
+			//R2004+:
+			if (this.R2004Plus)
 			{
-				Vertex currVertex = fm.Vertices.First();
-				for (int i = 1; i < fm.Vertices.Count; i++)
+				//Owned Object Count BL Number of objects owned by this object.
+				this._writer.WriteBitLong(count);
+				for (int i = 0; i < count; i++)
 				{
-					Vertex nextVertex = (Vertex)(this._next = fm.Vertices[i]);
-
-					// To avoid issues is better to enforce the flags
-					currVertex.Flags = VertexFlags.PolygonMesh3D | VertexFlags.PolyfaceMeshVertex;
-					this.writeEntity(currVertex);
-
-					this._prev = currVertex;
-					currVertex = nextVertex;
+					this._writer.HandleReference(DwgReferenceType.HardOwnership, pline.Vertices[i]);
 				}
-
-				// Get the next entity for the last vertex, the first Face
-				this._next = fm.Faces.FirstOrDefault();
-
-				// To avoid issues is better to enforce the flags
-				currVertex.Flags = VertexFlags.PolygonMesh3D | VertexFlags.PolyfaceMeshVertex;
-				this.writeEntity(currVertex);
-
-				this._prev = currVertex;
 			}
 
-			if (fm.Faces.Any())
+			//R13-R2000:
+			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)
 			{
-				VertexFaceRecord currFace = fm.Faces.First();
-				for (int j = 1; j < fm.Faces.Count; j++)
-				{
-					VertexFaceRecord nextFace = (VertexFaceRecord)(this._next = fm.Faces[j]);
-					this.writeEntity(currFace);
-					this._prev = currFace;
-					currFace = nextFace;
-				}
-				this._next = null;
-				this.writeEntity(currFace);
+				//H first VERTEX (soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, pline.Vertices.FirstOrDefault());
+				//H last VERTEX (soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, pline.Vertices.LastOrDefault());
 			}
 
-			this.writeSeqend(fm.Vertices.Seqend);
-
-			this._prev = prevHolder;
-			this._next = nextHolder;
+			//Common:
+			//H SEQEND(hard owner)
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, pline.Vertices.Seqend);
 		}
 
 		private void writePolyline3D(Polyline3D pline)
@@ -1080,10 +1272,6 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//H SEQEND(hard owner)
 			this._writer.HandleReference(DwgReferenceType.HardOwnership, pline.Vertices.Seqend);
-
-			this.writeChildEntities(pline.Vertices);
-
-			this.writeSeqend(pline.Vertices.Seqend);
 		}
 
 		private void writeSeqend(Seqend seqend)
@@ -1526,6 +1714,44 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitShort(face.Index4);
 		}
 
+		private void writeVertex2D(Vertex2D vertex)
+		{
+			//Flags EC 70 NOT bit-pair-coded.
+			this._writer.WriteByte((byte)(vertex.Flags));
+
+			//Point 3BD 10 NOTE THAT THE Z SEEMS TO ALWAYS BE 0.0! The Z must be taken from the 2D POLYLINE elevation.
+			this._writer.WriteBitDouble(vertex.Location.X);
+			this._writer.WriteBitDouble(vertex.Location.Y);
+			this._writer.WriteBitDouble(0.0);
+
+			//Start width BD 40 If it's negative, use the abs val for start AND end widths (and note that no end width will be present).
+			//This is a compression trick for cases where the start and end widths are identical and non-0.
+			if (vertex.StartWidth != 0.0 && vertex.EndWidth == vertex.StartWidth)
+			{
+				this._writer.WriteBitDouble(0.0 - (double)vertex.StartWidth);
+			}
+			else
+			{
+				this._writer.WriteBitDouble(vertex.StartWidth);
+				//End width BD 41 Not present if the start width is < 0.0; see above.
+				this._writer.WriteBitDouble(vertex.EndWidth);
+			}
+
+			//Bulge BD 42
+			this._writer.WriteBitDouble(vertex.Bulge);
+
+			//R2010+:
+			if (this.R2010Plus)
+			{
+				//Vertex ID BL 91
+				this._writer.WriteBitLong(vertex.Id);
+			}
+
+			//Common:
+			//Tangent dir BD 50
+			this._writer.WriteBitDouble(vertex.CurveTangent);
+		}
+
 		private void writeVertex(Vertex vertex)
 		{
 			this.writeCommonEntityData(vertex);
@@ -1696,7 +1922,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.Write3BitDouble(xline.Direction);
 		}
 
-		private void writeChildEntities(IEnumerable<Entity> entities)
+		private void writeChildEntities(IEnumerable<Entity> entities, Seqend seqend)
 		{
 			if (!entities.Any())
 				return;
@@ -1720,6 +1946,11 @@ namespace ACadSharp.IO.DWG
 
 			this._prev = prevHolder;
 			this._next = nextHolder;
+
+			if (seqend != null)
+			{
+				this.writeSeqend(seqend);
+			}
 		}
 	}
 }
