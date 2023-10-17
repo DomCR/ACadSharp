@@ -20,11 +20,8 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableUcs;
 
-		/// <summary>
-		/// Elevation
-		/// </summary>
-		[DxfCodeValue(146)]
-		public double Elevation { get; set; }
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Ucs;
 
 		/// <summary>
 		/// Origin (in WCS)
@@ -45,17 +42,25 @@ namespace ACadSharp.Tables
 		public XYZ YAxis { get; set; } = XYZ.AxisY;
 
 		/// <summary>
+		/// Orthographic type
+		/// </summary>
+		[DxfCodeValue(71)]
+		public OrthographicType OrthographicType { get; set; }
+
+		/// <summary>
 		/// Always 0
 		/// </summary>
 		[DxfCodeValue(79)]
 		public OrthographicType OrthographicViewType { get; set; }
 
 		/// <summary>
-		/// Orthographic type
+		/// Elevation
 		/// </summary>
-		[DxfCodeValue(71)]
-		public OrthographicType OrthographicType { get; set; }
+		[DxfCodeValue(146)]
+		public double Elevation { get; set; }
 
-		public UCS() : base() { }
+		internal UCS() : base() { }
+
+		public UCS(string name) : base(name) { }
 	}
 }

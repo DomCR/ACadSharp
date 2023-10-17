@@ -4,6 +4,7 @@ using ACadSharp.Objects;
 using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace ACadSharp.Tables
 {
@@ -37,6 +38,9 @@ namespace ACadSharp.Tables
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableBlockRecord;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.BlockRecord;
 
 		/// <summary>
 		/// Block insertion units
@@ -78,7 +82,22 @@ namespace ACadSharp.Tables
 			set
 			{
 				this._layout = value;
+
+				if (value == null)
+					return;
+
 				this._layout.AssociatedBlock = this;
+			}
+		}
+
+		/// <summary>
+		/// Attribute definitions in this block
+		/// </summary>
+		public IEnumerable<AttributeDefinition> AttributeDefinitions
+		{
+			get
+			{
+				return this.Entities.OfType<AttributeDefinition>();
 			}
 		}
 
@@ -93,20 +112,26 @@ namespace ACadSharp.Tables
 			}
 		}
 
-		public CadObjectCollection<Viewport> Viewports { get; set; }
+		/// <summary>
+		/// Viewports attached to this block
+		/// </summary>
+		public CadObjectCollection<Viewport> Viewports { get; }
 
-		public CadObjectCollection<Entity> Entities { get; set; }
+		/// <summary>
+		/// Entities owned by this block
+		/// </summary>
+		/// <remarks>
+		/// Entities with another owner cannot be added to another block
+		/// </remarks>
+		public CadObjectCollection<Entity> Entities { get; }
 
 		public Block BlockEntity
 		{
 			get { return _blockEntity; }
-			set
+			internal set
 			{
-				ReferenceChangedEventArgs args = new ReferenceChangedEventArgs(value, this._blockEntity);
-
 				this._blockEntity = value;
 				this._blockEntity.Owner = this;
-				this.onReferenceChange(args);
 			}
 		}
 
@@ -115,11 +140,8 @@ namespace ACadSharp.Tables
 			get { return _blockEnd; }
 			internal set
 			{
-				ReferenceChangedEventArgs args = new ReferenceChangedEventArgs(value, this._blockEnd);
-
 				this._blockEnd = value;
 				this._blockEnd.Owner = this;
-				this.onReferenceChange(args);
 			}
 		}
 
@@ -129,7 +151,13 @@ namespace ACadSharp.Tables
 
 		private Layout _layout;
 
-		internal BlockRecord() : this(null) { }
+		internal BlockRecord() : base()
+		{
+			this.BlockEntity = new Block(this);
+			this.BlockEnd = new BlockEnd(this);
+			this.Entities = new CadObjectCollection<Entity>(this);
+			this.Viewports = new CadObjectCollection<Viewport>(this);
+		}
 
 		public BlockRecord(string name) : base(name)
 		{
@@ -139,24 +167,49 @@ namespace ACadSharp.Tables
 			this.Viewports = new CadObjectCollection<Viewport>(this);
 		}
 
-		protected override void createCopy(CadObject copy)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		/// <exception cref="System.NotImplementedException"></exception>
+		public SortEntitiesTable CreateSortEntitiesTable()
 		{
-			base.createCopy(copy);
+			throw new System.NotImplementedException();
+		}
 
-			BlockRecord bl = copy as BlockRecord;
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			BlockRecord clone = (BlockRecord)base.Clone();
 
-			bl.Units = this.Units;
-			bl.IsExplodable = this.IsExplodable;
-			bl.CanScale = this.CanScale;
-			bl.Preview = this.Preview;
-			//bl.Layout = this.Layout?.Clone();
-			bl.BlockEntity = (Block)this.BlockEntity.Clone();
-			bl.BlockEnd = (BlockEnd)this.BlockEnd.Clone();
+			clone.Layout = (Layout)(this.Layout?.Clone());
 
+			clone.Entities.Clear();
 			foreach (var item in this.Entities)
 			{
-				bl.Entities.Add((Entity)item.Clone());
+				clone.Entities.Add((Entity)item.Clone());
 			}
+
+			clone.BlockEntity = (Block)this.BlockEntity.Clone();
+			clone.BlockEntity.Owner = clone;
+			clone.BlockEnd = (BlockEnd)this.BlockEnd.Clone();
+			clone.BlockEnd.Owner = clone;
+
+			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			doc.RegisterCollection(this.Entities);
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.UnregisterCollection(this.Entities);
+
+			base.UnassignDocument();
 		}
 	}
 }

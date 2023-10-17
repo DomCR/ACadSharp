@@ -1,4 +1,4 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.Tables;
 using System.Collections.Generic;
 using ACadSharp.IO.DXF;
@@ -21,64 +21,49 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? SeqendHandle { get; set; }
 
-		public List<ulong> OwnedHandles { get; set; } = new List<ulong>();
+		public List<ulong> AttributesHandles { get; set; } = new List<ulong>();
+
+		public CadInsertTemplate() : base(new Insert()) { }
 
 		public CadInsertTemplate(Insert insert) : base(insert) { }
-
-		public override bool AddName(int dxfcode, string name)
-		{
-			bool value = base.AddName(dxfcode, name);
-			if (value)
-				return value;
-
-			switch (dxfcode)
-			{
-				case 2:
-					this.BlockName = name;
-					value = true;
-					break;
-				default:
-					break;
-			}
-
-			return value;
-		}
 
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
-            if (!(this.CadObject is Insert insert))
-                return;
+			if (!(this.CadObject is Insert insert))
+				return;
 
-			if (builder.TryGetCadObject(this.BlockHeaderHandle, out BlockRecord block))
+			BlockRecord block;
+			if (builder.TryGetCadObject(this.BlockHeaderHandle, out block))
+			{
+				insert.Block = block;
+			}
+			else if (!string.IsNullOrEmpty(this.BlockName) && builder.TryGetTableEntry(this.BlockName, out block))
 			{
 				insert.Block = block;
 			}
 
-			if (this.FirstAttributeHandle.HasValue)
-			{
-				var attributes = getEntitiesCollection<Entities.AttributeEntity>(builder, FirstAttributeHandle.Value, EndAttributeHandle.Value);
-				insert.Attributes.AddRange(attributes);
-			}
-			else
-			{
-				foreach (ulong handle in this.OwnedHandles)
-				{
-					var att = builder.GetCadObject<Entities.AttributeEntity>(handle);
-					insert.Attributes.Add(att);
-				}
-			}
-
-			if(builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
+			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
 			{
 				insert.Attributes.Seqend = seqend;
 			}
 
-            if (builder is DxfDocumentBuilder)
-            {
-                insert.Rotation *= MathUtils.DegToRad;
-            }
+			if (this.FirstAttributeHandle.HasValue)
+			{
+				var attributes = getEntitiesCollection<AttributeEntity>(builder, FirstAttributeHandle.Value, EndAttributeHandle.Value);
+				insert.Attributes.AddRange(attributes);
+			}
+			else
+			{
+				foreach (ulong handle in this.AttributesHandles)
+				{
+					if (builder.TryGetCadObject<AttributeEntity>(handle, out AttributeEntity att))
+					{
+						insert.Attributes.Add(att);
+					}
+				}
+			}
 		}
 	}
 }

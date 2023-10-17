@@ -270,7 +270,7 @@ namespace ACadSharp
 			new byte[] { 255, 255, 255 }
 		};
 
-		private const int MaxTrueColor = 1 << 24;
+		private const int _maxTrueColor = 1 << 24;
 
 		public static Color ByLayer
 		{
@@ -311,7 +311,13 @@ namespace ACadSharp
 		/// <summary>
 		/// True if the stored color is a true color.  False if the color is an indexed color.
 		/// </summary>
-		public bool IsTrueColor => _color >= (1 << 30);
+		public bool IsTrueColor
+		{
+			get
+			{
+				return _color > 256 || _color < 0;
+			}
+		}
 
 		/// <summary>
 		/// Represents the actual stored color.  Either a True Color or an indexed color.
@@ -358,7 +364,7 @@ namespace ACadSharp
 		/// <param name="trueColor">True color int 32.</param>
 		private Color(int trueColor)
 		{
-			if (trueColor < 0 || trueColor > MaxTrueColor)
+			if (trueColor < 0 || trueColor > _maxTrueColor)
 				throw new ArgumentOutOfRangeException(nameof(trueColor), "True color must be a 24 bit color.");
 
 			// Shift to set the 30th bit indicating a true color.

@@ -4,13 +4,28 @@ using System;
 namespace ACadSharp.Tables
 {
 	[DxfSubClass(DxfSubclassMarker.TableRecord, true)]
-	public abstract class TableEntry : CadObject, INamedCadObject, ICloneable
+	public abstract class TableEntry : CadObject, INamedCadObject
 	{
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.TableRecord;
+
 		/// <summary>
 		/// Specifies the name of the object
 		/// </summary>
 		[DxfCodeValue(2)]
-		public string Name { get; set; }
+		public string Name
+		{
+			get { return this._name; }
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+				{
+					// throw new System.ArgumentNullException(nameof(value), $"Table entry [{this.GetType().FullName}] must have a name");
+				}
+
+				this._name = value;
+			}
+		}
 
 		/// <summary>
 		/// Standard flags
@@ -18,37 +33,22 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(70)]
 		public StandardFlags Flags { get; set; }
 
+		private string _name;
+
 		internal TableEntry() { }
 
 		public TableEntry(string name)
 		{
+			if (string.IsNullOrEmpty(name))
+				throw new ArgumentNullException(nameof(name), $"{this.GetType().Name} must have a name.");
+
 			this.Name = name;
-		}
-
-		/// <inheritdoc/>
-		public object Clone()
-		{
-			var clone = Activator.CreateInstance(this.GetType(), this.Name);
-
-			this.createCopy(clone as CadObject);
-
-			return clone;
 		}
 
 		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{this.ObjectName}:{this.Name}";
-		}
-
-		protected override void createCopy(CadObject copy)
-		{
-			base.createCopy(copy);
-
-			TableEntry te = copy as TableEntry;
-
-			te.Name = this.Name;
-			te.Flags = this.Flags;
 		}
 	}
 }

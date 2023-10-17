@@ -16,6 +16,8 @@ namespace ACadSharp.Tests.IO
 
 		protected const string _samplesOutFolder = "../../../../samples/out";
 
+		public static string AcCoreConsolePath { get; }
+
 		public static TheoryData<string> DwgFilePaths { get; }
 
 		public static TheoryData<string> DxfAsciiFiles { get; }
@@ -23,8 +25,6 @@ namespace ACadSharp.Tests.IO
 		public static TheoryData<string> DxfBinaryFiles { get; }
 
 		public static TheoryData<ACadVersion> Versions { get; }
-
-		public static string AcCoreConsolePath { get; }
 
 		protected readonly DwgReaderConfiguration _dwgConfiguration = new DwgReaderConfiguration
 		{
@@ -78,7 +78,8 @@ namespace ACadSharp.Tests.IO
 				Directory.CreateDirectory(_samplesOutFolder);
 			}
 
-			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null)
+			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null
+				|| !TestVariables.AutocadConsoleCheck)
 			{
 				return;
 			}
@@ -124,12 +125,22 @@ namespace ACadSharp.Tests.IO
 
 		protected void onNotification(object sender, NotificationEventArgs e)
 		{
+			if(e.NotificationType == NotificationType.Error)
+			{
+				throw e.Exception;
+			}
+
 			_output.WriteLine(e.Message);
+			if (e.Exception != null)
+			{
+				_output.WriteLine(e.Exception.ToString());
+			}
 		}
 
 		protected void checkDxfDocumentInAutocad(string path)
 		{
-			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null)
+			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null
+				|| !TestVariables.AutocadConsoleCheck)
 				return;
 
 			System.Diagnostics.Process process = new System.Diagnostics.Process();
@@ -190,7 +201,8 @@ namespace ACadSharp.Tests.IO
 
 		protected void checkDwgDocumentInAutocad(string path)
 		{
-			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null)
+			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null
+				|| !TestVariables.AutocadConsoleCheck)
 				return;
 
 			System.Diagnostics.Process process = new System.Diagnostics.Process();

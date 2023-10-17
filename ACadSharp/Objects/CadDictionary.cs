@@ -4,7 +4,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ACadSharp.Objects
 {
@@ -19,8 +18,8 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.Dictionary)]
 	public class CadDictionary : CadObject, IObservableCollection<CadObject>
 	{
-		public event EventHandler<ReferenceChangedEventArgs> OnAdd;
-		public event EventHandler<ReferenceChangedEventArgs> OnRemove;
+		public event EventHandler<CollectionChangedEventArgs> OnAdd;
+		public event EventHandler<CollectionChangedEventArgs> OnRemove;
 
 		#region Root dictionary entries
 
@@ -97,6 +96,9 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectDictionary;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Dictionary;
+
 		/// <summary>
 		/// indicates that elements of the dictionary are to be treated as hard-owned.
 		/// </summary>
@@ -123,7 +125,7 @@ namespace ACadSharp.Objects
 
 		public CadObject this[string entry] { get { return this._entries[entry]; } }
 
-		private Dictionary<string, CadObject> _entries { get; } = new Dictionary<string, CadObject>();    //TODO: Transform into an objservable collection
+		private readonly Dictionary<string, CadObject> _entries = new Dictionary<string, CadObject>();    //TODO: Transform into an objservable collection
 
 		/// <summary>
 		/// Creates the root dictionary with the default entries
@@ -131,9 +133,11 @@ namespace ACadSharp.Objects
 		/// <returns></returns>
 		public static CadDictionary CreateRoot()
 		{
-			CadDictionary root = new CadDictionary();
-
-			root.Add(CadDictionary.AcadLayout, new CadDictionary());
+			//TODO: finish root dictionary implementation
+			CadDictionary root = new CadDictionary
+			{
+				{ AcadLayout, new CadDictionary() }
+			};
 
 			return root;
 		}
@@ -152,7 +156,7 @@ namespace ACadSharp.Objects
 			this._entries.Add(key, value);
 			value.Owner = this;
 
-			OnAdd?.Invoke(this, new ReferenceChangedEventArgs(value));
+			OnAdd?.Invoke(this, new CollectionChangedEventArgs(value));
 		}
 
 		/// <summary>
@@ -165,7 +169,7 @@ namespace ACadSharp.Objects
 			if (this._entries.Remove(key, out CadObject item))
 			{
 				item.Owner = null;
-				OnRemove?.Invoke(this, new ReferenceChangedEventArgs(item));
+				OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));
 				return item;
 			}
 

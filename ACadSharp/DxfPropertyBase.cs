@@ -153,16 +153,14 @@ namespace ACadSharp
 			{
 				this._property.SetValue(obj, Enum.ToObject(this._property.PropertyType, value));
 			}
+			else if (this._property.PropertyType.IsEquivalentTo(typeof(ushort)))
+			{
+				this._property.SetValue(obj, Convert.ToUInt16(value));
+			}
 			else
 			{
 				this._property.SetValue(obj, value);
 			}
-		}
-
-		public object GetValue<TCadObject>(TCadObject obj)
-			where TCadObject : CadObject
-		{
-			return this._property.GetValue(obj);
 		}
 
 		public object GetValue<TCadObject>(int code, TCadObject obj)

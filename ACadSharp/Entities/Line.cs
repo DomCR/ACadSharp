@@ -20,6 +20,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityLine;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Line;
+
 		/// <summary>
 		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
 		/// </summary>
@@ -48,17 +51,5 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Line() : base() { }
-
-		protected override void createCopy(CadObject copy)
-		{
-			base.createCopy(copy);
-
-			Line c = copy as Line;
-
-			c.Normal = this.Normal;
-			c.Thickness = this.Thickness;
-			c.StartPoint = this.StartPoint;
-			c.EndPoint = this.EndPoint;
-		}
 	}
 }

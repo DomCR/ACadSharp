@@ -20,6 +20,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityDimension;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Angular3PointDimension;
+
 		/// <summary>
 		/// Definition point for linear and angular dimensions (in WCS)
 		/// </summary>
@@ -37,5 +40,7 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(15, 25, 35)]
 		public XYZ AngleVertex { get; set; }
+
+		public DimensionAngular3Pt() : base(DimensionType.Angular3Point) { }
 	}
 }

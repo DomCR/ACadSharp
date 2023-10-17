@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using CSMath;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -28,6 +27,11 @@ namespace ACadSharp.Entities
 			/// </summary>
 			[DxfCodeValue(DxfReferenceType.Count, 97)]
 			public List<Entity> Entities { get; set; } = new List<Entity>();
+
+			public BoundaryPath Clone()
+			{
+				throw new System.NotImplementedException();
+			}
 		}
 	}
 }

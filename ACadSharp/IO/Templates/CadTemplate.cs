@@ -29,16 +29,19 @@ namespace ACadSharp.IO.Templates
 			this.CadObject = cadObject;
 		}
 
+		[Obsolete]
 		public virtual bool AddHandle(int dxfcode, ulong handle)
 		{
 			return false;
 		}
 
+		[Obsolete]
 		public virtual bool AddName(int dxfcode, string name)
 		{
 			return false;
 		}
 
+		[Obsolete]
 		public virtual bool CheckDxfCode(int dxfcode, object value)
 		{
 			//Will return true if the code is used by the template
@@ -55,7 +58,20 @@ namespace ACadSharp.IO.Templates
 			foreach (ulong handle in this.ReactorsHandles)
 			{
 				if (builder.TryGetCadObject(handle, out CadObject reactor))
-					this.CadObject.Reactors.Add(handle, reactor);
+				{
+					if (this.CadObject.Reactors.ContainsKey(handle))
+					{
+						builder.Notify($"Reactor with handle {handle} already exist in the object {this.CadObject.Handle}", NotificationType.Warning);
+					}
+					else
+					{
+						this.CadObject.Reactors.Add(handle, reactor);
+					}
+				}
+				else
+				{
+					builder.Notify($"Reactor with handle {handle} not found", NotificationType.Warning);
+				}
 			}
 
 			foreach (KeyValuePair<ulong, ExtendedData> item in this.EDataTemplate)

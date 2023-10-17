@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ACadSharp.Objects
+﻿namespace ACadSharp.Objects
 {
 	public class Material : CadObject
 	{
 		public override ObjectType ObjectType => ObjectType.INVALID;
+
+		public override string SubclassMarker { get; }
 
 		//1	Material name(string)
 

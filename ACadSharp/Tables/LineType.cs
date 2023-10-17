@@ -1,8 +1,7 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Types;
-using ACadSharp.IO.Templates;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Tables
 {
@@ -35,6 +34,9 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableLinetype;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Linetype;
+
 		/// <summary>
 		/// Descriptive text for linetype
 		/// </summary>
@@ -45,7 +47,13 @@ namespace ACadSharp.Tables
 		/// Total pattern length
 		/// </summary>
 		[DxfCodeValue(40)]
-		public double PatternLen { get; set; }
+		public double PatternLen
+		{
+			get
+			{
+				return this.Segments.Sum(s => Math.Abs(s.Length));
+			}
+		}
 
 		/// <summary>
 		/// Alignment code
@@ -81,6 +89,20 @@ namespace ACadSharp.Tables
 
 			segment.LineType = this;
 			this._segments.Add(segment);
+		}
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			LineType clone = new LineType(this.Name);
+
+			clone._segments.Clear();
+			foreach (var segment in this._segments)
+			{
+				clone.AddSegment(segment.Clone());
+			}
+
+			return clone;
 		}
 	}
 }

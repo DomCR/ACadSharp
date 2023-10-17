@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Collections.Generic;
@@ -24,6 +23,8 @@ namespace ACadSharp.IO.Templates
 		public List<ulong> InsertHandles { get; set; } = new List<ulong>();
 
 		public string LayerName { get; set; }
+
+		public CadBlockRecordTemplate() : base(new BlockRecord()) { }
 
 		public CadBlockRecordTemplate(BlockRecord block) : base(block) { }
 

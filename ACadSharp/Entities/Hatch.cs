@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Classes;
 using CSMath;
 using System.Collections.Generic;
 
@@ -21,6 +20,9 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityHatch;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Hatch;
 
 		/// <summary>
 		/// The current elevation of the object.
@@ -61,18 +63,18 @@ namespace ACadSharp.Entities
 		/// Hatch style
 		/// </summary>
 		[DxfCodeValue(75)]
-		public HatchStyleType HatchStyle { get; set; }
+		public HatchStyleType Style { get; set; }
 
 		/// <summary>
 		/// Hatch pattern type
 		/// </summary>
 		[DxfCodeValue(76)]
-		public HatchPatternType HatchPatternType { get; set; }
+		public HatchPatternType PatternType { get; set; }
 
 		/// <summary>
 		/// Hatch pattern angle (pattern fill only)
 		/// </summary>
-		[DxfCodeValue(52)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 52)]
 		public double PatternAngle { get { return Pattern.Angle; } set { Pattern.Angle = value; } }
 
 		/// <summary>
@@ -124,6 +126,24 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Count, 91)]
 		public List<BoundaryPath> Paths { get; set; } = new List<BoundaryPath>();
 
+		private HatchPattern _pattern = HatchPattern.Solid;
+
 		public Hatch() : base() { }
+
+		public override CadObject Clone()
+		{
+			Hatch clone = base.Clone() as Hatch;
+
+			clone.GradientColor = this.GradientColor?.Clone();
+			clone.Pattern = this.Pattern?.Clone();
+
+			clone.Paths.Clear();
+			foreach (BoundaryPath item in this.Paths)
+			{
+				clone.Paths.Add(item.Clone());
+			}
+
+			return clone;
+		}
 	}
 }

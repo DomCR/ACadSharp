@@ -19,6 +19,10 @@ namespace ACadSharp.Tests.IO.DXF
 		[MemberData(nameof(Versions))]
 		public void WriteEmptyAsciiTest(ACadVersion version)
 		{
+			if (version < ACadVersion.AC1015)
+				// Not implemented
+				return;
+
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 
@@ -46,6 +50,10 @@ namespace ACadSharp.Tests.IO.DXF
 		[MemberData(nameof(Versions))]
 		public void WriteEmptyBinaryTest(ACadVersion version)
 		{
+			if (version < ACadVersion.AC1015)
+				// Not implemented
+				return;
+
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 
@@ -73,6 +81,10 @@ namespace ACadSharp.Tests.IO.DXF
 		[MemberData(nameof(Versions))]
 		public void WriteDocumentWithEntitiesTest(ACadVersion version)
 		{
+			if (version < ACadVersion.AC1015)
+				// Not implemented
+				return;
+
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 

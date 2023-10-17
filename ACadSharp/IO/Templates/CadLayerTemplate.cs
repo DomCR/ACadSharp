@@ -16,6 +16,11 @@ namespace ACadSharp.IO.Templates
 
 		public string LineTypeName { get; set; }
 
+		//TODO: Implement the color name for true color, dxf code 430
+		public string TrueColorName { get; set; }
+
+		public CadLayerTemplate() : base(new Layer()) { }
+
 		public CadLayerTemplate(Layer entry) : base(entry) { }
 
 		public override bool CheckDxfCode(int dxfcode, object value)

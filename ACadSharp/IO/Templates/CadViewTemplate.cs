@@ -10,23 +10,15 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? UcsHandle { get; set; }
 
+		public CadViewTemplate() : base(new View()) { }
+
 		public CadViewTemplate(View entry) : base(entry) { }
 
-		public override bool AddHandle(int dxfcode, ulong handle)
+		public override void Build(CadDocumentBuilder builder)
 		{
-			bool value = base.AddHandle(dxfcode, handle);
-			if (value)
-				return value;
+			base.Build(builder);
 
-			switch (dxfcode)
-			{
-				case 348:
-					VisualStyleHandle = handle;
-					value = true;
-					break;
-			}
-
-			return value;
+			//TODO: assing ucs for view
 		}
 	}
 }
