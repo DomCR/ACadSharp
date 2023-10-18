@@ -54,22 +54,18 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteRawLong(0xDCA);
 			}
 
-			this._objects.Enqueue(this._document.RootDictionary);
-
-			this.writeTable(this._document.AppIds);
-			this.writeTable(this._document.Layers);
-			this.writeTable(this._document.LineTypes);
-			this.writeTable(this._document.TextStyles);
-			this.writeTable(this._document.UCSs);
-			this.writeTable(this._document.Views);
-			this.writeTable(this._document.VPorts);
 			this.writeBlockControl();
+			this.writeTable(this._document.Layers);
+			this.writeTable(this._document.TextStyles);
+			this.writeTable(this._document.LineTypes);
+			this.writeTable(this._document.Views);
+			this.writeTable(this._document.UCSs);
+			this.writeTable(this._document.VPorts);
+			this.writeTable(this._document.AppIds);
 			//For some reason the dimension must be writen the last
 			this.writeTable(this._document.DimensionStyles);
 
-			this.writeBlocks();
-
-			this.writeObjects();
+			this.writeBlockEntities();
 		}
 
 		private void writeBlockControl()
@@ -162,7 +158,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private void writeBlocks()
+		private void writeBlockEntities()
 		{
 			foreach (BlockRecord blkRecord in this._document.BlockRecords)
 			{
