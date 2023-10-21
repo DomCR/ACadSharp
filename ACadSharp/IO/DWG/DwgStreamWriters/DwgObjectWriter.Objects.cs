@@ -22,7 +22,6 @@ namespace ACadSharp.IO.DWG
 			switch (obj)
 			{
 				case CadDictionaryWithDefault:
-				case DictionaryVariable:
 				case SortEntitiesTable:
 				case XRecord:
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
@@ -38,6 +37,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case CadDictionary dictionary:
 					this.writeDictionary(dictionary);
+					break;
+				case DictionaryVariable dictionaryVariable:
+					this.writeDictionaryVariable(dictionaryVariable);
 					break;
 				case Group group:
 					this.writeGroup(group);
@@ -109,6 +111,15 @@ namespace ACadSharp.IO.DWG
 			{
 				this._objects.Enqueue(e);
 			}
+		}
+
+		private void writeDictionaryVariable(DictionaryVariable dictionaryVariable)
+		{
+			//Intval RC an integer value
+			this._writer.WriteByte(0);
+
+			//BS a string
+			this._writer.WriteVariableText(dictionaryVariable.Value);
 		}
 
 		private void writeGroup(Group group)
