@@ -23,7 +23,6 @@ namespace ACadSharp.IO.DWG
 			{
 				case CadDictionaryWithDefault:
 				case DictionaryVariable:
-				case Scale:
 				case SortEntitiesTable:
 				case XRecord:
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
