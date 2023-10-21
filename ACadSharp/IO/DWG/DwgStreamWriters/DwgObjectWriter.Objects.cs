@@ -52,6 +52,9 @@ namespace ACadSharp.IO.DWG
 				case PlotSettings plotsettings:
 					this.writePlotSettings(plotsettings);
 					break;
+				case Scale scale:
+					this.writeScale(scale);
+					break;
 				case XRecord record:
 					this.writeXRecord(record);
 					break;
@@ -356,6 +359,20 @@ namespace ACadSharp.IO.DWG
 				//Visual Style handle(soft pointer)
 				this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
 			}
+		}
+
+		private void writeScale(Scale scale)
+		{
+			//BS	70	Unknown(ODA writes 0).
+			this._writer.WriteBitShort(scale.Unknown);
+			//TV	300	Name
+			this._writer.WriteVariableText(scale.Name);
+			//BD	140	Paper units(numerator)
+			this._writer.WriteBitDouble(scale.PaperUnits);
+			//BD	141	Drawing units(denominator, divided by 10).
+			this._writer.WriteBitDouble(scale.DrawingUnits);
+			//B	290	Has unit scale
+			this._writer.WriteBit(scale.IsUnitScale);
 		}
 
 		private void writeXRecord(XRecord xrecord)
