@@ -35,6 +35,9 @@ namespace ACadSharp.IO.DWG
 				case AcdbPlaceHolder acdbPlaceHolder:
 					this.writeAcdbPlaceHolder(acdbPlaceHolder);
 					break;
+				case CadDictionaryWithDefault dictionarydef:
+					this.writeCadDictionaryWithDefault(dictionarydef);
+					break;
 				case CadDictionary dictionary:
 					this.writeDictionary(dictionary);
 					break;
@@ -68,6 +71,14 @@ namespace ACadSharp.IO.DWG
 
 		private void writeAcdbPlaceHolder(AcdbPlaceHolder acdbPlaceHolder)
 		{
+		}
+
+		private void writeCadDictionaryWithDefault(CadDictionaryWithDefault dictionary)
+		{
+			this.writeDictionary(dictionary);
+
+			//H 7 Default entry (hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, dictionary.DefaultEntry);
 		}
 
 		private void writeDictionary(CadDictionary dictionary)
