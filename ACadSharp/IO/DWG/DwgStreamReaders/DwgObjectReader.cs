@@ -4103,12 +4103,16 @@ namespace ACadSharp.IO.DWG
 
 				//R2018+:
 				if (this.R2018Plus)
+				{
 					//Line type handle H Line type handle (hard pointer)
 					elementTemplate.LinetypeHandle = this.handleReference();
+				}
 				//Before R2018:
 				else
+				{
 					//Ltindex BS Linetype index (yes, index)
 					elementTemplate.LinetypeIndex = this._objectReader.ReadBitShort();
+				}
 
 				template.ElementTemplates.Add(elementTemplate);
 				mlineStyle.Elements.Add(element);

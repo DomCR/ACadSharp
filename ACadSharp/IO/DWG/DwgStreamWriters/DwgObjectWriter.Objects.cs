@@ -22,7 +22,6 @@ namespace ACadSharp.IO.DWG
 			switch (obj)
 			{
 				case DictionaryVariable:
-				case MLStyle:
 				case Scale:
 				case SortEntitiesTable:
 				case XRecord:
@@ -44,6 +43,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case Layout layout:
 					this.writeLayout(layout);
+					break;
+				case MLStyle style:
+					this.writeMLStyle(style);
 					break;
 				case PlotSettings plotsettings:
 					this.writePlotSettings(plotsettings);
@@ -186,6 +188,82 @@ namespace ACadSharp.IO.DWG
 				{
 					//Viewport handle(repeats Viewport count times) (soft pointer)
 					this._writer.HandleReference(DwgReferenceType.SoftPointer, viewport);
+				}
+			}
+		}
+
+		private void writeMLStyle(MLStyle mlineStyle)
+		{
+			//Common:
+			//Name TV Name of this style
+			this._writer.WriteVariableText(mlineStyle.Name);
+			//Desc TV Description of this style
+			this._writer.WriteVariableText(mlineStyle.Description);
+
+			short flags = 0;
+			if (mlineStyle.Flags.HasFlag(MLineStyleFlags.DisplayJoints))
+			{
+				flags = (short)(flags | 1U);
+			}
+			if (mlineStyle.Flags.HasFlag(MLineStyleFlags.FillOn))
+			{
+				flags = (short)(flags | 2U);
+			}
+			if (mlineStyle.Flags.HasFlag(MLineStyleFlags.StartSquareCap))
+			{
+				flags = (short)(flags | 16U);
+			}
+			if (mlineStyle.Flags.HasFlag(MLineStyleFlags.StartRoundCap))
+			{
+				flags = (short)(flags | 0x20);
+			}
+			if (mlineStyle.Flags.HasFlag(MLineStyleFlags.StartInnerArcsCap))
+			{
+				flags = (short)(flags | 0x40);
+			}
+			if (mlineStyle.Flags.HasFlag(MLineStyleFlags.EndSquareCap))
+			{
+				flags = (short)(flags | 0x100);
+			}
+			if (mlineStyle.Flags.HasFlag(MLineStyleFlags.EndRoundCap))
+			{
+				flags = (short)(flags | 0x200);
+			}
+			if (mlineStyle.Flags.HasFlag(MLineStyleFlags.EndInnerArcsCap))
+			{
+				flags = (short)(flags | 0x400);
+			}
+
+			//Flags BS A short which reconstitutes the mlinestyle flags as defined in DXF.
+			this._writer.WriteBitShort(flags);
+
+			//fillcolor CMC Fill color for this style
+			this._writer.WriteCmColor(mlineStyle.FillColor);
+			//startang BD Start angle
+			this._writer.WriteBitDouble(mlineStyle.StartAngle);
+			//endang BD End angle
+			this._writer.WriteBitDouble(mlineStyle.EndAngle);
+
+			//linesinstyle RC Number of lines in this style
+			this._writer.WriteByte((byte)mlineStyle.Elements.Count);
+			foreach (MLStyle.Element element in mlineStyle.Elements)
+			{
+				//Offset BD Offset of this segment
+				this._writer.WriteBitDouble(element.Offset);
+				//Color CMC Color of this segment
+				this._writer.WriteCmColor(element.Color);
+				//R2018+:
+				if (this.R2018Plus)
+				{
+					//Line type handle H Line type handle (hard pointer)
+					this._writer.HandleReference(DwgReferenceType.HardPointer, element.LineType);
+				}
+				//Before R2018:
+				else
+				{
+					//TODO: Fix the Linetype index for dwgReader and DwgWriter
+					//Ltindex BS Linetype index (yes, index)
+					this._writer.WriteBitShort(0);
 				}
 			}
 		}

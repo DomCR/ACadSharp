@@ -66,6 +66,7 @@ namespace ACadSharp.IO.DWG
 			this.writeTable(this._document.DimensionStyles);
 
 			this.writeBlockEntities();
+			this.writeObjects();
 		}
 
 		private void writeBlockControl()
