@@ -21,10 +21,10 @@ namespace ACadSharp.Tests
 			Assert.True(new Color(0).IsByBlock);
 			Assert.True(new Color(256).IsByLayer);
 
-			Assert.True(new Color(2705).IsTrueColor);
-			Assert.True(new Color(2706).IsTrueColor);
-			Assert.True(new Color(2707).IsTrueColor);
-			Assert.True(new Color(2708).IsTrueColor);
+			Assert.True(Color.FromTrueColor(2705).IsTrueColor);
+			Assert.True(Color.FromTrueColor(2706).IsTrueColor);
+			Assert.True(Color.FromTrueColor(2707).IsTrueColor);
+			Assert.True(Color.FromTrueColor(2708).IsTrueColor);
 		}
 
 		[Fact]
