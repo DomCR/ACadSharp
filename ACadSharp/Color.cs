@@ -266,6 +266,8 @@ namespace ACadSharp
 
 		private const int _maxTrueColor = 1 << 24;
 
+		private const int _trueColorFlag = 0x40000000;  //1 << 30
+
 		public static Color ByLayer
 		{
 			get { return new Color((short)256); }
@@ -274,6 +276,14 @@ namespace ACadSharp
 		public static Color ByBlock
 		{
 			get { return new Color((short)0); }
+		}
+
+		/// <summary>
+		/// This is found in some header variables but is not valid for Entities or Objects
+		/// </summary>
+		public static Color ByEntity
+		{
+			get { return new Color((short)257); }
 		}
 
 		/// <summary>
@@ -325,9 +335,12 @@ namespace ACadSharp
 		/// <summary>
 		/// Creates a new color out of an AutoCad indexed color.
 		/// </summary>
-		/// <param name="index">AutoCad index color</param>
+		/// <param name="index">AutoCad index color with a value between 0 to 257</param>
 		public Color(short index)
 		{
+			if (index < 0 || index > 257)
+				throw new ArgumentOutOfRangeException(nameof(index), "True index must be a value between 0 and 256.");
+
 			this._color = index;
 		}
 
@@ -357,7 +370,7 @@ namespace ACadSharp
 				throw new ArgumentOutOfRangeException(nameof(trueColor), "True color must be a 24 bit color.");
 
 			// Shift to set the 30th bit indicating a true color.
-			this._color = trueColor | 1 << 30;
+			this._color = trueColor | _trueColorFlag;   //Is this correct?
 		}
 
 		/// <summary>
