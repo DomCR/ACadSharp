@@ -1,6 +1,9 @@
 ﻿using ACadSharp.Objects;
+using CSUtilities.Converters;
+using CSUtilities.IO;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace ACadSharp.IO.DWG
@@ -397,12 +400,75 @@ namespace ACadSharp.IO.DWG
 
 		private void writeXRecord(XRecord xrecord)
 		{
+			MemoryStream stream = new MemoryStream();
+			StreamIO ms = new StreamIO(stream);
+			ms.EndianConverter = new LittleEndianConverter();
+
+			foreach (XRecord.Entry entry in xrecord.Entries)
+			{
+				if (entry.Value == null)
+				{
+					continue;
+				}
+
+				ms.Write<short>((short)entry.Code);
+				GroupCodeValueType groupValueType = GroupCodeValue.TransformValue(entry.Code);
+
+				switch (groupValueType)
+				{
+					case GroupCodeValueType.None:
+						break;
+					case GroupCodeValueType.String:
+						break;
+					case GroupCodeValueType.Point3D:
+						break;
+					case GroupCodeValueType.Double:
+						break;
+					case GroupCodeValueType.Int16:
+						break;
+					case GroupCodeValueType.Int32:
+						break;
+					case GroupCodeValueType.Int64:
+						break;
+					case GroupCodeValueType.Handle:
+						break;
+					case GroupCodeValueType.ObjectId:
+						break;
+					case GroupCodeValueType.Bool:
+						break;
+					case GroupCodeValueType.Chunk:
+						break;
+					case GroupCodeValueType.Comment:
+						break;
+					case GroupCodeValueType.ExtendedDataString:
+						break;
+					case GroupCodeValueType.ExtendedDataChunk:
+						break;
+					case GroupCodeValueType.ExtendedDataHandle:
+						break;
+					case GroupCodeValueType.ExtendedDataDouble:
+						break;
+					case GroupCodeValueType.ExtendedDataInt16:
+						break;
+					case GroupCodeValueType.ExtendedDataInt32:
+						break;
+					default:
+						break;
+				}
+			}
+
 			//Common:
 			//Numdatabytes BL number of databytes
-		}
+			this._writer.WriteBitLong((int)ms.Length);
+			this._writer.WriteBytes(stream.GetBuffer());
 
-		private void writeXRecordEntry(XRecord.Entry entry)
-		{
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Cloning flag BS 280
+				this._writer.WriteBitShort((short)xrecord.ClonningFlags);
+			}
+
 		}
 	}
 }

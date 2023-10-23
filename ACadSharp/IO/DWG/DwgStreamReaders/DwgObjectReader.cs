@@ -4672,8 +4672,10 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			if (this.R2000Plus)
+			{
 				//Cloning flag BS 280
 				xRecord.ClonningFlags = (DictionaryCloningFlags)this._objectReader.ReadBitShort();
+			}
 
 			long size = this._objectInitialPos + (long)(this._size * 8U) - 7L;
 			while (this._handlesReader.PositionInBits() < size)
