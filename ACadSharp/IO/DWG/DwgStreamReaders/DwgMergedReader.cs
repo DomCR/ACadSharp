@@ -24,19 +24,19 @@ namespace ACadSharp.IO.DWG
 				_handleReader.Encoding = value;
 			}
 		}
-		
+
 		public Stream Stream => throw new InvalidOperationException();
-		
+
 		public int BitShift { get => throw new InvalidOperationException(); set => throw new InvalidOperationException(); }
-		
+
 		public long Position { get => this._mainReader.Position; set => throw new InvalidOperationException(); }
-		
+
 		public bool IsEmpty { get; } = false;
 
 		private IDwgStreamReader _mainReader;
-	
+
 		private IDwgStreamReader _textReader;
-		
+
 		private IDwgStreamReader _handleReader;
 
 		public DwgMergedReader(IDwgStreamReader manReader, IDwgStreamReader textReader, IDwgStreamReader handleReader)
@@ -163,7 +163,12 @@ namespace ACadSharp.IO.DWG
 			//BS: color index(always 0)
 			short colorIndex = ReadBitShort();
 			//BL: RGB value
+			//Always negative
 			int rgb = ReadBitLong();
+
+			//The RGB value seems to have a mask: 0x3D000000
+			//it returns the actual index of the color when is added to the value
+			int index = rgb + 0x3D000000;
 
 			//RC : Color Byte
 			byte id = ReadByte();
@@ -171,14 +176,18 @@ namespace ACadSharp.IO.DWG
 			string colorName = string.Empty;
 			//RC: Color Byte(&1 => color name follows(TV),
 			if ((id & 1) == 1)
+			{
 				colorName = ReadVariableText();
+			}
 
 			string bookName = string.Empty;
 			//&2 => book name follows(TV))
 			if ((id & 2) == 2)
+			{
 				bookName = ReadVariableText();
+			}
 
-			return new Color(colorIndex);
+			return new Color((short)index);
 		}
 
 		public Color ReadEnColor(out Transparency transparency, out bool flag)
