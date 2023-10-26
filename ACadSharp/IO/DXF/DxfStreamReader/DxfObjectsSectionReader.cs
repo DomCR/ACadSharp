@@ -160,11 +160,6 @@ namespace ACadSharp.IO.DXF
 
 			//TODO: Finsih cadXrecordtemplate
 
-			if(template.CadObject.Handle == 0xBEA)
-			{
-
-			}
-
 			switch (this._reader.Code)
 			{
 				case 100 when this._reader.ValueAsString == DxfSubclassMarker.XRecord:

@@ -239,11 +239,6 @@ namespace ACadSharp.IO.DXF
 
 		protected void writeXRecord(XRecrod e)
 		{
-			if (e.Handle == 0xBEA)
-			{
-
-			}
-
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XRecord);
 
 			foreach (var item in e.Entries)
