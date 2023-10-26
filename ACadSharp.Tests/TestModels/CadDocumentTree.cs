@@ -51,6 +51,8 @@ namespace ACadSharp.Tests.TestModels
 
 	public class EntityNode : Node
 	{
+		public ColorData Color { get; set; }
+
 		public string LayerName { get; set; }
 
 		public bool IsInvisible { get; set; }
@@ -101,6 +103,21 @@ namespace ACadSharp.Tests.TestModels
 
 		public LineweightType LineWeight { get; set; }
 
-		public Color Color { get; set; }
+		public ColorData Color { get; set; } = new ColorData();
+	}
+
+	public class ColorData
+	{
+		public bool IsByBlock { get; set; }
+
+		public bool IsByLayer { get; set; }
+
+		public byte Green { get; set; }
+
+		public byte Blue { get; set; }
+
+		public byte Red { get; set; }
+
+		public int Index { get; set; }
 	}
 }

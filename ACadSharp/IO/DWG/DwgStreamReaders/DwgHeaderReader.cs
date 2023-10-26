@@ -368,7 +368,7 @@ namespace ACadSharp.IO.DWG
 			_header.UserElapsedTimeSpan = _reader.ReadTimeSpan();
 
 			//CMC : CECOLOR
-			_header.CurrentEntityColor = _reader.ReadCmColor();
+			_header.CurrentEntityColor = _reader.ReadCmColor(); //TODO: Check the method for CECOLOR
 
 			//H : HANDSEED The next handle, with an 8-bit length specifier preceding the handle
 			//bytes (standard hex handle form) (code 0). The HANDSEED is not part of the handle
