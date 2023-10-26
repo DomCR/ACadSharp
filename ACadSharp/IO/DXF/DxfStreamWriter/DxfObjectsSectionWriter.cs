@@ -33,6 +33,7 @@ namespace ACadSharp.IO.DXF
 				case SortEntitiesTable:
 				case Scale:
 				case VisualStyle:
+				//case XRecrod:	//TODO: XRecord Understand how it works for the reader
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
 			}
@@ -238,6 +239,11 @@ namespace ACadSharp.IO.DXF
 
 		protected void writeXRecord(XRecrod e)
 		{
+			if (e.Handle == 0xBEA)
+			{
+
+			}
+
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XRecord);
 
 			foreach (var item in e.Entries)
