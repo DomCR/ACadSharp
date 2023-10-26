@@ -339,7 +339,7 @@ namespace ACadSharp
 		public Color(short index)
 		{
 			if (index < 0 || index > 257)
-				throw new ArgumentOutOfRangeException(nameof(index), "True index must be a value between 0 and 256.");
+				throw new ArgumentOutOfRangeException(nameof(index), "True index must be a value between 0 and 257.");
 
 			this._color = index;
 		}
