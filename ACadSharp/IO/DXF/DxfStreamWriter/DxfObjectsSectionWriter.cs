@@ -30,7 +30,6 @@ namespace ACadSharp.IO.DXF
 			{
 				case AcdbPlaceHolder:
 				case Material:
-				case SortEntitiesTable:
 				case Scale:
 				case VisualStyle:
 				//case XRecrod:	//TODO: XRecord Understand how it works for the reader
