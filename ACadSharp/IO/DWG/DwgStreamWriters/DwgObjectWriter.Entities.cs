@@ -23,6 +23,7 @@ namespace ACadSharp.IO.DWG
 				case MText:
 				//Unlisted
 				case Wipeout:
+					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return;
 			}
 

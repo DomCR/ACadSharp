@@ -28,10 +28,9 @@ namespace ACadSharp.Tests.IO.DWG
 		[MemberData(nameof(Versions))]
 		public void WriteEmptyTest(ACadVersion version)
 		{
+			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}.dwg");
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
-
-			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}.dwg");
 
 			using (var wr = new DwgWriter(path, doc))
 			{

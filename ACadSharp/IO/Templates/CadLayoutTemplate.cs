@@ -39,7 +39,7 @@ namespace ACadSharp.IO.Templates
 
 			if (builder.TryGetCadObject(this.BaseUcsHandle, out UCS ucs))
 			{
-				this.CadObject.UCS = ucs;
+				this.CadObject.BaseUCS = ucs;
 			}
 
 			if (builder.TryGetCadObject(this.NamesUcsHandle, out UCS nameducs))

@@ -4033,7 +4033,7 @@ namespace ACadSharp.IO.DWG
 			//Numhandles BL # objhandles in this group
 			int numhandles = this._objectReader.ReadBitLong();
 			for (int index = 0; index < numhandles; ++index)
-				//Handle refs H parenthandle (soft pointer)
+				//the entries in the group(hard pointer)
 				template.Handles.Add(this.handleReference());
 
 			return template;
@@ -4103,12 +4103,16 @@ namespace ACadSharp.IO.DWG
 
 				//R2018+:
 				if (this.R2018Plus)
+				{
 					//Line type handle H Line type handle (hard pointer)
 					elementTemplate.LinetypeHandle = this.handleReference();
+				}
 				//Before R2018:
 				else
+				{
 					//Ltindex BS Linetype index (yes, index)
 					elementTemplate.LinetypeIndex = this._objectReader.ReadBitShort();
+				}
 
 				template.ElementTemplates.Add(elementTemplate);
 				mlineStyle.Elements.Add(element);
@@ -4601,7 +4605,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readXRecord()
 		{
-			XRecrod xRecord = new XRecrod();
+			XRecord xRecord = new XRecord();
 			CadXRecordTemplate template = new CadXRecordTemplate(xRecord);
 
 			this.readCommonNonEntityData(template);
@@ -4630,10 +4634,10 @@ namespace ACadSharp.IO.DWG
 					case GroupCodeValueType.None:
 						break;
 					case GroupCodeValueType.String:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadTextUnicode()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadTextUnicode()));
 						break;
 					case GroupCodeValueType.Point3D:
-						xRecord.Entries.Add(new XRecrod.Entry(code,
+						xRecord.Entries.Add(new XRecord.Entry(code,
 							new XYZ(
 								this._objectReader.ReadDouble(),
 								this._objectReader.ReadDouble(),
@@ -4641,25 +4645,25 @@ namespace ACadSharp.IO.DWG
 								)));
 						break;
 					case GroupCodeValueType.Double:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadDouble()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadDouble()));
 						break;
 					case GroupCodeValueType.Int16:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadShort()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadShort()));
 						break;
 					case GroupCodeValueType.Int32:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadRawLong()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawLong()));
 						break;
 					case GroupCodeValueType.Int64:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadRawLong()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawLong()));
 						break;
 					case GroupCodeValueType.Handle:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadTextUnicode()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadTextUnicode()));
 						break;
 					case GroupCodeValueType.Bool:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadByte() > 0));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadByte() > 0));
 						break;
 					case GroupCodeValueType.Chunk:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadBytes(this._objectReader.ReadByte())));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadBytes(this._objectReader.ReadByte())));
 						break;
 					default:
 						break;
@@ -4668,8 +4672,10 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			if (this.R2000Plus)
+			{
 				//Cloning flag BS 280
 				xRecord.ClonningFlags = (DictionaryCloningFlags)this._objectReader.ReadBitShort();
+			}
 
 			long size = this._objectInitialPos + (long)(this._size * 8U) - 7L;
 			while (this._handlesReader.PositionInBits() < size)
@@ -4815,9 +4821,9 @@ namespace ACadSharp.IO.DWG
 			plot.PaperSize = this._textReader.ReadVariableText();
 
 			//Plot origin 2BD 46,47 plotsettings origin offset in millimeters
-			var plotOrigin = this._objectReader.Read2BitDouble();
-			plot.PlotOriginX = plotOrigin.X;
-			plot.PlotOriginY = plotOrigin.Y;
+			plot.PlotOriginX = this._objectReader.ReadBitDouble();
+			plot.PlotOriginY = this._objectReader.ReadBitDouble();
+
 			//Paper units BS 72 plotsettings plot paper units
 			plot.PaperUnits = (PlotPaperUnits)this._objectReader.ReadBitShort();
 			//Plot rotation BS 73 plotsettings plot rotation
@@ -4826,13 +4832,11 @@ namespace ACadSharp.IO.DWG
 			plot.PlotType = (PlotType)this._objectReader.ReadBitShort();
 
 			//Window min 2BD 48,49 plotsettings plot window area lower left
-			var windowLowerLeft = this._objectReader.Read2BitDouble();
-			plot.WindowLowerLeftX = windowLowerLeft.X;
-			plot.WindowLowerLeftY = windowLowerLeft.Y;
+			plot.WindowLowerLeftX = this._objectReader.ReadBitDouble();
+			plot.WindowLowerLeftY = this._objectReader.ReadBitDouble();
 			//Window max 2BD 140,141 plotsettings plot window area upper right
-			var windowUpperLeft = this._objectReader.Read2BitDouble();
-			plot.WindowUpperLeftX = windowUpperLeft.X;
-			plot.WindowUpperLeftY = windowUpperLeft.Y;
+			plot.WindowUpperLeftX = this._objectReader.ReadBitDouble();
+			plot.WindowUpperLeftY = this._objectReader.ReadBitDouble();
 
 			//R13 - R2000 Only:
 			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)

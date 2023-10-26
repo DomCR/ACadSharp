@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace ACadSharp.Objects
 {
 	/// <summary>
-	/// Represents a <see cref="XRecrod"/> object
+	/// Represents a <see cref="XRecord"/> object
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.ObjectXRecord"/> <br/>
@@ -12,7 +12,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectXRecord)]
 	[DxfSubClass(DxfSubclassMarker.XRecord)]
-	public class XRecrod : CadObject
+	public class XRecord : CadObject
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.XRECORD;

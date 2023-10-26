@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSUtilities.Text;
@@ -12,10 +13,16 @@ namespace ACadSharp.IO.DWG
 {
 	internal partial class DwgObjectWriter : DwgSectionIO
 	{
+		public override string SectionName => DwgSectionDefinition.AcDbObjects;
+
 		/// <summary>
 		/// Key : handle | Value : Offset
 		/// </summary>
 		public Dictionary<ulong, long> Map { get; } = new Dictionary<ulong, long>();
+
+		private Dictionary<ulong, CadDictionary> _dictionaries = new();
+
+		private Queue<CadObject> _objects = new();
 
 		private MemoryStream _msmain;
 
@@ -47,18 +54,19 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteRawLong(0xDCA);
 			}
 
-			this.writeTable(this._document.AppIds);
-			this.writeTable(this._document.Layers);
-			this.writeTable(this._document.LineTypes);
-			this.writeTable(this._document.TextStyles);
-			this.writeTable(this._document.UCSs);
-			this.writeTable(this._document.Views);
-			this.writeTable(this._document.VPorts);
 			this.writeBlockControl();
+			this.writeTable(this._document.Layers);
+			this.writeTable(this._document.TextStyles);
+			this.writeTable(this._document.LineTypes);
+			this.writeTable(this._document.Views);
+			this.writeTable(this._document.UCSs);
+			this.writeTable(this._document.VPorts);
+			this.writeTable(this._document.AppIds);
 			//For some reason the dimension must be writen the last
 			this.writeTable(this._document.DimensionStyles);
 
-			this.writeBlocks();
+			this.writeBlockEntities();
+			this.writeObjects();
 		}
 
 		private void writeBlockControl()
@@ -151,9 +159,8 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private void writeBlocks()
+		private void writeBlockEntities()
 		{
-			//TODO: Seqend are missing...
 			foreach (BlockRecord blkRecord in this._document.BlockRecords)
 			{
 				this.writeBlockBegin(blkRecord.BlockEntity);
