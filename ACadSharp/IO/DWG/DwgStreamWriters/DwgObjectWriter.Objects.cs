@@ -25,7 +25,6 @@ namespace ACadSharp.IO.DWG
 			switch (obj)
 			{
 				case SortEntitiesTable:
-				case XRecord:
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
 					return;
 			}
