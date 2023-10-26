@@ -33,6 +33,7 @@ namespace ACadSharp.IO.DXF
 				case SortEntitiesTable:
 				case Scale:
 				case VisualStyle:
+				//case XRecrod:	//TODO: XRecord Understand how it works for the reader
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
 			}
