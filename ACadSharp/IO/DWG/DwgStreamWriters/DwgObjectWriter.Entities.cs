@@ -21,6 +21,7 @@ namespace ACadSharp.IO.DWG
 				case AttributeDefinition:
 				case AttributeBase:
 				case MText:
+				case Shape:
 				//Unlisted
 				case Wipeout:
 					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
@@ -119,8 +120,14 @@ namespace ACadSharp.IO.DWG
 				case Ray ray:
 					this.writeRay(ray);
 					break;
+				case Shape shape:
+					this.writeShape(shape);
+					break;
 				case Solid solid:
 					this.writeSolid(solid);
+					break;
+				case Solid3D solid3d:
+					this.writeSolid3D(solid3d);
 					break;
 				case Spline spline:
 					this.writeSpline(spline);
@@ -1294,6 +1301,36 @@ namespace ACadSharp.IO.DWG
 			this._next = nextHolder;
 		}
 
+		private void writeShape(Shape shape)
+		{
+			//Ins pt 3BD 10
+			this._writer.Write3BitDouble(shape.InsertionPoint);
+			//Scale BD 40 Scale factor, default value 1.
+			this._writer.WriteBitDouble(shape.Size);
+			//Rotation BD 50 Rotation in radians, default value 0.
+			this._writer.WriteBitDouble(shape.Rotation);
+			//Width factor BD 41 Width factor, default value 1.
+			this._writer.WriteBitDouble(shape.RelativeXScale);
+			//Oblique BD 51 Oblique angle in radians, default value 0.
+			this._writer.WriteBitDouble(shape.ObliqueAngle);
+			//Thickness BD 39
+			this._writer.WriteBitDouble(shape.Thickness);
+
+			//Shapeno BS 2
+			//This is the shape index.
+			//In DXF the shape name is stored.
+			//When reading from DXF, the shape is found by iterating over all the text styles
+			//(SHAPEFILE, see paragraph 20.4.56) and when the text style contains a shape file,
+			//iterating over all the shapes until the one with the matching name is found.
+			this._writer.WriteBitShort(0);	//TODO: missing implementation for shape
+
+			//Extrusion 3BD 210
+			this._writer.Write3BitDouble(shape.Normal);
+
+			//H SHAPEFILE (hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+		}
+
 		private void writeSolid(Solid solid)
 		{
 			this.writeCommonEntityData(solid);
@@ -1319,6 +1356,10 @@ namespace ACadSharp.IO.DWG
 
 			//Extrusion BE 210
 			this._writer.WriteBitExtrusion(solid.Normal);
+		}
+
+		private void writeSolid3D(Solid3D solid)
+		{
 		}
 
 		private void writeSpline(Spline spline)
