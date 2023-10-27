@@ -57,7 +57,7 @@ namespace ACadSharp.IO.DWG
 			this.writeBlockControl();
 			this.writeTable(this._document.Layers);
 			this.writeTable(this._document.TextStyles);
-			this.writeTable(this._document.LineTypes);
+			this.writeLTypeControlObject();
 			this.writeTable(this._document.Views);
 			this.writeTable(this._document.UCSs);
 			this.writeTable(this._document.VPorts);
@@ -67,6 +67,35 @@ namespace ACadSharp.IO.DWG
 
 			this.writeBlockEntities();
 			this.writeObjects();
+		}
+
+		private void writeLTypeControlObject()
+		{
+			this.writeCommonNonEntityData(this._document.LineTypes);
+
+			//Common:
+			//Numentries BL 70
+			this._writer.WriteBitLong(this._document.LineTypes.Count - 2);
+
+			foreach (LineType item in this._document.LineTypes)
+			{
+				if (item.Name.Equals(LineType.ByBlockName, StringComparison.OrdinalIgnoreCase)
+					|| item.Name.Equals(LineType.ByLayerName, StringComparison.OrdinalIgnoreCase))
+				{
+					continue;
+				}
+
+				//Handle refs H NULL(soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
+			}
+
+			//the linetypes, ending with BYLAYER and BYBLOCK.
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.LineTypes.ByBlock);
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.LineTypes.ByLayer);
+
+			this.registerObject(this._document.LineTypes);
+
+			this.writeEntries(this._document.LineTypes);
 		}
 
 		private void writeBlockControl()
@@ -82,9 +111,11 @@ namespace ACadSharp.IO.DWG
 				if (item.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase)
 					|| item.Name.Equals(BlockRecord.PaperSpaceName, StringComparison.OrdinalIgnoreCase))
 				{
-					//Handle refs H NULL(soft pointer)
-					this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
+					continue;
 				}
+
+				//Handle refs H NULL(soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
 			}
 
 			//*MODEL_SPACE and *PAPER_SPACE(hard owner).

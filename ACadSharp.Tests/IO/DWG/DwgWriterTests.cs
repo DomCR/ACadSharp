@@ -67,12 +67,13 @@ namespace ACadSharp.Tests.IO.DWG
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 
-			addEntities(doc);
+			this.addEntities(doc);
 
 			string path = Path.Combine(_samplesOutFolder, $"out_sample_{version}.dwg");
 
 			using (var wr = new DwgWriter(path, doc))
 			{
+				wr.OnNotification += this.onNotification;
 				if (isSupportedVersion(version))
 				{
 					wr.Write();
