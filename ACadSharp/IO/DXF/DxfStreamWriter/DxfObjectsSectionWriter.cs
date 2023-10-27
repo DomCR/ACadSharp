@@ -65,7 +65,7 @@ namespace ACadSharp.IO.DXF
 				case SortEntitiesTable sortensTable:
 					//this.writeSortentsTable(sortensTable);
 					break;
-				case XRecrod record:
+				case XRecord record:
 					this.writeXRecord(record);
 					break;
 				default:
@@ -237,7 +237,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(330, e.BlockOwner.Handle);
 		}
 
-		protected void writeXRecord(XRecrod e)
+		protected void writeXRecord(XRecord e)
 		{
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XRecord);
 

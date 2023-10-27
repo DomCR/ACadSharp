@@ -167,12 +167,12 @@ namespace ACadSharp.Entities
 
 		private readonly DimensionType _flags;
 
+		private DimensionStyle _style = DimensionStyle.Default;
+
 		protected Dimension(DimensionType type)
 		{
 			this._flags = type;
 		}
-
-		private DimensionStyle _style = DimensionStyle.Default;
 
 		public override CadObject Clone()
 		{
