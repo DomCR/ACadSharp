@@ -1,0 +1,640 @@
+﻿#nullable enable
+using System;
+using System.Runtime.CompilerServices;
+using System.Text;
+
+namespace ACadSharp.Entities
+{
+	public partial class MText
+	{
+		/// <summary>
+		/// Zero copy writer to serialize AutoCAD M-Text value entries and from MText tokens.
+		/// </summary>
+		/// <remarks>
+		/// Main goal of this writer is to be a zero copy serializer.
+		/// This class is NOT thread safe, but is designed to be re-used.
+		/// </remarks>
+		/// <seealso>
+		/// https://www.cadforum.cz/en/text-formatting-codes-in-mtext-objects-tip8640
+		/// https://knowledge.autodesk.com/support/autocad-lt/learn-explore/caas/CloudHelp/cloudhelp/2019/ENU/AutoCAD-LT/files/GUID-7D8BB40F-5C4E-4AE5-BD75-9ED7112E5967-htm.html
+		/// https://knowledge.autodesk.com/support/autocad-lt/learn-explore/caas/CloudHelp/cloudhelp/2019/ENU/AutoCAD-LT/files/GUID-6F59DA4A-A790-4316-A79C-2CCE723A30CA-htm.html
+		/// </seealso>
+		public class ValueWriter
+		{
+			//private List<ReadOnlyMemory<char>> _outputList = null!;
+			private readonly Format _defaultFormat = new Format();
+
+			private Format? _currentFormat;
+
+			// Tokens used to prevent memory allocation during serialization.
+			//                                                      ⌄0         ⌄10       ⌄20       ⌄30       ⌄40       ⌄50       ⌄60       ⌄70       ⌄80       ⌄90   
+			private static readonly ReadOnlyMemory<char> _tokens = @"\\P\~\{\}\A0;\A1;\A2;\L\l\O\o\K\k\p\;,\S\#\^\/x;%%D%%P%%C{\f|b0|b1|i0|i1|c|p\T\Q\H{\c{\C0123456789.-\W"
+					.AsMemory();
+
+			private static readonly ReadOnlyMemory<char> _tokenEscapeCharacter = _tokens.Slice(0, 1);
+			private static readonly ReadOnlyMemory<char> _tokenEscapedNewLine = _tokens.Slice(1, 2);
+			private static readonly ReadOnlyMemory<char> _tokenEscapedNbs = _tokens.Slice(3, 2);
+			private static readonly ReadOnlyMemory<char> _tokenEscapedOpenBrace = _tokens.Slice(5, 2);
+			private static readonly ReadOnlyMemory<char> _tokenEscapedClosedBrace = _tokens.Slice(7, 2);
+			private static readonly ReadOnlyMemory<char> _tokenClosedBrace = _tokens.Slice(8, 1);
+
+			private static readonly ReadOnlyMemory<char> _tokenAlignmentBottom = _tokens.Slice(9, 4);
+			private static readonly ReadOnlyMemory<char> _tokenAlignmentCenter = _tokens.Slice(13, 4);
+			private static readonly ReadOnlyMemory<char> _tokenAlignmentTop = _tokens.Slice(17, 4);
+
+			private static readonly ReadOnlyMemory<char> _tokenControlCodeL = _tokens.Slice(21, 2);
+			private static readonly ReadOnlyMemory<char> _tokenControlCodeLOut = _tokens.Slice(23, 2);
+			private static readonly ReadOnlyMemory<char> _tokenControlCodeO = _tokens.Slice(25, 2);
+			private static readonly ReadOnlyMemory<char> _tokenControlCodeOOut = _tokens.Slice(27, 2);
+			private static readonly ReadOnlyMemory<char> _tokenControlCodeK = _tokens.Slice(29, 2);
+			private static readonly ReadOnlyMemory<char> _tokenControlCodeKOut = _tokens.Slice(31, 2);
+			private static readonly ReadOnlyMemory<char> _tokenControlParagraph = _tokens.Slice(33, 2);
+			private static readonly ReadOnlyMemory<char> _tokenEscapedSemiColon = _tokens.Slice(35, 2);
+			private static readonly ReadOnlyMemory<char> _tokenSemiColon = _tokens.Slice(36, 1);
+			private static readonly ReadOnlyMemory<char> _tokenComma = _tokens.Slice(37, 1);
+
+			private static readonly ReadOnlyMemory<char> _tokenFraction = _tokens.Slice(38, 2);
+			private static readonly ReadOnlyMemory<char> _tokenFractionCondensed = _tokens.Slice(41, 1);
+			private static readonly ReadOnlyMemory<char> _tokenFractionStacked = _tokens.Slice(43, 1);
+			private static readonly ReadOnlyMemory<char> _tokenFractionFractionBar = _tokens.Slice(45, 1);
+			private static readonly ReadOnlyMemory<char> _tokenFractionEscapedCondensed = _tokens.Slice(40, 2);
+			private static readonly ReadOnlyMemory<char> _tokenFractionEscapedStacked = _tokens.Slice(42, 2);
+			private static readonly ReadOnlyMemory<char> _tokenFractionEscapedFractionBar = _tokens.Slice(44, 2);
+
+			private static readonly ReadOnlyMemory<char> _tokenRelativeHeightTrailer = _tokens.Slice(46, 2);
+
+			private static readonly ReadOnlyMemory<char> _tokenDegrees = _tokens.Slice(48, 3);
+			private static readonly ReadOnlyMemory<char> _tokenPlusMinus = _tokens.Slice(51, 3);
+			private static readonly ReadOnlyMemory<char> _tokenDiameter = _tokens.Slice(54, 3);
+
+			private static readonly ReadOnlyMemory<char> _tokenFontStartBracket = _tokens.Slice(57, 3);
+			private static readonly ReadOnlyMemory<char> _tokenFontStart = _tokens.Slice(58, 2);
+
+			private static readonly ReadOnlyMemory<char> _tokenFontBold0 = _tokens.Slice(60, 3);
+			private static readonly ReadOnlyMemory<char> _tokenFontBold1 = _tokens.Slice(63, 3);
+
+			private static readonly ReadOnlyMemory<char> _tokenFontItalic0 = _tokens.Slice(66, 3);
+			private static readonly ReadOnlyMemory<char> _tokenFontItalic1 = _tokens.Slice(69, 3);
+
+			private static readonly ReadOnlyMemory<char> _tokenFontCodePageStart = _tokens.Slice(72, 2);
+			private static readonly ReadOnlyMemory<char> _tokenFontPitchStart = _tokens.Slice(74, 2);
+
+			private static readonly ReadOnlyMemory<char> _tokenTextTracking = _tokens.Slice(76, 2);
+			private static readonly ReadOnlyMemory<char> _tokenTextObliquing = _tokens.Slice(78, 2);
+			private static readonly ReadOnlyMemory<char> _tokenTextHeight = _tokens.Slice(80, 2);
+			private static readonly ReadOnlyMemory<char> _tokenTextColorTrueBracket = _tokens.Slice(82, 3);
+			private static readonly ReadOnlyMemory<char> _tokenTextColorTrue = _tokens.Slice(83, 2);
+			private static readonly ReadOnlyMemory<char> _tokenTextColorIndexBracket = _tokens.Slice(85, 3);
+			private static readonly ReadOnlyMemory<char> _tokenTextColorIndex = _tokens.Slice(86, 2);
+
+			private static readonly ReadOnlyMemory<char> _token0 = _tokens.Slice(88, 1);
+			private static readonly ReadOnlyMemory<char> _token1 = _tokens.Slice(89, 1);
+			private static readonly ReadOnlyMemory<char> _token2 = _tokens.Slice(90, 1);
+			private static readonly ReadOnlyMemory<char> _token3 = _tokens.Slice(91, 1);
+			private static readonly ReadOnlyMemory<char> _token4 = _tokens.Slice(92, 1);
+			private static readonly ReadOnlyMemory<char> _token5 = _tokens.Slice(93, 1);
+			private static readonly ReadOnlyMemory<char> _token6 = _tokens.Slice(94, 1);
+			private static readonly ReadOnlyMemory<char> _token7 = _tokens.Slice(95, 1);
+			private static readonly ReadOnlyMemory<char> _token8 = _tokens.Slice(96, 1);
+			private static readonly ReadOnlyMemory<char> _token9 = _tokens.Slice(97, 1);
+
+			private static readonly ReadOnlyMemory<char> _tokenPeriod = _tokens.Slice(98, 1);
+			//private static readonly ReadOnlyMemory<char> _tokenNegative = _tokens.Slice(99, 1);
+
+			private static readonly ReadOnlyMemory<char> _tokenWidth = _tokens.Slice(100, 2);
+
+			private readonly Memory<char> _numberBuffer = new Memory<char>(new char[24]);
+			private int _lastConsumedPosition;
+			private int _position;
+			private ReadOnlyMemory<char> _values;
+			private int _closeFormatCount;
+			private Walker? _visitor;
+
+			public delegate void Walker(in ReadOnlyMemory<char> walk);
+
+			/// <summary>
+			/// Serializes the passed contest tokens into a string representation.
+			/// </summary>
+			/// <param name="tokens">Tokens to Serialize</param>
+			/// <returns>StringBuilder with the content of the serialized tokens.</returns>
+			/// <remarks>Not thread safe.</remarks>
+			public StringBuilder Serialize(Token[] tokens)
+			{
+				var stringBuilder = new StringBuilder();
+
+				void Visitor(in ReadOnlyMemory<char> value)
+				{
+					stringBuilder.Append(value);
+				}
+
+				this.SerializeWalker(Visitor, tokens);
+
+				return stringBuilder;
+			}
+
+			/// <summary>
+			/// Walks the content as it is being serialized.  The visitor is passed the output as it is written.
+			/// </summary>
+			/// <param name="visitor">Visitor to walk through the data as it is read.</param>
+			/// <param name="tokens">Tokens to Serialize</param>
+			/// <remarks>
+			/// Walking is a zero copy serializing process.  This means that the content of the tokens
+			/// are not guaranteed to be valid beyond the return of the visitor.
+			/// Not Thread Safe.
+			/// </remarks>
+			public void SerializeWalker(in Walker visitor, Token[] tokens)
+			{
+				this._visitor = visitor;
+				this._lastConsumedPosition = 0;
+				this._position = 0;
+				this._currentFormat = this._defaultFormat;
+				this._closeFormatCount = 0;
+
+				foreach (var token in tokens)
+				{
+					this.outputAnyFormatChanges(token.Format);
+
+					if (token is TokenValue tokenValue)
+					{
+						this.writeTokenValue(tokenValue);
+					}
+					else if (token is TokenFraction tokenFraction)
+					{
+						this.writeTokenFraction(tokenFraction);
+					}
+
+					if (this._closeFormatCount > 0)
+					{
+						for (int i = 0; i < this._closeFormatCount; i++) this._visitor!.Invoke(_tokenClosedBrace);
+
+						this._currentFormat = this._defaultFormat;
+						this._closeFormatCount = 0;
+					}
+				}
+
+				this._visitor = null;
+				this._values = null;
+			}
+
+			/// <summary>
+			/// Writes out the fraction token.
+			/// </summary>
+			/// <param name="tokenFraction">Token to write.</param>
+			/// <exception cref="ArgumentOutOfRangeException"></exception>
+			private void writeTokenFraction(TokenFraction tokenFraction)
+			{
+				this._visitor!.Invoke(_tokenFraction);
+
+				if (tokenFraction.Numerator != null)
+				{
+					for (var i = 0; i < tokenFraction.Numerator.Count; i++)
+					{
+						this._lastConsumedPosition = 0;
+						this.writeContents(tokenFraction.Numerator[i], true);
+					}
+				}
+
+				this._visitor!.Invoke(tokenFraction.DividerType switch
+				{
+					TokenFraction.Divider.Stacked => _tokenFractionStacked,
+					TokenFraction.Divider.FractionBar => _tokenFractionFractionBar,
+					TokenFraction.Divider.Condensed => _tokenFractionCondensed,
+					_ => throw new ArgumentOutOfRangeException()
+				});
+
+				if (tokenFraction.Denominator != null)
+				{
+					for (var i = 0; i < tokenFraction.Denominator.Count; i++)
+					{
+						this._lastConsumedPosition = 0;
+						this.writeContents(tokenFraction.Denominator[i], true);
+					}
+				}
+
+				this._visitor!.Invoke(_tokenSemiColon);
+
+			}
+
+			/// <summary>
+			/// Writes the passed token to the output.
+			/// </summary>
+			/// <param name="tokenValue">Token to write.</param>
+			private void writeTokenValue(TokenValue tokenValue)
+			{
+				if (tokenValue.Values == null)
+					return;
+
+				for (int i = 0; i < tokenValue.Values.Count; i++)
+				{
+					this._lastConsumedPosition = 0;
+					this.writeContents(tokenValue.Values[i]);
+				}
+			}
+
+			/// <summary>
+			/// Writes the passed contents and escapes/translates as required.
+			/// </summary>
+			/// <param name="values">Values to write.</param>
+			/// <param name="fractionEscapes">If true, escapes any passed special characters used for fractions.</param>
+			private void writeContents(ReadOnlyMemory<char> values, bool fractionEscapes = false)
+			{
+				var spanValues = values.Span;
+				this._values = values;
+
+				for (this._position = 0; this._position < spanValues.Length; this._position++)
+				{
+					char token = spanValues[this._position];
+					if (token == '\\')
+					{
+						this.appendCharacter(_tokenEscapeCharacter);
+					}
+					else if (token == '\n')
+					{
+						this.replaceCharacter(_tokenEscapedNewLine);
+					}
+					else if (token == '\u00A0')
+					{
+						// Non Breaking Space
+						this.replaceCharacter(_tokenEscapedNbs);
+					}
+					else if (token == '°')
+					{
+						this.replaceCharacter(_tokenDegrees);
+					}
+					else if (token == '±')
+					{
+						this.replaceCharacter(_tokenPlusMinus);
+					}
+					else if (token == 'Ø')
+					{
+						this.replaceCharacter(_tokenDiameter);
+					}
+					else if (token == '{')
+					{
+						this.replaceCharacter(_tokenEscapedOpenBrace);
+					}
+					else if (token == '}')
+					{
+						this.replaceCharacter(_tokenEscapedClosedBrace);
+					}
+					else
+					{
+						if (fractionEscapes)
+						{
+							if (token == '#')
+							{
+								this.replaceCharacter(_tokenFractionEscapedCondensed);
+							}
+							else if (token == '/')
+							{
+								this.replaceCharacter(_tokenFractionEscapedFractionBar);
+							}
+							else if (token == '^')
+							{
+								this.replaceCharacter(_tokenFractionEscapedStacked);
+							}
+							else if (token == ';')
+							{
+								this.replaceCharacter(_tokenEscapedSemiColon);
+							}
+						}
+					}
+				}
+
+				if (this._position != this._lastConsumedPosition)
+				{
+					// If the lastWritePosition is zero, this is a special case for when nothing has been transformed in the value.
+					// and we can just output the entire Memory<char>
+					this._visitor!.Invoke(this._lastConsumedPosition == 0
+						? values
+						: this._values.Slice(this._lastConsumedPosition, this._position - this._lastConsumedPosition));
+				}
+			}
+
+			/// <summary>
+			/// Replaces the current character with the passed values.
+			/// </summary>
+			/// <param name="replaceWith">Values to replace the current character with.</param>
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			private void replaceCharacter(ReadOnlyMemory<char> replaceWith)
+			{
+				var writeLength = this._position - this._lastConsumedPosition;
+				if (writeLength > 0) this._visitor!.Invoke(this._values.Slice(this._lastConsumedPosition, writeLength));
+
+				this._visitor!.Invoke(replaceWith);
+				this._lastConsumedPosition = this._position + 1;
+			}
+
+			/// <summary>
+			/// Appends the current character with the passed values.
+			/// </summary>
+			/// <param name="append">Values to append to the current position of the writer.</param>
+			private void appendCharacter(ReadOnlyMemory<char> append)
+			{
+				var writeLength = this._position - this._lastConsumedPosition;
+				if (writeLength > 0) this._visitor!.Invoke(this._values.Slice(this._lastConsumedPosition, writeLength));
+
+				this._visitor!.Invoke(append);
+				this._lastConsumedPosition = this._position;
+			}
+
+			private void outputAnyFormatChanges(Format? newFormat)
+			{
+				if (newFormat == null || this._currentFormat == null)
+					throw new InvalidOperationException("Format can't be null");
+
+				if (this._currentFormat.Align != newFormat.Align)
+				{
+					this._visitor!.Invoke(newFormat.Align switch
+					{
+						Format.Alignment.Bottom => _tokenAlignmentBottom,
+						Format.Alignment.Center => _tokenAlignmentCenter,
+						Format.Alignment.Top => _tokenAlignmentTop,
+						null => _tokenAlignmentCenter,
+						_ => throw new ArgumentOutOfRangeException()
+					});
+				}
+
+				if (this._currentFormat.IsUnderline != newFormat.IsUnderline)
+				{
+					this._visitor!.Invoke(newFormat.IsUnderline
+						? _tokenControlCodeL
+						: _tokenControlCodeLOut);
+				}
+
+				if (this._currentFormat.IsOverline != newFormat.IsOverline)
+				{
+					this._visitor!.Invoke(newFormat.IsOverline
+						? _tokenControlCodeO
+						: _tokenControlCodeOOut);
+				}
+
+				if (this._currentFormat.IsStrikeThrough != newFormat.IsStrikeThrough)
+				{
+					this._visitor!.Invoke(newFormat.IsStrikeThrough
+						? _tokenControlCodeK
+						: _tokenControlCodeKOut);
+				}
+
+				// ReSharper disable all CompareOfFloatsByEqualityOperator
+				if (this._currentFormat.Tracking != newFormat.Tracking && newFormat.Tracking != null)
+				{
+					this._visitor!.Invoke(_tokenTextTracking);
+					this.outputFloat(newFormat.Tracking.Value);
+					this._visitor!.Invoke(_tokenSemiColon);
+				}
+
+				if (this._currentFormat.Obliquing != newFormat.Obliquing && newFormat.Obliquing != null)
+				{
+					this._visitor!.Invoke(_tokenTextObliquing);
+					this.outputFloat(newFormat.Obliquing.Value);
+					this._visitor!.Invoke(_tokenSemiColon);
+				}
+
+				if (this._currentFormat.Width != newFormat.Width && newFormat.Width != null)
+				{
+					this._visitor!.Invoke(_tokenWidth);
+					this.outputFloat(newFormat.Width.Value);
+					this._visitor!.Invoke(_tokenSemiColon);
+				}
+
+				if (this._currentFormat.Height != newFormat.Height && newFormat.Height != null)
+				{
+					this._visitor!.Invoke(_tokenTextHeight);
+					this.outputFloat(newFormat.Height.Value);
+					this._visitor!.Invoke(newFormat.IsHeightRelative ? _tokenRelativeHeightTrailer : _tokenSemiColon);
+				}
+
+				if (newFormat.Color != null)
+				{
+					var value = newFormat.Color.Value;
+					if (value.IsTrueColor)
+					{
+						if (this._closeFormatCount == 0)
+						{
+							this._visitor!.Invoke(_tokenTextColorTrueBracket);
+							this._closeFormatCount++;
+						}
+						else
+						{
+							this._visitor!.Invoke(_tokenTextColorTrue);
+						}
+
+						this.outputUint((uint)value.TrueColor);
+					}
+					else
+					{
+						if (this._closeFormatCount == 0)
+						{
+							this._visitor!.Invoke(_tokenTextColorIndexBracket);
+							this._closeFormatCount++;
+						}
+						else
+						{
+							this._visitor!.Invoke(_tokenTextColorIndex);
+						}
+
+						this.outputUint((uint)value.Index);
+					}
+
+					this._visitor!.Invoke(_tokenSemiColon);
+				}
+
+				if (!this._currentFormat.Font.Equals(newFormat.Font))
+				{
+					if (this._closeFormatCount == 0)
+					{
+						this._visitor!.Invoke(_tokenFontStartBracket);
+						this._closeFormatCount++;
+					}
+					else
+					{
+						this._visitor!.Invoke(_tokenFontStart);
+					}
+
+					this._visitor!.Invoke(newFormat.Font.FontFamily);
+					this._visitor!.Invoke(newFormat.Font.IsBold ? _tokenFontBold1 : _tokenFontBold0);
+					this._visitor!.Invoke(newFormat.Font.IsItalic ? _tokenFontItalic1 : _tokenFontItalic0);
+					this._visitor!.Invoke(_tokenFontCodePageStart);
+					//_visitor!.Invoke(newFormat.Font.CodePage.ToString().AsMemory());
+					this.outputUint((uint)newFormat.Font.CodePage);
+					this._visitor!.Invoke(_tokenFontPitchStart);
+					//_visitor!.Invoke(newFormat.Font.Pitch.ToString().AsMemory());
+					this.outputUint((uint)newFormat.Font.Pitch);
+					this._visitor!.Invoke(_tokenSemiColon);
+				}
+
+				if (Token.AreSequencesEqual(newFormat.Paragraph, this._currentFormat.Paragraph) == false)
+				{
+					this._visitor!.Invoke(_tokenControlParagraph);
+
+					var count = newFormat.Paragraph.Count;
+					for (int i = 0; i < count; i++)
+					{
+						this._visitor!.Invoke(newFormat.Paragraph[i]);
+						if (i + 1 != count)
+						{
+							this._visitor!.Invoke(_tokenComma);
+						}
+					}
+
+					this._visitor!.Invoke(_tokenSemiColon);
+				}
+
+				this._currentFormat = newFormat;
+			}
+
+			/// <summary>
+			/// Outputs the string representation of a given unsigned integer value.
+			/// </summary>
+			/// <param name="value">The value to output the string representation of.</param>
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			private void outputUint(uint value)
+			{
+				int bufferLength = countDigits(value);
+				if (bufferLength == 1)
+				{
+					switch (value)
+					{
+						case 0:
+							this._visitor?.Invoke(_token0);
+							break;
+						case 1:
+							this._visitor?.Invoke(_token1);
+							break;
+						case 2:
+							this._visitor?.Invoke(_token2);
+							break;
+						case 3:
+							this._visitor?.Invoke(_token3);
+							break;
+						case 4:
+							this._visitor?.Invoke(_token4);
+							break;
+						case 5:
+							this._visitor?.Invoke(_token5);
+							break;
+						case 6:
+							this._visitor?.Invoke(_token6);
+							break;
+						case 7:
+							this._visitor?.Invoke(_token7);
+							break;
+						case 8:
+							this._visitor?.Invoke(_token8);
+							break;
+						case 9:
+							this._visitor?.Invoke(_token9);
+							break;
+					}
+					return;
+				}
+
+				var numberSpan = this._numberBuffer.Span;
+				var position = bufferLength - 1;
+				do
+				{
+					(value, var integer) = divRem(value, 10);
+
+					numberSpan[position--] = integer switch
+					{
+						0 => '0',
+						1 => '1',
+						2 => '2',
+						3 => '3',
+						4 => '4',
+						5 => '5',
+						6 => '6',
+						7 => '7',
+						8 => '8',
+						9 => '9',
+						_ => throw new ArgumentOutOfRangeException()
+					};
+				} while (value != 0);
+
+				this._visitor?.Invoke(this._numberBuffer.Slice(0, bufferLength));
+			}
+			
+			/// <summary>
+			/// Calculates the quotient and remainder of a division operation between two unsigned integers.
+			/// </summary>
+			/// <param name="left">The dividend of the division operation.</param>
+			/// <param name="right">The divisor of the division operation.</param>
+			/// <returns>A tuple containing the quotient and remainder of the division operation.</returns>
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			private static (uint Quotient, uint Remainder) divRem(uint left, uint right)
+			{
+				uint quotient = left / right;
+				return (quotient, left - (quotient * right));
+			}
+
+			/// <summary>
+			/// Counts the number of digits in a given unsigned integer value.
+			/// </summary>
+			/// <param name="value">The value to count the digits of.</param>
+			/// <returns>The number of digits in the given value.</returns>
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			private static int countDigits(uint value)
+			{
+				int digits = 1;
+				if (value >= 100000)
+				{
+					value /= 100000;
+					digits += 5;
+				}
+
+				if (value < 10)
+				{
+					// no-op
+				}
+				else if (value < 100)
+				{
+					digits++;
+				}
+				else if (value < 1000)
+				{
+					digits += 2;
+				}
+				else if (value < 10000)
+				{
+					digits += 3;
+				}
+				else
+				{
+					digits += 4;
+				}
+
+				return digits;
+			}
+
+			/// <summary>
+			/// Outputs a float to the visitor.
+			/// </summary>
+			/// <param name="value">Float value to output</param>
+			/// <exception cref="ArgumentOutOfRangeException"></exception>
+			private void outputFloat(float value)
+			{
+				// Handle the 0 case
+				if (value == 0)
+				{
+					this._visitor!.Invoke(_token0);
+					return;
+				}
+
+
+#if NETFRAMEWORK
+				value = (float)(Math.Truncate(value * 10000) / 10000f);
+				this._visitor!.Invoke(Math.Round(value, 4, MidpointRounding.ToEven).ToString("G").AsMemory());
+#else
+				var numberSpan = this._numberBuffer.Span;
+				// Round the values.
+				value = MathF.Truncate(value * 10000) / 10000f;
+				if (!value.TryFormat(numberSpan, out var charsWritten))
+					throw new InvalidOperationException("Can't format float.");
+
+				this._visitor!.Invoke(this._numberBuffer.Slice(0, charsWritten));
+#endif
+			}
+		}
+	}
+}
