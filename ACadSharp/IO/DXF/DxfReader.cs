@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Classes;
+using ACadSharp.Exceptions;
 using ACadSharp.Header;
 using ACadSharp.IO.DXF;
 using CSUtilities.IO;
@@ -393,6 +394,18 @@ namespace ACadSharp.IO
 					{
 						this._encoding = Encoding.UTF8;
 						break;
+					}
+
+					if (version < ACadVersion.AC1012)
+					{
+						if (version == ACadVersion.Unknown)
+						{
+							throw new DwgNotSupportedException();
+						}
+						else
+						{
+							throw new DwgNotSupportedException(version);
+						}
 					}
 				}
 				else if (tmpReader.ValueAsString == "$DWGCODEPAGE")
