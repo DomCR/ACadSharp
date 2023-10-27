@@ -85,7 +85,7 @@ namespace ACadSharp.IO.DWG
 					continue;
 				}
 
-				//Handle refs H NULL(soft pointer)
+				//numentries handles in the file (soft owner)
 				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
 			}
 
@@ -103,7 +103,7 @@ namespace ACadSharp.IO.DWG
 			this.writeCommonNonEntityData(this._document.BlockRecords);
 
 			//Common:
-			//Numentries BL 70
+			//Numentries BL 70 Doesn't count *MODEL_SPACE and *PAPER_SPACE.
 			this._writer.WriteBitLong(this._document.BlockRecords.Count - 2);
 
 			foreach (var item in this._document.BlockRecords)
@@ -114,7 +114,7 @@ namespace ACadSharp.IO.DWG
 					continue;
 				}
 
-				//Handle refs H NULL(soft pointer)
+				//numentries handles of blockheaders in the file (soft owner)
 				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
 			}
 
@@ -127,7 +127,7 @@ namespace ACadSharp.IO.DWG
 			this.writeEntries(this._document.BlockRecords);
 		}
 
-		private void writeTable<T>(Table<T> table, bool register = true, bool writeEntries = true)
+		private void writeTable<T>(Table<T> table)
 			where T : TableEntry
 		{
 			this.writeCommonNonEntityData(table);
@@ -138,15 +138,13 @@ namespace ACadSharp.IO.DWG
 
 			foreach (var item in table)
 			{
-				//Handle refs H NULL(soft pointer)
+				//numentries handles in the file (soft owner)
 				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
 			}
 
-			if (register)
-				this.registerObject(table);
+			this.registerObject(table);
 
-			if (writeEntries)
-				this.writeEntries(table);
+			this.writeEntries(table);
 		}
 
 		private void writeEntries<T>(Table<T> table)

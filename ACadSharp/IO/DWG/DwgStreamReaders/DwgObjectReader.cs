@@ -1256,9 +1256,7 @@ namespace ACadSharp.IO.DWG
 			//Layers: 	Numentries BL 70 Counts layer "0", too
 			int numentries = this._objectReader.ReadBitLong();
 			for (int i = 0; i < numentries; ++i)
-				//Handle refs H NULL(soft pointer)
-				//xdicobjhandle(hard owner)
-				//the apps(soft owner)
+				//numentries handles in the file (soft owner)
 				template.EntryHandles.Add(this.handleReference());
 
 			return template;
@@ -3164,6 +3162,8 @@ namespace ACadSharp.IO.DWG
 			this.readDocumentTable(template.CadObject, template);
 
 			//the linetypes, ending with BYLAYER and BYBLOCK.
+			//all are soft owner references except BYLAYER and 
+			//BYBLOCK, which are hard owner references.
 			template.EntryHandles.Add(this.handleReference());
 			template.EntryHandles.Add(this.handleReference());
 
