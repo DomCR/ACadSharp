@@ -18,10 +18,9 @@ namespace ACadSharp.IO.DWG
 			switch (entity)
 			{
 				case AttributeEntity:
-				case AttributeDefinition:
-				case AttributeBase:
 				case MText:
 				case Shape:
+				case Solid3D:
 				//Unlisted
 				case Wipeout:
 					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
