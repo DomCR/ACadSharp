@@ -67,11 +67,6 @@ namespace ACadSharp.Objects
 		public double PaperHeight { get; set; } 
 
 		/// <summary>
-		///Plot origin in millimeters
-		/// </summary>
-		public XY PlotOrigin { get; set; } = XY.Zero;
-
-		/// <summary>
 		/// Plot origin: X value of origin offset in millimeters
 		/// </summary>
 		[DxfCodeValue(46)]
@@ -84,11 +79,6 @@ namespace ACadSharp.Objects
 		public double PlotOriginY { get; set; }
 
 		/// <summary>
-		/// Plot lower-left window corner
-		/// </summary>
-		public XY WindowLowerLeft { get; set; }
-
-		/// <summary>
 		/// Plot window area: X value of lower-left window corner
 		/// </summary>
 		[DxfCodeValue(48)]
@@ -99,11 +89,6 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(49)]
 		public double WindowLowerLeftY { get; set; }
-
-		/// <summary>
-		/// Plot upper-left window corner
-		/// </summary>
-		public XY WindowUpperLeft { get; set; }
 
 		/// <summary>
 		/// Plot window area: X value of lower-left window corner
@@ -165,7 +150,7 @@ namespace ACadSharp.Objects
 		/// Plot layout flags
 		/// </summary>
 		[DxfCodeValue(70)]
-		public PlotFlags PlotFlags { get; set; } = PlotFlags.DrawViewportsFirst | PlotFlags.PrintLineweights | PlotFlags.PlotPlotStyles | PlotFlags.UseStandardScale;
+		public PlotFlags Flags { get; set; } = PlotFlags.DrawViewportsFirst | PlotFlags.PrintLineweights | PlotFlags.PlotPlotStyles | PlotFlags.UseStandardScale;
 
 		/// <summary>
 		/// Plot paper units.

@@ -29,17 +29,17 @@ namespace ACadSharpInternal.Tests
 
 			DwgDocumentBuilder builder = this.writeInfo(document);
 
-			builder.BuildTables();
+			builder.BuildDocument();
 
-			assertTable(document.AppIds, builder.AppIds);
-			assertTable(document.Layers, builder.Layers);
-			assertTable(document.LineTypes, builder.LineTypesTable);
-			assertTable(document.TextStyles, builder.TextStyles);
-			assertTable(document.UCSs, builder.UCSs);
-			assertTable(document.Views, builder.Views);
-			assertTable(document.DimensionStyles, builder.DimensionStyles);
-			assertTable(document.VPorts, builder.VPorts);
-			assertTable(document.BlockRecords, builder.BlockRecords);
+			this.assertTable(document.AppIds, builder.AppIds);
+			this.assertTable(document.Layers, builder.Layers);
+			this.assertTable(document.LineTypes, builder.LineTypesTable);
+			this.assertTable(document.TextStyles, builder.TextStyles);
+			this.assertTable(document.UCSs, builder.UCSs);
+			this.assertTable(document.Views, builder.Views);
+			this.assertTable(document.DimensionStyles, builder.DimensionStyles);
+			this.assertTable(document.VPorts, builder.VPorts);
+			this.assertTable(document.BlockRecords, builder.BlockRecords);
 		}
 
 		[Theory]
@@ -52,6 +52,7 @@ namespace ACadSharpInternal.Tests
 			document.Entities.Add(EntityFactory.Create<Arc>());
 			document.Entities.Add(EntityFactory.Create<Circle>());
 			document.Entities.Add(EntityFactory.Create<Ellipse>());
+			document.Entities.Add(EntityFactory.Create(typeof(Insert)));
 			document.Entities.Add(EntityFactory.Create<Line>());
 			document.Entities.Add(EntityFactory.Create<Point>());
 			document.Entities.Add(EntityFactory.Create<TextEntity>());

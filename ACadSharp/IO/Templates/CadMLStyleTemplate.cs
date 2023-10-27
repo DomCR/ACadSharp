@@ -1,5 +1,4 @@
-﻿using ACadSharp.IO.DWG;
-using ACadSharp.Objects;
+﻿using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,11 +29,11 @@ namespace ACadSharp.IO.Templates
 				{
 					if (this.LinetypeIndex == short.MaxValue)
 					{
-						this.Element.LineType = builder.LineTypes["ByLayer"];
+						this.Element.LineType = builder.LineTypes[LineType.ByLayerName];
 					}
 					else if (this.LinetypeIndex == (short.MaxValue - 1))
 					{
-						this.Element.LineType = builder.LineTypes["ByBlock"];
+						this.Element.LineType = builder.LineTypes[LineType.ByBlockName];
 					}
 					else
 					{
@@ -43,10 +42,10 @@ namespace ACadSharp.IO.Templates
 							//It can be assigned but is not checked
 							this.Element.LineType = builder.LineTypes.ElementAt(this.LinetypeIndex.Value).Value;
 						}
-						catch (System.Exception)
+						catch (System.Exception ex)
 						{
 							//TODO: Implement get linetype by index
-							builder.Notify(new NotificationEventArgs($"Linetype not assigned, index {LinetypeIndex}"));
+							builder.Notify($"Linetype not assigned, index {LinetypeIndex}", NotificationType.Error, ex);
 						}
 					}
 				}

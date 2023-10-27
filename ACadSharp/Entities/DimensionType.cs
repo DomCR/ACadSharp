@@ -3,6 +3,7 @@
 	/// <summary>
 	/// Dimension type
 	/// </summary>
+	[System.Flags]
 	public enum DimensionType
 	{
 		/// <summary>

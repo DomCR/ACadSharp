@@ -102,55 +102,55 @@ namespace ACadSharp.IO.DXF
 					template = new CadTableTemplate<AppId>(new AppIdsTable());
 					this.readEntries((CadTableTemplate<AppId>)template);
 					template.CadObject.Handle = handle;
-					this._builder.DocumentToBuild.RegisterCollection((AppIdsTable)template.CadObject);
+					this._builder.AppIds = (AppIdsTable)template.CadObject;
 					break;
 				case DxfFileToken.TableBlockRecord:
 					template = new CadBlockCtrlObjectTemplate(new BlockRecordsTable());
 					this.readEntries((CadBlockCtrlObjectTemplate)template);
 					template.CadObject.Handle = handle;
-					this._builder.DocumentToBuild.RegisterCollection((BlockRecordsTable)template.CadObject);
+					this._builder.BlockRecords = (BlockRecordsTable)template.CadObject;
 					break;
 				case DxfFileToken.TableVport:
 					template = new CadTableTemplate<VPort>(new VPortsTable());
 					this.readEntries((CadTableTemplate<VPort>)template);
 					template.CadObject.Handle = handle;
-					this._builder.DocumentToBuild.RegisterCollection((VPortsTable)template.CadObject);
+					this._builder.VPorts = (VPortsTable)template.CadObject;
 					break;
 				case DxfFileToken.TableLinetype:
 					template = new CadTableTemplate<LineType>(new LineTypesTable());
 					this.readEntries((CadTableTemplate<LineType>)template);
 					template.CadObject.Handle = handle;
-					this._builder.DocumentToBuild.RegisterCollection((LineTypesTable)template.CadObject);
+					this._builder.LineTypesTable = (LineTypesTable)template.CadObject;
 					break;
 				case DxfFileToken.TableLayer:
 					template = new CadTableTemplate<Layer>(new LayersTable());
 					this.readEntries((CadTableTemplate<Layer>)template);
 					template.CadObject.Handle = handle;
-					this._builder.DocumentToBuild.RegisterCollection((LayersTable)template.CadObject);
+					this._builder.Layers = (LayersTable)template.CadObject;
 					break;
 				case DxfFileToken.TableStyle:
 					template = new CadTableTemplate<TextStyle>(new TextStylesTable());
 					this.readEntries((CadTableTemplate<TextStyle>)template);
 					template.CadObject.Handle = handle;
-					this._builder.DocumentToBuild.RegisterCollection((TextStylesTable)template.CadObject);
+					this._builder.TextStyles = (TextStylesTable)template.CadObject;
 					break;
 				case DxfFileToken.TableView:
 					template = new CadTableTemplate<View>(new ViewsTable());
 					this.readEntries((CadTableTemplate<View>)template);
 					template.CadObject.Handle = handle;
-					this._builder.DocumentToBuild.RegisterCollection((ViewsTable)template.CadObject);
+					this._builder.Views = (ViewsTable)template.CadObject;
 					break;
 				case DxfFileToken.TableUcs:
 					template = new CadTableTemplate<UCS>(new UCSTable());
 					this.readEntries((CadTableTemplate<UCS>)template);
 					template.CadObject.Handle = handle;
-					this._builder.DocumentToBuild.RegisterCollection((UCSTable)template.CadObject);
+					this._builder.UCSs = (UCSTable)template.CadObject;
 					break;
 				case DxfFileToken.TableDimstyle:
 					template = new CadTableTemplate<DimensionStyle>(new DimensionStylesTable());
 					this.readEntries((CadTableTemplate<DimensionStyle>)template);
 					template.CadObject.Handle = handle;
-					this._builder.DocumentToBuild.RegisterCollection((DimensionStylesTable)template.CadObject);
+					this._builder.DimensionStyles = (DimensionStylesTable)template.CadObject;
 					break;
 				default:
 					throw new DxfException($"Unknown table name {name}");
@@ -575,6 +575,9 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				case 40:
+					tmp.TotalLen = this._reader.ValueAsDouble;
+					return true;
 				case 49:
 					do
 					{
@@ -696,45 +699,47 @@ namespace ACadSharp.IO.DXF
 
 		private void validateTables()
 		{
-			if (this._builder.DocumentToBuild.AppIds == null)
+			if (this._builder.AppIds == null)
 			{
 				this.createDefaultTable(new AppIdsTable());
 			}
 
-			if (this._builder.DocumentToBuild.BlockRecords == null)
+			if (this._builder.BlockRecords == null)
 			{
 				this.createDefaultTable(new BlockRecordsTable());
 			}
 
-			if (this._builder.DocumentToBuild.DimensionStyles == null)
+			if (this._builder.DimensionStyles == null)
 			{
 				this.createDefaultTable(new DimensionStylesTable());
 			}
 
-			if (this._builder.DocumentToBuild.Layers == null)
+			if (this._builder.Layers == null)
 			{
 				this.createDefaultTable(new LayersTable());
 			}
 
-			if (this._builder.DocumentToBuild.LineTypes == null)
+			if (this._builder.LineTypes == null)
 			{
 				this.createDefaultTable(new LineTypesTable());
 			}
 
-			if (this._builder.DocumentToBuild.UCSs == null)
+			if (this._builder.UCSs == null)
 			{
 				this.createDefaultTable(new UCSTable());
 			}
 
-			if (this._builder.DocumentToBuild.Views == null)
+			if (this._builder.Views == null)
 			{
 				this.createDefaultTable(new ViewsTable());
 			}
 
-			if (this._builder.DocumentToBuild.VPorts == null)
+			if (this._builder.VPorts == null)
 			{
 				this.createDefaultTable(new VPortsTable());
 			}
+
+			//this._builder.RegisterTables();
 		}
 
 		private void createDefaultTable<T>(Table<T> table)

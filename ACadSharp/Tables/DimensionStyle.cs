@@ -295,7 +295,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// DIMJOGANG
 		/// </summary>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double JoggedRadiusDimensionTransverseSegmentAngle { get; set; }
 
 		/// <summary>
@@ -449,14 +449,36 @@ namespace ACadSharp.Tables
 		public string AltMzs { get; set; }
 		public string Mzs { get; set; }
 
-		//289	DIMATFIT
+		/// <summary>
+		/// DIMATFIT
+		/// </summary>
+		[DxfCodeValue(289)]
 		public short DimensionTextArrowFit { get; set; }
 
 		/// <summary>
 		/// DIMTXSTY
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public TextStyle Style { get; set; } = TextStyle.Default;
+		public TextStyle Style
+		{
+			get { return this._style; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._style = this.updateTable(value, this.Document.TextStyles);
+				}
+				else
+				{
+					this._style = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Arrowhead block for leaders
@@ -502,6 +524,8 @@ namespace ACadSharp.Tables
 
 		private double _arrowSize = 0.18;
 
+		private TextStyle _style = TextStyle.Default;
+
 		internal DimensionStyle() : base() { }
 
 		public DimensionStyle(string name) : base(name) { }
@@ -516,6 +540,32 @@ namespace ACadSharp.Tables
 			clone.DimArrow1 = (Block)this.DimArrow1?.Clone();
 			clone.DimArrow2 = (Block)this.DimArrow2?.Clone();
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._style = this.updateTable(this.Style, doc.TextStyles);
+
+			doc.DimensionStyles.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
+
+			base.UnassignDocument();
+
+			this.Style = (TextStyle)this.Style.Clone();
+		}
+
+		protected void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this.Style))
+			{
+				this.Style = this.Document.TextStyles[TextStyle.DefaultName];
+			}
 		}
 	}
 }

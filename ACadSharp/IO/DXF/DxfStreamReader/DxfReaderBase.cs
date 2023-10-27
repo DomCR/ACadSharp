@@ -16,6 +16,8 @@ namespace ACadSharp.IO.DXF
 
 		public virtual int Position { get; protected set; }
 
+		public string ValueRaw { get; protected set; }
+
 		public string ValueAsString { get { return this.Value.ToString(); } }
 
 		public bool ValueAsBool { get { return Convert.ToBoolean(this.Value); } }

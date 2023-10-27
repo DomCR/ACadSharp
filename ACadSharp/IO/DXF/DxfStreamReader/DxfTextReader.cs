@@ -37,7 +37,8 @@ namespace ACadSharp.IO.DXF
 
 		protected override string readStringLine()
 		{
-			return this._stream.ReadLine();
+			this.ValueRaw = this._stream.ReadLine();
+			return this.ValueRaw;
 		}
 
 		protected override DxfCode readCode()

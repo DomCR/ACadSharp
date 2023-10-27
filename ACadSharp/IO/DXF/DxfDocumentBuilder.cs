@@ -16,10 +16,17 @@ namespace ACadSharp.IO.DXF
 
 		public override void BuildDocument()
 		{
-			foreach (ICadTableTemplate table in tableTemplates.Values)
-			{
-				table.Build(this);
-			}
+			this.RegisterTables();
+
+			this.BuildTable(this.AppIds);
+			this.BuildTable(this.LineTypesTable);
+			this.BuildTable(this.Layers);
+			this.BuildTable(this.TextStyles);
+			this.BuildTable(this.UCSs);
+			this.BuildTable(this.Views);
+			this.BuildTable(this.DimensionStyles);
+			this.BuildTable(this.VPorts);
+			this.BuildTable(this.BlockRecords);
 
 			//Assign the owners for the different objects
 			foreach (CadTemplate template in this.templates.Values)
