@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CSUtilities.Converters;
+using System;
 
 namespace ACadSharp
 {
@@ -324,6 +325,21 @@ namespace ACadSharp
 		}
 
 		/// <summary>
+		/// Red component of the color
+		/// </summary>
+		public byte R { get { return this.GetRgb()[0]; } }
+
+		/// <summary>
+		/// Green component of the color
+		/// </summary>
+		public byte G { get { return this.GetRgb()[1]; } }
+
+		/// <summary>
+		/// Blue component of the color
+		/// </summary>
+		public byte B { get { return this.GetRgb()[2]; } }
+
+		/// <summary>
 		/// Represents the actual stored color.  Either a True Color or an indexed color.
 		/// </summary>
 		/// <remarks>
@@ -501,7 +517,7 @@ namespace ACadSharp
 
 		private static ReadOnlySpan<byte> getRGBfromTrueColor(uint color)
 		{
-			return new ReadOnlySpan<byte>(BitConverter.GetBytes(color), 0, 3);
+			return new ReadOnlySpan<byte>(LittleEndianConverter.Instance.GetBytes(color), 0, 3);
 		}
 	}
 }
