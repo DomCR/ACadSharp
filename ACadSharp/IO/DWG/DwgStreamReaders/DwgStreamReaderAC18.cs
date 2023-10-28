@@ -34,12 +34,12 @@ namespace ACadSharp.IO.DWG
 				//0xC0000000
 
 				//True color
-				uint trueColor = (uint)((int)rgb - 0xC2000000);
+				uint trueColor = (uint)((int)rgb - 0b1100_0010_0000_0000_0000_0000_0000_0000);
 
 				//Needs the check just in case the flag is not set
 				if (trueColor < 1 << 24)
 				{
-					color = Color.FromTrueColor((int)trueColor);
+					color = Color.FromTrueColor(trueColor);
 				}
 			}
 
