@@ -11,16 +11,26 @@ namespace ACadSharp.Tests.IO.DWG
 {
 	public class DwgWriterTests : IOTestsBase
 	{
+		public static TheoryData<Entity> Entities { get; }
+
 		public DwgWriterTests(ITestOutputHelper output) : base(output) { }
+
+		static DwgWriterTests()
+		{
+			Entities = new TheoryData<Entity>
+			{
+				EntityFactory.Create<Point>(),
+				EntityFactory.Create<Line>(),
+			};
+		}
 
 		[Theory]
 		[MemberData(nameof(Versions))]
 		public void WriteEmptyTest(ACadVersion version)
 		{
+			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}.dwg");
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
-
-			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}.dwg");
 
 			using (var wr = new DwgWriter(path, doc))
 			{
@@ -44,18 +54,26 @@ namespace ACadSharp.Tests.IO.DWG
 		}
 
 		[Theory]
+		[MemberData(nameof(Entities))]
+		public void WriteSingleEntityFile(Entity entity)
+		{
+
+		}
+
+		[Theory]
 		[MemberData(nameof(Versions))]
 		public void WriteTest(ACadVersion version)
 		{
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 
-			addEntities(doc);
+			this.addEntities(doc);
 
 			string path = Path.Combine(_samplesOutFolder, $"out_sample_{version}.dwg");
 
 			using (var wr = new DwgWriter(path, doc))
 			{
+				wr.OnNotification += this.onNotification;
 				if (isSupportedVersion(version))
 				{
 					wr.Write();

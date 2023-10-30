@@ -114,7 +114,7 @@ namespace ACadSharp
 		/// </summary>
 		public BlockRecord PaperSpace { get { return this.BlockRecords[BlockRecord.PaperSpaceName]; } }
 
-		private CadDictionary _rootDictionary = new CadDictionary();
+		private CadDictionary _rootDictionary = null;
 
 		//Contains all the objects in the document
 		private readonly Dictionary<ulong, IHandledCadObject> _cadObjects = new Dictionary<ulong, IHandledCadObject>();

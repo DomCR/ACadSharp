@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Drawing;
+using System.IO;
 
 namespace ACadSharp.IO.DWG
 {
@@ -9,25 +10,57 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public override Color ReadCmColor()
 		{
+			Color color = default;
+
 			//CMC:
 			//BS: color index(always 0)
 			short colorIndex = this.ReadBitShort();
 			//BL: RGB value
-			int rgb = this.ReadBitLong();
+			//Always negative
+			uint rgb = (uint)this.ReadBitLong();
+
+			if ((rgb & 0b1000000000000000000000000) != 0)
+			{
+				//Indexed color
+				uint index = (uint)((int)rgb + 0b1100_0011_0000_0000_0000_0000_0000_0000);
+				color = new Color((byte)index);
+			}
+			else
+			{
+				//CECOLOR:
+				//3221225472
+				//0b11000000000000000000000000000000
+				//0b1100_0000_0000_0000_0000_0000_0000_0000 --> this should be ByLayer
+				//0xC0000000
+
+				//True color
+				uint trueColor = (uint)((int)rgb - 0xC2000000);
+
+				//Needs the check just in case the flag is not set
+				if (trueColor < 1 << 24)
+				{
+					color = Color.FromTrueColor((int)trueColor);
+				}
+			}
 
 			//RC: Color Byte(&1 => color name follows(TV),
 			byte id = this.ReadByte();
+
 			string colorName = string.Empty;
+			//RC: Color Byte(&1 => color name follows(TV),
 			if ((id & 1) == 1)
+			{
 				colorName = this.ReadVariableText();
+			}
 
 			string bookName = string.Empty;
 			//&2 => book name follows(TV))
 			if ((id & 2) == 2)
+			{
 				bookName = this.ReadVariableText();
+			}
 
-			//TODO: Finish the color implementation
-			return new Color();
+			return color;
 		}
 
 		/// <inheritdoc/>
@@ -55,12 +88,12 @@ namespace ACadSharp.IO.DWG
 				else if ((flags & 0x8000) > 0)
 				{
 					//Next value is a BS containing the RGB value(last 24 bits).
-					color = new Color((short)this.ReadBitLong());
+					color = new Color((byte)this.ReadBitLong());
 				}
 				else
 				{
 					//Color index: if no flags were set, the color is looked up by the color number (ACI color).
-					color = new Color((short)(size & 0b111111111111));
+					color = new Color((byte)(size & 0b111111111111));
 				}
 
 				//0x2000: color is followed by a transparency BL

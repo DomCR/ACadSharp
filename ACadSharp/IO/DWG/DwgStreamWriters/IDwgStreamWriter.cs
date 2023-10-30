@@ -50,6 +50,8 @@ namespace ACadSharp.IO.DWG
 
 		void WriteCmColor(Color value);
 
+		void Write2BitDouble(XY value);
+
 		void Write3BitDouble(XYZ value);
 
 		void Write2RawDouble(XY value);
@@ -77,6 +79,10 @@ namespace ACadSharp.IO.DWG
 		void WriteBitExtrusion(XYZ normal);
 
 		void WriteBitDoubleWithDefault(double def, double value);
+
+		void Write2BitDoubleWithDefault(XY def, XY value);
+
+		void Write3BitDoubleWithDefault(XYZ def, XYZ value);
 
 		void ResetStream();
 
