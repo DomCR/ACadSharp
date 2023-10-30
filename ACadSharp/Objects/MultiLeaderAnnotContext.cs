@@ -10,8 +10,8 @@ namespace ACadSharp.Objects
 {
 
 	/// <summary>
-	/// Common AcDbAnnotScaleObjectContextData data (see paragraph 20.4.71).
-	/// 300 DXF: “CONTEXT_DATA{“
+	/// This class represents a subset ob the properties of the MLeaderAnnotContext
+	/// object, that are embedded into the MultiLeader entity.
 	/// </summary>
 	public partial class MultiLeaderAnnotContext : CadObject
 	{
@@ -29,8 +29,6 @@ namespace ACadSharp.Objects
 		/// </summary>
 		public IList<LeaderRoot> LeaderRoots { get; } = new List<LeaderRoot>();
 
-
-		//	Common CONTEXT DATA
 
 		/// <summary>
 		/// BD	40	Overall scale
@@ -86,8 +84,6 @@ namespace ACadSharp.Objects
 
 		/// <summary>
 		/// BS	177	Attachment type 
-		/// 0 = content extents,
-		/// 1 = insertion point.
 		/// --> MLeader.BlockContentConnectionType
 		/// </summary>
 		[DxfCodeValue(177)]
@@ -170,9 +166,6 @@ namespace ACadSharp.Objects
 
 		/// <summary>
 		/// BS	172	Flow direction
-		/// 1 = horizontal,
-		/// 3 = vertical,
-		/// 6 = by style
 		/// </summary>
 		[DxfCodeValue(172)]
 		public FlowDirectionType FlowDirection { get; set; }
@@ -189,9 +182,9 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(141)]
 		public double BackgroundScaleFactor { get; set; }
 
+		/// TODO may be Transparency Type
 		/// <summary>
 		/// BL	92	Background transparency
-		/// TODO may be Transparency Type
 		/// </summary>
 		[DxfCodeValue(92)]
 		public int BackgroundTransparency { get; set; }
@@ -208,10 +201,11 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(292)]
 		public bool BackgroundMaskFillOn { get; set; }
 
+		// TODO: what meaning for values?
+		// TODO Type
+
 		/// <summary>
-		/// BS	173	Column type (ODA writes 0),
-		/// *TODO: what meaning for values?
-		/// TODO Type
+		/// BS	173	Column type (ODA writes 0)
 		/// </summary>
 		[DxfCodeValue(173)]
 		public short ColumnType { get; set; }
@@ -265,6 +259,8 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(341)]
 		public BlockRecord BlockContent { get; set; }
 
+		//	These fields read from DWG are stored into the
+		//	Normal and Location property (see above).
 		//3BD		14		Normal vector
 		//3BD		15		Location
 
@@ -274,6 +270,8 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(16)]
 		public XYZ BlockContentScale { get; set; }
 
+		//	This field read from DWG are stored into the
+		//	Rotation property (see above).
 		//BD		46		Rotation (radians)
 
 		/// <summary>
@@ -282,11 +280,24 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(93)]
 		public Color BlockContentColor { get; set; }
 
-		//BD (16)	47		16 doubles containg the complete transformation matrix. Order of transformation is:
-		//	- Rotation,
-		//	- OCS to WCS (using normal vector),
-		//	- Scaling (using scale vector),
-		//	- Translation (using location)
+		//	TODO ? should double[] be replaced by a TransformationMatrix type?
+
+		/// <summary>
+		/// BD (16)	47		16 doubles containg the complete transformation matrix.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// Order of transformation is:
+		/// </para>
+		/// <list type="ordered">
+		///	<item>Rotation,</item>
+		///	<item>OCS to WCS (using normal vector),</item>
+		///	<item>Scaling (using scale vector),</item>
+		///	<item>Translation (using location)</item>
+		/// </list>
+		/// </remarks>
+		[DxfCodeValue(93)]
+		public double[] TransformationMatrix { get; } = new double[16];
 
 		//END IF Has contents block
 		//END IF Has text contents
@@ -314,8 +325,6 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(297)]
 		public bool NormalReversed { get; set; }
-
-		//R2010
 
 		/// <summary>
 		/// BS	273	Style top attachment.

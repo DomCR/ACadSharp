@@ -7,7 +7,8 @@ using ACadSharp.Tables;
 using CSMath;
 
 
-namespace ACadSharp.Entities {
+namespace ACadSharp.Entities
+{
 	/// <summary>
 	/// Represents a <see cref="MultiLeader"/> entity.
 	/// </summary>
@@ -17,7 +18,8 @@ namespace ACadSharp.Entities {
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityMLeader)]
 	[DxfSubClass(DxfSubclassMarker.MLeader)]
-	public class MultiLeader : Entity {
+	public class MultiLeader : Entity
+{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
@@ -308,9 +310,7 @@ namespace ACadSharp.Entities {
 		/// Text attachment direction for MText contents.
 		/// </summary>
 		/// <value>
-		/// A <see cref="TextAttachmentDirectionType"/> having the values
-		///     0 = Horizontal,
-		/// 	1 = Vertical
+		/// A <see cref="TextAttachmentDirectionType"/>.
 		/// </value>
 		[DxfCodeValue(271)]
 		public TextAttachmentDirectionType TextAttachmentDirection { get; set; }
@@ -345,10 +345,6 @@ namespace ACadSharp.Entities {
 		public override CadObject Clone()
 		{
 			MultiLeader clone = (MultiLeader)base.Clone();
-
-			clone.Style = (MultiLeaderStyle)this.Style?.Clone();
-			clone.LineType = (LineType)this.LineType?.Clone();
-			clone.TextStyle = (TextStyle)this.TextStyle?.Clone();
 
 			clone.ContextData = (MultiLeaderAnnotContext)clone.Clone();
 

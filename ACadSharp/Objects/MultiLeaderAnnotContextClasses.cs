@@ -6,21 +6,21 @@ using ACadSharp.Tables;
 
 using CSMath;
 
+
 namespace ACadSharp.Objects
 {
 
 	/// <summary>
-	/// Common AcDbAnnotScaleObjectContextData data (see paragraph 20.4.71).
-	/// 300 DXF: “CONTEXT_DATA{“
+	/// Nested classes in MultiLeaderAnnotContext
 	/// </summary>
 	public partial class MultiLeaderAnnotContext : CadObject
 	{
 		/// <summary>
 		/// Represents a leader root
-		/// 302	DXF: “LEADER{“
+		/// 302	DXF: “LEADER“
 		/// </summary>
-		public class LeaderRoot : ICloneable {
-
+		public class LeaderRoot : ICloneable
+		{
 			public LeaderRoot() { }
 
 			/// <summary>
@@ -66,9 +66,6 @@ namespace ACadSharp.Objects
 			//R2010
 			/// <summary>
 			/// BS	271	Attachment direction
-			/// 0 = horizontal,
-			/// 1 = vertical,
-			/// default is 0
 			/// </summary>
 
 			public TextAttachmentDirectionType AttachmentDirection { get; internal set; }
@@ -96,7 +93,8 @@ namespace ACadSharp.Objects
 		/// 3BD	11	Start Point
 		/// 3BD	12	End point
 		/// </summary>
-		public struct StartEndPointPair : ICloneable {
+		public struct StartEndPointPair : ICloneable
+		{
 			public StartEndPointPair(XYZ startPoint, XYZ endPoint) {
 				StartPoint = startPoint;
 				EndPoint = endPoint;
@@ -123,10 +121,10 @@ namespace ACadSharp.Objects
 
 		/// <summary>
 		///	Represents a leader line
-		///	304	DXF: “LEADER_LINE{“
+		///	304	DXF: “LEADER_LINE“
 		/// </summary>
-		public class LeaderLine : ICloneable {
-
+		public class LeaderLine : ICloneable
+		{
 			public LeaderLine() { }
 
 			/// <summary>
@@ -158,9 +156,6 @@ namespace ACadSharp.Objects
 			//R2010
 			/// <summary>
 			/// BS 170 Leader type
-			/// 0 = invisible leader,
-			/// 1 = straight leader,
-			/// 2 = spline leader
 			/// </summary>
 			public MultiLeaderPathType PathType { get; set; }
 
@@ -192,14 +187,6 @@ namespace ACadSharp.Objects
 			/// <summary>
 			/// BL 93 Override flags
 			/// </summary>
-			/// <value>
-			/// 1 = leader type,
-			/// 2 = line color,
-			/// 4 = line type,
-			/// 8 = line weight,
-			/// 16 = arrow size,
-			/// 32 = arrow symbol (handle)
-			/// </value>
 			public LeaderLinePropertOverrideFlags OverrideFlags { get; set; }
 
 			public object Clone()

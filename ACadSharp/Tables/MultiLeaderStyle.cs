@@ -3,6 +3,7 @@ using ACadSharp.Entities;
 
 using CSMath;
 
+
 namespace ACadSharp.Tables
 {
 	/// <summary>
@@ -272,12 +273,22 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Bottom text attachment direction
 		/// </summary>
+		/// <value>
+		/// A <see cref="TextAttachmentType"/> having the values
+		/// 	9 = Center
+		/// 	10 = Underline and Center
+		/// </value>
 		[DxfCodeValue(272)]
 		public TextAttachmentType TextBottomAttachment { get; set; }
 
 		/// <summary>
-		/// 	Top text attachment direction
+		/// Top text attachment direction
 		/// </summary>
+		/// <value>
+		/// A <see cref="TextAttachmentType"/> having the values
+		/// 	9 = Center
+		/// 	10 = Underline and Center
+		/// </value>
 		[DxfCodeValue(273)]
 		public TextAttachmentType TextTopAttachment { get; set; }
 
@@ -291,7 +302,8 @@ namespace ACadSharp.Tables
 			Name = name;
 		}
 
-		public override CadObject Clone() {
+		public override CadObject Clone()
+		{
 			MultiLeaderStyle clone = (MultiLeaderStyle)base.Clone();
 
 			return clone;
