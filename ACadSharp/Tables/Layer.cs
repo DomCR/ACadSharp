@@ -97,7 +97,10 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(DxfReferenceType.Handle, 347)]
 		public Material Material { get; set; }    //TODO: Implement ulong handles, change to internal or private, implement the material class
 
-		public bool IsOn { get; set; }  //TODO: Is the same as PlotFlag???
+		/// <summary>
+		/// Indicates if the Layer is visible in the model
+		/// </summary>
+		public bool IsOn { get; set; } = true;
 
 		private LineType _lineType = LineType.Continuous;
 

@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -29,7 +30,26 @@ namespace ACadSharp.Entities
 		/// Dimension Style
 		/// </summary>
 		[DxfCodeValue(3)]
-		public DimensionStyle Style { get; set; } = DimensionStyle.Default;
+		public DimensionStyle Style
+		{
+			get { return this._style; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._style = this.updateTable(value, this.Document.DimensionStyles);
+				}
+				else
+				{
+					this._style = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Arrowhead flag
@@ -111,6 +131,36 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(213, 223, 233)]
 		public XYZ AnnotationOffset { get; set; } = XYZ.Zero;
+
+		private DimensionStyle _style = DimensionStyle.Default;
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._style = this.updateTable(this.Style, doc.DimensionStyles);
+
+			doc.DimensionStyles.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
+
+			base.UnassignDocument();
+
+			this.Style = (DimensionStyle)this.Style.Clone();
+		}
+
+		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			base.tableOnRemove(sender, e);
+
+			if (e.Item.Equals(this.Style))
+			{
+				this.Style = this.Document.DimensionStyles[DimensionStyle.DefaultName];
+			}
+		}
 
 		public override CadObject Clone()
 		{
