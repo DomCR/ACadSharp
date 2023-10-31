@@ -150,16 +150,16 @@ namespace ACadSharp.Objects
 				{ AcadLayout, new CadDictionary() },
 				{ AcadMaterial, new CadDictionary() },
 				{ AcadSortEnts, new CadDictionary() },
-				{ AcadMLeaderStyle, new CadDictionary() },	//Add default entry "Standard"
+				{ AcadMLeaderStyle, new CadDictionary() },	//TODO: MLeaderStyle Add default entry "Standard"
 				{ AcadMLineStyle, new CadDictionary
 					{
-						{ "", MLStyle.Default }
+						{ MLineStyle.DefaultName, MLineStyle.Default }
 					}
-				},//Add default entry "Standard"
+				},
 				{ AcadTableStyle, new CadDictionary() },
 				{ AcadPlotSettings, new CadDictionary() },
-				{ VariableDictionary, new CadDictionary() },	//DictionaryVars Entry DIMASSOC and HIDETEXT
-				{ AcadPlotStyleName, new CadDictionary() },	//Add default entry "Normal"	PlaceHolder
+				{ VariableDictionary, new CadDictionary() },	//DictionaryVars Entry DIMASSOC and HIDETEXT ??
+				{ AcadPlotStyleName, new CadDictionary() },	//Add default entry "Normal"	PlaceHolder	??
 				{ AcadScaleList, new CadDictionary
 					{
 						{ "A0", new Scale { Name="A0", PaperUnits = 1.0, DrawingUnits = 1.0, IsUnitScale = true } },
@@ -223,16 +223,40 @@ namespace ACadSharp.Objects
 			return null;
 		}
 
+		/// <summary>
+		/// Gets the value associated with the specific key
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="name"></param>
+		/// <returns>The value with Type T or null if not found or different type</returns>
 		public T GetEntry<T>(string name)
 			where T : CadObject
 		{
-			throw new NotImplementedException();
+			this.TryGetEntry<T>(name, out T value);
+			return value;
 		}
 
-		public bool TryGetEntry<T>(string name, out T entry)
-		where T : CadObject
+		/// <summary>
+		/// Gets the value associated with the specific key
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="name"></param>
+		/// <param name="value"></param>
+		/// <returns>true if the value is found or false if not found or different type</returns>
+		public bool TryGetEntry<T>(string name, out T value)
+			where T : CadObject
 		{
-			throw new NotImplementedException();
+			if (this._entries.TryGetValue(name, out CadObject obj))
+			{
+				if (obj is T t)
+				{
+					value = t;
+					return true;
+				}
+			}
+
+			value = null;
+			return false;
 		}
 
 		public IEnumerable<(string, CadObject)> GetEntries()

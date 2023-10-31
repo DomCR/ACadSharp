@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace ACadSharp.Objects
 {
 	/// <summary>
-	/// Represents a <see cref="MLStyle"/> object
+	/// Represents a <see cref="MLineStyle"/> object
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.ObjectMLStyle"/> <br/>
@@ -12,7 +12,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectMLStyle)]
 	[DxfSubClass(DxfSubclassMarker.MLineStyle)]
-	public partial class MLStyle : CadObject, INamedCadObject
+	public partial class MLineStyle : CadObject, INamedCadObject
 	{
 		/// <summary>
 		/// Default multiline style name
@@ -22,7 +22,7 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Gets the default MLine style
 		/// </summary>
-		public static MLStyle Default { get { return new MLStyle(DefaultName); } }
+		public static MLineStyle Default { get { return new MLineStyle(DefaultName); } }
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.MLINESTYLE;
@@ -76,11 +76,11 @@ namespace ACadSharp.Objects
 		/// Elements in the style
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 71)]
-		public List<MLStyle.Element> Elements { get; } = new List<Element>();
+		public List<MLineStyle.Element> Elements { get; } = new List<Element>();
 
-		internal MLStyle() { }
+		internal MLineStyle() { }
 
-		public MLStyle(string name)
+		public MLineStyle(string name)
 		{
 			this.Name = name;
 		}
