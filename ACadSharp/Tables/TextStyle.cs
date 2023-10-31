@@ -57,7 +57,7 @@ namespace ACadSharp.Tables
 		/// Width factor
 		/// </summary>
 		[DxfCodeValue(41)]
-		public double Width { get; set; }
+		public double Width { get; set; } = 1.0;
 
 		/// <summary>
 		/// Last height used.
@@ -84,7 +84,7 @@ namespace ACadSharp.Tables
 		/// A long value which contains a truetype font’s pitch and family, character set, and italic and bold flags
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional, 1071)]
-		public FontFlags TrueType { get; set; }
+		public FontFlags TrueType { get; set; } = FontFlags.Regular;
 
 		internal TextStyle() : base() { }
 
