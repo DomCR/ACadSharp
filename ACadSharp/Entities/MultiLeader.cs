@@ -346,7 +346,7 @@ namespace ACadSharp.Entities
 		{
 			MultiLeader clone = (MultiLeader)base.Clone();
 
-			clone.ContextData = (MultiLeaderAnnotContext)clone.Clone();
+			clone.ContextData = (MultiLeaderAnnotContext)(this.ContextData?.Clone());
 
 			foreach (var att in BlockAttributes)
 			{
