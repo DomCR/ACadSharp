@@ -42,6 +42,8 @@ namespace ACadSharp.IO
 		/// <inheritdoc/>
 		public override void Write()
 		{
+			this.validateDocument();
+
 			this.getFileHeaderWriter();
 
 			this.writeHeader();

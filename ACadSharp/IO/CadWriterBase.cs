@@ -2,6 +2,7 @@
 using System.Text;
 using System;
 using System.IO;
+using ACadSharp.Classes;
 
 namespace ACadSharp.IO
 {
