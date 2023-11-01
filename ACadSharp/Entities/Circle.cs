@@ -1,8 +1,5 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using CSMath;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Entities
 {
@@ -23,6 +20,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityCircle;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Circle;
+		
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
 		/// </summary>
@@ -51,17 +51,5 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Circle() : base() { }
-
-		protected override void createCopy(CadObject copy)
-		{
-			base.createCopy(copy);
-
-			Circle c = copy as Circle;
-
-			c.Normal = this.Normal;
-			c.Thickness = this.Thickness;
-			c.Center = this.Center;
-			c.Radius = this.Radius;
-		}
 	}
 }

@@ -1,6 +1,4 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.Examples.Common;
-using ACadSharp.IO;
+﻿using ACadSharp.IO;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
@@ -10,24 +8,24 @@ namespace ACadSharp.Examples
 {
 	class Program
 	{
-		const string file = "../../../../samples/sample_AC1032.dwg";
+		const string _file = "../../../../samples/sample_AC1032.dwg";
 
 		static void Main(string[] args)
 		{
 			CadDocument doc;
-			using (DwgReader reader = new DwgReader(file))
+			using (DwgReader reader = new DwgReader(_file))
 			{
 				doc = reader.Read();
 			}
 
-			ExploreDocument(doc);
+			exploreDocument(doc);
 		}
 
 		/// <summary>
 		/// Logs in the console the document information
 		/// </summary>
 		/// <param name="doc"></param>
-		static void ExploreDocument(CadDocument doc)
+		static void exploreDocument(CadDocument doc)
 		{
 			Console.WriteLine();
 			Console.WriteLine("SUMMARY INFO:");
@@ -42,18 +40,18 @@ namespace ACadSharp.Examples
 			Console.WriteLine($"\tCreatedDate: {doc.SummaryInfo.CreatedDate}");
 			Console.WriteLine($"\tModifiedDate: {doc.SummaryInfo.ModifiedDate}");
 
-			ExploreTable(doc.AppIds);
-			ExploreTable(doc.BlockRecords);
-			ExploreTable(doc.DimensionStyles);
-			ExploreTable(doc.Layers);
-			ExploreTable(doc.LineTypes);
-			ExploreTable(doc.TextStyles);
-			ExploreTable(doc.UCSs);
-			ExploreTable(doc.Views);
-			ExploreTable(doc.VPorts);
+			exploreTable(doc.AppIds);
+			exploreTable(doc.BlockRecords);
+			exploreTable(doc.DimensionStyles);
+			exploreTable(doc.Layers);
+			exploreTable(doc.LineTypes);
+			exploreTable(doc.TextStyles);
+			exploreTable(doc.UCSs);
+			exploreTable(doc.Views);
+			exploreTable(doc.VPorts);
 		}
 
-		static void ExploreTable<T>(Table<T> table)
+		static void exploreTable<T>(Table<T> table)
 			where T : TableEntry
 		{
 			Console.WriteLine($"{table.ObjectName}");

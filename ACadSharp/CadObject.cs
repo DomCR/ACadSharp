@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
-using System;
+using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
 using System.Collections.Generic;
 
 namespace ACadSharp
@@ -10,8 +11,6 @@ namespace ACadSharp
 	/// </summary>
 	public abstract class CadObject : IHandledCadObject
 	{
-		public event EventHandler<ReferenceChangedEventArgs> OnReferenceChange;
-
 		/// <summary>
 		/// Get the object type
 		/// </summary>
@@ -20,7 +19,12 @@ namespace ACadSharp
 		/// <summary>
 		/// The AutoCAD class name of an object
 		/// </summary>
-		public virtual string ObjectName { get; } = DxfFileToken.Undefined;
+		public virtual string ObjectName { get; }	//TODO: make abstract
+
+		/// <summary>
+		/// Object Subclass marker
+		/// </summary>
+		public abstract string SubclassMarker { get; }
 
 		/// <inheritdoc/>
 		/// <remarks>
@@ -67,7 +71,11 @@ namespace ACadSharp
 		/// <summary>
 		/// Document where this element belongs
 		/// </summary>
-		public CadDocument Document { get; internal set; }
+		public CadDocument Document
+		{
+			get;
+			private set;
+		}
 
 		private CadDictionary _xdictionary = null;
 
@@ -76,20 +84,65 @@ namespace ACadSharp
 		/// </summary>
 		public CadObject() { }
 
+		/// <summary>
+		/// Creates a new object that is a copy of the current instance.
+		/// </summary>
+		/// <remarks>
+		/// The copy will be unatached from the document or any reference
+		/// </remarks>
+		/// <returns>A new object that is a copy of this instance.</returns>
+		public virtual CadObject Clone()
+		{
+			CadObject clone = (CadObject)this.MemberwiseClone();
+
+			clone.Handle = 0;
+
+			clone.Document = null;
+			clone.Owner = null;
+
+			//Collections
+			clone.Reactors.Clear();
+			clone.XDictionary = new CadDictionary();
+			clone.ExtendedData.Clear();
+
+			return clone;
+		}
+
 		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{this.ObjectName}:{this.ObjectType}";
 		}
 
-		protected void onReferenceChange(ReferenceChangedEventArgs args)
+		internal virtual void AssignDocument(CadDocument doc)
 		{
-			OnReferenceChange?.Invoke(this, args);
+			this.Document = doc;
+
+			if (this.XDictionary != null)
+				doc.RegisterCollection(this.XDictionary);
 		}
 
-		protected virtual void createCopy(CadObject copy)
+		internal virtual void UnassignDocument()
 		{
-			//TODO: copy ExtendedData, Reactors, XDictionary needed ??
+			if (this.XDictionary != null)
+				this.Document.UnregisterCollection(this.XDictionary);
+
+			this.Handle = 0;
+			this.Document = null;
+		}
+
+		protected T updateTable<T>(T entry, Table<T> table)
+			where T : TableEntry
+		{
+			if (table.TryGetValue(entry.Name, out T existing))
+			{
+				return existing;
+			}
+			else
+			{
+				table.Add(entry);
+				return entry;
+			}
 		}
 	}
 }

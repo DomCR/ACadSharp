@@ -23,6 +23,8 @@ namespace ACadSharp.IO.DWG
 			this._stream = stream;
 
 #if NET48_OR_GREATER
+			this._handleMap = new Dictionary<ulong, long>();
+
 			foreach (var item in map.OrderBy(o => o.Key))
 			{
 				this._handleMap.Add(item.Key, item.Value);

@@ -16,5 +16,12 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntitySeqend;
+
+		public Seqend() { }
+
+		internal Seqend(CadObject owner)
+		{
+			this.Owner = owner;
+		}
 	}
 }

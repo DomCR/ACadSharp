@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using CSMath;
 
 namespace ACadSharp.Entities
@@ -20,6 +19,9 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.Entity3DFace;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Face3d;
 
 		/// <summary>
 		/// First corner(in WCS)

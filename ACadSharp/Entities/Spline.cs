@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -22,6 +21,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntitySpline;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Spline;
+
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
 		/// </summary>
@@ -41,7 +43,7 @@ namespace ACadSharp.Entities
 		/// Degree of the spline curve
 		/// </summary>
 		[DxfCodeValue(71)]
-		public double Degree { get; set; }
+		public int Degree { get; set; }
 
 		/// <summary>
 		/// Number of knots

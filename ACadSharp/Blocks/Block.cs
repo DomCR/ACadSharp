@@ -1,10 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
-using ACadSharp.Tables.Collections;
 using CSMath;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Blocks
 {
@@ -25,14 +22,22 @@ namespace ACadSharp.Blocks
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.Block;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.BlockBegin;
+
+		/// <summary>
+		/// Block record that owns this entity
+		/// </summary>
+		public BlockRecord BlockOwner { get { return this.Owner as BlockRecord; } }
+
 		/// <summary>
 		/// Specifies the name of the object.
 		/// </summary>
 		[DxfCodeValue(2, 3)]
 		public string Name
 		{
-			get { return (this.Owner as BlockRecord).Name; }
-			set { (this.Owner as BlockRecord).Name = value; }
+			get { return this.BlockOwner.Name; }
+			set { this.BlockOwner.Name = value; }
 		}
 
 		/// <summary>
@@ -51,7 +56,7 @@ namespace ACadSharp.Blocks
 		/// Gets the path of the block, document, application, or external reference.
 		/// </summary>
 		[DxfCodeValue(1)]
-		public string XrefPath { get; internal set; }
+		public string XrefPath { get; set; }
 
 		/// <summary>
 		/// Specifies the comments for the block or drawing.
@@ -59,11 +64,26 @@ namespace ACadSharp.Blocks
 		[DxfCodeValue(4)]
 		public string Comments { get; set; }
 
-		public Block() : base() { }
+		internal Block()
+		{
+		}
 
 		public Block(BlockRecord record) : base()
 		{
 			this.Owner = record;
+		}
+
+		/// <inheritdoc/>
+		/// <remarks>
+		/// Cloning a block will also unatach it from the record
+		/// </remarks>
+		public override CadObject Clone()
+		{
+			Block clone = (Block)base.Clone();
+
+			clone.Owner = new BlockRecord(this.Name);
+
+			return clone;
 		}
 	}
 }

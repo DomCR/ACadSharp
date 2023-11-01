@@ -6,20 +6,17 @@ namespace ACadSharp.Tests.Common
 {
 	public class CadObjectTestUtils
 	{
-		public static void AssertClone(CadObject original, CadObject clone, bool hasOwner = false)
+		public static void AssertClone(CadObject original, CadObject clone)
 		{
 			//Assert clone
 			Assert.NotEqual(original, clone);
 			Assert.True(0 == clone.Handle);
 			Assert.Null(clone.Document);
-
-			if (!hasOwner)
-				Assert.Null(clone.Owner);
 		}
 
-		public static void AssertEntityClone(Entity original, Entity clone, bool hasOwner = false)
+		public static void AssertEntityClone(Entity original, Entity clone)
 		{
-			AssertClone(original, clone, hasOwner);
+			AssertClone(original, clone);
 
 			Assert.Equal(original.LinetypeScale, clone.LinetypeScale);
 
@@ -28,9 +25,9 @@ namespace ACadSharp.Tests.Common
 			AssertTableEntryClone(original.LineType, clone.LineType);
 		}
 
-		public static void AssertTableEntryClone(TableEntry original, TableEntry clone, bool hasOwner = false)
+		public static void AssertTableEntryClone(TableEntry original, TableEntry clone)
 		{
-			AssertClone(original, clone, hasOwner);
+			AssertClone(original, clone);
 
 			//Assert clone
 			Assert.True(clone.Name == original.Name);

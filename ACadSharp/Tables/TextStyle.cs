@@ -1,8 +1,5 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
-using ACadSharp.IO.Templates;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.Tables
 {
@@ -25,6 +22,9 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableStyle;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.TextStyle;
+
 		/// <summary>
 		/// Default text style.
 		/// </summary>
@@ -34,6 +34,18 @@ namespace ACadSharp.Tables
 		/// Style state flags.
 		/// </summary>
 		public new StyleFlags Flags { get { return (StyleFlags)base.Flags; } set { base.Flags = (StandardFlags)value; } }
+
+		/// <summary>
+		/// Primary font file name.
+		/// </summary>
+		[DxfCodeValue(3)]
+		public string Filename { get; set; } = "arial.ttf";
+
+		/// <summary>
+		/// Bigfont file name, blank if none.
+		/// </summary>
+		[DxfCodeValue(4)]
+		public string BigFontFilename { get; set; }
 
 		/// <summary>
 		/// Fixed text height; 0 if not fixed
@@ -48,12 +60,18 @@ namespace ACadSharp.Tables
 		public double Width { get; set; }
 
 		/// <summary>
+		/// Last height used.
+		/// </summary>
+		[DxfCodeValue(42)]
+		public double LastHeight { get; set; }
+
+		/// <summary>
 		/// Specifies the oblique angle of the object.
 		/// </summary>
 		/// <value>
 		/// The angle in radians within the range of -85 to +85 degrees. A positive angle denotes a lean to the right; a negative value will have 2*PI added to it to convert it to its positive equivalent.
 		/// </value>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double ObliqueAngle { get; set; } = 0.0;
 
 		/// <summary>
@@ -61,24 +79,6 @@ namespace ACadSharp.Tables
 		/// </summary>
 		[DxfCodeValue(71)]
 		public TextMirrorFlag MirrorFlag { get; set; } = TextMirrorFlag.None;
-
-		/// <summary>
-		/// Last height used.
-		/// </summary>
-		[DxfCodeValue(42)]
-		public double LastHeight { get; set; }
-
-		/// <summary>
-		/// Primary font file name.
-		/// </summary>
-		[DxfCodeValue(3)]
-		public string Filename { get; set; } = "arial.ttf";
-
-		/// <summary>
-		/// Bigfont file name; blank if none.
-		/// </summary>
-		[DxfCodeValue(4)]
-		public string BigFontFilename { get; set; }
 
 		/// <summary>
 		/// A long value which contains a truetype font’s pitch and family, character set, and italic and bold flags

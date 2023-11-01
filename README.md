@@ -39,6 +39,8 @@ private static void onNotification(object sender, NotificationEventArgs e)
 }
 ```
 
+For more examples [check](https://github.com/DomCR/ACadSharp/tree/master/ACadSharp.Examples).
+
 WIP
 ---
 
@@ -46,7 +48,6 @@ The dwg/dxf readers are not yet fully implemented, the NotificationHandler will 
 
 ### Dwg reader entities not implemented
 
-- ACDBPLACEHOLDER
 - VP_ENT_HDR
 - POLYLINE_PFACE
 - ACAD_PROXY_OBJECT

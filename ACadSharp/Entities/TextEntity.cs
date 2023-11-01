@@ -16,9 +16,14 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Text)]
 	public class TextEntity : Entity
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.TEXT;
 
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityText;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Text;
 
 		/// <summary>
 		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
@@ -78,7 +83,7 @@ namespace ACadSharp.Entities
 		/// <value>
 		/// The rotation angle in radians.
 		/// </value>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation
 		{
 			get => _rotation;
@@ -104,14 +109,33 @@ namespace ACadSharp.Entities
 		/// <value>
 		/// The angle in radians within the range of -85 to +85 degrees. A positive angle denotes a lean to the right; a negative value will have 2*PI added to it to convert it to its positive equivalent.
 		/// </value>
-		[DxfCodeValue(51)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double ObliqueAngle { get; set; } = 0.0;
 
 		/// <summary>
 		/// Style of this text entity.
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Name, 7)]	//Optional
-		public TextStyle Style { get; set; } = TextStyle.Default;
+		[DxfCodeValue(DxfReferenceType.Name | DxfReferenceType.Optional, 7)]
+		public TextStyle Style
+		{
+			get { return this._style; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._style = this.updateTable(value, this.Document.TextStyles);
+				}
+				else
+				{
+					this._style = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Mirror flags.
@@ -162,6 +186,43 @@ namespace ACadSharp.Entities
 
 		private double _rotation = 0.0;
 
+		private TextStyle _style = TextStyle.Default;
+
 		public TextEntity() : base() { }
+
+		public override CadObject Clone()
+		{
+			TextEntity clone = (TextEntity)base.Clone();
+			clone.Style = (TextStyle)this.Style.Clone();
+			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._style = this.updateTable(this.Style, doc.TextStyles);
+
+			doc.DimensionStyles.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
+
+			base.UnassignDocument();
+
+			this.Style = (TextStyle)this.Style.Clone();
+		}
+
+		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			base.tableOnRemove(sender, e);
+
+			if (e.Item.Equals(this.Style))
+			{
+				this.Style = this.Document.TextStyles[TextStyle.DefaultName];
+			}
+		}
 	}
 }

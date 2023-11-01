@@ -34,7 +34,7 @@ namespace ACadSharp.Tables
 			/// <summary>
 			/// Rotation value in radians of embedded shape or text
 			/// </summary>
-			[DxfCodeValue(50)]
+			[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 			public double Rotation { get; set; }
 
 			/// <summary>
@@ -50,7 +50,14 @@ namespace ACadSharp.Tables
 			/// Only present if <see cref="LinetypeShapeFlags.Text"/> is present
 			/// </remarks>
 			[DxfCodeValue(9)]
-			public string Text { get; set; }
+			public string Text
+			{
+				get { return this._text; }
+				set
+				{
+					this._text = string.IsNullOrEmpty(value) ? string.Empty : value;
+				}
+			}
 
 			/// <summary>
 			/// Pointer to STYLE object (one per element if code 74 > 0)
@@ -62,6 +69,16 @@ namespace ACadSharp.Tables
 			/// Line type where this segment belongs
 			/// </summary>
 			public LineType LineType { get; internal set; }
+
+			private string _text = string.Empty;
+
+			public LineType.Segment Clone()
+			{
+				Segment clone = MemberwiseClone() as Segment;
+				clone.Style = (TextStyle)(this.Style?.Clone());
+				clone.LineType = null;
+				return clone;
+			}
 		}
 	}
 }

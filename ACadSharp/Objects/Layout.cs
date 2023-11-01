@@ -1,11 +1,9 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
 using CSMath;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ACadSharp.Objects
 {
@@ -29,6 +27,9 @@ namespace ACadSharp.Objects
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectLayout;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Layout;
 
 		/// <summary>
 		/// Layout name
@@ -124,7 +125,7 @@ namespace ACadSharp.Objects
 				if (this._blockRecord.Name.Equals(BlockRecord.ModelSpaceName, System.StringComparison.OrdinalIgnoreCase))
 				{
 					this.Viewport = null;
-					base.PlotFlags =
+					base.Flags =
 						PlotFlags.Initializing |
 						PlotFlags.UpdatePaper |
 						PlotFlags.ModelType |
@@ -166,13 +167,23 @@ namespace ACadSharp.Objects
 		}
 
 		/// <summary>
-		/// Layout's UCS
+		/// UCS Table Record if UCS is a named UCS
 		/// </summary>
+		/// <remarks>
+		/// If not present, then UCS is unnamed
+		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 345)]
 		public UCS UCS { get; set; }
 
-		//346	ID/handle of AcDbUCSTableRecord of base UCS if UCS is orthographic(76 code is non-zero).
-		//If not present and 76 code is non-zero, then base UCS is taken to be WORLD
+		/// <summary>
+		/// UCSTableRecord of base UCS if UCS is orthographic (<see cref="UcsOrthographicType"/> is non-zero)
+		/// </summary>
+		/// <remarks>
+		/// If not present and <see cref="UcsOrthographicType"/> is non-zero, then base UCS is taken to be WORLD
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Handle, 346)]
+		public UCS BaseUCS { get; set; }
+
 
 		//333	Shade plot ID
 

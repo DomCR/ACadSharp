@@ -18,25 +18,27 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.POLYLINE_3D;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Polyline3d;
+
 		public Polyline3D() : base()
 		{
 			this.Vertices.OnAdd += this.verticesOnAdd;
 		}
 
-		/// <exception cref="NotImplementedException"></exception>
 		public override IEnumerable<Entity> Explode()
 		{
-			return Polyline.explode(this);
+			return Polyline.Explode(this);
 		}
 
-		private void verticesOnAdd(object sender, ReferenceChangedEventArgs e)
+		private void verticesOnAdd(object sender, CollectionChangedEventArgs e)
 		{
-			if (e.Current is not Vertex3D)
+			if (e.Item is not Vertex3D)
 			{
-				this.Vertices.Remove((Vertex)e.Current);
+				this.Vertices.Remove((Vertex)e.Item);
 				throw new ArgumentException($"Wrong vertex type for {DxfSubclassMarker.Polyline3d}");
 			}
-			else if (e.Current is Vertex3D v && v.Bulge != 0)
+			else if (e.Item is Vertex3D v && v.Bulge != 0)
 			{
 				throw new ArgumentException($"Bulge value cannot be different than 0 for a Vertex3D in a 3D Polyline");
 			}

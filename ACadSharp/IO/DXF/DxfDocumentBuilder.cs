@@ -16,10 +16,17 @@ namespace ACadSharp.IO.DXF
 
 		public override void BuildDocument()
 		{
-			foreach (ICadTableTemplate table in tableTemplates.Values)
-			{
-				table.Build(this);
-			}
+			this.RegisterTables();
+
+			this.BuildTable(this.AppIds);
+			this.BuildTable(this.LineTypesTable);
+			this.BuildTable(this.Layers);
+			this.BuildTable(this.TextStyles);
+			this.BuildTable(this.UCSs);
+			this.BuildTable(this.Views);
+			this.BuildTable(this.DimensionStyles);
+			this.BuildTable(this.VPorts);
+			this.BuildTable(this.BlockRecords);
 
 			//Assign the owners for the different objects
 			foreach (CadTemplate template in this.templates.Values)
@@ -32,42 +39,39 @@ namespace ACadSharp.IO.DXF
 
 		private void assignOwners(CadTemplate template)
 		{
-			if (template.CadObject.Owner != null || template.CadObject is CadDictionary)
+			if (template.CadObject.Owner != null || template.CadObject is CadDictionary || !template.OwnerHandle.HasValue)
 				return;
 
-			if (this.TryGetCadObject(template.OwnerHandle, out CadObject owner))
+			if (this.TryGetObjectTemplate(template.OwnerHandle, out CadTemplate owner))
 			{
 				switch (owner)
 				{
-					case CadDictionary:
+					case CadDictionaryTemplate:
 						//Entries of the dictionary are assigned in the template
 						break;
-					case BlockRecord record when template.CadObject is Viewport viewport:
-						record.Viewports.Add(viewport);
+					case CadBlockRecordTemplate record when template.CadObject is Entity entity:
+						record.OwnedObjectsHandlers.Add(entity.Handle);
 						break;
-					case BlockRecord record when template.CadObject is Entity entity:
-						record.Entities.Add(entity);
+					case CadPolyLineTemplate pline when template.CadObject is Vertex v:
+						pline.VertexHandles.Add(v.Handle);
 						break;
-					case Polyline pline when template.CadObject is Vertex v:
-						pline.Vertices.Add(v);
+					case CadPolyLineTemplate pline when template.CadObject is Seqend seqend:
+						pline.SeqendHandle = seqend.Handle;
 						break;
-					case Polyline pline when template.CadObject is Seqend seqend:
-						pline.Vertices.Seqend = seqend;
+					case CadInsertTemplate insert when template.CadObject is AttributeEntity att:
+						insert.AttributesHandles.Add(att.Handle);
 						break;
-					case Insert insert when template.CadObject is AttributeEntity att:
-						insert.Attributes.Add(att);
-						break;
-					case Insert insert when template.CadObject is Seqend seqend:
-						insert.Attributes.Seqend = seqend;
+					case CadInsertTemplate insert when template.CadObject is Seqend seqend:
+						insert.SeqendHandle = seqend.Handle;
 						break;
 					default:
-						this.Notify(new NotificationEventArgs($"Owner {owner.GetType().Name} with handle {owner.Handle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}"));
+						this.Notify($"Owner {owner.GetType().Name} with handle {template.OwnerHandle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}");
 						break;
 				}
 			}
 			else
 			{
-				this.Notify(new NotificationEventArgs($"Owner {template.OwnerHandle} not found for {template.GetType().FullName} with handle {template.CadObject.Handle}"));
+				this.Notify($"Owner {template.OwnerHandle} not found for {template.GetType().FullName} with handle {template.CadObject.Handle}");
 			}
 		}
 	}

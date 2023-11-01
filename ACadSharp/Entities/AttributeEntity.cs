@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 
 namespace ACadSharp.Entities
 {
@@ -20,9 +19,17 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityAttribute;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Attribute;
+
 		/// <summary>
 		/// Default constructor
 		/// </summary>
 		public AttributeEntity() : base() { }
+
+		public AttributeEntity(AttributeDefinition definition) : this()
+		{
+			this.matchAttributeProperties(definition);
+		}
 	}
 }
