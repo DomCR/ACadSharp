@@ -3,6 +3,7 @@ using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using CSUtilities.Converters;
 using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
@@ -51,7 +52,8 @@ namespace ACadSharp.IO.DWG
 			//RL value of 0x0dca (meaning unknown).
 			if (this.R2004Plus)
 			{
-				this._writer.WriteRawLong(0xDCA);
+				byte[] arr = LittleEndianConverter.Instance.GetBytes((int)0xDCA);
+				this._stream.Write(arr, 0, arr.Length);
 			}
 
 			this.writeBlockControl();
