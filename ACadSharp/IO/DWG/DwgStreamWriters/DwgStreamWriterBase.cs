@@ -156,7 +156,7 @@ namespace ACadSharp.IO.DWG
 			{
 				for (int i = 0, j = initialIndex; i < length; i++, j++)
 				{
-					this.WriteByte(arr[j]);
+					this._stream.WriteByte(arr[j]);
 				}
 
 				return;
@@ -166,7 +166,7 @@ namespace ACadSharp.IO.DWG
 			for (int i = 0, j = initialIndex; i < length; i++, j++)
 			{
 				byte b = arr[j];
-				this.WriteByte((byte)(this._lastByte | (b >> this.BitShift)));
+				this._stream.WriteByte((byte)(this._lastByte | (b >> this.BitShift)));
 				this._lastByte = (byte)(b << num);
 			}
 		}
