@@ -138,6 +138,15 @@ namespace ACadSharp.IO.DWG
 			//Numentries BL 70
 			this._writer.WriteBitLong(table.Count);
 
+			if (this.R2000Plus && table is DimensionStylesTable)
+			{
+				//Undocumented: this byte is found only in the DimensionStylesTable
+				//Solves the Autocad error :
+				//Reading handle A object type AcDbDimStyleTable
+				//Error 34(eWrongObjectType)                       Object discarded
+				this._writer.WriteByte(0);
+			}
+
 			foreach (var item in table)
 			{
 				//numentries handles in the file (soft owner)
@@ -227,11 +236,9 @@ namespace ACadSharp.IO.DWG
 
 			//Unknown RC 71 Undoc'd 71-group; doesn't even appear in DXF or an entget if it's 0.
 			this._writer.WriteByte(0);
-			//Handle refs H The app control(soft pointer)
-			//[Reactors(soft pointer)]
-			//xdicobjhandle(hard owner)
-			//External reference block handle(hard pointer)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.AppIds);
+
+			//External reference block handle(hard pointer)	??
+			this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
 
 			this.registerObject(app);
 		}
@@ -366,7 +373,7 @@ namespace ACadSharp.IO.DWG
 				}
 
 				//Layout Handle H(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardOwnership, record.Layout);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, record.Layout);
 			}
 
 			this.registerObject(record);
@@ -444,12 +451,8 @@ namespace ACadSharp.IO.DWG
 			//Color CMC 62
 			this._writer.WriteCmColor(layer.Color);
 
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
-
-			//Handle refs H Layer control (soft pointer)
-			//[Reactors(soft pointer)]
-			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 
 			//R2000+:
 			if (this.R2000Plus)
@@ -547,11 +550,8 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Common:
-			//Handle refs H Ltype control(soft pointer)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.LineTypes);
-			//[Reactors (soft pointer)]
-			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
 
 			foreach (var segment in ltype.Segments)
 			{
@@ -1078,6 +1078,7 @@ namespace ACadSharp.IO.DWG
 
 			//External reference block handle(hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+
 			//340 shapefile(DIMTXSTY)(hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.Style);
 
@@ -1244,11 +1245,8 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Common:
-			//Handle refs H Vport control(soft pointer)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.VPorts);
-			//[Reactors(soft pointer)]
-			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
 
 			//R2007+:
 			if (this.R2007Plus)
