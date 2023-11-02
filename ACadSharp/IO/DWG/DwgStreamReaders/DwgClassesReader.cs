@@ -119,7 +119,7 @@ namespace ACadSharp.IO.DWG
 					sreader.ReadBitLong();
 				}
 
-				classes.Add(dxfClass);
+				classes.AddOrUpdate(dxfClass);
 			}
 
 			if (R2007Plus)

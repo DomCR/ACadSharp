@@ -7,12 +7,18 @@ namespace ACadSharp.Classes
 {
 	public class DxfClassCollection : ICollection<DxfClass>
 	{
+		/// <inheritdoc/>
 		public int Count { get { return this._entries.Count; } }
 
+		/// <inheritdoc/>
 		public bool IsReadOnly => false;
 
-		public Dictionary<string, DxfClass> _entries = new Dictionary<string, DxfClass>();
+		public Dictionary<string, DxfClass> _entries = new Dictionary<string, DxfClass>(StringComparer.OrdinalIgnoreCase);
 
+		/// <summary>
+		/// Adds or updates the classes in a specific document 
+		/// </summary>
+		/// <param name="doc"></param>
 		public static void UpdateDxfClasses(CadDocument doc)
 		{
 			//AcDbDictionaryWithDefault
@@ -357,14 +363,19 @@ namespace ACadSharp.Classes
 			});
 		}
 
+		/// <summary>
+		/// Add a dxf class to the collection if the <see cref="DxfClass.DxfName"/> is not present
+		/// </summary>
+		/// <param name="item"></param>
 		public void Add(DxfClass item)
 		{
-			if (_entries.ContainsKey(item.DxfName))
-				return;
-
-			_entries.Add(item.DxfName, item);
+			this._entries.Add(item.DxfName, item);
 		}
 
+		/// <summary>
+		/// Add a dxf class to the collection or updates the existing one if the <see cref="DxfClass.DxfName"/> is already in the collection
+		/// </summary>
+		/// <param name="item"></param>
 		public void AddOrUpdate(DxfClass item)
 		{
 			if (_entries.TryGetValue(item.DxfName, out DxfClass result))
@@ -377,31 +388,64 @@ namespace ACadSharp.Classes
 			}
 		}
 
+		/// <summary>
+		/// Get by <see cref="DxfClass.DxfName"/>
+		/// </summary>
+		/// <param name="dxfname"></param>
+		/// <returns></returns>
+		public DxfClass GetByName(string dxfname)
+		{
+			if (this._entries.TryGetValue(dxfname, out DxfClass result))
+			{
+				return result;
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+		/// <inheritdoc/>
 		public void Clear()
 		{
 			_entries.Clear();
 		}
 
+		/// <summary>
+		/// Determines whether the Collection contains a specific <see cref="DxfClass.DxfName"/>
+		/// </summary>
+		/// <param name="dxfname"></param>
+		/// <returns></returns>
+		public bool Contains(string dxfname)
+		{
+			return this._entries.ContainsKey(dxfname);
+		}
+
+		/// <inheritdoc/>
 		public bool Contains(DxfClass item)
 		{
 			return _entries.Values.Contains(item);
 		}
 
+		/// <inheritdoc/>
 		public void CopyTo(DxfClass[] array, int arrayIndex)
 		{
 			throw new NotImplementedException();
 		}
 
+		/// <inheritdoc/>
 		public IEnumerator<DxfClass> GetEnumerator()
 		{
 			return _entries.Values.GetEnumerator();
 		}
 
+		/// <inheritdoc/>
 		public bool Remove(DxfClass item)
 		{
 			return this._entries.Remove(item.DxfName);
 		}
 
+		/// <inheritdoc/>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return this._entries.Values.GetEnumerator();

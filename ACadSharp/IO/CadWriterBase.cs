@@ -29,7 +29,10 @@ namespace ACadSharp.IO
 		}
 
 		/// <inheritdoc/>
-		public abstract void Write();
+		public virtual void Write()
+		{
+			DxfClassCollection.UpdateDxfClasses(_document);
+		}
 
 		/// <inheritdoc/>
 		public abstract void Dispose();
@@ -51,11 +54,6 @@ namespace ACadSharp.IO
 			}
 
 			return TextEncoding.Windows1252();
-		}
-
-		protected void validateDocument()
-		{
-			DxfClassCollection.UpdateDxfClasses(_document);
 		}
 
 		protected void triggerNotification(string message, NotificationType notificationType, Exception ex = null)
