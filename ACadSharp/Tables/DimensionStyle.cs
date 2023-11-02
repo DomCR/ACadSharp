@@ -213,7 +213,7 @@ namespace ACadSharp.Tables
 		/// DIMALTU
 		/// </summary>
 		[DxfCodeValue(273)]
-		public LinearUnitFormat AlternateUnitFormat { get; set; }
+		public LinearUnitFormat AlternateUnitFormat { get; set; } = LinearUnitFormat.Decimal;
 
 		/// <summary>
 		/// DIMALTTD
@@ -344,13 +344,13 @@ namespace ACadSharp.Tables
 		/// DIMALTF
 		/// </summary>
 		[DxfCodeValue(143)]
-		public double AlternateUnitScaleFactor { get; set; }
+		public double AlternateUnitScaleFactor { get; set; } = 25.4;
 
 		/// <summary>
 		/// DIMLFAC
 		/// </summary>
 		[DxfCodeValue(144)]
-		public double LinearScaleFactor { get; set; }
+		public double LinearScaleFactor { get; set; } = 1.0;
 
 		/// <summary>
 		/// DIMTVP
@@ -362,7 +362,7 @@ namespace ACadSharp.Tables
 		/// DIMTFAC
 		/// </summary>
 		[DxfCodeValue(146)]
-		public double ToleranceScaleFactor { get; set; }
+		public double ToleranceScaleFactor { get; set; } = 1.0;
 
 		/// <summary>
 		/// DIMGAP
