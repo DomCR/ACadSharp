@@ -19,7 +19,7 @@ namespace ACadSharp.Entities
 	[DxfName(DxfFileToken.EntityMLeader)]
 	[DxfSubClass(DxfSubclassMarker.MLeader)]
 	public class MultiLeader : Entity
-{
+	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
@@ -164,7 +164,6 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(42)]
 		public double ArrowheadSize { get; set; }
 
-		//	TODO  similar to Leader.CreationType, aka AnnotationType
 		/// <summary>
 		/// Content Type
 		/// </summary>
@@ -181,12 +180,10 @@ namespace ACadSharp.Entities
 
 		/// <summary>
 		/// Text Left Attachment Type
-		/// TODO Property Name
 		/// </summary>
 		[DxfCodeValue(173)]
 		public TextAttachmentType TextLeftAttachment { get; set; }
 
-		//  TODO Property Name
 		/// <summary>
 		/// Text Right Attachement Type
 		/// </summary>
@@ -221,7 +218,7 @@ namespace ACadSharp.Entities
 		#region Block Content Properties
 
 		/// <summary>
-		/// Block Content ID (optional) Type = BlockRecord
+		/// Block Content
 		/// </summary>
 		[DxfCodeValue(344)]
 		public BlockRecord BlockContent { get; set; }
@@ -346,7 +343,7 @@ namespace ACadSharp.Entities
 		{
 			MultiLeader clone = (MultiLeader)base.Clone();
 
-			clone.ContextData = (MultiLeaderAnnotContext)(this.ContextData?.Clone());
+			clone.ContextData = (MultiLeaderAnnotContext)clone.Clone();
 
 			foreach (var att in BlockAttributes)
 			{

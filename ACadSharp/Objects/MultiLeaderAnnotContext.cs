@@ -182,7 +182,6 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(141)]
 		public double BackgroundScaleFactor { get; set; }
 
-		/// TODO may be Transparency Type
 		/// <summary>
 		/// BL	92	Background transparency
 		/// </summary>
@@ -200,9 +199,6 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(292)]
 		public bool BackgroundMaskFillOn { get; set; }
-
-		// TODO: what meaning for values?
-		// TODO Type
 
 		/// <summary>
 		/// BS	173	Column type (ODA writes 0)
