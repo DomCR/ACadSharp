@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
+using ACadSharp.Tables;
 using System;
 using System.Linq;
 
@@ -30,6 +31,7 @@ namespace ACadSharp.IO.DXF
 			{
 				case AcdbPlaceHolder:
 				case Material:
+				case MultiLeaderStyle:
 				case SortEntitiesTable:
 				case Scale:
 				case VisualStyle:
