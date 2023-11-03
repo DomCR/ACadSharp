@@ -244,11 +244,13 @@ namespace ACadSharp.Tables
 
 		/// <summary>
 		/// Overwrite Property Value
-		/// B	295	Property changed, meaning not totally clear
+		/// </summary>
+		/// <remarks>
+		/// Property changed, meaning not totally clear
 		/// might be set to true if something changed after loading,
 		/// or might be used to trigger updates in dependent MLeaders.
 		/// sequence seems to be different in DXF
-		/// </summary>
+		/// </remarks>
 		[DxfCodeValue(295)]
 		public bool OverwritePropertyValue { get; set; }
 

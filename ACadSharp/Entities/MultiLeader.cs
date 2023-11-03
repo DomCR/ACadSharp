@@ -324,7 +324,7 @@ namespace ACadSharp.Entities
 		public TextAttachmentType TextBottomAttachment { get; set; }
 
 		/// <summary>
-		/// 	Top text attachment direction.
+		/// Top text attachment direction.
 		/// </summary>
 		/// <value>
 		/// A <see cref="TextAttachmentType"/> having the values
@@ -335,7 +335,7 @@ namespace ACadSharp.Entities
 		public TextAttachmentType TextTopAttachment { get; set; }
 
 		/// <summary>
-		/// 295 Leader extended to text
+		/// Leader extended to text
 		/// </summary>
 		public bool ExtendedToText { get; set; }
 
