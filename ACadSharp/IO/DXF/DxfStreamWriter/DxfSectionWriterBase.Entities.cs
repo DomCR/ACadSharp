@@ -18,6 +18,7 @@ namespace ACadSharp.IO.DXF
 				case MLine:
 				case MText:
 				case Solid3D:
+				case MultiLeader:
 					this.notify($"Entity type not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return;
 			}

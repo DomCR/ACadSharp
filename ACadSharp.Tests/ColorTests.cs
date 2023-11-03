@@ -84,7 +84,7 @@ namespace ACadSharp.Tests
 
 			this._output.WriteLine($"Color value: {color}");
 
-			var rgb = color.GetTrueColorRgb();
+			var rgb = color.GetRgb();
 
 			Assert.Equal(r, rgb[0]);
 			Assert.Equal(g, rgb[1]);
