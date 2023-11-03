@@ -1201,8 +1201,10 @@ namespace ACadSharp.IO.DWG
 		{
 			//R2010+:
 			if (this.R2010Plus)
+			{
 				//Version RC ?
 				att.Version = this._objectReader.ReadByte();
+			}
 
 			//R2018+:
 			if (this.R2018Plus)
@@ -1212,27 +1214,12 @@ namespace ACadSharp.IO.DWG
 
 			switch (att.AttributeType)
 			{
-				case AttributeType.SingleLine:
-					//Common:
-					//Tag TV 2
-					att.Tag = this._textReader.ReadVariableText();
-					//Field length BS 73 unused
-					short length = this._objectReader.ReadBitShort();
-					//Flags RC 70 NOT bit-pair - coded.
-					att.Flags = (AttributeFlags)this._objectReader.ReadByte();
-					//R2007 +:
-					if (this.R2007Plus)
-						//Lock position flag B 280
-						att.IsReallyLocked = this._objectReader.ReadBit();
-
-					break;
 				case AttributeType.MultiLine:
 				case AttributeType.ConstantMultiLine:
 					//Attribute type is multi line
 					//MTEXT fields … Here all fields of an embedded MTEXT object
 					//are written, starting from the Entmode
 					//(entity mode). The owner handle can be 0.
-
 					short dataSize = this._objectReader.ReadBitShort();
 					if (dataSize > 0)
 					{
@@ -1243,13 +1230,21 @@ namespace ACadSharp.IO.DWG
 																//Unknown BS 72? Value 0.
 						this._objectReader.ReadBitShort();
 					}
-					att.Tag = this._mergedReaders.ReadVariableText();
-					length = this._mergedReaders.ReadBitShort();
-					att.Flags = (AttributeFlags)this._mergedReaders.ReadByte();
-					att.IsReallyLocked = this._mergedReaders.ReadBit();
 					break;
-				default:
-					break;
+			}
+
+			//Common:
+			//Tag TV 2
+			att.Tag = this._textReader.ReadVariableText();
+			//Field length BS 73 unused
+			short length = this._objectReader.ReadBitShort();
+			//Flags RC 70 NOT bit-pair - coded.
+			att.Flags = (AttributeFlags)this._objectReader.ReadByte();
+			//R2007 +:
+			if (this.R2007Plus)
+			{
+				//Lock position flag B 280
+				att.IsReallyLocked = this._objectReader.ReadBit();
 			}
 		}
 
@@ -1269,9 +1264,7 @@ namespace ACadSharp.IO.DWG
 			//Layers: 	Numentries BL 70 Counts layer "0", too
 			int numentries = this._objectReader.ReadBitLong();
 			for (int i = 0; i < numentries; ++i)
-				//Handle refs H NULL(soft pointer)
-				//xdicobjhandle(hard owner)
-				//the apps(soft owner)
+				//numentries handles in the file (soft owner)
 				template.EntryHandles.Add(this.handleReference());
 
 			return template;
@@ -1408,7 +1401,7 @@ namespace ACadSharp.IO.DWG
 			template.OwnedObjectsCount = 0;
 
 			//R2004+:
-			if (this.R2004Plus & template.HasAtts)
+			if (this.R2004Plus && template.HasAtts)
 				//Owned Object Count BL Number of objects owned by this object.
 				template.OwnedObjectsCount = this._objectReader.ReadBitLong();
 		}
@@ -1577,12 +1570,15 @@ namespace ACadSharp.IO.DWG
 			this.readCommonEntityData(template);
 
 			//Flags RC 70 NOT DIRECTLY THE 75. Bit-coded (76543210):
-			byte num1 = this._objectReader.ReadByte();
+			byte flags = this._objectReader.ReadByte();
+
 			//75 0 : Splined(75 value is 5)
 			//1 : Splined(75 value is 6)
-			bool splined = ((uint)num1 & 0b1) > 0;
+			bool splined = ((uint)flags & 0b1) > 0;
+			//Should assign pline.SmoothSurface ??
+
 			//(If either is set, set 70 bit 2(4) to indicate splined.)
-			bool splined1 = ((uint)num1 & 0b10) > 0;
+			bool splined1 = ((uint)flags & 0b10) > 0;
 
 			if (splined | splined1)
 			{
@@ -1921,7 +1917,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//Attachment Point BS 71
-				dimension.AttachmentPoint = (Entities.AttachmentPointType)this._objectReader.ReadBitShort();
+				dimension.AttachmentPoint = (AttachmentPointType)this._objectReader.ReadBitShort();
 				//Linespacing Style BS 72
 				dimension.LineSpacingStyle = (LineSpacingStyleType)this._objectReader.ReadBitShort();
 				//Linespacing Factor BD 41
@@ -2277,7 +2273,8 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				for (int i = 0; i < frozenLayerCount; ++i)
-					//H 341 Frozen Layer Handles(use count from above)(hard pointer until R2000, soft pointer from R2004 onwards)
+					//H 341 Frozen Layer Handles(use count from above)
+					//(hard pointer until R2000, soft pointer from R2004 onwards)
 					template.FrozenLayerHandles.Add(this.handleReference());
 
 				//H 340 Clip boundary handle(soft pointer)
@@ -2368,7 +2365,7 @@ namespace ACadSharp.IO.DWG
 				//The scenario flag becomes 1 if the knot parameter is Custom or has no fit data, otherwise 2.
 				spline.KnotParameterization = (KnotParameterization)this._mergedReaders.ReadBitLong();
 
-				scenario = ((spline.KnotParameterization == KnotParameterization.Custom || (spline.Flags1 & SplineFlags1.UseKnotParameter) == 0) ? 1 : 2);
+				scenario = (spline.KnotParameterization == KnotParameterization.Custom || (spline.Flags1 & SplineFlags1.UseKnotParameter) == 0) ? 1 : 2;
 			}
 			else if (scenario == 2)
 			{
@@ -2390,18 +2387,6 @@ namespace ACadSharp.IO.DWG
 			bool flag = false;
 			switch (scenario)
 			{
-				case 2:
-					//Fit Tol BD 44
-					spline.FitTolerance = this._objectReader.ReadBitDouble();
-					//Beg tan vec 3BD 12 Beginning tangent direction vector (normalized).
-					spline.StartTangent = this._objectReader.Read3BitDouble();
-					//End tan vec 3BD 13 Ending tangent direction vector (normalized).
-					spline.EndTangent = this._objectReader.Read3BitDouble();
-					//num fit pts BL 74 Number of fit points.
-					//Stored as a LONG, although it is defined in DXF as a short.
-					//You can see this if you create a spline with >=256 fit points
-					numfitpts = this._objectReader.ReadBitLong();
-					break;
 				case 1:
 					//Rational B flag bit 2
 					if (this._objectReader.ReadBit())
@@ -2427,7 +2412,20 @@ namespace ACadSharp.IO.DWG
 					//Weight B Seems to be an echo of the 4 bit on the flag for "weights present".
 					flag = this._objectReader.ReadBit();
 					break;
+				case 2:
+					//Fit Tol BD 44
+					spline.FitTolerance = this._objectReader.ReadBitDouble();
+					//Beg tan vec 3BD 12 Beginning tangent direction vector (normalized).
+					spline.StartTangent = this._objectReader.Read3BitDouble();
+					//End tan vec 3BD 13 Ending tangent direction vector (normalized).
+					spline.EndTangent = this._objectReader.Read3BitDouble();
+					//num fit pts BL 74 Number of fit points.
+					//Stored as a LONG, although it is defined in DXF as a short.
+					//You can see this if you create a spline with >=256 fit points
+					numfitpts = this._objectReader.ReadBitLong();
+					break;
 			}
+
 			for (int i = 0; i < numknots; i++)
 			{
 				//Knot BD knot value
@@ -2589,7 +2587,7 @@ namespace ACadSharp.IO.DWG
 			//Text height BD 40 Undocumented
 			mtext.Height = this._objectReader.ReadBitDouble();
 			//Attachment BS 71 Similar to justification; see DXF doc
-			mtext.AttachmentPoint = (Entities.AttachmentPointType)this._objectReader.ReadBitShort();
+			mtext.AttachmentPoint = (AttachmentPointType)this._objectReader.ReadBitShort();
 			//Drawing dir BS 72 Left to right, etc.; see DXF doc
 			mtext.DrawingDirection = (DrawingDirectionType)this._objectReader.ReadBitShort();
 			//Extents ht BD ---Undocumented and not present in DXF or entget
@@ -2728,9 +2726,10 @@ namespace ACadSharp.IO.DWG
 				leader.Vertices.Add(this._objectReader.Read3BitDouble());
 			}
 
-			//Origin 3BD --- The leader plane origin (by default it’s the first point).
-			this._objectReader.Read3BitDouble();    //Is necessary to store this value?
-													//Extrusion 3BD 210
+			//Origin 3BD --- The leader plane origin (by default it’s the first point)
+			//Is necessary to store this value?
+			this._objectReader.Read3BitDouble();
+			//Extrusion 3BD 210
 			leader.Normal = this._objectReader.Read3BitDouble();
 			//x direction 3BD 211
 			leader.HorizontalDirection = this._objectReader.Read3BitDouble();
@@ -3182,23 +3181,6 @@ namespace ACadSharp.IO.DWG
 			return leaderLine;
 		}
 
-
-		private void showCurrentPosAndShift() {
-			long positionO = _objectReader.Position;
-			int bitShiftO = _objectReader.BitShift;
-			System.Diagnostics.Debug.WriteLine($"Pos: {positionO}, bShi: {bitShiftO}");
-			long positionH = _handlesReader.Position;
-			int bitShiftH = _handlesReader.BitShift;
-			System.Diagnostics.Debug.WriteLine($"Pos: {positionH}, bShi: {bitShiftH}");
-		}
-
-
-		private void resetPosition(long positionBefore, int bitShiftBefore) {
-			_objectReader.Position = positionBefore - 1;
-			_objectReader.ReadByte();
-			((DwgStreamReaderBase)_objectReader).BitShift = bitShiftBefore;
-		}
-
 		private CadTemplate readMultiLeaderStyle()
 		{
 			if (!R2010Plus)
@@ -3429,9 +3411,10 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			if (this.R2000Plus)
+			{
 				//Loaded Bit B 0 indicates loaded for an xref
-				if (this._objectReader.ReadBit())
-					block.Flags |= BlockTypeFlags.XRef;
+				this._objectReader.ReadBit();
+			}
 
 			//R2004+:
 			int nownedObjects = 0;
@@ -3453,7 +3436,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//Insert Count RC A sequence of zero or more non-zero RC’s, followed by a terminating 0 RC.The total number of these indicates how many insert handles will be present.
-				for (byte i = this._objectReader.ReadByte(); i > 0; i = this._objectReader.ReadByte())
+				for (byte i = this._objectReader.ReadByte(); i != 0; i = this._objectReader.ReadByte())
 					++insertCount;
 
 				//Block Description TV 4 Block description.
@@ -3591,8 +3574,9 @@ namespace ACadSharp.IO.DWG
 			//Color CMC 62
 			layer.Color = this._mergedReaders.ReadCmColor();
 
-			//Handle refs H Layer control (soft pointer)
+			//TODO: This is not the Layer control handle
 			template.LayerControlHandle = this.handleReference();
+			//Handle refs H Layer control (soft pointer)
 			//[Reactors(soft pointer)]
 			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)
@@ -3673,6 +3657,8 @@ namespace ACadSharp.IO.DWG
 			this.readDocumentTable(template.CadObject, template);
 
 			//the linetypes, ending with BYLAYER and BYBLOCK.
+			//all are soft owner references except BYLAYER and 
+			//BYBLOCK, which are hard owner references.
 			template.EntryHandles.Add(this.handleReference());
 			template.EntryHandles.Add(this.handleReference());
 
@@ -4542,7 +4528,7 @@ namespace ACadSharp.IO.DWG
 			//Numhandles BL # objhandles in this group
 			int numhandles = this._objectReader.ReadBitLong();
 			for (int index = 0; index < numhandles; ++index)
-				//Handle refs H parenthandle (soft pointer)
+				//the entries in the group(hard pointer)
 				template.Handles.Add(this.handleReference());
 
 			return template;
@@ -4612,12 +4598,16 @@ namespace ACadSharp.IO.DWG
 
 				//R2018+:
 				if (this.R2018Plus)
+				{
 					//Line type handle H Line type handle (hard pointer)
 					elementTemplate.LinetypeHandle = this.handleReference();
+				}
 				//Before R2018:
 				else
+				{
 					//Ltindex BS Linetype index (yes, index)
 					elementTemplate.LinetypeIndex = this._objectReader.ReadBitShort();
+				}
 
 				template.ElementTemplates.Add(elementTemplate);
 				mlineStyle.Elements.Add(element);
@@ -4645,17 +4635,17 @@ namespace ACadSharp.IO.DWG
 				if ((flags & 0x200) != 0)
 					lwPolyline.Flags |= LwPolylineFlags.Closed;
 
-				if ((flags & 4u) != 0)
+				if ((flags & 0x4u) != 0)
 				{
 					lwPolyline.ConstantWidth = this._objectReader.ReadBitDouble();
 				}
 
-				if ((flags & 8u) != 0)
+				if ((flags & 0x8u) != 0)
 				{
 					lwPolyline.Elevation = this._objectReader.ReadBitDouble();
 				}
 
-				if ((flags & 2u) != 0)
+				if ((flags & 0x2u) != 0)
 				{
 					lwPolyline.Thickness = this._objectReader.ReadBitDouble();
 				}
@@ -4668,18 +4658,19 @@ namespace ACadSharp.IO.DWG
 				int nvertices = this._objectReader.ReadBitLong();
 				int nbulges = 0;
 
-				if (((uint)flags & 0x10u) != 0)
+				if (((uint)flags & 0x10) != 0)
 				{
 					nbulges = this._objectReader.ReadBitLong();
 				}
+
 				int nids = 0;
-				if (((uint)flags & 0x400u) != 0)
+				if (((uint)flags & 0x400) != 0)
 				{
 					nids = this._objectReader.ReadBitLong();
 				}
 
 				int ndiffwidth = 0;
-				if (((uint)flags & 0x20u) != 0)
+				if (((uint)flags & 0x20) != 0)
 				{
 					ndiffwidth = this._objectReader.ReadBitLong();
 				}
@@ -4939,7 +4930,6 @@ namespace ACadSharp.IO.DWG
 
 				//numboundaryobjhandles BL 97 Number of boundary object handles for this path
 				int numboundaryobjhandles = this._objectReader.ReadBitLong();
-
 				for (int h = 0; h < numboundaryobjhandles; h++)
 				{
 					//boundaryhandle H 330 boundary handle(soft pointer)
@@ -5177,8 +5167,10 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			if (this.R2000Plus)
+			{
 				//Cloning flag BS 280
 				xRecord.ClonningFlags = (DictionaryCloningFlags)this._objectReader.ReadBitShort();
+			}
 
 			long size = this._objectInitialPos + (long)(this._size * 8U) - 7L;
 			while (this._handlesReader.PositionInBits() < size)
@@ -5324,9 +5316,9 @@ namespace ACadSharp.IO.DWG
 			plot.PaperSize = this._textReader.ReadVariableText();
 
 			//Plot origin 2BD 46,47 plotsettings origin offset in millimeters
-			var plotOrigin = this._objectReader.Read2BitDouble();
-			plot.PlotOriginX = plotOrigin.X;
-			plot.PlotOriginY = plotOrigin.Y;
+			plot.PlotOriginX = this._objectReader.ReadBitDouble();
+			plot.PlotOriginY = this._objectReader.ReadBitDouble();
+
 			//Paper units BS 72 plotsettings plot paper units
 			plot.PaperUnits = (PlotPaperUnits)this._objectReader.ReadBitShort();
 			//Plot rotation BS 73 plotsettings plot rotation
@@ -5335,13 +5327,11 @@ namespace ACadSharp.IO.DWG
 			plot.PlotType = (PlotType)this._objectReader.ReadBitShort();
 
 			//Window min 2BD 48,49 plotsettings plot window area lower left
-			var windowLowerLeft = this._objectReader.Read2BitDouble();
-			plot.WindowLowerLeftX = windowLowerLeft.X;
-			plot.WindowLowerLeftY = windowLowerLeft.Y;
+			plot.WindowLowerLeftX = this._objectReader.ReadBitDouble();
+			plot.WindowLowerLeftY = this._objectReader.ReadBitDouble();
 			//Window max 2BD 140,141 plotsettings plot window area upper right
-			var windowUpperLeft = this._objectReader.Read2BitDouble();
-			plot.WindowUpperLeftX = windowUpperLeft.X;
-			plot.WindowUpperLeftY = windowUpperLeft.Y;
+			plot.WindowUpperLeftX = this._objectReader.ReadBitDouble();
+			plot.WindowUpperLeftY = this._objectReader.ReadBitDouble();
 
 			//R13 - R2000 Only:
 			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)
@@ -5381,6 +5371,8 @@ namespace ACadSharp.IO.DWG
 				//Visual Style handle(soft pointer)
 				this.handleReference();
 		}
+
+		#endregion Object readers
 
 		private CadTemplate readDwgColor()
 		{

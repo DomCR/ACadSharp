@@ -1,10 +1,4 @@
-﻿#region copyright
-//Copyright 2021, Albert Domenech.
-//All rights reserved. 
-//This source code is licensed under the MIT license. 
-//See LICENSE file in the project root for full license information.
-#endregion
-using System;
+﻿using System;
 
 namespace ACadSharp
 {
@@ -370,10 +364,6 @@ namespace ACadSharp
 		{
 		}
 
-		/// <summary>
-		/// Creates a color out of a RGB true color.
-		/// </summary>
-		/// <param name="trueColor">True color int 32.</param>
 		private Color(int trueColor)
 		{
 			if (trueColor < 0 || trueColor > _maxTrueColor)
