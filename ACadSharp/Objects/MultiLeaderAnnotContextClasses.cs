@@ -17,57 +17,60 @@ namespace ACadSharp.Objects
 	{
 		/// <summary>
 		/// Represents a leader root
-		/// 302	DXF: “LEADER“
 		/// </summary>
+		/// <remarks>
+		/// Appears in DXF as 302 DXF: “LEADER“
+		/// </remarks>
 		public class LeaderRoot : ICloneable
 		{
 			public LeaderRoot() { }
 
 			/// <summary>
-			/// B	290	Is content valid (ODA writes true)
+			/// Is content valid (ODA writes true)
 			/// </summary>
 			public bool ContentValid { get; set; }
 
 			/// <summary>
-			/// B	291	Unknown (ODA writes true)
+			/// Unknown (ODA writes true)
 			/// </summary>
 			public bool Unknown { get; set; }
 
 			/// <summary>
-			/// 3BD	10	Connection point
+			/// Connection point
 			/// </summary>
 			public XYZ ConnectionPoint { get; set; }
 
 			/// <summary>
-			/// 3BD	11	Direction
+			/// Direction
 			/// </summary>
 			public XYZ Direction { get; set; }
 
 			/// <summary>
-			/// 
+			/// Gets a list of <see cref="StartEndPointPair" />.
 			/// </summary>
-			public IList<StartEndPointPair> BreakStartEndPointsPairs { get; set; } = new List<StartEndPointPair>();
+			public IList<StartEndPointPair> BreakStartEndPointsPairs { get; } = new List<StartEndPointPair>();
 
 			/// <summary>
-			/// BL	90	Leader index
+			/// Leader index
 			/// </summary>
 			public int LeaderIndex { get; set; }
 
 			/// <summary>
-			/// BD	40	Landing distance
+			/// Landing distance
 			/// </summary>
 			public double LandingDistance { get; set; }
 
 			/// <summary>
-			/// 
+			/// Gets a list of <see cref="LeaderLine"/> objects representing
+			/// representing leader lines starting from the landing point
+			/// of the multi leader.
 			/// </summary>
 			public IList<LeaderLine> Lines { get; } = new List<LeaderLine>();
 
 			//R2010
 			/// <summary>
-			/// BS	271	Attachment direction
+			/// Attachment direction
 			/// </summary>
-
 			public TextAttachmentDirectionType AttachmentDirection { get; internal set; }
 
 			public object Clone()
@@ -101,13 +104,13 @@ namespace ACadSharp.Objects
 			}
 
 			/// <summary>
-			/// 3BD	12	Break start point
+			/// Break start point
 			/// </summary>
 			[DxfCodeValue(12)]
 			public XYZ StartPoint { get; private set; }
 
 			/// <summary>
-			/// 3BD	13	Break end point
+			/// Break end point
 			/// </summary>
 			[DxfCodeValue(13)]
 			public XYZ EndPoint { get; private set; }
@@ -121,25 +124,26 @@ namespace ACadSharp.Objects
 
 		/// <summary>
 		///	Represents a leader line
-		///	304	DXF: “LEADER_LINE“
 		/// </summary>
+		/// <remarks>
+		/// Appears as 304	DXF: “LEADER_LINE“
+		/// </remarks>
 		public class LeaderLine : ICloneable
 		{
 			public LeaderLine() { }
 
 			/// <summary>
 			/// Points of leader line
-			///	3BD	10	Point
 			/// </summary>
 			public IList<XYZ> Points { get; set; } = new List<XYZ>();
 
 			/// <summary>
-			/// BL	Break info count
+			/// Break info count
 			/// </summary>
 			public int BreakInfoCount { get; set; }
 
 			/// <summary>
-			/// BL 90 Segment index
+			/// Segment index
 			/// </summary>
 			public int SegmentIndex { get; set; }
 
@@ -149,43 +153,44 @@ namespace ACadSharp.Objects
 			public IList<StartEndPointPair> StartEndPoints { get; set; }
 
 			/// <summary>
-			/// BL 91 Leader line index.
+			/// Leader line index.
 			/// </summary>
 			public int Index { get; set; }
 
 			//R2010
 			/// <summary>
-			/// BS 170 Leader type
+			/// Leader type
 			/// </summary>
 			public MultiLeaderPathType PathType { get; set; }
 
 			/// <summary>
-			/// CMC 92 Line color
+			/// Line color
 			/// </summary>
 			public Color LineColor { get; set; }
 
 			/// <summary>
-			/// H 340 Line type handle (hard pointer)
+			/// Line type
 			/// </summary>
 			public LineType LineType { get; set; }
 
 			/// <summary>
-			/// BL 171 Line weight
+			/// Line weight
 			/// </summary>
 			public LineweightType LineWeight { get; set; }
 
 			/// <summary>
-			/// BD 40 Arrow size
+			/// Arrowhead size
 			/// </summary>
 			public double ArrowheadSize { get; set; }
 
 			/// <summary>
-			/// H 341 Arrow symbol handle (hard pointer)
+			/// Gets or sets a <see cref="BlockRecord"/> containig elements
+			/// to be dawn as arrow symbol.
 			/// </summary>
 			public BlockRecord Arrowhead { get; set; }
 
 			/// <summary>
-			/// BL 93 Override flags
+			/// Override flags
 			/// </summary>
 			public LeaderLinePropertOverrideFlags OverrideFlags { get; set; }
 
