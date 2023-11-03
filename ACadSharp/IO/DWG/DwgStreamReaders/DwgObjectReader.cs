@@ -1048,7 +1048,6 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		#endregion
 		#region Text entities
 
 		private CadTemplate readText()
