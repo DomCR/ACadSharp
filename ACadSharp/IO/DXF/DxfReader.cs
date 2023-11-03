@@ -246,7 +246,7 @@ namespace ACadSharp.IO
 			while (this._reader.ValueAsString != DxfFileToken.EndSection)
 			{
 				if (this._reader.ValueAsString == DxfFileToken.ClassEntry)
-					classes.Add(this.readClass());
+					classes.AddOrUpdate(this.readClass());
 				else
 					this._reader.ReadNext();
 			}

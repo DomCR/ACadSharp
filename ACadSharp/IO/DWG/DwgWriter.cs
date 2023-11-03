@@ -42,6 +42,8 @@ namespace ACadSharp.IO
 		/// <inheritdoc/>
 		public override void Write()
 		{
+			base.Write();
+
 			this.getFileHeaderWriter();
 
 			this.writeHeader();
