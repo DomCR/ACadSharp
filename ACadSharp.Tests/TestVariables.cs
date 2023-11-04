@@ -9,7 +9,7 @@ namespace ACadSharp.Tests
 
 		public static double Delta { get { return EnvironmentVars.Get<double>("DELTA"); } }
 
-		public static int DecimalPrecision { get { return EnvironmentVars.Get<int>("DELTA"); } }
+		public static int DecimalPrecision { get { return EnvironmentVars.Get<int>("DECIMAL_PRECISION"); } }
 
 		public static bool AutocadConsoleCheck { get { return EnvironmentVars.Get<bool>("CONSOLE_CHECK"); } }
 
