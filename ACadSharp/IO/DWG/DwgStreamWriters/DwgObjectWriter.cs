@@ -892,7 +892,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//DIMPOST TV 3
-				//this._writer.WriteVariableText(dimStyle.PostFix);
+				this._writer.WriteVariableText(dimStyle.PostFix);
 				//DIMAPOST TV 4
 				this._writer.WriteVariableText(dimStyle.AlternateDimensioningSuffix);
 				//DIMSCALE BD 40
