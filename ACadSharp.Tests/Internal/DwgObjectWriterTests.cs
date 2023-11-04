@@ -1,18 +1,16 @@
-﻿using ACadSharp;
-using ACadSharp.Entities;
+﻿using ACadSharp.Entities;
 using ACadSharp.IO;
 using ACadSharp.IO.DWG;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Tests.Common;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ACadSharpInternal.Tests
+namespace ACadSharp.Tests.Internal
 {
 	public class DwgObjectWriterTests : DwgSectionWriterTestBase
 	{
@@ -131,7 +129,7 @@ namespace ACadSharpInternal.Tests
 			docResult.Header = new ACadSharp.Header.CadHeader();
 			docResult.Header.Version = docToWrite.Header.Version;
 
-			DwgDocumentBuilder builder = new DwgDocumentBuilder(docResult, new ACadSharp.IO.DwgReaderConfiguration());
+			DwgDocumentBuilder builder = new DwgDocumentBuilder(docResult, new DwgReaderConfiguration());
 			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(docToWrite.Header.Version, stream, resetPositon: true);
 			DwgObjectReader reader = new DwgObjectReader(
 				docResult.Header.Version,
@@ -139,7 +137,7 @@ namespace ACadSharpInternal.Tests
 				sreader,
 				handles,
 				writer.Map,
-				new ACadSharp.Classes.DxfClassCollection()
+				new Classes.DxfClassCollection()
 				);
 			reader.Read();
 

@@ -78,8 +78,7 @@ namespace ACadSharp.Tests.IO
 				Directory.CreateDirectory(_samplesOutFolder);
 			}
 
-			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null
-				|| !TestVariables.AutocadConsoleCheck)
+			if (!TestVariables.LocalEnv || !TestVariables.AutocadConsoleCheck)
 			{
 				return;
 			}
@@ -125,7 +124,7 @@ namespace ACadSharp.Tests.IO
 
 		protected void onNotification(object sender, NotificationEventArgs e)
 		{
-			if(e.NotificationType == NotificationType.Error)
+			if (e.NotificationType == NotificationType.Error)
 			{
 				throw e.Exception;
 			}
@@ -139,8 +138,7 @@ namespace ACadSharp.Tests.IO
 
 		protected void checkDxfDocumentInAutocad(string path)
 		{
-			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null
-				|| !TestVariables.AutocadConsoleCheck)
+			if (!TestVariables.LocalEnv || !TestVariables.AutocadConsoleCheck)
 				return;
 
 			System.Diagnostics.Process process = new System.Diagnostics.Process();
@@ -201,8 +199,7 @@ namespace ACadSharp.Tests.IO
 
 		protected void checkDwgDocumentInAutocad(string path)
 		{
-			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null
-				|| !TestVariables.AutocadConsoleCheck)
+			if (!TestVariables.LocalEnv || !TestVariables.AutocadConsoleCheck)
 				return;
 
 			System.Diagnostics.Process process = new System.Diagnostics.Process();

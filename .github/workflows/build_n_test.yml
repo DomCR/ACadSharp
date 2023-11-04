@@ -7,7 +7,10 @@ on:
     branches: [ master ]
 
 env:
-  GITHUB_WORKFLOW: BUILD_TEST
+  LOCAL_ENV: "false"
+  DELTA: "0.00001"
+  DECIMAL_PRECISION: "5"
+  CONSOLE_CHECK: "true"
 
 jobs:
   build:
