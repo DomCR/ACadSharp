@@ -19,7 +19,6 @@ namespace ACadSharp.IO.DWG
 			{
 				case AttributeEntity:
 				case MText:
-				case Shape:
 				case Solid3D:
 				case MultiLeader:
 				//Unlisted
