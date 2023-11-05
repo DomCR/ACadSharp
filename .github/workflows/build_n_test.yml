@@ -10,7 +10,9 @@ env:
   LOCAL_ENV: "false"
   DELTA: "0.00001"
   DECIMAL_PRECISION: "5"
-  CONSOLE_CHECK: "true"
+  DXF_CONSOLE_CHECK: "true"
+  DWG_CONSOLE_CHECK: "false"
+  RUN_DWG_WRITER_SINGLE_CASES_TEST: "false"
 
 jobs:
   build:
