@@ -221,7 +221,7 @@ namespace ACadSharp.IO.DWG
 			if (textSizeBits > 0)
 			{
 				this.TextWriter.WriteSpearShift();
-				this.Main.WriteBytes(((MemoryStream)this.TextWriter.Stream).GetBuffer());
+				this.Main.WriteBytes(((MemoryStream)this.TextWriter.Stream).GetBuffer(), 0, (int)this.TextWriter.Stream.Length);
 				this.Main.WriteSpearShift();
 				this.Main.SetPositionInBits(mainSizeBits + textSizeBits);
 				this.Main.SetPositionByFlag(textSizeBits);
@@ -234,7 +234,7 @@ namespace ACadSharp.IO.DWG
 
 			this.HandleWriter.WriteSpearShift();
 			this.SavedPositionInBits = this.Main.PositionInBits;
-			this.Main.WriteBytes(((MemoryStream)this.HandleWriter.Stream).GetBuffer());
+			this.Main.WriteBytes(((MemoryStream)this.HandleWriter.Stream).GetBuffer(), 0, (int)this.HandleWriter.Stream.Length);
 			this.Main.WriteSpearShift();
 		}
 
@@ -264,6 +264,11 @@ namespace ACadSharp.IO.DWG
 		}
 
 		public void WriteShiftValue()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void WriteBytes(byte[] bytes, int offset, int length)
 		{
 			throw new NotImplementedException();
 		}

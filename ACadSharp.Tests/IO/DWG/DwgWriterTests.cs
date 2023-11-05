@@ -11,18 +11,7 @@ namespace ACadSharp.Tests.IO.DWG
 {
 	public class DwgWriterTests : IOTestsBase
 	{
-		public static TheoryData<Entity> Entities { get; }
-
 		public DwgWriterTests(ITestOutputHelper output) : base(output) { }
-
-		static DwgWriterTests()
-		{
-			Entities = new TheoryData<Entity>
-			{
-				EntityFactory.Create<Point>(),
-				EntityFactory.Create<Line>(),
-			};
-		}
 
 		[Theory]
 		[MemberData(nameof(Versions))]
@@ -50,14 +39,7 @@ namespace ACadSharp.Tests.IO.DWG
 				CadDocument readed = re.Read();
 			}
 
-			//this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
-		}
-
-		[Theory]
-		[MemberData(nameof(Entities))]
-		public void WriteSingleEntityFile(Entity entity)
-		{
-
+			this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
 		}
 
 		[Theory]

@@ -218,7 +218,7 @@ namespace ACadSharp.IO.DXF
 
 			if (layer.Color.IsTrueColor)
 			{
-				this._writer.Write(420, layer.Color.TrueColor, map);
+				this._writer.Write(420, (uint)layer.Color.TrueColor, map);
 			}
 
 			this._writer.Write(6, layer.LineType.Name, map);

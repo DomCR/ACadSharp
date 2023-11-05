@@ -99,7 +99,7 @@ namespace ACadSharp
 						break;
 					case 420:
 						// true color
-						this._property.SetValue(obj, Color.FromTrueColor((int)value));
+						this._property.SetValue(obj, Color.FromTrueColor(Convert.ToUInt32(value)));
 						break;
 					case 430:
 						// dictionary color

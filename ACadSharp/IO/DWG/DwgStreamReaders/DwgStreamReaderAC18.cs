@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using CSUtilities.Converters;
+using System.Drawing;
 using System.IO;
 
 namespace ACadSharp.IO.DWG
@@ -18,12 +19,12 @@ namespace ACadSharp.IO.DWG
 			//BL: RGB value
 			//Always negative
 			uint rgb = (uint)this.ReadBitLong();
+			byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
 
-			if ((rgb & 0b1000000000000000000000000) != 0)
+			if ((rgb & 0b0000_0001_0000_0000_0000_0000_0000_0000) != 0)
 			{
 				//Indexed color
-				uint index = (uint)((int)rgb + 0b1100_0011_0000_0000_0000_0000_0000_0000);
-				color = new Color((byte)index);
+				color = new Color(arr[0]);
 			}
 			else
 			{
@@ -34,13 +35,7 @@ namespace ACadSharp.IO.DWG
 				//0xC0000000
 
 				//True color
-				uint trueColor = (uint)((int)rgb - 0xC2000000);
-
-				//Needs the check just in case the flag is not set
-				if (trueColor < 1 << 24)
-				{
-					color = Color.FromTrueColor((int)trueColor);
-				}
+				color = new Color(arr[0], arr[1], arr[2]);
 			}
 
 			//RC: Color Byte(&1 => color name follows(TV),

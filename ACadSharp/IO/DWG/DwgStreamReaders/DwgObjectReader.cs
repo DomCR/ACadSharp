@@ -4111,10 +4111,8 @@ namespace ACadSharp.IO.DWG
 
 			//Unknown RC 71 Undoc'd 71-group; doesn't even appear in DXF or an entget if it's 0.
 			this._objectReader.ReadByte();
-			//Handle refs H The app control(soft pointer)
-			//[Reactors(soft pointer)]
-			//xdicobjhandle(hard owner)
-			//External reference block handle(hard pointer)
+
+			//External reference block handle(hard pointer)	??
 			this.handleReference();
 
 			return template;
@@ -4428,11 +4426,9 @@ namespace ACadSharp.IO.DWG
 			//Unknown B 70 Seems to set the 0 - bit(1) of the 70 - group.
 			this._objectReader.ReadBit();
 
-			//Handle refs H Dimstyle control(soft pointer)
-			//[Reactors(soft pointer)]
-			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)
 			long block = (long)this.handleReference();
+
 			//340 shapefile(DIMTXSTY)(hard pointer)
 			template.TextStyleHandle = this.handleReference();
 
