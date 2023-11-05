@@ -404,7 +404,7 @@ namespace ACadSharp.Tables
 		/// DIMLUNIT
 		/// </summary>
 		[DxfCodeValue(277)]
-		public LinearUnitFormat LinearUnitFormat { get; set; }
+		public LinearUnitFormat LinearUnitFormat { get; set; } = LinearUnitFormat.Decimal;
 
 		/// <summary>
 		/// DIMDSEP
