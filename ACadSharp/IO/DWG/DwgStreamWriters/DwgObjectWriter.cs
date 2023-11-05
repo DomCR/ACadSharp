@@ -56,6 +56,8 @@ namespace ACadSharp.IO.DWG
 				this._stream.Write(arr, 0, arr.Length);
 			}
 
+			this._objects.Enqueue(this._document.RootDictionary);
+
 			this.writeBlockControl();
 			this.writeTable(this._document.Layers);
 			this.writeTable(this._document.TextStyles);
