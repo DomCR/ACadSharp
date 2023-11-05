@@ -60,7 +60,7 @@ namespace ACadSharp.Tables
 		public double Width { get; set; } = 1.0;
 
 		/// <summary>
-		/// Last height used.
+		/// Last height used
 		/// </summary>
 		[DxfCodeValue(42)]
 		public double LastHeight { get; set; }

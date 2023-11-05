@@ -7,7 +7,12 @@ on:
     branches: [ master ]
 
 env:
-  GITHUB_WORKFLOW: BUILD_TEST
+  LOCAL_ENV: "false"
+  DELTA: "0.00001"
+  DECIMAL_PRECISION: "5"
+  DXF_CONSOLE_CHECK: "true"
+  DWG_CONSOLE_CHECK: "false"
+  RUN_DWG_WRITER_SINGLE_CASES_TEST: "false"
 
 jobs:
   build:

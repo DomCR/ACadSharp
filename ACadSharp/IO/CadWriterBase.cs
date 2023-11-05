@@ -2,6 +2,7 @@
 using System.Text;
 using System;
 using System.IO;
+using ACadSharp.Classes;
 
 namespace ACadSharp.IO
 {
@@ -28,7 +29,10 @@ namespace ACadSharp.IO
 		}
 
 		/// <inheritdoc/>
-		public abstract void Write();
+		public virtual void Write()
+		{
+			DxfClassCollection.UpdateDxfClasses(_document);
+		}
 
 		/// <inheritdoc/>
 		public abstract void Dispose();
@@ -50,11 +54,6 @@ namespace ACadSharp.IO
 			}
 
 			return TextEncoding.Windows1252();
-		}
-
-		protected void validateDocument()
-		{
-			//TODO: Implement the document validation to check the structure
 		}
 
 		protected void triggerNotification(string message, NotificationType notificationType, Exception ex = null)

@@ -125,6 +125,8 @@ namespace ACadSharp
 
 			if (createDefaults)
 			{
+				DxfClassCollection.UpdateDxfClasses(this);
+
 				//Header and summary
 				this.Header = new CadHeader(this);
 				this.SummaryInfo = new CadSummaryInfo();

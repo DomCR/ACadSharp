@@ -21,6 +21,7 @@ namespace ACadSharp.IO.DWG
 				case MText:
 				case Shape:
 				case Solid3D:
+				case MultiLeader:
 				//Unlisted
 				case Wipeout:
 					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);

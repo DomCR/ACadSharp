@@ -557,7 +557,7 @@ namespace ACadSharp.IO.DXF
 					template.CadObject.PlotStyleName = this._reader.ValueAsHandle;
 					return true;
 				case 420:
-					template.CadObject.Color = Color.FromTrueColor(this._reader.ValueAsInt);
+					template.CadObject.Color = Color.FromTrueColor((uint)this._reader.ValueAsInt);
 					return true;
 				case 430:
 					tmp.TrueColorName = this._reader.ValueAsString;

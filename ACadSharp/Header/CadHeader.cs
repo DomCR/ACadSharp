@@ -424,7 +424,7 @@ namespace ACadSharp.Header
 		/// System variable SURFTYPE
 		/// </remarks>
 		[CadSystemVariable("$SURFTYPE", 70)]
-		public short SurfaceType { get; set; }
+		public short SurfaceType { get; set; } = 6;
 
 		/// <summary>
 		/// Number of mesh tabulations in first direction
@@ -433,7 +433,7 @@ namespace ACadSharp.Header
 		/// System variable SURFTAB1
 		/// </remarks>
 		[CadSystemVariable("$SURFTAB1", 70)]
-		public short SurfaceMeshTabulationCount1 { get; set; }
+		public short SurfaceMeshTabulationCount1 { get; set; } = 6;
 
 		/// <summary>
 		/// Number of mesh tabulations in second direction
@@ -442,7 +442,7 @@ namespace ACadSharp.Header
 		/// System variable SURFTAB2
 		/// </remarks>
 		[CadSystemVariable("$SURFTAB2", 70)]
-		public short SurfaceMeshTabulationCount2 { get; set; }
+		public short SurfaceMeshTabulationCount2 { get; set; } = 6;
 
 		/// <summary>
 		/// Spline curve type for PEDIT Spline
@@ -451,7 +451,7 @@ namespace ACadSharp.Header
 		/// System variable SPLINETYPE
 		/// </remarks>
 		[CadSystemVariable("$SPLINETYPE", 70)]
-		public SplineType SplineType { get; set; }
+		public SplineType SplineType { get; set; } = SplineType.CubicBSpline;
 
 		/// <summary>
 		/// Controls the shading of edges
@@ -490,7 +490,7 @@ namespace ACadSharp.Header
 		/// System variable MAXACTVP
 		/// </remarks>
 		[CadSystemVariable("$MAXACTVP", 70)]
-		public short MaxViewportCount { get; set; }
+		public short MaxViewportCount { get; set; } = 64;
 
 		/// <summary>
 		/// 
@@ -544,21 +544,40 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$TEXTSTYLE", 7)]
 		public string TextStyleName
 		{
-			get { return this.CurrentTextStyle.Name; }
+			get { return this._currentTextStyle.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this.CurrentTextStyle = this.Document.TextStyles[value];
+					this._currentTextStyle = this.Document.TextStyles[value];
 				}
 				else
 				{
-					this.CurrentTextStyle = new TextStyle(value);
+					this._currentTextStyle = new TextStyle(value);
 				}
 			}
 		}
 
-		public TextStyle CurrentTextStyle { get; private set; } = TextStyle.Default;
+		public TextStyle CurrentTextStyle
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._currentTextStyle;
+				}
+				else
+				{
+					return this.Document.TextStyles[this.TextStyleName];
+				}
+			}
+			private set
+			{
+				this._currentTextStyle = value;
+			}
+		}
+
+		private TextStyle _currentTextStyle = TextStyle.Default;
 
 		/// <summary>
 		/// Current layer name

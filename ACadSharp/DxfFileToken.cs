@@ -119,6 +119,7 @@
 		public const string ObjectScale = "SCALE";
 		public const string ObjectSortEntsTable = "SORTENTSTABLE";
 		public const string ObjectXRecord = "XRECORD";
+		public const string ObjectMLeaderContextData = "CONTEXT_DATA";
 
 		#endregion
 	}
