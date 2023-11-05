@@ -72,7 +72,7 @@ namespace ACadSharp.Entities
 		/// Attachment point
 		/// </summary>
 		[DxfCodeValue(71)]
-		public AttachmentPointType AttachmentPoint { get; set; }
+		public AttachmentPointType AttachmentPoint { get; set; } = AttachmentPointType.TopLeft;
 
 		/// <summary>
 		/// Drawing direction
@@ -187,7 +187,7 @@ namespace ACadSharp.Entities
 		/// Percentage of default (3-on-5) line spacing to be applied.Valid values range from 0.25 to 4.00
 		/// </remarks>
 		[DxfCodeValue(44)]
-		public double LineSpacing { get; set; }
+		public double LineSpacing { get; set; } = 1.0;
 
 		/// <summary>
 		/// Background fill setting
@@ -221,11 +221,11 @@ namespace ACadSharp.Entities
 
 		public TextColumn Column { get; set; } = new TextColumn();
 
-		public bool IsAnnotative { get; set; }
+		public bool IsAnnotative { get; set; } = false;
 
-		private double _height = 0.0;
+		private double _height = 1.0;
 
-		private XYZ _alignmentPoint = XYZ.Zero;
+		private XYZ _alignmentPoint = XYZ.AxisX;
 
 		private double _rotation = 0.0;
 
