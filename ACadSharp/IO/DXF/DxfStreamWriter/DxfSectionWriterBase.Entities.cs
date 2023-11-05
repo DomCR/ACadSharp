@@ -17,6 +17,7 @@ namespace ACadSharp.IO.DXF
 				case MLine:
 				case Solid3D:
 				case MultiLeader:
+				case Wipeout:
 					this.notify($"Entity type not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return;
 			}
@@ -605,6 +606,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(40, mtext.Height, map);
 			this._writer.Write(41, mtext.RectangleWidth, map);
+			this._writer.Write(44, mtext.LineSpacing, map);
 
 			if (this.Version >= ACadVersion.AC1021)
 			{
@@ -614,9 +616,9 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(71, (short)mtext.AttachmentPoint, map);
 			this._writer.Write(72, (short)mtext.DrawingDirection, map);
 
-			this._writer.Write(1, mtext.Value, map);
+			this._writer.Write(1, mtext.Value.Replace("\n", "^J"), map);
 
-			if (string.IsNullOrEmpty(mtext.AdditionalText))
+			if (!string.IsNullOrEmpty(mtext.AdditionalText))
 			{
 				for (int i = 0; i < mtext.AdditionalText.Length; i += 250)
 					this._writer.Write(3, mtext.AdditionalText.Substring(i, 250), map);
@@ -627,6 +629,8 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(73, (short)mtext.LineSpacingStyle, map);
 
 			this._writer.Write(11, mtext.AlignmentPoint, map);
+
+			return;
 
 			if (this.Version >= ACadVersion.AC1018)
 			{
@@ -640,7 +644,6 @@ namespace ACadSharp.IO.DXF
 				}
 			}
 
-			this._writer.Write(44, mtext.LineSpacing, map);
 			this._writer.Write(45, mtext.BackgroundScale, map);
 
 			this._writer.Write(210, mtext.Normal, map);
