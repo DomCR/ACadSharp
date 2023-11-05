@@ -77,8 +77,10 @@ namespace ACadSharp.Tests.IO.DWG
 			if (!TestVariables.RunDwgWriterSingleCases)
 				return;
 
-			data.Document.Header.Version = ACadVersion.AC1018;
-			DwgWriter.Write(this.getPath(data.Name, ACadVersion.AC1018), data.Document, this.onNotification);
+			var version = ACadVersion.AC1018;
+
+			data.Document.Header.Version = version;
+			DwgWriter.Write(this.getPath(data.Name, version), data.Document, this.onNotification);
 		}
 
 		private string getPath(string name, ACadVersion version)
