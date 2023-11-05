@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
+using ACadSharp.Tables;
 using System;
 using System.Linq;
 
@@ -30,9 +31,11 @@ namespace ACadSharp.IO.DXF
 			{
 				case AcdbPlaceHolder:
 				case Material:
+				case MultiLeaderStyle:
 				case SortEntitiesTable:
 				case Scale:
 				case VisualStyle:
+				//case XRecrod:	//TODO: XRecord Understand how it works for the reader
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
 			}
@@ -64,7 +67,7 @@ namespace ACadSharp.IO.DXF
 				case SortEntitiesTable sortensTable:
 					//this.writeSortentsTable(sortensTable);
 					break;
-				case XRecrod record:
+				case XRecord record:
 					this.writeXRecord(record);
 					break;
 				default:
@@ -236,7 +239,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(330, e.BlockOwner.Handle);
 		}
 
-		protected void writeXRecord(XRecrod e)
+		protected void writeXRecord(XRecord e)
 		{
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XRecord);
 

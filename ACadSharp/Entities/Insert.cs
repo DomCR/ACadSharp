@@ -2,6 +2,7 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ACadSharp.Entities
@@ -18,7 +19,20 @@ namespace ACadSharp.Entities
 	public class Insert : Entity
 	{
 		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.INSERT;
+		public override ObjectType ObjectType
+		{
+			get
+			{
+				if (this.RowCount > 1 || this.ColumnCount > 1)
+				{
+					return ObjectType.MINSERT;
+				}
+				else
+				{
+					return ObjectType.INSERT;
+				}
+			}
+		}
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityInsert;
@@ -166,6 +180,34 @@ namespace ACadSharp.Entities
 			}
 
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			doc.RegisterCollection(this.Attributes);
+
+			//Should only be triggered for internal use
+			if (this.Block == null)
+				return;
+
+			if (doc.BlockRecords.TryGetValue(this.Block.Name, out BlockRecord blk))
+			{
+				this.Block = blk;
+			}
+			else
+			{
+				doc.BlockRecords.Add(this.Block);
+			}
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Block = (BlockRecord)this.Block.Clone();
+			this.Document.UnregisterCollection(this.Attributes);
+
+			base.UnassignDocument();
 		}
 
 		private void attributesOnAdd(object sender, CollectionChangedEventArgs e)

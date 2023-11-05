@@ -2,6 +2,7 @@
 using ACadSharp.Blocks;
 using ACadSharp.Tables;
 using CSMath;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -141,11 +142,32 @@ namespace ACadSharp.Entities
 		/// Dimension style
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 3)]
-		public DimensionStyle Style { get; set; } = DimensionStyle.Default;
+		public DimensionStyle Style
+		{
+			get { return this._style; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._style = this.updateTable(value, this.Document.DimensionStyles);
+				}
+				else
+				{
+					this._style = value;
+				}
+			}
+		}
 
 		private string _text;
 
 		private readonly DimensionType _flags;
+
+		private DimensionStyle _style = DimensionStyle.Default;
 
 		protected Dimension(DimensionType type)
 		{
@@ -156,9 +178,37 @@ namespace ACadSharp.Entities
 		{
 			Dimension clone = (Dimension)base.Clone();
 
-			clone.Style = (DimensionStyle)(this.Style?.Clone());
+			clone.Style = (DimensionStyle)(this.Style.Clone());
 
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._style = this.updateTable(this.Style, doc.DimensionStyles);
+
+			doc.DimensionStyles.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
+
+			base.UnassignDocument();
+
+			this.Style = (DimensionStyle)this.Style.Clone();
+		}
+
+		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			base.tableOnRemove(sender, e);
+
+			if (e.Item.Equals(this.Style))
+			{
+				this.Style = this.Document.DimensionStyles[DimensionStyle.DefaultName];
+			}
 		}
 	}
 }

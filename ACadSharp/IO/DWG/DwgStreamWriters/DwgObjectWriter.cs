@@ -1,7 +1,9 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using CSUtilities.Converters;
 using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
@@ -12,10 +14,16 @@ namespace ACadSharp.IO.DWG
 {
 	internal partial class DwgObjectWriter : DwgSectionIO
 	{
+		public override string SectionName => DwgSectionDefinition.AcDbObjects;
+
 		/// <summary>
 		/// Key : handle | Value : Offset
 		/// </summary>
 		public Dictionary<ulong, long> Map { get; } = new Dictionary<ulong, long>();
+
+		private Dictionary<ulong, CadDictionary> _dictionaries = new();
+
+		private Queue<CadObject> _objects = new();
 
 		private MemoryStream _msmain;
 
@@ -44,21 +52,54 @@ namespace ACadSharp.IO.DWG
 			//RL value of 0x0dca (meaning unknown).
 			if (this.R2004Plus)
 			{
-				this._writer.WriteRawLong(0xDCA);
+				byte[] arr = LittleEndianConverter.Instance.GetBytes((int)0xDCA);
+				this._stream.Write(arr, 0, arr.Length);
 			}
 
-			this.writeTable(this._document.AppIds);
-			this.writeTable(this._document.Layers);
-			this.writeTable(this._document.LineTypes);
-			this.writeTable(this._document.TextStyles);
-			this.writeTable(this._document.UCSs);
-			this.writeTable(this._document.Views);
-			this.writeTable(this._document.VPorts);
+			this._objects.Enqueue(this._document.RootDictionary);
+
 			this.writeBlockControl();
+			this.writeTable(this._document.Layers);
+			this.writeTable(this._document.TextStyles);
+			this.writeLTypeControlObject();
+			this.writeTable(this._document.Views);
+			this.writeTable(this._document.UCSs);
+			this.writeTable(this._document.VPorts);
+			this.writeTable(this._document.AppIds);
 			//For some reason the dimension must be writen the last
 			this.writeTable(this._document.DimensionStyles);
 
-			this.writeBlocks();
+			this.writeBlockEntities();
+			this.writeObjects();
+		}
+
+		private void writeLTypeControlObject()
+		{
+			this.writeCommonNonEntityData(this._document.LineTypes);
+
+			//Common:
+			//Numentries BL 70
+			this._writer.WriteBitLong(this._document.LineTypes.Count - 2);
+
+			foreach (LineType item in this._document.LineTypes)
+			{
+				if (item.Name.Equals(LineType.ByBlockName, StringComparison.OrdinalIgnoreCase)
+					|| item.Name.Equals(LineType.ByLayerName, StringComparison.OrdinalIgnoreCase))
+				{
+					continue;
+				}
+
+				//numentries handles in the file (soft owner)
+				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
+			}
+
+			//the linetypes, ending with BYLAYER and BYBLOCK.
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.LineTypes.ByBlock);
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.LineTypes.ByLayer);
+
+			this.registerObject(this._document.LineTypes);
+
+			this.writeEntries(this._document.LineTypes);
 		}
 
 		private void writeBlockControl()
@@ -66,7 +107,7 @@ namespace ACadSharp.IO.DWG
 			this.writeCommonNonEntityData(this._document.BlockRecords);
 
 			//Common:
-			//Numentries BL 70
+			//Numentries BL 70 Doesn't count *MODEL_SPACE and *PAPER_SPACE.
 			this._writer.WriteBitLong(this._document.BlockRecords.Count - 2);
 
 			foreach (var item in this._document.BlockRecords)
@@ -74,9 +115,11 @@ namespace ACadSharp.IO.DWG
 				if (item.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase)
 					|| item.Name.Equals(BlockRecord.PaperSpaceName, StringComparison.OrdinalIgnoreCase))
 				{
-					//Handle refs H NULL(soft pointer)
-					this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
+					continue;
 				}
+
+				//numentries handles of blockheaders in the file (soft owner)
+				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
 			}
 
 			//*MODEL_SPACE and *PAPER_SPACE(hard owner).
@@ -88,7 +131,7 @@ namespace ACadSharp.IO.DWG
 			this.writeEntries(this._document.BlockRecords);
 		}
 
-		private void writeTable<T>(Table<T> table, bool register = true, bool writeEntries = true)
+		private void writeTable<T>(Table<T> table)
 			where T : TableEntry
 		{
 			this.writeCommonNonEntityData(table);
@@ -97,20 +140,27 @@ namespace ACadSharp.IO.DWG
 			//Numentries BL 70
 			this._writer.WriteBitLong(table.Count);
 
+			if (this.R2000Plus && table is DimensionStylesTable)
+			{
+				//Undocumented: this byte is found only in the DimensionStylesTable
+				//Solves the Autocad error :
+				//Reading handle A object type AcDbDimStyleTable
+				//Error 34(eWrongObjectType)                       Object discarded
+				this._writer.WriteByte(0);
+			}
+
 			foreach (var item in table)
 			{
-				//Handle refs H NULL(soft pointer)
+				//numentries handles in the file (soft owner)
 				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
 			}
 
-			if (register)
-				this.registerObject(table);
+			this.registerObject(table);
 
-			if (writeEntries)
-				this.writeEntries(table);
+			this.writeEntries(table);
 		}
 
-		public void writeEntries<T>(Table<T> table)
+		private void writeEntries<T>(Table<T> table)
 			where T : TableEntry
 		{
 			foreach (var entry in table)
@@ -151,7 +201,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private void writeBlocks()
+		private void writeBlockEntities()
 		{
 			foreach (BlockRecord blkRecord in this._document.BlockRecords)
 			{
@@ -188,11 +238,9 @@ namespace ACadSharp.IO.DWG
 
 			//Unknown RC 71 Undoc'd 71-group; doesn't even appear in DXF or an entget if it's 0.
 			this._writer.WriteByte(0);
-			//Handle refs H The app control(soft pointer)
-			//[Reactors(soft pointer)]
-			//xdicobjhandle(hard owner)
-			//External reference block handle(hard pointer)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.AppIds);
+
+			//External reference block handle(hard pointer)	??
+			this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
 
 			this.registerObject(app);
 		}
@@ -327,7 +375,7 @@ namespace ACadSharp.IO.DWG
 				}
 
 				//Layout Handle H(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardOwnership, record.Layout);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, record.Layout);
 			}
 
 			this.registerObject(record);
@@ -405,11 +453,8 @@ namespace ACadSharp.IO.DWG
 			//Color CMC 62
 			this._writer.WriteCmColor(layer.Color);
 
-			//Handle refs H Layer control (soft pointer)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.Layers);
-			//[Reactors(soft pointer)]
-			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 
 			//R2000+:
 			if (this.R2000Plus)
@@ -507,11 +552,8 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Common:
-			//Handle refs H Ltype control(soft pointer)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.LineTypes);
-			//[Reactors (soft pointer)]
-			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
 
 			foreach (var segment in ltype.Segments)
 			{
@@ -852,7 +894,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//DIMPOST TV 3
-				//this._writer.WriteVariableText(dimStyle.PostFix);
+				this._writer.WriteVariableText(dimStyle.PostFix);
 				//DIMAPOST TV 4
 				this._writer.WriteVariableText(dimStyle.AlternateDimensioningSuffix);
 				//DIMSCALE BD 40
@@ -1038,6 +1080,7 @@ namespace ACadSharp.IO.DWG
 
 			//External reference block handle(hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+
 			//340 shapefile(DIMTXSTY)(hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.Style);
 
@@ -1204,11 +1247,8 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Common:
-			//Handle refs H Vport control(soft pointer)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.VPorts);
-			//[Reactors(soft pointer)]
-			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
 
 			//R2007+:
 			if (this.R2007Plus)

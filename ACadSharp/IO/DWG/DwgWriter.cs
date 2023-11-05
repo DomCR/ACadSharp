@@ -42,6 +42,8 @@ namespace ACadSharp.IO
 		/// <inheritdoc/>
 		public override void Write()
 		{
+			base.Write();
+
 			this.getFileHeaderWriter();
 
 			this.writeHeader();
@@ -286,7 +288,9 @@ namespace ACadSharp.IO
 		{
 			MemoryStream stream = new MemoryStream();
 			DwgObjectWriter writer = new DwgObjectWriter(stream, this._document);
+			writer.OnNotification += this.triggerNotification;
 			writer.Write();
+
 			this._handlesMap = writer.Map;
 
 			this._fileHeaderWriter.AddSection(DwgSectionDefinition.AcDbObjects, stream, true);

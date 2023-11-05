@@ -156,7 +156,7 @@ namespace ACadSharp.IO.DWG
 			{
 				for (int i = 0, j = initialIndex; i < length; i++, j++)
 				{
-					this.WriteByte(arr[j]);
+					this._stream.WriteByte(arr[j]);
 				}
 
 				return;
@@ -166,7 +166,7 @@ namespace ACadSharp.IO.DWG
 			for (int i = 0, j = initialIndex; i < length; i++, j++)
 			{
 				byte b = arr[j];
-				this.WriteByte((byte)(this._lastByte | (b >> this.BitShift)));
+				this._stream.WriteByte((byte)(this._lastByte | (b >> this.BitShift)));
 				this._lastByte = (byte)(b << num);
 			}
 		}
@@ -366,6 +366,12 @@ namespace ACadSharp.IO.DWG
 			this.WriteBitShort(value.Index);
 		}
 
+		public void Write2BitDouble(XY value)
+		{
+			this.WriteBitDouble(value.X);
+			this.WriteBitDouble(value.Y);
+		}
+
 		public void Write3BitDouble(XYZ value)
 		{
 			this.WriteBitDouble(value.X);
@@ -515,6 +521,19 @@ namespace ACadSharp.IO.DWG
 		{
 			//For R13-R14 this is 3BD.
 			this.Write3BitDouble(normal);
+		}
+
+		public void Write2BitDoubleWithDefault(XY def, XY value)
+		{
+			this.WriteBitDoubleWithDefault(def.X, value.X);
+			this.WriteBitDoubleWithDefault(def.Y, value.Y);
+		}
+
+		public void Write3BitDoubleWithDefault(XYZ def, XYZ value)
+		{
+			this.WriteBitDoubleWithDefault(def.X, value.X);
+			this.WriteBitDoubleWithDefault(def.Y, value.Y);
+			this.WriteBitDoubleWithDefault(def.Z, value.Z);
 		}
 
 		public void WriteBitDoubleWithDefault(double def, double value)

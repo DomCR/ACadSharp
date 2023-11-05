@@ -75,7 +75,7 @@ namespace ACadSharp.Entities
 
 		public IEnumerable<Entity> Explode()
 		{
-			return Polyline.explode(this);
+			return Polyline.Explode(this);
 		}
 	}
 }

@@ -1,11 +1,10 @@
-﻿using ACadSharp;
-using ACadSharp.Header;
+﻿using ACadSharp.Header;
 using ACadSharp.IO.DWG;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ACadSharpInternal.Tests
+namespace ACadSharp.Tests.Internal
 {
 	public class DwgHeaderWriterTests : DwgSectionWriterTestBase
 	{

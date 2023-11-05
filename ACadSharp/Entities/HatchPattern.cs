@@ -6,10 +6,14 @@ namespace ACadSharp.Entities
 {
 	public class HatchPattern
 	{
-		public readonly static HatchPattern Solid = new HatchPattern("SOLID");
+		public static HatchPattern Solid { get { return new HatchPattern("SOLID"); } }
 
 		public class Line
 		{
+			/// <summary>
+			/// Pattern line angle
+			/// </summary>
+			[DxfCodeValue(DxfReferenceType.IsAngle, 53)]
 			public double Angle { get; internal set; }
 
 			/// <summary>

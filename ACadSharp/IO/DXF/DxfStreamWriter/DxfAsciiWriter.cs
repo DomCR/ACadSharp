@@ -87,6 +87,7 @@ namespace ACadSharp.IO.DXF
 					{
 						this._stream.Write(string.Format("{0:X2}", v));
 					}
+					this._stream.Write(Environment.NewLine);
 					return;
 			}
 

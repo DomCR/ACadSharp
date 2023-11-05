@@ -92,8 +92,6 @@ namespace ACadSharp
 			}
 			else if (this._property.PropertyType.IsEquivalentTo(typeof(Color)))
 			{
-				//TODO: Implement color setter
-
 				switch (code)
 				{
 					case 62:
@@ -101,6 +99,7 @@ namespace ACadSharp
 						break;
 					case 420:
 						// true color
+						this._property.SetValue(obj, Color.FromTrueColor(Convert.ToUInt32(value)));
 						break;
 					case 430:
 						// dictionary color
@@ -256,11 +255,10 @@ namespace ACadSharp
 				{
 					case 62:
 					case 70:
-						//return color.Index;
-						return 0;
+						return color.Index;
 					case 420:
 						// true color
-						break;
+						return color.TrueColor;
 					case 430:
 						// dictionary color
 						break;

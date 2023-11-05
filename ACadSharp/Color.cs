@@ -1,9 +1,4 @@
-﻿#region copyright
-//Copyright 2021, Albert Domenech.
-//All rights reserved. 
-//This source code is licensed under the MIT license. 
-//See LICENSE file in the project root for full license information.
-#endregion
+﻿using CSUtilities.Converters;
 using System;
 
 namespace ACadSharp
@@ -12,7 +7,7 @@ namespace ACadSharp
 	{
 		private static readonly byte[][] _indexRgb = new byte[][]
 		{
-			new byte[] { 0, 0, 0 },
+			new byte[] { 0, 0, 0 },	//Dummy entry
 			new byte[] { 255, 0, 0 },
 			new byte[] { 255, 255, 0 },
 			new byte[] { 0, 255, 0 },
@@ -270,16 +265,26 @@ namespace ACadSharp
 			new byte[] { 255, 255, 255 }
 		};
 
-		private const int _maxTrueColor = 1 << 24;
+		private const int _maxTrueColor       = 0b0001_0000_0000_0000_0000_0000_0000;  // 1 << 24;
+
+		private const int _trueColorFlag = 0b0100_0000_0000_0000_0000_0000_0000_0000;  //1 << 30
 
 		public static Color ByLayer
 		{
-			get { return new Color(256); }
+			get { return new Color((short)256); }
 		}
 
 		public static Color ByBlock
 		{
-			get { return new Color(0); }
+			get { return new Color((short)0); }
+		}
+
+		/// <summary>
+		/// This is found in some header variables but is not valid for Entities or Objects
+		/// </summary>
+		public static Color ByEntity
+		{
+			get { return new Color((short)257); }
 		}
 
 		/// <summary>
@@ -301,12 +306,12 @@ namespace ACadSharp
 		/// <summary>
 		/// Indexed color.  If the color is stored as a true color, returns -1;
 		/// </summary>
-		public short Index => IsTrueColor ? (short)-1 : (short)_color;
+		public short Index => this.IsTrueColor ? (short)-1 : (short)this._color;
 
 		/// <summary>
 		/// True color.  If the color is stored as an indexed color, returns -1;
 		/// </summary>
-		public int TrueColor => IsTrueColor ? _color ^ (1 << 30) : -1;
+		public int TrueColor => this.IsTrueColor ? (int)(this._color ^ (1 << 30)) : -1;
 
 		/// <summary>
 		/// True if the stored color is a true color.  False if the color is an indexed color.
@@ -315,9 +320,24 @@ namespace ACadSharp
 		{
 			get
 			{
-				return _color > 256 || _color < 0;
+				return this._color > 257 || this._color < 0;
 			}
 		}
+
+		/// <summary>
+		/// Red component of the color
+		/// </summary>
+		public byte R { get { return this.GetRgb()[0]; } }
+
+		/// <summary>
+		/// Green component of the color
+		/// </summary>
+		public byte G { get { return this.GetRgb()[1]; } }
+
+		/// <summary>
+		/// Blue component of the color
+		/// </summary>
+		public byte B { get { return this.GetRgb()[2]; } }
 
 		/// <summary>
 		/// Represents the actual stored color.  Either a True Color or an indexed color.
@@ -326,15 +346,18 @@ namespace ACadSharp
 		/// If the number is >= 0, then the stored color is an indexed color ranging from 0 to 256.
 		/// If the number is &lt; 0, then the stored color is a true color, less the negative sign.
 		/// </remarks>
-		private readonly int _color;
+		private readonly uint _color;
 
 		/// <summary>
 		/// Creates a new color out of an AutoCad indexed color.
 		/// </summary>
-		/// <param name="index">AutoCad index color</param>
+		/// <param name="index">AutoCad index color with a value between 0 to 257</param>
 		public Color(short index)
 		{
-			_color = index;
+			if (index < 0 || index > 257)
+				throw new ArgumentOutOfRangeException(nameof(index), "True index must be a value between 0 and 257.");
+
+			this._color = (uint)index;
 		}
 
 		/// <summary>
@@ -353,29 +376,24 @@ namespace ACadSharp
 		/// </summary>
 		/// <param name="rgb">Red Green Blue</param>
 		public Color(byte[] rgb)
-			: this(GetInt24(rgb))
+			: this(getInt24(rgb))
 		{
-
 		}
 
-		/// <summary>
-		/// Creates a color out of a RGB true color.
-		/// </summary>
-		/// <param name="trueColor">True color int 32.</param>
-		private Color(int trueColor)
+		private Color(uint trueColor)
 		{
 			if (trueColor < 0 || trueColor > _maxTrueColor)
 				throw new ArgumentOutOfRangeException(nameof(trueColor), "True color must be a 24 bit color.");
 
 			// Shift to set the 30th bit indicating a true color.
-			_color = trueColor | 1 << 30;
+			this._color = (uint)(trueColor | _trueColorFlag);   //Is this correct?
 		}
 
 		/// <summary>
 		/// Creates a color out of a true color int32.
 		/// </summary>
 		/// <param name="color">True color int 32.</param>
-		public static Color FromTrueColor(int color)
+		public static Color FromTrueColor(uint color)
 		{
 			return new Color(color);
 		}
@@ -407,57 +425,99 @@ namespace ACadSharp
 		}
 
 		/// <summary>
-		/// Returns the RGP color code which matches the passed indexed color.
+		/// Returns the RGB color code which matches the passed indexed color.
 		/// </summary>
 		/// <returns>Approximate RGB color from AutoCAD's indexed color.</returns>
-		public static ReadOnlySpan<byte> GetIndexRGB(int index)
+		public static ReadOnlySpan<byte> GetIndexRGB(byte index)
 		{
 			return _indexRgb[index].AsSpan();
 		}
 
+		/// <summary>
+		/// Returns the RGB color code using the true color value.
+		/// </summary>
+		/// <remarks>
+		/// If the color is not <see cref="IsTrueColor"/> it will return the default values for RGB
+		/// </remarks>
+		/// <returns></returns>
 		public ReadOnlySpan<byte> GetTrueColorRgb()
 		{
-			if (IsTrueColor)
+			if (this.IsTrueColor)
 			{
-				return new ReadOnlySpan<byte>(BitConverter.GetBytes(_color), 0, 3);
+				return getRGBfromTrueColor(this._color);
 			}
 
 			return default;
 		}
 
+		/// <summary>
+		/// Returns the RGB color code
+		/// </summary>
+		/// <returns></returns>
+		public ReadOnlySpan<byte> GetRgb()
+		{
+			if (this.IsTrueColor)
+			{
+				return this.GetTrueColorRgb();
+			}
+			else
+			{
+				return GetIndexRGB((byte)this._color);
+			}
+		}
+
+		/// <inheritdoc/>
 		public bool Equals(Color other)
 		{
-			return _color == other._color;
+			return this._color == other._color;
 		}
 
+		/// <inheritdoc/>
 		public override bool Equals(object obj)
 		{
-			return obj is Color other && Equals(other);
+			return obj is Color other && this.Equals(other);
 		}
 
+		/// <inheritdoc/>
 		public override int GetHashCode()
 		{
-			return _color;
+			return (int)this._color;
 		}
 
+		/// <inheritdoc/>
 		public override string ToString()
 		{
-			if (IsTrueColor)
+			if (this._color == 0)
 			{
-				var parts = GetTrueColorRgb();
+				return "ByBlock";
+			}
+
+			if (this._color == 256)
+			{
+				return "ByLayer";
+			}
+
+			if (this.IsTrueColor)
+			{
+				var parts = this.GetTrueColorRgb();
 				return $"True Color RGB:{parts[0]},{parts[1]},{parts[2]}";
 			}
 
-			return $"Indexed Color:{Index}";
+			return $"Indexed Color:{this.Index}";
 
 		}
 
-		private static int GetInt24(byte[] array)
+		private static uint getInt24(byte[] array)
 		{
 			if (BitConverter.IsLittleEndian)
-				return array[0] | array[1] << 8 | array[2] << 16;
+				return (uint)(array[0] | array[1] << 8 | array[2] << 16);
 			else
-				return array[0] << 16 | array[1] << 8 | array[2];
+				return (uint)(array[0] << 16 | array[1] << 8 | array[2]);
+		}
+
+		private static ReadOnlySpan<byte> getRGBfromTrueColor(uint color)
+		{
+			return new ReadOnlySpan<byte>(LittleEndianConverter.Instance.GetBytes(color), 0, 3);
 		}
 	}
 }

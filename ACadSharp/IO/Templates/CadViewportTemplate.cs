@@ -32,7 +32,7 @@ namespace ACadSharp.IO.Templates
 
 			if (this.ViewportHeaderHandle.HasValue && this.ViewportHeaderHandle > 0)
 			{
-				builder.Notify(new NotificationEventArgs($"ViewportHeaderHandle not implemented for Viewport, handle {this.ViewportHeaderHandle}"));
+				builder.Notify($"ViewportHeaderHandle not implemented for Viewport, handle {this.ViewportHeaderHandle}");
 			}
 
 			if (this.BoundaryHandle.HasValue && this.BoundaryHandle > 0)
@@ -45,12 +45,12 @@ namespace ACadSharp.IO.Templates
 
 			if (this.NamedUcsHandle.HasValue && this.NamedUcsHandle > 0)
 			{
-				builder.Notify(new NotificationEventArgs($"Named ucs not implemented for Viewport, handle {this.NamedUcsHandle}"));
+				builder.Notify($"Named ucs not implemented for Viewport, handle {this.NamedUcsHandle}");
 			}
 
 			if (this.BaseUcsHandle.HasValue && this.BaseUcsHandle > 0)
 			{
-				builder.Notify(new NotificationEventArgs($"Base ucs not implemented for Viewport, handle {this.BaseUcsHandle}"));
+				builder.Notify($"Base ucs not implemented for Viewport, handle {this.BaseUcsHandle}");
 			}
 
 			foreach (var handle in this.FrozenLayerHandles)
