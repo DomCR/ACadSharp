@@ -25,17 +25,18 @@ namespace ACadSharp.IO.Templates
 				{
 					//There is no way to find the root dictionary, dwg does not provide an explicit handle for it
 					//the only way to check for the root dictionary is to try to find the handles that belong to it
-					List<ulong?> rootHandles = new() {
-					dwgBuilder.HeaderHandles.DICTIONARY_ACAD_GROUP,
-					dwgBuilder.HeaderHandles.DICTIONARY_ACAD_MLINESTYLE,
-					dwgBuilder.HeaderHandles.DICTIONARY_COLORS,
-					dwgBuilder.HeaderHandles.DICTIONARY_LAYOUTS,
-					dwgBuilder.HeaderHandles.DICTIONARY_MATERIALS,
-					dwgBuilder.HeaderHandles.DICTIONARY_NAMED_OBJECTS,
-					dwgBuilder.HeaderHandles.DICTIONARY_PLOTSETTINGS,
-					dwgBuilder.HeaderHandles.DICTIONARY_PLOTSTYLES,
-					dwgBuilder.HeaderHandles.DICTIONARY_VISUALSTYLE,
-				};
+					List<ulong?> rootHandles = new() 
+					{
+						dwgBuilder.HeaderHandles.DICTIONARY_ACAD_GROUP,
+						dwgBuilder.HeaderHandles.DICTIONARY_ACAD_MLINESTYLE,
+						dwgBuilder.HeaderHandles.DICTIONARY_COLORS,
+						dwgBuilder.HeaderHandles.DICTIONARY_LAYOUTS,
+						dwgBuilder.HeaderHandles.DICTIONARY_MATERIALS,
+						dwgBuilder.HeaderHandles.DICTIONARY_NAMED_OBJECTS,
+						dwgBuilder.HeaderHandles.DICTIONARY_PLOTSETTINGS,
+						dwgBuilder.HeaderHandles.DICTIONARY_PLOTSTYLES,
+						dwgBuilder.HeaderHandles.DICTIONARY_VISUALSTYLE,
+					};
 
 					foreach (ulong handle in rootHandles.Where(h => h.HasValue).Select(v => (ulong)v))
 					{

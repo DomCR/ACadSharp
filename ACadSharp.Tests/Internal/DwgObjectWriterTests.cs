@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
 using ACadSharp.IO.DWG;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Tests.Common;
@@ -130,6 +131,8 @@ namespace ACadSharp.Tests.Internal
 			docResult.Header.Version = docToWrite.Header.Version;
 
 			DwgDocumentBuilder builder = new DwgDocumentBuilder(docResult, new DwgReaderConfiguration());
+			builder.HeaderHandles.DICTIONARY_LAYOUTS = docToWrite.RootDictionary[CadDictionary.AcadLayout].Handle;
+
 			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(docToWrite.Header.Version, stream, resetPositon: true);
 			DwgObjectReader reader = new DwgObjectReader(
 				docResult.Header.Version,
