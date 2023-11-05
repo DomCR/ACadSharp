@@ -40,6 +40,15 @@ namespace ACadSharp.Tests.IO.DWG
 				this.Document.Layers.Add(new ACadSharp.Tables.Layer("default_layer"));
 			}
 
+			public void SingleMText()
+			{
+				MText mtext = new MText();
+
+				mtext.Value = "HELLO I'm an MTEXT";
+
+				this.Document.Entities.Add(mtext);
+			}
+
 			public void Deserialize(IXunitSerializationInfo info)
 			{
 				this.Name = info.GetValue<string>(nameof(this.Name));
@@ -68,6 +77,7 @@ namespace ACadSharp.Tests.IO.DWG
 			Data.Add(new(nameof(SingleCaseGenerator.Empty)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
 			Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
 		}
 
 		[Theory()]

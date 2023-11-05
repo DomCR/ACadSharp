@@ -18,7 +18,6 @@ namespace ACadSharp.IO.DWG
 			switch (entity)
 			{
 				case AttributeEntity:
-				case MText:
 				case Shape:
 				case Solid3D:
 				case MultiLeader:
@@ -94,6 +93,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case MLine mLine:
 					this.writeMLine(mLine);
+					break;
+				case MText mtext:
+					this.writeMText(mtext);
 					break;
 				case Point p:
 					this.writePoint(p);
