@@ -50,6 +50,18 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation { get; set; } = 0.0;
 
+		/// <summary>
+		/// Default constructor
+		/// </summary>
 		public Point() : base() { }
+
+		/// <summary>
+		/// Create a point in a specific location
+		/// </summary>
+		/// <param name="location"></param>
+		public Point(XYZ location) : base()
+		{
+			this.Location = location;
+		}
 	}
 }
