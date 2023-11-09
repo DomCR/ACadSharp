@@ -3064,7 +3064,7 @@ namespace ACadSharp.IO.DWG
 				matrix[12] = _objectReader.ReadBitDouble();
 				matrix[13] = _objectReader.ReadBitDouble();
 				matrix[14] = _objectReader.ReadBitDouble();
-				matrix[16] = _objectReader.ReadBitDouble();
+				matrix[15] = _objectReader.ReadBitDouble();
 			}
 			//END IF Has contents block
 			//END IF Has text contents
