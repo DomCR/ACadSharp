@@ -83,7 +83,8 @@ namespace ACadSharp.IO.DWG
 				else if ((flags & 0x8000) > 0)
 				{
 					//Next value is a BS containing the RGB value(last 24 bits).
-					color = new Color((byte)this.ReadBitLong());
+					uint rgb = (uint)this.ReadBitLong();
+					color = Color.FromTrueColor(rgb & 0b00000000111111111111111111111111);
 				}
 				else
 				{
