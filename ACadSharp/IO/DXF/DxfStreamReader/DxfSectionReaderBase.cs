@@ -716,6 +716,9 @@ namespace ACadSharp.IO.DXF
 				case 69:
 					tmp.ViewportId = this._reader.ValueAsShort;
 					return true;
+				case 331:
+					tmp.FrozenLayerHandles.Add(this._reader.ValueAsHandle);
+					return true;
 				case 348:
 					tmp.VisualStyleHandle = this._reader.ValueAsHandle;
 					return true;
@@ -999,7 +1002,7 @@ namespace ACadSharp.IO.DXF
 			if (template.Path.Flags.HasFlag(BoundaryPathFlags.Polyline))
 			{
 				Hatch.BoundaryPath.Edge pl = new Hatch.BoundaryPath.Polyline();
-				this._builder.Notify($"Hatch.BoundaryPath.Polyline not implemented", NotificationType.Error);
+				this._builder.Notify($"Hatch.BoundaryPath.Polyline not implemented", NotificationType.NotImplemented);
 
 				return null;
 			}
