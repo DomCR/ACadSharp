@@ -63,16 +63,16 @@ namespace ACadSharp.Entities
 		public double RectangleWidth { get; set; }
 
 		/// <summary>
-		/// 
+		/// Reference rectangle height
 		/// </summary>
 		[DxfCodeValue(46)]
-		public double ReferenceRectangleHeight { get; set; }
+		public double RectangleHeight { get; set; }
 
 		/// <summary>
 		/// Attachment point
 		/// </summary>
 		[DxfCodeValue(71)]
-		public AttachmentPointType AttachmentPoint { get; set; }
+		public AttachmentPointType AttachmentPoint { get; set; } = AttachmentPointType.TopLeft;
 
 		/// <summary>
 		/// Drawing direction
@@ -81,19 +81,10 @@ namespace ACadSharp.Entities
 		public DrawingDirectionType DrawingDirection { get; set; }
 
 		/// <summary>
-		/// Specifies the text string for the entity.
+		/// Specifies the text string for the entity
 		/// </summary>
-		/// <value>
-		/// The maximum length is 256 characters.
-		/// </value>
 		[DxfCodeValue(1)]
 		public string Value { get; set; } = string.Empty;
-
-		/// <summary>
-		/// Additional text (always in 250-character chunks)
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 3)]
-		public string AdditionalText { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Style of this text entity.
@@ -187,7 +178,7 @@ namespace ACadSharp.Entities
 		/// Percentage of default (3-on-5) line spacing to be applied.Valid values range from 0.25 to 4.00
 		/// </remarks>
 		[DxfCodeValue(44)]
-		public double LineSpacing { get; set; }
+		public double LineSpacing { get; set; } = 1.0;
 
 		/// <summary>
 		/// Background fill setting
@@ -221,11 +212,11 @@ namespace ACadSharp.Entities
 
 		public TextColumn Column { get; set; } = new TextColumn();
 
-		public bool IsAnnotative { get; set; }
+		public bool IsAnnotative { get; set; } = false;
 
-		private double _height = 0.0;
+		private double _height = 1.0;
 
-		private XYZ _alignmentPoint = XYZ.Zero;
+		private XYZ _alignmentPoint = XYZ.AxisX;
 
 		private double _rotation = 0.0;
 

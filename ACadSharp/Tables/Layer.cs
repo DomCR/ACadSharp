@@ -77,7 +77,7 @@ namespace ACadSharp.Tables
 		/// Specifies if the layer is plottable.
 		/// </summary>
 		[DxfCodeValue(290)]
-		public bool PlotFlag { get; set; }
+		public bool PlotFlag { get; set; } = true;
 
 		/// <summary>
 		/// Specifies the lineweight of an individual object or the default lineweight for the drawing.

@@ -429,17 +429,20 @@ namespace ACadSharp.IO.DWG
 				short values = (short)(CadUtils.ToIndex(layer.LineWeight) << 5);
 
 				//contains frozen (1 bit),
-				values |= (short)LayerFlags.Frozen;
+				if (layer.Flags.HasFlag(LayerFlags.Frozen))
+					values |= 0b1;
 
 				//on (2 bit)
-				if (layer.IsOn)
+				if (!layer.IsOn)
 					values |= 0b10;
 
 				//frozen by default in new viewports (4 bit)
-				values |= (short)LayerFlags.FrozenNewViewports;
+				if (layer.Flags.HasFlag(LayerFlags.Frozen))
+					values |= 0b100;
 
 				//locked (8 bit)
-				values |= (short)LayerFlags.Locked;
+				if (layer.Flags.HasFlag(LayerFlags.Locked))
+					values |= 0b1000;
 
 				//plotting flag (16 bit),
 				if (layer.PlotFlag)
