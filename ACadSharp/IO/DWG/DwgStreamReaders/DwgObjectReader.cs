@@ -2579,7 +2579,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2007Plus)
 			{
 				//Rect height BD 46 Reference rectangle height.
-				mtext.ReferenceRectangleHeight = this._objectReader.ReadBitDouble();
+				mtext.RectangleHeight = this._objectReader.ReadBitDouble();
 			}
 
 			//Common:

@@ -610,7 +610,7 @@ namespace ACadSharp.IO.DXF
 
 			if (this.Version >= ACadVersion.AC1021)
 			{
-				this._writer.Write(46, mtext.ReferenceRectangleHeight, map);
+				this._writer.Write(46, mtext.RectangleHeight, map);
 			}
 
 			this._writer.Write(71, (short)mtext.AttachmentPoint, map);

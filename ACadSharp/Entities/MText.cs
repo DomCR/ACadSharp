@@ -63,10 +63,10 @@ namespace ACadSharp.Entities
 		public double RectangleWidth { get; set; }
 
 		/// <summary>
-		/// 
+		/// Reference rectangle height
 		/// </summary>
 		[DxfCodeValue(46)]
-		public double ReferenceRectangleHeight { get; set; }
+		public double RectangleHeight { get; set; }
 
 		/// <summary>
 		/// Attachment point
