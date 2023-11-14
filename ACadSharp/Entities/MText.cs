@@ -81,19 +81,10 @@ namespace ACadSharp.Entities
 		public DrawingDirectionType DrawingDirection { get; set; }
 
 		/// <summary>
-		/// Specifies the text string for the entity.
+		/// Specifies the text string for the entity
 		/// </summary>
-		/// <value>
-		/// The maximum length is 256 characters.
-		/// </value>
 		[DxfCodeValue(1)]
 		public string Value { get; set; } = string.Empty;
-
-		/// <summary>
-		/// Additional text (always in 250-character chunks)
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 3)]
-		public string AdditionalText { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Style of this text entity.
