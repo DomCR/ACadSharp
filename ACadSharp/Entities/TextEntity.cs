@@ -166,10 +166,6 @@ namespace ACadSharp.Entities
 
 		private double _height = 0.0;
 
-		private XYZ _alignmentPoint = XYZ.Zero;
-
-		private double _rotation = 0.0;
-
 		private TextStyle _style = TextStyle.Default;
 
 		public TextEntity() : base() { }
