@@ -3048,23 +3048,25 @@ namespace ACadSharp.IO.DWG
 				//	- Scaling (using scale vector)
 				//	- Translation (using location)
 				//	Simply read an array of 16 doubles:
-				double[] matrix  = annotContext.TransformationMatrix;
-				matrix[0] = _objectReader.ReadBitDouble();
-				matrix[1] = _objectReader.ReadBitDouble();
-				matrix[2] = _objectReader.ReadBitDouble();
-				matrix[3] = _objectReader.ReadBitDouble();
-				matrix[4] = _objectReader.ReadBitDouble();
-				matrix[5] = _objectReader.ReadBitDouble();
-				matrix[6] = _objectReader.ReadBitDouble();
-				matrix[7] = _objectReader.ReadBitDouble();
-				matrix[8] = _objectReader.ReadBitDouble();
-				matrix[9] = _objectReader.ReadBitDouble();
-				matrix[10] = _objectReader.ReadBitDouble();
-				matrix[11] = _objectReader.ReadBitDouble();
-				matrix[12] = _objectReader.ReadBitDouble();
-				matrix[13] = _objectReader.ReadBitDouble();
-				matrix[14] = _objectReader.ReadBitDouble();
-				matrix[15] = _objectReader.ReadBitDouble();
+				double[] elements  = new double[16];
+				elements[0] = _objectReader.ReadBitDouble();
+				elements[1] = _objectReader.ReadBitDouble();
+				elements[2] = _objectReader.ReadBitDouble();
+				elements[3] = _objectReader.ReadBitDouble();
+				elements[4] = _objectReader.ReadBitDouble();
+				elements[5] = _objectReader.ReadBitDouble();
+				elements[6] = _objectReader.ReadBitDouble();
+				elements[7] = _objectReader.ReadBitDouble();
+				elements[8] = _objectReader.ReadBitDouble();
+				elements[9] = _objectReader.ReadBitDouble();
+				elements[10] = _objectReader.ReadBitDouble();
+				elements[11] = _objectReader.ReadBitDouble();
+				elements[12] = _objectReader.ReadBitDouble();
+				elements[13] = _objectReader.ReadBitDouble();
+				elements[14] = _objectReader.ReadBitDouble();
+				elements[15] = _objectReader.ReadBitDouble();
+
+				annotContext.TransformationMatrix = new Matrix4(elements);
 			}
 			//END IF Has contents block
 			//END IF Has text contents
