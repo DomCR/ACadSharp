@@ -89,7 +89,7 @@ namespace ACadSharp.IO.DWG
 				else
 				{
 					//Color index: if no flags were set, the color is looked up by the color number (ACI color).
-					color = new Color((byte)(size & 0b111111111111));
+					color = new Color((short)(size & 0b111111111111));
 				}
 
 				//0x2000: color is followed by a transparency BL

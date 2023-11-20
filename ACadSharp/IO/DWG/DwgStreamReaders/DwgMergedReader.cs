@@ -185,7 +185,14 @@ namespace ACadSharp.IO.DWG
 				//0xC0000000
 
 				//True color
-				color = new Color(arr[0], arr[1], arr[2]);
+				//color = new Color(arr[0], arr[1], arr[2]);
+				uint trueColor = (uint)((int)rgb - 0xC2000000);
+
+				//Needs the check just in case the flag is not set
+				if (trueColor < (1 << 24))
+				{
+					color = Color.FromTrueColor(trueColor);
+				}
 			}
 
 			//RC : Color Byte
