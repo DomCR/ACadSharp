@@ -1054,8 +1054,6 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		#endregion
-
 		#region Evaluation Graph, Enhanced Block etc.
 
 		private CadTemplate readEvaluationGraph() {
@@ -1113,10 +1111,11 @@ namespace ACadSharp.IO.DWG
 			var b_8 = _objectReader.ReadBit();
 			var b_9 = _objectReader.ReadBit();
 			var b_10 = _objectReader.ReadBit();
-			var s_11 = _objectReader.ReadBitShort();
+			var b_11 = _objectReader.ReadBit();
 			var b_12 = _objectReader.ReadBit();
 			var b_13 = _objectReader.ReadBit();
-			var b_14 = _objectReader.ReadBit();
+			var S_14 = _objectReader.ReadBitShort();  //	can also be L
+
 			var s_15 = _objectReader.ReadBitShort();
 			var b_16 = _objectReader.ReadBit();
 			var b_17 = _objectReader.ReadBit();
@@ -5507,7 +5506,7 @@ namespace ACadSharp.IO.DWG
 				this.handleReference();
 		}
 
-		#endregion Object readers
+		#endregion Evaluation Graph, Enhanced Block etc.
 
 		private CadTemplate readDwgColor()
 		{
