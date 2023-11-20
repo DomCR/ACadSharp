@@ -3047,26 +3047,31 @@ namespace ACadSharp.IO.DWG
 				//	- OCS to WCS (using normal vector),
 				//	- Scaling (using scale vector)
 				//	- Translation (using location)
-				//	Simply read an array of 16 doubles:
-				double[] elements  = new double[16];
-				elements[0] = _objectReader.ReadBitDouble();
-				elements[1] = _objectReader.ReadBitDouble();
-				elements[2] = _objectReader.ReadBitDouble();
-				elements[3] = _objectReader.ReadBitDouble();
-				elements[4] = _objectReader.ReadBitDouble();
-				elements[5] = _objectReader.ReadBitDouble();
-				elements[6] = _objectReader.ReadBitDouble();
-				elements[7] = _objectReader.ReadBitDouble();
-				elements[8] = _objectReader.ReadBitDouble();
-				elements[9] = _objectReader.ReadBitDouble();
-				elements[10] = _objectReader.ReadBitDouble();
-				elements[11] = _objectReader.ReadBitDouble();
-				elements[12] = _objectReader.ReadBitDouble();
-				elements[13] = _objectReader.ReadBitDouble();
-				elements[14] = _objectReader.ReadBitDouble();
-				elements[15] = _objectReader.ReadBitDouble();
+				double m00 = _objectReader.ReadBitDouble();
+				double m10 = _objectReader.ReadBitDouble();
+				double m20 = _objectReader.ReadBitDouble();
+				double m30 = _objectReader.ReadBitDouble();
 
-				annotContext.TransformationMatrix = new Matrix4(elements);
+				double m01 = _objectReader.ReadBitDouble();
+				double m11 = _objectReader.ReadBitDouble();
+				double m21 = _objectReader.ReadBitDouble();
+				double m31 = _objectReader.ReadBitDouble();
+
+				double m02 = _objectReader.ReadBitDouble();
+				double m12 = _objectReader.ReadBitDouble();
+				double m22 = _objectReader.ReadBitDouble();
+				double m32 = _objectReader.ReadBitDouble();
+
+				double m03 = _objectReader.ReadBitDouble();
+				double m13 = _objectReader.ReadBitDouble();
+				double m23 = _objectReader.ReadBitDouble();
+				double m33 = _objectReader.ReadBitDouble();
+
+				annotContext.TransformationMatrix = new Matrix4(
+						m00, m10, m20, m30,
+						m01, m11, m21, m31,
+						m02, m12, m22, m32,
+						m03, m13, m23, m33);
 			}
 			//END IF Has contents block
 			//END IF Has text contents
