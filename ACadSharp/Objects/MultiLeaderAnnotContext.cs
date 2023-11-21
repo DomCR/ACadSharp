@@ -298,7 +298,7 @@ namespace ACadSharp.Objects
 		/// </list>
 		/// </remarks>
 		[DxfCodeValue(93)]
-		public double[] TransformationMatrix { get; } = new double[16];
+		public Matrix4 TransformationMatrix { get; set; }
 
 		/// <summary>
 		/// Base point
