@@ -1,19 +1,33 @@
-﻿using CSMath;
-using System;
+﻿using ACadSharp.Attributes;
+using CSMath;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
-	//TODO: FIX the hatch mess!!!!
 	public class HatchPattern
 	{
-		public readonly static HatchPattern Solid = new HatchPattern("SOLID");
+		public static HatchPattern Solid { get { return new HatchPattern("SOLID"); } }
 
 		public class Line
 		{
+			/// <summary>
+			/// Pattern line angle
+			/// </summary>
+			[DxfCodeValue(DxfReferenceType.IsAngle, 53)]
 			public double Angle { get; internal set; }
+
+			/// <summary>
+			/// Pattern line base point
+			/// </summary>
+			[DxfCodeValue(43, 44)]
 			public XY BasePoint { get; internal set; }
+
+			/// <summary>
+			/// Pattern line offset
+			/// </summary>
+			[DxfCodeValue(45, 46)]
 			public XY Offset { get; internal set; }
+
 			public List<double> DashLengths { get; set; } = new List<double>();
 
 			public Line Clone()
@@ -24,15 +38,19 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		[DxfCodeValue(2)]
 		public string Name { get; set; }
+
+		[DxfCodeValue(DxfReferenceType.IsAngle, 53)]
 		public double Angle { get; set; }
+
 		public double Scale { get; set; }
 
 		public List<Line> Lines { get; set; } = new List<Line>();
 
 		public HatchPattern(string name)
 		{
-			Name = name;
+			this.Name = name;
 		}
 
 		public HatchPattern Clone()

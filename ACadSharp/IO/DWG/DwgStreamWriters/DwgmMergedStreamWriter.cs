@@ -68,6 +68,11 @@ namespace ACadSharp.IO.DWG
 			this.Main.Write2RawDouble(value);
 		}
 
+		public void Write2BitDouble(XY value)
+		{
+			this.Main.Write2BitDouble(value);
+		}
+
 		public void Write3BitDouble(XYZ value)
 		{
 			this.Main.Write3BitDouble(value);
@@ -86,6 +91,15 @@ namespace ACadSharp.IO.DWG
 		public void WriteBitDouble(double value)
 		{
 			this.Main.WriteBitDouble(value);
+		}
+		public void Write2BitDoubleWithDefault(XY def, XY value)
+		{
+			this.Main.Write2BitDoubleWithDefault(def, value);
+		}
+
+		public void Write3BitDoubleWithDefault(XYZ def, XYZ value)
+		{
+			this.Main.Write3BitDoubleWithDefault(def, value);
 		}
 
 		public void WriteBitDoubleWithDefault(double def, double value)
@@ -207,7 +221,7 @@ namespace ACadSharp.IO.DWG
 			if (textSizeBits > 0)
 			{
 				this.TextWriter.WriteSpearShift();
-				this.Main.WriteBytes(((MemoryStream)this.TextWriter.Stream).GetBuffer());
+				this.Main.WriteBytes(((MemoryStream)this.TextWriter.Stream).GetBuffer(), 0, (int)this.TextWriter.Stream.Length);
 				this.Main.WriteSpearShift();
 				this.Main.SetPositionInBits(mainSizeBits + textSizeBits);
 				this.Main.SetPositionByFlag(textSizeBits);
@@ -220,7 +234,7 @@ namespace ACadSharp.IO.DWG
 
 			this.HandleWriter.WriteSpearShift();
 			this.SavedPositionInBits = this.Main.PositionInBits;
-			this.Main.WriteBytes(((MemoryStream)this.HandleWriter.Stream).GetBuffer());
+			this.Main.WriteBytes(((MemoryStream)this.HandleWriter.Stream).GetBuffer(), 0, (int)this.HandleWriter.Stream.Length);
 			this.Main.WriteSpearShift();
 		}
 
@@ -250,6 +264,11 @@ namespace ACadSharp.IO.DWG
 		}
 
 		public void WriteShiftValue()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void WriteBytes(byte[] bytes, int offset, int length)
 		{
 			throw new NotImplementedException();
 		}

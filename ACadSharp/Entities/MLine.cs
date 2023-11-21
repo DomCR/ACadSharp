@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
 using CSMath;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -17,24 +16,36 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.MLine)]
 	public partial class MLine : Entity
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.MLINE;
 
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityMLine;
 
-		/// <summary>
-		/// String of up to 32 characters.The name of the style used for this mline.An entry for this style must exist in the MLINESTYLE dictionary.
-		/// </summary>
-		/// <remarks>
-		/// Do not modify this field without also updating the associated entry in the MLINESTYLE dictionary
-		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.Name, 2)]
-		public MLStyle MlStyleName { get { return this.MLStyle; } set{ this.MLStyle = value; } }    //TODO: Fix duplicated MLStyle
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.MLine;
 
 		/// <summary>
-		/// MLINESTYLE object
+		/// MLine Style
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public MLStyle MLStyle { get; set; }
+		/// <remarks>
+		/// Name reference: <br/>
+		/// String of up to 32 characters.The name of the style used for this mline. An entry for this style must exist in the MLINESTYLE dictionary.
+		/// Do not modify this field without also updating the associated entry in the MLINESTYLE dictionary
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Handle | DxfReferenceType.Name, 340)]
+		public MLStyle MLStyle
+		{
+			get { return _style; }
+			set
+			{
+				if (value == null)
+				{
+					throw new System.ArgumentNullException(nameof(value), "Multi line style cannot be null");
+				}
+				this._style = value;
+			}
+		}
 
 		/// <summary>
 		/// Scale factor
@@ -64,7 +75,7 @@ namespace ACadSharp.Entities
 		/// Extrusion direction
 		/// </summary>
 		[DxfCodeValue(210, 220, 230)]
-		public XYZ Extrusion { get; set; } = XYZ.AxisZ;
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 		/// <summary>
 		/// Vertices in the MLine
@@ -72,13 +83,14 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Count, 72)]
 		public List<Vertex> Vertices { get; set; } = new List<Vertex>();
 
+		private MLStyle _style = MLStyle.Default;
+
 		public MLine() : base() { }
 
 		public override CadObject Clone()
 		{
 			MLine clone = (MLine)base.Clone();
 
-			clone.MlStyleName = (MLStyle)(this.MlStyleName?.Clone());
 			clone.MLStyle = (MLStyle)(this.MLStyle?.Clone());
 
 			clone.Vertices.Clear();

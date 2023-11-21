@@ -20,7 +20,8 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityDimension;
 
-		//100	Subclass marker(AcDbOrdinateDimension)
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.OrdinateDimension; 
 
 		/// <summary>
 		/// Definition point for linear and angular dimensions (in WCS)
@@ -33,5 +34,7 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(14, 24, 34)]
 		public XYZ LeaderEndpoint { get; set; }
+
+		public DimensionOrdinate() : base(DimensionType.Ordinate) { }
 	}
 }

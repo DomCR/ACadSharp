@@ -3,7 +3,7 @@ using System.IO;
 
 namespace ACadSharp.IO.DXF
 {
-	internal class DxfAsciiWriter : IDxfStreamWriter
+	internal class DxfAsciiWriter : DxfStreamWriterBase
 	{
 		private TextWriter _stream;
 
@@ -12,34 +12,22 @@ namespace ACadSharp.IO.DXF
 			this._stream = stream;
 		}
 
-		public void Write(DxfCode code, object value)
-		{
-			this.Write((int)code, value);
-		}
-
-		public void Write(int code, object value)
-		{
-			this.writeDxfCode(code);
-			this.writeValue(code, value);
-		}
-
-		/// <inheritdoc/>
-		public void Dispose()
+		public override void Dispose()
 		{
 			this._stream.Dispose();
 		}
 
-		public void Flush()
+		public override void Flush()
 		{
 			this._stream.Flush();
 		}
 
-		public void Close()
+		public override void Close()
 		{
 			this._stream.Close();
 		}
 
-		private void writeDxfCode(int code)
+		protected override void writeDxfCode(int code)
 		{
 			if (code < 10)
 			{
@@ -55,7 +43,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void writeValue(int code, object value)
+		protected override void writeValue(int code, object value)
 		{
 			GroupCodeValueType groupCode = GroupCodeValue.TransformValue(code);
 
@@ -99,6 +87,7 @@ namespace ACadSharp.IO.DXF
 					{
 						this._stream.Write(string.Format("{0:X2}", v));
 					}
+					this._stream.Write(Environment.NewLine);
 					return;
 			}
 

@@ -14,6 +14,21 @@
 		public const string ClassesSection = "CLASSES";
 		public const string ClassEntry = "CLASS";
 
+		/// <summary>
+		/// Object reactors, list of handles
+		/// </summary>
+		public const string ReactorsToken = "{ACAD_REACTORS";
+
+		/// <summary>
+		/// Handle for the xdictionary
+		/// </summary>
+		public const string DictionaryToken = "{ACAD_XDICTIONARY";
+
+		/// <summary>
+		/// Block references
+		/// </summary>
+		public const string BlkRefToken = "{BLKREFS";
+
 		#region Tables
 
 		public const string TablesSection = "TABLES";
@@ -67,6 +82,7 @@
 		public const string EntityOle2Frame = "OLE2FRAME";
 		public const string EntityPoint = "POINT";
 		public const string EntityPolyline = "POLYLINE";
+		public const string EntityPolyFaceMesh = "PFACE";
 		public const string EntityRay = "RAY";
 		public const string EntityRegion = "REGION";
 		public const string EntitySection = "SECTION";
@@ -92,13 +108,18 @@
 
 		public const string ObjectsSection = "OBJECTS";
 		public const string ObjectDictionary = "DICTIONARY";
+		public const string ObjectDictionaryWithDefault = "ACDBDICTIONARYWDFLT";
+		public const string ObjectAcdbPlaceHolder = "ACDBPLACEHOLDER";
 		public const string ObjectDictionaryVar = "DICTIONARYVAR";
 		public const string ObjectPlotSettings = "PLOTSETTINGS";
+		public const string ObjectPlaceholder = "ACDBPLACEHOLDER";
 		public const string ObjectLayout = "LAYOUT";
 		public const string ObjectMLStyle = "MLINESTYLE";
 		public const string ObjectVisualStyle = "VISUALSTYLE";
+		public const string ObjectScale = "SCALE";
 		public const string ObjectSortEntsTable = "SORTENTSTABLE";
 		public const string ObjectXRecord = "XRECORD";
+		public const string ObjectMLeaderContextData = "CONTEXT_DATA";
 
 		#endregion
 	}

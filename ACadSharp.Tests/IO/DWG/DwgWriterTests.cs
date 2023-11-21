@@ -1,8 +1,8 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Exceptions;
+using ACadSharp.Header;
 using ACadSharp.IO;
 using ACadSharp.Tests.Common;
-using System;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
@@ -17,10 +17,9 @@ namespace ACadSharp.Tests.IO.DWG
 		[MemberData(nameof(Versions))]
 		public void WriteEmptyTest(ACadVersion version)
 		{
+			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}.dwg");
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
-
-			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}.dwg");
 
 			using (var wr = new DwgWriter(path, doc))
 			{
@@ -40,7 +39,7 @@ namespace ACadSharp.Tests.IO.DWG
 				CadDocument readed = re.Read();
 			}
 
-			//this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
+			this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
 		}
 
 		[Theory]
@@ -50,12 +49,13 @@ namespace ACadSharp.Tests.IO.DWG
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 
-			addEntities(doc);
+			this.addEntities(doc);
 
 			string path = Path.Combine(_samplesOutFolder, $"out_sample_{version}.dwg");
 
 			using (var wr = new DwgWriter(path, doc))
 			{
+				wr.OnNotification += this.onNotification;
 				if (isSupportedVersion(version))
 				{
 					wr.Write();
@@ -148,7 +148,7 @@ namespace ACadSharp.Tests.IO.DWG
 
 			using (var re = new DwgReader(stream, this.onNotification))
 			{
-				Header.CadHeader header = re.ReadHeader();
+				CadHeader header = re.ReadHeader();
 			}
 		}
 

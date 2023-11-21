@@ -13,14 +13,21 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.LinearDimension)]
 	public class DimensionLinear : DimensionAligned
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.DIMENSION_LINEAR;
 
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityDimension;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.LinearDimension;
 
 		/// <summary>
 		/// Angle of rotated, horizontal, or vertical dimensions
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation { get; set; }
+
+		public DimensionLinear() : base(DimensionType.Linear) { }
 	}
 }

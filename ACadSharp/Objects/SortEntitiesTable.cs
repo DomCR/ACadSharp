@@ -22,6 +22,9 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectSortEntsTable;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.SortentsTable;
+
 		/// <summary>
 		/// Block owner where the table is applied
 		/// </summary>

@@ -23,7 +23,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Contains all the header variables for this document.
 		/// </summary>
-		public CadHeader Header { get; set; }
+		public CadHeader Header { get; internal set; }
 
 		/// <summary>
 		/// Accesses drawing properties such as the Title, Subject, Author, and Keywords properties
@@ -114,7 +114,7 @@ namespace ACadSharp
 		/// </summary>
 		public BlockRecord PaperSpace { get { return this.BlockRecords[BlockRecord.PaperSpaceName]; } }
 
-		private CadDictionary _rootDictionary = new CadDictionary();
+		private CadDictionary _rootDictionary = null;
 
 		//Contains all the objects in the document
 		private readonly Dictionary<ulong, IHandledCadObject> _cadObjects = new Dictionary<ulong, IHandledCadObject>();
@@ -125,8 +125,10 @@ namespace ACadSharp
 
 			if (createDefaults)
 			{
+				DxfClassCollection.UpdateDxfClasses(this);
+
 				//Header and summary
-				this.Header = new CadHeader();
+				this.Header = new CadHeader(this);
 				this.SummaryInfo = new CadSummaryInfo();
 
 				//The order of the elements is rellevant for the handles assignation
@@ -180,7 +182,19 @@ namespace ACadSharp
 		/// <summary>
 		/// Creates a document with the default objects
 		/// </summary>
-		public CadDocument() : this(true) { }
+		/// <remarks>
+		/// Default version <see cref="ACadVersion.AC1018"/>
+		/// </remarks>
+		public CadDocument() : this(ACadVersion.AC1018) { }
+
+		/// <summary>
+		/// Creates a document with the default objects and a specific version
+		/// </summary>
+		/// <param name="version">Version of the document</param>
+		public CadDocument(ACadVersion version) : this(true)
+		{
+			this.Header.Version = version;
+		}
 
 		/// <summary>
 		/// Gets an object in the document by it's handle
@@ -209,10 +223,21 @@ namespace ACadSharp
 			return null;
 		}
 
+		/// <summary>
+		/// Gets an object in the document by it's handle
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="handle"></param>
+		/// <param name="cadObject"></param>
+		/// <returns></returns>
 		public bool TryGetCadObject<T>(ulong handle, out T cadObject)
 			where T : CadObject
 		{
 			cadObject = null;
+
+			if (handle == this.Handle)
+				return false;
+
 			if (this._cadObjects.TryGetValue(handle, out IHandledCadObject obj))
 			{
 				cadObject = obj as T;
@@ -229,8 +254,6 @@ namespace ACadSharp
 				throw new ArgumentException($"The item with handle {cadObject.Handle} is already assigned to a document");
 			}
 
-			cadObject.Document = this;
-
 			if (cadObject.Handle == 0 || this._cadObjects.ContainsKey(cadObject.Handle))
 			{
 				var nextHandle = this._cadObjects.Keys.Max() + 1;
@@ -241,105 +264,25 @@ namespace ACadSharp
 			}
 
 			this._cadObjects.Add(cadObject.Handle, cadObject);
-			cadObject.OnReferenceChanged += this.onReferenceChanged;
 
-			if (cadObject.XDictionary != null)
-				this.RegisterCollection(cadObject.XDictionary);
-
-			if (cadObject is Entity e)
+			if (cadObject is BlockRecord record)
 			{
-				if (this.Layers.TryGetValue(e.Layer.Name, out Layer layer))
-				{
-					e.Layer = layer;
-				}
-				else
-				{
-					//Add the layer if it does not exist
-					this.Layers.Add(e.Layer);
-				}
-
-				if (this.LineTypes.TryGetValue(e.LineType.Name, out LineType lineType))
-				{
-					e.LineType = lineType;
-				}
-				else
-				{
-					//Add the LineType if it does not exist
-					this.LineTypes.Add(e.LineType);
-				}
+				this.addCadObject(record.BlockEntity);
+				this.addCadObject(record.BlockEnd);
 			}
 
-			switch (cadObject)
-			{
-				case BlockRecord record:
-					this.RegisterCollection(record.Entities);
-					this.addCadObject(record.BlockEnd);
-					this.addCadObject(record.BlockEntity);
-					break;
-				case Insert insert:
-					this.RegisterCollection(insert.Attributes);
-					
-					//Should only be triggered for internal use
-					if (insert.Block == null)
-						break;
-
-					if (this.BlockRecords.TryGetValue(insert.Block.Name, out BlockRecord blk))
-					{
-						insert.Block = blk;
-					}
-					else
-					{
-						this.BlockRecords.Add(insert.Block);
-					}
-					break;
-				case Polyline pline:
-					this.RegisterCollection(pline.Vertices);
-					break;
-			}
+			cadObject.AssignDocument(this);
 		}
 
 		private void removeCadObject(CadObject cadObject)
 		{
-			if (!this.TryGetCadObject(cadObject.Handle, out CadObject obj) || !this._cadObjects.Remove(cadObject.Handle))
+			if (!this.TryGetCadObject(cadObject.Handle, out CadObject _)
+				|| !this._cadObjects.Remove(cadObject.Handle))
 			{
 				return;
 			}
 
-			cadObject.Handle = 0;
-			cadObject.Document = null;
-			cadObject.OnReferenceChanged -= this.onReferenceChanged;
-
-			if (cadObject.XDictionary != null)
-				this.UnregisterCollection(cadObject.XDictionary);
-
-			if (cadObject is Entity e)
-			{
-				//TODO: Replace for clones
-				e.Layer = new Layer(e.Layer.Name);
-				e.LineType = new LineType(e.LineType.Name);
-			}
-
-			switch (cadObject)
-			{
-				case BlockRecord record:
-					this.UnregisterCollection(record.Entities);
-					this.removeCadObject(record.BlockEnd);
-					this.removeCadObject(record.BlockEntity);
-					break;
-				case Insert insert:
-					insert.Block = (BlockRecord)insert.Block.Clone();
-					this.UnregisterCollection(insert.Attributes);
-					break;
-				case Polyline pline:
-					this.UnregisterCollection(pline.Vertices);
-					break;
-			}
-		}
-
-		private void onReferenceChanged(object sender, ReferenceChangedEventArgs e)
-		{
-			this.addCadObject(e.Current);
-			this.removeCadObject(e.Old);
+			cadObject.UnassignDocument();
 		}
 
 		private void onAdd(object sender, CollectionChangedEventArgs e)
@@ -366,7 +309,7 @@ namespace ACadSharp
 			}
 		}
 
-		internal void RegisterCollection<T>(IObservableCollection<T> collection, bool addElements = true)
+		internal void RegisterCollection<T>(IObservableCollection<T> collection)
 			where T : CadObject
 		{
 			switch (collection)
@@ -417,28 +360,31 @@ namespace ACadSharp
 				this.addCadObject(cadObject);
 			}
 
-			if (collection is ISeqendColleciton seqendColleciton)
+			if (collection is ISeqendCollection seqendColleciton)
 			{
-				this.addCadObject(seqendColleciton.Seqend);
+				seqendColleciton.OnSeqendAdded += this.onAdd;
+				seqendColleciton.OnSeqendRemoved += this.onRemove;
+
+				if (seqendColleciton.Seqend != null)
+				{
+					this.addCadObject(seqendColleciton.Seqend);
+				}
 			}
 
-			if (addElements)
+			foreach (T item in collection)
 			{
-				foreach (T item in collection)
+				if (item is CadDictionary dictionary)
 				{
-					if (item is CadDictionary dictionary)
-					{
-						this.RegisterCollection(dictionary);
-					}
-					else
-					{
-						this.addCadObject(item);
-					}
+					this.RegisterCollection(dictionary);
+				}
+				else
+				{
+					this.addCadObject(item);
 				}
 			}
 		}
 
-		internal void UnregisterCollection<T>(IObservableCollection<T> collection, bool removeElements = true)
+		internal void UnregisterCollection<T>(IObservableCollection<T> collection)
 			where T : CadObject
 		{
 			switch (collection)
@@ -463,23 +409,26 @@ namespace ACadSharp
 				this.removeCadObject(cadObject);
 			}
 
-			if (collection is ISeqendColleciton seqendColleciton)
+			if (collection is ISeqendCollection seqendColleciton)
 			{
-				this.removeCadObject(seqendColleciton.Seqend);
+				seqendColleciton.OnSeqendAdded -= this.onAdd;
+				seqendColleciton.OnSeqendRemoved -= this.onRemove;
+
+				if (seqendColleciton.Seqend != null)
+				{
+					this.removeCadObject(seqendColleciton.Seqend);
+				}
 			}
 
-			if (removeElements)
+			foreach (T item in collection)
 			{
-				foreach (T item in collection)
+				if (item is CadDictionary dictionary)
 				{
-					if (item is CadDictionary dictionary)
-					{
-						this.UnregisterCollection(dictionary);
-					}
-					else
-					{
-						this.removeCadObject(item);
-					}
+					this.UnregisterCollection(dictionary);
+				}
+				else
+				{
+					this.removeCadObject(item);
 				}
 			}
 		}

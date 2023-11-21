@@ -71,11 +71,12 @@ namespace ACadSharp.Tests.Common
 			foreach (BlockRecord br in doc.BlockRecords)
 			{
 				Assert.Equal(br.Name, br.BlockEntity.Name);
-
+				Assert.NotNull(br.BlockEntity.Document);
 				this.documentObjectNotNull(doc, br.BlockEntity);
 
 				Assert.True(br.Handle == br.BlockEntity.Owner.Handle, "Block entity owner doesn't mach");
 
+				Assert.NotNull(br.BlockEnd.Document);
 				this.documentObjectNotNull(doc, br.BlockEnd);
 
 				foreach (Entity e in br.Entities)

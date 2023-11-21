@@ -3,6 +3,7 @@ using CSUtilities.Converters;
 using CSUtilities.IO;
 using CSUtilities.Text;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -80,6 +81,54 @@ namespace ACadSharp.IO.DWG
 
 			return reader;
 		}
+
+#if TEST
+		public static Dictionary<string, object> Explore(IDwgStreamReader reader)
+		{
+			Dictionary<string, object> values = new Dictionary<string, object>();
+
+			tryGetValue(reader, values, reader.ReadByte);
+			tryGetValue(reader, values, reader.ReadShort);
+			tryGetValue(reader, values, reader.ReadInt);
+			tryGetValue(reader, values, reader.ReadUInt);
+			tryGetValue(reader, values, reader.ReadDouble);
+
+			tryGetValue(reader, values, reader.ReadBitShort);
+			tryGetValue(reader, values, reader.ReadBitLong);
+			tryGetValue(reader, values, reader.ReadBitLongLong);
+			tryGetValue(reader, values, reader.ReadBitDouble);
+			tryGetValue(reader, values, reader.Read2BitDouble);
+			tryGetValue(reader, values, reader.Read3BitDouble);
+
+			tryGetValue(reader, values, reader.ReadRawChar);
+			tryGetValue(reader, values, reader.ReadRawLong);
+			tryGetValue(reader, values, reader.Read2RawDouble);
+			
+			tryGetValue(reader, values, reader.HandleReference);
+
+			tryGetValue(reader, values, reader.ReadTextUnicode);
+			tryGetValue(reader, values, reader.ReadVariableText);
+
+			return values;
+		}
+
+		private static void tryGetValue<T>(IDwgStreamReader reader, Dictionary<string, object> values, Func<T> method)
+		{
+			var pos = reader.PositionInBits();
+
+			values.Add(method.Method.Name, null);
+
+			try
+			{
+				values[method.Method.Name] = method();
+			}
+			catch (Exception) { }
+			finally
+			{
+				reader.SetPositionInBits(pos);
+			}
+		}
+#endif
 
 		public override byte ReadByte()
 		{

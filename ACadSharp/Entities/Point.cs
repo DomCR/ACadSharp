@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using CSMath;
 
 namespace ACadSharp.Entities
@@ -20,6 +19,9 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityPoint;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Point;
 
 		/// <summary>
 		/// Point location(in WCS)
@@ -48,6 +50,18 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation { get; set; } = 0.0;
 
+		/// <summary>
+		/// Default constructor
+		/// </summary>
 		public Point() : base() { }
+
+		/// <summary>
+		/// Create a point in a specific location
+		/// </summary>
+		/// <param name="location"></param>
+		public Point(XYZ location) : base()
+		{
+			this.Location = location;
+		}
 	}
 }

@@ -15,9 +15,14 @@ namespace ACadSharp.Blocks
 	[DxfSubClass(DxfSubclassMarker.BlockEnd)]
 	public class BlockEnd : Entity
 	{
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EndBlock;
 
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.ENDBLK;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.BlockEnd;
 
 		public BlockEnd(BlockRecord record) : base()
 		{

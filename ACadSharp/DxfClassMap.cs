@@ -33,27 +33,29 @@ namespace ACadSharp
 		{
 			Type type = typeof(T);
 
-			if (!_cache.TryGetValue(type, out var classMap))
+			if (_cache.TryGetValue(type, out var classMap))
 			{
-				classMap = new DxfClassMap();
-
-				var att = type.GetCustomAttribute<DxfSubClassAttribute>();
-				if (att == null)
-					throw new ArgumentException($"{type.FullName} is not a dxf subclass");
-
-				classMap.Name = type.GetCustomAttribute<DxfSubClassAttribute>().ClassName;
-
-				addClassProperties(classMap, type);
-
-				DxfSubClassAttribute baseAtt = type.BaseType.GetCustomAttribute<DxfSubClassAttribute>();
-				if (baseAtt != null && baseAtt.IsEmpty)
-				{
-					//Properties in the table seem to be embeded to the hinerit type
-					addClassProperties(classMap, type.BaseType);
-				}
-
-				_cache.TryAdd(type, classMap);
+				return classMap;
 			}
+
+			classMap = new DxfClassMap();
+
+			var att = type.GetCustomAttribute<DxfSubClassAttribute>();
+			if (att == null)
+				throw new ArgumentException($"{type.FullName} is not a dxf subclass");
+
+			classMap.Name = type.GetCustomAttribute<DxfSubClassAttribute>().ClassName;
+
+			addClassProperties(classMap, type);
+
+			DxfSubClassAttribute baseAtt = type.BaseType.GetCustomAttribute<DxfSubClassAttribute>();
+			if (baseAtt != null && baseAtt.IsEmpty)
+			{
+				//Properties in the table seem to be embeded to the hinerit type
+				addClassProperties(classMap, type.BaseType);
+			}
+
+			_cache.TryAdd(type, classMap);
 
 			return classMap;
 		}
@@ -65,6 +67,11 @@ namespace ACadSharp
 		public void ClearCache()
 		{
 			_cache.Clear();
+		}
+
+		public override string ToString()
+		{
+			return $"DxfClassMap:{this.Name}";
 		}
 	}
 }

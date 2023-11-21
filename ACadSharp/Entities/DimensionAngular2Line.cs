@@ -20,6 +20,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityDimension;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Angular2LineDimension;
+
 		/// <summary>
 		/// Definition point for linear and angular dimensions (in WCS)
 		/// </summary>
@@ -43,5 +46,9 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(16, 26, 36)]
 		public XYZ DimensionArc { get; set; }
+
+		public DimensionAngular2Line() : base(DimensionType.Angular)
+		{
+		}
 	}
 }

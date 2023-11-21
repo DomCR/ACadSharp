@@ -3,7 +3,7 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadVPortTemplate : CadTemplate<VPort>
+	internal class CadVPortTemplate : CadTableEntryTemplate<VPort>
 	{
 		public ulong VportControlHandle { get; set; }
 
@@ -16,6 +16,8 @@ namespace ACadSharp.IO.Templates
 		public ulong? NamedUcsHandle { get; set; }
 
 		public ulong? BaseUcsHandle { get; set; }
+
+		public CadVPortTemplate() : base(new VPort()) { }
 
 		public CadVPortTemplate(VPort cadObject) : base(cadObject) { }
 

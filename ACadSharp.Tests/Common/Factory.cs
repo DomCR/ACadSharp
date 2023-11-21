@@ -41,7 +41,11 @@ namespace ACadSharp.Tests.Common
 				.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
 				.Where(o => o.CanWrite && !o.PropertyType.IsClass && !o.PropertyType.IsEnum && !o.PropertyType.IsInterface))
 			{
-				p.SetValue(e, _random.Next(p.PropertyType));
+				try
+				{
+					p.SetValue(e, _random.Next(p.PropertyType));
+				}
+				catch (Exception) { }
 			}
 
 			return e;
@@ -54,7 +58,7 @@ namespace ACadSharp.Tests.Common
 				return null;
 			}
 
-			if (type == typeof(XRecrod)
+			if (type == typeof(XRecord)
 				|| type == typeof(PlotSettings)
 				|| type == typeof(Material)
 				|| type == typeof(MLStyle)
