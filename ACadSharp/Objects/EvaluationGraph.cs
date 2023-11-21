@@ -1,8 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using ACadSharp.Attributes;
+
+
 namespace ACadSharp.Objects {
 
+	/// <summary>
+	/// Represents a evaluation graph containing a list of <see cref="GraphNode"/>
+	/// objects.
+	/// </summary>
 	public class EvaluationGraph : CadObject {
 
 		public EvaluationGraph() {
@@ -17,24 +24,71 @@ namespace ACadSharp.Objects {
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.EvalGraph;
 
-
+		/// <summary>
+		/// Gets a list of <see cref="GraphNode"/> objects.
+		/// </summary>
 		public IList<GraphNode> Nodes { get; } = new List<GraphNode>();
 
 
+		/// <summary>
+		/// Represents a graph node of a <see cref="EvaluationGraph"/>.
+		/// </summary>
 		public class GraphNode : ICloneable {
 
+			/// <summary>
+			/// Gets or sets the index of this <see cref="GraphNode"/> in the list of
+			/// graph nodes in the owning <see cref="EvaluationGraph"/>.
+			/// </summary>
+			[DxfCodeValue(91)]
 			public int Index { get; set; }
 
+			/// <summary>
+			/// Gets or sets the index of the next <see cref="GraphNode"/> in the list of
+			/// graph nodes in the owning <see cref="EvaluationGraph"/>.
+			/// </summary>
+			[DxfCodeValue(95)]
 			internal int NextNodeIndex { get; set; }
 
+			/// <summary>
+			/// Gets the next <see cref="GraphNode"/> in the list of
+			/// graph nodes in the owning <see cref="EvaluationGraph"/>.
+			/// </summary>
 			public GraphNode Next { get; internal set; }
 
+			/// <summary>
+			/// Unknown
+			/// </summary>
+			[DxfCodeValue(93)]
 			public int Flags { get; set; }
+
+			/// <summary>
+			/// Unknown
+			/// </summary>
+			[DxfCodeValue(92)]
 			public int Data1 { get; internal set; }
+
+			/// <summary>
+			/// Unknown
+			/// </summary>
+			[DxfCodeValue(92)]
 			public int Data2 { get; internal set; }
+
+			/// <summary>
+			/// Unknown
+			/// </summary>
+			[DxfCodeValue(92)]
 			public int Data3 { get; internal set; }
+
+			/// <summary>
+			/// Unknown
+			/// </summary>
+			[DxfCodeValue(92)]
 			public int Data4 { get; internal set; }
 
+			/// <summary>
+			/// Gets a <see cref="CadObject"/> associated with this <see cref="CadObject"/>.
+			/// </summary>
+			[DxfCodeValue(360)]
 			public CadObject NodeObject;
 
 			
