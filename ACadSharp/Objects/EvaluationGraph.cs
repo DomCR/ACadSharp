@@ -4,16 +4,17 @@ using System.Collections.Generic;
 using ACadSharp.Attributes;
 
 
-namespace ACadSharp.Objects {
+namespace ACadSharp.Objects
+{
 
 	/// <summary>
 	/// Represents a evaluation graph containing a list of <see cref="GraphNode"/>
 	/// objects.
 	/// </summary>
-	public class EvaluationGraph : CadObject {
+	public class EvaluationGraph : CadObject
+	{
 
-		public EvaluationGraph() {
-		}
+		public EvaluationGraph() {}
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
@@ -33,7 +34,8 @@ namespace ACadSharp.Objects {
 		/// <summary>
 		/// Represents a graph node of a <see cref="EvaluationGraph"/>.
 		/// </summary>
-		public class GraphNode : ICloneable {
+		public class GraphNode : ICloneable
+		{
 
 			/// <summary>
 			/// Gets or sets the index of this <see cref="GraphNode"/> in the list of
@@ -89,7 +91,7 @@ namespace ACadSharp.Objects {
 			/// Gets a <see cref="CadObject"/> associated with this <see cref="CadObject"/>.
 			/// </summary>
 			[DxfCodeValue(360)]
-			public CadObject NodeObject;
+			public CadObject NodeObject { get; internal set; }
 
 			
 			public object Clone()

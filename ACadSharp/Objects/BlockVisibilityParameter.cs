@@ -7,13 +7,15 @@ using ACadSharp.Entities;
 using CSMath;
 
 
-namespace ACadSharp.Objects {
+namespace ACadSharp.Objects
+{
 
 	/// <summary>
 	/// Represents a BLOCKVISIBILITYPARAMETER object, in AutoCAD used to
 	/// control the visibility state of entities in a dynamic block.
 	/// </summary>
-	public class BlockVisibilityParameter : CadObject {
+	public class BlockVisibilityParameter : CadObject
+	{
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
@@ -75,7 +77,8 @@ namespace ACadSharp.Objects {
 		/// The visibility of the entities of a subblock can be determined
 		/// interactively in AutoCAD.
 		/// </summary>
-		public class SubBlock : ICloneable {
+		public class SubBlock : ICloneable
+		{
 
 			/// <summary>
 			/// Gets the name of the subblock.
