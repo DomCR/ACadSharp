@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Objects {
 
@@ -20,7 +21,7 @@ namespace ACadSharp.Objects {
 		public IList<GraphNode> Nodes { get; } = new List<GraphNode>();
 
 
-		public class GraphNode {
+		public class GraphNode : ICloneable {
 
 			public int Index { get; set; }
 
@@ -36,7 +37,27 @@ namespace ACadSharp.Objects {
 
 			public CadObject NodeObject;
 
-			//public int
+			
+			public object Clone()
+			{
+				GraphNode clone = (GraphNode)MemberwiseClone();
+				return clone;
+			}
+		}
+
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			EvaluationGraph clone = (EvaluationGraph)base.Clone();
+
+			clone.Nodes.Clear();
+			foreach (var item in this.Nodes)
+			{
+				clone.Nodes.Add((GraphNode)item.Clone());
+			}
+
+			return clone;
 		}
 	}
 }

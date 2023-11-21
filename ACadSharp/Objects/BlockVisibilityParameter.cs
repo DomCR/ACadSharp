@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using ACadSharp.Attributes;
 using ACadSharp.Entities;
@@ -36,11 +37,47 @@ namespace ACadSharp.Objects {
 		[DxfCodeValue(302)]
 		public int L91 { get; internal set; }
 
-		public class SubBlock {
+
+		public class SubBlock : ICloneable {
 
 			public string Name { get; set; }
 
 			public IList<Entity> Entities { get; } = new List<Entity>();
+
+
+			public object Clone()
+			{
+				SubBlock clone = (SubBlock)MemberwiseClone();
+
+				clone.Entities.Clear();
+				foreach (var item in this.Entities)
+				{
+					clone.Entities.Add((Entity)item.Clone());
+				}
+
+				return clone;
+			}
+		}
+
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			BlockVisibilityParameter clone = (BlockVisibilityParameter)base.Clone();
+
+			clone.Entities.Clear();
+			foreach (var item in this.Entities)
+			{
+				clone.Entities.Add((Entity)item.Clone());
+			}
+
+			clone.SubBlocks.Clear();
+			foreach (var item in this.SubBlocks)
+			{
+				clone.Entities.Add((Entity)item.Clone());
+			}
+
+			return clone;
 		}
 	}
 }
