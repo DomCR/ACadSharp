@@ -1038,6 +1038,12 @@ namespace ACadSharp.IO.DWG
 				case "XRECORD":
 					template = this.readXRecord();
 					break;
+				case "ACAD_EVALUATION_GRAPH":
+					template = this.readEvaluationGraph();
+					break;
+				case "BLOCKVISIBILITYPARAMETER":
+					template = this.readBlockVisibilityParameter();
+					break;
 				default:
 					break;
 			}
@@ -1047,6 +1053,128 @@ namespace ACadSharp.IO.DWG
 
 			return template;
 		}
+
+		#region Evaluation Graph, Enhanced Block etc.
+
+		private CadTemplate readEvaluationGraph() {
+			EvaluationGraph evaluationGraph = new EvaluationGraph();
+			EvaluationGraphTemplate template = new EvaluationGraphTemplate(evaluationGraph);
+
+			this.readCommonNonEntityData(template);
+
+			//	DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
+			var val1 = _objectReader.ReadBitLong();
+			var val2 = _objectReader.ReadBitLong();
+			var val3 = _objectReader.ReadBitLong();
+			int nodeCount = val3;
+
+			for (int i = 0; i < nodeCount; i++) {
+				var node = new EvaluationGraph.GraphNode();
+				evaluationGraph.Nodes.Add(node);
+				node.Index = _objectReader.ReadBitLong();
+				node.Flags = _objectReader.ReadBitLong();
+				node.NextNodeIndex = _objectReader.ReadBitLong();
+				template.NodeHandles.Add(node, this.handleReference());
+				node.Data1 = _objectReader.ReadBitLong();
+				node.Data2 = _objectReader.ReadBitLong();
+				node.Data3 = _objectReader.ReadBitLong();
+				node.Data4 = _objectReader.ReadBitLong();
+			}
+
+			foreach (EvaluationGraph.GraphNode node in evaluationGraph.Nodes) {
+				int nextNodeIndex = node.NextNodeIndex;
+				if (nextNodeIndex >= 0 && nextNodeIndex < nodeCount) {
+					node.Next = evaluationGraph.Nodes[nextNodeIndex];
+				}
+			}
+
+			var val15 = _objectReader.ReadBitLong();
+
+			return template;
+		}
+
+
+		private CadTemplate readBlockVisibilityParameter() {
+			BlockVisibilityParameter blockVisibilityParameter = new BlockVisibilityParameter();
+			BlockVisibilityParameterTemplate template = new BlockVisibilityParameterTemplate(blockVisibilityParameter);
+
+			this.readCommonNonEntityData(template);
+
+			var l1 = _objectReader.ReadBitLong();
+			var s2 = _objectReader.ReadBitShort();  //	can also be L
+			var s3 = _objectReader.ReadBitShort();  //	can also be L
+			var b4 = _objectReader.ReadBit();
+			var s5 = _objectReader.ReadBitShort();  //	can also be L
+			var b6 = _objectReader.ReadBit();
+			var s7 = _objectReader.ReadBitShort();  //	can also be L
+
+			var b_8 = _objectReader.ReadBit();
+			var b_9 = _objectReader.ReadBit();
+			var b_10 = _objectReader.ReadBit();
+			var b_11 = _objectReader.ReadBit();
+			var b_12 = _objectReader.ReadBit();
+			var b_13 = _objectReader.ReadBit();
+			var S_14 = _objectReader.ReadBitShort();  //	can also be L
+
+			var s_15 = _objectReader.ReadBitShort();
+			var b_16 = _objectReader.ReadBit();
+			var b_17 = _objectReader.ReadBit();
+			var s_18 = _objectReader.ReadBitShort();
+
+			//	300	Parameter Type
+			blockVisibilityParameter.ParameterType = _textReader.ReadVariableText();
+
+			//resetPosition(214275, 2);
+			//	1010, 1020, 1030	Menu position
+			blockVisibilityParameter.BasePosition = _objectReader.Read3BitDouble();
+			//	2x0 <- 
+			var s170 = _objectReader.ReadBitShort();
+			var s171 = _objectReader.ReadBitShort();
+			var l93 = _objectReader.ReadBitLong();
+			showCurrentPosAndShift();
+
+			//var s281 = _objectReader.ReadBitShort();
+
+			//	301
+			blockVisibilityParameter.Name = _textReader.ReadVariableText();
+			//	302
+			blockVisibilityParameter.Description = _textReader.ReadVariableText();
+			//	DXF 91
+			blockVisibilityParameter.L91 = _objectReader.ReadBitLong();
+			//resetPosition(214293, 0);
+			//  DXF 93 Total entities count (no property)
+			var totalEntitiesCount = _objectReader.ReadBitLong();
+			for (int i = 0; i < totalEntitiesCount; i++) {
+				var handle = this.handleReference();
+				template.TotalEntityHandles.Add(handle, null);
+			}
+
+			//	DXF 92 Sub blocks count (no property)
+			var subBlocksCount = _objectReader.ReadBitLong();
+			for (int sbi = 0; sbi < subBlocksCount; sbi++) {
+				BlockVisibilityParameter.SubBlock subBlock = new BlockVisibilityParameter.SubBlock();
+				subBlock.Name = _textReader.ReadVariableText();
+				blockVisibilityParameter.SubBlocks.Add(subBlock);
+
+				IList<ulong> subBlockHandles = new List<ulong>();
+				template.SubBlockHandles.Add(subBlock, subBlockHandles);
+				//	DXF 94 Subblock entities count (no property)
+				int entitiesCount = _objectReader.ReadBitLong();
+				for (int i = 0; i < entitiesCount; i++) {
+					var handle = this.handleReference();
+					subBlockHandles.Add(handle);
+				}
+				showCurrentPosAndShift();
+				//	DXF 95 
+				var endMark = _objectReader.ReadBitLong();
+			}
+
+
+			return template;
+
+		}
+
+		#endregion
 
 		#region Text entities
 
@@ -3187,6 +3315,17 @@ namespace ACadSharp.IO.DWG
 			return leaderLine;
 		}
 
+
+		private void showCurrentPosAndShift() {
+			long positionO = _objectReader.Position;
+			int bitShiftO = _objectReader.BitShift;
+			System.Diagnostics.Debug.WriteLine($"Pos: {positionO}, bShi: {bitShiftO}");
+			long positionH = _handlesReader.Position;
+			int bitShiftH = _handlesReader.BitShift;
+			System.Diagnostics.Debug.WriteLine($"Pos: {positionH}, bShi: {bitShiftH}");
+		}
+		
+		
 		private CadTemplate readMultiLeaderStyle()
 		{
 			if (!R2010Plus)
@@ -5374,7 +5513,7 @@ namespace ACadSharp.IO.DWG
 				this.handleReference();
 		}
 
-		#endregion Object readers
+		#endregion Evaluation Graph, Enhanced Block etc.
 
 		private CadTemplate readDwgColor()
 		{
