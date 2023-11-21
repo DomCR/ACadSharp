@@ -15,9 +15,9 @@ namespace ACadSharp.IO.DXF
 			{
 				case Mesh:
 				case MLine:
-				case MText:
 				case Solid3D:
 				case MultiLeader:
+				case Wipeout:
 					this.notify($"Entity type not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return;
 			}
@@ -609,19 +609,13 @@ namespace ACadSharp.IO.DXF
 
 			if (this.Version >= ACadVersion.AC1021)
 			{
-				this._writer.Write(46, mtext.ReferenceRectangleHeight, map);
+				this._writer.Write(46, mtext.RectangleHeight, map);
 			}
 
 			this._writer.Write(71, (short)mtext.AttachmentPoint, map);
 			this._writer.Write(72, (short)mtext.DrawingDirection, map);
 
-			this._writer.Write(1, mtext.Value, map);
-
-			if (string.IsNullOrEmpty(mtext.AdditionalText))
-			{
-				for (int i = 0; i < mtext.AdditionalText.Length; i += 250)
-					this._writer.Write(3, mtext.AdditionalText.Substring(i, 250), map);
-			}
+			this.writeMTextValue(mtext.Value);
 
 			this._writer.WriteName(7, mtext.Style);
 
@@ -629,22 +623,19 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(11, mtext.AlignmentPoint, map);
 
-			if (this.Version >= ACadVersion.AC1018)
+			this._writer.Write(210, mtext.Normal, map);
+		}
+
+		private void writeMTextValue(string text)
+		{
+			string encoded = text?.Replace("\n", "^J");
+
+			for (int i = 0; i < encoded.Length - 250; i += 250)
 			{
-				this._writer.Write(90, (int)mtext.BackgroundFillFlags, map);
-				if (mtext.BackgroundFillFlags.HasFlag(BackgroundFillFlags.UseBackgroundFillColor))
-				{
-					//this._writer.Write(63, mtext.BackgroundColor, map);
-					this._writer.Write(45, mtext.BackgroundScale, map);
-					//Transparency of background fill color (not implemented)
-					//this._writer.Write(441, mtext.BackgroundTransparency, map);
-				}
+				this._writer.Write(3, encoded.Substring(i, 250));
 			}
 
-			this._writer.Write(44, mtext.LineSpacing, map);
-			this._writer.Write(45, mtext.BackgroundScale, map);
-
-			this._writer.Write(210, mtext.Normal, map);
+			this._writer.Write(1, encoded);
 		}
 
 		private void writePoint(Point line)

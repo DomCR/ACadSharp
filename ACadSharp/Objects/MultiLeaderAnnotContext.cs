@@ -280,8 +280,6 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(93)]
 		public Color BlockContentColor { get; set; }
 
-		//	TODO ? should double[] be replaced by a TransformationMatrix type? -> CSMath.Matrix4
-
 		/// <summary>
 		/// Gets a array of 16 doubles containg the complete transformation
 		/// matrix.

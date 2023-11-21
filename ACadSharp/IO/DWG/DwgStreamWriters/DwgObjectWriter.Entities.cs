@@ -1615,7 +1615,7 @@ namespace ACadSharp.IO.DWG
 			//R2007+:
 			if (this.R2007Plus)
 			{
-				this._writer.WriteBitDouble(mtext.ReferenceRectangleHeight);
+				this._writer.WriteBitDouble(mtext.RectangleHeight);
 			}
 
 			//Common:

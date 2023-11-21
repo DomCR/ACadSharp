@@ -2707,7 +2707,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2007Plus)
 			{
 				//Rect height BD 46 Reference rectangle height.
-				mtext.ReferenceRectangleHeight = this._objectReader.ReadBitDouble();
+				mtext.RectangleHeight = this._objectReader.ReadBitDouble();
 			}
 
 			//Common:
@@ -3175,24 +3175,31 @@ namespace ACadSharp.IO.DWG
 				//	- OCS to WCS (using normal vector),
 				//	- Scaling (using scale vector)
 				//	- Translation (using location)
-				//	Simply read an array of 16 doubles:
-				double[] matrix  = annotContext.TransformationMatrix;
-				matrix[0] = _objectReader.ReadBitDouble();
-				matrix[1] = _objectReader.ReadBitDouble();
-				matrix[2] = _objectReader.ReadBitDouble();
-				matrix[3] = _objectReader.ReadBitDouble();
-				matrix[4] = _objectReader.ReadBitDouble();
-				matrix[5] = _objectReader.ReadBitDouble();
-				matrix[6] = _objectReader.ReadBitDouble();
-				matrix[7] = _objectReader.ReadBitDouble();
-				matrix[8] = _objectReader.ReadBitDouble();
-				matrix[9] = _objectReader.ReadBitDouble();
-				matrix[10] = _objectReader.ReadBitDouble();
-				matrix[11] = _objectReader.ReadBitDouble();
-				matrix[12] = _objectReader.ReadBitDouble();
-				matrix[13] = _objectReader.ReadBitDouble();
-				matrix[14] = _objectReader.ReadBitDouble();
-				matrix[15] = _objectReader.ReadBitDouble();
+				double m00 = _objectReader.ReadBitDouble();
+				double m10 = _objectReader.ReadBitDouble();
+				double m20 = _objectReader.ReadBitDouble();
+				double m30 = _objectReader.ReadBitDouble();
+
+				double m01 = _objectReader.ReadBitDouble();
+				double m11 = _objectReader.ReadBitDouble();
+				double m21 = _objectReader.ReadBitDouble();
+				double m31 = _objectReader.ReadBitDouble();
+
+				double m02 = _objectReader.ReadBitDouble();
+				double m12 = _objectReader.ReadBitDouble();
+				double m22 = _objectReader.ReadBitDouble();
+				double m32 = _objectReader.ReadBitDouble();
+
+				double m03 = _objectReader.ReadBitDouble();
+				double m13 = _objectReader.ReadBitDouble();
+				double m23 = _objectReader.ReadBitDouble();
+				double m33 = _objectReader.ReadBitDouble();
+
+				annotContext.TransformationMatrix = new Matrix4(
+						m00, m10, m20, m30,
+						m01, m11, m21, m31,
+						m02, m12, m22, m32,
+						m03, m13, m23, m33);
 			}
 			//END IF Has contents block
 			//END IF Has text contents
