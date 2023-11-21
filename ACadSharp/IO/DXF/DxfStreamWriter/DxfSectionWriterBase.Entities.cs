@@ -606,6 +606,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(40, mtext.Height, map);
 			this._writer.Write(41, mtext.RectangleWidth, map);
+			this._writer.Write(44, mtext.LineSpacing, map);
 
 			if (this.Version >= ACadVersion.AC1021)
 			{

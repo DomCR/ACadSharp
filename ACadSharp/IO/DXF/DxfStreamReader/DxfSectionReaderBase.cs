@@ -301,7 +301,6 @@ namespace ACadSharp.IO.DXF
 				//TODO: Implement multiline text def codes
 				case 1 or 3 when tmp.CadObject is MText mtext:
 					mtext.Value += this._reader.ValueAsString;
-
 					return true;
 				case 70:
 				case 74:
