@@ -1693,13 +1693,10 @@ namespace ACadSharp.IO.DWG
 			//Registered application H Hard pointer
 			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 
-			//TODO: finish Mtext Writer, save redundant fields??
-
 			//Attachment point BL
 			this._writer.WriteBitLong((int)mtext.AttachmentPoint);
 			//X - axis dir 3BD 10
 			this._writer.Write3BitDouble(mtext.AlignmentPoint);
-
 			//Insertion point 3BD 11
 			this._writer.Write3BitDouble(mtext.InsertPoint);
 			//Rect width BD 40
@@ -1714,6 +1711,7 @@ namespace ACadSharp.IO.DWG
 
 			//Column type BS 71 0 = No columns, 1 = static columns, 2 = dynamic columns
 			this._writer.WriteBitShort((short)mtext.Column.ColumnType);
+
 			//IF Has Columns data(column type is not 0)
 			if (mtext.Column.ColumnType != ColumnType.NoColumns)
 			{
