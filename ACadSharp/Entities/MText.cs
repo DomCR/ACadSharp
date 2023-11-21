@@ -214,7 +214,7 @@ namespace ACadSharp.Entities
 
 		public bool IsAnnotative { get; set; } = false;
 
-		private double _height = 0.0;
+		private double _height = 1.0;
 
 		private XYZ _alignmentPoint = XYZ.AxisX;
 
