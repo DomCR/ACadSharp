@@ -49,6 +49,7 @@ namespace ACadSharp.Svg
 			StringBuilder style = new StringBuilder();
 
 			style.Append($"style=");
+			
 			style.Append($"\"stroke:rgb({entity.Color.R},{entity.Color.G},{entity.Color.B})\"");
 
 			return style.ToString();
