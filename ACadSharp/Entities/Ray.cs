@@ -34,5 +34,10 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(11, 21, 31)]
 		public XYZ Direction { get; set; } = XYZ.Zero;
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

@@ -51,5 +51,10 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Line() : base() { }
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

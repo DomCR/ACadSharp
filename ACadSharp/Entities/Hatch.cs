@@ -130,6 +130,12 @@ namespace ACadSharp.Entities
 
 		public Hatch() : base() { }
 
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			Hatch clone = base.Clone() as Hatch;

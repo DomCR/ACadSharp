@@ -77,5 +77,10 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Ellipse() : base() { }
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using CSMath;
 
 namespace ACadSharp.Entities
 {
@@ -21,5 +22,10 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.ModelerGeometry;
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

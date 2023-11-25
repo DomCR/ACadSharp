@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using CSMath;
 
 namespace ACadSharp.Entities
 {
@@ -22,6 +23,11 @@ namespace ACadSharp.Entities
 		internal Seqend(CadObject owner)
 		{
 			this.Owner = owner;
+		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

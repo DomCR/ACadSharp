@@ -352,5 +352,10 @@ namespace ACadSharp.Entities
 
 			return clone;
 		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

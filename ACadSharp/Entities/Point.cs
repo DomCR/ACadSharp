@@ -63,5 +63,10 @@ namespace ACadSharp.Entities
 		{
 			this.Location = location;
 		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

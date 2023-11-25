@@ -158,5 +158,10 @@ namespace ACadSharp.Entities
 		private byte _brightness = 50;
 		private byte _contrast = 50;
 		private byte _fade = 0;
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

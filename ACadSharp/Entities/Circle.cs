@@ -51,5 +51,11 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Circle() : base() { }
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }
