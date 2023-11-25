@@ -23,10 +23,10 @@ AC1012 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :x:    |    :x
 AC1014 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1015 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1018 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
-AC1021 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:    |
-AC1024 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:    |
-AC1027 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:    |
-AC1032 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:    |
+AC1021 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:                   |
+AC1024 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
+AC1027 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:                   |
+AC1032 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 
 ### Current development
 
@@ -39,9 +39,9 @@ AC1032 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_m
 - **AC1018** - AutoCAD 2004/2005/2006 - **MOST STABLE - RECOMENDED**
 - **AC1021** - AutoCAD 2007/2008/2009 - **NOT IMPLEMENTED**
     - This is a particular and isolated DWG version, it uses a different compression system and file distribution, due this difficulties, this version will not be implemented any time soon.
-- **AC1024** - AutoCAD 2010/2011/2012 - **NOT IMPLEMENTED**
+- **AC1024** - AutoCAD 2010/2011/2012 - **STABLE**
 - **AC1027** - AutoCAD 2013/2014/2015/2016/2017 - **NOT IMPLEMENTED**
-- **AC1032** - AutoCAD 2018/2019/2020 - **NOT IMPLEMENTED**
+- **AC1032** - AutoCAD 2018/2019/2020 - **STABLE**
 
 **IMPORTANT NOTE** when you open a file writen by ACadSharp with Autocad the following message may appear: *The drawing file requires recovery* press on Recover and it will open the file normally.
 This process may cause a **loss of information on the file**.
