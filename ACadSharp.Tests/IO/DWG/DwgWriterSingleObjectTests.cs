@@ -93,6 +93,19 @@ namespace ACadSharp.Tests.IO.DWG
 			DwgWriter.Write(this.getPath(data.Name, version), data.Document, this.onNotification);
 		}
 
+		[Theory()]
+		[MemberData(nameof(Data))]
+		public void WriteCasesAC1024(SingleCaseGenerator data)
+		{
+			if (!TestVariables.RunDwgWriterSingleCases)
+				return;
+
+			var version = ACadVersion.AC1024;
+
+			data.Document.Header.Version = version;
+			DwgWriter.Write(this.getPath(data.Name, version), data.Document, this.onNotification);
+		}
+
 		private string getPath(string name, ACadVersion version)
 		{
 			return Path.Combine(_singleCasesOutFolder, $"{name}_{version}.dwg");

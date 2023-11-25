@@ -29,7 +29,7 @@ namespace ACadSharp.IO.DWG
 			this.Encoding = encoding;
 		}
 
-		public static IDwgStreamWriter GetStreamHandler(ACadVersion version, Stream stream, Encoding encoding)
+		public static IDwgStreamWriter GetStreamWriter(ACadVersion version, Stream stream, Encoding encoding)
 		{
 			switch (version)
 			{

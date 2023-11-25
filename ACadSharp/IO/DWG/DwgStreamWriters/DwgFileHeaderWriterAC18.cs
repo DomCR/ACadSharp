@@ -166,7 +166,7 @@ namespace ACadSharp.IO.DWG
 		private void writeDescriptors()
 		{
 			MemoryStream stream = new MemoryStream();
-			var swriter = DwgStreamWriterBase.GetStreamHandler(_version, stream, _encoding);
+			var swriter = DwgStreamWriterBase.GetStreamWriter(_version, stream, _encoding);
 
 			//0x00	4	Number of section descriptions(NumDescriptions)
 			swriter.WriteInt(this._descriptors.Count);

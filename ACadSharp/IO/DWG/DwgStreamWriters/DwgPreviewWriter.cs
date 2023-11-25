@@ -23,7 +23,7 @@ namespace ACadSharp.IO.DWG
 
 		public DwgPreviewWriter(ACadVersion version, Stream stream) : base(version)
 		{
-			this._swriter = DwgStreamWriterBase.GetStreamHandler(version, stream, TextEncoding.Windows1252());
+			this._swriter = DwgStreamWriterBase.GetStreamWriter(version, stream, TextEncoding.Windows1252());
 		}
 
 		public void Write()
