@@ -72,7 +72,7 @@ namespace ACadSharp.Tests.IO.DWG
 				CadDocument readed = re.Read();
 			}
 
-			//this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
+			this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
 		}
 
 		[Theory]
@@ -179,10 +179,12 @@ namespace ACadSharp.Tests.IO.DWG
 				case ACadVersion.AC1018:
 					return true;
 				case ACadVersion.AC1021:
+					return false;
 				case ACadVersion.AC1024:
+					return true;
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
-					return false;
+					return true;
 				case ACadVersion.Unknown:
 				default:
 					return false;
