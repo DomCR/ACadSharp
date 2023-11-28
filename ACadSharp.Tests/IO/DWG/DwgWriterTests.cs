@@ -72,7 +72,7 @@ namespace ACadSharp.Tests.IO.DWG
 				CadDocument readed = re.Read();
 			}
 
-			//this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
+			this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
 		}
 
 		[Theory]

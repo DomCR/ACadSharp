@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using CSUtilities;
 
 namespace ACadSharp.Tests
 {
@@ -23,59 +22,8 @@ namespace ACadSharp.Tests
 			EnvironmentVars.SetIfNull("DELTA", "0.00001");
 			EnvironmentVars.SetIfNull("DECIMAL_PRECISION", "5");
 			EnvironmentVars.SetIfNull("DXF_CONSOLE_CHECK", "true");
-			EnvironmentVars.SetIfNull("DWG_CONSOLE_CHECK", "false");
+			EnvironmentVars.SetIfNull("DWG_CONSOLE_CHECK", "true");
 			EnvironmentVars.SetIfNull("RUN_DWG_WRITER_SINGLE_CASES_TEST", "true");
-		}
-	}
-
-	[Obsolete("Replace for the one in CSUtilities")]
-	internal static class EnvironmentVars
-	{
-		public static void Set(string name, string value)
-		{
-			Environment.SetEnvironmentVariable(name, value, EnvironmentVariableTarget.Process);
-		}
-
-		public static void SetIfNull(string name, string value)
-		{
-			if (Get(name) == null)
-			{
-				Set(name, value);
-			}
-		}
-
-		public static void SetIfNull(string name, string value, EnvironmentVariableTarget target)
-		{
-			if (Get(name) == null)
-			{
-				Set(name, value);
-			}
-		}
-
-		public static string Get(string name)
-		{
-			return Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
-		}
-
-		public static string Get(string name, EnvironmentVariableTarget target)
-		{
-			return Environment.GetEnvironmentVariable(name, target);
-		}
-
-		public static T Get<T>(string name)
-		{
-			string value = Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
-			return (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromInvariantString(value);
-		}
-
-		public static void Delete(string name)
-		{
-			Environment.SetEnvironmentVariable(name, null, EnvironmentVariableTarget.Process);
-		}
-
-		public static void Delete(string name, EnvironmentVariableTarget target)
-		{
-			Environment.SetEnvironmentVariable(name, null, target);
 		}
 	}
 }

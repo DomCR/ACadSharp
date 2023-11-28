@@ -257,7 +257,6 @@ namespace ACadSharp.Tests.IO
 			}
 			finally
 			{
-				process.WaitForExit();
 				process.Kill();
 			}
 		}
