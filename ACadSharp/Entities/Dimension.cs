@@ -105,6 +105,23 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(42)]
 		public double Measurement { get; internal set; }
 
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the arrow at first point is
+		/// to be flipped.
+		/// </summary>
+		[DxfCodeValue(74)]
+		public bool FlipArrow1 { get; set; }
+
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the arrow at second point is
+		/// to be flipped.
+		/// </summary>
+		[DxfCodeValue(75)]
+		public bool FlipArrow2 { get; set; }
+
+
 		/// <summary>
 		/// Dimension text explicitly entered by the user
 		/// </summary>
