@@ -107,17 +107,31 @@ namespace ACadSharp.Entities
 
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the arrow at first point is
-		/// to be flipped.
+		/// Gets or sets a value indicating whether the first arrow
+		/// is to be flipped.
 		/// </summary>
+		/// <value>
+		/// <b>true</b> if the arrow is to be flipped; otherwise, <b>false</b>.
+		/// </value>
+		/// <remarks>
+		/// Arrows are by default drawn inside the extension lines if there is enaugh
+		/// space; otherwise, outside. This flag overrules the standard behaviour.
+		/// </remarks>
 		[DxfCodeValue(74)]
 		public bool FlipArrow1 { get; set; }
 
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the arrow at second point is
+		/// Gets or sets a value indicating whether the second arrow
 		/// to be flipped.
 		/// </summary>
+		/// <value>
+		/// <b>true</b> if the arrow is to be flipped; otherwise, <b>false</b>.
+		/// </value>
+		/// <remarks>
+		/// Arrows are by default drawn inside the extension lines if there is enaugh
+		/// space; otherwise, outside. This flag overrules the standard behaviour.
+		/// </remarks>
 		[DxfCodeValue(75)]
 		public bool FlipArrow2 { get; set; }
 
