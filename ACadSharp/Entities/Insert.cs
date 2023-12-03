@@ -215,5 +215,10 @@ namespace ACadSharp.Entities
 			//TODO: Fix the relation between insert and block
 			//this.Block?.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));
 		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

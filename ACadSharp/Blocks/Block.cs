@@ -85,5 +85,10 @@ namespace ACadSharp.Blocks
 
 			return clone;
 		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

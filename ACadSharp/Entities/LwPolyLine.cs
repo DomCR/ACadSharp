@@ -77,5 +77,10 @@ namespace ACadSharp.Entities
 		{
 			return Polyline.Explode(this);
 		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

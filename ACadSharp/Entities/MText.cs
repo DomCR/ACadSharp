@@ -261,5 +261,10 @@ namespace ACadSharp.Entities
 				this.Style = this.Document.TextStyles[TextStyle.DefaultName];
 			}
 		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

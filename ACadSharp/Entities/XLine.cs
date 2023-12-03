@@ -36,5 +36,10 @@ namespace ACadSharp.Entities
 		public XYZ Direction { get; set; }
 
 		public XLine() : base() { }
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

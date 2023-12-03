@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using System.Drawing;
 using System;
+using CSMath;
 
 namespace ACadSharp.Entities
 {
@@ -29,6 +30,11 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(71)]
 		public short Version { get; internal set; }
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new NotImplementedException();
+		}
 
 		//72 "Blend Crease" property
 		//0 = Turn off

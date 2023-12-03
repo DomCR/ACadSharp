@@ -72,5 +72,10 @@ namespace ACadSharp.Entities
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 		public Shape() : base() { }
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

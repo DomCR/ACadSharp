@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
+using CSMath;
 
 namespace ACadSharp.Blocks
 {
@@ -35,6 +36,11 @@ namespace ACadSharp.Blocks
 			BlockEnd clone = (BlockEnd)base.Clone();
 			clone.Owner = new BlockRecord((this.Owner as BlockRecord).Name);
 			return clone;
+		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }
