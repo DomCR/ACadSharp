@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
+using ACadSharp.Tables;
 using CSMath;
 using System.IO;
 using Xunit;
@@ -34,7 +35,22 @@ namespace ACadSharp.Tests.IO.DWG
 
 			public void DefaultLayer()
 			{
-				this.Document.Layers.Add(new ACadSharp.Tables.Layer("default_layer"));
+				this.Document.Layers.Add(new Layer("default_layer"));
+			}
+
+			public void EntityColorByLayer()
+			{
+				Layer layer = new Layer("Test");
+				layer.Color = new Color(25);
+				this.Document.Layers.Add(layer);
+
+				Circle c = new Circle();
+				c.Center = new XYZ(0, 0, 0);
+				c.Radius = 10;
+				c.Layer = layer;
+				c.Color = Color.ByLayer;
+
+				this.Document.ModelSpace.Entities.Add(c);
 			}
 
 			public void SingleLine()
@@ -85,6 +101,7 @@ namespace ACadSharp.Tests.IO.DWG
 
 			Data.Add(new(nameof(SingleCaseGenerator.Empty)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
+			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
