@@ -105,6 +105,37 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(42)]
 		public double Measurement { get; internal set; }
 
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the first arrow
+		/// is to be flipped.
+		/// </summary>
+		/// <value>
+		/// <b>true</b> if the arrow is to be flipped; otherwise, <b>false</b>.
+		/// </value>
+		/// <remarks>
+		/// Arrows are by default drawn inside the extension lines if there is enaugh
+		/// space; otherwise, outside. This flag overrules the standard behaviour.
+		/// </remarks>
+		[DxfCodeValue(74)]
+		public bool FlipArrow1 { get; set; }
+
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the second arrow
+		/// to be flipped.
+		/// </summary>
+		/// <value>
+		/// <b>true</b> if the arrow is to be flipped; otherwise, <b>false</b>.
+		/// </value>
+		/// <remarks>
+		/// Arrows are by default drawn inside the extension lines if there is enaugh
+		/// space; otherwise, outside. This flag overrules the standard behaviour.
+		/// </remarks>
+		[DxfCodeValue(75)]
+		public bool FlipArrow2 { get; set; }
+
+
 		/// <summary>
 		/// Dimension text explicitly entered by the user
 		/// </summary>
