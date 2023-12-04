@@ -2,6 +2,7 @@
 using ACadSharp.Entities;
 using ACadSharp.IO.DWG;
 using ACadSharp.Tables;
+using CSMath;
 using System;
 
 namespace ACadSharp.IO.Templates
@@ -63,6 +64,11 @@ namespace ACadSharp.IO.Templates
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
 
 			public DimensionPlaceholder() : base(DimensionType.Linear) { }
+
+			public override BoundingBox GetBoundingBox()
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		public void SetDimensionObject(Dimension dimensionAligned)

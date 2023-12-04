@@ -36,5 +36,10 @@ namespace ACadSharp.Entities
 		public double LeaderLength { get; set; }
 
 		public DimensionDiameter() : base(DimensionType.Diameter) { }
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

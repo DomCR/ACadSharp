@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using CSMath;
 using System;
 using System.Collections.Generic;
 
@@ -89,6 +90,11 @@ namespace ACadSharp.IO.Templates
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
 
 			public override IEnumerable<Entity> Explode()
+			{
+				throw new NotImplementedException();
+			}
+
+			public override BoundingBox GetBoundingBox()
 			{
 				throw new NotImplementedException();
 			}

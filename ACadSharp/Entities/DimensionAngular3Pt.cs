@@ -42,5 +42,10 @@ namespace ACadSharp.Entities
 		public XYZ AngleVertex { get; set; }
 
 		public DimensionAngular3Pt() : base(DimensionType.Angular3Point) { }
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

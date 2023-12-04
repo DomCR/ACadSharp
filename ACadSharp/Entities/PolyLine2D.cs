@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using CSMath;
 using System;
 using System.Collections.Generic;
 
@@ -38,6 +39,11 @@ namespace ACadSharp.Entities
 				this.Vertices.Remove((Vertex)e.Item);
 				throw new ArgumentException($"Wrong vertex type for {DxfSubclassMarker.Polyline}");
 			}
+		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

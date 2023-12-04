@@ -46,5 +46,10 @@ namespace ACadSharp.Entities
 		protected DimensionAligned(DimensionType type) : base(type) { }
 
 		public DimensionAligned() : base(DimensionType.Aligned) { }
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

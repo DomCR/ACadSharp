@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using CSMath;
 using System;
 using System.Collections.Generic;
 
@@ -56,6 +57,11 @@ namespace ACadSharp.Entities
 		{
 			this.Document.UnregisterCollection(this.Faces);
 			base.UnassignDocument();
+		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

@@ -50,5 +50,10 @@ namespace ACadSharp.Entities
 		public DimensionAngular2Line() : base(DimensionType.Angular)
 		{
 		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

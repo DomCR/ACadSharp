@@ -36,5 +36,10 @@ namespace ACadSharp.Entities
 		public XYZ LeaderEndpoint { get; set; }
 
 		public DimensionOrdinate() : base(DimensionType.Ordinate) { }
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

@@ -32,7 +32,7 @@ namespace ACadSharp.IO.DXF
 
 		public double ValueAsDouble { get { return (double)this.Value; } }
 
-		public double ValueAsAngle { get { return (double)((double)this.Value * MathUtils.DegToRad); } }
+		public double ValueAsAngle { get { return (double)((double)this.Value * MathUtils.DegToRadFactor); } }
 
 		public ulong ValueAsHandle { get { return (ulong)this.Value; } }
 

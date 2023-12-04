@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using CSMath;
 using System;
 using System.Collections.Generic;
 
@@ -42,6 +43,11 @@ namespace ACadSharp.Entities
 			{
 				throw new ArgumentException($"Bulge value cannot be different than 0 for a Vertex3D in a 3D Polyline");
 			}
+		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
