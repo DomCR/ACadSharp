@@ -62,6 +62,8 @@ namespace ACadSharp.IO.Templates
 		{
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
 
+			public override double Measurement { get; }
+
 			public DimensionPlaceholder() : base(DimensionType.Linear) { }
 		}
 

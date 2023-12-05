@@ -43,6 +43,15 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Optional, 52)]
 		public double ExtLineRotation { get; set; }
 
+		/// <inheritdoc/>
+		public override double Measurement
+		{
+			get
+			{
+				return this.FirstPoint.DistanceFrom(SecondPoint);
+			}
+		}
+
 		protected DimensionAligned(DimensionType type) : base(type) { }
 
 		public DimensionAligned() : base(DimensionType.Aligned) { }

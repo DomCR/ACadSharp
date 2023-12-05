@@ -1922,7 +1922,7 @@ namespace ACadSharp.IO.DWG
 				//Linespacing Factor BD 41
 				dimension.LineSpacingFactor = this._objectReader.ReadBitDouble();
 				//Actual Measurement BD 42
-				dimension.Measurement = this._objectReader.ReadBitDouble();
+				this._objectReader.ReadBitDouble();
 			}
 
 			//R2007 +:
