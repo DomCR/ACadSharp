@@ -132,6 +132,11 @@ namespace ACadSharp.Entities
 			return clone;
 		}
 
+		public BoundingBox GetBoundingBox()
+		{
+			throw new NotImplementedException();
+		}
+
 		internal override void AssignDocument(CadDocument doc)
 		{
 			base.AssignDocument(doc);
