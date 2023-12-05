@@ -50,8 +50,19 @@ namespace ACadSharp.Tests.IO.DWG
 				c.Layer = layer;
 				c.Color = Color.ByLayer;
 
-				this.Document.ModelSpace.Entities.Add(c);
+				this.Document.Entities.Add(c);
 			}
+
+			public void EntityColorTrueColor()
+			{
+				Circle c = new Circle();
+				c.Center = new XYZ(0, 0, 0);
+				c.Radius = 10;
+				c.Color = Color.FromTrueColor(16777215);
+
+				this.Document.Entities.Add(c);
+			}
+
 
 			public void SingleLine()
 			{
@@ -102,6 +113,7 @@ namespace ACadSharp.Tests.IO.DWG
 			Data.Add(new(nameof(SingleCaseGenerator.Empty)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
+			Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));

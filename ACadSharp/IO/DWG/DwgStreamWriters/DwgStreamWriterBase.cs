@@ -366,6 +366,11 @@ namespace ACadSharp.IO.DWG
 			this.WriteBitShort(value.Index);
 		}
 
+		public virtual void WriteEnColor(Color color, Transparency transparency)
+		{
+			this.WriteCmColor(color);
+		}
+
 		public void Write2BitDouble(XY value)
 		{
 			this.WriteBitDouble(value.X);

@@ -93,7 +93,7 @@ namespace ACadSharp.IO.DWG
 				}
 
 				//0x2000: color is followed by a transparency BL
-				if ((flags & 0x2000U) > 0U)
+				if ((flags & 0x2000) > 0U)
 				{
 
 					//The first byte represents the transparency type:

@@ -51,6 +51,8 @@ namespace ACadSharp.IO.DWG
 
 		void WriteCmColor(Color value);
 
+		void WriteEnColor(Color color, Transparency transparency);
+
 		void Write2BitDouble(XY value);
 
 		void Write3BitDouble(XYZ value);

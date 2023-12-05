@@ -147,6 +147,11 @@ namespace ACadSharp.IO.DWG
 			this.Main.WriteCmColor(value);
 		}
 
+		public void WriteEnColor(Color color, Transparency transparency)
+		{
+			this.Main.WriteEnColor(color, transparency);
+		}
+
 		public void WriteDateTime(DateTime value)
 		{
 			this.Main.WriteDateTime(value);
