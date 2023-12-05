@@ -58,7 +58,7 @@ namespace ACadSharp.Tests.IO.DWG
 				Circle c = new Circle();
 				c.Center = new XYZ(0, 0, 0);
 				c.Radius = 10;
-				c.Color = Color.FromTrueColor(16777215);
+				c.Color = Color.FromTrueColor(1151726);
 
 				this.Document.Entities.Add(c);
 			}
