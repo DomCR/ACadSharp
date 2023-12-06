@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
 using CSMath;
-using System.Collections.Generic;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
@@ -84,13 +83,41 @@ namespace ACadSharp.Tests.IO.DWG
 		[MemberData(nameof(Data))]
 		public void WriteCasesAC1018(SingleCaseGenerator data)
 		{
+			this.writeFile(data, ACadVersion.AC1018);
+		}
+
+		[Theory()]
+		[MemberData(nameof(Data))]
+		public void WriteCasesAC1024(SingleCaseGenerator data)
+		{
+			this.writeFile(data, ACadVersion.AC1024);
+		}
+
+		[Theory()]
+		[MemberData(nameof(Data))]
+		public void WriteCasesAC1027(SingleCaseGenerator data)
+		{
+			this.writeFile(data, ACadVersion.AC1027);
+		}
+
+		[Theory()]
+		[MemberData(nameof(Data))]
+		public void WriteCasesAC1032(SingleCaseGenerator data)
+		{
+			this.writeFile(data, ACadVersion.AC1032);
+		}
+
+		private void writeFile(SingleCaseGenerator data, ACadVersion version)
+		{
 			if (!TestVariables.RunDwgWriterSingleCases)
 				return;
 
-			var version = ACadVersion.AC1018;
+			string path = this.getPath(data.Name, version);
 
 			data.Document.Header.Version = version;
 			DwgWriter.Write(this.getPath(data.Name, version), data.Document, this.onNotification);
+
+			this.checkDwgDocumentInAutocad(path);
 		}
 
 		private string getPath(string name, ACadVersion version)

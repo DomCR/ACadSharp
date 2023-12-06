@@ -23,10 +23,10 @@ namespace ACadSharp.IO.DWG
 			this._document = document;
 			this._header = document.Header;
 
-			this._startWriter = DwgStreamWriterBase.GetStreamHandler(_version, stream, TextEncoding.Windows1252());
+			this._startWriter = DwgStreamWriterBase.GetStreamWriter(_version, stream, TextEncoding.Windows1252());
 
 			this._msmain = new MemoryStream();
-			this._writer = DwgStreamWriterBase.GetStreamHandler(_version, this._msmain, TextEncoding.Windows1252());
+			this._writer = DwgStreamWriterBase.GetStreamWriter(_version, this._msmain, TextEncoding.Windows1252());
 		}
 
 		public void Write()
