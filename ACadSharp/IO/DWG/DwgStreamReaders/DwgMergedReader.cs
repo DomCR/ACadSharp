@@ -323,9 +323,9 @@ namespace ACadSharp.IO.DWG
 			return this._textReader.ReadVariableText();
 		}
 
-		public ushort ResetShift()
+		public ushort ReadCRC()
 		{
-			return this._mainReader.ResetShift();
+			return this._mainReader.ReadCRC();
 		}
 
 		public void SetPositionInBits(long positon)

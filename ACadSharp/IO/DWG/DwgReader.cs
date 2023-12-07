@@ -107,8 +107,10 @@ namespace ACadSharp.IO
 			byte[] buffer = new byte[6];
 			await this._fileStream.Stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
 			ACadVersion version = CadUtils.GetVersionFromName(Encoding.ASCII.GetString(buffer));
-			DwgFileHeader fileHeader = DwgFileHeader.CreateFileHeader(version);
 
+			DwgFileHeaderReader fileHeaderReader = new DwgFileHeaderReader(version, this._fileStream.Stream);
+
+			DwgFileHeader fileHeader = await fileHeaderReader.ReadAsync(cancellationToken);
 
 			throw new NotImplementedException();
 		}
@@ -458,7 +460,7 @@ namespace ACadSharp.IO
 			}
 
 			//RS : CRC for BOF to this point.
-			sreader.ResetShift();
+			sreader.ReadCRC();
 
 			var sn = sreader.ReadSentinel();
 			if (!DwgSectionIO.CheckSentinel(sn, DwgFileHeaderAC15.EndSentinel))
@@ -963,6 +965,11 @@ namespace ACadSharp.IO
 		}
 
 		#endregion
+
+		private ACadVersion getFileVersion(byte[] buffer)
+		{
+			return CadUtils.GetVersionFromName(Encoding.ASCII.GetString(buffer));
+		}
 
 		private IDwgStreamReader getSectionStream(string sectionName)
 		{

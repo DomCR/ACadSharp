@@ -892,17 +892,17 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
-		public ushort ResetShift()
+		public ushort ReadCRC()
 		{
 			//Reset the shift value
 			if ((uint)this.BitShift > 0U)
 				this.BitShift = 0;
 
 			this.AdvanceByte();
-			ushort num = this._lastByte;
+			ushort crc = this._lastByte;
 			this.AdvanceByte();
 
-			return (ushort)(num | (uint)(ushort)((uint)this._lastByte << 8));
+			return (ushort)(crc | (uint)(ushort)((uint)this._lastByte << 8));
 		}
 
 		#endregion Stream pointer control
