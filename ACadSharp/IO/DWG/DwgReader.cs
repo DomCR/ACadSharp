@@ -106,7 +106,7 @@ namespace ACadSharp.IO
 			//0x00	6	“ACXXXX” version string
 			byte[] buffer = new byte[6];
 			await this._fileStream.Stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
-			ACadVersion version = CadUtils.GetVersionFromName(Encoding.ASCII.GetString(buffer));
+			ACadVersion version = this.getFileVersion(buffer);
 
 			DwgFileHeaderReader fileHeaderReader = new DwgFileHeaderReader(version, this._fileStream.Stream);
 
@@ -249,13 +249,14 @@ namespace ACadSharp.IO
 			this._builder.OnNotification += this.onNotificationEvent;
 		}
 
-		/// <summary>
-		/// Read the file header data.
-		/// </summary>
-		/// <returns></returns>
-		[Obsolete("Use the class DwgFileHeaderReader")]
-		internal DwgFileHeader readFileHeader()
+		private DwgFileHeader readFileHeader()
 		{
+			DwgFileHeaderReader reader = new DwgFileHeaderReader(this.getFileVersion(this._fileStream.ReadBytes(6)), this._fileStream.Stream);
+			this._fileHeader = reader.Read();
+			this._encoding = getListedEncoding((int)_fileHeader.DrawingCodePage);
+
+			return this._fileHeader;
+
 			//Reset the stream position at the begining
 			this._fileStream.Position = 0L;
 

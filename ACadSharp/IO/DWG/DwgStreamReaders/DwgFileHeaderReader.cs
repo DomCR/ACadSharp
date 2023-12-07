@@ -4,10 +4,8 @@ using CSUtilities.IO;
 using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -77,9 +75,6 @@ namespace ACadSharp.IO.DWG
 		public DwgFileHeader Read()
 		{
 			DwgFileHeader fileHeader = DwgFileHeader.CreateFileHeader(this._version);
-
-			//Reset the stream position at the begining
-			this._fileStream.Position = 0L;
 
 			//Get the stream reader
 			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(_version, _fileStream.Stream);
