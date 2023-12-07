@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using ACadSharp.Exceptions;
 using ACadSharp.IO.DWG;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace ACadSharp.IO
 {
@@ -97,12 +99,24 @@ namespace ACadSharp.IO
 			return doc;
 		}
 
+		public async Task<CadDocument> ReadAsync(CancellationToken cancellationToken = default)
+		{
+			this.initializeReader();
+
+			//0x00	6	“ACXXXX” version string
+			byte[] buffer = new byte[6];
+			await this._fileStream.Stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+			ACadVersion version = CadUtils.GetVersionFromName(Encoding.ASCII.GetString(buffer));
+			DwgFileHeader fileHeader = DwgFileHeader.CreateFileHeader(version);
+
+
+			throw new NotImplementedException();
+		}
+
 		/// <inheritdoc/>
 		public override CadDocument Read()
 		{
-			this._document = new CadDocument(false);
-			this._builder = new DwgDocumentBuilder(this._document, this.Configuration);
-			this._builder.OnNotification += this.onNotificationEvent;
+			this.initializeReader();
 
 			//Read the file header
 			this._fileHeader = this.readFileHeader();
@@ -226,10 +240,18 @@ namespace ACadSharp.IO
 			return header;
 		}
 
+		private void initializeReader()
+		{
+			this._document = new CadDocument(false);
+			this._builder = new DwgDocumentBuilder(this._document, this.Configuration);
+			this._builder.OnNotification += this.onNotificationEvent;
+		}
+
 		/// <summary>
 		/// Read the file header data.
 		/// </summary>
 		/// <returns></returns>
+		[Obsolete("Use the class DwgFileHeaderReader")]
 		internal DwgFileHeader readFileHeader()
 		{
 			//Reset the stream position at the begining
@@ -881,22 +903,6 @@ namespace ACadSharp.IO
 					//8	Page CRC
 					page.CRC = sectionMapStream.ReadULong<LittleEndianConverter>();
 
-#if false
-//this code it doesn't take any effect on the reading
-					//Create an empty page to fill the gap
-					if (currentOffset < page.Offset)
-					{
-						ulong decompressedSize = page.Offset - currentOffset;
-						DwgLocalSectionMap emptyPage = new DwgLocalSectionMap();
-						emptyPage.IsEmpty = true;
-						emptyPage.Offset = currentOffset;
-						emptyPage.CompressedSize = 0;
-						emptyPage.DecompressedSize = decompressedSize;
-
-						//Add the empty local section to the current descriptor
-						section.LocalSections.Add(emptyPage);
-					}
-#endif
 					//Add the page to the section
 					section.LocalSections.Add(page);
 					//Move the offset
