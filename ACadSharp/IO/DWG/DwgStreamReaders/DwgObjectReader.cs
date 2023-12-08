@@ -2059,9 +2059,9 @@ namespace ACadSharp.IO.DWG
 				//Unknown B 73
 				this._objectReader.ReadBit();
 				//Flip arrow1 B 74
-				this._objectReader.ReadBit();
+				dimension.FlipArrow1 = this._objectReader.ReadBit();
 				//Flip arrow2 B 75
-				this._objectReader.ReadBit();
+				dimension.FlipArrow2 = this._objectReader.ReadBit();
 			}
 
 			//Common:
