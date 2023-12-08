@@ -106,13 +106,11 @@ namespace ACadSharp.IO.DWG
 					await this.readFileHeaderAC18Async(fileHeader as DwgFileHeaderAC18, cancellationToken);
 					break;
 				case ACadVersion.AC1021:
-					sreader = DwgStreamReaderBase.GetStreamHandler(_version, await getHeaderAC21Stream(cancellationToken));
-					this.readFileHeaderAC21(fileHeader as DwgFileHeaderAC21, sreader);
+					await this.readFileHeaderAC21Async(fileHeader as DwgFileHeaderAC21, cancellationToken);
 					break;
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
-					sreader = DwgStreamReaderBase.GetStreamHandler(_version, await getHeaderAC18Stream(cancellationToken));
 					this.readFileHeaderAC18(fileHeader as DwgFileHeaderAC18, sreader);
 					break;
 			}
@@ -709,6 +707,20 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
+		private async Task readFileHeaderAC21Async(DwgFileHeaderAC21 fileheader, CancellationToken cancellationToken = default)
+		{
+			this.readFileMetaData(fileheader, await this.getStreamChunkAsync(_metaDataSize, cancellationToken));
+
+			//The last 0x28 bytes of this section consists of check data, 
+			//containing 5 Int64 values representing CRC’s and related numbers 
+			//(starting from 0x3D8 until the end). The first 0x3D8 bytes 
+			//should be decoded using Reed-Solomon (255, 239) decoding, with a factor of 3.
+			byte[] compressedData = await _fileStream.ReadBytesAsync(0x400);
+
+			byte[] decodedData = new byte[3 * 239]; //factor * blockSize
+			this.reedSolomonDecoding(compressedData, decodedData, 3, 239);
+
+		}
 		private void readFileMetaData(DwgFileHeaderAC18 fileheader, IDwgStreamReader sreader)
 		{
 			//5 bytes of 0x00 
@@ -928,14 +940,6 @@ namespace ACadSharp.IO.DWG
 		{
 			MemoryStream ms = new MemoryStream(await this._fileStream.ReadBytesAsync(length, cancellationToken));
 			return DwgStreamReaderBase.GetStreamHandler(this._version, ms);
-		}
-
-		private async Task<Stream> getHeaderAC18Stream(CancellationToken cancellationToken = default)
-		{
-			ulong metadataSize = 0x80;
-			ulong fileHeaderSize = 0x400;
-
-			throw new NotImplementedException();
 		}
 
 		private async Task<Stream> getHeaderAC21Stream(CancellationToken cancellationToken = default)
