@@ -105,5 +105,22 @@ namespace ACadSharp.IO.Templates
 
 			return collection;
 		}
+
+		protected bool getTableReference<T>(CadDocumentBuilder builder, ulong? handle, string name, out T reference)
+			where T : TableEntry
+		{
+			if (builder.TryGetCadObject<T>(handle, out reference) || builder.TryGetTableEntry<T>(name, out reference))
+			{
+				return true;
+			}
+			else
+			{
+				if (!string.IsNullOrEmpty(name) || handle.HasValue)
+				{
+					builder.Notify($"{typeof(T).FullName} table reference with handle: {handle} | name: {name} not found for {this.CadObject.GetType().FullName} with handle {this.CadObject.Handle}", NotificationType.Warning);
+				}
+				return false;
+			}
+		}
 	}
 }
