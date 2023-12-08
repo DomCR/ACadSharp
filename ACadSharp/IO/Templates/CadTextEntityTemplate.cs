@@ -20,13 +20,13 @@ namespace ACadSharp.IO.Templates
 			switch (this.CadObject)
 			{
 				case TextEntity text:
-					if (builder.TryGetCadObject<TextStyle>(StyleHandle, out style))
+					if (builder.TryGetCadObject<TextStyle>(this.StyleHandle, out style))
 					{
 						text.Style = style;
 					}
 					break;
 				case MText mtext:
-					if (builder.TryGetCadObject<TextStyle>(StyleHandle, out style))
+					if (builder.TryGetCadObject<TextStyle>(this.StyleHandle, out style))
 					{
 						mtext.Style = style;
 					}
