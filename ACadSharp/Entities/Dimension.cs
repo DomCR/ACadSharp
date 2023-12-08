@@ -3,9 +3,9 @@ using ACadSharp.Blocks;
 using ACadSharp.Tables;
 using CSMath;
 using System;
+using System.Globalization;
 
-namespace ACadSharp.Entities
-{
+namespace ACadSharp.Entities {
 	/// <summary>
 	/// Represents a <see cref="Dimension"/> entity.
 	/// </summary>
@@ -15,8 +15,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityDimension)]
 	[DxfSubClass(DxfSubclassMarker.Dimension)]
-	public abstract class Dimension : Entity
-	{
+	public abstract class Dimension : Entity {
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Dimension;
 
@@ -145,10 +144,25 @@ namespace ACadSharp.Entities
 		/// if ““ (one blank space), the text is suppressed.Anything else is drawn as the text
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Optional, 1)]
-		public string Text
-		{
-			get { return string.IsNullOrEmpty(_text) ? this.Measurement.ToString() : this._text; }
-			set { this._text = value; }
+		public string Text {
+			get {
+				if (this._text == " ") {
+					return string.Empty;
+				}
+
+				if (string.IsNullOrEmpty(this._text)) {
+					double measurement = Math.Round(this.Measurement, this.Style.DecimalPlaces);
+					NumberFormatInfo nfi = new NumberFormatInfo();
+					nfi.NumberDecimalSeparator = this.Style.DecimalSeparator.ToString();
+					return measurement.ToString(nfi);
+				}
+
+				return this._text;
+			}
+
+			set {
+				this._text = value;
+			}
 		}
 
 		/// <summary>
