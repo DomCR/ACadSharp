@@ -24,12 +24,12 @@ namespace ACadSharp.IO.Templates
 
 			Dimension dimension = this.CadObject as Dimension;
 
-			if (this.getTableReference(builder, StyleHandle, StyleName, out DimensionStyle style))
+			if (this.getTableReference(builder, this.StyleHandle, this.StyleName, out DimensionStyle style))
 			{
 				dimension.Style = style;
 			}
 
-			if (this.getTableReference(builder, BlockHandle, BlockName, out BlockRecord block))
+			if (this.getTableReference(builder, this.BlockHandle, this.BlockName, out BlockRecord block))
 			{
 				dimension.Block = block;
 			}
