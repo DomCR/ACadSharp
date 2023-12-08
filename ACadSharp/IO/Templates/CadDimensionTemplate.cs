@@ -6,9 +6,9 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadDimensionTemplate : CadEntityTemplate
 	{
-		public ulong StyleHandle { get; set; }
+		public ulong? StyleHandle { get; set; }
 
-		public ulong BlockHandle { get; set; }
+		public ulong? BlockHandle { get; set; }
 
 		public string BlockName { get; set; }
 

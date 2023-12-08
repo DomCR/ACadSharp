@@ -115,7 +115,10 @@ namespace ACadSharp.IO.Templates
 			}
 			else
 			{
-				builder.Notify($"{typeof(T).FullName} table reference with handle: {handle} | name: {name} not found for {this.CadObject.GetType().FullName} with handle {this.CadObject.Handle}", NotificationType.Warning);
+				if (!string.IsNullOrEmpty(name) || handle.HasValue)
+				{
+					builder.Notify($"{typeof(T).FullName} table reference with handle: {handle} | name: {name} not found for {this.CadObject.GetType().FullName} with handle {this.CadObject.Handle}", NotificationType.Warning);
+				}
 				return false;
 			}
 		}
