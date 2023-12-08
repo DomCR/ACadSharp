@@ -51,5 +51,16 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Line() : base() { }
+
+		/// <summary>
+		/// Constructor with the start and end
+		/// </summary>
+		/// <param name="start"></param>
+		/// <param name="end"></param>
+		public Line(XYZ start, XYZ end) : base()
+		{
+			this.StartPoint = start;
+			this.EndPoint = end;
+		}
 	}
 }
