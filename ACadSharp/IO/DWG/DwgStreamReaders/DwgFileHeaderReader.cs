@@ -111,7 +111,7 @@ namespace ACadSharp.IO.DWG
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
-					this.readFileHeaderAC18(fileHeader as DwgFileHeaderAC18, sreader);
+					await this.readFileHeaderAC18Async(fileHeader as DwgFileHeaderAC18, cancellationToken);
 					break;
 			}
 
@@ -720,7 +720,9 @@ namespace ACadSharp.IO.DWG
 			byte[] decodedData = new byte[3 * 239]; //factor * blockSize
 			this.reedSolomonDecoding(compressedData, decodedData, 3, 239);
 
+			throw new NotSupportedException();
 		}
+
 		private void readFileMetaData(DwgFileHeaderAC18 fileheader, IDwgStreamReader sreader)
 		{
 			//5 bytes of 0x00 

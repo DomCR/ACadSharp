@@ -96,22 +96,6 @@ namespace ACadSharp.IO
 			return doc;
 		}
 
-		public async Task<CadDocument> ReadAsync(CancellationToken cancellationToken = default)
-		{
-			this.initializeReader();
-
-			//0x00	6	“ACXXXX” version string
-			byte[] buffer = new byte[6];
-			await this._fileStream.Stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
-			ACadVersion version = this.getFileVersion(buffer);
-
-			DwgFileHeaderReader fileHeaderReader = new DwgFileHeaderReader(version, this._fileStream.Stream);
-
-			DwgFileHeader fileHeader = await fileHeaderReader.ReadAsync(cancellationToken);
-
-			throw new NotImplementedException();
-		}
-
 		/// <inheritdoc/>
 		public override CadDocument Read()
 		{
@@ -131,6 +115,21 @@ namespace ACadSharp.IO
 			this._builder.BuildDocument();
 
 			return this._document;
+		}
+
+		public async Task<CadDocument> ReadAsync(CancellationToken cancellationToken = default)
+		{
+			this.initializeReader();
+
+			//0x00	6	“ACXXXX” version string
+			byte[] buffer = new byte[6];
+			await this._fileStream.Stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+			ACadVersion version = this.getFileVersion(buffer);
+
+			DwgFileHeaderReader fileHeaderReader = new DwgFileHeaderReader(version, this._fileStream.Stream);
+			this._fileHeader = await fileHeaderReader.ReadAsync(cancellationToken);
+
+			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -250,7 +249,7 @@ namespace ACadSharp.IO
 		{
 			DwgFileHeaderReader reader = new DwgFileHeaderReader(this.getFileVersion(this._fileStream.ReadBytes(6)), this._fileStream.Stream);
 			this._fileHeader = reader.Read();
-			this._encoding = getListedEncoding((int)_fileHeader.DrawingCodePage);
+			this._encoding = this.getListedEncoding((int)_fileHeader.DrawingCodePage);
 
 			return this._fileHeader;
 		}
@@ -448,6 +447,28 @@ namespace ACadSharp.IO
 				//set the stream position
 				stream = this._fileStream.Stream;
 				stream.Position = record.Seeker;
+			}
+
+			return stream;
+		}
+
+		private async Task<Stream> getSectionBuffer15Async(DwgFileHeaderAC15 fileheader, string sectionName, CancellationToken cancellationToken = default)
+		{
+			Stream stream = null;
+
+			//Get the section locator
+			var sectionLocator = DwgSectionDefinition.GetSectionLocatorByName(sectionName);
+
+			if (!sectionLocator.HasValue)
+				//There is no section for this version
+				return null;
+
+			if (fileheader.Records.TryGetValue(sectionLocator.Value, out DwgSectionLocatorRecord record))
+			{
+				//set the stream position
+				this._fileStream.Stream.Position = record.Seeker;
+				byte[] buffer = await this._fileStream.ReadBytesAsync((int)record.Size, cancellationToken);
+				stream = new MemoryStream(buffer);
 			}
 
 			return stream;
