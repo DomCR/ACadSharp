@@ -190,6 +190,13 @@ namespace ACadSharp.Entities
 
 		public TextEntity() : base() { }
 
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox();
+		}
+
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			TextEntity clone = (TextEntity)base.Clone();
@@ -223,11 +230,6 @@ namespace ACadSharp.Entities
 			{
 				this.Style = this.Document.TextStyles[TextStyle.DefaultName];
 			}
-		}
-
-		public override BoundingBox GetBoundingBox()
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

@@ -93,11 +93,6 @@ namespace ACadSharp.IO.Templates
 			{
 				throw new NotImplementedException();
 			}
-
-			public override BoundingBox GetBoundingBox()
-			{
-				throw new NotImplementedException();
-			}
 		}
 	}
 }

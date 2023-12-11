@@ -40,10 +40,5 @@ namespace ACadSharp.Entities
 				throw new ArgumentException($"Wrong vertex type for {DxfSubclassMarker.Polyline}");
 			}
 		}
-
-		public override BoundingBox GetBoundingBox()
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

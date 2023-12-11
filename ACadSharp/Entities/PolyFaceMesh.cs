@@ -58,10 +58,5 @@ namespace ACadSharp.Entities
 			this.Document.UnregisterCollection(this.Faces);
 			base.UnassignDocument();
 		}
-
-		public override BoundingBox GetBoundingBox()
-		{
-			throw new NotImplementedException();
-		}
 	}
 }
