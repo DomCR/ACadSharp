@@ -16,6 +16,8 @@ namespace ACadSharp.Tests.IO
 
 		protected const string _samplesOutFolder = "../../../../samples/out";
 
+		protected const string _singleCasesOutFolder = "../../../../samples/out/single_cases";
+
 		public static string AcCoreConsolePath { get; }
 
 		public static TheoryData<string> DwgFilePaths { get; }
@@ -78,8 +80,12 @@ namespace ACadSharp.Tests.IO
 				Directory.CreateDirectory(_samplesOutFolder);
 			}
 
-			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null
-				|| !TestVariables.AutocadConsoleCheck)
+			if (!Directory.Exists(_singleCasesOutFolder))
+			{
+				Directory.CreateDirectory(_singleCasesOutFolder);
+			}
+
+			if (!TestVariables.LocalEnv)
 			{
 				return;
 			}
@@ -125,7 +131,7 @@ namespace ACadSharp.Tests.IO
 
 		protected void onNotification(object sender, NotificationEventArgs e)
 		{
-			if(e.NotificationType == NotificationType.Error)
+			if (e.NotificationType == NotificationType.Error)
 			{
 				throw e.Exception;
 			}
@@ -139,8 +145,7 @@ namespace ACadSharp.Tests.IO
 
 		protected void checkDxfDocumentInAutocad(string path)
 		{
-			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null
-				|| !TestVariables.AutocadConsoleCheck)
+			if (!TestVariables.LocalEnv || !TestVariables.DxfAutocadConsoleCheck)
 				return;
 
 			System.Diagnostics.Process process = new System.Diagnostics.Process();
@@ -201,8 +206,7 @@ namespace ACadSharp.Tests.IO
 
 		protected void checkDwgDocumentInAutocad(string path)
 		{
-			if (Environment.GetEnvironmentVariable("GITHUB_WORKFLOW") != null
-				|| !TestVariables.AutocadConsoleCheck)
+			if (!TestVariables.LocalEnv || !TestVariables.DwgAutocadConsoleCheck)
 				return;
 
 			System.Diagnostics.Process process = new System.Diagnostics.Process();
@@ -253,7 +257,6 @@ namespace ACadSharp.Tests.IO
 			}
 			finally
 			{
-				process.WaitForExit();
 				process.Kill();
 			}
 		}

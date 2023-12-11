@@ -41,6 +41,8 @@ namespace ACadSharp.IO
 		/// <inheritdoc/>
 		public override void Write()
 		{
+			base.Write();
+
 			this.createStreamWriter();
 
 			this._objectHolder.Objects.Enqueue(_document.RootDictionary);

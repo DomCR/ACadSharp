@@ -19,7 +19,9 @@ namespace ACadSharp.IO.DWG
 			{
 				case AttributeEntity:
 				case MText:
+				case Shape:
 				case Solid3D:
+				case MultiLeader:
 				//Unlisted
 				case Wipeout:
 					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
@@ -92,6 +94,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case MLine mLine:
 					this.writeMLine(mLine);
+					break;
+				case MText mtext:
+					this.writeMText(mtext);
 					break;
 				case Point p:
 					this.writePoint(p);
@@ -1320,7 +1325,7 @@ namespace ACadSharp.IO.DWG
 			//When reading from DXF, the shape is found by iterating over all the text styles
 			//(SHAPEFILE, see paragraph 20.4.56) and when the text style contains a shape file,
 			//iterating over all the shapes until the one with the matching name is found.
-			this._writer.WriteBitShort(0);	//TODO: missing implementation for shapeIndex
+			this._writer.WriteBitShort(0);  //TODO: missing implementation for shapeIndex
 
 			//Extrusion 3BD 210
 			this._writer.Write3BitDouble(shape.Normal);
@@ -1613,7 +1618,7 @@ namespace ACadSharp.IO.DWG
 			//R2007+:
 			if (this.R2007Plus)
 			{
-				this._writer.WriteBitDouble(mtext.ReferenceRectangleHeight);
+				this._writer.WriteBitDouble(mtext.RectangleHeight);
 			}
 
 			//Common:
@@ -1624,7 +1629,6 @@ namespace ACadSharp.IO.DWG
 			//Drawing dir BS 72 Left to right, etc.; see DXF doc
 			this._writer.WriteBitShort((short)mtext.DrawingDirection);
 
-			//TODO: Check undocumented values for MText
 			//Extents ht BD ---Undocumented and not present in DXF or entget
 			this._writer.WriteBitDouble(0);
 			//Extents wid BD ---Undocumented and not present in DXF or entget
@@ -1681,9 +1685,6 @@ namespace ACadSharp.IO.DWG
 				return;
 			}
 
-			throw new System.NotImplementedException("Annotative MText not implemented for the writer");
-			//TODO: missing values depending on the reader to get them and process to be able to write
-#if false
 			//Version BS Default 0
 			this._writer.WriteBitShort(0);
 			//Default flag B Default true
@@ -1693,51 +1694,49 @@ namespace ACadSharp.IO.DWG
 			//Registered application H Hard pointer
 			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 
-			//TODO: finish Mtext Writer, save redundant fields??
-
 			//Attachment point BL
-			AttachmentPointType attachmentPoint = (AttachmentPointType)this._writer.WriteBitLong();
+			this._writer.WriteBitLong((int)mtext.AttachmentPoint);
 			//X - axis dir 3BD 10
-			this._writer.Write3BitDouble();
+			this._writer.Write3BitDouble(mtext.AlignmentPoint);
 			//Insertion point 3BD 11
-			this._writer.Write3BitDouble();
+			this._writer.Write3BitDouble(mtext.InsertPoint);
 			//Rect width BD 40
-			this._writer.WriteBitDouble();
+			this._writer.WriteBitDouble(mtext.Height);
 			//Rect height BD 41
-			this._writer.WriteBitDouble();
+			this._writer.WriteBitDouble(mtext.RectangleWidth);
 			//Extents width BD 42
-			this._writer.WriteBitDouble();
+			this._writer.WriteBitDouble(mtext.HorizontalWidth);
 			//Extents height BD 43
-			this._writer.WriteBitDouble();
+			this._writer.WriteBitDouble(mtext.VerticalWidth);
 			//END REDUNDANT FIELDS
 
 			//Column type BS 71 0 = No columns, 1 = static columns, 2 = dynamic columns
 			this._writer.WriteBitShort((short)mtext.Column.ColumnType);
+
 			//IF Has Columns data(column type is not 0)
 			if (mtext.Column.ColumnType != ColumnType.NoColumns)
 			{
 				//Column height count BL 72
-				int count = this._writer.WriteBitLong();
+				this._writer.WriteBitLong(mtext.Column.ColumnCount);
 				//Columnn width BD 44
-				mtext.Column.ColumnWidth = this._writer.WriteBitDouble();
+				this._writer.WriteBitDouble(mtext.Column.ColumnWidth);
 				//Gutter BD 45
-				mtext.Column.ColumnGutter = this._writer.WriteBitDouble();
+				this._writer.WriteBitDouble(mtext.Column.ColumnGutter);
 				//Auto height? B 73
-				mtext.Column.ColumnAutoHeight = this._writer.WriteBit();
+				this._writer.WriteBit(mtext.Column.ColumnAutoHeight);
 				//Flow reversed? B 74
-				mtext.Column.ColumnFlowReversed = this._writer.WriteBit();
+				this._writer.WriteBit(mtext.Column.ColumnFlowReversed);
 
 				//IF not auto height and column type is dynamic columns
-				if (!mtext.Column.ColumnAutoHeight && mtext.Column.ColumnType == ColumnType.DynamicColumns && count > 0)
+				if (!mtext.Column.ColumnAutoHeight && mtext.Column.ColumnType == ColumnType.DynamicColumns)
 				{
-					for (int i = 0; i < count; ++i)
+					foreach (double h in mtext.Column.ColumnHeights)
 					{
 						//Column height BD 46
-						mtext.Column.ColumnHeights.Add(this._writer.WriteBitDouble());
+						this._writer.WriteBitDouble(h);
 					}
 				}
 			}
-#endif
 		}
 
 		private void writeFaceRecord(VertexFaceRecord face)

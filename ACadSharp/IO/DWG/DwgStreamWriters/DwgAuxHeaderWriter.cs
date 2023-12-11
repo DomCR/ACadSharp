@@ -21,7 +21,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 
 		public void Write()
 		{
-			IDwgStreamWriter writer = DwgStreamWriterBase.GetStreamHandler(this._version, this._stream, TextEncoding.Windows1252());
+			IDwgStreamWriter writer = DwgStreamWriterBase.GetStreamWriter(this._version, this._stream, TextEncoding.Windows1252());
 
 			//RC: 0xff 0x77 0x01
 			writer.WriteByte(0xFF);

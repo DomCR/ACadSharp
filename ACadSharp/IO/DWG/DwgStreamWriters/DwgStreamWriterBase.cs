@@ -29,7 +29,7 @@ namespace ACadSharp.IO.DWG
 			this.Encoding = encoding;
 		}
 
-		public static IDwgStreamWriter GetStreamHandler(ACadVersion version, Stream stream, Encoding encoding)
+		public static IDwgStreamWriter GetStreamWriter(ACadVersion version, Stream stream, Encoding encoding)
 		{
 			switch (version)
 			{
@@ -156,7 +156,7 @@ namespace ACadSharp.IO.DWG
 			{
 				for (int i = 0, j = initialIndex; i < length; i++, j++)
 				{
-					this.WriteByte(arr[j]);
+					this._stream.WriteByte(arr[j]);
 				}
 
 				return;
@@ -166,7 +166,7 @@ namespace ACadSharp.IO.DWG
 			for (int i = 0, j = initialIndex; i < length; i++, j++)
 			{
 				byte b = arr[j];
-				this.WriteByte((byte)(this._lastByte | (b >> this.BitShift)));
+				this._stream.WriteByte((byte)(this._lastByte | (b >> this.BitShift)));
 				this._lastByte = (byte)(b << num);
 			}
 		}
@@ -364,6 +364,11 @@ namespace ACadSharp.IO.DWG
 		{
 			//R15 and earlier: BS color index
 			this.WriteBitShort(value.Index);
+		}
+
+		public virtual void WriteEnColor(Color color, Transparency transparency)
+		{
+			this.WriteCmColor(color);
 		}
 
 		public void Write2BitDouble(XY value)

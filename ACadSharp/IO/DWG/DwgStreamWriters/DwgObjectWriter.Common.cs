@@ -32,7 +32,7 @@ namespace ACadSharp.IO.DWG
 
 			//Write the object in the stream
 			crc.Write(this._msmain.GetBuffer(), 0, (int)this._msmain.Length);
-			crc.Write(LittleEndianConverter.Instance.GetBytes(crc.Seed), 0, 2);
+			_stream.Write(LittleEndianConverter.Instance.GetBytes(crc.Seed), 0, 2);
 
 			this.Map.Add(cadObject.Handle, position);
 		}
@@ -221,9 +221,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Color	CMC(B)	62
-			this._writer.WriteBitShort(0);
-			//TODO: Implement write en color
-			//this._writer.WriteEnColor(entity.Color, entity.Transparency);
+			this._writer.WriteEnColor(entity.Color, entity.Transparency);
 
 			//R2004+:
 			//if ((this._version >= ACadVersion.AC1018) && colorFlag)

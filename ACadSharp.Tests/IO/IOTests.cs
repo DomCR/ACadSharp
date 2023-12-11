@@ -34,7 +34,7 @@ namespace ACadSharp.Tests.IO
 			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_out.dwg");
 
 			//accoreconsole always fails because cannot recover the file
-			this.writeDwgFile(pathOut, doc, false);
+			this.writeDwgFile(pathOut, doc);
 		}
 
 		[Theory]
@@ -77,7 +77,7 @@ namespace ACadSharp.Tests.IO
 
 			string file = Path.GetFileNameWithoutExtension(test);
 			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_moved_out.dwg");
-			this.writeDwgFile(pathOut, transfer, false);
+			this.writeDwgFile(pathOut, transfer);
 		}
 
 		[Theory]
@@ -113,7 +113,7 @@ namespace ACadSharp.Tests.IO
 				this.checkDxfDocumentInAutocad(Path.GetFullPath(file));
 		}
 
-		private void writeDwgFile(string file, CadDocument doc, bool check)
+		private void writeDwgFile(string file, CadDocument doc)
 		{
 			if (doc.Header.Version < ACadVersion.AC1014 || doc.Header.Version > ACadVersion.AC1018)
 				return;
@@ -124,8 +124,7 @@ namespace ACadSharp.Tests.IO
 				writer.Write();
 			}
 
-			if (check)
-				this.checkDwgDocumentInAutocad(Path.GetFullPath(file));
+			this.checkDwgDocumentInAutocad(Path.GetFullPath(file));
 		}
 
 		private void writeDxfFile(string file, CadDocument doc, bool check)
@@ -138,18 +137,6 @@ namespace ACadSharp.Tests.IO
 
 			if (check)
 				this.checkDxfDocumentInAutocad(Path.GetFullPath(file));
-		}
-
-		private void writeDwgFile(string file, CadDocument doc)
-		{
-			if (doc.Header.Version > ACadVersion.AC1018)
-				return;
-
-			using (DwgWriter writer = new DwgWriter(file, doc))
-			{
-				writer.OnNotification += this.onNotification;
-				writer.Write();
-			}
 		}
 	}
 }

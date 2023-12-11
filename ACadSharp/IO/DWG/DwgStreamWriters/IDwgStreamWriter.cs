@@ -1,5 +1,4 @@
-﻿using ACadSharp.Entities;
-using CSMath;
+﻿using CSMath;
 using System;
 using System.IO;
 
@@ -19,6 +18,8 @@ namespace ACadSharp.IO.DWG
 		long SavedPositionInBits { get; }
 
 		void WriteBytes(byte[] bytes);
+
+		void WriteBytes(byte[] bytes, int offset, int length);
 
 		void WriteInt(int value);
 
@@ -49,6 +50,8 @@ namespace ACadSharp.IO.DWG
 		void WriteTimeSpan(TimeSpan value);
 
 		void WriteCmColor(Color value);
+
+		void WriteEnColor(Color color, Transparency transparency);
 
 		void Write2BitDouble(XY value);
 
