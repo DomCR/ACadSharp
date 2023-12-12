@@ -22,17 +22,24 @@ namespace ACadSharp.IO.DWG
 
 		private StreamIO _fileStream;
 
-		public DwgFileHeaderReader(ACadVersion version, Stream stream) : base(version)
+		public DwgFileHeaderReader(Stream stream) : base(ACadVersion.Unknown)
 		{
 			this._fileStream = new StreamIO(stream);
 		}
 
 		public DwgFileHeader Read()
 		{
+			this._fileStream.Position = 0;
+
+			//0x00	6	“ACXXXX” version string
+			byte[] buffer = new byte[6];
+			this._fileStream.Stream.Read(buffer, 0, buffer.Length);
+			this.updateFileVersion(buffer);
+
 			DwgFileHeader fileHeader = DwgFileHeader.CreateFileHeader(this._version);
 
 			//Get the stream reader
-			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(_version, _fileStream.Stream);
+			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(this._version, _fileStream.Stream);
 
 			//Read the file header
 			switch (fileHeader.AcadVersion)
@@ -74,6 +81,13 @@ namespace ACadSharp.IO.DWG
 
 		public async Task<DwgFileHeader> ReadAsync(CancellationToken cancellationToken = default)
 		{
+			this._fileStream.Position = 0;
+
+			//0x00	6	“ACXXXX” version string
+			byte[] buffer = new byte[6];
+			await this._fileStream.Stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+			this.updateFileVersion(buffer);
+
 			DwgFileHeader fileHeader = DwgFileHeader.CreateFileHeader(this._version);
 
 			//Reset the stream position at the begining
@@ -944,9 +958,10 @@ namespace ACadSharp.IO.DWG
 			return DwgStreamReaderBase.GetStreamHandler(this._version, ms);
 		}
 
-		private async Task<Stream> getHeaderAC21Stream(CancellationToken cancellationToken = default)
+		private void updateFileVersion(byte[] buffer)
 		{
-			throw new NotImplementedException();
+			ACadVersion version = CadUtils.GetVersionFromName(Encoding.ASCII.GetString(buffer));
+			this.setVersion(version);
 		}
 	}
 }

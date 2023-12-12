@@ -16,6 +16,8 @@ namespace ACadSharp.IO
 	{
 		public DwgReaderConfiguration Configuration { get; set; } = new DwgReaderConfiguration();
 
+		private ACadVersion _version = ACadVersion.Unknown;
+
 		private DwgDocumentBuilder _builder;
 
 		private DwgFileHeader _fileHeader;
@@ -121,15 +123,16 @@ namespace ACadSharp.IO
 		{
 			this.initializeReader();
 
-			//0x00	6	“ACXXXX” version string
-			byte[] buffer = new byte[6];
-			await this._fileStream.Stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
-			ACadVersion version = this.getFileVersion(buffer);
+			this._fileHeader = await this.readFileHeaderAsync(cancellationToken);
 
-			DwgFileHeaderReader fileHeaderReader = new DwgFileHeaderReader(version, this._fileStream.Stream);
-			this._fileHeader = await fileHeaderReader.ReadAsync(cancellationToken);
+			if (this._fileHeader.AcadVersion >= ACadVersion.AC1018)
+			{
+				this._document.SummaryInfo = this.readSummaryInfo(await this.getSectionStreamAsync(DwgSectionDefinition.SummaryInfo));
+			}
 
-			throw new NotImplementedException();
+			this._document.Header = this.readHeader(await this.getSectionStreamAsync(DwgSectionDefinition.Header));
+
+			return this._document;
 		}
 
 		/// <summary>
@@ -155,6 +158,12 @@ namespace ACadSharp.IO
 			return summaryReader.Read();
 		}
 
+		private CadSummaryInfo readSummaryInfo(IDwgStreamReader reader)
+		{
+			DwgSummaryInfoReader summaryReader = new DwgSummaryInfoReader(this._fileHeader.AcadVersion, reader);
+			return summaryReader.Read();
+		}
+
 		/// <summary>
 		/// Read the preview image of the dwg file.
 		/// </summary>
@@ -162,6 +171,7 @@ namespace ACadSharp.IO
 		/// Refers to AcDb:Preview data section.
 		/// </remarks>
 		/// <returns></returns>
+		/// <exception cref="NotImplementedException"></exception>
 		public DwgPreview ReadPreview()
 		{
 			this._fileHeader = this._fileHeader ?? this.readFileHeader();
@@ -238,6 +248,22 @@ namespace ACadSharp.IO
 			return header;
 		}
 
+		private CadHeader readHeader(IDwgStreamReader sreader)
+		{
+			CadHeader header = new CadHeader();
+			header.CodePage = CadUtils.GetCodePageName(this._fileHeader.DrawingCodePage);
+
+			DwgHeaderReader hReader = new DwgHeaderReader(this._fileHeader.AcadVersion, sreader, header);
+			hReader.OnNotification += onNotificationEvent;
+
+			hReader.Read(this._fileHeader.AcadMaintenanceVersion, out DwgHeaderHandlesCollection headerHandles);
+
+			if (this._builder != null)
+				this._builder.HeaderHandles = headerHandles;
+
+			return header;
+		}
+
 		private void initializeReader()
 		{
 			this._document = new CadDocument(false);
@@ -247,9 +273,20 @@ namespace ACadSharp.IO
 
 		private DwgFileHeader readFileHeader()
 		{
-			DwgFileHeaderReader reader = new DwgFileHeaderReader(this.getFileVersion(this._fileStream.ReadBytes(6)), this._fileStream.Stream);
+			DwgFileHeaderReader reader = new DwgFileHeaderReader(this._fileStream.Stream);
 			this._fileHeader = reader.Read();
-			this._encoding = this.getListedEncoding((int)_fileHeader.DrawingCodePage);
+
+			this.setFileVersion(this._fileHeader);
+
+			return this._fileHeader;
+		}
+
+		private async Task<DwgFileHeader> readFileHeaderAsync(CancellationToken cancellationToken = default)
+		{
+			DwgFileHeaderReader reader = new DwgFileHeaderReader(this._fileStream.Stream);
+			this._fileHeader = await reader.ReadAsync(cancellationToken);
+
+			this.setFileVersion(this._fileHeader);
 
 			return this._fileHeader;
 		}
@@ -372,9 +409,10 @@ namespace ACadSharp.IO
 			sectionReader.Read();
 		}
 
-		private ACadVersion getFileVersion(byte[] buffer)
+		private void setFileVersion(DwgFileHeader fileHeader)
 		{
-			return CadUtils.GetVersionFromName(Encoding.ASCII.GetString(buffer));
+			this._version = fileHeader.AcadVersion;
+			this._encoding = this.getListedEncoding((int)_fileHeader.DrawingCodePage);
 		}
 
 		private IDwgStreamReader getSectionStream(string sectionName)
@@ -401,7 +439,6 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
 					sectionStream = this.getSectionBuffer15(this._fileHeader as DwgFileHeaderAC15, sectionName);
-					//encoding = TextEncoding.GetListedEncoding((this._fileHeader as DwgFileHeaderAC15).DrawingCodePage);
 					break;
 				case ACadVersion.AC1018:
 					sectionStream = this.getSectionBuffer18(this._fileHeader as DwgFileHeaderAC18, sectionName);
@@ -430,6 +467,60 @@ namespace ACadSharp.IO
 
 			return streamHandler;
 		}
+
+		private async Task<IDwgStreamReader> getSectionStreamAsync(string sectionName, CancellationToken cancellationToken = default)
+		{
+			Stream sectionStream = null;
+
+			//Get the section buffer
+			switch (this._fileHeader.AcadVersion)
+			{
+				case ACadVersion.Unknown:
+					throw new DwgNotSupportedException();
+				case ACadVersion.MC0_0:
+				case ACadVersion.AC1_2:
+				case ACadVersion.AC1_4:
+				case ACadVersion.AC1_50:
+				case ACadVersion.AC2_10:
+				case ACadVersion.AC1002:
+				case ACadVersion.AC1003:
+				case ACadVersion.AC1004:
+				case ACadVersion.AC1006:
+				case ACadVersion.AC1009:
+					throw new DwgNotSupportedException(this._fileHeader.AcadVersion);
+				case ACadVersion.AC1012:
+				case ACadVersion.AC1014:
+				case ACadVersion.AC1015:
+					sectionStream = await this.getSectionBuffer15Async(this._fileHeader as DwgFileHeaderAC15, sectionName, cancellationToken);
+					break;
+				case ACadVersion.AC1018:
+					sectionStream = await this.getSectionBuffer18Async(this._fileHeader as DwgFileHeaderAC18, sectionName, cancellationToken);
+					break;
+				case ACadVersion.AC1021:
+					sectionStream = this.getSectionBuffer21(this._fileHeader as DwgFileHeaderAC21, sectionName);
+					break;
+				case ACadVersion.AC1024:
+				case ACadVersion.AC1027:
+				case ACadVersion.AC1032:
+					//Check if it works...
+					sectionStream = await this.getSectionBuffer18Async(this._fileHeader as DwgFileHeaderAC18, sectionName, cancellationToken);
+					break;
+				default:
+					break;
+			}
+
+			//Section not found
+			if (sectionStream == null)
+				return null;
+
+			IDwgStreamReader streamHandler = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, sectionStream);
+
+			//Set the encoding if needed
+			streamHandler.Encoding = this._encoding;
+
+			return streamHandler;
+		}
+
 
 		private Stream getSectionBuffer15(DwgFileHeaderAC15 fileheader, string sectionName)
 		{
@@ -511,6 +602,52 @@ namespace ACadSharp.IO
 						byte[] buffer = new byte[section.CompressedSize];
 						sreader.Stream.Read(buffer, 0, (int)section.CompressedSize);
 						memoryStream.Write(buffer, 0, (int)section.CompressedSize);
+					}
+				}
+			}
+
+			//Reset the stream
+			memoryStream.Position = 0L;
+			return memoryStream;
+		}
+
+		private async Task<Stream> getSectionBuffer18Async(DwgFileHeaderAC18 fileheader, string sectionName, CancellationToken cancellationToken = default)
+		{
+			if (!fileheader.Descriptors.TryGetValue(sectionName, out DwgSectionDescriptor descriptor))
+				return null;
+
+			//get the total size of the page
+			MemoryStream memoryStream = new MemoryStream((int)descriptor.DecompressedSize * descriptor.LocalSections.Count);
+
+			foreach (DwgLocalSectionMap section in descriptor.LocalSections)
+			{
+				if (section.IsEmpty)
+				{
+					//Page is empty, fill the gap with 0s
+					for (int index = 0; index < (int)section.DecompressedSize; ++index)
+					{
+						memoryStream.WriteByte(0);
+					}
+				}
+				else
+				{
+					this._fileStream.Position = section.Seeker;
+					byte[] buffer = await this._fileStream.ReadBytesAsync((int)section.CompressedSize);
+
+					//Get the page section header
+					IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(fileheader.AcadVersion, new MemoryStream(buffer));
+					//Get the header data
+					this.decryptDataSection(section, sreader);
+
+					if (descriptor.IsCompressed)
+					{
+						//Page is compressed
+						DwgLZ77AC18Decompressor.DecompressToDest(sreader.Stream, memoryStream);
+					}
+					else
+					{
+						//Read the stream normally
+						memoryStream.Write(await this._fileStream.ReadBytesAsync((int)section.CompressedSize), 0, (int)section.CompressedSize);
 					}
 				}
 			}
