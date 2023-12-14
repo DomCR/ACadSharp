@@ -2954,7 +2954,6 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-
 		private MultiLeaderAnnotContext readMultiLeaderAnnotContext(CadMLeaderTemplate template)
 		{
 			MultiLeaderAnnotContext annotContext = new MultiLeaderAnnotContext();
