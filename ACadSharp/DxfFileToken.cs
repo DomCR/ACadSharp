@@ -56,6 +56,7 @@
 		public const string EntitiesSection = "ENTITIES";
 		public const string Entity3DFace = "3DFACE";
 		public const string Entity3DSolid = "3DSOLID";
+		public const string EntityAecWall = "AEC_WALL";
 		public const string EntityProxyEntity = "ACAD_PROXY_ENTITY";
 		public const string EntityArc = "ARC";
 		public const string EntityAttributeDefinition = "ATTDEF";

@@ -2,6 +2,7 @@
 {
 	public static class DxfSubclassMarker
 	{
+		public const string AecWall = "AecDbWall";
 		public const string ApplicationId = "AcDbRegAppTableRecord";
 		public const string AcDbPlaceHolder = "AcDbPlaceHolder";
 		public const string Table = "AcDbSymbolTable";
