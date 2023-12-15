@@ -11,7 +11,10 @@
 		Centered = 0,
 
 		/// <summary>
-		/// Places the dimension text above the dimension line.
+		/// Places the dimension text above the dimension line except when the dimension
+		/// line is not horizontal and text inside the extension lines is forced horizontal
+		/// (DIMTIH = 1). The distance from the dimension line to the baseline of the lowest
+		/// line of text is the current DIMGAP value.
 		/// </summary>
 		Above = 1,
 
