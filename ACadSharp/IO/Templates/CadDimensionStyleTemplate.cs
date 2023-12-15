@@ -32,17 +32,17 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.Style = style;
 			}
 
-			if (builder.TryGetCadObject(this.DIMLDRBLK, out Block leaderArrow))
+			if (builder.TryGetCadObject(this.DIMLDRBLK, out BlockRecord leaderArrow))
 			{
 				this.CadObject.LeaderArrow = leaderArrow;
 			}
 
-			if (builder.TryGetCadObject(this.DIMBLK1, out Block dimArrow1))
+			if (builder.TryGetCadObject(this.DIMBLK1, out BlockRecord dimArrow1))
 			{
 				this.CadObject.DimArrow1 = dimArrow1;
 			}
 
-			if (builder.TryGetCadObject(this.DIMBLK2, out Block dimArrow2))
+			if (builder.TryGetCadObject(this.DIMBLK2, out BlockRecord dimArrow2))
 			{
 				this.CadObject.DimArrow2 = dimArrow2;
 			}
