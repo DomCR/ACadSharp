@@ -3263,7 +3263,7 @@ namespace ACadSharp.IO.DWG
 				mLeaderStyle.TextAngle = (TextAngleType)_objectReader.ReadBitShort();
 
 			}   //	END IF IsNewFormat OR DXF file
-				//	BS	176	Text alignment type
+			//	BS	176	Text alignment type
 			mLeaderStyle.TextAlignment = (TextAlignmentType)_objectReader.ReadBitShort();
 			//	CMC	93	Text color
 			mLeaderStyle.TextColor = _mergedReaders.ReadCmColor();
@@ -3276,7 +3276,7 @@ namespace ACadSharp.IO.DWG
 			 //	B	297	Always align text left
 				mLeaderStyle.TextAlignAlwaysLeft = _objectReader.ReadBit();
 			}//	END IF IsNewFormat OR DXF file
-			 //	BD	46	Align space
+			//	BD	46	Align space
 			mLeaderStyle.AlignSpace = _objectReader.ReadBitDouble();
 			//	H	343	Block handle (hard pointer)
 			template.BlockContentHandle = this.handleReference();
