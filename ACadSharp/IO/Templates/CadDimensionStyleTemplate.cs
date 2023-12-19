@@ -25,8 +25,6 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			//TODO: implement the dimension template for the names instead of handles
-
 			if (this.getTableReference(builder, this.TextStyleHandle, TextStyle_Name, out TextStyle style))
 			{
 				this.CadObject.Style = style;
