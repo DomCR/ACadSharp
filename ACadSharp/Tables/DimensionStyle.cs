@@ -37,7 +37,7 @@ namespace ACadSharp.Tables
 		/// (see DIMPOST System Variable).
 		/// </summary>
 		/// <remarks><para>
-		/// For example, to establish a suffix for millimeters, set <i>PostFix</i>> to mm;
+		/// For example, to establish a suffix for millimeters, set <i>PostFix</i> to mm;
 		/// a distance of 19.2 units would be displayed as 19.2 mm.
 		/// </para><para>
 		/// If tolerances are turned on, the suffix is applied to the tolerances
