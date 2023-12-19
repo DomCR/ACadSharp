@@ -1,10 +1,10 @@
-﻿using ACadSharp.Blocks;
-using ACadSharp.Tables;
+﻿using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
 	internal class CadDimensionStyleTemplate : CadTableEntryTemplate<DimensionStyle>
 	{
+		public string TextStyle_Name { get; internal set; }
 		public string DIMBL_Name { get; internal set; }
 		public string DIMBLK1_Name { get; internal set; }
 		public string DIMBLK2_Name { get; internal set; }
@@ -27,39 +27,24 @@ namespace ACadSharp.IO.Templates
 
 			//TODO: implement the dimension template for the names instead of handles
 
-			if (builder.TryGetCadObject(this.TextStyleHandle, out TextStyle style))
+			if (this.getTableReference(builder, this.TextStyleHandle, TextStyle_Name, out TextStyle style))
 			{
 				this.CadObject.Style = style;
 			}
 
-			if (builder.TryGetCadObject(this.DIMLDRBLK, out BlockRecord leaderArrow))
+			if (this.getTableReference(builder, this.DIMLDRBLK, this.DIMBL_Name, out BlockRecord leaderArrow))
 			{
 				this.CadObject.LeaderArrow = leaderArrow;
 			}
 
-			if (builder.TryGetCadObject(this.DIMBLK1, out BlockRecord dimArrow1))
+			if (this.getTableReference(builder, this.DIMBLK1, this.DIMBLK1_Name, out BlockRecord dimArrow1))
 			{
 				this.CadObject.DimArrow1 = dimArrow1;
 			}
 
-			if (builder.TryGetCadObject(this.DIMBLK2, out BlockRecord dimArrow2))
+			if (this.getTableReference(builder, this.DIMBLK2, this.DIMBLK2_Name, out BlockRecord dimArrow2))
 			{
 				this.CadObject.DimArrow2 = dimArrow2;
-			}
-
-			if (!string.IsNullOrWhiteSpace(DIMBL_Name))
-			{
-				builder.Notify($"DwgDimensionStyleTemplate does not implement the dimension block for : {DIMBL_Name}");
-			}
-
-			if (!string.IsNullOrWhiteSpace(DIMBLK1_Name))
-			{
-				builder.Notify($"DwgDimensionStyleTemplate does not implement the dimension block for : {DIMBLK1_Name}");
-			}
-
-			if (!string.IsNullOrWhiteSpace(DIMBLK2_Name))
-			{
-				builder.Notify($"DwgDimensionStyleTemplate does not implement the dimension block for : {DIMBLK2_Name}");
 			}
 		}
 	}
