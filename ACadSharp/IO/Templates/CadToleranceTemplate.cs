@@ -7,6 +7,8 @@ namespace ACadSharp.IO.Templates
 	{
 		public ulong? DimensionStyleHandle { get; set; }
 
+		public string DimensionStyleName { get; set; }
+
 		public CadToleranceTemplate() : base(new Tolerance()) { }
 
 		public CadToleranceTemplate(Tolerance tolerance) : base(tolerance) { }
@@ -15,7 +17,7 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			if (this.getTableReference(builder, DimensionStyleHandle, null, out DimensionStyle style))
+			if (this.getTableReference(builder, DimensionStyleHandle, DimensionStyleName, out DimensionStyle style))
 			{
 				this.CadObject.Style = style;
 			}

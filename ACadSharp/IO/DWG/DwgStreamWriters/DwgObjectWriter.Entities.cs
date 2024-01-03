@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Entities;
 using CSMath;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -147,8 +146,11 @@ namespace ACadSharp.IO.DWG
 							this.writeTextEntity(textEntity);
 							break;
 						default:
-							throw new NotImplementedException($"Entity not implemented : {entity.GetType().FullName}");
+							throw new NotImplementedException($"TextEntity not implemented : {entity.GetType().FullName}");
 					}
+					break;
+				case Tolerance tolerance:
+					this.writeTolerance(tolerance);
 					break;
 				case Vertex vertex:
 					switch (vertex)
@@ -1798,6 +1800,11 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteByte((byte)vertex.Flags);
 			//Point 3BD 10
 			this._writer.Write3BitDouble(vertex.Location);
+		}
+
+		private void writeTolerance(Tolerance tolerance)
+		{
+			throw new NotImplementedException();
 		}
 
 		private void writeViewport(Viewport viewport)
