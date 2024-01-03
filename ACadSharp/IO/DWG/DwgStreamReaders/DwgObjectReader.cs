@@ -14,6 +14,7 @@ using System.IO;
 using System;
 using ACadSharp.Types;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
+using System.Net;
 
 namespace ACadSharp.IO.DWG
 {
@@ -828,6 +829,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readLeader();
 					break;
 				case ObjectType.TOLERANCE:
+					template = this.readTolerance();
 					break;
 				case ObjectType.MLINE:
 					template = this.readMLine();
@@ -3310,6 +3312,42 @@ namespace ACadSharp.IO.DWG
 			mLeaderStyle.TextBottomAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
 			//	BS	272	Bottom attachment (see paragraph on LEADER for more details).
 			mLeaderStyle.TextTopAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
+
+			return template;
+		}
+
+		private CadTemplate readTolerance()
+		{
+			Tolerance tolerance = new Tolerance();
+			CadToleranceTemplate template = new CadToleranceTemplate(tolerance);
+
+			//Common Entity Data
+			this.readCommonEntityData(template);
+
+			//R13 - R14 Only:
+			if (this.R13_14Only)
+			{
+				//Unknown short S
+				short s = this._objectReader.ReadBitShort();
+				//Height BD --
+				double height = this._objectReader.ReadBitDouble();
+				//Dimgap(?) BD dimgap at time of creation, *dimscale
+				double dimscale = this._objectReader.ReadBitDouble();
+			}
+
+			//Common:
+			//Ins pt 3BD 10
+			tolerance.InsertionPoint = this._objectReader.Read3BitDouble();
+			//X direction 3BD 11
+			tolerance.Direction = this._objectReader.Read3BitDouble();
+			//Extrusion 3BD 210 etc.
+			tolerance.Normal = this._objectReader.Read3BitDouble();
+			//Text string BS 1
+			tolerance.Text = this._textReader.ReadVariableText();
+
+			//Common Entity Handle Data
+			//H DIMSTYLE(hard pointer)
+			template.DimensionStyleHandle = this.handleReference();
 
 			return template;
 		}
