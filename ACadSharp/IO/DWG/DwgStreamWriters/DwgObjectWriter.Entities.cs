@@ -1804,7 +1804,32 @@ namespace ACadSharp.IO.DWG
 
 		private void writeTolerance(Tolerance tolerance)
 		{
-			throw new NotImplementedException();
+			this.writeCommonEntityData(tolerance);
+
+			//R13 - R14 Only:
+			if (this.R13_14Only)
+			{
+				//Unknown short S
+				this._writer.WriteBitShort(0);
+				//Height BD --
+				this._writer.WriteBitDouble(0.0);
+				//Dimgap(?) BD dimgap at time of creation, *dimscale
+				this._writer.WriteBitDouble(0.0);
+			}
+
+			//Common:
+			//Ins pt 3BD 10
+			this._writer.Write3BitDouble(tolerance.InsertionPoint);
+			//X direction 3BD 11
+			this._writer.Write3BitDouble(tolerance.Direction);
+			//Extrusion 3BD 210 etc.
+			this._writer.Write3BitDouble(tolerance.Normal);
+			//Text string BS 1
+			this._writer.WriteVariableText(tolerance.Text);
+
+			//Common Entity Handle Data
+			//H DIMSTYLE(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, tolerance.Style);
 		}
 
 		private void writeViewport(Viewport viewport)
