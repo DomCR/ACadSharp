@@ -1,16 +1,14 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
 using ACadSharp.Tables;
-using System;
 
 namespace ACadSharp.IO.Templates
 {
 	internal class CadDimensionTemplate : CadEntityTemplate
 	{
-		public ulong StyleHandle { get; set; }
+		public ulong? StyleHandle { get; set; }
 
-		public ulong BlockHandle { get; set; }
+		public ulong? BlockHandle { get; set; }
 
 		public string BlockName { get; set; }
 
@@ -20,39 +18,18 @@ namespace ACadSharp.IO.Templates
 
 		public CadDimensionTemplate(Dimension dimension) : base(dimension) { }
 
-		public override bool AddName(int dxfcode, string name)
-		{
-			bool value = base.AddName(dxfcode, name);
-			if (value)
-				return value;
-
-			switch (dxfcode)
-			{
-				case 2:
-					this.BlockName = name;
-					value = true;
-					break;
-				case 3:
-					this.StyleName = name;
-					value = true;
-					break;
-			}
-
-			return value;
-		}
-
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
 			Dimension dimension = this.CadObject as Dimension;
 
-			if (builder.TryGetCadObject<DimensionStyle>(this.StyleHandle, out DimensionStyle style))
+			if (this.getTableReference(builder, this.StyleHandle, this.StyleName, out DimensionStyle style))
 			{
 				dimension.Style = style;
 			}
 
-			if (builder.TryGetCadObject<Block>(this.BlockHandle, out Block block))
+			if (this.getTableReference(builder, this.BlockHandle, this.BlockName, out BlockRecord block))
 			{
 				dimension.Block = block;
 			}

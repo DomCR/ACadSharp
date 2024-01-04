@@ -2,11 +2,9 @@
 using ACadSharp.IO.Templates;
 using CSMath;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Numerics;
 
 namespace ACadSharp.IO.DXF
 {
@@ -189,6 +187,8 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), readEntitySubclassMap);
 				case DxfFileToken.EntityText:
 					return this.readEntityCodes<TextEntity>(new CadTextEntityTemplate(new TextEntity()), readTextEntity);
+				case DxfFileToken.EntityTolerance:
+					return this.readEntityCodes<Tolerance>(new CadToleranceTemplate(new Tolerance()), readTolerance);
 				case DxfFileToken.EntityVertex:
 					return this.readEntityCodes<Entity>(new CadVertexTemplate(), readVertex);
 				case DxfFileToken.EntityViewport:
@@ -311,6 +311,20 @@ namespace ACadSharp.IO.DXF
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[mapName]);
+			}
+		}
+
+		private bool readTolerance(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadToleranceTemplate tmp = template as CadToleranceTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 3:
+					tmp.DimensionStyleName = this._reader.ValueAsString;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
 			}
 		}
 

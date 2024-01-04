@@ -14,6 +14,7 @@ using System.IO;
 using System;
 using ACadSharp.Types;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
+using System.Net;
 
 namespace ACadSharp.IO.DWG
 {
@@ -828,6 +829,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readLeader();
 					break;
 				case ObjectType.TOLERANCE:
+					template = this.readTolerance();
 					break;
 				case ObjectType.MLINE:
 					template = this.readMLine();
@@ -2816,7 +2818,7 @@ namespace ACadSharp.IO.DWG
 			CadMLeaderTemplate template = new CadMLeaderTemplate(mLeader);
 
 			this.readCommonEntityData(template);
-			
+
 			//	270 Version, expected to be 2
 			var f270 = _objectReader.ReadBitShort();
 
@@ -2880,17 +2882,17 @@ namespace ACadSharp.IO.DWG
 
 			//if (R2007pre)
 			//{
-				//	BL number of arrow  heads  Read2Bits returns 2 --> 0
-				//int arrowHeadCount = _objectReader.ReadBitLong();
-				//for (int ah = 0; ah < arrowHeadCount; ah++) {
-				//	//  DXF:	94  BL Arrowhead Index (DXF)
-				//	//	ODA:	94 B Is Default
-				//	int arrowheadIndex = _objectReader.ReadBitLong();
-				//	//bool isDefault = _objectReader.ReadBit();
-				//	bool isDefault = true;
-				//	//  345 Arrowhead ID
-				//	template.ArrowheadHandles.Add(this.handleReference(), isDefault);
-				//}
+			//	BL number of arrow  heads  Read2Bits returns 2 --> 0
+			//int arrowHeadCount = _objectReader.ReadBitLong();
+			//for (int ah = 0; ah < arrowHeadCount; ah++) {
+			//	//  DXF:	94  BL Arrowhead Index (DXF)
+			//	//	ODA:	94 B Is Default
+			//	int arrowheadIndex = _objectReader.ReadBitLong();
+			//	//bool isDefault = _objectReader.ReadBit();
+			//	bool isDefault = true;
+			//	//  345 Arrowhead ID
+			//	template.ArrowheadHandles.Add(this.handleReference(), isDefault);
+			//}
 			//}
 
 			//	BL Number of Block Labels 
@@ -2899,9 +2901,11 @@ namespace ACadSharp.IO.DWG
 			//  302 Block Attribute Text String
 			//  177 Block Attribute Index
 			//  44  Block Attribute Width
-			for (int bl = 0; bl < blockLabelCount; bl++) {
+			for (int bl = 0; bl < blockLabelCount; bl++)
+			{
 				var attributeHandle = this.handleReference();
-				var blockAttribute = new MultiLeader.BlockAttribute() {
+				var blockAttribute = new MultiLeader.BlockAttribute()
+				{
 					Text = _textReader.ReadVariableText(),
 					Index = _objectReader.ReadBitShort(),
 					Width = _objectReader.ReadBitDouble()
@@ -2918,7 +2922,7 @@ namespace ACadSharp.IO.DWG
 			mLeader.TextAttachmentPoint = (TextAttachmentPointType)_objectReader.ReadBitShort();
 			//	45	BD	ScaleFactor
 			mLeader.ScaleFactor = _objectReader.ReadBitDouble();
-			
+
 			//  271 Text attachment direction for MText contents
 			mLeader.TextAttachmentDirection = (TextAttachmentDirectionType)_objectReader.ReadBitShort();
 			//  272 Bottom text attachment direction (sequence my be interchanged)
@@ -2934,13 +2938,14 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-
-		private MultiLeaderAnnotContext readMultiLeaderAnnotContext(CadMLeaderTemplate template) {
+		private MultiLeaderAnnotContext readMultiLeaderAnnotContext(CadMLeaderTemplate template)
+		{
 			MultiLeaderAnnotContext annotContext = new MultiLeaderAnnotContext();
-		
+
 			//	BL	-	Number of leader roots
 			int leaderRootCount = _objectReader.ReadBitLong();
-			for (int i = 0; i < leaderRootCount; i++) {
+			for (int i = 0; i < leaderRootCount; i++)
+			{
 				annotContext.LeaderRoots.Add(readLeaderRoot(template));
 			}
 
@@ -2965,7 +2970,8 @@ namespace ACadSharp.IO.DWG
 			annotContext.AttachmentType = (AttachmentType)_objectReader.ReadBitShort();
 			//	B	290	Has text contents
 			annotContext.HasTextContents = _objectReader.ReadBit();
-			if (annotContext.HasTextContents) {
+			if (annotContext.HasTextContents)
+			{
 				//	TV	304	Text label
 				annotContext.TextLabel = _textReader.ReadVariableText();
 				//	3BD	11	Normal vector
@@ -3016,7 +3022,8 @@ namespace ACadSharp.IO.DWG
 				//	Column sizes
 				//  BD	144	Column size
 				int columnSizesCount = _objectReader.ReadBitLong();
-				for (int i = 0; i < columnSizesCount; i++) {
+				for (int i = 0; i < columnSizesCount; i++)
+				{
 					annotContext.ColumnSizes.Add(_objectReader.ReadBitDouble());
 				}
 
@@ -3026,7 +3033,8 @@ namespace ACadSharp.IO.DWG
 				_objectReader.ReadBit();
 				//	ELSE(Has text contents)
 			}
-			else if (annotContext.HasContentsBlock = _objectReader.ReadBit()) {
+			else if (annotContext.HasContentsBlock = _objectReader.ReadBit())
+			{
 				//B	296	Has contents block
 				//IF Has contents block
 				//	H	341	AcDbBlockTableRecord handle (soft pointer)
@@ -3093,7 +3101,8 @@ namespace ACadSharp.IO.DWG
 			return annotContext;
 		}
 
-		private LeaderRoot readLeaderRoot(CadMLeaderTemplate template) {
+		private LeaderRoot readLeaderRoot(CadMLeaderTemplate template)
+		{
 			LeaderRoot leaderRoot = new LeaderRoot();
 
 			//	B		290		Is content valid(ODA writes true)/DXF: Has Set Last Leader Line Point
@@ -3110,7 +3119,8 @@ namespace ACadSharp.IO.DWG
 			//	3BD		12		Break start point
 			//	3BD		13		Break end point
 			int breakStartEndPointCount = _objectReader.ReadBitLong();
-			for (int bsep = 0; bsep < breakStartEndPointCount; bsep++) {
+			for (int bsep = 0; bsep < breakStartEndPointCount; bsep++)
+			{
 				leaderRoot.BreakStartEndPointsPairs.Add(new StartEndPointPair(
 					_objectReader.Read3BitDouble(),
 					_objectReader.Read3BitDouble()));
@@ -3124,7 +3134,8 @@ namespace ACadSharp.IO.DWG
 			//	Leader lines
 			//	BL		Number of leader lines
 			int leaderLineCount = _objectReader.ReadBitLong();
-			for (int ll = 0; ll < leaderLineCount; ll++) {
+			for (int ll = 0; ll < leaderLineCount; ll++)
+			{
 				leaderRoot.Lines.Add(readLeaderLine(template));
 			}
 
@@ -3134,7 +3145,8 @@ namespace ACadSharp.IO.DWG
 			return leaderRoot;
 		}
 
-		private LeaderLine readLeaderLine(CadMLeaderTemplate template) {
+		private LeaderLine readLeaderLine(CadMLeaderTemplate template)
+		{
 			LeaderLine leaderLine = new LeaderLine();
 			CadMLeaderTemplate.LeaderLineSubTemplate leaderLineSubTemplate = new CadMLeaderTemplate.LeaderLineSubTemplate(leaderLine);
 			template.LeaderLineSubTemplates.Add(leaderLineSubTemplate);
@@ -3143,14 +3155,16 @@ namespace ACadSharp.IO.DWG
 			//	BL	-	Number of points
 			//	3BD		10		Point
 			int pointCount = _objectReader.ReadBitLong();
-			for (int p = 0; p < pointCount; p++) {
+			for (int p = 0; p < pointCount; p++)
+			{
 				leaderLine.Points.Add(_objectReader.Read3BitDouble());
 			}
 
 			//	Add optional Break Info (one or more)
 			//	BL	Break info count
 			leaderLine.BreakInfoCount = _objectReader.ReadBitLong();
-			if (leaderLine.BreakInfoCount > 0) {
+			if (leaderLine.BreakInfoCount > 0)
+			{
 				//	BL	90		Segment index
 				leaderLine.SegmentIndex = _objectReader.ReadBitLong();
 
@@ -3158,7 +3172,8 @@ namespace ACadSharp.IO.DWG
 				//	3BD	11	Start Point
 				//	3BD	12	End point
 				int startEndPointCount = _objectReader.ReadBitLong();
-				for (int sep = 0; sep < startEndPointCount; sep++) {
+				for (int sep = 0; sep < startEndPointCount; sep++)
+				{
 					leaderLine.StartEndPoints.Add(new StartEndPointPair(
 						_objectReader.Read3BitDouble(),
 						_objectReader.Read3BitDouble()));
@@ -3244,11 +3259,12 @@ namespace ACadSharp.IO.DWG
 			mLeaderStyle.TextLeftAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
 			//	BS	178	Right attachment (see paragraph on LEADER for more details).
 			mLeaderStyle.TextRightAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
-			if (R2010Plus) {//	IF IsNewFormat OR DXF file
-				//	BS	175	Text angle type (see paragraph on LEADER for more details).
+			if (R2010Plus)
+			{//	IF IsNewFormat OR DXF file
+			 //	BS	175	Text angle type (see paragraph on LEADER for more details).
 				mLeaderStyle.TextAngle = (TextAngleType)_objectReader.ReadBitShort();
-			
-			}	//	END IF IsNewFormat OR DXF file
+
+			}   //	END IF IsNewFormat OR DXF file
 			//	BS	176	Text alignment type
 			mLeaderStyle.TextAlignment = (TextAlignmentType)_objectReader.ReadBitShort();
 			//	CMC	93	Text color
@@ -3257,8 +3273,9 @@ namespace ACadSharp.IO.DWG
 			mLeaderStyle.TextHeight = _objectReader.ReadBitDouble();
 			//	B	292	Text frame enabled
 			mLeaderStyle.TextFrame = _objectReader.ReadBit();
-			if (R2010Plus) {//	IF IsNewFormat OR DXF file
-				//	B	297	Always align text left
+			if (R2010Plus)
+			{//	IF IsNewFormat OR DXF file
+			 //	B	297	Always align text left
 				mLeaderStyle.TextAlignAlwaysLeft = _objectReader.ReadBit();
 			}//	END IF IsNewFormat OR DXF file
 			//	BD	46	Align space
@@ -3295,6 +3312,42 @@ namespace ACadSharp.IO.DWG
 			mLeaderStyle.TextBottomAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
 			//	BS	272	Bottom attachment (see paragraph on LEADER for more details).
 			mLeaderStyle.TextTopAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
+
+			return template;
+		}
+
+		private CadTemplate readTolerance()
+		{
+			Tolerance tolerance = new Tolerance();
+			CadToleranceTemplate template = new CadToleranceTemplate(tolerance);
+
+			//Common Entity Data
+			this.readCommonEntityData(template);
+
+			//R13 - R14 Only:
+			if (this.R13_14Only)
+			{
+				//Unknown short S
+				short s = this._objectReader.ReadBitShort();
+				//Height BD --
+				double height = this._objectReader.ReadBitDouble();
+				//Dimgap(?) BD dimgap at time of creation, *dimscale
+				double dimscale = this._objectReader.ReadBitDouble();
+			}
+
+			//Common:
+			//Ins pt 3BD 10
+			tolerance.InsertionPoint = this._objectReader.Read3BitDouble();
+			//X direction 3BD 11
+			tolerance.Direction = this._objectReader.Read3BitDouble();
+			//Extrusion 3BD 210 etc.
+			tolerance.Normal = this._objectReader.Read3BitDouble();
+			//Text string BS 1
+			tolerance.Text = this._textReader.ReadVariableText();
+
+			//Common Entity Handle Data
+			//H DIMSTYLE(hard pointer)
+			template.DimensionStyleHandle = this.handleReference();
 
 			return template;
 		}
