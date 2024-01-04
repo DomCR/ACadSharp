@@ -75,5 +75,10 @@ namespace ACadSharp.Entities
 		public string Text { get; set; }
 
 		private DimensionStyle _style = DimensionStyle.Default;
+
+		public string GetVisualText()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
