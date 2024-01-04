@@ -115,7 +115,7 @@ namespace ACadSharp.Tests.IO
 
 		private void writeDwgFile(string file, CadDocument doc)
 		{
-			if (doc.Header.Version < ACadVersion.AC1014 || doc.Header.Version > ACadVersion.AC1018)
+			if (isSupportedVersion(doc.Header.Version))
 				return;
 
 			using (DwgWriter writer = new DwgWriter(file, doc))
