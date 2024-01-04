@@ -41,7 +41,7 @@ namespace ACadSharp
 		/// <returns></returns>
 		/// <exception cref="NotImplementedException"></exception>
 		public static T GetCenter<T>(T start, T end, double bulge)
-			where T : IVector<T>, new()
+			where T : IVector, new()
 		{
 			//Needs a plane of reference in case is in 3D
 			throw new NotImplementedException();

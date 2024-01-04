@@ -4,7 +4,6 @@ using CSMath;
 using CSUtilities.Extensions;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -71,10 +70,7 @@ namespace ACadSharp
 				XY vector = (XY)this._property.GetValue(obj);
 
 				int index = (code / 10) % 10 - 1;
-				double[] components = vector.GetComponents();
-				components[index] = Convert.ToDouble(value);
-
-				vector = vector.SetComponents(components);
+				vector[index] = Convert.ToDouble(value);
 
 				this._property.SetValue(obj, vector);
 			}
@@ -83,10 +79,7 @@ namespace ACadSharp
 				XYZ vector = (XYZ)this._property.GetValue(obj);
 
 				int index = (code / 10) % 10 - 1;
-				double[] components = vector.GetComponents();
-				components[index] = Convert.ToDouble(value);
-
-				vector = vector.SetComponents(components);
+				vector[index] = Convert.ToDouble(value);
 
 				this._property.SetValue(obj, vector);
 			}
@@ -235,8 +228,7 @@ namespace ACadSharp
 				IVector vector = (IVector)this._property.GetValue(obj);
 
 				int index = (code / 10) % 10 - 1;
-				double[] components = vector.GetComponents();
-				return components[index];
+				return vector[index];
 			}
 			else if (this._property.PropertyType.IsEquivalentTo(typeof(DateTime)))
 			{
