@@ -35,6 +35,15 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(40)]
 		public double LeaderLength { get; set; }
 
+		/// <inheritdoc/>
+		public override double Measurement
+		{
+			get
+			{
+				throw new System.NotImplementedException();
+			}
+		}
+
 		public DimensionDiameter() : base(DimensionType.Diameter) { }
 	}
 }

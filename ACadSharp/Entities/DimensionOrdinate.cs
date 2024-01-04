@@ -35,6 +35,15 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(14, 24, 34)]
 		public XYZ LeaderEndpoint { get; set; }
 
+		/// <inheritdoc/>
+		public override double Measurement
+		{
+			get
+			{
+				throw new System.NotImplementedException();
+			}
+		}
+
 		public DimensionOrdinate() : base(DimensionType.Ordinate) { }
 	}
 }

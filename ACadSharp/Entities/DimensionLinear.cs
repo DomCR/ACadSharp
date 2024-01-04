@@ -28,6 +28,15 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation { get; set; }
 
+		/// <inheritdoc/>
+		public override double Measurement
+		{
+			get
+			{
+				throw new System.NotImplementedException();
+			}
+		}
+
 		public DimensionLinear() : base(DimensionType.Linear) { }
 	}
 }
