@@ -2993,10 +2993,9 @@ namespace ACadSharp.Header
 					else
 					{
 						IVector vector = (IVector)p.GetValue(this);
-						var arr = vector.GetComponents();
-						for (int i = 0; i < arr.Length; i++)
+						for (int i = 0; i < vector.Dimension; i++)
 						{
-							value.Add(att.ValueCodes[i], arr[i]);
+							value.Add(att.ValueCodes[i], vector[i]);
 						}
 					}
 

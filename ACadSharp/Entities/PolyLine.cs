@@ -106,8 +106,8 @@ namespace ACadSharp.Entities
 					//Is a line
 					e = new Line
 					{
-						StartPoint = XYZ.CreateFrom(curr.Location.GetComponents()),
-						EndPoint = XYZ.CreateFrom(next.Location.GetComponents()),
+						StartPoint = XYZ.CreateFrom(curr.Location),
+						EndPoint = XYZ.CreateFrom(next.Location),
 						Normal = polyline.Normal,
 						Thickness = polyline.Thickness,
 					};

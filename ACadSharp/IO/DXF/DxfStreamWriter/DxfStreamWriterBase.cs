@@ -21,10 +21,9 @@
 
 		public void Write(int code, CSMath.IVector value, DxfClassMap map)
 		{
-			double[] comp = value.GetComponents();
-			for (int i = 0; i < comp.Length; i++)
+			for (int i = 0; i < value.Dimension; i++)
 			{
-				this.Write(code + i * 10, comp[i], map);
+				this.Write(code + i * 10, value[i], map);
 			}
 		}
 
