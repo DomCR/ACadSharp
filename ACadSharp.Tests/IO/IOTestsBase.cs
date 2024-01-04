@@ -281,5 +281,38 @@ namespace ACadSharp.Tests.IO
 				files.Add(string.Empty);
 			}
 		}
+
+		protected bool isSupportedVersion(ACadVersion version)
+		{
+			switch (version)
+			{
+				case ACadVersion.MC0_0:
+				case ACadVersion.AC1_2:
+				case ACadVersion.AC1_4:
+				case ACadVersion.AC1_50:
+				case ACadVersion.AC2_10:
+				case ACadVersion.AC1002:
+				case ACadVersion.AC1003:
+				case ACadVersion.AC1004:
+				case ACadVersion.AC1006:
+				case ACadVersion.AC1009:
+				case ACadVersion.AC1012:
+					return false;
+				case ACadVersion.AC1014:
+				case ACadVersion.AC1015:
+				case ACadVersion.AC1018:
+					return true;
+				case ACadVersion.AC1021:
+					return false;
+				case ACadVersion.AC1024:
+					return true;
+				case ACadVersion.AC1027:
+				case ACadVersion.AC1032:
+					return true;
+				case ACadVersion.Unknown:
+				default:
+					return false;
+			}
+		}
 	}
 }
