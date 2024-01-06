@@ -109,7 +109,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Hard reference to associated annotation (mtext, tolerance, or insert entity)
 		/// </summary>
-		[DxfCodeValue(340)]
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public Entity AssociatedAnnotation { get; internal set; }
 
 
