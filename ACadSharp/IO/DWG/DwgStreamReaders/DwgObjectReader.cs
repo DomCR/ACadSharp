@@ -1890,9 +1890,9 @@ namespace ACadSharp.IO.DWG
 			//The actual 70 - group value comes from 3 things:
 			//6 for being an ordinate DIMENSION, plus whatever bits "Flags 1" and "Flags 2" specify.
 
-			///<see cref="DwgObjectWriter.writeCommonDimensionData"></see>
-			//TODO: set dimension type
-			byte dimensionType = this._objectReader.ReadByte();
+			byte flags = (this._objectReader.ReadByte());
+			dimension.IsTextUserDefinedLocation = (flags & 0b01) == 0;
+			dimension.IsOrdinateTypeX = (flags & 0b10) == 0;
 
 			//User text TV 1
 			dimension.Text = this._textReader.ReadVariableText();
@@ -3265,7 +3265,7 @@ namespace ACadSharp.IO.DWG
 				mLeaderStyle.TextAngle = (TextAngleType)_objectReader.ReadBitShort();
 
 			}   //	END IF IsNewFormat OR DXF file
-			//	BS	176	Text alignment type
+				//	BS	176	Text alignment type
 			mLeaderStyle.TextAlignment = (TextAlignmentType)_objectReader.ReadBitShort();
 			//	CMC	93	Text color
 			mLeaderStyle.TextColor = _mergedReaders.ReadCmColor();
@@ -3278,7 +3278,7 @@ namespace ACadSharp.IO.DWG
 			 //	B	297	Always align text left
 				mLeaderStyle.TextAlignAlwaysLeft = _objectReader.ReadBit();
 			}//	END IF IsNewFormat OR DXF file
-			//	BD	46	Align space
+			 //	BD	46	Align space
 			mLeaderStyle.AlignSpace = _objectReader.ReadBitDouble();
 			//	H	343	Block handle (hard pointer)
 			template.BlockContentHandle = this.handleReference();

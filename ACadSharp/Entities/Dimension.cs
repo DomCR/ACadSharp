@@ -64,8 +64,51 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				var flags = this._flags | DimensionType.BlockReference;
-				return flags;
+				return this._flags;
+			}
+		}
+
+		/// <summary>
+		/// Ordinate type. If true, ordinate is X-type else is ordinate is Y-type
+		/// </summary>
+		public bool IsOrdinateTypeX
+		{
+			get
+			{
+				return this._flags.HasFlag(DimensionType.OrdinateTypeX);
+			}
+			set
+			{
+				if (value)
+				{
+					this._flags |= DimensionType.OrdinateTypeX;
+				}
+				else
+				{
+					this._flags &= ~DimensionType.OrdinateTypeX;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location
+		/// </summary>
+		public bool IsTextUserDefinedLocation
+		{
+			get
+			{
+				return this._flags.HasFlag(DimensionType.TextUserDefinedLocation);
+			}
+			set
+			{
+				if (value)
+				{
+					this._flags |= DimensionType.TextUserDefinedLocation;
+				}
+				else
+				{
+					this._flags &= ~DimensionType.TextUserDefinedLocation;
+				}
 			}
 		}
 
@@ -193,13 +236,14 @@ namespace ACadSharp.Entities
 
 		private string _text;
 
-		private readonly DimensionType _flags;
+		private DimensionType _flags;
 
 		private DimensionStyle _style = DimensionStyle.Default;
 
 		protected Dimension(DimensionType type)
 		{
 			this._flags = type;
+			this._flags |= DimensionType.BlockReference;
 		}
 
 		public override CadObject Clone()
