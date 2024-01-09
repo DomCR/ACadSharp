@@ -15,6 +15,7 @@ using System;
 using ACadSharp.Types;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
 using System.Net;
+using CSUtilities.Converters;
 
 namespace ACadSharp.IO.DWG
 {
@@ -523,11 +524,6 @@ namespace ACadSharp.IO.DWG
 				ulong appHandle = this._objectReader.HandleReference();
 				long endPos = this._objectReader.Position + size;
 
-				if (template.CadObject.Handle == 240)
-				{
-
-				}
-
 				//template.ExtendedData
 				ExtendedData edata = this.readExtendedDataRecords(endPos);
 
@@ -583,7 +579,7 @@ namespace ACadSharp.IO.DWG
 						//It's not a string; read it as hex, as usual for handles.
 						//(There's no length specifier this time.)
 						arr = this._objectReader.ReadBytes(8);
-						handle = System.BitConverter.ToUInt64(arr, 0);
+						handle = BigEndianConverter.Instance.ToUInt64(arr);
 						record = new ExtendedDataRecord(dxfCode, handle);
 						break;
 					//10 - 13 (1010 - 1013)
