@@ -566,7 +566,7 @@ namespace ACadSharp.IO.DWG
 						//it as hex, as usual for handles. (There's no length specifier this time.) 
 						//Even layer 0 is referred to by handle here.
 						byte[] arr = this._objectReader.ReadBytes(8);
-						ulong handle = System.BitConverter.ToUInt64(arr, 0);
+						ulong handle = BigEndianConverter.Instance.ToUInt64(arr);
 						record = new ExtendedDataRecord(dxfCode, handle);
 						break;
 					case DxfCode.ExtendedDataBinaryChunk:
