@@ -27,8 +27,8 @@ namespace ACadSharp
 			radius = c / Math.Sin(theta / 2.0);
 
 			double gamma = (Math.PI - theta) / 2;
-			double phi = start.AngleFrom(end) + Math.Sign(bulge) * gamma;
-			return new XY(start.X + radius * Math.Cos(phi), start.Y + radius * Math.Sin(phi));
+			double phi = (end - start).GetAngle() + Math.Sign(bulge) * gamma;
+			return new XY(start.X + radius * CSMath.MathUtils.Cos(phi), start.Y + radius * CSMath.MathUtils.Sin(phi));
 		}
 
 		/// <summary>

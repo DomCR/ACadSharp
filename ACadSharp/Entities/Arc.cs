@@ -54,7 +54,7 @@ namespace ACadSharp.Entities
 
 			double startAngle;
 			double endAngle;
-			if (bulge > 0)
+			if (bulge < 0)
 			{
 				startAngle = p2.Subtract(center).GetAngle();
 				endAngle = p1.Subtract(center).GetAngle();
