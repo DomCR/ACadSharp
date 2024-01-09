@@ -106,7 +106,12 @@ namespace ACadSharp.Entities
 
 		//77	Color to use if leader's DIMCLRD = BYBLOCK
 
-		//340	Hard reference to associated annotation(mtext, tolerance, or insert entity)
+		/// <summary>
+		/// Hard reference to associated annotation (mtext, tolerance, or insert entity)
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
+		public Entity AssociatedAnnotation { get; internal set; }
+
 
 		/// <summary>
 		/// Normal vector
@@ -132,7 +137,9 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(213, 223, 233)]
 		public XYZ AnnotationOffset { get; set; } = XYZ.Zero;
 
+
 		private DimensionStyle _style = DimensionStyle.Default;
+
 
 		internal override void AssignDocument(CadDocument doc)
 		{
