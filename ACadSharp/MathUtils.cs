@@ -4,18 +4,18 @@ using System;
 namespace ACadSharp
 {
 	public static class MathUtils
-    {
+	{
 		/// <summary>
 		/// Factor for converting radians to degrees.
 		/// </summary>
-        public const double RadToDeg = (180 / Math.PI);
+		public const double RadToDeg = (180 / Math.PI);
 
 		/// <summary>
 		/// Factor for converting degrees to radians.
 		/// </summary>
-        public const double DegToRad = (Math.PI / 180);
+		public const double DegToRad = (Math.PI / 180);
 
-        public static XY GetCenter(XY start, XY end, double bulge)
+		public static XY GetCenter(XY start, XY end, double bulge)
 		{
 			return GetCenter(start, end, bulge, out _);
 		}
@@ -27,7 +27,7 @@ namespace ACadSharp
 			radius = c / Math.Sin(theta / 2.0);
 
 			double gamma = (Math.PI - theta) / 2;
-			double phi = XY.GetAngle(start, end) + Math.Sign(bulge) * gamma;
+			double phi = start.AngleFrom(end) + Math.Sign(bulge) * gamma;
 			return new XY(start.X + radius * Math.Cos(phi), start.Y + radius * Math.Sin(phi));
 		}
 
