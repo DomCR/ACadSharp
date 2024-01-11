@@ -18,7 +18,6 @@ namespace ACadSharp
 
 		/// <summary>Get ExtendedData for a specific AppId from the Dictionary.</summary>
 		/// <param name="app">The AppId object.</param>
-		/// <param name="edata">The ExtendedData object.</param>
 		public ExtendedData Get(AppId app)
 		{
 			return this._data[app];
