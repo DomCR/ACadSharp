@@ -1734,6 +1734,9 @@ namespace ACadSharp.IO.DWG
 			//14 - pt 3BD 14 See DXF documentation.
 			dimension.LeaderEndpoint = this._objectReader.Read3BitDouble();
 
+			byte flags = (this._objectReader.ReadByte());
+			dimension.IsOrdinateTypeX = (flags & 0b01) != 0;
+
 			this.readCommonDimensionHandles(template);
 
 			return template;
@@ -1892,7 +1895,6 @@ namespace ACadSharp.IO.DWG
 
 			byte flags = (this._objectReader.ReadByte());
 			dimension.IsTextUserDefinedLocation = (flags & 0b01) == 0;
-			dimension.IsOrdinateTypeX = (flags & 0b10) == 0;
 
 			//User text TV 1
 			dimension.Text = this._textReader.ReadVariableText();
