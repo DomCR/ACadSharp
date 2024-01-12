@@ -17,7 +17,7 @@ namespace ACadSharp.Tests.Entities
 		[Fact]
 		public void IsOrdinateTypeXTest()
 		{
-			DimensionAligned aligned = new DimensionAligned();
+			DimensionOrdinate aligned = new DimensionOrdinate();
 			
 			Assert.False(aligned.Flags.HasFlag(DimensionType.OrdinateTypeX));
 			

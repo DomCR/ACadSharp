@@ -69,28 +69,6 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Ordinate type. If true, ordinate is X-type else is ordinate is Y-type
-		/// </summary>
-		public bool IsOrdinateTypeX
-		{
-			get
-			{
-				return this._flags.HasFlag(DimensionType.OrdinateTypeX);
-			}
-			set
-			{
-				if (value)
-				{
-					this._flags |= DimensionType.OrdinateTypeX;
-				}
-				else
-				{
-					this._flags &= ~DimensionType.OrdinateTypeX;
-				}
-			}
-		}
-
-		/// <summary>
 		/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location
 		/// </summary>
 		public bool IsTextUserDefinedLocation
@@ -234,9 +212,9 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		private string _text;
+		protected DimensionType _flags;
 
-		private DimensionType _flags;
+		private string _text;
 
 		private DimensionStyle _style = DimensionStyle.Default;
 

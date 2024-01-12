@@ -46,7 +46,10 @@ namespace ACadSharp.IO.Templates
 		{
 			Dimension dimension = this.CadObject as Dimension;
 
-			dimension.IsOrdinateTypeX = flags.HasFlag(DimensionType.OrdinateTypeX);
+			if (dimension is DimensionOrdinate ordinate)
+			{
+				ordinate.IsOrdinateTypeX = flags.HasFlag(DimensionType.OrdinateTypeX);
+			}
 			dimension.IsTextUserDefinedLocation = flags.HasFlag(DimensionType.TextUserDefinedLocation);
 		}
 
@@ -72,7 +75,6 @@ namespace ACadSharp.IO.Templates
 			dimensionAligned.TextMiddlePoint = dimension.TextMiddlePoint;
 			dimensionAligned.InsertionPoint = dimension.InsertionPoint;
 			dimensionAligned.Normal = dimension.Normal;
-			dimensionAligned.IsOrdinateTypeX = dimension.IsOrdinateTypeX;
 			dimensionAligned.IsTextUserDefinedLocation = dimension.IsTextUserDefinedLocation;
 			dimensionAligned.AttachmentPoint = dimension.AttachmentPoint;
 			dimensionAligned.LineSpacingStyle = dimension.LineSpacingStyle;
