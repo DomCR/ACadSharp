@@ -33,7 +33,7 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(70)]
 		public StandardFlags Flags { get; set; }
 
-		private string _name;
+		private string _name = string.Empty;
 
 		internal TableEntry() { }
 
