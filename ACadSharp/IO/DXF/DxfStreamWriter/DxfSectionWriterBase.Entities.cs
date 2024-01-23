@@ -290,6 +290,11 @@ namespace ACadSharp.IO.DXF
 
 			this.writeHatchPattern(hatch, hatch.Pattern);
 
+			if (hatch.PixelSize != 0)
+			{
+				this._writer.Write(47, hatch.PixelSize, map);
+			}
+
 			this._writer.Write(98, hatch.SeedPoints.Count);
 			foreach (XY spoint in hatch.SeedPoints)
 			{
