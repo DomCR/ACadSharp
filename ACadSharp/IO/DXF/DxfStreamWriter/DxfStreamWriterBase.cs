@@ -68,7 +68,20 @@
 			}
 
 			this.writeDxfCode(code);
-			this.writeValue(code, value);
+
+			if (value is string s)
+			{
+				s = s
+					.Replace("\n", "^J")
+					.Replace("\r", "^M")
+					.Replace("\t", "^I")
+					.Replace("^", "^ ");
+				this.writeValue(code, s);
+			}
+			else
+			{
+				this.writeValue(code, value);
+			}
 		}
 
 		/// <inheritdoc/>
