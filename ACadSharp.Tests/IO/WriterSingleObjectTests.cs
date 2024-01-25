@@ -75,6 +75,15 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(mtext);
 			}
 
+			public void SingleMTextMultiline()
+			{
+				MText mtext = new MText();
+
+				mtext.Value = "HELLO I'm an MTEXT\n and I have multiple lines";
+
+				this.Document.Entities.Add(mtext);
+			}
+
 			public void SinglePoint()
 			{
 				this.Document.Entities.Add(new Point(XYZ.Zero));
@@ -111,6 +120,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
 		}
 	}

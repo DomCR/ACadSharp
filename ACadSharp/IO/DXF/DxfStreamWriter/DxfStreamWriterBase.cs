@@ -72,10 +72,10 @@
 			if (value is string s)
 			{
 				s = s
+					.Replace("^", "^ ")
 					.Replace("\n", "^J")
 					.Replace("\r", "^M")
-					.Replace("\t", "^I")
-					.Replace("^", "^ ");
+					.Replace("\t", "^I");
 				this.writeValue(code, s);
 			}
 			else
