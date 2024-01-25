@@ -1,4 +1,6 @@
-﻿namespace ACadSharp.IO.DXF
+﻿using System;
+
+namespace ACadSharp.IO.DXF
 {
 	internal abstract class DxfStreamWriterBase : IDxfStreamWriter
 	{

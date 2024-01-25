@@ -75,6 +75,15 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(mtext);
 			}
 
+			public void SingleMTextSpecialCharacter()
+			{
+				MText mtext = new MText();
+
+				mtext.Value = "∅45,6";
+
+				this.Document.Entities.Add(mtext);
+			}
+
 			public void SingleMTextMultiline()
 			{
 				MText mtext = new MText();
@@ -120,6 +129,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
 		}
