@@ -3,51 +3,51 @@ using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ACadSharp.Tests.IO.DWG
+namespace ACadSharp.Tests.IO.DXF
 {
-	public class DwgWriterSingleObjectTests : WriterSingleObjectTests
+	public class DxfWriterSingleObjectTests : WriterSingleObjectTests
 	{
-		public DwgWriterSingleObjectTests(ITestOutputHelper output) : base(output) { }
+		public DxfWriterSingleObjectTests(ITestOutputHelper output) : base(output) { }
 
 		[Theory()]
 		[MemberData(nameof(Data))]
 		public void WriteCasesAC1018(SingleCaseGenerator data)
 		{
-			this.writeDwgFile(data, ACadVersion.AC1018);
+			this.writeDxfFile(data, ACadVersion.AC1018);
 		}
 
 		[Theory()]
 		[MemberData(nameof(Data))]
 		public void WriteCasesAC1024(SingleCaseGenerator data)
 		{
-			this.writeDwgFile(data, ACadVersion.AC1024);
+			this.writeDxfFile(data, ACadVersion.AC1024);
 		}
 
 		[Theory()]
 		[MemberData(nameof(Data))]
 		public void WriteCasesAC1027(SingleCaseGenerator data)
 		{
-			this.writeDwgFile(data, ACadVersion.AC1027);
+			this.writeDxfFile(data, ACadVersion.AC1027);
 		}
 
 		[Theory()]
 		[MemberData(nameof(Data))]
 		public void WriteCasesAC1032(SingleCaseGenerator data)
 		{
-			this.writeDwgFile(data, ACadVersion.AC1032);
+			this.writeDxfFile(data, ACadVersion.AC1032);
 		}
 
-		private void writeDwgFile(SingleCaseGenerator data, ACadVersion version)
+		private void writeDxfFile(SingleCaseGenerator data, ACadVersion version)
 		{
 			if (!TestVariables.RunDwgWriterSingleCases)
 				return;
 
-			string path = this.getPath(data.Name, "dwg", version);
+			string path = this.getPath(data.Name, "dxf", version);
 
 			data.Document.Header.Version = version;
-			DwgWriter.Write(path, data.Document, this.onNotification);
+			DxfWriter.Write(path, data.Document, false, this.onNotification);
 
-			this.checkDwgDocumentInAutocad(path);
+			this.checkDxfDocumentInAutocad(path);
 		}
 
 		private string getPath(string name, string ext, ACadVersion version)
