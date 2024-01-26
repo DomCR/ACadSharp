@@ -110,7 +110,7 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters
 			//RL: HANDSEED(Handle seed) if < 0x7fffffff, otherwise - 1.
 			writer.WriteRawLong(handseed);
 			//RL : Educational plot stamp(default value is 0)
-			writer.WriteRawLong(1);
+			writer.WriteRawLong(0);
 			//RS: 0
 			writer.WriteRawShort(0);
 			//RS: Number of saves part 1 – number of saves part 2
