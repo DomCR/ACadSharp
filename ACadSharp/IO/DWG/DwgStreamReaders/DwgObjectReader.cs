@@ -5450,7 +5450,7 @@ namespace ACadSharp.IO.DWG
 
 			dwgColor.Color = new Color(colorIndex);
 
-			return template;
+			return null;
 		}
 	}
 }
