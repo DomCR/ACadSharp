@@ -15,6 +15,11 @@ namespace ACadSharp.IO.Templates {
 
 		public override void Build(CadDocumentBuilder builder) {
 
+			if (builder.TryGetCadObject<CadObject>(this.OwnerHandle, out CadObject cadObject))
+			{
+
+			}
+
 			base.Build(builder);
 
 			if (builder.TryGetCadObject(this.LeaderLineTypeHandle, out LineType lineType)) {
