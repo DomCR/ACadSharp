@@ -277,7 +277,10 @@ namespace ACadSharp.IO.DWG
 			//and is not present in the binary form here.)
 			this._writer.WriteBitDouble(dimension.InsertionPoint.Z);
 
-			this._writer.WriteByte(0);
+			byte flags = 0;
+			flags |= dimension.IsTextUserDefinedLocation ? (byte)0b00 : (byte)0b01;
+
+			this._writer.WriteByte(flags);
 
 			//User text TV 1
 			this._writer.WriteVariableText(dimension.Text);
@@ -412,6 +415,9 @@ namespace ACadSharp.IO.DWG
 			this._writer.Write3BitDouble(dimension.FeatureLocation);
 			//14 - pt 3BD 14 See DXF documentation.
 			this._writer.Write3BitDouble(dimension.LeaderEndpoint);
+
+			byte flag = (byte)(dimension.IsOrdinateTypeX ? 1 : 0);
+			this._writer.WriteByte(flag);
 		}
 
 		private void writeEllipse(Ellipse ellipse)

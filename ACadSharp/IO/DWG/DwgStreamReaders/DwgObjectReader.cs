@@ -15,6 +15,7 @@ using System;
 using ACadSharp.Types;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
 using System.Net;
+using CSUtilities.Converters;
 
 namespace ACadSharp.IO.DWG
 {
@@ -523,11 +524,6 @@ namespace ACadSharp.IO.DWG
 				ulong appHandle = this._objectReader.HandleReference();
 				long endPos = this._objectReader.Position + size;
 
-				if (template.CadObject.Handle == 240)
-				{
-
-				}
-
 				//template.ExtendedData
 				ExtendedData edata = this.readExtendedDataRecords(endPos);
 
@@ -570,7 +566,7 @@ namespace ACadSharp.IO.DWG
 						//it as hex, as usual for handles. (There's no length specifier this time.) 
 						//Even layer 0 is referred to by handle here.
 						byte[] arr = this._objectReader.ReadBytes(8);
-						ulong handle = System.BitConverter.ToUInt64(arr, 0);
+						ulong handle = BigEndianConverter.Instance.ToUInt64(arr);
 						record = new ExtendedDataRecord(dxfCode, handle);
 						break;
 					case DxfCode.ExtendedDataBinaryChunk:
@@ -583,7 +579,7 @@ namespace ACadSharp.IO.DWG
 						//It's not a string; read it as hex, as usual for handles.
 						//(There's no length specifier this time.)
 						arr = this._objectReader.ReadBytes(8);
-						handle = System.BitConverter.ToUInt64(arr, 0);
+						handle = BigEndianConverter.Instance.ToUInt64(arr);
 						record = new ExtendedDataRecord(dxfCode, handle);
 						break;
 					//10 - 13 (1010 - 1013)
@@ -1734,6 +1730,9 @@ namespace ACadSharp.IO.DWG
 			//14 - pt 3BD 14 See DXF documentation.
 			dimension.LeaderEndpoint = this._objectReader.Read3BitDouble();
 
+			byte flags = (this._objectReader.ReadByte());
+			dimension.IsOrdinateTypeX = (flags & 0b01) != 0;
+
 			this.readCommonDimensionHandles(template);
 
 			return template;
@@ -1890,9 +1889,8 @@ namespace ACadSharp.IO.DWG
 			//The actual 70 - group value comes from 3 things:
 			//6 for being an ordinate DIMENSION, plus whatever bits "Flags 1" and "Flags 2" specify.
 
-			///<see cref="DwgObjectWriter.writeCommonDimensionData"></see>
-			//TODO: set dimension type
-			byte dimensionType = this._objectReader.ReadByte();
+			byte flags = (this._objectReader.ReadByte());
+			dimension.IsTextUserDefinedLocation = (flags & 0b01) == 0;
 
 			//User text TV 1
 			dimension.Text = this._textReader.ReadVariableText();
@@ -3698,8 +3696,6 @@ namespace ACadSharp.IO.DWG
 			style.LastHeight = this._objectReader.ReadBitDouble();
 			//Font name TV 3
 			style.Filename = this._textReader.ReadVariableText();
-			if (string.IsNullOrWhiteSpace(name))
-				style.Name = style.Filename;
 			//Bigfont name TV 4
 			style.BigFontFilename = this._textReader.ReadVariableText();
 
@@ -5454,7 +5450,7 @@ namespace ACadSharp.IO.DWG
 
 			dwgColor.Color = new Color(colorIndex);
 
-			return template;
+			return null;
 		}
 	}
 }

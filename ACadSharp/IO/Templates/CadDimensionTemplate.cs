@@ -42,6 +42,17 @@ namespace ACadSharp.IO.Templates
 			public DimensionPlaceholder() : base(DimensionType.Linear) { }
 		}
 
+		public void SetDimensionFlags(DimensionType flags)
+		{
+			Dimension dimension = this.CadObject as Dimension;
+
+			if (dimension is DimensionOrdinate ordinate)
+			{
+				ordinate.IsOrdinateTypeX = flags.HasFlag(DimensionType.OrdinateTypeX);
+			}
+			dimension.IsTextUserDefinedLocation = flags.HasFlag(DimensionType.TextUserDefinedLocation);
+		}
+
 		public void SetDimensionObject(Dimension dimensionAligned)
 		{
 			dimensionAligned.Handle = this.CadObject.Handle;
@@ -64,6 +75,7 @@ namespace ACadSharp.IO.Templates
 			dimensionAligned.TextMiddlePoint = dimension.TextMiddlePoint;
 			dimensionAligned.InsertionPoint = dimension.InsertionPoint;
 			dimensionAligned.Normal = dimension.Normal;
+			dimensionAligned.IsTextUserDefinedLocation = dimension.IsTextUserDefinedLocation;
 			dimensionAligned.AttachmentPoint = dimension.AttachmentPoint;
 			dimensionAligned.LineSpacingStyle = dimension.LineSpacingStyle;
 			dimensionAligned.LineSpacingFactor = dimension.LineSpacingFactor;

@@ -5,7 +5,7 @@ using Xunit;
 
 namespace ACadSharp.Tests.Entities
 {
-	public class PolylineTest
+	public class PolylineTests
 	{
 		[Fact]
 		public void ClearVertrticesTest()

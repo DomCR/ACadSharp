@@ -64,8 +64,29 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				var flags = this._flags | DimensionType.BlockReference;
-				return flags;
+				return this._flags;
+			}
+		}
+
+		/// <summary>
+		/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location
+		/// </summary>
+		public bool IsTextUserDefinedLocation
+		{
+			get
+			{
+				return this._flags.HasFlag(DimensionType.TextUserDefinedLocation);
+			}
+			set
+			{
+				if (value)
+				{
+					this._flags |= DimensionType.TextUserDefinedLocation;
+				}
+				else
+				{
+					this._flags &= ~DimensionType.TextUserDefinedLocation;
+				}
 			}
 		}
 
@@ -191,15 +212,16 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		private string _text;
+		protected DimensionType _flags;
 
-		private readonly DimensionType _flags;
+		private string _text;
 
 		private DimensionStyle _style = DimensionStyle.Default;
 
 		protected Dimension(DimensionType type)
 		{
 			this._flags = type;
+			this._flags |= DimensionType.BlockReference;
 		}
 
 		public override CadObject Clone()
