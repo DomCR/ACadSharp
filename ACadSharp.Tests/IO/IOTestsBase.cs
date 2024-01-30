@@ -116,6 +116,10 @@ namespace ACadSharp.Tests.IO
 						break;
 					}
 				}
+				if (!File.Exists(AcCoreConsolePath))
+				{
+				    Console.Error.WriteLine("accoreconsole.exe not found");
+				}
 			}
 			else
 			{
