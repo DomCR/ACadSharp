@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-
 using ACadSharp.Attributes;
-using ACadSharp.Entities;
 using ACadSharp.Tables;
 
 using CSMath;

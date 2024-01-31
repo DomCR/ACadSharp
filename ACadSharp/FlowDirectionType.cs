@@ -1,4 +1,4 @@
-﻿namespace ACadSharp.Objects
+﻿namespace ACadSharp
 {
 	public enum FlowDirectionType : short
 	{

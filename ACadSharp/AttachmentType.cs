@@ -1,4 +1,4 @@
-﻿namespace ACadSharp.Entities
+﻿namespace ACadSharp
 {
 	public enum AttachmentType : short
 	{
