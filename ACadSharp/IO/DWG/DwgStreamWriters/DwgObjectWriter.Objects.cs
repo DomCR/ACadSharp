@@ -23,8 +23,11 @@ namespace ACadSharp.IO.DWG
 		{
 			switch (obj)
 			{
+				case Material:
 				case MultiLeaderStyle:
+				case MultiLeaderAnnotContext:
 				case SortEntitiesTable:
+				case VisualStyle:
 				case XRecord:
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
 					return;
