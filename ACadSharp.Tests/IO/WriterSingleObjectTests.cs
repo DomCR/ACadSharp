@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
 using CSMath;
+using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -132,6 +133,11 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
+		}
+
+		protected string getPath(string name, string ext, ACadVersion version)
+		{
+			return Path.Combine(singleCasesOutFolder, $"{name}_{version}.{ext}");
 		}
 	}
 }

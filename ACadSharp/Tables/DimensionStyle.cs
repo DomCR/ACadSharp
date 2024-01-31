@@ -13,7 +13,6 @@ namespace ACadSharp.Tables
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.TableDimstyle"/> <br/>
 	/// Dxf class name <see cref="DxfSubclassMarker.DimensionStyle"/>
-	/// see https://help.autodesk.com/view/ACDLT/2024/ENU/?guid=GUID-1B946C9E-0AB1-40E6-8675-80A51851BEA1.
 	/// </remarks>
 	[DxfName(DxfFileToken.TableDimstyle)]
 	[DxfSubClass(DxfSubclassMarker.DimensionStyle)]

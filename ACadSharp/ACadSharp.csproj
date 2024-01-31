@@ -4,7 +4,7 @@
     <TargetFrameworks>net6.0;net5.0;net48;netstandard2.1</TargetFrameworks>
     <Authors>DomCr</Authors>
     <PackageId>ACadSharp</PackageId>
-    <PackageTags>C# Dwg Dxf Autocad</PackageTags>
+    <PackageTags>C# Dwg Dxf</PackageTags>
     <RepositoryUrl>https://github.com/DomCR/ACadSharp</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>

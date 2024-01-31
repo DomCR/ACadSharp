@@ -37,7 +37,7 @@ namespace ACadSharp.Tests.IO.DWG
 			this.writeDwgFile(data, ACadVersion.AC1032);
 		}
 
-		private void writeDwgFile(SingleCaseGenerator data, ACadVersion version)
+		protected virtual void writeDwgFile(SingleCaseGenerator data, ACadVersion version)
 		{
 			if (!TestVariables.RunDwgWriterSingleCases)
 				return;
@@ -46,13 +46,6 @@ namespace ACadSharp.Tests.IO.DWG
 
 			data.Document.Header.Version = version;
 			DwgWriter.Write(path, data.Document, this.onNotification);
-
-			this.checkDwgDocumentInAutocad(path);
-		}
-
-		private string getPath(string name, string ext, ACadVersion version)
-		{
-			return Path.Combine(_singleCasesOutFolder, $"{name}_{version}.{ext}");
 		}
 	}
 }

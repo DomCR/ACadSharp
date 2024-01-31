@@ -2593,7 +2593,7 @@ namespace ACadSharp.IO.DWG
 			this._objectReader.ReadBitDouble();
 			//Extents wid BD ---Undocumented and not present in DXF or entget
 			this._objectReader.ReadBitDouble();
-			//Text TV 1 All text in one long string (Autocad format)
+			//Text TV 1 All text in one long string
 			mtext.Value = this._textReader.ReadVariableText();
 
 			//H 7 STYLE (hard pointer)
@@ -3870,7 +3870,7 @@ namespace ACadSharp.IO.DWG
 				this._mergedReaders.ReadBitDouble();
 				//Contrast BD ? Default value is 0
 				this._mergedReaders.ReadBitDouble();
-				//Abient color CMC? Default value is AutoCAD indexed color 250
+				//Abient color CMC? Default value is indexed color 250
 				this._mergedReaders.ReadCmColor();
 			}
 
@@ -5171,7 +5171,7 @@ namespace ACadSharp.IO.DWG
 				//a string contains a short length N, and then N Unicode characters (2 bytes each).
 				//An indicator of 70 would mean a 2 byte short following. An indicator of 10 indicates
 				//3 8-byte doubles following. An indicator of 40 means 1 8-byte double. These indicator
-				//numbers all follow the normal AutoCAD DXF convention for group codes.
+				//numbers all follow the normal DXF convention for group codes.
 				var code = this._objectReader.ReadShort();
 				var groupCode = GroupCodeValue.TransformValue(code);
 
