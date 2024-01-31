@@ -1,4 +1,5 @@
 ﻿using CSUtilities;
+using System.Runtime.InteropServices;
 
 namespace ACadSharp.Tests
 {

@@ -1,10 +1,12 @@
-﻿namespace ACadSharp.Tables {
+﻿namespace ACadSharp.Objects
+{
 
 	/// <summary>
-	/// Specifies the draw order of a <see cref="Objects.MultiLeaderAnnotContext.LeaderRoot"/>
+	/// Specifies the draw order of a <see cref="MultiLeaderAnnotContext.LeaderRoot"/>
 	/// in a <see cref="Entities.MultiLeader"/> entity.
 	/// </summary>
-	public enum LeaderDrawOrderType {
+	public enum LeaderDrawOrderType
+	{
 
 		/// <summary>
 		/// 0 = draw leader head first

@@ -1,9 +1,8 @@
-﻿namespace ACadSharp {
-
-	public enum AttachmentType : short {
-
+﻿namespace ACadSharp
+{
+	public enum AttachmentType : short
+	{
 		CenterExtents = 0,
-
 		InsertionPoint = 1
 	}
 }
