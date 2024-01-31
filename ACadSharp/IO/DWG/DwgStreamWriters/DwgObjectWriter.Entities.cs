@@ -1641,7 +1641,7 @@ namespace ACadSharp.IO.DWG
 			//Extents wid BD ---Undocumented and not present in DXF or entget
 			this._writer.WriteBitDouble(0);
 
-			//Text TV 1 All text in one long string (Autocad format)
+			//Text TV 1 All text in one long string
 			this._writer.WriteVariableText(mtext.Value);
 
 			//H 7 STYLE (hard pointer)
