@@ -1,12 +1,9 @@
 ﻿using ACadSharp.IO;
 using ACadSharp.Tests.Common;
-using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Xunit;
 using Xunit.Abstractions;
-using static System.Environment;
 
 namespace ACadSharp.Tests.IO
 {
@@ -89,38 +86,6 @@ namespace ACadSharp.Tests.IO
 			{
 				return;
 			}
-
-			var acCoreConsolePath = @"D:\Programs\Autodesk\AutoCAD 2023\accoreconsole.exe";
-
-			if (!File.Exists(acCoreConsolePath))
-			{
-				var programFiles = Environment.GetFolderPath(SpecialFolder.ProgramFiles);
-				var autoCadPath = Path.Combine(programFiles, "Autodesk");
-
-				var baseAutoCadPaths = new string[]
-				{
-						"AutoCAD 2023",
-						"AutoCAD LT 2023",
-						"AutoCAD 2022",
-						"AutoCAD LT 2022",
-						"AutoCAD 2021",
-						"AutoCAD LT 2021",
-				};
-
-				for (var i = 0; i < baseAutoCadPaths.Length; i++)
-				{
-					var consolePath = Path.Combine(autoCadPath, baseAutoCadPaths[i], "accoreconsole.exe");
-					if (File.Exists(consolePath))
-					{
-						AcCoreConsolePath = consolePath;
-						break;
-					}
-				}
-			}
-			else
-			{
-				AcCoreConsolePath = acCoreConsolePath;
-			}
 		}
 
 		public IOTestsBase(ITestOutputHelper output)
@@ -140,125 +105,6 @@ namespace ACadSharp.Tests.IO
 			if (e.Exception != null)
 			{
 				_output.WriteLine(e.Exception.ToString());
-			}
-		}
-
-		[Obsolete("delete", error: true)]
-		protected void checkDxfDocumentInAutocad(string path)
-		{
-			if (!TestVariables.LocalEnv || !TestVariables.DxfAutocadConsoleCheck)
-				return;
-
-			System.Diagnostics.Process process = new System.Diagnostics.Process();
-
-			try
-			{
-				process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-				process.StartInfo.FileName = AcCoreConsolePath;
-				process.StartInfo.Arguments = $"/i \"{Path.Combine(_samplesFolder, "sample_base/empty.dwg")}\" /l en - US";
-				process.StartInfo.UseShellExecute = false;
-				process.StartInfo.RedirectStandardOutput = true;
-				process.StartInfo.RedirectStandardInput = true;
-				process.StartInfo.StandardOutputEncoding = Encoding.ASCII;
-
-				Assert.True(process.Start());
-
-				process.StandardInput.WriteLine($"_DXFIN");
-				process.StandardInput.WriteLine($"{path}");
-
-				string l = process.StandardOutput.ReadLine();
-				bool testPassed = true;
-				while (!process.StandardOutput.EndOfStream)
-				{
-					string li = l.Replace("\0", "");
-					if (!string.IsNullOrEmpty(li))
-					{
-						if (li.Contains("Invalid or incomplete DXF input -- drawing discarded.")
-							|| li.Contains("error", StringComparison.OrdinalIgnoreCase))
-						{
-							testPassed = false;
-						}
-
-						_output.WriteLine(li);
-					}
-
-					var t = process.StandardOutput.ReadLineAsync();
-
-					//The last line gets into an infinite loop
-					if (t.Wait(1000))
-					{
-						l = t.Result;
-					}
-					else
-					{
-						break;
-					}
-				}
-
-				if (!testPassed)
-					throw new Exception("File loading with accoreconsole failed");
-			}
-			finally
-			{
-				process.Kill();
-				process.Dispose();
-			}
-		}
-
-		protected void checkDwgDocumentInAutocad(string path)
-		{
-			if (!TestVariables.LocalEnv || !TestVariables.DwgAutocadConsoleCheck)
-				return;
-
-			System.Diagnostics.Process process = new System.Diagnostics.Process();
-
-			try
-			{
-				process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-				process.StartInfo.FileName = "\"D:\\Programs\\Autodesk\\AutoCAD 2023\\accoreconsole.exe\"";
-				process.StartInfo.Arguments = $"/i \"{path}\" /l en - US";
-				process.StartInfo.UseShellExecute = false;
-				process.StartInfo.RedirectStandardOutput = true;
-				process.StartInfo.RedirectStandardInput = true;
-				process.StartInfo.StandardOutputEncoding = Encoding.ASCII;
-
-				Assert.True(process.Start());
-
-				string l = process.StandardOutput.ReadLine();
-				bool testPassed = true;
-				while (!process.StandardOutput.EndOfStream)
-				{
-					string li = l.Replace("\0", "");
-					if (!string.IsNullOrEmpty(li))
-					{
-						if (li.Contains("Invalid or incomplete DXF input -- drawing discarded.")
-							|| li.Contains("error", StringComparison.OrdinalIgnoreCase))
-						{
-							testPassed = false;
-						}
-
-						_output.WriteLine(li);
-					}
-
-					var t = process.StandardOutput.ReadLineAsync();
-
-					//The last line gets into an infinite loop
-					if (t.Wait(1000))
-					{
-						l = t.Result;
-					}
-					else
-					{
-						break;
-					}
-				}
-
-				if (!testPassed)
-					throw new Exception("File loading with accoreconsole failed");
-			}
-			finally
-			{
-				process.Kill();
 			}
 		}
 

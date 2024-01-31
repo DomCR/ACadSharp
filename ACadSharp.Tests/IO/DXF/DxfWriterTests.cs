@@ -1,10 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
-using ACadSharp.IO.DXF;
 using ACadSharp.Tests.Common;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
@@ -42,8 +39,6 @@ namespace ACadSharp.Tests.IO.DXF
 			{
 				CadDocument readed = re.Read();
 			}
-
-			this.checkDxfDocumentInAutocad(Path.GetFullPath(path));
 		}
 
 		[Theory]
@@ -73,8 +68,6 @@ namespace ACadSharp.Tests.IO.DXF
 			{
 				CadDocument readed = re.Read();
 			}
-
-			this.checkDxfDocumentInAutocad(path);
 		}
 
 		[Theory]
@@ -109,8 +102,6 @@ namespace ACadSharp.Tests.IO.DXF
 				wr.OnNotification += this.onNotification;
 				wr.Write();
 			}
-
-			this.checkDxfDocumentInAutocad(path);
 		}
 	}
 }

@@ -53,8 +53,6 @@ namespace ACadSharp.Tests.IO.DXF
 
 			data.Document.Header.Version = version;
 			DxfWriter.Write(path, data.Document, false, this.onNotification);
-
-			this.checkDxfDocumentInAutocad(path);
 		}
 
 		private string getPath(string name, string ext, ACadVersion version)

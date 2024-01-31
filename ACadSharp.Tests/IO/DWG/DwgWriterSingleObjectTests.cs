@@ -46,8 +46,6 @@ namespace ACadSharp.Tests.IO.DWG
 
 			data.Document.Header.Version = version;
 			DwgWriter.Write(path, data.Document, this.onNotification);
-
-			this.checkDwgDocumentInAutocad(path);
 		}
 
 		private string getPath(string name, string ext, ACadVersion version)

@@ -108,9 +108,6 @@ namespace ACadSharp.Tests.IO
 				writer.OnNotification += this.onNotification;
 				writer.Write();
 			}
-
-			if (check)
-				this.checkDxfDocumentInAutocad(Path.GetFullPath(file));
 		}
 
 		private void writeDwgFile(string file, CadDocument doc)
@@ -123,8 +120,6 @@ namespace ACadSharp.Tests.IO
 				writer.OnNotification += this.onNotification;
 				writer.Write();
 			}
-
-			this.checkDwgDocumentInAutocad(Path.GetFullPath(file));
 		}
 
 		private void writeDxfFile(string file, CadDocument doc, bool check)
@@ -134,9 +129,6 @@ namespace ACadSharp.Tests.IO
 				writer.OnNotification += this.onNotification;
 				writer.Write();
 			}
-
-			if (check)
-				this.checkDxfDocumentInAutocad(Path.GetFullPath(file));
 		}
 	}
 }

@@ -38,8 +38,6 @@ namespace ACadSharp.Tests.IO.DWG
 			{
 				CadDocument readed = re.Read();
 			}
-
-			this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
 		}
 
 		[Theory]
@@ -71,8 +69,6 @@ namespace ACadSharp.Tests.IO.DWG
 			{
 				CadDocument readed = re.Read();
 			}
-
-			this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
 		}
 
 		[Theory]
