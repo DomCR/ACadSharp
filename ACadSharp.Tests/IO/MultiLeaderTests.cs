@@ -16,7 +16,7 @@ namespace ACadSharp.Tests.IO
 		[Fact]
 		public void MultiLeaderDwg()
 		{
-			string inPath = Path.Combine($"{_samplesFolder}", "multileader", "sample_MLeader_AC1032.dwg");
+			string inPath = Path.Combine($"{samplesFolder}", "multileader", "sample_MLeader_AC1032.dwg");
 			CadDocument doc = DwgReader.Read(inPath);
 
 			// There are 14 multileaders in DWG file

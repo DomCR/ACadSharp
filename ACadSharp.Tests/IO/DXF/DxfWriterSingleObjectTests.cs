@@ -54,10 +54,5 @@ namespace ACadSharp.Tests.IO.DXF
 			data.Document.Header.Version = version;
 			DxfWriter.Write(path, data.Document, false, this.onNotification);
 		}
-
-		protected string getPath(string name, string ext, ACadVersion version)
-		{
-			return Path.Combine(_singleCasesOutFolder, $"{name}_{version}.{ext}");
-		}
 	}
 }

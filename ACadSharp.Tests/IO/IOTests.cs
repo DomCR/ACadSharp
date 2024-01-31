@@ -16,11 +16,11 @@ namespace ACadSharp.Tests.IO
 		[Fact]
 		public void EmptyDwgToDxf()
 		{
-			string inPath = Path.Combine($"{_samplesFolder}", "sample_base", "empty.dwg");
+			string inPath = Path.Combine($"{samplesFolder}", "sample_base", "empty.dwg");
 			CadDocument doc = DwgReader.Read(inPath);
 
 			string file = Path.GetFileNameWithoutExtension(inPath);
-			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_out.dxf");
+			string pathOut = Path.Combine(samplesOutFolder, $"{file}_out.dxf");
 			this.writeDxfFile(pathOut, doc, true);
 		}
 
@@ -31,7 +31,7 @@ namespace ACadSharp.Tests.IO
 			CadDocument doc = DwgReader.Read(test);
 
 			string file = Path.GetFileNameWithoutExtension(test);
-			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_out.dwg");
+			string pathOut = Path.Combine(samplesOutFolder, $"{file}_out.dwg");
 
 			this.writeDwgFile(pathOut, doc);
 		}
@@ -43,7 +43,7 @@ namespace ACadSharp.Tests.IO
 			CadDocument doc = DwgReader.Read(test);
 
 			string file = Path.GetFileNameWithoutExtension(test);
-			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_out.dxf");
+			string pathOut = Path.Combine(samplesOutFolder, $"{file}_out.dxf");
 			this.writeDxfFile(pathOut, doc, true);
 		}
 
@@ -54,7 +54,7 @@ namespace ACadSharp.Tests.IO
 			CadDocument doc = DxfReader.Read(test);
 
 			string file = Path.GetFileNameWithoutExtension(test);
-			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_rewrite_out.dxf");
+			string pathOut = Path.Combine(samplesOutFolder, $"{file}_rewrite_out.dxf");
 			this.writeDxfFile(pathOut, doc, true);
 		}
 
@@ -75,7 +75,7 @@ namespace ACadSharp.Tests.IO
 			}
 
 			string file = Path.GetFileNameWithoutExtension(test);
-			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_moved_out.dwg");
+			string pathOut = Path.Combine(samplesOutFolder, $"{file}_moved_out.dwg");
 			this.writeDwgFile(pathOut, transfer);
 		}
 
@@ -96,7 +96,7 @@ namespace ACadSharp.Tests.IO
 			}
 
 			string file = Path.GetFileNameWithoutExtension(test);
-			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_moved_out.dxf");
+			string pathOut = Path.Combine(samplesOutFolder, $"{file}_moved_out.dxf");
 			this.writeDxfFile(pathOut, transfer, true);
 		}
 

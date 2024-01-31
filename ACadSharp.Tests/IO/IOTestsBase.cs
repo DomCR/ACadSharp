@@ -9,11 +9,11 @@ namespace ACadSharp.Tests.IO
 {
 	public abstract class IOTestsBase
 	{
-		protected const string _samplesFolder = "../../../../samples/";
+		protected static string samplesFolder => TestVariables.SamplesFolder;
 
-		protected const string _samplesOutFolder = "../../../../samples/out";
+		protected static string samplesOutFolder => TestVariables.OutputSamplesFolder;
 
-		protected const string _singleCasesOutFolder = "../../../../samples/out/single_cases";
+		protected static string singleCasesOutFolder => TestVariables.OutputSingleCasesFolder;
 
 		public static TheoryData<string> DwgFilePaths { get; }
 
@@ -30,7 +30,6 @@ namespace ACadSharp.Tests.IO
 
 		protected readonly DxfReaderConfiguration _dxfConfiguration = new DxfReaderConfiguration
 		{
-
 		};
 
 		protected readonly ITestOutputHelper _output;
@@ -40,19 +39,19 @@ namespace ACadSharp.Tests.IO
 		static IOTestsBase()
 		{
 			DwgFilePaths = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(_samplesFolder, $"*.dwg"))
+			foreach (string file in Directory.GetFiles(samplesFolder, $"*.dwg"))
 			{
 				DwgFilePaths.Add(file);
 			}
 
 			DxfAsciiFiles = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(_samplesFolder, "*_ascii.dxf"))
+			foreach (string file in Directory.GetFiles(samplesFolder, "*_ascii.dxf"))
 			{
 				DxfAsciiFiles.Add(file);
 			}
 
 			DxfBinaryFiles = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(_samplesFolder, "*_binary.dxf"))
+			foreach (string file in Directory.GetFiles(samplesFolder, "*_binary.dxf"))
 			{
 				DxfBinaryFiles.Add(file);
 			}
@@ -68,22 +67,6 @@ namespace ACadSharp.Tests.IO
 				ACadVersion.AC1027,
 				ACadVersion.AC1032
 			};
-
-			//Create folder, necessary in workflow
-			if (!Directory.Exists(_samplesOutFolder))
-			{
-				Directory.CreateDirectory(_samplesOutFolder);
-			}
-
-			if (!Directory.Exists(_singleCasesOutFolder))
-			{
-				Directory.CreateDirectory(_singleCasesOutFolder);
-			}
-
-			if (!TestVariables.LocalEnv)
-			{
-				return;
-			}
 		}
 
 		public IOTestsBase(ITestOutputHelper output)
@@ -108,7 +91,7 @@ namespace ACadSharp.Tests.IO
 
 		protected static void loadSamples(string folder, string ext, TheoryData<string> files)
 		{
-			string path = Path.Combine(_samplesFolder, "local", folder);
+			string path = Path.Combine(samplesFolder, "local", folder);
 
 			if (!Directory.Exists(path))
 			{
