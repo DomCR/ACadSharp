@@ -33,7 +33,6 @@ namespace ACadSharp.Tests.IO
 			string file = Path.GetFileNameWithoutExtension(test);
 			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_out.dwg");
 
-			//accoreconsole always fails because cannot recover the file
 			this.writeDwgFile(pathOut, doc);
 		}
 

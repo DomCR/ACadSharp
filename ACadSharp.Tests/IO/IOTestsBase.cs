@@ -15,8 +15,6 @@ namespace ACadSharp.Tests.IO
 
 		protected const string _singleCasesOutFolder = "../../../../samples/out/single_cases";
 
-		public static string AcCoreConsolePath { get; }
-
 		public static TheoryData<string> DwgFilePaths { get; }
 
 		public static TheoryData<string> DxfAsciiFiles { get; }
