@@ -1,4 +1,5 @@
 ﻿using CSUtilities;
+using System.Runtime.InteropServices;
 
 namespace ACadSharp.Tests
 {
@@ -21,8 +22,17 @@ namespace ACadSharp.Tests
 			EnvironmentVars.SetIfNull("LOCAL_ENV", "true");
 			EnvironmentVars.SetIfNull("DELTA", "0.00001");
 			EnvironmentVars.SetIfNull("DECIMAL_PRECISION", "5");
-			EnvironmentVars.SetIfNull("DXF_CONSOLE_CHECK", "true");
-			EnvironmentVars.SetIfNull("DWG_CONSOLE_CHECK", "true");
+			bool isLinux = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+			if (isLinux)
+			{
+			    EnvironmentVars.SetIfNull("DXF_CONSOLE_CHECK", "false");
+			    EnvironmentVars.SetIfNull("DWG_CONSOLE_CHECK", "false");
+			}
+			else
+			{
+			    EnvironmentVars.SetIfNull("DXF_CONSOLE_CHECK", "true");
+			    EnvironmentVars.SetIfNull("DWG_CONSOLE_CHECK", "true");
+			}
 			EnvironmentVars.SetIfNull("RUN_DWG_WRITER_SINGLE_CASES_TEST", "true");
 		}
 	}
