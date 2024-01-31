@@ -21,7 +21,7 @@ namespace ACadSharp.Tests.IO
 
 			string file = Path.GetFileNameWithoutExtension(inPath);
 			string pathOut = Path.Combine(samplesOutFolder, $"{file}_out.dxf");
-			this.writeDxfFile(pathOut, doc, true);
+			this.writeDxfFile(pathOut, doc);
 		}
 
 		[Theory]
@@ -44,7 +44,7 @@ namespace ACadSharp.Tests.IO
 
 			string file = Path.GetFileNameWithoutExtension(test);
 			string pathOut = Path.Combine(samplesOutFolder, $"{file}_out.dxf");
-			this.writeDxfFile(pathOut, doc, true);
+			this.writeDxfFile(pathOut, doc);
 		}
 
 		[Theory]
@@ -55,7 +55,7 @@ namespace ACadSharp.Tests.IO
 
 			string file = Path.GetFileNameWithoutExtension(test);
 			string pathOut = Path.Combine(samplesOutFolder, $"{file}_rewrite_out.dxf");
-			this.writeDxfFile(pathOut, doc, true);
+			this.writeDxfFile(pathOut, doc);
 		}
 
 		[Theory]
@@ -97,19 +97,10 @@ namespace ACadSharp.Tests.IO
 
 			string file = Path.GetFileNameWithoutExtension(test);
 			string pathOut = Path.Combine(samplesOutFolder, $"{file}_moved_out.dxf");
-			this.writeDxfFile(pathOut, transfer, true);
+			this.writeDxfFile(pathOut, transfer);
 		}
 
-		private void writeCadFile(string file, CadWriterBase writer, bool check)
-		{
-			using (writer)
-			{
-				writer.OnNotification += this.onNotification;
-				writer.Write();
-			}
-		}
-
-		private void writeDwgFile(string file, CadDocument doc)
+		protected virtual void writeDwgFile(string file, CadDocument doc)
 		{
 			if (doc.Header.Version < ACadVersion.AC1014 || doc.Header.Version > ACadVersion.AC1018)
 				return;
@@ -121,7 +112,7 @@ namespace ACadSharp.Tests.IO
 			}
 		}
 
-		private void writeDxfFile(string file, CadDocument doc, bool check)
+		protected virtual void writeDxfFile(string file, CadDocument doc)
 		{
 			using (DxfWriter writer = new DxfWriter(file, doc, false))
 			{
