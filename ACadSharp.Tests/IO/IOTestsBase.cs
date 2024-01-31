@@ -143,6 +143,7 @@ namespace ACadSharp.Tests.IO
 			}
 		}
 
+		[Obsolete("delete", error: true)]
 		protected void checkDxfDocumentInAutocad(string path)
 		{
 			if (!TestVariables.LocalEnv || !TestVariables.DxfAutocadConsoleCheck)
