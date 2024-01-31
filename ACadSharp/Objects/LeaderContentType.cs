@@ -1,7 +1,7 @@
-﻿namespace ACadSharp {
-
-	public enum LeaderContentType : short {
-
+﻿namespace ACadSharp.Objects
+{
+	public enum LeaderContentType : short
+	{
 		/// <summary>
 		/// None
 		/// </summary>
@@ -20,6 +20,6 @@
 		/// <summary>
 		/// Leader content is provided by a TOLERANCE entity
 		/// </summary>
-		Tolerance = 3 
+		Tolerance = 3
 	}
 }
