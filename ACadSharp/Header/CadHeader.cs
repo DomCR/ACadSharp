@@ -2849,7 +2849,7 @@ namespace ACadSharp.Header
 			}
 		}
 
-		public TextStyle DimensionTextStyle { get; private set; } = TextStyle.Default;
+		public TextStyle DimensionTextStyle { get; private set; } = TextStyle.Default;	//TODO: not updated when changed in the document, it should follow the same pattern as currentLayer
 
 		public DimensionStyle DimensionStyleOverrides { get; private set; } = DimensionStyle.Default;
 
