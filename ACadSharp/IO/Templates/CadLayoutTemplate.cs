@@ -1,6 +1,4 @@
-﻿using ACadSharp.Blocks;
-using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
+﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Collections.Generic;
@@ -17,7 +15,11 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? NamesUcsHandle { get; set; }
 
+		public ulong? LasActiveViewportHandle { get; set; }
+
 		public List<ulong> ViewportHandles { get; set; } = new List<ulong>();
+
+		public CadLayoutTemplate() : base(new Layout()) { }
 
 		public CadLayoutTemplate(Layout layout) : base(layout) { }
 
@@ -37,7 +39,7 @@ namespace ACadSharp.IO.Templates
 
 			if (builder.TryGetCadObject(this.BaseUcsHandle, out UCS ucs))
 			{
-				this.CadObject.UCS = ucs;
+				this.CadObject.BaseUCS = ucs;
 			}
 
 			if (builder.TryGetCadObject(this.NamesUcsHandle, out UCS nameducs))

@@ -7,8 +7,14 @@ namespace ACadSharp
 {
 	public abstract class DxfMapBase
 	{
+		/// <summary>
+		/// Name of the subclass map
+		/// </summary>
 		public string Name { get; set; }
 
+		/// <summary>
+		/// Properties linked to a dxf code
+		/// </summary>
 		public Dictionary<int, DxfProperty> DxfProperties { get; } = new Dictionary<int, DxfProperty>();
 
 		protected static void addClassProperties(DxfMapBase map, Type type)

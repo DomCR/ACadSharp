@@ -15,7 +15,12 @@ namespace ACadSharp.Tests.Common
 
 		public short NextShort()
 		{
-			return (short)Next(short.MinValue, short.MaxValue);
+			return NextShort(short.MinValue, short.MaxValue);
+		}
+
+		public short NextShort(short min, short max)
+		{
+			return (short)Next(min, max);
 		}
 
 		public object Next(Type t)
@@ -55,7 +60,7 @@ namespace ACadSharp.Tests.Common
 
 		public Color NextColor()
 		{
-			return new Color(this.NextShort());
+			return new Color(this.NextShort(0, 256));
 		}
 
 		public string RandomString(int length)

@@ -22,8 +22,11 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityEllipse;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Ellipse;
+
 		/// <summary>
-		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
+		/// Specifies the distance a 2D object is extruded above or below its elevation.
 		/// </summary>
 		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;

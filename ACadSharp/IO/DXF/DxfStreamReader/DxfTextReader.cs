@@ -1,6 +1,4 @@
-﻿using ACadSharp.Exceptions;
-using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -27,7 +25,7 @@ namespace ACadSharp.IO.DXF
 		public override void ReadNext()
 		{
 			base.ReadNext();
-			this.Position++;
+			this.Position += 2;
 		}
 
 		protected override void start()
@@ -39,8 +37,8 @@ namespace ACadSharp.IO.DXF
 
 		protected override string readStringLine()
 		{
-			this.Position++;
-			return this._stream.ReadLine();
+			this.ValueRaw = this._stream.ReadLine();
+			return this.ValueRaw;
 		}
 
 		protected override DxfCode readCode()

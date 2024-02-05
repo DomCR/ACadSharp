@@ -21,10 +21,13 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityArc;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Arc;
+
 		/// <summary>
 		/// The start angle in radians.
 		/// </summary>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double StartAngle { get; set; } = 0.0;
 
 		/// <summary>
@@ -33,7 +36,7 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// Use 6.28 radians to specify a closed circle or ellipse.
 		/// </remarks>
-		[DxfCodeValue(51)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double EndAngle { get; set; } = Math.PI;
 
 		public Arc() : base() { }
@@ -51,15 +54,15 @@ namespace ACadSharp.Entities
 
 			double startAngle;
 			double endAngle;
-			if (bulge > 0)
+			if (bulge < 0)
 			{
-				startAngle = p2.Substract(center).GetAngle();
-				endAngle = p1.Substract(center).GetAngle();
+				startAngle = p2.Subtract(center).GetAngle();
+				endAngle = p1.Subtract(center).GetAngle();
 			}
 			else
 			{
-				startAngle = p1.Substract(center).GetAngle();
-				endAngle = p2.Substract(center).GetAngle();
+				startAngle = p1.Subtract(center).GetAngle();
+				endAngle = p2.Subtract(center).GetAngle();
 			}
 
 			return new Arc

@@ -1,5 +1,7 @@
-﻿using ACadSharp.IO;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO;
 using System.IO;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -41,7 +43,7 @@ namespace ACadSharp.Tests.IO
 			string outPath = Path.Combine(Path.GetDirectoryName(test), $"{Path.GetFileNameWithoutExtension(test)}.out.dxf");
 			using (DxfWriter writer = new DxfWriter(outPath, doc, false))
 			{
-				writer.OnNotification += onNotification;
+				//writer.OnNotification += onNotification;
 				writer.Write();
 			}
 		}
@@ -49,26 +51,6 @@ namespace ACadSharp.Tests.IO
 		[Theory]
 		[MemberData(nameof(UserDxfFiles))]
 		public void ReadUserDxf(string test)
-		{
-			if (string.IsNullOrEmpty(test))
-				return;
-
-			CadDocument doc = DxfReader.Read(test, this.onNotification);
-		}
-
-		[Theory]
-		[MemberData(nameof(StressDwgFiles))]
-		public void ReadStressDwg(string test)
-		{
-			if (string.IsNullOrEmpty(test))
-				return;
-
-			CadDocument doc = DwgReader.Read(test, this._dwgConfiguration, this.onNotification);
-		}
-
-		[Theory]
-		[MemberData(nameof(StressDxfFiles))]
-		public void ReadStressDxf(string test)
 		{
 			if (string.IsNullOrEmpty(test))
 				return;

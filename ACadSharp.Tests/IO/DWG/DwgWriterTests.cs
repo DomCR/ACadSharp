@@ -1,8 +1,8 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Exceptions;
+using ACadSharp.Header;
 using ACadSharp.IO;
 using ACadSharp.Tests.Common;
-using System;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
@@ -17,10 +17,9 @@ namespace ACadSharp.Tests.IO.DWG
 		[MemberData(nameof(Versions))]
 		public void WriteEmptyTest(ACadVersion version)
 		{
+			string path = Path.Combine(samplesOutFolder, $"out_empty_sample_{version}.dwg");
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
-
-			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}.dwg");
 
 			using (var wr = new DwgWriter(path, doc))
 			{
@@ -39,8 +38,6 @@ namespace ACadSharp.Tests.IO.DWG
 			{
 				CadDocument readed = re.Read();
 			}
-
-			//this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
 		}
 
 		[Theory]
@@ -50,12 +47,13 @@ namespace ACadSharp.Tests.IO.DWG
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 
-			addEntities(doc);
+			this.addEntities(doc);
 
-			string path = Path.Combine(_samplesOutFolder, $"out_sample_{version}.dwg");
+			string path = Path.Combine(samplesOutFolder, $"out_sample_{version}.dwg");
 
 			using (var wr = new DwgWriter(path, doc))
 			{
+				wr.OnNotification += this.onNotification;
 				if (isSupportedVersion(version))
 				{
 					wr.Write();
@@ -71,8 +69,6 @@ namespace ACadSharp.Tests.IO.DWG
 			{
 				CadDocument readed = re.Read();
 			}
-
-			//this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
 		}
 
 		[Theory]
@@ -148,7 +144,7 @@ namespace ACadSharp.Tests.IO.DWG
 
 			using (var re = new DwgReader(stream, this.onNotification))
 			{
-				Header.CadHeader header = re.ReadHeader();
+				CadHeader header = re.ReadHeader();
 			}
 		}
 
@@ -156,37 +152,6 @@ namespace ACadSharp.Tests.IO.DWG
 		{
 			doc.Entities.Add(EntityFactory.Create<Point>());
 			doc.Entities.Add(EntityFactory.Create<Line>());
-		}
-
-		private bool isSupportedVersion(ACadVersion version)
-		{
-			switch (version)
-			{
-				case ACadVersion.MC0_0:
-				case ACadVersion.AC1_2:
-				case ACadVersion.AC1_4:
-				case ACadVersion.AC1_50:
-				case ACadVersion.AC2_10:
-				case ACadVersion.AC1002:
-				case ACadVersion.AC1003:
-				case ACadVersion.AC1004:
-				case ACadVersion.AC1006:
-				case ACadVersion.AC1009:
-				case ACadVersion.AC1012:
-					return false;
-				case ACadVersion.AC1014:
-				case ACadVersion.AC1015:
-				case ACadVersion.AC1018:
-					return true;
-				case ACadVersion.AC1021:
-				case ACadVersion.AC1024:
-				case ACadVersion.AC1027:
-				case ACadVersion.AC1032:
-					return false;
-				case ACadVersion.Unknown:
-				default:
-					return false;
-			}
 		}
 	}
 }

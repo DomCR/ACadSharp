@@ -4,7 +4,6 @@ using CSMath;
 using CSUtilities.Extensions;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -71,10 +70,7 @@ namespace ACadSharp
 				XY vector = (XY)this._property.GetValue(obj);
 
 				int index = (code / 10) % 10 - 1;
-				double[] components = vector.GetComponents();
-				components[index] = Convert.ToDouble(value);
-
-				vector = vector.SetComponents(components);
+				vector[index] = Convert.ToDouble(value);
 
 				this._property.SetValue(obj, vector);
 			}
@@ -83,17 +79,12 @@ namespace ACadSharp
 				XYZ vector = (XYZ)this._property.GetValue(obj);
 
 				int index = (code / 10) % 10 - 1;
-				double[] components = vector.GetComponents();
-				components[index] = Convert.ToDouble(value);
-
-				vector = vector.SetComponents(components);
+				vector[index] = Convert.ToDouble(value);
 
 				this._property.SetValue(obj, vector);
 			}
 			else if (this._property.PropertyType.IsEquivalentTo(typeof(Color)))
 			{
-				//TODO: Implement color setter
-
 				switch (code)
 				{
 					case 62:
@@ -101,6 +92,7 @@ namespace ACadSharp
 						break;
 					case 420:
 						// true color
+						this._property.SetValue(obj, Color.FromTrueColor(Convert.ToUInt32(value)));
 						break;
 					case 430:
 						// dictionary color
@@ -153,16 +145,14 @@ namespace ACadSharp
 			{
 				this._property.SetValue(obj, Enum.ToObject(this._property.PropertyType, value));
 			}
+			else if (this._property.PropertyType.IsEquivalentTo(typeof(ushort)))
+			{
+				this._property.SetValue(obj, Convert.ToUInt16(value));
+			}
 			else
 			{
 				this._property.SetValue(obj, value);
 			}
-		}
-
-		public object GetValue<TCadObject>(TCadObject obj)
-			where TCadObject : CadObject
-		{
-			return this._property.GetValue(obj);
 		}
 
 		public object GetValue<TCadObject>(int code, TCadObject obj)
@@ -238,8 +228,7 @@ namespace ACadSharp
 				IVector vector = (IVector)this._property.GetValue(obj);
 
 				int index = (code / 10) % 10 - 1;
-				double[] components = vector.GetComponents();
-				return components[index];
+				return vector[index];
 			}
 			else if (this._property.PropertyType.IsEquivalentTo(typeof(DateTime)))
 			{
@@ -258,11 +247,10 @@ namespace ACadSharp
 				{
 					case 62:
 					case 70:
-						//return color.Index;
-						return 0;
+						return color.Index;
 					case 420:
 						// true color
-						break;
+						return color.TrueColor;
 					case 430:
 						// dictionary color
 						break;

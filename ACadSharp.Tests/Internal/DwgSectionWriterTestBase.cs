@@ -1,9 +1,8 @@
-﻿using ACadSharp;
-using ACadSharp.IO;
+﻿using ACadSharp.IO;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ACadSharpInternal.Tests
+namespace ACadSharp.Tests.Internal
 {
 	public abstract class DwgSectionWriterTestBase
 	{

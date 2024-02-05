@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
-using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Types.Units;
 using CSMath;
@@ -11,23 +10,10 @@ using System.Reflection;
 
 namespace ACadSharp.Header
 {
-	public enum AttributeVisibilityMode
-	{
-		None = 0,
-		Normal = 1,
-		All = 2
-	}
-
 	public class CadHeader
 	{
-		//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
-
-		//TODO : Finish the header documentation
-
-		#region Header System Variables
-
 		/// <summary>
-		/// The AutoCAD drawing database version number.
+		/// The Drawing database version number.
 		/// </summary>
 		/// <remarks>
 		/// System variable ACADVER.
@@ -38,20 +24,6 @@ namespace ACadSharp.Header
 			get { return this.Version.ToString(); }
 			set
 			{
-				/*
-				 The AutoCAD drawing database version number:
-				AC1006 = R10
-				AC1009 = R11 and R12
-				AC1012 = R13
-				AC1014 = R14
-				AC1015 = AutoCAD 2000
-				AC1018 = AutoCAD 2004
-				AC1021 = AutoCAD 2007
-				AC1024 = AutoCAD 2010
-				AC1027 = AutoCAD 2013
-				AC1032 = AutoCAD 2018
-				 */
-
 				this.Version = CadUtils.GetVersionFromName(value);
 			}
 		}
@@ -68,8 +40,7 @@ namespace ACadSharp.Header
 		public short MaintenanceVersion { get; internal set; } = 0;
 
 		/// <summary>
-		/// Drawing code page; set to the system code page when a new drawing is created,
-		/// but not otherwise maintained by AutoCAD
+		/// Drawing code page.
 		/// </summary>
 		/// <remarks>
 		/// System variable DWGCODEPAGE
@@ -103,13 +74,13 @@ namespace ACadSharp.Header
 		/// System variable DIMASO <br/>
 		/// Obsolete; see DIMASSOC
 		/// </remarks>
-		[CadSystemVariable("$DIMASO", DxfCode.Int16)]
+		[CadSystemVariable("$DIMASO", 70)]
 		public bool AssociatedDimensions { get; set; } = true;
 
 		/// <summary>
 		/// System variable DIMSHO
 		/// </summary>
-		[CadSystemVariable("$DIMSHO", DxfCode.Int16)]
+		[CadSystemVariable("$DIMSHO", 70)]
 		public bool UpdateDimensionsWhileDragging { get; set; } = true;
 
 		/// <summary>
@@ -119,6 +90,15 @@ namespace ACadSharp.Header
 		/// System variable DIMSAV
 		/// </remarks>
 		public bool DIMSAV { get; set; }
+
+		/// <summary>
+		/// Sets drawing units
+		/// </summary>
+		/// <remarks>
+		/// System variable MEASUREMENT
+		/// </remarks>
+		[CadSystemVariable("$MEASUREMENT", 70)]
+		public MeasurementUnits MeasurementUnits { get; set; }
 
 		/// <summary>
 		/// Governs the generation of linetype patterns around the vertices of a 2D polyline:<br/>
@@ -135,14 +115,14 @@ namespace ACadSharp.Header
 		/// System variable ORTHOMODE.
 		/// Ortho mode on if nonzero.
 		/// </summary>
-		[CadSystemVariable("$ORTHOMODE", DxfCode.Int16)]
+		[CadSystemVariable("$ORTHOMODE", 70)]
 		public bool OrthoMode { get; set; }
 
 		/// <summary>
 		/// System variable REGENMODE.
 		/// REGENAUTO mode on if nonzero
 		/// </summary>
-		[CadSystemVariable("$REGENMODE", DxfCode.Int16)]
+		[CadSystemVariable("$REGENMODE", 70)]
 		public bool RegenerationMode { get; set; }
 
 		/// <summary>
@@ -151,7 +131,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable FILLMODE.
 		/// </remarks>
-		[CadSystemVariable("$FILLMODE", DxfCode.Int16)]
+		[CadSystemVariable("$FILLMODE", 70)]
 		public bool FillMode { get; set; } = true;
 
 		/// <summary>
@@ -160,7 +140,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable QTEXTMODE.
 		/// </remarks>
-		[CadSystemVariable("$QTEXTMODE", DxfCode.Int16)]
+		[CadSystemVariable("$QTEXTMODE", 70)]
 		public bool QuickTextMode { get; set; }
 
 		/// <summary>
@@ -169,76 +149,76 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable PSLTSCALE.
 		/// </remarks>
-		[CadSystemVariable("$PSLTSCALE", DxfCode.Int16)]
+		[CadSystemVariable("$PSLTSCALE", 70)]
 		public SpaceLineTypeScaling PaperSpaceLineTypeScaling { get; set; } = SpaceLineTypeScaling.Normal;
 
 		/// <summary>
 		/// Nonzero if limits checking is on
 		/// System variable LIMCHECK.
 		/// </summary>
-		[CadSystemVariable("$LIMCHECK", DxfCode.Int16)]
+		[CadSystemVariable("$LIMCHECK", 70)]
 		public bool LimitCheckingOn { get; set; }
 
 		/// <summary>
 		/// System variable BLIPMODE	??
 		/// </summary>
-		[CadSystemVariable("$BLIPMODE", DxfCode.Int16)]
+		[CadSystemVariable("$BLIPMODE", 70)]
 		public bool BlipMode { get; set; }
 
 		/// <summary>
 		/// Controls the user timer for the drawing
 		/// System variable USRTIMER
 		/// </summary>
-		[CadSystemVariable("$USRTIMER", DxfCode.Int16)]
+		[CadSystemVariable("$USRTIMER", 70)]
 		public bool UserTimer { get; set; }
 
 		/// <summary>
 		/// Determines the object type created by the SKETCH command
 		/// System variable SKPOLY
 		/// </summary>
-		[CadSystemVariable("$SKPOLY", DxfCode.Int16)]
+		[CadSystemVariable("$SKPOLY", 70)]
 		public bool SketchPolylines { get; set; }
 
 		/// <summary>
 		/// Represents angular direction.
 		/// System variable ANGDIR
 		/// </summary>
-		[CadSystemVariable("$ANGDIR", DxfCode.Int16)]
+		[CadSystemVariable("$ANGDIR", 70)]
 		public AngularDirection AngularDirection { get; set; } = AngularDirection.ClockWise;
 
 		/// <summary>
 		/// Controls the display of helixes and smoothed mesh objects.
 		/// System variable SPLFRAME
 		/// </summary>
-		[CadSystemVariable("$SPLFRAME", DxfCode.Int16)]
+		[CadSystemVariable("$SPLFRAME", 70)]
 		public bool ShowSplineControlPoints { get; set; }
 
 		/// <summary>
 		/// Mirror text if nonzero <br/>
 		/// System variable MIRRTEXT
 		/// </summary>
-		[CadSystemVariable("$MIRRTEXT", DxfCode.Int16)]
+		[CadSystemVariable("$MIRRTEXT", 70)]
 		public bool MirrorText { get; set; } = false;
 
 		/// <summary>
 		/// Determines whether input for the DVIEW and VPOINT command evaluated as relative to the WCS or current UCS <br/>
 		/// System variable WORLDVIEW
 		/// </summary>
-		[CadSystemVariable("$WORLDVIEW", DxfCode.Int16)]
+		[CadSystemVariable("$WORLDVIEW", 70)]
 		public bool WorldView { get; set; }
 
 		/// <summary>
 		/// 1 for previous release compatibility mode; 0 otherwise <br/>
 		/// System variable TILEMODE
 		/// </summary>
-		[CadSystemVariable("$TILEMODE", DxfCode.Int16)]
+		[CadSystemVariable("$TILEMODE", 70)]
 		public bool ShowModelSpace { get; set; }
 
 		/// <summary>
 		/// Limits checking in paper space when nonzero <br/>
 		/// System variable PLIMCHECK
 		/// </summary>
-		[CadSystemVariable("$PLIMCHECK", DxfCode.Int16)]
+		[CadSystemVariable("$PLIMCHECK", 70)]
 		public bool PaperSpaceLimitsChecking { get; set; }
 
 		/// <summary>
@@ -247,27 +227,34 @@ namespace ACadSharp.Header
 		/// 1 = Retain xref-dependent visibility settings <br/>
 		/// System variable VISRETAIN
 		/// </summary>
-		[CadSystemVariable("$VISRETAIN", DxfCode.Int16)]
+		[CadSystemVariable("$VISRETAIN", 70)]
 		public bool RetainXRefDependentVisibilitySettings { get; set; }
+
+		/// <summary>
+		/// Controls the display of silhouette curves of body objects in Wireframe mode
+		/// </summary>
+		/// <remarks>
+		/// System variable DISPSILH
+		/// </remarks>
+		[CadSystemVariable("$DISPSILH", 70)]
+		public bool DisplaySilhouetteCurves { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <remarks>
-		/// System variable DISPSILH
-		/// </remarks>
-		public bool DisplaySilhouetteCurves { get; set; }
-
-		/// <summary>
-		/// 
 		/// System variable PELLIPSE (not present in DXF)
-		/// </summary>
+		/// </remarks>
+		//[Obsolete("Not present in dxf or documentation")]
 		public bool CreateEllipseAsPolyline { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable PROXYGRAPHICS
+		/// Controls the saving of proxy object images
 		/// </summary>
+		/// <remarks>
+		/// System variable PROXYGRAPHICS
+		/// </remarks>
+		[CadSystemVariable("$PROXYGRAPHICS", 70)]
 		public bool ProxyGraphics { get; set; }
 
 		/// <summary>
@@ -316,9 +303,11 @@ namespace ACadSharp.Header
 		public short AngularUnitPrecision { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable OSMODE
+		/// Sets running object snaps, only for R13 - R14
 		/// </summary>
+		/// <remarks>
+		/// System variable OSMODE
+		/// </remarks>
 		public ObjectSnapMode ObjectSnapMode { get; set; }
 
 		/// <summary>
@@ -340,29 +329,48 @@ namespace ACadSharp.Header
 		public short PointDisplayMode { get; set; }
 
 		/// <summary>
-		/// 
+		/// Integer variable intended for use by third-party developers
+		/// </summary>
+		/// <remarks>
 		/// System variable USERI1
-		/// </summary>
+		/// </remarks>
+		[CadSystemVariable("$USERI1", 70)]
 		public short UserShort1 { get; set; }
+
 		/// <summary>
-		/// 
+		/// Integer variable intended for use by third-party developers
+		/// </summary>
+		/// <remarks>
 		/// System variable USERI2
-		/// </summary>
+		/// </remarks>
+		[CadSystemVariable("$USERI2", 70)]
 		public short UserShort2 { get; set; }
+
 		/// <summary>
-		/// 
+		/// Integer variable intended for use by third-party developers
+		/// </summary>
+		/// <remarks>
 		/// System variable USERI3
-		/// </summary>
+		/// </remarks>
+		[CadSystemVariable("$USERI3", 70)]
 		public short UserShort3 { get; set; }
+
 		/// <summary>
-		/// 
+		/// Integer variable intended for use by third-party developers
+		/// </summary>
+		/// <remarks>
 		/// System variable USERI4
-		/// </summary>
+		/// </remarks>
+		[CadSystemVariable("$USERI4", 70)]
 		public short UserShort4 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable USERI5
+		/// Integer variable intended for use by third-party developers
 		/// </summary>
+		/// <remarks>
+		/// System variable USERI5
+		/// </remarks>
+		[CadSystemVariable("$USERI5", 70)]
 		public short UserShort5 { get; set; }
 
 		/// <summary>
@@ -375,41 +383,66 @@ namespace ACadSharp.Header
 		public short NumberOfSplineSegments { get; set; } = 8;
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Surface density (for PEDIT Smooth) in M direction
 		/// </summary>
-		public short SurfaceDensityU { get; set; }
-		/// <summary>
-		/// 
+		/// <remarks>
 		/// System variable SURFU
-		/// </summary>
-		public short SurfaceDensityV { get; set; }
+		/// </remarks>
+		[CadSystemVariable("$SURFU", 70)]
+		public short SurfaceDensityU { get; set; } = 6;
+
 		/// <summary>
-		/// 
+		/// Surface density(for PEDIT Smooth) in N direction
+		/// </summary>
+		/// <remarks>
+		/// System variable SURFV
+		/// </remarks>
+		[CadSystemVariable("$SURFV", 70)]
+		public short SurfaceDensityV { get; set; } = 6;
+
+		/// <summary>
+		/// Surface type for PEDIT Smooth
+		/// </summary>
+		/// <remarks>
 		/// System variable SURFTYPE
-		/// </summary>
-		public short SurfaceType { get; set; }
+		/// </remarks>
+		[CadSystemVariable("$SURFTYPE", 70)]
+		public short SurfaceType { get; set; } = 6;
+
 		/// <summary>
-		/// 
+		/// Number of mesh tabulations in first direction
+		/// </summary>
+		/// <remarks>
 		/// System variable SURFTAB1
-		/// </summary>
-		public short SurfaceMeshTabulationCount1 { get; set; }
+		/// </remarks>
+		[CadSystemVariable("$SURFTAB1", 70)]
+		public short SurfaceMeshTabulationCount1 { get; set; } = 6;
+
 		/// <summary>
-		/// 
+		/// Number of mesh tabulations in second direction
+		/// </summary>
+		/// <remarks>
 		/// System variable SURFTAB2
-		/// </summary>
-		public short SurfaceMeshTabulationCount2 { get; set; }
+		/// </remarks>
+		[CadSystemVariable("$SURFTAB2", 70)]
+		public short SurfaceMeshTabulationCount2 { get; set; } = 6;
 
 		/// <summary>
-		/// 
+		/// Spline curve type for PEDIT Spline
+		/// </summary>
+		/// <remarks>
 		/// System variable SPLINETYPE
-		/// </summary>
-		public SplineType SplineType { get; set; }
+		/// </remarks>
+		[CadSystemVariable("$SPLINETYPE", 70)]
+		public SplineType SplineType { get; set; } = SplineType.CubicBSpline;
 
 		/// <summary>
-		/// 
-		/// System variable SHADEDGE
+		/// Controls the shading of edges
 		/// </summary>
+		/// <remarks>
+		/// System variable SHADEDGE
+		/// </remarks>
+		[CadSystemVariable("$SHADEDGE", 70)]
 		public ShadeEdgeType ShadeEdge { get; set; }
 
 		/// <summary>
@@ -425,20 +458,29 @@ namespace ACadSharp.Header
 		public short ShadeDiffuseToAmbientPercentage { get; set; } = 70;
 
 		/// <summary>
-		/// 
+		/// Low bit set = Display fractions, feet-and-inches, and surveyor's angles in input format
+		/// </summary>
+		/// <remarks>
 		/// System variable UNITMODE
-		/// </summary>
+		/// </remarks>
+		[CadSystemVariable("$UNITMODE", 70)]
 		public short UnitMode { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable MAXACTVP
+		/// Sets maximum number of viewports to be regenerated
 		/// </summary>
-		public short MaxViewportCount { get; set; }
+		/// <remarks>
+		/// System variable MAXACTVP
+		/// </remarks>
+		[CadSystemVariable("$MAXACTVP", 70)]
+		public short MaxViewportCount { get; set; } = 64;
 
 		/// <summary>
 		/// 
-		/// System variable ISOLINES
 		/// </summary>
+		/// <remarks>
+		/// System variable ISOLINES
+		/// </remarks>
 		public short SurfaceIsolineCount { get; set; }
 
 		/// <summary>
@@ -452,8 +494,10 @@ namespace ACadSharp.Header
 
 		/// <summary>
 		/// 
-		/// System variable 
 		/// </summary>
+		/// <remarks>
+		/// System variable TEXTQLTY
+		/// </remarks>
 		public short TextQuality { get; set; }
 
 		/// <summary>
@@ -483,21 +527,40 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$TEXTSTYLE", 7)]
 		public string TextStyleName
 		{
-			get { return this.CurrentTextStyle.Name; }
+			get { return this._currentTextStyle.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this.CurrentTextStyle = this.Document.TextStyles[value];
+					this._currentTextStyle = this.Document.TextStyles[value];
 				}
 				else
 				{
-					this.CurrentTextStyle = new TextStyle(value);
+					this._currentTextStyle = new TextStyle(value);
 				}
 			}
 		}
 
-		public TextStyle CurrentTextStyle { get; private set; } = TextStyle.Default;
+		public TextStyle CurrentTextStyle
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._currentTextStyle;
+				}
+				else
+				{
+					return this.Document.TextStyles[this.TextStyleName];
+				}
+			}
+			private set
+			{
+				this._currentTextStyle = value;
+			}
+		}
+
+		private TextStyle _currentTextStyle = TextStyle.Default;
 
 		/// <summary>
 		/// Current layer name
@@ -506,18 +569,18 @@ namespace ACadSharp.Header
 		/// System variable CLAYER
 		/// </remarks>
 		[CadSystemVariable("$CLAYER", 8)]
-		public string LayerName
+		public string CurrentLayerName
 		{
-			get { return this.CurrentLayer.Name; }
+			get { return this._currentLayer.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this.CurrentLayer = this.Document.Layers[value];
+					this._currentLayer = this.Document.Layers[value];
 				}
 				else
 				{
-					this.CurrentLayer = new Layer(value);
+					this._currentLayer = new Layer(value);
 				}
 			}
 		}
@@ -529,7 +592,7 @@ namespace ACadSharp.Header
 		/// System variable CELTYPE
 		/// </remarks>
 		[CadSystemVariable("$CELTYPE", 6)]
-		public string LineTypeName
+		public string CurrentLineTypeName
 		{
 			get { return this.CurrentLineType.Name; }
 			set
@@ -554,7 +617,7 @@ namespace ACadSharp.Header
 		/// System variable CMLSTYLE
 		/// </remarks>
 		[CadSystemVariable("$CMLSTYLE", 2)]
-		public string MultilineStyleName { get; set; } = "Standard";
+		public string MultilineStyleName { get; internal set; } = "Standard";
 
 		//TODO: Header MLStyle
 		//{
@@ -584,20 +647,30 @@ namespace ACadSharp.Header
 		public double TraceWidthDefault { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Sketch record increment
 		/// </summary>
+		/// <remarks>
+		/// System variable SKETCHINC
+		/// </remarks>
+		[CadSystemVariable("$SKETCHINC", 40)]
 		public double SketchIncrement { get; set; }
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Sketch record increment
 		/// </summary>
+		/// <remarks>
+		/// System variable FILLETRAD
+		/// </remarks>
+		[CadSystemVariable("$FILLETRAD", 40)]
 		public double FilletRadius { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Current thickness set by ELEV command
 		/// </summary>
+		/// <remarks>
+		/// System variable THICKNESS
+		/// </remarks>
+		[CadSystemVariable("$THICKNESS", 40)]
 		public double ThicknessDefault { get; set; }
 
 		/// <summary>
@@ -607,7 +680,7 @@ namespace ACadSharp.Header
 		/// System variable ANGBASE
 		/// </remarks>
 		[CadSystemVariable("$ANGBASE", 50)]
-		public double AngleBase { get; set; }
+		public double AngleBase { get; set; } = 0.0;
 
 		/// <summary>
 		/// Point display size
@@ -619,34 +692,57 @@ namespace ACadSharp.Header
 		public double PointDisplaySize { get; set; } = 0.0d;
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Default polyline width
 		/// </summary>
+		/// <remarks>
+		/// System variable PLINEWID
+		/// </remarks>
+		[CadSystemVariable("$PLINEWID", 40)]
 		public double PolylineWidthDefault { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Real variable intended for use by third-party developers
 		/// </summary>
+		/// <remarks>
+		/// System variable $USERR1
+		/// </remarks>
+		[CadSystemVariable("$USERR1", 40)]
 		public double UserDouble1 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Real variable intended for use by third-party developers
 		/// </summary>
+		/// <remarks>
+		/// System variable $USERR2
+		/// </remarks>
+		[CadSystemVariable("$USERR2", 40)]
 		public double UserDouble2 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Real variable intended for use by third-party developers
 		/// </summary>
+		/// <remarks>
+		/// System variable $USERR3
+		/// </remarks>
+		[CadSystemVariable("$USERR3", 40)]
 		public double UserDouble3 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Real variable intended for use by third-party developers
 		/// </summary>
+		/// <remarks>
+		/// System variable $USERR4
+		/// </remarks>
+		[CadSystemVariable("$USERR4", 40)]
 		public double UserDouble4 { get; set; }
+
 		/// <summary>
-		/// 
-		/// System variable 
+		/// Real variable intended for use by third-party developers
 		/// </summary>
+		/// <remarks>
+		/// System variable $USERR5
+		/// </remarks>
+		[CadSystemVariable("$USERR5", 40)]
 		public double UserDouble5 { get; set; }
 
 		/// <summary>
@@ -687,8 +783,10 @@ namespace ACadSharp.Header
 
 		/// <summary>
 		/// 
-		/// System variable 
 		/// </summary>
+		/// <remarks>
+		/// System variable FACETRES
+		/// </remarks>
 		public double FacetResolution { get; set; }
 
 		/// <summary>
@@ -770,12 +868,15 @@ namespace ACadSharp.Header
 		/// System variable TDINDWG
 		/// </remarks>
 		[CadSystemVariable("$TDINDWG", 40)]
-		public TimeSpan TotalEditingTime { get; set; }
+		public TimeSpan TotalEditingTime { get; set; } = new TimeSpan();
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// User-elapsed timer
 		/// </summary>
+		/// <remarks>
+		/// System variable TDUSRTIMER
+		/// </remarks>
+		[CadSystemVariable("$TDUSRTIMER", 40)]
 		public TimeSpan UserElapsedTimeSpan { get; set; }
 
 		/// <summary>
@@ -788,9 +889,12 @@ namespace ACadSharp.Header
 		public Color CurrentEntityColor { get; set; } = Color.ByLayer;
 
 		/// <summary>
-		/// 
-		/// System variable 
+		/// View scale factor for new viewports
 		/// </summary>
+		/// <remarks>
+		/// System variable PSVPSCALE
+		/// </remarks>
+		[CadSystemVariable("$PSVPSCALE", 40)]
 		public double ViewportDefaultViewScaleFactor { get; set; }
 
 		/// <summary>
@@ -851,6 +955,38 @@ namespace ACadSharp.Header
 			set
 			{
 				this.PaperSpaceUcs.Elevation = value;
+			}
+		}
+
+		/// <summary>
+		/// Name of the UCS that defines the origin and orientation of orthographic UCS settings (paper space only)
+		/// </summary>
+		/// <remarks>
+		/// System variable PUCSBASE
+		/// </remarks>
+		[CadSystemVariable("$PUCSBASE", 2)]
+		public string PaperSpaceBaseName
+		{
+			get { return this.PaperSpaceUcsBase.Name; }
+			set
+			{
+				this.PaperSpaceUcsBase.Name = value;
+			}
+		}
+
+		/// <summary>
+		/// Current paper space UCS name
+		/// </summary>
+		/// <remarks>
+		/// System variable PUCSNAME
+		/// </remarks>
+		[CadSystemVariable("$PUCSNAME", 2)]
+		public string PaperSpaceName
+		{
+			get { return this.PaperSpaceUcs.Name; }
+			set
+			{
+				this.PaperSpaceUcs.Name = value;
 			}
 		}
 
@@ -1017,7 +1153,7 @@ namespace ACadSharp.Header
 		/// System variable INSBASE
 		/// </remarks>
 		[CadSystemVariable("$INSBASE", 10, 20, 30)]
-		public XYZ ModelSpaceInsertionBase { get; set; }
+		public XYZ ModelSpaceInsertionBase { get; set; } = XYZ.Zero;
 
 		/// <summary>
 		/// X, Y, and Z drawing extents lower-left corner (in WCS)
@@ -1056,6 +1192,38 @@ namespace ACadSharp.Header
 		public XY ModelSpaceLimitsMax { get; set; }
 
 		/// <summary>
+		/// Name of the UCS that defines the origin and orientation of orthographic UCS settings
+		/// </summary>
+		/// <remarks>
+		/// System variable UCSBASE
+		/// </remarks>
+		[CadSystemVariable("$UCSBASE", 2)]
+		public string UcsBaseName
+		{
+			get { return this.ModelSpaceUcsBase.Name; }
+			set
+			{
+				this.ModelSpaceUcsBase.Name = value;
+			}
+		}
+
+		/// <summary>
+		/// Name of current UCS
+		/// </summary>
+		/// <remarks>
+		/// System variable UCSNAME
+		/// </remarks>
+		[CadSystemVariable("$UCSNAME", 2)]
+		public string UcsName
+		{
+			get { return this.ModelSpaceUcs.Name; }
+			set
+			{
+				this.ModelSpaceUcs.Name = value;
+			}
+		}
+
+		/// <summary>
 		/// Current elevation set by ELEV command
 		/// </summary>
 		/// <remarks>
@@ -1064,10 +1232,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$ELEVATION", 40)]
 		public double Elevation
 		{
-			get { return this.ModelSpace.Elevation; }
+			get { return this.ModelSpaceUcs.Elevation; }
 			set
 			{
-				this.ModelSpace.Elevation = value;
+				this.ModelSpaceUcs.Elevation = value;
 			}
 		}
 
@@ -1080,10 +1248,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$UCSORG", 10, 20, 30)]
 		public XYZ ModelSpaceOrigin
 		{
-			get { return this.ModelSpace.Origin; }
+			get { return this.ModelSpaceUcs.Origin; }
 			set
 			{
-				this.ModelSpace.Origin = value;
+				this.ModelSpaceUcs.Origin = value;
 			}
 		}
 
@@ -1096,10 +1264,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$UCSXDIR", 10, 20, 30)]
 		public XYZ ModelSpaceXAxis
 		{
-			get { return this.ModelSpace.XAxis; }
+			get { return this.ModelSpaceUcs.XAxis; }
 			set
 			{
-				this.ModelSpace.XAxis = value;
+				this.ModelSpaceUcs.XAxis = value;
 			}
 		}
 
@@ -1112,10 +1280,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$UCSYDIR", 10, 20, 30)]
 		public XYZ ModelSpaceYAxis
 		{
-			get { return this.ModelSpace.YAxis; }
+			get { return this.ModelSpaceUcs.YAxis; }
 			set
 			{
-				this.ModelSpace.YAxis = value;
+				this.ModelSpaceUcs.YAxis = value;
 			}
 		}
 
@@ -1137,10 +1305,41 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMLDRBLK", 1)]
 		public string ArrowBlockName { get; set; } = string.Empty;
 
+		/// <summary>
+		/// First arrow block name
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMBLK1
+		/// </remarks>
+		[CadSystemVariable("$DIMBLK1", 1)]
 		public string DimensionBlockNameFirst { get; set; }
+
+		/// <summary>
+		/// Second arrow block name
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMBLK2
+		/// </remarks>
+		[CadSystemVariable("$DIMBLK2", 1)]
 		public string DimensionBlockNameSecond { get; set; }
-		public short StackedTextAlignment { get; set; }
-		public short StackedTextSizePercentage { get; set; }
+
+		/// <remarks>
+		/// System variable TSTACKALIGN, default = 1(not present in DXF)
+		/// </remarks>
+		public short StackedTextAlignment { get; internal set; } = 1;
+
+		/// <remarks>
+		/// TSTACKSIZE, default = 70(not present in DXF)
+		/// </remarks>
+		public short StackedTextSizePercentage { get; internal set; } = 70;
+
+		/// <summary>
+		/// Path for all relative hyperlinks in the drawing. If null, the drawing path is used
+		/// </summary>
+		/// <remarks>
+		/// System variable HYPERLINKBASE
+		/// </remarks>
+		[CadSystemVariable("$HYPERLINKBASE", 1)]
 		public string HyperLinkBase { get; set; }
 
 		/// <summary>
@@ -1152,8 +1351,22 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$CELWEIGHT", 370)]
 		public LineweightType CurrentEntityLineWeight { get; set; } = LineweightType.ByLayer;
 
+		/// <summary>
+		/// Lineweight endcaps setting for new objects
+		/// </summary>
+		/// <remarks>
+		/// System variable ENDCAPS
+		/// </remarks>
+		[CadSystemVariable("$ENDCAPS", 280)]
 		public short EndCaps { get; set; }
 
+		/// <summary>
+		/// Lineweight joint setting for new objects
+		/// </summary>
+		/// <remarks>
+		/// System variable JOINSTYLE
+		/// </remarks>
+		[CadSystemVariable("$JOINSTYLE", 280)]
 		public short JoinStyle { get; set; }
 
 		/// <summary>
@@ -1167,12 +1380,17 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$LWDISPLAY", 290)]
 		public bool DisplayLineWeight { get; set; } = false;
 
+		/// <summary>
+		/// Controls whether the current drawing can be edited in-place when being referenced by another drawing
+		/// </summary>
+		/// <remarks>
+		/// System variable XEDIT
+		/// </remarks>
+		[CadSystemVariable("$XEDIT", 290)]
 		public bool XEdit { get; set; }
 
 		/// <summary>
-		/// Controls symbol table naming:<br/>
-		/// 0 = AutoCAD Release 14 compatibility. Limits names to 31 characters in length. Names can include the letters A to Z, the numerals 0 to 9, and the special characters dollar sign ($), underscore (_), and hyphen (-).<br/>
-		/// 1 = AutoCAD 2000. Names can be up to 255 characters in length, and can include the letters A to Z, the numerals 0 to 9, spaces, and any special characters not used for other purposes by Microsoft Windows and AutoCAD
+		/// Controls symbol table naming
 		/// </summary>
 		/// <remarks>
 		/// System variable EXTNAMES
@@ -1180,11 +1398,23 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$EXTNAMES", 290)]
 		public bool ExtendedNames { get; set; } = true;
 
+		/// <summary>
+		/// Indicates whether the current drawing is in a Color-Dependent or Named Plot Style mode
+		/// </summary>
+		/// <remarks>
+		/// System variable PSTYLEMODE
+		/// </remarks>
+		[CadSystemVariable("$PSTYLEMODE", 290)]
 		public short PlotStyleMode { get; set; }
+
+		/// <remarks>
+		/// System variable OLESTARTUP
+		/// </remarks>
+		//[CadSystemVariable("$OLESTARTUP", 290)]
 		public bool LoadOLEObject { get; set; }
 
 		/// <summary>
-		/// Default drawing units for AutoCAD DesignCenter blocks
+		/// Default drawing units for blocks
 		/// </summary>
 		/// <remarks>
 		/// System variable INSUNITS
@@ -1192,18 +1422,67 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$INSUNITS", 70)]
 		public UnitsType InsUnits { get; set; } = UnitsType.Unitless;
 
-		public short CurrentEntityPlotStyleType { get; set; }
+		/// <summary>
+		/// Plot style type of new objects
+		/// </summary>
+		/// <remarks>
+		/// System variable CEPSNTYPE
+		/// </remarks>
+		[CadSystemVariable("$CEPSNTYPE", 380)]
+		public EntityPlotStyleType CurrentEntityPlotStyle { get; set; }
 
-		public string FingerPrintGuid { get; set; } = Guid.NewGuid().ToString();
+		/// <summary>
+		/// Set at creation time, uniquely identifies a particular drawing
+		/// </summary>
+		/// <remarks>
+		/// System variable FINGERPRINTGUID
+		/// </remarks>
+		[CadSystemVariable("$FINGERPRINTGUID", 2)]
+		public string FingerPrintGuid { get; internal set; } = Guid.NewGuid().ToString();
 
-		public string VersionGuid { get; set; } = Guid.NewGuid().ToString();
+		/// <summary>
+		/// Uniquely identifies a particular version of a drawing. Updated when the drawing is modified
+		/// </summary>
+		/// <remarks>
+		/// System variable VERSIONGUID
+		/// </remarks>
+		[CadSystemVariable("$VERSIONGUID", 2)]
+		public string VersionGuid { get; internal set; } = Guid.NewGuid().ToString();
 
+		/// <summary>
+		/// Controls the object sorting methods
+		/// </summary>
+		/// <remarks>
+		/// System variable SORTENTS
+		/// </remarks>
+		[CadSystemVariable("$SORTENTS", 280)]
 		public ObjectSortingFlags EntitySortingFlags { get; set; }
 
-		public byte IndexCreationFlags { get; set; }
+		/// <summary>
+		/// Controls whether layer and spatial indexes are created and saved in drawing files
+		/// </summary>
+		/// <remarks>
+		/// System variable INDEXCTL
+		/// </remarks>
+		[CadSystemVariable("$INDEXCTL", 280)]
+		public IndexCreationFlags IndexCreationFlags { get; set; }
 
+		/// <summary>
+		/// Specifies HIDETEXT system variable
+		/// </summary>
+		/// <remarks>
+		/// System variable HIDETEXT
+		/// </remarks>
+		[CadSystemVariable("$HIDETEXT", 280)]   //note: mismatch with docs, code 290
 		public byte HideText { get; set; }
 
+		/// <summary>
+		/// Controls the visibility of xref clipping boundaries
+		/// </summary>
+		/// <remarks>
+		/// System variable XCLIPFRAME
+		/// </remarks>
+		[CadSystemVariable("$XCLIPFRAME", 280)] //note: mismatch with docs, code 290
 		public byte ExternalReferenceClippingBoundaryType { get; set; }
 
 		/// <summary>
@@ -1212,18 +1491,42 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable DIMASSOC
 		/// </remarks>
-		[CadSystemVariable("$DIMASSOC", DxfCode.Int8)]
+		[CadSystemVariable("$DIMASSOC", 280)]
 		public DimensionAssociation DimensionAssociativity { get; set; } = DimensionAssociation.CreateExplodedDimensions;
 
+		/// <summary>
+		/// Specifies a gap to be displayed where an object is hidden by another object; the value is specified as a percent of one unit and is independent of the zoom level.A haloed line is shortened at the point where it is hidden when HIDE or the Hidden option of SHADEMODE is used
+		/// </summary>
 		/// <remarks>
 		/// System variable HALOGAP
 		/// </remarks>
+		[CadSystemVariable("$HALOGAP", 280)]
 		public byte HaloGapPercentage { get; set; }
+
 		public Color ObscuredColor { get; set; }
+
+		/// <summary>
+		/// Represents the ACI color index of the "interference objects" created during the INTERFERE command. Default value is 1
+		/// </summary>
+		/// <remarks>
+		/// System variable INTERFERECOLOR
+		/// </remarks>
+		[CadSystemVariable("$INTERFERECOLOR", 62)]
 		public Color InterfereColor { get; set; }
+
 		public byte ObscuredType { get; set; }
+
 		public byte IntersectionDisplay { get; set; }
+
+		/// <summary>
+		/// Assigns a project name to the current drawing. Used when an external reference or image is not found on its original path. The project name points to a section in the registry that can contain one or more search paths for each project name defined. Project names and their search directories are created from the Files tab of the Options dialog box
+		/// </summary>
+		/// <remarks>
+		/// System variable PROJECTNAME
+		/// </remarks>
+		[CadSystemVariable("$PROJECTNAME", 1)]
 		public string ProjectName { get; set; }
+
 		public bool CameraDisplayObjects { get; set; }
 		public double StepsPerSecond { get; set; }
 		public double StepSize { get; set; }
@@ -1240,22 +1543,93 @@ namespace ACadSharp.Header
 		public double DraftMagnitudeSecondCrossSection { get; set; }
 		public short SolidLoftedShape { get; set; }
 		public char LoftedObjectNormals { get; set; }
-		public double Latitude { get; set; }
-		public double Longitude { get; set; }
+
+		/// <summary>
+		/// Specifies the latitude of the drawing model in decimal format
+		/// </summary>
+		/// <remarks>
+		/// System variable LATITUDE
+		/// </remarks>
+		[CadSystemVariable("$LATITUDE", 40)]
+		public double Latitude { get; set; } = 37.7950d;
+
+		/// <summary>
+		/// Specifies the longitude of the drawing model in decimal format
+		/// </summary>
+		/// <remarks>
+		/// System variable LONGITUDE
+		/// </remarks>
+		[CadSystemVariable("$LONGITUDE", 40)]
+		public double Longitude { get; set; } = -122.394d;
+
+		/// <remarks>
+		/// System variable NORTHDIRECTION
+		/// </remarks>
+		[CadSystemVariable("$NORTHDIRECTION", 40)]
 		public double NorthDirection { get; set; }
+
+		/// <remarks>
+		/// System variable TIMEZONE
+		/// </remarks>
+		[CadSystemVariable("$TIMEZONE", 70)]
 		public int TimeZone { get; set; }
+
 		public char DisplayLightGlyphs { get; set; }
+
+		/// <remarks>
+		/// System variable DWFFRAME
+		/// </remarks>
+		[CadSystemVariable("$DWFFRAME", 280)]
 		public char DwgUnderlayFramesVisibility { get; set; }
+
+		/// <remarks>
+		/// System variable DGNFRAME
+		/// </remarks>
+		[CadSystemVariable("$DGNFRAME", 280)]
 		public char DgnUnderlayFramesVisibility { get; set; }
-		public byte ShadowMode { get; set; }
+
+		/// <summary>
+		/// Shadow mode for a 3D object
+		/// </summary>
+		/// <remarks>
+		/// System variable CSHADOW
+		/// </remarks>
+		[CadSystemVariable("$CSHADOW", 280)]
+		public ShadowMode ShadowMode { get; set; }
+
+		/// <summary>
+		/// Location of the ground shadow plane. This is a Z axis ordinate
+		/// </summary>
+		/// <remarks>
+		/// System variable SHADOWPLANELOCATION
+		/// </remarks>
+		[CadSystemVariable("$SHADOWPLANELOCATION", 40)]
 		public double ShadowPlaneLocation { get; set; }
+
 		public string StyleSheetName { get; set; }
 
-		#endregion
-
-		public CadDocument Document { get; internal set; }
-
-
+		/// <summary>
+		/// Dimension text style
+		/// </summary>
+		/// <remarks>
+		/// System variable DIMTXSTY
+		/// </remarks>
+		[CadSystemVariable("$DIMTXSTY", 7)]
+		public string DimensionTextStyleName
+		{
+			get { return this.DimensionTextStyle.Name; }
+			set
+			{
+				if (this.Document != null)
+				{
+					this.DimensionTextStyle = this.Document.TextStyles[value];
+				}
+				else
+				{
+					this.DimensionTextStyle = new TextStyle(value);
+				}
+			}
+		}
 
 		/// <summary>
 		/// Dimension style name
@@ -2456,28 +2830,65 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMLTEX2", 6)]
 		public string DimensionTex2 { get; set; } = "ByBlock";
 
-		public Layer CurrentLayer { get; private set; } = Layer.Default;
+		public Layer CurrentLayer
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._currentLayer;
+				}
+				else
+				{
+					return this.Document.Layers[this.CurrentLayerName];
+				}
+			}
+			private set
+			{
+				this._currentLayer = value;
+			}
+		}
+
+		public TextStyle DimensionTextStyle { get; private set; } = TextStyle.Default;
 
 		public DimensionStyle DimensionStyleOverrides { get; private set; } = DimensionStyle.Default;
 
-		public UCS ModelSpace { get; private set; } = new UCS();
+		public UCS ModelSpaceUcs { get; private set; } = new UCS();
+
+		public UCS ModelSpaceUcsBase { get; private set; } = new UCS();
 
 		public UCS PaperSpaceUcs { get; private set; } = new UCS();
 
+		public UCS PaperSpaceUcsBase { get; private set; } = new UCS();
+
+		public CadDocument Document { get; internal set; }
+
 		private readonly static PropertyExpression<CadHeader, CadSystemVariableAttribute> _propertyCache;
 
-		public CadHeader() { }
+		private Layer _currentLayer = Layer.Default;
 
-		public CadHeader(ACadVersion version)
-		{
-			this.Version = version;
-		}
 		static CadHeader()
 		{
 			_propertyCache = new PropertyExpression<CadHeader, CadSystemVariableAttribute>(
 				(info, attribute) => attribute.Name);
 		}
 
+		public CadHeader() : this(ACadVersion.AC1018) { }
+
+		public CadHeader(CadDocument document) : this(ACadVersion.AC1018)
+		{
+			this.Document = document;
+		}
+
+		public CadHeader(ACadVersion version)
+		{
+			this.Version = version;
+		}
+
+		/// <summary>
+		/// Gets a map of all the system variables and it's codes
+		/// </summary>
+		/// <returns></returns>
 		public static Dictionary<string, CadSystemVariable> GetHeaderMap()
 		{
 			Dictionary<string, CadSystemVariable> map = new Dictionary<string, CadSystemVariable>();
@@ -2493,6 +2904,11 @@ namespace ACadSharp.Header
 			return map;
 		}
 
+		/// <summary>
+		/// Set a valueo of a system variable by name
+		/// </summary>
+		/// <param name="systemvar">name of the system var</param>
+		/// <param name="values">parameters for the constructor of the value</param>
 		public void SetValue(string systemvar, params object[] values)
 		{
 			var prop = _propertyCache.GetProperty(systemvar);
@@ -2558,10 +2974,9 @@ namespace ACadSharp.Header
 					else
 					{
 						IVector vector = (IVector)p.GetValue(this);
-						var arr = vector.GetComponents();
-						for (int i = 0; i < arr.Length; i++)
+						for (int i = 0; i < vector.Dimension; i++)
 						{
-							value.Add(att.ValueCodes[i], arr[i]);
+							value.Add(att.ValueCodes[i], vector[i]);
 						}
 					}
 

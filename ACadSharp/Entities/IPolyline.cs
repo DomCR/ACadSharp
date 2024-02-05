@@ -23,7 +23,7 @@ namespace ACadSharp.Entities
 		XYZ Normal { get; }
 
 		/// <summary>
-		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
+		/// Specifies the distance a 2D object is extruded above or below its elevation.
 		/// </summary>
 		double Thickness { get; }
 

@@ -2,6 +2,7 @@
 using ACadSharp.Blocks;
 using ACadSharp.Tables;
 using CSMath;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -16,6 +17,9 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Dimension)]
 	public abstract class Dimension : Entity
 	{
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Dimension;
+
 		/// <summary>
 		/// Version number
 		/// </summary>
@@ -26,7 +30,7 @@ namespace ACadSharp.Entities
 		/// Block that contains the entities that make up the dimension picture
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 2)]
-		public Block Block { get; set; }
+		public BlockRecord Block { get; set; }
 
 		/// <summary>
 		/// Definition point(in WCS)
@@ -56,7 +60,35 @@ namespace ACadSharp.Entities
 		/// Dimension type
 		/// </summary>
 		[DxfCodeValue(70)]
-		public DimensionType DimensionType { get; set; }
+		public DimensionType Flags
+		{
+			get
+			{
+				return this._flags;
+			}
+		}
+
+		/// <summary>
+		/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location
+		/// </summary>
+		public bool IsTextUserDefinedLocation
+		{
+			get
+			{
+				return this._flags.HasFlag(DimensionType.TextUserDefinedLocation);
+			}
+			set
+			{
+				if (value)
+				{
+					this._flags |= DimensionType.TextUserDefinedLocation;
+				}
+				else
+				{
+					this._flags &= ~DimensionType.TextUserDefinedLocation;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Attachment point
@@ -95,6 +127,34 @@ namespace ACadSharp.Entities
 		public double Measurement { get; internal set; }
 
 		/// <summary>
+		/// Gets or sets a value indicating whether the first arrow
+		/// is to be flipped.
+		/// </summary>
+		/// <value>
+		/// <b>true</b> if the arrow is to be flipped; otherwise, <b>false</b>.
+		/// </value>
+		/// <remarks>
+		/// Arrows are by default drawn inside the extension lines if there is enaugh
+		/// space; otherwise, outside. This flag overrules the standard behaviour.
+		/// </remarks>
+		[DxfCodeValue(74)]
+		public bool FlipArrow1 { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the second arrow
+		/// to be flipped.
+		/// </summary>
+		/// <value>
+		/// <b>true</b> if the arrow is to be flipped; otherwise, <b>false</b>.
+		/// </value>
+		/// <remarks>
+		/// Arrows are by default drawn inside the extension lines if there is enaugh
+		/// space; otherwise, outside. This flag overrules the standard behaviour.
+		/// </remarks>
+		[DxfCodeValue(75)]
+		public bool FlipArrow2 { get; set; }
+
+		/// <summary>
 		/// Dimension text explicitly entered by the user
 		/// </summary>
 		/// <remarks>
@@ -115,14 +175,14 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// Optional
 		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.Optional, 53)]
+		[DxfCodeValue(DxfReferenceType.Optional | DxfReferenceType.IsAngle, 53)]
 		public double TextRotation { get; set; }
 
 		/// <summary>
 		/// All dimension types have an optional 51 group code, which indicates the horizontal direction for the dimension entity.The dimension entity determines the orientation of dimension text and lines for horizontal, vertical, and rotated linear dimensions
 		/// This group value is the negative of the angle between the OCS X axis and the UCS X axis. It is always in the XY plane of the OCS
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 51)]
+		[DxfCodeValue(DxfReferenceType.Optional | DxfReferenceType.IsAngle, 51)]
 		public double HorizontalDirection { get; set; }
 
 		//This group value is the negative of the angle between the OCS X axis and the UCS X axis.It is always in the XY plane of the OCS
@@ -131,17 +191,74 @@ namespace ACadSharp.Entities
 		/// Dimension style
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 3)]
-		public DimensionStyle Style { get; set; } = DimensionStyle.Default;
+		public DimensionStyle Style
+		{
+			get { return this._style; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._style = this.updateTable(value, this.Document.DimensionStyles);
+				}
+				else
+				{
+					this._style = value;
+				}
+			}
+		}
+
+		protected DimensionType _flags;
 
 		private string _text;
+
+		private DimensionStyle _style = DimensionStyle.Default;
+
+		protected Dimension(DimensionType type)
+		{
+			this._flags = type;
+			this._flags |= DimensionType.BlockReference;
+		}
 
 		public override CadObject Clone()
 		{
 			Dimension clone = (Dimension)base.Clone();
 
-			clone.Style = (DimensionStyle)(this.Style?.Clone());
+			clone.Style = (DimensionStyle)(this.Style.Clone());
 
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._style = this.updateTable(this.Style, doc.DimensionStyles);
+
+			doc.DimensionStyles.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
+
+			base.UnassignDocument();
+
+			this.Style = (DimensionStyle)this.Style.Clone();
+		}
+
+		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			base.tableOnRemove(sender, e);
+
+			if (e.Item.Equals(this.Style))
+			{
+				this.Style = this.Document.DimensionStyles[DimensionStyle.DefaultName];
+			}
 		}
 	}
 }

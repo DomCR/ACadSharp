@@ -1,6 +1,5 @@
-﻿using ACadSharp.IO.DWG;
+﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
@@ -17,10 +16,21 @@ namespace ACadSharp.IO.Templates
 
 			foreach (var handle in this.Handles)
 			{
-				CadObject member = builder.GetCadObject(handle);
-				if (member != null)
+				if (builder.TryGetCadObject<Entity>(handle, out Entity e))
 				{
-					this.CadObject.Members.Add(handle, member);
+					this.CadObject.Entities.Add(handle, e);
+				}
+				else
+				{
+					CadObject cad = builder.GetCadObject(handle);
+					if (cad != null)
+					{
+						builder.Notify($"CadObject with handle {cad.GetType().FullName}:{handle} is not an entity and could not be added in group {this.CadObject.Handle}", NotificationType.Warning);
+					}
+					else
+					{
+						builder.Notify($"Entity with handle {handle} not found for group {this.CadObject.Handle}", NotificationType.Warning);
+					}
 				}
 			}
 		}

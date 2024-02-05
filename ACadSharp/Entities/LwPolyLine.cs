@@ -1,8 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -22,6 +20,9 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityLwPolyline;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.LwPolyline;
 
 		/// <summary>
 		/// Polyline flag (bit-coded)
@@ -45,7 +46,7 @@ namespace ACadSharp.Entities
 		public double Elevation { get; set; } = 0.0;
 
 		/// <summary>
-		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
+		/// Specifies the distance a 2D object is extruded above or below its elevation.
 		/// </summary>
 		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;
@@ -74,7 +75,7 @@ namespace ACadSharp.Entities
 
 		public IEnumerable<Entity> Explode()
 		{
-			return Polyline.explode(this);
+			return Polyline.Explode(this);
 		}
 	}
 }

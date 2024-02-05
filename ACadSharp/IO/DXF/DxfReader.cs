@@ -1,11 +1,14 @@
 ﻿using ACadSharp.Classes;
+using ACadSharp.Exceptions;
 using ACadSharp.Header;
 using ACadSharp.IO.DXF;
 using CSUtilities.IO;
+using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ACadSharp.IO
@@ -14,7 +17,6 @@ namespace ACadSharp.IO
 	{
 		public DxfReaderConfiguration Configuration { get; set; } = new DxfReaderConfiguration();
 
-		private CadDocument _document;
 		private DxfDocumentBuilder _builder;
 		private IDxfStreamReader _reader;
 
@@ -48,23 +50,30 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		public static bool IsBinary(string filename)
 		{
-			return IsBinary(new StreamIO(filename).Stream);
+			Stream stream = File.OpenRead(filename);
+			bool result = IsBinary(stream);
+
+			stream.Close();
+
+			return result;
 		}
 
 		/// <summary>
 		/// Check if the file format is in binary.
 		/// </summary>
 		/// <param name="stream"></param>
+		/// <param name="resetPos"></param>
 		/// <returns></returns>
-		public static bool IsBinary(Stream stream)
+		public static bool IsBinary(Stream stream, bool resetPos = false)
 		{
-			string sentinel = "AutoCAD Binary DXF";
-
 			StreamIO sio = new StreamIO(stream);
 			sio.Position = 0;
-			string sn = sio.ReadString(sentinel.Length);
+			string sn = sio.ReadString(DxfBinaryReader.Sentinel.Length);
 
-			return sn == sentinel;
+			if (resetPos)
+				stream.Position = 0;
+
+			return sn == DxfBinaryReader.Sentinel;
 		}
 
 		/// <summary>
@@ -112,9 +121,9 @@ namespace ACadSharp.IO
 
 			this._reader = this._reader ?? this.getReader();
 
-			while (this._reader.LastValueAsString != DxfFileToken.EndOfFile)
+			while (this._reader.ValueAsString != DxfFileToken.EndOfFile)
 			{
-				if (this._reader.LastValueAsString != DxfFileToken.BeginSection)
+				if (this._reader.ValueAsString != DxfFileToken.BeginSection)
 				{
 					this._reader.ReadNext();
 					continue;
@@ -124,7 +133,7 @@ namespace ACadSharp.IO
 					this._reader.ReadNext();
 				}
 
-				switch (this._reader.LastValueAsString)
+				switch (this._reader.ValueAsString)
 				{
 					case DxfFileToken.HeaderSection:
 						this._document.Header = this.ReadHeader();
@@ -145,7 +154,7 @@ namespace ACadSharp.IO
 						this.readObjects();
 						break;
 					default:
-						this.triggerNotification(($"Section not implemented {this._reader.LastValueAsString}"), NotificationType.NotImplemented);
+						this.triggerNotification(($"Section not implemented {this._reader.ValueAsString}"), NotificationType.NotImplemented);
 						break;
 				}
 
@@ -169,14 +178,16 @@ namespace ACadSharp.IO
 			this._reader.ReadNext();
 
 			//Loop until the section ends
-			while (this._reader.LastValueAsString != DxfFileToken.EndSection)
+			while (this._reader.ValueAsString != DxfFileToken.EndSection)
 			{
 				//Get the current header variable
-				string currVar = this._reader.LastValueAsString;
+				string currVar = this._reader.ValueAsString;
 
-				if (this._reader.LastValueAsString == null || !headerMap.TryGetValue(currVar, out var data))
+				if (this._reader.ValueAsString == null || !headerMap.TryGetValue(currVar, out var data))
 				{
-					//this.OnNotificationHandler?.Invoke(this, new NotificationEventArgs($"Header variable not implemented {currVar}"));
+#if TEST
+					this.triggerNotification($"Header variable not implemented {currVar}", NotificationType.NotImplemented);
+#endif
 					this._reader.ReadNext();
 					continue;
 				}
@@ -186,11 +197,19 @@ namespace ACadSharp.IO
 				{
 					this._reader.ReadNext();
 
-					parameters[i] = this._reader.LastValue;
+					parameters[i] = this._reader.Value;
 				}
 
-				//Set the header value by name
-				header.SetValue(currVar, parameters);
+				try
+				{
+					//Set the header value by name
+					header.SetValue(currVar, parameters);
+				}
+				catch (Exception ex)
+				{
+					this.triggerNotification($"Invalid value for header variable {currVar} | {parameters.FirstOrDefault()}", NotificationType.Warning, ex);
+				}
+
 
 				this._reader.ReadNext();
 			}
@@ -225,10 +244,10 @@ namespace ACadSharp.IO
 			//Advance to the first value in the section
 			this._reader.ReadNext();
 			//Loop until the section ends
-			while (this._reader.LastValueAsString != DxfFileToken.EndSection)
+			while (this._reader.ValueAsString != DxfFileToken.EndSection)
 			{
-				if (this._reader.LastValueAsString == DxfFileToken.ClassEntry)
-					classes.Add(this.readClass());
+				if (this._reader.ValueAsString == DxfFileToken.ClassEntry)
+					classes.AddOrUpdate(this.readClass());
 				else
 					this._reader.ReadNext();
 			}
@@ -240,41 +259,41 @@ namespace ACadSharp.IO
 		{
 			DxfClass curr = new DxfClass();
 
-			Debug.Assert(this._reader.LastValueAsString == DxfFileToken.ClassEntry);
+			Debug.Assert(this._reader.ValueAsString == DxfFileToken.ClassEntry);
 
 			this._reader.ReadNext();
 			//Loop until the next class or the end of the section
-			while (this._reader.LastDxfCode != DxfCode.Start)
+			while (this._reader.DxfCode != DxfCode.Start)
 			{
-				switch (this._reader.LastCode)
+				switch (this._reader.Code)
 				{
 					//Class DXF record name; always unique
 					case 1:
-						curr.DxfName = this._reader.LastValueAsString;
+						curr.DxfName = this._reader.ValueAsString;
 						break;
 					//C++ class name. Used to bind with software that defines object class behavior; always unique
 					case 2:
-						curr.CppClassName = this._reader.LastValueAsString;
+						curr.CppClassName = this._reader.ValueAsString;
 						break;
 					//Application name. Posted in Alert box when a class definition listed in this section is not currently loaded
 					case 3:
-						curr.ApplicationName = this._reader.LastValueAsString;
+						curr.ApplicationName = this._reader.ValueAsString;
 						break;
 					//Proxy capabilities flag.
 					case 90:
-						curr.ProxyFlags = (ProxyFlags)this._reader.LastValueAsShort;
+						curr.ProxyFlags = (ProxyFlags)this._reader.ValueAsUShort;
 						break;
 					//Instance count for a custom class
 					case 91:
-						curr.InstanceCount = this._reader.LastValueAsInt;
+						curr.InstanceCount = this._reader.ValueAsInt;
 						break;
 					//Was-a-proxy flag. Set to 1 if class was not loaded when this DXF file was created, and 0 otherwise
 					case 280:
-						curr.WasZombie = this._reader.LastValueAsBool;
+						curr.WasZombie = this._reader.ValueAsBool;
 						break;
 					//Is - an - entity flag.
 					case 281:
-						curr.IsAnEntity = this._reader.LastValueAsBool;
+						curr.IsAnEntity = this._reader.ValueAsBool;
 						break;
 					default:
 						break;
@@ -344,23 +363,73 @@ namespace ACadSharp.IO
 		/// <summary>
 		/// Read the THUMBNAILIMAGE section of the DXF file.
 		/// </summary>
-		private void ReadThumbnailImage()
+		private void readThumbnailImage()
 		{
 			throw new NotImplementedException();
 		}
 
 		private IDxfStreamReader getReader()
 		{
-			if (this.IsBinary())
+			IDxfStreamReader tmpReader = null;
+
+			bool isBinary = this.IsBinary();
+			if (isBinary)
 			{
-				return new DxfBinaryReader(this._fileStream.Stream, Encoding.ASCII);
+				tmpReader = new DxfBinaryReader(this._fileStream.Stream, Encoding.ASCII);
 			}
 			else
-				return new DxfTextReader(this._fileStream.Stream);
+			{
+				tmpReader = new DxfTextReader(this._fileStream.Stream);
+			}
 
-			//TODO: Setup encoding
-			//AutoCAD 2007 DXF and later format - UTF-8
-			//AutoCAD 2004 DXF and earlier format - Plain ASCII and CIF
+			tmpReader.Find(DxfFileToken.HeaderSection);
+
+			while (tmpReader.ValueAsString != DxfFileToken.EndSection)
+			{
+				if (tmpReader.ValueAsString == "$ACADVER")
+				{
+					tmpReader.ReadNext();
+					var version = CadUtils.GetVersionFromName(tmpReader.ValueAsString);
+					if (version >= ACadVersion.AC1021)
+					{
+						this._encoding = Encoding.UTF8;
+						break;
+					}
+
+					if (version < ACadVersion.AC1012)
+					{
+						if (version == ACadVersion.Unknown)
+						{
+							throw new DwgNotSupportedException();
+						}
+						else
+						{
+							throw new DwgNotSupportedException(version);
+						}
+					}
+				}
+				else if (tmpReader.ValueAsString == "$DWGCODEPAGE")
+				{
+					tmpReader.ReadNext();
+
+					string encoding = tmpReader.ValueAsString;
+
+					CodePage code = CadUtils.GetCodePage(encoding.ToLower());
+					this._encoding = this.getListedEncoding((int)code);
+					break;
+				}
+
+				tmpReader.ReadNext();
+			}
+
+			if (isBinary)
+			{
+				return new DxfBinaryReader(this._fileStream.Stream, this._encoding);
+			}
+			else
+			{
+				return new DxfTextReader(this._fileStream.Stream, this._encoding);
+			}
 		}
 
 		private IDxfStreamReader goToSection(string sectionName)
@@ -368,7 +437,7 @@ namespace ACadSharp.IO
 			//Get the needed handler
 			this._reader = this._reader ?? this.getReader();
 
-			if (this._reader.LastValueAsString == sectionName)
+			if (this._reader.ValueAsString == sectionName)
 				return this._reader;
 
 			//Go to the start of header section

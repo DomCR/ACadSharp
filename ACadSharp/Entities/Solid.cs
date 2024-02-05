@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.Templates;
 using CSMath;
 
 namespace ACadSharp.Entities
@@ -21,6 +20,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntitySolid;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Solid;
+
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ FirstCorner { get; set; }
 
@@ -35,7 +37,7 @@ namespace ACadSharp.Entities
 		public XYZ FourthCorner { get; set; }
 
 		/// <summary>
-		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
+		/// Specifies the distance a 2D object is extruded above or below its elevation.
 		/// </summary>
 		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;

@@ -5,6 +5,7 @@ using CSUtilities.IO;
 using CSUtilities.Text;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace ACadSharp.IO
 {
@@ -12,13 +13,9 @@ namespace ACadSharp.IO
 	{
 		private ACadVersion _version { get { return this._document.Header.Version; } }
 
-		private Stream _stream;
-
 		private DwgFileHeader _fileHeader;
 
 		private IDwgFileHeaderWriter _fileHeaderWriter;
-
-		private CadDocument _document;
 
 		private Dictionary<ulong, long> _handlesMap = new Dictionary<ulong, long>();
 
@@ -37,16 +34,16 @@ namespace ACadSharp.IO
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <param name="document"></param>
-		public DwgWriter(Stream stream, CadDocument document)
+		public DwgWriter(Stream stream, CadDocument document) : base(stream, document)
 		{
-			this._stream = stream;
-			this._document = document;
 			this._fileHeader = DwgFileHeader.CreateFileHeader(_version);
 		}
 
 		/// <inheritdoc/>
 		public override void Write()
 		{
+			base.Write();
+
 			this.getFileHeaderWriter();
 
 			this.writeHeader();
@@ -116,6 +113,8 @@ namespace ACadSharp.IO
 
 		private void getFileHeaderWriter()
 		{
+			Encoding encoding = this.getListedEncoding(this._document.Header.CodePage);
+
 			switch (this._document.Header.Version)
 			{
 				case ACadVersion.MC0_0:
@@ -132,21 +131,18 @@ namespace ACadSharp.IO
 					throw new DwgNotSupportedException(this._document.Header.Version);
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
-					this._fileHeaderWriter = new DwgFileHeaderWriterAC15(_stream, _document);
+					this._fileHeaderWriter = new DwgFileHeaderWriterAC15(_stream, encoding, _document);
 					break;
 				case ACadVersion.AC1018:
-					this._fileHeaderWriter = new DwgFileHeaderWriterAC18(_stream, _document);
+					this._fileHeaderWriter = new DwgFileHeaderWriterAC18(_stream, encoding, _document);
 					break;
 				case ACadVersion.AC1021:
 					throw new DwgNotSupportedException(this._document.Header.Version);
-				//this._fileHeaderWriter = new DwgFileHeaderWriterAC21(_stream, _document);
-				//break;
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
-					throw new DwgNotSupportedException(this._document.Header.Version);
-				//this._fileHeaderWriter = new DwgFileHeaderWriterAC18(_stream, _document);
-				//break;
+					this._fileHeaderWriter = new DwgFileHeaderWriterAC18(_stream, encoding, _document);
+					break;
 				case ACadVersion.Unknown:
 				default:
 					throw new DwgNotSupportedException();
@@ -180,7 +176,7 @@ namespace ACadSharp.IO
 				return;
 
 			MemoryStream stream = new MemoryStream();
-			var writer = DwgStreamWriterBase.GetStreamHandler(_version, stream, TextEncoding.Windows1252());
+			var writer = DwgStreamWriterBase.GetStreamWriter(_version, stream, TextEncoding.Windows1252());
 
 			CadSummaryInfo info = this._document.SummaryInfo;
 
@@ -289,7 +285,9 @@ namespace ACadSharp.IO
 		{
 			MemoryStream stream = new MemoryStream();
 			DwgObjectWriter writer = new DwgObjectWriter(stream, this._document);
+			writer.OnNotification += this.triggerNotification;
 			writer.Write();
+
 			this._handlesMap = writer.Map;
 
 			this._fileHeaderWriter.AddSection(DwgSectionDefinition.AcDbObjects, stream, true);

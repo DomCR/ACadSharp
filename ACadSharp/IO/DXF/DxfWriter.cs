@@ -6,7 +6,13 @@ namespace ACadSharp.IO
 {
 	public class DxfWriter : CadWriterBase
 	{
-		private CadDocument _document;
+		/// <summary>
+		/// Flag indicating if the dxf will be writen as a binary file
+		/// </summary>
+		public bool IsBinary { get; }
+
+		public DxfWriterOptions Options { get; set; } = new DxfWriterOptions();
+
 		private IDxfStreamWriter _writer;
 		private CadObjectHolder _objectHolder = new CadObjectHolder();
 
@@ -27,25 +33,18 @@ namespace ACadSharp.IO
 		/// <param name="stream">The stream to write into</param>
 		/// <param name="document"></param>
 		/// <param name="binary"></param>
-		public DxfWriter(Stream stream, CadDocument document, bool binary)
+		public DxfWriter(Stream stream, CadDocument document, bool binary) : base(stream, document)
 		{
-			var encoding = new UTF8Encoding(false);
-
-			if (binary)
-			{
-				this._writer = new DxfBinaryWriter(new BinaryWriter(stream, encoding));
-			}
-			else
-			{
-				this._writer = new DxfAsciiWriter(new StreamWriter(stream, encoding));
-			}
-
-			this._document = document;
+			this.IsBinary = binary;
 		}
 
 		/// <inheritdoc/>
 		public override void Write()
 		{
+			base.Write();
+
+			this.createStreamWriter();
+
 			this._objectHolder.Objects.Enqueue(_document.RootDictionary);
 
 			this.writeHeader();
@@ -109,9 +108,23 @@ namespace ACadSharp.IO
 			}
 		}
 
+		private void createStreamWriter()
+		{
+			Encoding encoding = new UTF8Encoding(false);
+
+			if (this.IsBinary)
+			{
+				this._writer = new DxfBinaryWriter(new BinaryWriter(this._stream, encoding));
+			}
+			else
+			{
+				this._writer = new DxfAsciiWriter(new StreamWriter(this._stream, encoding));
+			}
+		}
+
 		private void writeHeader()
 		{
-			var writer = new DxfHeaderSectionWriter(this._writer, this._document, this._objectHolder);
+			var writer = new DxfHeaderSectionWriter(this._writer, this._document, this._objectHolder, this.Options);
 			writer.OnNotification += this.triggerNotification;
 
 			writer.Write();

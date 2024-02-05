@@ -19,6 +19,15 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectVisualStyle;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.VisualStyle;
+
+		/// <summary>
+		/// Raster file name
+		/// </summary>
+		[DxfCodeValue(1)]
+		public string RasterFile { get; set; }
+
 		/// <summary>
 		/// Description
 		/// </summary>
@@ -159,10 +168,6 @@ namespace ACadSharp.Objects
 
 		//Number of edge isolines
 
-		//290
-
-		//Edge hide precision flag
-
 		//174
 
 		//Edge style apply flag
@@ -175,6 +180,16 @@ namespace ACadSharp.Objects
 
 		//173	Shadow type
 
-		//291	Internal use only flag
+		/// <summary>
+		/// Edge hide precision flag
+		/// </summary>
+		[DxfCodeValue(290)]
+		public bool PrecisionFlag { get; set; }
+
+		/// <summary>
+		/// Internal use only flag
+		/// </summary>
+		[DxfCodeValue(291)]
+		public bool InternalFlag { get; internal set; }
 	}
 }

@@ -13,7 +13,7 @@ namespace ACadSharp.IO.DWG
 
 		public DwgAppInfoWriter(ACadVersion version, Stream stream) : base(version)
 		{
-			this.writer = DwgStreamWriterBase.GetStreamHandler(version, stream, Encoding.Unicode);
+			this.writer = DwgStreamWriterBase.GetStreamWriter(version, stream, Encoding.Unicode);
 		}
 
 		public void Write()

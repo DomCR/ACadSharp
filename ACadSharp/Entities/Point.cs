@@ -20,6 +20,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityPoint;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Point;
+
 		/// <summary>
 		/// Point location(in WCS)
 		/// </summary>
@@ -27,7 +30,7 @@ namespace ACadSharp.Entities
 		public XYZ Location { get; set; } = XYZ.Zero;
 
 		/// <summary>
-		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
+		/// Specifies the distance a 2D object is extruded above or below its elevation.
 		/// </summary>
 		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;
@@ -44,9 +47,21 @@ namespace ACadSharp.Entities
 		/// <value>
 		/// The rotation angle in radians.
 		/// </value>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation { get; set; } = 0.0;
 
+		/// <summary>
+		/// Default constructor
+		/// </summary>
 		public Point() : base() { }
+
+		/// <summary>
+		/// Create a point in a specific location
+		/// </summary>
+		/// <param name="location"></param>
+		public Point(XYZ location) : base()
+		{
+			this.Location = location;
+		}
 	}
 }

@@ -23,6 +23,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityViewport;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Viewport;
+
 		/// <summary>
 		/// Center point(in WCS)
 		/// </summary>
@@ -110,13 +113,13 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Snap angle
 		/// </summary>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double SnapAngle { get; set; }
 
 		/// <summary>
 		/// View twist angle
 		/// </summary>
-		[DxfCodeValue(51)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double TwistAngle { get; set; }
 
 		/// <summary>
@@ -140,7 +143,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Hard-pointer ID/handle to entity that serves as the viewport's clipping boundary (only present if viewport is non-rectangular)
 		/// </summary>
-		[DxfCodeValue(340)]
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public Entity Boundary { get; set; }
 
 		/// <summary>

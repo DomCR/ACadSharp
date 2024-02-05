@@ -3,7 +3,7 @@
 namespace ACadSharp.IO.DWG
 {
 	/// <summary>
-	/// The AutoCAD DWG file format uses a modification of a standard cyclic redundancy check as an error detecting mechanism. <br/>
+	/// The DWG file format uses a modification of a standard cyclic redundancy check as an error detecting mechanism. <br/>
 	/// This class checks the integrity of the file using this check.
 	/// </summary>
 	/// <remarks>

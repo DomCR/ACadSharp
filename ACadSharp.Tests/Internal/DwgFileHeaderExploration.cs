@@ -1,11 +1,10 @@
 ﻿using ACadSharp.IO;
 using ACadSharp.IO.DWG;
-using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ACadSharpInternal.Tests
+namespace ACadSharp.Tests.Internal
 {
 	public class DwgFileHeaderExploration
 	{

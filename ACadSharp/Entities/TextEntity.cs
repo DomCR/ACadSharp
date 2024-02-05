@@ -16,12 +16,17 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Text)]
 	public class TextEntity : Entity
 	{
+		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.TEXT;
 
+		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityText;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Text;
+
 		/// <summary>
-		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
+		/// Specifies the distance a 2D object is extruded above or below its elevation.
 		/// </summary>
 		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;
@@ -78,16 +83,8 @@ namespace ACadSharp.Entities
 		/// <value>
 		/// The rotation angle in radians.
 		/// </value>
-		[DxfCodeValue(50)]
-		public double Rotation
-		{
-			get => _rotation;
-			set
-			{
-				_rotation = value;
-				this.AlignmentPoint = new XYZ(Math.Cos(_rotation), Math.Sin(_rotation), 0.0);
-			}
-		}
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+		public double Rotation { get; set; }
 
 		/// <summary>
 		/// Relative X scale factor—widt
@@ -104,14 +101,33 @@ namespace ACadSharp.Entities
 		/// <value>
 		/// The angle in radians within the range of -85 to +85 degrees. A positive angle denotes a lean to the right; a negative value will have 2*PI added to it to convert it to its positive equivalent.
 		/// </value>
-		[DxfCodeValue(51)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double ObliqueAngle { get; set; } = 0.0;
 
 		/// <summary>
 		/// Style of this text entity.
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Name, 7)]    //Optional
-		public TextStyle Style { get; set; } = TextStyle.Default;
+		[DxfCodeValue(DxfReferenceType.Name | DxfReferenceType.Optional, 7)]
+		public TextStyle Style
+		{
+			get { return this._style; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._style = this.updateTable(value, this.Document.TextStyles);
+				}
+				else
+				{
+					this._style = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Mirror flags.
@@ -132,15 +148,7 @@ namespace ACadSharp.Entities
 		/// This value is meaningful only if the value of a 72 or 73 group is nonzero (if the justification is anything other than baseline/left)
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Optional, 11, 21, 31)]
-		public XYZ AlignmentPoint
-		{
-			get => _alignmentPoint;
-			set
-			{
-				_alignmentPoint = value;
-				this._rotation = new XY(this._alignmentPoint.X, this._alignmentPoint.Y).GetAngle();
-			}
-		}
+		public XYZ AlignmentPoint { get; set; }
 
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
@@ -158,9 +166,7 @@ namespace ACadSharp.Entities
 
 		private double _height = 0.0;
 
-		private XYZ _alignmentPoint = XYZ.Zero;
-
-		private double _rotation = 0.0;
+		private TextStyle _style = TextStyle.Default;
 
 		public TextEntity() : base() { }
 
@@ -169,6 +175,34 @@ namespace ACadSharp.Entities
 			TextEntity clone = (TextEntity)base.Clone();
 			clone.Style = (TextStyle)this.Style.Clone();
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._style = this.updateTable(this.Style, doc.TextStyles);
+
+			doc.DimensionStyles.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
+
+			base.UnassignDocument();
+
+			this.Style = (TextStyle)this.Style.Clone();
+		}
+
+		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			base.tableOnRemove(sender, e);
+
+			if (e.Item.Equals(this.Style))
+			{
+				this.Style = this.Document.TextStyles[TextStyle.DefaultName];
+			}
 		}
 	}
 }

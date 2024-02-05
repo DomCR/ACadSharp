@@ -39,6 +39,9 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableBlockRecord;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.BlockRecord;
+
 		/// <summary>
 		/// Block insertion units
 		/// </summary>
@@ -127,10 +130,6 @@ namespace ACadSharp.Tables
 			get { return _blockEntity; }
 			internal set
 			{
-				ReferenceChangedEventArgs args = new ReferenceChangedEventArgs(value, this._blockEntity);
-
-				this.onReferenceChange(args);
-
 				this._blockEntity = value;
 				this._blockEntity.Owner = this;
 			}
@@ -141,10 +140,6 @@ namespace ACadSharp.Tables
 			get { return _blockEnd; }
 			internal set
 			{
-				ReferenceChangedEventArgs args = new ReferenceChangedEventArgs(value, this._blockEnd);
-
-				this.onReferenceChange(args);
-
 				this._blockEnd = value;
 				this._blockEnd.Owner = this;
 			}
@@ -156,7 +151,13 @@ namespace ACadSharp.Tables
 
 		private Layout _layout;
 
-		internal BlockRecord() : this(null) { }
+		internal BlockRecord() : base()
+		{
+			this.BlockEntity = new Block(this);
+			this.BlockEnd = new BlockEnd(this);
+			this.Entities = new CadObjectCollection<Entity>(this);
+			this.Viewports = new CadObjectCollection<Viewport>(this);
+		}
 
 		public BlockRecord(string name) : base(name)
 		{
@@ -190,11 +191,25 @@ namespace ACadSharp.Tables
 			}
 
 			clone.BlockEntity = (Block)this.BlockEntity.Clone();
-			clone.BlockEntity.Owner = this;
+			clone.BlockEntity.Owner = clone;
 			clone.BlockEnd = (BlockEnd)this.BlockEnd.Clone();
-			clone.BlockEnd.Owner = this;
+			clone.BlockEnd.Owner = clone;
 
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			doc.RegisterCollection(this.Entities);
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.UnregisterCollection(this.Entities);
+
+			base.UnassignDocument();
 		}
 	}
 }

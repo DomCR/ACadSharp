@@ -3,6 +3,7 @@
 	/// <summary>
 	/// Dimension type
 	/// </summary>
+	[System.Flags]
 	public enum DimensionType
 	{
 		/// <summary>
@@ -46,13 +47,13 @@
 		BlockReference = 32,
 
 		/// <summary>
-		///  Ordinate type.This is a bit value (bit 7) used only with integer value 6. If set, ordinate is X-type; if not set, ordinate is Y-type
+		/// Ordinate type. If set, ordinate is X-type; if not set, ordinate is Y-type
 		/// </summary>
-		OrdinateBit = 64,
+		OrdinateTypeX = 64,
 
 		/// <summary>
-		/// This is a bit value(bit 8) added to the other group 70 values if the dimension text has been positioned at a user-defined location rather than at the default location
+		/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location
 		/// </summary>
-		UserDefinedLocation = 128
+		TextUserDefinedLocation = 128
 	}
 }

@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
-using System;
 
 namespace ACadSharp.Entities
 {
@@ -21,6 +20,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityShape;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Shape;
+
 		/// <summary>
 		/// Thickness
 		/// </summary>
@@ -30,14 +32,14 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Insertion point (in WCS)
 		/// </summary>
-		[DxfCodeValue(10,20,30)]
+		[DxfCodeValue(10, 20, 30)]
 		public XYZ InsertionPoint { get; set; }
 
 		/// <summary>
 		/// Size
 		/// </summary>
 		[DxfCodeValue(40)]
-		public double Size { get; set; } = 0.0;
+		public double Size { get; set; } = 1.0;
 
 		/// <summary>
 		/// Shape name
@@ -48,7 +50,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Rotation angle
 		/// </summary>
-		[DxfCodeValue(50)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation { get; set; } = 0;
 
 		/// <summary>
@@ -60,14 +62,14 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Oblique angle
 		/// </summary>
-		[DxfCodeValue(51)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double ObliqueAngle { get; set; } = 0;
 
 		/// <summary>
 		/// Extrusion direction
 		/// </summary>
 		[DxfCodeValue(210, 220, 230)]
-		public XYZ Extrusion { get; set; } = XYZ.AxisZ;
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 		public Shape() : base() { }
 	}

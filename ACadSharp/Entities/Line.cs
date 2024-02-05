@@ -20,8 +20,11 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityLine;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Line;
+
 		/// <summary>
-		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
+		/// Specifies the distance a 2D object is extruded above or below its elevation.
 		/// </summary>
 		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;
@@ -48,5 +51,16 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Line() : base() { }
+
+		/// <summary>
+		/// Constructor with the start and end
+		/// </summary>
+		/// <param name="start"></param>
+		/// <param name="end"></param>
+		public Line(XYZ start, XYZ end) : base()
+		{
+			this.StartPoint = start;
+			this.EndPoint = end;
+		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
-using System;
+using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
 using System.Collections.Generic;
 
 namespace ACadSharp
@@ -10,17 +11,20 @@ namespace ACadSharp
 	/// </summary>
 	public abstract class CadObject : IHandledCadObject
 	{
-		public event EventHandler<ReferenceChangedEventArgs> OnReferenceChanged;
-
 		/// <summary>
 		/// Get the object type
 		/// </summary>
 		public abstract ObjectType ObjectType { get; }
 
 		/// <summary>
-		/// The AutoCAD class name of an object
+		/// The CAD class name of an object
 		/// </summary>
-		public virtual string ObjectName { get; } = DxfFileToken.Undefined;
+		public virtual string ObjectName { get; }
+
+		/// <summary>
+		/// Object Subclass marker
+		/// </summary>
+		public abstract string SubclassMarker { get; }
 
 		/// <inheritdoc/>
 		/// <remarks>
@@ -67,7 +71,11 @@ namespace ACadSharp
 		/// <summary>
 		/// Document where this element belongs
 		/// </summary>
-		public CadDocument Document { get; internal set; }
+		public CadDocument Document
+		{
+			get;
+			private set;
+		}
 
 		private CadDictionary _xdictionary = null;
 
@@ -87,9 +95,8 @@ namespace ACadSharp
 		{
 			CadObject clone = (CadObject)this.MemberwiseClone();
 
-			clone.OnReferenceChanged = null;
-
 			clone.Handle = 0;
+
 			clone.Document = null;
 			clone.Owner = null;
 
@@ -107,9 +114,35 @@ namespace ACadSharp
 			return $"{this.ObjectName}:{this.ObjectType}";
 		}
 
-		protected void onReferenceChange(ReferenceChangedEventArgs args)
+		internal virtual void AssignDocument(CadDocument doc)
 		{
-			OnReferenceChanged?.Invoke(this, args);
+			this.Document = doc;
+
+			if (this.XDictionary != null)
+				doc.RegisterCollection(this.XDictionary);
+		}
+
+		internal virtual void UnassignDocument()
+		{
+			if (this.XDictionary != null)
+				this.Document.UnregisterCollection(this.XDictionary);
+
+			this.Handle = 0;
+			this.Document = null;
+		}
+
+		protected T updateTable<T>(T entry, Table<T> table)
+			where T : TableEntry
+		{
+			if (table.TryGetValue(entry.Name, out T existing))
+			{
+				return existing;
+			}
+			else
+			{
+				table.Add(entry);
+				return entry;
+			}
 		}
 	}
 }

@@ -26,7 +26,9 @@ namespace ACadSharp.Entities
 			[DxfCodeValue(13, 23, 33)]
 			public XYZ Miter { get; set; }
 
-			//73	Number of elements in MLINESTYLE definition
+			/// <summary>
+			/// Segments in MLineStyle definition
+			/// </summary>
 			[DxfCodeValue(DxfReferenceType.Count, 73)]
 			public List<Segment> Segments { get; set; } = new List<Segment>();
 

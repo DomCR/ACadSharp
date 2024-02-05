@@ -23,7 +23,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			this.HandleWriter.WriteSpearShift();
-			this.Main.WriteBytes(((MemoryStream)this.HandleWriter.Stream).GetBuffer());
+			this.Main.WriteBytes(((MemoryStream)this.HandleWriter.Stream).GetBuffer(), 0, (int)this.HandleWriter.Stream.Length);
 			this.Main.WriteSpearShift();
 		}
 	}

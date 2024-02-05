@@ -23,10 +23,10 @@ namespace ACadSharp.IO.DWG
 			this._document = document;
 			this._header = document.Header;
 
-			this._startWriter = DwgStreamWriterBase.GetStreamHandler(_version, stream, TextEncoding.Windows1252());
+			this._startWriter = DwgStreamWriterBase.GetStreamWriter(_version, stream, TextEncoding.Windows1252());
 
 			this._msmain = new MemoryStream();
-			this._writer = DwgStreamWriterBase.GetStreamHandler(_version, this._msmain, TextEncoding.Windows1252());
+			this._writer = DwgStreamWriterBase.GetStreamWriter(_version, this._msmain, TextEncoding.Windows1252());
 		}
 
 		public void Write()
@@ -456,7 +456,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.Write3BitDouble(this._header.ModelSpaceYAxis);
 
 			//H: UCSNAME(MSPACE)(hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.ModelSpace);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.ModelSpaceUcs);
 
 			//R2000 + Only:
 			if (this.R2000Plus)
@@ -902,9 +902,9 @@ namespace ACadSharp.IO.DWG
 				//BS: INSUNITS
 				this._writer.WriteBitShort((short)this._header.InsUnits);
 				//BS : CEPSNTYPE
-				this._writer.WriteBitShort(this._header.CurrentEntityPlotStyleType);
+				this._writer.WriteBitShort((short)this._header.CurrentEntityPlotStyle);
 
-				if (this._header.CurrentEntityPlotStyleType == 3)
+				if (this._header.CurrentEntityPlotStyle == EntityPlotStyleType.ByObjectId)
 				{
 					//H: CPSNID(present only if CEPSNTYPE == 3) (hard pointer)
 					this._writer.HandleReference(DwgReferenceType.HardPointer, null);
@@ -922,7 +922,7 @@ namespace ACadSharp.IO.DWG
 				//RC: SORTENTS
 				this._writer.WriteByte((byte)this._header.EntitySortingFlags);
 				//RC : INDEXCTL
-				this._writer.WriteByte(this._header.IndexCreationFlags);
+				this._writer.WriteByte((byte)this._header.IndexCreationFlags);
 				//RC : HIDETEXT
 				this._writer.WriteByte(this._header.HideText);
 				//RC : XCLIPFRAME, before R2010 the value can be 0 or 1 only.
@@ -1030,7 +1030,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 
 				//RC: CSHADOW
-				this._writer.WriteByte(this._header.ShadowMode);
+				this._writer.WriteByte((byte)this._header.ShadowMode);
 				//BD : unknown
 				this._writer.WriteBitDouble(this._header.ShadowPlaneLocation);
 			}

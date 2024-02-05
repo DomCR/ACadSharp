@@ -1,45 +1,35 @@
-﻿using System;
-using ACadSharp.Entities;
-using ACadSharp.IO.DXF;
+﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
 	internal class CadTextEntityTemplate : CadEntityTemplate
 	{
-		public ulong StyleHandle { get; set; }
+		public ulong? StyleHandle { get; set; }
+
+		public string StyleName { get; set; }
 
 		public CadTextEntityTemplate(Entity entity) : base(entity) { }
 
-		public override bool CheckDxfCode(int dxfcode, object value)
-		{
-			switch (dxfcode)
-			{
-				//Multiple options
-				case 280:
-					//return true;
-				default:
-					return false;
-			}
-		}
-
-        public override void Build(CadDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
+
+			TextStyle style = null;
 
 			switch (this.CadObject)
 			{
 				case TextEntity text:
-					text.Style = builder.GetCadObject<TextStyle>(this.StyleHandle);
-
-                    // When the rotation is read in a DXF, the value is in decimal, but when the value
-                    // is read in a DWG, it is in radians.  Convert only on DXFs. Issue #80
-                    if (builder is DxfDocumentBuilder)
-                        text.Rotation *= MathUtils.DegToRad;
-
+					if (this.getTableReference(builder, this.StyleHandle, this.StyleName, out style))
+					{
+						text.Style = style;
+					}
 					break;
 				case MText mtext:
-					mtext.Style = builder.GetCadObject<TextStyle>(this.StyleHandle);
+					if (this.getTableReference(builder, this.StyleHandle, this.StyleName, out style))
+					{
+						mtext.Style = style;
+					}
 					break;
 				default:
 					throw new System.ArgumentException("Unknown type");

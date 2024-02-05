@@ -1,10 +1,10 @@
-﻿using ACadSharp;
+﻿using ACadSharp.Header;
 using ACadSharp.IO.DWG;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ACadSharpInternal.Tests
+namespace ACadSharp.Tests.Internal
 {
 	public class DwgHeaderWriterTests : DwgSectionWriterTestBase
 	{
@@ -23,9 +23,10 @@ namespace ACadSharpInternal.Tests
 			DwgHeaderWriter writer = new DwgHeaderWriter(stream, document);
 			writer.Write();
 
-			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, true);
-			DwgHeaderReader reader = new DwgHeaderReader(version, sreader);
-			var header = reader.Read(0, out _);
+			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, resetPositon: true);
+			var header = new CadHeader();
+			DwgHeaderReader reader = new DwgHeaderReader(version, sreader, header);
+			reader.Read(0, out _);
 		}
 	}
 }

@@ -1,11 +1,10 @@
-﻿using ACadSharp;
-using ACadSharp.IO.DWG;
+﻿using ACadSharp.IO.DWG;
 using System.Collections.Generic;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ACadSharpInternal.Tests
+namespace ACadSharp.Tests.Internal
 {
 	public class DwgHandleWriterTests : DwgSectionWriterTestBase
 	{
@@ -23,7 +22,7 @@ namespace ACadSharpInternal.Tests
 			DwgHandleWriter writer = new DwgHandleWriter(version, stream, imap);
 			writer.Write();
 
-			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, true);
+			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, resetPositon: true);
 			DwgHandleReader reader = new DwgHandleReader(sreader, version);
 			reader.OnNotification += onNotification;
 

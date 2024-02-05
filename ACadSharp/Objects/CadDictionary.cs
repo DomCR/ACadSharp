@@ -96,6 +96,9 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectDictionary;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Dictionary;
+
 		/// <summary>
 		/// indicates that elements of the dictionary are to be treated as hard-owned.
 		/// </summary>
@@ -122,7 +125,7 @@ namespace ACadSharp.Objects
 
 		public CadObject this[string entry] { get { return this._entries[entry]; } }
 
-		private Dictionary<string, CadObject> _entries { get; } = new Dictionary<string, CadObject>();    //TODO: Transform into an objservable collection
+		private readonly Dictionary<string, CadObject> _entries = new Dictionary<string, CadObject>();    //TODO: Transform into an objservable collection
 
 		/// <summary>
 		/// Creates the root dictionary with the default entries
@@ -130,9 +133,11 @@ namespace ACadSharp.Objects
 		/// <returns></returns>
 		public static CadDictionary CreateRoot()
 		{
-			CadDictionary root = new CadDictionary();
-
-			root.Add(CadDictionary.AcadLayout, new CadDictionary());
+			//TODO: finish root dictionary implementation
+			CadDictionary root = new CadDictionary
+			{
+				{ AcadLayout, new CadDictionary() }
+			};
 
 			return root;
 		}
