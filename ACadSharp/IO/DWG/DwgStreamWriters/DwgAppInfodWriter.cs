@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace ACadSharp.IO.DWG
@@ -18,6 +19,8 @@ namespace ACadSharp.IO.DWG
 
 		public void Write()
 		{
+			string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
 			//UInt32	4	Unknown(ODA writes 2)
 			_writer.WriteInt(2);
 			//String	2 + 2 * n + 2	App info name, ODA writes “AppInfoDataList”
@@ -27,7 +30,7 @@ namespace ACadSharp.IO.DWG
 			//Byte[]	16	Version data(checksum, ODA writes zeroes)
 			_writer.WriteBytes(_emptyArr);
 			//String	2 + 2 * n + 2	Version
-			_writer.WriteTextUnicode("_version_");
+			_writer.WriteTextUnicode(version);
 			//Byte[]	16	Comment data(checksum, ODA writes zeroes)
 			_writer.WriteBytes(_emptyArr);
 			//String	2 + 2 * n + 2	Comment
@@ -35,7 +38,7 @@ namespace ACadSharp.IO.DWG
 			//Byte[]	16	Product data(checksum, ODA writes zeroes)
 			_writer.WriteBytes(_emptyArr);
 			//String	2 + 2 * n + 2	Product
-			_writer.WriteTextUnicode("<ProductInformation name =\"ACadSharp\" build_version=\"_version_\" registry_version=\"_version_\" install_id_string=\"ACadSharp\" registry_localeID=\"1033\"/>");
+			_writer.WriteTextUnicode($"<ProductInformation name =\"ACadSharp\" build_version=\"{version}\" registry_version=\"{version}\" install_id_string=\"ACadSharp\" registry_localeID=\"1033\"/>");
 		}
 	}
 }
