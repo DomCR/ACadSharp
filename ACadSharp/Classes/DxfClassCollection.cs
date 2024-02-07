@@ -284,7 +284,7 @@ namespace ACadSharp.Classes
 			//AcDbWipeout
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				ApplicationName = "WipeOut|Product Desc: Object Enabler for WipeOut entity | Company: Autodesk, Inc. | WEB Address: www.autodesk.com",
+				ApplicationName = "WipeOut",
 				CppClassName = "AcDbWipeout",
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = ACadVersion.AC1015,
@@ -298,7 +298,7 @@ namespace ACadSharp.Classes
 			//AcDbWipeoutVariables
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				ApplicationName = "WipeOut|Product Desc: Object Enabler for WipeOut entity | Company: Autodesk, Inc. | WEB Address: www.autodesk.com",
+				ApplicationName = "WipeOut",
 				CppClassName = "AcDbWipeoutVariables",
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = ACadVersion.AC1015,
@@ -312,7 +312,7 @@ namespace ACadSharp.Classes
 			//AcDbDimAssoc
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				ApplicationName = "AcDbDimAssoc | Product Desc: AcDim ARX App For Dimension | Company: Autodesk, Inc. | WEB Address: www.autodesk.com",
+				ApplicationName = "AcDbDimAssoc",
 				CppClassName = "AcDbDimAssoc",
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = 0,

@@ -26,7 +26,7 @@ namespace ACadSharp.Tables
 		/// </summary>
 		Follow = 8,
 		/// <summary>
-		/// Front clipping not at the camera (not available in AutoCAD LT)
+		/// Front clipping not at the camera
 		/// </summary>
 		/// <remarks>
 		/// If turned on, FRONTZ determines the front clipping plane.

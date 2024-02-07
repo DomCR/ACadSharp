@@ -14,6 +14,8 @@ using System.IO;
 using System;
 using ACadSharp.Types;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
+using System.Net;
+using CSUtilities.Converters;
 
 namespace ACadSharp.IO.DWG
 {
@@ -522,11 +524,6 @@ namespace ACadSharp.IO.DWG
 				ulong appHandle = this._objectReader.HandleReference();
 				long endPos = this._objectReader.Position + size;
 
-				if (template.CadObject.Handle == 240)
-				{
-
-				}
-
 				//template.ExtendedData
 				ExtendedData edata = this.readExtendedDataRecords(endPos);
 
@@ -569,7 +566,7 @@ namespace ACadSharp.IO.DWG
 						//it as hex, as usual for handles. (There's no length specifier this time.) 
 						//Even layer 0 is referred to by handle here.
 						byte[] arr = this._objectReader.ReadBytes(8);
-						ulong handle = System.BitConverter.ToUInt64(arr, 0);
+						ulong handle = BigEndianConverter.Instance.ToUInt64(arr);
 						record = new ExtendedDataRecord(dxfCode, handle);
 						break;
 					case DxfCode.ExtendedDataBinaryChunk:
@@ -582,7 +579,7 @@ namespace ACadSharp.IO.DWG
 						//It's not a string; read it as hex, as usual for handles.
 						//(There's no length specifier this time.)
 						arr = this._objectReader.ReadBytes(8);
-						handle = System.BitConverter.ToUInt64(arr, 0);
+						handle = BigEndianConverter.Instance.ToUInt64(arr);
 						record = new ExtendedDataRecord(dxfCode, handle);
 						break;
 					//10 - 13 (1010 - 1013)
@@ -828,6 +825,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readLeader();
 					break;
 				case ObjectType.TOLERANCE:
+					template = this.readTolerance();
 					break;
 				case ObjectType.MLINE:
 					template = this.readMLine();
@@ -1732,6 +1730,9 @@ namespace ACadSharp.IO.DWG
 			//14 - pt 3BD 14 See DXF documentation.
 			dimension.LeaderEndpoint = this._objectReader.Read3BitDouble();
 
+			byte flags = (this._objectReader.ReadByte());
+			dimension.IsOrdinateTypeX = (flags & 0b01) != 0;
+
 			this.readCommonDimensionHandles(template);
 
 			return template;
@@ -1888,9 +1889,8 @@ namespace ACadSharp.IO.DWG
 			//The actual 70 - group value comes from 3 things:
 			//6 for being an ordinate DIMENSION, plus whatever bits "Flags 1" and "Flags 2" specify.
 
-			///<see cref="DwgObjectWriter.writeCommonDimensionData"></see>
-			//TODO: set dimension type
-			byte dimensionType = this._objectReader.ReadByte();
+			byte flags = (this._objectReader.ReadByte());
+			dimension.IsTextUserDefinedLocation = (flags & 0b01) == 0;
 
 			//User text TV 1
 			dimension.Text = this._textReader.ReadVariableText();
@@ -2593,7 +2593,7 @@ namespace ACadSharp.IO.DWG
 			this._objectReader.ReadBitDouble();
 			//Extents wid BD ---Undocumented and not present in DXF or entget
 			this._objectReader.ReadBitDouble();
-			//Text TV 1 All text in one long string (Autocad format)
+			//Text TV 1 All text in one long string
 			mtext.Value = this._textReader.ReadVariableText();
 
 			//H 7 STYLE (hard pointer)
@@ -3314,6 +3314,42 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private CadTemplate readTolerance()
+		{
+			Tolerance tolerance = new Tolerance();
+			CadToleranceTemplate template = new CadToleranceTemplate(tolerance);
+
+			//Common Entity Data
+			this.readCommonEntityData(template);
+
+			//R13 - R14 Only:
+			if (this.R13_14Only)
+			{
+				//Unknown short S
+				short s = this._objectReader.ReadBitShort();
+				//Height BD --
+				double height = this._objectReader.ReadBitDouble();
+				//Dimgap(?) BD dimgap at time of creation, *dimscale
+				double dimscale = this._objectReader.ReadBitDouble();
+			}
+
+			//Common:
+			//Ins pt 3BD 10
+			tolerance.InsertionPoint = this._objectReader.Read3BitDouble();
+			//X direction 3BD 11
+			tolerance.Direction = this._objectReader.Read3BitDouble();
+			//Extrusion 3BD 210 etc.
+			tolerance.Normal = this._objectReader.Read3BitDouble();
+			//Text string BS 1
+			tolerance.Text = this._textReader.ReadVariableText();
+
+			//Common Entity Handle Data
+			//H DIMSTYLE(hard pointer)
+			template.DimensionStyleHandle = this.handleReference();
+
+			return template;
+		}
+
 		private CadTemplate readMLine()
 		{
 			MLine mline = new MLine();
@@ -3660,8 +3696,6 @@ namespace ACadSharp.IO.DWG
 			style.LastHeight = this._objectReader.ReadBitDouble();
 			//Font name TV 3
 			style.Filename = this._textReader.ReadVariableText();
-			if (string.IsNullOrWhiteSpace(name))
-				style.Name = style.Filename;
 			//Bigfont name TV 4
 			style.BigFontFilename = this._textReader.ReadVariableText();
 
@@ -3836,7 +3870,7 @@ namespace ACadSharp.IO.DWG
 				this._mergedReaders.ReadBitDouble();
 				//Contrast BD ? Default value is 0
 				this._mergedReaders.ReadBitDouble();
-				//Abient color CMC? Default value is AutoCAD indexed color 250
+				//Abient color CMC? Default value is indexed color 250
 				this._mergedReaders.ReadCmColor();
 			}
 
@@ -5137,7 +5171,7 @@ namespace ACadSharp.IO.DWG
 				//a string contains a short length N, and then N Unicode characters (2 bytes each).
 				//An indicator of 70 would mean a 2 byte short following. An indicator of 10 indicates
 				//3 8-byte doubles following. An indicator of 40 means 1 8-byte double. These indicator
-				//numbers all follow the normal AutoCAD DXF convention for group codes.
+				//numbers all follow the normal DXF convention for group codes.
 				var code = this._objectReader.ReadShort();
 				var groupCode = GroupCodeValue.TransformValue(code);
 
@@ -5416,7 +5450,7 @@ namespace ACadSharp.IO.DWG
 
 			dwgColor.Color = new Color(colorIndex);
 
-			return template;
+			return null;
 		}
 	}
 }

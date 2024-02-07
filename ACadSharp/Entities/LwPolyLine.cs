@@ -46,7 +46,7 @@ namespace ACadSharp.Entities
 		public double Elevation { get; set; } = 0.0;
 
 		/// <summary>
-		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
+		/// Specifies the distance a 2D object is extruded above or below its elevation.
 		/// </summary>
 		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;

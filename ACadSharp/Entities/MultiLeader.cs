@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-
 using ACadSharp.Attributes;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
