@@ -306,6 +306,7 @@ namespace ACadSharp.IO
 
 		private void readAppInfo()
 		{
+#if TEST
 			this._fileHeader = this._fileHeader ?? this.readFileHeader();
 
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.AppInfo);
@@ -318,6 +319,10 @@ namespace ACadSharp.IO
 			reader.OnNotification += onNotificationEvent;
 
 			reader.Read();
+#else
+			//Optional section, only for testing
+			return;
+#endif
 		}
 
 		/// <summary>
