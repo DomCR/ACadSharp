@@ -21,11 +21,11 @@ namespace ACadSharp.IO.DWG
 		{
 			string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-			//UInt32	4	Unknown(ODA writes 2)
-			_writer.WriteInt(2);
+			//UInt32	4	class_version (default: 3)
+			_writer.WriteInt(3);
 			//String	2 + 2 * n + 2	App info name, ODA writes “AppInfoDataList”
 			_writer.WriteTextUnicode("AppInfoDataList");
-			//UInt32	4	Unknown(ODA writes 3)
+			//UInt32	4	num strings (default: 3)
 			_writer.WriteInt(3);
 			//Byte[]	16	Version data(checksum, ODA writes zeroes)
 			_writer.WriteBytes(_emptyArr);
