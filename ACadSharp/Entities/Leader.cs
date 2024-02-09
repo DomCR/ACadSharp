@@ -58,14 +58,24 @@ namespace ACadSharp.Entities
 		public bool ArrowHeadEnabled { get; set; }
 
 		/// <summary>
-		/// Leader creation flag
+		/// Leader Path Type
 		/// </summary>
+		/// <value>
+		/// 0 = straight lines
+		/// 1 = spline
+		/// </value>
 		[DxfCodeValue(72)]
 		public LeaderPathType PathType { get; set; }
 
 		/// <summary>
-		/// Leader creation flag
+		/// Leader creation flag, AssociatedAnnotation type
 		/// </summary>
+		/// <value>
+		/// 0 = mtext
+		/// 1 = tolerance
+		/// 2 = insert
+		/// 3 = none (default)
+		/// </value>
 		[DxfCodeValue(73)]
 		public LeaderCreationType CreationType { get; set; } = LeaderCreationType.CreatedWithoutAnnotation;
 
