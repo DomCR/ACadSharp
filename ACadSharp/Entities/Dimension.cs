@@ -1,7 +1,7 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Blocks;
 using ACadSharp.Tables;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
 
 namespace ACadSharp.Entities
@@ -81,11 +81,11 @@ namespace ACadSharp.Entities
 			{
 				if (value)
 				{
-					this._flags |= DimensionType.TextUserDefinedLocation;
+					this._flags = this._flags.AddFlag(DimensionType.TextUserDefinedLocation);
 				}
 				else
 				{
-					this._flags &= ~DimensionType.TextUserDefinedLocation;
+					this._flags = this._flags.RemoveFlag(DimensionType.TextUserDefinedLocation);
 				}
 			}
 		}
@@ -99,32 +99,26 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Dimension text line-spacing style
 		/// </summary>
-		/// <remarks>
-		/// optional
-		/// </remarks>
-		[DxfCodeValue(72)]
+		[DxfCodeValue(DxfReferenceType.Optional, 72)]
 		public LineSpacingStyleType LineSpacingStyle { get; set; }
 
 		/// <summary>
 		/// Dimension text-line spacing factor
 		/// </summary>
 		/// <remarks>
-		/// (optional) Percentage of default (3-on-5) line spacing to be applied.
+		/// Percentage of default (3-on-5) line spacing to be applied.
 		/// </remarks>
 		/// <value>
 		/// Valid values range from 0.25 to 4.00
 		/// </value>
-		[DxfCodeValue(41)]
+		[DxfCodeValue(DxfReferenceType.Optional, 41)]
 		public double LineSpacingFactor { get; set; }
 
 		/// <summary>
 		/// Actual measurement
 		/// </summary>
-		/// <remarks>
-		/// optional; read-only value
-		/// </remarks>
-		[DxfCodeValue(42)]
-		public double Measurement { get; internal set; }
+		[DxfCodeValue(DxfReferenceType.Optional, 42)]
+		public abstract double Measurement { get; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the first arrow
