@@ -1,5 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSUtilities.Extensions;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -21,7 +23,7 @@ namespace ACadSharp.Entities
 		public override string ObjectName => DxfFileToken.EntityDimension;
 
 		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.OrdinateDimension; 
+		public override string SubclassMarker => DxfSubclassMarker.OrdinateDimension;
 
 		/// <summary>
 		/// Definition point for linear and angular dimensions (in WCS)
@@ -40,7 +42,16 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				throw new System.NotImplementedException();
+				XY dir = this.IsOrdinateTypeX ? XY.AxisY : XY.AxisX;
+				double sin = Math.Sin(this.HorizontalDirection);
+				double cos = Math.Cos(this.HorizontalDirection);
+				dir = new XY(dir.X * cos - dir.Y * sin, dir.X * sin + dir.Y * cos);
+
+				double t = dir.Dot(this.InsertionPoint.Convert<XY>() - this.FeatureLocation.Convert<XY>());
+				XY pr = this.FeatureLocation.Convert<XY>() + t * dir;
+				XY v = this.InsertionPoint.Convert<XY>() - pr;
+				double distSqrt = v.Dot(v);
+				return Math.Sqrt(distSqrt);
 			}
 		}
 
@@ -57,11 +68,11 @@ namespace ACadSharp.Entities
 			{
 				if (value)
 				{
-					this._flags |= DimensionType.OrdinateTypeX;
+					this._flags = this._flags.AddFlag(DimensionType.OrdinateTypeX);
 				}
 				else
 				{
-					this._flags &= ~DimensionType.OrdinateTypeX;
+					this._flags = this._flags.RemoveFlag(DimensionType.OrdinateTypeX);
 				}
 			}
 		}
