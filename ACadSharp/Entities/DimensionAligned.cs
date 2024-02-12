@@ -48,7 +48,7 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				return this.FirstPoint.DistanceFrom(SecondPoint);
+				return this.FirstPoint.DistanceFrom(this.SecondPoint);
 			}
 		}
 

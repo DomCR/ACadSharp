@@ -54,7 +54,8 @@ namespace ACadSharp.Entities
 			{
 				XY v1 = (XY)(this.FirstPoint - this.SecondPoint);
 				XY v2 = (XY)(this.AngleVertex - this.DimensionArc);
-				return XY.GetAngle(v1, v2);
+
+				return v1.AngleFrom(v2);
 			}
 		}
 

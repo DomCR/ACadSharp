@@ -2,6 +2,7 @@
 using ACadSharp.Blocks;
 using ACadSharp.Tables;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
 
 namespace ACadSharp.Entities
@@ -81,11 +82,11 @@ namespace ACadSharp.Entities
 			{
 				if (value)
 				{
-					this._flags |= DimensionType.TextUserDefinedLocation;
+					this._flags = this._flags.AddFlag(DimensionType.TextUserDefinedLocation);
 				}
 				else
 				{
-					this._flags &= ~DimensionType.TextUserDefinedLocation;
+					this._flags = this._flags.RemoveFlag(DimensionType.TextUserDefinedLocation);
 				}
 			}
 		}

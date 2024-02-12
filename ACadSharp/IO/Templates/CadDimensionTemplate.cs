@@ -81,7 +81,7 @@ namespace ACadSharp.IO.Templates
 			dimensionAligned.AttachmentPoint = dimension.AttachmentPoint;
 			dimensionAligned.LineSpacingStyle = dimension.LineSpacingStyle;
 			dimensionAligned.LineSpacingFactor = dimension.LineSpacingFactor;
-			dimensionAligned.Measurement = dimension.Measurement;
+			//dimensionAligned.Measurement = dimension.Measurement;
 			dimensionAligned.Text = dimension.Text;
 			dimensionAligned.TextRotation = dimension.TextRotation;
 			dimensionAligned.HorizontalDirection = dimension.HorizontalDirection;
