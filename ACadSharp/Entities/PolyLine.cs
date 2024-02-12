@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSUtilities.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -64,11 +65,25 @@ namespace ACadSharp.Entities
 		/// </remarks>
 		public SeqendCollection<Vertex> Vertices { get; }
 
+		/// <inheritdoc/>
 		public bool IsClosed
 		{
 			get
 			{
 				return this.Flags.HasFlag(PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM) || this.Flags.HasFlag(PolylineFlags.ClosedPolygonMeshInN);
+			}
+			set
+			{
+				if (value)
+				{
+					this.Flags = this.Flags.AddFlag(PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM);
+					this.Flags = this.Flags.AddFlag(PolylineFlags.ClosedPolygonMeshInN);
+				}
+				else
+				{
+					this.Flags = this.Flags.RemoveFlag(PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM);
+					this.Flags = this.Flags.RemoveFlag(PolylineFlags.ClosedPolygonMeshInN);
+				}
 			}
 		}
 
