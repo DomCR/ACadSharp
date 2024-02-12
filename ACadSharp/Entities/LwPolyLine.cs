@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSUtilities.Extensions;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -25,7 +26,7 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.LwPolyline;
 
 		/// <summary>
-		/// Polyline flag (bit-coded)
+		/// Polyline flags
 		/// </summary>
 		[DxfCodeValue(70)]
 		public LwPolylineFlags Flags { get; set; }
@@ -63,11 +64,23 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Count, 90)]
 		public List<Vertex> Vertices { get; set; } = new List<Vertex>();
 
+		/// <inheritdoc/>
 		public bool IsClosed
 		{
 			get
 			{
 				return this.Flags.HasFlag(LwPolylineFlags.Closed);
+			}
+			set
+			{
+				if (value)
+				{
+					this.Flags = this.Flags.AddFlag(LwPolylineFlags.Closed);
+				}
+				else
+				{
+					this.Flags = this.Flags.RemoveFlag(LwPolylineFlags.Closed);
+				}
 			}
 		}
 
