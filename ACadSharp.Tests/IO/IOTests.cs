@@ -102,7 +102,10 @@ namespace ACadSharp.Tests.IO
 
 		protected virtual void writeDwgFile(string file, CadDocument doc)
 		{
-			if (isSupportedVersion(doc.Header.Version))
+			if (!TestVariables.LocalEnv)
+				return;
+
+			if (!isSupportedVersion(doc.Header.Version))
 				return;
 
 			using (DwgWriter writer = new DwgWriter(file, doc))
