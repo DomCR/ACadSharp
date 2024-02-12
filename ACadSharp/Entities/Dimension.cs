@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Blocks;
 using ACadSharp.Tables;
 using CSMath;
 using CSUtilities.Extensions;

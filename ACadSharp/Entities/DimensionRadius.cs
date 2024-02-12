@@ -40,7 +40,7 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				throw new System.NotImplementedException();
+				return this.InsertionPoint.DistanceFrom(this.AngleVertex);
 			}
 		}
 
