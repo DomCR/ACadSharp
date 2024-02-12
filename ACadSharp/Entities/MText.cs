@@ -2,7 +2,6 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -204,9 +203,6 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Transparency of background fill color
 		/// </summary>
-		/// <remarks>
-		/// not implemented (By Autocad)
-		/// </remarks>
 		[DxfCodeValue(441)]
 		public Transparency BackgroundTransparency { get; set; }
 

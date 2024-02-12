@@ -348,6 +348,7 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 70:
 					//Flags do not have set
+					tmp.SetDimensionFlags((DimensionType)this._reader.ValueAsShort);
 					return true;
 				//Undocumented codes
 				case 73:

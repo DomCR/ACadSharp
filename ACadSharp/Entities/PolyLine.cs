@@ -106,16 +106,16 @@ namespace ACadSharp.Entities
 					//Is a line
 					e = new Line
 					{
-						StartPoint = XYZ.CreateFrom(curr.Location.GetComponents()),
-						EndPoint = XYZ.CreateFrom(next.Location.GetComponents()),
+						StartPoint = curr.Location.Convert<XYZ>(),
+						EndPoint = next.Location.Convert<XYZ>(),
 						Normal = polyline.Normal,
 						Thickness = polyline.Thickness,
 					};
 				}
 				else
 				{
-					XY p1 = new XY(curr.Location.GetComponents());
-					XY p2 = new XY(next.Location.GetComponents());
+					XY p1 = curr.Location.Convert<XY>();
+					XY p2 = next.Location.Convert<XY>();
 
 					//Is an arc
 					Arc arc = Arc.CreateFromBulge(p1, p2, curr.Bulge);

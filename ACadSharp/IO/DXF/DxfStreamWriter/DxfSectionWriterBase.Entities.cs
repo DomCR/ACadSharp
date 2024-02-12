@@ -290,6 +290,11 @@ namespace ACadSharp.IO.DXF
 
 			this.writeHatchPattern(hatch, hatch.Pattern);
 
+			if (hatch.PixelSize != 0)
+			{
+				this._writer.Write(47, hatch.PixelSize, map);
+			}
+
 			this._writer.Write(98, hatch.SeedPoints.Count);
 			foreach (XY spoint in hatch.SeedPoints)
 			{
@@ -632,14 +637,12 @@ namespace ACadSharp.IO.DXF
 
 		private void writeMTextValue(string text)
 		{
-			string encoded = text?.Replace("\n", "^J");
-
-			for (int i = 0; i < encoded.Length - 250; i += 250)
+			for (int i = 0; i < text.Length - 250; i += 250)
 			{
-				this._writer.Write(3, encoded.Substring(i, 250));
+				this._writer.Write(3, text.Substring(i, 250));
 			}
 
-			this._writer.Write(1, encoded);
+			this._writer.Write(1, text);
 		}
 
 		private void writePoint(Point line)

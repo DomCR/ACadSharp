@@ -1,10 +1,9 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
-
+using ACadSharp.Tables;
 using CSMath;
 
-
-namespace ACadSharp.Tables
+namespace ACadSharp.Objects
 {
 	/// <summary>
 	/// Represents a <see cref="MultiLeaderStyle"/> table entry.
@@ -15,7 +14,7 @@ namespace ACadSharp.Tables
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityMLeaderStyle)]
 	[DxfSubClass(DxfSubclassMarker.MLeaderStyle)]
-	public class MultiLeaderStyle : TableEntry
+	public class MultiLeaderStyle : CadObject
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
@@ -25,6 +24,11 @@ namespace ACadSharp.Tables
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.MLeaderStyle;
+
+		/// <summary>
+		/// Style name
+		/// </summary>
+		public string Name { get; set; }
 
 		/// <summary>
 		/// Content Type
@@ -77,7 +81,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// LeaderLineType ID
 		/// </summary>
-		[DxfCodeValue(340)]
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public LineType LeaderLineType { get; set; }
 
 		/// <summary>
@@ -119,7 +123,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Arrowhead ID is Block?
 		/// </summary>
-		[DxfCodeValue(341)]
+		[DxfCodeValue(DxfReferenceType.Handle, 341)]
 		public BlockRecord Arrowhead { get; set; }
 
 		/// <summary>
@@ -137,7 +141,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// mTextStyleId
 		/// </summary>
-		[DxfCodeValue(342)]
+		[DxfCodeValue(DxfReferenceType.Handle, 342)]
 		public TextStyle TextStyle { get; set; }
 
 		/// <summary>
@@ -197,7 +201,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Block Content ID
 		/// </summary>
-		[DxfCodeValue(343)]
+		[DxfCodeValue(DxfReferenceType.Handle, 343)]
 		public BlockRecord BlockContent { get; set; }
 
 		/// <summary>
@@ -210,7 +214,7 @@ namespace ACadSharp.Tables
 		/// Block Content Scale
 		/// </summary>
 		[DxfCodeValue(47, 49, 140)]
-		public XYZ BlockContentScale { get; set; }
+		public XYZ BlockContentScale { get; set; }	//TODO: Change to 3 doubles values to better support the Dxf reading
 
 		/// <summary>
 		/// Enable Block Content Scale
@@ -297,17 +301,16 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Default constructor
 		/// </summary>
-		public MultiLeaderStyle() : base() { }
+		public MultiLeaderStyle() : this(string.Empty) { }
 
-		public MultiLeaderStyle(string name) : this()
+		public MultiLeaderStyle(string name) : base()
 		{
-			Name = name;
+			this.Name = name;
 		}
 
 		public override CadObject Clone()
 		{
 			MultiLeaderStyle clone = (MultiLeaderStyle)base.Clone();
-
 			return clone;
 		}
 	}

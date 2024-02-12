@@ -44,6 +44,28 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <summary>
+		/// Ordinate type. If true, ordinate is X-type else is ordinate is Y-type
+		/// </summary>
+		public bool IsOrdinateTypeX
+		{
+			get
+			{
+				return this._flags.HasFlag(DimensionType.OrdinateTypeX);
+			}
+			set
+			{
+				if (value)
+				{
+					this._flags |= DimensionType.OrdinateTypeX;
+				}
+				else
+				{
+					this._flags &= ~DimensionType.OrdinateTypeX;
+				}
+			}
+		}
+
 		public DimensionOrdinate() : base(DimensionType.Ordinate) { }
 	}
 }

@@ -64,8 +64,29 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				var flags = this._flags | DimensionType.BlockReference;
-				return flags;
+				return this._flags;
+			}
+		}
+
+		/// <summary>
+		/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location
+		/// </summary>
+		public bool IsTextUserDefinedLocation
+		{
+			get
+			{
+				return this._flags.HasFlag(DimensionType.TextUserDefinedLocation);
+			}
+			set
+			{
+				if (value)
+				{
+					this._flags |= DimensionType.TextUserDefinedLocation;
+				}
+				else
+				{
+					this._flags &= ~DimensionType.TextUserDefinedLocation;
+				}
 			}
 		}
 
@@ -128,19 +149,16 @@ namespace ACadSharp.Entities
 		public bool FlipArrow2 { get; set; }
 
 		/// <summary>
-		/// Dimension text explicitly entered by the user
+		/// Gets or sets an explicit dimension text to be displayed instead of the standard
+		/// dimension text created from the measurement in the format specified by the
+		/// dimension-style properties.
 		/// </summary>
 		/// <remarks>
-		/// Optional; default is the measurement.
-		/// If null, the dimension measurement is drawn as the text, 
-		/// if ““ (one blank space), the text is suppressed.Anything else is drawn as the text
+		/// If null or empty, the dimension created from the measurement is to be displayed. 
+		/// If " " (one blank space), the text is to be suppressed. Anything else is drawn as the text.
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Optional, 1)]
-		public string Text
-		{
-			get { return string.IsNullOrEmpty(_text) ? this.Measurement.ToString() : this._text; }
-			set { this._text = value; }
-		}
+		public string Text { get; set; }
 
 		/// <summary>
 		/// rotation angle of the dimension text away from its default orientation (the direction of the dimension line)
@@ -185,15 +203,14 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		private string _text;
-
-		private readonly DimensionType _flags;
+		protected DimensionType _flags;
 
 		private DimensionStyle _style = DimensionStyle.Default;
 
 		protected Dimension(DimensionType type)
 		{
 			this._flags = type;
+			this._flags |= DimensionType.BlockReference;
 		}
 
 		public override CadObject Clone()
