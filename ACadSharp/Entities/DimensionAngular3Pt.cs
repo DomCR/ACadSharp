@@ -60,9 +60,7 @@ namespace ACadSharp.Entities
 					return Math.PI;
 				}
 
-				double angle = XY.GetAngle(v1, v2);
-
-				return angle;
+				return (double)v1.AngleFrom(v2);
 			}
 		}
 
