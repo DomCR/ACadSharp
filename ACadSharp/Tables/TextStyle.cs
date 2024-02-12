@@ -57,10 +57,10 @@ namespace ACadSharp.Tables
 		/// Width factor
 		/// </summary>
 		[DxfCodeValue(41)]
-		public double Width { get; set; }
+		public double Width { get; set; } = 1.0;
 
 		/// <summary>
-		/// Last height used.
+		/// Last height used
 		/// </summary>
 		[DxfCodeValue(42)]
 		public double LastHeight { get; set; }

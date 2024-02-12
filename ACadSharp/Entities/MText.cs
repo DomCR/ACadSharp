@@ -2,7 +2,6 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -63,16 +62,16 @@ namespace ACadSharp.Entities
 		public double RectangleWidth { get; set; }
 
 		/// <summary>
-		/// 
+		/// Reference rectangle height
 		/// </summary>
 		[DxfCodeValue(46)]
-		public double ReferenceRectangleHeight { get; set; }
+		public double RectangleHeight { get; set; }
 
 		/// <summary>
 		/// Attachment point
 		/// </summary>
 		[DxfCodeValue(71)]
-		public AttachmentPointType AttachmentPoint { get; set; }
+		public AttachmentPointType AttachmentPoint { get; set; } = AttachmentPointType.TopLeft;
 
 		/// <summary>
 		/// Drawing direction
@@ -81,25 +80,35 @@ namespace ACadSharp.Entities
 		public DrawingDirectionType DrawingDirection { get; set; }
 
 		/// <summary>
-		/// Specifies the text string for the entity.
+		/// Specifies the text string for the entity
 		/// </summary>
-		/// <value>
-		/// The maximum length is 256 characters.
-		/// </value>
 		[DxfCodeValue(1)]
 		public string Value { get; set; } = string.Empty;
 
 		/// <summary>
-		/// Additional text (always in 250-character chunks)
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 3)]
-		public string AdditionalText { get; set; } = string.Empty;
-
-		/// <summary>
 		/// Style of this text entity.
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Handle, 7)]
-		public TextStyle Style { get; set; } = TextStyle.Default;
+		[DxfCodeValue(DxfReferenceType.Name | DxfReferenceType.Optional, 7)]
+		public TextStyle Style
+		{
+			get { return this._style; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._style = this.updateTable(value, this.Document.TextStyles);
+				}
+				else
+				{
+					this._style = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// X-axis direction vector(in WCS)
@@ -168,7 +177,7 @@ namespace ACadSharp.Entities
 		/// Percentage of default (3-on-5) line spacing to be applied.Valid values range from 0.25 to 4.00
 		/// </remarks>
 		[DxfCodeValue(44)]
-		public double LineSpacing { get; set; }
+		public double LineSpacing { get; set; } = 1.0;
 
 		/// <summary>
 		/// Background fill setting
@@ -194,21 +203,20 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Transparency of background fill color
 		/// </summary>
-		/// <remarks>
-		/// not implemented (By Autocad)
-		/// </remarks>
 		[DxfCodeValue(441)]
 		public Transparency BackgroundTransparency { get; set; }
 
 		public TextColumn Column { get; set; } = new TextColumn();
 
-		public bool IsAnnotative { get; set; }
+		public bool IsAnnotative { get; set; } = false;
 
-		private double _height = 0.0;
+		private double _height = 1.0;
 
-		private XYZ _alignmentPoint = XYZ.Zero;
+		private XYZ _alignmentPoint = XYZ.AxisX;
 
 		private double _rotation = 0.0;
+
+		private TextStyle _style = TextStyle.Default;
 
 		public MText() : base() { }
 
@@ -220,6 +228,34 @@ namespace ACadSharp.Entities
 			clone.Column = this.Column?.Clone();
 
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._style = this.updateTable(this.Style, doc.TextStyles);
+
+			doc.DimensionStyles.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
+
+			base.UnassignDocument();
+
+			this.Style = (TextStyle)this.Style.Clone();
+		}
+
+		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			base.tableOnRemove(sender, e);
+
+			if (e.Item.Equals(this.Style))
+			{
+				this.Style = this.Document.TextStyles[TextStyle.DefaultName];
+			}
 		}
 	}
 }

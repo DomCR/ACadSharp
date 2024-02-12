@@ -30,11 +30,22 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <remarks>
 		/// Name reference: <br/>
-		/// String of up to 32 characters.The name of the style used for this mline.An entry for this style must exist in the MLINESTYLE dictionary.
+		/// String of up to 32 characters.The name of the style used for this mline. An entry for this style must exist in the MLINESTYLE dictionary.
 		/// Do not modify this field without also updating the associated entry in the MLINESTYLE dictionary
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle | DxfReferenceType.Name, 340)]
-		public MLStyle MLStyle { get; set; }
+		public MLStyle MLStyle
+		{
+			get { return _style; }
+			set
+			{
+				if (value == null)
+				{
+					throw new System.ArgumentNullException(nameof(value), "Multi line style cannot be null");
+				}
+				this._style = value;
+			}
+		}
 
 		/// <summary>
 		/// Scale factor
@@ -71,6 +82,8 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 72)]
 		public List<Vertex> Vertices { get; set; } = new List<Vertex>();
+
+		private MLStyle _style = MLStyle.Default;
 
 		public MLine() : base() { }
 

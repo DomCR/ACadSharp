@@ -40,7 +40,20 @@ namespace ACadSharp.Entities
 		/// When added to the rotation angle of the linear dimension(group code 50),
 		/// it gives the angle of the extension lines
 		/// </summary>
-		[DxfCodeValue(52)]
+		[DxfCodeValue(DxfReferenceType.Optional, 52)]
 		public double ExtLineRotation { get; set; }
+
+		/// <inheritdoc/>
+		public override double Measurement
+		{
+			get
+			{
+				return this.FirstPoint.DistanceFrom(this.SecondPoint);
+			}
+		}
+
+		protected DimensionAligned(DimensionType type) : base(type) { }
+
+		public DimensionAligned() : base(DimensionType.Aligned) { }
 	}
 }

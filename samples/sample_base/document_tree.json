@@ -133,6 +133,7 @@
       {
         "Entities": [
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -150,6 +151,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -167,6 +169,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer_Lock",
             "IsInvisible": false,
             "Transparency": {
@@ -184,6 +187,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -201,6 +205,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -218,6 +223,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -235,6 +241,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -252,6 +259,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -269,6 +277,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -286,6 +295,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -303,6 +313,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -320,6 +331,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -337,6 +349,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -354,6 +367,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -371,6 +385,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -388,6 +403,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -405,6 +421,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -422,6 +439,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -439,6 +457,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -456,6 +475,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -473,6 +493,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -490,6 +511,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -507,6 +529,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -524,6 +547,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -541,6 +565,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -558,6 +583,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -575,6 +601,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer_color_80",
             "IsInvisible": false,
             "Transparency": {
@@ -592,6 +619,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -609,6 +637,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -626,6 +655,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -643,6 +673,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer_true_color",
             "IsInvisible": false,
             "Transparency": {
@@ -660,6 +691,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer_true_color",
             "IsInvisible": false,
             "Transparency": {
@@ -677,6 +709,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -694,6 +727,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -711,6 +745,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -728,6 +763,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -745,6 +781,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -762,6 +799,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -779,6 +817,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -796,6 +835,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -813,6 +853,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -830,6 +871,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -847,6 +889,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -864,6 +907,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -881,6 +925,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -898,6 +943,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -915,6 +961,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -932,6 +979,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -949,6 +997,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -966,6 +1015,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -983,6 +1033,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer2",
             "IsInvisible": false,
             "Transparency": {
@@ -1000,6 +1051,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer2",
             "IsInvisible": false,
             "Transparency": {
@@ -1017,6 +1069,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer2",
             "IsInvisible": false,
             "Transparency": {
@@ -1034,6 +1087,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer2",
             "IsInvisible": false,
             "Transparency": {
@@ -1051,6 +1105,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer2",
             "IsInvisible": false,
             "Transparency": {
@@ -1068,6 +1123,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer2",
             "IsInvisible": false,
             "Transparency": {
@@ -1085,6 +1141,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer2",
             "IsInvisible": false,
             "Transparency": {
@@ -1102,6 +1159,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer2",
             "IsInvisible": false,
             "Transparency": {
@@ -1119,6 +1177,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -1136,6 +1195,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -1153,6 +1213,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -1170,6 +1231,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -1187,6 +1249,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -1204,6 +1267,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -1221,6 +1285,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1238,6 +1303,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1255,6 +1321,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1272,6 +1339,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1289,6 +1357,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1306,6 +1375,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1323,6 +1393,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1340,6 +1411,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1357,6 +1429,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1374,6 +1447,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1391,6 +1465,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer_Lt_dash",
             "IsInvisible": false,
             "Transparency": {
@@ -1408,6 +1483,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer_Lt_dash",
             "IsInvisible": false,
             "Transparency": {
@@ -1425,6 +1501,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer_Lt_dash",
             "IsInvisible": false,
             "Transparency": {
@@ -1442,6 +1519,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer_Lt_dash",
             "IsInvisible": false,
             "Transparency": {
@@ -1459,6 +1537,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer_Lt_dash",
             "IsInvisible": false,
             "Transparency": {
@@ -1476,6 +1555,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer_Lt_dash",
             "IsInvisible": false,
             "Transparency": {
@@ -1493,6 +1573,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -1510,6 +1591,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer2",
             "IsInvisible": false,
             "Transparency": {
@@ -1527,6 +1609,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer_color_80",
             "IsInvisible": false,
             "Transparency": {
@@ -1544,6 +1627,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer_true_color",
             "IsInvisible": false,
             "Transparency": {
@@ -1561,6 +1645,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer_color_book",
             "IsInvisible": false,
             "Transparency": {
@@ -1578,6 +1663,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1595,6 +1681,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1612,6 +1699,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1627,6 +1715,78 @@
             "OwnerHandle": 31,
             "DictionaryHandle": 0,
             "Children": []
+          },
+          {
+            "Color": null,
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.MLeader",
+            "Handle": 1976,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "Color": null,
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.FeatureControlFrame",
+            "Handle": 2082,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "Color": null,
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.FeatureControlFrame",
+            "Handle": 2083,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "Color": null,
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.FeatureControlFrame",
+            "Handle": 2084,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
           }
         ],
         "Name": "*Model_Space",
@@ -1639,6 +1799,7 @@
       {
         "Entities": [
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1656,6 +1817,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1683,6 +1845,7 @@
       {
         "Entities": [
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1700,6 +1863,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1727,6 +1891,7 @@
       {
         "Entities": [
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1744,6 +1909,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1771,6 +1937,7 @@
       {
         "Entities": [
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -1798,6 +1965,7 @@
       {
         "Entities": [
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -1815,6 +1983,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -1832,6 +2001,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -1849,6 +2019,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -1866,6 +2037,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -1883,6 +2055,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -1900,6 +2073,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -1917,6 +2091,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -1934,6 +2109,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -1961,6 +2137,7 @@
       {
         "Entities": [
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -1978,6 +2155,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -1995,6 +2173,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2012,6 +2191,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2029,6 +2209,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2046,6 +2227,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2063,6 +2245,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2080,6 +2263,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2097,6 +2281,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2114,6 +2299,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2141,6 +2327,7 @@
       {
         "Entities": [
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2158,6 +2345,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2175,6 +2363,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2192,6 +2381,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2209,6 +2399,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2226,6 +2417,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2243,6 +2435,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2260,6 +2453,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2277,6 +2471,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2294,6 +2489,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2311,6 +2507,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2338,6 +2535,7 @@
       {
         "Entities": [
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2355,6 +2553,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2372,6 +2571,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2389,6 +2589,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2406,6 +2607,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2423,6 +2625,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2440,6 +2643,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2467,6 +2671,7 @@
       {
         "Entities": [
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2484,6 +2689,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2501,6 +2707,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2518,6 +2725,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2535,6 +2743,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2552,6 +2761,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2569,6 +2779,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2596,6 +2807,7 @@
       {
         "Entities": [
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2613,6 +2825,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2630,6 +2843,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2647,6 +2861,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2664,6 +2879,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2681,6 +2897,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2698,6 +2915,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2715,6 +2933,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2732,6 +2951,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -2759,6 +2979,7 @@
       {
         "Entities": [
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2776,6 +2997,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2793,6 +3015,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2810,6 +3033,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2827,6 +3051,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2844,6 +3069,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2861,6 +3087,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2878,6 +3105,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2895,6 +3123,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2912,6 +3141,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2929,6 +3159,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2946,6 +3177,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2963,6 +3195,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2980,6 +3213,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -2997,6 +3231,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3014,6 +3249,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3031,6 +3267,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3048,6 +3285,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3065,6 +3303,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3082,6 +3321,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3099,6 +3339,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3116,6 +3357,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3133,6 +3375,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3150,6 +3393,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3167,6 +3411,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3184,6 +3429,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3201,6 +3447,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3218,6 +3465,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": true,
             "Transparency": {
@@ -3245,6 +3493,7 @@
       {
         "Entities": [
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3262,6 +3511,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3279,6 +3529,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3296,6 +3547,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3313,6 +3565,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -3330,6 +3583,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -3357,6 +3611,7 @@
       {
         "Entities": [
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3374,6 +3629,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3391,6 +3647,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Layer1",
             "IsInvisible": false,
             "Transparency": {
@@ -3408,6 +3665,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -3425,6 +3683,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "Defpoints",
             "IsInvisible": false,
             "Transparency": {
@@ -3452,6 +3711,7 @@
       {
         "Entities": [
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -3469,6 +3729,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -3486,6 +3747,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -3503,6 +3765,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -3530,6 +3793,7 @@
       {
         "Entities": [
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -3547,6 +3811,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -3564,6 +3829,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -3581,6 +3847,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -3598,6 +3865,7 @@
             "Children": []
           },
           {
+            "Color": null,
             "LayerName": "0",
             "IsInvisible": false,
             "Transparency": {
@@ -3668,9 +3936,12 @@
         "LinetypeName": "Continuous",
         "LineWeight": -3,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 0,
+          "Blue": 0,
+          "Red": 0,
+          "Index": 7
         },
         "Name": "0",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
@@ -3683,9 +3954,12 @@
         "LinetypeName": "Continuous",
         "LineWeight": -3,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 0,
+          "Blue": 0,
+          "Red": 0,
+          "Index": 7
         },
         "Name": "Layer1",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
@@ -3698,9 +3972,12 @@
         "LinetypeName": "Continuous",
         "LineWeight": -3,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 0,
+          "Blue": 0,
+          "Red": 0,
+          "Index": 7
         },
         "Name": "Layer_Off",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
@@ -3713,9 +3990,12 @@
         "LinetypeName": "Continuous",
         "LineWeight": -3,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 0,
+          "Blue": 0,
+          "Red": 0,
+          "Index": 7
         },
         "Name": "Layer_Freeze",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
@@ -3728,9 +4008,12 @@
         "LinetypeName": "Continuous",
         "LineWeight": -3,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 0,
+          "Blue": 0,
+          "Red": 0,
+          "Index": 7
         },
         "Name": "Layer_Lock",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
@@ -3743,9 +4026,12 @@
         "LinetypeName": "Continuous",
         "LineWeight": -3,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 0,
+          "Blue": 0,
+          "Red": 0,
+          "Index": 7
         },
         "Name": "Layer_NoPlot",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
@@ -3758,9 +4044,12 @@
         "LinetypeName": "Continuous",
         "LineWeight": -3,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 0,
+          "Blue": 0,
+          "Red": 0,
+          "Index": 80
         },
         "Name": "Layer_color_80",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
@@ -3773,9 +4062,12 @@
         "LinetypeName": "ACAD_ISO02W100",
         "LineWeight": -3,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 0,
+          "Blue": 0,
+          "Red": 0,
+          "Index": 10
         },
         "Name": "Layer_Lt_dash",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
@@ -3788,9 +4080,12 @@
         "LinetypeName": "Continuous",
         "LineWeight": 35,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 0,
+          "Blue": 0,
+          "Red": 0,
+          "Index": 7
         },
         "Name": "Layer_lw_035",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
@@ -3803,9 +4098,12 @@
         "LinetypeName": "Continuous",
         "LineWeight": -3,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 0,
+          "Blue": 0,
+          "Red": 0,
+          "Index": 7
         },
         "Name": "Layer_transp_70",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
@@ -3818,9 +4116,12 @@
         "LinetypeName": "Continuous",
         "LineWeight": -3,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 0,
+          "Blue": 0,
+          "Red": 0,
+          "Index": 7
         },
         "Name": "Layer_vp_freeze",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
@@ -3833,9 +4134,12 @@
         "LinetypeName": "Continuous",
         "LineWeight": -3,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 0,
+          "Blue": 0,
+          "Red": 0,
+          "Index": 7
         },
         "Name": "Layer_desc",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
@@ -3848,9 +4152,12 @@
         "LinetypeName": "Continuous",
         "LineWeight": -3,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 146,
+          "Blue": 238,
+          "Red": 17,
+          "Index": 150
         },
         "Name": "Layer_true_color",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
@@ -3863,9 +4170,12 @@
         "LinetypeName": "Continuous",
         "LineWeight": -3,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 193,
+          "Blue": 135,
+          "Red": 252,
+          "Index": 31
         },
         "Name": "Layer_color_book",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
@@ -3878,9 +4188,12 @@
         "LinetypeName": "Continuous",
         "LineWeight": -3,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 0,
+          "Blue": 0,
+          "Red": 0,
+          "Index": 7
         },
         "Name": "Defpoints",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
@@ -3893,9 +4206,12 @@
         "LinetypeName": "Continuous",
         "LineWeight": -3,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 0,
+          "Blue": 0,
+          "Red": 0,
+          "Index": 65
         },
         "Name": "Layer2",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",
@@ -3908,9 +4224,12 @@
         "LinetypeName": "Continuous",
         "LineWeight": 50,
         "Color": {
+          "IsByBlock": false,
           "IsByLayer": false,
-          "IsByBlock": true,
-          "Index": 0
+          "Green": 0,
+          "Blue": 0,
+          "Red": 0,
+          "Index": 7
         },
         "Name": "Layer_lw_050",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.LayerTableRecord",

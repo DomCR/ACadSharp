@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using System;
 
 namespace ACadSharp.Tables
 {
@@ -32,12 +33,15 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(70)]
 		public StandardFlags Flags { get; set; }
 
-		private string _name;
+		private string _name = string.Empty;
 
 		internal TableEntry() { }
 
 		public TableEntry(string name)
 		{
+			if (string.IsNullOrEmpty(name))
+				throw new ArgumentNullException(nameof(name), $"{this.GetType().Name} must have a name.");
+
 			this.Name = name;
 		}
 

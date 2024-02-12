@@ -11,7 +11,7 @@ namespace ACadSharp.Entities
 			/// Text column type
 			/// </summary>
 			[DxfCodeValue(75)]
-			public ColumnType ColumnType { get; set; }
+			public ColumnType ColumnType { get; set; } = ColumnType.NoColumns;
 
 			/// <summary>
 			/// Number of columns

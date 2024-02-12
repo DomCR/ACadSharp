@@ -13,11 +13,10 @@ namespace ACadSharp.IO.DXF
 			//TODO: Implement complex entities in a separated branch
 			switch (entity)
 			{
-				case Hatch:
-				case Ray:
-				case Shape:
+				case MLine:
 				case Solid3D:
-				case XLine:
+				case MultiLeader:
+				case Wipeout:
 					this.notify($"Entity type not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return;
 			}
@@ -75,6 +74,12 @@ namespace ACadSharp.IO.DXF
 				case Polyline polyline:
 					this.writePolyline(polyline);
 					break;
+				case Ray ray:
+					this.writeRay(ray);
+					break;
+				case Shape shape:
+					this.writeShape(shape);
+					break;
 				case Solid solid:
 					this.writeSolid(solid);
 					break;
@@ -84,6 +89,9 @@ namespace ACadSharp.IO.DXF
 				case TextEntity text:
 					this.writeTextEntity(text);
 					break;
+				case Tolerance tolerance:
+					this.writeTolerance(tolerance);
+					break;
 				case Vertex vertex:
 					this.writeVertex(vertex);
 					break;
@@ -92,6 +100,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case Wipeout wipeout:
 					this.writeWipeout(wipeout);
+					break;
+				case XLine xline:
+					this.writeXLine(xline);
 					break;
 				default:
 					throw new NotImplementedException($"Entity not implemented {entity.GetType().FullName}");
@@ -138,7 +149,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(11, dim.TextMiddlePoint, map);
 
 			this._writer.Write(53, dim.TextRotation, map);
-			this._writer.Write(70, (short)dim.DimensionType, map);
+			this._writer.Write(70, (short)dim.Flags, map);
 			this._writer.Write(71, (short)dim.AttachmentPoint, map);
 			this._writer.Write(72, (short)dim.LineSpacingStyle, map);
 			this._writer.Write(41, dim.LineSpacingFactor, map);
@@ -181,7 +192,7 @@ namespace ACadSharp.IO.DXF
 		{
 			DxfClassMap map = DxfClassMap.Create<DimensionAligned>();
 
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Dimension);
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.AlignedDimension);
 
 			this._writer.Write(13, aligned.FirstPoint, map);
 			this._writer.Write(14, aligned.SecondPoint, map);
@@ -266,7 +277,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(20, 0, map);
 			this._writer.Write(30, hatch.Elevation, map);
 
-			this._writer.Write(210, hatch.Normal.X, map);
+			this._writer.Write(210, hatch.Normal, map);
 
 			this._writer.Write(2, hatch.Pattern.Name, map);
 
@@ -279,7 +290,20 @@ namespace ACadSharp.IO.DXF
 				this.writeBoundaryPath(path);
 			}
 
-			this.writeHatchPattern(hatch.Pattern);
+			this.writeHatchPattern(hatch, hatch.Pattern);
+
+			if (hatch.PixelSize != 0)
+			{
+				this._writer.Write(47, hatch.PixelSize, map);
+			}
+
+			this._writer.Write(98, hatch.SeedPoints.Count);
+			foreach (XY spoint in hatch.SeedPoints)
+			{
+				this._writer.Write(10, spoint);
+			}
+
+			//TODO: Implement HatchGradientPattern
 		}
 
 		private void writeBoundaryPath(Hatch.BoundaryPath path)
@@ -365,9 +389,31 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void writeHatchPattern(HatchPattern pattern)
+		private void writeHatchPattern(Hatch hatch, HatchPattern pattern)
 		{
-			//TODO: Hatch pattern need a refactor and a proper implementation
+			this._writer.Write(75, (short)hatch.Style);
+			this._writer.Write(76, (short)hatch.PatternType);
+
+			if (!hatch.IsSolid)
+			{
+				this._writer.Write(52, pattern.Angle * MathUtils.RadToDeg);
+				this._writer.Write(41, pattern.Scale);
+				this._writer.Write(77, (short)(hatch.IsDouble ? 1 : 0));
+				this._writer.Write(78, (short)pattern.Lines.Count);
+				foreach (HatchPattern.Line line in pattern.Lines)
+				{
+					this._writer.Write(53, line.Angle * (180.0 / System.Math.PI));
+					this._writer.Write(43, line.BasePoint.X);
+					this._writer.Write(44, line.BasePoint.Y);
+					this._writer.Write(45, line.Offset.X);
+					this._writer.Write(46, line.Offset.Y);
+					this._writer.Write(79, (short)line.DashLengths.Count);
+					foreach (double dashLength in line.DashLengths)
+					{
+						this._writer.Write(49, dashLength);
+					}
+				}
+			}
 		}
 
 		private void writeEllipse(Ellipse ellipse)
@@ -408,7 +454,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Insert);
 
-			this._writer.Write(2, insert.Block.Name, map);
+			this._writer.WriteName(2, insert.Block, map);
 
 			this._writer.Write(10, insert.InsertPoint, map);
 
@@ -537,7 +583,11 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(70, (short)mLine.Justification);
 			this._writer.Write(71, (short)mLine.Flags);
 			this._writer.Write(72, (short)mLine.Vertices.Count);
-			this._writer.Write(73, (short)mLine.MLStyle.Elements.Count);
+
+			if (mLine.MLStyle != null)
+			{
+				this._writer.Write(73, (short)mLine.MLStyle.Elements.Count);
+			}
 
 			this._writer.Write(10, mLine.StartPoint, map);
 
@@ -573,36 +623,37 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(10, mtext.InsertPoint, map);
 
-			this._writer.Write(11, mtext.AlignmentPoint, map);
-
-			this._writer.Write(210, mtext.Normal, map);
-
-			this._writer.Write(1, mtext.Value, map);
-
-			if (string.IsNullOrEmpty(mtext.AdditionalText))
-			{
-				for (int i = 0; i < mtext.AdditionalText.Length; i += 250)
-					this._writer.Write(3, mtext.AdditionalText.Substring(i, 250), map);
-			}
-
 			this._writer.Write(40, mtext.Height, map);
 			this._writer.Write(41, mtext.RectangleWidth, map);
 			this._writer.Write(44, mtext.LineSpacing, map);
-			this._writer.Write(45, mtext.BackgroundScale, map);
+
 			if (this.Version >= ACadVersion.AC1021)
 			{
-				this._writer.Write(46, mtext.ReferenceRectangleHeight, map);
+				this._writer.Write(46, mtext.RectangleHeight, map);
 			}
 
 			this._writer.Write(71, (short)mtext.AttachmentPoint, map);
 			this._writer.Write(72, (short)mtext.DrawingDirection, map);
+
+			this.writeMTextValue(mtext.Value);
+
+			this._writer.WriteName(7, mtext.Style);
+
 			this._writer.Write(73, (short)mtext.LineSpacingStyle, map);
 
-			if (mtext.Style != null)
+			this._writer.Write(11, mtext.AlignmentPoint, map);
+
+			this._writer.Write(210, mtext.Normal, map);
+		}
+
+		private void writeMTextValue(string text)
+		{
+			for (int i = 0; i < text.Length - 250; i += 250)
 			{
-				//TODO: Implement text style in the writer
-				//this._writer.Write(7, text.Style.Name);
+				this._writer.Write(3, text.Substring(i, 250));
 			}
+
+			this._writer.Write(1, text);
 		}
 
 		private void writePoint(Point line)
@@ -632,6 +683,9 @@ namespace ACadSharp.IO.DXF
 				case Polyline3D:
 					map = DxfClassMap.Create<Polyline3D>();
 					break;
+				case PolyfaceMesh:
+					map = DxfClassMap.Create<PolyfaceMesh>();
+					break;
 				default:
 					throw new NotImplementedException($"Polyline not implemented {polyline.GetType().FullName}");
 			}
@@ -647,12 +701,15 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(210, polyline.Normal, map);
 
-			foreach (Vertex v in polyline.Vertices)
+			if (polyline.Vertices.Any())
 			{
-				this.writeEntity(v);
-			}
+				foreach (Vertex v in polyline.Vertices)
+				{
+					this.writeEntity(v);
+				}
 
-			this.writeSeqend(polyline.Vertices.Seqend);
+				this.writeSeqend(polyline.Vertices.Seqend);
+			}
 		}
 
 		private void writeSeqend(Seqend seqend)
@@ -662,6 +719,39 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(330, seqend.Owner.Handle);
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Entity);
 			this._writer.Write(8, seqend.Layer.Name);
+		}
+
+		private void writeRay(Ray ray)
+		{
+			DxfClassMap map = DxfClassMap.Create<Ray>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Ray);
+
+			this._writer.Write(10, ray.StartPoint, map);
+
+			this._writer.Write(11, ray.Direction, map);
+		}
+
+		private void writeShape(Shape shape)
+		{
+			DxfClassMap map = DxfClassMap.Create<Shape>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Shape);
+
+			this._writer.Write(39, shape.Thickness, map);
+
+			this._writer.Write(10, shape.InsertionPoint, map);
+
+			this._writer.Write(40, shape.Size, map);
+
+			this._writer.Write(2, shape.Name, map);
+
+			this._writer.Write(50, shape.Rotation, map);
+
+			this._writer.Write(41, shape.RelativeXScale, map);
+			this._writer.Write(51, shape.ObliqueAngle, map);
+
+			this._writer.Write(210, shape.Normal, map);
 		}
 
 		private void writeSolid(Solid solid)
@@ -801,6 +891,20 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		private void writeTolerance(Tolerance tolerance)
+		{
+			DxfClassMap map = DxfClassMap.Create<Tolerance>();
+
+			this._writer.Write(DxfCode.Subclass, tolerance.SubclassMarker);
+
+			this._writer.WriteName(3, tolerance.Style, map);
+
+			this._writer.Write(10, tolerance.InsertionPoint, map);
+			this._writer.Write(11, tolerance.Direction, map);
+			this._writer.Write(210, tolerance.Normal, map);
+			this._writer.Write(1, tolerance.Text, map);
+		}
+
 		private void writeAttributeBase(AttributeBase att)
 		{
 			this._writer.Write(2, att.Tag);
@@ -927,6 +1031,16 @@ namespace ACadSharp.IO.DXF
 					this._writer.Write(14, bv, map);
 				}
 			}
+		}
+
+		private void writeXLine(XLine xline)
+		{
+			DxfClassMap map = DxfClassMap.Create<XLine>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XLine);
+
+			this._writer.Write(10, xline.FirstPoint, map);
+			this._writer.Write(11, xline.Direction, map);
 		}
 	}
 }

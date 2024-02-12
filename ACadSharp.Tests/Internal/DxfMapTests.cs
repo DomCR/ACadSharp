@@ -1,18 +1,13 @@
-﻿using ACadSharp;
-using ACadSharp.Attributes;
-using ACadSharp.Blocks;
+﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
 using System;
-using System.Collections.Generic;
-using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using Xunit;
 
-namespace ACadSharpInternal.Tests
+namespace ACadSharp.Tests.Internal
 {
 	public class DxfMapTests
 	{

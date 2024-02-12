@@ -1,5 +1,7 @@
-﻿using ACadSharp.IO.Templates;
+﻿using ACadSharp.IO.DWG;
+using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,24 @@ namespace ACadSharp.IO
 		public event NotificationEventHandler OnNotification;
 
 		public CadDocument DocumentToBuild { get; }
+
+		public AppIdsTable AppIds { get; set; }
+
+		public BlockRecordsTable BlockRecords { get; set; }
+
+		public DimensionStylesTable DimensionStyles { get; set; }
+
+		public LayersTable Layers { get; set; }
+
+		public LineTypesTable LineTypesTable { get; set; }
+
+		public TextStylesTable TextStyles { get; set; }
+
+		public UCSTable UCSs { get; set; }
+
+		public ViewsTable Views { get; set; }
+
+		public VPortsTable VPorts { get; set; }
 
 		public Dictionary<string, LineType> LineTypes { get; } = new Dictionary<string, LineType>(StringComparer.OrdinalIgnoreCase);
 
@@ -129,15 +149,35 @@ namespace ACadSharp.IO
 			return false;
 		}
 
-		[Obsolete]
-		public void Notify(NotificationEventArgs e)
+		public void RegisterTables()
 		{
-			this.OnNotification?.Invoke(this, e);
+			this.DocumentToBuild.RegisterCollection(this.AppIds);
+			this.DocumentToBuild.RegisterCollection(this.LineTypesTable);
+			this.DocumentToBuild.RegisterCollection(this.Layers);
+			this.DocumentToBuild.RegisterCollection(this.TextStyles);
+			this.DocumentToBuild.RegisterCollection(this.UCSs);
+			this.DocumentToBuild.RegisterCollection(this.Views);
+			this.DocumentToBuild.RegisterCollection(this.DimensionStyles);
+			this.DocumentToBuild.RegisterCollection(this.VPorts);
+			this.DocumentToBuild.RegisterCollection(this.BlockRecords);
 		}
 
 		public void Notify(string message, NotificationType notificationType = NotificationType.None, Exception exception = null)
 		{
 			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, exception));
+		}
+
+		public void BuildTable<T>(Table<T> table)
+			where T : TableEntry
+		{
+			if (this.tableTemplates.TryGetValue(table.Handle, out ICadTableTemplate template))
+			{
+				template.Build(this);
+			}
+			else
+			{
+				this.Notify($"Table {table.ObjectName} not found in the document", NotificationType.Warning);
+			}
 		}
 	}
 }

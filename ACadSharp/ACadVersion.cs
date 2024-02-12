@@ -1,7 +1,7 @@
 ﻿namespace ACadSharp
 {
 	/// <summary>
-	/// Drawing format version codes for AutoCAD.
+	/// Drawing format version.
 	/// </summary>
 	public enum ACadVersion : short
 	{
@@ -58,27 +58,27 @@
 		/// </summary>
 		AC1014 = 21,
 		/// <summary>
-		/// AutoCAD 2000/2000i/2002
+		/// Release 2000/2000i/2002
 		/// </summary>
 		AC1015 = 23,
 		/// <summary>
-		/// AutoCAD 2004/2005/2006
+		/// Release 2004/2005/2006
 		/// </summary>
 		AC1018 = 25,
 		/// <summary>
-		/// AutoCAD 2007/2008/2009
+		/// Release 2007/2008/2009
 		/// </summary>
 		AC1021 = 27,
 		/// <summary>
-		/// AutoCAD 2010/2011/2012
+		/// Release 2010/2011/2012
 		/// </summary>
 		AC1024 = 29, 
 		/// <summary>
-		/// AutoCAD 2013/2014/2015/2016/2017
+		/// Release 2013/2014/2015/2016/2017
 		/// </summary>
 		AC1027 = 31, 
 		/// <summary>
-		/// AutoCAD 2018/2019/2020
+		/// Release 2018/2019/2020
 		/// </summary>
 		AC1032 = 33 
 	}

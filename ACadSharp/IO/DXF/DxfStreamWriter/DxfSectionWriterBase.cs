@@ -53,14 +53,14 @@ namespace ACadSharp.IO.DXF
 			//TODO: Write exended data
 			if (cadObject.ExtendedData != null)
 			{
-				//this._writer.Write(DxfCode.ControlString, "{ACAD_REACTORS");
+				//this._writer.Write(DxfCode.ControlString,DxfFileToken.ReactorsToken);
 				//this._writer.Write(DxfCode.HardOwnershipId, cadObject.ExtendedData);
 				//this._writer.Write(DxfCode.ControlString, "}");
 			}
 
 			if (cadObject.XDictionary != null)
 			{
-				this._writer.Write(DxfCode.ControlString, "{ACAD_XDICTIONARY");
+				this._writer.Write(DxfCode.ControlString, DxfFileToken.DictionaryToken);
 				this._writer.Write(DxfCode.HardOwnershipId, cadObject.XDictionary.Handle);
 				this._writer.Write(DxfCode.ControlString, "}");
 
@@ -82,7 +82,6 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(8, entity.Layer.Name);
 
 			this._writer.Write(6, entity.LineType.Name);
-
 
 			if (entity.Color.IsTrueColor)
 			{

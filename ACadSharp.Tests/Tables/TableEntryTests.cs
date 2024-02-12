@@ -32,7 +32,6 @@ namespace ACadSharp.Tests.Tables
 		public void CloneUnattachEvent(Type t)
 		{
 			TableEntry entry = TableEntryFactory.Create(t);
-			entry.OnReferenceChanged += this.tableEntry_OnReferenceChanged;
 
 			TableEntry clone = (TableEntry)entry.Clone();
 
@@ -48,12 +47,6 @@ namespace ACadSharp.Tests.Tables
 			map.DxfProperties[70].SetValue(layer, LayerFlags.Frozen);
 
 			Assert.True(layer.Flags.HasFlag(LayerFlags.Frozen));
-		}
-
-		private void tableEntry_OnReferenceChanged(object sender, ReferenceChangedEventArgs e)
-		{
-			//The clone must not have any attachment
-			throw new InvalidOperationException();
 		}
 	}
 }

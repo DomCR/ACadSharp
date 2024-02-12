@@ -46,5 +46,21 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(16, 26, 36)]
 		public XYZ DimensionArc { get; set; }
+
+		/// <inheritdoc/>
+		public override double Measurement
+		{
+			get
+			{
+				XY v1 = (XY)(this.FirstPoint - this.SecondPoint);
+				XY v2 = (XY)(this.AngleVertex - this.DimensionArc);
+
+				return v1.AngleFrom(v2);
+			}
+		}
+
+		public DimensionAngular2Line() : base(DimensionType.Angular)
+		{
+		}
 	}
 }

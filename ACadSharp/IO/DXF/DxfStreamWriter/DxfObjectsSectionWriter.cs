@@ -1,4 +1,5 @@
-﻿using ACadSharp.Objects;
+﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using System;
 using System.Linq;
 
@@ -28,11 +29,12 @@ namespace ACadSharp.IO.DXF
 			switch (co)
 			{
 				case AcdbPlaceHolder:
-				case Group:
 				case Material:
+				case MultiLeaderStyle:
 				case SortEntitiesTable:
 				case Scale:
 				case VisualStyle:
+				//case XRecrod:	//TODO: XRecord Understand how it works for the reader
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
 			}
@@ -49,6 +51,9 @@ namespace ACadSharp.IO.DXF
 				case DictionaryVariable dictvar:
 					this.writeDictionaryVariable(dictvar);
 					break;
+				case Group group:
+					this.writeGroup(group); 
+					break;
 				case Layout layout:
 					this.writeLayout(layout);
 					break;
@@ -61,7 +66,7 @@ namespace ACadSharp.IO.DXF
 				case SortEntitiesTable sortensTable:
 					//this.writeSortentsTable(sortensTable);
 					break;
-				case XRecrod record:
+				case XRecord record:
 					this.writeXRecord(record);
 					break;
 				default:
@@ -147,6 +152,20 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(149, plot.PaperImageOrigin.Y, map);
 		}
 
+		protected void writeGroup(Group group)
+		{
+			this._writer.Write(100, DxfSubclassMarker.Group);
+
+			this._writer.Write(300, group.Description);
+			this._writer.Write(70, group.IsUnnamed ? (short)1 : (short)0);
+			this._writer.Write(71, group.Selectable ? (short)1 : (short)0);
+
+			foreach (Entity entity in group.Entities.Values)
+			{
+				this._writer.WriteHandle(340, entity);
+			}
+		}
+
 		protected void writeLayout(Layout layout)
 		{
 			DxfClassMap map = DxfClassMap.Create<Layout>();
@@ -219,7 +238,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(330, e.BlockOwner.Handle);
 		}
 
-		protected void writeXRecord(XRecrod e)
+		protected void writeXRecord(XRecord e)
 		{
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XRecord);
 

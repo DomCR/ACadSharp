@@ -7,10 +7,15 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSMath;
+using CSUtilities.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System;
+using ACadSharp.Types;
+using static ACadSharp.Objects.MultiLeaderAnnotContext;
+using System.Net;
+using CSUtilities.Converters;
 
 namespace ACadSharp.IO.DWG
 {
@@ -166,10 +171,9 @@ namespace ACadSharp.IO.DWG
 
 				//Add the template to the list to be processed
 				if (template == null)
-				{
+					continue;
 
-				}
-				else if (template is ICadTableTemplate tableTemplate)
+				if (template is ICadTableTemplate tableTemplate)
 				{
 					this._builder.AddTableTemplate(tableTemplate);
 				}
@@ -520,11 +524,6 @@ namespace ACadSharp.IO.DWG
 				ulong appHandle = this._objectReader.HandleReference();
 				long endPos = this._objectReader.Position + size;
 
-				if (template.CadObject.Handle == 240)
-				{
-
-				}
-
 				//template.ExtendedData
 				ExtendedData edata = this.readExtendedDataRecords(endPos);
 
@@ -567,7 +566,7 @@ namespace ACadSharp.IO.DWG
 						//it as hex, as usual for handles. (There's no length specifier this time.) 
 						//Even layer 0 is referred to by handle here.
 						byte[] arr = this._objectReader.ReadBytes(8);
-						ulong handle = System.BitConverter.ToUInt64(arr, 0);
+						ulong handle = BigEndianConverter.Instance.ToUInt64(arr);
 						record = new ExtendedDataRecord(dxfCode, handle);
 						break;
 					case DxfCode.ExtendedDataBinaryChunk:
@@ -580,7 +579,7 @@ namespace ACadSharp.IO.DWG
 						//It's not a string; read it as hex, as usual for handles.
 						//(There's no length specifier this time.)
 						arr = this._objectReader.ReadBytes(8);
-						handle = System.BitConverter.ToUInt64(arr, 0);
+						handle = BigEndianConverter.Instance.ToUInt64(arr);
 						record = new ExtendedDataRecord(dxfCode, handle);
 						break;
 					//10 - 13 (1010 - 1013)
@@ -826,6 +825,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readLeader();
 					break;
 				case ObjectType.TOLERANCE:
+					template = this.readTolerance();
 					break;
 				case ObjectType.MLINE:
 					template = this.readMLine();
@@ -997,8 +997,12 @@ namespace ACadSharp.IO.DWG
 				case "MESH":
 					template = this.readMesh();
 					break;
-				case "MLEADER":
+				case "MULTILEADER":
+					template = this.readMultiLeader();
+					break;
 				case "MLEADERSTYLE":
+					template = this.readMultiLeaderStyle();
+					break;
 				case "OLE2FRAME":
 					break;
 				case "ACDBPLACEHOLDER":
@@ -1194,8 +1198,10 @@ namespace ACadSharp.IO.DWG
 		{
 			//R2010+:
 			if (this.R2010Plus)
+			{
 				//Version RC ?
 				att.Version = this._objectReader.ReadByte();
+			}
 
 			//R2018+:
 			if (this.R2018Plus)
@@ -1205,27 +1211,12 @@ namespace ACadSharp.IO.DWG
 
 			switch (att.AttributeType)
 			{
-				case AttributeType.SingleLine:
-					//Common:
-					//Tag TV 2
-					att.Tag = this._textReader.ReadVariableText();
-					//Field length BS 73 unused
-					short length = this._objectReader.ReadBitShort();
-					//Flags RC 70 NOT bit-pair - coded.
-					att.Flags = (AttributeFlags)this._objectReader.ReadByte();
-					//R2007 +:
-					if (this.R2007Plus)
-						//Lock position flag B 280
-						att.IsReallyLocked = this._objectReader.ReadBit();
-
-					break;
 				case AttributeType.MultiLine:
 				case AttributeType.ConstantMultiLine:
 					//Attribute type is multi line
 					//MTEXT fields … Here all fields of an embedded MTEXT object
 					//are written, starting from the Entmode
 					//(entity mode). The owner handle can be 0.
-
 					short dataSize = this._objectReader.ReadBitShort();
 					if (dataSize > 0)
 					{
@@ -1236,13 +1227,21 @@ namespace ACadSharp.IO.DWG
 																//Unknown BS 72? Value 0.
 						this._objectReader.ReadBitShort();
 					}
-					att.Tag = this._mergedReaders.ReadVariableText();
-					length = this._mergedReaders.ReadBitShort();
-					att.Flags = (AttributeFlags)this._mergedReaders.ReadByte();
-					att.IsReallyLocked = this._mergedReaders.ReadBit();
 					break;
-				default:
-					break;
+			}
+
+			//Common:
+			//Tag TV 2
+			att.Tag = this._textReader.ReadVariableText();
+			//Field length BS 73 unused
+			short length = this._objectReader.ReadBitShort();
+			//Flags RC 70 NOT bit-pair - coded.
+			att.Flags = (AttributeFlags)this._objectReader.ReadByte();
+			//R2007 +:
+			if (this.R2007Plus)
+			{
+				//Lock position flag B 280
+				att.IsReallyLocked = this._objectReader.ReadBit();
 			}
 		}
 
@@ -1262,9 +1261,7 @@ namespace ACadSharp.IO.DWG
 			//Layers: 	Numentries BL 70 Counts layer "0", too
 			int numentries = this._objectReader.ReadBitLong();
 			for (int i = 0; i < numentries; ++i)
-				//Handle refs H NULL(soft pointer)
-				//xdicobjhandle(hard owner)
-				//the apps(soft owner)
+				//numentries handles in the file (soft owner)
 				template.EntryHandles.Add(this.handleReference());
 
 			return template;
@@ -1401,7 +1398,7 @@ namespace ACadSharp.IO.DWG
 			template.OwnedObjectsCount = 0;
 
 			//R2004+:
-			if (this.R2004Plus & template.HasAtts)
+			if (this.R2004Plus && template.HasAtts)
 				//Owned Object Count BL Number of objects owned by this object.
 				template.OwnedObjectsCount = this._objectReader.ReadBitLong();
 		}
@@ -1570,12 +1567,15 @@ namespace ACadSharp.IO.DWG
 			this.readCommonEntityData(template);
 
 			//Flags RC 70 NOT DIRECTLY THE 75. Bit-coded (76543210):
-			byte num1 = this._objectReader.ReadByte();
+			byte flags = this._objectReader.ReadByte();
+
 			//75 0 : Splined(75 value is 5)
 			//1 : Splined(75 value is 6)
-			bool splined = ((uint)num1 & 0b1) > 0;
+			bool splined = ((uint)flags & 0b1) > 0;
+			//Should assign pline.SmoothSurface ??
+
 			//(If either is set, set 70 bit 2(4) to indicate splined.)
-			bool splined1 = ((uint)num1 & 0b10) > 0;
+			bool splined1 = ((uint)flags & 0b10) > 0;
 
 			if (splined | splined1)
 			{
@@ -1585,7 +1585,11 @@ namespace ACadSharp.IO.DWG
 			//Flags RC 70 NOT DIRECTLY THE 70. Bit-coded (76543210):
 			//0 : Closed(70 bit 0(1))
 			//(Set 70 bit 3(8) because this is a 3D POLYLINE.)
-			bool closed = (this._objectReader.ReadByte() & 1U) > 0U;
+			pline.Flags |= PolylineFlags.Polyline3D;
+			if ((this._objectReader.ReadByte() & 1U) > 0U)
+			{
+				pline.Flags |= PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM;
+			}
 
 			//R2004+:
 			if (this.R2004Plus)
@@ -1725,6 +1729,9 @@ namespace ACadSharp.IO.DWG
 			dimension.FeatureLocation = this._objectReader.Read3BitDouble();
 			//14 - pt 3BD 14 See DXF documentation.
 			dimension.LeaderEndpoint = this._objectReader.Read3BitDouble();
+
+			byte flags = (this._objectReader.ReadByte());
+			dimension.IsOrdinateTypeX = (flags & 0b01) != 0;
 
 			this.readCommonDimensionHandles(template);
 
@@ -1882,9 +1889,8 @@ namespace ACadSharp.IO.DWG
 			//The actual 70 - group value comes from 3 things:
 			//6 for being an ordinate DIMENSION, plus whatever bits "Flags 1" and "Flags 2" specify.
 
-			///<see cref="DwgObjectWriter.writeCommonDimensionData"></see>
-			//TODO: set dimension type
-			byte dimensionType = this._objectReader.ReadByte();
+			byte flags = (this._objectReader.ReadByte());
+			dimension.IsTextUserDefinedLocation = (flags & 0b01) == 0;
 
 			//User text TV 1
 			dimension.Text = this._textReader.ReadVariableText();
@@ -1916,7 +1922,7 @@ namespace ACadSharp.IO.DWG
 				//Linespacing Factor BD 41
 				dimension.LineSpacingFactor = this._objectReader.ReadBitDouble();
 				//Actual Measurement BD 42
-				dimension.Measurement = this._objectReader.ReadBitDouble();
+				this._objectReader.ReadBitDouble();
 			}
 
 			//R2007 +:
@@ -1925,9 +1931,9 @@ namespace ACadSharp.IO.DWG
 				//Unknown B 73
 				this._objectReader.ReadBit();
 				//Flip arrow1 B 74
-				this._objectReader.ReadBit();
+				dimension.FlipArrow1 = this._objectReader.ReadBit();
 				//Flip arrow2 B 75
-				this._objectReader.ReadBit();
+				dimension.FlipArrow2 = this._objectReader.ReadBit();
 			}
 
 			//Common:
@@ -2150,7 +2156,7 @@ namespace ACadSharp.IO.DWG
 			template.ShapeIndex = (ushort)this._objectReader.ReadBitShort();
 
 			//Extrusion 3BD 210
-			shape.Extrusion = this._objectReader.Read3BitDouble();
+			shape.Normal = this._objectReader.Read3BitDouble();
 
 			//H SHAPEFILE (hard pointer)
 			template.ShapeFileHandle = this.handleReference();
@@ -2266,7 +2272,8 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				for (int i = 0; i < frozenLayerCount; ++i)
-					//H 341 Frozen Layer Handles(use count from above)(hard pointer until R2000, soft pointer from R2004 onwards)
+					//H 341 Frozen Layer Handles(use count from above)
+					//(hard pointer until R2000, soft pointer from R2004 onwards)
 					template.FrozenLayerHandles.Add(this.handleReference());
 
 				//H 340 Clip boundary handle(soft pointer)
@@ -2357,7 +2364,7 @@ namespace ACadSharp.IO.DWG
 				//The scenario flag becomes 1 if the knot parameter is Custom or has no fit data, otherwise 2.
 				spline.KnotParameterization = (KnotParameterization)this._mergedReaders.ReadBitLong();
 
-				scenario = ((spline.KnotParameterization == KnotParameterization.Custom || (spline.Flags1 & SplineFlags1.UseKnotParameter) == 0) ? 1 : 2);
+				scenario = (spline.KnotParameterization == KnotParameterization.Custom || (spline.Flags1 & SplineFlags1.UseKnotParameter) == 0) ? 1 : 2;
 			}
 			else if (scenario == 2)
 			{
@@ -2379,18 +2386,6 @@ namespace ACadSharp.IO.DWG
 			bool flag = false;
 			switch (scenario)
 			{
-				case 2:
-					//Fit Tol BD 44
-					spline.FitTolerance = this._objectReader.ReadBitDouble();
-					//Beg tan vec 3BD 12 Beginning tangent direction vector (normalized).
-					spline.StartTangent = this._objectReader.Read3BitDouble();
-					//End tan vec 3BD 13 Ending tangent direction vector (normalized).
-					spline.EndTangent = this._objectReader.Read3BitDouble();
-					//num fit pts BL 74 Number of fit points.
-					//Stored as a LONG, although it is defined in DXF as a short.
-					//You can see this if you create a spline with >=256 fit points
-					numfitpts = this._objectReader.ReadBitLong();
-					break;
 				case 1:
 					//Rational B flag bit 2
 					if (this._objectReader.ReadBit())
@@ -2416,7 +2411,20 @@ namespace ACadSharp.IO.DWG
 					//Weight B Seems to be an echo of the 4 bit on the flag for "weights present".
 					flag = this._objectReader.ReadBit();
 					break;
+				case 2:
+					//Fit Tol BD 44
+					spline.FitTolerance = this._objectReader.ReadBitDouble();
+					//Beg tan vec 3BD 12 Beginning tangent direction vector (normalized).
+					spline.StartTangent = this._objectReader.Read3BitDouble();
+					//End tan vec 3BD 13 Ending tangent direction vector (normalized).
+					spline.EndTangent = this._objectReader.Read3BitDouble();
+					//num fit pts BL 74 Number of fit points.
+					//Stored as a LONG, although it is defined in DXF as a short.
+					//You can see this if you create a spline with >=256 fit points
+					numfitpts = this._objectReader.ReadBitLong();
+					break;
 			}
+
 			for (int i = 0; i < numknots; i++)
 			{
 				//Knot BD knot value
@@ -2528,6 +2536,9 @@ namespace ACadSharp.IO.DWG
 				//itemhandles (soft owner)
 				ulong handle = this.handleReference();
 
+				if (handle == 0 || string.IsNullOrEmpty(name))
+					continue;
+
 				template.Entries.Add(name, handle);
 			}
 		}
@@ -2568,7 +2579,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2007Plus)
 			{
 				//Rect height BD 46 Reference rectangle height.
-				mtext.ReferenceRectangleHeight = this._objectReader.ReadBitDouble();
+				mtext.RectangleHeight = this._objectReader.ReadBitDouble();
 			}
 
 			//Common:
@@ -2582,7 +2593,7 @@ namespace ACadSharp.IO.DWG
 			this._objectReader.ReadBitDouble();
 			//Extents wid BD ---Undocumented and not present in DXF or entget
 			this._objectReader.ReadBitDouble();
-			//Text TV 1 All text in one long string (Autocad format)
+			//Text TV 1 All text in one long string
 			mtext.Value = this._textReader.ReadVariableText();
 
 			//H 7 STYLE (hard pointer)
@@ -2714,9 +2725,10 @@ namespace ACadSharp.IO.DWG
 				leader.Vertices.Add(this._objectReader.Read3BitDouble());
 			}
 
-			//Origin 3BD --- The leader plane origin (by default it’s the first point).
-			this._objectReader.Read3BitDouble();    //Is necessary to store this value?
-													//Extrusion 3BD 210
+			//Origin 3BD --- The leader plane origin (by default it’s the first point)
+			//Is necessary to store this value?
+			this._objectReader.Read3BitDouble();
+			//Extrusion 3BD 210
 			leader.Normal = this._objectReader.Read3BitDouble();
 			//x direction 3BD 211
 			leader.HorizontalDirection = this._objectReader.Read3BitDouble();
@@ -2789,6 +2801,551 @@ namespace ACadSharp.IO.DWG
 			template.AnnotationHandle = this.handleReference();
 			//H 2 DIMSTYLE (hard pointer)
 			template.DIMSTYLEHandle = this.handleReference();
+
+			return template;
+		}
+
+		private CadTemplate readMultiLeader()
+		{
+			if (!R2010Plus)
+			{
+				return null;
+			}
+
+			MultiLeader mLeader = new MultiLeader();
+			CadMLeaderTemplate template = new CadMLeaderTemplate(mLeader);
+
+			this.readCommonEntityData(template);
+
+			//	270 Version, expected to be 2
+			var f270 = _objectReader.ReadBitShort();
+
+			mLeader.ContextData = readMultiLeaderAnnotContext(template);
+
+			//	Multileader Common data
+			//	340 Leader StyleId (handle)
+			template.LeaderStyleHandle = this.handleReference();
+			//	90  Property Override Flags (int32)
+			mLeader.PropertyOverrideFlags = (MultiLeaderPropertyOverrideFlags)this._objectReader.ReadBitLong();
+			//	170 LeaderLineType (short)
+			mLeader.PathType = (MultiLeaderPathType)_objectReader.ReadBitShort();
+			//	91  Leade LineColor (Color)
+			mLeader.LineColor = _mergedReaders.ReadCmColor();
+			//	341 LeaderLineTypeID (handle/LineType)
+			template.LeaderLineTypeHandle = this.handleReference();
+			//	171 LeaderLine Weight
+			mLeader.LeaderLineWeight = (LineweightType)_objectReader.ReadBitShort();
+			//  290 Enable Landing
+			mLeader.EnableLanding = _objectReader.ReadBit();
+			//  291 Enable Dogleg
+			mLeader.EnableDogleg = _objectReader.ReadBit();
+
+			//	TODO Why do we need this
+			_objectReader.Advance(2);
+
+			//  41  Dogleg Length / Landing distance
+			mLeader.LandingDistance = _objectReader.ReadBitDouble();
+			//  342 Arrowhead ID
+			template.ArrowheadHandle = this.handleReference();
+			//  42  Arrowhead Size
+			mLeader.ArrowheadSize = _objectReader.ReadBitDouble();
+			//  172 Content Type
+			mLeader.ContentType = (LeaderContentType)_objectReader.ReadBitShort();
+			//  343 Text Style ID (handle/TextStyle)
+			template.MTextStyleHandle = this.handleReference();
+			//  173 Text Left Attachment Type
+			mLeader.TextLeftAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
+			//  95  Text Right Attachement Type
+			mLeader.TextRightAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
+			//  174 Text Angle Type
+			mLeader.TextAngle = (TextAngleType)_objectReader.ReadBitShort();
+			//  175 Text Alignment Type
+			mLeader.TextAlignment = (TextAlignmentType)_objectReader.ReadBitShort();
+			//  92  Text Color
+			mLeader.TextColor = _mergedReaders.ReadCmColor();
+			//  292 Enable Frame Text
+			mLeader.TextFrame = _objectReader.ReadBit();
+			//  344 Block Content ID
+			template.BlockContentHandle = this.handleReference();
+			//  93  Block Content Color
+			mLeader.BlockContentColor = _mergedReaders.ReadCmColor();
+			//  10  Block Content Scale
+			mLeader.BlockContentScale = _objectReader.Read3BitDouble();
+			//  43  Block Content Rotation
+			mLeader.BlockContentRotation = _objectReader.ReadBitDouble();
+			//  176 Block Content Connection Type
+			mLeader.BlockContentConnection = (AttachmentType)_objectReader.ReadBitShort();
+			//  293 Enable Annotation Scale/Is annotative
+			mLeader.EnableAnnotationScale = _objectReader.ReadBit();
+
+			//if (R2007pre)
+			//{
+			//	BL number of arrow  heads  Read2Bits returns 2 --> 0
+			//int arrowHeadCount = _objectReader.ReadBitLong();
+			//for (int ah = 0; ah < arrowHeadCount; ah++) {
+			//	//  DXF:	94  BL Arrowhead Index (DXF)
+			//	//	ODA:	94 B Is Default
+			//	int arrowheadIndex = _objectReader.ReadBitLong();
+			//	//bool isDefault = _objectReader.ReadBit();
+			//	bool isDefault = true;
+			//	//  345 Arrowhead ID
+			//	template.ArrowheadHandles.Add(this.handleReference(), isDefault);
+			//}
+			//}
+
+			//	BL Number of Block Labels 
+			int blockLabelCount = _objectReader.ReadBitShort();
+			//  330 Block Attribute definition handle (hard pointer)
+			//  302 Block Attribute Text String
+			//  177 Block Attribute Index
+			//  44  Block Attribute Width
+			for (int bl = 0; bl < blockLabelCount; bl++)
+			{
+				var attributeHandle = this.handleReference();
+				var blockAttribute = new MultiLeader.BlockAttribute()
+				{
+					Text = _textReader.ReadVariableText(),
+					Index = _objectReader.ReadBitShort(),
+					Width = _objectReader.ReadBitDouble()
+				};
+				mLeader.BlockAttributes.Add(blockAttribute);
+				template.BlockAttributeHandles.Add(blockAttribute, attributeHandle);
+			}
+
+			//  294 Text Direction Negative
+			mLeader.TextDirectionNegative = _objectReader.ReadBit();
+			//  178 Text Align in IPE
+			mLeader.TextAligninIPE = _objectReader.ReadBitShort();
+			//  179 Text Attachment Point
+			mLeader.TextAttachmentPoint = (TextAttachmentPointType)_objectReader.ReadBitShort();
+			//	45	BD	ScaleFactor
+			mLeader.ScaleFactor = _objectReader.ReadBitDouble();
+
+			//  271 Text attachment direction for MText contents
+			mLeader.TextAttachmentDirection = (TextAttachmentDirectionType)_objectReader.ReadBitShort();
+			//  272 Bottom text attachment direction (sequence my be interchanged)
+			mLeader.TextBottomAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
+			//  273 Top text attachment direction
+			mLeader.TextTopAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
+
+			if (R2013Plus)
+			{
+				//	295 Leader extended to text
+				mLeader.ExtendedToText = _objectReader.ReadBit();
+			}
+			return template;
+		}
+
+		private MultiLeaderAnnotContext readMultiLeaderAnnotContext(CadMLeaderTemplate template)
+		{
+			MultiLeaderAnnotContext annotContext = new MultiLeaderAnnotContext();
+
+			//	BL	-	Number of leader roots
+			int leaderRootCount = _objectReader.ReadBitLong();
+			for (int i = 0; i < leaderRootCount; i++)
+			{
+				annotContext.LeaderRoots.Add(readLeaderRoot(template));
+			}
+
+			//	Common
+			//	BD	40	Overall scale
+			annotContext.OverallScale = _objectReader.ReadBitDouble();
+			//	3BD	10	Content base point
+			annotContext.ContentBasePoint = _objectReader.Read3BitDouble();
+			//	BD	41	Text height
+			annotContext.TextHeight = _objectReader.ReadBitDouble();
+			//	BD	140	Arrow head size
+			annotContext.ArrowheadSize = _objectReader.ReadBitDouble();
+			//  BD	145	Landing gap
+			annotContext.LandingGap = _objectReader.ReadBitDouble();
+			//	BS	174	Style left text attachment type. See also MLEADER style left text attachment type for values. Relevant if mleader attachment direction is horizontal.
+			annotContext.TextLeftAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
+			//	BS	175	Style right text attachment type. See also MLEADER style left text attachment type for values. Relevant if mleader attachment direction is horizontal.
+			annotContext.TextRightAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
+			//	BS	176	Text align type (0 = left, 1 = center, 2 = right)
+			annotContext.TextAlignment = (TextAlignmentType)_objectReader.ReadBitShort();
+			//	BS	177	Attachment type (0 = content extents, 1 = insertion point).
+			annotContext.AttachmentType = (AttachmentType)_objectReader.ReadBitShort();
+			//	B	290	Has text contents
+			annotContext.HasTextContents = _objectReader.ReadBit();
+			if (annotContext.HasTextContents)
+			{
+				//	TV	304	Text label
+				annotContext.TextLabel = _textReader.ReadVariableText();
+				//	3BD	11	Normal vector
+				annotContext.Normal = _objectReader.Read3BitDouble();
+				//	H	340	Text style handle (hard pointer)
+				template.AnnotContextTextStyleHandle = this.handleReference();
+				//	3BD	12	Location
+				annotContext.Location = _objectReader.Read3BitDouble();
+				//	3BD	13	Direction
+				annotContext.Direction = _objectReader.Read3BitDouble();
+				//	BD	42	Rotation (radians)
+				annotContext.Rotation = _objectReader.ReadBitDouble();
+				//	BD	43	Boundary width
+				annotContext.BoundaryWidth = _objectReader.ReadBitDouble();
+				//	BD	44	Boundary height
+				annotContext.BoundaryHeight = _objectReader.ReadBitDouble();
+				//	BD	45	Line spacing factor
+				annotContext.LineSpacingFactor = _objectReader.ReadBitDouble();
+				//	BS	170	Line spacing style (1 = at least, 2 = exactly)
+				annotContext.LineSpacing = (LineSpacingStyle)_objectReader.ReadBitShort();
+				//	CMC	90	Text color
+				annotContext.TextColor = _objectReader.ReadCmColor();
+				//	BS	171	Alignment (1 = left, 2 = center, 3 = right)
+				annotContext.TextAlignment = (TextAlignmentType)_objectReader.ReadBitShort();
+				//	BS	172	Flow direction (1 = horizontal, 3 = vertical, 6 = by style)
+				annotContext.FlowDirection = (FlowDirectionType)_objectReader.ReadBitShort();
+				//	CMC	91	Background fill color
+				annotContext.BackgroundFillColor = _objectReader.ReadCmColor();
+				//	BD	141	Background scale factor
+				annotContext.BackgroundScaleFactor = _objectReader.ReadBitDouble();
+				//	BL	92	Background transparency
+				annotContext.BackgroundTransparency = _objectReader.ReadBitLong();
+				//	B	291	Is background fill enabled
+				annotContext.BackgroundFillEnabled = _objectReader.ReadBit();
+				//	B	292	Is background mask fill on
+				annotContext.BackgroundMaskFillOn = _objectReader.ReadBit();
+				//	BS	173	Column type (ODA writes 0), *TODO: what meaning for values?
+				annotContext.ColumnType = _objectReader.ReadBitShort();
+				//	B	293	Is text height automatic?
+				annotContext.TextHeightAutomatic = _objectReader.ReadBit();
+				//	BD	142	Column width
+				annotContext.ColumnWidth = _objectReader.ReadBitDouble();
+				//	BD	143	Column gutter
+				annotContext.ColumnGutter = _objectReader.ReadBitDouble();
+				//	B	294	Column flow reversed
+				annotContext.ColumnFlowReversed = _objectReader.ReadBit();
+
+				//	Column sizes
+				//  BD	144	Column size
+				int columnSizesCount = _objectReader.ReadBitLong();
+				for (int i = 0; i < columnSizesCount; i++)
+				{
+					annotContext.ColumnSizes.Add(_objectReader.ReadBitDouble());
+				}
+
+				//	B	295	Word break
+				annotContext.WordBreak = _objectReader.ReadBit();
+				//	B	Unknown
+				_objectReader.ReadBit();
+				//	ELSE(Has text contents)
+			}
+			else if (annotContext.HasContentsBlock = _objectReader.ReadBit())
+			{
+				//B	296	Has contents block
+				//IF Has contents block
+				//	H	341	AcDbBlockTableRecord handle (soft pointer)
+				template.AnnotContextBlockRecordHandle = this.handleReference();
+				//	3BD	14	Normal vector
+				annotContext.Normal = _objectReader.Read3BitDouble();
+				//	3BD	15	Location
+				annotContext.Location = _objectReader.Read3BitDouble();
+				//	3BD	16	Scale vector
+				annotContext.BlockContentScale = _objectReader.Read3BitDouble();
+				//	BD	46	Rotation (radians)
+				annotContext.Rotation = _objectReader.ReadBitDouble();
+				//  CMC	93	Block color
+				annotContext.BlockContentColor = _objectReader.ReadCmColor();
+				//	BD (16)	47	16 doubles containing the complete transformation
+				//	matrix. Order of transformation is:
+				//	- Rotation,
+				//	- OCS to WCS (using normal vector),
+				//	- Scaling (using scale vector)
+				//	- Translation (using location)
+				double m00 = _objectReader.ReadBitDouble();
+				double m10 = _objectReader.ReadBitDouble();
+				double m20 = _objectReader.ReadBitDouble();
+				double m30 = _objectReader.ReadBitDouble();
+
+				double m01 = _objectReader.ReadBitDouble();
+				double m11 = _objectReader.ReadBitDouble();
+				double m21 = _objectReader.ReadBitDouble();
+				double m31 = _objectReader.ReadBitDouble();
+
+				double m02 = _objectReader.ReadBitDouble();
+				double m12 = _objectReader.ReadBitDouble();
+				double m22 = _objectReader.ReadBitDouble();
+				double m32 = _objectReader.ReadBitDouble();
+
+				double m03 = _objectReader.ReadBitDouble();
+				double m13 = _objectReader.ReadBitDouble();
+				double m23 = _objectReader.ReadBitDouble();
+				double m33 = _objectReader.ReadBitDouble();
+
+				annotContext.TransformationMatrix = new Matrix4(
+						m00, m10, m20, m30,
+						m01, m11, m21, m31,
+						m02, m12, m22, m32,
+						m03, m13, m23, m33);
+			}
+			//END IF Has contents block
+			//END IF Has text contents
+
+			//	3BD	110	Base point
+			annotContext.BasePoint = _objectReader.Read3BitDouble();
+			//	3BD	111	Base direction
+			annotContext.BaseDirection = _objectReader.Read3BitDouble();
+			//	3BD	112	Base vertical
+			annotContext.BaseVertical = _objectReader.Read3BitDouble();
+			//	B	297	Is normal reversed?
+			annotContext.NormalReversed = _objectReader.ReadBit();
+
+			//	BS	273	Style top attachment
+			annotContext.TextTopAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
+			//	BS	272	Style bottom attachment
+			annotContext.TextBottomAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
+
+			return annotContext;
+		}
+
+		private LeaderRoot readLeaderRoot(CadMLeaderTemplate template)
+		{
+			LeaderRoot leaderRoot = new LeaderRoot();
+
+			//	B		290		Is content valid(ODA writes true)/DXF: Has Set Last Leader Line Point
+			leaderRoot.ContentValid = _objectReader.ReadBit();
+			//	B		291		Unknown(ODA writes true)/DXF: Has Set Dogleg Vector
+			leaderRoot.Unknown = _objectReader.ReadBit();
+			//	3BD		10		Connection point/DXF: Last Leader Line Point
+			leaderRoot.ConnectionPoint = _objectReader.Read3BitDouble();
+			//	3BD		11		Direction/DXF: Dogleg vector
+			leaderRoot.Direction = _objectReader.Read3BitDouble();
+
+			//	Break start/end point pairs
+			//	BL		Number of break start / end point pairs
+			//	3BD		12		Break start point
+			//	3BD		13		Break end point
+			int breakStartEndPointCount = _objectReader.ReadBitLong();
+			for (int bsep = 0; bsep < breakStartEndPointCount; bsep++)
+			{
+				leaderRoot.BreakStartEndPointsPairs.Add(new StartEndPointPair(
+					_objectReader.Read3BitDouble(),
+					_objectReader.Read3BitDouble()));
+			}
+
+			//	BL		90		Leader index
+			leaderRoot.LeaderIndex = _objectReader.ReadBitLong();
+			//	BD		40		Landing distance
+			leaderRoot.LandingDistance = _objectReader.ReadBitDouble();
+
+			//	Leader lines
+			//	BL		Number of leader lines
+			int leaderLineCount = _objectReader.ReadBitLong();
+			for (int ll = 0; ll < leaderLineCount; ll++)
+			{
+				leaderRoot.Lines.Add(readLeaderLine(template));
+			}
+
+			//	BS	271	Attachment direction(0 = horizontal, 1 = vertical, default is 0)
+			leaderRoot.AttachmentDirection = (TextAttachmentDirectionType)_objectReader.ReadBitShort();
+
+			return leaderRoot;
+		}
+
+		private LeaderLine readLeaderLine(CadMLeaderTemplate template)
+		{
+			LeaderLine leaderLine = new LeaderLine();
+			CadMLeaderTemplate.LeaderLineSubTemplate leaderLineSubTemplate = new CadMLeaderTemplate.LeaderLineSubTemplate(leaderLine);
+			template.LeaderLineSubTemplates.Add(leaderLineSubTemplate);
+
+			//	Points
+			//	BL	-	Number of points
+			//	3BD		10		Point
+			int pointCount = _objectReader.ReadBitLong();
+			for (int p = 0; p < pointCount; p++)
+			{
+				leaderLine.Points.Add(_objectReader.Read3BitDouble());
+			}
+
+			//	Add optional Break Info (one or more)
+			//	BL	Break info count
+			leaderLine.BreakInfoCount = _objectReader.ReadBitLong();
+			if (leaderLine.BreakInfoCount > 0)
+			{
+				//	BL	90		Segment index
+				leaderLine.SegmentIndex = _objectReader.ReadBitLong();
+
+				//	Start/end point pairs
+				//	3BD	11	Start Point
+				//	3BD	12	End point
+				int startEndPointCount = _objectReader.ReadBitLong();
+				for (int sep = 0; sep < startEndPointCount; sep++)
+				{
+					leaderLine.StartEndPoints.Add(new StartEndPointPair(
+						_objectReader.Read3BitDouble(),
+						_objectReader.Read3BitDouble()));
+				}
+			}
+
+			//	BL	91	Leader line index
+			leaderLine.Index = _objectReader.ReadBitLong();
+
+			//	BS	170	Leader type(0 = invisible leader, 1 = straight leader, 2 = spline leader)
+			leaderLine.PathType = (MultiLeaderPathType)_objectReader.ReadBitShort();
+			//	CMC	92	Line color
+			leaderLine.LineColor = _objectReader.ReadCmColor();
+			//	H	340	Line type handle(hard pointer)
+			leaderLineSubTemplate.LineTypeHandle = this.handleReference();
+			//	BL	171	Line weight
+			leaderLine.LineWeight = (LineweightType)_objectReader.ReadBitLong();
+			//	BD	40	Arrow size
+			leaderLine.ArrowheadSize = _objectReader.ReadBitDouble();
+			//	H	341	Arrow symbol handle(hard pointer)
+			leaderLineSubTemplate.ArrowSymbolHandle = this.handleReference();
+
+			//	BL	93	Override flags (1 = leader type, 2 = line color, 4 = line type, 8 = line weight, 16 = arrow size, 32 = arrow symbol(handle)
+			leaderLine.OverrideFlags = (LeaderLinePropertOverrideFlags)_objectReader.ReadBitLong();
+
+			return leaderLine;
+		}
+
+		private CadTemplate readMultiLeaderStyle()
+		{
+			if (!R2010Plus)
+			{
+				return null;
+			}
+
+			MultiLeaderStyle mLeaderStyle = new MultiLeaderStyle();
+			CadMLeaderStyleTemplate template = new CadMLeaderStyleTemplate(mLeaderStyle);
+
+			this.readCommonNonEntityData(template);
+
+			//	BS	179	Version expected: 2
+			var version = _objectReader.ReadBitShort();
+
+			//	BS	170	Content type (see paragraph on LEADER for more details).
+			mLeaderStyle.ContentType = (LeaderContentType)_objectReader.ReadBitShort();
+			//	BS	171	Draw multi-leader order (0 = draw content first, 1 = draw leader first)
+			mLeaderStyle.MultiLeaderDrawOrder = (MultiLeaderDrawOrderType)_objectReader.ReadBitShort();
+			//	BS	172	Draw leader order (0 = draw leader head first, 1 = draw leader tail first)
+			mLeaderStyle.LeaderDrawOrder = (LeaderDrawOrderType)_objectReader.ReadBitShort();
+			//	BL	90	Maximum number of points for leader
+			mLeaderStyle.MaxLeaderSegmentsPoints = _objectReader.ReadBitShort();
+			//	BD	40	First segment angle (radians)
+			mLeaderStyle.FirstSegmentAngleConstraint = _objectReader.ReadBitDouble();
+			//	BD	41	Second segment angle (radians)
+			mLeaderStyle.SecondSegmentAngleConstraint = _objectReader.ReadBitDouble();
+			//	BS	173	Leader type (see paragraph on LEADER for more details).
+			mLeaderStyle.PathType = (MultiLeaderPathType)_objectReader.ReadBitShort();
+			//	CMC	91	Leader line color
+			mLeaderStyle.LineColor = _mergedReaders.ReadCmColor();
+			//	H	340	Leader line type handle (hard pointer)
+			template.LeaderLineTypeHandle = this.handleReference();
+			//	BL	92	Leader line weight
+			mLeaderStyle.LeaderLineWeight = (LineweightType)_objectReader.ReadBitLong();
+			//	B	290	Is landing enabled?
+			mLeaderStyle.EnableLanding = _objectReader.ReadBit();
+			//	BD	42	Landing gap
+			mLeaderStyle.LandingGap = _objectReader.ReadBitDouble();
+			//	B	291	Auto include landing (is dog-leg enabled?)
+			mLeaderStyle.EnableDogleg = _objectReader.ReadBit();
+			//	BD	43	Landing distance
+			mLeaderStyle.LandingDistance = _objectReader.ReadBitDouble();
+			//	TV	3	Style description
+			mLeaderStyle.Description = _mergedReaders.ReadVariableText();
+			//	H	341	Arrow head block handle (hard pointer)
+			template.ArrowheadHandle = this.handleReference();
+			//	BD	44	Arrow head size
+			mLeaderStyle.ArrowheadSize = _objectReader.ReadBitDouble();
+			//	TV	300	Text default
+			mLeaderStyle.DefaultTextContents = _mergedReaders.ReadVariableText();
+			//	H	342	Text style handle (hard pointer)
+			template.MTextStyleHandle = this.handleReference();
+			//	BS	174	Left attachment (see paragraph on LEADER for more details).
+			mLeaderStyle.TextLeftAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
+			//	BS	178	Right attachment (see paragraph on LEADER for more details).
+			mLeaderStyle.TextRightAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
+			if (R2010Plus)
+			{//	IF IsNewFormat OR DXF file
+			 //	BS	175	Text angle type (see paragraph on LEADER for more details).
+				mLeaderStyle.TextAngle = (TextAngleType)_objectReader.ReadBitShort();
+
+			}   //	END IF IsNewFormat OR DXF file
+				//	BS	176	Text alignment type
+			mLeaderStyle.TextAlignment = (TextAlignmentType)_objectReader.ReadBitShort();
+			//	CMC	93	Text color
+			mLeaderStyle.TextColor = _mergedReaders.ReadCmColor();
+			//	BD	45	Text height
+			mLeaderStyle.TextHeight = _objectReader.ReadBitDouble();
+			//	B	292	Text frame enabled
+			mLeaderStyle.TextFrame = _objectReader.ReadBit();
+			if (R2010Plus)
+			{//	IF IsNewFormat OR DXF file
+			 //	B	297	Always align text left
+				mLeaderStyle.TextAlignAlwaysLeft = _objectReader.ReadBit();
+			}//	END IF IsNewFormat OR DXF file
+			 //	BD	46	Align space
+			mLeaderStyle.AlignSpace = _objectReader.ReadBitDouble();
+			//	H	343	Block handle (hard pointer)
+			template.BlockContentHandle = this.handleReference();
+			//	CMC	94	Block color
+			mLeaderStyle.BlockContentColor = _mergedReaders.ReadCmColor();
+			//	3BD	47,49,140	Block scale vector
+			mLeaderStyle.BlockContentScale = _objectReader.Read3BitDouble();
+			//	B	293	Is block scale enabled
+			mLeaderStyle.EnableBlockContentScale = _objectReader.ReadBit();
+			//	BD	141	Block rotation (radians)
+			mLeaderStyle.BlockContentRotation = _objectReader.ReadBitDouble();
+			//	B	294	Is block rotation enabled
+			mLeaderStyle.EnableBlockContentRotation = _objectReader.ReadBit();
+			//	BS	177	Block connection type (0 = MLeader connects to the block extents, 1 = MLeader connects to the block base point)
+			mLeaderStyle.BlockContentConnection = (BlockContentConnectionType)_objectReader.ReadBitShort();
+			//	BD	142	Scale factor
+			mLeaderStyle.ScaleFactor = _objectReader.ReadBitDouble();
+			//	B	295	Property changed, meaning not totally clear
+			//	might be set to true if something changed after loading,
+			//	or might be used to trigger updates in dependent MLeaders.
+			//	sequence seems to be different in DXF
+			mLeaderStyle.OverwritePropertyValue = _objectReader.ReadBit();
+			//	B	296	Is annotative?
+			mLeaderStyle.IsAnnotative = _objectReader.ReadBit();
+			//	BD	143	Break size
+			mLeaderStyle.BreakGapSize = _objectReader.ReadBitDouble();
+
+			//	BS	271	Attachment direction (see paragraph on LEADER for more details).
+			mLeaderStyle.TextAttachmentDirection = (TextAttachmentDirectionType)_objectReader.ReadBitShort();
+			//	BS	273	Top attachment (see paragraph on LEADER for more details).
+			mLeaderStyle.TextBottomAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
+			//	BS	272	Bottom attachment (see paragraph on LEADER for more details).
+			mLeaderStyle.TextTopAttachment = (TextAttachmentType)_objectReader.ReadBitShort();
+
+			return template;
+		}
+
+		private CadTemplate readTolerance()
+		{
+			Tolerance tolerance = new Tolerance();
+			CadToleranceTemplate template = new CadToleranceTemplate(tolerance);
+
+			//Common Entity Data
+			this.readCommonEntityData(template);
+
+			//R13 - R14 Only:
+			if (this.R13_14Only)
+			{
+				//Unknown short S
+				short s = this._objectReader.ReadBitShort();
+				//Height BD --
+				double height = this._objectReader.ReadBitDouble();
+				//Dimgap(?) BD dimgap at time of creation, *dimscale
+				double dimscale = this._objectReader.ReadBitDouble();
+			}
+
+			//Common:
+			//Ins pt 3BD 10
+			tolerance.InsertionPoint = this._objectReader.Read3BitDouble();
+			//X direction 3BD 11
+			tolerance.Direction = this._objectReader.Read3BitDouble();
+			//Extrusion 3BD 210 etc.
+			tolerance.Normal = this._objectReader.Read3BitDouble();
+			//Text string BS 1
+			tolerance.Text = this._textReader.ReadVariableText();
+
+			//Common Entity Handle Data
+			//H DIMSTYLE(hard pointer)
+			template.DimensionStyleHandle = this.handleReference();
 
 			return template;
 		}
@@ -2911,9 +3468,10 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			if (this.R2000Plus)
+			{
 				//Loaded Bit B 0 indicates loaded for an xref
-				if (this._objectReader.ReadBit())
-					block.Flags |= BlockTypeFlags.XRef;
+				this._objectReader.ReadBit();
+			}
 
 			//R2004+:
 			int nownedObjects = 0;
@@ -2935,7 +3493,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//Insert Count RC A sequence of zero or more non-zero RC’s, followed by a terminating 0 RC.The total number of these indicates how many insert handles will be present.
-				for (byte i = this._objectReader.ReadByte(); i > 0; i = this._objectReader.ReadByte())
+				for (byte i = this._objectReader.ReadByte(); i != 0; i = this._objectReader.ReadByte())
 					++insertCount;
 
 				//Block Description TV 4 Block description.
@@ -3073,8 +3631,9 @@ namespace ACadSharp.IO.DWG
 			//Color CMC 62
 			layer.Color = this._mergedReaders.ReadCmColor();
 
-			//Handle refs H Layer control (soft pointer)
+			//TODO: This is not the Layer control handle
 			template.LayerControlHandle = this.handleReference();
+			//Handle refs H Layer control (soft pointer)
 			//[Reactors(soft pointer)]
 			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)
@@ -3137,8 +3696,6 @@ namespace ACadSharp.IO.DWG
 			style.LastHeight = this._objectReader.ReadBitDouble();
 			//Font name TV 3
 			style.Filename = this._textReader.ReadVariableText();
-			if (string.IsNullOrWhiteSpace(name))
-				style.Name = style.Filename;
 			//Bigfont name TV 4
 			style.BigFontFilename = this._textReader.ReadVariableText();
 
@@ -3155,6 +3712,8 @@ namespace ACadSharp.IO.DWG
 			this.readDocumentTable(template.CadObject, template);
 
 			//the linetypes, ending with BYLAYER and BYBLOCK.
+			//all are soft owner references except BYLAYER and 
+			//BYBLOCK, which are hard owner references.
 			template.EntryHandles.Add(this.handleReference());
 			template.EntryHandles.Add(this.handleReference());
 
@@ -3311,7 +3870,7 @@ namespace ACadSharp.IO.DWG
 				this._mergedReaders.ReadBitDouble();
 				//Contrast BD ? Default value is 0
 				this._mergedReaders.ReadBitDouble();
-				//Abient color CMC? Default value is AutoCAD indexed color 250
+				//Abient color CMC? Default value is indexed color 250
 				this._mergedReaders.ReadCmColor();
 			}
 
@@ -3608,10 +4167,8 @@ namespace ACadSharp.IO.DWG
 
 			//Unknown RC 71 Undoc'd 71-group; doesn't even appear in DXF or an entget if it's 0.
 			this._objectReader.ReadByte();
-			//Handle refs H The app control(soft pointer)
-			//[Reactors(soft pointer)]
-			//xdicobjhandle(hard owner)
-			//External reference block handle(hard pointer)
+
+			//External reference block handle(hard pointer)	??
 			this.handleReference();
 
 			return template;
@@ -3925,11 +4482,9 @@ namespace ACadSharp.IO.DWG
 			//Unknown B 70 Seems to set the 0 - bit(1) of the 70 - group.
 			this._objectReader.ReadBit();
 
-			//Handle refs H Dimstyle control(soft pointer)
-			//[Reactors(soft pointer)]
-			//xdicobjhandle(hard owner)
 			//External reference block handle(hard pointer)
 			long block = (long)this.handleReference();
+
 			//340 shapefile(DIMTXSTY)(hard pointer)
 			template.TextStyleHandle = this.handleReference();
 
@@ -4017,14 +4572,14 @@ namespace ACadSharp.IO.DWG
 			group.Description = this._textReader.ReadVariableText();
 
 			//Unnamed BS 1 if group has no name
-			this._objectReader.ReadBitShort();
+			group.IsUnnamed = this._objectReader.ReadBitShort() > 0;
 			//Selectable BS 1 if group selectable
 			group.Selectable = this._objectReader.ReadBitShort() > 0;
 
 			//Numhandles BL # objhandles in this group
 			int numhandles = this._objectReader.ReadBitLong();
 			for (int index = 0; index < numhandles; ++index)
-				//Handle refs H parenthandle (soft pointer)
+				//the entries in the group(hard pointer)
 				template.Handles.Add(this.handleReference());
 
 			return template;
@@ -4094,12 +4649,16 @@ namespace ACadSharp.IO.DWG
 
 				//R2018+:
 				if (this.R2018Plus)
+				{
 					//Line type handle H Line type handle (hard pointer)
 					elementTemplate.LinetypeHandle = this.handleReference();
+				}
 				//Before R2018:
 				else
+				{
 					//Ltindex BS Linetype index (yes, index)
 					elementTemplate.LinetypeIndex = this._objectReader.ReadBitShort();
+				}
 
 				template.ElementTemplates.Add(elementTemplate);
 				mlineStyle.Elements.Add(element);
@@ -4127,17 +4686,17 @@ namespace ACadSharp.IO.DWG
 				if ((flags & 0x200) != 0)
 					lwPolyline.Flags |= LwPolylineFlags.Closed;
 
-				if ((flags & 4u) != 0)
+				if ((flags & 0x4u) != 0)
 				{
 					lwPolyline.ConstantWidth = this._objectReader.ReadBitDouble();
 				}
 
-				if ((flags & 8u) != 0)
+				if ((flags & 0x8u) != 0)
 				{
 					lwPolyline.Elevation = this._objectReader.ReadBitDouble();
 				}
 
-				if ((flags & 2u) != 0)
+				if ((flags & 0x2u) != 0)
 				{
 					lwPolyline.Thickness = this._objectReader.ReadBitDouble();
 				}
@@ -4150,18 +4709,19 @@ namespace ACadSharp.IO.DWG
 				int nvertices = this._objectReader.ReadBitLong();
 				int nbulges = 0;
 
-				if (((uint)flags & 0x10u) != 0)
+				if (((uint)flags & 0x10) != 0)
 				{
 					nbulges = this._objectReader.ReadBitLong();
 				}
+
 				int nids = 0;
-				if (((uint)flags & 0x400u) != 0)
+				if (((uint)flags & 0x400) != 0)
 				{
 					nids = this._objectReader.ReadBitLong();
 				}
 
 				int ndiffwidth = 0;
-				if (((uint)flags & 0x20u) != 0)
+				if (((uint)flags & 0x20) != 0)
 				{
 					ndiffwidth = this._objectReader.ReadBitLong();
 				}
@@ -4206,7 +4766,7 @@ namespace ACadSharp.IO.DWG
 			}
 			catch (System.Exception ex)
 			{
-				this._builder.Notify(new NotificationEventArgs($"Exception while reading LwPolyline: {ex.GetType().FullName}"));
+				this._builder.Notify($"Exception while reading LwPolyline: {ex.GetType().FullName}", NotificationType.Error, ex);
 				return template;
 			}
 
@@ -4421,7 +4981,6 @@ namespace ACadSharp.IO.DWG
 
 				//numboundaryobjhandles BL 97 Number of boundary object handles for this path
 				int numboundaryobjhandles = this._objectReader.ReadBitLong();
-
 				for (int h = 0; h < numboundaryobjhandles; h++)
 				{
 					//boundaryhandle H 330 boundary handle(soft pointer)
@@ -4434,9 +4993,9 @@ namespace ACadSharp.IO.DWG
 			#endregion Read the boundary path data
 
 			//style BS 75 style of hatch 0==odd parity, 1==outermost, 2==whole area
-			hatch.HatchStyle = (HatchStyleType)this._objectReader.ReadBitShort();
+			hatch.Style = (HatchStyleType)this._objectReader.ReadBitShort();
 			//patterntype BS 76 pattern type 0==user-defined, 1==predefined, 2==custom
-			hatch.HatchPatternType = (HatchPatternType)this._objectReader.ReadBitShort();
+			hatch.PatternType = (HatchPatternType)this._objectReader.ReadBitShort();
 
 			if (!hatch.IsSolid)
 			{
@@ -4592,7 +5151,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readXRecord()
 		{
-			XRecrod xRecord = new XRecrod();
+			XRecord xRecord = new XRecord();
 			CadXRecordTemplate template = new CadXRecordTemplate(xRecord);
 
 			this.readCommonNonEntityData(template);
@@ -4612,7 +5171,7 @@ namespace ACadSharp.IO.DWG
 				//a string contains a short length N, and then N Unicode characters (2 bytes each).
 				//An indicator of 70 would mean a 2 byte short following. An indicator of 10 indicates
 				//3 8-byte doubles following. An indicator of 40 means 1 8-byte double. These indicator
-				//numbers all follow the normal AutoCAD DXF convention for group codes.
+				//numbers all follow the normal DXF convention for group codes.
 				var code = this._objectReader.ReadShort();
 				var groupCode = GroupCodeValue.TransformValue(code);
 
@@ -4621,10 +5180,10 @@ namespace ACadSharp.IO.DWG
 					case GroupCodeValueType.None:
 						break;
 					case GroupCodeValueType.String:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadTextUnicode()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadTextUnicode()));
 						break;
 					case GroupCodeValueType.Point3D:
-						xRecord.Entries.Add(new XRecrod.Entry(code,
+						xRecord.Entries.Add(new XRecord.Entry(code,
 							new XYZ(
 								this._objectReader.ReadDouble(),
 								this._objectReader.ReadDouble(),
@@ -4632,25 +5191,25 @@ namespace ACadSharp.IO.DWG
 								)));
 						break;
 					case GroupCodeValueType.Double:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadDouble()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadDouble()));
 						break;
 					case GroupCodeValueType.Int16:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadShort()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadShort()));
 						break;
 					case GroupCodeValueType.Int32:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadRawLong()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawLong()));
 						break;
 					case GroupCodeValueType.Int64:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadRawLong()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawLong()));
 						break;
 					case GroupCodeValueType.Handle:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadTextUnicode()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadTextUnicode()));
 						break;
 					case GroupCodeValueType.Bool:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadByte() > 0));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadByte() > 0));
 						break;
 					case GroupCodeValueType.Chunk:
-						xRecord.Entries.Add(new XRecrod.Entry(code, this._objectReader.ReadBytes(this._objectReader.ReadByte())));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadBytes(this._objectReader.ReadByte())));
 						break;
 					default:
 						break;
@@ -4659,8 +5218,10 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			if (this.R2000Plus)
+			{
 				//Cloning flag BS 280
 				xRecord.ClonningFlags = (DictionaryCloningFlags)this._objectReader.ReadBitShort();
+			}
 
 			long size = this._objectInitialPos + (long)(this._size * 8U) - 7L;
 			while (this._handlesReader.PositionInBits() < size)
@@ -4806,9 +5367,9 @@ namespace ACadSharp.IO.DWG
 			plot.PaperSize = this._textReader.ReadVariableText();
 
 			//Plot origin 2BD 46,47 plotsettings origin offset in millimeters
-			var plotOrigin = this._objectReader.Read2BitDouble();
-			plot.PlotOriginX = plotOrigin.X;
-			plot.PlotOriginY = plotOrigin.Y;
+			plot.PlotOriginX = this._objectReader.ReadBitDouble();
+			plot.PlotOriginY = this._objectReader.ReadBitDouble();
+
 			//Paper units BS 72 plotsettings plot paper units
 			plot.PaperUnits = (PlotPaperUnits)this._objectReader.ReadBitShort();
 			//Plot rotation BS 73 plotsettings plot rotation
@@ -4817,13 +5378,11 @@ namespace ACadSharp.IO.DWG
 			plot.PlotType = (PlotType)this._objectReader.ReadBitShort();
 
 			//Window min 2BD 48,49 plotsettings plot window area lower left
-			var windowLowerLeft = this._objectReader.Read2BitDouble();
-			plot.WindowLowerLeftX = windowLowerLeft.X;
-			plot.WindowLowerLeftY = windowLowerLeft.Y;
+			plot.WindowLowerLeftX = this._objectReader.ReadBitDouble();
+			plot.WindowLowerLeftY = this._objectReader.ReadBitDouble();
 			//Window max 2BD 140,141 plotsettings plot window area upper right
-			var windowUpperLeft = this._objectReader.Read2BitDouble();
-			plot.WindowUpperLeftX = windowUpperLeft.X;
-			plot.WindowUpperLeftY = windowUpperLeft.Y;
+			plot.WindowUpperLeftX = this._objectReader.ReadBitDouble();
+			plot.WindowUpperLeftY = this._objectReader.ReadBitDouble();
 
 			//R13 - R2000 Only:
 			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)
@@ -4891,7 +5450,7 @@ namespace ACadSharp.IO.DWG
 
 			dwgColor.Color = new Color(colorIndex);
 
-			return template;
+			return null;
 		}
 	}
 }
