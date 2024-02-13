@@ -1,4 +1,6 @@
 ﻿using ACadSharp.Attributes;
+using CSMath;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -25,8 +27,21 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Angle of rotated, horizontal, or vertical dimensions
 		/// </summary>
+		/// <value>
+		/// Value in radians
+		/// </value>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation { get; set; }
+
+		/// <inheritdoc/>
+		public override double Measurement
+		{
+			get
+			{
+				double rot = FirstPoint.AngleFrom(this.SecondPoint);
+				return Math.Abs(FirstPoint.DistanceFrom(this.SecondPoint) * Math.Cos(this.Rotation - rot));
+			}
+		}
 
 		public DimensionLinear() : base(DimensionType.Linear) { }
 	}

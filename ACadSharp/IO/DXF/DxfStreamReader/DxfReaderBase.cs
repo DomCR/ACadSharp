@@ -18,7 +18,17 @@ namespace ACadSharp.IO.DXF
 
 		public string ValueRaw { get; protected set; }
 
-		public string ValueAsString { get { return this.Value.ToString(); } }
+		public string ValueAsString
+		{
+			get
+			{
+				return this.Value.ToString()
+					.Replace("^J", "\n")
+					.Replace("^M", "\r")
+					.Replace("^I", "\t")
+					.Replace("^ ", "^");
+			}
+		}
 
 		public bool ValueAsBool { get { return Convert.ToBoolean(this.Value); } }
 

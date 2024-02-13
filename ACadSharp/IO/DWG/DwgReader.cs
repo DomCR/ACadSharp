@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using ACadSharp.Exceptions;
 using ACadSharp.IO.DWG;
+using ACadSharp.IO.DWG.DwgStreamReaders;
 using System.Threading.Tasks;
 using System.Threading;
 
@@ -109,6 +110,8 @@ namespace ACadSharp.IO
 			this._document.SummaryInfo = this.ReadSummaryInfo();
 			this._document.Header = this.ReadHeader();
 			this._document.Classes = this.readClasses();
+
+			this.readAppInfo();
 
 			//Read all the objects in the file
 			this.readObjects();
@@ -308,6 +311,27 @@ namespace ACadSharp.IO
 			reader.OnNotification += onNotificationEvent;
 
 			return reader.Read(sreader);
+		}
+
+		private void readAppInfo()
+		{
+#if TEST
+			this._fileHeader = this._fileHeader ?? this.readFileHeader();
+
+			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.AppInfo);
+			if (sreader is null)
+			{
+				return;
+			}
+
+			var reader = new DwgAppInfoReader(this._fileHeader.AcadVersion, sreader);
+			reader.OnNotification += onNotificationEvent;
+
+			reader.Read();
+#else
+			//Optional section, only for testing
+			return;
+#endif
 		}
 
 		/// <summary>

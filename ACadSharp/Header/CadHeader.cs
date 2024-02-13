@@ -12,10 +12,8 @@ namespace ACadSharp.Header
 {
 	public class CadHeader
 	{
-		//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
-
 		/// <summary>
-		/// The AutoCAD drawing database version number.
+		/// The Drawing database version number.
 		/// </summary>
 		/// <remarks>
 		/// System variable ACADVER.
@@ -26,20 +24,6 @@ namespace ACadSharp.Header
 			get { return this.Version.ToString(); }
 			set
 			{
-				/*
-				 The AutoCAD drawing database version number:
-				AC1006 = R10
-				AC1009 = R11 and R12
-				AC1012 = R13
-				AC1014 = R14
-				AC1015 = AutoCAD 2000
-				AC1018 = AutoCAD 2004
-				AC1021 = AutoCAD 2007
-				AC1024 = AutoCAD 2010
-				AC1027 = AutoCAD 2013
-				AC1032 = AutoCAD 2018
-				 */
-
 				this.Version = CadUtils.GetVersionFromName(value);
 			}
 		}
@@ -56,8 +40,7 @@ namespace ACadSharp.Header
 		public short MaintenanceVersion { get; internal set; } = 0;
 
 		/// <summary>
-		/// Drawing code page; set to the system code page when a new drawing is created,
-		/// but not otherwise maintained by AutoCAD
+		/// Drawing code page.
 		/// </summary>
 		/// <remarks>
 		/// System variable DWGCODEPAGE
@@ -1407,9 +1390,7 @@ namespace ACadSharp.Header
 		public bool XEdit { get; set; }
 
 		/// <summary>
-		/// Controls symbol table naming:<br/>
-		/// 0 = AutoCAD Release 14 compatibility. Limits names to 31 characters in length. Names can include the letters A to Z, the numerals 0 to 9, and the special characters dollar sign ($), underscore (_), and hyphen (-).<br/>
-		/// 1 = AutoCAD 2000. Names can be up to 255 characters in length, and can include the letters A to Z, the numerals 0 to 9, spaces, and any special characters not used for other purposes by Microsoft Windows and AutoCAD
+		/// Controls symbol table naming
 		/// </summary>
 		/// <remarks>
 		/// System variable EXTNAMES
@@ -1433,7 +1414,7 @@ namespace ACadSharp.Header
 		public bool LoadOLEObject { get; set; }
 
 		/// <summary>
-		/// Default drawing units for AutoCAD DesignCenter blocks
+		/// Default drawing units for blocks
 		/// </summary>
 		/// <remarks>
 		/// System variable INSUNITS
@@ -2993,10 +2974,9 @@ namespace ACadSharp.Header
 					else
 					{
 						IVector vector = (IVector)p.GetValue(this);
-						var arr = vector.GetComponents();
-						for (int i = 0; i < arr.Length; i++)
+						for (int i = 0; i < vector.Dimension; i++)
 						{
-							value.Add(att.ValueCodes[i], arr[i]);
+							value.Add(att.ValueCodes[i], vector[i]);
 						}
 					}
 
