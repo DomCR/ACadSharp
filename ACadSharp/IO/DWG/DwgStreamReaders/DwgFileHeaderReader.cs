@@ -14,7 +14,7 @@ namespace ACadSharp.IO.DWG
 {
 	internal class DwgFileHeaderReader : DwgSectionIO
 	{
-		private const int _metaDataSize = 0x80;
+		private const int _metaDataSize = 0x7A;
 
 		private const int _encriptedDataSize = 0x6C;
 
@@ -90,10 +90,6 @@ namespace ACadSharp.IO.DWG
 
 			DwgFileHeader fileHeader = DwgFileHeader.CreateFileHeader(this._version);
 
-			//Reset the stream position at the begining
-			this._fileStream.Position = 0L;
-			IDwgStreamReader sreader = null;
-
 			//Read the file header
 			switch (fileHeader.AcadVersion)
 			{
@@ -113,7 +109,7 @@ namespace ACadSharp.IO.DWG
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
-					sreader = DwgStreamReaderBase.GetStreamHandler(_version, await getHeaderAC15Stream(cancellationToken));
+					IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(_version, await getHeaderAC15Stream(cancellationToken));
 					this.readFileHeaderAC15(fileHeader as DwgFileHeaderAC15, sreader);
 					break;
 				case ACadVersion.AC1018:
@@ -932,7 +928,6 @@ namespace ACadSharp.IO.DWG
 		{
 			bool match = false;
 			List<byte> buffer = new List<byte>();
-
 			buffer.AddRange(await this._fileStream.ReadBytesAsync(16, cancellationToken));
 
 			do
