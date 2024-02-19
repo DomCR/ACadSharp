@@ -157,8 +157,7 @@ namespace ACadSharp.IO
 			if (reader == null)
 				return null;
 
-			DwgSummaryInfoReader summaryReader = new DwgSummaryInfoReader(this._fileHeader.AcadVersion, reader);
-			return summaryReader.Read();
+			return this.readSummaryInfo(reader);
 		}
 
 		private CadSummaryInfo readSummaryInfo(IDwgStreamReader reader)
@@ -596,7 +595,6 @@ namespace ACadSharp.IO
 
 			//get the total size of the page
 			MemoryStream memoryStream = new MemoryStream((int)descriptor.DecompressedSize * descriptor.LocalSections.Count);
-
 			foreach (DwgLocalSectionMap section in descriptor.LocalSections)
 			{
 				if (section.IsEmpty)
@@ -613,7 +611,7 @@ namespace ACadSharp.IO
 					IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(fileheader.AcadVersion, this._fileStream.Stream);
 					sreader.Position = section.Seeker;
 					//Get the header data
-					this.decryptDataSection(section, sreader);
+					this.decryptDataSection(section, sreader, section.Seeker);
 
 					if (descriptor.IsCompressed)
 					{
@@ -655,13 +653,14 @@ namespace ACadSharp.IO
 				}
 				else
 				{
+					int dataSecitonSize = 32;
 					this._fileStream.Position = section.Seeker;
-					byte[] buffer = await this._fileStream.ReadBytesAsync((int)section.CompressedSize);
+					byte[] buffer = await this._fileStream.ReadBytesAsync((int)section.CompressedSize + dataSecitonSize);
 
 					//Get the page section header
 					IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(fileheader.AcadVersion, new MemoryStream(buffer));
 					//Get the header data
-					this.decryptDataSection(section, sreader);
+					this.decryptDataSection(section, sreader, section.Seeker);
 
 					if (descriptor.IsCompressed)
 					{
@@ -671,7 +670,9 @@ namespace ACadSharp.IO
 					else
 					{
 						//Read the stream normally
-						memoryStream.Write(await this._fileStream.ReadBytesAsync((int)section.CompressedSize), 0, (int)section.CompressedSize);
+						byte[] b = new byte[section.CompressedSize];
+						sreader.Stream.Read(b, 0, (int)section.CompressedSize);
+						memoryStream.Write(b, 0, (int)section.CompressedSize);
 					}
 				}
 			}
@@ -681,9 +682,9 @@ namespace ACadSharp.IO
 			return memoryStream;
 		}
 
-		private void decryptDataSection(DwgLocalSectionMap section, IDwgStreamReader sreader)
+		private void decryptDataSection(DwgLocalSectionMap section, IDwgStreamReader sreader, long seeker)
 		{
-			int secMask = 0x4164536B ^ (int)sreader.Position;
+			int secMask = 0x4164536B ^ (int)seeker;
 
 			//0x00	4	Section page type, since it’s always a data section: 0x4163043b
 			var pageType = sreader.ReadRawLong() ^ secMask;
