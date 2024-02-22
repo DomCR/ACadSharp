@@ -132,7 +132,14 @@ namespace ACadSharp.Tables.Collections
 			this._entries.Add(key, item);
 			item.Owner = this;
 
+			item.OnNameChanged += this.onEntryNameChanged;
+
 			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
+		}
+
+		private void onEntryNameChanged(object sender, OnNameChangedArgs e)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
