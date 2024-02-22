@@ -139,7 +139,14 @@ namespace ACadSharp.Tables.Collections
 
 		private void onEntryNameChanged(object sender, OnNameChangedArgs e)
 		{
-			throw new NotImplementedException();
+			if (this._defaultEntries.Contains(e.OldName, StringComparer.InvariantCultureIgnoreCase))
+			{
+				throw new ArgumentException($"The name {e.OldName} belongs to a default entry.");
+			}
+
+			var entry = this._entries[e.OldName];
+			this._entries.Add(e.NewName, entry);
+			this._entries.Remove(e.OldName);
 		}
 	}
 }
