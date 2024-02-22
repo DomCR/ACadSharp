@@ -6,6 +6,8 @@ namespace ACadSharp.Tables
 	[DxfSubClass(DxfSubclassMarker.TableRecord, true)]
 	public abstract class TableEntry : CadObject, INamedCadObject
 	{
+		public event EventHandler<OnNameChangedArgs> OnNameChanged;
+
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.TableRecord;
 
@@ -23,6 +25,7 @@ namespace ACadSharp.Tables
 					// throw new System.ArgumentNullException(nameof(value), $"Table entry [{this.GetType().FullName}] must have a name");
 				}
 
+				OnNameChanged?.Invoke(this, new OnNameChangedArgs(this._name, value));
 				this._name = value;
 			}
 		}
