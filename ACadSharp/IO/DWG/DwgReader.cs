@@ -109,9 +109,9 @@ namespace ACadSharp.IO
 
 			this._document.SummaryInfo = this.ReadSummaryInfo();
 			this._document.Header = this.ReadHeader();
-			this._document.Classes = this.readClasses();
+			this._document.Classes = this.readClasses(this.getSectionStream(DwgSectionDefinition.Classes));
 
-			this.readAppInfo();
+			this.readAppInfo(this.getSectionStream(DwgSectionDefinition.AppInfo));
 
 			//Read all the objects in the file
 			this.readObjects();
@@ -130,10 +130,19 @@ namespace ACadSharp.IO
 
 			if (this._fileHeader.AcadVersion >= ACadVersion.AC1018)
 			{
-				this._document.SummaryInfo = this.readSummaryInfo(await this.getSectionStreamAsync(DwgSectionDefinition.SummaryInfo));
+				this._document.SummaryInfo = this.readSummaryInfo(await this.getSectionStreamAsync(DwgSectionDefinition.SummaryInfo, cancellationToken));
 			}
 
-			this._document.Header = this.readHeader(await this.getSectionStreamAsync(DwgSectionDefinition.Header));
+			this._document.Header = this.readHeader(await this.getSectionStreamAsync(DwgSectionDefinition.Header, cancellationToken));
+			this._document.Classes = this.readClasses(await this.getSectionStreamAsync(DwgSectionDefinition.Classes, cancellationToken));
+
+			this.readAppInfo(await this.getSectionStreamAsync(DwgSectionDefinition.AppInfo, cancellationToken));
+
+			//Read all the objects in the file
+			await this.readObjectsAsync();
+
+			//Build the document 
+			this._builder.BuildDocument();
 
 			return this._document;
 		}
@@ -300,11 +309,11 @@ namespace ACadSharp.IO
 		/// Refers to AcDb:Classes data section.
 		/// </remarks>
 		/// <returns></returns>
-		private DxfClassCollection readClasses()
+		private DxfClassCollection readClasses(IDwgStreamReader sreader)
 		{
 			this._fileHeader = this._fileHeader ?? this.readFileHeader();
 
-			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Classes);
+			sreader = this.getSectionStream(DwgSectionDefinition.Classes);
 
 			var reader = new DwgClassesReader(this._fileHeader.AcadVersion, this._fileHeader);
 			reader.OnNotification += onNotificationEvent;
@@ -312,7 +321,7 @@ namespace ACadSharp.IO
 			return reader.Read(sreader);
 		}
 
-		private void readAppInfo()
+		private void readAppInfo(IDwgStreamReader sreader)
 		{
 #if TEST
 			this._fileHeader = this._fileHeader ?? this.readFileHeader();
@@ -403,7 +412,6 @@ namespace ACadSharp.IO
 		private void readObjects()
 		{
 			Dictionary<ulong, long> handles = this.readHandles();
-			this._document.Classes = this.readClasses();
 
 			IDwgStreamReader sreader = null;
 			if (this._fileHeader.AcadVersion <= ACadVersion.AC1015)
@@ -415,6 +423,37 @@ namespace ACadSharp.IO
 			else
 			{
 				sreader = this.getSectionStream(DwgSectionDefinition.AcDbObjects);
+			}
+
+			Queue<ulong> objectHandles = new Queue<ulong>(this._builder.HeaderHandles.GetHandles()
+				.Where(o => o.HasValue)
+				.Select(a => a.Value));
+
+			DwgObjectReader sectionReader = new DwgObjectReader(
+				this._fileHeader.AcadVersion,
+				this._builder,
+				sreader,
+				objectHandles,
+				handles,
+				this._document.Classes);
+
+			sectionReader.Read();
+		}
+
+		private async Task readObjectsAsync()
+		{
+			Dictionary<ulong, long> handles = this.readHandles();
+
+			IDwgStreamReader sreader = null;
+			if (this._fileHeader.AcadVersion <= ACadVersion.AC1015)
+			{
+				sreader = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
+				//Handles are in absolute offset for this versions
+				sreader.Position = 0;
+			}
+			else
+			{
+				sreader = await this.getSectionStreamAsync(DwgSectionDefinition.AcDbObjects);
 			}
 
 			Queue<ulong> objectHandles = new Queue<ulong>(this._builder.HeaderHandles.GetHandles()
