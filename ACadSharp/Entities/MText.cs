@@ -2,7 +2,6 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -15,7 +14,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityMText)]
 	[DxfSubClass(DxfSubclassMarker.MText)]
-	public partial class MText : Entity
+	public partial class MText : Entity, IText
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.MTEXT;
@@ -38,16 +37,12 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
-		/// <summary>
-		/// Changes the height of the object.
-		/// </summary>
-		/// <value>
-		/// This must be a positive, non-negative number.
-		/// </value>
+		/// <inheritdoc/>
 		[DxfCodeValue(40)]
 		public double Height
 		{
-			get => _height; set
+			get => _height;
+			set
 			{
 				if (value < 0)
 					throw new ArgumentOutOfRangeException("Height value cannot be negative.");
@@ -80,16 +75,12 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(72)]
 		public DrawingDirectionType DrawingDirection { get; set; }
 
-		/// <summary>
-		/// Specifies the text string for the entity
-		/// </summary>
+		/// <inheritdoc/>
 		[DxfCodeValue(1)]
 		public string Value { get; set; } = string.Empty;
 
-		/// <summary>
-		/// Style of this text entity.
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Handle, 7)]
+		/// <inheritdoc/>
+		[DxfCodeValue(DxfReferenceType.Name | DxfReferenceType.Optional, 7)]
 		public TextStyle Style
 		{
 			get { return this._style; }
@@ -204,9 +195,6 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Transparency of background fill color
 		/// </summary>
-		/// <remarks>
-		/// not implemented (By Autocad)
-		/// </remarks>
 		[DxfCodeValue(441)]
 		public Transparency BackgroundTransparency { get; set; }
 

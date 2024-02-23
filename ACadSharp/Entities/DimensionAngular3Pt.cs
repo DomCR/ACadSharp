@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -40,6 +41,28 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(15, 25, 35)]
 		public XYZ AngleVertex { get; set; }
+
+		/// <inheritdoc/>
+		public override double Measurement
+		{
+			get
+			{
+				XY v1 = (XY)(this.FirstPoint - this.AngleVertex);
+				XY v2 = (XY)(this.SecondPoint - this.AngleVertex);
+
+				if (v1.Equals(v2))
+				{
+					return 0.0;
+				}
+
+				if (v1.IsParallel(v2))
+				{
+					return Math.PI;
+				}
+
+				return (double)v1.AngleFrom(v2);
+			}
+		}
 
 		public DimensionAngular3Pt() : base(DimensionType.Angular3Point) { }
 	}

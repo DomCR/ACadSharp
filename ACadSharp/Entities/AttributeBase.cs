@@ -2,8 +2,8 @@
 
 namespace ACadSharp.Entities
 {
-	//Is it present in the DXF ??
-	public enum AttributeType   //TODO: Check how AttributeType is assigned in Autocad
+	//TODO: Is it present in the DXF ??
+	public enum AttributeType
 	{
 		SingleLine = 1,
 		MultiLine = 2,
@@ -59,10 +59,8 @@ namespace ACadSharp.Entities
 		/// </summary>
 		//[DxfCodeValue(280)]
 		//TODO: Check the dxf code of Attribute type.
-		//Missmatch between Autodesk documentation and OpenDesign
 		public AttributeType AttributeType { get; set; } = AttributeType.SingleLine;
 
-		//Missmatch between Autodesk documentation and OpenDesign
 		public bool IsReallyLocked { get; set; }
 
 		private string _tag = string.Empty;

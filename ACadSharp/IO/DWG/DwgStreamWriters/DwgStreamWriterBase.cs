@@ -29,7 +29,7 @@ namespace ACadSharp.IO.DWG
 			this.Encoding = encoding;
 		}
 
-		public static IDwgStreamWriter GetStreamHandler(ACadVersion version, Stream stream, Encoding encoding)
+		public static IDwgStreamWriter GetStreamWriter(ACadVersion version, Stream stream, Encoding encoding)
 		{
 			switch (version)
 			{
@@ -364,6 +364,11 @@ namespace ACadSharp.IO.DWG
 		{
 			//R15 and earlier: BS color index
 			this.WriteBitShort(value.Index);
+		}
+
+		public virtual void WriteEnColor(Color color, Transparency transparency)
+		{
+			this.WriteCmColor(color);
 		}
 
 		public void Write2BitDouble(XY value)

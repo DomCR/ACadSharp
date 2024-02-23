@@ -143,9 +143,6 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus && table is DimensionStylesTable)
 			{
 				//Undocumented: this byte is found only in the DimensionStylesTable
-				//Solves the Autocad error :
-				//Reading handle A object type AcDbDimStyleTable
-				//Error 34(eWrongObjectType)                       Object discarded
 				this._writer.WriteByte(0);
 			}
 
@@ -704,7 +701,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitDouble(0.0);
 				//Contrast BD ? Default value is 0
 				this._writer.WriteBitDouble(0.0);
-				//Abient color CMC? Default value is AutoCAD indexed color 250
+				//Abient color CMC? Default value is indexed color 250
 				this._writer.WriteCmColor(new Color(250));
 			}
 

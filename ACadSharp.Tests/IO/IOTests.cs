@@ -16,12 +16,12 @@ namespace ACadSharp.Tests.IO
 		[Fact]
 		public void EmptyDwgToDxf()
 		{
-			string inPath = Path.Combine($"{_samplesFolder}", "sample_base", "empty.dwg");
+			string inPath = Path.Combine($"{samplesFolder}", "sample_base", "empty.dwg");
 			CadDocument doc = DwgReader.Read(inPath);
 
 			string file = Path.GetFileNameWithoutExtension(inPath);
-			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_out.dxf");
-			this.writeDxfFile(pathOut, doc, true);
+			string pathOut = Path.Combine(samplesOutFolder, $"{file}_out.dxf");
+			this.writeDxfFile(pathOut, doc);
 		}
 
 		[Theory]
@@ -31,9 +31,8 @@ namespace ACadSharp.Tests.IO
 			CadDocument doc = DwgReader.Read(test);
 
 			string file = Path.GetFileNameWithoutExtension(test);
-			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_out.dwg");
+			string pathOut = Path.Combine(samplesOutFolder, $"{file}_out.dwg");
 
-			//accoreconsole always fails because cannot recover the file
 			this.writeDwgFile(pathOut, doc);
 		}
 
@@ -44,8 +43,8 @@ namespace ACadSharp.Tests.IO
 			CadDocument doc = DwgReader.Read(test);
 
 			string file = Path.GetFileNameWithoutExtension(test);
-			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_out.dxf");
-			this.writeDxfFile(pathOut, doc, true);
+			string pathOut = Path.Combine(samplesOutFolder, $"{file}_out.dxf");
+			this.writeDxfFile(pathOut, doc);
 		}
 
 		[Theory]
@@ -55,8 +54,8 @@ namespace ACadSharp.Tests.IO
 			CadDocument doc = DxfReader.Read(test);
 
 			string file = Path.GetFileNameWithoutExtension(test);
-			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_rewrite_out.dxf");
-			this.writeDxfFile(pathOut, doc, true);
+			string pathOut = Path.Combine(samplesOutFolder, $"{file}_rewrite_out.dxf");
+			this.writeDxfFile(pathOut, doc);
 		}
 
 		[Theory]
@@ -76,7 +75,7 @@ namespace ACadSharp.Tests.IO
 			}
 
 			string file = Path.GetFileNameWithoutExtension(test);
-			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_moved_out.dwg");
+			string pathOut = Path.Combine(samplesOutFolder, $"{file}_moved_out.dwg");
 			this.writeDwgFile(pathOut, transfer);
 		}
 
@@ -97,25 +96,16 @@ namespace ACadSharp.Tests.IO
 			}
 
 			string file = Path.GetFileNameWithoutExtension(test);
-			string pathOut = Path.Combine(_samplesOutFolder, $"{file}_moved_out.dxf");
-			this.writeDxfFile(pathOut, transfer, true);
+			string pathOut = Path.Combine(samplesOutFolder, $"{file}_moved_out.dxf");
+			this.writeDxfFile(pathOut, transfer);
 		}
 
-		private void writeCadFile(string file, CadWriterBase writer, bool check)
+		protected virtual void writeDwgFile(string file, CadDocument doc)
 		{
-			using (writer)
-			{
-				writer.OnNotification += this.onNotification;
-				writer.Write();
-			}
+			if (!TestVariables.LocalEnv)
+				return;
 
-			if (check)
-				this.checkDxfDocumentInAutocad(Path.GetFullPath(file));
-		}
-
-		private void writeDwgFile(string file, CadDocument doc)
-		{
-			if (doc.Header.Version < ACadVersion.AC1014 || doc.Header.Version > ACadVersion.AC1018)
+			if (!isSupportedVersion(doc.Header.Version))
 				return;
 
 			using (DwgWriter writer = new DwgWriter(file, doc))
@@ -123,20 +113,15 @@ namespace ACadSharp.Tests.IO
 				writer.OnNotification += this.onNotification;
 				writer.Write();
 			}
-
-			this.checkDwgDocumentInAutocad(Path.GetFullPath(file));
 		}
 
-		private void writeDxfFile(string file, CadDocument doc, bool check)
+		protected virtual void writeDxfFile(string file, CadDocument doc)
 		{
 			using (DxfWriter writer = new DxfWriter(file, doc, false))
 			{
 				writer.OnNotification += this.onNotification;
 				writer.Write();
 			}
-
-			if (check)
-				this.checkDxfDocumentInAutocad(Path.GetFullPath(file));
 		}
 	}
 }

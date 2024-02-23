@@ -1,13 +1,11 @@
 ﻿using System;
+using ACadSharp.Objects;
 
-using ACadSharp.Entities;
-using ACadSharp.Tables;
-
-namespace ACadSharp {
-
+namespace ACadSharp.Entities
+{
 	[Flags]
-	public enum MultiLeaderPropertyOverrideFlags : int {
-
+	public enum MultiLeaderPropertyOverrideFlags : int
+	{
 		/// <summary>
 		/// No Flag: No property to be overridden
 		/// </summary>
