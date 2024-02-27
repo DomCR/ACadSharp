@@ -39,6 +39,8 @@ namespace ACadSharp.IO.Templates
 		{
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
 
+			public override double Measurement { get; }
+
 			public DimensionPlaceholder() : base(DimensionType.Linear) { }
 		}
 
@@ -79,7 +81,7 @@ namespace ACadSharp.IO.Templates
 			dimensionAligned.AttachmentPoint = dimension.AttachmentPoint;
 			dimensionAligned.LineSpacingStyle = dimension.LineSpacingStyle;
 			dimensionAligned.LineSpacingFactor = dimension.LineSpacingFactor;
-			dimensionAligned.Measurement = dimension.Measurement;
+			//dimensionAligned.Measurement = dimension.Measurement;
 			dimensionAligned.Text = dimension.Text;
 			dimensionAligned.TextRotation = dimension.TextRotation;
 			dimensionAligned.HorizontalDirection = dimension.HorizontalDirection;

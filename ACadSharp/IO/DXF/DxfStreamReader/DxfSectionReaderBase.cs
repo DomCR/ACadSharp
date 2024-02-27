@@ -350,6 +350,9 @@ namespace ACadSharp.IO.DXF
 					//Flags do not have set
 					tmp.SetDimensionFlags((DimensionType)this._reader.ValueAsShort);
 					return true;
+				//Measurement - read only
+				case 42:
+					return true;
 				//Undocumented codes
 				case 73:
 				case 74:
