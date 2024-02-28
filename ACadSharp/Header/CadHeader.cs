@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace ACadSharp.Header
 {
@@ -540,27 +541,6 @@ namespace ACadSharp.Header
 				}
 			}
 		}
-
-		public TextStyle CurrentTextStyle
-		{
-			get
-			{
-				if (this.Document == null)
-				{
-					return this._currentTextStyle;
-				}
-				else
-				{
-					return this.Document.TextStyles[this.TextStyleName];
-				}
-			}
-			private set
-			{
-				this._currentTextStyle = value;
-			}
-		}
-
-		private TextStyle _currentTextStyle = TextStyle.Default;
 
 		/// <summary>
 		/// Current layer name
@@ -1617,16 +1597,16 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTXSTY", 7)]
 		public string DimensionTextStyleName
 		{
-			get { return this.DimensionTextStyle.Name; }
+			get { return this._dimensionTextStyle.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this.DimensionTextStyle = this.Document.TextStyles[value];
+					this._dimensionTextStyle = this.Document.TextStyles[value];
 				}
 				else
 				{
-					this.DimensionTextStyle = new TextStyle(value);
+					this._dimensionTextStyle = new TextStyle(value);
 				}
 			}
 		}
@@ -1640,16 +1620,16 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMSTYLE", 2)]
 		public string DimensionStyleOverridesName
 		{
-			get { return this.DimensionStyleOverrides.Name; }
+			get { return this._dimensionStyleOverrides.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this.DimensionStyleOverrides = this.Document.DimensionStyles[value];
+					this._dimensionStyleOverrides = this.Document.DimensionStyles[value];
 				}
 				else
 				{
-					this.DimensionStyleOverrides = new DimensionStyle(value);
+					this._dimensionStyleOverrides = new DimensionStyle(value);
 				}
 			}
 		}
@@ -2849,9 +2829,62 @@ namespace ACadSharp.Header
 			}
 		}
 
-		public TextStyle DimensionTextStyle { get; private set; } = TextStyle.Default;	//TODO: not updated when changed in the document, it should follow the same pattern as currentLayer
+		public TextStyle CurrentTextStyle
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._currentTextStyle;
+				}
+				else
+				{
+					return this.Document.TextStyles[this.TextStyleName];
+				}
+			}
+			private set
+			{
+				this._currentTextStyle = value;
+			}
+		}
 
-		public DimensionStyle DimensionStyleOverrides { get; private set; } = DimensionStyle.Default;
+		public TextStyle DimensionTextStyle
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._dimensionTextStyle;
+				}
+				else
+				{
+					return this.Document.TextStyles[this.DimensionTextStyleName];
+				}
+			}
+			private set
+			{
+				this._dimensionTextStyle = value;
+			}
+		}
+
+		public DimensionStyle DimensionStyleOverrides
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._dimensionStyleOverrides;
+				}
+				else
+				{
+					return this.Document.DimensionStyles[this.DimensionStyleOverridesName];
+				}
+			}
+			private set
+			{
+				this._dimensionStyleOverrides = value;
+			}
+		}
 
 		public UCS ModelSpaceUcs { get; private set; } = new UCS();
 
@@ -2861,11 +2894,20 @@ namespace ACadSharp.Header
 
 		public UCS PaperSpaceUcsBase { get; private set; } = new UCS();
 
+		/// <summary>
+		/// Document where this header resides
+		/// </summary>
 		public CadDocument Document { get; internal set; }
 
 		private readonly static PropertyExpression<CadHeader, CadSystemVariableAttribute> _propertyCache;
 
 		private Layer _currentLayer = Layer.Default;
+
+		private TextStyle _currentTextStyle = TextStyle.Default;
+
+		private TextStyle _dimensionTextStyle = TextStyle.Default;
+
+		private DimensionStyle _dimensionStyleOverrides = DimensionStyle.Default;
 
 		static CadHeader()
 		{
