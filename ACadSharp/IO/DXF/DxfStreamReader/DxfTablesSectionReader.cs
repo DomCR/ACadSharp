@@ -313,7 +313,8 @@ namespace ACadSharp.IO.DXF
 					tmp.DIMBLK2_Name = this._reader.ValueAsString;
 					return true;
 				case 40:
-					template.CadObject.ScaleFactor = this._reader.ValueAsDouble;
+					//Somethimes is 0 but it shouldn't be allowed
+					template.CadObject.ScaleFactor = this._reader.ValueAsDouble <= 0 ? 1.0d : this._reader.ValueAsDouble;
 					return true;
 				case 41:
 					template.CadObject.ArrowSize = this._reader.ValueAsDouble;
