@@ -76,7 +76,7 @@ namespace ACadSharp.Tables
 		/// Setting <i>GenerateTolerances</i> to on (true) turns <see cref="LimitsGeneration"/> off (false).
 		/// </remarks>
 		[DxfCodeValue(71)]
-		public bool GenerateTolerances { get; set; }
+		public bool GenerateTolerances { get; set; } = false;
 
 		/// <summary>
 		/// Generates dimension limits as the default text
@@ -86,7 +86,7 @@ namespace ACadSharp.Tables
 		/// Setting <i>LimitsGeneration</i> to on (true) turns <see cref="GenerateTolerances"/> off (false).
 		/// </remarks>
 		[DxfCodeValue(72)]
-		public bool LimitsGeneration { get; set; }
+		public bool LimitsGeneration { get; set; } = false;
 
 		/// <summary>
 		/// Controls the position of dimension text inside the extension lines for all
@@ -96,7 +96,7 @@ namespace ACadSharp.Tables
 		/// <value><b>true</b> if the text is to be drawn horizontally;
 		/// <b>false </b> if the text is to be aligned with the dimension line.</value>
 		[DxfCodeValue(73)]
-		public bool TextInsideHorizontal { get; set; }
+		public bool TextInsideHorizontal { get; set; } = false;
 
 		/// <summary>
 		/// Controls the position of dimension text outside the extension lines
@@ -105,7 +105,7 @@ namespace ACadSharp.Tables
 		/// <value><b>true</b> if the text is to be drawn horizontally;
 		/// <b>false </b> if the text is to be aligned with the dimension line.</value>
 		[DxfCodeValue(74)]
-		public bool TextOutsideHorizontal { get; set; }
+		public bool TextOutsideHorizontal { get; set; } = false;
 
 		/// <summary>
 		/// Suppresses display of the first extension line
@@ -114,7 +114,7 @@ namespace ACadSharp.Tables
 		/// <value><b>true</b> if the first extension line is to be suppressed; otherwise <b>false</b>.
 		/// </value>
 		[DxfCodeValue(75)]
-		public bool SuppressFirstExtensionLine { get; set; }
+		public bool SuppressFirstExtensionLine { get; set; } = false;
 
 		/// <summary>
 		/// Suppresses display of the second extension line
@@ -123,21 +123,21 @@ namespace ACadSharp.Tables
 		/// <value><b>true</b> if the second extension line is to be suppressed; otherwise <b>false</b>.
 		/// </value>
 		[DxfCodeValue(76)]
-		public bool SuppressSecondExtensionLine { get; set; }
+		public bool SuppressSecondExtensionLine { get; set; } = false;
 
 		/// <summary>
 		/// Controls the vertical position of text in relation to the dimension line
 		/// (see DIMTAD System Variable).
 		/// </summary>
 		[DxfCodeValue(77)]
-		public DimensionTextVerticalAlignment TextVerticalAlignment { get; set; }
+		public DimensionTextVerticalAlignment TextVerticalAlignment { get; set; } = DimensionTextVerticalAlignment.Above;
 
 		/// <summary>
 		/// Controls the suppression of zeros in the primary unit value
 		/// (see DIMZIN System Variable).
 		/// </summary>
 		[DxfCodeValue(78)]
-		public ZeroHandling ZeroHandling { get; set; }
+		public ZeroHandling ZeroHandling { get; set; } = ZeroHandling.SuppressDecimalTrailingZeroes;
 
 		/// <summary>Controls the display of alternate units in dimensions
 		/// (see DIMALT System Variable).
@@ -146,7 +146,7 @@ namespace ACadSharp.Tables
 		/// <b>true</b> enables alternate units; <b>false</b> disables alternate units.
 		/// </value>
 		[DxfCodeValue(170)]
-		public bool AlternateUnitDimensioning { get; set; }
+		public bool AlternateUnitDimensioning { get; set; } = false;
 
 		/// <summary>
 		/// Controls the number of decimal places in alternate units
@@ -158,7 +158,7 @@ namespace ACadSharp.Tables
 		/// measurement.
 		/// </remarks>
 		[DxfCodeValue(171)]
-		public short AlternateUnitDecimalPlaces { get; set; }
+		public short AlternateUnitDecimalPlaces { get; set; } = 3;
 
 		/// <summary>
 		/// Controls whether a dimension line is drawn between the extension lines even when the text
@@ -191,7 +191,7 @@ namespace ACadSharp.Tables
 		/// <b>false</b> if arrowhead block set by <see cref="ArrowBlock"/> shall be used.
 		/// </value>
 		[DxfCodeValue(173)]
-		public bool SeparateArrowBlocks { get; set; }
+		public bool SeparateArrowBlocks { get; set; } = true;
 
 		/// <summary>
 		/// Draws text between extension lines
@@ -208,7 +208,7 @@ namespace ACadSharp.Tables
 		/// </para>
 		/// </value>
 		[DxfCodeValue(174)]
-		public bool TextInsideExtensions { get; set; }
+		public bool TextInsideExtensions { get; set; } = false;
 
 		/// <summary>
 		/// Suppresses arrowheads if not enough space is available inside the extension lines
@@ -218,7 +218,7 @@ namespace ACadSharp.Tables
 		/// <b>true</b> if arrowheads are to be suppressed; otherwise, <b>false</b>.
 		/// </value>
 		[DxfCodeValue(175)]
-		public bool SuppressOutsideExtensions { get; set; }
+		public bool SuppressOutsideExtensions { get; set; } = false;
 
 		/// <summary>
 		/// Controls the number of precision places displayed in angular dimensions
@@ -233,14 +233,14 @@ namespace ACadSharp.Tables
 		/// </para>
 		/// </value>
 		[DxfCodeValue(179)]
-		public short AngularDimensionDecimalPlaces { get; set; }
+		public short AngularDimensionDecimalPlaces { get; set; } = 0;
 
 		/// <summary>
 		/// Controls the horizontal positioning of dimension text
 		/// (see DIMJUST System Variable).
 		/// </summary>
 		[DxfCodeValue(280)]
-		public DimensionTextHorizontalAlignment TextHorizontalAlignment { get; set; }
+		public DimensionTextHorizontalAlignment TextHorizontalAlignment { get; set; } = DimensionTextHorizontalAlignment.Centered;
 
 		/// <summary>
 		/// Controls suppression of the first dimension line and arrowhead
@@ -250,7 +250,7 @@ namespace ACadSharp.Tables
 		/// <b>true</b> if the first dimension line is to be suppressed; otherwise, <b>false</b>.
 		/// </value>
 		[DxfCodeValue(281)]
-		public bool SuppressFirstDimensionLine { get; set; }
+		public bool SuppressFirstDimensionLine { get; set; } = false;
 
 		/// <summary>
 		/// Controls suppression of the second dimension line and arrowhead
@@ -260,14 +260,14 @@ namespace ACadSharp.Tables
 		/// <b>true</b> if the second dimension line is to be suppressed; otherwise, <b>false</b>.
 		/// </value>
 		[DxfCodeValue(282)]
-		public bool SuppressSecondDimensionLine { get; set; }
+		public bool SuppressSecondDimensionLine { get; set; } = false;
 
 		/// <summary>
 		/// Gets or sets the vertical justification for tolerance values relative to the nominal dimension text.
 		/// (see DIMTOLJ System Variable).
 		/// </summary>
 		[DxfCodeValue(283)]
-		public ToleranceAlignment ToleranceAlignment { get; set; }
+		public ToleranceAlignment ToleranceAlignment { get; set; } = ToleranceAlignment.Bottom;
 
 		/// <summary>
 		/// Controls the suppression of zeros in tolerance values
@@ -277,14 +277,14 @@ namespace ACadSharp.Tables
 		/// Value 0-3 affect feet-and-inch dimensions only.
 		/// </remarks>
 		[DxfCodeValue(284)]
-		public ZeroHandling ToleranceZeroHandling { get; set; }
+		public ZeroHandling ToleranceZeroHandling { get; set; } = ZeroHandling.SuppressDecimalTrailingZeroes;
 
 		/// <summary>
 		/// Controls the suppression of zeros for alternate unit dimension values
 		/// (see DIMALTZ System Variable).
 		/// </summary>
 		[DxfCodeValue(285)]
-		public ZeroHandling AlternateUnitZeroHandling { get; set; }
+		public ZeroHandling AlternateUnitZeroHandling { get; set; } = ZeroHandling.SuppressZeroFeetAndInches;
 
 		/// <summary>
 		/// Determines how dimension text and arrows are arranged when space is not sufficient to
@@ -292,7 +292,7 @@ namespace ACadSharp.Tables
 		/// (see DIMFIT System Variable).
 		/// </summary>
 		[DxfCodeValue(287)]
-		public char DimensionFit { get; set; }
+		public char DimensionFit { get; set; }  //Obsolete in the documentation
 
 		/// <summary>
 		/// Controls options for user-positioned text
@@ -306,27 +306,27 @@ namespace ACadSharp.Tables
 		/// </para>
 		/// </value>
 		[DxfCodeValue(288)]
-		public bool CursorUpdate { get; set; }
+		public bool CursorUpdate { get; set; } = false;
 
 		/// <summary>
 		/// Controls suppression of zeros in tolerance values
 		/// (see DIMALTTZ System Variable).
 		/// </summary>
 		[DxfCodeValue(286)]
-		public ZeroHandling AlternateUnitToleranceZeroHandling { get; set; }
+		public ZeroHandling AlternateUnitToleranceZeroHandling { get; set; } = ZeroHandling.SuppressZeroFeetAndInches;
 
 		/// <summary>
 		/// DIMUNIT (obsolete, now use DIMLUNIT AND DIMFRAC)
 		/// </summary>
 		[DxfCodeValue(270)]
-		public short DimensionUnit { get; set; }
+		public short DimensionUnit { get; set; } = 2;
 
 		/// <summary>
 		/// Gets or sets the units format for angular dimensions
 		/// (see DIMAUNIT System Variable).
 		/// </summary>
 		[DxfCodeValue(275)]
-		public AngularUnitFormat AngularUnit { get; set; }
+		public AngularUnitFormat AngularUnit { get; set; } = AngularUnitFormat.DecimalDegrees;
 
 		/// <summary>
 		/// Gets or sets the number of decimal places displayed for the primary
@@ -334,7 +334,7 @@ namespace ACadSharp.Tables
 		/// (see DIMDEC System Variable).
 		/// </summary>
 		[DxfCodeValue(271)]
-		public short DecimalPlaces { get; set; }
+		public short DecimalPlaces { get; set; } = 2;
 
 		/// <summary>
 		/// Gets or sets the number of decimal places to display in tolerance values
@@ -342,7 +342,7 @@ namespace ACadSharp.Tables
 		/// (see DIMTDEC System Variable).
 		/// </summary>
 		[DxfCodeValue(272)]
-		public short ToleranceDecimalPlaces { get; set; }
+		public short ToleranceDecimalPlaces { get; set; } = 2;
 
 		/// <summary>
 		/// Gets or sets the units format for alternate units of all dimension substyles
@@ -358,7 +358,7 @@ namespace ACadSharp.Tables
 		/// (see DIMALTTD System Variable).
 		/// </summary>
 		[DxfCodeValue(274)]
-		public short AlternateUnitToleranceDecimalPlaces { get; set; }
+		public short AlternateUnitToleranceDecimalPlaces { get; set; } = 3;
 
 		/// <summary>
 		/// Gets or sets the overall scale factor applied to dimensioning variables that specify
@@ -394,7 +394,18 @@ namespace ACadSharp.Tables
 		/// </para>
 		/// </value>
 		[DxfCodeValue(40)]
-		public double ScaleFactor { get; set; }
+		public double ScaleFactor
+		{
+			get => _scaleFactor; set
+			{
+				if (value <= 0)
+				{
+					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(ScaleFactor)} must be equals or greater than zero.");
+				}
+
+				_scaleFactor = value;
+			}
+		}
 
 		/// <summary>
 		/// Controls the size of dimension line and leader line arrowheads. Also controls the
@@ -409,7 +420,7 @@ namespace ACadSharp.Tables
 			{
 				if (value < 0)
 				{
-					throw new ArgumentOutOfRangeException(nameof(value), value, "The ArrowSize must be equals or greater than zero.");
+					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(ArrowSize)} must be equals or greater than zero.");
 				}
 				this._arrowSize = value;
 			}
@@ -423,7 +434,7 @@ namespace ACadSharp.Tables
 		/// With fixed-length extension lines, this value determines the minimum offset.
 		/// </remarks>
 		[DxfCodeValue(42)]
-		public double ExtensionLineOffset { get; set; }
+		public double ExtensionLineOffset { get; set; } = 0.6250d;
 
 		/// <summary>
 		/// Controls the spacing of the dimension lines in baseline dimensions
@@ -435,14 +446,14 @@ namespace ACadSharp.Tables
 		/// not applied to existing dimensions.
 		/// </remarks>
 		[DxfCodeValue(43)]
-		public double DimensionLineIncrement { get; set; }
+		public double DimensionLineIncrement { get; set; } = 3.75d;
 
 		/// <summary>
 		/// Specifies how far to extend the extension line beyond the dimension line
 		/// (see DIMEXE System Variable).
 		/// </summary>
 		[DxfCodeValue(44)]
-		public double ExtensionLineExtension { get; set; }
+		public double ExtensionLineExtension { get; set; } = 1.2500d;
 
 		/// <summary>
 		/// Rounds all dimensioning distances to the specified value
@@ -461,7 +472,7 @@ namespace ACadSharp.Tables
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(45)]
-		public double Rounding { get; set; }
+		public double Rounding { get; set; } = 0.0d;
 
 		/// <summary>
 		/// Sets the distance the dimension line extends beyond the extension line when
@@ -469,7 +480,7 @@ namespace ACadSharp.Tables
 		/// (see DIMDLE System Variable).
 		/// </summary>
 		[DxfCodeValue(46)]
-		public double DimensionLineExtension { get; set; }
+		public double DimensionLineExtension { get; set; } = 0.0d;
 
 		/// <summary>
 		/// Gets or sets the maximum (or upper) tolerance limit for dimension text when
@@ -477,7 +488,7 @@ namespace ACadSharp.Tables
 		/// (see DIMTP System Variable).
 		/// </summary>
 		[DxfCodeValue(47)]
-		public double PlusTolerance { get; set; }
+		public double PlusTolerance { get; set; } = 0.0d;
 
 		/// <summary>
 		/// Gets or sets the minimum (or lower) tolerance limit for dimension text when
@@ -500,7 +511,7 @@ namespace ACadSharp.Tables
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(48)]
-		public double MinusTolerance { get; set; }
+		public double MinusTolerance { get; set; } = 0.0d;
 
 		/// <summary>
 		/// Sets the total length of the extension lines starting from the dimension line
@@ -508,49 +519,79 @@ namespace ACadSharp.Tables
 		/// (see DIMFXL System Variable).
 		/// </summary>
 		[DxfCodeValue(49)]
-		public double FixedExtensionLineLength { get; set; }
+		public double FixedExtensionLineLength { get; set; } = 1.0d;
 
 		/// <summary>
+		/// Determines the angle of the transverse segment of the dimension line in a jogged radius dimension in radians.
 		/// (see DIMJOGANG System Variable).
 		/// </summary>
+		/// <value>
+		/// Jogged radius dimensions are often created when the center point is located off the page. Valid settings range is 5 to 90 degrees.
+		/// </value>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
-		public double JoggedRadiusDimensionTransverseSegmentAngle { get; set; }
+		public double JoggedRadiusDimensionTransverseSegmentAngle
+		{
+			get
+			{
+				return _joggedRadiusDimensionTransverseSegmentAngle;
+			}
+			set
+			{
+				//5 - 90
+				if (value < CSMath.MathUtils.DegToRad(5) || value > Math.PI / 2)
+				{
+					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(JoggedRadiusDimensionTransverseSegmentAngle)} must be in range of 5 to 90 degrees.");
+				}
 
+				_joggedRadiusDimensionTransverseSegmentAngle = value;
+			}
+		}
 		/// <summary>
 		/// Controls the background of dimension text
 		/// (see DIMTFILL System Variable).
 		/// </summary>
 		[DxfCodeValue(69)]
-		public DimensionTextBackgroundFillMode TextBackgroundFillMode { get; set; }
+		public DimensionTextBackgroundFillMode TextBackgroundFillMode { get; set; } = DimensionTextBackgroundFillMode.NoBackground;
 
 		/// <summary>
-		/// Determines the angle of the transverse segment of the dimension line
-		/// in a jogged radius dimension.
+		/// Sets the color for the text background in dimensions.
 		/// (see DIMTFILLCLR System Variable).
 		/// </summary>
 		//[DxfCodeValue(70)]	//Not present in the dxf documentation
-		public Color TextBackgroundColor { get; set; }
+		public Color TextBackgroundColor { get; set; } = Color.ByBlock;
 
 		/// <summary>
 		/// Suppresses zeros for angular dimensions
 		/// (see DIMAZIN System Variable).
 		/// </summary>
 		[DxfCodeValue(79)]
-		public ZeroHandling AngularZeroHandling { get; set; }
+		public ZeroHandling AngularZeroHandling { get; set; } = ZeroHandling.SuppressZeroFeetAndInches;
 
 		/// <summary>
 		/// Controls display of the arc symbol in an arc length dimension
 		/// (see DIMARCSYM System Variable).
 		/// </summary>
 		[DxfCodeValue(90)]
-		public ArcLengthSymbolPosition ArcLengthSymbolPosition { get; set; }
+		public ArcLengthSymbolPosition ArcLengthSymbolPosition { get; set; } = ArcLengthSymbolPosition.BeforeDimensionText;
 
 		/// <summary>
 		/// Specifies the height of dimension text, unless the current text style has a fixed height
 		/// (see DIMTXT System Variable).
 		/// </summary>
 		[DxfCodeValue(140)]
-		public double TextHeight { get; set; } = 0.18;
+		public double TextHeight
+		{
+			get { return _textHeight; }
+			set
+			{
+				if (value <= 0)
+				{
+					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(TextHeight)} must be greater than zero.");
+				}
+
+				_textHeight = value;
+			}
+		}
 
 		/// <summary>
 		/// Controls drawing of circle or arc center marks and centerlines by the
@@ -577,7 +618,7 @@ namespace ACadSharp.Tables
 		/// </para>
 		/// </value>
 		[DxfCodeValue(141)]
-		public double CenterMarkSize { get; set; }
+		public double CenterMarkSize { get; set; } = 2.5;
 
 		/// <summary>
 		/// Specifies the size of oblique strokes drawn instead of arrowheads for linear, radius,
@@ -598,7 +639,7 @@ namespace ACadSharp.Tables
 		/// </para>
 		/// </value>
 		[DxfCodeValue(142)]
-		public double TickSize { get; set; }
+		public double TickSize { get; set; } = 0.0d;
 
 		/// <summary>
 		/// Controls the multiplier for alternate units
@@ -647,7 +688,7 @@ namespace ACadSharp.Tables
 		/// accommodate the text only if the absolute value of <i>TextVerticalPosition</i> is less than 0.7.
 		/// </remarks>
 		[DxfCodeValue(145)]
-		public double TextVerticalPosition { get; set; }
+		public double TextVerticalPosition { get; set; } = 0.0d;
 
 		/// <summary>
 		/// Specifies a scale factor for the text height of fractions and tolerance values relative
@@ -682,14 +723,14 @@ namespace ACadSharp.Tables
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(147)]
-		public double DimensionLineGap { get; set; }
+		public double DimensionLineGap { get; set; } = 0.6250;
 
 		/// <summary>
 		/// Rounds off the alternate dimension units
 		/// (see DIMALTRND System Variable).
 		/// </summary>
 		[DxfCodeValue(148)]
-		public double AlternateUnitRounding { get; set; }
+		public double AlternateUnitRounding { get; set; } = 0.0d;
 
 		/// <summary>
 		/// Gets or sets colors to dimension lines, arrowheads, and dimension leader lines
@@ -699,14 +740,14 @@ namespace ACadSharp.Tables
 		/// Also controls the color of leader lines created with the LEADER command.
 		/// </remarks>
 		[DxfCodeValue(176)]
-		public Color DimensionLineColor { get; set; }
+		public Color DimensionLineColor { get; set; } = Color.ByBlock;
 
 		/// <summary>
 		/// Gets or sets colors to extension lines, center marks, and centerlines
 		/// (see DIMCLRE System Variable).
 		/// </summary>
 		[DxfCodeValue(177)]
-		public Color ExtensionLineColor { get; set; }
+		public Color ExtensionLineColor { get; set; } = Color.ByBlock;
 
 		/// <summary>
 		/// Assigns colors to dimension text
@@ -716,14 +757,14 @@ namespace ACadSharp.Tables
 		/// The color can be any valid color number.
 		/// </remarks>
 		[DxfCodeValue(178)]
-		public Color TextColor { get; set; }
+		public Color TextColor { get; set; } = Color.ByBlock;
 
 		/// <summary>
 		/// Gets or sets the fraction format when <see cref="LinearUnitFormat"/> is set to 4 (Architectural) or 5 (Fractional).
 		/// (see DIMFRAC System Variable).
 		/// </summary>
 		[DxfCodeValue(276)]
-		public FractionFormat FractionFormat { get; set; }
+		public FractionFormat FractionFormat { get; set; } = FractionFormat.Horizontal;
 
 		/// <summary>
 		/// Gets or sets units for all dimension types except Angular
@@ -751,7 +792,7 @@ namespace ACadSharp.Tables
 		/// (see DIMTMOVE System Variable).
 		/// </summary>
 		[DxfCodeValue(279)]
-		public TextMovement TextMovement { get; set; }
+		public TextMovement TextMovement { get; set; } = TextMovement.MoveLineWithText;
 
 		/// <summary>
 		/// Controls whether extension lines are set to a fixed length
@@ -762,18 +803,14 @@ namespace ACadSharp.Tables
 		/// <see cref="FixedExtensionLineLength"/>; otherwise, <b>false</b>.
 		/// </value>
 		[DxfCodeValue(290)]
-		public bool IsExtensionLineLengthFixed { get; set; }
+		public bool IsExtensionLineLengthFixed { get; set; } = false;
 
 		/// <summary>
 		/// Specifies the reading direction of the dimension text
 		/// (see DIMTXTDIRECTION System Variable).
 		/// </summary>
 		[DxfCodeValue(295)]
-		public TextDirection TextDirection { get; set; }
-
-		public double AltMzf { get; set; }
-
-		public double Mzf { get; set; }
+		public TextDirection TextDirection { get; set; } = TextDirection.LeftToRight;
 
 		/// <summary>
 		/// Assigns lineweight to dimension lines
@@ -784,7 +821,7 @@ namespace ACadSharp.Tables
 		/// (Multiply a value by 2540 to convert values from inches to hundredths of millimeters.)
 		/// </value>
 		[DxfCodeValue(371)]
-		public LineweightType DimensionLineWeight { get; set; }
+		public LineweightType DimensionLineWeight { get; set; } = LineweightType.ByBlock;
 
 		/// <summary>
 		/// Assigns lineweight to extension lines
@@ -795,10 +832,7 @@ namespace ACadSharp.Tables
 		/// (Multiply a value by 2540 to convert values from inches to hundredths of millimeters.)
 		/// </value>
 		[DxfCodeValue(372)]
-		public LineweightType ExtensionLineWeight { get; set; }
-
-		public string AltMzs { get; set; }
-		public string Mzs { get; set; }
+		public LineweightType ExtensionLineWeight { get; set; } = LineweightType.ByBlock;
 
 		/// <summary>
 		/// Determines how dimension text and arrows are arranged when space is not sufficient
@@ -810,7 +844,7 @@ namespace ACadSharp.Tables
 		/// <see cref="TextMovement.AddLeaderWhenTextMoved"/>.
 		/// </remarks>
 		[DxfCodeValue(289)]
-		public short DimensionTextArrowFit { get; set; }
+		public TextArrowFitType DimensionTextArrowFit { get; set; } = TextArrowFitType.BestFit;
 
 		/// <summary>
 		/// Specifies the text style of the dimension
@@ -827,14 +861,7 @@ namespace ACadSharp.Tables
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				if (this.Document != null)
-				{
-					this._style = this.updateTable(value, this.Document.TextStyles);
-				}
-				else
-				{
-					this._style = value;
-				}
+				this._style = this.updateTable(value, this.Document?.TextStyles);
 			}
 		}
 
@@ -849,7 +876,7 @@ namespace ACadSharp.Tables
 		/// <remarks>
 		/// Note: Annotative blocks cannot be used as custom arrowheads for dimensions or leaders.
 		/// </remarks>
-		[DxfCodeValue(341)]
+		[DxfCodeValue(DxfReferenceType.Handle, 341)]
 		public BlockRecord LeaderArrow { get; set; }
 
 		/// <summary>
@@ -865,7 +892,7 @@ namespace ACadSharp.Tables
 		/// Note: Annotative blocks cannot be used as custom arrowheads for dimensions or leaders.
 		/// </para>
 		/// </remarks>
-		[DxfCodeValue(342)]
+		[DxfCodeValue(DxfReferenceType.Handle, 342)]
 		public BlockRecord ArrowBlock { get; set; }
 
 		//5	DIMBLK(obsolete, now object ID)
@@ -888,7 +915,7 @@ namespace ACadSharp.Tables
 		/// Note: Annotative blocks cannot be used as custom arrowheads for dimensions or leaders.
 		/// </para>
 		/// </remarks>
-		[DxfCodeValue(343)]
+		[DxfCodeValue(DxfReferenceType.Handle, 343)]
 		public BlockRecord DimArrow1 { get; set; }
 
 		/// <summary>
@@ -905,12 +932,26 @@ namespace ACadSharp.Tables
 		/// Note: Annotative blocks cannot be used as custom arrowheads for dimensions or leaders.
 		/// </para>
 		/// </remarks>
-		[DxfCodeValue(344)]
+		[DxfCodeValue(DxfReferenceType.Handle, 344)]
 		public BlockRecord DimArrow2 { get; set; }
 
 		private double _arrowSize = 0.18;
 
+		private double _scaleFactor = 1.0d;
+
 		private TextStyle _style = TextStyle.Default;
+		
+		private double _joggedRadiusDimensionTransverseSegmentAngle = System.Math.PI / 4.0;
+
+		private double _textHeight = 0.18;
+
+		internal string AltMzs { get; set; }
+
+		internal string Mzs { get; set; }
+
+		internal double AltMzf { get; set; }
+
+		internal double Mzf { get; set; }
 
 		internal DimensionStyle() : base() { }
 

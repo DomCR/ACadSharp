@@ -496,7 +496,7 @@ namespace ACadSharp.IO.DXF
 					template.CadObject.CursorUpdate = this._reader.ValueAsBool;
 					return true;
 				case 289:
-					template.CadObject.DimensionTextArrowFit = this._reader.ValueAsShort;
+					template.CadObject.DimensionTextArrowFit = (TextArrowFitType)this._reader.ValueAsShort;
 					return true;
 				case 290:
 					template.CadObject.IsExtensionLineLengthFixed = this._reader.ValueAsBool;

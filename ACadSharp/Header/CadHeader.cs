@@ -2054,7 +2054,7 @@ namespace ACadSharp.Header
 		/// System variable DIMATFIT
 		/// </remarks>
 		[CadSystemVariable("$DIMATFIT", 70)]
-		public short DimensionDimensionTextArrowFit
+		public TextArrowFitType DimensionDimensionTextArrowFit
 		{
 			get { return this.DimensionStyleOverrides.DimensionTextArrowFit; }
 			set

@@ -733,7 +733,7 @@ namespace ACadSharp.IO.DWG
 				//B : DIMUPT
 				_header.DimensionCursorUpdate = _reader.ReadBit();
 				//BS : DIMATFIT
-				_header.DimensionDimensionTextArrowFit = _reader.ReadBitShort();
+				_header.DimensionDimensionTextArrowFit = (Tables.TextArrowFitType)_reader.ReadBitShort();
 			}
 
 			//R2007 + Only:
