@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ACadSharp.Attributes;
+using ACadSharp.Entities;
 using ACadSharp.Tables;
 
 using CSMath;
@@ -33,7 +34,7 @@ namespace ACadSharp.Objects
 		/// Overall scale
 		/// </summary>
 		[DxfCodeValue(40)]
-		public double OverallScale { get; set; }
+		public double ScaleFactor { get; set; }
 
 		/// <summary>
 		/// Content base point
@@ -166,6 +167,8 @@ namespace ACadSharp.Objects
 
 		// BS	171	Alignment (1 = left, 2 = center, 3 = right)
 		// see above: TextAlignment
+		[DxfCodeValue(171)]
+		public TextAttachmentPointType TextAttachmentPoint { get; set; }
 
 		/// <summary>
 		/// Flow direction
