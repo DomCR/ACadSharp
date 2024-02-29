@@ -1988,7 +1988,7 @@ namespace ACadSharp.Header
 		/// System variable DIMFIT
 		/// </remarks>
 		[CadSystemVariable("$DIMFIT", 70)]
-		public char DimensionFit
+		public short DimensionFit
 		{
 			get { return this.DimensionStyleOverrides.DimensionFit; }
 			set

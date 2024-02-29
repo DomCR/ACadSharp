@@ -543,7 +543,7 @@ namespace ACadSharp.IO.DWG
 				//RC : DIMJUST
 				_header.DimensionTextHorizontalAlignment = (Tables.DimensionTextHorizontalAlignment)_reader.ReadRawChar();
 				//RC : DIMFIT
-				_header.DimensionFit = _reader.ReadRawChar();
+				_header.DimensionFit = (short)_reader.ReadRawChar();
 				//B : DIMUPT
 				_header.DimensionCursorUpdate = _reader.ReadBit();
 				//RC : DIMTZIN

@@ -491,7 +491,7 @@ namespace ACadSharp.IO.DXF
 					template.CadObject.AlternateUnitToleranceZeroHandling = (ZeroHandling)(byte)this._reader.ValueAsShort;
 					return true;
 				case 287:
-					template.CadObject.DimensionFit = (char)this._reader.ValueAsShort;
+					template.CadObject.DimensionFit = this._reader.ValueAsShort;
 					return true;
 				case 288:
 					template.CadObject.CursorUpdate = this._reader.ValueAsBool;

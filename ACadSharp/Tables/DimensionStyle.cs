@@ -292,7 +292,7 @@ namespace ACadSharp.Tables
 		/// (see DIMFIT System Variable).
 		/// </summary>
 		[DxfCodeValue(287)]
-		public char DimensionFit { get; set; }  //Obsolete in the documentation
+		public short DimensionFit { get; set; }  //Obsolete in the documentation
 
 		/// <summary>
 		/// Controls options for user-positioned text

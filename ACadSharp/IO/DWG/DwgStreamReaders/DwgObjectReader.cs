@@ -4225,7 +4225,7 @@ namespace ACadSharp.IO.DWG
 				//DIMJUST RC 280
 				dimStyle.TextHorizontalAlignment = (DimensionTextHorizontalAlignment)this._objectReader.ReadByte();
 				//DIMFIT RC 287
-				dimStyle.DimensionFit = this._objectReader.ReadRawChar();
+				dimStyle.DimensionFit = (short)this._objectReader.ReadRawChar();
 				//DIMUPT B 288
 				dimStyle.CursorUpdate = this._objectReader.ReadBit();
 				//DIMTZIN RC 284
@@ -4446,7 +4446,7 @@ namespace ACadSharp.IO.DWG
 				//DIMUPT B 288
 				dimStyle.CursorUpdate = this._objectReader.ReadBit();
 				//DIMFIT BS 287
-				this._objectReader.ReadBitShort();
+				dimStyle.DimensionFit = this._objectReader.ReadBitShort();
 			}
 
 			//R2007+:
