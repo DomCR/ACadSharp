@@ -574,21 +574,19 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$CELTYPE", 6)]
 		public string CurrentLineTypeName
 		{
-			get { return this.CurrentLineType.Name; }
+			get { return this._currentLineType.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this.CurrentLineType = this.Document.LineTypes[value];
+					this._currentLineType = this.Document.LineTypes[value];
 				}
 				else
 				{
-					this.CurrentLineType = new LineType(value);
+					this._currentLineType = new LineType(value);
 				}
 			}
 		}
-
-		public LineType CurrentLineType { get; private set; } = LineType.ByLayer;
 
 		/// <summary>
 		/// Current multiline style name
@@ -2829,6 +2827,25 @@ namespace ACadSharp.Header
 			}
 		}
 
+		public LineType CurrentLineType
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._currentLineType;
+				}
+				else
+				{
+					return this.Document.LineTypes[this.CurrentLineTypeName];
+				}
+			}
+			private set
+			{
+				_currentLineType = value;
+			}
+		}
+
 		public TextStyle CurrentTextStyle
 		{
 			get
@@ -2908,6 +2925,8 @@ namespace ACadSharp.Header
 		private TextStyle _dimensionTextStyle = TextStyle.Default;
 
 		private DimensionStyle _dimensionStyleOverrides = DimensionStyle.Default;
+	
+		private LineType _currentLineType = LineType.ByLayer;
 
 		static CadHeader()
 		{
