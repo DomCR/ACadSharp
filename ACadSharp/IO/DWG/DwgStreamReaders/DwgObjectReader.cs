@@ -2874,7 +2874,7 @@ namespace ACadSharp.IO.DWG
 			//  43  Block Content Rotation
 			mLeader.BlockContentRotation = _objectReader.ReadBitDouble();
 			//  176 Block Content Connection Type
-			mLeader.BlockContentConnection = (AttachmentType)_objectReader.ReadBitShort();
+			mLeader.BlockContentConnection = (BlockContentConnectionType)_objectReader.ReadBitShort();
 			//  293 Enable Annotation Scale/Is annotative
 			mLeader.EnableAnnotationScale = _objectReader.ReadBit();
 
@@ -2965,7 +2965,7 @@ namespace ACadSharp.IO.DWG
 			//	BS	176	Text align type (0 = left, 1 = center, 2 = right)
 			annotContext.TextAlignment = (TextAlignmentType)_objectReader.ReadBitShort();
 			//	BS	177	Attachment type (0 = content extents, 1 = insertion point).
-			annotContext.AttachmentType = (AttachmentType)_objectReader.ReadBitShort();
+			annotContext.BlockContentConnection = (BlockContentConnectionType)_objectReader.ReadBitShort();
 			//	B	290	Has text contents
 			annotContext.HasTextContents = _objectReader.ReadBit();
 			if (annotContext.HasTextContents)
