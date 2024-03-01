@@ -489,11 +489,12 @@ namespace ACadSharp.Objects
 		public bool EnableBlockContentRotation { get; set; }
 
 		/// <summary>
-		/// Block Content Connection Type
+		/// Gets or sets a value indicating whether the multileader connects to the content-block extents
+		/// or to the content-block base point.
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeader.BlockContentConnection"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.BlockContentConnection"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentConnection"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para>
