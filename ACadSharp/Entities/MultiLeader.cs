@@ -244,7 +244,7 @@ namespace ACadSharp.Entities
 		/// Block Content Connection Type
 		/// </summary>
 		[DxfCodeValue(176)]
-		public AttachmentType BlockContentConnection { get; set; }
+		public BlockContentConnectionType BlockContentConnection { get; set; }
 
 		#endregion
 

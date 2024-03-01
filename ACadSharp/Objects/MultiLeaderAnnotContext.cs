@@ -91,7 +91,7 @@ namespace ACadSharp.Objects
 		/// --> MLeader.BlockContentConnectionType
 		/// </summary>
 		[DxfCodeValue(177)]
-		public AttachmentType AttachmentType { get; set; }
+		public BlockContentConnectionType BlockContentConnection { get; set; }
 
 		/// <summary>
 		/// Has text contents
