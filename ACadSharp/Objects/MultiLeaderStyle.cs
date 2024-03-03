@@ -395,7 +395,7 @@ namespace ACadSharp.Objects
 		public double TextHeight { get; set; }
 
 		/// <summary>
-		/// Gets or sets a value indicating the the text label is to be drawn with a frame.
+		/// Gets or sets a value indicating that the text label is to be drawn with a frame.
 		/// </summary>
 		/// <remarks>
 		/// <para>
@@ -422,8 +422,8 @@ namespace ACadSharp.Objects
 		public double AlignSpace { get; set; }
 
 		/// <summary>
-		/// Gets or sets the reference to a standard <see cref="BlockRecord"/> containing content
-		/// to be displayed with the multileader.
+		/// Gets a <see cref="BlockRecord"/> containing elements
+		/// to be drawn as content for the multileader.
 		/// </summary>
 		/// <remarks>
 		/// <para>
