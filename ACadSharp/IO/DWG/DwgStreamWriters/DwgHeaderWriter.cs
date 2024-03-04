@@ -718,7 +718,7 @@ namespace ACadSharp.IO.DWG
 				//B : DIMUPT
 				this._writer.WriteBit(this._header.DimensionCursorUpdate);
 				//BS : DIMATFIT
-				this._writer.WriteBitShort(this._header.DimensionDimensionTextArrowFit);
+				this._writer.WriteBitShort((short)this._header.DimensionDimensionTextArrowFit);
 			}
 
 			//R2007 + Only:
