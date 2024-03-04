@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace ACadSharp.Header
 {
@@ -90,7 +89,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable DIMSAV
 		/// </remarks>
-		public bool DIMSAV { get; set; }
+		internal bool DIMSAV { get; set; }
 
 		/// <summary>
 		/// Sets drawing units
@@ -2903,6 +2902,7 @@ namespace ACadSharp.Header
 			}
 		}
 
+		//TODO: How header UCS work??
 		public UCS ModelSpaceUcs { get; private set; } = new UCS();
 
 		public UCS ModelSpaceUcsBase { get; private set; } = new UCS();
