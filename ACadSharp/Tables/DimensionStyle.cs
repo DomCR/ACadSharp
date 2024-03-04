@@ -398,7 +398,7 @@ namespace ACadSharp.Tables
 		{
 			get => _scaleFactor; set
 			{
-				if (value <= 0)
+				if (value < 0)
 				{
 					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(ScaleFactor)} must be equals or greater than zero.");
 				}
