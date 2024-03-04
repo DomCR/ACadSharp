@@ -511,8 +511,14 @@ namespace ACadSharp.Tables
 		public double FixedExtensionLineLength { get; set; }
 
 		/// <summary>
+		/// Determines the angle of the transverse segment of the dimension line in a jogged
+		/// radius dimension.
 		/// (see DIMJOGANG System Variable).
 		/// </summary>
+		/// <remarks>
+		/// Jogged radius dimensions are often created when the center point is located
+		/// off the page. Valid settings range is 5 to 90.
+		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double JoggedRadiusDimensionTransverseSegmentAngle { get; set; }
 
