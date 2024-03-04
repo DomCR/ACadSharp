@@ -2835,13 +2835,14 @@ namespace ACadSharp.IO.DWG
 			template.LeaderLineTypeHandle = this.handleReference();
 			//	171 LeaderLine Weight
 			mLeader.LeaderLineWeight = (LineweightType)_objectReader.ReadBitShort();
+
+			//	TODO Why do we need this
+			_objectReader.Advance(2);
+
 			//  290 Enable Landing
 			mLeader.EnableLanding = _objectReader.ReadBit();
 			//  291 Enable Dogleg
 			mLeader.EnableDogleg = _objectReader.ReadBit();
-
-			//	TODO Why do we need this
-			_objectReader.Advance(2);
 
 			//  41  Dogleg Length / Landing distance
 			mLeader.LandingDistance = _objectReader.ReadBitDouble();
@@ -2949,7 +2950,7 @@ namespace ACadSharp.IO.DWG
 
 			//	Common
 			//	BD	40	Overall scale
-			annotContext.OverallScale = _objectReader.ReadBitDouble();
+			annotContext.ScaleFactor = _objectReader.ReadBitDouble();
 			//	3BD	10	Content base point
 			annotContext.ContentBasePoint = _objectReader.Read3BitDouble();
 			//	BD	41	Text height
@@ -2965,7 +2966,7 @@ namespace ACadSharp.IO.DWG
 			//	BS	176	Text align type (0 = left, 1 = center, 2 = right)
 			annotContext.TextAlignment = (TextAlignmentType)_objectReader.ReadBitShort();
 			//	BS	177	Attachment type (0 = content extents, 1 = insertion point).
-			annotContext.AttachmentType = (AttachmentType)_objectReader.ReadBitShort();
+			annotContext.BlockContentConnection = (BlockContentConnectionType)_objectReader.ReadBitShort();
 			//	B	290	Has text contents
 			annotContext.HasTextContents = _objectReader.ReadBit();
 			if (annotContext.HasTextContents)
@@ -2993,7 +2994,7 @@ namespace ACadSharp.IO.DWG
 				//	CMC	90	Text color
 				annotContext.TextColor = _objectReader.ReadCmColor();
 				//	BS	171	Alignment (1 = left, 2 = center, 3 = right)
-				annotContext.TextAlignment = (TextAlignmentType)_objectReader.ReadBitShort();
+				annotContext.TextAttachmentPoint = (TextAttachmentPointType)_objectReader.ReadBitShort();
 				//	BS	172	Flow direction (1 = horizontal, 3 = vertical, 6 = by style)
 				annotContext.FlowDirection = (FlowDirectionType)_objectReader.ReadBitShort();
 				//	CMC	91	Background fill color
@@ -3263,7 +3264,7 @@ namespace ACadSharp.IO.DWG
 				mLeaderStyle.TextAngle = (TextAngleType)_objectReader.ReadBitShort();
 
 			}   //	END IF IsNewFormat OR DXF file
-				//	BS	176	Text alignment type
+			//	BS	176	Text alignment type
 			mLeaderStyle.TextAlignment = (TextAlignmentType)_objectReader.ReadBitShort();
 			//	CMC	93	Text color
 			mLeaderStyle.TextColor = _mergedReaders.ReadCmColor();
@@ -3276,7 +3277,7 @@ namespace ACadSharp.IO.DWG
 			 //	B	297	Always align text left
 				mLeaderStyle.TextAlignAlwaysLeft = _objectReader.ReadBit();
 			}//	END IF IsNewFormat OR DXF file
-			 //	BD	46	Align space
+			//	BD	46	Align space
 			mLeaderStyle.AlignSpace = _objectReader.ReadBitDouble();
 			//	H	343	Block handle (hard pointer)
 			template.BlockContentHandle = this.handleReference();

@@ -3,10 +3,14 @@ using ACadSharp.Entities;
 
 namespace ACadSharp.Objects
 {
+	/// <summary>
+	/// These flags specify whether properties of a leader line primarily defined by the
+	/// <see cref="MultiLeaderStyle"/> object or overidden by properties of the <see cref="MultiLeader"/> 
+	/// object are overridden for an individual leader line.
+	/// </summary>
 	[Flags]
 	public enum LeaderLinePropertOverrideFlags : int
 	{
-
 		/// <summary>
 		/// No property to be overridden
 		/// </summary>
