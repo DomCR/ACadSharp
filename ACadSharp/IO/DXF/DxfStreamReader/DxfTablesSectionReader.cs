@@ -3,6 +3,7 @@ using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Types.Units;
+using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -344,7 +345,7 @@ namespace ACadSharp.IO.DXF
 					template.CadObject.FixedExtensionLineLength = this._reader.ValueAsDouble;
 					return true;
 				case 50:
-					template.CadObject.JoggedRadiusDimensionTransverseSegmentAngle = this._reader.ValueAsDouble;
+					template.CadObject.JoggedRadiusDimensionTransverseSegmentAngle = CSMath.MathUtils.DegToRad(this._reader.ValueAsDouble);
 					return true;
 				case 69:
 					template.CadObject.TextBackgroundFillMode = (DimensionTextBackgroundFillMode)this._reader.ValueAsShort;
