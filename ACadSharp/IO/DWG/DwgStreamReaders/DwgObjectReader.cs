@@ -4968,9 +4968,11 @@ namespace ACadSharp.IO.DWG
 						//pt0 2RD 10 point on polyline
 						XY vertex = this._objectReader.Read2RawDouble();
 
-						if (bulgespresent)
+						if (bulgespresent) {
 							//bulge BD 42 bulge
-							pline.Bulge = this._objectReader.ReadBitDouble();
+							double bulge = this._objectReader.ReadBitDouble();
+							pline.Bulges.Add(bulge);
+						}
 
 						//Add the vertex
 						pline.Vertices.Add(new XY(vertex.X, vertex.Y));
