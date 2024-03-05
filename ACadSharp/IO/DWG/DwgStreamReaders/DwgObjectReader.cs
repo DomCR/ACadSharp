@@ -2973,15 +2973,15 @@ namespace ACadSharp.IO.DWG
 				//	TV	304	Text label
 				annotContext.TextLabel = _textReader.ReadVariableText();
 				//	3BD	11	Normal vector
-				annotContext.Normal = _objectReader.Read3BitDouble();
+				annotContext.TextNormal = _objectReader.Read3BitDouble();
 				//	H	340	Text style handle (hard pointer)
 				template.AnnotContextTextStyleHandle = this.handleReference();
 				//	3BD	12	Location
-				annotContext.Location = _objectReader.Read3BitDouble();
+				annotContext.TextLocation = _objectReader.Read3BitDouble();
 				//	3BD	13	Direction
 				annotContext.Direction = _objectReader.Read3BitDouble();
 				//	BD	42	Rotation (radians)
-				annotContext.Rotation = _objectReader.ReadBitDouble();
+				annotContext.TextRotation = _objectReader.ReadBitDouble();
 				//	BD	43	Boundary width
 				annotContext.BoundaryWidth = _objectReader.ReadBitDouble();
 				//	BD	44	Boundary height
@@ -3038,13 +3038,13 @@ namespace ACadSharp.IO.DWG
 				//	H	341	AcDbBlockTableRecord handle (soft pointer)
 				template.AnnotContextBlockRecordHandle = this.handleReference();
 				//	3BD	14	Normal vector
-				annotContext.Normal = _objectReader.Read3BitDouble();
+				annotContext.BlockContentNormal = _objectReader.Read3BitDouble();
 				//	3BD	15	Location
-				annotContext.Location = _objectReader.Read3BitDouble();
+				annotContext.BlockContentLocation = _objectReader.Read3BitDouble();
 				//	3BD	16	Scale vector
 				annotContext.BlockContentScale = _objectReader.Read3BitDouble();
 				//	BD	46	Rotation (radians)
-				annotContext.Rotation = _objectReader.ReadBitDouble();
+				annotContext.BlockContentRotation = _objectReader.ReadBitDouble();
 				//  CMC	93	Block color
 				annotContext.BlockContentColor = _objectReader.ReadCmColor();
 				//	BD (16)	47	16 doubles containing the complete transformation

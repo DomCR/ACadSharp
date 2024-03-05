@@ -108,8 +108,8 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Normal vector
 		/// </summary>
-		[DxfCodeValue(11)]
-		public XYZ Normal { get; set; }
+		[DxfCodeValue(11, 21, 31)]
+		public XYZ TextNormal { get; set; }
 
 		/// <summary>
 		/// Text style handle (hard pointer)
@@ -121,7 +121,7 @@ namespace ACadSharp.Objects
 		/// Location
 		/// </summary>
 		[DxfCodeValue(12, 22, 32)]
-		public XYZ Location { get; set; }
+		public XYZ TextLocation { get; set; }
 
 		/// <summary>
 		/// Direction
@@ -133,7 +133,7 @@ namespace ACadSharp.Objects
 		/// Rotation (radians)
 		/// </summary>
 		[DxfCodeValue(42)]
-		public double Rotation { get; set; }
+		public double TextRotation { get; set; }
 
 		/// <summary>
 		/// Boundary width
@@ -263,18 +263,25 @@ namespace ACadSharp.Objects
 
 		//	These fields read from DWG are stored into the
 		//	Normal and Location property (see above).
-		//3BD		14		Normal vector
-		//3BD		15		Location
+		[DxfCodeValue(14, 24, 34)]
+		public XYZ BlockContentNormal { get; set; }
 
+		/// <summary>
+		/// Location
+		/// </summary>
+		[DxfCodeValue(15, 25, 35)]
+		public XYZ BlockContentLocation { get; set; }
 		/// <summary>
 		/// Scale vector
 		/// </summary>
 		[DxfCodeValue(16)]
 		public XYZ BlockContentScale { get; set; }
 
-		//	This field read from DWG are stored into the
-		//	Rotation property (see above).
-		//BD		46		Rotation (radians)
+		/// <summary>
+		/// Rottaion (radians)
+		/// </summary>
+		[DxfCodeValue(46)]
+		public double BlockContentRotation { get; set; }
 
 		/// <summary>
 		/// Block color
