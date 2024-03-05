@@ -1,9 +1,10 @@
-﻿namespace ACadSharp {
-
+﻿namespace ACadSharp
+{
 	/// <summary>
 	/// 
 	/// </summary>
-	public enum TextAttachmentType : short {
+	public enum TextAttachmentType : short
+	{
 		/// <summary>
 		/// Top of top text line.
 		/// </summary>

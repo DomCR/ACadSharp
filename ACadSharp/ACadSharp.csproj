@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net5.0;net48;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;net5.0;net48;netstandard2.1</TargetFrameworks>
     <Authors>DomCr</Authors>
     <PackageId>ACadSharp</PackageId>
-    <PackageTags>C# Dwg Dxf Autocad</PackageTags>
+    <PackageTags>C# Dwg Dxf</PackageTags>
     <RepositoryUrl>https://github.com/DomCR/ACadSharp</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/DomCR/ACadSharp</PackageProjectUrl>
-    <Copyright>Copyright (c) 2023 Albert Domenech</Copyright>
+    <Copyright>Copyright (c) 2024 Albert Domenech</Copyright>
     <Description>C# library to read/write cad files like dxf/dwg.</Description>
     <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">True</GeneratePackageOnBuild>
   </PropertyGroup>
@@ -17,7 +17,7 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.5.1-alpha</Version>
+    <Version>2.1.0-beta</Version>
   </PropertyGroup>
 
   <Import Project="..\CSUtilities\CSMath\CSMath.projitems" Label="Shared" />

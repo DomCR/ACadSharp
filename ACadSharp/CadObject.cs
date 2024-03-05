@@ -17,9 +17,9 @@ namespace ACadSharp
 		public abstract ObjectType ObjectType { get; }
 
 		/// <summary>
-		/// The AutoCAD class name of an object
+		/// The CAD class name of an object
 		/// </summary>
-		public virtual string ObjectName { get; }	//TODO: make abstract
+		public virtual string ObjectName { get; }
 
 		/// <summary>
 		/// Object Subclass marker
@@ -131,9 +131,15 @@ namespace ACadSharp
 			this.Document = null;
 		}
 
+		//TODO: Update method to all references
 		protected T updateTable<T>(T entry, Table<T> table)
 			where T : TableEntry
 		{
+			if (table == null)
+			{
+				return entry;
+			}
+
 			if (table.TryGetValue(entry.Name, out T existing))
 			{
 				return existing;

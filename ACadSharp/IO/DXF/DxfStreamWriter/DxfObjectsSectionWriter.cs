@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
-using ACadSharp.Tables;
 using System;
 using System.Linq;
 

@@ -11,7 +11,7 @@ using System.Linq;
 namespace ACadSharp
 {
 	/// <summary>
-	/// An AutoCAD drawing
+	/// A CAD drawing
 	/// </summary>
 	public class CadDocument : IHandledCadObject
 	{

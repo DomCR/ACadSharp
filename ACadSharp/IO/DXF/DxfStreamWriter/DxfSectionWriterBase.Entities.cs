@@ -15,9 +15,9 @@ namespace ACadSharp.IO.DXF
 			{
 				case Mesh:
 				case MLine:
-				case MText:
 				case Solid3D:
 				case MultiLeader:
+				case Wipeout:
 					this.notify($"Entity type not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return;
 			}
@@ -86,6 +86,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case TextEntity text:
 					this.writeTextEntity(text);
+					break;
+				case Tolerance tolerance:
+					this.writeTolerance(tolerance);
 					break;
 				case Vertex vertex:
 					this.writeVertex(vertex);
@@ -286,6 +289,11 @@ namespace ACadSharp.IO.DXF
 			}
 
 			this.writeHatchPattern(hatch, hatch.Pattern);
+
+			if (hatch.PixelSize != 0)
+			{
+				this._writer.Write(47, hatch.PixelSize, map);
+			}
 
 			this._writer.Write(98, hatch.SeedPoints.Count);
 			foreach (XY spoint in hatch.SeedPoints)
@@ -606,22 +614,17 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(40, mtext.Height, map);
 			this._writer.Write(41, mtext.RectangleWidth, map);
+			this._writer.Write(44, mtext.LineSpacing, map);
 
 			if (this.Version >= ACadVersion.AC1021)
 			{
-				this._writer.Write(46, mtext.ReferenceRectangleHeight, map);
+				this._writer.Write(46, mtext.RectangleHeight, map);
 			}
 
 			this._writer.Write(71, (short)mtext.AttachmentPoint, map);
 			this._writer.Write(72, (short)mtext.DrawingDirection, map);
 
-			this._writer.Write(1, mtext.Value, map);
-
-			if (string.IsNullOrEmpty(mtext.AdditionalText))
-			{
-				for (int i = 0; i < mtext.AdditionalText.Length; i += 250)
-					this._writer.Write(3, mtext.AdditionalText.Substring(i, 250), map);
-			}
+			this.writeMTextValue(mtext.Value);
 
 			this._writer.WriteName(7, mtext.Style);
 
@@ -629,22 +632,17 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(11, mtext.AlignmentPoint, map);
 
-			if (this.Version >= ACadVersion.AC1018)
+			this._writer.Write(210, mtext.Normal, map);
+		}
+
+		private void writeMTextValue(string text)
+		{
+			for (int i = 0; i < text.Length - 250; i += 250)
 			{
-				this._writer.Write(90, (int)mtext.BackgroundFillFlags, map);
-				if (mtext.BackgroundFillFlags.HasFlag(BackgroundFillFlags.UseBackgroundFillColor))
-				{
-					//this._writer.Write(63, mtext.BackgroundColor, map);
-					this._writer.Write(45, mtext.BackgroundScale, map);
-					//Transparency of background fill color (not implemented)
-					//this._writer.Write(441, mtext.BackgroundTransparency, map);
-				}
+				this._writer.Write(3, text.Substring(i, 250));
 			}
 
-			this._writer.Write(44, mtext.LineSpacing, map);
-			this._writer.Write(45, mtext.BackgroundScale, map);
-
-			this._writer.Write(210, mtext.Normal, map);
+			this._writer.Write(1, text);
 		}
 
 		private void writePoint(Point line)
@@ -880,6 +878,20 @@ namespace ACadSharp.IO.DXF
 						throw new ArgumentException($"Unknown AttributeBase type {text.GetType().FullName}");
 				}
 			}
+		}
+
+		private void writeTolerance(Tolerance tolerance)
+		{
+			DxfClassMap map = DxfClassMap.Create<Tolerance>();
+
+			this._writer.Write(DxfCode.Subclass, tolerance.SubclassMarker);
+
+			this._writer.WriteName(3, tolerance.Style, map);
+
+			this._writer.Write(10, tolerance.InsertionPoint, map);
+			this._writer.Write(11, tolerance.Direction, map);
+			this._writer.Write(210, tolerance.Normal, map);
+			this._writer.Write(1, tolerance.Text, map);
 		}
 
 		private void writeAttributeBase(AttributeBase att)

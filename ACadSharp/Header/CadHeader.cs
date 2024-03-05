@@ -12,10 +12,8 @@ namespace ACadSharp.Header
 {
 	public class CadHeader
 	{
-		//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
-
 		/// <summary>
-		/// The AutoCAD drawing database version number.
+		/// The Drawing database version number.
 		/// </summary>
 		/// <remarks>
 		/// System variable ACADVER.
@@ -26,20 +24,6 @@ namespace ACadSharp.Header
 			get { return this.Version.ToString(); }
 			set
 			{
-				/*
-				 The AutoCAD drawing database version number:
-				AC1006 = R10
-				AC1009 = R11 and R12
-				AC1012 = R13
-				AC1014 = R14
-				AC1015 = AutoCAD 2000
-				AC1018 = AutoCAD 2004
-				AC1021 = AutoCAD 2007
-				AC1024 = AutoCAD 2010
-				AC1027 = AutoCAD 2013
-				AC1032 = AutoCAD 2018
-				 */
-
 				this.Version = CadUtils.GetVersionFromName(value);
 			}
 		}
@@ -56,8 +40,7 @@ namespace ACadSharp.Header
 		public short MaintenanceVersion { get; internal set; } = 0;
 
 		/// <summary>
-		/// Drawing code page; set to the system code page when a new drawing is created,
-		/// but not otherwise maintained by AutoCAD
+		/// Drawing code page.
 		/// </summary>
 		/// <remarks>
 		/// System variable DWGCODEPAGE
@@ -106,7 +89,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable DIMSAV
 		/// </remarks>
-		public bool DIMSAV { get; set; }
+		internal bool DIMSAV { get; set; }
 
 		/// <summary>
 		/// Sets drawing units
@@ -558,27 +541,6 @@ namespace ACadSharp.Header
 			}
 		}
 
-		public TextStyle CurrentTextStyle
-		{
-			get
-			{
-				if (this.Document == null)
-				{
-					return this._currentTextStyle;
-				}
-				else
-				{
-					return this.Document.TextStyles[this.TextStyleName];
-				}
-			}
-			private set
-			{
-				this._currentTextStyle = value;
-			}
-		}
-
-		private TextStyle _currentTextStyle = TextStyle.Default;
-
 		/// <summary>
 		/// Current layer name
 		/// </summary>
@@ -611,21 +573,19 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$CELTYPE", 6)]
 		public string CurrentLineTypeName
 		{
-			get { return this.CurrentLineType.Name; }
+			get { return this._currentLineType.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this.CurrentLineType = this.Document.LineTypes[value];
+					this._currentLineType = this.Document.LineTypes[value];
 				}
 				else
 				{
-					this.CurrentLineType = new LineType(value);
+					this._currentLineType = new LineType(value);
 				}
 			}
 		}
-
-		public LineType CurrentLineType { get; private set; } = LineType.ByLayer;
 
 		/// <summary>
 		/// Current multiline style name
@@ -1407,9 +1367,7 @@ namespace ACadSharp.Header
 		public bool XEdit { get; set; }
 
 		/// <summary>
-		/// Controls symbol table naming:<br/>
-		/// 0 = AutoCAD Release 14 compatibility. Limits names to 31 characters in length. Names can include the letters A to Z, the numerals 0 to 9, and the special characters dollar sign ($), underscore (_), and hyphen (-).<br/>
-		/// 1 = AutoCAD 2000. Names can be up to 255 characters in length, and can include the letters A to Z, the numerals 0 to 9, spaces, and any special characters not used for other purposes by Microsoft Windows and AutoCAD
+		/// Controls symbol table naming
 		/// </summary>
 		/// <remarks>
 		/// System variable EXTNAMES
@@ -1433,7 +1391,7 @@ namespace ACadSharp.Header
 		public bool LoadOLEObject { get; set; }
 
 		/// <summary>
-		/// Default drawing units for AutoCAD DesignCenter blocks
+		/// Default drawing units for blocks
 		/// </summary>
 		/// <remarks>
 		/// System variable INSUNITS
@@ -1636,16 +1594,16 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTXSTY", 7)]
 		public string DimensionTextStyleName
 		{
-			get { return this.DimensionTextStyle.Name; }
+			get { return this._dimensionTextStyle.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this.DimensionTextStyle = this.Document.TextStyles[value];
+					this._dimensionTextStyle = this.Document.TextStyles[value];
 				}
 				else
 				{
-					this.DimensionTextStyle = new TextStyle(value);
+					this._dimensionTextStyle = new TextStyle(value);
 				}
 			}
 		}
@@ -1659,16 +1617,16 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMSTYLE", 2)]
 		public string DimensionStyleOverridesName
 		{
-			get { return this.DimensionStyleOverrides.Name; }
+			get { return this._dimensionStyleOverrides.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this.DimensionStyleOverrides = this.Document.DimensionStyles[value];
+					this._dimensionStyleOverrides = this.Document.DimensionStyles[value];
 				}
 				else
 				{
-					this.DimensionStyleOverrides = new DimensionStyle(value);
+					this._dimensionStyleOverrides = new DimensionStyle(value);
 				}
 			}
 		}
@@ -2029,7 +1987,7 @@ namespace ACadSharp.Header
 		/// System variable DIMFIT
 		/// </remarks>
 		[CadSystemVariable("$DIMFIT", 70)]
-		public char DimensionFit
+		public short DimensionFit
 		{
 			get { return this.DimensionStyleOverrides.DimensionFit; }
 			set
@@ -2093,7 +2051,7 @@ namespace ACadSharp.Header
 		/// System variable DIMATFIT
 		/// </remarks>
 		[CadSystemVariable("$DIMATFIT", 70)]
-		public short DimensionDimensionTextArrowFit
+		public TextArrowFitType DimensionDimensionTextArrowFit
 		{
 			get { return this.DimensionStyleOverrides.DimensionTextArrowFit; }
 			set
@@ -2868,10 +2826,83 @@ namespace ACadSharp.Header
 			}
 		}
 
-		public TextStyle DimensionTextStyle { get; private set; } = TextStyle.Default;
+		public LineType CurrentLineType
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._currentLineType;
+				}
+				else
+				{
+					return this.Document.LineTypes[this.CurrentLineTypeName];
+				}
+			}
+			private set
+			{
+				_currentLineType = value;
+			}
+		}
 
-		public DimensionStyle DimensionStyleOverrides { get; private set; } = DimensionStyle.Default;
+		public TextStyle CurrentTextStyle
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._currentTextStyle;
+				}
+				else
+				{
+					return this.Document.TextStyles[this.TextStyleName];
+				}
+			}
+			private set
+			{
+				this._currentTextStyle = value;
+			}
+		}
 
+		public TextStyle DimensionTextStyle
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._dimensionTextStyle;
+				}
+				else
+				{
+					return this.Document.TextStyles[this.DimensionTextStyleName];
+				}
+			}
+			private set
+			{
+				this._dimensionTextStyle = value;
+			}
+		}
+
+		public DimensionStyle DimensionStyleOverrides
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._dimensionStyleOverrides;
+				}
+				else
+				{
+					return this.Document.DimensionStyles[this.DimensionStyleOverridesName];
+				}
+			}
+			private set
+			{
+				this._dimensionStyleOverrides = value;
+			}
+		}
+
+		//TODO: How header UCS work??
 		public UCS ModelSpaceUcs { get; private set; } = new UCS();
 
 		public UCS ModelSpaceUcsBase { get; private set; } = new UCS();
@@ -2880,11 +2911,22 @@ namespace ACadSharp.Header
 
 		public UCS PaperSpaceUcsBase { get; private set; } = new UCS();
 
+		/// <summary>
+		/// Document where this header resides
+		/// </summary>
 		public CadDocument Document { get; internal set; }
 
 		private readonly static PropertyExpression<CadHeader, CadSystemVariableAttribute> _propertyCache;
 
 		private Layer _currentLayer = Layer.Default;
+
+		private TextStyle _currentTextStyle = TextStyle.Default;
+
+		private TextStyle _dimensionTextStyle = TextStyle.Default;
+
+		private DimensionStyle _dimensionStyleOverrides = DimensionStyle.Default;
+	
+		private LineType _currentLineType = LineType.ByLayer;
 
 		static CadHeader()
 		{
@@ -2993,10 +3035,9 @@ namespace ACadSharp.Header
 					else
 					{
 						IVector vector = (IVector)p.GetValue(this);
-						var arr = vector.GetComponents();
-						for (int i = 0; i < arr.Length; i++)
+						for (int i = 0; i < vector.Dimension; i++)
 						{
-							value.Add(att.ValueCodes[i], arr[i]);
+							value.Add(att.ValueCodes[i], vector[i]);
 						}
 					}
 

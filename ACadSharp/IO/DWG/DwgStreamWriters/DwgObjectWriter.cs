@@ -143,9 +143,6 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus && table is DimensionStylesTable)
 			{
 				//Undocumented: this byte is found only in the DimensionStylesTable
-				//Solves the Autocad error :
-				//Reading handle A object type AcDbDimStyleTable
-				//Error 34(eWrongObjectType)                       Object discarded
 				this._writer.WriteByte(0);
 			}
 
@@ -429,17 +426,20 @@ namespace ACadSharp.IO.DWG
 				short values = (short)(CadUtils.ToIndex(layer.LineWeight) << 5);
 
 				//contains frozen (1 bit),
-				values |= (short)LayerFlags.Frozen;
+				if (layer.Flags.HasFlag(LayerFlags.Frozen))
+					values |= 0b1;
 
 				//on (2 bit)
-				if (layer.IsOn)
+				if (!layer.IsOn)
 					values |= 0b10;
 
 				//frozen by default in new viewports (4 bit)
-				values |= (short)LayerFlags.FrozenNewViewports;
+				if (layer.Flags.HasFlag(LayerFlags.Frozen))
+					values |= 0b100;
 
 				//locked (8 bit)
-				values |= (short)LayerFlags.Locked;
+				if (layer.Flags.HasFlag(LayerFlags.Locked))
+					values |= 0b1000;
 
 				//plotting flag (16 bit),
 				if (layer.PlotFlag)
@@ -701,7 +701,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitDouble(0.0);
 				//Contrast BD ? Default value is 0
 				this._writer.WriteBitDouble(0.0);
-				//Abient color CMC? Default value is AutoCAD indexed color 250
+				//Abient color CMC? Default value is indexed color 250
 				this._writer.WriteCmColor(new Color(250));
 			}
 
