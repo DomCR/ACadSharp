@@ -343,7 +343,7 @@ namespace ACadSharp.IO.DXF
 				case 50:
 					var dim = new DimensionLinear();
 					tmp.SetDimensionObject(dim);
-					dim.Rotation = this._reader.ValueAsDouble;
+					dim.Rotation = CSMath.MathUtils.DegToRad(this._reader.ValueAsDouble);
 					map.SubClasses.Add(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
 					return true;
 				case 70:
