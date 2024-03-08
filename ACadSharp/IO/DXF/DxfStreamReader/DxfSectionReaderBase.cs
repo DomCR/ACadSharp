@@ -1019,10 +1019,8 @@ namespace ACadSharp.IO.DXF
 
 			if (template.Path.Flags.HasFlag(BoundaryPathFlags.Polyline))
 			{
-				Hatch.BoundaryPath.Edge pl = new Hatch.BoundaryPath.Polyline();
-				this._builder.Notify($"Hatch.BoundaryPath.Polyline not implemented", NotificationType.NotImplemented);
-
-				return null;
+				Hatch.BoundaryPath.Polyline pl = this.readPolylineBoundary();
+				template.Path.Edges.Add(pl);
 			}
 			else
 			{
@@ -1067,9 +1065,55 @@ namespace ACadSharp.IO.DXF
 			return template;
 		}
 
-		private void readPolylineBoundary()
+		private Hatch.BoundaryPath.Polyline readPolylineBoundary()
 		{
+			Hatch.BoundaryPath.Polyline boundary = new Hatch.BoundaryPath.Polyline();
 
+			this._reader.ReadNext();
+
+			if (this._reader.Code != 72)
+			{
+				this._builder.Notify($"Polyline Boundary path should start with code 72 but was {this._reader.Code}");
+				return null;
+			}
+
+			//72
+			bool hasBulge = this._reader.ValueAsBool;
+			this._reader.ReadNext();
+
+			//73
+			bool isClosed = this._reader.ValueAsBool;
+			this._reader.ReadNext();
+
+			//93
+			int nvertices = this._reader.ValueAsInt;
+			this._reader.ReadNext();
+
+			for (int i = 0; i < nvertices; i++)
+			{
+				double bulge = 0.0;
+
+				//10
+				double x = this._reader.ValueAsDouble;
+				this._reader.ReadNext();
+				//20
+				double y = this._reader.ValueAsDouble;
+				this._reader.ReadNext();
+
+				if (hasBulge)
+				{
+					//42
+					bulge = this._reader.ValueAsDouble;
+					this._reader.ReadNext();
+				}
+
+				boundary.Vertices.Add(new XY(x, y));
+				boundary.Bulges.Add(bulge);
+			}
+
+
+
+			return boundary;
 		}
 
 		private Hatch.BoundaryPath.Edge readEdge()

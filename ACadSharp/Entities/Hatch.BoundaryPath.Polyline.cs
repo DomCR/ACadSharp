@@ -15,10 +15,10 @@ namespace ACadSharp.Entities
 				public override EdgeType Type => EdgeType.Polyline;
 
 				/// <summary>
-				/// Has bulge flag
+				/// The polyline has bulges with value different than 0
 				/// </summary>
 				[DxfCodeValue(72)]
-				public bool HasBulge => this.Bulges.Any();
+				public bool HasBulge => this.Bulges.Any(b => b != 0);
 
 				/// <summary>
 				/// Is closed flag
@@ -27,12 +27,12 @@ namespace ACadSharp.Entities
 				public bool IsClosed { get; set; }
 
 				/// <summary>
-				/// Bulge
+				/// Bulges applied to each vertice, the number of bulges must be equal to the vertices or empty.
 				/// </summary>
 				/// <remarks>
-				/// optional, default empty
+				/// default value, 0 if not set
 				/// </remarks>
-				[DxfCodeValue(42)]
+				[DxfCodeValue(DxfReferenceType.Optional, 42)]
 				public List<double> Bulges { get; set; } = new List<double>();
 
 				/// <remarks>
