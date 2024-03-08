@@ -33,16 +33,6 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation { get; set; }
 
-		/// <inheritdoc/>
-		public override double Measurement
-		{
-			get
-			{
-				double rot = FirstPoint.AngleFrom(this.SecondPoint);
-				return Math.Abs(FirstPoint.DistanceFrom(this.SecondPoint) * Math.Cos(this.Rotation - rot));
-			}
-		}
-
 		public DimensionLinear() : base(DimensionType.Linear) { }
 	}
 }
