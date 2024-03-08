@@ -141,35 +141,35 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.ValueAsString)
 			{
 				case DxfFileToken.EntityAttribute:
-					return this.readEntityCodes<AttributeEntity>(new CadTextEntityTemplate(new AttributeEntity()), readAttributeDefinition);
+					return this.readEntityCodes<AttributeEntity>(new CadTextEntityTemplate(new AttributeEntity()), this.readAttributeDefinition);
 				case DxfFileToken.EntityAttributeDefinition:
-					return this.readEntityCodes<AttributeDefinition>(new CadTextEntityTemplate(new AttributeDefinition()), readAttributeDefinition);
+					return this.readEntityCodes<AttributeDefinition>(new CadTextEntityTemplate(new AttributeDefinition()), this.readAttributeDefinition);
 				case DxfFileToken.EntityArc:
-					return this.readEntityCodes<Arc>(new CadEntityTemplate<Arc>(), readArc);
+					return this.readEntityCodes<Arc>(new CadEntityTemplate<Arc>(), this.readArc);
 				case DxfFileToken.EntityCircle:
-					return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), readEntitySubclassMap);
+					return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityDimension:
-					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(), readDimension);
+					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(), this.readDimension);
 				case DxfFileToken.Entity3DFace:
-					return this.readEntityCodes<Face3D>(new CadEntityTemplate<Face3D>(), readEntitySubclassMap);
+					return this.readEntityCodes<Face3D>(new CadEntityTemplate<Face3D>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityEllipse:
-					return this.readEntityCodes<Ellipse>(new CadEntityTemplate<Ellipse>(), readEntitySubclassMap);
+					return this.readEntityCodes<Ellipse>(new CadEntityTemplate<Ellipse>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityLine:
-					return this.readEntityCodes<Line>(new CadEntityTemplate<Line>(), readEntitySubclassMap);
+					return this.readEntityCodes<Line>(new CadEntityTemplate<Line>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityLwPolyline:
-					return this.readEntityCodes<LwPolyline>(new CadEntityTemplate<LwPolyline>(), readLwPolyline);
+					return this.readEntityCodes<LwPolyline>(new CadEntityTemplate<LwPolyline>(), this.readLwPolyline);
 				case DxfFileToken.EntityHatch:
-					return this.readEntityCodes<Hatch>(new CadHatchTemplate(), readHatch);
+					return this.readEntityCodes<Hatch>(new CadHatchTemplate(), this.readHatch);
 				case DxfFileToken.EntityInsert:
-					return this.readEntityCodes<Insert>(new CadInsertTemplate(), readInsert);
+					return this.readEntityCodes<Insert>(new CadInsertTemplate(), this.readInsert);
 				case DxfFileToken.EntityMText:
-					return this.readEntityCodes<MText>(new CadTextEntityTemplate(new MText()), readTextEntity);
+					return this.readEntityCodes<MText>(new CadTextEntityTemplate(new MText()), this.readTextEntity);
 				case DxfFileToken.EntityMLine:
-					return this.readEntityCodes<MLine>(new CadMLineTemplate(), readMLine);
+					return this.readEntityCodes<MLine>(new CadMLineTemplate(), this.readMLine);
 				case DxfFileToken.EntityPoint:
-					return this.readEntityCodes<Point>(new CadEntityTemplate<Point>(), readEntitySubclassMap);
+					return this.readEntityCodes<Point>(new CadEntityTemplate<Point>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityPolyline:
-					var template = this.readEntityCodes<Entity>(new CadPolyLineTemplate(), readPolyline);
+					var template = this.readEntityCodes<Entity>(new CadPolyLineTemplate(), this.readPolyline);
 					if (template.CadObject is CadPolyLineTemplate.PolyLinePlaceholder)
 					{
 						this._builder.Notify($"[{DxfFileToken.EntityPolyline}] Subclass not found, entity discarded", NotificationType.Warning);
@@ -180,23 +180,23 @@ namespace ACadSharp.IO.DXF
 						return template;
 					}
 				case DxfFileToken.EntityRay:
-					return this.readEntityCodes<Ray>(new CadEntityTemplate<Ray>(), readEntitySubclassMap);
+					return this.readEntityCodes<Ray>(new CadEntityTemplate<Ray>(), this.readEntitySubclassMap);
 				case DxfFileToken.EndSequence:
-					return this.readEntityCodes<Seqend>(new CadEntityTemplate<Seqend>(), readEntitySubclassMap);
+					return this.readEntityCodes<Seqend>(new CadEntityTemplate<Seqend>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntitySolid:
-					return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), readEntitySubclassMap);
+					return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityText:
-					return this.readEntityCodes<TextEntity>(new CadTextEntityTemplate(new TextEntity()), readTextEntity);
+					return this.readEntityCodes<TextEntity>(new CadTextEntityTemplate(new TextEntity()), this.readTextEntity);
 				case DxfFileToken.EntityTolerance:
-					return this.readEntityCodes<Tolerance>(new CadToleranceTemplate(new Tolerance()), readTolerance);
+					return this.readEntityCodes<Tolerance>(new CadToleranceTemplate(new Tolerance()), this.readTolerance);
 				case DxfFileToken.EntityVertex:
-					return this.readEntityCodes<Entity>(new CadVertexTemplate(), readVertex);
+					return this.readEntityCodes<Entity>(new CadVertexTemplate(), this.readVertex);
 				case DxfFileToken.EntityViewport:
 					return this.readEntityCodes<Viewport>(new CadViewportTemplate(), this.readViewport);
 				case DxfFileToken.EntityXline:
-					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), readEntitySubclassMap);
+					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntitySpline:
-					return this.readEntityCodes<Spline>(new CadSplineTemplate(), readSpline);
+					return this.readEntityCodes<Spline>(new CadSplineTemplate(), this.readSpline);
 				default:
 					this._builder.Notify($"Entity not implemented: {this._reader.ValueAsString}", NotificationType.NotImplemented);
 					do
@@ -1019,10 +1019,8 @@ namespace ACadSharp.IO.DXF
 
 			if (template.Path.Flags.HasFlag(BoundaryPathFlags.Polyline))
 			{
-				Hatch.BoundaryPath.Edge pl = new Hatch.BoundaryPath.Polyline();
-				this._builder.Notify($"Hatch.BoundaryPath.Polyline not implemented", NotificationType.NotImplemented);
-
-				return null;
+				Hatch.BoundaryPath.Polyline pl = this.readPolylineBoundary();
+				template.Path.Edges.Add(pl);
 			}
 			else
 			{
@@ -1067,9 +1065,55 @@ namespace ACadSharp.IO.DXF
 			return template;
 		}
 
-		private void readPolylineBoundary()
+		private Hatch.BoundaryPath.Polyline readPolylineBoundary()
 		{
+			Hatch.BoundaryPath.Polyline boundary = new Hatch.BoundaryPath.Polyline();
 
+			this._reader.ReadNext();
+
+			if (this._reader.Code != 72)
+			{
+				this._builder.Notify($"Polyline Boundary path should start with code 72 but was {this._reader.Code}");
+				return null;
+			}
+
+			//72
+			bool hasBulge = this._reader.ValueAsBool;
+			this._reader.ReadNext();
+
+			//73
+			bool isClosed = this._reader.ValueAsBool;
+			this._reader.ReadNext();
+
+			//93
+			int nvertices = this._reader.ValueAsInt;
+			this._reader.ReadNext();
+
+			for (int i = 0; i < nvertices; i++)
+			{
+				double bulge = 0.0;
+
+				//10
+				double x = this._reader.ValueAsDouble;
+				this._reader.ReadNext();
+				//20
+				double y = this._reader.ValueAsDouble;
+				this._reader.ReadNext();
+
+				if (hasBulge)
+				{
+					//42
+					bulge = this._reader.ValueAsDouble;
+					this._reader.ReadNext();
+				}
+
+				boundary.Vertices.Add(new XY(x, y));
+				boundary.Bulges.Add(bulge);
+			}
+
+
+
+			return boundary;
 		}
 
 		private Hatch.BoundaryPath.Edge readEdge()
@@ -1272,7 +1316,7 @@ namespace ACadSharp.IO.DXF
 					Debug.Assert(this._reader.DxfCode == DxfCode.ControlString);
 					return;
 				case DxfFileToken.ReactorsToken:
-					reactors = readReactors();
+					reactors = this.readReactors();
 					break;
 				case DxfFileToken.BlkRefToken:
 				default:
@@ -1327,7 +1371,7 @@ namespace ACadSharp.IO.DXF
 			}
 			catch (Exception ex)
 			{
-				if (!_builder.Configuration.Failsafe)
+				if (!this._builder.Configuration.Failsafe)
 				{
 					throw ex;
 				}
