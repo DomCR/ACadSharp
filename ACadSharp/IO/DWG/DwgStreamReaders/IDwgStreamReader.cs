@@ -306,10 +306,11 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		/// <param name="offset"></param>
 		void Advance(int offset);
+
 		/// <summary>
-		/// Sets the shift displacement to 0.
+		/// CRC: raw short (not compressed)
 		/// </summary>
 		/// <returns></returns>
-		ushort ResetShift();
+		ushort ReadCRC();
 	}
 }
