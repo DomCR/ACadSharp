@@ -856,12 +856,15 @@ namespace ACadSharp.IO.DWG
 
 					//numpathsegs BL 91 number of path segments
 					this._writer.WriteBitLong(pline.Vertices.Count);
-					foreach (var vertex in pline.Vertices)
+					for (var i = 0; i < pline.Vertices.Count; ++i)
 					{
-						this._writer.Write2RawDouble(vertex);
+						var vertex = pline.Vertices[i];
+						var bulge  = pline.Bulges[i];
+
+						this._writer.Write2RawDouble(new XY(vertex.X, vertex.Y));
 						if (pline.HasBulge)
 						{
-							this._writer.WriteBitDouble(pline.Bulge);
+							this._writer.WriteBitDouble(bulge);
 						}
 					}
 				}
