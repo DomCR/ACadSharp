@@ -2823,14 +2823,13 @@ namespace ACadSharp.IO.DWG
 			//	Multileader Common data
 			//	340 Leader StyleId (handle)
 			template.LeaderStyleHandle = this.handleReference();
-			//	90  Property Override Flags (int32)
+			//BL	90  Property Override Flags (int32)
 			mLeader.PropertyOverrideFlags = (MultiLeaderPropertyOverrideFlags)this._objectReader.ReadBitLong();
-			//	170 LeaderLineType (short)
-			mLeader.PathType = (MultiLeaderPathType)this._objectReader.ReadBitShort();
-			//	91  Leade LineColor (Color)
-			mLeader.LineColor = this._mergedReaders.ReadCmColor();
-
-			//	341 LeaderLineTypeID (handle/LineType)
+			//BS	170 LeaderLineType (short)
+			mLeader.PathType = (MultiLeaderPathType)_objectReader.ReadBitShort();
+			//CMC	91  Leade LineColor (Color)
+			mLeader.LineColor = _mergedReaders.ReadCmColor();
+			//H 	341 LeaderLineTypeID (handle/LineType)
 			template.LeaderLineTypeHandle = this.handleReference();
 
 			//BL	171 LeaderLine Weight
