@@ -2825,23 +2825,20 @@ namespace ACadSharp.IO.DWG
 			//	Multileader Common data
 			//	340 Leader StyleId (handle)
 			template.LeaderStyleHandle = this.handleReference();
-			//	90  Property Override Flags (int32)
+			//BL	90  Property Override Flags (int32)
 			mLeader.PropertyOverrideFlags = (MultiLeaderPropertyOverrideFlags)this._objectReader.ReadBitLong();
-			//	170 LeaderLineType (short)
+			//BS	170 LeaderLineType (short)
 			mLeader.PathType = (MultiLeaderPathType)_objectReader.ReadBitShort();
-			//	91  Leade LineColor (Color)
+			//CMC	91  Leade LineColor (Color)
 			mLeader.LineColor = _mergedReaders.ReadCmColor();
-			//	341 LeaderLineTypeID (handle/LineType)
+			//H 	341 LeaderLineTypeID (handle/LineType)
 			template.LeaderLineTypeHandle = this.handleReference();
-			//	171 LeaderLine Weight
-			mLeader.LeaderLineWeight = (LineweightType)_objectReader.ReadBitShort();
-			//  290 Enable Landing
+			//BL	171 LeaderLine Weight
+			mLeader.LeaderLineWeight = (LineweightType)_objectReader.ReadBitLong();
+			//B		290 Enable Landing
 			mLeader.EnableLanding = _objectReader.ReadBit();
-			//  291 Enable Dogleg
+			//B		291 Enable Dogleg
 			mLeader.EnableDogleg = _objectReader.ReadBit();
-
-			//	TODO Why do we need this
-			_objectReader.Advance(2);
 
 			//  41  Dogleg Length / Landing distance
 			mLeader.LandingDistance = _objectReader.ReadBitDouble();
