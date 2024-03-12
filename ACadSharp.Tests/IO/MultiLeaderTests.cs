@@ -14,9 +14,9 @@ namespace ACadSharp.Tests.IO
 		static MultiLeaderTests()
 		{
 			MultiLeaderFilePaths = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(Path.Combine($"{samplesFolder}", "multileader"), $"*.dwg"))
+			foreach (string p in Directory.GetFiles(Path.Combine($"{samplesFolder}", "multileader"), $"*.dwg"))
 			{
-				MultiLeaderFilePaths.Add(file);
+				MultiLeaderFilePaths.Add(Path.GetFileName(p));
 			}
 		}
 
@@ -28,7 +28,7 @@ namespace ACadSharp.Tests.IO
 		[MemberData(nameof(MultiLeaderFilePaths))]
 		public void MultiLeaderDwg(string path)
 		{
-			this._output.WriteLine(path);
+			path = Path.Combine($"{samplesFolder}", "multileader", path);
 
 			CadDocument doc = DwgReader.Read(path);
 
