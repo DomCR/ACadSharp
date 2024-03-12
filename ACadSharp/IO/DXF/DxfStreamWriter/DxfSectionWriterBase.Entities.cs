@@ -318,7 +318,6 @@ namespace ACadSharp.IO.DXF
 				this.writeHatchBoundaryPathEdge(edge);
 			}
 
-			//TODO: Check how this entities are handled
 			this._writer.Write(97, path.Entities.Count);
 			foreach (Entity entity in path.Entities)
 			{
@@ -352,11 +351,16 @@ namespace ACadSharp.IO.DXF
 					this._writer.Write(11, line.End);
 					break;
 				case Hatch.BoundaryPath.Polyline poly:
+					this._writer.Write(72, poly.HasBulge ? (short)1 : (short)0);
 					this._writer.Write(73, poly.IsClosed ? (short)1 : (short)0);
 					this._writer.Write(93, poly.Vertices.Count);
-					foreach (var vertex in poly.Vertices)
+					for (int i = 0; i < poly.Vertices.Count; i++)
 					{
-						this._writer.Write(10, vertex);
+						this._writer.Write(10, poly.Vertices[i]);
+						if (poly.HasBulge)
+						{
+							this._writer.Write(42, poly.Bulges.ElementAtOrDefault(i));
+						}
 					}
 					break;
 				case Hatch.BoundaryPath.Spline spline:
