@@ -145,6 +145,7 @@ namespace ACadSharp.Tests.IO
 
 			if (doc.Header.Version > ACadVersion.AC1021)
 			{
+				//For some reason this entity is not compatible for versions before AC1021
 				multiLeader = (MultiLeader)entities[13];
 				Assert.Equal(@"MULTILEADER TEST", multiLeader.ContextData.TextLabel);
 				Assert.Equal(TextAttachmentPointType.Left, multiLeader.TextAttachmentPoint);
