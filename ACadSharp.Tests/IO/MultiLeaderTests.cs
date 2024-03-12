@@ -9,15 +9,28 @@ namespace ACadSharp.Tests.IO
 {
 	public class MultiLeaderTests : IOTestsBase
 	{
+		public static TheoryData<string> MultiLeaderFilePaths { get; }
+
+		static MultiLeaderTests()
+		{
+			MultiLeaderFilePaths = new TheoryData<string>();
+			foreach (string p in Directory.GetFiles(Path.Combine($"{samplesFolder}", "multileader"), $"*.dwg"))
+			{
+				MultiLeaderFilePaths.Add(Path.GetFileName(p));
+			}
+		}
+
 		public MultiLeaderTests(ITestOutputHelper output) : base(output)
 		{
 		}
 
-		[Fact]
-		public void MultiLeaderDwg()
+		[Theory]
+		[MemberData(nameof(MultiLeaderFilePaths))]
+		public void MultiLeaderDwg(string path)
 		{
-			string inPath = Path.Combine($"{samplesFolder}", "multileader", "sample_MLeader_AC1032.dwg");
-			CadDocument doc = DwgReader.Read(inPath);
+			path = Path.Combine($"{samplesFolder}", "multileader", path);
+
+			CadDocument doc = DwgReader.Read(path);
 
 			// There are 14 multileaders in DWG file
 			Assert.Equal(14, doc.Entities.Count);
@@ -25,7 +38,7 @@ namespace ACadSharp.Tests.IO
 			List<Entity> entities = new List<Entity>(doc.Entities);
 
 			MultiLeader multiLeader;
-			
+
 			multiLeader = (MultiLeader)entities[0];
 			Assert.Equal(@"MULTILEADER TEST", multiLeader.ContextData.TextLabel);
 			Assert.Equal(TextAttachmentPointType.Left, multiLeader.TextAttachmentPoint);
@@ -130,13 +143,17 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(8, multiLeader.LandingDistance);
 			Assert.Equal(TextAttachmentDirectionType.Horizontal, multiLeader.TextAttachmentDirection);
 
-			multiLeader = (MultiLeader)entities[13];
-			Assert.Equal(@"MULTILEADER TEST", multiLeader.ContextData.TextLabel);
-			Assert.Equal(TextAttachmentPointType.Left, multiLeader.TextAttachmentPoint);
-			Assert.Equal(TextAttachmentType.TopOfTopLine, multiLeader.TextLeftAttachment);
-			Assert.False(multiLeader.TextFrame);
-			Assert.Equal(8, multiLeader.LandingDistance);
-			Assert.Equal(TextAttachmentDirectionType.Vertical, multiLeader.TextAttachmentDirection);
+			if (doc.Header.Version > ACadVersion.AC1021)
+			{
+				//For some reason this entity is not compatible for versions before AC1021
+				multiLeader = (MultiLeader)entities[13];
+				Assert.Equal(@"MULTILEADER TEST", multiLeader.ContextData.TextLabel);
+				Assert.Equal(TextAttachmentPointType.Left, multiLeader.TextAttachmentPoint);
+				Assert.Equal(TextAttachmentType.TopOfTopLine, multiLeader.TextLeftAttachment);
+				Assert.False(multiLeader.TextFrame);
+				Assert.Equal(8, multiLeader.LandingDistance);
+				Assert.Equal(TextAttachmentDirectionType.Vertical, multiLeader.TextAttachmentDirection);
+			}
 		}
 	}
 }
