@@ -143,13 +143,16 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(8, multiLeader.LandingDistance);
 			Assert.Equal(TextAttachmentDirectionType.Horizontal, multiLeader.TextAttachmentDirection);
 
-			multiLeader = (MultiLeader)entities[13];
-			Assert.Equal(@"MULTILEADER TEST", multiLeader.ContextData.TextLabel);
-			Assert.Equal(TextAttachmentPointType.Left, multiLeader.TextAttachmentPoint);
-			Assert.Equal(TextAttachmentType.TopOfTopLine, multiLeader.TextLeftAttachment);
-			Assert.False(multiLeader.TextFrame);
-			Assert.Equal(8, multiLeader.LandingDistance);
-			Assert.Equal(TextAttachmentDirectionType.Vertical, multiLeader.TextAttachmentDirection);
+			if (doc.Header.Version > ACadVersion.AC1021)
+			{
+				multiLeader = (MultiLeader)entities[13];
+				Assert.Equal(@"MULTILEADER TEST", multiLeader.ContextData.TextLabel);
+				Assert.Equal(TextAttachmentPointType.Left, multiLeader.TextAttachmentPoint);
+				Assert.Equal(TextAttachmentType.TopOfTopLine, multiLeader.TextLeftAttachment);
+				Assert.False(multiLeader.TextFrame);
+				Assert.Equal(8, multiLeader.LandingDistance);
+				Assert.Equal(TextAttachmentDirectionType.Vertical, multiLeader.TextAttachmentDirection);
+			}
 		}
 	}
 }

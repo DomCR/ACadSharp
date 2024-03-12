@@ -2846,10 +2846,11 @@ namespace ACadSharp.IO.DWG
 
 			//  42  Arrowhead Size
 			mLeader.ArrowheadSize = this._objectReader.ReadBitDouble();
-			//  172 Content Type
+			//BS	172 Content Type
 			mLeader.ContentType = (LeaderContentType)this._objectReader.ReadBitShort();
-			//  343 Text Style ID (handle/TextStyle)
+			//H		343 Text Style ID (handle/TextStyle)
 			template.MTextStyleHandle = this.handleReference();
+
 			//  173 Text Left Attachment Type
 			mLeader.TextLeftAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
 			//  95  Text Right Attachement Type
