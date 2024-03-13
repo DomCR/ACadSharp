@@ -85,6 +85,10 @@ namespace ACadSharp
 		/// </summary>
 		public IEnumerable<Layout> Layouts { get { return this._rootDictionary.GetEntry<CadDictionary>(CadDictionary.AcadLayout).Cast<Layout>(); } }
 
+		public Objects.Collections.GroupCollection Groups { get; } = new Objects.Collections.GroupCollection();
+
+		public Objects.Collections.ScaleCollection Scales { get; } = new();
+
 		/// <summary>
 		/// Root dictionary of the document
 		/// </summary>
