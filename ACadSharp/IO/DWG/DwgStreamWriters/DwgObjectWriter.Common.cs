@@ -115,11 +115,11 @@ namespace ACadSharp.IO.DWG
 			{
 				//TODO: Invalid type codes, what to do??
 				case ObjectType.UNLISTED:
+					throw new NotImplementedException($"CadObject type: {cadObject.ObjectType} fullname: {cadObject.GetType().FullName}");
 				case ObjectType.INVALID:
 				case ObjectType.UNUSED:
 					this.notify($"CadObject type: {cadObject.ObjectType} fullname: {cadObject.GetType().FullName}", NotificationType.NotImplemented);
 					return;
-					throw new NotImplementedException($"CadObject type: {cadObject.ObjectType} fullname: {cadObject.GetType().FullName}");
 				default:
 					this._writer.WriteObjectType(cadObject.ObjectType);
 					break;
