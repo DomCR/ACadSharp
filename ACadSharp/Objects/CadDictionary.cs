@@ -133,7 +133,7 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(350)]
 		public ulong[] EntryHandles { get { return this._entries.Values.Select(c => c.Handle).ToArray(); } }
 
-		public CadObject this[string entry] { get { return this._entries[entry]; } }
+		public CadObject this[string key] { get { return this._entries[key]; } }
 
 		private readonly Dictionary<string, CadObject> _entries = new Dictionary<string, CadObject>();    //TODO: Transform into an objservable collection
 
@@ -160,27 +160,27 @@ namespace ACadSharp.Objects
 				{ AcadPlotSettings, new CadDictionary() },
 				{ VariableDictionary, new CadDictionary() },	//DictionaryVars Entry DIMASSOC and HIDETEXT ??
 				// { AcadPlotStyleName, new CadDictionaryWithDefault() },	//Add default entry "Normal"	PlaceHolder	??
-				//{ AcadScaleList, new CadDictionary
-				//	{
-				//		{ "A0", new Scale { Name="A0", PaperUnits = 1.0, DrawingUnits = 1.0, IsUnitScale = true } },
-				//		{ "A1", new Scale { Name="A1", PaperUnits = 1.0, DrawingUnits = 2.0, IsUnitScale = false } },
-				//		{ "A2", new Scale { Name="A2", PaperUnits = 1.0, DrawingUnits = 4.0, IsUnitScale = false } },
-				//		{ "A3", new Scale { Name="A3", PaperUnits = 1.0, DrawingUnits = 5.0, IsUnitScale = false } },
-				//		{ "A4", new Scale { Name="A4", PaperUnits = 1.0, DrawingUnits = 8.0, IsUnitScale = false } },
-				//		{ "A5", new Scale { Name="A5", PaperUnits = 1.0, DrawingUnits = 10.0, IsUnitScale = false } },
-				//		{ "A6", new Scale { Name="A6", PaperUnits = 1.0, DrawingUnits = 16.0, IsUnitScale = false } },
-				//		{ "A7", new Scale { Name="A7", PaperUnits = 1.0, DrawingUnits = 20.0, IsUnitScale = false } },
-				//		{ "A8", new Scale { Name="A8", PaperUnits = 1.0, DrawingUnits = 30.0, IsUnitScale = false } },
-				//		{ "A9", new Scale { Name="A9", PaperUnits = 1.0, DrawingUnits = 40.0, IsUnitScale = false } },
-				//		{ "B0", new Scale { Name="B0", PaperUnits = 1.0, DrawingUnits = 50.0, IsUnitScale = false } },
-				//		{ "B1", new Scale { Name="B1", PaperUnits = 1.0, DrawingUnits = 100.0, IsUnitScale = false } },
-				//		{ "B2", new Scale { Name="B2", PaperUnits = 2.0, DrawingUnits = 1.0, IsUnitScale = false } },
-				//		{ "B3", new Scale { Name="B3", PaperUnits = 4.0, DrawingUnits = 1.0, IsUnitScale = false } },
-				//		{ "B4", new Scale { Name="B4", PaperUnits = 8.0, DrawingUnits = 1.0, IsUnitScale = false } },
-				//		{ "B5", new Scale { Name="B5", PaperUnits = 10.0, DrawingUnits = 1.0, IsUnitScale = false } },
-				//		{ "B6", new Scale { Name="B6", PaperUnits = 100.0, DrawingUnits = 1.0, IsUnitScale = false } },
-				//	}
-				//},
+				{ AcadScaleList, new CadDictionary
+					{
+						{ "A0", new Scale { Name="A0", PaperUnits = 1.0, DrawingUnits = 1.0, IsUnitScale = true } },
+						{ "A1", new Scale { Name="A1", PaperUnits = 1.0, DrawingUnits = 2.0, IsUnitScale = false } },
+						{ "A2", new Scale { Name="A2", PaperUnits = 1.0, DrawingUnits = 4.0, IsUnitScale = false } },
+						{ "A3", new Scale { Name="A3", PaperUnits = 1.0, DrawingUnits = 5.0, IsUnitScale = false } },
+						{ "A4", new Scale { Name="A4", PaperUnits = 1.0, DrawingUnits = 8.0, IsUnitScale = false } },
+						{ "A5", new Scale { Name="A5", PaperUnits = 1.0, DrawingUnits = 10.0, IsUnitScale = false } },
+						{ "A6", new Scale { Name="A6", PaperUnits = 1.0, DrawingUnits = 16.0, IsUnitScale = false } },
+						{ "A7", new Scale { Name="A7", PaperUnits = 1.0, DrawingUnits = 20.0, IsUnitScale = false } },
+						{ "A8", new Scale { Name="A8", PaperUnits = 1.0, DrawingUnits = 30.0, IsUnitScale = false } },
+						{ "A9", new Scale { Name="A9", PaperUnits = 1.0, DrawingUnits = 40.0, IsUnitScale = false } },
+						{ "B0", new Scale { Name="B0", PaperUnits = 1.0, DrawingUnits = 50.0, IsUnitScale = false } },
+						{ "B1", new Scale { Name="B1", PaperUnits = 1.0, DrawingUnits = 100.0, IsUnitScale = false } },
+						{ "B2", new Scale { Name="B2", PaperUnits = 2.0, DrawingUnits = 1.0, IsUnitScale = false } },
+						{ "B3", new Scale { Name="B3", PaperUnits = 4.0, DrawingUnits = 1.0, IsUnitScale = false } },
+						{ "B4", new Scale { Name="B4", PaperUnits = 8.0, DrawingUnits = 1.0, IsUnitScale = false } },
+						{ "B5", new Scale { Name="B5", PaperUnits = 10.0, DrawingUnits = 1.0, IsUnitScale = false } },
+						{ "B6", new Scale { Name="B6", PaperUnits = 100.0, DrawingUnits = 1.0, IsUnitScale = false } },
+					}
+				},
 				{ AcadVisualStyle, new CadDictionary() },
 				{ AcadFieldList, new CadDictionary() },
 				{ AcadImageDict, new CadDictionary() },

@@ -1,25 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ACadSharp.Objects.Collections
+﻿namespace ACadSharp.Objects.Collections
 {
-	public class ScaleCollection : IObservableCollection<Group>
+	public class ScaleCollection : ObjectDictionaryCollection<Scale>
 	{
-		public event EventHandler<CollectionChangedEventArgs> OnAdd;
-		public event EventHandler<CollectionChangedEventArgs> OnRemove;
-
-		public IEnumerator<Group> GetEnumerator()
+		public ScaleCollection(CadDictionary dictionary) : base(dictionary)
 		{
-			throw new NotImplementedException();
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			throw new NotImplementedException();
+			this._dictionary = dictionary;
 		}
 	}
 }

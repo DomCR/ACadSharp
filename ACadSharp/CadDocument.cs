@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Header;
+using ACadSharp.IO.DXF;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
@@ -85,9 +86,9 @@ namespace ACadSharp
 		/// </summary>
 		public IEnumerable<Layout> Layouts { get { return this._rootDictionary.GetEntry<CadDictionary>(CadDictionary.AcadLayout).Cast<Layout>(); } }
 
-		public Objects.Collections.GroupCollection Groups { get; } = new Objects.Collections.GroupCollection();
+		public Objects.Collections.GroupCollection Groups { get; private set; }
 
-		public Objects.Collections.ScaleCollection Scales { get; } = new();
+		public Objects.Collections.ScaleCollection Scales { get; private set; }
 
 		/// <summary>
 		/// Root dictionary of the document
@@ -180,6 +181,8 @@ namespace ACadSharp
 				BlockRecord pspace = BlockRecord.PaperSpace;
 				pspace.Layout = paperLayout;
 				this.BlockRecords.Add(pspace);
+
+				this.UpdateCollections(false);
 			}
 		}
 
@@ -249,6 +252,18 @@ namespace ACadSharp
 			}
 
 			return false;
+		}
+
+		public void UpdateCollections(bool createDictionaries)
+		{
+			if (this.RootDictionary.TryGetEntry(CadDictionary.AcadScaleList, out CadDictionary scales))
+			{
+				this.Scales = new Objects.Collections.ScaleCollection(scales);
+			}
+			else if (createDictionaries)
+			{
+
+			}
 		}
 
 		private void addCadObject(CadObject cadObject)
