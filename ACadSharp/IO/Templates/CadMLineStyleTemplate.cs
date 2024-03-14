@@ -5,16 +5,16 @@ using System.Linq;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadMLStyleTemplate : CadTemplate<MLStyle>
+	internal class CadMLineStyleTemplate : CadTemplate<MLineStyle>
 	{
 		public class ElementTemplate : ICadObjectTemplate
 		{
 			public ulong? LinetypeHandle { get; set; }
 			public int? LinetypeIndex { get; set; }
 
-			public MLStyle.Element Element { get; set; }
+			public MLineStyle.Element Element { get; set; }
 
-			public ElementTemplate(MLStyle.Element element)
+			public ElementTemplate(MLineStyle.Element element)
 			{
 				this.Element = element;
 			}
@@ -54,7 +54,7 @@ namespace ACadSharp.IO.Templates
 
 		public List<ElementTemplate> ElementTemplates { get; set; } = new List<ElementTemplate>();
 
-		public CadMLStyleTemplate(MLStyle mlStyle) : base(mlStyle) { }
+		public CadMLineStyleTemplate(MLineStyle mlStyle) : base(mlStyle) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{
