@@ -3,7 +3,7 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.Objects
 {
-	public partial class MLStyle
+	public partial class MLineStyle
 	{
 		public class Element
 		{
