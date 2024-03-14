@@ -911,7 +911,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readGroup();
 					break;
 				case ObjectType.MLINESTYLE:
-					template = this.readMLStyle();
+					template = this.readMLineStyle();
 					break;
 				case ObjectType.OLE2FRAME:
 					break;
@@ -4597,7 +4597,7 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadTemplate readMLStyle()
+		private CadTemplate readMLineStyle()
 		{
 			MLineStyle mlineStyle = new MLineStyle();
 			CadMLineStyleTemplate template = new CadMLineStyleTemplate(mlineStyle);

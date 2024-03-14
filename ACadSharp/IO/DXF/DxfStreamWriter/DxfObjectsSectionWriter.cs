@@ -58,7 +58,7 @@ namespace ACadSharp.IO.DXF
 					this.writeLayout(layout);
 					break;
 				case MLineStyle mlStyle:
-					this.writeMLStyle(mlStyle);
+					this.writeMLineStyle(mlStyle);
 					break;
 				case PlotSettings plotSettings:
 					this.writePlotSettings(plotSettings);
@@ -195,7 +195,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.WriteHandle(330, layout.AssociatedBlock.Owner, map);
 		}
 
-		protected void writeMLStyle(MLineStyle style)
+		protected void writeMLineStyle(MLineStyle style)
 		{
 			DxfClassMap map = DxfClassMap.Create<MLineStyle>();
 

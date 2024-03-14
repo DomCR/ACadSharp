@@ -34,7 +34,7 @@ namespace ACadSharp.Entities
 		/// Do not modify this field without also updating the associated entry in the MLINESTYLE dictionary
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle | DxfReferenceType.Name, 340)]
-		public MLineStyle MLStyle
+		public MLineStyle Style
 		{
 			get { return _style; }
 			set
@@ -91,7 +91,7 @@ namespace ACadSharp.Entities
 		{
 			MLine clone = (MLine)base.Clone();
 
-			clone.MLStyle = (MLineStyle)(this.MLStyle?.Clone());
+			clone.Style = (MLineStyle)(this.Style?.Clone());
 
 			clone.Vertices.Clear();
 			foreach (var item in this.Vertices)

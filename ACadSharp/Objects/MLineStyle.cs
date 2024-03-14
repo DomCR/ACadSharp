@@ -7,10 +7,10 @@ namespace ACadSharp.Objects
 	/// Represents a <see cref="MLineStyle"/> object
 	/// </summary>
 	/// <remarks>
-	/// Object name <see cref="DxfFileToken.ObjectMLStyle"/> <br/>
+	/// Object name <see cref="DxfFileToken.ObjectMLineStyle"/> <br/>
 	/// Dxf class name <see cref="DxfSubclassMarker.MLineStyle"/>
 	/// </remarks>
-	[DxfName(DxfFileToken.ObjectMLStyle)]
+	[DxfName(DxfFileToken.ObjectMLineStyle)]
 	[DxfSubClass(DxfSubclassMarker.MLineStyle)]
 	public partial class MLineStyle : CadObject, INamedCadObject
 	{
@@ -28,7 +28,7 @@ namespace ACadSharp.Objects
 		public override ObjectType ObjectType => ObjectType.MLINESTYLE;
 
 		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.ObjectMLStyle;
+		public override string ObjectName => DxfFileToken.ObjectMLineStyle;
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.MLineStyle;
@@ -40,7 +40,7 @@ namespace ACadSharp.Objects
 		public string Name { get; set; }
 
 		/// <summary>
-		/// MLStyle flags
+		/// Multi line style flags
 		/// </summary>
 		[DxfCodeValue(70)]
 		public MLineStyleFlags Flags { get; set; }

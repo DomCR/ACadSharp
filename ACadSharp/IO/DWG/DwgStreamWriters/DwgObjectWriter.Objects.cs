@@ -56,7 +56,7 @@ namespace ACadSharp.IO.DWG
 					this.writeLayout(layout);
 					break;
 				case MLineStyle style:
-					this.writeMLStyle(style);
+					this.writeMLineStyle(style);
 					break;
 				case PlotSettings plotsettings:
 					this.writePlotSettings(plotsettings);
@@ -223,7 +223,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private void writeMLStyle(MLineStyle mlineStyle)
+		private void writeMLineStyle(MLineStyle mlineStyle)
 		{
 			//Common:
 			//Name TV Name of this style
