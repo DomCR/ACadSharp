@@ -176,6 +176,29 @@ namespace ACadSharp.Objects
 			return null;
 		}
 
+		/// <summary>
+		/// Gets the value associated with the specific key
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="name"></param>
+		/// <param name="value"></param>
+		/// <returns>true if the value is found or false if not found or different type</returns>
+		public bool TryGetEntry<T>(string name, out T value)
+			where T : CadObject
+		{
+			if (this._entries.TryGetValue(name, out CadObject obj))
+			{
+				if (obj is T t)
+				{
+					value = t;
+					return true;
+				}
+			}
+
+			value = null;
+			return false;
+		}
+
 		public IEnumerator<CadObject> GetEnumerator()
 		{
 			return this._entries.Values.GetEnumerator();

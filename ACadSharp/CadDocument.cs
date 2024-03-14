@@ -83,7 +83,11 @@ namespace ACadSharp
 		/// <summary>
 		/// The collection of all layouts in the drawing
 		/// </summary>
-		public Layout[] Layouts { get { return this._cadObjects.Values.OfType<Layout>().ToArray(); } }   //TODO: Layouts have to go to the designed dictionary or blocks
+		public Objects.Collections.LayoutCollection Layouts { get; private set; }
+
+		public Objects.Collections.GroupCollection Groups { get; private set; }
+
+		public Objects.Collections.ScaleCollection Scales { get; private set; }
 
 		/// <summary>
 		/// Root dictionary of the document
@@ -176,6 +180,8 @@ namespace ACadSharp
 				BlockRecord pspace = BlockRecord.PaperSpace;
 				pspace.Layout = paperLayout;
 				this.BlockRecords.Add(pspace);
+
+				this.UpdateCollections(false);
 			}
 		}
 
@@ -245,6 +251,18 @@ namespace ACadSharp
 			}
 
 			return false;
+		}
+
+		public void UpdateCollections(bool createDictionaries)
+		{
+			if (this.RootDictionary.TryGetEntry(CadDictionary.AcadScaleList, out CadDictionary scales))
+			{
+				this.Scales = new Objects.Collections.ScaleCollection(scales);
+			}
+			else if (createDictionaries)
+			{
+
+			}
 		}
 
 		private void addCadObject(CadObject cadObject)
