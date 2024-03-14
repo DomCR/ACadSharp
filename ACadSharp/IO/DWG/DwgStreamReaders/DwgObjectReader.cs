@@ -4599,7 +4599,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readMLStyle()
 		{
-			MLStyle mlineStyle = new MLStyle();
+			MLineStyle mlineStyle = new MLineStyle();
 			CadMLStyleTemplate template = new CadMLStyleTemplate(mlineStyle);
 
 			this.readCommonNonEntityData(template);
@@ -4651,7 +4651,7 @@ namespace ACadSharp.IO.DWG
 			int nlines = this._objectReader.ReadByte();
 			for (int i = 0; i < nlines; ++i)
 			{
-				MLStyle.Element element = new MLStyle.Element();
+				MLineStyle.Element element = new MLineStyle.Element();
 				CadMLStyleTemplate.ElementTemplate elementTemplate = new CadMLStyleTemplate.ElementTemplate(element);
 
 				//Offset BD Offset of this segment
