@@ -14,7 +14,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityMLeaderStyle)]
 	[DxfSubClass(DxfSubclassMarker.MLeaderStyle)]
-	public class MultiLeaderStyle : CadObject
+	public class MultiLeaderStyle : CadObject, IDictionaryEntry
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
