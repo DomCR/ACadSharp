@@ -89,6 +89,10 @@ namespace ACadSharp
 
 		public Objects.Collections.ScaleCollection Scales { get; private set; }
 
+		public Objects.Collections.MLineStyleCollection MLineStyles { get; private set; }
+
+		public Objects.Collections.MLeaderStyleCollection MLeaderStyles { get; private set; }
+
 		/// <summary>
 		/// Root dictionary of the document
 		/// </summary>
