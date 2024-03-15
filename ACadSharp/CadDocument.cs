@@ -82,16 +82,43 @@ namespace ACadSharp
 		public VPortsTable VPorts { get; private set; }
 
 		/// <summary>
-		/// The collection of all layouts in the drawing
+		/// The collection of all layouts in the drawing.
 		/// </summary>
-		public Objects.Collections.LayoutCollection Layouts { get; private set; }
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadLayout"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public LayoutCollection Layouts { get; private set; }
 
+		/// <summary>
+		/// The collection of all groups in the drawing. 
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadGroup"/> doesn't exist in the root dictionary.
+		/// </remarks>
 		public GroupCollection Groups { get; private set; }
 
+		/// <summary>
+		/// The collection of all scales in the drawing. 
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadScaleList"/> doesn't exist in the root dictionary.
+		/// </remarks>
 		public ScaleCollection Scales { get; private set; }
 
+		/// <summary>
+		/// The collection of all Multi line styles in the drawing. 
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadMLineStyle"/> doesn't exist in the root dictionary.
+		/// </remarks>
 		public MLineStyleCollection MLineStyles { get; private set; }
 
+		/// <summary>
+		/// The collection of all Multi leader styles in the drawing. 
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadMLeaderStyle"/> doesn't exist in the root dictionary.
+		/// </remarks>
 		public MLeaderStyleCollection MLeaderStyles { get; private set; }
 
 		/// <summary>
@@ -258,11 +285,15 @@ namespace ACadSharp
 			return false;
 		}
 
+		/// <summary>
+		/// Updates the collections in the document and link them to it's dictionary
+		/// </summary>
+		/// <param name="createDictionaries"></param>
 		public void UpdateCollections(bool createDictionaries)
 		{
 			if(this.updateCollection(CadDictionary.AcadScaleList, createDictionaries, out CadDictionary layout))
 			{
-				this.Layouts = new Objects.Collections.LayoutCollection(layout);
+				this.Layouts = new LayoutCollection(layout);
 			}
 
 			if (this.updateCollection(CadDictionary.AcadGroup, createDictionaries, out CadDictionary groups))
