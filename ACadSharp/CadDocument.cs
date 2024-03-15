@@ -90,10 +90,6 @@ namespace ACadSharp
 		/// </remarks>
 		public LayoutCollection Layouts { get; private set; }
 
-		public Objects.Collections.GroupCollection Groups { get; private set; }
-
-		public Objects.Collections.ScaleCollection Scales { get; private set; }
-
 		/// <summary>
 		/// The collection of all groups in the drawing. 
 		/// </summary>
