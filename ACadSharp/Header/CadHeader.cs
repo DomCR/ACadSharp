@@ -594,7 +594,7 @@ namespace ACadSharp.Header
 		/// System variable CMLSTYLE
 		/// </remarks>
 		[CadSystemVariable("$CMLSTYLE", 2)]
-		public string MultilineStyleName { get; internal set; } = "Standard";
+		public string MultiLineStyleName { get; internal set; } = "Standard";
 
 		//TODO: Header MLStyle
 		//{

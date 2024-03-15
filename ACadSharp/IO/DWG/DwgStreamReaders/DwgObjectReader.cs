@@ -911,7 +911,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readGroup();
 					break;
 				case ObjectType.MLINESTYLE:
-					template = this.readMLStyle();
+					template = this.readMLineStyle();
 					break;
 				case ObjectType.OLE2FRAME:
 					break;
@@ -4597,10 +4597,10 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadTemplate readMLStyle()
+		private CadTemplate readMLineStyle()
 		{
-			MLStyle mlineStyle = new MLStyle();
-			CadMLStyleTemplate template = new CadMLStyleTemplate(mlineStyle);
+			MLineStyle mlineStyle = new MLineStyle();
+			CadMLineStyleTemplate template = new CadMLineStyleTemplate(mlineStyle);
 
 			this.readCommonNonEntityData(template);
 
@@ -4651,8 +4651,8 @@ namespace ACadSharp.IO.DWG
 			int nlines = this._objectReader.ReadByte();
 			for (int i = 0; i < nlines; ++i)
 			{
-				MLStyle.Element element = new MLStyle.Element();
-				CadMLStyleTemplate.ElementTemplate elementTemplate = new CadMLStyleTemplate.ElementTemplate(element);
+				MLineStyle.Element element = new MLineStyle.Element();
+				CadMLineStyleTemplate.ElementTemplate elementTemplate = new CadMLineStyleTemplate.ElementTemplate(element);
 
 				//Offset BD Offset of this segment
 				element.Offset = this._objectReader.ReadBitDouble();

@@ -121,9 +121,14 @@ namespace ACadSharp.IO.DWG
 			this.Write(value, LittleEndianConverter.Instance);
 		}
 
-		public virtual void WriteObjectType(ObjectType value)
+		public virtual void WriteObjectType(short value)
 		{
-			this.WriteBitShort((short)value);
+			this.WriteBitShort(value);
+		}
+
+		public void WriteObjectType(ObjectType value)
+		{
+			this.WriteObjectType((short)value);
 		}
 
 		public void WriteRawLong(long value)
