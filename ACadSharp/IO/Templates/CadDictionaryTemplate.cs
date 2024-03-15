@@ -1,7 +1,5 @@
-﻿using ACadSharp.IO.DWG;
-using ACadSharp.Objects;
+﻿using ACadSharp.Objects;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ACadSharp.IO.Templates
 {

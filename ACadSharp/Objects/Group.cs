@@ -27,7 +27,7 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Name in which this group is stored in the document
 		/// </summary>
-		public string Name { get; internal set; }
+		public string Name { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Group description

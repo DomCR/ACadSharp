@@ -117,7 +117,7 @@ namespace ACadSharp.IO.Templates
 
 			if (builder.TryGetCadObject<MLineStyle>(this.MLineStyleHandle, out MLineStyle style))
 			{
-				mLine.MLStyle = style;
+				mLine.Style = style;
 			}
 		}
 	}

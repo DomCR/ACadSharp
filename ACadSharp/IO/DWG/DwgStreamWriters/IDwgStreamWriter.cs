@@ -23,6 +23,8 @@ namespace ACadSharp.IO.DWG
 
 		void WriteInt(int value);
 
+		void WriteObjectType(short value);
+
 		void WriteObjectType(ObjectType value);
 
 		void WriteRawLong(long value);

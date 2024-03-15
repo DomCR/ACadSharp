@@ -52,6 +52,8 @@ namespace ACadSharp.IO
 			{
 				template.Build(this);
 			}
+
+			this.DocumentToBuild.UpdateCollections(false);
 		}
 
 		public void AddTableTemplate(ICadTableTemplate tableTemplate)

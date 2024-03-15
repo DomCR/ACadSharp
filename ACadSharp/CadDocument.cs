@@ -3,6 +3,7 @@ using ACadSharp.Entities;
 using ACadSharp.Header;
 using ACadSharp.IO.DXF;
 using ACadSharp.Objects;
+using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
@@ -82,13 +83,48 @@ namespace ACadSharp
 		public VPortsTable VPorts { get; private set; }
 
 		/// <summary>
-		/// The collection of all layouts in the drawing
+		/// The collection of all layouts in the drawing.
 		/// </summary>
-		public IEnumerable<Layout> Layouts { get { return this._rootDictionary.GetEntry<CadDictionary>(CadDictionary.AcadLayout).Cast<Layout>(); } }
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadLayout"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public LayoutCollection Layouts { get; private set; }
 
 		public Objects.Collections.GroupCollection Groups { get; private set; }
 
 		public Objects.Collections.ScaleCollection Scales { get; private set; }
+
+		/// <summary>
+		/// The collection of all groups in the drawing. 
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadGroup"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public GroupCollection Groups { get; private set; }
+
+		/// <summary>
+		/// The collection of all scales in the drawing. 
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadScaleList"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public ScaleCollection Scales { get; private set; }
+
+		/// <summary>
+		/// The collection of all Multi line styles in the drawing. 
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadMLineStyle"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public MLineStyleCollection MLineStyles { get; private set; }
+
+		/// <summary>
+		/// The collection of all Multi leader styles in the drawing. 
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadMLeaderStyle"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public MLeaderStyleCollection MLeaderStyles { get; private set; }
 
 		/// <summary>
 		/// Root dictionary of the document
@@ -254,16 +290,50 @@ namespace ACadSharp
 			return false;
 		}
 
+		/// <summary>
+		/// Updates the collections in the document and link them to it's dictionary
+		/// </summary>
+		/// <param name="createDictionaries"></param>
 		public void UpdateCollections(bool createDictionaries)
 		{
-			if (this.RootDictionary.TryGetEntry(CadDictionary.AcadScaleList, out CadDictionary scales))
+			if(this.updateCollection(CadDictionary.AcadLayout, createDictionaries, out CadDictionary layout))
 			{
-				this.Scales = new Objects.Collections.ScaleCollection(scales);
+				this.Layouts = new LayoutCollection(layout);
 			}
-			else if (createDictionaries)
-			{
 
+			if (this.updateCollection(CadDictionary.AcadGroup, createDictionaries, out CadDictionary groups))
+			{
+				this.Groups = new GroupCollection(groups);
 			}
+
+			if (this.updateCollection(CadDictionary.AcadScaleList, createDictionaries, out CadDictionary scales))
+			{
+				this.Scales = new ScaleCollection(scales);
+			}
+
+			if (this.updateCollection(CadDictionary.AcadMLineStyle, createDictionaries, out CadDictionary mlineStyles))
+			{
+				this.MLineStyles = new MLineStyleCollection(mlineStyles);
+			}
+
+			if (this.updateCollection(CadDictionary.AcadMLineStyle, createDictionaries, out CadDictionary mleaderStyles))
+			{
+				this.MLeaderStyles = new MLeaderStyleCollection(mleaderStyles);
+			}
+		}
+
+		private bool updateCollection(string dictName, bool createDictionary, out CadDictionary dictionary)
+		{
+			if (this.RootDictionary.TryGetEntry(dictName, out dictionary))
+			{
+				return true;
+			}
+			else if (createDictionary)
+			{
+				this.RootDictionary.Add(dictName, new CadDictionary());
+			}
+
+			return dictionary != null;
 		}
 
 		private void addCadObject(CadObject cadObject)

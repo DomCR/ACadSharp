@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadMLStyleTemplate : CadTemplate<MLineStyle>
+	internal class CadMLineStyleTemplate : CadTemplate<MLineStyle>
 	{
 		public class ElementTemplate : ICadObjectTemplate
 		{
@@ -54,7 +54,7 @@ namespace ACadSharp.IO.Templates
 
 		public List<ElementTemplate> ElementTemplates { get; set; } = new List<ElementTemplate>();
 
-		public CadMLStyleTemplate(MLineStyle mlStyle) : base(mlStyle) { }
+		public CadMLineStyleTemplate(MLineStyle mlStyle) : base(mlStyle) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{
