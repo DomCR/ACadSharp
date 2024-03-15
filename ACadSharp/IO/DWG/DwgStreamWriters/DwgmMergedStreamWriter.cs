@@ -167,6 +167,11 @@ namespace ACadSharp.IO.DWG
 			this.Main.WriteInt(value);
 		}
 
+		public void WriteObjectType(short value)
+		{
+			this.Main.WriteObjectType(value);
+		}
+
 		public void WriteObjectType(ObjectType value)
 		{
 			this.Main.WriteObjectType(value);
