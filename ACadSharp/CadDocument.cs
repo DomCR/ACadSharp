@@ -2,6 +2,7 @@
 using ACadSharp.Entities;
 using ACadSharp.Header;
 using ACadSharp.Objects;
+using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
@@ -85,13 +86,13 @@ namespace ACadSharp
 		/// </summary>
 		public Objects.Collections.LayoutCollection Layouts { get; private set; }
 
-		public Objects.Collections.GroupCollection Groups { get; private set; }
+		public GroupCollection Groups { get; private set; }
 
-		public Objects.Collections.ScaleCollection Scales { get; private set; }
+		public ScaleCollection Scales { get; private set; }
 
-		public Objects.Collections.MLineStyleCollection MLineStyles { get; private set; }
+		public MLineStyleCollection MLineStyles { get; private set; }
 
-		public Objects.Collections.MLeaderStyleCollection MLeaderStyles { get; private set; }
+		public MLeaderStyleCollection MLeaderStyles { get; private set; }
 
 		/// <summary>
 		/// Root dictionary of the document
@@ -259,14 +260,44 @@ namespace ACadSharp
 
 		public void UpdateCollections(bool createDictionaries)
 		{
-			if (this.RootDictionary.TryGetEntry(CadDictionary.AcadScaleList, out CadDictionary scales))
+			if(this.updateCollection(CadDictionary.AcadScaleList, createDictionaries, out CadDictionary layout))
 			{
-				this.Scales = new Objects.Collections.ScaleCollection(scales);
+				this.Layouts = new Objects.Collections.LayoutCollection(layout);
 			}
-			else if (createDictionaries)
-			{
 
+			if (this.updateCollection(CadDictionary.AcadGroup, createDictionaries, out CadDictionary groups))
+			{
+				this.Groups = new GroupCollection(groups);
 			}
+
+			if (this.updateCollection(CadDictionary.AcadScaleList, createDictionaries, out CadDictionary scales))
+			{
+				this.Scales = new ScaleCollection(scales);
+			}
+
+			if (this.updateCollection(CadDictionary.AcadMLineStyle, createDictionaries, out CadDictionary mlineStyles))
+			{
+				this.MLineStyles = new MLineStyleCollection(mlineStyles);
+			}
+
+			if (this.updateCollection(CadDictionary.AcadMLineStyle, createDictionaries, out CadDictionary mleaderStyles))
+			{
+				this.MLeaderStyles = new MLeaderStyleCollection(mleaderStyles);
+			}
+		}
+
+		private bool updateCollection(string dictName, bool createDictionary, out CadDictionary dictionary)
+		{
+			if (this.RootDictionary.TryGetEntry(dictName, out dictionary))
+			{
+				return true;
+			}
+			else if (createDictionary)
+			{
+				this.RootDictionary.Add(dictName, new CadDictionary());
+			}
+
+			return dictionary != null;
 		}
 
 		private void addCadObject(CadObject cadObject)
