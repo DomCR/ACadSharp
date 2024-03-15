@@ -1,4 +1,5 @@
-﻿using ACadSharp.Entities;
+﻿using ACadSharp.Classes;
+using ACadSharp.Entities;
 using ACadSharp.Tables;
 using CSUtilities.Converters;
 using System;
@@ -114,7 +115,16 @@ namespace ACadSharp.IO.DWG
 			switch (cadObject.ObjectType)
 			{
 				case ObjectType.UNLISTED:
-					throw new NotImplementedException($"CadObject type: {cadObject.ObjectType} fullname: {cadObject.GetType().FullName}");
+					if (this._document.Classes.TryGetByName(cadObject.ObjectName, out DxfClass dxfClass))
+					{
+						this._writer.WriteObjectType(dxfClass.ClassNumber);
+					}
+					else
+					{
+						this.notify($"Dxf Class not found for {cadObject.ObjectType} fullname: {cadObject.GetType().FullName}", NotificationType.Warning);
+						return;
+					}
+					break;
 				case ObjectType.INVALID:
 				case ObjectType.UNUSED:
 					this.notify($"CadObject type: {cadObject.ObjectType} fullname: {cadObject.GetType().FullName}", NotificationType.NotImplemented);
