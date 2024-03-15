@@ -150,7 +150,7 @@ namespace ACadSharp.Objects
 		/// <exception cref="ArgumentException"></exception>
 		public void Add(string key, CadObject value)
 		{
-			if (_entries.Values.Contains(value))
+			if (this._entries.Values.Contains(value))
 				throw new ArgumentException($"Dictionary already contains {value.GetType().FullName}", nameof(value));
 
 			this._entries.Add(key, value);
