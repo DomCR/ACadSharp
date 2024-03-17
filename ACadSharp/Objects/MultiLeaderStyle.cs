@@ -16,6 +16,16 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.MLeaderStyle)]
 	public class MultiLeaderStyle : CadObject, IDictionaryEntry
 	{
+		/// <summary>
+		/// Default multiline style name
+		/// </summary>
+		public const string DefaultName = "Standard";
+
+		/// <summary>
+		/// Gets the default MLine style
+		/// </summary>
+		public static MultiLeaderStyle Default { get { return new MultiLeaderStyle(DefaultName); } }
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 

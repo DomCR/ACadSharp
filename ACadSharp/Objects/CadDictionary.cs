@@ -150,7 +150,11 @@ namespace ACadSharp.Objects
 				{ AcadLayout, new CadDictionary() },
 				{ AcadMaterial, new CadDictionary() },
 				{ AcadSortEnts, new CadDictionary() },
-				{ AcadMLeaderStyle, new CadDictionary() },	//TODO: MLeaderStyle Add default entry "Standard"
+				{ AcadMLeaderStyle, new CadDictionary
+					{
+						{ MultiLeaderStyle.DefaultName, MultiLeaderStyle.Default }
+					}
+				},
 				{ AcadMLineStyle, new CadDictionary
 					{
 						{ MLineStyle.DefaultName, MLineStyle.Default }
