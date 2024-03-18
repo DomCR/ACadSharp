@@ -2826,23 +2826,11 @@ namespace ACadSharp.IO.DWG
 			//BL	90  Property Override Flags (int32)
 			mLeader.PropertyOverrideFlags = (MultiLeaderPropertyOverrideFlags)this._objectReader.ReadBitLong();
 			//BS	170 LeaderLineType (short)
-			mLeader.PathType = (MultiLeaderPathType)_objectReader.ReadBitShort();
+			mLeader.PathType = (MultiLeaderPathType)this._objectReader.ReadBitShort();
 			//CMC	91  Leade LineColor (Color)
 			mLeader.LineColor = _mergedReaders.ReadCmColor();
 			//H 	341 LeaderLineTypeID (handle/LineType)
 			template.LeaderLineTypeHandle = this.handleReference();
-<<<<<<< HEAD
-			//	171 LeaderLine Weight
-			mLeader.LeaderLineWeight = (LineweightType)_objectReader.ReadBitShort();
-			//	TODO Why do we need this
-			_objectReader.Advance(2);
-
-			//  290 Enable Landing
-			mLeader.EnableLanding = _objectReader.ReadBit();
-			//  291 Enable Dogleg
-			mLeader.EnableDogleg = _objectReader.ReadBit();
-
-=======
 
 			//BL	171 LeaderLine Weight
 			mLeader.LeaderLineWeight = (LineweightType)this._objectReader.ReadBitLong();
@@ -2851,7 +2839,6 @@ namespace ACadSharp.IO.DWG
 			//B  291 Enable Dogleg
 			mLeader.EnableDogleg = this._objectReader.ReadBit();
 
->>>>>>> 82bcaf01e247f63f26a3b35f384c817762f98e6a
 			//  41  Dogleg Length / Landing distance
 			mLeader.LandingDistance = this._objectReader.ReadBitDouble();
 			//  342 Arrowhead ID
@@ -2885,11 +2872,7 @@ namespace ACadSharp.IO.DWG
 			//  43  Block Content Rotation
 			mLeader.BlockContentRotation = this._objectReader.ReadBitDouble();
 			//  176 Block Content Connection Type
-<<<<<<< HEAD
 			mLeader.BlockContentConnection = (BlockContentConnectionType)_objectReader.ReadBitShort();
-=======
-			mLeader.BlockContentConnection = (AttachmentType)this._objectReader.ReadBitShort();
->>>>>>> 82bcaf01e247f63f26a3b35f384c817762f98e6a
 			//  293 Enable Annotation Scale/Is annotative
 			mLeader.EnableAnnotationScale = this._objectReader.ReadBit();
 
@@ -2970,11 +2953,7 @@ namespace ACadSharp.IO.DWG
 
 			//	Common
 			//	BD	40	Overall scale
-<<<<<<< HEAD
 			annotContext.ScaleFactor = _objectReader.ReadBitDouble();
-=======
-			annotContext.OverallScale = this._objectReader.ReadBitDouble();
->>>>>>> 82bcaf01e247f63f26a3b35f384c817762f98e6a
 			//	3BD	10	Content base point
 			annotContext.ContentBasePoint = this._objectReader.Read3BitDouble();
 			//	BD	41	Text height
@@ -2990,11 +2969,7 @@ namespace ACadSharp.IO.DWG
 			//	BS	176	Text align type (0 = left, 1 = center, 2 = right)
 			annotContext.TextAlignment = (TextAlignmentType)this._objectReader.ReadBitShort();
 			//	BS	177	Attachment type (0 = content extents, 1 = insertion point).
-<<<<<<< HEAD
-			annotContext.BlockContentConnection = (BlockContentConnectionType)_objectReader.ReadBitShort();
-=======
-			annotContext.AttachmentType = (AttachmentType)this._objectReader.ReadBitShort();
->>>>>>> 82bcaf01e247f63f26a3b35f384c817762f98e6a
+			annotContext.BlockContentConnection = (BlockContentConnectionType)this._objectReader.ReadBitShort();
 			//	B	290	Has text contents
 			annotContext.HasTextContents = this._objectReader.ReadBit();
 			if (annotContext.HasTextContents)
@@ -3002,27 +2977,15 @@ namespace ACadSharp.IO.DWG
 				//	TV	304	Text label
 				annotContext.TextLabel = this._textReader.ReadVariableText();
 				//	3BD	11	Normal vector
-<<<<<<< HEAD
-				annotContext.TextNormal = _objectReader.Read3BitDouble();
+				annotContext.TextNormal = this._objectReader.Read3BitDouble();
 				//	H	340	Text style handle (hard pointer)
 				template.AnnotContextTextStyleHandle = this.handleReference();
 				//	3BD	12	Location
-				annotContext.TextLocation = _objectReader.Read3BitDouble();
-=======
-				annotContext.Normal = this._objectReader.Read3BitDouble();
-				//	H	340	Text style handle (hard pointer)
-				template.AnnotContextTextStyleHandle = this.handleReference();
-				//	3BD	12	Location
-				annotContext.Location = this._objectReader.Read3BitDouble();
->>>>>>> 82bcaf01e247f63f26a3b35f384c817762f98e6a
+				annotContext.TextLocation = this._objectReader.Read3BitDouble();
 				//	3BD	13	Direction
 				annotContext.Direction = this._objectReader.Read3BitDouble();
 				//	BD	42	Rotation (radians)
-<<<<<<< HEAD
-				annotContext.TextRotation = _objectReader.ReadBitDouble();
-=======
-				annotContext.Rotation = this._objectReader.ReadBitDouble();
->>>>>>> 82bcaf01e247f63f26a3b35f384c817762f98e6a
+				annotContext.TextRotation = this._objectReader.ReadBitDouble();
 				//	BD	43	Boundary width
 				annotContext.BoundaryWidth = this._objectReader.ReadBitDouble();
 				//	BD	44	Boundary height
@@ -3034,11 +2997,7 @@ namespace ACadSharp.IO.DWG
 				//	CMC	90	Text color
 				annotContext.TextColor = this._objectReader.ReadCmColor();
 				//	BS	171	Alignment (1 = left, 2 = center, 3 = right)
-<<<<<<< HEAD
-				annotContext.TextAttachmentPoint = (TextAttachmentPointType)_objectReader.ReadBitShort();
-=======
-				annotContext.TextAlignment = (TextAlignmentType)this._objectReader.ReadBitShort();
->>>>>>> 82bcaf01e247f63f26a3b35f384c817762f98e6a
+				annotContext.TextAttachmentPoint = (TextAttachmentPointType)this._objectReader.ReadBitShort();
 				//	BS	172	Flow direction (1 = horizontal, 3 = vertical, 6 = by style)
 				annotContext.FlowDirection = (FlowDirectionType)this._objectReader.ReadBitShort();
 				//	CMC	91	Background fill color
@@ -3083,23 +3042,13 @@ namespace ACadSharp.IO.DWG
 				//	H	341	AcDbBlockTableRecord handle (soft pointer)
 				template.AnnotContextBlockRecordHandle = this.handleReference();
 				//	3BD	14	Normal vector
-<<<<<<< HEAD
-				annotContext.BlockContentNormal = _objectReader.Read3BitDouble();
+				annotContext.BlockContentNormal = this._objectReader.Read3BitDouble();
 				//	3BD	15	Location
-				annotContext.BlockContentLocation = _objectReader.Read3BitDouble();
-=======
-				annotContext.Normal = this._objectReader.Read3BitDouble();
-				//	3BD	15	Location
-				annotContext.Location = this._objectReader.Read3BitDouble();
->>>>>>> 82bcaf01e247f63f26a3b35f384c817762f98e6a
+				annotContext.BlockContentLocation = this._objectReader.Read3BitDouble();
 				//	3BD	16	Scale vector
 				annotContext.BlockContentScale = this._objectReader.Read3BitDouble();
 				//	BD	46	Rotation (radians)
-<<<<<<< HEAD
-				annotContext.BlockContentRotation = _objectReader.ReadBitDouble();
-=======
-				annotContext.Rotation = this._objectReader.ReadBitDouble();
->>>>>>> 82bcaf01e247f63f26a3b35f384c817762f98e6a
+				annotContext.BlockContentRotation = this._objectReader.ReadBitDouble();
 				//  CMC	93	Block color
 				annotContext.BlockContentColor = this._objectReader.ReadCmColor();
 				//	BD (16)	47	16 doubles containing the complete transformation
@@ -3326,13 +3275,8 @@ namespace ACadSharp.IO.DWG
 				mLeaderStyle.TextAngle = (TextAngleType)this._objectReader.ReadBitShort();
 
 			}   //	END IF IsNewFormat OR DXF file
-<<<<<<< HEAD
 			//	BS	176	Text alignment type
-			mLeaderStyle.TextAlignment = (TextAlignmentType)_objectReader.ReadBitShort();
-=======
-				//	BS	176	Text alignment type
 			mLeaderStyle.TextAlignment = (TextAlignmentType)this._objectReader.ReadBitShort();
->>>>>>> 82bcaf01e247f63f26a3b35f384c817762f98e6a
 			//	CMC	93	Text color
 			mLeaderStyle.TextColor = this._mergedReaders.ReadCmColor();
 			//	BD	45	Text height
@@ -3344,13 +3288,8 @@ namespace ACadSharp.IO.DWG
 			 //	B	297	Always align text left
 				mLeaderStyle.TextAlignAlwaysLeft = this._objectReader.ReadBit();
 			}//	END IF IsNewFormat OR DXF file
-<<<<<<< HEAD
 			//	BD	46	Align space
 			mLeaderStyle.AlignSpace = _objectReader.ReadBitDouble();
-=======
-			 //	BD	46	Align space
-			mLeaderStyle.AlignSpace = this._objectReader.ReadBitDouble();
->>>>>>> 82bcaf01e247f63f26a3b35f384c817762f98e6a
 			//	H	343	Block handle (hard pointer)
 			template.BlockContentHandle = this.handleReference();
 			//	CMC	94	Block color
