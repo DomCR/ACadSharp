@@ -3147,7 +3147,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2010Plus)
 			{
 				//	BS	271	Attachment direction(0 = horizontal, 1 = vertical, default is 0)
-				leaderRoot.AttachmentDirection = (TextAttachmentDirectionType)this._objectReader.ReadBitShort();
+				leaderRoot.TextAttachmentDirection = (TextAttachmentDirectionType)this._objectReader.ReadBitShort();
 			}
 
 			return leaderRoot;

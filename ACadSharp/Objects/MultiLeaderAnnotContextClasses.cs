@@ -71,7 +71,7 @@ namespace ACadSharp.Objects
 			/// <summary>
 			/// Attachment direction
 			/// </summary>
-			public TextAttachmentDirectionType AttachmentDirection { get; set; }
+			public TextAttachmentDirectionType TextAttachmentDirection { get; set; }
 
 			public object Clone()
 			{

@@ -459,7 +459,7 @@ namespace ACadSharp.Objects
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(47, 49, 140)]
-		public double BlockContentScale { get; set; }
+		public XYZ BlockContentScale { get; set; }
 
 		//	TODO: Cannot be overridden? Is this property only relevant in AutoCAD?
 		/// <summary>
