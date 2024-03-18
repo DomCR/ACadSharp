@@ -238,7 +238,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Block Content Rotation
 		/// </summary>
-		[DxfCodeValue(43)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 43)]
 		public double BlockContentRotation { get; set; }
 
 		/// <summary>

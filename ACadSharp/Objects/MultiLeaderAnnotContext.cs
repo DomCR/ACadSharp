@@ -132,7 +132,7 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Rotation (radians)
 		/// </summary>
-		[DxfCodeValue(42)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 42)]
 		public double TextRotation { get; set; }
 
 		/// <summary>
@@ -274,13 +274,13 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Scale vector
 		/// </summary>
-		[DxfCodeValue(16)]
+		[DxfCodeValue(16, 26, 36)]
 		public XYZ BlockContentScale { get; set; }
 
 		/// <summary>
 		/// Rottaion (radians)
 		/// </summary>
-		[DxfCodeValue(46)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 46)]
 		public double BlockContentRotation { get; set; }
 
 		/// <summary>
