@@ -85,6 +85,9 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Handle, 347)]
 		public Material Material { get; set; }
 
+		//92	Number of bytes in the proxy entity graphics represented in the subsequent 310 groups, which are binary chunk records(optional)
+		//310	Proxy entity graphics data(multiple lines; 256 characters max.per line) (optional)
+
 		private Layer _layer = Layer.Default;
 
 		private LineType _lineType = LineType.ByLayer;

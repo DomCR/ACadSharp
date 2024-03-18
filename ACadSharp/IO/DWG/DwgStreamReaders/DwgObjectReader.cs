@@ -964,7 +964,10 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "ACDBDETAILVIEWSTYLE":
 				case "ACDBSECTIONVIEWSTYLE":
+					break;
 				case "ACAD_TABLE":
+					template = this.readTableEntity();
+					break;
 				case "CELLSTYLEMAP":
 					break;
 				case "DBCOLOR":
@@ -1331,6 +1334,31 @@ namespace ACadSharp.IO.DWG
 			this.readInsertCommonHandles(template);
 
 			return template;
+		}
+
+		private CadTemplate readTableEntity()
+		{
+			TableEntity table = new TableEntity();
+			CadTableEntityTemplate template = new CadTableEntityTemplate(table);
+
+			this.readInsertCommonData(template);
+			this.readInsertCommonHandles(template);
+
+			if (this.R2010Plus)
+			{
+				return null;
+			}
+
+			//Until R2007
+
+			//Common:
+			//	Flag for table value BS 90 Bit flags, 0x06(0x02 + 0x04): has block,
+			//	0x10: table direction, 0 = up, 1 = down,
+			//	0x20: title suppressed.
+			//	Normally 0x06 is always set.
+
+
+			throw new NotImplementedException("ACAD_TABLE");
 		}
 
 		private void readInsertCommonData(CadInsertTemplate template)

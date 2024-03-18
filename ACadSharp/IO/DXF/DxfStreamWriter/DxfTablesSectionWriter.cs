@@ -29,7 +29,7 @@ namespace ACadSharp.IO.DXF
 		private void writeTable<T>(Table<T> table, string subclass = null)
 			where T : TableEntry
 		{
-			this._writer.Write(DxfCode.Start, DxfFileToken.EntityTable);
+			this._writer.Write(DxfCode.Start, DxfFileToken.TableEntry);
 			this._writer.Write(DxfCode.SymbolTableName, table.ObjectName);
 
 			this.writeCommonObjectData(table);
