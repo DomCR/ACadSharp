@@ -16,7 +16,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectLayout)]
 	[DxfSubClass(DxfSubclassMarker.Layout)]
-	public class Layout : PlotSettings
+	public class Layout : PlotSettings, IDictionaryEntry
 	{
 		public const string LayoutModelName = "Model";
 

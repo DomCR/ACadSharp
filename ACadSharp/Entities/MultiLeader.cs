@@ -63,7 +63,8 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// 
 		/// </summary>
-		public class BlockAttribute {
+		public class BlockAttribute
+		{
 			/// <summary>
 			/// Block Attribute Id
 			/// </summary>
