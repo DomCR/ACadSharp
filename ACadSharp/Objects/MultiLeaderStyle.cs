@@ -333,7 +333,7 @@ namespace ACadSharp.Objects
 
 		/// <summary>
 		/// Gets or sets the text alignment, i.e. the alignment of text lines if the a multiline
-		/// text label, relative to the <see cref="MultiLeaderAnnotContext.Location"/>.
+		/// text label, relative to the <see cref="MultiLeaderAnnotContext.TextLocation"/>.
 		/// </summary>
 		/// <remarks>
 		/// <para>
@@ -459,7 +459,7 @@ namespace ACadSharp.Objects
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(47, 49, 140)]
-		public XYZ BlockContentScale { get; set; }	//TODO: Change to 3 doubles values to better support the Dxf reading
+		public double BlockContentScale { get; set; }
 
 		//	TODO: Cannot be overridden? Is this property only relevant in AutoCAD?
 		/// <summary>
@@ -473,12 +473,12 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.Rotation"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.BlockContentRotation"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentRotation"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
-		[DxfCodeValue(141)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 141)]
 		public double BlockContentRotation { get; set; }
 
 		//	TODO: Cannot be overridden? Is this property only relevant in AutoCAD?
@@ -556,7 +556,7 @@ namespace ACadSharp.Objects
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para><para>
 		/// The value for all leader lines can be overridden for each individual leader line by the
-		/// <see cref="MultiLeaderAnnotContext.LeaderRoot.AttachmentDirection"/> property when the
+		/// <see cref="MultiLeaderAnnotContext.LeaderRoot.TextAttachmentDirection"/> property when the
 		/// <see cref="LeaderLinePropertOverrideFlags.TextAttachmentDirection"/> flag is set in the 
 		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
 		/// </para>
