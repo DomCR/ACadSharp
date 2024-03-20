@@ -14,10 +14,12 @@
 
 		internal TextStylesTable(CadDocument document) : base(document) { }
 
+		/// <inheritdoc/>
 		public override void Add(TextStyle item)
 		{
 			if (string.IsNullOrEmpty(item.Name) && !string.IsNullOrEmpty(item.Filename))
 			{
+				//TextStyles seem to accept empty names
 				this.add(item.Name, item);
 				return;
 			}

@@ -131,7 +131,6 @@ namespace ACadSharp
 			this.Document = null;
 		}
 
-		//TODO: Update method to all references
 		protected T updateTable<T>(T entry, Table<T> table)
 			where T : TableEntry
 		{
