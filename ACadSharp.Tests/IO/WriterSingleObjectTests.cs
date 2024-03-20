@@ -69,7 +69,6 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(c);
 			}
 
-
 			public void SingleLine()
 			{
 				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
