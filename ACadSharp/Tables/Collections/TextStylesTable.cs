@@ -18,7 +18,7 @@
 		{
 			if (string.IsNullOrEmpty(item.Name) && !string.IsNullOrEmpty(item.Filename))
 			{
-				this.add(item.Filename, item);
+				this.add(item.Name, item);
 				return;
 			}
 
