@@ -139,6 +139,11 @@ namespace ACadSharp
 				return entry;
 			}
 
+			if(entry is TextStyle style )
+			{
+
+			}
+
 			if (table.TryGetValue(entry.Name, out T existing))
 			{
 				return existing;
