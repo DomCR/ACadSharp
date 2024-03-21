@@ -29,6 +29,18 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		public void Write(int code, Color value, DxfClassMap map = null)
+		{
+			if (value.IsTrueColor)
+			{
+				this.Write(code, value.TrueColor, map);
+			}
+			else
+			{
+				this.Write(code, value.Index, map);
+			}
+		}
+
 		public void WriteHandle(int code, IHandledCadObject value, DxfClassMap map)
 		{
 			if (value == null)

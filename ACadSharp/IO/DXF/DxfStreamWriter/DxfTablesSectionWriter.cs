@@ -171,9 +171,9 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(175, (short)(style.SuppressOutsideExtensions ? 1 : 0));
 
 			//TODO: Fix the color index assignation in case of true color
-			this._writer.Write(176, style.DimensionLineColor.Index);
-			this._writer.Write(177, style.ExtensionLineColor.Index);
-			this._writer.Write(178, style.TextColor.Index);
+			this._writer.Write(176, style.DimensionLineColor, map);
+			this._writer.Write(177, style.ExtensionLineColor, map);
+			this._writer.Write(178, style.TextColor, map);
 
 			this._writer.Write(179, style.AngularDimensionDecimalPlaces);
 

@@ -1,6 +1,5 @@
 ﻿using CSMath;
 using System;
-using System.IO;
 
 namespace ACadSharp.IO.DXF
 {
@@ -15,6 +14,8 @@ namespace ACadSharp.IO.DXF
 		void Write(int code, object value, DxfClassMap map);
 		
 		void Write(int code, IVector value, DxfClassMap map = null);
+
+		void Write(int code, Color value, DxfClassMap map = null);
 
 		void WriteHandle(int code, IHandledCadObject value, DxfClassMap map = null);
 
