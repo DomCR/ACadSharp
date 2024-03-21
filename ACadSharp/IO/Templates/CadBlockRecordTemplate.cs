@@ -2,6 +2,7 @@
 using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using CSUtilities.Extensions;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
@@ -86,7 +87,10 @@ namespace ACadSharp.IO.Templates
 		{
 			if (builder.TryGetCadObject(this.BeginBlockHandle, out Block block))
 			{
-				this.CadObject.Name = block.Name;
+				if (!block.Name.IsNullOrEmpty())
+				{
+					this.CadObject.Name = block.Name;
+				}
 
 				block.Flags = this.CadObject.BlockEntity.Flags;
 				block.BasePoint = this.CadObject.BlockEntity.BasePoint;
