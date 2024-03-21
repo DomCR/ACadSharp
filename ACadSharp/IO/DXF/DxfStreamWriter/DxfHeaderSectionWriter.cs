@@ -40,6 +40,22 @@ namespace ACadSharp.IO.DXF
 					continue;
 				}
 
+				if (item.Key == "$CECOLOR")
+				{
+					object value = null;
+					if (this._document.Header.CurrentEntityColor.IsTrueColor)
+					{
+						value = this._document.Header.CurrentEntityColor.TrueColor;
+					}
+					else
+					{
+						value = this._document.Header.CurrentEntityColor.Index;
+					}
+
+					this._writer.Write(62, value);
+					continue;
+				}
+
 				foreach (var csv in item.Value.DxfCodes)
 				{
 					object value = item.Value.GetValue(csv, this._document.Header);
