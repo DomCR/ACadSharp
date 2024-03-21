@@ -13,16 +13,5 @@
 		internal TextStylesTable() : base() { }
 
 		internal TextStylesTable(CadDocument document) : base(document) { }
-
-		public override void Add(TextStyle item)
-		{
-			if (string.IsNullOrEmpty(item.Name) && !string.IsNullOrEmpty(item.Filename))
-			{
-				this.add(item.Filename, item);
-				return;
-			}
-
-			base.Add(item);
-		}
 	}
 }
