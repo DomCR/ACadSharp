@@ -2872,7 +2872,7 @@ namespace ACadSharp.IO.DWG
 			//  43  Block Content Rotation
 			mLeader.BlockContentRotation = this._objectReader.ReadBitDouble();
 			//  176 Block Content Connection Type
-			mLeader.BlockContentConnection = (BlockContentConnectionType)_objectReader.ReadBitShort();
+			mLeader.BlockContentConnection = (BlockContentConnectionType)this._objectReader.ReadBitShort();
 			//  293 Enable Annotation Scale/Is annotative
 			mLeader.EnableAnnotationScale = this._objectReader.ReadBit();
 
@@ -2894,7 +2894,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//	BL Number of Block Labels 
-			int blockLabelCount = this._objectReader.ReadBitShort();
+			int blockLabelCount = this._objectReader.ReadBitLong();
 			for (int bl = 0; bl < blockLabelCount; bl++)
 			{
 				//  330 Block Attribute definition handle (hard pointer)
@@ -2953,7 +2953,7 @@ namespace ACadSharp.IO.DWG
 
 			//	Common
 			//	BD	40	Overall scale
-			annotContext.ScaleFactor = _objectReader.ReadBitDouble();
+			annotContext.ScaleFactor = this._objectReader.ReadBitDouble();
 			//	3BD	10	Content base point
 			annotContext.ContentBasePoint = this._objectReader.Read3BitDouble();
 			//	BD	41	Text height
@@ -3289,7 +3289,7 @@ namespace ACadSharp.IO.DWG
 				mLeaderStyle.TextAlignAlwaysLeft = this._objectReader.ReadBit();
 			}//	END IF IsNewFormat OR DXF file
 			//	BD	46	Align space
-			mLeaderStyle.AlignSpace = _objectReader.ReadBitDouble();
+			mLeaderStyle.AlignSpace = this._objectReader.ReadBitDouble();
 			//	H	343	Block handle (hard pointer)
 			template.BlockContentHandle = this.handleReference();
 			//	CMC	94	Block color
