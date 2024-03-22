@@ -1,6 +1,4 @@
-﻿using ACadSharp.IO.Templates;
-
-namespace ACadSharp.Tables.Collections
+﻿namespace ACadSharp.Tables.Collections
 {
 	public class VPortsTable : Table<VPort>
 	{
@@ -15,5 +13,10 @@ namespace ACadSharp.Tables.Collections
 		internal VPortsTable() : base() { }
 
 		internal VPortsTable(CadDocument document) : base(document) { }
+
+		public override void Add(VPort item)
+		{
+			this.addHandlePrefix(item);
+		}
 	}
 }

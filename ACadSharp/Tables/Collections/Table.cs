@@ -30,7 +30,7 @@ namespace ACadSharp.Tables.Collections
 		{
 			get
 			{
-				return this._entries.TryGetValue(name, out T item) ? item : null;
+				return this._entries.Values.FirstOrDefault(e => e.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 			}
 		}
 
@@ -136,6 +136,18 @@ namespace ACadSharp.Tables.Collections
 			item.OnNameChanged += this.onEntryNameChanged;
 
 			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
+		}
+
+		protected void addHandlePrefix(T item)
+		{
+			item.Owner = this;
+			item.OnNameChanged += this.onEntryNameChanged;
+
+			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
+
+			string key = $"{item.Handle}:{item.Name}";
+
+			this._entries.Add(key, item);
 		}
 
 		private void onEntryNameChanged(object sender, OnNameChangedArgs e)
