@@ -5457,6 +5457,8 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readDwgColor()
 		{
+			return null;
+
 			DwgColorTemplate.DwgColor dwgColor = new DwgColorTemplate.DwgColor();
 			DwgColorTemplate template = new DwgColorTemplate(dwgColor);
 
