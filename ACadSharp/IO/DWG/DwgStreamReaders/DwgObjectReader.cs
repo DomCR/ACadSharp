@@ -16,6 +16,7 @@ using ACadSharp.Types;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
 using System.Net;
 using CSUtilities.Converters;
+using CSUtilities.Extensions;
 
 namespace ACadSharp.IO.DWG
 {
@@ -1275,7 +1276,11 @@ namespace ACadSharp.IO.DWG
 			this.readCommonEntityData(template);
 
 			//Block name TV 2
-			block.Name = this._textReader.ReadVariableText();
+			string name = this._textReader.ReadVariableText();
+			if (!name.IsNullOrEmpty())
+			{
+				block.Name = name;
+			}
 
 			return template;
 		}
@@ -3275,7 +3280,7 @@ namespace ACadSharp.IO.DWG
 				mLeaderStyle.TextAngle = (TextAngleType)this._objectReader.ReadBitShort();
 
 			}   //	END IF IsNewFormat OR DXF file
-			//	BS	176	Text alignment type
+				//	BS	176	Text alignment type
 			mLeaderStyle.TextAlignment = (TextAlignmentType)this._objectReader.ReadBitShort();
 			//	CMC	93	Text color
 			mLeaderStyle.TextColor = this._mergedReaders.ReadCmColor();
@@ -3686,7 +3691,9 @@ namespace ACadSharp.IO.DWG
 			//Entry name TV 2
 			string name = this._textReader.ReadVariableText();
 			if (!string.IsNullOrWhiteSpace(name))
+			{
 				style.Name = name;
+			}
 
 			this.readXrefDependantBit(template.CadObject);
 
