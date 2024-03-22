@@ -13,5 +13,10 @@
 		internal VPortsTable() : base() { }
 
 		internal VPortsTable(CadDocument document) : base(document) { }
+
+		public override void Add(VPort item)
+		{
+			this.addHandlePrefix(item);
+		}
 	}
 }
