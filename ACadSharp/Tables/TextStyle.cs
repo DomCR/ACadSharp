@@ -86,6 +86,8 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(DxfReferenceType.Optional, 1071)]
 		public FontFlags TrueType { get; set; } = FontFlags.Regular;
 
+		public bool IsShapeFile { get { return this.Flags.HasFlag(StyleFlags.IsShape); } }
+
 		internal TextStyle() : base() { }
 
 		public TextStyle(string name) : base(name) { }
