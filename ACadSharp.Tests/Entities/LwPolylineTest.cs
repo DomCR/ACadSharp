@@ -6,7 +6,7 @@ using Xunit;
 
 namespace ACadSharp.Tests.Entities
 {
-	public class LwPolylineTest
+	public class LwPolylineTests
 	{
 		private XYZ[] _points = new XYZ[]
 			{
@@ -24,7 +24,7 @@ namespace ACadSharp.Tests.Entities
 			Center = new XYZ(1, 0.5, 0)
 		};
 
-		public LwPolylineTest()
+		public LwPolylineTests()
 		{
 			//Square
 			_lines = new List<Line>
@@ -57,7 +57,6 @@ namespace ACadSharp.Tests.Entities
 				Assert.NotNull(result);
 			}
 		}
-
 
 		[Fact]
 		public void ExplodeInLinesAndArcs()

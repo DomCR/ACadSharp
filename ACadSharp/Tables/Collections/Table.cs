@@ -50,11 +50,12 @@ namespace ACadSharp.Tables.Collections
 		/// Add a <see cref="TableEntry"/> to the collection, this method triggers <see cref="OnAdd"/>
 		/// </summary>
 		/// <param name="item"></param>
-		/// <exception cref="ArgumentException"></exception>
 		public virtual void Add(T item)
 		{
 			if (string.IsNullOrEmpty(item.Name))
-				throw new ArgumentException($"Table entry must have a name.", nameof(item));
+			{
+				item.Name = this.createName();
+			}
 
 			this.add(item.Name, item);
 		}
@@ -132,7 +133,33 @@ namespace ACadSharp.Tables.Collections
 			this._entries.Add(key, item);
 			item.Owner = this;
 
+			item.OnNameChanged += this.onEntryNameChanged;
+
 			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
+		}
+
+		private void onEntryNameChanged(object sender, OnNameChangedArgs e)
+		{
+			if (this._defaultEntries.Contains(e.OldName, StringComparer.InvariantCultureIgnoreCase))
+			{
+				throw new ArgumentException($"The name {e.OldName} belongs to a default entry.");
+			}
+
+			var entry = this._entries[e.OldName];
+			this._entries.Add(e.NewName, entry);
+			this._entries.Remove(e.OldName);
+		}
+
+		private string createName()
+		{
+			string name = "generated_name";
+			int i = 0;
+			while (this._entries.ContainsKey($"{name}_{i}"))
+			{
+				i++;
+			}
+
+			return $"{name}_{i}";
 		}
 	}
 }

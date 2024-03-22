@@ -46,7 +46,7 @@ namespace ACadSharp.Tables
 		/// if the index is negative, layer is off
 		/// </remarks>
 		[DxfCodeValue(62, 420, 430)]
-		public Color Color { get; set; }
+		public Color Color { get; set; } = new Color(7);
 
 		/// <summary>
 		/// The linetype of an object. The default linetype is the linetype of the layer (ByLayer).
@@ -77,7 +77,7 @@ namespace ACadSharp.Tables
 		/// Specifies if the layer is plottable.
 		/// </summary>
 		[DxfCodeValue(290)]
-		public bool PlotFlag { get; set; }
+		public bool PlotFlag { get; set; } = true;
 
 		/// <summary>
 		/// Specifies the lineweight of an individual object or the default lineweight for the drawing.
@@ -97,7 +97,10 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(DxfReferenceType.Handle, 347)]
 		public Material Material { get; set; }    //TODO: Implement ulong handles, change to internal or private, implement the material class
 
-		public bool IsOn { get; set; }  //TODO: Is the same as PlotFlag???
+		/// <summary>
+		/// Indicates if the Layer is visible in the model
+		/// </summary>
+		public bool IsOn { get; set; } = true;
 
 		private LineType _lineType = LineType.Continuous;
 

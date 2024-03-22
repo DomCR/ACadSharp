@@ -169,9 +169,11 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(173, (short)(style.SeparateArrowBlocks ? 1 : 0));
 			this._writer.Write(174, (short)(style.TextInsideExtensions ? 1 : 0));
 			this._writer.Write(175, (short)(style.SuppressOutsideExtensions ? 1 : 0));
-			this._writer.Write(176, style.DimensionLineColor.Index);
-			this._writer.Write(177, style.ExtensionLineColor.Index);
-			this._writer.Write(178, style.TextColor.Index);
+
+			this._writer.Write(176, style.DimensionLineColor.GetApproxIndex(), map);
+			this._writer.Write(177, style.ExtensionLineColor.GetApproxIndex(), map);
+			this._writer.Write(178, style.TextColor.GetApproxIndex(), map);
+
 			this._writer.Write(179, style.AngularDimensionDecimalPlaces);
 
 			this._writer.Write(271, style.DecimalPlaces);
@@ -218,7 +220,7 @@ namespace ACadSharp.IO.DXF
 
 			if (layer.Color.IsTrueColor)
 			{
-				this._writer.Write(420, layer.Color.TrueColor, map);
+				this._writer.Write(420, (uint)layer.Color.TrueColor, map);
 			}
 
 			this._writer.Write(6, layer.LineType.Name, map);

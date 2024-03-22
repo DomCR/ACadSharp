@@ -25,6 +25,10 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		protected bool R2004Pre;
 		/// <summary>
+		/// Pre-2007 Only
+		/// </summary>
+		protected bool R2007Pre;
+		/// <summary>
 		/// R2004+
 		/// </summary>
 		protected bool R2004Plus;
@@ -49,17 +53,18 @@ namespace ACadSharp.IO.DWG
 
 		public DwgSectionIO(ACadVersion version)
 		{
-			_version = version;
+			this._version = version;
 
-			R13_14Only = version == ACadVersion.AC1014 || version == ACadVersion.AC1012;
-			R13_15Only = version >= ACadVersion.AC1012 && version <= ACadVersion.AC1015;
-			R2000Plus = version >= ACadVersion.AC1015;
-			R2004Pre = version < ACadVersion.AC1018;
-			R2004Plus = version >= ACadVersion.AC1018;
-			R2007Plus = version >= ACadVersion.AC1021;
-			R2010Plus = version >= ACadVersion.AC1024;
-			R2013Plus = version >= ACadVersion.AC1027;
-			R2018Plus = version >= ACadVersion.AC1032;
+			this.R13_14Only = version == ACadVersion.AC1014 || version == ACadVersion.AC1012;
+			this.R13_15Only = version >= ACadVersion.AC1012 && version <= ACadVersion.AC1015;
+			this.R2000Plus = version >= ACadVersion.AC1015;
+			this.R2004Pre = version < ACadVersion.AC1018;
+			this.R2007Pre = version <= ACadVersion.AC1021;
+			this.R2004Plus = version >= ACadVersion.AC1018;
+			this.R2007Plus = version >= ACadVersion.AC1021;
+			this.R2010Plus = version >= ACadVersion.AC1024;
+			this.R2013Plus = version >= ACadVersion.AC1027;
+			this.R2018Plus = version >= ACadVersion.AC1032;
 		}
 
 		public static bool CheckSentinel(byte[] actual, byte[] expected)
@@ -83,7 +88,7 @@ namespace ACadSharp.IO.DWG
 			var sn = sreader.ReadSentinel();
 
 			if (!CheckSentinel(sn, expected))
-				this.notify($"Invalid section sentinel found in {SectionName}", NotificationType.Warning);
+				this.notify($"Invalid section sentinel found in {this.SectionName}", NotificationType.Warning);
 		}
 
 		protected void notify(string message, NotificationType type, Exception ex = null)

@@ -16,7 +16,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectLayout)]
 	[DxfSubClass(DxfSubclassMarker.Layout)]
-	public class Layout : PlotSettings
+	public class Layout : PlotSettings, IDictionaryEntry
 	{
 		public const string LayoutModelName = "Model";
 
@@ -167,13 +167,23 @@ namespace ACadSharp.Objects
 		}
 
 		/// <summary>
-		/// Layout's UCS
+		/// UCS Table Record if UCS is a named UCS
 		/// </summary>
+		/// <remarks>
+		/// If not present, then UCS is unnamed
+		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 345)]
 		public UCS UCS { get; set; }
 
-		//346	ID/handle of AcDbUCSTableRecord of base UCS if UCS is orthographic(76 code is non-zero).
-		//If not present and 76 code is non-zero, then base UCS is taken to be WORLD
+		/// <summary>
+		/// UCSTableRecord of base UCS if UCS is orthographic (<see cref="UcsOrthographicType"/> is non-zero)
+		/// </summary>
+		/// <remarks>
+		/// If not present and <see cref="UcsOrthographicType"/> is non-zero, then base UCS is taken to be WORLD
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Handle, 346)]
+		public UCS BaseUCS { get; set; }
+
 
 		//333	Shade plot ID
 

@@ -17,9 +17,9 @@ namespace ACadSharp
 		public abstract ObjectType ObjectType { get; }
 
 		/// <summary>
-		/// The AutoCAD class name of an object
+		/// The CAD class name of an object
 		/// </summary>
-		public virtual string ObjectName { get; }	//TODO: make abstract
+		public virtual string ObjectName { get; }
 
 		/// <summary>
 		/// Object Subclass marker
@@ -111,7 +111,7 @@ namespace ACadSharp
 		/// <inheritdoc/>
 		public override string ToString()
 		{
-			return $"{this.ObjectName}:{this.ObjectType}";
+			return $"{this.ObjectName}:{this.SubclassMarker}";
 		}
 
 		internal virtual void AssignDocument(CadDocument doc)
@@ -134,6 +134,16 @@ namespace ACadSharp
 		protected T updateTable<T>(T entry, Table<T> table)
 			where T : TableEntry
 		{
+			if (table == null)
+			{
+				return entry;
+			}
+
+			if(entry is TextStyle style )
+			{
+
+			}
+
 			if (table.TryGetValue(entry.Name, out T existing))
 			{
 				return existing;

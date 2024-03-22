@@ -66,7 +66,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.ObjectVisualStyle:
 					return this.readObjectCodes<VisualStyle>(new CadTemplate<VisualStyle>(new VisualStyle()), this.readVisualStyle);
 				case DxfFileToken.ObjectXRecord:
-					return this.readObjectCodes<XRecrod>(new CadXRecordTemplate(), readXRecord);
+					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), readXRecord);
 				default:
 					this._builder.Notify($"Object not implemented: {this._reader.ValueAsString}", NotificationType.NotImplemented);
 					do
@@ -170,13 +170,13 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readXRecordEntries(XRecrod recrod)
+		private void readXRecordEntries(XRecord recrod)
 		{
 			this._reader.ReadNext();
 
 			while (this._reader.DxfCode != DxfCode.Start)
 			{
-				recrod.Entries.Add(new XRecrod.Entry(this._reader.Code, this._reader.Value));
+				recrod.Entries.Add(new XRecord.Entry(this._reader.Code, this._reader.Value));
 
 				this._reader.ReadNext();
 			}

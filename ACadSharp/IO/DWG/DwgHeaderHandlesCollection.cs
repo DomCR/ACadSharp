@@ -60,8 +60,10 @@ namespace ACadSharp.IO.DWG
 
 		public ulong? GetHandle(string name)
 		{
-			return _handles[name];
+			this._handles.TryGetValue(name, out var handle);
+			return handle;
 		}
+
 		public void SetHandle(string name, ulong? value)
 		{
 			_handles[name] = value;
