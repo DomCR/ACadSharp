@@ -28,12 +28,12 @@ namespace ACadSharp.IO.DWG
 			this.HandleWriter = handlewriter;
 		}
 
-		public void HandleReference(CadObject cadObject)
+		public void HandleReference(IHandledCadObject cadObject)
 		{
 			this.HandleWriter.HandleReference(cadObject);
 		}
 
-		public void HandleReference(DwgReferenceType type, CadObject cadObject)
+		public void HandleReference(DwgReferenceType type, IHandledCadObject cadObject)
 		{
 			this.HandleWriter.HandleReference(type, cadObject);
 		}

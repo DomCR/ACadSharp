@@ -410,12 +410,12 @@ namespace ACadSharp.IO.DWG
 			this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
 		}
 
-		public void HandleReference(CadObject cadObject)
+		public void HandleReference(IHandledCadObject cadObject)
 		{
 			this.HandleReference(DwgReferenceType.Undefined, cadObject);
 		}
 
-		public void HandleReference(DwgReferenceType type, CadObject cadObject)
+		public void HandleReference(DwgReferenceType type, IHandledCadObject cadObject)
 		{
 			if (cadObject == null)
 			{
