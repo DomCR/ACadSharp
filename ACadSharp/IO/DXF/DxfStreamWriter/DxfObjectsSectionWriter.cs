@@ -207,7 +207,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(3, style.Description, map);
 
-			this._writer.Write(62, style.FillColor, map);
+			this._writer.Write(62, style.FillColor.GetApproxIndex(), map);
 
 			this._writer.Write(51, style.StartAngle, map);
 			this._writer.Write(52, style.EndAngle, map);

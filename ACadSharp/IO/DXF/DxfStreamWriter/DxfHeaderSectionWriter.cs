@@ -42,17 +42,7 @@ namespace ACadSharp.IO.DXF
 
 				if (item.Key == "$CECOLOR")
 				{
-					object value = null;
-					if (this._document.Header.CurrentEntityColor.IsTrueColor)
-					{
-						value = this._document.Header.CurrentEntityColor.TrueColor;
-					}
-					else
-					{
-						value = this._document.Header.CurrentEntityColor.Index;
-					}
-
-					this._writer.Write(62, value);
+					this._writer.Write(62, this._document.Header.CurrentEntityColor.GetApproxIndex());
 					continue;
 				}
 
