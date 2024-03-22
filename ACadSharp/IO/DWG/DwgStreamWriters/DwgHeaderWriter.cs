@@ -806,7 +806,7 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//H: DICTIONARY(ACAD_GROUP)(hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.Groups);
 			//H: DICTIONARY(ACAD_MLINESTYLE)(hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace ACadSharp.IO.DWG
 {
-	internal class DwgmMergedStreamWriter : IDwgStreamWriter
+	internal class DwgMergedStreamWriter : IDwgStreamWriter
 	{
 		public IDwgStreamWriter Main { get; }
 
@@ -20,7 +20,7 @@ namespace ACadSharp.IO.DWG
 
 		protected bool _savedPosition;
 
-		public DwgmMergedStreamWriter(Stream stream, IDwgStreamWriter main, IDwgStreamWriter textwriter, IDwgStreamWriter handlewriter)
+		public DwgMergedStreamWriter(Stream stream, IDwgStreamWriter main, IDwgStreamWriter textwriter, IDwgStreamWriter handlewriter)
 		{
 			this.Stream = stream;
 			this.Main = main;
