@@ -389,6 +389,10 @@ namespace ACadSharp
 			this._color = (uint)(trueColor | _trueColorFlag);   //Is this correct?
 		}
 
+		/// <summary>
+		/// Approximates color from a true color RGB.
+		/// </summary>
+		/// <returns>Approximate RGB color.</returns>
 		public byte GetApproxIndex()
 		{
 			if (this.IsTrueColor)
