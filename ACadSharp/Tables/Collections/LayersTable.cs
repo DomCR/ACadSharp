@@ -8,7 +8,7 @@
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableLayer;
 
-		protected override string[] _defaultEntries { get { return new string[] { Layer.DefaultName }; } }
+		protected override string[] defaultEntries { get { return new string[] { Layer.DefaultName }; } }
 
 		internal LayersTable() { }
 
