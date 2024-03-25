@@ -149,7 +149,7 @@ namespace ACadSharp.Tests.Internal
 
 		protected override void onNotification(object sender, NotificationEventArgs e)
 		{
-			Assert.False(e.NotificationType == NotificationType.NotImplemented, e.Message);
+			Assert.False(e.NotificationType == NotificationType.Error, e.Message);
 
 			base.onNotification(sender, e);
 		}

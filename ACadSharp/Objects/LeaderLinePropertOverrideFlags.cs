@@ -43,7 +43,7 @@ namespace ACadSharp.Objects
 		ArrowheadSize = 16,
 
 		/// <summary>
-		/// <see cref="MultiLeaderAnnotContext.Lines" /> property
+		/// <see cref="MultiLeaderAnnotContext.LeaderLine.Arrowhead" /> property
 		/// overrides settings from <see cref="MultiLeader"/> and <see cref="MultiLeaderStyle"/>.
 		/// </summary>
 		Arrowhead = 32,

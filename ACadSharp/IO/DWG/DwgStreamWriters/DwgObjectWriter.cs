@@ -570,7 +570,14 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Entry name TV 2
-			this._writer.WriteVariableText(style.Name);
+			if (style.IsShapeFile)
+			{
+				this._writer.WriteVariableText(string.Empty);
+			}
+			else
+			{
+				this._writer.WriteVariableText(style.Name);
+			}
 
 			this.writeXrefDependantBit(style);
 

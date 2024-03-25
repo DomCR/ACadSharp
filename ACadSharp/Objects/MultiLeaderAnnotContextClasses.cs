@@ -71,7 +71,7 @@ namespace ACadSharp.Objects
 			/// <summary>
 			/// Attachment direction
 			/// </summary>
-			public TextAttachmentDirectionType AttachmentDirection { get; internal set; }
+			public TextAttachmentDirectionType TextAttachmentDirection { get; set; }
 
 			public object Clone()
 			{
@@ -135,7 +135,7 @@ namespace ACadSharp.Objects
 			/// <summary>
 			/// Points of leader line
 			/// </summary>
-			public IList<XYZ> Points { get; set; } = new List<XYZ>();
+			public IList<XYZ> Points { get; } = new List<XYZ>();
 
 			/// <summary>
 			/// Break info count
@@ -150,7 +150,7 @@ namespace ACadSharp.Objects
 			/// <summary>
 			/// Start/end point pairs
 			/// </summary>
-			public IList<StartEndPointPair> StartEndPoints { get; set; }
+			public IList<StartEndPointPair> StartEndPoints { get; } = new List<StartEndPointPair>();
 
 			/// <summary>
 			/// Leader line index.

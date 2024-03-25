@@ -568,8 +568,8 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.MLine);
 
 			//Style has to references
-			this._writer.WriteName(2, mLine.MLStyle, map);
-			this._writer.WriteHandle(340, mLine.MLStyle, map);
+			this._writer.WriteName(2, mLine.Style, map);
+			this._writer.WriteHandle(340, mLine.Style, map);
 
 			this._writer.Write(40, mLine.ScaleFactor);
 
@@ -577,9 +577,9 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(71, (short)mLine.Flags);
 			this._writer.Write(72, (short)mLine.Vertices.Count);
 
-			if (mLine.MLStyle != null)
+			if (mLine.Style != null)
 			{
-				this._writer.Write(73, (short)mLine.MLStyle.Elements.Count);
+				this._writer.Write(73, (short)mLine.Style.Elements.Count);
 			}
 
 			this._writer.Write(10, mLine.StartPoint, map);
