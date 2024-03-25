@@ -1,5 +1,7 @@
 ﻿using System;
 
+using CSUtilities.Converters;
+
 namespace ACadSharp.IO.DXF
 {
 	internal abstract class DxfStreamWriterBase : IDxfStreamWriter
@@ -27,6 +29,25 @@ namespace ACadSharp.IO.DXF
 			{
 				this.Write(code + i * 10, value[i], map);
 			}
+		}
+
+		public void WriteCmColor(int code, Color color, DxfClassMap map = null)
+		{
+			byte[] arr = new byte[4];
+
+			if (color.IsTrueColor) {
+				arr[0] = (byte)color.B;
+				arr[1] = (byte)color.G;
+				arr[2] = (byte)color.R;
+				arr[3] = 0b1100_0000;
+			}
+			else {
+				arr[3] = 0b1100_0001;
+				arr[0] = (byte)color.Index;
+			}
+
+			//BL: RGB value
+			this.Write(code, LittleEndianConverter.Instance.ToInt32(arr), map);
 		}
 
 		public void WriteHandle(int code, IHandledCadObject value, DxfClassMap map)
