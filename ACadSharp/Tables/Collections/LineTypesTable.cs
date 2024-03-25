@@ -25,7 +25,7 @@ namespace ACadSharp.Tables.Collections
 		/// </summary>
 		public LineType Continuous { get { return this[LineType.ContinuousName]; } }
 
-		protected override string[] _defaultEntries
+		protected override string[] defaultEntries
 		{
 			get
 			{

@@ -8,7 +8,7 @@
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableStyle;
 
-		protected override string[] _defaultEntries { get { return new string[] { TextStyle.DefaultName }; } }
+		protected override string[] defaultEntries { get { return new string[] { TextStyle.DefaultName }; } }
 
 		internal TextStylesTable() : base() { }
 

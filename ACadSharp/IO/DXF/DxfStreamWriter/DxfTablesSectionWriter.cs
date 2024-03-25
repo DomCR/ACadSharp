@@ -62,7 +62,16 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.TableRecord);
 			this._writer.Write(DxfCode.Subclass, entry.SubclassMarker);
-			this._writer.Write(DxfCode.SymbolTableName, entry.Name);
+
+			if (entry is TextStyle ts && ts.IsShapeFile)
+			{
+				this._writer.Write(DxfCode.SymbolTableName, string.Empty);
+			}
+			else
+			{
+				this._writer.Write(DxfCode.SymbolTableName, entry.Name);
+			}
+
 			this._writer.Write(70, entry.Flags);
 
 			switch (entry)
