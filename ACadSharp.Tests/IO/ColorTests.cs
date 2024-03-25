@@ -1,4 +1,5 @@
 ﻿using ACadSharp.IO;
+using ACadSharp.Tables;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
@@ -35,6 +36,39 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(155, currentEntityColor.R);
 			Assert.Equal(66, currentEntityColor.G);
 			Assert.Equal(236, currentEntityColor.B);
+
+			//Layer: color_125_33_79
+			Color layerColor = doc.Layers["color_125_33_79"].Color;
+			Assert.Equal(125, layerColor.R);
+			Assert.Equal(33, layerColor.G);
+			Assert.Equal(79, layerColor.B);
+
+			//Entity Line: R 52 : G 201 : B 24
+
+			//Entity Metext: R 52 : G 201 : B 24
+
+			//DimStyle: custom_dim_style
+			DimensionStyle dimStyle = doc.DimensionStyles["custom_dim_style"];
+			//DimensionLines: 44,136,27
+			Color linesColor = dimStyle.DimensionLineColor;
+			Assert.Equal(44, linesColor.R);
+			Assert.Equal(136, linesColor.G);
+			Assert.Equal(27, linesColor.B);
+			//ExtensionLines: 128,61,194
+			Color extensionLinesColor = dimStyle.ExtensionLineColor;
+			Assert.Equal(128, extensionLinesColor.R);
+			Assert.Equal(61, extensionLinesColor.G);
+			Assert.Equal(194, extensionLinesColor.B);
+			//TextColor: 80,179,255
+			Color textColor = dimStyle.TextColor;
+			Assert.Equal(80, textColor.R);
+			Assert.Equal(179, textColor.G);
+			Assert.Equal(255, textColor.B);
+			//FillColor: 54,117,66
+			Color fillColor = dimStyle.TextBackgroundColor;
+			Assert.Equal(54, fillColor.R);
+			Assert.Equal(117, fillColor.G);
+			Assert.Equal(66, fillColor.B);
 		}
 	}
 }
