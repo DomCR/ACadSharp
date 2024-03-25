@@ -14,9 +14,20 @@
 
 		internal VPortsTable(CadDocument document) : base(document) { }
 
+		/// <inheritdoc/>
+		/// <remarks>
+		/// VPorts allow duplicated entries with the same name, after the first entry, the others will have their <see cref="CadObject.Handle"/> as a prefix.
+		/// </remarks>
 		public override void Add(VPort item)
 		{
-			this.addHandlePrefix(item);
+			if (this.Contains(item.Name))
+			{
+				this.addHandlePrefix(item);
+			}
+			else
+			{
+				this.add(item.Name, item);
+			}
 		}
 	}
 }
