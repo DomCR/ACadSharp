@@ -129,7 +129,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Override <see cref="MultiLeaderStyle.BlockContentConnection"/> property.
 		/// </summary>
-		BlockConnectionConnection = 0x800000,
+		BlockContentConnection = 0x800000,
 
 
 		/// <summary>

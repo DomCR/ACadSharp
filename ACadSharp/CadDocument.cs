@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Header;
+using ACadSharp.IO.DXF;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
@@ -291,7 +292,7 @@ namespace ACadSharp
 		/// <param name="createDictionaries"></param>
 		public void UpdateCollections(bool createDictionaries)
 		{
-			if(this.updateCollection(CadDictionary.AcadLayout, createDictionaries, out CadDictionary layout))
+			if (this.updateCollection(CadDictionary.AcadLayout, createDictionaries, out CadDictionary layout))
 			{
 				this.Layouts = new LayoutCollection(layout);
 			}

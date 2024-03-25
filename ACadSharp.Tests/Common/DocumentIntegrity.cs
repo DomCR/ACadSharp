@@ -255,7 +255,7 @@ namespace ACadSharp.Tests.Common
 			where T : TableEntry
 		{
 			var record = table[entry];
-			Assert.True(record != null, $"Entry with name {entry} is null for thable {table}");
+			Assert.True(record != null, $"Entry with name {entry} is null for table {table}");
 			Assert.NotNull(record.Document);
 		}
 	}

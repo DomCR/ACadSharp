@@ -48,6 +48,7 @@ namespace ACadSharp.Objects
 		public bool Selectable { get; set; }
 
 		//340	Hard-pointer handle to entity in group(one entry per object)
+
 		/// <summary>
 		/// Entities in this group
 		/// </summary>

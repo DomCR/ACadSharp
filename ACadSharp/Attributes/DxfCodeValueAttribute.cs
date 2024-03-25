@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace ACadSharp.Attributes
 {
-	[System.AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
+	[System.AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 	public sealed class DxfCodeValueAttribute : Attribute, ICodeValueAttribute
 	{
 		/// <inheritdoc/>

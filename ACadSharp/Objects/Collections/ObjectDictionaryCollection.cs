@@ -8,9 +8,12 @@ namespace ACadSharp.Objects.Collections
 	/// Object collection linked to a dictionary
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public abstract class ObjectDictionaryCollection<T> : IEnumerable<T>
+	public abstract class ObjectDictionaryCollection<T> : IHandledCadObject, IEnumerable<T>
 		where T : CadObject, IDictionaryEntry
 	{
+		/// <inheritdoc/>
+		public ulong Handle { get { return this._dictionary.Handle; } }
+
 		public T this[string key] { get { return (T)this._dictionary[key]; } }
 
 		protected CadDictionary _dictionary;
