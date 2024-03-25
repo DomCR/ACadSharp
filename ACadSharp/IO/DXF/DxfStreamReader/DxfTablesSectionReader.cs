@@ -4,6 +4,7 @@ using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Types.Units;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -647,6 +648,13 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				case 2:
+					if (!this._reader.ValueAsString.IsNullOrEmpty())
+					{
+						//In some files the TextStyle is an empty string
+						template.CadObject.Name = this._reader.ValueAsString;
+					}
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map);
 			}

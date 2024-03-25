@@ -22,7 +22,7 @@ namespace ACadSharp.Tables
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					// throw new System.ArgumentNullException(nameof(value), $"Table entry [{this.GetType().FullName}] must have a name");
+					throw new ArgumentNullException(nameof(value), $"Table entry [{this.GetType().FullName}] must have a name");
 				}
 
 				OnNameChanged?.Invoke(this, new OnNameChangedArgs(this._name, value));
@@ -52,6 +52,12 @@ namespace ACadSharp.Tables
 		public override string ToString()
 		{
 			return $"{this.ObjectName}:{this.Name}";
+		}
+
+		internal void SetUnrestrictedName(string name)
+		{
+			// Needed to bypass invalid table entries with no name assigned
+			this._name = name;
 		}
 	}
 }
