@@ -35,7 +35,7 @@ namespace ACadSharp.Classes
 		public int InstanceCount { get; set; }
 
 		/// <summary>
-		/// Was-a-proxy flag.Set to 1 if class was not loaded when this DXF file was created, and 0 otherwise
+		/// Was-a-proxy flag. Set to 1 if class was not loaded when this DXF file was created, and 0 otherwise
 		/// </summary>
 		[DxfCodeValue(280)]
 		public bool WasZombie { get; set; }
