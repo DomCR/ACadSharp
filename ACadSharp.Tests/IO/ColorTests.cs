@@ -1,6 +1,8 @@
 ﻿using ACadSharp.IO;
+using ACadSharp.Entities;
 using ACadSharp.Tables;
 using System.IO;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -44,8 +46,12 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(79, layerColor.B);
 
 			//Entity Line: R 52 : G 201 : B 24
-
-			//Entity Metext: R 52 : G 201 : B 24
+			Line line = doc.Entities.OfType<Line>().FirstOrDefault();
+			Assert.NotNull(line);
+			Color lcolor = line.Color;
+			Assert.Equal(52, lcolor.R);
+			Assert.Equal(201, lcolor.G);
+			Assert.Equal(24, lcolor.B);
 
 			//DimStyle: custom_dim_style
 			DimensionStyle dimStyle = doc.DimensionStyles["custom_dim_style"];
