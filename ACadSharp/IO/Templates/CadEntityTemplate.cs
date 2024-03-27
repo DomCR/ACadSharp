@@ -27,58 +27,7 @@ namespace ACadSharp.IO.Templates
 		public ulong? MaterialHandle { get; set; }
 
 		public CadEntityTemplate(Entity entity) : base(entity) { }
-
-		public override bool CheckDxfCode(int dxfcode, object value)
-		{
-			switch (dxfcode)
-			{
-				//Absent or zero indicates entity is in model space.
-				//1 indicates entity is in paper space (optional).
-				case 67:
-					return true;
-				default:
-					return false;
-			}
-		}
-
-		public override bool AddHandle(int dxfcode, ulong handle)
-		{
-			bool value = base.AddHandle(dxfcode, handle);
-			if (value)
-				return value;
-
-			switch (dxfcode)
-			{
-				case 347:
-					this.MaterialHandle = handle;
-					value = true;
-					break;
-			}
-
-			return value;
-		}
-
-		public override bool AddName(int dxfcode, string name)
-		{
-			bool value = base.AddName(dxfcode, name);
-			if (value)
-				return value;
-
-			switch (dxfcode)
-			{
-				case 6:
-					this.LineTypeName = name;
-					value = true;
-					break;
-				case 8:
-					this.LayerName = name;
-					value = true;
-					break;
-			}
-
-			return value;
-		}
-
+		
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
