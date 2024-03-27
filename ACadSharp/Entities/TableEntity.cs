@@ -20,6 +20,15 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.TableEntity)]
 	public class TableEntity : Insert
 	{
+		public class Row
+		{
+			public double Height { get; internal set; }
+		}
+		public class Column
+		{
+			public double Width { get; internal set; }
+		}
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
@@ -53,19 +62,19 @@ namespace ACadSharp.Entities
 		/// Flag for table value
 		/// </summary>
 		[DxfCodeValue(90)]
-		public uint ValueFlag { get; internal set; }
+		public short ValueFlag { get; internal set; }
 
 		/// <summary>
 		/// Number of rows
 		/// </summary>
-		[DxfCodeValue(91)]
-		public int NumRows { get; set; }
+		[DxfCodeValue(DxfReferenceType.Count, 91)]
+		public List<Row> Rows { get; set; } = new List<Row>();
 
 		/// <summary>
 		/// Number of columns
 		/// </summary>
-		[DxfCodeValue(92)]
-		public int NumCols { get; set; }
+		[DxfCodeValue(DxfReferenceType.Count, 92)]
+		public List<Column> Columns { get; set; } = new List<Column>();
 
 		/// <summary>
 		/// Flag for an override

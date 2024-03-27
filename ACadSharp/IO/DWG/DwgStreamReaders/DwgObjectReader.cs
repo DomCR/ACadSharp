@@ -1357,11 +1357,40 @@ namespace ACadSharp.IO.DWG
 			//Until R2007
 
 			//Common:
-			//	Flag for table value BS 90 Bit flags, 0x06(0x02 + 0x04): has block,
+			//Flag for table value BS 90
+			//	Bit flags, 0x06(0x02 + 0x04): has block,
 			//	0x10: table direction, 0 = up, 1 = down,
 			//	0x20: title suppressed.
 			//	Normally 0x06 is always set.
+			table.ValueFlag = this._mergedReaders.ReadBitShort();
 
+			//Hor.Dir.Vector 3BD 11
+			table.HorizontalDirection = this._mergedReaders.Read3BitDouble();
+
+			//Number of columns BL 92
+			var ncols = this._mergedReaders.ReadBitLong();
+			//Number of rows BL 91
+			var nrows = this._mergedReaders.ReadBitLong();
+
+			//Column widths BD 142 Repeats “# of columns” times
+			for (int i = 0; i < ncols; i++)
+			{
+				TableEntity.Column c = new TableEntity.Column();
+				//Column widths BD 142 Repeats “# of columns” times
+				c.Width = this._mergedReaders.ReadBitDouble();
+
+				table.Columns.Add(c);
+			}
+
+			//Row heights BD 141 Repeats “# of rows” times
+			for (int i = 0; i < nrows; i++)
+			{
+				TableEntity.Row r = new TableEntity.Row();
+				//Row heights BD 141 Repeats “# of rows” times
+				r.Height = this._mergedReaders.ReadBitDouble();
+
+				table.Rows.Add(r);
+			}
 
 			throw new NotImplementedException("ACAD_TABLE");
 		}
