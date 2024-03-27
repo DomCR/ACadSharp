@@ -368,7 +368,17 @@ namespace ACadSharp.IO.DWG
 		public virtual void WriteCmColor(Color value)
 		{
 			//R15 and earlier: BS color index
-			this.WriteBitShort(value.Index);
+			short index = 0;
+			if (value.IsTrueColor)
+			{
+				index = value.GetApproxIndex();
+			}
+			else
+			{
+				index = value.Index;
+			}
+
+			this.WriteBitShort(index);
 		}
 
 		public virtual void WriteEnColor(Color color, Transparency transparency)

@@ -75,6 +75,8 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(54, fillColor.R);
 			Assert.Equal(117, fillColor.G);
 			Assert.Equal(66, fillColor.B);
+
+			DwgWriter.Write(new MemoryStream(), doc);
 		}
 	}
 }
