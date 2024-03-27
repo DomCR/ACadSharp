@@ -70,11 +70,15 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(80, textColor.R);
 			Assert.Equal(179, textColor.G);
 			Assert.Equal(255, textColor.B);
-			//FillColor: 54,117,66
-			Color fillColor = dimStyle.TextBackgroundColor;
-			Assert.Equal(54, fillColor.R);
-			Assert.Equal(117, fillColor.G);
-			Assert.Equal(66, fillColor.B);
+
+			if (doc.Header.Version >= ACadVersion.AC1021)
+			{
+				//FillColor: 54,117,66
+				Color fillColor = dimStyle.TextBackgroundColor;
+				Assert.Equal(54, fillColor.R);
+				Assert.Equal(117, fillColor.G);
+				Assert.Equal(66, fillColor.B);
+			}
 
 			DwgWriter.Write(new MemoryStream(), doc);
 		}
