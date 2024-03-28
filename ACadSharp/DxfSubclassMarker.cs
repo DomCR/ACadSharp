@@ -55,6 +55,7 @@
 		public const string PolyfaceMeshFace = "AcDbFaceRecord";
 		public const string Shape = "AcDbShape";
 		public const string Solid = "AcDbTrace";
+		public const string TableEntity = "AcDbTable";
 		public const string Trace = "AcDbTrace";
 		public const string Text = "AcDbText";
 		public const string Tolerance = "AcDbFcf";
