@@ -48,16 +48,6 @@ namespace ACadSharp.IO.DXF
 				this._writer.Write(DxfCode.Handle, cadObject.Handle);
 			}
 
-			this._writer.Write(DxfCode.SoftPointerId, cadObject.Owner.Handle);
-
-			//TODO: Write exended data
-			if (cadObject.ExtendedData != null)
-			{
-				//this._writer.Write(DxfCode.ControlString,DxfFileToken.ReactorsToken);
-				//this._writer.Write(DxfCode.HardOwnershipId, cadObject.ExtendedData);
-				//this._writer.Write(DxfCode.ControlString, "}");
-			}
-
 			if (cadObject.XDictionary != null)
 			{
 				this._writer.Write(DxfCode.ControlString, DxfFileToken.DictionaryToken);
@@ -66,6 +56,24 @@ namespace ACadSharp.IO.DXF
 
 				//Add the dictionary in the object holder
 				this.Holder.Objects.Enqueue(cadObject.XDictionary);
+			}
+
+			if (cadObject.Reactors != null && cadObject.Reactors.Count > 0) {
+				this._writer.Write(DxfCode.ControlString,DxfFileToken.ReactorsToken);
+				foreach (ulong reactorHandle in cadObject.Reactors.Keys) {
+					this._writer.Write(DxfCode.SoftPointerId, reactorHandle);
+				}
+				this._writer.Write(DxfCode.ControlString, "}");
+			}
+			
+			this._writer.Write(DxfCode.SoftPointerId, cadObject.Owner.Handle);
+
+			//TODO: Write exended data
+			if (cadObject.ExtendedData != null)
+			{
+				//this._writer.Write(DxfCode.ControlString,DxfFileToken.ReactorsToken);
+				//this._writer.Write(DxfCode.HardOwnershipId, cadObject.ExtendedData);
+				//this._writer.Write(DxfCode.ControlString, "}");
 			}
 		}
 

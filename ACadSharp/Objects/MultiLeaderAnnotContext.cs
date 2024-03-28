@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ACadSharp.Attributes;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
@@ -360,7 +361,7 @@ namespace ACadSharp.Objects
 		{
 			MultiLeaderAnnotContext clone = (MultiLeaderAnnotContext)base.Clone();
 
-			foreach (var leaderRoot in LeaderRoots)
+			foreach (var leaderRoot in LeaderRoots.ToList())
 			{
 				clone.LeaderRoots.Add((LeaderRoot)leaderRoot.Clone());
 			}

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ACadSharp.Attributes;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
@@ -345,7 +346,7 @@ namespace ACadSharp.Entities
 
 			clone.ContextData = (MultiLeaderAnnotContext)this.ContextData?.Clone();
 
-			foreach (var att in BlockAttributes)
+			foreach (var att in BlockAttributes.ToList())
 			{
 				clone.BlockAttributes.Add(att);
 			}

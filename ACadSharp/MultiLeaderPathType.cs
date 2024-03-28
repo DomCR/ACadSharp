@@ -1,14 +1,10 @@
-﻿//	TODO similar to LeaderPathType
-//  0 = straight line leader, 1 = spline leader
-
-
-namespace ACadSharp {
+﻿namespace ACadSharp {
 
 	/// <summary>
 	/// Controls the way the leader is drawn.
 	/// </summary>
-	public  enum MultiLeaderPathType {
-
+	public  enum MultiLeaderPathType : short
+	{
 		/// <summary>
 		/// Invisible leader
 		/// </summary>
