@@ -4202,7 +4202,15 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Entry name TV 2
-			dimStyle.Name = this._textReader.ReadVariableText();
+			string name = this._textReader.ReadVariableText();
+			if (name.IsNullOrEmpty())
+			{
+				this._builder.Notify($"[DimensionStyle] with handle {dimStyle.Handle} does not have a name assigned", NotificationType.Warning);
+			}
+			else
+			{
+				dimStyle.Name = name;
+			}
 
 			this.readXrefDependantBit(dimStyle);
 
@@ -5449,6 +5457,8 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readDwgColor()
 		{
+			return null;
+
 			DwgColorTemplate.DwgColor dwgColor = new DwgColorTemplate.DwgColor();
 			DwgColorTemplate template = new DwgColorTemplate(dwgColor);
 

@@ -20,9 +20,9 @@ namespace ACadSharp.IO.DWG
 
 			if (value.IsTrueColor)
 			{
-				arr[0] = (byte)value.R;
+				arr[2] = (byte)value.R;
 				arr[1] = (byte)value.G;
-				arr[2] = (byte)value.B;
+				arr[0] = (byte)value.B;
 				arr[3] = 0b1100_0010;
 			}
 			else

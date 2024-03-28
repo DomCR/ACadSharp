@@ -1,4 +1,5 @@
-﻿using ACadSharp.Objects;
+﻿using ACadSharp.IO.DWG;
+using ACadSharp.Objects;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
@@ -16,9 +17,18 @@ namespace ACadSharp.IO.Templates
 			base.Build(builder);
 
 			if (this.OwnerHandle.HasValue
-				&& this.OwnerHandle == 0)
+				&& this.OwnerHandle == 0
+				&& builder.DocumentToBuild.RootDictionary == null)
 			{
-				builder.DocumentToBuild.RootDictionary = this.CadObject;
+				if (builder is DwgDocumentBuilder dwgBuilder
+					&& this.CadObject.Handle == dwgBuilder.HeaderHandles.DICTIONARY_NAMED_OBJECTS)
+				{
+					builder.DocumentToBuild.RootDictionary = this.CadObject;
+				}
+				else
+				{
+					builder.DocumentToBuild.RootDictionary = this.CadObject;
+				}
 			}
 
 			foreach (var item in this.Entries)

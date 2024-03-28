@@ -62,7 +62,16 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.TableRecord);
 			this._writer.Write(DxfCode.Subclass, entry.SubclassMarker);
-			this._writer.Write(DxfCode.SymbolTableName, entry.Name);
+
+			if (entry is TextStyle ts && ts.IsShapeFile)
+			{
+				this._writer.Write(DxfCode.SymbolTableName, string.Empty);
+			}
+			else
+			{
+				this._writer.Write(DxfCode.SymbolTableName, entry.Name);
+			}
+
 			this._writer.Write(70, entry.Flags);
 
 			switch (entry)
@@ -170,10 +179,9 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(174, (short)(style.TextInsideExtensions ? 1 : 0));
 			this._writer.Write(175, (short)(style.SuppressOutsideExtensions ? 1 : 0));
 
-			//TODO: Fix the color index assignation in case of true color
-			this._writer.Write(176, style.DimensionLineColor.Index);
-			this._writer.Write(177, style.ExtensionLineColor.Index);
-			this._writer.Write(178, style.TextColor.Index);
+			this._writer.Write(176, style.DimensionLineColor.GetApproxIndex(), map);
+			this._writer.Write(177, style.ExtensionLineColor.GetApproxIndex(), map);
+			this._writer.Write(178, style.TextColor.GetApproxIndex(), map);
 
 			this._writer.Write(179, style.AngularDimensionDecimalPlaces);
 

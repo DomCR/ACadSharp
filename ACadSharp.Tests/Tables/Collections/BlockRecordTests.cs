@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace ACadSharp.Tests.Tables
+namespace ACadSharp.Tests.Tables.Collections
 {
 	public class BlockRecordTests
 	{

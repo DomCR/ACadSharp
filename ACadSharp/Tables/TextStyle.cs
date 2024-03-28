@@ -86,6 +86,11 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(DxfReferenceType.Optional, 1071)]
 		public FontFlags TrueType { get; set; } = FontFlags.Regular;
 
+		/// <summary>
+		/// Flag that indicates wheater this <see cref="TextStyle"/> is linked to a Shape file
+		/// </summary>
+		public bool IsShapeFile { get { return this.Flags.HasFlag(StyleFlags.IsShape); } }
+
 		internal TextStyle() : base() { }
 
 		public TextStyle(string name) : base(name) { }
