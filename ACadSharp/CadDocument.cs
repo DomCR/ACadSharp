@@ -1,7 +1,9 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Header;
+using ACadSharp.IO.DXF;
 using ACadSharp.Objects;
+using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
@@ -11,7 +13,7 @@ using System.Linq;
 namespace ACadSharp
 {
 	/// <summary>
-	/// An AutoCAD drawing
+	/// A CAD drawing
 	/// </summary>
 	public class CadDocument : IHandledCadObject
 	{
@@ -81,9 +83,44 @@ namespace ACadSharp
 		public VPortsTable VPorts { get; private set; }
 
 		/// <summary>
-		/// The collection of all layouts in the drawing
+		/// The collection of all layouts in the drawing.
 		/// </summary>
-		public Layout[] Layouts { get { return this._cadObjects.Values.OfType<Layout>().ToArray(); } }   //TODO: Layouts have to go to the designed dictionary or blocks
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadLayout"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public LayoutCollection Layouts { get; private set; }
+
+		/// <summary>
+		/// The collection of all groups in the drawing. 
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadGroup"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public GroupCollection Groups { get; private set; }
+
+		/// <summary>
+		/// The collection of all scales in the drawing. 
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadScaleList"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public ScaleCollection Scales { get; private set; }
+
+		/// <summary>
+		/// The collection of all Multi line styles in the drawing. 
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadMLineStyle"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public MLineStyleCollection MLineStyles { get; private set; }
+
+		/// <summary>
+		/// The collection of all Multi leader styles in the drawing. 
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadMLeaderStyle"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public MLeaderStyleCollection MLeaderStyles { get; private set; }
 
 		/// <summary>
 		/// Root dictionary of the document
@@ -114,7 +151,7 @@ namespace ACadSharp
 		/// </summary>
 		public BlockRecord PaperSpace { get { return this.BlockRecords[BlockRecord.PaperSpaceName]; } }
 
-		private CadDictionary _rootDictionary = new CadDictionary();
+		private CadDictionary _rootDictionary = null;
 
 		//Contains all the objects in the document
 		private readonly Dictionary<ulong, IHandledCadObject> _cadObjects = new Dictionary<ulong, IHandledCadObject>();
@@ -125,6 +162,8 @@ namespace ACadSharp
 
 			if (createDefaults)
 			{
+				DxfClassCollection.UpdateDxfClasses(this);
+
 				//Header and summary
 				this.Header = new CadHeader(this);
 				this.SummaryInfo = new CadSummaryInfo();
@@ -148,8 +187,8 @@ namespace ACadSharp
 				//Entries
 				Layout modelLayout = Layout.Default;
 				Layout paperLayout = new Layout("Layout1");
-				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(Layout.LayoutModelName, modelLayout);
 				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(paperLayout.Name, paperLayout);
+				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(Layout.LayoutModelName, modelLayout);
 
 				//Default variables
 				this.AppIds.Add(AppId.Default);
@@ -174,6 +213,8 @@ namespace ACadSharp
 				BlockRecord pspace = BlockRecord.PaperSpace;
 				pspace.Layout = paperLayout;
 				this.BlockRecords.Add(pspace);
+
+				this.UpdateCollections(false);
 			}
 		}
 
@@ -221,6 +262,13 @@ namespace ACadSharp
 			return null;
 		}
 
+		/// <summary>
+		/// Gets an object in the document by it's handle
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="handle"></param>
+		/// <param name="cadObject"></param>
+		/// <returns></returns>
 		public bool TryGetCadObject<T>(ulong handle, out T cadObject)
 			where T : CadObject
 		{
@@ -238,14 +286,58 @@ namespace ACadSharp
 			return false;
 		}
 
+		/// <summary>
+		/// Updates the collections in the document and link them to it's dictionary
+		/// </summary>
+		/// <param name="createDictionaries"></param>
+		public void UpdateCollections(bool createDictionaries)
+		{
+			if (this.updateCollection(CadDictionary.AcadLayout, createDictionaries, out CadDictionary layout))
+			{
+				this.Layouts = new LayoutCollection(layout);
+			}
+
+			if (this.updateCollection(CadDictionary.AcadGroup, createDictionaries, out CadDictionary groups))
+			{
+				this.Groups = new GroupCollection(groups);
+			}
+
+			if (this.updateCollection(CadDictionary.AcadScaleList, createDictionaries, out CadDictionary scales))
+			{
+				this.Scales = new ScaleCollection(scales);
+			}
+
+			if (this.updateCollection(CadDictionary.AcadMLineStyle, createDictionaries, out CadDictionary mlineStyles))
+			{
+				this.MLineStyles = new MLineStyleCollection(mlineStyles);
+			}
+
+			if (this.updateCollection(CadDictionary.AcadMLineStyle, createDictionaries, out CadDictionary mleaderStyles))
+			{
+				this.MLeaderStyles = new MLeaderStyleCollection(mleaderStyles);
+			}
+		}
+
+		private bool updateCollection(string dictName, bool createDictionary, out CadDictionary dictionary)
+		{
+			if (this.RootDictionary.TryGetEntry(dictName, out dictionary))
+			{
+				return true;
+			}
+			else if (createDictionary)
+			{
+				this.RootDictionary.Add(dictName, new CadDictionary());
+			}
+
+			return dictionary != null;
+		}
+
 		private void addCadObject(CadObject cadObject)
 		{
 			if (cadObject.Document != null)
 			{
 				throw new ArgumentException($"The item with handle {cadObject.Handle} is already assigned to a document");
 			}
-
-			cadObject.Document = this;
 
 			if (cadObject.Handle == 0 || this._cadObjects.ContainsKey(cadObject.Handle))
 			{
@@ -257,105 +349,25 @@ namespace ACadSharp
 			}
 
 			this._cadObjects.Add(cadObject.Handle, cadObject);
-			cadObject.OnReferenceChanged += this.onReferenceChanged;
 
-			if (cadObject.XDictionary != null)
-				this.RegisterCollection(cadObject.XDictionary);
-
-			if (cadObject is Entity e)
+			if (cadObject is BlockRecord record)
 			{
-				if (this.Layers.TryGetValue(e.Layer.Name, out Layer layer))
-				{
-					e.Layer = layer;
-				}
-				else
-				{
-					//Add the layer if it does not exist
-					this.Layers.Add(e.Layer);
-				}
-
-				if (this.LineTypes.TryGetValue(e.LineType.Name, out LineType lineType))
-				{
-					e.LineType = lineType;
-				}
-				else
-				{
-					//Add the LineType if it does not exist
-					this.LineTypes.Add(e.LineType);
-				}
+				this.addCadObject(record.BlockEntity);
+				this.addCadObject(record.BlockEnd);
 			}
 
-			switch (cadObject)
-			{
-				case BlockRecord record:
-					this.RegisterCollection(record.Entities);
-					this.addCadObject(record.BlockEnd);
-					this.addCadObject(record.BlockEntity);
-					break;
-				case Insert insert:
-					this.RegisterCollection(insert.Attributes);
-
-					//Should only be triggered for internal use
-					if (insert.Block == null)
-						break;
-
-					if (this.BlockRecords.TryGetValue(insert.Block.Name, out BlockRecord blk))
-					{
-						insert.Block = blk;
-					}
-					else
-					{
-						this.BlockRecords.Add(insert.Block);
-					}
-					break;
-				case Polyline pline:
-					this.RegisterCollection(pline.Vertices);
-					break;
-			}
+			cadObject.AssignDocument(this);
 		}
 
 		private void removeCadObject(CadObject cadObject)
 		{
-			if (!this.TryGetCadObject(cadObject.Handle, out CadObject obj) || !this._cadObjects.Remove(cadObject.Handle))
+			if (!this.TryGetCadObject(cadObject.Handle, out CadObject _)
+				|| !this._cadObjects.Remove(cadObject.Handle))
 			{
 				return;
 			}
 
-			cadObject.Handle = 0;
-			cadObject.Document = null;
-			cadObject.OnReferenceChanged -= this.onReferenceChanged;
-
-			if (cadObject.XDictionary != null)
-				this.UnregisterCollection(cadObject.XDictionary);
-
-			if (cadObject is Entity e)
-			{
-				//TODO: Replace for clones
-				e.Layer = new Layer(e.Layer.Name);
-				e.LineType = new LineType(e.LineType.Name);
-			}
-
-			switch (cadObject)
-			{
-				case BlockRecord record:
-					this.UnregisterCollection(record.Entities);
-					this.removeCadObject(record.BlockEnd);
-					this.removeCadObject(record.BlockEntity);
-					break;
-				case Insert insert:
-					insert.Block = (BlockRecord)insert.Block.Clone();
-					this.UnregisterCollection(insert.Attributes);
-					break;
-				case Polyline pline:
-					this.UnregisterCollection(pline.Vertices);
-					break;
-			}
-		}
-
-		private void onReferenceChanged(object sender, ReferenceChangedEventArgs e)
-		{
-			this.addCadObject(e.Current);
-			this.removeCadObject(e.Old);
+			cadObject.UnassignDocument();
 		}
 
 		private void onAdd(object sender, CollectionChangedEventArgs e)

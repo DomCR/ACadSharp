@@ -1,10 +1,11 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
 using CSMath;
+using CSUtilities.Converters;
 using CSUtilities.Extensions;
 using System;
 using System.Collections;
-using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 
@@ -71,10 +72,7 @@ namespace ACadSharp
 				XY vector = (XY)this._property.GetValue(obj);
 
 				int index = (code / 10) % 10 - 1;
-				double[] components = vector.GetComponents();
-				components[index] = Convert.ToDouble(value);
-
-				vector = vector.SetComponents(components);
+				vector[index] = Convert.ToDouble(value);
 
 				this._property.SetValue(obj, vector);
 			}
@@ -83,24 +81,21 @@ namespace ACadSharp
 				XYZ vector = (XYZ)this._property.GetValue(obj);
 
 				int index = (code / 10) % 10 - 1;
-				double[] components = vector.GetComponents();
-				components[index] = Convert.ToDouble(value);
-
-				vector = vector.SetComponents(components);
+				vector[index] = Convert.ToDouble(value);
 
 				this._property.SetValue(obj, vector);
 			}
 			else if (this._property.PropertyType.IsEquivalentTo(typeof(Color)))
 			{
-				//TODO: Implement color setter
-
 				switch (code)
 				{
 					case 62:
 						this._property.SetValue(obj, new Color((short)value));
 						break;
 					case 420:
+						byte[] b = LittleEndianConverter.Instance.GetBytes((int)value);
 						// true color
+						this._property.SetValue(obj, new Color(b[0], b[1], b[2]));
 						break;
 					case 430:
 						// dictionary color
@@ -236,8 +231,7 @@ namespace ACadSharp
 				IVector vector = (IVector)this._property.GetValue(obj);
 
 				int index = (code / 10) % 10 - 1;
-				double[] components = vector.GetComponents();
-				return components[index];
+				return vector[index];
 			}
 			else if (this._property.PropertyType.IsEquivalentTo(typeof(DateTime)))
 			{
@@ -256,11 +250,10 @@ namespace ACadSharp
 				{
 					case 62:
 					case 70:
-						//return color.Index;
-						return 0;
+						return color.Index;
 					case 420:
 						// true color
-						break;
+						return color.TrueColor;
 					case 430:
 						// dictionary color
 						break;

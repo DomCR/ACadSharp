@@ -32,11 +32,26 @@ namespace ACadSharp.Tests.Tables
 		public void CloneUnattachEvent(Type t)
 		{
 			TableEntry entry = TableEntryFactory.Create(t);
-			entry.OnReferenceChanged += this.tableEntry_OnReferenceChanged;
 
 			TableEntry clone = (TableEntry)entry.Clone();
 
 			CadObjectTestUtils.AssertTableEntryClone(entry, clone);
+		}
+
+		[Fact()]
+		public void ChangeName()
+		{
+			string initialName = "custom_layer";
+			Layer layer = new Layer(initialName);
+
+			CadDocument doc = new CadDocument();
+
+			doc.Layers.Add(layer);
+
+			layer.Name = "new_name";
+
+			Assert.NotNull(doc.Layers[layer.Name]);
+			Assert.False(doc.Layers.TryGetValue(initialName, out _));
 		}
 
 		[Fact()]
@@ -48,12 +63,6 @@ namespace ACadSharp.Tests.Tables
 			map.DxfProperties[70].SetValue(layer, LayerFlags.Frozen);
 
 			Assert.True(layer.Flags.HasFlag(LayerFlags.Frozen));
-		}
-
-		private void tableEntry_OnReferenceChanged(object sender, ReferenceChangedEventArgs e)
-		{
-			//The clone must not have any attachment
-			throw new InvalidOperationException();
 		}
 	}
 }

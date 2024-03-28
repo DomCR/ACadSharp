@@ -41,6 +41,8 @@ namespace ACadSharp.IO
 		/// <inheritdoc/>
 		public override void Write()
 		{
+			base.Write();
+
 			this.createStreamWriter();
 
 			this._objectHolder.Objects.Enqueue(_document.RootDictionary);
@@ -108,7 +110,7 @@ namespace ACadSharp.IO
 
 		private void createStreamWriter()
 		{
-			Encoding encoding = this.getListedEncoding(this._document.Header.CodePage);
+			Encoding encoding = new UTF8Encoding(false);
 
 			if (this.IsBinary)
 			{

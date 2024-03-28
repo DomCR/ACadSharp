@@ -24,19 +24,19 @@ namespace ACadSharp.Tables.Collections
 		/// Gets the number of entries in this table
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 70)]
-		public int Count => this._entries.Count;
+		public int Count => this.entries.Count;
 
 		public T this[string name]
 		{
 			get
 			{
-				return this._entries.TryGetValue(name, out T item) ? item : null;
+				return this.entries[name];
 			}
 		}
 
-		protected abstract string[] _defaultEntries { get; }
+		protected abstract string[] defaultEntries { get; }
 
-		protected readonly Dictionary<string, T> _entries = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
+		protected readonly Dictionary<string, T> entries = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
 
 		protected Table() { }
 
@@ -50,11 +50,12 @@ namespace ACadSharp.Tables.Collections
 		/// Add a <see cref="TableEntry"/> to the collection, this method triggers <see cref="OnAdd"/>
 		/// </summary>
 		/// <param name="item"></param>
-		/// <exception cref="ArgumentException"></exception>
 		public virtual void Add(T item)
 		{
 			if (string.IsNullOrEmpty(item.Name))
-				throw new ArgumentException($"Table entry must have a name.", nameof(item));
+			{
+				item.Name = this.createName();
+			}
 
 			this.add(item.Name, item);
 		}
@@ -71,20 +72,25 @@ namespace ACadSharp.Tables.Collections
 			}
 		}
 
+		/// <summary>
+		/// Gets the value associated with the specified key.
+		/// </summary>
+		/// <param name="key">The key of the value to get.</param>
+		/// <param name="item"></param>
+		/// <returns>true if the <see cref="Table{T}"/> contains an element with the specified key; otherwise, false.</returns>
 		public bool TryGetValue(string key, out T item)
 		{
-			return this._entries.TryGetValue(key, out item);
+			return this.entries.TryGetValue(key, out item);
 		}
 
+		/// <summary>
+		/// Determines whether the <see cref="Table{T}"/> contains the specified key.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		public bool Contains(string key)
 		{
-			return this._entries.ContainsKey(key);
-		}
-
-		/// <inheritdoc/>
-		public IEnumerator<T> GetEnumerator()
-		{
-			return this._entries.Values.GetEnumerator();
+			return this.entries.ContainsKey(key);
 		}
 
 		/// <summary>
@@ -94,10 +100,10 @@ namespace ACadSharp.Tables.Collections
 		/// <returns>The removed <see cref="TableEntry"/></returns>
 		public T Remove(string key)
 		{
-			if (this._defaultEntries.Contains(key))
+			if (this.defaultEntries.Contains(key))
 				return null;
 
-			if (this._entries.Remove(key, out T item))
+			if (this.entries.Remove(key, out T item))
 			{
 				item.Owner = null;
 				OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));
@@ -112,7 +118,7 @@ namespace ACadSharp.Tables.Collections
 		/// </summary>
 		public void CreateDefaultEntries()
 		{
-			foreach (string entry in this._defaultEntries)
+			foreach (string entry in this.defaultEntries)
 			{
 				if (this.Contains(entry))
 					continue;
@@ -122,17 +128,61 @@ namespace ACadSharp.Tables.Collections
 		}
 
 		/// <inheritdoc/>
+		public IEnumerator<T> GetEnumerator()
+		{
+			return this.entries.Values.GetEnumerator();
+		}
+
+		/// <inheritdoc/>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return this._entries.Values.GetEnumerator();
+			return this.entries.Values.GetEnumerator();
 		}
 
 		protected void add(string key, T item)
 		{
-			this._entries.Add(key, item);
+			this.entries.Add(key, item);
 			item.Owner = this;
 
+			item.OnNameChanged += this.onEntryNameChanged;
+
 			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
+		}
+
+		protected void addHandlePrefix(T item)
+		{
+			item.Owner = this;
+			item.OnNameChanged += this.onEntryNameChanged;
+
+			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
+
+			string key = $"{item.Handle}:{item.Name}";
+
+			this.entries.Add(key, item);
+		}
+
+		private void onEntryNameChanged(object sender, OnNameChangedArgs e)
+		{
+			if (this.defaultEntries.Contains(e.OldName, StringComparer.InvariantCultureIgnoreCase))
+			{
+				throw new ArgumentException($"The name {e.OldName} belongs to a default entry.");
+			}
+
+			var entry = this.entries[e.OldName];
+			this.entries.Add(e.NewName, entry);
+			this.entries.Remove(e.OldName);
+		}
+
+		private string createName()
+		{
+			string name = "unamed";
+			int i = 0;
+			while (this.entries.ContainsKey($"{name}_{i}"))
+			{
+				i++;
+			}
+
+			return $"{name}_{i}";
 		}
 	}
 }

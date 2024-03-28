@@ -2,6 +2,7 @@
 using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using CSUtilities.Extensions;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
@@ -27,25 +28,6 @@ namespace ACadSharp.IO.Templates
 		public CadBlockRecordTemplate() : base(new BlockRecord()) { }
 
 		public CadBlockRecordTemplate(BlockRecord block) : base(block) { }
-
-		public override bool AddHandle(int dxfcode, ulong handle)
-		{
-			bool value = base.AddHandle(dxfcode, handle);
-			if (value)
-				return value;
-
-			switch (dxfcode)
-			{
-				case 340:
-					this.LayoutHandle = handle;
-					value = true;
-					break;
-				default:
-					break;
-			}
-
-			return value;
-		}
 
 		public override void Build(CadDocumentBuilder builder)
 		{
@@ -86,7 +68,10 @@ namespace ACadSharp.IO.Templates
 		{
 			if (builder.TryGetCadObject(this.BeginBlockHandle, out Block block))
 			{
-				this.CadObject.Name = block.Name;
+				if (!block.Name.IsNullOrEmpty())
+				{
+					this.CadObject.Name = block.Name;
+				}
 
 				block.Flags = this.CadObject.BlockEntity.Flags;
 				block.BasePoint = this.CadObject.BlockEntity.BasePoint;

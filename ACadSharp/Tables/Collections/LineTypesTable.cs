@@ -10,7 +10,22 @@ namespace ACadSharp.Tables.Collections
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableLinetype;
 
-		protected override string[] _defaultEntries
+		/// <summary>
+		/// Get the ByLayer entry in the table
+		/// </summary>
+		public LineType ByLayer { get { return this[LineType.ByLayerName]; } }
+
+		/// <summary>
+		/// Get the ByBlock entry in the table
+		/// </summary>
+		public LineType ByBlock { get { return this[LineType.ByBlockName]; } }
+
+		/// <summary>
+		/// Get the Continuous entry in the table
+		/// </summary>
+		public LineType Continuous { get { return this[LineType.ContinuousName]; } }
+
+		protected override string[] defaultEntries
 		{
 			get
 			{
