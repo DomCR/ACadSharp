@@ -17,6 +17,8 @@ using static ACadSharp.Objects.MultiLeaderAnnotContext;
 using System.Net;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
+using static ACadSharp.Entities.TableEntity;
+using static ACadSharp.Entities.TableEntity.BreakData;
 
 namespace ACadSharp.IO.DWG
 {
@@ -1349,12 +1351,94 @@ namespace ACadSharp.IO.DWG
 			this.readInsertCommonData(template);
 			this.readInsertCommonHandles(template);
 
+
 			if (this.R2010Plus)
 			{
-				return null;
+				//RC Unknown (default 0)
+				this._mergedReaders.ReadByte();
+				//H Unknown (soft pointer, default NULL)
+				template.NullHandle = this.handleReference();
+
+				//BL Unknown (default 0)
+				long longZero = this._mergedReaders.ReadBitLong();
+				if (this.R2013Plus)
+				{
+					//R2013
+					//Unknown (default 0)
+					this._mergedReaders.ReadBitLong();
+				}
+				else
+				{
+					//R2010
+					//B Unknown (default true)
+					this._mergedReaders.ReadBit();
+				}
+
+				//Here the table content is present (see TABLECONTENT object),
+				//without the common OBJECT data.
+				//See paragraph 20.4.97.
+				this.readTableContent(table.TableContent, template);
+
+				//BS Unknown (default 38)
+				this._mergedReaders.ReadBitShort();
+				//3BD 11 Horizontal direction
+				table.HorizontalDirection = this._mergedReaders.Read3BitDouble();
+
+				//BL Has break data flag (0 = no break data, 1 = has break data)
+				//Begin break data(optional)
+				bool hasBreakData = this._mergedReaders.ReadBitLong() == 1;
+				if (hasBreakData)
+				{
+					TableEntity.BreakData breakData = table.TableBreakData;
+					//BL Option flags:
+					breakData.Flags = (BreakOptionFlags)this._mergedReaders.ReadBitLong();
+					//BL Flow direction:
+					breakData.FlowDirection = (BreakFlowDirection)this._mergedReaders.ReadBitLong();
+					//BD Break spacing
+					breakData.BreakSpacing = this._mergedReaders.ReadBitDouble();
+					//BL Unknown flags
+					this._mergedReaders.ReadBitLong();
+					//BL Unknown flags
+					this._mergedReaders.ReadBitLong();
+
+					//BL Number of manual positions (break heights)
+					int num = this._mergedReaders.ReadBitLong();
+					//Begin repeat manual positions (break heights)
+					for (int i = 0; i < num; i++)
+					{
+						BreakHeight breakHeight = new();
+						//3BD Position
+						breakHeight.Position = this._mergedReaders.Read3BitDouble();
+						//BD Height
+						breakHeight.Height = this._mergedReaders.ReadBitDouble();
+						//BL Flags(meaning unknown)
+						this._mergedReaders.ReadBitLong();
+						breakData.Heights.Add(breakHeight);
+					}
+				}
+
+				//End break data
+
+				//BL Number of break row ranges (there is always at least 1)
+				int rowRanges = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < rowRanges; i++)
+				{
+					TableEntity.BreakRowRange dxfTableBreakRowRange = new();
+					//3BD Position
+					dxfTableBreakRowRange.Position = this._mergedReaders.Read3BitDouble();
+					//BL Start row index
+					dxfTableBreakRowRange.StartRowIndex = this._mergedReaders.ReadBitLong();
+					//BL End row index
+					dxfTableBreakRowRange.EndRowIndex = this._mergedReaders.ReadBitLong();
+					table.BreakRowRanges.Add(dxfTableBreakRowRange);
+				}
+
+				return template;
 			}
 
 			//Until R2007
+			//H 342 Table Style ID (hard pointer)
+			template.StyleHandle = this.handleReference();
 
 			//Common:
 			//Flag for table value BS 90
@@ -1392,7 +1476,44 @@ namespace ACadSharp.IO.DWG
 				table.Rows.Add(r);
 			}
 
+			for (int i = 0; i < table.Rows.Count; i++)
+			{
+				for (int j = 0; j < table.Columns.Count; j++)
+				{
+					//Cell data, repeats for all cells in n x m table:
+					this.readTableCellData(table);
+				}
+			}
+
 			throw new NotImplementedException("ACAD_TABLE");
+		}
+
+		private void readTableCellData(TableEntity table)
+		{
+
+		}
+
+		private void readTableContent(TableEntity.Content content, CadTableEntityTemplate template)
+		{
+			//See paragraph 20.4.97.
+
+			//TV 1 Name
+			content.Name = this._mergedReaders.ReadVariableText();
+			//TV 300 Description AcDbLinkedTableData fields
+			content.Description = this._mergedReaders.ReadVariableText();
+
+			//BL 90 Number of columns
+			int cols = this._mergedReaders.ReadBitLong();
+			//Begin repeat columns
+			for (int i = 0; i < cols; i++)
+			{
+				TableEntity.Column column = new TableEntity.Column();
+
+				//TV 300 Column name
+				column.Name = this._mergedReaders.ReadVariableText();
+				//BL 91 32 bit integer containing custom data
+				column.CustomData = this._mergedReaders.ReadBitLong();
+			}
 		}
 
 		private void readInsertCommonData(CadInsertTemplate template)

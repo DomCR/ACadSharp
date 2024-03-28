@@ -27,6 +27,82 @@ namespace ACadSharp.Entities
 		public class Column
 		{
 			public double Width { get; internal set; }
+			public string Name { get; internal set; }
+			public int CustomData { get; internal set; }
+		}
+
+		public class Content
+		{
+			public string Name { get; set; }
+
+			public string Description { get; set; }
+		}
+
+		internal class BreakData
+		{
+			internal struct BreakHeight
+			{
+				public XYZ Position { get; internal set; }
+				public double Height { get; internal set; }
+			}
+
+			public BreakOptionFlags Flags { get; internal set; }
+			public BreakFlowDirection FlowDirection { get; internal set; }
+			public double BreakSpacing { get; internal set; }
+			public List<BreakHeight> Heights { get; internal set; } = new List<BreakHeight>();
+		}
+
+
+		internal class BreakRowRange
+		{
+			public XYZ Position { get; internal set; }
+			public int StartRowIndex { get; internal set; }
+			public int EndRowIndex { get; internal set; }
+		}
+
+		[System.Flags]
+		public enum BreakOptionFlags
+		{
+			/// <summary>
+			/// None
+			/// </summary>
+			None = 0,
+			/// <summary>
+			/// Enable breaks
+			/// </summary>
+			EnableBreaks = 1,
+			/// <summary>
+			/// Repeat top labels
+			/// </summary>
+			RepeatTopLabels = 2,
+			/// <summary>
+			/// Repeat bottom labels
+			/// </summary>
+			RepeatBottomLabels = 4,
+			/// <summary>
+			/// Allow manual positions
+			/// </summary>
+			AllowManualPositions = 8,
+			/// <summary>
+			/// Allow manual heights
+			/// </summary>
+			AllowManualHeights = 16
+		}
+
+		public enum BreakFlowDirection
+		{
+			/// <summary>
+			/// Right
+			/// </summary>
+			Right = 1,
+			/// <summary>
+			/// Vertical
+			/// </summary>
+			Vertical = 2,
+			/// <summary>
+			/// Left
+			/// </summary>
+			Left = 4
 		}
 
 		/// <inheritdoc/>
@@ -81,6 +157,12 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(93)]
 		public bool OverrideFlag { get; set; }
+
+		public Content TableContent { get; set; } = new();
+
+		internal BreakData TableBreakData { get; set; } = new();
+
+		internal List<BreakRowRange> BreakRowRanges { get; set; } = new();
 
 		//94
 
@@ -147,7 +229,6 @@ namespace ACadSharp.Entities
 		//Hard pointer ID of the FIELD object. This applies only to a text-type cell.If the text in the cell contains one or more fields, only the ID of the FIELD object is saved.The text string (group codes 1 and 3) is ignored
 
 		//1
-
 		//Text string in a cell.If the string is shorter than 250 characters, all characters appear in code 1. If the string is longer than 250 characters, it is divided into chunks of 250 characters.The chunks are contained in one or more code 2 codes.If code 2 codes are used, the last group is a code 1 and is shorter than 250 characters.This value applies only to text-type cells and is repeated, 1 value per cell
 
 		//2	
