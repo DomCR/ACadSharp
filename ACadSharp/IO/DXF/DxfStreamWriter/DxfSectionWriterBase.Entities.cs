@@ -14,7 +14,6 @@ namespace ACadSharp.IO.DXF
 			switch (entity)
 			{
 				case Mesh:
-				case MLine:
 				case Solid3D:
 				case MultiLeader:
 				case Wipeout:
