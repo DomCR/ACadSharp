@@ -120,6 +120,8 @@
 		public const string ObjectSortEntsTable = "SORTENTSTABLE";
 		public const string ObjectXRecord = "XRECORD";
 		public const string ObjectMLeaderContextData = "CONTEXT_DATA";
+		public const string ObjectEvalGraph = "ACAD_EVALUATION_GRAPH";
+		public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
 
 		#endregion
 	}
