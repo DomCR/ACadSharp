@@ -3182,13 +3182,13 @@ namespace ACadSharp.IO.DWG
 				leaderLine.SegmentIndex = this._objectReader.ReadBitLong();
 
 				//	Start/end point pairs
-				//	3BD	11	Start Point
-				//	3BD	12	End point
 				int startEndPointCount = this._objectReader.ReadBitLong();
 				for (int sep = 0; sep < startEndPointCount; sep++)
 				{
 					leaderLine.StartEndPoints.Add(new StartEndPointPair(
+						//	3BD	11	Start Point
 						this._objectReader.Read3BitDouble(),
+						//	3BD	12	End point
 						this._objectReader.Read3BitDouble()));
 				}
 			}
@@ -3280,7 +3280,7 @@ namespace ACadSharp.IO.DWG
 				mLeaderStyle.TextAngle = (TextAngleType)this._objectReader.ReadBitShort();
 
 			}   //	END IF IsNewFormat OR DXF file
-				//	BS	176	Text alignment type
+			//	BS	176	Text alignment type
 			mLeaderStyle.TextAlignment = (TextAlignmentType)this._objectReader.ReadBitShort();
 			//	CMC	93	Text color
 			mLeaderStyle.TextColor = this._mergedReaders.ReadCmColor();
