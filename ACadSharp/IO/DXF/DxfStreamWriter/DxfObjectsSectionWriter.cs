@@ -30,7 +30,7 @@ namespace ACadSharp.IO.DXF
 			{
 				case AcdbPlaceHolder:
 				case Material:
-				case MultiLeaderStyle:
+				case MultiLeaderAnnotContext:
 				case SortEntitiesTable:
 				case Scale:
 				case VisualStyle:
@@ -59,6 +59,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case MLineStyle mlStyle:
 					this.writeMLineStyle(mlStyle);
+					break;
+				case MultiLeaderStyle multiLeaderlStyle:
+					this.writeMultiLeaderStyle(multiLeaderlStyle);
 					break;
 				case PlotSettings plotSettings:
 					this.writePlotSettings(plotSettings);
@@ -218,6 +221,64 @@ namespace ACadSharp.IO.DXF
 				this._writer.Write(62, element.Color.Index, map);
 				this._writer.Write(6, element.LineType.Name, map);
 			}
+		}
+
+		protected void writeMultiLeaderStyle(MultiLeaderStyle style)
+		{
+			DxfClassMap map = DxfClassMap.Create<MultiLeaderStyle>();
+
+			this._writer.Write(100, DxfSubclassMarker.MLeaderStyle);
+
+			this._writer.Write(179, 2);
+			//	this._writer.Write(2, style.Name, map);
+			this._writer.Write(170, (short)style.ContentType, map);
+			this._writer.Write(171, (short)style.MultiLeaderDrawOrder, map);
+			this._writer.Write(172, (short)style.LeaderDrawOrder, map);
+			this._writer.Write(90, style.MaxLeaderSegmentsPoints, map);
+			this._writer.Write(40, style.FirstSegmentAngleConstraint, map);
+			this._writer.Write(41, style.SecondSegmentAngleConstraint, map);
+			this._writer.Write(173, (short)style.PathType, map);
+			this._writer.WriteCmColor(91, style.LineColor, map);
+			this._writer.WriteHandle(340, style.LeaderLineType);
+			this._writer.Write(92, (short)style.LeaderLineWeight, map);
+			this._writer.Write(290, style.EnableLanding, map);
+			this._writer.Write(42, style.LandingGap, map);
+			this._writer.Write(291, style.EnableDogleg, map);
+			this._writer.Write(43, style.LandingDistance, map);
+			this._writer.Write(3, style.Description, map);
+			this._writer.WriteHandle(341, style.Arrowhead);
+			this._writer.Write(44, style.ArrowheadSize, map);
+			this._writer.Write(300, style.DefaultTextContents, map);
+			this._writer.WriteHandle(342, style.TextStyle);
+			this._writer.Write(174, (short)style.TextLeftAttachment, map);
+			this._writer.Write(178, (short)style.TextRightAttachment, map);
+			this._writer.Write(175, style.TextAngle, map);
+			this._writer.Write(176, (short)style.TextAlignment, map);
+			this._writer.WriteCmColor(93, style.TextColor, map);
+			this._writer.Write(45, style.TextHeight, map);
+			this._writer.Write(292, style.TextFrame, map);
+			this._writer.Write(297, style.TextAlignAlwaysLeft, map);
+			this._writer.Write(46, style.AlignSpace, map);
+			this._writer.WriteHandle(343, style.BlockContent);
+			this._writer.WriteCmColor(94, style.BlockContentColor, map);
+
+			//	Write 3 doubles since group codes do not conform vector group codes
+			this._writer.Write(47, style.BlockContentScale.X, map);
+			this._writer.Write(49, style.BlockContentScale.Y, map);
+			this._writer.Write(140, style.BlockContentScale.Z, map);
+
+			this._writer.Write(293, style.EnableBlockContentScale, map);
+			this._writer.Write(141, style.BlockContentRotation, map);
+			this._writer.Write(294, style.EnableBlockContentRotation, map);
+			this._writer.Write(177, (short)style.BlockContentConnection, map);
+			this._writer.Write(142, style.ScaleFactor, map);
+			this._writer.Write(295, style.OverwritePropertyValue, map);
+			this._writer.Write(296, style.IsAnnotative, map);
+			this._writer.Write(143, style.BreakGapSize, map);
+			this._writer.Write(271, (short)style.TextAttachmentDirection, map);
+			this._writer.Write(272, (short)style.TextBottomAttachment, map);
+			this._writer.Write(273, (short)style.TextTopAttachment, map);
+			this._writer.Write(298, false);	//	undocumented
 		}
 
 		private void writeSortentsTable(SortEntitiesTable e)
