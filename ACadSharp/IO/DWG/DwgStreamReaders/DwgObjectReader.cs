@@ -696,7 +696,7 @@ namespace ACadSharp.IO.DWG
 
 			switch (type)
 			{
-				case ObjectType.UNUSED:
+				case ObjectType.UNDEFINED:
 					break;
 				case ObjectType.TEXT:
 					template = this.readText();
