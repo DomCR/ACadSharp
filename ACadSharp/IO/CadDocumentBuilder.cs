@@ -92,7 +92,7 @@ namespace ACadSharp.IO
 			return null;
 		}
 
-		public bool TryGetCadObject<T>(ulong? handle, out T value) where T : CadObject
+		public virtual bool TryGetCadObject<T>(ulong? handle, out T value) where T : CadObject
 		{
 			if (!handle.HasValue)
 			{
@@ -120,6 +120,7 @@ namespace ACadSharp.IO
 			return entry != null;
 		}
 
+		[Obsolete]
 		public T GetObjectTemplate<T>(ulong handle) where T : CadTemplate
 		{
 			if (this.templates.TryGetValue(handle, out CadTemplate builder))

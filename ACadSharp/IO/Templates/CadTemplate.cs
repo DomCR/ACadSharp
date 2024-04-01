@@ -122,7 +122,6 @@ namespace ACadSharp.IO.Templates
 					template = builder.GetObjectTemplate<CadEntityTemplate>(template.NextEntity.Value);
 				else
 					template = builder.GetObjectTemplate<CadEntityTemplate>(template.CadObject.Handle + 1);
-
 			}
 
 			return collection;
@@ -142,6 +141,7 @@ namespace ACadSharp.IO.Templates
 				{
 					builder.Notify($"{typeof(T).FullName} table reference with handle: {handle} | name: {name} not found for {this.CadObject.GetType().FullName} with handle {this.CadObject.Handle}", NotificationType.Warning);
 				}
+
 				return false;
 			}
 		}
