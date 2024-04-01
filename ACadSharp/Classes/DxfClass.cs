@@ -41,7 +41,9 @@ namespace ACadSharp.Classes
 		public bool WasZombie { get; set; }
 
 		/// <summary>
-		/// Is-an-entity flag.Set to 1 if class was derived from the AcDbEntity class and can reside in the BLOCKS or ENTITIES section.If 0, instances may appear only in the OBJECTS section
+		/// Is-an-entity flag.
+		/// Set to 1 if class was derived from the AcDbEntity class and can reside in the BLOCKS or ENTITIES section.
+		/// If 0, instances may appear only in the OBJECTS section
 		/// </summary>
 		[DxfCodeValue(281)]
 		public bool IsAnEntity { get; set; }
@@ -58,7 +60,7 @@ namespace ACadSharp.Classes
 
 		public ACadVersion DwgVersion { get; set; }
 
-		public short MaintenanceVersion { get; set; }
+		internal short MaintenanceVersion { get; set; }
 
 		/// <inheritdoc/>
 		public override string ToString()

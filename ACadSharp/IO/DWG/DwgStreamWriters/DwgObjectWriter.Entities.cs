@@ -16,6 +16,7 @@ namespace ACadSharp.IO.DWG
 			//Ignored Entities
 			switch (entity)
 			{
+				case UnknownEntity:
 				case AttributeEntity:
 				case Shape:
 				case Solid3D:
@@ -859,7 +860,7 @@ namespace ACadSharp.IO.DWG
 					for (var i = 0; i < pline.Vertices.Count; ++i)
 					{
 						var vertex = pline.Vertices[i];
-						var bulge  = pline.Bulges[i];
+						var bulge = pline.Bulges[i];
 
 						this._writer.Write2RawDouble(new XY(vertex.X, vertex.Y));
 						if (pline.HasBulge)

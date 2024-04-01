@@ -45,5 +45,18 @@ namespace ACadSharp.IO.DWG
 
 			base.BuildDocument();
 		}
+
+		public override bool TryGetCadObject<T>(ulong? handle, out T value)
+		{
+			bool result = base.TryGetCadObject(handle, out value);
+			
+			if (value is UnknownEntity && !this.Configuration.KeepUnknownEntities)
+			{
+				value = null;
+				result = false;
+			}
+
+			return result;
+		}
 	}
 }
