@@ -13,6 +13,11 @@ namespace ACadSharp.Tests.Entities
 		{
 			foreach (var item in DataFactory.GetTypes<Entity>())
 			{
+				if(item == typeof(UnknownEntity))
+				{
+					continue;
+				}
+
 				EntityTypes.Add(item);
 			}
 		}

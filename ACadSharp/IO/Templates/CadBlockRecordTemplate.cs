@@ -40,8 +40,10 @@ namespace ACadSharp.IO.Templates
 
 			if (this.FirstEntityHandle.HasValue)
 			{
-				var entities = this.getEntitiesCollection<Entity>(builder, this.FirstEntityHandle.Value, this.LastEntityHandle.Value);
-				this.CadObject.Entities.AddRange(entities);
+				foreach (Entity e in this.getEntitiesCollection<Entity>(builder, this.FirstEntityHandle.Value, this.LastEntityHandle.Value))
+				{
+					this.addEntity(e);
+				}
 			}
 			else
 			{
@@ -49,16 +51,7 @@ namespace ACadSharp.IO.Templates
 				{
 					if (builder.TryGetCadObject<Entity>(handle, out Entity child))
 					{
-						switch (child)
-						{
-							case Viewport viewport:
-								this.CadObject.Viewports.Add(viewport);
-								break;
-							default:
-								this.CadObject.Entities.Add(child);
-								break;
-						}
-
+						this.addEntity(child);
 					}
 				}
 			}
@@ -85,6 +78,19 @@ namespace ACadSharp.IO.Templates
 			if (builder.TryGetCadObject(this.EndBlockHandle, out BlockEnd blockEnd))
 			{
 				this.CadObject.BlockEnd = blockEnd;
+			}
+		}
+
+		private void addEntity(Entity entity)
+		{
+			switch (entity)
+			{
+				case Viewport viewport:
+					this.CadObject.Viewports.Add(viewport);
+					break;
+				default:
+					this.CadObject.Entities.Add(entity);
+					break;
 			}
 		}
 	}

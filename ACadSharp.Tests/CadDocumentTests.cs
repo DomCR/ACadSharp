@@ -20,7 +20,9 @@ namespace ACadSharp.Tests
 
 			foreach (var item in DataFactory.GetTypes<Entity>())
 			{
-				if (item == typeof(Block) || item == typeof(BlockEnd))
+				if (item == typeof(Block)
+					|| item == typeof(BlockEnd)
+					|| item == typeof(UnknownEntity))
 					continue;
 
 				EntityTypes.Add(item);

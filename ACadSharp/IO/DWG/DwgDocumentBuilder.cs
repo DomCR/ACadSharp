@@ -1,6 +1,8 @@
-﻿using ACadSharp.IO.Templates;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.DWG
@@ -12,6 +14,8 @@ namespace ACadSharp.IO.DWG
 		public DwgHeaderHandlesCollection HeaderHandles { get; set; } = new();
 
 		public List<CadBlockRecordTemplate> BlockRecordTemplates { get; set; } = new List<CadBlockRecordTemplate>();
+
+		public List<UnknownEntity> UnknownEntities { get; } = new();
 
 		public DwgDocumentBuilder(CadDocument document, DwgReaderConfiguration configuration)
 			: base(document)
@@ -40,6 +44,19 @@ namespace ACadSharp.IO.DWG
 			this.BuildTable(this.BlockRecords);
 
 			base.BuildDocument();
+		}
+
+		public override bool TryGetCadObject<T>(ulong? handle, out T value)
+		{
+			bool result = base.TryGetCadObject(handle, out value);
+			
+			if (value is UnknownEntity && !this.Configuration.KeepUnknownEntities)
+			{
+				value = null;
+				result = false;
+			}
+
+			return result;
 		}
 	}
 }
