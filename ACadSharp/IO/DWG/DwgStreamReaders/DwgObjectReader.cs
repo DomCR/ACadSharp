@@ -7,18 +7,15 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSMath;
-using CSUtilities.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System;
-using ACadSharp.Types;
-using static ACadSharp.Objects.MultiLeaderAnnotContext;
-using System.Net;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
 using static ACadSharp.Entities.TableEntity;
 using static ACadSharp.Entities.TableEntity.BreakData;
+using static ACadSharp.Objects.MultiLeaderAnnotContext;
 
 namespace ACadSharp.IO.DWG
 {
@@ -1513,6 +1510,105 @@ namespace ACadSharp.IO.DWG
 				column.Name = this._mergedReaders.ReadVariableText();
 				//BL 91 32 bit integer containing custom data
 				column.CustomData = this._mergedReaders.ReadBitLong();
+
+				//BL 90 Number of custom data items
+				int dataItems = this._mergedReaders.ReadBitLong();
+				//Begin repeat custom data items
+				for (int j = 0; j < dataItems; j++)
+				{
+					CustomDataEntry entry = new();
+
+					//Custom data collection, see paragraph 20.4.100
+					this.readCustomTableData(entry);
+
+					column.CustomEntries.Add(entry);
+				}
+
+				//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the column.
+				CellStyle cellStyle = new();
+				this.readCellStyle(cellStyle);
+
+				//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
+				//base cell style for the column. 0 if not present.
+				this._mergedReaders.ReadBitLong();
+				//BD 40 Column width.
+
+				column.Width = this._mergedReaders.ReadBitDouble();
+				//End repeat columns
+			}
+
+			//BL 91 Number of rows.
+			int nrows = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < nrows; i++)
+			{
+				//Begin repeat rows.
+				Row row = new Row();
+
+				//BL 90 Number of cells in row.
+				int ncells = this._mergedReaders.ReadBitLong();
+				//Begin repeat cells
+				for (int j = 0; j < ncells; j++)
+				{
+					Cell cell = new();
+
+					this.readTableCell(cell);
+
+					row.Cells.Add(cell);
+				}
+			}
+		}
+
+		private void readCustomTableData(CustomDataEntry entry)
+		{
+			//TV 300 Item name
+			entry.Name = this._mergedReaders.ReadVariableText();
+			throw new NotImplementedException();
+		}
+
+		private void readCellStyle(CellStyle cellStyle)
+		{
+			//BL 90 Cell style type
+			cellStyle.Type = (CellStypeType)this._mergedReaders.ReadBitLong();
+			//BS 170 Data flags, 0 = no data, 1 = data is present
+			//If data is present
+			bool hasData = this._mergedReaders.ReadBitShort() == 1;
+			if (!hasData)
+			{
+				return;
+			}
+
+			throw new NotImplementedException($"{nameof(readCellStyle)}");
+		}
+
+		private void readTableCell(Cell cell)
+		{
+			//BL 90 Cell state flags:
+			cell.StateFlags = (TableCellStateFlags)this._mergedReaders.ReadBitLong();
+			//TV 300 Tooltip
+			cell.ToolTip = this._mergedReaders.ReadVariableText();
+			//BL 91 32 bit integer containing custom data
+			cell.CustomData = this._mergedReaders.ReadBitLong();
+
+			//... Custom data collection, see paragraph 20.4.100.
+			int num = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < num; i++)
+			{
+				//this.readCustomTableData(cell);
+			}
+
+			//BL 92 Has linked data flags, 0 = false, 1 = true If has linked data
+			cell.HasLinkedData = this._mergedReaders.ReadBitLong() == 1;
+			if (cell.HasLinkedData)
+			{
+				//H 340 Handle to data link object (hard pointer).
+				this._mergedReaders.HandleReference();
+				//BL 93 Row count.
+				this._mergedReaders.ReadBitLong();
+				//BL 94 Column count.
+				this._mergedReaders.ReadBitLong();
+				//BL 96 Unknown.
+				this._mergedReaders.ReadBitLong();
+				//End if has linked data
 			}
 		}
 

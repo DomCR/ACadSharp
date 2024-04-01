@@ -4,6 +4,7 @@ using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,15 +21,82 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.TableEntity)]
 	public class TableEntity : Insert
 	{
+		public enum CellStypeType
+		{
+			Cell = 1,
+			Row = 2,
+			Column = 3,
+			FormattedTableData = 4,
+			Table = 5
+		}
+
+		[System.Flags]
+		public enum TableCellStateFlags
+		{
+			/// <summary>
+			/// None
+			/// </summary>
+			None = 0x0,
+			/// <summary>
+			/// Content  locked
+			/// </summary>
+			ContentLocked = 0x1,
+			/// <summary>
+			/// Content read only
+			/// </summary>
+			ContentReadOnly = 0x2,
+			/// <summary>
+			/// Linked.
+			/// </summary>
+			Linked = 0x4,
+			/// <summary>
+			/// Content modifed after update
+			/// </summary>
+			ContentModifiedAfterUpdate = 0x8,
+			/// <summary>
+			/// Format locked
+			/// </summary>
+			FormatLocked = 0x10,
+			/// <summary>
+			/// Format readonly
+			/// </summary>
+			FormatReadOnly = 0x20,
+			/// <summary>
+			/// Format was modified after update
+			/// </summary>
+			FormatModifiedAfterUpdate = 0x40,
+		}
+
+		public class CellStyle
+		{
+			public CellStypeType Type { get; set; }
+		}
+		public class CustomDataEntry
+		{
+			public string Name { get; internal set; }
+		}
+
+		public class Cell
+		{
+			public string ToolTip { get; internal set; }
+			public int CustomData { get; internal set; }
+			public TableCellStateFlags StateFlags { get; internal set; }
+			public bool HasLinkedData { get; internal set; }
+		}
+
 		public class Row
 		{
 			public double Height { get; internal set; }
+
+			public List<Cell> Cells { get; internal set; } = new();
 		}
+
 		public class Column
 		{
 			public double Width { get; internal set; }
 			public string Name { get; internal set; }
 			public int CustomData { get; internal set; }
+			public List<CustomDataEntry> CustomEntries { get; internal set; }
 		}
 
 		public class Content
