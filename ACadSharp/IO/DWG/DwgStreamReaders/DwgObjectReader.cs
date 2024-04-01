@@ -993,6 +993,10 @@ namespace ACadSharp.IO.DWG
 					template = this.readLayout();
 					break;
 				case "LWPLINE":
+					break;
+				case "LWPOLYLINE":
+					template = this.readLWPolyline();
+					break;
 				case "MATERIAL":
 					break;
 				case "MESH":
