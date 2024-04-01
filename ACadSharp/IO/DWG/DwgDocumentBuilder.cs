@@ -1,6 +1,5 @@
-﻿using ACadSharp.IO.Templates;
-using ACadSharp.Tables;
-using ACadSharp.Tables.Collections;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO.Templates;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.DWG
@@ -12,6 +11,10 @@ namespace ACadSharp.IO.DWG
 		public DwgHeaderHandlesCollection HeaderHandles { get; set; } = new();
 
 		public List<CadBlockRecordTemplate> BlockRecordTemplates { get; set; } = new List<CadBlockRecordTemplate>();
+
+		public List<Entity> PaperSpaceEntities { get; } = new();
+
+		public List<Entity> ModelSpaceEntities { get; } = new();
 
 		public DwgDocumentBuilder(CadDocument document, DwgReaderConfiguration configuration)
 			: base(document)

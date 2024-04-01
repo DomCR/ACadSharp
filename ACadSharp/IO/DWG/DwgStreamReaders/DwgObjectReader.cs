@@ -344,7 +344,17 @@ namespace ACadSharp.IO.DWG
 			//11 : Not used.
 
 			if (template.EntityMode == 0)
+			{
 				template.OwnerHandle = this._handlesReader.HandleReference(entity.Handle);
+			}
+			else if (template.EntityMode == 1)
+			{
+				this._builder.PaperSpaceEntities.Add(entity);
+			}
+			else if (template.EntityMode == 2)
+			{
+				this._builder.ModelSpaceEntities.Add(entity);
+			}
 
 			//Numreactors BL number of persistent reactors attached to this object
 			this.readReactorsAndDictionaryHandle(template);
@@ -975,6 +985,8 @@ namespace ACadSharp.IO.DWG
 					template = this.readDictionaryVar();
 					break;
 				case "DICTIONARYWDFLT":
+					template = this.readDictionaryWithDefault();
+					break;
 				case "FIELD":
 					break;
 				case "GROUP":
@@ -993,7 +1005,6 @@ namespace ACadSharp.IO.DWG
 					template = this.readLayout();
 					break;
 				case "LWPLINE":
-					break;
 				case "LWPOLYLINE":
 					template = this.readLWPolyline();
 					break;
@@ -1043,6 +1054,11 @@ namespace ACadSharp.IO.DWG
 					break;
 				default:
 					break;
+			}
+
+			if (c.IsAnEntity)
+			{
+				this.readUnknownEntity();
 			}
 
 			if (template == null)

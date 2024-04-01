@@ -66,6 +66,48 @@ namespace ACadSharp.IO.Templates
 		protected IEnumerable<T> getEntitiesCollection<T>(CadDocumentBuilder builder, ulong firstHandle, ulong endHandle)
 			where T : Entity
 		{
+#if false
+			Dictionary<ulong, T> collection = new();
+
+			CadEntityTemplate template = null;
+
+			do
+			{
+				if (!builder.TryGetObjectTemplate(firstHandle, out template))
+				{
+					firstHandle++;
+					continue;
+				}
+				else if (!template.OwnerHandle.HasValue)
+				{
+					if (template.NextEntity.HasValue)
+					{
+						if (template.NextEntity.Value != 0)
+						{
+							firstHandle = template.NextEntity.Value;
+						}
+						else
+						{
+							firstHandle = template.CadObject.Handle + 1;
+						}
+					}
+					else
+					{
+						firstHandle = template.CadObject.Handle + 1;
+					}
+				}
+				else
+				{
+					firstHandle = template.CadObject.Handle + 1;
+					continue;
+				}
+
+				collection.Add(template.CadObject.Handle, (T)template.CadObject);
+
+			} while (firstHandle != endHandle);
+
+			return collection.Values;
+#else
 			List<T> collection = new List<T>();
 
 			CadEntityTemplate template = builder.GetObjectTemplate<CadEntityTemplate>(firstHandle);
@@ -84,6 +126,7 @@ namespace ACadSharp.IO.Templates
 			}
 
 			return collection;
+#endif
 		}
 
 		protected bool getTableReference<T>(CadDocumentBuilder builder, ulong? handle, string name, out T reference)

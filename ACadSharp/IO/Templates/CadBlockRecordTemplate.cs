@@ -40,25 +40,19 @@ namespace ACadSharp.IO.Templates
 
 			if (this.FirstEntityHandle.HasValue)
 			{
-				var entities = this.getEntitiesCollection<Entity>(builder, this.FirstEntityHandle.Value, this.LastEntityHandle.Value);
-				this.CadObject.Entities.AddRange(entities);
+				//Missing or not implemented entities mess with this method
+				foreach (Entity e in this.getEntitiesCollection<Entity>(builder, this.FirstEntityHandle.Value, this.LastEntityHandle.Value))
+				{
+					this.addEntity(e);
+				}
 			}
 			else
 			{
 				foreach (ulong handle in this.OwnedObjectsHandlers)
 				{
-					if (builder.TryGetCadObject<Entity>(handle, out Entity child))
+					if (builder.TryGetCadObject(handle, out Entity child))
 					{
-						switch (child)
-						{
-							case Viewport viewport:
-								this.CadObject.Viewports.Add(viewport);
-								break;
-							default:
-								this.CadObject.Entities.Add(child);
-								break;
-						}
-
+						this.addEntity(child);
 					}
 				}
 			}
@@ -79,12 +73,24 @@ namespace ACadSharp.IO.Templates
 				block.Comments = this.CadObject.BlockEntity.Comments;
 
 				this.CadObject.BlockEntity = block;
-
 			}
 
 			if (builder.TryGetCadObject(this.EndBlockHandle, out BlockEnd blockEnd))
 			{
 				this.CadObject.BlockEnd = blockEnd;
+			}
+		}
+
+		private void addEntity(Entity entity)
+		{
+			switch (entity)
+			{
+				case Viewport viewport:
+					this.CadObject.Viewports.Add(viewport);
+					break;
+				default:
+					this.CadObject.Entities.Add(entity);
+					break;
 			}
 		}
 	}
