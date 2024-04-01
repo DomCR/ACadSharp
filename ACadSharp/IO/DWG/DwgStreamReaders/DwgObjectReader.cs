@@ -1041,13 +1041,33 @@ namespace ACadSharp.IO.DWG
 					break;
 			}
 
+			if (template == null && c.IsAnEntity)
+			{
+				template = this.readUnknownEntity(c);
+				this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownEntity", NotificationType.Warning);
+			}
+
 			if (template == null)
+			{
 				this._builder.Notify($"Unlisted object not implemented, DXF name: {c.DxfName}", NotificationType.NotImplemented);
+			}
 
 			return template;
 		}
 
 		#region Text entities
+
+		private CadTemplate readUnknownEntity(DxfClass dxfClass)
+		{
+			UnknownEntity entity = new UnknownEntity(dxfClass);
+			CadUnknownEntityTemplate template = new CadUnknownEntityTemplate(entity);
+
+			this._builder.UnknownEntities.Add(entity);
+
+			this.readCommonEntityData(template);
+
+			return template;
+		}
 
 		private CadTemplate readText()
 		{
