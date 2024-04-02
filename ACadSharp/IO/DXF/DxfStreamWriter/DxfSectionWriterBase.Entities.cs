@@ -23,14 +23,7 @@ namespace ACadSharp.IO.DXF
 					return;
 			}
 
-			if (entity.ObjectName == "MLEADER")
-			{
-				this._writer.Write(DxfCode.Start, "MULTILEADER");
-			}
-			else
-			{
-				this._writer.Write(DxfCode.Start, entity.ObjectName);
-			}
+			this._writer.Write(DxfCode.Start, entity.ObjectName);
 
 			this.writeCommonObjectData(entity);
 
@@ -699,7 +692,9 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.WriteCmColor(92, multiLeader.TextColor);
 
-			this._writer.WriteCmColor(91, multiLeader.BlockContentColor);
+			this._writer.Write(292, multiLeader.TextFrame);
+
+			this._writer.WriteCmColor(93, multiLeader.BlockContentColor);
 
 			this._writer.Write(10, multiLeader.BlockContentScale);
 

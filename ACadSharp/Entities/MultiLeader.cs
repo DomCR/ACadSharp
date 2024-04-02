@@ -14,10 +14,10 @@ namespace ACadSharp.Entities
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.EntityMLeader"/> <br/>
-	/// Dxf class name <see cref="DxfSubclassMarker.MLeader"/>
+	/// Dxf class name <see cref="DxfSubclassMarker.MultiLeader"/>
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityMLeader)]
-	[DxfSubClass(DxfSubclassMarker.MLeader)]
+	[DxfSubClass(DxfSubclassMarker.MultiLeader)]
 	public class MultiLeader : Entity
 	{
 		/// <inheritdoc/>
@@ -27,7 +27,7 @@ namespace ACadSharp.Entities
 		public override string ObjectName => DxfFileToken.EntityMLeader;
 
 		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.MLeader;
+		public override string SubclassMarker => DxfSubclassMarker.MultiLeader;
 
 		// TODO
 		// We ommit this class because we assumed that the multileader

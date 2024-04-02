@@ -10,11 +10,6 @@ namespace ACadSharp.IO.DWG
 {
 	internal partial class DwgObjectWriter : DwgSectionIO
 	{
-		private Dictionary<string, string> _classNameMap = new Dictionary<string, string>()
-		{
-			{ "MLEADER", "MULTILEADER" }
-		};
-
 		private void registerObject(CadObject cadObject)
 		{
 			this._writer.WriteSpearShift();
@@ -121,8 +116,7 @@ namespace ACadSharp.IO.DWG
 			switch (cadObject.ObjectType)
 			{
 				case ObjectType.UNLISTED:
-					string className = mapClassName(cadObject.ObjectName);
-					if (this._document.Classes.TryGetByName(className, out DxfClass dxfClass))
+					if (this._document.Classes.TryGetByName(cadObject.ObjectName, out DxfClass dxfClass))
 					{
 						this._writer.WriteObjectType(dxfClass.ClassNumber);
 					}
@@ -151,15 +145,6 @@ namespace ACadSharp.IO.DWG
 
 			//Extended object data, if any
 			this.writeExtendedData(cadObject.ExtendedData);
-		}
-
-		private string mapClassName(string objectName)
-		{
-			if (_classNameMap.TryGetValue(objectName, out string className))
-			{
-				return className;
-			}
-			return objectName;
 		}
 
 		private void writeCommonNonEntityData(CadObject cadObject)
