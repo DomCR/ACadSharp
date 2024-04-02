@@ -39,7 +39,7 @@ namespace ACadSharp.IO.DXF
 				arr[0] = (byte)color.B;
 				arr[1] = (byte)color.G;
 				arr[2] = (byte)color.R;
-				arr[3] = 0b1100_0000;
+				arr[3] = 0b1100_0010;
 			}
 			else {
 				arr[3] = 0b1100_0001;
