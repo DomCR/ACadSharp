@@ -2,7 +2,7 @@
 {
 	public class EntityNode : Node
 	{
-		public ColorData Color { get; set; }
+		public ColorData Color { get; set; } = new ColorData();
 
 		public string LayerName { get; set; }
 

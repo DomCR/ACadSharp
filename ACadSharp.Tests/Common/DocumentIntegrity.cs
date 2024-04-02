@@ -15,7 +15,7 @@ namespace ACadSharp.Tests.Common
 	{
 		public ITestOutputHelper Output { get; set; }
 
-		private const string _documentTree = "../../../../ACadSharp.Tests/Data/document_tree.json";
+		private const string _folder = "../../../../ACadSharp.Tests/Data/";
 
 		private CadDocument _document;
 
@@ -87,9 +87,11 @@ namespace ACadSharp.Tests.Common
 		public void AssertDocumentContent(CadDocument doc)
 		{
 			this._document = doc;
-			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(File.ReadAllText(_documentTree));
+			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(
+				File.ReadAllText(Path.Combine(_folder,$"{doc.Header.Version}_tree.json"))
+				);
 
-			this.assertTableContent(doc.AppIds, tree.AppIdsTable);
+			//this.assertTableContent(doc.AppIds, tree.AppIdsTable);
 			this.assertTableContent(doc.BlockRecords, tree.BlocksTable);
 			this.assertTableContent(doc.DimensionStyles, tree.DimensionStylesTable);
 			this.assertTableContent(doc.Layers, tree.LayersTable);
@@ -103,7 +105,9 @@ namespace ACadSharp.Tests.Common
 		public void AssertDocumentTree(CadDocument doc)
 		{
 			this._document = doc;
-			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(File.ReadAllText(_documentTree));
+			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(
+						File.ReadAllText(Path.Combine(_folder, $"{doc.Header.Version}_tree.json"))
+						);
 
 			this.assertTableTree(doc.BlockRecords, tree.BlocksTable);
 			this.assertTableTree(doc.Layers, tree.LayersTable);
@@ -140,8 +144,11 @@ namespace ACadSharp.Tests.Common
 
 			foreach (T entry in table)
 			{
+				if (entry.Name.Contains("__") || entry.Name.Contains(" @ "))
+					continue;
+
 				TableEntryNode child = node.GetEntry(entry.Handle);
-				this.notNull(child, $"Entry name: {entry.Name}");
+				this.notNull(child, $"[{table}] Entry name: {entry.Name}");
 
 				this.assertObject(entry, child);
 

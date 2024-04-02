@@ -63,9 +63,9 @@ namespace ACadSharp.Tests.IO.DXF
 		[Theory]
 		[MemberData(nameof(DxfAsciiFiles))]
 		[MemberData(nameof(DxfBinaryFiles))]
-		public override void AssertDocumentTree(string test)
+		public override void AssertDocumentContent(string test)
 		{
-			base.AssertDocumentTree(test);
+			base.AssertDocumentContent(test);
 		}
 
 		[Theory]
