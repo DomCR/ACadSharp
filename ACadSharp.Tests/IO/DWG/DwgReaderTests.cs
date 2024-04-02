@@ -45,6 +45,13 @@ namespace ACadSharp.Tests.IO.DWG
 
 		[Theory]
 		[MemberData(nameof(DwgFilePaths))]
+		public override void AssertDocumentContent(string test)
+		{
+			base.AssertDocumentContent(test);
+		}
+
+		[Theory]
+		[MemberData(nameof(DwgFilePaths))]
 		public override void AssertDocumentTree(string test)
 		{
 			base.AssertDocumentTree(test);

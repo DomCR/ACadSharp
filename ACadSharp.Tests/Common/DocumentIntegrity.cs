@@ -1,13 +1,11 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Tests.TestModels;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -61,7 +59,7 @@ namespace ACadSharp.Tests.Common
 			this.entryNotNull(doc.VPorts, "*Active");
 
 			//Assert Model layout
-			var layout = doc.Layouts.FirstOrDefault(l => l.Name == "Model");
+			var layout = doc.Layouts.FirstOrDefault(l => l.Name == Layout.LayoutModelName);
 			this.notNull(layout, "Layout Model is null");
 			Assert.True(layout.AssociatedBlock == doc.ModelSpace);
 		}
@@ -84,6 +82,14 @@ namespace ACadSharp.Tests.Common
 					this.documentObjectNotNull(doc, e);
 				}
 			}
+		}
+
+		public void AssertDocumentContent(CadDocument doc)
+		{
+			this._document = doc;
+			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(File.ReadAllText(_documentTree));
+
+			this.assertTableContent(doc.BlockRecords, tree.BlocksTable);
 		}
 
 		public void AssertDocumentTree(CadDocument doc)
@@ -116,6 +122,27 @@ namespace ACadSharp.Tests.Common
 
 				this.documentObjectNotNull(doc, entry);
 			}
+		}
+
+		private void assertTableContent<T, R>(Table<T> table, TableNode<R> node)
+			where T : TableEntry
+			where R : TableEntryNode
+		{
+			this.assertObject(table, node);
+
+			foreach (T entry in table)
+			{
+				TableEntryNode child = node.GetEntry(entry.Handle);
+				Assert.NotNull(child);
+			}
+
+			//this.assertObjectContent(table, node);
+
+			//foreach (TableEntryNode entryNode in node.Entries)
+			//{
+			//	Assert.True(table.TryGetValue(entryNode.Name, out T entry));
+			//	this.assertObject(entry, entryNode);
+			//}
 		}
 
 		private void assertTable<T, R>(Table<T> table, TableNode<R> node)
@@ -159,7 +186,7 @@ namespace ACadSharp.Tests.Common
 			if (co.XDictionary != null && this._document.Header.Version >= ACadVersion.AC1021)
 			{
 				// Some versions do not add dictionaries to some entities
-				if (node.DictionaryHandle != 0 && false)	//TODO: handles does not match for the different versions, the export script for DocumentTree should handle that
+				if (node.DictionaryHandle != 0 && false)    //TODO: handles does not match for the different versions, the export script for DocumentTree should handle that
 				{
 					Assert.True(co.XDictionary.Handle == node.DictionaryHandle, $"Dictionary handle doesn't match; actual: {co.XDictionary.Handle} | expected {node.DictionaryHandle}");
 					Assert.True(co.XDictionary.Owner == co);

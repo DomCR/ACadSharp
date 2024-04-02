@@ -83,15 +83,7 @@ namespace ACadSharp.IO.Templates
 
 		private void addEntity(Entity entity)
 		{
-			switch (entity)
-			{
-				case Viewport viewport:
-					this.CadObject.Viewports.Add(viewport);
-					break;
-				default:
-					this.CadObject.Entities.Add(entity);
-					break;
-			}
+			this.CadObject.Entities.Add(entity);
 		}
 	}
 }
