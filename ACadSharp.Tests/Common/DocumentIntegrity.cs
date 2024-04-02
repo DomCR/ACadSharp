@@ -89,7 +89,15 @@ namespace ACadSharp.Tests.Common
 			this._document = doc;
 			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(File.ReadAllText(_documentTree));
 
+			this.assertTableContent(doc.AppIds, tree.AppIdsTable);
 			this.assertTableContent(doc.BlockRecords, tree.BlocksTable);
+			this.assertTableContent(doc.DimensionStyles, tree.DimensionStylesTable);
+			this.assertTableContent(doc.Layers, tree.LayersTable);
+			this.assertTableContent(doc.LineTypes, tree.LineTypesTable);
+			this.assertTableContent(doc.TextStyles, tree.TextStylesTable);
+			this.assertTableContent(doc.UCSs, tree.UCSsTable);
+			this.assertTableContent(doc.Views, tree.ViewsTable);
+			this.assertTableContent(doc.VPorts, tree.VPortsTable);
 		}
 
 		public void AssertDocumentTree(CadDocument doc)
@@ -97,8 +105,8 @@ namespace ACadSharp.Tests.Common
 			this._document = doc;
 			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(File.ReadAllText(_documentTree));
 
-			this.assertTable(doc.BlockRecords, tree.BlocksTable);
-			this.assertTable(doc.Layers, tree.LayersTable);
+			this.assertTableTree(doc.BlockRecords, tree.BlocksTable);
+			this.assertTableTree(doc.Layers, tree.LayersTable);
 		}
 
 		private void assertTable<T>(CadDocument doc, Table<T> table)
@@ -133,48 +141,46 @@ namespace ACadSharp.Tests.Common
 			foreach (T entry in table)
 			{
 				TableEntryNode child = node.GetEntry(entry.Handle);
-				Assert.NotNull(child);
+				this.notNull(child, $"Entry name: {entry.Name}");
+
+				this.assertObject(entry, child);
+
+				switch (entry)
+				{
+					case BlockRecord record when child is BlockRecordNode blockRecordNode:
+						this.assertCollectionContent(record.Entities, blockRecordNode.Entities);
+						break;
+					case Layer layer when child is LayerNode layerNode:
+						this.assertLayer(layer, layerNode);
+						break;
+					default:
+						break;
+				}
 			}
-
-			//this.assertObjectContent(table, node);
-
-			//foreach (TableEntryNode entryNode in node.Entries)
-			//{
-			//	Assert.True(table.TryGetValue(entryNode.Name, out T entry));
-			//	this.assertObject(entry, entryNode);
-			//}
 		}
 
-		private void assertTable<T, R>(Table<T> table, TableNode<R> node)
+		private void assertTableTree<T, R>(Table<T> table, TableNode<R> node)
 			where T : TableEntry
 			where R : TableEntryNode
 		{
 			this.assertObject(table, node);
 
-			//By handle
-			foreach (T entry in table)
+			foreach (R child in node.Entries)
 			{
-				TableEntryNode child = node.GetEntry(entry.Handle);
-				if (child == null)
-				{
-					this.Output.WriteLine($"[{node.ACadName}] entry not found in the tree handle: {entry.Handle}");
-					continue;
-				}
-
+				Assert.True(table.TryGetValue(child.Name, out T entry), $"Entry not found: {child.Name}");
 				this.assertObject(entry, child);
-			}
 
-			//By name
-			foreach (T entry in table)
-			{
-				TableEntryNode child = node.GetEntry(entry.Name);
-				if (child == null)
+				switch (entry)
 				{
-					this.Output.WriteLine($"[{node.ACadName}] entry not found in the tree name: {entry.Name}");
-					continue;
+					case BlockRecord record when child is BlockRecordNode blockRecordNode:
+						this.assertCollectionTree(record.Entities, blockRecordNode.Entities);
+						break;
+					case Layer layer when child is LayerNode layerNode:
+						this.assertLayer(layer, layerNode);
+						break;
+					default:
+						break;
 				}
-
-				this.assertObject(entry, child);
 			}
 		}
 
@@ -195,28 +201,14 @@ namespace ACadSharp.Tests.Common
 				this.notNull<CadDocument>(co.XDictionary.Document, "Dictionary is not assigned to a document");
 				Assert.Equal(co.Document, co.XDictionary.Document);
 			}
-
-			switch (co)
-			{
-				case BlockRecord record when node is BlockRecordNode blockRecordNode:
-					this.assertCollection(record.Entities, blockRecordNode.Entities);
-					break;
-				case Entity entity when node is EntityNode enode:
-					this.assertEntity(entity, enode);
-					break;
-				case Layer layer when node is LayerNode lnode:
-					this.assertLayer(layer, lnode);
-					break;
-				default:
-					break;
-			}
 		}
 
 		private void assertEntity(Entity entity, EntityNode node)
 		{
+			this.assertObject(entity, node);
+
 			if (this._document.Header.Version > ACadVersion.AC1021) //TODO: For TextEntity the default layer is changed for "0 @ 1"
 				Assert.Equal(entity.Layer.Name, node.LayerName);
-
 
 			//Assert.Equal(entity.Transparency, node.Transparency);
 			Assert.Equal(entity.LineType.Name, node.LinetypeName, ignoreCase: true);
@@ -240,28 +232,26 @@ namespace ACadSharp.Tests.Common
 			}
 		}
 
-		private void assertCollection(IEnumerable<CadObject> collection, IEnumerable<Node> node)
+		private void assertCollectionContent(IEnumerable<Entity> collection, IEnumerable<EntityNode> node)
 		{
-			//Check the actual elements in the collection
-			foreach (CadObject entry in collection)
+			foreach (Entity e in collection)
 			{
-				Node child = node.FirstOrDefault(x => x.Handle == entry.Handle);
+				EntityNode child = node.FirstOrDefault(x => x.Handle == e.Handle);
+				this.notNull(child, $"Entity: {e}");
 
-				if (child == null)
-				{
-					this.Output.WriteLine($"Handle not found in collection : {entry.Handle}");
-					continue;
-				}
-
-				this.assertObject(entry, child);
+				this.assertEntity(e, child);
 			}
+		}
 
+		private void assertCollectionTree(IEnumerable<Entity> collection, IEnumerable<EntityNode> node)
+		{
 			//Look for missing elements
-			foreach (Node n in node)
+			foreach (EntityNode n in node)
 			{
-				var o = collection.FirstOrDefault(x => x.Handle == n.Handle);
-				if (o == null)
-					this.Output.WriteLine($"Missing object in {n.ACadName} collection with handle : {n.Handle} | owner handle : {n.OwnerHandle}");
+				var e = collection.FirstOrDefault(x => x.Handle == n.Handle);
+				this.notNull(e, $"Entity: {n}");
+
+				this.assertEntity(e, n);
 			}
 		}
 
@@ -275,7 +265,7 @@ namespace ACadSharp.Tests.Common
 
 		private void notNull<T>(T o, string info = null)
 		{
-			Assert.True(o != null, $"Object of type {typeof(T)} should not be null:  {info}");
+			Assert.True(o != null, $"Object of type {typeof(T)} should not be null: {info}");
 		}
 
 		private void entryNotNull<T>(Table<T> table, string entry)
