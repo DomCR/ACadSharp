@@ -88,10 +88,13 @@ namespace ACadSharp.Tests.Common
 		{
 			this._document = doc;
 			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(
-				File.ReadAllText(Path.Combine(_folder,$"{doc.Header.Version}_tree.json"))
+				File.ReadAllText(Path.Combine(_folder, $"{doc.Header.Version}_tree.json"))
 				);
 
-			//this.assertTableContent(doc.AppIds, tree.AppIdsTable);
+			if (doc.Header.Version > ACadVersion.AC1021)
+			{
+				this.assertTableContent(doc.AppIds, tree.AppIdsTable);
+			}
 			this.assertTableContent(doc.BlockRecords, tree.BlocksTable);
 			this.assertTableContent(doc.DimensionStyles, tree.DimensionStylesTable);
 			this.assertTableContent(doc.Layers, tree.LayersTable);
