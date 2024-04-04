@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
+using ACadSharp.IO.DWG;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSUtilities.Extensions;
@@ -40,19 +41,23 @@ namespace ACadSharp.IO.Templates
 
 			if (this.FirstEntityHandle.HasValue)
 			{
-				//Missing or not implemented entities mess with this method
 				foreach (Entity e in this.getEntitiesCollection<Entity>(builder, this.FirstEntityHandle.Value, this.LastEntityHandle.Value))
 				{
-					this.addEntity(e);
+					this.addEntity(builder, e);
 				}
 			}
 			else
 			{
 				foreach (ulong handle in this.OwnedObjectsHandlers)
 				{
+					if(handle == 835)
+					{
+
+					}
+
 					if (builder.TryGetCadObject(handle, out Entity child))
 					{
-						this.addEntity(child);
+						this.addEntity(builder, child);
 					}
 				}
 			}
@@ -81,8 +86,13 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
-		private void addEntity(Entity entity)
+		private void addEntity(CadDocumentBuilder builder,Entity entity)
 		{
+			if(!builder.KeepUnknownEntities && entity is UnknownEntity)
+			{
+				return;
+			}
+
 			this.CadObject.Entities.Add(entity);
 		}
 	}

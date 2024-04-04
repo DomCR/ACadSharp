@@ -9,6 +9,8 @@ namespace ACadSharp.IO.DXF
 	{
 		public DxfReaderConfiguration Configuration { get; }
 
+		public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
+
 		public DxfDocumentBuilder(CadDocument document, DxfReaderConfiguration configuration) : base(document)
 		{
 			this.Configuration = configuration;
@@ -41,6 +43,11 @@ namespace ACadSharp.IO.DXF
 		{
 			if (template.CadObject.Owner != null || template.CadObject is CadDictionary || !template.OwnerHandle.HasValue)
 				return;
+
+			if(template is CadUnknownEntityTemplate)
+			{
+
+			}
 
 			if (this.TryGetObjectTemplate(template.OwnerHandle, out CadTemplate owner))
 			{

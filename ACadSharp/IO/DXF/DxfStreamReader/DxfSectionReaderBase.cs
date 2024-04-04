@@ -154,6 +154,8 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<Face3D>(new CadEntityTemplate<Face3D>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityEllipse:
 					return this.readEntityCodes<Ellipse>(new CadEntityTemplate<Ellipse>(), this.readEntitySubclassMap);
+				case DxfFileToken.EntityLeader:
+					return this.readEntityCodes<Leader>(new CadLeaderTemplate(), this.readLeader);
 				case DxfFileToken.EntityLine:
 					return this.readEntityCodes<Line>(new CadEntityTemplate<Line>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityLwPolyline:
@@ -198,13 +200,40 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntitySpline:
 					return this.readEntityCodes<Spline>(new CadSplineTemplate(), this.readSpline);
 				default:
-					this._builder.Notify($"Entity not implemented: {this._reader.ValueAsString}", NotificationType.NotImplemented);
+
+					DxfMap map = DxfMap.Create<Entity>();
+					CadUnknownEntityTemplate unknownEntityTemplate = null;
+					if (this._builder.DocumentToBuild.Classes.TryGetByName(this._reader.ValueAsString, out Classes.DxfClass dxfClass))
+					{
+						this._builder.Notify($"Entity not supported read as an UnknownEntity: {this._reader.ValueAsString}", NotificationType.NotImplemented);
+						unknownEntityTemplate = new CadUnknownEntityTemplate(new UnknownEntity(dxfClass));
+					}
+					else
+					{
+						this._builder.Notify($"Entity not supported: {this._reader.ValueAsString}", NotificationType.NotImplemented);
+					}
+
+					this._reader.ReadNext();
+
 					do
 					{
+						if (unknownEntityTemplate != null)
+						{
+							this.readCommonEntityCodes(unknownEntityTemplate, out _, map);
+						}
+
 						this._reader.ReadNext();
 					}
 					while (this._reader.DxfCode != DxfCode.Start);
-					return null;
+
+					if (this._builder.Configuration.KeepUnknownEntities)
+					{
+						return unknownEntityTemplate;
+					}
+					else
+					{
+						return null;
+					}
 			}
 		}
 
@@ -554,6 +583,39 @@ namespace ACadSharp.IO.DXF
 						default:
 							return false;
 					}
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readLeader(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadLeaderTemplate tmp = template as CadLeaderTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 3:
+					tmp.DIMSTYLEName = this._reader.ValueAsString;
+					return true;
+				case 10:
+					tmp.CadObject.Vertices.Add(new XYZ(this._reader.ValueAsDouble, 0, 0));
+					return true;
+				case 20:
+					XYZ y = tmp.CadObject.Vertices[tmp.CadObject.Vertices.Count - 1];
+					y.Y = this._reader.ValueAsDouble;
+					tmp.CadObject.Vertices[tmp.CadObject.Vertices.Count - 1] = y;
+					return true;
+				case 30:
+					XYZ z = tmp.CadObject.Vertices[tmp.CadObject.Vertices.Count - 1];
+					z.Z = this._reader.ValueAsDouble;
+					tmp.CadObject.Vertices[tmp.CadObject.Vertices.Count - 1] = z;
+					return true;
+				case 340:
+					tmp.AnnotationHandle = this._reader.ValueAsHandle;
+					return true;
+				//Vertices count
+				case 76:
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}

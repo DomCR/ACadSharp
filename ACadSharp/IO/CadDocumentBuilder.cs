@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO.DWG;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO.DWG;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
@@ -32,6 +33,8 @@ namespace ACadSharp.IO
 
 		public VPortsTable VPorts { get; set; }
 
+		public abstract bool KeepUnknownEntities { get; }
+
 		public Dictionary<string, LineType> LineTypes { get; } = new Dictionary<string, LineType>(StringComparer.OrdinalIgnoreCase);
 
 		// Stores all the templates to build the document, some of the elements can be null due a missing implementation
@@ -53,7 +56,7 @@ namespace ACadSharp.IO
 				template.Build(this);
 			}
 
-			this.DocumentToBuild.UpdateCollections(false);
+			//this.DocumentToBuild.UpdateCollections(false);
 		}
 
 		public void AddTableTemplate(ICadTableTemplate tableTemplate)
@@ -92,7 +95,7 @@ namespace ACadSharp.IO
 			return null;
 		}
 
-		public virtual bool TryGetCadObject<T>(ulong? handle, out T value) where T : CadObject
+		public bool TryGetCadObject<T>(ulong? handle, out T value) where T : CadObject
 		{
 			if (!handle.HasValue)
 			{
@@ -102,6 +105,12 @@ namespace ACadSharp.IO
 
 			if (this.cadObjects.TryGetValue(handle.Value, out CadObject obj))
 			{
+				if (obj is UnknownEntity && !this.KeepUnknownEntities)
+				{
+					value = null;
+					return false;
+				}
+
 				if (obj is T)
 				{
 					value = (T)obj;
@@ -120,7 +129,6 @@ namespace ACadSharp.IO
 			return entry != null;
 		}
 
-		[Obsolete]
 		public T GetObjectTemplate<T>(ulong handle) where T : CadTemplate
 		{
 			if (this.templates.TryGetValue(handle, out CadTemplate builder))

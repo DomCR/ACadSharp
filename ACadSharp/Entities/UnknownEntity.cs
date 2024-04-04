@@ -14,10 +14,29 @@ namespace ACadSharp.Entities
 		public override ObjectType ObjectType => ObjectType.UNDEFINED;
 
 		/// <inheritdoc/>
-		public override string ObjectName => this.DxfClass.DxfName;
+		public override string ObjectName
+		{
+			get
+			{
+				return this.DxfClass.DxfName;
+			}
+		}
 
 		/// <inheritdoc/>
-		public override string SubclassMarker => this.DxfClass.CppClassName;
+		public override string SubclassMarker
+		{
+			get
+			{
+				if (this.DxfClass == null)
+				{
+					return DxfSubclassMarker.Entity;
+				}
+				else
+				{
+					return this.DxfClass.CppClassName;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Dxf class linked to this entity
