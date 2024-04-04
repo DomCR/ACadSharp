@@ -662,8 +662,10 @@ namespace ACadSharp.IO.DXF
 						last.CurveTangent = this._reader.ValueAsDouble;
 					}
 					return true;
+				//Obsolete; formerly an “entities follow flag” (optional; ignore if present)
+				case 66:
+				//Vertex count
 				case 90:
-					//Vertex count
 					return true;
 				case 91:
 					if (last is not null)
