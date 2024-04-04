@@ -61,7 +61,7 @@ namespace ACadSharp.Tests.Common
 			if (type == typeof(XRecord)
 				|| type == typeof(PlotSettings)
 				|| type == typeof(Material)
-				|| type == typeof(MLStyle)
+				|| type == typeof(MLineStyle)
 				|| type == typeof(Layout)
 				|| type == typeof(Group)
 				|| type == typeof(CadDictionary)

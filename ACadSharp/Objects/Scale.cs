@@ -11,7 +11,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectScale)]
 	[DxfSubClass(DxfSubclassMarker.Scale)]
-	public class Scale : CadObject
+	public class Scale : CadObject, IDictionaryEntry
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }

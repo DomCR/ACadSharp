@@ -1,6 +1,5 @@
 ﻿using CSMath;
 using System;
-using System.IO;
 
 namespace ACadSharp.IO.DXF
 {

@@ -10,18 +10,6 @@ namespace ACadSharp.IO.Templates
 
 		public DwgTextEntityTemplate(Entity entity) : base(entity) { }
 
-		public override bool CheckDxfCode(int dxfcode, object value)
-		{
-			switch (dxfcode)
-			{
-				//Multiple options
-				case 280:
-					//return true;
-				default:
-					return false;
-			}
-		}
-
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);

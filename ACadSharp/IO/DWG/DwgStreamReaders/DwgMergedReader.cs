@@ -2,6 +2,7 @@
 using CSUtilities.Converters;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -49,7 +50,7 @@ namespace ACadSharp.IO.DWG
 
 		public void Advance(int offset)
 		{
-			throw new InvalidOperationException();
+			_mainReader.Advance(offset);
 		}
 
 		public void AdvanceByte()
@@ -168,29 +169,17 @@ namespace ACadSharp.IO.DWG
 			//BL: RGB value
 			//Always negative
 			uint rgb = (uint)this.ReadBitLong();
+			byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
 
-			if ((rgb & 0b1000000000000000000000000) != 0)
+			if ((rgb & 0b0000_0001_0000_0000_0000_0000_0000_0000) != 0)
 			{
 				//Indexed color
-				uint index = (uint)((int)rgb + 0b1100_0011_0000_0000_0000_0000_0000_0000);
-				color = new Color((byte)index);
+				color = new Color(arr[0]);
 			}
 			else
 			{
-				//CECOLOR:
-				//3221225472
-				//0b11000000000000000000000000000000
-				//0b1100_0000_0000_0000_0000_0000_0000_0000 --> this should be ByLayer
-				//0xC0000000
-
 				//True color
-				uint trueColor = (uint)((int)rgb - 0xC2000000);
-
-				//Needs the check just in case the flag is not set
-				if (trueColor < (1 << 24))
-				{
-					color = Color.FromTrueColor((int)trueColor);
-				}
+				color = new Color(arr[2], arr[1], arr[0]);
 			}
 
 			//RC : Color Byte

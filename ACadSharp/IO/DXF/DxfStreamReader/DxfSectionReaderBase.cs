@@ -2,11 +2,9 @@
 using ACadSharp.IO.Templates;
 using CSMath;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Numerics;
 
 namespace ACadSharp.IO.DXF
 {
@@ -143,35 +141,37 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.ValueAsString)
 			{
 				case DxfFileToken.EntityAttribute:
-					return this.readEntityCodes<AttributeEntity>(new CadTextEntityTemplate(new AttributeEntity()), readAttributeDefinition);
+					return this.readEntityCodes<AttributeEntity>(new CadTextEntityTemplate(new AttributeEntity()), this.readAttributeDefinition);
 				case DxfFileToken.EntityAttributeDefinition:
-					return this.readEntityCodes<AttributeDefinition>(new CadTextEntityTemplate(new AttributeDefinition()), readAttributeDefinition);
+					return this.readEntityCodes<AttributeDefinition>(new CadTextEntityTemplate(new AttributeDefinition()), this.readAttributeDefinition);
 				case DxfFileToken.EntityArc:
-					return this.readEntityCodes<Arc>(new CadEntityTemplate<Arc>(), readArc);
+					return this.readEntityCodes<Arc>(new CadEntityTemplate<Arc>(), this.readArc);
 				case DxfFileToken.EntityCircle:
-					return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), readEntitySubclassMap);
+					return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityDimension:
-					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(), readDimension);
+					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(), this.readDimension);
 				case DxfFileToken.Entity3DFace:
-					return this.readEntityCodes<Face3D>(new CadEntityTemplate<Face3D>(), readEntitySubclassMap);
+					return this.readEntityCodes<Face3D>(new CadEntityTemplate<Face3D>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityEllipse:
-					return this.readEntityCodes<Ellipse>(new CadEntityTemplate<Ellipse>(), readEntitySubclassMap);
+					return this.readEntityCodes<Ellipse>(new CadEntityTemplate<Ellipse>(), this.readEntitySubclassMap);
+				case DxfFileToken.EntityLeader:
+					return this.readEntityCodes<Leader>(new CadLeaderTemplate(), this.readLeader);
 				case DxfFileToken.EntityLine:
-					return this.readEntityCodes<Line>(new CadEntityTemplate<Line>(), readEntitySubclassMap);
+					return this.readEntityCodes<Line>(new CadEntityTemplate<Line>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityLwPolyline:
-					return this.readEntityCodes<LwPolyline>(new CadEntityTemplate<LwPolyline>(), readLwPolyline);
+					return this.readEntityCodes<LwPolyline>(new CadEntityTemplate<LwPolyline>(), this.readLwPolyline);
 				case DxfFileToken.EntityHatch:
-					return this.readEntityCodes<Hatch>(new CadHatchTemplate(), readHatch);
+					return this.readEntityCodes<Hatch>(new CadHatchTemplate(), this.readHatch);
 				case DxfFileToken.EntityInsert:
-					return this.readEntityCodes<Insert>(new CadInsertTemplate(), readInsert);
+					return this.readEntityCodes<Insert>(new CadInsertTemplate(), this.readInsert);
 				case DxfFileToken.EntityMText:
-					return this.readEntityCodes<MText>(new CadTextEntityTemplate(new MText()), readTextEntity);
+					return this.readEntityCodes<MText>(new CadTextEntityTemplate(new MText()), this.readTextEntity);
 				case DxfFileToken.EntityMLine:
-					return this.readEntityCodes<MLine>(new CadMLineTemplate(), readMLine);
+					return this.readEntityCodes<MLine>(new CadMLineTemplate(), this.readMLine);
 				case DxfFileToken.EntityPoint:
-					return this.readEntityCodes<Point>(new CadEntityTemplate<Point>(), readEntitySubclassMap);
+					return this.readEntityCodes<Point>(new CadEntityTemplate<Point>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityPolyline:
-					var template = this.readEntityCodes<Entity>(new CadPolyLineTemplate(), readPolyline);
+					var template = this.readEntityCodes<Entity>(new CadPolyLineTemplate(), this.readPolyline);
 					if (template.CadObject is CadPolyLineTemplate.PolyLinePlaceholder)
 					{
 						this._builder.Notify($"[{DxfFileToken.EntityPolyline}] Subclass not found, entity discarded", NotificationType.Warning);
@@ -182,29 +182,58 @@ namespace ACadSharp.IO.DXF
 						return template;
 					}
 				case DxfFileToken.EntityRay:
-					return this.readEntityCodes<Ray>(new CadEntityTemplate<Ray>(), readEntitySubclassMap);
+					return this.readEntityCodes<Ray>(new CadEntityTemplate<Ray>(), this.readEntitySubclassMap);
 				case DxfFileToken.EndSequence:
-					return this.readEntityCodes<Seqend>(new CadEntityTemplate<Seqend>(), readEntitySubclassMap);
+					return this.readEntityCodes<Seqend>(new CadEntityTemplate<Seqend>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntitySolid:
-					return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), readEntitySubclassMap);
+					return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityText:
-					return this.readEntityCodes<TextEntity>(new CadTextEntityTemplate(new TextEntity()), readTextEntity);
+					return this.readEntityCodes<TextEntity>(new CadTextEntityTemplate(new TextEntity()), this.readTextEntity);
+				case DxfFileToken.EntityTolerance:
+					return this.readEntityCodes<Tolerance>(new CadToleranceTemplate(new Tolerance()), this.readTolerance);
 				case DxfFileToken.EntityVertex:
-					return this.readEntityCodes<Entity>(new CadVertexTemplate(), readVertex);
+					return this.readEntityCodes<Entity>(new CadVertexTemplate(), this.readVertex);
 				case DxfFileToken.EntityViewport:
 					return this.readEntityCodes<Viewport>(new CadViewportTemplate(), this.readViewport);
 				case DxfFileToken.EntityXline:
-					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), readEntitySubclassMap);
+					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntitySpline:
-					return this.readEntityCodes<Spline>(new CadSplineTemplate(), readSpline);
+					return this.readEntityCodes<Spline>(new CadSplineTemplate(), this.readSpline);
 				default:
-					this._builder.Notify($"Entity not implemented: {this._reader.ValueAsString}", NotificationType.NotImplemented);
+
+					DxfMap map = DxfMap.Create<Entity>();
+					CadUnknownEntityTemplate unknownEntityTemplate = null;
+					if (this._builder.DocumentToBuild.Classes.TryGetByName(this._reader.ValueAsString, out Classes.DxfClass dxfClass))
+					{
+						this._builder.Notify($"Entity not supported read as an UnknownEntity: {this._reader.ValueAsString}", NotificationType.NotImplemented);
+						unknownEntityTemplate = new CadUnknownEntityTemplate(new UnknownEntity(dxfClass));
+					}
+					else
+					{
+						this._builder.Notify($"Entity not supported: {this._reader.ValueAsString}", NotificationType.NotImplemented);
+					}
+
+					this._reader.ReadNext();
+
 					do
 					{
+						if (unknownEntityTemplate != null)
+						{
+							this.readCommonEntityCodes(unknownEntityTemplate, out _, map);
+						}
+
 						this._reader.ReadNext();
 					}
 					while (this._reader.DxfCode != DxfCode.Start);
-					return null;
+
+					if (this._builder.Configuration.KeepUnknownEntities)
+					{
+						return unknownEntityTemplate;
+					}
+					else
+					{
+						return null;
+					}
 			}
 		}
 
@@ -299,8 +328,8 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.Code)
 			{
 				//TODO: Implement multiline text def codes
-				case 3 when tmp.CadObject is MText mtext:
-					mtext.AdditionalText.Concat(this._reader.ValueAsString);
+				case 1 or 3 when tmp.CadObject is MText mtext:
+					mtext.Value += this._reader.ValueAsString;
 					return true;
 				case 70:
 				case 74:
@@ -311,6 +340,20 @@ namespace ACadSharp.IO.DXF
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[mapName]);
+			}
+		}
+
+		private bool readTolerance(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadToleranceTemplate tmp = template as CadToleranceTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 3:
+					tmp.DimensionStyleName = this._reader.ValueAsString;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
 			}
 		}
 
@@ -329,11 +372,15 @@ namespace ACadSharp.IO.DXF
 				case 50:
 					var dim = new DimensionLinear();
 					tmp.SetDimensionObject(dim);
-					dim.Rotation = this._reader.ValueAsDouble;
+					dim.Rotation = CSMath.MathUtils.DegToRad(this._reader.ValueAsDouble);
 					map.SubClasses.Add(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
 					return true;
 				case 70:
 					//Flags do not have set
+					tmp.SetDimensionFlags((DimensionType)this._reader.ValueAsShort);
+					return true;
+				//Measurement - read only
+				case 42:
 					return true;
 				//Undocumented codes
 				case 73:
@@ -426,7 +473,7 @@ namespace ACadSharp.IO.DXF
 					return true;
 				//Number of boundary paths (loops)
 				case 91:
-					this.readLoops(hatch, tmp, this._reader.ValueAsInt);
+					this.readLoops(tmp, this._reader.ValueAsInt);
 					return true;
 				//Number of seed points
 				case 98:
@@ -536,6 +583,39 @@ namespace ACadSharp.IO.DXF
 						default:
 							return false;
 					}
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readLeader(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadLeaderTemplate tmp = template as CadLeaderTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 3:
+					tmp.DIMSTYLEName = this._reader.ValueAsString;
+					return true;
+				case 10:
+					tmp.CadObject.Vertices.Add(new XYZ(this._reader.ValueAsDouble, 0, 0));
+					return true;
+				case 20:
+					XYZ y = tmp.CadObject.Vertices[tmp.CadObject.Vertices.Count - 1];
+					y.Y = this._reader.ValueAsDouble;
+					tmp.CadObject.Vertices[tmp.CadObject.Vertices.Count - 1] = y;
+					return true;
+				case 30:
+					XYZ z = tmp.CadObject.Vertices[tmp.CadObject.Vertices.Count - 1];
+					z.Z = this._reader.ValueAsDouble;
+					tmp.CadObject.Vertices[tmp.CadObject.Vertices.Count - 1] = z;
+					return true;
+				case 340:
+					tmp.AnnotationHandle = this._reader.ValueAsHandle;
+					return true;
+				//Vertices count
+				case 76:
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
@@ -716,6 +796,9 @@ namespace ACadSharp.IO.DXF
 				case 69:
 					tmp.ViewportId = this._reader.ValueAsShort;
 					return true;
+				case 331:
+					tmp.FrozenLayerHandles.Add(this._reader.ValueAsHandle);
+					return true;
 				case 348:
 					tmp.VisualStyleHandle = this._reader.ValueAsHandle;
 					return true;
@@ -732,109 +815,6 @@ namespace ACadSharp.IO.DXF
 			{
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[mapName]);
-			}
-		}
-
-		protected void readMapped<T>(CadObject cadObject, CadTemplate template)
-			where T : CadObject
-		{
-			DxfClassMap map = DxfClassMap.Create<T>();
-
-			Debug.Assert(map.Name == this._reader.ValueAsString);
-			this._reader.ReadNext();
-
-			while (this._reader.DxfCode != DxfCode.Start
-				&& this._reader.DxfCode != DxfCode.Subclass)
-			{
-				//Check for an extended data code
-				if (this._reader.DxfCode == DxfCode.ExtendedDataRegAppName)
-				{
-					this.readExtendedData(template.EDataTemplateByAppName);
-					continue;
-				}
-				else if (this._reader.DxfCode >= DxfCode.ExtendedDataAsciiString)
-				{
-					this._builder.Notify($"Extended data should start witth : {DxfCode.ExtendedDataRegAppName}");
-					this._reader.ReadNext();
-					continue;
-				}
-				else if (this._reader.DxfCode == DxfCode.ControlString)
-				{
-					if (!template.CheckDxfCode(this._reader.Code, this._reader.Value))
-					{
-						this.readDefinedGroups(template);
-						this._reader.ReadNext();
-					}
-					else
-					{
-						this._reader.ReadNext();
-					}
-
-					continue;
-				}
-
-				if (!map.DxfProperties.TryGetValue(this._reader.Code, out DxfProperty dxfProperty))
-				{
-					if (!template.CheckDxfCode(this._reader.Code, this._reader.Value))
-						this._builder.Notify($"Dxf code {this._reader.Code} not found in map for {typeof(T)} | value : {this._reader.ValueAsString}");
-
-					this._reader.ReadNext();
-					continue;
-				}
-
-				if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Handle))
-				{
-					if (!template.AddHandle(this._reader.Code, this._reader.ValueAsHandle))
-						this._builder.Notify($"Dxf referenced code {this._reader.Code} not implemented in the {template.GetType().Name} for {typeof(T)} | value : {this._reader.ValueAsHandle}");
-				}
-				else if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Name))
-				{
-					if (!template.AddName(this._reader.Code, this._reader.ValueAsString))
-						this._builder.Notify($"Dxf named referenced code {this._reader.Code} not implemented in the {template.GetType().Name} for {typeof(T)} | value : {this._reader.ValueAsString}");
-				}
-				else if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Count))
-				{
-					//Do nothing just marks the amount
-				}
-				else if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Unprocess) || dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Ignored))
-				{
-					this._reader.ReadNext();
-					continue;
-				}
-				else
-				{
-					object value = this._reader.Value;
-
-					if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
-					{
-						value = (double)value * MathUtils.DegToRad;
-					}
-
-					switch (this._reader.GroupCodeValue)
-					{
-						case GroupCodeValueType.String:
-						case GroupCodeValueType.Point3D:
-						case GroupCodeValueType.Double:
-						case GroupCodeValueType.Int16:
-						case GroupCodeValueType.Int32:
-						case GroupCodeValueType.Int64:
-						case GroupCodeValueType.Chunk:
-						case GroupCodeValueType.Bool:
-							dxfProperty.SetValue(this._reader.Code, cadObject, value);
-							break;
-						case GroupCodeValueType.Comment:
-							this._builder.Notify($"Comment in the file:  {this._reader.ValueAsString}");
-							break;
-						case GroupCodeValueType.Handle:
-						case GroupCodeValueType.ObjectId:
-						case GroupCodeValueType.None:
-						default:
-							this._builder.Notify($"Group Code not handled {this._reader.GroupCodeValue} for {typeof(T)}, code : {this._reader.Code} | value : {this._reader.ValueAsString}");
-							break;
-					}
-				}
-
-				this._reader.ReadNext();
 			}
 		}
 
@@ -859,120 +839,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		protected void readHatch(Hatch hatch, CadHatchTemplate template)
-		{
-			bool isFirstSeed = true;
-			XY seedPoint = new XY();
-			DxfClassMap map = DxfClassMap.Create<Hatch>();
-
-			//Jump sublcass
-			this._reader.ReadNext();
-
-			while (this._reader.DxfCode != DxfCode.Start)
-			{
-				map.DxfProperties.TryGetValue(this._reader.Code, out DxfProperty dxfProperty);
-
-				switch (this._reader.Code)
-				{
-					//TODO: Check hatch undocumented codes
-					case 43:
-					case 44:
-					case 45:
-					case 46:
-					case 49:
-					case 53:
-					case 79:
-					case 90:
-						break;
-					case 2:
-						template.HatchPatternName = this._reader.ValueAsString;
-						break;
-					case 10:
-						seedPoint = new XY(this._reader.ValueAsDouble, seedPoint.Y);
-						break;
-					case 20:
-						if (!isFirstSeed)
-						{
-							seedPoint = new XY(seedPoint.X, this._reader.ValueAsDouble);
-							hatch.SeedPoints.Add(seedPoint);
-						}
-						break;
-					case 30:
-						hatch.Elevation = this._reader.ValueAsDouble;
-						isFirstSeed = false;
-						break;
-					case 78:    //Number of pattern definition lines
-						break;
-					case 91:    //Number of boundary paths (loops)
-						this.readLoops(hatch, template, this._reader.ValueAsInt);
-						continue;
-					case 98:    //Number of seed points
-						break;
-					case 450:
-						hatch.GradientColor.Enabled = this._reader.ValueAsBool;
-						break;
-					case 451:
-						hatch.GradientColor.Reserved = this._reader.ValueAsInt;
-						break;
-					case 452:
-						hatch.GradientColor.IsSingleColorGradient = this._reader.ValueAsBool;
-						break;
-					case 453:
-						//Number of colors
-						break;
-					case 460:
-						hatch.GradientColor.Angle = this._reader.ValueAsDouble;
-						break;
-					case 461:
-						hatch.GradientColor.Shift = this._reader.ValueAsDouble;
-						break;
-					case 462:
-						hatch.GradientColor.ColorTint = this._reader.ValueAsDouble;
-						break;
-					case 463:
-						GradientColor gradient = new GradientColor();
-						gradient.Value = this._reader.ValueAsDouble;
-						hatch.GradientColor.Colors.Add(gradient);
-						break;
-					case 63:
-						GradientColor colorByIndex = hatch.GradientColor.Colors.LastOrDefault();
-						if (colorByIndex != null)
-						{
-							colorByIndex.Color = new Color((short)this._reader.ValueAsUShort);
-						}
-						break;
-					case 421:
-						GradientColor colorByRgb = hatch.GradientColor.Colors.LastOrDefault();
-						if (colorByRgb != null)
-						{
-							//TODO: Hatch assign color by true color
-							//TODO: Is always duplicated by 63, is it needed??
-							//colorByRgb.Color = new Color(this._reader.LastValueAsShort);
-						}
-						break;
-					case 470:
-						hatch.GradientColor.Name = this._reader.ValueAsString;
-						break;
-					default:
-						if (dxfProperty != null)
-						{
-							dxfProperty.SetValue(hatch, this._reader.Value);
-							break;
-						}
-						else if (this._reader.DxfCode >= DxfCode.ExtendedDataAsciiString)
-						{
-							this.readExtendedData(template.EDataTemplateByAppName);
-							continue;
-						}
-						this._builder.Notify($"Unhandeled dxf code : {this._reader.Code} with value : {this._reader.Value} for subclass {DxfSubclassMarker.Hatch}");
-						break;
-				}
-
-				this._reader.ReadNext();
-			}
-		}
-
-		private void readLoops(Hatch hatch, CadHatchTemplate template, int count)
+		private void readLoops(CadHatchTemplate template, int count)
 		{
 			if (this._reader.Code == 91)
 				this._reader.ReadNext();
@@ -998,10 +865,8 @@ namespace ACadSharp.IO.DXF
 
 			if (template.Path.Flags.HasFlag(BoundaryPathFlags.Polyline))
 			{
-				Hatch.BoundaryPath.Edge pl = new Hatch.BoundaryPath.Polyline();
-				this._builder.Notify($"Hatch.BoundaryPath.Polyline not implemented", NotificationType.Error);
-
-				return null;
+				Hatch.BoundaryPath.Polyline pl = this.readPolylineBoundary();
+				template.Path.Edges.Add(pl);
 			}
 			else
 			{
@@ -1046,9 +911,55 @@ namespace ACadSharp.IO.DXF
 			return template;
 		}
 
-		private void readPolylineBoundary()
+		private Hatch.BoundaryPath.Polyline readPolylineBoundary()
 		{
+			Hatch.BoundaryPath.Polyline boundary = new Hatch.BoundaryPath.Polyline();
 
+			this._reader.ReadNext();
+
+			if (this._reader.Code != 72)
+			{
+				this._builder.Notify($"Polyline Boundary path should start with code 72 but was {this._reader.Code}");
+				return null;
+			}
+
+			//72
+			bool hasBulge = this._reader.ValueAsBool;
+			this._reader.ReadNext();
+
+			//73
+			bool isClosed = this._reader.ValueAsBool;
+			this._reader.ReadNext();
+
+			//93
+			int nvertices = this._reader.ValueAsInt;
+			this._reader.ReadNext();
+
+			for (int i = 0; i < nvertices; i++)
+			{
+				double bulge = 0.0;
+
+				//10
+				double x = this._reader.ValueAsDouble;
+				this._reader.ReadNext();
+				//20
+				double y = this._reader.ValueAsDouble;
+				this._reader.ReadNext();
+
+				if (hasBulge)
+				{
+					//42
+					bulge = this._reader.ValueAsDouble;
+					this._reader.ReadNext();
+				}
+
+				boundary.Vertices.Add(new XY(x, y));
+				boundary.Bulges.Add(bulge);
+			}
+
+
+
+			return boundary;
 		}
 
 		private Hatch.BoundaryPath.Edge readEdge()
@@ -1251,7 +1162,7 @@ namespace ACadSharp.IO.DXF
 					Debug.Assert(this._reader.DxfCode == DxfCode.ControlString);
 					return;
 				case DxfFileToken.ReactorsToken:
-					reactors = readReactors();
+					reactors = this.readReactors();
 					break;
 				case DxfFileToken.BlkRefToken:
 				default:
@@ -1306,7 +1217,7 @@ namespace ACadSharp.IO.DXF
 			}
 			catch (Exception ex)
 			{
-				if (!_builder.Configuration.Failsafe)
+				if (!this._builder.Configuration.Failsafe)
 				{
 					throw ex;
 				}

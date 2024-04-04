@@ -8,7 +8,7 @@
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableAppId;
 
-		protected override string[] _defaultEntries { get { return new string[] { AppId.DefaultName }; } }
+		protected override string[] defaultEntries { get { return new string[] { AppId.DefaultName }; } }
 
 		internal AppIdsTable() : base() { }
 
