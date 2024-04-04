@@ -1,6 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using System.Drawing;
-using System;
 
 namespace ACadSharp.Entities
 {

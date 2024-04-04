@@ -160,6 +160,8 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<Line>(new CadEntityTemplate<Line>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityLwPolyline:
 					return this.readEntityCodes<LwPolyline>(new CadEntityTemplate<LwPolyline>(), this.readLwPolyline);
+				case DxfFileToken.EntityMesh:
+					return this.readEntityCodes<Mesh>(new CadMeshTemplate(), this.readMesh);
 				case DxfFileToken.EntityHatch:
 					return this.readEntityCodes<Hatch>(new CadHatchTemplate(), this.readHatch);
 				case DxfFileToken.EntityInsert:
@@ -273,6 +275,12 @@ namespace ACadSharp.IO.DXF
 					break;
 				//Absent or zero indicates entity is in model space. 1 indicates entity is in paper space (optional).
 				case 67:
+					break;
+				//Number of bytes Proxy entity graphics data
+				case 92:
+				case 160:
+				//Proxy entity graphics data
+				case 310:
 					break;
 				case 347:
 					template.MaterialHandle = this._reader.ValueAsHandle;
@@ -671,6 +679,17 @@ namespace ACadSharp.IO.DXF
 						last.Id = this._reader.ValueAsInt;
 					}
 					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readMesh(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadMeshTemplate tmp = template as CadMeshTemplate;
+
+			switch (this._reader.Code)
+			{
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
