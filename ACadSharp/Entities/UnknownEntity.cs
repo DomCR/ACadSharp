@@ -18,7 +18,14 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				return this.DxfClass.DxfName;
+				if (this.DxfClass == null)
+				{
+					return "UNKNOWN";
+				}
+				else
+				{
+					return this.DxfClass.DxfName;
+				}
 			}
 		}
 
