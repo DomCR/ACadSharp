@@ -111,7 +111,7 @@ namespace ACadSharp
 		/// <inheritdoc/>
 		public override string ToString()
 		{
-			return $"{this.ObjectName}:{this.SubclassMarker}";
+			return $"{this.ObjectName}:{this.Handle}";
 		}
 
 		internal virtual void AssignDocument(CadDocument doc)

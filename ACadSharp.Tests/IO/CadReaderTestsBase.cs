@@ -53,6 +53,13 @@ namespace ACadSharp.Tests.IO
 			this._docIntegrity.AssertBlockRecords(doc);
 		}
 
+		public virtual void AssertDocumentContent(string test)
+		{
+			CadDocument doc = this.getDocument(test, false);
+
+			this._docIntegrity.AssertDocumentContent(doc);
+		}
+
 		public virtual void AssertDocumentTree(string test)
 		{
 			CadDocument doc = this.getDocument(test, false);

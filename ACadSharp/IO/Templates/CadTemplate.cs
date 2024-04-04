@@ -74,12 +74,18 @@ namespace ACadSharp.IO.Templates
 				collection.Add((T)template.CadObject);
 
 				if (template.CadObject.Handle == endHandle)
+				{
 					break;
+				}
 
 				if (template.NextEntity.HasValue)
+				{
 					template = builder.GetObjectTemplate<CadEntityTemplate>(template.NextEntity.Value);
+				}
 				else
+				{
 					template = builder.GetObjectTemplate<CadEntityTemplate>(template.CadObject.Handle + 1);
+				}
 			}
 
 			return collection;
