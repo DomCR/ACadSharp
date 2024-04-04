@@ -20,9 +20,9 @@ namespace ACadSharp.IO.DWG
 
 			if (value.IsTrueColor)
 			{
-				arr[0] = (byte)(value.R);
-				arr[1] = (byte)(value.G);
-				arr[2] = (byte)(value.B);
+				arr[2] = (byte)value.R;
+				arr[1] = (byte)value.G;
+				arr[0] = (byte)value.B;
 				arr[3] = 0b1100_0010;
 			}
 			else
@@ -55,7 +55,7 @@ namespace ACadSharp.IO.DWG
 			//0x2000: color is followed by a transparency BL
 			if (!transparency.IsByLayer)
 			{
-				size = (ushort)(size | 0x2000);
+				size = (ushort)(size | 0b10000000000000);
 			}
 
 			//0x8000: complex color (rgb).
@@ -73,7 +73,8 @@ namespace ACadSharp.IO.DWG
 
 			if (color.IsTrueColor)
 			{
-				base.WriteBitLong(color.TrueColor);
+				uint rgb = (uint)(0b1100_0010_0000_0000_0000_0000_0000_0000 | color.TrueColor);
+				base.WriteBitLong((int)rgb);
 			}
 
 			if (!transparency.IsByLayer)

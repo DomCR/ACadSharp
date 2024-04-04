@@ -39,6 +39,22 @@ namespace ACadSharp.Tests.Tables
 		}
 
 		[Fact()]
+		public void ChangeName()
+		{
+			string initialName = "custom_layer";
+			Layer layer = new Layer(initialName);
+
+			CadDocument doc = new CadDocument();
+
+			doc.Layers.Add(layer);
+
+			layer.Name = "new_name";
+
+			Assert.NotNull(doc.Layers[layer.Name]);
+			Assert.False(doc.Layers.TryGetValue(initialName, out _));
+		}
+
+		[Fact()]
 		public void SetFlagUsingMapper()
 		{
 			Layer layer = new Layer("My layer");

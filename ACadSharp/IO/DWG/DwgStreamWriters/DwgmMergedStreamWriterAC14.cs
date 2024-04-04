@@ -2,7 +2,7 @@
 
 namespace ACadSharp.IO.DWG
 {
-	internal class DwgmMergedStreamWriterAC14 : DwgmMergedStreamWriter, IDwgStreamWriter
+	internal class DwgmMergedStreamWriterAC14 : DwgMergedStreamWriter, IDwgStreamWriter
 	{
 		public DwgmMergedStreamWriterAC14(Stream stream, IDwgStreamWriter main, IDwgStreamWriter handle)
 			: base(stream, main, main, handle)

@@ -2,6 +2,7 @@
 using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using CSUtilities.Extensions;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
@@ -28,25 +29,6 @@ namespace ACadSharp.IO.Templates
 
 		public CadBlockRecordTemplate(BlockRecord block) : base(block) { }
 
-		public override bool AddHandle(int dxfcode, ulong handle)
-		{
-			bool value = base.AddHandle(dxfcode, handle);
-			if (value)
-				return value;
-
-			switch (dxfcode)
-			{
-				case 340:
-					this.LayoutHandle = handle;
-					value = true;
-					break;
-				default:
-					break;
-			}
-
-			return value;
-		}
-
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
@@ -58,8 +40,10 @@ namespace ACadSharp.IO.Templates
 
 			if (this.FirstEntityHandle.HasValue)
 			{
-				var entities = this.getEntitiesCollection<Entity>(builder, this.FirstEntityHandle.Value, this.LastEntityHandle.Value);
-				this.CadObject.Entities.AddRange(entities);
+				foreach (Entity e in this.getEntitiesCollection<Entity>(builder, this.FirstEntityHandle.Value, this.LastEntityHandle.Value))
+				{
+					this.addEntity(e);
+				}
 			}
 			else
 			{
@@ -67,16 +51,7 @@ namespace ACadSharp.IO.Templates
 				{
 					if (builder.TryGetCadObject<Entity>(handle, out Entity child))
 					{
-						switch (child)
-						{
-							case Viewport viewport:
-								this.CadObject.Viewports.Add(viewport);
-								break;
-							default:
-								this.CadObject.Entities.Add(child);
-								break;
-						}
-
+						this.addEntity(child);
 					}
 				}
 			}
@@ -86,7 +61,10 @@ namespace ACadSharp.IO.Templates
 		{
 			if (builder.TryGetCadObject(this.BeginBlockHandle, out Block block))
 			{
-				this.CadObject.Name = block.Name;
+				if (!block.Name.IsNullOrEmpty())
+				{
+					this.CadObject.Name = block.Name;
+				}
 
 				block.Flags = this.CadObject.BlockEntity.Flags;
 				block.BasePoint = this.CadObject.BlockEntity.BasePoint;
@@ -100,6 +78,19 @@ namespace ACadSharp.IO.Templates
 			if (builder.TryGetCadObject(this.EndBlockHandle, out BlockEnd blockEnd))
 			{
 				this.CadObject.BlockEnd = blockEnd;
+			}
+		}
+
+		private void addEntity(Entity entity)
+		{
+			switch (entity)
+			{
+				case Viewport viewport:
+					this.CadObject.Viewports.Add(viewport);
+					break;
+				default:
+					this.CadObject.Entities.Add(entity);
+					break;
 			}
 		}
 	}

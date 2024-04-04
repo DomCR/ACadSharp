@@ -111,7 +111,7 @@ namespace ACadSharp
 		/// <inheritdoc/>
 		public override string ToString()
 		{
-			return $"{this.ObjectName}:{this.ObjectType}";
+			return $"{this.ObjectName}:{this.SubclassMarker}";
 		}
 
 		internal virtual void AssignDocument(CadDocument doc)
@@ -134,6 +134,11 @@ namespace ACadSharp
 		protected T updateTable<T>(T entry, Table<T> table)
 			where T : TableEntry
 		{
+			if (table == null)
+			{
+				return entry;
+			}
+
 			if (table.TryGetValue(entry.Name, out T existing))
 			{
 				return existing;

@@ -36,6 +36,14 @@ namespace ACadSharp.Tests.IO
 				this.Document.Layers.Add(new Layer("default_layer"));
 			}
 
+			public void LayerTrueColor()
+			{
+				Layer layer = new Layer("Layer_true_color");
+				layer.Color = Color.FromTrueColor(1151726);
+
+				this.Document.Layers.Add(layer);
+			}
+
 			public void EntityColorByLayer()
 			{
 				Layer layer = new Layer("Test");
@@ -61,6 +69,10 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(c);
 			}
 
+			public void CurrentEntityColorTrueColor()
+			{
+				this.Document.Header.CurrentEntityColor = Color.FromTrueColor(1151726);
+			}
 
 			public void SingleLine()
 			{
@@ -170,7 +182,9 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
+			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityColorTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
+			Data.Add(new(nameof(SingleCaseGenerator.LayerTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));

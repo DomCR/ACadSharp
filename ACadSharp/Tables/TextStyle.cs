@@ -84,7 +84,12 @@ namespace ACadSharp.Tables
 		/// A long value which contains a truetype font’s pitch and family, character set, and italic and bold flags
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional, 1071)]
-		public FontFlags TrueType { get; set; }
+		public FontFlags TrueType { get; set; } = FontFlags.Regular;
+
+		/// <summary>
+		/// Flag that indicates wheater this <see cref="TextStyle"/> is linked to a Shape file
+		/// </summary>
+		public bool IsShapeFile { get { return this.Flags.HasFlag(StyleFlags.IsShape); } }
 
 		internal TextStyle() : base() { }
 

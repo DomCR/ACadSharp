@@ -16,6 +16,7 @@ namespace ACadSharp.IO.DWG
 			//Ignored Entities
 			switch (entity)
 			{
+				case UnknownEntity:
 				case AttributeEntity:
 				case Shape:
 				case Solid3D:
@@ -651,7 +652,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//H mline style oject handle (hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, mline.MLStyle);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, mline.Style);
 		}
 
 		private void writeLwPolyline(LwPolyline lwPolyline)
@@ -856,12 +857,15 @@ namespace ACadSharp.IO.DWG
 
 					//numpathsegs BL 91 number of path segments
 					this._writer.WriteBitLong(pline.Vertices.Count);
-					foreach (var vertex in pline.Vertices)
+					for (var i = 0; i < pline.Vertices.Count; ++i)
 					{
-						this._writer.Write2RawDouble(vertex);
+						var vertex = pline.Vertices[i];
+						var bulge = pline.Bulges[i];
+
+						this._writer.Write2RawDouble(new XY(vertex.X, vertex.Y));
 						if (pline.HasBulge)
 						{
-							this._writer.WriteBitDouble(pline.Bulge);
+							this._writer.WriteBitDouble(bulge);
 						}
 					}
 				}
