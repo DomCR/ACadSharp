@@ -217,7 +217,7 @@ namespace ACadSharp.IO.DXF
 
 					do
 					{
-						if (unknownEntityTemplate != null)
+						if (unknownEntityTemplate != null && this._builder.KeepUnknownEntities)
 						{
 							this.readCommonEntityCodes(unknownEntityTemplate, out _, map);
 						}
