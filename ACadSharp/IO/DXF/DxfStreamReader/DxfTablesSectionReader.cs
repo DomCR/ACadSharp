@@ -186,7 +186,14 @@ namespace ACadSharp.IO.DXF
 						template = this.readTableEntry(new CadTableEntryTemplate<AppId>(new AppId()), this.readAppId);
 						break;
 					case DxfFileToken.TableBlockRecord:
-						template = this.readTableEntry(new CadBlockRecordTemplate(), this.readBlockRecord);
+						CadBlockRecordTemplate block = new CadBlockRecordTemplate();
+						template = this.readTableEntry(block, this.readBlockRecord);
+
+						if (block.CadObject.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase))
+						{
+							this._builder.ModelSpaceTemplate = block;
+						}
+
 						break;
 					case DxfFileToken.TableDimstyle:
 						template = this.readTableEntry(new CadDimensionStyleTemplate(), this.readDimensionStyle);
@@ -729,7 +736,7 @@ namespace ACadSharp.IO.DXF
 				this.createDefaultTable(new LayersTable());
 			}
 
-			if (this._builder.LineTypes == null)
+			if (this._builder.LineTypesTable == null)
 			{
 				this.createDefaultTable(new LineTypesTable());
 			}
