@@ -292,6 +292,15 @@ namespace ACadSharp
 		/// <param name="createDictionaries"></param>
 		public void UpdateCollections(bool createDictionaries)
 		{
+			if (createDictionaries && this.RootDictionary == null)
+			{
+				this.RootDictionary = CadDictionary.CreateRoot();
+			}
+			else if(this.RootDictionary == null)
+			{
+				return;
+			}
+
 			if (this.updateCollection(CadDictionary.AcadLayout, createDictionaries, out CadDictionary layout))
 			{
 				this.Layouts = new LayoutCollection(layout);
