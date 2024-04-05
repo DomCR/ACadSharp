@@ -50,11 +50,6 @@ namespace ACadSharp.IO.Templates
 			{
 				foreach (ulong handle in this.OwnedObjectsHandlers)
 				{
-					if(handle == 835)
-					{
-
-					}
-
 					if (builder.TryGetCadObject(handle, out Entity child))
 					{
 						this.addEntity(builder, child);

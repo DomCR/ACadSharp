@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
-using System;
 
 namespace ACadSharp.IO.Templates
 {
@@ -32,18 +31,9 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			Layer layer;
-			if (builder.TryGetCadObject<Layer>(this.LayerHandle, out layer))
+			if(this.getTableReference(builder, this.LayerHandle, this.LayerName, out Layer layer))
 			{
 				this.CadObject.Layer = layer;
-			}
-			else if (!string.IsNullOrEmpty(LayerName) && builder.DocumentToBuild.Layers.TryGetValue(this.LayerName, out layer))
-			{
-				this.CadObject.Layer = layer;
-			}
-			else
-			{
-				builder.Notify($"Could not assign the layer to entity | handle : {this.LayerHandle} | name : {LayerName}", NotificationType.Warning);
 			}
 
 			//Handle the line type for this entity
@@ -64,21 +54,21 @@ namespace ACadSharp.IO.Templates
 						this.CadObject.LineType = builder.LineTypes["Continuous"];
 						break;
 					case 3:
-						applyLineType(builder);
+						this.applyLineType(builder);
 						break;
 				}
 			}
 			else if (this.LineTypeHandle.HasValue)
 			{
-				applyLineType(builder);
+				this.applyLineType(builder);
 			}
-			else if (!string.IsNullOrEmpty(LineTypeName) && builder.DocumentToBuild.LineTypes.TryGetValue(this.LineTypeName, out LineType ltype))
+			else if (!string.IsNullOrEmpty(this.LineTypeName) && builder.DocumentToBuild.LineTypes.TryGetValue(this.LineTypeName, out LineType ltype))
 			{
 				this.CadObject.LineType = ltype;
 			}
-			else if (!string.IsNullOrEmpty(LineTypeName) || this.LineTypeHandle.HasValue)
+			else if (!string.IsNullOrEmpty(this.LineTypeName) || this.LineTypeHandle.HasValue)
 			{
-				builder.Notify($"Could not assign the line type to entity | handle : {this.LineTypeHandle} | name : {LineTypeName}", NotificationType.Warning);
+				builder.Notify($"Could not assign the line type to entity | handle : {this.LineTypeHandle} | name : {this.LineTypeName}", NotificationType.Warning);
 			}
 
 			if (this.ColorHandle.HasValue)
