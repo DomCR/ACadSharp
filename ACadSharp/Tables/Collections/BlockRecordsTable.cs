@@ -8,7 +8,7 @@ namespace ACadSharp.Tables.Collections
 		public override ObjectType ObjectType => ObjectType.BLOCK_CONTROL_OBJ;
 
 		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.TableBlockRecord;
+		public override string ObjectName => DxfFileToken.BlocksSection;
 
 		protected override string[] defaultEntries { get { return new string[] { BlockRecord.ModelSpaceName, BlockRecord.PaperSpaceName }; } }
 

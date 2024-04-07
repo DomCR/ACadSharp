@@ -174,7 +174,7 @@ namespace ACadSharp.IO.DXF
 					var template = this.readEntityCodes<Entity>(new CadPolyLineTemplate(), this.readPolyline);
 					if (template.CadObject is CadPolyLineTemplate.PolyLinePlaceholder)
 					{
-						this._builder.Notify($"[{DxfFileToken.EntityPolyline}] Subclass not found, entity discarded", NotificationType.Warning);
+						this._builder.Notify($"[{this._reader.ValueAsString}] Subclass not found, entity discarded", NotificationType.Warning);
 						return null;
 					}
 					else

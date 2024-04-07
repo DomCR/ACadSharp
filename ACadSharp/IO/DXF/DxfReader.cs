@@ -396,7 +396,7 @@ namespace ACadSharp.IO
 						break;
 					}
 
-					if (version < ACadVersion.AC1012)
+					if (version < ACadVersion.AC1002)
 					{
 						if (version == ACadVersion.Unknown)
 						{

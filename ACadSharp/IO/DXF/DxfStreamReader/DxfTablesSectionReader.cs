@@ -718,55 +718,57 @@ namespace ACadSharp.IO.DXF
 		{
 			if (this._builder.AppIds == null)
 			{
-				this.createDefaultTable(new AppIdsTable());
+				this._builder.AppIds = new AppIdsTable();
+				this.createDefaultTable(new CadTableTemplate<AppId>(this._builder.AppIds));
 			}
 
 			if (this._builder.BlockRecords == null)
 			{
-				this.createDefaultTable(new BlockRecordsTable());
+				this._builder.BlockRecords = new BlockRecordsTable();
+				this.createDefaultTable(new CadBlockCtrlObjectTemplate(this._builder.BlockRecords));
 			}
 
 			if (this._builder.DimensionStyles == null)
 			{
-				this.createDefaultTable(new DimensionStylesTable());
+				this.createDefaultTable(new CadTableTemplate<DimensionStyle>(new DimensionStylesTable()));
 			}
 
 			if (this._builder.Layers == null)
 			{
-				this.createDefaultTable(new LayersTable());
+				this.createDefaultTable(new CadTableTemplate<Layer>(new LayersTable()));
 			}
 
 			if (this._builder.LineTypesTable == null)
 			{
-				this.createDefaultTable(new LineTypesTable());
+				this.createDefaultTable(new CadTableTemplate<LineType>(new LineTypesTable()));
 			}
 
 			if (this._builder.UCSs == null)
 			{
-				this.createDefaultTable(new UCSTable());
+				this.createDefaultTable(new CadTableTemplate<UCS>(new UCSTable()));
 			}
 
 			if (this._builder.Views == null)
 			{
-				this.createDefaultTable(new ViewsTable());
+				this.createDefaultTable(new CadTableTemplate<View>(new ViewsTable()));
 			}
 
 			if (this._builder.VPorts == null)
 			{
-				this.createDefaultTable(new VPortsTable());
+				this.createDefaultTable(new CadTableTemplate<VPort>(new VPortsTable()));
 			}
 
 			//this._builder.RegisterTables();
 		}
 
-		private void createDefaultTable<T>(Table<T> table)
+		private void createDefaultTable<T>(CadTableTemplate<T> template)
 			where T : TableEntry
 		{
-			//TODO: Validate tables in the document
-			this._builder.Notify($"Table [{table.GetType().FullName}] not found in document", NotificationType.Warning);
+			this._builder.Notify($"Table [{template.CadObject.GetType().FullName}] not found in document", NotificationType.Warning);
 
-			//this._builder.DocumentToBuild.RegisterCollection(table);
-			//table.CreateDefaultEntries();
+			//template.CadObject.CreateDefaultEntries();
+
+			this._builder.AddTableTemplate((ICadTableTemplate)template);
 		}
 	}
 }
