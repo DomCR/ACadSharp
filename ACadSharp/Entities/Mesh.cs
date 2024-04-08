@@ -1,4 +1,6 @@
 ﻿using ACadSharp.Attributes;
+using CSMath;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -13,6 +15,21 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Mesh)]
 	public class Mesh : Entity
 	{
+		public struct Edge
+		{
+			public int Start { get; set; }
+
+			public int End { get; set; }
+
+			public double? Crease { get; set; }
+
+			public override string ToString()
+			{
+				string str = $"{this.Start}|{this.End}";
+				return this.Crease.HasValue ? $"{this.Start}|{this.End}|{this.Crease}" : str;
+			}
+		}
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
@@ -31,24 +48,35 @@ namespace ACadSharp.Entities
 		//72 "Blend Crease" property
 		//0 = Turn off
 		//1 = Turn on
+		[DxfCodeValue(72)]
+		public short BlendCrease { get; set; }
 
-		//91	Number of subdivision level
+		/// <summary>
+		/// Number of subdivision level
+		/// </summary>
+		[DxfCodeValue(91)]
+		public int SubdivisionLevel { get; set; }
 
-		//92	Vertex count of level 0
+		/// <summary>
+		/// Vertex count of level 0
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Count, 92)]
+		[DxfCollectionCodeValue(10, 20, 30)]
+		public List<XYZ> Vertices { get; set; } = new();
 
-		//10	Vertex position
+		/// <summary>
+		/// Face list of level 0
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Count, 93)]
+		[DxfCollectionCodeValue(90)]
+		public List<int[]> Faces { get; set; } = new();
 
-		//93	Size of face list of level 0
-
-		//90	Face list item
-
-		//94	Edge count of level 0
-
-		//90	Vertex index of each edge
-
-		//95	Edge crease count of level 0
-
-		//140	Edge create value
+		/// <summary>
+		/// Edges of level 0
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Count, 94)]
+		[DxfCollectionCodeValue(90)]
+		public List<Edge> Edges { get; set; } = new();
 
 		//90	Count of sub-entity which property has been overridden
 

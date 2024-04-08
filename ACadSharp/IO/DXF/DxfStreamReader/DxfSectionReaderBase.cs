@@ -690,6 +690,90 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				//Count of sub-entity which property has been overridden
+				case 90:
+					//TODO: process further entities
+					return true;
+				case 92:
+					int nvertices = this._reader.ValueAsInt;
+					for (int i = 0; i < nvertices; i++)
+					{
+						this._reader.ReadNext();
+						double x = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						double y = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						double z = this._reader.ValueAsDouble;
+						tmp.CadObject.Vertices.Add(new XYZ(x, y, z));
+					}
+					return true;
+				case 93:
+					int size = this._reader.ValueAsInt;
+					this._reader.ReadNext();
+
+					int indexes = 0;
+					for (int i = 0; i < size; i += indexes + 1)
+					{
+						indexes = this._reader.ValueAsInt;
+						this._reader.ReadNext();
+
+						int[] face = new int[indexes];
+						for (int j = 0; j < indexes; j++)
+						{
+							face[j] = this._reader.ValueAsInt;
+
+							if ((i + j + 2) < size)
+							{
+								this._reader.ReadNext();
+							}
+						}
+
+						tmp.CadObject.Faces.Add(face);
+					}
+
+					Debug.Assert(this._reader.Code == 90);
+
+					return true;
+				case 94:
+					int numEdges = this._reader.ValueAsInt;
+					this._reader.ReadNext();
+					for (int i = 0; i < numEdges; i++)
+					{
+						Mesh.Edge edge = new Mesh.Edge();
+
+						edge.Start = this._reader.ValueAsInt;
+						this._reader.ReadNext();
+						edge.End = this._reader.ValueAsInt;
+
+						if (i < numEdges - 1)
+						{
+							this._reader.ReadNext();
+						}
+
+						tmp.CadObject.Edges.Add(edge);
+					}
+
+					Debug.Assert(this._reader.Code == 90);
+
+					return true;
+				case 95:
+					this._reader.ReadNext();
+					for (int i = 0; i < tmp.CadObject.Edges.Count; i++)
+					{
+						Mesh.Edge edge = tmp.CadObject.Edges[i];
+						edge.Crease = this._reader.ValueAsDouble;
+
+						tmp.CadObject.Edges[i] = edge;
+
+						if (i < tmp.CadObject.Edges.Count - 1)
+						{
+							this._reader.ReadNext();
+						}
+					}
+
+					Debug.Assert(this._reader.Code == 140);
+
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}

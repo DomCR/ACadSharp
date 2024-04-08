@@ -68,7 +68,7 @@ namespace ACadSharp.Tests.IO.DXF
 			base.AssertDocumentContent(test);
 		}
 
-		[Theory(Skip = "Dxf files need to be refactor to support the Unknown entities")]
+		[Theory]
 		[MemberData(nameof(DxfAsciiFiles))]
 		[MemberData(nameof(DxfBinaryFiles))]
 		public override void AssertDocumentTree(string test)
@@ -80,6 +80,7 @@ namespace ACadSharp.Tests.IO.DXF
 			using (DxfReader reader = new DxfReader(test))
 			{
 				reader.Configuration = configuration;
+				reader.OnNotification += onNotification;
 				doc = reader.Read();
 			}
 
