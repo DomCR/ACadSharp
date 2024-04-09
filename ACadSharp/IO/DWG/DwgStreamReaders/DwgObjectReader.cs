@@ -5306,9 +5306,9 @@ namespace ACadSharp.IO.DWG
 			Mesh mesh = new Mesh();
 			CadMeshTemplate template = new CadMeshTemplate(mesh);
 
+#if TEST
 			this.readCommonEntityData(template);
 
-#if TEST
 			//Same order as dxf?
 
 			//71 BS Version
