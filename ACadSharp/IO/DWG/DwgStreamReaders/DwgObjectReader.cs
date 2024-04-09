@@ -5314,12 +5314,23 @@ namespace ACadSharp.IO.DWG
 			//71 BS Version
 			mesh.Version = this._objectReader.ReadBitShort();
 			//72 BS BlendCrease
-			mesh.BlendCrease = this._objectReader.ReadBitShort();
+			mesh.BlendCrease = this._objectReader.ReadBitAsShort();
+			//91 BL SubdivisionLevel
+			mesh.SubdivisionLevel = this._objectReader.ReadBitLong();
+
+			//92 BL nvertices
+			int nvertices = this._objectReader.ReadBitLong();
+			for (int i = 0; i < nvertices; i++)
+			{
+				//10 3BD vertice
+				XYZ v = this._objectReader.Read3BitDouble();
+				mesh.Vertices.Add(v);
+			}
 
 			var dict = DwgStreamReaderBase.Explore(this._objectReader);
 #endif
 
-			return null;
+			return template;
 		}
 
 		private CadTemplate readPlaceHolder()
