@@ -50,14 +50,14 @@ namespace ACadSharp.IO.DXF
 		{
 			if (b.Name == BlockRecord.ModelSpaceName || b.Name == BlockRecord.PaperSpaceName)
 			{
-				foreach (Entity e in b.Entities.Concat(b.Viewports))
+				foreach (Entity e in b.Entities)
 				{
 					this.Holder.Entities.Enqueue(e);
 				}
 			}
 			else
 			{
-				foreach (Entity e in b.Entities.Concat(b.Viewports))
+				foreach (Entity e in b.Entities)
 				{
 					this.writeEntity(e);
 				}

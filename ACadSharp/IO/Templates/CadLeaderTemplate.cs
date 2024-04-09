@@ -3,16 +3,19 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadLeaderTemplate : CadEntityTemplate
+	internal class CadLeaderTemplate : CadEntityTemplate<Leader>
 	{
+		public CadLeaderTemplate() : base(new Leader()) { }
+
 		public CadLeaderTemplate(Leader entity) : base(entity) { }
 
-		public double Dimasz { get; internal set; }
+		public double Dimasz { get; set; }
 
-		public ulong DIMSTYLEHandle { get; internal set; }
+		public ulong DIMSTYLEHandle { get; set; }
 
-		public ulong AnnotationHandle { get; internal set; }
+		public string DIMSTYLEName { get; set; }
 
+		public ulong AnnotationHandle { get; set; }
 
 		public override void Build(CadDocumentBuilder builder)
 		{
@@ -20,10 +23,13 @@ namespace ACadSharp.IO.Templates
 
 			Leader leader = (Leader)this.CadObject;
 
-			if (this.getTableReference(builder, this.DIMSTYLEHandle, string.Empty, out DimensionStyle style)) {
+			if (this.getTableReference(builder, this.DIMSTYLEHandle, this.DIMSTYLEName, out DimensionStyle style))
+			{
 				leader.Style = style;
 			}
-			if (builder.TryGetCadObject(this.AnnotationHandle, out Entity annotation)) {
+
+			if (builder.TryGetCadObject(this.AnnotationHandle, out Entity annotation))
+			{
 				leader.AssociatedAnnotation = annotation;
 			}
 		}

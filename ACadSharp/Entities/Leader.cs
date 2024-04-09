@@ -29,7 +29,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Dimension Style
 		/// </summary>
-		[DxfCodeValue(3)]
+		[DxfCodeValue(DxfReferenceType.Name, 3)]
 		public DimensionStyle Style
 		{
 			get { return this._style; }
@@ -121,7 +121,6 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public Entity AssociatedAnnotation { get; internal set; }
-
 
 		/// <summary>
 		/// Normal vector

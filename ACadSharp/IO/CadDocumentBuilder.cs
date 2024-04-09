@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO.DWG;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO.DWG;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
@@ -31,6 +32,8 @@ namespace ACadSharp.IO
 		public ViewsTable Views { get; set; }
 
 		public VPortsTable VPorts { get; set; }
+
+		public abstract bool KeepUnknownEntities { get; }
 
 		public Dictionary<string, LineType> LineTypes { get; } = new Dictionary<string, LineType>(StringComparer.OrdinalIgnoreCase);
 
@@ -102,6 +105,12 @@ namespace ACadSharp.IO
 
 			if (this.cadObjects.TryGetValue(handle.Value, out CadObject obj))
 			{
+				if (obj is UnknownEntity && !this.KeepUnknownEntities)
+				{
+					value = null;
+					return false;
+				}
+
 				if (obj is T)
 				{
 					value = (T)obj;

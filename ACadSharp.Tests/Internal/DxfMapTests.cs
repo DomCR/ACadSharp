@@ -21,8 +21,14 @@ namespace ACadSharp.Tests.Internal
 
 			foreach (var item in d.GetTypes().Where(i => !i.IsAbstract && i.IsPublic))
 			{
-				if (item.IsSubclassOf(typeof(Entity)) || item.IsSubclassOf(typeof(TableEntry)))
+				if (item.IsSubclassOf(typeof(Entity)) 
+					|| item.IsSubclassOf(typeof(TableEntry)))
 				{
+					if(item == typeof(UnknownEntity))
+					{
+						continue;
+					}
+
 					Types.Add(item);
 				}
 			}
