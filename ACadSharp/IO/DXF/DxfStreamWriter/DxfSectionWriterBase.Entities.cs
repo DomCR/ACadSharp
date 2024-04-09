@@ -615,7 +615,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.MLine);
 
-			//Style has to references
+			//Style has two references
 			this._writer.WriteName(2, mLine.Style, map);
 			this._writer.WriteHandle(340, mLine.Style, map);
 
