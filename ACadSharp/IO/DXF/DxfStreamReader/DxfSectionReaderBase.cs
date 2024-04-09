@@ -221,7 +221,9 @@ namespace ACadSharp.IO.DXF
 					{
 						if (unknownEntityTemplate != null)
 						{
-							this.readCommonEntityCodes(unknownEntityTemplate, out _, map);
+							this.readCommonEntityCodes(unknownEntityTemplate, out bool isExtendedData, map);
+							if (isExtendedData)
+								continue;
 						}
 
 						this._reader.ReadNext();
@@ -690,11 +692,22 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				case 100:
+					if (this._reader.ValueAsString.Equals(DxfSubclassMarker.Mesh, StringComparison.OrdinalIgnoreCase))
+					{
+						tmp.SubclassMarker = true;
+					}
+					return true;
 				//Count of sub-entity which property has been overridden
 				case 90:
 					//TODO: process further entities
 					return true;
 				case 92:
+					if (!tmp.SubclassMarker)
+					{
+						return false;
+					}
+
 					int nvertices = this._reader.ValueAsInt;
 					for (int i = 0; i < nvertices; i++)
 					{

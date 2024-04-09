@@ -80,7 +80,6 @@ namespace ACadSharp.Tests.IO.DXF
 			using (DxfReader reader = new DxfReader(test))
 			{
 				reader.Configuration = configuration;
-				reader.OnNotification += onNotification;
 				doc = reader.Read();
 			}
 
