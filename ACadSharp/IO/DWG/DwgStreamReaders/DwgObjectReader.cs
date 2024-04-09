@@ -5303,6 +5303,22 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readMesh()
 		{
+			Mesh mesh = new Mesh();
+			CadMeshTemplate template = new CadMeshTemplate(mesh);
+
+			this.readCommonEntityData(template);
+
+#if TEST
+			//Same order as dxf?
+
+			//71 BS Version
+			mesh.Version = this._objectReader.ReadBitShort();
+			//72 BS BlendCrease
+			mesh.BlendCrease = this._objectReader.ReadBitShort();
+
+			var dict = DwgStreamReaderBase.Explore(this._objectReader);
+#endif
+
 			return null;
 		}
 
