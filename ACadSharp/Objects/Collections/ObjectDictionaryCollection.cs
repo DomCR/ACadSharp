@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,6 +12,9 @@ namespace ACadSharp.Objects.Collections
 	public abstract class ObjectDictionaryCollection<T> : IHandledCadObject, IEnumerable<T>
 		where T : CadObject, IDictionaryEntry
 	{
+		public event EventHandler<CollectionChangedEventArgs> OnAdd { add { this._dictionary.OnAdd += value; } remove { this._dictionary.OnAdd -= value; } }
+		public event EventHandler<CollectionChangedEventArgs> OnRemove { add { this._dictionary.OnRemove += value; } remove { this._dictionary.OnRemove -= value; } }
+
 		/// <inheritdoc/>
 		public ulong Handle { get { return this._dictionary.Handle; } }
 
@@ -30,6 +34,18 @@ namespace ACadSharp.Objects.Collections
 		public void Add(T entry)
 		{
 			this._dictionary.Add(entry.Name, entry);
+		}
+
+		/// <summary>
+		/// Gets the value associated with the specific key
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="name"></param>
+		/// <param name="entry"></param>
+		/// <returns>true if the value is found or false if not found</returns>
+		public bool TryGetValue(string name, out T entry)
+		{
+			return this._dictionary.TryGetEntry(name, out entry);
 		}
 
 		/// <summary>
