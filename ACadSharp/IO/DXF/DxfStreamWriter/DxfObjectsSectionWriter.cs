@@ -34,7 +34,6 @@ namespace ACadSharp.IO.DXF
 				case SortEntitiesTable:
 				case Scale:
 				case VisualStyle:
-				//case XRecrod:	//TODO: XRecord Understand how it works for the reader
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
 			}
@@ -62,6 +61,8 @@ namespace ACadSharp.IO.DXF
 					break;
 				case PlotSettings plotSettings:
 					this.writePlotSettings(plotSettings);
+					break;
+				case Scale scale:
 					break;
 				case SortEntitiesTable sortensTable:
 					//this.writeSortentsTable(sortensTable);

@@ -178,6 +178,10 @@ namespace ACadSharp.IO.DWG
 				{
 					this._builder.AddTableTemplate(tableTemplate);
 				}
+				else if (template is ICadDictionaryTemplate dictionaryTemplate)
+				{
+					this._builder.AddDictionaryTemplate(dictionaryTemplate);
+				}
 				else
 				{
 					this._builder.AddTemplate(template);
@@ -2538,6 +2542,11 @@ namespace ACadSharp.IO.DWG
 			CadDictionaryTemplate template = new CadDictionaryTemplate(cadDictionary);
 
 			this.readCommonDictionary(template);
+
+			if (cadDictionary.Handle == this._builder.HeaderHandles.DICTIONARY_NAMED_OBJECTS)
+			{
+
+			}
 
 			return template;
 		}
