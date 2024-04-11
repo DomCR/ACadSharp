@@ -91,7 +91,7 @@ namespace ACadSharp.IO.Templates
 
 		private void applyLineType(CadDocumentBuilder builder)
 		{
-			if (this.getTableReference<LineType>(builder, this.LineTypeHandle, this.LayerName, out LineType ltype))
+			if (this.getTableReference<LineType>(builder, this.LineTypeHandle, this.LineTypeName, out LineType ltype))
 			{
 				this.CadObject.LineType = ltype;
 			}
