@@ -23,12 +23,6 @@ namespace ACadSharp.Objects
 		public override string SubclassMarker => DxfSubclassMarker.Scale;
 
 		/// <summary>
-		/// Unknown
-		/// </summary>
-		[DxfCodeValue(70)]
-		public short Unknown { get; internal set; }
-
-		/// <summary>
 		/// Name
 		/// </summary>
 		[DxfCodeValue(300)]

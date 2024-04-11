@@ -5348,7 +5348,7 @@ namespace ACadSharp.IO.DWG
 			this.readCommonNonEntityData(template);
 
 			//BS	70	Unknown(ODA writes 0).
-			scale.Unknown = this._mergedReaders.ReadBitShort();
+			this._mergedReaders.ReadBitShort();
 			//TV	300	Name
 			scale.Name = this._mergedReaders.ReadVariableText();
 			//BD	140	Paper units(numerator)
