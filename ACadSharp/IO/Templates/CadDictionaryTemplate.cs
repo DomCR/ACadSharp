@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadDictionaryTemplate : CadTemplate<CadDictionary>
+	internal class CadDictionaryTemplate : CadTemplate<CadDictionary>, ICadDictionaryTemplate
 	{
 		public Dictionary<string, ulong?> Entries { get; set; } = new Dictionary<string, ulong?>();
 

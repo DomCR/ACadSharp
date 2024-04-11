@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
@@ -44,6 +43,8 @@ namespace ACadSharp.IO
 
 		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new Dictionary<ulong, ICadTableTemplate>();
 
+		protected Dictionary<ulong, ICadDictionaryTemplate> dictionaryTemplates = new();
+
 		public CadDocumentBuilder(CadDocument document)
 		{
 			this.DocumentToBuild = document;
@@ -51,12 +52,17 @@ namespace ACadSharp.IO
 
 		public virtual void BuildDocument()
 		{
+			foreach (ICadDictionaryTemplate dictionaryTemplate in dictionaryTemplates.Values)
+			{
+				dictionaryTemplate.Build(this);
+			}
+
+			this.DocumentToBuild.UpdateCollections(false);
+		
 			foreach (CadTemplate template in this.templates.Values)
 			{
 				template.Build(this);
 			}
-
-			this.DocumentToBuild.UpdateCollections(false);
 		}
 
 		public void AddTableTemplate(ICadTableTemplate tableTemplate)
@@ -189,6 +195,12 @@ namespace ACadSharp.IO
 			{
 				this.Notify($"Table {table.ObjectName} not found in the document", NotificationType.Warning);
 			}
+		}
+
+		public void AddDictionaryTemplate(ICadDictionaryTemplate dictionaryTemplate)
+		{
+			this.dictionaryTemplates[dictionaryTemplate.CadObject.Handle] = dictionaryTemplate;
+			this.cadObjects[dictionaryTemplate.CadObject.Handle] = dictionaryTemplate.CadObject;
 		}
 	}
 }

@@ -178,6 +178,10 @@ namespace ACadSharp.IO.DWG
 				{
 					this._builder.AddTableTemplate(tableTemplate);
 				}
+				else if (template is ICadDictionaryTemplate dictionaryTemplate)
+				{
+					this._builder.AddDictionaryTemplate(dictionaryTemplate);
+				}
 				else
 				{
 					this._builder.AddTemplate(template);
@@ -2538,6 +2542,11 @@ namespace ACadSharp.IO.DWG
 			CadDictionaryTemplate template = new CadDictionaryTemplate(cadDictionary);
 
 			this.readCommonDictionary(template);
+
+			if (cadDictionary.Handle == this._builder.HeaderHandles.DICTIONARY_NAMED_OBJECTS)
+			{
+
+			}
 
 			return template;
 		}
@@ -5339,7 +5348,7 @@ namespace ACadSharp.IO.DWG
 			this.readCommonNonEntityData(template);
 
 			//BS	70	Unknown(ODA writes 0).
-			scale.Unknown = this._mergedReaders.ReadBitShort();
+			this._mergedReaders.ReadBitShort();
 			//TV	300	Name
 			scale.Name = this._mergedReaders.ReadVariableText();
 			//BD	140	Paper units(numerator)

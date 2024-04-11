@@ -13,7 +13,6 @@ namespace ACadSharp.IO.DXF
 			//TODO: Implement complex entities in a separated branch
 			switch (entity)
 			{
-				case MLine:
 				case Solid3D:
 				case MultiLeader:
 				case Wipeout:
@@ -616,7 +615,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.MLine);
 
-			//Style has to references
+			//Style has two references
 			this._writer.WriteName(2, mLine.Style, map);
 			this._writer.WriteHandle(340, mLine.Style, map);
 
