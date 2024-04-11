@@ -218,6 +218,13 @@ namespace ACadSharp.IO
 			return header;
 		}
 
+		/// <summary>
+		/// Read only the entities section in the dxf document
+		/// </summary>
+		/// <remarks>
+		/// The entities will be completely independent from each other and linetypes and layers will only have it's name set, all the other properties will be set as default
+		/// </remarks>
+		/// <returns></returns>
 		public List<Entity> ReadEntities()
 		{
 			this._builder = new DxfDocumentBuilder(this._document, this.Configuration);
@@ -228,8 +235,6 @@ namespace ACadSharp.IO
 			this.readEntities();
 
 			return this._builder.BuildEntities();
-
-			throw new NotImplementedException();
 		}
 
 		/// <inheritdoc/>
