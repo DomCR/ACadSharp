@@ -42,12 +42,28 @@ namespace ACadSharp.IO.DXF
 				this.assignOwner(template);
 			}
 
-			if(this.ModelSpaceTemplate != null)
+			if (this.ModelSpaceTemplate != null)
 			{
 				this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(ModelSpaceEntities);
 			}
 
 			base.BuildDocument();
+		}
+
+		public List<Entity> BuildEntities()
+		{
+			var entities = new List<Entity>();
+
+			foreach (CadEntityTemplate item in this.templates.Values.OfType<CadEntityTemplate>())
+			{
+				item.Build(this);
+
+				item.SetUnlinkedReferences();
+
+				entities.Add(item.CadObject);
+			}
+
+			return entities;
 		}
 
 		private void assignOwner(CadTemplate template)

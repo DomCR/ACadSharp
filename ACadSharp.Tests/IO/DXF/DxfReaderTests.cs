@@ -1,4 +1,6 @@
-﻿using ACadSharp.IO;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO;
+using System.Collections.Generic;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -34,6 +36,22 @@ namespace ACadSharp.Tests.IO.DXF
 		public void ReadBinaryTest(string test)
 		{
 			base.ReadTest(test);
+		}
+
+		[Theory]
+		[MemberData(nameof(DxfAsciiFiles))]
+		[MemberData(nameof(DxfBinaryFiles))]
+		public void ReadEntities(string test)
+		{
+			List<Entity> entities = null;
+			using (DxfReader reader = new DxfReader(test))
+			{
+				reader.OnNotification += this.onNotification;
+				entities = reader.ReadEntities();
+			}
+
+			Assert.NotNull(entities);
+			Assert.NotEmpty(entities);
 		}
 
 		[Theory]

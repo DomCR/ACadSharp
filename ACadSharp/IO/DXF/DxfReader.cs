@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Classes;
+using ACadSharp.Entities;
 using ACadSharp.Exceptions;
 using ACadSharp.Header;
 using ACadSharp.IO.DXF;
@@ -215,6 +216,20 @@ namespace ACadSharp.IO
 			}
 
 			return header;
+		}
+
+		public List<Entity> ReadEntities()
+		{
+			this._builder = new DxfDocumentBuilder(this._document, this.Configuration);
+			this._builder.OnNotification += this.onNotificationEvent;
+
+			this._reader = this._reader ?? this.getReader();
+
+			this.readEntities();
+
+			return this._builder.BuildEntities();
+
+			throw new NotImplementedException();
 		}
 
 		/// <inheritdoc/>
