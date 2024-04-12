@@ -2,6 +2,7 @@
 using ACadSharp.Objects;
 using CSMath;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -34,7 +35,7 @@ namespace ACadSharp.Entities
 		/// Do not modify this field without also updating the associated entry in the MLINESTYLE dictionary
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle | DxfReferenceType.Name, 340)]
-		public MLStyle MLStyle
+		public MLineStyle Style
 		{
 			get { return _style; }
 			set
@@ -51,7 +52,7 @@ namespace ACadSharp.Entities
 		/// Scale factor
 		/// </summary>
 		[DxfCodeValue(40)]
-		public double ScaleFactor { get; set; }
+		public double ScaleFactor { get; set; } = 1;
 
 		/// <summary>
 		/// Justification
@@ -83,7 +84,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Count, 72)]
 		public List<Vertex> Vertices { get; set; } = new List<Vertex>();
 
-		private MLStyle _style = MLStyle.Default;
+		private MLineStyle _style = MLineStyle.Default;
 
 		public MLine() : base() { }
 
@@ -91,7 +92,7 @@ namespace ACadSharp.Entities
 		{
 			MLine clone = (MLine)base.Clone();
 
-			clone.MLStyle = (MLStyle)(this.MLStyle?.Clone());
+			clone.Style = (MLineStyle)(this.Style?.Clone());
 
 			clone.Vertices.Clear();
 			foreach (var item in this.Vertices)
@@ -100,6 +101,32 @@ namespace ACadSharp.Entities
 			}
 
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._style = this.updateCollection(this.Style, doc.MLineStyles);
+
+			this.Document.MLineStyles.OnRemove += this.mLineStylesOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.MLineStyles.OnRemove -= this.mLineStylesOnRemove;
+
+			base.UnassignDocument();
+
+			this._style = (MLineStyle)this.Style.Clone();
+		}
+
+		private void mLineStylesOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this.Style))
+			{
+				this.Style = this.Document.MLineStyles[MLineStyle.DefaultName];
+			}
 		}
 	}
 }

@@ -88,6 +88,16 @@ namespace ACadSharp.Objects
 		/// </summary>
 		public const string AcadVisualStyle = "ACAD_VISUALSTYLE";
 
+		/// <summary>
+		/// ACAD_FIELDLIST dictionary entry
+		/// </summary>
+		public const string AcadFieldList = "ACAD_FIELDLIST";
+
+		/// <summary>
+		/// ACAD_IMAGE_DICT dictionary entry
+		/// </summary>
+		public const string AcadImageDict = "ACAD_IMAGE_DICT";
+
 		#endregion
 
 		/// <inheritdoc/>
@@ -123,7 +133,7 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(350)]
 		public ulong[] EntryHandles { get { return this._entries.Values.Select(c => c.Handle).ToArray(); } }
 
-		public CadObject this[string entry] { get { return this._entries[entry]; } }
+		public CadObject this[string key] { get { return this._entries[key]; } }
 
 		private readonly Dictionary<string, CadObject> _entries = new Dictionary<string, CadObject>();    //TODO: Transform into an objservable collection
 
@@ -133,10 +143,51 @@ namespace ACadSharp.Objects
 		/// <returns></returns>
 		public static CadDictionary CreateRoot()
 		{
-			//TODO: finish root dictionary implementation
 			CadDictionary root = new CadDictionary
 			{
-				{ AcadLayout, new CadDictionary() }
+				{ AcadColor, new CadDictionary() },
+				{ AcadGroup, new CadDictionary() },
+				{ AcadLayout, new CadDictionary() },
+				{ AcadMaterial, new CadDictionary() },
+				{ AcadSortEnts, new CadDictionary() },
+				{ AcadMLeaderStyle, new CadDictionary
+					{
+						{ MultiLeaderStyle.DefaultName, MultiLeaderStyle.Default }
+					}
+				},
+				{ AcadMLineStyle, new CadDictionary
+					{
+						{ MLineStyle.DefaultName, MLineStyle.Default }
+					}
+				},
+				{ AcadTableStyle, new CadDictionary() },
+				{ AcadPlotSettings, new CadDictionary() },
+				{ VariableDictionary, new CadDictionary() },	//DictionaryVars Entry DIMASSOC and HIDETEXT ??
+				// { AcadPlotStyleName, new CadDictionaryWithDefault() },	//Add default entry "Normal"	PlaceHolder	??
+				{ AcadScaleList, new CadDictionary
+					{
+						{ "A0", new Scale { Name="A0", PaperUnits = 1.0, DrawingUnits = 1.0, IsUnitScale = true } },
+						{ "A1", new Scale { Name="A1", PaperUnits = 1.0, DrawingUnits = 2.0, IsUnitScale = false } },
+						{ "A2", new Scale { Name="A2", PaperUnits = 1.0, DrawingUnits = 4.0, IsUnitScale = false } },
+						{ "A3", new Scale { Name="A3", PaperUnits = 1.0, DrawingUnits = 5.0, IsUnitScale = false } },
+						{ "A4", new Scale { Name="A4", PaperUnits = 1.0, DrawingUnits = 8.0, IsUnitScale = false } },
+						{ "A5", new Scale { Name="A5", PaperUnits = 1.0, DrawingUnits = 10.0, IsUnitScale = false } },
+						{ "A6", new Scale { Name="A6", PaperUnits = 1.0, DrawingUnits = 16.0, IsUnitScale = false } },
+						{ "A7", new Scale { Name="A7", PaperUnits = 1.0, DrawingUnits = 20.0, IsUnitScale = false } },
+						{ "A8", new Scale { Name="A8", PaperUnits = 1.0, DrawingUnits = 30.0, IsUnitScale = false } },
+						{ "A9", new Scale { Name="A9", PaperUnits = 1.0, DrawingUnits = 40.0, IsUnitScale = false } },
+						{ "B0", new Scale { Name="B0", PaperUnits = 1.0, DrawingUnits = 50.0, IsUnitScale = false } },
+						{ "B1", new Scale { Name="B1", PaperUnits = 1.0, DrawingUnits = 100.0, IsUnitScale = false } },
+						{ "B2", new Scale { Name="B2", PaperUnits = 2.0, DrawingUnits = 1.0, IsUnitScale = false } },
+						{ "B3", new Scale { Name="B3", PaperUnits = 4.0, DrawingUnits = 1.0, IsUnitScale = false } },
+						{ "B4", new Scale { Name="B4", PaperUnits = 8.0, DrawingUnits = 1.0, IsUnitScale = false } },
+						{ "B5", new Scale { Name="B5", PaperUnits = 10.0, DrawingUnits = 1.0, IsUnitScale = false } },
+						{ "B6", new Scale { Name="B6", PaperUnits = 100.0, DrawingUnits = 1.0, IsUnitScale = false } },
+					}
+				},
+				{ AcadVisualStyle, new CadDictionary() },
+				{ AcadFieldList, new CadDictionary() },
+				{ AcadImageDict, new CadDictionary() },
 			};
 
 			return root;
@@ -150,7 +201,7 @@ namespace ACadSharp.Objects
 		/// <exception cref="ArgumentException"></exception>
 		public void Add(string key, CadObject value)
 		{
-			if (_entries.Values.Contains(value))
+			if (this._entries.Values.Contains(value))
 				throw new ArgumentException($"Dictionary already contains {value.GetType().FullName}", nameof(value));
 
 			this._entries.Add(key, value);
@@ -174,6 +225,50 @@ namespace ACadSharp.Objects
 			}
 
 			return null;
+		}
+
+		/// <summary>
+		/// Gets the value associated with the specific key
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="name"></param>
+		/// <returns>The value with Type T or null if not found or different type</returns>
+		public T GetEntry<T>(string name)
+			where T : CadObject
+		{
+			this.TryGetEntry<T>(name, out T value);
+			return value;
+		}
+
+		/// <summary>
+		/// Gets the value associated with the specific key
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="name"></param>
+		/// <param name="value"></param>
+		/// <returns>true if the value is found or false if not found or different type</returns>
+		public bool TryGetEntry<T>(string name, out T value)
+			where T : CadObject
+		{
+			if (this._entries.TryGetValue(name, out CadObject obj))
+			{
+				if (obj is T t)
+				{
+					value = t;
+					return true;
+				}
+			}
+
+			value = null;
+			return false;
+		}
+
+		public IEnumerable<(string, CadObject)> GetEntries()
+		{
+			foreach (var item in this._entries)
+			{
+				yield return (item.Key, item.Value);
+			}
 		}
 
 		public IEnumerator<CadObject> GetEnumerator()

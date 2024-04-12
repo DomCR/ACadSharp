@@ -10,9 +10,6 @@ using System.Text;
 
 namespace ACadSharp
 {
-	//TODO: Finish documentation DxfCode
-	//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-3F0380A5-1C15-464D-BC66-2C5F094BCFB9
-
 	public enum DxfCode
 	{
 		Invalid = -9999,
@@ -207,9 +204,6 @@ namespace ACadSharp
 		ExtendedDataInteger32 = 1071
 	}
 
-	//TODO: Finish documentation for GroupCodeValueType
-	//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-2553CF98-44F6-4828-82DD-FE3BC7448113
-
 	/// <summary>
 	/// Group codes define the type of the associated value as an integer, a floating-point number, or a string, according to the following table of group code ranges.
 	/// </summary>
@@ -218,7 +212,7 @@ namespace ACadSharp
 		None,
 
 		/// <summary>
-		/// String (with the introduction of extended symbol names in AutoCAD 2000, the 255-character limit has been increased to 2049 single-byte characters not including the newline at the end of the line)
+		/// String
 		/// </summary>
 		/// <remarks>
 		/// Code range : 0-9

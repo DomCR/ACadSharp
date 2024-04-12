@@ -1,4 +1,6 @@
-﻿namespace ACadSharp.IO.DXF
+﻿using System;
+
+namespace ACadSharp.IO.DXF
 {
 	internal abstract class DxfStreamWriterBase : IDxfStreamWriter
 	{
@@ -21,10 +23,9 @@
 
 		public void Write(int code, CSMath.IVector value, DxfClassMap map)
 		{
-			double[] comp = value.GetComponents();
-			for (int i = 0; i < comp.Length; i++)
+			for (int i = 0; i < value.Dimension; i++)
 			{
-				this.Write(code + i * 10, comp[i], map);
+				this.Write(code + i * 10, value[i], map);
 			}
 		}
 
@@ -69,7 +70,20 @@
 			}
 
 			this.writeDxfCode(code);
-			this.writeValue(code, value);
+
+			if (value is string s)
+			{
+				s = s
+					.Replace("^", "^ ")
+					.Replace("\n", "^J")
+					.Replace("\r", "^M")
+					.Replace("\t", "^I");
+				this.writeValue(code, s);
+			}
+			else
+			{
+				this.writeValue(code, value);
+			}
 		}
 
 		/// <inheritdoc/>

@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -14,10 +15,10 @@ namespace ACadSharp.Entities
 				public override EdgeType Type => EdgeType.Polyline;
 
 				/// <summary>
-				/// Has bulge flag
+				/// The polyline has bulges with value different than 0
 				/// </summary>
 				[DxfCodeValue(72)]
-				public bool HasBulge { get { return Bulge != 0; } }
+				public bool HasBulge => this.Bulges.Any(b => b != 0);
 
 				/// <summary>
 				/// Is closed flag
@@ -26,18 +27,19 @@ namespace ACadSharp.Entities
 				public bool IsClosed { get; set; }
 
 				/// <summary>
-				/// Bulge
+				/// Bulges applied to each vertice, the number of bulges must be equal to the vertices or empty.
 				/// </summary>
 				/// <remarks>
-				/// optional, default = 0
+				/// default value, 0 if not set
 				/// </remarks>
-				[DxfCodeValue(42)]
-				public double Bulge { get; set; } = 0.0;
+				[DxfCodeValue(DxfReferenceType.Optional, 42)]
+				//TODO: Consider move the Bulge value to the Z component of the vertices
+				public List<double> Bulges { get; set; } = new List<double>();
 
 				/// <remarks>
 				/// Position values are only X and Y
 				/// </remarks>
-				[DxfCodeValue(93)]
+				[DxfCodeValue(DxfReferenceType.Count, 93)]
 				public List<XY> Vertices { get; set; } = new List<XY>();
 			}
 		}

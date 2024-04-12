@@ -39,7 +39,20 @@ namespace ACadSharp.IO.Templates
 		{
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
 
+			public override double Measurement { get; }
+
 			public DimensionPlaceholder() : base(DimensionType.Linear) { }
+		}
+
+		public void SetDimensionFlags(DimensionType flags)
+		{
+			Dimension dimension = this.CadObject as Dimension;
+
+			if (dimension is DimensionOrdinate ordinate)
+			{
+				ordinate.IsOrdinateTypeX = flags.HasFlag(DimensionType.OrdinateTypeX);
+			}
+			dimension.IsTextUserDefinedLocation = flags.HasFlag(DimensionType.TextUserDefinedLocation);
 		}
 
 		public void SetDimensionObject(Dimension dimensionAligned)
@@ -64,10 +77,11 @@ namespace ACadSharp.IO.Templates
 			dimensionAligned.TextMiddlePoint = dimension.TextMiddlePoint;
 			dimensionAligned.InsertionPoint = dimension.InsertionPoint;
 			dimensionAligned.Normal = dimension.Normal;
+			dimensionAligned.IsTextUserDefinedLocation = dimension.IsTextUserDefinedLocation;
 			dimensionAligned.AttachmentPoint = dimension.AttachmentPoint;
 			dimensionAligned.LineSpacingStyle = dimension.LineSpacingStyle;
 			dimensionAligned.LineSpacingFactor = dimension.LineSpacingFactor;
-			dimensionAligned.Measurement = dimension.Measurement;
+			//dimensionAligned.Measurement = dimension.Measurement;
 			dimensionAligned.Text = dimension.Text;
 			dimensionAligned.TextRotation = dimension.TextRotation;
 			dimensionAligned.HorizontalDirection = dimension.HorizontalDirection;

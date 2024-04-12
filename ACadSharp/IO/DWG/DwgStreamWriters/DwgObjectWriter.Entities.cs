@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Entities;
 using CSMath;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,11 +16,13 @@ namespace ACadSharp.IO.DWG
 			//Ignored Entities
 			switch (entity)
 			{
+				case UnknownEntity:
 				case AttributeEntity:
 				case MText:
 				case Shape:
 				case Solid3D:
 				case MultiLeader:
+				case Mesh:
 				//Unlisted
 				case Wipeout:
 					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
@@ -148,8 +149,11 @@ namespace ACadSharp.IO.DWG
 							this.writeTextEntity(textEntity);
 							break;
 						default:
-							throw new NotImplementedException($"Entity not implemented : {entity.GetType().FullName}");
+							throw new NotImplementedException($"TextEntity not implemented : {entity.GetType().FullName}");
 					}
+					break;
+				case Tolerance tolerance:
+					this.writeTolerance(tolerance);
 					break;
 				case Vertex vertex:
 					switch (vertex)
@@ -276,7 +280,10 @@ namespace ACadSharp.IO.DWG
 			//and is not present in the binary form here.)
 			this._writer.WriteBitDouble(dimension.InsertionPoint.Z);
 
-			this._writer.WriteByte(0);
+			byte flags = 0;
+			flags |= dimension.IsTextUserDefinedLocation ? (byte)0b00 : (byte)0b01;
+
+			this._writer.WriteByte(flags);
 
 			//User text TV 1
 			this._writer.WriteVariableText(dimension.Text);
@@ -411,6 +418,9 @@ namespace ACadSharp.IO.DWG
 			this._writer.Write3BitDouble(dimension.FeatureLocation);
 			//14 - pt 3BD 14 See DXF documentation.
 			this._writer.Write3BitDouble(dimension.LeaderEndpoint);
+
+			byte flag = (byte)(dimension.IsOrdinateTypeX ? 1 : 0);
+			this._writer.WriteByte(flag);
 		}
 
 		private void writeEllipse(Ellipse ellipse)
@@ -643,7 +653,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//H mline style oject handle (hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, mline.MLStyle);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, mline.Style);
 		}
 
 		private void writeLwPolyline(LwPolyline lwPolyline)
@@ -848,12 +858,15 @@ namespace ACadSharp.IO.DWG
 
 					//numpathsegs BL 91 number of path segments
 					this._writer.WriteBitLong(pline.Vertices.Count);
-					foreach (var vertex in pline.Vertices)
+					for (var i = 0; i < pline.Vertices.Count; ++i)
 					{
-						this._writer.Write2RawDouble(vertex);
+						var vertex = pline.Vertices[i];
+						var bulge = pline.Bulges[i];
+
+						this._writer.Write2RawDouble(new XY(vertex.X, vertex.Y));
 						if (pline.HasBulge)
 						{
-							this._writer.WriteBitDouble(pline.Bulge);
+							this._writer.WriteBitDouble(bulge);
 						}
 					}
 				}
@@ -1634,7 +1647,7 @@ namespace ACadSharp.IO.DWG
 			//Extents wid BD ---Undocumented and not present in DXF or entget
 			this._writer.WriteBitDouble(0);
 
-			//Text TV 1 All text in one long string (Autocad format)
+			//Text TV 1 All text in one long string
 			this._writer.WriteVariableText(mtext.Value);
 
 			//H 7 STYLE (hard pointer)
@@ -1799,6 +1812,36 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteByte((byte)vertex.Flags);
 			//Point 3BD 10
 			this._writer.Write3BitDouble(vertex.Location);
+		}
+
+		private void writeTolerance(Tolerance tolerance)
+		{
+			this.writeCommonEntityData(tolerance);
+
+			//R13 - R14 Only:
+			if (this.R13_14Only)
+			{
+				//Unknown short S
+				this._writer.WriteBitShort(0);
+				//Height BD --
+				this._writer.WriteBitDouble(0.0);
+				//Dimgap(?) BD dimgap at time of creation, *dimscale
+				this._writer.WriteBitDouble(0.0);
+			}
+
+			//Common:
+			//Ins pt 3BD 10
+			this._writer.Write3BitDouble(tolerance.InsertionPoint);
+			//X direction 3BD 11
+			this._writer.Write3BitDouble(tolerance.Direction);
+			//Extrusion 3BD 210 etc.
+			this._writer.Write3BitDouble(tolerance.Normal);
+			//Text string BS 1
+			this._writer.WriteVariableText(tolerance.Text);
+
+			//Common Entity Handle Data
+			//H DIMSTYLE(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, tolerance.Style);
 		}
 
 		private void writeViewport(Viewport viewport)

@@ -63,9 +63,27 @@ namespace ACadSharp.Tests.IO.DXF
 		[Theory]
 		[MemberData(nameof(DxfAsciiFiles))]
 		[MemberData(nameof(DxfBinaryFiles))]
+		public override void AssertDocumentContent(string test)
+		{
+			base.AssertDocumentContent(test);
+		}
+
+		[Theory]
+		[MemberData(nameof(DxfAsciiFiles))]
+		[MemberData(nameof(DxfBinaryFiles))]
 		public override void AssertDocumentTree(string test)
 		{
-			base.AssertDocumentTree(test);
+			DxfReaderConfiguration configuration = new DxfReaderConfiguration();
+			configuration.KeepUnknownEntities = true;
+
+			CadDocument doc;
+			using (DxfReader reader = new DxfReader(test))
+			{
+				reader.Configuration = configuration;
+				doc = reader.Read();
+			}
+
+			this._docIntegrity.AssertDocumentTree(doc);
 		}
 
 		[Theory]

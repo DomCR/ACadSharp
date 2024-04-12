@@ -35,8 +35,7 @@ namespace ACadSharp.Tables
 
 		/// <summary>
 		/// If set, the table entry was referenced by at least one entity in the drawing the last time the 
-		/// drawing was edited. (This flag is for the benefit of AutoCAD commands. It can be ignored by 
-		/// most programs that read DXF files and need not be set by programs that write DXF files)
+		/// drawing was edited.
 		/// </summary>
 		Referenced = 64
 	}

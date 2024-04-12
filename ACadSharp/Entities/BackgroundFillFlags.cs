@@ -26,9 +26,6 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Adds a text frame
 		/// </summary>
-		/// <remarks>
-		/// Introduced in AutoCAD 2018
-		/// </remarks>
 		TextFrame = 16, // 0x10
 	}
 }

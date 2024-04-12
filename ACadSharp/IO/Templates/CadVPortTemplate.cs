@@ -21,41 +21,6 @@ namespace ACadSharp.IO.Templates
 
 		public CadVPortTemplate(VPort cadObject) : base(cadObject) { }
 
-		public override bool CheckDxfCode(int dxfcode, object value)
-		{
-			bool found = base.CheckDxfCode(dxfcode, value);
-			if (found)
-				return found;
-
-			switch (dxfcode)
-			{
-				//NOTE: Undocumented codes
-				case 65:
-				case 73:
-					found = true;
-					break;
-			}
-
-			return found;
-		}
-
-		public override bool AddHandle(int dxfcode, ulong handle)
-		{
-			bool value = base.AddHandle(dxfcode, handle);
-			if (value)
-				return value;
-
-			switch (dxfcode)
-			{
-				case 348:
-					this.StyleHandle = handle;
-					value = true;
-					break;
-			}
-
-			return value;
-		}
-
 		public override void Build(CadDocumentBuilder builder)
 		{
 			//TODO: implement DwgVPortTemplate

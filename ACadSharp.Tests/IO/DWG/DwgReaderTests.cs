@@ -45,9 +45,21 @@ namespace ACadSharp.Tests.IO.DWG
 
 		[Theory]
 		[MemberData(nameof(DwgFilePaths))]
+		public override void AssertDocumentContent(string test)
+		{
+			base.AssertDocumentContent(test);
+		}
+
+		[Theory]
+		[MemberData(nameof(DwgFilePaths))]
 		public override void AssertDocumentTree(string test)
 		{
-			base.AssertDocumentTree(test);
+			DwgReaderConfiguration configuration = new DwgReaderConfiguration();
+			configuration.KeepUnknownEntities = true;
+
+			CadDocument doc = DwgReader.Read(test, configuration);
+
+			this._docIntegrity.AssertDocumentTree(doc);
 		}
 
 		[Theory(Skip = "Long time test")]

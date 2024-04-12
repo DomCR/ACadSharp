@@ -2,12 +2,20 @@
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.IO.DXF
 {
 	internal class DxfDocumentBuilder : CadDocumentBuilder
 	{
 		public DxfReaderConfiguration Configuration { get; }
+
+		public CadBlockRecordTemplate ModelSpaceTemplate { get; set; }
+
+		public HashSet<ulong> ModelSpaceEntities { get; } = new();
+
+		public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
 
 		public DxfDocumentBuilder(CadDocument document, DxfReaderConfiguration configuration) : base(document)
 		{
@@ -31,13 +39,18 @@ namespace ACadSharp.IO.DXF
 			//Assign the owners for the different objects
 			foreach (CadTemplate template in this.templates.Values)
 			{
-				this.assignOwners(template);
+				this.assignOwner(template);
+			}
+
+			if(this.ModelSpaceTemplate != null)
+			{
+				this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(ModelSpaceEntities);
 			}
 
 			base.BuildDocument();
 		}
 
-		private void assignOwners(CadTemplate template)
+		private void assignOwner(CadTemplate template)
 		{
 			if (template.CadObject.Owner != null || template.CadObject is CadDictionary || !template.OwnerHandle.HasValue)
 				return;

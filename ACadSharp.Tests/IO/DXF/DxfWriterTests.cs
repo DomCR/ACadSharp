@@ -1,10 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
-using ACadSharp.IO.DXF;
 using ACadSharp.Tests.Common;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
@@ -26,7 +23,7 @@ namespace ACadSharp.Tests.IO.DXF
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 
-			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}_ascii.dxf");
+			string path = Path.Combine(samplesOutFolder, $"out_empty_sample_{version}_ascii.dxf");
 
 			using (var wr = new DxfWriter(path, doc, false))
 			{
@@ -42,8 +39,6 @@ namespace ACadSharp.Tests.IO.DXF
 			{
 				CadDocument readed = re.Read();
 			}
-
-			this.checkDxfDocumentInAutocad(Path.GetFullPath(path));
 		}
 
 		[Theory]
@@ -57,7 +52,7 @@ namespace ACadSharp.Tests.IO.DXF
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 
-			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}_binary.dxf");
+			string path = Path.Combine(samplesOutFolder, $"out_empty_sample_{version}_binary.dxf");
 
 			using (var wr = new DxfWriter(path, doc, true))
 			{
@@ -73,8 +68,6 @@ namespace ACadSharp.Tests.IO.DXF
 			{
 				CadDocument readed = re.Read();
 			}
-
-			this.checkDxfDocumentInAutocad(path);
 		}
 
 		[Theory]
@@ -102,15 +95,13 @@ namespace ACadSharp.Tests.IO.DXF
 
 			doc.Entities.AddRange(entities);
 
-			string path = Path.Combine(_samplesOutFolder, $"out_sample_{version}_ascii.dxf");
+			string path = Path.Combine(samplesOutFolder, $"out_sample_{version}_ascii.dxf");
 
 			using (var wr = new DxfWriter(path, doc, false))
 			{
 				wr.OnNotification += this.onNotification;
 				wr.Write();
 			}
-
-			this.checkDxfDocumentInAutocad(path);
 		}
 	}
 }
