@@ -219,6 +219,31 @@ namespace ACadSharp.IO
 		}
 
 		/// <summary>
+		/// Read only the tables section in the dxf document
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="CadDocument"/> will not contain any entity, only the tables and it's records
+		/// </remarks>
+		/// <returns></returns>
+		public CadDocument ReadTables()
+		{
+			this._builder = new DxfDocumentBuilder(this._document, this.Configuration);
+			this._builder.OnNotification += this.onNotificationEvent;
+
+			this._reader = this._reader ?? this.getReader();
+
+			this.readTables();
+
+			this._document.Header = new CadHeader(this._document);
+
+			this._builder.RegisterTables();
+
+			this._builder.BuildTables();
+
+			return this._document;
+		}
+
+		/// <summary>
 		/// Read only the entities section in the dxf document
 		/// </summary>
 		/// <remarks>

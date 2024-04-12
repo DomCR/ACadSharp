@@ -179,6 +179,19 @@ namespace ACadSharp.IO
 			this.DocumentToBuild.RegisterCollection(this.BlockRecords);
 		}
 
+		public void BuildTables()
+		{
+			this.BuildTable(this.AppIds);
+			this.BuildTable(this.LineTypesTable);
+			this.BuildTable(this.Layers);
+			this.BuildTable(this.TextStyles);
+			this.BuildTable(this.UCSs);
+			this.BuildTable(this.Views);
+			this.BuildTable(this.DimensionStyles);
+			this.BuildTable(this.VPorts);
+			this.BuildTable(this.BlockRecords);
+		}
+
 		public void Notify(string message, NotificationType notificationType = NotificationType.None, Exception exception = null)
 		{
 			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, exception));

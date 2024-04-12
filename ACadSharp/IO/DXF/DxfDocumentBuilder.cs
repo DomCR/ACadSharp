@@ -26,15 +26,7 @@ namespace ACadSharp.IO.DXF
 		{
 			this.RegisterTables();
 
-			this.BuildTable(this.AppIds);
-			this.BuildTable(this.LineTypesTable);
-			this.BuildTable(this.Layers);
-			this.BuildTable(this.TextStyles);
-			this.BuildTable(this.UCSs);
-			this.BuildTable(this.Views);
-			this.BuildTable(this.DimensionStyles);
-			this.BuildTable(this.VPorts);
-			this.BuildTable(this.BlockRecords);
+			this.BuildTables();
 
 			//Assign the owners for the different objects
 			foreach (CadTemplate template in this.templates.Values)
