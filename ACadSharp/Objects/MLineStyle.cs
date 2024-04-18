@@ -37,7 +37,17 @@ namespace ACadSharp.Objects
 		/// Mline style name
 		/// </summary>
 		[DxfCodeValue(2)]
-		public string Name { get; set; }
+		public override string Name
+		{
+			get
+			{
+				return base.Name;
+			}
+			set
+			{
+				base.Name = value;
+			}
+		}
 
 		/// <summary>
 		/// Multi line style flags
