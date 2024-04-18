@@ -33,8 +33,13 @@ namespace ACadSharp.IO.Templates
 
 			foreach (var item in this.Entries)
 			{
-				if (builder.TryGetCadObject(item.Value, out CadObject entry))
+				if (builder.TryGetCadObject(item.Value, out NonGraphicalObject entry))
 				{
+					if (string.IsNullOrEmpty(entry.Name))
+					{
+						entry.Name = item.Key;
+					}
+
 					this.CadObject.Add(item.Key, entry);
 				}
 			}

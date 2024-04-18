@@ -16,7 +16,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectDictionary)]
 	[DxfSubClass(DxfSubclassMarker.Dictionary)]
-	public class CadDictionary : CadObject, IObservableCollection<CadObject>
+	public class CadDictionary : NonGraphicalObject, IObservableCollection<NonGraphicalObject>
 	{
 		public event EventHandler<CollectionChangedEventArgs> OnAdd;
 		public event EventHandler<CollectionChangedEventArgs> OnRemove;
@@ -135,7 +135,7 @@ namespace ACadSharp.Objects
 
 		public CadObject this[string key] { get { return this._entries[key]; } }
 
-		private readonly Dictionary<string, CadObject> _entries = new Dictionary<string, CadObject>();    //TODO: Transform into an objservable collection
+		private readonly Dictionary<string, NonGraphicalObject> _entries = new();
 
 		/// <summary>
 		/// Creates the root dictionary with the default entries
@@ -194,18 +194,29 @@ namespace ACadSharp.Objects
 		}
 
 		/// <summary>
-		/// Add a <see cref="CadObject"/> to the collection, this method triggers <see cref="OnAdd"/>
+		/// Add a <see cref="NonGraphicalObject"/> to the collection, this method triggers <see cref="OnAdd"/>
 		/// </summary>
-		/// <param name="key"></param>
 		/// <param name="value"></param>
 		/// <exception cref="ArgumentException"></exception>
-		public void Add(string key, CadObject value)
+		public void Add(string name, NonGraphicalObject value)
 		{
 			//TODO: Performance increase, needs to change to a IDictionaryEntry
-			if (this._entries.ContainsKey(key))
+			if (this._entries.ContainsKey(name))
 				throw new ArgumentException($"Dictionary already contains {value.GetType().FullName}", nameof(value));
 
-			this._entries.Add(key, value);
+			this._entries.Add(name, value);
+			value.Owner = this;
+
+			OnAdd?.Invoke(this, new CollectionChangedEventArgs(value));
+		}
+
+		public void Add(NonGraphicalObject value)
+		{
+			//TODO: Performance increase, needs to change to a IDictionaryEntry
+			if (this._entries.ContainsKey(value.Name))
+				throw new ArgumentException($"Dictionary already contains {value.GetType().FullName}", nameof(value));
+
+			this._entries.Add(value.Name, value);
 			value.Owner = this;
 
 			OnAdd?.Invoke(this, new CollectionChangedEventArgs(value));
@@ -218,7 +229,7 @@ namespace ACadSharp.Objects
 		/// <returns>The removed <see cref="CadObject"/></returns>
 		public CadObject Remove(string key)
 		{
-			if (this._entries.Remove(key, out CadObject item))
+			if (this._entries.Remove(key, out NonGraphicalObject item))
 			{
 				item.Owner = null;
 				OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));
@@ -235,7 +246,7 @@ namespace ACadSharp.Objects
 		/// <param name="name"></param>
 		/// <returns>The value with Type T or null if not found or different type</returns>
 		public T GetEntry<T>(string name)
-			where T : CadObject
+			where T : NonGraphicalObject
 		{
 			this.TryGetEntry<T>(name, out T value);
 			return value;
@@ -249,9 +260,9 @@ namespace ACadSharp.Objects
 		/// <param name="value"></param>
 		/// <returns>true if the value is found or false if not found or different type</returns>
 		public bool TryGetEntry<T>(string name, out T value)
-			where T : CadObject
+			where T : NonGraphicalObject
 		{
-			if (this._entries.TryGetValue(name, out CadObject obj))
+			if (this._entries.TryGetValue(name, out NonGraphicalObject obj))
 			{
 				if (obj is T t)
 				{
@@ -264,15 +275,7 @@ namespace ACadSharp.Objects
 			return false;
 		}
 
-		public IEnumerable<(string, CadObject)> GetEntries()
-		{
-			foreach (var item in this._entries)
-			{
-				yield return (item.Key, item.Value);
-			}
-		}
-
-		public IEnumerator<CadObject> GetEnumerator()
+		public IEnumerator<NonGraphicalObject> GetEnumerator()
 		{
 			return this._entries.Values.GetEnumerator();
 		}
