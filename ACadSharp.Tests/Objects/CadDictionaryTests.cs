@@ -1,9 +1,5 @@
 ﻿using ACadSharp.Objects;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace ACadSharp.Tests.Objects
@@ -11,17 +7,18 @@ namespace ACadSharp.Tests.Objects
 	public class CadDictionaryTests
 	{
 		[Fact]
-		public void PerformanceTest()
+		public void AvoidDuplicatedEntries()
 		{
 			CadDictionary cadDictionary = new CadDictionary();
+			Scale scale = new Scale();
+			scale.Name = "scale_test";
 
-			for (int i = 0; i < 100000000; i++)
-			{
-				Scale scale = new Scale();
-				scale.Name = i.ToString();
+			cadDictionary.Add(scale);
 
-				cadDictionary.Add("i", scale);
-			}
+			Scale scale1 = new Scale();
+			scale.Name = "scale_test";
+
+			Assert.Throws<ArgumentException>(() => cadDictionary.Add(scale));
 		}
 	}
 }

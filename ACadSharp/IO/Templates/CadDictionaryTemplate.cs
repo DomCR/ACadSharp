@@ -40,7 +40,12 @@ namespace ACadSharp.IO.Templates
 						entry.Name = item.Key;
 					}
 
-					this.CadObject.Add(item.Key, entry);
+					if (entry.Name.Equals("standard", System.StringComparison.OrdinalIgnoreCase))
+					{
+
+					}
+
+					this.CadObject.Add(entry);
 				}
 			}
 		}

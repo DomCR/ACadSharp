@@ -24,6 +24,11 @@ namespace ACadSharp.Objects
 		#region Root dictionary entries
 
 		/// <summary>
+		/// ROOT dictionary, only used in the top level dictionary
+		/// </summary>
+		public const string Root = "ROOT";
+
+		/// <summary>
 		/// ACAD_COLOR dictionary entry
 		/// </summary>
 		public const string AcadColor = "ACAD_COLOR";
@@ -135,7 +140,7 @@ namespace ACadSharp.Objects
 
 		public CadObject this[string key] { get { return this._entries[key]; } }
 
-		private readonly Dictionary<string, NonGraphicalObject> _entries = new();
+		private readonly Dictionary<string, NonGraphicalObject> _entries = new(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>
 		/// Creates the root dictionary with the default entries
@@ -143,54 +148,61 @@ namespace ACadSharp.Objects
 		/// <returns></returns>
 		public static CadDictionary CreateRoot()
 		{
-			CadDictionary root = new CadDictionary
+			CadDictionary root = new CadDictionary(Root)
 			{
-				{ AcadColor, new CadDictionary() },
-				{ AcadGroup, new CadDictionary() },
-				{ AcadLayout, new CadDictionary() },
-				{ AcadMaterial, new CadDictionary() },
-				{ AcadSortEnts, new CadDictionary() },
-				{ AcadMLeaderStyle, new CadDictionary
+				{ new CadDictionary(AcadColor) },
+				{ new CadDictionary(AcadGroup) },
+				{ new CadDictionary(AcadLayout) },
+				{ new CadDictionary(AcadMaterial) },
+				{ new CadDictionary(AcadSortEnts) },
+				{  new CadDictionary(AcadMLeaderStyle)
 					{
-						{ MultiLeaderStyle.DefaultName, MultiLeaderStyle.Default }
+						{ MultiLeaderStyle.Default }
 					}
 				},
-				{ AcadMLineStyle, new CadDictionary
+				{ new CadDictionary(AcadMLineStyle)
 					{
-						{ MLineStyle.DefaultName, MLineStyle.Default }
+						{ MLineStyle.Default }
 					}
 				},
-				{ AcadTableStyle, new CadDictionary() },
-				{ AcadPlotSettings, new CadDictionary() },
-				{ VariableDictionary, new CadDictionary() },	//DictionaryVars Entry DIMASSOC and HIDETEXT ??
+				{ new CadDictionary(AcadTableStyle) },
+				{ new CadDictionary(AcadPlotSettings) },
+				{ new CadDictionary(VariableDictionary) },	//DictionaryVars Entry DIMASSOC and HIDETEXT ??
 				// { AcadPlotStyleName, new CadDictionaryWithDefault() },	//Add default entry "Normal"	PlaceHolder	??
-				{ AcadScaleList, new CadDictionary
+				{ new CadDictionary(AcadScaleList)
 					{
-						{ "A0", new Scale { Name="A0", PaperUnits = 1.0, DrawingUnits = 1.0, IsUnitScale = true } },
-						{ "A1", new Scale { Name="A1", PaperUnits = 1.0, DrawingUnits = 2.0, IsUnitScale = false } },
-						{ "A2", new Scale { Name="A2", PaperUnits = 1.0, DrawingUnits = 4.0, IsUnitScale = false } },
-						{ "A3", new Scale { Name="A3", PaperUnits = 1.0, DrawingUnits = 5.0, IsUnitScale = false } },
-						{ "A4", new Scale { Name="A4", PaperUnits = 1.0, DrawingUnits = 8.0, IsUnitScale = false } },
-						{ "A5", new Scale { Name="A5", PaperUnits = 1.0, DrawingUnits = 10.0, IsUnitScale = false } },
-						{ "A6", new Scale { Name="A6", PaperUnits = 1.0, DrawingUnits = 16.0, IsUnitScale = false } },
-						{ "A7", new Scale { Name="A7", PaperUnits = 1.0, DrawingUnits = 20.0, IsUnitScale = false } },
-						{ "A8", new Scale { Name="A8", PaperUnits = 1.0, DrawingUnits = 30.0, IsUnitScale = false } },
-						{ "A9", new Scale { Name="A9", PaperUnits = 1.0, DrawingUnits = 40.0, IsUnitScale = false } },
-						{ "B0", new Scale { Name="B0", PaperUnits = 1.0, DrawingUnits = 50.0, IsUnitScale = false } },
-						{ "B1", new Scale { Name="B1", PaperUnits = 1.0, DrawingUnits = 100.0, IsUnitScale = false } },
-						{ "B2", new Scale { Name="B2", PaperUnits = 2.0, DrawingUnits = 1.0, IsUnitScale = false } },
-						{ "B3", new Scale { Name="B3", PaperUnits = 4.0, DrawingUnits = 1.0, IsUnitScale = false } },
-						{ "B4", new Scale { Name="B4", PaperUnits = 8.0, DrawingUnits = 1.0, IsUnitScale = false } },
-						{ "B5", new Scale { Name="B5", PaperUnits = 10.0, DrawingUnits = 1.0, IsUnitScale = false } },
-						{ "B6", new Scale { Name="B6", PaperUnits = 100.0, DrawingUnits = 1.0, IsUnitScale = false } },
+						{ new Scale { Name="A0", PaperUnits = 1.0, DrawingUnits = 1.0, IsUnitScale = true } },
+						{ new Scale { Name="A1", PaperUnits = 1.0, DrawingUnits = 2.0, IsUnitScale = false } },
+						{ new Scale { Name="A2", PaperUnits = 1.0, DrawingUnits = 4.0, IsUnitScale = false } },
+						{ new Scale { Name="A3", PaperUnits = 1.0, DrawingUnits = 5.0, IsUnitScale = false } },
+						{ new Scale { Name="A4", PaperUnits = 1.0, DrawingUnits = 8.0, IsUnitScale = false } },
+						{ new Scale { Name="A5", PaperUnits = 1.0, DrawingUnits = 10.0, IsUnitScale = false } },
+						{ new Scale { Name="A6", PaperUnits = 1.0, DrawingUnits = 16.0, IsUnitScale = false } },
+						{ new Scale { Name="A7", PaperUnits = 1.0, DrawingUnits = 20.0, IsUnitScale = false } },
+						{ new Scale { Name="A8", PaperUnits = 1.0, DrawingUnits = 30.0, IsUnitScale = false } },
+						{ new Scale { Name="A9", PaperUnits = 1.0, DrawingUnits = 40.0, IsUnitScale = false } },
+						{ new Scale { Name="B0", PaperUnits = 1.0, DrawingUnits = 50.0, IsUnitScale = false } },
+						{ new Scale { Name="B1", PaperUnits = 1.0, DrawingUnits = 100.0, IsUnitScale = false } },
+						{ new Scale { Name="B2", PaperUnits = 2.0, DrawingUnits = 1.0, IsUnitScale = false } },
+						{ new Scale { Name="B3", PaperUnits = 4.0, DrawingUnits = 1.0, IsUnitScale = false } },
+						{ new Scale { Name="B4", PaperUnits = 8.0, DrawingUnits = 1.0, IsUnitScale = false } },
+						{ new Scale { Name="B5", PaperUnits = 10.0, DrawingUnits = 1.0, IsUnitScale = false } },
+						{ new Scale { Name="B6", PaperUnits = 100.0, DrawingUnits = 1.0, IsUnitScale = false } },
 					}
 				},
-				{ AcadVisualStyle, new CadDictionary() },
-				{ AcadFieldList, new CadDictionary() },
-				{ AcadImageDict, new CadDictionary() },
+				{ new CadDictionary(AcadVisualStyle) },
+				{ new CadDictionary(AcadFieldList) },
+				{ new CadDictionary(AcadImageDict) },
 			};
 
 			return root;
+		}
+
+		internal CadDictionary() { }
+
+		public CadDictionary(string name)
+		{
+			this.Name = name;
 		}
 
 		/// <summary>
@@ -198,23 +210,12 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <param name="value"></param>
 		/// <exception cref="ArgumentException"></exception>
-		public void Add(string name, NonGraphicalObject value)
-		{
-			//TODO: Performance increase, needs to change to a IDictionaryEntry
-			if (this._entries.ContainsKey(name))
-				throw new ArgumentException($"Dictionary already contains {value.GetType().FullName}", nameof(value));
-
-			this._entries.Add(name, value);
-			value.Owner = this;
-
-			OnAdd?.Invoke(this, new CollectionChangedEventArgs(value));
-		}
-
 		public void Add(NonGraphicalObject value)
 		{
-			//TODO: Performance increase, needs to change to a IDictionaryEntry
-			if (this._entries.ContainsKey(value.Name))
-				throw new ArgumentException($"Dictionary already contains {value.GetType().FullName}", nameof(value));
+			if (string.IsNullOrEmpty(value.Name))
+			{
+				throw new ArgumentNullException(nameof(value), $"NonGraphicalObject [{this.GetType().FullName}] must have a name");
+			}
 
 			this._entries.Add(value.Name, value);
 			value.Owner = this;
