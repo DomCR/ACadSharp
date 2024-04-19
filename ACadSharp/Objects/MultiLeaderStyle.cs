@@ -14,7 +14,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityMLeaderStyle)]
 	[DxfSubClass(DxfSubclassMarker.MLeaderStyle)]
-	public class MultiLeaderStyle : NonGraphicalObject, IDictionaryEntry
+	public class MultiLeaderStyle : NonGraphicalObject
 	{
 		/// <summary>
 		/// Default multiline style name
