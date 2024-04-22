@@ -26,15 +26,7 @@ namespace ACadSharp.IO.DXF
 		{
 			this.RegisterTables();
 
-			this.BuildTable(this.AppIds);
-			this.BuildTable(this.LineTypesTable);
-			this.BuildTable(this.Layers);
-			this.BuildTable(this.TextStyles);
-			this.BuildTable(this.UCSs);
-			this.BuildTable(this.Views);
-			this.BuildTable(this.DimensionStyles);
-			this.BuildTable(this.VPorts);
-			this.BuildTable(this.BlockRecords);
+			this.BuildTables();
 
 			//Assign the owners for the different objects
 			foreach (CadTemplate template in this.templates.Values)
@@ -42,12 +34,28 @@ namespace ACadSharp.IO.DXF
 				this.assignOwner(template);
 			}
 
-			if(this.ModelSpaceTemplate != null)
+			if (this.ModelSpaceTemplate != null)
 			{
 				this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(ModelSpaceEntities);
 			}
 
 			base.BuildDocument();
+		}
+
+		public List<Entity> BuildEntities()
+		{
+			var entities = new List<Entity>();
+
+			foreach (CadEntityTemplate item in this.templates.Values.OfType<CadEntityTemplate>())
+			{
+				item.Build(this);
+
+				item.SetUnlinkedReferences();
+
+				entities.Add(item.CadObject);
+			}
+
+			return entities;
 		}
 
 		private void assignOwner(CadTemplate template)

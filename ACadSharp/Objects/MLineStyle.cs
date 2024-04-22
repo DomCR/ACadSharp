@@ -12,7 +12,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectMLineStyle)]
 	[DxfSubClass(DxfSubclassMarker.MLineStyle)]
-	public partial class MLineStyle : CadObject, IDictionaryEntry
+	public partial class MLineStyle : NonGraphicalObject
 	{
 		/// <summary>
 		/// Default multiline style name
@@ -37,7 +37,17 @@ namespace ACadSharp.Objects
 		/// Mline style name
 		/// </summary>
 		[DxfCodeValue(2)]
-		public string Name { get; set; }
+		public override string Name
+		{
+			get
+			{
+				return base.Name;
+			}
+			set
+			{
+				base.Name = value;
+			}
+		}
 
 		/// <summary>
 		/// Multi line style flags
