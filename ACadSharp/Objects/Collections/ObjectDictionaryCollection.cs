@@ -10,7 +10,7 @@ namespace ACadSharp.Objects.Collections
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	public abstract class ObjectDictionaryCollection<T> : IHandledCadObject, IEnumerable<T>
-		where T : CadObject, IDictionaryEntry
+		where T : NonGraphicalObject
 	{
 		public event EventHandler<CollectionChangedEventArgs> OnAdd { add { this._dictionary.OnAdd += value; } remove { this._dictionary.OnAdd -= value; } }
 		public event EventHandler<CollectionChangedEventArgs> OnRemove { add { this._dictionary.OnRemove += value; } remove { this._dictionary.OnRemove -= value; } }
@@ -33,7 +33,7 @@ namespace ACadSharp.Objects.Collections
 		/// <param name="entry"></param>
 		public void Add(T entry)
 		{
-			this._dictionary.Add(entry.Name, entry);
+			this._dictionary.Add(entry);
 		}
 
 		/// <summary>

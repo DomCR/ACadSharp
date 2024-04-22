@@ -13,7 +13,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectPlotSettings)]
 	[DxfSubClass(DxfSubclassMarker.PlotSettings)]
-	public class PlotSettings : CadObject
+	public class PlotSettings : NonGraphicalObject
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.INVALID;

@@ -53,11 +53,5 @@ namespace ACadSharp.Tables
 		{
 			return $"{this.ObjectName}:{this.Name}";
 		}
-
-		internal void SetUnrestrictedName(string name)
-		{
-			// Needed to bypass invalid table entries with no name assigned
-			this.name = name;
-		}
 	}
 }

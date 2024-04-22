@@ -13,7 +13,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.TableGroup)]
 	[DxfSubClass(DxfSubclassMarker.Group)]
-	public class Group : CadObject, IDictionaryEntry
+	public class Group : NonGraphicalObject
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.GROUP;
@@ -23,11 +23,6 @@ namespace ACadSharp.Objects
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Group;
-
-		/// <summary>
-		/// Name in which this group is stored in the document
-		/// </summary>
-		public string Name { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Group description
