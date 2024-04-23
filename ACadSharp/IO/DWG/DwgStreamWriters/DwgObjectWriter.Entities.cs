@@ -19,7 +19,6 @@ namespace ACadSharp.IO.DWG
 				case UnknownEntity:
 				case AttributeEntity:
 				case MText:
-				case Shape:
 				case Solid3D:
 				case MultiLeader:
 				case Mesh:
