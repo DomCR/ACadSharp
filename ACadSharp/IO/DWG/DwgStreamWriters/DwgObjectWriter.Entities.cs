@@ -18,7 +18,6 @@ namespace ACadSharp.IO.DWG
 			{
 				case UnknownEntity:
 				case AttributeEntity:
-				case Shape:
 				case Solid3D:
 				case MultiLeader:
 				case Mesh:
