@@ -160,11 +160,19 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Updates all attribute definitions contained in the block reference as Attribute entitites in the insert
+		/// Updates all attribute definitions contained in the block reference as <see cref="AttributeDefinition"/> entitites in the insert
 		/// </summary>
-		/// <exception cref="NotImplementedException"></exception>
 		public void UpdateAttributes()
 		{
+			foreach (AttributeEntity att in this.Attributes)
+			{
+				//Tags are not unique, is it needed? check how the different applications link the atts
+				if (!this.Block.AttributeDefinitions.Select(d => d.Tag).Contains(att.Tag))
+				{
+					this.Attributes.Remove(att);
+				}
+			}
+
 			throw new NotImplementedException();
 		}
 
