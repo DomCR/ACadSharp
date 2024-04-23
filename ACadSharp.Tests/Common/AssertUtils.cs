@@ -1,4 +1,6 @@
-﻿using CSMath;
+﻿using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
+using CSMath;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ACadSharp.Tests.Common
@@ -22,6 +24,19 @@ namespace ACadSharp.Tests.Common
 					Assert.AreEqual(expected, actual, $"Different {varname}");
 					break;
 			}
+		}
+
+		public static void NotNull<T>(T o, string info = null)
+		{
+			Assert.IsNotNull(o != null, $"Object of type {typeof(T)} should not be null:  {info}");
+		}
+
+		public static void EntryNotNull<T>(Table<T> table, string entry)
+			where T : TableEntry
+		{
+			var record = table[entry];
+			Assert.IsTrue(record != null, $"Entry with name {entry} is null for table {table}");
+			Assert.IsNotNull(record.Document);
 		}
 	}
 }

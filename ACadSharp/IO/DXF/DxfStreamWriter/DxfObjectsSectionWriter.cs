@@ -32,9 +32,7 @@ namespace ACadSharp.IO.DXF
 				case Material:
 				case MultiLeaderStyle:
 				case SortEntitiesTable:
-				case Scale:
 				case VisualStyle:
-				//case XRecrod:	//TODO: XRecord Understand how it works for the reader
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
 			}
@@ -52,7 +50,7 @@ namespace ACadSharp.IO.DXF
 					this.writeDictionaryVariable(dictvar);
 					break;
 				case Group group:
-					this.writeGroup(group); 
+					this.writeGroup(group);
 					break;
 				case Layout layout:
 					this.writeLayout(layout);
@@ -62,6 +60,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case PlotSettings plotSettings:
 					this.writePlotSettings(plotSettings);
+					break;
+				case Scale scale:
+					this.writeScale(scale);
 					break;
 				case SortEntitiesTable sortensTable:
 					//this.writeSortentsTable(sortensTable);
@@ -150,6 +151,17 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(148, plot.PaperImageOrigin.X, map);
 			this._writer.Write(149, plot.PaperImageOrigin.Y, map);
+		}
+
+		protected void writeScale(Scale scale)
+		{
+			this._writer.Write(100, DxfSubclassMarker.Scale);
+
+			this._writer.Write(70, 0);
+			this._writer.Write(300, scale.Name);
+			this._writer.Write(140, scale.PaperUnits);
+			this._writer.Write(141, scale.DrawingUnits);
+			this._writer.Write(290, scale.IsUnitScale ? (short)1 : (short)0);
 		}
 
 		protected void writeGroup(Group group)

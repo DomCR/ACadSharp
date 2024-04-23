@@ -177,6 +177,10 @@ namespace ACadSharp.IO.DWG
 				{
 					this._builder.AddTableTemplate(tableTemplate);
 				}
+				else if (template is ICadDictionaryTemplate dictionaryTemplate)
+				{
+					this._builder.AddDictionaryTemplate(dictionaryTemplate);
+				}
 				else
 				{
 					this._builder.AddTemplate(template);
@@ -343,7 +347,17 @@ namespace ACadSharp.IO.DWG
 			//11 : Not used.
 
 			if (template.EntityMode == 0)
+			{
 				template.OwnerHandle = this._handlesReader.HandleReference(entity.Handle);
+			}
+			else if (template.EntityMode == 1)
+			{
+				this._builder.PaperSpaceEntities.Add(entity);
+			}
+			else if (template.EntityMode == 2)
+			{
+				this._builder.ModelSpaceEntities.Add(entity);
+			}
 
 			//Numreactors BL number of persistent reactors attached to this object
 			this.readReactorsAndDictionaryHandle(template);
@@ -695,7 +709,7 @@ namespace ACadSharp.IO.DWG
 
 			switch (type)
 			{
-				case ObjectType.UNUSED:
+				case ObjectType.UNDEFINED:
 					break;
 				case ObjectType.TEXT:
 					template = this.readText();
@@ -977,6 +991,8 @@ namespace ACadSharp.IO.DWG
 					template = this.readDictionaryVar();
 					break;
 				case "DICTIONARYWDFLT":
+					template = this.readDictionaryWithDefault();
+					break;
 				case "FIELD":
 					break;
 				case "GROUP":
@@ -995,6 +1011,9 @@ namespace ACadSharp.IO.DWG
 					template = this.readLayout();
 					break;
 				case "LWPLINE":
+				case "LWPOLYLINE":
+					template = this.readLWPolyline();
+					break;
 				case "MATERIAL":
 					break;
 				case "MESH":
@@ -1043,13 +1062,33 @@ namespace ACadSharp.IO.DWG
 					break;
 			}
 
+			if (template == null && c.IsAnEntity)
+			{
+				template = this.readUnknownEntity(c);
+				this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownEntity", NotificationType.Warning);
+			}
+
 			if (template == null)
+			{
 				this._builder.Notify($"Unlisted object not implemented, DXF name: {c.DxfName}", NotificationType.NotImplemented);
+			}
 
 			return template;
 		}
 
 		#region Text entities
+
+		private CadTemplate readUnknownEntity(DxfClass dxfClass)
+		{
+			UnknownEntity entity = new UnknownEntity(dxfClass);
+			CadUnknownEntityTemplate template = new CadUnknownEntityTemplate(entity);
+
+			this._builder.UnknownEntities.Add(entity);
+
+			this.readCommonEntityData(template);
+
+			return template;
+		}
 
 		private CadTemplate readText()
 		{
@@ -2777,6 +2816,11 @@ namespace ACadSharp.IO.DWG
 			CadDictionaryTemplate template = new CadDictionaryTemplate(cadDictionary);
 
 			this.readCommonDictionary(template);
+
+			if (cadDictionary.Handle == this._builder.HeaderHandles.DICTIONARY_NAMED_OBJECTS)
+			{
+
+			}
 
 			return template;
 		}
@@ -5542,6 +5586,22 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readMesh()
 		{
+			Mesh mesh = new Mesh();
+			CadMeshTemplate template = new CadMeshTemplate(mesh);
+
+#if TEST
+			this.readCommonEntityData(template);
+
+			//Same order as dxf?
+
+			//71 BS Version
+			mesh.Version = this._objectReader.ReadBitShort();
+			//72 BS BlendCrease
+			mesh.BlendCrease = this._objectReader.ReadBitShort();
+
+			var dict = DwgStreamReaderBase.Explore(this._objectReader);
+#endif
+
 			return null;
 		}
 
@@ -5562,7 +5622,7 @@ namespace ACadSharp.IO.DWG
 			this.readCommonNonEntityData(template);
 
 			//BS	70	Unknown(ODA writes 0).
-			scale.Unknown = this._mergedReaders.ReadBitShort();
+			this._mergedReaders.ReadBitShort();
 			//TV	300	Name
 			scale.Name = this._mergedReaders.ReadVariableText();
 			//BD	140	Paper units(numerator)
