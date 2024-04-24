@@ -204,7 +204,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(76, (short)0, map);
 
-			this._writer.WriteHandle(330, layout.AssociatedBlock.Owner, map);
+			this._writer.WriteHandle(330, layout.AssociatedBlock, map);
 		}
 
 		protected void writeMLineStyle(MLineStyle style)

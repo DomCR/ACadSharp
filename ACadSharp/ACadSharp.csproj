@@ -17,7 +17,7 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>2.3.0-beta</Version>
+    <Version>2.3.1-beta</Version>
   </PropertyGroup>
 
   <Import Project="..\CSUtilities\CSMath\CSMath.projitems" Label="Shared" />
