@@ -21,6 +21,85 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.TableEntity)]
 	public class TableEntity : Insert
 	{
+		public class TableAttribute
+		{
+			public string Value { get; internal set; }
+		}
+
+		public class CellValue
+		{
+			internal int Flags { get; set; }
+
+			public bool IsEmpty
+			{
+				get
+				{
+					return (this.Flags & 1) != 0;
+				}
+				set
+				{
+					if (value)
+					{
+						this.Flags |= 1;
+					}
+					else
+					{
+						this.Flags &= -2;
+					}
+				}
+			}
+
+			public object Value { get; internal set; }
+		}
+
+		public enum CellValueType
+		{
+			/// <summary>
+			/// Unknown
+			/// </summary>
+			Unknown = 0,
+			/// <summary>
+			/// 32 bit Long value
+			/// </summary>
+			Long = 1,
+			/// <summary>
+			/// Double value
+			/// </summary>
+			Double = 2,
+			/// <summary>
+			/// String value
+			/// </summary>
+			String = 4,
+			/// <summary>
+			/// Date value
+			/// </summary>
+			Date = 8,
+			/// <summary>
+			/// 2D point value
+			/// </summary>
+			Point2D = 0x10,
+			/// <summary>
+			/// 3D point value
+			/// </summary>
+			Point3D = 0x20,
+			/// <summary>
+			/// Object handle value
+			/// </summary>
+			Handle = 0x40,
+			/// <summary>
+			/// Buffer value
+			/// </summary>
+			Buffer = 0x80,
+			/// <summary>
+			/// Result buffer value
+			/// </summary>
+			ResultBuffer = 0x100,
+			/// <summary>
+			/// General
+			/// </summary>
+			General = 0x200
+		}
+
 		public enum CellStypeType
 		{
 			Cell = 1,
@@ -71,17 +150,34 @@ namespace ACadSharp.Entities
 		{
 			public CellStypeType Type { get; set; }
 		}
+
 		public class CustomDataEntry
 		{
 			public string Name { get; internal set; }
+			public CellValue Value { get; internal set; } = new CellValue();
 		}
 
 		public class Cell
 		{
 			public string ToolTip { get; internal set; }
-			public int CustomData { get; internal set; }
 			public TableCellStateFlags StateFlags { get; internal set; }
 			public bool HasLinkedData { get; internal set; }
+			public int CustomData { get; internal set; }
+			public List<CustomDataEntry> CustomDataCollection { get; internal set; } = new();
+
+			public List<Content> Contents { get; internal set; } = new();
+
+			public class Content
+			{
+
+			}
+		}
+
+		public enum TableCellContentType
+		{
+			Value,
+			Field,
+			Block
 		}
 
 		public class Row
@@ -96,7 +192,7 @@ namespace ACadSharp.Entities
 			public double Width { get; internal set; }
 			public string Name { get; internal set; }
 			public int CustomData { get; internal set; }
-			public List<CustomDataEntry> CustomEntries { get; internal set; }
+			public List<CustomDataEntry> CustomDataCollection { get; internal set; }
 		}
 
 		public class Content

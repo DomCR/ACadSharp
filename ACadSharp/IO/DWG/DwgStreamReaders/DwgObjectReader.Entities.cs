@@ -1,8 +1,11 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
+using CSMath;
+using CSUtilities.Converters;
 using System;
 using static ACadSharp.Entities.TableEntity;
 using static ACadSharp.Entities.TableEntity.BreakData;
+using static ACadSharp.IO.Templates.CadTableEntityTemplate;
 
 namespace ACadSharp.IO.DWG
 {
@@ -188,7 +191,7 @@ namespace ACadSharp.IO.DWG
 					//Custom data collection, see paragraph 20.4.100
 					this.readCustomTableData(entry);
 
-					column.CustomEntries.Add(entry);
+					column.CustomDataCollection.Add(entry);
 				}
 
 				//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the column.
@@ -229,7 +232,101 @@ namespace ACadSharp.IO.DWG
 		{
 			//TV 300 Item name
 			entry.Name = this._mergedReaders.ReadVariableText();
+			this.readCustomTableDataValue(entry.Value);
+		}
+
+		private void readCustomTableDataValue(CellValue value)
+		{
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Flags BL 93 Flags & 0x01 => type is kGeneral
+				value.Flags = this._mergedReaders.ReadBitLong();
+			}
+
+			//Common:
+			//Data type BL 90
+			CellValueType type = (CellValueType)this._mergedReaders.ReadBitLong();
+			if (!this.R2007Plus || !value.IsEmpty)
+			{
+				//Varies by type: Not present in case bit 1 in Flags is set
+				switch (type)
+				{
+					case CellValueType.Unknown:
+					case CellValueType.Long:
+						value.Value = this._mergedReaders.ReadBitLong();
+						break;
+					case CellValueType.Double:
+						value.Value = this._mergedReaders.ReadBitDouble();
+						break;
+					case CellValueType.General:
+					case CellValueType.String:
+						value.Value = this.readStringCellValue();
+						break;
+					case CellValueType.Date:
+						System.DateTime? dateTime = this.readDateCellValue();
+						if (dateTime.HasValue)
+						{
+							value.Value = dateTime.Value;
+						}
+						break;
+					case CellValueType.Point2D:
+						value.Value = this.readCellValueXY();
+						break;
+					case CellValueType.Point3D:
+						value.Value = this.readCellValueXYZ();
+						break;
+					case CellValueType.Handle:
+						value.Value = this.handleReference();
+						break;
+					case CellValueType.Buffer:
+					case CellValueType.ResultBuffer:
+						throw new NotImplementedException();
+				}
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Unit type BL 94 0 = no units, 1 = distance, 2 = angle, 4 = area, 8 = volume
+				this._mergedReaders.ReadBitLong();
+				//Format String TV 300
+				this._mergedReaders.ReadVariableText();
+				//Value String TV 302
+				this._mergedReaders.ReadVariableText();
+			}
+		}
+
+		private string readStringCellValue()
+		{
 			throw new NotImplementedException();
+		}
+
+		private System.DateTime? readDateCellValue()
+		{
+			throw new NotImplementedException();
+		}
+
+		private XY? readCellValueXY()
+		{
+			XY? result = null;
+			int length = this._mergedReaders.ReadBitLong();
+			if (length > 0)
+			{
+				result = this._mergedReaders.Read2RawDouble();
+			}
+			return result;
+		}
+
+		private XYZ? readCellValueXYZ()
+		{
+			XYZ? result = null;
+			int length = this._mergedReaders.ReadBitLong();
+			if (length > 0)
+			{
+				result = this._mergedReaders.Read3RawDouble();
+			}
+			return result;
 		}
 
 		private void readCellStyle(CellStyle cellStyle)
@@ -260,8 +357,9 @@ namespace ACadSharp.IO.DWG
 			int num = this._mergedReaders.ReadBitLong();
 			for (int i = 0; i < num; i++)
 			{
-				throw new NotImplementedException();
-				//this.readCustomTableData(cell);
+				CustomDataEntry customData = new CustomDataEntry();
+				this.readCustomTableData(customData);
+				cell.CustomDataCollection.Add(customData);
 			}
 
 			//BL 92 Has linked data flags, 0 = false, 1 = true If has linked data
@@ -277,6 +375,18 @@ namespace ACadSharp.IO.DWG
 				//BL 96 Unknown.
 				this._mergedReaders.ReadBitLong();
 				//End if has linked data
+			}
+
+			//BL 95 Number of cell contents
+			int cellContents = this._mergedReaders.ReadBitLong();
+			for (int j = 0; j < cellContents; j++)
+			{
+				//Begin repeat cell contents
+				TableEntity.Cell.Content cellContent = new();
+
+				throw new NotImplementedException();
+
+				cell.Contents.Add(cellContent);
 			}
 		}
 	}

@@ -88,6 +88,11 @@ namespace ACadSharp.IO.DWG
 			return this._mainReader.Read2RawDouble();
 		}
 
+		public XYZ Read3RawDouble()
+		{
+			return this._mainReader.Read3RawDouble();
+		}
+
 		public XYZ Read3BitDouble()
 		{
 			return this._mainReader.Read3BitDouble();

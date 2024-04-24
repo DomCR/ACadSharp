@@ -380,6 +380,12 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
+		public XYZ Read3RawDouble()
+		{
+			return new XYZ(this.ReadDouble(), this.ReadDouble(), this.ReadDouble());
+		}
+
+		/// <inheritdoc/>
 		public ulong ReadModularChar()
 		{
 			int shift = 0;
