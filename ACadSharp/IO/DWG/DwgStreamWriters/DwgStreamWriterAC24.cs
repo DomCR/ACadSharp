@@ -10,17 +10,17 @@ namespace ACadSharp.IO.DWG
 		{
 		}
 
-		public override void WriteObjectType(ObjectType value)
+		public override void WriteObjectType(short value)
 		{
 			//A bit pair, followed by either 1 or 2 bytes
 			//Amount of bytes depens on the value
-			if ((short)value <= 255)
+			if (value <= 255)
 			{
 				//Read the following byte
 				this.Write2Bits(0);
 				this.WriteByte((byte)value);
 			}
-			else if ((short)value >= 0x1F0 && (short)value <= 0x2EF)
+			else if (value >= 0x1F0 && value <= 0x2EF)
 			{
 				//Read following byte and add 0x1f0.
 				this.Write2Bits(1);
@@ -30,7 +30,7 @@ namespace ACadSharp.IO.DWG
 			{
 				//Read the following two bytes (raw short)
 				this.Write2Bits(2);
-				this.WriteBytes(LittleEndianConverter.Instance.GetBytes((short)value));
+				this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
 			}
 		}
 	}

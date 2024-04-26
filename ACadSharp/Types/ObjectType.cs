@@ -7,7 +7,7 @@
 	{
 		UNLISTED = -999,
 		INVALID = -1,
-		UNUSED = 0,
+		UNDEFINED = 0,
 
 		TEXT = 1,
 		ATTRIB = 2,

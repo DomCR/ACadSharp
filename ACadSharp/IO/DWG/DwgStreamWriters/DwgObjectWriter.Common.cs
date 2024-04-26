@@ -1,4 +1,5 @@
-﻿using ACadSharp.Entities;
+﻿using ACadSharp.Classes;
+using ACadSharp.Entities;
 using ACadSharp.Tables;
 using CSUtilities.Converters;
 using System;
@@ -32,7 +33,7 @@ namespace ACadSharp.IO.DWG
 
 			//Write the object in the stream
 			crc.Write(this._msmain.GetBuffer(), 0, (int)this._msmain.Length);
-			crc.Write(LittleEndianConverter.Instance.GetBytes(crc.Seed), 0, 2);
+			_stream.Write(LittleEndianConverter.Instance.GetBytes(crc.Seed), 0, 2);
 
 			this.Map.Add(cadObject.Handle, position);
 		}
@@ -113,13 +114,21 @@ namespace ACadSharp.IO.DWG
 
 			switch (cadObject.ObjectType)
 			{
-				//TODO: Invalid type codes, what to do??
 				case ObjectType.UNLISTED:
+					if (this._document.Classes.TryGetByName(cadObject.ObjectName, out DxfClass dxfClass))
+					{
+						this._writer.WriteObjectType(dxfClass.ClassNumber);
+					}
+					else
+					{
+						this.notify($"Dxf Class not found for {cadObject.ObjectType} fullname: {cadObject.GetType().FullName}", NotificationType.Warning);
+						return;
+					}
+					break;
 				case ObjectType.INVALID:
-				case ObjectType.UNUSED:
+				case ObjectType.UNDEFINED:
 					this.notify($"CadObject type: {cadObject.ObjectType} fullname: {cadObject.GetType().FullName}", NotificationType.NotImplemented);
 					return;
-					throw new NotImplementedException($"CadObject type: {cadObject.ObjectType} fullname: {cadObject.GetType().FullName}");
 				default:
 					this._writer.WriteObjectType(cadObject.ObjectType);
 					break;
@@ -221,9 +230,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Color	CMC(B)	62
-			this._writer.WriteBitShort(0);
-			//TODO: Implement write en color
-			//this._writer.WriteEnColor(entity.Color, entity.Transparency);
+			this._writer.WriteEnColor(entity.Color, entity.Transparency);
 
 			//R2004+:
 			//if ((this._version >= ACadVersion.AC1018) && colorFlag)

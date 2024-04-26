@@ -10,7 +10,7 @@ namespace ACadSharp.Tables.Collections
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableView;
 
-		protected override string[] _defaultEntries { get { return new string[] { }; } }
+		protected override string[] defaultEntries { get { return new string[] { }; } }
 
 		internal ViewsTable() : base() { }
 

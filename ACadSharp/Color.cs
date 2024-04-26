@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CSUtilities.Converters;
+using System;
 
 namespace ACadSharp
 {
@@ -6,7 +7,7 @@ namespace ACadSharp
 	{
 		private static readonly byte[][] _indexRgb = new byte[][]
 		{
-			new byte[] { 0, 0, 0 },
+			new byte[] { 0, 0, 0 },	//Dummy entry
 			new byte[] { 255, 0, 0 },
 			new byte[] { 255, 255, 0 },
 			new byte[] { 0, 255, 0 },
@@ -264,9 +265,9 @@ namespace ACadSharp
 			new byte[] { 255, 255, 255 }
 		};
 
-		private const int _maxTrueColor = 1 << 24;
+		private const int _maxTrueColor = 0b0001_0000_0000_0000_0000_0000_0000;  // 1 << 24;
 
-		private const int _trueColorFlag = 0x40000000;  //1 << 30
+		private const int _trueColorFlag = 0b0100_0000_0000_0000_0000_0000_0000_0000;  //1 << 30
 
 		public static Color ByLayer
 		{
@@ -310,7 +311,7 @@ namespace ACadSharp
 		/// <summary>
 		/// True color.  If the color is stored as an indexed color, returns -1;
 		/// </summary>
-		public int TrueColor => this.IsTrueColor ? this._color ^ (1 << 30) : -1;
+		public int TrueColor => this.IsTrueColor ? (int)(this._color ^ (1 << 30)) : -1;
 
 		/// <summary>
 		/// True if the stored color is a true color.  False if the color is an indexed color.
@@ -319,9 +320,24 @@ namespace ACadSharp
 		{
 			get
 			{
-				return this._color > 256 || this._color < 0;
+				return this._color > 257 || this._color < 0;
 			}
 		}
+
+		/// <summary>
+		/// Red component of the color
+		/// </summary>
+		public byte R { get { return this.GetRgb()[0]; } }
+
+		/// <summary>
+		/// Green component of the color
+		/// </summary>
+		public byte G { get { return this.GetRgb()[1]; } }
+
+		/// <summary>
+		/// Blue component of the color
+		/// </summary>
+		public byte B { get { return this.GetRgb()[2]; } }
 
 		/// <summary>
 		/// Represents the actual stored color.  Either a True Color or an indexed color.
@@ -330,18 +346,18 @@ namespace ACadSharp
 		/// If the number is >= 0, then the stored color is an indexed color ranging from 0 to 256.
 		/// If the number is &lt; 0, then the stored color is a true color, less the negative sign.
 		/// </remarks>
-		private readonly int _color;
+		private readonly uint _color;
 
 		/// <summary>
-		/// Creates a new color out of an AutoCad indexed color.
+		/// Creates a new color out of an indexed color.
 		/// </summary>
-		/// <param name="index">AutoCad index color with a value between 0 to 257</param>
+		/// <param name="index">Index color with a value between 0 to 257</param>
 		public Color(short index)
 		{
 			if (index < 0 || index > 257)
 				throw new ArgumentOutOfRangeException(nameof(index), "True index must be a value between 0 and 257.");
 
-			this._color = index;
+			this._color = (uint)index;
 		}
 
 		/// <summary>
@@ -364,20 +380,36 @@ namespace ACadSharp
 		{
 		}
 
-		private Color(int trueColor)
+		private Color(uint trueColor)
 		{
 			if (trueColor < 0 || trueColor > _maxTrueColor)
 				throw new ArgumentOutOfRangeException(nameof(trueColor), "True color must be a 24 bit color.");
 
 			// Shift to set the 30th bit indicating a true color.
-			this._color = trueColor | _trueColorFlag;   //Is this correct?
+			this._color = (uint)(trueColor | _trueColorFlag);   //Is this correct?
+		}
+
+		/// <summary>
+		/// Approximates color from a true color RGB.
+		/// </summary>
+		/// <returns>Approximate RGB color.</returns>
+		public byte GetApproxIndex()
+		{
+			if (this.IsTrueColor)
+			{
+				return Color.ApproxIndex(this.R, this.G, this.B);
+			}
+			else
+			{
+				return (byte)this.Index;
+			}
 		}
 
 		/// <summary>
 		/// Creates a color out of a true color int32.
 		/// </summary>
 		/// <param name="color">True color int 32.</param>
-		public static Color FromTrueColor(int color)
+		public static Color FromTrueColor(uint color)
 		{
 			return new Color(color);
 		}
@@ -388,7 +420,7 @@ namespace ACadSharp
 		/// <param name="r">Red</param>
 		/// <param name="g">Green</param>
 		/// <param name="b">Blue</param>
-		/// <returns>Approximate AutoCad RGB color.</returns>
+		/// <returns>Approximate RGB color.</returns>
 		public static byte ApproxIndex(byte r, byte g, byte b)
 		{
 			var prevDist = -1;
@@ -411,7 +443,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Returns the RGB color code which matches the passed indexed color.
 		/// </summary>
-		/// <returns>Approximate RGB color from AutoCAD's indexed color.</returns>
+		/// <returns>Approximate RGB color from indexed color.</returns>
 		public static ReadOnlySpan<byte> GetIndexRGB(byte index)
 		{
 			return _indexRgb[index].AsSpan();
@@ -465,9 +497,10 @@ namespace ACadSharp
 		/// <inheritdoc/>
 		public override int GetHashCode()
 		{
-			return this._color;
+			return (int)this._color;
 		}
 
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			if (this._color == 0)
@@ -490,17 +523,17 @@ namespace ACadSharp
 
 		}
 
-		private static int getInt24(byte[] array)
+		private static uint getInt24(byte[] array)
 		{
 			if (BitConverter.IsLittleEndian)
-				return array[0] | array[1] << 8 | array[2] << 16;
+				return (uint)(array[0] | array[1] << 8 | array[2] << 16);
 			else
-				return array[0] << 16 | array[1] << 8 | array[2];
+				return (uint)(array[0] << 16 | array[1] << 8 | array[2]);
 		}
 
-		private static ReadOnlySpan<byte> getRGBfromTrueColor(int color)
+		private static ReadOnlySpan<byte> getRGBfromTrueColor(uint color)
 		{
-			return new ReadOnlySpan<byte>(BitConverter.GetBytes(color), 0, 3);
+			return new ReadOnlySpan<byte>(LittleEndianConverter.Instance.GetBytes(color), 0, 3);
 		}
 	}
 }

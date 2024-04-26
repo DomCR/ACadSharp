@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Entities;
 using CSMath;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,9 +16,10 @@ namespace ACadSharp.IO.DWG
 			//Ignored Entities
 			switch (entity)
 			{
+				case UnknownEntity:
 				case AttributeEntity:
-				case MText:
-				case Shape:
+				case MultiLeader:
+				case Mesh:
 				//Unlisted
 				case Wipeout:
 					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
@@ -93,6 +93,9 @@ namespace ACadSharp.IO.DWG
 				case MLine mLine:
 					this.writeMLine(mLine);
 					break;
+				case MText mtext:
+					this.writeMText(mtext);
+					break;
 				case Point p:
 					this.writePoint(p);
 					break;
@@ -143,8 +146,11 @@ namespace ACadSharp.IO.DWG
 							this.writeTextEntity(textEntity);
 							break;
 						default:
-							throw new NotImplementedException($"Entity not implemented : {entity.GetType().FullName}");
+							throw new NotImplementedException($"TextEntity not implemented : {entity.GetType().FullName}");
 					}
+					break;
+				case Tolerance tolerance:
+					this.writeTolerance(tolerance);
 					break;
 				case Vertex vertex:
 					switch (vertex)
@@ -271,7 +277,10 @@ namespace ACadSharp.IO.DWG
 			//and is not present in the binary form here.)
 			this._writer.WriteBitDouble(dimension.InsertionPoint.Z);
 
-			this._writer.WriteByte(0);
+			byte flags = 0;
+			flags |= dimension.IsTextUserDefinedLocation ? (byte)0b00 : (byte)0b01;
+
+			this._writer.WriteByte(flags);
 
 			//User text TV 1
 			this._writer.WriteVariableText(dimension.Text);
@@ -406,6 +415,9 @@ namespace ACadSharp.IO.DWG
 			this._writer.Write3BitDouble(dimension.FeatureLocation);
 			//14 - pt 3BD 14 See DXF documentation.
 			this._writer.Write3BitDouble(dimension.LeaderEndpoint);
+
+			byte flag = (byte)(dimension.IsOrdinateTypeX ? 1 : 0);
+			this._writer.WriteByte(flag);
 		}
 
 		private void writeEllipse(Ellipse ellipse)
@@ -638,7 +650,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//H mline style oject handle (hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, mline.MLStyle);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, mline.Style);
 		}
 
 		private void writeLwPolyline(LwPolyline lwPolyline)
@@ -843,12 +855,15 @@ namespace ACadSharp.IO.DWG
 
 					//numpathsegs BL 91 number of path segments
 					this._writer.WriteBitLong(pline.Vertices.Count);
-					foreach (var vertex in pline.Vertices)
+					for (var i = 0; i < pline.Vertices.Count; ++i)
 					{
-						this._writer.Write2RawDouble(vertex);
+						var vertex = pline.Vertices[i];
+						var bulge = pline.Bulges[i];
+
+						this._writer.Write2RawDouble(new XY(vertex.X, vertex.Y));
 						if (pline.HasBulge)
 						{
-							this._writer.WriteBitDouble(pline.Bulge);
+							this._writer.WriteBitDouble(bulge);
 						}
 					}
 				}
@@ -1320,7 +1335,7 @@ namespace ACadSharp.IO.DWG
 			//When reading from DXF, the shape is found by iterating over all the text styles
 			//(SHAPEFILE, see paragraph 20.4.56) and when the text style contains a shape file,
 			//iterating over all the shapes until the one with the matching name is found.
-			this._writer.WriteBitShort(0);	//TODO: missing implementation for shapeIndex
+			this._writer.WriteBitShort(0);  //TODO: missing implementation for shapeIndex
 
 			//Extrusion 3BD 210
 			this._writer.Write3BitDouble(shape.Normal);
@@ -1613,7 +1628,7 @@ namespace ACadSharp.IO.DWG
 			//R2007+:
 			if (this.R2007Plus)
 			{
-				this._writer.WriteBitDouble(mtext.ReferenceRectangleHeight);
+				this._writer.WriteBitDouble(mtext.RectangleHeight);
 			}
 
 			//Common:
@@ -1624,13 +1639,12 @@ namespace ACadSharp.IO.DWG
 			//Drawing dir BS 72 Left to right, etc.; see DXF doc
 			this._writer.WriteBitShort((short)mtext.DrawingDirection);
 
-			//TODO: Check undocumented values for MText
 			//Extents ht BD ---Undocumented and not present in DXF or entget
 			this._writer.WriteBitDouble(0);
 			//Extents wid BD ---Undocumented and not present in DXF or entget
 			this._writer.WriteBitDouble(0);
 
-			//Text TV 1 All text in one long string (Autocad format)
+			//Text TV 1 All text in one long string
 			this._writer.WriteVariableText(mtext.Value);
 
 			//H 7 STYLE (hard pointer)
@@ -1681,9 +1695,6 @@ namespace ACadSharp.IO.DWG
 				return;
 			}
 
-			throw new System.NotImplementedException("Annotative MText not implemented for the writer");
-			//TODO: missing values depending on the reader to get them and process to be able to write
-#if false
 			//Version BS Default 0
 			this._writer.WriteBitShort(0);
 			//Default flag B Default true
@@ -1693,51 +1704,49 @@ namespace ACadSharp.IO.DWG
 			//Registered application H Hard pointer
 			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 
-			//TODO: finish Mtext Writer, save redundant fields??
-
 			//Attachment point BL
-			AttachmentPointType attachmentPoint = (AttachmentPointType)this._writer.WriteBitLong();
+			this._writer.WriteBitLong((int)mtext.AttachmentPoint);
 			//X - axis dir 3BD 10
-			this._writer.Write3BitDouble();
+			this._writer.Write3BitDouble(mtext.AlignmentPoint);
 			//Insertion point 3BD 11
-			this._writer.Write3BitDouble();
+			this._writer.Write3BitDouble(mtext.InsertPoint);
 			//Rect width BD 40
-			this._writer.WriteBitDouble();
+			this._writer.WriteBitDouble(mtext.Height);
 			//Rect height BD 41
-			this._writer.WriteBitDouble();
+			this._writer.WriteBitDouble(mtext.RectangleWidth);
 			//Extents width BD 42
-			this._writer.WriteBitDouble();
+			this._writer.WriteBitDouble(mtext.HorizontalWidth);
 			//Extents height BD 43
-			this._writer.WriteBitDouble();
+			this._writer.WriteBitDouble(mtext.VerticalWidth);
 			//END REDUNDANT FIELDS
 
 			//Column type BS 71 0 = No columns, 1 = static columns, 2 = dynamic columns
 			this._writer.WriteBitShort((short)mtext.Column.ColumnType);
+
 			//IF Has Columns data(column type is not 0)
 			if (mtext.Column.ColumnType != ColumnType.NoColumns)
 			{
 				//Column height count BL 72
-				int count = this._writer.WriteBitLong();
+				this._writer.WriteBitLong(mtext.Column.ColumnCount);
 				//Columnn width BD 44
-				mtext.Column.ColumnWidth = this._writer.WriteBitDouble();
+				this._writer.WriteBitDouble(mtext.Column.ColumnWidth);
 				//Gutter BD 45
-				mtext.Column.ColumnGutter = this._writer.WriteBitDouble();
+				this._writer.WriteBitDouble(mtext.Column.ColumnGutter);
 				//Auto height? B 73
-				mtext.Column.ColumnAutoHeight = this._writer.WriteBit();
+				this._writer.WriteBit(mtext.Column.ColumnAutoHeight);
 				//Flow reversed? B 74
-				mtext.Column.ColumnFlowReversed = this._writer.WriteBit();
+				this._writer.WriteBit(mtext.Column.ColumnFlowReversed);
 
 				//IF not auto height and column type is dynamic columns
-				if (!mtext.Column.ColumnAutoHeight && mtext.Column.ColumnType == ColumnType.DynamicColumns && count > 0)
+				if (!mtext.Column.ColumnAutoHeight && mtext.Column.ColumnType == ColumnType.DynamicColumns)
 				{
-					for (int i = 0; i < count; ++i)
+					foreach (double h in mtext.Column.ColumnHeights)
 					{
 						//Column height BD 46
-						mtext.Column.ColumnHeights.Add(this._writer.WriteBitDouble());
+						this._writer.WriteBitDouble(h);
 					}
 				}
 			}
-#endif
 		}
 
 		private void writeFaceRecord(VertexFaceRecord face)
@@ -1800,6 +1809,36 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteByte((byte)vertex.Flags);
 			//Point 3BD 10
 			this._writer.Write3BitDouble(vertex.Location);
+		}
+
+		private void writeTolerance(Tolerance tolerance)
+		{
+			this.writeCommonEntityData(tolerance);
+
+			//R13 - R14 Only:
+			if (this.R13_14Only)
+			{
+				//Unknown short S
+				this._writer.WriteBitShort(0);
+				//Height BD --
+				this._writer.WriteBitDouble(0.0);
+				//Dimgap(?) BD dimgap at time of creation, *dimscale
+				this._writer.WriteBitDouble(0.0);
+			}
+
+			//Common:
+			//Ins pt 3BD 10
+			this._writer.Write3BitDouble(tolerance.InsertionPoint);
+			//X direction 3BD 11
+			this._writer.Write3BitDouble(tolerance.Direction);
+			//Extrusion 3BD 210 etc.
+			this._writer.Write3BitDouble(tolerance.Normal);
+			//Text string BS 1
+			this._writer.WriteVariableText(tolerance.Text);
+
+			//Common Entity Handle Data
+			//H DIMSTYLE(hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, tolerance.Style);
 		}
 
 		private void writeViewport(Viewport viewport)

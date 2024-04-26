@@ -92,37 +92,46 @@ namespace ACadSharp.IO.DWG
 				dxfClass.WasZombie = sreader.ReadBit();
 				//BS : itemclassid -- 0x1F2 for classes which produce entities, 0x1F3 for classes which produce objects.
 				dxfClass.ItemClassId = sreader.ReadBitShort();
-
-				if (this._fileHeader.AcadVersion == ACadVersion.AC1018)
+				if (dxfClass.ItemClassId == 0x1F2)
 				{
-					//BL : Number of objects created of this type in the current DB(DXF 91).
-					sreader.ReadBitLong();
-					//BS : Dwg Version
-					sreader.ReadBitShort();
-					//BS : Maintenance release version.
-					sreader.ReadBitShort();
-					//BL : Unknown(normally 0L)
-					sreader.ReadBitLong();
-					//BL : Unknown(normally 0L)
-					sreader.ReadBitLong();
+					dxfClass.IsAnEntity = true;
 				}
-				else if (this._fileHeader.AcadVersion > ACadVersion.AC1018)
+				else if (dxfClass.ItemClassId == 0x1F3)
 				{
+					dxfClass.IsAnEntity = false;
+				}
+				else
+				{
+					this.notify($"Invalid DxfClass id value: {dxfClass.ItemClassId} for {dxfClass.CppClassName}", NotificationType.Error);
+				}
 
+				if (this._fileHeader.AcadVersion >= ACadVersion.AC1018)
+				{
 					//BL : Number of objects created of this type in the current DB(DXF 91).
 					dxfClass.InstanceCount = sreader.ReadBitLong();
 
-					//BS : Dwg Version
-					sreader.ReadBitLong();
-					//BS : Maintenance release version.
-					sreader.ReadBitLong();
+					if (this._fileHeader.AcadVersion == ACadVersion.AC1018)
+					{
+						//BS : Dwg Version
+						dxfClass.DwgVersion = (ACadVersion)sreader.ReadBitShort();
+						//BS : Maintenance release version.
+						dxfClass.MaintenanceVersion = sreader.ReadBitShort();
+					}
+					else if (this._fileHeader.AcadVersion > ACadVersion.AC1018)
+					{
+						//BS : Dwg Version
+						dxfClass.DwgVersion = (ACadVersion)sreader.ReadBitLong();
+						//BS : Maintenance release version.
+						dxfClass.MaintenanceVersion = (short)sreader.ReadBitLong();
+					}
+
 					//BL : Unknown(normally 0L)
 					sreader.ReadBitLong();
 					//BL : Unknown(normally 0L)
 					sreader.ReadBitLong();
 				}
 
-				classes.Add(dxfClass);
+				classes.AddOrUpdate(dxfClass);
 			}
 
 			if (R2007Plus)

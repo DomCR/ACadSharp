@@ -6,8 +6,8 @@
 	public enum TextDirection : byte
 	{
 		/// <summary>Display text left-to-right.</summary>
-		LeftToRight,
+		LeftToRight = 0,
 		/// <summary>Display text right-to-left.</summary>
-		RightToLeft,
+		RightToLeft = 1,
 	}
 }
