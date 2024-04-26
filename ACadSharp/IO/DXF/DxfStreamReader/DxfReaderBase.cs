@@ -18,7 +18,17 @@ namespace ACadSharp.IO.DXF
 
 		public string ValueRaw { get; protected set; }
 
-		public string ValueAsString { get { return this.Value.ToString(); } }
+		public string ValueAsString
+		{
+			get
+			{
+				return this.Value.ToString()
+					.Replace("^J", "\n")
+					.Replace("^M", "\r")
+					.Replace("^I", "\t")
+					.Replace("^ ", "^");
+			}
+		}
 
 		public bool ValueAsBool { get { return Convert.ToBoolean(this.Value); } }
 
@@ -30,15 +40,15 @@ namespace ACadSharp.IO.DXF
 
 		public long ValueAsLong { get { return Convert.ToInt64(this.Value); } }
 
-		public double ValueAsDouble { get { return (double)this.Value; } }
+		public double ValueAsDouble { get { return Convert.ToDouble(this.Value); } }
 
-		public double ValueAsAngle { get { return (double)((double)this.Value * MathUtils.DegToRadFactor); } }
+		public double ValueAsAngle { get { return MathUtils.DegToRad(Convert.ToDouble(this.Value)); } }
 
 		public ulong ValueAsHandle { get { return (ulong)this.Value; } }
 
 		public byte[] ValueAsBinaryChunk { get { return this.Value as byte[]; } }
 
-		protected abstract Stream _baseStream { get; }
+		protected abstract Stream baseStream { get; }
 
 		public virtual void ReadNext()
 		{
@@ -68,7 +78,7 @@ namespace ACadSharp.IO.DXF
 			this.DxfCode = DxfCode.Invalid;
 			this.Value = string.Empty;
 
-			this._baseStream.Position = 0;
+			this.baseStream.Position = 0;
 
 			this.Position = 0;
 		}

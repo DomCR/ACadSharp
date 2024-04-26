@@ -1,7 +1,7 @@
 ﻿using ACadSharp.Attributes;
-using System.Drawing;
-using System;
 using CSMath;
+using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -14,7 +14,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityMesh)]
 	[DxfSubClass(DxfSubclassMarker.Mesh)]
-	public class Mesh : Entity
+	public partial class Mesh : Entity
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
@@ -31,32 +31,38 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(71)]
 		public short Version { get; internal set; }
 
-		public override BoundingBox GetBoundingBox()
-		{
-			throw new NotImplementedException();
-		}
+		/// <summary>
+		/// Blend Crease flag
+		/// </summary>
+		[DxfCodeValue(72)]
+		public bool BlendCrease { get; set; }
 
-		//72 "Blend Crease" property
-		//0 = Turn off
-		//1 = Turn on
+		/// <summary>
+		/// Number of subdivision level
+		/// </summary>
+		[DxfCodeValue(91)]
+		public int SubdivisionLevel { get; set; }
 
-		//91	Number of subdivision level
+		/// <summary>
+		/// Vertex count of level 0
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Count, 92)]
+		[DxfCollectionCodeValue(10, 20, 30)]
+		public List<XYZ> Vertices { get; set; } = new();
 
-		//92	Vertex count of level 0
+		/// <summary>
+		/// Face list of level 0
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Count, 93)]
+		[DxfCollectionCodeValue(90)]
+		public List<int[]> Faces { get; set; } = new();
 
-		//10	Vertex position
-
-		//93	Size of face list of level 0
-
-		//90	Face list item
-
-		//94	Edge count of level 0
-
-		//90	Vertex index of each edge
-
-		//95	Edge crease count of level 0
-
-		//140	Edge create value
+		/// <summary>
+		/// Edges of level 0
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Count, 94)]
+		[DxfCollectionCodeValue(90)]
+		public List<Edge> Edges { get; set; } = new();
 
 		//90	Count of sub-entity which property has been overridden
 
@@ -69,5 +75,11 @@ namespace ACadSharp.Entities
 		//1 = Material
 		//2 = Transparency
 		//3 = Material mapper
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using CSMath;
+using System;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities
@@ -9,28 +10,22 @@ namespace ACadSharp.Tests.Entities
 		[Fact]
 		public void CreateFromBulgeTest()
 		{
-			XY p1 = new XY();
-			XY p2 = new XY(1, 0);
-			double bulge = 0.5;
+			XY start = new XY(1, 0);
+			XY end = new XY(0, 1);
+			// 90 degree bulge
+			double bulge = Math.Tan(Math.PI / (2 * 4));
 
-			var a = Arc.CreateFromBulge(p1, p2, bulge);
+			XY center = MathUtils.GetCenter(start, end, bulge, out double radius);
 
-			a.GetEndVertices(out XYZ s, out XYZ e);
-		}
+			Assert.Equal(XY.Zero, center);
+			Assert.Equal(1, radius);
 
-		[Fact]
-		public void FromBulgeTest()
-		{
-			Arc arc = new Arc();
-			arc.GetEndVertices(out XYZ s1, out XYZ e1);
-		
-			XY p1 = new XY();
-			XY p2 = new XY(1, 0);
-			double bulge = 0.5;
+			Arc arc = Arc.CreateFromBulge(start, end, bulge);
 
-			var a = Arc.CreateFromBulge(p1, p2, bulge);
-
-			a.GetEndVertices(out XYZ s, out XYZ e);
+			Assert.Equal(XYZ.Zero, arc.Center);
+			Assert.Equal(1, arc.Radius);
+			Assert.Equal(0, arc.StartAngle);
+			Assert.Equal(Math.PI / 2, arc.EndAngle);
 		}
 	}
 }

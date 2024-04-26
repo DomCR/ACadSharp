@@ -98,7 +98,7 @@ namespace ACadSharp.IO.DWG
 			MemoryStream memoryStream = new MemoryStream();
 
 			//0x00	6	“ACXXXX” version string
-			IDwgStreamWriter writer = DwgStreamWriterBase.GetStreamHandler(this._version, memoryStream, this._encoding);
+			IDwgStreamWriter writer = DwgStreamWriterBase.GetStreamWriter(this._version, memoryStream, this._encoding);
 			writer.WriteBytes(Encoding.ASCII.GetBytes(this._document.Header.VersionString));
 			//The next 7 starting at offset 0x06 are to be six bytes of 0 
 			//(in R14, 5 0’s and the ACADMAINTVER variable) and a byte of 1.

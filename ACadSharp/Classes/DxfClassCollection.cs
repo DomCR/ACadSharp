@@ -284,7 +284,7 @@ namespace ACadSharp.Classes
 			//AcDbWipeout
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				ApplicationName = "WipeOut|Product Desc: Object Enabler for WipeOut entity | Company: Autodesk, Inc. | WEB Address: www.autodesk.com",
+				ApplicationName = "WipeOut",
 				CppClassName = "AcDbWipeout",
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = ACadVersion.AC1015,
@@ -298,7 +298,7 @@ namespace ACadSharp.Classes
 			//AcDbWipeoutVariables
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				ApplicationName = "WipeOut|Product Desc: Object Enabler for WipeOut entity | Company: Autodesk, Inc. | WEB Address: www.autodesk.com",
+				ApplicationName = "WipeOut",
 				CppClassName = "AcDbWipeoutVariables",
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = ACadVersion.AC1015,
@@ -312,7 +312,7 @@ namespace ACadSharp.Classes
 			//AcDbDimAssoc
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				ApplicationName = "AcDbDimAssoc | Product Desc: AcDim ARX App For Dimension | Company: Autodesk, Inc. | WEB Address: www.autodesk.com",
+				ApplicationName = "AcDbDimAssoc",
 				CppClassName = "AcDbDimAssoc",
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = 0,
@@ -389,7 +389,7 @@ namespace ACadSharp.Classes
 		}
 
 		/// <summary>
-		/// Get by <see cref="DxfClass.DxfName"/>
+		/// Gets the dxf class associated with <see cref="DxfClass.DxfName"/>
 		/// </summary>
 		/// <param name="dxfname"></param>
 		/// <returns></returns>
@@ -403,6 +403,17 @@ namespace ACadSharp.Classes
 			{
 				return null;
 			}
+		}
+
+		/// <summary>
+		/// Gets the dxf class associated with <see cref="DxfClass.DxfName"/>
+		/// </summary>
+		/// <param name="dxfname"></param>
+		/// <param name="result"></param>
+		/// <returns>true if the Collection contains an element with the specified key; otherwise, false.</returns>
+		public bool TryGetByName(string dxfname, out DxfClass result)
+		{
+			return this._entries.TryGetValue(dxfname, out result);
 		}
 
 		/// <inheritdoc/>

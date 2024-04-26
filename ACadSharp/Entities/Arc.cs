@@ -57,15 +57,15 @@ namespace ACadSharp.Entities
 
 			double startAngle;
 			double endAngle;
-			if (bulge > 0)
+			if (bulge < 0)
 			{
-				startAngle = p2.Substract(center).GetAngle();
-				endAngle = p1.Substract(center).GetAngle();
+				startAngle = p2.Subtract(center).GetAngle();
+				endAngle = p1.Subtract(center).GetAngle();
 			}
 			else
 			{
-				startAngle = p1.Substract(center).GetAngle();
-				endAngle = p2.Substract(center).GetAngle();
+				startAngle = p1.Subtract(center).GetAngle();
+				endAngle = p2.Subtract(center).GetAngle();
 			}
 
 			return new Arc

@@ -110,7 +110,7 @@ namespace ACadSharp.IO
 
 		private void createStreamWriter()
 		{
-			Encoding encoding = this.getListedEncoding(this._document.Header.CodePage);
+			Encoding encoding = new UTF8Encoding(false);
 
 			if (this.IsBinary)
 			{

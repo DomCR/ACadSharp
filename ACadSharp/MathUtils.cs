@@ -60,8 +60,8 @@ namespace ACadSharp
 			radius = c / Math.Sin(theta / 2.0);
 
 			double gamma = (Math.PI - theta) / 2;
-			double phi = XY.GetAngle(start, end) + Math.Sign(bulge) * gamma;
-			return new XY(start.X + radius * Math.Cos(phi), start.Y + radius * Math.Sin(phi));
+			double phi = (end - start).GetAngle() + Math.Sign(bulge) * gamma;
+			return new XY(start.X + radius * CSMath.MathUtils.Cos(phi), start.Y + radius * CSMath.MathUtils.Sin(phi));
 		}
 
 		/// <summary>
@@ -74,7 +74,7 @@ namespace ACadSharp
 		/// <returns></returns>
 		/// <exception cref="NotImplementedException"></exception>
 		public static T GetCenter<T>(T start, T end, double bulge)
-			where T : IVector<T>, new()
+			where T : IVector, new()
 		{
 			//Needs a plane of reference in case is in 3D
 			throw new NotImplementedException();

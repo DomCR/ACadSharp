@@ -46,7 +46,7 @@ namespace ACadSharp.Tables
 		/// if the index is negative, layer is off
 		/// </remarks>
 		[DxfCodeValue(62, 420, 430)]
-		public Color Color { get; set; }
+		public Color Color { get; set; } = new Color(7);
 
 		/// <summary>
 		/// The linetype of an object. The default linetype is the linetype of the layer (ByLayer).

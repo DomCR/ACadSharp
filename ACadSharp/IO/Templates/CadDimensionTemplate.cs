@@ -1,17 +1,14 @@
-﻿using ACadSharp.Blocks;
-using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
+﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
 using CSMath;
-using System;
 
 namespace ACadSharp.IO.Templates
 {
 	internal class CadDimensionTemplate : CadEntityTemplate
 	{
-		public ulong StyleHandle { get; set; }
+		public ulong? StyleHandle { get; set; }
 
-		public ulong BlockHandle { get; set; }
+		public ulong? BlockHandle { get; set; }
 
 		public string BlockName { get; set; }
 
@@ -21,39 +18,18 @@ namespace ACadSharp.IO.Templates
 
 		public CadDimensionTemplate(Dimension dimension) : base(dimension) { }
 
-		public override bool AddName(int dxfcode, string name)
-		{
-			bool value = base.AddName(dxfcode, name);
-			if (value)
-				return value;
-
-			switch (dxfcode)
-			{
-				case 2:
-					this.BlockName = name;
-					value = true;
-					break;
-				case 3:
-					this.StyleName = name;
-					value = true;
-					break;
-			}
-
-			return value;
-		}
-
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
 			Dimension dimension = this.CadObject as Dimension;
 
-			if (builder.TryGetCadObject<DimensionStyle>(this.StyleHandle, out DimensionStyle style))
+			if (this.getTableReference(builder, this.StyleHandle, this.StyleName, out DimensionStyle style))
 			{
 				dimension.Style = style;
 			}
 
-			if (builder.TryGetCadObject<Block>(this.BlockHandle, out Block block))
+			if (this.getTableReference(builder, this.BlockHandle, this.BlockName, out BlockRecord block))
 			{
 				dimension.Block = block;
 			}
@@ -63,12 +39,25 @@ namespace ACadSharp.IO.Templates
 		{
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
 
+			public override double Measurement { get; }
+
 			public DimensionPlaceholder() : base(DimensionType.Linear) { }
 
 			public override BoundingBox GetBoundingBox()
 			{
-				throw new NotImplementedException();
+				throw new System.InvalidOperationException();
 			}
+		}
+
+		public void SetDimensionFlags(DimensionType flags)
+		{
+			Dimension dimension = this.CadObject as Dimension;
+
+			if (dimension is DimensionOrdinate ordinate)
+			{
+				ordinate.IsOrdinateTypeX = flags.HasFlag(DimensionType.OrdinateTypeX);
+			}
+			dimension.IsTextUserDefinedLocation = flags.HasFlag(DimensionType.TextUserDefinedLocation);
 		}
 
 		public void SetDimensionObject(Dimension dimensionAligned)
@@ -93,10 +82,11 @@ namespace ACadSharp.IO.Templates
 			dimensionAligned.TextMiddlePoint = dimension.TextMiddlePoint;
 			dimensionAligned.InsertionPoint = dimension.InsertionPoint;
 			dimensionAligned.Normal = dimension.Normal;
+			dimensionAligned.IsTextUserDefinedLocation = dimension.IsTextUserDefinedLocation;
 			dimensionAligned.AttachmentPoint = dimension.AttachmentPoint;
 			dimensionAligned.LineSpacingStyle = dimension.LineSpacingStyle;
 			dimensionAligned.LineSpacingFactor = dimension.LineSpacingFactor;
-			dimensionAligned.Measurement = dimension.Measurement;
+			//dimensionAligned.Measurement = dimension.Measurement;
 			dimensionAligned.Text = dimension.Text;
 			dimensionAligned.TextRotation = dimension.TextRotation;
 			dimensionAligned.HorizontalDirection = dimension.HorizontalDirection;

@@ -10,7 +10,7 @@ ACadSharp allows to read or create CAD files using .Net and also extract or modi
 - Read/Write Dxf binary files
 - Read/Write Dxf ASCII files
 - Read Dwg files
-- Write Dwg files (limited to the version AC1018 - most stable)
+- Write Dwg files
 - Extract/Modify the geometric information from the different [entities](https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484) in the model
 - Control over the table elements like Blocks, Layers and Styles, allows you to read, create or modify the different tables
 
@@ -23,28 +23,25 @@ AC1012 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :x:    |    :x
 AC1014 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1015 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1018 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
-AC1021 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:    |
-AC1024 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:    |
-AC1027 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:    |
-AC1032 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:    |
+AC1021 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:                   |
+AC1024 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
+AC1027 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:                   |
+AC1032 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 
 ### Current development
 
 #### Dwg Writer 
 
-- **AC1014** - Release 14, 14.01 (LT97/LT98)
+- **AC1014**
     - Produces a valid file but some entities are missing in the model.
-- **AC1015** - AutoCAD 2000/2000i/2002
+- **AC1015**
     - This version depens on the implementation of VP_ENT_HDR to work properly with the different `Viewports`
-- **AC1018** - AutoCAD 2004/2005/2006 - **MOST STABLE - RECOMENDED**
-- **AC1021** - AutoCAD 2007/2008/2009 - **NOT IMPLEMENTED**
+- **AC1018** - **MOST STABLE - RECOMENDED**
+- **AC1021** - **NOT IMPLEMENTED**
     - This is a particular and isolated DWG version, it uses a different compression system and file distribution, due this difficulties, this version will not be implemented any time soon.
-- **AC1024** - AutoCAD 2010/2011/2012 - **NOT IMPLEMENTED**
-- **AC1027** - AutoCAD 2013/2014/2015/2016/2017 - **NOT IMPLEMENTED**
-- **AC1032** - AutoCAD 2018/2019/2020 - **NOT IMPLEMENTED**
-
-**IMPORTANT NOTE** when you open a file writen by ACadSharp with Autocad the following message may appear: *The drawing file requires recovery* press on Recover and it will open the file normally.
-This process may cause a **loss of information on the file**.
+- **AC1024** - **STABLE**
+- **AC1027** - **NOT IMPLEMENTED**
+- **AC1032** - **STABLE**
 
 Code Example
 ---

@@ -6,7 +6,7 @@ namespace ACadSharp.IO.DXF
 {
 	internal class DxfTextReader : DxfReaderBase, IDxfStreamReader
 	{
-		protected override Stream _baseStream { get { return this._stream.BaseStream; } }
+		protected override Stream baseStream { get { return this._stream.BaseStream; } }
 
 		private StreamReader _stream;
 

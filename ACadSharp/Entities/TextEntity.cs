@@ -14,7 +14,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityText)]
 	[DxfSubClass(DxfSubclassMarker.Text)]
-	public class TextEntity : Entity
+	public class TextEntity : Entity, IText
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.TEXT;
@@ -26,7 +26,7 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.Text;
 
 		/// <summary>
-		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
+		/// Specifies the distance a 2D object is extruded above or below its elevation.
 		/// </summary>
 		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;
@@ -37,16 +37,12 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ InsertPoint { get; set; } = XYZ.Zero;
 
-		/// <summary>
-		/// Changes the height of the object.
-		/// </summary>
-		/// <value>
-		/// This must be a positive, non-negative number.
-		/// </value>
+		/// <inheritdoc/>
 		[DxfCodeValue(40)]
 		public double Height
 		{
-			get => _height; set
+			get => _height;
+			set
 			{
 				if (value < 0)
 					throw new ArgumentOutOfRangeException("Height value cannot be negative.");
@@ -55,9 +51,7 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		/// <summary>
-		/// Specifies the text string for the entity.
-		/// </summary>
+		/// <inheritdoc/>
 		/// <value>
 		/// The maximum length is 256 characters.
 		/// </value>
@@ -84,23 +78,15 @@ namespace ACadSharp.Entities
 		/// The rotation angle in radians.
 		/// </value>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
-		public double Rotation
-		{
-			get => _rotation;
-			set
-			{
-				_rotation = value;
-				this.AlignmentPoint = new XYZ(Math.Cos(_rotation), Math.Sin(_rotation), 0.0);
-			}
-		}
+		public double Rotation { get; set; }
 
 		/// <summary>
 		/// Relative X scale factor—widt
 		/// </summary>
 		/// <remarks>
-		/// This value is also adjusted when fit-type text is used (optional)
+		/// This value is also adjusted when fit-type text is used
 		/// </remarks>
-		[DxfCodeValue(41)]
+		[DxfCodeValue(DxfReferenceType.Optional, 41)]
 		public double WidthFactor { get; set; } = 1.0;
 
 		/// <summary>
@@ -112,9 +98,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double ObliqueAngle { get; set; } = 0.0;
 
-		/// <summary>
-		/// Style of this text entity.
-		/// </summary>
+		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name | DxfReferenceType.Optional, 7)]
 		public TextStyle Style
 		{
@@ -156,15 +140,7 @@ namespace ACadSharp.Entities
 		/// This value is meaningful only if the value of a 72 or 73 group is nonzero (if the justification is anything other than baseline/left)
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Optional, 11, 21, 31)]
-		public XYZ AlignmentPoint
-		{
-			get => _alignmentPoint;
-			set
-			{
-				_alignmentPoint = value;
-				this._rotation = new XY(this._alignmentPoint.X, this._alignmentPoint.Y).GetAngle();
-			}
-		}
+		public XYZ AlignmentPoint { get; set; }
 
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
@@ -181,10 +157,6 @@ namespace ACadSharp.Entities
 		private string _value = string.Empty;
 
 		private double _height = 0.0;
-
-		private XYZ _alignmentPoint = XYZ.Zero;
-
-		private double _rotation = 0.0;
 
 		private TextStyle _style = TextStyle.Default;
 

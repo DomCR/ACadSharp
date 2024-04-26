@@ -15,24 +15,11 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			TextStyle style = null;
+			IText text = (IText)this.CadObject;
 
-			switch (this.CadObject)
+			if (this.getTableReference(builder, this.StyleHandle, this.StyleName, out TextStyle style))
 			{
-				case TextEntity text:
-					if (builder.TryGetCadObject<TextStyle>(StyleHandle, out style))
-					{
-						text.Style = style;
-					}
-					break;
-				case MText mtext:
-					if (builder.TryGetCadObject<TextStyle>(StyleHandle, out style))
-					{
-						mtext.Style = style;
-					}
-					break;
-				default:
-					throw new System.ArgumentException("Unknown type");
+				text.Style = style;
 			}
 		}
 	}

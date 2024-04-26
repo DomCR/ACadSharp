@@ -20,9 +20,9 @@ namespace ACadSharp.IO.DWG
 
 			if (value.IsTrueColor)
 			{
-				arr[0] = (byte)(value.R);
-				arr[1] = (byte)(value.G);
-				arr[2] = (byte)(value.B);
+				arr[2] = (byte)value.R;
+				arr[1] = (byte)value.G;
+				arr[0] = (byte)value.B;
 				arr[3] = 0b1100_0010;
 			}
 			else
@@ -39,6 +39,52 @@ namespace ACadSharp.IO.DWG
 
 			//(&1 => color name follows(TV),
 			//&2 => book name follows(TV))
+		}
+
+		public override void WriteEnColor(Color color, Transparency transparency)
+		{
+			//BS : color number: flags + color index
+			ushort size = 0;
+
+			if (color.IsByBlock && transparency.IsByLayer)
+			{
+				base.WriteBitShort(0);
+				return;
+			}
+
+			//0x2000: color is followed by a transparency BL
+			if (!transparency.IsByLayer)
+			{
+				size = (ushort)(size | 0b10000000000000);
+			}
+
+			//0x8000: complex color (rgb).
+			if (color.IsTrueColor)
+			{
+				size = (ushort)(size | 0x8000);
+			}
+			else
+			{
+				//Color index: if no flags were set, the color is looked up by the color number (ACI color).
+				size = (ushort)(size | (ushort)color.Index);
+			}
+
+			base.WriteBitShort((short)size);
+
+			if (color.IsTrueColor)
+			{
+				uint rgb = (uint)(0b1100_0010_0000_0000_0000_0000_0000_0000 | color.TrueColor);
+				base.WriteBitLong((int)rgb);
+			}
+
+			if (!transparency.IsByLayer)
+			{
+				//The first byte represents the transparency type:
+				//0 = BYLAYER,
+				//1 = BYBLOCK,
+				//3 = the transparency value in the last byte.
+				base.WriteBitLong((int)transparency.Value);
+			}
 		}
 	}
 }

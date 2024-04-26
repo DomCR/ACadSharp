@@ -35,6 +35,15 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(40)]
 		public double LeaderLength { get; set; }
 
+		/// <inheritdoc/>
+		public override double Measurement
+		{
+			get
+			{
+				return this.InsertionPoint.DistanceFrom(this.AngleVertex);
+			}
+		}
+
 		public DimensionRadius() : base(DimensionType.Radius) { }
 
 		public override BoundingBox GetBoundingBox()

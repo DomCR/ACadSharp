@@ -3,7 +3,7 @@
 namespace ACadSharp.Header
 {
 	/// <summary>
-	/// Bitmask flags to set the various object sorting types defined in AutoCAD.
+	/// Bitmask flags to set the various object sorting types.
 	/// </summary>
 	[Flags]
 	public enum ObjectSortingFlags : byte

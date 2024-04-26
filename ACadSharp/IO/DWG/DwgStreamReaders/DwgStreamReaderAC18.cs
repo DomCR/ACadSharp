@@ -35,7 +35,7 @@ namespace ACadSharp.IO.DWG
 				//0xC0000000
 
 				//True color
-				color = new Color(arr[0], arr[1], arr[2]);
+				color = new Color(arr[2], arr[1], arr[0]);
 			}
 
 			//RC: Color Byte(&1 => color name follows(TV),
@@ -72,6 +72,7 @@ namespace ACadSharp.IO.DWG
 			{
 				//color flags: first byte of the bitshort.
 				ushort flags = (ushort)((ushort)size & 0b1111111100000000);
+
 				//0x4000: has AcDbColor reference (0x8000 is also set in this case).
 				if ((flags & 0x4000) > 0)
 				{
@@ -83,17 +84,19 @@ namespace ACadSharp.IO.DWG
 				else if ((flags & 0x8000) > 0)
 				{
 					//Next value is a BS containing the RGB value(last 24 bits).
+					//flags: 0b1100_0010_0000_0000_0000_0000_0000_0000
 					uint rgb = (uint)this.ReadBitLong();
-					color = Color.FromTrueColor(rgb & 0b00000000111111111111111111111111);
+					byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
+					color = new Color(arr[2], arr[1], arr[0]);
 				}
 				else
 				{
 					//Color index: if no flags were set, the color is looked up by the color number (ACI color).
-					color = new Color((byte)(size & 0b111111111111));
+					color = new Color((short)(size & 0b111111111111));
 				}
 
 				//0x2000: color is followed by a transparency BL
-				if ((flags & 0x2000U) > 0U)
+				if ((flags & 0x2000) > 0U)
 				{
 
 					//The first byte represents the transparency type:
