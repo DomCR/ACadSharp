@@ -1373,6 +1373,7 @@ namespace ACadSharp.IO.DWG
 
 		private void writeSolid3D(Solid3D solid)
 		{
+			throw new NotImplementedException();
 		}
 
 		private void writeSpline(Spline spline)
