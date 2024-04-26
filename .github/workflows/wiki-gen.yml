@@ -1,0 +1,28 @@
+name: Wiki generation
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+
+    - name: Checkout
+      run: git config --global core.autocrlf true
+    - uses: actions/checkout@v2
+      with: 
+        submodules: true
+        repository: ${{github.repository}}
+        path: ${{github.repository}}
+
+    - name: Restore local tools
+      run: dotnet tool restore
+
+    - name: Create wiki
+      run: netdocgen
