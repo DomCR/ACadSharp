@@ -22,7 +22,7 @@ jobs:
         path: ${{github.repository}}
 
     - name: Restore local tools
-      run: dotnet tool install netdocgen --global
+      run: dotnet tool install NetDocGen.Runner --global
 
     - name: Create wiki
       run: netdocgen
