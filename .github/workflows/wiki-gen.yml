@@ -21,8 +21,14 @@ jobs:
         repository: ${{github.repository}}
         path: ${{github.repository}}
 
+    - name: List
+      run: ls
+
     - name: Restore local tools
-      run: dotnet tool install NetDocGen.Runner --global
+      run: dotnet tool restore
+
+    # - name: Install global tool
+    #   run: dotnet tool install NetDocGen.Runner --global
 
     - name: Create wiki
       run: netdocgen
