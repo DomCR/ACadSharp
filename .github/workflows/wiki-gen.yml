@@ -22,7 +22,7 @@ jobs:
         path: ${{github.repository}}
 
     - name: Restore local tools
-      run: dotnet tool restore --tool-manifest ".config/dotnet-tools.json"
+      run: dotnet tool install netdocgen
 
     - name: Create wiki
       run: netdocgen
