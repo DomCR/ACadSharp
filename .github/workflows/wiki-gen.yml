@@ -18,14 +18,12 @@ jobs:
     - uses: actions/checkout@v2
       with: 
         submodules: true
-        repository: ${{github.repository}}
-        path: ${{github.repository}}
 
     - name: List
       run: ls
 
     - name: Restore local tools
-      run: dotnet tool restore
+      run: dotnet tool restore 
 
     # - name: Install global tool
     #   run: dotnet tool install NetDocGen.Runner --global
