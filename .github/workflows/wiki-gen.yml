@@ -19,8 +19,8 @@ jobs:
       with: 
         submodules: true
 
-    - name: List
-      run: ls
+    # - name: List
+    #   run: ls
 
     - name: Restore local tools
       run: dotnet tool restore
@@ -31,6 +31,10 @@ jobs:
           cd .github/tmp
           new-item ./test.txt
 
-
-    # - name: Create wiki
-    #   run: dotnet netdocgen ""
+    - name: Create wiki
+      run: |
+          dotnet restore
+          dotnet build --configuration Release --no-restore
+          cd ACadSharp\bin\Release\net6.0
+          ls
+          # dotnet netdocgen ""
