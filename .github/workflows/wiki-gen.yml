@@ -25,5 +25,12 @@ jobs:
     - name: Restore local tools
       run: dotnet tool restore
 
-    - name: Create wiki
-      run: dotnet netdocgen ""
+    - name: create files
+      run: |
+          mkdir .github/tmp
+          cd .github/tmp
+          new-item ./test.txt
+
+
+    # - name: Create wiki
+    #   run: dotnet netdocgen ""
