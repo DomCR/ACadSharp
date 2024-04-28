@@ -21,8 +21,8 @@ if [ -z "$GITHUB_TOKEN" ]; then
 fi
 
 #Clone wiki repo
-# echo "Cloning wiki repo https://github.com/$GITHUB_REPOSITORY.wiki.git"
-# git clone "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.wiki.git" "$WIKI_DIR"
+echo "Cloning wiki repo https://github.com/$GITHUB_REPOSITORY.wiki.git"
+git clone "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.wiki.git" "$WIKI_DIR"
 
 #Get commit details
 author=`git log -1 --format="%an"`
