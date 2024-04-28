@@ -38,5 +38,5 @@ jobs:
           dotnet netdocgen "ACadSharp\bin\Release\net6.0\ACadSharp.dll" -o "wiki/"
           cd wiki
           git add --all
-          commit -m "update wiki"
+          git commit -m "update wiki"
           git push
