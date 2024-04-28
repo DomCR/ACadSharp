@@ -21,8 +21,8 @@ if [ -z "$GITHUB_TOKEN" ]; then
 fi
 
 #Clone wiki repo
-echo "Cloning wiki repo https://github.com/$GITHUB_REPOSITORY.wiki.git"
-git clone "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.wiki.git" "$WIKI_DIR"
+# echo "Cloning wiki repo https://github.com/$GITHUB_REPOSITORY.wiki.git"
+# git clone "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.wiki.git" "$WIKI_DIR"
 
 #Get commit details
 author=`git log -1 --format="%an"`
@@ -30,7 +30,7 @@ email=`git log -1 --format="%ae"`
 message=`git log -1 --format="%s"`
 
 echo "Create wiki"
-dotnet netdocgen "ACadSharp\bin\Release\net6.0\ACadSharp.dll" -o "$WIKI_DIR/" -c
+dotnet netdocgen "ACadSharp\bin\Release\net6.0\ACadSharp.dll" -o "$WIKI_DIR/"
 
 echo "Checking if wiki has changes"
 cd "$WIKI_DIR"
