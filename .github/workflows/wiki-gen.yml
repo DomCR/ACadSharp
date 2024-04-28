@@ -35,6 +35,6 @@ jobs:
       run: |
           dotnet restore
           dotnet build --configuration Release --no-restore
-          cd ACadSharp\bin\Release\net6.0
+          dotnet netdocgen "ACadSharp\bin\Release\net6.0\ACadSharp.dll" -o "wiki/"
+          cd wiki
           ls
-          # dotnet netdocgen ""
