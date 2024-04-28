@@ -37,4 +37,6 @@ jobs:
           dotnet build --configuration Release --no-restore
           dotnet netdocgen "ACadSharp\bin\Release\net6.0\ACadSharp.dll" -o "wiki/"
           cd wiki
-          ls
+          git add --all
+          commit -m "update wiki"
+          git push
