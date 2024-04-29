@@ -1,9 +1,9 @@
-name: Wiki generation
+name: Wiki genrator
 
 on:
   push:
     branches: [ master ]
-  pull_request:
+  pull_request: # Remove on merge
     branches: [ master ]
 
 jobs:
@@ -17,31 +17,8 @@ jobs:
     - uses: actions/checkout@v2
       with: 
         submodules: true
-
-    # - name: List
-    #   run: ls
-
-    # - name: Restore local tools
-    #   run: dotnet tool restore
-
-    # - name: create files
-    #   run: |
-    #       mkdir .github/tmp
-    #       cd .github/tmp
-    #       new-item ./test.txt
-
-    # - name: Create wiki
-    #   run: |
-    #       dotnet restore
-    #       dotnet build --configuration Release --no-restore
-    #       dotnet netdocgen "ACadSharp\bin\Release\net6.0\ACadSharp.dll" -o "wiki/"
-    #       cd wiki
-    #       git add --all
-    #       git commit -m "update wiki"
-    #       git push
     - name: Update Wiki
       run: ./update-wiki.sh
       shell: bash
       env:
-        WIKI_DIR: "./wiki"
-        GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
