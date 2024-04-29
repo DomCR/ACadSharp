@@ -29,7 +29,9 @@ echo Cloning wiki
 git clone https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.wiki.git $WIKI_REPO_DIR
 
 echo "Create wiki"
+cd ..
 dotnet netdocgen "ACadSharp\bin\Release\net6.0\ACadSharp.dll" -o "$TMP_WORK_DIR/$WIKI_UPDATE_DIR"
+cd $TMP_WORK_DIR
 
 echo "Copying edited wiki"
 cp -R "$WIKI_REPO_DIR/.git" "$WIKI_UPDATE_DIR/"
