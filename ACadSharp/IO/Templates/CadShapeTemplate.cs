@@ -1,11 +1,15 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadShapeTemplate : CadEntityTemplate
+	internal class CadShapeTemplate : CadEntityTemplate<Shape>
 	{
 		public ushort? ShapeIndex { get; set; }
+
 		public ulong? ShapeFileHandle { get; set; }
+
+		public string ShapeFileName { get; set; }
 
 		public CadShapeTemplate(Shape shape) : base(shape) { }
 
@@ -13,7 +17,17 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			//TODO: Finish shape template
+			if (this.getTableReference(builder, ShapeFileHandle, ShapeFileName, out TextStyle text))
+			{
+				if (text.IsShapeFile)
+				{
+					this.CadObject.ShapeStyle = text;
+				}
+				else
+				{
+					builder.Notify($"Shape style {ShapeFileHandle} | {ShapeFileName} not found", NotificationType.Warning);
+				}
+			}
 		}
 	}
 }

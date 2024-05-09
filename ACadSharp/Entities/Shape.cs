@@ -1,5 +1,7 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Tables;
 using CSMath;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -44,8 +46,27 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Shape name
 		/// </summary>
-		[DxfCodeValue(2)]
-		public string Name { get; set; }
+		[DxfCodeValue(DxfReferenceType.Name, 2)]
+		public TextStyle ShapeStyle
+		{
+			get { return this._style; }
+			set
+			{
+				if (value == null || !value.IsShapeFile)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._style = this.updateTable(value, this.Document.TextStyles);
+				}
+				else
+				{
+					this._style = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Rotation angle
@@ -70,6 +91,13 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public ushort ShapeIndex { get; internal set; }
+
+		private TextStyle _style;
 
 		public Shape() : base() { }
 	}

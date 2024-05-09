@@ -2197,7 +2197,7 @@ namespace ACadSharp.IO.DWG
 			//When reading from DXF, the shape is found by iterating over all the text styles
 			//(SHAPEFILE, see paragraph 20.4.56) and when the text style contains a shape file,
 			//iterating over all the shapes until the one with the matching name is found.
-			template.ShapeIndex = (ushort)this._objectReader.ReadBitShort();
+			shape.ShapeIndex = (ushort)this._objectReader.ReadBitShort();
 
 			//Extrusion 3BD 210
 			shape.Normal = this._objectReader.Read3BitDouble();
