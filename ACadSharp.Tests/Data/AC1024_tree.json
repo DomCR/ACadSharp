@@ -124,7 +124,7 @@
       {
         "Name": "ACAD_SPLINE_DATA",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
-        "Handle": 2277,
+        "Handle": 2336,
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
@@ -2436,6 +2436,31 @@
             "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.FeatureControlFrame",
             "Handle": 2084,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "Color": {
+              "IsByBlock": false,
+              "IsByLayer": true,
+              "Green": 0,
+              "Blue": 0,
+              "Red": 0,
+              "Index": 256
+            },
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.Shape",
+            "Handle": 2185,
             "OwnerHandle": 31,
             "DictionaryHandle": 0,
             "Children": []
@@ -5212,7 +5237,7 @@
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.AttributeDefinition",
             "Handle": 1942,
             "OwnerHandle": 1919,
-            "DictionaryHandle": 2198,
+            "DictionaryHandle": 2257,
             "Children": []
           },
           {
@@ -5764,6 +5789,14 @@
         "Name": "MyTextStyle",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.TextStyleTableRecord",
         "Handle": 1033,
+        "OwnerHandle": 3,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "",
+        "ACadName": "Autodesk.AutoCAD.DatabaseServices.TextStyleTableRecord",
+        "Handle": 2183,
         "OwnerHandle": 3,
         "DictionaryHandle": 0,
         "Children": []

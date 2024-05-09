@@ -199,10 +199,11 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<Viewport>(new CadViewportTemplate(), this.readViewport);
 				case DxfFileToken.EntityXline:
 					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), this.readEntitySubclassMap);
+				case DxfFileToken.EntityShape:
+					return this.readEntityCodes<Shape>(new CadShapeTemplate(new Shape()), this.readShape);
 				case DxfFileToken.EntitySpline:
 					return this.readEntityCodes<Spline>(new CadSplineTemplate(), this.readSpline);
 				default:
-
 					DxfMap map = DxfMap.Create<Entity>();
 					CadUnknownEntityTemplate unknownEntityTemplate = null;
 					if (this._builder.DocumentToBuild.Classes.TryGetByName(this._reader.ValueAsString, out Classes.DxfClass dxfClass))
@@ -820,6 +821,20 @@ namespace ACadSharp.IO.DXF
 						return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 					}
 					return true;
+			}
+		}
+
+		private bool readShape(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadShapeTemplate tmp = template as CadShapeTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 2:
+					tmp.ShapeFileName = this._reader.ValueAsString;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
 		}
 
