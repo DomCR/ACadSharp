@@ -726,11 +726,208 @@ namespace ACadSharp.IO.DWG
 			//(starting from 0x3D8 until the end). The first 0x3D8 bytes 
 			//should be decoded using Reed-Solomon (255, 239) decoding, with a factor of 3.
 			byte[] compressedData = await _fileStream.ReadBytesAsync(0x400);
-
 			byte[] decodedData = new byte[3 * 239]; //factor * blockSize
 			this.reedSolomonDecoding(compressedData, decodedData, 3, 239);
 
-			throw new NotSupportedException();
+			//0x00	8	CRC
+			long crc = LittleEndianConverter.Instance.ToInt64(decodedData, 0);
+			//0x08	8	Unknown key
+			long unknownKey = LittleEndianConverter.Instance.ToInt64(decodedData, 8);
+			//0x10	8	Compressed Data CRC
+			long compressedDataCRC = LittleEndianConverter.Instance.ToInt64(decodedData, 16);
+			//0x18	4	ComprLen
+			int comprLen = LittleEndianConverter.Instance.ToInt32(decodedData, 24);
+			//0x1C	4	Length2
+			int length2 = LittleEndianConverter.Instance.ToInt32(decodedData, 28);
+
+			//The decompressed size is a fixed 0x110.
+			byte[] buffer = new byte[0x110];
+			//If ComprLen is negative, then Data is not compressed (and data length is ComprLen).
+			if (comprLen < 0)
+			{
+				//buffer = decodedData
+				throw new NotImplementedException();
+			}
+			//If ComprLen is positive, the ComprLen bytes of data are compressed
+			else
+			{
+				DwgLZ77AC21Decompressor.Decompress(decodedData, 32U, (uint)comprLen, buffer);
+			}
+
+			//Get the descompressed stream to read the records
+			StreamIO decompressed = new StreamIO(buffer);
+
+			//Read the compressed data
+			fileheader.CompressedMetadata = new Dwg21CompressedMetadata()
+			{
+				//0x00	8	Header size (normally 0x70)
+				HeaderSize = decompressed.ReadULong(),
+				//0x08	8	File size
+				FileSize = decompressed.ReadULong(),
+				//0x10	8	PagesMapCrcCompressed
+				PagesMapCrcCompressed = decompressed.ReadULong(),
+				//0x18	8	PagesMapCorrectionFactor
+				PagesMapCorrectionFactor = decompressed.ReadULong(),
+				//0x20	8	PagesMapCrcSeed
+				PagesMapCrcSeed = decompressed.ReadULong(),
+				//0x28	8	Pages map2offset(relative to data page map 1, add 0x480 to get stream position)
+				Map2Offset = decompressed.ReadULong(),
+				//0x30	8	Pages map2Id
+				Map2Id = decompressed.ReadULong(),
+				//0x38	8	PagesMapOffset(relative to data page map 1, add 0x480 to get stream position)
+				PagesMapOffset = decompressed.ReadULong(),
+				//0x40	8	PagesMapId
+				PagesMapId = decompressed.ReadULong(),
+				//0x48	8	Header2offset(relative to page map 1 address, add 0x480 to get stream position)
+				Header2offset = decompressed.ReadULong(),
+				//0x50	8	PagesMapSizeCompressed
+				PagesMapSizeCompressed = decompressed.ReadULong(),
+				//0x58	8	PagesMapSizeUncompressed
+				PagesMapSizeUncompressed = decompressed.ReadULong(),
+				//0x60	8	PagesAmount
+				PagesAmount = decompressed.ReadULong(),
+				//0x68	8	PagesMaxId
+				PagesMaxId = decompressed.ReadULong(),
+				//0x70	8	Unknown(normally 0x20, 32)
+				Unknow0x20 = decompressed.ReadULong(),
+				//0x78	8	Unknown(normally 0x40, 64)
+				Unknow0x40 = decompressed.ReadULong(),
+				//0x80	8	PagesMapCrcUncompressed
+				PagesMapCrcUncompressed = decompressed.ReadULong(),
+				//0x88	8	Unknown(normally 0xf800, 63488)
+				Unknown0xF800 = decompressed.ReadULong(),
+				//0x90	8	Unknown(normally 4)
+				Unknown4 = decompressed.ReadULong(),
+				//0x98	8	Unknown(normally 1)
+				Unknown1 = decompressed.ReadULong(),
+				//0xA0	8	SectionsAmount(number of sections + 1)
+				SectionsAmount = decompressed.ReadULong(),
+				//0xA8	8	SectionsMapCrcUncompressed
+				SectionsMapCrcUncompressed = decompressed.ReadULong(),
+				//0xB0	8	SectionsMapSizeCompressed
+				SectionsMapSizeCompressed = decompressed.ReadULong(),
+				//0xB8	8	SectionsMap2Id
+				SectionsMap2Id = decompressed.ReadULong(),
+				//0xC0	8	SectionsMapId
+				SectionsMapId = decompressed.ReadULong(),
+				//0xC8	8	SectionsMapSizeUncompressed
+				SectionsMapSizeUncompressed = decompressed.ReadULong(),
+				//0xD0	8	SectionsMapCrcCompressed
+				SectionsMapCrcCompressed = decompressed.ReadULong(),
+				//0xD8	8	SectionsMapCorrectionFactor
+				SectionsMapCorrectionFactor = decompressed.ReadULong(),
+				//0xE0	8	SectionsMapCrcSeed
+				SectionsMapCrcSeed = decompressed.ReadULong(),
+				//0xE8	8	StreamVersion(normally 0x60100)
+				StreamVersion = decompressed.ReadULong(),
+				//0xF0	8	CrcSeed
+				CrcSeed = decompressed.ReadULong(),
+				//0xF8	8	CrcSeedEncoded
+				CrcSeedEncoded = decompressed.ReadULong(),
+				//0x100	8	RandomSeed
+				RandomSeed = decompressed.ReadULong(),
+				//0x108	8	Header CRC64
+				HeaderCRC64 = decompressed.ReadULong()
+			};
+
+			//Prepare the page data stream to read
+			byte[] arr = await this.getPageBufferAsync(
+				fileheader.CompressedMetadata.PagesMapOffset,
+				fileheader.CompressedMetadata.PagesMapSizeCompressed,
+				fileheader.CompressedMetadata.PagesMapSizeUncompressed,
+				fileheader.CompressedMetadata.PagesMapCorrectionFactor,
+				0xEF, _fileStream.Stream);
+
+			//Read the page data
+			StreamIO pageDataStream = new StreamIO(arr);
+
+			long offset = 0;
+			while (pageDataStream.Position < pageDataStream.Length)
+			{
+				long size = pageDataStream.ReadLong();
+				long id = Math.Abs(pageDataStream.ReadLong());
+				fileheader.Records.Add((int)id, new DwgSectionLocatorRecord((int)id, (int)offset, (int)size));
+
+				//Add the size to the current offset
+				offset += size;
+			}
+
+			//Prepare the section map data stream to read
+			arr = await this.getPageBufferAsync(
+				(ulong)fileheader.Records[(int)fileheader.CompressedMetadata.SectionsMapId].Seeker,
+				fileheader.CompressedMetadata.SectionsMapSizeCompressed,
+				fileheader.CompressedMetadata.SectionsMapSizeUncompressed,
+				fileheader.CompressedMetadata.SectionsMapCorrectionFactor,
+				239, _fileStream.Stream);
+
+			//Section map stream
+			StreamIO sectionMapStream = new StreamIO(arr);
+
+			while (sectionMapStream.Position < sectionMapStream.Length)
+			{
+				DwgSectionDescriptor section = new DwgSectionDescriptor();
+				//0x00	8	Data size
+				section.CompressedSize = sectionMapStream.ReadULong<LittleEndianConverter>();
+				//0x08	8	Max size
+				section.DecompressedSize = sectionMapStream.ReadULong<LittleEndianConverter>();
+				//0x10	8	Encryption
+				section.Encrypted = (int)sectionMapStream.ReadULong<LittleEndianConverter>();
+				//0x18	8	HashCode
+				section.HashCode = sectionMapStream.ReadULong<LittleEndianConverter>();
+				//0x20	8	SectionNameLength
+				int sectionNameLength = (int)sectionMapStream.ReadLong<LittleEndianConverter>();
+				//0x28	8	Unknown
+				sectionMapStream.ReadULong<LittleEndianConverter>();
+				//0x30	8	Encoding
+				section.Encoding = sectionMapStream.ReadULong<LittleEndianConverter>();
+				//0x38	8	NumPages.This is the number of pages present 
+				//			in the file for the section, but this does not include 
+				//			pages that contain zeroes only.A page that contains zeroes 
+				//			only is not written to file.If a page’s data offset is 
+				//			smaller than the sum of the decompressed size of all previous 
+				//			pages, then it is to be preceded by a zero page with a size 
+				//			that is equal to the difference between these two numbers.
+				section.PageCount = (int)sectionMapStream.ReadULong<LittleEndianConverter>();
+
+				//Read the name
+				if (sectionNameLength > 0)
+				{
+					section.Name = sectionMapStream.ReadString(sectionNameLength, Encoding.Unicode);
+					//Remove the empty characters
+					section.Name = section.Name.Replace("\0", "");
+				}
+
+				ulong currentOffset = 0;
+				for (int i = 0; i < section.PageCount; ++i)
+				{
+					DwgLocalSectionMap page = new DwgLocalSectionMap();
+					//8	Page data offset.If a page’s data offset is 
+					//	smaller than the sum of the decompressed size
+					//	of all previous pages, then it is to be preceded 
+					//	by a zero page with a size that is equal to the 
+					//	difference between these two numbers.
+					page.Offset = sectionMapStream.ReadULong<LittleEndianConverter>();
+					//8	Page Size
+					page.Size = sectionMapStream.ReadLong<LittleEndianConverter>();
+					//8	Page Id
+					page.PageNumber = (int)sectionMapStream.ReadLong<LittleEndianConverter>();
+					//8	Page Uncompressed Size
+					page.DecompressedSize = sectionMapStream.ReadULong<LittleEndianConverter>();
+					//8	Page Compressed Size
+					page.CompressedSize = sectionMapStream.ReadULong<LittleEndianConverter>();
+					//8	Page Checksum
+					page.Checksum = sectionMapStream.ReadULong<LittleEndianConverter>();
+					//8	Page CRC
+					page.CRC = sectionMapStream.ReadULong<LittleEndianConverter>();
+
+					//Add the page to the section
+					section.LocalSections.Add(page);
+					//Move the offset
+					currentOffset = page.Offset + page.DecompressedSize;
+				}
+				if (sectionNameLength > 0)
+					fileheader.Descriptors.Add(section.Name, section);
+			}
 		}
 
 		private void readFileMetaData(DwgFileHeaderAC18 fileheader, IDwgStreamReader sreader)
@@ -848,6 +1045,33 @@ namespace ACadSharp.IO.DWG
 			//			initially zero! So the CRC calculation takes into account 
 			//			all of the 0x6c bytes of the data in this table.
 			fileHeader.CRCSeed = headerStream.ReadUInt();
+		}
+
+		private async Task<byte[]> getPageBufferAsync(ulong pageOffset, ulong compressedSize, ulong uncompressedSize, ulong correctionFactor, int blockSize, Stream stream)
+		{
+			//Avoid shifted bits
+			ulong v = compressedSize + 7L;
+			ulong v1 = v & 0b11111111_11111111_11111111_11111000L;
+
+			uint totalSize = (uint)(v1 * correctionFactor);
+
+			int factor = (int)(totalSize + blockSize - 1L) / blockSize;
+			int lenght = factor * byte.MaxValue;
+
+			byte[] buffer = new byte[lenght];
+
+			//Relative to data page map 1, add 0x480 to get stream position
+			stream.Position = (long)(0x480 + pageOffset);
+			await stream.ReadAsync(buffer, 0, lenght);
+
+			byte[] compressedData = new byte[(int)totalSize];
+			this.reedSolomonDecoding(buffer, compressedData, factor, blockSize);
+
+			byte[] decompressedData = new byte[uncompressedSize];
+
+			DwgLZ77AC21Decompressor.Decompress(compressedData, 0U, (uint)compressedSize, decompressedData);
+
+			return decompressedData;
 		}
 
 		private byte[] getPageBuffer(ulong pageOffset, ulong compressedSize, ulong uncompressedSize, ulong correctionFactor, int blockSize, Stream stream)
