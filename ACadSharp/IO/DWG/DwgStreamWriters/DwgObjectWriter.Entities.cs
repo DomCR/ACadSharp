@@ -1335,7 +1335,7 @@ namespace ACadSharp.IO.DWG
 			//When reading from DXF, the shape is found by iterating over all the text styles
 			//(SHAPEFILE, see paragraph 20.4.56) and when the text style contains a shape file,
 			//iterating over all the shapes until the one with the matching name is found.
-			this._writer.WriteBitShort(0);  //TODO: missing implementation for shapeIndex
+			this._writer.WriteBitShort((short)shape.ShapeIndex);
 
 			//Extrusion 3BD 210
 			this._writer.Write3BitDouble(shape.Normal);
