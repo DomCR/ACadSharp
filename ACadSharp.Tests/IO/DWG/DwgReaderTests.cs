@@ -1,4 +1,5 @@
 ﻿using ACadSharp.IO;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -20,6 +21,18 @@ namespace ACadSharp.Tests.IO.DWG
 		public override void ReadTest(string test)
 		{
 			base.ReadTest(test);
+		}
+
+		[Theory]
+		[MemberData(nameof(DwgFilePaths))]
+		public async Task ReadAsyncTest(string test)
+		{
+			CadDocument doc = null;
+			using (DwgReader reader = new DwgReader(test))
+			{
+				reader.OnNotification += this.onNotification;
+				doc = await reader.ReadAsync();
+			}
 		}
 
 		[Theory]
