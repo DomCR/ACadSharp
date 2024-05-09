@@ -3,7 +3,7 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadShapeTemplate : CadEntityTemplate<Shape>
+	internal class CadShapeTemplate : CadEntityTemplate
 	{
 		public ushort? ShapeIndex { get; set; }
 
@@ -17,11 +17,13 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
+			Shape shape = this.CadObject as Shape;
+
 			if (this.getTableReference(builder, ShapeFileHandle, ShapeFileName, out TextStyle text))
 			{
 				if (text.IsShapeFile)
 				{
-					this.CadObject.ShapeStyle = text;
+					shape.ShapeStyle = text;
 				}
 				else
 				{

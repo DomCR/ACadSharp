@@ -92,13 +92,19 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public ushort ShapeIndex { get; internal set; }
+		internal ushort ShapeIndex { get; set; }
 
 		private TextStyle _style;
 
-		public Shape() : base() { }
+		internal Shape() : base() { }
+
+		/// <summary>
+		/// Initializes a shape by the <see cref="TextStyle"/>
+		/// </summary>
+		/// <param name="textStyle">Text style with the flag <see cref="TextStyle.IsShapeFile"/></param>
+		public Shape(TextStyle textStyle)
+		{
+			this.ShapeStyle = textStyle;
+		}
 	}
 }
