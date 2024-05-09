@@ -31,9 +31,6 @@ namespace ACadSharp
 		/// <summary>
 		/// Optional value
 		/// </summary>
-		/// <remarks>
-		/// This values are ignored, may be configurable in the future
-		/// </remarks>
 		Optional = 8,
 
 		/// <summary>

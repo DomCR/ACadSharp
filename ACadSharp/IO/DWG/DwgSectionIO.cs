@@ -25,6 +25,10 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		protected bool R2004Pre;
 		/// <summary>
+		/// Pre-2007 Only
+		/// </summary>
+		protected bool R2007Pre;
+		/// <summary>
 		/// R2004+
 		/// </summary>
 		protected bool R2004Plus;
@@ -88,7 +92,7 @@ namespace ACadSharp.IO.DWG
 			var sn = sreader.ReadSentinel();
 
 			if (!CheckSentinel(sn, expected))
-				this.notify($"Invalid section sentinel found in {SectionName}", NotificationType.Warning);
+				this.notify($"Invalid section sentinel found in {this.SectionName}", NotificationType.Warning);
 		}
 
 		protected void notify(string message, NotificationType type, Exception ex = null)

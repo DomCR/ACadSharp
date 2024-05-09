@@ -206,7 +206,7 @@ namespace ACadSharp.IO.DWG
 
 				this._prev = null;
 				this._next = null;
-				Entity[] arr = blkRecord.Entities.Concat(blkRecord.Viewports).ToArray();
+				Entity[] arr = blkRecord.Entities.ToArray();
 				for (int i = 0; i < arr.Length; i++)
 				{
 					this._prev = arr.ElementAtOrDefault(i - 1);
@@ -283,7 +283,7 @@ namespace ACadSharp.IO.DWG
 				&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 			{
 				//Owned Object Count BL Number of objects owned by this object.
-				_writer.WriteBitLong(record.Entities.Concat(record.Viewports).Count());
+				_writer.WriteBitLong(record.Entities.Count());
 			}
 
 			//Common:
@@ -570,7 +570,14 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Entry name TV 2
-			this._writer.WriteVariableText(style.Name);
+			if (style.IsShapeFile)
+			{
+				this._writer.WriteVariableText(string.Empty);
+			}
+			else
+			{
+				this._writer.WriteVariableText(style.Name);
+			}
 
 			this.writeXrefDependantBit(style);
 

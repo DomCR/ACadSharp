@@ -3,6 +3,7 @@ using ACadSharp.Entities;
 using ACadSharp.Tables;
 using ACadSharp.Types.Units;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -524,7 +525,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable TEXTSTYLE
 		/// </remarks>
-		[CadSystemVariable("$TEXTSTYLE", 7)]
+		[CadSystemVariable("$TEXTSTYLE", true, 7)]
 		public string TextStyleName
 		{
 			get { return this._currentTextStyle.Name; }
@@ -547,7 +548,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable CLAYER
 		/// </remarks>
-		[CadSystemVariable("$CLAYER", 8)]
+		[CadSystemVariable("$CLAYER", true, 8)]
 		public string CurrentLayerName
 		{
 			get { return this._currentLayer.Name; }
@@ -570,7 +571,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable CELTYPE
 		/// </remarks>
-		[CadSystemVariable("$CELTYPE", 6)]
+		[CadSystemVariable("$CELTYPE", true, 6)]
 		public string CurrentLineTypeName
 		{
 			get { return this._currentLineType.Name; }
@@ -593,8 +594,8 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable CMLSTYLE
 		/// </remarks>
-		[CadSystemVariable("$CMLSTYLE", 2)]
-		public string MultilineStyleName { get; internal set; } = "Standard";
+		[CadSystemVariable("$CMLSTYLE", true, 2)]
+		public string MultiLineStyleName { get; internal set; } = "Standard";
 
 		//TODO: Header MLStyle
 		//{
@@ -941,7 +942,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable PUCSBASE
 		/// </remarks>
-		[CadSystemVariable("$PUCSBASE", 2)]
+		[CadSystemVariable("$PUCSBASE", true, 2)]
 		public string PaperSpaceBaseName
 		{
 			get { return this.PaperSpaceUcsBase.Name; }
@@ -957,7 +958,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable PUCSNAME
 		/// </remarks>
-		[CadSystemVariable("$PUCSNAME", 2)]
+		[CadSystemVariable("$PUCSNAME", true, 2)]
 		public string PaperSpaceName
 		{
 			get { return this.PaperSpaceUcs.Name; }
@@ -1174,7 +1175,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable UCSBASE
 		/// </remarks>
-		[CadSystemVariable("$UCSBASE", 2)]
+		[CadSystemVariable("$UCSBASE", true, 2)]
 		public string UcsBaseName
 		{
 			get { return this.ModelSpaceUcsBase.Name; }
@@ -1190,7 +1191,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable UCSNAME
 		/// </remarks>
-		[CadSystemVariable("$UCSNAME", 2)]
+		[CadSystemVariable("$UCSNAME", true, 2)]
 		public string UcsName
 		{
 			get { return this.ModelSpaceUcs.Name; }
@@ -1591,7 +1592,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable DIMTXSTY
 		/// </remarks>
-		[CadSystemVariable("$DIMTXSTY", 7)]
+		[CadSystemVariable("$DIMTXSTY", true, 7)]
 		public string DimensionTextStyleName
 		{
 			get { return this._dimensionTextStyle.Name; }
@@ -1614,7 +1615,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable DIMSTYLE
 		/// </remarks>
-		[CadSystemVariable("$DIMSTYLE", 2)]
+		[CadSystemVariable("$DIMSTYLE", true, 2)]
 		public string DimensionStyleOverridesName
 		{
 			get { return this._dimensionStyleOverrides.Name; }
@@ -2925,7 +2926,7 @@ namespace ACadSharp.Header
 		private TextStyle _dimensionTextStyle = TextStyle.Default;
 
 		private DimensionStyle _dimensionStyleOverrides = DimensionStyle.Default;
-	
+
 		private LineType _currentLineType = LineType.ByLayer;
 
 		static CadHeader()
@@ -2972,7 +2973,7 @@ namespace ACadSharp.Header
 		/// <param name="values">parameters for the constructor of the value</param>
 		public void SetValue(string systemvar, params object[] values)
 		{
-			var prop = _propertyCache.GetProperty(systemvar);
+			PropertyExpression<CadHeader, CadSystemVariableAttribute>.Prop prop = _propertyCache.GetProperty(systemvar);
 
 			ConstructorInfo constr = prop.Property.PropertyType.GetConstructor(values.Select(o => o.GetType()).ToArray());
 
@@ -2995,7 +2996,17 @@ namespace ACadSharp.Header
 			}
 			else if (constr == null)
 			{
-				prop.Setter(this, Convert.ChangeType(values.First(), prop.Property.PropertyType));
+				if (prop.Attribute.IsName && values.First() is string name)
+				{
+					if (!name.IsNullOrEmpty())
+					{
+						prop.Setter(this, Convert.ChangeType(values.First(), prop.Property.PropertyType));
+					}
+				}
+				else
+				{
+					prop.Setter(this, Convert.ChangeType(values.First(), prop.Property.PropertyType));
+				}
 			}
 			else
 			{

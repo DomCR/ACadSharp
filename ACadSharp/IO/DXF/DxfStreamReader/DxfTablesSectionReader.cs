@@ -4,6 +4,7 @@ using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Types.Units;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -185,7 +186,14 @@ namespace ACadSharp.IO.DXF
 						template = this.readTableEntry(new CadTableEntryTemplate<AppId>(new AppId()), this.readAppId);
 						break;
 					case DxfFileToken.TableBlockRecord:
-						template = this.readTableEntry(new CadBlockRecordTemplate(), this.readBlockRecord);
+						CadBlockRecordTemplate block = new CadBlockRecordTemplate();
+						template = this.readTableEntry(block, this.readBlockRecord);
+
+						if (block.CadObject.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase))
+						{
+							this._builder.ModelSpaceTemplate = block;
+						}
+
 						break;
 					case DxfFileToken.TableDimstyle:
 						template = this.readTableEntry(new CadDimensionStyleTemplate(), this.readDimensionStyle);
@@ -647,6 +655,13 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				case 2:
+					if (!this._reader.ValueAsString.IsNullOrEmpty())
+					{
+						//In some files the TextStyle is an empty string
+						template.CadObject.Name = this._reader.ValueAsString;
+					}
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map);
 			}
@@ -721,7 +736,7 @@ namespace ACadSharp.IO.DXF
 				this.createDefaultTable(new LayersTable());
 			}
 
-			if (this._builder.LineTypes == null)
+			if (this._builder.LineTypesTable == null)
 			{
 				this.createDefaultTable(new LineTypesTable());
 			}

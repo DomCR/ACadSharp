@@ -43,7 +43,14 @@ namespace ACadSharp.IO.DXF
 					continue;
 
 				//Add the object and the template to the builder
-				this._builder.AddTemplate(template);
+				if (template is ICadDictionaryTemplate dictionaryTemplate)
+				{
+					this._builder.AddDictionaryTemplate(dictionaryTemplate);
+				}
+				else
+				{
+					this._builder.AddTemplate(template);
+				}
 			}
 		}
 

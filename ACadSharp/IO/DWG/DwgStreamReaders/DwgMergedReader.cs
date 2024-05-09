@@ -178,14 +178,8 @@ namespace ACadSharp.IO.DWG
 			}
 			else
 			{
-				//CECOLOR:
-				//3221225472
-				//0b11000000000000000000000000000000
-				//0b1100_0000_0000_0000_0000_0000_0000_0000 --> this should be ByLayer
-				//0xC0000000
-
 				//True color
-				color = new Color(arr[0], arr[1], arr[2]);
+				color = new Color(arr[2], arr[1], arr[0]);
 			}
 
 			//RC : Color Byte
