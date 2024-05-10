@@ -114,6 +114,7 @@
 		public const string ObjectPlotSettings = "PLOTSETTINGS";
 		public const string ObjectPlaceholder = "ACDBPLACEHOLDER";
 		public const string ObjectLayout = "LAYOUT";
+		public const string ObjectImageDefinition = "IMAGEDEF";
 		public const string ObjectMLineStyle = "MLINESTYLE";
 		public const string ObjectVisualStyle = "VISUALSTYLE";
 		public const string ObjectScale = "SCALE";

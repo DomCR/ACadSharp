@@ -7,14 +7,11 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSMath;
-using CSUtilities.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System;
-using ACadSharp.Types;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
-using System.Net;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
 
@@ -1005,6 +1002,8 @@ namespace ACadSharp.IO.DWG
 					template = this.readCadImage(new RasterImage());
 					break;
 				case "IMAGEDEF":
+					template = this.readImageDefinition();
+					break;
 				case "IMAGEDEFREACTOR":
 				case "LAYER_INDEX":
 					break;
@@ -5216,8 +5215,32 @@ namespace ACadSharp.IO.DWG
 					break;
 			}
 
-			template.ImgHandle_1 = this.handleReference();
-			template.ImgHandle_2 = this.handleReference();
+			template.ImgDefHandle = this.handleReference();
+			template.ImgReactorHandle = this.handleReference();
+
+			return template;
+		}
+
+		private CadTemplate readImageDefinition()
+		{
+			ImageDefinition definition = new ImageDefinition();
+			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(definition);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Clsver BL 0 class version
+			definition.ClassVersion = this._mergedReaders.ReadBitLong();
+			//Imgsize 2RD 10 size of image in pixels
+			definition.Size = this._mergedReaders.Read2RawDouble();
+			//Filepath TV 1 path to file
+			definition.FileName = this._mergedReaders.ReadVariableText();
+			//Isloaded B 280 0==no, 1==yes
+			definition.IsLoaded = this._mergedReaders.ReadBit();
+			//Resunits RC 281 0==none, 2==centimeters, 5==inches
+			definition.Units = (ResolutionUnit)this._mergedReaders.ReadByte();
+			//Pixelsize 2RD 11 size of one pixel in AutoCAD units
+			definition.DefaultSize = this._mergedReaders.Read2RawDouble();
 
 			return template;
 		}

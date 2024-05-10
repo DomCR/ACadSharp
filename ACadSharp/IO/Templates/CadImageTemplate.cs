@@ -1,24 +1,28 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 
 namespace ACadSharp.IO.Templates
 {
 	internal class CadImageTemplate : CadEntityTemplate
 	{
-		public ulong? ImgHandle_1 { get; set; }
+		public ulong? ImgDefHandle { get; set; }
 
-		public ulong? ImgHandle_2 { get; set; }
+		public ulong? ImgReactorHandle { get; set; }
 
-		public CadImageTemplate(CadImageBase wipeout) : base(wipeout) { }
+		public CadImageTemplate(CadImageBase image) : base(image) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
-			if(builder.TryGetCadObject(ImgHandle_1, out CadObject obj))
-			{
+			CadImageBase image = this.CadObject as CadImageBase;
 
+			if(builder.TryGetCadObject(this.ImgDefHandle, out ImageDefinition imgDef))
+			{
+				image.Definition = imgDef;
 			}
-			if(builder.TryGetCadObject(ImgHandle_2, out CadObject obj1))
+
+			if(builder.TryGetCadObject(this.ImgReactorHandle, out CadObject imgReactor))
 			{
 
 			}

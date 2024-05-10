@@ -2,6 +2,7 @@
 using CSMath;
 using System.Collections.Generic;
 using System;
+using ACadSharp.Objects;
 
 namespace ACadSharp.Entities
 {
@@ -138,7 +139,11 @@ namespace ACadSharp.Entities
 		[DxfCollectionCodeValue(14, 24)]
 		public List<XY> ClipBoundaryVertices { get; set; } = new List<XY>();
 
-		//340	Hard reference to imagedef object
+		/// <summary>
+		/// Image definition.
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
+		public ImageDefinition Definition { get; set; }
 
 		//360	Hard reference to imagedef_reactor object
 
