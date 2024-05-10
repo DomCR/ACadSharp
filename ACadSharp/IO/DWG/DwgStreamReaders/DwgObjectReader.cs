@@ -1000,7 +1000,10 @@ namespace ACadSharp.IO.DWG
 					template = this.readHatch();
 					break;
 				case "IDBUFFER":
+					break;
 				case "IMAGE":
+					template = this.readCadImage(new RasterImage());
+					break;
 				case "IMAGEDEF":
 				case "IMAGEDEFREACTOR":
 				case "LAYER_INDEX":
@@ -1048,7 +1051,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readVisualStyle();
 					break;
 				case "WIPEOUT":
-					template = this.readWipeout();
+					template = this.readCadImage(new Wipeout());
 					break;
 				case "WIPEOUTVARIABLE":
 				case "WIPEOUTVARIABLES":
@@ -5170,50 +5173,46 @@ namespace ACadSharp.IO.DWG
 			return null;
 		}
 
-		private CadTemplate readWipeout()
+		private CadTemplate readCadImage(CadImageBase image)
 		{
-			Wipeout wipeout = new Wipeout();
-			CadWipeoutTemplate template = new CadWipeoutTemplate(wipeout);
+			CadImageTemplate template = new CadImageTemplate(image);
 
 			this.readCommonEntityData(template);
 
 			//WARNING: this object is not documented, the fields have been found using exploration methods and matching them with the dxf file
 
-			wipeout.ClassVersion = this._objectReader.ReadBitLong();
+			image.ClassVersion = this._objectReader.ReadBitLong();
 
-			wipeout.InsertPoint = this._objectReader.Read3BitDouble();
-			wipeout.UVector = this._objectReader.Read3BitDouble();
-			wipeout.VVector = this._objectReader.Read3BitDouble();
+			image.InsertPoint = this._objectReader.Read3BitDouble();
+			image.UVector = this._objectReader.Read3BitDouble();
+			image.VVector = this._objectReader.Read3BitDouble();
 
-			wipeout.Size = this._objectReader.Read2RawDouble();
+			image.Size = this._objectReader.Read2RawDouble();
 
-			wipeout.Flags = (ImageDisplayFlags)this._objectReader.ReadBitShort();
-			wipeout.ClippingState = this._objectReader.ReadBit();
-			wipeout.Brightness = this._objectReader.ReadByte();
-			wipeout.Contrast = this._objectReader.ReadByte();
-			wipeout.Fade = this._objectReader.ReadByte();
+			image.Flags = (ImageDisplayFlags)this._objectReader.ReadBitShort();
+			image.ClippingState = this._objectReader.ReadBit();
+			image.Brightness = this._objectReader.ReadByte();
+			image.Contrast = this._objectReader.ReadByte();
+			image.Fade = this._objectReader.ReadByte();
 
 			if (this._version > ACadVersion.AC1021)
 			{
-				//Unknown bit
-				this._objectReader.ReadBit();
+				image.ClipMode = this._objectReader.ReadBit() ? ClipMode.Inside : ClipMode.Outside;
 			}
 
-			wipeout.ClipType = (ClipType)this._objectReader.ReadBitShort();
-			switch (wipeout.ClipType)
+			image.ClipType = (ClipType)this._objectReader.ReadBitShort();
+			switch (image.ClipType)
 			{
 				case ClipType.Rectangular:
-					wipeout.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
-					wipeout.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
+					image.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
+					image.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
 					break;
 				case ClipType.Polygonal:
 					int nvertices = this._objectReader.ReadBitLong();
 					for (int i = 0; i < nvertices; i++)
 					{
-						wipeout.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
+						image.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
 					}
-					break;
-				default:
 					break;
 			}
 
