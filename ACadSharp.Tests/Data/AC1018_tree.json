@@ -124,7 +124,7 @@
       {
         "Name": "AcadAnnotativeDecomposition",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
-        "Handle": 2437,
+        "Handle": 2510,
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
@@ -132,7 +132,7 @@
       {
         "Name": "ACAD_SPLINE_DATA",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
-        "Handle": 2530,
+        "Handle": 2603,
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
@@ -140,7 +140,7 @@
       {
         "Name": "AcDbAttr",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
-        "Handle": 2555,
+        "Handle": 2628,
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
@@ -2477,6 +2477,31 @@
             "LineWeight": -1,
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Shape",
             "Handle": 2185,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "Color": {
+              "IsByBlock": false,
+              "IsByLayer": true,
+              "Green": 0,
+              "Blue": 0,
+              "Red": 0,
+              "Index": 256
+            },
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.RasterImage",
+            "Handle": 2246,
             "OwnerHandle": 31,
             "DictionaryHandle": 0,
             "Children": []
@@ -5008,7 +5033,7 @@
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1611,
             "OwnerHandle": 1462,
-            "DictionaryHandle": 2553,
+            "DictionaryHandle": 2626,
             "Children": []
           },
           {
@@ -5253,7 +5278,7 @@
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.AttributeDefinition",
             "Handle": 1942,
             "OwnerHandle": 1919,
-            "DictionaryHandle": 2445,
+            "DictionaryHandle": 2518,
             "Children": []
           },
           {
@@ -5863,7 +5888,7 @@
     "ACadName": "Autodesk.AutoCAD.DatabaseServices.ViewportTable",
     "Handle": 8,
     "OwnerHandle": 0,
-    "DictionaryHandle": 2460,
+    "DictionaryHandle": 2533,
     "Children": []
   }
 }
