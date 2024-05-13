@@ -433,7 +433,7 @@ namespace ACadSharp.Entities
 
 		//	TODO According to the OpenDesign_Specification_for_.dwg_files
 		//	a list of arror head AND a list of block attributes can occur.
-		//	If both list are empty it ist expected that two BL-field should
+		//	If both list are empty it ist expected that two BL-fields should
 		//	occur yielding count=0 for both lists. But when we read two
 		//	BL-fields we get out of sync. If we read one BL-field everything
 		//	works fine.
