@@ -127,7 +127,7 @@ namespace ACadSharp.IO.DWG
 					}
 					break;
 				case ObjectType.INVALID:
-				case ObjectType.UNUSED:
+				case ObjectType.UNDEFINED:
 					this.notify($"CadObject type: {cadObject.ObjectType} fullname: {cadObject.GetType().FullName}", NotificationType.NotImplemented);
 					return;
 				default:

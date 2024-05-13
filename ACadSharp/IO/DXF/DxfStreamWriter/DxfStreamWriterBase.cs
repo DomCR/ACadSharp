@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CSUtilities.Converters;
+using System;
 
 using CSUtilities.Converters;
 
@@ -33,21 +34,31 @@ namespace ACadSharp.IO.DXF
 
 		public void WriteCmColor(int code, Color color, DxfClassMap map = null)
 		{
-			byte[] arr = new byte[4];
-
-			if (color.IsTrueColor) {
-				arr[0] = (byte)color.B;
-				arr[1] = (byte)color.G;
-				arr[2] = (byte)color.R;
-				arr[3] = 0b1100_0010;
+			if (GroupCodeValue.TransformValue(code) == GroupCodeValueType.Int16)
+			{
+				//BS: Color Index
+				this.Write(code, Convert.ToInt16(color.GetApproxIndex()));
 			}
-			else {
-				arr[3] = 0b1100_0001;
-				arr[0] = (byte)color.Index;
-			}
+			else
+			{
+				byte[] arr = new byte[4];
 
-			//BL: RGB value
-			this.Write(code, LittleEndianConverter.Instance.ToInt32(arr), map);
+				if (color.IsTrueColor)
+				{
+					arr[0] = (byte)color.B;
+					arr[1] = (byte)color.G;
+					arr[2] = (byte)color.R;
+					arr[3] = 0b1100_0010;   //	0xC2
+				}
+				else
+				{
+					arr[3] = 0b1100_0001;
+					arr[0] = (byte)color.Index;
+				}
+
+				//BL: RGB value
+				this.Write(code, LittleEndianConverter.Instance.ToInt32(arr), map);
+			}
 		}
 
 		public void WriteHandle(int code, IHandledCadObject value, DxfClassMap map)

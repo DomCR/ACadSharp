@@ -18,7 +18,7 @@
   (command "SAVEAS" "DXF" "V" "2007" "16" (strcat cur_dir "sample_AC1021_ascii.dxf"))
   (command "SAVEAS" "DXF" "V" "2004" "16" (strcat cur_dir "sample_AC1018_ascii.dxf"))
   (command "SAVEAS" "DXF" "V" "2000" "16" (strcat cur_dir "sample_AC1015_ascii.dxf"))
-  (command "SAVEAS" "DXF" "V" "R12" "16" (strcat cur_dir "sample_R12_ascii.dxf"))
+  (command "SAVEAS" "DXF" "V" "R12" "16" (strcat cur_dir "sample_AC1009_ascii.dxf"))
 
   (command "SAVEAS" "DXF" "V" "2018" "B" (strcat cur_dir "sample_AC1032_binary.dxf"))
   (command "SAVEAS" "DXF" "V" "2013" "B" (strcat cur_dir "sample_AC1027_binary.dxf"))
@@ -26,7 +26,7 @@
   (command "SAVEAS" "DXF" "V" "2007" "B" (strcat cur_dir "sample_AC1021_binary.dxf"))
   (command "SAVEAS" "DXF" "V" "2004" "B" (strcat cur_dir "sample_AC1018_binary.dxf"))
   (command "SAVEAS" "DXF" "V" "2000" "B" (strcat cur_dir "sample_AC1015_binary.dxf"))
-  (command "SAVEAS" "DXF" "V" "R12" "B" (strcat cur_dir "sample_R12_binary.dxf"))
+  (command "SAVEAS" "DXF" "V" "R12" "B" (strcat cur_dir "sample_AC1009_binary.dxf"))
 
   (command "FILEDIA" 1 "")
   (princ)
