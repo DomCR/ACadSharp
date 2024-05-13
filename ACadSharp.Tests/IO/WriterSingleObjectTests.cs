@@ -81,6 +81,34 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(line);
 			}
 
+			public void SingleMLine()
+			{
+				//It creates a valid dxf but the MLine is wrongly drawn
+
+				MLine line = new MLine();
+
+				line.StartPoint = XYZ.Zero;
+
+				var v1 = new MLine.Vertex();
+				v1.Position = XYZ.Zero;
+				v1.Direction = XYZ.AxisY;
+
+				v1.Segments.Add(new MLine.Vertex.Segment { Parameters = new List<double> { 0.75, 0 } });
+				v1.Segments.Add(new MLine.Vertex.Segment { Parameters = new List<double> { -0.75, 0 } });
+
+				var v2 = new MLine.Vertex();
+				v2.Position = new XYZ(100, 100, 0);
+				v2.Direction = XYZ.AxisY;
+
+				v2.Segments.Add(new MLine.Vertex.Segment { Parameters = new List<double> { 0.75, 0 } });
+				v2.Segments.Add(new MLine.Vertex.Segment { Parameters = new List<double> { -0.75, 0 } });
+
+				line.Vertices.Add(v1);
+				line.Vertices.Add(v2);
+
+				this.Document.Entities.Add(line);
+			}
+
 			public void SingleMText()
 			{
 				MText mtext = new MText();
@@ -180,6 +208,7 @@ namespace ACadSharp.Tests.IO
 
 			Data.Add(new(nameof(SingleCaseGenerator.Empty)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleMLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityColorTrueColor)));

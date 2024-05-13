@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
+using ACadSharp.IO.DWG;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSUtilities.Extensions;
@@ -42,16 +43,16 @@ namespace ACadSharp.IO.Templates
 			{
 				foreach (Entity e in this.getEntitiesCollection<Entity>(builder, this.FirstEntityHandle.Value, this.LastEntityHandle.Value))
 				{
-					this.addEntity(e);
+					this.addEntity(builder, e);
 				}
 			}
 			else
 			{
 				foreach (ulong handle in this.OwnedObjectsHandlers)
 				{
-					if (builder.TryGetCadObject<Entity>(handle, out Entity child))
+					if (builder.TryGetCadObject(handle, out Entity child))
 					{
-						this.addEntity(child);
+						this.addEntity(builder, child);
 					}
 				}
 			}
@@ -72,7 +73,6 @@ namespace ACadSharp.IO.Templates
 				block.Comments = this.CadObject.BlockEntity.Comments;
 
 				this.CadObject.BlockEntity = block;
-
 			}
 
 			if (builder.TryGetCadObject(this.EndBlockHandle, out BlockEnd blockEnd))
@@ -81,17 +81,14 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
-		private void addEntity(Entity entity)
+		private void addEntity(CadDocumentBuilder builder,Entity entity)
 		{
-			switch (entity)
+			if(!builder.KeepUnknownEntities && entity is UnknownEntity)
 			{
-				case Viewport viewport:
-					this.CadObject.Viewports.Add(viewport);
-					break;
-				default:
-					this.CadObject.Entities.Add(entity);
-					break;
+				return;
 			}
+
+			this.CadObject.Entities.Add(entity);
 		}
 	}
 }

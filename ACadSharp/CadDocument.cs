@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Header;
-using ACadSharp.IO.DXF;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
@@ -187,8 +186,8 @@ namespace ACadSharp
 				//Entries
 				Layout modelLayout = Layout.Default;
 				Layout paperLayout = new Layout("Layout1");
-				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(paperLayout.Name, paperLayout);
-				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(Layout.LayoutModelName, modelLayout);
+				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(paperLayout);
+				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(modelLayout);
 
 				//Default variables
 				this.AppIds.Add(AppId.Default);
@@ -292,6 +291,15 @@ namespace ACadSharp
 		/// <param name="createDictionaries"></param>
 		public void UpdateCollections(bool createDictionaries)
 		{
+			if (createDictionaries && this.RootDictionary == null)
+			{
+				this.RootDictionary = CadDictionary.CreateRoot();
+			}
+			else if (this.RootDictionary == null)
+			{
+				return;
+			}
+
 			if (this.updateCollection(CadDictionary.AcadLayout, createDictionaries, out CadDictionary layout))
 			{
 				this.Layouts = new LayoutCollection(layout);
@@ -326,7 +334,7 @@ namespace ACadSharp
 			}
 			else if (createDictionary)
 			{
-				this.RootDictionary.Add(dictName, new CadDictionary());
+				this.RootDictionary.Add(new CadDictionary(dictName));
 			}
 
 			return dictionary != null;

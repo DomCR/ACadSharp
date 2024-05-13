@@ -17,6 +17,12 @@ namespace ACadSharp.IO.DWG
 
 		public List<UnknownEntity> UnknownEntities { get; } = new();
 
+		public List<Entity> PaperSpaceEntities { get; } = new();
+
+		public List<Entity> ModelSpaceEntities { get; } = new();
+
+		public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
+
 		public DwgDocumentBuilder(CadDocument document, DwgReaderConfiguration configuration)
 			: base(document)
 		{
@@ -33,30 +39,9 @@ namespace ACadSharp.IO.DWG
 
 			this.RegisterTables();
 
-			this.BuildTable(this.AppIds);
-			this.BuildTable(this.LineTypesTable);
-			this.BuildTable(this.Layers);
-			this.BuildTable(this.TextStyles);
-			this.BuildTable(this.UCSs);
-			this.BuildTable(this.Views);
-			this.BuildTable(this.DimensionStyles);
-			this.BuildTable(this.VPorts);
-			this.BuildTable(this.BlockRecords);
+			this.BuildTables();
 
 			base.BuildDocument();
-		}
-
-		public override bool TryGetCadObject<T>(ulong? handle, out T value)
-		{
-			bool result = base.TryGetCadObject(handle, out value);
-			
-			if (value is UnknownEntity && !this.Configuration.KeepUnknownEntities)
-			{
-				value = null;
-				result = false;
-			}
-
-			return result;
 		}
 	}
 }

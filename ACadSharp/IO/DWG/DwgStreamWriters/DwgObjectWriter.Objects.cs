@@ -390,7 +390,7 @@ namespace ACadSharp.IO.DWG
 		private void writeScale(Scale scale)
 		{
 			//BS	70	Unknown(ODA writes 0).
-			this._writer.WriteBitShort(scale.Unknown);
+			this._writer.WriteBitShort(0);
 			//TV	300	Name
 			this._writer.WriteVariableText(scale.Name);
 			//BD	140	Paper units(numerator)

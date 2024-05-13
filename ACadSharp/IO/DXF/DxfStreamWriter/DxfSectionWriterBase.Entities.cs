@@ -13,8 +13,6 @@ namespace ACadSharp.IO.DXF
 			//TODO: Implement complex entities in a separated branch
 			switch (entity)
 			{
-				case Mesh:
-				case MLine:
 				case Solid3D:
 				case MultiLeader:
 				case Wipeout:
@@ -60,6 +58,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case LwPolyline lwPolyline:
 					this.writeLwPolyline(lwPolyline);
+					break;
+				case Mesh mesh:
+					this.writeMesh(mesh);
 					break;
 				case MLine mline:
 					this.writeMLine(mline);
@@ -562,13 +563,59 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(210, polyline.Normal, map);
 		}
 
+		private void writeMesh(Mesh mesh)
+		{
+			DxfClassMap map = DxfClassMap.Create<Mesh>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Mesh);
+
+			this._writer.Write(71, (short)mesh.Version, map);
+			this._writer.Write(72, (short)(mesh.BlendCrease ? 1 : 0), map);
+
+			this._writer.Write(91, mesh.SubdivisionLevel, map);
+
+			this._writer.Write(92, mesh.Vertices.Count, map);
+			foreach (XYZ vertex in mesh.Vertices)
+			{
+				this._writer.Write(10, vertex, map);
+			}
+
+			int nFaces = mesh.Faces.Count;
+			nFaces += mesh.Faces.Sum(f => f.Length);
+
+			this._writer.Write(93, nFaces);
+			foreach (int[] face in mesh.Faces)
+			{
+				this._writer.Write(90, face.Length);
+				foreach (int index in face)
+				{
+					this._writer.Write(90, index);
+				}
+			}
+
+			this._writer.Write(94, mesh.Edges.Count, map);
+			foreach (Mesh.Edge edge in mesh.Edges)
+			{
+				this._writer.Write(90, edge.Start);
+				this._writer.Write(90, edge.End);
+			}
+
+			this._writer.Write(95, mesh.Edges.Count, map);
+			foreach (Mesh.Edge edge in mesh.Edges)
+			{
+				this._writer.Write(140, edge.Crease);
+			}
+
+			this._writer.Write(90, 0);
+		}
+
 		private void writeMLine(MLine mLine)
 		{
 			DxfClassMap map = DxfClassMap.Create<MLine>();
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.MLine);
 
-			//Style has to references
+			//Style has two references
 			this._writer.WriteName(2, mLine.Style, map);
 			this._writer.WriteHandle(340, mLine.Style, map);
 
@@ -738,7 +785,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(40, shape.Size, map);
 
-			this._writer.Write(2, shape.Name, map);
+			this._writer.WriteName(2, shape.ShapeStyle, map);
 
 			this._writer.Write(50, shape.Rotation, map);
 
