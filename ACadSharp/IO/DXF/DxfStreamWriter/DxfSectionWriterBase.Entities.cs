@@ -705,11 +705,6 @@ namespace ACadSharp.IO.DXF
 		{
 			MultiLeaderAnnotContext contextData = multiLeader.ContextData;
 
-			this._writer.Write(160, 644);
-
-			// TODO: 310 bitmap preview bytes
-			// this._writer.Write(310, byte[]);
-
 			this._writer.Write(100, "AcDbMLeader");
 
 			//	version
@@ -828,8 +823,9 @@ namespace ACadSharp.IO.DXF
 		{
 			this._writer.Write(302, "LEADER{");
 
-			this._writer.Write(290, true); // Has Set Last Leader Line Point
-			this._writer.Write(291, true); // Has Set Dogleg Vector
+			// TODO: true is placeholder
+			this._writer.Write(290, true ? (short)1 : (short)0); // Has Set Last Leader Line Point
+			this._writer.Write(291, true ? (short)1 : (short)0); // Has Set Dogleg Vector
 
 			this._writer.Write(10, leaderRoot.ConnectionPoint);
 

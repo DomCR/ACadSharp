@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using ACadSharp.Attributes;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
@@ -64,7 +64,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// 
 		/// </summary>
-		public class BlockAttribute
+		public class BlockAttribute : ICloneable
 		{
 			/// <summary>
 			/// Block Attribute Id
@@ -89,6 +89,11 @@ namespace ACadSharp.Entities
 			/// </summary>
 			[DxfCodeValue(302)]
 			public string Text { get; set; }
+
+			public object Clone()
+			{
+				return this.MemberwiseClone();
+			}
 		}
 
 		/// <summary>
@@ -346,9 +351,9 @@ namespace ACadSharp.Entities
 
 			clone.ContextData = (MultiLeaderAnnotContext)this.ContextData?.Clone();
 
-			foreach (var att in BlockAttributes.ToList())
+			foreach (var att in this.BlockAttributes)
 			{
-				clone.BlockAttributes.Add(att);
+				clone.BlockAttributes.Add((BlockAttribute)att.Clone());
 			}
 
 			return clone;
