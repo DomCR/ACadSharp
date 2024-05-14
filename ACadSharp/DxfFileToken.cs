@@ -74,7 +74,7 @@
 		public const string EntityLine = "LINE";
 		public const string EntityLwPolyline = "LWPOLYLINE";
 		public const string EntityMesh = "MESH";
-		public const string EntityMultiLeader = "MULTILEADER";
+		public const string EntityMultiLeader = "MLEADER";
 		public const string EntityMLine = "MLINE";
 		public const string EntityMText = "MTEXT";
 		public const string EntityOleFrame = "OLEFRAME";

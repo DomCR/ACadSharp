@@ -1377,6 +1377,8 @@ namespace ACadSharp.IO.DWG
 			{
 				//	BS	273	Style top attachment
 				this._writer.WriteBitShort((short)annotContext.TextTopAttachment);
+				//	BS	272	Style bottom attachment
+				this._writer.WriteBitShort((short)annotContext.TextBottomAttachment);
 			}
 		}
 

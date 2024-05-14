@@ -206,7 +206,7 @@ namespace ACadSharp.IO.DWG
 
 				this._prev = null;
 				this._next = null;
-				Entity[] arr = blkRecord.Entities.ToArray();
+				Entity[] arr = blkRecord.Entities.Concat(blkRecord.Viewports).ToArray();
 				for (int i = 0; i < arr.Length; i++)
 				{
 					this._prev = arr.ElementAtOrDefault(i - 1);
@@ -283,7 +283,7 @@ namespace ACadSharp.IO.DWG
 				&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 			{
 				//Owned Object Count BL Number of objects owned by this object.
-				_writer.WriteBitLong(record.Entities.Count());
+				_writer.WriteBitLong(record.Entities.Concat(record.Viewports).Count());
 			}
 
 			//Common:
