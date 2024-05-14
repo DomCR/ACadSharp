@@ -161,7 +161,7 @@ namespace ACadSharp.Entities
 		public string Text { get; set; }
 
 		/// <summary>
-		/// Rotation angle of the dimension text away from its default orientation (the direction of the dimension line)
+		/// rotation angle of the dimension text away from its default orientation (the direction of the dimension line)
 		/// </summary>
 		/// <remarks>
 		/// Optional
