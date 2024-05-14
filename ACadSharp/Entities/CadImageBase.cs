@@ -143,12 +143,35 @@ namespace ACadSharp.Entities
 		/// Image definition.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public ImageDefinition Definition { get; set; }
+		public ImageDefinition Definition
+		{
+			get { return _definition; }
+			internal set
+			{
+				_definition = value;
+				_definition.Owner = this;
+			}
+		}
 
-		//360	Hard reference to imagedef_reactor object
+		/// <summary>
+		/// Reference to image definition reactor
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Handle, 360)]
+		public ImageDefinitionReactor DefinitionReactor
+		{
+			get { return _definitionReactor; }
+			internal set
+			{
+				_definitionReactor = value;
+				_definitionReactor.Owner = this;
+			}
+		}
 
 		private byte _brightness = 50;
 		private byte _contrast = 50;
 		private byte _fade = 0;
+
+		private ImageDefinition _definition;
+		private ImageDefinitionReactor _definitionReactor;
 	}
 }

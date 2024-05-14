@@ -1004,7 +1004,9 @@ namespace ACadSharp.IO.DWG
 				case "IMAGEDEF":
 					template = this.readImageDefinition();
 					break;
-				case "IMAGEDEFREACTOR":
+				case "IMAGEDEF_REACTOR":
+					template = this.readImageDefinitionReactor();
+					break;
 				case "LAYER_INDEX":
 					break;
 				case "LAYOUT":
@@ -5241,6 +5243,20 @@ namespace ACadSharp.IO.DWG
 			definition.Units = (ResolutionUnit)this._mergedReaders.ReadByte();
 			//Pixelsize 2RD 11 size of one pixel in AutoCAD units
 			definition.DefaultSize = this._mergedReaders.Read2RawDouble();
+
+			return template;
+		}
+
+		private CadTemplate readImageDefinitionReactor()
+		{
+			ImageDefinitionReactor definition = new ImageDefinitionReactor();
+			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(definition);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Classver BL 90 class version
+			definition.ClassVersion = this._objectReader.ReadBitLong();
 
 			return template;
 		}

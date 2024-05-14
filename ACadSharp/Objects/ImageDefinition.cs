@@ -10,8 +10,8 @@ namespace ACadSharp.Objects
 	/// Object name <see cref="DxfFileToken.ObjectImageDefinition"/> <br/>
 	/// Dxf class name <see cref="DxfSubclassMarker.RasterImageDef"/>
 	/// </remarks>
-	[DxfName(DxfFileToken.TableGroup)]
-	[DxfSubClass(DxfSubclassMarker.Group)]
+	[DxfName(DxfFileToken.ObjectImageDefinition)]
+	[DxfSubClass(DxfSubclassMarker.RasterImageDef)]
 	public class ImageDefinition : NonGraphicalObject
 	{
 		/// <inheritdoc/>

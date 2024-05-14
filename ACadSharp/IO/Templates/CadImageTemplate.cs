@@ -17,14 +17,14 @@ namespace ACadSharp.IO.Templates
 
 			CadImageBase image = this.CadObject as CadImageBase;
 
-			if(builder.TryGetCadObject(this.ImgDefHandle, out ImageDefinition imgDef))
+			if (builder.TryGetCadObject(this.ImgDefHandle, out ImageDefinition imgDef))
 			{
 				image.Definition = imgDef;
 			}
 
-			if(builder.TryGetCadObject(this.ImgReactorHandle, out CadObject imgReactor))
+			if (builder.TryGetCadObject(this.ImgReactorHandle, out ImageDefinitionReactor imgReactor))
 			{
-
+				image.DefinitionReactor = imgReactor;
 			}
 		}
 	}
