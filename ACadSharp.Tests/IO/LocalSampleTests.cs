@@ -9,18 +9,12 @@ namespace ACadSharp.Tests.IO
 {
 	public class LocalSampleTests : IOTestsBase
 	{
-		public static TheoryData<string> StressDwgFiles { get; } = new TheoryData<string>();
-
-		public static TheoryData<string> StressDxfFiles { get; } = new TheoryData<string>();
-
 		public static TheoryData<string> UserDwgFiles { get; } = new TheoryData<string>();
 
 		public static TheoryData<string> UserDxfFiles { get; } = new TheoryData<string>();
 
 		static LocalSampleTests()
 		{
-			loadSamples("stress", "dwg", StressDwgFiles);
-			loadSamples("stress", "dxf", StressDxfFiles);
 			loadSamples("user_files", "dwg", UserDwgFiles);
 			loadSamples("user_files", "dxf", UserDxfFiles);
 		}
@@ -37,6 +31,8 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test, this._dwgConfiguration, this.onNotification);
+
+			DwgWriter.Write(new MemoryStream(), doc, this.onNotification);
 
 			return;
 
