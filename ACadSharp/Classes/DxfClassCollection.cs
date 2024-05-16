@@ -389,7 +389,7 @@ namespace ACadSharp.Classes
 		}
 
 		/// <summary>
-		/// Get by <see cref="DxfClass.DxfName"/>
+		/// Gets the dxf class associated with <see cref="DxfClass.DxfName"/>
 		/// </summary>
 		/// <param name="dxfname"></param>
 		/// <returns></returns>
@@ -403,6 +403,17 @@ namespace ACadSharp.Classes
 			{
 				return null;
 			}
+		}
+
+		/// <summary>
+		/// Gets the dxf class associated with <see cref="DxfClass.DxfName"/>
+		/// </summary>
+		/// <param name="dxfname"></param>
+		/// <param name="result"></param>
+		/// <returns>true if the Collection contains an element with the specified key; otherwise, false.</returns>
+		public bool TryGetByName(string dxfname, out DxfClass result)
+		{
+			return this._entries.TryGetValue(dxfname, out result);
 		}
 
 		/// <inheritdoc/>

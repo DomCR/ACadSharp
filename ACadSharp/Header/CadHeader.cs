@@ -3,6 +3,7 @@ using ACadSharp.Entities;
 using ACadSharp.Tables;
 using ACadSharp.Types.Units;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,7 +90,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable DIMSAV
 		/// </remarks>
-		public bool DIMSAV { get; set; }
+		internal bool DIMSAV { get; set; }
 
 		/// <summary>
 		/// Sets drawing units
@@ -524,7 +525,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable TEXTSTYLE
 		/// </remarks>
-		[CadSystemVariable("$TEXTSTYLE", 7)]
+		[CadSystemVariable("$TEXTSTYLE", true, 7)]
 		public string TextStyleName
 		{
 			get { return this._currentTextStyle.Name; }
@@ -541,34 +542,13 @@ namespace ACadSharp.Header
 			}
 		}
 
-		public TextStyle CurrentTextStyle
-		{
-			get
-			{
-				if (this.Document == null)
-				{
-					return this._currentTextStyle;
-				}
-				else
-				{
-					return this.Document.TextStyles[this.TextStyleName];
-				}
-			}
-			private set
-			{
-				this._currentTextStyle = value;
-			}
-		}
-
-		private TextStyle _currentTextStyle = TextStyle.Default;
-
 		/// <summary>
 		/// Current layer name
 		/// </summary>
 		/// <remarks>
 		/// System variable CLAYER
 		/// </remarks>
-		[CadSystemVariable("$CLAYER", 8)]
+		[CadSystemVariable("$CLAYER", true, 8)]
 		public string CurrentLayerName
 		{
 			get { return this._currentLayer.Name; }
@@ -591,24 +571,22 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable CELTYPE
 		/// </remarks>
-		[CadSystemVariable("$CELTYPE", 6)]
+		[CadSystemVariable("$CELTYPE", true, 6)]
 		public string CurrentLineTypeName
 		{
-			get { return this.CurrentLineType.Name; }
+			get { return this._currentLineType.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this.CurrentLineType = this.Document.LineTypes[value];
+					this._currentLineType = this.Document.LineTypes[value];
 				}
 				else
 				{
-					this.CurrentLineType = new LineType(value);
+					this._currentLineType = new LineType(value);
 				}
 			}
 		}
-
-		public LineType CurrentLineType { get; private set; } = LineType.ByLayer;
 
 		/// <summary>
 		/// Current multiline style name
@@ -616,8 +594,8 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable CMLSTYLE
 		/// </remarks>
-		[CadSystemVariable("$CMLSTYLE", 2)]
-		public string MultilineStyleName { get; internal set; } = "Standard";
+		[CadSystemVariable("$CMLSTYLE", true, 2)]
+		public string MultiLineStyleName { get; internal set; } = "Standard";
 
 		//TODO: Header MLStyle
 		//{
@@ -964,7 +942,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable PUCSBASE
 		/// </remarks>
-		[CadSystemVariable("$PUCSBASE", 2)]
+		[CadSystemVariable("$PUCSBASE", true, 2)]
 		public string PaperSpaceBaseName
 		{
 			get { return this.PaperSpaceUcsBase.Name; }
@@ -980,7 +958,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable PUCSNAME
 		/// </remarks>
-		[CadSystemVariable("$PUCSNAME", 2)]
+		[CadSystemVariable("$PUCSNAME", true, 2)]
 		public string PaperSpaceName
 		{
 			get { return this.PaperSpaceUcs.Name; }
@@ -1197,7 +1175,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable UCSBASE
 		/// </remarks>
-		[CadSystemVariable("$UCSBASE", 2)]
+		[CadSystemVariable("$UCSBASE", true, 2)]
 		public string UcsBaseName
 		{
 			get { return this.ModelSpaceUcsBase.Name; }
@@ -1213,7 +1191,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable UCSNAME
 		/// </remarks>
-		[CadSystemVariable("$UCSNAME", 2)]
+		[CadSystemVariable("$UCSNAME", true, 2)]
 		public string UcsName
 		{
 			get { return this.ModelSpaceUcs.Name; }
@@ -1614,19 +1592,19 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable DIMTXSTY
 		/// </remarks>
-		[CadSystemVariable("$DIMTXSTY", 7)]
+		[CadSystemVariable("$DIMTXSTY", true, 7)]
 		public string DimensionTextStyleName
 		{
-			get { return this.DimensionTextStyle.Name; }
+			get { return this._dimensionTextStyle.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this.DimensionTextStyle = this.Document.TextStyles[value];
+					this._dimensionTextStyle = this.Document.TextStyles[value];
 				}
 				else
 				{
-					this.DimensionTextStyle = new TextStyle(value);
+					this._dimensionTextStyle = new TextStyle(value);
 				}
 			}
 		}
@@ -1637,19 +1615,19 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable DIMSTYLE
 		/// </remarks>
-		[CadSystemVariable("$DIMSTYLE", 2)]
+		[CadSystemVariable("$DIMSTYLE", true, 2)]
 		public string DimensionStyleOverridesName
 		{
-			get { return this.DimensionStyleOverrides.Name; }
+			get { return this._dimensionStyleOverrides.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this.DimensionStyleOverrides = this.Document.DimensionStyles[value];
+					this._dimensionStyleOverrides = this.Document.DimensionStyles[value];
 				}
 				else
 				{
-					this.DimensionStyleOverrides = new DimensionStyle(value);
+					this._dimensionStyleOverrides = new DimensionStyle(value);
 				}
 			}
 		}
@@ -2010,7 +1988,7 @@ namespace ACadSharp.Header
 		/// System variable DIMFIT
 		/// </remarks>
 		[CadSystemVariable("$DIMFIT", 70)]
-		public char DimensionFit
+		public short DimensionFit
 		{
 			get { return this.DimensionStyleOverrides.DimensionFit; }
 			set
@@ -2074,7 +2052,7 @@ namespace ACadSharp.Header
 		/// System variable DIMATFIT
 		/// </remarks>
 		[CadSystemVariable("$DIMATFIT", 70)]
-		public short DimensionDimensionTextArrowFit
+		public TextArrowFitType DimensionDimensionTextArrowFit
 		{
 			get { return this.DimensionStyleOverrides.DimensionTextArrowFit; }
 			set
@@ -2849,10 +2827,83 @@ namespace ACadSharp.Header
 			}
 		}
 
-		public TextStyle DimensionTextStyle { get; private set; } = TextStyle.Default;
+		public LineType CurrentLineType
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._currentLineType;
+				}
+				else
+				{
+					return this.Document.LineTypes[this.CurrentLineTypeName];
+				}
+			}
+			private set
+			{
+				_currentLineType = value;
+			}
+		}
 
-		public DimensionStyle DimensionStyleOverrides { get; private set; } = DimensionStyle.Default;
+		public TextStyle CurrentTextStyle
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._currentTextStyle;
+				}
+				else
+				{
+					return this.Document.TextStyles[this.TextStyleName];
+				}
+			}
+			private set
+			{
+				this._currentTextStyle = value;
+			}
+		}
 
+		public TextStyle DimensionTextStyle
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._dimensionTextStyle;
+				}
+				else
+				{
+					return this.Document.TextStyles[this.DimensionTextStyleName];
+				}
+			}
+			private set
+			{
+				this._dimensionTextStyle = value;
+			}
+		}
+
+		public DimensionStyle DimensionStyleOverrides
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._dimensionStyleOverrides;
+				}
+				else
+				{
+					return this.Document.DimensionStyles[this.DimensionStyleOverridesName];
+				}
+			}
+			private set
+			{
+				this._dimensionStyleOverrides = value;
+			}
+		}
+
+		//TODO: How header UCS work??
 		public UCS ModelSpaceUcs { get; private set; } = new UCS();
 
 		public UCS ModelSpaceUcsBase { get; private set; } = new UCS();
@@ -2861,11 +2912,22 @@ namespace ACadSharp.Header
 
 		public UCS PaperSpaceUcsBase { get; private set; } = new UCS();
 
+		/// <summary>
+		/// Document where this header resides
+		/// </summary>
 		public CadDocument Document { get; internal set; }
 
 		private readonly static PropertyExpression<CadHeader, CadSystemVariableAttribute> _propertyCache;
 
 		private Layer _currentLayer = Layer.Default;
+
+		private TextStyle _currentTextStyle = TextStyle.Default;
+
+		private TextStyle _dimensionTextStyle = TextStyle.Default;
+
+		private DimensionStyle _dimensionStyleOverrides = DimensionStyle.Default;
+
+		private LineType _currentLineType = LineType.ByLayer;
 
 		static CadHeader()
 		{
@@ -2911,7 +2973,7 @@ namespace ACadSharp.Header
 		/// <param name="values">parameters for the constructor of the value</param>
 		public void SetValue(string systemvar, params object[] values)
 		{
-			var prop = _propertyCache.GetProperty(systemvar);
+			PropertyExpression<CadHeader, CadSystemVariableAttribute>.Prop prop = _propertyCache.GetProperty(systemvar);
 
 			ConstructorInfo constr = prop.Property.PropertyType.GetConstructor(values.Select(o => o.GetType()).ToArray());
 
@@ -2934,7 +2996,17 @@ namespace ACadSharp.Header
 			}
 			else if (constr == null)
 			{
-				prop.Setter(this, Convert.ChangeType(values.First(), prop.Property.PropertyType));
+				if (prop.Attribute.IsName && values.First() is string name)
+				{
+					if (!name.IsNullOrEmpty())
+					{
+						prop.Setter(this, Convert.ChangeType(values.First(), prop.Property.PropertyType));
+					}
+				}
+				else
+				{
+					prop.Setter(this, Convert.ChangeType(values.First(), prop.Property.PropertyType));
+				}
 			}
 			else
 			{

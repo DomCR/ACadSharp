@@ -16,8 +16,8 @@ namespace ACadSharp.IO.DWG
 			//Ignored Entities
 			switch (entity)
 			{
+				case UnknownEntity:
 				case AttributeEntity:
-				case Shape:
 				case Solid3D:
 				case MultiLeader:
 				case Mesh:
@@ -651,7 +651,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//H mline style oject handle (hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, mline.MLStyle);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, mline.Style);
 		}
 
 		private void writeLwPolyline(LwPolyline lwPolyline)
@@ -859,7 +859,7 @@ namespace ACadSharp.IO.DWG
 					for (var i = 0; i < pline.Vertices.Count; ++i)
 					{
 						var vertex = pline.Vertices[i];
-						var bulge  = pline.Bulges[i];
+						var bulge = pline.Bulges[i];
 
 						this._writer.Write2RawDouble(new XY(vertex.X, vertex.Y));
 						if (pline.HasBulge)
@@ -1336,7 +1336,7 @@ namespace ACadSharp.IO.DWG
 			//When reading from DXF, the shape is found by iterating over all the text styles
 			//(SHAPEFILE, see paragraph 20.4.56) and when the text style contains a shape file,
 			//iterating over all the shapes until the one with the matching name is found.
-			this._writer.WriteBitShort(0);  //TODO: missing implementation for shapeIndex
+			this._writer.WriteBitShort((short)shape.ShapeIndex);
 
 			//Extrusion 3BD 210
 			this._writer.Write3BitDouble(shape.Normal);

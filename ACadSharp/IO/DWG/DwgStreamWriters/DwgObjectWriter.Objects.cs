@@ -55,8 +55,8 @@ namespace ACadSharp.IO.DWG
 				case Layout layout:
 					this.writeLayout(layout);
 					break;
-				case MLStyle style:
-					this.writeMLStyle(style);
+				case MLineStyle style:
+					this.writeMLineStyle(style);
 					break;
 				case PlotSettings plotsettings:
 					this.writePlotSettings(plotsettings);
@@ -223,7 +223,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private void writeMLStyle(MLStyle mlineStyle)
+		private void writeMLineStyle(MLineStyle mlineStyle)
 		{
 			//Common:
 			//Name TV Name of this style
@@ -277,7 +277,7 @@ namespace ACadSharp.IO.DWG
 
 			//linesinstyle RC Number of lines in this style
 			this._writer.WriteByte((byte)mlineStyle.Elements.Count);
-			foreach (MLStyle.Element element in mlineStyle.Elements)
+			foreach (MLineStyle.Element element in mlineStyle.Elements)
 			{
 				//Offset BD Offset of this segment
 				this._writer.WriteBitDouble(element.Offset);
@@ -390,7 +390,7 @@ namespace ACadSharp.IO.DWG
 		private void writeScale(Scale scale)
 		{
 			//BS	70	Unknown(ODA writes 0).
-			this._writer.WriteBitShort(scale.Unknown);
+			this._writer.WriteBitShort(0);
 			//TV	300	Name
 			this._writer.WriteVariableText(scale.Name);
 			//BD	140	Paper units(numerator)

@@ -1,9 +1,9 @@
-﻿using ACadSharp.Header;
+﻿using ACadSharp.Entities;
+using ACadSharp.Header;
 using ACadSharp.IO;
-using ACadSharp.IO.DWG;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -53,6 +53,13 @@ namespace ACadSharp.Tests.IO
 			CadDocument doc = this.getDocument(test);
 
 			this._docIntegrity.AssertBlockRecords(doc);
+		}
+
+		public virtual void AssertDocumentContent(string test)
+		{
+			CadDocument doc = this.getDocument(test, false);
+
+			this._docIntegrity.AssertDocumentContent(doc);
 		}
 
 		public virtual void AssertDocumentTree(string test)

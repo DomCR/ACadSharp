@@ -13,68 +13,6 @@ namespace ACadSharp.IO.Templates
 
 		public CadSplineTemplate(Spline entity) : base(entity) { }
 
-		public override bool CheckDxfCode(int dxfcode, object value)
-		{
-			bool found = base.CheckDxfCode(dxfcode, value);
-			if (found)
-				return found;
-
-			var spline = this.CadObject as Spline;
-
-			switch (dxfcode)
-			{
-				//--- ControlPoint
-				case 10:
-					this._currentControlPoint = new CSMath.XYZ(
-						(double)value,
-						0,
-						0
-						);
-					return true;
-				case 20:
-					this._currentControlPoint = new CSMath.XYZ(
-						_currentControlPoint.X,
-						(double)value,
-						_currentControlPoint.Z
-						);
-					return true;
-				case 30:
-					this._currentControlPoint = new CSMath.XYZ(
-						_currentControlPoint.X,
-						_currentControlPoint.Y,
-						(double)value
-						);
-					spline.ControlPoints.Add(this._currentControlPoint);
-					return true;
-
-				//--- FitPoint
-				case 11:
-					this._currentFitPoint = new CSMath.XYZ(
-						(double)value,
-						0,
-						0
-						);
-					return true;
-				case 21:
-					this._currentFitPoint = new CSMath.XYZ(
-						_currentFitPoint.X,
-						(double)value,
-						_currentFitPoint.Z
-						);
-					return true;
-				case 31:
-					this._currentFitPoint = new CSMath.XYZ(
-						_currentFitPoint.X,
-						_currentFitPoint.Y,
-						(double)value
-						);
-					spline.FitPoints.Add(this._currentFitPoint);
-					return true;
-			}
-
-			return found;
-		}
-
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);

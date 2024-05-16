@@ -51,7 +51,7 @@ namespace ACadSharp.Tests.Tables
 			layer.Name = "new_name";
 
 			Assert.NotNull(doc.Layers[layer.Name]);
-			Assert.Null(doc.Layers[initialName]);
+			Assert.False(doc.Layers.TryGetValue(initialName, out _));
 		}
 
 		[Fact()]

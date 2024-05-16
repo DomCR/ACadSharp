@@ -35,7 +35,7 @@ namespace ACadSharp.IO.DWG
 				//0xC0000000
 
 				//True color
-				color = new Color(arr[0], arr[1], arr[2]);
+				color = new Color(arr[2], arr[1], arr[0]);
 			}
 
 			//RC: Color Byte(&1 => color name follows(TV),
@@ -86,7 +86,8 @@ namespace ACadSharp.IO.DWG
 					//Next value is a BS containing the RGB value(last 24 bits).
 					//flags: 0b1100_0010_0000_0000_0000_0000_0000_0000
 					uint rgb = (uint)this.ReadBitLong();
-					color = Color.FromTrueColor(rgb & 0b00000000111111111111111111111111);
+					byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
+					color = new Color(arr[2], arr[1], arr[0]);
 				}
 				else
 				{

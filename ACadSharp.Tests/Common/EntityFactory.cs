@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
+using CSUtilities.Extensions;
 using System;
 
 namespace ACadSharp.Tests.Common
@@ -40,6 +41,12 @@ namespace ACadSharp.Tests.Common
 			else if (type == typeof(BlockEnd))
 			{
 				e = new BlockEnd(TableEntryFactory.Create<BlockRecord>());
+			}
+			else if (type == typeof(Shape))
+			{
+				var style = TableEntryFactory.Create<TextStyle>();
+				style.Flags = style.Flags.AddFlag(StyleFlags.IsShape);
+				e = new Shape(style);
 			}
 			else
 			{

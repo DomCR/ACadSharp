@@ -1,9 +1,11 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
 using CSMath;
+using CSUtilities.Converters;
 using CSUtilities.Extensions;
 using System;
 using System.Collections;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 
@@ -91,8 +93,9 @@ namespace ACadSharp
 						this._property.SetValue(obj, new Color((short)value));
 						break;
 					case 420:
+						byte[] b = LittleEndianConverter.Instance.GetBytes((int)value);
 						// true color
-						this._property.SetValue(obj, Color.FromTrueColor(Convert.ToUInt32(value)));
+						this._property.SetValue(obj, new Color(b[0], b[1], b[2]));
 						break;
 					case 430:
 						// dictionary color

@@ -265,7 +265,7 @@ namespace ACadSharp
 			new byte[] { 255, 255, 255 }
 		};
 
-		private const int _maxTrueColor       = 0b0001_0000_0000_0000_0000_0000_0000;  // 1 << 24;
+		private const int _maxTrueColor = 0b0001_0000_0000_0000_0000_0000_0000;  // 1 << 24;
 
 		private const int _trueColorFlag = 0b0100_0000_0000_0000_0000_0000_0000_0000;  //1 << 30
 
@@ -387,6 +387,22 @@ namespace ACadSharp
 
 			// Shift to set the 30th bit indicating a true color.
 			this._color = (uint)(trueColor | _trueColorFlag);   //Is this correct?
+		}
+
+		/// <summary>
+		/// Approximates color from a true color RGB.
+		/// </summary>
+		/// <returns>Approximate RGB color.</returns>
+		public byte GetApproxIndex()
+		{
+			if (this.IsTrueColor)
+			{
+				return Color.ApproxIndex(this.R, this.G, this.B);
+			}
+			else
+			{
+				return (byte)this.Index;
+			}
 		}
 
 		/// <summary>
