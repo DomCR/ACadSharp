@@ -5045,6 +5045,10 @@ namespace ACadSharp.IO.DWG
 							double bulge = this._objectReader.ReadBitDouble();
 							pline.Bulges.Add(bulge);
 						}
+						else
+						{
+							pline.Bulges.Add(0);
+						}
 
 						//Add the vertex
 						pline.Vertices.Add(new XY(vertex.X, vertex.Y));
