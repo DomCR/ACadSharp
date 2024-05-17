@@ -5038,20 +5038,15 @@ namespace ACadSharp.IO.DWG
 					{
 						//pt0 2RD 10 point on polyline
 						XY vertex = this._objectReader.Read2RawDouble();
-
+						double bulge = 0;
 						if (bulgespresent)
 						{
 							//bulge BD 42 bulge
-							double bulge = this._objectReader.ReadBitDouble();
-							pline.Bulges.Add(bulge);
-						}
-						else
-						{
-							pline.Bulges.Add(0);
+							bulge = this._objectReader.ReadBitDouble();
 						}
 
 						//Add the vertex
-						pline.Vertices.Add(new XY(vertex.X, vertex.Y));
+						pline.Vertices.Add(new XYZ(vertex.X, vertex.Y, bulge));
 					}
 
 					pathTemplate.Path.Edges.Add(pline);
