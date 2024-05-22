@@ -88,25 +88,25 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Column count
 		/// </summary>
-		[DxfCodeValue(70)]
+		[DxfCodeValue(DxfReferenceType.Optional, 70)]
 		public ushort ColumnCount { get; set; } = 1;
 
 		/// <summary>
 		/// Row count
 		/// </summary>
-		[DxfCodeValue(71)]
+		[DxfCodeValue(DxfReferenceType.Optional, 71)]
 		public ushort RowCount { get; set; } = 1;
 
 		/// <summary>
 		/// Column spacing
 		/// </summary>
-		[DxfCodeValue(44)]
+		[DxfCodeValue(DxfReferenceType.Optional, 44)]
 		public double ColumnSpacing { get; set; } = 0;
 
 		/// <summary>
 		/// Row spacing
 		/// </summary>
-		[DxfCodeValue(45)]
+		[DxfCodeValue(DxfReferenceType.Optional, 45)]
 		public double RowSpacing { get; set; } = 0;
 
 		/// <summary>

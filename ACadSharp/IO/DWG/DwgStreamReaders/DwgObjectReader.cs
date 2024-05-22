@@ -7,16 +7,15 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSMath;
-using CSUtilities.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System;
-using ACadSharp.Types;
-using static ACadSharp.Objects.MultiLeaderAnnotContext;
-using System.Net;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
+using static ACadSharp.Entities.TableEntity;
+using static ACadSharp.Entities.TableEntity.BreakData;
+using static ACadSharp.Objects.MultiLeaderAnnotContext;
 
 namespace ACadSharp.IO.DWG
 {
@@ -979,7 +978,10 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "ACDBDETAILVIEWSTYLE":
 				case "ACDBSECTIONVIEWSTYLE":
+					break;
 				case "ACAD_TABLE":
+					template = this.readTableEntity();
+					break;
 				case "CELLSTYLEMAP":
 					break;
 				case "DBCOLOR":
@@ -1376,6 +1378,8 @@ namespace ACadSharp.IO.DWG
 
 			return template;
 		}
+
+	
 
 		private void readInsertCommonData(CadInsertTemplate template)
 		{
