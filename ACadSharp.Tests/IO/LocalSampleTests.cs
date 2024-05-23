@@ -32,9 +32,7 @@ namespace ACadSharp.Tests.IO
 
 			CadDocument doc = DwgReader.Read(test, this._dwgConfiguration, this.onNotification);
 
-			DwgWriter.Write(new MemoryStream(), doc, this.onNotification);
-
-			return;
+			//return;
 
 			string outPath = Path.Combine(Path.GetDirectoryName(test), $"{Path.GetFileNameWithoutExtension(test)}.out.dxf");
 			using (DxfWriter writer = new DxfWriter(outPath, doc, false))
