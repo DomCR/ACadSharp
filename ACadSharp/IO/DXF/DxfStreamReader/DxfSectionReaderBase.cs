@@ -1086,11 +1086,8 @@ namespace ACadSharp.IO.DXF
 					this._reader.ReadNext();
 				}
 
-				boundary.Vertices.Add(new XY(x, y));
-				boundary.Bulges.Add(bulge);
+				boundary.Vertices.Add(new XYZ(x, y, bulge));
 			}
-
-
 
 			return boundary;
 		}
