@@ -9,7 +9,7 @@ namespace ACadSharp.Objects
 	/// Represents a <see cref="MultiLeaderStyle"/> object.
 	/// </summary>
 	/// <remarks>
-	/// Object name <see cref="DxfFileToken.EntityMLeaderStyle"/> <br/>
+	/// Object name <see cref="DxfFileToken.ObjectMLeaderStyle"/> <br/>
 	/// Dxf class name <see cref="DxfSubclassMarker.MLeaderStyle"/>
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectMLeaderStyle)]

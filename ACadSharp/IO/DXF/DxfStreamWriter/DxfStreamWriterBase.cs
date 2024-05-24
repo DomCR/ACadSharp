@@ -1,7 +1,6 @@
 ﻿using CSUtilities.Converters;
 using System;
 
-using CSUtilities.Converters;
 
 namespace ACadSharp.IO.DXF
 {

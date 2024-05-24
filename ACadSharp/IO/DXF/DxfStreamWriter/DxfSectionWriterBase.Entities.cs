@@ -22,14 +22,7 @@ namespace ACadSharp.IO.DXF
 					return;
 			}
 
-			if (entity.ObjectName == "MLEADER")
-			{
-				this._writer.Write(DxfCode.Start, "MULTILEADER");
-			}
-			else
-			{
-				this._writer.Write(DxfCode.Start, entity.ObjectName);
-			}
+			this._writer.Write(DxfCode.Start, entity.ObjectName);
 
 			this.writeCommonObjectData(entity);
 
