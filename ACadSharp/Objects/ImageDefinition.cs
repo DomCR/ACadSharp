@@ -45,13 +45,13 @@ namespace ACadSharp.Objects
 		/// Default size of one pixel in AutoCAD units
 		/// </summary>
 		[DxfCodeValue(11, 21)]
-		public XY DefaultSize { get; set; }
+		public XY DefaultSize { get; set; } = new XY(1, 1);
 
 		/// <summary>
 		/// Image-is-loaded flag.
 		/// </summary>
 		[DxfCodeValue(280)]
-		public bool IsLoaded { get; set; }
+		public bool IsLoaded { get; set; } = false;
 
 		/// <summary>
 		/// Resolution units.

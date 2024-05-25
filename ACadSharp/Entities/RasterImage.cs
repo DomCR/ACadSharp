@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Objects;
 
 namespace ACadSharp.Entities
 {
@@ -21,5 +22,21 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.RasterImage;
+
+		internal RasterImage() : base() { }
+
+		public RasterImage(ImageDefinition definition)
+		{
+			this.Definition = definition;
+		}
+
+		/// <summary>
+		/// Set the image definition
+		/// </summary>
+		/// <param name="definition"></param>
+		public void SetImageDefinition(ImageDefinition definition)
+		{
+			this.Definition = definition;
+		}
 	}
 }

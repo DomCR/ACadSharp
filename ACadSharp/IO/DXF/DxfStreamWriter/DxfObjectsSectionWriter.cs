@@ -33,6 +33,7 @@ namespace ACadSharp.IO.DXF
 				case MultiLeaderStyle:
 				case SortEntitiesTable:
 				case VisualStyle:
+				case ImageDefinitionReactor:
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
 			}

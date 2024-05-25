@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
 using System.Collections.Generic;
@@ -141,6 +142,18 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(new Point(XYZ.Zero));
 			}
 
+			public void SingleRasterImage()
+			{
+				ImageDefinition definition = new ImageDefinition();
+				definition.Size = new XY(1000, 1000);
+				definition.Name = "image";
+				definition.FileName = ".\\image.JPG";
+
+				RasterImage raster = new RasterImage(definition);
+
+				this.Document.Entities.Add(raster);
+			}
+
 			public void ClosedLwPolyline()
 			{
 				List<LwPolyline.Vertex> vertices = new List<LwPolyline.Vertex>() {
@@ -220,6 +233,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedLwPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline2DTest)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleRasterImage)));
 		}
 
 		protected string getPath(string name, string ext, ACadVersion version)

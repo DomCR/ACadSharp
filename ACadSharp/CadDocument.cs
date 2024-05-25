@@ -364,6 +364,12 @@ namespace ACadSharp
 				this.addCadObject(record.BlockEnd);
 			}
 
+			if(cadObject is RasterImage raster)
+			{
+				this.addCadObject(raster.Definition);
+				//this.addCadObject(record.BlockEnd);
+			}
+
 			cadObject.AssignDocument(this);
 		}
 

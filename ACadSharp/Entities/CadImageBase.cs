@@ -149,7 +149,6 @@ namespace ACadSharp.Entities
 			internal set
 			{
 				_definition = value;
-				_definition.Owner = this;
 			}
 		}
 
@@ -163,7 +162,6 @@ namespace ACadSharp.Entities
 			internal set
 			{
 				_definitionReactor = value;
-				_definitionReactor.Owner = this;
 			}
 		}
 
@@ -173,5 +171,10 @@ namespace ACadSharp.Entities
 
 		private ImageDefinition _definition;
 		private ImageDefinitionReactor _definitionReactor;
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+		}
 	}
 }
