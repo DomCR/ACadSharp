@@ -167,6 +167,7 @@ namespace ACadSharp.Objects
 				},
 				{ new CadDictionary(AcadTableStyle) },
 				{ new CadDictionary(AcadPlotSettings) },
+				{ new CadDictionary(AcadImageDict) },
 				{ new CadDictionary(VariableDictionary) },	//DictionaryVars Entry DIMASSOC and HIDETEXT ??
 				// { AcadPlotStyleName, new CadDictionaryWithDefault() },	//Add default entry "Normal"	PlaceHolder	??
 				{ new CadDictionary(AcadScaleList)
