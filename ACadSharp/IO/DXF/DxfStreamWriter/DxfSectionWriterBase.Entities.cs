@@ -362,7 +362,7 @@ namespace ACadSharp.IO.DXF
 					this._writer.Write(93, poly.Vertices.Count);
 					for (int i = 0; i < poly.Vertices.Count; i++)
 					{
-						this._writer.Write(10, poly.Vertices[i]);
+						this._writer.Write(10, (XY)poly.Vertices[i]);
 						if (poly.HasBulge)
 						{
 							this._writer.Write(42, poly.Bulges.ElementAtOrDefault(i));
