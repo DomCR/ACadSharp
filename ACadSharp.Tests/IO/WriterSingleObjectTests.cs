@@ -5,6 +5,7 @@ using CSMath;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -142,16 +143,39 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(new Point(XYZ.Zero));
 			}
 
+			public void SingleWipeout()
+			{
+				Wipeout wipeout = new Wipeout();
+
+				wipeout.Size = new XY(1, 1);
+				wipeout.ClippingState = true;
+
+				wipeout.ClipBoundaryVertices.Add(new XY(0, 0));
+				wipeout.ClipBoundaryVertices.Add(new XY(0, 1));
+				wipeout.ClipBoundaryVertices.Add(new XY(1, 1));
+				wipeout.ClipBoundaryVertices.Add(new XY(1, 0));
+
+				this.Document.Entities.Add(wipeout);
+			}
+
 			public void SingleRasterImage()
 			{
 				ImageDefinition definition = new ImageDefinition();
-				definition.Size = new XY(1000, 1000);
+				definition.Size = new XY(1, 1);
 				definition.Name = "image";
-				definition.FileName = ".\\image.JPG";
+
+				definition.FileName = "..\\..\\image.JPG";
 
 				RasterImage raster = new RasterImage(definition);
 
+				raster.ClipBoundaryVertices.Add(new XY(0, 0));
+				raster.ClipBoundaryVertices.Add(new XY(0, 1));
+				raster.ClipBoundaryVertices.Add(new XY(1, 1));
+				raster.ClipBoundaryVertices.Add(new XY(1, 0));
+
 				this.Document.Entities.Add(raster);
+
+				//this.Document.ImageDefinitions.Add(definition);
 			}
 
 			public void ClosedLwPolyline()
@@ -234,6 +258,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedLwPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline2DTest)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleRasterImage)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleWipeout)));
 		}
 
 		protected string getPath(string name, string ext, ACadVersion version)

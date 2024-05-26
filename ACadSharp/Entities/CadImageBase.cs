@@ -25,13 +25,13 @@ namespace ACadSharp.Entities
 		/// U-vector of a single pixel(points along the visual bottom of the image, starting at the insertion point) (in WCS)
 		/// </summary>
 		[DxfCodeValue(11, 21, 31)]
-		public XYZ UVector { get; set; }
+		public XYZ UVector { get; set; } = XYZ.AxisX;
 
 		/// <summary>
 		/// V-vector of a single pixel(points along the visual left side of the image, starting at the insertion point) (in WCS)
 		/// </summary>
 		[DxfCodeValue(12, 22, 32)]
-		public XYZ VVector { get; set; }
+		public XYZ VVector { get; set; } = XYZ.AxisY;
 
 		/// <summary>
 		/// Image size in pixels
@@ -127,7 +127,7 @@ namespace ACadSharp.Entities
 		/// Clipping boundary type
 		/// </summary>
 		[DxfCodeValue(71)]
-		public ClipType ClipType { get; set; }
+		public ClipType ClipType { get; set; } = ClipType.Rectangular;
 
 		/// <summary>
 		/// Clip boundary vertices
@@ -148,7 +148,19 @@ namespace ACadSharp.Entities
 			get { return this._definition; }
 			set
 			{
-				this._definition = value;
+				if (value == null)
+				{
+					return;
+				}
+
+				if (this.Document != null)
+				{
+					this._definition = this.updateCollection(value, this.Document.ImageDefinitions);
+				}
+				else
+				{
+					this._definition = value;
+				}
 			}
 		}
 
@@ -175,6 +187,21 @@ namespace ACadSharp.Entities
 		internal override void AssignDocument(CadDocument doc)
 		{
 			base.AssignDocument(doc);
+
+			if (this.Definition != null)
+			{
+				this._definition = this.updateCollection(this.Definition, doc.ImageDefinitions);
+			}
+
+			this.Document.ImageDefinitions.OnRemove += this.imageDefinitionsOnRemove;
+		}
+
+		private void imageDefinitionsOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this.Definition))
+			{
+				this.Definition = null;
+			}
 		}
 	}
 }

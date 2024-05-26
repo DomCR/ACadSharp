@@ -21,5 +21,13 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Wipeout;
+
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public Wipeout()
+		{
+			this.Flags = ImageDisplayFlags.ShowImage | ImageDisplayFlags.ShowNotAlignedImage | ImageDisplayFlags.UseClippingBoundary;
+		}
 	}
 }

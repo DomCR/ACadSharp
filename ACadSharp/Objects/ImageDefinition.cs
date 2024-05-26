@@ -32,7 +32,7 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// File name of image
 		/// </summary>
-		[DxfCodeValue(90)]
+		[DxfCodeValue(1)]
 		public string FileName { get; set; }
 
 		/// <summary>
