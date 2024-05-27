@@ -169,6 +169,22 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			BoundingBox box = new BoundingBox();
+			foreach (var item in this.Block.Entities)
+			{
+				box = box.Merge(item.GetBoundingBox());
+			}
+
+			var scale = new XYZ(this.XScale, this.YScale, this.ZScale);
+			var min = box.Min * scale + this.InsertPoint;
+			var max = box.Max * scale + this.InsertPoint;
+
+			return new BoundingBox(min, max);
+		}
+
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			Insert clone = (Insert)base.Clone();
@@ -214,11 +230,6 @@ namespace ACadSharp.Entities
 		{
 			//TODO: Fix the relation between insert and block
 			//this.Block?.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));
-		}
-
-		public override BoundingBox GetBoundingBox()
-		{
-			throw new NotImplementedException();
 		}
 	}
 }
