@@ -69,11 +69,6 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			if (this.Normal != XYZ.AxisZ)
-			{
-				throw new NotImplementedException("Bounding box for not aligned Normal is not implemented");
-			}
-
 			XYZ min = new XYZ(Math.Min(this.Center.X - this.Radius, this.Center.X + this.Radius), Math.Min(this.Center.Y - this.Radius, this.Center.Y + this.Radius), Math.Min(this.Center.Z - this.Radius, this.Center.Z + this.Radius));
 			XYZ max = new XYZ(Math.Max(this.Center.X - this.Radius, this.Center.X + this.Radius), Math.Max(this.Center.Y - this.Radius, this.Center.Y + this.Radius), Math.Max(this.Center.Z - this.Radius, this.Center.Z + this.Radius));
 
