@@ -114,6 +114,11 @@ namespace ACadSharp
 		public MLineStyleCollection MLineStyles { get; private set; }
 
 		/// <summary>
+		/// 
+		/// </summary>
+		public ImageDefinitionCollection ImageDefinitions { get; private set; }
+
+		/// <summary>
 		/// The collection of all Multi leader styles in the drawing. 
 		/// </summary>
 		/// <remarks>
@@ -320,9 +325,14 @@ namespace ACadSharp
 				this.MLineStyles = new MLineStyleCollection(mlineStyles);
 			}
 
-			if (this.updateCollection(CadDictionary.AcadMLineStyle, createDictionaries, out CadDictionary mleaderStyles))
+			if (this.updateCollection(CadDictionary.AcadMLeaderStyle, createDictionaries, out CadDictionary mleaderStyles))
 			{
 				this.MLeaderStyles = new MLeaderStyleCollection(mleaderStyles);
+			}
+
+			if (this.updateCollection(CadDictionary.AcadImageDict, createDictionaries, out CadDictionary imageDefinitions))
+			{
+				this.ImageDefinitions = new ImageDefinitionCollection(imageDefinitions);
 			}
 		}
 

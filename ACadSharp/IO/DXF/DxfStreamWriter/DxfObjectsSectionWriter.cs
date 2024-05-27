@@ -33,6 +33,7 @@ namespace ACadSharp.IO.DXF
 				case MultiLeaderAnnotContext:
 				case SortEntitiesTable:
 				case VisualStyle:
+				case ImageDefinitionReactor:
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
 			}
@@ -52,6 +53,9 @@ namespace ACadSharp.IO.DXF
 				case Group group:
 					this.writeGroup(group);
 					break;
+				case ImageDefinition imageDefinition:
+					this.writeImageDefinition(imageDefinition);
+					return;
 				case Layout layout:
 					this.writeLayout(layout);
 					break;
@@ -179,6 +183,22 @@ namespace ACadSharp.IO.DXF
 			{
 				this._writer.WriteHandle(340, entity);
 			}
+		}
+
+		protected void writeImageDefinition(ImageDefinition definition)
+		{
+			DxfClassMap map = DxfClassMap.Create<ImageDefinition>();
+
+			this._writer.Write(100, DxfSubclassMarker.RasterImageDef);
+
+			this._writer.Write(90, definition.ClassVersion, map);
+			this._writer.Write(1, definition.FileName, map);
+
+			this._writer.Write(10, definition.Size, map);
+
+			this._writer.Write(280, definition.IsLoaded ? 1 : 0, map);
+
+			this._writer.Write(281, (byte)definition.Units, map);
 		}
 
 		protected void writeLayout(Layout layout)
