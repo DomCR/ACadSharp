@@ -107,6 +107,15 @@ namespace ACadSharp.Entities
 			this.ShapeStyle = textStyle;
 		}
 
+		public override CadObject Clone()
+		{
+			Shape clone = (Shape)base.Clone();
+
+			clone.ShapeStyle = (TextStyle)(this.ShapeStyle?.Clone());
+
+			return clone;
+		}
+
 		public override BoundingBox GetBoundingBox()
 		{
 			throw new System.NotImplementedException();
