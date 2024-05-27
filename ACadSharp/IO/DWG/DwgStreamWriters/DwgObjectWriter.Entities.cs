@@ -21,8 +21,6 @@ namespace ACadSharp.IO.DWG
 				case Solid3D:
 				case MultiLeader:
 				case Mesh:
-				//Unlisted
-				case Wipeout:
 					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return;
 			}
@@ -133,6 +131,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case Spline spline:
 					this.writeSpline(spline);
+					break;
+				case CadImageBase image:
+					this.writeCadImage(image);
 					break;
 				case TextEntity text:
 					switch (text)
@@ -1373,6 +1374,50 @@ namespace ACadSharp.IO.DWG
 
 		private void writeSolid3D(Solid3D solid)
 		{
+		}
+
+		private void writeCadImage(CadImageBase image)
+		{
+			this._writer.WriteBitLong(image.ClassVersion);
+
+			this._writer.Write3BitDouble(image.InsertPoint);
+			this._writer.Write3BitDouble(image.UVector);
+			this._writer.Write3BitDouble(image.VVector);
+
+			this._writer.Write2RawDouble(image.Size);
+
+			this._writer.WriteBitShort((short)image.Flags);
+			this._writer.WriteBit(image.ClippingState);
+			this._writer.WriteByte(image.Brightness);
+			this._writer.WriteByte(image.Contrast);
+			this._writer.WriteByte(image.Fade);
+
+			if (this.R2010Plus)
+			{
+				this._writer.WriteBit(image.ClipMode == ClipMode.Inside);
+			}
+
+			this._writer.WriteBitShort((short)image.ClipType);
+
+
+			switch (image.ClipType)
+			{
+				case ClipType.Rectangular:
+					this._writer.Write2RawDouble(image.ClipBoundaryVertices[0]);
+					this._writer.Write2RawDouble(image.ClipBoundaryVertices[1]);
+					break;
+				case ClipType.Polygonal:
+					this._writer.WriteBitLong(image.ClipBoundaryVertices.Count);
+					for (int i = 0; i < image.ClipBoundaryVertices.Count; i++)
+					{
+						this._writer.Write2RawDouble(image.ClipBoundaryVertices[i]);
+					}
+					break;
+			}
+
+			this._writer.HandleReference(DwgReferenceType.HardPointer, image.Definition);
+			//Reactor, not needed
+			this._writer.HandleReference(null);
 		}
 
 		private void writeSpline(Spline spline)

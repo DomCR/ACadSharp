@@ -48,6 +48,14 @@ namespace ACadSharp.Tests.Common
 				style.Flags = style.Flags.AddFlag(StyleFlags.IsShape);
 				e = new Shape(style);
 			}
+			else if (type == typeof(RasterImage))
+			{
+				var def = new ACadSharp.Objects.ImageDefinition
+				{
+					Name = "Mock_def"
+				};
+				e = new RasterImage(def);
+			}
 			else
 			{
 				e = Activator.CreateInstance(type);

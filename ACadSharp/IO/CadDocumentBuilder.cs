@@ -103,7 +103,7 @@ namespace ACadSharp.IO
 
 		public bool TryGetCadObject<T>(ulong? handle, out T value) where T : CadObject
 		{
-			if (!handle.HasValue)
+			if (!handle.HasValue || handle == 0)
 			{
 				value = null;
 				return false;
