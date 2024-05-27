@@ -74,6 +74,12 @@ namespace ACadSharp.Tests.IO
 			foreach (var item in entities)
 			{
 				Entity e = doc.Entities.Remove(item);
+
+				if(e is RasterImage)
+				{
+
+				}
+
 				transfer.Entities.Add(e);
 			}
 

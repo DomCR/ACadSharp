@@ -185,16 +185,31 @@ namespace ACadSharp.Entities
 		private ImageDefinition _definition;
 		private ImageDefinitionReactor _definitionReactor;
 
+		public override CadObject Clone()
+		{
+			CadImageBase clone = (CadImageBase)base.Clone();
+
+			clone.Definition = (ImageDefinition)this.Definition?.Clone();
+
+			return clone;
+		}
+
 		internal override void AssignDocument(CadDocument doc)
 		{
 			base.AssignDocument(doc);
 
-			if (this.Definition != null)
-			{
-				this._definition = this.updateCollection(this.Definition, doc.ImageDefinitions);
-			}
+			this._definition = this.updateCollection(this.Definition, doc.ImageDefinitions);
 
 			this.Document.ImageDefinitions.OnRemove += this.imageDefinitionsOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.ImageDefinitions.OnRemove -= this.imageDefinitionsOnRemove;
+
+			base.UnassignDocument();
+
+			this.Definition = (ImageDefinition)this.Definition?.Clone();
 		}
 
 		private void imageDefinitionsOnRemove(object sender, CollectionChangedEventArgs e)
