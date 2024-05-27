@@ -37,9 +37,12 @@ namespace ACadSharp.Entities
 
 		public XLine() : base() { }
 
+		/// <remarks>
+		/// XLine cannot have a defined Bounding box.
+		/// </remarks>
 		public override BoundingBox GetBoundingBox()
 		{
-			throw new System.NotImplementedException();
+			return new BoundingBox();
 		}
 	}
 }
