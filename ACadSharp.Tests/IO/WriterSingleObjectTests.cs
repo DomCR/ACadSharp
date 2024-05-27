@@ -174,8 +174,6 @@ namespace ACadSharp.Tests.IO
 				raster.ClipBoundaryVertices.Add(new XY(1, 0));
 
 				this.Document.Entities.Add(raster);
-
-				//this.Document.ImageDefinitions.Add(definition);
 			}
 
 			public void ClosedLwPolyline()

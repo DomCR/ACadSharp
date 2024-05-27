@@ -15,7 +15,7 @@ namespace ACadSharp.Objects
 	public class ImageDefinition : NonGraphicalObject
 	{
 		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.UNDEFINED;
+		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectImageDefinition;

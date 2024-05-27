@@ -5179,8 +5179,6 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonEntityData(template);
 
-			//WARNING: this object is not documented, the fields have been found using exploration methods and matching them with the dxf file
-
 			image.ClassVersion = this._objectReader.ReadBitLong();
 
 			image.InsertPoint = this._objectReader.Read3BitDouble();
@@ -5195,7 +5193,7 @@ namespace ACadSharp.IO.DWG
 			image.Contrast = this._objectReader.ReadByte();
 			image.Fade = this._objectReader.ReadByte();
 
-			if (this._version > ACadVersion.AC1021)
+			if (this.R2010Plus)
 			{
 				image.ClipMode = this._objectReader.ReadBit() ? ClipMode.Inside : ClipMode.Outside;
 			}

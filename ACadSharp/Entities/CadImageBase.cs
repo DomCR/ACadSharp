@@ -167,6 +167,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Reference to image definition reactor
 		/// </summary>
+		//It seems that is not necessecary, keep it hidden for now
 		[DxfCodeValue(DxfReferenceType.Handle, 360)]
 		internal ImageDefinitionReactor DefinitionReactor
 		{
