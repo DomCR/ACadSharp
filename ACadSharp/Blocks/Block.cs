@@ -88,7 +88,13 @@ namespace ACadSharp.Blocks
 
 		public override BoundingBox GetBoundingBox()
 		{
-			throw new System.NotImplementedException();
+			BoundingBox box = new BoundingBox();
+			foreach (var item in this.BlockOwner.Entities)
+			{
+				box = box.Merge(item.GetBoundingBox());
+			}
+
+			return box;
 		}
 	}
 }

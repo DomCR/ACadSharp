@@ -171,11 +171,7 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			BoundingBox box = new BoundingBox();
-			foreach (var item in this.Block.Entities)
-			{
-				box = box.Merge(item.GetBoundingBox());
-			}
+			BoundingBox box = this.Block.BlockEntity.GetBoundingBox();
 
 			var scale = new XYZ(this.XScale, this.YScale, this.ZScale);
 			var min = box.Min * scale + this.InsertPoint;

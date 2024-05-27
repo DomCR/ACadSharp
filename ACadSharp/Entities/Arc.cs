@@ -116,11 +116,5 @@ namespace ACadSharp.Entities
 
 			end = new XYZ(endX, endY, 0);
 		}
-
-		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

@@ -59,13 +59,17 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public DimensionAngular2Line() : base(DimensionType.Angular)
 		{
 		}
 
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			throw new System.NotImplementedException();
+			return new BoundingBox(this.FirstPoint, this.SecondPoint);
 		}
 	}
 }

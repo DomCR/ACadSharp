@@ -38,9 +38,10 @@ namespace ACadSharp.Blocks
 			return clone;
 		}
 
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			throw new System.NotImplementedException();
+			return new BoundingBox();
 		}
 	}
 }

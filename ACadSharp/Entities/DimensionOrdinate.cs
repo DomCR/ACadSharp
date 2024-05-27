@@ -77,11 +77,15 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public DimensionOrdinate() : base(DimensionType.Ordinate) { }
 
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			throw new System.NotImplementedException();
+			return new BoundingBox(this.FeatureLocation, this.LeaderEndpoint);
 		}
 	}
 }
