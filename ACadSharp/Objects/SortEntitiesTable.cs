@@ -14,7 +14,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectSortEntsTable)]
 	[DxfSubClass(DxfSubclassMarker.SortentsTable)]
-	public class SortEntitiesTable : CadObject
+	public class SortEntitiesTable : NonGraphicalObject
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
@@ -32,6 +32,14 @@ namespace ACadSharp.Objects
 		public BlockRecord BlockOwner { get; internal set; }
 
 		public List<Sorter> Sorters { get; } = new List<Sorter>();
+
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public SortEntitiesTable()
+		{
+			this.Name = "ACAD_SORTENTS";
+		}
 
 		public class Sorter
 		{

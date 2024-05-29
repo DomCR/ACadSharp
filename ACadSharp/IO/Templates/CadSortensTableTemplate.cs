@@ -1,5 +1,4 @@
-﻿using ACadSharp.Blocks;
-using ACadSharp.Entities;
+﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Collections.Generic;
