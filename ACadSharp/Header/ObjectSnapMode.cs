@@ -2,8 +2,6 @@
 
 namespace ACadSharp.Header
 {
-	//https://help.autodesk.com/view/ACD/2020/ENU/?guid=GUID-DD9B3216-A533-4D47-95D8-7585F738FD75
-
 	/// <summary>
 	/// Object snap mode AcDb::OsnapMask
 	/// </summary>

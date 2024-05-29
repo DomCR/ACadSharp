@@ -19,7 +19,20 @@ namespace ACadSharp.Entities
 	public class Insert : Entity
 	{
 		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.INSERT;
+		public override ObjectType ObjectType
+		{
+			get
+			{
+				if (this.RowCount > 1 || this.ColumnCount > 1)
+				{
+					return ObjectType.MINSERT;
+				}
+				else
+				{
+					return ObjectType.INSERT;
+				}
+			}
+		}
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityInsert;

@@ -1,6 +1,8 @@
-﻿using ACadSharp.IO.Templates;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.DWG
@@ -9,9 +11,17 @@ namespace ACadSharp.IO.DWG
 	{
 		public DwgReaderConfiguration Configuration { get; }
 
-		public DwgHeaderHandlesCollection HeaderHandles { get; set; }
+		public DwgHeaderHandlesCollection HeaderHandles { get; set; } = new();
 
 		public List<CadBlockRecordTemplate> BlockRecordTemplates { get; set; } = new List<CadBlockRecordTemplate>();
+
+		public List<UnknownEntity> UnknownEntities { get; } = new();
+
+		public List<Entity> PaperSpaceEntities { get; } = new();
+
+		public List<Entity> ModelSpaceEntities { get; } = new();
+
+		public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
 
 		public DwgDocumentBuilder(CadDocument document, DwgReaderConfiguration configuration)
 			: base(document)
@@ -29,15 +39,7 @@ namespace ACadSharp.IO.DWG
 
 			this.RegisterTables();
 
-			this.BuildTable(this.AppIds);
-			this.BuildTable(this.LineTypesTable);
-			this.BuildTable(this.Layers);
-			this.BuildTable(this.TextStyles);
-			this.BuildTable(this.UCSs);
-			this.BuildTable(this.Views);
-			this.BuildTable(this.DimensionStyles);
-			this.BuildTable(this.VPorts);
-			this.BuildTable(this.BlockRecords);
+			this.BuildTables();
 
 			base.BuildDocument();
 		}

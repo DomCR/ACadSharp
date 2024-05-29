@@ -1,4 +1,7 @@
-﻿namespace ACadSharp.IO.DXF
+﻿using CSUtilities.Converters;
+using System;
+
+namespace ACadSharp.IO.DXF
 {
 	internal abstract class DxfStreamWriterBase : IDxfStreamWriter
 	{
@@ -21,10 +24,38 @@
 
 		public void Write(int code, CSMath.IVector value, DxfClassMap map)
 		{
-			double[] comp = value.GetComponents();
-			for (int i = 0; i < comp.Length; i++)
+			for (int i = 0; i < value.Dimension; i++)
 			{
-				this.Write(code + i * 10, comp[i], map);
+				this.Write(code + i * 10, value[i], map);
+			}
+		}
+
+		public void WriteCmColor(int code, Color color, DxfClassMap map = null)
+		{
+			if (GroupCodeValue.TransformValue(code) == GroupCodeValueType.Int16)
+			{
+				//BS: Color Index
+				this.Write(code, Convert.ToInt16(color.GetApproxIndex()));
+			}
+			else
+			{
+				byte[] arr = new byte[4];
+
+				if (color.IsTrueColor)
+				{
+					arr[0] = (byte)color.B;
+					arr[1] = (byte)color.G;
+					arr[2] = (byte)color.R;
+					arr[3] = 0b1100_0010;   //	0xC2
+				}
+				else
+				{
+					arr[3] = 0b1100_0001;
+					arr[0] = (byte)color.Index;
+				}
+
+				//BL: RGB value
+				this.Write(code, LittleEndianConverter.Instance.ToInt32(arr), map);
 			}
 		}
 
@@ -69,7 +100,20 @@
 			}
 
 			this.writeDxfCode(code);
-			this.writeValue(code, value);
+
+			if (value is string s)
+			{
+				s = s
+					.Replace("^", "^ ")
+					.Replace("\n", "^J")
+					.Replace("\r", "^M")
+					.Replace("\t", "^I");
+				this.writeValue(code, s);
+			}
+			else
+			{
+				this.writeValue(code, value);
+			}
 		}
 
 		/// <inheritdoc/>

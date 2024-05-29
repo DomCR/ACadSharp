@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -28,8 +29,27 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Dimension Style
 		/// </summary>
-		[DxfCodeValue(3)]
-		public DimensionStyle Style { get; set; } = DimensionStyle.Default;
+		[DxfCodeValue(DxfReferenceType.Name, 3)]
+		public DimensionStyle Style
+		{
+			get { return this._style; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._style = this.updateTable(value, this.Document.DimensionStyles);
+				}
+				else
+				{
+					this._style = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Arrowhead flag
@@ -38,14 +58,24 @@ namespace ACadSharp.Entities
 		public bool ArrowHeadEnabled { get; set; }
 
 		/// <summary>
-		/// Leader creation flag
+		/// Leader Path Type
 		/// </summary>
+		/// <value>
+		/// 0 = straight lines
+		/// 1 = spline
+		/// </value>
 		[DxfCodeValue(72)]
 		public LeaderPathType PathType { get; set; }
 
 		/// <summary>
-		/// Leader creation flag
+		/// Leader creation flag, AssociatedAnnotation type
 		/// </summary>
+		/// <value>
+		/// 0 = mtext
+		/// 1 = tolerance
+		/// 2 = insert
+		/// 3 = none (default)
+		/// </value>
 		[DxfCodeValue(73)]
 		public LeaderCreationType CreationType { get; set; } = LeaderCreationType.CreatedWithoutAnnotation;
 
@@ -86,7 +116,11 @@ namespace ACadSharp.Entities
 
 		//77	Color to use if leader's DIMCLRD = BYBLOCK
 
-		//340	Hard reference to associated annotation(mtext, tolerance, or insert entity)
+		/// <summary>
+		/// Hard reference to associated annotation (mtext, tolerance, or insert entity)
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
+		public Entity AssociatedAnnotation { get; internal set; }
 
 		/// <summary>
 		/// Normal vector
@@ -111,6 +145,38 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(213, 223, 233)]
 		public XYZ AnnotationOffset { get; set; } = XYZ.Zero;
+
+
+		private DimensionStyle _style = DimensionStyle.Default;
+
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._style = this.updateTable(this.Style, doc.DimensionStyles);
+
+			doc.DimensionStyles.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
+
+			base.UnassignDocument();
+
+			this.Style = (DimensionStyle)this.Style.Clone();
+		}
+
+		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			base.tableOnRemove(sender, e);
+
+			if (e.Item.Equals(this.Style))
+			{
+				this.Style = this.Document.DimensionStyles[DimensionStyle.DefaultName];
+			}
+		}
 
 		public override CadObject Clone()
 		{

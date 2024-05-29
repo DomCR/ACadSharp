@@ -1,12 +1,7 @@
-﻿using ACadSharp.Blocks;
-using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
+﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
-using ACadSharp.Tables.Collections;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ACadSharp.IO.Templates
 {
@@ -27,25 +22,6 @@ namespace ACadSharp.IO.Templates
 		public CadTemplate(CadObject cadObject)
 		{
 			this.CadObject = cadObject;
-		}
-
-		[Obsolete]
-		public virtual bool AddHandle(int dxfcode, ulong handle)
-		{
-			return false;
-		}
-
-		[Obsolete]
-		public virtual bool AddName(int dxfcode, string name)
-		{
-			return false;
-		}
-
-		[Obsolete]
-		public virtual bool CheckDxfCode(int dxfcode, object value)
-		{
-			//Will return true if the code is used by the template
-			return false;
 		}
 
 		public virtual void Build(CadDocumentBuilder builder)
@@ -80,6 +56,10 @@ namespace ACadSharp.IO.Templates
 				{
 					this.CadObject.ExtendedData.Add(app, item.Value);
 				}
+				else
+				{
+					builder.Notify($"AppId in extended data with handle {item.Key} not found", NotificationType.Warning);
+				}
 			}
 		}
 
@@ -94,16 +74,39 @@ namespace ACadSharp.IO.Templates
 				collection.Add((T)template.CadObject);
 
 				if (template.CadObject.Handle == endHandle)
+				{
 					break;
+				}
 
 				if (template.NextEntity.HasValue)
+				{
 					template = builder.GetObjectTemplate<CadEntityTemplate>(template.NextEntity.Value);
+				}
 				else
+				{
 					template = builder.GetObjectTemplate<CadEntityTemplate>(template.CadObject.Handle + 1);
-
+				}
 			}
 
 			return collection;
+		}
+
+		protected bool getTableReference<T>(CadDocumentBuilder builder, ulong? handle, string name, out T reference)
+			where T : TableEntry
+		{
+			if (builder.TryGetCadObject<T>(handle, out reference) || builder.TryGetTableEntry<T>(name, out reference))
+			{
+				return true;
+			}
+			else
+			{
+				if (!string.IsNullOrEmpty(name) || (handle.HasValue && handle.Value != 0))
+				{
+					builder.Notify($"{typeof(T).FullName} table reference with handle: {handle} | name: {name} not found for {this.CadObject.GetType().FullName} with handle {this.CadObject.Handle}", NotificationType.Warning);
+				}
+
+				return false;
+			}
 		}
 	}
 }

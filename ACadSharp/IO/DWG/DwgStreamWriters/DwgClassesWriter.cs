@@ -31,10 +31,10 @@ namespace ACadSharp.IO.DWG
 		public DwgClassesWriter(CadDocument document, ACadVersion version, Stream stream) : base(version)
 		{
 			this._document = document;
-			this._startWriter = DwgStreamWriterBase.GetStreamHandler(version, stream, TextEncoding.Windows1252());
+			this._startWriter = DwgStreamWriterBase.GetStreamWriter(version, stream, TextEncoding.Windows1252());
 
 			this._sectionStream = new MemoryStream();
-			this._writer = DwgStreamWriterBase.GetStreamHandler(version, _sectionStream, TextEncoding.Windows1252());
+			this._writer = DwgStreamWriterBase.GetMergedWriter(version, _sectionStream, TextEncoding.Windows1252());
 		}
 
 		public void Write()

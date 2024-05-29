@@ -23,10 +23,10 @@ namespace ACadSharp.IO.DWG
 			this._document = document;
 			this._header = document.Header;
 
-			this._startWriter = DwgStreamWriterBase.GetStreamHandler(_version, stream, TextEncoding.Windows1252());
+			this._startWriter = DwgStreamWriterBase.GetStreamWriter(_version, stream, TextEncoding.Windows1252());
 
 			this._msmain = new MemoryStream();
-			this._writer = DwgStreamWriterBase.GetStreamHandler(_version, this._msmain, TextEncoding.Windows1252());
+			this._writer = DwgStreamWriterBase.GetStreamWriter(_version, this._msmain, TextEncoding.Windows1252());
 		}
 
 		public void Write()
@@ -718,7 +718,7 @@ namespace ACadSharp.IO.DWG
 				//B : DIMUPT
 				this._writer.WriteBit(this._header.DimensionCursorUpdate);
 				//BS : DIMATFIT
-				this._writer.WriteBitShort(this._header.DimensionDimensionTextArrowFit);
+				this._writer.WriteBitShort((short)this._header.DimensionDimensionTextArrowFit);
 			}
 
 			//R2007 + Only:
@@ -806,9 +806,9 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//H: DICTIONARY(ACAD_GROUP)(hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.Groups);
 			//H: DICTIONARY(ACAD_MLINESTYLE)(hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.MLineStyles);
 
 			//H : DICTIONARY (NAMED OBJECTS) (hard owner)
 			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.RootDictionary);
@@ -827,12 +827,10 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteVariableText(this._header.StyleSheetName);
 
 				//H : DICTIONARY(LAYOUTS)(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.RootDictionary[CadDictionary.AcadLayout]);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.Layouts);
 				//H: DICTIONARY(PLOTSETTINGS)(hard pointer)
-				//_writer.HandleReference(DwgReferenceType.HardPointer, _document.RootDictionary[CadDictionary.AcadPlotSettings]);
 				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 				//H: DICTIONARY(PLOTSTYLES)(hard pointer)
-				//_writer.HandleReference(DwgReferenceType.HardPointer, _document.RootDictionary[CadDictionary.AcadPlotStyleName]);
 				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 			}
 

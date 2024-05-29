@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
+using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System.Collections.Generic;
@@ -17,9 +18,9 @@ namespace ACadSharp
 		public abstract ObjectType ObjectType { get; }
 
 		/// <summary>
-		/// The AutoCAD class name of an object
+		/// The CAD class name of an object
 		/// </summary>
-		public virtual string ObjectName { get; }	//TODO: make abstract
+		public virtual string ObjectName { get; }
 
 		/// <summary>
 		/// Object Subclass marker
@@ -111,7 +112,7 @@ namespace ACadSharp
 		/// <inheritdoc/>
 		public override string ToString()
 		{
-			return $"{this.ObjectName}:{this.ObjectType}";
+			return $"{this.ObjectName}:{this.Handle}";
 		}
 
 		internal virtual void AssignDocument(CadDocument doc)
@@ -134,6 +135,11 @@ namespace ACadSharp
 		protected T updateTable<T>(T entry, Table<T> table)
 			where T : TableEntry
 		{
+			if (table == null)
+			{
+				return entry;
+			}
+
 			if (table.TryGetValue(entry.Name, out T existing))
 			{
 				return existing;
@@ -141,6 +147,25 @@ namespace ACadSharp
 			else
 			{
 				table.Add(entry);
+				return entry;
+			}
+		}
+
+		protected T updateCollection<T>(T entry, ObjectDictionaryCollection<T> collection)
+			where T : NonGraphicalObject
+		{
+			if (collection == null || entry == null)
+			{
+				return entry;
+			}
+
+			if (collection.TryGetValue(entry.Name, out T existing))
+			{
+				return existing;
+			}
+			else
+			{
+				collection.Add(entry);
 				return entry;
 			}
 		}

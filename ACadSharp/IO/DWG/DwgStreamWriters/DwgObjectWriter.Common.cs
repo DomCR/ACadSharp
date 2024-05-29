@@ -1,4 +1,5 @@
-﻿using ACadSharp.Entities;
+﻿using ACadSharp.Classes;
+using ACadSharp.Entities;
 using ACadSharp.Tables;
 using CSUtilities.Converters;
 using System;
@@ -8,8 +9,6 @@ namespace ACadSharp.IO.DWG
 {
 	internal partial class DwgObjectWriter : DwgSectionIO
 	{
-		public override string SectionName => DwgSectionDefinition.AcDbObjects;
-
 		private void registerObject(CadObject cadObject)
 		{
 			this._writer.WriteSpearShift();
@@ -34,7 +33,7 @@ namespace ACadSharp.IO.DWG
 
 			//Write the object in the stream
 			crc.Write(this._msmain.GetBuffer(), 0, (int)this._msmain.Length);
-			crc.Write(LittleEndianConverter.Instance.GetBytes(crc.Seed), 0, 2);
+			_stream.Write(LittleEndianConverter.Instance.GetBytes(crc.Seed), 0, 2);
 
 			this.Map.Add(cadObject.Handle, position);
 		}
@@ -115,11 +114,21 @@ namespace ACadSharp.IO.DWG
 
 			switch (cadObject.ObjectType)
 			{
-				//TODO: Invalid type codes, what to do??
 				case ObjectType.UNLISTED:
+					if (this._document.Classes.TryGetByName(cadObject.ObjectName, out DxfClass dxfClass))
+					{
+						this._writer.WriteObjectType(dxfClass.ClassNumber);
+					}
+					else
+					{
+						this.notify($"Dxf Class not found for {cadObject.ObjectType} fullname: {cadObject.GetType().FullName}", NotificationType.Warning);
+						return;
+					}
+					break;
 				case ObjectType.INVALID:
-				case ObjectType.UNUSED:
-					throw new NotImplementedException();
+				case ObjectType.UNDEFINED:
+					this.notify($"CadObject type: {cadObject.ObjectType} fullname: {cadObject.GetType().FullName}", NotificationType.NotImplemented);
+					return;
 				default:
 					this._writer.WriteObjectType(cadObject.ObjectType);
 					break;
@@ -221,9 +230,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Color	CMC(B)	62
-			this._writer.WriteBitShort(0);
-			//TODO: Implement write en color
-			//this._writer.WriteEnColor(entity.Color, entity.Transparency);
+			this._writer.WriteEnColor(entity.Color, entity.Transparency);
 
 			//R2004+:
 			//if ((this._version >= ACadVersion.AC1018) && colorFlag)
@@ -322,7 +329,7 @@ namespace ACadSharp.IO.DWG
 
 		private void writeReactorsAndDictionaryHandle(CadObject cadObject)
 		{
-			//TODO: Write reactors and dictionary
+			//TODO: Write reactors
 
 			//Numreactors S number of reactors in this object
 			this._writer.WriteBitLong(0);
@@ -331,12 +338,17 @@ namespace ACadSharp.IO.DWG
 			//	//[Reactors (soft pointer)]
 			//	template.CadObject.Reactors.Add(this.handleReference(), null);
 
+			bool noDictionary = cadObject.XDictionary == null;
+
 			//R2004+:
 			if (this.R2004Plus)
 			{
-				_writer.WriteBit(true);
-				//_writer.WriteBit(cadObject.XDictionary == null);
-				//this._writer.HandleReference(DwgReferenceType.HardOwnership, cadObject.XDictionary);
+
+				this._writer.WriteBit(noDictionary);
+				if (!noDictionary)
+				{
+					this._writer.HandleReference(DwgReferenceType.HardOwnership, cadObject.XDictionary);
+				}
 			}
 			else
 			{
@@ -349,6 +361,12 @@ namespace ACadSharp.IO.DWG
 			{
 				//Has DS binary data B If 1 then this object has associated binary data stored in the data store
 				this._writer.WriteBit(false);
+			}
+
+			if (!noDictionary)
+			{
+				_dictionaries.Add(cadObject.XDictionary.Handle, cadObject.XDictionary);
+				_objects.Enqueue(cadObject.XDictionary);
 			}
 		}
 

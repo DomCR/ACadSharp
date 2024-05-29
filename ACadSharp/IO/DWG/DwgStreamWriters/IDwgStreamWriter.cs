@@ -1,5 +1,4 @@
-﻿using ACadSharp.Entities;
-using CSMath;
+﻿using CSMath;
 using System;
 using System.IO;
 
@@ -20,7 +19,11 @@ namespace ACadSharp.IO.DWG
 
 		void WriteBytes(byte[] bytes);
 
+		void WriteBytes(byte[] bytes, int offset, int length);
+
 		void WriteInt(int value);
+
+		void WriteObjectType(short value);
 
 		void WriteObjectType(ObjectType value);
 
@@ -50,15 +53,19 @@ namespace ACadSharp.IO.DWG
 
 		void WriteCmColor(Color value);
 
+		void WriteEnColor(Color color, Transparency transparency);
+
+		void Write2BitDouble(XY value);
+
 		void Write3BitDouble(XYZ value);
 
 		void Write2RawDouble(XY value);
 
 		void WriteByte(byte value);
 
-		void HandleReference(CadObject cadObject);
+		void HandleReference(IHandledCadObject cadObject);
 
-		void HandleReference(DwgReferenceType type, CadObject cadObject);
+		void HandleReference(DwgReferenceType type, IHandledCadObject cadObject);
 
 		void HandleReference(ulong handle);
 
@@ -77,6 +84,10 @@ namespace ACadSharp.IO.DWG
 		void WriteBitExtrusion(XYZ normal);
 
 		void WriteBitDoubleWithDefault(double def, double value);
+
+		void Write2BitDoubleWithDefault(XY def, XY value);
+
+		void Write3BitDoubleWithDefault(XYZ def, XYZ value);
 
 		void ResetStream();
 

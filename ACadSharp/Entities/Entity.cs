@@ -7,7 +7,7 @@ using System;
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// The standard class for a basic CAD entity.
+	/// The standard class for a basic CAD entity or a graphical object.
 	/// </summary>
 	[DxfSubClass(DxfSubclassMarker.Entity)]
 	public abstract class Entity : CadObject, IEntity
@@ -90,7 +90,7 @@ namespace ACadSharp.Entities
 		private LineType _lineType = LineType.ByLayer;
 
 		/// <summary>
-		/// Default constructor
+		/// Default constructor.
 		/// </summary>
 		public Entity() : base() { }
 

@@ -115,13 +115,19 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Viewports attached to this block
 		/// </summary>
-		public CadObjectCollection<Viewport> Viewports { get; }
+		public IEnumerable<Viewport> Viewports
+		{
+			get
+			{
+				return this.Entities.OfType<Viewport>();
+			}
+		}
 
 		/// <summary>
 		/// Entities owned by this block
 		/// </summary>
 		/// <remarks>
-		/// Entities with another owner cannot be added to another block
+		/// Entities with an owner cannot be added to another block
 		/// </remarks>
 		public CadObjectCollection<Entity> Entities { get; }
 
@@ -156,7 +162,6 @@ namespace ACadSharp.Tables
 			this.BlockEntity = new Block(this);
 			this.BlockEnd = new BlockEnd(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
-			this.Viewports = new CadObjectCollection<Viewport>(this);
 		}
 
 		public BlockRecord(string name) : base(name)
@@ -164,7 +169,6 @@ namespace ACadSharp.Tables
 			this.BlockEntity = new Block(this);
 			this.BlockEnd = new BlockEnd(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
-			this.Viewports = new CadObjectCollection<Viewport>(this);
 		}
 
 		/// <summary>

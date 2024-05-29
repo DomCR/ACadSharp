@@ -1,4 +1,6 @@
 ﻿using ACadSharp.Classes;
+using ACadSharp.Entities;
+using ACadSharp.Exceptions;
 using ACadSharp.Header;
 using ACadSharp.IO.DXF;
 using CSUtilities.IO;
@@ -216,6 +218,50 @@ namespace ACadSharp.IO
 			return header;
 		}
 
+		/// <summary>
+		/// Read only the tables section in the dxf document
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="CadDocument"/> will not contain any entity, only the tables and it's records
+		/// </remarks>
+		/// <returns></returns>
+		public CadDocument ReadTables()
+		{
+			this._builder = new DxfDocumentBuilder(this._document, this.Configuration);
+			this._builder.OnNotification += this.onNotificationEvent;
+
+			this._reader = this._reader ?? this.getReader();
+
+			this.readTables();
+
+			this._document.Header = new CadHeader(this._document);
+
+			this._builder.RegisterTables();
+
+			this._builder.BuildTables();
+
+			return this._document;
+		}
+
+		/// <summary>
+		/// Read only the entities section in the dxf document
+		/// </summary>
+		/// <remarks>
+		/// The entities will be completely independent from each other and linetypes and layers will only have it's name set, all the other properties will be set as default
+		/// </remarks>
+		/// <returns></returns>
+		public List<Entity> ReadEntities()
+		{
+			this._builder = new DxfDocumentBuilder(this._document, this.Configuration);
+			this._builder.OnNotification += this.onNotificationEvent;
+
+			this._reader = this._reader ?? this.getReader();
+
+			this.readEntities();
+
+			return this._builder.BuildEntities();
+		}
+
 		/// <inheritdoc/>
 		public override void Dispose()
 		{
@@ -246,7 +292,7 @@ namespace ACadSharp.IO
 			while (this._reader.ValueAsString != DxfFileToken.EndSection)
 			{
 				if (this._reader.ValueAsString == DxfFileToken.ClassEntry)
-					classes.Add(this.readClass());
+					classes.AddOrUpdate(this.readClass());
 				else
 					this._reader.ReadNext();
 			}
@@ -393,6 +439,18 @@ namespace ACadSharp.IO
 					{
 						this._encoding = Encoding.UTF8;
 						break;
+					}
+
+					if (version < ACadVersion.AC1012)
+					{
+						if (version == ACadVersion.Unknown)
+						{
+							throw new DwgNotSupportedException();
+						}
+						else
+						{
+							throw new DwgNotSupportedException(version);
+						}
 					}
 				}
 				else if (tmpReader.ValueAsString == "$DWGCODEPAGE")
