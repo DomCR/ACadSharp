@@ -192,6 +192,11 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
+			if (!this.ClipBoundaryVertices.Any())
+			{
+				return new BoundingBox();
+			}
+
 			double minX = this.ClipBoundaryVertices.Select(v => v.X).Min();
 			double minY = this.ClipBoundaryVertices.Select(v => v.Y).Min();
 			XYZ min = new XYZ(minX, minY, 0) + this.InsertPoint;
