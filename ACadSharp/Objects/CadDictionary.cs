@@ -198,8 +198,15 @@ namespace ACadSharp.Objects
 			return root;
 		}
 
-		internal CadDictionary() { }
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public CadDictionary() { }
 
+		/// <summary>
+		/// Constructor for a named dictionary.
+		/// </summary>
+		/// <param name="name">Dictionary name.</param>
 		public CadDictionary(string name)
 		{
 			this.Name = name;
@@ -276,11 +283,13 @@ namespace ACadSharp.Objects
 			return false;
 		}
 
+		/// <inheritdoc/>
 		public IEnumerator<NonGraphicalObject> GetEnumerator()
 		{
 			return this._entries.Values.GetEnumerator();
 		}
 
+		/// <inheritdoc/>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return this._entries.Values.GetEnumerator();

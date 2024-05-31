@@ -14,8 +14,11 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectSortEntsTable)]
 	[DxfSubClass(DxfSubclassMarker.SortentsTable)]
-	public class SortEntitiesTable : NonGraphicalObject
+	public partial class SortEntitiesTable : NonGraphicalObject
 	{
+		/// <summary>
+		/// Dictionary entry name for the object <see cref="SortEntitiesTable"/>
+		/// </summary>
 		public const string DictionaryEntryName = "ACAD_SORTENTS";
 
 		/// <inheritdoc/>
@@ -36,30 +39,25 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// List of the <see cref="BlockOwner"/> entities sorted.
 		/// </summary>
-		public List<Sorter> Sorters { get; } = new List<Sorter>();
+		public List<Sorter> Sorters { get; }
 
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		public SortEntitiesTable()
+		internal SortEntitiesTable()
 		{
 			this.Name = DictionaryEntryName;
 		}
 
-		/// <summary>
-		/// Entity sorter based in their position in the collection.
-		/// </summary>
-		public class Sorter : IHandledCadObject
+		internal SortEntitiesTable(BlockRecord owner) : this()
 		{
-			/// <inheritdoc/>
-			[DxfCodeValue(5)]
-			public ulong Handle { get; internal set; }
+			this.BlockOwner = owner;
+			this.BlockOwner.Entities.OnAdd += this.OnAddEntity;
+		}
 
-			/// <summary>
-			/// Soft-pointer ID/handle to an entity
-			/// </summary>
-			[DxfCodeValue(331)]
-			public Entity Entity { get; set; }
+		internal void OnAddEntity(object sender, CollectionChangedEventArgs e)
+		{
+			this.Sorters.Add(new Sorter
+			{
+				Entity = (Entity)e.Item
+			});
 		}
 	}
 }
