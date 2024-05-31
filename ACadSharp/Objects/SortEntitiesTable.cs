@@ -16,6 +16,8 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.SortentsTable)]
 	public class SortEntitiesTable : NonGraphicalObject
 	{
+		public const string DictionaryEntryName = "ACAD_SORTENTS";
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
@@ -31,6 +33,9 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(330)]
 		public BlockRecord BlockOwner { get; internal set; }
 
+		/// <summary>
+		/// List of the <see cref="BlockOwner"/> entities sorted.
+		/// </summary>
 		public List<Sorter> Sorters { get; } = new List<Sorter>();
 
 		/// <summary>
@@ -38,24 +43,23 @@ namespace ACadSharp.Objects
 		/// </summary>
 		public SortEntitiesTable()
 		{
-			this.Name = "ACAD_SORTENTS";
+			this.Name = DictionaryEntryName;
 		}
 
-		public class Sorter
+		/// <summary>
+		/// Entity sorter based in their position in the collection.
+		/// </summary>
+		public class Sorter : IHandledCadObject
 		{
-			/// <summary>
-			/// Sort handle
-			/// </summary>
+			/// <inheritdoc/>
 			[DxfCodeValue(5)]
-			public ulong SortHandle { get; set; }
+			public ulong Handle { get; internal set; }
 
 			/// <summary>
 			/// Soft-pointer ID/handle to an entity
 			/// </summary>
 			[DxfCodeValue(331)]
 			public Entity Entity { get; set; }
-
-			public Sorter() { }
 		}
 	}
 }

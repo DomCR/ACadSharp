@@ -36,13 +36,13 @@ namespace ACadSharp.IO.Templates
 				}
 			}
 
-			foreach ((ulong?, ulong?) pair in Values)
+			foreach ((ulong?, ulong?) pair in this.Values)
 			{
 				if (builder.TryGetCadObject(pair.Item2, out Entity entity))
 				{
 					SortEntitiesTable.Sorter sorter = new SortEntitiesTable.Sorter
 					{
-						SortHandle = pair.Item1.Value,
+						Handle = pair.Item1.Value,
 						Entity = entity
 					};
 					this.CadObject.Sorters.Add(sorter);
