@@ -209,7 +209,11 @@ namespace ACadSharp.Entities
 
 		internal override void UnassignDocument()
 		{
-			this.Document.ImageDefinitions.OnRemove -= this.imageDefinitionsOnRemove;
+			// The definitions entry is optional, some documents do not have it.
+			if (this.Document.ImageDefinitions != null)
+			{
+				this.Document.ImageDefinitions.OnRemove -= this.imageDefinitionsOnRemove;
+			}
 
 			base.UnassignDocument();
 
