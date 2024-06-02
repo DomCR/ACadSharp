@@ -200,12 +200,20 @@ namespace ACadSharp.Entities
 
 			this._definition = this.updateCollection(this.Definition, doc.ImageDefinitions);
 
-			this.Document.ImageDefinitions.OnRemove += this.imageDefinitionsOnRemove;
+			// The definitions entry is optional, some documents do not have it.
+			if (this.Document.ImageDefinitions != null)
+			{
+				this.Document.ImageDefinitions.OnRemove += this.imageDefinitionsOnRemove;
+			}
 		}
 
 		internal override void UnassignDocument()
 		{
-			this.Document.ImageDefinitions.OnRemove -= this.imageDefinitionsOnRemove;
+			// The definitions entry is optional, some documents do not have it.
+			if (this.Document.ImageDefinitions != null)
+			{
+				this.Document.ImageDefinitions.OnRemove -= this.imageDefinitionsOnRemove;
+			}
 
 			base.UnassignDocument();
 
