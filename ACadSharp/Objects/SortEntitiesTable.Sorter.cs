@@ -22,7 +22,7 @@ namespace ACadSharp.Objects
 					}
 					else
 					{
-						return Entity.Handle;
+						return this.Entity.Handle;
 					}
 				}
 				internal set { this._handle = value; }
@@ -35,6 +35,17 @@ namespace ACadSharp.Objects
 			public Entity Entity { get; set; }
 
 			private ulong? _handle;
+
+			/// <summary>
+			/// Sorter constructor with the entity and handle.
+			/// </summary>
+			/// <param name="entity">Enity in the block to be sorted.</param>
+			/// <param name="handle">Sorter handle, will use the entity handle if null.</param>
+			public Sorter(Entity entity, ulong? handle = null)
+			{
+				this.Entity = entity;
+				this._handle = handle;
+			}
 		}
 	}
 }

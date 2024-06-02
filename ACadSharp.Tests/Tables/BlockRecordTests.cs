@@ -69,6 +69,10 @@ namespace ACadSharp.Tests.Tables
 			record.Entities.Add(new Line());
 
 			record.CreateSortEntitiesTable();
+
+			Assert.NotNull(record.SortEntitiesTable);
+			Assert.NotNull(record.SortEntitiesTable.Sorters);
+			Assert.Empty(record.SortEntitiesTable.Sorters);
 		}
 
 		[Fact()]

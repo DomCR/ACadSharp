@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Objects
@@ -39,7 +40,9 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// List of the <see cref="BlockOwner"/> entities sorted.
 		/// </summary>
-		public List<Sorter> Sorters { get; }
+		public IEnumerable<Sorter> Sorters { get { return this._sorters; } }
+
+		private List<Sorter> _sorters = new();
 
 		internal SortEntitiesTable()
 		{
@@ -49,15 +52,27 @@ namespace ACadSharp.Objects
 		internal SortEntitiesTable(BlockRecord owner) : this()
 		{
 			this.BlockOwner = owner;
-			this.BlockOwner.Entities.OnAdd += this.OnAddEntity;
+		}
+
+		/// <summary>
+		/// Sorter attached to an entity.
+		/// </summary>
+		/// <param name="entity">Enity in the block to be sorted.</param>
+		/// <param name="sorterHandle">Sorter handle, will use the entity handle if null.</param>
+		/// <exception cref="ArgumentException"></exception>
+		public void AddEntity(Entity entity, ulong? sorterHandle = null)
+		{
+			if (entity.Owner != this.BlockOwner)
+			{
+				throw new ArgumentException($"Entity is not owned by the block {this.BlockOwner.Name}", nameof(entity));
+			}
+
+			this._sorters.Add(new Sorter(entity, sorterHandle));
 		}
 
 		internal void OnAddEntity(object sender, CollectionChangedEventArgs e)
 		{
-			this.Sorters.Add(new Sorter
-			{
-				Entity = (Entity)e.Item
-			});
+			this._sorters.Add(new Sorter((Entity)e.Item));
 		}
 	}
 }
