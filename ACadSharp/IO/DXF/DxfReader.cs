@@ -211,7 +211,6 @@ namespace ACadSharp.IO
 					this.triggerNotification($"Invalid value for header variable {currVar} | {parameters.FirstOrDefault()}", NotificationType.Warning, ex);
 				}
 
-
 				this._reader.ReadNext();
 			}
 

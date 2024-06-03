@@ -1,7 +1,5 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.IO;
+﻿using ACadSharp.IO;
 using System.IO;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
