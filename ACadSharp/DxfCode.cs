@@ -379,6 +379,11 @@ namespace ACadSharp
 			if (code == 1071)
 				return GroupCodeValueType.ExtendedDataInt32;
 
+			if (code == 5005)
+				return GroupCodeValueType.String;
+			if (code == 5010)
+				return GroupCodeValueType.Int32;
+
 			return GroupCodeValueType.None;
 		}
 	}

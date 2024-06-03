@@ -5267,7 +5267,7 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Numdatabytes BL number of databytes
-			long offset = this._objectReader.ReadBitLong();
+			long offset = this._objectReader.ReadBitLong() + this._objectReader.Position;
 
 			//Databytes X databytes, however many there are to the handles
 			while (this._objectReader.Position < offset)
