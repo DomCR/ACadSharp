@@ -32,9 +32,8 @@ namespace ACadSharp.IO.DXF
 				case Material:
 				case MultiLeaderStyle:
 				case SortEntitiesTable:
-				case Scale:
 				case VisualStyle:
-				//case XRecrod:	//TODO: XRecord Understand how it works for the reader
+				case ImageDefinitionReactor:
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
 			}
@@ -52,8 +51,11 @@ namespace ACadSharp.IO.DXF
 					this.writeDictionaryVariable(dictvar);
 					break;
 				case Group group:
-					this.writeGroup(group); 
+					this.writeGroup(group);
 					break;
+				case ImageDefinition imageDefinition:
+					this.writeImageDefinition(imageDefinition);
+					return;
 				case Layout layout:
 					this.writeLayout(layout);
 					break;
@@ -62,6 +64,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case PlotSettings plotSettings:
 					this.writePlotSettings(plotSettings);
+					break;
+				case Scale scale:
+					this.writeScale(scale);
 					break;
 				case SortEntitiesTable sortensTable:
 					//this.writeSortentsTable(sortensTable);
@@ -152,6 +157,17 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(149, plot.PaperImageOrigin.Y, map);
 		}
 
+		protected void writeScale(Scale scale)
+		{
+			this._writer.Write(100, DxfSubclassMarker.Scale);
+
+			this._writer.Write(70, 0);
+			this._writer.Write(300, scale.Name);
+			this._writer.Write(140, scale.PaperUnits);
+			this._writer.Write(141, scale.DrawingUnits);
+			this._writer.Write(290, scale.IsUnitScale ? (short)1 : (short)0);
+		}
+
 		protected void writeGroup(Group group)
 		{
 			this._writer.Write(100, DxfSubclassMarker.Group);
@@ -164,6 +180,22 @@ namespace ACadSharp.IO.DXF
 			{
 				this._writer.WriteHandle(340, entity);
 			}
+		}
+
+		protected void writeImageDefinition(ImageDefinition definition)
+		{
+			DxfClassMap map = DxfClassMap.Create<ImageDefinition>();
+
+			this._writer.Write(100, DxfSubclassMarker.RasterImageDef);
+
+			this._writer.Write(90, definition.ClassVersion, map);
+			this._writer.Write(1, definition.FileName, map);
+
+			this._writer.Write(10, definition.Size, map);
+
+			this._writer.Write(280, definition.IsLoaded ? 1 : 0, map);
+
+			this._writer.Write(281, (byte)definition.Units, map);
 		}
 
 		protected void writeLayout(Layout layout)
@@ -192,7 +224,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(76, (short)0, map);
 
-			this._writer.WriteHandle(330, layout.AssociatedBlock.Owner, map);
+			this._writer.WriteHandle(330, layout.AssociatedBlock, map);
 		}
 
 		protected void writeMLineStyle(MLineStyle style)

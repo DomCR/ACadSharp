@@ -160,6 +160,8 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<Line>(new CadEntityTemplate<Line>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityLwPolyline:
 					return this.readEntityCodes<LwPolyline>(new CadEntityTemplate<LwPolyline>(), this.readLwPolyline);
+				case DxfFileToken.EntityMesh:
+					return this.readEntityCodes<Mesh>(new CadMeshTemplate(), this.readMesh);
 				case DxfFileToken.EntityHatch:
 					return this.readEntityCodes<Hatch>(new CadHatchTemplate(), this.readHatch);
 				case DxfFileToken.EntityInsert:
@@ -197,10 +199,11 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<Viewport>(new CadViewportTemplate(), this.readViewport);
 				case DxfFileToken.EntityXline:
 					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), this.readEntitySubclassMap);
+				case DxfFileToken.EntityShape:
+					return this.readEntityCodes<Shape>(new CadShapeTemplate(new Shape()), this.readShape);
 				case DxfFileToken.EntitySpline:
 					return this.readEntityCodes<Spline>(new CadSplineTemplate(), this.readSpline);
 				default:
-
 					DxfMap map = DxfMap.Create<Entity>();
 					CadUnknownEntityTemplate unknownEntityTemplate = null;
 					if (this._builder.DocumentToBuild.Classes.TryGetByName(this._reader.ValueAsString, out Classes.DxfClass dxfClass))
@@ -219,7 +222,9 @@ namespace ACadSharp.IO.DXF
 					{
 						if (unknownEntityTemplate != null && this._builder.KeepUnknownEntities)
 						{
-							this.readCommonEntityCodes(unknownEntityTemplate, out _, map);
+							this.readCommonEntityCodes(unknownEntityTemplate, out bool isExtendedData, map);
+							if (isExtendedData)
+								continue;
 						}
 
 						this._reader.ReadNext();
@@ -273,6 +278,12 @@ namespace ACadSharp.IO.DXF
 					break;
 				//Absent or zero indicates entity is in model space. 1 indicates entity is in paper space (optional).
 				case 67:
+					break;
+				//Number of bytes Proxy entity graphics data
+				case 92:
+				case 160:
+				//Proxy entity graphics data
+				case 310:
 					break;
 				case 347:
 					template.MaterialHandle = this._reader.ValueAsHandle;
@@ -678,6 +689,112 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		private bool readMesh(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadMeshTemplate tmp = template as CadMeshTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 100:
+					if (this._reader.ValueAsString.Equals(DxfSubclassMarker.Mesh, StringComparison.OrdinalIgnoreCase))
+					{
+						tmp.SubclassMarker = true;
+					}
+					return true;
+				//Count of sub-entity which property has been overridden
+				case 90:
+					//TODO: process further entities
+					return true;
+				case 92:
+					if (!tmp.SubclassMarker)
+					{
+						return false;
+					}
+
+					int nvertices = this._reader.ValueAsInt;
+					for (int i = 0; i < nvertices; i++)
+					{
+						this._reader.ReadNext();
+						double x = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						double y = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						double z = this._reader.ValueAsDouble;
+						tmp.CadObject.Vertices.Add(new XYZ(x, y, z));
+					}
+					return true;
+				case 93:
+					int size = this._reader.ValueAsInt;
+					this._reader.ReadNext();
+
+					int indexes = 0;
+					for (int i = 0; i < size; i += indexes + 1)
+					{
+						indexes = this._reader.ValueAsInt;
+						this._reader.ReadNext();
+
+						int[] face = new int[indexes];
+						for (int j = 0; j < indexes; j++)
+						{
+							face[j] = this._reader.ValueAsInt;
+
+							if ((i + j + 2) < size)
+							{
+								this._reader.ReadNext();
+							}
+						}
+
+						tmp.CadObject.Faces.Add(face);
+					}
+
+					Debug.Assert(this._reader.Code == 90);
+
+					return true;
+				case 94:
+					int numEdges = this._reader.ValueAsInt;
+					this._reader.ReadNext();
+					for (int i = 0; i < numEdges; i++)
+					{
+						Mesh.Edge edge = new Mesh.Edge();
+
+						edge.Start = this._reader.ValueAsInt;
+						this._reader.ReadNext();
+						edge.End = this._reader.ValueAsInt;
+
+						if (i < numEdges - 1)
+						{
+							this._reader.ReadNext();
+						}
+
+						tmp.CadObject.Edges.Add(edge);
+					}
+
+					Debug.Assert(this._reader.Code == 90);
+
+					return true;
+				case 95:
+					this._reader.ReadNext();
+					for (int i = 0; i < tmp.CadObject.Edges.Count; i++)
+					{
+						Mesh.Edge edge = tmp.CadObject.Edges[i];
+						edge.Crease = this._reader.ValueAsDouble;
+
+						tmp.CadObject.Edges[i] = edge;
+
+						if (i < tmp.CadObject.Edges.Count - 1)
+						{
+							this._reader.ReadNext();
+						}
+					}
+
+					Debug.Assert(this._reader.Code == 140);
+
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
 		private bool readMLine(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
 			CadMLineTemplate tmp = template as CadMLineTemplate;
@@ -704,6 +821,20 @@ namespace ACadSharp.IO.DXF
 						return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 					}
 					return true;
+			}
+		}
+
+		private bool readShape(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadShapeTemplate tmp = template as CadShapeTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 2:
+					tmp.ShapeFileName = this._reader.ValueAsString;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
 		}
 
@@ -955,11 +1086,8 @@ namespace ACadSharp.IO.DXF
 					this._reader.ReadNext();
 				}
 
-				boundary.Vertices.Add(new XY(x, y));
-				boundary.Bulges.Add(bulge);
+				boundary.Vertices.Add(new XYZ(x, y, bulge));
 			}
-
-
 
 			return boundary;
 		}

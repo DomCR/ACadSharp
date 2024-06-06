@@ -52,6 +52,12 @@ namespace ACadSharp.IO.DWG
 				case Group group:
 					this.writeGroup(group);
 					break;
+				case ImageDefinitionReactor definitionReactor:
+					this.writeImageDefinitionReactor(definitionReactor);
+					break;
+				case ImageDefinition definition:
+					this.writeImageDefinition(definition);
+					break;
 				case Layout layout:
 					this.writeLayout(layout);
 					break;
@@ -155,6 +161,30 @@ namespace ACadSharp.IO.DWG
 				//the entries in the group(hard pointer)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, h);
 			}
+		}
+
+		private void writeImageDefinitionReactor(ImageDefinitionReactor definitionReactor)
+		{
+			//Common:
+			//Classver BL 90 class version
+			this._writer.WriteBitLong(definitionReactor.ClassVersion);
+		}
+
+		private void writeImageDefinition(ImageDefinition definition)
+		{
+			//Common:
+			//Clsver BL 0 class version
+			this._writer.WriteBitLong(definition.ClassVersion);
+			//Imgsize 2RD 10 size of image in pixels
+			this._writer.Write2RawDouble(definition.Size);
+			//Filepath TV 1 path to file
+			this._writer.WriteVariableText(definition.FileName);
+			//Isloaded B 280 0==no, 1==yes
+			this._writer.WriteBit(definition.IsLoaded);
+			//Resunits RC 281 0==none, 2==centimeters, 5==inches
+			this._writer.WriteByte((byte)definition.Units);
+			//Pixelsize 2RD 11 size of one pixel in AutoCAD units
+			this._writer.Write2RawDouble(definition.DefaultSize);
 		}
 
 		private void writeLayout(Layout layout)
@@ -390,7 +420,7 @@ namespace ACadSharp.IO.DWG
 		private void writeScale(Scale scale)
 		{
 			//BS	70	Unknown(ODA writes 0).
-			this._writer.WriteBitShort(scale.Unknown);
+			this._writer.WriteBitShort(0);
 			//TV	300	Name
 			this._writer.WriteVariableText(scale.Name);
 			//BD	140	Paper units(numerator)

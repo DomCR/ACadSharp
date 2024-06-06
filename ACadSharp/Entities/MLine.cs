@@ -2,6 +2,7 @@
 using ACadSharp.Objects;
 using CSMath;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -36,14 +37,22 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Handle | DxfReferenceType.Name, 340)]
 		public MLineStyle Style
 		{
-			get { return _style; }
+			get { return this._style; }
 			set
 			{
 				if (value == null)
 				{
 					throw new System.ArgumentNullException(nameof(value), "Multi line style cannot be null");
 				}
-				this._style = value;
+
+				if (this.Document != null)
+				{
+					this._style = this.updateCollection(value, this.Document.MLineStyles);
+				}
+				else
+				{
+					this._style = value;
+				}
 			}
 		}
 
@@ -51,7 +60,7 @@ namespace ACadSharp.Entities
 		/// Scale factor
 		/// </summary>
 		[DxfCodeValue(40)]
-		public double ScaleFactor { get; set; }
+		public double ScaleFactor { get; set; } = 1;
 
 		/// <summary>
 		/// Justification
@@ -100,6 +109,32 @@ namespace ACadSharp.Entities
 			}
 
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._style = this.updateCollection(this.Style, doc.MLineStyles);
+
+			this.Document.MLineStyles.OnRemove += this.mLineStylesOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.MLineStyles.OnRemove -= this.mLineStylesOnRemove;
+
+			base.UnassignDocument();
+
+			this._style = (MLineStyle)this.Style.Clone();
+		}
+
+		private void mLineStylesOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this.Style))
+			{
+				this.Style = this.Document.MLineStyles[MLineStyle.DefaultName];
+			}
 		}
 	}
 }

@@ -16,7 +16,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectLayout)]
 	[DxfSubClass(DxfSubclassMarker.Layout)]
-	public class Layout : PlotSettings, IDictionaryEntry
+	public class Layout : PlotSettings
 	{
 		public const string LayoutModelName = "Model";
 
@@ -35,7 +35,17 @@ namespace ACadSharp.Objects
 		/// Layout name
 		/// </summary>
 		[DxfCodeValue(1)]
-		public string Name { get; set; }
+		public override string Name
+		{
+			get
+			{
+				return base.Name;
+			}
+			set
+			{
+				base.Name = value;
+			}
+		}
 
 		/// <summary>
 		/// Layout flags

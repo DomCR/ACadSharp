@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Header;
-using ACadSharp.IO.DXF;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
@@ -115,6 +114,11 @@ namespace ACadSharp
 		public MLineStyleCollection MLineStyles { get; private set; }
 
 		/// <summary>
+		/// 
+		/// </summary>
+		public ImageDefinitionCollection ImageDefinitions { get; private set; }
+
+		/// <summary>
 		/// The collection of all Multi leader styles in the drawing. 
 		/// </summary>
 		/// <remarks>
@@ -187,8 +191,8 @@ namespace ACadSharp
 				//Entries
 				Layout modelLayout = Layout.Default;
 				Layout paperLayout = new Layout("Layout1");
-				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(paperLayout.Name, paperLayout);
-				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(Layout.LayoutModelName, modelLayout);
+				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(paperLayout);
+				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(modelLayout);
 
 				//Default variables
 				this.AppIds.Add(AppId.Default);
@@ -296,7 +300,7 @@ namespace ACadSharp
 			{
 				this.RootDictionary = CadDictionary.CreateRoot();
 			}
-			else if(this.RootDictionary == null)
+			else if (this.RootDictionary == null)
 			{
 				return;
 			}
@@ -321,9 +325,14 @@ namespace ACadSharp
 				this.MLineStyles = new MLineStyleCollection(mlineStyles);
 			}
 
-			if (this.updateCollection(CadDictionary.AcadMLineStyle, createDictionaries, out CadDictionary mleaderStyles))
+			if (this.updateCollection(CadDictionary.AcadMLeaderStyle, createDictionaries, out CadDictionary mleaderStyles))
 			{
 				this.MLeaderStyles = new MLeaderStyleCollection(mleaderStyles);
+			}
+
+			if (this.updateCollection(CadDictionary.AcadImageDict, createDictionaries, out CadDictionary imageDefinitions))
+			{
+				this.ImageDefinitions = new ImageDefinitionCollection(imageDefinitions);
 			}
 		}
 
@@ -335,7 +344,7 @@ namespace ACadSharp
 			}
 			else if (createDictionary)
 			{
-				this.RootDictionary.Add(dictName, new CadDictionary());
+				this.RootDictionary.Add(new CadDictionary(dictName));
 			}
 
 			return dictionary != null;

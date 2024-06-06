@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
@@ -46,6 +45,8 @@ namespace ACadSharp.IO
 
 		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new Dictionary<ulong, ICadTableTemplate>();
 
+		protected Dictionary<ulong, ICadDictionaryTemplate> dictionaryTemplates = new();
+
 		public CadDocumentBuilder(CadDocument document)
 		{
 			this.DocumentToBuild = document;
@@ -53,12 +54,17 @@ namespace ACadSharp.IO
 
 		public virtual void BuildDocument()
 		{
+			foreach (ICadDictionaryTemplate dictionaryTemplate in dictionaryTemplates.Values)
+			{
+				dictionaryTemplate.Build(this);
+			}
+
+			this.DocumentToBuild.UpdateCollections(false);
+		
 			foreach (CadTemplate template in this.templates.Values)
 			{
 				template.Build(this);
 			}
-
-			this.DocumentToBuild.UpdateCollections(false);
 		}
 
 		public void AddTableTemplate(ICadTableTemplate tableTemplate)
@@ -99,7 +105,7 @@ namespace ACadSharp.IO
 
 		public bool TryGetCadObject<T>(ulong? handle, out T value) where T : CadObject
 		{
-			if (!handle.HasValue)
+			if (!handle.HasValue || handle == 0)
 			{
 				value = null;
 				return false;
@@ -175,6 +181,19 @@ namespace ACadSharp.IO
 			this.DocumentToBuild.RegisterCollection(this.BlockRecords);
 		}
 
+		public void BuildTables()
+		{
+			this.BuildTable(this.AppIds);
+			this.BuildTable(this.LineTypesTable);
+			this.BuildTable(this.Layers);
+			this.BuildTable(this.TextStyles);
+			this.BuildTable(this.UCSs);
+			this.BuildTable(this.Views);
+			this.BuildTable(this.DimensionStyles);
+			this.BuildTable(this.VPorts);
+			this.BuildTable(this.BlockRecords);
+		}
+
 		public void Notify(string message, NotificationType notificationType = NotificationType.None, Exception exception = null)
 		{
 			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, exception));
@@ -191,6 +210,12 @@ namespace ACadSharp.IO
 			{
 				this.Notify($"Table {table.ObjectName} not found in the document", NotificationType.Warning);
 			}
+		}
+
+		public void AddDictionaryTemplate(ICadDictionaryTemplate dictionaryTemplate)
+		{
+			this.dictionaryTemplates[dictionaryTemplate.CadObject.Handle] = dictionaryTemplate;
+			this.cadObjects[dictionaryTemplate.CadObject.Handle] = dictionaryTemplate.CadObject;
 		}
 	}
 }

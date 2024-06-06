@@ -26,12 +26,12 @@ namespace ACadSharp.IO.Templates
 		public ulong? MaterialHandle { get; set; }
 
 		public CadEntityTemplate(Entity entity) : base(entity) { }
-		
+
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
-			if(this.getTableReference(builder, this.LayerHandle, this.LayerName, out Layer layer))
+			if (this.getTableReference(builder, this.LayerHandle, this.LayerName, out Layer layer))
 			{
 				this.CadObject.Layer = layer;
 			}
@@ -58,17 +58,9 @@ namespace ACadSharp.IO.Templates
 						break;
 				}
 			}
-			else if (this.LineTypeHandle.HasValue)
+			else
 			{
 				this.applyLineType(builder);
-			}
-			else if (!string.IsNullOrEmpty(this.LineTypeName) && builder.DocumentToBuild.LineTypes.TryGetValue(this.LineTypeName, out LineType ltype))
-			{
-				this.CadObject.LineType = ltype;
-			}
-			else if (!string.IsNullOrEmpty(this.LineTypeName) || this.LineTypeHandle.HasValue)
-			{
-				builder.Notify($"Could not assign the line type to entity | handle : {this.LineTypeHandle} | name : {this.LineTypeName}", NotificationType.Warning);
 			}
 
 			if (this.ColorHandle.HasValue)
@@ -84,9 +76,22 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
+		public void SetUnlinkedReferences()
+		{
+			if (!string.IsNullOrEmpty(this.LayerName))
+			{
+				this.CadObject.Layer = new Layer(this.LayerName);
+			}
+
+			if (!string.IsNullOrEmpty(this.LineTypeName))
+			{
+				this.CadObject.LineType = new LineType(this.LineTypeName);
+			}
+		}
+
 		private void applyLineType(CadDocumentBuilder builder)
 		{
-			if (builder.TryGetCadObject<LineType>(this.LineTypeHandle, out LineType ltype))
+			if (this.getTableReference<LineType>(builder, this.LineTypeHandle, this.LineTypeName, out LineType ltype))
 			{
 				this.CadObject.LineType = ltype;
 			}

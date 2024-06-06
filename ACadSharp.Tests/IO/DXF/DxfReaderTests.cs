@@ -1,4 +1,6 @@
-﻿using ACadSharp.IO;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO;
+using System.Collections.Generic;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -39,6 +41,45 @@ namespace ACadSharp.Tests.IO.DXF
 		[Theory]
 		[MemberData(nameof(DxfAsciiFiles))]
 		[MemberData(nameof(DxfBinaryFiles))]
+		public void ReadEntities(string test)
+		{
+			List<Entity> entities = null;
+			using (DxfReader reader = new DxfReader(test))
+			{
+				reader.OnNotification += this.onNotification;
+				entities = reader.ReadEntities();
+			}
+
+			Assert.NotNull(entities);
+			Assert.NotEmpty(entities);
+		}
+
+		[Theory]
+		[MemberData(nameof(DxfAsciiFiles))]
+		[MemberData(nameof(DxfBinaryFiles))]
+		public void ReadTables(string test)
+		{
+			CadDocument doc = null;
+			using (DxfReader reader = new DxfReader(test))
+			{
+				reader.OnNotification += this.onNotification;
+				doc = reader.ReadTables();
+			}
+
+			Assert.NotNull(doc);
+			Assert.NotNull(doc.AppIds);
+			Assert.NotNull(doc.BlockRecords);
+			Assert.NotNull(doc.DimensionStyles);
+			Assert.NotNull(doc.LineTypes);
+			Assert.NotNull(doc.TextStyles);
+			Assert.NotNull(doc.UCSs);
+			Assert.NotNull(doc.Views);
+			Assert.NotNull(doc.VPorts);
+		}
+
+		[Theory]
+		[MemberData(nameof(DxfAsciiFiles))]
+		[MemberData(nameof(DxfBinaryFiles))]
 		public override void AssertDocumentDefaults(string test)
 		{
 			base.AssertDocumentDefaults(test);
@@ -68,7 +109,7 @@ namespace ACadSharp.Tests.IO.DXF
 			base.AssertDocumentContent(test);
 		}
 
-		[Theory(Skip = "Dxf files need to be refactor to support the Unknown entities")]
+		[Theory]
 		[MemberData(nameof(DxfAsciiFiles))]
 		[MemberData(nameof(DxfBinaryFiles))]
 		public override void AssertDocumentTree(string test)

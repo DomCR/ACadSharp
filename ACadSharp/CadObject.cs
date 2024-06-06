@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
+using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System.Collections.Generic;
@@ -146,6 +147,25 @@ namespace ACadSharp
 			else
 			{
 				table.Add(entry);
+				return entry;
+			}
+		}
+
+		protected T updateCollection<T>(T entry, ObjectDictionaryCollection<T> collection)
+			where T : NonGraphicalObject
+		{
+			if (collection == null || entry == null)
+			{
+				return entry;
+			}
+
+			if (collection.TryGetValue(entry.Name, out T existing))
+			{
+				return existing;
+			}
+			else
+			{
+				collection.Add(entry);
 				return entry;
 			}
 		}
