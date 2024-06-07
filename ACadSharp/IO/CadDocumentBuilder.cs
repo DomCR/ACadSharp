@@ -52,13 +52,6 @@ namespace ACadSharp.IO
 
 		public virtual void BuildDocument()
 		{
-			foreach (ICadDictionaryTemplate dictionaryTemplate in dictionaryTemplates.Values)
-			{
-				dictionaryTemplate.Build(this);
-			}
-
-			this.DocumentToBuild.UpdateCollections(false);
-		
 			foreach (CadTemplate template in this.templates.Values)
 			{
 				template.Build(this);
@@ -214,6 +207,16 @@ namespace ACadSharp.IO
 		{
 			this.dictionaryTemplates[dictionaryTemplate.CadObject.Handle] = dictionaryTemplate;
 			this.cadObjects[dictionaryTemplate.CadObject.Handle] = dictionaryTemplate.CadObject;
+		}
+
+		protected void buildDictionaries()
+		{
+			foreach (ICadDictionaryTemplate dictionaryTemplate in dictionaryTemplates.Values)
+			{
+				dictionaryTemplate.Build(this);
+			}
+
+			this.DocumentToBuild.UpdateCollections(true);
 		}
 	}
 }

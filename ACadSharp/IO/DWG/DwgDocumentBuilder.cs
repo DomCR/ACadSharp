@@ -1,8 +1,5 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
-using ACadSharp.Tables;
-using ACadSharp.Tables.Collections;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.DWG
@@ -40,6 +37,8 @@ namespace ACadSharp.IO.DWG
 			this.RegisterTables();
 
 			this.BuildTables();
+
+			this.buildDictionaries();
 
 			base.BuildDocument();
 		}
