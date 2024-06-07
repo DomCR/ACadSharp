@@ -370,7 +370,13 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public long ReadRawLong()
 		{
-			return this.ReadInt();
+			return this.ReadInt<LittleEndianConverter>();
+		}
+
+		/// <inheritdoc/>
+		public ulong ReadRawULong()
+		{
+			return this.ReadULong<LittleEndianConverter>();
 		}
 
 		/// <inheritdoc/>

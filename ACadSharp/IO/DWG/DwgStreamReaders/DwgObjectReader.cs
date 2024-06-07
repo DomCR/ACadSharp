@@ -5267,7 +5267,7 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Numdatabytes BL number of databytes
-			long offset = this._objectReader.ReadBitLong();
+			long offset = this._objectReader.ReadBitLong() + this._objectReader.Position;
 
 			//Databytes X databytes, however many there are to the handles
 			while (this._objectReader.Position < offset)
@@ -5286,8 +5286,6 @@ namespace ACadSharp.IO.DWG
 
 				switch (groupCode)
 				{
-					case GroupCodeValueType.None:
-						break;
 					case GroupCodeValueType.String:
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadTextUnicode()));
 						break;
@@ -5308,8 +5306,11 @@ namespace ACadSharp.IO.DWG
 					case GroupCodeValueType.Int32:
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawLong()));
 						break;
+					case GroupCodeValueType.Byte:
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadByte()));
+						break;
 					case GroupCodeValueType.Int64:
-						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawLong()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawULong()));
 						break;
 					case GroupCodeValueType.Handle:
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadTextUnicode()));
@@ -5320,7 +5321,11 @@ namespace ACadSharp.IO.DWG
 					case GroupCodeValueType.Chunk:
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadBytes(this._objectReader.ReadByte())));
 						break;
+					case GroupCodeValueType.ObjectId:
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawULong()));
+						break;
 					default:
+						this.notify($"Unedintified GroupCodeValueType {code} for XRecord [{xRecord.Handle}]", NotificationType.Warning);
 						break;
 				}
 			}

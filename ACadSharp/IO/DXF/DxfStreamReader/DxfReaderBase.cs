@@ -113,6 +113,7 @@ namespace ACadSharp.IO.DXF
 				case GroupCodeValueType.Double:
 				case GroupCodeValueType.ExtendedDataDouble:
 					return this.lineAsDouble();
+				case GroupCodeValueType.Byte:
 				case GroupCodeValueType.Int16:
 				case GroupCodeValueType.ExtendedDataInt16:
 					return this.lineAsShort();
