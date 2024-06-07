@@ -271,7 +271,12 @@ namespace ACadSharp.IO.DWG
 
 		public long ReadRawLong()
 		{
-			throw new NotImplementedException();
+			return this._mainReader.ReadRawLong();
+		}
+
+		public ulong ReadRawULong()
+		{
+			return this._mainReader.ReadRawULong();
 		}
 
 		public byte[] ReadSentinel()
