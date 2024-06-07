@@ -57,7 +57,7 @@ namespace ACadSharp.IO
 				dictionaryTemplate.Build(this);
 			}
 
-			this.DocumentToBuild.UpdateCollections(false);
+			this.DocumentToBuild.UpdateCollections(true);
 		
 			foreach (CadTemplate template in this.templates.Values)
 			{
