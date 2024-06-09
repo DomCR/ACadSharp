@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace ACadSharp.Tests.Tables.Collections
+namespace ACadSharp.Tests.Tables
 {
 	public class BlockRecordTests
 	{
@@ -55,6 +55,24 @@ namespace ACadSharp.Tests.Tables.Collections
 
 			record.Entities.Add(l1);
 			Assert.Throws<ArgumentException>(() => record.Entities.Add(l1));
+		}
+
+		[Fact()]
+		public void CreateSortensTableTest()
+		{
+			string name = "my_block";
+			BlockRecord record = new BlockRecord(name);
+
+			record.Entities.Add(new Line());
+			record.Entities.Add(new Line());
+			record.Entities.Add(new Line());
+			record.Entities.Add(new Line());
+
+			record.CreateSortEntitiesTable();
+
+			Assert.NotNull(record.SortEntitiesTable);
+			Assert.NotNull(record.SortEntitiesTable.Sorters);
+			Assert.Empty(record.SortEntitiesTable.Sorters);
 		}
 
 		[Fact()]

@@ -5130,6 +5130,9 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
+			//parenthandle (soft pointer)
+			template.BlockOwnerHandle = this.handleReference();
+
 			//Common:
 			//Numentries BL number of entries
 			int numentries = this._mergedReaders.ReadBitLong();
@@ -5146,9 +5149,6 @@ namespace ACadSharp.IO.DWG
 
 				template.Values.Add((sortHandle, entityHandle));
 			}
-
-			//owner handle (soft pointer)
-			template.BlockOwnerHandle = this.handleReference();
 
 			return template;
 		}
