@@ -33,14 +33,13 @@ namespace ACadSharp.Entities
 				/// default value, 0 if not set
 				/// </remarks>
 				[DxfCodeValue(DxfReferenceType.Optional, 42)]
-				//TODO: Consider move the Bulge value to the Z component of the vertices
-				public List<double> Bulges { get; set; } = new List<double>();
+				public IEnumerable<double> Bulges { get { return this.Vertices.Select(v => v.Z); } }
 
 				/// <remarks>
 				/// Position values are only X and Y
 				/// </remarks>
 				[DxfCodeValue(DxfReferenceType.Count, 93)]
-				public List<XY> Vertices { get; set; } = new List<XY>();
+				public List<XYZ> Vertices { get; set; } = new();
 			}
 		}
 	}

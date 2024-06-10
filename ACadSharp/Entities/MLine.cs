@@ -37,14 +37,22 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Handle | DxfReferenceType.Name, 340)]
 		public MLineStyle Style
 		{
-			get { return _style; }
+			get { return this._style; }
 			set
 			{
 				if (value == null)
 				{
 					throw new System.ArgumentNullException(nameof(value), "Multi line style cannot be null");
 				}
-				this._style = value;
+
+				if (this.Document != null)
+				{
+					this._style = this.updateCollection(value, this.Document.MLineStyles);
+				}
+				else
+				{
+					this._style = value;
+				}
 			}
 		}
 

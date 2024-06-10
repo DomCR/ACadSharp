@@ -156,6 +156,9 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		/// <returns></returns>
 		long ReadRawLong();
+
+		ulong ReadRawULong();
+
 		/// <summary>
 		/// 2RD : 2 raw doubles
 		/// </summary>

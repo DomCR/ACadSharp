@@ -361,6 +361,32 @@ namespace ACadSharp.Classes
 				ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
 				WasZombie = false,
 			});
+
+			//AcDbRasterImage
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.RasterImage,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1014,
+				DxfName = DxfFileToken.EntityImage,
+				ItemClassId = 498,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.TransformAllowed | ProxyFlags.ColorChangeAllowed | ProxyFlags.LayerChangeAllowed | ProxyFlags.LinetypeChangeAllowed | ProxyFlags.LinetypeScaleChangeAllowed | ProxyFlags.VisibilityChangeAllowed | ProxyFlags.R13FormatProxy,
+			WasZombie = false,
+			});
+
+			//AcDbRasterImageDef
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.RasterImageDef,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1014,
+				DxfName = DxfFileToken.ObjectImageDefinition,
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.R13FormatProxy,
+				WasZombie = false,
+			});
 		}
 
 		/// <summary>

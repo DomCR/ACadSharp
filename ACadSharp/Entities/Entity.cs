@@ -90,7 +90,7 @@ namespace ACadSharp.Entities
 		private LineType _lineType = LineType.ByLayer;
 
 		/// <summary>
-		/// Default constructor
+		/// Default constructor.
 		/// </summary>
 		public Entity() : base() { }
 

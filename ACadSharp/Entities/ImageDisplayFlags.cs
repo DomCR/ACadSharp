@@ -20,7 +20,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Use clipping boundary
 		/// </summary>
-		UseClippingBoundary = 8,
+		UseClippingBoundary = 4,
 		/// <summary>
 		/// Transparency is on
 		/// </summary>

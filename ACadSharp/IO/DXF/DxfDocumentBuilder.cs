@@ -24,6 +24,8 @@ namespace ACadSharp.IO.DXF
 
 		public override void BuildDocument()
 		{
+			this.buildDictionaries();
+
 			this.RegisterTables();
 
 			this.BuildTables();

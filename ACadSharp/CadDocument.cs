@@ -114,6 +114,11 @@ namespace ACadSharp
 		public MLineStyleCollection MLineStyles { get; private set; }
 
 		/// <summary>
+		/// 
+		/// </summary>
+		public ImageDefinitionCollection ImageDefinitions { get; private set; }
+
+		/// <summary>
 		/// The collection of all Multi leader styles in the drawing. 
 		/// </summary>
 		/// <remarks>
@@ -320,9 +325,14 @@ namespace ACadSharp
 				this.MLineStyles = new MLineStyleCollection(mlineStyles);
 			}
 
-			if (this.updateCollection(CadDictionary.AcadMLineStyle, createDictionaries, out CadDictionary mleaderStyles))
+			if (this.updateCollection(CadDictionary.AcadMLeaderStyle, createDictionaries, out CadDictionary mleaderStyles))
 			{
 				this.MLeaderStyles = new MLeaderStyleCollection(mleaderStyles);
+			}
+
+			if (this.updateCollection(CadDictionary.AcadImageDict, createDictionaries, out CadDictionary imageDefinitions))
+			{
+				this.ImageDefinitions = new ImageDefinitionCollection(imageDefinitions);
 			}
 		}
 
@@ -334,7 +344,8 @@ namespace ACadSharp
 			}
 			else if (createDictionary)
 			{
-				this.RootDictionary.Add(new CadDictionary(dictName));
+				dictionary = new CadDictionary(dictName);
+				this.RootDictionary.Add(dictionary);
 			}
 
 			return dictionary != null;
@@ -350,10 +361,14 @@ namespace ACadSharp
 			if (cadObject.Handle == 0 || this._cadObjects.ContainsKey(cadObject.Handle))
 			{
 				var nextHandle = this._cadObjects.Keys.Max() + 1;
-
-				this.Header.HandleSeed = nextHandle + 1;
+				if (nextHandle < this.Header.HandleSeed)
+				{
+					nextHandle = this.Header.HandleSeed;
+				}
 
 				cadObject.Handle = nextHandle;
+
+				this.Header.HandleSeed = nextHandle + 1;
 			}
 
 			this._cadObjects.Add(cadObject.Handle, cadObject);
