@@ -1,4 +1,5 @@
 ﻿using ACadSharp.IO;
+using System.Diagnostics;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
@@ -63,6 +64,10 @@ namespace ACadSharp.Tests.IO
 
 			CadDocument doc = null;
 			string extension = Path.GetExtension(test);
+
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
+
 			if (extension == ".dxf")
 			{
 				doc = DxfReader.Read(test, this.onNotification);
@@ -71,6 +76,13 @@ namespace ACadSharp.Tests.IO
 			{
 				doc = DwgReader.Read(test, this.onNotification);
 			}
+
+			stopwatch.Stop();
+			this._output.WriteLine(stopwatch.Elapsed.TotalSeconds.ToString());
+
+			//Files tested have a size of ~100MB
+			//Cannot exceed 10 seconds
+			Assert.True(stopwatch.Elapsed.TotalSeconds < 10);
 		}
 	}
 }
