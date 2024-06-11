@@ -11,10 +11,13 @@ namespace ACadSharp.Tests.IO
 
 		public static TheoryData<string> UserDxfFiles { get; } = new TheoryData<string>();
 
+		public static TheoryData<string> StressFiles { get; } = new TheoryData<string>();
+
 		static LocalSampleTests()
 		{
 			loadSamples("user_files", "dwg", UserDwgFiles);
 			loadSamples("user_files", "dxf", UserDxfFiles);
+			loadSamples("stress", "*", StressFiles);
 		}
 
 		public LocalSampleTests(ITestOutputHelper output) : base(output)
@@ -48,6 +51,26 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DxfReader.Read(test, this.onNotification);
+		}
+
+
+		[Theory]
+		[MemberData(nameof(StressFiles))]
+		public void ReadStressFiles(string test)
+		{
+			if (string.IsNullOrEmpty(test))
+				return;
+
+			CadDocument doc = null;
+			string extension = Path.GetExtension(test);
+			if (extension == ".dxf")
+			{
+				doc = DxfReader.Read(test, this.onNotification);
+			}
+			else if (extension.Equals(".dwg", System.StringComparison.OrdinalIgnoreCase))
+			{
+				doc = DwgReader.Read(test, this.onNotification);
+			}
 		}
 	}
 }
