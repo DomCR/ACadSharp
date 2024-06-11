@@ -13,22 +13,7 @@ namespace ACadSharp.Examples
 
 		static void Main(string[] args)
 		{
-			Stopwatch stopwatch = new Stopwatch();
-			stopwatch.Start();
-
 			CadDocument doc;
-			using (DwgReader reader = new DwgReader("D:\\Albert DC\\Documents\\Visual Studio 2022\\Repos\\ACadSharp\\samples\\local\\stress\\stress_AC1032.dwg"))
-			{
-				reader.OnNotification += Common.NotificationHelper.LogConsoleNotification;
-				doc = reader.Read();
-			}
-
-			stopwatch.Stop();
-			var sec = stopwatch.ElapsedMilliseconds / 1000;
-			//9 seconds for 2.2.0
-			//12 seconds for 2.3.1
-			return;
-
 			using (DwgReader reader = new DwgReader(_file))
 			{
 				doc = reader.Read();
