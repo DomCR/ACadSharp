@@ -1,5 +1,7 @@
-﻿using ACadSharp.Examples.Common;
+﻿using ACadSharp.Entities;
+using ACadSharp.Examples.Common;
 using ACadSharp.IO;
+using System.Collections.Generic;
 
 namespace ACadSharp.Examples
 {
@@ -29,6 +31,24 @@ namespace ACadSharp.Examples
 				reader.OnNotification += NotificationHelper.LogConsoleNotification;
 				CadDocument doc = reader.Read();
 			}
+		}
+
+		/// <summary>
+		/// Read the entities section from a dxf file and add them to a <see cref="CadDocument"/>
+		/// </summary>
+		/// <param name="file"></param>
+		public static void ReadEntitiesFromDxf(string file)
+		{
+			CadDocument doc = new CadDocument();
+			List<Entity> entities = new List<Entity>();
+
+			using (DxfReader reader = new DxfReader(file))
+			{
+				reader.OnNotification += NotificationHelper.LogConsoleNotification;
+				entities = reader.ReadEntities();
+			}
+
+			doc.Entities.AddRange(entities);
 		}
 	}
 }
