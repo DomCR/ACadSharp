@@ -50,5 +50,18 @@ namespace ACadSharp.Examples
 
 			doc.Entities.AddRange(entities);
 		}
+
+		/// <summary>
+		/// Read the tables section from a dxf file.
+		/// </summary>
+		/// <param name="file"></param>
+		public static void ReadTablesFromDxf(string file)
+		{
+			using (DxfReader reader = new DxfReader(file))
+			{
+				reader.OnNotification += NotificationHelper.LogConsoleNotification;
+				CadDocument doc = reader.ReadTables();
+			}
+		}
 	}
 }
