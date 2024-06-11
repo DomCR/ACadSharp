@@ -215,19 +215,29 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Add a <see cref="NonGraphicalObject"/> to the collection, this method triggers <see cref="OnAdd"/>
 		/// </summary>
+		/// <param name="key"></param>
 		/// <param name="value"></param>
-		/// <exception cref="ArgumentException"></exception>
-		public void Add(NonGraphicalObject value)
+		public void Add(string key, NonGraphicalObject value)
 		{
-			if (string.IsNullOrEmpty(value.Name))
+			if (string.IsNullOrEmpty(key))
 			{
 				throw new ArgumentNullException(nameof(value), $"NonGraphicalObject [{this.GetType().FullName}] must have a name");
 			}
 
-			this._entries.Add(value.Name, value);
+			this._entries.Add(key, value);
 			value.Owner = this;
 
 			OnAdd?.Invoke(this, new CollectionChangedEventArgs(value));
+		}
+
+		/// <summary>
+		/// Add a <see cref="NonGraphicalObject"/> to the collection, this method triggers <see cref="OnAdd"/>
+		/// </summary>
+		/// <param name="value"></param>
+		/// <exception cref="ArgumentException"></exception>
+		public void Add(NonGraphicalObject value)
+		{
+			this.Add(value.Name, value);
 		}
 
 		/// <summary>

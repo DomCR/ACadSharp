@@ -33,15 +33,6 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test, this._dwgConfiguration, this.onNotification);
-
-			return;
-
-			string outPath = Path.Combine(Path.GetDirectoryName(test), $"{Path.GetFileNameWithoutExtension(test)}.out.dxf");
-			using (DxfWriter writer = new DxfWriter(outPath, doc, false))
-			{
-				//writer.OnNotification += onNotification;
-				writer.Write();
-			}
 		}
 
 		[Theory]
