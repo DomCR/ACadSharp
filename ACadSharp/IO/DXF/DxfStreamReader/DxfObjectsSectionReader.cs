@@ -66,8 +66,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<Layout>(new CadLayoutTemplate(), this.readLayout);
 				case DxfFileToken.ObjectDictionaryVar:
 					return this.readObjectCodes<DictionaryVariable>(new CadTemplate<DictionaryVariable>(new DictionaryVariable()), this.readObjectSubclassMap);
-				//case DxfFileToken.ObjectSortEntsTable:
-				//return this.readSortentsTable();
+				case DxfFileToken.ObjectSortEntsTable:
+					return this.readSortentsTable();
 				case DxfFileToken.ObjectScale:
 					return this.readObjectCodes<Scale>(new CadTemplate<Scale>(new Scale()), this.readScale);
 				case DxfFileToken.ObjectVisualStyle:

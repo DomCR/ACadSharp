@@ -71,7 +71,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		[Obsolete]
+		[Obsolete("Only needed for SortEntitiesTable but it should be removed")]
 		protected void readCommonObjectData(CadTemplate template)
 		{
 			while (this._reader.DxfCode != DxfCode.Subclass)
