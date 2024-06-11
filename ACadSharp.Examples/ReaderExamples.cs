@@ -45,7 +45,7 @@ namespace ACadSharp.Examples
 			using (DxfReader reader = new DxfReader(file))
 			{
 				reader.OnNotification += NotificationHelper.LogConsoleNotification;
-				entities = reader.ReadEntities();
+				//entities = reader.ReadEntities();
 			}
 
 			doc.Entities.AddRange(entities);
@@ -60,7 +60,7 @@ namespace ACadSharp.Examples
 			using (DxfReader reader = new DxfReader(file))
 			{
 				reader.OnNotification += NotificationHelper.LogConsoleNotification;
-				CadDocument doc = reader.ReadTables();
+				//CadDocument doc = reader.ReadTables();
 			}
 		}
 	}

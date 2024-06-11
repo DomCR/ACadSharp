@@ -2,6 +2,7 @@
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace ACadSharp.Examples
@@ -12,7 +13,22 @@ namespace ACadSharp.Examples
 
 		static void Main(string[] args)
 		{
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
+
 			CadDocument doc;
+			using (DxfReader reader = new DxfReader("D:\\Albert DC\\Documents\\Visual Studio 2022\\Repos\\ACadSharp\\samples\\local\\stress\\stress_AC1032.dxf"))
+			{
+				reader.OnNotification += Common.NotificationHelper.LogConsoleNotification;
+				doc = reader.Read();
+			}
+
+			stopwatch.Stop();
+			var sec = stopwatch.ElapsedMilliseconds / 1000;
+			//9 seconds for 2.2.0
+			//12 seconds for 2.3.1
+			return;
+
 			using (DwgReader reader = new DwgReader(_file))
 			{
 				doc = reader.Read();

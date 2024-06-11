@@ -121,6 +121,16 @@ namespace ACadSharp.IO
 			return false;
 		}
 
+		public T GetObjectTemplate<T>(ulong handle) where T : CadTemplate
+		{
+			if (this.templates.TryGetValue(handle, out CadTemplate template))
+			{
+				return (T)template;
+			}
+
+			return null;
+		}
+
 		public bool TryGetTableEntry<T>(string name, out T entry)
 			where T : TableEntry
 		{
@@ -134,19 +144,9 @@ namespace ACadSharp.IO
 			return entry != null;
 		}
 
-		public T GetObjectTemplate<T>(ulong handle) where T : CadTemplate
-		{
-			if (this.templates.TryGetValue(handle, out CadTemplate builder))
-			{
-				return (T)builder;
-			}
-
-			return null;
-		}
-
 		public bool TryGetObjectTemplate<T>(ulong? handle, out T value) where T : CadTemplate
 		{
-			if (!handle.HasValue)
+			if (!handle.HasValue || handle == 0)
 			{
 				value = null;
 				return false;
