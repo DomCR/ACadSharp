@@ -68,7 +68,8 @@ namespace ACadSharp.Tests.Internal
 
 			foreach (Entity item in document.Entities)
 			{
-				var e = builder.GetCadObject(item.Handle);
+				builder.TryGetCadObject(item.Handle, out Entity e);
+
 				Assert.NotNull(e);
 
 				switch (item)

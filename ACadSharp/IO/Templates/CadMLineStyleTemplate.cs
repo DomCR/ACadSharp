@@ -7,7 +7,7 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadMLineStyleTemplate : CadTemplate<MLineStyle>
 	{
-		public class ElementTemplate : ICadObjectTemplate
+		public class ElementTemplate
 		{
 			public ulong? LinetypeHandle { get; set; }
 			public int? LinetypeIndex { get; set; }

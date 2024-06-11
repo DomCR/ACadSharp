@@ -269,9 +269,8 @@ namespace ACadSharp.IO.DWG
 			//Read the handle
 			ulong value = this._handlesReader.HandleReference(handle);
 
-			if (!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
-				!this._handles.Contains(value) &&
-				value != 0 &&
+			if (value != 0 &&
+				!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
 				!this._readedObjects.ContainsKey(value))
 			{
 				//Add the value to the handles queue to be processed
