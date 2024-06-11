@@ -124,7 +124,13 @@ namespace ACadSharp.IO
 		public bool TryGetTableEntry<T>(string name, out T entry)
 			where T : TableEntry
 		{
-			entry = cadObjects.Values.OfType<T>().FirstOrDefault(e => e.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+			if (string.IsNullOrEmpty(name))
+			{
+				entry = null;
+				return false;
+			}
+
+			entry = this.cadObjects.Values.OfType<T>().FirstOrDefault(e => e.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
 			return entry != null;
 		}
 
