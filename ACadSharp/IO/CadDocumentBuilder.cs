@@ -36,8 +36,9 @@ namespace ACadSharp.IO
 
 		public Dictionary<string, LineType> LineTypes { get; } = new Dictionary<string, LineType>(StringComparer.OrdinalIgnoreCase);
 
-		// Stores all the templates to build the document, some of the elements can be null due a missing implementation
-		protected Dictionary<ulong, CadTemplate> templates = new Dictionary<ulong, CadTemplate>();
+		protected Dictionary<ulong, CadTemplate> cadObjectsTemplates = new Dictionary<ulong, CadTemplate>();
+
+		protected Dictionary<ulong, ICadObjectTemplate> templatesMap = new Dictionary<ulong, ICadObjectTemplate>();
 
 		protected Dictionary<ulong, CadObject> cadObjects = new Dictionary<ulong, CadObject>();
 
@@ -52,30 +53,28 @@ namespace ACadSharp.IO
 
 		public virtual void BuildDocument()
 		{
-			foreach (CadTemplate template in this.templates.Values)
+			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
 			{
 				template.Build(this);
 			}
 		}
 
+		public void AddTemplate(CadTemplate template)
+		{
+			this.cadObjectsTemplates[template.CadObject.Handle] = template;
+			this.addToMap(template);
+		}
+
 		public void AddTableTemplate(ICadTableTemplate tableTemplate)
 		{
 			this.tableTemplates[tableTemplate.CadObject.Handle] = tableTemplate;
-			this.cadObjects[tableTemplate.CadObject.Handle] = tableTemplate.CadObject;
+			this.addToMap(tableTemplate);
 		}
 
-		public void AddTemplate(CadTemplate template)
+		public void AddDictionaryTemplate(ICadDictionaryTemplate dictionaryTemplate)
 		{
-			this.templates[template.CadObject.Handle] = template;
-			this.cadObjects[template.CadObject.Handle] = template.CadObject;
-		}
-
-		public CadObject GetCadObject(ulong handle)
-		{
-			if (this.templates.TryGetValue(handle, out CadTemplate template))
-				return template?.CadObject;
-			else
-				return null;
+			this.dictionaryTemplates[dictionaryTemplate.CadObject.Handle] = dictionaryTemplate;
+			this.addToMap(dictionaryTemplate);
 		}
 
 		public T GetCadObject<T>(ulong? handle) where T : CadObject
@@ -123,7 +122,7 @@ namespace ACadSharp.IO
 
 		public T GetObjectTemplate<T>(ulong handle) where T : CadTemplate
 		{
-			if (this.templates.TryGetValue(handle, out CadTemplate template))
+			if (this.templatesMap.TryGetValue(handle, out ICadObjectTemplate template))
 			{
 				return (T)template;
 			}
@@ -152,7 +151,7 @@ namespace ACadSharp.IO
 				return false;
 			}
 
-			if (this.templates.TryGetValue(handle.Value, out CadTemplate template))
+			if (this.templatesMap.TryGetValue(handle.Value, out ICadObjectTemplate template))
 			{
 				if (template is T)
 				{
@@ -209,12 +208,6 @@ namespace ACadSharp.IO
 			}
 		}
 
-		public void AddDictionaryTemplate(ICadDictionaryTemplate dictionaryTemplate)
-		{
-			this.dictionaryTemplates[dictionaryTemplate.CadObject.Handle] = dictionaryTemplate;
-			this.cadObjects[dictionaryTemplate.CadObject.Handle] = dictionaryTemplate.CadObject;
-		}
-
 		protected void buildDictionaries()
 		{
 			foreach (ICadDictionaryTemplate dictionaryTemplate in dictionaryTemplates.Values)
@@ -223,6 +216,12 @@ namespace ACadSharp.IO
 			}
 
 			this.DocumentToBuild.UpdateCollections(true);
+		}
+
+		private void addToMap(ICadObjectTemplate template)
+		{
+			this.templatesMap.Add(template.CadObject.Handle, template);
+			this.cadObjects.Add(template.CadObject.Handle, template.CadObject);
 		}
 	}
 }

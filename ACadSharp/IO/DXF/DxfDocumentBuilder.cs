@@ -31,7 +31,7 @@ namespace ACadSharp.IO.DXF
 			this.BuildTables();
 
 			//Assign the owners for the different objects
-			foreach (CadTemplate template in this.templates.Values)
+			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
 			{
 				this.assignOwner(template);
 			}
@@ -48,7 +48,7 @@ namespace ACadSharp.IO.DXF
 		{
 			var entities = new List<Entity>();
 
-			foreach (CadEntityTemplate item in this.templates.Values.OfType<CadEntityTemplate>())
+			foreach (CadEntityTemplate item in this.cadObjectsTemplates.Values.OfType<CadEntityTemplate>())
 			{
 				item.Build(this);
 
