@@ -46,7 +46,7 @@ namespace ACadSharp.IO.Templates
 					}
 					catch (System.Exception ex)
 					{
-						builder.Notify("", NotificationType.Error, ex);
+						builder.Notify($"Error when trying to add the entry {entry.Name} to {this.CadObject.Name}|{this.CadObject.Handle}", NotificationType.Error, ex);
 					}
 				}
 			}

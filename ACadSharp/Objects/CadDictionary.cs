@@ -215,7 +215,7 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Add a <see cref="NonGraphicalObject"/> to the collection, this method triggers <see cref="OnAdd"/>
 		/// </summary>
-		/// <param name="key"></param>
+		/// <param name="key">key for the entry in the dictionary</param>
 		/// <param name="value"></param>
 		public void Add(string key, NonGraphicalObject value)
 		{
@@ -233,7 +233,7 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Add a <see cref="NonGraphicalObject"/> to the collection, this method triggers <see cref="OnAdd"/>
 		/// </summary>
-		/// <param name="value"></param>
+		/// <param name="value">the name of the NonGraphicalObject will be used as a key for the dictionary</param>
 		/// <exception cref="ArgumentException"></exception>
 		public void Add(NonGraphicalObject value)
 		{
