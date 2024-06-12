@@ -85,5 +85,16 @@ namespace ACadSharp.Blocks
 
 			return clone;
 		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			BoundingBox box = new BoundingBox();
+			foreach (var item in this.BlockOwner.Entities)
+			{
+				box = box.Merge(item.GetBoundingBox());
+			}
+
+			return box;
+		}
 	}
 }

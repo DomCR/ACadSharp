@@ -74,8 +74,14 @@ namespace ACadSharp.Entities
 		public double EndParameter { get; set; } = Math.PI * 2;
 
 		/// <summary>
-		/// Default constructor
+		/// Default constructor.
 		/// </summary>
 		public Ellipse() : base() { }
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

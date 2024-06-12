@@ -213,6 +213,7 @@ namespace ACadSharp.Entities
 			this._flags |= DimensionType.BlockReference;
 		}
 
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			Dimension clone = (Dimension)base.Clone();

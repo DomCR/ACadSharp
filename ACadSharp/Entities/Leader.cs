@@ -184,5 +184,10 @@ namespace ACadSharp.Entities
 			clone.Style = (DimensionStyle)(this.Style?.Clone());
 			return clone;
 		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

@@ -1,6 +1,6 @@
-﻿using ACadSharp.Blocks;
-using ACadSharp.Entities;
+﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
+using CSMath;
 
 namespace ACadSharp.IO.Templates
 {
@@ -42,6 +42,11 @@ namespace ACadSharp.IO.Templates
 			public override double Measurement { get; }
 
 			public DimensionPlaceholder() : base(DimensionType.Linear) { }
+
+			public override BoundingBox GetBoundingBox()
+			{
+				throw new System.InvalidOperationException();
+			}
 		}
 
 		public void SetDimensionFlags(DimensionType flags)

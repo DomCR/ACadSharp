@@ -54,6 +54,15 @@ namespace ACadSharp.Entities
 
 		protected DimensionAligned(DimensionType type) : base(type) { }
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public DimensionAligned() : base(DimensionType.Aligned) { }
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox(this.FirstPoint, this.SecondPoint);
+		}
 	}
 }

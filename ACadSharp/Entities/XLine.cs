@@ -36,5 +36,13 @@ namespace ACadSharp.Entities
 		public XYZ Direction { get; set; }
 
 		public XLine() : base() { }
+
+		/// <remarks>
+		/// XLine cannot have a defined Bounding box.
+		/// </remarks>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox();
+		}
 	}
 }

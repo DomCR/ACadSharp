@@ -8,12 +8,45 @@ namespace ACadSharp
 		/// <summary>
 		/// Factor for converting radians to degrees.
 		/// </summary>
-		public const double RadToDeg = (180 / Math.PI);
+		public const double RadToDegFactor = (180 / Math.PI);
 
 		/// <summary>
 		/// Factor for converting degrees to radians.
 		/// </summary>
-		public const double DegToRad = (Math.PI / 180);
+		public const double DegToRadFactor = (Math.PI / 180);
+
+		public const double Epsilon = 1e-12;
+
+		/// <summary>
+		/// Checks if a number is close to zero.
+		/// </summary>
+		/// <param name="number">Double precision number.</param>
+		/// <returns>True if its close to one or false in any other case.</returns>
+		public static bool IsZero(double number)
+		{
+			return IsZero(number, Epsilon);
+		}
+
+		/// <summary>
+		/// Checks if a number is close to zero.
+		/// </summary>
+		/// <param name="number">Double precision number.</param>
+		/// <param name="threshold">Tolerance.</param>
+		/// <returns>True if its close to one or false in any other case.</returns>
+		public static bool IsZero(double number, double threshold)
+		{
+			return number >= -threshold && number <= threshold;
+		}
+
+		public static double RadToDeg(double value)
+		{
+			return value * RadToDegFactor;
+		}
+
+		public static double DegToRad(double value)
+		{
+			return value * DegToRadFactor;
+		}
 
 		public static XY GetCenter(XY start, XY end, double bulge)
 		{

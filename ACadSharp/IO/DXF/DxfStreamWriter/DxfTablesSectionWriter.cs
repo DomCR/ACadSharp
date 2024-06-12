@@ -276,7 +276,7 @@ namespace ACadSharp.IO.DXF
 					}
 
 					this._writer.Write(46, s.Scale);
-					this._writer.Write(50, s.Rotation * MathUtils.DegToRad);
+					this._writer.Write(50, s.Rotation * MathUtils.DegToRadFactor);
 					this._writer.Write(44, s.Offset.X);
 					this._writer.Write(45, s.Offset.Y);
 					this._writer.Write(9, s.Text);

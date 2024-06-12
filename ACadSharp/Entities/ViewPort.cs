@@ -286,8 +286,7 @@ namespace ACadSharp.Entities
 
 		//Soft pointer reference to viewport object (for layer VP property override)
 
-		public Viewport() : base() { }
-
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			Viewport clone = (Viewport)base.Clone();
@@ -295,6 +294,12 @@ namespace ACadSharp.Entities
 			clone.VisualStyle = (VisualStyle)this.VisualStyle?.Clone();
 
 			return clone;
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox();
 		}
 	}
 }

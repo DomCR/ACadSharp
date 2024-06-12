@@ -107,5 +107,10 @@ namespace ACadSharp.Entities
 		internal KnotParameterization KnotParameterization { get; set; }
 
 		public Spline() : base() { }
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

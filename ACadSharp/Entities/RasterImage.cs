@@ -29,14 +29,5 @@ namespace ACadSharp.Entities
 		{
 			this.Definition = definition;
 		}
-
-		/// <summary>
-		/// Set the image definition
-		/// </summary>
-		/// <param name="definition"></param>
-		public void SetImageDefinition(ImageDefinition definition)
-		{
-			this.Definition = definition;
-		}
 	}
 }

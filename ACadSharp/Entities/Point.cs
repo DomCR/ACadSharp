@@ -63,5 +63,11 @@ namespace ACadSharp.Entities
 		{
 			this.Location = location;
 		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox();
+		}
 	}
 }
