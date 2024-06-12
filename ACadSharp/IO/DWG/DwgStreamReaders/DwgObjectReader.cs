@@ -171,18 +171,7 @@ namespace ACadSharp.IO.DWG
 				if (template == null)
 					continue;
 
-				if (template is ICadTableTemplate tableTemplate)
-				{
-					this._builder.AddTableTemplate(tableTemplate);
-				}
-				else if (template is ICadDictionaryTemplate dictionaryTemplate)
-				{
-					this._builder.AddDictionaryTemplate(dictionaryTemplate);
-				}
-				else
-				{
-					this._builder.AddTemplate(template);
-				}
+				this._builder.AddTemplate(template);
 			}
 		}
 

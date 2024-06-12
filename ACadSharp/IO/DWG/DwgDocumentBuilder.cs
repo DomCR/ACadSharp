@@ -10,7 +10,7 @@ namespace ACadSharp.IO.DWG
 
 		public DwgHeaderHandlesCollection HeaderHandles { get; set; } = new();
 
-		public List<CadBlockRecordTemplate> BlockRecordTemplates { get; set; } = new List<CadBlockRecordTemplate>();
+		public List<CadBlockRecordTemplate> BlockRecordTemplates { get; set; } = new();
 
 		public List<UnknownEntity> UnknownEntities { get; } = new();
 

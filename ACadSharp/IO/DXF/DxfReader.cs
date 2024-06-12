@@ -117,10 +117,11 @@ namespace ACadSharp.IO
 		public override CadDocument Read()
 		{
 			this._document = new CadDocument(false);
+
+			this._reader = this._reader ?? this.getReader(out ACadVersion version);
+
 			this._builder = new DxfDocumentBuilder(this._document, this.Configuration);
 			this._builder.OnNotification += this.onNotificationEvent;
-
-			this._reader = this._reader ?? this.getReader();
 
 			while (this._reader.ValueAsString != DxfFileToken.EndOfFile)
 			{
@@ -184,7 +185,7 @@ namespace ACadSharp.IO
 				//Get the current header variable
 				string currVar = this._reader.ValueAsString;
 
-				if (this._reader.ValueAsString == null || !headerMap.TryGetValue(currVar, out var data))
+				if (this._reader.ValueAsString == null || !headerMap.TryGetValue(currVar, out CadSystemVariable data))
 				{
 #if TEST
 					this.triggerNotification($"Header variable not implemented {currVar}", NotificationType.NotImplemented);
@@ -197,6 +198,34 @@ namespace ACadSharp.IO
 				for (int i = 0; i < data.DxfCodes.Length; i++)
 				{
 					this._reader.ReadNext();
+
+					if (this._reader.DxfCode == DxfCode.CLShapeText)
+					{
+						//Irregular dxf files may not follow the header type
+						int c = data.DxfCodes[i];
+						GroupCodeValueType g = GroupCodeValue.TransformValue(c);
+						switch (g)
+						{
+							case GroupCodeValueType.Bool:
+								parameters[i] = false;
+								break;
+							case GroupCodeValueType.Byte:
+							case GroupCodeValueType.Int16:
+							case GroupCodeValueType.Int32:
+							case GroupCodeValueType.Int64:
+							case GroupCodeValueType.Double:
+							case GroupCodeValueType.Point3D:
+								parameters[i] = 0;
+								break;
+							case GroupCodeValueType.None:
+							case GroupCodeValueType.String:
+							default:
+								parameters[i] = default;
+								break;
+						}
+
+						break;
+					}
 
 					parameters[i] = this._reader.Value;
 				}
@@ -211,7 +240,10 @@ namespace ACadSharp.IO
 					this.triggerNotification($"Invalid value for header variable {currVar} | {parameters.FirstOrDefault()}", NotificationType.Warning, ex);
 				}
 
-				this._reader.ReadNext();
+				if (this._reader.DxfCode != DxfCode.CLShapeText)
+				{
+					this._reader.ReadNext();
+				}
 			}
 
 			return header;
@@ -226,10 +258,10 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		public CadDocument ReadTables()
 		{
+			this._reader = this._reader ?? this.getReader(out ACadVersion version);
+
 			this._builder = new DxfDocumentBuilder(this._document, this.Configuration);
 			this._builder.OnNotification += this.onNotificationEvent;
-
-			this._reader = this._reader ?? this.getReader();
 
 			this.readTables();
 
@@ -251,10 +283,10 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		public List<Entity> ReadEntities()
 		{
+			this._reader = this._reader ?? this.getReader(out ACadVersion version);
+
 			this._builder = new DxfDocumentBuilder(this._document, this.Configuration);
 			this._builder.OnNotification += this.onNotificationEvent;
-
-			this._reader = this._reader ?? this.getReader();
 
 			this.readEntities();
 
@@ -412,9 +444,10 @@ namespace ACadSharp.IO
 			throw new NotImplementedException();
 		}
 
-		private IDxfStreamReader getReader()
+		private IDxfStreamReader getReader(out ACadVersion version)
 		{
 			IDxfStreamReader tmpReader = null;
+			version = ACadVersion.Unknown;
 
 			bool isBinary = this.IsBinary();
 			if (isBinary)
@@ -433,7 +466,7 @@ namespace ACadSharp.IO
 				if (tmpReader.ValueAsString == "$ACADVER")
 				{
 					tmpReader.ReadNext();
-					var version = CadUtils.GetVersionFromName(tmpReader.ValueAsString);
+					version = CadUtils.GetVersionFromName(tmpReader.ValueAsString);
 					if (version >= ACadVersion.AC1021)
 					{
 						this._encoding = Encoding.UTF8;
@@ -444,11 +477,11 @@ namespace ACadSharp.IO
 					{
 						if (version == ACadVersion.Unknown)
 						{
-							throw new DwgNotSupportedException();
+							throw new CadNotSupportedException();
 						}
 						else
 						{
-							throw new DwgNotSupportedException(version);
+							throw new CadNotSupportedException(version);
 						}
 					}
 				}
@@ -479,7 +512,7 @@ namespace ACadSharp.IO
 		private IDxfStreamReader goToSection(string sectionName)
 		{
 			//Get the needed handler
-			this._reader = this._reader ?? this.getReader();
+			this._reader = this._reader ?? this.getReader(out _);
 
 			if (this._reader.ValueAsString == sectionName)
 				return this._reader;

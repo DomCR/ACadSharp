@@ -755,8 +755,6 @@ namespace ACadSharp.IO.DXF
 			{
 				this.createDefaultTable(new VPortsTable());
 			}
-
-			//this._builder.RegisterTables();
 		}
 
 		private void createDefaultTable<T>(Table<T> table)
