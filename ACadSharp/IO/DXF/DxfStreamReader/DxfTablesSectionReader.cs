@@ -166,7 +166,7 @@ namespace ACadSharp.IO.DXF
 			template.EDataTemplateByAppName = edata;
 
 			//Add the object and the template to the builder
-			this._builder.AddTableTemplate((ICadTableTemplate)template);
+			this._builder.AddTemplate(template);
 		}
 
 		private void readEntries<T>(CadTableTemplate<T> tableTemplate)

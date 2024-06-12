@@ -43,15 +43,15 @@ namespace ACadSharp.IO.Templates
 				{
 					case 0:
 						//Get the linetype by layer
-						this.CadObject.LineType = builder.LineTypes["ByLayer"];
+						this.CadObject.LineType = builder.LineTypesTable["ByLayer"];
 						break;
 					case 1:
 						//Get the linetype by block
-						this.CadObject.LineType = builder.LineTypes["ByBlock"];
+						this.CadObject.LineType = builder.LineTypesTable["ByBlock"];
 						break;
 					case 2:
 						//Get the linetype by continuous
-						this.CadObject.LineType = builder.LineTypes["Continuous"];
+						this.CadObject.LineType = builder.LineTypesTable["Continuous"];
 						break;
 					case 3:
 						this.applyLineType(builder);
@@ -65,10 +65,7 @@ namespace ACadSharp.IO.Templates
 
 			if (this.ColorHandle.HasValue)
 			{
-				var dwgColor = builder.GetCadObject<DwgColorTemplate.DwgColor>(this.ColorHandle.Value);
-
-				if (dwgColor != null)
-					this.CadObject.Color = dwgColor.Color;
+				//TODO: Set the color by handle
 			}
 			else
 			{

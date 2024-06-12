@@ -36,6 +36,7 @@ namespace ACadSharp.IO
 
 		protected ulong maxHandle = 0;
 
+		[Obsolete]
 		public Dictionary<string, LineType> LineTypes { get; } = new Dictionary<string, LineType>(StringComparer.OrdinalIgnoreCase);
 
 		protected Dictionary<ulong, CadTemplate> cadObjectsTemplates = new();
@@ -87,23 +88,6 @@ namespace ACadSharp.IO
 					this.cadObjectsTemplates.Add(template.CadObject.Handle, template);
 					break;
 			}
-
-			//this.addToMap(template);
-			//this.cadObjectsTemplates.Add(template.CadObject.Handle, template);
-		}
-
-		[Obsolete]
-		public void AddTableTemplate(ICadTableTemplate tableTemplate)
-		{
-			this.addToMap(tableTemplate);
-			this.tableTemplates[tableTemplate.CadObject.Handle] = tableTemplate;
-		}
-
-		[Obsolete]
-		public void AddDictionaryTemplate(ICadDictionaryTemplate dictionaryTemplate)
-		{
-			this.addToMap(dictionaryTemplate);
-			this.dictionaryTemplates[dictionaryTemplate.CadObject.Handle] = dictionaryTemplate;
 		}
 
 		[Obsolete]
@@ -169,8 +153,51 @@ namespace ACadSharp.IO
 				return false;
 			}
 
-			entry = this.tableEntryTemplates.Values.OfType<T>().FirstOrDefault(e => e.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
-			return entry != null;
+			Table<T> table = null;
+			if (typeof(T) == typeof(AppId))
+			{
+				table = this.AppIds as Table<T>;
+			}
+			else if (typeof(T) == typeof(Layer))
+			{
+				table = this.Layers as Table<T>;
+			}
+			else if (typeof(T) == typeof(LineType))
+			{
+				table = this.LineTypesTable as Table<T>;
+			}
+			else if (typeof(T) == typeof(UCS))
+			{
+				table = this.UCSs as Table<T>;
+			}
+			else if (typeof(T) == typeof(View))
+			{
+				table = this.Views as Table<T>;
+			}
+			else if (typeof(T) == typeof(DimensionStyle))
+			{
+				table = this.DimensionStyles as Table<T>;
+			}
+			else if (typeof(T) == typeof(TextStyle))
+			{
+				table = this.TextStyles as Table<T>;
+			}
+			else if (typeof(T) == typeof(VPortsTable))
+			{
+				table = this.VPorts as Table<T>;
+			}
+			else if (typeof(T) == typeof(BlockRecord))
+			{
+				table = this.BlockRecords as Table<T>;
+			}
+
+			if (table == null)
+			{
+				entry = null;
+				return false;
+			}
+
+			return table.TryGetValue(name, out entry);
 		}
 
 		public bool TryGetObjectTemplate<T>(ulong? handle, out T value) where T : CadTemplate
