@@ -36,31 +36,25 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.Layer = layer;
 			}
 
-			//Handle the line type for this entity
-			if (this.LtypeFlags.HasValue)
+			switch (this.LtypeFlags)
 			{
-				switch (this.LtypeFlags)
-				{
-					case 0:
-						//Get the linetype by layer
-						this.CadObject.LineType = builder.LineTypesTable["ByLayer"];
-						break;
-					case 1:
-						//Get the linetype by block
-						this.CadObject.LineType = builder.LineTypesTable["ByBlock"];
-						break;
-					case 2:
-						//Get the linetype by continuous
-						this.CadObject.LineType = builder.LineTypesTable["Continuous"];
-						break;
-					case 3:
-						this.applyLineType(builder);
-						break;
-				}
+				case 0:
+					//Get the linetype by layer
+					this.LineTypeName = "ByLayer";
+					break;
+				case 1:
+					//Get the linetype by block
+					this.LineTypeName = "ByBlock";
+					break;
+				case 2:
+					//Get the linetype by continuous
+					this.LineTypeName = "Continuous";
+					break;
 			}
-			else
+
+			if (this.getTableReference<LineType>(builder, this.LineTypeHandle, this.LineTypeName, out LineType ltype))
 			{
-				this.applyLineType(builder);
+				this.CadObject.LineType = ltype;
 			}
 
 			if (this.ColorHandle.HasValue)
