@@ -3855,8 +3855,6 @@ namespace ACadSharp.IO.DWG
 				template.SegmentTemplates[i].StyleHandle = this.handleReference();
 			}
 
-			this._builder.LineTypes.Add(ltype.Name, ltype);
-
 			return template;
 		}
 
@@ -4714,7 +4712,7 @@ namespace ACadSharp.IO.DWG
 				if (this.R2018Plus)
 				{
 					//Line type handle H Line type handle (hard pointer)
-					elementTemplate.LinetypeHandle = this.handleReference();
+					elementTemplate.LineTypeHandle = this.handleReference();
 				}
 				//Before R2018:
 				else

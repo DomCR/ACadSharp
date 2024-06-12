@@ -40,15 +40,15 @@ namespace ACadSharp.IO.Templates
 			{
 				case 0:
 					//Get the linetype by layer
-					this.LineTypeName = "ByLayer";
+					this.LineTypeName = LineType.ByLayerName;
 					break;
 				case 1:
 					//Get the linetype by block
-					this.LineTypeName = "ByBlock";
+					this.LineTypeName = LineType.ByBlockName;
 					break;
 				case 2:
 					//Get the linetype by continuous
-					this.LineTypeName = "Continuous";
+					this.LineTypeName = LineType.ContinuousName;
 					break;
 			}
 
@@ -77,14 +77,6 @@ namespace ACadSharp.IO.Templates
 			if (!string.IsNullOrEmpty(this.LineTypeName))
 			{
 				this.CadObject.LineType = new LineType(this.LineTypeName);
-			}
-		}
-
-		private void applyLineType(CadDocumentBuilder builder)
-		{
-			if (this.getTableReference<LineType>(builder, this.LineTypeHandle, this.LineTypeName, out LineType ltype))
-			{
-				this.CadObject.LineType = ltype;
 			}
 		}
 	}

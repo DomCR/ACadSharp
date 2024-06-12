@@ -36,9 +36,6 @@ namespace ACadSharp.IO
 
 		protected ulong maxHandle = 0;
 
-		[Obsolete]
-		public Dictionary<string, LineType> LineTypes { get; } = new Dictionary<string, LineType>(StringComparer.OrdinalIgnoreCase);
-
 		protected Dictionary<ulong, CadTemplate> cadObjectsTemplates = new();
 
 		protected Dictionary<ulong, ICadObjectTemplate> templatesMap = new();
