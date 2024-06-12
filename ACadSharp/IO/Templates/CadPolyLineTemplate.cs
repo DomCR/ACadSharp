@@ -44,7 +44,14 @@ namespace ACadSharp.IO.Templates
 				{
 					foreach (var handle in this.VertexHandles)
 					{
-						polyLine.Vertices.Add(builder.GetCadObject<Vertex>(handle));
+						if (builder.TryGetCadObject<Vertex>(handle, out Vertex v))
+						{
+							polyLine.Vertices.Add(v);
+						}
+						else
+						{
+							builder.Notify($"Vertex {handle} not found for polyline {this.CadObject.Handle}", NotificationType.Warning);
+						}
 					}
 				}
 			}

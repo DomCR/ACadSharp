@@ -55,7 +55,7 @@ namespace ACadSharp.IO
 
 		public virtual void BuildDocument()
 		{
-			foreach (CadTemplate template in this.tableEntryTemplates.Values)
+			foreach (ICadTableEntryTemplate template in this.tableEntryTemplates.Values)
 			{
 				template.Build(this);
 			}
@@ -85,23 +85,6 @@ namespace ACadSharp.IO
 					this.cadObjectsTemplates.Add(template.CadObject.Handle, template);
 					break;
 			}
-		}
-
-		[Obsolete]
-		public T GetCadObject<T>(ulong? handle) where T : CadObject
-		{
-			if (!handle.HasValue)
-			{
-				return null;
-			}
-
-			if (this.cadObjects.TryGetValue(handle.Value, out CadObject co))
-			{
-				if (co is T)
-					return (T)co;
-			}
-
-			return null;
 		}
 
 		public bool TryGetCadObject<T>(ulong? handle, out T value) where T : CadObject
