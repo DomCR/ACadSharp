@@ -43,11 +43,6 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DxfReader.Read(test, this.onNotification);
-
-			using (DxfReader reader = new DxfReader(test, this.onNotification))
-			{
-				var a = reader.ReadEntities();
-			}
 		}
 
 

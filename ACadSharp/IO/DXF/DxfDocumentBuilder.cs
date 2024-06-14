@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
+using ACadSharp.Tables;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,6 +26,16 @@ namespace ACadSharp.IO.DXF
 		{
 			this.buildDictionaries();
 
+			if (this.ModelSpaceTemplate == null)
+			{
+				BlockRecord record = BlockRecord.ModelSpace;
+				this.BlockRecords.Add(record);
+				this.ModelSpaceTemplate = new CadBlockRecordTemplate(record);
+				this.AddTemplate(this.ModelSpaceTemplate);
+			}
+
+			this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(this.ModelSpaceEntities);
+			
 			this.RegisterTables();
 
 			this.BuildTables();
@@ -33,11 +44,6 @@ namespace ACadSharp.IO.DXF
 			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
 			{
 				this.assignOwner(template);
-			}
-
-			if (this.ModelSpaceTemplate != null)
-			{
-				this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(ModelSpaceEntities);
 			}
 
 			base.BuildDocument();
