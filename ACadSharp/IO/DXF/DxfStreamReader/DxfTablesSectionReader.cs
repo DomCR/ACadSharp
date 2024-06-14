@@ -41,8 +41,6 @@ namespace ACadSharp.IO.DXF
 				else
 					throw new DxfException($"Unexpected token at the end of a table: {this._reader.ValueAsString}", this._reader.Position);
 			}
-
-			this.validateTables();
 		}
 
 		private void readTable()
@@ -221,7 +219,8 @@ namespace ACadSharp.IO.DXF
 						break;
 				}
 
-				tableTemplate.EntryHandles.Add(template.CadObject.Handle);
+				//tableTemplate.EntryHandles.Add(template.CadObject.Handle);
+				tableTemplate.CadObject.Add((T)template.CadObject);
 
 				//Add the object and the template to the builder
 				this._builder.AddTemplate(template);
