@@ -581,7 +581,7 @@ namespace ACadSharp.IO.DXF
 			else
 			{
 				template = new CadPolyLineTemplate();
-				this.readEntityCodes<Entity>(new CadPolyLineTemplate(), this.readPolyline);
+				this.readEntityCodes<Entity>(template, this.readPolyline);
 			}
 
 			if (template.CadObject is CadPolyLineTemplate.PolyLinePlaceholder)
