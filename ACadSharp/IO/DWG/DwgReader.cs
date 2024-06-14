@@ -102,11 +102,12 @@ namespace ACadSharp.IO
 		public override CadDocument Read()
 		{
 			this._document = new CadDocument(false);
-			this._builder = new DwgDocumentBuilder(this._document, this.Configuration);
-			this._builder.OnNotification += this.onNotificationEvent;
 
 			//Read the file header
 			this._fileHeader = this.readFileHeader();
+
+			this._builder = new DwgDocumentBuilder(this._fileHeader.AcadVersion, this._document, this.Configuration);
+			this._builder.OnNotification += this.onNotificationEvent;
 
 			this._document.SummaryInfo = this.ReadSummaryInfo();
 			this._document.Header = this.ReadHeader();

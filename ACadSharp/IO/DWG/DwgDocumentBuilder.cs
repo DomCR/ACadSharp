@@ -20,8 +20,8 @@ namespace ACadSharp.IO.DWG
 
 		public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
 
-		public DwgDocumentBuilder(CadDocument document, DwgReaderConfiguration configuration)
-			: base(document)
+		public DwgDocumentBuilder(ACadVersion version, CadDocument document, DwgReaderConfiguration configuration)
+			: base(version, document)
 		{
 			this.Configuration = configuration;
 		}

@@ -4,13 +4,14 @@ using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ACadSharp.IO
 {
 	internal abstract class CadDocumentBuilder
 	{
 		public event NotificationEventHandler OnNotification;
+
+		public ACadVersion Version { get; }
 
 		public CadDocument DocumentToBuild { get; }
 
@@ -48,8 +49,9 @@ namespace ACadSharp.IO
 
 		protected Dictionary<ulong, ICadDictionaryTemplate> dictionaryTemplates = new();
 
-		public CadDocumentBuilder(CadDocument document)
+		public CadDocumentBuilder(ACadVersion version, CadDocument document)
 		{
+			this.Version = version;
 			this.DocumentToBuild = document;
 		}
 
