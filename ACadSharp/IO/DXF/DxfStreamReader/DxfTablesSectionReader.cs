@@ -219,7 +219,8 @@ namespace ACadSharp.IO.DXF
 						break;
 				}
 
-				tableTemplate.EntryHandles.Add(template.CadObject.Handle);
+				//tableTemplate.EntryHandles.Add(template.CadObject.Handle);
+				tableTemplate.CadObject.Add((T)template.CadObject);
 
 				//Add the object and the template to the builder
 				this._builder.AddTemplate(template);

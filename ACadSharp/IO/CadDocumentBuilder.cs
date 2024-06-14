@@ -129,6 +129,7 @@ namespace ACadSharp.IO
 		public bool TryGetTableEntry<T>(string name, out T entry)
 			where T : TableEntry
 		{
+			//Only to be used when the tables are build
 			if (string.IsNullOrEmpty(name))
 			{
 				entry = null;
