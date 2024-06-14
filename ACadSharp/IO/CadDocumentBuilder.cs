@@ -4,7 +4,6 @@ using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ACadSharp.IO
 {
@@ -12,47 +11,57 @@ namespace ACadSharp.IO
 	{
 		public event NotificationEventHandler OnNotification;
 
+		public ACadVersion Version { get; }
+
 		public CadDocument DocumentToBuild { get; }
 
-		public AppIdsTable AppIds { get; set; }
+		public AppIdsTable AppIds { get; set; } = new AppIdsTable();
 
-		public BlockRecordsTable BlockRecords { get; set; }
+		public BlockRecordsTable BlockRecords { get; set; } = new BlockRecordsTable();
 
-		public DimensionStylesTable DimensionStyles { get; set; }
+		public DimensionStylesTable DimensionStyles { get; set; } = new DimensionStylesTable();
 
-		public LayersTable Layers { get; set; }
+		public LayersTable Layers { get; set; } = new LayersTable();
 
-		public LineTypesTable LineTypesTable { get; set; }
+		public LineTypesTable LineTypesTable { get; set; } = new LineTypesTable();
 
-		public TextStylesTable TextStyles { get; set; }
+		public TextStylesTable TextStyles { get; set; } = new TextStylesTable();
 
-		public UCSTable UCSs { get; set; }
+		public UCSTable UCSs { get; set; } = new UCSTable();
 
-		public ViewsTable Views { get; set; }
+		public ViewsTable Views { get; set; } = new ViewsTable();
 
-		public VPortsTable VPorts { get; set; }
+		public VPortsTable VPorts { get; set; } = new VPortsTable();
 
 		public abstract bool KeepUnknownEntities { get; }
 
-		public Dictionary<string, LineType> LineTypes { get; } = new Dictionary<string, LineType>(StringComparer.OrdinalIgnoreCase);
+		protected ulong maxHandle = 0;
 
-		protected Dictionary<ulong, CadTemplate> cadObjectsTemplates = new Dictionary<ulong, CadTemplate>();
+		protected Dictionary<ulong, CadTemplate> cadObjectsTemplates = new();
 
-		protected Dictionary<ulong, ICadObjectTemplate> templatesMap = new Dictionary<ulong, ICadObjectTemplate>();
+		protected Dictionary<ulong, ICadObjectTemplate> templatesMap = new();
 
-		protected Dictionary<ulong, CadObject> cadObjects = new Dictionary<ulong, CadObject>();
+		protected Dictionary<ulong, CadObject> cadObjects = new();
 
-		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new Dictionary<ulong, ICadTableTemplate>();
+		protected Dictionary<ulong, ICadTableEntryTemplate> tableEntryTemplates = new();
+
+		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new();
 
 		protected Dictionary<ulong, ICadDictionaryTemplate> dictionaryTemplates = new();
 
-		public CadDocumentBuilder(CadDocument document)
+		public CadDocumentBuilder(ACadVersion version, CadDocument document)
 		{
+			this.Version = version;
 			this.DocumentToBuild = document;
 		}
 
 		public virtual void BuildDocument()
 		{
+			foreach (ICadTableEntryTemplate template in this.tableEntryTemplates.Values)
+			{
+				template.Build(this);
+			}
+
 			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
 			{
 				template.Build(this);
@@ -61,36 +70,23 @@ namespace ACadSharp.IO
 
 		public void AddTemplate(CadTemplate template)
 		{
-			this.cadObjectsTemplates[template.CadObject.Handle] = template;
 			this.addToMap(template);
-		}
 
-		public void AddTableTemplate(ICadTableTemplate tableTemplate)
-		{
-			this.tableTemplates[tableTemplate.CadObject.Handle] = tableTemplate;
-			this.addToMap(tableTemplate);
-		}
-
-		public void AddDictionaryTemplate(ICadDictionaryTemplate dictionaryTemplate)
-		{
-			this.dictionaryTemplates[dictionaryTemplate.CadObject.Handle] = dictionaryTemplate;
-			this.addToMap(dictionaryTemplate);
-		}
-
-		public T GetCadObject<T>(ulong? handle) where T : CadObject
-		{
-			if (!handle.HasValue)
+			switch (template)
 			{
-				return null;
+				case ICadDictionaryTemplate dictionaryTemplate:
+					this.dictionaryTemplates.Add(dictionaryTemplate.CadObject.Handle, dictionaryTemplate);
+					break;
+				case ICadTableTemplate tableTemplate:
+					this.tableTemplates.Add(tableTemplate.CadObject.Handle, tableTemplate);
+					break;
+				case ICadTableEntryTemplate tableEntryTemplate:
+					this.tableEntryTemplates.Add(tableEntryTemplate.CadObject.Handle, tableEntryTemplate);
+					break;
+				default:
+					this.cadObjectsTemplates.Add(template.CadObject.Handle, template);
+					break;
 			}
-
-			if (this.cadObjects.TryGetValue(handle.Value, out CadObject co))
-			{
-				if (co is T)
-					return (T)co;
-			}
-
-			return null;
 		}
 
 		public bool TryGetCadObject<T>(ulong? handle, out T value) where T : CadObject
@@ -139,8 +135,51 @@ namespace ACadSharp.IO
 				return false;
 			}
 
-			entry = this.cadObjects.Values.OfType<T>().FirstOrDefault(e => e.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
-			return entry != null;
+			Table<T> table = null;
+			if (typeof(T) == typeof(AppId))
+			{
+				table = this.AppIds as Table<T>;
+			}
+			else if (typeof(T) == typeof(Layer))
+			{
+				table = this.Layers as Table<T>;
+			}
+			else if (typeof(T) == typeof(LineType))
+			{
+				table = this.LineTypesTable as Table<T>;
+			}
+			else if (typeof(T) == typeof(UCS))
+			{
+				table = this.UCSs as Table<T>;
+			}
+			else if (typeof(T) == typeof(View))
+			{
+				table = this.Views as Table<T>;
+			}
+			else if (typeof(T) == typeof(DimensionStyle))
+			{
+				table = this.DimensionStyles as Table<T>;
+			}
+			else if (typeof(T) == typeof(TextStyle))
+			{
+				table = this.TextStyles as Table<T>;
+			}
+			else if (typeof(T) == typeof(VPortsTable))
+			{
+				table = this.VPorts as Table<T>;
+			}
+			else if (typeof(T) == typeof(BlockRecord))
+			{
+				table = this.BlockRecords as Table<T>;
+			}
+
+			if (table == null)
+			{
+				entry = null;
+				return false;
+			}
+
+			return table.TryGetValue(name, out entry);
 		}
 
 		public bool TryGetObjectTemplate<T>(ulong? handle, out T value) where T : CadTemplate
@@ -208,6 +247,20 @@ namespace ACadSharp.IO
 			}
 		}
 
+		protected void registerTable<T, R>(T table)
+			where T : Table<R>
+			where R : TableEntry
+		{
+			if (table == null)
+			{
+				this.DocumentToBuild.RegisterCollection((T)Activator.CreateInstance(typeof(T)));
+			}
+			else
+			{
+				this.DocumentToBuild.RegisterCollection(table);
+			}
+		}
+
 		protected void buildDictionaries()
 		{
 			foreach (ICadDictionaryTemplate dictionaryTemplate in dictionaryTemplates.Values)
@@ -220,6 +273,16 @@ namespace ACadSharp.IO
 
 		private void addToMap(ICadObjectTemplate template)
 		{
+			if (template.CadObject.Handle == 0)
+			{
+				template.CadObject.Handle = this.maxHandle + 1;
+			}
+
+			if (template.CadObject.Handle > this.maxHandle)
+			{
+				this.maxHandle = template.CadObject.Handle;
+			}
+
 			this.templatesMap.Add(template.CadObject.Handle, template);
 			this.cadObjects.Add(template.CadObject.Handle, template.CadObject);
 		}

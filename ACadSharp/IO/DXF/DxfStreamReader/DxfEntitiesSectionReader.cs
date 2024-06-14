@@ -38,13 +38,13 @@ namespace ACadSharp.IO.DXF
 				if (template == null)
 					continue;
 
+				//Add the object and the template to the builder
+				this._builder.AddTemplate(template);
+
 				if (template.OwnerHandle == null)
 				{
 					this._builder.ModelSpaceEntities.Add(template.CadObject.Handle);
 				}
-
-				//Add the object and the template to the builder
-				this._builder.AddTemplate(template);
 			}
 		}
 	}
