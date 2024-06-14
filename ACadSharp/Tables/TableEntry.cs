@@ -15,7 +15,7 @@ namespace ACadSharp.Tables
 		/// Specifies the name of the object
 		/// </summary>
 		[DxfCodeValue(2)]
-		public string Name
+		public virtual string Name
 		{
 			get { return this.name; }
 			set

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace ACadSharp.IO.DXF
 {
-	internal abstract class DxfReaderBase : IDxfStreamReader
+	internal abstract class DxfStreamReaderBase : IDxfStreamReader
 	{
 		public DxfCode DxfCode { get; protected set; }
 
@@ -48,7 +48,7 @@ namespace ACadSharp.IO.DXF
 
 		public byte[] ValueAsBinaryChunk { get { return this.Value as byte[]; } }
 
-		protected abstract Stream _baseStream { get; }
+		protected abstract Stream baseStream { get; }
 
 		public virtual void ReadNext()
 		{
@@ -78,7 +78,7 @@ namespace ACadSharp.IO.DXF
 			this.DxfCode = DxfCode.Invalid;
 			this.Value = string.Empty;
 
-			this._baseStream.Position = 0;
+			this.baseStream.Position = 0;
 
 			this.Position = 0;
 		}
@@ -113,6 +113,7 @@ namespace ACadSharp.IO.DXF
 				case GroupCodeValueType.Double:
 				case GroupCodeValueType.ExtendedDataDouble:
 					return this.lineAsDouble();
+				case GroupCodeValueType.Byte:
 				case GroupCodeValueType.Int16:
 				case GroupCodeValueType.ExtendedDataInt16:
 					return this.lineAsShort();

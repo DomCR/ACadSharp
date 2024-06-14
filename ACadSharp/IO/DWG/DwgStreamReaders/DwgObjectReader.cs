@@ -171,18 +171,7 @@ namespace ACadSharp.IO.DWG
 				if (template == null)
 					continue;
 
-				if (template is ICadTableTemplate tableTemplate)
-				{
-					this._builder.AddTableTemplate(tableTemplate);
-				}
-				else if (template is ICadDictionaryTemplate dictionaryTemplate)
-				{
-					this._builder.AddDictionaryTemplate(dictionaryTemplate);
-				}
-				else
-				{
-					this._builder.AddTemplate(template);
-				}
+				this._builder.AddTemplate(template);
 			}
 		}
 
@@ -269,9 +258,8 @@ namespace ACadSharp.IO.DWG
 			//Read the handle
 			ulong value = this._handlesReader.HandleReference(handle);
 
-			if (!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
-				!this._handles.Contains(value) &&
-				value != 0 &&
+			if (value != 0 &&
+				!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
 				!this._readedObjects.ContainsKey(value))
 			{
 				//Add the value to the handles queue to be processed
@@ -3867,8 +3855,6 @@ namespace ACadSharp.IO.DWG
 				template.SegmentTemplates[i].StyleHandle = this.handleReference();
 			}
 
-			this._builder.LineTypes.Add(ltype.Name, ltype);
-
 			return template;
 		}
 
@@ -4726,7 +4712,7 @@ namespace ACadSharp.IO.DWG
 				if (this.R2018Plus)
 				{
 					//Line type handle H Line type handle (hard pointer)
-					elementTemplate.LinetypeHandle = this.handleReference();
+					elementTemplate.LineTypeHandle = this.handleReference();
 				}
 				//Before R2018:
 				else
@@ -5130,6 +5116,9 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
+			//parenthandle (soft pointer)
+			template.BlockOwnerHandle = this.handleReference();
+
 			//Common:
 			//Numentries BL number of entries
 			int numentries = this._mergedReaders.ReadBitLong();
@@ -5146,9 +5135,6 @@ namespace ACadSharp.IO.DWG
 
 				template.Values.Add((sortHandle, entityHandle));
 			}
-
-			//owner handle (soft pointer)
-			template.BlockOwnerHandle = this.handleReference();
 
 			return template;
 		}
@@ -5267,7 +5253,7 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Numdatabytes BL number of databytes
-			long offset = this._objectReader.ReadBitLong();
+			long offset = this._objectReader.ReadBitLong() + this._objectReader.Position;
 
 			//Databytes X databytes, however many there are to the handles
 			while (this._objectReader.Position < offset)
@@ -5286,9 +5272,8 @@ namespace ACadSharp.IO.DWG
 
 				switch (groupCode)
 				{
-					case GroupCodeValueType.None:
-						break;
 					case GroupCodeValueType.String:
+					case GroupCodeValueType.ExtendedDataString:
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadTextUnicode()));
 						break;
 					case GroupCodeValueType.Point3D:
@@ -5300,16 +5285,22 @@ namespace ACadSharp.IO.DWG
 								)));
 						break;
 					case GroupCodeValueType.Double:
+					case GroupCodeValueType.ExtendedDataDouble:
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadDouble()));
 						break;
+					case GroupCodeValueType.Byte:
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadByte()));
+						break;
 					case GroupCodeValueType.Int16:
+					case GroupCodeValueType.ExtendedDataInt16:
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadShort()));
 						break;
 					case GroupCodeValueType.Int32:
+					case GroupCodeValueType.ExtendedDataInt32:
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawLong()));
 						break;
 					case GroupCodeValueType.Int64:
-						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawLong()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawULong()));
 						break;
 					case GroupCodeValueType.Handle:
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadTextUnicode()));
@@ -5318,9 +5309,15 @@ namespace ACadSharp.IO.DWG
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadByte() > 0));
 						break;
 					case GroupCodeValueType.Chunk:
+					case GroupCodeValueType.ExtendedDataChunk:
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadBytes(this._objectReader.ReadByte())));
 						break;
+					case GroupCodeValueType.ObjectId:
+					case GroupCodeValueType.ExtendedDataHandle:
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawULong()));
+						break;
 					default:
+						this.notify($"Unedintified GroupCodeValueType {code} for XRecord [{xRecord.Handle}]", NotificationType.Warning);
 						break;
 				}
 			}
