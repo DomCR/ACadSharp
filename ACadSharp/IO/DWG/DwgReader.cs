@@ -102,11 +102,12 @@ namespace ACadSharp.IO
 		public override CadDocument Read()
 		{
 			this._document = new CadDocument(false);
-			this._builder = new DwgDocumentBuilder(this._document, this.Configuration);
-			this._builder.OnNotification += this.onNotificationEvent;
 
 			//Read the file header
 			this._fileHeader = this.readFileHeader();
+
+			this._builder = new DwgDocumentBuilder(this._fileHeader.AcadVersion, this._document, this.Configuration);
+			this._builder.OnNotification += this.onNotificationEvent;
 
 			this._document.SummaryInfo = this.ReadSummaryInfo();
 			this._document.Header = this.ReadHeader();
@@ -249,7 +250,7 @@ namespace ACadSharp.IO
 			switch (fileHeader.AcadVersion)
 			{
 				case ACadVersion.Unknown:
-					throw new DwgNotSupportedException();
+					throw new CadNotSupportedException();
 				case ACadVersion.MC0_0:
 				case ACadVersion.AC1_2:
 				case ACadVersion.AC1_4:
@@ -260,7 +261,7 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1004:
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
-					throw new DwgNotSupportedException(this._fileHeader.AcadVersion);
+					throw new CadNotSupportedException(this._fileHeader.AcadVersion);
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
@@ -990,7 +991,7 @@ namespace ACadSharp.IO
 			switch (this._fileHeader.AcadVersion)
 			{
 				case ACadVersion.Unknown:
-					throw new DwgNotSupportedException();
+					throw new CadNotSupportedException();
 				case ACadVersion.MC0_0:
 				case ACadVersion.AC1_2:
 				case ACadVersion.AC1_4:
@@ -1001,7 +1002,7 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1004:
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
-					throw new DwgNotSupportedException(this._fileHeader.AcadVersion);
+					throw new CadNotSupportedException(this._fileHeader.AcadVersion);
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:

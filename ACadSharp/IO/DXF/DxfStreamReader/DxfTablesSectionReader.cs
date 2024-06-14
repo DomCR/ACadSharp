@@ -41,8 +41,6 @@ namespace ACadSharp.IO.DXF
 				else
 					throw new DxfException($"Unexpected token at the end of a table: {this._reader.ValueAsString}", this._reader.Position);
 			}
-
-			this.validateTables();
 		}
 
 		private void readTable()
@@ -166,7 +164,7 @@ namespace ACadSharp.IO.DXF
 			template.EDataTemplateByAppName = edata;
 
 			//Add the object and the template to the builder
-			this._builder.AddTableTemplate((ICadTableTemplate)template);
+			this._builder.AddTemplate(template);
 		}
 
 		private void readEntries<T>(CadTableTemplate<T> tableTemplate)
@@ -713,61 +711,6 @@ namespace ACadSharp.IO.DXF
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map);
 			}
-		}
-
-		private void validateTables()
-		{
-			if (this._builder.AppIds == null)
-			{
-				this.createDefaultTable(new AppIdsTable());
-			}
-
-			if (this._builder.BlockRecords == null)
-			{
-				this.createDefaultTable(new BlockRecordsTable());
-			}
-
-			if (this._builder.DimensionStyles == null)
-			{
-				this.createDefaultTable(new DimensionStylesTable());
-			}
-
-			if (this._builder.Layers == null)
-			{
-				this.createDefaultTable(new LayersTable());
-			}
-
-			if (this._builder.LineTypesTable == null)
-			{
-				this.createDefaultTable(new LineTypesTable());
-			}
-
-			if (this._builder.UCSs == null)
-			{
-				this.createDefaultTable(new UCSTable());
-			}
-
-			if (this._builder.Views == null)
-			{
-				this.createDefaultTable(new ViewsTable());
-			}
-
-			if (this._builder.VPorts == null)
-			{
-				this.createDefaultTable(new VPortsTable());
-			}
-
-			//this._builder.RegisterTables();
-		}
-
-		private void createDefaultTable<T>(Table<T> table)
-			where T : TableEntry
-		{
-			//TODO: Validate tables in the document
-			this._builder.Notify($"Table [{table.GetType().FullName}] not found in document", NotificationType.Warning);
-
-			//this._builder.DocumentToBuild.RegisterCollection(table);
-			//table.CreateDefaultEntries();
 		}
 	}
 }
