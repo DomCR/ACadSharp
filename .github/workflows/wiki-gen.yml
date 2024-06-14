@@ -1,0 +1,24 @@
+name: Wiki genrator
+
+on:
+  push:
+    branches: [ master ]
+  pull_request: # Remove on merge
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    steps:
+
+    - name: Checkout
+      run: git config --global core.autocrlf true
+    - uses: actions/checkout@v2
+      with: 
+        submodules: true
+    - name: Update Wiki
+      run: ./update-wiki.sh
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ github.token }}

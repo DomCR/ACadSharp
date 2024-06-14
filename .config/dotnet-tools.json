@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "netdocgen.runner": {
+      "version": "0.0.1",
+      "commands": [
+        "netdocgen"
+      ]
+    }
+  }
+}
