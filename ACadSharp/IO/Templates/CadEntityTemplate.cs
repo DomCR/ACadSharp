@@ -36,30 +36,39 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.Layer = layer;
 			}
 
-			switch (this.LtypeFlags)
+			//Handle the line type for this entity
+			if (this.LtypeFlags.HasValue)
 			{
-				case 0:
-					//Get the linetype by layer
-					this.LineTypeName = LineType.ByLayerName;
-					break;
-				case 1:
-					//Get the linetype by block
-					this.LineTypeName = LineType.ByBlockName;
-					break;
-				case 2:
-					//Get the linetype by continuous
-					this.LineTypeName = LineType.ContinuousName;
-					break;
+				switch (this.LtypeFlags)
+				{
+					case 0:
+						//Get the linetype by layer
+						this.CadObject.LineType = builder.LineTypes["ByLayer"];
+						break;
+					case 1:
+						//Get the linetype by block
+						this.CadObject.LineType = builder.LineTypes["ByBlock"];
+						break;
+					case 2:
+						//Get the linetype by continuous
+						this.CadObject.LineType = builder.LineTypes["Continuous"];
+						break;
+					case 3:
+						this.applyLineType(builder);
+						break;
+				}
 			}
-
-			if (this.getTableReference<LineType>(builder, this.LineTypeHandle, this.LineTypeName, out LineType ltype))
+			else
 			{
-				this.CadObject.LineType = ltype;
+				this.applyLineType(builder);
 			}
 
 			if (this.ColorHandle.HasValue)
 			{
-				//TODO: Set the color by handle
+				var dwgColor = builder.GetCadObject<DwgColorTemplate.DwgColor>(this.ColorHandle.Value);
+
+				if (dwgColor != null)
+					this.CadObject.Color = dwgColor.Color;
 			}
 			else
 			{
@@ -77,6 +86,14 @@ namespace ACadSharp.IO.Templates
 			if (!string.IsNullOrEmpty(this.LineTypeName))
 			{
 				this.CadObject.LineType = new LineType(this.LineTypeName);
+			}
+		}
+
+		private void applyLineType(CadDocumentBuilder builder)
+		{
+			if (this.getTableReference<LineType>(builder, this.LineTypeHandle, this.LineTypeName, out LineType ltype))
+			{
+				this.CadObject.LineType = ltype;
 			}
 		}
 	}

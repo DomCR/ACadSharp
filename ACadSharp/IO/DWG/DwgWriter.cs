@@ -128,7 +128,7 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
 				case ACadVersion.AC1012:
-					throw new CadNotSupportedException(this._document.Header.Version);
+					throw new DwgNotSupportedException(this._document.Header.Version);
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
 					this._fileHeaderWriter = new DwgFileHeaderWriterAC15(_stream, encoding, _document);
@@ -137,7 +137,7 @@ namespace ACadSharp.IO
 					this._fileHeaderWriter = new DwgFileHeaderWriterAC18(_stream, encoding, _document);
 					break;
 				case ACadVersion.AC1021:
-					throw new CadNotSupportedException(this._document.Header.Version);
+					throw new DwgNotSupportedException(this._document.Header.Version);
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
@@ -145,7 +145,7 @@ namespace ACadSharp.IO
 					break;
 				case ACadVersion.Unknown:
 				default:
-					throw new CadNotSupportedException();
+					throw new DwgNotSupportedException();
 			}
 		}
 

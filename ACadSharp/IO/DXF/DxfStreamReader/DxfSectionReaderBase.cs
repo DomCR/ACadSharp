@@ -173,7 +173,16 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityPoint:
 					return this.readEntityCodes<Point>(new CadEntityTemplate<Point>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityPolyline:
-					return this.readPolyline();
+					var template = this.readEntityCodes<Entity>(new CadPolyLineTemplate(), this.readPolyline);
+					if (template.CadObject is CadPolyLineTemplate.PolyLinePlaceholder)
+					{
+						this._builder.Notify($"[{DxfFileToken.EntityPolyline}] Subclass not found, entity discarded", NotificationType.Warning);
+						return null;
+					}
+					else
+					{
+						return template;
+					}
 				case DxfFileToken.EntityRay:
 					return this.readEntityCodes<Ray>(new CadEntityTemplate<Ray>(), this.readEntitySubclassMap);
 				case DxfFileToken.EndSequence:
@@ -544,53 +553,6 @@ namespace ACadSharp.IO.DXF
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
-		}
-
-		private CadEntityTemplate readPolyline()
-		{
-			CadPolyLineTemplate template = null;
-
-			if (this._builder.Version == ACadVersion.Unknown)
-			{
-				var polyline = new Polyline2D();
-				template = new CadPolyLineTemplate(polyline);
-				this.readEntityCodes<Polyline2D>(template, this.readPolyline);
-
-				while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EntityVertex)
-				{
-					Vertex2D v = new Vertex2D();
-					CadVertexTemplate vertexTemplate = new CadVertexTemplate(v);
-					this.readEntityCodes<Vertex2D>(vertexTemplate, this.readVertex);
-
-					this._builder.AddTemplate(vertexTemplate);
-
-					template.VertexHandles.Add(v.Handle);
-				}
-
-				while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EndSequence)
-				{
-					var seqend = new Seqend();
-					var seqendTemplate = new CadEntityTemplate<Seqend>(seqend);
-					this.readEntityCodes<Seqend>(seqendTemplate, this.readEntitySubclassMap);
-
-					this._builder.AddTemplate(seqendTemplate);
-
-					template.SeqendHandle = seqend.Handle;
-				}
-			}
-			else
-			{
-				template = new CadPolyLineTemplate();
-				this.readEntityCodes<Entity>(template, this.readPolyline);
-			}
-
-			if (template.CadObject is CadPolyLineTemplate.PolyLinePlaceholder)
-			{
-				this._builder.Notify($"[{DxfFileToken.EntityPolyline}] Subclass not found, entity discarded", NotificationType.Warning);
-				return null;
-			}
-
-			return template;
 		}
 
 		private bool readPolyline(CadEntityTemplate template, DxfMap map, string subclass = null)

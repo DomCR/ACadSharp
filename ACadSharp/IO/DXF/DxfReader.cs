@@ -18,7 +18,6 @@ namespace ACadSharp.IO
 	{
 		public DxfReaderConfiguration Configuration { get; set; } = new DxfReaderConfiguration();
 
-		private ACadVersion _version;
 		private DxfDocumentBuilder _builder;
 		private IDxfStreamReader _reader;
 
@@ -118,11 +117,10 @@ namespace ACadSharp.IO
 		public override CadDocument Read()
 		{
 			this._document = new CadDocument(false);
+			this._builder = new DxfDocumentBuilder(this._document, this.Configuration);
+			this._builder.OnNotification += this.onNotificationEvent;
 
 			this._reader = this._reader ?? this.getReader();
-
-			this._builder = new DxfDocumentBuilder(this._version,this._document, this.Configuration);
-			this._builder.OnNotification += this.onNotificationEvent;
 
 			while (this._reader.ValueAsString != DxfFileToken.EndOfFile)
 			{
@@ -186,7 +184,7 @@ namespace ACadSharp.IO
 				//Get the current header variable
 				string currVar = this._reader.ValueAsString;
 
-				if (this._reader.ValueAsString == null || !headerMap.TryGetValue(currVar, out CadSystemVariable data))
+				if (this._reader.ValueAsString == null || !headerMap.TryGetValue(currVar, out var data))
 				{
 #if TEST
 					this.triggerNotification($"Header variable not implemented {currVar}", NotificationType.NotImplemented);
@@ -199,34 +197,6 @@ namespace ACadSharp.IO
 				for (int i = 0; i < data.DxfCodes.Length; i++)
 				{
 					this._reader.ReadNext();
-
-					if (this._reader.DxfCode == DxfCode.CLShapeText)
-					{
-						//Irregular dxf files may not follow the header type
-						int c = data.DxfCodes[i];
-						GroupCodeValueType g = GroupCodeValue.TransformValue(c);
-						switch (g)
-						{
-							case GroupCodeValueType.Bool:
-								parameters[i] = false;
-								break;
-							case GroupCodeValueType.Byte:
-							case GroupCodeValueType.Int16:
-							case GroupCodeValueType.Int32:
-							case GroupCodeValueType.Int64:
-							case GroupCodeValueType.Double:
-							case GroupCodeValueType.Point3D:
-								parameters[i] = 0;
-								break;
-							case GroupCodeValueType.None:
-							case GroupCodeValueType.String:
-							default:
-								parameters[i] = default;
-								break;
-						}
-
-						break;
-					}
 
 					parameters[i] = this._reader.Value;
 				}
@@ -241,10 +211,7 @@ namespace ACadSharp.IO
 					this.triggerNotification($"Invalid value for header variable {currVar} | {parameters.FirstOrDefault()}", NotificationType.Warning, ex);
 				}
 
-				if (this._reader.DxfCode != DxfCode.CLShapeText)
-				{
-					this._reader.ReadNext();
-				}
+				this._reader.ReadNext();
 			}
 
 			return header;
@@ -259,10 +226,10 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		public CadDocument ReadTables()
 		{
-			this._reader = this._reader ?? this.getReader();
-
-			this._builder = new DxfDocumentBuilder(this._version, this._document, this.Configuration);
+			this._builder = new DxfDocumentBuilder(this._document, this.Configuration);
 			this._builder.OnNotification += this.onNotificationEvent;
+
+			this._reader = this._reader ?? this.getReader();
 
 			this.readTables();
 
@@ -284,10 +251,10 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		public List<Entity> ReadEntities()
 		{
-			this._reader = this._reader ?? this.getReader();
-
-			this._builder = new DxfDocumentBuilder(this._version, this._document, this.Configuration);
+			this._builder = new DxfDocumentBuilder(this._document, this.Configuration);
 			this._builder.OnNotification += this.onNotificationEvent;
+
+			this._reader = this._reader ?? this.getReader();
 
 			this.readEntities();
 
@@ -448,7 +415,6 @@ namespace ACadSharp.IO
 		private IDxfStreamReader getReader()
 		{
 			IDxfStreamReader tmpReader = null;
-			this._version = ACadVersion.Unknown;
 
 			bool isBinary = this.IsBinary();
 			if (isBinary)
@@ -467,22 +433,22 @@ namespace ACadSharp.IO
 				if (tmpReader.ValueAsString == "$ACADVER")
 				{
 					tmpReader.ReadNext();
-					this._version = CadUtils.GetVersionFromName(tmpReader.ValueAsString);
-					if (this._version >= ACadVersion.AC1021)
+					var version = CadUtils.GetVersionFromName(tmpReader.ValueAsString);
+					if (version >= ACadVersion.AC1021)
 					{
 						this._encoding = Encoding.UTF8;
 						break;
 					}
 
-					if (this._version < ACadVersion.AC1012)
+					if (version < ACadVersion.AC1012)
 					{
-						if (this._version == ACadVersion.Unknown)
+						if (version == ACadVersion.Unknown)
 						{
-							throw new CadNotSupportedException();
+							throw new DwgNotSupportedException();
 						}
 						else
 						{
-							throw new CadNotSupportedException(this._version);
+							throw new DwgNotSupportedException(version);
 						}
 					}
 				}
