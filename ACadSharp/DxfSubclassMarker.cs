@@ -80,6 +80,7 @@
 		public const string Layout = "AcDbLayout";
 		public const string PlotSettings = "AcDbPlotSettings";
 		public const string DictionaryVariables = "DictionaryVariables";
+		public const string ACadTable = "AcDbTable";
 		public const string Scale = "AcDbScale";
 	}
 }
