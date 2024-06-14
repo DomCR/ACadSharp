@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Entities;
-using CSMath;
 using System;
 using System.Collections.Generic;
 
@@ -45,14 +44,7 @@ namespace ACadSharp.IO.Templates
 				{
 					foreach (var handle in this.VertexHandles)
 					{
-						if (builder.TryGetCadObject<Vertex>(handle, out Vertex v))
-						{
-							polyLine.Vertices.Add(v);
-						}
-						else
-						{
-							builder.Notify($"Vertex {handle} not found for polyline {this.CadObject.Handle}", NotificationType.Warning);
-						}
+						polyLine.Vertices.Add(builder.GetCadObject<Vertex>(handle));
 					}
 				}
 			}

@@ -17,7 +17,7 @@ namespace ACadSharp.IO.DXF
 
 		public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
 
-		public DxfDocumentBuilder(ACadVersion version, CadDocument document, DxfReaderConfiguration configuration) : base(version, document)
+		public DxfDocumentBuilder(CadDocument document, DxfReaderConfiguration configuration) : base(document)
 		{
 			this.Configuration = configuration;
 		}
@@ -26,16 +26,6 @@ namespace ACadSharp.IO.DXF
 		{
 			this.buildDictionaries();
 
-			if (this.ModelSpaceTemplate == null)
-			{
-				BlockRecord record = BlockRecord.ModelSpace;
-				this.BlockRecords.Add(record);
-				this.ModelSpaceTemplate = new CadBlockRecordTemplate(record);
-				this.AddTemplate(this.ModelSpaceTemplate);
-			}
-
-			this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(this.ModelSpaceEntities);
-			
 			this.RegisterTables();
 
 			this.BuildTables();
@@ -44,6 +34,11 @@ namespace ACadSharp.IO.DXF
 			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
 			{
 				this.assignOwner(template);
+			}
+
+			if (this.ModelSpaceTemplate != null)
+			{
+				this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(ModelSpaceEntities);
 			}
 
 			base.BuildDocument();
@@ -58,12 +53,7 @@ namespace ACadSharp.IO.DXF
 				item.Build(this);
 
 				item.SetUnlinkedReferences();
-			}
 
-			foreach (var item in this.cadObjectsTemplates.Values
-				.OfType<CadEntityTemplate>()
-				.Where(o => o.CadObject.Owner == null))
-			{
 				entities.Add(item.CadObject);
 			}
 

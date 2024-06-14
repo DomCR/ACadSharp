@@ -9,10 +9,7 @@ namespace ACadSharp.IO.Templates
 	{
 		public class ElementTemplate
 		{
-			public ulong? LineTypeHandle { get; set; }
-
-			public ulong? LineTypeName { get; set; }
-
+			public ulong? LinetypeHandle { get; set; }
 			public int? LinetypeIndex { get; set; }
 
 			public MLineStyle.Element Element { get; set; }
@@ -24,32 +21,26 @@ namespace ACadSharp.IO.Templates
 
 			public void Build(CadDocumentBuilder builder)
 			{
-				if (builder.TryGetCadObject(this.LineTypeHandle, out LineType lt))
+				if (this.LinetypeHandle.HasValue)
 				{
-					this.Element.LineType = lt;
+					this.Element.LineType = builder.GetCadObject<LineType>(this.LinetypeHandle.Value);
 				}
 				else if (this.LinetypeIndex.HasValue)
 				{
 					if (this.LinetypeIndex == short.MaxValue)
 					{
-						if (builder.TryGetTableEntry<LineType>(LineType.ByLayerName, out LineType bylayer))
-						{
-							this.Element.LineType = bylayer;
-						}
+						this.Element.LineType = builder.LineTypes[LineType.ByLayerName];
 					}
 					else if (this.LinetypeIndex == (short.MaxValue - 1))
 					{
-						if (builder.TryGetTableEntry<LineType>(LineType.ByBlockName, out LineType byblock))
-						{
-							this.Element.LineType = byblock;
-						}
+						this.Element.LineType = builder.LineTypes[LineType.ByBlockName];
 					}
 					else
 					{
 						try
 						{
 							//It can be assigned but is not checked
-							this.Element.LineType = builder.LineTypesTable.ElementAt(this.LinetypeIndex.Value);
+							this.Element.LineType = builder.LineTypes.ElementAt(this.LinetypeIndex.Value).Value;
 						}
 						catch (System.Exception ex)
 						{

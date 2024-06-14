@@ -29,7 +29,7 @@ namespace ACadSharp.Tests.IO.DWG
 				}
 				else
 				{
-					Assert.Throws<CadNotSupportedException>(() => wr.Write());
+					Assert.Throws<DwgNotSupportedException>(() => wr.Write());
 					return;
 				}
 			}
@@ -60,7 +60,7 @@ namespace ACadSharp.Tests.IO.DWG
 				}
 				else
 				{
-					Assert.Throws<CadNotSupportedException>(() => wr.Write());
+					Assert.Throws<DwgNotSupportedException>(() => wr.Write());
 					return;
 				}
 			}
@@ -99,7 +99,7 @@ namespace ACadSharp.Tests.IO.DWG
 				}
 				else
 				{
-					Assert.Throws<CadNotSupportedException>(() => wr.Write());
+					Assert.Throws<DwgNotSupportedException>(() => wr.Write());
 					return;
 				}
 			}
@@ -135,7 +135,7 @@ namespace ACadSharp.Tests.IO.DWG
 				}
 				else
 				{
-					Assert.Throws<CadNotSupportedException>(() => wr.Write());
+					Assert.Throws<DwgNotSupportedException>(() => wr.Write());
 					return;
 				}
 			}
