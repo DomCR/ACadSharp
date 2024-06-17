@@ -18,7 +18,6 @@ namespace ACadSharp.IO.DWG
 			{
 				case UnknownEntity:
 				case AttributeEntity:
-				case Solid3D:
 				case MultiLeader:
 				case Mesh:
 					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
@@ -1374,6 +1373,7 @@ namespace ACadSharp.IO.DWG
 
 		private void writeSolid3D(Solid3D solid)
 		{
+			throw new NotImplementedException();
 		}
 
 		private void writeCadImage(CadImageBase image)
