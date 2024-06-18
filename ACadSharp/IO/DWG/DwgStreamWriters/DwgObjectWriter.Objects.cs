@@ -26,7 +26,6 @@ namespace ACadSharp.IO.DWG
 			{
 				case Material:
 				case MultiLeaderAnnotContext:
-				case SortEntitiesTable:
 				case VisualStyle:
 				case XRecord:
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
