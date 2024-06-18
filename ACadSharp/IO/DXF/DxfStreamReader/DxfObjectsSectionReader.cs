@@ -43,14 +43,7 @@ namespace ACadSharp.IO.DXF
 					continue;
 
 				//Add the object and the template to the builder
-				if (template is ICadDictionaryTemplate dictionaryTemplate)
-				{
-					this._builder.AddDictionaryTemplate(dictionaryTemplate);
-				}
-				else
-				{
-					this._builder.AddTemplate(template);
-				}
+				this._builder.AddTemplate(template);
 			}
 		}
 
@@ -59,21 +52,21 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.ValueAsString)
 			{
 				case DxfFileToken.ObjectDictionary:
-					return this.readObjectCodes<CadDictionary>(new CadDictionaryTemplate(), readDictionary);
+					return this.readObjectCodes<CadDictionary>(new CadDictionaryTemplate(), this.readDictionary);
 				case DxfFileToken.ObjectDictionaryWithDefault:
 					return this.readObjectCodes<CadDictionaryWithDefault>(new CadDictionaryWithDefaultTemplate(), this.readDictionaryWithDefault);
 				case DxfFileToken.ObjectLayout:
-					return this.readObjectCodes<Layout>(new CadLayoutTemplate(), readLayout);
+					return this.readObjectCodes<Layout>(new CadLayoutTemplate(), this.readLayout);
 				case DxfFileToken.ObjectDictionaryVar:
 					return this.readObjectCodes<DictionaryVariable>(new CadTemplate<DictionaryVariable>(new DictionaryVariable()), this.readObjectSubclassMap);
-				//case DxfFileToken.ObjectSortEntsTable:
-				//return this.readSortentsTable();
+				case DxfFileToken.ObjectSortEntsTable:
+					return this.readSortentsTable();
 				case DxfFileToken.ObjectScale:
-					return this.readObjectCodes<Scale>(new CadTemplate<Scale>(new Scale()), this.readObjectSubclassMap);
+					return this.readObjectCodes<Scale>(new CadTemplate<Scale>(new Scale()), this.readScale);
 				case DxfFileToken.ObjectVisualStyle:
 					return this.readObjectCodes<VisualStyle>(new CadTemplate<VisualStyle>(new VisualStyle()), this.readVisualStyle);
 				case DxfFileToken.ObjectXRecord:
-					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), readXRecord);
+					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), this.readXRecord);
 				default:
 					this._builder.Notify($"Object not implemented: {this._reader.ValueAsString}", NotificationType.NotImplemented);
 					do
@@ -144,6 +137,19 @@ namespace ACadSharp.IO.DXF
 						return this.readPlotSettings(template, map);
 					}
 					return true;
+			}
+		}
+
+		private bool readScale(CadTemplate template, DxfMap map)
+		{
+			switch (this._reader.Code)
+			{
+				// Undocumented codes
+				case 70:
+					//Always 0
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Scale]);
 			}
 		}
 
@@ -226,7 +232,7 @@ namespace ACadSharp.IO.DXF
 				default:
 					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.DictionaryWithDefault]))
 					{
-						return readDictionary(template, map);
+						return this.readDictionary(template, map);
 					}
 					return true;
 			}

@@ -1,5 +1,4 @@
-﻿using ACadSharp.Blocks;
-using ACadSharp.Entities;
+﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Collections.Generic;
@@ -20,7 +19,7 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			if (builder.TryGetCadObject(BlockOwnerHandle, out CadObject owner))
+			if (builder.TryGetCadObject(this.BlockOwnerHandle, out CadObject owner))
 			{
 				// Not always a block
 				if (owner is BlockRecord record)
@@ -30,23 +29,20 @@ namespace ACadSharp.IO.Templates
 				else if (owner is null)
 				{
 					builder.Notify($"Block owner for SortEntitiesTable {this.CadObject.Handle} not found", NotificationType.Warning);
+					return;
 				}
 				else
 				{
 					builder.Notify($"Block owner for SortEntitiesTable {this.CadObject.Handle} is not a block {owner.GetType().FullName} | {owner.Handle}", NotificationType.Warning);
+					return;
 				}
 			}
 
-			foreach ((ulong?, ulong?) pair in Values)
+			foreach ((ulong?, ulong?) pair in this.Values)
 			{
 				if (builder.TryGetCadObject(pair.Item2, out Entity entity))
 				{
-					SortEntitiesTable.Sorter sorter = new SortEntitiesTable.Sorter
-					{
-						SortHandle = pair.Item1.Value,
-						Entity = entity
-					};
-					this.CadObject.Sorters.Add(sorter);
+					this.CadObject.AddEntity(entity, pair.Item1.Value);
 				}
 				else
 				{

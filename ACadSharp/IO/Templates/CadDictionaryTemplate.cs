@@ -40,7 +40,14 @@ namespace ACadSharp.IO.Templates
 						entry.Name = item.Key;
 					}
 
-					this.CadObject.Add(entry);
+					try
+					{
+						this.CadObject.Add(item.Key, entry);
+					}
+					catch (System.Exception ex)
+					{
+						builder.Notify($"Error when trying to add the entry {entry.Name} to {this.CadObject.Name}|{this.CadObject.Handle}", NotificationType.Error, ex);
+					}
 				}
 			}
 		}

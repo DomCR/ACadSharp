@@ -56,6 +56,7 @@ namespace ACadSharp.IO.DXF
 				case GroupCodeValueType.ExtendedDataDouble:
 					this._stream.Write(Convert.ToDouble(value));
 					return;
+				case GroupCodeValueType.Byte:
 				case GroupCodeValueType.Int16:
 				case GroupCodeValueType.ExtendedDataInt16:
 					this._stream.Write(Convert.ToInt16(value));
