@@ -2,6 +2,7 @@
 using CSUtilities.Converters;
 using CSUtilities.IO;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -71,6 +72,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case Scale scale:
 					this.writeScale(scale);
+					break;
+				case SortEntitiesTable sorttables:
+					this.writeSortEntitiesTable(sorttables);
 					break;
 				case XRecord record:
 					this.writeXRecord(record);
@@ -541,6 +545,27 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(scale.DrawingUnits);
 			//B	290	Has unit scale
 			this._writer.WriteBit(scale.IsUnitScale);
+		}
+
+		private void writeSortEntitiesTable(SortEntitiesTable sortEntitiesTable)
+		{
+			//parenthandle (soft pointer)
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, sortEntitiesTable.BlockOwner);
+			
+			//Common:
+			//Numentries BL number of entries
+			this._writer.WriteBitLong(sortEntitiesTable.Sorters.Count());
+
+			foreach (var item in sortEntitiesTable.Sorters)
+			{
+				//Sort handle(numentries of these, CODE 0, i.e.part of the main bit stream, not of the handle bit stream!).
+				//The sort handle does not have to point to an entity (but it can).
+				//This is just the handle used for determining the drawing order of the entity specified by the entity handle in the handle bit stream.
+				//When the sortentstable doesn’t have a
+				//mapping from entity handle to sort handle, then the entity’s own handle is used for sorting.
+				this._writer.HandleReference(item.Handle);
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, item.Entity);
+			}
 		}
 
 		private void writeXRecord(XRecord xrecord)

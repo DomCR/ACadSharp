@@ -344,7 +344,8 @@ namespace ACadSharp
 			}
 			else if (createDictionary)
 			{
-				this.RootDictionary.Add(new CadDictionary(dictName));
+				dictionary = new CadDictionary(dictName);
+				this.RootDictionary.Add(dictionary);
 			}
 
 			return dictionary != null;
@@ -360,10 +361,14 @@ namespace ACadSharp
 			if (cadObject.Handle == 0 || this._cadObjects.ContainsKey(cadObject.Handle))
 			{
 				var nextHandle = this._cadObjects.Keys.Max() + 1;
-
-				this.Header.HandleSeed = nextHandle + 1;
+				if (nextHandle < this.Header.HandleSeed)
+				{
+					nextHandle = this.Header.HandleSeed;
+				}
 
 				cadObject.Handle = nextHandle;
+
+				this.Header.HandleSeed = nextHandle + 1;
 			}
 
 			this._cadObjects.Add(cadObject.Handle, cadObject);
