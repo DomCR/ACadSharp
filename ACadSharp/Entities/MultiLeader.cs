@@ -13,7 +13,7 @@ namespace ACadSharp.Entities
 	/// Represents a <see cref="MultiLeader"/> entity.
 	/// </summary>
 	/// <remarks>
-	/// Object name <see cref="DxfFileToken.EntityMLeader"/> <br/>
+	/// Object name <see cref="DxfFileToken.EntityMultiLeader"/> <br/>
 	/// Dxf class name <see cref="DxfSubclassMarker.MultiLeader"/>
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityMultiLeader)]
@@ -202,6 +202,13 @@ namespace ACadSharp.Entities
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.LandingDistance"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </summary>
+		/// <remarks><para>
+		/// There is only one field for the landing distance in the multileader property grid.
+		/// The value entered arrives in this property and the <see cref="Objects.MultiLeaderAnnotContext.LeaderRoot.LandingDistance"/>
+		/// property. If two leader roots exist both receive the same value. I seems 
+		/// <see cref="MultiLeaderPropertyOverrideFlags.LandingDistance"/> flag is never set.
+		/// </para>
+		/// </remarks>
 		[DxfCodeValue(41)]
 		public double LandingDistance { get; set; }
 
@@ -511,8 +518,8 @@ namespace ACadSharp.Entities
 		/// or attach to the top/bottom.
 		/// </para><para>
 		/// The value for all leader lines can be overridden for each individual leader line by the
-		/// <see cref="MultiLeaderAnnotContext.LeaderRoot.AttachmentDirection"/> property when the
-		/// <see cref="LeaderLinePropertOverrideFlags.TextAttachmentDirection"/> flag is set in the 
+		/// <see cref="Objects.MultiLeaderAnnotContext.LeaderRoot.TextAttachmentDirection"/> property when the
+		/// <see cref="MultiLeaderPropertyOverrideFlags.TextAttachmentDirection"/> flag is set in the 
 		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
