@@ -1,6 +1,7 @@
 ﻿using CSUtilities.Converters;
 using System;
 
+
 namespace ACadSharp.IO.DXF
 {
 	internal abstract class DxfStreamWriterBase : IDxfStreamWriter
@@ -61,11 +62,7 @@ namespace ACadSharp.IO.DXF
 
 		public void WriteHandle(int code, IHandledCadObject value, DxfClassMap map)
 		{
-			if (value == null)
-			{
-				this.Write(code, (ulong)0, map);
-			}
-			else
+			if (value != null)
 			{
 				this.Write(code, value.Handle, map);
 			}
