@@ -765,7 +765,7 @@ namespace ACadSharp.IO.DXF
 
 			//template.CadObject.CreateDefaultEntries();
 
-			this._builder.AddTableTemplate((ICadTableTemplate)template);
+			//this._builder.AddTableTemplate((ICadTableTemplate)template);
 		}
 	}
 }
