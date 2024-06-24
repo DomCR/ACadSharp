@@ -11,9 +11,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System;
-using static ACadSharp.Objects.MultiLeaderAnnotContext;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
+using static ACadSharp.Objects.MultiLeaderAnnotContext;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.IO.DWG
 {
@@ -962,10 +963,8 @@ namespace ACadSharp.IO.DWG
 				case "ACDBDICTIONARYWDFLT":
 					template = this.readDictionaryWithDefault();
 					break;
-				case "ACDBDETAILVIEWSTYLE":
-				case "ACDBSECTIONVIEWSTYLE":
-				case "ACAD_TABLE":
-				case "CELLSTYLEMAP":
+				case "ACDBPLACEHOLDER":
+					template = this.readPlaceHolder();
 					break;
 				case "DBCOLOR":
 					template = this.readDwgColor();
@@ -976,15 +975,11 @@ namespace ACadSharp.IO.DWG
 				case "DICTIONARYWDFLT":
 					template = this.readDictionaryWithDefault();
 					break;
-				case "FIELD":
-					break;
 				case "GROUP":
 					template = this.readGroup();
 					break;
 				case "HATCH":
 					template = this.readHatch();
-					break;
-				case "IDBUFFER":
 					break;
 				case "IMAGE":
 					template = this.readCadImage(new RasterImage());
@@ -994,8 +989,6 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "IMAGEDEF_REACTOR":
 					template = this.readImageDefinitionReactor();
-					break;
-				case "LAYER_INDEX":
 					break;
 				case "LAYOUT":
 					template = this.readLayout();
@@ -1015,13 +1008,8 @@ namespace ACadSharp.IO.DWG
 				case "MLEADERSTYLE":
 					template = this.readMultiLeaderStyle();
 					break;
-				case "OLE2FRAME":
-					break;
-				case "ACDBPLACEHOLDER":
-					template = this.readPlaceHolder();
-					break;
-				case "PLOTSETTINGS":
-				case "RASTERVARIABLES":
+				case "PDFUNDERLAY":
+					template = this.readPdfUnderlay();
 					break;
 				case "SCALE":
 					template = this.readScale();
@@ -1029,21 +1017,11 @@ namespace ACadSharp.IO.DWG
 				case "SORTENTSTABLE":
 					template = this.readSortentsTable();
 					break;
-				case "SPATIAL_FILTER":
-				case "SPATIAL_INDEX":
-				case "TABLEGEOMETRY":
-				case "TABLESTYLE":
-				case "TABLESTYLES":
-				case "VBA_PROJECT":
-					break;
 				case "VISUALSTYLE":
 					template = this.readVisualStyle();
 					break;
 				case "WIPEOUT":
 					template = this.readCadImage(new Wipeout());
-					break;
-				case "WIPEOUTVARIABLE":
-				case "WIPEOUTVARIABLES":
 					break;
 				case "XRECORD":
 					template = this.readXRecord();
@@ -5352,11 +5330,6 @@ namespace ACadSharp.IO.DWG
 
 			//Same order as dxf?
 
-			//71 BS Version
-			mesh.Version = this._objectReader.ReadBitShort();
-			//72 BS BlendCrease
-			mesh.BlendCrease = this._objectReader.ReadBitShort();
-
 			var dict = DwgStreamReaderBase.Explore(this._objectReader);
 #endif
 
@@ -5368,6 +5341,33 @@ namespace ACadSharp.IO.DWG
 			CadTemplate<AcdbPlaceHolder> template = new CadTemplate<AcdbPlaceHolder>(new AcdbPlaceHolder());
 
 			this.readCommonNonEntityData(template);
+
+			return template;
+		}
+
+		private CadTemplate readPdfUnderlay()
+		{
+			PdfUnderlay underlay = new PdfUnderlay();
+			CadPdfUnderlayTemplate template = new(underlay);
+
+			this.readCommonEntityData(template);
+
+			underlay.Normal = this._objectReader.Read3BitDouble();
+
+			underlay.InsertPoint = this._objectReader.Read3BitDouble();
+
+			underlay.Rotation = this._objectReader.ReadBitDouble();
+
+			underlay.XScale = this._objectReader.ReadBitDouble();
+			underlay.YScale = this._objectReader.ReadBitDouble();
+			underlay.ZScale = this._objectReader.ReadBitDouble();
+
+			underlay.Flags = (UnderlayDisplayFlags)this._objectReader.ReadByte();
+
+			underlay.Contrast = this._objectReader.ReadByte();
+			underlay.Fade = this._objectReader.ReadByte();
+
+			template.DefinitionHandle = this.handleReference();
 
 			return template;
 		}

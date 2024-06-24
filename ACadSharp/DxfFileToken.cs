@@ -80,6 +80,7 @@
 		public const string EntityMText = "MTEXT";
 		public const string EntityOleFrame = "OLEFRAME";
 		public const string EntityOle2Frame = "OLE2FRAME";
+		public const string EntityPdfUnderlay = "PDFUNDERLAY";
 		public const string EntityPoint = "POINT";
 		public const string EntityPolyline = "POLYLINE";
 		public const string EntityPolyFaceMesh = "PFACE";
