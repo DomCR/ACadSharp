@@ -11,7 +11,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectDictionaryWithDefault)]
 	[DxfSubClass(DxfSubclassMarker.DictionaryWithDefault)]
-	public class CadDictionaryWithDefault : NonGraphicalObject
+	public class CadDictionaryWithDefault : CadDictionary
 	{
 		public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }
 
