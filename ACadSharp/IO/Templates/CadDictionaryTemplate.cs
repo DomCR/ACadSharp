@@ -49,6 +49,10 @@ namespace ACadSharp.IO.Templates
 						builder.Notify($"Error when trying to add the entry {entry.Name} to {this.CadObject.Name}|{this.CadObject.Handle}", NotificationType.Error, ex);
 					}
 				}
+				else
+				{
+					builder.Notify($"Entry not found {item.Value} for dictionary {this.CadObject.Name}|{this.CadObject.Handle}", NotificationType.Warning);
+				}
 			}
 		}
 	}
