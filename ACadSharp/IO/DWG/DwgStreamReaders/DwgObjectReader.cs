@@ -14,7 +14,6 @@ using System;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.IO.DWG
 {
@@ -1007,6 +1006,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "MLEADERSTYLE":
 					template = this.readMultiLeaderStyle();
+					break;
+				case "PDFDEFINITION":
+					template = this.readPdfDefinition();
 					break;
 				case "PDFUNDERLAY":
 					template = this.readPdfUnderlay();
@@ -5341,6 +5343,19 @@ namespace ACadSharp.IO.DWG
 			CadTemplate<AcdbPlaceHolder> template = new CadTemplate<AcdbPlaceHolder>(new AcdbPlaceHolder());
 
 			this.readCommonNonEntityData(template);
+
+			return template;
+		}
+
+		private CadTemplate readPdfDefinition()
+		{
+			PdfUnderlayDefinition definition = new PdfUnderlayDefinition();
+			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(definition);
+
+			this.readCommonNonEntityData(template);
+
+			definition.File = this._objectReader.ReadVariableText();
+			definition.Page = this._objectReader.ReadVariableText();
 
 			return template;
 		}

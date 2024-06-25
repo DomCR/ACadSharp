@@ -51,7 +51,7 @@ namespace ACadSharp.IO.Templates
 				}
 				else
 				{
-					builder.Notify($"Entry not found {item.Value} for dictionary {this.CadObject.Name}|{this.CadObject.Handle}", NotificationType.Warning);
+					builder.Notify($"Entry not found {item.Key}|{item.Value} for dictionary {this.CadObject.Name}|{this.CadObject.Handle}", NotificationType.Warning);
 				}
 			}
 		}

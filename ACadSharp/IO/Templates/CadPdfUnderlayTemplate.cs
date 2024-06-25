@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 
 namespace ACadSharp.IO.Templates
 {
@@ -14,9 +15,13 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			if (builder.TryGetCadObject(this.DefinitionHandle, out CadObject definition))
+			if (builder.TryGetCadObject(this.DefinitionHandle, out UnderlayDefinition definition))
 			{
-				//this.CadObject.Definition = definition;
+				this.CadObject.Definition = definition;
+			}
+			else
+			{
+				builder.Notify($"UnderlayDefinition not found for {this.CadObject.Handle}", NotificationType.Warning);
 			}
 		}
 	}

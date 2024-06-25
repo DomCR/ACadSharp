@@ -118,6 +118,7 @@
 		public const string ObjectImageDefinition = "IMAGEDEF";
 		public const string ObjectImageDefinitionReactor = "IMAGEDEF_REACTOR";
 		public const string ObjectMLineStyle = "MLINESTYLE";
+		public const string ObjectPdfDefinition = "PDFDEFINITION";
 		public const string ObjectVisualStyle = "VISUALSTYLE";
 		public const string ObjectScale = "SCALE";
 		public const string ObjectSortEntsTable = "SORTENTSTABLE";
