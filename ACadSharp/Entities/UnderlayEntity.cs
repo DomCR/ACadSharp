@@ -5,6 +5,10 @@ using System;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Common base class for all underlay entities, like <see cref="PdfUnderlay" />.
+	/// </summary>
+	[DxfSubClass(null, true)]
 	public abstract class UnderlayEntity : Entity
 	{
 		/// <inheritdoc/>

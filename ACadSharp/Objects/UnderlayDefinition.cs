@@ -1,5 +1,11 @@
-﻿namespace ACadSharp.Objects
+﻿using ACadSharp.Attributes;
+
+namespace ACadSharp.Objects
 {
+	/// <summary>
+	/// Common base class for all underlay definitions, like <see cref="PdfUnderlayDefinition" />.
+	/// </summary>
+	[DxfSubClass(null, true)]
 	public abstract class UnderlayDefinition : NonGraphicalObject
 	{
 		/// <inheritdoc/>
@@ -14,6 +20,7 @@
 		/// <remarks>
 		/// The file extension must match the underlay type.
 		/// </remarks>
+		[DxfCodeValue(1)]
 		public string File { get; set; }
 	}
 }
