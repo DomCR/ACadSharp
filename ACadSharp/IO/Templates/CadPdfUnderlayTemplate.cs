@@ -7,6 +7,8 @@ namespace ACadSharp.IO.Templates
 	{
 		public ulong? DefinitionHandle { get; set; }
 
+		public CadPdfUnderlayTemplate() : base(new PdfUnderlay()) { }
+
 		public CadPdfUnderlayTemplate(PdfUnderlay entity) : base(entity)
 		{
 		}
