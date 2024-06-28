@@ -130,7 +130,7 @@ namespace ACadSharp.Tables
 		/// <remarks>
 		/// Entities with an owner cannot be added to another block
 		/// </remarks>
-		public CadObjectCollection<Entity> Entities { get; }
+		public CadObjectCollection<Entity> Entities { get; private set; }
 
 		/// <summary>
 		/// Sort entities table for this block record.
@@ -234,7 +234,7 @@ namespace ACadSharp.Tables
 
 			clone.Layout = (Layout)(this.Layout?.Clone());
 
-			clone.Entities.Clear();
+			clone.Entities = new CadObjectCollection<Entity>(clone);
 			foreach (var item in this.Entities)
 			{
 				clone.Entities.Add((Entity)item.Clone());

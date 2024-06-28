@@ -33,5 +33,15 @@ namespace ACadSharp.Tests.Common
 			Assert.True(clone.Name == original.Name);
 			Assert.True(clone.Flags == original.Flags);
 		}
+
+		public static void AssertEntityCollection<T>(CadObjectCollection<T> original, CadObjectCollection<T> clone)
+			where T : Entity
+		{
+			Assert.NotEmpty(original);
+			for (int i = 0; i < original.Count; i++)
+			{
+				CadObjectTestUtils.AssertEntityClone(original[i], clone[i]);
+			}
+		}
 	}
 }
