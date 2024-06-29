@@ -11,7 +11,7 @@ namespace ACadSharp.IO
 	{
 		public event NotificationEventHandler OnNotification;
 
-		public ACadVersion Version { get { return this.DocumentToBuild.Header.Version; } }
+		public ACadVersion Version { get; }
 
 		public CadDocument DocumentToBuild { get; }
 
