@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
+using ACadSharp.Tests.Common;
 using System.Linq;
 using Xunit;
 
@@ -18,6 +19,20 @@ namespace ACadSharp.Tests.Entities
 			Assert.NotNull(insert);
 			Assert.NotNull(insert.Block);
 			Assert.Empty(insert.Attributes);
+		}
+
+		[Fact]
+		public void CloneTest()
+		{
+			BlockRecord record = new BlockRecord(_blockName);
+			Insert insert = new Insert(record);
+
+			insert.Attributes.Add(new AttributeEntity());
+
+			Insert clone = (Insert)insert.Clone();
+
+			CadObjectTestUtils.AssertEntityClone(insert, clone);
+			CadObjectTestUtils.AssertEntityCollection(insert.Attributes, clone.Attributes);
 		}
 
 		[Fact]
