@@ -81,7 +81,7 @@ namespace ACadSharp.IO.DXF
 							this.readExtendedData(edata);
 							break;
 						default:
-							this._builder.Notify($"Unhandeled dxf code {this._reader.Code} at line {this._reader.Position}.");
+							this._builder.Notify($"[AcDbSymbolTable] Unhandeled dxf code {this._reader.Code} at line {this._reader.Position}.");
 							break;
 					}
 

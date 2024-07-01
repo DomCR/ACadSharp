@@ -112,9 +112,14 @@ namespace ACadSharp.IO.DXF
 			{
 				record = new BlockRecord(name);
 				record.BlockEntity = blckEntity;
+				CadBlockRecordTemplate recordTemplate = new CadBlockRecordTemplate(record);
 
 				this._builder.BlockRecords.Add(record);
-				//throw new DxfException($"Could not find the block record for {name} and handle {blckEntity.Handle}");
+
+				if (recordTemplate.CadObject.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase))
+				{
+					this._builder.ModelSpaceTemplate = recordTemplate;
+				}
 			}
 
 			while (this._reader.ValueAsString != DxfFileToken.EndBlock)

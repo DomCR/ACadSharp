@@ -35,7 +35,7 @@ namespace ACadSharp.IO
 
 		public abstract bool KeepUnknownEntities { get; }
 
-		protected ulong maxHandle = 0;
+		public ulong InitialHandSeed { get; set; } = 0;
 
 		protected Dictionary<ulong, CadTemplate> cadObjectsTemplates = new();
 
@@ -274,14 +274,19 @@ namespace ACadSharp.IO
 
 		private void addToMap(ICadObjectTemplate template)
 		{
-			if (template.CadObject.Handle == 0)
+			if (templatesMap.ContainsKey(template.CadObject.Handle))
 			{
-				template.CadObject.Handle = this.maxHandle + 1;
+
 			}
 
-			if (template.CadObject.Handle > this.maxHandle)
+			if (template.CadObject.Handle == 0)
 			{
-				this.maxHandle = template.CadObject.Handle;
+				template.CadObject.Handle = this.InitialHandSeed + 1;
+			}
+
+			if (template.CadObject.Handle > this.InitialHandSeed)
+			{
+				this.InitialHandSeed = template.CadObject.Handle;
 			}
 
 			this.templatesMap.Add(template.CadObject.Handle, template);
