@@ -80,6 +80,7 @@
 		public const string EntityMText = "MTEXT";
 		public const string EntityOleFrame = "OLEFRAME";
 		public const string EntityOle2Frame = "OLE2FRAME";
+		public const string EntityPdfUnderlay = "PDFUNDERLAY";
 		public const string EntityPoint = "POINT";
 		public const string EntityPolyline = "POLYLINE";
 		public const string EntityPolyFaceMesh = "PFACE";
@@ -117,6 +118,7 @@
 		public const string ObjectImageDefinition = "IMAGEDEF";
 		public const string ObjectImageDefinitionReactor = "IMAGEDEF_REACTOR";
 		public const string ObjectMLineStyle = "MLINESTYLE";
+		public const string ObjectPdfDefinition = "PDFDEFINITION";
 		public const string ObjectVisualStyle = "VISUALSTYLE";
 		public const string ObjectScale = "SCALE";
 		public const string ObjectSortEntsTable = "SORTENTSTABLE";

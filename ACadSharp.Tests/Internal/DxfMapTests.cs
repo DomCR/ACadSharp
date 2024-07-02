@@ -50,7 +50,6 @@ namespace ACadSharp.Tests.Internal
 			}
 
 			DxfMap map = DxfMap.Create(t);
-
 		}
 
 		[Fact]
