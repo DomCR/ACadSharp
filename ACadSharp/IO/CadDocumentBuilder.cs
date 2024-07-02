@@ -274,11 +274,6 @@ namespace ACadSharp.IO
 
 		private void addToMap(ICadObjectTemplate template)
 		{
-			if (templatesMap.ContainsKey(template.CadObject.Handle))
-			{
-
-			}
-
 			if (template.CadObject.Handle == 0)
 			{
 				template.CadObject.Handle = this.InitialHandSeed + 1;
