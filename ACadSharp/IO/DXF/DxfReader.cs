@@ -72,10 +72,14 @@ namespace ACadSharp.IO
 			sio.Position = 0;
 			string sn = sio.ReadString(DxfBinaryReader.Sentinel.Length);
 
-			if (resetPos)
-				stream.Position = 0;
+			bool isBinary = sn == DxfBinaryReader.Sentinel;
 
-			return sn == DxfBinaryReader.Sentinel;
+			if (resetPos)
+			{
+				stream.Position = 0;
+			}
+
+			return isBinary;
 		}
 
 		/// <summary>
@@ -121,7 +125,7 @@ namespace ACadSharp.IO
 
 			this._reader = this._reader ?? this.getReader();
 
-			this._builder = new DxfDocumentBuilder(this._version,this._document, this.Configuration);
+			this._builder = new DxfDocumentBuilder(this._version, this._document, this.Configuration);
 			this._builder.OnNotification += this.onNotificationEvent;
 
 			while (this._reader.ValueAsString != DxfFileToken.EndOfFile)
@@ -451,15 +455,19 @@ namespace ACadSharp.IO
 			IDxfStreamReader tmpReader = null;
 			this._version = ACadVersion.Unknown;
 
-			bool isBinary = this.IsBinary();
-			if (isBinary)
+			bool isBinary = IsBinary(this._fileStream.Stream, false);
+			bool isAC1009Format = false;
+
+			if (isBinary && this._fileStream.Stream.ReadByte() != -1)
 			{
-				tmpReader = new DxfBinaryReader(this._fileStream.Stream, Encoding.ASCII);
+				int flag = this._fileStream.ReadByte();
+				if (flag != -1 && flag != 0)
+				{
+					isAC1009Format = true;
+				}
 			}
-			else
-			{
-				tmpReader = new DxfTextReader(this._fileStream.Stream);
-			}
+
+			tmpReader = this.createReader(isBinary, isAC1009Format);
 
 			tmpReader.Find(DxfFileToken.HeaderSection);
 
@@ -501,14 +509,7 @@ namespace ACadSharp.IO
 				tmpReader.ReadNext();
 			}
 
-			if (isBinary)
-			{
-				return new DxfBinaryReader(this._fileStream.Stream, this._encoding);
-			}
-			else
-			{
-				return new DxfTextReader(this._fileStream.Stream, this._encoding);
-			}
+			return this.createReader(isBinary, isAC1009Format);
 		}
 
 		private IDxfStreamReader goToSection(string sectionName)
@@ -523,6 +524,25 @@ namespace ACadSharp.IO
 			this._reader.Find(sectionName);
 
 			return this._reader;
+		}
+
+		private IDxfStreamReader createReader(bool isBinary, bool isAC1009Format)
+		{
+			if (isBinary)
+			{
+				if (isAC1009Format)
+				{
+					return new DxfBinaryReaderAC1009(this._fileStream.Stream, Encoding.ASCII);
+				}
+				else
+				{
+					return new DxfBinaryReader(this._fileStream.Stream, Encoding.ASCII);
+				}
+			}
+			else
+			{
+				return new DxfTextReader(this._fileStream.Stream);
+			}
 		}
 	}
 }
