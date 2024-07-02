@@ -67,6 +67,15 @@ namespace ACadSharp.IO.DXF
 					case 2:
 					case 3:
 						name = this._reader.ValueAsString;
+						if (name.Equals("$MODEL_SPACE", StringComparison.OrdinalIgnoreCase))
+						{
+							name = BlockRecord.ModelSpaceName;
+						}
+						else if (name.Equals("$PAPER_SPACE", StringComparison.OrdinalIgnoreCase))
+						{
+							name = BlockRecord.PaperSpaceName;
+						}
+
 						if (record == null && this._builder.TryGetTableEntry(name, out record))
 						{
 							record.BlockEntity = blckEntity;
@@ -101,11 +110,16 @@ namespace ACadSharp.IO.DXF
 
 			if (record == null)
 			{
-				//record = new BlockRecord(name);
-				//record.BlockEntity = blckEntity;
+				record = new BlockRecord(name);
+				record.BlockEntity = blckEntity;
+				CadBlockRecordTemplate recordTemplate = new CadBlockRecordTemplate(record);
 
-				//this._builder.DocumentToBuild.BlockRecords.Add(record);
-				throw new DxfException($"Could not find the block record for {name} and handle {blckEntity.Handle}");
+				this._builder.BlockRecords.Add(record);
+
+				if (recordTemplate.CadObject.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase))
+				{
+					this._builder.ModelSpaceTemplate = recordTemplate;
+				}
 			}
 
 			while (this._reader.ValueAsString != DxfFileToken.EndBlock)

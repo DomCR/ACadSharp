@@ -12,7 +12,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectXRecord)]
 	[DxfSubClass(DxfSubclassMarker.XRecord)]
-	public class XRecord : CadObject
+	public class XRecord : NonGraphicalObject
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.XRECORD;

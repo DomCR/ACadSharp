@@ -124,6 +124,12 @@ namespace ACadSharp.Tests.IO.DXF
 				doc = reader.Read();
 			}
 
+			if(doc.Header.Version < ACadVersion.AC1012)
+			{
+				//Older version do not keep the handles for tables and other objects like block_records
+				return;
+			}
+
 			this._docIntegrity.AssertDocumentTree(doc);
 		}
 
