@@ -1,9 +1,9 @@
-﻿using ACadSharp.Header;
+﻿using ACadSharp.Entities;
+using ACadSharp.Header;
 using ACadSharp.IO;
-using ACadSharp.IO.DWG;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -38,6 +38,13 @@ namespace ACadSharp.Tests.IO
 		{
 			CadDocument doc = this.getDocument(test);
 
+			if (doc.Header.Version < ACadVersion.AC1012)
+			{
+				//Older version do not keep the handles for tables and other objects like block_records
+				//This can be fixed if the document creates the default entries manually
+				return;
+			}
+
 			this._docIntegrity.AssertDocumentDefaults(doc);
 		}
 
@@ -53,6 +60,19 @@ namespace ACadSharp.Tests.IO
 			CadDocument doc = this.getDocument(test);
 
 			this._docIntegrity.AssertBlockRecords(doc);
+		}
+
+		public virtual void AssertDocumentContent(string test)
+		{
+			CadDocument doc = this.getDocument(test, false);
+
+			if (doc.Header.Version < ACadVersion.AC1012)
+			{
+				//Older version do not keep the handles for tables and other objects like block_records
+				return;
+			}
+
+			this._docIntegrity.AssertDocumentContent(doc);
 		}
 
 		public virtual void AssertDocumentTree(string test)

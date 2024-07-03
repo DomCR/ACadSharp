@@ -13,11 +13,9 @@ namespace ACadSharp.IO.DXF
 			//TODO: Implement complex entities in a separated branch
 			switch (entity)
 			{
-				case Mesh:
-				case MLine:
 				case Solid3D:
 				case MultiLeader:
-				case Wipeout:
+				case UnknownEntity:
 					this.notify($"Entity type not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return;
 			}
@@ -60,6 +58,9 @@ namespace ACadSharp.IO.DXF
 				case LwPolyline lwPolyline:
 					this.writeLwPolyline(lwPolyline);
 					break;
+				case Mesh mesh:
+					this.writeMesh(mesh);
+					break;
 				case MLine mline:
 					this.writeMLine(mline);
 					break;
@@ -71,6 +72,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case Polyline polyline:
 					this.writePolyline(polyline);
+					break;
+				case RasterImage rasterImage:
+					this.writeCadImage(rasterImage);
 					break;
 				case Ray ray:
 					this.writeRay(ray);
@@ -97,7 +101,7 @@ namespace ACadSharp.IO.DXF
 					this.writeViewport(viewport);
 					break;
 				case Wipeout wipeout:
-					this.writeWipeout(wipeout);
+					this.writeCadImage(wipeout);
 					break;
 				case XLine xline:
 					this.writeXLine(xline);
@@ -318,7 +322,6 @@ namespace ACadSharp.IO.DXF
 				this.writeHatchBoundaryPathEdge(edge);
 			}
 
-			//TODO: Check how this entities are handled
 			this._writer.Write(97, path.Entities.Count);
 			foreach (Entity entity in path.Entities)
 			{
@@ -352,11 +355,16 @@ namespace ACadSharp.IO.DXF
 					this._writer.Write(11, line.End);
 					break;
 				case Hatch.BoundaryPath.Polyline poly:
+					this._writer.Write(72, poly.HasBulge ? (short)1 : (short)0);
 					this._writer.Write(73, poly.IsClosed ? (short)1 : (short)0);
 					this._writer.Write(93, poly.Vertices.Count);
-					foreach (var vertex in poly.Vertices)
+					for (int i = 0; i < poly.Vertices.Count; i++)
 					{
-						this._writer.Write(10, vertex);
+						this._writer.Write(10, (XY)poly.Vertices[i]);
+						if (poly.HasBulge)
+						{
+							this._writer.Write(42, poly.Bulges.ElementAtOrDefault(i));
+						}
 					}
 					break;
 				case Hatch.BoundaryPath.Spline spline:
@@ -557,15 +565,61 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(210, polyline.Normal, map);
 		}
 
+		private void writeMesh(Mesh mesh)
+		{
+			DxfClassMap map = DxfClassMap.Create<Mesh>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Mesh);
+
+			this._writer.Write(71, (short)mesh.Version, map);
+			this._writer.Write(72, (short)(mesh.BlendCrease ? 1 : 0), map);
+
+			this._writer.Write(91, mesh.SubdivisionLevel, map);
+
+			this._writer.Write(92, mesh.Vertices.Count, map);
+			foreach (XYZ vertex in mesh.Vertices)
+			{
+				this._writer.Write(10, vertex, map);
+			}
+
+			int nFaces = mesh.Faces.Count;
+			nFaces += mesh.Faces.Sum(f => f.Length);
+
+			this._writer.Write(93, nFaces);
+			foreach (int[] face in mesh.Faces)
+			{
+				this._writer.Write(90, face.Length);
+				foreach (int index in face)
+				{
+					this._writer.Write(90, index);
+				}
+			}
+
+			this._writer.Write(94, mesh.Edges.Count, map);
+			foreach (Mesh.Edge edge in mesh.Edges)
+			{
+				this._writer.Write(90, edge.Start);
+				this._writer.Write(90, edge.End);
+			}
+
+			this._writer.Write(95, mesh.Edges.Count, map);
+			foreach (Mesh.Edge edge in mesh.Edges)
+			{
+				this._writer.Write(140, edge.Crease);
+			}
+
+			this._writer.Write(90, 0);
+		}
+
 		private void writeMLine(MLine mLine)
 		{
 			DxfClassMap map = DxfClassMap.Create<MLine>();
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.MLine);
 
-			//Style has to references
-			this._writer.WriteName(2, mLine.MLStyle, map);
-			this._writer.WriteHandle(340, mLine.MLStyle, map);
+			//Style has two references
+			this._writer.WriteName(2, mLine.Style, map);
+			this._writer.WriteHandle(340, mLine.Style, map);
 
 			this._writer.Write(40, mLine.ScaleFactor);
 
@@ -573,9 +627,9 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(71, (short)mLine.Flags);
 			this._writer.Write(72, (short)mLine.Vertices.Count);
 
-			if (mLine.MLStyle != null)
+			if (mLine.Style != null)
 			{
-				this._writer.Write(73, (short)mLine.MLStyle.Elements.Count);
+				this._writer.Write(73, (short)mLine.Style.Elements.Count);
 			}
 
 			this._writer.Write(10, mLine.StartPoint, map);
@@ -733,7 +787,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(40, shape.Size, map);
 
-			this._writer.Write(2, shape.Name, map);
+			this._writer.WriteName(2, shape.ShapeStyle, map);
 
 			this._writer.Write(50, shape.Rotation, map);
 
@@ -980,42 +1034,47 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(112, vp.UcsYAxis, map);
 		}
 
-		private void writeWipeout(Wipeout wipeout)
+		private void writeCadImage<T>(T image)
+			where T : CadImageBase
 		{
-			DxfClassMap map = DxfClassMap.Create<Wipeout>();
+			DxfClassMap map = DxfClassMap.Create<T>();
 
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Wipeout);
+			this._writer.Write(DxfCode.Subclass, image.SubclassMarker);
 
-			this._writer.Write(90, wipeout.ClassVersion, map);
+			this._writer.Write(90, image.ClassVersion, map);
 
-			this._writer.Write(10, wipeout.InsertPoint, map);
-			this._writer.Write(11, wipeout.UVector, map);
-			this._writer.Write(12, wipeout.VVector, map);
-			this._writer.Write(13, wipeout.Size, map);
+			this._writer.Write(10, image.InsertPoint, map);
+			this._writer.Write(11, image.UVector, map);
+			this._writer.Write(12, image.VVector, map);
+			this._writer.Write(13, image.Size, map);
 
-			this._writer.Write(70, (short)wipeout.Flags, map);
+			this._writer.WriteHandle(340, image.Definition, map);
 
-			this._writer.Write(280, wipeout.ClippingState, map);
-			this._writer.Write(281, wipeout.Brightness, map);
-			this._writer.Write(282, wipeout.Contrast, map);
-			this._writer.Write(283, wipeout.Fade, map);
+			this._writer.Write(70, (short)image.Flags, map);
 
-			this._writer.Write(71, (short)wipeout.ClipType, map);
+			this._writer.Write(280, image.ClippingState, map);
+			this._writer.Write(281, image.Brightness, map);
+			this._writer.Write(282, image.Contrast, map);
+			this._writer.Write(283, image.Fade, map);
 
-			if (wipeout.ClipType == ClipType.Polygonal)
+			//this._writer.WriteHandle(360, image.DefinitionReactor, map);
+
+			this._writer.Write(71, (short)image.ClipType, map);
+
+			if (image.ClipType == ClipType.Polygonal)
 			{
-				this._writer.Write(91, wipeout.ClipBoundaryVertices.Count + 1, map);
-				foreach (XY bv in wipeout.ClipBoundaryVertices)
+				this._writer.Write(91, image.ClipBoundaryVertices.Count + 1, map);
+				foreach (XY bv in image.ClipBoundaryVertices)
 				{
 					this._writer.Write(14, bv, map);
 				}
 
-				this._writer.Write(14, wipeout.ClipBoundaryVertices.First(), map);
+				this._writer.Write(14, image.ClipBoundaryVertices.First(), map);
 			}
 			else
 			{
-				this._writer.Write(91, wipeout.ClipBoundaryVertices.Count, map);
-				foreach (XY bv in wipeout.ClipBoundaryVertices)
+				this._writer.Write(91, image.ClipBoundaryVertices.Count, map);
+				foreach (XY bv in image.ClipBoundaryVertices)
 				{
 					this._writer.Write(14, bv, map);
 				}

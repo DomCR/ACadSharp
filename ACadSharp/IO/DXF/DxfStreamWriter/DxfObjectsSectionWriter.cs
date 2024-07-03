@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
-using ACadSharp.Tables;
 using System;
 using System.Linq;
 
@@ -32,10 +31,9 @@ namespace ACadSharp.IO.DXF
 				case AcdbPlaceHolder:
 				case Material:
 				case MultiLeaderStyle:
-				case SortEntitiesTable:
-				case Scale:
 				case VisualStyle:
-				//case XRecrod:	//TODO: XRecord Understand how it works for the reader
+				case ImageDefinitionReactor:
+				case XRecord:
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
 			}
@@ -53,19 +51,25 @@ namespace ACadSharp.IO.DXF
 					this.writeDictionaryVariable(dictvar);
 					break;
 				case Group group:
-					this.writeGroup(group); 
+					this.writeGroup(group);
 					break;
+				case ImageDefinition imageDefinition:
+					this.writeImageDefinition(imageDefinition);
+					return;
 				case Layout layout:
 					this.writeLayout(layout);
 					break;
-				case MLStyle mlStyle:
-					this.writeMLStyle(mlStyle);
+				case MLineStyle mlStyle:
+					this.writeMLineStyle(mlStyle);
 					break;
 				case PlotSettings plotSettings:
 					this.writePlotSettings(plotSettings);
 					break;
+				case Scale scale:
+					this.writeScale(scale);
+					break;
 				case SortEntitiesTable sortensTable:
-					//this.writeSortentsTable(sortensTable);
+					this.writeSortentsTable(sortensTable);
 					break;
 				case XRecord record:
 					this.writeXRecord(record);
@@ -153,6 +157,17 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(149, plot.PaperImageOrigin.Y, map);
 		}
 
+		protected void writeScale(Scale scale)
+		{
+			this._writer.Write(100, DxfSubclassMarker.Scale);
+
+			this._writer.Write(70, 0);
+			this._writer.Write(300, scale.Name);
+			this._writer.Write(140, scale.PaperUnits);
+			this._writer.Write(141, scale.DrawingUnits);
+			this._writer.Write(290, scale.IsUnitScale ? (short)1 : (short)0);
+		}
+
 		protected void writeGroup(Group group)
 		{
 			this._writer.Write(100, DxfSubclassMarker.Group);
@@ -165,6 +180,22 @@ namespace ACadSharp.IO.DXF
 			{
 				this._writer.WriteHandle(340, entity);
 			}
+		}
+
+		protected void writeImageDefinition(ImageDefinition definition)
+		{
+			DxfClassMap map = DxfClassMap.Create<ImageDefinition>();
+
+			this._writer.Write(100, DxfSubclassMarker.RasterImageDef);
+
+			this._writer.Write(90, definition.ClassVersion, map);
+			this._writer.Write(1, definition.FileName, map);
+
+			this._writer.Write(10, definition.Size, map);
+
+			this._writer.Write(280, definition.IsLoaded ? 1 : 0, map);
+
+			this._writer.Write(281, (byte)definition.Units, map);
 		}
 
 		protected void writeLayout(Layout layout)
@@ -193,12 +224,12 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(76, (short)0, map);
 
-			this._writer.WriteHandle(330, layout.AssociatedBlock.Owner, map);
+			this._writer.WriteHandle(330, layout.AssociatedBlock, map);
 		}
 
-		protected void writeMLStyle(MLStyle style)
+		protected void writeMLineStyle(MLineStyle style)
 		{
-			DxfClassMap map = DxfClassMap.Create<MLStyle>();
+			DxfClassMap map = DxfClassMap.Create<MLineStyle>();
 
 			this._writer.Write(100, DxfSubclassMarker.MLineStyle);
 
@@ -208,12 +239,12 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(3, style.Description, map);
 
-			this._writer.Write(62, style.FillColor.Index, map);
+			this._writer.Write(62, style.FillColor.GetApproxIndex(), map);
 
 			this._writer.Write(51, style.StartAngle, map);
 			this._writer.Write(52, style.EndAngle, map);
 			this._writer.Write(71, (short)style.Elements.Count, map);
-			foreach (MLStyle.Element element in style.Elements)
+			foreach (MLineStyle.Element element in style.Elements)
 			{
 				this._writer.Write(49, element.Offset, map);
 				this._writer.Write(62, element.Color.Index, map);
@@ -223,20 +254,15 @@ namespace ACadSharp.IO.DXF
 
 		private void writeSortentsTable(SortEntitiesTable e)
 		{
-			if (e.BlockOwner == null)
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.SortentsTable);
+
+			this._writer.WriteHandle(330, e.BlockOwner);
+
+			foreach (SortEntitiesTable.Sorter item in e.Sorters)
 			{
-				//In some cases the block onwer is null in the files, this has to be checked
-				this.notify("SortEntitiesTable with handle {e.Handle} has no block owner", NotificationType.Warning);
-				return;
+				this._writer.WriteHandle(331, item.Entity);
+				this._writer.Write(5, item.Handle);
 			}
-
-			this._writer.Write(DxfCode.Start, e.ObjectName);
-
-			this.writeCommonObjectData(e);
-
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XRecord);
-
-			this._writer.Write(330, e.BlockOwner.Handle);
 		}
 
 		protected void writeXRecord(XRecord e)

@@ -1,6 +1,4 @@
-﻿using ACadSharp.Blocks;
-
-namespace ACadSharp.Tables.Collections
+﻿namespace ACadSharp.Tables.Collections
 {
 	public class BlockRecordsTable : Table<BlockRecord>
 	{
@@ -10,7 +8,7 @@ namespace ACadSharp.Tables.Collections
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableBlockRecord;
 
-		protected override string[] _defaultEntries { get { return new string[] { BlockRecord.ModelSpaceName, BlockRecord.PaperSpaceName }; } }
+		protected override string[] defaultEntries { get { return new string[] { BlockRecord.ModelSpaceName, BlockRecord.PaperSpaceName }; } }
 
 		internal BlockRecordsTable() { }
 

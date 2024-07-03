@@ -87,6 +87,7 @@ namespace ACadSharp.IO.DWG
 		{
 			Dictionary<string, object> values = new Dictionary<string, object>();
 
+			tryGetValue(reader, values, reader.ReadBit);
 			tryGetValue(reader, values, reader.ReadByte);
 			tryGetValue(reader, values, reader.ReadShort);
 			tryGetValue(reader, values, reader.ReadInt);
@@ -369,7 +370,13 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public long ReadRawLong()
 		{
-			return this.ReadInt();
+			return this.ReadInt<LittleEndianConverter>();
+		}
+
+		/// <inheritdoc/>
+		public ulong ReadRawULong()
+		{
+			return this.ReadULong<LittleEndianConverter>();
 		}
 
 		/// <inheritdoc/>

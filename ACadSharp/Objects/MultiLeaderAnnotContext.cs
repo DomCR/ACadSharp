@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-
 using ACadSharp.Attributes;
+using ACadSharp.Entities;
 using ACadSharp.Tables;
 
 using CSMath;
@@ -34,7 +34,7 @@ namespace ACadSharp.Objects
 		/// Overall scale
 		/// </summary>
 		[DxfCodeValue(40)]
-		public double OverallScale { get; set; }
+		public double ScaleFactor { get; set; }
 
 		/// <summary>
 		/// Content base point
@@ -91,7 +91,7 @@ namespace ACadSharp.Objects
 		/// --> MLeader.BlockContentConnectionType
 		/// </summary>
 		[DxfCodeValue(177)]
-		public AttachmentType AttachmentType { get; set; }
+		public BlockContentConnectionType BlockContentConnection { get; set; }
 
 		/// <summary>
 		/// Has text contents
@@ -108,8 +108,8 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Normal vector
 		/// </summary>
-		[DxfCodeValue(11)]
-		public XYZ Normal { get; set; }
+		[DxfCodeValue(11, 21, 31)]
+		public XYZ TextNormal { get; set; }
 
 		/// <summary>
 		/// Text style handle (hard pointer)
@@ -121,7 +121,7 @@ namespace ACadSharp.Objects
 		/// Location
 		/// </summary>
 		[DxfCodeValue(12, 22, 32)]
-		public XYZ Location { get; set; }
+		public XYZ TextLocation { get; set; }
 
 		/// <summary>
 		/// Direction
@@ -132,8 +132,8 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Rotation (radians)
 		/// </summary>
-		[DxfCodeValue(42)]
-		public double Rotation { get; set; }
+		[DxfCodeValue(DxfReferenceType.IsAngle, 42)]
+		public double TextRotation { get; set; }
 
 		/// <summary>
 		/// Boundary width
@@ -167,6 +167,8 @@ namespace ACadSharp.Objects
 
 		// BS	171	Alignment (1 = left, 2 = center, 3 = right)
 		// see above: TextAlignment
+		[DxfCodeValue(171)]
+		public TextAttachmentPointType TextAttachmentPoint { get; set; }
 
 		/// <summary>
 		/// Flow direction
@@ -261,18 +263,25 @@ namespace ACadSharp.Objects
 
 		//	These fields read from DWG are stored into the
 		//	Normal and Location property (see above).
-		//3BD		14		Normal vector
-		//3BD		15		Location
+		[DxfCodeValue(14, 24, 34)]
+		public XYZ BlockContentNormal { get; set; }
 
+		/// <summary>
+		/// Location
+		/// </summary>
+		[DxfCodeValue(15, 25, 35)]
+		public XYZ BlockContentLocation { get; set; }
 		/// <summary>
 		/// Scale vector
 		/// </summary>
-		[DxfCodeValue(16)]
+		[DxfCodeValue(16, 26, 36)]
 		public XYZ BlockContentScale { get; set; }
 
-		//	This field read from DWG are stored into the
-		//	Rotation property (see above).
-		//BD		46		Rotation (radians)
+		/// <summary>
+		/// Rottaion (radians)
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.IsAngle, 46)]
+		public double BlockContentRotation { get; set; }
 
 		/// <summary>
 		/// Block color

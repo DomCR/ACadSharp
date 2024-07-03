@@ -2,6 +2,8 @@
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.IO.DXF
 {
@@ -9,35 +11,66 @@ namespace ACadSharp.IO.DXF
 	{
 		public DxfReaderConfiguration Configuration { get; }
 
-		public DxfDocumentBuilder(CadDocument document, DxfReaderConfiguration configuration) : base(document)
+		public CadBlockRecordTemplate ModelSpaceTemplate { get; set; }
+
+		public HashSet<ulong> ModelSpaceEntities { get; } = new();
+
+		public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
+
+		public DxfDocumentBuilder(ACadVersion version, CadDocument document, DxfReaderConfiguration configuration) : base(version, document)
 		{
 			this.Configuration = configuration;
 		}
 
 		public override void BuildDocument()
 		{
+			this.buildDictionaries();
+
+			if (this.ModelSpaceTemplate == null)
+			{
+				BlockRecord record = BlockRecord.ModelSpace;
+				this.BlockRecords.Add(record);
+				this.ModelSpaceTemplate = new CadBlockRecordTemplate(record);
+				this.AddTemplate(this.ModelSpaceTemplate);
+			}
+
+			this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(this.ModelSpaceEntities);
+			
 			this.RegisterTables();
 
-			this.BuildTable(this.AppIds);
-			this.BuildTable(this.LineTypesTable);
-			this.BuildTable(this.Layers);
-			this.BuildTable(this.TextStyles);
-			this.BuildTable(this.UCSs);
-			this.BuildTable(this.Views);
-			this.BuildTable(this.DimensionStyles);
-			this.BuildTable(this.VPorts);
-			this.BuildTable(this.BlockRecords);
+			this.BuildTables();
 
 			//Assign the owners for the different objects
-			foreach (CadTemplate template in this.templates.Values)
+			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
 			{
-				this.assignOwners(template);
+				this.assignOwner(template);
 			}
 
 			base.BuildDocument();
 		}
 
-		private void assignOwners(CadTemplate template)
+		public List<Entity> BuildEntities()
+		{
+			var entities = new List<Entity>();
+
+			foreach (CadEntityTemplate item in this.cadObjectsTemplates.Values.OfType<CadEntityTemplate>())
+			{
+				item.Build(this);
+
+				item.SetUnlinkedReferences();
+			}
+
+			foreach (var item in this.cadObjectsTemplates.Values
+				.OfType<CadEntityTemplate>()
+				.Where(o => o.CadObject.Owner == null))
+			{
+				entities.Add(item.CadObject);
+			}
+
+			return entities;
+		}
+
+		private void assignOwner(CadTemplate template)
 		{
 			if (template.CadObject.Owner != null || template.CadObject is CadDictionary || !template.OwnerHandle.HasValue)
 				return;

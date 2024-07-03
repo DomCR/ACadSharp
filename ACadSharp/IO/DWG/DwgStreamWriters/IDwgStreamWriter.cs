@@ -23,6 +23,8 @@ namespace ACadSharp.IO.DWG
 
 		void WriteInt(int value);
 
+		void WriteObjectType(short value);
+
 		void WriteObjectType(ObjectType value);
 
 		void WriteRawLong(long value);
@@ -61,9 +63,9 @@ namespace ACadSharp.IO.DWG
 
 		void WriteByte(byte value);
 
-		void HandleReference(CadObject cadObject);
+		void HandleReference(IHandledCadObject cadObject);
 
-		void HandleReference(DwgReferenceType type, CadObject cadObject);
+		void HandleReference(DwgReferenceType type, IHandledCadObject cadObject);
 
 		void HandleReference(ulong handle);
 

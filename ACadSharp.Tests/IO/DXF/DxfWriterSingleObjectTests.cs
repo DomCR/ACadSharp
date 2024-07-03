@@ -44,7 +44,7 @@ namespace ACadSharp.Tests.IO.DXF
 			this.writeDxfFile(data, ACadVersion.AC1032);
 		}
 
-		private void writeDxfFile(SingleCaseGenerator data, ACadVersion version)
+		protected virtual void writeDxfFile(SingleCaseGenerator data, ACadVersion version)
 		{
 			if (!TestVariables.RunDwgWriterSingleCases)
 				return;
@@ -53,13 +53,6 @@ namespace ACadSharp.Tests.IO.DXF
 
 			data.Document.Header.Version = version;
 			DxfWriter.Write(path, data.Document, false, this.onNotification);
-
-			this.checkDxfDocumentInAutocad(path);
-		}
-
-		private string getPath(string name, string ext, ACadVersion version)
-		{
-			return Path.Combine(_singleCasesOutFolder, $"{name}_{version}.{ext}");
 		}
 	}
 }

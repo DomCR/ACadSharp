@@ -265,7 +265,7 @@ namespace ACadSharp
 			new byte[] { 255, 255, 255 }
 		};
 
-		private const int _maxTrueColor       = 0b0001_0000_0000_0000_0000_0000_0000;  // 1 << 24;
+		private const int _maxTrueColor = 0b0001_0000_0000_0000_0000_0000_0000;  // 1 << 24;
 
 		private const int _trueColorFlag = 0b0100_0000_0000_0000_0000_0000_0000_0000;  //1 << 30
 
@@ -349,9 +349,9 @@ namespace ACadSharp
 		private readonly uint _color;
 
 		/// <summary>
-		/// Creates a new color out of an AutoCad indexed color.
+		/// Creates a new color out of an indexed color.
 		/// </summary>
-		/// <param name="index">AutoCad index color with a value between 0 to 257</param>
+		/// <param name="index">Index color with a value between 0 to 257</param>
 		public Color(short index)
 		{
 			if (index < 0 || index > 257)
@@ -390,6 +390,22 @@ namespace ACadSharp
 		}
 
 		/// <summary>
+		/// Approximates color from a true color RGB.
+		/// </summary>
+		/// <returns>Approximate RGB color.</returns>
+		public byte GetApproxIndex()
+		{
+			if (this.IsTrueColor)
+			{
+				return Color.ApproxIndex(this.R, this.G, this.B);
+			}
+			else
+			{
+				return (byte)this.Index;
+			}
+		}
+
+		/// <summary>
 		/// Creates a color out of a true color int32.
 		/// </summary>
 		/// <param name="color">True color int 32.</param>
@@ -404,7 +420,7 @@ namespace ACadSharp
 		/// <param name="r">Red</param>
 		/// <param name="g">Green</param>
 		/// <param name="b">Blue</param>
-		/// <returns>Approximate AutoCad RGB color.</returns>
+		/// <returns>Approximate RGB color.</returns>
 		public static byte ApproxIndex(byte r, byte g, byte b)
 		{
 			var prevDist = -1;
@@ -427,7 +443,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Returns the RGB color code which matches the passed indexed color.
 		/// </summary>
-		/// <returns>Approximate RGB color from AutoCAD's indexed color.</returns>
+		/// <returns>Approximate RGB color from indexed color.</returns>
 		public static ReadOnlySpan<byte> GetIndexRGB(byte index)
 		{
 			return _indexRgb[index].AsSpan();

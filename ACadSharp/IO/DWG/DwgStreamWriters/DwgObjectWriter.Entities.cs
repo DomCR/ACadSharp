@@ -16,12 +16,11 @@ namespace ACadSharp.IO.DWG
 			//Ignored Entities
 			switch (entity)
 			{
+				case UnknownEntity:
 				case AttributeEntity:
-				case Shape:
 				case Solid3D:
 				case MultiLeader:
-				//Unlisted
-				case Wipeout:
+				case Mesh:
 					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return;
 			}
@@ -132,6 +131,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case Spline spline:
 					this.writeSpline(spline);
+					break;
+				case CadImageBase image:
+					this.writeCadImage(image);
 					break;
 				case TextEntity text:
 					switch (text)
@@ -650,7 +652,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//H mline style oject handle (hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, mline.MLStyle);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, mline.Style);
 		}
 
 		private void writeLwPolyline(LwPolyline lwPolyline)
@@ -855,12 +857,14 @@ namespace ACadSharp.IO.DWG
 
 					//numpathsegs BL 91 number of path segments
 					this._writer.WriteBitLong(pline.Vertices.Count);
-					foreach (var vertex in pline.Vertices)
+					for (var i = 0; i < pline.Vertices.Count; ++i)
 					{
-						this._writer.Write2RawDouble(vertex);
+						var vertex = pline.Vertices[i];
+
+						this._writer.Write2RawDouble(new XY(vertex.X, vertex.Y));
 						if (pline.HasBulge)
 						{
-							this._writer.WriteBitDouble(pline.Bulge);
+							this._writer.WriteBitDouble(vertex.Z);
 						}
 					}
 				}
@@ -1332,7 +1336,7 @@ namespace ACadSharp.IO.DWG
 			//When reading from DXF, the shape is found by iterating over all the text styles
 			//(SHAPEFILE, see paragraph 20.4.56) and when the text style contains a shape file,
 			//iterating over all the shapes until the one with the matching name is found.
-			this._writer.WriteBitShort(0);  //TODO: missing implementation for shapeIndex
+			this._writer.WriteBitShort((short)shape.ShapeIndex);
 
 			//Extrusion 3BD 210
 			this._writer.Write3BitDouble(shape.Normal);
@@ -1370,6 +1374,50 @@ namespace ACadSharp.IO.DWG
 
 		private void writeSolid3D(Solid3D solid)
 		{
+		}
+
+		private void writeCadImage(CadImageBase image)
+		{
+			this._writer.WriteBitLong(image.ClassVersion);
+
+			this._writer.Write3BitDouble(image.InsertPoint);
+			this._writer.Write3BitDouble(image.UVector);
+			this._writer.Write3BitDouble(image.VVector);
+
+			this._writer.Write2RawDouble(image.Size);
+
+			this._writer.WriteBitShort((short)image.Flags);
+			this._writer.WriteBit(image.ClippingState);
+			this._writer.WriteByte(image.Brightness);
+			this._writer.WriteByte(image.Contrast);
+			this._writer.WriteByte(image.Fade);
+
+			if (this.R2010Plus)
+			{
+				this._writer.WriteBit(image.ClipMode == ClipMode.Inside);
+			}
+
+			this._writer.WriteBitShort((short)image.ClipType);
+
+
+			switch (image.ClipType)
+			{
+				case ClipType.Rectangular:
+					this._writer.Write2RawDouble(image.ClipBoundaryVertices[0]);
+					this._writer.Write2RawDouble(image.ClipBoundaryVertices[1]);
+					break;
+				case ClipType.Polygonal:
+					this._writer.WriteBitLong(image.ClipBoundaryVertices.Count);
+					for (int i = 0; i < image.ClipBoundaryVertices.Count; i++)
+					{
+						this._writer.Write2RawDouble(image.ClipBoundaryVertices[i]);
+					}
+					break;
+			}
+
+			this._writer.HandleReference(DwgReferenceType.HardPointer, image.Definition);
+			//Reactor, not needed
+			this._writer.HandleReference(null);
 		}
 
 		private void writeSpline(Spline spline)
@@ -1641,7 +1689,7 @@ namespace ACadSharp.IO.DWG
 			//Extents wid BD ---Undocumented and not present in DXF or entget
 			this._writer.WriteBitDouble(0);
 
-			//Text TV 1 All text in one long string (Autocad format)
+			//Text TV 1 All text in one long string
 			this._writer.WriteVariableText(mtext.Value);
 
 			//H 7 STYLE (hard pointer)

@@ -1,7 +1,6 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.IO;
+﻿using ACadSharp.IO;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -9,20 +8,17 @@ namespace ACadSharp.Tests.IO
 {
 	public class LocalSampleTests : IOTestsBase
 	{
-		public static TheoryData<string> StressDwgFiles { get; } = new TheoryData<string>();
-
-		public static TheoryData<string> StressDxfFiles { get; } = new TheoryData<string>();
-
 		public static TheoryData<string> UserDwgFiles { get; } = new TheoryData<string>();
 
 		public static TheoryData<string> UserDxfFiles { get; } = new TheoryData<string>();
 
+		public static TheoryData<string> StressFiles { get; } = new TheoryData<string>();
+
 		static LocalSampleTests()
 		{
-			loadSamples("stress", "dwg", StressDwgFiles);
-			loadSamples("stress", "dxf", StressDxfFiles);
 			loadSamples("user_files", "dwg", UserDwgFiles);
 			loadSamples("user_files", "dxf", UserDxfFiles);
+			loadSamples("stress", "*", StressFiles);
 		}
 
 		public LocalSampleTests(ITestOutputHelper output) : base(output)
@@ -37,15 +33,6 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test, this._dwgConfiguration, this.onNotification);
-
-			return;
-
-			string outPath = Path.Combine(Path.GetDirectoryName(test), $"{Path.GetFileNameWithoutExtension(test)}.out.dxf");
-			using (DxfWriter writer = new DxfWriter(outPath, doc, false))
-			{
-				//writer.OnNotification += onNotification;
-				writer.Write();
-			}
 		}
 
 		[Theory]
@@ -56,26 +43,42 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DxfReader.Read(test, this.onNotification);
+
+			using (DxfReader reader = new DxfReader(test))
+			{
+				var e = reader.ReadEntities();
+			}
 		}
 
+
 		[Theory]
-		[MemberData(nameof(StressDwgFiles))]
-		public void ReadStressDwg(string test)
+		[MemberData(nameof(StressFiles))]
+		public void ReadStressFiles(string test)
 		{
 			if (string.IsNullOrEmpty(test))
 				return;
 
-			CadDocument doc = DwgReader.Read(test, this._dwgConfiguration, this.onNotification);
-		}
+			CadDocument doc = null;
+			string extension = Path.GetExtension(test);
 
-		[Theory]
-		[MemberData(nameof(StressDxfFiles))]
-		public void ReadStressDxf(string test)
-		{
-			if (string.IsNullOrEmpty(test))
-				return;
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
 
-			CadDocument doc = DxfReader.Read(test, this.onNotification);
+			if (extension == ".dxf")
+			{
+				doc = DxfReader.Read(test, this.onNotification);
+			}
+			else if (extension.Equals(".dwg", System.StringComparison.OrdinalIgnoreCase))
+			{
+				doc = DwgReader.Read(test, this.onNotification);
+			}
+
+			stopwatch.Stop();
+			this._output.WriteLine(stopwatch.Elapsed.TotalSeconds.ToString());
+
+			//Files tested have a size of ~100MB
+			//Cannot exceed 10 seconds
+			Assert.True(stopwatch.Elapsed.TotalSeconds < 10);
 		}
 	}
 }

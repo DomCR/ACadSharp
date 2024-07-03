@@ -27,7 +27,7 @@ namespace ACadSharp.IO.Templates
 				}
 				catch (ArgumentException ex)
 				{
-					builder.Notify(ex.Message, NotificationType.Warning);
+					builder.Notify($"[{this.CadObject.SubclassMarker}] the entry {entry.Name} already exists", NotificationType.Error, ex);
 				}
 				catch (Exception ex)
 				{

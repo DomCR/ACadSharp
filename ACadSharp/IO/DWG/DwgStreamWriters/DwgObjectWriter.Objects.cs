@@ -2,6 +2,7 @@
 using CSUtilities.Converters;
 using CSUtilities.IO;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -23,7 +24,11 @@ namespace ACadSharp.IO.DWG
 		{
 			switch (obj)
 			{
+				case Material:
+				case MultiLeaderStyle:
+				case MultiLeaderAnnotContext:
 				case SortEntitiesTable:
+				case VisualStyle:
 				case XRecord:
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
 					return;
@@ -48,17 +53,26 @@ namespace ACadSharp.IO.DWG
 				case Group group:
 					this.writeGroup(group);
 					break;
+				case ImageDefinitionReactor definitionReactor:
+					this.writeImageDefinitionReactor(definitionReactor);
+					break;
+				case ImageDefinition definition:
+					this.writeImageDefinition(definition);
+					break;
 				case Layout layout:
 					this.writeLayout(layout);
 					break;
-				case MLStyle style:
-					this.writeMLStyle(style);
+				case MLineStyle style:
+					this.writeMLineStyle(style);
 					break;
 				case PlotSettings plotsettings:
 					this.writePlotSettings(plotsettings);
 					break;
 				case Scale scale:
 					this.writeScale(scale);
+					break;
+				case SortEntitiesTable sorttables:
+					this.writeSortEntitiesTable(sorttables);
 					break;
 				case XRecord record:
 					this.writeXRecord(record);
@@ -153,6 +167,30 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
+		private void writeImageDefinitionReactor(ImageDefinitionReactor definitionReactor)
+		{
+			//Common:
+			//Classver BL 90 class version
+			this._writer.WriteBitLong(definitionReactor.ClassVersion);
+		}
+
+		private void writeImageDefinition(ImageDefinition definition)
+		{
+			//Common:
+			//Clsver BL 0 class version
+			this._writer.WriteBitLong(definition.ClassVersion);
+			//Imgsize 2RD 10 size of image in pixels
+			this._writer.Write2RawDouble(definition.Size);
+			//Filepath TV 1 path to file
+			this._writer.WriteVariableText(definition.FileName);
+			//Isloaded B 280 0==no, 1==yes
+			this._writer.WriteBit(definition.IsLoaded);
+			//Resunits RC 281 0==none, 2==centimeters, 5==inches
+			this._writer.WriteByte((byte)definition.Units);
+			//Pixelsize 2RD 11 size of one pixel in AutoCAD units
+			this._writer.Write2RawDouble(definition.DefaultSize);
+		}
+
 		private void writeLayout(Layout layout)
 		{
 			this.writePlotSettings(layout);
@@ -219,7 +257,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private void writeMLStyle(MLStyle mlineStyle)
+		private void writeMLineStyle(MLineStyle mlineStyle)
 		{
 			//Common:
 			//Name TV Name of this style
@@ -273,7 +311,7 @@ namespace ACadSharp.IO.DWG
 
 			//linesinstyle RC Number of lines in this style
 			this._writer.WriteByte((byte)mlineStyle.Elements.Count);
-			foreach (MLStyle.Element element in mlineStyle.Elements)
+			foreach (MLineStyle.Element element in mlineStyle.Elements)
 			{
 				//Offset BD Offset of this segment
 				this._writer.WriteBitDouble(element.Offset);
@@ -386,7 +424,7 @@ namespace ACadSharp.IO.DWG
 		private void writeScale(Scale scale)
 		{
 			//BS	70	Unknown(ODA writes 0).
-			this._writer.WriteBitShort(scale.Unknown);
+			this._writer.WriteBitShort(0);
 			//TV	300	Name
 			this._writer.WriteVariableText(scale.Name);
 			//BD	140	Paper units(numerator)
@@ -395,6 +433,27 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(scale.DrawingUnits);
 			//B	290	Has unit scale
 			this._writer.WriteBit(scale.IsUnitScale);
+		}
+
+		private void writeSortEntitiesTable(SortEntitiesTable sortEntitiesTable)
+		{
+			//parenthandle (soft pointer)
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, sortEntitiesTable.BlockOwner);
+			
+			//Common:
+			//Numentries BL number of entries
+			this._writer.WriteBitLong(sortEntitiesTable.Sorters.Count());
+
+			foreach (var item in sortEntitiesTable.Sorters)
+			{
+				//Sort handle(numentries of these, CODE 0, i.e.part of the main bit stream, not of the handle bit stream!).
+				//The sort handle does not have to point to an entity (but it can).
+				//This is just the handle used for determining the drawing order of the entity specified by the entity handle in the handle bit stream.
+				//When the sortentstable doesn’t have a
+				//mapping from entity handle to sort handle, then the entity’s own handle is used for sorting.
+				this._writer.HandleReference(item.Handle);
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, item.Entity);
+			}
 		}
 
 		private void writeXRecord(XRecord xrecord)

@@ -143,9 +143,6 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus && table is DimensionStylesTable)
 			{
 				//Undocumented: this byte is found only in the DimensionStylesTable
-				//Solves the Autocad error :
-				//Reading handle A object type AcDbDimStyleTable
-				//Error 34(eWrongObjectType)                       Object discarded
 				this._writer.WriteByte(0);
 			}
 
@@ -209,7 +206,7 @@ namespace ACadSharp.IO.DWG
 
 				this._prev = null;
 				this._next = null;
-				Entity[] arr = blkRecord.Entities.Concat(blkRecord.Viewports).ToArray();
+				Entity[] arr = blkRecord.Entities.ToArray();
 				for (int i = 0; i < arr.Length; i++)
 				{
 					this._prev = arr.ElementAtOrDefault(i - 1);
@@ -286,7 +283,7 @@ namespace ACadSharp.IO.DWG
 				&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 			{
 				//Owned Object Count BL Number of objects owned by this object.
-				_writer.WriteBitLong(record.Entities.Concat(record.Viewports).Count());
+				_writer.WriteBitLong(record.Entities.Count());
 			}
 
 			//Common:
@@ -573,7 +570,14 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Entry name TV 2
-			this._writer.WriteVariableText(style.Name);
+			if (style.IsShapeFile)
+			{
+				this._writer.WriteVariableText(string.Empty);
+			}
+			else
+			{
+				this._writer.WriteVariableText(style.Name);
+			}
 
 			this.writeXrefDependantBit(style);
 
@@ -704,7 +708,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitDouble(0.0);
 				//Contrast BD ? Default value is 0
 				this._writer.WriteBitDouble(0.0);
-				//Abient color CMC? Default value is AutoCAD indexed color 250
+				//Abient color CMC? Default value is indexed color 250
 				this._writer.WriteCmColor(new Color(250));
 			}
 

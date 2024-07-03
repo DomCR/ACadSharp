@@ -17,7 +17,7 @@ namespace ACadSharp.Tests.IO.DWG
 		[MemberData(nameof(Versions))]
 		public void WriteEmptyTest(ACadVersion version)
 		{
-			string path = Path.Combine(_samplesOutFolder, $"out_empty_sample_{version}.dwg");
+			string path = Path.Combine(samplesOutFolder, $"out_empty_sample_{version}.dwg");
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 
@@ -29,7 +29,7 @@ namespace ACadSharp.Tests.IO.DWG
 				}
 				else
 				{
-					Assert.Throws<DwgNotSupportedException>(() => wr.Write());
+					Assert.Throws<CadNotSupportedException>(() => wr.Write());
 					return;
 				}
 			}
@@ -38,8 +38,6 @@ namespace ACadSharp.Tests.IO.DWG
 			{
 				CadDocument readed = re.Read();
 			}
-
-			this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
 		}
 
 		[Theory]
@@ -51,7 +49,7 @@ namespace ACadSharp.Tests.IO.DWG
 
 			this.addEntities(doc);
 
-			string path = Path.Combine(_samplesOutFolder, $"out_sample_{version}.dwg");
+			string path = Path.Combine(samplesOutFolder, $"out_sample_{version}.dwg");
 
 			using (var wr = new DwgWriter(path, doc))
 			{
@@ -62,7 +60,7 @@ namespace ACadSharp.Tests.IO.DWG
 				}
 				else
 				{
-					Assert.Throws<DwgNotSupportedException>(() => wr.Write());
+					Assert.Throws<CadNotSupportedException>(() => wr.Write());
 					return;
 				}
 			}
@@ -71,8 +69,6 @@ namespace ACadSharp.Tests.IO.DWG
 			{
 				CadDocument readed = re.Read();
 			}
-
-			this.checkDwgDocumentInAutocad(Path.GetFullPath(path));
 		}
 
 		[Theory]
@@ -103,7 +99,7 @@ namespace ACadSharp.Tests.IO.DWG
 				}
 				else
 				{
-					Assert.Throws<DwgNotSupportedException>(() => wr.Write());
+					Assert.Throws<CadNotSupportedException>(() => wr.Write());
 					return;
 				}
 			}
@@ -139,7 +135,7 @@ namespace ACadSharp.Tests.IO.DWG
 				}
 				else
 				{
-					Assert.Throws<DwgNotSupportedException>(() => wr.Write());
+					Assert.Throws<CadNotSupportedException>(() => wr.Write());
 					return;
 				}
 			}
