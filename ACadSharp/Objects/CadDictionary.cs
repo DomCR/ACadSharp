@@ -152,7 +152,12 @@ namespace ACadSharp.Objects
 			{
 				{ new CadDictionary(AcadColor) },
 				{ new CadDictionary(AcadGroup) },
-				{ new CadDictionary(AcadLayout) },
+				{ new CadDictionary(AcadLayout)
+					{
+						Layout.Default,
+						new Layout("Layout1")
+					} 
+				},
 				{ new CadDictionary(AcadMaterial) },
 				{ new CadDictionary(AcadSortEnts) },
 				{  new CadDictionary(AcadMLeaderStyle)

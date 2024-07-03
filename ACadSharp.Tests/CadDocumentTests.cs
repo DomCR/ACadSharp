@@ -130,6 +130,21 @@ namespace ACadSharp.Tests
 			Assert.Equal(lineType, doc.LineTypes[lineType.Name]);
 		}
 
+		[Fact]
+		public void CreateDefaultsExistingDocumentTest()
+		{
+			CadDocument doc = new CadDocument();
+
+			ulong appIdsHandle = doc.AppIds.Handle;
+
+			doc.CreateDefaults();
+
+			//Objects should not be overriden
+			Assert.Equal(appIdsHandle, doc.AppIds.Handle);
+
+			this._docIntegrity.AssertDocumentDefaults(doc);
+		}
+
 		[Theory]
 		[MemberData(nameof(EntityTypes))]
 		public void DetachedEntityClone(Type entityType)
