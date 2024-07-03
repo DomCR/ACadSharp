@@ -19,7 +19,7 @@ namespace ACadSharp.IO.Templates
 
 			Shape shape = this.CadObject as Shape;
 
-			if (this.getTableReference(builder, ShapeFileHandle, ShapeFileName, out TextStyle text))
+			if (this.getTableReference(builder, this.ShapeFileHandle, this.ShapeFileName, out TextStyle text))
 			{
 				if (text.IsShapeFile)
 				{
@@ -27,7 +27,7 @@ namespace ACadSharp.IO.Templates
 				}
 				else
 				{
-					builder.Notify($"Shape style {ShapeFileHandle} | {ShapeFileName} not found", NotificationType.Warning);
+					builder.Notify($"Shape style {this.ShapeFileHandle} | {this.ShapeFileName} not found", NotificationType.Warning);
 				}
 			}
 		}

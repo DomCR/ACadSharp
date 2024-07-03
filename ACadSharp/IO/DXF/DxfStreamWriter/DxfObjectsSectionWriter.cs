@@ -31,9 +31,9 @@ namespace ACadSharp.IO.DXF
 				case AcdbPlaceHolder:
 				case Material:
 				case MultiLeaderStyle:
-				case SortEntitiesTable:
 				case VisualStyle:
 				case ImageDefinitionReactor:
+				case XRecord:
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
 			}
@@ -69,7 +69,7 @@ namespace ACadSharp.IO.DXF
 					this.writeScale(scale);
 					break;
 				case SortEntitiesTable sortensTable:
-					//this.writeSortentsTable(sortensTable);
+					this.writeSortentsTable(sortensTable);
 					break;
 				case XRecord record:
 					this.writeXRecord(record);
@@ -254,20 +254,15 @@ namespace ACadSharp.IO.DXF
 
 		private void writeSortentsTable(SortEntitiesTable e)
 		{
-			if (e.BlockOwner == null)
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.SortentsTable);
+
+			this._writer.WriteHandle(330, e.BlockOwner);
+
+			foreach (SortEntitiesTable.Sorter item in e.Sorters)
 			{
-				//In some cases the block onwer is null in the files, this has to be checked
-				this.notify("SortEntitiesTable with handle {e.Handle} has no block owner", NotificationType.Warning);
-				return;
+				this._writer.WriteHandle(331, item.Entity);
+				this._writer.Write(5, item.Handle);
 			}
-
-			this._writer.Write(DxfCode.Start, e.ObjectName);
-
-			this.writeCommonObjectData(e);
-
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XRecord);
-
-			this._writer.Write(330, e.BlockOwner.Handle);
 		}
 
 		protected void writeXRecord(XRecord e)

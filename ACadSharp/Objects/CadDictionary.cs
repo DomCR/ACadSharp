@@ -198,8 +198,15 @@ namespace ACadSharp.Objects
 			return root;
 		}
 
-		internal CadDictionary() { }
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public CadDictionary() { }
 
+		/// <summary>
+		/// Constructor for a named dictionary.
+		/// </summary>
+		/// <param name="name">Dictionary name.</param>
 		public CadDictionary(string name)
 		{
 			this.Name = name;
@@ -208,19 +215,29 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Add a <see cref="NonGraphicalObject"/> to the collection, this method triggers <see cref="OnAdd"/>
 		/// </summary>
+		/// <param name="key">key for the entry in the dictionary</param>
 		/// <param name="value"></param>
-		/// <exception cref="ArgumentException"></exception>
-		public void Add(NonGraphicalObject value)
+		public void Add(string key, NonGraphicalObject value)
 		{
-			if (string.IsNullOrEmpty(value.Name))
+			if (string.IsNullOrEmpty(key))
 			{
 				throw new ArgumentNullException(nameof(value), $"NonGraphicalObject [{this.GetType().FullName}] must have a name");
 			}
 
-			this._entries.Add(value.Name, value);
+			this._entries.Add(key, value);
 			value.Owner = this;
 
 			OnAdd?.Invoke(this, new CollectionChangedEventArgs(value));
+		}
+
+		/// <summary>
+		/// Add a <see cref="NonGraphicalObject"/> to the collection, this method triggers <see cref="OnAdd"/>
+		/// </summary>
+		/// <param name="value">the name of the NonGraphicalObject will be used as a key for the dictionary</param>
+		/// <exception cref="ArgumentException"></exception>
+		public void Add(NonGraphicalObject value)
+		{
+			this.Add(value.Name, value);
 		}
 
 		/// <summary>
@@ -276,11 +293,13 @@ namespace ACadSharp.Objects
 			return false;
 		}
 
+		/// <inheritdoc/>
 		public IEnumerator<NonGraphicalObject> GetEnumerator()
 		{
 			return this._entries.Values.GetEnumerator();
 		}
 
+		/// <inheritdoc/>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return this._entries.Values.GetEnumerator();

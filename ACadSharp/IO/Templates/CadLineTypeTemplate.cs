@@ -5,7 +5,7 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadLineTypeTemplate : CadTableEntryTemplate<LineType>
 	{
-		public class SegmentTemplate : ICadObjectTemplate
+		public class SegmentTemplate
 		{
 			public ulong? StyleHandle { get; set; }
 

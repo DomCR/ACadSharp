@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace ACadSharp.Tests.Tables.Collections
+namespace ACadSharp.Tests.Tables
 {
 	public class BlockRecordTests
 	{
@@ -58,6 +58,24 @@ namespace ACadSharp.Tests.Tables.Collections
 		}
 
 		[Fact()]
+		public void CreateSortensTableTest()
+		{
+			string name = "my_block";
+			BlockRecord record = new BlockRecord(name);
+
+			record.Entities.Add(new Line());
+			record.Entities.Add(new Line());
+			record.Entities.Add(new Line());
+			record.Entities.Add(new Line());
+
+			record.CreateSortEntitiesTable();
+
+			Assert.NotNull(record.SortEntitiesTable);
+			Assert.NotNull(record.SortEntitiesTable.Sorters);
+			Assert.Empty(record.SortEntitiesTable.Sorters);
+		}
+
+		[Fact()]
 		public void CloneTest()
 		{
 			string name = "my_block";
@@ -79,13 +97,7 @@ namespace ACadSharp.Tests.Tables.Collections
 
 			Assert.NotEqual(clone.BlockEntity.Owner, record);
 
-			var recordEntities = record.Entities.ToArray();
-			var cloneEntities = clone.Entities.ToArray();
-
-			for (int i = 0; i < record.Entities.Count; i++)
-			{
-				CadObjectTestUtils.AssertEntityClone(recordEntities[i], cloneEntities[i]);
-			}
+			CadObjectTestUtils.AssertEntityCollection(record.Entities, clone.Entities);
 		}
 
 		[Fact()]

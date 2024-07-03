@@ -4,7 +4,7 @@ using System.IO;
 
 namespace ACadSharp.IO.DXF
 {
-	internal abstract class DxfReaderBase : IDxfStreamReader
+	internal abstract class DxfStreamReaderBase : IDxfStreamReader
 	{
 		public DxfCode DxfCode { get; protected set; }
 
@@ -42,7 +42,7 @@ namespace ACadSharp.IO.DXF
 
 		public double ValueAsDouble { get { return Convert.ToDouble(this.Value); } }
 
-		public double ValueAsAngle { get { return MathUtils.DegToRad(Convert.ToDouble(this.Value)); } }
+		public double ValueAsAngle { get { return (double)(Convert.ToDouble(this.Value) * MathUtils.DegToRad); } }
 
 		public ulong ValueAsHandle { get { return (ulong)this.Value; } }
 

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ACadSharp.IO.DXF
 {
-	internal class DxfTextReader : DxfReaderBase, IDxfStreamReader
+	internal class DxfTextReader : DxfStreamReaderBase, IDxfStreamReader
 	{
 		protected override Stream baseStream { get { return this._stream.BaseStream; } }
 

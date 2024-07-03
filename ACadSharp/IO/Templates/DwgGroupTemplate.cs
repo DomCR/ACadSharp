@@ -22,15 +22,7 @@ namespace ACadSharp.IO.Templates
 				}
 				else
 				{
-					CadObject cad = builder.GetCadObject(handle);
-					if (cad != null)
-					{
-						builder.Notify($"CadObject with handle {cad.GetType().FullName}:{handle} is not an entity and could not be added in group {this.CadObject.Handle}", NotificationType.Warning);
-					}
-					else
-					{
-						builder.Notify($"Entity with handle {handle} not found for group {this.CadObject.Handle}", NotificationType.Warning);
-					}
+					builder.Notify($"Entity with handle {handle} not found for group {this.CadObject.Handle}", NotificationType.Warning);
 				}
 			}
 		}

@@ -17,26 +17,33 @@ namespace ACadSharp.IO.DXF
 
 		public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
 
-		public DxfDocumentBuilder(CadDocument document, DxfReaderConfiguration configuration) : base(document)
+		public DxfDocumentBuilder(ACadVersion version, CadDocument document, DxfReaderConfiguration configuration) : base(version, document)
 		{
 			this.Configuration = configuration;
 		}
 
 		public override void BuildDocument()
 		{
+			this.buildDictionaries();
+
+			if (this.ModelSpaceTemplate == null)
+			{
+				BlockRecord record = BlockRecord.ModelSpace;
+				this.BlockRecords.Add(record);
+				this.ModelSpaceTemplate = new CadBlockRecordTemplate(record);
+				this.AddTemplate(this.ModelSpaceTemplate);
+			}
+
+			this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(this.ModelSpaceEntities);
+			
 			this.RegisterTables();
 
 			this.BuildTables();
 
 			//Assign the owners for the different objects
-			foreach (CadTemplate template in this.templates.Values)
+			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
 			{
 				this.assignOwner(template);
-			}
-
-			if (this.ModelSpaceTemplate != null)
-			{
-				this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(ModelSpaceEntities);
 			}
 
 			base.BuildDocument();
@@ -46,12 +53,17 @@ namespace ACadSharp.IO.DXF
 		{
 			var entities = new List<Entity>();
 
-			foreach (CadEntityTemplate item in this.templates.Values.OfType<CadEntityTemplate>())
+			foreach (CadEntityTemplate item in this.cadObjectsTemplates.Values.OfType<CadEntityTemplate>())
 			{
 				item.Build(this);
 
 				item.SetUnlinkedReferences();
+			}
 
+			foreach (var item in this.cadObjectsTemplates.Values
+				.OfType<CadEntityTemplate>()
+				.Where(o => o.CadObject.Owner == null))
+			{
 				entities.Add(item.CadObject);
 			}
 
