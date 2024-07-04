@@ -147,7 +147,7 @@ namespace ACadSharp.Tests
 
 			doc.CreateDefaults();
 
-			//Objects should not be overriden
+			//Objects should not be replaced
 			Assert.Equal(appIdsHandle, doc.AppIds.Handle);
 			Assert.Equal(blksHandle, doc.BlockRecords.Handle);
 			Assert.Equal(dimHandle, doc.DimensionStyles.Handle);
