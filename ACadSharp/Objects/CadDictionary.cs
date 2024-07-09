@@ -143,7 +143,7 @@ namespace ACadSharp.Objects
 		private readonly Dictionary<string, NonGraphicalObject> _entries = new(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>
-		/// Creates the root dictionary with the default entries
+		/// Creates the root dictionary with the default entries.
 		/// </summary>
 		/// <returns></returns>
 		public static CadDictionary CreateRoot()
@@ -242,11 +242,11 @@ namespace ACadSharp.Objects
 		}
 
 		/// <summary>
-		/// 
+		/// Tries to add the <see cref="NonGraphicalObject"/> entry if the key doesn't exits.
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="value"></param>
-		/// <returns></returns>
+		/// <returns>true if the element is successfully added; otherwise, false.</returns>
 		public bool TryAdd(string key, NonGraphicalObject value)
 		{
 			if (!this._entries.ContainsKey(key))
@@ -257,13 +257,18 @@ namespace ACadSharp.Objects
 			return false;
 		}
 
+		/// <summary>
+		/// Tries to add the <see cref="NonGraphicalObject"/> entry using the name as key.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns>true if the element is successfully added; otherwise, false.</returns>
 		public bool TryAdd(NonGraphicalObject value)
 		{
 			return this.TryAdd(value.Name, value);
 		}
 
 		/// <summary>
-		/// Removes a <see cref="CadObject"/> from the collection, this method triggers <see cref="OnRemove"/>
+		/// Removes a <see cref="NonGraphicalObject"/> from the collection, this method triggers <see cref="OnRemove"/>
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="item"></param>
