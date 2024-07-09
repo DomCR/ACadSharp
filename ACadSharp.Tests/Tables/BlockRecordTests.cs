@@ -97,13 +97,7 @@ namespace ACadSharp.Tests.Tables
 
 			Assert.NotEqual(clone.BlockEntity.Owner, record);
 
-			var recordEntities = record.Entities.ToArray();
-			var cloneEntities = clone.Entities.ToArray();
-
-			for (int i = 0; i < record.Entities.Count; i++)
-			{
-				CadObjectTestUtils.AssertEntityClone(recordEntities[i], cloneEntities[i]);
-			}
+			CadObjectTestUtils.AssertEntityCollection(record.Entities, clone.Entities);
 		}
 
 		[Fact()]

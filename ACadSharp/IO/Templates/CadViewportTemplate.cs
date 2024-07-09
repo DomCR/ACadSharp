@@ -35,12 +35,13 @@ namespace ACadSharp.IO.Templates
 				builder.Notify($"ViewportHeaderHandle not implemented for Viewport, handle {this.ViewportHeaderHandle}");
 			}
 
-			if (this.BoundaryHandle.HasValue && this.BoundaryHandle > 0)
+			if (builder.TryGetCadObject<Entity>(this.BoundaryHandle, out Entity entity))
 			{
-				var entity = builder.GetCadObject<Entity>(this.BoundaryHandle.Value);
-
-				if (entity != null)
-					viewport.Boundary = entity;
+				viewport.Boundary = entity;
+			}
+			else if(this.BoundaryHandle.HasValue  && this.BoundaryHandle > 0)
+			{
+				builder.Notify($"Boundary {this.BoundaryHandle} not found for viewport {this.CadObject.Handle}", NotificationType.Warning);
 			}
 
 			if (this.NamedUcsHandle.HasValue && this.NamedUcsHandle > 0)
@@ -55,10 +56,14 @@ namespace ACadSharp.IO.Templates
 
 			foreach (var handle in this.FrozenLayerHandles)
 			{
-				var layer = builder.GetCadObject<Layer>(handle);
-
-				if (layer != null)
+				if (builder.TryGetCadObject(handle, out Layer layer))
+				{
 					viewport.FrozenLayers.Add(layer);
+				}
+				else
+				{
+					builder.Notify($"Frozen layer {handle} not found for viewport {this.CadObject.Handle}", NotificationType.Warning);
+				}
 			}
 		}
 	}

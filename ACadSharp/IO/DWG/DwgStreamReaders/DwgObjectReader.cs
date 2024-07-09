@@ -171,18 +171,7 @@ namespace ACadSharp.IO.DWG
 				if (template == null)
 					continue;
 
-				if (template is ICadTableTemplate tableTemplate)
-				{
-					this._builder.AddTableTemplate(tableTemplate);
-				}
-				else if (template is ICadDictionaryTemplate dictionaryTemplate)
-				{
-					this._builder.AddDictionaryTemplate(dictionaryTemplate);
-				}
-				else
-				{
-					this._builder.AddTemplate(template);
-				}
+				this._builder.AddTemplate(template);
 			}
 		}
 
@@ -269,9 +258,8 @@ namespace ACadSharp.IO.DWG
 			//Read the handle
 			ulong value = this._handlesReader.HandleReference(handle);
 
-			if (!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
-				!this._handles.Contains(value) &&
-				value != 0 &&
+			if (value != 0 &&
+				!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
 				!this._readedObjects.ContainsKey(value))
 			{
 				//Add the value to the handles queue to be processed
@@ -3867,8 +3855,6 @@ namespace ACadSharp.IO.DWG
 				template.SegmentTemplates[i].StyleHandle = this.handleReference();
 			}
 
-			this._builder.LineTypes.Add(ltype.Name, ltype);
-
 			return template;
 		}
 
@@ -4726,7 +4712,7 @@ namespace ACadSharp.IO.DWG
 				if (this.R2018Plus)
 				{
 					//Line type handle H Line type handle (hard pointer)
-					elementTemplate.LinetypeHandle = this.handleReference();
+					elementTemplate.LineTypeHandle = this.handleReference();
 				}
 				//Before R2018:
 				else
