@@ -14,7 +14,7 @@ namespace ACadSharp.Objects
 	/// This class represents a subset ob the properties of the MLeaderAnnotContext
 	/// object, that are embedded into the MultiLeader entity.
 	/// </summary>
-	public partial class MultiLeaderAnnotContext : CadObject
+	public partial class MultiLeaderAnnotContext : NonGraphicalObject
 	{
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 

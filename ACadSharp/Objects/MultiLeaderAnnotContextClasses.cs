@@ -13,7 +13,7 @@ namespace ACadSharp.Objects
 	/// <summary>
 	/// Nested classes in MultiLeaderAnnotContext
 	/// </summary>
-	public partial class MultiLeaderAnnotContext : CadObject
+	public partial class MultiLeaderAnnotContext : NonGraphicalObject
 	{
 		/// <summary>
 		/// Represents a leader root

@@ -16,7 +16,6 @@ namespace ACadSharp.IO.DXF
 			switch (entity)
 			{
 				case Solid3D:
-				case Wipeout:
 				case UnknownEntity:
 					this.notify($"Entity type not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return;
