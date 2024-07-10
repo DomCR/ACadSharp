@@ -550,6 +550,7 @@ namespace ACadSharp.Objects
 		{
 			MultiLeaderAnnotContext clone = (MultiLeaderAnnotContext)base.Clone();
 
+			clone.LeaderRoots.Clear();
 			foreach (var leaderRoot in this.LeaderRoots)
 			{
 				clone.LeaderRoots.Add((LeaderRoot)leaderRoot.Clone());
