@@ -3,8 +3,6 @@ name: Wiki genrator
 on:
   push:
     branches: [ master ]
-  pull_request: # Remove on merge
-    branches: [ master ]
 
 jobs:
   build:
