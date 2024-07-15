@@ -1673,6 +1673,7 @@ namespace ACadSharp.IO.DWG
 			//R2007+:
 			if (this.R2007Plus)
 			{
+				//Rect height BD 46 Reference rectangle height.
 				this._writer.WriteBitDouble(mtext.RectangleHeight);
 			}
 
@@ -1693,7 +1694,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteVariableText(mtext.Value);
 
 			//H 7 STYLE (hard pointer)
-			this._writer.HandleReference(mtext.Style);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, mtext.Style);
 
 			//R2000+:
 			if (this.R2000Plus)
@@ -1729,7 +1730,9 @@ namespace ACadSharp.IO.DWG
 
 			//R2018+
 			if (!this.R2018Plus)
+			{
 				return;
+			}
 
 			//Is NOT annotative B
 			this._writer.WriteBit(!mtext.IsAnnotative);
@@ -1741,7 +1744,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Version BS Default 0
-			this._writer.WriteBitShort(0);
+			this._writer.WriteBitShort(4);
 			//Default flag B Default true
 			this._writer.WriteBit(true);
 
@@ -1756,13 +1759,13 @@ namespace ACadSharp.IO.DWG
 			//Insertion point 3BD 11
 			this._writer.Write3BitDouble(mtext.InsertPoint);
 			//Rect width BD 40
-			this._writer.WriteBitDouble(mtext.Height);
-			//Rect height BD 41
 			this._writer.WriteBitDouble(mtext.RectangleWidth);
+			//Rect height BD 41 -> wrong code, should be 46, undocumented
+			this._writer.WriteBitDouble(mtext.RectangleHeight);
 			//Extents width BD 42
 			this._writer.WriteBitDouble(mtext.HorizontalWidth);
 			//Extents height BD 43
-			this._writer.WriteBitDouble(mtext.VerticalWidth);
+			this._writer.WriteBitDouble(mtext.VerticalHeight);
 			//END REDUNDANT FIELDS
 
 			//Column type BS 71 0 = No columns, 1 = static columns, 2 = dynamic columns
