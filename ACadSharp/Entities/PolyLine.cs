@@ -63,7 +63,7 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// Each <see cref="Vertex"/> has it's own unique handle.
 		/// </remarks>
-		public SeqendCollection<Vertex> Vertices { get; }
+		public SeqendCollection<Vertex> Vertices { get; private set; }
 
 		/// <inheritdoc/>
 		public bool IsClosed
@@ -147,6 +147,20 @@ namespace ACadSharp.Entities
 			}
 
 			return entities;
+		}
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			Polyline clone = (Polyline)base.Clone();
+
+			clone.Vertices = new SeqendCollection<Vertex>(clone);
+			foreach (Vertex v in this.Vertices)
+			{
+				clone.Vertices.Add((Vertex)v.Clone());
+			}
+
+			return clone;
 		}
 
 		internal override void AssignDocument(CadDocument doc)

@@ -24,7 +24,7 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.PolyfaceMesh;
 
-		public CadObjectCollection<VertexFaceRecord> Faces { get; }
+		public CadObjectCollection<VertexFaceRecord> Faces { get; private set; }
 
 		public PolyfaceMesh()
 		{
@@ -35,6 +35,20 @@ namespace ACadSharp.Entities
 		public override IEnumerable<Entity> Explode()
 		{
 			throw new System.NotImplementedException();
+		}
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			PolyfaceMesh clone = (PolyfaceMesh)base.Clone();
+
+			clone.Faces = new SeqendCollection<VertexFaceRecord>(clone);
+			foreach (VertexFaceRecord v in this.Faces)
+			{
+				clone.Vertices.Add((VertexFaceRecord)v.Clone());
+			}
+
+			return clone;
 		}
 
 		private void verticesOnAdd(object sender, CollectionChangedEventArgs e)

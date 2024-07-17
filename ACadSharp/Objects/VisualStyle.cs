@@ -11,7 +11,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectVisualStyle)]
 	[DxfSubClass(DxfSubclassMarker.VisualStyle)]
-	public class VisualStyle : CadObject
+	public class VisualStyle : NonGraphicalObject
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;

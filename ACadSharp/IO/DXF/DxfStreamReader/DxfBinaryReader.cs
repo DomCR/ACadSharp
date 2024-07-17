@@ -7,15 +7,15 @@ namespace ACadSharp.IO.DXF
 {
 	internal class DxfBinaryReader : DxfStreamReaderBase, IDxfStreamReader
 	{
-		public const string Sentinel = "AutoCAD Binary DXF";
+		public const string Sentinel = "AutoCAD Binary DXF\r\n\u001a\0";
 
 		public override int Position { get { return (int)this.baseStream.Position; } }
 
 		protected override Stream baseStream { get { return this._stream.BaseStream; } }
 
-		private Encoding _encoding;
+		protected BinaryReader _stream;
 
-		private BinaryReader _stream;
+		private Encoding _encoding;
 
 		public DxfBinaryReader(Stream stream) : this(stream, Encoding.ASCII) { }
 
@@ -32,6 +32,7 @@ namespace ACadSharp.IO.DXF
 			base.start();
 
 			byte[] sentinel = this._stream.ReadBytes(22);
+			//AutoCAD Binary DXF\r\n\u001a\0
 			string s = Encoding.ASCII.GetString(sentinel);
 		}
 
