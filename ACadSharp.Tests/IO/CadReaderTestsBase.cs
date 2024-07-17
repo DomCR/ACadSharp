@@ -38,6 +38,8 @@ namespace ACadSharp.Tests.IO
 		{
 			CadDocument doc = this.getDocument(test);
 
+			Assert.NotNull(doc.SummaryInfo);
+
 			if (doc.Header.Version < ACadVersion.AC1012)
 			{
 				//Older version do not keep the handles for tables and other objects like block_records

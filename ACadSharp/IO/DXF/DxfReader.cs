@@ -108,20 +108,14 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		public static CadDocument Read(string filename, NotificationEventHandler notification = null)
 		{
-			CadDocument doc = null;
-
-			using (DxfReader reader = new DxfReader(filename, notification))
-			{
-				doc = reader.Read();
-			}
-
-			return doc;
+			return Read(File.OpenRead(filename));
 		}
 
 		/// <inheritdoc/>
 		public override CadDocument Read()
 		{
 			this._document = new CadDocument(false);
+			this._document.SummaryInfo = new CadSummaryInfo();
 
 			this._reader = this._reader ?? this.getReader();
 

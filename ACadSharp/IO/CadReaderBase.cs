@@ -22,9 +22,8 @@ namespace ACadSharp.IO
 			this.OnNotification += notification;
 		}
 
-		protected CadReaderBase(string filename, NotificationEventHandler notification = null) : this(notification)
+		protected CadReaderBase(string filename, NotificationEventHandler notification = null) : this(File.OpenRead(filename), notification)
 		{
-			this._fileStream = new StreamIO(filename, FileMode.Open, FileAccess.Read);
 		}
 
 		protected CadReaderBase(Stream stream, NotificationEventHandler notification = null) : this(notification)
