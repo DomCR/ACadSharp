@@ -137,11 +137,11 @@ namespace ACadSharp.IO
 
 			//Older versions than 2004 don't have summaryinfo in it's file
 			if (this._fileHeader.AcadVersion < ACadVersion.AC1018)
-				return null;
+				return new CadSummaryInfo();
 
 			IDwgStreamReader reader = this.getSectionStream(DwgSectionDefinition.SummaryInfo);
 			if (reader == null)
-				return null;
+				return new CadSummaryInfo();
 
 			DwgSummaryInfoReader summaryReader = new DwgSummaryInfoReader(this._fileHeader.AcadVersion, reader);
 			return summaryReader.Read();
