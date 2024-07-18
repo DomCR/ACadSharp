@@ -7,9 +7,20 @@ using System.Text;
 
 namespace ACadSharp.IO
 {
-	public abstract class CadReaderBase : ICadReader
+	/// <summary>
+	/// Base class for the DWG and DXF readers.
+	/// </summary>
+	/// <typeparam name="T">Configuration type for the reader.</typeparam>
+	public abstract class CadReaderBase<T> : ICadReader
+		where T : CadReaderConfiguration, new()
 	{
+		/// <inheritdoc/>
 		public event NotificationEventHandler OnNotification;
+
+		/// <summary>
+		/// Reader configuration.
+		/// </summary>
+		public T Configuration { get; set; } = new();
 
 		protected CadDocument _document = new CadDocument(false);
 
