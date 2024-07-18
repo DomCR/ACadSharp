@@ -9,6 +9,9 @@ using System.Text;
 
 namespace ACadSharp.IO
 {
+	/// <summary>
+	/// Class for writing a DWG from a <see cref="CadDocument"/>.
+	/// </summary>
 	public class DwgWriter : CadWriterBase
 	{
 		private ACadVersion _version { get { return this._document.Header.Version; } }
@@ -20,7 +23,7 @@ namespace ACadSharp.IO
 		private Dictionary<ulong, long> _handlesMap = new Dictionary<ulong, long>();
 
 		/// <summary>
-		/// 
+		/// Initializes a new instance of the <see cref="DwgWriter"/> class.
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <param name="document"></param>
@@ -30,7 +33,7 @@ namespace ACadSharp.IO
 		}
 
 		/// <summary>
-		/// 
+		/// Initializes a new instance of the <see cref="DwgWriter"/> class.
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <param name="document"></param>

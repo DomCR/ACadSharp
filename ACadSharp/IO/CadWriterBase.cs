@@ -8,13 +8,19 @@ namespace ACadSharp.IO
 {
 	public abstract class CadWriterBase : ICadWriter
 	{
+		/// <summary>
+		/// Notification event to get information about the writing process.
+		/// </summary>
+		/// <remarks>
+		/// The notification system informs about any issue or non critical errors during the writing.
+		/// </remarks>
 		public event NotificationEventHandler OnNotification;
 
 		/// <summary>
-		/// Notifies the writer to close the stream once the operation is completed
+		/// Notifies the writer to close the stream once the operation is completed.
 		/// </summary>
 		/// <value>
-		/// true
+		/// default: true
 		/// </value>
 		public bool CloseStream { get; set; } = true;
 

@@ -14,12 +14,7 @@ namespace ACadSharp.IO
 	public abstract class CadReaderBase<T> : ICadReader
 		where T : CadReaderConfiguration, new()
 	{
-		/// <summary>
-		/// Notification event to get information about the reading process.
-		/// </summary>
-		/// <remarks>
-		/// The notification system informs about any issue or non critical errors during the reading.
-		/// </remarks>
+		/// <inheritdoc/>
 		public event NotificationEventHandler OnNotification;
 
 		/// <summary>

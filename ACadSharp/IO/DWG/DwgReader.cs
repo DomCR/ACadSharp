@@ -20,7 +20,6 @@ namespace ACadSharp.IO
 	public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	{
 		private DwgDocumentBuilder _builder;
-
 		private DwgFileHeader _fileHeader;
 
 		/// <summary>

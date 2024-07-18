@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ACadSharp.IO
 {
+	/// <summary>
+	/// Class for writing a DXF from a <see cref="CadDocument"/>.
+	/// </summary>
 	public class DxfWriter : CadWriterBase
 	{
 		/// <summary>
@@ -11,6 +14,9 @@ namespace ACadSharp.IO
 		/// </summary>
 		public bool IsBinary { get; }
 
+		/// <summary>
+		/// DXF writer configuration.
+		/// </summary>
 		public DxfWriterConfiguration Configuration { get; set; } = new DxfWriterConfiguration();
 
 		private IDxfStreamWriter _writer;

@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace ACadSharp.IO
 {
+	/// <summary>
+	/// Configuration for writing DWG files.
+	/// </summary>
 	public class DxfWriterConfiguration
 	{
 		/// <summary>
