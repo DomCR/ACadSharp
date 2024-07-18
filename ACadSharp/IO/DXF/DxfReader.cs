@@ -14,10 +14,11 @@ using System.Text;
 
 namespace ACadSharp.IO
 {
-	public class DxfReader : CadReaderBase
+	/// <summary>
+	/// Class for reading a DXF file into a <see cref="CadDocument"></see>.
+	/// </summary>
+	public class DxfReader : CadReaderBase<DxfReaderConfiguration>
 	{
-		public DxfReaderConfiguration Configuration { get; set; } = new DxfReaderConfiguration();
-
 		private ACadVersion _version;
 		private DxfDocumentBuilder _builder;
 		private IDxfStreamReader _reader;

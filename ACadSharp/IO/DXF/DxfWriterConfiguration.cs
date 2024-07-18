@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ACadSharp.IO
 {
-	public class DxfWriterOptions
+	public class DxfWriterConfiguration
 	{
 		/// <summary>
 		/// Variables that must be writen in a dxf file
@@ -72,7 +72,7 @@ namespace ACadSharp.IO
 
 		private HashSet<string> _headerVariables;
 
-		public DxfWriterOptions()
+		public DxfWriterConfiguration()
 		{
 			this._headerVariables = new HashSet<string>(Variables);
 		}

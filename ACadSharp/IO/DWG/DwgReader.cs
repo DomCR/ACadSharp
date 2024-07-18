@@ -14,10 +14,11 @@ using ACadSharp.IO.DWG.DwgStreamReaders;
 
 namespace ACadSharp.IO
 {
-	public class DwgReader : CadReaderBase
+	/// <summary>
+	/// Class for reading a DWG file into a <see cref="CadDocument"></see>.
+	/// </summary>
+	public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	{
-		public DwgReaderConfiguration Configuration { get; set; } = new DwgReaderConfiguration();
-
 		private DwgDocumentBuilder _builder;
 
 		private DwgFileHeader _fileHeader;
@@ -68,7 +69,7 @@ namespace ACadSharp.IO
 		}
 
 		/// <summary>
-		/// Read a dwg document from a file
+		/// Read a dwg document from a file.
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
@@ -79,7 +80,7 @@ namespace ACadSharp.IO
 		}
 
 		/// <summary>
-		/// Read a dwg document from a file
+		/// Read a dwg document from a file.
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <param name="configuration"></param>
