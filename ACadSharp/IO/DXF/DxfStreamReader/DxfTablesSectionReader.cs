@@ -3,6 +3,8 @@ using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Types.Units;
+using CSMath;
+using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -39,8 +41,6 @@ namespace ACadSharp.IO.DXF
 				else
 					throw new DxfException($"Unexpected token at the end of a table: {this._reader.ValueAsString}", this._reader.Position);
 			}
-
-			this.validateTables();
 		}
 
 		private void readTable()
@@ -81,7 +81,7 @@ namespace ACadSharp.IO.DXF
 							this.readExtendedData(edata);
 							break;
 						default:
-							this._builder.Notify($"Unhandeled dxf code {this._reader.Code} at line {this._reader.Position}.");
+							this._builder.Notify($"[AcDbSymbolTable] Unhandeled dxf code {this._reader.Code} at line {this._reader.Position}.");
 							break;
 					}
 
@@ -164,7 +164,7 @@ namespace ACadSharp.IO.DXF
 			template.EDataTemplateByAppName = edata;
 
 			//Add the object and the template to the builder
-			this._builder.AddTableTemplate((ICadTableTemplate)template);
+			this._builder.AddTemplate(template);
 		}
 
 		private void readEntries<T>(CadTableTemplate<T> tableTemplate)
@@ -184,7 +184,14 @@ namespace ACadSharp.IO.DXF
 						template = this.readTableEntry(new CadTableEntryTemplate<AppId>(new AppId()), this.readAppId);
 						break;
 					case DxfFileToken.TableBlockRecord:
-						template = this.readTableEntry(new CadBlockRecordTemplate(), this.readBlockRecord);
+						CadBlockRecordTemplate block = new CadBlockRecordTemplate();
+						template = this.readTableEntry(block, this.readBlockRecord);
+
+						if (block.CadObject.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase))
+						{
+							this._builder.ModelSpaceTemplate = block;
+						}
+
 						break;
 					case DxfFileToken.TableDimstyle:
 						template = this.readTableEntry(new CadDimensionStyleTemplate(), this.readDimensionStyle);
@@ -212,7 +219,8 @@ namespace ACadSharp.IO.DXF
 						break;
 				}
 
-				tableTemplate.EntryHandles.Add(template.CadObject.Handle);
+				//tableTemplate.EntryHandles.Add(template.CadObject.Handle);
+				tableTemplate.CadObject.Add((T)template.CadObject);
 
 				//Add the object and the template to the builder
 				this._builder.AddTemplate(template);
@@ -313,7 +321,8 @@ namespace ACadSharp.IO.DXF
 					tmp.DIMBLK2_Name = this._reader.ValueAsString;
 					return true;
 				case 40:
-					template.CadObject.ScaleFactor = this._reader.ValueAsDouble;
+					//Somethimes is 0 but it shouldn't be allowed
+					template.CadObject.ScaleFactor = this._reader.ValueAsDouble <= 0 ? 1.0d : this._reader.ValueAsDouble;
 					return true;
 				case 41:
 					template.CadObject.ArrowSize = this._reader.ValueAsDouble;
@@ -343,7 +352,7 @@ namespace ACadSharp.IO.DXF
 					template.CadObject.FixedExtensionLineLength = this._reader.ValueAsDouble;
 					return true;
 				case 50:
-					template.CadObject.JoggedRadiusDimensionTransverseSegmentAngle = this._reader.ValueAsDouble;
+					template.CadObject.JoggedRadiusDimensionTransverseSegmentAngle = CSMath.MathUtils.DegToRad(this._reader.ValueAsDouble);
 					return true;
 				case 69:
 					template.CadObject.TextBackgroundFillMode = (DimensionTextBackgroundFillMode)this._reader.ValueAsShort;
@@ -490,13 +499,13 @@ namespace ACadSharp.IO.DXF
 					template.CadObject.AlternateUnitToleranceZeroHandling = (ZeroHandling)(byte)this._reader.ValueAsShort;
 					return true;
 				case 287:
-					template.CadObject.DimensionFit = (char)this._reader.ValueAsShort;
+					template.CadObject.DimensionFit = this._reader.ValueAsShort;
 					return true;
 				case 288:
 					template.CadObject.CursorUpdate = this._reader.ValueAsBool;
 					return true;
 				case 289:
-					template.CadObject.DimensionTextArrowFit = this._reader.ValueAsShort;
+					template.CadObject.DimensionTextArrowFit = (TextArrowFitType)this._reader.ValueAsShort;
 					return true;
 				case 290:
 					template.CadObject.IsExtensionLineLengthFixed = this._reader.ValueAsBool;
@@ -557,7 +566,7 @@ namespace ACadSharp.IO.DXF
 					template.CadObject.PlotStyleName = this._reader.ValueAsHandle;
 					return true;
 				case 420:
-					template.CadObject.Color = Color.FromTrueColor(this._reader.ValueAsInt);
+					template.CadObject.Color = Color.FromTrueColor((uint)this._reader.ValueAsInt);
 					return true;
 				case 430:
 					tmp.TrueColorName = this._reader.ValueAsString;
@@ -645,6 +654,13 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				case 2:
+					if (!this._reader.ValueAsString.IsNullOrEmpty())
+					{
+						//In some files the TextStyle is an empty string
+						template.CadObject.Name = this._reader.ValueAsString;
+					}
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map);
 			}
@@ -695,61 +711,6 @@ namespace ACadSharp.IO.DXF
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map);
 			}
-		}
-
-		private void validateTables()
-		{
-			if (this._builder.AppIds == null)
-			{
-				this.createDefaultTable(new AppIdsTable());
-			}
-
-			if (this._builder.BlockRecords == null)
-			{
-				this.createDefaultTable(new BlockRecordsTable());
-			}
-
-			if (this._builder.DimensionStyles == null)
-			{
-				this.createDefaultTable(new DimensionStylesTable());
-			}
-
-			if (this._builder.Layers == null)
-			{
-				this.createDefaultTable(new LayersTable());
-			}
-
-			if (this._builder.LineTypes == null)
-			{
-				this.createDefaultTable(new LineTypesTable());
-			}
-
-			if (this._builder.UCSs == null)
-			{
-				this.createDefaultTable(new UCSTable());
-			}
-
-			if (this._builder.Views == null)
-			{
-				this.createDefaultTable(new ViewsTable());
-			}
-
-			if (this._builder.VPorts == null)
-			{
-				this.createDefaultTable(new VPortsTable());
-			}
-
-			//this._builder.RegisterTables();
-		}
-
-		private void createDefaultTable<T>(Table<T> table)
-			where T : TableEntry
-		{
-			//TODO: Validate tables in the document
-			this._builder.Notify($"Table [{table.GetType().FullName}] not found in document", NotificationType.Warning);
-
-			//this._builder.DocumentToBuild.RegisterCollection(table);
-			//table.CreateDefaultEntries();
 		}
 	}
 }

@@ -61,6 +61,7 @@ namespace ACadSharp.IO.DXF
 				case GroupCodeValueType.ExtendedDataDouble:
 					this._stream.WriteLine(Convert.ToDouble(value).ToString("0.0###############", System.Globalization.CultureInfo.InvariantCulture));
 					return;
+				case GroupCodeValueType.Byte:
 				case GroupCodeValueType.Int16:
 				case GroupCodeValueType.ExtendedDataInt16:
 					this._stream.WriteLine(Convert.ToInt16(value).ToString(System.Globalization.CultureInfo.InvariantCulture));
@@ -87,6 +88,7 @@ namespace ACadSharp.IO.DXF
 					{
 						this._stream.Write(string.Format("{0:X2}", v));
 					}
+					this._stream.Write(Environment.NewLine);
 					return;
 			}
 

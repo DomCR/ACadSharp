@@ -5,6 +5,7 @@ using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using System.Linq;
 using System.Collections.Generic;
+using ACadSharp.IO.Templates;
 
 namespace ACadSharp.Tables
 {
@@ -78,7 +79,7 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public Layout Layout
 		{
-			get { return _layout; }
+			get { return this._layout; }
 			set
 			{
 				this._layout = value;
@@ -115,19 +116,53 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Viewports attached to this block
 		/// </summary>
-		public CadObjectCollection<Viewport> Viewports { get; }
+		public IEnumerable<Viewport> Viewports
+		{
+			get
+			{
+				return this.Entities.OfType<Viewport>();
+			}
+		}
 
 		/// <summary>
 		/// Entities owned by this block
 		/// </summary>
 		/// <remarks>
-		/// Entities with another owner cannot be added to another block
+		/// Entities with an owner cannot be added to another block
 		/// </remarks>
-		public CadObjectCollection<Entity> Entities { get; }
+		public CadObjectCollection<Entity> Entities { get; private set; }
 
+		/// <summary>
+		/// Sort entities table for this block record.
+		/// </summary>
+		/// <remarks>
+		/// 
+		/// </remarks>
+		public SortEntitiesTable SortEntitiesTable
+		{
+			get
+			{
+				if (this.XDictionary == null)
+				{
+					return null;
+				}
+				else if (this.XDictionary.TryGetEntry(SortEntitiesTable.DictionaryEntryName, out SortEntitiesTable table))
+				{
+					return table;
+				}
+				else
+				{
+					return null;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Block entity for this record
+		/// </summary>
 		public Block BlockEntity
 		{
-			get { return _blockEntity; }
+			get { return this._blockEntity; }
 			internal set
 			{
 				this._blockEntity = value;
@@ -135,9 +170,12 @@ namespace ACadSharp.Tables
 			}
 		}
 
+		/// <summary>
+		/// End block entity for this Block record.
+		/// </summary>
 		public BlockEnd BlockEnd
 		{
-			get { return _blockEnd; }
+			get { return this._blockEnd; }
 			internal set
 			{
 				this._blockEnd = value;
@@ -156,25 +194,37 @@ namespace ACadSharp.Tables
 			this.BlockEntity = new Block(this);
 			this.BlockEnd = new BlockEnd(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
-			this.Viewports = new CadObjectCollection<Viewport>(this);
 		}
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		/// <param name="name">Unique name for this block record.</param>
 		public BlockRecord(string name) : base(name)
 		{
 			this.BlockEntity = new Block(this);
 			this.BlockEnd = new BlockEnd(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
-			this.Viewports = new CadObjectCollection<Viewport>(this);
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		/// <exception cref="System.NotImplementedException"></exception>
 		public SortEntitiesTable CreateSortEntitiesTable()
 		{
-			throw new System.NotImplementedException();
+			CadDictionary dictionary = this.CreateExtendedDictionary();
+
+			if (dictionary.TryGetEntry(SortEntitiesTable.DictionaryEntryName, out SortEntitiesTable table))
+			{
+				return table;
+			}
+
+			table = new SortEntitiesTable(this);
+
+			dictionary.Add(table);
+
+			return table;
 		}
 
 		/// <inheritdoc/>
@@ -184,7 +234,7 @@ namespace ACadSharp.Tables
 
 			clone.Layout = (Layout)(this.Layout?.Clone());
 
-			clone.Entities.Clear();
+			clone.Entities = new CadObjectCollection<Entity>(clone);
 			foreach (var item in this.Entities)
 			{
 				clone.Entities.Add((Entity)item.Clone());

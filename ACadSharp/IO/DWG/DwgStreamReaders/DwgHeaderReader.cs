@@ -368,7 +368,7 @@ namespace ACadSharp.IO.DWG
 			_header.UserElapsedTimeSpan = _reader.ReadTimeSpan();
 
 			//CMC : CECOLOR
-			_header.CurrentEntityColor = _reader.ReadCmColor();
+			_header.CurrentEntityColor = _reader.ReadCmColor(); //TODO: Check the method for CECOLOR
 
 			//H : HANDSEED The next handle, with an 8-bit length specifier preceding the handle
 			//bytes (standard hex handle form) (code 0). The HANDSEED is not part of the handle
@@ -543,7 +543,7 @@ namespace ACadSharp.IO.DWG
 				//RC : DIMJUST
 				_header.DimensionTextHorizontalAlignment = (Tables.DimensionTextHorizontalAlignment)_reader.ReadRawChar();
 				//RC : DIMFIT
-				_header.DimensionFit = _reader.ReadRawChar();
+				_header.DimensionFit = (short)_reader.ReadRawChar();
 				//B : DIMUPT
 				_header.DimensionCursorUpdate = _reader.ReadBit();
 				//RC : DIMTZIN
@@ -733,7 +733,7 @@ namespace ACadSharp.IO.DWG
 				//B : DIMUPT
 				_header.DimensionCursorUpdate = _reader.ReadBit();
 				//BS : DIMATFIT
-				_header.DimensionDimensionTextArrowFit = _reader.ReadBitShort();
+				_header.DimensionDimensionTextArrowFit = (Tables.TextArrowFitType)_reader.ReadBitShort();
 			}
 
 			//R2007 + Only:

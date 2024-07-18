@@ -28,6 +28,7 @@ namespace ACadSharp.Examples.Common
 
 			//Write in the console all the messages
 			Console.WriteLine(e.Message);
+			Console.ResetColor();
 		}
 	}
 }

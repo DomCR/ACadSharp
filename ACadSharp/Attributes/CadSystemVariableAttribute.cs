@@ -19,6 +19,18 @@ namespace ACadSharp.Attributes
 		/// <inheritdoc/>
 		public DxfReferenceType ReferenceType { get; }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public bool IsName { get; } = false;
+
+		public CadSystemVariableAttribute(string variable, bool isName, params int[] codes)
+		{
+			this.Name = variable;
+			this.IsName = isName;
+			this.ValueCodes = codes.Select(c => (DxfCode)c).ToArray();
+		}
+
 		public CadSystemVariableAttribute(string variable, params int[] codes)
 		{
 			this.Name = variable;

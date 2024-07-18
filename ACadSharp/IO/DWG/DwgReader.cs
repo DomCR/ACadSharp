@@ -10,15 +10,16 @@ using System.Linq;
 using System.Text;
 using ACadSharp.Exceptions;
 using ACadSharp.IO.DWG;
+using ACadSharp.IO.DWG.DwgStreamReaders;
 
 namespace ACadSharp.IO
 {
-	public class DwgReader : CadReaderBase
+	/// <summary>
+	/// Class for reading a DWG file into a <see cref="CadDocument"></see>.
+	/// </summary>
+	public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	{
-		public DwgReaderConfiguration Configuration { get; set; } = new DwgReaderConfiguration();
-
 		private DwgDocumentBuilder _builder;
-
 		private DwgFileHeader _fileHeader;
 
 		/// <summary>
@@ -67,7 +68,7 @@ namespace ACadSharp.IO
 		}
 
 		/// <summary>
-		/// Read a dwg document from a file
+		/// Read a dwg document from a file.
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
@@ -78,7 +79,7 @@ namespace ACadSharp.IO
 		}
 
 		/// <summary>
-		/// Read a dwg document from a file
+		/// Read a dwg document from a file.
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <param name="configuration"></param>
@@ -101,15 +102,18 @@ namespace ACadSharp.IO
 		public override CadDocument Read()
 		{
 			this._document = new CadDocument(false);
-			this._builder = new DwgDocumentBuilder(this._document, this.Configuration);
-			this._builder.OnNotification += this.onNotificationEvent;
 
 			//Read the file header
 			this._fileHeader = this.readFileHeader();
 
+			this._builder = new DwgDocumentBuilder(this._fileHeader.AcadVersion, this._document, this.Configuration);
+			this._builder.OnNotification += this.onNotificationEvent;
+
 			this._document.SummaryInfo = this.ReadSummaryInfo();
 			this._document.Header = this.ReadHeader();
 			this._document.Classes = this.readClasses();
+
+			this.readAppInfo();
 
 			//Read all the objects in the file
 			this.readObjects();
@@ -133,11 +137,11 @@ namespace ACadSharp.IO
 
 			//Older versions than 2004 don't have summaryinfo in it's file
 			if (this._fileHeader.AcadVersion < ACadVersion.AC1018)
-				return null;
+				return new CadSummaryInfo();
 
 			IDwgStreamReader reader = this.getSectionStream(DwgSectionDefinition.SummaryInfo);
 			if (reader == null)
-				return null;
+				return new CadSummaryInfo();
 
 			DwgSummaryInfoReader summaryReader = new DwgSummaryInfoReader(this._fileHeader.AcadVersion, reader);
 			return summaryReader.Read();
@@ -246,7 +250,7 @@ namespace ACadSharp.IO
 			switch (fileHeader.AcadVersion)
 			{
 				case ACadVersion.Unknown:
-					throw new DwgNotSupportedException();
+					throw new CadNotSupportedException();
 				case ACadVersion.MC0_0:
 				case ACadVersion.AC1_2:
 				case ACadVersion.AC1_4:
@@ -257,7 +261,7 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1004:
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
-					throw new DwgNotSupportedException(this._fileHeader.AcadVersion);
+					throw new CadNotSupportedException(this._fileHeader.AcadVersion);
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
@@ -299,6 +303,27 @@ namespace ACadSharp.IO
 			reader.OnNotification += onNotificationEvent;
 
 			return reader.Read(sreader);
+		}
+
+		private void readAppInfo()
+		{
+#if TEST
+			this._fileHeader = this._fileHeader ?? this.readFileHeader();
+
+			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.AppInfo);
+			if (sreader is null)
+			{
+				return;
+			}
+
+			var reader = new DwgAppInfoReader(this._fileHeader.AcadVersion, sreader);
+			reader.OnNotification += onNotificationEvent;
+
+			reader.Read();
+#else
+			//Optional section, only for testing
+			return;
+#endif
 		}
 
 		/// <summary>
@@ -966,7 +991,7 @@ namespace ACadSharp.IO
 			switch (this._fileHeader.AcadVersion)
 			{
 				case ACadVersion.Unknown:
-					throw new DwgNotSupportedException();
+					throw new CadNotSupportedException();
 				case ACadVersion.MC0_0:
 				case ACadVersion.AC1_2:
 				case ACadVersion.AC1_4:
@@ -977,7 +1002,7 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1004:
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
-					throw new DwgNotSupportedException(this._fileHeader.AcadVersion);
+					throw new CadNotSupportedException(this._fileHeader.AcadVersion);
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:

@@ -43,6 +43,9 @@
 		public const string Vertex = "AcDbVertex";
 		public const string Polyline = "AcDb2dPolyline";
 		public const string Leader = "AcDbLeader";
+		public const string MultiLeader = "AcDbMLeader";
+		public const string MLeaderStyle = "AcDbMLeaderStyle";
+		public const string MultiLeaderAnnotContext = "AcDbMultiLeaderAnnotContext";
 		public const string LwPolyline = "AcDbPolyline";
 		public const string PolylineVertex = "AcDb2dVertex";
 		public const string Polyline3d = "AcDb3dPolyline";

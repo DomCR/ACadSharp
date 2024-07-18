@@ -2,8 +2,6 @@
 
 namespace ACadSharp.Classes
 {
-	//https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-DBD5351C-E408-4CED-9336-3BD489179EF5
-
 	[Flags]
 	public enum ProxyFlags : ushort
 	{

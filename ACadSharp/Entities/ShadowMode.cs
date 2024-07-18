@@ -1,7 +1,7 @@
 ﻿namespace ACadSharp.Entities
 {
 	/// <remarks>
-	/// Starting with AutoCAD 2016-based products, this property is obsolete but still supported for backwards compatibility.
+	/// This property is obsolete but still supported for backwards compatibility.
 	/// </remarks>
 	public enum ShadowMode
 	{
@@ -10,5 +10,4 @@
 		ReceivesShadows = 2,
 		IgnoresShadows = 3,
 	}
-
 }

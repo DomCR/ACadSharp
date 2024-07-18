@@ -1,5 +1,7 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Tables;
 using CSMath;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -39,13 +41,32 @@ namespace ACadSharp.Entities
 		/// Size
 		/// </summary>
 		[DxfCodeValue(40)]
-		public double Size { get; set; } = 0.0;
+		public double Size { get; set; } = 1.0;
 
 		/// <summary>
 		/// Shape name
 		/// </summary>
-		[DxfCodeValue(2)]
-		public string Name { get; set; }
+		[DxfCodeValue(DxfReferenceType.Name, 2)]
+		public TextStyle ShapeStyle
+		{
+			get { return this._style; }
+			set
+			{
+				if (value == null || !value.IsShapeFile)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._style = this.updateTable(value, this.Document.TextStyles);
+				}
+				else
+				{
+					this._style = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Rotation angle
@@ -71,6 +92,28 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
-		public Shape() : base() { }
+		internal ushort ShapeIndex { get; set; }
+
+		private TextStyle _style;
+
+		internal Shape() : base() { }
+
+		/// <summary>
+		/// Initializes a shape by the <see cref="TextStyle"/>
+		/// </summary>
+		/// <param name="textStyle">Text style with the flag <see cref="TextStyle.IsShapeFile"/></param>
+		public Shape(TextStyle textStyle)
+		{
+			this.ShapeStyle = textStyle;
+		}
+
+		public override CadObject Clone()
+		{
+			Shape clone = (Shape)base.Clone();
+
+			clone.ShapeStyle = (TextStyle)(this.ShapeStyle?.Clone());
+
+			return clone;
+		}
 	}
 }

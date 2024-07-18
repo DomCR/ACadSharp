@@ -2,7 +2,6 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -15,7 +14,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityMText)]
 	[DxfSubClass(DxfSubclassMarker.MText)]
-	public partial class MText : Entity
+	public partial class MText : Entity, IText
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.MTEXT;
@@ -38,16 +37,12 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
-		/// <summary>
-		/// Changes the height of the object.
-		/// </summary>
-		/// <value>
-		/// This must be a positive, non-negative number.
-		/// </value>
+		/// <inheritdoc/>
 		[DxfCodeValue(40)]
 		public double Height
 		{
-			get => _height; set
+			get => this._height;
+			set
 			{
 				if (value < 0)
 					throw new ArgumentOutOfRangeException("Height value cannot be negative.");
@@ -63,16 +58,16 @@ namespace ACadSharp.Entities
 		public double RectangleWidth { get; set; }
 
 		/// <summary>
-		/// 
+		/// Reference rectangle height
 		/// </summary>
 		[DxfCodeValue(46)]
-		public double ReferenceRectangleHeight { get; set; }
+		public double RectangleHeight { get; set; }
 
 		/// <summary>
 		/// Attachment point
 		/// </summary>
 		[DxfCodeValue(71)]
-		public AttachmentPointType AttachmentPoint { get; set; }
+		public AttachmentPointType AttachmentPoint { get; set; } = AttachmentPointType.TopLeft;
 
 		/// <summary>
 		/// Drawing direction
@@ -80,25 +75,12 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(72)]
 		public DrawingDirectionType DrawingDirection { get; set; }
 
-		/// <summary>
-		/// Specifies the text string for the entity.
-		/// </summary>
-		/// <value>
-		/// The maximum length is 256 characters.
-		/// </value>
+		/// <inheritdoc/>
 		[DxfCodeValue(1)]
 		public string Value { get; set; } = string.Empty;
 
-		/// <summary>
-		/// Additional text (always in 250-character chunks)
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 3)]
-		public string AdditionalText { get; set; } = string.Empty;
-
-		/// <summary>
-		/// Style of this text entity.
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Handle, 7)]
+		/// <inheritdoc/>
+		[DxfCodeValue(DxfReferenceType.Name | DxfReferenceType.Optional, 7)]
 		public TextStyle Style
 		{
 			get { return this._style; }
@@ -129,10 +111,10 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(11, 21, 31)]
 		public XYZ AlignmentPoint
 		{
-			get => _alignmentPoint;
+			get => this._alignmentPoint;
 			set
 			{
-				_alignmentPoint = value;
+				this._alignmentPoint = value;
 				this._rotation = new XY(this._alignmentPoint.X, this._alignmentPoint.Y).GetAngle();
 			}
 		}
@@ -145,17 +127,16 @@ namespace ACadSharp.Entities
 		/// read-only, ignored if supplied
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Ignored, 42)]
-		public double HorizontalWidth { get; set; }
+		public double HorizontalWidth { get; set; } = 0.9;
 
 		/// <summary>
-		/// Horizontal width of the characters that make up the mtext entity.
-		/// This value will always be equal to or less than the value of group code 41 
+		/// Vertical height of the mtext entity
 		/// </summary>
 		/// <remarks>
 		/// read-only, ignored if supplied
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Ignored, 43)]
-		public double VerticalWidth { get; set; }
+		public double VerticalHeight { get; set; } = 0.2;
 
 		/// <summary>
 		/// Specifies the rotation angle for the object.
@@ -166,11 +147,11 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation
 		{
-			get => _rotation;
+			get => this._rotation;
 			set
 			{
-				_rotation = value;
-				this.AlignmentPoint = new XYZ(Math.Cos(_rotation), Math.Sin(_rotation), 0.0);
+				this._rotation = value;
+				this.AlignmentPoint = new XYZ(Math.Cos(this._rotation), Math.Sin(this._rotation), 0.0);
 			}
 		}
 
@@ -181,13 +162,13 @@ namespace ACadSharp.Entities
 		public LineSpacingStyleType LineSpacingStyle { get; set; }
 
 		/// <summary>
-		/// Mtext line spacing factor 
+		/// Mtext line spacing factor.
 		/// </summary>
 		/// <remarks>
 		/// Percentage of default (3-on-5) line spacing to be applied.Valid values range from 0.25 to 4.00
 		/// </remarks>
 		[DxfCodeValue(44)]
-		public double LineSpacing { get; set; }
+		public double LineSpacing { get; set; } = 1.0;
 
 		/// <summary>
 		/// Background fill setting
@@ -213,24 +194,22 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Transparency of background fill color
 		/// </summary>
-		/// <remarks>
-		/// not implemented (By Autocad)
-		/// </remarks>
 		[DxfCodeValue(441)]
 		public Transparency BackgroundTransparency { get; set; }
 
 		public TextColumn Column { get; set; } = new TextColumn();
 
-		public bool IsAnnotative { get; set; }
+		public bool IsAnnotative { get; set; } = false;
 
-		private double _height = 0.0;
+		private double _height = 1.0;
 
-		private XYZ _alignmentPoint = XYZ.Zero;
+		private XYZ _alignmentPoint = XYZ.AxisX;
 
 		private double _rotation = 0.0;
 
 		private TextStyle _style = TextStyle.Default;
 
+		/// <inheritdoc/>
 		public MText() : base() { }
 
 		public override CadObject Clone()

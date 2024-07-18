@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Attributes;
-using System.Collections.Generic;
-using System.Text;
+using System;
 
 namespace ACadSharp.Classes
 {
@@ -11,6 +10,7 @@ namespace ACadSharp.Classes
 		/// </summary>
 		[DxfCodeValue(1)]
 		public string DxfName { get; set; }
+
 		/// <summary>
 		/// C++ class name. Used to bind with software that defines object class behavior; always unique
 		/// </summary>
@@ -36,13 +36,15 @@ namespace ACadSharp.Classes
 		public int InstanceCount { get; set; }
 
 		/// <summary>
-		/// Was-a-proxy flag.Set to 1 if class was not loaded when this DXF file was created, and 0 otherwise
+		/// Was-a-proxy flag. Set to 1 if class was not loaded when this DXF file was created, and 0 otherwise
 		/// </summary>
 		[DxfCodeValue(280)]
 		public bool WasZombie { get; set; }
 
 		/// <summary>
-		/// Is-an-entity flag.Set to 1 if class was derived from the AcDbEntity class and can reside in the BLOCKS or ENTITIES section.If 0, instances may appear only in the OBJECTS section
+		/// Is-an-entity flag.
+		/// Set to 1 if class was derived from the AcDbEntity class and can reside in the BLOCKS or ENTITIES section.
+		/// If 0, instances may appear only in the OBJECTS section
 		/// </summary>
 		[DxfCodeValue(281)]
 		public bool IsAnEntity { get; set; }
@@ -55,7 +57,11 @@ namespace ACadSharp.Classes
 		/// <summary>
 		/// Item class id
 		/// </summary>
-		public short ItemClassId { get; set; }
+		internal short ItemClassId { get; set; }
+
+		public ACadVersion DwgVersion { get; set; }
+
+		internal short MaintenanceVersion { get; set; }
 
 		/// <inheritdoc/>
 		public override string ToString()

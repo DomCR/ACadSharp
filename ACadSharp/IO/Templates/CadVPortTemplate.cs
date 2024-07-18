@@ -21,58 +21,29 @@ namespace ACadSharp.IO.Templates
 
 		public CadVPortTemplate(VPort cadObject) : base(cadObject) { }
 
-		public override bool CheckDxfCode(int dxfcode, object value)
-		{
-			bool found = base.CheckDxfCode(dxfcode, value);
-			if (found)
-				return found;
-
-			switch (dxfcode)
-			{
-				//NOTE: Undocumented codes
-				case 65:
-				case 73:
-					found = true;
-					break;
-			}
-
-			return found;
-		}
-
-		public override bool AddHandle(int dxfcode, ulong handle)
-		{
-			bool value = base.AddHandle(dxfcode, handle);
-			if (value)
-				return value;
-
-			switch (dxfcode)
-			{
-				case 348:
-					this.StyleHandle = handle;
-					value = true;
-					break;
-			}
-
-			return value;
-		}
-
 		public override void Build(CadDocumentBuilder builder)
 		{
-			//TODO: implement DwgVPortTemplate
-
 			base.Build(builder);
 
-			if (this.BaseUcsHandle.HasValue)
+			if (builder.TryGetCadObject(this.BaseUcsHandle, out UCS baseUcs))
 			{
-				this.CadObject.BaseUcs = builder.GetCadObject<UCS>(this.BaseUcsHandle.Value);
+				this.CadObject.BaseUcs = baseUcs;
+			}
+			else if (this.BaseUcsHandle.HasValue && this.BaseUcsHandle > 0)
+			{
+				builder.Notify($"Boundary {this.BaseUcsHandle} not found for viewport {this.CadObject.Handle}", NotificationType.Warning);
 			}
 
-			if (this.NamedUcsHandle.HasValue)
+			if (builder.TryGetCadObject(this.NamedUcsHandle, out UCS namedUcs))
 			{
-				this.CadObject.NamedUcs = builder.GetCadObject<UCS>(this.NamedUcsHandle.Value);
+				this.CadObject.BaseUcs = namedUcs;
+			}
+			else if (this.NamedUcsHandle.HasValue && this.NamedUcsHandle > 0)
+			{
+				builder.Notify($"Boundary {this.BaseUcsHandle} not found for viewport {this.CadObject.Handle}", NotificationType.Warning);
 			}
 
-			if (builder.TryGetCadObject(StyleHandle, out CadObject style))
+			if (builder.TryGetCadObject(this.StyleHandle, out CadObject style))
 			{
 
 			}

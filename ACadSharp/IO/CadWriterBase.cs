@@ -2,18 +2,25 @@
 using System.Text;
 using System;
 using System.IO;
+using ACadSharp.Classes;
 
 namespace ACadSharp.IO
 {
 	public abstract class CadWriterBase : ICadWriter
 	{
+		/// <summary>
+		/// Notification event to get information about the writing process.
+		/// </summary>
+		/// <remarks>
+		/// The notification system informs about any issue or non critical errors during the writing.
+		/// </remarks>
 		public event NotificationEventHandler OnNotification;
 
 		/// <summary>
-		/// Notifies the writer to close the stream once the operation is completed
+		/// Notifies the writer to close the stream once the operation is completed.
 		/// </summary>
 		/// <value>
-		/// true
+		/// default: true
 		/// </value>
 		public bool CloseStream { get; set; } = true;
 
@@ -28,7 +35,10 @@ namespace ACadSharp.IO
 		}
 
 		/// <inheritdoc/>
-		public abstract void Write();
+		public virtual void Write()
+		{
+			DxfClassCollection.UpdateDxfClasses(_document);
+		}
 
 		/// <inheritdoc/>
 		public abstract void Dispose();
@@ -50,11 +60,6 @@ namespace ACadSharp.IO
 			}
 
 			return TextEncoding.Windows1252();
-		}
-
-		protected void validateDocument()
-		{
-			//TODO: Implement the document validation to check the structure
 		}
 
 		protected void triggerNotification(string message, NotificationType notificationType, Exception ex = null)

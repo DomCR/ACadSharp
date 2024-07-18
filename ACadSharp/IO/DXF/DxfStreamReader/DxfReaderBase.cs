@@ -18,7 +18,17 @@ namespace ACadSharp.IO.DXF
 
 		public string ValueRaw { get; protected set; }
 
-		public string ValueAsString { get { return this.Value.ToString(); } }
+		public string ValueAsString
+		{
+			get
+			{
+				return this.Value.ToString()
+					.Replace("^J", "\n")
+					.Replace("^M", "\r")
+					.Replace("^I", "\t")
+					.Replace("^ ", "^");
+			}
+		}
 
 		public bool ValueAsBool { get { return Convert.ToBoolean(this.Value); } }
 
@@ -30,9 +40,9 @@ namespace ACadSharp.IO.DXF
 
 		public long ValueAsLong { get { return Convert.ToInt64(this.Value); } }
 
-		public double ValueAsDouble { get { return (double)this.Value; } }
+		public double ValueAsDouble { get { return Convert.ToDouble(this.Value); } }
 
-		public double ValueAsAngle { get { return (double)((double)this.Value * MathUtils.DegToRad); } }
+		public double ValueAsAngle { get { return (double)(Convert.ToDouble(this.Value) * MathUtils.DegToRad); } }
 
 		public ulong ValueAsHandle { get { return (ulong)this.Value; } }
 
@@ -103,6 +113,7 @@ namespace ACadSharp.IO.DXF
 				case GroupCodeValueType.Double:
 				case GroupCodeValueType.ExtendedDataDouble:
 					return this.lineAsDouble();
+				case GroupCodeValueType.Byte:
 				case GroupCodeValueType.Int16:
 				case GroupCodeValueType.ExtendedDataInt16:
 					return this.lineAsShort();

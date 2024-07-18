@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ACadSharp.IO
 {
+	/// <summary>
+	/// Class for writing a DXF from a <see cref="CadDocument"/>.
+	/// </summary>
 	public class DxfWriter : CadWriterBase
 	{
 		/// <summary>
@@ -11,7 +14,10 @@ namespace ACadSharp.IO
 		/// </summary>
 		public bool IsBinary { get; }
 
-		public DxfWriterOptions Options { get; set; } = new DxfWriterOptions();
+		/// <summary>
+		/// DXF writer configuration.
+		/// </summary>
+		public DxfWriterConfiguration Configuration { get; set; } = new DxfWriterConfiguration();
 
 		private IDxfStreamWriter _writer;
 		private CadObjectHolder _objectHolder = new CadObjectHolder();
@@ -41,6 +47,8 @@ namespace ACadSharp.IO
 		/// <inheritdoc/>
 		public override void Write()
 		{
+			base.Write();
+
 			this.createStreamWriter();
 
 			this._objectHolder.Objects.Enqueue(_document.RootDictionary);
@@ -108,7 +116,7 @@ namespace ACadSharp.IO
 
 		private void createStreamWriter()
 		{
-			Encoding encoding = this.getListedEncoding(this._document.Header.CodePage);
+			Encoding encoding = new UTF8Encoding(false);
 
 			if (this.IsBinary)
 			{
@@ -122,7 +130,7 @@ namespace ACadSharp.IO
 
 		private void writeHeader()
 		{
-			var writer = new DxfHeaderSectionWriter(this._writer, this._document, this._objectHolder, this.Options);
+			var writer = new DxfHeaderSectionWriter(this._writer, this._document, this._objectHolder, this.Configuration);
 			writer.OnNotification += this.triggerNotification;
 
 			writer.Write();

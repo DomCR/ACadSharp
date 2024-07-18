@@ -1,9 +1,12 @@
 ﻿namespace ACadSharp.IO
 {
+	/// <summary>
+	/// Configuration for reading DWG files.
+	/// </summary>
 	public class DwgReaderConfiguration : CadReaderConfiguration
 	{
 		/// <summary>
-		/// Use the Standard Cycling Redundancy Check to verify the integrity of the file.
+		/// Use the Standard Cycling Redundancy Check to verify the integrity of the file, default value is set to false.
 		/// </summary>
 		/// <remarks>
 		/// DWG file format uses a modification of a standard Cyclic Redundancy Check as an error detecting mechanism, 

@@ -20,7 +20,9 @@ namespace ACadSharp.Tests
 
 			foreach (var item in DataFactory.GetTypes<Entity>())
 			{
-				if (item == typeof(Block) || item == typeof(BlockEnd))
+				if (item == typeof(Block)
+					|| item == typeof(BlockEnd)
+					|| item == typeof(UnknownEntity))
 					continue;
 
 				EntityTypes.Add(item);
@@ -126,6 +128,37 @@ namespace ACadSharp.Tests
 			Assert.False(0 == lineType.Handle);
 			Assert.NotNull(doc.LineTypes[lineType.Name]);
 			Assert.Equal(lineType, doc.LineTypes[lineType.Name]);
+		}
+
+		[Fact]
+		public void CreateDefaultsExistingDocumentTest()
+		{
+			CadDocument doc = new CadDocument();
+
+			ulong appIdsHandle = doc.AppIds.Handle;
+			ulong blksHandle = doc.BlockRecords.Handle;
+			ulong dimHandle = doc.DimensionStyles.Handle;
+			ulong layersHandle = doc.Layers.Handle;
+			ulong ltypesHandle = doc.LineTypes.Handle;
+			ulong textStyleHandle = doc.TextStyles.Handle;
+			ulong ucsHandle = doc.UCSs.Handle;
+			ulong viewsHandle = doc.Views.Handle;
+			ulong vportsHandle = doc.VPorts.Handle;
+
+			doc.CreateDefaults();
+
+			//Objects should not be replaced
+			Assert.Equal(appIdsHandle, doc.AppIds.Handle);
+			Assert.Equal(blksHandle, doc.BlockRecords.Handle);
+			Assert.Equal(dimHandle, doc.DimensionStyles.Handle);
+			Assert.Equal(layersHandle, doc.Layers.Handle);
+			Assert.Equal(ltypesHandle, doc.LineTypes.Handle);
+			Assert.Equal(textStyleHandle, doc.TextStyles.Handle);
+			Assert.Equal(ucsHandle, doc.UCSs.Handle);
+			Assert.Equal(viewsHandle, doc.Views.Handle);
+			Assert.Equal(vportsHandle, doc.VPorts.Handle);
+
+			this._docIntegrity.AssertDocumentDefaults(doc);
 		}
 
 		[Theory]
