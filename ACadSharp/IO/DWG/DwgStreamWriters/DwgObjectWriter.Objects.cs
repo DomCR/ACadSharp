@@ -337,7 +337,7 @@ namespace ACadSharp.IO.DWG
 
 		private void writeMultiLeaderStyle(MultiLeaderStyle mLeaderStyle)
 		{
-			if (!R2010Plus)
+			if (!this.R2010Plus)
 			{
 				return;
 			}

@@ -3310,12 +3310,16 @@ namespace ACadSharp.IO.DWG
 			mLeaderStyle.TextLeftAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
 			//	BS	178	Right attachment (see paragraph on LEADER for more details).
 			mLeaderStyle.TextRightAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
+		
 			if (this.R2010Plus)
-			{//	IF IsNewFormat OR DXF file
-			 //	BS	175	Text angle type (see paragraph on LEADER for more details).
+			{
+				//	IF IsNewFormat OR DXF file
+				//	BS	175	Text angle type (see paragraph on LEADER for more details).
 				mLeaderStyle.TextAngle = (TextAngleType)this._objectReader.ReadBitShort();
 
-			}   //	END IF IsNewFormat OR DXF file
+			}
+			//	END IF IsNewFormat OR DXF file
+
 			//	BS	176	Text alignment type
 			mLeaderStyle.TextAlignment = (TextAlignmentType)this._objectReader.ReadBitShort();
 			//	CMC	93	Text color
@@ -3324,11 +3328,15 @@ namespace ACadSharp.IO.DWG
 			mLeaderStyle.TextHeight = this._objectReader.ReadBitDouble();
 			//	B	292	Text frame enabled
 			mLeaderStyle.TextFrame = this._objectReader.ReadBit();
+
 			if (this.R2010Plus)
-			{//	IF IsNewFormat OR DXF file
-			 //	B	297	Always align text left
+			{
+				//	IF IsNewFormat OR DXF file
+				//	B	297	Always align text left
 				mLeaderStyle.TextAlignAlwaysLeft = this._objectReader.ReadBit();
-			}//	END IF IsNewFormat OR DXF file
+			}
+			//	END IF IsNewFormat OR DXF file
+
 			//	BD	46	Align space
 			mLeaderStyle.AlignSpace = this._objectReader.ReadBitDouble();
 			//	H	343	Block handle (hard pointer)

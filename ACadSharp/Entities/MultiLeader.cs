@@ -115,7 +115,7 @@ namespace ACadSharp.Entities
 		/// or the attached <see cref="MultiLeaderAnnotContext"/>.
 		/// </summary>
 		[DxfCodeValue(90)]
-		public MultiLeaderPropertyOverrideFlags PropertyOverrideFlags { get; set; }
+		public MultiLeaderPropertyOverrideFlags PropertyOverrideFlags { get; set; } = MultiLeaderPropertyOverrideFlags.None;
 
 		/// <summary>
 		/// Gets or sets a value indicating the path type of this <see cref="MultiLeader"/>
