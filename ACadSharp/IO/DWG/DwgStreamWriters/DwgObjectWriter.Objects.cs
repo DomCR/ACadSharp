@@ -26,6 +26,7 @@ namespace ACadSharp.IO.DWG
 			{
 				case Material:
 				case MultiLeaderAnnotContext:
+				case MultiLeaderStyle:
 				case SortEntitiesTable:
 				case VisualStyle:
 				case XRecord:
@@ -337,6 +338,9 @@ namespace ACadSharp.IO.DWG
 
 		private void writeMultiLeaderStyle(MultiLeaderStyle mLeaderStyle)
 		{
+			//TODO: Remove this line when MultiLeaderStyle is fixed for writing
+			return;
+
 			if (!R2010Plus)
 			{
 				return;
