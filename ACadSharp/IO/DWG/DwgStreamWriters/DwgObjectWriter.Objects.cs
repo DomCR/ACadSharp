@@ -125,25 +125,15 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Common:
-			//foreach (var item in dictionary)
-			//{
-			//	if (item is XRecord && this.IgnoreXRecords)
-			//	{
-			//		return;
-			//	}
-
-			//	this._writer.WriteVariableText(item.Name);
-			//	//this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Handle);
-			//}
-
-			foreach (var name in dictionary.EntryNames)
+			foreach (var item in dictionary)
 			{
-				this._writer.WriteVariableText(name);
-			}
+				if (item is XRecord && this.IgnoreXRecords)
+				{
+					return;
+				}
 
-			foreach (var handle in dictionary.EntryHandles)
-			{
-				this._writer.HandleReference(DwgReferenceType.SoftOwnership, handle);
+				this._writer.WriteVariableText(item.Name);
+				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Handle);
 			}
 
 			this.addEntriesToWriter(dictionary);
