@@ -2,6 +2,7 @@
 using ACadSharp.Entities;
 using ACadSharp.Tables;
 using CSMath;
+using System;
 
 namespace ACadSharp.Objects
 {
@@ -155,7 +156,26 @@ namespace ACadSharp.Objects
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public LineType LeaderLineType { get; set; }
+		public LineType LeaderLineType
+		{
+			get { return this._lineType; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._lineType = this.updateTable(value, this.Document.LineTypes);
+				}
+				else
+				{
+					this._lineType = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets a value specifying the lineweight to be applied to all leader lines of the multileader.
@@ -297,7 +317,26 @@ namespace ACadSharp.Objects
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 342)]
-		public TextStyle TextStyle { get; set; }
+		public TextStyle TextStyle
+		{
+			get { return this._textStyle; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._textStyle = this.updateTable(value, this.Document.TextStyles);
+				}
+				else
+				{
+					this._textStyle = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the Text Left Attachment Type.
@@ -622,6 +661,10 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(273)]
 		public TextAttachmentType TextTopAttachment { get; set; }
 
+		public TextStyle _textStyle = TextStyle.Default;
+
+		private LineType _lineType = LineType.ByLayer;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MultiLeaderStyle"/> class.
 		/// </summary>
@@ -636,10 +679,50 @@ namespace ACadSharp.Objects
 			this.Name = name;
 		}
 
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			MultiLeaderStyle clone = (MultiLeaderStyle)base.Clone();
+
+			clone.TextStyle = (TextStyle)this.TextStyle.Clone();
+			clone.LeaderLineType = (LineType)this.LeaderLineType.Clone();
+
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._textStyle = this.updateTable(this.TextStyle, doc.TextStyles);
+			this._lineType = this.updateTable(this.LeaderLineType, doc.LineTypes);
+
+			doc.TextStyles.OnRemove += this.tableOnRemove;
+			doc.LineTypes.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.TextStyles.OnRemove -= this.tableOnRemove;
+			this.Document.LineTypes.OnRemove -= this.tableOnRemove;
+
+			base.UnassignDocument();
+
+			this.TextStyle = (TextStyle)this.TextStyle.Clone();
+			this.LeaderLineType = (LineType)this.LeaderLineType.Clone();
+		}
+
+		protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this.TextStyle))
+			{
+				this.TextStyle = this.Document.TextStyles[Layer.DefaultName];
+			}
+
+			if (e.Item.Equals(this.LeaderLineType))
+			{
+				this.LeaderLineType = this.Document.LineTypes[LineType.ByLayerName];
+			}
 		}
 	}
 }
