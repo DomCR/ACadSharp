@@ -32,9 +32,9 @@ namespace ACadSharp.IO.DWG
 					return;
 			}
 
-			if (obj is XRecord)
+			if (obj is XRecord && this.IgnoreXRecords)
 			{
-				//Add option to skip XRecords
+				return;
 			}
 
 			this.writeCommonNonEntityData(obj);
@@ -124,6 +124,17 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Common:
+			//foreach (var item in dictionary)
+			//{
+			//	if (item is XRecord && this.IgnoreXRecords)
+			//	{
+			//		return;
+			//	}
+
+			//	this._writer.WriteVariableText(item.Name);
+			//	//this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Handle);
+			//}
+
 			foreach (var name in dictionary.EntryNames)
 			{
 				this._writer.WriteVariableText(name);

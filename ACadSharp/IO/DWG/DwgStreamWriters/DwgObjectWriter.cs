@@ -21,6 +21,8 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		public Dictionary<ulong, long> Map { get; } = new Dictionary<ulong, long>();
 
+		public bool IgnoreXRecords { get; }
+
 		private Dictionary<ulong, CadDictionary> _dictionaries = new();
 
 		private Queue<CadObject> _objects = new();
@@ -37,13 +39,14 @@ namespace ACadSharp.IO.DWG
 
 		private Entity _next;
 
-		public DwgObjectWriter(Stream stream, CadDocument document) : base(document.Header.Version)
+		public DwgObjectWriter(Stream stream, CadDocument document, bool ignoreXRecords = true) : base(document.Header.Version)
 		{
 			this._stream = stream;
 			this._document = document;
 
 			this._msmain = new MemoryStream();
 			this._writer = DwgStreamWriterBase.GetMergedWriter(document.Header.Version, this._msmain, TextEncoding.Windows1252());
+			this.IgnoreXRecords = ignoreXRecords;
 		}
 
 		public void Write()
