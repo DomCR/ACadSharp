@@ -263,7 +263,15 @@ namespace ACadSharp
 			this.AppIds ??= new AppIdsTable(this);
 
 			//Root dictionary
-			this.RootDictionary ??= CadDictionary.CreateRoot();
+			if (this.RootDictionary == null)
+			{
+				this.RootDictionary = CadDictionary.CreateRoot();
+			}
+			else
+			{
+				CadDictionary.CreateDefaultEntries(this.RootDictionary);
+			}
+
 			this.UpdateCollections(true);
 
 			//Default variables
@@ -278,14 +286,12 @@ namespace ACadSharp
 			if (!this.BlockRecords.Contains(BlockRecord.ModelSpaceName))
 			{
 				BlockRecord model = BlockRecord.ModelSpace;
-				model.Layout = this.Layouts[Layout.LayoutModelName];
 				this.BlockRecords.Add(model);
 			}
 
 			if (!this.BlockRecords.Contains(BlockRecord.PaperSpaceName))
 			{
 				BlockRecord pspace = BlockRecord.PaperSpace;
-				pspace.Layout = this.Layouts["Layout1"];
 				this.BlockRecords.Add(pspace);
 			}
 		}

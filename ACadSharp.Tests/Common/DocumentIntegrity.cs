@@ -59,8 +59,10 @@ namespace ACadSharp.Tests.Common
 			this.entryNotNull(doc.VPorts, "*Active");
 
 			//Assert Model layout
-			var layout = doc.Layouts.FirstOrDefault(l => l.Name == Layout.LayoutModelName);
+			var layout = doc.Layouts.FirstOrDefault(l => l.Name == Layout.ModelLayoutName);
+
 			this.notNull(layout, "Layout Model is null");
+
 			Assert.True(layout.AssociatedBlock == doc.ModelSpace);
 		}
 

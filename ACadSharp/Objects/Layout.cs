@@ -18,9 +18,9 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.Layout)]
 	public class Layout : PlotSettings
 	{
-		public const string LayoutModelName = "Model";
+		public const string ModelLayoutName = "Model";
 
-		public static Layout Default { get { return new Layout(LayoutModelName); } }
+		public const string PaperLayoutName = "Layout1";
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.LAYOUT;
@@ -128,32 +128,25 @@ namespace ACadSharp.Objects
 			get { return this._blockRecord; }
 			internal set
 			{
-				this._blockRecord = value;
-				if (this._blockRecord == null)
-					return;
+				if (value == null)
+				{
+					throw new System.ArgumentNullException(nameof(value));
+				}
 
-				if (this._blockRecord.Name.Equals(BlockRecord.ModelSpaceName, System.StringComparison.OrdinalIgnoreCase))
-				{
-					this.Viewport = null;
-					base.Flags =
-						PlotFlags.Initializing |
-						PlotFlags.UpdatePaper |
-						PlotFlags.ModelType |
-						PlotFlags.DrawViewportsFirst |
-						PlotFlags.PrintLineweights |
-						PlotFlags.PlotPlotStyles |
-						PlotFlags.UseStandardScale;
-				}
-				else
-				{
-					this.Viewport = new Viewport();
-					this.Viewport.ViewCenter = new XY(50.0, 100.0);
-					this.Viewport.Status =
-						ViewportStatusFlags.AdaptiveGridDisplay |
-						ViewportStatusFlags.DisplayGridBeyondDrawingLimits |
-						ViewportStatusFlags.CurrentlyAlwaysEnabled |
-						ViewportStatusFlags.UcsIconVisibility;
-				}
+				this._blockRecord = value;
+
+				//if (this._blockRecord.Name.Equals(BlockRecord.ModelSpaceName, System.StringComparison.OrdinalIgnoreCase))
+				//{
+				//	this.Viewport = null;
+				//	base.Flags =
+				//		PlotFlags.Initializing |
+				//		PlotFlags.UpdatePaper |
+				//		PlotFlags.ModelType |
+				//		PlotFlags.DrawViewportsFirst |
+				//		PlotFlags.PrintLineweights |
+				//		PlotFlags.PlotPlotStyles |
+				//		PlotFlags.UseStandardScale;
+				//}
 			}
 		}
 
@@ -194,20 +187,28 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(DxfReferenceType.Handle, 346)]
 		public UCS BaseUCS { get; set; }
 
-
 		//333	Shade plot ID
 
-		public IEnumerable<Viewport> Viewports { get { return this.AssociatedBlock?.Viewports; } }
+		public IEnumerable<Viewport> Viewports
+		{
+			get
+			{
+				return this.AssociatedBlock.Viewports;
+			}
+		}
 
 		private Viewport _lastViewport;
 
 		private BlockRecord _blockRecord;
 
-		public Layout() : this(null) { }
+		internal Layout() : base()
+		{
+		}
 
 		public Layout(string name) : base()
 		{
 			this.Name = name;
+			this.AssociatedBlock = new BlockRecord(name);
 		}
 
 		/// <inheritdoc/>

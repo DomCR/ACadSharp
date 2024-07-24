@@ -51,6 +51,16 @@ namespace ACadSharp.Objects.Collections
 		/// Remove an entry from the collection.
 		/// </summary>
 		/// <param name="name"></param>
+		/// <returns></returns>
+		public bool Remove(string name)
+		{
+			return this.Remove(name, out _);
+		}
+
+		/// <summary>
+		/// Remove an entry from the collection.
+		/// </summary>
+		/// <param name="name"></param>
 		/// <param name="entry"></param>
 		/// <returns></returns>
 		public bool Remove(string name, out T entry)

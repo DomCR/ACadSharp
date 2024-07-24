@@ -150,12 +150,20 @@ namespace ACadSharp.Objects
 		{
 			CadDictionary root = new CadDictionary(Root);
 
+			CreateDefaultEntries(root);
+
+			return root;
+		}
+
+		/// <summary>
+		/// Create the default entries for the root dictionary.
+		/// </summary>
+		public static void CreateDefaultEntries(CadDictionary root)
+		{
 			root.TryAdd(new CadDictionary(AcadColor));
 			root.TryAdd(new CadDictionary(AcadGroup));
 
 			CadDictionary layouts = root.ensureCadDictionaryExist(AcadLayout);
-			layouts.TryAdd(Layout.Default);
-			layouts.TryAdd(new Layout("Layout1"));
 
 			root.TryAdd(new CadDictionary(AcadMaterial));
 			root.TryAdd(new CadDictionary(AcadSortEnts));
@@ -195,8 +203,6 @@ namespace ACadSharp.Objects
 			root.TryAdd(new CadDictionary(AcadVisualStyle));
 			root.TryAdd(new CadDictionary(AcadFieldList));
 			root.TryAdd(new CadDictionary(AcadImageDict));
-
-			return root;
 		}
 
 		/// <summary>
@@ -338,7 +344,7 @@ namespace ACadSharp.Objects
 
 		private void onEntryNameChanged(object sender, OnNameChangedArgs e)
 		{
-	
+
 			var entry = this._entries[e.OldName];
 			this._entries.Add(e.NewName, entry);
 			this._entries.Remove(e.OldName);

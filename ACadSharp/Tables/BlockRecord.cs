@@ -30,9 +30,37 @@ namespace ACadSharp.Tables
 		/// </summary>
 		public const string PaperSpaceName = "*Paper_Space";
 
-		public static BlockRecord ModelSpace { get { return new BlockRecord(ModelSpaceName); } }
+		/// <summary>
+		/// Create an instance of the *Model_Space block.
+		/// </summary>
+		/// <remarks>
+		/// It only can be one Model in each document.
+		/// </remarks>
+		public static BlockRecord ModelSpace
+		{
+			get
+			{
+				BlockRecord record = new BlockRecord(ModelSpaceName);
 
-		public static BlockRecord PaperSpace { get { return new BlockRecord(PaperSpaceName); } }
+				record.Layout = new Layout();
+				record.Layout.Name = Layout.ModelLayoutName;
+
+				return record;
+			}
+		}
+
+		public static BlockRecord PaperSpace
+		{
+			get
+			{
+				BlockRecord record = new BlockRecord(PaperSpaceName);
+
+				record.Layout = new Layout();
+				record.Layout.Name = Layout.PaperLayoutName;
+
+				return record;
+			}
+		}
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.BLOCK_HEADER;
@@ -80,12 +108,13 @@ namespace ACadSharp.Tables
 		public Layout Layout
 		{
 			get { return this._layout; }
-			set
+			internal set
 			{
 				this._layout = value;
-
 				if (value == null)
+				{
 					return;
+				}
 
 				this._layout.AssociatedBlock = this;
 			}
@@ -125,19 +154,16 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Entities owned by this block
+		/// Entities owned by this block.
 		/// </summary>
 		/// <remarks>
-		/// Entities with an owner cannot be added to another block
+		/// Entities with an owner cannot be added to another block.
 		/// </remarks>
 		public CadObjectCollection<Entity> Entities { get; private set; }
 
 		/// <summary>
 		/// Sort entities table for this block record.
 		/// </summary>
-		/// <remarks>
-		/// 
-		/// </remarks>
 		public SortEntitiesTable SortEntitiesTable
 		{
 			get
@@ -253,13 +279,33 @@ namespace ACadSharp.Tables
 			base.AssignDocument(doc);
 
 			doc.RegisterCollection(this.Entities);
+
+			if (this.Layout != null)
+			{
+				this._layout = this.updateCollection(this.Layout, doc.Layouts);
+				this.Document.Layouts.OnRemove += this.layoutsOnRemove;
+			}
 		}
 
 		internal override void UnassignDocument()
 		{
+			if (this.Layout != null)
+			{
+				this.Document.Layouts.OnRemove -= this.layoutsOnRemove;
+				this.Document.Layouts.Remove(this.Layout.Name);
+			}
+
 			this.Document.UnregisterCollection(this.Entities);
 
 			base.UnassignDocument();
+		}
+
+		private void layoutsOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this.Layout) && this.name.Equals(ModelSpaceName, System.StringComparison.InvariantCultureIgnoreCase))
+			{
+				throw new System.InvalidOperationException($"Layout {e.Item.Handle} cannot be removed while attached to this record.");
+			}
 		}
 	}
 }
