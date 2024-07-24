@@ -7,17 +7,12 @@ namespace ACadSharp.IO
 	/// <summary>
 	/// Class for writing a DXF from a <see cref="CadDocument"/>.
 	/// </summary>
-	public class DxfWriter : CadWriterBase
+	public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 	{
 		/// <summary>
 		/// Flag indicating if the dxf will be writen as a binary file
 		/// </summary>
 		public bool IsBinary { get; }
-
-		/// <summary>
-		/// DXF writer configuration.
-		/// </summary>
-		public DxfWriterConfiguration Configuration { get; set; } = new DxfWriterConfiguration();
 
 		private IDxfStreamWriter _writer;
 		private CadObjectHolder _objectHolder = new CadObjectHolder();
@@ -71,7 +66,7 @@ namespace ACadSharp.IO
 
 			this._writer.Flush();
 
-			if (this.CloseStream)
+			if (this.Configuration.CloseStream)
 			{
 				this._writer.Close();
 			}

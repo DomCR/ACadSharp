@@ -33,7 +33,7 @@ namespace ACadSharp.IO.DWG
 					return;
 			}
 
-			if (obj is XRecord && this.IgnoreXRecords)
+			if (obj is XRecord && !this.WriteXRecords)
 			{
 				return;
 			}
@@ -127,7 +127,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			foreach (var item in dictionary)
 			{
-				if (item is XRecord && this.IgnoreXRecords)
+				if (item is XRecord && !this.WriteXRecords)
 				{
 					return;
 				}

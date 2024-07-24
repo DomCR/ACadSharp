@@ -8,7 +8,7 @@ namespace ACadSharp.IO
 	/// <summary>
 	/// Configuration for writing DWG files.
 	/// </summary>
-	public class DxfWriterConfiguration
+	public class DxfWriterConfiguration : CadWriterConfiguration
 	{
 		/// <summary>
 		/// Variables that must be writen in a dxf file
