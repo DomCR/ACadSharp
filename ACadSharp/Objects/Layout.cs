@@ -134,6 +134,7 @@ namespace ACadSharp.Objects
 				}
 
 				this._blockRecord = value;
+				this._blockRecord.Layout = this;
 
 				//if (this._blockRecord.Name.Equals(BlockRecord.ModelSpaceName, System.StringComparison.OrdinalIgnoreCase))
 				//{
@@ -193,7 +194,7 @@ namespace ACadSharp.Objects
 		{
 			get
 			{
-				return this.AssociatedBlock.Viewports;
+				return this.AssociatedBlock?.Viewports;
 			}
 		}
 
@@ -205,16 +206,44 @@ namespace ACadSharp.Objects
 		{
 		}
 
-		public Layout(string name) : base()
+		public Layout(string name) : this(name, name) { }
+
+		public Layout(string name, string blockName) : base()
 		{
 			this.Name = name;
-			this.AssociatedBlock = new BlockRecord(name);
+			this.AssociatedBlock = new BlockRecord(blockName);
 		}
 
 		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{this.ObjectName}:{this.Name}";
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			if (this.AssociatedBlock != null)
+			{
+				doc.BlockRecords.Add(this.AssociatedBlock);
+			}
+
+			doc.BlockRecords.OnRemove += this.onRemoveBlockRecord;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.BlockRecords.OnRemove -= this.onRemoveBlockRecord;
+
+			this.AssociatedBlock.Layout = null;
+
+			base.UnassignDocument();
+		}
+
+		private void onRemoveBlockRecord(object sender, CollectionChangedEventArgs e)
+		{
+			this.Document.Layouts.Remove(this.Name);
 		}
 	}
 }

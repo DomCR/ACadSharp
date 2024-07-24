@@ -63,7 +63,7 @@ namespace ACadSharp.Objects.Collections
 		/// <param name="name"></param>
 		/// <param name="entry"></param>
 		/// <returns></returns>
-		public bool Remove(string name, out T entry)
+		public virtual bool Remove(string name, out T entry)
 		{
 			bool result = this._dictionary.Remove(name, out NonGraphicalObject n);
 			entry = (T)n;

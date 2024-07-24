@@ -286,13 +286,13 @@ namespace ACadSharp
 			if (!this.BlockRecords.Contains(BlockRecord.ModelSpaceName))
 			{
 				BlockRecord model = BlockRecord.ModelSpace;
-				this.BlockRecords.Add(model);
+				this.Layouts.Add(model.Layout);
 			}
 
 			if (!this.BlockRecords.Contains(BlockRecord.PaperSpaceName))
 			{
 				BlockRecord pspace = BlockRecord.PaperSpace;
-				this.BlockRecords.Add(pspace);
+				this.Layouts.Add(pspace.Layout);
 			}
 		}
 

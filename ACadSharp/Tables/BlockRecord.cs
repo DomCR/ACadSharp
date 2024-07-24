@@ -42,8 +42,9 @@ namespace ACadSharp.Tables
 			{
 				BlockRecord record = new BlockRecord(ModelSpaceName);
 
-				record.Layout = new Layout();
-				record.Layout.Name = Layout.ModelLayoutName;
+				Layout layout = new Layout();
+				layout.Name = Layout.ModelLayoutName;
+				layout.AssociatedBlock = record;
 
 				return record;
 			}
@@ -55,8 +56,9 @@ namespace ACadSharp.Tables
 			{
 				BlockRecord record = new BlockRecord(PaperSpaceName);
 
-				record.Layout = new Layout();
-				record.Layout.Name = Layout.PaperLayoutName;
+				Layout layout = new Layout();
+				layout.Name = Layout.PaperLayoutName;
+				layout.AssociatedBlock = record;
 
 				return record;
 			}
@@ -111,12 +113,6 @@ namespace ACadSharp.Tables
 			internal set
 			{
 				this._layout = value;
-				if (value == null)
-				{
-					return;
-				}
-
-				this._layout.AssociatedBlock = this;
 			}
 		}
 
@@ -279,33 +275,13 @@ namespace ACadSharp.Tables
 			base.AssignDocument(doc);
 
 			doc.RegisterCollection(this.Entities);
-
-			if (this.Layout != null)
-			{
-				this._layout = this.updateCollection(this.Layout, doc.Layouts);
-				this.Document.Layouts.OnRemove += this.layoutsOnRemove;
-			}
 		}
 
 		internal override void UnassignDocument()
 		{
-			if (this.Layout != null)
-			{
-				this.Document.Layouts.OnRemove -= this.layoutsOnRemove;
-				this.Document.Layouts.Remove(this.Layout.Name);
-			}
-
 			this.Document.UnregisterCollection(this.Entities);
 
 			base.UnassignDocument();
-		}
-
-		private void layoutsOnRemove(object sender, CollectionChangedEventArgs e)
-		{
-			if (e.Item.Equals(this.Layout) && this.name.Equals(ModelSpaceName, System.StringComparison.InvariantCultureIgnoreCase))
-			{
-				throw new System.InvalidOperationException($"Layout {e.Item.Handle} cannot be removed while attached to this record.");
-			}
 		}
 	}
 }

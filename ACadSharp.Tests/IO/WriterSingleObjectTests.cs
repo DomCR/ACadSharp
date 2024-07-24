@@ -184,9 +184,6 @@ namespace ACadSharp.Tests.IO
 
 				Layout layout = new Layout("my_layout");
 
-				layout.AssociatedBlock = new BlockRecord("My custom block");
-				this.Document.BlockRecords.Add(layout.AssociatedBlock);
-
 				this.Document.Layouts.Add(layout);
 			}
 
