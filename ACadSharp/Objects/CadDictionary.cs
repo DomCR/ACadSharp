@@ -228,6 +228,8 @@ namespace ACadSharp.Objects
 			this._entries.Add(key, value);
 			value.Owner = this;
 
+			value.OnNameChanged += this.onEntryNameChanged;
+
 			OnAdd?.Invoke(this, new CollectionChangedEventArgs(value));
 		}
 
@@ -242,29 +244,19 @@ namespace ACadSharp.Objects
 		}
 
 		/// <summary>
-		/// Tries to add the <see cref="NonGraphicalObject"/> entry if the key doesn't exits.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="value"></param>
-		/// <returns>true if the element is successfully added; otherwise, false.</returns>
-		public bool TryAdd(string key, NonGraphicalObject value)
-		{
-			if (!this._entries.ContainsKey(key))
-			{
-				this.Add(key, value);
-			}
-
-			return false;
-		}
-
-		/// <summary>
 		/// Tries to add the <see cref="NonGraphicalObject"/> entry using the name as key.
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns>true if the element is successfully added; otherwise, false.</returns>
 		public bool TryAdd(NonGraphicalObject value)
 		{
-			return this.TryAdd(value.Name, value);
+			if (!this._entries.ContainsKey(value.Name))
+			{
+				this.Add(value.Name, value);
+				return true;
+			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -342,6 +334,14 @@ namespace ACadSharp.Objects
 			}
 
 			return entry;
+		}
+
+		private void onEntryNameChanged(object sender, OnNameChangedArgs e)
+		{
+	
+			var entry = this._entries[e.OldName];
+			this._entries.Add(e.NewName, entry);
+			this._entries.Remove(e.OldName);
 		}
 	}
 }
