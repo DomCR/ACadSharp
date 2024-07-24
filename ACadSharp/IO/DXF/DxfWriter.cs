@@ -166,6 +166,7 @@ namespace ACadSharp.IO
 		private void writeObjects()
 		{
 			var writer = new DxfObjectsSectionWriter(this._writer, this._document, this._objectHolder);
+			writer.WriteXRecords = this.Configuration.WriteXRecords;
 			writer.OnNotification += this.triggerNotification;
 
 			writer.Write();
