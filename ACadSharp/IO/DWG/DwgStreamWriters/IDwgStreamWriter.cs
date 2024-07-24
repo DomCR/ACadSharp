@@ -1,6 +1,7 @@
 ﻿using CSMath;
 using System;
 using System.IO;
+using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
@@ -9,6 +10,8 @@ namespace ACadSharp.IO.DWG
 	/// </summary>
 	internal interface IDwgStreamWriter
 	{
+		Encoding Encoding { get; }
+
 		IDwgStreamWriter Main { get; }
 
 		Stream Stream { get; }

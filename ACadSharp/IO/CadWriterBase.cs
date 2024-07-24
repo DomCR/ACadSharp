@@ -6,7 +6,11 @@ using ACadSharp.Classes;
 
 namespace ACadSharp.IO
 {
-	public abstract class CadWriterBase : ICadWriter
+	/// <summary>
+	/// Base class for the CAD writers.
+	/// </summary>
+	public abstract class CadWriterBase<T> : ICadWriter
+		where T : CadWriterConfiguration, new()
 	{
 		/// <summary>
 		/// Notification event to get information about the writing process.
@@ -17,12 +21,9 @@ namespace ACadSharp.IO
 		public event NotificationEventHandler OnNotification;
 
 		/// <summary>
-		/// Notifies the writer to close the stream once the operation is completed.
+		/// Configuration for the writer.
 		/// </summary>
-		/// <value>
-		/// default: true
-		/// </value>
-		public bool CloseStream { get; set; } = true;
+		public T Configuration { get; set; } = new T();
 
 		protected Stream _stream;
 
