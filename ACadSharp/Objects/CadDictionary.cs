@@ -266,6 +266,16 @@ namespace ACadSharp.Objects
 		}
 
 		/// <summary>
+		/// Determines whether the <see cref="CadDictionary"/> contains the specified key.
+		/// </summary>
+		/// <param name="key">The key to locate in the <see cref="CadDictionary"/></param>
+		/// <returns></returns>
+		public bool ContainsKey(string key)
+		{
+			return this._entries.ContainsKey(key);
+		}
+
+		/// <summary>
 		/// Removes a <see cref="NonGraphicalObject"/> from the collection, this method triggers <see cref="OnRemove"/>
 		/// </summary>
 		/// <param name="key"></param>

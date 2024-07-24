@@ -37,6 +37,16 @@ namespace ACadSharp.Objects.Collections
 		}
 
 		/// <summary>
+		/// Determines whether the <see cref="ObjectDictionaryCollection{T}"/> contains the specified key.
+		/// </summary>
+		/// <param name="key">The key to locate in the <see cref="ObjectDictionaryCollection{T}"/></param>
+		/// <returns></returns>
+		public bool ContainsKey(string key)
+		{
+			return this._dictionary.ContainsKey(key);
+		}
+
+		/// <summary>
 		/// Gets the value associated with the specific key
 		/// </summary>
 		/// <param name="name"></param>

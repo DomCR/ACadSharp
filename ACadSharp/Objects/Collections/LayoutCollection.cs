@@ -13,7 +13,7 @@ namespace ACadSharp.Objects.Collections
 		public override bool Remove(string name, out Layout entry)
 		{
 			if (name.Equals(Layout.ModelLayoutName, StringComparison.InvariantCultureIgnoreCase)
-				|| name.Equals(Layout.ModelLayoutName, StringComparison.InvariantCultureIgnoreCase))
+				|| name.Equals(Layout.PaperLayoutName, StringComparison.InvariantCultureIgnoreCase))
 			{
 				throw new ArgumentException($"The Layout {name} cannot be removed.");
 			}

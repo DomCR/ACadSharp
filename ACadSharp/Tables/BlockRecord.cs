@@ -5,7 +5,6 @@ using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using System.Linq;
 using System.Collections.Generic;
-using ACadSharp.IO.Templates;
 
 namespace ACadSharp.Tables
 {
@@ -50,6 +49,12 @@ namespace ACadSharp.Tables
 			}
 		}
 
+		/// <summary>
+		/// Create an instance of the *Paper_Space block.
+		/// </summary>
+		/// <remarks>
+		/// This is the default paper space in the document.
+		/// </remarks>
 		public static BlockRecord PaperSpace
 		{
 			get
@@ -254,7 +259,11 @@ namespace ACadSharp.Tables
 		{
 			BlockRecord clone = (BlockRecord)base.Clone();
 
-			clone.Layout = (Layout)(this.Layout?.Clone());
+			Layout layout = (Layout)(this.Layout?.Clone());
+			if (layout is not null)
+			{
+				layout.AssociatedBlock = this;
+			}
 
 			clone.Entities = new CadObjectCollection<Entity>(clone);
 			foreach (var item in this.Entities)

@@ -22,6 +22,22 @@ namespace ACadSharp.Tests.Objects
 			Assert.True(document.BlockRecords.Contains(layoutName));
 		}
 
+		[Fact]
+		public void RemoveBlockRecordTest()
+		{
+			var document = new CadDocument();
+
+			string layoutName = "my_layout";
+			Layout layout = new Layout(layoutName);
+
+			document.Layouts.Add(layout);
+
+			document.BlockRecords.Remove(layoutName);
+
+			Assert.Equal(2, document.Layouts.Count());
+			Assert.False(document.Layouts.ContainsKey(layoutName));
+			Assert.False(document.BlockRecords.Contains(layoutName));
+		}
 
 		[Fact]
 		public void RemoveTest()
@@ -36,6 +52,7 @@ namespace ACadSharp.Tests.Objects
 			Assert.True(document.Layouts.Remove(layoutName));
 			Assert.Equal(2, document.Layouts.Count());
 			Assert.True(document.BlockRecords.Contains(layoutName));
+			Assert.NotEqual(document.BlockRecords[layoutName], layout.AssociatedBlock);
 		}
 
 		[Fact]

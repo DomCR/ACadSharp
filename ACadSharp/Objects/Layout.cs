@@ -135,19 +135,6 @@ namespace ACadSharp.Objects
 
 				this._blockRecord = value;
 				this._blockRecord.Layout = this;
-
-				//if (this._blockRecord.Name.Equals(BlockRecord.ModelSpaceName, System.StringComparison.OrdinalIgnoreCase))
-				//{
-				//	this.Viewport = null;
-				//	base.Flags =
-				//		PlotFlags.Initializing |
-				//		PlotFlags.UpdatePaper |
-				//		PlotFlags.ModelType |
-				//		PlotFlags.DrawViewportsFirst |
-				//		PlotFlags.PrintLineweights |
-				//		PlotFlags.PlotPlotStyles |
-				//		PlotFlags.UseStandardScale;
-				//}
 			}
 		}
 
@@ -211,7 +198,16 @@ namespace ACadSharp.Objects
 		public Layout(string name, string blockName) : base()
 		{
 			this.Name = name;
-			this.AssociatedBlock = new BlockRecord(blockName);
+			this._blockRecord = new BlockRecord(blockName);
+		}
+
+		public override CadObject Clone()
+		{
+			Layout clone = (Layout)base.Clone();
+
+			clone._blockRecord = (BlockRecord)this._blockRecord?.Clone();
+
+			return clone;
 		}
 
 		/// <inheritdoc/>
@@ -227,23 +223,30 @@ namespace ACadSharp.Objects
 			if (this.AssociatedBlock != null)
 			{
 				doc.BlockRecords.Add(this.AssociatedBlock);
+				doc.BlockRecords.OnRemove += this.onRemoveBlockRecord;
 			}
-
-			doc.BlockRecords.OnRemove += this.onRemoveBlockRecord;
 		}
 
 		internal override void UnassignDocument()
 		{
 			this.Document.BlockRecords.OnRemove -= this.onRemoveBlockRecord;
 
-			this.AssociatedBlock.Layout = null;
+			if (this.AssociatedBlock != null)
+			{
+				this.AssociatedBlock.Layout = null;
+				this.Document.BlockRecords.OnRemove -= this.onRemoveBlockRecord;
+				this._blockRecord = (BlockRecord)this._blockRecord?.Clone();
+			}
 
 			base.UnassignDocument();
 		}
 
 		private void onRemoveBlockRecord(object sender, CollectionChangedEventArgs e)
 		{
-			this.Document.Layouts.Remove(this.Name);
+			if (this.AssociatedBlock.Equals(e.Item))
+			{
+				this.Document.Layouts.Remove(this.Name);
+			}
 		}
 	}
 }
