@@ -37,6 +37,16 @@ namespace ACadSharp.Objects.Collections
 		}
 
 		/// <summary>
+		/// Determines whether the <see cref="ObjectDictionaryCollection{T}"/> contains the specified key.
+		/// </summary>
+		/// <param name="key">The key to locate in the <see cref="ObjectDictionaryCollection{T}"/></param>
+		/// <returns></returns>
+		public bool ContainsKey(string key)
+		{
+			return this._dictionary.ContainsKey(key);
+		}
+
+		/// <summary>
 		/// Gets the value associated with the specific key
 		/// </summary>
 		/// <param name="name"></param>
@@ -51,9 +61,19 @@ namespace ACadSharp.Objects.Collections
 		/// Remove an entry from the collection.
 		/// </summary>
 		/// <param name="name"></param>
+		/// <returns></returns>
+		public bool Remove(string name)
+		{
+			return this.Remove(name, out _);
+		}
+
+		/// <summary>
+		/// Remove an entry from the collection.
+		/// </summary>
+		/// <param name="name"></param>
 		/// <param name="entry"></param>
 		/// <returns></returns>
-		public bool Remove(string name, out T entry)
+		public virtual bool Remove(string name, out T entry)
 		{
 			bool result = this._dictionary.Remove(name, out NonGraphicalObject n);
 			entry = (T)n;

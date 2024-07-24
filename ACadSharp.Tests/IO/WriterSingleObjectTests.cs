@@ -176,6 +176,17 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(raster);
 			}
 
+			public void CreateLayout()
+			{
+				//Draw a cross in the model
+				this.Document.Entities.Add(new Line(XYZ.Zero, new XYZ(100, 100, 0)));
+				this.Document.Entities.Add(new Line(new XYZ(0, 100, 0), new XYZ(100, 0, 0)));
+
+				Layout layout = new Layout("my_layout");
+
+				this.Document.Layouts.Add(layout);
+			}
+
 			public void ClosedLwPolyline()
 			{
 				List<LwPolyline.Vertex> vertices = new List<LwPolyline.Vertex>() {
@@ -257,6 +268,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline2DTest)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleRasterImage)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleWipeout)));
+			Data.Add(new(nameof(SingleCaseGenerator.CreateLayout)));
 		}
 
 		protected string getPath(string name, string ext, ACadVersion version)
