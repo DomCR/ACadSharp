@@ -401,7 +401,7 @@ namespace ACadSharp.IO
 			IDwgStreamReader sreader = null;
 			if (this._fileHeader.AcadVersion <= ACadVersion.AC1015)
 			{
-				sreader = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
+				sreader = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream, this._encoding);
 				//Handles are in absolute offset for this versions
 				sreader.Position = 0;
 			}
