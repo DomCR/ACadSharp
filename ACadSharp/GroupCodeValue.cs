@@ -72,7 +72,7 @@
 				return GroupCodeValueType.Int16;
 
 			if (code >= 390 && code <= 399)
-				return GroupCodeValueType.Handle;
+				return GroupCodeValueType.ObjectId;
 
 			if (code >= 400 && code <= 409)
 				return GroupCodeValueType.Int16;
