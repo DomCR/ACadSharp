@@ -83,7 +83,7 @@ namespace ACadSharp.IO.DWG
 				//0 = BYLAYER,
 				//1 = BYBLOCK,
 				//3 = the transparency value in the last byte.
-				base.WriteBitLong((int)transparency.Value);
+				base.WriteBitLong(Transparency.ToAlphaValue(transparency));
 			}
 		}
 	}
