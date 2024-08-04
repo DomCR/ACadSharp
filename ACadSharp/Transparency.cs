@@ -1,21 +1,25 @@
-﻿#region copyright
-//Copyright 2021, Albert Domenech.
-//All rights reserved. 
-//This source code is licensed under the MIT license. 
-//See LICENSE file in the project root for full license information.
-#endregion
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace ACadSharp
 {
+	/// <summary>
+	/// Represents the transparency for the graphical objects.
+	/// </summary>
 	public struct Transparency
 	{
+		/// <summary>
+		/// Gets the ByLayer transparency.
+		/// </summary>
 		public static Transparency ByLayer { get { return new Transparency(-1); } }
-		
+
+		/// <summary>
+		/// Gets the ByBlock transparency.
+		/// </summary>
 		public static Transparency ByBlock { get { return new Transparency(100); } }
 
+		/// <summary>
+		/// Gets the Opaque transparency.
+		/// </summary>
 		public static Transparency Opaque { get { return new Transparency(0); } }
 
 		/// <summary>
@@ -25,7 +29,7 @@ namespace ACadSharp
 		{
 			get { return _value == -1; }
 		}
-		
+
 		/// <summary>
 		/// Defines if the transparency is defined by block.
 		/// </summary>
@@ -38,7 +42,7 @@ namespace ACadSharp
 		/// Gets or sets the transparency value.
 		/// </summary>
 		/// <remarks>
-		/// Transparency values must be in range from 0 to 90, the reserved values -1 and 100 represents ByLayer and ByBlock.
+		/// Transparency values must be in range from 0 (opaque) to 90 (transparent), the reserved values -1 and 100 represents ByLayer and ByBlock.
 		/// </remarks>
 		public short Value
 		{
@@ -63,8 +67,16 @@ namespace ACadSharp
 				_value = value;
 			}
 		}
+
 		private short _value;
 
+		/// <summary>
+		/// Initializes a new instance of the Transparency struct.
+		/// </summary>
+		/// <param name="value">Alpha value range from 0 to 90.</param>
+		/// <remarks>
+		/// Transparency values must be in range from 0 (opaque) to 90 (transparent), the reserved values -1 and 100 represents ByLayer and ByBlock.
+		/// </remarks>
 		public Transparency(short value)
 		{
 			_value = -1;
@@ -72,11 +84,23 @@ namespace ACadSharp
 		}
 
 		/// <summary>
-		/// Gets the transparency value within range of a valid value
+		/// Gets the alpha value of a transperency.
+		/// </summary>
+		/// <param name="transparency"></param>
+		/// <returns></returns>
+		public static int ToAlphaValue(Transparency transparency)
+		{
+			byte alpha = (byte)(255 * (100 - transparency.Value) / 100.0);
+			byte[] bytes = transparency.IsByBlock ? new byte[] { 0, 0, 0, 1 } : new byte[] { alpha, 0, 0, 2 };
+			return BitConverter.ToInt32(bytes, 0);
+		}
+
+		/// <summary>
+		/// Gets the transparency from a transparency value
 		/// </summary>
 		/// <param name="value">A transparency value</param>
 		/// <returns>A <see cref="Transparency"></see></returns>
-		public static Transparency FromValue(int value)
+		public static Transparency FromAlphaValue(int value)
 		{
 			byte[] bytes = BitConverter.GetBytes(value);
 			short alpha = (short)(100 - (bytes[0] / 255.0) * 100);

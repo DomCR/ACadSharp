@@ -56,7 +56,7 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		[DxfCodeValue(440)]
-		public Transparency Transparency { get; set; }
+		public Transparency Transparency { get; set; } = Transparency.ByLayer;
 
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name, 6)]
