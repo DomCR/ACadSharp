@@ -45,7 +45,7 @@ namespace ACadSharp.Tests.IO.DWG
 			string path = this.getPath(data.Name, "dwg", version);
 
 			data.Document.Header.Version = version;
-			DwgWriter.Write(path, data.Document, this.onNotification);
+			DwgWriter.Write(path, data.Document, notification: this.onNotification);
 		}
 	}
 }

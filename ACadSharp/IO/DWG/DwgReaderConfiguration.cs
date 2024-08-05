@@ -1,5 +1,8 @@
 ﻿namespace ACadSharp.IO
 {
+	/// <summary>
+	/// Configuration for reading DWG files.
+	/// </summary>
 	public class DwgReaderConfiguration : CadReaderConfiguration
 	{
 		/// <summary>

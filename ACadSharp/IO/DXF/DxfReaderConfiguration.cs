@@ -1,5 +1,8 @@
 ﻿namespace ACadSharp.IO
 {
+	/// <summary>
+	/// Configuration for reading DXF files.
+	/// </summary>
 	public class DxfReaderConfiguration : CadReaderConfiguration
 	{
 		/// <summary>

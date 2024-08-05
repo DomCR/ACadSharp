@@ -37,25 +37,47 @@ namespace ACadSharp.Objects.Collections
 		}
 
 		/// <summary>
+		/// Determines whether the <see cref="ObjectDictionaryCollection{T}"/> contains the specified key.
+		/// </summary>
+		/// <param name="key">The key to locate in the <see cref="ObjectDictionaryCollection{T}"/></param>
+		/// <returns></returns>
+		public bool ContainsKey(string key)
+		{
+			return this._dictionary.ContainsKey(key);
+		}
+
+		/// <summary>
 		/// Gets the value associated with the specific key
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
 		/// <param name="name"></param>
 		/// <param name="entry"></param>
-		/// <returns>true if the value is found or false if not found</returns>
+		/// <returns>true if the value is found or false if not found.</returns>
 		public bool TryGetValue(string name, out T entry)
 		{
 			return this._dictionary.TryGetEntry(name, out entry);
 		}
 
 		/// <summary>
-		/// Remove an entry from the collection
+		/// Remove an entry from the collection.
 		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public bool Remove(string name)
+		{
+			return this.Remove(name, out _);
+		}
+
+		/// <summary>
+		/// Remove an entry from the collection.
+		/// </summary>
+		/// <param name="name"></param>
 		/// <param name="entry"></param>
 		/// <returns></returns>
-		public T Remove(T entry)
+		public virtual bool Remove(string name, out T entry)
 		{
-			return (T)this._dictionary.Remove(entry.Name);
+			bool result = this._dictionary.Remove(name, out NonGraphicalObject n);
+			entry = (T)n;
+			return result;
 		}
 
 		/// <inheritdoc/>

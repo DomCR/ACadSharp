@@ -9,7 +9,10 @@ using System.Text;
 
 namespace ACadSharp.IO
 {
-	public class DwgWriter : CadWriterBase
+	/// <summary>
+	/// Class for writing a DWG from a <see cref="CadDocument"/>.
+	/// </summary>
+	public class DwgWriter : CadWriterBase<CadWriterConfiguration>
 	{
 		private ACadVersion _version { get { return this._document.Header.Version; } }
 
@@ -20,7 +23,7 @@ namespace ACadSharp.IO
 		private Dictionary<ulong, long> _handlesMap = new Dictionary<ulong, long>();
 
 		/// <summary>
-		/// 
+		/// Initializes a new instance of the <see cref="DwgWriter"/> class.
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <param name="document"></param>
@@ -30,7 +33,7 @@ namespace ACadSharp.IO
 		}
 
 		/// <summary>
-		/// 
+		/// Initializes a new instance of the <see cref="DwgWriter"/> class.
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <param name="document"></param>
@@ -69,7 +72,7 @@ namespace ACadSharp.IO
 
 			this._stream.Flush();
 
-			if (this.CloseStream)
+			if (this.Configuration.CloseStream)
 			{
 				this._stream.Close();
 			}
@@ -86,11 +89,17 @@ namespace ACadSharp.IO
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <param name="document"></param>
+		/// <param name="configuration"></param>
 		/// <param name="notification"></param>
-		public static void Write(string filename, CadDocument document, NotificationEventHandler notification = null)
+		public static void Write(string filename, CadDocument document, CadWriterConfiguration configuration = null, NotificationEventHandler notification = null)
 		{
 			using (DwgWriter writer = new DwgWriter(filename, document))
 			{
+				if(configuration != null)
+				{
+					writer.Configuration = configuration;
+				}
+
 				writer.OnNotification += notification;
 				writer.Write();
 			}
@@ -284,7 +293,7 @@ namespace ACadSharp.IO
 		private void writeObjects()
 		{
 			MemoryStream stream = new MemoryStream();
-			DwgObjectWriter writer = new DwgObjectWriter(stream, this._document);
+			DwgObjectWriter writer = new DwgObjectWriter(stream, this._document, this.Configuration.WriteXRecords);
 			writer.OnNotification += this.triggerNotification;
 			writer.Write();
 

@@ -1,7 +1,9 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using CSMath;
 using System;
 using System.Linq;
+using System.Text;
 
 namespace ACadSharp.IO.DXF
 {
@@ -14,7 +16,6 @@ namespace ACadSharp.IO.DXF
 			switch (entity)
 			{
 				case Solid3D:
-				case MultiLeader:
 				case UnknownEntity:
 					this.notify($"Entity type not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return;
@@ -66,6 +67,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case MText mtext:
 					this.writeMText(mtext);
+					break;
+				case MultiLeader multiLeader:
+					this.writeMultiLeader(multiLeader);
 					break;
 				case Point point:
 					this.writePoint(point);
@@ -697,6 +701,158 @@ namespace ACadSharp.IO.DXF
 			}
 
 			this._writer.Write(1, text);
+		}
+
+		private void writeMultiLeader(MultiLeader multiLeader)
+		{
+			MultiLeaderAnnotContext contextData = multiLeader.ContextData;
+
+			this._writer.Write(100, "AcDbMLeader");
+
+			//	version
+			//	if (Version > ACadVersion.
+			this._writer.Write(270, 2);
+
+			writeMultiLeaderAnnotContext(contextData);
+
+			//	MultiLeader properties
+			this._writer.WriteHandle(340, multiLeader.Style);
+			this._writer.Write(90, multiLeader.PropertyOverrideFlags);
+			this._writer.Write(170, (short)multiLeader.PathType);
+
+			this._writer.WriteCmColor(91, multiLeader.LineColor);
+
+			this._writer.WriteHandle(341, multiLeader.LineType);
+			this._writer.Write(171, (short)multiLeader.LeaderLineWeight);
+			this._writer.Write(290, multiLeader.EnableLanding);
+			this._writer.Write(291, multiLeader.EnableDogleg);
+			this._writer.Write(41, multiLeader.LandingDistance);
+			this._writer.Write(42, multiLeader.ArrowheadSize);
+			this._writer.Write(172, (short)multiLeader.ContentType);
+			this._writer.WriteHandle(343, multiLeader.TextStyle);
+			this._writer.Write(173, (short)multiLeader.TextLeftAttachment);
+			this._writer.Write(95, (short)multiLeader.TextRightAttachment);
+			this._writer.Write(174, (short)multiLeader.TextAngle);
+			this._writer.Write(175, (short)multiLeader.TextAlignment);
+
+			this._writer.WriteCmColor(92, multiLeader.TextColor);
+
+			this._writer.Write(292, multiLeader.TextFrame);
+
+			this._writer.WriteCmColor(93, multiLeader.BlockContentColor);
+
+			this._writer.Write(10, multiLeader.BlockContentScale);
+
+			this._writer.Write(43, multiLeader.BlockContentRotation);
+			this._writer.Write(176, (short)multiLeader.BlockContentConnection);
+			this._writer.Write(293, multiLeader.EnableAnnotationScale);
+			this._writer.Write(294, multiLeader.TextDirectionNegative);
+			this._writer.Write(178, multiLeader.TextAligninIPE);
+			this._writer.Write(179, multiLeader.TextAttachmentPoint);
+			this._writer.Write(45, multiLeader.ScaleFactor);
+			this._writer.Write(271, multiLeader.TextAttachmentDirection);
+			this._writer.Write(272, multiLeader.TextBottomAttachment);
+			this._writer.Write(273, multiLeader.TextTopAttachment);
+			this._writer.Write(295, 0);
+		}
+
+		private void writeMultiLeaderAnnotContext(MultiLeaderAnnotContext contextData) {
+			this._writer.Write(300, "CONTEXT_DATA{");
+			this._writer.Write(40, contextData.ScaleFactor);
+			this._writer.Write(10, contextData.ContentBasePoint);
+			this._writer.Write(41, contextData.TextHeight);
+			this._writer.Write(140, contextData.ArrowheadSize);
+			this._writer.Write(145, contextData.LandingGap);
+			this._writer.Write(174, (short)contextData.TextLeftAttachment);
+			this._writer.Write(175, (short)contextData.TextRightAttachment);
+			this._writer.Write(176, (short)contextData.TextAlignment);
+			this._writer.Write(177, (short)contextData.BlockContentConnection);
+			this._writer.Write(290, contextData.HasTextContents);
+			this._writer.Write(304, contextData.TextLabel);
+
+			this._writer.Write(11, contextData.TextNormal);
+
+			this._writer.WriteHandle(340, contextData.TextStyle);
+
+			this._writer.Write(12, contextData.TextLocation);
+
+			this._writer.Write(13, contextData.Direction);
+
+			this._writer.Write(42, contextData.TextRotation);
+			this._writer.Write(43, contextData.BoundaryWidth);
+			this._writer.Write(44, contextData.BoundaryHeight);
+			this._writer.Write(45, contextData.LineSpacingFactor);
+			this._writer.Write(170, (short)contextData.LineSpacing);
+
+			this._writer.WriteCmColor(90, contextData.TextColor);
+
+			this._writer.Write(171, (short)contextData.TextAttachmentPoint);
+			this._writer.Write(172, (short)contextData.FlowDirection);
+
+			this._writer.WriteCmColor(91, contextData.BackgroundFillColor);
+
+			this._writer.Write(141, contextData.BackgroundScaleFactor);
+			this._writer.Write(92, contextData.BackgroundTransparency);
+			this._writer.Write(291, contextData.BackgroundFillEnabled);
+			this._writer.Write(292, contextData.BackgroundMaskFillOn);
+			this._writer.Write(173, contextData.ColumnType);
+			this._writer.Write(293, contextData.TextHeightAutomatic);
+			this._writer.Write(142, contextData.ColumnWidth);
+			this._writer.Write(143, contextData.ColumnGutter);
+			this._writer.Write(294, contextData.ColumnFlowReversed);
+			this._writer.Write(295, contextData.WordBreak);
+
+			this._writer.Write(296, contextData.HasContentsBlock);
+
+			this._writer.Write(110, contextData.BasePoint);
+
+			this._writer.Write(111, contextData.BaseDirection);
+
+			this._writer.Write(112, contextData.BaseVertical);
+
+			this._writer.Write(297, contextData.NormalReversed);
+
+			foreach (MultiLeaderAnnotContext.LeaderRoot leaderRoot in contextData.LeaderRoots) {
+				writeLeaderRoot(leaderRoot);
+			}
+
+			this._writer.Write(272, (short)contextData.TextBottomAttachment);
+			this._writer.Write(273, (short)contextData.TextTopAttachment);
+			this._writer.Write(301, "}");       //	CONTEXT_DATA
+		}
+
+		private void writeLeaderRoot(MultiLeaderAnnotContext.LeaderRoot leaderRoot)
+		{
+			this._writer.Write(302, "LEADER{");
+
+			// TODO: true is placeholder
+			this._writer.Write(290, true ? (short)1 : (short)0); // Has Set Last Leader Line Point
+			this._writer.Write(291, true ? (short)1 : (short)0); // Has Set Dogleg Vector
+
+			this._writer.Write(10, leaderRoot.ConnectionPoint);
+
+			this._writer.Write(11, leaderRoot.Direction);
+
+			this._writer.Write(90, leaderRoot.LeaderIndex);
+			this._writer.Write(40, leaderRoot.LandingDistance);
+
+			foreach (MultiLeaderAnnotContext.LeaderLine leaderLine in leaderRoot.Lines) {
+				writeLeaderLine(leaderLine);
+			}
+
+			this._writer.Write(271, 0);
+			this._writer.Write(303, "}");   //	LEADER
+		}
+
+		private void writeLeaderLine(MultiLeaderAnnotContext.LeaderLine leaderLine) {
+			this._writer.Write(304, "LEADER_LINE{");
+
+			foreach (XYZ point in leaderLine.Points) {
+				this._writer.Write(10, point);
+			}
+			this._writer.Write(91, leaderLine.Index);
+
+			this._writer.Write(305, "}");   //	LEADER_Line
 		}
 
 		private void writePoint(Point line)

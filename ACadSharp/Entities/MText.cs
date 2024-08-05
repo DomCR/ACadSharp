@@ -41,7 +41,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(40)]
 		public double Height
 		{
-			get => _height;
+			get => this._height;
 			set
 			{
 				if (value < 0)
@@ -111,10 +111,10 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(11, 21, 31)]
 		public XYZ AlignmentPoint
 		{
-			get => _alignmentPoint;
+			get => this._alignmentPoint;
 			set
 			{
-				_alignmentPoint = value;
+				this._alignmentPoint = value;
 				this._rotation = new XY(this._alignmentPoint.X, this._alignmentPoint.Y).GetAngle();
 			}
 		}
@@ -127,17 +127,16 @@ namespace ACadSharp.Entities
 		/// read-only, ignored if supplied
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Ignored, 42)]
-		public double HorizontalWidth { get; set; }
+		public double HorizontalWidth { get; set; } = 0.9;
 
 		/// <summary>
-		/// Horizontal width of the characters that make up the mtext entity.
-		/// This value will always be equal to or less than the value of group code 41 
+		/// Vertical height of the mtext entity
 		/// </summary>
 		/// <remarks>
 		/// read-only, ignored if supplied
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Ignored, 43)]
-		public double VerticalWidth { get; set; }
+		public double VerticalHeight { get; set; } = 0.2;
 
 		/// <summary>
 		/// Specifies the rotation angle for the object.
@@ -148,11 +147,11 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation
 		{
-			get => _rotation;
+			get => this._rotation;
 			set
 			{
-				_rotation = value;
-				this.AlignmentPoint = new XYZ(Math.Cos(_rotation), Math.Sin(_rotation), 0.0);
+				this._rotation = value;
+				this.AlignmentPoint = new XYZ(Math.Cos(this._rotation), Math.Sin(this._rotation), 0.0);
 			}
 		}
 
@@ -163,7 +162,7 @@ namespace ACadSharp.Entities
 		public LineSpacingStyleType LineSpacingStyle { get; set; }
 
 		/// <summary>
-		/// Mtext line spacing factor 
+		/// Mtext line spacing factor.
 		/// </summary>
 		/// <remarks>
 		/// Percentage of default (3-on-5) line spacing to be applied.Valid values range from 0.25 to 4.00
@@ -210,6 +209,7 @@ namespace ACadSharp.Entities
 
 		private TextStyle _style = TextStyle.Default;
 
+		/// <inheritdoc/>
 		public MText() : base() { }
 
 		public override CadObject Clone()
