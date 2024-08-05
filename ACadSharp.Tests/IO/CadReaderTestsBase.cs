@@ -1,16 +1,14 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.Header;
+﻿using ACadSharp.Header;
 using ACadSharp.IO;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace ACadSharp.Tests.IO
 {
 	public abstract class CadReaderTestsBase<T> : IOTestsBase, IDisposable
-		where T : CadReaderBase
+		where T : ICadReader
 	{
 		protected readonly Dictionary<string, CadDocument> _documents = new Dictionary<string, CadDocument>();  //TODO: this does not store the document readed
 
@@ -37,6 +35,8 @@ namespace ACadSharp.Tests.IO
 		public virtual void AssertDocumentDefaults(string test)
 		{
 			CadDocument doc = this.getDocument(test);
+
+			Assert.NotNull(doc.SummaryInfo);
 
 			if (doc.Header.Version < ACadVersion.AC1012)
 			{

@@ -1,6 +1,7 @@
 ﻿namespace ACadSharp {
 
-	public enum TextAttachmentDirectionType {
+	public enum TextAttachmentDirectionType : short
+	{
 
 		Horizontal = 0,
 

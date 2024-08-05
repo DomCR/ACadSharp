@@ -1,8 +1,18 @@
-﻿namespace ACadSharp
+﻿using ACadSharp.Entities;
+
+
+namespace ACadSharp
 {
 	/// <summary>
-	/// 
+	/// Text attachment type, controls how the text label of a <see cref="MultiLeader"/> is to placed
+	/// relative to the landing point.
 	/// </summary>
+	/// <remarks><para>
+	/// Values 0-8 are used for the left/right attachment points (attachment direction is horizontal),
+	/// </para><para>
+	/// values 9-10 are used for the top/bottom attachment points (attachment direction is vertical).
+	/// </para>
+	/// </remarks>
 	public enum TextAttachmentType : short
 	{
 		/// <summary>
