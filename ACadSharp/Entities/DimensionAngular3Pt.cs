@@ -64,6 +64,15 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public DimensionAngular3Pt() : base(DimensionType.Angular3Point) { }
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox(this.FirstPoint, this.SecondPoint);
+		}
 	}
 }

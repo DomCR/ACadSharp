@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Classes;
+using CSMath;
 
 namespace ACadSharp.Entities
 {
@@ -53,6 +54,15 @@ namespace ACadSharp.Entities
 		internal UnknownEntity(DxfClass dxfClass)
 		{
 			this.DxfClass = dxfClass;
+		}
+
+		/// <inheritdoc/>
+		/// <remarks>
+		/// An Unknown Entity does not have any geometric shape, therfore it's bounding box will be always 0
+		/// </remarks>
+		public override BoundingBox GetBoundingBox()
+		{
+			return default;
 		}
 	}
 }

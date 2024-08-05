@@ -94,8 +94,7 @@ namespace ACadSharp.Entities
 
 		private MLineStyle _style = MLineStyle.Default;
 
-		public MLine() : base() { }
-
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			MLine clone = (MLine)base.Clone();
@@ -109,6 +108,12 @@ namespace ACadSharp.Entities
 			}
 
 			return clone;
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return BoundingBox.FromPoints(Vertices.Select(v => v.Position));
 		}
 
 		internal override void AssignDocument(CadDocument doc)

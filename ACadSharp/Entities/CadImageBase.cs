@@ -3,9 +3,13 @@ using CSMath;
 using System.Collections.Generic;
 using System;
 using ACadSharp.Objects;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Common base class for <see cref="RasterImage" /> and <see cref="Wipeout" />.
+	/// </summary>
 	[DxfSubClass(null, true)]
 	public abstract class CadImageBase : Entity
 	{
@@ -185,6 +189,28 @@ namespace ACadSharp.Entities
 		private ImageDefinition _definition;
 		private ImageDefinitionReactor _definitionReactor;
 
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			if (!this.ClipBoundaryVertices.Any())
+			{
+				return BoundingBox.Null;
+			}
+
+			double minX = this.ClipBoundaryVertices.Select(v => v.X).Min();
+			double minY = this.ClipBoundaryVertices.Select(v => v.Y).Min();
+			XYZ min = new XYZ(minX, minY, 0) + this.InsertPoint;
+
+			double maxX = this.ClipBoundaryVertices.Select(v => v.X).Max();
+			double maxY = this.ClipBoundaryVertices.Select(v => v.Y).Max();
+			XYZ max = new XYZ(maxX, maxY, 0) + this.InsertPoint;
+
+			BoundingBox box = new BoundingBox(min, max);
+
+			return box;
+		}
+
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			CadImageBase clone = (CadImageBase)base.Clone();

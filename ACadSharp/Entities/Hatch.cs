@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -128,8 +129,18 @@ namespace ACadSharp.Entities
 
 		private HatchPattern _pattern = HatchPattern.Solid;
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public Hatch() : base() { }
 
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return BoundingBox.FromPoints(this.SeedPoints.Cast<XYZ>());
+		}
+
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			Hatch clone = base.Clone() as Hatch;
