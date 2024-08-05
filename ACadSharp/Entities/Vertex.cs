@@ -49,17 +49,15 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Vertex identifier
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Ignored, 91)]	//TODO: for some versions this code is invalid
+		[DxfCodeValue(DxfReferenceType.Ignored, 91)]    //TODO: for some versions this code is invalid
 		public int Id { get; set; }
 
 		IVector IVertex.Location { get { return this.Location; } }
 
-		public Vertex() : base() { }
-
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			return new BoundingBox();
+			return new BoundingBox(this.Location);
 		}
 	}
 }

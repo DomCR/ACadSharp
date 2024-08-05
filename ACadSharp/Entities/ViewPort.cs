@@ -299,7 +299,10 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			return new BoundingBox();
+			XYZ min = new XYZ(Center.X - this.Width, Center.Y - this.Height, Center.Z);
+			XYZ max = new XYZ(Center.X + this.Width, Center.Y + this.Height, Center.Z);
+
+			return new BoundingBox(min, max);
 		}
 	}
 }

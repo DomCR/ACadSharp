@@ -102,7 +102,7 @@ namespace ACadSharp.Entities
 			//TODO: can a polyline have only 1 vertex?
 			if (this.Vertices.Count < 2)
 			{
-				return new BoundingBox();
+				return BoundingBox.Null;
 			}
 
 			XYZ first = this.Vertices[0].Location;

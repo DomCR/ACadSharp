@@ -79,7 +79,7 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			return new BoundingBox();
+			return new BoundingBox(this.InsertionPoint);
 		}
 	}
 }

@@ -88,7 +88,7 @@ namespace ACadSharp.Blocks
 
 		public override BoundingBox GetBoundingBox()
 		{
-			BoundingBox box = new BoundingBox();
+			BoundingBox box = BoundingBox.Null;
 			foreach (var item in this.BlockOwner.Entities)
 			{
 				box = box.Merge(item.GetBoundingBox());

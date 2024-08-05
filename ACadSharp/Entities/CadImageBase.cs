@@ -194,7 +194,7 @@ namespace ACadSharp.Entities
 		{
 			if (!this.ClipBoundaryVertices.Any())
 			{
-				return new BoundingBox();
+				return BoundingBox.Null;
 			}
 
 			double minX = this.ClipBoundaryVertices.Select(v => v.X).Min();

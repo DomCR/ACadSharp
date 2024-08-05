@@ -95,7 +95,7 @@ namespace ACadSharp.Entities
 		{
 			if (this.Vertices.Count < 2)
 			{
-				return new BoundingBox();
+				return BoundingBox.Null;
 			}
 
 			XYZ first = (XYZ)this.Vertices[0].Location;
