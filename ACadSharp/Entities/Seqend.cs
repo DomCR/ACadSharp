@@ -25,9 +25,10 @@ namespace ACadSharp.Entities
 			this.Owner = owner;
 		}
 
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			throw new System.NotImplementedException();
+			return BoundingBox.Null;
 		}
 	}
 }

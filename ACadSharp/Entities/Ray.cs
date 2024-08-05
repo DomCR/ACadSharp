@@ -24,20 +24,21 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.Ray;
 
 		/// <summary>
-		/// Start point(in WCS)
+		/// Start point(in WCS).
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ StartPoint { get; set; } = XYZ.Zero;
 
 		/// <summary>
-		/// Unit direction vector(in WCS)
+		/// Unit direction vector(in WCS).
 		/// </summary>
 		[DxfCodeValue(11, 21, 31)]
 		public XYZ Direction { get; set; } = XYZ.Zero;
 
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			throw new System.NotImplementedException();
+			return BoundingBox.Infinite;
 		}
 	}
 }

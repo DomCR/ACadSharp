@@ -27,7 +27,7 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.Leader;
 
 		/// <summary>
-		/// Dimension Style
+		/// Dimension Style.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 3)]
 		public DimensionStyle Style
@@ -52,13 +52,13 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Arrowhead flag
+		/// Arrowhead flag.
 		/// </summary>
 		[DxfCodeValue(71)]
 		public bool ArrowHeadEnabled { get; set; }
 
 		/// <summary>
-		/// Leader Path Type
+		/// Leader Path Type.
 		/// </summary>
 		/// <value>
 		/// 0 = straight lines
@@ -68,7 +68,7 @@ namespace ACadSharp.Entities
 		public LeaderPathType PathType { get; set; }
 
 		/// <summary>
-		/// Leader creation flag, AssociatedAnnotation type
+		/// Leader creation flag, AssociatedAnnotation type.
 		/// </summary>
 		/// <value>
 		/// 0 = mtext
@@ -80,7 +80,7 @@ namespace ACadSharp.Entities
 		public LeaderCreationType CreationType { get; set; } = LeaderCreationType.CreatedWithoutAnnotation;
 
 		/// <summary>
-		/// Hookline direction flag
+		/// Hookline direction flag.
 		/// </summary>
 		/// <value>
 		/// 0 = Hookline(or end of tangent for a splined leader) is the opposite direction from the horizontal vector <br/>
@@ -90,25 +90,25 @@ namespace ACadSharp.Entities
 		public bool HookLineDirection { get; set; }
 
 		/// <summary>
-		/// Hookline flag
+		/// Hookline flag.
 		/// </summary>
 		[DxfCodeValue(75)]
 		public bool HasHookline { get; set; }
 
 		/// <summary>
-		/// Text annotation height
+		/// Text annotation height.
 		/// </summary>
 		[DxfCodeValue(40)]
 		public double TextHeight { get; set; }
 
 		/// <summary>
-		/// Text annotation width
+		/// Text annotation width.
 		/// </summary>
 		[DxfCodeValue(41)]
 		public double TextWidth { get; set; }
 
 		/// <summary>
-		/// Vertices in leader
+		/// Vertices in leader.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 76)]
 		[DxfCollectionCodeValue(10, 20, 30)]
@@ -117,38 +117,50 @@ namespace ACadSharp.Entities
 		//77	Color to use if leader's DIMCLRD = BYBLOCK
 
 		/// <summary>
-		/// Hard reference to associated annotation (mtext, tolerance, or insert entity)
+		/// Hard reference to associated annotation (mtext, tolerance, or insert entity).
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public Entity AssociatedAnnotation { get; internal set; }
 
 		/// <summary>
-		/// Normal vector
+		/// Normal vector.
 		/// </summary>
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 		/// <summary>
-		/// Horizontal direction for leader
+		/// Horizontal direction for leader.
 		/// </summary>
 		[DxfCodeValue(211, 221, 231)]
 		public XYZ HorizontalDirection { get; set; } = XYZ.AxisX;
 
 		/// <summary>
-		/// Offset of last leader vertex from block reference insertion point
+		/// Offset of last leader vertex from block reference insertion point.
 		/// </summary>
 		[DxfCodeValue(212, 222, 232)]
 		public XYZ BlockOffset { get; set; } = XYZ.Zero;
 
 		/// <summary>
-		/// Offset of last leader vertex from annotation placement point
+		/// Offset of last leader vertex from annotation placement point.
 		/// </summary>
 		[DxfCodeValue(213, 223, 233)]
 		public XYZ AnnotationOffset { get; set; } = XYZ.Zero;
 
-
 		private DimensionStyle _style = DimensionStyle.Default;
 
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			Leader clone = (Leader)base.Clone();
+			clone.Style = (DimensionStyle)(this.Style?.Clone());
+			return clone;
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return BoundingBox.FromPoints(this.Vertices);
+		}
 
 		internal override void AssignDocument(CadDocument doc)
 		{
@@ -176,18 +188,6 @@ namespace ACadSharp.Entities
 			{
 				this.Style = this.Document.DimensionStyles[DimensionStyle.DefaultName];
 			}
-		}
-
-		public override CadObject Clone()
-		{
-			Leader clone = (Leader)base.Clone();
-			clone.Style = (DimensionStyle)(this.Style?.Clone());
-			return clone;
-		}
-
-		public override BoundingBox GetBoundingBox()
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

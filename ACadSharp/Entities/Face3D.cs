@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -24,19 +25,19 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.Face3d;
 
 		/// <summary>
-		/// First corner(in WCS)
+		/// First corner(in WCS).
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ FirstCorner { get; set; }
 
 		/// <summary>
-		/// Second corner(in WCS)
+		/// Second corner(in WCS).
 		/// </summary>
 		[DxfCodeValue(11, 21, 31)]
 		public XYZ SecondCorner { get; set; }
 
 		/// <summary>
-		/// Third corner(in WCS)
+		/// Third corner(in WCS).
 		/// </summary>
 		[DxfCodeValue(12, 22, 32)]
 		public XYZ ThirdCorner { get; set; }
@@ -51,16 +52,17 @@ namespace ACadSharp.Entities
 		public XYZ FourthCorner { get; set; }
 
 		/// <summary>
-		/// Invisible edge flags
+		/// Invisible edge flags.
 		/// </summary>
 		[DxfCodeValue(70)]
 		public InvisibleEdgeFlags Flags { get; set; }
 
 		public Face3D() : base() { }
 
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			throw new System.NotImplementedException();
+			return BoundingBox.FromPoints(new List<XYZ> { this.FirstCorner, this.SecondCorner, this.ThirdCorner, this.FourthCorner });
 		}
 	}
 }

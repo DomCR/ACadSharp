@@ -6,11 +6,6 @@ namespace ACadSharp.Entities
 {
 	public partial class MLine
 	{
-		public override BoundingBox GetBoundingBox()
-		{
-			throw new System.NotImplementedException();
-		}
-
 		public class Vertex
 		{
 			/// <summary>

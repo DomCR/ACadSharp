@@ -574,6 +574,7 @@ namespace ACadSharp.Entities
 		/// </summary>
 		public bool ExtendedToText { get; set; }
 
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			MultiLeader clone = (MultiLeader)base.Clone();
@@ -589,9 +590,10 @@ namespace ACadSharp.Entities
 			return clone;
 		}
 
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			throw new System.NotImplementedException();
+			return BoundingBox.Null;
 		}
 	}
 }
