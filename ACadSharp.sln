@@ -37,8 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build.yml = .github\workflows\build.yml
 		.github\workflows\build_n_test.yml = .github\workflows\build_n_test.yml
-		.github\workflows\coverage.yml = .github\workflows\coverage.yml
 		publish.yml = publish.yml
+		.github\workflows\coveralls.yml = .github\workflows\coveralls.yml
 		.github\workflows\wiki-gen.yml = .github\workflows\wiki-gen.yml
 	EndProjectSection
 EndProject

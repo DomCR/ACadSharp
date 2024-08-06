@@ -27,16 +27,9 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover --no-build --verbosity normal ACadSharp.Tests/
+      run: dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal ACadSharp.Tests/
     - name: Create Test Coverage Badge
-      uses: simon-k/dotnet-code-coverage-badge@v1.0.0
-      id: create_coverage_badge
+      uses: coverallsapp/github-action@master
       with:
-        label: Unit Test Coverage
-        color: brightgreen
-        path: ACadSharp.Tests/TestResults/coverage.opencover.xml
-        gist-filename: code-coverage.json
-        gist-id: 1234567890abcdef1234567890abcdef
-        gist-auth-token: ${{ github.token }}       
-    - name: Print code coverage
-      run: echo "Code coverage percentage ${{steps.create_coverage_badge.outputs.percentage}}%"
+        github-token: ${{ github.token }}
+        path-to-lcov: ACadSharp.Tests/TestResults/coverage.info 
