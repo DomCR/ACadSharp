@@ -169,6 +169,18 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			BoundingBox box = this.Block.BlockEntity.GetBoundingBox();
+
+			var scale = new XYZ(this.XScale, this.YScale, this.ZScale);
+			var min = box.Min * scale + this.InsertPoint;
+			var max = box.Max * scale + this.InsertPoint;
+
+			return new BoundingBox(min, max);
+		}
+
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			Insert clone = (Insert)base.Clone();

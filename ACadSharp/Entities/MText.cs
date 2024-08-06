@@ -52,13 +52,13 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Reference rectangle width
+		/// Reference rectangle width.
 		/// </summary>
 		[DxfCodeValue(41)]
 		public double RectangleWidth { get; set; }
 
 		/// <summary>
-		/// Reference rectangle height
+		/// Reference rectangle height.
 		/// </summary>
 		[DxfCodeValue(46)]
 		public double RectangleHeight { get; set; }
@@ -212,6 +212,13 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public MText() : base() { }
 
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox(this.InsertPoint);
+		}
+
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			MText clone = (MText)base.Clone();
