@@ -28,7 +28,7 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal ACadSharp.Tests/
-    - name: Create Test Coverage Badge
+    - name: Coveralls action
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ github.token }}
