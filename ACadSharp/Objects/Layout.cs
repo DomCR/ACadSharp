@@ -2,6 +2,7 @@
 using ACadSharp.Entities;
 using ACadSharp.Tables;
 using CSMath;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -175,6 +176,17 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(DxfReferenceType.Handle, 346)]
 		public UCS BaseUCS { get; set; }
 
+		/// <summary>
+		/// If true, the layout is a paper space.
+		/// </summary>
+		public bool IsPaperSpace
+		{
+			get
+			{
+				return this.Name.Equals(ModelLayoutName, StringComparison.InvariantCultureIgnoreCase);
+			}
+		}
+
 		//333	Shade plot ID
 
 		public IEnumerable<Viewport> Viewports
@@ -201,6 +213,7 @@ namespace ACadSharp.Objects
 			this._blockRecord = new BlockRecord(blockName);
 		}
 
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			Layout clone = (Layout)base.Clone();
