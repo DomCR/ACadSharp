@@ -50,7 +50,7 @@ namespace ACadSharp.Tests.IO
 			}
 		}
 
-		[Theory(Skip = "HELLO")]
+		[Theory]
 		[MemberData(nameof(StressFiles))]
 		public void ReadStressFiles(string test)
 		{

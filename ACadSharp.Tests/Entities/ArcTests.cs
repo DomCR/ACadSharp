@@ -10,11 +10,6 @@ namespace ACadSharp.Tests.Entities
 		[Fact]
 		public void CreateFromBulgeTest()
 		{
-			if (!TestVariables.LocalEnv)
-			{
-				return;
-			}
-
 			XY start = new XY(1, 0);
 			XY end = new XY(0, 1);
 			// 90 degree bulge

@@ -66,7 +66,7 @@ namespace ACadSharp.Tests.IO
 			this.writeDxfFile(pathOut, doc);
 		}
 
-		[Theory(Skip = "ddd")]
+		[Theory]
 		[MemberData(nameof(DwgFilePaths))]
 		public void DwgEntitiesToDwgFile(string test)
 		{
