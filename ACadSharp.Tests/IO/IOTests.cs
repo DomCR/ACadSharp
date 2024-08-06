@@ -56,7 +56,7 @@ namespace ACadSharp.Tests.IO
 		{
 			CadDocument doc = DxfReader.Read(test);
 
-			if(doc.Header.Version < ACadVersion.AC1012)
+			if (doc.Header.Version < ACadVersion.AC1012)
 			{
 				return;
 			}
