@@ -1,4 +1,4 @@
-name: Unit Test With Coverage
+name: Coveralls
 
 on:
   push:
