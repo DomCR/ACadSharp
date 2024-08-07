@@ -24,7 +24,7 @@ namespace ACadSharp.Tests.Entities
 
 		[Theory]
 		[MemberData(nameof(EntityTypes))]
-		public void BoundingBoxTest(Type entityType)
+		public void GetBoundingBoxImplementation(Type entityType)
 		{
 			Entity entity = EntityFactory.Create(entityType);
 
