@@ -526,9 +526,9 @@ namespace ACadSharp
 		private static uint getInt24(byte[] array)
 		{
 			if (BitConverter.IsLittleEndian)
-				return (uint)(array[0] | array[1] << 8 | array[2] << 16);
-			else
 				return (uint)(array[0] << 16 | array[1] << 8 | array[2]);
+			else
+				return (uint)(array[0] | array[1] << 8 | array[2] << 16);
 		}
 
 		private static ReadOnlySpan<byte> getRGBfromTrueColor(uint color)
