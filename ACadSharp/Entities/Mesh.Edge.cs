@@ -19,6 +19,12 @@
 			/// </summary>
 			public double? Crease { get; set; }
 
+			public Edge(int start, int end)
+			{
+				this.Start = start;
+				this.End = end;
+			}
+
 			public override string ToString()
 			{
 				string str = $"{this.Start}|{this.End}";
