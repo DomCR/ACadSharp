@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32407.343
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CSUtilities", "CSUtilities\CSUtilities.shproj", "{80357B65-E301-49FD-94C2-D04EB965FD1F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSUtilities.Tests", "CSUtilities.Tests\CSUtilities.Tests.csproj", "{709B24F9-F586-4770-A1D3-180BF90D9F09}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CSMath", "CSMath\CSMath.shproj", "{411B6122-5EF6-46DB-A8F2-43E9C1841E4A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSMath.Tests", "CSMath.Tests\CSMath.Tests.csproj", "{DE70F0E2-BE42-477B-BAB0-7C3A521C4233}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSMath.Lib", "CSMath.Lib\CSMath.Lib.csproj", "{1CE32FE3-1140-4677-91AE-36F49E05BEA1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{CB6AC638-2D90-4D21-BDA2-7F9732895A7B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{6F67BA72-FE36-46C6-BA76-B19EE10353D3}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
+		.github\workflows\build_n_test.yml = .github\workflows\build_n_test.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{709B24F9-F586-4770-A1D3-180BF90D9F09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{709B24F9-F586-4770-A1D3-180BF90D9F09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{709B24F9-F586-4770-A1D3-180BF90D9F09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{709B24F9-F586-4770-A1D3-180BF90D9F09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE70F0E2-BE42-477B-BAB0-7C3A521C4233}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE70F0E2-BE42-477B-BAB0-7C3A521C4233}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE70F0E2-BE42-477B-BAB0-7C3A521C4233}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE70F0E2-BE42-477B-BAB0-7C3A521C4233}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CE32FE3-1140-4677-91AE-36F49E05BEA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CE32FE3-1140-4677-91AE-36F49E05BEA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CE32FE3-1140-4677-91AE-36F49E05BEA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CE32FE3-1140-4677-91AE-36F49E05BEA1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6F67BA72-FE36-46C6-BA76-B19EE10353D3} = {CB6AC638-2D90-4D21-BDA2-7F9732895A7B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B59C250C-BD83-4D0F-A4C9-B7087C6B9ABA}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		CSMath\CSMath.projitems*{1ce32fe3-1140-4677-91ae-36f49e05bea1}*SharedItemsImports = 5
+		CSMath\CSMath.projitems*{411b6122-5ef6-46db-a8f2-43e9c1841e4a}*SharedItemsImports = 13
+		CSUtilities\CSUtilities.projitems*{709b24f9-f586-4770-a1d3-180bf90d9f09}*SharedItemsImports = 5
+		CSUtilities\CSUtilities.projitems*{80357b65-e301-49fd-94c2-d04eb965fd1f}*SharedItemsImports = 13
+		CSMath\CSMath.projitems*{de70f0e2-be42-477b-bab0-7c3a521c4233}*SharedItemsImports = 5
+	EndGlobalSection
+EndGlobal
