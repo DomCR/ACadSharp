@@ -5375,7 +5375,7 @@ namespace ACadSharp.IO.DWG
 				int[] arr = [faceSize];
 				for (int j = 0; j < faceSize; j++)
 				{
-					arr.[j] = _objectReader.ReadBitLong();
+					arr[j] = _objectReader.ReadBitLong();
 				}
 
 				i += faceSize;
