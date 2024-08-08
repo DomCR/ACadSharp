@@ -19,7 +19,6 @@ namespace ACadSharp.Objects
 
 		public override string SubclassMarker => DxfSubclassMarker.DictionaryWithDefault;
 
-		//340	Hard pointer to default object ID/handle(currently only used for plot style dictionary's default entry, named “Normal”)
 		/// <summary>
 		/// Default object
 		/// </summary>

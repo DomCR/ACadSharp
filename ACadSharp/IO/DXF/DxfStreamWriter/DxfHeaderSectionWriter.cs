@@ -10,9 +10,9 @@ namespace ACadSharp.IO.DXF
 
 		public CadHeader Header { get { return this._document.Header; } }
 
-		public DxfWriterOptions Options { get; }
+		public DxfWriterConfiguration Options { get; }
 
-		public DxfHeaderSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder, DxfWriterOptions options) : base(writer, document, holder)
+		public DxfHeaderSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder, DxfWriterConfiguration options) : base(writer, document, holder)
 		{
 			this.Options = options;
 		}
@@ -37,6 +37,12 @@ namespace ACadSharp.IO.DXF
 				if (item.Key == "$HANDSEED")    //Not very elegant but by now...
 				{
 					this._writer.Write(DxfCode.Handle, this._document.Header.HandleSeed);
+					continue;
+				}
+
+				if (item.Key == "$CECOLOR")
+				{
+					this._writer.Write(62, this._document.Header.CurrentEntityColor.GetApproxIndex());
 					continue;
 				}
 

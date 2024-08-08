@@ -121,7 +121,7 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// If an attribute should be added in this collection a definition will be added into the block reference as well
 		/// </remarks>
-		public SeqendCollection<AttributeEntity> Attributes { get; }
+		public SeqendCollection<AttributeEntity> Attributes { get; private set; }
 
 		internal Insert(bool onAdd = true) : base()
 		{
@@ -169,12 +169,26 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			BoundingBox box = this.Block.BlockEntity.GetBoundingBox();
+
+			var scale = new XYZ(this.XScale, this.YScale, this.ZScale);
+			var min = box.Min * scale + this.InsertPoint;
+			var max = box.Max * scale + this.InsertPoint;
+
+			return new BoundingBox(min, max);
+		}
+
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			Insert clone = (Insert)base.Clone();
 
 			clone.Block = (BlockRecord)this.Block.Clone();
-			foreach (var att in Attributes)
+
+			clone.Attributes = new SeqendCollection<AttributeEntity>(clone);
+			foreach (var att in this.Attributes)
 			{
 				clone.Attributes.Add((AttributeEntity)att.Clone());
 			}

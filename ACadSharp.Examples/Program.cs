@@ -2,6 +2,7 @@
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace ACadSharp.Examples

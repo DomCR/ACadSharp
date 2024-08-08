@@ -1,6 +1,6 @@
 ﻿namespace ACadSharp.Objects
 {
-	public class Material : CadObject
+	public class Material : NonGraphicalObject
 	{
 		public override ObjectType ObjectType => ObjectType.INVALID;
 

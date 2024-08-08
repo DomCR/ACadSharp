@@ -18,9 +18,9 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.Layout)]
 	public class Layout : PlotSettings
 	{
-		public const string LayoutModelName = "Model";
+		public const string ModelLayoutName = "Model";
 
-		public static Layout Default { get { return new Layout(LayoutModelName); } }
+		public const string PaperLayoutName = "Layout1";
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.LAYOUT;
@@ -35,7 +35,17 @@ namespace ACadSharp.Objects
 		/// Layout name
 		/// </summary>
 		[DxfCodeValue(1)]
-		public string Name { get; set; }
+		public override string Name
+		{
+			get
+			{
+				return base.Name;
+			}
+			set
+			{
+				base.Name = value;
+			}
+		}
 
 		/// <summary>
 		/// Layout flags
@@ -118,32 +128,13 @@ namespace ACadSharp.Objects
 			get { return this._blockRecord; }
 			internal set
 			{
-				this._blockRecord = value;
-				if (this._blockRecord == null)
-					return;
+				if (value == null)
+				{
+					throw new System.ArgumentNullException(nameof(value));
+				}
 
-				if (this._blockRecord.Name.Equals(BlockRecord.ModelSpaceName, System.StringComparison.OrdinalIgnoreCase))
-				{
-					this.Viewport = null;
-					base.Flags =
-						PlotFlags.Initializing |
-						PlotFlags.UpdatePaper |
-						PlotFlags.ModelType |
-						PlotFlags.DrawViewportsFirst |
-						PlotFlags.PrintLineweights |
-						PlotFlags.PlotPlotStyles |
-						PlotFlags.UseStandardScale;
-				}
-				else
-				{
-					this.Viewport = new Viewport();
-					this.Viewport.ViewCenter = new XY(50.0, 100.0);
-					this.Viewport.Status =
-						ViewportStatusFlags.AdaptiveGridDisplay |
-						ViewportStatusFlags.DisplayGridBeyondDrawingLimits |
-						ViewportStatusFlags.CurrentlyAlwaysEnabled |
-						ViewportStatusFlags.UcsIconVisibility;
-				}
+				this._blockRecord = value;
+				this._blockRecord.Layout = this;
 			}
 		}
 
@@ -184,26 +175,78 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(DxfReferenceType.Handle, 346)]
 		public UCS BaseUCS { get; set; }
 
-
 		//333	Shade plot ID
 
-		public IEnumerable<Viewport> Viewports { get { return this.AssociatedBlock?.Viewports; } }
+		public IEnumerable<Viewport> Viewports
+		{
+			get
+			{
+				return this.AssociatedBlock?.Viewports;
+			}
+		}
 
 		private Viewport _lastViewport;
 
 		private BlockRecord _blockRecord;
 
-		public Layout() : this(null) { }
+		internal Layout() : base()
+		{
+		}
 
-		public Layout(string name) : base()
+		public Layout(string name) : this(name, name) { }
+
+		public Layout(string name, string blockName) : base()
 		{
 			this.Name = name;
+			this._blockRecord = new BlockRecord(blockName);
+		}
+
+		public override CadObject Clone()
+		{
+			Layout clone = (Layout)base.Clone();
+
+			clone._blockRecord = (BlockRecord)this._blockRecord?.Clone();
+
+			return clone;
 		}
 
 		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{this.ObjectName}:{this.Name}";
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			if (this.AssociatedBlock != null)
+			{
+				doc.BlockRecords.Add(this.AssociatedBlock);
+				doc.BlockRecords.OnRemove += this.onRemoveBlockRecord;
+			}
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.BlockRecords.OnRemove -= this.onRemoveBlockRecord;
+
+			if (this.AssociatedBlock != null)
+			{
+				this.AssociatedBlock.Layout = null;
+				this.Document.BlockRecords.OnRemove -= this.onRemoveBlockRecord;
+				this._blockRecord = (BlockRecord)this._blockRecord?.Clone();
+			}
+
+			base.UnassignDocument();
+		}
+
+		private void onRemoveBlockRecord(object sender, CollectionChangedEventArgs e)
+		{
+			if (this.AssociatedBlock.Equals(e.Item))
+			{
+				this.Document.Layouts.Remove(this.Name);
+			}
 		}
 	}
 }

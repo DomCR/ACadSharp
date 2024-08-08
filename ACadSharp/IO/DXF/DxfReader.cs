@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Classes;
+using ACadSharp.Entities;
 using ACadSharp.Exceptions;
 using ACadSharp.Header;
 using ACadSharp.IO.DXF;
@@ -13,10 +14,12 @@ using System.Text;
 
 namespace ACadSharp.IO
 {
-	public class DxfReader : CadReaderBase
+	/// <summary>
+	/// Class for reading a DXF file into a <see cref="CadDocument"></see>.
+	/// </summary>
+	public class DxfReader : CadReaderBase<DxfReaderConfiguration>
 	{
-		public DxfReaderConfiguration Configuration { get; set; } = new DxfReaderConfiguration();
-
+		private ACadVersion _version;
 		private DxfDocumentBuilder _builder;
 		private IDxfStreamReader _reader;
 
@@ -70,10 +73,14 @@ namespace ACadSharp.IO
 			sio.Position = 0;
 			string sn = sio.ReadString(DxfBinaryReader.Sentinel.Length);
 
-			if (resetPos)
-				stream.Position = 0;
+			bool isBinary = sn == DxfBinaryReader.Sentinel;
 
-			return sn == DxfBinaryReader.Sentinel;
+			if (resetPos)
+			{
+				stream.Position = 0;
+			}
+
+			return isBinary;
 		}
 
 		/// <summary>
@@ -102,24 +109,19 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		public static CadDocument Read(string filename, NotificationEventHandler notification = null)
 		{
-			CadDocument doc = null;
-
-			using (DxfReader reader = new DxfReader(filename, notification))
-			{
-				doc = reader.Read();
-			}
-
-			return doc;
+			return Read(File.OpenRead(filename));
 		}
 
 		/// <inheritdoc/>
 		public override CadDocument Read()
 		{
 			this._document = new CadDocument(false);
-			this._builder = new DxfDocumentBuilder(this._document, this.Configuration);
-			this._builder.OnNotification += this.onNotificationEvent;
+			this._document.SummaryInfo = new CadSummaryInfo();
 
 			this._reader = this._reader ?? this.getReader();
+
+			this._builder = new DxfDocumentBuilder(this._version, this._document, this.Configuration);
+			this._builder.OnNotification += this.onNotificationEvent;
 
 			while (this._reader.ValueAsString != DxfFileToken.EndOfFile)
 			{
@@ -137,6 +139,7 @@ namespace ACadSharp.IO
 				{
 					case DxfFileToken.HeaderSection:
 						this._document.Header = this.ReadHeader();
+						this._builder.InitialHandSeed = this._document.Header.HandleSeed;
 						break;
 					case DxfFileToken.ClassesSection:
 						this._document.Classes = this.readClasses();
@@ -183,7 +186,7 @@ namespace ACadSharp.IO
 				//Get the current header variable
 				string currVar = this._reader.ValueAsString;
 
-				if (this._reader.ValueAsString == null || !headerMap.TryGetValue(currVar, out var data))
+				if (this._reader.ValueAsString == null || !headerMap.TryGetValue(currVar, out CadSystemVariable data))
 				{
 #if TEST
 					this.triggerNotification($"Header variable not implemented {currVar}", NotificationType.NotImplemented);
@@ -196,6 +199,34 @@ namespace ACadSharp.IO
 				for (int i = 0; i < data.DxfCodes.Length; i++)
 				{
 					this._reader.ReadNext();
+
+					if (this._reader.DxfCode == DxfCode.CLShapeText)
+					{
+						//Irregular dxf files may not follow the header type
+						int c = data.DxfCodes[i];
+						GroupCodeValueType g = GroupCodeValue.TransformValue(c);
+						switch (g)
+						{
+							case GroupCodeValueType.Bool:
+								parameters[i] = false;
+								break;
+							case GroupCodeValueType.Byte:
+							case GroupCodeValueType.Int16:
+							case GroupCodeValueType.Int32:
+							case GroupCodeValueType.Int64:
+							case GroupCodeValueType.Double:
+							case GroupCodeValueType.Point3D:
+								parameters[i] = 0;
+								break;
+							case GroupCodeValueType.None:
+							case GroupCodeValueType.String:
+							default:
+								parameters[i] = default;
+								break;
+						}
+
+						break;
+					}
 
 					parameters[i] = this._reader.Value;
 				}
@@ -210,11 +241,57 @@ namespace ACadSharp.IO
 					this.triggerNotification($"Invalid value for header variable {currVar} | {parameters.FirstOrDefault()}", NotificationType.Warning, ex);
 				}
 
-
-				this._reader.ReadNext();
+				if (this._reader.DxfCode != DxfCode.CLShapeText)
+				{
+					this._reader.ReadNext();
+				}
 			}
 
 			return header;
+		}
+
+		/// <summary>
+		/// Read only the tables section in the dxf document
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="CadDocument"/> will not contain any entity, only the tables and it's records
+		/// </remarks>
+		/// <returns></returns>
+		public CadDocument ReadTables()
+		{
+			this._reader = this._reader ?? this.getReader();
+
+			this._builder = new DxfDocumentBuilder(this._version, this._document, this.Configuration);
+			this._builder.OnNotification += this.onNotificationEvent;
+
+			this.readTables();
+
+			this._document.Header = new CadHeader(this._document);
+
+			this._builder.RegisterTables();
+
+			this._builder.BuildTables();
+
+			return this._document;
+		}
+
+		/// <summary>
+		/// Read only the entities section in the dxf document
+		/// </summary>
+		/// <remarks>
+		/// The entities will be completely independent from each other and linetypes and layers will only have it's name set, all the other properties will be set as default
+		/// </remarks>
+		/// <returns></returns>
+		public List<Entity> ReadEntities()
+		{
+			this._reader = this._reader ?? this.getReader();
+
+			this._builder = new DxfDocumentBuilder(this._version, this._document, this.Configuration);
+			this._builder.OnNotification += this.onNotificationEvent;
+
+			this.readEntities();
+
+			return this._builder.BuildEntities();
 		}
 
 		/// <inheritdoc/>
@@ -371,16 +448,21 @@ namespace ACadSharp.IO
 		private IDxfStreamReader getReader()
 		{
 			IDxfStreamReader tmpReader = null;
+			this._version = ACadVersion.Unknown;
 
-			bool isBinary = this.IsBinary();
-			if (isBinary)
+			bool isBinary = IsBinary(this._fileStream.Stream, false);
+			bool isAC1009Format = false;
+
+			if (isBinary && this._fileStream.Stream.ReadByte() != -1)
 			{
-				tmpReader = new DxfBinaryReader(this._fileStream.Stream, Encoding.ASCII);
+				int flag = this._fileStream.ReadByte();
+				if (flag != -1 && flag != 0)
+				{
+					isAC1009Format = true;
+				}
 			}
-			else
-			{
-				tmpReader = new DxfTextReader(this._fileStream.Stream);
-			}
+
+			tmpReader = this.createReader(isBinary, isAC1009Format);
 
 			tmpReader.Find(DxfFileToken.HeaderSection);
 
@@ -389,22 +471,22 @@ namespace ACadSharp.IO
 				if (tmpReader.ValueAsString == "$ACADVER")
 				{
 					tmpReader.ReadNext();
-					var version = CadUtils.GetVersionFromName(tmpReader.ValueAsString);
-					if (version >= ACadVersion.AC1021)
+					this._version = CadUtils.GetVersionFromName(tmpReader.ValueAsString);
+					if (this._version >= ACadVersion.AC1021)
 					{
 						this._encoding = Encoding.UTF8;
 						break;
 					}
 
-					if (version < ACadVersion.AC1012)
+					if (this._version < ACadVersion.AC1002)
 					{
-						if (version == ACadVersion.Unknown)
+						if (this._version == ACadVersion.Unknown)
 						{
-							throw new DwgNotSupportedException();
+							throw new CadNotSupportedException();
 						}
 						else
 						{
-							throw new DwgNotSupportedException(version);
+							throw new CadNotSupportedException(this._version);
 						}
 					}
 				}
@@ -422,14 +504,7 @@ namespace ACadSharp.IO
 				tmpReader.ReadNext();
 			}
 
-			if (isBinary)
-			{
-				return new DxfBinaryReader(this._fileStream.Stream, this._encoding);
-			}
-			else
-			{
-				return new DxfTextReader(this._fileStream.Stream, this._encoding);
-			}
+			return this.createReader(isBinary, isAC1009Format);
 		}
 
 		private IDxfStreamReader goToSection(string sectionName)
@@ -444,6 +519,25 @@ namespace ACadSharp.IO
 			this._reader.Find(sectionName);
 
 			return this._reader;
+		}
+
+		private IDxfStreamReader createReader(bool isBinary, bool isAC1009Format)
+		{
+			if (isBinary)
+			{
+				if (isAC1009Format)
+				{
+					return new DxfBinaryReaderAC1009(this._fileStream.Stream, Encoding.ASCII);
+				}
+				else
+				{
+					return new DxfBinaryReader(this._fileStream.Stream, Encoding.ASCII);
+				}
+			}
+			else
+			{
+				return new DxfTextReader(this._fileStream.Stream);
+			}
 		}
 	}
 }

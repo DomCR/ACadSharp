@@ -361,6 +361,32 @@ namespace ACadSharp.Classes
 				ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
 				WasZombie = false,
 			});
+
+			//AcDbRasterImage
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.RasterImage,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1014,
+				DxfName = DxfFileToken.EntityImage,
+				ItemClassId = 498,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.TransformAllowed | ProxyFlags.ColorChangeAllowed | ProxyFlags.LayerChangeAllowed | ProxyFlags.LinetypeChangeAllowed | ProxyFlags.LinetypeScaleChangeAllowed | ProxyFlags.VisibilityChangeAllowed | ProxyFlags.R13FormatProxy,
+			WasZombie = false,
+			});
+
+			//AcDbRasterImageDef
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.RasterImageDef,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1014,
+				DxfName = DxfFileToken.ObjectImageDefinition,
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.R13FormatProxy,
+				WasZombie = false,
+			});
 		}
 
 		/// <summary>
@@ -389,7 +415,7 @@ namespace ACadSharp.Classes
 		}
 
 		/// <summary>
-		/// Get by <see cref="DxfClass.DxfName"/>
+		/// Gets the dxf class associated with <see cref="DxfClass.DxfName"/>
 		/// </summary>
 		/// <param name="dxfname"></param>
 		/// <returns></returns>
@@ -403,6 +429,17 @@ namespace ACadSharp.Classes
 			{
 				return null;
 			}
+		}
+
+		/// <summary>
+		/// Gets the dxf class associated with <see cref="DxfClass.DxfName"/>
+		/// </summary>
+		/// <param name="dxfname"></param>
+		/// <param name="result"></param>
+		/// <returns>true if the Collection contains an element with the specified key; otherwise, false.</returns>
+		public bool TryGetByName(string dxfname, out DxfClass result)
+		{
+			return this._entries.TryGetValue(dxfname, out result);
 		}
 
 		/// <inheritdoc/>

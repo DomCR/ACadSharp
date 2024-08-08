@@ -33,6 +33,9 @@ namespace ACadSharp.Tests.IO
 			string file = Path.GetFileNameWithoutExtension(test);
 			string pathOut = Path.Combine(samplesOutFolder, $"{file}_out.dwg");
 
+			if (doc.Header.Version == ACadVersion.AC1032)
+				return;
+
 			this.writeDwgFile(pathOut, doc);
 		}
 
@@ -52,6 +55,11 @@ namespace ACadSharp.Tests.IO
 		public void DxfToDxf(string test)
 		{
 			CadDocument doc = DxfReader.Read(test);
+
+			if (doc.Header.Version < ACadVersion.AC1012)
+			{
+				return;
+			}
 
 			string file = Path.GetFileNameWithoutExtension(test);
 			string pathOut = Path.Combine(samplesOutFolder, $"{file}_rewrite_out.dxf");

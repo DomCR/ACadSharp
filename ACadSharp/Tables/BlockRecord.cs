@@ -29,9 +29,45 @@ namespace ACadSharp.Tables
 		/// </summary>
 		public const string PaperSpaceName = "*Paper_Space";
 
-		public static BlockRecord ModelSpace { get { return new BlockRecord(ModelSpaceName); } }
+		/// <summary>
+		/// Create an instance of the *Model_Space block.
+		/// </summary>
+		/// <remarks>
+		/// It only can be one Model in each document.
+		/// </remarks>
+		public static BlockRecord ModelSpace
+		{
+			get
+			{
+				BlockRecord record = new BlockRecord(ModelSpaceName);
 
-		public static BlockRecord PaperSpace { get { return new BlockRecord(PaperSpaceName); } }
+				Layout layout = new Layout();
+				layout.Name = Layout.ModelLayoutName;
+				layout.AssociatedBlock = record;
+
+				return record;
+			}
+		}
+
+		/// <summary>
+		/// Create an instance of the *Paper_Space block.
+		/// </summary>
+		/// <remarks>
+		/// This is the default paper space in the document.
+		/// </remarks>
+		public static BlockRecord PaperSpace
+		{
+			get
+			{
+				BlockRecord record = new BlockRecord(PaperSpaceName);
+
+				Layout layout = new Layout();
+				layout.Name = Layout.PaperLayoutName;
+				layout.AssociatedBlock = record;
+
+				return record;
+			}
+		}
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.BLOCK_HEADER;
@@ -78,15 +114,10 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public Layout Layout
 		{
-			get { return _layout; }
-			set
+			get { return this._layout; }
+			internal set
 			{
 				this._layout = value;
-
-				if (value == null)
-					return;
-
-				this._layout.AssociatedBlock = this;
 			}
 		}
 
@@ -115,19 +146,50 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Viewports attached to this block
 		/// </summary>
-		public CadObjectCollection<Viewport> Viewports { get; }
+		public IEnumerable<Viewport> Viewports
+		{
+			get
+			{
+				return this.Entities.OfType<Viewport>();
+			}
+		}
 
 		/// <summary>
-		/// Entities owned by this block
+		/// Entities owned by this block.
 		/// </summary>
 		/// <remarks>
-		/// Entities with another owner cannot be added to another block
+		/// Entities with an owner cannot be added to another block.
 		/// </remarks>
-		public CadObjectCollection<Entity> Entities { get; }
+		public CadObjectCollection<Entity> Entities { get; private set; }
 
+		/// <summary>
+		/// Sort entities table for this block record.
+		/// </summary>
+		public SortEntitiesTable SortEntitiesTable
+		{
+			get
+			{
+				if (this.XDictionary == null)
+				{
+					return null;
+				}
+				else if (this.XDictionary.TryGetEntry(SortEntitiesTable.DictionaryEntryName, out SortEntitiesTable table))
+				{
+					return table;
+				}
+				else
+				{
+					return null;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Block entity for this record
+		/// </summary>
 		public Block BlockEntity
 		{
-			get { return _blockEntity; }
+			get { return this._blockEntity; }
 			internal set
 			{
 				this._blockEntity = value;
@@ -135,9 +197,12 @@ namespace ACadSharp.Tables
 			}
 		}
 
+		/// <summary>
+		/// End block entity for this Block record.
+		/// </summary>
 		public BlockEnd BlockEnd
 		{
-			get { return _blockEnd; }
+			get { return this._blockEnd; }
 			internal set
 			{
 				this._blockEnd = value;
@@ -156,25 +221,37 @@ namespace ACadSharp.Tables
 			this.BlockEntity = new Block(this);
 			this.BlockEnd = new BlockEnd(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
-			this.Viewports = new CadObjectCollection<Viewport>(this);
 		}
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		/// <param name="name">Unique name for this block record.</param>
 		public BlockRecord(string name) : base(name)
 		{
 			this.BlockEntity = new Block(this);
 			this.BlockEnd = new BlockEnd(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
-			this.Viewports = new CadObjectCollection<Viewport>(this);
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		/// <exception cref="System.NotImplementedException"></exception>
 		public SortEntitiesTable CreateSortEntitiesTable()
 		{
-			throw new System.NotImplementedException();
+			CadDictionary dictionary = this.CreateExtendedDictionary();
+
+			if (dictionary.TryGetEntry(SortEntitiesTable.DictionaryEntryName, out SortEntitiesTable table))
+			{
+				return table;
+			}
+
+			table = new SortEntitiesTable(this);
+
+			dictionary.Add(table);
+
+			return table;
 		}
 
 		/// <inheritdoc/>
@@ -182,9 +259,13 @@ namespace ACadSharp.Tables
 		{
 			BlockRecord clone = (BlockRecord)base.Clone();
 
-			clone.Layout = (Layout)(this.Layout?.Clone());
+			Layout layout = (Layout)(this.Layout?.Clone());
+			if (layout is not null)
+			{
+				layout.AssociatedBlock = this;
+			}
 
-			clone.Entities.Clear();
+			clone.Entities = new CadObjectCollection<Entity>(clone);
 			foreach (var item in this.Entities)
 			{
 				clone.Entities.Add((Entity)item.Clone());

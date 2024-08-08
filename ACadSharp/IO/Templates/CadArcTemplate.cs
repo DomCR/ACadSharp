@@ -21,8 +21,8 @@ namespace ACadSharp.IO.Templates
 
             if (builder is DxfDocumentBuilder && this.CadObject is Arc arc)
             {
-                arc.StartAngle *= MathUtils.DegToRad;
-                arc.EndAngle *= MathUtils.DegToRad;
+                arc.StartAngle *= MathUtils.DegToRadFactor;
+                arc.EndAngle *= MathUtils.DegToRadFactor;
             }
 		}
 	}

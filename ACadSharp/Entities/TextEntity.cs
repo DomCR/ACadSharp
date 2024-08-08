@@ -14,7 +14,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityText)]
 	[DxfSubClass(DxfSubclassMarker.Text)]
-	public class TextEntity : Entity
+	public class TextEntity : Entity, IText
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.TEXT;
@@ -37,16 +37,12 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ InsertPoint { get; set; } = XYZ.Zero;
 
-		/// <summary>
-		/// Changes the height of the object.
-		/// </summary>
-		/// <value>
-		/// This must be a positive, non-negative number.
-		/// </value>
+		/// <inheritdoc/>
 		[DxfCodeValue(40)]
 		public double Height
 		{
-			get => _height; set
+			get => _height;
+			set
 			{
 				if (value < 0)
 					throw new ArgumentOutOfRangeException("Height value cannot be negative.");
@@ -55,9 +51,7 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		/// <summary>
-		/// Specifies the text string for the entity.
-		/// </summary>
+		/// <inheritdoc/>
 		/// <value>
 		/// The maximum length is 256 characters.
 		/// </value>
@@ -90,9 +84,9 @@ namespace ACadSharp.Entities
 		/// Relative X scale factor—widt
 		/// </summary>
 		/// <remarks>
-		/// This value is also adjusted when fit-type text is used (optional)
+		/// This value is also adjusted when fit-type text is used
 		/// </remarks>
-		[DxfCodeValue(41)]
+		[DxfCodeValue(DxfReferenceType.Optional, 41)]
 		public double WidthFactor { get; set; } = 1.0;
 
 		/// <summary>
@@ -104,9 +98,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double ObliqueAngle { get; set; } = 0.0;
 
-		/// <summary>
-		/// Style of this text entity.
-		/// </summary>
+		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name | DxfReferenceType.Optional, 7)]
 		public TextStyle Style
 		{
@@ -170,6 +162,13 @@ namespace ACadSharp.Entities
 
 		public TextEntity() : base() { }
 
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox(this.InsertPoint);
+		}
+
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			TextEntity clone = (TextEntity)base.Clone();

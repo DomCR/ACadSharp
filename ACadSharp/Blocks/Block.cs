@@ -14,7 +14,7 @@ namespace ACadSharp.Blocks
 	/// </remarks>
 	[DxfName(DxfFileToken.Block)]
 	[DxfSubClass(DxfSubclassMarker.BlockBegin)]
-	public class Block : Entity, INamedCadObject
+	public class Block : Entity
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.BLOCK;
@@ -84,6 +84,17 @@ namespace ACadSharp.Blocks
 			clone.Owner = new BlockRecord(this.Name);
 
 			return clone;
+		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			BoundingBox box = BoundingBox.Null;
+			foreach (var item in this.BlockOwner.Entities)
+			{
+				box = box.Merge(item.GetBoundingBox());
+			}
+
+			return box;
 		}
 	}
 }

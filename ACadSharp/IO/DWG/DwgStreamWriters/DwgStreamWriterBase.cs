@@ -18,8 +18,6 @@ namespace ACadSharp.IO.DWG
 
 		public long SavedPositionInBits { get; } = 0;
 
-		public Encoding Encoding { get; }
-
 		public int BitShift { get; private set; } = 0;
 
 		private byte _lastByte;
@@ -98,7 +96,7 @@ namespace ACadSharp.IO.DWG
 							new DwgStreamWriterAC18(stream, encoding),
 							new DwgStreamWriterAC18(new MemoryStream(), encoding));
 				case ACadVersion.AC1021:
-					return new DwgmMergedStreamWriter(
+					return new DwgMergedStreamWriter(
 							stream,
 							new DwgStreamWriterAC21(stream, encoding),
 							new DwgStreamWriterAC21(new MemoryStream(), encoding),
@@ -106,7 +104,7 @@ namespace ACadSharp.IO.DWG
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
-					return new DwgmMergedStreamWriter(
+					return new DwgMergedStreamWriter(
 							stream,
 							new DwgStreamWriterAC24(stream, encoding),
 							new DwgStreamWriterAC24(new MemoryStream(), encoding),
@@ -121,9 +119,14 @@ namespace ACadSharp.IO.DWG
 			this.Write(value, LittleEndianConverter.Instance);
 		}
 
-		public virtual void WriteObjectType(ObjectType value)
+		public virtual void WriteObjectType(short value)
 		{
-			this.WriteBitShort((short)value);
+			this.WriteBitShort(value);
+		}
+
+		public void WriteObjectType(ObjectType value)
+		{
+			this.WriteObjectType((short)value);
 		}
 
 		public void WriteRawLong(long value)
@@ -363,7 +366,17 @@ namespace ACadSharp.IO.DWG
 		public virtual void WriteCmColor(Color value)
 		{
 			//R15 and earlier: BS color index
-			this.WriteBitShort(value.Index);
+			short index = 0;
+			if (value.IsTrueColor)
+			{
+				index = value.GetApproxIndex();
+			}
+			else
+			{
+				index = value.Index;
+			}
+
+			this.WriteBitShort(index);
 		}
 
 		public virtual void WriteEnColor(Color color, Transparency transparency)
@@ -405,12 +418,12 @@ namespace ACadSharp.IO.DWG
 			this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
 		}
 
-		public void HandleReference(CadObject cadObject)
+		public void HandleReference(IHandledCadObject cadObject)
 		{
 			this.HandleReference(DwgReferenceType.Undefined, cadObject);
 		}
 
-		public void HandleReference(DwgReferenceType type, CadObject cadObject)
+		public void HandleReference(DwgReferenceType type, IHandledCadObject cadObject)
 		{
 			if (cadObject == null)
 			{

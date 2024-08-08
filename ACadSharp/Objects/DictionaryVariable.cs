@@ -11,7 +11,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectDictionaryVar)]
 	[DxfSubClass(DxfSubclassMarker.DictionaryVariables)]
-	public class DictionaryVariable : CadObject
+	public class DictionaryVariable : NonGraphicalObject
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;

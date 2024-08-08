@@ -1,8 +1,5 @@
 ﻿using ACadSharp.Header;
 using ACadSharp.Tables;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace ACadSharp.Tests.Header
@@ -22,7 +19,7 @@ namespace ACadSharp.Tests.Header
 		}
 
 		[Fact]
-		public void CadHeaderWithDocumentTest()
+		public void CadHeaderCurrentLayerTest()
 		{
 			CadDocument document = new CadDocument();
 			CadHeader header = new CadHeader(document);
@@ -32,6 +29,19 @@ namespace ACadSharp.Tests.Header
 			Assert.True(header.CurrentLayer.Name == Layer.DefaultName, "Name does not match");
 			Assert.True(header.CurrentLayer.Handle == document.Layers[header.CurrentLayerName].Handle, "Handle does not match");
 			Assert.Equal(document.Layers, header.CurrentLayer.Owner);
+		}
+
+		[Fact]
+		public void CadHeaderCurrentCurrentTextStyleTest()
+		{
+			CadDocument document = new CadDocument();
+			CadHeader header = new CadHeader(document);
+
+			Assert.NotNull(header.CurrentTextStyle);
+			Assert.True(header.CurrentTextStyle.Name == header.TextStyleName, "Name does not match");
+			Assert.True(header.CurrentTextStyle.Name == TextStyle.DefaultName, "Name does not match");
+			Assert.True(header.CurrentTextStyle.Handle == document.TextStyles[header.TextStyleName].Handle, "Handle does not match");
+			Assert.Equal(document.TextStyles, header.CurrentTextStyle.Owner);
 		}
 	}
 }

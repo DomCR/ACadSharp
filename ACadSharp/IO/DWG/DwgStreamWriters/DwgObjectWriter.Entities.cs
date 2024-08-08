@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using CSMath;
 using System;
 using System.Collections.Generic;
@@ -16,13 +17,10 @@ namespace ACadSharp.IO.DWG
 			//Ignored Entities
 			switch (entity)
 			{
+				case UnknownEntity:
 				case AttributeEntity:
-				case Shape:
 				case Solid3D:
-				case MultiLeader:
 				case Mesh:
-				//Unlisted
-				case Wipeout:
 					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return;
 			}
@@ -97,6 +95,9 @@ namespace ACadSharp.IO.DWG
 				case MText mtext:
 					this.writeMText(mtext);
 					break;
+				case MultiLeader multiLeader:
+					this.writeMultiLeader(multiLeader);
+					break;
 				case Point p:
 					this.writePoint(p);
 					break;
@@ -133,6 +134,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case Spline spline:
 					this.writeSpline(spline);
+					break;
+				case CadImageBase image:
+					this.writeCadImage(image);
 					break;
 				case TextEntity text:
 					switch (text)
@@ -651,7 +655,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//H mline style oject handle (hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, mline.MLStyle);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, mline.Style);
 		}
 
 		private void writeLwPolyline(LwPolyline lwPolyline)
@@ -856,12 +860,14 @@ namespace ACadSharp.IO.DWG
 
 					//numpathsegs BL 91 number of path segments
 					this._writer.WriteBitLong(pline.Vertices.Count);
-					foreach (var vertex in pline.Vertices)
+					for (var i = 0; i < pline.Vertices.Count; ++i)
 					{
-						this._writer.Write2RawDouble(vertex);
+						var vertex = pline.Vertices[i];
+
+						this._writer.Write2RawDouble(new XY(vertex.X, vertex.Y));
 						if (pline.HasBulge)
 						{
-							this._writer.WriteBitDouble(pline.Bulge);
+							this._writer.WriteBitDouble(vertex.Z);
 						}
 					}
 				}
@@ -1112,6 +1118,363 @@ namespace ACadSharp.IO.DWG
 			this._writer.HandleReference(DwgReferenceType.HardPointer, leader.Style);
 		}
 
+		private void writeMultiLeader(MultiLeader multiLeader)
+		{
+
+			if (this.R2010Plus)
+			{
+				//	270 Version, expected to be 2
+				this._writer.WriteBitShort(2);
+			}
+
+			writeMultiLeaderAnnotContext(multiLeader.ContextData);
+
+			//	Multileader Common data
+			//	340 Leader StyleId (handle)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, multiLeader.Style);
+			//	90  Property Override Flags (int32)
+			this._writer.WriteBitLong((int)multiLeader.PropertyOverrideFlags);
+			//	170 LeaderLineType (short)
+			this._writer.WriteBitShort((short)multiLeader.PathType);
+			//	91  Leade LineColor (Color)
+			this._writer.WriteCmColor(multiLeader.LineColor);
+			//	341 LeaderLineTypeID (handle/LineType)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, multiLeader.LeaderLineType);
+			//	171 LeaderLine Weight
+			this._writer.WriteBitLong((short)multiLeader.LeaderLineWeight);
+
+			//  290 Enable Landing
+			this._writer.WriteBit(multiLeader.EnableLanding);
+			//  291 Enable Dogleg
+			this._writer.WriteBit(multiLeader.EnableDogleg);
+
+			//  41  Dogleg Length / Landing distance
+			this._writer.WriteBitDouble(multiLeader.LandingDistance);
+			//  342 Arrowhead ID
+			this._writer.HandleReference(DwgReferenceType.HardPointer, multiLeader.Arrowhead);
+			//template.ArrowheadHandle = this.handleReference();
+			//  42  Arrowhead Size
+			this._writer.WriteBitDouble(multiLeader.ArrowheadSize);
+			//  172 Content Type
+			this._writer.WriteBitShort((short)multiLeader.ContentType);
+			//  343 Text Style ID (handle/TextStyle)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, multiLeader.TextStyle); //	Hard/soft??
+			//  173 Text Left Attachment Type
+			this._writer.WriteBitShort((short)multiLeader.TextLeftAttachment);
+			//  95  Text Right Attachement Type
+			this._writer.WriteBitShort((short)multiLeader.TextRightAttachment);
+			//  174 Text Angle Type
+			this._writer.WriteBitShort((short)multiLeader.TextAngle);
+			//  175 Text Alignment Type
+			this._writer.WriteBitShort((short)multiLeader.TextAlignment);
+			//  92  Text Color
+			this._writer.WriteCmColor(multiLeader.TextColor);
+			//  292 Enable Frame Text
+			this._writer.WriteBit(multiLeader.TextFrame);
+			//  344 Block Content ID
+			this._writer.HandleReference(DwgReferenceType.HardPointer, multiLeader.BlockContent); //	Hard/soft??
+			//  93  Block Content Color
+			this._writer.WriteCmColor(multiLeader.BlockContentColor);
+			//  10  Block Content Scale
+			this._writer.Write3BitDouble(multiLeader.BlockContentScale);
+			//  43  Block Content Rotation
+			this._writer.WriteBitDouble(multiLeader.BlockContentRotation);
+			//  176 Block Content Connection Type
+			this._writer.WriteBitShort((short)multiLeader.BlockContentConnection);
+			//  293 Enable Annotation Scale/Is annotative
+			this._writer.WriteBit(multiLeader.EnableAnnotationScale);
+
+			//	R2007pre not supported
+
+			//	BL Number of Block Labels 
+			int blockLabelCount = multiLeader.BlockAttributes.Count;
+			this._writer.WriteBitLong(blockLabelCount);
+			for (int bl = 0; bl < blockLabelCount; bl++) {
+				//  330 Block Attribute definition handle (hard pointer)
+				MultiLeader.BlockAttribute blockAttribute = multiLeader.BlockAttributes[bl];
+				this._writer.HandleReference(DwgReferenceType.HardPointer, blockAttribute.AttributeDefinition);
+				//  302 Block Attribute Text String
+				this._writer.WriteVariableText(blockAttribute.Text);
+				//  177 Block Attribute Index
+				this._writer.WriteBitShort(blockAttribute.Index);
+				//  44  Block Attribute Width
+				this._writer.WriteBitDouble(blockAttribute.Width);
+			}
+
+			//  294 Text Direction Negative
+			this._writer.WriteBit(multiLeader.TextDirectionNegative);
+			//  178 Text Align in IPE
+			this._writer.WriteBitShort(multiLeader.TextAligninIPE);
+			//  179 Text Attachment Point
+			this._writer.WriteBitShort((short)multiLeader.TextAttachmentPoint);
+			//	45	BD	ScaleFactor
+			this._writer.WriteBitDouble(multiLeader.ScaleFactor);
+
+			if (this.R2010Plus) {
+				//  271 Text attachment direction for MText contents
+					this._writer.WriteBitShort((short)multiLeader.TextAttachmentDirection);
+				//  272 Bottom text attachment direction (sequence my be interchanged)
+				this._writer.WriteBitShort((short)multiLeader.TextBottomAttachment);
+				//  273 Top text attachment direction
+				this._writer.WriteBitShort((short)multiLeader.TextTopAttachment);
+			}
+
+			if (R2013Plus) {
+				//	295 Leader extended to text
+				this._writer.WriteBit(multiLeader.ExtendedToText);
+			}
+		}
+
+		private void writeMultiLeaderAnnotContext(MultiLeaderAnnotContext annotContext) {
+
+			//	BL	-	Number of leader roots
+			int leaderRootCount = annotContext.LeaderRoots.Count;
+			this._writer.WriteBitLong(leaderRootCount);
+			for (int i = 0; i < leaderRootCount; i++) {
+				writeLeaderRoot(annotContext.LeaderRoots[i]);
+			}
+
+			//	Common
+			//	BD	40	Overall scale
+			this._writer.WriteBitDouble(annotContext.ScaleFactor);
+			//	3BD	10	Content base point
+			this._writer.Write3BitDouble(annotContext.ContentBasePoint);
+			//	BD	41	Text height
+			this._writer.WriteBitDouble(annotContext.TextHeight);
+			//	BD	140	Arrow head size
+			this._writer.WriteBitDouble(annotContext.ArrowheadSize);
+			//  BD	145	Landing gap
+			this._writer.WriteBitDouble(annotContext.LandingGap);
+			//	BS	174	Style left text attachment type. See also MLEADER style left text attachment type for values. Relevant if mleader attachment direction is horizontal.
+			this._writer.WriteBitShort((short)annotContext.TextLeftAttachment);
+			//	BS	175	Style right text attachment type. See also MLEADER style left text attachment type for values. Relevant if mleader attachment direction is horizontal.
+			this._writer.WriteBitShort((short)annotContext.TextRightAttachment);
+			//	BS	176	Text align type (0 = left, 1 = center, 2 = right)
+			this._writer.WriteBitShort((short)annotContext.TextAlignment);
+			//	BS	177	Attachment type (0 = content extents, 1 = insertion point).
+			this._writer.WriteBitShort((short)annotContext.BlockContentConnection);
+			//	B	290	Has text contents
+			this._writer.WriteBit(annotContext.HasTextContents);
+			if (annotContext.HasTextContents) {
+				//	TV	304	Text label
+				this._writer.WriteVariableText(annotContext.TextLabel);
+				//	3BD	11	Normal vector
+				this._writer.Write3BitDouble(annotContext.TextNormal);
+				//	H	340	Text style handle (hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, annotContext.TextStyle);
+				//	3BD	12	Location
+				this._writer.Write3BitDouble(annotContext.TextLocation);
+				//	3BD	13	Direction
+				this._writer.Write3BitDouble(annotContext.Direction);
+				//	BD	42	Rotation (radians)
+				this._writer.WriteBitDouble(annotContext.TextRotation);
+				//	BD	43	Boundary width
+				this._writer.WriteBitDouble(annotContext.BoundaryWidth);
+				//	BD	44	Boundary height
+				this._writer.WriteBitDouble(annotContext.BoundaryHeight);
+				//	BD	45	Line spacing factor
+				this._writer.WriteBitDouble(annotContext.LineSpacingFactor);
+				//	BS	170	Line spacing style (1 = at least, 2 = exactly)
+				this._writer.WriteBitShort((short)annotContext.LineSpacing);
+				//	CMC	90	Text color
+				this._writer.WriteCmColor(annotContext.TextColor);
+				//	BS	171	Alignment (1 = left, 2 = center, 3 = right)
+				this._writer.WriteBitShort((short)annotContext.TextAttachmentPoint);
+				//	BS	172	Flow direction (1 = horizontal, 3 = vertical, 6 = by style)
+				this._writer.WriteBitShort((short)annotContext.FlowDirection);
+				//	CMC	91	Background fill color
+				this._writer.WriteCmColor(annotContext.BackgroundFillColor);
+				//	BD	141	Background scale factor
+				this._writer.WriteBitDouble(annotContext.BackgroundScaleFactor);
+				//	BL	92	Background transparency
+				this._writer.WriteBitLong(annotContext.BackgroundTransparency);
+				//	B	291	Is background fill enabled
+				this._writer.WriteBit(annotContext.BackgroundFillEnabled);
+				//	B	292	Is background mask fill on
+				this._writer.WriteBit(annotContext.BackgroundMaskFillOn);
+				//	BS	173	Column type (ODA writes 0), *TODO: what meaning for values?
+				this._writer.WriteBitShort(annotContext.ColumnType);
+				//	B	293	Is text height automatic?
+				this._writer.WriteBit(annotContext.TextHeightAutomatic);
+				//	BD	142	Column width
+				this._writer.WriteBitDouble(annotContext.ColumnWidth);
+				//	BD	143	Column gutter
+				this._writer.WriteBitDouble(annotContext.ColumnGutter);
+				//	B	294	Column flow reversed
+				this._writer.WriteBit(annotContext.ColumnFlowReversed);
+
+				//	Column sizes
+				//  BD	144	Column size
+				int columnSizesCount = annotContext.ColumnSizes.Count;
+				this._writer.WriteBitLong(columnSizesCount);
+				for (int i = 0; i < columnSizesCount; i++) {
+					this._writer.WriteBitDouble(annotContext.ColumnSizes[i]);
+				}
+
+				//	B	295	Word break
+				this._writer.WriteBit(annotContext.WordBreak);
+				//	B	Unknown
+				this._writer.WriteBit(false);
+			}
+			
+			else if (annotContext.HasContentsBlock) {
+				this._writer.WriteBit(annotContext.HasContentsBlock);
+
+				//B	296	Has contents block
+				//IF Has contents block
+				//	H	341	AcDbBlockTableRecord handle (soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, annotContext.BlockContent);
+				//	3BD	14	Normal vector
+				this._writer.Write3BitDouble(annotContext.BlockContentNormal);
+				//	3BD	15	Location
+				this._writer.Write3BitDouble(annotContext.BlockContentLocation);
+				//	3BD	16	Scale vector
+				this._writer.Write3BitDouble(annotContext.BlockContentScale);
+				//	BD	46	Rotation (radians)
+				this._writer.WriteBitDouble(annotContext.BlockContentRotation);
+				//  CMC	93	Block color
+				this._writer.WriteCmColor(annotContext.BlockContentColor);
+				//	BD (16)	47	16 doubles containing the complete transformation
+				//	matrix. Order of transformation is:
+				//	- Rotation,
+				//	- OCS to WCS (using normal vector),
+				//	- Scaling (using scale vector)
+				//	- Translation (using location)
+				var m4 = annotContext.TransformationMatrix;
+				this._writer.WriteBitDouble(m4.m00);
+				this._writer.WriteBitDouble(m4.m10);
+				this._writer.WriteBitDouble(m4.m20);
+				this._writer.WriteBitDouble(m4.m30);
+
+				this._writer.WriteBitDouble(m4.m01);
+				this._writer.WriteBitDouble(m4.m11);
+				this._writer.WriteBitDouble(m4.m21);
+				this._writer.WriteBitDouble(m4.m31);
+
+				this._writer.WriteBitDouble(m4.m02);
+				this._writer.WriteBitDouble(m4.m12);
+				this._writer.WriteBitDouble(m4.m22);
+				this._writer.WriteBitDouble(m4.m32);
+
+				this._writer.WriteBitDouble(m4.m03);
+				this._writer.WriteBitDouble(m4.m13);
+				this._writer.WriteBitDouble(m4.m23);
+				this._writer.WriteBitDouble(m4.m33);
+			}
+			//END IF Has contents block
+			//END IF Has text contents
+
+			//	3BD	110	Base point
+			this._writer.Write3BitDouble(annotContext.BasePoint);
+			//	3BD	111	Base direction
+			this._writer.Write3BitDouble(annotContext.BaseDirection);
+			//	3BD	112	Base vertical
+			this._writer.Write3BitDouble(annotContext.BaseVertical);
+			//	B	297	Is normal reversed?
+			this._writer.WriteBit(annotContext.NormalReversed);
+
+			if (this.R2010Plus)
+			{
+				//	BS	273	Style top attachment
+				this._writer.WriteBitShort((short)annotContext.TextTopAttachment);
+				//	BS	272	Style bottom attachment
+				this._writer.WriteBitShort((short)annotContext.TextBottomAttachment);
+			}
+		}
+
+		private void writeLeaderRoot(MultiLeaderAnnotContext.LeaderRoot leaderRoot)
+		{
+			//	B		290		Is content valid(ODA writes true)/DXF: Has Set Last Leader Line Point
+			this._writer.WriteBit(leaderRoot.ContentValid);
+			//	B		291		Unknown(ODA writes true)/DXF: Has Set Dogleg Vector
+			this._writer.WriteBit(true);
+			//	3BD		10		Connection point/DXF: Last Leader Line Point
+			this._writer.Write3BitDouble(leaderRoot.ConnectionPoint);
+			//	3BD		11		Direction/DXF: Dogleg vector
+			this._writer.Write3BitDouble(leaderRoot.Direction);
+
+			//	Break start/end point pairs
+			//	BL		Number of break start / end point pairs
+			//	3BD		12		Break start point
+			//	3BD		13		Break end point
+			this._writer.WriteBitLong(leaderRoot.BreakStartEndPointsPairs.Count);
+			foreach (MultiLeaderAnnotContext.StartEndPointPair startEndPointPair in leaderRoot.BreakStartEndPointsPairs)
+			{
+				this._writer.Write3BitDouble(startEndPointPair.StartPoint);
+				this._writer.Write3BitDouble(startEndPointPair.EndPoint);
+			}
+
+			//	BL		90		Leader index
+			this._writer.WriteBitLong(leaderRoot.LeaderIndex);
+			//	BD		40		Landing distance
+			this._writer.WriteBitDouble(leaderRoot.LandingDistance);
+
+			//	Leader lines
+			//	BL		Number of leader lines
+			this._writer.WriteBitLong(leaderRoot.Lines.Count);
+			foreach (MultiLeaderAnnotContext.LeaderLine leaderLine in leaderRoot.Lines)
+			{
+				writeLeaderLine(leaderLine);
+			}
+
+			if (this.R2010Plus)
+			{
+				//	BS	271	Attachment direction(0 = horizontal, 1 = vertical, default is 0)
+				this._writer.WriteBitShort((short)leaderRoot.TextAttachmentDirection);
+			}
+		}
+
+		private void writeLeaderLine(MultiLeaderAnnotContext.LeaderLine leaderLine)
+		{
+			//	Points
+			//	BL	-	Number of points
+			//	3BD		10		Point
+			this._writer.WriteBitLong(leaderLine.Points.Count);
+			foreach (XYZ point in leaderLine.Points) {
+				//	3BD		10		Point
+				this._writer.Write3BitDouble(point);
+			}
+
+			//	Add optional Break Info (one or more)
+			//	BL	Break info count
+			this._writer.WriteBitLong(leaderLine.BreakInfoCount);
+			if (leaderLine.BreakInfoCount > 0) {
+				//	BL	90		Segment index
+				this._writer.WriteBitLong(leaderLine.SegmentIndex);
+
+				//	Start/end point pairs
+				//	3BD	12	End point
+				this._writer.WriteBitLong(leaderLine.StartEndPoints.Count);
+				foreach (MultiLeaderAnnotContext.StartEndPointPair sep in leaderLine.StartEndPoints)
+				{
+					//	3BD	11	Start Point
+					this._writer.Write3BitDouble(sep.StartPoint);
+					this._writer.Write3BitDouble(sep.EndPoint);
+				}
+			}
+
+			//	BL	91	Leader line index
+			this._writer.WriteBitLong(leaderLine.Index);
+
+			if (this.R2010Plus) {
+				//	BS	170	Leader type(0 = invisible leader, 1 = straight leader, 2 = spline leader)
+				this._writer.WriteBitShort((short)leaderLine.PathType);
+				//	CMC	92	Line color
+				this._writer.WriteCmColor(leaderLine.LineColor);
+				//	H	340	Line type handle(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, leaderLine.LineType);
+				//	BL	171	Line weight
+				this._writer.WriteBitLong((short)leaderLine.LineWeight);
+				//	BD	40	Arrow size
+				this._writer.WriteBitDouble(leaderLine.ArrowheadSize);
+				//	H	341	Arrow symbol handle(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, leaderLine.Arrowhead);
+
+				//	BL	93	Override flags (1 = leader type, 2 = line color, 4 = line type, 8 = line weight, 16 = arrow size, 32 = arrow symbol(handle)
+				this._writer.WriteBitLong((short)leaderLine.OverrideFlags);
+			}
+		}
+
 		private void writeLine(Line line)
 		{
 			//R13-R14 Only:
@@ -1333,7 +1696,7 @@ namespace ACadSharp.IO.DWG
 			//When reading from DXF, the shape is found by iterating over all the text styles
 			//(SHAPEFILE, see paragraph 20.4.56) and when the text style contains a shape file,
 			//iterating over all the shapes until the one with the matching name is found.
-			this._writer.WriteBitShort(0);  //TODO: missing implementation for shapeIndex
+			this._writer.WriteBitShort((short)shape.ShapeIndex);
 
 			//Extrusion 3BD 210
 			this._writer.Write3BitDouble(shape.Normal);
@@ -1371,6 +1734,50 @@ namespace ACadSharp.IO.DWG
 
 		private void writeSolid3D(Solid3D solid)
 		{
+		}
+
+		private void writeCadImage(CadImageBase image)
+		{
+			this._writer.WriteBitLong(image.ClassVersion);
+
+			this._writer.Write3BitDouble(image.InsertPoint);
+			this._writer.Write3BitDouble(image.UVector);
+			this._writer.Write3BitDouble(image.VVector);
+
+			this._writer.Write2RawDouble(image.Size);
+
+			this._writer.WriteBitShort((short)image.Flags);
+			this._writer.WriteBit(image.ClippingState);
+			this._writer.WriteByte(image.Brightness);
+			this._writer.WriteByte(image.Contrast);
+			this._writer.WriteByte(image.Fade);
+
+			if (this.R2010Plus)
+			{
+				this._writer.WriteBit(image.ClipMode == ClipMode.Inside);
+			}
+
+			this._writer.WriteBitShort((short)image.ClipType);
+
+
+			switch (image.ClipType)
+			{
+				case ClipType.Rectangular:
+					this._writer.Write2RawDouble(image.ClipBoundaryVertices[0]);
+					this._writer.Write2RawDouble(image.ClipBoundaryVertices[1]);
+					break;
+				case ClipType.Polygonal:
+					this._writer.WriteBitLong(image.ClipBoundaryVertices.Count);
+					for (int i = 0; i < image.ClipBoundaryVertices.Count; i++)
+					{
+						this._writer.Write2RawDouble(image.ClipBoundaryVertices[i]);
+					}
+					break;
+			}
+
+			this._writer.HandleReference(DwgReferenceType.HardPointer, image.Definition);
+			//Reactor, not needed
+			this._writer.HandleReference(null);
 		}
 
 		private void writeSpline(Spline spline)
@@ -1626,6 +2033,7 @@ namespace ACadSharp.IO.DWG
 			//R2007+:
 			if (this.R2007Plus)
 			{
+				//Rect height BD 46 Reference rectangle height.
 				this._writer.WriteBitDouble(mtext.RectangleHeight);
 			}
 
@@ -1646,7 +2054,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteVariableText(mtext.Value);
 
 			//H 7 STYLE (hard pointer)
-			this._writer.HandleReference(mtext.Style);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, mtext.Style);
 
 			//R2000+:
 			if (this.R2000Plus)
@@ -1682,7 +2090,9 @@ namespace ACadSharp.IO.DWG
 
 			//R2018+
 			if (!this.R2018Plus)
+			{
 				return;
+			}
 
 			//Is NOT annotative B
 			this._writer.WriteBit(!mtext.IsAnnotative);
@@ -1694,7 +2104,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Version BS Default 0
-			this._writer.WriteBitShort(0);
+			this._writer.WriteBitShort(4);
 			//Default flag B Default true
 			this._writer.WriteBit(true);
 
@@ -1709,13 +2119,13 @@ namespace ACadSharp.IO.DWG
 			//Insertion point 3BD 11
 			this._writer.Write3BitDouble(mtext.InsertPoint);
 			//Rect width BD 40
-			this._writer.WriteBitDouble(mtext.Height);
-			//Rect height BD 41
 			this._writer.WriteBitDouble(mtext.RectangleWidth);
+			//Rect height BD 41 -> wrong code, should be 46, undocumented
+			this._writer.WriteBitDouble(mtext.RectangleHeight);
 			//Extents width BD 42
 			this._writer.WriteBitDouble(mtext.HorizontalWidth);
 			//Extents height BD 43
-			this._writer.WriteBitDouble(mtext.VerticalWidth);
+			this._writer.WriteBitDouble(mtext.VerticalHeight);
 			//END REDUNDANT FIELDS
 
 			//Column type BS 71 0 = No columns, 1 = static columns, 2 = dynamic columns

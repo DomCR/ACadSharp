@@ -1,13 +1,13 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
-using ACadSharp.Tables.Collections;
+using CSMath;
 using System;
 
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// The standard class for a basic CAD entity.
+	/// The standard class for a basic CAD entity or a graphical object.
 	/// </summary>
 	[DxfSubClass(DxfSubclassMarker.Entity)]
 	public abstract class Entity : CadObject, IEntity
@@ -56,7 +56,7 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		[DxfCodeValue(440)]
-		public Transparency Transparency { get; set; }
+		public Transparency Transparency { get; set; } = Transparency.ByLayer;
 
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name, 6)]
@@ -90,9 +90,15 @@ namespace ACadSharp.Entities
 		private LineType _lineType = LineType.ByLayer;
 
 		/// <summary>
-		/// Default constructor
+		/// Default constructor.
 		/// </summary>
 		public Entity() : base() { }
+
+		/// <summary>
+		/// Gets the bounding box aligned with the axis XYZ that ocupies this entity
+		/// </summary>
+		/// <returns></returns>
+		public abstract BoundingBox GetBoundingBox();
 
 		/// <inheritdoc/>
 		public void MatchProperties(IEntity entity)

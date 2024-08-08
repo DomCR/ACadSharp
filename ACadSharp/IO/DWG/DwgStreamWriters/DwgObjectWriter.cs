@@ -21,6 +21,8 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		public Dictionary<ulong, long> Map { get; } = new Dictionary<ulong, long>();
 
+		public bool WriteXRecords { get; }
+
 		private Dictionary<ulong, CadDictionary> _dictionaries = new();
 
 		private Queue<CadObject> _objects = new();
@@ -37,13 +39,14 @@ namespace ACadSharp.IO.DWG
 
 		private Entity _next;
 
-		public DwgObjectWriter(Stream stream, CadDocument document) : base(document.Header.Version)
+		public DwgObjectWriter(Stream stream, CadDocument document, bool writeXRecords = true) : base(document.Header.Version)
 		{
 			this._stream = stream;
 			this._document = document;
 
 			this._msmain = new MemoryStream();
 			this._writer = DwgStreamWriterBase.GetMergedWriter(document.Header.Version, this._msmain, TextEncoding.Windows1252());
+			this.WriteXRecords = writeXRecords;
 		}
 
 		public void Write()
@@ -206,7 +209,7 @@ namespace ACadSharp.IO.DWG
 
 				this._prev = null;
 				this._next = null;
-				Entity[] arr = blkRecord.Entities.Concat(blkRecord.Viewports).ToArray();
+				Entity[] arr = blkRecord.Entities.ToArray();
 				for (int i = 0; i < arr.Length; i++)
 				{
 					this._prev = arr.ElementAtOrDefault(i - 1);
@@ -283,7 +286,7 @@ namespace ACadSharp.IO.DWG
 				&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 			{
 				//Owned Object Count BL Number of objects owned by this object.
-				_writer.WriteBitLong(record.Entities.Concat(record.Viewports).Count());
+				_writer.WriteBitLong(record.Entities.Count());
 			}
 
 			//Common:
@@ -570,7 +573,14 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Entry name TV 2
-			this._writer.WriteVariableText(style.Name);
+			if (style.IsShapeFile)
+			{
+				this._writer.WriteVariableText(string.Empty);
+			}
+			else
+			{
+				this._writer.WriteVariableText(style.Name);
+			}
 
 			this.writeXrefDependantBit(style);
 

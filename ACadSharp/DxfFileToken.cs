@@ -75,8 +75,7 @@
 		public const string EntityLine = "LINE";
 		public const string EntityLwPolyline = "LWPOLYLINE";
 		public const string EntityMesh = "MESH";
-		public const string EntityMLeader = "MLEADER";
-		public const string EntityMLeaderStyle = "MLEADERSTYLE";
+		public const string EntityMultiLeader = "MULTILEADER";
 		public const string EntityMLine = "MLINE";
 		public const string EntityMText = "MTEXT";
 		public const string EntityOleFrame = "OLEFRAME";
@@ -115,7 +114,10 @@
 		public const string ObjectPlotSettings = "PLOTSETTINGS";
 		public const string ObjectPlaceholder = "ACDBPLACEHOLDER";
 		public const string ObjectLayout = "LAYOUT";
-		public const string ObjectMLStyle = "MLINESTYLE";
+		public const string ObjectMLeaderStyle = "MLEADERSTYLE";
+		public const string ObjectImageDefinition = "IMAGEDEF";
+		public const string ObjectImageDefinitionReactor = "IMAGEDEF_REACTOR";
+		public const string ObjectMLineStyle = "MLINESTYLE";
 		public const string ObjectVisualStyle = "VISUALSTYLE";
 		public const string ObjectScale = "SCALE";
 		public const string ObjectSortEntsTable = "SORTENTSTABLE";

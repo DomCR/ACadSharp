@@ -11,7 +11,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectPlaceholder)]
 	[DxfSubClass(DxfSubclassMarker.AcDbPlaceHolder)]
-	public class AcdbPlaceHolder : CadObject
+	public class AcdbPlaceHolder : NonGraphicalObject
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType { get { return ObjectType.ACDBPLACEHOLDER; } }
