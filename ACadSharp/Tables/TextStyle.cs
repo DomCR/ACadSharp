@@ -30,6 +30,30 @@ namespace ACadSharp.Tables
 		/// </summary>
 		public static TextStyle Default { get { return new TextStyle(DefaultName); } }
 
+		/// <inheritdoc/>
+		public override string Name
+		{
+			get
+			{
+				if (this.IsShapeFile)
+				{
+					return this.Filename;
+				}
+				else
+				{
+					return this.name;
+				}
+			}
+			set
+			{
+				base.Name = value;
+				if (this.IsShapeFile)
+				{
+					this.Filename = value;
+				}
+			}
+		}
+
 		/// <summary>
 		/// Style state flags.
 		/// </summary>
@@ -39,7 +63,7 @@ namespace ACadSharp.Tables
 		/// Primary font file name.
 		/// </summary>
 		[DxfCodeValue(3)]
-		public string Filename { get; set; } = "arial.ttf";
+		public string Filename { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Bigfont file name, blank if none.

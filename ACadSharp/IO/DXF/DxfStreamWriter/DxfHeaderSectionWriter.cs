@@ -10,9 +10,9 @@ namespace ACadSharp.IO.DXF
 
 		public CadHeader Header { get { return this._document.Header; } }
 
-		public DxfWriterOptions Options { get; }
+		public DxfWriterConfiguration Options { get; }
 
-		public DxfHeaderSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder, DxfWriterOptions options) : base(writer, document, holder)
+		public DxfHeaderSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder, DxfWriterConfiguration options) : base(writer, document, holder)
 		{
 			this.Options = options;
 		}

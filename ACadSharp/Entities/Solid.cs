@@ -15,7 +15,7 @@ namespace ACadSharp.Entities
 	public class Solid : Entity
 	{
 		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.SOLID;	//Replaces also TRACE
+		public override ObjectType ObjectType => ObjectType.SOLID;  //Replaces also TRACE
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntitySolid;
@@ -48,6 +48,9 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
-		public Solid() : base() { }
+		public override BoundingBox GetBoundingBox()
+		{
+			return BoundingBox.Null;
+		}
 	}
 }

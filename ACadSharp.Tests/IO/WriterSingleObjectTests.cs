@@ -1,9 +1,11 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -81,6 +83,34 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(line);
 			}
 
+			public void SingleMLine()
+			{
+				//It creates a valid dxf but the MLine is wrongly drawn
+
+				MLine line = new MLine();
+
+				line.StartPoint = XYZ.Zero;
+
+				var v1 = new MLine.Vertex();
+				v1.Position = XYZ.Zero;
+				v1.Direction = XYZ.AxisY;
+
+				v1.Segments.Add(new MLine.Vertex.Segment { Parameters = new List<double> { 0.75, 0 } });
+				v1.Segments.Add(new MLine.Vertex.Segment { Parameters = new List<double> { -0.75, 0 } });
+
+				var v2 = new MLine.Vertex();
+				v2.Position = new XYZ(100, 100, 0);
+				v2.Direction = XYZ.AxisY;
+
+				v2.Segments.Add(new MLine.Vertex.Segment { Parameters = new List<double> { 0.75, 0 } });
+				v2.Segments.Add(new MLine.Vertex.Segment { Parameters = new List<double> { -0.75, 0 } });
+
+				line.Vertices.Add(v1);
+				line.Vertices.Add(v2);
+
+				this.Document.Entities.Add(line);
+			}
+
 			public void SingleMText()
 			{
 				MText mtext = new MText();
@@ -111,6 +141,50 @@ namespace ACadSharp.Tests.IO
 			public void SinglePoint()
 			{
 				this.Document.Entities.Add(new Point(XYZ.Zero));
+			}
+
+			public void SingleWipeout()
+			{
+				Wipeout wipeout = new Wipeout();
+
+				wipeout.Size = new XY(1, 1);
+				wipeout.ClippingState = true;
+
+				wipeout.ClipBoundaryVertices.Add(new XY(0, 0));
+				wipeout.ClipBoundaryVertices.Add(new XY(0, 1));
+				wipeout.ClipBoundaryVertices.Add(new XY(1, 1));
+				wipeout.ClipBoundaryVertices.Add(new XY(1, 0));
+
+				this.Document.Entities.Add(wipeout);
+			}
+
+			public void SingleRasterImage()
+			{
+				ImageDefinition definition = new ImageDefinition();
+				definition.Size = new XY(1, 1);
+				definition.Name = "image";
+
+				definition.FileName = "..\\..\\image.JPG";
+
+				RasterImage raster = new RasterImage(definition);
+
+				raster.ClipBoundaryVertices.Add(new XY(0, 0));
+				raster.ClipBoundaryVertices.Add(new XY(0, 1));
+				raster.ClipBoundaryVertices.Add(new XY(1, 1));
+				raster.ClipBoundaryVertices.Add(new XY(1, 0));
+
+				this.Document.Entities.Add(raster);
+			}
+
+			public void CreateLayout()
+			{
+				//Draw a cross in the model
+				this.Document.Entities.Add(new Line(XYZ.Zero, new XYZ(100, 100, 0)));
+				this.Document.Entities.Add(new Line(new XYZ(0, 100, 0), new XYZ(100, 0, 0)));
+
+				Layout layout = new Layout("my_layout");
+
+				this.Document.Layouts.Add(layout);
 			}
 
 			public void ClosedLwPolyline()
@@ -145,12 +219,21 @@ namespace ACadSharp.Tests.IO
 					new Vertex2D() { Location = new XYZ(4, 4, 0) }
 				};
 
-				var Pline = new Polyline2D();
-				Pline.Vertices.AddRange(vector2d);
-				Pline.IsClosed = true;
-				Pline.Vertices.ElementAt(3).Bulge = 1;
+				var pline = new Polyline2D();
+				pline.Vertices.AddRange(vector2d);
+				pline.IsClosed = true;
+				pline.Vertices.ElementAt(3).Bulge = 1;
 
-				this.Document.Entities.Add(Pline);
+				this.Document.Entities.Add(pline);
+			}
+
+			public void EntityTransparency()
+			{
+				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
+
+				line.Transparency = new Transparency(50);
+
+				this.Document.Entities.Add(line);
 			}
 
 			public void Deserialize(IXunitSerializationInfo info)
@@ -180,6 +263,7 @@ namespace ACadSharp.Tests.IO
 
 			Data.Add(new(nameof(SingleCaseGenerator.Empty)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleMLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityColorTrueColor)));
@@ -191,6 +275,10 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedLwPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline2DTest)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleRasterImage)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleWipeout)));
+			Data.Add(new(nameof(SingleCaseGenerator.CreateLayout)));
+			Data.Add(new(nameof(SingleCaseGenerator.EntityTransparency)));
 		}
 
 		protected string getPath(string name, string ext, ACadVersion version)

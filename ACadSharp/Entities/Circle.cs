@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -22,7 +23,7 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Circle;
-		
+
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
 		/// </summary>
@@ -45,11 +46,33 @@ namespace ACadSharp.Entities
 		/// Specifies the radius of an arc, circle, or position marker.
 		/// </summary>
 		[DxfCodeValue(40)]
-		public double Radius { get; set; } = 1.0;
+		public double Radius
+		{
+			get { return this._radius; }
+			set
+			{
+				if (value <= 0)
+				{
+					throw new ArgumentOutOfRangeException(nameof(value), value, "The radius must be greater than 0.");
+				}
+				this._radius = value;
+			}
+		}
+
+		private double _radius = 1.0;
 
 		/// <summary>
 		/// Default constructor
 		/// </summary>
 		public Circle() : base() { }
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			XYZ min = new XYZ(Math.Min(this.Center.X - this.Radius, this.Center.X + this.Radius), Math.Min(this.Center.Y - this.Radius, this.Center.Y + this.Radius), Math.Min(this.Center.Z - this.Radius, this.Center.Z + this.Radius));
+			XYZ max = new XYZ(Math.Max(this.Center.X - this.Radius, this.Center.X + this.Radius), Math.Max(this.Center.Y - this.Radius, this.Center.Y + this.Radius), Math.Max(this.Center.Z - this.Radius, this.Center.Z + this.Radius));
+
+			return new BoundingBox(min, max);
+		}
 	}
 }

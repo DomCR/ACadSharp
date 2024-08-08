@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CSUtilities.Converters;
+using System;
+
 
 namespace ACadSharp.IO.DXF
 {
@@ -29,13 +31,38 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		public void WriteHandle(int code, IHandledCadObject value, DxfClassMap map)
+		public void WriteCmColor(int code, Color color, DxfClassMap map = null)
 		{
-			if (value == null)
+			if (GroupCodeValue.TransformValue(code) == GroupCodeValueType.Int16)
 			{
-				this.Write(code, (ulong)0, map);
+				//BS: Color Index
+				this.Write(code, Convert.ToInt16(color.GetApproxIndex()));
 			}
 			else
+			{
+				byte[] arr = new byte[4];
+
+				if (color.IsTrueColor)
+				{
+					arr[0] = (byte)color.B;
+					arr[1] = (byte)color.G;
+					arr[2] = (byte)color.R;
+					arr[3] = 0b1100_0010;   //	0xC2
+				}
+				else
+				{
+					arr[3] = 0b1100_0001;
+					arr[0] = (byte)color.Index;
+				}
+
+				//BL: RGB value
+				this.Write(code, LittleEndianConverter.Instance.ToInt32(arr), map);
+			}
+		}
+
+		public void WriteHandle(int code, IHandledCadObject value, DxfClassMap map)
+		{
+			if (value != null)
 			{
 				this.Write(code, value.Handle, map);
 			}
@@ -65,7 +92,7 @@ namespace ACadSharp.IO.DXF
 
 				if (prop.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
 				{
-					value = (double)value * MathUtils.RadToDeg;
+					value = (double)value * MathUtils.RadToDegFactor;
 				}
 			}
 

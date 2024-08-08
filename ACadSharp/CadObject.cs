@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
+using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System.Collections.Generic;
@@ -40,8 +41,11 @@ namespace ACadSharp
 		public IHandledCadObject Owner { get; internal set; }
 
 		/// <summary>
-		/// Object dictionary
+		/// Extended Dictionary object.
 		/// </summary>
+		/// <remarks>
+		/// An extended dictionary can be created using <see cref="CreateExtendedDictionary"/>
+		/// </remarks>
 		public CadDictionary XDictionary
 		{
 			get { return this._xdictionary; }
@@ -83,6 +87,20 @@ namespace ACadSharp
 		/// Default constructor
 		/// </summary>
 		public CadObject() { }
+
+		/// <summary>
+		/// Creates the extended dictionary if null.
+		/// </summary>
+		/// <returns>The <see cref="CadDictionary"/> attached to this <see cref="CadObject"/></returns>
+		public CadDictionary CreateExtendedDictionary()
+		{
+			if (this._xdictionary == null)
+			{
+				this.XDictionary = new CadDictionary();
+			}
+
+			return this._xdictionary;
+		}
 
 		/// <summary>
 		/// Creates a new object that is a copy of the current instance.
@@ -146,6 +164,25 @@ namespace ACadSharp
 			else
 			{
 				table.Add(entry);
+				return entry;
+			}
+		}
+
+		protected T updateCollection<T>(T entry, ObjectDictionaryCollection<T> collection)
+			where T : NonGraphicalObject
+		{
+			if (collection == null || entry == null)
+			{
+				return entry;
+			}
+
+			if (collection.TryGetValue(entry.Name, out T existing))
+			{
+				return existing;
+			}
+			else
+			{
+				collection.Add(entry);
 				return entry;
 			}
 		}

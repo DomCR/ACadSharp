@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Header;
-using ACadSharp.IO.DXF;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
@@ -115,6 +114,11 @@ namespace ACadSharp
 		public MLineStyleCollection MLineStyles { get; private set; }
 
 		/// <summary>
+		/// 
+		/// </summary>
+		public ImageDefinitionCollection ImageDefinitions { get; private set; }
+
+		/// <summary>
 		/// The collection of all Multi leader styles in the drawing. 
 		/// </summary>
 		/// <remarks>
@@ -162,59 +166,7 @@ namespace ACadSharp
 
 			if (createDefaults)
 			{
-				DxfClassCollection.UpdateDxfClasses(this);
-
-				//Header and summary
-				this.Header = new CadHeader(this);
-				this.SummaryInfo = new CadSummaryInfo();
-
-				//The order of the elements is rellevant for the handles assignation
-
-				//Initialize tables
-				this.BlockRecords = new BlockRecordsTable(this);
-				this.Layers = new LayersTable(this);
-				this.DimensionStyles = new DimensionStylesTable(this);
-				this.TextStyles = new TextStylesTable(this);
-				this.LineTypes = new LineTypesTable(this);
-				this.Views = new ViewsTable(this);
-				this.UCSs = new UCSTable(this);
-				this.VPorts = new VPortsTable(this);
-				this.AppIds = new AppIdsTable(this);
-
-				//Root dictionary
-				this.RootDictionary = CadDictionary.CreateRoot();
-
-				//Entries
-				Layout modelLayout = Layout.Default;
-				Layout paperLayout = new Layout("Layout1");
-				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(paperLayout.Name, paperLayout);
-				(this.RootDictionary[CadDictionary.AcadLayout] as CadDictionary).Add(Layout.LayoutModelName, modelLayout);
-
-				//Default variables
-				this.AppIds.Add(AppId.Default);
-
-				this.LineTypes.Add(LineType.ByLayer);
-				this.LineTypes.Add(LineType.ByBlock);
-				this.LineTypes.Add(LineType.Continuous);
-
-				this.Layers.Add(Layer.Default);
-
-				this.TextStyles.Add(TextStyle.Default);
-
-				this.DimensionStyles.Add(DimensionStyle.Default);
-
-				this.VPorts.Add(VPort.Default);
-
-				//Blocks
-				BlockRecord model = BlockRecord.ModelSpace;
-				model.Layout = modelLayout;
-				this.BlockRecords.Add(model);
-
-				BlockRecord pspace = BlockRecord.PaperSpace;
-				pspace.Layout = paperLayout;
-				this.BlockRecords.Add(pspace);
-
-				this.UpdateCollections(false);
+				this.CreateDefaults();
 			}
 		}
 
@@ -287,11 +239,78 @@ namespace ACadSharp
 		}
 
 		/// <summary>
+		/// 
+		/// </summary>
+		public void CreateDefaults()
+		{
+			DxfClassCollection.UpdateDxfClasses(this);
+
+			//Header and summary
+			this.Header = new CadHeader(this);
+			this.SummaryInfo = new CadSummaryInfo();
+
+			//The order of the elements is rellevant for the handles assignation
+
+			//Initialize tables
+			this.BlockRecords ??= new BlockRecordsTable(this);
+			this.Layers ??= new LayersTable(this);
+			this.DimensionStyles ??= new DimensionStylesTable(this);
+			this.TextStyles ??= new TextStylesTable(this);
+			this.LineTypes ??= new LineTypesTable(this);
+			this.Views ??= new ViewsTable(this);
+			this.UCSs ??= new UCSTable(this);
+			this.VPorts ??= new VPortsTable(this);
+			this.AppIds ??= new AppIdsTable(this);
+
+			//Root dictionary
+			if (this.RootDictionary == null)
+			{
+				this.RootDictionary = CadDictionary.CreateRoot();
+			}
+			else
+			{
+				CadDictionary.CreateDefaultEntries(this.RootDictionary);
+			}
+
+			this.UpdateCollections(true);
+
+			//Default variables
+			this.AppIds.CreateDefaultEntries();
+			this.LineTypes.CreateDefaultEntries();
+			this.Layers.CreateDefaultEntries();
+			this.TextStyles.CreateDefaultEntries();
+			this.DimensionStyles.CreateDefaultEntries();
+			this.VPorts.CreateDefaultEntries();
+
+			//Blocks
+			if (!this.BlockRecords.Contains(BlockRecord.ModelSpaceName))
+			{
+				BlockRecord model = BlockRecord.ModelSpace;
+				this.Layouts.Add(model.Layout);
+			}
+
+			if (!this.BlockRecords.Contains(BlockRecord.PaperSpaceName))
+			{
+				BlockRecord pspace = BlockRecord.PaperSpace;
+				this.Layouts.Add(pspace.Layout);
+			}
+		}
+
+		/// <summary>
 		/// Updates the collections in the document and link them to it's dictionary
 		/// </summary>
 		/// <param name="createDictionaries"></param>
 		public void UpdateCollections(bool createDictionaries)
 		{
+			if (createDictionaries && this.RootDictionary == null)
+			{
+				this.RootDictionary = CadDictionary.CreateRoot();
+			}
+			else if (this.RootDictionary == null)
+			{
+				return;
+			}
+
 			if (this.updateCollection(CadDictionary.AcadLayout, createDictionaries, out CadDictionary layout))
 			{
 				this.Layouts = new LayoutCollection(layout);
@@ -312,9 +331,14 @@ namespace ACadSharp
 				this.MLineStyles = new MLineStyleCollection(mlineStyles);
 			}
 
-			if (this.updateCollection(CadDictionary.AcadMLineStyle, createDictionaries, out CadDictionary mleaderStyles))
+			if (this.updateCollection(CadDictionary.AcadMLeaderStyle, createDictionaries, out CadDictionary mleaderStyles))
 			{
 				this.MLeaderStyles = new MLeaderStyleCollection(mleaderStyles);
+			}
+
+			if (this.updateCollection(CadDictionary.AcadImageDict, createDictionaries, out CadDictionary imageDefinitions))
+			{
+				this.ImageDefinitions = new ImageDefinitionCollection(imageDefinitions);
 			}
 		}
 
@@ -326,7 +350,8 @@ namespace ACadSharp
 			}
 			else if (createDictionary)
 			{
-				this.RootDictionary.Add(dictName, new CadDictionary());
+				dictionary = new CadDictionary(dictName);
+				this.RootDictionary.Add(dictionary);
 			}
 
 			return dictionary != null;
@@ -342,10 +367,14 @@ namespace ACadSharp
 			if (cadObject.Handle == 0 || this._cadObjects.ContainsKey(cadObject.Handle))
 			{
 				var nextHandle = this._cadObjects.Keys.Max() + 1;
-
-				this.Header.HandleSeed = nextHandle + 1;
+				if (nextHandle < this.Header.HandleSeed)
+				{
+					nextHandle = this.Header.HandleSeed;
+				}
 
 				cadObject.Handle = nextHandle;
+
+				this.Header.HandleSeed = nextHandle + 1;
 			}
 
 			this._cadObjects.Add(cadObject.Handle, cadObject);

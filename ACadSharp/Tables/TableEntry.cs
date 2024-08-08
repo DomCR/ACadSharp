@@ -15,7 +15,7 @@ namespace ACadSharp.Tables
 		/// Specifies the name of the object
 		/// </summary>
 		[DxfCodeValue(2)]
-		public string Name
+		public virtual string Name
 		{
 			get { return this.name; }
 			set
@@ -52,12 +52,6 @@ namespace ACadSharp.Tables
 		public override string ToString()
 		{
 			return $"{this.ObjectName}:{this.Name}";
-		}
-
-		internal void SetUnrestrictedName(string name)
-		{
-			// Needed to bypass invalid table entries with no name assigned
-			this.name = name;
 		}
 	}
 }

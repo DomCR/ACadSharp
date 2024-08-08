@@ -1,6 +1,6 @@
 ﻿namespace ACadSharp.IO.DWG
 {
-	public class DwgLocalSectionMap
+	internal class DwgLocalSectionMap
 	{
 		public int Compression { get; set; } = 2;
 

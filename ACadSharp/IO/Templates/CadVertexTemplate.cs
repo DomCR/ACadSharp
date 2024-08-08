@@ -8,6 +8,10 @@ namespace ACadSharp.IO.Templates
 		{
 		}
 
+		public CadVertexTemplate(Vertex vertex) : base(vertex)
+		{
+		}
+
 		internal void SetVertexObject(Vertex vertex)
 		{
 			vertex.Handle = this.CadObject.Handle;

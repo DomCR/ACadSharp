@@ -68,7 +68,8 @@ namespace ACadSharp.Tests.Internal
 
 			foreach (Entity item in document.Entities)
 			{
-				var e = builder.GetCadObject(item.Handle);
+				builder.TryGetCadObject(item.Handle, out Entity e);
+
 				Assert.NotNull(e);
 
 				switch (item)
@@ -130,7 +131,7 @@ namespace ACadSharp.Tests.Internal
 			docResult.Header = new ACadSharp.Header.CadHeader();
 			docResult.Header.Version = docToWrite.Header.Version;
 
-			DwgDocumentBuilder builder = new DwgDocumentBuilder(docResult, new DwgReaderConfiguration());
+			DwgDocumentBuilder builder = new DwgDocumentBuilder(docToWrite.Header.Version, docResult, new DwgReaderConfiguration());
 			builder.HeaderHandles.DICTIONARY_LAYOUTS = docToWrite.RootDictionary[CadDictionary.AcadLayout].Handle;
 
 			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(docToWrite.Header.Version, stream, resetPositon: true);

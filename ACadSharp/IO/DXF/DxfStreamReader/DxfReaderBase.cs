@@ -42,13 +42,13 @@ namespace ACadSharp.IO.DXF
 
 		public double ValueAsDouble { get { return Convert.ToDouble(this.Value); } }
 
-		public double ValueAsAngle { get { return (double)(Convert.ToDouble(this.Value) * MathUtils.DegToRad); } }
+		public double ValueAsAngle { get { return MathUtils.DegToRad(Convert.ToDouble(this.Value)); } }
 
 		public ulong ValueAsHandle { get { return (ulong)this.Value; } }
 
 		public byte[] ValueAsBinaryChunk { get { return this.Value as byte[]; } }
 
-		protected abstract Stream _baseStream { get; }
+		protected abstract Stream baseStream { get; }
 
 		public virtual void ReadNext()
 		{
@@ -78,7 +78,7 @@ namespace ACadSharp.IO.DXF
 			this.DxfCode = DxfCode.Invalid;
 			this.Value = string.Empty;
 
-			this._baseStream.Position = 0;
+			this.baseStream.Position = 0;
 
 			this.Position = 0;
 		}
@@ -113,6 +113,7 @@ namespace ACadSharp.IO.DXF
 				case GroupCodeValueType.Double:
 				case GroupCodeValueType.ExtendedDataDouble:
 					return this.lineAsDouble();
+				case GroupCodeValueType.Byte:
 				case GroupCodeValueType.Int16:
 				case GroupCodeValueType.ExtendedDataInt16:
 					return this.lineAsShort();

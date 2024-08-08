@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Objects;
+using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
 using System;
@@ -24,13 +25,17 @@ namespace ACadSharp.IO.DWG
 			switch (obj)
 			{
 				case Material:
-				case MultiLeaderStyle:
 				case MultiLeaderAnnotContext:
+				case MultiLeaderStyle:
 				case SortEntitiesTable:
 				case VisualStyle:
-				case XRecord:
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
 					return;
+			}
+
+			if (obj is XRecord && !this.WriteXRecords)
+			{
+				return;
 			}
 
 			this.writeCommonNonEntityData(obj);
@@ -52,17 +57,29 @@ namespace ACadSharp.IO.DWG
 				case Group group:
 					this.writeGroup(group);
 					break;
+				case ImageDefinitionReactor definitionReactor:
+					this.writeImageDefinitionReactor(definitionReactor);
+					break;
+				case ImageDefinition definition:
+					this.writeImageDefinition(definition);
+					break;
 				case Layout layout:
 					this.writeLayout(layout);
 					break;
 				case MLineStyle style:
 					this.writeMLineStyle(style);
 					break;
+				case MultiLeaderStyle multiLeaderStyle:
+					this.writeMultiLeaderStyle(multiLeaderStyle);
+					break;
 				case PlotSettings plotsettings:
 					this.writePlotSettings(plotsettings);
 					break;
 				case Scale scale:
 					this.writeScale(scale);
+					break;
+				case SortEntitiesTable sorttables:
+					this.writeSortEntitiesTable(sorttables);
 					break;
 				case XRecord record:
 					this.writeXRecord(record);
@@ -108,14 +125,15 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Common:
-			foreach (var name in dictionary.EntryNames)
+			foreach (var item in dictionary)
 			{
-				this._writer.WriteVariableText(name);
-			}
+				if (item is XRecord && !this.WriteXRecords)
+				{
+					return;
+				}
 
-			foreach (var handle in dictionary.EntryHandles)
-			{
-				this._writer.HandleReference(DwgReferenceType.SoftOwnership, handle);
+				this._writer.WriteVariableText(item.Name);
+				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Handle);
 			}
 
 			this.addEntriesToWriter(dictionary);
@@ -155,6 +173,30 @@ namespace ACadSharp.IO.DWG
 				//the entries in the group(hard pointer)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, h);
 			}
+		}
+
+		private void writeImageDefinitionReactor(ImageDefinitionReactor definitionReactor)
+		{
+			//Common:
+			//Classver BL 90 class version
+			this._writer.WriteBitLong(definitionReactor.ClassVersion);
+		}
+
+		private void writeImageDefinition(ImageDefinition definition)
+		{
+			//Common:
+			//Clsver BL 0 class version
+			this._writer.WriteBitLong(definition.ClassVersion);
+			//Imgsize 2RD 10 size of image in pixels
+			this._writer.Write2RawDouble(definition.Size);
+			//Filepath TV 1 path to file
+			this._writer.WriteVariableText(definition.FileName);
+			//Isloaded B 280 0==no, 1==yes
+			this._writer.WriteBit(definition.IsLoaded);
+			//Resunits RC 281 0==none, 2==centimeters, 5==inches
+			this._writer.WriteByte((byte)definition.Units);
+			//Pixelsize 2RD 11 size of one pixel in AutoCAD units
+			this._writer.Write2RawDouble(definition.DefaultSize);
 		}
 
 		private void writeLayout(Layout layout)
@@ -299,6 +341,119 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
+		private void writeMultiLeaderStyle(MultiLeaderStyle mLeaderStyle)
+		{
+			//TODO: Remove this line when MultiLeaderStyle is fixed for writing
+			return;
+
+			if (!R2010Plus)
+			{
+				return;
+			}
+
+			//	BS	179	Version expected: 2
+			this._writer.WriteBitShort(2);
+
+			//	BS	170	Content type (see paragraph on LEADER for more details).
+			this._writer.WriteBitShort((short)mLeaderStyle.ContentType);
+			//	BS	171	Draw multi-leader order (0 = draw content first, 1 = draw leader first)
+			this._writer.WriteBitShort((short)mLeaderStyle.MultiLeaderDrawOrder);
+			//	BS	172	Draw leader order (0 = draw leader head first, 1 = draw leader tail first)
+			this._writer.WriteBitShort((short)mLeaderStyle.LeaderDrawOrder);
+			//	BL	90	Maximum number of points for leader
+			this._writer.WriteBitShort((short)mLeaderStyle.MaxLeaderSegmentsPoints);
+			//	BD	40	First segment angle (radians)
+			this._writer.WriteBitDouble(mLeaderStyle.FirstSegmentAngleConstraint);
+			//	BD	41	Second segment angle (radians)
+			this._writer.WriteBitDouble(mLeaderStyle.SecondSegmentAngleConstraint);
+			//	BS	173	Leader type (see paragraph on LEADER for more details).
+			this._writer.WriteBitShort((short)mLeaderStyle.PathType);
+			//	CMC	91	Leader line color
+			this._writer.WriteCmColor(mLeaderStyle.LineColor);
+			//	H	340	Leader line type handle (hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, mLeaderStyle.LeaderLineType);
+			//	BL	92	Leader line weight
+			this._writer.WriteBitLong((short)mLeaderStyle.LeaderLineWeight);
+			//	B	290	Is landing enabled?
+			this._writer.WriteBit(mLeaderStyle.EnableLanding);
+			//	BD	42	Landing gap
+			this._writer.WriteBitDouble(mLeaderStyle.LandingGap);
+			//	B	291	Auto include landing (is dog-leg enabled?)
+			this._writer.WriteBit(mLeaderStyle.EnableDogleg);
+			//	BD	43	Landing distance
+			this._writer.WriteBitDouble(mLeaderStyle.LandingDistance);
+			//	TV	3	Style description
+			this._writer.WriteVariableText(mLeaderStyle.Description);
+			//	H	341	Arrow head block handle (hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, mLeaderStyle.Arrowhead);
+			//	BD	44	Arrow head size
+			this._writer.WriteBitDouble(mLeaderStyle.ArrowheadSize);
+			//	TV	300	Text default
+			this._writer.WriteVariableText(mLeaderStyle.DefaultTextContents);
+			//	H	342	Text style handle (hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, mLeaderStyle.TextStyle);
+			//	BS	174	Left attachment (see paragraph on LEADER for more details).
+			this._writer.WriteBitShort((short)mLeaderStyle.TextLeftAttachment);
+			//	BS	178	Right attachment (see paragraph on LEADER for more details).
+			this._writer.WriteBitShort((short)mLeaderStyle.TextRightAttachment);
+			if (R2010Plus)
+			{
+				//	IF IsNewFormat OR DXF file
+				//	BS	175	Text angle type (see paragraph on LEADER for more details).
+				this._writer.WriteBitShort((short)mLeaderStyle.TextAngle);
+				//	END IF IsNewFormat OR DXF file
+			}
+			//	BS	176	Text alignment type
+			this._writer.WriteBitShort((short)mLeaderStyle.TextAlignment);
+			//	CMC	93	Text color
+			this._writer.WriteCmColor(mLeaderStyle.TextColor);
+			//	BD	45	Text height
+			this._writer.WriteBitDouble(mLeaderStyle.TextHeight);
+			//	B	292	Text frame enabled
+			this._writer.WriteBit(mLeaderStyle.TextFrame);
+			if (R2010Plus)
+			{
+				//	IF IsNewFormat OR DXF file
+				//	B	297	Always align text left
+				this._writer.WriteBit(mLeaderStyle.TextAlignAlwaysLeft);
+				//	END IF IsNewFormat OR DXF file
+			}
+			//	BD	46	Align space
+			this._writer.WriteBitDouble(mLeaderStyle.AlignSpace);
+			//	H	343	Block handle (hard pointer)
+			this._writer.HandleReference(DwgReferenceType.HardPointer, mLeaderStyle.BlockContent);
+			//	CMC	94	Block color
+			this._writer.WriteCmColor(mLeaderStyle.BlockContentColor);
+			//	3BD	47,49,140	Block scale vector
+			this._writer.Write3BitDouble(mLeaderStyle.BlockContentScale);
+			//	B	293	Is block scale enabled
+			this._writer.WriteBit(mLeaderStyle.EnableBlockContentScale);
+			//	BD	141	Block rotation (radians)
+			this._writer.WriteBitDouble(mLeaderStyle.BlockContentRotation);
+			//	B	294	Is block rotation enabled
+			this._writer.WriteBit(mLeaderStyle.EnableBlockContentRotation);
+			//	BS	177	Block connection type (0 = MLeader connects to the block extents, 1 = MLeader connects to the block base point)
+			this._writer.WriteBitShort((short)mLeaderStyle.BlockContentConnection);
+			//	BD	142	Scale factor
+			this._writer.WriteBitDouble(mLeaderStyle.ScaleFactor);
+			//	B	295	Property changed, meaning not totally clear
+			//	might be set to true if something changed after loading,
+			//	or might be used to trigger updates in dependent MLeaders.
+			//	sequence seems to be different in DXF
+			this._writer.WriteBit(mLeaderStyle.OverwritePropertyValue);
+			//	B	296	Is annotative?
+			this._writer.WriteBit(mLeaderStyle.IsAnnotative);
+			//	BD	143	Break size
+			this._writer.WriteBitDouble(mLeaderStyle.BreakGapSize);
+
+			//	BS	271	Attachment direction (see paragraph on LEADER for more details).
+			this._writer.WriteBitShort((short)mLeaderStyle.TextAttachmentDirection);
+			//	BS	273	Top attachment (see paragraph on LEADER for more details).
+			this._writer.WriteBitShort((short)mLeaderStyle.TextBottomAttachment);
+			//	BS	272	Bottom attachment (see paragraph on LEADER for more details).
+			this._writer.WriteBitShort((short)mLeaderStyle.TextTopAttachment);
+		}
+
 		private void writePlotSettings(PlotSettings plot)
 		{
 			//Common:
@@ -390,7 +545,7 @@ namespace ACadSharp.IO.DWG
 		private void writeScale(Scale scale)
 		{
 			//BS	70	Unknown(ODA writes 0).
-			this._writer.WriteBitShort(scale.Unknown);
+			this._writer.WriteBitShort(0);
 			//TV	300	Name
 			this._writer.WriteVariableText(scale.Name);
 			//BD	140	Paper units(numerator)
@@ -399,6 +554,27 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(scale.DrawingUnits);
 			//B	290	Has unit scale
 			this._writer.WriteBit(scale.IsUnitScale);
+		}
+
+		private void writeSortEntitiesTable(SortEntitiesTable sortEntitiesTable)
+		{
+			//parenthandle (soft pointer)
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, sortEntitiesTable.BlockOwner);
+
+			//Common:
+			//Numentries BL number of entries
+			this._writer.WriteBitLong(sortEntitiesTable.Sorters.Count());
+
+			foreach (var item in sortEntitiesTable.Sorters)
+			{
+				//Sort handle(numentries of these, CODE 0, i.e.part of the main bit stream, not of the handle bit stream!).
+				//The sort handle does not have to point to an entity (but it can).
+				//This is just the handle used for determining the drawing order of the entity specified by the entity handle in the handle bit stream.
+				//When the sortentstable doesn’t have a
+				//mapping from entity handle to sort handle, then the entity’s own handle is used for sorting.
+				this._writer.HandleReference(item.Handle);
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, item.Entity);
+			}
 		}
 
 		private void writeXRecord(XRecord xrecord)
@@ -419,44 +595,73 @@ namespace ACadSharp.IO.DWG
 
 				switch (groupValueType)
 				{
-					case GroupCodeValueType.None:
-						break;
-					case GroupCodeValueType.String:
-						break;
-					case GroupCodeValueType.Point3D:
-						break;
-					case GroupCodeValueType.Double:
+					case GroupCodeValueType.Byte:
+					case GroupCodeValueType.Bool:
+						ms.Write(Convert.ToByte(entry.Value, System.Globalization.CultureInfo.InvariantCulture));
 						break;
 					case GroupCodeValueType.Int16:
+					case GroupCodeValueType.ExtendedDataInt16:
+						ms.Write(Convert.ToInt16(entry.Value, System.Globalization.CultureInfo.InvariantCulture));
 						break;
 					case GroupCodeValueType.Int32:
+					case GroupCodeValueType.ExtendedDataInt32:
+						ms.Write(Convert.ToInt32(entry.Value, System.Globalization.CultureInfo.InvariantCulture));
 						break;
 					case GroupCodeValueType.Int64:
+						ms.Write(Convert.ToInt64(entry.Value, System.Globalization.CultureInfo.InvariantCulture));
 						break;
-					case GroupCodeValueType.Handle:
+					case GroupCodeValueType.Double:
+					case GroupCodeValueType.ExtendedDataDouble:
+						double d = (entry.Value as double?).Value;
+						ms.Write<double, LittleEndianConverter>(d);
 						break;
-					case GroupCodeValueType.ObjectId:
-						break;
-					case GroupCodeValueType.Bool:
+					case GroupCodeValueType.Point3D:
+						XYZ xyz = (entry.Value as XYZ?).Value;
+						ms.Write<double, LittleEndianConverter>(xyz.X);
+						ms.Write<double, LittleEndianConverter>(xyz.Y);
+						ms.Write<double, LittleEndianConverter>(xyz.Z);
 						break;
 					case GroupCodeValueType.Chunk:
-						break;
-					case GroupCodeValueType.Comment:
-						break;
-					case GroupCodeValueType.ExtendedDataString:
-						break;
 					case GroupCodeValueType.ExtendedDataChunk:
+						byte[] array = (byte[])entry.Value;
+						ms.Write((byte)array.Length);
+						ms.WriteBytes(array);
 						break;
+					case GroupCodeValueType.String:
+					case GroupCodeValueType.ExtendedDataString:
+					case GroupCodeValueType.Handle:
+						string text = (string)entry.Value;
+
+						if (this.R2007Plus)
+						{
+							if (string.IsNullOrEmpty(text))
+							{
+								ms.Write<short, LittleEndianConverter>(0);
+								return;
+							}
+
+							ms.Write<short, LittleEndianConverter>((short)text.Length);
+							ms.Write(text, System.Text.Encoding.Unicode);
+						}
+						else if (string.IsNullOrEmpty(text))
+						{
+							ms.Write<short, LittleEndianConverter>(0);
+							ms.Write((byte)this._writer.Encoding.CodePage);
+						}
+						else
+						{
+							ms.Write<short, LittleEndianConverter>((short)text.Length);
+							ms.Write((byte)this._writer.Encoding.CodePage);
+							ms.Write(text, this._writer.Encoding);
+						}
+						break;
+					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:
-						break;
-					case GroupCodeValueType.ExtendedDataDouble:
-						break;
-					case GroupCodeValueType.ExtendedDataInt16:
-						break;
-					case GroupCodeValueType.ExtendedDataInt32:
+						ulong u = (entry.Value as ulong?).Value;
+						ms.Write<ulong, LittleEndianConverter>(u);
 						break;
 					default:
-						break;
+						throw new NotSupportedException();
 				}
 			}
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadDictionaryTemplate : CadTemplate<CadDictionary>
+	internal class CadDictionaryTemplate : CadTemplate<CadDictionary>, ICadDictionaryTemplate
 	{
 		public Dictionary<string, ulong?> Entries { get; set; } = new Dictionary<string, ulong?>();
 
@@ -33,9 +33,25 @@ namespace ACadSharp.IO.Templates
 
 			foreach (var item in this.Entries)
 			{
-				if (builder.TryGetCadObject(item.Value, out CadObject entry))
+				if (builder.TryGetCadObject(item.Value, out NonGraphicalObject entry))
 				{
-					this.CadObject.Add(item.Key, entry);
+					if (string.IsNullOrEmpty(entry.Name))
+					{
+						entry.Name = item.Key;
+					}
+
+					try
+					{
+						this.CadObject.Add(item.Key, entry);
+					}
+					catch (System.Exception ex)
+					{
+						builder.Notify($"Error when trying to add the entry {entry.Name} to {this.CadObject.Name}|{this.CadObject.Handle}", NotificationType.Error, ex);
+					}
+				}
+				else
+				{
+					builder.Notify($"Entry not found {item.Key}|{item.Value} for dictionary {this.CadObject.Name}|{this.CadObject.Handle}", NotificationType.Warning);
 				}
 			}
 		}

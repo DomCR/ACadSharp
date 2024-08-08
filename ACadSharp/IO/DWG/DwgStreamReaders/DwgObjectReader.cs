@@ -7,14 +7,11 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSMath;
-using CSUtilities.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System;
-using ACadSharp.Types;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
-using System.Net;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
 
@@ -174,14 +171,7 @@ namespace ACadSharp.IO.DWG
 				if (template == null)
 					continue;
 
-				if (template is ICadTableTemplate tableTemplate)
-				{
-					this._builder.AddTableTemplate(tableTemplate);
-				}
-				else
-				{
-					this._builder.AddTemplate(template);
-				}
+				this._builder.AddTemplate(template);
 			}
 		}
 
@@ -268,9 +258,8 @@ namespace ACadSharp.IO.DWG
 			//Read the handle
 			ulong value = this._handlesReader.HandleReference(handle);
 
-			if (!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
-				!this._handles.Contains(value) &&
-				value != 0 &&
+			if (value != 0 &&
+				!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
 				!this._readedObjects.ContainsKey(value))
 			{
 				//Add the value to the handles queue to be processed
@@ -996,9 +985,16 @@ namespace ACadSharp.IO.DWG
 					template = this.readHatch();
 					break;
 				case "IDBUFFER":
+					break;
 				case "IMAGE":
+					template = this.readCadImage(new RasterImage());
+					break;
 				case "IMAGEDEF":
-				case "IMAGEDEFREACTOR":
+					template = this.readImageDefinition();
+					break;
+				case "IMAGEDEF_REACTOR":
+					template = this.readImageDefinitionReactor();
+					break;
 				case "LAYER_INDEX":
 					break;
 				case "LAYOUT":
@@ -1044,7 +1040,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readVisualStyle();
 					break;
 				case "WIPEOUT":
-					template = this.readWipeout();
+					template = this.readCadImage(new Wipeout());
 					break;
 				case "WIPEOUTVARIABLE":
 				case "WIPEOUTVARIABLES":
@@ -2193,7 +2189,7 @@ namespace ACadSharp.IO.DWG
 			//When reading from DXF, the shape is found by iterating over all the text styles
 			//(SHAPEFILE, see paragraph 20.4.56) and when the text style contains a shape file,
 			//iterating over all the shapes until the one with the matching name is found.
-			template.ShapeIndex = (ushort)this._objectReader.ReadBitShort();
+			shape.ShapeIndex = (ushort)this._objectReader.ReadBitShort();
 
 			//Extrusion 3BD 210
 			shape.Normal = this._objectReader.Read3BitDouble();
@@ -2538,6 +2534,11 @@ namespace ACadSharp.IO.DWG
 			CadDictionaryTemplate template = new CadDictionaryTemplate(cadDictionary);
 
 			this.readCommonDictionary(template);
+
+			if (cadDictionary.Handle == this._builder.HeaderHandles.DICTIONARY_NAMED_OBJECTS)
+			{
+
+			}
 
 			return template;
 		}
@@ -2912,7 +2913,7 @@ namespace ACadSharp.IO.DWG
 			//  43  Block Content Rotation
 			mLeader.BlockContentRotation = this._objectReader.ReadBitDouble();
 			//  176 Block Content Connection Type
-			mLeader.BlockContentConnection = (BlockContentConnectionType)_objectReader.ReadBitShort();
+			mLeader.BlockContentConnection = (BlockContentConnectionType)this._objectReader.ReadBitShort();
 			//  293 Enable Annotation Scale/Is annotative
 			mLeader.EnableAnnotationScale = this._objectReader.ReadBit();
 
@@ -2934,7 +2935,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//	BL Number of Block Labels 
-			int blockLabelCount = this._objectReader.ReadBitShort();
+			int blockLabelCount = this._objectReader.ReadBitLong();
 			for (int bl = 0; bl < blockLabelCount; bl++)
 			{
 				//  330 Block Attribute definition handle (hard pointer)
@@ -2993,7 +2994,7 @@ namespace ACadSharp.IO.DWG
 
 			//	Common
 			//	BD	40	Overall scale
-			annotContext.ScaleFactor = _objectReader.ReadBitDouble();
+			annotContext.ScaleFactor = this._objectReader.ReadBitDouble();
 			//	3BD	10	Content base point
 			annotContext.ContentBasePoint = this._objectReader.Read3BitDouble();
 			//	BD	41	Text height
@@ -3217,13 +3218,13 @@ namespace ACadSharp.IO.DWG
 				leaderLine.SegmentIndex = this._objectReader.ReadBitLong();
 
 				//	Start/end point pairs
-				//	3BD	11	Start Point
-				//	3BD	12	End point
 				int startEndPointCount = this._objectReader.ReadBitLong();
 				for (int sep = 0; sep < startEndPointCount; sep++)
 				{
 					leaderLine.StartEndPoints.Add(new StartEndPointPair(
+						//	3BD	11	Start Point
 						this._objectReader.Read3BitDouble(),
+						//	3BD	12	End point
 						this._objectReader.Read3BitDouble()));
 				}
 			}
@@ -3315,7 +3316,7 @@ namespace ACadSharp.IO.DWG
 				mLeaderStyle.TextAngle = (TextAngleType)this._objectReader.ReadBitShort();
 
 			}   //	END IF IsNewFormat OR DXF file
-				//	BS	176	Text alignment type
+			//	BS	176	Text alignment type
 			mLeaderStyle.TextAlignment = (TextAlignmentType)this._objectReader.ReadBitShort();
 			//	CMC	93	Text color
 			mLeaderStyle.TextColor = this._mergedReaders.ReadCmColor();
@@ -3328,8 +3329,8 @@ namespace ACadSharp.IO.DWG
 			 //	B	297	Always align text left
 				mLeaderStyle.TextAlignAlwaysLeft = this._objectReader.ReadBit();
 			}//	END IF IsNewFormat OR DXF file
-			 //	BD	46	Align space
-			mLeaderStyle.AlignSpace = _objectReader.ReadBitDouble();
+			//	BD	46	Align space
+			mLeaderStyle.AlignSpace = this._objectReader.ReadBitDouble();
 			//	H	343	Block handle (hard pointer)
 			template.BlockContentHandle = this.handleReference();
 			//	CMC	94	Block color
@@ -3853,8 +3854,6 @@ namespace ACadSharp.IO.DWG
 			{
 				template.SegmentTemplates[i].StyleHandle = this.handleReference();
 			}
-
-			this._builder.LineTypes.Add(ltype.Name, ltype);
 
 			return template;
 		}
@@ -4713,7 +4712,7 @@ namespace ACadSharp.IO.DWG
 				if (this.R2018Plus)
 				{
 					//Line type handle H Line type handle (hard pointer)
-					elementTemplate.LinetypeHandle = this.handleReference();
+					elementTemplate.LineTypeHandle = this.handleReference();
 				}
 				//Before R2018:
 				else
@@ -5029,16 +5028,15 @@ namespace ACadSharp.IO.DWG
 					{
 						//pt0 2RD 10 point on polyline
 						XY vertex = this._objectReader.Read2RawDouble();
-
+						double bulge = 0;
 						if (bulgespresent)
 						{
 							//bulge BD 42 bulge
-							double bulge = this._objectReader.ReadBitDouble();
-							pline.Bulges.Add(bulge);
+							bulge = this._objectReader.ReadBitDouble();
 						}
 
 						//Add the vertex
-						pline.Vertices.Add(new XY(vertex.X, vertex.Y));
+						pline.Vertices.Add(new XYZ(vertex.X, vertex.Y, bulge));
 					}
 
 					pathTemplate.Path.Edges.Add(pline);
@@ -5118,6 +5116,9 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
+			//parenthandle (soft pointer)
+			template.BlockOwnerHandle = this.handleReference();
+
 			//Common:
 			//Numentries BL number of entries
 			int numentries = this._mergedReaders.ReadBitLong();
@@ -5134,9 +5135,6 @@ namespace ACadSharp.IO.DWG
 
 				template.Values.Add((sortHandle, entityHandle));
 			}
-
-			//owner handle (soft pointer)
-			template.BlockOwnerHandle = this.handleReference();
 
 			return template;
 		}
@@ -5161,55 +5159,87 @@ namespace ACadSharp.IO.DWG
 			return null;
 		}
 
-		private CadTemplate readWipeout()
+		private CadTemplate readCadImage(CadImageBase image)
 		{
-			Wipeout wipeout = new Wipeout();
-			CadWipeoutTemplate template = new CadWipeoutTemplate(wipeout);
+			CadImageTemplate template = new CadImageTemplate(image);
 
 			this.readCommonEntityData(template);
 
-			//WARNING: this object is not documented, the fields have been found using exploration methods and matching them with the dxf file
+			image.ClassVersion = this._objectReader.ReadBitLong();
 
-			wipeout.ClassVersion = this._objectReader.ReadBitLong();
+			image.InsertPoint = this._objectReader.Read3BitDouble();
+			image.UVector = this._objectReader.Read3BitDouble();
+			image.VVector = this._objectReader.Read3BitDouble();
 
-			wipeout.InsertPoint = this._objectReader.Read3BitDouble();
-			wipeout.UVector = this._objectReader.Read3BitDouble();
-			wipeout.VVector = this._objectReader.Read3BitDouble();
+			image.Size = this._objectReader.Read2RawDouble();
 
-			wipeout.Size = this._objectReader.Read2RawDouble();
+			image.Flags = (ImageDisplayFlags)this._objectReader.ReadBitShort();
+			image.ClippingState = this._objectReader.ReadBit();
+			image.Brightness = this._objectReader.ReadByte();
+			image.Contrast = this._objectReader.ReadByte();
+			image.Fade = this._objectReader.ReadByte();
 
-			wipeout.Flags = (ImageDisplayFlags)this._objectReader.ReadBitShort();
-			wipeout.ClippingState = this._objectReader.ReadBit();
-			wipeout.Brightness = this._objectReader.ReadByte();
-			wipeout.Contrast = this._objectReader.ReadByte();
-			wipeout.Fade = this._objectReader.ReadByte();
-
-			if (this._version > ACadVersion.AC1021)
+			if (this.R2010Plus)
 			{
-				//Unknown bit
-				this._objectReader.ReadBit();
+				image.ClipMode = this._objectReader.ReadBit() ? ClipMode.Inside : ClipMode.Outside;
 			}
 
-			wipeout.ClipType = (ClipType)this._objectReader.ReadBitShort();
-			switch (wipeout.ClipType)
+			image.ClipType = (ClipType)this._objectReader.ReadBitShort();
+			switch (image.ClipType)
 			{
 				case ClipType.Rectangular:
-					wipeout.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
-					wipeout.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
+					image.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
+					image.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
 					break;
 				case ClipType.Polygonal:
 					int nvertices = this._objectReader.ReadBitLong();
 					for (int i = 0; i < nvertices; i++)
 					{
-						wipeout.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
+						image.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
 					}
-					break;
-				default:
 					break;
 			}
 
-			template.ImgHandle_1 = this.handleReference();
-			template.ImgHandle_2 = this.handleReference();
+			template.ImgDefHandle = this.handleReference();
+			template.ImgReactorHandle = this.handleReference();
+
+			return template;
+		}
+
+		private CadTemplate readImageDefinition()
+		{
+			ImageDefinition definition = new ImageDefinition();
+			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(definition);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Clsver BL 0 class version
+			definition.ClassVersion = this._mergedReaders.ReadBitLong();
+			//Imgsize 2RD 10 size of image in pixels
+			definition.Size = this._mergedReaders.Read2RawDouble();
+			//Filepath TV 1 path to file
+			definition.FileName = this._mergedReaders.ReadVariableText();
+			//Isloaded B 280 0==no, 1==yes
+			definition.IsLoaded = this._mergedReaders.ReadBit();
+			//Resunits RC 281 0==none, 2==centimeters, 5==inches
+			definition.Units = (ResolutionUnit)this._mergedReaders.ReadByte();
+			//Pixelsize 2RD 11 size of one pixel in AutoCAD units
+			definition.DefaultSize = this._mergedReaders.Read2RawDouble();
+
+			return template;
+		}
+
+		private CadTemplate readImageDefinitionReactor()
+		{
+			ImageDefinitionReactor definition = new ImageDefinitionReactor();
+			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(definition);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Classver BL 90 class version
+			definition.ClassVersion = this._objectReader.ReadBitLong();
 
 			return template;
 		}
@@ -5223,7 +5253,7 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Numdatabytes BL number of databytes
-			long offset = this._objectReader.ReadBitLong();
+			long offset = this._objectReader.ReadBitLong() + this._objectReader.Position;
 
 			//Databytes X databytes, however many there are to the handles
 			while (this._objectReader.Position < offset)
@@ -5242,9 +5272,8 @@ namespace ACadSharp.IO.DWG
 
 				switch (groupCode)
 				{
-					case GroupCodeValueType.None:
-						break;
 					case GroupCodeValueType.String:
+					case GroupCodeValueType.ExtendedDataString:
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadTextUnicode()));
 						break;
 					case GroupCodeValueType.Point3D:
@@ -5256,16 +5285,22 @@ namespace ACadSharp.IO.DWG
 								)));
 						break;
 					case GroupCodeValueType.Double:
+					case GroupCodeValueType.ExtendedDataDouble:
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadDouble()));
 						break;
+					case GroupCodeValueType.Byte:
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadByte()));
+						break;
 					case GroupCodeValueType.Int16:
+					case GroupCodeValueType.ExtendedDataInt16:
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadShort()));
 						break;
 					case GroupCodeValueType.Int32:
+					case GroupCodeValueType.ExtendedDataInt32:
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawLong()));
 						break;
 					case GroupCodeValueType.Int64:
-						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawLong()));
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawULong()));
 						break;
 					case GroupCodeValueType.Handle:
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadTextUnicode()));
@@ -5274,9 +5309,15 @@ namespace ACadSharp.IO.DWG
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadByte() > 0));
 						break;
 					case GroupCodeValueType.Chunk:
+					case GroupCodeValueType.ExtendedDataChunk:
 						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadBytes(this._objectReader.ReadByte())));
 						break;
+					case GroupCodeValueType.ObjectId:
+					case GroupCodeValueType.ExtendedDataHandle:
+						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawULong()));
+						break;
 					default:
+						this.notify($"Unedintified GroupCodeValueType {code} for XRecord [{xRecord.Handle}]", NotificationType.Warning);
 						break;
 				}
 			}
@@ -5350,7 +5391,7 @@ namespace ACadSharp.IO.DWG
 			this.readCommonNonEntityData(template);
 
 			//BS	70	Unknown(ODA writes 0).
-			scale.Unknown = this._mergedReaders.ReadBitShort();
+			this._mergedReaders.ReadBitShort();
 			//TV	300	Name
 			scale.Name = this._mergedReaders.ReadVariableText();
 			//BD	140	Paper units(numerator)

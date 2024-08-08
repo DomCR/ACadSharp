@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -13,23 +14,8 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityMesh)]
 	[DxfSubClass(DxfSubclassMarker.Mesh)]
-	public class Mesh : Entity
+	public partial class Mesh : Entity
 	{
-		public struct Edge
-		{
-			public int Start { get; set; }
-
-			public int End { get; set; }
-
-			public double? Crease { get; set; }
-
-			public override string ToString()
-			{
-				string str = $"{this.Start}|{this.End}";
-				return this.Crease.HasValue ? $"{this.Start}|{this.End}|{this.Crease}" : str;
-			}
-		}
-
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
@@ -45,11 +31,11 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(71)]
 		public short Version { get; internal set; }
 
-		//72 "Blend Crease" property
-		//0 = Turn off
-		//1 = Turn on
+		/// <summary>
+		/// Blend Crease flag
+		/// </summary>
 		[DxfCodeValue(72)]
-		public short BlendCrease { get; set; }
+		public bool BlendCrease { get; set; }
 
 		/// <summary>
 		/// Number of subdivision level
@@ -89,5 +75,11 @@ namespace ACadSharp.Entities
 		//1 = Material
 		//2 = Transparency
 		//3 = Material mapper
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return BoundingBox.FromPoints(this.Vertices);
+		}
 	}
 }

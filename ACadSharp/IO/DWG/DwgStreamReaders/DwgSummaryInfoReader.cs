@@ -11,17 +11,17 @@ namespace ACadSharp.IO.DWG
 		private delegate string readString();
 
 		private readString _readStringMethod;
-		
+
 		private IDwgStreamReader _reader;
 
 		private StreamIO _sreader;
 
 		public DwgSummaryInfoReader(ACadVersion version, IDwgStreamReader reader) : base(version)
 		{
-			this._reader =  reader;
+			this._reader = reader;
 			this._sreader = new StreamIO(reader.Stream);
 
-			if(version < ACadVersion.AC1021)
+			if (version < ACadVersion.AC1021)
 			{
 				_readStringMethod = this.readUnicodeString;
 			}
@@ -73,7 +73,14 @@ namespace ACadSharp.IO.DWG
 				string propValue = _readStringMethod();
 
 				//Add the property
-				summary.Properties.Add(propName, propValue);
+				try
+				{
+					summary.Properties.Add(propName, propValue);
+				}
+				catch (System.Exception ex)
+				{
+					this.notify("[SummaryInfo] An error ocurred while adding a property in the SummaryInfo", NotificationType.Error, ex);
+				}
 			}
 
 			//Int32	4	Unknown(write 0)

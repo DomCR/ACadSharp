@@ -9,12 +9,12 @@ namespace ACadSharp.Objects
 	/// Represents a <see cref="MultiLeaderStyle"/> object.
 	/// </summary>
 	/// <remarks>
-	/// Object name <see cref="DxfFileToken.EntityMLeaderStyle"/> <br/>
+	/// Object name <see cref="DxfFileToken.ObjectMLeaderStyle"/> <br/>
 	/// Dxf class name <see cref="DxfSubclassMarker.MLeaderStyle"/>
 	/// </remarks>
-	[DxfName(DxfFileToken.EntityMLeaderStyle)]
+	[DxfName(DxfFileToken.ObjectMLeaderStyle)]
 	[DxfSubClass(DxfSubclassMarker.MLeaderStyle)]
-	public class MultiLeaderStyle : CadObject, IDictionaryEntry
+	public class MultiLeaderStyle : NonGraphicalObject
 	{
 		/// <summary>
 		/// Default multiline style name
@@ -30,15 +30,10 @@ namespace ACadSharp.Objects
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
 		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityMLeaderStyle;
+		public override string ObjectName => DxfFileToken.ObjectMLeaderStyle;
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.MLeaderStyle;
-
-		/// <summary>
-		/// Gets or sets the name of this <see cref="MultiLeaderStyle" />.
-		/// </summary>
-		public string Name { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating the content type for the multileader.

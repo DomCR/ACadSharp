@@ -5,7 +5,7 @@ namespace ACadSharp.IO.Templates
 {
 	internal partial class CadHatchTemplate
 	{
-		public class CadBoundaryPathTemplate : ICadObjectTemplate
+		public class CadBoundaryPathTemplate
 		{
 			public Hatch.BoundaryPath Path { get; set; } = new Hatch.BoundaryPath();
 
