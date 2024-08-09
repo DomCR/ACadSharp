@@ -3044,7 +3044,7 @@ namespace ACadSharp.IO.DWG
 			//  43  Block Content Rotation
 			mLeader.BlockContentRotation = this._objectReader.ReadBitDouble();
 			//  176 Block Content Connection Type
-			mLeader.BlockContentConnection = (BlockContentConnectionType)_objectReader.ReadBitShort();
+			mLeader.BlockContentConnection = (BlockContentConnectionType)this._objectReader.ReadBitShort();
 			//  293 Enable Annotation Scale/Is annotative
 			mLeader.EnableAnnotationScale = this._objectReader.ReadBit();
 
@@ -3066,7 +3066,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//	BL Number of Block Labels 
-			int blockLabelCount = this._objectReader.ReadBitShort();
+			int blockLabelCount = this._objectReader.ReadBitLong();
 			for (int bl = 0; bl < blockLabelCount; bl++)
 			{
 				//  330 Block Attribute definition handle (hard pointer)
@@ -3125,7 +3125,7 @@ namespace ACadSharp.IO.DWG
 
 			//	Common
 			//	BD	40	Overall scale
-			annotContext.ScaleFactor = _objectReader.ReadBitDouble();
+			annotContext.ScaleFactor = this._objectReader.ReadBitDouble();
 			//	3BD	10	Content base point
 			annotContext.ContentBasePoint = this._objectReader.Read3BitDouble();
 			//	BD	41	Text height
@@ -3349,13 +3349,13 @@ namespace ACadSharp.IO.DWG
 				leaderLine.SegmentIndex = this._objectReader.ReadBitLong();
 
 				//	Start/end point pairs
-				//	3BD	11	Start Point
-				//	3BD	12	End point
 				int startEndPointCount = this._objectReader.ReadBitLong();
 				for (int sep = 0; sep < startEndPointCount; sep++)
 				{
 					leaderLine.StartEndPoints.Add(new StartEndPointPair(
+						//	3BD	11	Start Point
 						this._objectReader.Read3BitDouble(),
+						//	3BD	12	End point
 						this._objectReader.Read3BitDouble()));
 				}
 			}
@@ -3447,7 +3447,7 @@ namespace ACadSharp.IO.DWG
 				mLeaderStyle.TextAngle = (TextAngleType)this._objectReader.ReadBitShort();
 
 			}   //	END IF IsNewFormat OR DXF file
-				//	BS	176	Text alignment type
+			//	BS	176	Text alignment type
 			mLeaderStyle.TextAlignment = (TextAlignmentType)this._objectReader.ReadBitShort();
 			//	CMC	93	Text color
 			mLeaderStyle.TextColor = this._mergedReaders.ReadCmColor();
@@ -3460,8 +3460,8 @@ namespace ACadSharp.IO.DWG
 			 //	B	297	Always align text left
 				mLeaderStyle.TextAlignAlwaysLeft = this._objectReader.ReadBit();
 			}//	END IF IsNewFormat OR DXF file
-			 //	BD	46	Align space
-			mLeaderStyle.AlignSpace = _objectReader.ReadBitDouble();
+			//	BD	46	Align space
+			mLeaderStyle.AlignSpace = this._objectReader.ReadBitDouble();
 			//	H	343	Block handle (hard pointer)
 			template.BlockContentHandle = this.handleReference();
 			//	CMC	94	Block color

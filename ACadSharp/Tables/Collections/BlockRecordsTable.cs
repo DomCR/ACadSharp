@@ -1,6 +1,4 @@
-﻿using ACadSharp.Blocks;
-
-namespace ACadSharp.Tables.Collections
+﻿namespace ACadSharp.Tables.Collections
 {
 	public class BlockRecordsTable : Table<BlockRecord>
 	{

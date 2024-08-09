@@ -2,6 +2,9 @@
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Common interface for all text entities in the drawing.
+	/// </summary>
 	public interface IText
 	{
 		/// <summary>
