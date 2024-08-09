@@ -19,6 +19,11 @@
 			/// </summary>
 			public double? Crease { get; set; }
 
+			/// <summary>
+			/// Edge constructor with the start and end of the edge.
+			/// </summary>
+			/// <param name="start"></param>
+			/// <param name="end"></param>
 			public Edge(int start, int end)
 			{
 				this.Start = start;
