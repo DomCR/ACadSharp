@@ -170,6 +170,8 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<MText>(new CadTextEntityTemplate(new MText()), this.readTextEntity);
 				case DxfFileToken.EntityMLine:
 					return this.readEntityCodes<MLine>(new CadMLineTemplate(), this.readMLine);
+				case DxfFileToken.EntityPdfUnderlay:
+					return this.readEntityCodes<PdfUnderlay>(new CadPdfUnderlayTemplate(), this.readUnderlayEntity);
 				case DxfFileToken.EntityPoint:
 					return this.readEntityCodes<Point>(new CadEntityTemplate<Point>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityPolyline:
@@ -188,12 +190,12 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<Entity>(new CadVertexTemplate(), this.readVertex);
 				case DxfFileToken.EntityViewport:
 					return this.readEntityCodes<Viewport>(new CadViewportTemplate(), this.readViewport);
-				case DxfFileToken.EntityXline:
-					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityShape:
 					return this.readEntityCodes<Shape>(new CadShapeTemplate(new Shape()), this.readShape);
 				case DxfFileToken.EntitySpline:
 					return this.readEntityCodes<Spline>(new CadSplineTemplate(), this.readSpline);
+				case DxfFileToken.EntityXline:
+					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), this.readEntitySubclassMap);
 				default:
 					DxfMap map = DxfMap.Create<Entity>();
 					CadUnknownEntityTemplate unknownEntityTemplate = null;
@@ -907,6 +909,20 @@ namespace ACadSharp.IO.DXF
 				case 72:
 				case 73:
 				case 74:
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readUnderlayEntity(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadPdfUnderlayTemplate tmp = template as CadPdfUnderlayTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 340:
+					tmp.DefinitionHandle = this._reader.ValueAsHandle;
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
