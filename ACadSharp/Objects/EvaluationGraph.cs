@@ -8,10 +8,10 @@ namespace ACadSharp.Objects
 {
 
 	/// <summary>
-	/// Represents a evaluation graph containing a list of <see cref="GraphNode"/>
+	/// Represents an evaluation graph containing a list of <see cref="GraphNode"/>
 	/// objects.
 	/// </summary>
-	public class EvaluationGraph : CadObject
+	public class EvaluationGraph : NonGraphicalObject 
 	{
 
 		public EvaluationGraph() {}
