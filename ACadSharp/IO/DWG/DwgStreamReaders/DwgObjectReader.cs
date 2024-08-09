@@ -3316,7 +3316,7 @@ namespace ACadSharp.IO.DWG
 				mLeaderStyle.TextAngle = (TextAngleType)this._objectReader.ReadBitShort();
 
 			}   //	END IF IsNewFormat OR DXF file
-			//	BS	176	Text alignment type
+				//	BS	176	Text alignment type
 			mLeaderStyle.TextAlignment = (TextAlignmentType)this._objectReader.ReadBitShort();
 			//	CMC	93	Text color
 			mLeaderStyle.TextColor = this._mergedReaders.ReadCmColor();
@@ -3329,7 +3329,7 @@ namespace ACadSharp.IO.DWG
 			 //	B	297	Always align text left
 				mLeaderStyle.TextAlignAlwaysLeft = this._objectReader.ReadBit();
 			}//	END IF IsNewFormat OR DXF file
-			//	BD	46	Align space
+			 //	BD	46	Align space
 			mLeaderStyle.AlignSpace = this._objectReader.ReadBitDouble();
 			//	H	343	Block handle (hard pointer)
 			template.BlockContentHandle = this.handleReference();
@@ -5347,7 +5347,6 @@ namespace ACadSharp.IO.DWG
 			Mesh mesh = new Mesh();
 			CadMeshTemplate template = new CadMeshTemplate(mesh);
 
-#if TEST
 			this.readCommonEntityData(template);
 
 			//Same order as dxf?
@@ -5355,12 +5354,54 @@ namespace ACadSharp.IO.DWG
 			//71 BS Version
 			mesh.Version = this._objectReader.ReadBitShort();
 			//72 BS BlendCrease
-			mesh.BlendCrease = this._objectReader.ReadBitShort();
+			mesh.BlendCrease = this._objectReader.ReadBit();
+			//91 BL SubdivisionLevel
+			mesh.SubdivisionLevel = this._objectReader.ReadBitLong();
 
-			var dict = DwgStreamReaderBase.Explore(this._objectReader);
-#endif
+			//92 BL nvertices
+			int nvertices = this._objectReader.ReadBitLong();
+			for (int i = 0; i < nvertices; i++)
+			{
+				//10 3BD vertice
+				XYZ v = this._objectReader.Read3BitDouble();
+				mesh.Vertices.Add(v);
+			}
 
-			return null;
+			//Faces
+			int nfaces = this._objectReader.ReadBitLong();
+			for (int i = 0; i < nfaces; i++)
+			{
+				int faceSize = _objectReader.ReadBitLong();
+				int[] arr = new int[faceSize];
+				for (int j = 0; j < faceSize; j++)
+				{
+					arr[j] = _objectReader.ReadBitLong();
+				}
+
+				i += faceSize;
+
+				mesh.Faces.Add(arr.ToArray());
+			}
+
+			//Edges
+			int nedges = _objectReader.ReadBitLong();
+			for (int k = 0; k < nedges; k++)
+			{
+				int start = _objectReader.ReadBitLong();
+				int end = _objectReader.ReadBitLong();
+				mesh.Edges.Add(new Mesh.Edge(start, end));
+			}
+
+			//Crease
+			int ncrease = _objectReader.ReadBitLong();
+			for (int l = 0; l < ncrease; l++)
+			{
+				Mesh.Edge edge = mesh.Edges[l];
+				edge.Crease = _objectReader.ReadBitDouble();
+				mesh.Edges[l] = edge;
+			}
+
+			return template;
 		}
 
 		private CadTemplate readPlaceHolder()
