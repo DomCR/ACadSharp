@@ -3,6 +3,12 @@ using System.Text;
 using System;
 using System.IO;
 using ACadSharp.Classes;
+using ACadSharp.IO;
+using ACadSharp.Exceptions;
+using ACadSharp.IO.DWG;
+using ACadSharp.IO.DWG.DwgStreamWriters;
+using CSUtilities.IO;
+using System.Collections.Generic;
 
 namespace ACadSharp.IO
 {
@@ -29,6 +35,8 @@ namespace ACadSharp.IO
 
 		protected CadDocument _document;
 
+		protected Encoding _encoding;
+
 		protected CadWriterBase(Stream stream, CadDocument document)
 		{
 			this._stream = stream;
@@ -39,6 +47,8 @@ namespace ACadSharp.IO
 		public virtual void Write()
 		{
 			DxfClassCollection.UpdateDxfClasses(_document);
+
+			this._encoding = this.getListedEncoding(this._document.Header.CodePage);
 		}
 
 		/// <inheritdoc/>
