@@ -187,6 +187,29 @@ namespace ACadSharp.Tests.IO
 				this.Document.Layouts.Add(layout);
 			}
 
+			public void LineTypeWithSegments()
+			{
+				LineType lt = new LineType("segmented");
+				lt.Description = "hello";
+
+				LineType.Segment s1 = new LineType.Segment
+				{
+					Length = 12,
+					//Style = this.Document.TextStyles[TextStyle.DefaultName]
+				};
+
+				LineType.Segment s2 = new LineType.Segment
+				{
+					Length = -3,
+					//Style = this.Document.TextStyles[TextStyle.DefaultName]
+				};
+
+				lt.AddSegment(s1);
+				lt.AddSegment(s2);
+
+				this.Document.LineTypes.Add(lt);
+			}
+
 			public void ClosedLwPolyline()
 			{
 				List<LwPolyline.Vertex> vertices = new List<LwPolyline.Vertex>() {
@@ -279,6 +302,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SingleWipeout)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateLayout)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityTransparency)));
+			Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithSegments)));
 		}
 
 		protected string getPath(string name, string ext, ACadVersion version)
