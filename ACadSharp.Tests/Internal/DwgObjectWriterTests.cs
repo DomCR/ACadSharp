@@ -8,6 +8,7 @@ using ACadSharp.Tests.Common;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -121,7 +122,7 @@ namespace ACadSharp.Tests.Internal
 		{
 			Stream stream = new MemoryStream();
 
-			DwgObjectWriter writer = new DwgObjectWriter(stream, docToWrite);
+			DwgObjectWriter writer = new DwgObjectWriter(stream, docToWrite, Encoding.Default);
 			writer.OnNotification += onNotification;
 			writer.Write();
 
