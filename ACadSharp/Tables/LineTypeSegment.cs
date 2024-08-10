@@ -8,43 +8,43 @@ namespace ACadSharp.Tables
 		public class Segment
 		{
 			/// <summary>
-			/// Dash, dot or space length 
+			/// Dash, dot or space length.
 			/// </summary>
 			[DxfCodeValue(49)]
 			public double Length { get; set; }
 
 			/// <summary>
-			/// Complex linetype element type
+			/// Complex linetype element type.
 			/// </summary>
 			[DxfCodeValue(74)]
 			public LinetypeShapeFlags Shapeflag { get; set; }
 
 			/// <summary>
-			/// Shape number 
+			/// Shape number.
 			/// </summary>
 			[DxfCodeValue(75)]
 			public short ShapeNumber { get; set; }
 
 			/// <summary>
-			/// Offset
+			/// Offset.
 			/// </summary>
 			[DxfCodeValue(44, 45)]
 			public XY Offset { get; set; }
 
 			/// <summary>
-			/// Rotation value in radians of embedded shape or text
+			/// Rotation value in radians of embedded shape or text.
 			/// </summary>
 			[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 			public double Rotation { get; set; }
 
 			/// <summary>
-			/// Scale value
+			/// Scale value.
 			/// </summary>
 			[DxfCodeValue(46)]
-			public double Scale { get; set; }
+			public double Scale { get; set; } = 1.0d;
 
 			/// <summary>
-			/// Text string
+			/// Text string.
 			/// </summary>
 			/// <remarks>
 			/// Only present if <see cref="LinetypeShapeFlags.Text"/> is present
