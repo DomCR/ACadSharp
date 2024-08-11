@@ -78,7 +78,7 @@ namespace ACadSharp.Tables
 
 		private List<Segment> _segments = new List<Segment>();
 
-		public LineType() : base() { }
+		internal LineType() : base() { }
 
 		public LineType(string name) : base(name) { }
 
