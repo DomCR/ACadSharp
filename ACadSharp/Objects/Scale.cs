@@ -55,5 +55,11 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(290)]
 		public bool IsUnitScale { get; set; }
+
+		public Scale() { }
+
+		public Scale(string name) : base(name)
+		{
+		}
 	}
 }

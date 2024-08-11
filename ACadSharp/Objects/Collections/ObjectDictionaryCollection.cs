@@ -80,6 +80,14 @@ namespace ACadSharp.Objects.Collections
 			return result;
 		}
 
+		/// <summary>
+		/// Removes all keys and values from the <see cref="ObjectDictionaryCollection{T}"/>.
+		/// </summary>
+		public void Clear()
+		{
+			this._dictionary.Clear();
+		}
+
 		/// <inheritdoc/>
 		public IEnumerator<T> GetEnumerator()
 		{

@@ -28,6 +28,20 @@ namespace ACadSharp.Objects
 
 		private string _name = string.Empty;
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public NonGraphicalObject() { }
+
+		/// <summary>
+		/// Initialize a <see cref="NonGraphicalObject"/> with an specific name.
+		/// </summary>
+		/// <param name="name"></param>
+		public NonGraphicalObject(string name)
+		{
+			this._name = name;
+		}
+
 		/// <inheritdoc/>
 		public override string ToString()
 		{

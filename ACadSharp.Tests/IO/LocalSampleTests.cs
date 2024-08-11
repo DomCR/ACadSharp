@@ -1,4 +1,5 @@
 ﻿using ACadSharp.IO;
+using ACadSharp.Objects;
 using CSUtilities;
 using System;
 using System.Diagnostics;
@@ -53,7 +54,13 @@ namespace ACadSharp.Tests.IO
 
 			var a = doc.GetCadObject(0x24CB);
 
-			doc.Header.Version = ACadVersion.AC1018;
+			//doc.Scales.Clear();
+
+			//Scale s = new Scale("hello");
+
+			//doc.Scales.Add(s);
+
+			doc.Header.Version = ACadVersion.AC1032;
 			using (DwgWriter wr = new DwgWriter($"{TestVariables.DesktopFolder}\\core-b\\test.dwg", doc))
 			{
 				wr.OnNotification += this.onNotification;
