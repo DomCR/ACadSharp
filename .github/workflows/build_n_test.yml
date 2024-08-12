@@ -6,10 +6,14 @@ on:
   pull_request:
     branches: [ master ]
 
+defaults:
+  run:
+    working-directory: ./src
+
 env:
-  SAMPLES_FOLDER: "../../../../samples"
-  OUTPUT_SAMPLES_FOLDER: "../../../../samples/out"
-  OUTPUT_SINGLE_CASES_FOLDER: "../../../../samples/out/single_cases"
+  SAMPLES_FOLDER: "../../../../../samples"
+  OUTPUT_SAMPLES_FOLDER: "../../../../../samples/out"
+  OUTPUT_SINGLE_CASES_FOLDER: "../../../../../samples/out/single_cases"
   LOCAL_ENV: "false"
   DELTA: "0.00001"
   DECIMAL_PRECISION: "5"
@@ -17,9 +21,7 @@ env:
 
 jobs:
   build:
-
     runs-on: windows-latest
-
     steps:
     - name: Checkout
       run: git config --global core.autocrlf true
