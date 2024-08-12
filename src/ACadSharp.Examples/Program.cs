@@ -9,7 +9,7 @@ namespace ACadSharp.Examples
 {
 	class Program
 	{
-		const string _file = "../../../../samples/sample_AC1032.dwg";
+		const string _file = "../../../../../samples/sample_AC1032.dwg";
 
 		static void Main(string[] args)
 		{
