@@ -30,7 +30,7 @@ jobs:
       run: |
           dotnet restore
           dotnet build --no-restore
-          dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal src/ACadSharp.Tests/
+          dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal ACadSharp.Tests/
     - name: Coveralls action
       uses: coverallsapp/github-action@master
       with:
