@@ -22,12 +22,15 @@ jobs:
     - uses: actions/checkout@v2
       with: 
         submodules: true
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal src/ACadSharp.Tests/
+    - uses: cardinalby/export-env-action@v2
+      with:
+        envFile: 'github.env'
+    - name: Build and Test
+      working-directory: src
+      run: |
+          dotnet restore
+          dotnet build --no-restore
+          dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal src/ACadSharp.Tests/
     - name: Coveralls action
       uses: coverallsapp/github-action@master
       with:

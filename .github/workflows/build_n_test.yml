@@ -23,14 +23,14 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - name: Checkout
-      run: git config --global core.autocrlf true
     - uses: actions/checkout@v2
       with: 
         submodules: true
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    - name: Test
-      run: dotnet test --configuration Release --no-build --verbosity normal
+    - uses: cardinalby/export-env-action@v2
+      with:
+        envFile: 'github.env'
+    - name: Build and test
+      run: |
+          dotnet restore
+          dotnet build --configuration Release --no-restore
+          dotnet test --configuration Release --no-build --verbosity normal

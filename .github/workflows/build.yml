@@ -12,8 +12,6 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    # - name: Checkout
-    #   run: git config --global core.autocrlf true
     - uses: actions/checkout@v2
       with: 
         submodules: true
