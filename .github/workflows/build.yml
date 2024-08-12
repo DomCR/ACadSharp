@@ -6,10 +6,6 @@ on:
   pull_request:
     branches: [ master ]
 
-defaults:
-  run:
-    working-directory: src
-
 jobs:
   build:
 
@@ -22,6 +18,7 @@ jobs:
       with: 
         submodules: true
     - name: Restore dependencies
+      working-directory: src
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
