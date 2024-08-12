@@ -12,13 +12,13 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout
-      run: git config --global core.autocrlf true
+    # - name: Checkout
+    #   run: git config --global core.autocrlf true
     - uses: actions/checkout@v2
       with: 
         submodules: true
-    - name: Restore dependencies
+    - name: Restore dependencies and Build
       working-directory: src
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: |
+          dotnet restore
+          dotnet build --configuration Release --no-restore
