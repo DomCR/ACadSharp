@@ -55,13 +55,13 @@ namespace ACadSharp.Entities
 		//63	For MPolygon, pattern fill color as the ACI
 
 		/// <summary>
-		/// Associativity flag
+		/// Associativity flag.
 		/// </summary>
 		[DxfCodeValue(71)]
 		public bool IsAssociative { get; set; }
 
 		/// <summary>
-		/// Hatch style
+		/// Hatch style.
 		/// </summary>
 		[DxfCodeValue(75)]
 		public HatchStyleType Style { get; set; }

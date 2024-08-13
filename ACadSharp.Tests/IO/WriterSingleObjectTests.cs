@@ -259,6 +259,52 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(line);
 			}
 
+			public void CreateHatch()
+			{
+				Hatch hatch = new Hatch();
+				hatch.IsSolid = true;
+
+				hatch.SeedPoints.Add(new XY());
+
+				List<Hatch.BoundaryPath.Line> edges = new List<Hatch.BoundaryPath.Line>();
+
+				//edges
+				Hatch.BoundaryPath.Line edge1 = new Hatch.BoundaryPath.Line
+				{
+					Start = new CSMath.XY(0, 0),
+					End = new CSMath.XY(1, 0)
+				};
+				edges.Add(edge1);
+
+				Hatch.BoundaryPath.Line edge2 = new Hatch.BoundaryPath.Line
+				{
+					Start = new CSMath.XY(1, 0),
+					End = new CSMath.XY(1, 1)
+				};
+				edges.Add(edge2);
+
+				Hatch.BoundaryPath.Line edge3 = new Hatch.BoundaryPath.Line
+				{
+					Start = new CSMath.XY(1, 1),
+					End = new CSMath.XY(0, 1)
+				};
+				edges.Add(edge3);
+
+				Hatch.BoundaryPath.Line edge4 = new Hatch.BoundaryPath.Line
+				{
+					Start = new CSMath.XY(0, 1),
+					End = new CSMath.XY(0, 0)
+				};
+				edges.Add(edge4);
+
+
+				Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+				path.Edges.AddRange(edges);
+				hatch.Paths.Add(path);
+
+				this.Document.Entities.Add(hatch);
+			}
+
 			public void Deserialize(IXunitSerializationInfo info)
 			{
 				this.Name = info.GetValue<string>(nameof(this.Name));
@@ -303,6 +349,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.CreateLayout)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityTransparency)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithSegments)));
+			Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
 		}
 
 		protected string getPath(string name, string ext, ACadVersion version)

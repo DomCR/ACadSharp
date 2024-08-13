@@ -1,7 +1,9 @@
-﻿using ACadSharp.Header;
+﻿using ACadSharp.Entities;
+using ACadSharp.Header;
 using ACadSharp.IO;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -28,6 +30,10 @@ namespace ACadSharp.Tests.IO
 		public virtual void ReadTest(string test)
 		{
 			CadDocument doc = this.getDocument(test);
+
+			foreach (var h in doc.Entities.OfType<Hatch>()) 
+			{
+			}
 
 			Assert.NotNull(doc);
 		}
