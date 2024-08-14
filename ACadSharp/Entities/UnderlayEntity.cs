@@ -107,5 +107,11 @@ namespace ACadSharp.Entities
 
 		private byte _contrast = 50;
 		private byte _fade = 0;
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return BoundingBox.Null;
+		}
 	}
 }
