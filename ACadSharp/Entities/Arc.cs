@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -82,39 +83,48 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <param name="start">Start point of the arc segment</param>
 		/// <param name="end">End point of the arc segment</param>
-		public void GetEndVertices(out XYZ start, out XYZ end)
+		public void GetEndVertices(out XY start, out XY end)
 		{
-			if (this.Normal != XYZ.AxisZ)
+			List<XY> pts = this.PolygonalVertexes(2);
+
+			start = pts[0];
+			end = pts[1];
+		}
+
+		/// <summary>
+		/// Converts the arc in a list of vertexes.
+		/// </summary>
+		/// <param name="precision">Number of vertexes generated.</param>
+		/// <returns>A list vertexes that represents the arc expressed in object coordinate system.</returns>
+		public List<XY> PolygonalVertexes(int precision)
+		{
+			if (precision < 2)
 			{
-				throw new NotImplementedException("GetBoundPoints box for not aligned Normal is not implemented");
+				throw new ArgumentOutOfRangeException(nameof(precision), precision, "The arc precision must be equal or greater than two.");
 			}
 
-			double tmpEndAngle = this.EndAngle;
-
-			if (this.EndAngle < this.StartAngle)
+			List<XY> ocsVertexes = new List<XY>();
+			double start = this.StartAngle;
+			double end = this.EndAngle;
+			if (end < start)
 			{
-				tmpEndAngle += 2 * Math.PI;
+				end += 2 * Math.PI;
 			}
 
-			double delta = tmpEndAngle - this.StartAngle;
+			double delta = (end - start) / (precision - 1);
+			for (int i = 0; i < precision; i++)
+			{
+				double angle = start + delta * i;
+				double cosine = this.Radius * Math.Cos(angle);
+				double sine = this.Radius * Math.Sin(angle);
 
-			double angle = this.StartAngle + delta;
-			double startX = this.Radius * Math.Sin(angle);
-			double startY = this.Radius * Math.Cos(angle);
+				cosine = MathUtils.IsZero(cosine) ? 0 : cosine;
+				sine = MathUtils.IsZero(sine) ? 0 : sine;
 
-			startX = MathUtils.IsZero(startX) ? 0 : startX;
-			startY = MathUtils.IsZero(startY) ? 0 : startY;
+				ocsVertexes.Add(new XY(cosine, sine));
+			}
 
-			start = new XYZ(startX, startY, 0);
-
-			double angle2 = this.StartAngle + delta * 2;
-			double endX = (this.Radius * Math.Sin(angle2));
-			double endY = (this.Radius * Math.Cos(angle2));
-
-			endX = MathUtils.IsZero(endX) ? 0 : endX;
-			endY = MathUtils.IsZero(endY) ? 0 : endY;
-
-			end = new XYZ(endX, endY, 0);
+			return ocsVertexes;
 		}
 	}
 }

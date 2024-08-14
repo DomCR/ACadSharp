@@ -1,4 +1,5 @@
-﻿using CSMath;
+﻿using ACadSharp.Exceptions;
+using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
 using CSUtilities.Text;
@@ -589,7 +590,7 @@ namespace ACadSharp.IO.DWG
 			}
 			else
 			{
-				throw new Exceptions.DwgException($"DwgStreamReader exception, incorrect reference code with value: {code}");
+				throw new DwgException($"[HandleReference] invalid reference code with value: {code}");
 			}
 
 			return initialPos;
