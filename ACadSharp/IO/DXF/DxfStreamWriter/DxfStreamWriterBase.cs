@@ -92,7 +92,7 @@ namespace ACadSharp.IO.DXF
 
 				if (prop.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
 				{
-					value = (double)value * MathUtils.RadToDeg;
+					value = (double)value * MathUtils.RadToDegFactor;
 				}
 			}
 

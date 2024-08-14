@@ -14,12 +14,12 @@ using ACadSharp.IO.DWG.DwgStreamReaders;
 
 namespace ACadSharp.IO
 {
-	public class DwgReader : CadReaderBase
+	/// <summary>
+	/// Class for reading a DWG file into a <see cref="CadDocument"></see>.
+	/// </summary>
+	public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	{
-		public DwgReaderConfiguration Configuration { get; set; } = new DwgReaderConfiguration();
-
 		private DwgDocumentBuilder _builder;
-
 		private DwgFileHeader _fileHeader;
 
 		/// <summary>
@@ -68,7 +68,7 @@ namespace ACadSharp.IO
 		}
 
 		/// <summary>
-		/// Read a dwg document from a file
+		/// Read a dwg document from a file.
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
@@ -79,7 +79,7 @@ namespace ACadSharp.IO
 		}
 
 		/// <summary>
-		/// Read a dwg document from a file
+		/// Read a dwg document from a file.
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <param name="configuration"></param>
@@ -137,11 +137,11 @@ namespace ACadSharp.IO
 
 			//Older versions than 2004 don't have summaryinfo in it's file
 			if (this._fileHeader.AcadVersion < ACadVersion.AC1018)
-				return null;
+				return new CadSummaryInfo();
 
 			IDwgStreamReader reader = this.getSectionStream(DwgSectionDefinition.SummaryInfo);
 			if (reader == null)
-				return null;
+				return new CadSummaryInfo();
 
 			DwgSummaryInfoReader summaryReader = new DwgSummaryInfoReader(this._fileHeader.AcadVersion, reader);
 			return summaryReader.Read();
@@ -401,7 +401,7 @@ namespace ACadSharp.IO
 			IDwgStreamReader sreader = null;
 			if (this._fileHeader.AcadVersion <= ACadVersion.AC1015)
 			{
-				sreader = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
+				sreader = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream, this._encoding);
 				//Handles are in absolute offset for this versions
 				sreader.Position = 0;
 			}

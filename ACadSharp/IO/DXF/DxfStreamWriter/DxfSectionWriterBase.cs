@@ -58,14 +58,16 @@ namespace ACadSharp.IO.DXF
 				this.Holder.Objects.Enqueue(cadObject.XDictionary);
 			}
 
-			if (cadObject.Reactors != null && cadObject.Reactors.Count > 0) {
-				this._writer.Write(DxfCode.ControlString,DxfFileToken.ReactorsToken);
-				foreach (ulong reactorHandle in cadObject.Reactors.Keys) {
+			if (cadObject.Reactors != null && cadObject.Reactors.Count > 0)
+			{
+				this._writer.Write(DxfCode.ControlString, DxfFileToken.ReactorsToken);
+				foreach (ulong reactorHandle in cadObject.Reactors.Keys)
+				{
 					this._writer.Write(DxfCode.SoftPointerId, reactorHandle);
 				}
 				this._writer.Write(DxfCode.ControlString, "}");
 			}
-			
+
 			this._writer.Write(DxfCode.SoftPointerId, cadObject.Owner.Handle);
 
 			//TODO: Write exended data
@@ -102,7 +104,7 @@ namespace ACadSharp.IO.DXF
 
 			if (entity.Transparency.Value >= 0)
 			{
-				//this._writer.Write(440, entity.Transparency.Value);
+				this._writer.Write(440, Transparency.ToAlphaValue(entity.Transparency));
 			}
 
 			this._writer.Write(48, entity.LinetypeScale, map);

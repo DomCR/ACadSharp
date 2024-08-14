@@ -18,8 +18,6 @@ namespace ACadSharp.IO.DWG
 
 		public long SavedPositionInBits { get; } = 0;
 
-		public Encoding Encoding { get; }
-
 		public int BitShift { get; private set; } = 0;
 
 		private byte _lastByte;

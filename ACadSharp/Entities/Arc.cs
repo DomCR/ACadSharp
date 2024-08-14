@@ -39,6 +39,9 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double EndAngle { get; set; } = Math.PI;
 
+		/// <summary>
+		/// Default constructor
+		/// </summary>
 		public Arc() : base() { }
 
 		/// <summary>
@@ -72,6 +75,46 @@ namespace ACadSharp.Entities
 				StartAngle = startAngle,
 				EndAngle = endAngle,
 			};
+		}
+
+		/// <summary>
+		/// Process the 2 points limiting the arc segment
+		/// </summary>
+		/// <param name="start">Start point of the arc segment</param>
+		/// <param name="end">End point of the arc segment</param>
+		public void GetEndVertices(out XYZ start, out XYZ end)
+		{
+			if (this.Normal != XYZ.AxisZ)
+			{
+				throw new NotImplementedException("GetBoundPoints box for not aligned Normal is not implemented");
+			}
+
+			double tmpEndAngle = this.EndAngle;
+
+			if (this.EndAngle < this.StartAngle)
+			{
+				tmpEndAngle += 2 * Math.PI;
+			}
+
+			double delta = tmpEndAngle - this.StartAngle;
+
+			double angle = this.StartAngle + delta;
+			double startX = this.Radius * Math.Sin(angle);
+			double startY = this.Radius * Math.Cos(angle);
+
+			startX = MathUtils.IsZero(startX) ? 0 : startX;
+			startY = MathUtils.IsZero(startY) ? 0 : startY;
+
+			start = new XYZ(startX, startY, 0);
+
+			double angle2 = this.StartAngle + delta * 2;
+			double endX = (this.Radius * Math.Sin(angle2));
+			double endY = (this.Radius * Math.Cos(angle2));
+
+			endX = MathUtils.IsZero(endX) ? 0 : endX;
+			endY = MathUtils.IsZero(endY) ? 0 : endY;
+
+			end = new XYZ(endX, endY, 0);
 		}
 	}
 }

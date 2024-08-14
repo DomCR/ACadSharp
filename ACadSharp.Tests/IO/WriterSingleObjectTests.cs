@@ -176,6 +176,40 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(raster);
 			}
 
+			public void CreateLayout()
+			{
+				//Draw a cross in the model
+				this.Document.Entities.Add(new Line(XYZ.Zero, new XYZ(100, 100, 0)));
+				this.Document.Entities.Add(new Line(new XYZ(0, 100, 0), new XYZ(100, 0, 0)));
+
+				Layout layout = new Layout("my_layout");
+
+				this.Document.Layouts.Add(layout);
+			}
+
+			public void LineTypeWithSegments()
+			{
+				LineType lt = new LineType("segmented");
+				lt.Description = "hello";
+
+				LineType.Segment s1 = new LineType.Segment
+				{
+					Length = 12,
+					//Style = this.Document.TextStyles[TextStyle.DefaultName]
+				};
+
+				LineType.Segment s2 = new LineType.Segment
+				{
+					Length = -3,
+					//Style = this.Document.TextStyles[TextStyle.DefaultName]
+				};
+
+				lt.AddSegment(s1);
+				lt.AddSegment(s2);
+
+				this.Document.LineTypes.Add(lt);
+			}
+
 			public void ClosedLwPolyline()
 			{
 				List<LwPolyline.Vertex> vertices = new List<LwPolyline.Vertex>() {
@@ -208,12 +242,21 @@ namespace ACadSharp.Tests.IO
 					new Vertex2D() { Location = new XYZ(4, 4, 0) }
 				};
 
-				var Pline = new Polyline2D();
-				Pline.Vertices.AddRange(vector2d);
-				Pline.IsClosed = true;
-				Pline.Vertices.ElementAt(3).Bulge = 1;
+				var pline = new Polyline2D();
+				pline.Vertices.AddRange(vector2d);
+				pline.IsClosed = true;
+				pline.Vertices.ElementAt(3).Bulge = 1;
 
-				this.Document.Entities.Add(Pline);
+				this.Document.Entities.Add(pline);
+			}
+
+			public void EntityTransparency()
+			{
+				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
+
+				line.Transparency = new Transparency(50);
+
+				this.Document.Entities.Add(line);
 			}
 
 			public void Deserialize(IXunitSerializationInfo info)
@@ -257,6 +300,9 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline2DTest)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleRasterImage)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleWipeout)));
+			Data.Add(new(nameof(SingleCaseGenerator.CreateLayout)));
+			Data.Add(new(nameof(SingleCaseGenerator.EntityTransparency)));
+			Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithSegments)));
 		}
 
 		protected string getPath(string name, string ext, ACadVersion version)

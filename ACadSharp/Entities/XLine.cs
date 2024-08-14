@@ -24,17 +24,21 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.XLine;
 
 		/// <summary>
-		/// First point(in WCS)
+		/// First point(in WCS).
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ FirstPoint { get; set; }
 
 		/// <summary>
-		/// Unit direction vector(in WCS)
+		/// Unit direction vector(in WCS).
 		/// </summary>
 		[DxfCodeValue(11, 21, 31)]
 		public XYZ Direction { get; set; }
 
-		public XLine() : base() { }
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return BoundingBox.Infinite;
+		}
 	}
 }

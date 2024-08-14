@@ -1,7 +1,8 @@
-﻿using ACadSharp.IO;
-
-namespace ACadSharp.IO
+﻿namespace ACadSharp.IO
 {
+	/// <summary>
+	/// Base configuration for all the <see cref="CadReaderBase{T}"/> classes.
+	/// </summary>
 	public abstract class CadReaderConfiguration
 	{
 		/// <summary>
