@@ -9,7 +9,7 @@ namespace ACadSharp.IO.DWG
 
 		private IDwgStreamReader _sreader;
 
-		public DwgHandleReader(IDwgStreamReader sreader, ACadVersion version) : base(version)
+		public DwgHandleReader(ACadVersion version, IDwgStreamReader sreader) : base(version)
 		{
 			this._sreader = sreader;
 		}

@@ -28,13 +28,13 @@ namespace ACadSharp.IO.DWG
 			0x72, 0x5E, 0x3B, 0x47, 0x3B, 0x56, 0x07, 0x3A, 0x3F, 0x23, 0x0B, 0xA0, 0x18, 0x30, 0x49, 0x75
 		};
 
-		public DwgClassesWriter(CadDocument document, ACadVersion version, Stream stream) : base(version)
+		public DwgClassesWriter(Stream stream, CadDocument document, Encoding encoding) : base(document.Header.Version)
 		{
 			this._document = document;
-			this._startWriter = DwgStreamWriterBase.GetStreamWriter(version, stream, TextEncoding.Windows1252());
+			this._startWriter = DwgStreamWriterBase.GetStreamWriter(this._version, stream, encoding);
 
 			this._sectionStream = new MemoryStream();
-			this._writer = DwgStreamWriterBase.GetMergedWriter(version, _sectionStream, TextEncoding.Windows1252());
+			this._writer = DwgStreamWriterBase.GetMergedWriter(this._version, _sectionStream, encoding);
 		}
 
 		public void Write()

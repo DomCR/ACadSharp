@@ -523,20 +523,26 @@ namespace ACadSharp.IO
 
 		private IDxfStreamReader createReader(bool isBinary, bool isAC1009Format)
 		{
+			Encoding encoding = this._encoding;
+			if (encoding == null)
+			{
+				encoding = Encoding.ASCII;
+			}
+
 			if (isBinary)
 			{
 				if (isAC1009Format)
 				{
-					return new DxfBinaryReaderAC1009(this._fileStream.Stream, Encoding.ASCII);
+					return new DxfBinaryReaderAC1009(this._fileStream.Stream, encoding);
 				}
 				else
 				{
-					return new DxfBinaryReader(this._fileStream.Stream, Encoding.ASCII);
+					return new DxfBinaryReader(this._fileStream.Stream, encoding);
 				}
 			}
 			else
 			{
-				return new DxfTextReader(this._fileStream.Stream);
+				return new DxfTextReader(this._fileStream.Stream, encoding);
 			}
 		}
 	}

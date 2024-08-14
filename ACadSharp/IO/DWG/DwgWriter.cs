@@ -39,7 +39,7 @@ namespace ACadSharp.IO
 		/// <param name="document"></param>
 		public DwgWriter(Stream stream, CadDocument document) : base(stream, document)
 		{
-			this._fileHeader = DwgFileHeader.CreateFileHeader(_version);
+			this._fileHeader = DwgFileHeader.CreateFileHeader(this._version);
 		}
 
 		/// <inheritdoc/>
@@ -95,7 +95,7 @@ namespace ACadSharp.IO
 		{
 			using (DwgWriter writer = new DwgWriter(filename, document))
 			{
-				if(configuration != null)
+				if (configuration != null)
 				{
 					writer.Configuration = configuration;
 				}
@@ -122,8 +122,6 @@ namespace ACadSharp.IO
 
 		private void getFileHeaderWriter()
 		{
-			Encoding encoding = this.getListedEncoding(this._document.Header.CodePage);
-
 			switch (this._document.Header.Version)
 			{
 				case ACadVersion.MC0_0:
@@ -140,17 +138,17 @@ namespace ACadSharp.IO
 					throw new CadNotSupportedException(this._document.Header.Version);
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
-					this._fileHeaderWriter = new DwgFileHeaderWriterAC15(_stream, encoding, _document);
+					this._fileHeaderWriter = new DwgFileHeaderWriterAC15(this._stream, this._encoding, this._document);
 					break;
 				case ACadVersion.AC1018:
-					this._fileHeaderWriter = new DwgFileHeaderWriterAC18(_stream, encoding, _document);
+					this._fileHeaderWriter = new DwgFileHeaderWriterAC18(this._stream, this._encoding, this._document);
 					break;
 				case ACadVersion.AC1021:
 					throw new CadNotSupportedException(this._document.Header.Version);
 				case ACadVersion.AC1024:
 				case ACadVersion.AC1027:
 				case ACadVersion.AC1032:
-					this._fileHeaderWriter = new DwgFileHeaderWriterAC18(_stream, encoding, _document);
+					this._fileHeaderWriter = new DwgFileHeaderWriterAC18(this._stream, this._encoding, this._document);
 					break;
 				case ACadVersion.Unknown:
 				default:
@@ -161,8 +159,8 @@ namespace ACadSharp.IO
 		private void writeHeader()
 		{
 			MemoryStream stream = new MemoryStream();
-			DWG.DwgHeaderWriter writer = new DWG.DwgHeaderWriter(stream, this._document);
-			writer.OnNotification += triggerNotification;
+			DWG.DwgHeaderWriter writer = new DWG.DwgHeaderWriter(stream, this._document, this._encoding);
+			writer.OnNotification += this.triggerNotification;
 			writer.Write();
 
 			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Header, stream, true);
@@ -171,7 +169,7 @@ namespace ACadSharp.IO
 		private void writeClasses()
 		{
 			MemoryStream stream = new MemoryStream();
-			DwgClassesWriter writer = new DwgClassesWriter(this._document, this._version, stream);
+			DwgClassesWriter writer = new DwgClassesWriter(stream, this._document, this._encoding);
 			writer.Write();
 
 			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Classes, stream, false);
@@ -185,7 +183,7 @@ namespace ACadSharp.IO
 				return;
 
 			MemoryStream stream = new MemoryStream();
-			var writer = DwgStreamWriterBase.GetStreamWriter(_version, stream, TextEncoding.Windows1252());
+			var writer = DwgStreamWriterBase.GetStreamWriter(this._version, stream, TextEncoding.Windows1252());
 
 			CadSummaryInfo info = this._document.SummaryInfo;
 
@@ -293,7 +291,7 @@ namespace ACadSharp.IO
 		private void writeObjects()
 		{
 			MemoryStream stream = new MemoryStream();
-			DwgObjectWriter writer = new DwgObjectWriter(stream, this._document, this.Configuration.WriteXRecords);
+			DwgObjectWriter writer = new DwgObjectWriter(stream, this._document, this._encoding, this.Configuration.WriteXRecords);
 			writer.OnNotification += this.triggerNotification;
 			writer.Write();
 
@@ -313,7 +311,7 @@ namespace ACadSharp.IO
 			writer.Write<uint>((uint)this._handlesMap.Count);
 
 			//Julian datetime	8	If version > R14 then system variable TDUPDATE otherwise TDUUPDATE.
-			if (_version >= ACadVersion.AC1015)
+			if (this._version >= ACadVersion.AC1015)
 			{
 				CadUtils.DateToJulian(this._document.Header.UniversalUpdateDateTime, out int jdate, out int mili);
 				writer.Write<int>(jdate);
@@ -376,7 +374,7 @@ namespace ACadSharp.IO
 		private void writeAuxHeader()
 		{
 			MemoryStream stream = new MemoryStream();
-			DwgAuxHeaderWriter writer = new DwgAuxHeaderWriter(stream, this._document.Header);
+			DwgAuxHeaderWriter writer = new DwgAuxHeaderWriter(stream, this._encoding, this._document.Header);
 			writer.Write();
 
 			this._fileHeaderWriter.AddSection(DwgSectionDefinition.AuxHeader, stream, true);

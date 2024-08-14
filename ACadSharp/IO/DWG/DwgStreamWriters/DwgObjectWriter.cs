@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
@@ -39,13 +40,13 @@ namespace ACadSharp.IO.DWG
 
 		private Entity _next;
 
-		public DwgObjectWriter(Stream stream, CadDocument document, bool writeXRecords = true) : base(document.Header.Version)
+		public DwgObjectWriter(Stream stream, CadDocument document, Encoding encoding, bool writeXRecords = true) : base(document.Header.Version)
 		{
 			this._stream = stream;
 			this._document = document;
 
 			this._msmain = new MemoryStream();
-			this._writer = DwgStreamWriterBase.GetMergedWriter(document.Header.Version, this._msmain, TextEncoding.Windows1252());
+			this._writer = DwgStreamWriterBase.GetMergedWriter(document.Header.Version, this._msmain, encoding);
 			this.WriteXRecords = writeXRecords;
 		}
 

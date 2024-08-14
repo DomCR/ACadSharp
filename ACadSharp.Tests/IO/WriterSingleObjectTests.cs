@@ -259,6 +259,12 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(line);
 			}
 
+			public void ChangedEncoding()
+			{
+				this.Document.Header.CodePage = "gb2312";
+				this.Document.Layers.Add(new Layer("我的自定义层"));
+			}
+
 			public void Deserialize(IXunitSerializationInfo info)
 			{
 				this.Name = info.GetValue<string>(nameof(this.Name));
@@ -303,6 +309,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.CreateLayout)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityTransparency)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithSegments)));
+			Data.Add(new(nameof(SingleCaseGenerator.ChangedEncoding)));
 		}
 
 		protected string getPath(string name, string ext, ACadVersion version)
