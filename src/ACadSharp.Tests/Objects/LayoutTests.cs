@@ -5,7 +5,7 @@ using Xunit;
 
 namespace ACadSharp.Tests.Objects
 {
-	public class LayoutTests
+	public class LayoutTests: NonGraphicalObjectTests<Layout>
 	{
 		[Fact]
 		public void AddLayout()

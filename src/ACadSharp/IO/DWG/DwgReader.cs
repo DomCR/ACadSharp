@@ -299,10 +299,10 @@ namespace ACadSharp.IO
 
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Classes);
 
-			var reader = new DwgClassesReader(this._fileHeader.AcadVersion, this._fileHeader);
+			var reader = new DwgClassesReader(this._fileHeader.AcadVersion, sreader, this._fileHeader);
 			reader.OnNotification += onNotificationEvent;
 
-			return reader.Read(sreader);
+			return reader.Read();
 		}
 
 		private void readAppInfo()
@@ -340,7 +340,7 @@ namespace ACadSharp.IO
 
 			IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Handles);
 
-			var handleReader = new DwgHandleReader(sreader, this._fileHeader.AcadVersion);
+			var handleReader = new DwgHandleReader(this._fileHeader.AcadVersion, sreader);
 			handleReader.OnNotification += onNotificationEvent;
 
 			return handleReader.Read();

@@ -1,10 +1,13 @@
 ﻿using CSUtilities;
+using System;
 using System.IO;
 
 namespace ACadSharp.Tests
 {
 	public static class TestVariables
 	{
+		public static string DesktopFolder { get { return Environment.GetFolderPath(Environment.SpecialFolder.Desktop); } }
+
 		public static string SamplesFolder { get { return EnvironmentVars.Get<string>("SAMPLES_FOLDER"); } }
 	
 		public static string OutputSamplesFolder { get { return EnvironmentVars.Get<string>("OUTPUT_SAMPLES_FOLDER"); } }

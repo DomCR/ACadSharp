@@ -294,6 +294,17 @@ namespace ACadSharp.Objects
 		}
 
 		/// <summary>
+		/// Removes all keys and values from the <see cref="CadDictionary"/>.
+		/// </summary>
+		public void Clear()
+		{
+			foreach (var item in this._entries)
+			{
+				this.Remove(item.Key, out _);
+			}
+		}
+
+		/// <summary>
 		/// Gets the value associated with the specific key
 		/// </summary>
 		/// <typeparam name="T"></typeparam>

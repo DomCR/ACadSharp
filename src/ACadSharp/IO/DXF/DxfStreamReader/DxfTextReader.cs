@@ -10,12 +10,6 @@ namespace ACadSharp.IO.DXF
 
 		private StreamReader _stream;
 
-		public DxfTextReader(Stream stream)
-		{
-			this._stream = new StreamReader(stream);
-			this.start();
-		}
-
 		public DxfTextReader(Stream stream, Encoding encoding)
 		{
 			this._stream = new StreamReader(stream, encoding);
