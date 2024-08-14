@@ -262,6 +262,7 @@ namespace ACadSharp.Tests.IO
 			public void ChangedEncoding()
 			{
 				this.Document.Header.CodePage = "gb2312";
+				this.Document.Layers.Add(new Layer("我的自定义层"));
 			}
 
 			public void Deserialize(IXunitSerializationInfo info)
