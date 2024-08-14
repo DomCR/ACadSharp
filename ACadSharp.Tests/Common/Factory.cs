@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
+using CSUtilities.Extensions;
 using System;
 using System.Linq;
 
@@ -58,34 +60,30 @@ namespace ACadSharp.Tests.Common
 				return null;
 			}
 
-			if (type == typeof(XRecord)
-				|| type == typeof(PlotSettings)
-				|| type == typeof(Material)
-				|| type == typeof(MLineStyle)
-				|| type == typeof(Layout)
-				|| type == typeof(Group)
-				|| type == typeof(CadDictionary)
-				|| type == typeof(DictionaryVariable)
-				|| type == typeof(VisualStyle))
+			if (type.IsSubclassOf(typeof(NonGraphicalObject)))
 			{
-				object o = Activator.CreateInstance(type);
+				object o = Activator.CreateInstance(type, true);
 				if (!randomize)
 					return (CadObject)o;
 
 				return (CadObject)Factory.map(o);
 			}
 
-			if (type.BaseType == typeof(Entity))
+			if (type.IsSubclassOf(typeof(Entity)))
 			{
 				return EntityFactory.Create(original, randomize);
 			}
-			else if (type.BaseType == typeof(TableEntry))
+			else if (type.IsSubclassOf(typeof(TableEntry)))
 			{
 				return TableEntryFactory.Create(original, randomize: randomize);
 			}
 
+			if (type.HasInterface<ITable>())
+			{
+				return (CadObject)Activator.CreateInstance(type, true);
+			}
+
 			return createObject(type.BaseType, original, randomize);
 		}
-
 	}
 }

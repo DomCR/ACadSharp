@@ -27,5 +27,10 @@ namespace ACadSharp.Objects
 		}
 
 		private string _page;
+
+		/// <inheritdoc/>
+		public PdfUnderlayDefinition() : base()
+		{
+		}
 	}
 }
