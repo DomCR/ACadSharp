@@ -81,5 +81,7 @@
 		public const string PlotSettings = "AcDbPlotSettings";
 		public const string DictionaryVariables = "DictionaryVariables";
 		public const string Scale = "AcDbScale";
+		public const string EvalGraph = "AcDbEvalGraph";
+		public const string BlockVisibilityParameter = "AcDbBlockVisibilityParameter";
 	}
 }
