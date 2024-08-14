@@ -26,25 +26,25 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.Shape;
 
 		/// <summary>
-		/// Thickness
+		/// Thickness.
 		/// </summary>
 		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;
 
 		/// <summary>
-		/// Insertion point (in WCS)
+		/// Insertion point (in WCS).
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ InsertionPoint { get; set; }
 
 		/// <summary>
-		/// Size
+		/// Size.
 		/// </summary>
 		[DxfCodeValue(40)]
 		public double Size { get; set; } = 1.0;
 
 		/// <summary>
-		/// Shape name
+		/// Shape name.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 2)]
 		public TextStyle ShapeStyle
@@ -69,25 +69,25 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Rotation angle
+		/// Rotation angle.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation { get; set; } = 0;
 
 		/// <summary>
-		/// Relative X scale factor
+		/// Relative X scale factor.
 		/// </summary>
 		[DxfCodeValue(41)]
 		public double RelativeXScale { get; set; } = 1;
 
 		/// <summary>
-		/// Oblique angle
+		/// Oblique angle.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double ObliqueAngle { get; set; } = 0;
 
 		/// <summary>
-		/// Extrusion direction
+		/// Extrusion direction.
 		/// </summary>
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
@@ -107,6 +107,7 @@ namespace ACadSharp.Entities
 			this.ShapeStyle = textStyle;
 		}
 
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			Shape clone = (Shape)base.Clone();
@@ -114,6 +115,12 @@ namespace ACadSharp.Entities
 			clone.ShapeStyle = (TextStyle)(this.ShapeStyle?.Clone());
 
 			return clone;
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox(this.InsertionPoint);
 		}
 	}
 }

@@ -10,7 +10,7 @@ namespace ACadSharp
 		event EventHandler<OnNameChangedArgs> OnNameChanged;
 
 		/// <summary>
-		/// Name identifier for this object
+		/// Name identifier for this object.
 		/// </summary>
 		string Name { get; }
 	}

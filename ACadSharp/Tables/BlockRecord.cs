@@ -5,7 +5,6 @@ using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using System.Linq;
 using System.Collections.Generic;
-using ACadSharp.IO.Templates;
 
 namespace ACadSharp.Tables
 {
@@ -30,9 +29,45 @@ namespace ACadSharp.Tables
 		/// </summary>
 		public const string PaperSpaceName = "*Paper_Space";
 
-		public static BlockRecord ModelSpace { get { return new BlockRecord(ModelSpaceName); } }
+		/// <summary>
+		/// Create an instance of the *Model_Space block.
+		/// </summary>
+		/// <remarks>
+		/// It only can be one Model in each document.
+		/// </remarks>
+		public static BlockRecord ModelSpace
+		{
+			get
+			{
+				BlockRecord record = new BlockRecord(ModelSpaceName);
 
-		public static BlockRecord PaperSpace { get { return new BlockRecord(PaperSpaceName); } }
+				Layout layout = new Layout();
+				layout.Name = Layout.ModelLayoutName;
+				layout.AssociatedBlock = record;
+
+				return record;
+			}
+		}
+
+		/// <summary>
+		/// Create an instance of the *Paper_Space block.
+		/// </summary>
+		/// <remarks>
+		/// This is the default paper space in the document.
+		/// </remarks>
+		public static BlockRecord PaperSpace
+		{
+			get
+			{
+				BlockRecord record = new BlockRecord(PaperSpaceName);
+
+				Layout layout = new Layout();
+				layout.Name = Layout.PaperLayoutName;
+				layout.AssociatedBlock = record;
+
+				return record;
+			}
+		}
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.BLOCK_HEADER;
@@ -80,14 +115,9 @@ namespace ACadSharp.Tables
 		public Layout Layout
 		{
 			get { return this._layout; }
-			set
+			internal set
 			{
 				this._layout = value;
-
-				if (value == null)
-					return;
-
-				this._layout.AssociatedBlock = this;
 			}
 		}
 
@@ -125,19 +155,16 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Entities owned by this block
+		/// Entities owned by this block.
 		/// </summary>
 		/// <remarks>
-		/// Entities with an owner cannot be added to another block
+		/// Entities with an owner cannot be added to another block.
 		/// </remarks>
 		public CadObjectCollection<Entity> Entities { get; private set; }
 
 		/// <summary>
 		/// Sort entities table for this block record.
 		/// </summary>
-		/// <remarks>
-		/// 
-		/// </remarks>
 		public SortEntitiesTable SortEntitiesTable
 		{
 			get
@@ -232,7 +259,11 @@ namespace ACadSharp.Tables
 		{
 			BlockRecord clone = (BlockRecord)base.Clone();
 
-			clone.Layout = (Layout)(this.Layout?.Clone());
+			Layout layout = (Layout)(this.Layout?.Clone());
+			if (layout is not null)
+			{
+				layout.AssociatedBlock = this;
+			}
 
 			clone.Entities = new CadObjectCollection<Entity>(clone);
 			foreach (var item in this.Entities)

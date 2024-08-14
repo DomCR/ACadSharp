@@ -1,7 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
-using ACadSharp.Tables.Collections;
+using CSMath;
 using System;
 
 namespace ACadSharp.Entities
@@ -56,7 +56,7 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		[DxfCodeValue(440)]
-		public Transparency Transparency { get; set; }
+		public Transparency Transparency { get; set; } = Transparency.ByLayer;
 
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name, 6)]
@@ -93,6 +93,12 @@ namespace ACadSharp.Entities
 		/// Default constructor.
 		/// </summary>
 		public Entity() : base() { }
+
+		/// <summary>
+		/// Gets the bounding box aligned with the axis XYZ that ocupies this entity
+		/// </summary>
+		/// <returns></returns>
+		public abstract BoundingBox GetBoundingBox();
 
 		/// <inheritdoc/>
 		public void MatchProperties(IEntity entity)

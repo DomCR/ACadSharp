@@ -1,8 +1,8 @@
 ﻿using ACadSharp.Objects;
+using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -26,11 +26,16 @@ namespace ACadSharp.IO.DWG
 			{
 				case Material:
 				case MultiLeaderAnnotContext:
+				case MultiLeaderStyle:
 				case SortEntitiesTable:
 				case VisualStyle:
-				case XRecord:
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
 					return;
+			}
+
+			if (obj is XRecord && !this.WriteXRecords)
+			{
+				return;
 			}
 
 			this.writeCommonNonEntityData(obj);
@@ -120,14 +125,15 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Common:
-			foreach (var name in dictionary.EntryNames)
+			foreach (var item in dictionary)
 			{
-				this._writer.WriteVariableText(name);
-			}
+				if (item is XRecord && !this.WriteXRecords)
+				{
+					return;
+				}
 
-			foreach (var handle in dictionary.EntryHandles)
-			{
-				this._writer.HandleReference(DwgReferenceType.SoftOwnership, handle);
+				this._writer.WriteVariableText(item.Name);
+				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Handle);
 			}
 
 			this.addEntriesToWriter(dictionary);
@@ -337,6 +343,9 @@ namespace ACadSharp.IO.DWG
 
 		private void writeMultiLeaderStyle(MultiLeaderStyle mLeaderStyle)
 		{
+			//TODO: Remove this line when MultiLeaderStyle is fixed for writing
+			return;
+
 			if (!R2010Plus)
 			{
 				return;
@@ -551,7 +560,7 @@ namespace ACadSharp.IO.DWG
 		{
 			//parenthandle (soft pointer)
 			this._writer.HandleReference(DwgReferenceType.SoftPointer, sortEntitiesTable.BlockOwner);
-			
+
 			//Common:
 			//Numentries BL number of entries
 			this._writer.WriteBitLong(sortEntitiesTable.Sorters.Count());
@@ -586,44 +595,73 @@ namespace ACadSharp.IO.DWG
 
 				switch (groupValueType)
 				{
-					case GroupCodeValueType.None:
-						break;
-					case GroupCodeValueType.String:
-						break;
-					case GroupCodeValueType.Point3D:
-						break;
-					case GroupCodeValueType.Double:
+					case GroupCodeValueType.Byte:
+					case GroupCodeValueType.Bool:
+						ms.Write(Convert.ToByte(entry.Value, System.Globalization.CultureInfo.InvariantCulture));
 						break;
 					case GroupCodeValueType.Int16:
+					case GroupCodeValueType.ExtendedDataInt16:
+						ms.Write(Convert.ToInt16(entry.Value, System.Globalization.CultureInfo.InvariantCulture));
 						break;
 					case GroupCodeValueType.Int32:
+					case GroupCodeValueType.ExtendedDataInt32:
+						ms.Write(Convert.ToInt32(entry.Value, System.Globalization.CultureInfo.InvariantCulture));
 						break;
 					case GroupCodeValueType.Int64:
+						ms.Write(Convert.ToInt64(entry.Value, System.Globalization.CultureInfo.InvariantCulture));
 						break;
-					case GroupCodeValueType.Handle:
+					case GroupCodeValueType.Double:
+					case GroupCodeValueType.ExtendedDataDouble:
+						double d = (entry.Value as double?).Value;
+						ms.Write<double, LittleEndianConverter>(d);
 						break;
-					case GroupCodeValueType.ObjectId:
-						break;
-					case GroupCodeValueType.Bool:
+					case GroupCodeValueType.Point3D:
+						XYZ xyz = (entry.Value as XYZ?).Value;
+						ms.Write<double, LittleEndianConverter>(xyz.X);
+						ms.Write<double, LittleEndianConverter>(xyz.Y);
+						ms.Write<double, LittleEndianConverter>(xyz.Z);
 						break;
 					case GroupCodeValueType.Chunk:
-						break;
-					case GroupCodeValueType.Comment:
-						break;
-					case GroupCodeValueType.ExtendedDataString:
-						break;
 					case GroupCodeValueType.ExtendedDataChunk:
+						byte[] array = (byte[])entry.Value;
+						ms.Write((byte)array.Length);
+						ms.WriteBytes(array);
 						break;
+					case GroupCodeValueType.String:
+					case GroupCodeValueType.ExtendedDataString:
+					case GroupCodeValueType.Handle:
+						string text = (string)entry.Value;
+
+						if (this.R2007Plus)
+						{
+							if (string.IsNullOrEmpty(text))
+							{
+								ms.Write<short, LittleEndianConverter>(0);
+								return;
+							}
+
+							ms.Write<short, LittleEndianConverter>((short)text.Length);
+							ms.Write(text, System.Text.Encoding.Unicode);
+						}
+						else if (string.IsNullOrEmpty(text))
+						{
+							ms.Write<short, LittleEndianConverter>(0);
+							ms.Write((byte)this._writer.Encoding.CodePage);
+						}
+						else
+						{
+							ms.Write<short, LittleEndianConverter>((short)text.Length);
+							ms.Write((byte)this._writer.Encoding.CodePage);
+							ms.Write(text, this._writer.Encoding);
+						}
+						break;
+					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:
-						break;
-					case GroupCodeValueType.ExtendedDataDouble:
-						break;
-					case GroupCodeValueType.ExtendedDataInt16:
-						break;
-					case GroupCodeValueType.ExtendedDataInt32:
+						ulong u = (entry.Value as ulong?).Value;
+						ms.Write<ulong, LittleEndianConverter>(u);
 						break;
 					default:
-						break;
+						throw new NotSupportedException();
 				}
 			}
 

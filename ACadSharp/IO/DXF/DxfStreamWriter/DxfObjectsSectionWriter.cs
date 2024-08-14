@@ -9,6 +9,8 @@ namespace ACadSharp.IO.DXF
 	{
 		public override string SectionName { get { return DxfFileToken.ObjectsSection; } }
 
+		public bool WriteXRecords { get; set; } = false;
+
 		public DxfObjectsSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder) : base(writer, document, holder)
 		{
 		}
@@ -36,6 +38,12 @@ namespace ACadSharp.IO.DXF
 				case XRecord:
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
+			}
+
+
+			if (co is XRecord && !this.WriteXRecords)
+			{
+				return;
 			}
 
 			this._writer.Write(DxfCode.Start, co.ObjectName);
@@ -91,11 +99,15 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(280, e.HardOwnerFlag);
 			this._writer.Write(281, (int)e.ClonningFlags);
 
-			System.Diagnostics.Debug.Assert(e.EntryNames.Length == e.EntryHandles.Length);
-			for (int i = 0; i < e.EntryNames.Length; i++)
+			foreach (NonGraphicalObject item in e)
 			{
-				this._writer.Write(3, e.EntryNames[i]);
-				this._writer.Write(350, e.EntryHandles[i]);
+				if (item is XRecord && !this.WriteXRecords)
+				{
+					return;
+				}
+
+				this._writer.Write(3, item.Name);
+				this._writer.Write(350, item.Handle);
 			}
 
 			//Add the entries as objects
@@ -310,7 +322,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(271, (short)style.TextAttachmentDirection, map);
 			this._writer.Write(272, (short)style.TextBottomAttachment, map);
 			this._writer.Write(273, (short)style.TextTopAttachment, map);
-			this._writer.Write(298, false);	//	undocumented
+			this._writer.Write(298, false); //	undocumented
 		}
 
 		private void writeSortentsTable(SortEntitiesTable e)

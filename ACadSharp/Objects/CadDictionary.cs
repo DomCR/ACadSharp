@@ -150,12 +150,20 @@ namespace ACadSharp.Objects
 		{
 			CadDictionary root = new CadDictionary(Root);
 
+			CreateDefaultEntries(root);
+
+			return root;
+		}
+
+		/// <summary>
+		/// Create the default entries for the root dictionary.
+		/// </summary>
+		public static void CreateDefaultEntries(CadDictionary root)
+		{
 			root.TryAdd(new CadDictionary(AcadColor));
 			root.TryAdd(new CadDictionary(AcadGroup));
 
 			CadDictionary layouts = root.ensureCadDictionaryExist(AcadLayout);
-			layouts.TryAdd(Layout.Default);
-			layouts.TryAdd(new Layout("Layout1"));
 
 			root.TryAdd(new CadDictionary(AcadMaterial));
 			root.TryAdd(new CadDictionary(AcadSortEnts));
@@ -195,8 +203,6 @@ namespace ACadSharp.Objects
 			root.TryAdd(new CadDictionary(AcadVisualStyle));
 			root.TryAdd(new CadDictionary(AcadFieldList));
 			root.TryAdd(new CadDictionary(AcadImageDict));
-
-			return root;
 		}
 
 		/// <summary>
@@ -228,6 +234,8 @@ namespace ACadSharp.Objects
 			this._entries.Add(key, value);
 			value.Owner = this;
 
+			value.OnNameChanged += this.onEntryNameChanged;
+
 			OnAdd?.Invoke(this, new CollectionChangedEventArgs(value));
 		}
 
@@ -242,29 +250,29 @@ namespace ACadSharp.Objects
 		}
 
 		/// <summary>
-		/// Tries to add the <see cref="NonGraphicalObject"/> entry if the key doesn't exits.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="value"></param>
-		/// <returns>true if the element is successfully added; otherwise, false.</returns>
-		public bool TryAdd(string key, NonGraphicalObject value)
-		{
-			if (!this._entries.ContainsKey(key))
-			{
-				this.Add(key, value);
-			}
-
-			return false;
-		}
-
-		/// <summary>
 		/// Tries to add the <see cref="NonGraphicalObject"/> entry using the name as key.
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns>true if the element is successfully added; otherwise, false.</returns>
 		public bool TryAdd(NonGraphicalObject value)
 		{
-			return this.TryAdd(value.Name, value);
+			if (!this._entries.ContainsKey(value.Name))
+			{
+				this.Add(value.Name, value);
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Determines whether the <see cref="CadDictionary"/> contains the specified key.
+		/// </summary>
+		/// <param name="key">The key to locate in the <see cref="CadDictionary"/></param>
+		/// <returns></returns>
+		public bool ContainsKey(string key)
+		{
+			return this._entries.ContainsKey(key);
 		}
 
 		/// <summary>
@@ -342,6 +350,14 @@ namespace ACadSharp.Objects
 			}
 
 			return entry;
+		}
+
+		private void onEntryNameChanged(object sender, OnNameChangedArgs e)
+		{
+
+			var entry = this._entries[e.OldName];
+			this._entries.Add(e.NewName, entry);
+			this._entries.Remove(e.OldName);
 		}
 	}
 }

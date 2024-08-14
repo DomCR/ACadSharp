@@ -14,10 +14,11 @@ using System.Text;
 
 namespace ACadSharp.IO
 {
-	public class DxfReader : CadReaderBase
+	/// <summary>
+	/// Class for reading a DXF file into a <see cref="CadDocument"></see>.
+	/// </summary>
+	public class DxfReader : CadReaderBase<DxfReaderConfiguration>
 	{
-		public DxfReaderConfiguration Configuration { get; set; } = new DxfReaderConfiguration();
-
 		private ACadVersion _version;
 		private DxfDocumentBuilder _builder;
 		private IDxfStreamReader _reader;
@@ -108,20 +109,14 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		public static CadDocument Read(string filename, NotificationEventHandler notification = null)
 		{
-			CadDocument doc = null;
-
-			using (DxfReader reader = new DxfReader(filename, notification))
-			{
-				doc = reader.Read();
-			}
-
-			return doc;
+			return Read(File.OpenRead(filename));
 		}
 
 		/// <inheritdoc/>
 		public override CadDocument Read()
 		{
 			this._document = new CadDocument(false);
+			this._document.SummaryInfo = new CadSummaryInfo();
 
 			this._reader = this._reader ?? this.getReader();
 

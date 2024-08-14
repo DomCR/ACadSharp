@@ -130,7 +130,7 @@ namespace ACadSharp
 			}
 			else if (this._property.PropertyType.IsEquivalentTo(typeof(Transparency)))
 			{
-				this._property.SetValue(obj, Transparency.FromValue((int)value));
+				this._property.SetValue(obj, Transparency.FromAlphaValue((int)value));
 			}
 			else if (this._property.PropertyType.IsEquivalentTo(typeof(bool)))
 			{

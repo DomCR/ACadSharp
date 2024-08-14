@@ -104,7 +104,7 @@ namespace ACadSharp.IO.DWG
 					//1 = BYBLOCK,
 					//3 = the transparency value in the last byte.
 					int value = this.ReadBitLong();
-					transparency = Transparency.FromValue(value);
+					transparency = Transparency.FromAlphaValue(value);
 				}
 				else
 				{

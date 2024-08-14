@@ -5,6 +5,7 @@ using ACadSharp.Tests.Common;
 using ACadSharp.Entities;
 using Xunit.Abstractions;
 using ACadSharp.Blocks;
+using System.Linq;
 
 namespace ACadSharp.Tests
 {
@@ -50,6 +51,11 @@ namespace ACadSharp.Tests
 			this._docIntegrity.AssertDocumentDefaults(doc);
 			this._docIntegrity.AssertTableHirearchy(doc);
 			this._docIntegrity.AssertBlockRecords(doc);
+
+			Assert.Equal(2, doc.BlockRecords.Count);
+			Assert.Equal(1, doc.Layers.Count);
+			Assert.Equal(3, doc.LineTypes.Count);
+			Assert.Equal(2, doc.Layouts.Count());
 		}
 
 		[Fact]

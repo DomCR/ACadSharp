@@ -1,11 +1,14 @@
 ﻿using CSMath;
 using System;
 using System.IO;
+using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
 	internal class DwgMergedStreamWriter : IDwgStreamWriter
 	{
+		public Encoding Encoding { get { return this.Main.Encoding; } }
+
 		public IDwgStreamWriter Main { get; }
 
 		public IDwgStreamWriter TextWriter { get; }

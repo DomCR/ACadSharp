@@ -4,14 +4,15 @@ using System.Text;
 
 namespace ACadSharp.IO
 {
-	public class DxfWriter : CadWriterBase
+	/// <summary>
+	/// Class for writing a DXF from a <see cref="CadDocument"/>.
+	/// </summary>
+	public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 	{
 		/// <summary>
 		/// Flag indicating if the dxf will be writen as a binary file
 		/// </summary>
 		public bool IsBinary { get; }
-
-		public DxfWriterOptions Options { get; set; } = new DxfWriterOptions();
 
 		private IDxfStreamWriter _writer;
 		private CadObjectHolder _objectHolder = new CadObjectHolder();
@@ -65,7 +66,7 @@ namespace ACadSharp.IO
 
 			this._writer.Flush();
 
-			if (this.CloseStream)
+			if (this.Configuration.CloseStream)
 			{
 				this._writer.Close();
 			}
@@ -124,7 +125,7 @@ namespace ACadSharp.IO
 
 		private void writeHeader()
 		{
-			var writer = new DxfHeaderSectionWriter(this._writer, this._document, this._objectHolder, this.Options);
+			var writer = new DxfHeaderSectionWriter(this._writer, this._document, this._objectHolder, this.Configuration);
 			writer.OnNotification += this.triggerNotification;
 
 			writer.Write();
@@ -165,6 +166,7 @@ namespace ACadSharp.IO
 		private void writeObjects()
 		{
 			var writer = new DxfObjectsSectionWriter(this._writer, this._document, this._objectHolder);
+			writer.WriteXRecords = this.Configuration.WriteXRecords;
 			writer.OnNotification += this.triggerNotification;
 
 			writer.Write();
