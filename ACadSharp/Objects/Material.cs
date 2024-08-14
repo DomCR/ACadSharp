@@ -2,9 +2,14 @@
 {
 	public class Material : NonGraphicalObject
 	{
-		public override ObjectType ObjectType => ObjectType.INVALID;
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
-		public override string SubclassMarker { get; }
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.ObjectMaterial;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Material;
 
 		//1	Material name(string)
 
