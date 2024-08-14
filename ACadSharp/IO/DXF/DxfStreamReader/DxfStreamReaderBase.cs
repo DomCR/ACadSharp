@@ -42,7 +42,7 @@ namespace ACadSharp.IO.DXF
 
 		public double ValueAsDouble { get { return Convert.ToDouble(this.Value); } }
 
-		public double ValueAsAngle { get { return (double)(Convert.ToDouble(this.Value) * MathUtils.DegToRad); } }
+		public double ValueAsAngle { get { return (double)(Convert.ToDouble(this.Value) * MathUtils.RadToDegFactor); } }
 
 		public ulong ValueAsHandle { get { return (ulong)this.Value; } }
 

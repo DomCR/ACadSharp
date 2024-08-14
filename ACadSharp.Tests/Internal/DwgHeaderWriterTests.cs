@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Header;
 using ACadSharp.IO.DWG;
 using System.IO;
+using System.Text;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -20,7 +21,7 @@ namespace ACadSharp.Tests.Internal
 			CadDocument document = new CadDocument();
 			document.Header.Version = version;
 
-			DwgHeaderWriter writer = new DwgHeaderWriter(stream, document);
+			DwgHeaderWriter writer = new DwgHeaderWriter(stream, document, Encoding.Default);
 			writer.Write();
 
 			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, resetPositon: true);

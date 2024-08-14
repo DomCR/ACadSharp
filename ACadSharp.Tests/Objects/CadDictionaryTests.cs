@@ -4,7 +4,7 @@ using Xunit;
 
 namespace ACadSharp.Tests.Objects
 {
-	public class CadDictionaryTests
+	public class CadDictionaryTests : NonGraphicalObjectTests<CadDictionary>
 	{
 		[Fact]
 		public void AvoidDuplicatedEntries()

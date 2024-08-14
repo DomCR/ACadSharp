@@ -96,6 +96,32 @@ namespace ACadSharp.Entities
 
 		public abstract IEnumerable<Entity> Explode();
 
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			//TODO: can a polyline have only 1 vertex?
+			if (this.Vertices.Count < 2)
+			{
+				return BoundingBox.Null;
+			}
+
+			XYZ first = this.Vertices[0].Location;
+			XYZ second = this.Vertices[1].Location;
+
+			XYZ min = new XYZ(System.Math.Min(first.X, second.X), System.Math.Min(first.Y, second.Y), System.Math.Min(first.Z, second.Z));
+			XYZ max = new XYZ(System.Math.Max(first.X, second.X), System.Math.Max(first.Y, second.Y), System.Math.Max(first.Z, second.Z));
+
+			for (int i = 2; i < this.Vertices.Count; i++)
+			{
+				XYZ curr = this.Vertices[i].Location;
+
+				min = new XYZ(System.Math.Min(min.X, curr.X), System.Math.Min(min.Y, curr.Y), System.Math.Min(min.Z, curr.Z));
+				max = new XYZ(System.Math.Max(max.X, curr.X), System.Math.Max(max.Y, curr.Y), System.Math.Max(max.Z, curr.Z));
+			}
+
+			return new BoundingBox(min, max);
+		}
+
 		internal static IEnumerable<Entity> Explode(IPolyline polyline)
 		{
 			//Generic explode method for Polyline2D and LwPolyline

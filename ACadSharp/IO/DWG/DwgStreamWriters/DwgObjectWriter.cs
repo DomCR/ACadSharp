@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
@@ -39,13 +40,13 @@ namespace ACadSharp.IO.DWG
 
 		private Entity _next;
 
-		public DwgObjectWriter(Stream stream, CadDocument document, bool writeXRecords = true) : base(document.Header.Version)
+		public DwgObjectWriter(Stream stream, CadDocument document, Encoding encoding, bool writeXRecords = true) : base(document.Header.Version)
 		{
 			this._stream = stream;
 			this._document = document;
 
 			this._msmain = new MemoryStream();
-			this._writer = DwgStreamWriterBase.GetMergedWriter(document.Header.Version, this._msmain, TextEncoding.Windows1252());
+			this._writer = DwgStreamWriterBase.GetMergedWriter(document.Header.Version, this._msmain, encoding);
 			this.WriteXRecords = writeXRecords;
 		}
 
@@ -515,8 +516,8 @@ namespace ACadSharp.IO.DWG
 
 				//X - offset RD 44 (0.0 for a simple dash.)
 				//Y - offset RD 45(0.0 for a simple dash.)
-				this._writer.WriteBitDouble(segment.Offset.X);
-				this._writer.WriteBitDouble(segment.Offset.Y);
+				this._writer.WriteRawDouble(segment.Offset.X);
+				this._writer.WriteRawDouble(segment.Offset.Y);
 
 				//Scale BD 46 (1.0 for a simple dash.)
 				this._writer.WriteBitDouble(segment.Scale);
@@ -551,7 +552,6 @@ namespace ACadSharp.IO.DWG
 					//TODO: Write the line type text area
 					this._writer.WriteByte(0);
 				}
-				//TODO: Read the line type text area
 			}
 
 			//Common:
@@ -561,7 +561,7 @@ namespace ACadSharp.IO.DWG
 			foreach (var segment in ltype.Segments)
 			{
 				//340 shapefile for dash/shape (1 each) (hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, segment.Style);
 			}
 
 			this.registerObject(ltype);

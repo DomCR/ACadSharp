@@ -73,7 +73,8 @@ namespace ACadSharp.IO.DWG
 
 			if (color.IsTrueColor)
 			{
-				uint rgb = (uint)(0b1100_0010_0000_0000_0000_0000_0000_0000 | color.TrueColor);
+				byte[] arr = new byte[] { color.B, color.G, color.R, 0b11000010 };
+				uint rgb = LittleEndianConverter.Instance.ToUInt32(arr);
 				base.WriteBitLong((int)rgb);
 			}
 

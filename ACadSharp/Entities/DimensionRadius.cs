@@ -44,6 +44,15 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public DimensionRadius() : base(DimensionType.Radius) { }
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox(this.InsertionPoint - this.AngleVertex, this.InsertionPoint + this.AngleVertex);
+		}
 	}
 }

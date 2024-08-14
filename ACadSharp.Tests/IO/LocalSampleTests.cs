@@ -45,7 +45,6 @@ namespace ACadSharp.Tests.IO
 			CadDocument doc = DxfReader.Read(test, this.onNotification);
 		}
 
-
 		[Theory]
 		[MemberData(nameof(StressFiles))]
 		public void ReadStressFiles(string test)

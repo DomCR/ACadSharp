@@ -74,5 +74,11 @@ namespace ACadSharp.Entities
 		//1 = Material
 		//2 = Transparency
 		//3 = Material mapper
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return BoundingBox.FromPoints(this.Vertices);
+		}
 	}
 }
