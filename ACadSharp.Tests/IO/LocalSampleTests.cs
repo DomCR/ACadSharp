@@ -1,7 +1,4 @@
 ﻿using ACadSharp.IO;
-using ACadSharp.Objects;
-using CSUtilities;
-using System;
 using System.Diagnostics;
 using System.IO;
 using Xunit;
@@ -50,21 +47,6 @@ namespace ACadSharp.Tests.IO
 			using (DxfReader reader = new DxfReader(test))
 			{
 				var e = reader.ReadEntities();
-			}
-
-			var a = doc.GetCadObject(0x24CB);
-
-			//doc.Scales.Clear();
-
-			//Scale s = new Scale("hello");
-
-			//doc.Scales.Add(s);
-
-			doc.Header.Version = ACadVersion.AC1032;
-			using (DwgWriter wr = new DwgWriter($"{TestVariables.DesktopFolder}\\core-b\\test.dwg", doc))
-			{
-				wr.OnNotification += this.onNotification;
-				wr.Write();
 			}
 		}
 
