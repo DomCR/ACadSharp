@@ -18,7 +18,6 @@ jobs:
     - name: Update Wiki
       run: ./update-wiki.sh
       shell: bash
-      working-directory: ./src
       env:
         ASSEMBLY_PATH: "src/ACadSharp/bin/Release/net6.0/ACadSharp.dll"
         GITHUB_TOKEN: ${{ github.token }}

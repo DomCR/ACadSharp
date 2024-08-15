@@ -1,6 +1,8 @@
 #!/bin/sh
 set -eu
 
+cd ./src
+
 echo "Restore project"
 dotnet restore
 
@@ -9,6 +11,8 @@ dotnet tool restore
 
 echo "Build project"
 dotnet build --configuration Release --no-restore
+
+cd ..
 
 TMP_WORK_DIR="tmp-$GITHUB_SHA"
 
