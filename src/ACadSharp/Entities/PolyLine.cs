@@ -94,6 +94,7 @@ namespace ACadSharp.Entities
 			this.Vertices = new SeqendCollection<Vertex>(this);
 		}
 
+		/// <inheritdoc/>
 		public abstract IEnumerable<Entity> Explode();
 
 		/// <inheritdoc/>
