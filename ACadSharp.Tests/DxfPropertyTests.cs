@@ -1,11 +1,25 @@
 ﻿using ACadSharp.Entities;
 using CSMath;
+using System;
+using System.Reflection;
 using Xunit;
 
 namespace ACadSharp.Tests
 {
 	public class DxfPropertyTests
 	{
+		[Fact]
+		public void Constructor()
+		{
+			DxfClassMap map = DxfClassMap.Create<Line>();
+			PropertyInfo dxfProp = typeof(Line).GetProperty(nameof(Line.StartPoint));
+			PropertyInfo info = typeof(Line).GetProperty(nameof(Line.SubclassMarker));
+
+			Assert.Throws<ArgumentException>(() => new DxfProperty(-7, dxfProp));
+			Assert.Throws<ArgumentException>(() => new DxfProperty(-7, info));
+			Assert.Throws<ArgumentNullException>(() => new DxfProperty(-7, null));
+		}
+
 		[Fact]
 		public void SetXYValueTest()
 		{

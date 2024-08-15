@@ -5,7 +5,7 @@ using System.Linq;
 namespace ACadSharp
 {
 	/// <summary>
-	/// Represents a collection of <see cref="CadObject"/> ended by a <see cref="Entities.Seqend"/> entity
+	/// Represents a collection of <see cref="CadObject"/> ended by a <see cref="Entities.Seqend"/> entity.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	public class SeqendCollection<T> : CadObjectCollection<T>, ISeqendCollection
@@ -15,6 +15,9 @@ namespace ACadSharp
 
 		public event EventHandler<CollectionChangedEventArgs> OnSeqendRemoved;
 
+		/// <summary>
+		/// Sequence end entity for dxf.
+		/// </summary>
 		public Seqend Seqend
 		{
 			get
@@ -35,8 +38,7 @@ namespace ACadSharp
 
 		public SeqendCollection(CadObject owner) : base(owner)
 		{
-			this._seqend = new Seqend();
-			this._seqend.Owner = owner;
+			this._seqend = new Seqend(owner);
 		}
 
 		/// <inheritdoc/>

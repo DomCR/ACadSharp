@@ -84,7 +84,7 @@ namespace ACadSharp
 		private CadDictionary _xdictionary = null;
 
 		/// <summary>
-		/// Default constructor
+		/// Default constructor.
 		/// </summary>
 		public CadObject() { }
 
