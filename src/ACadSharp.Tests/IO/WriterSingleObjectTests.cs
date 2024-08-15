@@ -91,6 +91,11 @@ namespace ACadSharp.Tests.IO
 				this.Document.Header.CurrentEntityColor = new Color(11);
 			}
 
+			public void CurrentEntityByBlock()
+			{
+				this.Document.Header.CurrentEntityColor = Color.ByBlock;
+			}
+
 			public void SingleLine()
 			{
 				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
@@ -313,6 +318,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByIndex)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityColorTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByIndex)));
+			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.LayerTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
