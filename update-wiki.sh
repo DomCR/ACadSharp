@@ -12,8 +12,6 @@ dotnet tool restore
 echo "Build project"
 dotnet build --configuration Release --no-restore
 
-cd ..
-
 TMP_WORK_DIR="tmp-$GITHUB_SHA"
 
 WIKI_REPO_DIR="wiki-repo"
