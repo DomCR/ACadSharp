@@ -8,7 +8,7 @@ using System.Linq;
 namespace ACadSharp.Tables.Collections
 {
 	[DxfSubClass(DxfSubclassMarker.Table)]
-	public abstract class Table<T> : CadObject, IObservableCollection<T>
+	public abstract class Table<T> : CadObject, ITable, IObservableCollection<T>
 		where T : TableEntry
 	{
 		public event EventHandler<CollectionChangedEventArgs> OnAdd;
