@@ -71,9 +71,24 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(c);
 			}
 
+			public void EntityColorByIndex()
+			{
+				Circle c = new Circle();
+				c.Center = new XYZ(0, 0, 0);
+				c.Radius = 10;
+				c.Color = new Color(11);
+
+				this.Document.Entities.Add(c);
+			}
+
 			public void CurrentEntityColorTrueColor()
 			{
 				this.Document.Header.CurrentEntityColor = Color.FromTrueColor(1151726);
+			}
+
+			public void CurrentEntityByIndex()
+			{
+				this.Document.Header.CurrentEntityColor = new Color(11);
 			}
 
 			public void SingleLine()
@@ -295,7 +310,9 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
+			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByIndex)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityColorTrueColor)));
+			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByIndex)));
 			Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.LayerTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
