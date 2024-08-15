@@ -24,9 +24,9 @@ namespace ACadSharp.Tests
 
 		static TestVariables()
 		{
-			EnvironmentVars.SetIfNull("SAMPLES_FOLDER", "../../../../samples/");
-			EnvironmentVars.SetIfNull("OUTPUT_SAMPLES_FOLDER", "../../../../samples/out");
-			EnvironmentVars.SetIfNull("OUTPUT_SINGLE_CASES_FOLDER", "../../../../samples/out/single_cases");
+			EnvironmentVars.SetIfNull("SAMPLES_FOLDER", "../../../../../samples/");
+			EnvironmentVars.SetIfNull("OUTPUT_SAMPLES_FOLDER", "../../../../../samples/out");
+			EnvironmentVars.SetIfNull("OUTPUT_SINGLE_CASES_FOLDER", "../../../../../samples/out/single_cases");
 			EnvironmentVars.SetIfNull("LOCAL_ENV", "true");
 			EnvironmentVars.SetIfNull("DELTA", "0.00001");
 			EnvironmentVars.SetIfNull("DECIMAL_PRECISION", "5");

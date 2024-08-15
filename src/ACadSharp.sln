@@ -9,37 +9,32 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACadSharp.Examples", "ACadS
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D4F40AC7-232A-4140-B26C-C432E6B82E53}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		.gitattributes = .gitattributes
-		.gitignore = .gitignore
-		.gitmodules = .gitmodules
+		..\.editorconfig = ..\.editorconfig
+		..\.gitignore = ..\.gitignore
+		..\.gitmodules = ..\.gitmodules
 		Directory.Build.props = Directory.Build.props
-		.config\dotnet-tools.json = .config\dotnet-tools.json
-		LICENSE = LICENSE
-		README.md = README.md
+		..\LICENSE = ..\LICENSE
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACadSharp.Tests", "ACadSharp.Tests\ACadSharp.Tests.csproj", "{3503AFF9-E9C1-46F4-8E40-81D3035093DD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "reference", "reference", "{B86AD482-05C4-400E-9CAE-7B96AD6B0C3E}"
 	ProjectSection(SolutionItems) = preProject
-		reference\ACadFileExploration.xlsx = reference\ACadFileExploration.xlsx
-		reference\autocad_2012_pdf_dxf-reference_enu.pdf = reference\autocad_2012_pdf_dxf-reference_enu.pdf
-		reference\OpenDesign_Specification_for_.dwg_files.pdf = reference\OpenDesign_Specification_for_.dwg_files.pdf
+		..\reference\ACadFileExploration.xlsx = ..\reference\ACadFileExploration.xlsx
+		..\reference\autocad_2012_pdf_dxf-reference_enu.pdf = ..\reference\autocad_2012_pdf_dxf-reference_enu.pdf
+		..\reference\OpenDesign_Specification_for_.dwg_files.pdf = ..\reference\OpenDesign_Specification_for_.dwg_files.pdf
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{9F28195B-66DE-4C0C-B1C0-C8BF3300ED9F}"
-	ProjectSection(SolutionItems) = preProject
-		.github\FUNDING.yml = .github\FUNDING.yml
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{B2461717-C79A-4081-AD58-5DF52D2EC41F}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\build.yml = .github\workflows\build.yml
-		.github\workflows\build_n_test.yml = .github\workflows\build_n_test.yml
-		.github\workflows\coveralls.yml = .github\workflows\coveralls.yml
-		publish.yml = publish.yml
-		.github\workflows\wiki-gen.yml = .github\workflows\wiki-gen.yml
+		..\.github\workflows\build.yml = ..\.github\workflows\build.yml
+		..\.github\workflows\build_n_test.yml = ..\.github\workflows\build_n_test.yml
+		..\.github\workflows\coveralls.yml = ..\.github\workflows\coveralls.yml
+		..\.github\workflows\publish.yml = ..\.github\workflows\publish.yml
+		..\.github\workflows\wiki-gen.yml = ..\.github\workflows\wiki-gen.yml
 	EndProjectSection
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CSUtilities", "CSUtilities\CSUtilities\CSUtilities.shproj", "{B4EF345D-52B9-47F1-AA2A-B4AE85F62EFC}"
@@ -47,6 +42,11 @@ EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CSMath", "CSUtilities\CSMath\CSMath.shproj", "{411B6122-5EF6-46DB-A8F2-43E9C1841E4A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{824FC7E8-4401-428C-87E7-2EA8A78D54BB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{003AC2BC-9682-4C4D-86CC-D5EB4CDC2126}"
+	ProjectSection(SolutionItems) = preProject
+		.config\dotnet-tools.json = .config\dotnet-tools.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +83,7 @@ Global
 		{B2461717-C79A-4081-AD58-5DF52D2EC41F} = {9F28195B-66DE-4C0C-B1C0-C8BF3300ED9F}
 		{B4EF345D-52B9-47F1-AA2A-B4AE85F62EFC} = {824FC7E8-4401-428C-87E7-2EA8A78D54BB}
 		{411B6122-5EF6-46DB-A8F2-43E9C1841E4A} = {824FC7E8-4401-428C-87E7-2EA8A78D54BB}
+		{003AC2BC-9682-4C4D-86CC-D5EB4CDC2126} = {D4F40AC7-232A-4140-B26C-C432E6B82E53}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B40C2E48-575E-40D1-88C5-272437A5683F}

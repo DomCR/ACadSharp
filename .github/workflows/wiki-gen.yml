@@ -6,10 +6,8 @@ on:
 
 jobs:
   build:
-
     runs-on: windows-latest
     steps:
-
     - name: Checkout
       run: git config --global core.autocrlf true
     - uses: actions/checkout@v2
@@ -19,5 +17,5 @@ jobs:
       run: ./update-wiki.sh
       shell: bash
       env:
-        ASSEMBLY_PATH: "ACadSharp/bin/Release/net6.0/ACadSharp.dll"
+        ASSEMBLY_PATH: "src/ACadSharp/bin/Release/net6.0/ACadSharp.dll"
         GITHUB_TOKEN: ${{ github.token }}
