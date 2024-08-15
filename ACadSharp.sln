@@ -37,8 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build.yml = .github\workflows\build.yml
 		.github\workflows\build_n_test.yml = .github\workflows\build_n_test.yml
-		publish.yml = publish.yml
 		.github\workflows\coveralls.yml = .github\workflows\coveralls.yml
+		publish.yml = publish.yml
 		.github\workflows\wiki-gen.yml = .github\workflows\wiki-gen.yml
 	EndProjectSection
 EndProject
@@ -47,6 +47,10 @@ EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CSMath", "CSUtilities\CSMath\CSMath.shproj", "{411B6122-5EF6-46DB-A8F2-43E9C1841E4A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{824FC7E8-4401-428C-87E7-2EA8A78D54BB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSUtilities.Tests", "CSUtilities\CSUtilities.Tests\CSUtilities.Tests.csproj", "{F2108513-DDCB-4432-8F0E-F99EE173A6D2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSMath.Tests", "CSUtilities\CSMath.Tests\CSMath.Tests.csproj", "{ADE8AF6B-F065-46F0-9957-31DFCD221B71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +77,18 @@ Global
 		{3503AFF9-E9C1-46F4-8E40-81D3035093DD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3503AFF9-E9C1-46F4-8E40-81D3035093DD}.Test|Any CPU.ActiveCfg = Test|Any CPU
 		{3503AFF9-E9C1-46F4-8E40-81D3035093DD}.Test|Any CPU.Build.0 = Test|Any CPU
+		{F2108513-DDCB-4432-8F0E-F99EE173A6D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2108513-DDCB-4432-8F0E-F99EE173A6D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2108513-DDCB-4432-8F0E-F99EE173A6D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2108513-DDCB-4432-8F0E-F99EE173A6D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2108513-DDCB-4432-8F0E-F99EE173A6D2}.Test|Any CPU.ActiveCfg = Test|Any CPU
+		{F2108513-DDCB-4432-8F0E-F99EE173A6D2}.Test|Any CPU.Build.0 = Test|Any CPU
+		{ADE8AF6B-F065-46F0-9957-31DFCD221B71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADE8AF6B-F065-46F0-9957-31DFCD221B71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADE8AF6B-F065-46F0-9957-31DFCD221B71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADE8AF6B-F065-46F0-9957-31DFCD221B71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADE8AF6B-F065-46F0-9957-31DFCD221B71}.Test|Any CPU.ActiveCfg = Test|Any CPU
+		{ADE8AF6B-F065-46F0-9957-31DFCD221B71}.Test|Any CPU.Build.0 = Test|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +99,8 @@ Global
 		{B2461717-C79A-4081-AD58-5DF52D2EC41F} = {9F28195B-66DE-4C0C-B1C0-C8BF3300ED9F}
 		{B4EF345D-52B9-47F1-AA2A-B4AE85F62EFC} = {824FC7E8-4401-428C-87E7-2EA8A78D54BB}
 		{411B6122-5EF6-46DB-A8F2-43E9C1841E4A} = {824FC7E8-4401-428C-87E7-2EA8A78D54BB}
+		{F2108513-DDCB-4432-8F0E-F99EE173A6D2} = {824FC7E8-4401-428C-87E7-2EA8A78D54BB}
+		{ADE8AF6B-F065-46F0-9957-31DFCD221B71} = {824FC7E8-4401-428C-87E7-2EA8A78D54BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B40C2E48-575E-40D1-88C5-272437A5683F}
@@ -91,6 +109,8 @@ Global
 		CSUtilities\CSMath\CSMath.projitems*{411b6122-5ef6-46db-a8f2-43e9c1841e4a}*SharedItemsImports = 13
 		CSUtilities\CSMath\CSMath.projitems*{66b978f6-8ed4-4e14-bd43-bbb86664adb3}*SharedItemsImports = 5
 		CSUtilities\CSUtilities\CSUtilities.projitems*{66b978f6-8ed4-4e14-bd43-bbb86664adb3}*SharedItemsImports = 5
+		CSUtilities\CSMath\CSMath.projitems*{ade8af6b-f065-46f0-9957-31dfcd221b71}*SharedItemsImports = 5
 		CSUtilities\CSUtilities\CSUtilities.projitems*{b4ef345d-52b9-47f1-aa2a-b4ae85f62efc}*SharedItemsImports = 13
+		CSUtilities\CSUtilities\CSUtilities.projitems*{f2108513-ddcb-4432-8f0e-f99ee173a6d2}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal
