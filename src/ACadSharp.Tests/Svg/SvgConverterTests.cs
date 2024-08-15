@@ -8,7 +8,7 @@ namespace ACadSharp.Tests.Svg
 {
 	public class SvgConverterTests
 	{
-		protected const string _svgOutFolder = "../../../../samples/out/svg";
+		protected const string _svgOutFolder = "../../../../../samples/out/svg";
 
 		public static SvgConverter Instance = new SvgConverter();
 
