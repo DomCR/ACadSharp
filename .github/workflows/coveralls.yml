@@ -23,7 +23,7 @@ jobs:
           dotnet build --no-restore
           dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal ACadSharp.Tests/
     - name: Build and Test Submodules
-      working-directory: CSUtilities
+      working-directory: src/CSUtilities
       run: |
           dotnet restore
           dotnet build --no-restore
