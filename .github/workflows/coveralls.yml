@@ -32,4 +32,4 @@ jobs:
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ github.token }}
-        path-to-lcov: ACadSharp.Tests/TestResults/coverage.info 
+        # path-to-lcov: ACadSharp.Tests/TestResults/coverage.info 
