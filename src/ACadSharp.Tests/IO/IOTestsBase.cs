@@ -1,5 +1,6 @@
 ﻿using ACadSharp.IO;
 using ACadSharp.Tests.Common;
+using ACadSharp.Tests.TestModels;
 using System.IO;
 using System.Linq;
 using Xunit;
@@ -107,6 +108,27 @@ namespace ACadSharp.Tests.IO
 			if (!files.Any())
 			{
 				files.Add(string.Empty);
+			}
+		}
+
+		protected static void loadSamples(string folder, string ext, TheoryData<FileModel> files)
+		{
+			string path = Path.Combine(samplesFolder, "local", folder);
+
+			if (!Directory.Exists(path))
+			{
+				files.Add(new FileModel());
+				return;
+			}
+
+			foreach (string file in Directory.GetFiles(path, $"*.{ext}"))
+			{
+				files.Add(new FileModel(file));
+			}
+
+			if (!files.Any())
+			{
+				files.Add(new FileModel());
 			}
 		}
 

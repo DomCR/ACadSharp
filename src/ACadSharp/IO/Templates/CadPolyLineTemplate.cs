@@ -15,6 +15,8 @@ namespace ACadSharp.IO.Templates
 
 		public List<ulong> VertexHandles { get; set; } = new List<ulong>();
 
+		public Polyline PolyLine => this.CadObject as Polyline;
+
 		public CadPolyLineTemplate() : base(new PolyLinePlaceholder()) { }
 
 		public CadPolyLineTemplate(Polyline entity) : base(entity) { }

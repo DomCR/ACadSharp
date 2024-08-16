@@ -1,4 +1,5 @@
 ﻿using ACadSharp.IO;
+using ACadSharp.Tests.TestModels;
 using System.Diagnostics;
 using System.IO;
 using Xunit;
@@ -10,7 +11,7 @@ namespace ACadSharp.Tests.IO
 	{
 		public static TheoryData<string> UserDwgFiles { get; } = new TheoryData<string>();
 
-		public static TheoryData<string> UserDxfFiles { get; } = new TheoryData<string>();
+		public static TheoryData<FileModel> UserDxfFiles { get; } = new();
 
 		public static TheoryData<string> StressFiles { get; } = new TheoryData<string>();
 
@@ -37,12 +38,12 @@ namespace ACadSharp.Tests.IO
 
 		[Theory]
 		[MemberData(nameof(UserDxfFiles))]
-		public void ReadUserDxf(string test)
+		public void ReadUserDxf(FileModel test)
 		{
-			if (string.IsNullOrEmpty(test))
+			if (string.IsNullOrEmpty(test.Path))
 				return;
 
-			CadDocument doc = DxfReader.Read(test, this.onNotification);
+			CadDocument doc = DxfReader.Read(test.Path, this.onNotification);
 		}
 
 		[Theory]
