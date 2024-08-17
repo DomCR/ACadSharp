@@ -9,17 +9,17 @@ namespace ACadSharp.Tests.IO
 {
 	public class LocalSampleTests : IOTestsBase
 	{
-		public static TheoryData<string> UserDwgFiles { get; } = new TheoryData<string>();
+		public static TheoryData<FileModel> UserDwgFiles { get; } = new();
 
 		public static TheoryData<FileModel> UserDxfFiles { get; } = new();
 
-		public static TheoryData<string> StressFiles { get; } = new TheoryData<string>();
+		public static TheoryData<FileModel> StressFiles { get; } = new();
 
 		static LocalSampleTests()
 		{
-			loadSamples("user_files", "dwg", UserDwgFiles);
-			loadSamples("user_files", "dxf", UserDxfFiles);
-			loadSamples("stress", "*", StressFiles);
+			loadLocalSamples("user_files", "dwg", UserDwgFiles);
+			loadLocalSamples("user_files", "dxf", UserDxfFiles);
+			loadLocalSamples("stress", "*", StressFiles);
 		}
 
 		public LocalSampleTests(ITestOutputHelper output) : base(output)
@@ -28,12 +28,12 @@ namespace ACadSharp.Tests.IO
 
 		[Theory]
 		[MemberData(nameof(UserDwgFiles))]
-		public void ReadUserDwg(string test)
+		public void ReadUserDwg(FileModel test)
 		{
-			if (string.IsNullOrEmpty(test))
+			if (string.IsNullOrEmpty(test.Path))
 				return;
 
-			CadDocument doc = DwgReader.Read(test, this._dwgConfiguration, this.onNotification);
+			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
 		}
 
 		[Theory]
@@ -48,24 +48,24 @@ namespace ACadSharp.Tests.IO
 
 		[Theory]
 		[MemberData(nameof(StressFiles))]
-		public void ReadStressFiles(string test)
+		public void ReadStressFiles(FileModel test)
 		{
-			if (string.IsNullOrEmpty(test))
+			if (string.IsNullOrEmpty(test.Path))
 				return;
 
 			CadDocument doc = null;
-			string extension = Path.GetExtension(test);
+			string extension = Path.GetExtension(test.Path);
 
 			Stopwatch stopwatch = new Stopwatch();
 			stopwatch.Start();
 
 			if (extension == ".dxf")
 			{
-				doc = DxfReader.Read(test, this.onNotification);
+				doc = DxfReader.Read(test.Path, this.onNotification);
 			}
 			else if (extension.Equals(".dwg", System.StringComparison.OrdinalIgnoreCase))
 			{
-				doc = DwgReader.Read(test, this.onNotification);
+				doc = DwgReader.Read(test.Path, this.onNotification);
 			}
 
 			stopwatch.Stop();

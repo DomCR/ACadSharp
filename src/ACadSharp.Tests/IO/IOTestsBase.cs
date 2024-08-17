@@ -1,6 +1,7 @@
 ﻿using ACadSharp.IO;
 using ACadSharp.Tests.Common;
 using ACadSharp.Tests.TestModels;
+using System;
 using System.IO;
 using System.Linq;
 using Xunit;
@@ -10,17 +11,11 @@ namespace ACadSharp.Tests.IO
 {
 	public abstract class IOTestsBase
 	{
-		protected static string samplesFolder => TestVariables.SamplesFolder;
+		public static TheoryData<FileModel> DwgFilePaths { get; } = new();
 
-		protected static string samplesOutFolder => TestVariables.OutputSamplesFolder;
+		public static TheoryData<FileModel> DxfAsciiFiles { get; } = new();
 
-		protected static string singleCasesOutFolder => TestVariables.OutputSingleCasesFolder;
-
-		public static TheoryData<string> DwgFilePaths { get; }
-
-		public static TheoryData<string> DxfAsciiFiles { get; }
-
-		public static TheoryData<string> DxfBinaryFiles { get; }
+		public static TheoryData<FileModel> DxfBinaryFiles { get; } = new();
 
 		public static TheoryData<ACadVersion> Versions { get; }
 
@@ -39,23 +34,9 @@ namespace ACadSharp.Tests.IO
 
 		static IOTestsBase()
 		{
-			DwgFilePaths = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(samplesFolder, $"*.dwg"))
-			{
-				DwgFilePaths.Add(file);
-			}
-
-			DxfAsciiFiles = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(samplesFolder, "*_ascii.dxf"))
-			{
-				DxfAsciiFiles.Add(file);
-			}
-
-			DxfBinaryFiles = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(samplesFolder, "*_binary.dxf"))
-			{
-				DxfBinaryFiles.Add(file);
-			}
+			loadSamples("", "dwg", DwgFilePaths);
+			loadSamples("", "dxf", DxfAsciiFiles);
+			loadSamples("", "dxf", DxfBinaryFiles);
 
 			Versions = new TheoryData<ACadVersion>
 			{
@@ -90,30 +71,20 @@ namespace ACadSharp.Tests.IO
 			}
 		}
 
-		protected static void loadSamples(string folder, string ext, TheoryData<string> files)
+		protected static void loadLocalSamples(string folder, string ext, TheoryData<FileModel> files)
 		{
-			string path = Path.Combine(samplesFolder, "local", folder);
-
-			if (!Directory.Exists(path))
-			{
-				files.Add(string.Empty);
-				return;
-			}
-
-			foreach (string file in Directory.GetFiles(path, $"*.{ext}"))
-			{
-				files.Add(file);
-			}
-
-			if (!files.Any())
-			{
-				files.Add(string.Empty);
-			}
+			string path = Path.Combine(TestVariables.SamplesFolder, "local", folder);
+			loadSamples(path, ext, files);
 		}
 
 		protected static void loadSamples(string folder, string ext, TheoryData<FileModel> files)
 		{
-			string path = Path.Combine(samplesFolder, "local", folder);
+			string path = TestVariables.SamplesFolder;
+
+			if (!string.IsNullOrEmpty(folder))
+			{
+				path = Path.Combine(TestVariables.SamplesFolder, folder);
+			}
 
 			if (!Directory.Exists(path))
 			{

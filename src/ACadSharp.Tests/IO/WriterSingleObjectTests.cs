@@ -5,7 +5,6 @@ using CSMath;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -337,7 +336,7 @@ namespace ACadSharp.Tests.IO
 
 		protected string getPath(string name, string ext, ACadVersion version)
 		{
-			return Path.Combine(singleCasesOutFolder, $"{name}_{version}.{ext}");
+			return Path.Combine(TestVariables.OutputSingleCasesFolder, $"{name}_{version}.{ext}");
 		}
 	}
 }
