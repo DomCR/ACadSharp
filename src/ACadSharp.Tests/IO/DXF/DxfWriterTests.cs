@@ -23,7 +23,7 @@ namespace ACadSharp.Tests.IO.DXF
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 
-			string path = Path.Combine(samplesOutFolder, $"out_empty_sample_{version}_ascii.dxf");
+			string path = Path.Combine(TestVariables.OutputSamplesFolder, $"out_empty_sample_{version}_ascii.dxf");
 
 			using (var wr = new DxfWriter(path, doc, false))
 			{
@@ -52,7 +52,7 @@ namespace ACadSharp.Tests.IO.DXF
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 
-			string path = Path.Combine(samplesOutFolder, $"out_empty_sample_{version}_binary.dxf");
+			string path = Path.Combine(TestVariables.OutputSamplesFolder, $"out_empty_sample_{version}_binary.dxf");
 
 			using (var wr = new DxfWriter(path, doc, true))
 			{
@@ -95,7 +95,7 @@ namespace ACadSharp.Tests.IO.DXF
 
 			doc.Entities.AddRange(entities);
 
-			string path = Path.Combine(samplesOutFolder, $"out_sample_{version}_ascii.dxf");
+			string path = Path.Combine(TestVariables.OutputSamplesFolder, $"out_sample_{version}_ascii.dxf");
 
 			using (var wr = new DxfWriter(path, doc, false))
 			{

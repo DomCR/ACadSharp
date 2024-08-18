@@ -5,7 +5,6 @@ using CSMath;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -71,9 +70,29 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(c);
 			}
 
+			public void EntityColorByIndex()
+			{
+				Circle c = new Circle();
+				c.Center = new XYZ(0, 0, 0);
+				c.Radius = 10;
+				c.Color = new Color(11);
+
+				this.Document.Entities.Add(c);
+			}
+
 			public void CurrentEntityColorTrueColor()
 			{
 				this.Document.Header.CurrentEntityColor = Color.FromTrueColor(1151726);
+			}
+
+			public void CurrentEntityByIndex()
+			{
+				this.Document.Header.CurrentEntityColor = new Color(11);
+			}
+
+			public void CurrentEntityByBlock()
+			{
+				this.Document.Header.CurrentEntityColor = Color.ByBlock;
 			}
 
 			public void SingleLine()
@@ -341,7 +360,10 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
+			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByIndex)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityColorTrueColor)));
+			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByIndex)));
+			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.LayerTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
@@ -361,7 +383,7 @@ namespace ACadSharp.Tests.IO
 
 		protected string getPath(string name, string ext, ACadVersion version)
 		{
-			return Path.Combine(singleCasesOutFolder, $"{name}_{version}.{ext}");
+			return Path.Combine(TestVariables.OutputSingleCasesFolder, $"{name}_{version}.{ext}");
 		}
 	}
 }

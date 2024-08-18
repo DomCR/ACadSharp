@@ -64,6 +64,7 @@ namespace ACadSharp.IO.DXF
 				.OfType<CadEntityTemplate>()
 				.Where(o => o.CadObject.Owner == null))
 			{
+				item.CadObject.Handle = 0;
 				entities.Add(item.CadObject);
 			}
 
