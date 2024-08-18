@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ACadSharp.IO.DXF
 {
-	internal class DxfTextReader : DxfStreamReaderBase, IDxfStreamReader
+	internal class DxfTextReader : DxfStreamReaderBase
 	{
 		protected override Stream baseStream { get { return this._stream.BaseStream; } }
 
@@ -13,20 +13,20 @@ namespace ACadSharp.IO.DXF
 		public DxfTextReader(Stream stream, Encoding encoding)
 		{
 			this._stream = new StreamReader(stream, encoding);
-			this.start();
+			this.Start();
+		}
+
+		public override void Start()
+		{
+			base.Start();
+
+			this._stream.DiscardBufferedData();
 		}
 
 		public override void ReadNext()
 		{
 			base.ReadNext();
 			this.Position += 2;
-		}
-
-		protected override void start()
-		{
-			base.start();
-
-			this._stream.DiscardBufferedData();
 		}
 
 		protected override string readStringLine()
