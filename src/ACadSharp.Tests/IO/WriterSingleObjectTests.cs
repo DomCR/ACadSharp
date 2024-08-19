@@ -340,7 +340,11 @@ namespace ACadSharp.Tests.IO
 
 
 				Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-				path.Edges.AddRange(edges);
+				foreach (var item in edges)
+				{
+					path.Edges.Add(item);
+				}
+
 				hatch.Paths.Add(path);
 
 				this.Document.Entities.Add(hatch);

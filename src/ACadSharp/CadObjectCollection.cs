@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ACadSharp
 {
-	public class CadObjectCollection<T> : IObservableCollection<T>
+	public class CadObjectCollection<T> : IObservableCadCollection<T>
 		where T : CadObject
 	{
 		public event EventHandler<CollectionChangedEventArgs> OnAdd;
