@@ -16,7 +16,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectDictionary)]
 	[DxfSubClass(DxfSubclassMarker.Dictionary)]
-	public class CadDictionary : NonGraphicalObject, IObservableCollection<NonGraphicalObject>
+	public class CadDictionary : NonGraphicalObject, IObservableCadCollection<NonGraphicalObject>
 	{
 		public event EventHandler<CollectionChangedEventArgs> OnAdd;
 		public event EventHandler<CollectionChangedEventArgs> OnRemove;

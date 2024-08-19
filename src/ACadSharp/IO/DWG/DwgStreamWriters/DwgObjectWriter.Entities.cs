@@ -850,7 +850,6 @@ namespace ACadSharp.IO.DWG
 
 				if (boundaryPath.Flags.HasFlag(BoundaryPathFlags.Polyline))
 				{
-					//TODO: Polyline may need to be treated different than the regular edges
 					Hatch.BoundaryPath.Polyline pline = boundaryPath.Edges.First() as Hatch.BoundaryPath.Polyline;
 
 					//bulgespresent B 72 bulges are present if 1

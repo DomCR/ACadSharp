@@ -55,13 +55,13 @@ namespace ACadSharp.Entities
 		//63	For MPolygon, pattern fill color as the ACI
 
 		/// <summary>
-		/// Associativity flag
+		/// Associativity flag.
 		/// </summary>
 		[DxfCodeValue(71)]
 		public bool IsAssociative { get; set; }
 
 		/// <summary>
-		/// Hatch style
+		/// Hatch style.
 		/// </summary>
 		[DxfCodeValue(75)]
 		public HatchStyleType Style { get; set; }
@@ -116,22 +116,20 @@ namespace ACadSharp.Entities
 		public List<XY> SeedPoints { get; set; } = new List<XY>();
 
 		/// <summary>
-		/// Gradient color pattern, if exists
+		/// Gradient color pattern, if exists.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 470)]
 		public HatchGradientPattern GradientColor { get; set; } = new HatchGradientPattern();
 
 		/// <summary>
-		/// Boundary paths (loops)
+		/// Boundary paths (loops).
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 91)]
 		public List<BoundaryPath> Paths { get; set; } = new List<BoundaryPath>();
 
 		private HatchPattern _pattern = HatchPattern.Solid;
 
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
+		/// <inheritdoc/>
 		public Hatch() : base() { }
 
 		/// <inheritdoc/>
