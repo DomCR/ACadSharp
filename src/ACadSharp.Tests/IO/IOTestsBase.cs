@@ -73,7 +73,7 @@ namespace ACadSharp.Tests.IO
 
 		protected static void loadLocalSamples(string folder, string ext, TheoryData<FileModel> files)
 		{
-			string path = Path.Combine(TestVariables.SamplesFolder, "local", folder);
+			string path = Path.Combine("local", folder);
 			loadSamples(path, ext, files);
 		}
 

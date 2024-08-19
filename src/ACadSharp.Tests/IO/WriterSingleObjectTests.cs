@@ -2,6 +2,7 @@
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
+using CSUtilities.Extensions;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -278,6 +279,27 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(line);
 			}
 
+			public void CreateHatchPolyline()
+			{
+				Hatch hatch = new Hatch();
+				hatch.IsSolid = true;
+
+				Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+
+				Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
+				pline.Vertices.Add(new XYZ(0, 0, 0));
+				pline.Vertices.Add(new XYZ(1, 0, 0));
+				pline.Vertices.Add(new XYZ(1, 1, 0));
+				pline.Vertices.Add(new XYZ(0, 1, 0));
+				pline.Vertices.Add(new XYZ(0, 0, 0));
+
+				path.Edges.Add(pline);
+				path.Flags = path.Flags.AddFlag(BoundaryPathFlags.Polyline);
+				hatch.Paths.Add(path);
+
+				this.Document.Entities.Add(hatch);
+			}
+
 			public void CreateHatch()
 			{
 				Hatch hatch = new Hatch();
@@ -377,6 +399,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.CreateLayout)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityTransparency)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithSegments)));
+			Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.ChangedEncoding)));
 		}

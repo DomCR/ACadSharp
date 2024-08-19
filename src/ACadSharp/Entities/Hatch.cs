@@ -116,22 +116,20 @@ namespace ACadSharp.Entities
 		public List<XY> SeedPoints { get; set; } = new List<XY>();
 
 		/// <summary>
-		/// Gradient color pattern, if exists
+		/// Gradient color pattern, if exists.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 470)]
 		public HatchGradientPattern GradientColor { get; set; } = new HatchGradientPattern();
 
 		/// <summary>
-		/// Boundary paths (loops)
+		/// Boundary paths (loops).
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 91)]
 		public List<BoundaryPath> Paths { get; set; } = new List<BoundaryPath>();
 
 		private HatchPattern _pattern = HatchPattern.Solid;
 
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
+		/// <inheritdoc/>
 		public Hatch() : base() { }
 
 		/// <inheritdoc/>

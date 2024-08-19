@@ -32,10 +32,6 @@ namespace ACadSharp.Tests.IO
 		{
 			CadDocument doc = this.getDocument(test);
 
-			foreach (var h in doc.Entities.OfType<Hatch>()) 
-			{
-			}
-
 			Assert.NotNull(doc);
 		}
 
