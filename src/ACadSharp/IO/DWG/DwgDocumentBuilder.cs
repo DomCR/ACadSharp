@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
+using ACadSharp.Objects;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.DWG
@@ -13,6 +14,8 @@ namespace ACadSharp.IO.DWG
 		public List<CadBlockRecordTemplate> BlockRecordTemplates { get; set; } = new();
 
 		public List<UnknownEntity> UnknownEntities { get; } = new();
+
+		public List<UnknownNonGraphicalObject> UnknownNonGraphicalObjects { get; } = new();
 
 		public List<Entity> PaperSpaceEntities { get; } = new();
 
