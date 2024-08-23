@@ -4,6 +4,8 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadVertexTemplate : CadEntityTemplate
 	{
+		public Vertex Vertex => this.CadObject as Vertex;
+
 		public CadVertexTemplate() : base(new VertexPlaceholder())
 		{
 		}
@@ -28,7 +30,7 @@ namespace ACadSharp.IO.Templates
 			vertex.IsInvisible = this.CadObject.IsInvisible;
 			vertex.Transparency = this.CadObject.Transparency;
 
-			VertexPlaceholder placeholder = this.CadObject as VertexPlaceholder;
+			Vertex placeholder = this.CadObject as Vertex;
 
 			vertex.Location = placeholder.Location;
 			vertex.StartWidth = placeholder.StartWidth;

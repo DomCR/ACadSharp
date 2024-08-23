@@ -423,7 +423,7 @@ namespace ACadSharp
 			}
 		}
 
-		internal void RegisterCollection<T>(IObservableCollection<T> collection)
+		internal void RegisterCollection<T>(IObservableCadCollection<T> collection)
 			where T : CadObject
 		{
 			switch (collection)
@@ -498,7 +498,7 @@ namespace ACadSharp
 			}
 		}
 
-		internal void UnregisterCollection<T>(IObservableCollection<T> collection)
+		internal void UnregisterCollection<T>(IObservableCadCollection<T> collection)
 			where T : CadObject
 		{
 			switch (collection)

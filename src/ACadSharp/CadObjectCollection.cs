@@ -10,7 +10,7 @@ namespace ACadSharp
 	/// Collection formed by <see cref="CadObject"/> managed by an owner.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class CadObjectCollection<T> : IObservableCollection<T>
+	public class CadObjectCollection<T> : IObservableCadCollection<T>
 		where T : CadObject
 	{
 		/// <inheritdoc/>

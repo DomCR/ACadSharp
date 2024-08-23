@@ -5,20 +5,17 @@ using System.IO;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
+using ACadSharp.Tests.TestModels;
 
 namespace ACadSharp.Tests.IO
 {
 	public class ColorTests : IOTestsBase
 	{
-		public static TheoryData<string> ColorSamplesFilePaths { get; }
+		public static TheoryData<FileModel> ColorSamplesFilePaths { get; } = new();
 
 		static ColorTests()
 		{
-			ColorSamplesFilePaths = new TheoryData<string>();
-			foreach (string p in Directory.GetFiles(Path.Combine($"{samplesFolder}", "color_samples"), $"*.dwg"))
-			{
-				ColorSamplesFilePaths.Add(Path.GetFileName(p));
-			}
+			loadSamples("color_samples", "dwg", ColorSamplesFilePaths);
 		}
 
 		public ColorTests(ITestOutputHelper output) : base(output)
@@ -27,11 +24,9 @@ namespace ACadSharp.Tests.IO
 
 		[Theory]
 		[MemberData(nameof(ColorSamplesFilePaths))]
-		public void ColorDwg(string path)
+		public void ColorDwg(FileModel test)
 		{
-			path = Path.Combine($"{samplesFolder}", "color_samples", path);
-
-			CadDocument doc = DwgReader.Read(path);
+			CadDocument doc = DwgReader.Read(test.Path);
 
 			//CECOLOR R 155 : G 66 : B 236
 			Color currentEntityColor = doc.Header.CurrentEntityColor;

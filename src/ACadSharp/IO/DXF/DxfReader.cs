@@ -164,6 +164,11 @@ namespace ACadSharp.IO
 				this._reader.ReadNext();
 			}
 
+			if(this._document.Header == null)
+			{
+				this._document.Header = new CadHeader(this._document);
+			}
+
 			this._builder.BuildDocument();
 
 			return this._document;
@@ -464,7 +469,12 @@ namespace ACadSharp.IO
 
 			tmpReader = this.createReader(isBinary, isAC1009Format);
 
-			tmpReader.Find(DxfFileToken.HeaderSection);
+			if (!tmpReader.Find(DxfFileToken.HeaderSection))
+			{
+				this._version = ACadVersion.Unknown;
+				tmpReader.Start();
+				return tmpReader;
+			}
 
 			while (tmpReader.ValueAsString != DxfFileToken.EndSection)
 			{

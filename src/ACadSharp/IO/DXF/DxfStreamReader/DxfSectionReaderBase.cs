@@ -564,9 +564,15 @@ namespace ACadSharp.IO.DXF
 					CadVertexTemplate vertexTemplate = new CadVertexTemplate(v);
 					this.readEntityCodes<Vertex2D>(vertexTemplate, this.readVertex);
 
-					this._builder.AddTemplate(vertexTemplate);
-
-					template.VertexHandles.Add(v.Handle);
+					if (vertexTemplate.Vertex.Handle == 0)
+					{
+						template.PolyLine.Vertices.Add(vertexTemplate.Vertex);
+					}
+					else
+					{
+						template.VertexHandles.Add(vertexTemplate.Vertex.Handle);
+						this._builder.AddTemplate(vertexTemplate);
+					}
 				}
 
 				while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EndSequence)
