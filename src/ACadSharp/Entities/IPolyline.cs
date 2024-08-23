@@ -6,11 +6,9 @@ namespace ACadSharp.Entities
 	public interface IPolyline : IEntity
 	{
 		/// <summary>
-		/// Indicates that the polyline is closed
+		/// Indicates that the polyline is closed.
 		/// </summary>
 		bool IsClosed { get; set; }
-
-		IEnumerable<IVertex> Vertices { get; }
 
 		/// <summary>
 		/// The current elevation of the object.
@@ -32,5 +30,10 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <returns></returns>
 		IEnumerable<Entity> Explode();
+
+		/// <summary>
+		/// Vertices that form the Polyline.
+		/// </summary>
+		IEnumerable<IVertex> Vertices { get; }
 	}
 }
