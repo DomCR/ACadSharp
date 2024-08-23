@@ -4894,12 +4894,14 @@ namespace ACadSharp.IO.DWG
 				CadHatchTemplate.CadBoundaryPathTemplate pathTemplate = new CadHatchTemplate.CadBoundaryPathTemplate();
 
 				//Pathflag BL 92 Path flag
-				pathTemplate.Path.Flags = (BoundaryPathFlags)this._objectReader.ReadBitLong();
+				var flags = (BoundaryPathFlags)this._objectReader.ReadBitLong();
+
+				pathTemplate.Path.Flags = flags;
 
 				if (pathTemplate.Path.Flags.HasFlag(BoundaryPathFlags.Derived))
 					hasDerivedBoundary = true;
 
-				if (!pathTemplate.Path.Flags.HasFlag(BoundaryPathFlags.Polyline))
+				if (!flags.HasFlag(BoundaryPathFlags.Polyline))
 				{
 					//Numpathsegs BL 93 number of segments in this path
 					int nsegments = this._objectReader.ReadBitLong();

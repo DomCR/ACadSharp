@@ -7,7 +7,7 @@ using System.Linq;
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Represents a <see cref="Polyline"/> entity
+	/// Represents a <see cref="Polyline"/> entity.
 	/// </summary>
 	[DxfName(DxfFileToken.EntityPolyline)]
 	[DxfSubClass(null, true)]
@@ -29,19 +29,19 @@ namespace ACadSharp.Entities
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 		/// <summary>
-		/// Polyline flags
+		/// Polyline flags.
 		/// </summary>
 		[DxfCodeValue(70)]
 		public PolylineFlags Flags { get; set; }
 
 		/// <summary>
-		/// Start width
+		/// Start width.
 		/// </summary>
 		[DxfCodeValue(40)]
 		public double StartWidth { get; set; } = 0.0;
 
 		/// <summary>
-		/// End width
+		/// End width.
 		/// </summary>
 		[DxfCodeValue(41)]
 		public double EndWidth { get; set; } = 0.0;
@@ -52,7 +52,7 @@ namespace ACadSharp.Entities
 		//74	Smooth surface N density(optional; default = 0)
 
 		/// <summary>
-		/// Curves and smooth surface type
+		/// Curves and smooth surface type.
 		/// </summary>
 		[DxfCodeValue(75)]
 		public SmoothSurfaceType SmoothSurface { get; set; }
@@ -87,6 +87,7 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <inheritdoc/>
 		IEnumerable<IVertex> IPolyline.Vertices { get { return this.Vertices; } }
 
 		public Polyline() : base()
@@ -94,6 +95,7 @@ namespace ACadSharp.Entities
 			this.Vertices = new SeqendCollection<Vertex>(this);
 		}
 
+		/// <inheritdoc/>
 		public abstract IEnumerable<Entity> Explode();
 
 		/// <inheritdoc/>
