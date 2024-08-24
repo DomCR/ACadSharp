@@ -662,11 +662,14 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void writeMText(MText mtext)
+		private void writeMText(MText mtext, bool writeSubclass = true)
 		{
 			DxfClassMap map = DxfClassMap.Create<MText>();
 
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.MText);
+			if (writeSubclass)
+			{
+				this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.MText);
+			}
 
 			this._writer.Write(10, mtext.InsertPoint, map);
 
@@ -756,7 +759,8 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(295, 0);
 		}
 
-		private void writeMultiLeaderAnnotContext(MultiLeaderAnnotContext contextData) {
+		private void writeMultiLeaderAnnotContext(MultiLeaderAnnotContext contextData)
+		{
 			this._writer.Write(300, "CONTEXT_DATA{");
 			this._writer.Write(40, contextData.ScaleFactor);
 			this._writer.Write(10, contextData.ContentBasePoint);
@@ -812,7 +816,8 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(297, contextData.NormalReversed);
 
-			foreach (MultiLeaderAnnotContext.LeaderRoot leaderRoot in contextData.LeaderRoots) {
+			foreach (MultiLeaderAnnotContext.LeaderRoot leaderRoot in contextData.LeaderRoots)
+			{
 				writeLeaderRoot(leaderRoot);
 			}
 
@@ -836,7 +841,8 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(90, leaderRoot.LeaderIndex);
 			this._writer.Write(40, leaderRoot.LandingDistance);
 
-			foreach (MultiLeaderAnnotContext.LeaderLine leaderLine in leaderRoot.Lines) {
+			foreach (MultiLeaderAnnotContext.LeaderLine leaderLine in leaderRoot.Lines)
+			{
 				writeLeaderLine(leaderLine);
 			}
 
@@ -844,10 +850,12 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(303, "}");   //	LEADER
 		}
 
-		private void writeLeaderLine(MultiLeaderAnnotContext.LeaderLine leaderLine) {
+		private void writeLeaderLine(MultiLeaderAnnotContext.LeaderLine leaderLine)
+		{
 			this._writer.Write(304, "LEADER_LINE{");
 
-			foreach (XYZ point in leaderLine.Points) {
+			foreach (XYZ point in leaderLine.Points)
+			{
 				this._writer.Write(10, point);
 			}
 			this._writer.Write(91, leaderLine.Index);
@@ -1114,6 +1122,15 @@ namespace ACadSharp.IO.DXF
 			if (att.VerticalAlignment != 0)
 			{
 				this._writer.Write(74, (short)att.VerticalAlignment);
+			}
+
+			if (this.Version > ACadVersion.AC1027 && att.MText != null)
+			{
+				this._writer.Write(71, (short)att.AttributeType);
+				this._writer.Write(72, (short)0);
+				this._writer.Write(11, att.AlignmentPoint);
+
+				this.writeMText(att.MText, false);
 			}
 		}
 
