@@ -49,16 +49,15 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Attribute flags
+		/// Attribute flags.
 		/// </summary>
 		[DxfCodeValue(70)]
 		public AttributeFlags Flags { get; set; }
 
 		/// <summary>
-		/// MText flag
+		/// Attribute type.
 		/// </summary>
-		//[DxfCodeValue(280)]
-		//TODO: Check the dxf code of Attribute type.
+		[DxfCodeValue(71)]
 		public AttributeType AttributeType { get; set; } = AttributeType.SingleLine;
 
 		public bool IsReallyLocked { get; set; }
