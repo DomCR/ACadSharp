@@ -63,6 +63,8 @@ namespace ACadSharp.Entities
 
 		public bool IsReallyLocked { get; set; }
 
+		public MText MText { get; set; }
+
 		private string _tag = string.Empty;
 
 		public AttributeBase() : base() { }
