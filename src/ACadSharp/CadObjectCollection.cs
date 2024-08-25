@@ -6,20 +6,26 @@ using System.Linq;
 
 namespace ACadSharp
 {
-	public class CadObjectCollection<T> : IObservableCollection<T>
+	/// <summary>
+	/// Collection formed by <see cref="CadObject"/> managed by an owner.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public class CadObjectCollection<T> : IObservableCadCollection<T>
 		where T : CadObject
 	{
+		/// <inheritdoc/>
 		public event EventHandler<CollectionChangedEventArgs> OnAdd;
 
+		/// <inheritdoc/>
 		public event EventHandler<CollectionChangedEventArgs> OnRemove;
 
 		/// <summary>
-		/// Owner of the collection
+		/// Owner of the collection.
 		/// </summary>
 		public CadObject Owner { get; }
 
 		/// <summary>
-		/// Gets the number of elements that are contained in the collection
+		/// Gets the number of elements that are contained in the collection.
 		/// </summary>
 		public int Count { get { return this._entries.Count; } }
 
@@ -33,13 +39,17 @@ namespace ACadSharp
 
 		protected readonly HashSet<T> _entries = new HashSet<T>();
 
+		/// <summary>
+		/// Default constructor for a <see cref="CadObjectCollection{T}"/> with it's owner assigned.
+		/// </summary>
+		/// <param name="owner">Owner of the collection.</param>
 		public CadObjectCollection(CadObject owner)
 		{
 			this.Owner = owner;
 		}
 
 		/// <summary>
-		/// Add a <see cref="CadObject"/> to the collection, this method triggers <see cref="OnAdd"/>
+		/// Add a <see cref="CadObject"/> to the collection, this method triggers <see cref="OnAdd"/>.
 		/// </summary>
 		/// <param name="item"></param>
 		/// <exception cref="ArgumentException"></exception>
@@ -61,7 +71,7 @@ namespace ACadSharp
 		}
 
 		/// <summary>
-		/// Add multiple <see cref="CadObject"/> to the collection, this method triggers <see cref="OnAdd"/>
+		/// Add multiple <see cref="CadObject"/> to the collection, this method triggers <see cref="OnAdd"/>.
 		/// </summary>
 		/// <param name="items"></param>
 		public void AddRange(IEnumerable<T> items)
@@ -73,7 +83,7 @@ namespace ACadSharp
 		}
 
 		/// <summary>
-		/// Removes all elements from the Collection
+		/// Removes all elements from the Collection.
 		/// </summary>
 		public void Clear()
 		{
@@ -85,7 +95,7 @@ namespace ACadSharp
 		}
 
 		/// <summary>
-		/// Removes a <see cref="CadObject"/> from the collection, this method triggers <see cref="OnRemove"/>
+		/// Removes a <see cref="CadObject"/> from the collection, this method triggers <see cref="OnRemove"/>.
 		/// </summary>
 		/// <param name="item"></param>
 		/// <returns>The removed <see cref="CadObject"/></returns>

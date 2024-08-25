@@ -2,6 +2,9 @@
 {
 	public partial class Hatch
 	{
+		/// <summary>
+		/// Defines a hatch boundary.
+		/// </summary>
 		public partial class BoundaryPath
 		{
 			public enum EdgeType

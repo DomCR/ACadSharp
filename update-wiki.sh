@@ -1,6 +1,8 @@
 #!/bin/sh
 set -eu
 
+cd ./src
+
 echo "Restore project"
 dotnet restore
 

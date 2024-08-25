@@ -17,6 +17,8 @@ namespace ACadSharp.IO.DXF
 
 		public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
 
+		public override bool KeepUnknownNonGraphicalObjects => this.Configuration.KeepUnknownNonGraphicalObjects;
+
 		public DxfDocumentBuilder(ACadVersion version, CadDocument document, DxfReaderConfiguration configuration) : base(version, document)
 		{
 			this.Configuration = configuration;
@@ -64,6 +66,7 @@ namespace ACadSharp.IO.DXF
 				.OfType<CadEntityTemplate>()
 				.Where(o => o.CadObject.Owner == null))
 			{
+				item.CadObject.Handle = 0;
 				entities.Add(item.CadObject);
 			}
 

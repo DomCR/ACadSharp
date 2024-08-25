@@ -15,13 +15,13 @@ namespace ACadSharp.Entities
 				public override EdgeType Type => EdgeType.Polyline;
 
 				/// <summary>
-				/// The polyline has bulges with value different than 0
+				/// The polyline has bulges with value different than 0.
 				/// </summary>
 				[DxfCodeValue(72)]
 				public bool HasBulge => this.Bulges.Any(b => b != 0);
 
 				/// <summary>
-				/// Is closed flag
+				/// Is closed flag.
 				/// </summary>
 				[DxfCodeValue(73)]
 				public bool IsClosed { get; set; }
@@ -35,8 +35,11 @@ namespace ACadSharp.Entities
 				[DxfCodeValue(DxfReferenceType.Optional, 42)]
 				public IEnumerable<double> Bulges { get { return this.Vertices.Select(v => v.Z); } }
 
+				/// <summary>
+				/// Position values are only X and Y.
+				/// </summary>
 				/// <remarks>
-				/// Position values are only X and Y
+				/// The vertex bulge is stored in the Z component.
 				/// </remarks>
 				[DxfCodeValue(DxfReferenceType.Count, 93)]
 				public List<XYZ> Vertices { get; set; } = new();

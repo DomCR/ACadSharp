@@ -26,7 +26,7 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.LwPolyline;
 
 		/// <summary>
-		/// Polyline flags
+		/// Polyline flags.
 		/// </summary>
 		[DxfCodeValue(70)]
 		public LwPolylineFlags Flags { get; set; }
@@ -84,13 +84,16 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <inheritdoc/>
 		IEnumerable<IVertex> IPolyline.Vertices { get { return this.Vertices; } }
 
+		/// <inheritdoc/>
 		public IEnumerable<Entity> Explode()
 		{
 			return Polyline.Explode(this);
 		}
 
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
 			if (this.Vertices.Count < 2)

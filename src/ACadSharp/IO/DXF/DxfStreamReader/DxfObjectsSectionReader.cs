@@ -70,13 +70,34 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.ObjectXRecord:
 					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), this.readXRecord);
 				default:
-					this._builder.Notify($"Object not implemented: {this._reader.ValueAsString}", NotificationType.NotImplemented);
+					DxfMap map = DxfMap.Create<CadObject>();
+					CadUnknownNonGraphicalObjectTemplate unknownEntityTemplate = null;
+					if (this._builder.DocumentToBuild.Classes.TryGetByName(this._reader.ValueAsString, out Classes.DxfClass dxfClass))
+					{
+						this._builder.Notify($"NonGraphicalObject not supported read as an UnknownNonGraphicalObject: {this._reader.ValueAsString}", NotificationType.NotImplemented);
+						unknownEntityTemplate = new CadUnknownNonGraphicalObjectTemplate(new UnknownNonGraphicalObject(dxfClass));
+					}
+					else
+					{
+						this._builder.Notify($"UnknownNonGraphicalObject not supported: {this._reader.ValueAsString}", NotificationType.NotImplemented);
+					}
+
+					this._reader.ReadNext();
+
 					do
 					{
+						if (unknownEntityTemplate != null && this._builder.KeepUnknownEntities)
+						{
+							this.readCommonCodes(unknownEntityTemplate, out bool isExtendedData, map);
+							if (isExtendedData)
+								continue;
+						}
+
 						this._reader.ReadNext();
 					}
 					while (this._reader.DxfCode != DxfCode.Start);
-					return null;
+
+					return unknownEntityTemplate;
 			}
 		}
 

@@ -312,7 +312,17 @@ namespace ACadSharp.IO.DWG
 
 			//R13 - R14 Only:
 			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1014)
+			{
 				this.updateHandleReader();
+			}
+
+			this.readEntityMode(template);
+		}
+
+		private void readEntityMode(CadEntityTemplate template)
+		{
+			//Get the cad object as an entity
+			Entity entity = template.CadObject;
 
 			//Common:
 			//6B : Flags
@@ -996,8 +1006,6 @@ namespace ACadSharp.IO.DWG
 				case "LWPOLYLINE":
 					template = this.readLWPolyline();
 					break;
-				case "MATERIAL":
-					break;
 				case "MESH":
 					template = this.readMesh();
 					break;
@@ -1019,9 +1027,9 @@ namespace ACadSharp.IO.DWG
 				case "SORTENTSTABLE":
 					template = this.readSortentsTable();
 					break;
-				case "VISUALSTYLE":
-					template = this.readVisualStyle();
-					break;
+				//case "VISUALSTYLE":
+				//	template = this.readVisualStyle();
+				//	break;
 				case "WIPEOUT":
 					template = this.readCadImage(new Wipeout());
 					break;
@@ -1036,6 +1044,11 @@ namespace ACadSharp.IO.DWG
 			{
 				template = this.readUnknownEntity(c);
 				this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownEntity", NotificationType.Warning);
+			}
+			else if (template == null && !c.IsAnEntity)
+			{
+				template = this.readUnknownNonGraphicalObject(c);
+				this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownNonGraphicalObject", NotificationType.Warning);
 			}
 
 			if (template == null)
@@ -1053,9 +1066,17 @@ namespace ACadSharp.IO.DWG
 			UnknownEntity entity = new UnknownEntity(dxfClass);
 			CadUnknownEntityTemplate template = new CadUnknownEntityTemplate(entity);
 
-			this._builder.UnknownEntities.Add(entity);
-
 			this.readCommonEntityData(template);
+
+			return template;
+		}
+
+		private CadTemplate readUnknownNonGraphicalObject(DxfClass dxfClass)
+		{
+			UnknownNonGraphicalObject obj = new UnknownNonGraphicalObject(dxfClass);
+			CadUnknownNonGraphicalObjectTemplate template = new CadUnknownNonGraphicalObjectTemplate(obj);
+
+			this.readCommonNonEntityData(template);
 
 			return template;
 		}
@@ -1073,11 +1094,11 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readAttribute()
 		{
 			AttributeEntity att = new AttributeEntity();
-			CadTextEntityTemplate template = new CadTextEntityTemplate(att);
+			CadAttributeTemplate template = new CadAttributeTemplate(att);
 
 			this.readCommonTextData(template);
 
-			this.readCommonAttData(att);
+			this.readCommonAttData(template);
 
 			return template;
 		}
@@ -1085,11 +1106,11 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readAttributeDefinition()
 		{
 			AttributeDefinition attdef = new AttributeDefinition();
-			CadTextEntityTemplate template = new CadTextEntityTemplate(attdef);
+			CadAttributeTemplate template = new CadAttributeTemplate(attdef);
 
 			this.readCommonTextData(template);
 
-			this.readCommonAttData(attdef);
+			this.readCommonAttData(template);
 
 			//R2010+:
 			if (this.R2010Plus)
@@ -1206,8 +1227,10 @@ namespace ACadSharp.IO.DWG
 			template.StyleHandle = this.handleReference();
 		}
 
-		private void readCommonAttData(AttributeBase att)
+		private void readCommonAttData(CadAttributeTemplate template)
 		{
+			AttributeBase att = template.CadObject as AttributeBase;
+
 			//R2010+:
 			if (this.R2010Plus)
 			{
@@ -1229,6 +1252,14 @@ namespace ACadSharp.IO.DWG
 					//MTEXT fields … Here all fields of an embedded MTEXT object
 					//are written, starting from the Entmode
 					//(entity mode). The owner handle can be 0.
+					att.MText = new MText();
+					CadTextEntityTemplate mtextTemplate = new CadTextEntityTemplate(att.MText);
+					template.MTextTemplate = mtextTemplate;
+
+					this.readEntityMode(mtextTemplate);
+
+					this.readMText(mtextTemplate, false);
+
 					short dataSize = this._objectReader.ReadBitShort();
 					if (dataSize > 0)
 					{
@@ -2585,7 +2616,17 @@ namespace ACadSharp.IO.DWG
 			MText mtext = new MText();
 			CadTextEntityTemplate template = new CadTextEntityTemplate(mtext);
 
-			this.readCommonEntityData(template);
+			return this.readMText(template, true);
+		}
+
+		private CadTemplate readMText(CadTextEntityTemplate template, bool readCommonData)
+		{
+			MText mtext = template.CadObject as MText;
+
+			if (readCommonData)
+			{
+				this.readCommonEntityData(template);
+			}
 
 			//Insertion pt3 BD 10 First picked point. (Location relative to text depends on attachment point (71).)
 			mtext.InsertPoint = this._objectReader.Read3BitDouble();
@@ -4879,12 +4920,14 @@ namespace ACadSharp.IO.DWG
 				CadHatchTemplate.CadBoundaryPathTemplate pathTemplate = new CadHatchTemplate.CadBoundaryPathTemplate();
 
 				//Pathflag BL 92 Path flag
-				pathTemplate.Path.Flags = (BoundaryPathFlags)this._objectReader.ReadBitLong();
+				var flags = (BoundaryPathFlags)this._objectReader.ReadBitLong();
+
+				pathTemplate.Path.Flags = flags;
 
 				if (pathTemplate.Path.Flags.HasFlag(BoundaryPathFlags.Derived))
 					hasDerivedBoundary = true;
 
-				if (!pathTemplate.Path.Flags.HasFlag(BoundaryPathFlags.Polyline))
+				if (!flags.HasFlag(BoundaryPathFlags.Polyline))
 				{
 					//Numpathsegs BL 93 number of segments in this path
 					int nsegments = this._objectReader.ReadBitLong();

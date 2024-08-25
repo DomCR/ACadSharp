@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      with: 
+      with:
         submodules: true
     - name: Restore dependencies and Build
       working-directory: src

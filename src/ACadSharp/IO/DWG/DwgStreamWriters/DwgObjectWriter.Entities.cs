@@ -232,9 +232,15 @@ namespace ACadSharp.IO.DWG
 			{
 				this._writer.WriteByte((byte)att.AttributeType);
 
-				if (att.AttributeType == AttributeType.MultiLine || att.AttributeType == AttributeType.ConstantMultiLine)
+				if (att.AttributeType == AttributeType.MultiLine ||
+					att.AttributeType == AttributeType.ConstantMultiLine)
 				{
-					throw new NotImplementedException("Multiple line Attribute not implemented");
+					this.writeEntityMode(att.MText);
+
+					this.writeMText(att.MText);
+
+					//TODO: Write attribute MText data
+					this._writer.WriteBitShort(0);
 				}
 			}
 
@@ -850,7 +856,6 @@ namespace ACadSharp.IO.DWG
 
 				if (boundaryPath.Flags.HasFlag(BoundaryPathFlags.Polyline))
 				{
-					//TODO: Polyline may need to be treated different than the regular edges
 					Hatch.BoundaryPath.Polyline pline = boundaryPath.Edges.First() as Hatch.BoundaryPath.Polyline;
 
 					//bulgespresent B 72 bulges are present if 1
@@ -1159,7 +1164,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitShort((short)multiLeader.ContentType);
 			//  343 Text Style ID (handle/TextStyle)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, multiLeader.TextStyle); //	Hard/soft??
-			//  173 Text Left Attachment Type
+																							   //  173 Text Left Attachment Type
 			this._writer.WriteBitShort((short)multiLeader.TextLeftAttachment);
 			//  95  Text Right Attachement Type
 			this._writer.WriteBitShort((short)multiLeader.TextRightAttachment);
@@ -1173,7 +1178,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBit(multiLeader.TextFrame);
 			//  344 Block Content ID
 			this._writer.HandleReference(DwgReferenceType.HardPointer, multiLeader.BlockContent); //	Hard/soft??
-			//  93  Block Content Color
+																								  //  93  Block Content Color
 			this._writer.WriteCmColor(multiLeader.BlockContentColor);
 			//  10  Block Content Scale
 			this._writer.Write3BitDouble(multiLeader.BlockContentScale);
@@ -1189,7 +1194,8 @@ namespace ACadSharp.IO.DWG
 			//	BL Number of Block Labels 
 			int blockLabelCount = multiLeader.BlockAttributes.Count;
 			this._writer.WriteBitLong(blockLabelCount);
-			for (int bl = 0; bl < blockLabelCount; bl++) {
+			for (int bl = 0; bl < blockLabelCount; bl++)
+			{
 				//  330 Block Attribute definition handle (hard pointer)
 				MultiLeader.BlockAttribute blockAttribute = multiLeader.BlockAttributes[bl];
 				this._writer.HandleReference(DwgReferenceType.HardPointer, blockAttribute.AttributeDefinition);
@@ -1210,27 +1216,31 @@ namespace ACadSharp.IO.DWG
 			//	45	BD	ScaleFactor
 			this._writer.WriteBitDouble(multiLeader.ScaleFactor);
 
-			if (this.R2010Plus) {
+			if (this.R2010Plus)
+			{
 				//  271 Text attachment direction for MText contents
-					this._writer.WriteBitShort((short)multiLeader.TextAttachmentDirection);
+				this._writer.WriteBitShort((short)multiLeader.TextAttachmentDirection);
 				//  272 Bottom text attachment direction (sequence my be interchanged)
 				this._writer.WriteBitShort((short)multiLeader.TextBottomAttachment);
 				//  273 Top text attachment direction
 				this._writer.WriteBitShort((short)multiLeader.TextTopAttachment);
 			}
 
-			if (R2013Plus) {
+			if (R2013Plus)
+			{
 				//	295 Leader extended to text
 				this._writer.WriteBit(multiLeader.ExtendedToText);
 			}
 		}
 
-		private void writeMultiLeaderAnnotContext(MultiLeaderAnnotContext annotContext) {
+		private void writeMultiLeaderAnnotContext(MultiLeaderAnnotContext annotContext)
+		{
 
 			//	BL	-	Number of leader roots
 			int leaderRootCount = annotContext.LeaderRoots.Count;
 			this._writer.WriteBitLong(leaderRootCount);
-			for (int i = 0; i < leaderRootCount; i++) {
+			for (int i = 0; i < leaderRootCount; i++)
+			{
 				writeLeaderRoot(annotContext.LeaderRoots[i]);
 			}
 
@@ -1255,7 +1265,8 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitShort((short)annotContext.BlockContentConnection);
 			//	B	290	Has text contents
 			this._writer.WriteBit(annotContext.HasTextContents);
-			if (annotContext.HasTextContents) {
+			if (annotContext.HasTextContents)
+			{
 				//	TV	304	Text label
 				this._writer.WriteVariableText(annotContext.TextLabel);
 				//	3BD	11	Normal vector
@@ -1307,7 +1318,8 @@ namespace ACadSharp.IO.DWG
 				//  BD	144	Column size
 				int columnSizesCount = annotContext.ColumnSizes.Count;
 				this._writer.WriteBitLong(columnSizesCount);
-				for (int i = 0; i < columnSizesCount; i++) {
+				for (int i = 0; i < columnSizesCount; i++)
+				{
 					this._writer.WriteBitDouble(annotContext.ColumnSizes[i]);
 				}
 
@@ -1316,8 +1328,9 @@ namespace ACadSharp.IO.DWG
 				//	B	Unknown
 				this._writer.WriteBit(false);
 			}
-			
-			else if (annotContext.HasContentsBlock) {
+
+			else if (annotContext.HasContentsBlock)
+			{
 				this._writer.WriteBit(annotContext.HasContentsBlock);
 
 				//B	296	Has contents block
@@ -1430,7 +1443,8 @@ namespace ACadSharp.IO.DWG
 			//	BL	-	Number of points
 			//	3BD		10		Point
 			this._writer.WriteBitLong(leaderLine.Points.Count);
-			foreach (XYZ point in leaderLine.Points) {
+			foreach (XYZ point in leaderLine.Points)
+			{
 				//	3BD		10		Point
 				this._writer.Write3BitDouble(point);
 			}
@@ -1438,7 +1452,8 @@ namespace ACadSharp.IO.DWG
 			//	Add optional Break Info (one or more)
 			//	BL	Break info count
 			this._writer.WriteBitLong(leaderLine.BreakInfoCount);
-			if (leaderLine.BreakInfoCount > 0) {
+			if (leaderLine.BreakInfoCount > 0)
+			{
 				//	BL	90		Segment index
 				this._writer.WriteBitLong(leaderLine.SegmentIndex);
 
@@ -1456,7 +1471,8 @@ namespace ACadSharp.IO.DWG
 			//	BL	91	Leader line index
 			this._writer.WriteBitLong(leaderLine.Index);
 
-			if (this.R2010Plus) {
+			if (this.R2010Plus)
+			{
 				//	BS	170	Leader type(0 = invisible leader, 1 = straight leader, 2 = spline leader)
 				this._writer.WriteBitShort((short)leaderLine.PathType);
 				//	CMC	92	Line color
@@ -2020,7 +2036,6 @@ namespace ACadSharp.IO.DWG
 
 		private void writeMText(MText mtext)
 		{
-
 			//Insertion pt3 BD 10 First picked point. (Location relative to text depends on attachment point (71).)
 			this._writer.Write3BitDouble(mtext.InsertPoint);
 			//Extrusion 3BD 210 Undocumented; appears in DXF and entget, but ACAD doesn't even bother to adjust it to unit length.
