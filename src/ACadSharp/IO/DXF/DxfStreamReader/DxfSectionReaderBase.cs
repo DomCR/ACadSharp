@@ -224,14 +224,7 @@ namespace ACadSharp.IO.DXF
 					}
 					while (this._reader.DxfCode != DxfCode.Start);
 
-					if (this._builder.Configuration.KeepUnknownEntities)
-					{
-						return unknownEntityTemplate;
-					}
-					else
-					{
-						return null;
-					}
+					return unknownEntityTemplate;
 			}
 		}
 

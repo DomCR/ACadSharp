@@ -116,6 +116,7 @@ namespace ACadSharp.Tests.IO.DXF
 		public override void AssertDocumentTree(FileModel test)
 		{
 			DxfReaderConfiguration configuration = new DxfReaderConfiguration();
+			configuration.KeepUnknownNonGraphicalObjects = true;
 			configuration.KeepUnknownEntities = true;
 
 			CadDocument doc;

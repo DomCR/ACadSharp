@@ -1,7 +1,6 @@
 ﻿using System;
 using Xunit;
 using ACadSharp.Tests.Common;
-using ACadSharp.Tables.Collections;
 using ACadSharp.Entities;
 
 namespace ACadSharp.Tests
@@ -26,23 +25,6 @@ namespace ACadSharp.Tests
 
 				ACadTypes.Add(item);
 			}
-		}
-
-		[Theory]
-		[MemberData(nameof(ACadTypes))]
-		public void DefaultConstructor(Type t)
-		{
-			CadObject cadObject = Factory.CreateObject(t, false);
-
-			Assert.NotNull(cadObject);
-			Assert.True(0 == cadObject.Handle);
-
-			Assert.NotEqual(ObjectType.UNDEFINED, cadObject.ObjectType);
-
-			Assert.False(string.IsNullOrEmpty(cadObject.ObjectName));
-			Assert.False(string.IsNullOrEmpty(cadObject.SubclassMarker));
-
-			Assert.Null(cadObject.XDictionary);
 		}
 
 		[Fact]

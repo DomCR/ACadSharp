@@ -1006,8 +1006,6 @@ namespace ACadSharp.IO.DWG
 				case "LWPOLYLINE":
 					template = this.readLWPolyline();
 					break;
-				case "MATERIAL":
-					break;
 				case "MESH":
 					template = this.readMesh();
 					break;
@@ -1029,9 +1027,9 @@ namespace ACadSharp.IO.DWG
 				case "SORTENTSTABLE":
 					template = this.readSortentsTable();
 					break;
-				case "VISUALSTYLE":
-					template = this.readVisualStyle();
-					break;
+				//case "VISUALSTYLE":
+				//	template = this.readVisualStyle();
+				//	break;
 				case "WIPEOUT":
 					template = this.readCadImage(new Wipeout());
 					break;
@@ -1046,6 +1044,11 @@ namespace ACadSharp.IO.DWG
 			{
 				template = this.readUnknownEntity(c);
 				this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownEntity", NotificationType.Warning);
+			}
+			else if (template == null && !c.IsAnEntity)
+			{
+				template = this.readUnknownNonGraphicalObject(c);
+				this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownNonGraphicalObject", NotificationType.Warning);
 			}
 
 			if (template == null)
@@ -1063,9 +1066,17 @@ namespace ACadSharp.IO.DWG
 			UnknownEntity entity = new UnknownEntity(dxfClass);
 			CadUnknownEntityTemplate template = new CadUnknownEntityTemplate(entity);
 
-			this._builder.UnknownEntities.Add(entity);
-
 			this.readCommonEntityData(template);
+
+			return template;
+		}
+
+		private CadTemplate readUnknownNonGraphicalObject(DxfClass dxfClass)
+		{
+			UnknownNonGraphicalObject obj = new UnknownNonGraphicalObject(dxfClass);
+			CadUnknownNonGraphicalObjectTemplate template = new CadUnknownNonGraphicalObjectTemplate(obj);
+
+			this.readCommonNonEntityData(template);
 
 			return template;
 		}

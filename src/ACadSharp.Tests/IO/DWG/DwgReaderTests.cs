@@ -56,6 +56,7 @@ namespace ACadSharp.Tests.IO.DWG
 		public override void AssertDocumentTree(FileModel test)
 		{
 			DwgReaderConfiguration configuration = new DwgReaderConfiguration();
+			configuration.KeepUnknownNonGraphicalObjects = true;
 			configuration.KeepUnknownEntities = true;
 
 			CadDocument doc = DwgReader.Read(test.Path, configuration);

@@ -1,15 +1,14 @@
 ﻿using ACadSharp.Classes;
-using CSMath;
 
-namespace ACadSharp.Entities
+namespace ACadSharp.Objects
 {
 	/// <summary>
-	/// Class that holds the basic information for an unknown <see cref="Entity"/>.
+	/// Class that holds the basic information for an unknown <see cref="NonGraphicalObject"/>.
 	/// </summary>
 	/// <remarks>
-	/// Unknown entities may appear in the <see cref="CadDocument"/> if the cad file contains proxies or entities not yet supported by ACadSharp.
+	/// Unknown entities may appear in the <see cref="CadDocument"/> if the cad file contains proxies or objects not yet supported by ACadSharp.
 	/// </remarks>
-	public class UnknownEntity : Entity
+	public class UnknownNonGraphicalObject : NonGraphicalObject
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNDEFINED;
@@ -51,18 +50,9 @@ namespace ACadSharp.Entities
 		/// </summary>
 		public DxfClass DxfClass { get; }
 
-		internal UnknownEntity(DxfClass dxfClass)
+		internal UnknownNonGraphicalObject(DxfClass dxfClass)
 		{
 			this.DxfClass = dxfClass;
-		}
-
-		/// <inheritdoc/>
-		/// <remarks>
-		/// An Unknown Entity does not have any geometric shape, therfore it's bounding box will be always 0
-		/// </remarks>
-		public override BoundingBox GetBoundingBox()
-		{
-			return BoundingBox.Null;
 		}
 	}
 }
