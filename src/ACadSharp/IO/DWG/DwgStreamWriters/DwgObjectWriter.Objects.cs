@@ -133,6 +133,11 @@ namespace ACadSharp.IO.DWG
 					return;
 				}
 
+				if (item is UnknownNonGraphicalObject)
+				{
+					return;
+				}
+
 				this._writer.WriteVariableText(item.Name);
 				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Handle);
 			}
