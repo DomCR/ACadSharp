@@ -14,12 +14,21 @@
 		public bool Failsafe { get; set; } = true;
 
 		/// <summary>
-		/// The reader will try to read and add to the document all <see cref="ObjectType.UNLISTED"/> that are linked to a <see cref="Classes. DxfClass"/> 
+		/// The reader will try to read and add to the document all <see cref="ObjectType.UNLISTED"/> that are linked to a <see cref="Classes.DxfClass"/> 
 		/// which may be a proxy or an entity that is not yet supported by ACadSharp, default value is set to false.
 		/// </summary>
 		/// <remarks>
-		/// These entities do not contain any geometric information and will be ignored by the writers
+		/// These entities do not contain any geometric information and will be ignored by the writers.
 		/// </remarks>
 		public bool KeepUnknownEntities { get; set; } = false;
+
+		/// <summary>
+		/// The reader will try to read and add to the document all <see cref="ObjectType.UNLISTED"/> that are linked to a <see cref="Classes.DxfClass"/> 
+		/// which may be a proxy or an NonGraphicalObject that is not yet supported by ACadSharp, default value is set to false.
+		/// </summary>
+		/// <remarks>
+		/// These NonGraphicalObjects do not contain any information and will be ignored by the writers.
+		/// </remarks>
+		public bool KeepUnknownNonGraphicalObjects { get; set; } = false;
 	}
 }

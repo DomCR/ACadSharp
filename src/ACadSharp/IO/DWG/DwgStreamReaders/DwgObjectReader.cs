@@ -1066,8 +1066,6 @@ namespace ACadSharp.IO.DWG
 			UnknownEntity entity = new UnknownEntity(dxfClass);
 			CadUnknownEntityTemplate template = new CadUnknownEntityTemplate(entity);
 
-			this._builder.UnknownEntities.Add(entity);
-
 			this.readCommonEntityData(template);
 
 			return template;
@@ -1077,8 +1075,6 @@ namespace ACadSharp.IO.DWG
 		{
 			UnknownNonGraphicalObject obj = new UnknownNonGraphicalObject(dxfClass);
 			CadUnknownNonGraphicalObjectTemplate template = new CadUnknownNonGraphicalObjectTemplate(obj);
-
-			this._builder.UnknownNonGraphicalObjects.Add(obj);
 
 			this.readCommonNonEntityData(template);
 
