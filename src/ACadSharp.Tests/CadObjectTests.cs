@@ -1,7 +1,6 @@
 ﻿using System;
 using Xunit;
 using ACadSharp.Tests.Common;
-using ACadSharp.Tables.Collections;
 using ACadSharp.Entities;
 
 namespace ACadSharp.Tests
@@ -12,7 +11,7 @@ namespace ACadSharp.Tests
 
 		static CadObjectTests()
 		{
-			foreach (Type item in DataFactory.GetTypes<CadObject>())
+			foreach (Type item in DataFactory.GetTypes<Entity>())
 			{
 				if (item == typeof(UnknownEntity))
 				{
