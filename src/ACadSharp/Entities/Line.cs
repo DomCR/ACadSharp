@@ -24,7 +24,7 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.Line;
 
 		/// <summary>
-		/// Specifies the distance a 2D AutoCAD object is extruded above or below its elevation.
+		/// Specifies the distance a 2D object is extruded above or below its elevation.
 		/// </summary>
 		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;
@@ -48,12 +48,12 @@ namespace ACadSharp.Entities
 		public XYZ EndPoint { get; set; } = XYZ.Zero;
 
 		/// <summary>
-		/// Default constructor
+		/// Default constructor.
 		/// </summary>
 		public Line() : base() { }
 
 		/// <summary>
-		/// Line constructor
+		/// Constructor with the start and end.
 		/// </summary>
 		/// <param name="start"></param>
 		/// <param name="end"></param>
@@ -61,6 +61,15 @@ namespace ACadSharp.Entities
 		{
 			this.StartPoint = start;
 			this.EndPoint = end;
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			var min = new XYZ(System.Math.Min(this.StartPoint.X, this.EndPoint.X), System.Math.Min(this.StartPoint.Y, this.EndPoint.Y), System.Math.Min(this.StartPoint.Z, this.EndPoint.Z));
+			var max = new XYZ(System.Math.Max(this.StartPoint.X, this.EndPoint.X), System.Math.Max(this.StartPoint.Y, this.EndPoint.Y), System.Math.Max(this.StartPoint.Z, this.EndPoint.Z));
+
+			return new BoundingBox(min, max);
 		}
 	}
 }
