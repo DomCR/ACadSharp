@@ -28,6 +28,7 @@ namespace ACadSharp.IO.DWG
 				case MultiLeaderAnnotContext:
 				case MultiLeaderStyle:
 				case SortEntitiesTable:
+				case UnknownNonGraphicalObject:
 				case VisualStyle:
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
 					return;

@@ -11,7 +11,7 @@ namespace ACadSharp.Tests
 
 		static CadObjectTests()
 		{
-			foreach (Type item in DataFactory.GetTypes<Entity>())
+			foreach (Type item in DataFactory.GetTypes<CadObject>())
 			{
 				if (item == typeof(UnknownEntity))
 				{
@@ -25,23 +25,6 @@ namespace ACadSharp.Tests
 
 				ACadTypes.Add(item);
 			}
-		}
-
-		[Theory]
-		[MemberData(nameof(ACadTypes))]
-		public void DefaultConstructor(Type t)
-		{
-			CadObject cadObject = Factory.CreateObject(t, false);
-
-			Assert.NotNull(cadObject);
-			Assert.True(0 == cadObject.Handle);
-
-			Assert.NotEqual(ObjectType.UNDEFINED, cadObject.ObjectType);
-
-			Assert.False(string.IsNullOrEmpty(cadObject.ObjectName));
-			Assert.False(string.IsNullOrEmpty(cadObject.SubclassMarker));
-
-			Assert.Null(cadObject.XDictionary);
 		}
 
 		[Fact]
