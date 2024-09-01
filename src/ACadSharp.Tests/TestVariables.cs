@@ -9,10 +9,12 @@ namespace ACadSharp.Tests
 		public static string DesktopFolder { get { return Environment.GetFolderPath(Environment.SpecialFolder.Desktop); } }
 
 		public static string SamplesFolder { get { return EnvironmentVars.Get<string>("SAMPLES_FOLDER"); } }
-	
+
 		public static string OutputSamplesFolder { get { return EnvironmentVars.Get<string>("OUTPUT_SAMPLES_FOLDER"); } }
 
 		public static string OutputSingleCasesFolder { get { return EnvironmentVars.Get<string>("OUTPUT_SINGLE_CASES_FOLDER"); } }
+
+		public static string OutputSvgFolder { get { return EnvironmentVars.Get<string>("OUTPUT_SVG"); } }
 
 		public static bool LocalEnv { get { return EnvironmentVars.Get<bool>("LOCAL_ENV"); } }
 
@@ -27,6 +29,7 @@ namespace ACadSharp.Tests
 			EnvironmentVars.SetIfNull("SAMPLES_FOLDER", "../../../../../samples/");
 			EnvironmentVars.SetIfNull("OUTPUT_SAMPLES_FOLDER", "../../../../../samples/out");
 			EnvironmentVars.SetIfNull("OUTPUT_SINGLE_CASES_FOLDER", "../../../../../samples/out/single_cases");
+			EnvironmentVars.SetIfNull("OUTPUT_SVG", "../../../../../samples/out/svg");
 			EnvironmentVars.SetIfNull("LOCAL_ENV", "true");
 			EnvironmentVars.SetIfNull("DELTA", "0.00001");
 			EnvironmentVars.SetIfNull("DECIMAL_PRECISION", "5");
@@ -35,14 +38,16 @@ namespace ACadSharp.Tests
 
 		public static void CreateOutputFolders()
 		{
-			if (!Directory.Exists(OutputSamplesFolder))
-			{
-				Directory.CreateDirectory(OutputSamplesFolder);
-			}
+			craateFolderIfDoesNotExist(OutputSamplesFolder);
+			craateFolderIfDoesNotExist(OutputSingleCasesFolder);
+			craateFolderIfDoesNotExist(OutputSvgFolder);
+		}
 
-			if (!Directory.Exists(OutputSingleCasesFolder))
+		private static void craateFolderIfDoesNotExist(string path)
+		{
+			if (!Directory.Exists(path))
 			{
-				Directory.CreateDirectory(OutputSingleCasesFolder);
+				Directory.CreateDirectory(path);
 			}
 		}
 	}

@@ -3,12 +3,6 @@ using System.Text;
 using System;
 using System.IO;
 using ACadSharp.Classes;
-using ACadSharp.IO;
-using ACadSharp.Exceptions;
-using ACadSharp.IO.DWG;
-using ACadSharp.IO.DWG.DwgStreamWriters;
-using CSUtilities.IO;
-using System.Collections.Generic;
 
 namespace ACadSharp.IO
 {
@@ -18,12 +12,7 @@ namespace ACadSharp.IO
 	public abstract class CadWriterBase<T> : ICadWriter
 		where T : CadWriterConfiguration, new()
 	{
-		/// <summary>
-		/// Notification event to get information about the writing process.
-		/// </summary>
-		/// <remarks>
-		/// The notification system informs about any issue or non critical errors during the writing.
-		/// </remarks>
+		/// <inheritdoc/>
 		public event NotificationEventHandler OnNotification;
 
 		/// <summary>
