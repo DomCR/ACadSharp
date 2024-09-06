@@ -17,6 +17,11 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Viewport)]
 	public class Viewport : Entity
 	{
+		/// <summary>
+		/// Paper view Id, it indicates that the viewport acts as a paper size.
+		/// </summary>
+		public const int PaperViewId = 1;
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.VIEWPORT;
 
@@ -45,10 +50,32 @@ namespace ACadSharp.Entities
 		public double Height { get; set; }
 
 		/// <summary>
-		/// Viewport ID
+		/// Viewport ID.
 		/// </summary>
+		/// <remarks>
+		/// The first value for a PaperSpace will represent the paper image in the screen.
+		/// </remarks>
 		[DxfCodeValue(69)]
-		public short Id { get; set; } = 1;
+		public short Id
+		{
+			get
+			{
+				if (this.Owner is BlockRecord record)
+				{
+					short id = 0;
+					foreach (Viewport viewport in record.Viewports)
+					{
+						id += 1;
+						if (viewport == this)
+						{
+							return id;
+						}
+					}
+				}
+
+				return 0;
+			}
+		}
 
 		/// <summary>
 		/// View center point(in DCS)
@@ -286,6 +313,14 @@ namespace ACadSharp.Entities
 
 		//Soft pointer reference to viewport object (for layer VP property override)
 
+		public bool RepresentsPaper
+		{
+			get
+			{
+				return this.Id == PaperViewId;
+			}
+		}
+
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
@@ -299,8 +334,8 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			XYZ min = new XYZ(Center.X - this.Width, Center.Y - this.Height, Center.Z);
-			XYZ max = new XYZ(Center.X + this.Width, Center.Y + this.Height, Center.Z);
+			XYZ min = new XYZ(this.Center.X - this.Width / 2, this.Center.Y - this.Height / 2, this.Center.Z);
+			XYZ max = new XYZ(this.Center.X + this.Width / 2, this.Center.Y + this.Height / 2, this.Center.Z);
 
 			return new BoundingBox(min, max);
 		}
