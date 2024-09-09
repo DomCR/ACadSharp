@@ -47,7 +47,7 @@ private static void onNotification(object sender, NotificationEventArgs e)
 }
 ```
 
-For more examples [check](https://github.com/DomCR/ACadSharp/tree/master/ACadSharp.Examples).
+For more examples [check](https://github.com/DomCR/ACadSharp/tree/master/src/ACadSharp.Examples).
 
 For more information visit the :construction: [wiki](https://github.com/DomCR/ACadSharp/wiki) :construction: .
 
