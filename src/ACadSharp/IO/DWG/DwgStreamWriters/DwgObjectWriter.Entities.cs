@@ -19,7 +19,6 @@ namespace ACadSharp.IO.DWG
 			{
 				case UnknownEntity:
 				case AttributeEntity:
-				case Solid3D:
 				case Mesh:
 					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return;
