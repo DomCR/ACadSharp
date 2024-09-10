@@ -356,6 +356,39 @@ namespace ACadSharp.Tests.IO
 				this.Document.Layers.Add(new Layer("我的自定义层"));
 			}
 
+			public void AddBlockWithAttributes()
+			{
+				BlockRecord record = new("my_block");
+
+				record.Entities.Add(new Circle
+				{
+					Radius = 10,
+					Center = XYZ.Zero
+				});
+
+				record.Entities.Add(new AttributeDefinition()
+				{
+					InsertPoint = XYZ.Zero,
+					Prompt = "Name_custom",
+					Tag = "CIRCLE_NAME",
+					Value = "Circilla",
+					HorizontalAlignment = TextHorizontalAlignment.Left,
+					Height = 18,
+					AttributeType = AttributeType.SingleLine,
+				});
+
+				this.Document.BlockRecords.Add(record);
+
+				var insert = new Insert(record)
+				{
+					InsertPoint = new XYZ(0, 0, 0),
+					XScale = 0.8,
+					YScale = 0.8,
+				};
+
+				this.Document.Entities.Add(insert);
+			}
+
 			public void Deserialize(IXunitSerializationInfo info)
 			{
 				this.Name = info.GetValue<string>(nameof(this.Name));
@@ -406,6 +439,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.ChangedEncoding)));
+			Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
 		}
 
 		protected string getPath(string name, string ext, ACadVersion version)
