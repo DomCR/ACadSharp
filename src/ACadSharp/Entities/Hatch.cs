@@ -135,7 +135,7 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			return BoundingBox.FromPoints(this.SeedPoints.Cast<XYZ>());
+			return BoundingBox.FromPoints(this.SeedPoints.Select(x=>(XYZ)x));
 		}
 
 		/// <inheritdoc/>
