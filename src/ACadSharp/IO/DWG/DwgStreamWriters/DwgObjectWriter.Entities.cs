@@ -1722,8 +1722,6 @@ namespace ACadSharp.IO.DWG
 
 		private void writeSolid(Solid solid)
 		{
-			this.writeCommonEntityData(solid);
-
 			//Thickness BT 39
 			this._writer.WriteBitThickness(solid.Thickness);
 
@@ -2173,8 +2171,6 @@ namespace ACadSharp.IO.DWG
 
 		private void writeFaceRecord(VertexFaceRecord face)
 		{
-			this.writeCommonEntityData(face);
-
 			//Vert index BS 71 1 - based vertex index(see DXF doc)
 			this._writer.WriteBitShort(face.Index1);
 			//Vert index BS 72 1 - based vertex index(see DXF doc)
@@ -2225,8 +2221,6 @@ namespace ACadSharp.IO.DWG
 
 		private void writeVertex(Vertex vertex)
 		{
-			this.writeCommonEntityData(vertex);
-
 			//Flags EC 70 NOT bit-pair-coded.
 			this._writer.WriteByte((byte)vertex.Flags);
 			//Point 3BD 10
@@ -2235,8 +2229,6 @@ namespace ACadSharp.IO.DWG
 
 		private void writeTolerance(Tolerance tolerance)
 		{
-			this.writeCommonEntityData(tolerance);
-
 			//R13 - R14 Only:
 			if (this.R13_14Only)
 			{
