@@ -141,9 +141,9 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.ValueAsString)
 			{
 				case DxfFileToken.EntityAttribute:
-					return this.readEntityCodes<AttributeEntity>(new CadTextEntityTemplate(new AttributeEntity()), this.readAttributeDefinition);
+					return this.readEntityCodes<AttributeEntity>(new CadAttributeTemplate(new AttributeEntity()), this.readAttributeDefinition);
 				case DxfFileToken.EntityAttributeDefinition:
-					return this.readEntityCodes<AttributeDefinition>(new CadTextEntityTemplate(new AttributeDefinition()), this.readAttributeDefinition);
+					return this.readEntityCodes<AttributeDefinition>(new CadAttributeTemplate(new AttributeDefinition()), this.readAttributeDefinition);
 				case DxfFileToken.EntityArc:
 					return this.readEntityCodes<Arc>(new CadEntityTemplate<Arc>(), this.readArc);
 				case DxfFileToken.EntityCircle:
@@ -224,14 +224,7 @@ namespace ACadSharp.IO.DXF
 					}
 					while (this._reader.DxfCode != DxfCode.Start);
 
-					if (this._builder.Configuration.KeepUnknownEntities)
-					{
-						return unknownEntityTemplate;
-					}
-					else
-					{
-						return null;
-					}
+					return unknownEntityTemplate;
 			}
 		}
 
@@ -306,14 +299,19 @@ namespace ACadSharp.IO.DXF
 		private bool readAttributeDefinition(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
 			DxfClassMap emap = map.SubClasses[template.CadObject.SubclassMarker];
-			CadTextEntityTemplate tmp = template as CadTextEntityTemplate;
+			CadAttributeTemplate tmp = template as CadAttributeTemplate;
 
 			switch (this._reader.Code)
 			{
-				//TODO: Implement multiline attribute def codes
 				case 44:
 				case 46:
+					return true;
 				case 101:
+					var att = tmp.CadObject as AttributeBase;
+					att.MText = new MText();
+					CadTextEntityTemplate mtextTemplate = new CadTextEntityTemplate(att.MText);
+					tmp.MTextTemplate = mtextTemplate;
+					this.readEntityCodes<MText>(mtextTemplate, this.readTextEntity);
 					return true;
 				default:
 					if (!this.tryAssignCurrentValue(template.CadObject, emap))
@@ -564,9 +562,15 @@ namespace ACadSharp.IO.DXF
 					CadVertexTemplate vertexTemplate = new CadVertexTemplate(v);
 					this.readEntityCodes<Vertex2D>(vertexTemplate, this.readVertex);
 
-					this._builder.AddTemplate(vertexTemplate);
-
-					template.VertexHandles.Add(v.Handle);
+					if (vertexTemplate.Vertex.Handle == 0)
+					{
+						template.PolyLine.Vertices.Add(vertexTemplate.Vertex);
+					}
+					else
+					{
+						template.VertexHandles.Add(vertexTemplate.Vertex.Handle);
+						this._builder.AddTemplate(vertexTemplate);
+					}
 				}
 
 				while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EndSequence)

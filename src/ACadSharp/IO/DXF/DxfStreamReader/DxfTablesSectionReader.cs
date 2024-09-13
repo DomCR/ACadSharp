@@ -91,6 +91,10 @@ namespace ACadSharp.IO.DXF
 					this._reader.ReadNext();
 				}
 			}
+			else if(this._reader.ValueAsString == DxfFileToken.EndTable)
+			{
+				return;
+			}
 			else
 			{
 				this._reader.ReadNext();

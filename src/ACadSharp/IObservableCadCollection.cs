@@ -3,7 +3,11 @@ using System.Collections.Generic;
 
 namespace ACadSharp
 {
-	public interface IObservableCollection<T> : IEnumerable<T>
+	/// <summary>
+	/// Events for an observed cad collection.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public interface IObservableCadCollection<T> : IEnumerable<T>
 		where T : CadObject
 	{
 		/// <summary>

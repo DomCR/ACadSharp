@@ -28,6 +28,7 @@ namespace ACadSharp.IO.DWG
 				case MultiLeaderAnnotContext:
 				case MultiLeaderStyle:
 				case SortEntitiesTable:
+				case UnknownNonGraphicalObject:
 				case VisualStyle:
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
 					return;
@@ -128,6 +129,11 @@ namespace ACadSharp.IO.DWG
 			foreach (var item in dictionary)
 			{
 				if (item is XRecord && !this.WriteXRecords)
+				{
+					return;
+				}
+
+				if (item is UnknownNonGraphicalObject)
 				{
 					return;
 				}
