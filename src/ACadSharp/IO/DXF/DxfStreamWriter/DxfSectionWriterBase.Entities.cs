@@ -101,7 +101,7 @@ namespace ACadSharp.IO.DXF
 				case Vertex vertex:
 					this.writeVertex(vertex);
 					break;
-				case Viewport viewport:
+				case ViewPort viewport:
 					this.writeViewport(viewport);
 					break;
 				case Wipeout wipeout:
@@ -1152,9 +1152,9 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(50, v.CurveTangent, map);
 		}
 
-		private void writeViewport(Viewport vp)
+		private void writeViewport(ViewPort vp)
 		{
-			DxfClassMap map = DxfClassMap.Create<Viewport>();
+			DxfClassMap map = DxfClassMap.Create<ViewPort>();
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Viewport);
 

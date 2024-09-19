@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Represents a <see cref="Viewport"/> entity.
+	/// Represents a <see cref="ViewPort"/> entity.
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.EntityViewport"/> <br/>
@@ -15,7 +15,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityViewport)]
 	[DxfSubClass(DxfSubclassMarker.Viewport)]
-	public class Viewport : Entity
+	public class ViewPort : Entity
 	{
 		/// <summary>
 		/// Paper view Id, it indicates that the viewport acts as a paper size.
@@ -63,7 +63,7 @@ namespace ACadSharp.Entities
 				if (this.Owner is BlockRecord record)
 				{
 					short id = 0;
-					foreach (Viewport viewport in record.Viewports)
+					foreach (ViewPort viewport in record.ViewPorts)
 					{
 						id += 1;
 						if (viewport == this)
@@ -324,7 +324,7 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
-			Viewport clone = (Viewport)base.Clone();
+			ViewPort clone = (ViewPort)base.Clone();
 
 			clone.VisualStyle = (VisualStyle)this.VisualStyle?.Clone();
 

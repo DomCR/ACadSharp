@@ -189,7 +189,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityVertex:
 					return this.readEntityCodes<Entity>(new CadVertexTemplate(), this.readVertex);
 				case DxfFileToken.EntityViewport:
-					return this.readEntityCodes<Viewport>(new CadViewportTemplate(), this.readViewport);
+					return this.readEntityCodes<ViewPort>(new CadViewportTemplate(), this.readViewport);
 				case DxfFileToken.EntityShape:
 					return this.readEntityCodes<Shape>(new CadShapeTemplate(new Shape()), this.readShape);
 				case DxfFileToken.EntitySpline:

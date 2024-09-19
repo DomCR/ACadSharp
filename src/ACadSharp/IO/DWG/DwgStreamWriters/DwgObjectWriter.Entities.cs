@@ -174,7 +174,7 @@ namespace ACadSharp.IO.DWG
 							throw new NotImplementedException($"Vertex not implemented : {entity.GetType().FullName}");
 					}
 					break;
-				case Viewport viewport:
+				case ViewPort viewport:
 					this.writeViewport(viewport);
 					break;
 				case XLine xline:
@@ -2264,7 +2264,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.HandleReference(DwgReferenceType.HardPointer, tolerance.Style);
 		}
 
-		private void writeViewport(Viewport viewport)
+		private void writeViewport(ViewPort viewport)
 		{
 			//Center 3BD 10
 			this._writer.Write3BitDouble(viewport.Center);

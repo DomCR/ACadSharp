@@ -20,15 +20,15 @@ namespace ACadSharp.IO.Templates
 
 		public List<ulong> FrozenLayerHandles { get; set; } = new List<ulong>();
 
-		public CadViewportTemplate() : base(new Viewport()) { }
+		public CadViewportTemplate() : base(new ViewPort()) { }
 
-		public CadViewportTemplate(Viewport entity) : base(entity) { }
+		public CadViewportTemplate(ViewPort entity) : base(entity) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
-			Viewport viewport = this.CadObject as Viewport;
+			ViewPort viewport = this.CadObject as ViewPort;
 
 			if (this.ViewportHeaderHandle.HasValue && this.ViewportHeaderHandle > 0)
 			{

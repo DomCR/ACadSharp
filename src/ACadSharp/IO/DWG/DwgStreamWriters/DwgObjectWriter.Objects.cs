@@ -263,7 +263,7 @@ namespace ACadSharp.IO.DWG
 			//R2004+:
 			if (this.R2004Plus)
 			{
-				foreach (Entities.Viewport viewport in layout.Viewports)
+				foreach (Entities.ViewPort viewport in layout.Viewports)
 				{
 					//Viewport handle(repeats Viewport count times) (soft pointer)
 					this._writer.HandleReference(DwgReferenceType.SoftPointer, viewport);
