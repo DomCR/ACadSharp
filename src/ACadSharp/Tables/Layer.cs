@@ -46,7 +46,19 @@ namespace ACadSharp.Tables
 		/// if the index is negative, layer is off
 		/// </remarks>
 		[DxfCodeValue(62, 420, 430)]
-		public Color Color { get; set; } = new Color(7);
+		public Color Color
+		{
+			get { return this._color; }
+			set
+			{
+				if (value.IsByLayer || value.IsByBlock)
+				{
+					throw new ArgumentException("The layer color cannot be ByLayer or ByBlock", nameof(value));
+				}
+
+				this._color = value;
+			}
+		}
 
 		/// <summary>
 		/// The linetype of an object. The default linetype is the linetype of the layer (ByLayer).
@@ -103,6 +115,8 @@ namespace ACadSharp.Tables
 		public bool IsOn { get; set; } = true;
 
 		private LineType _lineType = LineType.Continuous;
+
+		private Color _color = new Color(7);
 
 		internal Layer() : base() { }
 
