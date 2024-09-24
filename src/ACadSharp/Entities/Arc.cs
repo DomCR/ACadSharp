@@ -118,8 +118,8 @@ namespace ACadSharp.Entities
 				double cosine = this.Radius * Math.Cos(angle);
 				double sine = this.Radius * Math.Sin(angle);
 
-				cosine = MathUtils.IsZero(cosine) ? 0 : cosine;
-				sine = MathUtils.IsZero(sine) ? 0 : sine;
+				cosine = Utilities.IsZero(cosine) ? 0 : cosine;
+				sine = Utilities.IsZero(sine) ? 0 : sine;
 
 				ocsVertexes.Add(new XY(cosine, sine));
 			}
