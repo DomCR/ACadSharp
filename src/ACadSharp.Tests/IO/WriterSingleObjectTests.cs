@@ -71,6 +71,17 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(c);
 			}
 
+			public void EntityChangeNormal()
+			{
+				Circle c = new Circle();
+				c.Center = new XYZ(0, 0, 0);
+				c.Radius = 10;
+
+				c.Normal = XYZ.AxisX;
+
+				this.Document.Entities.Add(c);
+			}
+
 			public void EntityColorByIndex()
 			{
 				Circle c = new Circle();
@@ -419,6 +430,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
+			Data.Add(new(nameof(SingleCaseGenerator.EntityChangeNormal)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByIndex)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityColorTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByIndex)));
