@@ -538,7 +538,7 @@ namespace ACadSharp.Tables
 			set
 			{
 				//5 - 90
-				if (value < CSMath.MathUtils.DegToRad(5) || value > Math.PI / 2)
+				if (value < CSMath.Utilities.DegToRad(5) || value > Math.PI / 2)
 				{
 					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(JoggedRadiusDimensionTransverseSegmentAngle)} must be in range of 5 to 90 degrees.");
 				}

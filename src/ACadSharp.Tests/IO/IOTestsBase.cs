@@ -97,7 +97,7 @@ namespace ACadSharp.Tests.IO
 				files.Add(new FileModel(file));
 			}
 
-			if (!files.Any())
+			if (files.Count == 0)
 			{
 				files.Add(new FileModel());
 			}
