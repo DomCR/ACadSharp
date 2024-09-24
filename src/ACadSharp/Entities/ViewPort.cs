@@ -271,6 +271,11 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(63, 421, 431)]
 		public Color AmbientLightColor { get; set; }
 
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new System.NotImplementedException();
+		}
+
 		//361	Sun ID/Handle(optional)
 
 		//335
@@ -303,6 +308,21 @@ namespace ACadSharp.Entities
 			XYZ max = new XYZ(Center.X + this.Width, Center.Y + this.Height, Center.Z);
 
 			return new BoundingBox(min, max);
+		}
+
+		public override void Rotate(double rotation, XYZ axis)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void Scale(XYZ scale)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void Translate(XYZ translation)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

@@ -73,5 +73,25 @@ namespace ACadSharp.Entities
 			XYZ max = new XYZ(Math.Max(this.Center.X - this.Radius, this.Center.X + this.Radius), Math.Max(this.Center.Y - this.Radius, this.Center.Y + this.Radius), Math.Max(this.Center.Z, this.Center.Z));
 			return new BoundingBox(min, max);
 		}
+
+		public override void Translate(XYZ translation)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Rotate(double rotation, XYZ axis)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Scale(XYZ scale)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

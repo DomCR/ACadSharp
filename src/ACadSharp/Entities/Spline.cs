@@ -28,7 +28,7 @@ namespace ACadSharp.Entities
 		/// Specifies the three-dimensional normal unit vector for the object.
 		/// </summary>
 		/// <remarks>
-		/// Omitted if the spline is nonplanar.
+		/// Omitted if the spline is non-planar.
 		/// </remarks>
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
@@ -113,6 +113,26 @@ namespace ACadSharp.Entities
 		public override BoundingBox GetBoundingBox()
 		{
 			return BoundingBox.FromPoints(this.ControlPoints);
+		}
+
+		public override void Translate(XYZ translation)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void Rotate(double rotation, XYZ axis)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void Scale(XYZ scale)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
 using CSUtilities.Extensions;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -116,6 +117,26 @@ namespace ACadSharp.Entities
 			}
 
 			return new BoundingBox(min, max);
+		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Rotate(double rotation, XYZ axis)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Scale(XYZ scale)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Translate(XYZ translation)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

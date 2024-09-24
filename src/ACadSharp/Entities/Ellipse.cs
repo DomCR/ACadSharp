@@ -72,10 +72,30 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(42)]
 		public double EndParameter { get; set; } = Math.PI * 2;
 
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
+		}
+
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
 			return BoundingBox.Null;
+		}
+
+		public override void Rotate(double rotation, XYZ axis)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Scale(XYZ scale)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Translate(XYZ translation)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
