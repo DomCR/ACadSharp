@@ -129,6 +129,10 @@ namespace ACadSharp.Tests.Entities
 			pline.Vertices.Add(new XYZ(0, 1, 0));
 			pline.Vertices.Add(new XYZ(0, 0, 0));
 
+			path.Edges.Add(pline);
+
+			hatch.Paths.Add(path);
+
 			var box = hatch.GetBoundingBox();
 
 			Assert.Equal(new XYZ(0, 0, 0), box.Min);
