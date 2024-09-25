@@ -44,7 +44,7 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		[DxfCodeValue(370)]
-		public LineweightType LineWeight { get; set; } = LineweightType.ByLayer;
+		public LineWeightType LineWeight { get; set; } = LineWeightType.ByLayer;
 
 		/// <inheritdoc/>
 		[DxfCodeValue(48)]

@@ -530,10 +530,10 @@ namespace ACadSharp.IO.DXF
 					tmp.DIMBLK2 = this._reader.ValueAsHandle;
 					return true;
 				case 371:
-					template.CadObject.DimensionLineWeight = (LineweightType)this._reader.ValueAsShort;
+					template.CadObject.DimensionLineWeight = (LineWeightType)this._reader.ValueAsShort;
 					return true;
 				case 372:
-					template.CadObject.ExtensionLineWeight = (LineweightType)this._reader.ValueAsShort;
+					template.CadObject.ExtensionLineWeight = (LineWeightType)this._reader.ValueAsShort;
 					return true;
 				default:
 					return false;

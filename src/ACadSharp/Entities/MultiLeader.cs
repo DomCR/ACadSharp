@@ -175,7 +175,7 @@ namespace ACadSharp.Entities
 		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
 		/// </remarks>
 		[DxfCodeValue(171)]
-		public LineweightType LeaderLineWeight { get; set; }
+		public LineWeightType LeaderLineWeight { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether landing is enabled.

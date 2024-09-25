@@ -1327,7 +1327,7 @@ namespace ACadSharp.Header
 		/// System variable CELWEIGHT
 		/// </remarks>
 		[CadSystemVariable("$CELWEIGHT", 370)]
-		public LineweightType CurrentEntityLineWeight { get; set; } = LineweightType.ByLayer;
+		public LineWeightType CurrentEntityLineWeight { get; set; } = LineWeightType.ByLayer;
 
 		/// <summary>
 		/// Lineweight endcaps setting for new objects
@@ -2420,7 +2420,7 @@ namespace ACadSharp.Header
 		/// System variable DIMLWD
 		/// </remarks>
 		[CadSystemVariable("$DIMLWD", 70)]
-		public LineweightType DimensionLineWeight
+		public LineWeightType DimensionLineWeight
 		{
 			get { return this.DimensionStyleOverrides.DimensionLineWeight; }
 			set
@@ -2436,7 +2436,7 @@ namespace ACadSharp.Header
 		/// System variable DIMLWE
 		/// </remarks>
 		[CadSystemVariable("$DIMLWE", 70)]
-		public LineweightType ExtensionLineWeight
+		public LineWeightType ExtensionLineWeight
 		{
 			get { return this.DimensionStyleOverrides.ExtensionLineWeight; }
 			set

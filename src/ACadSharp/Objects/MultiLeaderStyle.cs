@@ -173,7 +173,7 @@ namespace ACadSharp.Objects
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(92)]
-		public LineweightType LeaderLineWeight { get; set; }
+		public LineWeightType LeaderLineWeight { get; set; }
 
 		//	TODO It seems that this value indicates that for a new leader that is being created
 		//		 with this <see cref="MultiLeaderStyle" /> landing i.e. a dogleg is enabled.
