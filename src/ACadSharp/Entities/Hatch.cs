@@ -127,8 +127,6 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Count, 91)]
 		public List<BoundaryPath> Paths { get; set; } = new List<BoundaryPath>();
 
-		private HatchPattern _pattern = HatchPattern.Solid;
-
 		/// <inheritdoc/>
 		public Hatch() : base() { }
 
