@@ -318,8 +318,8 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public BoundingBox GetModelBoundingBox()
 		{
-			XYZ min = new XYZ(this.ViewCenter.X - this.Width / 2, this.ViewCenter.Y - this.ViewHeight / 2, 0);
-			XYZ max = new XYZ(this.ViewCenter.X + this.Width / 2, this.ViewCenter.Y + this.ViewHeight / 2, 0);
+			XYZ min = new XYZ(this.ViewCenter.X - this.ViewWidth / 2, this.ViewCenter.Y - this.ViewHeight / 2, 0);
+			XYZ max = new XYZ(this.ViewCenter.X + this.ViewWidth / 2, this.ViewCenter.Y + this.ViewHeight / 2, 0);
 			return new BoundingBox(min, max);
 		}
 	}
