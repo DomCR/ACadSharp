@@ -93,7 +93,32 @@ namespace ACadSharp.Entities
 		public Entity() : base() { }
 
 		/// <summary>
-		/// Gets the bounding box aligned with the axis XYZ that ocupies this entity
+		/// Apply a translation to this entity.
+		/// </summary>
+		/// <param name="translation"></param>
+		public abstract void Translate(XYZ translation);
+
+		/// <summary>
+		/// Apply a rotation to this entity.
+		/// </summary>
+		/// <param name="rotation"></param>
+		/// <param name="axis"></param>
+		public abstract void Rotate(double rotation, XYZ axis);
+
+		/// <summary>
+		/// Apply a scale to this entity.
+		/// </summary>
+		/// <param name="scale"></param>
+		public abstract void Scale(XYZ scale);
+
+		/// <summary>
+		/// Apply a transform matrix to this entity.
+		/// </summary>
+		/// <param name="transform"></param>
+		public abstract void ApplyTransform(Transform transform);
+
+		/// <summary>
+		/// Gets the bounding box aligned with the axis XYZ that occupies this entity
 		/// </summary>
 		/// <returns></returns>
 		public abstract BoundingBox GetBoundingBox();

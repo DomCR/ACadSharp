@@ -189,5 +189,25 @@ namespace ACadSharp.Entities
 				this.Style = this.Document.DimensionStyles[DimensionStyle.DefaultName];
 			}
 		}
+
+		public override void Translate(XYZ translation)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Rotate(double rotation, XYZ axis)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Scale(XYZ scale)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

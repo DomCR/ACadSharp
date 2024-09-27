@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Classes;
 using CSMath;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -54,6 +55,26 @@ namespace ACadSharp.Entities
 		internal UnknownEntity(DxfClass dxfClass)
 		{
 			this.DxfClass = dxfClass;
+		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Rotate(double rotation, XYZ axis)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Scale(XYZ scale)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Translate(XYZ translation)
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <inheritdoc/>

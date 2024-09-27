@@ -31,5 +31,25 @@ namespace ACadSharp.Entities
 		{
 			return BoundingBox.Null;
 		}
+
+		public override void Translate(XYZ translation)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void Rotate(double rotation, XYZ axis)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void Scale(XYZ scale)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

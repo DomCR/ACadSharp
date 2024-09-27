@@ -1395,7 +1395,7 @@ namespace ACadSharp.IO.DXF
 
 					if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
 					{
-						value = (double)value * MathUtils.DegToRadFactor;
+						value = (double)value * Utilities.DegToRadFactor;
 					}
 
 					dxfProperty.SetValue(this._reader.Code, cadObject, value);

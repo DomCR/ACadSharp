@@ -406,7 +406,7 @@ namespace ACadSharp.IO.DXF
 
 			if (!hatch.IsSolid)
 			{
-				this._writer.Write(52, pattern.Angle * MathUtils.RadToDegFactor);
+				this._writer.Write(52, pattern.Angle * Utilities.RadToDegFactor);
 				this._writer.Write(41, pattern.Scale);
 				this._writer.Write(77, (short)(hatch.IsDouble ? 1 : 0));
 				this._writer.Write(78, (short)pattern.Lines.Count);

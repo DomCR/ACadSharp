@@ -229,5 +229,25 @@ namespace ACadSharp.Entities
 			//TODO: Fix the relation between insert and block
 			//this.Block?.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));
 		}
+
+		public override void Translate(XYZ translation)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Rotate(double rotation, XYZ axis)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Scale(XYZ scale)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

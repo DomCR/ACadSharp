@@ -30,13 +30,13 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.MultiLeader;
 
 		// TODO
-		// We ommit this class because we assumed that the multileader
+		// We omit this class because we assumed that the multileader
 		// does not have a list of arrow heads associated (see below).
 		// According to the OpenDesign_Specification_for_.dwg_files
 		// each arrowhead shall be associated with an IsDefault flag
 		// having the group code 94. This means the type of the field
 		// is BL instead of B.
-		// According to the DXF refence the 94 group code refers to
+		// According to the DXF reference the 94 group code refers to
 		// the index of the arrow head.
 		/*
 		/// <summary>
@@ -162,7 +162,7 @@ namespace ACadSharp.Entities
 
 		//  TODO Additional Line Weight? see Entity.LineWeight.
 		/// <summary>
-		/// Gets or sets a value specifying the lineweight to be applied to all leader lines of this
+		/// Gets or sets a value specifying the line weight to be applied to all leader lines of this
 		/// <see cref="MultiLeader"/> (see <see cref="MultiLeaderStyle.LeaderLineWeight"/>).
 		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.LeaderLineWeight"/> flag is set in the
@@ -229,7 +229,7 @@ namespace ACadSharp.Entities
 		public BlockRecord Arrowhead { get; set; }
 
 		/// <summary>
-		/// Gests or sets the arrowhead size (see <see cref="MultiLeaderStyle.Arrowhead"/>)
+		/// Gets or sets the arrowhead size (see <see cref="MultiLeaderStyle.Arrowhead"/>)
 		/// for every leader line
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.ArrowheadSize"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
@@ -447,7 +447,7 @@ namespace ACadSharp.Entities
 		//	We do not understand what a list of arroheads can be used for,
 		//	and we do not know how to create such a list.
 		//	The documentation for arrowheads list in OpenDesign_Specification_for_.dwg_files
-		//	and the DXF Reference are contracicting.
+		//	and the DXF Reference are contradicting.
 		//	Decision:
 		//		Ommit the Arrowheads property,
 		//		try to keep the block attributes.
@@ -457,7 +457,7 @@ namespace ACadSharp.Entities
 
 		///<subject>
 		/// Gets a list of <see cref="BlockAttribute"/> objects representing
-		/// a reference to a "block attribute"? and some proprties to adjust
+		/// a reference to a "block attribute"? and some properties to adjust
 		/// the attribute.
 		/// </subject>
 		public IList<BlockAttribute> BlockAttributes { get; } = new List<BlockAttribute>();
@@ -478,8 +478,8 @@ namespace ACadSharp.Entities
 		/// Gets or sets a value indicating the text attachment point.
 		/// </summary>
 		/// <remarks><para>
-		///	The Open Desisign Specification for DWG files documents this property as <i>Justification</i>,
-		/// the DXF referenece as <i>Text Attachmenst point</i>.
+		///	The Open Design Specification for DWG files documents this property as <i>Justification</i>,
+		/// the DXF reference as <i>Text Attachments point</i>.
 		/// </para><para>
 		/// This property is also exposed by the <see cref="MultiLeader"/> class
 		/// (<see cref="MultiLeader.TextAttachmentPoint"/>).
@@ -594,6 +594,26 @@ namespace ACadSharp.Entities
 		public override BoundingBox GetBoundingBox()
 		{
 			return BoundingBox.Null;
+		}
+
+		public override void Translate(XYZ translation)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Rotate(double rotation, XYZ axis)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Scale(XYZ scale)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

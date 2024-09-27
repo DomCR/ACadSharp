@@ -43,5 +43,29 @@ namespace ACadSharp.Blocks
 		{
 			return BoundingBox.Null;
 		}
+
+		/// <inheritdoc/>
+		public override void Translate(XYZ translation)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		/// <inheritdoc/>
+		public override void Rotate(double rotation, XYZ axis)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		/// <inheritdoc/>
+		public override void Scale(XYZ scale)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

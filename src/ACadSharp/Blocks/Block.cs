@@ -75,7 +75,7 @@ namespace ACadSharp.Blocks
 
 		/// <inheritdoc/>
 		/// <remarks>
-		/// Cloning a block will also unatach it from the record
+		/// Cloning a block will also unattached it from the record
 		/// </remarks>
 		public override CadObject Clone()
 		{
@@ -86,6 +86,30 @@ namespace ACadSharp.Blocks
 			return clone;
 		}
 
+		/// <inheritdoc/>
+		public override void Translate(XYZ translation)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		/// <inheritdoc/>
+		public override void Rotate(double rotation, XYZ axis)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		/// <inheritdoc/>
+		public override void Scale(XYZ scale)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
 			BoundingBox box = BoundingBox.Null;

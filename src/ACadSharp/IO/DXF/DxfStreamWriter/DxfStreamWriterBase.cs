@@ -1,4 +1,5 @@
-﻿using CSUtilities.Converters;
+﻿using CSMath;
+using CSUtilities.Converters;
 using System;
 
 
@@ -92,7 +93,7 @@ namespace ACadSharp.IO.DXF
 
 				if (prop.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
 				{
-					value = (double)value * MathUtils.RadToDegFactor;
+					value = (double)value * Utilities.RadToDegFactor;
 				}
 			}
 
