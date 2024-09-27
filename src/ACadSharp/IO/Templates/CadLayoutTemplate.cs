@@ -32,7 +32,7 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.AssociatedBlock = record;
 			}
 
-			if (builder.TryGetCadObject(this.ActiveViewportHandle, out ViewPort viewport))
+			if (builder.TryGetCadObject(this.ActiveViewportHandle, out Viewport viewport))
 			{
 				this.CadObject.Viewport = viewport;
 			}
@@ -49,7 +49,7 @@ namespace ACadSharp.IO.Templates
 
 			foreach (var handle in this.ViewportHandles)
 			{
-				if (builder.TryGetCadObject<ViewPort>(handle, out ViewPort vp))
+				if (builder.TryGetCadObject<Viewport>(handle, out Viewport vp))
 				{
 					//Is repeated, the viewports are already in the entities list in the BLOCK_RECORD
 					// if(this.CadObject.AssociatedBlock.Viewports.Contains(vp))

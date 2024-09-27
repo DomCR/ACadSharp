@@ -2213,7 +2213,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readViewport()
 		{
-			ViewPort viewport = new ViewPort();
+			Viewport viewport = new Viewport();
 			CadViewportTemplate template = new CadViewportTemplate(viewport);
 
 			//Common Entity Data

@@ -143,7 +143,7 @@ namespace ACadSharp.Objects
 		/// Viewport that was last active in this layout when the layout was current.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 331)]
-		public ViewPort Viewport
+		public Viewport Viewport
 		{
 			get
 			{
@@ -189,7 +189,7 @@ namespace ACadSharp.Objects
 
 		//333	Shade plot ID
 
-		public IEnumerable<ViewPort> Viewports
+		public IEnumerable<Viewport> Viewports
 		{
 			get
 			{
@@ -197,7 +197,7 @@ namespace ACadSharp.Objects
 			}
 		}
 
-		private ViewPort _lastViewport;
+		private Viewport _lastViewport;
 
 		private BlockRecord _blockRecord;
 

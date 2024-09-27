@@ -146,11 +146,11 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// ViewPorts attached to this block
 		/// </summary>
-		public IEnumerable<ViewPort> ViewPorts
+		public IEnumerable<Viewport> ViewPorts
 		{
 			get
 			{
-				return this.Entities.OfType<ViewPort>();
+				return this.Entities.OfType<Viewport>();
 			}
 		}
 
