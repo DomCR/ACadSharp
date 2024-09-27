@@ -27,17 +27,6 @@ namespace ACadSharp.Tests.Tables
 			CadObjectTestUtils.AssertTableEntryClone(entry, clone);
 		}
 
-		[Theory]
-		[MemberData(nameof(TableEntryTypes))]
-		public void CloneUnattachEvent(Type t)
-		{
-			TableEntry entry = TableEntryFactory.Create(t);
-
-			TableEntry clone = (TableEntry)entry.Clone();
-
-			CadObjectTestUtils.AssertTableEntryClone(entry, clone);
-		}
-
 		[Fact()]
 		public void ChangeName()
 		{
