@@ -111,9 +111,11 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
-			Layer clone = new Layer(this.Name);
+			Layer clone = (Layer)base.Clone();
+
 			clone.LineType = (LineType)this.LineType.Clone();
 			clone.Material = (Material)(this.Material?.Clone());
+
 			return clone;
 		}
 

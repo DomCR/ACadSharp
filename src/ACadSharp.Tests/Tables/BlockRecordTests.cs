@@ -2,7 +2,6 @@
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
 using System;
-using System.Linq;
 using Xunit;
 
 namespace ACadSharp.Tests.Tables
