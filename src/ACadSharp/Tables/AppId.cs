@@ -32,10 +32,11 @@ namespace ACadSharp.Tables
 
 		internal AppId() : base() { }
 
+		/// <inheritdoc/>
 		public AppId(string name) : base(name)
 		{
 			if (string.IsNullOrEmpty(name))
-				throw new ArgumentNullException(nameof(name), "App id must have a name.");
+				throw new ArgumentNullException(nameof(name), "Application id must have a name.");
 		}
 	}
 }

@@ -120,22 +120,33 @@ namespace ACadSharp.Entities
 		public double LensLength { get; set; }
 
 		/// <summary>
-		/// Front clip plane Z value
+		/// Front clip plane Z value.
 		/// </summary>
 		[DxfCodeValue(43)]
 		public double FrontClipPlane { get; set; }
 
 		/// <summary>
-		/// Back clip plane Z value
+		/// Back clip plane Z value.
 		/// </summary>
 		[DxfCodeValue(44)]
 		public double BackClipPlane { get; set; }
 
 		/// <summary>
-		/// View height(in model space units)
+		/// View height(in model space units).
 		/// </summary>
 		[DxfCodeValue(45)]
 		public double ViewHeight { get; set; }
+
+		/// <summary>
+		/// View width (in model space units).
+		/// </summary>
+		public double ViewWidth
+		{
+			get
+			{
+				return this.ViewHeight / this.Height * this.Width;
+			}
+		}
 
 		/// <summary>
 		/// Snap angle

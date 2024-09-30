@@ -4,7 +4,7 @@ using ACadSharp.Entities;
 namespace ACadSharp.Tables
 {
 	/// <summary>
-	/// Represents a <see cref="TextStyle"/> entry
+	/// Represents a <see cref="TextStyle"/> entry.
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.TableStyle"/> <br/>
@@ -66,7 +66,7 @@ namespace ACadSharp.Tables
 		public string Filename { get; set; } = string.Empty;
 
 		/// <summary>
-		/// Bigfont file name, blank if none.
+		/// Big-font file name, blank if none.
 		/// </summary>
 		[DxfCodeValue(4)]
 		public string BigFontFilename { get; set; }
@@ -105,18 +105,19 @@ namespace ACadSharp.Tables
 		public TextMirrorFlag MirrorFlag { get; set; } = TextMirrorFlag.None;
 
 		/// <summary>
-		/// A long value which contains a truetype font’s pitch and family, character set, and italic and bold flags
+		/// A long value which contains a true-type font’s pitch and family, character set, and italic and bold flags
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional, 1071)]
 		public FontFlags TrueType { get; set; } = FontFlags.Regular;
 
 		/// <summary>
-		/// Flag that indicates wheater this <see cref="TextStyle"/> is linked to a Shape file
+		/// Flag that indicates weather this <see cref="TextStyle"/> is linked to a Shape file
 		/// </summary>
 		public bool IsShapeFile { get { return this.Flags.HasFlag(StyleFlags.IsShape); } }
 
 		internal TextStyle() : base() { }
 
+		/// <inheritdoc/>
 		public TextStyle(string name) : base(name) { }
 	}
 }
