@@ -290,7 +290,7 @@ namespace ACadSharp.Entities
 		/// View contrast
 		/// </summary>
 		[DxfCodeValue(142)]
-		public double Constrast { get; set; }
+		public double Contrast { get; set; }
 
 		/// <summary>
 		/// Ambient light color.Write only if not black color.
