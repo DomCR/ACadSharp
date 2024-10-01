@@ -29,7 +29,7 @@ namespace ACadSharp.Tests.Entities
 			Assert.Equal(Math.PI / 2, arc.EndAngle);
 		}
 
-		[Fact(Skip = "Needs a dedicated implementation for Arc")]
+		[Fact]
 		public void GetBoundingBoxTest()
 		{
 			Arc arc = new Arc();
