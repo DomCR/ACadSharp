@@ -1,6 +1,6 @@
 ﻿namespace ACadSharp
 {
-	public enum LineWeightType : short
+	public enum LineweightType : short
 	{
 		ByDIPs = -4,
 

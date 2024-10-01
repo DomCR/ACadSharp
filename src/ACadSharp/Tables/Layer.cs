@@ -95,7 +95,7 @@ namespace ACadSharp.Tables
 		/// Specifies the lineweight of an individual object or the default lineweight for the drawing.
 		/// </summary>
 		[DxfCodeValue(370)]
-		public LineWeightType LineWeight { get; set; } = LineWeightType.Default;
+		public LineweightType LineWeight { get; set; } = LineweightType.Default;
 
 		/// <summary>
 		/// PlotStyleName object

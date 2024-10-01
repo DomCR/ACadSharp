@@ -23,7 +23,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Specifies the lineweight of an individual object or the default lineweight for the drawing.
 		/// </summary>
-		LineWeightType LineWeight { get; set; }
+		LineweightType LineWeight { get; set; }
 
 		/// <summary>
 		/// Linetype scale for this entity.
