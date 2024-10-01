@@ -63,7 +63,7 @@ namespace ACadSharp.Entities
 				if (this.Owner is BlockRecord record)
 				{
 					short id = 0;
-					foreach (Viewport viewport in record.ViewPorts)
+					foreach (Viewport viewport in record.Viewports)
 					{
 						id += 1;
 						if (viewport == this)

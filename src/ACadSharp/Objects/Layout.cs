@@ -193,7 +193,7 @@ namespace ACadSharp.Objects
 		{
 			get
 			{
-				return this.AssociatedBlock?.ViewPorts;
+				return this.AssociatedBlock?.Viewports;
 			}
 		}
 

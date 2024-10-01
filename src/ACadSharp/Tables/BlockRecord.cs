@@ -146,7 +146,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// ViewPorts attached to this block
 		/// </summary>
-		public IEnumerable<Viewport> ViewPorts
+		public IEnumerable<Viewport> Viewports
 		{
 			get
 			{
