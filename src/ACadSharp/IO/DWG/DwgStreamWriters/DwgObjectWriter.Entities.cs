@@ -2346,7 +2346,7 @@ namespace ACadSharp.IO.DWG
 				//Brightness BD 141
 				this._writer.WriteBitDouble(viewport.Brightness);
 				//Contrast BD 142
-				this._writer.WriteBitDouble(viewport.Constrast);
+				this._writer.WriteBitDouble(viewport.Contrast);
 				//Ambient light color CMC 63
 				this._writer.WriteCmColor(viewport.AmbientLightColor);
 			}
