@@ -361,6 +361,32 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(hatch);
 			}
 
+			public void CreateCircleHatch()
+			{
+				Hatch hatch = new Hatch();
+				hatch.IsSolid = true;
+
+				hatch.SeedPoints.Add(new XY());
+
+				List<Hatch.BoundaryPath.Line> edges = new List<Hatch.BoundaryPath.Line>();
+
+				//edges
+				Hatch.BoundaryPath.Polyline polyline = new Hatch.BoundaryPath.Polyline();
+				polyline.IsClosed = true;
+				polyline.Vertices.Add(new XYZ(0, 2.5, 1));
+				polyline.Vertices.Add(new XYZ(10, 2.5, 1));
+
+				Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+				foreach (var item in edges)
+				{
+					path.Edges.Add(item);
+				}
+
+				hatch.Paths.Add(path);
+
+				this.Document.Entities.Add(hatch);
+			}
+
 			public void ChangedEncoding()
 			{
 				this.Document.Header.CodePage = "gb2312";
@@ -450,6 +476,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithSegments)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
+			Data.Add(new(nameof(SingleCaseGenerator.CreateCircleHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.ChangedEncoding)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
 		}
