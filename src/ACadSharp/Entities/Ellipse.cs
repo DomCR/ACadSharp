@@ -45,8 +45,11 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Endpoint of major axis, relative to the center (in WCS).
 		/// </summary>
+		/// <remarks>
+		/// Axis X is set as default.
+		/// </remarks>
 		[DxfCodeValue(11, 21, 31)]
-		public XYZ EndPoint { get; set; } = XYZ.Zero;
+		public XYZ EndPoint { get; set; } = XYZ.AxisX;
 
 		/// <summary>
 		/// Ratio of minor axis to major axis.

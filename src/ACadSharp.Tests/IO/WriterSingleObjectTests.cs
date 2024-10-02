@@ -3,6 +3,7 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
 using CSUtilities.Extensions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -105,6 +106,16 @@ namespace ACadSharp.Tests.IO
 			public void CurrentEntityByBlock()
 			{
 				this.Document.Header.CurrentEntityColor = Color.ByBlock;
+			}
+
+			public void SingleEllipse()
+			{
+				Ellipse ellipse = new Ellipse();
+				ellipse.RadiusRatio = 0.5d;
+				ellipse.StartParameter = 0.0d;
+				ellipse.EndParameter = Math.PI * 2;
+
+				this.Document.Entities.Add(ellipse);
 			}
 
 			public void SingleLine()
@@ -452,6 +463,7 @@ namespace ACadSharp.Tests.IO
 			}
 
 			Data.Add(new(nameof(SingleCaseGenerator.Empty)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleEllipse)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
