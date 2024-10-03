@@ -2,6 +2,7 @@
 using CSMath;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -125,6 +126,14 @@ namespace ACadSharp.Entities
 			}
 
 			return ocsVertexes;
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			List<XY> vertices = this.PolygonalVertexes(256);
+
+			return BoundingBox.FromPoints(vertices.Select(v => (XYZ)v));
 		}
 	}
 }

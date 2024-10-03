@@ -32,25 +32,25 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.Viewport;
 
 		/// <summary>
-		/// Center point(in WCS)
+		/// Center point(in WCS).
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ Center { get; set; }
 
 		/// <summary>
-		/// Width in paper space units
+		/// Width in paper space units.
 		/// </summary>
 		[DxfCodeValue(40)]
 		public double Width { get; set; }
 
 		/// <summary>
-		/// Height in paper space units
+		/// Height in paper space units.
 		/// </summary>
 		[DxfCodeValue(41)]
 		public double Height { get; set; }
 
 		/// <summary>
-		/// Viewport ID
+		/// Viewport ID.
 		/// </summary>
 		[DxfCodeValue(69)]
 		public short Id
@@ -75,7 +75,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// View center point(in DCS)
+		/// View center point(in DCS).
 		/// </summary>
 		[DxfCodeValue(12, 22)]
 		public XY ViewCenter { get; set; }
@@ -334,9 +334,16 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			XYZ min = new XYZ(this.Center.X - this.Width / 2, this.Center.Y - this.Height / 2, this.Center.Z);
-			XYZ max = new XYZ(this.Center.X + this.Width / 2, this.Center.Y + this.Height / 2, this.Center.Z);
+			XYZ min = new XYZ(this.Center.X - this.Width, this.Center.Y - this.Height, this.Center.Z);
+			XYZ max = new XYZ(this.Center.X + this.Width, this.Center.Y + this.Height, this.Center.Z);
+			return new BoundingBox(min, max);
+		}
 
+		/// <inheritdoc/>
+		public BoundingBox GetModelBoundingBox()
+		{
+			XYZ min = new XYZ(this.ViewCenter.X - this.ViewWidth / 2, this.ViewCenter.Y - this.ViewHeight / 2, 0);
+			XYZ max = new XYZ(this.ViewCenter.X + this.ViewWidth / 2, this.ViewCenter.Y + this.ViewHeight / 2, 0);
 			return new BoundingBox(min, max);
 		}
 	}
