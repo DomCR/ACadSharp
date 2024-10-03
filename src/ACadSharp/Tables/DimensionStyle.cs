@@ -345,7 +345,7 @@ namespace ACadSharp.Tables
 		public short ToleranceDecimalPlaces { get; set; } = 2;
 
 		/// <summary>
-		/// Gets or sets the units format for alternate units of all dimension substyles
+		/// Gets or sets the units format for alternate units of all dimension sub-styles
 		/// except Angular
 		/// (see DIMALTU System Variable).
 		/// </summary>
@@ -538,7 +538,7 @@ namespace ACadSharp.Tables
 			set
 			{
 				//5 - 90
-				if (value < CSMath.MathUtils.DegToRad(5) || value > Math.PI / 2)
+				if (value < CSMath.Utilities.DegToRad(5) || value > Math.PI / 2)
 				{
 					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(JoggedRadiusDimensionTransverseSegmentAngle)} must be in range of 5 to 90 degrees.");
 				}
@@ -665,8 +665,8 @@ namespace ACadSharp.Tables
 		/// Positive values of <i>LinearScaleFactor</i> are applied to dimensions in both model space and
 		/// paper space; negative values are applied to paper space only.
 		/// </para><para>
-		/// <i>LinearScaleFactor</i> applies primarily to nonassociative dimensions (DIMASSOC set 0 or 1).
-		/// For nonassociative dimensions in paper space, <i>LinearScaleFactor</i> must be set individually
+		/// <i>LinearScaleFactor</i> applies primarily to non-associative dimensions (DIMASSOC set 0 or 1).
+		/// For non-associative dimensions in paper space, <i>LinearScaleFactor</i> must be set individually
 		/// for each layout viewport to accommodate viewport scaling.
 		/// </para><para>
 		/// <i>LinearScaleFactor</i> has no effect on angular dimensions, and is not applied to the values held in
@@ -813,7 +813,7 @@ namespace ACadSharp.Tables
 		public TextDirection TextDirection { get; set; } = TextDirection.LeftToRight;
 
 		/// <summary>
-		/// Assigns lineweight to dimension lines
+		/// Assigns line weight to dimension lines
 		/// (see DIMLWD System Variable).
 		/// </summary>
 		/// <value>
@@ -824,7 +824,7 @@ namespace ACadSharp.Tables
 		public LineweightType DimensionLineWeight { get; set; } = LineweightType.ByBlock;
 
 		/// <summary>
-		/// Assigns lineweight to extension lines
+		/// Assigns line weight to extension lines
 		/// (see DIMLWE System Variable).
 		/// </summary>
 		/// <value>
@@ -960,12 +960,14 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
-			DimensionStyle clone = new DimensionStyle(this.Name);
+			DimensionStyle clone = (DimensionStyle)base.Clone();
+
 			clone.Style = (TextStyle)this.Style?.Clone();
 			clone.LeaderArrow = (BlockRecord)this.LeaderArrow?.Clone();
 			clone.ArrowBlock = (BlockRecord)this.ArrowBlock?.Clone();
 			clone.DimArrow1 = (BlockRecord)this.DimArrow1?.Clone();
 			clone.DimArrow2 = (BlockRecord)this.DimArrow2?.Clone();
+			
 			return clone;
 		}
 
