@@ -22,6 +22,13 @@ namespace ACadSharp.Entities
 				/// </summary>
 				[DxfCodeValue(11, 21)]
 				public XY End { get; set; }
+
+
+				/// <inheritdoc/>
+				public override BoundingBox GetBoundingBox()
+				{
+					return BoundingBox.FromPoints([(XYZ)this.Start, (XYZ)this.End]);
+				}
 			}
 		}
 	}
