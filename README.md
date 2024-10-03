@@ -54,7 +54,7 @@ For more information visit the :construction: [wiki](https://github.com/DomCR/AC
 Building
 ---
 
-This project uses [check](https://github.com/DomCR/CSUtilities) as a Shared Project. Make sure to add the files to the ACadSharp\src\CSUtilities local directory when building.
+This project uses https://github.com/DomCR/CSUtilities as a Shared Project. Make sure to add the files to the ACadSharp\src\CSUtilities local directory when building.
 
 Contributing
 ---
