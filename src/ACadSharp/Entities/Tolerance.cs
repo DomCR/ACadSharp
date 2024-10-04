@@ -81,5 +81,10 @@ namespace ACadSharp.Entities
 		{
 			return new BoundingBox(this.InsertionPoint);
 		}
+
+		public string GetVisualText()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
