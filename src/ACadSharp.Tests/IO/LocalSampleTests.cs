@@ -34,6 +34,26 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
+
+			CadDocument newDoc = new CadDocument();
+
+			var h = doc.GetCadObject(7819);
+
+			foreach (var entity in doc.Entities)
+			{
+				doc.Entities.Remove(entity);
+				newDoc.Entities.Add(entity);
+			}
+
+		//	var h = doc.GetCadObject(7819);
+
+			var b1 = doc.BlockRecords["3D ORBIT"];
+			var b2 = doc.BlockRecords["3D ORBIT"];
+
+			using (DwgWriter wr = new DwgWriter(Path.Combine(TestVariables.DesktopFolder, "test.dwg"), newDoc))
+			{
+				wr.Write();
+			}
 		}
 
 		[Theory]
