@@ -151,7 +151,7 @@ namespace ACadSharp.Entities
 			clone.GradientColor = this.GradientColor?.Clone();
 			clone.Pattern = this.Pattern?.Clone();
 
-			clone.Paths.Clear();
+			clone.Paths = new List<BoundaryPath>();
 			foreach (BoundaryPath item in this.Paths)
 			{
 				clone.Paths.Add(item.Clone());
