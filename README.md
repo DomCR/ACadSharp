@@ -53,8 +53,9 @@ For more information visit the :construction: [wiki](https://github.com/DomCR/AC
 
 Building
 ---
-
-This project uses https://github.com/DomCR/CSUtilities as a Shared Project. Make sure to add the files to the ACadSharp\src\CSUtilities local directory when building.
+Before building run:
+'''git submodule update --init --recursive'''
+This command will clone the submodules. These are Shared Projects that this project dependes on.
 
 Contributing
 ---
