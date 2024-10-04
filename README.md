@@ -54,7 +54,9 @@ For more information visit the :construction: [wiki](https://github.com/DomCR/AC
 Building
 ---
 Before building run:
-'''git submodule update --init --recursive'''
+```console
+git submodule update --init --recursive
+```
 This command will clone the submodules. These are Shared Projects that this project dependes on.
 
 Contributing
