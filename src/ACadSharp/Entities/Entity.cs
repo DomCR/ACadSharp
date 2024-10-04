@@ -92,10 +92,7 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public Entity() : base() { }
 
-		/// <summary>
-		/// Gets the bounding box aligned with the axis XYZ that ocupies this entity
-		/// </summary>
-		/// <returns></returns>
+		/// <inheritdoc/>
 		public abstract BoundingBox GetBoundingBox();
 
 		/// <inheritdoc/>

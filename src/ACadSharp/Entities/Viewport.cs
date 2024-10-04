@@ -17,6 +17,11 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Viewport)]
 	public class Viewport : Entity
 	{
+		/// <summary>
+		/// Paper view Id, it indicates that the viewport acts as a paper size.
+		/// </summary>
+		public const int PaperViewId = 1;
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.VIEWPORT;
 
@@ -27,31 +32,50 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.Viewport;
 
 		/// <summary>
-		/// Center point(in WCS)
+		/// Center point(in WCS).
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ Center { get; set; }
 
 		/// <summary>
-		/// Width in paper space units
+		/// Width in paper space units.
 		/// </summary>
 		[DxfCodeValue(40)]
 		public double Width { get; set; }
 
 		/// <summary>
-		/// Height in paper space units
+		/// Height in paper space units.
 		/// </summary>
 		[DxfCodeValue(41)]
 		public double Height { get; set; }
 
 		/// <summary>
-		/// Viewport ID
+		/// Viewport ID.
 		/// </summary>
 		[DxfCodeValue(69)]
-		public short Id { get; set; } = 1;
+		public short Id
+		{
+			get
+			{
+				if (this.Owner is BlockRecord record)
+				{
+					short id = 0;
+					foreach (Viewport viewport in record.Viewports)
+					{
+						id += 1;
+						if (viewport == this)
+						{
+							return id;
+						}
+					}
+				}
+
+				return 0;
+			}
+		}
 
 		/// <summary>
-		/// View center point(in DCS)
+		/// View center point(in DCS).
 		/// </summary>
 		[DxfCodeValue(12, 22)]
 		public XY ViewCenter { get; set; }
@@ -93,22 +117,33 @@ namespace ACadSharp.Entities
 		public double LensLength { get; set; }
 
 		/// <summary>
-		/// Front clip plane Z value
+		/// Front clip plane Z value.
 		/// </summary>
 		[DxfCodeValue(43)]
 		public double FrontClipPlane { get; set; }
 
 		/// <summary>
-		/// Back clip plane Z value
+		/// Back clip plane Z value.
 		/// </summary>
 		[DxfCodeValue(44)]
 		public double BackClipPlane { get; set; }
 
 		/// <summary>
-		/// View height(in model space units)
+		/// View height(in model space units).
 		/// </summary>
 		[DxfCodeValue(45)]
 		public double ViewHeight { get; set; }
+
+		/// <summary>
+		/// View width (in model space units).
+		/// </summary>
+		public double ViewWidth
+		{
+			get
+			{
+				return this.ViewHeight / this.Height * this.Width;
+			}
+		}
 
 		/// <summary>
 		/// Snap angle
@@ -263,7 +298,7 @@ namespace ACadSharp.Entities
 		/// View contrast
 		/// </summary>
 		[DxfCodeValue(142)]
-		public double Constrast { get; set; }
+		public double Contrast { get; set; }
 
 		/// <summary>
 		/// Ambient light color.Write only if not black color.
@@ -299,9 +334,16 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			XYZ min = new XYZ(Center.X - this.Width, Center.Y - this.Height, Center.Z);
-			XYZ max = new XYZ(Center.X + this.Width, Center.Y + this.Height, Center.Z);
+			XYZ min = new XYZ(this.Center.X - this.Width, this.Center.Y - this.Height, this.Center.Z);
+			XYZ max = new XYZ(this.Center.X + this.Width, this.Center.Y + this.Height, this.Center.Z);
+			return new BoundingBox(min, max);
+		}
 
+		/// <inheritdoc/>
+		public BoundingBox GetModelBoundingBox()
+		{
+			XYZ min = new XYZ(this.ViewCenter.X - this.ViewWidth / 2, this.ViewCenter.Y - this.ViewHeight / 2, 0);
+			XYZ max = new XYZ(this.ViewCenter.X + this.ViewWidth / 2, this.ViewCenter.Y + this.ViewHeight / 2, 0);
 			return new BoundingBox(min, max);
 		}
 	}

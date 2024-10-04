@@ -43,6 +43,12 @@ namespace ACadSharp.Entities
 				/// </remarks>
 				[DxfCodeValue(DxfReferenceType.Count, 93)]
 				public List<XYZ> Vertices { get; set; } = new();
+
+				/// <inheritdoc/>
+				public override BoundingBox GetBoundingBox()
+				{
+					return BoundingBox.FromPoints(this.Vertices);
+				}
 			}
 		}
 	}

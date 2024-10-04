@@ -13,37 +13,43 @@ namespace ACadSharp.Entities
 				public override EdgeType Type => EdgeType.CircularArc;
 
 				/// <summary>
-				/// Center point (in OCS)
+				/// Center point (in OCS).
 				/// </summary>
 				[DxfCodeValue(10, 20)]
 				public XY Center { get; set; }
 
 				/// <summary>
-				/// Radius
+				/// Radius.
 				/// </summary>
 				/// <remarks>
-				/// For the ellispe this is the length of minor axis (percentage of major axis length)
+				/// For the ellipse this is the length of minor axis (percentage of major axis length).
 				/// </remarks>
 				[DxfCodeValue(40)]
 				public double Radius { get; set; }
 
 				/// <summary>
-				/// Start angle
+				/// Start angle.
 				/// </summary>
 				[DxfCodeValue(50)]
 				public double StartAngle { get; set; }
 
 				/// <summary>
-				/// End angle
+				/// End angle.
 				/// </summary>
 				[DxfCodeValue(51)]
 				public double EndAngle { get; set; }
 
 				/// <summary>
-				/// Is counterclockwise flag
+				/// Is counterclockwise flag.
 				/// </summary>
 				[DxfCodeValue(73)]
 				public bool CounterClockWise { get; set; }
+
+				/// <inheritdoc/>
+				public override BoundingBox GetBoundingBox()
+				{
+					throw new System.NotImplementedException();
+				}
 			}
 		}
 	}

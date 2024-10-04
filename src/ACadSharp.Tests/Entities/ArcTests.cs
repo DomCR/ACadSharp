@@ -30,6 +30,19 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
+		public void GetBoundingBoxTest()
+		{
+			Arc arc = new Arc();
+			arc.Radius = 5;
+			arc.EndAngle = Math.PI / 2;
+
+			BoundingBox boundingBox = arc.GetBoundingBox();
+
+			Assert.Equal(new XYZ(0, 0, 0), boundingBox.Min);
+			Assert.Equal(new XYZ(5, 5, 0), boundingBox.Max);
+		}
+
+		[Fact]
 		public void GetCenter()
 		{
 			XY start = new XY(1, 0);

@@ -2305,7 +2305,7 @@ namespace ACadSharp.IO.DWG
 				//Brightness BD 141
 				viewport.Brightness = this._objectReader.ReadBitDouble();
 				//Contrast BD 142
-				viewport.Constrast = this._objectReader.ReadBitDouble();
+				viewport.Contrast = this._objectReader.ReadBitDouble();
 				//Ambient light color CMC 63
 				viewport.AmbientLightColor = this._objectReader.ReadCmColor();
 			}

@@ -127,15 +127,20 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Count, 91)]
 		public List<BoundaryPath> Paths { get; set; } = new List<BoundaryPath>();
 
-		private HatchPattern _pattern = HatchPattern.Solid;
-
 		/// <inheritdoc/>
 		public Hatch() : base() { }
 
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			return BoundingBox.FromPoints(this.SeedPoints.Select(x=>(XYZ)x));
+			BoundingBox box = BoundingBox.Null;
+
+			foreach (BoundaryPath bp in this.Paths)
+			{
+				box = box.Merge(bp.GetBoundingBox());
+			}
+
+			return box;
 		}
 
 		/// <inheritdoc/>
