@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using CSMath;
 using CSUtilities.Extensions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,8 +10,11 @@ namespace ACadSharp.Entities
 {
 	public partial class Hatch
 	{
-		public partial class BoundaryPath
+		public partial class BoundaryPath : IGeometricEntity
 		{
+			/// <summary>
+			/// Flag that indicates that this boundary path is formed by a polyline.
+			/// </summary>
 			public bool IsPolyline { get { return this.Edges.OfType<Polyline>().Any(); } }
 
 			/// <summary>
@@ -39,30 +43,60 @@ namespace ACadSharp.Entities
 			}
 
 			/// <summary>
-			/// Number of edges in this boundary path
+			/// Number of edges in this boundary path.
 			/// </summary>
 			/// <remarks>
-			/// only if boundary is not a polyline
+			/// Only if boundary is not a polyline.
 			/// </remarks>
 			[DxfCodeValue(DxfReferenceType.Count, 93)]
-			public ObservableCollection<Edge> Edges { get; } = new();
+			public ObservableCollection<Edge> Edges { get; private set; } = new();
 
 			/// <summary>
-			/// Source boundary objects
+			/// Source boundary objects.
 			/// </summary>
 			[DxfCodeValue(DxfReferenceType.Count, 97)]
 			public List<Entity> Entities { get; set; } = new List<Entity>();
 
 			private BoundaryPathFlags _flags;
 
+			/// <summary>
+			/// Default constructor.
+			/// </summary>
 			public BoundaryPath()
 			{
-				Edges.CollectionChanged += this.onEdgesCollectionChanged;
+				this.Edges.CollectionChanged += this.onEdgesCollectionChanged;
 			}
 
+			/// <inheritdoc/>
+			public BoundingBox GetBoundingBox()
+			{
+				BoundingBox box = BoundingBox.Null;
+
+				foreach (Edge edge in this.Edges)
+				{
+					box = box.Merge(edge.GetBoundingBox());
+				}
+
+				foreach (Entity entity in this.Entities)
+				{
+					box = box.Merge(entity.GetBoundingBox());
+				}
+
+				return box;
+			}
+
+			/// <inheritdoc/>
 			public BoundaryPath Clone()
 			{
-				throw new System.NotImplementedException();
+				BoundaryPath path = (BoundaryPath)this.MemberwiseClone();
+
+				path.Entities = new List<Entity>();
+				path.Entities.AddRange(this.Entities.Select(e => (Entity)e.Clone()));
+
+				path.Edges = new ObservableCollection<Edge>(
+					this.Edges.Select(e => e.Clone()));
+
+				return path;
 			}
 
 			private void onEdgesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -70,7 +104,7 @@ namespace ACadSharp.Entities
 				switch (e.Action)
 				{
 					case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
-						onAdd(e);
+						this.onAdd(e);
 						break;
 					case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
 						break;
