@@ -2,6 +2,7 @@
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -345,6 +346,22 @@ namespace ACadSharp.Entities
 			XYZ min = new XYZ(this.ViewCenter.X - this.ViewWidth / 2, this.ViewCenter.Y - this.ViewHeight / 2, 0);
 			XYZ max = new XYZ(this.ViewCenter.X + this.ViewWidth / 2, this.ViewCenter.Y + this.ViewHeight / 2, 0);
 			return new BoundingBox(min, max);
+		}
+
+		/// <summary>
+		/// Gets all the entities from the model that are in the view of the viewport.
+		/// </summary>
+		/// <returns></returns>
+		public List<Entity> SelectEntities(bool includePartial = true)
+		{
+			BoundingBox box = this.GetModelBoundingBox();
+
+			foreach (Entity e in Document.Entities)
+			{
+
+			}
+
+			throw new NotImplementedException();
 		}
 	}
 }
