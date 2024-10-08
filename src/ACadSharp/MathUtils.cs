@@ -73,7 +73,7 @@ namespace ACadSharp
 
 			double gamma = (Math.PI - theta) / 2;
 			double phi = (end - start).GetAngle() + Math.Sign(bulge) * gamma;
-			return new XY(start.X + radius * CSMath.Utilities.Cos(phi), start.Y + radius * CSMath.Utilities.Sin(phi));
+			return new XY(start.X + radius * CSMath.MathHelper.Cos(phi), start.Y + radius * CSMath.MathHelper.Sin(phi));
 		}
 
 		/// <summary>
