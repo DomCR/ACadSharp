@@ -13,6 +13,8 @@ using System.IO;
 using System;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
+using static ACadSharp.Entities.TableEntity;
+using static ACadSharp.Entities.TableEntity.BreakData;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
 
 namespace ACadSharp.IO.DWG
@@ -974,6 +976,8 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "ACDBPLACEHOLDER":
 					template = this.readPlaceHolder();
+				case "ACAD_TABLE":
+					template = this.readTableEntity();
 					break;
 				case "DBCOLOR":
 					template = this.readDwgColor();
@@ -1379,6 +1383,8 @@ namespace ACadSharp.IO.DWG
 
 			return template;
 		}
+
+	
 
 		private void readInsertCommonData(CadInsertTemplate template)
 		{

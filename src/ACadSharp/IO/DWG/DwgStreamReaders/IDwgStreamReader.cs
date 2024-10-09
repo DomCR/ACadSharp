@@ -164,6 +164,13 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		/// <returns></returns>
 		XY Read2RawDouble();
+
+		/// <summary>
+		/// 3RD : 3 raw doubles
+		/// </summary>
+		/// <returns></returns>
+		XYZ Read3RawDouble();
+
 		/// <summary>
 		/// MC : modular char
 		/// </summary>
