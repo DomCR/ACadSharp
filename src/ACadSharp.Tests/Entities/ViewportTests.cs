@@ -59,10 +59,12 @@ namespace ACadSharp.Tests.Entities
 
 			//Entities in the view
 			Point ptIn = new Point(new XYZ(0, 0, 0));
+			Line lineIn = new Line(new XYZ(), new XYZ(100, 100, 0));
 
 			List<Entity> inView = new List<Entity>
 			{
-				ptIn
+				ptIn,
+				lineIn
 			};
 			doc.Entities.AddRange(inView);
 
@@ -84,6 +86,9 @@ namespace ACadSharp.Tests.Entities
 				Assert.Contains(e, inView);
 				Assert.DoesNotContain(e, outView);
 			}
+
+			var selectedPartial = viewport.SelectEntities(false);
+			Assert.DoesNotContain(lineIn, selectedPartial);
 		}
 	}
 }
