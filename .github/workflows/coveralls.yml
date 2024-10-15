@@ -6,15 +6,6 @@ on:
   pull_request:
     branches: [ master ]
 
-env:
-  SAMPLES_FOLDER: "../../../../samples"
-  OUTPUT_SAMPLES_FOLDER: "../../../../samples/out"
-  OUTPUT_SINGLE_CASES_FOLDER: "../../../../samples/out/single_cases"
-  LOCAL_ENV: "false"
-  DELTA: "0.00001"
-  DECIMAL_PRECISION: "5"
-  RUN_DWG_WRITER_SINGLE_CASES_TEST: "false"
-
 jobs:
   build:
     runs-on: windows-latest
@@ -22,14 +13,24 @@ jobs:
     - uses: actions/checkout@v2
       with: 
         submodules: true
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal ACadSharp.Tests/
+    - uses: cardinalby/export-env-action@v2
+      with:
+        envFile: 'github.env'
+    - name: Build and Test ACadSharp
+      working-directory: src
+      run: |
+          dotnet restore
+          dotnet build --no-restore
+          dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal ACadSharp.Tests/
+    - name: Build and Test Submodules
+      working-directory: src/CSUtilities
+      run: |
+          dotnet restore
+          dotnet build --no-restore
+          dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal CSUtilities.Tests/
+          dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal CSMath.Tests/
     - name: Coveralls action
-      uses: coverallsapp/github-action@master
+      uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ github.token }}
-        path-to-lcov: ACadSharp.Tests/TestResults/coverage.info 
+        files: src/ACadSharp.Tests/TestResults/coverage.info src/CSUtilities/CSUtilities.Tests/TestResults/coverage.info src/CSUtilities/CSMath.Tests/TestResults/coverage.info 
