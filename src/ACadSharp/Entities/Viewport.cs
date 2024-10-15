@@ -354,10 +354,15 @@ namespace ACadSharp.Entities
 		/// <returns></returns>
 		public List<Entity> SelectEntities(bool includePartial = true)
 		{
+			if (this.Document == null)
+			{
+				throw new InvalidOperationException($"Viewport needs to be assigned to a document.");
+			}
+
 			List<Entity> entities = new List<Entity>();
 
 			BoundingBox box = this.GetModelBoundingBox();
-			foreach (Entity e in Document.Entities)
+			foreach (Entity e in this.Document.Entities)
 			{
 				if (box.IsIn(e.GetBoundingBox(), out bool partialIn) || (partialIn && includePartial))
 				{
