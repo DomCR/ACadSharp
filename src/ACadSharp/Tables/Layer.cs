@@ -61,7 +61,7 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// The linetype of an object. The default linetype is the linetype of the layer (ByLayer).
+		/// The line type of an object. The default line type is the line type of the layer (ByLayer).
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 6)]
 		public LineType LineType
@@ -92,7 +92,7 @@ namespace ACadSharp.Tables
 		public bool PlotFlag { get; set; } = true;
 
 		/// <summary>
-		/// Specifies the lineweight of an individual object or the default lineweight for the drawing.
+		/// Specifies the line weight of an individual object or the default line weight for the drawing.
 		/// </summary>
 		[DxfCodeValue(370)]
 		public LineweightType LineWeight { get; set; } = LineweightType.Default;
