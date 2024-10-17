@@ -57,7 +57,7 @@ namespace ACadSharp.Entities
 		{
 			HatchPattern clone = (HatchPattern)this.MemberwiseClone();
 
-			clone.Lines.Clear();
+			clone.Lines = new List<Line>();
 			foreach (var item in this.Lines)
 			{
 				clone.Lines.Add(item.Clone());

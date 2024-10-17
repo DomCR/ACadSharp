@@ -2,6 +2,7 @@
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -32,19 +33,19 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.Viewport;
 
 		/// <summary>
-		/// Center point(in WCS)
+		/// Center point(in WCS).
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ Center { get; set; }
 
 		/// <summary>
-		/// Width in paper space units
+		/// Width in paper space units.
 		/// </summary>
 		[DxfCodeValue(40)]
 		public double Width { get; set; }
 
 		/// <summary>
-		/// Height in paper space units
+		/// Height in paper space units.
 		/// </summary>
 		[DxfCodeValue(41)]
 		public double Height { get; set; }
@@ -78,7 +79,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// View center point(in DCS)
+		/// View center point(in DCS).
 		/// </summary>
 		[DxfCodeValue(12, 22)]
 		public XY ViewCenter { get; set; }
@@ -347,8 +348,40 @@ namespace ACadSharp.Entities
 		{
 			XYZ min = new XYZ(this.Center.X - this.Width / 2, this.Center.Y - this.Height / 2, this.Center.Z);
 			XYZ max = new XYZ(this.Center.X + this.Width / 2, this.Center.Y + this.Height / 2, this.Center.Z);
-
 			return new BoundingBox(min, max);
+		}
+
+		/// <inheritdoc/>
+		public BoundingBox GetModelBoundingBox()
+		{
+			XYZ min = new XYZ(this.ViewCenter.X - this.ViewWidth / 2, this.ViewCenter.Y - this.ViewHeight / 2, 0);
+			XYZ max = new XYZ(this.ViewCenter.X + this.ViewWidth / 2, this.ViewCenter.Y + this.ViewHeight / 2, 0);
+			return new BoundingBox(min, max);
+		}
+
+		/// <summary>
+		/// Gets all the entities from the model that are in the view of the viewport.
+		/// </summary>
+		/// <returns></returns>
+		public List<Entity> SelectEntities(bool includePartial = true)
+		{
+			if (this.Document == null)
+			{
+				throw new InvalidOperationException($"Viewport needs to be assigned to a document.");
+			}
+
+			List<Entity> entities = new List<Entity>();
+
+			BoundingBox box = this.GetModelBoundingBox();
+			foreach (Entity e in this.Document.Entities)
+			{
+				if (box.IsIn(e.GetBoundingBox(), out bool partialIn) || (partialIn && includePartial))
+				{
+					entities.Add(e);
+				}
+			}
+
+			return entities;
 		}
 	}
 }

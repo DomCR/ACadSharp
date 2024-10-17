@@ -51,6 +51,14 @@ For more examples [check](https://github.com/DomCR/ACadSharp/tree/master/src/ACa
 
 For more information visit the :construction: [wiki](https://github.com/DomCR/ACadSharp/wiki) :construction: .
 
+Building
+---
+Before building run:
+```console
+git submodule update --init --recursive
+```
+This command will clone the submodules. These are Shared Projects that this project dependes on.
+
 Contributing
 ---
 
