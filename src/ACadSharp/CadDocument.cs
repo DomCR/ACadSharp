@@ -249,7 +249,7 @@ namespace ACadSharp
 			this.Header = new CadHeader(this);
 			this.SummaryInfo = new CadSummaryInfo();
 
-			//The order of the elements is rellevant for the handles assignation
+			//The order of the elements is relevant for the handles assignation
 
 			//Initialize tables
 			this.BlockRecords ??= new BlockRecordsTable(this);

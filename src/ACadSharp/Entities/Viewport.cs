@@ -53,6 +53,9 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Viewport ID.
 		/// </summary>
+		/// <remarks>
+		/// The first value for a PaperSpace will represent the paper image in the screen.
+		/// </remarks>
 		[DxfCodeValue(69)]
 		public short Id
 		{
@@ -321,6 +324,14 @@ namespace ACadSharp.Entities
 		//91
 
 		//Soft pointer reference to viewport object (for layer VP property override)
+
+		public bool RepresentsPaper
+		{
+			get
+			{
+				return this.Id == PaperViewId;
+			}
+		}
 
 		/// <inheritdoc/>
 		public override CadObject Clone()
