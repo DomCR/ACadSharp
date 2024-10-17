@@ -128,8 +128,8 @@ namespace ACadSharp.Entities
 		/// <b>true</b> if the arrow is to be flipped; otherwise, <b>false</b>.
 		/// </value>
 		/// <remarks>
-		/// Arrows are by default drawn inside the extension lines if there is enaugh
-		/// space; otherwise, outside. This flag overrules the standard behaviour.
+		/// Arrows are by default drawn inside the extension lines if there is enough
+		/// space; otherwise, outside. This flag overrules the standard behavior.
 		/// </remarks>
 		[DxfCodeValue(74)]
 		public bool FlipArrow1 { get; set; }
@@ -142,8 +142,8 @@ namespace ACadSharp.Entities
 		/// <b>true</b> if the arrow is to be flipped; otherwise, <b>false</b>.
 		/// </value>
 		/// <remarks>
-		/// Arrows are by default drawn inside the extension lines if there is enaugh
-		/// space; otherwise, outside. This flag overrules the standard behaviour.
+		/// Arrows are by default drawn inside the extension lines if there is enough
+		/// space; otherwise, outside. This flag overrules the standard behavior.
 		/// </remarks>
 		[DxfCodeValue(75)]
 		public bool FlipArrow2 { get; set; }

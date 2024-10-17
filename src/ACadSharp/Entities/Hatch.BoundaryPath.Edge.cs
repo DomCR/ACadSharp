@@ -1,4 +1,6 @@
-﻿namespace ACadSharp.Entities
+﻿using CSMath;
+
+namespace ACadSharp.Entities
 {
 	public partial class Hatch
 	{
@@ -10,7 +12,7 @@
 			public enum EdgeType
 			{
 				/// <remarks>
-				/// Not included in the documentation
+				/// Not included in the documentation.
 				/// </remarks>
 				Polyline = 0,
 				Line = 1,
@@ -19,12 +21,24 @@
 				Spline = 4,
 			}
 
-			public abstract class Edge
+			public abstract class Edge : IGeometricEntity
 			{
 				/// <summary>
-				/// Edge type
+				/// Edge type.
 				/// </summary>
 				public abstract EdgeType Type { get; }
+
+				/// <summary>
+				/// Creates a new object that is a copy of the current instance.
+				/// </summary>
+				/// <returns></returns>
+				public Edge Clone()
+				{
+					return (Edge)this.MemberwiseClone();
+				}
+
+				/// <inheritdoc/>
+				public abstract BoundingBox GetBoundingBox();
 			}
 		}
 	}

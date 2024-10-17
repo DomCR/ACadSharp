@@ -3,6 +3,7 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
 using CSUtilities.Extensions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -71,6 +72,17 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(c);
 			}
 
+			public void EntityChangeNormal()
+			{
+				Circle c = new Circle();
+				c.Center = new XYZ(0, 0, 0);
+				c.Radius = 10;
+
+				c.Normal = XYZ.AxisX;
+
+				this.Document.Entities.Add(c);
+			}
+
 			public void EntityColorByIndex()
 			{
 				Circle c = new Circle();
@@ -94,6 +106,16 @@ namespace ACadSharp.Tests.IO
 			public void CurrentEntityByBlock()
 			{
 				this.Document.Header.CurrentEntityColor = Color.ByBlock;
+			}
+
+			public void SingleEllipse()
+			{
+				Ellipse ellipse = new Ellipse();
+				ellipse.RadiusRatio = 0.5d;
+				ellipse.StartParameter = 0.0d;
+				ellipse.EndParameter = Math.PI * 2;
+
+				this.Document.Entities.Add(ellipse);
 			}
 
 			public void SingleLine()
@@ -359,10 +381,69 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(hatch);
 			}
 
+			public void CreateCircleHatch()
+			{
+				Hatch hatch = new Hatch();
+				hatch.IsSolid = true;
+
+				hatch.SeedPoints.Add(new XY());
+
+				List<Hatch.BoundaryPath.Line> edges = new List<Hatch.BoundaryPath.Line>();
+
+				//edges
+				Hatch.BoundaryPath.Polyline polyline = new Hatch.BoundaryPath.Polyline();
+				polyline.IsClosed = true;
+				polyline.Vertices.Add(new XYZ(0, 2.5, 1));
+				polyline.Vertices.Add(new XYZ(10, 2.5, 1));
+
+				Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+				foreach (var item in edges)
+				{
+					path.Edges.Add(item);
+				}
+
+				hatch.Paths.Add(path);
+
+				this.Document.Entities.Add(hatch);
+			}
+
 			public void ChangedEncoding()
 			{
 				this.Document.Header.CodePage = "gb2312";
 				this.Document.Layers.Add(new Layer("我的自定义层"));
+			}
+
+			public void AddBlockWithAttributes()
+			{
+				BlockRecord record = new("my_block");
+
+				record.Entities.Add(new Circle
+				{
+					Radius = 10,
+					Center = XYZ.Zero
+				});
+
+				record.Entities.Add(new AttributeDefinition()
+				{
+					InsertPoint = XYZ.Zero,
+					Prompt = "Name_custom",
+					Tag = "CIRCLE_NAME",
+					Value = "Circilla",
+					HorizontalAlignment = TextHorizontalAlignment.Left,
+					Height = 18,
+					AttributeType = AttributeType.SingleLine,
+				});
+
+				this.Document.BlockRecords.Add(record);
+
+				var insert = new Insert(record)
+				{
+					InsertPoint = new XYZ(0, 0, 0),
+					XScale = 0.8,
+					YScale = 0.8,
+				};
+
+				this.Document.Entities.Add(insert);
 			}
 
 			public void Deserialize(IXunitSerializationInfo info)
@@ -391,10 +472,12 @@ namespace ACadSharp.Tests.IO
 			}
 
 			Data.Add(new(nameof(SingleCaseGenerator.Empty)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleEllipse)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
+			Data.Add(new(nameof(SingleCaseGenerator.EntityChangeNormal)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByIndex)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityColorTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByIndex)));
@@ -415,7 +498,9 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithSegments)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
+			Data.Add(new(nameof(SingleCaseGenerator.CreateCircleHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.ChangedEncoding)));
+			Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
 		}
 
 		protected string getPath(string name, string ext, ACadVersion version)

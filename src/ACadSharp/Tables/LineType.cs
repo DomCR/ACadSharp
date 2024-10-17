@@ -6,7 +6,7 @@ using System.Linq;
 namespace ACadSharp.Tables
 {
 	/// <summary>
-	/// Represents a <see cref="LineType"/> entry
+	/// Represents a <see cref="LineType"/> entry.
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.TableLinetype"/> <br/>
@@ -38,13 +38,13 @@ namespace ACadSharp.Tables
 		public override string SubclassMarker => DxfSubclassMarker.Linetype;
 
 		/// <summary>
-		/// Descriptive text for linetype
+		/// Descriptive text for line type.
 		/// </summary>
 		[DxfCodeValue(3)]
 		public string Description { get; set; }
 
 		/// <summary>
-		/// Total pattern length
+		/// Total pattern length.
 		/// </summary>
 		[DxfCodeValue(40)]
 		public double PatternLen
@@ -56,16 +56,16 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Alignment code
+		/// Alignment code.
 		/// </summary>
 		/// <value>
-		/// value is always 65, the ASCII code for A
+		/// value is always 65, the ASCII code for A.
 		/// </value>
 		[DxfCodeValue(72)]
 		public char Alignment { get; internal set; } = 'A';
 
 		/// <summary>
-		/// Linetype Segments
+		/// LineType Segments
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 73)]
 		public IEnumerable<Segment> Segments { get { return this._segments; } }
@@ -80,12 +80,18 @@ namespace ACadSharp.Tables
 
 		internal LineType() : base() { }
 
+		/// <inheritdoc/>
 		public LineType(string name) : base(name) { }
 
+		/// <summary>
+		/// Add a segment to this line type.
+		/// </summary>
+		/// <param name="segment"></param>
+		/// <exception cref="ArgumentException"></exception>
 		public void AddSegment(Segment segment)
 		{
 			if (segment.LineType != null)
-				throw new ArgumentException($"Segment has already a Linetype: {segment.LineType.Name}");
+				throw new ArgumentException($"Segment has already a LineType: {segment.LineType.Name}");
 
 			segment.LineType = this;
 			this._segments.Add(segment);
@@ -94,7 +100,7 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
-			LineType clone = new LineType(this.Name);
+			LineType clone = (LineType)base.Clone();
 
 			clone._segments.Clear();
 			foreach (var segment in this._segments)

@@ -7,7 +7,7 @@ namespace ACadSharp.Tests.Common
 {
 	public static class AssertUtils
 	{
-		public static void AreEqual<T>(T expected, T actual, string varname)
+		public static void AreEqual<T>(T expected, T actual, string varname = null)
 		{
 			switch (expected, actual)
 			{
