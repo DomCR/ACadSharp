@@ -680,7 +680,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//Cloning flag BS 280
-				this._writer.WriteBitShort((short)xrecord.ClonningFlags);
+				this._writer.WriteBitShort((short)xrecord.CloningFlags);
 			}
 
 		}

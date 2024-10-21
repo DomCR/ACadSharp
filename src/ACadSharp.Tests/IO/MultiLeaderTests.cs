@@ -2,7 +2,6 @@
 using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
 using System.Collections.Generic;
-using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 

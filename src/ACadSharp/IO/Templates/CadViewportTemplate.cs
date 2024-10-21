@@ -1,10 +1,11 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadViewportTemplate : CadEntityTemplate
+	internal class CadViewportTemplate : CadEntityTemplate<Viewport>
 	{
 		public ulong? ViewportHeaderHandle { get; set; }
 
@@ -39,7 +40,7 @@ namespace ACadSharp.IO.Templates
 			{
 				viewport.Boundary = entity;
 			}
-			else if(this.BoundaryHandle.HasValue  && this.BoundaryHandle > 0)
+			else if (this.BoundaryHandle.HasValue && this.BoundaryHandle > 0)
 			{
 				builder.Notify($"Boundary {this.BoundaryHandle} not found for viewport {this.CadObject.Handle}", NotificationType.Warning);
 			}
@@ -52,6 +53,21 @@ namespace ACadSharp.IO.Templates
 			if (this.BaseUcsHandle.HasValue && this.BaseUcsHandle > 0)
 			{
 				builder.Notify($"Base ucs not implemented for Viewport, handle {this.BaseUcsHandle}");
+			}
+
+			if (this.CadObject.XDictionary != null &&
+				this.CadObject.XDictionary.TryGetEntry(Viewport.ASDK_XREC_ANNOTATION_SCALE_INFO, out XRecord record))
+			{
+				foreach (XRecord.Entry item in record.Entries)
+				{
+					if (item.Code == 340)
+					{
+						if (builder.TryGetCadObject((ulong?)item.Value, out Scale scale))
+						{
+							this.CadObject.Scale = scale;
+						}
+					}
+				}
 			}
 
 			foreach (var handle in this.FrozenLayerHandles)
