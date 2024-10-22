@@ -34,14 +34,6 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
-
-			CadDocument newDoc = new CadDocument();
-
-			foreach (var entity in doc.Entities)
-			{
-				doc.Entities.Remove(entity);
-				newDoc.Entities.Add(entity);
-			}
 		}
 
 		[Theory]
