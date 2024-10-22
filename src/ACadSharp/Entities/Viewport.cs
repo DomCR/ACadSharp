@@ -351,7 +351,7 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		private Scale _scale;
+		public double ScaleFactor => 1 / (this.ViewHeight / this.Height);
 
 		public bool RepresentsPaper
 		{
@@ -360,6 +360,8 @@ namespace ACadSharp.Entities
 				return this.Id == PaperViewId;
 			}
 		}
+
+		private Scale _scale;
 
 		/// <inheritdoc/>
 		public override CadObject Clone()
