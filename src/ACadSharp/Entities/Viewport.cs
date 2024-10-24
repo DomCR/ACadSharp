@@ -56,6 +56,9 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Viewport ID.
 		/// </summary>
+		/// <remarks>
+		/// The first value for a PaperSpace will represent the paper image in the screen.
+		/// </remarks>
 		[DxfCodeValue(69)]
 		public short Id
 		{
@@ -326,7 +329,7 @@ namespace ACadSharp.Entities
 		//Soft pointer reference to viewport object (for layer VP property override)
 
 		/// <summary>
-		/// 
+		/// Scale assigned for this viewport.
 		/// </summary>
 		public Scale Scale
 		{
@@ -345,6 +348,28 @@ namespace ACadSharp.Entities
 				{
 					this._scale = value;
 				}
+			}
+		}
+
+		/// <summary>
+		/// Scale factor applied in this viewport.
+		/// </summary>
+		/// <remarks>
+		/// Represents the scale applied to all the entities in the model when are visualized in the paper.
+		/// </remarks>
+		public double ScaleFactor => 1 / (this.ViewHeight / this.Height);
+
+		/// <summary>
+		/// Flag that set for those viewports that represent the paper in the view.
+		/// </summary>
+		/// <remarks>
+		/// A paper viewport is only for boundaries only, does not visualize anything.
+		/// </remarks>
+		public bool RepresentsPaper
+		{
+			get
+			{
+				return this.Id == PaperViewId;
 			}
 		}
 
@@ -368,7 +393,10 @@ namespace ACadSharp.Entities
 			return new BoundingBox(min, max);
 		}
 
-		/// <inheritdoc/>
+		/// <summary>
+		/// Gets the bounding box of this viewport in the model space.
+		/// </summary>
+		/// <returns></returns>
 		public BoundingBox GetModelBoundingBox()
 		{
 			XYZ min = new XYZ(this.ViewCenter.X - this.ViewWidth / 2, this.ViewCenter.Y - this.ViewHeight / 2, 0);
