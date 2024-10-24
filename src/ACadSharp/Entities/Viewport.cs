@@ -56,6 +56,9 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Viewport ID.
 		/// </summary>
+		/// <remarks>
+		/// The first value for a PaperSpace will represent the paper image in the screen.
+		/// </remarks>
 		[DxfCodeValue(69)]
 		public short Id
 		{
@@ -345,6 +348,16 @@ namespace ACadSharp.Entities
 				{
 					this._scale = value;
 				}
+			}
+		}
+
+		public double ScaleFactor => 1 / (this.ViewHeight / this.Height);
+
+		public bool RepresentsPaper
+		{
+			get
+			{
+				return this.Id == PaperViewId;
 			}
 		}
 

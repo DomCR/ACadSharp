@@ -88,19 +88,19 @@ namespace ACadSharp.Tables
 		public new BlockTypeFlags Flags { get { return this.BlockEntity.Flags; } set { this.BlockEntity.Flags = value; } }
 
 		/// <summary>
-		/// Specifies whether the block can be exploded
+		/// Specifies whether the block can be exploded.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional, 280)]
 		public bool IsExplodable { get; set; }
 
 		/// <summary>
-		/// Specifies the scaling allowed for the block
+		/// Specifies the scaling allowed for the block.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional, 281)]
 		public bool CanScale { get; set; } = true;
 
 		/// <summary>
-		/// DXF: Binary data for bitmap preview
+		/// DXF: Binary data for bitmap preview.
 		/// </summary>
 		/// <remarks>
 		/// Optional
@@ -109,7 +109,7 @@ namespace ACadSharp.Tables
 		public byte[] Preview { get; set; }
 
 		/// <summary>
-		/// Associated Layout
+		/// Associated Layout.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public Layout Layout
@@ -144,7 +144,7 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Viewports attached to this block
+		/// ViewPorts attached to this block
 		/// </summary>
 		public IEnumerable<Viewport> Viewports
 		{
