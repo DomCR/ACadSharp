@@ -122,7 +122,7 @@ namespace ACadSharp.Objects
 			clone.SubBlocks.Clear();
 			foreach (var item in this.SubBlocks)
 			{
-				clone.Entities.Add((Entity)item.Clone());
+				clone.SubBlocks.Add((SubBlock)item.Clone());
 			}
 
 			return clone;
