@@ -2,7 +2,9 @@
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -21,6 +23,8 @@ namespace ACadSharp.Entities
 		/// Paper view Id, it indicates that the viewport acts as a paper size.
 		/// </summary>
 		public const int PaperViewId = 1;
+
+		public const string ASDK_XREC_ANNOTATION_SCALE_INFO = "ASDK_XREC_ANNOTATION_SCALE_INFO";
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.VIEWPORT;
@@ -321,6 +325,31 @@ namespace ACadSharp.Entities
 
 		//Soft pointer reference to viewport object (for layer VP property override)
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public Scale Scale
+		{
+			get
+			{
+				return this._scale;
+			}
+			set
+			{
+				if (this.Document != null)
+				{
+					this._scale = this.updateCollection(value, this.Document.Scales);
+					this.updateScaleXRecord();
+				}
+				else
+				{
+					this._scale = value;
+				}
+			}
+		}
+
+		private Scale _scale;
+
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
@@ -334,8 +363,8 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			XYZ min = new XYZ(this.Center.X - this.Width, this.Center.Y - this.Height, this.Center.Z);
-			XYZ max = new XYZ(this.Center.X + this.Width, this.Center.Y + this.Height, this.Center.Z);
+			XYZ min = new XYZ(this.Center.X - this.Width / 2, this.Center.Y - this.Height / 2, this.Center.Z);
+			XYZ max = new XYZ(this.Center.X + this.Width / 2, this.Center.Y + this.Height / 2, this.Center.Z);
 			return new BoundingBox(min, max);
 		}
 
@@ -345,6 +374,83 @@ namespace ACadSharp.Entities
 			XYZ min = new XYZ(this.ViewCenter.X - this.ViewWidth / 2, this.ViewCenter.Y - this.ViewHeight / 2, 0);
 			XYZ max = new XYZ(this.ViewCenter.X + this.ViewWidth / 2, this.ViewCenter.Y + this.ViewHeight / 2, 0);
 			return new BoundingBox(min, max);
+		}
+
+		/// <summary>
+		/// Gets all the entities from the model that are in the view of the viewport.
+		/// </summary>
+		/// <returns></returns>
+		public List<Entity> SelectEntities(bool includePartial = true)
+		{
+			if (this.Document == null)
+			{
+				throw new InvalidOperationException($"Viewport needs to be assigned to a document.");
+			}
+
+			List<Entity> entities = new List<Entity>();
+
+			BoundingBox box = this.GetModelBoundingBox();
+			foreach (Entity e in this.Document.Entities)
+			{
+				if (box.IsIn(e.GetBoundingBox(), out bool partialIn) || (partialIn && includePartial))
+				{
+					entities.Add(e);
+				}
+			}
+
+			return entities;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._scale = this.updateCollection(this.Scale, doc.Scales);
+
+			this.Document.Scales.OnRemove += this.scalesOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.Scales.OnRemove -= this.scalesOnRemove;
+
+			base.UnassignDocument();
+
+			this._scale = (Scale)this.Scale.Clone();
+		}
+
+		private void scalesOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this.Scale))
+			{
+				this.Scale = this.Document.Scales.FirstOrDefault();
+			}
+		}
+
+		private void updateScaleXRecord()
+		{
+			if (this.Document == null)
+			{
+				return;
+			}
+
+			if (this.XDictionary.TryGetEntry(ASDK_XREC_ANNOTATION_SCALE_INFO, out XRecord record))
+			{
+				foreach (XRecord.Entry item in record.Entries)
+				{
+					if (item.Code == 340)
+					{
+						item.Value = this._scale.Handle;
+					}
+				}
+			}
+			else
+			{
+				record = new XRecord(ASDK_XREC_ANNOTATION_SCALE_INFO);
+				this.XDictionary.Add(record);
+
+				record.CreateEntry(340, _scale.Handle);
+			}
 		}
 	}
 }

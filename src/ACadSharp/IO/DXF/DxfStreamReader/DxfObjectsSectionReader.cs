@@ -194,8 +194,6 @@ namespace ACadSharp.IO.DXF
 		{
 			CadXRecordTemplate tmp = template as CadXRecordTemplate;
 
-			//TODO: Finsih cadXrecordtemplate
-
 			switch (this._reader.Code)
 			{
 				case 100 when this._reader.ValueAsString == DxfSubclassMarker.XRecord:
@@ -212,7 +210,7 @@ namespace ACadSharp.IO.DXF
 
 			while (this._reader.DxfCode != DxfCode.Start)
 			{
-				recrod.Entries.Add(new XRecord.Entry(this._reader.Code, this._reader.Value));
+				recrod.CreateEntry(this._reader.Code, this._reader.Value);
 
 				this._reader.ReadNext();
 			}

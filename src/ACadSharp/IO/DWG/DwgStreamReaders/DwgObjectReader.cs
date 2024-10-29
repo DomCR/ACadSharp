@@ -1908,7 +1908,7 @@ namespace ACadSharp.IO.DWG
 			//14 - pt 3BD 14 See DXF documentation.
 			dimension.LeaderEndpoint = this._objectReader.Read3BitDouble();
 
-			byte flags = (this._objectReader.ReadByte());
+			byte flags = this._objectReader.ReadByte();
 			dimension.IsOrdinateTypeX = (flags & 0b01) != 0;
 
 			this.readCommonDimensionHandles(template);
@@ -2067,7 +2067,7 @@ namespace ACadSharp.IO.DWG
 			//The actual 70 - group value comes from 3 things:
 			//6 for being an ordinate DIMENSION, plus whatever bits "Flags 1" and "Flags 2" specify.
 
-			byte flags = (this._objectReader.ReadByte());
+			byte flags = this._objectReader.ReadByte();
 			dimension.IsTextUserDefinedLocation = (flags & 0b01) == 0;
 
 			//User text TV 1
@@ -5428,50 +5428,50 @@ namespace ACadSharp.IO.DWG
 				{
 					case GroupCodeValueType.String:
 					case GroupCodeValueType.ExtendedDataString:
-						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadTextUnicode()));
+						xRecord.CreateEntry(code, this._objectReader.ReadTextUnicode());
 						break;
 					case GroupCodeValueType.Point3D:
-						xRecord.Entries.Add(new XRecord.Entry(code,
+						xRecord.CreateEntry(code,
 							new XYZ(
 								this._objectReader.ReadDouble(),
 								this._objectReader.ReadDouble(),
 								this._objectReader.ReadDouble()
-								)));
+								));
 						break;
 					case GroupCodeValueType.Double:
 					case GroupCodeValueType.ExtendedDataDouble:
-						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadDouble()));
+						xRecord.CreateEntry(code, this._objectReader.ReadDouble());
 						break;
 					case GroupCodeValueType.Byte:
-						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadByte()));
+						xRecord.CreateEntry(code, this._objectReader.ReadByte());
 						break;
 					case GroupCodeValueType.Int16:
 					case GroupCodeValueType.ExtendedDataInt16:
-						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadShort()));
+						xRecord.CreateEntry(code, this._objectReader.ReadShort());
 						break;
 					case GroupCodeValueType.Int32:
 					case GroupCodeValueType.ExtendedDataInt32:
-						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawLong()));
+						xRecord.CreateEntry(code, this._objectReader.ReadRawLong());
 						break;
 					case GroupCodeValueType.Int64:
-						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawULong()));
+						xRecord.CreateEntry(code, this._objectReader.ReadRawULong());
 						break;
 					case GroupCodeValueType.Handle:
-						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadTextUnicode()));
+						xRecord.CreateEntry(code, this._objectReader.ReadTextUnicode());
 						break;
 					case GroupCodeValueType.Bool:
-						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadByte() > 0));
+						xRecord.CreateEntry(code, this._objectReader.ReadByte() > 0);
 						break;
 					case GroupCodeValueType.Chunk:
 					case GroupCodeValueType.ExtendedDataChunk:
-						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadBytes(this._objectReader.ReadByte())));
+						xRecord.CreateEntry(code, this._objectReader.ReadBytes(this._objectReader.ReadByte()));
 						break;
 					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:
-						xRecord.Entries.Add(new XRecord.Entry(code, this._objectReader.ReadRawULong()));
+						xRecord.CreateEntry(code, this._objectReader.ReadRawULong());
 						break;
 					default:
-						this.notify($"Unedintified GroupCodeValueType {code} for XRecord [{xRecord.Handle}]", NotificationType.Warning);
+						this.notify($"Unidentified GroupCodeValueType {code} for XRecord [{xRecord.Handle}]", NotificationType.Warning);
 						break;
 				}
 			}
@@ -5480,7 +5480,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//Cloning flag BS 280
-				xRecord.ClonningFlags = (DictionaryCloningFlags)this._objectReader.ReadBitShort();
+				xRecord.CloningFlags = (DictionaryCloningFlags)this._objectReader.ReadBitShort();
 			}
 
 			long size = this._objectInitialPos + (long)(this._size * 8U) - 7L;
