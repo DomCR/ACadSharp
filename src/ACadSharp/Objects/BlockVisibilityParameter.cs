@@ -90,14 +90,14 @@ namespace ACadSharp.Objects
 			/// Get the list of <see cref="Entity"/> objects in this subblock.
 			/// </summary>
 			[DxfCodeValue(332)]
-			public IList<Entity> Entities { get; } = new List<Entity>();
+			public IList<Entity> Entities { get; private set; } = new List<Entity>();
 
 
 			public object Clone()
 			{
 				SubBlock clone = (SubBlock)MemberwiseClone();
 
-				clone.Entities.Clear();
+				clone.Entities = new List<Entity>();
 				foreach (var item in this.Entities)
 				{
 					clone.Entities.Add((Entity)item.Clone());
