@@ -97,6 +97,10 @@ namespace ACadSharp.Objects
 			public object Clone()
 			{
 				GraphNode clone = (GraphNode)MemberwiseClone();
+
+				clone.Next = (GraphNode)Next.Clone();
+				clone.NodeObject = NodeObject.Clone();
+
 				return clone;
 			}
 		}
