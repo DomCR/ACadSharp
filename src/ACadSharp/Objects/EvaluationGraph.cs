@@ -28,7 +28,7 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Gets a list of <see cref="GraphNode"/> objects.
 		/// </summary>
-		public IList<GraphNode> Nodes { get; } = new List<GraphNode>();
+		public IList<GraphNode> Nodes { get; private set; } = new List<GraphNode>();
 
 
 		/// <summary>
@@ -111,7 +111,7 @@ namespace ACadSharp.Objects
 		{
 			EvaluationGraph clone = (EvaluationGraph)base.Clone();
 
-			clone.Nodes.Clear();
+			clone.Nodes = new List<GraphNode>();
 			foreach (var item in this.Nodes)
 			{
 				clone.Nodes.Add((GraphNode)item.Clone());

@@ -32,14 +32,14 @@ namespace ACadSharp.Objects
 		/// this <see cref="BlockVisibilityParameter"/> is associated with.
 		/// </summary>
 		[DxfCodeValue(331)]
-		public IList<Entity> Entities { get; } = new List<Entity>();
+		public IList<Entity> Entities { get; private set; } = new List<Entity>();
 
 		/// <summary>
 		/// Gets the list of subblocks each containing a subset of the <see cref="Entity"/>
 		/// objects of the dynamic block this <see cref="BlockVisibilityParameter"/>
 		/// is associated with.
 		/// </summary>
-		public IList<SubBlock> SubBlocks { get; } = new List<SubBlock>();
+		public IList<SubBlock> SubBlocks { get; private set; } = new List<SubBlock>();
 
 		/// <summary>
 		/// Gets a position presumably used to display a triangle-button in AutoCAD open
@@ -113,13 +113,13 @@ namespace ACadSharp.Objects
 		{
 			BlockVisibilityParameter clone = (BlockVisibilityParameter)base.Clone();
 
-			clone.Entities.Clear();
+			clone.Entities = new List<Entity>();
 			foreach (var item in this.Entities)
 			{
 				clone.Entities.Add((Entity)item.Clone());
 			}
 
-			clone.SubBlocks.Clear();
+			clone.SubBlocks = new List<SubBlock>();
 			foreach (var item in this.SubBlocks)
 			{
 				clone.SubBlocks.Add((SubBlock)item.Clone());
