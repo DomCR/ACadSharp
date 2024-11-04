@@ -103,7 +103,12 @@ namespace ACadSharp.Tables.Collections
 			if (this.defaultEntries.Contains(key))
 				return null;
 
-			if (this.entries.Remove(key, out T item))
+			if(!this.entries.ContainsKey(key))
+				return null;
+
+			var item = this.entries[key];
+
+			if (this.entries.Remove(key))
 			{
 				item.Owner = null;
 				OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));

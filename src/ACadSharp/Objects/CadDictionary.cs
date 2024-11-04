@@ -283,7 +283,14 @@ namespace ACadSharp.Objects
 		/// <returns>true if the element is successfully removed; otherwise, false.</returns>
 		public bool Remove(string key, out NonGraphicalObject item)
 		{
-			if (this._entries.Remove(key, out item))
+			item = default;
+
+			if (!this._entries.ContainsKey(key))
+				return false;
+
+			item = this._entries[key];
+
+			if (this._entries.Remove(key))
 			{
 				item.Owner = null;
 				OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));
