@@ -760,12 +760,28 @@ namespace ACadSharp.Header
 		public double ChamferAngle { get; set; }
 
 		/// <summary>
-		/// 
+		/// Adjusts the smoothness of shaded and rendered objects, rendered shadows, and objects with hidden lines removed.
 		/// </summary>
 		/// <remarks>
-		/// System variable FACETRES
+		/// System variable FACETRES.
 		/// </remarks>
-		public double FacetResolution { get; set; }
+		/// <value>
+		/// Valid values are from 0.01 to 10.0.
+		/// </value>
+		[CadSystemVariable("$FACETRES", 40)]
+		public double FacetResolution
+		{
+			get
+			{
+				return this._facetResolution;
+			}
+			set
+			{
+				ObjectExtensions.InRange<double, ArgumentOutOfRangeException>(value, 0.01, 10, "FACETRES valid values are from 0.01 to 10.0");
+			}
+		}
+
+		private double _facetResolution = 0.5;
 
 		/// <summary>
 		/// Current multiline scale
