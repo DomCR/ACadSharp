@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using ACadSharp.Attributes;
 using ACadSharp.Entities;
-
 using CSMath;
 
-
-namespace ACadSharp.Objects
+namespace ACadSharp.Objects.Evaluations
 {
-
 	/// <summary>
 	/// Represents a BLOCKVISIBILITYPARAMETER object, in AutoCAD used to
 	/// control the visibility state of entities in a dynamic block.
@@ -47,7 +43,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(1010, 1020, 1030)]
 		public XYZ BasePosition { get; internal set; }
-		
+
 		/// <summary>
 		/// Gets a text presumably describing the purpose of this <see cref="BlockVisibilityParameter"/>.
 		/// </summary>
@@ -106,7 +102,6 @@ namespace ACadSharp.Objects
 				return clone;
 			}
 		}
-
 
 		/// <inheritdoc/>
 		public override CadObject Clone()

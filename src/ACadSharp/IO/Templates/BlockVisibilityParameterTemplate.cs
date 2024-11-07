@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 
 using ACadSharp.Entities;
-using ACadSharp.Objects;
+using ACadSharp.Objects.Evaluations;
 
-namespace ACadSharp.IO.Templates {
+namespace ACadSharp.IO.Templates
+{
 
 	internal class BlockVisibilityParameterTemplate : CadTemplate<BlockVisibilityParameter> {
 

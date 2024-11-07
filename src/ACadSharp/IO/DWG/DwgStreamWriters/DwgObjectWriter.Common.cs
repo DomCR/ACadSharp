@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
+using ACadSharp.XData;
 using CSUtilities.Converters;
 using System.IO;
 

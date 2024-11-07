@@ -3,6 +3,7 @@ using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Types.Units;
+using ACadSharp.XData;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
