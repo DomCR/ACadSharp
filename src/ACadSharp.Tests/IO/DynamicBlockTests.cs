@@ -10,11 +10,11 @@ namespace ACadSharp.Tests.IO
 {
 	public class DynamicBlockTests : IOTestsBase
 	{
-		public static TheoryData<FileModel> DynamicBlocksPaths { get; } = new();
+		public static TheoryData<FileModel> DwgDynamicBlocksPaths { get; } = new();
 
 		static DynamicBlockTests()
 		{
-			loadSamples("dynamic-blocks", "dwg", DynamicBlocksPaths);
+			loadSamples("dynamic-blocks", "*", DwgDynamicBlocksPaths);
 		}
 
 		public DynamicBlockTests(ITestOutputHelper output) : base(output)
@@ -22,16 +22,29 @@ namespace ACadSharp.Tests.IO
 		}
 
 		[Theory]
-		[MemberData(nameof(DynamicBlocksPaths))]
+		[MemberData(nameof(DwgDynamicBlocksPaths))]
 		public void DynamicBlocksTest(FileModel test)
 		{
+			CadDocument doc;
+
+			if (test.Extension == ".dxf")
+			{
+				DxfReaderConfiguration configuration = new();
+				configuration.KeepUnknownEntities = true;
+				configuration.KeepUnknownNonGraphicalObjects = true;
+
+				doc = DxfReader.Read(test.Path, configuration, this.onNotification);
+			}
+			else
+			{
+				DwgReaderConfiguration configuration = new DwgReaderConfiguration();
+				configuration.KeepUnknownEntities = true;
+				configuration.KeepUnknownNonGraphicalObjects = true;
+
+				doc = DwgReader.Read(test.Path, configuration, this.onNotification);
+			}
+
 			//"my-dynamic-block" handle = 570
-
-			DwgReaderConfiguration configuration = new DwgReaderConfiguration();
-			configuration.KeepUnknownEntities = true;
-			configuration.KeepUnknownNonGraphicalObjects = true;
-
-			CadDocument doc = DwgReader.Read(test.Path, configuration, this.onNotification);
 
 			BlockRecord blk = doc.BlockRecords["my-dynamic-block"];
 

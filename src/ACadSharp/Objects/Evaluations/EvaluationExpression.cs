@@ -1,10 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ACadSharp.Objects.Evaluations
 {
@@ -32,13 +28,13 @@ namespace ACadSharp.Objects.Evaluations
 		public override string SubclassMarker => DxfSubclassMarker.EvalGraphExpr;
 
 		[DxfCodeValue(90)]
-		public int Value90 { get; set; }
+		internal int Value90 { get; set; }
 
 		[DxfCodeValue(98)]
-		public int Value98 { get; set; }
+		internal int Value98 { get; set; }
 
 		[DxfCodeValue(99)]
-		public int Value99 { get; set; }
+		internal int Value99 { get; set; }
 	}
 
 	public abstract class BlockElement : EvaluationExpression
@@ -61,10 +57,10 @@ namespace ACadSharp.Objects.Evaluations
 		public override string SubclassMarker => DxfSubclassMarker.BlockParameter;
 
 		[DxfCodeValue(280)]
-		public bool Value280 { get; set; }
+		internal bool Value280 { get; set; }
 
 		[DxfCodeValue(281)]
-		public bool Value281 { get; set; }
+		internal bool Value281 { get; set; }
 	}
 
 	public abstract class Block2PtParameter : BlockParameter

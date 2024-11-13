@@ -1,12 +1,16 @@
-﻿using Xunit.Abstractions;
+﻿using ACadSharp.IO;
+using System.IO;
+using Xunit.Abstractions;
 
 namespace ACadSharp.Tests.TestModels
 {
 	public class FileModel : IXunitSerializable
 	{
-		public string FileName { get; set; }
+		public string Extension { get { return System.IO.Path.GetExtension(Path); } }
 
-		public string Path { get; set; }
+		public string FileName { get; private set; }
+
+		public string Path { get; private set; }
 
 		public FileModel()
 		{
