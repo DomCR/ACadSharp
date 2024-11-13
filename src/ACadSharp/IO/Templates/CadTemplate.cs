@@ -61,6 +61,18 @@ namespace ACadSharp.IO.Templates
 					builder.Notify($"AppId in extended data with handle {item.Key} not found", NotificationType.Warning);
 				}
 			}
+
+			foreach (KeyValuePair<string, ExtendedData> item in this.EDataTemplateByAppName)
+			{
+				if (builder.TryGetTableEntry(item.Key, out AppId app))
+				{
+					this.CadObject.ExtendedData.Add(app, item.Value);
+				}
+				else
+				{
+					builder.Notify($"AppId in extended data with handle {item.Key} not found", NotificationType.Warning);
+				}
+			}
 		}
 
 		protected IEnumerable<T> getEntitiesCollection<T>(CadDocumentBuilder builder, ulong firstHandle, ulong endHandle)
