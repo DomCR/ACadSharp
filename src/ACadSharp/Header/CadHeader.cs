@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Types.Units;
 using CSMath;
@@ -595,25 +596,21 @@ namespace ACadSharp.Header
 		/// System variable CMLSTYLE
 		/// </remarks>
 		[CadSystemVariable("$CMLSTYLE", true, 2)]
-		public string MultiLineStyleName { get; internal set; } = "Standard";
-
-		//TODO: Header MLStyle
-		//{
-		//	get { return this.CurrentLType.Name; }
-		//	set
-		//	{
-		//		if (this.Document != null)
-		//		{
-		//			this.CurrentLType = this.Document.LineTypes[value];
-		//		}
-		//		else
-		//		{
-		//			this.CurrentLType = new LineType(value);
-		//		}
-		//	}
-		//}
-
-		//public MLStyle CurrentTextStyle { get; private set; } = MLStyle.Default;
+		public string MultiLineStyleName
+		{
+			get { return this._currentMLineStyle.Name; }
+			set
+			{
+				if (this.Document != null)
+				{
+					this._currentMLineStyle = this.Document.MLineStyles[value];
+				}
+				else
+				{
+					this._currentMLineStyle = new MLineStyle(value);
+				}
+			}
+		}
 
 		/// <summary>
 		/// Default trace width
@@ -643,7 +640,7 @@ namespace ACadSharp.Header
 		public double FilletRadius { get; set; }
 
 		/// <summary>
-		/// Current thickness set by ELEV command
+		/// Sets the default 3D thickness property when creating 2D geometric objects.
 		/// </summary>
 		/// <remarks>
 		/// System variable THICKNESS
@@ -652,7 +649,7 @@ namespace ACadSharp.Header
 		public double ThicknessDefault { get; set; }
 
 		/// <summary>
-		/// Angle 0 direction
+		/// Sets the zero (0) base angle with respect to the current UCS.
 		/// </summary>
 		/// <remarks>
 		/// System variable ANGBASE
@@ -777,7 +774,8 @@ namespace ACadSharp.Header
 			}
 			set
 			{
-				ObjectExtensions.InRange<double, ArgumentOutOfRangeException>(value, 0.01, 10, "FACETRES valid values are from 0.01 to 10.0");
+				ObjectExtensions.InRange(value, 0.01, 10, "FACETRES valid values are from 0.01 to 10.0");
+				this._facetResolution = value;
 			}
 		}
 
@@ -796,7 +794,7 @@ namespace ACadSharp.Header
 		/// Current entity linetype scale
 		/// </summary>
 		/// <remarks>
-		/// System variable CHAMFERD
+		/// System variable CELTSCALE
 		/// </remarks>
 		[CadSystemVariable("$CELTSCALE", 40)]
 		public double CurrentEntityLinetypeScale { get; set; } = 1.0d;
@@ -1337,7 +1335,7 @@ namespace ACadSharp.Header
 		public string HyperLinkBase { get; set; }
 
 		/// <summary>
-		/// Lineweight of new objects
+		/// Line weight of new objects
 		/// </summary>
 		/// <remarks>
 		/// System variable CELWEIGHT
@@ -1346,7 +1344,7 @@ namespace ACadSharp.Header
 		public LineweightType CurrentEntityLineWeight { get; set; } = LineweightType.ByLayer;
 
 		/// <summary>
-		/// Lineweight endcaps setting for new objects
+		/// Line weight end-caps setting for new objects
 		/// </summary>
 		/// <remarks>
 		/// System variable ENDCAPS
@@ -1355,7 +1353,7 @@ namespace ACadSharp.Header
 		public short EndCaps { get; set; }
 
 		/// <summary>
-		/// Lineweight joint setting for new objects
+		/// Line weight joint setting for new objects
 		/// </summary>
 		/// <remarks>
 		/// System variable JOINSTYLE
@@ -1364,7 +1362,7 @@ namespace ACadSharp.Header
 		public short JoinStyle { get; set; }
 
 		/// <summary>
-		/// Controls the display of lineweights on the Model or Layout tab<br/>
+		/// Controls whether the lineweights of objects are displayed.<br/>
 		/// 0 = Lineweight is not displayed<br/>
 		/// 1 = Lineweight is displayed
 		/// </summary>
@@ -1495,7 +1493,7 @@ namespace ACadSharp.Header
 		/// System variable HALOGAP
 		/// </remarks>
 		[CadSystemVariable("$HALOGAP", 280)]
-		public byte HaloGapPercentage { get; set; }
+		public byte HaloGapPercentage { get; set; } = 0;
 
 		public Color ObscuredColor { get; set; }
 
@@ -1506,8 +1504,11 @@ namespace ACadSharp.Header
 		/// System variable INTERFERECOLOR
 		/// </remarks>
 		[CadSystemVariable("$INTERFERECOLOR", 62)]
-		public Color InterfereColor { get; set; }
+		public Color InterfereColor { get; set; } = new Color(1);
 
+		/// <remarks>
+		/// System variable OBSCUREDLTYPE
+		/// </remarks>
 		public byte ObscuredType { get; set; }
 
 		public byte IntersectionDisplay { get; set; }
@@ -1521,6 +1522,9 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$PROJECTNAME", 1)]
 		public string ProjectName { get; set; }
 
+		/// <remarks>
+		/// System variable CAMERADISPLAY
+		/// </remarks>
 		public bool CameraDisplayObjects { get; set; }
 		public double StepsPerSecond { get; set; }
 		public double StepSize { get; set; }
@@ -2919,6 +2923,25 @@ namespace ACadSharp.Header
 			}
 		}
 
+		public MLineStyle CurrentMLineStyle
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._currentMLineStyle;
+				}
+				else
+				{
+					return this.Document.MLineStyles[this.MultiLineStyleName];
+				}
+			}
+			private set
+			{
+				this._currentMLineStyle = value;
+			}
+		}
+
 		//TODO: How header UCS work??
 		public UCS ModelSpaceUcs { get; private set; } = new UCS();
 
@@ -2944,6 +2967,8 @@ namespace ACadSharp.Header
 		private DimensionStyle _dimensionStyleOverrides = DimensionStyle.Default;
 
 		private LineType _currentLineType = LineType.ByLayer;
+
+		private MLineStyle _currentMLineStyle = MLineStyle.Default;
 
 		static CadHeader()
 		{
