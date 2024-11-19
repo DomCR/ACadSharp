@@ -17,6 +17,8 @@ using static ACadSharp.Objects.MultiLeaderAnnotContext;
 using System.Net;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
+using ACadSharp.Objects.Evaluations;
+using ACadSharp.XData;
 
 namespace ACadSharp.IO.DWG
 {
@@ -1070,34 +1072,45 @@ namespace ACadSharp.IO.DWG
 
 		#region Evaluation Graph, Enhanced Block etc.
 
-		private CadTemplate readEvaluationGraph() {
+		private CadTemplate readEvaluationGraph()
+		{
 			EvaluationGraph evaluationGraph = new EvaluationGraph();
 			EvaluationGraphTemplate template = new EvaluationGraphTemplate(evaluationGraph);
 
 			this.readCommonNonEntityData(template);
 
 			//	DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
-			var val1 = _objectReader.ReadBitLong();
-			var val2 = _objectReader.ReadBitLong();
-			var val3 = _objectReader.ReadBitLong();
-			int nodeCount = val3;
+			evaluationGraph.Value96 = _objectReader.ReadBitLong();
+			evaluationGraph.Value97 = _objectReader.ReadBitLong();
 
-			for (int i = 0; i < nodeCount; i++) {
+			int nodeCount = _objectReader.ReadBitLong();
+			for (int i = 0; i < nodeCount; i++)
+			{
 				var node = new EvaluationGraph.GraphNode();
 				evaluationGraph.Nodes.Add(node);
+
+				//Code 91
 				node.Index = _objectReader.ReadBitLong();
+				//Code 93
 				node.Flags = _objectReader.ReadBitLong();
+				//Code 95
 				node.NextNodeIndex = _objectReader.ReadBitLong();
+
+				//Code 360
 				template.NodeHandles.Add(node, this.handleReference());
+
+				//Codes 92
 				node.Data1 = _objectReader.ReadBitLong();
 				node.Data2 = _objectReader.ReadBitLong();
 				node.Data3 = _objectReader.ReadBitLong();
 				node.Data4 = _objectReader.ReadBitLong();
 			}
 
-			foreach (EvaluationGraph.GraphNode node in evaluationGraph.Nodes) {
+			foreach (EvaluationGraph.GraphNode node in evaluationGraph.Nodes)
+			{
 				int nextNodeIndex = node.NextNodeIndex;
-				if (nextNodeIndex >= 0 && nextNodeIndex < nodeCount) {
+				if (nextNodeIndex >= 0 && nextNodeIndex < nodeCount)
+				{
 					node.Next = evaluationGraph.Nodes[nextNodeIndex];
 				}
 			}
@@ -1108,7 +1121,8 @@ namespace ACadSharp.IO.DWG
 		}
 
 
-		private CadTemplate readBlockVisibilityParameter() {
+		private CadTemplate readBlockVisibilityParameter()
+		{
 			BlockVisibilityParameter blockVisibilityParameter = new BlockVisibilityParameter();
 			BlockVisibilityParameterTemplate template = new BlockVisibilityParameterTemplate(blockVisibilityParameter);
 
@@ -1160,14 +1174,16 @@ namespace ACadSharp.IO.DWG
 			//DwgAnalyseTools.resetPosition(214293, 0);
 			//  DXF 93 Total entities count (no property)
 			var totalEntitiesCount = _objectReader.ReadBitLong();
-			for (int i = 0; i < totalEntitiesCount; i++) {
+			for (int i = 0; i < totalEntitiesCount; i++)
+			{
 				var handle = this.handleReference();
 				template.TotalEntityHandles.Add(handle, null);
 			}
 
 			//	DXF 92 Sub blocks count (no property)
 			var subBlocksCount = _objectReader.ReadBitLong();
-			for (int sbi = 0; sbi < subBlocksCount; sbi++) {
+			for (int sbi = 0; sbi < subBlocksCount; sbi++)
+			{
 				BlockVisibilityParameter.SubBlock subBlock = new BlockVisibilityParameter.SubBlock();
 				subBlock.Name = _textReader.ReadVariableText();
 				blockVisibilityParameter.SubBlocks.Add(subBlock);
@@ -1176,7 +1192,8 @@ namespace ACadSharp.IO.DWG
 				template.SubBlockHandles.Add(subBlock, subBlockHandles);
 				//	DXF 94 Subblock entities count (no property)
 				int entitiesCount = _objectReader.ReadBitLong();
-				for (int i = 0; i < entitiesCount; i++) {
+				for (int i = 0; i < entitiesCount; i++)
+				{
 					var handle = this.handleReference();
 					subBlockHandles.Add(handle);
 				}

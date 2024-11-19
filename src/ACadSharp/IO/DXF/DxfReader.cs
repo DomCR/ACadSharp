@@ -83,6 +83,19 @@ namespace ACadSharp.IO
 			return isBinary;
 		}
 
+		public static CadDocument Read(string filename, DxfReaderConfiguration configuration, NotificationEventHandler notification = null)
+		{
+			CadDocument doc = null;
+
+			using (DxfReader reader = new DxfReader(filename, notification))
+			{
+				reader.Configuration = configuration;
+				doc = reader.Read();
+			}
+
+			return doc;
+		}
+
 		/// <summary>
 		/// Read a dxf document in a stream
 		/// </summary>
@@ -164,7 +177,7 @@ namespace ACadSharp.IO
 				this._reader.ReadNext();
 			}
 
-			if(this._document.Header == null)
+			if (this._document.Header == null)
 			{
 				this._document.Header = new CadHeader(this._document);
 			}
