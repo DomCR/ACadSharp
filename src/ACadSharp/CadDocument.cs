@@ -82,6 +82,14 @@ namespace ACadSharp
 		public VPortsTable VPorts { get; private set; }
 
 		/// <summary>
+		/// The collection of all book colors in the drawing.
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadColor"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public ColorCollection Colors { get; private set; }
+
+		/// <summary>
 		/// The collection of all layouts in the drawing.
 		/// </summary>
 		/// <remarks>
@@ -339,6 +347,11 @@ namespace ACadSharp
 			if (this.updateCollection(CadDictionary.AcadImageDict, createDictionaries, out CadDictionary imageDefinitions))
 			{
 				this.ImageDefinitions = new ImageDefinitionCollection(imageDefinitions);
+			}
+
+			if (this.updateCollection(CadDictionary.AcadColor, createDictionaries, out CadDictionary colors))
+			{
+				this.Colors = new ColorCollection(colors);
 			}
 		}
 

@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
@@ -59,7 +60,10 @@ namespace ACadSharp.IO.Templates
 
 			if (this.ColorHandle.HasValue)
 			{
-				//TODO: Set the color by handle
+				if (builder.TryGetCadObject(this.ColorHandle, out BookColor color))
+				{
+
+				}
 			}
 			else
 			{

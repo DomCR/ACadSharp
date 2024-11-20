@@ -26,7 +26,7 @@ namespace ACadSharp.Tests.IO
 		[MemberData(nameof(ColorSamplesFilePaths))]
 		public void ColorDwg(FileModel test)
 		{
-			CadDocument doc = DwgReader.Read(test.Path);
+			CadDocument doc = DwgReader.Read(test.Path, this.onNotification);
 
 			//CECOLOR R 155 : G 66 : B 236
 			Color currentEntityColor = doc.Header.CurrentEntityColor;
@@ -76,6 +76,20 @@ namespace ACadSharp.Tests.IO
 			}
 
 			DwgWriter.Write(new MemoryStream(), doc);
+		}
+
+		[Theory]
+		[MemberData(nameof(ColorSamplesFilePaths))]
+		public void BookColor(FileModel test)
+		{
+			DwgReaderConfiguration configuration = new()
+			{
+				KeepUnknownNonGraphicalObjects = true,
+			};
+
+			CadDocument doc = DwgReader.Read(test.Path, configuration, this.onNotification);
+
+
 		}
 	}
 }
