@@ -413,6 +413,11 @@ namespace ACadSharp.Tests.IO
 				this.Document.Layers.Add(new Layer("我的自定义层"));
 			}
 
+			public void AddCustomScale()
+			{
+				this.Document.Scales.Add(new Scale("Hello"));
+			}
+
 			public void AddBlockWithAttributes()
 			{
 				BlockRecord record = new("my_block");
@@ -501,6 +506,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.CreateCircleHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.ChangedEncoding)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
+			Data.Add(new(nameof(SingleCaseGenerator.AddCustomScale)));
 		}
 
 		protected string getPath(string name, string ext, ACadVersion version)

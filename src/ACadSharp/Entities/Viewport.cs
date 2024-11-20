@@ -4,6 +4,7 @@ using ACadSharp.Tables;
 using CSMath;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -22,6 +23,8 @@ namespace ACadSharp.Entities
 		/// Paper view Id, it indicates that the viewport acts as a paper size.
 		/// </summary>
 		public const int PaperViewId = 1;
+
+		public const string ASDK_XREC_ANNOTATION_SCALE_INFO = "ASDK_XREC_ANNOTATION_SCALE_INFO";
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.VIEWPORT;
@@ -53,6 +56,9 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Viewport ID.
 		/// </summary>
+		/// <remarks>
+		/// The first value for a PaperSpace will represent the paper image in the screen.
+		/// </remarks>
 		[DxfCodeValue(69)]
 		public short Id
 		{
@@ -322,6 +328,53 @@ namespace ACadSharp.Entities
 
 		//Soft pointer reference to viewport object (for layer VP property override)
 
+		/// <summary>
+		/// Scale assigned for this viewport.
+		/// </summary>
+		public Scale Scale
+		{
+			get
+			{
+				return this._scale;
+			}
+			set
+			{
+				if (this.Document != null)
+				{
+					this._scale = this.updateCollection(value, this.Document.Scales);
+					this.updateScaleXRecord();
+				}
+				else
+				{
+					this._scale = value;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Scale factor applied in this viewport.
+		/// </summary>
+		/// <remarks>
+		/// Represents the scale applied to all the entities in the model when are visualized in the paper.
+		/// </remarks>
+		public double ScaleFactor => 1 / (this.ViewHeight / this.Height);
+
+		/// <summary>
+		/// Flag that set for those viewports that represent the paper in the view.
+		/// </summary>
+		/// <remarks>
+		/// A paper viewport is only for boundaries only, does not visualize anything.
+		/// </remarks>
+		public bool RepresentsPaper
+		{
+			get
+			{
+				return this.Id == PaperViewId;
+			}
+		}
+
+		private Scale _scale;
+
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
@@ -340,7 +393,10 @@ namespace ACadSharp.Entities
 			return new BoundingBox(min, max);
 		}
 
-		/// <inheritdoc/>
+		/// <summary>
+		/// Gets the bounding box of this viewport in the model space.
+		/// </summary>
+		/// <returns></returns>
 		public BoundingBox GetModelBoundingBox()
 		{
 			XYZ min = new XYZ(this.ViewCenter.X - this.ViewWidth / 2, this.ViewCenter.Y - this.ViewHeight / 2, 0);
@@ -371,6 +427,58 @@ namespace ACadSharp.Entities
 			}
 
 			return entities;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._scale = this.updateCollection(this.Scale, doc.Scales);
+
+			this.Document.Scales.OnRemove += this.scalesOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.Scales.OnRemove -= this.scalesOnRemove;
+
+			base.UnassignDocument();
+
+			this._scale = (Scale)this.Scale.Clone();
+		}
+
+		private void scalesOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this.Scale))
+			{
+				this.Scale = this.Document.Scales.FirstOrDefault();
+			}
+		}
+
+		private void updateScaleXRecord()
+		{
+			if (this.Document == null)
+			{
+				return;
+			}
+
+			if (this.XDictionary.TryGetEntry(ASDK_XREC_ANNOTATION_SCALE_INFO, out XRecord record))
+			{
+				foreach (XRecord.Entry item in record.Entries)
+				{
+					if (item.Code == 340)
+					{
+						item.Value = this._scale.Handle;
+					}
+				}
+			}
+			else
+			{
+				record = new XRecord(ASDK_XREC_ANNOTATION_SCALE_INFO);
+				this.XDictionary.Add(record);
+
+				record.CreateEntry(340, _scale.Handle);
+			}
 		}
 	}
 }
