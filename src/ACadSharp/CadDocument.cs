@@ -122,8 +122,11 @@ namespace ACadSharp
 		public MLineStyleCollection MLineStyles { get; private set; }
 
 		/// <summary>
-		/// 
+		/// The collection of all images in the drawing. 
 		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadImageDict"/> doesn't exist in the root dictionary.
+		/// </remarks>
 		public ImageDefinitionCollection ImageDefinitions { get; private set; }
 
 		/// <summary>

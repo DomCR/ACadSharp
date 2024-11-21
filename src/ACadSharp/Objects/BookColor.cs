@@ -1,18 +1,19 @@
 ﻿using ACadSharp.Attributes;
+using System.Linq;
 
 namespace ACadSharp.Objects
 {
 	/// <summary>
-	/// Represents a <see cref="Group"/> object.
+	/// Represents a <see cref="BookColor"/> object.
 	/// </summary>
 	/// <remarks>
-	/// Object name <see cref="DxfFileToken.TableGroup"/> <br/>
-	/// Dxf class name <see cref="DxfSubclassMarker.Group"/>
+	/// Object name <see cref="DxfFileToken.ObjectDBColor"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.DbColor"/>
 	/// </remarks>
-	[DxfName(DxfFileToken.TableGroup)]
-	[DxfSubClass(DxfSubclassMarker.Group)]
+	[DxfName(DxfFileToken.ObjectDBColor)]
+	[DxfSubClass(DxfSubclassMarker.DbColor)]
 	public class BookColor : NonGraphicalObject
-	{   
+	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
@@ -22,7 +23,11 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.DbColor;
 
-		public string BookName { get; internal set; }
-		public Color Color { get; internal set; }
+		public string ColorName { get { return this.Name.Split('$').Last(); } }
+
+		public string BookName { get { return this.Name.Split('$').First(); } }
+		
+		[DxfCodeValue(62, 420)]
+		public Color Color { get; set; }
 	}
 }

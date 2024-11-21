@@ -7,18 +7,13 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSMath;
-using CSUtilities.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System;
-using ACadSharp.Types;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
-using System.Net;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
 
 namespace ACadSharp.IO.DWG
 {
@@ -5807,10 +5802,14 @@ namespace ACadSharp.IO.DWG
 				byte flags = this._objectReader.ReadByte();
 
 				if ((flags & 1U) > 0U)
-					bookColor.Name = this._textReader.ReadVariableText();
+				{
+					string colorName = this._textReader.ReadVariableText();
+				}
 
 				if ((flags & 2U) > 0U)
-					bookColor.BookName = this._textReader.ReadVariableText();
+				{
+					string bookName = this._textReader.ReadVariableText();
+				}
 
 				byte[] arr = LittleEndianConverter.Instance.GetBytes(trueColor);
 

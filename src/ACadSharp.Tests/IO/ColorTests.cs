@@ -91,7 +91,7 @@ namespace ACadSharp.Tests.IO
 
 			BookColor color = circle.BookColor;
 
-			Assert.Equal("RAL 1006", color.Name);
+			Assert.Equal("RAL 1006", color.ColorName);
 			Assert.Equal("RAL CLASSIC", color.BookName);
 
 			Assert.True(doc.Colors.ContainsKey(color.Name));

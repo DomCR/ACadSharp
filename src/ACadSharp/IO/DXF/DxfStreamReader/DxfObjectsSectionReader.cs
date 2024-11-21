@@ -51,6 +51,8 @@ namespace ACadSharp.IO.DXF
 		{
 			switch (this._reader.ValueAsString)
 			{
+				case DxfFileToken.ObjectDBColor:
+					return this.readObjectCodes<BookColor>(new CadNonGraphicalObjectTemplate(new BookColor()), this.readBookColor);
 				case DxfFileToken.ObjectDictionary:
 					return this.readObjectCodes<CadDictionary>(new CadDictionaryTemplate(), this.readDictionary);
 				case DxfFileToken.ObjectDictionaryWithDefault:
@@ -216,10 +218,25 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		private bool readBookColor(CadTemplate template, DxfMap map)
+		{
+			CadNonGraphicalObjectTemplate tmp = template as CadNonGraphicalObjectTemplate;
+			BookColor color = tmp.CadObject as BookColor;
+
+			switch (this._reader.Code)
+			{
+				case 430:
+					color.Name = this._reader.ValueAsString;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.DbColor]);
+			}
+		}
+
 		private bool readDictionary(CadTemplate template, DxfMap map)
 		{
-			CadDictionary cadDictionary = new CadDictionary();
 			CadDictionaryTemplate tmp = template as CadDictionaryTemplate;
+			CadDictionary cadDictionary = tmp.CadObject;
 
 			switch (this._reader.Code)
 			{

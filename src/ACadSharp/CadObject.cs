@@ -3,6 +3,7 @@ using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp

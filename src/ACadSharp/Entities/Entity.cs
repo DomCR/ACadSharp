@@ -39,7 +39,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		[DxfCodeValue(62, 420, 430)]
+		[DxfCodeValue(62, 420)]
 		public Color Color { get; set; } = Color.ByLayer;
 
 		/// <inheritdoc/>
@@ -85,9 +85,28 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Handle, 347)]
 		public Material Material { get; set; }
 
+		[DxfCodeValue(DxfReferenceType.Name, 430)]
+		public BookColor BookColor
+		{
+			get { return this._bookColor; }
+			set
+			{
+				if (this.Document != null)
+				{
+					this._bookColor = this.updateCollection(value, this.Document.Colors);
+				}
+				else
+				{
+					this._bookColor = value;
+				}
+			}
+		}
+
 		private Layer _layer = Layer.Default;
 
 		private LineType _lineType = LineType.ByLayer;
+
+		private BookColor _bookColor = null;
 
 		/// <inheritdoc/>
 		public Entity() : base() { }

@@ -109,7 +109,7 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		public static CadDocument Read(string filename, NotificationEventHandler notification = null)
 		{
-			return Read(File.OpenRead(filename));
+			return Read(File.OpenRead(filename), notification);
 		}
 
 		/// <inheritdoc/>
@@ -164,7 +164,7 @@ namespace ACadSharp.IO
 				this._reader.ReadNext();
 			}
 
-			if(this._document.Header == null)
+			if (this._document.Header == null)
 			{
 				this._document.Header = new CadHeader(this._document);
 			}
