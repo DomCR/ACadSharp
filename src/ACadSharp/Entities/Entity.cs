@@ -85,6 +85,9 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Handle, 347)]
 		public Material Material { get; set; }
 
+		/// <summary>
+		/// Book color for this entity.
+		/// </summary> 
 		[DxfCodeValue(DxfReferenceType.Name, 430)]
 		public BookColor BookColor
 		{

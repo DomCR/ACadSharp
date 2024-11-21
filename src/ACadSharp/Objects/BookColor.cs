@@ -23,8 +23,14 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.DbColor;
 
+		/// <summary>
+		/// Color name.
+		/// </summary>
 		public string ColorName { get { return this.Name.Split('$').Last(); } }
 
+		/// <summary>
+		/// Book name where the color is stored.
+		/// </summary>
 		public string BookName { get { return this.Name.Split('$').First(); } }
 		
 		[DxfCodeValue(62, 420)]

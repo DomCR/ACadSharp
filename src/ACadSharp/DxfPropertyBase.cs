@@ -97,9 +97,6 @@ namespace ACadSharp
 						// true color
 						this._property.SetValue(obj, new Color(b[2], b[1], b[0]));
 						break;
-					case 430:
-						// dictionary color
-						break;
 				}
 			}
 			else if (_property.PropertyType.IsEquivalentTo(typeof(PaperMargin)))
