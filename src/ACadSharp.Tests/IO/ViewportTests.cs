@@ -18,15 +18,7 @@ namespace ACadSharp.Tests.IO
 		[MemberData(nameof(DxfAsciiFiles))]
 		public void ScaleInViewport(FileModel test)
 		{
-			CadDocument doc;
-			if (Path.GetExtension(test.FileName).Equals(".dxf"))
-			{
-				doc = DxfReader.Read(test.Path);
-			}
-			else
-			{
-				doc = DwgReader.Read(test.Path);
-			}
+			CadDocument doc = this.readDocument(test);
 
 			ACadSharp.Tables.BlockRecord paper = doc.PaperSpace;
 			foreach (Viewport v in paper.Viewports)

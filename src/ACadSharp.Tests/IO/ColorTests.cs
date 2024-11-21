@@ -6,6 +6,7 @@ using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 using ACadSharp.Tests.TestModels;
+using ACadSharp.Objects;
 
 namespace ACadSharp.Tests.IO
 {
@@ -15,7 +16,7 @@ namespace ACadSharp.Tests.IO
 
 		static ColorTests()
 		{
-			loadSamples("color_samples", "dwg", ColorSamplesFilePaths);
+			loadSamples("color_samples", "*", ColorSamplesFilePaths);
 		}
 
 		public ColorTests(ITestOutputHelper output) : base(output)
@@ -26,7 +27,7 @@ namespace ACadSharp.Tests.IO
 		[MemberData(nameof(ColorSamplesFilePaths))]
 		public void ColorDwg(FileModel test)
 		{
-			CadDocument doc = DwgReader.Read(test.Path, this.onNotification);
+			CadDocument doc = this.readDocument(test);
 
 			//CECOLOR R 155 : G 66 : B 236
 			Color currentEntityColor = doc.Header.CurrentEntityColor;
@@ -82,14 +83,18 @@ namespace ACadSharp.Tests.IO
 		[MemberData(nameof(ColorSamplesFilePaths))]
 		public void BookColor(FileModel test)
 		{
-			DwgReaderConfiguration configuration = new()
-			{
-				KeepUnknownNonGraphicalObjects = true,
-			};
+			CadDocument doc = this.readDocument(test);
 
-			CadDocument doc = DwgReader.Read(test.Path, configuration, this.onNotification);
+			Circle circle = doc.GetCadObject<Circle>(649);
 
+			Assert.NotNull(circle.BookColor);
 
+			BookColor color = circle.BookColor;
+
+			Assert.Equal("RAL 1006", color.Name);
+			Assert.Equal("RAL CLASSIC", color.BookName);
+
+			Assert.True(doc.Colors.ContainsKey(color.Name));
 		}
 	}
 }
