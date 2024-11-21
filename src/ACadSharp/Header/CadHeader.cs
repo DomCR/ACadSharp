@@ -1675,6 +1675,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$TIMEZONE", 70)]
 		public int TimeZone { get; set; } = 0;  //Create enum for variable
 
+		/// <remarks>
+		/// System variable LIGHTGLYPHDISPLAY
+		/// </remarks>
+		[CadSystemVariable("$LIGHTGLYPHDISPLAY", 280)]
 		public char DisplayLightGlyphs { get; set; }
 
 		/// <remarks>
