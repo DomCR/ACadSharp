@@ -1562,18 +1562,82 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$STEPSIZE", 40)]
 		public double StepSize { get; set; } = 6.0d;
 
+		/// <remarks>
+		/// System variable 3DDWFPREC
+		/// </remarks>
+		[CadSystemVariable("$3DDWFPREC", 40)]
 		public double Dw3DPrecision { get; set; }
+
+		/// <remarks>
+		/// System variable LENSLENGTH
+		/// </remarks>
+		[CadSystemVariable("$LENSLENGTH", 40)]
 		public double LensLength { get; set; }
+
+		/// <remarks>
+		/// System variable CAMERAHEIGHT
+		/// </remarks>
+		[CadSystemVariable("$CAMERAHEIGHT", 40)]
 		public double CameraHeight { get; set; }
+
+		/// <remarks>
+		/// System variable SOLIDHIST
+		/// </remarks>
+		[CadSystemVariable("$SOLIDHIST", 280)]
 		public char SolidsRetainHistory { get; set; }
+
+		/// <remarks>
+		/// System variable SHOWHIST
+		/// </remarks>
+		[CadSystemVariable("$SHOWHIST", 280)]
 		public char ShowSolidsHistory { get; set; }
+
+		/// <remarks>
+		/// System variable PSOLWIDTH
+		/// </remarks>
+		[CadSystemVariable("$PSOLWIDTH", 40)]
 		public double SweptSolidWidth { get; set; }
+
+		/// <remarks>
+		/// System variable PSOLHEIGHT
+		/// </remarks>
+		[CadSystemVariable("$PSOLHEIGHT", 40)]
 		public double SweptSolidHeight { get; set; }
+
+		/// <remarks>
+		/// System variable LOFTANG1
+		/// </remarks>
+		[CadSystemVariable("$LOFTANG1", 40)]
 		public double DraftAngleFirstCrossSection { get; set; }
+
+		/// <remarks>
+		/// System variable LOFTANG2
+		/// </remarks>
+		[CadSystemVariable("$LOFTANG2", 40)]
 		public double DraftAngleSecondCrossSection { get; set; }
+
+		/// <remarks>
+		/// System variable LOFTMAG1
+		/// </remarks>
+		[CadSystemVariable("$LOFTMAG1", 40)]
 		public double DraftMagnitudeFirstCrossSection { get; set; }
+
+		/// <remarks>
+		/// System variable LOFTMAG2
+		/// </remarks>
+		[CadSystemVariable("$LOFTMAG2", 40)]
 		public double DraftMagnitudeSecondCrossSection { get; set; }
+
+		/// <remarks>
+		/// System variable LOFTPARAM
+		/// </remarks>
+		[CadSystemVariable("$LOFTPARAM", 70)]
 		public short SolidLoftedShape { get; set; }
+
+		/// <remarks>
+		/// System variable LOFTNORMALS
+		/// </remarks>
+		[CadSystemVariable("$LOFTNORMALS", 280)]
 		public char LoftedObjectNormals { get; set; }
 
 		/// <summary>
@@ -1609,7 +1673,7 @@ namespace ACadSharp.Header
 		/// System variable TIMEZONE
 		/// </remarks>
 		[CadSystemVariable("$TIMEZONE", 70)]
-		public int TimeZone { get; set; } = 0;	//Create enum for variable
+		public int TimeZone { get; set; } = 0;  //Create enum for variable
 
 		public char DisplayLightGlyphs { get; set; }
 
@@ -1643,6 +1707,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$SHADOWPLANELOCATION", 40)]
 		public double ShadowPlaneLocation { get; set; }
 
+		/// <remarks>
+		/// System variable STYLESHEET
+		/// </remarks>
+		[CadSystemVariable("$STYLESHEET", 1)]
 		public string StyleSheetName { get; set; }
 
 		/// <summary>
