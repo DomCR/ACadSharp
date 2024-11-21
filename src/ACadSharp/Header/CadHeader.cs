@@ -1525,9 +1525,43 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable CAMERADISPLAY
 		/// </remarks>
+		[CadSystemVariable("$CAMERADISPLAY", 290)]
 		public bool CameraDisplayObjects { get; set; }
-		public double StepsPerSecond { get; set; }
-		public double StepSize { get; set; }
+
+		/// <summary>
+		/// Specifies the number of steps taken per second when you are in walk or fly mode.
+		/// </summary>
+		/// <remarks>
+		/// System variable STEPSPERSEC
+		/// </remarks>
+		/// <value>
+		/// Valid values are from 1 to 30
+		/// </value>
+		[CadSystemVariable("$STEPSPERSEC", 40)]
+		public double StepsPerSecond
+		{
+			get
+			{
+				return this._stepsPerSecond;
+			}
+			set
+			{
+				ObjectExtensions.InRange(value, 1, 30, "STEPSPERSEC valid values are from 1 to 30");
+				this._stepsPerSecond = value;
+			}
+		}
+
+		private double _stepsPerSecond = 2.0d;
+
+		/// <summary>
+		/// Specifies the size of each step when in walk or fly mode, in drawing units.
+		/// </summary>
+		/// <remarks>
+		/// System variable STEPSIZE
+		/// </remarks>
+		[CadSystemVariable("$STEPSIZE", 40)]
+		public double StepSize { get; set; } = 6.0d;
+
 		public double Dw3DPrecision { get; set; }
 		public double LensLength { get; set; }
 		public double CameraHeight { get; set; }
@@ -1543,7 +1577,7 @@ namespace ACadSharp.Header
 		public char LoftedObjectNormals { get; set; }
 
 		/// <summary>
-		/// Specifies the latitude of the drawing model in decimal format
+		/// Specifies the latitude of the drawing model in decimal format.
 		/// </summary>
 		/// <remarks>
 		/// System variable LATITUDE
@@ -1552,7 +1586,7 @@ namespace ACadSharp.Header
 		public double Latitude { get; set; } = 37.7950d;
 
 		/// <summary>
-		/// Specifies the longitude of the drawing model in decimal format
+		/// Specifies the longitude of the drawing model in decimal format.
 		/// </summary>
 		/// <remarks>
 		/// System variable LONGITUDE
@@ -1566,11 +1600,16 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$NORTHDIRECTION", 40)]
 		public double NorthDirection { get; set; }
 
+		/// <summary>
+		/// Sets the time zone for the sun in the drawing.
+		/// </summary>
 		/// <remarks>
+		/// The values in the table are expressed as hours and minutes away from Greenwich Mean Time. You can also change this value in the Geographic Location dialog box when you set or edit geographic location information for the drawing file.
+		/// <br/>
 		/// System variable TIMEZONE
 		/// </remarks>
 		[CadSystemVariable("$TIMEZONE", 70)]
-		public int TimeZone { get; set; }
+		public int TimeZone { get; set; } = 0;	//Create enum for variable
 
 		public char DisplayLightGlyphs { get; set; }
 
