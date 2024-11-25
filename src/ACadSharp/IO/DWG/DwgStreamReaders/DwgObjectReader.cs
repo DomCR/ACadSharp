@@ -5798,7 +5798,6 @@ namespace ACadSharp.IO.DWG
 
 			if (this.R2004Plus)
 			{
-				//3269627904
 				uint trueColor = (uint)this._objectReader.ReadBitLong();
 				byte flags = this._objectReader.ReadByte();
 

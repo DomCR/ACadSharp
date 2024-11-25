@@ -98,7 +98,7 @@ namespace ACadSharp.IO.DWG
 			//BS : color number: flags + color index
 			ushort size = 0;
 
-			if (color.IsByBlock && transparency.IsByLayer)
+			if (color.IsByBlock && transparency.IsByLayer && !isBookColor)
 			{
 				base.WriteBitShort(0);
 				return;
@@ -110,10 +110,6 @@ namespace ACadSharp.IO.DWG
 				size = (ushort)(size | 0b10000000000000);
 			}
 
-			//49152
-			//0b1100000000000000
-			//0b0100000000000000
-			//0b1000000000000000
 			//0x4000: has AcDbColor reference (0x8000 is also set in this case).
 			if (isBookColor)
 			{

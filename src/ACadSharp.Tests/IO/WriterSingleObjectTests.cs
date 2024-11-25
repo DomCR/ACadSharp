@@ -411,8 +411,8 @@ namespace ACadSharp.Tests.IO
 
 			public void AddCustomBookColor()
 			{
-				var color = new BookColor("RAL CLASSIC$RAL 1006");
-				//var color = new BookColor("TEST BOOK$MY COLOR");
+				//var color = new BookColor("RAL CLASSIC$RAL 1006");
+				var color = new BookColor("TEST BOOK$MY COLOR");
 				color.Color = new(226, 144, 0);
 
 				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
