@@ -3,6 +3,7 @@ using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp
@@ -106,7 +107,7 @@ namespace ACadSharp
 		/// Creates a new object that is a copy of the current instance.
 		/// </summary>
 		/// <remarks>
-		/// The copy will be unatached from the document or any reference
+		/// The copy will be unattached from the document or any reference.
 		/// </remarks>
 		/// <returns>A new object that is a copy of this instance.</returns>
 		public virtual CadObject Clone()

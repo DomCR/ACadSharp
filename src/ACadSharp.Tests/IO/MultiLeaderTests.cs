@@ -1,7 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
+using ACadSharp.Tests.TestModels;
 using System.Collections.Generic;
-using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -9,15 +9,11 @@ namespace ACadSharp.Tests.IO
 {
 	public class MultiLeaderTests : IOTestsBase
 	{
-		public static TheoryData<string> MultiLeaderFilePaths { get; }
+		public static TheoryData<FileModel> MultiLeaderFilePaths { get; } = new();
 
 		static MultiLeaderTests()
 		{
-			MultiLeaderFilePaths = new TheoryData<string>();
-			foreach (string p in Directory.GetFiles(Path.Combine($"{samplesFolder}", "multileader"), $"*.dwg"))
-			{
-				MultiLeaderFilePaths.Add(Path.GetFileName(p));
-			}
+			loadSamples("multileader", "dwg", MultiLeaderFilePaths);
 		}
 
 		public MultiLeaderTests(ITestOutputHelper output) : base(output)
@@ -26,11 +22,9 @@ namespace ACadSharp.Tests.IO
 
 		[Theory]
 		[MemberData(nameof(MultiLeaderFilePaths))]
-		public void MultiLeaderDwg(string path)
+		public void MultiLeaderDwg(FileModel test)
 		{
-			path = Path.Combine($"{samplesFolder}", "multileader", path);
-
-			CadDocument doc = DwgReader.Read(path);
+			CadDocument doc = DwgReader.Read(test.Path);
 
 			// There are 14 multileaders in DWG file
 			Assert.Equal(14, doc.Entities.Count);

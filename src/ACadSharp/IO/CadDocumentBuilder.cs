@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
@@ -34,6 +35,8 @@ namespace ACadSharp.IO
 		public VPortsTable VPorts { get; set; } = new VPortsTable();
 
 		public abstract bool KeepUnknownEntities { get; }
+
+		public abstract bool KeepUnknownNonGraphicalObjects { get; }
 
 		public ulong InitialHandSeed { get; set; } = 0;
 
@@ -100,6 +103,12 @@ namespace ACadSharp.IO
 			if (this.cadObjects.TryGetValue(handle.Value, out CadObject obj))
 			{
 				if (obj is UnknownEntity && !this.KeepUnknownEntities)
+				{
+					value = null;
+					return false;
+				}
+
+				if (obj is UnknownNonGraphicalObject && !this.KeepUnknownNonGraphicalObjects)
 				{
 					value = null;
 					return false;

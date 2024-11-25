@@ -28,6 +28,7 @@ namespace ACadSharp.IO.DWG
 				case MultiLeaderAnnotContext:
 				case MultiLeaderStyle:
 				case SortEntitiesTable:
+				case UnknownNonGraphicalObject:
 				case VisualStyle:
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
 					return;
@@ -44,6 +45,9 @@ namespace ACadSharp.IO.DWG
 			{
 				case AcdbPlaceHolder acdbPlaceHolder:
 					this.writeAcdbPlaceHolder(acdbPlaceHolder);
+					break;
+				case BookColor bookColor:
+					this.writeBookColor(bookColor);
 					break;
 				case CadDictionaryWithDefault dictionarydef:
 					this.writeCadDictionaryWithDefault(dictionarydef);
@@ -95,6 +99,48 @@ namespace ACadSharp.IO.DWG
 		{
 		}
 
+		private void writeBookColor(BookColor color)
+		{
+			this._writer.WriteBitShort(0);
+
+			if (this.R2004Plus)
+			{
+				byte[] arr = new byte[]
+				{
+					color.Color.B,
+					color.Color.G,
+					color.Color.R,
+					0b11000010
+				};
+
+				uint rgb = LittleEndianConverter.Instance.ToUInt32(arr);
+
+				this._writer.WriteBitLong((int)rgb);
+
+				byte flags = 0;
+				if (!string.IsNullOrEmpty(color.ColorName))
+				{
+					flags = (byte)(flags | 1u);
+				}
+
+				if (!string.IsNullOrEmpty(color.BookName))
+				{
+					flags = (byte)(flags | 2u);
+				}
+
+				this._writer.WriteByte(flags);
+				if (!string.IsNullOrEmpty(color.ColorName))
+				{
+					this._writer.WriteVariableText(color.ColorName);
+				}
+
+				if (!string.IsNullOrEmpty(color.BookName))
+				{
+					this._writer.WriteVariableText(color.BookName);
+				}
+			}
+		}
+
 		private void writeCadDictionaryWithDefault(CadDictionaryWithDefault dictionary)
 		{
 			this.writeDictionary(dictionary);
@@ -128,6 +174,11 @@ namespace ACadSharp.IO.DWG
 			foreach (var item in dictionary)
 			{
 				if (item is XRecord && !this.WriteXRecords)
+				{
+					return;
+				}
+
+				if (item is UnknownNonGraphicalObject)
 				{
 					return;
 				}
@@ -674,7 +725,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//Cloning flag BS 280
-				this._writer.WriteBitShort((short)xrecord.ClonningFlags);
+				this._writer.WriteBitShort((short)xrecord.CloningFlags);
 			}
 
 		}

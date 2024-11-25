@@ -17,6 +17,8 @@ namespace ACadSharp
 
 		public const double Epsilon = 1e-12;
 
+		public const double TwoPI = Math.PI * 2;
+
 		/// <summary>
 		/// Checks if a number is close to zero.
 		/// </summary>
@@ -36,6 +38,16 @@ namespace ACadSharp
 		public static bool IsZero(double number, double threshold)
 		{
 			return number >= -threshold && number <= threshold;
+		}
+
+		public static double FixZero(double number)
+		{
+			return FixZero(number, Epsilon);
+		}
+
+		public static double FixZero(double number, double threshold)
+		{
+			return IsZero(number, threshold) ? 0 : number;
 		}
 
 		public static double RadToDeg(double value)
@@ -61,7 +73,7 @@ namespace ACadSharp
 
 			double gamma = (Math.PI - theta) / 2;
 			double phi = (end - start).GetAngle() + Math.Sign(bulge) * gamma;
-			return new XY(start.X + radius * CSMath.MathUtils.Cos(phi), start.Y + radius * CSMath.MathUtils.Sin(phi));
+			return new XY(start.X + radius * CSMath.MathHelper.Cos(phi), start.Y + radius * CSMath.MathHelper.Sin(phi));
 		}
 
 		/// <summary>

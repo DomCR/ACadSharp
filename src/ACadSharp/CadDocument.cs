@@ -82,6 +82,14 @@ namespace ACadSharp
 		public VPortsTable VPorts { get; private set; }
 
 		/// <summary>
+		/// The collection of all book colors in the drawing.
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadColor"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public ColorCollection Colors { get; private set; }
+
+		/// <summary>
 		/// The collection of all layouts in the drawing.
 		/// </summary>
 		/// <remarks>
@@ -114,8 +122,11 @@ namespace ACadSharp
 		public MLineStyleCollection MLineStyles { get; private set; }
 
 		/// <summary>
-		/// 
+		/// The collection of all images in the drawing. 
 		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadImageDict"/> doesn't exist in the root dictionary.
+		/// </remarks>
 		public ImageDefinitionCollection ImageDefinitions { get; private set; }
 
 		/// <summary>
@@ -249,7 +260,7 @@ namespace ACadSharp
 			this.Header = new CadHeader(this);
 			this.SummaryInfo = new CadSummaryInfo();
 
-			//The order of the elements is rellevant for the handles assignation
+			//The order of the elements is relevant for the handles assignation
 
 			//Initialize tables
 			this.BlockRecords ??= new BlockRecordsTable(this);
@@ -340,6 +351,11 @@ namespace ACadSharp
 			{
 				this.ImageDefinitions = new ImageDefinitionCollection(imageDefinitions);
 			}
+
+			if (this.updateCollection(CadDictionary.AcadColor, createDictionaries, out CadDictionary colors))
+			{
+				this.Colors = new ColorCollection(colors);
+			}
 		}
 
 		private bool updateCollection(string dictName, bool createDictionary, out CadDictionary dictionary)
@@ -423,7 +439,7 @@ namespace ACadSharp
 			}
 		}
 
-		internal void RegisterCollection<T>(IObservableCollection<T> collection)
+		internal void RegisterCollection<T>(IObservableCadCollection<T> collection)
 			where T : CadObject
 		{
 			switch (collection)
@@ -498,7 +514,7 @@ namespace ACadSharp
 			}
 		}
 
-		internal void UnregisterCollection<T>(IObservableCollection<T> collection)
+		internal void UnregisterCollection<T>(IObservableCadCollection<T> collection)
 			where T : CadObject
 		{
 			switch (collection)

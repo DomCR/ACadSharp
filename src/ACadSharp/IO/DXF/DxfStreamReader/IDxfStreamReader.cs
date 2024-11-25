@@ -44,8 +44,10 @@
 		/// Find a dxf entry in the file.
 		/// </summary>
 		/// <param name="dxfEntry"></param>
-		void Find(string dxfEntry);
+		bool Find(string dxfEntry);
 
+		void Start();
+		
 		void ReadNext();
 	}
 }

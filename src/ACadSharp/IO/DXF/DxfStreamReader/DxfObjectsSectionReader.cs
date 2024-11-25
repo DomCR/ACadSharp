@@ -51,6 +51,8 @@ namespace ACadSharp.IO.DXF
 		{
 			switch (this._reader.ValueAsString)
 			{
+				case DxfFileToken.ObjectDBColor:
+					return this.readObjectCodes<BookColor>(new CadNonGraphicalObjectTemplate(new BookColor()), this.readBookColor);
 				case DxfFileToken.ObjectDictionary:
 					return this.readObjectCodes<CadDictionary>(new CadDictionaryTemplate(), this.readDictionary);
 				case DxfFileToken.ObjectDictionaryWithDefault:
@@ -70,13 +72,34 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.ObjectXRecord:
 					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), this.readXRecord);
 				default:
-					this._builder.Notify($"Object not implemented: {this._reader.ValueAsString}", NotificationType.NotImplemented);
+					DxfMap map = DxfMap.Create<CadObject>();
+					CadUnknownNonGraphicalObjectTemplate unknownEntityTemplate = null;
+					if (this._builder.DocumentToBuild.Classes.TryGetByName(this._reader.ValueAsString, out Classes.DxfClass dxfClass))
+					{
+						this._builder.Notify($"NonGraphicalObject not supported read as an UnknownNonGraphicalObject: {this._reader.ValueAsString}", NotificationType.NotImplemented);
+						unknownEntityTemplate = new CadUnknownNonGraphicalObjectTemplate(new UnknownNonGraphicalObject(dxfClass));
+					}
+					else
+					{
+						this._builder.Notify($"UnknownNonGraphicalObject not supported: {this._reader.ValueAsString}", NotificationType.NotImplemented);
+					}
+
+					this._reader.ReadNext();
+
 					do
 					{
+						if (unknownEntityTemplate != null && this._builder.KeepUnknownEntities)
+						{
+							this.readCommonCodes(unknownEntityTemplate, out bool isExtendedData, map);
+							if (isExtendedData)
+								continue;
+						}
+
 						this._reader.ReadNext();
 					}
 					while (this._reader.DxfCode != DxfCode.Start);
-					return null;
+
+					return unknownEntityTemplate;
 			}
 		}
 
@@ -173,8 +196,6 @@ namespace ACadSharp.IO.DXF
 		{
 			CadXRecordTemplate tmp = template as CadXRecordTemplate;
 
-			//TODO: Finsih cadXrecordtemplate
-
 			switch (this._reader.Code)
 			{
 				case 100 when this._reader.ValueAsString == DxfSubclassMarker.XRecord:
@@ -191,16 +212,31 @@ namespace ACadSharp.IO.DXF
 
 			while (this._reader.DxfCode != DxfCode.Start)
 			{
-				recrod.Entries.Add(new XRecord.Entry(this._reader.Code, this._reader.Value));
+				recrod.CreateEntry(this._reader.Code, this._reader.Value);
 
 				this._reader.ReadNext();
 			}
 		}
 
+		private bool readBookColor(CadTemplate template, DxfMap map)
+		{
+			CadNonGraphicalObjectTemplate tmp = template as CadNonGraphicalObjectTemplate;
+			BookColor color = tmp.CadObject as BookColor;
+
+			switch (this._reader.Code)
+			{
+				case 430:
+					color.Name = this._reader.ValueAsString;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.DbColor]);
+			}
+		}
+
 		private bool readDictionary(CadTemplate template, DxfMap map)
 		{
-			CadDictionary cadDictionary = new CadDictionary();
 			CadDictionaryTemplate tmp = template as CadDictionaryTemplate;
+			CadDictionary cadDictionary = tmp.CadObject;
 
 			switch (this._reader.Code)
 			{

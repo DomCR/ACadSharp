@@ -6,6 +6,9 @@ namespace ACadSharp.Tables
 	[DxfSubClass(DxfSubclassMarker.TableRecord, true)]
 	public abstract class TableEntry : CadObject, INamedCadObject
 	{
+		/// <summary>
+		/// Event occurs when the <see cref="TableEntry.Name"/> changes.
+		/// </summary>
 		public event EventHandler<OnNameChangedArgs> OnNameChanged;
 
 		/// <inheritdoc/>
@@ -40,6 +43,11 @@ namespace ACadSharp.Tables
 
 		internal TableEntry() { }
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		/// <param name="name">Name for the entry, must be unique is added to a <see cref="CadDocument"/>.</param>
+		/// <exception cref="ArgumentNullException"></exception>
 		public TableEntry(string name)
 		{
 			if (string.IsNullOrEmpty(name))

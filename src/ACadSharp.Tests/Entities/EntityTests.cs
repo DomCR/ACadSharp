@@ -24,6 +24,23 @@ namespace ACadSharp.Tests.Entities
 
 		[Theory]
 		[MemberData(nameof(EntityTypes))]
+		public void DefaultConstructor(Type t)
+		{
+			CadObject cadObject = Factory.CreateObject(t, false);
+
+			Assert.NotNull(cadObject);
+			Assert.True(0 == cadObject.Handle);
+
+			Assert.NotEqual(ObjectType.UNDEFINED, cadObject.ObjectType);
+
+			Assert.False(string.IsNullOrEmpty(cadObject.ObjectName));
+			Assert.False(string.IsNullOrEmpty(cadObject.SubclassMarker));
+
+			Assert.Null(cadObject.XDictionary);
+		}
+
+		[Theory]
+		[MemberData(nameof(EntityTypes))]
 		public void BoundingBoxTest(Type entityType)
 		{
 			Entity entity = EntityFactory.Create(entityType);

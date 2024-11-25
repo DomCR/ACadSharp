@@ -2,6 +2,7 @@
 using CSMath;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -121,10 +122,18 @@ namespace ACadSharp.Entities
 				cosine = MathUtils.IsZero(cosine) ? 0 : cosine;
 				sine = MathUtils.IsZero(sine) ? 0 : sine;
 
-				ocsVertexes.Add(new XY(cosine, sine));
+				ocsVertexes.Add(new XY(cosine + this.Center.X, sine + this.Center.Y));
 			}
 
 			return ocsVertexes;
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			List<XY> vertices = this.PolygonalVertexes(256);
+
+			return BoundingBox.FromPoints(vertices.Select(v => (XYZ)v));
 		}
 	}
 }

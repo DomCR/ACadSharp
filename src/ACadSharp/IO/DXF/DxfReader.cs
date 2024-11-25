@@ -109,7 +109,7 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		public static CadDocument Read(string filename, NotificationEventHandler notification = null)
 		{
-			return Read(File.OpenRead(filename));
+			return Read(File.OpenRead(filename), notification);
 		}
 
 		/// <inheritdoc/>
@@ -162,6 +162,11 @@ namespace ACadSharp.IO
 				}
 
 				this._reader.ReadNext();
+			}
+
+			if (this._document.Header == null)
+			{
+				this._document.Header = new CadHeader(this._document);
 			}
 
 			this._builder.BuildDocument();
@@ -464,7 +469,12 @@ namespace ACadSharp.IO
 
 			tmpReader = this.createReader(isBinary, isAC1009Format);
 
-			tmpReader.Find(DxfFileToken.HeaderSection);
+			if (!tmpReader.Find(DxfFileToken.HeaderSection))
+			{
+				this._version = ACadVersion.Unknown;
+				tmpReader.Start();
+				return tmpReader;
+			}
 
 			while (tmpReader.ValueAsString != DxfFileToken.EndSection)
 			{

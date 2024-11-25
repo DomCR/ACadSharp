@@ -39,7 +39,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		[DxfCodeValue(62, 420, 430)]
+		[DxfCodeValue(62, 420)]
 		public Color Color { get; set; } = Color.ByLayer;
 
 		/// <inheritdoc/>
@@ -85,20 +85,36 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Handle, 347)]
 		public Material Material { get; set; }
 
-		//92	Number of bytes in the proxy entity graphics represented in the subsequent 310 groups, which are binary chunk records(optional)
-		//310	Proxy entity graphics data(multiple lines; 256 characters max.per line) (optional)
+		/// <summary>
+		/// Book color for this entity.
+		/// </summary> 
+		[DxfCodeValue(DxfReferenceType.Name, 430)]
+		public BookColor BookColor
+		{
+			get { return this._bookColor; }
+			set
+			{
+				if (this.Document != null)
+				{
+					this._bookColor = this.updateCollection(value, this.Document.Colors);
+				}
+				else
+				{
+					this._bookColor = value;
+				}
+			}
+		}
 
 		private Layer _layer = Layer.Default;
 
 		private LineType _lineType = LineType.ByLayer;
 
+		private BookColor _bookColor = null;
+
 		/// <inheritdoc/>
 		public Entity() : base() { }
 
-		/// <summary>
-		/// Gets the bounding box aligned with the axis XYZ that ocupies this entity
-		/// </summary>
-		/// <returns></returns>
+		/// <inheritdoc/>
 		public abstract BoundingBox GetBoundingBox();
 
 		/// <inheritdoc/>

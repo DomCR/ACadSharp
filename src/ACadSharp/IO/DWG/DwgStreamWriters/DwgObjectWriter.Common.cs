@@ -174,6 +174,11 @@ namespace ACadSharp.IO.DWG
 				this._writer.SavePositonForSize();
 			}
 
+			this.writeEntityMode(entity);
+		}
+
+		private void writeEntityMode(Entity entity)
+		{
 			//FE: Entity mode(entmode). Generally, this indicates whether or not the owner
 			//relative handle reference is present.The values go as follows:
 
@@ -190,7 +195,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.Write2Bits(entmode);
 			if (entmode == 0)
 			{
-				this._writer.HandleReference(DwgReferenceType.SoftPointer, entity.Owner.Handle);
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, entity.Owner);
 			}
 
 			this.writeReactorsAndDictionaryHandle(entity);
@@ -229,12 +234,14 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Color	CMC(B)	62
-			this._writer.WriteEnColor(entity.Color, entity.Transparency);
+			this._writer.WriteEnColor(entity.Color, entity.Transparency, entity.BookColor != null);
 
 			//R2004+:
-			//if ((this._version >= ACadVersion.AC1018) && colorFlag)
-			//	//[Color book color handle (hard pointer)]
-			//	template.ColorHandle = this.handleReference();
+			if ((this._version >= ACadVersion.AC1018) && entity.BookColor != null)
+			{
+				//[Color book color handle (hard pointer)]
+				this._writer.HandleReference(DwgReferenceType.HardPointer, entity.BookColor);
+			}
 
 			//Ltype scale	BD	48
 			this._writer.WriteBitDouble(entity.LinetypeScale);
@@ -371,6 +378,11 @@ namespace ACadSharp.IO.DWG
 
 		private byte getEntMode(Entity entity)
 		{
+			if (entity.Owner == null)
+			{
+				return 0;
+			}
+
 			if (entity.Owner.Handle == this._document.PaperSpace.Handle)
 			{
 				return 0b01;

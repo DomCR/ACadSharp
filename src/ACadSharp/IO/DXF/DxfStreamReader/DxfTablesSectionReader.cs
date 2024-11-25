@@ -91,6 +91,10 @@ namespace ACadSharp.IO.DXF
 					this._reader.ReadNext();
 				}
 			}
+			else if(this._reader.ValueAsString == DxfFileToken.EndTable)
+			{
+				return;
+			}
 			else
 			{
 				this._reader.ReadNext();
@@ -352,7 +356,7 @@ namespace ACadSharp.IO.DXF
 					template.CadObject.FixedExtensionLineLength = this._reader.ValueAsDouble;
 					return true;
 				case 50:
-					template.CadObject.JoggedRadiusDimensionTransverseSegmentAngle = CSMath.MathUtils.DegToRad(this._reader.ValueAsDouble);
+					template.CadObject.JoggedRadiusDimensionTransverseSegmentAngle = CSMath.MathHelper.DegToRad(this._reader.ValueAsDouble);
 					return true;
 				case 69:
 					template.CadObject.TextBackgroundFillMode = (DimensionTextBackgroundFillMode)this._reader.ValueAsShort;
@@ -564,9 +568,6 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 390:
 					template.CadObject.PlotStyleName = this._reader.ValueAsHandle;
-					return true;
-				case 420:
-					template.CadObject.Color = Color.FromTrueColor((uint)this._reader.ValueAsInt);
 					return true;
 				case 430:
 					tmp.TrueColorName = this._reader.ValueAsString;

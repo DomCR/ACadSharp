@@ -285,5 +285,10 @@ namespace ACadSharp.IO.DWG
 		{
 			throw new NotImplementedException();
 		}
+
+		public void WriteEnColor(Color color, Transparency transparency, bool isBookColor)
+		{
+			this.Main.WriteEnColor(color, transparency, isBookColor);
+		}
 	}
 }

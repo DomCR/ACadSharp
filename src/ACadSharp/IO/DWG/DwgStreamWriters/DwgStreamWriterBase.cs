@@ -384,6 +384,11 @@ namespace ACadSharp.IO.DWG
 			this.WriteCmColor(color);
 		}
 
+		public virtual void WriteEnColor(Color color, Transparency transparency, bool isBookColor)
+		{
+			this.WriteCmColor(color);
+		}
+
 		public void Write2BitDouble(XY value)
 		{
 			this.WriteBitDouble(value.X);

@@ -57,15 +57,17 @@ namespace ACadSharp.IO.DXF
 			this.Value = this.transformValue(this.GroupCodeValue);
 		}
 
-		public void Find(string dxfEntry)
+		public bool Find(string dxfEntry)
 		{
-			this.start();
+			this.Start();
 
 			do
 			{
 				this.ReadNext();
 			}
 			while (this.ValueAsString != dxfEntry && (this.ValueAsString != DxfFileToken.EndOfFile));
+
+			return this.ValueAsString == dxfEntry;
 		}
 
 		public override string ToString()
@@ -73,7 +75,7 @@ namespace ACadSharp.IO.DXF
 			return $"{Code} | {Value}";
 		}
 
-		protected virtual void start()
+		public virtual void Start()
 		{
 			this.DxfCode = DxfCode.Invalid;
 			this.Value = string.Empty;
