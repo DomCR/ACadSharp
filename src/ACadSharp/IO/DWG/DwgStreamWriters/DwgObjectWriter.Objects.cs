@@ -113,7 +113,6 @@ namespace ACadSharp.IO.DWG
 					0b11000010
 				};
 
-				//3269627904
 				uint rgb = LittleEndianConverter.Instance.ToUInt32(arr);
 
 				this._writer.WriteBitLong((int)rgb);

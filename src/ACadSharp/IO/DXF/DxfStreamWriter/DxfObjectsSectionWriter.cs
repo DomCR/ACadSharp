@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
+using CSUtilities.Converters;
 using System;
 using System.Linq;
 
@@ -101,7 +102,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.DbColor);
 
 			this._writer.Write(62, color.Color.GetApproxIndex());
-			this._writer.Write(420, color.Color.TrueColor);
+			this._writer.WriteTrueColor(420, color.Color);
 			this._writer.Write(430, color.Name);
 		}
 
