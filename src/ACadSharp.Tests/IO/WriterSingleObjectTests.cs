@@ -409,6 +409,20 @@ namespace ACadSharp.Tests.IO
 				this.Document.Scales.Add(new Scale("Hello"));
 			}
 
+			public void AddCustomBookColor()
+			{
+				//var color = new BookColor("RAL CLASSIC$RAL 1006");
+				var color = new BookColor("TEST BOOK$MY COLOR");
+				color.Color = new(226, 144, 0);
+
+				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
+				line.Color = Color.ByBlock;
+				line.BookColor = color;
+
+				this.Document.Colors.Add(color);
+				this.Document.Entities.Add(line);
+			}
+
 			public void AddBlockWithAttributes()
 			{
 				BlockRecord record = new("my_block");
@@ -497,6 +511,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.ChangedEncoding)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomScale)));
+			Data.Add(new(nameof(SingleCaseGenerator.AddCustomBookColor)));
 		}
 
 		protected string getPath(string name, string ext, ACadVersion version)

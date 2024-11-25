@@ -274,6 +274,9 @@ namespace ACadSharp.IO.DXF
 				case 347:
 					template.MaterialHandle = this._reader.ValueAsHandle;
 					break;
+				case 430:
+					template.BookColorName = this._reader.ValueAsString;
+					break;
 				default:
 					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Entity]))
 					{

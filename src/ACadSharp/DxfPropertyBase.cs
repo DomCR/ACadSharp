@@ -95,10 +95,7 @@ namespace ACadSharp
 					case 420:
 						byte[] b = LittleEndianConverter.Instance.GetBytes((int)value);
 						// true color
-						this._property.SetValue(obj, new Color(b[0], b[1], b[2]));
-						break;
-					case 430:
-						// dictionary color
+						this._property.SetValue(obj, new Color(b[2], b[1], b[0]));
 						break;
 				}
 			}
