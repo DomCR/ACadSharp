@@ -93,7 +93,13 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(6, entity.LineType.Name);
 
-			if (entity.Color.IsTrueColor)
+			if (entity.BookColor != null)
+			{
+				this._writer.Write(62, entity.BookColor.Color.GetApproxIndex());
+				this._writer.Write(420, entity.BookColor.Color.TrueColor);
+				this._writer.Write(430, entity.BookColor.Name);
+			}
+			else if (entity.Color.IsTrueColor)
 			{
 				this._writer.Write(420, entity.Color.TrueColor);
 			}

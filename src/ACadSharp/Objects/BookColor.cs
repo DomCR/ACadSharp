@@ -1,5 +1,7 @@
 ﻿using ACadSharp.Attributes;
+using System;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace ACadSharp.Objects
 {
@@ -23,6 +25,21 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.DbColor;
 
+		/// <inheritdoc/>
+		public override string Name
+		{
+			get { return base.Name; }
+			set
+			{
+				if (!value.Contains('$'))
+				{
+					throw new ArgumentException($"Invalid BookColor name: ({value}), a book color name has to separate the book name and the color name by the character '$'", nameof(value));
+				}
+
+				base.Name = value;
+			}
+		}
+
 		/// <summary>
 		/// Color name.
 		/// </summary>
@@ -32,8 +49,14 @@ namespace ACadSharp.Objects
 		/// Book name where the color is stored.
 		/// </summary>
 		public string BookName { get { return this.Name.Split('$').First(); } }
-		
+
 		[DxfCodeValue(62, 420)]
 		public Color Color { get; set; }
+
+		public BookColor() : base() { }
+
+		public BookColor(string name) : base(name)
+		{
+		}
 	}
 }
