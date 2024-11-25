@@ -234,12 +234,14 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Color	CMC(B)	62
-			this._writer.WriteEnColor(entity.Color, entity.Transparency);
+			this._writer.WriteEnColor(entity.Color, entity.Transparency, entity.BookColor != null);
 
 			//R2004+:
-			//if ((this._version >= ACadVersion.AC1018) && colorFlag)
-			//	//[Color book color handle (hard pointer)]
-			//	template.ColorHandle = this.handleReference();
+			if ((this._version >= ACadVersion.AC1018) && entity.BookColor != null)
+			{
+				//[Color book color handle (hard pointer)]
+				this._writer.HandleReference(DwgReferenceType.HardPointer, entity.BookColor);
+			}
 
 			//Ltype scale	BD	48
 			this._writer.WriteBitDouble(entity.LinetypeScale);

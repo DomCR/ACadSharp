@@ -46,6 +46,9 @@ namespace ACadSharp.IO.DWG
 				case AcdbPlaceHolder acdbPlaceHolder:
 					this.writeAcdbPlaceHolder(acdbPlaceHolder);
 					break;
+				case BookColor bookColor:
+					this.writeBookColor(bookColor);
+					break;
 				case CadDictionaryWithDefault dictionarydef:
 					this.writeCadDictionaryWithDefault(dictionarydef);
 					break;
@@ -94,6 +97,49 @@ namespace ACadSharp.IO.DWG
 
 		private void writeAcdbPlaceHolder(AcdbPlaceHolder acdbPlaceHolder)
 		{
+		}
+
+		private void writeBookColor(BookColor color)
+		{
+			this._writer.WriteBitShort(0);
+
+			if (this.R2004Plus)
+			{
+				byte[] arr = new byte[]
+				{
+					color.Color.B,
+					color.Color.G,
+					color.Color.R,
+					0b11000010
+				};
+
+				//3269627904
+				uint rgb = LittleEndianConverter.Instance.ToUInt32(arr);
+
+				this._writer.WriteBitLong((int)rgb);
+
+				byte flags = 0;
+				if (!string.IsNullOrEmpty(color.ColorName))
+				{
+					flags = (byte)(flags | 1u);
+				}
+
+				if (!string.IsNullOrEmpty(color.BookName))
+				{
+					flags = (byte)(flags | 2u);
+				}
+
+				this._writer.WriteByte(flags);
+				if (!string.IsNullOrEmpty(color.ColorName))
+				{
+					this._writer.WriteVariableText(color.ColorName);
+				}
+
+				if (!string.IsNullOrEmpty(color.BookName))
+				{
+					this._writer.WriteVariableText(color.BookName);
+				}
+			}
 		}
 
 		private void writeCadDictionaryWithDefault(CadDictionaryWithDefault dictionary)

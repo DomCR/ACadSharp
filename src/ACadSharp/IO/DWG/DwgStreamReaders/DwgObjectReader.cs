@@ -206,7 +206,7 @@ namespace ACadSharp.IO.DWG
 				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
-				//set the initial posiltion and get the object type
+				//set the initial position and get the object type
 				this._objectInitialPos = this._objectReader.PositionInBits();
 				type = this._objectReader.ReadObjectType();
 
@@ -230,7 +230,7 @@ namespace ACadSharp.IO.DWG
 				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
 				this._textReader = this._objectReader;
 
-				//set the initial posiltion and get the object type
+				//set the initial position and get the object type
 				this._objectInitialPos = this._objectReader.PositionInBits();
 				type = this._objectReader.ReadObjectType();
 			}
@@ -5798,7 +5798,8 @@ namespace ACadSharp.IO.DWG
 
 			if (this.R2004Plus)
 			{
-				int trueColor = this._objectReader.ReadBitLong();
+				//3269627904
+				uint trueColor = (uint)this._objectReader.ReadBitLong();
 				byte flags = this._objectReader.ReadByte();
 
 				if ((flags & 1U) > 0U)
