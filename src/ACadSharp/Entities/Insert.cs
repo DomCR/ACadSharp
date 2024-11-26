@@ -41,7 +41,7 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.Insert;
 
 		/// <summary>
-		/// Gets the insert block definition
+		/// Gets the insert block definition.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 2)]
 		public BlockRecord Block { get; internal set; }
@@ -53,19 +53,19 @@ namespace ACadSharp.Entities
 		public XYZ InsertPoint { get; set; } = XYZ.Zero;
 
 		/// <summary>
-		/// X scale factor 
+		/// X scale factor.
 		/// </summary>
 		[DxfCodeValue(41)]
 		public double XScale { get; set; } = 1;
 
 		/// <summary>
-		/// Y scale factor 
+		/// Y scale factor.
 		/// </summary>
 		[DxfCodeValue(42)]
 		public double YScale { get; set; } = 1;
 
 		/// <summary>
-		/// Z scale factor 
+		/// Z scale factor.
 		/// </summary>
 		[DxfCodeValue(43)]
 		public double ZScale { get; set; } = 1;

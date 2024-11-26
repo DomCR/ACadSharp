@@ -113,7 +113,7 @@ namespace ACadSharp.IO.DWG
 			//	0x10: table direction, 0 = up, 1 = down,
 			//	0x20: title suppressed.
 			//	Normally 0x06 is always set.
-			table.ValueFlag = this._mergedReaders.ReadBitShort();
+			table.ValueFlag = (int)this._mergedReaders.ReadBitShort();
 
 			//Hor.Dir.Vector 3BD 11
 			table.HorizontalDirection = this._mergedReaders.Read3BitDouble();

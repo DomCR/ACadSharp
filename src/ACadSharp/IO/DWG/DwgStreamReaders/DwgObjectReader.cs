@@ -977,6 +977,7 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "ACDBPLACEHOLDER":
 					template = this.readPlaceHolder();
+					break;
 				case "ACAD_TABLE":
 					template = this.readTableEntity();
 					break;

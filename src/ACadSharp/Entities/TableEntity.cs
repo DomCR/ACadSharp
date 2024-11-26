@@ -1,12 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
 using CSMath;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ACadSharp.Entities
 {
@@ -182,16 +177,26 @@ namespace ACadSharp.Entities
 
 		public class Row
 		{
-			public double Height { get; internal set; }
+			/// <summary>
+			/// Row height.
+			/// </summary>
+			[DxfCodeValue(141)]
+			public double Height { get; set; }
 
-			public List<Cell> Cells { get; internal set; } = new();
+			public List<Cell> Cells { get; set; } = new();
 		}
 
 		public class Column
 		{
-			public double Width { get; internal set; }
-			public string Name { get; internal set; }
-			public int CustomData { get; internal set; }
+			/// <summary>
+			/// Column width.
+			/// </summary>
+			[DxfCodeValue(142)]
+			public double Width { get; set; }
+
+			public string Name { get; set; }
+
+			public int CustomData { get; set; }
 			public List<CustomDataEntry> CustomDataCollection { get; internal set; }
 		}
 
@@ -299,28 +304,46 @@ namespace ACadSharp.Entities
 		public XYZ HorizontalDirection { get; set; }
 
 		/// <summary>
-		/// Flag for table value
+		/// Flag for table value.
 		/// </summary>
 		[DxfCodeValue(90)]
-		public short ValueFlag { get; internal set; }
+		public int ValueFlag { get; internal set; }
 
 		/// <summary>
-		/// Number of rows
+		/// Table rows.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 91)]
 		public List<Row> Rows { get; set; } = new List<Row>();
 
 		/// <summary>
-		/// Number of columns
+		/// Table columns
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 92)]
 		public List<Column> Columns { get; set; } = new List<Column>();
 
 		/// <summary>
-		/// Flag for an override
+		/// Flag for an override.
 		/// </summary>
 		[DxfCodeValue(93)]
 		public bool OverrideFlag { get; set; }
+
+		/// <summary>
+		/// Flag for an override of border color.
+		/// </summary>
+		[DxfCodeValue(94)]
+		public bool OverrideBorderColor { get; set; }
+
+		/// <summary>
+		/// Flag for an override of border line weight.
+		/// </summary>
+		[DxfCodeValue(95)]
+		public bool OverrideBorderLineWeight { get; set; }
+
+		/// <summary>
+		/// Flag for an override of border visibility.
+		/// </summary>
+		[DxfCodeValue(96)]
+		public bool OverrideBorderVisibility { get; set; }
 
 		public Content TableContent { get; set; } = new();
 

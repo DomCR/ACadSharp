@@ -6,20 +6,26 @@ namespace ACadSharp.IO.Templates
 	{
 		public ulong? StyleHandle { get; set; }
 
-		public ulong NullHandle { get; internal set; }
+		public ulong? BlockOwnerHandle { get; set; }
+
+		public ulong? NullHandle { get; internal set; }
+
+		public CadTableEntityTemplate() : base(new TableEntity()) { }
 
 		public CadTableEntityTemplate(TableEntity table) : base(table) { }
 
 		internal class CadTableAttributeTemplate : ICadObjectTemplate
 		{
+			public ulong? AttDefHandle { get; internal set; }
+			
+			public CadObject CadObject { get; }
+
 			private TableEntity.TableAttribute _tableAtt;
 
 			public CadTableAttributeTemplate(TableEntity.TableAttribute tableAtt)
 			{
 				this._tableAtt = tableAtt;
 			}
-
-			public ulong? AttDefHandle { get; internal set; }
 
 			public void Build(CadDocumentBuilder builder)
 			{

@@ -182,6 +182,8 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<Seqend>(new CadEntityTemplate<Seqend>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntitySolid:
 					return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), this.readEntitySubclassMap);
+				case DxfFileToken.EntityTable:
+					return this.readEntityCodes<TableEntity>(new CadTableEntityTemplate(), this.readTableEntity);
 				case DxfFileToken.EntityText:
 					return this.readEntityCodes<TextEntity>(new CadTextEntityTemplate(new TextEntity()), this.readTextEntity);
 				case DxfFileToken.EntityTolerance:
@@ -320,6 +322,49 @@ namespace ACadSharp.IO.DXF
 					if (!this.tryAssignCurrentValue(template.CadObject, emap))
 					{
 						return this.readTextEntity(template, map, DxfSubclassMarker.Text);
+					}
+					return true;
+			}
+		}
+
+		private bool readTableEntity(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			string mapName = string.IsNullOrEmpty(subclass) ? template.CadObject.SubclassMarker : subclass;
+			CadTableEntityTemplate tmp = template as CadTableEntityTemplate;
+			TableEntity table = tmp.CadObject as TableEntity;
+
+			switch (this._reader.Code)
+			{
+				case 2:
+					tmp.BlockName = this._reader.ValueAsString;
+					return true;
+				case 342:
+					tmp.StyleHandle = this._reader.ValueAsHandle;
+					return true;
+				case 343:
+					tmp.BlockOwnerHandle = this._reader.ValueAsHandle;
+					return true;
+				case 141:
+					var row = new TableEntity.Row();
+					row.Height = this._reader.ValueAsDouble;
+					table.Rows.Add(row);
+					return true;
+				case 142:
+					var col = new TableEntity.Column();
+					col.Width = this._reader.ValueAsDouble;
+					table.Columns.Add(col);
+					return true;
+				case 91:
+				case 92:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Insert]))
+					{
+						return this.readEntitySubclassMap(template, map, DxfSubclassMarker.TableEntity);
+					}
+					return true;
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Insert]))
+					{
+						return this.readEntitySubclassMap(template, map, DxfSubclassMarker.TableEntity);
 					}
 					return true;
 			}
@@ -1387,9 +1432,13 @@ namespace ACadSharp.IO.DXF
 				//Use this method only if the value is not a link between objects
 				if (map.DxfProperties.TryGetValue(this._reader.Code, out DxfProperty dxfProperty))
 				{
+					if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Count))
+					{
+						return true;
+					}
+
 					if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Handle)
-						|| dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Name)
-						|| dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Count))
+						|| dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Name))
 					{
 						return false;
 					}
