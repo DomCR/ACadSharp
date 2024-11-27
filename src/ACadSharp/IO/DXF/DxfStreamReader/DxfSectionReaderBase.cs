@@ -63,7 +63,7 @@ namespace ACadSharp.IO.DXF
 					case 340:
 					//Dimension table has the handles of the styles at the begining
 					default:
-						this._builder.Notify($"Unhandeled dxf code {this._reader.Code} at line {this._reader.Position}.");
+						this._builder.Notify($"Unhandled dxf code {this._reader.Code} at line {this._reader.Position}.");
 						break;
 				}
 
@@ -95,7 +95,7 @@ namespace ACadSharp.IO.DXF
 						template.OwnerHandle = this._reader.ValueAsHandle;
 						break;
 					default:
-						this._builder.Notify($"Unhandeled dxf code {this._reader.Code} at line {this._reader.Position}.", NotificationType.None);
+						this._builder.Notify($"Unhandled dxf code {this._reader.Code} at line {this._reader.Position}.", NotificationType.None);
 						break;
 				}
 
@@ -131,7 +131,7 @@ namespace ACadSharp.IO.DXF
 					this.readExtendedData(template.EDataTemplateByAppName);
 					break;
 				default:
-					this._builder.Notify($"[{template.CadObject.SubclassMarker}] Unhandeled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
+					this._builder.Notify($"[{template.CadObject.SubclassMarker}] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
 					break;
 			}
 		}
@@ -354,12 +354,32 @@ namespace ACadSharp.IO.DXF
 					col.Width = this._reader.ValueAsDouble;
 					table.Columns.Add(col);
 					return true;
-				case 91:
-				case 92:
-					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Insert]))
-					{
-						return this.readEntitySubclassMap(template, map, DxfSubclassMarker.TableEntity);
-					}
+				case 145:
+					tmp.CurrentCell.Rotation = this._reader.ValueAsDouble;
+					return true;
+				case 171:
+					tmp.CreateCell((TableEntity.CellType)this._reader.ValueAsInt);
+					return true;
+				case 172:
+					tmp.CurrentCell.FlagValue = this._reader.ValueAsInt;
+					return true;
+				case 173:
+					tmp.CurrentCell.MergedValue = this._reader.ValueAsInt;
+					return true;
+				case 174:
+					tmp.CurrentCell.Autofit = this._reader.ValueAsBool;
+					return true;
+				case 175:
+					tmp.CurrentCell.BorderWidth = this._reader.ValueAsInt;
+					return true;
+				case 176:
+					tmp.CurrentCell.BorderHeight = this._reader.ValueAsInt;
+					return true;
+				case 178:
+					tmp.CurrentCell.VirtualEdgeFlag = this._reader.ValueAsShort;
+					return true;
+				case 301:
+					this.readCellValue(tmp.CurrentCell.Value);
 					return true;
 				default:
 					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Insert]))
@@ -367,6 +387,47 @@ namespace ACadSharp.IO.DXF
 						return this.readEntitySubclassMap(template, map, DxfSubclassMarker.TableEntity);
 					}
 					return true;
+			}
+		}
+
+		private void readCellValue(TableEntity.CellValue value)
+		{
+			if (this._reader.ValueAsString.Equals("CELL_VALUE", StringComparison.OrdinalIgnoreCase))
+			{
+				this._reader.ReadNext();
+			}
+			else
+			{
+				throw new Exceptions.DxfException($"Expected value not found CELL_VALUE", this._reader.Position);
+			}
+
+			while (this._reader.Code != 304
+				&& !this._reader.ValueAsString.Equals("ACVALUE_END", StringComparison.OrdinalIgnoreCase))
+			{
+				switch (this._reader.Code)
+				{
+					case 1:
+						value.Text = this._reader.ValueAsString;
+						break;
+					case 2:
+						value.Text += this._reader.ValueAsString;
+						break;
+					case 302:
+						//TODO: Fix this assignation to cell value
+						value.Value = this._reader.ValueAsString;
+						break;
+					//TODO: Find this codes
+					case 90:
+					case 93:
+					case 94:
+					case 300:
+						break;
+					default:
+						this._builder.Notify($"[CELL_VALUE] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
+						break;
+				}
+
+				this._reader.ReadNext();
 			}
 		}
 

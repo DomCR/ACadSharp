@@ -1,6 +1,8 @@
 ﻿using Xunit;
 using Xunit.Abstractions;
 using ACadSharp.Tests.TestModels;
+using ACadSharp.Entities;
+using System.Linq;
 
 namespace ACadSharp.Tests.IO
 {
@@ -22,6 +24,8 @@ namespace ACadSharp.Tests.IO
 		public void TableEntityDwg(FileModel test)
 		{
 			CadDocument doc = this.readDocument(test);
+
+			TableEntity table = (TableEntity)doc.Entities.First();
 		}
 	}
 }
