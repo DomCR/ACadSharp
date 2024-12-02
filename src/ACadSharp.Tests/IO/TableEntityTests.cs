@@ -21,7 +21,7 @@ namespace ACadSharp.Tests.IO
 
 		[Theory]
 		[MemberData(nameof(TableSamplesFilePaths))]
-		public void TableEntityDwg(FileModel test)
+		public void ReadTableEntity(FileModel test)
 		{
 			CadDocument doc = this.readDocument(test);
 
