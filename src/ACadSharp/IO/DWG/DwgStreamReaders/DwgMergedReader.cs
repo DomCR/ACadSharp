@@ -145,7 +145,7 @@ namespace ACadSharp.IO.DWG
 
 		public byte[] ReadBytes(int length)
 		{
-			throw new NotImplementedException();
+			return this._mainReader.ReadBytes(length);
 		}
 
 		public XY Read2BitDoubleWithDefault(XY defValues)

@@ -163,6 +163,7 @@ namespace ACadSharp.IO.DWG
 		private void readTableContent(TableEntity.Content content, CadTableEntityTemplate template)
 		{
 			//See paragraph 20.4.97.
+			TableEntity tableEntity = template.TableEntity;
 
 			//TV 1 Name
 			content.Name = this._mergedReaders.ReadVariableText();
@@ -175,6 +176,7 @@ namespace ACadSharp.IO.DWG
 			for (int i = 0; i < cols; i++)
 			{
 				TableEntity.Column column = new TableEntity.Column();
+				tableEntity.Columns.Add(column);
 
 				//TV 300 Column name
 				column.Name = this._mergedReaders.ReadVariableText();
@@ -195,14 +197,14 @@ namespace ACadSharp.IO.DWG
 				}
 
 				//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the column.
-				CellStyle cellStyle = new();
-				this.readCellStyle(cellStyle);
+				CadCellStyleTemplate colStyleTemplate = new(column.StyleOverride);
+				this.readCellStyle(colStyleTemplate);
 
 				//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
 				//base cell style for the column. 0 if not present.
 				this._mergedReaders.ReadBitLong();
-				//BD 40 Column width.
 
+				//BD 40 Column width.
 				column.Width = this._mergedReaders.ReadBitDouble();
 				//End repeat columns
 			}
@@ -213,6 +215,7 @@ namespace ACadSharp.IO.DWG
 			{
 				//Begin repeat rows.
 				Row row = new Row();
+				tableEntity.Rows.Add(row);
 
 				//BL 90 Number of cells in row.
 				int ncells = this._mergedReaders.ReadBitLong();
@@ -220,12 +223,73 @@ namespace ACadSharp.IO.DWG
 				for (int j = 0; j < ncells; j++)
 				{
 					Cell cell = new();
+					CadTableCellTemplate cellTemplate = new CadTableCellTemplate(cell);
 
-					this.readTableCell(cell);
+					this.readTableCell(cellTemplate);
 
 					row.Cells.Add(cell);
 				}
+
+				//BL 91 32 bit integer containing custom data
+				row.CustomData = this._mergedReaders.ReadBitLong();
+
+				//BL 90 Number of custom data items
+				int dataItems = this._mergedReaders.ReadBitLong();
+				//Begin repeat custom data items
+				for (int j = 0; j < dataItems; j++)
+				{
+					CustomDataEntry entry = new();
+
+					//Custom data collection, see paragraph 20.4.100
+					this.readCustomTableData(entry);
+
+					row.CustomDataCollection.Add(entry);
+				}
+
+				//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the column.
+				CadCellStyleTemplate colStyleTemplate = new(row.CellStyleOverride);
+				this.readCellStyle(colStyleTemplate);
+
+				//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
+				//base cell style for the column. 0 if not present.
+				this._mergedReaders.ReadBitLong();
+
+				//40 Row height
+				row.Height = this._mergedReaders.ReadBitDouble();
 			}
+
+			//BL Number of cell contents that contain a field reference.
+			int nfields = this._mergedReaders.ReadBitLong();
+			//Begin repeat field references
+			for (int n = 0; n < nfields; n++)
+			{
+				//H Handle to field (AcDbField), hard owner.
+				this._mergedReaders.HandleReference();
+			}
+
+			//The table’s cell style override fields (see paragraph 20.4.101.4). The table’s
+			//base cell style is the table style’s overall cell style (present from R2010 onwards).
+			this.readCellStyle(new CadCellStyleTemplate(content.CellStyleOverride));
+
+			//Bl 90 Number of merged cell ranges
+			int nranges = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < nranges; i++)
+			{
+				CellRange dxfTableCellRange = new();
+				//BL 91 Top row index
+				dxfTableCellRange.TopRowIndex = this._mergedReaders.ReadBitLong();
+				//BL 92 Left column index
+				dxfTableCellRange.LeftColumnIndex = this._mergedReaders.ReadBitLong();
+				//BL 93 Bottom row index
+				dxfTableCellRange.BottomRowIndex = this._mergedReaders.ReadBitLong();
+				//BL 94 Right column index
+				dxfTableCellRange.RightColumnIndex = this._mergedReaders.ReadBitLong();
+
+				content.MergedCellRanges.Add(dxfTableCellRange);
+			}
+
+			//H 340 Handle to table style(hard pointer).
+			template.StyleHandle = this.handleReference();
 		}
 
 		private void readCustomTableData(CustomDataEntry entry)
@@ -246,11 +310,11 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Data type BL 90
-			CellValueType type = (CellValueType)this._mergedReaders.ReadBitLong();
+			value.ValueType = (CellValueType)this._mergedReaders.ReadBitLong();
 			if (!this.R2007Plus || !value.IsEmpty)
 			{
 				//Varies by type: Not present in case bit 1 in Flags is set
-				switch (type)
+				switch (value.ValueType)
 				{
 					case CellValueType.Unknown:
 					case CellValueType.Long:
@@ -281,6 +345,7 @@ namespace ACadSharp.IO.DWG
 						break;
 					case CellValueType.Buffer:
 					case CellValueType.ResultBuffer:
+					default:
 						throw new NotImplementedException();
 				}
 			}
@@ -289,22 +354,47 @@ namespace ACadSharp.IO.DWG
 			if (this.R2007Plus)
 			{
 				//Unit type BL 94 0 = no units, 1 = distance, 2 = angle, 4 = area, 8 = volume
-				this._mergedReaders.ReadBitLong();
+				value.Units = this._mergedReaders.ReadBitLong();
 				//Format String TV 300
-				this._mergedReaders.ReadVariableText();
+				value.Format = this._mergedReaders.ReadVariableText();
 				//Value String TV 302
-				this._mergedReaders.ReadVariableText();
+				value.FormatedValue = this._mergedReaders.ReadVariableText();
 			}
 		}
 
 		private string readStringCellValue()
 		{
-			throw new NotImplementedException();
+			//General, BL containing the byte count followed by a
+			//byte array. (introduced in R2007, use Unknown before
+			//R2007).
+
+			//NOTE: It also seems to be valid for the string values
+
+			int length = this._mergedReaders.ReadBitLong();
+			byte[] arr = this._mergedReaders.ReadBytes(length);
+
+			if (this.R2007Plus)
+			{
+				return System.Text.Encoding.Unicode.GetString(arr, 0, length - 2);
+			}
+			else
+			{
+				return this._mergedReaders.Encoding.GetString(arr, 0, length);
+			}
 		}
 
 		private System.DateTime? readDateCellValue()
 		{
-			throw new NotImplementedException();
+			//data size N, 
+			int data = this._mergedReaders.ReadBitLong();
+
+			if (data > 0)
+			{
+				byte[] array = this._mergedReaders.ReadBytes(data);
+			}
+
+			//TODO: Finish implementation
+			return null;
 		}
 
 		private XY? readCellValueXY()
@@ -329,23 +419,95 @@ namespace ACadSharp.IO.DWG
 			return result;
 		}
 
-		private void readCellStyle(CellStyle cellStyle)
+		private void readCellStyle(CadCellStyleTemplate template)
 		{
+			//20.4.101.4
+			CellStyle cellStyle = (CellStyle)template.Format;
+
 			//BL 90 Cell style type
-			cellStyle.Type = (CellStypeType)this._mergedReaders.ReadBitLong();
+			cellStyle.Type = (CellStyleTypeType)this._mergedReaders.ReadBitLong();
+
 			//BS 170 Data flags, 0 = no data, 1 = data is present
 			//If data is present
-			bool hasData = this._mergedReaders.ReadBitShort() == 1;
-			if (!hasData)
+			cellStyle.HasData = this._mergedReaders.ReadBitShortAsBool();
+			if (!cellStyle.HasData)
 			{
 				return;
 			}
 
-			throw new NotImplementedException($"{nameof(readCellStyle)}");
+			//BL 91 Property override flags. The definition is the same as the content format
+			//propery override flags, see paragraph 20.4.101.3.
+			cellStyle.PropertyOverrideFlags = (TableCellStylePropertyFlags)this._mergedReaders.ReadBitLong();
+			//BL  92 Merge flags, but may only for bits 0x8000 and 0x10000.
+			cellStyle.TableCellStylePropertyFlags = (TableCellStylePropertyFlags)this._mergedReaders.ReadBitLong();
+			//TC 62 Background color
+			cellStyle.BackgroundColor = this._mergedReaders.ReadCmColor();
+
+			//BL 93 Content layout flags
+			cellStyle.ContentLayoutFlags = (TableCellContentLayoutFlags)this._mergedReaders.ReadBitLong();
+
+			//Content format fields (see paragraph 20.4.101.3)
+			this.readCellContentFormat(template, cellStyle);
+
+			//BS 171 Margin override flags, bit 1 is set if margin overrides are present
+			//If margin overrides are present
+			cellStyle.MarginOverrideFlags = (MarginFlags)this._mergedReaders.ReadBitShort();
+			if (cellStyle.MarginOverrideFlags.HasFlag(MarginFlags.Override))
+			{
+				//BD 40 Vertical margin
+				cellStyle.VerticalMargin = this._mergedReaders.ReadBitDouble();
+				//BD 40 Horizontal margin
+				cellStyle.HorizontalMargin = this._mergedReaders.ReadBitDouble();
+				//BD 40 Bottom margin
+				cellStyle.BottomMargin = this._mergedReaders.ReadBitDouble();
+				//BD 40 Right margin
+				cellStyle.RightMargin = this._mergedReaders.ReadBitDouble();
+				//BD 40 Margin horizontal spacing
+				cellStyle.MarginHorizontalSpacing = this._mergedReaders.ReadBitDouble();
+				//BD 40 Margin vertical spacing
+				cellStyle.MarginVerticalSpacing = this._mergedReaders.ReadBitDouble();
+			}
+
+			//BL 94 Number of borders present (0-6)
+			int nborders = this._mergedReaders.ReadBitLong();
+			//Begin repeat borders
+			for (int i = 0; i < nborders; i++)
+			{
+				//BL 95 Edge flags
+				CellEdgeFlags edgeFlags = (CellEdgeFlags)this._mergedReaders.ReadBitLong();
+				// If edge flags is non - zero
+				if (edgeFlags != 0)
+				{
+					CellBorder border = new CellBorder(edgeFlags);
+					cellStyle.Borders.Add(border);
+
+					this.readBorder(template, border);
+				}
+			}
 		}
 
-		private void readTableCell(Cell cell)
+		private void readBorder(CadCellStyleTemplate template, CellBorder border)
 		{
+			//BL 90 Border property override flags
+			border.PropertyOverrideFlags = (TableBorderPropertyFlags)this._mergedReaders.ReadBitLong();
+			//BL 91 Border type
+			border.Type = ((BorderType)this._mergedReaders.ReadBitLong());
+			//TC 62 Color
+			border.Color = (this._mergedReaders.ReadCmColor());
+			//BL 92 Line weight
+			border.LineWeight = ((short)this._mergedReaders.ReadBitLong());
+			//H 40 Line type (hard pointer)
+			template.BorderLinetypePairs.Add(new Tuple<CellBorder, ulong>(border, this.handleReference()));
+			//BL 93 Invisibility: 1 = invisible, 0 = visible.
+			border.IsInvisible = (this._mergedReaders.ReadBitLong() == 1);
+			//BD 40 Double line spacing
+			border.DoubleLineSpacing = (this._mergedReaders.ReadBitDouble());
+		}
+
+		private void readTableCell(CadTableCellTemplate template)
+		{
+			Cell cell = template.Cell;
+
 			//BL 90 Cell state flags:
 			cell.StateFlags = (TableCellStateFlags)this._mergedReaders.ReadBitLong();
 			//TV 300 Tooltip
@@ -354,8 +516,8 @@ namespace ACadSharp.IO.DWG
 			cell.CustomData = this._mergedReaders.ReadBitLong();
 
 			//... Custom data collection, see paragraph 20.4.100.
-			int num = this._mergedReaders.ReadBitLong();
-			for (int i = 0; i < num; i++)
+			int ndata = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < ndata; i++)
 			{
 				CustomDataEntry customData = new CustomDataEntry();
 				this.readCustomTableData(customData);
@@ -363,7 +525,8 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//BL 92 Has linked data flags, 0 = false, 1 = true If has linked data
-			cell.HasLinkedData = this._mergedReaders.ReadBitLong() == 1;
+			var data = this._mergedReaders.ReadBitLong();
+			cell.HasLinkedData = data == 1;
 			if (cell.HasLinkedData)
 			{
 				//H 340 Handle to data link object (hard pointer).
@@ -383,11 +546,140 @@ namespace ACadSharp.IO.DWG
 			{
 				//Begin repeat cell contents
 				TableEntity.Cell.Content cellContent = new();
-
-				throw new NotImplementedException();
-
 				cell.Contents.Add(cellContent);
+
+				CadTableCellContentTemplate cellContentTemplate = new CadTableCellContentTemplate(cellContent);
+				template.ContentTemplates.Add(cellContentTemplate);
+
+				this.readTableCellContent(cellContentTemplate);
 			}
+
+			CadCellStyleTemplate formatTemplate = new(cell.StyleOverride);
+			this.readCellStyle(formatTemplate);
+
+			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
+			//base cell style for the cell. 0 if not present.
+			template.StyleId = this._mergedReaders.ReadBitLong();
+
+			//BL 91 Unknown flag
+			var unknownFlag = this._mergedReaders.ReadBitLong();
+			if (unknownFlag != 0)
+			{
+				//If unknown flag is non-zero
+				//BL 91 Unknown
+				this._mergedReaders.ReadBitLong();
+				//BD 40 Unknown
+				this._mergedReaders.ReadBitDouble();
+				//BD 40 Unknown
+				this._mergedReaders.ReadBitDouble();
+				//BL Geometry data flags
+				var geomFlags = this._mergedReaders.ReadBitLong();
+
+				//H Unknown ()
+				template.UnknownHandle = this.handleReference();
+				if (geomFlags != 0)
+				{
+					cell.Geometry = new CellContentGeometry();
+					this.readCellContentGeometry(cell.Geometry);
+				}
+			}
+		}
+
+		private void readCellContentGeometry(CellContentGeometry geometry)
+		{
+			// Cell content geometry, see paragraph 20.4.98.
+
+			//3BD	Distance to top left
+			geometry.DistanceTopLeft = this._mergedReaders.Read3BitDouble();
+			//3BD	Distance to center
+			geometry.DistanceCenter = this._mergedReaders.Read3BitDouble();
+			//BD	Content width
+			geometry.ContentWidth = this._mergedReaders.ReadBitDouble();
+			//BD	Content height
+			geometry.ContentHeight = this._mergedReaders.ReadBitDouble();
+			//BD	Width
+			geometry.Width = this._mergedReaders.ReadBitDouble();
+			//BD	Height
+			geometry.Height = this._mergedReaders.ReadBitDouble();
+			//BL	Unknown flags
+			geometry.Flags = this._mergedReaders.ReadBitLong();
+		}
+
+		private void readTableCellContent(CadTableCellContentTemplate template)
+		{
+			//BL 90 Cell content type:
+			template.Content.ContentType = (TableCellContentType)this._mergedReaders.ReadBitLong();
+
+			switch (template.Content.ContentType)
+			{
+				case TableCellContentType.Unknown:
+					break;
+				case TableCellContentType.Value:
+					this.readCustomTableDataValue(template.Content.Value);
+					break;
+				case TableCellContentType.Field:
+					//H 340 Handle to AcDbField object (hard pointer).
+					template.FieldHandle = this.handleReference();
+					break;
+				case TableCellContentType.Block:
+					//H 340 Handle to block record (hard pointer).
+					template.BlockRecordHandle = this.handleReference();
+					break;
+			}
+
+			//BL 91 Number of attributes
+			int natts = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < natts; i++)
+			{
+				TableAttribute tableAttribute = new TableAttribute();
+				CadTableAttributeTemplate attTemplate = new CadTableAttributeTemplate(tableAttribute);
+
+				//H 330 Handle to attribute definition (ATTDEF), soft pointer.
+				attTemplate.AttDefHandle = this.handleReference();
+				//TV 301 Attribute value.
+				tableAttribute.Value = this._mergedReaders.ReadVariableText();
+				//BL 92 Index (starts at 1).
+				this._mergedReaders.ReadBitLong();
+				//End repeat attributes
+			}
+
+			//BS 170 Has content format overrides flag
+			template.Content.Format.HasData = this._mergedReaders.ReadBitShortAsBool();
+			if (template.Content.Format.HasData)
+			{
+				CadTableCellContentFormatTemplate formatTemplate = new CadTableCellContentFormatTemplate(template.Content.Format);
+				this.readCellContentFormat(formatTemplate, template.Content.Format);
+			}
+		}
+
+		private void readCellContentFormat(CadTableCellContentFormatTemplate template, ContentFormat format)
+		{
+			//Cell.ContentFormat format = template.Content.Format;
+
+			//20.4.101.3 Content format
+
+			//BL 90 Property override flags
+			format.PropertyOverrideFlags = (TableCellStylePropertyFlags)this._mergedReaders.ReadBitLong();
+			//BL 91 Property flags. Contains property bit values for property Auto Scale only
+			format.PropertyFlags = this._mergedReaders.ReadBitLong();
+			//BL 92 Value data type, see also paragraph 20.4.98.
+			format.ValueDataType = this._mergedReaders.ReadBitLong();
+			//BL 93 Value unit type, see also paragraph 20.4.98.
+			format.ValueUnitType = this._mergedReaders.ReadBitLong();
+			//TV 300 Value format string
+			format.ValueFormatString = this._mergedReaders.ReadVariableText();
+			//BD 40 Rotation
+			format.Rotation = this._mergedReaders.ReadBitDouble();
+			//BD 140 Block scale
+			format.Scale = this._mergedReaders.ReadBitDouble();
+			//BL  94 Cell alignment
+			format.Alignment = this._mergedReaders.ReadBitLong();
+			//TC 62 Content color
+			format.Color = this._mergedReaders.ReadCmColor();
+			//H 340 Text style handle (hard pointer)
+			template.TextStyleHandle = this.handleReference();
+			//BD 144 Text height
+			format.TextHeight = this._mergedReaders.ReadBitDouble();
 		}
 	}
 }

@@ -381,6 +381,9 @@ namespace ACadSharp.IO.DXF
 				case 301:
 					this.readCellValue(tmp.CurrentCell.Value);
 					return true;
+				case 340:
+					tmp.CurrentCellTemplate.BlockRecordHandle = this._reader.ValueAsHandle;
+					return true;
 				default:
 					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Insert]))
 					{
