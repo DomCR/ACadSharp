@@ -387,6 +387,19 @@ namespace ACadSharp.Classes
 				ProxyFlags = ProxyFlags.R13FormatProxy,
 				WasZombie = false,
 			});
+
+			//AcDbColor
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.DbColor,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1015,
+				DxfName = DxfFileToken.ObjectDBColor,
+				ItemClassId = 499,
+				MaintenanceVersion = 14,
+				ProxyFlags = ProxyFlags.None,
+				WasZombie = false,
+			});
 		}
 
 		/// <summary>

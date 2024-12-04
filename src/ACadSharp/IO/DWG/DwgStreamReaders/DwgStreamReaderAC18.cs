@@ -59,11 +59,11 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
-		public override Color ReadEnColor(out Transparency transparency, out bool flag)
+		public override Color ReadEnColor(out Transparency transparency, out bool isBookColor)
 		{
 			Color color = new Color();
 			transparency = Transparency.ByLayer;
-			flag = false;
+			isBookColor = false;
 
 			//BS : color number: flags + color index
 			short size = this.ReadBitShort();
@@ -78,7 +78,7 @@ namespace ACadSharp.IO.DWG
 				{
 					color = Color.ByBlock;
 					//The handle to the color is written in the handle stream.
-					flag = true;
+					isBookColor = true;
 				}
 				//0x8000: complex color (rgb).
 				else if ((flags & 0x8000) > 0)
