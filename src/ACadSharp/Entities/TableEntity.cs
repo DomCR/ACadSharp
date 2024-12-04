@@ -89,7 +89,8 @@ namespace ACadSharp.Entities
 
 		//343	Hard pointer ID of the owning BLOCK record
 		[DxfCodeValue(DxfReferenceType.Handle, 343)]
-		public BlockRecord BlockRecord { get; set; }
+		[Obsolete("Is it needed??")]
+		internal BlockRecord TableBlock { get { return this.Block; } }
 
 		[Obsolete("Move to table")]
 		public Content TableContent { get; set; } = new();

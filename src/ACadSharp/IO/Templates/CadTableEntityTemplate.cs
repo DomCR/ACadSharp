@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
 using System;
 using System.Collections.Generic;
 using static ACadSharp.Entities.TableEntity;
@@ -41,6 +42,11 @@ namespace ACadSharp.IO.Templates
 			this._cadTableCellTemplates.Add(this.CurrentCellTemplate);
 
 			this._currCellIndex++;
+		}
+
+		public override void Build(CadDocumentBuilder builder)
+		{
+			base.Build(builder);
 		}
 
 		internal class CadTableAttributeTemplate : ICadTemplate
@@ -89,9 +95,9 @@ namespace ACadSharp.IO.Templates
 
 			public ulong? FieldHandle { get; set; }
 
-			public TableEntity.Cell.Content Content { get; }
+			public TableEntity.Cell.CellContent Content { get; }
 
-			public CadTableCellContentTemplate(TableEntity.Cell.Content content)
+			public CadTableCellContentTemplate(TableEntity.Cell.CellContent content)
 			{
 				Content = content;
 			}

@@ -1,5 +1,7 @@
 ﻿using ACadSharp.Attributes;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -77,14 +79,39 @@ namespace ACadSharp.Entities
 
 			public int CustomData { get; set; }
 
+			[Obsolete]
 			public CellValue Value { get; } = new CellValue();
 
 			public List<CustomDataEntry> CustomDataCollection { get; set; } = new();
 
-			public List<Content> Contents { get; } = new();
+			public bool HasMultipleContent
+			{
+				get
+				{
+					return this.Contents.Count > 1;
+				}
+			}
+
+			public CellContent Content
+			{
+				get
+				{
+					if (this.HasMultipleContent)
+					{
+						return null;
+					}
+					else
+					{
+						return this.Contents.First();
+					}
+				}
+			}
+
+			public List<CellContent> Contents { get; } = new();
+
 			public CellContentGeometry Geometry { get; set; }
 
-			public class Content
+			public class CellContent
 			{
 				public ContentFormat Format { get; } = new();
 

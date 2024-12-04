@@ -545,7 +545,7 @@ namespace ACadSharp.IO.DWG
 			for (int j = 0; j < cellContents; j++)
 			{
 				//Begin repeat cell contents
-				TableEntity.Cell.Content cellContent = new();
+				TableEntity.Cell.CellContent cellContent = new();
 				cell.Contents.Add(cellContent);
 
 				CadTableCellContentTemplate cellContentTemplate = new CadTableCellContentTemplate(cellContent);

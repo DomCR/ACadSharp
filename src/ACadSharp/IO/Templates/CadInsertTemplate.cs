@@ -35,13 +35,9 @@ namespace ACadSharp.IO.Templates
 				return;
 
 			BlockRecord block;
-			if (builder.TryGetCadObject(this.BlockHeaderHandle, out block))
+			if (this.getTableReference(builder, this.BlockHeaderHandle, this.BlockName, out BlockRecord owner))
 			{
-				insert.Block = block;
-			}
-			else if (!string.IsNullOrEmpty(this.BlockName) && builder.TryGetTableEntry(this.BlockName, out block))
-			{
-				insert.Block = block;
+				insert.Block = owner;
 			}
 
 			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
