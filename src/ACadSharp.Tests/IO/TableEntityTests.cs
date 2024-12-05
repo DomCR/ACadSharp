@@ -41,10 +41,11 @@ namespace ACadSharp.Tests.IO
 
 			Assert.Equal(4, table.Rows.Count);
 			//First row
-			var r0 = table.Rows[0];
-			var r0_c0 = r0.Cells[0];
-			Assert.False(r0_c0.HasMultipleContent);
-			Assert.Equal("Hello this is a title", r0_c0.Content.Value.FormatedValue);
+			TableEntity.Cell titleCell = table.GetCell(0, 0);
+			Assert.False(titleCell.HasMultipleContent);
+			Assert.Equal("Hello this is a title", titleCell.Content.Value.FormatedValue);
+
+			TableEntity.Cell next = table.GetCell(0, 1);
 		}
 	}
 }

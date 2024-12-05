@@ -98,5 +98,10 @@ namespace ACadSharp.Entities
 		internal BreakData TableBreakData { get; set; } = new();
 
 		internal List<BreakRowRange> BreakRowRanges { get; set; } = new();
+
+		public Cell GetCell(int row, int column)
+		{
+			return this.Rows[row].Cells[column];
+		}
 	}
 }

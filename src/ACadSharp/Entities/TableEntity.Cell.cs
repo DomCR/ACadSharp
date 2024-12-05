@@ -79,15 +79,17 @@ namespace ACadSharp.Entities
 
 			public int CustomData { get; set; }
 
-			[Obsolete]
-			public CellValue Value { get; } = new CellValue();
-
 			public List<CustomDataEntry> CustomDataCollection { get; set; } = new();
 
 			public bool HasMultipleContent
 			{
 				get
 				{
+					if (this.Contents == null)
+					{
+						return false;
+					}
+
 					return this.Contents.Count > 1;
 				}
 			}
@@ -96,7 +98,7 @@ namespace ACadSharp.Entities
 			{
 				get
 				{
-					if (this.HasMultipleContent)
+					if (this.Contents == null || this.HasMultipleContent)
 					{
 						return null;
 					}
@@ -110,16 +112,6 @@ namespace ACadSharp.Entities
 			public List<CellContent> Contents { get; } = new();
 
 			public CellContentGeometry Geometry { get; set; }
-
-			public class CellContent
-			{
-				public ContentFormat Format { get; } = new();
-
-				public TableCellContentType ContentType { get; set; }
-
-				public CellValue Value { get; } = new CellValue();
-			}
-
 		}
 	}
 }

@@ -95,9 +95,9 @@ namespace ACadSharp.IO.Templates
 
 			public ulong? FieldHandle { get; set; }
 
-			public TableEntity.Cell.CellContent Content { get; }
+			public TableEntity.CellContent Content { get; }
 
-			public CadTableCellContentTemplate(TableEntity.Cell.CellContent content)
+			public CadTableCellContentTemplate(TableEntity.CellContent content)
 			{
 				Content = content;
 			}

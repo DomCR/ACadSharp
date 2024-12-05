@@ -379,7 +379,9 @@ namespace ACadSharp.IO.DXF
 					tmp.CurrentCell.VirtualEdgeFlag = this._reader.ValueAsShort;
 					return true;
 				case 301:
-					this.readCellValue(tmp.CurrentCell.Value);
+					var content = new TableEntity.CellContent();
+					tmp.CurrentCell.Contents.Add(content);
+					this.readCellValue(content);
 					return true;
 				case 340:
 					tmp.CurrentCellTemplate.BlockRecordHandle = this._reader.ValueAsHandle;
@@ -393,7 +395,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readCellValue(TableEntity.CellValue value)
+		private void readCellValue(TableEntity.CellContent content)
 		{
 			if (this._reader.ValueAsString.Equals("CELL_VALUE", StringComparison.OrdinalIgnoreCase))
 			{
@@ -410,21 +412,20 @@ namespace ACadSharp.IO.DXF
 				switch (this._reader.Code)
 				{
 					case 1:
-						value.Text = this._reader.ValueAsString;
+						content.Value.Text = this._reader.ValueAsString;
 						break;
 					case 2:
-						value.Text += this._reader.ValueAsString;
+						content.Value.Text += this._reader.ValueAsString;
 						break;
 					case 302:
 						//TODO: Fix this assignation to cell value
-						value.Value = this._reader.ValueAsString;
+						content.Value.Value = this._reader.ValueAsString;
 						break;
 					//TODO: Find this codes
 					case 90:
 					case 93:
 					case 94:
 					case 300:
-						break;
 					default:
 						this._builder.Notify($"[CELL_VALUE] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
 						break;
