@@ -36,10 +36,6 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
-
-			var trees = doc.Entities.Where(e => e is Insert insert 
-				&& insert.Block.Name == "TREE_1"
-				&& e.Layer.Name.Equals("VEGETATION", System.StringComparison.OrdinalIgnoreCase));
 		}
 
 		[Theory]
