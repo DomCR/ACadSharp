@@ -92,8 +92,7 @@ namespace ACadSharp.Entities
 		[Obsolete("Is it needed??")]
 		internal BlockRecord TableBlock { get { return this.Block; } }
 
-		[Obsolete("Move to table")]
-		public Content TableContent { get; set; } = new();
+		public TableContent Content { get; set; } = new();
 
 		internal BreakData TableBreakData { get; set; } = new();
 

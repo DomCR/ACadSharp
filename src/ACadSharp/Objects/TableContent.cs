@@ -1,12 +1,18 @@
-﻿using System;
+﻿using ACadSharp.Attributes;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static ACadSharp.Entities.TableEntity;
 
 namespace ACadSharp.Objects
 {
+	/// <summary>
+	/// Represents a <see cref="TableContent"/> object.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.ObjectTableContent"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.TableContent"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.ObjectTableContent)]
+	[DxfSubClass(DxfSubclassMarker.TableContent)]
 	public class TableContent : NonGraphicalObject
 	{
 		/// <inheritdoc/>
@@ -18,6 +24,10 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.TableContent;
 
+		[DxfCodeValue(1)]
+		public override string Name { get => base.Name; set => base.Name = value; }
+
+		[DxfCodeValue(300)]
 		public string Description { get; set; }
 
 		public CellStyle CellStyleOverride { get; set; } = new();

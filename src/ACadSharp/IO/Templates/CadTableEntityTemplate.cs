@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,13 @@ using static ACadSharp.Entities.TableEntity;
 
 namespace ACadSharp.IO.Templates
 {
+	internal class CadTableContentTemplate : CadTemplate<TableContent>
+	{
+		public CadTableContentTemplate() : base(new TableContent()) { }
+
+		public CadTableContentTemplate(TableContent cadObject) : base(cadObject) { }
+	}
+
 	internal class CadTableEntityTemplate : CadInsertTemplate
 	{
 		public ulong? StyleHandle { get; set; }

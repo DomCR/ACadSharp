@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
+using ACadSharp.Objects;
 using CSMath;
 using CSUtilities.Converters;
 using System;
@@ -44,7 +45,7 @@ namespace ACadSharp.IO.DWG
 				//Here the table content is present (see TABLECONTENT object),
 				//without the common OBJECT data.
 				//See paragraph 20.4.97.
-				this.readTableContent(table.TableContent, template);
+				this.readTableContent(table.Content, template);
 
 				//BS Unknown (default 38)
 				this._mergedReaders.ReadBitShort();
@@ -160,7 +161,7 @@ namespace ACadSharp.IO.DWG
 			throw new NotImplementedException();
 		}
 
-		private void readTableContent(TableEntity.Content content, CadTableEntityTemplate template)
+		private void readTableContent(TableContent content, CadTableEntityTemplate template)
 		{
 			//See paragraph 20.4.97.
 			TableEntity tableEntity = template.TableEntity;
