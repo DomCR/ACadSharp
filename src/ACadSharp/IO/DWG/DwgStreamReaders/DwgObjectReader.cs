@@ -1123,8 +1123,6 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			//analyse02(200);
-
 			var l1 = _objectReader.ReadBitLong();
 			var s2 = _objectReader.ReadBitShort();  //	can also be L
 			var s3 = _objectReader.ReadBitShort();  //	can also be L
@@ -1149,16 +1147,12 @@ namespace ACadSharp.IO.DWG
 			//	300	Parameter Type
 			blockVisibilityParameter.ParameterType = _textReader.ReadVariableText();
 
-			//resetPosition(214275, 2);
 			//	1010, 1020, 1030	Menu position
 			blockVisibilityParameter.BasePosition = _objectReader.Read3BitDouble();
 			//	2x0 <- 
 			var s170 = _objectReader.ReadBitShort();
 			var s171 = _objectReader.ReadBitShort();
 			var l93 = _objectReader.ReadBitLong();
-			//DwgAnalyseTools.ShowCurrentPosAndShift();
-
-			//var s281 = _objectReader.ReadBitShort();
 
 			//	301
 			blockVisibilityParameter.Name = _textReader.ReadVariableText();

@@ -25,6 +25,7 @@ namespace ACadSharp.Tests.IO
 			public SingleCaseGenerator(string name)
 			{
 				this.Name = name;
+				this.Document.Header.ShowModelSpace = true;
 			}
 
 			public override string ToString()

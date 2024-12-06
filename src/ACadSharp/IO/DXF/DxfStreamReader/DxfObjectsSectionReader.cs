@@ -233,7 +233,6 @@ namespace ACadSharp.IO.DXF
 						break;
 				}
 
-
 				this._reader.ReadNext();
 			}
 		}
