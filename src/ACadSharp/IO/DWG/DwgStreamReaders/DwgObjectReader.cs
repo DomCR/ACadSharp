@@ -14,6 +14,7 @@ using System;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
+using System.Globalization;
 
 namespace ACadSharp.IO.DWG
 {
@@ -1116,8 +1117,6 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			//analyse02(200);
-
 			var l1 = _objectReader.ReadBitLong();
 			var s2 = _objectReader.ReadBitShort();  //	can also be L
 			var s3 = _objectReader.ReadBitShort();  //	can also be L
@@ -1142,16 +1141,12 @@ namespace ACadSharp.IO.DWG
 			//	300	Parameter Type
 			blockVisibilityParameter.ParameterType = _textReader.ReadVariableText();
 
-			//resetPosition(214275, 2);
 			//	1010, 1020, 1030	Menu position
 			blockVisibilityParameter.BasePosition = _objectReader.Read3BitDouble();
 			//	2x0 <- 
 			var s170 = _objectReader.ReadBitShort();
 			var s171 = _objectReader.ReadBitShort();
 			var l93 = _objectReader.ReadBitLong();
-			//DwgAnalyseTools.ShowCurrentPosAndShift();
-
-			//var s281 = _objectReader.ReadBitShort();
 
 			//	301
 			blockVisibilityParameter.Name = _textReader.ReadVariableText();
@@ -3839,7 +3834,8 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Color CMC 62
-			layer.Color = this._mergedReaders.ReadCmColor();
+			var color = this._mergedReaders.ReadCmColor();
+			layer.Color = color.IsByBlock || color.IsByLayer ? new(30) : color;
 
 			//TODO: This is not the Layer control handle
 			template.LayerControlHandle = this.handleReference();
@@ -5462,7 +5458,15 @@ namespace ACadSharp.IO.DWG
 						xRecord.CreateEntry(code, this._objectReader.ReadRawULong());
 						break;
 					case GroupCodeValueType.Handle:
-						xRecord.CreateEntry(code, this._objectReader.ReadTextUnicode());
+						string hex = this._objectReader.ReadTextUnicode();
+						if (ulong.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong result))
+						{
+							template.AddHandleReference(code, result);
+						}
+						else
+						{
+							this.notify($"Failed to parse {hex} to handle", NotificationType.Warning);
+						}
 						break;
 					case GroupCodeValueType.Bool:
 						xRecord.CreateEntry(code, this._objectReader.ReadByte() > 0);
@@ -5473,7 +5477,7 @@ namespace ACadSharp.IO.DWG
 						break;
 					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:
-						xRecord.CreateEntry(code, this._objectReader.ReadRawULong());
+						template.AddHandleReference(code, this._objectReader.ReadRawULong());
 						break;
 					default:
 						this.notify($"Unidentified GroupCodeValueType {code} for XRecord [{xRecord.Handle}]", NotificationType.Warning);
