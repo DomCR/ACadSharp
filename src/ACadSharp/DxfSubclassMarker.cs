@@ -86,5 +86,6 @@
 		public const string EvalGraph = "AcDbEvalGraph";
 		public const string BlockVisibilityParameter = "AcDbBlockVisibilityParameter";
 		public const string DbColor = "AcDbColor";
+		public const string TableContent = "AcDbTableContent";
 	}
 }

@@ -17,6 +17,7 @@ using CSUtilities.Extensions;
 using static ACadSharp.Entities.TableEntity;
 using static ACadSharp.Entities.TableEntity.BreakData;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
+using System.Globalization;
 
 namespace ACadSharp.IO.DWG
 {
@@ -1522,7 +1523,7 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-	
+
 
 		private void readInsertCommonData(CadInsertTemplate template)
 		{
@@ -5470,7 +5471,15 @@ namespace ACadSharp.IO.DWG
 						xRecord.CreateEntry(code, this._objectReader.ReadRawULong());
 						break;
 					case GroupCodeValueType.Handle:
-						xRecord.CreateEntry(code, this._objectReader.ReadTextUnicode());
+						string hex = this._objectReader.ReadTextUnicode();
+						if (ulong.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong result))
+						{
+							template.AddHandleReference(code, result);
+						}
+						else
+						{
+							this.notify($"Failed to parse {hex} to handle", NotificationType.Warning);
+						}
 						break;
 					case GroupCodeValueType.Bool:
 						xRecord.CreateEntry(code, this._objectReader.ReadByte() > 0);
@@ -5481,7 +5490,7 @@ namespace ACadSharp.IO.DWG
 						break;
 					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:
-						xRecord.CreateEntry(code, this._objectReader.ReadRawULong());
+						template.AddHandleReference(code, this._objectReader.ReadRawULong());
 						break;
 					default:
 						this.notify($"Unidentified GroupCodeValueType {code} for XRecord [{xRecord.Handle}]", NotificationType.Warning);

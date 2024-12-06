@@ -4,6 +4,7 @@ using ACadSharp.Tests.TestModels;
 using ACadSharp.Entities;
 using System.Linq;
 using ACadSharp.Tables;
+using ACadSharp.IO;
 
 namespace ACadSharp.Tests.IO
 {
@@ -24,7 +25,20 @@ namespace ACadSharp.Tests.IO
 		[MemberData(nameof(TableSamplesFilePaths))]
 		public void ReadTableEntity(FileModel test)
 		{
-			CadDocument doc = this.readDocument(test);
+			CadReaderConfiguration configuration;
+
+			if (test.IsDxf)
+			{
+				configuration = new DxfReaderConfiguration();
+			}
+			else
+			{
+				configuration = new DwgReaderConfiguration();
+			}
+
+			configuration.KeepUnknownNonGraphicalObjects = true;
+
+			CadDocument doc = this.readDocument(test, configuration);
 
 			TableEntity table = (TableEntity)doc.Entities.First();
 

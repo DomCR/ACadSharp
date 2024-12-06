@@ -199,20 +199,29 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.Code)
 			{
 				case 100 when this._reader.ValueAsString == DxfSubclassMarker.XRecord:
-					this.readXRecordEntries(tmp.CadObject);
+					this.readXRecordEntries(tmp);
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.XRecord]);
 			}
 		}
 
-		private void readXRecordEntries(XRecord recrod)
+		private void readXRecordEntries(CadXRecordTemplate template)
 		{
 			this._reader.ReadNext();
 
 			while (this._reader.DxfCode != DxfCode.Start)
 			{
-				recrod.CreateEntry(this._reader.Code, this._reader.Value);
+				switch (this._reader.GroupCodeValue)
+				{
+					case GroupCodeValueType.Handle:
+						template.AddHandleReference(this._reader.Code, this._reader.ValueAsHandle);
+						break;
+					default:
+						template.CadObject.CreateEntry(this._reader.Code, this._reader.Value);
+						break;
+				}
+
 
 				this._reader.ReadNext();
 			}
