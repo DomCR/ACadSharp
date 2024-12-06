@@ -43,7 +43,7 @@ namespace ACadSharp.Tests.IO
 			//First row
 			TableEntity.Cell titleCell = table.GetCell(0, 0);
 			Assert.False(titleCell.HasMultipleContent);
-			Assert.Equal("Hello this is a title", titleCell.Content.Value.FormatedValue);
+			Assert.Equal("Hello this is a title", titleCell.Content.Value.Value);
 
 			TableEntity.Cell next = table.GetCell(0, 1);
 		}

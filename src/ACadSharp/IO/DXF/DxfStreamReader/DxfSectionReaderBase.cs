@@ -354,8 +354,14 @@ namespace ACadSharp.IO.DXF
 					col.Width = this._reader.ValueAsDouble;
 					table.Columns.Add(col);
 					return true;
+				case 144:
+					tmp.CurrentCellTemplate.FormatTextHeight = this._reader.ValueAsDouble;
+					return true;
 				case 145:
 					tmp.CurrentCell.Rotation = this._reader.ValueAsDouble;
+					return true;
+				case 170:
+					//Has data flag
 					return true;
 				case 171:
 					tmp.CreateCell((TableEntity.CellType)this._reader.ValueAsInt);
@@ -377,6 +383,9 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 178:
 					tmp.CurrentCell.VirtualEdgeFlag = this._reader.ValueAsShort;
+					return true;
+				case 179:
+					//Unknown value
 					return true;
 				case 301:
 					var content = new TableEntity.CellContent();
@@ -417,15 +426,37 @@ namespace ACadSharp.IO.DXF
 					case 2:
 						content.Value.Text += this._reader.ValueAsString;
 						break;
+					case 11:
+						content.Value.Value = new XYZ(this._reader.ValueAsDouble, 0, 0);
+						break;
+					case 21:
+						content.Value.Value = new XYZ(0, this._reader.ValueAsDouble, 0);
+						break;
+					case 31:
+						content.Value.Value = new XYZ(0, 0, this._reader.ValueAsDouble);
+						break;
 					case 302:
 						//TODO: Fix this assignation to cell value
 						content.Value.Value = this._reader.ValueAsString;
 						break;
-					//TODO: Find this codes
 					case 90:
+						content.Value.ValueType = (TableEntity.CellValueType)this._reader.ValueAsInt;
+						break;
+					case 91:
+						content.Value.Value = this._reader.ValueAsInt;
+						break;
 					case 93:
+						content.Value.Flags = this._reader.ValueAsInt;
+						break;
 					case 94:
+						content.Value.Units = (TableEntity.ValueUnitType)this._reader.ValueAsInt;
+						break;
+					case 140:
+						content.Value.Value = this._reader.ValueAsDouble;
+						break;
 					case 300:
+						content.Value.Format = this._reader.ValueAsString;
+						break;
 					default:
 						this._builder.Notify($"[CELL_VALUE] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
 						break;

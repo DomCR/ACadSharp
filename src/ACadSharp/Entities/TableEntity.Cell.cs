@@ -104,7 +104,7 @@ namespace ACadSharp.Entities
 					}
 					else
 					{
-						return this.Contents.First();
+						return this.Contents.FirstOrDefault();
 					}
 				}
 			}

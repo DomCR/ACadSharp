@@ -354,7 +354,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2007Plus)
 			{
 				//Unit type BL 94 0 = no units, 1 = distance, 2 = angle, 4 = area, 8 = volume
-				value.Units = this._mergedReaders.ReadBitLong();
+				value.Units = (ValueUnitType)this._mergedReaders.ReadBitLong();
 				//Format String TV 300
 				value.Format = this._mergedReaders.ReadVariableText();
 				//Value String TV 302

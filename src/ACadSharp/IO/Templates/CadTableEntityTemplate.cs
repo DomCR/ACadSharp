@@ -74,6 +74,8 @@ namespace ACadSharp.IO.Templates
 
 			public int StyleId { get; internal set; }
 
+			public double? FormatTextHeight { get; set; }
+
 			public TableEntity.Cell Cell { get; }
 
 			public List<CadTableCellContentTemplate> ContentTemplates { get; } = new();
