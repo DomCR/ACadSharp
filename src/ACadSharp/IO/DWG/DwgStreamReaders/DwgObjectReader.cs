@@ -4377,6 +4377,11 @@ namespace ACadSharp.IO.DWG
 
 			appId.Name = this._textReader.ReadVariableText();
 
+			if(appId.Name == "ACAD_EXEMPT_FROM_CAD_STANDARDS")
+			{
+				//586
+			}
+
 			this.readXrefDependantBit(appId);
 
 			//Unknown RC 71 Undoc'd 71-group; doesn't even appear in DXF or an entget if it's 0.

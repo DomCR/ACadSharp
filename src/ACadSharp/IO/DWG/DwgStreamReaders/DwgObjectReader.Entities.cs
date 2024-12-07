@@ -147,6 +147,10 @@ namespace ACadSharp.IO.DWG
 				table.Rows.Add(r);
 			}
 
+			//Cells have more handles
+			//H 342 Table Style ID (hard pointer)
+			template.StyleHandle = this.handleReference();
+
 			for (int n = 0; n < table.Rows.Count; n++)
 			{
 				for (int m = 0; m < table.Columns.Count; m++)
