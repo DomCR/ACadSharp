@@ -1517,8 +1517,6 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-
-
 		private void readInsertCommonData(CadInsertTemplate template)
 		{
 			Insert insert = template.CadObject as Insert;
