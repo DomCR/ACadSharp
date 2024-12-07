@@ -185,7 +185,7 @@ namespace ACadSharp.Entities
 		{
 			Insert clone = (Insert)base.Clone();
 
-			clone.Block = (BlockRecord)this.Block.Clone();
+			clone.Block = (BlockRecord)this.Block?.Clone();
 
 			clone.Attributes = new SeqendCollection<AttributeEntity>(clone);
 			foreach (var att in this.Attributes)

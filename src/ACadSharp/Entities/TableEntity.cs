@@ -102,5 +102,17 @@ namespace ACadSharp.Entities
 		{
 			return this.Rows[row].Cells[column];
 		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return BoundingBox.Null;
+		}
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			return base.Clone();
+		}
 	}
 }
