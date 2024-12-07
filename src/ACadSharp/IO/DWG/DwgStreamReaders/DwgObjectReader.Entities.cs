@@ -17,6 +17,11 @@ namespace ACadSharp.IO.DWG
 			TableEntity table = new TableEntity();
 			CadTableEntityTemplate template = new CadTableEntityTemplate(table);
 
+			if (!this.R2010Plus)
+			{
+				return null;
+			}
+
 			this.readInsertCommonData(template);
 			this.readInsertCommonHandles(template);
 
@@ -105,8 +110,6 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Until R2007
-			//H 342 Table Style ID (hard pointer)
-			template.StyleHandle = this.handleReference();
 
 			//Common:
 			//Flag for table value BS 90
@@ -144,20 +147,32 @@ namespace ACadSharp.IO.DWG
 				table.Rows.Add(r);
 			}
 
-			for (int i = 0; i < table.Rows.Count; i++)
+			for (int n = 0; n < table.Rows.Count; n++)
 			{
-				for (int j = 0; j < table.Columns.Count; j++)
+				for (int m = 0; m < table.Columns.Count; m++)
 				{
 					//Cell data, repeats for all cells in n x m table:
-					this.readTableCellData(table);
+					TableEntity.Cell cell = new TableEntity.Cell();
+					CadTableCellTemplate cellTemplate = new CadTableCellTemplate(cell);
+
+					table.Rows[n].Cells.Add(cell);
+
+					this.readTableCellData(cellTemplate);
 				}
 			}
 
 			return template;
 		}
 
-		private void readTableCellData(TableEntity table)
+		private void readTableCellData(CadTableCellTemplate template)
 		{
+			TableEntity.Cell cellPlaceholder = template.Cell;
+
+			//Cell type BS 171 1 = text, 2 = block.
+			//In AutoCAD 2007 a cell can contain either 1 text
+			//or 1 block.In AutoCAD 2008 this changed(TODO).
+			cellPlaceholder.Type = (CellType)this._mergedReaders.ReadBitShort();
+
 			throw new NotImplementedException();
 		}
 
