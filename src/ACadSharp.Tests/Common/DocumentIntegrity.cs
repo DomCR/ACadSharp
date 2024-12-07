@@ -152,8 +152,6 @@ namespace ACadSharp.Tests.Common
 				if (entry.Name.Contains("__") || entry.Name.Contains(" @ "))
 					continue;
 
-				//ACAD_EXEMPT_FROM_CAD_STANDARDS
-				//704
 				TableEntryNode child = node.GetEntry(entry.Handle);
 				this.notNull(child, $"[{table}] Entry name: {entry.Name}");
 
