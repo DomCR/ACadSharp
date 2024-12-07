@@ -16,6 +16,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityTable)]
 	[DxfSubClass(DxfSubclassMarker.TableEntity)]
+	[Obsolete("TableEntity is in a work in progress, is only supported in Dwg and for versions higher than AC1021")]
 	public partial class TableEntity : Insert
 	{
 		/// <inheritdoc/>
