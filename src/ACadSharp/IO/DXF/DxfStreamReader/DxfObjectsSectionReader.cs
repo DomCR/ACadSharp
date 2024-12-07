@@ -67,6 +67,8 @@ namespace ACadSharp.IO.DXF
 					return this.readSortentsTable();
 				case DxfFileToken.ObjectScale:
 					return this.readObjectCodes<Scale>(new CadTemplate<Scale>(new Scale()), this.readScale);
+				case DxfFileToken.ObjectTableContent:
+					return this.readObjectCodes<TableContent>(new CadTableContentTemplate(), this.readTableContent);
 				case DxfFileToken.ObjectVisualStyle:
 					return this.readObjectCodes<VisualStyle>(new CadTemplate<VisualStyle>(new VisualStyle()), this.readVisualStyle);
 				case DxfFileToken.ObjectXRecord:
@@ -175,6 +177,15 @@ namespace ACadSharp.IO.DXF
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Scale]);
+			}
+		}
+
+		private bool readTableContent(CadTemplate template, DxfMap map)
+		{
+			switch (this._reader.Code)
+			{
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.TableContent]);
 			}
 		}
 

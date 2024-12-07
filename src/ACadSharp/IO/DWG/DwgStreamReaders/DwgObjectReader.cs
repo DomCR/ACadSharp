@@ -14,6 +14,9 @@ using System;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
+using static ACadSharp.Entities.TableEntity;
+using static ACadSharp.Entities.TableEntity.BreakData;
+using static ACadSharp.Objects.MultiLeaderAnnotContext;
 using System.Globalization;
 
 namespace ACadSharp.IO.DWG
@@ -975,6 +978,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "ACDBPLACEHOLDER":
 					template = this.readPlaceHolder();
+					break;
+				case "ACAD_TABLE":
+					template = this.readTableEntity();
 					break;
 				case "DBCOLOR":
 					template = this.readDbColor();
