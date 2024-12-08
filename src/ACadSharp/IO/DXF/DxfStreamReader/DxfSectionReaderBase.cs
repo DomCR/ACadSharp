@@ -63,7 +63,7 @@ namespace ACadSharp.IO.DXF
 					case 340:
 					//Dimension table has the handles of the styles at the begining
 					default:
-						this._builder.Notify($"Unhandeled dxf code {this._reader.Code} at line {this._reader.Position}.");
+						this._builder.Notify($"Unhandled dxf code {this._reader.Code} at line {this._reader.Position}.");
 						break;
 				}
 
@@ -95,7 +95,7 @@ namespace ACadSharp.IO.DXF
 						template.OwnerHandle = this._reader.ValueAsHandle;
 						break;
 					default:
-						this._builder.Notify($"Unhandeled dxf code {this._reader.Code} at line {this._reader.Position}.", NotificationType.None);
+						this._builder.Notify($"Unhandled dxf code {this._reader.Code} at line {this._reader.Position}.", NotificationType.None);
 						break;
 				}
 
@@ -131,7 +131,7 @@ namespace ACadSharp.IO.DXF
 					this.readExtendedData(template.EDataTemplateByAppName);
 					break;
 				default:
-					this._builder.Notify($"[{template.CadObject.SubclassMarker}] Unhandeled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
+					this._builder.Notify($"[{template.CadObject.SubclassMarker}] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
 					break;
 			}
 		}
@@ -182,6 +182,8 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<Seqend>(new CadEntityTemplate<Seqend>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntitySolid:
 					return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), this.readEntitySubclassMap);
+				case DxfFileToken.EntityTable:
+					return this.readEntityCodes<TableEntity>(new CadTableEntityTemplate(), this.readTableEntity);
 				case DxfFileToken.EntityText:
 					return this.readEntityCodes<TextEntity>(new CadTextEntityTemplate(new TextEntity()), this.readTextEntity);
 				case DxfFileToken.EntityTolerance:
@@ -274,6 +276,9 @@ namespace ACadSharp.IO.DXF
 				case 347:
 					template.MaterialHandle = this._reader.ValueAsHandle;
 					break;
+				case 430:
+					template.BookColorName = this._reader.ValueAsString;
+					break;
 				default:
 					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Entity]))
 					{
@@ -319,6 +324,145 @@ namespace ACadSharp.IO.DXF
 						return this.readTextEntity(template, map, DxfSubclassMarker.Text);
 					}
 					return true;
+			}
+		}
+
+		private bool readTableEntity(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			string mapName = string.IsNullOrEmpty(subclass) ? template.CadObject.SubclassMarker : subclass;
+			CadTableEntityTemplate tmp = template as CadTableEntityTemplate;
+			TableEntity table = tmp.CadObject as TableEntity;
+
+			switch (this._reader.Code)
+			{
+				case 2:
+					tmp.BlockName = this._reader.ValueAsString;
+					return true;
+				case 342:
+					tmp.StyleHandle = this._reader.ValueAsHandle;
+					return true;
+				case 343:
+					tmp.BlockOwnerHandle = this._reader.ValueAsHandle;
+					return true;
+				case 141:
+					var row = new TableEntity.Row();
+					row.Height = this._reader.ValueAsDouble;
+					table.Rows.Add(row);
+					return true;
+				case 142:
+					var col = new TableEntity.Column();
+					col.Width = this._reader.ValueAsDouble;
+					table.Columns.Add(col);
+					return true;
+				case 144:
+					tmp.CurrentCellTemplate.FormatTextHeight = this._reader.ValueAsDouble;
+					return true;
+				case 145:
+					tmp.CurrentCell.Rotation = this._reader.ValueAsDouble;
+					return true;
+				case 170:
+					//Has data flag
+					return true;
+				case 171:
+					tmp.CreateCell((TableEntity.CellType)this._reader.ValueAsInt);
+					return true;
+				case 172:
+					tmp.CurrentCell.FlagValue = this._reader.ValueAsInt;
+					return true;
+				case 173:
+					tmp.CurrentCell.MergedValue = this._reader.ValueAsInt;
+					return true;
+				case 174:
+					tmp.CurrentCell.Autofit = this._reader.ValueAsBool;
+					return true;
+				case 175:
+					tmp.CurrentCell.BorderWidth = this._reader.ValueAsInt;
+					return true;
+				case 176:
+					tmp.CurrentCell.BorderHeight = this._reader.ValueAsInt;
+					return true;
+				case 178:
+					tmp.CurrentCell.VirtualEdgeFlag = this._reader.ValueAsShort;
+					return true;
+				case 179:
+					//Unknown value
+					return true;
+				case 301:
+					var content = new TableEntity.CellContent();
+					tmp.CurrentCell.Contents.Add(content);
+					this.readCellValue(content);
+					return true;
+				case 340:
+					tmp.CurrentCellTemplate.BlockRecordHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Insert]))
+					{
+						return this.readEntitySubclassMap(template, map, DxfSubclassMarker.TableEntity);
+					}
+					return true;
+			}
+		}
+
+		private void readCellValue(TableEntity.CellContent content)
+		{
+			if (this._reader.ValueAsString.Equals("CELL_VALUE", StringComparison.OrdinalIgnoreCase))
+			{
+				this._reader.ReadNext();
+			}
+			else
+			{
+				throw new Exceptions.DxfException($"Expected value not found CELL_VALUE", this._reader.Position);
+			}
+
+			while (this._reader.Code != 304
+				&& !this._reader.ValueAsString.Equals("ACVALUE_END", StringComparison.OrdinalIgnoreCase))
+			{
+				switch (this._reader.Code)
+				{
+					case 1:
+						content.Value.Text = this._reader.ValueAsString;
+						break;
+					case 2:
+						content.Value.Text += this._reader.ValueAsString;
+						break;
+					case 11:
+						content.Value.Value = new XYZ(this._reader.ValueAsDouble, 0, 0);
+						break;
+					case 21:
+						content.Value.Value = new XYZ(0, this._reader.ValueAsDouble, 0);
+						break;
+					case 31:
+						content.Value.Value = new XYZ(0, 0, this._reader.ValueAsDouble);
+						break;
+					case 302:
+						//TODO: Fix this assignation to cell value
+						content.Value.Value = this._reader.ValueAsString;
+						break;
+					case 90:
+						content.Value.ValueType = (TableEntity.CellValueType)this._reader.ValueAsInt;
+						break;
+					case 91:
+						content.Value.Value = this._reader.ValueAsInt;
+						break;
+					case 93:
+						content.Value.Flags = this._reader.ValueAsInt;
+						break;
+					case 94:
+						content.Value.Units = (TableEntity.ValueUnitType)this._reader.ValueAsInt;
+						break;
+					case 140:
+						content.Value.Value = this._reader.ValueAsDouble;
+						break;
+					case 300:
+						content.Value.Format = this._reader.ValueAsString;
+						break;
+					default:
+						this._builder.Notify($"[CELL_VALUE] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
+						break;
+				}
+
+				this._reader.ReadNext();
 			}
 		}
 
@@ -1384,9 +1528,13 @@ namespace ACadSharp.IO.DXF
 				//Use this method only if the value is not a link between objects
 				if (map.DxfProperties.TryGetValue(this._reader.Code, out DxfProperty dxfProperty))
 				{
+					if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Count))
+					{
+						return true;
+					}
+
 					if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Handle)
-						|| dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Name)
-						|| dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Count))
+						|| dxfProperty.ReferenceType.HasFlag(DxfReferenceType.Name))
 					{
 						return false;
 					}

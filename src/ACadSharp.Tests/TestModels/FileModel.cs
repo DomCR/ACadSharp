@@ -8,6 +8,8 @@ namespace ACadSharp.Tests.TestModels
 
 		public string Path { get; set; }
 
+		public bool IsDxf { get { return System.IO.Path.GetExtension(this.Path) == ".dxf"; } }
+
 		public FileModel()
 		{
 			this.FileName = string.Empty;

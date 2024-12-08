@@ -31,6 +31,17 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		public void WriteTrueColor(int code, Color color, DxfClassMap map = null)
+		{
+			byte[] arr = new byte[4];
+			arr[0] = (byte)color.B;
+			arr[1] = (byte)color.G;
+			arr[2] = (byte)color.R;
+			arr[3] = 0;
+
+			this.Write(code, LittleEndianConverter.Instance.ToInt32(arr), map);
+		}
+
 		public void WriteCmColor(int code, Color color, DxfClassMap map = null)
 		{
 			if (GroupCodeValue.TransformValue(code) == GroupCodeValueType.Int16)

@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
+using CSUtilities.Converters;
 using System;
 using System.Linq;
 
@@ -53,6 +54,9 @@ namespace ACadSharp.IO.DXF
 
 			switch (co)
 			{
+				case BookColor bookColor:
+					this.writeBookColor(bookColor);
+					return;
 				case CadDictionary cadDictionary:
 					this.writeDictionary(cadDictionary);
 					return;
@@ -91,6 +95,15 @@ namespace ACadSharp.IO.DXF
 			}
 
 			this.writeExtendedData(co);
+		}
+
+		protected void writeBookColor(BookColor color)
+		{
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.DbColor);
+
+			this._writer.Write(62, color.Color.GetApproxIndex());
+			this._writer.WriteTrueColor(420, color.Color);
+			this._writer.Write(430, color.Name);
 		}
 
 		protected void writeDictionary(CadDictionary e)
