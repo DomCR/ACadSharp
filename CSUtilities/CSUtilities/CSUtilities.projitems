@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>b4ef345d-52b9-47f1-aa2a-b4ae85f62efc</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>CSUtilities</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\StringValueAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\BigEndianConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EnvironmentVars.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\IDictionaryExtension.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ObjectExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\CodePage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\DefaultEndianConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\EndianConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\IEndianConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\InverseConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\LittleEndianConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\StreamIO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\IEnumerableExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\QueueExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ReflectionExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\CsvReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mutation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TaskManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AppDomainUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ByteExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\TextEncoding.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\TextEncoding.Windows1252.cs" />
+  </ItemGroup>
+</Project>

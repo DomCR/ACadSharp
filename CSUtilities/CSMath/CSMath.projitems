@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>411b6122-5ef6-46db-a8f2-43e9c1841e4a</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>CSMath</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BoundingBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BoundingBoxExtent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Geometry\ILine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Geometry\Line3D.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Geometry\LineExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IVector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Matrix4.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Matrix4.Operators.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MathHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Quaternion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VectorExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XY.operators.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XY.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XYZ.operators.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XYZ.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XYZM.operators.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XYZM.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Geometry\Line2D.cs" />
+  </ItemGroup>
+</Project>

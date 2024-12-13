@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net5.0;net6.0;net7.0;net48;netstandard2.0</TargetFrameworks>
+		<Authors>Mozibur Rahman</Authors>
+		<LangVersion>11.0</LangVersion>
+		<PackageId>ACadSharp</PackageId>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryType>git</RepositoryType>
+		<GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">True</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Version>1.0.2</Version>
+		<PackageOutputPath>../nupkg</PackageOutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+		<PackageReference Include="System.Memory" Version="4.5.5" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="System.Memory" Version="4.5.5" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
+	</ItemGroup>
+
+</Project>
