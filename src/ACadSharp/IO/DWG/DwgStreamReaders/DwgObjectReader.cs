@@ -1941,7 +1941,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readDimAligned()
 		{
-			DimensionLinear dimension = new DimensionLinear();
+			DimensionAligned dimension = new DimensionAligned();
 			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
 
 			this.readCommonDimensionData(template);
