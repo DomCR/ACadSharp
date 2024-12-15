@@ -4,7 +4,6 @@
 	{
 		public MLineStyleCollection(CadDictionary dictionary) : base(dictionary)
 		{
-			this._dictionary = dictionary;
 		}
 	}
 }

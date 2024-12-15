@@ -15,6 +15,7 @@ namespace ACadSharp.IO.DXF
 			//TODO: Implement complex entities in a separated branch
 			switch (entity)
 			{
+				case TableEntity:
 				case Solid3D:
 				case UnknownEntity:
 					this.notify($"Entity type not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);

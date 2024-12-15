@@ -1,5 +1,7 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
+using CSUtilities.Extensions;
 
 namespace ACadSharp.IO.Templates
 {
@@ -22,6 +24,8 @@ namespace ACadSharp.IO.Templates
 		public ulong? NextEntity { get; set; }
 
 		public ulong? ColorHandle { get; set; }
+
+		public string BookColorName { get; set; }
 
 		public ulong? MaterialHandle { get; set; }
 
@@ -57,13 +61,14 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.LineType = ltype;
 			}
 
-			if (this.ColorHandle.HasValue)
+			BookColor color;
+			if (builder.TryGetCadObject(this.ColorHandle, out color))
 			{
-				//TODO: Set the color by handle
+				this.CadObject.BookColor = color;
 			}
-			else
+			else if (!this.BookColorName.IsNullOrEmpty() && builder.DocumentToBuild.Colors.TryGetValue(this.BookColorName, out color))
 			{
-				//TODO: Set color by name, only for dxf?
+				this.CadObject.BookColor = color;
 			}
 		}
 

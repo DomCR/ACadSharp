@@ -41,7 +41,7 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.Insert;
 
 		/// <summary>
-		/// Gets the insert block definition
+		/// Gets the insert block definition.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 2)]
 		public BlockRecord Block { get; internal set; }
@@ -53,19 +53,19 @@ namespace ACadSharp.Entities
 		public XYZ InsertPoint { get; set; } = XYZ.Zero;
 
 		/// <summary>
-		/// X scale factor 
+		/// X scale factor.
 		/// </summary>
 		[DxfCodeValue(41)]
 		public double XScale { get; set; } = 1;
 
 		/// <summary>
-		/// Y scale factor 
+		/// Y scale factor.
 		/// </summary>
 		[DxfCodeValue(42)]
 		public double YScale { get; set; } = 1;
 
 		/// <summary>
-		/// Z scale factor 
+		/// Z scale factor.
 		/// </summary>
 		[DxfCodeValue(43)]
 		public double ZScale { get; set; } = 1;
@@ -88,25 +88,25 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Column count
 		/// </summary>
-		[DxfCodeValue(70)]
+		[DxfCodeValue(DxfReferenceType.Optional, 70)]
 		public ushort ColumnCount { get; set; } = 1;
 
 		/// <summary>
 		/// Row count
 		/// </summary>
-		[DxfCodeValue(71)]
+		[DxfCodeValue(DxfReferenceType.Optional, 71)]
 		public ushort RowCount { get; set; } = 1;
 
 		/// <summary>
 		/// Column spacing
 		/// </summary>
-		[DxfCodeValue(44)]
+		[DxfCodeValue(DxfReferenceType.Optional, 44)]
 		public double ColumnSpacing { get; set; } = 0;
 
 		/// <summary>
 		/// Row spacing
 		/// </summary>
-		[DxfCodeValue(45)]
+		[DxfCodeValue(DxfReferenceType.Optional, 45)]
 		public double RowSpacing { get; set; } = 0;
 
 		/// <summary>
@@ -185,7 +185,7 @@ namespace ACadSharp.Entities
 		{
 			Insert clone = (Insert)base.Clone();
 
-			clone.Block = (BlockRecord)this.Block.Clone();
+			clone.Block = (BlockRecord)this.Block?.Clone();
 
 			clone.Attributes = new SeqendCollection<AttributeEntity>(clone);
 			foreach (var att in this.Attributes)

@@ -56,6 +56,7 @@
 		public const string PolyfaceMeshFace = "AcDbFaceRecord";
 		public const string Shape = "AcDbShape";
 		public const string Solid = "AcDbTrace";
+		public const string TableEntity = "AcDbTable";
 		public const string Trace = "AcDbTrace";
 		public const string Text = "AcDbText";
 		public const string Tolerance = "AcDbFcf";
@@ -92,5 +93,7 @@
 		public const string BlockLinearParameter = "AcDbBlockLinearParameter";
 
 		public const string BlockVisibilityParameter = "AcDbBlockVisibilityParameter";
+		public const string DbColor = "AcDbColor";
+		public const string TableContent = "AcDbTableContent";
 	}
 }

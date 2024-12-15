@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.Tests.IO
 {
@@ -134,6 +135,37 @@ namespace ACadSharp.Tests.IO
 				default:
 					return false;
 			}
+		}
+
+		protected CadDocument readDocument(FileModel test, CadReaderConfiguration configuration = null)
+		{
+			CadDocument doc;
+			if (Path.GetExtension(test.FileName).Equals(".dxf"))
+			{
+				using (DxfReader dxfReader = new DxfReader(test.Path, this.onNotification))
+				{
+					if (configuration != null)
+					{
+						dxfReader.Configuration = (DxfReaderConfiguration)configuration;
+					}
+
+					doc = dxfReader.Read();
+				}
+			}
+			else
+			{
+				using (DwgReader dxfReader = new DwgReader(test.Path, this.onNotification))
+				{
+					if (configuration != null)
+					{
+						dxfReader.Configuration = (DwgReaderConfiguration)configuration;
+					}
+
+					doc = dxfReader.Read();
+				}
+			}
+
+			return doc;
 		}
 	}
 }

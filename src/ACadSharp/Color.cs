@@ -386,7 +386,7 @@ namespace ACadSharp
 				throw new ArgumentOutOfRangeException(nameof(trueColor), "True color must be a 24 bit color.");
 
 			// Shift to set the 30th bit indicating a true color.
-			this._color = (uint)(trueColor | _trueColorFlag);   //Is this correct?
+			this._color = (uint)(trueColor | _trueColorFlag);
 		}
 
 		/// <summary>

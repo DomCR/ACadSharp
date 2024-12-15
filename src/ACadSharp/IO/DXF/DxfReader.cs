@@ -122,7 +122,7 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		public static CadDocument Read(string filename, NotificationEventHandler notification = null)
 		{
-			return Read(File.OpenRead(filename));
+			return Read(File.OpenRead(filename), notification);
 		}
 
 		/// <inheritdoc/>

@@ -32,7 +32,6 @@ namespace ACadSharp.IO.Templates
 
 		public IList<LeaderLineSubTemplate> LeaderLineSubTemplates { get; } = new List<LeaderLineSubTemplate>();
 		
-
 		public class LeaderLineSubTemplate
 		{
 			public MultiLeaderAnnotContext.LeaderLine LeaderLine { get; }
