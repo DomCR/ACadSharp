@@ -17,6 +17,7 @@ namespace ACadSharp.IO.DWG
 			//Ignored Entities
 			switch (entity)
 			{
+				case TableEntity:
 				case UnknownEntity:
 				case Solid3D:
 				case Mesh:
