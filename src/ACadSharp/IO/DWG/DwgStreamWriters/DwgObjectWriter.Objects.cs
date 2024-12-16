@@ -153,7 +153,7 @@ namespace ACadSharp.IO.DWG
 		private void writeDictionary(CadDictionary dictionary)
 		{
 			//Common:
-			//Numitems L number of dictonary items
+			//Numitems L number of dictionary items
 			List<NonGraphicalObject> entries = new List<NonGraphicalObject>();
 			foreach (var item in dictionary)
 			{
@@ -170,7 +170,6 @@ namespace ACadSharp.IO.DWG
 				entries.Add(item);
 			}
 
-			//16
 			this._writer.WriteBitLong(entries.Count);
 
 			//R14 Only:
