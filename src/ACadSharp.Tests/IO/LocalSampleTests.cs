@@ -2,6 +2,7 @@
 using ACadSharp.IO;
 using ACadSharp.Tables;
 using ACadSharp.Tests.TestModels;
+using CSMath;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -42,25 +43,6 @@ namespace ACadSharp.Tests.IO
 			{
 				return;
 			}
-
-			CadDocument a = new CadDocument();
-
-			var b = doc.GetCadObject(0x94);
-			var b1 = doc.GetCadObject(14);
-			var b2 = doc.GetCadObject(25);
-
-			var vport = doc.VPorts[VPort.DefaultName];
-			//vport.ExtendedData.Clear();
-
-			//doc.VPorts.Remove(VPort.DefaultName);
-			//doc.VPorts.Add(VPort.Default);
-
-			//doc.RootDictionary.Remove("AcDbVariableDictionary", out _);
-
-			//doc.Header = new ACadSharp.Header.CadHeader();
-			//doc.Header.Version = ACadVersion.AC1032;
-
-			doc.RootDictionary.Remove("AcadPlotStyleName", out _);
 
 			string path = Path.ChangeExtension(test.Path, ".out.dwg");
 			DwgWriter.Write(path, doc, notification: this.onNotification);
