@@ -2683,11 +2683,6 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonDictionary(template);
 
-			if (cadDictionary.Handle == this._builder.HeaderHandles.DICTIONARY_NAMED_OBJECTS)
-			{
-
-			}
-
 			return template;
 		}
 

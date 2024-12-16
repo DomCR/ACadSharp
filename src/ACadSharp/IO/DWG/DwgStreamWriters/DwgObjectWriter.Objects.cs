@@ -170,7 +170,6 @@ namespace ACadSharp.IO.DWG
 				entries.Add(item);
 			}
 
-			//16
 			this._writer.WriteBitLong(entries.Count);
 
 			//R14 Only:
