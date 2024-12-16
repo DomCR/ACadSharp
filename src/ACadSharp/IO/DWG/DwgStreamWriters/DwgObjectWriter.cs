@@ -257,8 +257,15 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Entry name TV 2
-			//Warning: names ended with a number are not readed in this method
-			this._writer.WriteVariableText(record.Name);
+			if (record.Flags.HasFlag(BlockTypeFlags.Anonymous))
+			{
+				//Warning: anonymous blocks do not write the full name, only *{type character}
+				this._writer.WriteVariableText(record.Name.Substring(0, 2));
+			}
+			else
+			{
+				this._writer.WriteVariableText(record.Name);
+			}
 
 			this.writeXrefDependantBit(record);
 

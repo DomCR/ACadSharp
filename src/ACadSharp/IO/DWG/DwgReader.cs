@@ -227,6 +227,8 @@ namespace ACadSharp.IO
 			if (this._builder != null)
 				this._builder.HeaderHandles = headerHandles;
 
+			header.Document = this._document;
+
 			return header;
 		}
 

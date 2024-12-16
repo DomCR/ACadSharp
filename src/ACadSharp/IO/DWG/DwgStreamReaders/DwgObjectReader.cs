@@ -2688,11 +2688,6 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonDictionary(template);
 
-			if (cadDictionary.Handle == this._builder.HeaderHandles.DICTIONARY_NAMED_OBJECTS)
-			{
-
-			}
-
 			return template;
 		}
 
@@ -3659,7 +3654,7 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Entry name TV 2
-			//Warning: names ended with a number are not readed in this method
+			//Warning: anonymous blocks do not write the full name, only *{type character}
 			string name = this._textReader.ReadVariableText();
 			if (name.Equals(BlockRecord.ModelSpaceName, System.StringComparison.CurrentCultureIgnoreCase) ||
 				name.Equals(BlockRecord.PaperSpaceName, System.StringComparison.CurrentCultureIgnoreCase))

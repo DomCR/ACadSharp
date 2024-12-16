@@ -2967,7 +2967,7 @@ namespace ACadSharp.Header
 		}
 
 		/// <summary>
-		/// Set a valueo of a system variable by name
+		/// Set a value of a system variable by name
 		/// </summary>
 		/// <param name="systemvar">name of the system var</param>
 		/// <param name="values">parameters for the constructor of the value</param>

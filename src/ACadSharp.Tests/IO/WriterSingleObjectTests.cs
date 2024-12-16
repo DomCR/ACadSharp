@@ -20,12 +20,14 @@ namespace ACadSharp.Tests.IO
 
 			public CadDocument Document { get; private set; } = new CadDocument();
 
-			public SingleCaseGenerator() { }
+			public SingleCaseGenerator()
+			{
+				this.Document.Header.ShowModelSpace = true;
+			}
 
-			public SingleCaseGenerator(string name)
+			public SingleCaseGenerator(string name) : this()
 			{
 				this.Name = name;
-				this.Document.Header.ShowModelSpace = true;
 			}
 
 			public override string ToString()
@@ -410,6 +412,15 @@ namespace ACadSharp.Tests.IO
 				this.Document.Scales.Add(new Scale("Hello"));
 			}
 
+			public void Dimensions()
+			{
+				DimensionAligned dim = new DimensionAligned();
+
+				dim.SecondPoint = new XYZ(10);
+
+				this.Document.Entities.Add(dim);
+			}
+
 			public void AddCustomBookColor()
 			{
 				//var color = new BookColor("RAL CLASSIC$RAL 1006");
@@ -513,6 +524,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomScale)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomBookColor)));
+			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
 		}
 
 		protected string getPath(string name, string ext, ACadVersion version)

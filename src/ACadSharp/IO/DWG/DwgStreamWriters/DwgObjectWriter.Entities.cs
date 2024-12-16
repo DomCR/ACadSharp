@@ -341,7 +341,9 @@ namespace ACadSharp.IO.DWG
 			//H 3 DIMSTYLE(hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, dimension.Style);
 			//H 2 anonymous BLOCK(hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, dimension.Block);
+			//TODO: fix annotative dimensions
+			//this._writer.HandleReference(DwgReferenceType.HardPointer, dimension.Block);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 		}
 
 		private void writeDimensionLinear(DimensionLinear dimension)
