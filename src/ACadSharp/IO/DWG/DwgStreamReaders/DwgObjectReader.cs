@@ -1083,12 +1083,10 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			//	DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
+			//DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
 			evaluationGraph.Value96 = _objectReader.ReadBitLong();
 			evaluationGraph.Value97 = _objectReader.ReadBitLong();
 
-			for (int i = 0; i < nodeCount; i++)
-			{
 			int nodeCount = _objectReader.ReadBitLong();
 			for (int i = 0; i < nodeCount; i++)
 			{
@@ -1125,7 +1123,6 @@ namespace ACadSharp.IO.DWG
 
 			return template;
 		}
-
 
 		private CadTemplate readBlockVisibilityParameter()
 		{
