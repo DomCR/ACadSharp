@@ -349,7 +349,6 @@ namespace ACadSharp.IO.DWG
 			//R2004+:
 			if (this.R2004Plus)
 			{
-
 				this._writer.WriteBit(noDictionary);
 				if (!noDictionary)
 				{
