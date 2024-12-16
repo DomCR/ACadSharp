@@ -38,14 +38,6 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
-
-			if (test.Path.Contains("out"))
-			{
-				return;
-			}
-
-			string path = Path.ChangeExtension(test.Path, ".out.dwg");
-			DwgWriter.Write(path, doc, notification: this.onNotification);
 		}
 
 		[Theory]
