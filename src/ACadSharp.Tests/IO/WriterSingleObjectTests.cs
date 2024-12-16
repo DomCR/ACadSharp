@@ -20,12 +20,14 @@ namespace ACadSharp.Tests.IO
 
 			public CadDocument Document { get; private set; } = new CadDocument();
 
-			public SingleCaseGenerator() { }
+			public SingleCaseGenerator()
+			{
+				this.Document.Header.ShowModelSpace = true;
+			}
 
-			public SingleCaseGenerator(string name)
+			public SingleCaseGenerator(string name) : this()
 			{
 				this.Name = name;
-				this.Document.Header.ShowModelSpace = true;
 			}
 
 			public override string ToString()
