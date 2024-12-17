@@ -71,6 +71,9 @@ namespace ACadSharp.Objects.Evaluations
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Block1PtParameter;
 
+		/// <summary>
+		/// Location for parameter to be placed in the block.
+		/// </summary>
 		[DxfCodeValue(1010, 1020, 1030)]
 		public XYZ Location { get; set; }
 

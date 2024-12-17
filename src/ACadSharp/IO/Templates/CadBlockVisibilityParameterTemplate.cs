@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using System.Linq;
 using ACadSharp.Entities;
 using ACadSharp.Objects.Evaluations;
 
@@ -46,9 +46,45 @@ namespace ACadSharp.IO.Templates
 
 	internal class CadBlockVisibilityParameterTemplate : CadBlock1PtParameterTemplate
 	{
-		public IDictionary<ulong, Entity> TotalEntityHandles { get; } = new Dictionary<ulong, Entity>();
+		public class StateTemplate
+		{
+			public BlockVisibilityParameter.State State { get; } = new BlockVisibilityParameter.State();
 
-		public IDictionary<BlockVisibilityParameter.SubBlock, IList<ulong>> SubBlockHandles { get; } = new Dictionary<BlockVisibilityParameter.SubBlock, IList<ulong>>();
+			public List<ulong> SubSet1 { get; } = new();
+
+			public List<ulong> SubSet2 { get; } = new();
+
+			public void Build(CadDocumentBuilder builder, IEnumerable<ulong> entityHandles)
+			{
+				this.setEntities(builder, State.Entities, SubSet1, entityHandles);
+				this.setEntities(builder, State.Expressions, SubSet2, null);
+			}
+
+			private void setEntities<T>(CadDocumentBuilder builder, List<T> subset, IEnumerable<ulong> handles, IEnumerable<ulong> entities = null)
+				where T : CadObject
+			{
+				foreach (var h in handles)
+				{
+					if (entities != null && !entities.Contains(h))
+					{
+						builder.Notify($"[{State.ToString()}] parent does not contain handle {h}.");
+					}
+
+					if (builder.TryGetCadObject(h, out T obj))
+					{
+						subset.Add(obj);
+					}
+					else
+					{
+						builder.Notify($"[{State.ToString()}] {typeof(T).FullName} with handle {h} not found.");
+					}
+				}
+			}
+		}
+
+		public List<ulong> EntityHandles { get; } = new List<ulong>();
+
+		public List<StateTemplate> StateTemplates { get; } = new();
 
 		public CadBlockVisibilityParameterTemplate(BlockVisibilityParameter cadObject)
 			: base(cadObject)
@@ -61,31 +97,21 @@ namespace ACadSharp.IO.Templates
 
 			BlockVisibilityParameter bvp = this.CadObject as BlockVisibilityParameter;
 
-			foreach (var cadObjectHandle in this.TotalEntityHandles)
+			foreach (var handle in this.EntityHandles)
 			{
-				ulong handle = cadObjectHandle.Key;
 				if (builder.TryGetCadObject(handle, out Entity entity))
 				{
-					this.TotalEntityHandles[handle] = entity;
 					bvp.Entities.Add(entity);
+				}
+				else
+				{
+					builder.Notify($"[{bvp.ToString()}] entity with handle {handle} not found.");
 				}
 			}
 
-			foreach (var subGroup in bvp.SubBlocks)
+			foreach (var item in StateTemplates)
 			{
-				if (this.SubBlockHandles.TryGetValue(subGroup, out IList<ulong> subBlockHandles))
-				{
-					foreach (ulong handle in subBlockHandles)
-					{
-						if (this.TotalEntityHandles.TryGetValue(handle, out Entity entity))
-						{
-							subGroup.Entities.Add(entity);
-						}
-						else if (builder.TryGetCadObject(handle, out Entity entityX))
-						{
-						}
-					}
-				}
+				item.Build(builder, this.EntityHandles);
 			}
 		}
 	}

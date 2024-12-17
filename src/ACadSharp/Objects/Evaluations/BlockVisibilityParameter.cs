@@ -6,12 +6,6 @@ using CSMath;
 
 namespace ACadSharp.Objects.Evaluations
 {
-	//BLOCKVISIBILITYPARAMETER
-	//AcDbEvalExpr
-	//AcDbBlockElement
-	//AcDbBlock1PtParameter
-	//AcDbBlockVisibilityParameter
-
 	/// <summary>
 	/// Represents a BLOCKVISIBILITYPARAMETER object, in AutoCAD used to
 	/// control the visibility state of entities in a dynamic block.
@@ -29,27 +23,14 @@ namespace ACadSharp.Objects.Evaluations
 		/// this <see cref="BlockVisibilityParameter"/> is associated with.
 		/// </summary>
 		[DxfCodeValue(331)]
-		public IList<Entity> Entities { get; private set; } = new List<Entity>();
+		public List<Entity> Entities { get; private set; } = new List<Entity>();
 
 		/// <summary>
-		/// Gets the list of subblocks each containing a subset of the <see cref="Entity"/>
-		/// objects of the dynamic block this <see cref="BlockVisibilityParameter"/>
-		/// is associated with.
+		/// Gets the list of states each containing a 2 subsets of <see cref="Entity"/> <br/>
+		/// Objects must belong to the dynamic <see cref="BlockVisibilityParameter"/> associated with.
 		/// </summary>
-		public IList<SubBlock> SubBlocks { get; private set; } = new List<SubBlock>();
-
-		/// <summary>
-		/// Gets a position presumably used to display a triangle-button in AutoCAD open
-		/// a dialog to select the subblock that is to be set visible.
-		/// </summary>
-		[DxfCodeValue(1010, 1020, 1030)]
-		public XYZ BasePosition { get; internal set; }
-
-		/// <summary>
-		/// Gets a text presumably describing the purpose of this <see cref="BlockVisibilityParameter"/>.
-		/// </summary>
-		[DxfCodeValue(300)]
-		public string ParameterType { get; internal set; }
+		[DxfCodeValue(DxfReferenceType.Count, 95)]
+		public List<State> States { get; private set; } = new List<State>();
 
 		/// <summary>
 		/// Gets a title for the dialog to select the subblock that is to be set visible.
@@ -63,41 +44,50 @@ namespace ACadSharp.Objects.Evaluations
 		[DxfCodeValue(302)]
 		public string Description { get; set; }
 
-		/// <summary>
-		/// Unknown
-		/// </summary>
 		[DxfCodeValue(91)]
-		internal int Value91 { get; set; }
+		internal bool Value91 { get; set; }
 
 		/// <summary>
-		/// Represents a named subblock containing <see cref="Entity"/> objects.
-		/// The visibility of the entities of a subblock can be determined
-		/// interactively in AutoCAD.
+		/// Represents a named state containing <see cref="Entity"/> objects. <br/>
+		/// The state controls the visibility of the entities assigned to it.
 		/// </summary>
-		public class SubBlock : ICloneable
+		public class State : ICloneable
 		{
-
 			/// <summary>
-			/// Gets the name of the subblock.
+			/// Gets the name of the state.
 			/// </summary>
 			[DxfCodeValue(303)]
 			public string Name { get; set; }
 
 			/// <summary>
-			/// Get the list of <see cref="Entity"/> objects in this subblock.
+			/// Get the list of <see cref="Entity"/> objects in this state.
 			/// </summary>
-			[DxfCodeValue(332)]
-			public IList<Entity> Entities { get; private set; } = new List<Entity>();
+			[DxfCodeValue(DxfReferenceType.Count, 94)]
+			[DxfCollectionCodeValue(DxfReferenceType.Handle, 332)]
+			public List<Entity> Entities { get; private set; } = new();
 
+			/// <summary>
+			/// Get the list of <see cref="EvaluationExpression"/> objects.
+			/// </summary>
+			[DxfCodeValue(DxfReferenceType.Count, 95)]
+			[DxfCollectionCodeValue(DxfReferenceType.Handle, 333)]
+			public List<EvaluationExpression> Expressions { get; private set; } = new();
 
+			/// <inheritdoc/>
 			public object Clone()
 			{
-				SubBlock clone = (SubBlock)MemberwiseClone();
+				State clone = (State)MemberwiseClone();
 
 				clone.Entities = new List<Entity>();
 				foreach (var item in this.Entities)
 				{
 					clone.Entities.Add((Entity)item.Clone());
+				}
+
+				clone.Expressions = new();
+				foreach (var item in this.Expressions)
+				{
+					clone.Expressions.Add((EvaluationExpression)item.Clone());
 				}
 
 				return clone;
@@ -115,10 +105,10 @@ namespace ACadSharp.Objects.Evaluations
 				clone.Entities.Add((Entity)item.Clone());
 			}
 
-			clone.SubBlocks = new List<SubBlock>();
-			foreach (var item in this.SubBlocks)
+			clone.States = new List<State>();
+			foreach (var item in this.States)
 			{
-				clone.SubBlocks.Add((SubBlock)item.Clone());
+				clone.States.Add((State)item.Clone());
 			}
 
 			return clone;

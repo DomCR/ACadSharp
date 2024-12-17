@@ -1127,8 +1127,9 @@ namespace ACadSharp.IO.DWG
 			this.readCommonNonEntityData(template);
 
 			//AcDbEvalExpr
-			//90
-			template.CadObject.Value90 = _objectReader.ReadBitLong();
+			var unknown = _objectReader.ReadBitLong();
+			Debug.Assert(unknown == -1);
+
 			//98
 			template.CadObject.Value98 = _objectReader.ReadBitLong();
 			//99
@@ -1137,6 +1138,9 @@ namespace ACadSharp.IO.DWG
 			//-9999 always the same value
 			short n9999 = this._mergedReaders.ReadBitShort();
 			Debug.Assert(n9999 == -9999);
+
+			//90
+			template.CadObject.Value90 = _objectReader.ReadBitLong();
 		}
 
 		private void readBlockElement(CadBlockElementTemplate template)
@@ -1186,43 +1190,52 @@ namespace ACadSharp.IO.DWG
 			this.readBlock1PtParameter(template);
 
 			//281
-			blockVisibilityParameter.Name = _textReader.ReadVariableText();
+			blockVisibilityParameter.Value281 = _mergedReaders.ReadBit();
 			//301
-			blockVisibilityParameter.Name = _textReader.ReadVariableText();
+			blockVisibilityParameter.Name = _mergedReaders.ReadVariableText();
 			//302
-			blockVisibilityParameter.Description = _textReader.ReadVariableText();
-			//DXF 91
-			blockVisibilityParameter.Value91 = _objectReader.ReadBitLong();
+			blockVisibilityParameter.Description = _mergedReaders.ReadVariableText();
+			//missing bit??	91 should be an int
+			blockVisibilityParameter.Value91 = _mergedReaders.ReadBit();
 
-			//DwgAnalyseTools.resetPosition(214293, 0);
-			//DXF 93 Total entities count (no property)
+			//DXF 93 Total entities count
 			var totalEntitiesCount = _objectReader.ReadBitLong();
 			for (int i = 0; i < totalEntitiesCount; i++)
 			{
-				var handle = this.handleReference();
-				template.TotalEntityHandles.Add(handle, null);
+				//331
+				template.EntityHandles.Add(this.handleReference());
 			}
 
-			//	DXF 92 Sub blocks count (no property)
-			var subBlocksCount = _objectReader.ReadBitLong();
-			for (int sbi = 0; sbi < subBlocksCount; sbi++)
+			//DXF 92 states count
+			var nstates = _objectReader.ReadBitLong();
+			for (int j = 0; j < nstates; j++)
 			{
-				BlockVisibilityParameter.SubBlock subBlock = new BlockVisibilityParameter.SubBlock();
-				subBlock.Name = _textReader.ReadVariableText();
-				blockVisibilityParameter.SubBlocks.Add(subBlock);
+				template.StateTemplates.Add(this.readState());
+			}
 
-				IList<ulong> subBlockHandles = new List<ulong>();
-				template.SubBlockHandles.Add(subBlock, subBlockHandles);
-				//	DXF 94 Subblock entities count (no property)
-				int entitiesCount = _objectReader.ReadBitLong();
-				for (int i = 0; i < entitiesCount; i++)
-				{
-					var handle = this.handleReference();
-					subBlockHandles.Add(handle);
-				}
-				//DwgAnalyseTools.showCurrentPosAndShift();
-				//	DXF 95 
-				var endMark = _objectReader.ReadBitLong();
+			return template;
+		}
+
+		private CadBlockVisibilityParameterTemplate.StateTemplate readState()
+		{
+			CadBlockVisibilityParameterTemplate.StateTemplate template = new CadBlockVisibilityParameterTemplate.StateTemplate();
+
+			template.State.Name = _textReader.ReadVariableText();
+
+			//DXF 94 subset count 1
+			int n1 = _objectReader.ReadBitLong();
+			for (int i = 0; i < n1; i++)
+			{
+				//332
+				template.SubSet1.Add(this.handleReference());
+			}
+
+			//DXF 95 subset count 2 
+			var n2 = _objectReader.ReadBitLong();
+			for (int i = 0; i < n2; i++)
+			{
+				//333
+				template.SubSet2.Add(this.handleReference());
 			}
 
 			return template;
