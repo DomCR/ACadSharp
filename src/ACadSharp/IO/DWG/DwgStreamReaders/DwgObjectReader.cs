@@ -17,6 +17,7 @@ using CSUtilities.Extensions;
 using System.Globalization;
 using ACadSharp.Objects.Evaluations;
 using ACadSharp.XData;
+using System.Diagnostics;
 
 namespace ACadSharp.IO.DWG
 {
@@ -1121,52 +1122,80 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private void readEvaluationExpression(CadEvaluationExpressionTemplate template)
+		{
+			this.readCommonNonEntityData(template);
+
+			//AcDbEvalExpr
+			//90
+			template.CadObject.Value90 = _objectReader.ReadBitLong();
+			//98
+			template.CadObject.Value98 = _objectReader.ReadBitLong();
+			//99
+			template.CadObject.Value99 = _objectReader.ReadBitLong();
+
+			//-9999 always the same value
+			short n9999 = this._mergedReaders.ReadBitShort();
+			Debug.Assert(n9999 == -9999);
+		}
+
+		private void readBlockElement(CadBlockElementTemplate template)
+		{
+			this.readEvaluationExpression(template);
+
+			//300 name
+			template.BlockElement.ElementName = this._mergedReaders.ReadVariableText();
+			//98
+			template.BlockElement.Value98 = this._mergedReaders.ReadBitLong();
+			//99
+			template.BlockElement.Value99 = this._mergedReaders.ReadBitLong();
+			//1071
+			template.BlockElement.Value1071 = this._mergedReaders.ReadBitLong();
+		}
+
+		private void readBlockParameter(CadBlockParameterTemplate template)
+		{
+			this.readBlockElement(template);
+
+			//280
+			template.BlockParameter.Value280 = this._mergedReaders.ReadBit();
+			//281
+			template.BlockParameter.Value281 = this._mergedReaders.ReadBit();
+		}
+
+		private void readBlock1PtParameter(CadBlock1PtParameterTemplate template)
+		{
+			this.readBlockParameter(template);
+
+			//1010 1020 1030
+			template.Block1PtParameter.Location = this._mergedReaders.Read3BitDouble();
+
+			//170
+			template.Block1PtParameter.Value170 = this._mergedReaders.ReadBitShort();
+			//171
+			template.Block1PtParameter.Value171 = this._mergedReaders.ReadBitShort();
+			//93
+			template.Block1PtParameter.Value93 = this._mergedReaders.ReadBitLong();
+		}
+
 		private CadTemplate readBlockVisibilityParameter()
 		{
 			BlockVisibilityParameter blockVisibilityParameter = new BlockVisibilityParameter();
-			BlockVisibilityParameterTemplate template = new BlockVisibilityParameterTemplate(blockVisibilityParameter);
+			CadBlockVisibilityParameterTemplate template = new CadBlockVisibilityParameterTemplate(blockVisibilityParameter);
 
-			this.readCommonNonEntityData(template);
+			this.readBlock1PtParameter(template);
 
-			var l1 = _objectReader.ReadBitLong();
-			var s2 = _objectReader.ReadBitShort();  //	can also be L
-			var s3 = _objectReader.ReadBitShort();  //	can also be L
-			var b4 = _objectReader.ReadBit();
-			var s5 = _objectReader.ReadBitShort();  //	can also be L
-			var b6 = _objectReader.ReadBit();
-			var s7 = _objectReader.ReadBitShort();  //	can also be L
-
-			var b_8 = _objectReader.ReadBit();
-			var b_9 = _objectReader.ReadBit();
-			var b_10 = _objectReader.ReadBit();
-			var b_11 = _objectReader.ReadBit();
-			var b_12 = _objectReader.ReadBit();
-			var b_13 = _objectReader.ReadBit();
-			var S_14 = _objectReader.ReadBitShort();  //	can also be L
-
-			var s_15 = _objectReader.ReadBitShort();
-			var b_16 = _objectReader.ReadBit();
-			var b_17 = _objectReader.ReadBit();
-			var s_18 = _objectReader.ReadBitShort();
-
-			//	300	Parameter Type
-			blockVisibilityParameter.ParameterType = _textReader.ReadVariableText();
-
-			//	1010, 1020, 1030	Menu position
-			blockVisibilityParameter.BasePosition = _objectReader.Read3BitDouble();
-			//	2x0 <- 
-			var s170 = _objectReader.ReadBitShort();
-			var s171 = _objectReader.ReadBitShort();
-			var l93 = _objectReader.ReadBitLong();
-
-			//	301
+			//281
 			blockVisibilityParameter.Name = _textReader.ReadVariableText();
-			//	302
+			//301
+			blockVisibilityParameter.Name = _textReader.ReadVariableText();
+			//302
 			blockVisibilityParameter.Description = _textReader.ReadVariableText();
-			//	DXF 91
-			blockVisibilityParameter.L91 = _objectReader.ReadBitLong();
+			//DXF 91
+			blockVisibilityParameter.Value91 = _objectReader.ReadBitLong();
+
 			//DwgAnalyseTools.resetPosition(214293, 0);
-			//  DXF 93 Total entities count (no property)
+			//DXF 93 Total entities count (no property)
 			var totalEntitiesCount = _objectReader.ReadBitLong();
 			for (int i = 0; i < totalEntitiesCount; i++)
 			{

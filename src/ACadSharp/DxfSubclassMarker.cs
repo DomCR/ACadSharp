@@ -89,6 +89,7 @@
 		public const string EvalGraphExpr = "AcDbEvalExpr";
 		public const string BlockElement = "AcDbBlockElement";
 		public const string BlockParameter = "AcDbBlockParameter";
+		public const string Block1PtParameter = "AcDbBlock1PtParameter";
 		public const string Block2PtParameter = "AcDbBlock2PtParameter";
 		public const string BlockLinearParameter = "AcDbBlockLinearParameter";
 

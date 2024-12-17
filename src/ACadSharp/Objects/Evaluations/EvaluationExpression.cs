@@ -17,13 +17,15 @@ namespace ACadSharp.Objects.Evaluations
 	//AcDbBlockElement
 	//AcDbBlockGrip
 	//AcDbBlockLinearGrip
-	//
 
 	/// <summary>
 	/// 
 	/// </summary>
 	public abstract class EvaluationExpression : CadObject
 	{
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.UNLISTED;
+
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.EvalGraphExpr;
 
@@ -48,7 +50,8 @@ namespace ACadSharp.Objects.Evaluations
 		[DxfCodeValue(300)]
 		public string ElementName { get; set; }
 
-		//Repeats 98 and 99 with the same values as it's parent
+		[DxfCodeValue(1071)]
+		internal int Value1071 { get; set; }
 	}
 
 	public abstract class BlockParameter : BlockElement
@@ -63,27 +66,34 @@ namespace ACadSharp.Objects.Evaluations
 		internal bool Value281 { get; set; }
 	}
 
+	public abstract class Block1PtParameter : BlockParameter
+	{
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Block1PtParameter;
+
+		[DxfCodeValue(1010, 1020, 1030)]
+		public XYZ Location { get; set; }
+
+		[DxfCodeValue(93)]
+		internal long Value93 { get; set; }
+
+		[DxfCodeValue(170)]
+		internal short Value170 { get; set; }
+
+		[DxfCodeValue(171)]
+		internal short Value171 { get; set; }
+	}
+
 	public abstract class Block2PtParameter : BlockParameter
 	{
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Block2PtParameter;
 
 		[DxfCodeValue(1010, 1020, 1030)]
-		public XYZ Start { get; set; }
+		public XYZ FirstPoint { get; set; }
 
 		[DxfCodeValue(1011, 1021, 1031)]
-		public XYZ End { get; set; }
-
-		[DxfCodeValue(DxfReferenceType.Count, 170)]
-		[DxfCollectionCodeValue(91)]
-		public List<int> Value170 { get; set; } = new();
-
-		[DxfCodeValue(171)]
-		//Follows a list of:
-		//171 (int) - 92 (int) - 301 (string)
-		//172 - 93 - 302
-		//...
-		public List<object> Value171 { get; set; } = new();
+		public XYZ SecondPoint { get; set; }
 	}
 
 	public class BlockLinearParameter : Block2PtParameter

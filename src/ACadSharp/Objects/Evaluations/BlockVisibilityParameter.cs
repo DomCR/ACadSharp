@@ -6,22 +6,23 @@ using CSMath;
 
 namespace ACadSharp.Objects.Evaluations
 {
+	//BLOCKVISIBILITYPARAMETER
+	//AcDbEvalExpr
+	//AcDbBlockElement
+	//AcDbBlock1PtParameter
+	//AcDbBlockVisibilityParameter
+
 	/// <summary>
 	/// Represents a BLOCKVISIBILITYPARAMETER object, in AutoCAD used to
 	/// control the visibility state of entities in a dynamic block.
 	/// </summary>
-	public class BlockVisibilityParameter : CadObject
+	public class BlockVisibilityParameter : Block1PtParameter
 	{
-
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.UNLISTED;
-
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectBlockVisibilityParameter;
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.BlockVisibilityParameter;
-
 
 		/// <summary>
 		/// Gets the list of all <see cref="Entity"/> objects of the dynamic block
@@ -54,19 +55,19 @@ namespace ACadSharp.Objects.Evaluations
 		/// Gets a title for the dialog to select the subblock that is to be set visible.
 		/// </summary>
 		[DxfCodeValue(301)]
-		public string Name { get; internal set; }
+		public string Name { get; set; }
 
 		/// <summary>
 		/// Gets a description presumably for the dialog to select the subblock that is to be set visible.
 		/// </summary>
 		[DxfCodeValue(302)]
-		public string Description { get; internal set; }
+		public string Description { get; set; }
 
 		/// <summary>
 		/// Unknown
 		/// </summary>
 		[DxfCodeValue(91)]
-		public int L91 { get; internal set; }
+		internal int Value91 { get; set; }
 
 		/// <summary>
 		/// Represents a named subblock containing <see cref="Entity"/> objects.
