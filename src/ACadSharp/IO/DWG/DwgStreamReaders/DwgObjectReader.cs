@@ -5319,9 +5319,9 @@ namespace ACadSharp.IO.DWG
 			visualStyle.Type = this._objectReader.ReadBitLong();
 
 			//177 
-			_objectReader.ReadBitShort();
+			var value177 = _objectReader.ReadBitShort();
 			//291 Internal use only flag
-			_objectReader.ReadBit();
+			var value291 = _objectReader.ReadBit();
 
 			//70 Count then repeat 90 and 176
 			int count = this._objectReader.ReadBitLong();
@@ -5331,7 +5331,7 @@ namespace ACadSharp.IO.DWG
 			var textValues = DwgStreamReaderBase.Explore(_textReader);
 #endif
 
-			return null;
+			return template;
 		}
 
 		private CadTemplate readCadImage(CadImageBase image)
