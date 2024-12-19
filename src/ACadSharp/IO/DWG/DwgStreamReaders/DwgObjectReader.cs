@@ -504,13 +504,17 @@ namespace ACadSharp.IO.DWG
 
 				//Xdep B 70 dependent on an xref. (16 bit)
 				if (((uint)xrefindex & 0b100000000) > 0)
+				{
 					entry.Flags |= StandardFlags.XrefDependent;
+				}
 			}
 			else
 			{
 				//64-flag B 70 The 64-bit of the 70 group.
 				if (this._objectReader.ReadBit())
+				{
 					entry.Flags |= StandardFlags.Referenced;
+				}
 
 				//xrefindex + 1 BS 70 subtract one from this value when read.
 				//After that, -1 indicates that this reference did not come from an xref,
@@ -519,7 +523,9 @@ namespace ACadSharp.IO.DWG
 
 				//Xdep B 70 dependent on an xref. (16 bit)
 				if (this._objectReader.ReadBit())
+				{
 					entry.Flags |= StandardFlags.XrefDependent;
+				}
 			}
 		}
 
@@ -2496,8 +2502,10 @@ namespace ACadSharp.IO.DWG
 
 			//R13 - R14 Only:
 			if (this.R13_14Only)
+			{
 				//H VIEWPORT ENT HEADER(hard pointer)
 				template.ViewportHeaderHandle = this.handleReference();
+			}
 
 			//R2000 +:
 			if (this.R2000Plus)
@@ -4779,9 +4787,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readViewportEntityControl()
 		{
-			return null;
-
-			DwgViewportEntityControlTemplate template = new DwgViewportEntityControlTemplate();
+			CadViewportEntityControlTemplate template = new CadViewportEntityControlTemplate();
 
 			this.readCommonNonEntityData(template);
 
@@ -4789,38 +4795,41 @@ namespace ACadSharp.IO.DWG
 			//Numentries BL 70
 			int numentries = this._objectReader.ReadBitLong();
 			for (int i = 0; i < numentries; ++i)
+			{
 				//Handle refs H NULL(soft pointer)	xdicobjhandle(hard owner)	the apps(soft owner)
 				template.EntryHandles.Add(this.handleReference());
+			}
 
 			return template;
 		}
 
 		private CadTemplate readViewportEntityHeader()
 		{
-			//Viewport viewport = new Viewport();
-			//DwgViewportTemplate template = new DwgViewportTemplate(viewport);
+			Viewport viewport = new Viewport();
+			CadViewportTemplate template = new CadViewportTemplate(viewport);
 
-			//this.readCommonNonEntityData(template);
+			this.readCommonNonEntityData(template);
 
-			////Common:
-			////Entry name TV 2
-			//viewport.StyleSheetName = this._textReader.ReadVariableText();
+			//Common:
+			//Entry name TV 2
+			viewport.StyleSheetName = this._textReader.ReadVariableText();
 
+			this._objectReader.ReadBit();
+			this._objectReader.ReadBitShort();
+			this._objectReader.ReadBit();
 			//this.readXrefDependantBit(viewport);
 
-			////1 flag B The 1 bit of the 70 group
-			//this._objectReader.ReadBit();
+			//1 flag B The 1 bit of the 70 group
+			this._objectReader.ReadBit();
 
-			////Handle refs H viewport entity control (soft pointer)
-			//this.handleReference();
-			////xdicobjhandle (hard owner)
-			//this.handleReference();
-			////External reference block handle (hard pointer)
-			//this.handleReference();
+			//Handle refs H viewport entity control (soft pointer)
+			this.handleReference();
+			//xdicobjhandle (hard owner)
+			this.handleReference();
+			//External reference block handle (hard pointer)
+			template.BlockHandle = this.handleReference();
 
-			//TODO: transform the viewport ent into the viewport
-
-			return null;
+			return template;
 		}
 
 		private CadTemplate readGroup()
