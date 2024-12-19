@@ -13,6 +13,11 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.VisualStyle)]
 	public class VisualStyle : NonGraphicalObject
 	{
+		/// <summary>
+		/// Default <see cref="VisualStyle"/> name.
+		/// </summary>
+		public const string DefaultName = "2dWireframe";
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
