@@ -5331,7 +5331,7 @@ namespace ACadSharp.IO.DWG
 			var textValues = DwgStreamReaderBase.Explore(_textReader);
 #endif
 
-			return null;
+			return template;
 		}
 
 		private CadTemplate readCadImage(CadImageBase image)
