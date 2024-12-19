@@ -17,7 +17,9 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? VisualStyleHandle { get; set; }
 
-		public short? ViewportId { get; internal set; }
+		public short? ViewportId { get; set; }
+
+		public ulong? BlockHandle { get; set; }
 
 		public List<ulong> FrozenLayerHandles { get; set; } = new List<ulong>();
 
@@ -29,8 +31,6 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			Viewport viewport = this.CadObject as Viewport;
-
 			if (this.ViewportHeaderHandle.HasValue && this.ViewportHeaderHandle > 0)
 			{
 				builder.Notify($"ViewportHeaderHandle not implemented for Viewport, handle {this.ViewportHeaderHandle}");
@@ -38,7 +38,7 @@ namespace ACadSharp.IO.Templates
 
 			if (builder.TryGetCadObject<Entity>(this.BoundaryHandle, out Entity entity))
 			{
-				viewport.Boundary = entity;
+				this.CadObject.Boundary = entity;
 			}
 			else if (this.BoundaryHandle.HasValue && this.BoundaryHandle > 0)
 			{
@@ -74,7 +74,7 @@ namespace ACadSharp.IO.Templates
 			{
 				if (builder.TryGetCadObject(handle, out Layer layer))
 				{
-					viewport.FrozenLayers.Add(layer);
+					this.CadObject.FrozenLayers.Add(layer);
 				}
 				else
 				{
