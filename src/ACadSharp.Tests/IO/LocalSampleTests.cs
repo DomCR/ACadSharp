@@ -38,6 +38,14 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
+
+			foreach (var item in doc.Entities)
+			{
+				if (item.ExtendedData.Entries.Any())
+				{
+					var f = item.ExtendedData.Entries.FirstOrDefault();
+				}
+			}
 		}
 
 		[Theory]

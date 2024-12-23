@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
+using ACadSharp.XData;
 using CSUtilities.Converters;
 using System.IO;
 
@@ -330,7 +331,95 @@ namespace ACadSharp.IO.DWG
 		private void writeExtendedData(ExtendedDataDictionary data)
 		{
 			//EED size BS size of extended entity data, if any
+			foreach (var item in data.Entries)
+			{
+				writeExtendedDataEntry(item.Key, item.Value);
+			}
+
 			this._writer.WriteBitShort(0);
+		}
+
+		private void writeExtendedDataEntry(AppId app, ExtendedData entry)
+		{
+			using (MemoryStream mstream = new MemoryStream())
+			{
+				foreach (ExtendedDataRecord record in entry.Records)
+				{
+					//Each data item has a 1-byte code (DXF group code minus 1000) followed by the value.
+					mstream.WriteByte((byte)(record.Code - 1000));
+
+					switch (record.Code)
+					{
+						//0 (1000) String.
+						case DxfCode.ExtendedDataAsciiString:
+						//R13-R2004: 1st byte of value is the length N; this is followed by a 2-byte short indicating the codepage, followed by N single-byte characters.
+						//R2007 +: 2 - byte length N, followed by N Unicode characters(2 bytes each).
+						case DxfCode.ExtendedDataRegAppName:
+							//1 (1001) This one seems to be invalid; can't even use as a string inside braces.
+							//This would be a registered application that this data relates to, but we've already had that above, 
+							//so it would be redundant or irrelevant here.
+						
+							break;
+						case DxfCode.ExtendedDataControlString:
+							//2 (1002) A '{' or '}'; 1 byte; ASCII 0 means '{', ASCII 1 means '}'
+
+							break;
+						case DxfCode.ExtendedDataLayerName:
+							//3 (1003) A layer table reference. The value is the handle of the layer;
+							//it's 8 bytes -- even if the leading ones are 0. It's not a string; read 
+							//it as hex, as usual for handles. (There's no length specifier this time.) 
+							//Even layer 0 is referred to by handle here.
+				
+							break;
+						case DxfCode.ExtendedDataBinaryChunk:
+							//4 (1004) Binary chunk. The first byte of the value is a char giving the length; the bytes follow.
+
+							break;
+						case DxfCode.ExtendedDataHandle:
+							//5 (1005) An entity handle reference.
+							//The value is given as 8 bytes -- even if the leading ones are 0.
+							//It's not a string; read it as hex, as usual for handles.
+							//(There's no length specifier this time.)
+			
+							break;
+						//10 - 13 (1010 - 1013)
+						case DxfCode.ExtendedDataXCoordinate:
+						case DxfCode.ExtendedDataWorldXCoordinate:
+						case DxfCode.ExtendedDataWorldYCoordinate:
+						case DxfCode.ExtendedDataWorldZCoordinate:
+						case DxfCode.ExtendedDataWorldXDisp:
+						case DxfCode.ExtendedDataWorldYDisp:
+						case DxfCode.ExtendedDataWorldZDisp:
+						case DxfCode.ExtendedDataWorldXDir:
+						case DxfCode.ExtendedDataWorldYDir:
+						case DxfCode.ExtendedDataWorldZDir:
+							//Points; 24 bytes(XYZ)-- 3 doubles
+	
+							break;
+						//40 - 42 (1040 - 1042)
+						case DxfCode.ExtendedDataReal:
+						case DxfCode.ExtendedDataDist:
+						case DxfCode.ExtendedDataScale:
+							//Reals; 8 bytes(double)
+
+							break;
+						//70(1070) A short int; 2 bytes
+						case DxfCode.ExtendedDataInteger16:
+
+							break;
+						//71(1071) A long int; 4 bytes
+						case DxfCode.ExtendedDataInteger32:
+
+							break;
+					}
+				}
+
+				this._writer.WriteBitShort((short)mstream.Length);
+
+				this._writer.HandleReference(DwgReferenceType.HardPointer, app.Handle);
+
+				this._writer.WriteBytes(mstream.GetBuffer());
+			}
 		}
 
 		private void writeReactorsAndDictionaryHandle(CadObject cadObject)

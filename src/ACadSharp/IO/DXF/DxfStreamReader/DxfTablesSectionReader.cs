@@ -3,6 +3,7 @@ using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Types.Units;
+using ACadSharp.XData;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
@@ -52,7 +53,7 @@ namespace ACadSharp.IO.DXF
 
 			int nentries = 0;
 			CadTemplate template = null;
-			Dictionary<string, ExtendedData> edata = new Dictionary<string, ExtendedData>();
+			Dictionary<string, List<ExtendedDataRecord>> edata = new();
 
 			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors);
 
@@ -91,7 +92,7 @@ namespace ACadSharp.IO.DXF
 					this._reader.ReadNext();
 				}
 			}
-			else if(this._reader.ValueAsString == DxfFileToken.EndTable)
+			else if (this._reader.ValueAsString == DxfFileToken.EndTable)
 			{
 				return;
 			}
