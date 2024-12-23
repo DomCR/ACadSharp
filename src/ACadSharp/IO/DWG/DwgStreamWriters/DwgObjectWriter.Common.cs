@@ -4,6 +4,7 @@ using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSUtilities.Converters;
 using System.IO;
+using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
@@ -348,69 +349,36 @@ namespace ACadSharp.IO.DWG
 					//Each data item has a 1-byte code (DXF group code minus 1000) followed by the value.
 					mstream.WriteByte((byte)(record.Code - 1000));
 
-					switch (record.Code)
+					switch (record)
 					{
-						//0 (1000) String.
-						case DxfCode.ExtendedDataAsciiString:
-						//R13-R2004: 1st byte of value is the length N; this is followed by a 2-byte short indicating the codepage, followed by N single-byte characters.
-						//R2007 +: 2 - byte length N, followed by N Unicode characters(2 bytes each).
-						case DxfCode.ExtendedDataRegAppName:
-							//1 (1001) This one seems to be invalid; can't even use as a string inside braces.
-							//This would be a registered application that this data relates to, but we've already had that above, 
-							//so it would be redundant or irrelevant here.
-						
-							break;
-						case DxfCode.ExtendedDataControlString:
-							//2 (1002) A '{' or '}'; 1 byte; ASCII 0 means '{', ASCII 1 means '}'
+						case ExtendedDataString str:
+							//same as ReadTextUnicode()
+							if (this.R2007Plus)
+							{
+								mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)str.Value.Length + 1), 0, 2);
+								byte[] bytes = Encoding.Unicode.GetBytes(str.Value);
 
+								mstream.Write(bytes, 0, bytes.Length);
+								mstream.WriteByte(0);
+								mstream.WriteByte(0);
+							}
+							else
+							{
+								byte[] bytes = this._writer.Encoding.GetBytes(string.IsNullOrEmpty(str.Value) ? string.Empty : str.Value);
+								mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)str.Value.Length + 1), 0, 2);
+								mstream.Write(bytes, 0, bytes.Length);
+								mstream.WriteByte(0);
+							}
 							break;
-						case DxfCode.ExtendedDataLayerName:
-							//3 (1003) A layer table reference. The value is the handle of the layer;
-							//it's 8 bytes -- even if the leading ones are 0. It's not a string; read 
-							//it as hex, as usual for handles. (There's no length specifier this time.) 
-							//Even layer 0 is referred to by handle here.
-				
+						case ExtendedDataControlString control:
+							mstream.WriteByte((byte)(control.Value == '}' ? 1 : 0));
 							break;
-						case DxfCode.ExtendedDataBinaryChunk:
-							//4 (1004) Binary chunk. The first byte of the value is a char giving the length; the bytes follow.
-
+						case ExtendedDataBinaryChunk binaryChunk:
+							mstream.WriteByte((byte)binaryChunk.Value.Length);
+							mstream.Write(binaryChunk.Value, 0, binaryChunk.Value.Length);
 							break;
-						case DxfCode.ExtendedDataHandle:
-							//5 (1005) An entity handle reference.
-							//The value is given as 8 bytes -- even if the leading ones are 0.
-							//It's not a string; read it as hex, as usual for handles.
-							//(There's no length specifier this time.)
-			
-							break;
-						//10 - 13 (1010 - 1013)
-						case DxfCode.ExtendedDataXCoordinate:
-						case DxfCode.ExtendedDataWorldXCoordinate:
-						case DxfCode.ExtendedDataWorldYCoordinate:
-						case DxfCode.ExtendedDataWorldZCoordinate:
-						case DxfCode.ExtendedDataWorldXDisp:
-						case DxfCode.ExtendedDataWorldYDisp:
-						case DxfCode.ExtendedDataWorldZDisp:
-						case DxfCode.ExtendedDataWorldXDir:
-						case DxfCode.ExtendedDataWorldYDir:
-						case DxfCode.ExtendedDataWorldZDir:
-							//Points; 24 bytes(XYZ)-- 3 doubles
-	
-							break;
-						//40 - 42 (1040 - 1042)
-						case DxfCode.ExtendedDataReal:
-						case DxfCode.ExtendedDataDist:
-						case DxfCode.ExtendedDataScale:
-							//Reals; 8 bytes(double)
-
-							break;
-						//70(1070) A short int; 2 bytes
-						case DxfCode.ExtendedDataInteger16:
-
-							break;
-						//71(1071) A long int; 4 bytes
-						case DxfCode.ExtendedDataInteger32:
-
-							break;
+						default:
+							throw new System.Exception();
 					}
 				}
 
