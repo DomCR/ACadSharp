@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using ACadSharp.XData;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
@@ -468,6 +469,26 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(insert);
 			}
 
+			public void XData()
+			{
+				AppId app = new AppId("my_app");
+				this.Document.AppIds.Add(app);
+
+				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
+
+				List<ExtendedDataRecord> records = new();
+				records.Add(new ExtendedDataControlString(false));
+				records.Add(new ExtendedDataInteger16(5));
+				records.Add(new ExtendedDataString("my extended data string"));
+				//records.Add(new ExtendedDataBinaryChunk(new byte[] { 1, 2, 3, 4 }));
+				records.Add(new ExtendedDataControlString(true));
+
+				line.ExtendedData.Add(app, records);
+
+				this.Document.Entities.Add(line);
+			}
+
+
 			public void Deserialize(IXunitSerializationInfo info)
 			{
 				this.Name = info.GetValue<string>(nameof(this.Name));
@@ -525,6 +546,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomScale)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomBookColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
+			Data.Add(new(nameof(SingleCaseGenerator.XData)));
 		}
 
 		protected string getPath(string name, string ext, ACadVersion version)

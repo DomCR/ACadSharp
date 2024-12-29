@@ -351,6 +351,13 @@ namespace ACadSharp.IO.DWG
 
 					switch (record)
 					{
+						case ExtendedDataBinaryChunk binaryChunk:
+							mstream.WriteByte((byte)binaryChunk.Value.Length);
+							mstream.Write(binaryChunk.Value, 0, binaryChunk.Value.Length);
+							break;
+						case ExtendedDataInteger16 s16:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(s16.Value), 0, 2);
+							break;
 						case ExtendedDataString str:
 							//same as ReadTextUnicode()
 							if (this.R2007Plus)
@@ -373,10 +380,6 @@ namespace ACadSharp.IO.DWG
 						case ExtendedDataControlString control:
 							mstream.WriteByte((byte)(control.Value == '}' ? 1 : 0));
 							break;
-						case ExtendedDataBinaryChunk binaryChunk:
-							mstream.WriteByte((byte)binaryChunk.Value.Length);
-							mstream.Write(binaryChunk.Value, 0, binaryChunk.Value.Length);
-							break;
 						default:
 							throw new System.Exception();
 					}
@@ -384,9 +387,9 @@ namespace ACadSharp.IO.DWG
 
 				this._writer.WriteBitShort((short)mstream.Length);
 
-				this._writer.HandleReference(DwgReferenceType.HardPointer, app.Handle);
+				this._writer.Main.HandleReference(DwgReferenceType.HardPointer, app.Handle);
 
-				this._writer.WriteBytes(mstream.GetBuffer());
+				this._writer.WriteBytes(mstream.GetBuffer(), 0, (int)mstream.Length);
 			}
 		}
 
