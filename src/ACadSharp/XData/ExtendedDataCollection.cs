@@ -6,16 +6,29 @@ namespace ACadSharp.XData
 {
 	public class ExtendedDataDictionary
 	{
-		private readonly Dictionary<AppId, ExtendedData> _data = new Dictionary<AppId, ExtendedData>();
+		public IEnumerable<KeyValuePair<AppId, ExtendedData>> Entries { get { return this._data; } }
 
+		public CadObject Owner { get; }
+
+		private Dictionary<AppId, ExtendedData> _data = new Dictionary<AppId, ExtendedData>();
+
+		public ExtendedDataDictionary(CadObject owner)
+		{
+			this.Owner = owner;
+		}
+
+		public void Add(AppId app)
+		{
+			this._data.Add(app, new ExtendedData(app));
+		}
 		/// <summary>
 		/// Add ExtendedData for a specific AppId to the Dictionary.
 		/// </summary>
 		/// <param name="app">The AppId object.</param>
-		/// <param name="edata">The ExtendedData object.</param>
-		public void Add(AppId app, ExtendedData edata)
+		/// <param name="records">The ExtendedData records.</param>
+		public void Add(AppId app, IEnumerable<ExtendedDataRecord> records)
 		{
-			this._data.Add(app, edata);
+			this._data.Add(app, new ExtendedData(app, records));
 		}
 
 		/// <summary>

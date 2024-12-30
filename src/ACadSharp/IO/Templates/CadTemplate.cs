@@ -16,9 +16,9 @@ namespace ACadSharp.IO.Templates
 
 		public List<ulong> ReactorsHandles { get; set; } = new List<ulong>();
 
-		public Dictionary<ulong, ExtendedData> EDataTemplate { get; set; } = new Dictionary<ulong, ExtendedData>();
+		public Dictionary<ulong, List<ExtendedDataRecord>> EDataTemplate { get; set; } = new();
 
-		public Dictionary<string, ExtendedData> EDataTemplateByAppName { get; set; } = new Dictionary<string, ExtendedData>();
+		public Dictionary<string, List<ExtendedDataRecord>> EDataTemplateByAppName { get; set; } = new();
 
 		public CadTemplate(CadObject cadObject)
 		{
@@ -51,7 +51,7 @@ namespace ACadSharp.IO.Templates
 				}
 			}
 
-			foreach (KeyValuePair<ulong, ExtendedData> item in this.EDataTemplate)
+			foreach (var item in this.EDataTemplate)
 			{
 				if (builder.TryGetCadObject(item.Key, out AppId app))
 				{
@@ -63,7 +63,7 @@ namespace ACadSharp.IO.Templates
 				}
 			}
 
-			foreach (KeyValuePair<string, ExtendedData> item in this.EDataTemplateByAppName)
+			foreach (var item in this.EDataTemplateByAppName)
 			{
 				if (builder.TryGetTableEntry(item.Key, out AppId app))
 				{
