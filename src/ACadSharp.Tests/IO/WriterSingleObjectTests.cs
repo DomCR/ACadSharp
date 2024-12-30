@@ -472,14 +472,19 @@ namespace ACadSharp.Tests.IO
 			public void XData()
 			{
 				AppId app = new AppId("my_app");
+				Layer layer = new Layer("my_layer");
 				this.Document.AppIds.Add(app);
+				this.Document.Layers.Add(layer);
 
 				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
 
 				List<ExtendedDataRecord> records = new();
 				records.Add(new ExtendedDataControlString(false));
 				records.Add(new ExtendedDataInteger16(5));
+				records.Add(new ExtendedDataInteger32(33));
 				records.Add(new ExtendedDataString("my extended data string"));
+				records.Add(new ExtendedDataHandle(5));
+				records.Add(new ExtendedDataLayer(layer.Handle));
 				records.Add(new ExtendedDataBinaryChunk(new byte[] { 1, 2, 3, 4 }));
 				records.Add(new ExtendedDataControlString(true));
 
@@ -487,7 +492,6 @@ namespace ACadSharp.Tests.IO
 
 				this.Document.Entities.Add(line);
 			}
-
 
 			public void Deserialize(IXunitSerializationInfo info)
 			{

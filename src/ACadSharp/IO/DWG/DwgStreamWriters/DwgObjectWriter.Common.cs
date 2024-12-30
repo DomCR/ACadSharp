@@ -355,8 +355,43 @@ namespace ACadSharp.IO.DWG
 							mstream.WriteByte((byte)binaryChunk.Value.Length);
 							mstream.Write(binaryChunk.Value, 0, binaryChunk.Value.Length);
 							break;
+						case ExtendedDataControlString control:
+							mstream.WriteByte((byte)(control.Value == '}' ? 1 : 0));
+							break;
 						case ExtendedDataInteger16 s16:
 							mstream.Write(LittleEndianConverter.Instance.GetBytes(s16.Value), 0, 2);
+							break;
+						case ExtendedDataInteger32 s32:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(s32.Value), 0, 4);
+							break;
+						case ExtendedDataScale scale:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(scale.Value), 0, 8);
+							break;
+						case ExtendedDataDistance dist:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(dist.Value), 0, 8);
+							break;
+						case ExtendedDataDirection dir:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(dir.Value.X), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(dir.Value.Y), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(dir.Value.Z), 0, 8);
+							break;
+						case ExtendedDataCoordinate coord:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(coord.Value.X), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(coord.Value.Y), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(coord.Value.Z), 0, 8);
+							break;
+						case ExtendedDataWorldCoordinate wcoord:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(wcoord.Value.X), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(wcoord.Value.Y), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(wcoord.Value.Z), 0, 8);
+							break;
+						case IExtendedDataHandleReference handle:
+							ulong h = handle.Value;
+							if (handle.ResolveReference(this._document) == null)
+							{
+								h = 0;
+							}
+							mstream.Write(BigEndianConverter.Instance.GetBytes(h), 0, 8);
 							break;
 						case ExtendedDataString str:
 							//same as ReadTextUnicode()
@@ -377,11 +412,8 @@ namespace ACadSharp.IO.DWG
 								mstream.WriteByte(0);
 							}
 							break;
-						case ExtendedDataControlString control:
-							mstream.WriteByte((byte)(control.Value == '}' ? 1 : 0));
-							break;
 						default:
-							throw new System.Exception();
+							throw new System.NotSupportedException($"ExtendedDataRecord of type {record.GetType().FullName} not supported.");
 					}
 				}
 
