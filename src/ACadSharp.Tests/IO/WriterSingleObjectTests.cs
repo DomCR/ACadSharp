@@ -480,7 +480,7 @@ namespace ACadSharp.Tests.IO
 				records.Add(new ExtendedDataControlString(false));
 				records.Add(new ExtendedDataInteger16(5));
 				records.Add(new ExtendedDataString("my extended data string"));
-				//records.Add(new ExtendedDataBinaryChunk(new byte[] { 1, 2, 3, 4 }));
+				records.Add(new ExtendedDataBinaryChunk(new byte[] { 1, 2, 3, 4 }));
 				records.Add(new ExtendedDataControlString(true));
 
 				line.ExtendedData.Add(app, records);
