@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ACadSharp.XData
+﻿namespace ACadSharp.XData
 {
 	public abstract class ExtendedDataRecord
 	{
@@ -39,8 +37,6 @@ namespace ACadSharp.XData
 
 		protected ExtendedDataRecord(DxfCode code, T value) : base(code, value)
 		{
-			this.Code = dxfCode;
-			this.Value = value;
 		}
 	}
 }
