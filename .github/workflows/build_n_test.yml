@@ -27,4 +27,7 @@ jobs:
     runs-on: windows-latest
     needs: build
     steps:
+    - uses: actions/checkout@v2
+      with: 
+        submodules: true
     - run: dotnet test --configuration Release --no-build --verbosity normal
