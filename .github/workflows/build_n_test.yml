@@ -17,11 +17,17 @@ jobs:
     - uses: actions/checkout@v2
       with: 
         submodules: true
-    - uses: cardinalby/export-env-action@v2
-      with:
-        envFile: 'github.env'
+    - uses: ./.github/actions/setup.yml
     - name: Build and test
       run: |
           dotnet restore
           dotnet build --configuration Release --no-restore
-          dotnet test --configuration Release --no-build --verbosity normal
+ 
+  test:
+    runs-on: windows-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v2
+      with: 
+        submodules: true
+    - run: dotnet test --configuration Release --no-build --verbosity normal
