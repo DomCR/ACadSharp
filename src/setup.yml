@@ -3,6 +3,6 @@ name: Setup
 runs:
   using: "composite"
   steps:
-  - uses: actions/checkout@v2
-    with: 
-      submodules: true
+  - uses: cardinalby/export-env-action@v2
+    with:
+      envFile: 'github.env'
