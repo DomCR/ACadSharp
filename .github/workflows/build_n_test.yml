@@ -24,4 +24,9 @@ jobs:
       run: |
           dotnet restore
           dotnet build --configuration Release --no-restore
-          dotnet test --configuration Release --no-build --verbosity normal
+ 
+  test:
+    runs-on: windows-latest
+    needs: build
+    steps:
+    - run: dotnet test --configuration Release --no-build --verbosity normal
