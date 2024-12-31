@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - uses: ./.github/actions/setup
+    - uses: ./.github/actions/setup.yml
     - uses: cardinalby/export-env-action@v2
       with:
         envFile: 'github.env'
