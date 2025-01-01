@@ -17,11 +17,6 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			if(builder.TryGetCadObject<CadObject>(this.OwnerHandle, out CadObject o))
-			{
-
-			}
-
 			foreach (EvaluationGraph.GraphNode node in this.CadObject.Nodes)
 			{
 				var nodeHandle = this.NodeHandles[node];

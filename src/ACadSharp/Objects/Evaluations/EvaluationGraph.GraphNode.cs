@@ -62,17 +62,17 @@ namespace ACadSharp.Objects.Evaluations
 			public int Data4 { get; internal set; }
 
 			/// <summary>
-			/// Gets a <see cref="CadObject"/> associated with this <see cref="CadObject"/>.
+			/// Gets a <see cref="EvaluationExpression"/> associated with this <see cref="GraphNode"/>.
 			/// </summary>
 			[DxfCodeValue(360)]
-			public CadObject NodeObject { get; internal set; }
+			public EvaluationExpression NodeObject { get; internal set; }
 
 			public object Clone()
 			{
 				GraphNode clone = (GraphNode)MemberwiseClone();
 
 				clone.Next = (GraphNode)Next.Clone();
-				clone.NodeObject = NodeObject.Clone();
+				clone.NodeObject = (EvaluationExpression)NodeObject.Clone();
 
 				return clone;
 			}
