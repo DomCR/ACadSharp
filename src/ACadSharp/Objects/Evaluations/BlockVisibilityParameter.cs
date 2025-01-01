@@ -8,6 +8,12 @@ namespace ACadSharp.Objects.Evaluations
 	/// Represents a BLOCKVISIBILITYPARAMETER object, in AutoCAD used to
 	/// control the visibility state of entities in a dynamic block.
 	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.ObjectBlockVisibilityParameter"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.BlockVisibilityParameter"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.ObjectBlockVisibilityParameter)]
+	[DxfSubClass(DxfSubclassMarker.BlockVisibilityParameter)]
 	public partial class BlockVisibilityParameter : Block1PtParameter
 	{
 		/// <inheritdoc/>
