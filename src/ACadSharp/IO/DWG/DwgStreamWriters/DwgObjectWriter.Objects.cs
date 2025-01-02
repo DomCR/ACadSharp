@@ -3,6 +3,7 @@ using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -152,8 +153,24 @@ namespace ACadSharp.IO.DWG
 		private void writeDictionary(CadDictionary dictionary)
 		{
 			//Common:
-			//Numitems L number of dictonary items
-			this._writer.WriteBitLong(dictionary.Count());
+			//Numitems L number of dictionary items
+			List<NonGraphicalObject> entries = new List<NonGraphicalObject>();
+			foreach (var item in dictionary)
+			{
+				if (item is XRecord && !this.WriteXRecords)
+				{
+					continue;
+				}
+
+				if (item is UnknownNonGraphicalObject)
+				{
+					continue;
+				}
+
+				entries.Add(item);
+			}
+
+			this._writer.WriteBitLong(entries.Count);
 
 			//R14 Only:
 			if (this._version == ACadVersion.AC1014)
@@ -171,16 +188,16 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Common:
-			foreach (var item in dictionary)
+			foreach (var item in entries)
 			{
 				if (item is XRecord && !this.WriteXRecords)
 				{
-					return;
+					continue;
 				}
 
 				if (item is UnknownNonGraphicalObject)
 				{
-					return;
+					continue;
 				}
 
 				this._writer.WriteVariableText(item.Name);
