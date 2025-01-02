@@ -6,30 +6,36 @@ namespace ACadSharp.Objects.Evaluations
 {
 	public partial class EvaluationGraph
 	{
+		public class Edge
+		{
+
+		}
+
 		/// <summary>
 		/// Represents a graph node of a <see cref="EvaluationGraph"/>.
 		/// </summary>
-		public class GraphNode : ICloneable
+		public class Node : ICloneable
 		{
 			/// <summary>
-			/// Gets or sets the index of this <see cref="GraphNode"/> in the list of
+			/// Gets or sets the index of this <see cref="Node"/> in the list of
 			/// graph nodes in the owning <see cref="EvaluationGraph"/>.
 			/// </summary>
 			[DxfCodeValue(91)]
 			public int Index { get; set; }
 
 			/// <summary>
-			/// Gets or sets the index of the next <see cref="GraphNode"/> in the list of
+			/// Gets or sets the index of the next <see cref="Node"/> in the list of
 			/// graph nodes in the owning <see cref="EvaluationGraph"/>.
 			/// </summary>
 			[DxfCodeValue(95)]
 			internal int NextNodeIndex { get; set; }
 
 			/// <summary>
-			/// Gets the next <see cref="GraphNode"/> in the list of
+			/// Gets the next <see cref="Node"/> in the list of
 			/// graph nodes in the owning <see cref="EvaluationGraph"/>.
 			/// </summary>
-			public GraphNode Next { get; internal set; }
+			[Obsolete("Next reference may not be needed if the reference is the index.")]
+			public Node Next { get; internal set; }
 
 			/// <summary>
 			/// Unknown
@@ -62,17 +68,17 @@ namespace ACadSharp.Objects.Evaluations
 			public int Data4 { get; internal set; }
 
 			/// <summary>
-			/// Gets a <see cref="EvaluationExpression"/> associated with this <see cref="GraphNode"/>.
+			/// Gets a <see cref="EvaluationExpression"/> associated with this <see cref="Node"/>.
 			/// </summary>
 			[DxfCodeValue(360)]
-			public EvaluationExpression NodeObject { get; internal set; }
+			public EvaluationExpression Expression { get; internal set; }
 
 			public object Clone()
 			{
-				GraphNode clone = (GraphNode)MemberwiseClone();
+				Node clone = (Node)MemberwiseClone();
 
-				clone.Next = (GraphNode)Next.Clone();
-				clone.NodeObject = (EvaluationExpression)NodeObject.Clone();
+				clone.Next = (Node)Next.Clone();
+				clone.Expression = (EvaluationExpression)Expression.Clone();
 
 				return clone;
 			}

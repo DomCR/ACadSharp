@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace ACadSharp.Objects.Evaluations
 {
 	/// <summary>
-	/// Represents an evaluation graph containing a list of <see cref="GraphNode"/>
+	/// Represents an evaluation graph containing a list of <see cref="Node"/>
 	/// objects.
 	/// </summary>
 	[DxfName(DxfFileToken.ObjectEvalGraph)]
@@ -21,15 +21,17 @@ namespace ACadSharp.Objects.Evaluations
 		public override string SubclassMarker => DxfSubclassMarker.EvalGraph;
 
 		[DxfCodeValue(96)]
-		public int Value96 { get; set; }
+		internal int Value96 { get; set; }
 
 		[DxfCodeValue(97)]
-		public int Value97 { get; set; }
+		internal int Value97 { get; set; }
 
 		/// <summary>
-		/// Gets a list of <see cref="GraphNode"/> objects.
+		/// Gets a list of <see cref="Node"/> objects.
 		/// </summary>
-		public IList<GraphNode> Nodes { get; private set; } = new List<GraphNode>();
+		public IList<Node> Nodes { get; private set; } = new List<Node>();
+
+		public IList<Edge> Edges { get; private set; } = new List<Edge>();
 
 		public EvaluationGraph() { }
 
@@ -38,10 +40,10 @@ namespace ACadSharp.Objects.Evaluations
 		{
 			EvaluationGraph clone = (EvaluationGraph)base.Clone();
 
-			clone.Nodes = new List<GraphNode>();
+			clone.Nodes = new List<Node>();
 			foreach (var item in this.Nodes)
 			{
-				clone.Nodes.Add((GraphNode)item.Clone());
+				clone.Nodes.Add((Node)item.Clone());
 			}
 
 			return clone;

@@ -1112,42 +1112,62 @@ namespace ACadSharp.IO.DWG
 			this.readCommonNonEntityData(template);
 
 			//DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
-			evaluationGraph.Value96 = _objectReader.ReadBitLong();
-			evaluationGraph.Value97 = _objectReader.ReadBitLong();
+			evaluationGraph.Value96 = this._objectReader.ReadBitLong();
+			evaluationGraph.Value97 = this._objectReader.ReadBitLong();
 
-			int nodeCount = _objectReader.ReadBitLong();
+			int nodeCount = this._objectReader.ReadBitLong();
 			for (int i = 0; i < nodeCount; i++)
 			{
-				var node = new EvaluationGraph.GraphNode();
-				evaluationGraph.Nodes.Add(node);
+				var nodeTemplate = new EvaluationGraphTemplate.GraphNodeTemplate();
+				var node = new EvaluationGraph.Node();
+				template.NodeTemplates.Add(nodeTemplate);
 
 				//Code 91
-				node.Index = _objectReader.ReadBitLong();
+				node.Index = this._objectReader.ReadBitLong();
 				//Code 93
-				node.Flags = _objectReader.ReadBitLong();
+				node.Flags = this._objectReader.ReadBitLong();
 				//Code 95
-				node.NextNodeIndex = _objectReader.ReadBitLong();
+				node.NextNodeIndex = this._objectReader.ReadBitLong();
 
 				//Code 360
-				template.NodeHandles.Add(node, this.handleReference());
+				nodeTemplate.ExpressionHandle = this.handleReference();
 
-				//Codes 92
-				node.Data1 = _objectReader.ReadBitLong();
-				node.Data2 = _objectReader.ReadBitLong();
-				node.Data3 = _objectReader.ReadBitLong();
-				node.Data4 = _objectReader.ReadBitLong();
+				//Codes 92, x4
+				node.Data1 = this._objectReader.ReadBitLong();
+				node.Data2 = this._objectReader.ReadBitLong();
+				node.Data3 = this._objectReader.ReadBitLong();
+				node.Data4 = this._objectReader.ReadBitLong();
 			}
 
-			foreach (EvaluationGraph.GraphNode node in evaluationGraph.Nodes)
+			//Last node has x5 92 with the last value as 0 instead of x4
+			//Followed by a 93
+			var edgeCount = this._objectReader.ReadBitLong();
+			for (int i = 0; i < edgeCount; i++)
 			{
-				int nextNodeIndex = node.NextNodeIndex;
-				if (nextNodeIndex >= 0 && nextNodeIndex < nodeCount)
-				{
-					node.Next = evaluationGraph.Nodes[nextNodeIndex];
-				}
-			}
+				//id BL, DXF 92
+				//nextid BLd, DXF 93
+				//e1 BLd, DXF 94
+				//e2 BLd, DXF 91
+				//e3 BLd, DXF 91
+				//out_edge BLd
 
-			var val15 = _objectReader.ReadBitLong();
+				//92 id
+				this._objectReader.ReadBitLong();
+				//93 
+				this._objectReader.ReadBitLong();
+				//94
+				this._objectReader.ReadBitLong();
+				//91
+				this._objectReader.ReadBitLong();
+				//91
+				this._objectReader.ReadBitLong();
+				//92 x6
+				this._objectReader.ReadBitLong();
+				this._objectReader.ReadBitLong();
+				this._objectReader.ReadBitLong();
+				this._objectReader.ReadBitLong();
+				this._objectReader.ReadBitLong();
+			}
 
 			return template;
 		}
@@ -1157,20 +1177,20 @@ namespace ACadSharp.IO.DWG
 			this.readCommonNonEntityData(template);
 
 			//AcDbEvalExpr
-			var unknown = _objectReader.ReadBitLong();
+			var unknown = this._objectReader.ReadBitLong();
 			Debug.Assert(unknown == -1);
 
 			//98
-			template.CadObject.Value98 = _objectReader.ReadBitLong();
+			template.CadObject.Value98 = this._objectReader.ReadBitLong();
 			//99
-			template.CadObject.Value99 = _objectReader.ReadBitLong();
+			template.CadObject.Value99 = this._objectReader.ReadBitLong();
 
 			//-9999 always the same value
 			short n9999 = this._mergedReaders.ReadBitShort();
 			Debug.Assert(n9999 == -9999);
 
 			//90
-			template.CadObject.Value90 = _objectReader.ReadBitLong();
+			template.CadObject.Value90 = this._objectReader.ReadBitLong();
 		}
 
 		private void readBlockElement(CadBlockElementTemplate template)
@@ -1220,16 +1240,16 @@ namespace ACadSharp.IO.DWG
 			this.readBlock1PtParameter(template);
 
 			//281
-			blockVisibilityParameter.Value281 = _mergedReaders.ReadBit();
+			blockVisibilityParameter.Value281 = this._mergedReaders.ReadBit();
 			//301
-			blockVisibilityParameter.Name = _mergedReaders.ReadVariableText();
+			blockVisibilityParameter.Name = this._mergedReaders.ReadVariableText();
 			//302
-			blockVisibilityParameter.Description = _mergedReaders.ReadVariableText();
+			blockVisibilityParameter.Description = this._mergedReaders.ReadVariableText();
 			//missing bit??	91 should be an int
-			blockVisibilityParameter.Value91 = _mergedReaders.ReadBit();
+			blockVisibilityParameter.Value91 = this._mergedReaders.ReadBit();
 
 			//DXF 93 Total entities count
-			var totalEntitiesCount = _objectReader.ReadBitLong();
+			var totalEntitiesCount = this._objectReader.ReadBitLong();
 			for (int i = 0; i < totalEntitiesCount; i++)
 			{
 				//331
@@ -1237,7 +1257,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//DXF 92 states count
-			var nstates = _objectReader.ReadBitLong();
+			var nstates = this._objectReader.ReadBitLong();
 			for (int j = 0; j < nstates; j++)
 			{
 				template.StateTemplates.Add(this.readState());
@@ -1250,10 +1270,10 @@ namespace ACadSharp.IO.DWG
 		{
 			CadBlockVisibilityParameterTemplate.StateTemplate template = new CadBlockVisibilityParameterTemplate.StateTemplate();
 
-			template.State.Name = _textReader.ReadVariableText();
+			template.State.Name = this._textReader.ReadVariableText();
 
 			//DXF 94 subset count 1
-			int n1 = _objectReader.ReadBitLong();
+			int n1 = this._objectReader.ReadBitLong();
 			for (int i = 0; i < n1; i++)
 			{
 				//332
@@ -1261,7 +1281,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//DXF 95 subset count 2 
-			var n2 = _objectReader.ReadBitLong();
+			var n2 = this._objectReader.ReadBitLong();
 			for (int i = 0; i < n2; i++)
 			{
 				//333
@@ -3101,7 +3121,7 @@ namespace ACadSharp.IO.DWG
 			//BS	170 LeaderLineType (short)
 			mLeader.PathType = (MultiLeaderPathType)this._objectReader.ReadBitShort();
 			//CMC	91  Leade LineColor (Color)
-			mLeader.LineColor = _mergedReaders.ReadCmColor();
+			mLeader.LineColor = this._mergedReaders.ReadCmColor();
 			//H 	341 LeaderLineTypeID (handle/LineType)
 			template.LeaderLineTypeHandle = this.handleReference();
 
@@ -3159,7 +3179,7 @@ namespace ACadSharp.IO.DWG
 					//	//  DXF:	94  BL Arrowhead Index (DXF)
 					//	//	ODA:	94 B Is Default
 					//	int arrowheadIndex = _objectReader.ReadBitLong();
-					bool isDefault = _objectReader.ReadBit();
+					bool isDefault = this._objectReader.ReadBit();
 
 					//  345 Arrowhead ID
 					template.ArrowheadHandles.Add(this.handleReference(), isDefault);
@@ -5614,11 +5634,11 @@ namespace ACadSharp.IO.DWG
 			int nfaces = this._objectReader.ReadBitLong();
 			for (int i = 0; i < nfaces; i++)
 			{
-				int faceSize = _objectReader.ReadBitLong();
+				int faceSize = this._objectReader.ReadBitLong();
 				int[] arr = new int[faceSize];
 				for (int j = 0; j < faceSize; j++)
 				{
-					arr[j] = _objectReader.ReadBitLong();
+					arr[j] = this._objectReader.ReadBitLong();
 				}
 
 				i += faceSize;
@@ -5627,20 +5647,20 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Edges
-			int nedges = _objectReader.ReadBitLong();
+			int nedges = this._objectReader.ReadBitLong();
 			for (int k = 0; k < nedges; k++)
 			{
-				int start = _objectReader.ReadBitLong();
-				int end = _objectReader.ReadBitLong();
+				int start = this._objectReader.ReadBitLong();
+				int end = this._objectReader.ReadBitLong();
 				mesh.Edges.Add(new Mesh.Edge(start, end));
 			}
 
 			//Crease
-			int ncrease = _objectReader.ReadBitLong();
+			int ncrease = this._objectReader.ReadBitLong();
 			for (int l = 0; l < ncrease; l++)
 			{
 				Mesh.Edge edge = mesh.Edges[l];
-				edge.Crease = _objectReader.ReadBitDouble();
+				edge.Crease = this._objectReader.ReadBitDouble();
 				mesh.Edges[l] = edge;
 			}
 

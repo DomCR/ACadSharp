@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ACadSharp.Objects.Evaluations;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class EvaluationGraphTemplate : CadTemplate<EvaluationGraph>
+	internal partial class EvaluationGraphTemplate : CadTemplate<EvaluationGraph>
 	{
-		public IDictionary<EvaluationGraph.GraphNode, ulong> NodeHandles { get; } = new Dictionary<EvaluationGraph.GraphNode, ulong>();
+		public List<GraphNodeTemplate> NodeTemplates { get; } = new();
 
 		public EvaluationGraphTemplate(EvaluationGraph evaluationGraph)
 			: base(evaluationGraph)
@@ -16,17 +17,11 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			foreach (EvaluationGraph.GraphNode node in this.CadObject.Nodes)
+			foreach (GraphNodeTemplate item in this.NodeTemplates)
 			{
-				var nodeHandle = this.NodeHandles[node];
-				if (builder.TryGetCadObject(nodeHandle, out EvaluationExpression evExpression))
-				{
-					node.NodeObject = evExpression;
-				}
-				else
-				{
-					builder.Notify($"Evaluation graph with handle {this.CadObject.Handle} couldn't find the EvaluationExpression with handle {nodeHandle}", NotificationType.Warning);
-				}
+				item.Build(builder);
+
+				this.CadObject.Nodes.Add(item.Node);
 			}
 		}
 	}
