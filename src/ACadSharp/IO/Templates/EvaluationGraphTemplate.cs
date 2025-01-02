@@ -5,13 +5,12 @@ namespace ACadSharp.IO.Templates
 {
 	internal class EvaluationGraphTemplate : CadTemplate<EvaluationGraph>
 	{
+		public IDictionary<EvaluationGraph.GraphNode, ulong> NodeHandles { get; } = new Dictionary<EvaluationGraph.GraphNode, ulong>();
 
 		public EvaluationGraphTemplate(EvaluationGraph evaluationGraph)
 			: base(evaluationGraph)
 		{
 		}
-
-		public IDictionary<EvaluationGraph.GraphNode, ulong> NodeHandles { get; } = new Dictionary<EvaluationGraph.GraphNode, ulong>();
 
 		public override void Build(CadDocumentBuilder builder)
 		{
@@ -20,9 +19,13 @@ namespace ACadSharp.IO.Templates
 			foreach (EvaluationGraph.GraphNode node in this.CadObject.Nodes)
 			{
 				var nodeHandle = this.NodeHandles[node];
-				if (builder.TryGetCadObject(nodeHandle, out CadObject nodeObject))
+				if (builder.TryGetCadObject(nodeHandle, out EvaluationExpression evExpression))
 				{
-					node.NodeObject = nodeObject;
+					node.NodeObject = evExpression;
+				}
+				else
+				{
+					builder.Notify($"Evaluation graph with handle {this.CadObject.Handle} couldn't find the EvaluationExpression with handle {nodeHandle}", NotificationType.Warning);
 				}
 			}
 		}
