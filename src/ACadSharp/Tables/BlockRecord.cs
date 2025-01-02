@@ -5,6 +5,7 @@ using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using System.Linq;
 using System.Collections.Generic;
+using ACadSharp.Objects.Evaluations;
 
 namespace ACadSharp.Tables
 {
@@ -174,6 +175,39 @@ namespace ACadSharp.Tables
 					return null;
 				}
 				else if (this.XDictionary.TryGetEntry(SortEntitiesTable.DictionaryEntryName, out SortEntitiesTable table))
+				{
+					return table;
+				}
+				else
+				{
+					return null;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Active flag if it has an <see cref="Objects.Evaluations.EvaluationGraph"/> attached to it with dynamic expressions.
+		/// </summary>
+		public bool IsDynamic
+		{
+			get
+			{
+				return this.EvaluationGraph != null;
+			}
+		}
+
+		/// <summary>
+		/// Gets the evaluation graph for this block if it has dynamic properties attached to it.
+		/// </summary>
+		public EvaluationGraph EvaluationGraph
+		{
+			get
+			{
+				if (this.XDictionary == null)
+				{
+					return null;
+				}
+				else if (this.XDictionary.TryGetEntry(EvaluationGraph.DictionaryEntryName, out EvaluationGraph table))
 				{
 					return table;
 				}

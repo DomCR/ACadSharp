@@ -48,6 +48,8 @@ namespace ACadSharp.Tests.IO
 
 			BlockRecord blk = doc.BlockRecords["my-dynamic-block"];
 
+			Assert.True(blk.IsDynamic);
+
 			//Dictionary entry
 			EvaluationGraph eval = blk.XDictionary.GetEntry<EvaluationGraph>("ACAD_ENHANCEDBLOCK");
 

@@ -11,6 +11,11 @@ namespace ACadSharp.Objects.Evaluations
 	[DxfSubClass(DxfSubclassMarker.EvalGraph)]
 	public partial class EvaluationGraph : NonGraphicalObject
 	{
+		/// <summary>
+		/// Dictionary entry name for the object <see cref="EvaluationGraph"/>
+		/// </summary>
+		public const string DictionaryEntryName = "ACAD_ENHANCEDBLOCK";
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
