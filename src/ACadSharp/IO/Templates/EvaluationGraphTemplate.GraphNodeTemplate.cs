@@ -2,7 +2,7 @@
 
 namespace ACadSharp.IO.Templates
 {
-	internal partial class EvaluationGraphTemplate
+	internal partial class CadEvaluationGraphTemplate
 	{
 		public class GraphNodeTemplate : ICadTemplate
 		{

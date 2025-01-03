@@ -4,11 +4,13 @@ using ACadSharp.Objects.Evaluations;
 
 namespace ACadSharp.IO.Templates
 {
-	internal partial class EvaluationGraphTemplate : CadTemplate<EvaluationGraph>
+	internal partial class CadEvaluationGraphTemplate : CadTemplate<EvaluationGraph>
 	{
 		public List<GraphNodeTemplate> NodeTemplates { get; } = new();
 
-		public EvaluationGraphTemplate(EvaluationGraph evaluationGraph)
+		public CadEvaluationGraphTemplate() : base(new EvaluationGraph()) { }
+
+		public CadEvaluationGraphTemplate(EvaluationGraph evaluationGraph)
 			: base(evaluationGraph)
 		{
 		}

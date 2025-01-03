@@ -1,5 +1,6 @@
 ﻿using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
+using ACadSharp.Objects.Evaluations;
 using System;
 using System.Linq;
 
@@ -59,6 +60,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<CadDictionaryWithDefault>(new CadDictionaryWithDefaultTemplate(), this.readDictionaryWithDefault);
 				case DxfFileToken.ObjectLayout:
 					return this.readObjectCodes<Layout>(new CadLayoutTemplate(), this.readLayout);
+				case DxfFileToken.ObjectEvalGraph:
+					return this.readObjectCodes<EvaluationGraph>(new CadEvaluationGraphTemplate(), this.readEvaluationGraph);
 				case DxfFileToken.ObjectDictionaryVar:
 					return this.readObjectCodes<DictionaryVariable>(new CadTemplate<DictionaryVariable>(new DictionaryVariable()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectPdfDefinition:
@@ -143,6 +146,15 @@ namespace ACadSharp.IO.DXF
 			{
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.PlotSettings]);
+			}
+		}
+
+		private bool readEvaluationGraph(CadTemplate template, DxfMap map)
+		{
+			switch (this._reader.Code)
+			{
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.EvalGraph]);
 			}
 		}
 

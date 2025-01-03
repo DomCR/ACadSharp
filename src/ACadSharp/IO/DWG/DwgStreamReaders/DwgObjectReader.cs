@@ -1107,7 +1107,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readEvaluationGraph()
 		{
 			EvaluationGraph evaluationGraph = new EvaluationGraph();
-			EvaluationGraphTemplate template = new EvaluationGraphTemplate(evaluationGraph);
+			CadEvaluationGraphTemplate template = new CadEvaluationGraphTemplate(evaluationGraph);
 
 			this.readCommonNonEntityData(template);
 
@@ -1118,7 +1118,7 @@ namespace ACadSharp.IO.DWG
 			int nodeCount = this._objectReader.ReadBitLong();
 			for (int i = 0; i < nodeCount; i++)
 			{
-				var nodeTemplate = new EvaluationGraphTemplate.GraphNodeTemplate();
+				var nodeTemplate = new CadEvaluationGraphTemplate.GraphNodeTemplate();
 				var node = new EvaluationGraph.Node();
 				template.NodeTemplates.Add(nodeTemplate);
 
