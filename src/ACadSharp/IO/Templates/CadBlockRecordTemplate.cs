@@ -34,6 +34,12 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
+			if (this.CadObject.Name == "*U16")
+			{
+				//Is dynamic if Flags.Contains(Anonymous)
+				//Block reference -> ExtendedData["AcDbRegAppTableRecord"].Value[ACadSharp.DxfCode.ExtendedDataHandle] => handle
+			}
+
 			if (builder.TryGetCadObject(this.LayoutHandle, out Layout layout))
 			{
 				this.CadObject.Layout = layout;
@@ -81,9 +87,9 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
-		private void addEntity(CadDocumentBuilder builder,Entity entity)
+		private void addEntity(CadDocumentBuilder builder, Entity entity)
 		{
-			if(!builder.KeepUnknownEntities && entity is UnknownEntity)
+			if (!builder.KeepUnknownEntities && entity is UnknownEntity)
 			{
 				return;
 			}

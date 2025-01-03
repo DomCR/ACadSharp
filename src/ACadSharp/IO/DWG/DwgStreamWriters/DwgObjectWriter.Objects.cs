@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Objects;
+using ACadSharp.Objects.Evaluations;
 using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
@@ -25,6 +26,7 @@ namespace ACadSharp.IO.DWG
 		{
 			switch (obj)
 			{
+				case EvaluationGraph:
 				case Material:
 				case MultiLeaderAnnotContext:
 				case MultiLeaderStyle:

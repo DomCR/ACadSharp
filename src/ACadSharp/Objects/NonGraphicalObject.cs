@@ -12,6 +12,9 @@ namespace ACadSharp.Objects
 		public event EventHandler<OnNameChangedArgs> OnNameChanged;
 
 		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.UNLISTED;
+
+		/// <inheritdoc/>
 		/// <remarks>
 		/// The name of a <see cref="NonGraphicalObject"/> will be used as the name of the entry when the owner is a <see cref="CadDictionary"/>
 		/// otherwise the name may not be saved if there is no dxf code assigned to the <see cref="CadObject"/>.
