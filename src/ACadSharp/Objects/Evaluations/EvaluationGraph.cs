@@ -26,10 +26,10 @@ namespace ACadSharp.Objects.Evaluations
 		public override string SubclassMarker => DxfSubclassMarker.EvalGraph;
 
 		[DxfCodeValue(96)]
-		internal int Value96 { get; set; }
+		public int Value96 { get; set; }
 
 		[DxfCodeValue(97)]
-		internal int Value97 { get; set; }
+		public int Value97 { get; set; }
 
 		/// <summary>
 		/// Gets a list of <see cref="Node"/> objects.
