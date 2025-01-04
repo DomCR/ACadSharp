@@ -126,7 +126,7 @@ namespace ACadSharp.Tests.IO.DXF
 				doc = reader.Read();
 			}
 
-			if(doc.Header.Version < ACadVersion.AC1012)
+			if (doc.Header.Version < ACadVersion.AC1012)
 			{
 				//Older version do not keep the handles for tables and other objects like block_records
 				return;
@@ -135,6 +135,7 @@ namespace ACadSharp.Tests.IO.DXF
 			this._docIntegrity.AssertDocumentTree(doc);
 		}
 
+#if !NETFRAMEWORK
 		[Theory]
 		[MemberData(nameof(DxfAsciiFiles))]
 		[MemberData(nameof(DxfBinaryFiles))]
@@ -161,5 +162,6 @@ namespace ACadSharp.Tests.IO.DXF
 				}
 			}
 		}
+#endif
 	}
 }

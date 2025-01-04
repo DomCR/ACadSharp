@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
+using ACadSharp.XData;
 using CSMath;
+using CSUtilities.Converters;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -1153,10 +1155,10 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		protected void readExtendedData(Dictionary<string, ExtendedData> edata)
+		protected void readExtendedData(Dictionary<string, List<ExtendedDataRecord>> edata)
 		{
-			ExtendedData extendedData = new ExtendedData();
-			edata.Add(this._reader.ValueAsString, extendedData);
+			List<ExtendedDataRecord> records = new();
+			edata.Add(this._reader.ValueAsString, records);
 
 			this._reader.ReadNext();
 
@@ -1168,7 +1170,104 @@ namespace ACadSharp.IO.DXF
 					break;
 				}
 
-				extendedData.Data.Add(new ExtendedDataRecord(this._reader.DxfCode, this._reader.Value));
+				ExtendedDataRecord record;
+				double x = 0;
+				double y = 0;
+				double z = 0;
+
+				switch (this._reader.DxfCode)
+				{
+					case DxfCode.ExtendedDataAsciiString:
+					case DxfCode.ExtendedDataRegAppName:
+						record = new ExtendedDataString(this._reader.ValueAsString);
+						break;
+					case DxfCode.ExtendedDataControlString:
+						record = new ExtendedDataControlString(this._reader.ValueAsString == "}");
+						break;
+					case DxfCode.ExtendedDataLayerName:
+						record = new ExtendedDataLayer(this._reader.ValueAsHandle);
+						break;
+					case DxfCode.ExtendedDataBinaryChunk:
+						record = new ExtendedDataBinaryChunk(this._reader.ValueAsBinaryChunk);
+						break;
+					case DxfCode.ExtendedDataHandle:
+						record = new ExtendedDataHandle(this._reader.ValueAsHandle);
+						break;
+					case DxfCode.ExtendedDataXCoordinate:
+						x = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						y = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						z = this._reader.ValueAsDouble;
+
+						record = new ExtendedDataCoordinate(
+							new XYZ(
+								x,
+								y,
+								z)
+							);
+						break;
+					case DxfCode.ExtendedDataWorldXCoordinate:
+						x = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						y = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						z = this._reader.ValueAsDouble;
+
+						record = new ExtendedDataCoordinate(
+							new XYZ(
+								x,
+								y,
+								z)
+							);
+						break;
+					case DxfCode.ExtendedDataWorldXDisp:
+						x = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						y = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						z = this._reader.ValueAsDouble;
+
+						record = new ExtendedDataCoordinate(
+							new XYZ(
+								x,
+								y,
+								z)
+							);
+						break;
+					case DxfCode.ExtendedDataWorldXDir:
+						x = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						y = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						z = this._reader.ValueAsDouble;
+
+						record = new ExtendedDataCoordinate(
+							new XYZ(
+								x,
+								y,
+								z)
+							);
+						break;
+					case DxfCode.ExtendedDataReal:
+						record = new ExtendedDataReal(this._reader.ValueAsDouble);
+						break;
+					case DxfCode.ExtendedDataDist:
+						record = new ExtendedDataDistance(this._reader.ValueAsDouble);
+						break;
+					case DxfCode.ExtendedDataScale:
+						record = new ExtendedDataScale(this._reader.ValueAsDouble);
+						break;
+					case DxfCode.ExtendedDataInteger16:
+						record = new ExtendedDataInteger16(this._reader.ValueAsShort);
+						break;
+					case DxfCode.ExtendedDataInteger32:
+						record = new ExtendedDataInteger32((int)this._reader.ValueAsInt);
+						break;
+					default:
+						this._builder.Notify($"Unknown code for extended data: {this._reader.DxfCode}", NotificationType.Warning);
+						break;
+				}
 
 				this._reader.ReadNext();
 			}
@@ -1298,7 +1397,7 @@ namespace ACadSharp.IO.DXF
 		{
 			if (this._reader.Code != 72)
 			{
-				this._builder.Notify($"Edge Boundary path should should define the type with code 72 but was {this._reader.Code}");
+				this._builder.Notify($"Edge Boundary path should define the type with code 72 but was {this._reader.Code}");
 				return null;
 			}
 
@@ -1559,7 +1658,7 @@ namespace ACadSharp.IO.DXF
 				}
 				else
 				{
-					this._builder.Notify("An error occurred while assiging a property using mapper", NotificationType.Error, ex);
+					this._builder.Notify("An error occurred while assigning a property using mapper", NotificationType.Error, ex);
 				}
 			}
 

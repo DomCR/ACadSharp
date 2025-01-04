@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
+using ACadSharp.Objects.Evaluations;
 using CSUtilities.Converters;
 using System;
 using System.Linq;
@@ -32,6 +33,7 @@ namespace ACadSharp.IO.DXF
 			switch (co)
 			{
 				case AcdbPlaceHolder:
+				case EvaluationGraph:
 				case Material:
 				case MultiLeaderAnnotContext:
 				case VisualStyle:

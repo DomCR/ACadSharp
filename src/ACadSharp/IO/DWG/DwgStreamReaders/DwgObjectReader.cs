@@ -14,10 +14,10 @@ using System;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
-using static ACadSharp.Entities.TableEntity;
-using static ACadSharp.Entities.TableEntity.BreakData;
-using static ACadSharp.Objects.MultiLeaderAnnotContext;
 using System.Globalization;
+using ACadSharp.Objects.Evaluations;
+using ACadSharp.XData;
+using System.Diagnostics;
 
 namespace ACadSharp.IO.DWG
 {
@@ -504,13 +504,17 @@ namespace ACadSharp.IO.DWG
 
 				//Xdep B 70 dependent on an xref. (16 bit)
 				if (((uint)xrefindex & 0b100000000) > 0)
+				{
 					entry.Flags |= StandardFlags.XrefDependent;
+				}
 			}
 			else
 			{
 				//64-flag B 70 The 64-bit of the 70 group.
 				if (this._objectReader.ReadBit())
+				{
 					entry.Flags |= StandardFlags.Referenced;
+				}
 
 				//xrefindex + 1 BS 70 subtract one from this value when read.
 				//After that, -1 indicates that this reference did not come from an xref,
@@ -519,7 +523,9 @@ namespace ACadSharp.IO.DWG
 
 				//Xdep B 70 dependent on an xref. (16 bit)
 				if (this._objectReader.ReadBit())
+				{
 					entry.Flags |= StandardFlags.XrefDependent;
+				}
 			}
 		}
 
@@ -539,7 +545,7 @@ namespace ACadSharp.IO.DWG
 				long endPos = this._objectReader.Position + size;
 
 				//template.ExtendedData
-				ExtendedData edata = this.readExtendedDataRecords(endPos);
+				List<ExtendedDataRecord> edata = this.readExtendedDataRecords(endPos);
 
 				template.EDataTemplate.Add(appHandle, edata);
 
@@ -547,9 +553,9 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private ExtendedData readExtendedDataRecords(long endPos)
+		private List<ExtendedDataRecord> readExtendedDataRecords(long endPos)
 		{
-			ExtendedData data = new ExtendedData();
+			List<ExtendedDataRecord> records = new List<ExtendedDataRecord>();
 
 			while (this._objectReader.Position < endPos)
 			{
@@ -561,18 +567,18 @@ namespace ACadSharp.IO.DWG
 				switch (dxfCode)
 				{
 					//0 (1000) String.
-					case DxfCode.ExtendedDataAsciiString:
 					//R13-R2004: 1st byte of value is the length N; this is followed by a 2-byte short indicating the codepage, followed by N single-byte characters.
 					//R2007 +: 2 - byte length N, followed by N Unicode characters(2 bytes each).
+					case DxfCode.ExtendedDataAsciiString:
 					case DxfCode.ExtendedDataRegAppName:
 						//1 (1001) This one seems to be invalid; can't even use as a string inside braces.
 						//This would be a registered application that this data relates to, but we've already had that above, 
 						//so it would be redundant or irrelevant here.
-						record = new ExtendedDataRecord(dxfCode, this._objectReader.ReadTextUnicode());
+						record = new ExtendedDataString(this._objectReader.ReadTextUnicode());
 						break;
 					case DxfCode.ExtendedDataControlString:
 						//2 (1002) A '{' or '}'; 1 byte; ASCII 0 means '{', ASCII 1 means '}'
-						record = new ExtendedDataRecord(dxfCode, this._objectReader.ReadByte());
+						record = new ExtendedDataControlString(this._objectReader.ReadByte() == 1);
 						break;
 					case DxfCode.ExtendedDataLayerName:
 						//3 (1003) A layer table reference. The value is the handle of the layer;
@@ -581,11 +587,11 @@ namespace ACadSharp.IO.DWG
 						//Even layer 0 is referred to by handle here.
 						byte[] arr = this._objectReader.ReadBytes(8);
 						ulong handle = BigEndianConverter.Instance.ToUInt64(arr);
-						record = new ExtendedDataRecord(dxfCode, handle);
+						record = new ExtendedDataLayer(handle);
 						break;
 					case DxfCode.ExtendedDataBinaryChunk:
 						//4 (1004) Binary chunk. The first byte of the value is a char giving the length; the bytes follow.
-						record = new ExtendedDataRecord(dxfCode, this._objectReader.ReadBytes(this._objectReader.ReadByte()));
+						record = new ExtendedDataBinaryChunk(this._objectReader.ReadBytes(this._objectReader.ReadByte()));
 						break;
 					case DxfCode.ExtendedDataHandle:
 						//5 (1005) An entity handle reference.
@@ -594,22 +600,42 @@ namespace ACadSharp.IO.DWG
 						//(There's no length specifier this time.)
 						arr = this._objectReader.ReadBytes(8);
 						handle = BigEndianConverter.Instance.ToUInt64(arr);
-						record = new ExtendedDataRecord(dxfCode, handle);
+						record = new ExtendedDataHandle(handle);
 						break;
 					//10 - 13 (1010 - 1013)
 					case DxfCode.ExtendedDataXCoordinate:
-					case DxfCode.ExtendedDataWorldXCoordinate:
-					case DxfCode.ExtendedDataWorldYCoordinate:
-					case DxfCode.ExtendedDataWorldZCoordinate:
-					case DxfCode.ExtendedDataWorldXDisp:
-					case DxfCode.ExtendedDataWorldYDisp:
-					case DxfCode.ExtendedDataWorldZDisp:
-					case DxfCode.ExtendedDataWorldXDir:
-					case DxfCode.ExtendedDataWorldYDir:
-					case DxfCode.ExtendedDataWorldZDir:
 						//Points; 24 bytes(XYZ)-- 3 doubles
-						record = new ExtendedDataRecord(
-							dxfCode,
+						record = new ExtendedDataCoordinate(
+							new XYZ(
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble()
+								)
+							);
+						break;
+					case DxfCode.ExtendedDataWorldXCoordinate:
+						//Points; 24 bytes(XYZ)-- 3 doubles
+						record = new ExtendedDataWorldCoordinate(
+							new XYZ(
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble()
+								)
+							);
+						break;
+					case DxfCode.ExtendedDataWorldXDisp:
+						//Points; 24 bytes(XYZ)-- 3 doubles
+						record = new ExtendedDataDisplacement(
+							new XYZ(
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble()
+								)
+							);
+						break;
+					case DxfCode.ExtendedDataWorldXDir:
+						//Points; 24 bytes(XYZ)-- 3 doubles
+						record = new ExtendedDataDirection(
 							new XYZ(
 								this._objectReader.ReadDouble(),
 								this._objectReader.ReadDouble(),
@@ -618,30 +644,34 @@ namespace ACadSharp.IO.DWG
 							);
 						break;
 					//40 - 42 (1040 - 1042)
+					//Reals; 8 bytes(double)
 					case DxfCode.ExtendedDataReal:
+						record = new ExtendedDataReal(this._objectReader.ReadDouble());
+						break;
 					case DxfCode.ExtendedDataDist:
+						record = new ExtendedDataDistance(this._objectReader.ReadDouble());
+						break;
 					case DxfCode.ExtendedDataScale:
-						//Reals; 8 bytes(double)
-						record = new ExtendedDataRecord(dxfCode, this._objectReader.ReadDouble());
+						record = new ExtendedDataScale(this._objectReader.ReadDouble());
 						break;
 					//70(1070) A short int; 2 bytes
 					case DxfCode.ExtendedDataInteger16:
-						record = new ExtendedDataRecord(dxfCode, this._objectReader.ReadShort());
+						record = new ExtendedDataInteger16(this._objectReader.ReadShort());
 						break;
 					//71(1071) A long int; 4 bytes
 					case DxfCode.ExtendedDataInteger32:
-						record = new ExtendedDataRecord(dxfCode, this._objectReader.ReadRawLong());
+						record = new ExtendedDataInteger32((int)this._objectReader.ReadRawLong());
 						break;
 					default:
 						this._objectReader.ReadBytes((int)(endPos - this._objectReader.Position));
 						this._builder.Notify($"Unknown code for extended data: {dxfCode}", NotificationType.Warning);
-						return data;
+						return records;
 				}
 
-				data.Data.Add(record);
+				records.Add(record);
 			}
 
-			return data;
+			return records;
 		}
 
 		// Add the reactors to the template.
@@ -1077,118 +1107,185 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readEvaluationGraph()
 		{
 			EvaluationGraph evaluationGraph = new EvaluationGraph();
-			EvaluationGraphTemplate template = new EvaluationGraphTemplate(evaluationGraph);
+			CadEvaluationGraphTemplate template = new CadEvaluationGraphTemplate(evaluationGraph);
 
 			this.readCommonNonEntityData(template);
 
-			//	DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
-			var val1 = _objectReader.ReadBitLong();
-			var val2 = _objectReader.ReadBitLong();
-			var val3 = _objectReader.ReadBitLong();
-			int nodeCount = val3;
+			//DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
+			evaluationGraph.Value96 = this._objectReader.ReadBitLong();
+			evaluationGraph.Value97 = this._objectReader.ReadBitLong();
 
+			int nodeCount = this._objectReader.ReadBitLong();
 			for (int i = 0; i < nodeCount; i++)
 			{
-				var node = new EvaluationGraph.GraphNode();
-				evaluationGraph.Nodes.Add(node);
-				node.Index = _objectReader.ReadBitLong();
-				node.Flags = _objectReader.ReadBitLong();
-				node.NextNodeIndex = _objectReader.ReadBitLong();
-				template.NodeHandles.Add(node, this.handleReference());
-				node.Data1 = _objectReader.ReadBitLong();
-				node.Data2 = _objectReader.ReadBitLong();
-				node.Data3 = _objectReader.ReadBitLong();
-				node.Data4 = _objectReader.ReadBitLong();
+				var nodeTemplate = new CadEvaluationGraphTemplate.GraphNodeTemplate();
+				var node = new EvaluationGraph.Node();
+				template.NodeTemplates.Add(nodeTemplate);
+
+				//Code 91
+				node.Index = this._objectReader.ReadBitLong();
+				//Code 93
+				node.Flags = this._objectReader.ReadBitLong();
+				//Code 95
+				node.NextNodeIndex = this._objectReader.ReadBitLong();
+
+				//Code 360
+				nodeTemplate.ExpressionHandle = this.handleReference();
+
+				//Codes 92, x4
+				node.Data1 = this._objectReader.ReadBitLong();
+				node.Data2 = this._objectReader.ReadBitLong();
+				node.Data3 = this._objectReader.ReadBitLong();
+				node.Data4 = this._objectReader.ReadBitLong();
 			}
 
-			foreach (EvaluationGraph.GraphNode node in evaluationGraph.Nodes)
+			//Last node has x5 92 with the last value as 0 instead of x4
+			//Followed by a 93
+			var edgeCount = this._objectReader.ReadBitLong();
+			for (int i = 0; i < edgeCount; i++)
 			{
-				int nextNodeIndex = node.NextNodeIndex;
-				if (nextNodeIndex >= 0 && nextNodeIndex < nodeCount)
-				{
-					node.Next = evaluationGraph.Nodes[nextNodeIndex];
-				}
-			}
+				//id BL, DXF 92
+				//nextid BLd, DXF 93
+				//e1 BLd, DXF 94
+				//e2 BLd, DXF 91
+				//e3 BLd, DXF 91
+				//out_edge BLd
 
-			var val15 = _objectReader.ReadBitLong();
+				//92 id
+				this._objectReader.ReadBitLong();
+				//93 
+				this._objectReader.ReadBitLong();
+				//94
+				this._objectReader.ReadBitLong();
+				//91
+				this._objectReader.ReadBitLong();
+				//91
+				this._objectReader.ReadBitLong();
+				//92 x6
+				this._objectReader.ReadBitLong();
+				this._objectReader.ReadBitLong();
+				this._objectReader.ReadBitLong();
+				this._objectReader.ReadBitLong();
+				this._objectReader.ReadBitLong();
+			}
 
 			return template;
 		}
 
+		private void readEvaluationExpression(CadEvaluationExpressionTemplate template)
+		{
+			this.readCommonNonEntityData(template);
+
+			//AcDbEvalExpr
+			var unknown = this._objectReader.ReadBitLong();
+			Debug.Assert(unknown == -1);
+
+			//98
+			template.CadObject.Value98 = this._objectReader.ReadBitLong();
+			//99
+			template.CadObject.Value99 = this._objectReader.ReadBitLong();
+
+			//-9999 always the same value
+			short n9999 = this._mergedReaders.ReadBitShort();
+			Debug.Assert(n9999 == -9999);
+
+			//90
+			template.CadObject.Value90 = this._objectReader.ReadBitLong();
+		}
+
+		private void readBlockElement(CadBlockElementTemplate template)
+		{
+			this.readEvaluationExpression(template);
+
+			//300 name
+			template.BlockElement.ElementName = this._mergedReaders.ReadVariableText();
+			//98
+			template.BlockElement.Value98 = this._mergedReaders.ReadBitLong();
+			//99
+			template.BlockElement.Value99 = this._mergedReaders.ReadBitLong();
+			//1071
+			template.BlockElement.Value1071 = this._mergedReaders.ReadBitLong();
+		}
+
+		private void readBlockParameter(CadBlockParameterTemplate template)
+		{
+			this.readBlockElement(template);
+
+			//280
+			template.BlockParameter.Value280 = this._mergedReaders.ReadBit();
+			//281
+			template.BlockParameter.Value281 = this._mergedReaders.ReadBit();
+		}
+
+		private void readBlock1PtParameter(CadBlock1PtParameterTemplate template)
+		{
+			this.readBlockParameter(template);
+
+			//1010 1020 1030
+			template.Block1PtParameter.Location = this._mergedReaders.Read3BitDouble();
+
+			//170
+			template.Block1PtParameter.Value170 = this._mergedReaders.ReadBitShort();
+			//171
+			template.Block1PtParameter.Value171 = this._mergedReaders.ReadBitShort();
+			//93
+			template.Block1PtParameter.Value93 = this._mergedReaders.ReadBitLong();
+		}
 
 		private CadTemplate readBlockVisibilityParameter()
 		{
 			BlockVisibilityParameter blockVisibilityParameter = new BlockVisibilityParameter();
-			BlockVisibilityParameterTemplate template = new BlockVisibilityParameterTemplate(blockVisibilityParameter);
+			CadBlockVisibilityParameterTemplate template = new CadBlockVisibilityParameterTemplate(blockVisibilityParameter);
 
-			this.readCommonNonEntityData(template);
+			this.readBlock1PtParameter(template);
 
-			var l1 = _objectReader.ReadBitLong();
-			var s2 = _objectReader.ReadBitShort();  //	can also be L
-			var s3 = _objectReader.ReadBitShort();  //	can also be L
-			var b4 = _objectReader.ReadBit();
-			var s5 = _objectReader.ReadBitShort();  //	can also be L
-			var b6 = _objectReader.ReadBit();
-			var s7 = _objectReader.ReadBitShort();  //	can also be L
+			//281
+			blockVisibilityParameter.Value281 = this._mergedReaders.ReadBit();
+			//301
+			blockVisibilityParameter.Name = this._mergedReaders.ReadVariableText();
+			//302
+			blockVisibilityParameter.Description = this._mergedReaders.ReadVariableText();
+			//missing bit??	91 should be an int
+			blockVisibilityParameter.Value91 = this._mergedReaders.ReadBit();
 
-			var b_8 = _objectReader.ReadBit();
-			var b_9 = _objectReader.ReadBit();
-			var b_10 = _objectReader.ReadBit();
-			var b_11 = _objectReader.ReadBit();
-			var b_12 = _objectReader.ReadBit();
-			var b_13 = _objectReader.ReadBit();
-			var S_14 = _objectReader.ReadBitShort();  //	can also be L
-
-			var s_15 = _objectReader.ReadBitShort();
-			var b_16 = _objectReader.ReadBit();
-			var b_17 = _objectReader.ReadBit();
-			var s_18 = _objectReader.ReadBitShort();
-
-			//	300	Parameter Type
-			blockVisibilityParameter.ParameterType = _textReader.ReadVariableText();
-
-			//	1010, 1020, 1030	Menu position
-			blockVisibilityParameter.BasePosition = _objectReader.Read3BitDouble();
-			//	2x0 <- 
-			var s170 = _objectReader.ReadBitShort();
-			var s171 = _objectReader.ReadBitShort();
-			var l93 = _objectReader.ReadBitLong();
-
-			//	301
-			blockVisibilityParameter.Name = _textReader.ReadVariableText();
-			//	302
-			blockVisibilityParameter.Description = _textReader.ReadVariableText();
-			//	DXF 91
-			blockVisibilityParameter.L91 = _objectReader.ReadBitLong();
-			//DwgAnalyseTools.resetPosition(214293, 0);
-			//  DXF 93 Total entities count (no property)
-			var totalEntitiesCount = _objectReader.ReadBitLong();
+			//DXF 93 Total entities count
+			var totalEntitiesCount = this._objectReader.ReadBitLong();
 			for (int i = 0; i < totalEntitiesCount; i++)
 			{
-				var handle = this.handleReference();
-				template.TotalEntityHandles.Add(handle, null);
+				//331
+				template.EntityHandles.Add(this.handleReference());
 			}
 
-			//	DXF 92 Sub blocks count (no property)
-			var subBlocksCount = _objectReader.ReadBitLong();
-			for (int sbi = 0; sbi < subBlocksCount; sbi++)
+			//DXF 92 states count
+			var nstates = this._objectReader.ReadBitLong();
+			for (int j = 0; j < nstates; j++)
 			{
-				BlockVisibilityParameter.SubBlock subBlock = new BlockVisibilityParameter.SubBlock();
-				subBlock.Name = _textReader.ReadVariableText();
-				blockVisibilityParameter.SubBlocks.Add(subBlock);
+				template.StateTemplates.Add(this.readState());
+			}
 
-				IList<ulong> subBlockHandles = new List<ulong>();
-				template.SubBlockHandles.Add(subBlock, subBlockHandles);
-				//	DXF 94 Subblock entities count (no property)
-				int entitiesCount = _objectReader.ReadBitLong();
-				for (int i = 0; i < entitiesCount; i++)
-				{
-					var handle = this.handleReference();
-					subBlockHandles.Add(handle);
-				}
-				//DwgAnalyseTools.showCurrentPosAndShift();
-				//	DXF 95 
-				var endMark = _objectReader.ReadBitLong();
+			return template;
+		}
+
+		private CadBlockVisibilityParameterTemplate.StateTemplate readState()
+		{
+			CadBlockVisibilityParameterTemplate.StateTemplate template = new CadBlockVisibilityParameterTemplate.StateTemplate();
+
+			template.State.Name = this._textReader.ReadVariableText();
+
+			//DXF 94 subset count 1
+			int n1 = this._objectReader.ReadBitLong();
+			for (int i = 0; i < n1; i++)
+			{
+				//332
+				template.SubSet1.Add(this.handleReference());
+			}
+
+			//DXF 95 subset count 2 
+			var n2 = this._objectReader.ReadBitLong();
+			for (int i = 0; i < n2; i++)
+			{
+				//333
+				template.SubSet2.Add(this.handleReference());
 			}
 
 			return template;
@@ -2449,8 +2546,10 @@ namespace ACadSharp.IO.DWG
 
 			//R13 - R14 Only:
 			if (this.R13_14Only)
+			{
 				//H VIEWPORT ENT HEADER(hard pointer)
 				template.ViewportHeaderHandle = this.handleReference();
+			}
 
 			//R2000 +:
 			if (this.R2000Plus)
@@ -3022,7 +3121,7 @@ namespace ACadSharp.IO.DWG
 			//BS	170 LeaderLineType (short)
 			mLeader.PathType = (MultiLeaderPathType)this._objectReader.ReadBitShort();
 			//CMC	91  Leade LineColor (Color)
-			mLeader.LineColor = _mergedReaders.ReadCmColor();
+			mLeader.LineColor = this._mergedReaders.ReadCmColor();
 			//H 	341 LeaderLineTypeID (handle/LineType)
 			template.LeaderLineTypeHandle = this.handleReference();
 
@@ -3080,7 +3179,7 @@ namespace ACadSharp.IO.DWG
 					//	//  DXF:	94  BL Arrowhead Index (DXF)
 					//	//	ODA:	94 B Is Default
 					//	int arrowheadIndex = _objectReader.ReadBitLong();
-					bool isDefault = _objectReader.ReadBit();
+					bool isDefault = this._objectReader.ReadBit();
 
 					//  345 Arrowhead ID
 					template.ArrowheadHandles.Add(this.handleReference(), isDefault);
@@ -4732,9 +4831,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readViewportEntityControl()
 		{
-			return null;
-
-			DwgViewportEntityControlTemplate template = new DwgViewportEntityControlTemplate();
+			CadViewportEntityControlTemplate template = new CadViewportEntityControlTemplate();
 
 			this.readCommonNonEntityData(template);
 
@@ -4742,38 +4839,40 @@ namespace ACadSharp.IO.DWG
 			//Numentries BL 70
 			int numentries = this._objectReader.ReadBitLong();
 			for (int i = 0; i < numentries; ++i)
+			{
 				//Handle refs H NULL(soft pointer)	xdicobjhandle(hard owner)	the apps(soft owner)
 				template.EntryHandles.Add(this.handleReference());
+			}
 
 			return template;
 		}
 
 		private CadTemplate readViewportEntityHeader()
 		{
-			//Viewport viewport = new Viewport();
-			//DwgViewportTemplate template = new DwgViewportTemplate(viewport);
+			Viewport viewport = new Viewport();
+			CadViewportTemplate template = new CadViewportTemplate(viewport);
 
-			//this.readCommonNonEntityData(template);
+			this.readCommonNonEntityData(template);
 
-			////Common:
-			////Entry name TV 2
-			//viewport.StyleSheetName = this._textReader.ReadVariableText();
+			//Common:
+			//Entry name TV 2
+			viewport.StyleSheetName = this._textReader.ReadVariableText();
 
-			//this.readXrefDependantBit(viewport);
+			this._objectReader.ReadBit();
+			this._objectReader.ReadBitShort();
+			this._objectReader.ReadBit();
 
-			////1 flag B The 1 bit of the 70 group
-			//this._objectReader.ReadBit();
+			//1 flag B The 1 bit of the 70 group
+			this._objectReader.ReadBit();
 
-			////Handle refs H viewport entity control (soft pointer)
-			//this.handleReference();
-			////xdicobjhandle (hard owner)
-			//this.handleReference();
-			////External reference block handle (hard pointer)
-			//this.handleReference();
+			//Handle refs H viewport entity control (soft pointer)
+			this.handleReference();
+			//xdicobjhandle (hard owner)
+			this.handleReference();
+			//External reference block handle (hard pointer)
+			template.BlockHandle = this.handleReference();
 
-			//TODO: transform the viewport ent into the viewport
-
-			return null;
+			return template;
 		}
 
 		private CadTemplate readGroup()
@@ -5535,11 +5634,11 @@ namespace ACadSharp.IO.DWG
 			int nfaces = this._objectReader.ReadBitLong();
 			for (int i = 0; i < nfaces; i++)
 			{
-				int faceSize = _objectReader.ReadBitLong();
+				int faceSize = this._objectReader.ReadBitLong();
 				int[] arr = new int[faceSize];
 				for (int j = 0; j < faceSize; j++)
 				{
-					arr[j] = _objectReader.ReadBitLong();
+					arr[j] = this._objectReader.ReadBitLong();
 				}
 
 				i += faceSize;
@@ -5548,20 +5647,20 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Edges
-			int nedges = _objectReader.ReadBitLong();
+			int nedges = this._objectReader.ReadBitLong();
 			for (int k = 0; k < nedges; k++)
 			{
-				int start = _objectReader.ReadBitLong();
-				int end = _objectReader.ReadBitLong();
+				int start = this._objectReader.ReadBitLong();
+				int end = this._objectReader.ReadBitLong();
 				mesh.Edges.Add(new Mesh.Edge(start, end));
 			}
 
 			//Crease
-			int ncrease = _objectReader.ReadBitLong();
+			int ncrease = this._objectReader.ReadBitLong();
 			for (int l = 0; l < ncrease; l++)
 			{
 				Mesh.Edge edge = mesh.Edges[l];
-				edge.Crease = _objectReader.ReadBitDouble();
+				edge.Crease = this._objectReader.ReadBitDouble();
 				mesh.Edges[l] = edge;
 			}
 

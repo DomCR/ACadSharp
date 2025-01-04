@@ -283,7 +283,7 @@ namespace ACadSharp.IO.DWG
 
 		public void WriteBytes(byte[] bytes, int offset, int length)
 		{
-			throw new NotImplementedException();
+			this.Main.WriteBytes(bytes, offset, length);
 		}
 
 		public void WriteEnColor(Color color, Transparency transparency, bool isBookColor)

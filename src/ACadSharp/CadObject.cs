@@ -3,7 +3,9 @@ using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using ACadSharp.XData;
 using System;
+using ACadSharp.XData;
 using System.Collections.Generic;
 
 namespace ACadSharp
@@ -71,7 +73,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Extended data attached to this object
 		/// </summary>
-		public ExtendedDataDictionary ExtendedData { get; } = new ExtendedDataDictionary();
+		public ExtendedDataDictionary ExtendedData { get; }
 
 		/// <summary>
 		/// Document where this element belongs
@@ -87,7 +89,10 @@ namespace ACadSharp
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		public CadObject() { }
+		public CadObject()
+		{
+			this.ExtendedData = new ExtendedDataDictionary(this);
+		}
 
 		/// <summary>
 		/// Creates the extended dictionary if null.
