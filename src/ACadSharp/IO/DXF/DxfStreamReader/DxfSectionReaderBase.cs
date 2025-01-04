@@ -1397,7 +1397,7 @@ namespace ACadSharp.IO.DXF
 		{
 			if (this._reader.Code != 72)
 			{
-				this._builder.Notify($"Edge Boundary path should should define the type with code 72 but was {this._reader.Code}");
+				this._builder.Notify($"Edge Boundary path should define the type with code 72 but was {this._reader.Code}");
 				return null;
 			}
 
@@ -1658,7 +1658,7 @@ namespace ACadSharp.IO.DXF
 				}
 				else
 				{
-					this._builder.Notify("An error occurred while assiging a property using mapper", NotificationType.Error, ex);
+					this._builder.Notify("An error occurred while assigning a property using mapper", NotificationType.Error, ex);
 				}
 			}
 

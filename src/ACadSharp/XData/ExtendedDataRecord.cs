@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ACadSharp.XData
+﻿namespace ACadSharp.XData
 {
 	public abstract class ExtendedDataRecord
 	{

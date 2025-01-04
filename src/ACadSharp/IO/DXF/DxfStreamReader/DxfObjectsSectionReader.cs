@@ -1,7 +1,10 @@
 ﻿using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
+using ACadSharp.Objects.Evaluations;
 using System;
 using System.Linq;
+using System.Threading;
+using static ACadSharp.IO.Templates.CadEvaluationGraphTemplate;
 
 namespace ACadSharp.IO.DXF
 {
@@ -59,6 +62,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<CadDictionaryWithDefault>(new CadDictionaryWithDefaultTemplate(), this.readDictionaryWithDefault);
 				case DxfFileToken.ObjectLayout:
 					return this.readObjectCodes<Layout>(new CadLayoutTemplate(), this.readLayout);
+				case DxfFileToken.ObjectEvalGraph:
+					return this.readObjectCodes<EvaluationGraph>(new CadEvaluationGraphTemplate(), this.readEvaluationGraph);
 				case DxfFileToken.ObjectDictionaryVar:
 					return this.readObjectCodes<DictionaryVariable>(new CadTemplate<DictionaryVariable>(new DictionaryVariable()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectPdfDefinition:
@@ -105,7 +110,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		protected CadTemplate readObjectCodes<T>(CadTemplate template, ReadObjectDelegate<T> readEntity)
+		protected CadTemplate readObjectCodes<T>(CadTemplate template, ReadObjectDelegate<T> readObject)
 			where T : CadObject
 		{
 			this._reader.ReadNext();
@@ -114,7 +119,7 @@ namespace ACadSharp.IO.DXF
 
 			while (this._reader.DxfCode != DxfCode.Start)
 			{
-				if (!readEntity(template, map))
+				if (!readObject(template, map))
 				{
 					this.readCommonCodes(template, out bool isExtendedData, map);
 					if (isExtendedData)
@@ -143,6 +148,78 @@ namespace ACadSharp.IO.DXF
 			{
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.PlotSettings]);
+			}
+		}
+
+		private bool readEvaluationGraph(CadTemplate template, DxfMap map)
+		{
+			CadEvaluationGraphTemplate tmp = template as CadEvaluationGraphTemplate;
+			EvaluationGraph evGraph = tmp.CadObject;
+
+			switch (this._reader.Code)
+			{
+				case 91:
+					while (this._reader.Code == 91)
+					{
+						GraphNodeTemplate nodeTemplate = new GraphNodeTemplate();
+						EvaluationGraph.Node node = nodeTemplate.Node;
+
+						node.Index = this._reader.ValueAsInt;
+
+						this._reader.ExpectedCode(93);
+						node.Flags = this._reader.ValueAsInt;
+
+						this._reader.ExpectedCode(95);
+						node.NextNodeIndex = this._reader.ValueAsInt;
+
+						this._reader.ExpectedCode(360);
+						nodeTemplate.ExpressionHandle = this._reader.ValueAsHandle;
+
+						this._reader.ExpectedCode(92);
+						node.Data1 = this._reader.ValueAsInt;
+						this._reader.ExpectedCode(92);
+						node.Data2 = this._reader.ValueAsInt;
+						this._reader.ExpectedCode(92);
+						node.Data3 = this._reader.ValueAsInt;
+						this._reader.ExpectedCode(92);
+						node.Data4 = this._reader.ValueAsInt;
+
+						this._reader.ReadNext();
+
+						tmp.NodeTemplates.Add(nodeTemplate);
+					}
+
+					if (this._reader.DxfCode == DxfCode.Start)
+					{
+						return true;
+					}
+
+					return this.readEvaluationGraph(template, map);
+				case 92:
+					//Edges
+					while (this._reader.Code == 92)
+					{
+						this._reader.ExpectedCode(93);
+						this._reader.ExpectedCode(94);
+						this._reader.ExpectedCode(91);
+						this._reader.ExpectedCode(91);
+						this._reader.ExpectedCode(92);
+						this._reader.ExpectedCode(92);
+						this._reader.ExpectedCode(92);
+						this._reader.ExpectedCode(92);
+						this._reader.ExpectedCode(92);
+
+						this._reader.ReadNext();
+					}
+
+					if(this._reader.DxfCode == DxfCode.Start)
+					{
+						return true;
+					}
+
+					return this.readEvaluationGraph(template, map);
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.EvalGraph]);
 			}
 		}
 
