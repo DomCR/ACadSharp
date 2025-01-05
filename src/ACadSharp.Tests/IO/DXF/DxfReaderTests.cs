@@ -135,6 +135,14 @@ namespace ACadSharp.Tests.IO.DXF
 			this._docIntegrity.AssertDocumentTree(doc);
 		}
 
+		[Theory]
+		[MemberData(nameof(DxfAsciiFiles))]
+		[MemberData(nameof(DxfBinaryFiles))]
+		public override void AssertDocumentHeader(FileModel test)
+		{
+			base.AssertDocumentHeader(test);
+		}
+
 #if !NETFRAMEWORK
 		[Theory]
 		[MemberData(nameof(DxfAsciiFiles))]

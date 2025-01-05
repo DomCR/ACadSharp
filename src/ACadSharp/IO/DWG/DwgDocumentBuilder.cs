@@ -43,6 +43,8 @@ namespace ACadSharp.IO.DWG
 			this.buildDictionaries();
 
 			base.BuildDocument();
+
+			this.HeaderHandles.UpdateHeader(this.DocumentToBuild.Header, this);
 		}
 	}
 }

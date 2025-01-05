@@ -673,7 +673,7 @@ namespace ACadSharp.Header
 		/// System variable CMLSTYLE.
 		/// </remarks>
 		[CadSystemVariable("$CMLSTYLE", true, 2)]
-		public string MultiLineStyleName
+		public string CurrentMultiLineStyleName
 		{
 			get { return this._currentMLineStyle.Name; }
 			set
@@ -859,10 +859,10 @@ namespace ACadSharp.Header
 		private double _facetResolution = 0.5;
 
 		/// <summary>
-		/// Current multiline scale
+		/// Current multiline scale.
 		/// </summary>
 		/// <remarks>
-		/// System variable CMLSCALE
+		/// System variable CMLSCALE.
 		/// </remarks>
 		[CadSystemVariable("$CMLSCALE", 40)]
 		public double CurrentMultilineScale { get; set; } = 20.0d;
@@ -3121,7 +3121,7 @@ namespace ACadSharp.Header
 				}
 				else
 				{
-					return this.Document.MLineStyles[this.MultiLineStyleName];
+					return this.Document.MLineStyles[this.CurrentMultiLineStyleName];
 				}
 			}
 			private set
@@ -3164,9 +3164,9 @@ namespace ACadSharp.Header
 				(info, attribute) => attribute.Name);
 		}
 
-		public CadHeader() : this(ACadVersion.AC1018) { }
+		public CadHeader() : this(ACadVersion.AC1032) { }
 
-		public CadHeader(CadDocument document) : this(ACadVersion.AC1018)
+		public CadHeader(CadDocument document) : this(ACadVersion.AC1032)
 		{
 			this.Document = document;
 		}

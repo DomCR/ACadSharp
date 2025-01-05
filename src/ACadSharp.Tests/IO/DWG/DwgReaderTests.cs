@@ -64,6 +64,13 @@ namespace ACadSharp.Tests.IO.DWG
 			this._docIntegrity.AssertDocumentTree(doc);
 		}
 
+		[Theory]
+		[MemberData(nameof(DwgFilePaths))]
+		public override void AssertDocumentHeader(FileModel test)
+		{
+			base.AssertDocumentHeader(test);
+		}
+
 		[Theory(Skip = "Long time test")]
 		[MemberData(nameof(DwgFilePaths))]
 		public void ReadCrcEnabledTest(FileModel test)
