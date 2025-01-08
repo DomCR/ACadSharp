@@ -110,7 +110,10 @@ namespace ACadSharp.IO
 			this._builder.OnNotification += this.onNotificationEvent;
 
 			this._document.SummaryInfo = this.ReadSummaryInfo();
+			
 			this._document.Header = this.ReadHeader();
+			this._document.Header.Document = this._document;
+
 			this._document.Classes = this.readClasses();
 
 			this.readAppInfo();
@@ -226,8 +229,6 @@ namespace ACadSharp.IO
 
 			if (this._builder != null)
 				this._builder.HeaderHandles = headerHandles;
-
-			header.Document = this._document;
 
 			return header;
 		}

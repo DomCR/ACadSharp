@@ -152,6 +152,7 @@ namespace ACadSharp.IO
 				{
 					case DxfFileToken.HeaderSection:
 						this._document.Header = this.ReadHeader();
+						this._document.Header.Document = this._document;
 						this._builder.InitialHandSeed = this._document.Header.HandleSeed;
 						break;
 					case DxfFileToken.ClassesSection:

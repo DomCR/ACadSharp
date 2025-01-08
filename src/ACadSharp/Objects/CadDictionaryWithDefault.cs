@@ -23,10 +23,10 @@ namespace ACadSharp.Objects
 		public override string SubclassMarker => DxfSubclassMarker.DictionaryWithDefault;
 
 		/// <summary>
-		/// Default object
+		/// Default entry.
 		/// </summary>
 		/// <remarks>
-		/// Currently only used for plot style dictionary's default entry, named “Normal”
+		/// Currently only used for plot style dictionary's default entry, named “Normal”.
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public CadObject DefaultEntry { get; set; }
