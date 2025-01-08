@@ -129,6 +129,23 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(line);
 			}
 
+			public void ViewZoom()
+			{
+				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
+				Line line1 = new Line(new XYZ(0, 100, 0), new XYZ(100, 0, 0));
+
+				this.Document.Entities.Add(line);
+				this.Document.Entities.Add(line1);
+
+				var box = line.GetBoundingBox();
+
+				VPort active = this.Document.VPorts[VPort.DefaultName];
+				active.Center = (XY)box.Center;
+				//active.BottomLeft = (XY)box.Min;
+				//active.TopRight = (XY)box.Max;
+				active.ViewHeight = 100;
+			}
+
 			public void SingleMLine()
 			{
 				//It creates a valid dxf but the MLine is wrongly drawn
@@ -521,6 +538,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.Empty)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleEllipse)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
+			Data.Add(new(nameof(SingleCaseGenerator.ViewZoom)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
