@@ -1,5 +1,5 @@
 ﻿using ACadSharp.Attributes;
-using CSMath;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -11,11 +11,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(2)]
 		public string Name { get; set; }
 
-		[DxfCodeValue(DxfReferenceType.IsAngle, 53)]
-		public double Angle { get; set; }
-
-		public double Scale { get; set; }
-
+		[DxfCodeValue(DxfReferenceType.Count, 79)]
 		public List<Line> Lines { get; set; } = new List<Line>();
 
 		public HatchPattern(string name)
@@ -34,6 +30,19 @@ namespace ACadSharp.Entities
 			}
 
 			return clone;
+		}
+
+		public static IEnumerable<HatchPattern> LoadFrom(string path)
+		{
+			List<HatchPattern> patterns = new List<HatchPattern>();
+
+			return patterns;
+		}
+
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return $"{this.Name}";
 		}
 	}
 }
