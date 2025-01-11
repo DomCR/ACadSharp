@@ -12,7 +12,7 @@ namespace ACadSharp.IO
 	/// <summary>
 	/// Class for writing a DWG from a <see cref="CadDocument"/>.
 	/// </summary>
-	public class DwgWriter : CadWriterBase<CadWriterConfiguration>
+	public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 	{
 		private ACadVersion _version { get { return this._document.Header.Version; } }
 
@@ -91,7 +91,7 @@ namespace ACadSharp.IO
 		/// <param name="document"></param>
 		/// <param name="configuration"></param>
 		/// <param name="notification"></param>
-		public static void Write(string filename, CadDocument document, CadWriterConfiguration configuration = null, NotificationEventHandler notification = null)
+		public static void Write(string filename, CadDocument document, DwgWriterConfiguration configuration = null, NotificationEventHandler notification = null)
 		{
 			using (DwgWriter writer = new DwgWriter(filename, document))
 			{
