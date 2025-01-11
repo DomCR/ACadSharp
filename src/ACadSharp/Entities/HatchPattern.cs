@@ -18,12 +18,12 @@ namespace ACadSharp.Entities
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Additional names for this pattern.
+		/// Description for this pattern.
 		/// </summary>
 		/// <remarks>
-		/// The Additional names are not saved in dxf or dwg files, they are only used in the .pat files.
+		/// The description is not saved in dxf or dwg files, its only used in the .pat files.
 		/// </remarks>
-		public string[] AdditionalNames { get; set; }
+		public string Description { get; set; }
 
 		[DxfCodeValue(DxfReferenceType.Count, 79)]
 		public List<Line> Lines { get; set; } = new List<Line>();
@@ -67,8 +67,11 @@ namespace ACadSharp.Entities
 			{
 				if (line.StartsWith("*"))
 				{
-					string[] names = line.Remove(0, 1).Split(',');
-					current = new HatchPattern(names.FirstOrDefault());
+					int index = line.IndexOf(',');
+					string noPrefix = line.Remove(0, 1);
+					current = new HatchPattern(noPrefix.Substring(0, index - 1));
+					current.Description = new string(noPrefix.Skip(index).ToArray()).Trim();
+
 					patterns.Add(current);
 				}
 				else
