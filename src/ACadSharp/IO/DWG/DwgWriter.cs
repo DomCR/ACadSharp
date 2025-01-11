@@ -291,7 +291,12 @@ namespace ACadSharp.IO
 		private void writeObjects()
 		{
 			MemoryStream stream = new MemoryStream();
-			DwgObjectWriter writer = new DwgObjectWriter(stream, this._document, this._encoding, this.Configuration.WriteXRecords);
+			DwgObjectWriter writer = new DwgObjectWriter(
+				stream,
+				this._document,
+				this._encoding,
+				this.Configuration.WriteXRecords,
+				this.Configuration.WriteXData);
 			writer.OnNotification += this.triggerNotification;
 			writer.Write();
 
