@@ -16,17 +16,21 @@ namespace ACadSharp.IO.DXF
 
 		public CadObjectHolder Holder { get; }
 
+		public DxfWriterConfiguration Configuration { get; }
+
 		protected IDxfStreamWriter _writer;
 		protected CadDocument _document;
 
 		public DxfSectionWriterBase(
 			IDxfStreamWriter writer,
 			CadDocument document,
-			CadObjectHolder holder)
+			CadObjectHolder holder,
+			DxfWriterConfiguration configuration)
 		{
 			this._writer = writer;
 			this._document = document;
 			this.Holder = holder;
+			this.Configuration = configuration;
 		}
 
 		public void Write()
@@ -72,8 +76,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(DxfCode.SoftPointerId, cadObject.Owner.Handle);
 
-			//TODO: Write exended data
-			if (cadObject.ExtendedData != null)
+			if (cadObject.ExtendedData != null && this.Configuration.WriteXData)
 			{
 				//this._writer.Write(DxfCode.ControlString,DxfFileToken.ReactorsToken);
 				//this._writer.Write(DxfCode.HardOwnershipId, cadObject.ExtendedData);
