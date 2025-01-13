@@ -115,7 +115,7 @@ namespace ACadSharp.IO.DXF
 					throw new NotImplementedException($"Entity not implemented {entity.GetType().FullName}");
 			}
 
-			this.writeExtendedData(entity);
+			this.writeExtendedData(entity.ExtendedData);
 		}
 
 		private void writeArc(Arc arc)

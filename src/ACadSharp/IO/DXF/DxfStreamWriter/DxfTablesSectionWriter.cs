@@ -107,7 +107,7 @@ namespace ACadSharp.IO.DXF
 #endif
 			}
 
-			this.writeExtendedData(entry);
+			this.writeExtendedData(entry.ExtendedData);
 		}
 
 		private void writeBlockRecord(BlockRecord block, DxfClassMap map)

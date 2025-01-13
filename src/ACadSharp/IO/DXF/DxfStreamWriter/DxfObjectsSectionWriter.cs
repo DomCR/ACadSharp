@@ -95,7 +95,7 @@ namespace ACadSharp.IO.DXF
 					throw new NotImplementedException($"Object not implemented : {co.GetType().FullName}");
 			}
 
-			this.writeExtendedData(co);
+			this.writeExtendedData(co.ExtendedData);
 		}
 
 		protected void writeBookColor(BookColor color)
