@@ -7,9 +7,8 @@ namespace ACadSharp.IO.DXF
 	{
 		public override string SectionName { get { return DxfFileToken.EntitiesSection; } }
 
-		public DxfEntitiesSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder) : base(writer, document, holder)
-		{
-		}
+		public DxfEntitiesSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder objectHolder, DxfWriterConfiguration configuration)
+			: base(writer, document, objectHolder, configuration) { }
 
 		protected override void writeSection()
 		{

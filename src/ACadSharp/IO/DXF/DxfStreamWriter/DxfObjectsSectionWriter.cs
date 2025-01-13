@@ -11,9 +11,8 @@ namespace ACadSharp.IO.DXF
 	{
 		public override string SectionName { get { return DxfFileToken.ObjectsSection; } }
 
-		public bool WriteXRecords { get; set; } = false;
-
-		public DxfObjectsSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder) : base(writer, document, holder)
+		public DxfObjectsSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder, DxfWriterConfiguration configuration)
+			: base(writer, document, holder, configuration)
 		{
 		}
 
@@ -45,7 +44,7 @@ namespace ACadSharp.IO.DXF
 			}
 
 
-			if (co is XRecord && !this.WriteXRecords)
+			if (co is XRecord && !this.Configuration.WriteXRecords)
 			{
 				return;
 			}
@@ -96,7 +95,7 @@ namespace ACadSharp.IO.DXF
 					throw new NotImplementedException($"Object not implemented : {co.GetType().FullName}");
 			}
 
-			this.writeExtendedData(co);
+			this.writeExtendedData(co.ExtendedData);
 		}
 
 		protected void writeBookColor(BookColor color)
@@ -117,7 +116,7 @@ namespace ACadSharp.IO.DXF
 
 			foreach (NonGraphicalObject item in e)
 			{
-				if (item is XRecord && !this.WriteXRecords)
+				if (item is XRecord && !this.Configuration.WriteXRecords)
 				{
 					return;
 				}

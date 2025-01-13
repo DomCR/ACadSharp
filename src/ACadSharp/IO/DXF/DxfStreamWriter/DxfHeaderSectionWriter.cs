@@ -10,11 +10,9 @@ namespace ACadSharp.IO.DXF
 
 		public CadHeader Header { get { return this._document.Header; } }
 
-		public DxfWriterConfiguration Options { get; }
-
-		public DxfHeaderSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder, DxfWriterConfiguration options) : base(writer, document, holder)
+		public DxfHeaderSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder, DxfWriterConfiguration configuration)
+			: base(writer, document, holder, configuration)
 		{
-			this.Options = options;
 		}
 
 		protected override void writeSection()
@@ -23,7 +21,7 @@ namespace ACadSharp.IO.DXF
 
 			foreach (KeyValuePair<string, CadSystemVariable> item in map)
 			{
-				if (!this.Options.WriteAllHeaderVariables && !this.Options.HeaderVariables.Contains(item.Key))
+				if (!this.Configuration.WriteAllHeaderVariables && !this.Configuration.HeaderVariables.Contains(item.Key))
 					continue;
 
 				if (item.Value.ReferenceType.HasFlag(DxfReferenceType.Ignored))
