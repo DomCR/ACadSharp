@@ -501,6 +501,12 @@ namespace ACadSharp.Tests.IO
 				records.Add(new ExtendedDataInteger32(33));
 				records.Add(new ExtendedDataString("my extended data string"));
 				records.Add(new ExtendedDataHandle(5));
+				records.Add(new ExtendedDataReal(25.35));
+				records.Add(new ExtendedDataScale(0.66));
+				records.Add(new ExtendedDataDistance(481.48));
+				records.Add(new ExtendedDataDirection(new XYZ(4, 3, 2)));
+				records.Add(new ExtendedDataCoordinate(new XYZ(8, 7, 4)));
+				records.Add(new ExtendedDataWorldCoordinate(new XYZ(85, 74, 47)));
 				records.Add(new ExtendedDataLayer(layer.Handle));
 				records.Add(new ExtendedDataBinaryChunk(new byte[] { 1, 2, 3, 4 }));
 				records.Add(new ExtendedDataControlString(true));

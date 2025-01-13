@@ -331,10 +331,13 @@ namespace ACadSharp.IO.DWG
 
 		private void writeExtendedData(ExtendedDataDictionary data)
 		{
-			//EED size BS size of extended entity data, if any
-			foreach (var item in data.Entries)
+			if (this.WriteXData)
 			{
-				writeExtendedDataEntry(item.Key, item.Value);
+				//EED size BS size of extended entity data, if any
+				foreach (var item in data.Entries)
+				{
+					writeExtendedDataEntry(item.Key, item.Value);
+				}
 			}
 
 			this._writer.WriteBitShort(0);
@@ -363,6 +366,9 @@ namespace ACadSharp.IO.DWG
 							break;
 						case ExtendedDataInteger32 s32:
 							mstream.Write(LittleEndianConverter.Instance.GetBytes(s32.Value), 0, 4);
+							break;
+						case ExtendedDataReal real:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(real.Value), 0, 8);
 							break;
 						case ExtendedDataScale scale:
 							mstream.Write(LittleEndianConverter.Instance.GetBytes(scale.Value), 0, 8);
