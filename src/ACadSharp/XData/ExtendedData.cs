@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace ACadSharp.XData
 {
+	/// <summary>
+	/// Extended data linked to an <see cref="AppId"/>.
+	/// </summary>
 	public class ExtendedData
 	{
 		public AppId AppId { get; }
