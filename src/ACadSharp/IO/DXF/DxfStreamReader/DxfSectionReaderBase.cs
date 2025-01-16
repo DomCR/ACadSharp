@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
+using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSMath;
 using CSUtilities.Converters;
@@ -1185,7 +1186,14 @@ namespace ACadSharp.IO.DXF
 						record = new ExtendedDataControlString(this._reader.ValueAsString == "}");
 						break;
 					case DxfCode.ExtendedDataLayerName:
-						record = new ExtendedDataLayer(this._reader.ValueAsHandle);
+						if (this._builder.Layers.TryGetValue(this._reader.ValueAsString, out Layer layer))
+						{
+							record = new ExtendedDataLayer(layer.Handle);
+						}
+						else
+						{
+							this._builder.Notify($"[XData] Could not found the linked Layer {this._reader.ValueAsString}.", NotificationType.Warning);
+						}
 						break;
 					case DxfCode.ExtendedDataBinaryChunk:
 						record = new ExtendedDataBinaryChunk(this._reader.ValueAsBinaryChunk);

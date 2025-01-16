@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Tables;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.XData
 {
@@ -50,6 +51,19 @@ namespace ACadSharp.XData
 			return this._data.TryGetValue(app, out value);
 		}
 
+		public bool TryGet(string name, out ExtendedData value)
+		{
+			AppId app = this._data.Keys.FirstOrDefault(k => k.Name == name);
+			if (app == null)
+			{
+				value = null;
+				return false;
+			}
+
+			value = this._data[app];
+			return true;
+		}
+
 		/// <summary>
 		/// Check whether a AppId is given in the Dictionary.
 		/// </summary>
@@ -57,6 +71,11 @@ namespace ACadSharp.XData
 		public bool ContainsKey(AppId app)
 		{
 			return this._data.ContainsKey(app);
+		}
+
+		public bool ContainsKeyName(string name)
+		{
+			return this._data.Keys.Select(k => k.Name).Contains(name);
 		}
 
 		/// <summary>
