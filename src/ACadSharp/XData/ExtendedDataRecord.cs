@@ -7,6 +7,8 @@
 			get { return this._code; }
 		}
 
+		public object RawValue { get { return this._value; } }
+
 		private DxfCode _code;
 
 		protected object _value;
