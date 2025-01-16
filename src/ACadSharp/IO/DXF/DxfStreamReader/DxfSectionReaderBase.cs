@@ -1222,7 +1222,7 @@ namespace ACadSharp.IO.DXF
 						this._reader.ReadNext();
 						z = this._reader.ValueAsDouble;
 
-						record = new ExtendedDataCoordinate(
+						record = new ExtendedDataWorldCoordinate(
 							new XYZ(
 								x,
 								y,
@@ -1236,7 +1236,7 @@ namespace ACadSharp.IO.DXF
 						this._reader.ReadNext();
 						z = this._reader.ValueAsDouble;
 
-						record = new ExtendedDataCoordinate(
+						record = new ExtendedDataDisplacement(
 							new XYZ(
 								x,
 								y,
@@ -1250,7 +1250,7 @@ namespace ACadSharp.IO.DXF
 						this._reader.ReadNext();
 						z = this._reader.ValueAsDouble;
 
-						record = new ExtendedDataCoordinate(
+						record = new ExtendedDataDirection(
 							new XYZ(
 								x,
 								y,
