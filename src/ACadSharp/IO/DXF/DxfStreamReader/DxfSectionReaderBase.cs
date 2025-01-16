@@ -1170,7 +1170,7 @@ namespace ACadSharp.IO.DXF
 					break;
 				}
 
-				ExtendedDataRecord record;
+				ExtendedDataRecord record = null;
 				double x = 0;
 				double y = 0;
 				double z = 0;
@@ -1267,6 +1267,11 @@ namespace ACadSharp.IO.DXF
 					default:
 						this._builder.Notify($"Unknown code for extended data: {this._reader.DxfCode}", NotificationType.Warning);
 						break;
+				}
+
+				if (record != null)
+				{
+					records.Add(record);
 				}
 
 				this._reader.ReadNext();
