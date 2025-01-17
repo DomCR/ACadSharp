@@ -7,6 +7,7 @@ using ACadSharp.XData;
 using System;
 using ACadSharp.XData;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp
 {
@@ -143,7 +144,21 @@ namespace ACadSharp
 			this.Document = doc;
 
 			if (this.XDictionary != null)
+			{
 				doc.RegisterCollection(this.XDictionary);
+			}
+
+			if (this.ExtendedData != null)
+			{
+				//Reset existing collection
+				var entries = this.ExtendedData.Entries;
+				this.ExtendedData.Clear();
+
+				foreach (var item in entries)
+				{
+					this.ExtendedData.Add(item.Key, item.Value);
+				}
+			}
 		}
 
 		internal virtual void UnassignDocument()

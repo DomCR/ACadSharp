@@ -20,8 +20,29 @@ namespace ACadSharp.XData
 
 		public void Add(AppId app)
 		{
-			this._data.Add(app, new ExtendedData(app));
+			this.Add(app, new ExtendedData());
 		}
+
+		public void Add(AppId app, ExtendedData extendedData)
+		{
+			if (this.Owner.Document != null)
+			{
+				if (this.Owner.Document.AppIds.TryGetValue(app.Name, out AppId existing))
+				{
+					this._data.Add(existing, extendedData);
+				}
+				else
+				{
+					this.Owner.Document.AppIds.Add(app);
+					this._data.Add(app, extendedData);
+				}
+			}
+			else
+			{
+				this._data.Add(app, extendedData);
+			}
+		}
+
 		/// <summary>
 		/// Add ExtendedData for a specific AppId to the Dictionary.
 		/// </summary>
@@ -29,7 +50,7 @@ namespace ACadSharp.XData
 		/// <param name="records">The ExtendedData records.</param>
 		public void Add(AppId app, IEnumerable<ExtendedDataRecord> records)
 		{
-			this._data.Add(app, new ExtendedData(app, records));
+			this._data.Add(app, new ExtendedData(records));
 		}
 
 		/// <summary>
