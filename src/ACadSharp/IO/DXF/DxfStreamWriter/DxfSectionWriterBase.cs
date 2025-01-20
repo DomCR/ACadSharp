@@ -95,7 +95,7 @@ namespace ACadSharp.IO.DXF
 				return;
 			}
 
-			foreach (var entry in xdata.Entries)
+			foreach (var entry in xdata)
 			{
 				this._writer.Write(DxfCode.ExtendedDataRegAppName, entry.Key.Name);
 
