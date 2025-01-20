@@ -148,7 +148,7 @@ namespace ACadSharp
 				doc.RegisterCollection(this.XDictionary);
 			}
 
-			if (this.ExtendedData != null)
+			if (this.ExtendedData.Any())
 			{
 				//Reset existing collection
 				var entries = this.ExtendedData.ToArray();
@@ -168,6 +168,18 @@ namespace ACadSharp
 
 			this.Handle = 0;
 			this.Document = null;
+
+			if (this.ExtendedData.Any())
+			{
+				//Reset existing collection
+				var entries = this.ExtendedData.ToArray();
+				this.ExtendedData.Clear();
+
+				foreach (var item in entries)
+				{
+					this.ExtendedData.Add(item.Key.Clone() as AppId, item.Value);
+				}
+			}
 		}
 
 		protected T updateTable<T>(T entry, Table<T> table)
