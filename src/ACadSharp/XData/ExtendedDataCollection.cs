@@ -8,9 +8,6 @@ namespace ACadSharp.XData
 {
 	public class ExtendedDataDictionary : IEnumerable<KeyValuePair<AppId, ExtendedData>>
 	{
-		[Obsolete]
-		public IEnumerable<KeyValuePair<AppId, ExtendedData>> Entries { get { return this._data; } }
-
 		public CadObject Owner { get; }
 
 		private Dictionary<AppId, ExtendedData> _data = new Dictionary<AppId, ExtendedData>();
