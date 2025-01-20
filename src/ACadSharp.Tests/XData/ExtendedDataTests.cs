@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
 using ACadSharp.XData;
+using System.Linq;
 using Xunit;
 
 namespace ACadSharp.Tests.XData
@@ -16,16 +17,19 @@ namespace ACadSharp.Tests.XData
 			AppId app = new AppId(appName);
 			Line line = new Line();
 			ExtendedData extendedData = new ExtendedData();
-			extendedData.Records.Add(new ExtendedDataString("extended data record"));
-
+			ExtendedDataRecord extendedDataRecord = new ExtendedDataString("extended data record");
+			extendedData.Records.Add(extendedDataRecord);
 
 			line.ExtendedData.Add(app, extendedData);
 
 			doc.Entities.Add(line);
 
 			Assert.Contains(app, doc.AppIds);
+			Assert.False(app.Handle == 0);
+
 			Assert.NotEmpty(line.ExtendedData);
 			Assert.NotEmpty(line.ExtendedData.Get(appName).Records);
+			Assert.Equal(extendedDataRecord, line.ExtendedData.Get(appName).Records.First());
 		}
 	}
 }
