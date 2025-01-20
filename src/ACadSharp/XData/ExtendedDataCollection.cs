@@ -1,12 +1,14 @@
 ﻿using ACadSharp.Tables;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ACadSharp.XData
 {
-	public class ExtendedDataDictionary
+	public class ExtendedDataDictionary : IEnumerable<KeyValuePair<AppId, ExtendedData>>
 	{
+		[Obsolete]
 		public IEnumerable<KeyValuePair<AppId, ExtendedData>> Entries { get { return this._data; } }
 
 		public CadObject Owner { get; }
@@ -51,6 +53,20 @@ namespace ACadSharp.XData
 		public void Add(AppId app, IEnumerable<ExtendedDataRecord> records)
 		{
 			this._data.Add(app, new ExtendedData(records));
+		}
+
+		/// <summary>
+		/// Get the different extended data by it's name.
+		/// </summary>
+		/// <returns></returns>
+		public IDictionary<string, ExtendedData> GetExtendedDataByName()
+		{
+			return this._data.ToDictionary(x => x.Key.Name, x => x.Value);
+		}
+
+		public ExtendedData Get(string name)
+		{
+			return this.GetExtendedDataByName()[name];
 		}
 
 		/// <summary>
@@ -105,6 +121,16 @@ namespace ACadSharp.XData
 		public void Clear()
 		{
 			this._data.Clear();
+		}
+
+		public IEnumerator<KeyValuePair<AppId, ExtendedData>> GetEnumerator()
+		{
+			return this._data.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return this._data.GetEnumerator();
 		}
 	}
 }

@@ -151,7 +151,7 @@ namespace ACadSharp
 			if (this.ExtendedData != null)
 			{
 				//Reset existing collection
-				var entries = this.ExtendedData.Entries;
+				var entries = this.ExtendedData.ToArray();
 				this.ExtendedData.Clear();
 
 				foreach (var item in entries)
