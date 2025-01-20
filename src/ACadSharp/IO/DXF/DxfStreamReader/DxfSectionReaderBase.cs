@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
+using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSMath;
 using CSUtilities.Converters;
@@ -1170,7 +1171,7 @@ namespace ACadSharp.IO.DXF
 					break;
 				}
 
-				ExtendedDataRecord record;
+				ExtendedDataRecord record = null;
 				double x = 0;
 				double y = 0;
 				double z = 0;
@@ -1185,7 +1186,14 @@ namespace ACadSharp.IO.DXF
 						record = new ExtendedDataControlString(this._reader.ValueAsString == "}");
 						break;
 					case DxfCode.ExtendedDataLayerName:
-						record = new ExtendedDataLayer(this._reader.ValueAsHandle);
+						if (this._builder.Layers.TryGetValue(this._reader.ValueAsString, out Layer layer))
+						{
+							record = new ExtendedDataLayer(layer.Handle);
+						}
+						else
+						{
+							this._builder.Notify($"[XData] Could not found the linked Layer {this._reader.ValueAsString}.", NotificationType.Warning);
+						}
 						break;
 					case DxfCode.ExtendedDataBinaryChunk:
 						record = new ExtendedDataBinaryChunk(this._reader.ValueAsBinaryChunk);
@@ -1214,7 +1222,7 @@ namespace ACadSharp.IO.DXF
 						this._reader.ReadNext();
 						z = this._reader.ValueAsDouble;
 
-						record = new ExtendedDataCoordinate(
+						record = new ExtendedDataWorldCoordinate(
 							new XYZ(
 								x,
 								y,
@@ -1228,7 +1236,7 @@ namespace ACadSharp.IO.DXF
 						this._reader.ReadNext();
 						z = this._reader.ValueAsDouble;
 
-						record = new ExtendedDataCoordinate(
+						record = new ExtendedDataDisplacement(
 							new XYZ(
 								x,
 								y,
@@ -1242,7 +1250,7 @@ namespace ACadSharp.IO.DXF
 						this._reader.ReadNext();
 						z = this._reader.ValueAsDouble;
 
-						record = new ExtendedDataCoordinate(
+						record = new ExtendedDataDirection(
 							new XYZ(
 								x,
 								y,
@@ -1267,6 +1275,11 @@ namespace ACadSharp.IO.DXF
 					default:
 						this._builder.Notify($"Unknown code for extended data: {this._reader.DxfCode}", NotificationType.Warning);
 						break;
+				}
+
+				if (record != null)
+				{
+					records.Add(record);
 				}
 
 				this._reader.ReadNext();

@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Tables;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.XData
@@ -8,18 +9,20 @@ namespace ACadSharp.XData
 	/// </summary>
 	public class ExtendedData
 	{
-		public AppId AppId { get; }
+		public List<ExtendedDataRecord> Records { get; } = new();
 
-		public List<ExtendedDataRecord> Records { get; } = new List<ExtendedDataRecord>();
-
-		public ExtendedData(AppId app)
+		public ExtendedData()
 		{
-			this.AppId = app;
 		}
 
-		public ExtendedData(AppId app, IEnumerable<ExtendedDataRecord> records) : this(app)
+		public ExtendedData(IEnumerable<ExtendedDataRecord> records) : this()
 		{
 			this.Records.AddRange(records);
+		}
+
+		public void AddControlStrings()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
