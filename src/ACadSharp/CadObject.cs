@@ -67,17 +67,20 @@ namespace ACadSharp
 		}
 
 		/// <summary>
-		/// Objects that are attached to this object
+		/// Objects that are attached to this object.
 		/// </summary>
+		/// <remarks>
+		/// This collection is not managed by ACadSharp, any changes may cause a corruption in the file.
+		/// </remarks>
 		public Dictionary<ulong, CadObject> Reactors { get; } = new Dictionary<ulong, CadObject>();
 
 		/// <summary>
-		/// Extended data attached to this object
+		/// Extended data attached to this object.
 		/// </summary>
 		public ExtendedDataDictionary ExtendedData { get; }
 
 		/// <summary>
-		/// Document where this element belongs
+		/// Document where this element belongs.
 		/// </summary>
 		public CadDocument Document
 		{
