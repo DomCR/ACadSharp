@@ -7,21 +7,14 @@ using System.Linq;
 
 namespace ACadSharp.IO.DXF
 {
-	internal class DxfDocumentBuilder : CadDocumentBuilder
+	internal class DxfDocumentBuilder : CadDocumentBuilder<DxfReaderConfiguration>
 	{
-		public DxfReaderConfiguration Configuration { get; }
-
 		public CadBlockRecordTemplate ModelSpaceTemplate { get; set; }
 
 		public HashSet<ulong> ModelSpaceEntities { get; } = new();
 
-		public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
-
-		public override bool KeepUnknownNonGraphicalObjects => this.Configuration.KeepUnknownNonGraphicalObjects;
-
-		public DxfDocumentBuilder(ACadVersion version, CadDocument document, DxfReaderConfiguration configuration) : base(version, document)
+		public DxfDocumentBuilder(ACadVersion version, CadDocument document, DxfReaderConfiguration configuration) : base(version, document, configuration)
 		{
-			this.Configuration = configuration;
 		}
 
 		public override void BuildDocument()
@@ -37,7 +30,7 @@ namespace ACadSharp.IO.DXF
 			}
 
 			this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(this.ModelSpaceEntities);
-			
+
 			this.RegisterTables();
 
 			this.BuildTables();

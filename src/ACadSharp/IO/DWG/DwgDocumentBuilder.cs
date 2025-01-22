@@ -14,10 +14,6 @@ namespace ACadSharp.IO.DWG
 
 		public List<Entity> ModelSpaceEntities { get; } = new();
 
-		public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
-
-		public override bool KeepUnknownNonGraphicalObjects => this.Configuration.KeepUnknownNonGraphicalObjects;
-
 		public DwgDocumentBuilder(ACadVersion version, CadDocument document, DwgReaderConfiguration configuration)
 			: base(version, document, configuration)
 		{

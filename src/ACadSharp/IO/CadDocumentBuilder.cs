@@ -303,6 +303,10 @@ namespace ACadSharp.IO
 	{
 		public T Configuration { get; }
 
+		public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
+
+		public override bool KeepUnknownNonGraphicalObjects => this.Configuration.KeepUnknownNonGraphicalObjects;
+
 		protected CadDocumentBuilder(ACadVersion version, CadDocument document, T configuration) : base(version, document)
 		{
 			this.Configuration = configuration;
