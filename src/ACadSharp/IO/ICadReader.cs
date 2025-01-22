@@ -1,5 +1,7 @@
 ﻿using ACadSharp.Header;
 using System;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace ACadSharp.IO
 {
@@ -22,8 +24,15 @@ namespace ACadSharp.IO
 		CadHeader ReadHeader();
 
 		/// <summary>
-		/// Read the cad document.
+		/// Read a cad document.
 		/// </summary>
 		CadDocument Read();
+
+		/// <summary>
+		/// Read a cad document asynchronously.
+		/// </summary>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		Task<CadDocument> ReadAsync(CancellationToken cancellationToken = default);
 	}
 }

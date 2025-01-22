@@ -1,15 +1,11 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
-using ACadSharp.Objects;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.DWG
 {
-	internal class DwgDocumentBuilder : CadDocumentBuilder
+	internal class DwgDocumentBuilder : CadDocumentBuilder<DwgReaderConfiguration>
 	{
-		public DwgReaderConfiguration Configuration { get; }
-
 		public DwgHeaderHandlesCollection HeaderHandles { get; set; } = new();
 
 		public List<CadBlockRecordTemplate> BlockRecordTemplates { get; set; } = new();
@@ -23,9 +19,8 @@ namespace ACadSharp.IO.DWG
 		public override bool KeepUnknownNonGraphicalObjects => this.Configuration.KeepUnknownNonGraphicalObjects;
 
 		public DwgDocumentBuilder(ACadVersion version, CadDocument document, DwgReaderConfiguration configuration)
-			: base(version, document)
+			: base(version, document, configuration)
 		{
-			this.Configuration = configuration;
 		}
 
 		public override void BuildDocument()

@@ -297,4 +297,15 @@ namespace ACadSharp.IO
 			this.cadObjects.Add(template.CadObject.Handle, template.CadObject);
 		}
 	}
+
+	internal abstract class CadDocumentBuilder<T> : CadDocumentBuilder
+	where T : CadReaderConfiguration
+	{
+		public T Configuration { get; }
+
+		protected CadDocumentBuilder(ACadVersion version, CadDocument document, T configuration) : base(version, document)
+		{
+			this.Configuration = configuration;
+		}
+	}
 }

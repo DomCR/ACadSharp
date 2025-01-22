@@ -45,7 +45,7 @@ namespace ACadSharp.IO.DWG
 			switch (fileHeader.AcadVersion)
 			{
 				case ACadVersion.Unknown:
-					throw new DwgNotSupportedException();
+					throw new CadNotSupportedException();
 				case ACadVersion.MC0_0:
 				case ACadVersion.AC1_2:
 				case ACadVersion.AC1_4:
@@ -56,7 +56,7 @@ namespace ACadSharp.IO.DWG
 				case ACadVersion.AC1004:
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
-					throw new DwgNotSupportedException(this._version);
+					throw new CadNotSupportedException(this._version);
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
@@ -94,7 +94,7 @@ namespace ACadSharp.IO.DWG
 			switch (fileHeader.AcadVersion)
 			{
 				case ACadVersion.Unknown:
-					throw new DwgNotSupportedException();
+					throw new CadNotSupportedException();
 				case ACadVersion.MC0_0:
 				case ACadVersion.AC1_2:
 				case ACadVersion.AC1_4:
@@ -105,7 +105,7 @@ namespace ACadSharp.IO.DWG
 				case ACadVersion.AC1004:
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
-					throw new DwgNotSupportedException(this._version);
+					throw new CadNotSupportedException(this._version);
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:

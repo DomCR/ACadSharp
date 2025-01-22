@@ -102,20 +102,15 @@ namespace ACadSharp.IO
 		/// <inheritdoc/>
 		public override CadDocument Read()
 		{
-			this.initializeReader();
-			this._builder = new DwgDocumentBuilder(this._document, this.Configuration);
-			this._builder.OnNotification += this.onNotificationEvent;
-
 			//Read the file header
 			this._fileHeader = this.readFileHeader();
 
-			this._builder = new DwgDocumentBuilder(this._fileHeader.AcadVersion, this._document, this.Configuration);
-			this._builder.OnNotification += this.onNotificationEvent;
+			this.initializeReader(this._fileHeader.AcadVersion);
 
 			this._document.SummaryInfo = this.ReadSummaryInfo();
-			
+
 			this._document.Header = this.ReadHeader();
-			this._document.Classes = this.readClasses();
+			this._document.Classes = this.readClasses(this.getSectionStream(DwgSectionDefinition.Classes));
 
 			this.readAppInfo(this.getSectionStream(DwgSectionDefinition.AppInfo));
 
@@ -128,11 +123,11 @@ namespace ACadSharp.IO
 			return this._document;
 		}
 
-		public async Task<CadDocument> ReadAsync(CancellationToken cancellationToken = default)
+		public override async Task<CadDocument> ReadAsync(CancellationToken cancellationToken = default)
 		{
-			this.initializeReader();
-
 			this._fileHeader = await this.readFileHeaderAsync(cancellationToken);
+
+			this.initializeReader(this._fileHeader.AcadVersion);
 
 			if (this._fileHeader.AcadVersion >= ACadVersion.AC1018)
 			{
@@ -273,27 +268,28 @@ namespace ACadSharp.IO
 			DwgHeaderReader hReader = new DwgHeaderReader(this._fileHeader.AcadVersion, sreader, header);
 			hReader.OnNotification += onNotificationEvent;
 
+			hReader.Read(this._fileHeader.AcadMaintenanceVersion, out DwgHeaderHandlesCollection headerHandles);
+
 			if (this._builder != null)
 				this._builder.HeaderHandles = headerHandles;
 
 			return header;
 		}
 
-		private void initializeReader()
+		private void initializeReader(ACadVersion version)
 		{
 			this._document = new CadDocument(false);
-			this._builder = new DwgDocumentBuilder(this._document, this.Configuration);
+
+			this._builder = new DwgDocumentBuilder(version, this._document, this.Configuration);
 			this._builder.OnNotification += this.onNotificationEvent;
 		}
-					break;
-			}
 
 		private DwgFileHeader readFileHeader()
 		{
 			DwgFileHeaderReader reader = new DwgFileHeaderReader(this._fileStream.Stream);
 			this._fileHeader = reader.Read();
 
-			this.setFileVersion(this._fileHeader);
+			this.setFileEncoding(this._fileHeader);
 
 			return this._fileHeader;
 		}
@@ -303,7 +299,7 @@ namespace ACadSharp.IO
 			DwgFileHeaderReader reader = new DwgFileHeaderReader(this._fileStream.Stream);
 			this._fileHeader = await reader.ReadAsync(cancellationToken);
 
-			this.setFileVersion(this._fileHeader);
+			this.setFileEncoding(this._fileHeader);
 
 			return this._fileHeader;
 		}
@@ -477,9 +473,8 @@ namespace ACadSharp.IO
 			sectionReader.Read();
 		}
 
-		private void setFileVersion(DwgFileHeader fileHeader)
+		private void setFileEncoding(DwgFileHeader fileHeader)
 		{
-			this._version = fileHeader.AcadVersion;
 			this._encoding = this.getListedEncoding((int)_fileHeader.DrawingCodePage);
 		}
 
@@ -491,7 +486,7 @@ namespace ACadSharp.IO
 			switch (this._fileHeader.AcadVersion)
 			{
 				case ACadVersion.Unknown:
-					throw new DwgNotSupportedException();
+					throw new CadNotSupportedException();
 				case ACadVersion.MC0_0:
 				case ACadVersion.AC1_2:
 				case ACadVersion.AC1_4:
@@ -502,7 +497,7 @@ namespace ACadSharp.IO
 				case ACadVersion.AC1004:
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
-					throw new DwgNotSupportedException(this._fileHeader.AcadVersion);
+					throw new CadNotSupportedException(this._fileHeader.AcadVersion);
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:

@@ -11,6 +11,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ACadSharp.IO
 {
@@ -186,6 +188,12 @@ namespace ACadSharp.IO
 			this._builder.BuildDocument();
 
 			return this._document;
+		}
+
+		public override async Task<CadDocument> ReadAsync(CancellationToken cancellationToken = default)
+		{
+			await Task.CompletedTask;
+			throw new NotImplementedException();
 		}
 
 		/// <inheritdoc/>
