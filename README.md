@@ -1,4 +1,4 @@
-﻿ACadSharp ![Build&Test](https://github.com/DomCr/ACadSharp/actions/workflows/build_n_test.yml/badge.svg) ![License](https://img.shields.io/github/license/DomCr/ACadSharp) ![nuget](https://img.shields.io/nuget/v/Acadsharp)
+﻿ACadSharp ![Build&Test](https://github.com/DomCr/ACadSharp/actions/workflows/build_n_test.yml/badge.svg) ![License](https://img.shields.io/github/license/DomCr/ACadSharp) ![nuget](https://img.shields.io/nuget/v/Acadsharp) [![Coverage Status](https://coveralls.io/repos/github/DomCR/ACadSharp/badge.svg?branch=master)](https://coveralls.io/github/DomCR/ACadSharp?branch=master)
 ---
 
 C# library to read/write cad files like dxf/dwg.
@@ -14,6 +14,8 @@ ACadSharp allows to read or create CAD files using .Net and also extract or modi
 - Extract/Modify the geometric information from the different [entities](https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484) in the model
 - Control over the table elements like Blocks, Layers and Styles, allows you to read, create or modify the different tables
 
+For pdf export check :construction: [ACadSharp.Pdf](https://github.com/DomCR/ACadSharp.Pdf) :construction:.
+
 #### Compatible Dwg/Dxf versions:
 
 |      | DxfReader | DxfWriter | DwgReader | DwgWriter |
@@ -27,21 +29,6 @@ AC1021 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_m
 AC1024 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1027 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:                   |
 AC1032 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
-
-### Current development
-
-#### Dwg Writer 
-
-- **AC1014**
-    - Produces a valid file but some entities are missing in the model.
-- **AC1015**
-    - This version depens on the implementation of VP_ENT_HDR to work properly with the different `Viewports`
-- **AC1018** - **MOST STABLE - RECOMENDED**
-- **AC1021** - **NOT IMPLEMENTED**
-    - This is a particular and isolated DWG version, it uses a different compression system and file distribution, due this difficulties, this version will not be implemented any time soon.
-- **AC1024** - **STABLE**
-- **AC1027** - **NOT IMPLEMENTED**
-- **AC1032** - **STABLE**
 
 Code Example
 ---
@@ -60,7 +47,17 @@ private static void onNotification(object sender, NotificationEventArgs e)
 }
 ```
 
-For more examples [check](https://github.com/DomCR/ACadSharp/tree/master/ACadSharp.Examples).
+For more examples [check](https://github.com/DomCR/ACadSharp/tree/master/src/ACadSharp.Examples).
+
+For more information visit the :construction: [wiki](https://github.com/DomCR/ACadSharp/wiki) :construction: .
+
+Building
+---
+Before building run:
+```console
+git submodule update --init --recursive
+```
+This command will clone the submodules. These are Shared Projects that this project dependes on.
 
 Contributing
 ---

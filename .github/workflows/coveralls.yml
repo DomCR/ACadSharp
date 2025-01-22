@@ -1,0 +1,36 @@
+name: Coveralls
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+      with: 
+        submodules: true
+    - uses: cardinalby/export-env-action@v2
+      with:
+        envFile: 'github.env'
+    - name: Build and Test ACadSharp
+      working-directory: src
+      run: |
+          dotnet restore
+          dotnet build --no-restore
+          dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal ACadSharp.Tests/
+    - name: Build and Test Submodules
+      working-directory: src/CSUtilities
+      run: |
+          dotnet restore
+          dotnet build --no-restore
+          dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal CSUtilities.Tests/
+          dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal CSMath.Tests/
+    - name: Coveralls action
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ github.token }}
+        files: src/ACadSharp.Tests/TestResults/coverage.net6.0.info src/CSUtilities/CSUtilities.Tests/TestResults/coverage.info src/CSUtilities/CSMath.Tests/TestResults/coverage.info 
