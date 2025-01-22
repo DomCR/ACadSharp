@@ -91,6 +91,8 @@ namespace ACadSharp.Entities
 					{
 						l.DashLengths.AddRange(dashes.Select(d => double.Parse(d, CultureInfo.InvariantCulture)));
 					}
+
+					current.Lines.Add(l);
 				}
 			}
 

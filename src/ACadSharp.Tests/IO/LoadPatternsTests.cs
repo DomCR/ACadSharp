@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
-using CSUtilities.Extensions;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -27,16 +26,30 @@ namespace ACadSharp.Tests.IO
 		[MemberData(nameof(PatternFilesPaths))]
 		public void LoadPatterns(FileModel test)
 		{
-			if (test.Path.IsNullOrEmpty())
+			CadDocument doc;
+
+			if (test.IsDxf)
 			{
-				return;
+				doc = DxfReader.Read(Path.Combine(test.Folder, "hatch_pattern.dxf"), this.onNotification);
+			}
+			else
+			{
+				doc = DwgReader.Read(Path.Combine(test.Folder, "hatch_pattern.dwg"), this.onNotification);
 			}
 
-			CadDocument doc = DxfReader.Read(Path.Combine(test.Folder, "hatch_pattern.dxf"), this.onNotification);
-
-			Hatch h = doc.Entities.OfType<Hatch>().FirstOrDefault();
+			var hatches = doc.Entities.OfType<Hatch>();
 
 			IEnumerable<HatchPattern> patterns = HatchPattern.LoadFrom(test.Path);
+
+			Assert.NotEmpty(patterns);
+
+			foreach (HatchPattern pattern in patterns)
+			{
+				var p = hatches.FirstOrDefault(h => h.Pattern.Name.Equals(pattern.Name, System.StringComparison.OrdinalIgnoreCase)).Pattern;
+
+				Assert.NotNull(p);
+				Assert.Equal(pattern.Lines.Count, p.Lines.Count);
+			}
 		}
 	}
 }
