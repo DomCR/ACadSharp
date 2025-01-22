@@ -9,6 +9,40 @@ namespace ACadSharp.Tests.XData
 	public class ExtendedDataTests
 	{
 		[Fact]
+		public void AddObjectWithXDataTest()
+		{
+			ExtendedData data = new ExtendedData();
+
+			data.AddControlStrings();
+
+			//Empty
+			var first = data.Records.First();
+			Assert.IsType<ExtendedDataControlString>(first);
+			Assert.False((first as ExtendedDataControlString).IsClosing);
+
+			var last = data.Records.Last();
+			Assert.IsType<ExtendedDataControlString>(last);
+			Assert.True((last as ExtendedDataControlString).IsClosing);
+
+			data.Records.Clear();
+
+			//1 Item
+			data.Records.Add(new ExtendedDataString("Hello"));
+
+			data.AddControlStrings();
+
+			first = data.Records.First();
+			Assert.IsType<ExtendedDataControlString>(first);
+			Assert.False((first as ExtendedDataControlString).IsClosing);
+
+			last = data.Records.Last();
+			Assert.IsType<ExtendedDataControlString>(last);
+			Assert.True((last as ExtendedDataControlString).IsClosing);
+
+			Assert.Equal(3, data.Records.Count);
+		}
+
+		[Fact]
 		public void AddObjectWithXData()
 		{
 			CadDocument doc = new CadDocument();
