@@ -226,10 +226,13 @@ namespace ACadSharp.Tests.IO
 				ImageDefinition definition = new ImageDefinition();
 				definition.Size = new XY(1, 1);
 				definition.Name = "image";
+				definition.IsLoaded = true;
 
 				definition.FileName = "..\\..\\image.JPG";
 
 				RasterImage raster = new RasterImage(definition);
+
+				raster.Flags = ImageDisplayFlags.ShowImage;
 
 				raster.ClipBoundaryVertices.Add(new XY(0, 0));
 				raster.ClipBoundaryVertices.Add(new XY(0, 1));

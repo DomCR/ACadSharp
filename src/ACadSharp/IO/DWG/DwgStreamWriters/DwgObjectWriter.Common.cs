@@ -334,7 +334,7 @@ namespace ACadSharp.IO.DWG
 			if (this.WriteXData)
 			{
 				//EED size BS size of extended entity data, if any
-				foreach (var item in data.Entries)
+				foreach (var item in data)
 				{
 					writeExtendedDataEntry(item.Key, item.Value);
 				}
