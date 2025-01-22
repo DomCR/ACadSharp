@@ -4,10 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using ACadSharp.Exceptions;
 using ACadSharp.IO.DWG;
-using ACadSharp.IO.DWG.DwgStreamReaders;
 using System.Threading.Tasks;
 using System.Threading;
 
@@ -18,8 +16,6 @@ namespace ACadSharp.IO
 	/// </summary>
 	public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	{
-		public DwgReaderConfiguration Configuration { get; set; } = new DwgReaderConfiguration();
-
 		private DwgDocumentBuilder _builder;
 		private DwgFileHeader _fileHeader;
 
@@ -255,7 +251,9 @@ namespace ACadSharp.IO
 			hReader.Read(this._fileHeader.AcadMaintenanceVersion, out DwgHeaderHandlesCollection headerHandles);
 
 			if (this._builder != null)
+			{
 				this._builder.HeaderHandles = headerHandles;
+			}
 
 			return header;
 		}
