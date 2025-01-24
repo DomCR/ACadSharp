@@ -30,7 +30,8 @@ jobs:
           includePreview: true
 
     - name: Build and test
-      run: |
-          dotnet restore
-          dotnet build --configuration Release --no-restore
-          dotnet test --configuration Release --no-build --verbosity normal
+      run: dotnet restore
+    - name: build
+      run: dotnet build --configuration Release --no-restore
+    - name: test
+      run: dotnet test --configuration Release --no-build --verbosity normal
