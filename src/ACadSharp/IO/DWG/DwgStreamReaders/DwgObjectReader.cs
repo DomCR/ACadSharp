@@ -889,7 +889,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readLayer();
 					break;
 				case ObjectType.STYLE_CONTROL_OBJ:
-					template = this.readDocumentTable(new TextStylesTable());
+					template = this.readDocumentTable( new TextStylesTable());
 					this._builder.TextStyles = (TextStylesTable)template.CadObject;
 					break;
 				case ObjectType.STYLE:
@@ -1524,12 +1524,16 @@ namespace ACadSharp.IO.DWG
 
 		#endregion Text entities
 
-		private CadTemplate readDocumentTable<T>(Table<T> table, CadTableTemplate<T> template = null)
+		private CadTemplate readDocumentTable<T>(Table<T> table)
 			where T : TableEntry
 		{
-			if (template == null)
-				template = new CadTableTemplate<T>(table);
+			var template = new CadTableTemplate<T>(table);
+			return readDocumentTable(template);
+		}
 
+		private CadTemplate readDocumentTable<T>(CadTableTemplate<T> template)
+			where T : TableEntry
+		{
 			this.readCommonNonEntityData(template);
 
 			//Common:
@@ -3727,7 +3731,7 @@ namespace ACadSharp.IO.DWG
 			CadBlockCtrlObjectTemplate template = new CadBlockCtrlObjectTemplate(
 				new BlockRecordsTable());
 
-			this.readDocumentTable(template.CadObject, template);
+			this.readDocumentTable(template);
 
 			//*MODEL_SPACE and *PAPER_SPACE(hard owner).
 			template.ModelSpaceHandle = this.handleReference();
@@ -4017,7 +4021,7 @@ namespace ACadSharp.IO.DWG
 			CadTableTemplate<LineType> template = new CadTableTemplate<LineType>(
 				new LineTypesTable());
 
-			this.readDocumentTable(template.CadObject, template);
+			this.readDocumentTable(template);
 
 			//the linetypes, ending with BYLAYER and BYBLOCK.
 			//all are soft owner references except BYLAYER and 

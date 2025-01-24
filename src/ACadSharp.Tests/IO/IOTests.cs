@@ -3,6 +3,7 @@ using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -100,6 +101,11 @@ namespace ACadSharp.Tests.IO
 			List<Entity> entities = new List<Entity>(doc.Entities);
 			foreach (var item in entities)
 			{
+				if (item.ExtendedData.Any())
+				{
+
+				}
+
 				Entity e = doc.Entities.Remove(item);
 				transfer.Entities.Add(e);
 			}
