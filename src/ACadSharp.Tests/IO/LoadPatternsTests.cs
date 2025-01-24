@@ -43,6 +43,11 @@ namespace ACadSharp.Tests.IO
 			this.assertPatterns(doc, test);
 		}
 
+		[Fact]
+		public void SavePattern()
+		{
+		}
+
 		private void assertPatterns(CadDocument doc, FileModel test)
 		{
 			var hatches = doc.Entities.OfType<Hatch>();

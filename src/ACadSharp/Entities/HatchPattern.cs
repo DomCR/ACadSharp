@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace ACadSharp.Entities
 {
@@ -46,6 +47,17 @@ namespace ACadSharp.Entities
 			return clone;
 		}
 
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return $"{this.Name}";
+		}
+
+		/// <summary>
+		/// Load a collection of patterns from a .pat file.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns></returns>
 		public static IEnumerable<HatchPattern> LoadFrom(string path)
 		{
 			List<HatchPattern> patterns = new List<HatchPattern>();
@@ -99,10 +111,25 @@ namespace ACadSharp.Entities
 			return patterns;
 		}
 
-		/// <inheritdoc/>
-		public override string ToString()
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="writer"></param>
+		/// <param name="patterns"></param>
+		public static void SavePatterns(TextWriter writer, params IEnumerable<HatchPattern> patterns)
 		{
-			return $"{this.Name}";
+			foreach (HatchPattern p in patterns)
+			{
+				writer.WriteLine("*", p.Name, p.Description);
+
+				foreach (Line l in p.Lines)
+				{
+					StringBuilder sb = new StringBuilder();
+
+					//sb.Append($"{}{}{}{}{}");
+				}
+
+			}
 		}
 	}
 }
