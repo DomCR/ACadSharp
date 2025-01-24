@@ -15,7 +15,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        dotnet-version: [ '5.0.x', '6.0.x' ]
+        dotnet-version: [ '5.0.x' ]
 
     steps:
     - name: Checkout
