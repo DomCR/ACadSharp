@@ -13,6 +13,10 @@ defaults:
 jobs:
   build:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '5.0.x', '6.0.x' ]
+
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -24,10 +28,10 @@ jobs:
       with:
         envFile: 'github.env'
 
-    - name: Install .NET
-      uses: codebeltnet/install-dotnet@v1
+    - name: Setup dotnet ${{ matrix.dotnet-version }}
+      uses: actions/setup-dotnet@v3
       with:
-          includePreview: true
+        dotnet-version: ${{ matrix.dotnet-version }}
 
     - name: Build and test
       run: dotnet restore
