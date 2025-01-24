@@ -23,5 +23,5 @@ jobs:
     - name: Build and test
       run: |
           dotnet restore
-          dotnet build --configuration Release --no-restore
-          dotnet test --configuration Release --no-build --verbosity normal
+          dotnet build --configuration Release --no-restore --framework net6.0
+          dotnet test --configuration Release --no-build --verbosity normal --framework net6.0
