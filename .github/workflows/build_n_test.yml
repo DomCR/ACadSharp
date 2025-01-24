@@ -32,6 +32,6 @@ jobs:
     - name: Build and test
       run: dotnet restore
     - name: build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build --configuration Release --no-restore --framework net5.0
     - name: test
-      run: dotnet test --configuration Release --no-build --verbosity normal
+      run: dotnet test --configuration Release --no-build --verbosity normal --framework net5.0
