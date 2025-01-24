@@ -407,13 +407,13 @@ namespace ACadSharp.IO.DXF
 
 			if (!hatch.IsSolid)
 			{
-				this._writer.Write(52, pattern.Angle * MathUtils.RadToDegFactor);
-				this._writer.Write(41, pattern.Scale);
+				this._writer.Write(52, MathHelper.RadToDeg(hatch.PatternAngle));
+				this._writer.Write(41, hatch.PatternScale);
 				this._writer.Write(77, (short)(hatch.IsDouble ? 1 : 0));
 				this._writer.Write(78, (short)pattern.Lines.Count);
 				foreach (HatchPattern.Line line in pattern.Lines)
 				{
-					this._writer.Write(53, line.Angle * (180.0 / System.Math.PI));
+					this._writer.Write(53, MathHelper.RadToDeg(line.Angle));
 					this._writer.Write(43, line.BasePoint.X);
 					this._writer.Write(44, line.BasePoint.Y);
 					this._writer.Write(45, line.Offset.X);
