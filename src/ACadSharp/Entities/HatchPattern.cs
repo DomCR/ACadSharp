@@ -112,21 +112,54 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// 
+		/// Write a pattern or a collection of patterns into a .pat file.
 		/// </summary>
-		/// <param name="writer"></param>
+		/// <param name="filename"></param>
 		/// <param name="patterns"></param>
-		public static void SavePatterns(TextWriter writer, params IEnumerable<HatchPattern> patterns)
+		public static void SavePatterns(string filename, params IEnumerable<HatchPattern> patterns)
 		{
+			using StreamWriter writer = File.CreateText(filename);
+
 			foreach (HatchPattern p in patterns)
 			{
-				writer.WriteLine("*", p.Name, p.Description);
+				writer.Write($"*{p.Name}");
 
-				foreach (Line l in p.Lines)
+				if (!p.Description.IsNullOrEmpty())
+				{
+					writer.Write($",{p.Description}");
+				}
+
+				writer.WriteLine();
+
+				foreach (Line line in p.Lines)
 				{
 					StringBuilder sb = new StringBuilder();
 
-					//sb.Append($"{}{}{}{}{}");
+					double angle = MathHelper.DegToRad(line.Angle);
+					double cos = Math.Cos(line.Angle);
+					double sin = Math.Sin(line.Angle);
+
+					var offset = line.Offset;
+					var vector2D = new XY(offset.X * cos - offset.Y * sin, offset.X * sin + offset.Y * cos);
+					
+					sb.Append(angle.ToString(CultureInfo.InvariantCulture));
+					sb.Append(",");
+					sb.Append(line.BasePoint.ToString(CultureInfo.InvariantCulture));
+					sb.Append(",");
+					sb.Append(vector2D.ToString(CultureInfo.InvariantCulture));
+
+					if (line.DashLengths.Count > 0)
+					{
+						sb.Append(",");
+						sb.Append(line.DashLengths[0].ToString(CultureInfo.InvariantCulture));
+						for (int i = 1; i < line.DashLengths.Count; i++)
+						{
+							sb.Append(",");
+							sb.Append(line.DashLengths[i].ToString(CultureInfo.InvariantCulture));
+						}
+					}
+
+					writer.WriteLine(sb.ToString());
 				}
 
 			}

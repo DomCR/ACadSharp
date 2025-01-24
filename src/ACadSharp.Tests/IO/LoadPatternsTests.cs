@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.Tests.IO
 {
@@ -46,6 +45,25 @@ namespace ACadSharp.Tests.IO
 		[Fact]
 		public void SavePattern()
 		{
+			HatchPattern p = new HatchPattern("my pattern");
+			p.Description = "my custom description";
+
+			p.Lines.Add(new HatchPattern.Line
+			{
+				Angle = MathHelper.DegToRad(30),
+				BasePoint = XY.Zero,
+				Offset = XY.AxisX
+			});
+
+			p.Lines.Add(new HatchPattern.Line
+			{
+				Angle = MathHelper.DegToRad(40),
+				BasePoint = XY.AxisY,
+				Offset = XY.AxisY,
+				DashLengths = new List<double> { 3.34, 32.3, 44.5 }
+			});
+
+			HatchPattern.SavePatterns(Path.Combine(TestVariables.OutputSamplesFolder, "patterns.pat"), p);
 		}
 
 		private void assertPatterns(CadDocument doc, FileModel test)
