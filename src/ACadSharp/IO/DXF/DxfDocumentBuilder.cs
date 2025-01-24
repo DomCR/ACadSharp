@@ -26,8 +26,6 @@ namespace ACadSharp.IO.DXF
 
 		public override void BuildDocument()
 		{
-			this.buildDictionaries();
-
 			if (this.ModelSpaceTemplate == null)
 			{
 				BlockRecord record = BlockRecord.ModelSpace;
@@ -37,10 +35,12 @@ namespace ACadSharp.IO.DXF
 			}
 
 			this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(this.ModelSpaceEntities);
-			
+
 			this.RegisterTables();
 
 			this.BuildTables();
+
+			this.buildDictionaries();
 
 			//Assign the owners for the different objects
 			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
