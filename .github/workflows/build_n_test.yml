@@ -14,12 +14,21 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
       with: 
         submodules: true
-    - uses: cardinalby/export-env-action@v2
+
+    - name: load vars
+      uses: cardinalby/export-env-action@v2
       with:
         envFile: 'github.env'
+
+    - name: Install .NET
+      uses: codebeltnet/install-dotnet@v1
+      with:
+          includePreview: true
+
     - name: Build and test
       run: |
           dotnet restore
