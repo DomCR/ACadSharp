@@ -13,10 +13,5 @@
 		internal TextStylesTable() : base() { }
 
 		internal TextStylesTable(CadDocument document) : base(document) { }
-
-		public override void Add(TextStyle item)
-		{
-			base.Add(item);
-		}
 	}
 }
