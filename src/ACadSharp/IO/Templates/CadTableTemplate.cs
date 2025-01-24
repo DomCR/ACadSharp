@@ -10,6 +10,8 @@ namespace ACadSharp.IO.Templates
 	{
 		public List<ulong> EntryHandles { get; } = new List<ulong>();
 
+		public List<string> EntryNames { get; } = new();
+
 		public CadTableTemplate(Table<T> tableControl) : base(tableControl) { }
 
 		public override void Build(CadDocumentBuilder builder)

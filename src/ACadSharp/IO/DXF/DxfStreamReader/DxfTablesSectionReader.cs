@@ -34,7 +34,7 @@ namespace ACadSharp.IO.DXF
 				if (this._reader.ValueAsString == DxfFileToken.TableEntry)
 					this.readTable();
 				else
-					throw new DxfException($"Unexpected token at the begining of a table: {this._reader.ValueAsString}", this._reader.Position);
+					throw new DxfException($"Unexpected token at the beginning of a table: {this._reader.ValueAsString}", this._reader.Position);
 
 
 				if (this._reader.ValueAsString == DxfFileToken.EndTable)
@@ -225,7 +225,7 @@ namespace ACadSharp.IO.DXF
 				}
 
 				//tableTemplate.EntryHandles.Add(template.CadObject.Handle);
-				tableTemplate.EntryHandles.Add(template.CadObject.Handle);
+				tableTemplate.CadObject.Add((T)template.CadObject);
 
 				//Add the object and the template to the builder
 				this._builder.AddTemplate(template);
