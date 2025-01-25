@@ -2,6 +2,7 @@
 using ACadSharp.Objects;
 using CSMath;
 using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -336,7 +337,10 @@ namespace ACadSharp.IO.DXF
 
 		private void writeHatchBoundaryPathEdge(Hatch.BoundaryPath.Edge edge)
 		{
-			this._writer.Write(72, edge.Type);
+			if (edge is not Hatch.BoundaryPath.Polyline)
+			{
+				this._writer.Write(72, edge.Type);
+			}
 
 			switch (edge)
 			{

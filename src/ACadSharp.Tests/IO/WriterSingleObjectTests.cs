@@ -1,4 +1,5 @@
-﻿using ACadSharp.Entities;
+﻿using ACadSharp.Blocks;
+using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.XData;
@@ -325,6 +326,44 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(line);
 			}
 
+			public void CreateInsertWithHatch()
+			{
+				CadDocument doc = this.Document;
+				var modelSpace = doc.ModelSpace;
+
+				string blockName = Guid.NewGuid().ToString();
+				var block = new Block(new(blockName));
+				var blockRecord = new BlockRecord(blockName);
+				var insert = new Insert(blockRecord);
+				modelSpace.Entities.Add(insert);
+
+				var hatch = new Hatch()
+				{
+					Pattern = HatchPattern.Solid,
+					Color = new ACadSharp.Color(0, 0, 0),
+					IsAssociative = false,
+					IsSolid = true,
+					PatternType = HatchPatternType.SolidFill,
+					IsInvisible = false,
+					Style = HatchStyleType.Normal,
+				};
+
+				var path = new Hatch.BoundaryPath
+				{
+					Flags = BoundaryPathFlags.External,
+				};
+
+				path.Edges.Add(new Hatch.BoundaryPath.Polyline()
+				{
+					Vertices = [new(0, 0, 0), new(0, 5, 0), new(5, 5, 0), new(5, 0, 0)],
+					IsClosed = true,
+				});
+
+				hatch.Paths.Add(path);
+
+				blockRecord.Entities.Add(hatch);
+			}
+
 			public void CreateHatchPolyline()
 			{
 				Hatch hatch = new Hatch();
@@ -569,6 +608,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.CreateLayout)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityTransparency)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithSegments)));
+			Data.Add(new(nameof(SingleCaseGenerator.CreateInsertWithHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateCircleHatch)));
