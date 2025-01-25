@@ -1501,7 +1501,7 @@ namespace ACadSharp.IO.DXF
 								ellipse.EndAngle = this._reader.ValueAsDouble;
 								break;
 							case 73:
-								ellipse.CounterClockWise = this._reader.ValueAsBool;
+								ellipse.IsCounterclockwise = this._reader.ValueAsBool;
 								break;
 							default:
 								return ellipse;

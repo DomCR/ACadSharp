@@ -102,6 +102,11 @@ namespace ACadSharp.IO.Templates
 			{
 				throw new NotImplementedException();
 			}
+
+			protected override void verticesOnAdd(object sender, CollectionChangedEventArgs e)
+			{
+				throw new NotImplementedException();
+			}
 		}
 	}
 }

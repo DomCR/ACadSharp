@@ -103,7 +103,8 @@ namespace ACadSharp.Entities
 					return ocsVertexes;
 				}
 
-				public ACadSharp.Entities.Arc ConvertToArc()
+				/// <inheritdoc/>
+				public override Entity ToEntity()
 				{
 					if (this.CounterClockWise)
 					{

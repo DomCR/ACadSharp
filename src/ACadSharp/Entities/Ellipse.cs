@@ -75,7 +75,7 @@ namespace ACadSharp.Entities
 		/// The valid range is 0 to 2 * PI.
 		/// </value>
 		[DxfCodeValue(42)]
-		public double EndParameter { get; set; } = MathUtils.TwoPI;
+		public double EndParameter { get; set; } = MathHelper.TwoPI;
 
 		/// <summary>
 		/// Rotation of the major axis from the world X axis.
