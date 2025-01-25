@@ -54,6 +54,20 @@ namespace ACadSharp.Entities
 
 		IVector IVertex.Location { get { return this.Location; } }
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public Vertex() { }
+
+		/// <summary>
+		/// Location constructor.
+		/// </summary>
+		/// <param name="location"></param>
+		public Vertex(XYZ location)
+		{
+			this.Location = location;
+		}
+
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{

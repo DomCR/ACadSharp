@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.IO.DXF;
 using CSMath;
 
 namespace ACadSharp.Entities
@@ -13,40 +14,57 @@ namespace ACadSharp.Entities
 				public override EdgeType Type => EdgeType.EllipticArc;
 
 				/// <summary>
-				/// Center point (in OCS)
+				/// Center point (in OCS).
 				/// </summary>
 				[DxfCodeValue(10, 20)]
 				public XY Center { get; set; }
 
 				/// <summary>
-				/// Endpoint of major axis relative to center point (in OCS)
+				/// Endpoint of major axis relative to center point (in OCS).
 				/// </summary>
 				[DxfCodeValue(11, 21)]
 				public XY MajorAxisEndPoint { get; set; }
 
 				/// <summary>
-				/// Length of minor axis (percentage of major axis length)
+				/// Length of minor axis (percentage of major axis length).
 				/// </summary>
 				[DxfCodeValue(40)]
 				public double MinorToMajorRatio { get; set; }
 
 				/// <summary>
-				/// Start angle
+				/// Start angle.
 				/// </summary>
 				[DxfCodeValue(50)]
 				public double StartAngle { get; set; }
 
 				/// <summary>
-				/// End angle
+				/// End angle.
 				/// </summary>
 				[DxfCodeValue(51)]
 				public double EndAngle { get; set; }
 
 				/// <summary>
-				/// Is counterclockwise flag
+				/// Is counterclockwise flag.
 				/// </summary>
 				[DxfCodeValue(73)]
-				public bool CounterClockWise { get; set; }
+				public bool IsCounterclockwise { get; set; }
+
+				/// <inheritdoc/>
+				public override Entity ToEntity()
+				{
+					XYZ center = new XYZ(this.Center.X, this.Center.Y, 0.0);
+					XYZ axisPoint = new XYZ(this.MajorAxisEndPoint.X, this.MajorAxisEndPoint.Y, 0.0);
+
+					double rotation = axisPoint.Convert<XY>().GetAngle();
+					double majorAxis = 2 * axisPoint.GetLength();
+
+					Entities.Ellipse ellipse = new();
+					ellipse.Center = center;
+					ellipse.StartParameter = this.IsCounterclockwise ? this.StartAngle : 360 - this.EndAngle;
+					ellipse.EndParameter = this.IsCounterclockwise ? this.EndAngle : 360 - this.StartAngle;
+
+					return ellipse;
+				}
 
 				/// <inheritdoc/>
 				public override BoundingBox GetBoundingBox()

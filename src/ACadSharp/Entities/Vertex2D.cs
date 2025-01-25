@@ -22,9 +22,9 @@ namespace ACadSharp.Entities
 
 		public Vertex2D() { }
 
-		public Vertex2D(XY location)
+		public Vertex2D(IVector location)
 		{
-			this.Location = (XYZ)location;
+			this.Location = location.Convert<XYZ>();
 		}
 	}
 }

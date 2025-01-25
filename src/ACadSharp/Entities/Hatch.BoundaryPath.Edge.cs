@@ -39,6 +39,12 @@ namespace ACadSharp.Entities
 
 				/// <inheritdoc/>
 				public abstract BoundingBox GetBoundingBox();
+
+				/// <summary>
+				/// Create the equivalent entity for this Edge.
+				/// </summary>
+				/// <returns></returns>
+				public abstract Entity ToEntity();
 			}
 		}
 	}
