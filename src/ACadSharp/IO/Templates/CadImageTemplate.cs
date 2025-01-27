@@ -9,13 +9,13 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? ImgReactorHandle { get; set; }
 
-		public CadImageTemplate(CadImageBase image) : base(image) { }
+		public CadImageTemplate(CadWipeoutBase image) : base(image) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 
-			CadImageBase image = this.CadObject as CadImageBase;
+			CadWipeoutBase image = this.CadObject as CadWipeoutBase;
 
 			if (builder.TryGetCadObject(this.ImgDefHandle, out ImageDefinition imgDef))
 			{

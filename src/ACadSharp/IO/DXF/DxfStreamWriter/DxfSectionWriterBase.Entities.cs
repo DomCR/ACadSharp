@@ -1213,7 +1213,7 @@ namespace ACadSharp.IO.DXF
 		}
 
 		private void writeCadImage<T>(T image)
-			where T : CadImageBase
+			where T : CadWipeoutBase
 		{
 			DxfClassMap map = DxfClassMap.Create<T>();
 

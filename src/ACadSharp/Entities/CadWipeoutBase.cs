@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using ACadSharp.Objects;
 using System.Linq;
+using CSUtilities.Extensions;
 
 namespace ACadSharp.Entities
 {
@@ -11,7 +12,7 @@ namespace ACadSharp.Entities
 	/// Common base class for <see cref="RasterImage" /> and <see cref="Wipeout" />.
 	/// </summary>
 	[DxfSubClass(null, true)]
-	public abstract class CadImageBase : Entity
+	public abstract class CadWipeoutBase : Entity
 	{
 		/// <summary>
 		/// Class version
@@ -38,19 +39,38 @@ namespace ACadSharp.Entities
 		public XYZ VVector { get; set; } = XYZ.AxisY;
 
 		/// <summary>
-		/// Image size in pixels
+		/// Image size in pixels.
 		/// </summary>
 		/// <remarks>
-		/// 2D point(U and V values)
+		/// 2D point(U and V values).
 		/// </remarks>
 		[DxfCodeValue(13, 23)]
 		public XY Size { get; set; }
 
 		/// <summary>
-		/// Image display properties
+		/// Image display properties.
 		/// </summary>
 		[DxfCodeValue(70)]
 		public ImageDisplayFlags Flags { get; set; }
+
+		/// <summary>
+		/// Add the ShowImage flag to the display flags property.
+		/// </summary>
+		public bool ShowImage
+		{
+			get { return this.Flags.HasFlag(ImageDisplayFlags.ShowImage); }
+			set
+			{
+				if (value)
+				{
+					this.Flags = this.Flags.AddFlag(ImageDisplayFlags.ShowImage);
+				}
+				else
+				{
+					this.Flags = this.Flags.RemoveFlag(ImageDisplayFlags.ShowImage);
+				}
+			}
+		}
 
 		/// <summary>
 		/// Clipping state
@@ -169,7 +189,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Reference to image definition reactor
+		/// Reference to image definition reactor.
 		/// </summary>
 		//It seems that is not necessecary, keep it hidden for now
 		[DxfCodeValue(DxfReferenceType.Handle, 360)]
@@ -179,6 +199,7 @@ namespace ACadSharp.Entities
 			set
 			{
 				this._definitionReactor = value;
+				this._definitionReactor.Owner = this;
 			}
 		}
 
@@ -213,7 +234,7 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
-			CadImageBase clone = (CadImageBase)base.Clone();
+			CadWipeoutBase clone = (CadWipeoutBase)base.Clone();
 
 			clone.Definition = (ImageDefinition)this.Definition?.Clone();
 
