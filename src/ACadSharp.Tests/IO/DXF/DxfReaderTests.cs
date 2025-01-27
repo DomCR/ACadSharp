@@ -89,9 +89,9 @@ namespace ACadSharp.Tests.IO.DXF
 		[Theory]
 		[MemberData(nameof(DxfAsciiFiles))]
 		[MemberData(nameof(DxfBinaryFiles))]
-		public override void AssertTableHirearchy(FileModel test)
+		public override void AssertTableHierarchy(FileModel test)
 		{
-			base.AssertTableHirearchy(test);
+			base.AssertTableHierarchy(test);
 		}
 
 		[Theory]
