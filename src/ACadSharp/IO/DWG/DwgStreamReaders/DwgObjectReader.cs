@@ -5418,7 +5418,7 @@ namespace ACadSharp.IO.DWG
 			return null;
 		}
 
-		private CadTemplate readCadImage(CadImageBase image)
+		private CadTemplate readCadImage(CadWipeoutBase image)
 		{
 			CadImageTemplate template = new CadImageTemplate(image);
 

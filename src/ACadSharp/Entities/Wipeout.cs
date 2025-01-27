@@ -11,7 +11,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityWipeout)]
 	[DxfSubClass(DxfSubclassMarker.Wipeout)]
-	public class Wipeout : CadImageBase
+	public class Wipeout : CadWipeoutBase
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;

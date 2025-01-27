@@ -74,7 +74,8 @@ namespace ACadSharp.Tests.Common
 				Assert.NotNull(br.BlockEntity.Document);
 				this.documentObjectNotNull(doc, br.BlockEntity);
 
-				Assert.True(br.Handle == br.BlockEntity.Owner.Handle, "Block entity owner doesn't mach");
+				Assert.True(br.Handle == br.BlockEntity.Owner.Handle, "Block entity owner doesn't match");
+				Assert.NotNull(br.BlockEntity.Document);
 
 				Assert.NotNull(br.BlockEnd.Document);
 				this.documentObjectNotNull(doc, br.BlockEnd);

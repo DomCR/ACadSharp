@@ -12,7 +12,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityImage)]
 	[DxfSubClass(DxfSubclassMarker.RasterImage)]
-	public class RasterImage : CadImageBase
+	public class RasterImage : CadWipeoutBase
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;

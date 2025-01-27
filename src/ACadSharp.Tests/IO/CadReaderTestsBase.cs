@@ -52,7 +52,7 @@ namespace ACadSharp.Tests.IO
 			this._docIntegrity.AssertDocumentDefaults(doc);
 		}
 
-		public virtual void AssertTableHirearchy(FileModel test)
+		public virtual void AssertTableHierarchy(FileModel test)
 		{
 			CadDocument doc = this.getDocument(test);
 
