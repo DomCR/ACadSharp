@@ -123,14 +123,9 @@ namespace ACadSharp.Entities
 		/// </remarks>
 		public SeqendCollection<AttributeEntity> Attributes { get; private set; }
 
-		internal Insert(bool onAdd = true) : base()
+		internal Insert() : base()
 		{
 			this.Attributes = new SeqendCollection<AttributeEntity>(this);
-
-			if (onAdd)
-			{
-				this.Attributes.OnAdd += this.attributesOnAdd;
-			}
 		}
 
 		/// <summary>
@@ -138,7 +133,7 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <param name="block">Block Record to reference</param>
 		/// <exception cref="ArgumentNullException"></exception>
-		public Insert(BlockRecord block) : this(false)
+		public Insert(BlockRecord block) : this()
 		{
 			if (block is null) throw new ArgumentNullException(nameof(block));
 
@@ -155,8 +150,6 @@ namespace ACadSharp.Entities
 			{
 				this.Attributes.Add(new AttributeEntity(attdef));
 			}
-
-			this.Attributes.OnAdd += this.attributesOnAdd;
 		}
 
 		/// <summary>
@@ -164,7 +157,9 @@ namespace ACadSharp.Entities
 		/// </summary>
 		public void UpdateAttributes()
 		{
-			foreach (AttributeEntity att in this.Attributes)
+			var atts = this.Attributes.ToArray();
+
+			foreach (AttributeEntity att in atts)
 			{
 				//Tags are not unique, is it needed? check how the different applications link the atts
 				if (!this.Block.AttributeDefinitions.Select(d => d.Tag).Contains(att.Tag))
@@ -173,7 +168,15 @@ namespace ACadSharp.Entities
 				}
 			}
 
-			throw new NotImplementedException();
+			foreach (AttributeDefinition attdef in this.Block.AttributeDefinitions)
+			{
+				if (this.Attributes.Select(d => d.Tag).Contains(attdef.Tag))
+				{
+					AttributeEntity att = new AttributeEntity(attdef);
+
+					this.Attributes.Add(att);
+				}
+			}
 		}
 
 		/// <inheritdoc/>
@@ -230,12 +233,6 @@ namespace ACadSharp.Entities
 			this.Document.UnregisterCollection(this.Attributes);
 
 			base.UnassignDocument();
-		}
-
-		private void attributesOnAdd(object sender, CollectionChangedEventArgs e)
-		{
-			//TODO: Fix the relation between insert and block
-			//this.Block?.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));
 		}
 	}
 }
