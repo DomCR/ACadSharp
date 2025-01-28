@@ -146,10 +146,7 @@ namespace ACadSharp.Entities
 				this.Block = block;
 			}
 
-			foreach (AttributeDefinition attdef in block.AttributeDefinitions)
-			{
-				this.Attributes.Add(new AttributeEntity(attdef));
-			}
+			this.UpdateAttributes();
 		}
 
 		/// <summary>
@@ -170,7 +167,7 @@ namespace ACadSharp.Entities
 
 			foreach (AttributeDefinition attdef in this.Block.AttributeDefinitions)
 			{
-				if (this.Attributes.Select(d => d.Tag).Contains(attdef.Tag))
+				if (!this.Attributes.Select(d => d.Tag).Contains(attdef.Tag))
 				{
 					AttributeEntity att = new AttributeEntity(attdef);
 
