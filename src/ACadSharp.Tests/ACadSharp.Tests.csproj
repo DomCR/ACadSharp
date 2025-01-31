@@ -35,8 +35,4 @@
 		<ProjectReference Include="..\ACadSharp\ACadSharp.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="TestResults\" />
-	</ItemGroup>
-
 </Project>

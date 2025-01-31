@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ACadSharp.Types.Units
+﻿namespace ACadSharp.Types.Units
 {
 	public enum UnitsType : short
 	{

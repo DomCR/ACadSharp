@@ -130,6 +130,7 @@
 		public const string ObjectBlockLinearParameter = "BLOCKLINEARPARAMETER";
 		public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
 		public const string ObjectTableContent = "TABLECONTENT";
+		public const string ObjectGeoData = "GEODATA";
 
 		#endregion
 	}

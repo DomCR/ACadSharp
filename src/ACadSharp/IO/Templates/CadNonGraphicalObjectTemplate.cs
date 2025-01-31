@@ -4,6 +4,6 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadNonGraphicalObjectTemplate : CadTemplate<NonGraphicalObject>
 	{
-		public CadNonGraphicalObjectTemplate(NonGraphicalObject entity) : base(entity) { }
+		public CadNonGraphicalObjectTemplate(NonGraphicalObject obj) : base(obj) { }
 	}
 }
