@@ -18,6 +18,7 @@ using System.Globalization;
 using ACadSharp.Objects.Evaluations;
 using ACadSharp.XData;
 using System.Diagnostics;
+using System.Numerics;
 
 namespace ACadSharp.IO.DWG
 {
@@ -889,7 +890,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readLayer();
 					break;
 				case ObjectType.STYLE_CONTROL_OBJ:
-					template = this.readDocumentTable( new TextStylesTable());
+					template = this.readDocumentTable(new TextStylesTable());
 					this._builder.TextStyles = (TextStylesTable)template.CadObject;
 					break;
 				case ObjectType.STYLE:
@@ -1020,6 +1021,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "DICTIONARYWDFLT":
 					template = this.readDictionaryWithDefault();
+					break;
+				case DxfFileToken.ObjectGeoData:
+					template = this.readGeoData();
 					break;
 				case "GROUP":
 					template = this.readGroup();
@@ -1528,7 +1532,7 @@ namespace ACadSharp.IO.DWG
 			where T : TableEntry
 		{
 			var template = new CadTableTemplate<T>(table);
-			return readDocumentTable(template);
+			return this.readDocumentTable(template);
 		}
 
 		private CadTemplate readDocumentTable<T>(CadTableTemplate<T> template)
@@ -4875,6 +4879,102 @@ namespace ACadSharp.IO.DWG
 			this.handleReference();
 			//External reference block handle (hard pointer)
 			template.BlockHandle = this.handleReference();
+
+			return template;
+		}
+
+		private CadTemplate readGeoData()
+		{
+			GeoData geoData = new GeoData();
+			var template = new CadGeoDataTemplate(geoData);
+
+			this.readCommonNonEntityData(template);
+
+			//BL Object version formats
+			geoData.Version = (GeoDataVersion)this._mergedReaders.ReadBitLong();
+
+			//H Soft pointer to host block
+			template.HostBlockHandle = this.handleReference();
+
+			switch (geoData.Version)
+			{
+				case GeoDataVersion.R2009:
+					//3BD  Reference point 
+					geoData.ReferencePoint = this._mergedReaders.Read3BitDouble();
+
+					//BL  Units value horizontal
+					geoData.HorizontalUnits = (UnitsType)this._mergedReaders.ReadBitLong();
+					geoData.VerticalUnits = geoData.HorizontalUnits;
+
+					//3BD  Design point
+					geoData.DesignPoint = this._mergedReaders.Read3BitDouble();
+
+					//3BD  Obsolete, ODA writes (0, 0, 0) 
+					this._mergedReaders.Read3BitDouble();
+
+					//3BD  Up direction
+					geoData.UpDirection = this._mergedReaders.Read3BitDouble();
+
+					//BD Angle of north direction (radians, angle measured clockwise from the (0, 1) vector). 
+					double angle = System.Math.PI / 2.0 - this._mergedReaders.ReadBitDouble();
+					geoData.NorthDirection = new XY(Math.Cos(angle), Math.Sin(angle));
+
+					//3BD  Obsolete, ODA writes(1, 1, 1)
+					this._mergedReaders.Read3BitDouble();
+
+					//VT  Coordinate system definition. In AutoCAD 2009 this is a “Well known text” (WKT)string containing a projected coordinate system(PROJCS).
+					geoData.CoordinateSystemDefinition = this._mergedReaders.ReadVariableText();
+					//VT  Geo RSS tag.
+					geoData.GeoRssTag = this._mergedReaders.ReadVariableText();
+
+					//BD Unit scale factor horizontal
+					geoData.HorizontalUnitScale = this._mergedReaders.ReadBitDouble();
+					geoData.VerticalUnitScale = geoData.HorizontalUnitScale;
+
+					//VT  Obsolete, coordinate system datum name 
+					this._mergedReaders.ReadVariableText();
+					//VT  Obsolete: coordinate system WKT 
+					this._mergedReaders.ReadVariableText();
+					break;
+				case GeoDataVersion.R2010:
+				case GeoDataVersion.R2013:
+					//3BD  Design point
+					geoData.DesignPoint = this._mergedReaders.Read3BitDouble();
+					//3BD  Reference point
+					geoData.ReferencePoint = this._mergedReaders.Read3BitDouble();
+					//BD  Unit scale factor horizontal
+					geoData.HorizontalUnitScale = this._mergedReaders.ReadBitDouble();
+					//BL  Units value horizontal
+					geoData.HorizontalUnits = (UnitsType)this._mergedReaders.ReadBitLong();
+					//BD  Unit scale factor vertical 
+					geoData.VerticalUnitScale = this._mergedReaders.ReadBitDouble();
+					//BL  Units value vertical
+					geoData.HorizontalUnits = (UnitsType)this._mergedReaders.ReadBitLong();
+					//3RD  Up direction
+					geoData.UpDirection = this._mergedReaders.Read3BitDouble();
+					//3RD  North direction
+					geoData.NorthDirection = this._mergedReaders.Read2RawDouble();
+					//BL Scale estimation method.
+					geoData.ScaleEstimationMethod = (ScaleEstimationType)this._mergedReaders.ReadBitLong();
+					//BD  User specified scale factor
+					geoData.UserSpecifiedScaleFactor = this._mergedReaders.ReadBitDouble();
+					//B  Do sea level correction
+					geoData.EnableSeaLevelCorrection = this._mergedReaders.ReadBit();
+					//BD  Sea level elevation
+					geoData.SeaLevelElevation = this._mergedReaders.ReadBitDouble();
+					//BD  Coordinate projection radius
+					geoData.CoordinateProjectionRadius = this._mergedReaders.ReadBitDouble();
+					//VT  Coordinate system definition . In AutoCAD 2010 this is a map guide XML string.
+					geoData.CoordinateSystemDefinition = this._mergedReaders.ReadVariableText();
+					//VT  Geo RSS tag.
+					geoData.GeoRssTag = this._mergedReaders.ReadVariableText();
+					break;
+				default:
+					break;
+			}
+
+			//VT  Observation from tag
+			geoData.ObservationFromTag = this._mergedReaders.ReadVariableText();
 
 			return template;
 		}
