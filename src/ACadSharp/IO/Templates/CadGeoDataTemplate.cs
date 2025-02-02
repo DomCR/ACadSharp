@@ -7,6 +7,8 @@ namespace ACadSharp.IO.Templates
 	{
 		public ulong? HostBlockHandle { get; set; }
 
+		public CadGeoDataTemplate() : base(new GeoData()) { }
+
 		public CadGeoDataTemplate(GeoData geodata) : base(geodata) { }
 
 		public override void Build(CadDocumentBuilder builder)

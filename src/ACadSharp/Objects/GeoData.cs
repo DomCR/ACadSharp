@@ -3,6 +3,7 @@ using ACadSharp.Tables;
 using ACadSharp.Types.Units;
 using CSMath;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Objects
 {
@@ -183,6 +184,31 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(307)]
 		public string ObservationCoverageTag { get; set; } = string.Empty;
 
+		[DxfCodeValue(DxfReferenceType.Count, 93)]
+		public List<GeoMeshPoint> Points { get; } = new();
+
+		[DxfCodeValue(DxfReferenceType.Count, 96)]
+		public List<GeoMeshFace> Faces { get; } = new();
+
 		private BlockRecord _hostBlock;
+
+		public class GeoMeshPoint
+		{
+			[DxfCodeValue(13, 23)]
+			public XY Source { get; set; }
+
+			[DxfCodeValue(14, 24)]
+			public XY Destination { get; set; }
+		}
+
+		public class GeoMeshFace
+		{
+			[DxfCodeValue(97)]
+			public int Index1 { get; set; }
+			[DxfCodeValue(98)]
+			public int Index2 { get; set; }
+			[DxfCodeValue(99)]
+			public int Index3 { get; set; }
+		}
 	}
 }

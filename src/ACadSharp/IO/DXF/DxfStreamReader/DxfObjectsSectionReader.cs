@@ -2,8 +2,8 @@
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
 using System;
+using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using static ACadSharp.IO.Templates.CadEvaluationGraphTemplate;
 
 namespace ACadSharp.IO.DXF
@@ -71,7 +71,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.ObjectSortEntsTable:
 					return this.readSortentsTable();
 				case DxfFileToken.ObjectGeoData:
-					return this.readObjectCodes<GeoData>(new CadNonGraphicalObjectTemplate(new GeoData()), this.readObjectSubclassMap);
+					return this.readObjectCodes<GeoData>(new CadGeoDataTemplate(), this.readGeoData);
 				case DxfFileToken.ObjectScale:
 					return this.readObjectCodes<Scale>(new CadTemplate<Scale>(new Scale()), this.readScale);
 				case DxfFileToken.ObjectTableContent:
@@ -191,12 +191,7 @@ namespace ACadSharp.IO.DXF
 						tmp.NodeTemplates.Add(nodeTemplate);
 					}
 
-					if (this._reader.DxfCode == DxfCode.Start)
-					{
-						return true;
-					}
-
-					return this.readEvaluationGraph(template, map);
+					return this.checkObjectEnd(template, map, this.readEvaluationGraph);
 				case 92:
 					//Edges
 					while (this._reader.Code == 92)
@@ -214,12 +209,7 @@ namespace ACadSharp.IO.DXF
 						this._reader.ReadNext();
 					}
 
-					if(this._reader.DxfCode == DxfCode.Start)
-					{
-						return true;
-					}
-
-					return this.readEvaluationGraph(template, map);
+					return this.checkObjectEnd(template, map, this.readEvaluationGraph);
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.EvalGraph]);
 			}
@@ -243,6 +233,69 @@ namespace ACadSharp.IO.DXF
 						return this.readPlotSettings(template, map);
 					}
 					return true;
+			}
+		}
+
+		private bool readGeoData(CadTemplate template, DxfMap map)
+		{
+			CadGeoDataTemplate tmp = template as CadGeoDataTemplate;
+
+			switch (this._reader.Code)
+			{
+				// Number of Geo-Mesh points
+				case 93:
+					var npts = this._reader.ValueAsInt;
+					for (int i = 0; i < npts; i++)
+					{
+						this._reader.ReadNext();
+						Debug.Assert(this._reader.Code == 13);
+						double sourceX = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						Debug.Assert(this._reader.Code == 23);
+						double sourceY = this._reader.ValueAsDouble;
+
+						this._reader.ReadNext();
+						Debug.Assert(this._reader.Code == 14);
+						double destX = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						Debug.Assert(this._reader.Code == 24);
+						double destY = this._reader.ValueAsDouble;
+
+						tmp.CadObject.Points.Add(new GeoData.GeoMeshPoint
+						{
+							Source = new CSMath.XY(sourceX, sourceY),
+							Destination = new CSMath.XY(destX, destY)
+						});
+					}
+					return true;
+				// Number of Geo-Mesh points
+				case 96:
+					var nfaces = this._reader.ValueAsInt;
+					for (int i = 0; i < nfaces; i++)
+					{
+						this._reader.ReadNext();
+						Debug.Assert(this._reader.Code == 97);
+						int index1 = this._reader.ValueAsInt;
+						this._reader.ReadNext();
+						Debug.Assert(this._reader.Code == 98);
+						int index2 = this._reader.ValueAsInt;
+						this._reader.ReadNext();
+						Debug.Assert(this._reader.Code == 99);
+						int index3 = this._reader.ValueAsInt;
+
+						tmp.CadObject.Faces.Add(new GeoData.GeoMeshFace
+						{
+							Index1 = index1,
+							Index2 = index2,
+							Index3 = index3
+						});
+					}
+					return true;
+				case 303:
+					tmp.CadObject.CoordinateSystemDefinition += this._reader.ValueAsString;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
 		}
 

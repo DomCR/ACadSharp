@@ -4896,6 +4896,9 @@ namespace ACadSharp.IO.DWG
 			//H Soft pointer to host block
 			template.HostBlockHandle = this.handleReference();
 
+			//BS Design coordinate type
+			geoData.CoordinatesType = (DesignCoordinatesType)this._mergedReaders.ReadBitShort();
+
 			switch (geoData.Version)
 			{
 				case GeoDataVersion.R2009:
@@ -4975,6 +4978,36 @@ namespace ACadSharp.IO.DWG
 
 			//VT  Observation from tag
 			geoData.ObservationFromTag = this._mergedReaders.ReadVariableText();
+			//VT  Observation to tag
+			geoData.ObservationToTag = this._mergedReaders.ReadVariableText();
+			//VT  Observation coverage tag
+			geoData.ObservationCoverageTag = this._mergedReaders.ReadVariableText();
+
+			//BL Number of geo mesh points
+			int npts = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < npts; i++)
+			{
+				var pt = new GeoData.GeoMeshPoint();
+				//2RD Source point 
+				pt.Source = this._mergedReaders.Read2RawDouble();
+				//2RD Destination point 
+				pt.Destination = this._mergedReaders.Read2RawDouble();
+				geoData.Points.Add(pt);
+			}
+
+			//BL Number of geo mesh faces
+			int nfaces = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < nfaces; i++)
+			{
+				var face = new GeoData.GeoMeshFace();
+				//BL Face index 1
+				face.Index1 = this._mergedReaders.ReadBitLong();
+				//BL Face index 2
+				face.Index2 = this._mergedReaders.ReadBitLong();
+				//BL Face index 3
+				face.Index3 = this._mergedReaders.ReadBitLong();
+				geoData.Faces.Add(face);
+			}
 
 			return template;
 		}

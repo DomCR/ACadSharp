@@ -291,6 +291,18 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		protected bool checkObjectEnd(CadTemplate template, DxfMap map, Func<CadTemplate, DxfMap, bool> func)
+		{
+			if (this._reader.DxfCode == DxfCode.Start)
+			{
+				return true;
+			}
+			else
+			{
+				return func.Invoke(template, map);
+			}
+		}
+
 		private bool readArc(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
 			switch (this._reader.Code)
@@ -606,9 +618,6 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 53:
 					hatch.PatternAngle = this._reader.ValueAsAngle;
-					return true;
-				//Number of dash length items
-				case 79:
 					return true;
 				//TODO: Check hatch undocumented codes
 				case 90:
@@ -1724,7 +1733,7 @@ namespace ACadSharp.IO.DXF
 
 					if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
 					{
-						value = (double)value * MathUtils.DegToRadFactor;
+						value = (double)value * MathHelper.DegToRadFactor;
 					}
 
 					dxfProperty.SetValue(this._reader.Code, cadObject, value);
