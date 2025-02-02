@@ -24,7 +24,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectGeoData)]
 	[DxfSubClass(DxfSubclassMarker.GeoData)]
-	public class GeoData : NonGraphicalObject
+	public partial class GeoData : NonGraphicalObject
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }
@@ -184,31 +184,18 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(307)]
 		public string ObservationCoverageTag { get; set; } = string.Empty;
 
+		/// <summary>
+		/// Geo-Mesh points.
+		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 93)]
 		public List<GeoMeshPoint> Points { get; } = new();
 
+		/// <summary>
+		/// Faces.
+		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 96)]
 		public List<GeoMeshFace> Faces { get; } = new();
 
 		private BlockRecord _hostBlock;
-
-		public class GeoMeshPoint
-		{
-			[DxfCodeValue(13, 23)]
-			public XY Source { get; set; }
-
-			[DxfCodeValue(14, 24)]
-			public XY Destination { get; set; }
-		}
-
-		public class GeoMeshFace
-		{
-			[DxfCodeValue(97)]
-			public int Index1 { get; set; }
-			[DxfCodeValue(98)]
-			public int Index2 { get; set; }
-			[DxfCodeValue(99)]
-			public int Index3 { get; set; }
-		}
 	}
 }
