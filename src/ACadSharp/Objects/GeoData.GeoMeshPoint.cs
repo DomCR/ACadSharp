@@ -19,6 +19,12 @@ namespace ACadSharp.Objects
 			/// </summary>
 			[DxfCodeValue(14, 24)]
 			public XY Destination { get; set; }
+
+			/// <inheritdoc/>
+			public override string ToString()
+			{
+				return $"src:{this.Source.ToString(System.Globalization.CultureInfo.InvariantCulture)} dest:{this.Destination.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
+			}
 		}
 	}
 }
