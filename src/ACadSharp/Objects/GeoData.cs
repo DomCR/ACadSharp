@@ -7,14 +7,6 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Objects
 {
-	public enum ScaleEstimationType
-	{
-		None = 1,
-		UserSpecifiedScaleFactor = 2,
-		GridScaleAtReferencePoint = 3,
-		Prismodial = 4
-	}
-
 	/// <summary>
 	/// Represents a <see cref="GeoData"/> object
 	/// </summary>
@@ -197,5 +189,16 @@ namespace ACadSharp.Objects
 		public List<GeoMeshFace> Faces { get; } = new();
 
 		private BlockRecord _hostBlock;
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			//TODO: the assigned block is always the owner of the dictionary??
+			base.AssignDocument(doc);
+		}
+
+		internal override void UnassignDocument()
+		{
+			base.UnassignDocument();
+		}
 	}
 }
