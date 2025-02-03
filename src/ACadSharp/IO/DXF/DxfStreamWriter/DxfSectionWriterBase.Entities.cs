@@ -690,7 +690,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(71, (short)mtext.AttachmentPoint, map);
 			this._writer.Write(72, (short)mtext.DrawingDirection, map);
 
-			this.writeMTextValue(mtext.Value);
+			this.writeLongTextValue(1, 3, mtext.Value);
 
 			this._writer.WriteName(7, mtext.Style);
 
@@ -699,16 +699,6 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(11, mtext.AlignmentPoint, map);
 
 			this._writer.Write(210, mtext.Normal, map);
-		}
-
-		private void writeMTextValue(string text)
-		{
-			for (int i = 0; i < text.Length - 250; i += 250)
-			{
-				this._writer.Write(3, text.Substring(i, 250));
-			}
-
-			this._writer.Write(1, text);
 		}
 
 		private void writeMultiLeader(MultiLeader multiLeader)

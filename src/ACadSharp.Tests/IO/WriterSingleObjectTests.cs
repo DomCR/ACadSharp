@@ -528,6 +528,16 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(insert);
 			}
 
+			public void GeoData()
+			{
+				this.Document.ModelSpace.CreateExtendedDictionary();
+
+				var geodata = new GeoData();
+				geodata.HostBlock = this.Document.ModelSpace;
+
+				this.Document.ModelSpace.XDictionary.Add(CadDictionary.GeographicData, geodata);
+			}
+
 			public void XData()
 			{
 				AppId app = new AppId("my_app");
@@ -617,6 +627,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomScale)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomBookColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
+			Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
 			Data.Add(new(nameof(SingleCaseGenerator.XData)));
 		}
 

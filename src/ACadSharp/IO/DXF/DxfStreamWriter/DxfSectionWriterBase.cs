@@ -196,6 +196,16 @@ namespace ACadSharp.IO.DXF
 
 		protected abstract void writeSection();
 
+		protected void writeLongTextValue(int code, int subcode, string text)
+		{
+			for (int i = 0; i < text.Length - 250; i += 250)
+			{
+				this._writer.Write(subcode, text.Substring(i, 250));
+			}
+
+			this._writer.Write(code, text);
+		}
+
 		protected void notify(string message, NotificationType notificationType = NotificationType.None, Exception ex = null)
 		{
 			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, ex));

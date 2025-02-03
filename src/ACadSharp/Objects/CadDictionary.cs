@@ -24,62 +24,62 @@ namespace ACadSharp.Objects
 		#region Root dictionary entries
 
 		/// <summary>
-		/// ROOT dictionary, only used in the top level dictionary
+		/// ROOT dictionary, only used in the top level dictionary.
 		/// </summary>
 		public const string Root = "ROOT";
 
 		/// <summary>
-		/// ACAD_COLOR dictionary entry
+		/// ACAD_COLOR dictionary entry.
 		/// </summary>
 		public const string AcadColor = "ACAD_COLOR";
 
 		/// <summary>
-		/// ACAD_GROUP dictionary entry
+		/// ACAD_GROUP dictionary entry.
 		/// </summary>
 		public const string AcadGroup = "ACAD_GROUP";
 
 		/// <summary>
-		/// ACAD_LAYOUT dictionary entry
+		/// ACAD_LAYOUT dictionary entry.
 		/// </summary>
 		public const string AcadLayout = "ACAD_LAYOUT";
 
 		/// <summary>
-		/// ACAD_MATERIAL dictionary entry
+		/// ACAD_MATERIAL dictionary entry.
 		/// </summary>
 		public const string AcadMaterial = "ACAD_MATERIAL";
 
 		/// <summary>
-		/// ACAD_SORTENTS dictionary entry
+		/// ACAD_SORTENTS dictionary entry.
 		/// </summary>
 		public const string AcadSortEnts = "ACAD_SORTENTS";
 
 		/// <summary>
-		/// ACAD_MLEADERSTYLE dictionary entry
+		/// ACAD_MLEADERSTYLE dictionary entry.
 		/// </summary>
 		public const string AcadMLeaderStyle = "ACAD_MLEADERSTYLE";
 
 		/// <summary>
-		/// ACAD_MLINESTYLE dictionary entry
+		/// ACAD_MLINESTYLE dictionary entry.
 		/// </summary>
 		public const string AcadMLineStyle = "ACAD_MLINESTYLE";
 
 		/// <summary>
-		/// ACAD_TABLESTYLE dictionary entry
+		/// ACAD_TABLESTYLE dictionary entry.
 		/// </summary>
 		public const string AcadTableStyle = "ACAD_TABLESTYLE";
 
 		/// <summary>
-		/// ACAD_PLOTSETTINGS dictionary entry
+		/// ACAD_PLOTSETTINGS dictionary entry.
 		/// </summary>
 		public const string AcadPlotSettings = "ACAD_PLOTSETTINGS";
 
 		/// <summary>
-		/// AcDbVariableDictionary dictionary entry
+		/// AcDbVariableDictionary dictionary entry.
 		/// </summary>
 		public const string VariableDictionary = "AcDbVariableDictionary";
 
 		/// <summary>
-		/// ACAD_PLOTSTYLENAME dictionary entry
+		/// ACAD_PLOTSTYLENAME dictionary entry.
 		/// </summary>
 		public const string AcadPlotStyleName = "ACAD_PLOTSTYLENAME";
 
@@ -89,21 +89,26 @@ namespace ACadSharp.Objects
 		public const string AcadScaleList = "ACAD_SCALELIST";
 
 		/// <summary>
-		/// ACAD_VISUALSTYLE dictionary entry
+		/// ACAD_VISUALSTYLE dictionary entry.
 		/// </summary>
 		public const string AcadVisualStyle = "ACAD_VISUALSTYLE";
 
 		/// <summary>
-		/// ACAD_FIELDLIST dictionary entry
+		/// ACAD_FIELDLIST dictionary entry.
 		/// </summary>
 		public const string AcadFieldList = "ACAD_FIELDLIST";
 
 		/// <summary>
-		/// ACAD_IMAGE_DICT dictionary entry
+		/// ACAD_IMAGE_DICT dictionary entry.
 		/// </summary>
 		public const string AcadImageDict = "ACAD_IMAGE_DICT";
 
 		#endregion
+
+		/// <summary>
+		/// ACAD_GEOGRAPHICDATA dictionary entry.
+		/// </summary>
+		public const string GeographicData = "ACAD_GEOGRAPHICDATA";
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.DICTIONARY;
