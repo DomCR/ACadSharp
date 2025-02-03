@@ -242,23 +242,47 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				case 40 when tmp.CadObject.Version == GeoDataVersion.R2009:
+					tmp.CadObject.ReferencePoint = new CSMath.XYZ(
+						tmp.CadObject.ReferencePoint.X,
+						this._reader.ValueAsDouble,
+						tmp.CadObject.ReferencePoint.Z
+						);
+					return true;
+				case 41 when tmp.CadObject.Version == GeoDataVersion.R2009:
+					tmp.CadObject.ReferencePoint = new CSMath.XYZ(
+						this._reader.ValueAsDouble,
+						tmp.CadObject.ReferencePoint.Y,
+						tmp.CadObject.ReferencePoint.Z
+						);
+					return true;
+				case 42 when tmp.CadObject.Version == GeoDataVersion.R2009:
+					tmp.CadObject.ReferencePoint = new CSMath.XYZ(
+						tmp.CadObject.ReferencePoint.X,
+						tmp.CadObject.ReferencePoint.Y,
+						this._reader.ValueAsDouble
+						);
+					return true;
+				case 46 when tmp.CadObject.Version == GeoDataVersion.R2009:
+					tmp.CadObject.HorizontalUnitScale = this._reader.ValueAsDouble;
+					return true;
+				case 52 when tmp.CadObject.Version == GeoDataVersion.R2009:
+					double angle = System.Math.PI / 2.0 - this._reader.ValueAsAngle;
+					tmp.CadObject.NorthDirection = new CSMath.XY(Math.Cos(angle), Math.Sin(angle));
+					return true;
 				// Number of Geo-Mesh points
 				case 93:
 					var npts = this._reader.ValueAsInt;
 					for (int i = 0; i < npts; i++)
 					{
 						this._reader.ReadNext();
-						Debug.Assert(this._reader.Code == 13);
 						double sourceX = this._reader.ValueAsDouble;
 						this._reader.ReadNext();
-						Debug.Assert(this._reader.Code == 23);
 						double sourceY = this._reader.ValueAsDouble;
 
 						this._reader.ReadNext();
-						Debug.Assert(this._reader.Code == 14);
 						double destX = this._reader.ValueAsDouble;
 						this._reader.ReadNext();
-						Debug.Assert(this._reader.Code == 24);
 						double destY = this._reader.ValueAsDouble;
 
 						tmp.CadObject.Points.Add(new GeoData.GeoMeshPoint
@@ -293,6 +317,27 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 303:
 					tmp.CadObject.CoordinateSystemDefinition += this._reader.ValueAsString;
+					return true;
+				//Obsolete codes for version GeoDataVersion.R2009
+				case 3:
+				case 4:
+				case 14:
+				case 24:
+				case 15:
+				case 25:
+				case 43:
+				case 44:
+				case 45:
+				case 94:
+				case 293:
+				case 16:
+				case 26:
+				case 17:
+				case 27:
+				case 54:
+				case 140:
+				case 304:
+				case 292:
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
