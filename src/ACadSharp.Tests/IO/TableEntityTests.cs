@@ -2,7 +2,6 @@
 using Xunit.Abstractions;
 using ACadSharp.Tests.TestModels;
 using ACadSharp.Entities;
-using System.Linq;
 using ACadSharp.Tables;
 using ACadSharp.IO;
 
@@ -14,7 +13,8 @@ namespace ACadSharp.Tests.IO
 
 		static TableEntityTests()
 		{
-			loadSamples("table_samples", "*", TableSamplesFilePaths);
+			loadSamples("sample_base", "dxf", TableSamplesFilePaths);
+			loadSamples("sample_base", "dwg", TableSamplesFilePaths);
 		}
 
 		public TableEntityTests(ITestOutputHelper output) : base(output)
@@ -40,12 +40,12 @@ namespace ACadSharp.Tests.IO
 
 			CadDocument doc = this.readDocument(test, configuration);
 
-			TableEntity table = (TableEntity)doc.Entities.First();
+			TableEntity table = doc.GetCadObject<TableEntity>(0xA35);
 
 			BlockRecord record = table.Block;
 
 			Assert.NotNull(record);
-			Assert.Equal("*T1", record.Name);
+			Assert.Equal("*T18", record.Name);
 
 			Assert.Equal(5, table.Columns.Count);
 			foreach (var column in table.Columns)

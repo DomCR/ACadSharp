@@ -3,7 +3,6 @@ using ACadSharp.IO;
 using ACadSharp.Objects.Evaluations;
 using ACadSharp.Tables;
 using ACadSharp.Tests.TestModels;
-using System.Collections.Generic;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -15,7 +14,8 @@ namespace ACadSharp.Tests.IO
 
 		static DynamicBlockTests()
 		{
-			loadSamples("dynamic-blocks", "*", DwgDynamicBlocksPaths);
+			loadSamples("sample_base", "dxf", DwgDynamicBlocksPaths);
+			loadSamples("sample_base", "dwg", DwgDynamicBlocksPaths);
 		}
 
 		public DynamicBlockTests(ITestOutputHelper output) : base(output)
@@ -28,7 +28,7 @@ namespace ACadSharp.Tests.IO
 		{
 			CadDocument doc;
 
-			if (test.Extension == ".dxf")
+			if (test.IsDxf)
 			{
 				DxfReaderConfiguration configuration = new();
 				configuration.KeepUnknownEntities = true;
@@ -59,8 +59,8 @@ namespace ACadSharp.Tests.IO
 			var b = blk.ExtendedData.Get(doc.AppIds["AcDbDynamicBlockTrueName"]);
 			var c = blk.ExtendedData.Get(doc.AppIds["AcDbDynamicBlockGUID"]);
 
-			Insert basic = doc.GetCadObject<Insert>(788);
-			Insert modified = doc.GetCadObject<Insert>(889);
+			Insert basic = doc.GetCadObject<Insert>(0xABA);
+			Insert modified = doc.GetCadObject<Insert>(0xAC5);
 		}
 	}
 }

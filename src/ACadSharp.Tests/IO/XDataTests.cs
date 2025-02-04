@@ -3,8 +3,6 @@ using ACadSharp.Tables;
 using ACadSharp.Tests.TestModels;
 using ACadSharp.XData;
 using CSMath;
-using System;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
