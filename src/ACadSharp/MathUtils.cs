@@ -3,6 +3,7 @@ using System;
 
 namespace ACadSharp
 {
+	[Obsolete("Use CSMath.MathHelper instead.")]
 	public static class MathUtils
 	{
 		/// <summary>

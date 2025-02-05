@@ -24,6 +24,8 @@ namespace ACadSharp.IO.DWG
 
 		public bool WriteXRecords { get; }
 
+		public bool WriteXData { get; }
+
 		private Dictionary<ulong, CadDictionary> _dictionaries = new();
 
 		private Queue<CadObject> _objects = new();
@@ -40,7 +42,7 @@ namespace ACadSharp.IO.DWG
 
 		private Entity _next;
 
-		public DwgObjectWriter(Stream stream, CadDocument document, Encoding encoding, bool writeXRecords = true) : base(document.Header.Version)
+		public DwgObjectWriter(Stream stream, CadDocument document, Encoding encoding, bool writeXRecords = true, bool writeXData = true) : base(document.Header.Version)
 		{
 			this._stream = stream;
 			this._document = document;
@@ -48,6 +50,7 @@ namespace ACadSharp.IO.DWG
 			this._msmain = new MemoryStream();
 			this._writer = DwgStreamWriterBase.GetMergedWriter(document.Header.Version, this._msmain, encoding);
 			this.WriteXRecords = writeXRecords;
+			this.WriteXData = writeXData;
 		}
 
 		public void Write()
@@ -257,8 +260,15 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Entry name TV 2
-			//Warning: names ended with a number are not readed in this method
-			this._writer.WriteVariableText(record.Name);
+			if (record.Flags.HasFlag(BlockTypeFlags.Anonymous))
+			{
+				//Warning: anonymous blocks do not write the full name, only *{type character}
+				this._writer.WriteVariableText(record.Name.Substring(0, 2));
+			}
+			else
+			{
+				this._writer.WriteVariableText(record.Name);
+			}
 
 			this.writeXrefDependantBit(record);
 

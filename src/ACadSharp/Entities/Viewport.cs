@@ -335,19 +335,38 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				return this._scale;
+				if (this.Document != null)
+				{
+					if (this.XDictionary != null && this.XDictionary.TryGetEntry(ASDK_XREC_ANNOTATION_SCALE_INFO, out XRecord record))
+					{
+						foreach (XRecord.Entry item in record.Entries)
+						{
+							if (item.Code == 340)
+							{
+								return item.Value as Scale;
+							}
+						}
+					}
+
+					return null;
+				}
+				else
+				{
+					return this._scale;
+				}
 			}
 			set
 			{
 				if (this.Document != null)
 				{
 					this._scale = this.updateCollection(value, this.Document.Scales);
-					this.updateScaleXRecord();
 				}
 				else
 				{
 					this._scale = value;
 				}
+
+				this.updateScaleXRecord();
 			}
 		}
 
@@ -433,7 +452,7 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._scale = this.updateCollection(this.Scale, doc.Scales);
+			this._scale = this.updateCollection(this._scale, doc.Scales);
 
 			this.Document.Scales.OnRemove += this.scalesOnRemove;
 		}
@@ -468,7 +487,7 @@ namespace ACadSharp.Entities
 				{
 					if (item.Code == 340)
 					{
-						item.Value = this._scale.Handle;
+						item.Value = this._scale;
 					}
 				}
 			}
@@ -477,7 +496,7 @@ namespace ACadSharp.Entities
 				record = new XRecord(ASDK_XREC_ANNOTATION_SCALE_INFO);
 				this.XDictionary.Add(record);
 
-				record.CreateEntry(340, _scale.Handle);
+				record.CreateEntry(340, _scale);
 			}
 		}
 	}

@@ -1,6 +1,8 @@
-﻿using ACadSharp.Entities;
+﻿using ACadSharp.Blocks;
+using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using ACadSharp.XData;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
@@ -20,9 +22,12 @@ namespace ACadSharp.Tests.IO
 
 			public CadDocument Document { get; private set; } = new CadDocument();
 
-			public SingleCaseGenerator() { }
+			public SingleCaseGenerator()
+			{
+				this.Document.Header.ShowModelSpace = true;
+			}
 
-			public SingleCaseGenerator(string name)
+			public SingleCaseGenerator(string name) : this()
 			{
 				this.Name = name;
 			}
@@ -125,6 +130,23 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(line);
 			}
 
+			public void ViewZoom()
+			{
+				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
+				Line line1 = new Line(new XYZ(0, 100, 0), new XYZ(100, 0, 0));
+
+				this.Document.Entities.Add(line);
+				this.Document.Entities.Add(line1);
+
+				var box = line.GetBoundingBox();
+
+				VPort active = this.Document.VPorts[VPort.DefaultName];
+				active.Center = (XY)box.Center;
+				//active.BottomLeft = (XY)box.Min;
+				//active.TopRight = (XY)box.Max;
+				active.ViewHeight = 100;
+			}
+
 			public void SingleMLine()
 			{
 				//It creates a valid dxf but the MLine is wrongly drawn
@@ -205,10 +227,13 @@ namespace ACadSharp.Tests.IO
 				ImageDefinition definition = new ImageDefinition();
 				definition.Size = new XY(1, 1);
 				definition.Name = "image";
+				definition.IsLoaded = true;
 
 				definition.FileName = "..\\..\\image.JPG";
 
 				RasterImage raster = new RasterImage(definition);
+
+				raster.Flags = ImageDisplayFlags.ShowImage;
 
 				raster.ClipBoundaryVertices.Add(new XY(0, 0));
 				raster.ClipBoundaryVertices.Add(new XY(0, 1));
@@ -299,6 +324,44 @@ namespace ACadSharp.Tests.IO
 				line.Transparency = new Transparency(50);
 
 				this.Document.Entities.Add(line);
+			}
+
+			public void CreateInsertWithHatch()
+			{
+				CadDocument doc = this.Document;
+				var modelSpace = doc.ModelSpace;
+
+				string blockName = Guid.NewGuid().ToString();
+				var block = new Block(new(blockName));
+				var blockRecord = new BlockRecord(blockName);
+				var insert = new Insert(blockRecord);
+				modelSpace.Entities.Add(insert);
+
+				var hatch = new Hatch()
+				{
+					Pattern = HatchPattern.Solid,
+					Color = new ACadSharp.Color(0, 0, 0),
+					IsAssociative = false,
+					IsSolid = true,
+					PatternType = HatchPatternType.SolidFill,
+					IsInvisible = false,
+					Style = HatchStyleType.Normal,
+				};
+
+				var path = new Hatch.BoundaryPath
+				{
+					Flags = BoundaryPathFlags.External,
+				};
+
+				path.Edges.Add(new Hatch.BoundaryPath.Polyline()
+				{
+					Vertices = [new(0, 0, 0), new(0, 5, 0), new(5, 5, 0), new(5, 0, 0)],
+					IsClosed = true,
+				});
+
+				hatch.Paths.Add(path);
+
+				blockRecord.Entities.Add(hatch);
 			}
 
 			public void CreateHatchPolyline()
@@ -409,6 +472,15 @@ namespace ACadSharp.Tests.IO
 				this.Document.Scales.Add(new Scale("Hello"));
 			}
 
+			public void Dimensions()
+			{
+				DimensionAligned dim = new DimensionAligned();
+
+				dim.SecondPoint = new XYZ(10);
+
+				this.Document.Entities.Add(dim);
+			}
+
 			public void AddCustomBookColor()
 			{
 				//var color = new BookColor("RAL CLASSIC$RAL 1006");
@@ -456,6 +528,46 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(insert);
 			}
 
+			public void GeoData()
+			{
+				this.Document.ModelSpace.CreateExtendedDictionary();
+
+				var geodata = new GeoData();
+				geodata.HostBlock = this.Document.ModelSpace;
+
+				this.Document.ModelSpace.XDictionary.Add(CadDictionary.GeographicData, geodata);
+			}
+
+			public void XData()
+			{
+				AppId app = new AppId("my_app");
+				Layer layer = new Layer("my_layer");
+				this.Document.AppIds.Add(app);
+				this.Document.Layers.Add(layer);
+
+				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
+
+				List<ExtendedDataRecord> records = new();
+				records.Add(new ExtendedDataControlString(false));
+				records.Add(new ExtendedDataInteger16(5));
+				records.Add(new ExtendedDataInteger32(33));
+				records.Add(new ExtendedDataString("my extended data string"));
+				records.Add(new ExtendedDataHandle(5));
+				records.Add(new ExtendedDataReal(25.35));
+				records.Add(new ExtendedDataScale(0.66));
+				records.Add(new ExtendedDataDistance(481.48));
+				records.Add(new ExtendedDataDirection(new XYZ(4, 3, 2)));
+				records.Add(new ExtendedDataCoordinate(new XYZ(8, 7, 4)));
+				records.Add(new ExtendedDataWorldCoordinate(new XYZ(85, 74, 47)));
+				records.Add(new ExtendedDataLayer(layer.Handle));
+				records.Add(new ExtendedDataBinaryChunk(new byte[] { 1, 2, 3, 4 }));
+				records.Add(new ExtendedDataControlString(true));
+
+				line.ExtendedData.Add(app, records);
+
+				this.Document.Entities.Add(line);
+			}
+
 			public void Deserialize(IXunitSerializationInfo info)
 			{
 				this.Name = info.GetValue<string>(nameof(this.Name));
@@ -484,6 +596,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.Empty)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleEllipse)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
+			Data.Add(new(nameof(SingleCaseGenerator.ViewZoom)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
@@ -505,6 +618,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.CreateLayout)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityTransparency)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithSegments)));
+			Data.Add(new(nameof(SingleCaseGenerator.CreateInsertWithHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateCircleHatch)));
@@ -512,6 +626,9 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomScale)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomBookColor)));
+			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
+			Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
+			Data.Add(new(nameof(SingleCaseGenerator.XData)));
 		}
 
 		protected string getPath(string name, string ext, ACadVersion version)

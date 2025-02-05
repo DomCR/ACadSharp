@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using System;
 
 namespace ACadSharp.Objects
 {
@@ -11,6 +12,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectImageDefinitionReactor)]
 	[DxfSubClass(DxfSubclassMarker.RasterImageDefReactor)]
+	[Obsolete("This object doesn't seem to be needed for any kind of app.")]
 	public class ImageDefinitionReactor : NonGraphicalObject
 	{
 		/// <inheritdoc/>
@@ -33,5 +35,12 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 330)]
 		public ImageDefinition Definition { get; set; }
+
+		internal ImageDefinitionReactor() { }
+
+		internal ImageDefinitionReactor(ImageDefinition definition)
+		{
+			this.Definition = definition;
+		}
 	}
 }

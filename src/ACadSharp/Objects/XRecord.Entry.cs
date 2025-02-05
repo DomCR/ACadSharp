@@ -40,6 +40,12 @@
 				this.Value = value;
 				this.Owner = owner;
 			}
+
+			/// <inheritdoc/>
+			public override string ToString()
+			{
+				return $"{Code}:{Value}";
+			}
 		}
 	}
 }

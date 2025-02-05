@@ -57,6 +57,7 @@
 		public const string Entity3DFace = "3DFACE";
 		public const string Entity3DSolid = "3DSOLID";
 		public const string EntityProxyEntity = "ACAD_PROXY_ENTITY";
+		public const string EntityTable = "ACAD_TABLE";
 		public const string EntityArc = "ARC";
 		public const string EntityAttributeDefinition = "ATTDEF";
 		public const string EntityAttribute = "ATTRIB";
@@ -92,7 +93,6 @@
 		public const string EntitySpline = "SPLINE";
 		public const string EntitySun = "SUN";
 		public const string EntitySurface = "SURFACE";
-		public const string EntityTable = "TABLE";
 		public const string EntityText = "TEXT";
 		public const string EntityTolerance = "TOLERANCE";
 		public const string EntityTrace = "TRACE";
@@ -127,7 +127,10 @@
 		public const string ObjectXRecord = "XRECORD";
 		public const string ObjectMLeaderContextData = "CONTEXT_DATA";
 		public const string ObjectEvalGraph = "ACAD_EVALUATION_GRAPH";
+		public const string ObjectBlockLinearParameter = "BLOCKLINEARPARAMETER";
 		public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
+		public const string ObjectTableContent = "TABLECONTENT";
+		public const string ObjectGeoData = "GEODATA";
 
 		#endregion
 	}

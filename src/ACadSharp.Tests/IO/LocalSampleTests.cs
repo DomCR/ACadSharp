@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
+using ACadSharp.Tables;
 using ACadSharp.Tests.TestModels;
+using CSMath;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -36,10 +38,6 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
-
-			var trees = doc.Entities.Where(e => e is Insert insert 
-				&& insert.Block.Name == "TREE_1"
-				&& e.Layer.Name.Equals("VEGETATION", System.StringComparison.OrdinalIgnoreCase));
 		}
 
 		[Theory]

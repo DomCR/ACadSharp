@@ -46,7 +46,7 @@ namespace ACadSharp.IO
 
 			this.createStreamWriter();
 
-			this._objectHolder.Objects.Enqueue(_document.RootDictionary);
+			this._objectHolder.Objects.Enqueue(this._document.RootDictionary);
 
 			this.writeHeader();
 
@@ -133,7 +133,7 @@ namespace ACadSharp.IO
 
 		private void writeDxfClasses()
 		{
-			var writer = new DxfClassesSectionWriter(this._writer, this._document, this._objectHolder);
+			var writer = new DxfClassesSectionWriter(this._writer, this._document, this._objectHolder, this.Configuration);
 			writer.OnNotification += this.triggerNotification;
 
 			writer.Write();
@@ -141,7 +141,7 @@ namespace ACadSharp.IO
 
 		private void writeTables()
 		{
-			var writer = new DxfTablesSectionWriter(this._writer, this._document, this._objectHolder);
+			var writer = new DxfTablesSectionWriter(this._writer, this._document, this._objectHolder, this.Configuration);
 			writer.OnNotification += this.triggerNotification;
 
 			writer.Write();
@@ -149,7 +149,7 @@ namespace ACadSharp.IO
 
 		private void writeBlocks()
 		{
-			var writer = new DxfBlocksSectionWriter(this._writer, this._document, this._objectHolder);
+			var writer = new DxfBlocksSectionWriter(this._writer, this._document, this._objectHolder, this.Configuration);
 			writer.OnNotification += this.triggerNotification;
 
 			writer.Write();
@@ -157,7 +157,7 @@ namespace ACadSharp.IO
 
 		private void writeEntities()
 		{
-			var writer = new DxfEntitiesSectionWriter(this._writer, this._document, this._objectHolder);
+			var writer = new DxfEntitiesSectionWriter(this._writer, this._document, this._objectHolder, this.Configuration);
 			writer.OnNotification += this.triggerNotification;
 
 			writer.Write();
@@ -165,8 +165,7 @@ namespace ACadSharp.IO
 
 		private void writeObjects()
 		{
-			var writer = new DxfObjectsSectionWriter(this._writer, this._document, this._objectHolder);
-			writer.WriteXRecords = this.Configuration.WriteXRecords;
+			var writer = new DxfObjectsSectionWriter(this._writer, this._document, this._objectHolder, this.Configuration);
 			writer.OnNotification += this.triggerNotification;
 
 			writer.Write();

@@ -3,8 +3,11 @@ using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using ACadSharp.XData;
 using System;
+using ACadSharp.XData;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp
 {
@@ -64,17 +67,20 @@ namespace ACadSharp
 		}
 
 		/// <summary>
-		/// Objects that are attached to this object
+		/// Objects that are attached to this object.
 		/// </summary>
+		/// <remarks>
+		/// This collection is not managed by ACadSharp, any changes may cause a corruption in the file.
+		/// </remarks>
 		public Dictionary<ulong, CadObject> Reactors { get; } = new Dictionary<ulong, CadObject>();
 
 		/// <summary>
-		/// Extended data attached to this object
+		/// Extended data attached to this object.
 		/// </summary>
-		public ExtendedDataDictionary ExtendedData { get; } = new ExtendedDataDictionary();
+		public ExtendedDataDictionary ExtendedData { get; }
 
 		/// <summary>
-		/// Document where this element belongs
+		/// Document where this element belongs.
 		/// </summary>
 		public CadDocument Document
 		{
@@ -87,7 +93,10 @@ namespace ACadSharp
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		public CadObject() { }
+		public CadObject()
+		{
+			this.ExtendedData = new ExtendedDataDictionary(this);
+		}
 
 		/// <summary>
 		/// Creates the extended dictionary if null.
@@ -138,7 +147,21 @@ namespace ACadSharp
 			this.Document = doc;
 
 			if (this.XDictionary != null)
+			{
 				doc.RegisterCollection(this.XDictionary);
+			}
+
+			if (this.ExtendedData.Any())
+			{
+				//Reset existing collection
+				var entries = this.ExtendedData.ToArray();
+				this.ExtendedData.Clear();
+
+				foreach (var item in entries)
+				{
+					this.ExtendedData.Add(item.Key, item.Value);
+				}
+			}
 		}
 
 		internal virtual void UnassignDocument()
@@ -148,6 +171,18 @@ namespace ACadSharp
 
 			this.Handle = 0;
 			this.Document = null;
+
+			if (this.ExtendedData.Any())
+			{
+				//Reset existing collection
+				var entries = this.ExtendedData.ToArray();
+				this.ExtendedData.Clear();
+
+				foreach (var item in entries)
+				{
+					this.ExtendedData.Add(item.Key.Clone() as AppId, item.Value);
+				}
+			}
 		}
 
 		protected T updateTable<T>(T entry, Table<T> table)

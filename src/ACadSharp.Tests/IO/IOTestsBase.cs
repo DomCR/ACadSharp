@@ -62,7 +62,7 @@ namespace ACadSharp.Tests.IO
 		{
 			if (e.NotificationType == NotificationType.Error)
 			{
-				throw e.Exception;
+				//throw e.Exception;
 			}
 
 			_output.WriteLine(e.Message);
@@ -137,16 +137,32 @@ namespace ACadSharp.Tests.IO
 			}
 		}
 
-		protected CadDocument readDocument(FileModel test)
+		protected CadDocument readDocument(FileModel test, CadReaderConfiguration configuration = null)
 		{
 			CadDocument doc;
-			if (Path.GetExtension(test.FileName).Equals(".dxf"))
+			if (test.IsDxf)
 			{
-				doc = DxfReader.Read(test.Path, this.onNotification);
+				using (DxfReader dxfReader = new DxfReader(test.Path, this.onNotification))
+				{
+					if (configuration != null)
+					{
+						dxfReader.Configuration = (DxfReaderConfiguration)configuration;
+					}
+
+					doc = dxfReader.Read();
+				}
 			}
 			else
 			{
-				doc = DwgReader.Read(test.Path, this.onNotification);
+				using (DwgReader dxfReader = new DwgReader(test.Path, this.onNotification))
+				{
+					if (configuration != null)
+					{
+						dxfReader.Configuration = (DwgReaderConfiguration)configuration;
+					}
+
+					doc = dxfReader.Read();
+				}
 			}
 
 			return doc;

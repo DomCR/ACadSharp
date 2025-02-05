@@ -25,7 +25,7 @@ namespace ACadSharp.Tests.IO
 
 		[Theory]
 		[MemberData(nameof(ColorSamplesFilePaths))]
-		public void ColorDwg(FileModel test)
+		public void BasicColorTest(FileModel test)
 		{
 			bool isDxf = Path.GetExtension(test.FileName).Equals(".dxf");
 			CadDocument doc = this.readDocument(test);

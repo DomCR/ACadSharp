@@ -1,24 +1,25 @@
-#name: Publish NuGet package
+name: Publish NuGet package
 
-#on:
-#  push:
-#    tags:
-#      - '*'
+on:
+ workflow_dispatch:
+ release:
+    branches: [ master ]
 
-#jobs:
-#  build:
-
-#    runs-on: windows-latest
-
-#    steps:
-#    - name: Checkout
-#      run: git config --global core.autocrlf true
-#    - uses: actions/checkout@v2
-#      with: 
-#        submodules: true
-#    - name: Restore dependencies
-#      run: dotnet restore
-#    - name: Build NuGet package
-#      run: dotnet pack ./ACadSharp.sln -c Release -o packages
-#    - name: Publish NuGet package
-#      run: dotnet nuget push .\packages\ACadSharp*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+jobs:
+ build:
+   runs-on: windows-latest
+   steps:
+   - uses: actions/checkout@v3
+     with: 
+       submodules: true
+       fetch-depth: 0
+   - name: Publish NuGet package
+     working-directory: src
+     run: |
+         git submodule update --force --recursive --init --remote
+         dotnet restore
+         dotnet build --configuration Release
+         dotnet pack ./ACadSharp/ACadSharp.csproj --configuration Release
+         foreach($file in (Get-ChildItem ./nupkg -Recurse -Include *.nupkg)) {
+              dotnet nuget push $file --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+         }
