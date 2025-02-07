@@ -193,6 +193,28 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(mtext);
 			}
 
+			public void TextWithChineseCharacters()
+			{
+				//this.Document.Header.CodePage = "GB2312";
+
+				TextStyle style = new TextStyle("custom");
+				style.Filename = "romans.shx";
+				style.BigFontFilename = "chineset.shx";
+
+				MText mtext = new MText();
+				//mtext.AlignmentPoint = XYZ.Zero;
+				//mtext.HorizontalWidth = 1;
+				mtext.Value = "我的短信";
+				mtext.Style = style;
+
+				TextEntity text = new TextEntity();
+				text.Value = "我的短信";
+				text.Style = style;
+
+				this.Document.Entities.Add(mtext);
+				this.Document.Entities.Add(text);
+			}
+
 			public void SingleMTextMultiline()
 			{
 				MText mtext = new MText();
@@ -609,6 +631,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.LayerTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
+			Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedLwPolyline)));
