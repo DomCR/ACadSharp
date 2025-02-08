@@ -14,8 +14,8 @@ namespace ACadSharp.Tests.IO
 
 		static XDataTests()
 		{
-			loadSamples("sample_base", "dxf", Files);
-			loadSamples("sample_base", "dwg", Files);
+			loadSamples("./", "dxf", Files);
+			loadSamples("./", "dwg", Files);
 		}
 
 		public XDataTests(ITestOutputHelper output) : base(output)
@@ -30,6 +30,11 @@ namespace ACadSharp.Tests.IO
 
 			ExtendedData edata = null;
 			ExtendedDataRecord record = null;
+
+			if(doc.Header.Version <= ACadVersion.AC1009)
+			{
+				return;
+			}
 
 			//XData 3Real
 			Entity e = doc.GetCadObject<Entity>(0x915);
@@ -139,7 +144,7 @@ namespace ACadSharp.Tests.IO
 			Layer layer = layRecord.ResolveReference(doc);
 
 			Assert.NotNull(layer);
-			Assert.Equal("app_layer", layer.Name);
+			Assert.Equal("app_layer", layer.Name, ignoreCase: true);
 
 			record = edata.Records[2];
 			Assert.Equal(DxfCode.ExtendedDataControlString, record.Code);

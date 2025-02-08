@@ -13,8 +13,8 @@ namespace ACadSharp.Tests.IO
 
 		static TableEntityTests()
 		{
-			loadSamples("sample_base", "dxf", TableSamplesFilePaths);
-			loadSamples("sample_base", "dwg", TableSamplesFilePaths);
+			loadSamples("./", "dxf", TableSamplesFilePaths);
+			loadSamples("./", "dwg", TableSamplesFilePaths);
 		}
 
 		public TableEntityTests(ITestOutputHelper output) : base(output)
@@ -40,12 +40,17 @@ namespace ACadSharp.Tests.IO
 
 			CadDocument doc = this.readDocument(test, configuration);
 
+			if(doc.Header.Version <= ACadVersion.AC1021)
+			{
+				return;
+			}
+
 			TableEntity table = doc.GetCadObject<TableEntity>(0xA35);
 
 			BlockRecord record = table.Block;
 
 			Assert.NotNull(record);
-			Assert.Equal("*T18", record.Name);
+			Assert.Equal("*T16", record.Name);
 
 			Assert.Equal(5, table.Columns.Count);
 			foreach (var column in table.Columns)

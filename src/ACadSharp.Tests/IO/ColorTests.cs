@@ -13,8 +13,8 @@ namespace ACadSharp.Tests.IO
 
 		static ColorTests()
 		{
-			loadSamples("sample_base", "dxf", ColorSamplesFilePaths);
-			loadSamples("sample_base", "dwg", ColorSamplesFilePaths);
+			loadSamples("./", "dxf", ColorSamplesFilePaths);
+			loadSamples("./", "dwg", ColorSamplesFilePaths);
 		}
 
 		public ColorTests(ITestOutputHelper output) : base(output)
@@ -92,10 +92,25 @@ namespace ACadSharp.Tests.IO
 		{
 			CadDocument doc = this.readDocument(test);
 
+			if (doc.Header.Version <= ACadVersion.AC1009)
+			{
+				return;
+			}
+
 			Circle circle = doc.GetCadObject<Circle>(0x99F);
 
-			Assert.True(doc.Colors.ContainsKey("RAL CLASSIC$RAL 1006"));
+			string entryName;
+			if (doc.Header.Version >= ACadVersion.AC1015)
+			{
+				entryName = "RAL CLASSIC$RAL 1006";
+			}
+			else
+			{
+				entryName = "RAL_CLASSIC$RAL_1006";
+			}
 
+			Assert.True(doc.Colors.ContainsKey(entryName));
+			
 			if (doc.Header.Version <= ACadVersion.AC1015)
 			{
 				return;

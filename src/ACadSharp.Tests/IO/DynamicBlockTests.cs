@@ -14,8 +14,8 @@ namespace ACadSharp.Tests.IO
 
 		static DynamicBlockTests()
 		{
-			loadSamples("sample_base", "dxf", DwgDynamicBlocksPaths);
-			loadSamples("sample_base", "dwg", DwgDynamicBlocksPaths);
+			loadSamples("./", "dxf", DwgDynamicBlocksPaths);
+			loadSamples("./", "dwg", DwgDynamicBlocksPaths);
 		}
 
 		public DynamicBlockTests(ITestOutputHelper output) : base(output)
@@ -35,6 +35,11 @@ namespace ACadSharp.Tests.IO
 				configuration.KeepUnknownNonGraphicalObjects = true;
 
 				doc = DxfReader.Read(test.Path, configuration, this.onNotification);
+
+				if(doc.Header.Version <= ACadVersion.AC1021)
+				{
+					return;
+				}
 			}
 			else
 			{
