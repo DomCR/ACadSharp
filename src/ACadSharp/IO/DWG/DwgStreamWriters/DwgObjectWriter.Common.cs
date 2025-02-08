@@ -381,6 +381,11 @@ namespace ACadSharp.IO.DWG
 							mstream.Write(LittleEndianConverter.Instance.GetBytes(dir.Value.Y), 0, 8);
 							mstream.Write(LittleEndianConverter.Instance.GetBytes(dir.Value.Z), 0, 8);
 							break;
+						case ExtendedDataDisplacement disp:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(disp.Value.X), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(disp.Value.Y), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(disp.Value.Z), 0, 8);
+							break;
 						case ExtendedDataCoordinate coord:
 							mstream.Write(LittleEndianConverter.Instance.GetBytes(coord.Value.X), 0, 8);
 							mstream.Write(LittleEndianConverter.Instance.GetBytes(coord.Value.Y), 0, 8);

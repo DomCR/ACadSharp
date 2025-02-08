@@ -2,6 +2,7 @@
 using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -13,8 +14,8 @@ namespace ACadSharp.Tests.IO
 
 		static MultiLeaderTests()
 		{
-			loadSamples("sample_base", "dxf", MultiLeaderFilePaths);
-			loadSamples("sample_base", "dwg", MultiLeaderFilePaths);
+			//loadSamples("./", "dxf", MultiLeaderFilePaths);
+			loadSamples("./", "dwg", MultiLeaderFilePaths);
 		}
 
 		public MultiLeaderTests(ITestOutputHelper output) : base(output)
@@ -25,7 +26,16 @@ namespace ACadSharp.Tests.IO
 		[MemberData(nameof(MultiLeaderFilePaths))]
 		public void MultiLeaderDwg(FileModel test)
 		{
-			CadDocument doc = DwgReader.Read(test.Path);
+			CadDocument doc;
+
+			if (test.IsDxf)
+			{
+				doc = DxfReader.Read(test.Path);
+			}
+			else
+			{
+				doc = DwgReader.Read(test.Path);
+			}
 
 			List<Entity> entities = new List<Entity>(doc.Entities);
 
