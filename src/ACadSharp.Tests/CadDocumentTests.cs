@@ -40,7 +40,7 @@ namespace ACadSharp.Tests
 		{
 			CadDocument doc = new CadDocument();
 
-			this._docIntegrity.AssertTableHirearchy(doc);
+			this._docIntegrity.AssertTableHierarchy(doc);
 		}
 
 		[Fact]
@@ -49,7 +49,7 @@ namespace ACadSharp.Tests
 			CadDocument doc = new CadDocument();
 
 			this._docIntegrity.AssertDocumentDefaults(doc);
-			this._docIntegrity.AssertTableHirearchy(doc);
+			this._docIntegrity.AssertTableHierarchy(doc);
 			this._docIntegrity.AssertBlockRecords(doc);
 
 			Assert.Equal(2, doc.BlockRecords.Count);
