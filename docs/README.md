@@ -6,7 +6,7 @@ ACadSharp is a pure C# library to read/write cad files like dxf/dwg.
 
 ### Read
 
-If you want to read a cad file you just need to pick the reader that matches the format, for dwg files you can use [`ACadSharp.IO.DwgReader`](https://github.com/DomCR/ACadSharp/wiki/ACadSharp.IO.DwgReader) or [`ACadSharp.IO.DxfReader`](https://github.com/DomCR/ACadSharp/wiki/ACadSharp.IO.DxfReader) to read a dxf file.
+If you want to read a cad file you just need to pick the reader that matches the format, for dwg files you can use [`ACadSharp.IO.DwgReader`](https://github.com/DomCR/ACadSharp/wiki/ACadSharp.IO.DwgReader) or [`ACadSharp.IO.DxfReader`](https://github.com/DomCR/ACadSharp/wiki/ACadSharp.IO.DxfReader) for a dxf file.
 
 The following example shows how to use the `DwgReader` using the static `Read()` method, the `DxfReader` has the equivalent method as well.
 
