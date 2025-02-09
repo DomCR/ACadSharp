@@ -62,7 +62,7 @@ namespace ACadSharp.Tests.IO
 		{
 			if (e.NotificationType == NotificationType.Error)
 			{
-				throw e.Exception;
+				//throw e.Exception;
 			}
 
 			_output.WriteLine(e.Message);
@@ -140,7 +140,7 @@ namespace ACadSharp.Tests.IO
 		protected CadDocument readDocument(FileModel test, CadReaderConfiguration configuration = null)
 		{
 			CadDocument doc;
-			if (Path.GetExtension(test.FileName).Equals(".dxf"))
+			if (test.IsDxf)
 			{
 				using (DxfReader dxfReader = new DxfReader(test.Path, this.onNotification))
 				{

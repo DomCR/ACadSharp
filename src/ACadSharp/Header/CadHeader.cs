@@ -3287,5 +3287,11 @@ namespace ACadSharp.Header
 
 			return value;
 		}
+
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return $"{this.Version}";
+		}
 	}
 }

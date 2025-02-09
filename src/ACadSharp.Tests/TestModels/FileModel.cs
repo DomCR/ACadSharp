@@ -12,6 +12,8 @@ namespace ACadSharp.Tests.TestModels
 
 		public string Path { get; private set; }
 
+		public string Folder { get { return System.IO.Path.GetDirectoryName(Path); } }
+
 		public bool IsDxf { get { return System.IO.Path.GetExtension(this.Path) == ".dxf"; } }
 
 		public FileModel()

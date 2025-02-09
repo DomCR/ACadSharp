@@ -1,8 +1,12 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
+using ACadSharp.XData;
+using CSMath;
 using CSUtilities.Converters;
 using System;
 using System.Drawing;
+using System.IO;
+using System.Text;
 
 namespace ACadSharp.IO.DXF
 {
@@ -16,17 +20,21 @@ namespace ACadSharp.IO.DXF
 
 		public CadObjectHolder Holder { get; }
 
+		public DxfWriterConfiguration Configuration { get; }
+
 		protected IDxfStreamWriter _writer;
 		protected CadDocument _document;
 
 		public DxfSectionWriterBase(
 			IDxfStreamWriter writer,
 			CadDocument document,
-			CadObjectHolder holder)
+			CadObjectHolder holder,
+			DxfWriterConfiguration configuration)
 		{
 			this._writer = writer;
 			this._document = document;
 			this.Holder = holder;
+			this.Configuration = configuration;
 		}
 
 		public void Write()
@@ -72,8 +80,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(DxfCode.SoftPointerId, cadObject.Owner.Handle);
 
-			//TODO: Write exended data
-			if (cadObject.ExtendedData != null)
+			if (cadObject.ExtendedData != null && this.Configuration.WriteXData)
 			{
 				//this._writer.Write(DxfCode.ControlString,DxfFileToken.ReactorsToken);
 				//this._writer.Write(DxfCode.HardOwnershipId, cadObject.ExtendedData);
@@ -81,8 +88,70 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		protected void writeExtendedData(CadObject cadObject)
+		protected void writeExtendedData(ExtendedDataDictionary xdata)
 		{
+			if (xdata == null || !this.Configuration.WriteXData)
+			{
+				return;
+			}
+
+			foreach (var entry in xdata)
+			{
+				this._writer.Write(DxfCode.ExtendedDataRegAppName, entry.Key.Name);
+
+				foreach (ExtendedDataRecord record in entry.Value.Records)
+				{
+					switch (record)
+					{
+						case ExtendedDataBinaryChunk binaryChunk:
+							this._writer.Write(binaryChunk.Code, binaryChunk.Value);
+							break;
+						case ExtendedDataControlString control:
+							this._writer.Write(control.Code, control.Value);
+							break;
+						case ExtendedDataInteger16 s16:
+							this._writer.Write(s16.Code, s16.Value);
+							break;
+						case ExtendedDataInteger32 s32:
+							this._writer.Write(s32.Code, s32.Value);
+							break;
+						case ExtendedDataReal real:
+							this._writer.Write(real.Code, real.Value);
+							break;
+						case ExtendedDataScale scale:
+							this._writer.Write(scale.Code, scale.Value);
+							break;
+						case ExtendedDataDistance dist:
+							this._writer.Write(dist.Code, dist.Value);
+							break;
+						case ExtendedDataDisplacement disp:
+							this._writer.Write(disp.Code, disp.Value);
+							break;
+						case ExtendedDataDirection dir:
+							this._writer.Write(dir.Code, (IVector)dir.Value);
+							break;
+						case ExtendedDataCoordinate coord:
+							this._writer.Write(coord.Code, (IVector)coord.Value);
+							break;
+						case ExtendedDataWorldCoordinate wcoord:
+							this._writer.Write(wcoord.Code, (IVector)wcoord.Value);
+							break;
+						case IExtendedDataHandleReference handle:
+							ulong h = handle.Value;
+							if (handle.ResolveReference(this._document) == null)
+							{
+								h = 0;
+							}
+							this._writer.Write(DxfCode.ExtendedDataHandle, h);
+							break;
+						case ExtendedDataString str:
+							this._writer.Write(str.Code, str.Value);
+							break;
+						default:
+							throw new System.NotSupportedException($"ExtendedDataRecord of type {record.GetType().FullName} not supported.");
+					}
+				}
+			}
 		}
 
 		protected void writeCommonEntityData(Entity entity)
@@ -129,6 +198,16 @@ namespace ACadSharp.IO.DXF
 		}
 
 		protected abstract void writeSection();
+
+		protected void writeLongTextValue(int code, int subcode, string text)
+		{
+			for (int i = 0; i < text.Length - 250; i += 250)
+			{
+				this._writer.Write(subcode, text.Substring(i, 250));
+			}
+
+			this._writer.Write(code, text);
+		}
 
 		protected void notify(string message, NotificationType notificationType = NotificationType.None, Exception ex = null)
 		{

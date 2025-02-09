@@ -18,6 +18,7 @@ using System.Globalization;
 using ACadSharp.Objects.Evaluations;
 using ACadSharp.XData;
 using System.Diagnostics;
+using System.Numerics;
 
 namespace ACadSharp.IO.DWG
 {
@@ -1021,6 +1022,9 @@ namespace ACadSharp.IO.DWG
 				case "DICTIONARYWDFLT":
 					template = this.readDictionaryWithDefault();
 					break;
+				case DxfFileToken.ObjectGeoData:
+					template = this.readGeoData();
+					break;
 				case "GROUP":
 					template = this.readGroup();
 					break;
@@ -1524,12 +1528,16 @@ namespace ACadSharp.IO.DWG
 
 		#endregion Text entities
 
-		private CadTemplate readDocumentTable<T>(Table<T> table, CadTableTemplate<T> template = null)
+		private CadTemplate readDocumentTable<T>(Table<T> table)
 			where T : TableEntry
 		{
-			if (template == null)
-				template = new CadTableTemplate<T>(table);
+			var template = new CadTableTemplate<T>(table);
+			return this.readDocumentTable(template);
+		}
 
+		private CadTemplate readDocumentTable<T>(CadTableTemplate<T> template)
+			where T : TableEntry
+		{
 			this.readCommonNonEntityData(template);
 
 			//Common:
@@ -3146,7 +3154,7 @@ namespace ACadSharp.IO.DWG
 
 			//  173 Text Left Attachment Type
 			mLeader.TextLeftAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
-			//  95  Text Right Attachement Type
+			//  95  Text Right Attachment Type
 			mLeader.TextRightAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
 			//  174 Text Angle Type
 			mLeader.TextAngle = (TextAngleType)this._objectReader.ReadBitShort();
@@ -3727,7 +3735,7 @@ namespace ACadSharp.IO.DWG
 			CadBlockCtrlObjectTemplate template = new CadBlockCtrlObjectTemplate(
 				new BlockRecordsTable());
 
-			this.readDocumentTable(template.CadObject, template);
+			this.readDocumentTable(template);
 
 			//*MODEL_SPACE and *PAPER_SPACE(hard owner).
 			template.ModelSpaceHandle = this.handleReference();
@@ -4017,7 +4025,7 @@ namespace ACadSharp.IO.DWG
 			CadTableTemplate<LineType> template = new CadTableTemplate<LineType>(
 				new LineTypesTable());
 
-			this.readDocumentTable(template.CadObject, template);
+			this.readDocumentTable(template);
 
 			//the linetypes, ending with BYLAYER and BYBLOCK.
 			//all are soft owner references except BYLAYER and 
@@ -4875,6 +4883,135 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private CadTemplate readGeoData()
+		{
+			GeoData geoData = new GeoData();
+			var template = new CadGeoDataTemplate(geoData);
+
+			this.readCommonNonEntityData(template);
+
+			//BL Object version formats
+			geoData.Version = (GeoDataVersion)this._mergedReaders.ReadBitLong();
+
+			//H Soft pointer to host block
+			template.HostBlockHandle = this.handleReference();
+
+			//BS Design coordinate type
+			geoData.CoordinatesType = (DesignCoordinatesType)this._mergedReaders.ReadBitShort();
+
+			switch (geoData.Version)
+			{
+				case GeoDataVersion.R2009:
+					//3BD  Reference point 
+					geoData.ReferencePoint = this._mergedReaders.Read3BitDouble();
+
+					//BL  Units value horizontal
+					geoData.HorizontalUnits = (UnitsType)this._mergedReaders.ReadBitLong();
+					geoData.VerticalUnits = geoData.HorizontalUnits;
+
+					//3BD  Design point
+					geoData.DesignPoint = this._mergedReaders.Read3BitDouble();
+
+					//3BD  Obsolete, ODA writes (0, 0, 0) 
+					this._mergedReaders.Read3BitDouble();
+
+					//3BD  Up direction
+					geoData.UpDirection = this._mergedReaders.Read3BitDouble();
+
+					//BD Angle of north direction (radians, angle measured clockwise from the (0, 1) vector). 
+					double angle = System.Math.PI / 2.0 - this._mergedReaders.ReadBitDouble();
+					geoData.NorthDirection = new XY(Math.Cos(angle), Math.Sin(angle));
+
+					//3BD  Obsolete, ODA writes(1, 1, 1)
+					this._mergedReaders.Read3BitDouble();
+
+					//VT  Coordinate system definition. In AutoCAD 2009 this is a “Well known text” (WKT)string containing a projected coordinate system(PROJCS).
+					geoData.CoordinateSystemDefinition = this._mergedReaders.ReadVariableText();
+					//VT  Geo RSS tag.
+					geoData.GeoRssTag = this._mergedReaders.ReadVariableText();
+
+					//BD Unit scale factor horizontal
+					geoData.HorizontalUnitScale = this._mergedReaders.ReadBitDouble();
+					geoData.VerticalUnitScale = geoData.HorizontalUnitScale;
+
+					//VT  Obsolete, coordinate system datum name 
+					this._mergedReaders.ReadVariableText();
+					//VT  Obsolete: coordinate system WKT 
+					this._mergedReaders.ReadVariableText();
+					break;
+				case GeoDataVersion.R2010:
+				case GeoDataVersion.R2013:
+					//3BD  Design point
+					geoData.DesignPoint = this._mergedReaders.Read3BitDouble();
+					//3BD  Reference point
+					geoData.ReferencePoint = this._mergedReaders.Read3BitDouble();
+					//BD  Unit scale factor horizontal
+					geoData.HorizontalUnitScale = this._mergedReaders.ReadBitDouble();
+					//BL  Units value horizontal
+					geoData.HorizontalUnits = (UnitsType)this._mergedReaders.ReadBitLong();
+					//BD  Unit scale factor vertical 
+					geoData.VerticalUnitScale = this._mergedReaders.ReadBitDouble();
+					//BL  Units value vertical
+					geoData.HorizontalUnits = (UnitsType)this._mergedReaders.ReadBitLong();
+					//3RD  Up direction
+					geoData.UpDirection = this._mergedReaders.Read3BitDouble();
+					//3RD  North direction
+					geoData.NorthDirection = this._mergedReaders.Read2RawDouble();
+					//BL Scale estimation method.
+					geoData.ScaleEstimationMethod = (ScaleEstimationType)this._mergedReaders.ReadBitLong();
+					//BD  User specified scale factor
+					geoData.UserSpecifiedScaleFactor = this._mergedReaders.ReadBitDouble();
+					//B  Do sea level correction
+					geoData.EnableSeaLevelCorrection = this._mergedReaders.ReadBit();
+					//BD  Sea level elevation
+					geoData.SeaLevelElevation = this._mergedReaders.ReadBitDouble();
+					//BD  Coordinate projection radius
+					geoData.CoordinateProjectionRadius = this._mergedReaders.ReadBitDouble();
+					//VT  Coordinate system definition . In AutoCAD 2010 this is a map guide XML string.
+					geoData.CoordinateSystemDefinition = this._mergedReaders.ReadVariableText();
+					//VT  Geo RSS tag.
+					geoData.GeoRssTag = this._mergedReaders.ReadVariableText();
+					break;
+				default:
+					break;
+			}
+
+			//VT  Observation from tag
+			geoData.ObservationFromTag = this._mergedReaders.ReadVariableText();
+			//VT  Observation to tag
+			geoData.ObservationToTag = this._mergedReaders.ReadVariableText();
+			//VT  Observation coverage tag
+			geoData.ObservationCoverageTag = this._mergedReaders.ReadVariableText();
+
+			//BL Number of geo mesh points
+			int npts = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < npts; i++)
+			{
+				var pt = new GeoData.GeoMeshPoint();
+				//2RD Source point 
+				pt.Source = this._mergedReaders.Read2RawDouble();
+				//2RD Destination point 
+				pt.Destination = this._mergedReaders.Read2RawDouble();
+				geoData.Points.Add(pt);
+			}
+
+			//BL Number of geo mesh faces
+			int nfaces = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < nfaces; i++)
+			{
+				var face = new GeoData.GeoMeshFace();
+				//BL Face index 1
+				face.Index1 = this._mergedReaders.ReadBitLong();
+				//BL Face index 2
+				face.Index2 = this._mergedReaders.ReadBitLong();
+				//BL Face index 3
+				face.Index3 = this._mergedReaders.ReadBitLong();
+				geoData.Faces.Add(face);
+			}
+
+			return template;
+		}
+
 		private CadTemplate readGroup()
 		{
 			Group group = new Group();
@@ -5414,7 +5551,7 @@ namespace ACadSharp.IO.DWG
 			return null;
 		}
 
-		private CadTemplate readCadImage(CadImageBase image)
+		private CadTemplate readCadImage(CadWipeoutBase image)
 		{
 			CadImageTemplate template = new CadImageTemplate(image);
 

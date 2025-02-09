@@ -61,6 +61,9 @@ namespace ACadSharp.IO.DWG
 				case DictionaryVariable dictionaryVariable:
 					this.writeDictionaryVariable(dictionaryVariable);
 					break;
+				case GeoData geodata:
+					this.writeGeoData(geodata);
+					break;
 				case Group group:
 					this.writeGroup(group);
 					break;
@@ -224,6 +227,122 @@ namespace ACadSharp.IO.DWG
 
 			//BS a string
 			this._writer.WriteVariableText(dictionaryVariable.Value);
+		}
+
+		private void writeGeoData(GeoData geodata)
+		{
+			//BL Object version formats
+			this._writer.WriteBitLong((int)geodata.Version);
+
+			//H Soft pointer to host block
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, geodata.HostBlock);
+
+			//BS Design coordinate type
+			this._writer.WriteBitShort((short)geodata.CoordinatesType);
+
+			switch (geodata.Version)
+			{
+				case GeoDataVersion.R2009:
+					//3BD  Reference point 
+					this._writer.Write3BitDouble(geodata.ReferencePoint);
+
+					//BL  Units value horizontal
+					this._writer.WriteBitLong((int)geodata.HorizontalUnits);
+
+					//3BD  Design point
+					this._writer.Write3BitDouble(geodata.DesignPoint);
+
+					//3BD  Obsolete, ODA writes (0, 0, 0) 
+					this._writer.Write3BitDouble(XYZ.Zero);
+
+					//3BD  Up direction
+					this._writer.Write3BitDouble(geodata.UpDirection);
+
+					//BD Angle of north direction (radians, angle measured clockwise from the (0, 1) vector). 
+					this._writer.WriteBitDouble(System.Math.PI / 2.0 - geodata.NorthDirection.GetAngle());
+
+					//3BD  Obsolete, ODA writes(1, 1, 1)
+					this._writer.Write3BitDouble(new XYZ(1, 1, 1));
+
+					//VT  Coordinate system definition. In AutoCAD 2009 this is a “Well known text” (WKT)string containing a projected coordinate system(PROJCS).
+					this._writer.WriteVariableText(geodata.CoordinateSystemDefinition);
+					//VT  Geo RSS tag.
+					this._writer.WriteVariableText(geodata.GeoRssTag);
+
+					//BD Unit scale factor horizontal
+					this._writer.WriteBitDouble(geodata.HorizontalUnitScale);
+					geodata.VerticalUnitScale = geodata.HorizontalUnitScale;
+
+					//VT  Obsolete, coordinate system datum name 
+					this._writer.WriteVariableText(string.Empty);
+					//VT  Obsolete: coordinate system WKT 
+					this._writer.WriteVariableText(string.Empty);
+					break;
+				case GeoDataVersion.R2010:
+				case GeoDataVersion.R2013:
+					//3BD  Design point
+					this._writer.Write3BitDouble(geodata.DesignPoint);
+					//3BD  Reference point
+					this._writer.Write3BitDouble(geodata.ReferencePoint);
+					//BD  Unit scale factor horizontal
+					this._writer.WriteBitDouble(geodata.HorizontalUnitScale);
+					//BL  Units value horizontal
+					this._writer.WriteBitLong((int)geodata.HorizontalUnits);
+					//BD  Unit scale factor vertical 
+					this._writer.WriteBitDouble(geodata.VerticalUnitScale);
+					//BL  Units value vertical
+					this._writer.WriteBitLong((int)geodata.HorizontalUnits);
+					//3RD  Up direction
+					this._writer.Write3BitDouble(geodata.UpDirection);
+					//3RD  North direction
+					this._writer.Write2RawDouble(geodata.NorthDirection);
+					//BL Scale estimation method.
+					this._writer.WriteBitLong((int)geodata.ScaleEstimationMethod);
+					//BD  User specified scale factor
+					this._writer.WriteBitDouble(geodata.UserSpecifiedScaleFactor);
+					//B  Do sea level correction
+					this._writer.WriteBit(geodata.EnableSeaLevelCorrection);
+					//BD  Sea level elevation
+					this._writer.WriteBitDouble(geodata.SeaLevelElevation);
+					//BD  Coordinate projection radius
+					this._writer.WriteBitDouble(geodata.CoordinateProjectionRadius);
+					//VT  Coordinate system definition . In AutoCAD 2010 this is a map guide XML string.
+					this._writer.WriteVariableText(geodata.CoordinateSystemDefinition);
+					//VT  Geo RSS tag.
+					this._writer.WriteVariableText(geodata.GeoRssTag);
+					break;
+				default:
+					break;
+			}
+
+			//VT  Observation from tag
+			this._writer.WriteVariableText(geodata.ObservationFromTag);
+			//VT  Observation to tag
+			this._writer.WriteVariableText(geodata.ObservationToTag);
+			//VT  Observation coverage tag
+			this._writer.WriteVariableText(geodata.ObservationCoverageTag);
+
+			//BL Number of geo mesh points
+			this._writer.WriteBitLong(geodata.Points.Count);
+			foreach (var pt in geodata.Points)
+			{
+				//2RD Source point 
+				this._writer.Write2RawDouble(pt.Source);
+				//2RD Destination point 
+				this._writer.Write2RawDouble(pt.Destination);
+			}
+
+			//BL Number of geo mesh faces
+			this._writer.WriteBitLong(geodata.Faces.Count);
+			foreach (var face in geodata.Faces)
+			{
+				//BL Face index 1
+				this._writer.WriteBitLong(face.Index1);
+				//BL Face index 2
+				this._writer.WriteBitLong(face.Index2);
+				//BL Face index 3
+				this._writer.WriteBitLong(face.Index3);
+			}
 		}
 
 		private void writeGroup(Group group)

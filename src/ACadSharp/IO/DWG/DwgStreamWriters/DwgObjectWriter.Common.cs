@@ -331,10 +331,13 @@ namespace ACadSharp.IO.DWG
 
 		private void writeExtendedData(ExtendedDataDictionary data)
 		{
-			//EED size BS size of extended entity data, if any
-			foreach (var item in data.Entries)
+			if (this.WriteXData)
 			{
-				writeExtendedDataEntry(item.Key, item.Value);
+				//EED size BS size of extended entity data, if any
+				foreach (var item in data)
+				{
+					writeExtendedDataEntry(item.Key, item.Value);
+				}
 			}
 
 			this._writer.WriteBitShort(0);
@@ -364,6 +367,9 @@ namespace ACadSharp.IO.DWG
 						case ExtendedDataInteger32 s32:
 							mstream.Write(LittleEndianConverter.Instance.GetBytes(s32.Value), 0, 4);
 							break;
+						case ExtendedDataReal real:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(real.Value), 0, 8);
+							break;
 						case ExtendedDataScale scale:
 							mstream.Write(LittleEndianConverter.Instance.GetBytes(scale.Value), 0, 8);
 							break;
@@ -374,6 +380,11 @@ namespace ACadSharp.IO.DWG
 							mstream.Write(LittleEndianConverter.Instance.GetBytes(dir.Value.X), 0, 8);
 							mstream.Write(LittleEndianConverter.Instance.GetBytes(dir.Value.Y), 0, 8);
 							mstream.Write(LittleEndianConverter.Instance.GetBytes(dir.Value.Z), 0, 8);
+							break;
+						case ExtendedDataDisplacement disp:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(disp.Value.X), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(disp.Value.Y), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(disp.Value.Z), 0, 8);
 							break;
 						case ExtendedDataCoordinate coord:
 							mstream.Write(LittleEndianConverter.Instance.GetBytes(coord.Value.X), 0, 8);
