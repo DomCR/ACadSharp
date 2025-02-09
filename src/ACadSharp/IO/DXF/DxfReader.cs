@@ -190,6 +190,7 @@ namespace ACadSharp.IO
 			return this._document;
 		}
 
+		/// <inheritdoc/>
 		public override async Task<CadDocument> ReadAsync(CancellationToken cancellationToken = default)
 		{
 			await Task.CompletedTask;
