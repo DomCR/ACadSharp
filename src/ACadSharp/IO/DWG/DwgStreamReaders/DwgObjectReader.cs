@@ -15,7 +15,10 @@ using static ACadSharp.Objects.MultiLeaderAnnotContext;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
 using System.Globalization;
+using ACadSharp.Objects.Evaluations;
 using ACadSharp.XData;
+using System.Diagnostics;
+using System.Numerics;
 
 namespace ACadSharp.IO.DWG
 {
@@ -1019,6 +1022,9 @@ namespace ACadSharp.IO.DWG
 				case "DICTIONARYWDFLT":
 					template = this.readDictionaryWithDefault();
 					break;
+				case DxfFileToken.ObjectGeoData:
+					template = this.readGeoData();
+					break;
 				case "GROUP":
 					template = this.readGroup();
 					break;
@@ -1105,118 +1111,185 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readEvaluationGraph()
 		{
 			EvaluationGraph evaluationGraph = new EvaluationGraph();
-			EvaluationGraphTemplate template = new EvaluationGraphTemplate(evaluationGraph);
+			CadEvaluationGraphTemplate template = new CadEvaluationGraphTemplate(evaluationGraph);
 
 			this.readCommonNonEntityData(template);
 
-			//	DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
-			var val1 = _objectReader.ReadBitLong();
-			var val2 = _objectReader.ReadBitLong();
-			var val3 = _objectReader.ReadBitLong();
-			int nodeCount = val3;
+			//DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
+			evaluationGraph.Value96 = this._objectReader.ReadBitLong();
+			evaluationGraph.Value97 = this._objectReader.ReadBitLong();
 
+			int nodeCount = this._objectReader.ReadBitLong();
 			for (int i = 0; i < nodeCount; i++)
 			{
-				var node = new EvaluationGraph.GraphNode();
-				evaluationGraph.Nodes.Add(node);
-				node.Index = _objectReader.ReadBitLong();
-				node.Flags = _objectReader.ReadBitLong();
-				node.NextNodeIndex = _objectReader.ReadBitLong();
-				template.NodeHandles.Add(node, this.handleReference());
-				node.Data1 = _objectReader.ReadBitLong();
-				node.Data2 = _objectReader.ReadBitLong();
-				node.Data3 = _objectReader.ReadBitLong();
-				node.Data4 = _objectReader.ReadBitLong();
+				var nodeTemplate = new CadEvaluationGraphTemplate.GraphNodeTemplate();
+				var node = new EvaluationGraph.Node();
+				template.NodeTemplates.Add(nodeTemplate);
+
+				//Code 91
+				node.Index = this._objectReader.ReadBitLong();
+				//Code 93
+				node.Flags = this._objectReader.ReadBitLong();
+				//Code 95
+				node.NextNodeIndex = this._objectReader.ReadBitLong();
+
+				//Code 360
+				nodeTemplate.ExpressionHandle = this.handleReference();
+
+				//Codes 92, x4
+				node.Data1 = this._objectReader.ReadBitLong();
+				node.Data2 = this._objectReader.ReadBitLong();
+				node.Data3 = this._objectReader.ReadBitLong();
+				node.Data4 = this._objectReader.ReadBitLong();
 			}
 
-			foreach (EvaluationGraph.GraphNode node in evaluationGraph.Nodes)
+			//Last node has x5 92 with the last value as 0 instead of x4
+			//Followed by a 93
+			var edgeCount = this._objectReader.ReadBitLong();
+			for (int i = 0; i < edgeCount; i++)
 			{
-				int nextNodeIndex = node.NextNodeIndex;
-				if (nextNodeIndex >= 0 && nextNodeIndex < nodeCount)
-				{
-					node.Next = evaluationGraph.Nodes[nextNodeIndex];
-				}
-			}
+				//id BL, DXF 92
+				//nextid BLd, DXF 93
+				//e1 BLd, DXF 94
+				//e2 BLd, DXF 91
+				//e3 BLd, DXF 91
+				//out_edge BLd
 
-			var val15 = _objectReader.ReadBitLong();
+				//92 id
+				this._objectReader.ReadBitLong();
+				//93 
+				this._objectReader.ReadBitLong();
+				//94
+				this._objectReader.ReadBitLong();
+				//91
+				this._objectReader.ReadBitLong();
+				//91
+				this._objectReader.ReadBitLong();
+				//92 x6
+				this._objectReader.ReadBitLong();
+				this._objectReader.ReadBitLong();
+				this._objectReader.ReadBitLong();
+				this._objectReader.ReadBitLong();
+				this._objectReader.ReadBitLong();
+			}
 
 			return template;
 		}
 
+		private void readEvaluationExpression(CadEvaluationExpressionTemplate template)
+		{
+			this.readCommonNonEntityData(template);
+
+			//AcDbEvalExpr
+			var unknown = this._objectReader.ReadBitLong();
+			Debug.Assert(unknown == -1);
+
+			//98
+			template.CadObject.Value98 = this._objectReader.ReadBitLong();
+			//99
+			template.CadObject.Value99 = this._objectReader.ReadBitLong();
+
+			//-9999 always the same value
+			short n9999 = this._mergedReaders.ReadBitShort();
+			Debug.Assert(n9999 == -9999);
+
+			//90
+			template.CadObject.Value90 = this._objectReader.ReadBitLong();
+		}
+
+		private void readBlockElement(CadBlockElementTemplate template)
+		{
+			this.readEvaluationExpression(template);
+
+			//300 name
+			template.BlockElement.ElementName = this._mergedReaders.ReadVariableText();
+			//98
+			template.BlockElement.Value98 = this._mergedReaders.ReadBitLong();
+			//99
+			template.BlockElement.Value99 = this._mergedReaders.ReadBitLong();
+			//1071
+			template.BlockElement.Value1071 = this._mergedReaders.ReadBitLong();
+		}
+
+		private void readBlockParameter(CadBlockParameterTemplate template)
+		{
+			this.readBlockElement(template);
+
+			//280
+			template.BlockParameter.Value280 = this._mergedReaders.ReadBit();
+			//281
+			template.BlockParameter.Value281 = this._mergedReaders.ReadBit();
+		}
+
+		private void readBlock1PtParameter(CadBlock1PtParameterTemplate template)
+		{
+			this.readBlockParameter(template);
+
+			//1010 1020 1030
+			template.Block1PtParameter.Location = this._mergedReaders.Read3BitDouble();
+
+			//170
+			template.Block1PtParameter.Value170 = this._mergedReaders.ReadBitShort();
+			//171
+			template.Block1PtParameter.Value171 = this._mergedReaders.ReadBitShort();
+			//93
+			template.Block1PtParameter.Value93 = this._mergedReaders.ReadBitLong();
+		}
 
 		private CadTemplate readBlockVisibilityParameter()
 		{
 			BlockVisibilityParameter blockVisibilityParameter = new BlockVisibilityParameter();
-			BlockVisibilityParameterTemplate template = new BlockVisibilityParameterTemplate(blockVisibilityParameter);
+			CadBlockVisibilityParameterTemplate template = new CadBlockVisibilityParameterTemplate(blockVisibilityParameter);
 
-			this.readCommonNonEntityData(template);
+			this.readBlock1PtParameter(template);
 
-			var l1 = _objectReader.ReadBitLong();
-			var s2 = _objectReader.ReadBitShort();  //	can also be L
-			var s3 = _objectReader.ReadBitShort();  //	can also be L
-			var b4 = _objectReader.ReadBit();
-			var s5 = _objectReader.ReadBitShort();  //	can also be L
-			var b6 = _objectReader.ReadBit();
-			var s7 = _objectReader.ReadBitShort();  //	can also be L
+			//281
+			blockVisibilityParameter.Value281 = this._mergedReaders.ReadBit();
+			//301
+			blockVisibilityParameter.Name = this._mergedReaders.ReadVariableText();
+			//302
+			blockVisibilityParameter.Description = this._mergedReaders.ReadVariableText();
+			//missing bit??	91 should be an int
+			blockVisibilityParameter.Value91 = this._mergedReaders.ReadBit();
 
-			var b_8 = _objectReader.ReadBit();
-			var b_9 = _objectReader.ReadBit();
-			var b_10 = _objectReader.ReadBit();
-			var b_11 = _objectReader.ReadBit();
-			var b_12 = _objectReader.ReadBit();
-			var b_13 = _objectReader.ReadBit();
-			var S_14 = _objectReader.ReadBitShort();  //	can also be L
-
-			var s_15 = _objectReader.ReadBitShort();
-			var b_16 = _objectReader.ReadBit();
-			var b_17 = _objectReader.ReadBit();
-			var s_18 = _objectReader.ReadBitShort();
-
-			//	300	Parameter Type
-			blockVisibilityParameter.ParameterType = _textReader.ReadVariableText();
-
-			//	1010, 1020, 1030	Menu position
-			blockVisibilityParameter.BasePosition = _objectReader.Read3BitDouble();
-			//	2x0 <- 
-			var s170 = _objectReader.ReadBitShort();
-			var s171 = _objectReader.ReadBitShort();
-			var l93 = _objectReader.ReadBitLong();
-
-			//	301
-			blockVisibilityParameter.Name = _textReader.ReadVariableText();
-			//	302
-			blockVisibilityParameter.Description = _textReader.ReadVariableText();
-			//	DXF 91
-			blockVisibilityParameter.L91 = _objectReader.ReadBitLong();
-			//DwgAnalyseTools.resetPosition(214293, 0);
-			//  DXF 93 Total entities count (no property)
-			var totalEntitiesCount = _objectReader.ReadBitLong();
+			//DXF 93 Total entities count
+			var totalEntitiesCount = this._objectReader.ReadBitLong();
 			for (int i = 0; i < totalEntitiesCount; i++)
 			{
-				var handle = this.handleReference();
-				template.EntityHandles.Add(handle);
+				//331
+				template.EntityHandles.Add(this.handleReference());
 			}
 
-			//	DXF 92 Sub blocks count (no property)
-			var subBlocksCount = _objectReader.ReadBitLong();
-			for (int sbi = 0; sbi < subBlocksCount; sbi++)
+			//DXF 92 states count
+			var nstates = this._objectReader.ReadBitLong();
+			for (int j = 0; j < nstates; j++)
 			{
-				BlockVisibilityParameter.SubBlock subBlock = new BlockVisibilityParameter.SubBlock();
-				subBlock.Name = _textReader.ReadVariableText();
-				blockVisibilityParameter.SubBlocks.Add(subBlock);
+				template.StateTemplates.Add(this.readState());
+			}
 
-				IList<ulong> subBlockHandles = new List<ulong>();
-				template.SubBlockHandles.Add(subBlock, subBlockHandles);
-				//	DXF 94 Subblock entities count (no property)
-				int entitiesCount = _objectReader.ReadBitLong();
-				for (int i = 0; i < entitiesCount; i++)
-				{
-					var handle = this.handleReference();
-					subBlockHandles.Add(handle);
-				}
-				//DwgAnalyseTools.showCurrentPosAndShift();
-				//	DXF 95 
-				var endMark = _objectReader.ReadBitLong();
+			return template;
+		}
+
+		private CadBlockVisibilityParameterTemplate.StateTemplate readState()
+		{
+			CadBlockVisibilityParameterTemplate.StateTemplate template = new CadBlockVisibilityParameterTemplate.StateTemplate();
+
+			template.State.Name = this._textReader.ReadVariableText();
+
+			//DXF 94 subset count 1
+			int n1 = this._objectReader.ReadBitLong();
+			for (int i = 0; i < n1; i++)
+			{
+				//332
+				template.SubSet1.Add(this.handleReference());
+			}
+
+			//DXF 95 subset count 2 
+			var n2 = this._objectReader.ReadBitLong();
+			for (int i = 0; i < n2; i++)
+			{
+				//333
+				template.SubSet2.Add(this.handleReference());
 			}
 
 			return template;
@@ -1455,12 +1528,16 @@ namespace ACadSharp.IO.DWG
 
 		#endregion Text entities
 
-		private CadTemplate readDocumentTable<T>(Table<T> table, CadTableTemplate<T> template = null)
+		private CadTemplate readDocumentTable<T>(Table<T> table)
 			where T : TableEntry
 		{
-			if (template == null)
-				template = new CadTableTemplate<T>(table);
+			var template = new CadTableTemplate<T>(table);
+			return this.readDocumentTable(template);
+		}
 
+		private CadTemplate readDocumentTable<T>(CadTableTemplate<T> template)
+			where T : TableEntry
+		{
 			this.readCommonNonEntityData(template);
 
 			//Common:
@@ -3052,7 +3129,7 @@ namespace ACadSharp.IO.DWG
 			//BS	170 LeaderLineType (short)
 			mLeader.PathType = (MultiLeaderPathType)this._objectReader.ReadBitShort();
 			//CMC	91  Leade LineColor (Color)
-			mLeader.LineColor = _mergedReaders.ReadCmColor();
+			mLeader.LineColor = this._mergedReaders.ReadCmColor();
 			//H 	341 LeaderLineTypeID (handle/LineType)
 			template.LeaderLineTypeHandle = this.handleReference();
 
@@ -3077,7 +3154,7 @@ namespace ACadSharp.IO.DWG
 
 			//  173 Text Left Attachment Type
 			mLeader.TextLeftAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
-			//  95  Text Right Attachement Type
+			//  95  Text Right Attachment Type
 			mLeader.TextRightAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
 			//  174 Text Angle Type
 			mLeader.TextAngle = (TextAngleType)this._objectReader.ReadBitShort();
@@ -3110,7 +3187,7 @@ namespace ACadSharp.IO.DWG
 					//	//  DXF:	94  BL Arrowhead Index (DXF)
 					//	//	ODA:	94 B Is Default
 					//	int arrowheadIndex = _objectReader.ReadBitLong();
-					bool isDefault = _objectReader.ReadBit();
+					bool isDefault = this._objectReader.ReadBit();
 
 					//  345 Arrowhead ID
 					template.ArrowheadHandles.Add(this.handleReference(), isDefault);
@@ -3658,7 +3735,7 @@ namespace ACadSharp.IO.DWG
 			CadBlockCtrlObjectTemplate template = new CadBlockCtrlObjectTemplate(
 				new BlockRecordsTable());
 
-			this.readDocumentTable(template.CadObject, template);
+			this.readDocumentTable(template);
 
 			//*MODEL_SPACE and *PAPER_SPACE(hard owner).
 			template.ModelSpaceHandle = this.handleReference();
@@ -3948,7 +4025,7 @@ namespace ACadSharp.IO.DWG
 			CadTableTemplate<LineType> template = new CadTableTemplate<LineType>(
 				new LineTypesTable());
 
-			this.readDocumentTable(template.CadObject, template);
+			this.readDocumentTable(template);
 
 			//the linetypes, ending with BYLAYER and BYBLOCK.
 			//all are soft owner references except BYLAYER and 
@@ -4792,7 +4869,6 @@ namespace ACadSharp.IO.DWG
 			this._objectReader.ReadBit();
 			this._objectReader.ReadBitShort();
 			this._objectReader.ReadBit();
-			//this.readXrefDependantBit(viewport);
 
 			//1 flag B The 1 bit of the 70 group
 			this._objectReader.ReadBit();
@@ -4803,6 +4879,135 @@ namespace ACadSharp.IO.DWG
 			this.handleReference();
 			//External reference block handle (hard pointer)
 			template.BlockHandle = this.handleReference();
+
+			return template;
+		}
+
+		private CadTemplate readGeoData()
+		{
+			GeoData geoData = new GeoData();
+			var template = new CadGeoDataTemplate(geoData);
+
+			this.readCommonNonEntityData(template);
+
+			//BL Object version formats
+			geoData.Version = (GeoDataVersion)this._mergedReaders.ReadBitLong();
+
+			//H Soft pointer to host block
+			template.HostBlockHandle = this.handleReference();
+
+			//BS Design coordinate type
+			geoData.CoordinatesType = (DesignCoordinatesType)this._mergedReaders.ReadBitShort();
+
+			switch (geoData.Version)
+			{
+				case GeoDataVersion.R2009:
+					//3BD  Reference point 
+					geoData.ReferencePoint = this._mergedReaders.Read3BitDouble();
+
+					//BL  Units value horizontal
+					geoData.HorizontalUnits = (UnitsType)this._mergedReaders.ReadBitLong();
+					geoData.VerticalUnits = geoData.HorizontalUnits;
+
+					//3BD  Design point
+					geoData.DesignPoint = this._mergedReaders.Read3BitDouble();
+
+					//3BD  Obsolete, ODA writes (0, 0, 0) 
+					this._mergedReaders.Read3BitDouble();
+
+					//3BD  Up direction
+					geoData.UpDirection = this._mergedReaders.Read3BitDouble();
+
+					//BD Angle of north direction (radians, angle measured clockwise from the (0, 1) vector). 
+					double angle = System.Math.PI / 2.0 - this._mergedReaders.ReadBitDouble();
+					geoData.NorthDirection = new XY(Math.Cos(angle), Math.Sin(angle));
+
+					//3BD  Obsolete, ODA writes(1, 1, 1)
+					this._mergedReaders.Read3BitDouble();
+
+					//VT  Coordinate system definition. In AutoCAD 2009 this is a “Well known text” (WKT)string containing a projected coordinate system(PROJCS).
+					geoData.CoordinateSystemDefinition = this._mergedReaders.ReadVariableText();
+					//VT  Geo RSS tag.
+					geoData.GeoRssTag = this._mergedReaders.ReadVariableText();
+
+					//BD Unit scale factor horizontal
+					geoData.HorizontalUnitScale = this._mergedReaders.ReadBitDouble();
+					geoData.VerticalUnitScale = geoData.HorizontalUnitScale;
+
+					//VT  Obsolete, coordinate system datum name 
+					this._mergedReaders.ReadVariableText();
+					//VT  Obsolete: coordinate system WKT 
+					this._mergedReaders.ReadVariableText();
+					break;
+				case GeoDataVersion.R2010:
+				case GeoDataVersion.R2013:
+					//3BD  Design point
+					geoData.DesignPoint = this._mergedReaders.Read3BitDouble();
+					//3BD  Reference point
+					geoData.ReferencePoint = this._mergedReaders.Read3BitDouble();
+					//BD  Unit scale factor horizontal
+					geoData.HorizontalUnitScale = this._mergedReaders.ReadBitDouble();
+					//BL  Units value horizontal
+					geoData.HorizontalUnits = (UnitsType)this._mergedReaders.ReadBitLong();
+					//BD  Unit scale factor vertical 
+					geoData.VerticalUnitScale = this._mergedReaders.ReadBitDouble();
+					//BL  Units value vertical
+					geoData.HorizontalUnits = (UnitsType)this._mergedReaders.ReadBitLong();
+					//3RD  Up direction
+					geoData.UpDirection = this._mergedReaders.Read3BitDouble();
+					//3RD  North direction
+					geoData.NorthDirection = this._mergedReaders.Read2RawDouble();
+					//BL Scale estimation method.
+					geoData.ScaleEstimationMethod = (ScaleEstimationType)this._mergedReaders.ReadBitLong();
+					//BD  User specified scale factor
+					geoData.UserSpecifiedScaleFactor = this._mergedReaders.ReadBitDouble();
+					//B  Do sea level correction
+					geoData.EnableSeaLevelCorrection = this._mergedReaders.ReadBit();
+					//BD  Sea level elevation
+					geoData.SeaLevelElevation = this._mergedReaders.ReadBitDouble();
+					//BD  Coordinate projection radius
+					geoData.CoordinateProjectionRadius = this._mergedReaders.ReadBitDouble();
+					//VT  Coordinate system definition . In AutoCAD 2010 this is a map guide XML string.
+					geoData.CoordinateSystemDefinition = this._mergedReaders.ReadVariableText();
+					//VT  Geo RSS tag.
+					geoData.GeoRssTag = this._mergedReaders.ReadVariableText();
+					break;
+				default:
+					break;
+			}
+
+			//VT  Observation from tag
+			geoData.ObservationFromTag = this._mergedReaders.ReadVariableText();
+			//VT  Observation to tag
+			geoData.ObservationToTag = this._mergedReaders.ReadVariableText();
+			//VT  Observation coverage tag
+			geoData.ObservationCoverageTag = this._mergedReaders.ReadVariableText();
+
+			//BL Number of geo mesh points
+			int npts = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < npts; i++)
+			{
+				var pt = new GeoData.GeoMeshPoint();
+				//2RD Source point 
+				pt.Source = this._mergedReaders.Read2RawDouble();
+				//2RD Destination point 
+				pt.Destination = this._mergedReaders.Read2RawDouble();
+				geoData.Points.Add(pt);
+			}
+
+			//BL Number of geo mesh faces
+			int nfaces = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < nfaces; i++)
+			{
+				var face = new GeoData.GeoMeshFace();
+				//BL Face index 1
+				face.Index1 = this._mergedReaders.ReadBitLong();
+				//BL Face index 2
+				face.Index2 = this._mergedReaders.ReadBitLong();
+				//BL Face index 3
+				face.Index3 = this._mergedReaders.ReadBitLong();
+				geoData.Faces.Add(face);
+			}
 
 			return template;
 		}
@@ -5346,7 +5551,7 @@ namespace ACadSharp.IO.DWG
 			return null;
 		}
 
-		private CadTemplate readCadImage(CadImageBase image)
+		private CadTemplate readCadImage(CadWipeoutBase image)
 		{
 			CadImageTemplate template = new CadImageTemplate(image);
 
@@ -5566,11 +5771,11 @@ namespace ACadSharp.IO.DWG
 			int nfaces = this._objectReader.ReadBitLong();
 			for (int i = 0; i < nfaces; i++)
 			{
-				int faceSize = _objectReader.ReadBitLong();
+				int faceSize = this._objectReader.ReadBitLong();
 				int[] arr = new int[faceSize];
 				for (int j = 0; j < faceSize; j++)
 				{
-					arr[j] = _objectReader.ReadBitLong();
+					arr[j] = this._objectReader.ReadBitLong();
 				}
 
 				i += faceSize;
@@ -5579,20 +5784,20 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Edges
-			int nedges = _objectReader.ReadBitLong();
+			int nedges = this._objectReader.ReadBitLong();
 			for (int k = 0; k < nedges; k++)
 			{
-				int start = _objectReader.ReadBitLong();
-				int end = _objectReader.ReadBitLong();
+				int start = this._objectReader.ReadBitLong();
+				int end = this._objectReader.ReadBitLong();
 				mesh.Edges.Add(new Mesh.Edge(start, end));
 			}
 
 			//Crease
-			int ncrease = _objectReader.ReadBitLong();
+			int ncrease = this._objectReader.ReadBitLong();
 			for (int l = 0; l < ncrease; l++)
 			{
 				Mesh.Edge edge = mesh.Edges[l];
-				edge.Crease = _objectReader.ReadBitDouble();
+				edge.Crease = this._objectReader.ReadBitDouble();
 				mesh.Edges[l] = edge;
 			}
 

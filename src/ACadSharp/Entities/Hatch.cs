@@ -73,16 +73,16 @@ namespace ACadSharp.Entities
 		public HatchPatternType PatternType { get; set; }
 
 		/// <summary>
-		/// Hatch pattern angle (pattern fill only)
+		/// Hatch pattern angle (pattern fill only).
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 52)]
-		public double PatternAngle { get { return Pattern.Angle; } set { Pattern.Angle = value; } }
+		public double PatternAngle { get; set; }
 
 		/// <summary>
 		/// Hatch pattern scale or spacing(pattern fill only)
 		/// </summary>
 		[DxfCodeValue(41)]
-		public double PatternScale { get { return Pattern.Scale; } set { Pattern.Scale = value; } }
+		public double PatternScale { get; set; }
 
 		//73	For MPolygon, boundary annotation flag:
 		//0 = boundary is not an annotated boundary

@@ -83,7 +83,17 @@
 		public const string PlotSettings = "AcDbPlotSettings";
 		public const string DictionaryVariables = "DictionaryVariables";
 		public const string Scale = "AcDbScale";
+		public const string GeoData = "AcDbGeoData";
+
+		//Dynamic block constants
 		public const string EvalGraph = "AcDbEvalGraph";
+		public const string EvalGraphExpr = "AcDbEvalExpr";
+		public const string BlockElement = "AcDbBlockElement";
+		public const string BlockParameter = "AcDbBlockParameter";
+		public const string Block1PtParameter = "AcDbBlock1PtParameter";
+		public const string Block2PtParameter = "AcDbBlock2PtParameter";
+		public const string BlockLinearParameter = "AcDbBlockLinearParameter";
+
 		public const string BlockVisibilityParameter = "AcDbBlockVisibilityParameter";
 		public const string DbColor = "AcDbColor";
 		public const string TableContent = "AcDbTableContent";

@@ -2,6 +2,7 @@
 using ACadSharp.Objects;
 using CSMath;
 using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -115,7 +116,7 @@ namespace ACadSharp.IO.DXF
 					throw new NotImplementedException($"Entity not implemented {entity.GetType().FullName}");
 			}
 
-			this.writeExtendedData(entity);
+			this.writeExtendedData(entity.ExtendedData);
 		}
 
 		private void writeArc(Arc arc)
@@ -336,7 +337,10 @@ namespace ACadSharp.IO.DXF
 
 		private void writeHatchBoundaryPathEdge(Hatch.BoundaryPath.Edge edge)
 		{
-			this._writer.Write(72, edge.Type);
+			if (edge is not Hatch.BoundaryPath.Polyline)
+			{
+				this._writer.Write(72, edge.Type);
+			}
 
 			switch (edge)
 			{
@@ -407,13 +411,13 @@ namespace ACadSharp.IO.DXF
 
 			if (!hatch.IsSolid)
 			{
-				this._writer.Write(52, pattern.Angle * MathUtils.RadToDegFactor);
-				this._writer.Write(41, pattern.Scale);
+				this._writer.Write(52, MathHelper.RadToDeg(hatch.PatternAngle));
+				this._writer.Write(41, hatch.PatternScale);
 				this._writer.Write(77, (short)(hatch.IsDouble ? 1 : 0));
 				this._writer.Write(78, (short)pattern.Lines.Count);
 				foreach (HatchPattern.Line line in pattern.Lines)
 				{
-					this._writer.Write(53, line.Angle * (180.0 / System.Math.PI));
+					this._writer.Write(53, MathHelper.RadToDeg(line.Angle));
 					this._writer.Write(43, line.BasePoint.X);
 					this._writer.Write(44, line.BasePoint.Y);
 					this._writer.Write(45, line.Offset.X);
@@ -686,7 +690,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(71, (short)mtext.AttachmentPoint, map);
 			this._writer.Write(72, (short)mtext.DrawingDirection, map);
 
-			this.writeMTextValue(mtext.Value);
+			this.writeLongTextValue(1, 3, mtext.Value);
 
 			this._writer.WriteName(7, mtext.Style);
 
@@ -695,16 +699,6 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(11, mtext.AlignmentPoint, map);
 
 			this._writer.Write(210, mtext.Normal, map);
-		}
-
-		private void writeMTextValue(string text)
-		{
-			for (int i = 0; i < text.Length - 250; i += 250)
-			{
-				this._writer.Write(3, text.Substring(i, 250));
-			}
-
-			this._writer.Write(1, text);
 		}
 
 		private void writeMultiLeader(MultiLeader multiLeader)
@@ -1209,7 +1203,7 @@ namespace ACadSharp.IO.DXF
 		}
 
 		private void writeCadImage<T>(T image)
-			where T : CadImageBase
+			where T : CadWipeoutBase
 		{
 			DxfClassMap map = DxfClassMap.Create<T>();
 

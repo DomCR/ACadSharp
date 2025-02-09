@@ -70,6 +70,16 @@ namespace ACadSharp.IO.DXF
 			return this.ValueAsString == dxfEntry;
 		}
 
+		public void ExpectedCode(int code)
+		{
+			this.ReadNext();
+
+			if (this.Code != code)
+			{
+				throw new DxfException(code, this.Position);
+			}
+		}
+
 		public override string ToString()
 		{
 			return $"{Code} | {Value}";

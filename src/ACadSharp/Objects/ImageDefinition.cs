@@ -27,7 +27,7 @@ namespace ACadSharp.Objects
 		/// Class version
 		/// </summary>
 		[DxfCodeValue(90)]
-		public int ClassVersion { get; set; }
+		public int ClassVersion { get; internal set; }
 
 		/// <summary>
 		/// File name of image
@@ -51,7 +51,7 @@ namespace ACadSharp.Objects
 		/// Image-is-loaded flag.
 		/// </summary>
 		[DxfCodeValue(280)]
-		public bool IsLoaded { get; set; } = false;
+		public bool IsLoaded { get; set; } = true;
 
 		/// <summary>
 		/// Resolution units.

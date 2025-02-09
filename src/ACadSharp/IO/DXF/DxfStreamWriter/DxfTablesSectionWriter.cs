@@ -9,9 +9,8 @@ namespace ACadSharp.IO.DXF
 	{
 		public override string SectionName { get { return DxfFileToken.TablesSection; } }
 
-		public DxfTablesSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder) : base(writer, document, holder)
-		{
-		}
+		public DxfTablesSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder objectHolder, DxfWriterConfiguration configuration)
+			: base(writer, document, objectHolder, configuration) { }
 
 		protected override void writeSection()
 		{
@@ -108,7 +107,7 @@ namespace ACadSharp.IO.DXF
 #endif
 			}
 
-			this.writeExtendedData(entry);
+			this.writeExtendedData(entry.ExtendedData);
 		}
 
 		private void writeBlockRecord(BlockRecord block, DxfClassMap map)
