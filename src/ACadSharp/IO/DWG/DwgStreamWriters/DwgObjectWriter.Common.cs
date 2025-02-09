@@ -1,8 +1,10 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
+using ACadSharp.XData;
 using CSUtilities.Converters;
 using System.IO;
+using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
@@ -234,12 +236,14 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Color	CMC(B)	62
-			this._writer.WriteEnColor(entity.Color, entity.Transparency);
+			this._writer.WriteEnColor(entity.Color, entity.Transparency, entity.BookColor != null);
 
 			//R2004+:
-			//if ((this._version >= ACadVersion.AC1018) && colorFlag)
-			//	//[Color book color handle (hard pointer)]
-			//	template.ColorHandle = this.handleReference();
+			if ((this._version >= ACadVersion.AC1018) && entity.BookColor != null)
+			{
+				//[Color book color handle (hard pointer)]
+				this._writer.HandleReference(DwgReferenceType.HardPointer, entity.BookColor);
+			}
 
 			//Ltype scale	BD	48
 			this._writer.WriteBitDouble(entity.LinetypeScale);
@@ -327,8 +331,109 @@ namespace ACadSharp.IO.DWG
 
 		private void writeExtendedData(ExtendedDataDictionary data)
 		{
-			//EED size BS size of extended entity data, if any
+			if (this.WriteXData)
+			{
+				//EED size BS size of extended entity data, if any
+				foreach (var item in data)
+				{
+					writeExtendedDataEntry(item.Key, item.Value);
+				}
+			}
+
 			this._writer.WriteBitShort(0);
+		}
+
+		private void writeExtendedDataEntry(AppId app, ExtendedData entry)
+		{
+			using (MemoryStream mstream = new MemoryStream())
+			{
+				foreach (ExtendedDataRecord record in entry.Records)
+				{
+					//Each data item has a 1-byte code (DXF group code minus 1000) followed by the value.
+					mstream.WriteByte((byte)(record.Code - 1000));
+
+					switch (record)
+					{
+						case ExtendedDataBinaryChunk binaryChunk:
+							mstream.WriteByte((byte)binaryChunk.Value.Length);
+							mstream.Write(binaryChunk.Value, 0, binaryChunk.Value.Length);
+							break;
+						case ExtendedDataControlString control:
+							mstream.WriteByte((byte)(control.Value == '}' ? 1 : 0));
+							break;
+						case ExtendedDataInteger16 s16:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(s16.Value), 0, 2);
+							break;
+						case ExtendedDataInteger32 s32:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(s32.Value), 0, 4);
+							break;
+						case ExtendedDataReal real:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(real.Value), 0, 8);
+							break;
+						case ExtendedDataScale scale:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(scale.Value), 0, 8);
+							break;
+						case ExtendedDataDistance dist:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(dist.Value), 0, 8);
+							break;
+						case ExtendedDataDirection dir:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(dir.Value.X), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(dir.Value.Y), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(dir.Value.Z), 0, 8);
+							break;
+						case ExtendedDataDisplacement disp:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(disp.Value.X), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(disp.Value.Y), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(disp.Value.Z), 0, 8);
+							break;
+						case ExtendedDataCoordinate coord:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(coord.Value.X), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(coord.Value.Y), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(coord.Value.Z), 0, 8);
+							break;
+						case ExtendedDataWorldCoordinate wcoord:
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(wcoord.Value.X), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(wcoord.Value.Y), 0, 8);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes(wcoord.Value.Z), 0, 8);
+							break;
+						case IExtendedDataHandleReference handle:
+							ulong h = handle.Value;
+							if (handle.ResolveReference(this._document) == null)
+							{
+								h = 0;
+							}
+							mstream.Write(BigEndianConverter.Instance.GetBytes(h), 0, 8);
+							break;
+						case ExtendedDataString str:
+							//same as ReadTextUnicode()
+							if (this.R2007Plus)
+							{
+								mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)str.Value.Length + 1), 0, 2);
+								byte[] bytes = Encoding.Unicode.GetBytes(str.Value);
+
+								mstream.Write(bytes, 0, bytes.Length);
+								mstream.WriteByte(0);
+								mstream.WriteByte(0);
+							}
+							else
+							{
+								byte[] bytes = this._writer.Encoding.GetBytes(string.IsNullOrEmpty(str.Value) ? string.Empty : str.Value);
+								mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)str.Value.Length + 1), 0, 2);
+								mstream.Write(bytes, 0, bytes.Length);
+								mstream.WriteByte(0);
+							}
+							break;
+						default:
+							throw new System.NotSupportedException($"ExtendedDataRecord of type {record.GetType().FullName} not supported.");
+					}
+				}
+
+				this._writer.WriteBitShort((short)mstream.Length);
+
+				this._writer.Main.HandleReference(DwgReferenceType.HardPointer, app.Handle);
+
+				this._writer.WriteBytes(mstream.GetBuffer(), 0, (int)mstream.Length);
+			}
 		}
 
 		private void writeReactorsAndDictionaryHandle(CadObject cadObject)
@@ -347,7 +452,6 @@ namespace ACadSharp.IO.DWG
 			//R2004+:
 			if (this.R2004Plus)
 			{
-
 				this._writer.WriteBit(noDictionary);
 				if (!noDictionary)
 				{

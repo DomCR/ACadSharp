@@ -4,7 +4,7 @@ using System.Linq;
 namespace ACadSharp.Attributes
 {
 	[System.AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
-	sealed class DxfCollectionCodeValueAttribute : Attribute, ICodeValueAttribute
+	public sealed class DxfCollectionCodeValueAttribute : Attribute, ICodeValueAttribute
 	{
 		/// <inheritdoc/>
 		public DxfCode[] ValueCodes { get; }

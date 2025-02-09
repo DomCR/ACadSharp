@@ -32,9 +32,9 @@ namespace ACadSharp.Tests.IO.DWG
 
 		[Theory]
 		[MemberData(nameof(DwgFilePaths))]
-		public override void AssertTableHirearchy(FileModel test)
+		public override void AssertTableHierarchy(FileModel test)
 		{
-			base.AssertTableHirearchy(test);
+			base.AssertTableHierarchy(test);
 		}
 
 		[Theory]
@@ -62,6 +62,13 @@ namespace ACadSharp.Tests.IO.DWG
 			CadDocument doc = DwgReader.Read(test.Path, configuration);
 
 			this._docIntegrity.AssertDocumentTree(doc);
+		}
+
+		[Theory]
+		[MemberData(nameof(DwgFilePaths))]
+		public override void AssertDocumentHeader(FileModel test)
+		{
+			base.AssertDocumentHeader(test);
 		}
 
 		[Theory(Skip = "Long time test")]

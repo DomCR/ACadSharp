@@ -41,7 +41,7 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.Insert;
 
 		/// <summary>
-		/// Gets the insert block definition
+		/// Gets the insert block definition.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 2)]
 		public BlockRecord Block { get; internal set; }
@@ -53,19 +53,19 @@ namespace ACadSharp.Entities
 		public XYZ InsertPoint { get; set; } = XYZ.Zero;
 
 		/// <summary>
-		/// X scale factor 
+		/// X scale factor.
 		/// </summary>
 		[DxfCodeValue(41)]
 		public double XScale { get; set; } = 1;
 
 		/// <summary>
-		/// Y scale factor 
+		/// Y scale factor.
 		/// </summary>
 		[DxfCodeValue(42)]
 		public double YScale { get; set; } = 1;
 
 		/// <summary>
-		/// Z scale factor 
+		/// Z scale factor.
 		/// </summary>
 		[DxfCodeValue(43)]
 		public double ZScale { get; set; } = 1;
@@ -88,25 +88,25 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Column count
 		/// </summary>
-		[DxfCodeValue(70)]
+		[DxfCodeValue(DxfReferenceType.Optional, 70)]
 		public ushort ColumnCount { get; set; } = 1;
 
 		/// <summary>
 		/// Row count
 		/// </summary>
-		[DxfCodeValue(71)]
+		[DxfCodeValue(DxfReferenceType.Optional, 71)]
 		public ushort RowCount { get; set; } = 1;
 
 		/// <summary>
 		/// Column spacing
 		/// </summary>
-		[DxfCodeValue(44)]
+		[DxfCodeValue(DxfReferenceType.Optional, 44)]
 		public double ColumnSpacing { get; set; } = 0;
 
 		/// <summary>
 		/// Row spacing
 		/// </summary>
-		[DxfCodeValue(45)]
+		[DxfCodeValue(DxfReferenceType.Optional, 45)]
 		public double RowSpacing { get; set; } = 0;
 
 		/// <summary>
@@ -123,14 +123,9 @@ namespace ACadSharp.Entities
 		/// </remarks>
 		public SeqendCollection<AttributeEntity> Attributes { get; private set; }
 
-		internal Insert(bool onAdd = true) : base()
+		internal Insert() : base()
 		{
 			this.Attributes = new SeqendCollection<AttributeEntity>(this);
-
-			if (onAdd)
-			{
-				this.Attributes.OnAdd += this.attributesOnAdd;
-			}
 		}
 
 		/// <summary>
@@ -138,7 +133,7 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <param name="block">Block Record to reference</param>
 		/// <exception cref="ArgumentNullException"></exception>
-		public Insert(BlockRecord block) : this(false)
+		public Insert(BlockRecord block) : this()
 		{
 			if (block is null) throw new ArgumentNullException(nameof(block));
 
@@ -151,21 +146,34 @@ namespace ACadSharp.Entities
 				this.Block = block;
 			}
 
-			foreach (AttributeDefinition attdef in block.AttributeDefinitions)
-			{
-				this.Attributes.Add(new AttributeEntity(attdef));
-			}
-
-			this.Attributes.OnAdd += this.attributesOnAdd;
+			this.UpdateAttributes();
 		}
 
 		/// <summary>
-		/// Updates all attribute definitions contained in the block reference as Attribute entitites in the insert
+		/// Updates all attribute definitions contained in the block reference as <see cref="AttributeDefinition"/> entitites in the insert
 		/// </summary>
-		/// <exception cref="NotImplementedException"></exception>
 		public void UpdateAttributes()
 		{
-			throw new NotImplementedException();
+			var atts = this.Attributes.ToArray();
+
+			foreach (AttributeEntity att in atts)
+			{
+				//Tags are not unique, is it needed? check how the different applications link the atts
+				if (!this.Block.AttributeDefinitions.Select(d => d.Tag).Contains(att.Tag))
+				{
+					this.Attributes.Remove(att);
+				}
+			}
+
+			foreach (AttributeDefinition attdef in this.Block.AttributeDefinitions)
+			{
+				if (!this.Attributes.Select(d => d.Tag).Contains(attdef.Tag))
+				{
+					AttributeEntity att = new AttributeEntity(attdef);
+
+					this.Attributes.Add(att);
+				}
+			}
 		}
 
 		/// <inheritdoc/>
@@ -185,7 +193,7 @@ namespace ACadSharp.Entities
 		{
 			Insert clone = (Insert)base.Clone();
 
-			clone.Block = (BlockRecord)this.Block.Clone();
+			clone.Block = (BlockRecord)this.Block?.Clone();
 
 			clone.Attributes = new SeqendCollection<AttributeEntity>(clone);
 			foreach (var att in this.Attributes)
@@ -222,12 +230,6 @@ namespace ACadSharp.Entities
 			this.Document.UnregisterCollection(this.Attributes);
 
 			base.UnassignDocument();
-		}
-
-		private void attributesOnAdd(object sender, CollectionChangedEventArgs e)
-		{
-			//TODO: Fix the relation between insert and block
-			//this.Block?.Entities.Add(new AttributeDefinition(e.Item as AttributeEntity));
 		}
 	}
 }

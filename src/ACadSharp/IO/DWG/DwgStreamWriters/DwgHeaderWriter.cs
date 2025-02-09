@@ -45,7 +45,7 @@ namespace ACadSharp.IO.DWG
 			//R2013+:
 			if (this.R2013Plus)
 			{
-				//BLL : Variabele REQUIREDVERSIONS, default value 0, read only.
+				//BLL : Variable REQUIREDVERSIONS, default value 0, read only.
 				this._writer.WriteBitLongLong(0);
 			}
 

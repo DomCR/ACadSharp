@@ -58,6 +58,8 @@ namespace ACadSharp.IO.DWG
 
 		void WriteEnColor(Color color, Transparency transparency);
 
+		void WriteEnColor(Color color, Transparency transparency, bool isBookColor);
+
 		void Write2BitDouble(XY value);
 
 		void Write3BitDouble(XYZ value);

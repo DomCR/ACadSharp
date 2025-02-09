@@ -23,5 +23,13 @@
 		/// default: false
 		/// </value>
 		public bool WriteXRecords { get; set; } = false;
+
+		/// <summary>
+		/// Will not ignore the <see cref="ACadSharp.XData.ExtendedData"/> collection in the <see cref="CadObject"/>.
+		/// </summary>
+		/// <value>
+		/// default: true
+		/// </value>
+		public bool WriteXData { get; set; } = true;
 	}
 }
