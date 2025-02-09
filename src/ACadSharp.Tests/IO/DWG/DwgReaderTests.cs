@@ -45,9 +45,9 @@ namespace ACadSharp.Tests.IO.DWG
 
 		[Theory]
 		[MemberData(nameof(DwgFilePaths))]
-		public override void AssertTableHirearchy(FileModel test)
+		public override void AssertTableHierarchy(FileModel test)
 		{
-			base.AssertTableHirearchy(test);
+			base.AssertTableHierarchy(test);
 		}
 
 		[Theory]

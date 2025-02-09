@@ -57,7 +57,7 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Sorter attached to an entity.
 		/// </summary>
-		/// <param name="entity">Enity in the block to be sorted.</param>
+		/// <param name="entity">Entity in the block to be sorted.</param>
 		/// <param name="sorterHandle">Sorter handle, will use the entity handle if null.</param>
 		/// <exception cref="ArgumentException"></exception>
 		public void AddEntity(Entity entity, ulong? sorterHandle = null)

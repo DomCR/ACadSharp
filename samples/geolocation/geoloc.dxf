@@ -33,19 +33,19 @@ $INSBASE
   9
 $EXTMIN
  10
-2.564682407586133
+1.000000000000000E+20
  20
--1.863430473944571
+1.000000000000000E+20
  30
-0.0
+1.000000000000000E+20
   9
 $EXTMAX
  10
-105.8310859877778
+-1.000000000000000E+20
  20
-7.860619723460116
+-1.000000000000000E+20
  30
-0.0
+-1.000000000000000E+20
   9
 $LIMMIN
  10
@@ -89,7 +89,7 @@ $ATTMODE
   9
 $TEXTSIZE
  40
-7.696940739654763
+0.2
   9
 $TRACEWID
  40
@@ -493,27 +493,27 @@ $SKPOLY
   9
 $TDCREATE
  40
-2460666.713564815
+2460705.567905093
   9
 $TDUCREATE
  40
-2460666.671898148
+2460705.526238426
   9
 $TDUPDATE
  40
-2460692.364953704
+2460707.514224537
   9
 $TDUUPDATE
  40
-2460692.323287037
+2460707.472557870
   9
 $TDINDWG
  40
-0.1823611111
+0.0046643519
   9
 $TDUSRTIMER
  40
-0.1823611111
+0.0046643519
   9
 $USRTIMER
  70
@@ -553,7 +553,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-26D
+249
   9
 $SURFTAB1
  70
@@ -933,11 +933,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{DF0726D1-F59D-AD40-B173-869A39A052FB}
+{519E1D13-E437-9D45-96C4-8FD28F8FA457}
   9
 $VERSIONGUID
   2
-{11C5FF29-BA08-1445-B4BA-6433562BCA6A}
+{603CA4C5-1DE8-9E4B-8EF5-49C7F7D20A77}
   9
 $EXTNAMES
 290
@@ -1053,11 +1053,11 @@ $LOFTNORMALS
   9
 $LATITUDE
  40
-37.795
+55.844
   9
 $LONGITUDE
  40
--122.394
+-4.230999999999999
   9
 $NORTHDIRECTION
  40
@@ -1065,7 +1065,7 @@ $NORTHDIRECTION
   9
 $TIMEZONE
  70
- -8000
+     0
   9
 $LIGHTGLYPHDISPLAY
 280
@@ -1151,7 +1151,7 @@ ObjectDBX Classes
  90
         0
  91
-        9
+       10
 280
      0
 281
@@ -1365,6 +1365,54 @@ ObjectDBX Classes
 281
      0
   0
+CLASS
+  1
+GEODATA
+  2
+AcDbGeoData
+  3
+ObjectDBX Classes
+ 90
+     4095
+ 91
+        1
+280
+     0
+281
+     0
+  0
+CLASS
+  1
+AcGeoBackupObject
+  2
+AcGeoBackupObject
+  3
+AcGeoLocationUI
+ 90
+     1024
+ 91
+        0
+280
+     0
+281
+     0
+  0
+CLASS
+  1
+SUN
+  2
+AcDbSun
+  3
+SCENEOE
+ 90
+     1153
+ 91
+        1
+280
+     0
+281
+     0
+  0
 ENDSEC
   0
 SECTION
@@ -1386,6 +1434,12 @@ AcDbSymbolTable
 VPORT
   5
 94
+102
+{ACAD_XDICTIONARY
+360
+23C
+102
+}
 330
 8
 100
@@ -1405,9 +1459,9 @@ AcDbViewportTableRecord
  21
 1.0
  12
-78.0850726224407
+82118.9630433321
  22
-14.40520632599197
+-38734.69856769292
  13
 0.0
  23
@@ -1425,15 +1479,15 @@ AcDbViewportTableRecord
  26
 0.0
  36
-1.0
+484.2941077271366
  17
-0.0
+11.24751811939982
  27
-0.0
+17.27339827571614
  37
 0.0
  40
-60.78135612110714
+334971.5125264358
  41
 2.254285714285714
  42
@@ -1506,6 +1560,8 @@ AcDbViewportTableRecord
    250
 421
   3355443
+361
+23B
 1001
 ACAD_NAV_VCDISPLAY
 1070
@@ -1609,7 +1665,7 @@ LAYER
 100
 AcDbSymbolTable
  70
-     2
+     1
   0
 LAYER
   5
@@ -1642,42 +1698,6 @@ F
 98
 348
 0
-  0
-LAYER
-  5
-257
-330
-2
-100
-AcDbSymbolTableRecord
-100
-AcDbLayerTableRecord
-  2
-app_layer
- 70
-     0
- 62
-     7
-  6
-Continuous
-370
-    -3
-390
-F
-347
-98
-348
-0
-1001
-AcAecLayerStandard
-1000
-
-1000
-
-1001
-AcCmTransparency
-1071
-        0
   0
 ENDTAB
   0
@@ -1715,7 +1735,7 @@ Standard
  71
      0
  42
-7.696940739654763
+0.2
   3
 arial.ttf
   4
@@ -1813,7 +1833,7 @@ APPID
 100
 AcDbSymbolTable
  70
-    23
+     7
   0
 APPID
   5
@@ -1910,230 +1930,6 @@ AcDbSymbolTableRecord
 AcDbRegAppTableRecord
   2
 ACAD_NAV_VCDISPLAY
- 70
-     0
-  0
-APPID
-  5
-23A
-330
-9
-100
-AcDbSymbolTableRecord
-100
-AcDbRegAppTableRecord
-  2
-ACAD_EXEMPT_FROM_CAD_STANDARDS
- 70
-     0
-  0
-APPID
-  5
-24F
-330
-9
-100
-AcDbSymbolTableRecord
-100
-AcDbRegAppTableRecord
-  2
-MY_APP
- 70
-     0
-  0
-APPID
-  5
-251
-330
-9
-100
-AcDbSymbolTableRecord
-100
-AcDbRegAppTableRecord
-  2
-3REAL_APP
- 70
-     0
-  0
-APPID
-  5
-252
-330
-9
-100
-AcDbSymbolTableRecord
-100
-AcDbRegAppTableRecord
-  2
-DIR_APP
- 70
-     0
-  0
-APPID
-  5
-253
-330
-9
-100
-AcDbSymbolTableRecord
-100
-AcDbRegAppTableRecord
-  2
-DISP_APP
- 70
-     0
-  0
-APPID
-  5
-254
-330
-9
-100
-AcDbSymbolTableRecord
-100
-AcDbRegAppTableRecord
-  2
-DIST_APP
- 70
-     0
-  0
-APPID
-  5
-255
-330
-9
-100
-AcDbSymbolTableRecord
-100
-AcDbRegAppTableRecord
-  2
-HANDLE_APP
- 70
-     0
-  0
-APPID
-  5
-256
-330
-9
-100
-AcDbSymbolTableRecord
-100
-AcDbRegAppTableRecord
-  2
-INT_APP
- 70
-     0
-  0
-APPID
-  5
-258
-330
-9
-100
-AcDbSymbolTableRecord
-100
-AcDbRegAppTableRecord
-  2
-AcAecLayerStandard
- 70
-     0
-  0
-APPID
-  5
-259
-330
-9
-100
-AcDbSymbolTableRecord
-100
-AcDbRegAppTableRecord
-  2
-AcCmTransparency
- 70
-     0
-  0
-APPID
-  5
-25A
-330
-9
-100
-AcDbSymbolTableRecord
-100
-AcDbRegAppTableRecord
-  2
-LAYER_APP
- 70
-     0
-  0
-APPID
-  5
-25B
-330
-9
-100
-AcDbSymbolTableRecord
-100
-AcDbRegAppTableRecord
-  2
-APP_LONG
- 70
-     0
-  0
-APPID
-  5
-25C
-330
-9
-100
-AcDbSymbolTableRecord
-100
-AcDbRegAppTableRecord
-  2
-POS_APP
- 70
-     0
-  0
-APPID
-  5
-25D
-330
-9
-100
-AcDbSymbolTableRecord
-100
-AcDbRegAppTableRecord
-  2
-REAL_APP
- 70
-     0
-  0
-APPID
-  5
-25E
-330
-9
-100
-AcDbSymbolTableRecord
-100
-AcDbRegAppTableRecord
-  2
-SCALE_APP
- 70
-     0
-  0
-APPID
-  5
-25F
-330
-9
-100
-AcDbSymbolTableRecord
-100
-AcDbRegAppTableRecord
-  2
-STR_APP
  70
      0
   0
@@ -2237,7 +2033,7 @@ BLOCK_RECORD
 102
 {ACAD_XDICTIONARY
 360
-15D
+240
 102
 }
 330
@@ -2433,444 +2229,6 @@ SECTION
   2
 ENTITIES
   0
-TEXT
-  5
-23C
-330
-1F
-100
-AcDbEntity
-  8
-0
-100
-AcDbText
- 10
-2.564682407586133
- 20
-2.853378693935724
- 30
-0.0
- 40
-1.0
-  1
-XData 3Real
-100
-AcDbText
-1001
-3REAL_APP
-1002
-{
-1010
-19.54373178850764
-1020
-22.40092522929139
-1030
-0.0
-1002
-}
-  0
-TEXT
-  5
-243
-330
-1F
-100
-AcDbEntity
-  8
-0
-100
-AcDbText
- 10
-11.20459499899743
- 20
-6.59595396629777
- 30
-0.0
- 40
-1.0
-  1
-XData Dir
-100
-AcDbText
-1001
-DIR_APP
-1002
-{
-1013
-16.59029480710555
-1023
--14.37650923950492
-1033
-0.0
-1002
-}
-  0
-TEXT
-  5
-244
-330
-1F
-100
-AcDbEntity
-  8
-0
-100
-AcDbText
- 10
-16.72198676937432
- 20
-1.647557228780556
- 30
-0.0
- 40
-1.0
-  1
-XData Disp
-100
-AcDbText
-1001
-DISP_APP
-1002
-{
-1012
-32.20131918508733
-1022
--11.95278148221291
-1032
-0.0
-1002
-}
-  0
-TEXT
-  5
-245
-330
-1F
-100
-AcDbEntity
-  8
-0
-100
-AcDbText
- 10
-24.44666316208645
- 20
-5.857585972881108
- 30
-0.0
- 40
-1.0
-  1
-XData Dist
-100
-AcDbText
-1001
-DIST_APP
-1002
-{
-1041
-41.03167835943094
-1002
-}
-  0
-TEXT
-  5
-246
-330
-1F
-100
-AcDbEntity
-  8
-0
-100
-AcDbText
- 10
-33.06761662124882
- 20
-1.102027832727
- 30
-0.0
- 40
-1.0
-  1
-XData Hand
-100
-AcDbText
-1001
-HANDLE_APP
-1002
-{
-1005
-10
-1002
-}
-  0
-TEXT
-  5
-247
-330
-1F
-100
-AcDbEntity
-  8
-0
-100
-AcDbText
- 10
-39.7502099365588
- 20
-5.173356249004766
- 30
-0.0
- 40
-1.0
-  1
-XData Int
-100
-AcDbText
-1001
-INT_APP
-1002
-{
-1070
-   524
-1002
-}
-  0
-TEXT
-  5
-248
-330
-1F
-100
-AcDbEntity
-  8
-0
-100
-AcDbText
- 10
-47.33707505062159
- 20
-0.9395945363203253
- 30
-0.0
- 40
-1.0
-  1
-XData Layer
-100
-AcDbText
-1001
-LAYER_APP
-1002
-{
-1003
-app_layer
-1002
-}
-  0
-TEXT
-  5
-249
-330
-1F
-100
-AcDbEntity
-  8
-0
-100
-AcDbText
- 10
-58.69292105875127
- 20
-4.65433982282411
- 30
-0.0
- 40
-1.0
-  1
-XData Long
-100
-AcDbText
-1001
-APP_LONG
-1002
-{
-1071
-     6654
-1002
-}
-  0
-TEXT
-  5
-24A
-330
-1F
-100
-AcDbEntity
-  8
-0
-100
-AcDbText
- 10
-64.62207873176601
- 20
-0.2368044415229606
- 30
-0.0
- 40
-1.0
-  1
-XData Pos
-100
-AcDbText
-1001
-POS_APP
-1002
-{
-1011
-52.34797874212754
-1021
--11.6366430295707
-1031
-0.0
-1002
-}
-  0
-TEXT
-  5
-24B
-330
-1F
-100
-AcDbEntity
-  8
-0
-100
-AcDbText
- 10
-73.86754643497226
- 20
-4.65433982282411
- 30
-0.0
- 40
-1.0
-  1
-XData Real
-100
-AcDbText
-1001
-REAL_APP
-1002
-{
-1040
-54.25399999999999
-1002
-}
-  0
-TEXT
-  5
-24C
-330
-1F
-100
-AcDbEntity
-  8
-0
-100
-AcDbText
- 10
-82.81153046876296
- 20
--0.9679773994171254
- 30
-0.0
- 40
-1.0
-  1
-XData Scale
-100
-AcDbText
-1001
-SCALE_APP
-1002
-{
-1042
-548.5399999999999
-1002
-}
-  0
-TEXT
-  5
-24D
-330
-1F
-100
-AcDbEntity
-  8
-0
-100
-AcDbText
- 10
-93.7860305614048
- 20
-4.65433982282411
- 30
-0.0
- 40
-1.0
-  1
-XData Str
-100
-AcDbText
-1001
-STR_APP
-1002
-{
-1000
-hello this is my string
-1002
-}
-  0
-TEXT
-  5
-250
-330
-1F
-100
-AcDbEntity
-  8
-0
-100
-AcDbText
- 10
-100.0077572019661
- 20
--1.567386817737204
- 30
-0.0
- 40
-1.0
-  1
-XData All
-100
-AcDbText
-1001
-MY_APP
-1002
-{
-1000
-hello this is a xdata record
-1010
-132.3686792514247
-1020
-13.41632788666925
-1030
-0.0
-1002
-}
-  0
 ENDSEC
   0
 SECTION
@@ -2945,11 +2303,59 @@ ACAD_VISUALSTYLE
   3
 ACDB_RECOMPOSE_DATA
 350
-26C
+248
   3
 AcDbVariableDictionary
 350
 66
+  0
+DICTIONARY
+  5
+23C
+330
+94
+100
+AcDbDictionary
+280
+     1
+281
+     1
+  3
+AcDbVariableDictionary
+360
+23D
+  0
+SUN
+  5
+23B
+330
+94
+100
+AcDbSun
+ 90
+        1
+290
+     0
+ 63
+     7
+421
+ 16777215
+ 40
+1.0
+291
+     1
+ 91
+  2460940
+ 92
+ 54000000
+292
+     0
+ 70
+     0
+ 71
+   256
+280
+     1
   0
 DICTIONARY
   5
@@ -2981,7 +2387,7 @@ AcDbDictionary
   0
 DICTIONARY
   5
-15D
+240
 330
 1F
 100
@@ -2990,6 +2396,10 @@ AcDbDictionary
      1
 281
      1
+  3
+ACAD_GEOGRAPHICDATA
+360
+241
   0
 XRECORD
   5
@@ -3507,7 +2917,7 @@ X-Ray
   0
 XRECORD
   5
-26C
+248
 102
 {ACAD_REACTORS
 330
@@ -3579,6 +2989,26 @@ LAYERNOTIFY
   0
 DICTIONARY
   5
+23D
+102
+{ACAD_REACTORS
+330
+23C
+102
+}
+330
+23C
+100
+AcDbDictionary
+281
+     1
+  3
+GEOMAPMODE
+350
+242
+  0
+DICTIONARY
+  5
 18F
 102
 {ACAD_REACTORS
@@ -3592,6 +3022,200 @@ DICTIONARY
 AcDbDictionary
 281
      1
+  0
+GEODATA
+  5
+241
+102
+{ACAD_REACTORS
+330
+240
+102
+}
+330
+240
+100
+AcDbGeoData
+ 90
+        3
+330
+1F
+ 70
+     1
+ 10
+11.24751811939982
+ 20
+17.27339827573371
+ 30
+0.0
+ 11
+-315551.0219150639
+ 21
+4702004.167534534
+ 31
+50.0
+ 40
+0.0254
+ 91
+        1
+ 41
+0.0254
+ 92
+        1
+210
+0.0
+220
+0.0
+230
+1.0
+ 12
+0.0000000000000002
+ 22
+1.0
+ 95
+        1
+141
+1.0
+294
+     0
+142
+0.0
+143
+6362228.650184014
+303
+<?xml version="1.0" encoding="UTF-16" standalone="no" ?>^J<Dictionary version="1.0" xmlns="http://www.osgeo.org/mapguide/coordinatesystem">^J^J  <ProjectedCoordinateSystem id="WORLD-LM-CONIC">^J    <Name>WORLD-LM-CONIC</Name>^J    <Description>Lambert Con
+303
+formal Conic projection for the world, Meter</Description>^J    <Authority>Autodesk</Authority>^J    <AdditionalInformation>^J      <ParameterItem type="CsMap">^J        <Key>CSQuadrantSimplified</Key>^J        <IntegerValue>1</IntegerValue>^J      </Param
+303
+eterItem>^J    </AdditionalInformation>^J    <DatumId>WGS84</DatumId>^J    <Axis uom="METER">^J      <CoordinateSystemAxis>^J        <AxisOrder>1</AxisOrder>^J        <AxisName>Easting</AxisName>^J        <AxisAbbreviation>E</AxisAbbreviation>^J        <Axis
+303
+Direction>east</AxisDirection>^J      </CoordinateSystemAxis>^J      <CoordinateSystemAxis>^J        <AxisOrder>2</AxisOrder>^J        <AxisName>Northing</AxisName>^J        <AxisAbbreviation>N</AxisAbbreviation>^J        <AxisDirection>north</AxisDirectio
+303
+n>^J      </CoordinateSystemAxis>^J    </Axis>^J    <Conversion>^J      <Projection>^J        <OperationMethodId>Lambert Conic Conformal (2SP)</OperationMethodId>^J        <ParameterValue>^J          <OperationParameterId>Latitude of 1st standard parallel</
+303
+OperationParameterId>^J          <Value uom="degree">-25</Value>^J        </ParameterValue>^J        <ParameterValue>^J          <OperationParameterId>Latitude of 2nd standard parallel</OperationParameterId>^J          <Value uom="degree">45</Value>^J     
+303
+   </ParameterValue>^J        <ParameterValue>^J          <OperationParameterId>Longitude of false origin</OperationParameterId>^J          <Value uom="degree">0</Value>^J        </ParameterValue>^J        <ParameterValue>^J          <OperationParameterId>
+303
+Latitude of false origin</OperationParameterId>^J          <Value uom="degree">10</Value>^J        </ParameterValue>^J        <ParameterValue>^J          <OperationParameterId>False easting</OperationParameterId>^J          <Value uom="METER">0</Value>^J  
+303
+      </ParameterValue>^J        <ParameterValue>^J          <OperationParameterId>False northing</OperationParameterId>^J          <Value uom="METER">0</Value>^J        </ParameterValue>^J      </Projection>^J    </Conversion>^J  </ProjectedCoordinateSyste
+303
+m>^J^J  <GeodeticDatum id="WGS84">^J    <Name>WGS84</Name>^J    <Description>World Geodetic System of 1984</Description>^J    <Authority>US Defense Mapping Agency, TR-8350.2-B, December 1987</Authority>^J    <PrimeMeridianId>Greenwich</PrimeMeridianId>^J   
+303
+ <EllipsoidId>WGS84</EllipsoidId>^J  </GeodeticDatum>^J^J  <Alias id="6326" type="Datum">^J    <ObjectId>WGS84</ObjectId>^J    <Namespace>EPSG Code</Namespace>^J  </Alias>^J^J  <Ellipsoid id="WGS84">^J    <Name>WGS84</Name>^J    <Description>World Geodetic Sys
+303
+tem of 1984, GEM 10C</Description>^J    <Authority>US Defense Mapping Agency, TR-8350.2-B, December 1987</Authority>^J    <SemiMajorAxis uom="meter">6378137</SemiMajorAxis>^J    <SecondDefiningParameter>^J      <SemiMinorAxis uom="meter">6356752.31424518
+301
+</SemiMinorAxis>^J    </SecondDefiningParameter>^J  </Ellipsoid>^J^J  <Alias id="7030" type="Ellipsoid">^J    <ObjectId>WGS84</ObjectId>^J    <Namespace>EPSG Code</Namespace>^J  </Alias>^J^J</Dictionary>^J
+302
+<georss:point>55.8440 -4.2310</georss:point>
+305
+
+306
+
+307
+
+ 93
+       12
+ 13
+-1181127.712712326
+ 23
+-8854428.877050615
+ 14
+-9.945829701130792
+ 24
+-60.24638740732543
+ 13
+1181127.712712326
+ 23
+-8854428.877050615
+ 14
+9.945829701130792
+ 24
+-60.24638740732543
+ 13
+1181127.712712326
+ 23
+9503591.441139382
+ 14
+20.01029802424763
+ 24
+79.95234001187483
+ 13
+-1181127.712712326
+ 23
+9521949.461457571
+ 14
+-20.03055306056916
+ 24
+80.00634280394445
+ 13
+-71333.71488446998
+ 23
+333760.2922034804
+ 14
+-0.8033182383895361
+ 24
+13.67821197244332
+ 13
+0.0
+ 23
+-4335973.471659722
+ 14
+0.0
+ 24
+-33.03219164791445
+ 13
+-35076.29358587903
+ 23
+4999257.371408738
+ 14
+-0.4765267920935405
+ 24
+58.05148734653528
+ 13
+-0.0000000002328306
+ 23
+-6749575.019903432
+ 14
+-0.0000000000000021
+ 24
+-49.72832692686398
+ 13
+-16337.13296155399
+ 23
+7410556.797243629
+ 14
+-0.2484462808609101
+ 24
+72.23617867974218
+ 13
+0.0
+ 23
+-8133393.761975149
+ 14
+0.0
+ 24
+-56.96365753665794
+ 13
+-5589.955297925975
+ 23
+8793471.637944209
+ 14
+-0.0912578085822429
+ 24
+77.80485267929325
+ 13
+0.0
+ 23
+0.0
+ 14
+0.0
+ 24
+9.999999999896218
+ 96
+        0
   0
 ACDBDETAILVIEWSTYLE
   5
@@ -12127,6 +11751,24 @@ DictionaryVariables
   1
 0
   0
+DICTIONARYVAR
+  5
+242
+102
+{ACAD_REACTORS
+330
+23D
+102
+}
+330
+23D
+100
+DictionaryVariables
+280
+     0
+  1
+1
+  0
 DICTIONARY
   5
 194
@@ -12217,7 +11859,7 @@ AcDbDictionary
   3
 ACAD_ROUNDTRIP_2008_TABLESTYLE_CELLSTYLEMAP
 360
-26B
+247
   0
 XRECORD
   5
@@ -12637,7 +12279,7 @@ AcDbXrecord
   0
 CELLSTYLEMAP
   5
-26B
+247
 102
 {ACAD_REACTORS
 330
@@ -13421,9 +13063,9 @@ Thumbnail_Data
 280
     15
  94
-      951
+      896
 310
-89504E470D0A1A0A0000000D49484452000001000000006608030000001376BFA700000300504C5445212830FFFFFF2128300000000000000000000000000000000000000000000000000000330000660000990000CC0000FF0033000033330033660033990033CC0033FF0066000066330066660066990066CC0066FF0099
+89504E470D0A1A0A0000000D49484452000001000000009108030000001BE1960600000300504C5445212830FFFFFF2128300000000000000000000000000000000000000000000000000000330000660000990000CC0000FF0033000033330033660033990033CC0033FF0066000066330066660066990066CC0066FF0099
 310
 000099330099660099990099CC0099FF00CC0000CC3300CC6600CC9900CCCC00CCFF00FF0000FF3300FF6600FF9900FFCC00FFFF3300003300333300663300993300CC3300FF3333003333333333663333993333CC3333FF3366003366333366663366993366CC3366FF3399003399333399663399993399CC3399FF33CC00
 310
@@ -13435,9 +13077,9 @@ FF3366FF6666FF9966FFCC66FFFF9900009900339900669900999900CC9900FF9933009933339933
 310
 FF3366FF3399FF33CCFF33FFFF6600FF6633FF6666FF6699FF66CCFF66FFFF9900FF9933FF9966FF9999FF99CCFF99FFFFCC00FFCC33FFCC66FFCC99FFCCCCFFCCFFFFFF00FFFF33FFFF66FFFF99FFFFCCFFFFFF0000000D0D0D1A1A1A2828283535354343435050505D5D5D6B6B6B787878868686939393A1A1A1AEAEAEBB
 310
-BBBBC9C9C9D6D6D6E4E4E4F1F1F1FFFFFF0000000000000000000000000000000000000000000000000000000000002E4550F1000000724944415478DAEDD7310E8020104541EE7F5F7A2B2B5C88D8A87FA624A1795936A13500000000000000000000000008D14F0208309EA566A9024CB314971631BF553A3EC0CED8BC31
+BBBBC9C9C9D6D6D6E4E4E4F1F1F1FFFFFF0000000000000000000000000000000000000000000000000000000000002E4550F10000003B4944415478DAEDC13101000000C2A0F54F6D0B2FA0000000000000000000000000000000000000000000000000000000000000000000000000CE06919100016C9A5B1B0000000049
 310
-404F7FE3025C0648DFFC758045AEFF07BB1BC028095007B07FCB00FE24E901000000000000000080270E06973FB650AF88B00000000049454E44AE426082
+454E44AE426082
   0
 ENDSEC
   0

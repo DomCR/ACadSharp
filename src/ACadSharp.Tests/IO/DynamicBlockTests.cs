@@ -14,7 +14,8 @@ namespace ACadSharp.Tests.IO
 
 		static DynamicBlockTests()
 		{
-			loadSamples("dynamic-blocks", "*", DwgDynamicBlocksPaths);
+			loadSamples("./", "dxf", DwgDynamicBlocksPaths);
+			loadSamples("./", "dwg", DwgDynamicBlocksPaths);
 		}
 
 		public DynamicBlockTests(ITestOutputHelper output) : base(output)
@@ -27,13 +28,18 @@ namespace ACadSharp.Tests.IO
 		{
 			CadDocument doc;
 
-			if (test.Extension == ".dxf")
+			if (test.IsDxf)
 			{
 				DxfReaderConfiguration configuration = new();
 				configuration.KeepUnknownEntities = true;
 				configuration.KeepUnknownNonGraphicalObjects = true;
 
 				doc = DxfReader.Read(test.Path, configuration, this.onNotification);
+
+				if(doc.Header.Version <= ACadVersion.AC1021)
+				{
+					return;
+				}
 			}
 			else
 			{
@@ -58,8 +64,8 @@ namespace ACadSharp.Tests.IO
 			var b = blk.ExtendedData.Get(doc.AppIds["AcDbDynamicBlockTrueName"]);
 			var c = blk.ExtendedData.Get(doc.AppIds["AcDbDynamicBlockGUID"]);
 
-			Insert basic = doc.GetCadObject<Insert>(788);
-			Insert modified = doc.GetCadObject<Insert>(889);
+			Insert basic = doc.GetCadObject<Insert>(0xABA);
+			Insert modified = doc.GetCadObject<Insert>(0xAC5);
 		}
 	}
 }
