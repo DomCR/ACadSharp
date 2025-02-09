@@ -9,7 +9,10 @@ namespace ACadSharp.Tests.IO.DXF
 {
 	public class DxfReaderTests : CadReaderTestsBase<DxfReader>
 	{
-		public DxfReaderTests(ITestOutputHelper output) : base(output) { }
+		public DxfReaderTests(ITestOutputHelper output) : base(output)
+		{
+			this._docIntegrity.IsDxf = true;
+		}
 
 		[Theory]
 		[MemberData(nameof(DxfAsciiFiles))]

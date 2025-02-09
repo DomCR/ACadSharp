@@ -124,6 +124,9 @@ namespace ACadSharp.IO.DXF
 						case ExtendedDataDistance dist:
 							this._writer.Write(dist.Code, dist.Value);
 							break;
+						case ExtendedDataDisplacement disp:
+							this._writer.Write(disp.Code, disp.Value);
+							break;
 						case ExtendedDataDirection dir:
 							this._writer.Write(dir.Code, (IVector)dir.Value);
 							break;

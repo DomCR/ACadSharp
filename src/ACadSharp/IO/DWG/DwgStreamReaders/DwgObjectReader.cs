@@ -3154,7 +3154,7 @@ namespace ACadSharp.IO.DWG
 
 			//  173 Text Left Attachment Type
 			mLeader.TextLeftAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
-			//  95  Text Right Attachement Type
+			//  95  Text Right Attachment Type
 			mLeader.TextRightAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
 			//  174 Text Angle Type
 			mLeader.TextAngle = (TextAngleType)this._objectReader.ReadBitShort();
