@@ -47,9 +47,9 @@ namespace ACadSharp.Entities
 				double cos = Math.Cos(this.HorizontalDirection);
 				dir = new XY(dir.X * cos - dir.Y * sin, dir.X * sin + dir.Y * cos);
 
-				double t = dir.Dot(this.InsertionPoint.Convert<XY>() - this.FeatureLocation.Convert<XY>());
+				double t = dir.Dot(this.DefinitionPoint.Convert<XY>() - this.FeatureLocation.Convert<XY>());
 				XY pr = this.FeatureLocation.Convert<XY>() + t * dir;
-				XY v = this.InsertionPoint.Convert<XY>() - pr;
+				XY v = this.DefinitionPoint.Convert<XY>() - pr;
 				double distSqrt = v.Dot(v);
 				return Math.Sqrt(distSqrt);
 			}

@@ -312,10 +312,6 @@ namespace ACadSharp.Tests.Common
 #if !NETFRAMEWORK
 			if (node.Properties.TryGetValue(nameof(dimension.Measurement), out object measurement))
 			{
-				//[AcDbOrdinateDimension] expected: 102.59461481181886 | actual: 8.640880277946811
-				//[AcDbOrdinateDimension] expected: 353.38145101848755 | actual: 666.5714080264308 no
-				//[AcDbAlignedDimension] expected: 48.363565231105952 | actual: 48.36356523110596 ok
-				//[AcDbAlignedDimension] expected: 7.0710678118654755 | actual: 7.0710678118654755 ok
 				Assert.Equal(((System.Text.Json.JsonElement)measurement).GetDouble(), dimension.Measurement, 4);
 			}
 #endif
