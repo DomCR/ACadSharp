@@ -40,7 +40,7 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				return this.InsertionPoint.DistanceFrom(this.AngleVertex);
+				return this.DefinitionPoint.DistanceFrom(this.AngleVertex);
 			}
 		}
 
