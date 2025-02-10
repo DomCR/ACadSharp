@@ -312,7 +312,6 @@ namespace ACadSharp.Tests.Common
 #if !NETFRAMEWORK
 			if (node.Properties.TryGetValue(nameof(dimension.Measurement), out object measurement))
 			{
-				//[AcDb2LineAngularDimension] expected: 1.6475682180646727 | actual: 1.0983788120431175
 				//[AcDbRadialDimension] expected: 11.399401645757905 | actual: 578.7249969833655
 				//[AcDbDiametricDimension] expected: 45.597606583030711 | actual: 1208.8460593039217
 				//[AcDbOrdinateDimension] expected: 102.59461481181886 | actual: 8.640880277946811

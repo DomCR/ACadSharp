@@ -24,7 +24,7 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.RadialDimension;
 
 		/// <summary>
-		/// Definition point for diameter, radius, and angular dimensions(in WCS)
+		/// Definition point for diameter, radius, and angular dimensions(in WCS).
 		/// </summary>
 		[DxfCodeValue(15, 25, 35)]
 		public XYZ AngleVertex { get; set; }
