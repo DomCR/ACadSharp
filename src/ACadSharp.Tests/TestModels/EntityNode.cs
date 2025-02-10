@@ -1,4 +1,6 @@
-﻿namespace ACadSharp.Tests.TestModels
+﻿using System.Collections.Generic;
+
+namespace ACadSharp.Tests.TestModels
 {
 	public class EntityNode : Node
 	{
@@ -15,5 +17,7 @@
 		public double LinetypeScale { get; set; }
 
 		public LineweightType LineWeight { get; set; }
+
+		public Dictionary<string, object> Properties { get; set; } = new Dictionary<string, object>();
 	}
 }

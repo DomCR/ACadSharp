@@ -160,7 +160,7 @@ namespace ACadSharp.Tests.Common
 					continue;
 
 				TableEntryNode child = node.GetEntry(entry.Handle);
-				if(child == null && (entry.Name.StartsWith("*U") || entry.Name.StartsWith("*T")))
+				if (child == null && (entry.Name.StartsWith("*U") || entry.Name.StartsWith("*T")))
 				{
 					return;
 				}
@@ -191,7 +191,7 @@ namespace ACadSharp.Tests.Common
 
 			foreach (R child in node.Entries)
 			{
-				if(this._document.Header.Version < ACadVersion.AC1024 &&
+				if (this._document.Header.Version < ACadVersion.AC1024 &&
 					child is BlockRecordNode tmp &&
 					tmp.IsDynamic)
 				{
@@ -256,6 +256,13 @@ namespace ACadSharp.Tests.Common
 				Assert.Equal(entity.IsInvisible, node.IsInvisible);
 				Assert.Equal(entity.LineWeight, node.LineWeight);
 			}
+
+			switch (entity)
+			{
+				case Dimension dim:
+					assertDimensionProperties(dim, node);
+					break;
+			}
 		}
 
 		private void assertLayer(Layer layer, LayerNode node)
@@ -298,6 +305,23 @@ namespace ACadSharp.Tests.Common
 			CadObject cobj = doc.GetCadObject(o.Handle);
 			this.notNull(cobj, $"Object of type {typeof(T)} | {o.Handle} not found in the document");
 			this.notNull(cobj.Document, $"Document is null for object with handle: {cobj.Handle}");
+		}
+
+		private void assertDimensionProperties(Dimension dimension, EntityNode node)
+		{
+#if !NETFRAMEWORK
+			if (node.Properties.TryGetValue(nameof(dimension.Measurement), out object measurement))
+			{
+				//[AcDb2LineAngularDimension] expected: 1.6475682180646727 | actual: 1.0983788120431175
+				//[AcDbRadialDimension] expected: 11.399401645757905 | actual: 578.7249969833655
+				//[AcDbDiametricDimension] expected: 45.597606583030711 | actual: 1208.8460593039217
+				//[AcDbOrdinateDimension] expected: 102.59461481181886 | actual: 8.640880277946811
+				//[AcDbOrdinateDimension] expected: 353.38145101848755 | actual: 666.5714080264308 no
+				//[AcDbAlignedDimension] expected: 48.363565231105952 | actual: 48.36356523110596 ok
+				//[AcDbAlignedDimension] expected: 7.0710678118654755 | actual: 7.0710678118654755 ok
+				Assert.Equal(((System.Text.Json.JsonElement)measurement).GetDouble(), dimension.Measurement, 4);
+			}
+#endif
 		}
 
 		private void notNull<T>(T o, string info = null)
