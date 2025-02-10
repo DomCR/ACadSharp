@@ -52,46 +52,51 @@ namespace ACadSharp.IO.Templates
 		public void SetDimensionFlags(DimensionType flags)
 		{
 			Dimension dimension = this.CadObject as Dimension;
-
-			if (dimension is DimensionOrdinate ordinate)
-			{
-				ordinate.IsOrdinateTypeX = flags.HasFlag(DimensionType.OrdinateTypeX);
-			}
-			dimension.IsTextUserDefinedLocation = flags.HasFlag(DimensionType.TextUserDefinedLocation);
+			dimension.Flags = flags;
 		}
 
-		public void SetDimensionObject(Dimension dimensionAligned)
+		public void SetDimensionObject(Dimension dimension)
 		{
-			dimensionAligned.Handle = this.CadObject.Handle;
-			dimensionAligned.Owner = this.CadObject.Owner;
+			dimension.Handle = this.CadObject.Handle;
+			dimension.Owner = this.CadObject.Owner;
 
-			dimensionAligned.XDictionary = this.CadObject.XDictionary;
+			dimension.XDictionary = this.CadObject.XDictionary;
 			//dimensionAligned.Reactors = this.CadObject.Reactors;
 			//dimensionAligned.ExtendedData = this.CadObject.ExtendedData;
 
-			dimensionAligned.Color = this.CadObject.Color;
-			dimensionAligned.LineWeight = this.CadObject.LineWeight;
-			dimensionAligned.LinetypeScale = this.CadObject.LinetypeScale;
-			dimensionAligned.IsInvisible = this.CadObject.IsInvisible;
-			dimensionAligned.Transparency = this.CadObject.Transparency;
+			dimension.Color = this.CadObject.Color;
+			dimension.LineWeight = this.CadObject.LineWeight;
+			dimension.LinetypeScale = this.CadObject.LinetypeScale;
+			dimension.IsInvisible = this.CadObject.IsInvisible;
+			dimension.Transparency = this.CadObject.Transparency;
 
-			Dimension dimension = this.CadObject as Dimension;
+			Dimension source = this.CadObject as Dimension;
 
-			dimensionAligned.Version = dimension.Version;
-			dimensionAligned.DefinitionPoint = dimension.DefinitionPoint;
-			dimensionAligned.TextMiddlePoint = dimension.TextMiddlePoint;
-			dimensionAligned.InsertionPoint = dimension.InsertionPoint;
-			dimensionAligned.Normal = dimension.Normal;
-			dimensionAligned.IsTextUserDefinedLocation = dimension.IsTextUserDefinedLocation;
-			dimensionAligned.AttachmentPoint = dimension.AttachmentPoint;
-			dimensionAligned.LineSpacingStyle = dimension.LineSpacingStyle;
-			dimensionAligned.LineSpacingFactor = dimension.LineSpacingFactor;
+			dimension.Version = source.Version;
+			dimension.DefinitionPoint = source.DefinitionPoint;
+			dimension.TextMiddlePoint = source.TextMiddlePoint;
+			dimension.InsertionPoint = source.InsertionPoint;
+			dimension.Normal = source.Normal;
+			dimension.IsTextUserDefinedLocation = source.IsTextUserDefinedLocation;
+			dimension.AttachmentPoint = source.AttachmentPoint;
+			dimension.LineSpacingStyle = source.LineSpacingStyle;
+			dimension.LineSpacingFactor = source.LineSpacingFactor;
 			//dimensionAligned.Measurement = dimension.Measurement;
-			dimensionAligned.Text = dimension.Text;
-			dimensionAligned.TextRotation = dimension.TextRotation;
-			dimensionAligned.HorizontalDirection = dimension.HorizontalDirection;
+			dimension.Text = source.Text;
+			dimension.TextRotation = source.TextRotation;
+			dimension.HorizontalDirection = source.HorizontalDirection;
 
-			this.CadObject = dimensionAligned;
+			dimension.Flags = source.Flags;
+
+			if (this.CadObject is DimensionAligned aligned &&
+				dimension is DimensionLinear linear)
+			{
+				linear.FirstPoint = aligned.FirstPoint;
+				linear.SecondPoint = aligned.SecondPoint;
+				linear.ExtLineRotation = aligned.ExtLineRotation;
+			}
+
+			this.CadObject = dimension;
 		}
 	}
 }
