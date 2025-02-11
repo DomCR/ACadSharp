@@ -49,22 +49,11 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		protected bool R2018Plus;
 
-		protected readonly ACadVersion _version;
+		protected ACadVersion _version;
 
 		public DwgSectionIO(ACadVersion version)
 		{
-			this._version = version;
-
-			this.R13_14Only = version == ACadVersion.AC1014 || version == ACadVersion.AC1012;
-			this.R13_15Only = version >= ACadVersion.AC1012 && version <= ACadVersion.AC1015;
-			this.R2000Plus = version >= ACadVersion.AC1015;
-			this.R2004Pre = version < ACadVersion.AC1018;
-			this.R2007Pre = version <= ACadVersion.AC1021;
-			this.R2004Plus = version >= ACadVersion.AC1018;
-			this.R2007Plus = version >= ACadVersion.AC1021;
-			this.R2010Plus = version >= ACadVersion.AC1024;
-			this.R2013Plus = version >= ACadVersion.AC1027;
-			this.R2018Plus = version >= ACadVersion.AC1032;
+			this.setVersion(version);
 		}
 
 		public static bool CheckSentinel(byte[] actual, byte[] expected)
@@ -81,6 +70,22 @@ namespace ACadSharp.IO.DWG
 			}
 
 			return true;
+		}
+
+		protected void setVersion(ACadVersion version)
+		{
+			this._version = version;
+
+			this.R13_14Only = version == ACadVersion.AC1014 || version == ACadVersion.AC1012;
+			this.R13_15Only = version >= ACadVersion.AC1012 && version <= ACadVersion.AC1015;
+			this.R2000Plus = version >= ACadVersion.AC1015;
+			this.R2004Pre = version < ACadVersion.AC1018;
+			this.R2007Pre = version <= ACadVersion.AC1021;
+			this.R2004Plus = version >= ACadVersion.AC1018;
+			this.R2007Plus = version >= ACadVersion.AC1021;
+			this.R2010Plus = version >= ACadVersion.AC1024;
+			this.R2013Plus = version >= ACadVersion.AC1027;
+			this.R2018Plus = version >= ACadVersion.AC1032;
 		}
 
 		protected void checkSentinel(IDwgStreamReader sreader, byte[] expected)
