@@ -184,6 +184,15 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(mtext);
 			}
 
+			public void MTextChineseCharacters()
+			{
+				MText mtext = new MText();
+
+				mtext.Value = "这是一个多行文本";
+
+				this.Document.Entities.Add(mtext);
+			}
+
 			public void SingleMTextSpecialCharacter()
 			{
 				MText mtext = new MText();
@@ -633,6 +642,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
 			Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
+			Data.Add(new(nameof(SingleCaseGenerator.MTextChineseCharacters)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedLwPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline2DTest)));
