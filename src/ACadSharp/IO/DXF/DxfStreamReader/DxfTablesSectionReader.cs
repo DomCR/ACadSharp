@@ -530,6 +530,9 @@ namespace ACadSharp.IO.DXF
 				case 344:
 					tmp.DIMBLK2 = this._reader.ValueAsHandle;
 					return true;
+				case 345:
+					tmp.DimltypeName = this._reader.ValueAsString;
+					return true;
 				case 371:
 					template.CadObject.DimensionLineWeight = (LineweightType)this._reader.ValueAsShort;
 					return true;

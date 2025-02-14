@@ -4805,7 +4805,7 @@ namespace ACadSharp.IO.DWG
 			this._objectReader.ReadBit();
 
 			//External reference block handle(hard pointer)
-			long block = (long)this.handleReference();
+			template.BlockHandle = this.handleReference();
 
 			//340 shapefile(DIMTXSTY)(hard pointer)
 			template.TextStyleHandle = this.handleReference();
@@ -4827,11 +4827,11 @@ namespace ACadSharp.IO.DWG
 			if (this.R2007Plus)
 			{
 				//345 dimltype(hard pointer)
-				template.Dimltype = this.handleReference();
+				template.DimLineType = this.handleReference();
 				//346 dimltex1(hard pointer)
-				template.Dimltex1 = this.handleReference();
+				template.DimLineTypeExt1 = this.handleReference();
 				//347 dimltex2(hard pointer)
-				template.Dimltex2 = this.handleReference();
+				template.DimLineTypeExt2 = this.handleReference();
 			}
 
 			return template;

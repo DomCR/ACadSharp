@@ -935,12 +935,24 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(DxfReferenceType.Handle, 344)]
 		public BlockRecord DimArrow2 { get; set; }
 
+		/// <summary>
+		/// Linetype applied to the dimension lines.
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Handle, 345)]
+		public LineType LineType { get; set; } = LineType.ByBlock;
+		[DxfCodeValue(DxfReferenceType.Handle, 346)]
+		
+		public LineType ExtensionLine1LineType { get; set; } = LineType.ByBlock;
+
+		[DxfCodeValue(DxfReferenceType.Handle, 347)]
+		public LineType ExtensionLine2LineType { get; set; } = LineType.ByBlock;
+
 		private double _arrowSize = 0.18;
 
 		private double _scaleFactor = 1.0d;
 
 		private TextStyle _style = TextStyle.Default;
-		
+
 		private double _joggedRadiusDimensionTransverseSegmentAngle = System.Math.PI / 4.0;
 
 		private double _textHeight = 0.18;
@@ -967,7 +979,7 @@ namespace ACadSharp.Tables
 			clone.ArrowBlock = (BlockRecord)this.ArrowBlock?.Clone();
 			clone.DimArrow1 = (BlockRecord)this.DimArrow1?.Clone();
 			clone.DimArrow2 = (BlockRecord)this.DimArrow2?.Clone();
-			
+
 			return clone;
 		}
 

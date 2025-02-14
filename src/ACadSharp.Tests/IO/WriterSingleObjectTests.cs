@@ -503,6 +503,8 @@ namespace ACadSharp.Tests.IO
 
 				this.Document.Entities.Add(dim);
 
+				dim.UpdateBlock();
+
 				ACadSharp.Entities.Line line = new ACadSharp.Entities.Line
 				{
 					StartPoint = new CSMath.XYZ(1, 0, 0),
@@ -513,8 +515,9 @@ namespace ACadSharp.Tests.IO
 				{
 					FirstPoint = line.StartPoint,
 					SecondPoint = line.EndPoint,
-					DefinitionPoint = new XYZ(0, -1, 0)
+					DefinitionPoint = new XYZ(2.8023467929098436, 6.758122565672127, 0)
 				};
+				dim1.UpdateBlock();
 
 				this.Document.Entities.Add(line);
 				this.Document.Entities.Add(dim1);
@@ -610,10 +613,10 @@ namespace ACadSharp.Tests.IO
 			public void BlockWithDimensions()
 			{
 				BlockRecord block = new BlockRecord("block1");
-				
+
 				ACadSharp.Entities.Line line = new ACadSharp.Entities.Line
 				{
-					StartPoint = new CSMath.XYZ(1, 0, 0),
+					StartPoint = new CSMath.XYZ(0, 0, 0),
 					EndPoint = new CSMath.XYZ(5, 5, 0)
 				};
 
@@ -624,15 +627,37 @@ namespace ACadSharp.Tests.IO
 					DefinitionPoint = new XYZ(0, -1, 0)
 				};
 
-				block.Entities.Add(line);
-				block.Entities.Add(dim);
+				DimensionAligned aligned = new DimensionAligned()
+				{
+					FirstPoint = line.StartPoint,
+					SecondPoint = line.EndPoint,
+				};
+				aligned.UpdateBlock();
+
+				//block.Entities.Add(line);
+				//block.Entities.Add(dim);
+				//block.Entities.Add(aligned);
 
 				this.Document.BlockRecords.Add(block);
 				Insert blockinsert = new Insert(block)
 				{
 					InsertPoint = new XYZ(10, 10, 0)
 				};
-				this.Document.Entities.Add(blockinsert);
+				//this.Document.Entities.Add(blockinsert);
+
+				//this.Document.Entities.Add(line);
+				this.Document.Entities.Add(aligned);
+
+				//Add simple dimension
+				DimensionAligned a = new DimensionAligned()
+				{
+					FirstPoint = new XYZ(-1, 0, 0),
+					SecondPoint = new XYZ(5, 0, 0),
+					DefinitionPoint = new XYZ(-1, 1, 0),
+				};
+				a.UpdateBlock();
+
+				this.Document.Entities.Add(a);
 			}
 
 			public void Deserialize(IXunitSerializationInfo info)
