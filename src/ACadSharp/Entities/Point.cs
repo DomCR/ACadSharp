@@ -68,7 +68,7 @@ namespace ACadSharp.Entities
 		public override void ApplyTransform(Transform transform)
 		{
 			this.Location = transform.ApplyTransform(this.Location);
-			this.Normal = transform.ApplyTransform(this.Normal);
+			this.Normal = this.transformNormal(transform, this.Normal);
 		}
 
 		/// <inheritdoc/>

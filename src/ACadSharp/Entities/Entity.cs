@@ -220,6 +220,11 @@ namespace ACadSharp.Entities
 			this.LineType = (LineType)this.LineType.Clone();
 		}
 
+		protected XYZ transformNormal(Transform transform, XYZ normal)
+		{
+			return transform.Rotate(normal).Normalize();
+		}
+
 		protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
 		{
 			if (e.Item.Equals(this.Layer))

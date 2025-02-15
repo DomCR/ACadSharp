@@ -5,7 +5,7 @@ using Xunit;
 
 namespace ACadSharp.Tests.Entities
 {
-	public class LineTests
+	public class LineTests : CommonEntityTests<Line>
 	{
 		private CSMathRandom _random = new CSMathRandom();
 

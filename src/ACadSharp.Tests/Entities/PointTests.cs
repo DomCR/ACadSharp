@@ -13,14 +13,31 @@ namespace ACadSharp.Tests.Entities
 		public void TranslateTest()
 		{
 			XYZ init = _random.Next<XYZ>();
-			XYZ translation = _random.Next<XYZ>();
-			XYZ result = init + translation;
+			XYZ transform = _random.Next<XYZ>();
+			XYZ result = init + transform;
 
 			Point point = new Point(init);
 
-			point.ApplyTranslation(translation);
+			point.ApplyTranslation(transform);
 
 			AssertUtils.AreEqual(result, point.Location, "Point Location");
+			AssertUtils.AreEqual(XYZ.AxisZ, point.Normal);
+		}
+
+
+		[Fact]
+		public void RotationTest()
+		{
+			XYZ init = new(5, 5, 0);
+
+			Point point = new Point(init);
+
+			Transform translation = Transform.CreateRotation(new XYZ(1, 0, 0), MathHelper.DegToRad(90));
+			point.ApplyTransform(translation);
+
+			//Rotation around origin
+			AssertUtils.AreEqual(new XYZ(5, 0, 5), point.Location, "Point Location");
+			AssertUtils.AreEqual(XYZ.AxisY, point.Normal);
 		}
 	}
 }
