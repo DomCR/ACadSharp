@@ -75,7 +75,7 @@ namespace ACadSharp.Entities
 		/// The valid range is 0 to 2 * PI.
 		/// </value>
 		[DxfCodeValue(42)]
-		public double EndParameter { get; set; } = MathUtils.TwoPI;
+		public double EndParameter { get; set; } = MathHelper.TwoPI;
 
 		/// <summary>
 		/// Rotation of the major axis from the world X axis.
@@ -101,7 +101,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Flag that indicates weather this ellipse is closed or not.
 		/// </summary>
-		public bool IsFullEllipse { get { return this.StartParameter == 0 && this.EndParameter == MathUtils.TwoPI; } }
+		public bool IsFullEllipse { get { return this.StartParameter == 0 && this.EndParameter == MathHelper.TwoPI; } }
 
 		/// <summary>
 		/// Calculate the local point on the ellipse for a given angle relative to the center.
@@ -145,7 +145,7 @@ namespace ACadSharp.Entities
 			if (this.IsFullEllipse)
 			{
 				start = 0;
-				end = MathUtils.TwoPI;
+				end = MathHelper.TwoPI;
 				steps = precision;
 			}
 			else
@@ -159,7 +159,7 @@ namespace ACadSharp.Entities
 
 				if (end < start)
 				{
-					end += MathUtils.TwoPI;
+					end += MathHelper.TwoPI;
 				}
 				steps = precision - 1;
 			}
@@ -175,8 +175,8 @@ namespace ACadSharp.Entities
 				double pointX = 0.5 * (this.MajorAxis * cosAlpha * cosBeta - this.MinorAxis * sinAlpha * sinBeta);
 				double pointY = 0.5 * (this.MajorAxis * cosAlpha * sinBeta + this.MinorAxis * sinAlpha * cosBeta);
 
-				pointX = MathUtils.FixZero(pointX);
-				pointY = MathUtils.FixZero(pointY);
+				pointX = MathHelper.FixZero(pointX);
+				pointY = MathHelper.FixZero(pointY);
 
 				points.Add(new XY(pointX, pointY));
 			}
