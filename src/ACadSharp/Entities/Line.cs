@@ -77,7 +77,7 @@ namespace ACadSharp.Entities
 		{
 			this.StartPoint = transform.ApplyTransform(this.StartPoint);
 			this.EndPoint = transform.ApplyTransform(this.EndPoint);
-			this.Normal = transform.ApplyTransform(this.Normal);
+			this.Normal = transform.Rotate(this.Normal).Normalize();
 		}
 	}
 }

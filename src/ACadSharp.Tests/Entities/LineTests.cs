@@ -26,6 +26,26 @@ namespace ACadSharp.Tests.Entities
 
 			AssertUtils.AreEqual(start.Add(move), line.StartPoint);
 			AssertUtils.AreEqual(end.Add(move), line.EndPoint);
+			AssertUtils.AreEqual(XYZ.AxisZ, line.Normal);
+		}
+
+		[Fact]
+		public void RotationTest()
+		{
+			var start = XYZ.Zero;
+			var end = new XYZ(1, 1, 0);
+			Line line = new Line
+			{
+				StartPoint = start,
+				EndPoint = end,
+			};
+
+			Transform translation = Transform.CreateRotation(XYZ.AxisX, MathHelper.DegToRad(90));
+			line.ApplyTransform(translation);
+
+			AssertUtils.AreEqual(start, line.StartPoint);
+			AssertUtils.AreEqual(new XYZ(1, 0, 1), line.EndPoint);
+			AssertUtils.AreEqual(XYZ.AxisY, line.Normal);
 		}
 
 		[Fact]
@@ -40,11 +60,12 @@ namespace ACadSharp.Tests.Entities
 			};
 
 			XYZ scale = new XYZ(2, 2, 1);
-			Transform translation = Transform.CreateEscalation(scale);
-			line.ApplyTransform(translation);
+			Transform transform = Transform.CreateScaling(scale);
+			line.ApplyTransform(transform);
 
 			AssertUtils.AreEqual(start.Multiply(scale), line.StartPoint);
 			AssertUtils.AreEqual(end.Multiply(scale), line.EndPoint);
+			AssertUtils.AreEqual(XYZ.AxisZ, line.Normal);
 		}
 
 		[Fact]

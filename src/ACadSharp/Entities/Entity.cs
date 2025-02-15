@@ -139,9 +139,15 @@ namespace ACadSharp.Entities
 		/// Apply a scale to this entity.
 		/// </summary>
 		/// <param name="scale"></param>
-		public void ApplyEscalation(XYZ scale)
+		public void ApplyScaling(XYZ scale)
 		{
-			Transform transform = Transform.CreateEscalation(scale);
+			Transform transform = Transform.CreateScaling(scale);
+			this.ApplyTransform(transform);
+		}
+
+		public void ApplyScaling(XYZ scale, XYZ origin)
+		{
+			Transform transform = Transform.CreateScaling(scale, origin);
 			this.ApplyTransform(transform);
 		}
 
