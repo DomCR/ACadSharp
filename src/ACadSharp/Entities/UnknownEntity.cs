@@ -62,21 +62,6 @@ namespace ACadSharp.Entities
 			throw new NotImplementedException();
 		}
 
-		public override void ApplyRotation(double rotation, XYZ axis)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void ApplyEscalation(XYZ scale)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void ApplyTranslation(XYZ translation)
-		{
-			throw new NotImplementedException();
-		}
-
 		/// <inheritdoc/>
 		/// <remarks>
 		/// An Unknown Entity does not have any geometric shape, therfore it's bounding box will be always 0

@@ -55,21 +55,7 @@ namespace ACadSharp.Entities
 			return new BoundingBox(this.InsertionPoint - this.AngleVertex, this.InsertionPoint + this.AngleVertex);
 		}
 
-		public override void ApplyTranslation(XYZ translation)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public override void ApplyRotation(double rotation, XYZ axis)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public override void ApplyEscalation(XYZ scale)
-		{
-			throw new System.NotImplementedException();
-		}
-
+		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
 			throw new System.NotImplementedException();

@@ -118,20 +118,5 @@ namespace ACadSharp.Entities
 		{
 			throw new NotImplementedException();
 		}
-
-		public override void ApplyRotation(double rotation, XYZ axis)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void ApplyEscalation(XYZ scale)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void ApplyTranslation(XYZ translation)
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

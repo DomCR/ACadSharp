@@ -72,24 +72,12 @@ namespace ACadSharp.Entities
 			return new BoundingBox(min, max);
 		}
 
-		public override void ApplyTranslation(XYZ translation)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public override void ApplyRotation(double rotation, XYZ axis)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public override void ApplyEscalation(XYZ scale)
-		{
-			throw new System.NotImplementedException();
-		}
-
+		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
-			throw new System.NotImplementedException();
+			this.StartPoint = transform.ApplyTransform(this.StartPoint);
+			this.EndPoint = transform.ApplyTransform(this.EndPoint);
+			this.Normal = transform.ApplyTransform(this.Normal);
 		}
 	}
 }

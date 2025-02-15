@@ -35,6 +35,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(11, 21, 31)]
 		public XYZ Direction { get; set; }
 
+		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
 			throw new System.NotImplementedException();
@@ -44,21 +45,6 @@ namespace ACadSharp.Entities
 		public override BoundingBox GetBoundingBox()
 		{
 			return BoundingBox.Infinite;
-		}
-
-		public override void ApplyRotation(double rotation, XYZ axis)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public override void ApplyEscalation(XYZ scale)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public override void ApplyTranslation(XYZ translation)
-		{
-			throw new System.NotImplementedException();
 		}
 	}
 }

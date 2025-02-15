@@ -45,20 +45,5 @@ namespace ACadSharp.Entities
 		{
 			return BoundingBox.Infinite;
 		}
-
-		public override void ApplyRotation(double rotation, XYZ axis)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public override void ApplyEscalation(XYZ scale)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public override void ApplyTranslation(XYZ translation)
-		{
-			throw new System.NotImplementedException();
-		}
 	}
 }

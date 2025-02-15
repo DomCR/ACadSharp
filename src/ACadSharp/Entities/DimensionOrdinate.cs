@@ -88,21 +88,7 @@ namespace ACadSharp.Entities
 			return new BoundingBox(this.FeatureLocation, this.LeaderEndpoint);
 		}
 
-		public override void ApplyTranslation(XYZ translation)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void ApplyRotation(double rotation, XYZ axis)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void ApplyEscalation(XYZ scale)
-		{
-			throw new NotImplementedException();
-		}
-
+		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
 			throw new NotImplementedException();
