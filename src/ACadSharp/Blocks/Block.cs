@@ -86,24 +86,6 @@ namespace ACadSharp.Blocks
 			return clone;
 		}
 
-		/// <inheritdoc/>
-		public override void ApplyTranslation(XYZ translation)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		/// <inheritdoc/>
-		public override void ApplyRotation(double rotation, XYZ axis)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		/// <inheritdoc/>
-		public override void ApplyEscalation(XYZ scale)
-		{
-			throw new System.NotImplementedException();
-		}
-
 		public override void ApplyTransform(Transform transform)
 		{
 			throw new System.NotImplementedException();

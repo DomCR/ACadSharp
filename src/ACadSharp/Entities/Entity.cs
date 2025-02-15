@@ -118,20 +118,32 @@ namespace ACadSharp.Entities
 		/// Apply a translation to this entity.
 		/// </summary>
 		/// <param name="translation"></param>
-		public abstract void ApplyTranslation(XYZ translation);
+		public void ApplyTranslation(XYZ translation)
+		{
+			Transform transform = Transform.CreateTranslation(translation);
+			this.ApplyTransform(transform);
+		}
 
 		/// <summary>
 		/// Apply a rotation to this entity.
 		/// </summary>
-		/// <param name="rotation"></param>
 		/// <param name="axis"></param>
-		public abstract void ApplyRotation(double rotation, XYZ axis);
+		/// <param name="rotation"></param>
+		public void ApplyRotation(XYZ axis, double rotation)
+		{
+			Transform transform = Transform.CreateRotation(axis, rotation);
+			this.ApplyTransform(transform);
+		}
 
 		/// <summary>
 		/// Apply a scale to this entity.
 		/// </summary>
 		/// <param name="scale"></param>
-		public abstract void ApplyEscalation(XYZ scale);
+		public void ApplyEscalation(XYZ scale)
+		{
+			Transform transform = Transform.CreateEscalation(scale);
+			this.ApplyTransform(transform);
+		}
 
 		/// <summary>
 		/// Apply a transform matrix to this entity.

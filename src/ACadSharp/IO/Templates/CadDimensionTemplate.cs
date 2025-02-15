@@ -48,21 +48,6 @@ namespace ACadSharp.IO.Templates
 				throw new System.InvalidOperationException();
 			}
 
-			public override void ApplyTranslation(XYZ translation)
-			{
-				throw new System.NotImplementedException();
-			}
-
-			public override void ApplyRotation(double rotation, XYZ axis)
-			{
-				throw new System.NotImplementedException();
-			}
-
-			public override void ApplyEscalation(XYZ scale)
-			{
-				throw new System.NotImplementedException();
-			}
-
 			public override void ApplyTransform(Transform transform)
 			{
 				throw new System.NotImplementedException();
