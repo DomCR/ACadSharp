@@ -533,7 +533,7 @@ namespace ACadSharp.IO.DXF
 				case 50:
 					var dim = new DimensionLinear();
 					tmp.SetDimensionObject(dim);
-					dim.Rotation = CSMath.MathHelper.DegToRad(this._reader.ValueAsDouble);
+					dim.Rotation = this._reader.ValueAsAngle;
 					map.SubClasses.Add(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
 					return true;
 				case 70:
@@ -1733,7 +1733,7 @@ namespace ACadSharp.IO.DXF
 
 					if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
 					{
-						value = (double)value * MathHelper.DegToRadFactor;
+						value = MathHelper.DegToRad((double)value);
 					}
 
 					dxfProperty.SetValue(this._reader.Code, cadObject, value);

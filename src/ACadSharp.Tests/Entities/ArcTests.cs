@@ -16,7 +16,7 @@ namespace ACadSharp.Tests.Entities
 			// 90 degree bulge
 			double bulge = Math.Tan(Math.PI / (2 * 4));
 
-			XY center = MathUtils.GetCenter(start, end, bulge, out double radius);
+			XY center = Arc.GetCenter(start, end, bulge, out double radius);
 
 #if NETFRAMEWORK
 			center = MathHelper.FixZero(center);
@@ -58,7 +58,7 @@ namespace ACadSharp.Tests.Entities
 			// 90 degree bulge
 			double bulge = Math.Tan(Math.PI / (2 * 4));
 
-			XY center = MathUtils.GetCenter(start, end, bulge);
+			XY center = Arc.GetCenter(start, end, bulge);
 
 #if NETFRAMEWORK
 			center = MathHelper.FixZero(center);
