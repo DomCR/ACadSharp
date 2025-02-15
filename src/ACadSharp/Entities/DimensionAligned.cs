@@ -17,6 +17,12 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.AlignedDimension)]
 	public class DimensionAligned : Dimension
 	{
+		/// <inheritdoc/>
+		/// <remarks>
+		/// The definition point should be always positioned in a perpendicular line relative to the dimension.
+		/// </remarks>
+		public override XYZ DefinitionPoint { get => base.DefinitionPoint; set => base.DefinitionPoint = value; }
+
 		/// <summary>
 		/// Linear dimension types with an oblique angle have an optional group code 52.
 		/// When added to the rotation angle of the linear dimension(group code 50),
@@ -47,6 +53,21 @@ namespace ACadSharp.Entities
 		public override ObjectType ObjectType => ObjectType.DIMENSION_ALIGNED;
 
 		/// <summary>
+		/// Definition point offset relative to the <see cref="FirstPoint"/>.
+		/// </summary>
+		public double Offset
+		{
+			get { return this.FirstPoint.DistanceFrom(this.DefinitionPoint); }
+			set
+			{
+				XY p = (this.SecondPoint - this.FirstPoint)
+					.Convert<XY>().Perpendicular().Normalize();
+
+				this.DefinitionPoint = this.FirstPoint + p.Convert<XYZ>() * value;
+			}
+		}
+
+		/// <summary>
 		/// Definition point for linear and angular dimensions(in WCS)
 		/// </summary>
 		[DxfCodeValue(14, 24, 34)]
@@ -54,10 +75,6 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.AlignedDimension;
-
-		public override XYZ DefinitionPoint { get => base.DefinitionPoint; set => base.DefinitionPoint = value; }
-
-		public double Offset { get; set; }
 
 		/// <summary>
 		/// Default constructor.
@@ -127,25 +144,6 @@ namespace ACadSharp.Entities
 				gap = -gap;
 				textRot += Math.PI;
 			}
-
-			//List<string> texts = FormatDimensionText(measure, this.DimensionType, this.UserText, Style, this.Owner);
-
-			//MText mText = DimensionText(textRef + gap * vec, AttachmentPointType.BottomCenter, textRot, texts[0], Style);
-			//if (mText != null)
-			//{
-			//	entities.Add(mText);
-			//}
-
-			//// there might be an additional text if the code \X has been used in the thisension UserText 
-			//// this additional text appears under the thisension line
-			//if (texts.Count > 1)
-			//{
-			//	MText mText2 = DimensionText(textRef - gap * vec, AttachmentPointType.TopCenter, textRot, texts[1], Style);
-			//	if (mText2 != null)
-			//	{
-			//		entities.Add(mText2);
-			//	}
-			//}
 
 			this.TextMiddlePoint = (textRef + gap * vec).Convert<XYZ>();
 			this.IsTextUserDefinedLocation = false;
