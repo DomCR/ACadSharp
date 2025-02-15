@@ -17,14 +17,20 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Arc)]
 	public class Arc : Circle
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.ARC;
+		/// <summary>
+		/// The end angle in radians.
+		/// </summary>
+		/// <remarks>
+		/// Use 6.28 radians to specify a closed circle or ellipse.
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
+		public double EndAngle { get; set; } = Math.PI;
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityArc;
 
 		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Arc;
+		public override ObjectType ObjectType => ObjectType.ARC;
 
 		/// <summary>
 		/// The start angle in radians.
@@ -32,14 +38,8 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double StartAngle { get; set; } = 0.0;
 
-		/// <summary>
-		/// The end angle in radians. 
-		/// </summary>
-		/// <remarks>
-		/// Use 6.28 radians to specify a closed circle or ellipse.
-		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
-		public double EndAngle { get; set; } = Math.PI;
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Arc;
 
 		/// <summary>
 		/// Default constructor
@@ -55,7 +55,7 @@ namespace ACadSharp.Entities
 		/// <returns></returns>
 		public static Arc CreateFromBulge(XY p1, XY p2, double bulge)
 		{
-			XY center = MathUtils.GetCenter(p1, p2, bulge, out double r);
+			XY center = GetCenter(p1, p2, bulge, out double r);
 
 			double startAngle;
 			double endAngle;
@@ -77,6 +77,45 @@ namespace ACadSharp.Entities
 				StartAngle = startAngle,
 				EndAngle = endAngle,
 			};
+		}
+
+		/// <summary>
+		/// Get the center coordinate from a start, end an a bulge value.
+		/// </summary>
+		/// <param name="start">Start point.</param>
+		/// <param name="end">Ending point.</param>
+		/// <param name="bulge">Bulge.</param>
+		/// <returns>Center of the represented circle.</returns>
+		public static XY GetCenter(XY start, XY end, double bulge)
+		{
+			return GetCenter(start, end, bulge, out _);
+		}
+
+		/// <summary>
+		/// Get the center coordinate from a start, end an a bulge value.
+		/// </summary>
+		/// <param name="start">Start point.</param>
+		/// <param name="end">Ending point.</param>
+		/// <param name="bulge">Bulge.</param>
+		/// <param name="radius">Radius of the circle.</param>
+		/// <returns>Center of the represented circle.</returns>
+		public static XY GetCenter(XY start, XY end, double bulge, out double radius)
+		{
+			double theta = 4 * Math.Atan(Math.Abs(bulge));
+			double c = start.DistanceFrom(end) / 2.0;
+			radius = c / Math.Sin(theta / 2.0);
+
+			double gamma = (Math.PI - theta) / 2;
+			double phi = (end - start).GetAngle() + Math.Sign(bulge) * gamma;
+			return new XY(start.X + radius * CSMath.MathHelper.Cos(phi), start.Y + radius * CSMath.MathHelper.Sin(phi));
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			List<XY> vertices = this.PolygonalVertexes(256);
+
+			return BoundingBox.FromPoints(vertices.Select(v => (XYZ)v));
 		}
 
 		/// <summary>
@@ -126,14 +165,6 @@ namespace ACadSharp.Entities
 			}
 
 			return ocsVertexes;
-		}
-
-		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			List<XY> vertices = this.PolygonalVertexes(256);
-
-			return BoundingBox.FromPoints(vertices.Select(v => (XYZ)v));
 		}
 	}
 }
