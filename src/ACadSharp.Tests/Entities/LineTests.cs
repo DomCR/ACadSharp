@@ -29,6 +29,25 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
+		public void EscalationTest()
+		{
+			var start = new XYZ(-1, -1, 0);
+			var end = new XYZ(1, 1, 0);
+			Line line = new Line
+			{
+				StartPoint = start,
+				EndPoint = end,
+			};
+
+			XYZ scale = new XYZ(2, 2, 1);
+			Transform translation = Transform.CreateEscalation(scale);
+			line.ApplyTransform(translation);
+
+			AssertUtils.AreEqual(start.Multiply(scale), line.StartPoint);
+			AssertUtils.AreEqual(end.Multiply(scale), line.EndPoint);
+		}
+
+		[Fact]
 		public void RandomTranslationTest()
 		{
 			XYZ start = this._random.Next<XYZ>();
