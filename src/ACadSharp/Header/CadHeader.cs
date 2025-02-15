@@ -30,7 +30,42 @@ namespace ACadSharp.Header
 			}
 		}
 
-		public ACadVersion Version { get; set; } = ACadVersion.AC1018;
+		public ACadVersion Version
+		{
+			get { return this._version; }
+			set
+			{
+				this._version = value;
+
+				//Values are relevant for the dwgWriter, manually checked form dxf
+				switch (value)
+				{
+					case ACadVersion.AC1015:
+						this.MaintenanceVersion = 20;
+						break;
+					case ACadVersion.AC1018:
+						this.MaintenanceVersion = 104;
+						break;
+					case ACadVersion.AC1021:
+						this.MaintenanceVersion = 50;
+						break;
+					case ACadVersion.AC1024:
+						this.MaintenanceVersion = 226;
+						break;
+					case ACadVersion.AC1027:
+						this.MaintenanceVersion = 125;
+						break;
+					case ACadVersion.AC1032:
+						this.MaintenanceVersion = 228;
+						break;
+					default:
+						this.MaintenanceVersion = 0;
+						break;
+				}
+			}
+		}
+
+		private ACadVersion _version = ACadVersion.AC1032;
 
 		/// <summary>
 		/// Maintenance version number(should be ignored)
@@ -39,7 +74,7 @@ namespace ACadSharp.Header
 		/// System variable ACADMAINTVER.
 		/// </remarks>
 		[CadSystemVariable(DxfReferenceType.Ignored, "$ACADMAINTVER", 70)]
-		public short MaintenanceVersion { get; internal set; } = 0;
+		public short MaintenanceVersion { get; internal set; }
 
 		/// <summary>
 		/// Drawing code page.
