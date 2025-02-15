@@ -196,6 +196,25 @@ namespace ACadSharp.Tables
 			}
 		}
 
+		public bool IsAnonymous
+		{
+			get
+			{
+				return (this.Flags & BlockTypeFlags.Anonymous) != 0;
+			}
+			set
+			{
+				if (value)
+				{
+					this.Flags |= BlockTypeFlags.Anonymous;
+				}
+				else
+				{
+					this.Flags &= ~BlockTypeFlags.Anonymous;
+				}
+			}
+		}
+
 		/// <summary>
 		/// Gets the evaluation graph for this block if it has dynamic properties attached to it.
 		/// </summary>

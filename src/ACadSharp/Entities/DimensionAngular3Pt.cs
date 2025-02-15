@@ -60,7 +60,7 @@ namespace ACadSharp.Entities
 					return Math.PI;
 				}
 
-				return (double)v1.AngleFrom(v2);
+				return (double)v1.AngleBetweenVectors(v2);
 			}
 		}
 

@@ -55,7 +55,7 @@ namespace ACadSharp.Entities
 				XY v1 = (XY)(this.SecondPoint - this.FirstPoint);
 				XY v2 = (XY)(this.DefinitionPoint - this.AngleVertex);
 
-				return v1.AngleFrom(v2);
+				return v1.AngleBetweenVectors(v2);
 			}
 		}
 

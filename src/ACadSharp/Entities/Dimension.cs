@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Blocks;
 using ACadSharp.Tables;
 using CSMath;
 using CSUtilities.Extensions;
@@ -27,25 +28,32 @@ namespace ACadSharp.Entities
 		public byte Version { get; set; }
 
 		/// <summary>
-		/// Block that contains the entities that make up the dimension picture
+		/// Block that contains the entities that make up the dimension picture.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 2)]
-		public BlockRecord Block { get; set; }
+		public BlockRecord Block
+		{
+			get { return this._block; }
+			set
+			{
+				this._block = value;
+			}
+		}
 
 		/// <summary>
-		/// Definition point(in WCS)
+		/// Definition point for the dimension line (in WCS).
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
-		public XYZ DefinitionPoint { get; set; }
+		public virtual XYZ DefinitionPoint { get; set; }
 
 		/// <summary>
-		/// Middle point of dimension text(in OCS)
+		/// Middle point of dimension text(in OCS).
 		/// </summary>
 		[DxfCodeValue(11, 21, 31)]
 		public XYZ TextMiddlePoint { get; set; }
 
 		/// <summary>
-		/// Insertion point for clones of a dimension-Baseline and Continue(in OCS)
+		/// Insertion point for clones of a dimension-Baseline and Continue(in OCS).
 		/// </summary>
 		[DxfCodeValue(12, 22, 32)]
 		public XYZ InsertionPoint { get; set; }
@@ -209,6 +217,8 @@ namespace ACadSharp.Entities
 
 		protected DimensionType _flags;
 
+		protected BlockRecord _block;
+
 		private DimensionStyle _style = DimensionStyle.Default;
 
 		protected Dimension(DimensionType type)
@@ -217,12 +227,34 @@ namespace ACadSharp.Entities
 			this._flags |= DimensionType.BlockReference;
 		}
 
+		public void UpdateDefinitionPoint(double offset)
+		{
+			throw new NotImplementedException();
+		}
+
+		public virtual void UpdateBlock()
+		{
+			if (this._block == null)
+			{
+				this._block = new BlockRecord(this.generateBlockName());
+				this._block.IsAnonymous = true;
+			}
+
+			if (this.Document != null)
+			{
+
+			}
+
+			this._block.Entities.Clear();
+		}
+
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			Dimension clone = (Dimension)base.Clone();
 
 			clone.Style = (DimensionStyle)(this.Style.Clone());
+			clone.Block = null;
 
 			return clone;
 		}
@@ -232,6 +264,17 @@ namespace ACadSharp.Entities
 			base.AssignDocument(doc);
 
 			this._style = this.updateTable(this.Style, doc.DimensionStyles);
+
+			if (this._block != null)
+			{
+				this._block.Name = this.generateBlockName();
+				while (doc.BlockRecords.Contains(this._block.Name))
+				{
+					this._block.Name += "_";
+				}
+
+				this.updateTable(this._block, this.Document.BlockRecords);
+			}
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 		}
@@ -243,6 +286,42 @@ namespace ACadSharp.Entities
 			base.UnassignDocument();
 
 			this.Style = (DimensionStyle)this.Style.Clone();
+		}
+
+		private Block generateBlock()
+		{
+			throw new NotImplementedException();
+		}
+
+		private string generateBlockName()
+		{
+			return $"*D{this.Handle}";
+		}
+
+		protected static Line dimensionLine(XY start, XY end, double rotation, DimensionStyle style)
+		{
+			double ext1 = style.ArrowSize * style.ScaleFactor;
+			double ext2 = -style.ArrowSize * style.ScaleFactor;
+
+			start = start.Polar(ext1, rotation);
+			end = end.Polar(ext2, rotation);
+
+			return new Line(start, end)
+			{
+				Color = style.DimensionLineColor,
+				LineType = style.LineType,
+				LineWeight = style.DimensionLineWeight
+			};
+		}
+
+		protected static Line extensionLine(XY start, XY end, DimensionStyle style, LineType linetype)
+		{
+			return new Line(start, end)
+			{
+				Color = style.ExtensionLineColor,
+				LineType = linetype,
+				LineWeight = style.ExtensionLineWeight
+			};
 		}
 
 		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)

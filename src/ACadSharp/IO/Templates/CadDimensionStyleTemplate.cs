@@ -13,9 +13,11 @@ namespace ACadSharp.IO.Templates
 		public ulong? DIMBLK { get; internal set; }
 		public ulong? DIMBLK1 { get; internal set; }
 		public ulong? DIMBLK2 { get; internal set; }
-		public ulong Dimltype { get; internal set; }
-		public ulong Dimltex1 { get; internal set; }
-		public ulong Dimltex2 { get; internal set; }
+		public ulong DimLineType { get; internal set; }
+		public string DimltypeName { get; internal set; }
+		public ulong? DimLineTypeExt1 { get; internal set; }
+		public ulong? DimLineTypeExt2 { get; internal set; }
+		public ulong? BlockHandle { get; internal set; }
 
 		public CadDimensionStyleTemplate() : base(new DimensionStyle()) { }
 
@@ -43,6 +45,25 @@ namespace ACadSharp.IO.Templates
 			if (this.getTableReference(builder, this.DIMBLK2, this.DIMBLK2_Name, out BlockRecord dimArrow2))
 			{
 				this.CadObject.DimArrow2 = dimArrow2;
+			}
+
+			if (this.getTableReference(builder, this.DimLineType, this.DimltypeName, out LineType lineType))
+			{
+				this.CadObject.LineType = lineType;
+			}
+
+			if (this.getTableReference(builder, this.DimLineTypeExt1, null, out lineType))
+			{
+				this.CadObject.ExtensionLine1LineType = lineType;
+			}
+
+			if (this.getTableReference(builder, this.DimLineTypeExt2, null, out lineType))
+			{
+				this.CadObject.ExtensionLine2LineType = lineType;
+			}
+
+			if (this.getTableReference(builder, this.BlockHandle, null, out BlockRecord block))
+			{
 			}
 		}
 	}

@@ -496,11 +496,31 @@ namespace ACadSharp.Tests.IO
 
 			public void Dimensions()
 			{
-				DimensionAligned dim = new DimensionAligned();
-
-				dim.SecondPoint = new XYZ(10);
+				DimensionAligned dim = new DimensionAligned
+				{
+					SecondPoint = new XYZ(10)
+				};
 
 				this.Document.Entities.Add(dim);
+
+				dim.UpdateBlock();
+
+				ACadSharp.Entities.Line line = new ACadSharp.Entities.Line
+				{
+					StartPoint = new CSMath.XYZ(1, 0, 0),
+					EndPoint = new CSMath.XYZ(5, 5, 0)
+				};
+
+				DimensionLinear dim1 = new DimensionLinear()
+				{
+					FirstPoint = line.StartPoint,
+					SecondPoint = line.EndPoint,
+					DefinitionPoint = new XYZ(2.8023467929098436, 6.758122565672127, 0)
+				};
+				dim1.UpdateBlock();
+
+				this.Document.Entities.Add(line);
+				this.Document.Entities.Add(dim1);
 			}
 
 			public void AddCustomBookColor()
@@ -590,6 +610,56 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(line);
 			}
 
+			public void BlockWithDimensions()
+			{
+				BlockRecord block = new BlockRecord("block1");
+
+				ACadSharp.Entities.Line line = new ACadSharp.Entities.Line
+				{
+					StartPoint = new CSMath.XYZ(0, 0, 0),
+					EndPoint = new CSMath.XYZ(5, 5, 0)
+				};
+
+				DimensionLinear dim = new DimensionLinear()
+				{
+					FirstPoint = line.StartPoint,
+					SecondPoint = line.EndPoint,
+					DefinitionPoint = new XYZ(0, -1, 0)
+				};
+
+				DimensionAligned aligned = new DimensionAligned()
+				{
+					FirstPoint = line.StartPoint,
+					SecondPoint = line.EndPoint,
+				};
+				aligned.UpdateBlock();
+
+				//block.Entities.Add(line);
+				//block.Entities.Add(dim);
+				//block.Entities.Add(aligned);
+
+				this.Document.BlockRecords.Add(block);
+				Insert blockinsert = new Insert(block)
+				{
+					InsertPoint = new XYZ(10, 10, 0)
+				};
+				//this.Document.Entities.Add(blockinsert);
+
+				//this.Document.Entities.Add(line);
+				this.Document.Entities.Add(aligned);
+
+				//Add simple dimension
+				DimensionAligned a = new DimensionAligned()
+				{
+					FirstPoint = new XYZ(-1, 0, 0),
+					SecondPoint = new XYZ(5, 0, 0),
+					DefinitionPoint = new XYZ(-1, 1, 0),
+				};
+				a.UpdateBlock();
+
+				this.Document.Entities.Add(a);
+			}
+
 			public void Deserialize(IXunitSerializationInfo info)
 			{
 				this.Name = info.GetValue<string>(nameof(this.Name));
@@ -651,6 +721,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomBookColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
 			Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
+			Data.Add(new(nameof(SingleCaseGenerator.BlockWithDimensions)));
 			Data.Add(new(nameof(SingleCaseGenerator.XData)));
 		}
 
