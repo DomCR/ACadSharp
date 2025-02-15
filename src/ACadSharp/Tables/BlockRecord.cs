@@ -5,6 +5,7 @@ using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using System.Linq;
 using System.Collections.Generic;
+using ACadSharp.Objects.Evaluations;
 
 namespace ACadSharp.Tables
 {
@@ -88,19 +89,19 @@ namespace ACadSharp.Tables
 		public new BlockTypeFlags Flags { get { return this.BlockEntity.Flags; } set { this.BlockEntity.Flags = value; } }
 
 		/// <summary>
-		/// Specifies whether the block can be exploded
+		/// Specifies whether the block can be exploded.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional, 280)]
 		public bool IsExplodable { get; set; }
 
 		/// <summary>
-		/// Specifies the scaling allowed for the block
+		/// Specifies the scaling allowed for the block.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional, 281)]
 		public bool CanScale { get; set; } = true;
 
 		/// <summary>
-		/// DXF: Binary data for bitmap preview
+		/// DXF: Binary data for bitmap preview.
 		/// </summary>
 		/// <remarks>
 		/// Optional
@@ -109,7 +110,7 @@ namespace ACadSharp.Tables
 		public byte[] Preview { get; set; }
 
 		/// <summary>
-		/// Associated Layout
+		/// Associated Layout.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public Layout Layout
@@ -144,7 +145,7 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Viewports attached to this block
+		/// ViewPorts attached to this block
 		/// </summary>
 		public IEnumerable<Viewport> Viewports
 		{
@@ -174,6 +175,39 @@ namespace ACadSharp.Tables
 					return null;
 				}
 				else if (this.XDictionary.TryGetEntry(SortEntitiesTable.DictionaryEntryName, out SortEntitiesTable table))
+				{
+					return table;
+				}
+				else
+				{
+					return null;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Active flag if it has an <see cref="Objects.Evaluations.EvaluationGraph"/> attached to it with dynamic expressions.
+		/// </summary>
+		public bool IsDynamic
+		{
+			get
+			{
+				return this.EvaluationGraph != null;
+			}
+		}
+
+		/// <summary>
+		/// Gets the evaluation graph for this block if it has dynamic properties attached to it.
+		/// </summary>
+		public EvaluationGraph EvaluationGraph
+		{
+			get
+			{
+				if (this.XDictionary == null)
+				{
+					return null;
+				}
+				else if (this.XDictionary.TryGetEntry(EvaluationGraph.DictionaryEntryName, out EvaluationGraph table))
 				{
 					return table;
 				}

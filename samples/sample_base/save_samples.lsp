@@ -31,3 +31,9 @@
   (command "FILEDIA" 1 "")
   (princ)
 )
+
+(defun c:gethandle ()
+  (setq a2 (entsel))
+ 	(setq b2 (entget (car a2)))
+  (princ (assoc 5 b2))
+)

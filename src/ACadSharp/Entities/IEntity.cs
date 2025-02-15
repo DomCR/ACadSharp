@@ -3,7 +3,7 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.Entities
 {
-	public interface IEntity : IHandledCadObject
+	public interface IEntity : IHandledCadObject, IGeometricEntity
 	{
 		/// <summary>
 		/// Specifies the layer for an object.

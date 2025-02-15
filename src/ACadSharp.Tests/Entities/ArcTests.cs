@@ -18,15 +18,36 @@ namespace ACadSharp.Tests.Entities
 
 			XY center = MathUtils.GetCenter(start, end, bulge, out double radius);
 
+#if NETFRAMEWORK
+			center = MathHelper.FixZero(center);
+#endif
+
 			Assert.Equal(XY.Zero, center);
-			Assert.Equal(1, radius);
+			Assert.Equal(1, radius, TestVariables.DecimalPrecision);
 
 			Arc arc = Arc.CreateFromBulge(start, end, bulge);
 
+#if NETFRAMEWORK
+			arc.Center = MathHelper.FixZero(arc.Center);
+#endif
+
 			Assert.Equal(XYZ.Zero, arc.Center);
-			Assert.Equal(1, arc.Radius);
-			Assert.Equal(0, arc.StartAngle);
-			Assert.Equal(Math.PI / 2, arc.EndAngle);
+			Assert.Equal(1, arc.Radius, TestVariables.DecimalPrecision);
+			Assert.Equal(0, arc.StartAngle, TestVariables.DecimalPrecision);
+			Assert.Equal(Math.PI / 2, arc.EndAngle, TestVariables.DecimalPrecision);
+		}
+
+		[Fact]
+		public void GetBoundingBoxTest()
+		{
+			Arc arc = new Arc();
+			arc.Radius = 5;
+			arc.EndAngle = Math.PI / 2;
+
+			BoundingBox boundingBox = arc.GetBoundingBox();
+
+			Assert.Equal(new XYZ(0, 0, 0), boundingBox.Min);
+			Assert.Equal(new XYZ(5, 5, 0), boundingBox.Max);
 		}
 
 		[Fact]
@@ -39,14 +60,22 @@ namespace ACadSharp.Tests.Entities
 
 			XY center = MathUtils.GetCenter(start, end, bulge);
 
+#if NETFRAMEWORK
+			center = MathHelper.FixZero(center);
+#endif
+
 			Assert.Equal(XY.Zero, center);
 
 			Arc arc = Arc.CreateFromBulge(start, end, bulge);
 
+#if NETFRAMEWORK
+			arc.Center = MathHelper.FixZero(arc.Center);
+#endif
+
 			Assert.Equal(XYZ.Zero, arc.Center);
-			Assert.Equal(1, arc.Radius);
-			Assert.Equal(0, arc.StartAngle);
-			Assert.Equal(Math.PI / 2, arc.EndAngle);
+			Assert.Equal(1, arc.Radius, TestVariables.DecimalPrecision);
+			Assert.Equal(0, arc.StartAngle, TestVariables.DecimalPrecision);
+			Assert.Equal(Math.PI / 2, arc.EndAngle, TestVariables.DecimalPrecision);
 		}
 
 		[Fact]

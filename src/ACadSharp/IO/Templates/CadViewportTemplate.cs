@@ -1,10 +1,11 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadViewportTemplate : CadEntityTemplate
+	internal class CadViewportTemplate : CadEntityTemplate<Viewport>
 	{
 		public ulong? ViewportHeaderHandle { get; set; }
 
@@ -16,7 +17,9 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? VisualStyleHandle { get; set; }
 
-		public short? ViewportId { get; internal set; }
+		public short? ViewportId { get; set; }
+
+		public ulong? BlockHandle { get; set; }
 
 		public List<ulong> FrozenLayerHandles { get; set; } = new List<ulong>();
 
@@ -28,8 +31,6 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			Viewport viewport = this.CadObject as Viewport;
-
 			if (this.ViewportHeaderHandle.HasValue && this.ViewportHeaderHandle > 0)
 			{
 				builder.Notify($"ViewportHeaderHandle not implemented for Viewport, handle {this.ViewportHeaderHandle}");
@@ -37,9 +38,9 @@ namespace ACadSharp.IO.Templates
 
 			if (builder.TryGetCadObject<Entity>(this.BoundaryHandle, out Entity entity))
 			{
-				viewport.Boundary = entity;
+				this.CadObject.Boundary = entity;
 			}
-			else if(this.BoundaryHandle.HasValue  && this.BoundaryHandle > 0)
+			else if (this.BoundaryHandle.HasValue && this.BoundaryHandle > 0)
 			{
 				builder.Notify($"Boundary {this.BoundaryHandle} not found for viewport {this.CadObject.Handle}", NotificationType.Warning);
 			}
@@ -54,11 +55,26 @@ namespace ACadSharp.IO.Templates
 				builder.Notify($"Base ucs not implemented for Viewport, handle {this.BaseUcsHandle}");
 			}
 
+			if (this.CadObject.XDictionary != null &&
+				this.CadObject.XDictionary.TryGetEntry(Viewport.ASDK_XREC_ANNOTATION_SCALE_INFO, out XRecord record))
+			{
+				foreach (XRecord.Entry item in record.Entries)
+				{
+					if (item.Code == 340)
+					{
+						if (builder.TryGetCadObject((ulong?)item.Value, out Scale scale))
+						{
+							this.CadObject.Scale = scale;
+						}
+					}
+				}
+			}
+
 			foreach (var handle in this.FrozenLayerHandles)
 			{
 				if (builder.TryGetCadObject(handle, out Layer layer))
 				{
-					viewport.FrozenLayers.Add(layer);
+					this.CadObject.FrozenLayers.Add(layer);
 				}
 				else
 				{

@@ -9,27 +9,33 @@ namespace ACadSharp.IO.DXF
 	{
 		public bool WriteOptional { get; } = false;
 
-		public void Write(DxfCode code, object value)
-		{
-			this.Write((int)code, value, null);
-		}
-
-		public void Write(DxfCode code, object value, DxfClassMap map)
+		public void Write(DxfCode code, object value, DxfClassMap map = null)
 		{
 			this.Write((int)code, value, map);
 		}
 
-		public void Write(int code, object value)
+		public void Write(DxfCode code, CSMath.IVector value, DxfClassMap map = null)
 		{
-			this.Write(code, value, null);
+			this.Write((int)code, value, map);
 		}
 
-		public void Write(int code, CSMath.IVector value, DxfClassMap map)
+		public void Write(int code, CSMath.IVector value, DxfClassMap map = null)
 		{
 			for (int i = 0; i < value.Dimension; i++)
 			{
 				this.Write(code + i * 10, value[i], map);
 			}
+		}
+
+		public void WriteTrueColor(int code, Color color, DxfClassMap map = null)
+		{
+			byte[] arr = new byte[4];
+			arr[0] = (byte)color.B;
+			arr[1] = (byte)color.G;
+			arr[2] = (byte)color.R;
+			arr[3] = 0;
+
+			this.Write(code, LittleEndianConverter.Instance.ToInt32(arr), map);
 		}
 
 		public void WriteCmColor(int code, Color color, DxfClassMap map = null)
@@ -61,7 +67,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		public void WriteHandle(int code, IHandledCadObject value, DxfClassMap map)
+		public void WriteHandle(int code, IHandledCadObject value, DxfClassMap map = null)
 		{
 			if (value != null)
 			{
@@ -69,7 +75,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		public void WriteName(int code, INamedCadObject value, DxfClassMap map)
+		public void WriteName(int code, INamedCadObject value, DxfClassMap map = null)
 		{
 			if (value != null)
 			{
@@ -77,7 +83,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		public void Write(int code, object value, DxfClassMap map)
+		public void Write(int code, object value, DxfClassMap map = null)
 		{
 			if (value == null)
 			{
@@ -93,7 +99,7 @@ namespace ACadSharp.IO.DXF
 
 				if (prop.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
 				{
-					value = (double)value * Utilities.RadToDegFactor;
+					value = MathHelper.RadToDeg((double)value);
 				}
 			}
 

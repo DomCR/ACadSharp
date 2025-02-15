@@ -88,6 +88,11 @@ namespace ACadSharp.IO.DWG
 			return this._mainReader.Read2RawDouble();
 		}
 
+		public XYZ Read3RawDouble()
+		{
+			return this._mainReader.Read3RawDouble();
+		}
+
 		public XYZ Read3BitDouble()
 		{
 			return this._mainReader.Read3BitDouble();
@@ -140,7 +145,7 @@ namespace ACadSharp.IO.DWG
 
 		public byte[] ReadBytes(int length)
 		{
-			throw new NotImplementedException();
+			return this._mainReader.ReadBytes(length);
 		}
 
 		public XY Read2BitDoubleWithDefault(XY defValues)

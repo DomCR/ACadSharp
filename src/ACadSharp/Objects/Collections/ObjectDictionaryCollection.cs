@@ -31,7 +31,7 @@ namespace ACadSharp.Objects.Collections
 		/// Add an entry to the collection
 		/// </summary>
 		/// <param name="entry"></param>
-		public void Add(T entry)
+		public virtual void Add(T entry)
 		{
 			this._dictionary.Add(entry);
 		}

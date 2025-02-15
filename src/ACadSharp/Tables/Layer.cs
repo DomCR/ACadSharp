@@ -46,10 +46,22 @@ namespace ACadSharp.Tables
 		/// if the index is negative, layer is off
 		/// </remarks>
 		[DxfCodeValue(62, 420, 430)]
-		public Color Color { get; set; } = new Color(7);
+		public Color Color
+		{
+			get { return this._color; }
+			set
+			{
+				if (value.IsByLayer || value.IsByBlock)
+				{
+					throw new ArgumentException("The layer color cannot be ByLayer or ByBlock", nameof(value));
+				}
+
+				this._color = value;
+			}
+		}
 
 		/// <summary>
-		/// The linetype of an object. The default linetype is the linetype of the layer (ByLayer).
+		/// The line type of an object. The default line type is the line type of the layer (ByLayer).
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 6)]
 		public LineType LineType
@@ -80,7 +92,7 @@ namespace ACadSharp.Tables
 		public bool PlotFlag { get; set; } = true;
 
 		/// <summary>
-		/// Specifies the lineweight of an individual object or the default lineweight for the drawing.
+		/// Specifies the line weight of an individual object or the default line weight for the drawing.
 		/// </summary>
 		[DxfCodeValue(370)]
 		public LineweightType LineWeight { get; set; } = LineweightType.Default;
@@ -103,6 +115,8 @@ namespace ACadSharp.Tables
 		public bool IsOn { get; set; } = true;
 
 		private LineType _lineType = LineType.Continuous;
+
+		private Color _color = new Color(7);
 
 		internal Layer() : base() { }
 

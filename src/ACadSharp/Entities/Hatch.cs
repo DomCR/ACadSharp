@@ -74,16 +74,16 @@ namespace ACadSharp.Entities
 		public HatchPatternType PatternType { get; set; }
 
 		/// <summary>
-		/// Hatch pattern angle (pattern fill only)
+		/// Hatch pattern angle (pattern fill only).
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 52)]
-		public double PatternAngle { get { return Pattern.Angle; } set { Pattern.Angle = value; } }
+		public double PatternAngle { get; set; }
 
 		/// <summary>
 		/// Hatch pattern scale or spacing(pattern fill only)
 		/// </summary>
 		[DxfCodeValue(41)]
-		public double PatternScale { get { return Pattern.Scale; } set { Pattern.Scale = value; } }
+		public double PatternScale { get; set; }
 
 		//73	For MPolygon, boundary annotation flag:
 		//0 = boundary is not an annotated boundary
@@ -128,8 +128,6 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Count, 91)]
 		public List<BoundaryPath> Paths { get; set; } = new List<BoundaryPath>();
 
-		private HatchPattern _pattern = HatchPattern.Solid;
-
 		/// <inheritdoc/>
 		public Hatch() : base() { }
 
@@ -141,7 +139,14 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			return BoundingBox.FromPoints(this.SeedPoints.Select(x=>(XYZ)x));
+			BoundingBox box = BoundingBox.Null;
+
+			foreach (BoundaryPath bp in this.Paths)
+			{
+				box = box.Merge(bp.GetBoundingBox());
+			}
+
+			return box;
 		}
 
 		/// <inheritdoc/>
@@ -152,7 +157,7 @@ namespace ACadSharp.Entities
 			clone.GradientColor = this.GradientColor?.Clone();
 			clone.Pattern = this.Pattern?.Clone();
 
-			clone.Paths.Clear();
+			clone.Paths = new List<BoundaryPath>();
 			foreach (BoundaryPath item in this.Paths)
 			{
 				clone.Paths.Add(item.Clone());

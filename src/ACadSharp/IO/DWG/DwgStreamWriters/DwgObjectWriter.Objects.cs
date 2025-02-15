@@ -1,8 +1,10 @@
 ﻿using ACadSharp.Objects;
+using ACadSharp.Objects.Evaluations;
 using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -24,6 +26,7 @@ namespace ACadSharp.IO.DWG
 		{
 			switch (obj)
 			{
+				case EvaluationGraph:
 				case Material:
 				case MultiLeaderAnnotContext:
 				case MultiLeaderStyle:
@@ -46,6 +49,9 @@ namespace ACadSharp.IO.DWG
 				case AcdbPlaceHolder acdbPlaceHolder:
 					this.writeAcdbPlaceHolder(acdbPlaceHolder);
 					break;
+				case BookColor bookColor:
+					this.writeBookColor(bookColor);
+					break;
 				case CadDictionaryWithDefault dictionarydef:
 					this.writeCadDictionaryWithDefault(dictionarydef);
 					break;
@@ -54,6 +60,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case DictionaryVariable dictionaryVariable:
 					this.writeDictionaryVariable(dictionaryVariable);
+					break;
+				case GeoData geodata:
+					this.writeGeoData(geodata);
 					break;
 				case Group group:
 					this.writeGroup(group);
@@ -96,6 +105,48 @@ namespace ACadSharp.IO.DWG
 		{
 		}
 
+		private void writeBookColor(BookColor color)
+		{
+			this._writer.WriteBitShort(0);
+
+			if (this.R2004Plus)
+			{
+				byte[] arr = new byte[]
+				{
+					color.Color.B,
+					color.Color.G,
+					color.Color.R,
+					0b11000010
+				};
+
+				uint rgb = LittleEndianConverter.Instance.ToUInt32(arr);
+
+				this._writer.WriteBitLong((int)rgb);
+
+				byte flags = 0;
+				if (!string.IsNullOrEmpty(color.ColorName))
+				{
+					flags = (byte)(flags | 1u);
+				}
+
+				if (!string.IsNullOrEmpty(color.BookName))
+				{
+					flags = (byte)(flags | 2u);
+				}
+
+				this._writer.WriteByte(flags);
+				if (!string.IsNullOrEmpty(color.ColorName))
+				{
+					this._writer.WriteVariableText(color.ColorName);
+				}
+
+				if (!string.IsNullOrEmpty(color.BookName))
+				{
+					this._writer.WriteVariableText(color.BookName);
+				}
+			}
+		}
+
 		private void writeCadDictionaryWithDefault(CadDictionaryWithDefault dictionary)
 		{
 			this.writeDictionary(dictionary);
@@ -107,8 +158,24 @@ namespace ACadSharp.IO.DWG
 		private void writeDictionary(CadDictionary dictionary)
 		{
 			//Common:
-			//Numitems L number of dictonary items
-			this._writer.WriteBitLong(dictionary.Count());
+			//Numitems L number of dictionary items
+			List<NonGraphicalObject> entries = new List<NonGraphicalObject>();
+			foreach (var item in dictionary)
+			{
+				if (item is XRecord && !this.WriteXRecords)
+				{
+					continue;
+				}
+
+				if (item is UnknownNonGraphicalObject)
+				{
+					continue;
+				}
+
+				entries.Add(item);
+			}
+
+			this._writer.WriteBitLong(entries.Count);
 
 			//R14 Only:
 			if (this._version == ACadVersion.AC1014)
@@ -126,16 +193,16 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Common:
-			foreach (var item in dictionary)
+			foreach (var item in entries)
 			{
 				if (item is XRecord && !this.WriteXRecords)
 				{
-					return;
+					continue;
 				}
 
 				if (item is UnknownNonGraphicalObject)
 				{
-					return;
+					continue;
 				}
 
 				this._writer.WriteVariableText(item.Name);
@@ -160,6 +227,122 @@ namespace ACadSharp.IO.DWG
 
 			//BS a string
 			this._writer.WriteVariableText(dictionaryVariable.Value);
+		}
+
+		private void writeGeoData(GeoData geodata)
+		{
+			//BL Object version formats
+			this._writer.WriteBitLong((int)geodata.Version);
+
+			//H Soft pointer to host block
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, geodata.HostBlock);
+
+			//BS Design coordinate type
+			this._writer.WriteBitShort((short)geodata.CoordinatesType);
+
+			switch (geodata.Version)
+			{
+				case GeoDataVersion.R2009:
+					//3BD  Reference point 
+					this._writer.Write3BitDouble(geodata.ReferencePoint);
+
+					//BL  Units value horizontal
+					this._writer.WriteBitLong((int)geodata.HorizontalUnits);
+
+					//3BD  Design point
+					this._writer.Write3BitDouble(geodata.DesignPoint);
+
+					//3BD  Obsolete, ODA writes (0, 0, 0) 
+					this._writer.Write3BitDouble(XYZ.Zero);
+
+					//3BD  Up direction
+					this._writer.Write3BitDouble(geodata.UpDirection);
+
+					//BD Angle of north direction (radians, angle measured clockwise from the (0, 1) vector). 
+					this._writer.WriteBitDouble(System.Math.PI / 2.0 - geodata.NorthDirection.GetAngle());
+
+					//3BD  Obsolete, ODA writes(1, 1, 1)
+					this._writer.Write3BitDouble(new XYZ(1, 1, 1));
+
+					//VT  Coordinate system definition. In AutoCAD 2009 this is a “Well known text” (WKT)string containing a projected coordinate system(PROJCS).
+					this._writer.WriteVariableText(geodata.CoordinateSystemDefinition);
+					//VT  Geo RSS tag.
+					this._writer.WriteVariableText(geodata.GeoRssTag);
+
+					//BD Unit scale factor horizontal
+					this._writer.WriteBitDouble(geodata.HorizontalUnitScale);
+					geodata.VerticalUnitScale = geodata.HorizontalUnitScale;
+
+					//VT  Obsolete, coordinate system datum name 
+					this._writer.WriteVariableText(string.Empty);
+					//VT  Obsolete: coordinate system WKT 
+					this._writer.WriteVariableText(string.Empty);
+					break;
+				case GeoDataVersion.R2010:
+				case GeoDataVersion.R2013:
+					//3BD  Design point
+					this._writer.Write3BitDouble(geodata.DesignPoint);
+					//3BD  Reference point
+					this._writer.Write3BitDouble(geodata.ReferencePoint);
+					//BD  Unit scale factor horizontal
+					this._writer.WriteBitDouble(geodata.HorizontalUnitScale);
+					//BL  Units value horizontal
+					this._writer.WriteBitLong((int)geodata.HorizontalUnits);
+					//BD  Unit scale factor vertical 
+					this._writer.WriteBitDouble(geodata.VerticalUnitScale);
+					//BL  Units value vertical
+					this._writer.WriteBitLong((int)geodata.HorizontalUnits);
+					//3RD  Up direction
+					this._writer.Write3BitDouble(geodata.UpDirection);
+					//3RD  North direction
+					this._writer.Write2RawDouble(geodata.NorthDirection);
+					//BL Scale estimation method.
+					this._writer.WriteBitLong((int)geodata.ScaleEstimationMethod);
+					//BD  User specified scale factor
+					this._writer.WriteBitDouble(geodata.UserSpecifiedScaleFactor);
+					//B  Do sea level correction
+					this._writer.WriteBit(geodata.EnableSeaLevelCorrection);
+					//BD  Sea level elevation
+					this._writer.WriteBitDouble(geodata.SeaLevelElevation);
+					//BD  Coordinate projection radius
+					this._writer.WriteBitDouble(geodata.CoordinateProjectionRadius);
+					//VT  Coordinate system definition . In AutoCAD 2010 this is a map guide XML string.
+					this._writer.WriteVariableText(geodata.CoordinateSystemDefinition);
+					//VT  Geo RSS tag.
+					this._writer.WriteVariableText(geodata.GeoRssTag);
+					break;
+				default:
+					break;
+			}
+
+			//VT  Observation from tag
+			this._writer.WriteVariableText(geodata.ObservationFromTag);
+			//VT  Observation to tag
+			this._writer.WriteVariableText(geodata.ObservationToTag);
+			//VT  Observation coverage tag
+			this._writer.WriteVariableText(geodata.ObservationCoverageTag);
+
+			//BL Number of geo mesh points
+			this._writer.WriteBitLong(geodata.Points.Count);
+			foreach (var pt in geodata.Points)
+			{
+				//2RD Source point 
+				this._writer.Write2RawDouble(pt.Source);
+				//2RD Destination point 
+				this._writer.Write2RawDouble(pt.Destination);
+			}
+
+			//BL Number of geo mesh faces
+			this._writer.WriteBitLong(geodata.Faces.Count);
+			foreach (var face in geodata.Faces)
+			{
+				//BL Face index 1
+				this._writer.WriteBitLong(face.Index1);
+				//BL Face index 2
+				this._writer.WriteBitLong(face.Index2);
+				//BL Face index 3
+				this._writer.WriteBitLong(face.Index3);
+			}
 		}
 
 		private void writeGroup(Group group)
@@ -680,7 +863,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//Cloning flag BS 280
-				this._writer.WriteBitShort((short)xrecord.ClonningFlags);
+				this._writer.WriteBitShort((short)xrecord.CloningFlags);
 			}
 
 		}

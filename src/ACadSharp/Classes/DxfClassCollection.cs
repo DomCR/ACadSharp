@@ -372,7 +372,7 @@ namespace ACadSharp.Classes
 				ItemClassId = 498,
 				MaintenanceVersion = 0,
 				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.TransformAllowed | ProxyFlags.ColorChangeAllowed | ProxyFlags.LayerChangeAllowed | ProxyFlags.LinetypeChangeAllowed | ProxyFlags.LinetypeScaleChangeAllowed | ProxyFlags.VisibilityChangeAllowed | ProxyFlags.R13FormatProxy,
-			WasZombie = false,
+				WasZombie = false,
 			});
 
 			//AcDbRasterImageDef
@@ -385,6 +385,32 @@ namespace ACadSharp.Classes
 				ItemClassId = 499,
 				MaintenanceVersion = 0,
 				ProxyFlags = ProxyFlags.R13FormatProxy,
+				WasZombie = false,
+			});
+
+			//AcDbColor
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.DbColor,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1015,
+				DxfName = DxfFileToken.ObjectDBColor,
+				ItemClassId = 499,
+				MaintenanceVersion = 14,
+				ProxyFlags = ProxyFlags.None,
+				WasZombie = false,
+			});
+
+			//AcDbGeoData
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.GeoData,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1021,
+				DxfName = DxfFileToken.ObjectGeoData,
+				ItemClassId = 499,
+				MaintenanceVersion = 45,
+				ProxyFlags = (ProxyFlags)4095,
 				WasZombie = false,
 			});
 		}

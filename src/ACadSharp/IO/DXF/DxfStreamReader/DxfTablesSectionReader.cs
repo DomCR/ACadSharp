@@ -3,6 +3,7 @@ using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Types.Units;
+using ACadSharp.XData;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
@@ -33,7 +34,7 @@ namespace ACadSharp.IO.DXF
 				if (this._reader.ValueAsString == DxfFileToken.TableEntry)
 					this.readTable();
 				else
-					throw new DxfException($"Unexpected token at the begining of a table: {this._reader.ValueAsString}", this._reader.Position);
+					throw new DxfException($"Unexpected token at the beginning of a table: {this._reader.ValueAsString}", this._reader.Position);
 
 
 				if (this._reader.ValueAsString == DxfFileToken.EndTable)
@@ -52,7 +53,7 @@ namespace ACadSharp.IO.DXF
 
 			int nentries = 0;
 			CadTemplate template = null;
-			Dictionary<string, ExtendedData> edata = new Dictionary<string, ExtendedData>();
+			Dictionary<string, List<ExtendedDataRecord>> edata = new();
 
 			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors);
 
@@ -91,7 +92,7 @@ namespace ACadSharp.IO.DXF
 					this._reader.ReadNext();
 				}
 			}
-			else if(this._reader.ValueAsString == DxfFileToken.EndTable)
+			else if (this._reader.ValueAsString == DxfFileToken.EndTable)
 			{
 				return;
 			}
@@ -356,7 +357,7 @@ namespace ACadSharp.IO.DXF
 					template.CadObject.FixedExtensionLineLength = this._reader.ValueAsDouble;
 					return true;
 				case 50:
-					template.CadObject.JoggedRadiusDimensionTransverseSegmentAngle = CSMath.Utilities.DegToRad(this._reader.ValueAsDouble);
+					template.CadObject.JoggedRadiusDimensionTransverseSegmentAngle = CSMath.MathHelper.DegToRad(this._reader.ValueAsDouble);
 					return true;
 				case 69:
 					template.CadObject.TextBackgroundFillMode = (DimensionTextBackgroundFillMode)this._reader.ValueAsShort;
@@ -568,9 +569,6 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 390:
 					template.CadObject.PlotStyleName = this._reader.ValueAsHandle;
-					return true;
-				case 420:
-					template.CadObject.Color = Color.FromTrueColor((uint)this._reader.ValueAsInt);
 					return true;
 				case 430:
 					tmp.TrueColorName = this._reader.ValueAsString;
