@@ -60,7 +60,7 @@ namespace ACadSharp.Entities
 					return Math.PI;
 				}
 
-				return (double)v1.AngleFrom(v2);
+				return (double)v1.AngleBetweenVectors(v2);
 			}
 		}
 
@@ -75,17 +75,17 @@ namespace ACadSharp.Entities
 			return new BoundingBox(this.FirstPoint, this.SecondPoint);
 		}
 
-		public override void Translate(XYZ translation)
+		public override void ApplyTranslation(XYZ translation)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void Rotate(double rotation, XYZ axis)
+		public override void ApplyRotation(double rotation, XYZ axis)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void Scale(XYZ scale)
+		public override void ApplyEscalation(XYZ scale)
 		{
 			throw new NotImplementedException();
 		}

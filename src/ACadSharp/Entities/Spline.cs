@@ -115,17 +115,17 @@ namespace ACadSharp.Entities
 			return BoundingBox.FromPoints(this.ControlPoints);
 		}
 
-		public override void Translate(XYZ translation)
+		public override void ApplyTranslation(XYZ translation)
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public override void Rotate(double rotation, XYZ axis)
+		public override void ApplyRotation(double rotation, XYZ axis)
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public override void Scale(XYZ scale)
+		public override void ApplyEscalation(XYZ scale)
 		{
 			throw new System.NotImplementedException();
 		}

@@ -18,7 +18,7 @@ namespace ACadSharp.Tests.Entities
 
 			Point point = new Point(init);
 
-			point.Translate(translation);
+			point.ApplyTranslation(translation);
 
 			AssertUtils.AreEqual(result, point.Location, "Point Location");
 		}

@@ -55,7 +55,7 @@ namespace ACadSharp.Entities
 				XY v1 = (XY)(this.SecondPoint - this.FirstPoint);
 				XY v2 = (XY)(this.DefinitionPoint - this.AngleVertex);
 
-				return v1.AngleFrom(v2);
+				return v1.AngleBetweenVectors(v2);
 			}
 		}
 
@@ -72,17 +72,17 @@ namespace ACadSharp.Entities
 			return new BoundingBox(this.FirstPoint, this.SecondPoint);
 		}
 
-		public override void Translate(XYZ translation)
+		public override void ApplyTranslation(XYZ translation)
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public override void Rotate(double rotation, XYZ axis)
+		public override void ApplyRotation(double rotation, XYZ axis)
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public override void Scale(XYZ scale)
+		public override void ApplyEscalation(XYZ scale)
 		{
 			throw new System.NotImplementedException();
 		}
