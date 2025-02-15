@@ -150,6 +150,7 @@ namespace ACadSharp.Entities
 
 			this._block.Entities.AddRange(entities);
 
+			//TO DELETE
 			List<Line> lines = new List<Line>
 			{
 				new Line
