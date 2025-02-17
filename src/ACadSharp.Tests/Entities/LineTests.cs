@@ -21,8 +21,8 @@ namespace ACadSharp.Tests.Entities
 			};
 
 			XYZ move = new XYZ(5, 5, 0);
-			Transform translation = Transform.CreateTranslation(move);
-			line.ApplyTransform(translation);
+			Transform transform = Transform.CreateTranslation(move);
+			line.ApplyTransform(transform);
 
 			AssertUtils.AreEqual(start.Add(move), line.StartPoint);
 			AssertUtils.AreEqual(end.Add(move), line.EndPoint);
@@ -49,7 +49,7 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
-		public void EscalationTest()
+		public void ScalingTest()
 		{
 			var start = new XYZ(-1, -1, 0);
 			var end = new XYZ(1, 1, 0);

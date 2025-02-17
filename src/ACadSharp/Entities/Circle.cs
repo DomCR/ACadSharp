@@ -77,7 +77,22 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
+			var center = this.Center;
+			var normal = this.Normal;
+
 			this.Center = transform.ApplyTransform(this.Center);
+			this.Normal = this.transformNormal(transform, this.Normal);
+
+			Matrix3 trans = new Matrix3(transform.Matrix);
+			Matrix3 transOW = Matrix3.ArbitraryAxis(normal);
+			Matrix3 transWO = Matrix3.ArbitraryAxis(this.Normal).Transpose();
+
+			XYZ axis = transOW * new XYZ(this.Radius, 0.0, 0.0);
+			axis = trans * axis;
+			axis = transWO * axis;
+
+			XY axisPoint = new XY(axis.X, axis.Y);
+			this._radius = axisPoint.GetLength();
 		}
 	}
 }
