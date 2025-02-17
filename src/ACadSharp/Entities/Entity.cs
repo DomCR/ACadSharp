@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
@@ -236,6 +237,21 @@ namespace ACadSharp.Entities
 			{
 				this.LineType = this.Document.LineTypes[LineType.ByLayerName];
 			}
+		}
+
+		protected Matrix3 getWorldMatrix(Transform transform, XYZ normal, XYZ newNormal, out Matrix3 transOW, out Matrix3 transWO)
+		{
+			transOW = Matrix3.ArbitraryAxis(normal);
+			transWO = Matrix3.ArbitraryAxis(newNormal).Transpose();
+			return new Matrix3(transform.Matrix);
+		}
+
+		protected XYZ applyWorldMatrix(XYZ xyz, Transform transform, Matrix3 transOW, Matrix3 transWO)
+		{
+			XYZ v = transOW * xyz;
+			v = transform.ApplyTransform(v);
+			v = transWO * v;
+			return v;
 		}
 	}
 }

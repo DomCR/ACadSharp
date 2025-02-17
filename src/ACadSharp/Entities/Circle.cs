@@ -92,12 +92,5 @@ namespace ACadSharp.Entities
 			XY axisPoint = new XY(axis.X, axis.Y);
 			this._radius = axisPoint.GetLength();
 		}
-
-		protected Matrix3 getWorldMatrix(Transform transform, XYZ normal, XYZ newNormal, out Matrix3 transOW, out Matrix3 transWO)
-		{
-			transOW = Matrix3.ArbitraryAxis(normal);
-			transWO = Matrix3.ArbitraryAxis(newNormal).Transpose();
-			return new Matrix3(transform.Matrix);
-		}
 	}
 }
