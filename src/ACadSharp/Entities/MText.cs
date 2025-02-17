@@ -212,6 +212,11 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public MText() : base() { }
 
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
+		}
+
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{

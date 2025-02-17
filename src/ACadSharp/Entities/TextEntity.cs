@@ -203,5 +203,10 @@ namespace ACadSharp.Entities
 				this.Style = this.Document.TextStyles[TextStyle.DefaultName];
 			}
 		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

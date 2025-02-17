@@ -47,6 +47,11 @@ namespace ACadSharp.IO.Templates
 			{
 				throw new System.InvalidOperationException();
 			}
+
+			public override void ApplyTransform(Transform transform)
+			{
+				throw new System.NotImplementedException();
+			}
 		}
 
 		public void SetDimensionFlags(DimensionType flags)

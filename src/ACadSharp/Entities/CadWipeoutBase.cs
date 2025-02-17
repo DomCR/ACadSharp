@@ -210,6 +210,11 @@ namespace ACadSharp.Entities
 		private ImageDefinition _definition;
 		private ImageDefinitionReactor _definitionReactor;
 
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
+		}
+
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{

@@ -113,5 +113,10 @@ namespace ACadSharp.Entities
 		{
 			return BoundingBox.Null;
 		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

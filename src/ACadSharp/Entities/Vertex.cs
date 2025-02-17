@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -58,6 +59,11 @@ namespace ACadSharp.Entities
 		public override BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.Location);
+		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

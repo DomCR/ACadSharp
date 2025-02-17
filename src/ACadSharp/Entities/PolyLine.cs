@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
 using CSUtilities.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -189,6 +190,11 @@ namespace ACadSharp.Entities
 			}
 
 			return clone;
+		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
 		}
 
 		internal override void AssignDocument(CadDocument doc)
