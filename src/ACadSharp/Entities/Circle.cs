@@ -83,9 +83,7 @@ namespace ACadSharp.Entities
 			this.Center = transform.ApplyTransform(this.Center);
 			this.Normal = this.transformNormal(transform, this.Normal);
 
-			Matrix3 trans = new Matrix3(transform.Matrix);
-			Matrix3 transOW = Matrix3.ArbitraryAxis(normal);
-			Matrix3 transWO = Matrix3.ArbitraryAxis(this.Normal).Transpose();
+			Matrix3 trans = getWorldMatrix(transform, normal, this.Normal, out Matrix3 transOW, out Matrix3 transWO);
 
 			XYZ axis = transOW * new XYZ(this.Radius, 0.0, 0.0);
 			axis = trans * axis;
@@ -93,6 +91,13 @@ namespace ACadSharp.Entities
 
 			XY axisPoint = new XY(axis.X, axis.Y);
 			this._radius = axisPoint.GetLength();
+		}
+
+		protected Matrix3 getWorldMatrix(Transform transform, XYZ normal, XYZ newNormal, out Matrix3 transOW, out Matrix3 transWO)
+		{
+			transOW = Matrix3.ArbitraryAxis(normal);
+			transWO = Matrix3.ArbitraryAxis(newNormal).Transpose();
+			return new Matrix3(transform.Matrix);
 		}
 	}
 }

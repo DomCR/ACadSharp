@@ -6,7 +6,7 @@ using Xunit;
 
 namespace ACadSharp.Tests.Entities
 {
-	public class ArcTests
+	public class ArcTests : CommonEntityTests<Arc>
 	{
 		[Fact]
 		public void CreateFromBulgeTest()
@@ -92,6 +92,71 @@ namespace ACadSharp.Tests.Entities
 
 			AssertUtils.AreEqual<XY>(start, s1, "start point");
 			AssertUtils.AreEqual<XY>(end, e2, "end point");
+		}
+
+		[Fact]
+		public void TranslationTest()
+		{
+			double radius = 5;
+			XYZ center = new XYZ(1, 1, 0);
+			Arc arc = new Arc
+			{
+				Radius = radius,
+				Center = center,
+			};
+
+			XYZ move = new XYZ(5, 5, 0);
+			Transform transform = Transform.CreateTranslation(move);
+			arc.ApplyTransform(transform);
+
+			AssertUtils.AreEqual(XYZ.AxisZ, arc.Normal);
+			AssertUtils.AreEqual(center.Add(move), arc.Center);
+			Assert.Equal(radius, arc.Radius);
+			Assert.Equal(0, arc.StartAngle);
+			Assert.Equal(Math.PI, arc.EndAngle);
+		}
+
+		[Fact]
+		public void RotationTest()
+		{
+			double radius = 5;
+			XYZ center = new XYZ(1, 1, 0);
+			Arc arc = new Arc
+			{
+				Radius = radius,
+				Center = center
+			};
+
+			Transform transform = Transform.CreateRotation(XYZ.AxisX, MathHelper.DegToRad(90));
+			arc.ApplyTransform(transform);
+
+			AssertUtils.AreEqual(new XYZ(1, 0, 1), arc.Center);
+			Assert.Equal(radius, arc.Radius);
+			Assert.Equal(Math.PI, arc.StartAngle);
+			Assert.Equal(0, arc.EndAngle);
+			AssertUtils.AreEqual(XYZ.AxisY, arc.Normal);
+		}
+
+		[Fact]
+		public void ScalingTest()
+		{
+			double radius = 5;
+			XYZ center = new XYZ(1, 1, 0);
+			Arc arc = new Arc
+			{
+				Radius = radius,
+				Center = center
+			};
+
+			XYZ scale = new XYZ(2, 2, 1);
+			Transform transform = Transform.CreateScaling(scale, center);
+			arc.ApplyTransform(transform);
+
+			AssertUtils.AreEqual(XYZ.AxisZ, arc.Normal);
+			AssertUtils.AreEqual(center, arc.Center);
+			Assert.Equal(10, arc.Radius);
+			Assert.Equal(0, arc.StartAngle);
+			Assert.Equal(Math.PI, arc.EndAngle);
 		}
 	}
 }

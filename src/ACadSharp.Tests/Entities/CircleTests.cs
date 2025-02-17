@@ -41,7 +41,6 @@ namespace ACadSharp.Tests.Entities
 			};
 
 			Transform transform = Transform.CreateRotation(XYZ.AxisX, MathHelper.DegToRad(90));
-			//{| 1, 0, 0, 0 || 0, 6.123233995736766E-17, -1, 0 || 0, 1, 6.123233995736766E-17, 0 || 0, 0, 0, 1 |}
 			circle.ApplyTransform(transform);
 
 			AssertUtils.AreEqual(new XYZ(1, 0, 1), circle.Center);
