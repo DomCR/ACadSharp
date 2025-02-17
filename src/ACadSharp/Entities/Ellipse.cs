@@ -184,6 +184,7 @@ namespace ACadSharp.Entities
 			return points;
 		}
 
+		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
 			throw new NotImplementedException();
