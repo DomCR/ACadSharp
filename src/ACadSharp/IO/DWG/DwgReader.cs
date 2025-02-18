@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text;
 using ACadSharp.Exceptions;
 using ACadSharp.IO.DWG;
-using ACadSharp.IO.DWG.DwgStreamReaders;
 
 namespace ACadSharp.IO
 {
@@ -110,7 +109,7 @@ namespace ACadSharp.IO
 			this._builder.OnNotification += this.onNotificationEvent;
 
 			this._document.SummaryInfo = this.ReadSummaryInfo();
-			
+
 			this._document.Header = this.ReadHeader();
 			this._document.Header.Document = this._document;
 
@@ -177,6 +176,12 @@ namespace ACadSharp.IO
 			//imagespresent RC counter indicating what is present here
 			byte imagespresent = (byte)sectionHandler.ReadRawChar();
 
+			long? headerDataStart = null;
+			long? headerDataSize = null;
+			long? startOfImage = null;
+			long? sizeImage = null;
+
+			DwgPreview.PreviewType previewCode = DwgPreview.PreviewType.Unknown;
 			for (int i = 0; i < imagespresent; i++)
 			{
 				//Code RC code indicating what follows
@@ -185,27 +190,42 @@ namespace ACadSharp.IO
 				{
 					case 1:
 						//header data start RL start of header data
-						long headerDataStart = sectionHandler.ReadRawLong();
+						headerDataStart = sectionHandler.ReadRawLong();
 						//header data size RL size of header data
-						long headerDataSize = sectionHandler.ReadRawLong();
+						headerDataSize = sectionHandler.ReadRawLong();
 						break;
-					case 2:
-						//start of bmp RL start of bmp data
-						long startOfBmp = sectionHandler.ReadRawLong();
-						//size of bmp RL size of bmp data
-						long sizeBmp = sectionHandler.ReadRawLong();
-						break;
-					case 3:
-						//start of wmf RL start of wmf data
-						long startOfWmf = sectionHandler.ReadRawLong();
-						//size of wmf RL size of wmf data
-						long sizeWmf = sectionHandler.ReadRawLong();
+					default:
+						previewCode = (DwgPreview.PreviewType)code;
+						startOfImage = sectionHandler.ReadRawLong();
+						sizeImage = sectionHandler.ReadRawLong();
 						break;
 				}
 			}
 
-			//TODO: Implement the image reading
-			throw new NotImplementedException();
+			byte[] header = null;
+			if (this._fileStream.Position == headerDataStart)
+			{
+				header = sectionHandler.ReadBytes((int)headerDataSize.Value);
+			}
+			else
+			{
+				throw new Exception();
+			}
+
+			byte[] body = null;
+			if (this._fileStream.Position == startOfImage)
+			{
+				body = sectionHandler.ReadBytes((int)sizeImage);
+			}
+			else
+			{
+				throw new Exception();
+			}
+
+			//0xE0,0xDA,0x92,0xF8,0x2B,0xc9,0xD7,0xD7,0x62,0xA8,0x35,0xC0,0x62,0xBB,0xEF,0xD4
+			byte[] endSentinel = sectionHandler.ReadSentinel();
+
+			return new DwgPreview(previewCode, header, body);
 		}
 
 		/// <inheritdoc/>
