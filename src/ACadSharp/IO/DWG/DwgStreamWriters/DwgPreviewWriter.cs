@@ -33,5 +33,36 @@ namespace ACadSharp.IO.DWG
 			this._swriter.WriteByte(0);
 			this._swriter.WriteBytes(_endSentinel);
 		}
+
+		public void Write(DwgPreview preview, Stream stream)
+		{
+			//1745
+			var a = preview.RawHeader.Length + preview.RawImage.Length + 19;
+			var c = 1745 - a;
+
+			this._swriter.WriteBytes(_startSentinel);
+
+			this._swriter.WriteRawLong(a);  //4
+
+			this._swriter.WriteByte(2); //1
+
+			this._swriter.WriteByte(1); //1
+			var e = stream.Position + this._swriter.Stream.Position + 12 + 5;
+			this._swriter.WriteRawLong(2727);   //4
+			this._swriter.WriteRawLong(preview.RawHeader.Length);   //4
+
+			this._swriter.WriteByte(6); //1
+			var f = stream.Position + this._swriter.Stream.Position + 12 + 6;
+			this._swriter.WriteRawLong(2807);   //4
+			this._swriter.WriteRawLong(preview.RawImage.Length);    //4
+
+			var off = stream.Position + this._swriter.Stream.Position; //2695, correct: 2727
+			this._swriter.WriteBytes(preview.RawHeader);
+
+			var off1 = stream.Position + this._swriter.Stream.Position;//2775
+			this._swriter.WriteBytes(preview.RawImage);
+
+			this._swriter.WriteBytes(_endSentinel);
+		}
 	}
 }
