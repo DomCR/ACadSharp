@@ -42,7 +42,7 @@ namespace ACadSharp
 					throw new System.NotSupportedException();
 			}
 
-			using (StreamIO sw = new StreamIO(path))
+			using (StreamIO sw = new StreamIO(path, System.IO.FileMode.Create, System.IO.FileAccess.ReadWrite))
 			{
 				if (writeHeader)
 				{

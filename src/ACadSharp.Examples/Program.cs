@@ -3,6 +3,7 @@ using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace ACadSharp.Examples
@@ -14,12 +15,31 @@ namespace ACadSharp.Examples
 		static void Main(string[] args)
 		{
 			CadDocument doc;
+			DwgPreview preview;
 			using (DwgReader reader = new DwgReader(_file))
 			{
 				doc = reader.Read();
+				preview = reader.ReadPreview();
 			}
 
-			exploreDocument(doc);
+			//exploreDocument(doc);
+
+			string output = Path.Combine(Path.GetDirectoryName(_file),
+				$"{Path.GetFileNameWithoutExtension(_file)}.out.dwg");
+			using (DwgWriter writer = new DwgWriter(output, new CadDocument()))
+			{
+				writer.Preview = preview;
+				writer.Write();
+			}
+
+			string o1 = Path.Combine(Path.GetDirectoryName(_file),
+				$"{Path.GetFileNameWithoutExtension(_file)}.out.png");
+			preview.Save(o1);
+
+			using (DwgReader reader = new DwgReader(output))
+			{
+				preview = reader.ReadPreview();
+			}
 		}
 
 		/// <summary>

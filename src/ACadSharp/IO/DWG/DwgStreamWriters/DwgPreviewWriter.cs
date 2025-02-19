@@ -47,12 +47,14 @@ namespace ACadSharp.IO.DWG
 			this._swriter.WriteByte(2); //1
 
 			this._swriter.WriteByte(1); //1
-			var e = stream.Position + this._swriter.Stream.Position + 12 + 5;
+			var e = stream.Position + this._swriter.Stream.Position + 12 + 5 + 32;
+			var e1 = 2727 - e;	//32
 			this._swriter.WriteRawLong(2727);   //4
 			this._swriter.WriteRawLong(preview.RawHeader.Length);   //4
 
 			this._swriter.WriteByte(6); //1
-			var f = stream.Position + this._swriter.Stream.Position + 12 + 6;
+			var f = stream.Position + this._swriter.Stream.Position + 12 + 6 + 22 + 80;
+			var f1 = 2807 - f;
 			this._swriter.WriteRawLong(2807);   //4
 			this._swriter.WriteRawLong(preview.RawImage.Length);    //4
 

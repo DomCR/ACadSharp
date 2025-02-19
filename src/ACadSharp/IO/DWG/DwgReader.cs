@@ -259,7 +259,7 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		internal DwgFileHeader readFileHeader()
 		{
-			//Reset the stream position at the begining
+			//Reset the stream position at the beginning
 			this._fileStream.Position = 0L;
 
 			//0x00	6	“ACXXXX” version string
