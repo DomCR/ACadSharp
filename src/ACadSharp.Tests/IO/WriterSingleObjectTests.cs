@@ -560,6 +560,41 @@ namespace ACadSharp.Tests.IO
 				this.Document.ModelSpace.XDictionary.Add(CadDictionary.GeographicData, geodata);
 			}
 
+			public void LineTypeInBlock()
+			{
+				BlockRecord block = new BlockRecord("block1");
+
+				LineType linetype = new LineType("LTYPE:PAINT");
+				linetype.AddSegment(new LineType.Segment() { Length = 1 });
+				linetype.AddSegment(new LineType.Segment() { Length = -1 });
+
+				ACadSharp.Entities.Line line = new ACadSharp.Entities.Line
+				{
+					StartPoint = new CSMath.XYZ(1, 0, 0),
+					EndPoint = new CSMath.XYZ(5, 5, 0),
+					LineType = linetype
+				};
+
+				ACadSharp.Entities.Line line1 = new ACadSharp.Entities.Line
+				{
+					StartPoint = new CSMath.XYZ(1, 0, 0),
+					EndPoint = new CSMath.XYZ(5, 5, 0),
+					LineType = linetype
+				};
+				// dashed line shows up fine when added directly to the document
+				this.Document.Entities.Add(line1);
+
+				block.Entities.Add(line);
+
+				this.Document.BlockRecords.Add(block);
+				Insert blockinsert = new Insert(block)
+				{
+					InsertPoint = new XYZ(10, 10, 0)
+				};
+
+				this.Document.Entities.Add(blockinsert);
+			}
+
 			public void XData()
 			{
 				AppId app = new AppId("my_app");
@@ -651,6 +686,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomBookColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
 			Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
+			Data.Add(new(nameof(SingleCaseGenerator.LineTypeInBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.XData)));
 		}
 
