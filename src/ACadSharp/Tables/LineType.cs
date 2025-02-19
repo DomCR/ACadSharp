@@ -102,7 +102,7 @@ namespace ACadSharp.Tables
 		{
 			LineType clone = (LineType)base.Clone();
 
-			clone._segments.Clear();
+			clone._segments = new List<Segment>();
 			foreach (var segment in this._segments)
 			{
 				clone.AddSegment(segment.Clone());
