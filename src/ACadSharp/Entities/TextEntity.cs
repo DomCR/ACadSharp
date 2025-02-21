@@ -16,26 +16,14 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Text)]
 	public class TextEntity : Entity, IText
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.TEXT;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityText;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Text;
-
 		/// <summary>
-		/// Specifies the distance a 2D object is extruded above or below its elevation.
+		/// Second alignment point (in OCS)
 		/// </summary>
-		[DxfCodeValue(39)]
-		public double Thickness { get; set; } = 0.0;
-
-		/// <summary>
-		/// First alignment point(in OCS)
-		/// </summary>
-		[DxfCodeValue(10, 20, 30)]
-		public XYZ InsertPoint { get; set; } = XYZ.Zero;
+		/// <remarks>
+		/// This value is meaningful only if the value of a 72 or 73 group is nonzero (if the justification is anything other than baseline/left)
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Optional, 11, 21, 31)]
+		public XYZ AlignmentPoint { get; set; }
 
 		/// <inheritdoc/>
 		[DxfCodeValue(40)]
@@ -51,43 +39,35 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <summary>
+		/// Horizontal text justification type.
+		/// </summary>
+		[DxfCodeValue(72)]
+		public TextHorizontalAlignment HorizontalAlignment { get; set; } = TextHorizontalAlignment.Left;
+
+		/// <summary>
+		/// First alignment point(in OCS)
+		/// </summary>
+		[DxfCodeValue(10, 20, 30)]
+		public XYZ InsertPoint { get; set; } = XYZ.Zero;
+
+		/// <summary>
+		/// Mirror flags.
+		/// </summary>
+		[DxfCodeValue(71)]
+		public TextMirrorFlag Mirror { get; set; } = TextMirrorFlag.None;
+
+		/// <summary>
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
 		/// <inheritdoc/>
-		/// <value>
-		/// The maximum length is 256 characters.
-		/// </value>
-		[DxfCodeValue(1)]
-		public string Value
-		{
-			get
-			{
-				return _value;
-			}
-			set
-			{
-				if (value.Length > 256)
-					throw new ArgumentException($"Text length cannot be supiror than 256, current: {value.Length}");
-				else
-					this._value = value;
-			}
-		}
+		public override string ObjectName => DxfFileToken.EntityText;
 
-		/// <summary>
-		/// Specifies the rotation angle for the object.
-		/// </summary>
-		/// <value>
-		/// The rotation angle in radians.
-		/// </value>
-		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
-		public double Rotation { get; set; }
-
-		/// <summary>
-		/// Relative X scale factor—widt
-		/// </summary>
-		/// <remarks>
-		/// This value is also adjusted when fit-type text is used
-		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.Optional, 41)]
-		public double WidthFactor { get; set; } = 1.0;
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.TEXT;
 
 		/// <summary>
 		/// Specifies the oblique angle of the object.
@@ -97,6 +77,15 @@ namespace ACadSharp.Entities
 		/// </value>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double ObliqueAngle { get; set; } = 0.0;
+
+		/// <summary>
+		/// Specifies the rotation angle for the object.
+		/// </summary>
+		/// <value>
+		/// The rotation angle in radians.
+		/// </value>
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+		public double Rotation { get; set; }
 
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name | DxfReferenceType.Optional, 7)]
@@ -121,32 +110,34 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		/// <summary>
-		/// Mirror flags.
-		/// </summary>
-		[DxfCodeValue(71)]
-		public TextMirrorFlag Mirror { get; set; } = TextMirrorFlag.None;
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Text;
 
 		/// <summary>
-		/// Horizontal text justification type.
+		/// Specifies the distance a 2D object is extruded above or below its elevation.
 		/// </summary>
-		[DxfCodeValue(72)]
-		public TextHorizontalAlignment HorizontalAlignment { get; set; } = TextHorizontalAlignment.Left;
+		[DxfCodeValue(39)]
+		public double Thickness { get; set; } = 0.0;
 
-		/// <summary>
-		/// Second alignment point (in OCS) 
-		/// </summary>
-		/// <remarks>
-		/// This value is meaningful only if the value of a 72 or 73 group is nonzero (if the justification is anything other than baseline/left)
-		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.Optional, 11, 21, 31)]
-		public XYZ AlignmentPoint { get; set; }
-
-		/// <summary>
-		/// Specifies the three-dimensional normal unit vector for the object.
-		/// </summary>
-		[DxfCodeValue(210, 220, 230)]
-		public XYZ Normal { get; set; } = XYZ.AxisZ;
+		/// <inheritdoc/>
+		/// <value>
+		/// The maximum length is 256 characters.
+		/// </value>
+		[DxfCodeValue(1)]
+		public string Value
+		{
+			get
+			{
+				return _value;
+			}
+			set
+			{
+				if (value.Length > 256)
+					throw new ArgumentException($"Text length cannot be supiror than 256, current: {value.Length}");
+				else
+					this._value = value;
+			}
+		}
 
 		/// <summary>
 		/// Vertical text justification type.
@@ -154,18 +145,28 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Optional, 73)]
 		public virtual TextVerticalAlignmentType VerticalAlignment { get; set; } = TextVerticalAlignmentType.Baseline;
 
-		private string _value = string.Empty;
+		/// <summary>
+		/// Relative X scale factor—widt
+		/// </summary>
+		/// <remarks>
+		/// This value is also adjusted when fit-type text is used
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Optional, 41)]
+		public double WidthFactor { get; set; } = 1.0;
 
 		private double _height = 0.0;
-
 		private TextStyle _style = TextStyle.Default;
+		private string _value = string.Empty;
 
-		public TextEntity() : base() { }
+		public TextEntity() : base()
+		{
+		}
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public override void ApplyTransform(Transform transform)
 		{
-			return new BoundingBox(this.InsertPoint);
+
+			throw new NotImplementedException();
 		}
 
 		/// <inheritdoc/>
@@ -174,6 +175,12 @@ namespace ACadSharp.Entities
 			TextEntity clone = (TextEntity)base.Clone();
 			clone.Style = (TextStyle)this.Style.Clone();
 			return clone;
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox(this.InsertPoint);
 		}
 
 		internal override void AssignDocument(CadDocument doc)
@@ -202,11 +209,6 @@ namespace ACadSharp.Entities
 			{
 				this.Style = this.Document.TextStyles[TextStyle.DefaultName];
 			}
-		}
-
-		public override void ApplyTransform(Transform transform)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }
