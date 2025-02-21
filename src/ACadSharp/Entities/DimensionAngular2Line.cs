@@ -24,25 +24,25 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.Angular2LineDimension;
 
 		/// <summary>
-		/// Definition point for linear and angular dimensions (in WCS)
+		/// Definition point for linear and angular dimensions (in WCS).
 		/// </summary>
 		[DxfCodeValue(13, 23, 33)]
 		public XYZ FirstPoint { get; set; }
 
 		/// <summary>
-		/// Definition point for linear and angular dimensions (in WCS)
+		/// Definition point for linear and angular dimensions (in WCS).
 		/// </summary>
 		[DxfCodeValue(14, 24, 34)]
 		public XYZ SecondPoint { get; set; }
 
 		/// <summary>
-		/// Definition point for diameter, radius, and angular dimensions (in WCS)
+		/// Definition point for diameter, radius, and angular dimensions (in WCS).
 		/// </summary>
 		[DxfCodeValue(15, 25, 35)]
 		public XYZ AngleVertex { get; set; }
 
 		/// <summary>
-		/// Point defining dimension arc for angular dimensions (in OCS)
+		/// Point defining dimension arc for angular dimensions (in OCS).
 		/// </summary>
 		[DxfCodeValue(16, 26, 36)]
 		public XYZ DimensionArc { get; set; }
@@ -52,10 +52,10 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				XY v1 = (XY)(this.FirstPoint - this.SecondPoint);
-				XY v2 = (XY)(this.AngleVertex - this.DimensionArc);
+				XY v1 = (XY)(this.SecondPoint - this.FirstPoint);
+				XY v2 = (XY)(this.DefinitionPoint - this.AngleVertex);
 
-				return v1.AngleFrom(v2);
+				return v1.AngleBetweenVectors(v2);
 			}
 		}
 

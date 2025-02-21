@@ -129,8 +129,8 @@ namespace ACadSharp.IO.DWG
 			if (this.R2004Plus)
 			{
 				//For R18 and later 8 unknown bytes follow. The ODA writes 0 bytes.
-				_startWriter.WriteRawLong(0);
-				_startWriter.WriteRawLong(0);
+				this._startWriter.WriteRawLong(0);
+				this._startWriter.WriteRawLong(0);
 			}
 		}
 	}
