@@ -1,7 +1,7 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.IO.SVG;
 using CSMath;
 using System;
-using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -12,17 +12,28 @@ namespace ACadSharp.IO
 	{
 		private SvgXmlWriter _writer;
 
-		public SvgWriter(Stream stream) : base(stream, null)
+		/// <summary>
+		/// Initialize an instance of <see cref="SvgWriter"/> with a default document as a reference.
+		/// </summary>
+		/// <param name="stream"></param>
+		public SvgWriter(Stream stream) : base(stream, new CadDocument())
 		{
-			StreamWriter textWriter = new StreamWriter(stream);
-			this._writer = new SvgXmlWriter(textWriter);
 		}
 
+		/// <summary>
+		/// Initialize an instance of <see cref="SvgWriter"/> with a default document as a reference.
+		/// </summary>
+		/// <param name="filename"></param>
 		public SvgWriter(string filename)
-			: this(File.Create(filename), null)
+			: this(File.Create(filename))
 		{
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="filename"></param>
+		/// <param name="document">Reference document for the table records.</param>
 		public SvgWriter(string filename, CadDocument document)
 			: this(File.Create(filename), document)
 		{
@@ -30,10 +41,6 @@ namespace ACadSharp.IO
 
 		public SvgWriter(Stream stream, CadDocument document) : base(stream, document)
 		{
-			StreamWriter textWriter = new StreamWriter(this._stream);
-			this._writer = new SvgXmlWriter(this._stream, Encoding.Default);
-
-			this._writer.Formatting = Formatting.Indented;
 		}
 
 		/// <inheritdoc/>
@@ -43,19 +50,7 @@ namespace ACadSharp.IO
 		/// </remarks>
 		public override void Write()
 		{
-			this.Write(this._document);
-
-			throw new NotImplementedException();
-		}
-
-		public void Write(CadDocument document)
-		{
-			if (this._document is null)
-			{
-				throw new ArgumentNullException("CadDocument cannot be null in the SvgWriter.", "CadDocument");
-			}
-
-			this._encoding = this.getListedEncoding(document.Header.CodePage);
+			this.createWriter();
 
 			throw new NotImplementedException();
 		}
@@ -84,6 +79,15 @@ namespace ACadSharp.IO
 			this._writer.WriteEndDocument();
 
 			this._writer.Close();
+		}
+
+		private void createWriter()
+		{
+			base.Write();
+
+			StreamWriter textWriter = new StreamWriter(this._stream);
+			this._writer = new SvgXmlWriter(this._stream, this._encoding);
+			this._writer.Formatting = Formatting.Indented;
 		}
 
 		private void writeEntityStyle(Entity entity)
@@ -158,26 +162,6 @@ namespace ACadSharp.IO
 			style.Append($"\"stroke:rgb({entity.Color.R},{entity.Color.G},{entity.Color.B})\"");
 
 			return style.ToString();
-		}
-	}
-
-	public class SvgXmlWriter : XmlTextWriter
-	{
-		public SvgXmlWriter(TextWriter w) : base(w)
-		{
-		}
-
-		public SvgXmlWriter(Stream w, Encoding encoding) : base(w, encoding)
-		{
-		}
-
-		public SvgXmlWriter(string filename, Encoding encoding) : base(filename, encoding)
-		{
-		}
-
-		public void WriteAttributeString(string localName, double value)
-		{
-			this.WriteAttributeString(localName, value.ToString(CultureInfo.InvariantCulture));
 		}
 	}
 }
