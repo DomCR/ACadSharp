@@ -18,12 +18,64 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Insert)]
 	public class Insert : Entity
 	{
+		/// <summary>
+		/// Attributes from the block reference
+		/// </summary>
+		/// <remarks>
+		/// If an attribute should be added in this collection a definition will be added into the block reference as well
+		/// </remarks>
+		public SeqendCollection<AttributeEntity> Attributes { get; private set; }
+
+		/// <summary>
+		/// Gets the insert block definition.
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Name, 2)]
+		public BlockRecord Block { get; internal set; }
+
+		/// <summary>
+		/// Column count
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Optional, 70)]
+		public ushort ColumnCount { get; set; } = 1;
+
+		/// <summary>
+		/// Column spacing
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Optional, 44)]
+		public double ColumnSpacing { get; set; } = 0;
+
+		/// <summary>
+		/// True if the insert has attribute entities in it
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Ignored, 66)]
+		public bool HasAttributes { get { return this.Attributes.Any(); } }
+
+		/// <summary>
+		/// A 3D WCS coordinate representing the insertion or origin point.
+		/// </summary>
+		[DxfCodeValue(10, 20, 30)]
+		public XYZ InsertPoint { get; set; } = XYZ.Zero;
+
+		/// <summary>
+		/// Flag is true for multiple insertion of the same block.
+		/// </summary>
+		public bool IsMultiple { get { return this.RowCount > 1 || this.ColumnCount > 1; } }
+
+		/// <summary>
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityInsert;
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType
 		{
 			get
 			{
-				if (this.RowCount > 1 || this.ColumnCount > 1)
+				if (this.IsMultiple)
 				{
 					return ObjectType.MINSERT;
 				}
@@ -34,23 +86,29 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityInsert;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Insert;
+		/// <summary>
+		/// Specifies the rotation angle for the object.
+		/// </summary>
+		/// <value>
+		/// The rotation angle in radians.
+		/// </value>
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+		public double Rotation { get; set; } = 0.0;
 
 		/// <summary>
-		/// Gets the insert block definition.
+		/// Row count
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Name, 2)]
-		public BlockRecord Block { get; internal set; }
+		[DxfCodeValue(DxfReferenceType.Optional, 71)]
+		public ushort RowCount { get; set; } = 1;
 
 		/// <summary>
-		/// A 3D WCS coordinate representing the insertion or origin point.
+		/// Row spacing
 		/// </summary>
-		[DxfCodeValue(10, 20, 30)]
-		public XYZ InsertPoint { get; set; } = XYZ.Zero;
+		[DxfCodeValue(DxfReferenceType.Optional, 45)]
+		public double RowSpacing { get; set; } = 0;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => this.IsMultiple ? DxfSubclassMarker.MInsert : DxfSubclassMarker.Insert;
 
 		/// <summary>
 		/// X scale factor.
@@ -71,64 +129,6 @@ namespace ACadSharp.Entities
 		public double ZScale { get; set; } = 1;
 
 		/// <summary>
-		/// Specifies the rotation angle for the object.
-		/// </summary>
-		/// <value>
-		/// The rotation angle in radians.
-		/// </value>
-		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
-		public double Rotation { get; set; } = 0.0;
-
-		/// <summary>
-		/// Specifies the three-dimensional normal unit vector for the object.
-		/// </summary>
-		[DxfCodeValue(210, 220, 230)]
-		public XYZ Normal { get; set; } = XYZ.AxisZ;
-
-		/// <summary>
-		/// Column count
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 70)]
-		public ushort ColumnCount { get; set; } = 1;
-
-		/// <summary>
-		/// Row count
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 71)]
-		public ushort RowCount { get; set; } = 1;
-
-		/// <summary>
-		/// Column spacing
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 44)]
-		public double ColumnSpacing { get; set; } = 0;
-
-		/// <summary>
-		/// Row spacing
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 45)]
-		public double RowSpacing { get; set; } = 0;
-
-		/// <summary>
-		/// True if the insert has attribute entities in it
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Ignored, 66)]
-		public bool HasAttributes { get { return this.Attributes.Any(); } }
-
-		/// <summary>
-		/// Attributes from the block reference
-		/// </summary>
-		/// <remarks>
-		/// If an attribute should be added in this collection a definition will be added into the block reference as well
-		/// </remarks>
-		public SeqendCollection<AttributeEntity> Attributes { get; private set; }
-
-		internal Insert() : base()
-		{
-			this.Attributes = new SeqendCollection<AttributeEntity>(this);
-		}
-
-		/// <summary>
 		/// Constructor to reference an insert to a block record
 		/// </summary>
 		/// <param name="block">Block Record to reference</param>
@@ -147,6 +147,39 @@ namespace ACadSharp.Entities
 			}
 
 			this.UpdateAttributes();
+		}
+
+		internal Insert() : base()
+		{
+			this.Attributes = new SeqendCollection<AttributeEntity>(this);
+		}
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			Insert clone = (Insert)base.Clone();
+
+			clone.Block = (BlockRecord)this.Block?.Clone();
+
+			clone.Attributes = new SeqendCollection<AttributeEntity>(clone);
+			foreach (var att in this.Attributes)
+			{
+				clone.Attributes.Add((AttributeEntity)att.Clone());
+			}
+
+			return clone;
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			BoundingBox box = this.Block.BlockEntity.GetBoundingBox();
+
+			var scale = new XYZ(this.XScale, this.YScale, this.ZScale);
+			var min = box.Min * scale + this.InsertPoint;
+			var max = box.Max * scale + this.InsertPoint;
+
+			return new BoundingBox(min, max);
 		}
 
 		/// <summary>
@@ -174,34 +207,6 @@ namespace ACadSharp.Entities
 					this.Attributes.Add(att);
 				}
 			}
-		}
-
-		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			BoundingBox box = this.Block.BlockEntity.GetBoundingBox();
-
-			var scale = new XYZ(this.XScale, this.YScale, this.ZScale);
-			var min = box.Min * scale + this.InsertPoint;
-			var max = box.Max * scale + this.InsertPoint;
-
-			return new BoundingBox(min, max);
-		}
-
-		/// <inheritdoc/>
-		public override CadObject Clone()
-		{
-			Insert clone = (Insert)base.Clone();
-
-			clone.Block = (BlockRecord)this.Block?.Clone();
-
-			clone.Attributes = new SeqendCollection<AttributeEntity>(clone);
-			foreach (var att in this.Attributes)
-			{
-				clone.Attributes.Add((AttributeEntity)att.Clone());
-			}
-
-			return clone;
 		}
 
 		internal override void AssignDocument(CadDocument doc)
