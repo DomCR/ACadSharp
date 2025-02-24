@@ -6,10 +6,10 @@
 		<!-- Enable the MSTest runner, this is an opt-in feature -->
 		<EnableMSTestRunner>true</EnableMSTestRunner>
 		<!-- We need to produce an executable and not a DLL -->
-		<!--<OutputType>Exe</OutputType>-->
+		<OutputType Condition="'$(TargetFramework)' == 'net6.0'">Exe"</OutputType>
 
 		<IsPackable>false</IsPackable>
-		
+		<IsTestProject>true</IsTestProject>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -62,10 +62,10 @@ namespace ACadSharp.Objects
 		/// <exception cref="ArgumentException"></exception>
 		public void AddEntity(Entity entity, ulong? sorterHandle = null)
 		{
-			//if (entity.Owner != null && entity.Owner != this.BlockOwner)
-			//{
-			//	throw new ArgumentException($"Entity is not owned by the block {this.BlockOwner.Name}", nameof(entity));
-			//}
+			if (entity.Owner != null && entity.Owner != this.BlockOwner)
+			{
+				throw new ArgumentException($"Entity is not owned by the block {this.BlockOwner.Name}", nameof(entity));
+			}
 
 			this._sorters.Add(new Sorter(entity, sorterHandle));
 		}
