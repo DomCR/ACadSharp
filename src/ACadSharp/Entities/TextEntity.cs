@@ -31,9 +31,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;
 
-		/// <summary>
-		/// First alignment point(in OCS)
-		/// </summary>
+		/// <inheritdoc/>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ InsertPoint { get; set; } = XYZ.Zero;
 
@@ -134,7 +132,7 @@ namespace ACadSharp.Entities
 		public TextHorizontalAlignment HorizontalAlignment { get; set; } = TextHorizontalAlignment.Left;
 
 		/// <summary>
-		/// Second alignment point (in OCS) 
+		/// Second alignment point (in OCS).
 		/// </summary>
 		/// <remarks>
 		/// This value is meaningful only if the value of a 72 or 73 group is nonzero (if the justification is anything other than baseline/left)
@@ -156,7 +154,7 @@ namespace ACadSharp.Entities
 
 		private string _value = string.Empty;
 
-		private double _height = 0.0;
+		private double _height = 1.0;
 
 		private TextStyle _style = TextStyle.Default;
 
