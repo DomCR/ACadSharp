@@ -313,6 +313,11 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(63, 421, 431)]
 		public Color AmbientLightColor { get; set; }
 
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new System.NotImplementedException();
+		}
+
 		//361	Sun ID/Handle(optional)
 
 		//335

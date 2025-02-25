@@ -64,5 +64,11 @@ namespace ACadSharp.Entities
 		{
 			return BoundingBox.FromPoints(new List<XYZ> { this.FirstCorner, this.SecondCorner, this.ThirdCorner, this.FourthCorner });
 		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

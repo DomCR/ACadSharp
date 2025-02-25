@@ -185,6 +185,12 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
 			List<XY> pts = this.PolygonalVertexes(100);

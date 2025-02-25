@@ -122,5 +122,10 @@ namespace ACadSharp.Entities
 		{
 			return new BoundingBox(this.InsertionPoint);
 		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

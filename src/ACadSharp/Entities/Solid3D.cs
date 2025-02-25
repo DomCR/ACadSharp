@@ -23,6 +23,11 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.ModelerGeometry;
 
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new System.NotImplementedException();
+		}
+
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{

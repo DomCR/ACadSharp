@@ -36,6 +36,12 @@ namespace ACadSharp.Entities
 		public XYZ Direction { get; set; }
 
 		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
 			return BoundingBox.Infinite;

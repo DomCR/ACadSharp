@@ -87,5 +87,11 @@ namespace ACadSharp.Entities
 		{
 			return new BoundingBox(this.FeatureLocation, this.LeaderEndpoint);
 		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
