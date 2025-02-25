@@ -14,6 +14,8 @@ namespace ACadSharp.IO
 	/// </summary>
 	public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 	{
+		public DwgPreview Preview { get; set; }
+
 		private ACadVersion _version { get { return this._document.Header.Version; } }
 
 		private DwgFileHeader _fileHeader;
@@ -221,7 +223,15 @@ namespace ACadSharp.IO
 		{
 			MemoryStream stream = new MemoryStream();
 			DwgPreviewWriter writer = new DwgPreviewWriter(this._version, stream);
-			writer.Write();
+
+			if (this.Preview != null)
+			{
+				writer.Write(this.Preview, this._stream);
+			}
+			else
+			{
+				writer.Write();
+			}
 
 			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, false, 0x400);
 		}
