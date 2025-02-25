@@ -4,8 +4,6 @@ using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.XData;
-using System;
-using ACadSharp.XData;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,19 +15,14 @@ namespace ACadSharp
 	public abstract class CadObject : IHandledCadObject
 	{
 		/// <summary>
-		/// Get the object type
+		/// Document where this element belongs.
 		/// </summary>
-		public abstract ObjectType ObjectType { get; }
+		public CadDocument Document { get; private set; }
 
 		/// <summary>
-		/// The CAD class name of an object
+		/// Extended data attached to this object.
 		/// </summary>
-		public virtual string ObjectName { get; }
-
-		/// <summary>
-		/// Object Subclass marker
-		/// </summary>
-		public abstract string SubclassMarker { get; }
+		public ExtendedDataDictionary ExtendedData { get; }
 
 		/// <inheritdoc/>
 		/// <remarks>
@@ -39,10 +32,38 @@ namespace ACadSharp
 		public ulong Handle { get; internal set; }
 
 		/// <summary>
+		/// Flag that indicates if this object has a dynamic dxf sublcass.
+		/// </summary>
+		public virtual bool HasDynamicSubclass { get { return false; } }
+
+		/// <summary>
+		/// The CAD class name of an object
+		/// </summary>
+		public virtual string ObjectName { get; }
+
+		/// <summary>
+		/// Get the object type
+		/// </summary>
+		public abstract ObjectType ObjectType { get; }
+
+		/// <summary>
 		/// Soft-pointer ID/handle to owner object
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 330)]
 		public IHandledCadObject Owner { get; internal set; }
+
+		/// <summary>
+		/// Objects that are attached to this object.
+		/// </summary>
+		/// <remarks>
+		/// This collection is not managed by ACadSharp, any changes may cause a corruption in the file.
+		/// </remarks>
+		public Dictionary<ulong, CadObject> Reactors { get; } = new Dictionary<ulong, CadObject>();
+
+		/// <summary>
+		/// Object Subclass marker
+		/// </summary>
+		public abstract string SubclassMarker { get; }
 
 		/// <summary>
 		/// Extended Dictionary object.
@@ -66,28 +87,6 @@ namespace ACadSharp
 			}
 		}
 
-		/// <summary>
-		/// Objects that are attached to this object.
-		/// </summary>
-		/// <remarks>
-		/// This collection is not managed by ACadSharp, any changes may cause a corruption in the file.
-		/// </remarks>
-		public Dictionary<ulong, CadObject> Reactors { get; } = new Dictionary<ulong, CadObject>();
-
-		/// <summary>
-		/// Extended data attached to this object.
-		/// </summary>
-		public ExtendedDataDictionary ExtendedData { get; }
-
-		/// <summary>
-		/// Document where this element belongs.
-		/// </summary>
-		public CadDocument Document
-		{
-			get;
-			private set;
-		}
-
 		private CadDictionary _xdictionary = null;
 
 		/// <summary>
@@ -96,20 +95,6 @@ namespace ACadSharp
 		public CadObject()
 		{
 			this.ExtendedData = new ExtendedDataDictionary(this);
-		}
-
-		/// <summary>
-		/// Creates the extended dictionary if null.
-		/// </summary>
-		/// <returns>The <see cref="CadDictionary"/> attached to this <see cref="CadObject"/></returns>
-		public CadDictionary CreateExtendedDictionary()
-		{
-			if (this._xdictionary == null)
-			{
-				this.XDictionary = new CadDictionary();
-			}
-
-			return this._xdictionary;
 		}
 
 		/// <summary>
@@ -134,6 +119,20 @@ namespace ACadSharp
 			clone.ExtendedData.Clear();
 
 			return clone;
+		}
+
+		/// <summary>
+		/// Creates the extended dictionary if null.
+		/// </summary>
+		/// <returns>The <see cref="CadDictionary"/> attached to this <see cref="CadObject"/></returns>
+		public CadDictionary CreateExtendedDictionary()
+		{
+			if (this._xdictionary == null)
+			{
+				this.XDictionary = new CadDictionary();
+			}
+
+			return this._xdictionary;
 		}
 
 		/// <inheritdoc/>
@@ -185,25 +184,6 @@ namespace ACadSharp
 			}
 		}
 
-		protected T updateTable<T>(T entry, Table<T> table)
-			where T : TableEntry
-		{
-			if (table == null)
-			{
-				return entry;
-			}
-
-			if (table.TryGetValue(entry.Name, out T existing))
-			{
-				return existing;
-			}
-			else
-			{
-				table.Add(entry);
-				return entry;
-			}
-		}
-
 		protected T updateCollection<T>(T entry, ObjectDictionaryCollection<T> collection)
 			where T : NonGraphicalObject
 		{
@@ -219,6 +199,25 @@ namespace ACadSharp
 			else
 			{
 				collection.Add(entry);
+				return entry;
+			}
+		}
+
+		protected T updateTable<T>(T entry, Table<T> table)
+					where T : TableEntry
+		{
+			if (table == null)
+			{
+				return entry;
+			}
+
+			if (table.TryGetValue(entry.Name, out T existing))
+			{
+				return existing;
+			}
+			else
+			{
+				table.Add(entry);
 				return entry;
 			}
 		}

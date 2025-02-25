@@ -119,7 +119,9 @@ namespace ACadSharp.IO.DXF
 				//Check with mapper
 				case 100:
 					if (map != null && !map.SubClasses.ContainsKey(this._reader.ValueAsString))
+					{
 						this._builder.Notify($"[{template.CadObject.ObjectName}] Unidentified subclass {this._reader.ValueAsString}", NotificationType.Warning);
+					}
 					break;
 				//Start of application - defined group
 				case 102:
@@ -695,10 +697,15 @@ namespace ACadSharp.IO.DXF
 				case 2:
 					tmp.BlockName = this._reader.ValueAsString;
 					return true;
+				case 100:
+					//AcDbEntity
+					//AcDbBlockReference
+					//AcDbMInsertBlock
+					return true;
 				case 66:
 					return true;
 				default:
-					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Insert]);
 			}
 		}
 
