@@ -2,7 +2,6 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ACadSharp.Entities
@@ -49,6 +48,9 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Ignored, 66)]
 		public bool HasAttributes { get { return this.Attributes.Any(); } }
+
+		/// <inheritdoc/>
+		public override bool HasDynamicSubclass => true;
 
 		/// <summary>
 		/// A 3D WCS coordinate representing the insertion or origin point.
