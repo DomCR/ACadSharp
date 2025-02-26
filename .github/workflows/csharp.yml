@@ -53,8 +53,6 @@ jobs:
     - uses: cardinalby/export-env-action@v2
       with:
         envFile: 'github.env'
-    - name: prev data
-      run: ls
     - name: Install dependencies
       run: dotnet restore
     - name: Build
