@@ -53,11 +53,11 @@ jobs:
     - uses: cardinalby/export-env-action@v2
       with:
         envFile: 'github.env'
+    - name: prev data
+      run: ls
     - name: Install dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: prev data
-      run: ls -a
     - name: Test with the dotnet CLI
       run: dotnet test --no-build --no-restore --framework net48
