@@ -1,4 +1,4 @@
-name: Build&Test
+name: Build and Test
 
 on:
   push:
@@ -11,23 +11,51 @@ defaults:
     working-directory: ./src
 
 jobs:
-  testDotNet:
+  build:
+    name: Build
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
       with: 
         submodules: true
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v4
+    - uses: cardinalby/export-env-action@v2
       with:
-       dotnet-version: | 
-        5.0.x
-        6.0.x
-        7.0.x
-        8.0.x
+        envFile: 'github.env'
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build
+      run: dotnet build --no-restore
+
+  testDotNet:
+    name: Test Dotnet
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+      with: 
+        submodules: true
+    - uses: cardinalby/export-env-action@v2
+      with:
+        envFile: 'github.env'
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
     - name: Test with the dotnet CLI
-      run: dotnet test
+      run: dotnet test --no-build --no-restore --framework net6.0
+
+  testFramework:
+    name: Test net Framework
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+      with: 
+        submodules: true
+    - uses: cardinalby/export-env-action@v2
+      with:
+        envFile: 'github.env'
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test with the dotnet CLI
+      run: dotnet test --no-build --no-restore --framework net48
