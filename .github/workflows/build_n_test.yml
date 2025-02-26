@@ -11,23 +11,23 @@ defaults:
     working-directory: ./src
 
 jobs:
-  build:
+  testDotNet:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with: 
         submodules: true
-    - uses: ./.github/actions/setup.yml
-    - name: Build and test
-      run: |
-          dotnet restore
-          dotnet build --configuration Release --no-restore
- 
-  test:
-    runs-on: windows-latest
-    needs: build
-    steps:
-    - uses: actions/checkout@v2
-      with: 
-        submodules: true
-    - run: dotnet test --configuration Release --no-build --verbosity normal
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v4
+      with:
+       dotnet-version: | 
+        5.0.x
+        6.0.x
+        7.0.x
+        8.0.x
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build
+    - name: Test with the dotnet CLI
+      run: dotnet test
