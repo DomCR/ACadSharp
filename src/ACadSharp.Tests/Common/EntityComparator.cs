@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Entities;
 using CSMath;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ACadSharp.Tests.Common
 {

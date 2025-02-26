@@ -160,7 +160,7 @@ namespace ACadSharp.Tests.Common
 					continue;
 
 				TableEntryNode child = node.GetEntry(entry.Handle);
-				if(child == null && (entry.Name.StartsWith("*U") || entry.Name.StartsWith("*T")))
+				if (child == null && (entry.Name.StartsWith("*U") || entry.Name.StartsWith("*T")))
 				{
 					return;
 				}
@@ -191,7 +191,7 @@ namespace ACadSharp.Tests.Common
 
 			foreach (R child in node.Entries)
 			{
-				if(this._document.Header.Version < ACadVersion.AC1024 &&
+				if (this._document.Header.Version < ACadVersion.AC1024 &&
 					child is BlockRecordNode tmp &&
 					tmp.IsDynamic)
 				{
@@ -256,6 +256,13 @@ namespace ACadSharp.Tests.Common
 				Assert.Equal(entity.IsInvisible, node.IsInvisible);
 				Assert.Equal(entity.LineWeight, node.LineWeight);
 			}
+
+			switch (entity)
+			{
+				case Dimension dim:
+					assertDimensionProperties(dim, node);
+					break;
+			}
 		}
 
 		private void assertLayer(Layer layer, LayerNode node)
@@ -298,6 +305,16 @@ namespace ACadSharp.Tests.Common
 			CadObject cobj = doc.GetCadObject(o.Handle);
 			this.notNull(cobj, $"Object of type {typeof(T)} | {o.Handle} not found in the document");
 			this.notNull(cobj.Document, $"Document is null for object with handle: {cobj.Handle}");
+		}
+
+		private void assertDimensionProperties(Dimension dimension, EntityNode node)
+		{
+#if !NETFRAMEWORK
+			if (node.Properties.TryGetValue(nameof(dimension.Measurement), out object measurement))
+			{
+				Assert.Equal(((System.Text.Json.JsonElement)measurement).GetDouble(), dimension.Measurement, 4);
+			}
+#endif
 		}
 
 		private void notNull<T>(T o, string info = null)

@@ -507,7 +507,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitLong(insert.Attributes.Count);
 			}
 
-			if (insert.ObjectType == ObjectType.MINSERT)
+			if (insert.IsMultiple)
 			{
 				//Common:
 				//Numcols BS 70

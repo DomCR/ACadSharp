@@ -172,7 +172,7 @@ namespace ACadSharp.IO
 			DwgClassesWriter writer = new DwgClassesWriter(stream, this._document, this._encoding);
 			writer.Write();
 
-			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Classes, stream, false);
+			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Classes, stream, true);
 		}
 
 		private void writeSummaryInfo()

@@ -112,6 +112,7 @@ namespace ACadSharp.IO.Templates
 			foreach (var item in StateTemplates)
 			{
 				item.Build(builder, this.EntityHandles);
+				bvp.States.Add(item.State);
 			}
 		}
 	}
