@@ -9,7 +9,7 @@ namespace ACadSharp.Tests
 		public static string DesktopFolder { get { return Environment.GetFolderPath(Environment.SpecialFolder.Desktop); } }
 
 		public static string SamplesFolder { get { return EnvironmentVars.Get<string>("SAMPLES_FOLDER"); } }
-	
+
 		public static string OutputSamplesFolder { get { return EnvironmentVars.Get<string>("OUTPUT_SAMPLES_FOLDER"); } }
 
 		public static string OutputSingleCasesFolder { get { return EnvironmentVars.Get<string>("OUTPUT_SINGLE_CASES_FOLDER"); } }
@@ -35,14 +35,23 @@ namespace ACadSharp.Tests
 
 		public static void CreateOutputFolders()
 		{
-			if (!Directory.Exists(OutputSamplesFolder))
+			string outputSamplesFolder = OutputSamplesFolder;
+			string outputSingleCasesFolder = OutputSingleCasesFolder;
+
+#if NETFRAMEWORK
+			string curr = AppDomain.CurrentDomain.BaseDirectory;
+			outputSamplesFolder = Path.GetFullPath(Path.Combine(curr, OutputSamplesFolder));
+			outputSingleCasesFolder = Path.GetFullPath(Path.Combine(curr, OutputSingleCasesFolder));
+#endif
+
+			if (!Directory.Exists(outputSamplesFolder))
 			{
-				Directory.CreateDirectory(OutputSamplesFolder);
+				Directory.CreateDirectory(outputSamplesFolder);
 			}
 
-			if (!Directory.Exists(OutputSingleCasesFolder))
+			if (!Directory.Exists(outputSingleCasesFolder))
 			{
-				Directory.CreateDirectory(OutputSingleCasesFolder);
+				Directory.CreateDirectory(outputSingleCasesFolder);
 			}
 		}
 	}
