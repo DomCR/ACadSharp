@@ -2,7 +2,6 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ACadSharp.Entities
@@ -48,6 +47,11 @@ namespace ACadSharp.Entities
 		/// True if the insert has attribute entities in it
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Ignored, 66)]
+		public bool HasAttributes { get { return this.Attributes.Any(); } }
+
+		/// <inheritdoc/>
+		public override bool HasDynamicSubclass => true;
+		[DxfCodeValue(DxfReferenceType.Ignored, 66)]
 		public bool HasAttributes
 		{ get { return this.Attributes.Any(); } }
 
@@ -56,6 +60,37 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ InsertPoint { get; set; } = XYZ.Zero;
+
+		/// <summary>
+		/// Flag is true for multiple insertion of the same block.
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityInsert;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType
+		{
+			get
+			{
+				if (this.RowCount > 1 || this.ColumnCount > 1)
+				{
+					return ObjectType.MINSERT;
+				}
+				else
+				{
+					return ObjectType.INSERT;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Specifies the rotation angle for the object.
+		/// </summary>
+		public bool IsMultiple { get { return this.RowCount > 1 || this.ColumnCount > 1; } }
 
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
@@ -71,7 +106,7 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				if (this.RowCount > 1 || this.ColumnCount > 1)
+				if (this.IsMultiple)
 				{
 					return ObjectType.MINSERT;
 				}
@@ -105,6 +140,9 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Insert;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => this.IsMultiple ? DxfSubclassMarker.MInsert : DxfSubclassMarker.Insert;
 
 		/// <summary>
 		/// X scale factor.
@@ -146,6 +184,43 @@ namespace ACadSharp.Entities
 		}
 
 		internal Insert() : base()
+		internal Insert() : base()
+		{
+			this.Attributes = new SeqendCollection<AttributeEntity>(this);
+		}
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			Insert clone = (Insert)base.Clone();
+
+			clone.Block = (BlockRecord)this.Block?.Clone();
+
+			clone.Attributes = new SeqendCollection<AttributeEntity>(clone);
+			foreach (var att in this.Attributes)
+			{
+				clone.Attributes.Add((AttributeEntity)att.Clone());
+			}
+
+			return clone;
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			BoundingBox box = this.Block.BlockEntity.GetBoundingBox();
+
+			var scale = new XYZ(this.XScale, this.YScale, this.ZScale);
+			var min = box.Min * scale + this.InsertPoint;
+			var max = box.Max * scale + this.InsertPoint;
+
+			return new BoundingBox(min, max);
+		}
+
+		/// <summary>
+		/// Updates all attribute definitions contained in the block reference as <see cref="AttributeDefinition"/> entitites in the insert
+		/// </summary>
+		public void UpdateAttributes()
 		{
 			this.Attributes = new SeqendCollection<AttributeEntity>(this);
 		}
@@ -233,14 +308,6 @@ namespace ACadSharp.Entities
 				{
 					this.Attributes.Remove(att);
 				}
-			}
-
-			foreach (AttributeDefinition attdef in this.Block.AttributeDefinitions)
-			{
-				if (!this.Attributes.Select(d => d.Tag).Contains(attdef.Tag))
-				{
-					AttributeEntity att = new AttributeEntity(attdef);
-
 					this.Attributes.Add(att);
 				}
 			}
