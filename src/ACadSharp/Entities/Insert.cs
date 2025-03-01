@@ -241,7 +241,16 @@ namespace ACadSharp.Entities
 				{
 					this.Attributes.Remove(att);
 				}
-				this.Attributes.Add(att);
+			}
+
+			foreach (AttributeDefinition attdef in this.Block.AttributeDefinitions)
+			{
+				if (!this.Attributes.Select(d => d.Tag).Contains(attdef.Tag))
+				{
+					AttributeEntity att = new AttributeEntity(attdef);
+
+					this.Attributes.Add(att);
+				}
 			}
 		}
 
