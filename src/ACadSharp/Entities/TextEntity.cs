@@ -1,7 +1,9 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -165,8 +167,129 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
+			bool mirrText = this.Mirror.HasFlag(TextMirrorFlag.Backward);
 
-			throw new NotImplementedException();
+			XYZ newInsert = transform.ApplyTransform(this.InsertPoint);
+			XYZ newNormal = this.transformNormal(transform, this.Normal);
+
+			var transformation = this.getWorldMatrix(transform, Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+
+			List<XY> uv = applyRotation(
+				new[]
+				{
+					this.WidthFactor * this.Height * XY.AxisX,
+					new XY(this.Height * Math.Tan(this.ObliqueAngle), this.Height)
+				},
+				this.Rotation);
+
+			XYZ v;
+			v = transOW * new XYZ(uv[0].X, uv[0].Y, 0.0);
+			v = transformation * v;
+			v = transWO * v;
+			XY newUvector = new XY(v.X, v.Y);
+
+			v = transOW * new XYZ(uv[1].X, uv[1].Y, 0.0);
+			v = transformation * v;
+			v = transWO * v;
+			XY newVvector = new XY(v.X, v.Y);
+
+			double newRotation = newUvector.GetAngle();
+			double newObliqueAngle = newVvector.GetAngle();
+
+			if (mirrText)
+			{
+				if (XY.Cross(newUvector, newVvector) < 0)
+				{
+					newObliqueAngle = 90 - (newRotation - newObliqueAngle);
+					if (!(this.HorizontalAlignment.HasFlag(TextHorizontalAlignment.Fit)
+						|| this.HorizontalAlignment.HasFlag(TextHorizontalAlignment.Aligned)))
+					{
+						newRotation += 180;
+					}
+
+					this.Mirror = this.Mirror.RemoveFlag(TextMirrorFlag.Backward);
+				}
+				else
+				{
+					newObliqueAngle = 90 + (newRotation - newObliqueAngle);
+				}
+			}
+			else
+			{
+				if (XY.Cross(newUvector, newVvector) < 0.0)
+				{
+					newObliqueAngle = 90 - (newRotation - newObliqueAngle);
+
+					if (newUvector.Dot(uv[0]) < 0.0)
+					{
+						newRotation += 180;
+
+						switch (this.HorizontalAlignment)
+						{
+							case TextHorizontalAlignment.Left:
+								this.HorizontalAlignment = TextHorizontalAlignment.Right;
+								break;
+							case TextHorizontalAlignment.Right:
+								this.HorizontalAlignment = TextHorizontalAlignment.Left;
+								break;
+						}
+					}
+					else
+					{
+						switch (this.VerticalAlignment)
+						{
+							case TextVerticalAlignmentType.Top:
+								this.VerticalAlignment = TextVerticalAlignmentType.Bottom;
+								break;
+							case TextVerticalAlignmentType.Bottom:
+								this.VerticalAlignment = TextVerticalAlignmentType.Top;
+								break;
+						}
+					}
+				}
+				else
+				{
+					newObliqueAngle = 90 + (newRotation - newObliqueAngle);
+				}
+			}
+
+			// the oblique angle is defined between -85 and 85 degrees
+			newObliqueAngle = MathHelper.NormalizeAngle(newObliqueAngle);
+			if (newObliqueAngle > 180)
+			{
+				newObliqueAngle = 180 - newObliqueAngle;
+			}
+
+			if (newObliqueAngle < -85)
+			{
+				newObliqueAngle = -85;
+			}
+			else if (newObliqueAngle > 85)
+			{
+				newObliqueAngle = 85;
+			}
+
+			// the height must be greater than zero, the cos is always positive between -85 and 85
+			double newHeight = newVvector.GetLength() * Math.Cos(newObliqueAngle);
+			newHeight = MathHelper.IsZero(newHeight) ? MathHelper.Epsilon : newHeight;
+
+			// the width factor is defined between 0.01 and 100
+			double newWidthFactor = newUvector.GetLength() / newHeight;
+			if (newWidthFactor < 0.01)
+			{
+				newWidthFactor = 0.01;
+			}
+			else if (newWidthFactor > 100)
+			{
+				newWidthFactor = 100;
+			}
+
+			this.InsertPoint = newInsert;
+			this.Normal = newNormal;
+			this.Rotation = newRotation;
+			this.Height = newHeight;
+			this.WidthFactor = newWidthFactor;
+			this.ObliqueAngle = newObliqueAngle;
 		}
 
 		/// <inheritdoc/>
@@ -209,6 +332,31 @@ namespace ACadSharp.Entities
 			{
 				this.Style = this.Document.TextStyles[TextStyle.DefaultName];
 			}
+		}
+
+		private static List<XY> applyRotation(IEnumerable<XY> points, double rotation)
+		{
+			if (points == null)
+			{
+				throw new ArgumentNullException(nameof(points));
+			}
+
+			if (MathHelper.IsZero(rotation))
+			{
+				return new List<XY>(points);
+			}
+
+			double sin = Math.Sin(rotation);
+			double cos = Math.Cos(rotation);
+
+			List<XY> transPoints;
+
+			transPoints = new List<XY>();
+			foreach (XY p in points)
+			{
+				transPoints.Add(new XY(p.X * cos - p.Y * sin, p.X * sin + p.Y * cos));
+			}
+			return transPoints;
 		}
 	}
 }
