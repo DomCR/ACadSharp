@@ -3,7 +3,9 @@ using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -252,6 +254,31 @@ namespace ACadSharp.Entities
 			v = transform.ApplyTransform(v);
 			v = transWO * v;
 			return v;
+		}
+
+		protected List<XY> applyRotation(IEnumerable<XY> points, double rotation)
+		{
+			if (points == null)
+			{
+				throw new ArgumentNullException(nameof(points));
+			}
+
+			if (MathHelper.IsZero(rotation))
+			{
+				return new List<XY>(points);
+			}
+
+			double sin = Math.Sin(rotation);
+			double cos = Math.Cos(rotation);
+
+			List<XY> transPoints;
+
+			transPoints = new List<XY>();
+			foreach (XY p in points)
+			{
+				transPoints.Add(new XY(p.X * cos - p.Y * sin, p.X * sin + p.Y * cos));
+			}
+			return transPoints;
 		}
 	}
 }
