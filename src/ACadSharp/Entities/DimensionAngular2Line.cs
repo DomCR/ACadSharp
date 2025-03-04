@@ -75,7 +75,12 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
-			throw new System.NotImplementedException();
+			base.ApplyTransform(transform);
+
+			this.FirstPoint = transform.ApplyTransform(this.FirstPoint);
+			this.SecondPoint = transform.ApplyTransform(this.SecondPoint);
+			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
+			this.DimensionArc = transform.ApplyTransform(this.DimensionArc);
 		}
 	}
 }
