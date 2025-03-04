@@ -280,5 +280,22 @@ namespace ACadSharp.Entities
 			}
 			return transPoints;
 		}
+
+		protected List<XYZ> applyRotation(IEnumerable<XYZ> points, XYZ zAxis)
+		{
+			if (points == null)
+			{
+				throw new ArgumentNullException(nameof(points));
+			}
+
+			Matrix3 trans = Matrix3.ArbitraryAxis(zAxis);
+			List<XYZ> transPoints;
+			transPoints = new List<XYZ>();
+			foreach (XYZ p in points)
+			{
+				transPoints.Add(trans * p);
+			}
+			return transPoints;
+		}
 	}
 }

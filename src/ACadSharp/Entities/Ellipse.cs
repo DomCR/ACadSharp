@@ -187,7 +187,22 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
-			throw new NotImplementedException();
+			XYZ perp = XYZ.Cross(this.Normal, this.EndPoint);
+			perp.Normalize();
+			perp *= this.EndPoint.GetLength() * this.RadiusRatio;
+
+			this.Center = transform.ApplyTransform(this.Center);
+			this.EndPoint = transform.ApplyTransform(this.EndPoint);
+			XYZ newPrep = transform.ApplyTransform(perp);
+			if (newPrep != XYZ.Zero && this.EndPoint != XYZ.Zero)
+			{
+				this.RadiusRatio = newPrep.GetLength() / this.EndPoint.GetLength();
+				this.Normal = XYZ.Cross(this.EndPoint, newPrep);
+			}
+			else
+			{
+				this.Normal = transform.ApplyTransform(this.Normal);
+			}
 		}
 
 		/// <inheritdoc/>
