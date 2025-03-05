@@ -60,6 +60,7 @@ namespace ACadSharp.Entities
 		{
 			base.ApplyTransform(transform);
 			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
+			//LeaderLength should be scaled based on axis??
 		}
 	}
 }
