@@ -58,7 +58,8 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
-			throw new System.NotImplementedException();
+			base.ApplyTransform(transform);
+			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
 		}
 	}
 }
