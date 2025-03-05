@@ -86,9 +86,12 @@ namespace ACadSharp.Blocks
 			return clone;
 		}
 
+		/// <inheritdoc/>
+		/// <remarks>
+		/// Block entities don't have any geometric properties.
+		/// </remarks>
 		public override void ApplyTransform(Transform transform)
 		{
-			throw new System.NotImplementedException();
 		}
 
 		/// <inheritdoc/>
