@@ -14,14 +14,11 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.XLine)]
 	public class XLine : Entity
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.XLINE;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityXline;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.XLine;
+		/// <summary>
+		/// Unit direction vector(in WCS).
+		/// </summary>
+		[DxfCodeValue(11, 21, 31)]
+		public XYZ Direction { get; set; }
 
 		/// <summary>
 		/// First point(in WCS).
@@ -29,16 +26,20 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ FirstPoint { get; set; }
 
-		/// <summary>
-		/// Unit direction vector(in WCS).
-		/// </summary>
-		[DxfCodeValue(11, 21, 31)]
-		public XYZ Direction { get; set; }
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityXline;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.XLINE;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.XLine;
 
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
-			throw new System.NotImplementedException();
+			this.FirstPoint = transform.ApplyTransform(this.FirstPoint);
+			this.Direction = transform.Rotate(this.Direction);
 		}
 
 		/// <inheritdoc/>
