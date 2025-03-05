@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
 using CSUtilities.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,31 +14,8 @@ namespace ACadSharp.Entities
 	public abstract class Polyline : Entity, IPolyline
 	{
 		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityPolyline;
-
-		/// <inheritdoc/>
 		[DxfCodeValue(30)]
 		public double Elevation { get; set; } = 0.0;
-
-		/// <inheritdoc/>
-		[DxfCodeValue(39)]
-		public double Thickness { get; set; } = 0.0;
-
-		/// <inheritdoc/>
-		[DxfCodeValue(210, 220, 230)]
-		public XYZ Normal { get; set; } = XYZ.AxisZ;
-
-		/// <summary>
-		/// Polyline flags.
-		/// </summary>
-		[DxfCodeValue(70)]
-		public PolylineFlags Flags { get; set; }
-
-		/// <summary>
-		/// Start width.
-		/// </summary>
-		[DxfCodeValue(40)]
-		public double StartWidth { get; set; } = 0.0;
 
 		/// <summary>
 		/// End width.
@@ -47,24 +23,11 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(41)]
 		public double EndWidth { get; set; } = 0.0;
 
-		//71	Polygon mesh M vertex count(optional; default = 0)
-		//72	Polygon mesh N vertex count(optional; default = 0)
-		//73	Smooth surface M density(optional; default = 0)
-		//74	Smooth surface N density(optional; default = 0)
-
 		/// <summary>
-		/// Curves and smooth surface type.
+		/// Polyline flags.
 		/// </summary>
-		[DxfCodeValue(75)]
-		public SmoothSurfaceType SmoothSurface { get; set; }
-
-		/// <summary>
-		/// Vertices that form this polyline.
-		/// </summary>
-		/// <remarks>
-		/// Each <see cref="Vertex"/> has it's own unique handle.
-		/// </remarks>
-		public SeqendCollection<Vertex> Vertices { get; private set; }
+		[DxfCodeValue(70)]
+		public PolylineFlags Flags { get; set; }
 
 		/// <inheritdoc/>
 		public bool IsClosed
@@ -89,11 +52,78 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityPolyline;
+
+		/// <summary>
+		/// Curves and smooth surface type.
+		/// </summary>
+		[DxfCodeValue(75)]
+		public SmoothSurfaceType SmoothSurface { get; set; }
+
+		/// <summary>
+		/// Start width.
+		/// </summary>
+		[DxfCodeValue(40)]
+		public double StartWidth { get; set; } = 0.0;
+
+		/// <inheritdoc/>
+		[DxfCodeValue(39)]
+		public double Thickness { get; set; } = 0.0;
+
+		//71	Polygon mesh M vertex count(optional; default = 0)
+		//72	Polygon mesh N vertex count(optional; default = 0)
+		//73	Smooth surface M density(optional; default = 0)
+		//74	Smooth surface N density(optional; default = 0)
+		/// <summary>
+		/// Vertices that form this polyline.
+		/// </summary>
+		/// <remarks>
+		/// Each <see cref="Vertex"/> has it's own unique handle.
+		/// </remarks>
+		public SeqendCollection<Vertex> Vertices { get; private set; }
+
+		/// <inheritdoc/>
 		IEnumerable<IVertex> IPolyline.Vertices { get { return this.Vertices; } }
 
 		public Polyline() : base()
 		{
 			this.Vertices = new SeqendCollection<Vertex>(this);
+		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			var newNormal = this.transformNormal(transform, this.Normal);
+
+			this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+
+			foreach (var vertex in this.Vertices)
+			{
+				XYZ v = transOW * vertex.Location;
+				v = transform.ApplyTransform(v);
+				v = transWO * v;
+				vertex.Location = v;
+			}
+
+			this.Normal = newNormal;
+		}
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			Polyline clone = (Polyline)base.Clone();
+
+			clone.Vertices = new SeqendCollection<Vertex>(clone);
+			foreach (Vertex v in this.Vertices)
+			{
+				clone.Vertices.Add((Vertex)v.Clone());
+			}
+
+			return clone;
 		}
 
 		/// <inheritdoc/>
@@ -176,25 +206,6 @@ namespace ACadSharp.Entities
 			}
 
 			return entities;
-		}
-
-		/// <inheritdoc/>
-		public override CadObject Clone()
-		{
-			Polyline clone = (Polyline)base.Clone();
-
-			clone.Vertices = new SeqendCollection<Vertex>(clone);
-			foreach (Vertex v in this.Vertices)
-			{
-				clone.Vertices.Add((Vertex)v.Clone());
-			}
-
-			return clone;
-		}
-
-		public override void ApplyTransform(Transform transform)
-		{
-			throw new NotImplementedException();
 		}
 
 		internal override void AssignDocument(CadDocument doc)
