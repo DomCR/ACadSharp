@@ -50,7 +50,10 @@ namespace ACadSharp.Entities
 
 		public override void ApplyTransform(Transform transform)
 		{
-			throw new System.NotImplementedException();
+			this.FirstCorner = transform.ApplyTransform(this.FirstCorner);
+			this.SecondCorner = transform.ApplyTransform(this.SecondCorner);
+			this.ThirdCorner = transform.ApplyTransform(this.ThirdCorner);
+			this.FourthCorner = transform.ApplyTransform(this.FourthCorner);
 		}
 
 		public override BoundingBox GetBoundingBox()
