@@ -115,6 +115,7 @@ namespace ACadSharp.Entities
 			return BoundingBox.FromPoints(this.ControlPoints);
 		}
 
+		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
 			throw new System.NotImplementedException();
