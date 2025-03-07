@@ -123,9 +123,11 @@ namespace ACadSharp.Entities
 			return new BoundingBox(this.InsertionPoint);
 		}
 
+		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
-			throw new NotImplementedException();
+			this.Normal = this.transformNormal(transform, this.Normal);
+			this.InsertionPoint = transform.Translate(this.InsertionPoint);
 		}
 	}
 }
