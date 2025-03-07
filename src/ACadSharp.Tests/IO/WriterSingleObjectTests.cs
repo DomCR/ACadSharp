@@ -44,6 +44,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
 			Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
+			Data.Add(new(nameof(SingleCaseGenerator.CreateGroup)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedLwPolyline)));
@@ -646,6 +647,46 @@ namespace ACadSharp.Tests.IO
 			public override string ToString()
 			{
 				return this.Name;
+			}
+
+			public void CreateGroup()
+			{
+				Layer layer = new Layer("MyLayer");
+				layer.Color = new Color(0, 153, 0);
+				this.Document.Layers.Add(layer);
+
+				Circle circle = new Circle();
+				circle.Center = new CSMath.XYZ(1, 1, 0);
+				circle.Radius = 1;
+				circle.Normal = new CSMath.XYZ(0, 0, 1);
+
+				Line line = new Line();
+				line.StartPoint = new CSMath.XYZ(0, 0, 0);
+				line.EndPoint = new CSMath.XYZ(2, 2, 0);
+
+				circle.Layer = layer;
+				line.Layer = layer;
+
+				this.Document.Entities.Add(circle);
+				this.Document.Entities.Add(line);
+
+				Group group = new Group();
+				group.Name = "MyGroup";
+				group.Add(circle);
+				group.Add(line);
+				group.Selectable = true;
+
+				this.Document.Groups.Add(group);
+
+				TextEntity text = new TextEntity();
+				text.Value = "Hello World!";
+				text.Layer = layer;
+				text.HorizontalAlignment = TextHorizontalAlignment.Center;
+				text.VerticalAlignment = TextVerticalAlignmentType.Middle;
+				text.InsertPoint = new CSMath.XYZ(1, 1, 0);
+				text.AlignmentPoint = new CSMath.XYZ(10, 10, 0);
+
+				this.Document.Entities.Add(text);
 			}
 
 			public void ViewZoom()
