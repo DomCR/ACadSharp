@@ -356,18 +356,11 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitShort((short)(group.Selectable ? 1 : 0));
 
 			//Numhandles BL # objhandles in this group
-			this._writer.WriteBitLong(group.Entities.Count());
-			foreach (Entities.Entity e in group.Entities)
+			this._writer.WriteBitLong(group.Entities.Count);
+			foreach (ulong h in group.Entities.Keys)
 			{
-				if (e.Document == group.Document)
-				{
-					//the entries in the group(hard pointer)
-					this._writer.HandleReference(DwgReferenceType.HardPointer, e);
-				}
-				else
-				{
-					this.notify($"Invalid Group {group.Handle} has an entity that doesn't belong to the same CadDocument.", NotificationType.Warning);
-				}
+				//the entries in the group(hard pointer)
+				this._writer.HandleReference(DwgReferenceType.HardPointer, h);
 			}
 		}
 

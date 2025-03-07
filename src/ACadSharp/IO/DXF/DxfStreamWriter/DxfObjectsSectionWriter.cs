@@ -362,7 +362,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(70, group.IsUnnamed ? (short)1 : (short)0);
 			this._writer.Write(71, group.Selectable ? (short)1 : (short)0);
 
-			foreach (Entity entity in group.Entities)
+			foreach (Entity entity in group.Entities.Values)
 			{
 				this._writer.WriteHandle(340, entity);
 			}

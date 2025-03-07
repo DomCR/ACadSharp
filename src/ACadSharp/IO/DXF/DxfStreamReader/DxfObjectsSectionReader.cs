@@ -70,8 +70,6 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<PdfUnderlayDefinition>(new CadNonGraphicalObjectTemplate(new PdfUnderlayDefinition()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectSortEntsTable:
 					return this.readSortentsTable();
-				case DxfFileToken.TableGroup:
-					return this.readObjectCodes<Group>(new CadGroupTemplate(), this.readGroup);
 				case DxfFileToken.ObjectGeoData:
 					return this.readObjectCodes<GeoData>(new CadGeoDataTemplate(), this.readGeoData);
 				case DxfFileToken.ObjectScale:
@@ -235,17 +233,6 @@ namespace ACadSharp.IO.DXF
 						return this.readPlotSettings(template, map);
 					}
 					return true;
-			}
-		}
-
-		private bool readGroup(CadTemplate template, DxfMap map)
-		{
-			CadLayoutTemplate tmp = template as CadLayoutTemplate;
-
-			switch (this._reader.Code)
-			{
-				default:
-					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
 		}
 

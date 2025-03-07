@@ -4,13 +4,11 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadGroupTemplate : CadTemplate<Group>
+	internal class DwgGroupTemplate : CadTemplate<Group>
 	{
 		public List<ulong> Handles { get; set; } = new List<ulong>();
 
-		public CadGroupTemplate() : base(new Group()) { }
-
-		public CadGroupTemplate(Group group) : base(group) { }
+		public DwgGroupTemplate(Group group) : base(group) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{
@@ -20,7 +18,7 @@ namespace ACadSharp.IO.Templates
 			{
 				if (builder.TryGetCadObject<Entity>(handle, out Entity e))
 				{
-					this.CadObject.Add(e);
+					this.CadObject.Entities.Add(handle, e);
 				}
 				else
 				{

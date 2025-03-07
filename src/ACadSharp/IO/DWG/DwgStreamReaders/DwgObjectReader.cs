@@ -5015,7 +5015,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readGroup()
 		{
 			Group group = new Group();
-			CadGroupTemplate template = new CadGroupTemplate(group);
+			DwgGroupTemplate template = new DwgGroupTemplate(group);
 
 			this.readCommonNonEntityData(template);
 
