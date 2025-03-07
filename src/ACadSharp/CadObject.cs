@@ -22,7 +22,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Extended data attached to this object.
 		/// </summary>
-		public ExtendedDataDictionary ExtendedData { get; }
+		public ExtendedDataDictionary ExtendedData { get; private set; }
 
 		/// <inheritdoc/>
 		/// <remarks>
@@ -115,7 +115,7 @@ namespace ACadSharp
 			//Collections
 			clone.reactors = new List<CadObject>();
 			clone.XDictionary = null;
-			clone.ExtendedData.Clear();
+			clone.ExtendedData = new ExtendedDataDictionary(clone);
 
 			return clone;
 		}

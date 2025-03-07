@@ -3,6 +3,10 @@ using Xunit;
 using ACadSharp.Tests.Common;
 using ACadSharp.Entities;
 using ACadSharp.Objects;
+using ACadSharp.Tables;
+using ACadSharp.XData;
+using System.Collections.Generic;
+using System.Reflection.Emit;
 
 namespace ACadSharp.Tests
 {
@@ -50,6 +54,15 @@ namespace ACadSharp.Tests
 			}
 
 			CadObject clone = (CadObject)cadObject.Clone();
+
+			List<ExtendedDataRecord> records = new();
+			records.Add(new ExtendedDataControlString(false));
+			records.Add(new ExtendedDataInteger16(5));
+			records.Add(new ExtendedDataInteger32(33));
+			records.Add(new ExtendedDataString("my extended data string"));
+			records.Add(new ExtendedDataControlString(true));
+
+			cadObject.ExtendedData.Add(new AppId("hello"), records);
 
 			CadObjectTestUtils.AssertClone(cadObject, clone);
 		}

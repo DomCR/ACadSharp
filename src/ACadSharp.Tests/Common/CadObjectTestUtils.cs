@@ -12,6 +12,7 @@ namespace ACadSharp.Tests.Common
 			Assert.False(original.Equals(clone));
 			Assert.True(0 == clone.Handle);
 			Assert.Null(clone.Document);
+			Assert.Empty(clone.ExtendedData);
 		}
 
 		public static void AssertEntityClone(Entity original, Entity clone)
