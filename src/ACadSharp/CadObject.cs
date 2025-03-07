@@ -114,7 +114,7 @@ namespace ACadSharp
 
 			//Collections
 			clone.reactors = new List<CadObject>();
-			clone.XDictionary = null;
+			clone._xdictionary = null;
 			clone.ExtendedData = new ExtendedDataDictionary(clone);
 
 			return clone;
@@ -165,7 +165,9 @@ namespace ACadSharp
 		internal virtual void UnassignDocument()
 		{
 			if (this.XDictionary != null)
+			{
 				this.Document.UnregisterCollection(this.XDictionary);
+			}
 
 			this.Handle = 0;
 			this.Document = null;

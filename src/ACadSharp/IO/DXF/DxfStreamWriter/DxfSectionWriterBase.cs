@@ -87,13 +87,6 @@ namespace ACadSharp.IO.DXF
 			}
 
 			this._writer.Write(DxfCode.SoftPointerId, cadObject.Owner.Handle);
-
-			if (cadObject.ExtendedData != null && this.Configuration.WriteXData)
-			{
-				//this._writer.Write(DxfCode.ControlString,DxfFileToken.ReactorsToken);
-				//this._writer.Write(DxfCode.HardOwnershipId, cadObject.ExtendedData);
-				//this._writer.Write(DxfCode.ControlString, "}");
-			}
 		}
 
 		protected void writeExtendedData(ExtendedDataDictionary xdata)
