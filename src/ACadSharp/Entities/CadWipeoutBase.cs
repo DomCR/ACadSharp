@@ -210,9 +210,12 @@ namespace ACadSharp.Entities
 		private ImageDefinition _definition;
 		private ImageDefinitionReactor _definitionReactor;
 
+		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
-			throw new NotImplementedException();
+			this.InsertPoint = transform.ApplyTransform(this.InsertPoint);
+			this.UVector = transform.ApplyTransform(this.UVector);
+			this.VVector = transform.ApplyTransform(this.VVector);
 		}
 
 		/// <inheritdoc/>
