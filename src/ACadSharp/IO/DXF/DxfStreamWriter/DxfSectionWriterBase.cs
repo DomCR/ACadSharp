@@ -6,6 +6,7 @@ using CSUtilities.Converters;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ACadSharp.IO.DXF
@@ -68,12 +69,19 @@ namespace ACadSharp.IO.DXF
 				this.Holder.Objects.Enqueue(cadObject.XDictionary);
 			}
 
-			if (cadObject.Reactors != null && cadObject.Reactors.Count > 0)
+			if (cadObject.Reactors != null && cadObject.Reactors.Any())
 			{
 				this._writer.Write(DxfCode.ControlString, DxfFileToken.ReactorsToken);
-				foreach (ulong reactorHandle in cadObject.Reactors.Keys)
+				foreach (var reactor in cadObject.Reactors)
 				{
-					this._writer.Write(DxfCode.SoftPointerId, reactorHandle);
+					if (reactor.Document == cadObject.Document)
+					{
+						this._writer.Write(DxfCode.SoftPointerId, reactor.Handle);
+					}
+					else
+					{
+						this.notify($"CadObject {cadObject.Handle} has an external reactor.", NotificationType.Warning);
+					}
 				}
 				this._writer.Write(DxfCode.ControlString, "}");
 			}

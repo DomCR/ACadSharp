@@ -2,6 +2,7 @@
 using Xunit;
 using ACadSharp.Tests.Common;
 using ACadSharp.Entities;
+using ACadSharp.Objects;
 
 namespace ACadSharp.Tests
 {
@@ -13,7 +14,7 @@ namespace ACadSharp.Tests
 		{
 			foreach (Type item in DataFactory.GetTypes<CadObject>())
 			{
-				if (item == typeof(UnknownEntity))
+				if (item == typeof(UnknownEntity) || item == typeof(UnknownNonGraphicalObject))
 				{
 					continue;
 				}
@@ -37,11 +38,17 @@ namespace ACadSharp.Tests
 			Assert.Empty(obj.XDictionary);
 		}
 
-		[Theory(Skip = "Factory refactor needed")]
+		[Theory]
 		[MemberData(nameof(ACadTypes))]
 		public void Clone(Type t)
 		{
 			CadObject cadObject = Factory.CreateObject(t);
+
+			if (cadObject == null)
+			{
+				return;
+			}
+
 			CadObject clone = (CadObject)cadObject.Clone();
 
 			CadObjectTestUtils.AssertClone(cadObject, clone);
