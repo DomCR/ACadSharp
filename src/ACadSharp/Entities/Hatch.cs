@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -129,6 +130,11 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public Hatch() : base() { }
+
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
+		}
 
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()

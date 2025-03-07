@@ -48,6 +48,14 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
+		public override void ApplyTransform(Transform transform)
+		{
+			this.FirstCorner = transform.ApplyTransform(this.FirstCorner);
+			this.SecondCorner = transform.ApplyTransform(this.SecondCorner);
+			this.ThirdCorner = transform.ApplyTransform(this.ThirdCorner);
+			this.FourthCorner = transform.ApplyTransform(this.FourthCorner);
+		}
+
 		public override BoundingBox GetBoundingBox()
 		{
 			return BoundingBox.Null;

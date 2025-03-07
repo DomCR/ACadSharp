@@ -189,5 +189,11 @@ namespace ACadSharp.Entities
 				this.Style = this.Document.DimensionStyles[DimensionStyle.DefaultName];
 			}
 		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

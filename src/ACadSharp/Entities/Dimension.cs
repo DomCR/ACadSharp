@@ -17,14 +17,11 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Dimension)]
 	public abstract class Dimension : Entity
 	{
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Dimension;
-
 		/// <summary>
-		/// Version number
+		/// Attachment point
 		/// </summary>
-		[DxfCodeValue(280)]
-		public byte Version { get; set; }
+		[DxfCodeValue(71)]
+		public AttachmentPointType AttachmentPoint { get; set; }
 
 		/// <summary>
 		/// Block that contains the entities that make up the dimension picture
@@ -37,24 +34,6 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ DefinitionPoint { get; set; }
-
-		/// <summary>
-		/// Middle point of dimension text(in OCS)
-		/// </summary>
-		[DxfCodeValue(11, 21, 31)]
-		public XYZ TextMiddlePoint { get; set; }
-
-		/// <summary>
-		/// Insertion point for clones of a dimension-Baseline and Continue(in OCS)
-		/// </summary>
-		[DxfCodeValue(12, 22, 32)]
-		public XYZ InsertionPoint { get; set; }
-
-		/// <summary>
-		/// Specifies the three-dimensional normal unit vector for the object.
-		/// </summary>
-		[DxfCodeValue(210, 220, 230)]
-		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 		/// <summary>
 		/// Dimension type
@@ -71,58 +50,6 @@ namespace ACadSharp.Entities
 				this._flags = value;
 			}
 		}
-
-		/// <summary>
-		/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location
-		/// </summary>
-		public bool IsTextUserDefinedLocation
-		{
-			get
-			{
-				return this._flags.HasFlag(DimensionType.TextUserDefinedLocation);
-			}
-			set
-			{
-				if (value)
-				{
-					this._flags = this._flags.AddFlag(DimensionType.TextUserDefinedLocation);
-				}
-				else
-				{
-					this._flags = this._flags.RemoveFlag(DimensionType.TextUserDefinedLocation);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Attachment point
-		/// </summary>
-		[DxfCodeValue(71)]
-		public AttachmentPointType AttachmentPoint { get; set; }
-
-		/// <summary>
-		/// Dimension text line-spacing style
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 72)]
-		public LineSpacingStyleType LineSpacingStyle { get; set; }
-
-		/// <summary>
-		/// Dimension text-line spacing factor
-		/// </summary>
-		/// <remarks>
-		/// Percentage of default (3-on-5) line spacing to be applied.
-		/// </remarks>
-		/// <value>
-		/// Valid values range from 0.25 to 4.00
-		/// </value>
-		[DxfCodeValue(DxfReferenceType.Optional, 41)]
-		public double LineSpacingFactor { get; set; }
-
-		/// <summary>
-		/// Actual measurement
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 42)]
-		public abstract double Measurement { get; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the first arrow
@@ -153,34 +80,69 @@ namespace ACadSharp.Entities
 		public bool FlipArrow2 { get; set; }
 
 		/// <summary>
-		/// Gets or sets an explicit dimension text to be displayed instead of the standard
-		/// dimension text created from the measurement in the format specified by the
-		/// dimension-style properties.
-		/// </summary>
-		/// <remarks>
-		/// If null or empty, the dimension created from the measurement is to be displayed. 
-		/// If " " (one blank space), the text is to be suppressed. Anything else is drawn as the text.
-		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.Optional, 1)]
-		public string Text { get; set; }
-
-		/// <summary>
-		/// rotation angle of the dimension text away from its default orientation (the direction of the dimension line)
-		/// </summary>
-		/// <remarks>
-		/// Optional
-		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.Optional | DxfReferenceType.IsAngle, 53)]
-		public double TextRotation { get; set; }
-
-		/// <summary>
 		/// All dimension types have an optional 51 group code, which indicates the horizontal direction for the dimension entity.The dimension entity determines the orientation of dimension text and lines for horizontal, vertical, and rotated linear dimensions
 		/// This group value is the negative of the angle between the OCS X axis and the UCS X axis. It is always in the XY plane of the OCS
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional | DxfReferenceType.IsAngle, 51)]
 		public double HorizontalDirection { get; set; }
 
-		//This group value is the negative of the angle between the OCS X axis and the UCS X axis.It is always in the XY plane of the OCS
+		/// <summary>
+		/// Insertion point for clones of a dimension-Baseline and Continue(in OCS)
+		/// </summary>
+		[DxfCodeValue(12, 22, 32)]
+		public XYZ InsertionPoint { get; set; }
+
+		/// <summary>
+		/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location
+		/// </summary>
+		public bool IsTextUserDefinedLocation
+		{
+			get
+			{
+				return this._flags.HasFlag(DimensionType.TextUserDefinedLocation);
+			}
+			set
+			{
+				if (value)
+				{
+					this._flags = this._flags.AddFlag(DimensionType.TextUserDefinedLocation);
+				}
+				else
+				{
+					this._flags = this._flags.RemoveFlag(DimensionType.TextUserDefinedLocation);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Dimension text-line spacing factor
+		/// </summary>
+		/// <remarks>
+		/// Percentage of default (3-on-5) line spacing to be applied.
+		/// </remarks>
+		/// <value>
+		/// Valid values range from 0.25 to 4.00
+		/// </value>
+		[DxfCodeValue(DxfReferenceType.Optional, 41)]
+		public double LineSpacingFactor { get; set; }
+
+		/// <summary>
+		/// Dimension text line-spacing style
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Optional, 72)]
+		public LineSpacingStyleType LineSpacingStyle { get; set; }
+
+		/// <summary>
+		/// Actual measurement
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Optional, 42)]
+		public abstract double Measurement { get; }
+
+		/// <summary>
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 		/// <summary>
 		/// Dimension style
@@ -207,6 +169,43 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Dimension;
+
+		/// <summary>
+		/// Gets or sets an explicit dimension text to be displayed instead of the standard
+		/// dimension text created from the measurement in the format specified by the
+		/// dimension-style properties.
+		/// </summary>
+		/// <remarks>
+		/// If null or empty, the dimension created from the measurement is to be displayed.
+		/// If " " (one blank space), the text is to be suppressed. Anything else is drawn as the text.
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Optional, 1)]
+		public string Text { get; set; }
+
+		/// <summary>
+		/// Middle point of dimension text(in OCS)
+		/// </summary>
+		[DxfCodeValue(11, 21, 31)]
+		public XYZ TextMiddlePoint { get; set; }
+
+		/// <summary>
+		/// rotation angle of the dimension text away from its default orientation (the direction of the dimension line)
+		/// </summary>
+		/// <remarks>
+		/// Optional
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Optional | DxfReferenceType.IsAngle, 53)]
+		public double TextRotation { get; set; }
+
+		/// <summary>
+		/// Version number
+		/// </summary>
+		[DxfCodeValue(280)]
+		public byte Version { get; set; }
+
+		//This group value is the negative of the angle between the OCS X axis and the UCS X axis.It is always in the XY plane of the OCS
 		protected DimensionType _flags;
 
 		private DimensionStyle _style = DimensionStyle.Default;
@@ -215,6 +214,22 @@ namespace ACadSharp.Entities
 		{
 			this._flags = type;
 			this._flags |= DimensionType.BlockReference;
+		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			XYZ newNormal = this.transformNormal(transform, this.Normal);
+			this.getWorldMatrix(transform, Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+
+			this.DefinitionPoint = applyWorldMatrix(this.DefinitionPoint, transform, transOW, transWO);
+
+			if (this.IsTextUserDefinedLocation)
+			{
+				this.TextMiddlePoint = applyWorldMatrix(this.TextMiddlePoint, transform, transOW, transWO);
+			}
+
+			this.Normal = newNormal;
 		}
 
 		/// <inheritdoc/>
