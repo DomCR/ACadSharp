@@ -4,6 +4,7 @@ using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSUtilities.Converters;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ACadSharp.IO.DWG
@@ -438,14 +439,14 @@ namespace ACadSharp.IO.DWG
 
 		private void writeReactorsAndDictionaryHandle(CadObject cadObject)
 		{
-			//TODO: Write reactors
-
 			//Numreactors S number of reactors in this object
-			this._writer.WriteBitLong(0);
-
-			//for (int i = 0; i < 0; ++i)
-			//	//[Reactors (soft pointer)]
-			//	template.CadObject.Reactors.Add(this.handleReference(), null);
+			cadObject.CleanReactors();
+			this._writer.WriteBitLong(cadObject.Reactors.Count());
+			foreach (var item in cadObject.Reactors)
+			{
+				//[Reactors (soft pointer)]
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, item);
+			}
 
 			bool noDictionary = cadObject.XDictionary == null;
 
