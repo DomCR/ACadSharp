@@ -69,19 +69,13 @@ namespace ACadSharp.IO.DXF
 				this.Holder.Objects.Enqueue(cadObject.XDictionary);
 			}
 
+			cadObject.CleanReactors();
 			if (cadObject.Reactors.Any())
 			{
 				this._writer.Write(DxfCode.ControlString, DxfFileToken.ReactorsToken);
 				foreach (var reactor in cadObject.Reactors)
 				{
-					if (reactor.Document == cadObject.Document)
-					{
-						this._writer.Write(DxfCode.SoftPointerId, reactor.Handle);
-					}
-					else
-					{
-						this.notify($"CadObject {cadObject.Handle} has an external reactor.", NotificationType.Warning);
-					}
+					this._writer.Write(DxfCode.SoftPointerId, reactor.Handle);
 				}
 				this._writer.Write(DxfCode.ControlString, "}");
 			}

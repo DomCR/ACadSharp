@@ -36,7 +36,7 @@ namespace ACadSharp.IO.Templates
 			{
 				if (builder.TryGetCadObject(handle, out CadObject reactor))
 				{
-					this.CadObject.reactors.Add(reactor);
+					this.CadObject.AddReactor(reactor);
 				}
 				else
 				{

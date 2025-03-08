@@ -55,7 +55,20 @@ namespace ACadSharp
 		/// <summary>
 		/// Objects that are attached to this object.
 		/// </summary>
-		public IEnumerable<CadObject> Reactors { get { return this.reactors; } }
+		public IEnumerable<CadObject> Reactors
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return Enumerable.Empty<CadObject>();
+				}
+				else
+				{
+					return this._reactors;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Object Subclass marker.
@@ -84,8 +97,8 @@ namespace ACadSharp
 			}
 		}
 
-		internal List<CadObject> reactors = new List<CadObject>();
-		
+		private List<CadObject> _reactors = new List<CadObject>();
+
 		private CadDictionary _xdictionary = null;
 
 		/// <summary>
@@ -113,7 +126,7 @@ namespace ACadSharp
 			clone.Owner = null;
 
 			//Collections
-			clone.reactors = new List<CadObject>();
+			clone._reactors = new List<CadObject>();
 			clone._xdictionary = null;
 			clone.ExtendedData = new ExtendedDataDictionary(clone);
 
@@ -138,6 +151,33 @@ namespace ACadSharp
 		public override string ToString()
 		{
 			return $"{this.ObjectName}:{this.Handle}";
+		}
+
+		/// <summary>
+		/// Removes any reactor object that doesn't belong to the same <see cref="CadDocument"/> as this <see cref="CadObject"/>.
+		/// </summary>
+		public void CleanReactors()
+		{
+			var reactors = this._reactors.ToArray();
+			foreach (var reactor in reactors)
+			{
+				if (reactor.Document != this.Document)
+				{
+					this._reactors.Remove(reactor);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Add a reactor object linked to this one.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="CadObject"/> and its reactors must be in the same <see cref="CadDocument"/> to be valid.
+		/// </remarks>
+		/// <param name="cadObject"></param>
+		public void AddReactor(CadObject cadObject)
+		{
+			this._reactors.Add(cadObject);
 		}
 
 		internal virtual void AssignDocument(CadDocument doc)
@@ -183,6 +223,8 @@ namespace ACadSharp
 					this.ExtendedData.Add(item.Key.Clone() as AppId, item.Value);
 				}
 			}
+
+			this._reactors.Clear();
 		}
 
 		protected T updateCollection<T>(T entry, ObjectDictionaryCollection<T> collection)
