@@ -77,7 +77,8 @@ namespace ACadSharp.Tests.IO
 			CadDocument transfer = new CadDocument();
 			transfer.Header.Version = doc.Header.Version;
 
-			foreach (var item in doc.Entities)
+			List<Entity> entities = new List<Entity>(doc.Entities);
+			foreach (var item in entities)
 			{
 				Entity e = doc.Entities.Remove(item);
 				transfer.Entities.Add(e);
@@ -97,7 +98,8 @@ namespace ACadSharp.Tests.IO
 			CadDocument transfer = new CadDocument();
 			transfer.Header.Version = doc.Header.Version;
 
-			foreach (var item in doc.Entities)
+			List<Entity> entities = new List<Entity>(doc.Entities);
+			foreach (var item in entities)
 			{
 				if (item.ExtendedData.Any())
 				{
