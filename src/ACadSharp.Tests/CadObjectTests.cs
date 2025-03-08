@@ -7,6 +7,7 @@ using ACadSharp.Tables;
 using ACadSharp.XData;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using System.Linq;
 
 namespace ACadSharp.Tests
 {
@@ -33,13 +34,30 @@ namespace ACadSharp.Tests
 		}
 
 		[Fact]
-		public void CreateExtendedDictionaryTest()
+		public void CleanReactorsTest()
 		{
-			CadObject obj = new Line();
-			obj.CreateExtendedDictionary();
+			Line main = new Line();
+			Line line = new Line();
+			CadDocument doc = new CadDocument();
 
-			Assert.NotNull(obj.XDictionary);
-			Assert.Empty(obj.XDictionary);
+			Assert.NotNull(main.Reactors);
+			Assert.Empty(main.Reactors);
+
+			doc.Entities.Add(main);
+			doc.Entities.Add(line);
+			Point point = new Point();
+			main.AddReactor(point);
+			main.AddReactor(line);
+
+			Assert.Contains(point, main.Reactors);
+			Assert.True(main.Reactors.Count() == 2);
+
+			main.CleanReactors();
+			Assert.NotEmpty(main.Reactors);
+			Assert.True(main.Reactors.Count() == 1);
+
+			doc.Entities.Remove(main);
+			Assert.Empty(main.Reactors);
 		}
 
 		[Theory]
@@ -65,6 +83,16 @@ namespace ACadSharp.Tests
 			cadObject.ExtendedData.Add(new AppId("hello"), records);
 
 			CadObjectTestUtils.AssertClone(cadObject, clone);
+		}
+
+		[Fact]
+		public void CreateExtendedDictionaryTest()
+		{
+			CadObject obj = new Line();
+			obj.CreateExtendedDictionary();
+
+			Assert.NotNull(obj.XDictionary);
+			Assert.Empty(obj.XDictionary);
 		}
 	}
 }
