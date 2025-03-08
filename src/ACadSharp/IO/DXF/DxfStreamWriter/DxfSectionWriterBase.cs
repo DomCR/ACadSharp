@@ -69,7 +69,7 @@ namespace ACadSharp.IO.DXF
 				this.Holder.Objects.Enqueue(cadObject.XDictionary);
 			}
 
-			if (cadObject.Reactors != null && cadObject.Reactors.Any())
+			if (cadObject.Reactors.Any())
 			{
 				this._writer.Write(DxfCode.ControlString, DxfFileToken.ReactorsToken);
 				foreach (var reactor in cadObject.Reactors)

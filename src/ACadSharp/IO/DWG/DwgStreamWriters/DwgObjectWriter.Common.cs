@@ -438,14 +438,13 @@ namespace ACadSharp.IO.DWG
 
 		private void writeReactorsAndDictionaryHandle(CadObject cadObject)
 		{
-			//TODO: Write reactors
-
 			//Numreactors S number of reactors in this object
-			this._writer.WriteBitLong(0);
-
-			//for (int i = 0; i < 0; ++i)
-			//	//[Reactors (soft pointer)]
-			//	template.CadObject.Reactors.Add(this.handleReference(), null);
+			this._writer.WriteBitLong(cadObject.reactors.Count);
+			foreach (var item in cadObject.reactors)
+			{
+				//[Reactors (soft pointer)]
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, item);
+			}
 
 			bool noDictionary = cadObject.XDictionary == null;
 
