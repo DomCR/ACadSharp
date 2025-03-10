@@ -2,6 +2,7 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
+using System.Collections;
 
 namespace ACadSharp.Entities
 {
@@ -102,22 +103,9 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		/// <summary>
-		/// X-axis direction vector(in WCS)
-		/// </summary>
-		/// <remarks>
-		/// A group code 50 (rotation angle in radians) passed as DXF input is converted to the equivalent direction vector (if both a code 50 and codes 11, 21, 31 are passed, the last one wins). This is provided as a convenience for conversions from text objects
-		/// </remarks>
+		/// <inheritdoc/>
 		[DxfCodeValue(11, 21, 31)]
-		public XYZ AlignmentPoint
-		{
-			get => this._alignmentPoint;
-			set
-			{
-				this._alignmentPoint = value;
-				this._rotation = new XY(this._alignmentPoint.X, this._alignmentPoint.Y).GetAngle();
-			}
-		}
+		public XYZ AlignmentPoint { get; set; }
 
 		/// <summary>
 		/// Horizontal width of the characters that make up the mtext entity.
@@ -145,18 +133,10 @@ namespace ACadSharp.Entities
 		/// The rotation angle in radians.
 		/// </value>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
-		public double Rotation
-		{
-			get => this._rotation;
-			set
-			{
-				this._rotation = value;
-				this.AlignmentPoint = new XYZ(Math.Cos(this._rotation), Math.Sin(this._rotation), 0.0);
-			}
-		}
+		public double Rotation { get; set; } = 0.0;
 
 		/// <summary>
-		/// Mtext line spacing style 
+		/// Mtext line spacing style.
 		/// </summary>
 		[DxfCodeValue(73)]
 		public LineSpacingStyleType LineSpacingStyle { get; set; }
@@ -203,10 +183,6 @@ namespace ACadSharp.Entities
 
 		private double _height = 1.0;
 
-		private XYZ _alignmentPoint = XYZ.AxisX;
-
-		private double _rotation = 0.0;
-
 		private TextStyle _style = TextStyle.Default;
 
 		/// <inheritdoc/>
@@ -216,6 +192,18 @@ namespace ACadSharp.Entities
 		public override BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.InsertPoint);
+		}
+
+		/// <summary>
+		/// Get the text value separated in lines.
+		/// </summary>
+		/// <returns></returns>
+		public string[] GetTextLines()
+		{
+			return this.Value.Split(
+				new string[] { "\r\n", "\r", "\n" },
+				StringSplitOptions.None
+			);
 		}
 
 		/// <inheritdoc/>
