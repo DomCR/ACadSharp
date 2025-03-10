@@ -356,11 +356,11 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitShort((short)(group.Selectable ? 1 : 0));
 
 			//Numhandles BL # objhandles in this group
-			this._writer.WriteBitLong(group.Entities.Count);
-			foreach (ulong h in group.Entities.Keys)
+			this._writer.WriteBitLong(group.Entities.Count());
+			foreach (var e in group.Entities)
 			{
 				//the entries in the group(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, h);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, e);
 			}
 		}
 

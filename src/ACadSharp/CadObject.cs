@@ -174,10 +174,20 @@ namespace ACadSharp
 		/// <remarks>
 		/// The <see cref="CadObject"/> and its reactors must be in the same <see cref="CadDocument"/> to be valid.
 		/// </remarks>
-		/// <param name="cadObject"></param>
-		public void AddReactor(CadObject cadObject)
+		/// <param name="reactor"></param>
+		public void AddReactor(CadObject reactor)
 		{
-			this._reactors.Add(cadObject);
+			this._reactors.Add(reactor);
+		}
+
+		/// <summary>
+		/// Remove a reactor linked to this object.
+		/// </summary>
+		/// <param name="reactor"></param>
+		/// <returns></returns>
+		public bool RemoveReactor(CadObject reactor)
+		{
+			return this._reactors.Remove(reactor);
 		}
 
 		internal virtual void AssignDocument(CadDocument doc)

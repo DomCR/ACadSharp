@@ -131,6 +131,7 @@
 		public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
 		public const string ObjectTableContent = "TABLECONTENT";
 		public const string ObjectGeoData = "GEODATA";
+		public const string ObjectGroup = "GROUP";
 
 		#endregion
 	}

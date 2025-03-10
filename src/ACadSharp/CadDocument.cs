@@ -250,7 +250,7 @@ namespace ACadSharp
 		}
 
 		/// <summary>
-		/// 
+		/// Create the default entries and objects for the <see cref="CadDocument"/>.
 		/// </summary>
 		public void CreateDefaults()
 		{
