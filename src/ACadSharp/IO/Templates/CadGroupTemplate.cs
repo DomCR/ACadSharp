@@ -20,7 +20,7 @@ namespace ACadSharp.IO.Templates
 			{
 				if (builder.TryGetCadObject<Entity>(handle, out Entity e))
 				{
-					this.CadObject.Entities.Add(handle, e);
+					this.CadObject.Add(e);
 				}
 				else
 				{

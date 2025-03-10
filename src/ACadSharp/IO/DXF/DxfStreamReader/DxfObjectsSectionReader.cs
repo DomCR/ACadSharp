@@ -244,6 +244,8 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				case 70:
+					return true;
 				case 340:
 					tmp.Handles.Add(this._reader.ValueAsHandle);
 					return true;
