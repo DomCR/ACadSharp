@@ -81,5 +81,12 @@ namespace ACadSharp.Entities
 		{
 			return new BoundingBox(this.InsertionPoint);
 		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			this.Normal = this.transformNormal(transform, this.Normal);
+			this.Direction = transform.Rotate(this.Direction);
+			this.InsertionPoint = transform.ApplyTransform(this.InsertionPoint);
+		}
 	}
 }

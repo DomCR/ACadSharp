@@ -211,6 +211,14 @@ namespace ACadSharp.Entities
 		private ImageDefinitionReactor _definitionReactor;
 
 		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			this.InsertPoint = transform.ApplyTransform(this.InsertPoint);
+			this.UVector = transform.ApplyTransform(this.UVector);
+			this.VVector = transform.ApplyTransform(this.VVector);
+		}
+
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
 			if (!this.ClipBoundaryVertices.Any())

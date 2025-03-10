@@ -117,6 +117,11 @@ namespace ACadSharp.Entities
 			return BoundingBox.FromPoints(Vertices.Select(v => v.Position));
 		}
 
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new NotImplementedException();
+		}
+
 		internal override void AssignDocument(CadDocument doc)
 		{
 			base.AssignDocument(doc);

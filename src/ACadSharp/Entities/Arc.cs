@@ -111,6 +111,46 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			var center = this.Center;
+			var normal = this.Normal;
+			var radius = this.Radius;
+
+			base.ApplyTransform(transform);
+
+			Matrix3 trans = getWorldMatrix(transform, normal, this.Normal, out Matrix3 transOW, out Matrix3 transWO);
+
+			XY start = XY.Rotate(new XY(this.Radius, 0.0), this.StartAngle);
+			XY end = XY.Rotate(new XY(this.Radius, 0.0), this.EndAngle);
+
+			XYZ vStart = transOW * new XYZ(start.X, start.Y, 0.0);
+			vStart = trans * vStart;
+			vStart = transWO * vStart;
+
+			XYZ vEnd = transOW * new XYZ(end.X, end.Y, 0.0);
+			vEnd = trans * vEnd;
+			vEnd = transWO * vEnd;
+
+			XY startPoint = new XY(vStart.X, vStart.Y);
+			XY endPoint = new XY(vEnd.X, vEnd.Y);
+
+			if (Math.Sign(trans.m00 * trans.m11 * trans.m22) < 0)
+			{
+				this.EndAngle = startPoint.GetAngle();
+				this.StartAngle = endPoint.GetAngle();
+			}
+			else
+			{
+				this.StartAngle = startPoint.GetAngle();
+				this.EndAngle = endPoint.GetAngle();
+			}
+
+			this.StartAngle = MathHelper.FixZero(this.StartAngle);
+			this.EndAngle = MathHelper.FixZero(this.EndAngle);
+		}
+
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
 			List<XY> vertices = this.PolygonalVertexes(256);
