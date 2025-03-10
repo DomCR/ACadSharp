@@ -8,6 +8,8 @@ namespace ACadSharp.IO.Templates
 	{
 		public List<ulong> Handles { get; set; } = new List<ulong>();
 
+		public CadGroupTemplate() : base(new Group()) { }
+
 		public CadGroupTemplate(Group group) : base(group) { }
 
 		public override void Build(CadDocumentBuilder builder)

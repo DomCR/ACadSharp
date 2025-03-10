@@ -33,7 +33,7 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// If the group has an automatic generated name
 		/// </summary>
-		[DxfCodeValue(71)]
+		[DxfCodeValue(70)]
 		public bool IsUnnamed { get; set; }
 
 		/// <summary>
