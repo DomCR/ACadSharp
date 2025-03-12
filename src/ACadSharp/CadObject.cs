@@ -59,14 +59,7 @@ namespace ACadSharp
 		{
 			get
 			{
-				if (this.Document == null)
-				{
-					return Enumerable.Empty<CadObject>();
-				}
-				else
-				{
-					return this._reactors;
-				}
+				return this._reactors;
 			}
 		}
 

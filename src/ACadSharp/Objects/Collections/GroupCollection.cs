@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -15,6 +16,14 @@ namespace ACadSharp.Objects.Collections
 		/// <inheritdoc/>
 		public override void Add(Group entry)
 		{
+			foreach (var e in entry.Entities)
+			{
+				if (e.Document != this._dictionary.Document)
+				{
+					throw new InvalidOperationException("Entities in a group must be in the same document as the group being added.");
+				}
+			}
+
 			if (entry.IsUnnamed)
 			{
 				int next = 0;

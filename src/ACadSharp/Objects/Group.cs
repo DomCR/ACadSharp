@@ -39,7 +39,7 @@ namespace ACadSharp.Objects
 		/// The name for an unnamed group will be managed by the <see cref="GroupCollection"/>.
 		/// </remarks>
 		[DxfCodeValue(70)]
-		public bool IsUnnamed { get { return !this.Name.IsNullOrWhiteSpace() && this.Name.StartsWith("*"); } }
+		public bool IsUnnamed { get { return this.Name.IsNullOrWhiteSpace() || this.Name.StartsWith("*"); } }
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableGroup;
@@ -93,6 +93,29 @@ namespace ACadSharp.Objects
 			{
 				this.Add(e);
 			}
+		}
+
+		/// <summary>
+		/// Removes all entities in the group.
+		/// </summary>
+		public void Clear()
+		{
+			foreach (var e in this._entities)
+			{
+				e.RemoveReactor(this);
+			}
+
+			this._entities.Clear();
+		}
+
+		/// <summary>
+		/// Removes the entity from the group.
+		/// </summary>
+		/// <param name="entity"></param>
+		public bool Remove(Entity entity)
+		{
+			entity.RemoveReactor(this);
+			return this._entities.Remove(entity);
 		}
 
 		/// <inheritdoc/>
