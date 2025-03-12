@@ -672,11 +672,8 @@ namespace ACadSharp.Tests.IO
 
 				Group group = new Group();
 				group.Name = "MyGroup";
-				group.Entities.Add(circle.Handle, circle);
-				circle.AddReactor(group);
-				group.Entities.Add(line.Handle, line);
-				line.AddReactor(group);
-				group.Selectable = true;
+				group.Add( circle);
+				group.Add(line);
 
 				this.Document.Groups.Add(group);
 
