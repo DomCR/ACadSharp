@@ -23,10 +23,14 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.Attribute;
 
 		/// <summary>
-		/// Default constructor
+		/// Default constructor.
 		/// </summary>
 		public AttributeEntity() : base() { }
 
+		/// <summary>
+		/// Create an instance of an attribute based on a definition.
+		/// </summary>
+		/// <param name="definition"></param>
 		public AttributeEntity(AttributeDefinition definition) : this()
 		{
 			this.matchAttributeProperties(definition);

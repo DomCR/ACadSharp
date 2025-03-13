@@ -73,5 +73,24 @@ namespace ACadSharp.Entities
 			XYZ max = new XYZ(Math.Max(this.Center.X - this.Radius, this.Center.X + this.Radius), Math.Max(this.Center.Y - this.Radius, this.Center.Y + this.Radius), Math.Max(this.Center.Z, this.Center.Z));
 			return new BoundingBox(min, max);
 		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			var center = this.Center;
+			var normal = this.Normal;
+
+			this.Center = transform.ApplyTransform(this.Center);
+			this.Normal = this.transformNormal(transform, this.Normal);
+
+			Matrix3 trans = getWorldMatrix(transform, normal, this.Normal, out Matrix3 transOW, out Matrix3 transWO);
+
+			XYZ axis = transOW * new XYZ(this.Radius, 0.0, 0.0);
+			axis = trans * axis;
+			axis = transWO * axis;
+
+			XY axisPoint = new XY(axis.X, axis.Y);
+			this._radius = axisPoint.GetLength();
+		}
 	}
 }
