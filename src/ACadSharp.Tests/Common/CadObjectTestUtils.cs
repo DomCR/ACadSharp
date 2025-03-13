@@ -9,9 +9,10 @@ namespace ACadSharp.Tests.Common
 		public static void AssertClone(CadObject original, CadObject clone)
 		{
 			//Assert clone
-			Assert.NotEqual(original, clone);
+			Assert.False(original.Equals(clone));
 			Assert.True(0 == clone.Handle);
 			Assert.Null(clone.Document);
+			Assert.Empty(clone.ExtendedData);
 		}
 
 		public static void AssertEntityClone(Entity original, Entity clone)

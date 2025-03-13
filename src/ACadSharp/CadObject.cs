@@ -10,7 +10,7 @@ using System.Linq;
 namespace ACadSharp
 {
 	/// <summary>
-	/// Represents an element in a CadDocument
+	/// Represents an element in a CadDocument.
 	/// </summary>
 	public abstract class CadObject : IHandledCadObject
 	{
@@ -22,11 +22,11 @@ namespace ACadSharp
 		/// <summary>
 		/// Extended data attached to this object.
 		/// </summary>
-		public ExtendedDataDictionary ExtendedData { get; }
+		public ExtendedDataDictionary ExtendedData { get; private set; }
 
 		/// <inheritdoc/>
 		/// <remarks>
-		/// If the value is 0 the object is not assigned to a document or a parent
+		/// If the value is 0 the object is not assigned to a document or a parent.
 		/// </remarks>
 		[DxfCodeValue(5)]
 		public ulong Handle { get; internal set; }
@@ -37,17 +37,17 @@ namespace ACadSharp
 		public virtual bool HasDynamicSubclass { get { return false; } }
 
 		/// <summary>
-		/// The CAD class name of an object
+		/// The CAD class name of an object.
 		/// </summary>
 		public virtual string ObjectName { get; }
 
 		/// <summary>
-		/// Get the object type
+		/// Get the object type.
 		/// </summary>
 		public abstract ObjectType ObjectType { get; }
 
 		/// <summary>
-		/// Soft-pointer ID/handle to owner object
+		/// Soft-pointer ID/handle to owner object.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 330)]
 		public IHandledCadObject Owner { get; internal set; }
@@ -55,13 +55,16 @@ namespace ACadSharp
 		/// <summary>
 		/// Objects that are attached to this object.
 		/// </summary>
-		/// <remarks>
-		/// This collection is not managed by ACadSharp, any changes may cause a corruption in the file.
-		/// </remarks>
-		public Dictionary<ulong, CadObject> Reactors { get; } = new Dictionary<ulong, CadObject>();
+		public IEnumerable<CadObject> Reactors
+		{
+			get
+			{
+				return this._reactors;
+			}
+		}
 
 		/// <summary>
-		/// Object Subclass marker
+		/// Object Subclass marker.
 		/// </summary>
 		public abstract string SubclassMarker { get; }
 
@@ -69,7 +72,7 @@ namespace ACadSharp
 		/// Extended Dictionary object.
 		/// </summary>
 		/// <remarks>
-		/// An extended dictionary can be created using <see cref="CreateExtendedDictionary"/>
+		/// An extended dictionary can be created using <see cref="CreateExtendedDictionary"/>.
 		/// </remarks>
 		public CadDictionary XDictionary
 		{
@@ -86,6 +89,8 @@ namespace ACadSharp
 					this.Document.RegisterCollection(this._xdictionary);
 			}
 		}
+
+		private List<CadObject> _reactors = new List<CadObject>();
 
 		private CadDictionary _xdictionary = null;
 
@@ -114,9 +119,9 @@ namespace ACadSharp
 			clone.Owner = null;
 
 			//Collections
-			clone.Reactors.Clear();
-			clone.XDictionary = new CadDictionary();
-			clone.ExtendedData.Clear();
+			clone._reactors = new List<CadObject>();
+			clone._xdictionary = null;
+			clone.ExtendedData = new ExtendedDataDictionary(clone);
 
 			return clone;
 		}
@@ -139,6 +144,43 @@ namespace ACadSharp
 		public override string ToString()
 		{
 			return $"{this.ObjectName}:{this.Handle}";
+		}
+
+		/// <summary>
+		/// Removes any reactor object that doesn't belong to the same <see cref="CadDocument"/> as this <see cref="CadObject"/>.
+		/// </summary>
+		public void CleanReactors()
+		{
+			var reactors = this._reactors.ToArray();
+			foreach (var reactor in reactors)
+			{
+				if (reactor.Document != this.Document)
+				{
+					this._reactors.Remove(reactor);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Add a reactor object linked to this one.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="CadObject"/> and its reactors must be in the same <see cref="CadDocument"/> to be valid.
+		/// </remarks>
+		/// <param name="reactor"></param>
+		public void AddReactor(CadObject reactor)
+		{
+			this._reactors.Add(reactor);
+		}
+
+		/// <summary>
+		/// Remove a reactor linked to this object.
+		/// </summary>
+		/// <param name="reactor"></param>
+		/// <returns></returns>
+		public bool RemoveReactor(CadObject reactor)
+		{
+			return this._reactors.Remove(reactor);
 		}
 
 		internal virtual void AssignDocument(CadDocument doc)
@@ -166,7 +208,9 @@ namespace ACadSharp
 		internal virtual void UnassignDocument()
 		{
 			if (this.XDictionary != null)
+			{
 				this.Document.UnregisterCollection(this.XDictionary);
+			}
 
 			this.Handle = 0;
 			this.Document = null;
@@ -182,6 +226,8 @@ namespace ACadSharp
 					this.ExtendedData.Add(item.Key.Clone() as AppId, item.Value);
 				}
 			}
+
+			this._reactors.Clear();
 		}
 
 		protected T updateCollection<T>(T entry, ObjectDictionaryCollection<T> collection)
