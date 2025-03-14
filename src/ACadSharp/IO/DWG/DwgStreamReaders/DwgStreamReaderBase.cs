@@ -4,8 +4,8 @@ using CSUtilities.Converters;
 using CSUtilities.IO;
 using CSUtilities.Text;
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace ACadSharp.IO.DWG
@@ -41,7 +41,6 @@ namespace ACadSharp.IO.DWG
 			switch (version)
 			{
 				case ACadVersion.Unknown:
-					throw new Exception();
 				case ACadVersion.MC0_0:
 				case ACadVersion.AC1_2:
 				case ACadVersion.AC1_4:
@@ -52,7 +51,7 @@ namespace ACadSharp.IO.DWG
 				case ACadVersion.AC1004:
 				case ACadVersion.AC1006:
 				case ACadVersion.AC1009:
-					throw new NotSupportedException($"Dwg version not supported: {version}");
+					throw new CadNotSupportedException(version);
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 					reader = new DwgStreamReaderAC12(stream, resetPositon);
@@ -72,7 +71,7 @@ namespace ACadSharp.IO.DWG
 					reader = new DwgStreamReaderAC24(stream, resetPositon);
 					break;
 				default:
-					throw new NotSupportedException($"Dwg version not supported: {version}");
+					throw new CadNotSupportedException();
 			}
 
 			if (encoding != null)
@@ -105,7 +104,7 @@ namespace ACadSharp.IO.DWG
 			tryGetValue(reader, values, reader.ReadRawChar);
 			tryGetValue(reader, values, reader.ReadRawLong);
 			tryGetValue(reader, values, reader.Read2RawDouble);
-			
+
 			tryGetValue(reader, values, reader.HandleReference);
 
 			tryGetValue(reader, values, reader.ReadTextUnicode);
@@ -271,7 +270,7 @@ namespace ACadSharp.IO.DWG
 					value = 256;
 					break;
 				default:
-					throw new Exception();
+					throw this.throwException();
 			}
 			return value;
 		}
@@ -308,7 +307,7 @@ namespace ACadSharp.IO.DWG
 					break;
 				default:
 					//11 : not used
-					throw new Exception();
+					throw new Exception("Failed to read ReadBitLong");
 			}
 			return value;
 		}
@@ -344,7 +343,7 @@ namespace ACadSharp.IO.DWG
 					value = 0.0;
 					break;
 				default:
-					throw new Exception();
+					throw this.throwException();
 			}
 
 			return value;
@@ -824,7 +823,7 @@ namespace ACadSharp.IO.DWG
 				case 3:
 					return this.ReadDouble();
 				default:
-					throw new Exception();
+					throw this.throwException();
 			}
 		}
 
@@ -859,7 +858,6 @@ namespace ACadSharp.IO.DWG
 			if (hours < 0 || hours > TimeSpan.MaxValue.TotalHours || milliseconds < 0 || milliseconds > TimeSpan.MaxValue.TotalMilliseconds)
 			{
 				return TimeSpan.FromHours(0) + TimeSpan.FromMilliseconds(0);
-
 			}
 
 			return TimeSpan.FromHours(hours) + TimeSpan.FromMilliseconds(milliseconds);
@@ -961,6 +959,11 @@ namespace ACadSharp.IO.DWG
 			this.AdvanceByte();
 
 			return (byte)((uint)value | (byte)((uint)this._lastByte >> 8 - this.BitShift));
+		}
+
+		protected DwgException throwException([CallerMemberName] string callerName = null)
+		{
+			return new DwgException($"Failed to read {callerName}");
 		}
 
 		private void applyShiftToArr(int length, byte[] arr)
