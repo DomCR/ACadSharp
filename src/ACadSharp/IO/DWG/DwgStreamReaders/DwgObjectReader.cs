@@ -1047,6 +1047,8 @@ namespace ACadSharp.IO.DWG
 				case "LWPOLYLINE":
 					template = this.readLWPolyline();
 					break;
+				case "MATERIAL":
+					break;
 				case "MESH":
 					template = this.readMesh();
 					break;
