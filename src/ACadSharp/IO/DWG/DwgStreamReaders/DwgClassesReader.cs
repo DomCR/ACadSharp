@@ -65,7 +65,7 @@ namespace ACadSharp.IO.DWG
 
 			if (this._fileHeader.AcadVersion == ACadVersion.AC1018)
 			{
-				//BS : Maxiumum class number
+				//BS : Maximum class number
 				this._sreader.ReadBitShort();
 				//RC: 0x00
 				this._sreader.ReadRawChar();
@@ -113,20 +113,10 @@ namespace ACadSharp.IO.DWG
 					//BL : Number of objects created of this type in the current DB(DXF 91).
 					dxfClass.InstanceCount = this._sreader.ReadBitLong();
 
-					if (this._fileHeader.AcadVersion == ACadVersion.AC1018)
-					{
-						//BS : Dwg Version
-						dxfClass.DwgVersion = (ACadVersion)this._sreader.ReadBitShort();
-						//BS : Maintenance release version.
-						dxfClass.MaintenanceVersion = this._sreader.ReadBitShort();
-					}
-					else if (this._fileHeader.AcadVersion > ACadVersion.AC1018)
-					{
-						//BS : Dwg Version
-						dxfClass.DwgVersion = (ACadVersion)this._sreader.ReadBitLong();
-						//BS : Maintenance release version.
-						dxfClass.MaintenanceVersion = (short)this._sreader.ReadBitLong();
-					}
+					//BS : Dwg Version
+					dxfClass.DwgVersion = (ACadVersion)this._sreader.ReadBitLong();
+					//BS : Maintenance release version.
+					dxfClass.MaintenanceVersion = (short)this._sreader.ReadBitLong();
 
 					//BL : Unknown(normally 0L)
 					this._sreader.ReadBitLong();
