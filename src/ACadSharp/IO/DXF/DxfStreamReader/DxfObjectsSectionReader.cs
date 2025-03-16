@@ -74,6 +74,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<Group>(new CadGroupTemplate(), this.readGroup);
 				case DxfFileToken.ObjectGeoData:
 					return this.readObjectCodes<GeoData>(new CadGeoDataTemplate(), this.readGeoData);
+				case DxfFileToken.ObjectMaterial:
+					return this.readObjectCodes<Material>(new CadMaterialTemplate(), this.readMaterial);
 				case DxfFileToken.ObjectScale:
 					return this.readObjectCodes<Scale>(new CadTemplate<Scale>(new Scale()), this.readScale);
 				case DxfFileToken.ObjectTableContent:
@@ -357,6 +359,17 @@ namespace ACadSharp.IO.DXF
 				case 304:
 				case 292:
 					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readMaterial(CadTemplate template, DxfMap map)
+		{
+			CadMaterialTemplate tmp = template as CadMaterialTemplate;
+
+			switch (this._reader.Code)
+			{
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}

@@ -1,5 +1,24 @@
-﻿namespace ACadSharp.Objects
+﻿using ACadSharp.Attributes;
+using CSUtilities.Extensions;
+
+namespace ACadSharp.Objects
 {
+	public enum AmbientColorMethod
+	{
+		Current = 0,
+		Override = 1,
+
+	}
+
+	/// <summary>
+	/// Represents a <see cref="Material"/> object
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.ObjectMaterial"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Material"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.ObjectMaterial)]
+	[DxfSubClass(DxfSubclassMarker.Material)]
 	public class Material : NonGraphicalObject
 	{
 		/// <inheritdoc/>
@@ -11,45 +30,95 @@
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Material;
 
-		//1	Material name(string)
+		/// <summary>
+		/// Material name.
+		/// </summary>
+		[DxfCodeValue(1)]
+		public override string Name
+		{
+			get
+			{
+				return base.Name;
+			}
+			set
+			{
+				base.Name = value;
+			}
+		}
 
-		//2	Description(string, default null string)
+		/// <summary>
+		/// Material description.
+		/// </summary>
+		[DxfCodeValue(2)]
+		public string Description { get; set; }
 
-		//70
+		/// <summary>
+		/// Ambient color method.
+		/// </summary>
+		[DxfCodeValue(70)]
+		public AmbientColorMethod AmbientColorMethod { get; set; } = AmbientColorMethod.Current;
 
-		//Ambient color method(default = 0) :
+		/// <summary>
+		/// Ambient color factor.
+		/// </summary>
+		/// <value>
+		/// valid range is 0.0 to 1.0)
+		/// </value>
+		[DxfCodeValue(40)]
+		public double AmbientColorFactor
+		{
+			get { return this._ambientColorFactor; }
+			set
+			{
+				ObjectExtensions.InRange(value, 0, 1, $"{nameof(AmbientColorFactor)} valid values are from 0.0 to 1.0");
+				this._ambientColorFactor = value;
+			}
+		}
 
-		//0 = Use current color
+		private double _ambientColorFactor = 1.0;
 
-		//1 = Override current color
+		/// <summary>
+		/// Ambient color value.
+		/// </summary>
+		[DxfCodeValue(90)]
+		public Color AmbientColor { get; set; }
 
-		//40
+		/// <summary>
+		/// Ambient color method.
+		/// </summary>
+		[DxfCodeValue(71)]
+		public AmbientColorMethod DiffuseColorMethod { get; set; } = AmbientColorMethod.Current;
 
-		//Ambient color factor(real, default = 1.0; valid range is 0.0 to 1.0)
+		/// <summary>
+		/// Diffuse color factor.
+		/// </summary>
+		/// <value>
+		/// valid range is 0.0 to 1.0)
+		/// </value>
+		[DxfCodeValue(41)]
+		public double DiffuseColorFactor
+		{
+			get { return this._diffuseColorFactor; }
+			set
+			{
+				ObjectExtensions.InRange(value, 0, 1, $"{nameof(DiffuseColorFactor)} valid values are from 0.0 to 1.0");
+				this._diffuseColorFactor = value;
+			}
+		}
 
-		//90
+		private double _diffuseColorFactor = 1.0;
 
-		//Ambient color value(unsigned 32-bit integer representing an AcCmEntityColor)
+		/// <summary>
+		/// Diffuse color value.
+		/// </summary>
+		[DxfCodeValue(91)]
+		public Color DiffuseColor { get; set; }
 
-		//71
-
-		//Diffuse color method(default = 0) :
-
-		//0 = Use current color
-
-		//1 = Override current color
-
-		//41
-
-		//Diffuse color factor(real, default = 1.0; valid range is 0.0 to 1.0)
-
-		//91
-
-		//Diffuse color value(unsigned 32-bit integer representing an AcCmEntityColor)
-
-		//42
-
-		//Diffuse map blend factor(real, default = 1.0)
+		/// <summary>
+		/// Diffuse map blend factor.
+		/// </summary>
+		[DxfCodeValue(42)]
+		public double DiffuseMapBlendFactor { get; set; } = 1.0;
 
 		//72
 
