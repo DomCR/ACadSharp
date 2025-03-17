@@ -108,7 +108,7 @@ namespace ACadSharp.IO.DWG
 					this.notify($"Invalid DxfClass id value: {dxfClass.ItemClassId} for {dxfClass.CppClassName}", NotificationType.Error);
 				}
 
-				if (this._fileHeader.AcadVersion >= ACadVersion.AC1018)
+				if (this.R2004Plus)
 				{
 					//BL : Number of objects created of this type in the current DB(DXF 91).
 					dxfClass.InstanceCount = this._sreader.ReadBitLong();
