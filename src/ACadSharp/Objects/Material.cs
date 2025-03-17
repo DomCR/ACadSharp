@@ -7,7 +7,50 @@ namespace ACadSharp.Objects
 	{
 		Current = 0,
 		Override = 1,
+	}
 
+	public enum MapSource
+	{
+		UseCurrentScene = 0,
+		UseImageFile = 1,
+	}
+
+	public enum ProjectionMethod
+	{
+		None = 0,
+		Planar = 1,
+		Box = 2,
+		Cylinder = 3,
+		Sphere = 4
+	}
+
+	public enum TilingMethod
+	{
+		None = 0,
+		Tile = 1,
+		Crop = 2,
+		Clamp = 3
+	}
+
+	[System.Flags]
+	public enum AutoTransformMethodFlags
+	{
+		/// <summary>
+		/// None.
+		/// </summary>
+		None = 0,
+		/// <summary>
+		/// No auto transform.
+		/// </summary>
+		NoAutoTransform = 1,
+		/// <summary>
+		/// Scale mapper to current entity extents; translate mapper to entity origin.
+		/// </summary>
+		ScaleMapper = 2,
+		/// <summary>
+		/// Include current block transform in mapper transform.
+		/// </summary>
+		IncludeCurrentBlock = 4
 	}
 
 	/// <summary>
@@ -120,49 +163,38 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(42)]
 		public double DiffuseMapBlendFactor { get; set; } = 1.0;
 
-		//72
+		/// <summary>
+		/// Diffuse map source.
+		/// </summary>
+		[DxfCodeValue(72)]
+		public MapSource DiffuseMapSource { get; set; } = MapSource.UseImageFile;
 
-		//Diffuse map source(default = 1) :
+		/// <summary>
+		/// Diffuse map file name.
+		/// </summary>
+		/// <remarks>
+		/// null file name specifies no map.
+		/// </remarks>
+		[DxfCodeValue(3)]
+		public string DiffuseMapRileName { get; set; }
 
-		//0 = Use current scene
+		/// <summary>
+		/// Projection method of diffuse map mapper.
+		/// </summary>
+		[DxfCodeValue(73)]
+		public ProjectionMethod ProjectionMethod { get; set; } = ProjectionMethod.Planar;
 
-		//1 = Use image file(specified by file name; null file name specifies no map)
+		/// <summary>
+		/// Tiling method of diffuse map mapper.
+		/// </summary>
+		[DxfCodeValue(74)]
+		public TilingMethod DiffuseMapper { get; set; } = TilingMethod.Tile;
 
-		//3
-
-		//Diffuse map file name(string, default = null string)
-
-		//73
-
-		//Projection method of diffuse map mapper(default = 1):
-
-		//1 = Planar
-
-		//2 = Box
-
-		//3 = Cylinder
-
-		//4 = Sphere
-
-		//74
-
-		//Tiling method of diffuse map mapper(default = 1):
-
-		//1 = Tile
-
-		//2 = Crop
-
-		//3 = Clamp
-
-		//75
-
-		//Auto transform method of diffuse map mapper(bitset, default = 1) :
-
-		//1= No auto transform
-
-		//2 = Scale mapper to current entity extents; translate mapper to entity origin
-
-		//4 = Include current block transform in mapper transform
+		/// <summary>
+		/// Auto transform method of diffuse map mapper.
+		/// </summary>
+		[DxfCodeValue(75)]
+		public AutoTransformMethodFlags AutoTransformDiffuse { get; set; } = AutoTransformMethodFlags.NoAutoTransform;
 
 		//43
 
