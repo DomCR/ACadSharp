@@ -1,9 +1,10 @@
 ﻿using ACadSharp.Attributes;
+using CSMath;
 using CSUtilities.Extensions;
 
 namespace ACadSharp.Objects
 {
-	public enum AmbientColorMethod
+	public enum ColorMethod
 	{
 		Current = 0,
 		Override = 1,
@@ -99,7 +100,7 @@ namespace ACadSharp.Objects
 		/// Ambient color method.
 		/// </summary>
 		[DxfCodeValue(70)]
-		public AmbientColorMethod AmbientColorMethod { get; set; } = AmbientColorMethod.Current;
+		public ColorMethod AmbientColorMethod { get; set; } = ColorMethod.Current;
 
 		/// <summary>
 		/// Ambient color factor.
@@ -113,7 +114,7 @@ namespace ACadSharp.Objects
 			get { return this._ambientColorFactor; }
 			set
 			{
-				ObjectExtensions.InRange(value, 0, 1, $"{nameof(AmbientColorFactor)} valid values are from 0.0 to 1.0");
+				ObjectExtensions.InRange(value, 0, 1);
 				this._ambientColorFactor = value;
 			}
 		}
@@ -130,7 +131,7 @@ namespace ACadSharp.Objects
 		/// Ambient color method.
 		/// </summary>
 		[DxfCodeValue(71)]
-		public AmbientColorMethod DiffuseColorMethod { get; set; } = AmbientColorMethod.Current;
+		public ColorMethod DiffuseColorMethod { get; set; } = ColorMethod.Current;
 
 		/// <summary>
 		/// Diffuse color factor.
@@ -144,7 +145,7 @@ namespace ACadSharp.Objects
 			get { return this._diffuseColorFactor; }
 			set
 			{
-				ObjectExtensions.InRange(value, 0, 1, $"{nameof(DiffuseColorFactor)} valid values are from 0.0 to 1.0");
+				ObjectExtensions.InRange(value, 0, 1);
 				this._diffuseColorFactor = value;
 			}
 		}
@@ -176,13 +177,13 @@ namespace ACadSharp.Objects
 		/// null file name specifies no map.
 		/// </remarks>
 		[DxfCodeValue(3)]
-		public string DiffuseMapRileName { get; set; }
+		public string DiffuseMapFileName { get; set; }
 
 		/// <summary>
 		/// Projection method of diffuse map mapper.
 		/// </summary>
 		[DxfCodeValue(73)]
-		public ProjectionMethod ProjectionMethod { get; set; } = ProjectionMethod.Planar;
+		public ProjectionMethod DiffuseProjectionMethod { get; set; } = ProjectionMethod.Planar;
 
 		/// <summary>
 		/// Tiling method of diffuse map mapper.
@@ -194,303 +195,306 @@ namespace ACadSharp.Objects
 		/// Auto transform method of diffuse map mapper.
 		/// </summary>
 		[DxfCodeValue(75)]
-		public AutoTransformMethodFlags AutoTransformDiffuse { get; set; } = AutoTransformMethodFlags.NoAutoTransform;
-
-		//43
-
-		//Transform matrix of diffuse map mapper(16 reals; row major format; default = identity matrix)
-
-		//44
-
-		//Specular gloss factor(real, default = 0.5)
-
-		//76
-
-		//Specular color method(default = 0) :
-
-		//0 = Use current color
-
-		//1 = Override current color
-
-		//45
-
-		//Specular color factor(real, default = 1.0; valid range is 0.0 to 1.0)
-
-		//92
-
-		//Specular color value(unsigned 32-bit integer representing an AcCmEntityColor)
-
-		//46
-
-		//Specular map blend factor(real; default = 1.0)
-
-		//77
-
-		//Specular map source(default = 1) :
-
-		//0 = Use current scene
-
-		//1 = Use image file(specified by file name; null file name specifies no map)
-
-		//4
-
-		//Specular map file name(string; default = null string)
-
-		//78
-
-		//Projection method of specular map mapper(default = 1):
-
-		//1 = Planar
-
-		//2 = Box
-
-		//3 = Cylinder
-
-		//4 = Sphere
-
-		//79
-
-		//Tiling method of specular map mapper(default = 1):
-
-		//1 = Tile
-
-		//2 = Crop
-
-		//3 = Clamp
-
-		//170
-
-		//Auto transform method of specular map mapper(bitset; default = 1):
-
-		//1 = No auto transform
-
-		//2 = Scale mapper to current entity extents; translate mapper to entity origin
-
-		//4 = Include current block transform in mapper transform
-
-		//47
-
-		//Transform matrix of specular map mapper(16 reals; row major format; default = identity matrix)
-
-		//48
-
-		//Blend factor of reflection map(real, default = 1.0)
-
-		//171
-
-		//Reflection map source(default = 1) :
-
-		//0 = Use current scene
-
-		//1 = Use image file(specified by file name; null file name specifies no map)
-
-		//6
-
-		//Reflection map file name(string; default = null string)
-
-		//172
-
-		//Projection method of reflection map mapper(default = 1):
-
-		//1 = Planar
-
-		//2 = Box
-
-		//3 = Cylinder
-
-		//4 = Sphere
-
-		//173
-
-		//Tiling method of reflection map mapper(default = 1):
-
-		//1 = Tile
-
-		//2 = Crop
-
-		//3 = Clamp
-
-		//174
-
-		//Auto transform method of reflection map mapper(bitset; default = 1):
-
-		//1 = No auto transform
-
-		//2 = Scale mapper to current entity extents; translate mapper to entity origin
-
-		//4 = Include current block transform in mapper transform
-
-		//49
-
-		//Transform matrix of reflection map mapper(16 reals; row major format; default = identity matrix)
-
-		//140
-
-		//Opacity percent(real; default = 1.0)
-
-		//141
-
-		//Blend factor of opacity map(real; default = 1.0)
-
-		//175
-
-		//Opacity map source(default = 1) :
-
-		//0 = Use current scene
-
-		//1 = Use image file(specified by file name; null file name specifies no map)
-
-		//7
-
-		//Opacity map file name(string; default = null string)
-
-		//176
-
-		//Projection method of opacity map mapper(default = 1):
-
-		//1 = Planar
-
-		//2 = Box
-
-		//3 = Cylinder
-
-		//4 = Sphere
-
-		//177
-
-		//Tiling method of opacity map mapper(default = 1):
-
-		//1 = Tile
-
-		//2 = Crop
-
-		//3 = Clamp
-
-		//178
-
-		//Auto transform method of opacity map mapper(bitset; default = 1):
-
-		//1 = No auto transform
-
-		//2 = Scale mapper to current entity extents; translate mapper to entity origin
-
-		//4 = Include current block transform in mapper transform
-
-		//142
-
-		//Transform matrix of opacity map mapper(16 reals; row major format; default = identity matrix)
-
-		//143
-
-		//Blend factor of bump map(real; default = 1.0)
-
-		//179
-
-		//Bump map source(default = 1) :
-
-		//0 = Use current scene
-
-		//1 = Use image file(specified by file name; null file name specifies no map)
-
-		//8
-
-		//Bump map file name(string; default = null string)
-
-		//270
-
-		//Projection method of bump map mapper(default = 1):
-
-		//1 = Planar
-
-		//2 = Box
-
-		//3 = Cylinder
-
-		//4 = Sphere
-
-		//271
-
-		//Tiling method of bump map mapper(default = 1):
-
-		//1 = Tile
-
-		//2 = Crop
-
-		//3 = Clamp
-
-		//272
-
-		//Auto transform method of bump map mapper(bitset; default = 1):
-
-		//1 = No auto transform
-
-		//2 = Scale mapper to current entity extents; translate mapper to entity origin
-
-		//4 = Include current block transform in mapper transform
-
-		//144
-
-		//Transform matrix of bump map mapper(16 reals; row major format; default = identity matrix)
-
-		//145
-
-		//Refraction index(real; default = 1.0)
-
-		//146
-
-		//Blend factor of refraction map(real; default = 1.0)
-
-		//273
-
-		//Refraction map source(default = 1) :
-
-		//0 = Use current scene
-
-		//1 = Use image file(specified by file name; null file name specifies no map)
-
-		//9
-
-		//Refraction map file name(string; default = null string)
-
-		//274
-
-		//Projection method of refraction map mapper(default = 1):
-
-		//1 = Planar
-
-		//2 = Box
-
-		//3 = Cylinder
-
-		//4 = Sphere
-
-		//275
-
-		//Tiling method of refraction map mapper(default = 1):
-
-		//1 = Tile
-
-		//2 = Crop
-
-		//3 = Clamp
-
-		//276
-
-		//Auto transform method of refraction map mapper(bitset; default = 1):
-
-		//1 = No auto transform
-
-		//2 = Scale mapper to current entity extents; translate mapper to entity origin
-
-		//4 = Include current block transform in mapper transform
-
-		//147
-
-		//Transform matrix of refraction map mapper(16 reals; row major format; default = identity matrix)
+		public AutoTransformMethodFlags DiffuseAutoTransform { get; set; } = AutoTransformMethodFlags.NoAutoTransform;
+
+		/// <summary>
+		/// Transform matrix of diffuse map mapper.
+		/// </summary>
+		[DxfCodeValue(43)]
+		public Matrix4 DiffuseMatrix { get; set; } = Matrix4.Identity;
+
+		/// <summary>
+		/// Specular gloss factor.
+		/// </summary>
+		/// <value>
+		/// default = 0.5
+		/// </value>
+		[DxfCodeValue(44)]
+		public double SpecularGlossFactor { get; set; } = 0.5;
+
+		/// <summary>
+		/// Specular color method.
+		/// </summary>
+		[DxfCodeValue(76)]
+		public ColorMethod SpecularColorMethod { get; set; } = ColorMethod.Current;
+
+		/// <summary>
+		/// Specular color factor.
+		/// </summary>
+		/// <value>
+		/// valid range is 0.0 to 1.0)
+		/// </value>
+		[DxfCodeValue(45)]
+		public double SpecularColorFactor
+		{
+			get { return this._specularColorFactor; }
+			set
+			{
+				ObjectExtensions.InRange(value, 0, 1);
+				this._specularColorFactor = value;
+			}
+		}
+
+		private double _specularColorFactor = 1.0;
+
+		/// <summary>
+		/// Specular color.
+		/// </summary>
+		[DxfCodeValue(92)]
+		public Color SpecularColor { get; set; }
+
+		/// <summary>
+		/// Specular map blend factor.
+		/// </summary>
+		/// <value>
+		/// default = 1.0
+		/// </value>
+		[DxfCodeValue(46)]
+		public double SpecularMapBlendFactor { get; set; } = 1.0;
+
+		/// <summary>
+		/// Specular map source.
+		/// </summary>
+		[DxfCodeValue(77)]
+		public MapSource SpecularMapSource { get; set; } = MapSource.UseImageFile;
+
+		/// <summary>
+		/// Specular map file name.
+		/// </summary>
+		/// <remarks>
+		/// null file name specifies no map.
+		/// </remarks>
+		[DxfCodeValue(4)]
+		public string SpecularMapFileName { get; set; }
+
+		/// <summary>
+		/// Projection method of specular map mapper.
+		/// </summary>
+		[DxfCodeValue(78)]
+		public ProjectionMethod SpecularProjectionMethod { get; set; } = ProjectionMethod.Planar;
+
+		/// <summary>
+		/// Tiling method of specular map mapper.
+		/// </summary>
+		[DxfCodeValue(79)]
+		public TilingMethod SpecularMapper { get; set; } = TilingMethod.Tile;
+
+		/// <summary>
+		/// Auto transform method of specular map mapper.
+		/// </summary>
+		[DxfCodeValue(170)]
+		public AutoTransformMethodFlags SpecularAutoTransform { get; set; } = AutoTransformMethodFlags.NoAutoTransform;
+
+		/// <summary>
+		/// Transform matrix of specular map mapper.
+		/// </summary>
+		[DxfCodeValue(47)]
+		public Matrix4 SpecularMatrix { get; set; } = Matrix4.Identity;
+
+		/// <summary>
+		/// Blend factor of reflection map.
+		/// </summary>
+		[DxfCodeValue(48)]
+		public double ReflectionMapBlendFactor { get; set; } = 1.0;
+
+		/// <summary>
+		/// Reflection map source.
+		/// </summary>
+		[DxfCodeValue(171)]
+		public MapSource ReflectionMapSource { get; set; } = MapSource.UseImageFile;
+
+		/// <summary>
+		/// Reflection map file name.
+		/// </summary>
+		/// <remarks>
+		/// null file name specifies no map.
+		/// </remarks>
+		[DxfCodeValue(6)]
+		public string ReflectionMapFileName { get; set; }
+
+		/// <summary>
+		/// Projection method of specular map mapper.
+		/// </summary>
+		[DxfCodeValue(172)]
+		public ProjectionMethod ReflectionProjectionMethod { get; set; } = ProjectionMethod.Planar;
+
+		/// <summary>
+		/// Tiling method of reflection map mapper.
+		/// </summary>
+		[DxfCodeValue(173)]
+		public TilingMethod ReflectionMapper { get; set; } = TilingMethod.Tile;
+
+		/// <summary>
+		/// Auto transform method of reflection map mapper.
+		/// </summary>
+		[DxfCodeValue(174)]
+		public AutoTransformMethodFlags ReflectionAutoTransform { get; set; } = AutoTransformMethodFlags.NoAutoTransform;
+
+		/// <summary>
+		/// Transform matrix of reflection map mapper.
+		/// </summary>
+		[DxfCodeValue(49)]
+		public Matrix4 ReflectionMatrix { get; set; } = Matrix4.Identity;
+
+		/// <summary>
+		/// Opacity percent.
+		/// </summary>
+		[DxfCodeValue(140)]
+		public double Opacity { get; set; } = 1.0;
+
+		/// <summary>
+		/// Opacity map blend factor.
+		/// </summary>
+		/// <value>
+		/// default = 1.0
+		/// </value>
+		[DxfCodeValue(141)]
+		public double OpacityMapBlendFactor { get; set; } = 1.0;
+
+		/// <summary>
+		/// Opacity map source.
+		/// </summary>
+		[DxfCodeValue(175)]
+		public MapSource OpacityMapSource { get; set; } = MapSource.UseImageFile;
+
+		/// <summary>
+		/// Opacity map file name.
+		/// </summary>
+		/// <remarks>
+		/// null file name specifies no map.
+		/// </remarks>
+		[DxfCodeValue(7)]
+		public string OpacityMapFileName { get; set; }
+
+		/// <summary>
+		/// Opacity method of specular map mapper.
+		/// </summary>
+		[DxfCodeValue(176)]
+		public ProjectionMethod OpacityProjectionMethod { get; set; } = ProjectionMethod.Planar;
+
+		/// <summary>
+		/// Tiling method of opacity map mapper.
+		/// </summary>
+		[DxfCodeValue(177)]
+		public TilingMethod OpacityMapper { get; set; } = TilingMethod.Tile;
+
+		/// <summary>
+		/// Auto transform method of opacity map mapper.
+		/// </summary>
+		[DxfCodeValue(178)]
+		public AutoTransformMethodFlags OpacityAutoTransform { get; set; } = AutoTransformMethodFlags.NoAutoTransform;
+
+		/// <summary>
+		/// Transform matrix of opacity map mapper.
+		/// </summary>
+		[DxfCodeValue(142)]
+		public Matrix4 OpacityMatrix { get; set; } = Matrix4.Identity;
+
+		/// <summary>
+		/// Bump map blend factor.
+		/// </summary>
+		/// <value>
+		/// default = 1.0
+		/// </value>
+		[DxfCodeValue(143)]
+		public double BumpMapBlendFactor { get; set; } = 1.0;
+
+		/// <summary>
+		/// Bump map source.
+		/// </summary>
+		[DxfCodeValue(179)]
+		public MapSource BumpMapSource { get; set; } = MapSource.UseImageFile;
+
+		/// <summary>
+		/// Bump map file name.
+		/// </summary>
+		/// <remarks>
+		/// null file name specifies no map.
+		/// </remarks>
+		[DxfCodeValue(8)]
+		public string BumpMapFileName { get; set; }
+
+		/// <summary>
+		/// Bump method of specular map mapper.
+		/// </summary>
+		[DxfCodeValue(270)]
+		public ProjectionMethod BumpProjectionMethod { get; set; } = ProjectionMethod.Planar;
+
+		/// <summary>
+		/// Tiling method of bump map mapper.
+		/// </summary>
+		[DxfCodeValue(271)]
+		public TilingMethod BumpMapper { get; set; } = TilingMethod.Tile;
+
+		/// <summary>
+		/// Auto transform method of bump map mapper.
+		/// </summary>
+		[DxfCodeValue(272)]
+		public AutoTransformMethodFlags BumpAutoTransform { get; set; } = AutoTransformMethodFlags.NoAutoTransform;
+
+		/// <summary>
+		/// Transform matrix of bump map mapper.
+		/// </summary>
+		[DxfCodeValue(144)]
+		public Matrix4 BumpMatrix { get; set; } = Matrix4.Identity;
+
+		/// <summary>
+		/// Refraction index.
+		/// </summary>
+		[DxfCodeValue(145)]
+		public double RefractionIndex { get; set; } = 1.0;
+
+		/// <summary>
+		/// Bump map refraction factor.
+		/// </summary>
+		/// <value>
+		/// default = 1.0
+		/// </value>
+		[DxfCodeValue(146)]
+		public double RefractionMapBlendFactor { get; set; } = 1.0;
+
+		/// <summary>
+		/// Refraction map source.
+		/// </summary>
+		[DxfCodeValue(273)]
+		public MapSource RefractionMapSource { get; set; } = MapSource.UseImageFile;
+
+		/// <summary>
+		/// Refraction map file name.
+		/// </summary>
+		/// <remarks>
+		/// null file name specifies no map.
+		/// </remarks>
+		[DxfCodeValue(9)]
+		public string RefractionMapFileName { get; set; }
+
+		/// <summary>
+		/// Projection method of refraction map mapper.
+		/// </summary>
+		[DxfCodeValue(274)]
+		public ProjectionMethod RefractionProjectionMethod { get; set; } = ProjectionMethod.Planar;
+
+		/// <summary>
+		/// Tiling method of refraction map mapper.
+		/// </summary>
+		[DxfCodeValue(275)]
+		public TilingMethod RefractionMapper { get; set; } = TilingMethod.Tile;
+
+		/// <summary>
+		/// Auto transform method of refraction map mapper.
+		/// </summary>
+		[DxfCodeValue(276)]
+		public AutoTransformMethodFlags RefractionAutoTransform { get; set; } = AutoTransformMethodFlags.NoAutoTransform;
+
+		/// <summary>
+		/// Transform matrix of refraction map mapper.
+		/// </summary>
+		[DxfCodeValue(147)]
+		public Matrix4 RefractionMatrix { get; set; } = Matrix4.Identity;
 
 		//460
-
 		//Color Bleed Scale
+
 		//461	Indirect Dump Scale
 		//462	Reflectance Scale
 		//463
@@ -531,6 +535,11 @@ namespace ACadSharp.Objects
 		//90	Self-Illuminaton
 		//468	Reflectivity
 		//93	Illumination Model
-		//94	Channel Flags
+
+		/// <summary>
+		/// Channel Flags.
+		/// </summary>
+		[DxfCodeValue(94)]
+		public int ChannelFlags { get; set; }
 	}
 }

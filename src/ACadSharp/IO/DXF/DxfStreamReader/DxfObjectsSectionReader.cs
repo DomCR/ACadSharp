@@ -2,6 +2,7 @@
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using static ACadSharp.IO.Templates.CadEvaluationGraphTemplate;
@@ -367,9 +368,88 @@ namespace ACadSharp.IO.DXF
 		private bool readMaterial(CadTemplate template, DxfMap map)
 		{
 			CadMaterialTemplate tmp = template as CadMaterialTemplate;
+			List<double> arr = null;
 
 			switch (this._reader.Code)
 			{
+				case 43:
+					arr = new();
+					for (int i = 0; i < 16; i++)
+					{
+						Debug.Assert(this._reader.Code == 43);
+
+						arr.Add(this._reader.ValueAsDouble);
+
+						this._reader.ReadNext();
+					}
+
+					tmp.CadObject.DiffuseMatrix = new CSMath.Matrix4(arr.ToArray());
+					return this.checkObjectEnd(template, map, this.readMaterial);
+				case 47:
+					arr = new();
+					for (int i = 0; i < 16; i++)
+					{
+						Debug.Assert(this._reader.Code == 47);
+
+						arr.Add(this._reader.ValueAsDouble);
+
+						this._reader.ReadNext();
+					}
+
+					tmp.CadObject.SpecularMatrix = new CSMath.Matrix4(arr.ToArray());
+					return this.checkObjectEnd(template, map, this.readMaterial);
+				case 49:
+					arr = new();
+					for (int i = 0; i < 16; i++)
+					{
+						Debug.Assert(this._reader.Code == 49);
+
+						arr.Add(this._reader.ValueAsDouble);
+
+						this._reader.ReadNext();
+					}
+
+					tmp.CadObject.ReflectionMatrix = new CSMath.Matrix4(arr.ToArray());
+					return this.checkObjectEnd(template, map, this.readMaterial);
+				case 142:
+					arr = new();
+					for (int i = 0; i < 16; i++)
+					{
+						Debug.Assert(this._reader.Code == 142);
+
+						arr.Add(this._reader.ValueAsDouble);
+
+						this._reader.ReadNext();
+					}
+
+					tmp.CadObject.OpacityMatrix = new CSMath.Matrix4(arr.ToArray());
+					return this.checkObjectEnd(template, map, this.readMaterial);
+				case 144:
+					arr = new();
+					for (int i = 0; i < 16; i++)
+					{
+						Debug.Assert(this._reader.Code == 144);
+
+						arr.Add(this._reader.ValueAsDouble);
+
+						this._reader.ReadNext();
+					}
+
+					tmp.CadObject.BumpMatrix = new CSMath.Matrix4(arr.ToArray());
+					return this.checkObjectEnd(template, map, this.readMaterial);
+				case 147:
+					arr = new();
+					for (int i = 0; i < 16; i++)
+					{
+						Debug.Assert(this._reader.Code == 147);
+
+						arr.Add(this._reader.ValueAsDouble);
+
+						this._reader.ReadNext();
+					}
+
+					tmp.CadObject.RefractionMatrix = new CSMath.Matrix4(arr.ToArray());
+					return this.checkObjectEnd(template, map, this.readMaterial);
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
