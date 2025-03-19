@@ -24,7 +24,15 @@ namespace ACadSharp
 		/// <summary>
 		/// Contains all the header variables for this document.
 		/// </summary>
-		public CadHeader Header { get; internal set; }
+		public CadHeader Header
+		{
+			get { return this._header; }
+			internal set
+			{
+				this._header = value;
+				this._header.Document = this;
+			}
+		}
 
 		/// <summary>
 		/// Accesses drawing properties such as the Title, Subject, Author, and Keywords properties
@@ -165,6 +173,8 @@ namespace ACadSharp
 		/// Default paper space of the model
 		/// </summary>
 		public BlockRecord PaperSpace { get { return this.BlockRecords[BlockRecord.PaperSpaceName]; } }
+
+		private CadHeader _header = null;
 
 		private CadDictionary _rootDictionary = null;
 

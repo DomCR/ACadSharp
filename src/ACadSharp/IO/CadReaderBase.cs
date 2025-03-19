@@ -4,6 +4,8 @@ using CSUtilities.Text;
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ACadSharp.IO
 {
@@ -44,6 +46,9 @@ namespace ACadSharp.IO
 
 		/// <inheritdoc/>
 		public abstract CadDocument Read();
+
+		/// <inheritdoc/>
+		public abstract Task<CadDocument> ReadAsync(CancellationToken cancellationToken = default);
 
 		/// <inheritdoc/>
 		public abstract CadHeader ReadHeader();
