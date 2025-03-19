@@ -1048,6 +1048,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readLWPolyline();
 					break;
 				case "MATERIAL":
+					template = this.readMaterial();
 					break;
 				case "MESH":
 					template = this.readMesh();
@@ -5224,6 +5225,24 @@ namespace ACadSharp.IO.DWG
 			}
 
 			return template;
+		}
+
+		private CadTemplate readMaterial()
+		{
+			Material material = new Material();
+			CadMaterialTemplate template = new CadMaterialTemplate(material);
+
+			this.readCommonNonEntityData(template);
+
+			material.Name = this._mergedReaders.ReadVariableText();
+			material.Description = this._mergedReaders.ReadVariableText();
+
+#if TEST
+			var obj = DwgStreamReaderBase.Explore(this._objectReader);
+			var text = DwgStreamReaderBase.Explore(this._textReader);
+#endif
+
+			return null;
 		}
 
 		private CadTemplate readHatch()
