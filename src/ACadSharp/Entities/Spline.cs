@@ -159,7 +159,7 @@ namespace ACadSharp.Entities
 			// where P_i are the control points and N_{i,k}(u) the basis functions for a spline of degree k
 			for (int i = 0; i < this.ControlPoints.Count; i++)
 			{
-				P += N(i, this.Degree, u) * this.ControlPoints[i];
+				P += this.N(i, this.Degree, u) * this.ControlPoints[i];
 			}
 			return P;
 		}
