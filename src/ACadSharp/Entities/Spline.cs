@@ -131,7 +131,7 @@ namespace ACadSharp.Entities
 		{
 			if (precision < 2)
 			{
-				throw new ArgumentOutOfRangeException(nameof(precision), precision, "The arc precision must be equal or greater than two.");
+				throw new ArgumentOutOfRangeException(nameof(precision), precision, "The precision must be equal or greater than two.");
 			}
 
 			List<XYZ> ocsVertexes = new List<XYZ>();
@@ -152,7 +152,7 @@ namespace ACadSharp.Entities
 		/// <returns>Point coordinates for the given parametric position on the spline.</returns>
 		public XYZ PointOnSpline(double t)
 		{
-			double u = t * this.Knots.Last() - this.Knots.First();
+			double u = t * (this.Knots.Last() - this.Knots.First()) + this.Knots.First();
 			XYZ P = new XYZ();
 
 			// P(u) = sum( N_{i,k}(u) * P_i, i= 0 to m-1 )
