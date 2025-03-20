@@ -48,6 +48,12 @@ namespace ACadSharp.Tests.Entities
 
 			Assert.Equal(new XYZ(0, 0, 0), boundingBox.Min);
 			Assert.Equal(new XYZ(5, 5, 0), boundingBox.Max);
+
+			arc.Center = new XYZ(200.0, 200.0, 0.0);
+			boundingBox = arc.GetBoundingBox();
+
+			Assert.Equal(new XYZ(200, 200, 0), boundingBox.Min);
+			Assert.Equal(new XYZ(205, 205, 0), boundingBox.Max);
 		}
 
 		[Fact]
