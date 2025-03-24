@@ -1,0 +1,43 @@
+name: Auto Version
+
+on:
+  # push:
+  #   branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  bump:
+    runs-on: windows-latest
+    name: Build and bump version
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with: 
+          submodules: true
+      - uses: cardinalby/export-env-action@v2
+        with:
+          envFile: 'github.env'
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Bump build version
+        id: bump
+        uses: vers-one/dotnet-project-version-updater@v1.7
+        with:
+          file: "src/ACadSharp.csproj"
+          version: bump-build
+      - name: Push changes
+        run: ./update-wiki.sh
+        shell: bash
+        env:
+          VERSION: ${{ steps.bump.outputs.newVersion }}
+        
+      # - run: |
+      #     git config user.name ${{github.actor}}
+      #     git config user.email "your-email@users.noreply.github.com"
+      #     git add .
+      #     git commit -m "Bump project version to ${{ steps.bump.outputs.newVersion }}"
+      #     git push
