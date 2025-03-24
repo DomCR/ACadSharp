@@ -20,11 +20,11 @@ jobs:
         with:
           envFile: 'github.env'
       - name: Update major version
-        id: '*.*.^'
+        id: bump
         uses: vers-one/dotnet-project-version-updater@v1.7
         with:
           file: ./src/ACadSharp/ACadSharp.csproj
-          version: bump-build
+          version: '*.*.^'
       - name: Push changes
         run: ./push-changes.sh
         shell: bash
@@ -43,11 +43,11 @@ jobs:
         with:
           envFile: 'github.env'
       - name: Update major version
-        id: '*.^.0'
+        id: bump
         uses: vers-one/dotnet-project-version-updater@v1.7
         with:
           file: ./src/ACadSharp/ACadSharp.csproj
-          version: bump-build
+          version: '*.^.0'
       - name: Push changes
         run: ./push-changes.sh
         shell: bash
