@@ -12,5 +12,5 @@ if git diff-index --quiet HEAD; then
 fi
 
 echo "Pushing changes"
-git commit -m "Update project version to $VERSION"
-git push origin ${{ github.ref_name }}
+git commit -am "Update project version to $VERSION"
+# git push origin ${{ github.ref_name }}
