@@ -33,7 +33,7 @@ jobs:
         shell: bash
         env:
           VERSION: ${{steps.update.outputs.newVersion}}
-          BRANCH: ${{github.ref_name}}
+          BRANCH: auto-version
   major:
     if: contains(github.event.pull_request.labels.*.name, 'major')
     runs-on: windows-latest
