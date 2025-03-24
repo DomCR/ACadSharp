@@ -5,7 +5,7 @@ email=`git log -1 --format="%ae"`
 
 git config --local user.email "$email"
 git config --local user.name "$author" 
-git add -A
+git add .
 if git diff-index --quiet HEAD; then
   echo "Nothing changed"
   exit 0
