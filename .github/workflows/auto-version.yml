@@ -1,9 +1,10 @@
 name: Auto Version
 
 on:
+  # pull_request:
+  #   types: [labeled]
   pull_request:
-    types: [labeled]
-
+    branches: [ master ]
 jobs:
   minor:
     if: contains(github.event.pull_request.labels.*.name, 'minor')
