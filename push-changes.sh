@@ -13,4 +13,4 @@ fi
 
 echo "Pushing changes"
 git commit -am "Update project version to $VERSION"
-git push origin ${{ github.ref_name }}
+git push origin $BRANCH

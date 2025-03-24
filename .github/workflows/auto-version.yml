@@ -51,3 +51,4 @@ jobs:
         shell: bash
         env:
           VERSION: ${{steps.update.outputs.newVersion}}
+          BRANCH: ${{github.ref_name}}
