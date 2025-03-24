@@ -10,7 +10,7 @@ jobs:
   minor:
     if: ${{ github.event.label.name == 'minor' }}
     runs-on: windows-latest
-    name: Build and bump version
+    name: Minor version
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
   major:
     if: ${{ github.event.label.name == 'major' }}
     runs-on: windows-latest
-    name: Build and bump version
+    name: Major version
     steps:
       - name: Checkout
         uses: actions/checkout@v4
