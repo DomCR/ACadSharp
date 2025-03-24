@@ -33,7 +33,7 @@ jobs:
         shell: bash
         env:
           VERSION: ${{steps.update.outputs.newVersion}}
-          BRANCH: ${{ github.ref }}"
+          BRANCH: ${{github.ref_name}}"
   major:
     if: contains(github.event.pull_request.labels.*.name, 'major')
     runs-on: windows-latest
@@ -57,4 +57,4 @@ jobs:
         shell: bash
         env:
           VERSION: ${{steps.update.outputs.newVersion}}
-          BRANCH: ${{github.ref}}
+          BRANCH: ${{github.ref_name}}
