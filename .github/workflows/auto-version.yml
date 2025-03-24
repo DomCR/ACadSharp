@@ -1,10 +1,8 @@
 name: Auto Version
 
 on:
-  # pull_request:
-  #   types: [labeled]
   pull_request:
-    branches: [ master ]
+    types: [labeled]
 
 permissions:
   contents: write
