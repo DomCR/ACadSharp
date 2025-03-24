@@ -31,7 +31,7 @@ jobs:
           file: ./src/ACadSharp/ACadSharp.csproj
           version: bump-build
       - name: Push changes
-        run: ../push-changes.sh
+        run: ./push-changes.sh
         shell: bash
         env:
           VERSION: ${{ steps.bump.outputs.newVersion }}
