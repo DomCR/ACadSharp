@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ master ]
 
+defaults:
+  run:
+    working-directory: ./src
+
 jobs:
   bump:
     runs-on: windows-latest
@@ -27,10 +31,10 @@ jobs:
         id: bump
         uses: vers-one/dotnet-project-version-updater@v1.7
         with:
-          file: "src/ACadSharp/ACadSharp.csproj"
+          file: "ACadSharp/ACadSharp.csproj"
           version: bump-build
       - name: Push changes
-        run: ./update-wiki.sh
+        run: ../push-changes.sh
         shell: bash
         env:
           VERSION: ${{ steps.bump.outputs.newVersion }}
