@@ -5,6 +5,10 @@ on:
   #   types: [labeled]
   pull_request:
     branches: [ master ]
+
+permissions:
+  contents: write
+
 jobs:
   minor:
     if: contains(github.event.pull_request.labels.*.name, 'minor')
