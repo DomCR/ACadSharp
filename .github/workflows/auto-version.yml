@@ -27,7 +27,7 @@ jobs:
         id: bump
         uses: vers-one/dotnet-project-version-updater@v1.7
         with:
-          file: "src/ACadSharp.csproj"
+          file: "src/ACadSharp/ACadSharp.csproj"
           version: bump-build
       - name: Push changes
         run: ./update-wiki.sh
