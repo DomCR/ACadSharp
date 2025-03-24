@@ -11,6 +11,6 @@ if git diff-index --quiet HEAD; then
   exit 0
 fi
 
-echo "Pushing changes"
+echo "Pushing changes $BRANCH"
 git commit -m "Update project version to $VERSION"
-git push
+git push origin $BRANCH
