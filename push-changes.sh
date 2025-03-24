@@ -13,4 +13,4 @@ fi
 
 echo "Pushing changes"
 git commit -m "Update project version to $VERSION"
-git push
+git push origin ${{ github.ref_name }}
