@@ -9,7 +9,7 @@ permissions:
 
 env:
   CURRENT_BRANCH: ${{github.event.pull_request.head.ref}}
-  VERSION_FORMAT: ${{ fromJSON('['*.*.^', '*.^.0']')[contains(github.event.pull_request.labels.*.name, 'minor')] }}
+  VERSION_FORMAT: ${{ fromJSON('["*.*.^", "*.^.0"]')[contains(github.event.pull_request.labels.*.name, 'minor')] }}
 
 jobs:
   update:
