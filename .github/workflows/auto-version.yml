@@ -6,10 +6,6 @@ on:
   pull_request:
     branches: [ master ]
 
-defaults:
-  run:
-    working-directory: ./src
-
 jobs:
   bump:
     runs-on: windows-latest
@@ -22,10 +18,11 @@ jobs:
       - uses: cardinalby/export-env-action@v2
         with:
           envFile: 'github.env'
-      - name: Install dependencies
-        run: dotnet restore
-      - name: Build
-        run: dotnet build --no-restore
+
+      # - name: Install dependencies
+      #   run: dotnet restore
+      # - name: Build
+      #   run: dotnet build --no-restore
 
       - name: Bump build version
         id: bump
