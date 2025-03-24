@@ -13,4 +13,4 @@ fi
 
 echo "Pushing changes $BRANCH"
 git commit -m "Update project version to $VERSION"
-git push $BRANCH
+git push origin $BRANCH
