@@ -8,7 +8,7 @@ on:
 
 jobs:
   minor:
-    if: ${{ github.event.label.name == 'minor' }}
+    if: contains(github.event.pull_request.labels.*.name, 'minor')
     runs-on: windows-latest
     name: Minor version
     steps:
@@ -20,7 +20,7 @@ jobs:
         with:
           envFile: 'github.env'
       - name: Update major version
-        id: bump
+        id: update
         uses: vers-one/dotnet-project-version-updater@v1.7
         with:
           file: ./src/ACadSharp/ACadSharp.csproj
@@ -29,9 +29,9 @@ jobs:
         run: ./push-changes.sh
         shell: bash
         env:
-          VERSION: ${{steps.bump.outputs.newVersion}}
+          VERSION: ${{steps.update.outputs.newVersion}}
   major:
-    if: ${{ github.event.label.name == 'major' }}
+    if: contains(github.event.pull_request.labels.*.name, 'major')
     runs-on: windows-latest
     name: Major version
     steps:
@@ -43,7 +43,7 @@ jobs:
         with:
           envFile: 'github.env'
       - name: Update major version
-        id: bump
+        id: update
         uses: vers-one/dotnet-project-version-updater@v1.7
         with:
           file: ./src/ACadSharp/ACadSharp.csproj
@@ -52,4 +52,4 @@ jobs:
         run: ./push-changes.sh
         shell: bash
         env:
-          VERSION: ${{steps.bump.outputs.newVersion}}
+          VERSION: ${{steps.update.outputs.newVersion}}
