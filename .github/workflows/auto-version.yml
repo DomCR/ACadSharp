@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with: 
           submodules: true
-          ref: auto-version
+          ref: ${{github.ref_name}}
       - uses: cardinalby/export-env-action@v2
         with:
           envFile: 'github.env'
@@ -32,7 +32,7 @@ jobs:
         shell: bash
         env:
           VERSION: ${{steps.update.outputs.newVersion}}
-          BRANCH: auto-version
+          BRANCH: ${{github.ref_name}}
   major:
     if: contains(github.event.pull_request.labels.*.name, 'major')
     runs-on: windows-latest
