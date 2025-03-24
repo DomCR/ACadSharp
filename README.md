@@ -27,7 +27,7 @@ AC1015 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_m
 AC1018 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1021 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:                   |
 AC1024 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
-AC1027 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:                   |
+AC1027 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:                   |
 AC1032 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 
 Code Example
@@ -47,9 +47,11 @@ private static void onNotification(object sender, NotificationEventArgs e)
 }
 ```
 
-For more examples [check](https://github.com/DomCR/ACadSharp/tree/master/src/ACadSharp.Examples).
+For more code examples [check](https://github.com/DomCR/ACadSharp/tree/master/src/ACadSharp.Examples).
 
-For more information visit the :construction: [wiki](https://github.com/DomCR/ACadSharp/wiki) :construction: .
+Visit the :construction: [wiki](https://github.com/DomCR/ACadSharp/wiki) :construction: for the API specification of the library.
+
+Check the [documentation](https://github.com/DomCR/ACadSharp/tree/master/docs/) for specific information about some use cases.
 
 Building
 ---

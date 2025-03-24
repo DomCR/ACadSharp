@@ -6,6 +6,7 @@ using CSUtilities.Converters;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ACadSharp.IO.DXF
@@ -68,24 +69,18 @@ namespace ACadSharp.IO.DXF
 				this.Holder.Objects.Enqueue(cadObject.XDictionary);
 			}
 
-			if (cadObject.Reactors != null && cadObject.Reactors.Count > 0)
+			cadObject.CleanReactors();
+			if (cadObject.Reactors.Any())
 			{
 				this._writer.Write(DxfCode.ControlString, DxfFileToken.ReactorsToken);
-				foreach (ulong reactorHandle in cadObject.Reactors.Keys)
+				foreach (var reactor in cadObject.Reactors)
 				{
-					this._writer.Write(DxfCode.SoftPointerId, reactorHandle);
+					this._writer.Write(DxfCode.SoftPointerId, reactor.Handle);
 				}
 				this._writer.Write(DxfCode.ControlString, "}");
 			}
 
 			this._writer.Write(DxfCode.SoftPointerId, cadObject.Owner.Handle);
-
-			if (cadObject.ExtendedData != null && this.Configuration.WriteXData)
-			{
-				//this._writer.Write(DxfCode.ControlString,DxfFileToken.ReactorsToken);
-				//this._writer.Write(DxfCode.HardOwnershipId, cadObject.ExtendedData);
-				//this._writer.Write(DxfCode.ControlString, "}");
-			}
 		}
 
 		protected void writeExtendedData(ExtendedDataDictionary xdata)
@@ -123,6 +118,9 @@ namespace ACadSharp.IO.DXF
 							break;
 						case ExtendedDataDistance dist:
 							this._writer.Write(dist.Code, dist.Value);
+							break;
+						case ExtendedDataDisplacement disp:
+							this._writer.Write(disp.Code, disp.Value);
 							break;
 						case ExtendedDataDirection dir:
 							this._writer.Write(dir.Code, (IVector)dir.Value);

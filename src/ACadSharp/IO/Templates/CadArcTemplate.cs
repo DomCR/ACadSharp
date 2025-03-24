@@ -1,6 +1,5 @@
 ﻿using System;
 using ACadSharp.Entities;
-using ACadSharp.IO.DXF;
 
 namespace ACadSharp.IO.Templates
 {
@@ -13,17 +12,9 @@ namespace ACadSharp.IO.Templates
 		public CadArcTemplate(Entity entity) : base(entity) { }
 
 
-        public override void Build(CadDocumentBuilder builder)
+		public override void Build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
-
-			return;
-
-            if (builder is DxfDocumentBuilder && this.CadObject is Arc arc)
-            {
-                arc.StartAngle *= MathUtils.DegToRadFactor;
-                arc.EndAngle *= MathUtils.DegToRadFactor;
-            }
 		}
 	}
 }

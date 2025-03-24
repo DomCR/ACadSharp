@@ -56,7 +56,7 @@ namespace ACadSharp.Tests.IO
 		{
 			CadDocument doc = this.getDocument(test);
 
-			this._docIntegrity.AssertTableHirearchy(doc);
+			this._docIntegrity.AssertTableHierarchy(doc);
 		}
 
 		public virtual void AssertBlockRecords(FileModel test)

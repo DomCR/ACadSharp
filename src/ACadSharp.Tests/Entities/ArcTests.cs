@@ -16,7 +16,7 @@ namespace ACadSharp.Tests.Entities
 			// 90 degree bulge
 			double bulge = Math.Tan(Math.PI / (2 * 4));
 
-			XY center = MathUtils.GetCenter(start, end, bulge, out double radius);
+			XY center = Arc.GetCenter(start, end, bulge, out double radius);
 
 #if NETFRAMEWORK
 			center = MathHelper.FixZero(center);
@@ -48,6 +48,12 @@ namespace ACadSharp.Tests.Entities
 
 			Assert.Equal(new XYZ(0, 0, 0), boundingBox.Min);
 			Assert.Equal(new XYZ(5, 5, 0), boundingBox.Max);
+
+			arc.Center = new XYZ(200.0, 200.0, 0.0);
+			boundingBox = arc.GetBoundingBox();
+
+			Assert.Equal(new XYZ(200, 200, 0), boundingBox.Min);
+			Assert.Equal(new XYZ(205, 205, 0), boundingBox.Max);
 		}
 
 		[Fact]
@@ -58,7 +64,7 @@ namespace ACadSharp.Tests.Entities
 			// 90 degree bulge
 			double bulge = Math.Tan(Math.PI / (2 * 4));
 
-			XY center = MathUtils.GetCenter(start, end, bulge);
+			XY center = Arc.GetCenter(start, end, bulge);
 
 #if NETFRAMEWORK
 			center = MathHelper.FixZero(center);

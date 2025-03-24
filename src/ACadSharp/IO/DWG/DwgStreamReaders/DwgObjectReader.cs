@@ -3154,7 +3154,7 @@ namespace ACadSharp.IO.DWG
 
 			//  173 Text Left Attachment Type
 			mLeader.TextLeftAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
-			//  95  Text Right Attachement Type
+			//  95  Text Right Attachment Type
 			mLeader.TextRightAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
 			//  174 Text Angle Type
 			mLeader.TextAngle = (TextAngleType)this._objectReader.ReadBitShort();
@@ -5015,7 +5015,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readGroup()
 		{
 			Group group = new Group();
-			DwgGroupTemplate template = new DwgGroupTemplate(group);
+			CadGroupTemplate template = new CadGroupTemplate(group);
 
 			this.readCommonNonEntityData(template);
 
@@ -5023,7 +5023,7 @@ namespace ACadSharp.IO.DWG
 			group.Description = this._textReader.ReadVariableText();
 
 			//Unnamed BS 1 if group has no name
-			group.IsUnnamed = this._objectReader.ReadBitShort() > 0;
+			bool isUnnamed = this._objectReader.ReadBitShort() > 0;
 			//Selectable BS 1 if group selectable
 			group.Selectable = this._objectReader.ReadBitShort() > 0;
 

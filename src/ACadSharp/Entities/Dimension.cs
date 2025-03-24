@@ -66,6 +66,10 @@ namespace ACadSharp.Entities
 			{
 				return this._flags;
 			}
+			internal set
+			{
+				this._flags = value;
+			}
 		}
 
 		/// <summary>
