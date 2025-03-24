@@ -1,0 +1,53 @@
+name: Auto Version
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  minor:
+    if: contains(github.event.pull_request.labels.*.name, 'minor')
+    runs-on: windows-latest
+    name: Minor version
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with: 
+          submodules: true
+      - uses: cardinalby/export-env-action@v2
+        with:
+          envFile: 'github.env'
+      - name: Update major version
+        id: update
+        uses: vers-one/dotnet-project-version-updater@v1.7
+        with:
+          file: ./src/ACadSharp/ACadSharp.csproj
+          version: '*.*.^'
+      - name: Push changes
+        run: ./push-changes.sh
+        shell: bash
+        env:
+          VERSION: ${{steps.update.outputs.newVersion}}
+  major:
+    if: contains(github.event.pull_request.labels.*.name, 'major')
+    runs-on: windows-latest
+    name: Major version
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with: 
+          submodules: true
+      - uses: cardinalby/export-env-action@v2
+        with:
+          envFile: 'github.env'
+      - name: Update major version
+        id: update
+        uses: vers-one/dotnet-project-version-updater@v1.7
+        with:
+          file: ./src/ACadSharp/ACadSharp.csproj
+          version: '*.^.0'
+      - name: Push changes
+        run: ./push-changes.sh
+        shell: bash
+        env:
+          VERSION: ${{steps.update.outputs.newVersion}}

@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  coveralls:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
