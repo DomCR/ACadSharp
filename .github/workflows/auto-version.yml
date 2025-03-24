@@ -1,9 +1,7 @@
 name: Auto Version
 
 on:
-  # push:
-  #   branches: [ master ]
-  pull_request:
+  push:
     branches: [ master ]
 
 jobs:
