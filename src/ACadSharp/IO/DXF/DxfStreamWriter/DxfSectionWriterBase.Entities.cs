@@ -467,7 +467,7 @@ namespace ACadSharp.IO.DXF
 		{
 			DxfClassMap map = DxfClassMap.Create<Insert>();
 
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Insert);
+			this._writer.Write(DxfCode.Subclass, insert.SubclassMarker);
 
 			this._writer.WriteName(2, insert.Block, map);
 
