@@ -143,6 +143,25 @@ namespace ACadSharp.Entities
 			entity.Transparency = this.Transparency;
 		}
 
+		/// <summary>
+		/// Get the active color for the entity, process the colors like <see cref="Color.ByBlock"/> and <see cref="Color.ByLayer"/>.
+		/// </summary>
+		/// <returns></returns>
+		public Color GetActiveColor()
+		{
+			Color color;
+			if (this.Color.IsByLayer)
+			{
+				color = this.Layer.Color;
+			}
+			else
+			{
+				color = this.Color;
+			}
+
+			return color;
+		}
+
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{

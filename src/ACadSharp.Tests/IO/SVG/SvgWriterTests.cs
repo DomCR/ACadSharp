@@ -55,35 +55,6 @@ namespace ACadSharp.Tests.IO.SVG
 			}
 		}
 
-		[Fact]
-		public void WriteLine()
-		{
-			Entity e = new Line(new XYZ(0, 0, 0), new XYZ(100, 100, 0));
-			e.Color = new Color(255, 0, 0);
-			CadDocument doc = new CadDocument();
-			doc.Entities.Add(e);
-
-			string filename = Path.Combine(TestVariables.OutputSvgFolder, $"{e.ObjectType}.svg");
-
-			using (SvgWriter writer = new SvgWriter(filename, doc))
-			{
-				writer.WriteEntity(e);
-			}
-		}
-
-		[Fact(Skip = "Not implemented")]
-		public void WriteLineNoDocument()
-		{
-			Entity e = new Line(new XYZ(0, 0, 0), new XYZ(10, 10, 0));
-
-			string filename = Path.Combine(TestVariables.OutputSvgFolder, $"{e.ObjectType}.svg");
-
-			using (SvgWriter writer = new SvgWriter(filename))
-			{
-				writer.WriteEntity(e);
-			}
-		}
-
 		private void writeSvg(string filename, string svg)
 		{
 			using (StreamWriter sw = new StreamWriter(filename))
