@@ -2,8 +2,10 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 
@@ -13,16 +15,11 @@ namespace ACadSharp.IO.SVG
 	{
 		public event NotificationEventHandler OnNotification;
 
-		public SvgXmlWriter(TextWriter w) : base(w)
-		{
-		}
+		public SvgConfiguration Configuration { get; } = new();
 
-		public SvgXmlWriter(Stream w, Encoding encoding) : base(w, encoding)
+		public SvgXmlWriter(Stream w, Encoding encoding, SvgConfiguration configuration) : base(w, encoding)
 		{
-		}
-
-		public SvgXmlWriter(string filename, Encoding encoding) : base(filename, encoding)
-		{
+			this.Configuration = configuration;
 		}
 
 		public void WriteAttributeString(string localName, double value)
@@ -42,6 +39,23 @@ namespace ACadSharp.IO.SVG
 			}
 
 			this.endDocument();
+		}
+
+		private string colorSvg(Color color)
+		{
+			return $"rgb({color.R},{color.G},{color.B})";
+		}
+
+		private void endDocument()
+		{
+			this.WriteEndElement();
+			this.WriteEndDocument();
+			this.Close();
+		}
+
+		private void notify(string message, NotificationType type, Exception ex = null)
+		{
+			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, type, ex));
 		}
 
 		private void startDocument(BoundingBox box)
@@ -67,11 +81,69 @@ namespace ACadSharp.IO.SVG
 			this.WriteAttributeString("transform", $"scale(1,-1)");
 		}
 
-		private void endDocument()
+		private string svgPoints(IEnumerable<IVector> points, Transform transform)
 		{
+			if (!points.Any())
+			{
+				return string.Empty;
+			}
+
+			StringBuilder sb = new StringBuilder();
+			sb.Append(transform.ApplyTransform(points.First().Convert<XYZ>()).SvgPoint());
+			foreach (IVector point in points.Skip(1))
+			{
+				sb.Append(' ');
+				sb.Append(transform.ApplyTransform(point.Convert<XYZ>()).SvgPoint());
+			}
+
+			return sb.ToString();
+		}
+
+		private void writeArc(Arc arc, Transform transform)
+		{
+			//A rx ry rotation large-arc-flag sweep-flag x y
+
+			this.WriteStartElement("polyline");
+
+			this.writeEntityStyle(arc);
+
+			IEnumerable<IVector> vertices = arc.PolygonalVertexes(256).OfType<IVector>();
+			string pts = this.svgPoints(vertices, transform);
+			this.WriteAttributeString("points", pts);
+			this.WriteAttributeString("fill", "none");
+
 			this.WriteEndElement();
-			this.WriteEndDocument();
-			this.Close();
+		}
+
+		private void writeCircle(Circle circle, Transform transform)
+		{
+			var loc = transform.ApplyTransform(circle.Center);
+
+			this.WriteStartElement("circle");
+
+			this.writeEntityStyle(circle);
+
+			this.WriteAttributeString("r", circle.Radius);
+			this.WriteAttributeString("cx", loc.X);
+			this.WriteAttributeString("cy", loc.Y);
+
+			this.WriteAttributeString("fill", "none");
+
+			this.WriteEndElement();
+		}
+
+		private void writeEllipse(Ellipse ellipse, Transform transform)
+		{
+			this.WriteStartElement("polygon");
+
+			this.writeEntityStyle(ellipse);
+
+			IEnumerable<IVector> vertices = ellipse.PolygonalVertexes(256).OfType<IVector>();
+			string pts = this.svgPoints(vertices, transform);
+			this.WriteAttributeString("points", pts);
+			this.WriteAttributeString("fill", "none");
+
+			this.WriteEndElement();
 		}
 
 		private void writeEntity(Entity entity)
@@ -83,16 +155,45 @@ namespace ACadSharp.IO.SVG
 		{
 			switch (entity)
 			{
+				case Arc arc:
+					this.writeArc(arc, transform);
+					break;
 				case Line line:
 					this.writeLine(line, transform);
 					break;
 				case Point point:
 					this.writePoint(point, transform);
 					break;
+				case Circle circle:
+					this.writeCircle(circle, transform);
+					break;
+				case Ellipse ellipse:
+					this.writeEllipse(ellipse, transform);
+					break;
+				case IPolyline polyline:
+					this.writePolyline(polyline, transform);
+					break;
 				default:
 					this.notify($"[{entity.ObjectName}] Entity not implemented.", NotificationType.NotImplemented);
 					break;
 			}
+		}
+
+		private void writeEntityStyle(IEntity entity)
+		{
+			Color color = entity.GetActiveColor();
+
+			this.WriteAttributeString("stroke", this.colorSvg(color));
+
+			var lineWeight = entity.LineWeight;
+			switch (lineWeight)
+			{
+				case LineweightType.ByLayer:
+					lineWeight = entity.Layer.LineWeight;
+					break;
+			}
+
+			this.WriteAttributeString("stroke-width", Configuration.GetLineWeightValue(lineWeight));
 		}
 
 		private void writeLine(Line line, Transform transform)
@@ -120,30 +221,35 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityStyle(point);
 
-			this.WriteAttributeString("r", 0.5);
+			this.WriteAttributeString("r", this.Configuration.PointRadius);
 			this.WriteAttributeString("cx", loc.X);
 			this.WriteAttributeString("cy", loc.Y);
 
-			this.WriteAttributeString("fill", colorSvg(point.GetActiveColor()));
+			this.WriteAttributeString("fill", this.colorSvg(point.GetActiveColor()));
 
 			this.WriteEndElement();
 		}
 
-		private void writeEntityStyle(Entity entity)
+		private void writePolyline(IPolyline polyline, Transform transform)
 		{
-			Color color = entity.GetActiveColor();
+			if (polyline.IsClosed)
+			{
+				this.WriteStartElement("polygon");
+			}
+			else
+			{
+				this.WriteStartElement("polyline");
+			}
 
-			this.WriteAttributeString("style", $"stroke:{colorSvg(color)}");
-		}
+			this.writeEntityStyle(polyline);
 
-		private string colorSvg(Color color)
-		{
-			return $"rgb({color.R},{color.G},{color.B})";
-		}
+			var vertices = polyline.Vertices.Select(v => v.Location).ToList();
 
-		private void notify(string message, NotificationType type, Exception ex = null)
-		{
-			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, type, ex));
+			string pts = this.svgPoints(polyline.Vertices.Select(v => v.Location), transform);
+			this.WriteAttributeString("points", pts);
+			this.WriteAttributeString("fill", "none");
+
+			this.WriteEndElement();
 		}
 	}
 }

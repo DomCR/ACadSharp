@@ -9,7 +9,7 @@ using System.Xml;
 
 namespace ACadSharp.IO
 {
-	public class SvgWriter : CadWriterBase<CadWriterConfiguration>
+	public class SvgWriter : CadWriterBase<SvgConfiguration>
 	{
 		private SvgXmlWriter _writer;
 
@@ -99,7 +99,7 @@ namespace ACadSharp.IO
 		private void createWriter()
 		{
 			StreamWriter textWriter = new StreamWriter(this._stream);
-			this._writer = new SvgXmlWriter(this._stream, this._encoding);
+			this._writer = new SvgXmlWriter(this._stream, this._encoding, this.Configuration);
 			this._writer.Formatting = Formatting.Indented;
 			this._writer.OnNotification += this.triggerNotification;
 		}
