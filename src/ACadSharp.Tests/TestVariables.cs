@@ -51,7 +51,7 @@ namespace ACadSharp.Tests
 
 			craateFolderIfDoesNotExist(outputSamplesFolder);
 			craateFolderIfDoesNotExist(outputSingleCasesFolder);
-			craateFolderIfDoesNotExist(outputSingleCasesFolder);
+			craateFolderIfDoesNotExist(outputSvgFolder);
 		}
 
 		private static void craateFolderIfDoesNotExist(string path)

@@ -21,7 +21,7 @@ namespace ACadSharp.IO
 				value = 1;
 			}
 
-			return Math.Abs(value) / LineWeightRatio;
+			return Math.Abs(value) / this.LineWeightRatio;
 		}
 	}
 }
