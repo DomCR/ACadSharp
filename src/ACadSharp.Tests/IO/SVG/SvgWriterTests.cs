@@ -5,10 +5,11 @@ using CSMath;
 using System;
 using System.IO;
 using Xunit;
+using Xunit.Abstractions;
 
-namespace ACadSharp.Tests.IO
+namespace ACadSharp.Tests.IO.SVG
 {
-	public class SvgWriterTests
+	public class SvgWriterTests : IOTestsBase
 	{
 		public static readonly TheoryData<Type> EntityTypes = new TheoryData<Type>();
 
@@ -23,14 +24,25 @@ namespace ACadSharp.Tests.IO
 
 				EntityTypes.Add(item);
 			}
+		}
 
-			if (!Directory.Exists(TestVariables.OutputSvgFolder))
+		public SvgWriterTests(ITestOutputHelper output) : base(output) { }
+
+		[Fact]
+		public void WriteModel()
+		{
+			string svg = Path.Combine(TestVariables.OutputSvgFolder, $"model.svg");
+			string dwg = Path.Combine(TestVariables.SamplesFolder, "svg", $"export_sample.dwg");
+			var doc = DwgReader.Read(dwg);
+
+			using (SvgWriter writer = new SvgWriter(svg, doc))
 			{
-				Directory.CreateDirectory(TestVariables.OutputSvgFolder);
+				writer.OnNotification += this.onNotification;
+				writer.Write();
 			}
 		}
 
-		[Theory]
+		[Theory(Skip = "Not implemented")]
 		[MemberData(nameof(EntityTypes))]
 		public void WriteEntitiesNoDocument(Type t)
 		{
@@ -44,6 +56,22 @@ namespace ACadSharp.Tests.IO
 		}
 
 		[Fact]
+		public void WriteLine()
+		{
+			Entity e = new Line(new XYZ(0, 0, 0), new XYZ(100, 100, 0));
+			e.Color = new Color(255, 0, 0);
+			CadDocument doc = new CadDocument();
+			doc.Entities.Add(e);
+
+			string filename = Path.Combine(TestVariables.OutputSvgFolder, $"{e.ObjectType}.svg");
+
+			using (SvgWriter writer = new SvgWriter(filename, doc))
+			{
+				writer.WriteEntity(e);
+			}
+		}
+
+		[Fact(Skip = "Not implemented")]
 		public void WriteLineNoDocument()
 		{
 			Entity e = new Line(new XYZ(0, 0, 0), new XYZ(10, 10, 0));

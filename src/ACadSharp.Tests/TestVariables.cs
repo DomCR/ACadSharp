@@ -40,22 +40,18 @@ namespace ACadSharp.Tests
 		{
 			string outputSamplesFolder = OutputSamplesFolder;
 			string outputSingleCasesFolder = OutputSingleCasesFolder;
+			string outputSvgFolder = OutputSvgFolder;
 
 #if NETFRAMEWORK
 			string curr = AppDomain.CurrentDomain.BaseDirectory;
 			outputSamplesFolder = Path.GetFullPath(Path.Combine(curr, OutputSamplesFolder));
 			outputSingleCasesFolder = Path.GetFullPath(Path.Combine(curr, OutputSingleCasesFolder));
+			outputSvgFolder = Path.GetFullPath(Path.Combine(curr, OutputSvgFolder));
 #endif
 
-			if (!Directory.Exists(outputSamplesFolder))
-			{
-				Directory.CreateDirectory(outputSamplesFolder);
-			}
-
-			if (!Directory.Exists(outputSingleCasesFolder))
-			{
-				Directory.CreateDirectory(outputSingleCasesFolder);
-			}
+			craateFolderIfDoesNotExist(outputSamplesFolder);
+			craateFolderIfDoesNotExist(outputSingleCasesFolder);
+			craateFolderIfDoesNotExist(outputSingleCasesFolder);
 		}
 
 		private static void craateFolderIfDoesNotExist(string path)

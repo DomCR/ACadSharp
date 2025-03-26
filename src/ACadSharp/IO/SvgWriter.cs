@@ -1,9 +1,10 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.SVG;
+using ACadSharp.Objects;
+using ACadSharp.Tables;
 using CSMath;
 using System;
 using System.IO;
-using System.Text;
 using System.Xml;
 
 namespace ACadSharp.IO
@@ -16,7 +17,7 @@ namespace ACadSharp.IO
 		/// Initialize an instance of <see cref="SvgWriter"/> with a default document as a reference.
 		/// </summary>
 		/// <param name="stream"></param>
-		public SvgWriter(Stream stream) : base(stream, new CadDocument())
+		public SvgWriter(Stream stream) : base(stream, null)
 		{
 		}
 
@@ -33,7 +34,7 @@ namespace ACadSharp.IO
 		/// 
 		/// </summary>
 		/// <param name="filename"></param>
-		/// <param name="document">Reference document for the table records.</param>
+		/// <param name="document">Document to export from.</param>
 		public SvgWriter(string filename, CadDocument document)
 			: this(File.Create(filename), document)
 		{
@@ -50,20 +51,34 @@ namespace ACadSharp.IO
 		/// </remarks>
 		public override void Write()
 		{
+			this.Write(this._document.ModelSpace);
+		}
+
+		public void Write(BlockRecord record)
+		{
 			this.createWriter();
 
+			this._writer.WriteBlock(record);
+		}
+
+		public void Write(Layout layout)
+		{
 			throw new NotImplementedException();
 		}
 
 		public void WriteEntity(Entity entity)
 		{
+			this.createWriter();
+
 			this._writer.WriteStartDocument();
 
 			this._writer.WriteStartElement("svg");
+			this._writer.WriteAttributeString("xmlns", "http://www.w3.org/2000/svg");
 
 			BoundingBox box = entity.GetBoundingBox();
 			this._writer.WriteAttributeString("width", box.Max.X);
 			this._writer.WriteAttributeString("height", box.Max.Y);
+			this._writer.WriteAttributeString(" transform", "scale(1,-1)");
 
 			switch (entity)
 			{
@@ -83,11 +98,10 @@ namespace ACadSharp.IO
 
 		private void createWriter()
 		{
-			base.Write();
-
 			StreamWriter textWriter = new StreamWriter(this._stream);
 			this._writer = new SvgXmlWriter(this._stream, this._encoding);
 			this._writer.Formatting = Formatting.Indented;
+			this._writer.OnNotification += this.triggerNotification;
 		}
 
 		private void writeEntityStyle(Entity entity)
@@ -107,61 +121,10 @@ namespace ACadSharp.IO
 			this._writer.WriteAttributeString("y2", line.EndPoint.Y);
 		}
 
-		public string Convert(Entity entity)
-		{
-			StringBuilder sb = new StringBuilder();
-
-			BoundingBox box = entity.GetBoundingBox();
-
-
-
-			sb.AppendLine($"<svg width=\"{box.Max.X}\" height=\"{box.Max.Y}\">");
-
-			switch (entity)
-			{
-				case Line line:
-					sb.AppendLine(convertLine(line));
-					break;
-				default:
-					throw new NotImplementedException($"Svg convertion not implemented for {entity.SubclassMarker}");
-			}
-
-			sb.AppendLine($"</svg>");
-
-			return sb.ToString();
-		}
-
 		/// <inheritdoc/>
 		public override void Dispose()
 		{
 			this._stream.Dispose();
-		}
-
-		private string convertLine(Line line)
-		{
-			StringBuilder sb = new StringBuilder();
-
-			sb.Append($"\t");
-			sb.Append($"<line ");
-			sb.Append($"x1=\"{line.StartPoint.X}\" ");
-			sb.Append($"y1=\"{line.StartPoint.Y}\" ");
-			sb.Append($"x2=\"{line.EndPoint.X}\" ");
-			sb.Append($"y2=\"{line.EndPoint.Y}\" ");
-			sb.Append(this.entityStyle(line));
-			sb.Append($"/>");
-
-			return sb.ToString();
-		}
-
-		private string entityStyle(Entity entity)
-		{
-			StringBuilder style = new StringBuilder();
-
-			style.Append($"style=");
-
-			style.Append($"\"stroke:rgb({entity.Color.R},{entity.Color.G},{entity.Color.B})\"");
-
-			return style.ToString();
 		}
 	}
 }

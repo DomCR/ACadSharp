@@ -6,6 +6,7 @@ using ACadSharp.Entities;
 using System.Linq;
 using System.Collections.Generic;
 using ACadSharp.Objects.Evaluations;
+using CSMath;
 
 namespace ACadSharp.Tables
 {
@@ -286,6 +287,28 @@ namespace ACadSharp.Tables
 			dictionary.Add(table);
 
 			return table;
+		}
+
+		/// <summary>
+		/// Get the bounding box for all the entities in the block.
+		/// </summary>
+		/// <param name="ignoreInfinite">Ignore infinite entities, default: true</param>
+		/// <returns></returns>
+		public BoundingBox GetBoundingBox(bool ignoreInfinite = true)
+		{
+			BoundingBox box = BoundingBox.Null;
+			foreach (var item in this.Entities)
+			{
+				if (item.GetBoundingBox().Extent == BoundingBoxExtent.Infinite
+					&& ignoreInfinite)
+				{
+					continue;
+				}
+
+				box = box.Merge(item.GetBoundingBox());
+			}
+
+			return box;
 		}
 
 		/// <inheritdoc/>
