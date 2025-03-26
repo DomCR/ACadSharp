@@ -173,6 +173,9 @@ namespace ACadSharp.IO.SVG
 				case IPolyline polyline:
 					this.writePolyline(polyline, transform);
 					break;
+				case TextEntity text:
+					this.writeText(text, transform);
+					break;
 				default:
 					this.notify($"[{entity.ObjectName}] Entity not implemented.", NotificationType.NotImplemented);
 					break;
@@ -227,6 +230,33 @@ namespace ACadSharp.IO.SVG
 
 			this.WriteAttributeString("fill", this.colorSvg(point.GetActiveColor()));
 
+			this.WriteEndElement();
+		}
+
+		private void writeText(TextEntity text, Transform transform)
+		{
+			var insert = transform.ApplyTransform(text.InsertPoint);
+
+			this.WriteStartElement("g");
+			this.WriteAttributeString("transform", $"translate({insert.X.ToString(CultureInfo.InvariantCulture)},{insert.Y.ToString(CultureInfo.InvariantCulture)})");
+
+			this.WriteStartElement("text");
+			this.WriteAttributeString("transform", "scale(1,-1)");
+
+			this.WriteAttributeString("fill", this.colorSvg(text.GetActiveColor()));
+
+			//<text x="20" y="35" class="small">My</text>
+			this.WriteStartAttribute("style");
+			this.WriteValue("font:");
+			this.WriteValue(text.Height);
+			this.WriteValue("px");
+			this.WriteValue(" ");
+			this.WriteValue(Path.GetFileNameWithoutExtension(text.Style.Filename));
+			this.WriteEndAttribute();
+
+			this.WriteRaw(text.Value);
+
+			this.WriteEndElement();
 			this.WriteEndElement();
 		}
 
