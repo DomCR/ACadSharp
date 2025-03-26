@@ -6,7 +6,7 @@ namespace ACadSharp.Entities
 	/// <summary>
 	/// Common interface for all text entities in the drawing.
 	/// </summary>
-	public interface IText
+	public interface IText : IEntity
 	{
 		/// <summary>
 		/// Changes the height of the object.

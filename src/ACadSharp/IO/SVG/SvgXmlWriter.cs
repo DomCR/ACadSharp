@@ -173,7 +173,7 @@ namespace ACadSharp.IO.SVG
 				case IPolyline polyline:
 					this.writePolyline(polyline, transform);
 					break;
-				case TextEntity text:
+				case IText text:
 					this.writeText(text, transform);
 					break;
 				default:
@@ -233,7 +233,29 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndElement();
 		}
 
-		private void writeText(TextEntity text, Transform transform)
+		private void writePolyline(IPolyline polyline, Transform transform)
+		{
+			if (polyline.IsClosed)
+			{
+				this.WriteStartElement("polygon");
+			}
+			else
+			{
+				this.WriteStartElement("polyline");
+			}
+
+			this.writeEntityStyle(polyline);
+
+			var vertices = polyline.Vertices.Select(v => v.Location).ToList();
+
+			string pts = this.svgPoints(polyline.Vertices.Select(v => v.Location), transform);
+			this.WriteAttributeString("points", pts);
+			this.WriteAttributeString("fill", "none");
+
+			this.WriteEndElement();
+		}
+
+		private void writeText(IText text, Transform transform)
 		{
 			var insert = transform.ApplyTransform(text.InsertPoint);
 
@@ -254,31 +276,24 @@ namespace ACadSharp.IO.SVG
 			this.WriteValue(Path.GetFileNameWithoutExtension(text.Style.Filename));
 			this.WriteEndAttribute();
 
-			this.WriteRaw(text.Value);
+			switch (text)
+			{
+				case MText mtext:
+					foreach (var item in mtext.GetTextLines())
+					{
+						this.WriteStartElement("tspan");
+						this.WriteAttributeString("x", 0);
+						this.WriteAttributeString("dy", "1em");
+						this.WriteRaw(item);
+						this.WriteEndElement();
+					}
+					break;
+				default:
+					this.WriteRaw(text.Value);
+					break;
+			}
 
 			this.WriteEndElement();
-			this.WriteEndElement();
-		}
-
-		private void writePolyline(IPolyline polyline, Transform transform)
-		{
-			if (polyline.IsClosed)
-			{
-				this.WriteStartElement("polygon");
-			}
-			else
-			{
-				this.WriteStartElement("polyline");
-			}
-
-			this.writeEntityStyle(polyline);
-
-			var vertices = polyline.Vertices.Select(v => v.Location).ToList();
-
-			string pts = this.svgPoints(polyline.Vertices.Select(v => v.Location), transform);
-			this.WriteAttributeString("points", pts);
-			this.WriteAttributeString("fill", "none");
-
 			this.WriteEndElement();
 		}
 	}

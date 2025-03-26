@@ -201,7 +201,7 @@ namespace ACadSharp.Entities
 		public string[] GetTextLines()
 		{
 			return this.Value.Split(
-				new string[] { "\r\n", "\r", "\n" },
+				new string[] { "\r\n", "\r", "\n", "\\P" },
 				StringSplitOptions.None
 			);
 		}
