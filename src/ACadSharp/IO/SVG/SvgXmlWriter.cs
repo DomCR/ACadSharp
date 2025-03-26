@@ -146,6 +146,34 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndElement();
 		}
 
+		private void writeInsert(Insert insert, Transform transform)
+		{
+			var insertTransform = insert.GetTransform();
+			var merged = new Transform(transform.Matrix * insertTransform.Matrix);
+
+			StringBuilder sb = new StringBuilder();
+			sb.Append($"translate(");
+			sb.Append($"{insert.InsertPoint.X.ToString(CultureInfo.InvariantCulture)},");
+			sb.Append($"{insert.InsertPoint.Y.ToString(CultureInfo.InvariantCulture)})");
+			sb.Append(' ');
+			sb.Append($"scale(");
+			sb.Append($"{insert.XScale.ToString(CultureInfo.InvariantCulture)},");
+			sb.Append($"{insert.YScale.ToString(CultureInfo.InvariantCulture)})");
+			sb.Append(' ');
+			sb.Append($"rotate(");
+			sb.Append($"{insert.Rotation.ToString(CultureInfo.InvariantCulture)})");
+
+			this.WriteStartElement("g");
+			this.WriteAttributeString("transform", sb.ToString());
+
+			foreach (var e in insert.Block.Entities)
+			{
+				this.writeEntity(e);
+			}
+
+			this.WriteEndElement();
+		}
+
 		private void writeEntity(Entity entity)
 		{
 			this.writeEntity(entity, new Transform());
@@ -169,6 +197,9 @@ namespace ACadSharp.IO.SVG
 					break;
 				case Ellipse ellipse:
 					this.writeEllipse(ellipse, transform);
+					break;
+				case Insert insert:
+					this.writeInsert(insert, transform);
 					break;
 				case IPolyline polyline:
 					this.writePolyline(polyline, transform);
