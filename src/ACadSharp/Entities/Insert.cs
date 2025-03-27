@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
 using System.Linq;
 
@@ -116,19 +117,58 @@ namespace ACadSharp.Entities
 		/// X scale factor.
 		/// </summary>
 		[DxfCodeValue(41)]
-		public double XScale { get; set; } = 1;
+		public double XScale
+		{
+			get
+			{
+				return this._xscale;
+			}
+			set
+			{
+				value.GreaterThan(0, inclusive: false);
+				this._xscale = value;
+			}
+		}
 
 		/// <summary>
 		/// Y scale factor.
 		/// </summary>
 		[DxfCodeValue(42)]
-		public double YScale { get; set; } = 1;
+		public double YScale
+		{
+			get
+			{
+				return this._yscale;
+			}
+			set
+			{
+				value.GreaterThan(0, inclusive: false);
+				this._yscale = value;
+			}
+		}
 
 		/// <summary>
 		/// Z scale factor.
 		/// </summary>
 		[DxfCodeValue(43)]
-		public double ZScale { get; set; } = 1;
+		public double ZScale
+		{
+			get
+			{
+				return this._zscale;
+			}
+			set
+			{
+				value.GreaterThan(0, inclusive: false);
+				this._zscale = value;
+			}
+		}
+
+		private double _xscale = 1;
+
+		private double _yscale = 1;
+
+		private double _zscale = 1;
 
 		/// <summary>
 		/// Constructor to reference an insert to a block record
@@ -175,13 +215,25 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			BoundingBox box = this.Block.BlockEntity.GetBoundingBox();
+			BoundingBox box = this.Block.GetBoundingBox();
 
 			var scale = new XYZ(this.XScale, this.YScale, this.ZScale);
 			var min = box.Min * scale + this.InsertPoint;
 			var max = box.Max * scale + this.InsertPoint;
 
 			return new BoundingBox(min, max);
+		}
+
+		/// <summary>
+		/// Get the transform that will be applied to the entities in the <see cref="BlockRecord"/> when this entity is processed.
+		/// </summary>
+		/// <returns></returns>
+		public Transform GetTransform()
+		{
+			XYZ scale = new XYZ(XScale, YScale, ZScale);
+
+			//TODO: Apply rotation
+			return new Transform(this.InsertPoint, scale, XYZ.Zero);
 		}
 
 		/// <summary>

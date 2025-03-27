@@ -68,6 +68,7 @@ namespace ACadSharp.Blocks
 		{
 		}
 
+		/// <inheritdoc/>
 		public Block(BlockRecord record) : base()
 		{
 			this.Owner = record;
@@ -86,6 +87,7 @@ namespace ACadSharp.Blocks
 			return clone;
 		}
 
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
 			BoundingBox box = BoundingBox.Null;

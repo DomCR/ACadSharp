@@ -48,12 +48,12 @@ namespace ACadSharp.Entities
 		public XYZ EndPoint { get; set; } = XYZ.Zero;
 
 		/// <summary>
-		/// Default constructor
+		/// Default constructor.
 		/// </summary>
 		public Line() : base() { }
 
 		/// <summary>
-		/// Constructor with the start and end
+		/// Constructor with the start and end.
 		/// </summary>
 		/// <param name="start"></param>
 		/// <param name="end"></param>
