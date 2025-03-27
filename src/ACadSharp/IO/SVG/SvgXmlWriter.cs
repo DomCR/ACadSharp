@@ -310,6 +310,48 @@ namespace ACadSharp.IO.SVG
 			switch (text)
 			{
 				case MText mtext:
+					switch (mtext.AttachmentPoint)
+					{
+						case AttachmentPointType.TopLeft:
+							this.WriteAttributeString("alignment-baseline", "hanging");
+							this.WriteAttributeString("text-anchor", "start");
+							break;
+						case AttachmentPointType.TopCenter:
+							this.WriteAttributeString("alignment-baseline", "hanging");
+							this.WriteAttributeString("text-anchor", "middle");
+							break;
+						case AttachmentPointType.TopRight:
+							this.WriteAttributeString("alignment-baseline", "hanging");
+							this.WriteAttributeString("text-anchor", "end");
+							break;
+						case AttachmentPointType.MiddleLeft:
+							this.WriteAttributeString("alignment-baseline", "middle");
+							this.WriteAttributeString("text-anchor", "start");
+							break;
+						case AttachmentPointType.MiddleCenter:
+							this.WriteAttributeString("alignment-baseline", "middle");
+							this.WriteAttributeString("text-anchor", "middle");
+							break;
+						case AttachmentPointType.MiddleRight:
+							this.WriteAttributeString("alignment-baseline", "middle");
+							this.WriteAttributeString("text-anchor", "end");
+							break;
+						case AttachmentPointType.BottomLeft:
+							this.WriteAttributeString("alignment-baseline", "baseline");
+							this.WriteAttributeString("text-anchor", "start");
+							break;
+						case AttachmentPointType.BottomCenter:
+							this.WriteAttributeString("alignment-baseline", "baseline");
+							this.WriteAttributeString("text-anchor", "middle");
+							break;
+						case AttachmentPointType.BottomRight:
+							this.WriteAttributeString("alignment-baseline", "baseline");
+							this.WriteAttributeString("text-anchor", "end");
+							break;
+						default:
+							break;
+					}
+
 					foreach (var item in mtext.GetTextLines())
 					{
 						this.WriteStartElement("tspan");
@@ -319,7 +361,22 @@ namespace ACadSharp.IO.SVG
 						this.WriteEndElement();
 					}
 					break;
-				default:
+				case TextEntity textEntity:
+
+					switch (textEntity.HorizontalAlignment)
+					{
+						case TextHorizontalAlignment.Left:
+							this.WriteAttributeString("text-anchor", "start");
+							break;
+						case TextHorizontalAlignment.Middle:
+						case TextHorizontalAlignment.Center:
+							this.WriteAttributeString("text-anchor", "middle");
+							break;
+						case TextHorizontalAlignment.Right:
+							this.WriteAttributeString("text-anchor", "end");
+							break;
+					}
+
 					this.WriteRaw(text.Value);
 					break;
 			}
