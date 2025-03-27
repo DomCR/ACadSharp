@@ -1,14 +1,15 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.IO.SVG;
+﻿using ACadSharp.IO.SVG;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
-using CSMath;
 using System;
 using System.IO;
 using System.Xml;
 
 namespace ACadSharp.IO
 {
+	/// <summary>
+	/// Writer to support the creation of SVG from <see cref="BlockRecord"/> and <see cref="Layout"/>.
+	/// </summary>
 	public class SvgWriter : CadWriterBase<SvgConfiguration>
 	{
 		private SvgXmlWriter _writer;
@@ -31,7 +32,7 @@ namespace ACadSharp.IO
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <param name="document">Document to export from.</param>
@@ -42,6 +43,12 @@ namespace ACadSharp.IO
 
 		public SvgWriter(Stream stream, CadDocument document) : base(stream, document)
 		{
+		}
+
+		/// <inheritdoc/>
+		public override void Dispose()
+		{
+			this._stream.Dispose();
 		}
 
 		/// <inheritdoc/>
@@ -61,39 +68,14 @@ namespace ACadSharp.IO
 			this._writer.WriteBlock(record);
 		}
 
+		/// <summary>
+		/// Write the selected layout into a SVG.
+		/// </summary>
+		/// <param name="layout"></param>
+		/// <exception cref="NotImplementedException"></exception>
 		public void Write(Layout layout)
 		{
 			throw new NotImplementedException();
-		}
-
-		public void WriteEntity(Entity entity)
-		{
-			this.createWriter();
-
-			this._writer.WriteStartDocument();
-
-			this._writer.WriteStartElement("svg");
-			this._writer.WriteAttributeString("xmlns", "http://www.w3.org/2000/svg");
-
-			BoundingBox box = entity.GetBoundingBox();
-			this._writer.WriteAttributeString("width", box.Max.X);
-			this._writer.WriteAttributeString("height", box.Max.Y);
-			this._writer.WriteAttributeString(" transform", "scale(1,-1)");
-
-			switch (entity)
-			{
-				case Line line:
-					this.writeLine(line);
-					break;
-				default:
-					throw new NotImplementedException($"Entity {entity.SubclassMarker} is not implemented.");
-			}
-
-			this._writer.WriteEndElement();
-
-			this._writer.WriteEndDocument();
-
-			this._writer.Close();
 		}
 
 		private void createWriter()
@@ -102,29 +84,6 @@ namespace ACadSharp.IO
 			this._writer = new SvgXmlWriter(this._stream, this._encoding, this.Configuration);
 			this._writer.Formatting = Formatting.Indented;
 			this._writer.OnNotification += this.triggerNotification;
-		}
-
-		private void writeEntityStyle(Entity entity)
-		{
-			this._writer.WriteAttributeString("style", $"stroke:rgb({entity.Color.R},{entity.Color.G},{entity.Color.B})");
-		}
-
-		private void writeLine(Line line)
-		{
-			this._writer.WriteStartElement("line");
-
-			this.writeEntityStyle(line);
-
-			this._writer.WriteAttributeString("x1", line.StartPoint.X);
-			this._writer.WriteAttributeString("y1", line.StartPoint.Y);
-			this._writer.WriteAttributeString("x2", line.EndPoint.X);
-			this._writer.WriteAttributeString("y2", line.EndPoint.Y);
-		}
-
-		/// <inheritdoc/>
-		public override void Dispose()
-		{
-			this._stream.Dispose();
 		}
 	}
 }

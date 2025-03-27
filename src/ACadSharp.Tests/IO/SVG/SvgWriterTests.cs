@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
 using ACadSharp.Tests.Common;
-using CSMath;
 using System;
 using System.IO;
 using Xunit;
@@ -39,27 +38,6 @@ namespace ACadSharp.Tests.IO.SVG
 			{
 				writer.OnNotification += this.onNotification;
 				writer.Write();
-			}
-		}
-
-		[Theory(Skip = "Not implemented")]
-		[MemberData(nameof(EntityTypes))]
-		public void WriteEntitiesNoDocument(Type t)
-		{
-			Entity e = (Entity)Factory.CreateObject(t);
-			string filename = Path.Combine(TestVariables.OutputSvgFolder, $"{e.SubclassMarker}.svg");
-
-			using (SvgWriter writer = new SvgWriter(filename))
-			{
-				writer.WriteEntity(e);
-			}
-		}
-
-		private void writeSvg(string filename, string svg)
-		{
-			using (StreamWriter sw = new StreamWriter(filename))
-			{
-				sw.Write(svg);
 			}
 		}
 	}
