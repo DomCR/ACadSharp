@@ -3,7 +3,7 @@
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Objects with geometric qualities in the drawing.
+	/// Objects with geometric properties that can be processed in a drawing.
 	/// </summary>
 	public interface IGeometricEntity
 	{

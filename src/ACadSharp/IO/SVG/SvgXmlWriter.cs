@@ -198,6 +198,9 @@ namespace ACadSharp.IO.SVG
 				case Ellipse ellipse:
 					this.writeEllipse(ellipse, transform);
 					break;
+				//case Hatch hatch:
+				//	this.writeHatch(hatch, transform);
+				//	break;
 				case Insert insert:
 					this.writeInsert(insert, transform);
 					break;
@@ -211,6 +214,40 @@ namespace ACadSharp.IO.SVG
 					this.notify($"[{entity.ObjectName}] Entity not implemented.", NotificationType.NotImplemented);
 					break;
 			}
+		}
+
+		private void writeHatch(Hatch hatch, Transform transform)
+		{
+			this.WriteStartElement("g");
+
+			this.writePattern(hatch.Pattern);
+
+			foreach (Hatch.BoundaryPath path in hatch.Paths)
+			{
+				this.WriteStartElement("polyline");
+
+				this.writeEntityStyle(hatch);
+
+				foreach (var item in path.Edges)
+				{
+					//TODO: svg edges for hatch drawing
+				}
+
+				//this.WriteAttributeString("points", pts);
+
+				this.WriteAttributeString("fill", "none");
+
+				this.WriteEndElement();
+			}
+
+			this.WriteEndElement();
+		}
+
+		private void writePattern(HatchPattern pattern)
+		{
+			this.WriteStartElement("pattern");
+
+			this.WriteEndElement();
 		}
 
 		private void writeEntityStyle(IEntity entity)
