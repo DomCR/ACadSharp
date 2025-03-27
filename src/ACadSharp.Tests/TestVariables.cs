@@ -14,6 +14,8 @@ namespace ACadSharp.Tests
 
 		public static string OutputSingleCasesFolder { get { return EnvironmentVars.Get<string>("OUTPUT_SINGLE_CASES_FOLDER"); } }
 
+		public static string OutputSvgFolder { get { return EnvironmentVars.Get<string>("OUTPUT_SVG"); } }
+
 		public static bool LocalEnv { get { return EnvironmentVars.Get<bool>("LOCAL_ENV"); } }
 
 		public static double Delta { get { return EnvironmentVars.Get<double>("DELTA"); } }
@@ -27,6 +29,7 @@ namespace ACadSharp.Tests
 			EnvironmentVars.SetIfNull("SAMPLES_FOLDER", "../../../../../samples/");
 			EnvironmentVars.SetIfNull("OUTPUT_SAMPLES_FOLDER", "../../../../../samples/out");
 			EnvironmentVars.SetIfNull("OUTPUT_SINGLE_CASES_FOLDER", "../../../../../samples/out/single_cases");
+			EnvironmentVars.SetIfNull("OUTPUT_SVG", "../../../../../samples/out/svg");
 			EnvironmentVars.SetIfNull("LOCAL_ENV", "true");
 			EnvironmentVars.SetIfNull("DELTA", "0.00001");
 			EnvironmentVars.SetIfNull("DECIMAL_PRECISION", "5");
@@ -37,21 +40,25 @@ namespace ACadSharp.Tests
 		{
 			string outputSamplesFolder = OutputSamplesFolder;
 			string outputSingleCasesFolder = OutputSingleCasesFolder;
+			string outputSvgFolder = OutputSvgFolder;
 
 #if NETFRAMEWORK
 			string curr = AppDomain.CurrentDomain.BaseDirectory;
 			outputSamplesFolder = Path.GetFullPath(Path.Combine(curr, OutputSamplesFolder));
 			outputSingleCasesFolder = Path.GetFullPath(Path.Combine(curr, OutputSingleCasesFolder));
+			outputSvgFolder = Path.GetFullPath(Path.Combine(curr, OutputSvgFolder));
 #endif
 
-			if (!Directory.Exists(outputSamplesFolder))
-			{
-				Directory.CreateDirectory(outputSamplesFolder);
-			}
+			craateFolderIfDoesNotExist(outputSamplesFolder);
+			craateFolderIfDoesNotExist(outputSingleCasesFolder);
+			craateFolderIfDoesNotExist(outputSvgFolder);
+		}
 
-			if (!Directory.Exists(outputSingleCasesFolder))
+		private static void craateFolderIfDoesNotExist(string path)
+		{
+			if (!Directory.Exists(path))
 			{
-				Directory.CreateDirectory(outputSingleCasesFolder);
+				Directory.CreateDirectory(path);
 			}
 		}
 	}
