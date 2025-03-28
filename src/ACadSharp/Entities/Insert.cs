@@ -4,6 +4,7 @@ using CSMath;
 using CSUtilities.Extensions;
 using System;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -125,7 +126,11 @@ namespace ACadSharp.Entities
 			}
 			set
 			{
-				value.GreaterThan(0, inclusive: false);
+				if (value.Equals(0))
+				{
+					string name = nameof(this.XScale);
+					throw new ArgumentOutOfRangeException(name, value, $"{name} value must be none zero.");
+				}
 				this._xscale = value;
 			}
 		}
@@ -142,7 +147,11 @@ namespace ACadSharp.Entities
 			}
 			set
 			{
-				value.GreaterThan(0, inclusive: false);
+				if (value.Equals(0))
+				{
+					string name = nameof(this.YScale);
+					throw new ArgumentOutOfRangeException(name, value, $"{name} value must be none zero.");
+				}
 				this._yscale = value;
 			}
 		}
@@ -159,7 +168,11 @@ namespace ACadSharp.Entities
 			}
 			set
 			{
-				value.GreaterThan(0, inclusive: false);
+				if (value.Equals(0))
+				{
+					string name = nameof(this.ZScale);
+					throw new ArgumentOutOfRangeException(name, value, $"{name} value must be none zero.");
+				}
 				this._zscale = value;
 			}
 		}
