@@ -747,7 +747,7 @@ namespace ACadSharp.Header
 		}
 
 		/// <summary>
-		/// Dimension extension line color
+		/// Dimension extension line color override.
 		/// </summary>
 		/// <remarks>
 		/// System variable DIMCLRE
@@ -763,7 +763,7 @@ namespace ACadSharp.Header
 		}
 
 		/// <summary>
-		/// Extension line extension
+		/// Extension line extension override.
 		/// </summary>
 		/// <remarks>
 		/// System variable DIMEXE
@@ -779,7 +779,7 @@ namespace ACadSharp.Header
 		}
 
 		/// <summary>
-		/// Extension line offset
+		/// Extension line offset override.
 		/// </summary>
 		/// <remarks>
 		/// System variable DIMEXO
@@ -840,7 +840,7 @@ namespace ACadSharp.Header
 		}
 
 		/// <summary>
-		/// Vertical justification for tolerance values
+		/// Vertical justification for tolerance values override.
 		/// </summary>
 		/// <remarks>
 		/// System variable DIMTOL
@@ -888,7 +888,7 @@ namespace ACadSharp.Header
 		}
 
 		/// <summary>
-		/// Dimension limits generated if nonzero
+		/// Dimension limits generated if nonzero override.
 		/// </summary>
 		/// <remarks>
 		/// System variable DIMLIM
@@ -904,7 +904,7 @@ namespace ACadSharp.Header
 		}
 
 		/// <summary>
-		/// Linear measurements scale factor
+		/// Linear measurements scale factor override.
 		/// </summary>
 		/// <remarks>
 		/// System variable DIMLFAC
