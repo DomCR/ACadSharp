@@ -377,7 +377,7 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//H: DIMSTYLE (hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.DimensionStyleOverrides);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.CurrentDimensionStyle);
 
 			//H: CMLSTYLE (hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
@@ -555,7 +555,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitShort(this._header.DimensionAlternateUnitToleranceDecimalPlaces);
 
 				//H : DIMTXSTY(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.DimensionStyleOverrides);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.DimensionTextStyle);
 			}
 
 			//Common:
@@ -750,7 +750,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//H: DIMTXSTY(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.DimensionTextStyle);
 				//H: DIMLDRBLK(hard pointer)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 				//H: DIMBLK(hard pointer)

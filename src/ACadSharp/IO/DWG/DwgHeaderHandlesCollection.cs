@@ -105,7 +105,7 @@ namespace ACadSharp.IO.DWG
 
 			if (builder.TryGetCadObject(this.DIMSTYLE, out entry))
 			{
-				header.DimensionStyleOverridesName = entry.Name;
+				header.CurrentDimensionStyleName = entry.Name;
 			}
 
 			BlockRecord record;
