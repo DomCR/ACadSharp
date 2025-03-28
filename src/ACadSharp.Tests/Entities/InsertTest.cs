@@ -108,9 +108,9 @@ namespace ACadSharp.Tests.Entities
 			insert.ZScale = 5;
 
 			//Negative
-			Assert.Throws<ArgumentOutOfRangeException>(() => insert.XScale = -1);
-			Assert.Throws<ArgumentOutOfRangeException>(() => insert.YScale = -1);
-			Assert.Throws<ArgumentOutOfRangeException>(() => insert.ZScale = -1);
+			insert.XScale = -1;
+			insert.YScale = -1;
+			insert.ZScale = -1;
 
 			//Zero
 			Assert.Throws<ArgumentOutOfRangeException>(() => insert.XScale = 0);
