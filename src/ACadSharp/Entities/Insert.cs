@@ -201,7 +201,10 @@ namespace ACadSharp.Entities
 				this.Block = block;
 			}
 
-			this.UpdateAttributes();
+			foreach (var item in block.AttributeDefinitions)
+			{
+				this.Attributes.Add(new AttributeEntity(item));
+			}
 		}
 
 		internal Insert() : base()
@@ -250,8 +253,11 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Updates all attribute definitions contained in the block reference as <see cref="AttributeDefinition"/> entitites in the insert
+		/// Updates all attribute definitions contained in the block reference as <see cref="AttributeDefinition"/> entities in the insert.
 		/// </summary>
+		/// <remarks>
+		/// This will update the attributes based on their <see cref="AttributeBase.Tag"/>.
+		/// </remarks>
 		public void UpdateAttributes()
 		{
 			var atts = this.Attributes.ToArray();

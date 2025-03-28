@@ -91,6 +91,8 @@ namespace ACadSharp.Tests.Entities
 		{
 			BlockRecord record = new BlockRecord(_blockName);
 			record.Entities.Add(new AttributeDefinition());
+			record.Entities.Add(new AttributeDefinition());
+			record.Entities.Add(new AttributeDefinition());
 
 			Insert insert = new Insert(record);
 
