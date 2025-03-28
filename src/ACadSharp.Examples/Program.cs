@@ -1,8 +1,10 @@
 ﻿using ACadSharp.IO;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using Svg;
 using System;
-using System.Diagnostics;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 
 namespace ACadSharp.Examples
@@ -10,16 +12,39 @@ namespace ACadSharp.Examples
 	class Program
 	{
 		const string _file = "../../../../../samples/sample_AC1032.dwg";
+		const string _previewFile = "../../../../../samples/svg/export_sample.dwg";
 
 		static void Main(string[] args)
 		{
 			CadDocument doc;
-			using (DwgReader reader = new DwgReader(_file))
+			DwgPreview preview;
+			using (DwgReader reader = new DwgReader(_previewFile))
 			{
 				doc = reader.Read();
+				preview = reader.ReadPreview();
 			}
 
-			exploreDocument(doc);
+			//exploreDocument(doc);
+
+			var svgStream = new MemoryStream();
+			using (SvgWriter svgwriter = new SvgWriter(svgStream, doc))
+			{
+				svgwriter.Write();
+			}
+
+			var pngStream = new MemoryStream();
+			SvgDocument svg = SvgDocument.Open<SvgDocument>(new MemoryStream(svgStream.GetBuffer()));
+			var bitmap = svg.Draw();
+			bitmap.Save(pngStream, ImageFormat.Png);
+
+			string dwgOutput = Path.Combine(Path.GetDirectoryName(_previewFile),
+				"out",
+				$"{Path.GetFileNameWithoutExtension(_file)}.out.dwg");
+			using (DwgWriter writer = new DwgWriter(dwgOutput, new CadDocument()))
+			{
+				writer.Preview = preview;
+				writer.Write();
+			}
 		}
 
 		/// <summary>
