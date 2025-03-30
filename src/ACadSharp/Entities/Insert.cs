@@ -4,6 +4,7 @@ using CSMath;
 using CSUtilities.Extensions;
 using System;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -125,7 +126,11 @@ namespace ACadSharp.Entities
 			}
 			set
 			{
-				value.GreaterThan(0, inclusive: false);
+				if (value.Equals(0))
+				{
+					string name = nameof(this.XScale);
+					throw new ArgumentOutOfRangeException(name, value, $"{name} value must be none zero.");
+				}
 				this._xscale = value;
 			}
 		}
@@ -142,7 +147,11 @@ namespace ACadSharp.Entities
 			}
 			set
 			{
-				value.GreaterThan(0, inclusive: false);
+				if (value.Equals(0))
+				{
+					string name = nameof(this.YScale);
+					throw new ArgumentOutOfRangeException(name, value, $"{name} value must be none zero.");
+				}
 				this._yscale = value;
 			}
 		}
@@ -159,7 +168,11 @@ namespace ACadSharp.Entities
 			}
 			set
 			{
-				value.GreaterThan(0, inclusive: false);
+				if (value.Equals(0))
+				{
+					string name = nameof(this.ZScale);
+					throw new ArgumentOutOfRangeException(name, value, $"{name} value must be none zero.");
+				}
 				this._zscale = value;
 			}
 		}
@@ -188,7 +201,10 @@ namespace ACadSharp.Entities
 				this.Block = block;
 			}
 
-			this.UpdateAttributes();
+			foreach (var item in block.AttributeDefinitions)
+			{
+				this.Attributes.Add(new AttributeEntity(item));
+			}
 		}
 
 		internal Insert() : base()
@@ -237,8 +253,11 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Updates all attribute definitions contained in the block reference as <see cref="AttributeDefinition"/> entitites in the insert
+		/// Updates all attribute definitions contained in the block reference as <see cref="AttributeDefinition"/> entities in the insert.
 		/// </summary>
+		/// <remarks>
+		/// This will update the attributes based on their <see cref="AttributeBase.Tag"/>.
+		/// </remarks>
 		public void UpdateAttributes()
 		{
 			var atts = this.Attributes.ToArray();

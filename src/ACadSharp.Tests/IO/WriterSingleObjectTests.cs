@@ -113,6 +113,17 @@ namespace ACadSharp.Tests.IO
 					AttributeType = AttributeType.SingleLine,
 				});
 
+				record.Entities.Add(new AttributeDefinition()
+				{
+					InsertPoint = new XYZ(10, 10, 0),
+					Prompt = "Name_custom",
+					Tag = "CIRCLE_NAME",
+					Value = "Circilla",
+					HorizontalAlignment = TextHorizontalAlignment.Left,
+					Height = 18,
+					AttributeType = AttributeType.SingleLine,
+				});
+
 				this.Document.BlockRecords.Add(record);
 
 				var insert = new Insert(record)
@@ -121,6 +132,16 @@ namespace ACadSharp.Tests.IO
 					XScale = 0.8,
 					YScale = 0.8,
 				};
+
+				insert.Attributes.Add(new AttributeEntity()
+				{
+					InsertPoint = new XYZ(-10, -10, 0),
+					Tag = "CIRCLE_NAME_ATT",
+					Value = "Bla",
+					HorizontalAlignment = TextHorizontalAlignment.Left,
+					Height = 18,
+					AttributeType = AttributeType.SingleLine,
+				});
 
 				this.Document.Entities.Add(insert);
 			}
@@ -672,7 +693,7 @@ namespace ACadSharp.Tests.IO
 
 				Group group = new Group();
 				group.Name = "MyGroup";
-				group.Add( circle);
+				group.Add(circle);
 				group.Add(line);
 
 				this.Document.Groups.Add(group);
