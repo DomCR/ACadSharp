@@ -226,14 +226,18 @@ namespace ACadSharp.IO
 
 			if (this.Preview != null)
 			{
-				writer.Write(this.Preview, this._stream);
+				writer.Write(this.Preview, this._stream.Position);
+
+				//Page has to fit the image byte size, in intervals of 0x400
+				int pageSize = (int)((stream.Length % 0x400) * 0x400 + 0x400);
+				this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, false, pageSize);
 			}
 			else
 			{
 				writer.Write();
+				this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, false, 0x400);
 			}
 
-			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, false, 0x400);
 		}
 
 		private void writeAppInfo()
