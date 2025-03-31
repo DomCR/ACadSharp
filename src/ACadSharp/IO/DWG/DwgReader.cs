@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using ACadSharp.Exceptions;
 using ACadSharp.IO.DWG;
+using ACadSharp.IO.DWG.DwgStreamReaders;
 
 namespace ACadSharp.IO
 {
@@ -164,77 +165,15 @@ namespace ACadSharp.IO
 			if (this._fileHeader.PreviewAddress < 0)
 				return null;
 
-			IDwgStreamReader sectionHandler = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
-			sectionHandler.Position = this._fileHeader.PreviewAddress;
-
-			//{0x1F,0x25,0x6D,0x07,0xD4,0x36,0x28,0x28,0x9D,0x57,0xCA,0x3F,0x9D,0x44,0x10,0x2B }
-			byte[] sentinel = sectionHandler.ReadSentinel();
-
-			//overall size	RL	overall size of image area
-			long overallSize = sectionHandler.ReadRawLong();
-
-			//imagespresent RC counter indicating what is present here
-			byte imagespresent = (byte)sectionHandler.ReadRawChar();
-
-			long? headerDataStart = null;
-			long? headerDataSize = null;
-			long? startOfImage = null;
-			long? sizeImage = null;
-
-			DwgPreview.PreviewType previewCode = DwgPreview.PreviewType.Unknown;
-			for (int i = 0; i < imagespresent; i++)
+			IDwgStreamReader streamReader = this.getSectionStream(DwgSectionDefinition.Preview);
+			if (streamReader == null)
 			{
-				//Code RC code indicating what follows
-				byte code = (byte)sectionHandler.ReadRawChar();
-				switch (code)
-				{
-					case 1:
-						//header data start RL start of header data
-						headerDataStart = sectionHandler.ReadRawLong();
-						//header data size RL size of header data
-						headerDataSize = sectionHandler.ReadRawLong();
-						break;
-					default:
-						previewCode = (DwgPreview.PreviewType)code;
-						startOfImage = sectionHandler.ReadRawLong();
-						sizeImage = sectionHandler.ReadRawLong();
-						break;
-				}
+				streamReader = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
+				streamReader.Position = this._fileHeader.PreviewAddress;
 			}
 
-			byte[] header = null;
-			if (this._fileStream.Position == headerDataStart)
-			{
-				header = sectionHandler.ReadBytes((int)headerDataSize.Value);
-			}
-			else
-			{
-				throw new Exception();
-			}
-
-			byte[] body = null;
-			if (this._fileStream.Position == startOfImage)
-			{
-				body = sectionHandler.ReadBytes((int)sizeImage);
-			}
-			else
-			{
-				throw new Exception();
-			}
-
-			//0xE0,0xDA,0x92,0xF8,0x2B,0xc9,0xD7,0xD7,0x62,0xA8,0x35,0xC0,0x62,0xBB,0xEF,0xD4
-			byte[] _endSentinel = new byte[16]
-		{
-			0xE0, 0xDA, 0x92, 0xF8, 0x2B, 0xC9, 0xD7, 0xD7, 0x62, 0xA8, 0x35, 0xC0, 0x62, 0xBB, 0xEF, 0xD4
-		};
-			byte[] endSentinel = sectionHandler.ReadSentinel();
-
-			if(!DwgSectionIO.CheckSentinel(endSentinel, _endSentinel))
-			{
-				throw new Exception();
-			}
-
-			return new DwgPreview(previewCode, header, body);
+			DwgPreviewReader reader = new DwgPreviewReader(this._fileHeader.AcadVersion, streamReader, this._fileHeader.PreviewAddress);
+			return reader.Read();
 		}
 
 		/// <inheritdoc/>
@@ -496,10 +435,7 @@ namespace ACadSharp.IO
 			sreader.ResetShift();
 
 			var sn = sreader.ReadSentinel();
-			if (!DwgSectionIO.CheckSentinel(sn, DwgFileHeaderAC15.EndSentinel))
-			{
-				this.triggerNotification($"Invalid section sentinel found in FileHeader", NotificationType.Warning);
-			}
+			DwgSectionIO.CheckSentinel(sn, DwgFileHeaderAC15.EndSentinel);
 		}
 
 		/// <summary>
