@@ -18,6 +18,11 @@ namespace ACadSharp
 
 		public byte[] RawImage { get; }
 
+		public DwgPreview()
+		{
+			this.Code = PreviewType.Unknown;
+		}
+
 		public DwgPreview(PreviewType code, byte[] rawHeader, byte[] rawImage)
 		{
 			this.Code = code;
@@ -32,14 +37,12 @@ namespace ACadSharp
 			{
 				case PreviewType.Bmp:
 				case PreviewType.Wmf:
-					writeHeader = true;
-					break;
 				case PreviewType.Png:
 					writeHeader = false;
 					break;
 				case PreviewType.Unknown:
 				default:
-					throw new System.NotSupportedException();
+					throw new System.NotSupportedException($"Preview with code {this.Code} not supported.");
 			}
 
 			using (StreamIO sw = new StreamIO(path, System.IO.FileMode.Create, System.IO.FileAccess.ReadWrite))
