@@ -224,7 +224,7 @@ namespace ACadSharp.IO
 			MemoryStream stream = new MemoryStream();
 			DwgPreviewWriter writer = new DwgPreviewWriter(this._version, stream);
 
-			if (this.Preview != null)
+			if (this.Preview != null && this.Preview.Code != DwgPreview.PreviewType.Unknown)
 			{
 				writer.Write(this.Preview, this._stream.Position);
 
