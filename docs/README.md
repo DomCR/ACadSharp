@@ -42,4 +42,6 @@ string file = "your file path";
 DwgWriter.Write(file, doc);
 ```
 
-Similar as with the `CadReader` the `CadWriter` have a configuration and a notification system, for more information check [CadReader](./CadWriterDocs.md).
+Similar as with the `CadReader` the `CadWriter` have a configuration and a notification system, for more information check [CadWriter](./CadWriterDocs.md).
+
+To save the file in other formats.
