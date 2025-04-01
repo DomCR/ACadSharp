@@ -23,11 +23,11 @@ namespace ACadSharp.IO.DWG
 
 			if (version < ACadVersion.AC1021)
 			{
-				_readStringMethod = this.readUnicodeString;
+				this._readStringMethod = this.readUnicodeString;
 			}
 			else
 			{
-				_readStringMethod = this._reader.ReadTextUnicode;
+				this._readStringMethod = this._reader.ReadTextUnicode;
 			}
 		}
 
@@ -35,65 +35,76 @@ namespace ACadSharp.IO.DWG
 		{
 			CadSummaryInfo summary = new CadSummaryInfo();
 
-			//This section contains summary information about the drawing. 
-			//Strings are encoded as a 16-bit length, followed by the character bytes (0-terminated).
-
-			//String	2 + n	Title
-			summary.Title = _readStringMethod();
-			//String	2 + n	Subject
-			summary.Subject = _readStringMethod();
-			//String	2 + n	Author
-			summary.Author = _readStringMethod();
-			//String	2 + n	Keywords
-			summary.Keywords = _readStringMethod();
-			//String	2 + n	Comments
-			summary.Comments = _readStringMethod();
-			//String	2 + n	LastSavedBy
-			summary.LastSavedBy = _readStringMethod();
-			//String	2 + n	RevisionNumber
-			summary.RevisionNumber = _readStringMethod();
-			//String	2 + n	RevisionNumber
-			summary.HyperlinkBase = _readStringMethod();
-
-			//?	8	Total editing time(ODA writes two zero Int32’s)
-			_reader.ReadInt();
-			_reader.ReadInt();
-
-			//Julian date	8	Create date time
-			summary.CreatedDate = _reader.Read8BitJulianDate();
-
-			//Julian date	8	Modified date timez
-			summary.ModifiedDate = _reader.Read8BitJulianDate();
-
-			//Int16	2 + 2 * (2 + n)	Property count, followed by PropertyCount key/value string pairs.
-			short nproperties = _reader.ReadShort();
-			for (int i = 0; i < nproperties; i++)
+			try
 			{
-				string propName = _readStringMethod();
-				string propValue = _readStringMethod();
+				//This section contains summary information about the drawing. 
+				//Strings are encoded as a 16-bit length, followed by the character bytes (0-terminated).
 
-				//Add the property
-				try
+				//String	2 + n	Title
+				summary.Title = this._readStringMethod();
+				//String	2 + n	Subject
+				summary.Subject = this._readStringMethod();
+				//String	2 + n	Author
+				summary.Author = this._readStringMethod();
+				//String	2 + n	Keywords
+				summary.Keywords = this._readStringMethod();
+				//String	2 + n	Comments
+				summary.Comments = this._readStringMethod();
+				//String	2 + n	LastSavedBy
+				summary.LastSavedBy = this._readStringMethod();
+				//String	2 + n	RevisionNumber
+				summary.RevisionNumber = this._readStringMethod();
+				//String	2 + n	RevisionNumber
+				summary.HyperlinkBase = this._readStringMethod();
+
+				//?	8	Total editing time(ODA writes two zero Int32’s)
+				this._reader.ReadInt();
+				this._reader.ReadInt();
+
+				//Julian date	8	Create date time
+				summary.CreatedDate = this._reader.Read8BitJulianDate();
+
+				//Julian date	8	Modified date timez
+				summary.ModifiedDate = this._reader.Read8BitJulianDate();
+
+				//Int16	2 + 2 * (2 + n)	Property count, followed by PropertyCount key/value string pairs.
+				short nproperties = this._reader.ReadShort();
+				for (int i = 0; i < nproperties; i++)
 				{
-					summary.Properties.Add(propName, propValue);
+					string propName = this._readStringMethod();
+					string propValue = this._readStringMethod();
+
+					//Add the property
+					try
+					{
+						summary.Properties.Add(propName, propValue);
+					}
+					catch (System.Exception ex)
+					{
+						this.notify("[SummaryInfo] An error ocurred while adding a property in the SummaryInfo", NotificationType.Error, ex);
+					}
 				}
-				catch (System.Exception ex)
+
+				//Int32	4	Unknown(write 0)
+				this._reader.ReadInt();
+				//Int32	4	Unknown(write 0)
+				this._reader.ReadInt();
+
+			}
+			catch (System.Exception ex)
+			{
+				if (this._reader.Stream.Position != this._reader.Stream.Length)
 				{
-					this.notify("[SummaryInfo] An error ocurred while adding a property in the SummaryInfo", NotificationType.Error, ex);
+					this.notify("An error occurred while reading the Summary Info", NotificationType.Error, ex);
 				}
 			}
-
-			//Int32	4	Unknown(write 0)
-			_reader.ReadInt();
-			//Int32	4	Unknown(write 0)
-			_reader.ReadInt();
 
 			return summary;
 		}
 
 		private string readUnicodeString()
 		{
-			short textLength = _sreader.ReadShort<LittleEndianConverter>();
+			short textLength = this._sreader.ReadShort<LittleEndianConverter>();
 			string value;
 			if (textLength == 0)
 			{
@@ -102,7 +113,7 @@ namespace ACadSharp.IO.DWG
 			else
 			{
 				//Read the string and get rid of the empty bytes
-				value = _sreader.ReadString(textLength,
+				value = this._sreader.ReadString(textLength,
 					TextEncoding.GetListedEncoding(CodePage.Windows1252))
 					.Replace("\0", "");
 			}
