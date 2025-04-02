@@ -12,8 +12,33 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Entity)]
 	public abstract class Entity : CadObject, IEntity
 	{
+		/// <summary>
+		/// Book color for this entity.
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Name, 430)]
+		public BookColor BookColor
+		{
+			get { return this._bookColor; }
+			set
+			{
+				if (this.Document != null)
+				{
+					this._bookColor = this.updateCollection(value, this.Document.Colors);
+				}
+				else
+				{
+					this._bookColor = value;
+				}
+			}
+		}
+
 		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Entity;
+		[DxfCodeValue(62, 420)]
+		public Color Color { get; set; } = Color.ByLayer;
+
+		/// <inheritdoc/>
+		[DxfCodeValue(60)]
+		public bool IsInvisible { get; set; } = false;
 
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name, 8)]
@@ -39,26 +64,6 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		[DxfCodeValue(62, 420)]
-		public Color Color { get; set; } = Color.ByLayer;
-
-		/// <inheritdoc/>
-		[DxfCodeValue(370)]
-		public LineweightType LineWeight { get; set; } = LineweightType.ByLayer;
-
-		/// <inheritdoc/>
-		[DxfCodeValue(48)]
-		public double LinetypeScale { get; set; } = 1.0;
-
-		/// <inheritdoc/>
-		[DxfCodeValue(60)]
-		public bool IsInvisible { get; set; } = false;
-
-		/// <inheritdoc/>
-		[DxfCodeValue(440)]
-		public Transparency Transparency { get; set; } = Transparency.ByLayer;
-
-		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name, 6)]
 		public LineType LineType
 		{
@@ -82,37 +87,60 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
+		[DxfCodeValue(48)]
+		public double LinetypeScale { get; set; } = 1.0;
+
+		/// <inheritdoc/>
+		[DxfCodeValue(370)]
+		public LineweightType LineWeight { get; set; } = LineweightType.ByLayer;
+
+		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Handle, 347)]
 		public Material Material { get; set; }
 
-		/// <summary>
-		/// Book color for this entity.
-		/// </summary> 
-		[DxfCodeValue(DxfReferenceType.Name, 430)]
-		public BookColor BookColor
-		{
-			get { return this._bookColor; }
-			set
-			{
-				if (this.Document != null)
-				{
-					this._bookColor = this.updateCollection(value, this.Document.Colors);
-				}
-				else
-				{
-					this._bookColor = value;
-				}
-			}
-		}
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Entity;
+
+		/// <inheritdoc/>
+		[DxfCodeValue(440)]
+		public Transparency Transparency { get; set; } = Transparency.ByLayer;
+
+		private BookColor _bookColor = null;
 
 		private Layer _layer = Layer.Default;
 
 		private LineType _lineType = LineType.ByLayer;
 
-		private BookColor _bookColor = null;
-
 		/// <inheritdoc/>
 		public Entity() : base() { }
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			Entity clone = (Entity)base.Clone();
+
+			clone.Layer = (Layer)this.Layer.Clone();
+			clone.LineType = (LineType)this.LineType.Clone();
+			clone.Material = (Material)this.Material?.Clone();
+
+			return clone;
+		}
+
+		/// <inheritdoc/>
+		public Color GetActiveColor()
+		{
+			Color color;
+			if (this.Color.IsByLayer)
+			{
+				color = this.Layer.Color;
+			}
+			else
+			{
+				color = this.Color;
+			}
+
+			return color;
+		}
 
 		/// <inheritdoc/>
 		public abstract BoundingBox GetBoundingBox();
@@ -141,18 +169,6 @@ namespace ACadSharp.Entities
 			entity.LinetypeScale = this.LinetypeScale;
 			entity.IsInvisible = this.IsInvisible;
 			entity.Transparency = this.Transparency;
-		}
-
-		/// <inheritdoc/>
-		public override CadObject Clone()
-		{
-			Entity clone = (Entity)base.Clone();
-
-			clone.Layer = (Layer)this.Layer.Clone();
-			clone.LineType = (LineType)this.LineType.Clone();
-			clone.Material = (Material)this.Material?.Clone();
-
-			return clone;
 		}
 
 		internal override void AssignDocument(CadDocument doc)

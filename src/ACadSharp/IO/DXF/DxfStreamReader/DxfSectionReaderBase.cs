@@ -119,7 +119,9 @@ namespace ACadSharp.IO.DXF
 				//Check with mapper
 				case 100:
 					if (map != null && !map.SubClasses.ContainsKey(this._reader.ValueAsString))
+					{
 						this._builder.Notify($"[{template.CadObject.ObjectName}] Unidentified subclass {this._reader.ValueAsString}", NotificationType.Warning);
+					}
 					break;
 				//Start of application - defined group
 				case 102:
@@ -288,6 +290,18 @@ namespace ACadSharp.IO.DXF
 						this.readCommonCodes(template, out isExtendedData, map);
 					}
 					break;
+			}
+		}
+
+		protected bool checkObjectEnd(CadTemplate template, DxfMap map, Func<CadTemplate, DxfMap, bool> func)
+		{
+			if (this._reader.DxfCode == DxfCode.Start)
+			{
+				return true;
+			}
+			else
+			{
+				return func.Invoke(template, map);
 			}
 		}
 
@@ -521,7 +535,7 @@ namespace ACadSharp.IO.DXF
 				case 50:
 					var dim = new DimensionLinear();
 					tmp.SetDimensionObject(dim);
-					dim.Rotation = CSMath.MathHelper.DegToRad(this._reader.ValueAsDouble);
+					dim.Rotation = this._reader.ValueAsAngle;
 					map.SubClasses.Add(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
 					return true;
 				case 70:
@@ -588,7 +602,7 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.Code)
 			{
 				case 2:
-					tmp.HatchPatternName = this._reader.ValueAsString;
+					hatch.Pattern.Name = this._reader.ValueAsString;
 					return true;
 				case 10:
 					seedPoint.X = this._reader.ValueAsDouble;
@@ -604,14 +618,10 @@ namespace ACadSharp.IO.DXF
 					hatch.Elevation = this._reader.ValueAsDouble;
 					isFirstSeed = false;
 					return true;
-				//TODO: Check hatch undocumented codes
-				case 43:
-				case 44:
-				case 45:
-				case 46:
-				case 49:
 				case 53:
-				case 79:
+					hatch.PatternAngle = this._reader.ValueAsAngle;
+					return true;
+				//TODO: Check hatch undocumented codes
 				case 90:
 					return true;
 				//Information about the hatch pattern
@@ -619,6 +629,7 @@ namespace ACadSharp.IO.DXF
 					return true;
 				//Number of pattern definition lines
 				case 78:
+					this.readPattern(hatch.Pattern, this._reader.ValueAsInt);
 					return true;
 				//Number of boundary paths (loops)
 				case 91:
@@ -686,10 +697,15 @@ namespace ACadSharp.IO.DXF
 				case 2:
 					tmp.BlockName = this._reader.ValueAsString;
 					return true;
+				case 100:
+					//AcDbEntity
+					//AcDbBlockReference
+					//AcDbMInsertBlock
+					return true;
 				case 66:
 					return true;
 				default:
-					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Insert]);
 			}
 		}
 
@@ -1286,6 +1302,74 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		private void readPattern(HatchPattern pattern, int nlines)
+		{
+			//Jump 78 code
+			this._reader.ReadNext();
+
+			for (int i = 0; i < nlines; i++)
+			{
+				HatchPattern.Line line = new HatchPattern.Line();
+				XY basePoint = new XY();
+				XY offset = new XY();
+
+				bool end = false;
+				HashSet<int> codes = new();
+
+				while (!end)
+				{
+					if (codes.Contains(this._reader.Code))
+					{
+						break;
+					}
+					else
+					{
+						codes.Add(this._reader.Code);
+					}
+
+					switch (this._reader.Code)
+					{
+						case 53:
+							line.Angle = this._reader.ValueAsAngle;
+							break;
+						case 43:
+							basePoint.X = this._reader.ValueAsDouble;
+							break;
+						case 44:
+							basePoint.Y = this._reader.ValueAsDouble;
+							line.BasePoint = basePoint;
+							break;
+						case 45:
+							offset.X = this._reader.ValueAsDouble;
+							line.Offset = offset;
+							break;
+						case 46:
+							offset.Y = this._reader.ValueAsDouble;
+							line.Offset = offset;
+							break;
+						//Number of dash length items
+						case 79:
+							int ndash = this._reader.ValueAsInt;
+							for (int j = 0; j < ndash; j++)
+							{
+								this._reader.ReadNext();
+								line.DashLengths.Add(this._reader.ValueAsDouble);
+							}
+							break;
+						case 49:
+							line.DashLengths.Add(this._reader.ValueAsDouble);
+							break;
+						default:
+							end = true;
+							break;
+					}
+					this._reader.ReadNext();
+				}
+
+				pattern.Lines.Add(line);
+			}
+		}
+
 		private void readLoops(CadHatchTemplate template, int count)
 		{
 			if (this._reader.Code == 91)
@@ -1308,9 +1392,10 @@ namespace ACadSharp.IO.DXF
 		private CadHatchTemplate.CadBoundaryPathTemplate readLoop()
 		{
 			CadHatchTemplate.CadBoundaryPathTemplate template = new CadHatchTemplate.CadBoundaryPathTemplate();
-			template.Path.Flags = (BoundaryPathFlags)this._reader.ValueAsInt;
+			var flags = (BoundaryPathFlags)this._reader.ValueAsInt;
+			template.Path.Flags = flags;
 
-			if (template.Path.Flags.HasFlag(BoundaryPathFlags.Polyline))
+			if (flags.HasFlag(BoundaryPathFlags.Polyline))
 			{
 				Hatch.BoundaryPath.Polyline pl = this.readPolylineBoundary();
 				template.Path.Edges.Add(pl);
@@ -1655,7 +1740,7 @@ namespace ACadSharp.IO.DXF
 
 					if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
 					{
-						value = (double)value * MathUtils.DegToRadFactor;
+						value = MathHelper.DegToRad((double)value);
 					}
 
 					dxfProperty.SetValue(this._reader.Code, cadObject, value);

@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
 using System;
+using System.Numerics;
 
 namespace ACadSharp.Entities
 {
@@ -25,13 +26,24 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.LinearDimension;
 
 		/// <summary>
-		/// Angle of rotated, horizontal, or vertical dimensions
+		/// Angle of rotated, horizontal, or vertical dimensions.
 		/// </summary>
 		/// <value>
-		/// Value in radians
+		/// Value in radians.
 		/// </value>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation { get; set; }
+
+		/// <inheritdoc/>
+		public override double Measurement
+		{
+			get
+			{
+				var angle = new XYZ(System.Math.Cos(this.Rotation), System.Math.Sin(this.Rotation), 0.0);
+				double dot = Math.Abs(angle.Dot((this.SecondPoint - this.FirstPoint).Normalize()));
+				return base.Measurement * dot;
+			}
+		}
 
 		public DimensionLinear() : base(DimensionType.Linear) { }
 	}

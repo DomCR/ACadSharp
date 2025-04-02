@@ -12,12 +12,12 @@ using System.Linq;
 namespace ACadSharp
 {
 	/// <summary>
-	/// A CAD drawing
+	/// A CAD drawing.
 	/// </summary>
 	public class CadDocument : IHandledCadObject
 	{
 		/// <summary>
-		/// The document handle is always 0, this field makes sure that no object overrides this value
+		/// The document handle is always 0, this field makes sure that no object overrides this value.
 		/// </summary>
 		public ulong Handle { get { return 0; } }
 
@@ -27,57 +27,57 @@ namespace ACadSharp
 		public CadHeader Header { get; internal set; }
 
 		/// <summary>
-		/// Accesses drawing properties such as the Title, Subject, Author, and Keywords properties
+		/// Accesses drawing properties such as the Title, Subject, Author, and Keywords properties.
 		/// </summary>
 		public CadSummaryInfo SummaryInfo { get; set; }
 
 		/// <summary>
-		/// Dxf classes defined in this document
+		/// Dxf classes defined in this document.
 		/// </summary>
 		public DxfClassCollection Classes { get; set; } = new DxfClassCollection();
 
 		/// <summary>
-		/// The collection of all registered applications in the drawing
+		/// The collection of all registered applications in the drawing.
 		/// </summary>
 		public AppIdsTable AppIds { get; private set; }
 
 		/// <summary>
-		/// The collection of all block records in the drawing
+		/// The collection of all block records in the drawing.
 		/// </summary>
 		public BlockRecordsTable BlockRecords { get; private set; }
 
 		/// <summary>
-		/// The collection of all dimension styles in the drawing
+		/// The collection of all dimension styles in the drawing.
 		/// </summary>
 		public DimensionStylesTable DimensionStyles { get; private set; }
 
 		/// <summary>
-		/// The collection of all layers in the drawing
+		/// The collection of all layers in the drawing.
 		/// </summary>
 		public LayersTable Layers { get; private set; }
 
 		/// <summary>
-		/// The collection of all linetypes in the drawing
+		/// The collection of all linetypes in the drawing.
 		/// </summary>
 		public LineTypesTable LineTypes { get; private set; }
 
 		/// <summary>
-		/// The collection of all text styles in the drawing
+		/// The collection of all text styles in the drawing.
 		/// </summary>
 		public TextStylesTable TextStyles { get; private set; }
 
 		/// <summary>
-		/// The collection of all user coordinate systems (UCSs) in the drawing
+		/// The collection of all user coordinate systems (UCSs) in the drawing.
 		/// </summary>
 		public UCSTable UCSs { get; private set; }
 
 		/// <summary>
-		/// The collection of all views in the drawing
+		/// The collection of all views in the drawing.
 		/// </summary>
 		public ViewsTable Views { get; private set; }
 
 		/// <summary>
-		/// The collection of all vports in the drawing
+		/// The collection of all vports in the drawing.
 		/// </summary>
 		public VPortsTable VPorts { get; private set; }
 
@@ -138,7 +138,7 @@ namespace ACadSharp
 		public MLeaderStyleCollection MLeaderStyles { get; private set; }
 
 		/// <summary>
-		/// Root dictionary of the document
+		/// Root dictionary of the document.
 		/// </summary>
 		public CadDictionary RootDictionary
 		{
@@ -250,7 +250,7 @@ namespace ACadSharp
 		}
 
 		/// <summary>
-		/// 
+		/// Create the default entries and objects for the <see cref="CadDocument"/>.
 		/// </summary>
 		public void CreateDefaults()
 		{

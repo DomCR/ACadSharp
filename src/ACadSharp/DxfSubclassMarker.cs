@@ -34,6 +34,7 @@
 		public const string Face3d = "AcDbFace";
 		public const string Helix = "AcDbHelix";
 		public const string Insert = "AcDbBlockReference";
+		public const string MInsert = "AcDbMInsertBlock";
 		public const string Line = "AcDbLine";
 		public const string Ray = "AcDbRay";
 		public const string XLine = "AcDbXline";
@@ -83,6 +84,7 @@
 		public const string PlotSettings = "AcDbPlotSettings";
 		public const string DictionaryVariables = "DictionaryVariables";
 		public const string Scale = "AcDbScale";
+		public const string GeoData = "AcDbGeoData";
 
 		//Dynamic block constants
 		public const string EvalGraph = "AcDbEvalGraph";

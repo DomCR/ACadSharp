@@ -57,16 +57,11 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Sorter attached to an entity.
 		/// </summary>
-		/// <param name="entity">Enity in the block to be sorted.</param>
+		/// <param name="entity">Entity in the block to be sorted.</param>
 		/// <param name="sorterHandle">Sorter handle, will use the entity handle if null.</param>
 		/// <exception cref="ArgumentException"></exception>
 		public void AddEntity(Entity entity, ulong? sorterHandle = null)
 		{
-			if (entity.Owner != null && entity.Owner != this.BlockOwner)
-			{
-				throw new ArgumentException($"Entity is not owned by the block {this.BlockOwner.Name}", nameof(entity));
-			}
-
 			this._sorters.Add(new Sorter(entity, sorterHandle));
 		}
 

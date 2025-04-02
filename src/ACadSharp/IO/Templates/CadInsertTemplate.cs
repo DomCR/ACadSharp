@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
 using System.Collections.Generic;
-using ACadSharp.IO.DXF;
 
 namespace ACadSharp.IO.Templates
 {

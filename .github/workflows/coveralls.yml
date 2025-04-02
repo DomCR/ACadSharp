@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  coveralls:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
@@ -21,14 +21,14 @@ jobs:
       run: |
           dotnet restore
           dotnet build --no-restore
-          dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal ACadSharp.Tests/
+          dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-restore --no-build --framework net6.0 --verbosity normal ACadSharp.Tests/
     - name: Build and Test Submodules
       working-directory: src/CSUtilities
       run: |
           dotnet restore
           dotnet build --no-restore
-          dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal CSUtilities.Tests/
-          dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-build --verbosity normal CSMath.Tests/
+          dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-restore --no-build --framework net6.0 --verbosity normal CSUtilities.Tests/
+          dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=lcov --no-restore --no-build --framework net6.0 --verbosity normal CSMath.Tests/
     - name: Coveralls action
       uses: coverallsapp/github-action@v2
       with:

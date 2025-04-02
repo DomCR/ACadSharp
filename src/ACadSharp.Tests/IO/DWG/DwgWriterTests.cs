@@ -11,7 +11,9 @@ namespace ACadSharp.Tests.IO.DWG
 {
 	public class DwgWriterTests : IOTestsBase
 	{
-		public DwgWriterTests(ITestOutputHelper output) : base(output) { }
+		public DwgWriterTests(ITestOutputHelper output) : base(output)
+		{
+		}
 
 		[Theory]
 		[MemberData(nameof(Versions))]
@@ -23,7 +25,7 @@ namespace ACadSharp.Tests.IO.DWG
 
 			using (var wr = new DwgWriter(path, doc))
 			{
-				if (isSupportedVersion(version))
+				if (this.isSupportedVersion(version))
 				{
 					wr.Write();
 				}
@@ -42,20 +44,53 @@ namespace ACadSharp.Tests.IO.DWG
 
 		[Theory]
 		[MemberData(nameof(Versions))]
-		public void WriteTest(ACadVersion version)
+		public void WriteHeaderTest(ACadVersion version)
 		{
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 
-			this.addEntities(doc);
+			MemoryStream stream = new MemoryStream();
 
-			string path = Path.Combine(TestVariables.OutputSamplesFolder, $"out_sample_{version}.dwg");
+			using (var wr = new DwgWriter(stream, doc))
+			{
+				if (this.isSupportedVersion(version))
+				{
+					wr.Write();
+				}
+				else
+				{
+					Assert.Throws<CadNotSupportedException>(() => wr.Write());
+					return;
+				}
+			}
+
+			stream = new MemoryStream(stream.ToArray());
+
+			using (var re = new DwgReader(stream, this.onNotification))
+			{
+				CadHeader header = re.ReadHeader();
+			}
+		}
+
+		[Theory]
+		[MemberData(nameof(Versions))]
+		public void WritePreview(ACadVersion version)
+		{
+			if (!TestVariables.SavePreview)
+			{
+				return;
+			}
+
+			string image = Path.Combine(TestVariables.SamplesFolder, $"preview.png");
+			string path = Path.Combine(TestVariables.OutputSamplesFolder, $"prview_{version}.dwg");
+			CadDocument doc = new CadDocument();
+			doc.Header.Version = version;
 
 			using (var wr = new DwgWriter(path, doc))
 			{
-				wr.OnNotification += this.onNotification;
-				if (isSupportedVersion(version))
+				if (this.isSupportedVersion(version))
 				{
+					wr.Preview = new DwgPreview(DwgPreview.PreviewType.Png, new byte[80], File.ReadAllBytes(image));
 					wr.Write();
 				}
 				else
@@ -93,7 +128,7 @@ namespace ACadSharp.Tests.IO.DWG
 
 			using (var wr = new DwgWriter(stream, doc))
 			{
-				if (isSupportedVersion(version))
+				if (this.isSupportedVersion(version))
 				{
 					wr.Write();
 				}
@@ -120,16 +155,19 @@ namespace ACadSharp.Tests.IO.DWG
 
 		[Theory]
 		[MemberData(nameof(Versions))]
-		public void WriteHeaderTest(ACadVersion version)
+		public void WriteTest(ACadVersion version)
 		{
 			CadDocument doc = new CadDocument();
 			doc.Header.Version = version;
 
-			MemoryStream stream = new MemoryStream();
+			this.addEntities(doc);
 
-			using (var wr = new DwgWriter(stream, doc))
+			string path = Path.Combine(TestVariables.OutputSamplesFolder, $"out_sample_{version}.dwg");
+
+			using (var wr = new DwgWriter(path, doc))
 			{
-				if (isSupportedVersion(version))
+				wr.OnNotification += this.onNotification;
+				if (this.isSupportedVersion(version))
 				{
 					wr.Write();
 				}
@@ -140,11 +178,9 @@ namespace ACadSharp.Tests.IO.DWG
 				}
 			}
 
-			stream = new MemoryStream(stream.ToArray());
-
-			using (var re = new DwgReader(stream, this.onNotification))
+			using (var re = new DwgReader(path, this.onNotification))
 			{
-				CadHeader header = re.ReadHeader();
+				CadDocument readed = re.Read();
 			}
 		}
 

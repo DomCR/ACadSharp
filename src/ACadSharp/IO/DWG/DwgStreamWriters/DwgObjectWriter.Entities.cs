@@ -135,7 +135,7 @@ namespace ACadSharp.IO.DWG
 				case Spline spline:
 					this.writeSpline(spline);
 					break;
-				case CadImageBase image:
+				case CadWipeoutBase image:
 					this.writeCadImage(image);
 					break;
 				case TextEntity text:
@@ -507,7 +507,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitLong(insert.Attributes.Count);
 			}
 
-			if (insert.ObjectType == ObjectType.MINSERT)
+			if (insert.IsMultiple)
 			{
 				//Common:
 				//Numcols BS 70
@@ -1752,7 +1752,7 @@ namespace ACadSharp.IO.DWG
 		{
 		}
 
-		private void writeCadImage(CadImageBase image)
+		private void writeCadImage(CadWipeoutBase image)
 		{
 			this._writer.WriteBitLong(image.ClassVersion);
 

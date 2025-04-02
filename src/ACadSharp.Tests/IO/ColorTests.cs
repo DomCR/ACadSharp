@@ -1,8 +1,5 @@
-﻿using ACadSharp.IO;
-using ACadSharp.Entities;
+﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
-using System.IO;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 using ACadSharp.Tests.TestModels;
@@ -16,7 +13,8 @@ namespace ACadSharp.Tests.IO
 
 		static ColorTests()
 		{
-			loadSamples("color_samples", "*", ColorSamplesFilePaths);
+			loadSamples("./", "dxf", ColorSamplesFilePaths);
+			loadSamples("./", "dwg", ColorSamplesFilePaths);
 		}
 
 		public ColorTests(ITestOutputHelper output) : base(output)
@@ -27,7 +25,6 @@ namespace ACadSharp.Tests.IO
 		[MemberData(nameof(ColorSamplesFilePaths))]
 		public void BasicColorTest(FileModel test)
 		{
-			bool isDxf = Path.GetExtension(test.FileName).Equals(".dxf");
 			CadDocument doc = this.readDocument(test);
 
 			if (doc.Header.Version <= ACadVersion.AC1015)
@@ -36,7 +33,7 @@ namespace ACadSharp.Tests.IO
 			}
 
 			//Entity Line: R 52 : G 201 : B 24
-			Line line = doc.Entities.OfType<Line>().FirstOrDefault();
+			Line line = doc.GetCadObject<Line>(0x99E);
 			Assert.NotNull(line);
 			Color lcolor = line.Color;
 			Assert.Equal(52, lcolor.R);
@@ -49,7 +46,7 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(33, layerColor.G);
 			Assert.Equal(79, layerColor.B);
 
-			if (isDxf)
+			if (test.IsDxf)
 			{
 				//True color for dimension style is not supported in dxf
 				return;
@@ -95,10 +92,25 @@ namespace ACadSharp.Tests.IO
 		{
 			CadDocument doc = this.readDocument(test);
 
-			Circle circle = doc.GetCadObject<Circle>(649);
+			if (doc.Header.Version <= ACadVersion.AC1009)
+			{
+				return;
+			}
 
-			Assert.True(doc.Colors.ContainsKey("RAL CLASSIC$RAL 1006"));
+			Circle circle = doc.GetCadObject<Circle>(0x99F);
 
+			string entryName;
+			if (doc.Header.Version >= ACadVersion.AC1015)
+			{
+				entryName = "RAL CLASSIC$RAL 1006";
+			}
+			else
+			{
+				entryName = "RAL_CLASSIC$RAL_1006";
+			}
+
+			Assert.True(doc.Colors.ContainsKey(entryName));
+			
 			if (doc.Header.Version <= ACadVersion.AC1015)
 			{
 				return;
