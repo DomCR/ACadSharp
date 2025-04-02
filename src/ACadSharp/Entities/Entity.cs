@@ -154,10 +154,7 @@ namespace ACadSharp.Entities
 			this.ApplyTransform(transform);
 		}
 
-		/// <summary>
-		/// Apply a transform matrix to this entity.
-		/// </summary>
-		/// <param name="transform"></param>
+		/// <inheritdoc/>
 		public abstract void ApplyTransform(Transform transform);
 
 		/// <inheritdoc/>

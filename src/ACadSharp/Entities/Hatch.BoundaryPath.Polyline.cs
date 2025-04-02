@@ -45,6 +45,12 @@ namespace ACadSharp.Entities
 				public List<XYZ> Vertices { get; set; } = new();
 
 				/// <inheritdoc/>
+				public override void ApplyTransform(Transform transform)
+				{
+					throw new System.NotImplementedException();
+				}
+
+				/// <inheritdoc/>
 				public override BoundingBox GetBoundingBox()
 				{
 					return BoundingBox.FromPoints(this.Vertices);
