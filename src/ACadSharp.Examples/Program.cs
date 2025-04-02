@@ -2,7 +2,6 @@
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
-using System.Diagnostics;
 using System.Linq;
 
 namespace ACadSharp.Examples
@@ -14,9 +13,11 @@ namespace ACadSharp.Examples
 		static void Main(string[] args)
 		{
 			CadDocument doc;
+			DwgPreview preview;
 			using (DwgReader reader = new DwgReader(_file))
 			{
 				doc = reader.Read();
+				preview = reader.ReadPreview();
 			}
 
 			exploreDocument(doc);

@@ -29,6 +29,7 @@ jobs:
   testDotNet:
     name: Test Dotnet
     runs-on: windows-latest
+    needs: build
     steps:
     - uses: actions/checkout@v4
       with: 
@@ -46,6 +47,7 @@ jobs:
   testFramework:
     name: Test net Framework
     runs-on: windows-latest
+    needs: build
     steps:
     - uses: actions/checkout@v4
       with: 

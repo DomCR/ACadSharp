@@ -68,6 +68,7 @@ namespace ACadSharp.Blocks
 		{
 		}
 
+		/// <inheritdoc/>
 		public Block(BlockRecord record) : base()
 		{
 			this.Owner = record;
@@ -75,7 +76,7 @@ namespace ACadSharp.Blocks
 
 		/// <inheritdoc/>
 		/// <remarks>
-		/// Cloning a block will also unattached it from the record
+		/// Cloning a block will also unattached it from the record.
 		/// </remarks>
 		public override CadObject Clone()
 		{

@@ -178,7 +178,7 @@ namespace ACadSharp.Entities
 				pointX = MathHelper.FixZero(pointX);
 				pointY = MathHelper.FixZero(pointY);
 
-				points.Add(new XY(pointX, pointY));
+				points.Add(new XY(pointX, pointY) + this.Center.Convert<XY>());
 			}
 
 			return points;

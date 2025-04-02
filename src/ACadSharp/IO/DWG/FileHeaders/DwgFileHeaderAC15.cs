@@ -1,5 +1,4 @@
-﻿using CSUtilities.Text;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.DWG
