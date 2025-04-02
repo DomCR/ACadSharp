@@ -32,7 +32,7 @@ namespace ACadSharp.Objects
 		/// A <see cref="MultiLeader"/> can have one or two leader roots having one ore more
 		/// leader lines each.
 		/// </remarks>
-		public IList<LeaderRoot> LeaderRoots { get; } = new List<LeaderRoot>();
+		public IList<LeaderRoot> LeaderRoots { get; private set; } = new List<LeaderRoot>();
 
 		/// <summary>
 		/// Gets or sets a scale factor (see <see cref="MultiLeaderStyle.ScaleFactor"/>).
@@ -550,7 +550,7 @@ namespace ACadSharp.Objects
 		{
 			MultiLeaderAnnotContext clone = (MultiLeaderAnnotContext)base.Clone();
 
-			clone.LeaderRoots.Clear();
+			clone.LeaderRoots = new List<LeaderRoot>();
 			foreach (var leaderRoot in this.LeaderRoots)
 			{
 				clone.LeaderRoots.Add((LeaderRoot)leaderRoot.Clone());

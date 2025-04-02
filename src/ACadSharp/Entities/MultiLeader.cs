@@ -460,7 +460,7 @@ namespace ACadSharp.Entities
 		/// a reference to a "block attribute"? and some proprties to adjust
 		/// the attribute.
 		/// </subject>
-		public IList<BlockAttribute> BlockAttributes { get; } = new List<BlockAttribute>();
+		public IList<BlockAttribute> BlockAttributes { get; private set; } = new List<BlockAttribute>();
 
 		/// <summary>
 		/// Text Direction Negative
@@ -581,7 +581,7 @@ namespace ACadSharp.Entities
 
 			clone.ContextData = (MultiLeaderAnnotContext)this.ContextData?.Clone();
 
-			clone.BlockAttributes.Clear();
+			clone.BlockAttributes = new List<BlockAttribute>();
 			foreach (var att in this.BlockAttributes)
 			{
 				clone.BlockAttributes.Add((BlockAttribute)att.Clone());
