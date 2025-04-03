@@ -92,6 +92,13 @@ namespace ACadSharp.Entities
 		public Polyline() : base()
 		{
 			this.Vertices = new SeqendCollection<Vertex>(this);
+			this.Vertices.OnAdd += this.verticesOnAdd;
+		}
+
+		public Polyline(IEnumerable<Vertex> vertices, bool isColsed) : this()
+		{
+			this.Vertices.AddRange(vertices);
+			this.IsClosed = isColsed;
 		}
 
 		/// <inheritdoc/>
@@ -154,6 +161,8 @@ namespace ACadSharp.Entities
 
 			return new BoundingBox(min, max);
 		}
+
+		protected abstract void verticesOnAdd(object sender, CollectionChangedEventArgs e);
 
 		internal static IEnumerable<Entity> Explode(IPolyline polyline)
 		{

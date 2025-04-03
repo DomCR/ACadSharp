@@ -1,5 +1,9 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.IO.DXF;
 using CSMath;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -54,7 +58,40 @@ namespace ACadSharp.Entities
 				/// <inheritdoc/>
 				public override BoundingBox GetBoundingBox()
 				{
-					throw new System.NotImplementedException();
+					return ((Entities.Arc)this.ToEntity()).GetBoundingBox();
+				}
+
+				/// <summary>
+				/// Converts the arc in a list of vertexes.
+				/// </summary>
+				/// <param name="precision">Number of vertexes generated.</param>
+				/// <returns>A list vertexes that represents the arc expressed in object coordinate system.</returns>
+				public List<XY> PolygonalVertexes(int precision)
+				{
+					return ((Entities.Arc)this.ToEntity()).PolygonalVertexes(precision);
+				}
+
+				/// <inheritdoc/>
+				public override Entity ToEntity()
+				{
+					if (this.CounterClockWise)
+					{
+						return new ACadSharp.Entities.Arc
+						{
+							Center = (XYZ)this.Center,
+							Radius = this.Radius,
+							StartAngle = this.StartAngle,
+							EndAngle = this.EndAngle
+						};
+					}
+
+					return new ACadSharp.Entities.Arc
+					{
+						Center = (XYZ)this.Center,
+						Radius = this.Radius,
+						StartAngle = 2 * Math.PI - this.EndAngle,
+						EndAngle = 2 * Math.PI - this.StartAngle
+					};
 				}
 			}
 		}
