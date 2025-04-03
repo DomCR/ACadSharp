@@ -28,6 +28,11 @@ namespace ACadSharp.Entities
 				{
 					return new Entities.Line(this.Start, this.End);
 				}
+				/// <inheritdoc/>
+				public override void ApplyTransform(Transform transform)
+				{
+					throw new System.NotImplementedException();
+				}
 
 				/// <inheritdoc/>
 				public override BoundingBox GetBoundingBox()

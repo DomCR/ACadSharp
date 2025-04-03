@@ -28,6 +28,9 @@ namespace ACadSharp.Entities
 				/// </summary>
 				public abstract EdgeType Type { get; }
 
+				/// <inheritdoc/>
+				public abstract void ApplyTransform(Transform transform);
+
 				/// <summary>
 				/// Creates a new object that is a copy of the current instance.
 				/// </summary>

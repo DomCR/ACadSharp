@@ -24,13 +24,13 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.DiametricDimension;
 
 		/// <summary>
-		/// Definition point for diameter, radius, and angular dimensions(in WCS)
+		/// Definition point for diameter, radius, and angular dimensions(in WCS).
 		/// </summary>
 		[DxfCodeValue(15, 25, 35)]
 		public XYZ AngleVertex { get; set; }
 
 		/// <summary>
-		/// Leader length for radius and diameter dimensions
+		/// Leader length for radius and diameter dimensions.
 		/// </summary>
 		[DxfCodeValue(40)]
 		public double LeaderLength { get; set; }
@@ -53,6 +53,14 @@ namespace ACadSharp.Entities
 		public override BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.InsertionPoint - this.AngleVertex, this.InsertionPoint + this.AngleVertex);
+		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			base.ApplyTransform(transform);
+			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
+			//LeaderLength should be scaled based on axis??
 		}
 	}
 }

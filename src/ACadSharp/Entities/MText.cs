@@ -2,7 +2,7 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -187,6 +187,103 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public MText() : base() { }
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			XYZ newInsert = transform.ApplyTransform(this.InsertPoint);
+			XYZ newNormal = this.transformNormal(transform, this.Normal);
+
+			var transformation = this.getWorldMatrix(transform, Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+
+			transWO = transWO.Transpose();
+
+			List<XY> uv = applyRotation(
+				new[]
+				{
+					XY.AxisX, XY.AxisY
+				},
+				this.Rotation);
+
+			XYZ v;
+			v = transOW * new XYZ(uv[0].X, uv[0].Y, 0.0);
+			v = transformation * v;
+			v = transWO * v;
+			XY newUvector = new XY(v.X, v.Y);
+
+			// the MText entity does not support non-uniform scaling
+			double scale = newUvector.GetLength();
+
+			v = transOW * new XYZ(uv[1].X, uv[1].Y, 0.0);
+			v = transformation * v;
+			v = transWO * v;
+			XY newVvector = new XY(v.X, v.Y);
+
+			double newRotation = newUvector.GetAngle();
+
+			if (XY.Cross(newUvector, newVvector) < 0.0)
+			{
+				if (newUvector.Dot(uv[0]) < 0.0)
+				{
+					newRotation += 180;
+
+					switch (this.AttachmentPoint)
+					{
+						case AttachmentPointType.TopLeft:
+							this.AttachmentPoint = AttachmentPointType.TopRight;
+							break;
+						case AttachmentPointType.TopRight:
+							this.AttachmentPoint = AttachmentPointType.TopLeft;
+							break;
+						case AttachmentPointType.MiddleLeft:
+							this.AttachmentPoint = AttachmentPointType.MiddleRight;
+							break;
+						case AttachmentPointType.MiddleRight:
+							this.AttachmentPoint = AttachmentPointType.MiddleLeft;
+							break;
+						case AttachmentPointType.BottomLeft:
+							this.AttachmentPoint = AttachmentPointType.BottomRight;
+							break;
+						case AttachmentPointType.BottomRight:
+							this.AttachmentPoint = AttachmentPointType.BottomLeft;
+							break;
+					}
+				}
+				else
+				{
+					switch (this.AttachmentPoint)
+					{
+						case AttachmentPointType.TopLeft:
+							this.AttachmentPoint = AttachmentPointType.BottomLeft;
+							break;
+						case AttachmentPointType.TopCenter:
+							this.AttachmentPoint = AttachmentPointType.BottomCenter;
+							break;
+						case AttachmentPointType.TopRight:
+							this.AttachmentPoint = AttachmentPointType.BottomRight;
+							break;
+						case AttachmentPointType.BottomLeft:
+							this.AttachmentPoint = AttachmentPointType.TopLeft;
+							break;
+						case AttachmentPointType.BottomCenter:
+							this.AttachmentPoint = AttachmentPointType.TopCenter;
+							break;
+						case AttachmentPointType.BottomRight:
+							this.AttachmentPoint = AttachmentPointType.TopRight;
+							break;
+					}
+				}
+			}
+
+			double newHeight = this.Height * scale;
+			newHeight = MathHelper.IsZero(newHeight) ? MathHelper.Epsilon : newHeight;
+
+			this.InsertPoint = newInsert;
+			this.Normal = newNormal;
+			this.Rotation = newRotation;
+			this.Height = newHeight;
+			this.RectangleWidth *= scale;
+		}
 
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
