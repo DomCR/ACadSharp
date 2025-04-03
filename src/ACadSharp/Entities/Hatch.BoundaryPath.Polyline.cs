@@ -53,7 +53,7 @@ namespace ACadSharp.Entities
 						vertices.Add(new Vertex2D(v));
 					}
 
-					return new Entities.Polyline2D(vertices, this.IsClosed);
+					return new Entities.Polyline2D(vertices.Cast<Vertex2D>(), this.IsClosed);
 				}
 
 				/// <inheritdoc/>

@@ -52,7 +52,7 @@ namespace ACadSharp.Entities
 			return clone;
 		}
 
-		private void verticesOnAdd(object sender, CollectionChangedEventArgs e)
+		protected override void verticesOnAdd(object sender, CollectionChangedEventArgs e)
 		{
 			if (e.Item is not VertexFaceMesh)
 			{
