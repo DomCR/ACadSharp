@@ -69,7 +69,7 @@ namespace ACadSharp.Entities
 				/// <inheritdoc/>
 				public override BoundingBox GetBoundingBox()
 				{
-					throw new System.NotImplementedException();
+					return this.ToEntity().GetBoundingBox();
 				}
 			}
 		}
