@@ -1,8 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
+using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -36,8 +35,6 @@ namespace ACadSharp.Tests.IO
 			{
 				doc = DwgReader.Read(test.Path);
 			}
-
-			List<Entity> entities = new List<Entity>(doc.Entities);
 
 			MultiLeader multiLeader;
 
@@ -156,6 +153,41 @@ namespace ACadSharp.Tests.IO
 				Assert.Equal(8, multiLeader.LandingDistance);
 				Assert.Equal(TextAttachmentDirectionType.Vertical, multiLeader.TextAttachmentDirection);
 			}
+		}
+
+		[Fact]
+		public void MultiLeaderStreamWriteAndRead()
+		{
+			CadDocument doc = new CadDocument(ACadVersion.AC1032);
+			MemoryStream stream = new MemoryStream();
+			
+			MultiLeader multiLeader = new MultiLeader();
+			multiLeader.ContextData = new ACadSharp.Objects.MultiLeaderAnnotContext();
+			multiLeader.ContextData.LeaderRoots.Add(new ACadSharp.Objects.MultiLeaderAnnotContext.LeaderRoot());
+			/*
+			multiLeader.Style = new ACadSharp.Objects.MultiLeaderStyle();
+			multiLeader.Style.Name = "MyStyle";
+			*/
+			doc.Entities.Add(multiLeader);
+			
+			/*
+			DimensionLinear dimensionLinear = new DimensionLinear();
+			doc.Entities.Add(dimensionLinear);
+
+
+			Circle circle = new Circle();
+			doc.Entities.Add(circle);
+			*/
+
+			DwgWriter.Write(stream, doc);
+
+
+			stream = new MemoryStream(stream.ToArray());
+			CadDocument newDoc = DwgReader.Read(stream);
+
+			Assert.Equal(1, newDoc.Entities.Count);
+
+			MultiLeader newMultiLeader = (MultiLeader)newDoc.Entities[0];
 		}
 	}
 }

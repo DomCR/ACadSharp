@@ -532,9 +532,6 @@ namespace ACadSharp.IO.DWG
 
 		private void writeMultiLeaderStyle(MultiLeaderStyle mLeaderStyle)
 		{
-			//TODO: Remove this line when MultiLeaderStyle is fixed for writing
-			return;
-
 			if (!R2010Plus)
 			{
 				return;
