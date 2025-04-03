@@ -28,7 +28,7 @@ namespace ACadSharp.Entities
 		/// Specifies the three-dimensional normal unit vector for the object.
 		/// </summary>
 		/// <remarks>
-		/// Omitted if the spline is nonplanar.
+		/// Omitted if the spline is non-planar.
 		/// </remarks>
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;

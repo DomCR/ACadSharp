@@ -130,6 +130,25 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public Hatch() : base() { }
 
+		/// <summary>
+		/// Explode the hatch edges into the equivalent entities.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<Entity> Explode()
+		{
+			List<Entity> entities = new List<Entity>();
+
+			foreach (BoundaryPath b in Paths)
+			{
+				foreach (BoundaryPath.Edge e in b.Edges)
+				{
+					entities.Add(e.ToEntity());
+				}
+			}
+
+			return entities;
+		}
+
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
