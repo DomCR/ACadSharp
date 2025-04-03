@@ -48,7 +48,6 @@ namespace ACadSharp.Tests.Entities
 			};
 			edges.Add(edge4);
 
-
 			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
 			foreach (var item in edges)
 			{
@@ -85,6 +84,55 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
+		public void ExplodeTest()
+		{
+			Hatch hatch = new Hatch();
+			hatch.IsSolid = true;
+
+			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+
+			Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
+			pline.Vertices.Add(new XYZ(0, 0, 0));
+			pline.Vertices.Add(new XYZ(1, 0, 0));
+			pline.Vertices.Add(new XYZ(1, 1, 0));
+			pline.Vertices.Add(new XYZ(0, 1, 0));
+			pline.Vertices.Add(new XYZ(0, 0, 0));
+
+			path.Edges.Add(pline);
+			path.Flags = path.Flags.AddFlag(BoundaryPathFlags.Polyline);
+			hatch.Paths.Add(path);
+
+			var entities = hatch.Explode();
+
+			Assert.NotEmpty(entities);
+		}
+
+		[Fact]
+		public void GetBoundingBoxTest()
+		{
+			Hatch hatch = new Hatch();
+			hatch.IsSolid = true;
+
+			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+
+			Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
+			pline.Vertices.Add(new XYZ(0, 0, 0));
+			pline.Vertices.Add(new XYZ(1, 0, 0));
+			pline.Vertices.Add(new XYZ(1, 1, 0));
+			pline.Vertices.Add(new XYZ(0, 1, 0));
+			pline.Vertices.Add(new XYZ(0, 0, 0));
+
+			path.Edges.Add(pline);
+
+			hatch.Paths.Add(path);
+
+			var box = hatch.GetBoundingBox();
+
+			Assert.Equal(new XYZ(0, 0, 0), box.Min);
+			Assert.Equal(new XYZ(1, 1, 0), box.Max);
+		}
+
+		[Fact]
 		public void PolylineHatchNotAllowMoreEdges()
 		{
 			Hatch hatch = new Hatch();
@@ -112,31 +160,6 @@ namespace ACadSharp.Tests.Entities
 				path.Edges.Add(new Hatch.BoundaryPath.Polyline());
 			}
 			);
-		}
-
-		[Fact]
-		public void GetBoundingBoxTest()
-		{
-			Hatch hatch = new Hatch();
-			hatch.IsSolid = true;
-
-			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-
-			Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
-			pline.Vertices.Add(new XYZ(0, 0, 0));
-			pline.Vertices.Add(new XYZ(1, 0, 0));
-			pline.Vertices.Add(new XYZ(1, 1, 0));
-			pline.Vertices.Add(new XYZ(0, 1, 0));
-			pline.Vertices.Add(new XYZ(0, 0, 0));
-
-			path.Edges.Add(pline);
-
-			hatch.Paths.Add(path);
-
-			var box = hatch.GetBoundingBox();
-
-			Assert.Equal(new XYZ(0, 0, 0), box.Min);
-			Assert.Equal(new XYZ(1, 1, 0), box.Max);
 		}
 	}
 }
