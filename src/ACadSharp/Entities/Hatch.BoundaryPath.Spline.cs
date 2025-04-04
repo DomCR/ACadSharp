@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSUtilities.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -61,6 +63,25 @@ namespace ACadSharp.Entities
 				/// </summary>
 				[DxfCodeValue(13, 23)]
 				public XY EndTangent { get; set; }
+
+				/// <inheritdoc/>
+				public override Entity ToEntity()
+				{
+					Entities.Spline spline = new();
+					
+					spline.Degree = this.Degree;
+					spline.Flags = this.Periodic ? spline.Flags.AddFlag(SplineFlags.Periodic) : spline.Flags;
+					spline.Flags = this.Rational ? spline.Flags.AddFlag(SplineFlags.Rational) : spline.Flags;
+					
+					spline.StartTangent = this.StartTangent.Convert<XYZ>();
+					spline.EndTangent = this.EndTangent.Convert<XYZ>();
+
+					spline.ControlPoints.AddRange(this.ControlPoints);
+					spline.Weights.AddRange(this.ControlPoints.Select(x => x.Z));
+					spline.FitPoints.AddRange(this.FitPoints.Select(x => x.Convert<XYZ>()));
+
+					return spline;
+				}
 
 				/// <inheritdoc/>
 				public override BoundingBox GetBoundingBox()
