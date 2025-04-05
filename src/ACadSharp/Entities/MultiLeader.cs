@@ -587,6 +587,9 @@ namespace ACadSharp.Entities
 				clone.BlockAttributes.Add((BlockAttribute)att.Clone());
 			}
 
+			clone.Style = (MultiLeaderStyle)this.Style.Clone();
+			clone.TextStyle = (TextStyle)clone.TextStyle.Clone();
+
 			return clone;
 		}
 
