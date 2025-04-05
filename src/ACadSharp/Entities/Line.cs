@@ -57,6 +57,17 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <param name="start"></param>
 		/// <param name="end"></param>
+		public Line(IVector start, IVector end) : base()
+		{
+			this.StartPoint = start.Convert<XYZ>();
+			this.EndPoint = end.Convert<XYZ>();
+		}
+
+		/// <summary>
+		/// Constructor with the start and end.
+		/// </summary>
+		/// <param name="start"></param>
+		/// <param name="end"></param>
 		public Line(XYZ start, XYZ end) : base()
 		{
 			this.StartPoint = start;
