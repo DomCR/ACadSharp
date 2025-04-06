@@ -152,6 +152,10 @@ namespace ACadSharp.Entities
 
 		public override void ApplyTransform(Transform transform)
 		{
+			if (this.IsAssociative)
+			{
+			}
+
 			throw new NotImplementedException();
 		}
 
