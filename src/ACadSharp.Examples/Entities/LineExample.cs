@@ -1,17 +1,13 @@
 ﻿using ACadSharp.Entities;
 using CSMath;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ACadSharp.Examples.Entities
 {
 	public static class LineExample
 	{
 		/// <summary>
-		/// Create an insert referencing a block
+		/// Get a Line object with some given properties
 		/// </summary>
 		public static Line CreateLine(XYZ startPoint, XYZ endPoint, short colorIndex)
 		{
