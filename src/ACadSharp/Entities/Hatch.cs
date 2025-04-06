@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -147,6 +148,15 @@ namespace ACadSharp.Entities
 			}
 
 			return entities;
+		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			if (this.IsAssociative)
+			{
+			}
+
+			throw new NotImplementedException();
 		}
 
 		/// <inheritdoc/>

@@ -49,7 +49,8 @@ namespace ACadSharp.Entities
 		/// True if the insert has attribute entities in it
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Ignored, 66)]
-		public bool HasAttributes { get { return this.Attributes.Any(); } }
+		public bool HasAttributes
+		{ get { return this.Attributes.Any(); } }
 
 		/// <inheritdoc/>
 		public override bool HasDynamicSubclass => true;
@@ -61,9 +62,10 @@ namespace ACadSharp.Entities
 		public XYZ InsertPoint { get; set; } = XYZ.Zero;
 
 		/// <summary>
-		/// Flag is true for multiple insertion of the same block.
+		/// Specifies the rotation angle for the object.
 		/// </summary>
-		public bool IsMultiple { get { return this.RowCount > 1 || this.ColumnCount > 1; } }
+		public bool IsMultiple
+		{ get { return this.RowCount > 1 || this.ColumnCount > 1; } }
 
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
@@ -79,7 +81,7 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				if (this.IsMultiple)
+				if (this.RowCount > 1 || this.ColumnCount > 1)
 				{
 					return ObjectType.MINSERT;
 				}
@@ -210,6 +212,47 @@ namespace ACadSharp.Entities
 		internal Insert() : base()
 		{
 			this.Attributes = new SeqendCollection<AttributeEntity>(this);
+		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			XYZ newPosition = transform.ApplyTransform(this.InsertPoint);
+			XYZ newNormal = this.transformNormal(transform, this.Normal);
+
+			Matrix3 transOW = Matrix3.ArbitraryAxis(this.Normal);
+			transOW *= Matrix3.RotationZ(this.Rotation);
+
+			Matrix3 transWO = Matrix3.ArbitraryAxis(newNormal);
+			transWO = transWO.Transpose();
+
+			var transformation = new Matrix3(transform.Matrix);
+			XYZ v = transOW * XYZ.AxisX;
+			v = transformation * v;
+			v = transWO * v;
+			double newRotation = new XY(v.X, v.Y).GetAngle();
+
+			transWO = Matrix3.RotationZ(newRotation).Transpose() * transWO;
+
+			XYZ s = transOW * new XYZ(this.XScale, this.YScale, this.ZScale);
+			s = transformation * s;
+			s = transWO * s;
+			XYZ newScale = new XYZ(
+				MathHelper.IsZero(s.X) ? MathHelper.Epsilon : s.X,
+				MathHelper.IsZero(s.Y) ? MathHelper.Epsilon : s.Y,
+				MathHelper.IsZero(s.Z) ? MathHelper.Epsilon : s.Z);
+
+			this.Normal = newNormal;
+			this.InsertPoint = newPosition;
+			this.XScale = newScale.X;
+			this.YScale = newScale.Y;
+			this.ZScale = newScale.Z;
+			this.Rotation = newRotation;
+
+			foreach (AttributeEntity att in this.Attributes)
+			{
+				att.ApplyTransform(transform);
+			}
 		}
 
 		/// <inheritdoc/>

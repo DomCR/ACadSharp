@@ -64,5 +64,17 @@ namespace ACadSharp.Entities
 		{
 			return new BoundingBox(this.FirstPoint, this.SecondPoint);
 		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			XYZ newNormal = this.transformNormal(transform, this.Normal);
+			this.getWorldMatrix(transform, Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+
+			base.ApplyTransform(transform);
+
+			this.FirstPoint = applyWorldMatrix(this.FirstPoint, transform, transOW, transWO);
+			this.SecondPoint = applyWorldMatrix(this.SecondPoint, transform, transOW, transWO);
+		}
 	}
 }
