@@ -700,12 +700,12 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(circle);
 				this.Document.Entities.Add(line);
 
-				Group group = new Group();
-				group.Name = "MyGroup";
-				group.Add(circle);
-				group.Add(line);
+				//Group group = new Group();
+				//group.Name = "MyGroup";
+				//group.Add(circle);
+				//group.Add(line);
 
-				this.Document.Groups.Add(group);
+				this.Document.Groups.CreateGroup("MyGroup", new List<Entity> { circle, line });
 
 				TextEntity text = new TextEntity();
 				text.Value = "Hello World!";
