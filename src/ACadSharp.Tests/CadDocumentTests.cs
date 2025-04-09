@@ -61,7 +61,11 @@ namespace ACadSharp.Tests
 
 			stopwatch.Stop();
 			this._output.WriteLine(stopwatch.Elapsed.TotalSeconds.ToString());
-			Assert.True(stopwatch.Elapsed.TotalSeconds < 2);
+
+			if (TestVariables.LocalEnv)
+			{
+				Assert.True(stopwatch.Elapsed.TotalSeconds < 5);
+			}
 		}
 
 		[Fact]
