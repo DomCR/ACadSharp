@@ -65,6 +65,29 @@ namespace ACadSharp.Tests
 		}
 
 		[Fact]
+		public void RestoreHandlesTest()
+		{
+			ulong bigHandle = 10000;
+			Line line = new Line();
+			line.Handle = bigHandle;
+
+			CadDocument doc = new CadDocument();
+
+			doc.Entities.Add(line);
+
+			doc.RestoreHandles();
+
+			CadObject l = doc.GetCadObject(line.Handle);
+
+			//Assert existing element
+			Assert.NotNull(l);
+			Assert.Equal(line, l);
+			Assert.False(0 == l.Handle);
+			Assert.Equal(line.Handle, l.Handle);
+			Assert.True(line.Handle < bigHandle);
+		}
+
+		[Fact]
 		public void AddCadObjectTest()
 		{
 			Line line = new Line();
