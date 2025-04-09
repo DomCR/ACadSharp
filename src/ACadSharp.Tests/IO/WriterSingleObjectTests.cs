@@ -220,19 +220,28 @@ namespace ACadSharp.Tests.IO
 
 				List<Hatch.BoundaryPath.Line> edges = new List<Hatch.BoundaryPath.Line>();
 
-				//edges
+				//Polyline circle
 				Hatch.BoundaryPath.Polyline polyline = new Hatch.BoundaryPath.Polyline();
 				polyline.IsClosed = true;
 				polyline.Vertices.Add(new XYZ(0, 2.5, 1));
 				polyline.Vertices.Add(new XYZ(10, 2.5, 1));
 
+				//Arc circle
+				Hatch.BoundaryPath.Arc arc = new();
+				arc.Center = new XY(10, 10);
+				arc.CounterClockWise = true;
+				arc.Radius = 5;
+				arc.StartAngle = 0;
+				arc.EndAngle = MathHelper.TwoPI;
+
 				Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-				foreach (var item in edges)
-				{
-					path.Edges.Add(item);
-				}
+				path.Edges.Add(polyline);
+
+				Hatch.BoundaryPath path1 = new Hatch.BoundaryPath();
+				path1.Edges.Add(arc);
 
 				hatch.Paths.Add(path);
+				hatch.Paths.Add(path1);
 
 				this.Document.Entities.Add(hatch);
 			}
@@ -691,12 +700,12 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(circle);
 				this.Document.Entities.Add(line);
 
-				Group group = new Group();
-				group.Name = "MyGroup";
-				group.Add(circle);
-				group.Add(line);
+				//Group group = new Group();
+				//group.Name = "MyGroup";
+				//group.Add(circle);
+				//group.Add(line);
 
-				this.Document.Groups.Add(group);
+				this.Document.Groups.CreateGroup("MyGroup", new List<Entity> { circle, line });
 
 				TextEntity text = new TextEntity();
 				text.Value = "Hello World!";
