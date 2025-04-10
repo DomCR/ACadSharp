@@ -515,14 +515,14 @@ namespace ACadSharp
 
 			if (cadObject.Handle == 0 || this._cadObjects.ContainsKey(cadObject.Handle))
 			{
-				var nextHandle = this.Header.HandleSeed + 1;
+				var nextHandle = this.Header.HandleSeed;
 
 				cadObject.Handle = nextHandle;
-				this.Header.HandleSeed = nextHandle;
+				this.Header.HandleSeed = nextHandle + 1;
 			}
-			else if (cadObject.Handle > this.Header.HandleSeed)
+			else if (cadObject.Handle >= this.Header.HandleSeed)
 			{
-				this.Header.HandleSeed = cadObject.Handle;
+				this.Header.HandleSeed = cadObject.Handle + 1;
 			}
 
 			this._cadObjects.Add(cadObject.Handle, cadObject);
