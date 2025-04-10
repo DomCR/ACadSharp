@@ -45,6 +45,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
 			Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
+			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateGroup)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
@@ -696,16 +697,21 @@ namespace ACadSharp.Tests.IO
 
 			public void TextAlignment()
 			{
-				TextEntity textEntity = new TextEntity();
-				textEntity.Height = 0.5;
-				//textEntity.Rotation = rotation * Math.PI / 180.0;
-				textEntity.Value = "Hello I'm a text";
+				XYZ insert = new XYZ(0, 0, 0);
 
-				//textEntity.AlignmentPoint = position;
-				//textEntity.InsertPoint = position;
-				//textEntity.Normal = CSMath.XYZ.AxisY;
+				foreach (var item in Enum.GetValues(typeof(TextHorizontalAlignment)).Cast<TextHorizontalAlignment>())
+				{
+					TextEntity textEntity = new TextEntity();
+					textEntity.Value = item.ToString();
+					textEntity.HorizontalAlignment = item;
+					textEntity.InsertPoint = insert;
+					textEntity.Height = 0.5;
 
-				this.Document.Entities.Add(textEntity);
+					this.Document.Entities.Add(textEntity);
+
+					insert = new XYZ(insert.X + 2, 0, 0);
+				}
+
 			}
 
 			public void TextWithChineseCharacters()
