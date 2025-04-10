@@ -250,7 +250,7 @@ namespace ACadSharp
 		}
 
 		protected T updateTable<T>(T entry, Table<T> table)
-					where T : TableEntry
+			where T : TableEntry
 		{
 			if (table == null)
 			{
