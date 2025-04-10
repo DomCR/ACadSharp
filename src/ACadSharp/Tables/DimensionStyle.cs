@@ -515,47 +515,41 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(277)]
 		public LinearUnitFormat LinearUnitFormat { get; set; } = LinearUnitFormat.Decimal;
 
+		/// <summary>
+		/// Line type for the main line of the dimension.
+		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 345)]
 		public LineType LineType
 		{
 			get { return this._lineType; }
 			set
 			{
-				if (value == null)
-				{
-					throw new ArgumentNullException(nameof(value));
-				}
-
 				this._lineType = this.updateTable(value, this.Document?.LineTypes);
 			}
 		}
 
+		/// <summary>
+		/// Line type for the extension line 1. 
+		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 346)]
 		public LineType LineTypeExt1
 		{
 			get { return this._lineTypeExt1; }
 			set
 			{
-				if (value == null)
-				{
-					throw new ArgumentNullException(nameof(value));
-				}
-
 				this._lineTypeExt1 = this.updateTable(value, this.Document?.LineTypes);
 			}
 		}
 
+		/// <summary>
+		/// Line type for the extension line 2. 
+		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 347)]
 		public LineType LineTypeExt2
 		{
 			get { return this._lineTypeExt2; }
 			set
 			{
-				if (value == null)
-				{
-					throw new ArgumentNullException(nameof(value));
-				}
-
 				this._lineTypeExt2 = this.updateTable(value, this.Document?.LineTypes);
 			}
 		}
@@ -1000,6 +994,7 @@ namespace ACadSharp.Tables
 
 		private double _textHeight = 0.18;
 
+		/// <inheritdoc/>
 		public DimensionStyle(string name) : base(name)
 		{
 		}
@@ -1018,6 +1013,9 @@ namespace ACadSharp.Tables
 			clone.ArrowBlock = (BlockRecord)this.ArrowBlock?.Clone();
 			clone.DimArrow1 = (BlockRecord)this.DimArrow1?.Clone();
 			clone.DimArrow2 = (BlockRecord)this.DimArrow2?.Clone();
+			clone.LineType = (LineType)this.LineType?.Clone();
+			clone.LineTypeExt1 = (LineType)this.LineTypeExt1?.Clone();
+			clone.LineTypeExt2 = (LineType)this.LineTypeExt2?.Clone();
 
 			return clone;
 		}
@@ -1029,11 +1027,13 @@ namespace ACadSharp.Tables
 			this._style = this.updateTable(this.Style, doc.TextStyles);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
+			doc.LineTypes.OnRemove += this.tableOnRemove;
 		}
 
 		internal override void UnassignDocument()
 		{
 			this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
+			this.Document.LineTypes.OnRemove -= this.tableOnRemove;
 
 			base.UnassignDocument();
 
@@ -1045,6 +1045,21 @@ namespace ACadSharp.Tables
 			if (e.Item.Equals(this.Style))
 			{
 				this.Style = this.Document.TextStyles[TextStyle.DefaultName];
+			}
+
+			if (e.Item.Equals(this.LineType))
+			{
+				this.LineType = null;
+			}
+
+			if (e.Item.Equals(this.LineTypeExt1))
+			{
+				this.LineTypeExt1 = null;
+			}
+
+			if (e.Item.Equals(this.LineTypeExt2))
+			{
+				this.LineTypeExt2 = null;
 			}
 		}
 	}
