@@ -44,6 +44,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
 			Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
+			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateGroup)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
@@ -650,6 +651,25 @@ namespace ACadSharp.Tests.IO
 				wipeout.ClipBoundaryVertices.Add(new XY(1, 0));
 
 				this.Document.Entities.Add(wipeout);
+			}
+
+			public void TextAlignment()
+			{
+				XYZ insert = new XYZ(0, 0, 0);
+
+				foreach (var item in Enum.GetValues(typeof(TextHorizontalAlignment)).Cast<TextHorizontalAlignment>())
+				{
+					TextEntity textEntity = new TextEntity();
+					textEntity.Value = item.ToString();
+					textEntity.HorizontalAlignment = item;
+					textEntity.InsertPoint = insert;
+					textEntity.Height = 0.5;
+
+					this.Document.Entities.Add(textEntity);
+
+					insert = new XYZ(insert.X + 2, 0, 0);
+				}
+
 			}
 
 			public void TextWithChineseCharacters()
