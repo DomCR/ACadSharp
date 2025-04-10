@@ -520,7 +520,7 @@ namespace ACadSharp
 				cadObject.Handle = nextHandle;
 				this.Header.HandleSeed = nextHandle + 1;
 			}
-			else if (cadObject.Handle > this.Header.HandleSeed)
+			else if (cadObject.Handle >= this.Header.HandleSeed)
 			{
 				this.Header.HandleSeed = cadObject.Handle + 1;
 			}
