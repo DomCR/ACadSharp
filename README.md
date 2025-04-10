@@ -68,7 +68,7 @@ Please feel free to fork this repo and send a pull request if you want to contri
 
 Notice that this project is in an alpha version, not all the features are implemented and there can be bugs due to this so any PR with a bug fix will not have a priority.
 
-If you want to contribute you can check the Dxf documentation [here](https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-235B22E0-A567-4CF6-92D3-38A2306D73F3). 
+If you want to contribute you can check the references [here](https://github.com/DomCR/ACadSharp/tree/master/reference). 
 
 License
 ---
