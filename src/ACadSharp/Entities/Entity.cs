@@ -78,14 +78,7 @@ namespace ACadSharp.Entities
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				if (this.Document != null)
-				{
-					this._lineType = this.updateTable(value, this.Document.LineTypes);
-				}
-				else
-				{
-					this._lineType = value;
-				}
+				this._lineType = this.updateTable(value, this.Document?.LineTypes);
 			}
 		}
 

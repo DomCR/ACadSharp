@@ -1121,11 +1121,11 @@ namespace ACadSharp.IO.DWG
 			if (this.R2007Plus)
 			{
 				//345 dimltype(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.LineType);
 				//346 dimltex1(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.LineTypeExt1);
 				//347 dimltex2(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.LineTypeExt2);
 			}
 
 			this.registerObject(dimStyle);

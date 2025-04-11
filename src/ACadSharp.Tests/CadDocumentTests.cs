@@ -69,29 +69,6 @@ namespace ACadSharp.Tests
 		}
 
 		[Fact]
-		public void RestoreHandlesTest()
-		{
-			ulong bigHandle = 10000;
-			Line line = new Line();
-			line.Handle = bigHandle;
-
-			CadDocument doc = new CadDocument();
-
-			doc.Entities.Add(line);
-
-			doc.RestoreHandles();
-
-			CadObject l = doc.GetCadObject(line.Handle);
-
-			//Assert existing element
-			Assert.NotNull(l);
-			Assert.Equal(line, l);
-			Assert.False(0 == l.Handle);
-			Assert.Equal(line.Handle, l.Handle);
-			Assert.True(line.Handle < bigHandle);
-		}
-
-		[Fact]
 		public void AddCadObjectTest()
 		{
 			Line line = new Line();
@@ -190,6 +167,19 @@ namespace ACadSharp.Tests
 			Assert.False(0 == lineType.Handle);
 			Assert.NotNull(doc.LineTypes[lineType.Name]);
 			Assert.Equal(lineType, doc.LineTypes[lineType.Name]);
+		}
+
+		[Fact]
+		public void ChangeEntityLineTypeNoDocument()
+		{
+			Line line = new Line();
+			LineType lineType = new LineType("test_linetype");
+
+			line.LineType = lineType;
+
+			//Assert layer
+			Assert.Equal(line.LineType, lineType);
+			Assert.True(0 == lineType.Handle);
 		}
 
 		[Fact]
@@ -322,6 +312,29 @@ namespace ACadSharp.Tests
 			Assert.Null(ltype.Document);
 			Assert.True(ltype.Handle == 0);
 			Assert.Equal(doc.LineTypes[LineType.ByLayerName], line.LineType);
+		}
+
+		[Fact]
+		public void RestoreHandlesTest()
+		{
+			ulong bigHandle = 10000;
+			Line line = new Line();
+			line.Handle = bigHandle;
+
+			CadDocument doc = new CadDocument();
+
+			doc.Entities.Add(line);
+
+			doc.RestoreHandles();
+
+			CadObject l = doc.GetCadObject(line.Handle);
+
+			//Assert existing element
+			Assert.NotNull(l);
+			Assert.Equal(line, l);
+			Assert.False(0 == l.Handle);
+			Assert.Equal(line.Handle, l.Handle);
+			Assert.True(line.Handle < bigHandle);
 		}
 	}
 }
