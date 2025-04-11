@@ -1025,6 +1025,9 @@ namespace ACadSharp.Tables
 			base.AssignDocument(doc);
 
 			this._style = this.updateTable(this.Style, doc.TextStyles);
+			this._lineType = this.updateTable(this.LineType, doc.LineTypes);
+			this._lineTypeExt1 = this.updateTable(this.LineTypeExt1, doc.LineTypes);
+			this._lineTypeExt2 = this.updateTable(this.LineTypeExt2, doc.LineTypes);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 			doc.LineTypes.OnRemove += this.tableOnRemove;
@@ -1038,6 +1041,9 @@ namespace ACadSharp.Tables
 			base.UnassignDocument();
 
 			this.Style = (TextStyle)this.Style.Clone();
+			this.LineType = (LineType)(this.LineType?.Clone());
+			this.LineTypeExt1 = (LineType)(this.LineTypeExt1?.Clone());
+			this.LineTypeExt2 = (LineType)(this.LineTypeExt2?.Clone());
 		}
 
 		protected void tableOnRemove(object sender, CollectionChangedEventArgs e)

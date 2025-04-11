@@ -65,6 +65,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomScale)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomBookColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
+			Data.Add(new(nameof(SingleCaseGenerator.DimensionWithLineType)));
 			Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
 			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeInBlock)));
@@ -443,6 +444,23 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(dim);
 			}
 
+			public void DimensionWithLineType()
+			{
+				LineType linetype = new LineType("LTYPE:PAINT");
+				linetype.AddSegment(new LineType.Segment() { Length = 1 });
+				linetype.AddSegment(new LineType.Segment() { Length = -1 });
+
+				DimensionStyle style = new DimensionStyle("my_style");
+				style.LineType = linetype;
+
+				DimensionAligned dim = new DimensionAligned();
+				dim.Style = style;
+
+				dim.SecondPoint = new XYZ(10);
+
+				this.Document.Entities.Add(dim);
+			}
+
 			public void Empty()
 			{ }
 
@@ -711,7 +729,6 @@ namespace ACadSharp.Tests.IO
 
 					insert = new XYZ(insert.X + 2, 0, 0);
 				}
-
 			}
 
 			public void TextWithChineseCharacters()
