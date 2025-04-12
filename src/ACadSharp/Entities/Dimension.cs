@@ -56,12 +56,6 @@ namespace ACadSharp.Entities
 		public XYZ InsertionPoint { get; set; }
 
 		/// <summary>
-		/// Specifies the three-dimensional normal unit vector for the object.
-		/// </summary>
-		[DxfCodeValue(210, 220, 230)]
-		public XYZ Normal { get; set; } = XYZ.AxisZ;
-
-		/// <summary>
 		/// Dimension type
 		/// </summary>
 		[DxfCodeValue(70)]
@@ -111,12 +105,6 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional | DxfReferenceType.IsAngle, 51)]
 		public double HorizontalDirection { get; set; }
-
-		/// <summary>
-		/// Insertion point for clones of a dimension-Baseline and Continue(in OCS)
-		/// </summary>
-		[DxfCodeValue(12, 22, 32)]
-		public XYZ InsertionPoint { get; set; }
 
 		/// <summary>
 		/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location
@@ -211,12 +199,6 @@ namespace ACadSharp.Entities
 		public string Text { get; set; }
 
 		/// <summary>
-		/// Middle point of dimension text(in OCS)
-		/// </summary>
-		[DxfCodeValue(11, 21, 31)]
-		public XYZ TextMiddlePoint { get; set; }
-
-		/// <summary>
 		/// rotation angle of the dimension text away from its default orientation (the direction of the dimension line)
 		/// </summary>
 		/// <remarks>
@@ -235,6 +217,7 @@ namespace ACadSharp.Entities
 		protected DimensionType _flags;
 
 		private DimensionStyle _style = DimensionStyle.Default;
+		protected BlockRecord _block;
 
 		protected Dimension(DimensionType type)
 		{
@@ -249,9 +232,6 @@ namespace ACadSharp.Entities
 			this.getWorldMatrix(transform, Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
 
 			this.DefinitionPoint = applyWorldMatrix(this.DefinitionPoint, transform, transOW, transWO);
-		protected BlockRecord _block;
-
-		private DimensionStyle _style = DimensionStyle.Default;
 
 			if (this.IsTextUserDefinedLocation)
 			{

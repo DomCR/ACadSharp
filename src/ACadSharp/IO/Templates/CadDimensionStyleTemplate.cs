@@ -22,11 +22,13 @@ namespace ACadSharp.IO.Templates
 
 		public ulong Dimltex2 { get; set; }
 
-		public ulong Dimltype { get; set; }
+		public ulong? Dimltype { get; set; }
 
 		public string TextStyle_Name { get; set; }
 
 		public ulong? TextStyleHandle { get; set; }
+
+		public ulong? BlockHandle { get; set; }
 
 		public CadDimensionStyleTemplate() : base(new DimensionStyle())
 		{
@@ -75,22 +77,7 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.DimArrow2 = dimArrow2;
 			}
 
-			if (this.getTableReference(builder, this.DimLineType, this.DimltypeName, out LineType lineType))
-			{
-				this.CadObject.LineType = lineType;
-			}
-
-			if (this.getTableReference(builder, this.DimLineTypeExt1, null, out lineType))
-			{
-				this.CadObject.ExtensionLine1LineType = lineType;
-			}
-
-			if (this.getTableReference(builder, this.DimLineTypeExt2, null, out lineType))
-			{
-				this.CadObject.ExtensionLine2LineType = lineType;
-			}
-
-			if (this.getTableReference(builder, this.BlockHandle, null, out BlockRecord block))
+			if(this.getTableReference(builder, this.BlockHandle, null, out BlockRecord external))
 			{
 			}
 		}

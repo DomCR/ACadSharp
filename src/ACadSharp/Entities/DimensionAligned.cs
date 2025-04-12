@@ -127,12 +127,12 @@ namespace ACadSharp.Entities
 			double thisexe = Math.Sign(this.Offset) * Style.ExtensionLineExtension * Style.ScaleFactor;
 			if (!Style.SuppressFirstExtensionLine)
 			{
-				entities.Add(extensionLine(ref1 + thisexo * vec, dimRef1 + thisexe * vec, Style, Style.ExtensionLine1LineType));
+				entities.Add(extensionLine(ref1 + thisexo * vec, dimRef1 + thisexe * vec, Style, Style.LineTypeExt1));
 			}
 
 			if (!Style.SuppressSecondExtensionLine)
 			{
-				entities.Add(extensionLine(ref2 + thisexo * vec, dimRef2 + thisexe * vec, Style, Style.ExtensionLine2LineType));
+				entities.Add(extensionLine(ref2 + thisexo * vec, dimRef2 + thisexe * vec, Style, Style.LineTypeExt2));
 			}
 
 			// thisension text

@@ -4827,11 +4827,11 @@ namespace ACadSharp.IO.DWG
 			if (this.R2007Plus)
 			{
 				//345 dimltype(hard pointer)
-				template.DimLineType = this.handleReference();
+				template.Dimltype = this.handleReference();
 				//346 dimltex1(hard pointer)
-				template.DimLineTypeExt1 = this.handleReference();
+				template.Dimltex1 = this.handleReference();
 				//347 dimltex2(hard pointer)
-				template.DimLineTypeExt2 = this.handleReference();
+				template.Dimltex2 = this.handleReference();
 			}
 
 			return template;

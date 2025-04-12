@@ -1006,18 +1006,6 @@ namespace ACadSharp.Tables
 
 		public const string DefaultName = "Standard";
 
-		/// <summary>
-		/// Linetype applied to the dimension lines.
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Handle, 345)]
-		public LineType LineType { get; set; } = LineType.ByBlock;
-		[DxfCodeValue(DxfReferenceType.Handle, 346)]
-		
-		public LineType ExtensionLine1LineType { get; set; } = LineType.ByBlock;
-
-		[DxfCodeValue(DxfReferenceType.Handle, 347)]
-		public LineType ExtensionLine2LineType { get; set; } = LineType.ByBlock;
-
 		private double _arrowSize = 0.18;
 
 		private BlockRecord _dimArrow1 = null;
