@@ -71,5 +71,16 @@ namespace ACadSharp.Entities
 		{
 			return new BoundingBox(this.FirstPoint, this.SecondPoint);
 		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			base.ApplyTransform(transform);
+
+			this.FirstPoint = transform.ApplyTransform(this.FirstPoint);
+			this.SecondPoint = transform.ApplyTransform(this.SecondPoint);
+			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
+			this.DimensionArc = transform.ApplyTransform(this.DimensionArc);
+		}
 	}
 }

@@ -11,15 +11,9 @@ namespace ACadSharp.IO.DWG
 
 		private IDwgStreamWriter _swriter;
 
-		private readonly byte[] _startSentinel = new byte[16]
-		{
-			0x1F,0x25,0x6D,0x07,0xD4,0x36,0x28,0x28,0x9D,0x57,0xCA,0x3F,0x9D,0x44,0x10,0x2B
-		};
+		private readonly byte[] _startSentinel = DwgSectionDefinition.StartSentinels[DwgSectionDefinition.Preview];
 
-		private readonly byte[] _endSentinel = new byte[16]
-		{
-			0xE0, 0xDA, 0x92, 0xF8, 0x2B, 0xC9, 0xD7, 0xD7, 0x62, 0xA8, 0x35, 0xC0, 0x62, 0xBB, 0xEF, 0xD4
-		};
+		private readonly byte[] _endSentinel = DwgSectionDefinition.EndSentinels[DwgSectionDefinition.Preview];
 
 		public DwgPreviewWriter(ACadVersion version, Stream stream) : base(version)
 		{
@@ -28,10 +22,51 @@ namespace ACadSharp.IO.DWG
 
 		public void Write()
 		{
-			this._swriter.WriteBytes(_startSentinel);
+			this._swriter.WriteBytes(this._startSentinel);
+			//overall size	RL	overall size of image area
 			this._swriter.WriteRawLong(1);
+			//images present RC counter indicating what is present here
 			this._swriter.WriteByte(0);
-			this._swriter.WriteBytes(_endSentinel);
+			this._swriter.WriteBytes(this._endSentinel);
+		}
+
+		public void Write(DwgPreview preview, long startPos)
+		{
+			var size = preview.RawHeader.Length + preview.RawImage.Length + 19;
+
+			this._swriter.WriteBytes(this._startSentinel);
+
+			//overall size	RL	overall size of image area
+			this._swriter.WriteRawLong(size);
+
+			//images present RC counter indicating what is present here
+			this._swriter.WriteByte(2);
+
+			//Code RC code indicating what follows
+			this._swriter.WriteByte(1);
+
+			var headerOffset = startPos + this._swriter.Stream.Position + 12 + 5 + 32;
+			//header data start RL start of header data
+			this._swriter.WriteRawLong(headerOffset);
+
+			//header data size RL size of header data
+			this._swriter.WriteRawLong(preview.RawHeader.Length);
+
+			//Code RC code indicating what follows
+			this._swriter.WriteByte((byte)preview.Code);
+
+			var imageOffset = headerOffset + preview.RawHeader.Length;
+			//image data start RL start of image data
+			this._swriter.WriteRawLong(imageOffset);
+
+			//image data size RL size of image data
+			this._swriter.WriteRawLong(preview.RawImage.Length);
+
+			this._swriter.WriteBytes(preview.RawHeader);
+
+			this._swriter.WriteBytes(preview.RawImage);
+
+			this._swriter.WriteBytes(this._endSentinel);
 		}
 	}
 }

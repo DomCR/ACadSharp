@@ -2,6 +2,7 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -102,22 +103,9 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		/// <summary>
-		/// X-axis direction vector(in WCS)
-		/// </summary>
-		/// <remarks>
-		/// A group code 50 (rotation angle in radians) passed as DXF input is converted to the equivalent direction vector (if both a code 50 and codes 11, 21, 31 are passed, the last one wins). This is provided as a convenience for conversions from text objects
-		/// </remarks>
+		/// <inheritdoc/>
 		[DxfCodeValue(11, 21, 31)]
-		public XYZ AlignmentPoint
-		{
-			get => this._alignmentPoint;
-			set
-			{
-				this._alignmentPoint = value;
-				this._rotation = new XY(this._alignmentPoint.X, this._alignmentPoint.Y).GetAngle();
-			}
-		}
+		public XYZ AlignmentPoint { get; set; }
 
 		/// <summary>
 		/// Horizontal width of the characters that make up the mtext entity.
@@ -145,18 +133,10 @@ namespace ACadSharp.Entities
 		/// The rotation angle in radians.
 		/// </value>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
-		public double Rotation
-		{
-			get => this._rotation;
-			set
-			{
-				this._rotation = value;
-				this.AlignmentPoint = new XYZ(Math.Cos(this._rotation), Math.Sin(this._rotation), 0.0);
-			}
-		}
+		public double Rotation { get; set; } = 0.0;
 
 		/// <summary>
-		/// Mtext line spacing style 
+		/// Mtext line spacing style.
 		/// </summary>
 		[DxfCodeValue(73)]
 		public LineSpacingStyleType LineSpacingStyle { get; set; }
@@ -203,19 +183,124 @@ namespace ACadSharp.Entities
 
 		private double _height = 1.0;
 
-		private XYZ _alignmentPoint = XYZ.AxisX;
-
-		private double _rotation = 0.0;
-
 		private TextStyle _style = TextStyle.Default;
 
 		/// <inheritdoc/>
 		public MText() : base() { }
 
 		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			XYZ newInsert = transform.ApplyTransform(this.InsertPoint);
+			XYZ newNormal = this.transformNormal(transform, this.Normal);
+
+			var transformation = this.getWorldMatrix(transform, Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+
+			transWO = transWO.Transpose();
+
+			List<XY> uv = applyRotation(
+				new[]
+				{
+					XY.AxisX, XY.AxisY
+				},
+				this.Rotation);
+
+			XYZ v;
+			v = transOW * new XYZ(uv[0].X, uv[0].Y, 0.0);
+			v = transformation * v;
+			v = transWO * v;
+			XY newUvector = new XY(v.X, v.Y);
+
+			// the MText entity does not support non-uniform scaling
+			double scale = newUvector.GetLength();
+
+			v = transOW * new XYZ(uv[1].X, uv[1].Y, 0.0);
+			v = transformation * v;
+			v = transWO * v;
+			XY newVvector = new XY(v.X, v.Y);
+
+			double newRotation = newUvector.GetAngle();
+
+			if (XY.Cross(newUvector, newVvector) < 0.0)
+			{
+				if (newUvector.Dot(uv[0]) < 0.0)
+				{
+					newRotation += 180;
+
+					switch (this.AttachmentPoint)
+					{
+						case AttachmentPointType.TopLeft:
+							this.AttachmentPoint = AttachmentPointType.TopRight;
+							break;
+						case AttachmentPointType.TopRight:
+							this.AttachmentPoint = AttachmentPointType.TopLeft;
+							break;
+						case AttachmentPointType.MiddleLeft:
+							this.AttachmentPoint = AttachmentPointType.MiddleRight;
+							break;
+						case AttachmentPointType.MiddleRight:
+							this.AttachmentPoint = AttachmentPointType.MiddleLeft;
+							break;
+						case AttachmentPointType.BottomLeft:
+							this.AttachmentPoint = AttachmentPointType.BottomRight;
+							break;
+						case AttachmentPointType.BottomRight:
+							this.AttachmentPoint = AttachmentPointType.BottomLeft;
+							break;
+					}
+				}
+				else
+				{
+					switch (this.AttachmentPoint)
+					{
+						case AttachmentPointType.TopLeft:
+							this.AttachmentPoint = AttachmentPointType.BottomLeft;
+							break;
+						case AttachmentPointType.TopCenter:
+							this.AttachmentPoint = AttachmentPointType.BottomCenter;
+							break;
+						case AttachmentPointType.TopRight:
+							this.AttachmentPoint = AttachmentPointType.BottomRight;
+							break;
+						case AttachmentPointType.BottomLeft:
+							this.AttachmentPoint = AttachmentPointType.TopLeft;
+							break;
+						case AttachmentPointType.BottomCenter:
+							this.AttachmentPoint = AttachmentPointType.TopCenter;
+							break;
+						case AttachmentPointType.BottomRight:
+							this.AttachmentPoint = AttachmentPointType.TopRight;
+							break;
+					}
+				}
+			}
+
+			double newHeight = this.Height * scale;
+			newHeight = MathHelper.IsZero(newHeight) ? MathHelper.Epsilon : newHeight;
+
+			this.InsertPoint = newInsert;
+			this.Normal = newNormal;
+			this.Rotation = newRotation;
+			this.Height = newHeight;
+			this.RectangleWidth *= scale;
+		}
+
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.InsertPoint);
+		}
+
+		/// <summary>
+		/// Get the text value separated in lines.
+		/// </summary>
+		/// <returns></returns>
+		public string[] GetTextLines()
+		{
+			return this.Value.Split(
+				new string[] { "\r\n", "\r", "\n", "\\P" },
+				StringSplitOptions.None
+			);
 		}
 
 		/// <inheritdoc/>

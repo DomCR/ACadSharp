@@ -34,6 +34,7 @@
 		public const string Face3d = "AcDbFace";
 		public const string Helix = "AcDbHelix";
 		public const string Insert = "AcDbBlockReference";
+		public const string MInsert = "AcDbMInsertBlock";
 		public const string Line = "AcDbLine";
 		public const string Ray = "AcDbRay";
 		public const string XLine = "AcDbXline";

@@ -221,9 +221,9 @@ namespace ACadSharp.IO
 			this.DocumentToBuild.RegisterCollection(this.TextStyles);
 			this.DocumentToBuild.RegisterCollection(this.UCSs);
 			this.DocumentToBuild.RegisterCollection(this.Views);
+			this.DocumentToBuild.RegisterCollection(this.BlockRecords);
 			this.DocumentToBuild.RegisterCollection(this.DimensionStyles);
 			this.DocumentToBuild.RegisterCollection(this.VPorts);
-			this.DocumentToBuild.RegisterCollection(this.BlockRecords);
 		}
 
 		public void BuildTables()
@@ -234,9 +234,9 @@ namespace ACadSharp.IO
 			this.BuildTable(this.TextStyles);
 			this.BuildTable(this.UCSs);
 			this.BuildTable(this.Views);
+			this.BuildTable(this.BlockRecords);
 			this.BuildTable(this.DimensionStyles);
 			this.BuildTable(this.VPorts);
-			this.BuildTable(this.BlockRecords);
 		}
 
 		public void Notify(string message, NotificationType notificationType = NotificationType.None, Exception exception = null)

@@ -22,17 +22,22 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Polyline;
 
+		/// <inheritdoc/>
 		public Polyline2D() : base()
 		{
-			this.Vertices.OnAdd += this.verticesOnAdd;
 		}
 
+		public Polyline2D(IEnumerable<Vertex2D> vertices, bool isColsed) : base(vertices, isColsed)
+		{
+		}
+
+		/// <inheritdoc/>
 		public override IEnumerable<Entity> Explode()
 		{
 			return Polyline.Explode(this);
 		}
 
-		private void verticesOnAdd(object sender, CollectionChangedEventArgs e)
+		protected override void verticesOnAdd(object sender, CollectionChangedEventArgs e)
 		{
 			if (e.Item is not Vertex2D)
 			{

@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using CSMath;
 using System;
 using System.Linq;
 
@@ -217,13 +218,14 @@ namespace ACadSharp.IO.DXF
 
 		private void writeLayer(Layer layer, DxfClassMap map)
 		{
+			int index = layer.Color.IsTrueColor ? layer.Color.GetApproxIndex() : layer.Color.Index;
 			if (layer.IsOn)
 			{
-				this._writer.Write(62, layer.Color.Index, map);
+				this._writer.Write(62, index, map);
 			}
 			else
 			{
-				this._writer.Write(62, (short)-layer.Color.Index, map);
+				this._writer.Write(62, -index, map);
 			}
 
 			if (layer.Color.IsTrueColor)
@@ -275,7 +277,7 @@ namespace ACadSharp.IO.DXF
 					}
 
 					this._writer.Write(46, s.Scale);
-					this._writer.Write(50, s.Rotation * MathUtils.DegToRadFactor);
+					this._writer.Write(50, MathHelper.RadToDeg(s.Rotation));
 					this._writer.Write(44, s.Offset.X);
 					this._writer.Write(45, s.Offset.Y);
 					this._writer.Write(9, s.Text);

@@ -5015,7 +5015,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readGroup()
 		{
 			Group group = new Group();
-			DwgGroupTemplate template = new DwgGroupTemplate(group);
+			CadGroupTemplate template = new CadGroupTemplate(group);
 
 			this.readCommonNonEntityData(template);
 
@@ -5023,7 +5023,7 @@ namespace ACadSharp.IO.DWG
 			group.Description = this._textReader.ReadVariableText();
 
 			//Unnamed BS 1 if group has no name
-			group.IsUnnamed = this._objectReader.ReadBitShort() > 0;
+			bool isUnnamed = this._objectReader.ReadBitShort() > 0;
 			//Selectable BS 1 if group selectable
 			group.Selectable = this._objectReader.ReadBitShort() > 0;
 
@@ -5344,7 +5344,7 @@ namespace ACadSharp.IO.DWG
 									//endangle BD 51 endangle
 									EndAngle = this._objectReader.ReadBitDouble(),
 									//isccw B 73 1 if counter clockwise, otherwise 0
-									CounterClockWise = this._objectReader.ReadBit()
+									IsCounterclockwise = this._objectReader.ReadBit()
 								});
 								break;
 							case Hatch.BoundaryPath.EdgeType.Spline:

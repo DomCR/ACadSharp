@@ -505,7 +505,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitLong(insert.Attributes.Count);
 			}
 
-			if (insert.ObjectType == ObjectType.MINSERT)
+			if (insert.IsMultiple)
 			{
 				//Common:
 				//Numcols BS 70
@@ -917,7 +917,7 @@ namespace ACadSharp.IO.DWG
 								//endangle BD 51 endangle
 								this._writer.WriteBitDouble(ellispe.EndAngle);
 								//isccw B 73 1 if counter clockwise; otherwise 0
-								this._writer.WriteBit(ellispe.CounterClockWise);
+								this._writer.WriteBit(ellispe.IsCounterclockwise);
 								break;
 							case Hatch.BoundaryPath.Spline splineEdge:
 								//degree BL 94 degree of the spline

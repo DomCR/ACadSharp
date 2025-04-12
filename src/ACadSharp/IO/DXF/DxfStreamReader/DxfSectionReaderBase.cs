@@ -119,7 +119,9 @@ namespace ACadSharp.IO.DXF
 				//Check with mapper
 				case 100:
 					if (map != null && !map.SubClasses.ContainsKey(this._reader.ValueAsString))
+					{
 						this._builder.Notify($"[{template.CadObject.ObjectName}] Unidentified subclass {this._reader.ValueAsString}", NotificationType.Warning);
+					}
 					break;
 				//Start of application - defined group
 				case 102:
@@ -533,7 +535,7 @@ namespace ACadSharp.IO.DXF
 				case 50:
 					var dim = new DimensionLinear();
 					tmp.SetDimensionObject(dim);
-					dim.Rotation = CSMath.MathHelper.DegToRad(this._reader.ValueAsDouble);
+					dim.Rotation = this._reader.ValueAsAngle;
 					map.SubClasses.Add(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
 					return true;
 				case 70:
@@ -695,10 +697,15 @@ namespace ACadSharp.IO.DXF
 				case 2:
 					tmp.BlockName = this._reader.ValueAsString;
 					return true;
+				case 100:
+					//AcDbEntity
+					//AcDbBlockReference
+					//AcDbMInsertBlock
+					return true;
 				case 66:
 					return true;
 				default:
-					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Insert]);
 			}
 		}
 
@@ -1579,7 +1586,7 @@ namespace ACadSharp.IO.DXF
 								ellipse.EndAngle = this._reader.ValueAsDouble;
 								break;
 							case 73:
-								ellipse.CounterClockWise = this._reader.ValueAsBool;
+								ellipse.IsCounterclockwise = this._reader.ValueAsBool;
 								break;
 							default:
 								return ellipse;
@@ -1733,7 +1740,7 @@ namespace ACadSharp.IO.DXF
 
 					if (dxfProperty.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
 					{
-						value = (double)value * MathHelper.DegToRadFactor;
+						value = MathHelper.DegToRad((double)value);
 					}
 
 					dxfProperty.SetValue(this._reader.Code, cadObject, value);

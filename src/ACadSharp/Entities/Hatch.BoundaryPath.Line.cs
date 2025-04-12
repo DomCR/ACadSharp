@@ -23,6 +23,16 @@ namespace ACadSharp.Entities
 				[DxfCodeValue(11, 21)]
 				public XY End { get; set; }
 
+				/// <inheritdoc/>
+				public override Entity ToEntity()
+				{
+					return new Entities.Line(this.Start, this.End);
+				}
+				/// <inheritdoc/>
+				public override void ApplyTransform(Transform transform)
+				{
+					throw new System.NotImplementedException();
+				}
 
 				/// <inheritdoc/>
 				public override BoundingBox GetBoundingBox()

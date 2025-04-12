@@ -17,14 +17,20 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Arc)]
 	public class Arc : Circle
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.ARC;
+		/// <summary>
+		/// The end angle in radians.
+		/// </summary>
+		/// <remarks>
+		/// Use 6.28 radians to specify a closed circle or ellipse.
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
+		public double EndAngle { get; set; } = Math.PI;
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityArc;
 
 		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Arc;
+		public override ObjectType ObjectType => ObjectType.ARC;
 
 		/// <summary>
 		/// The start angle in radians.
@@ -32,14 +38,8 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double StartAngle { get; set; } = 0.0;
 
-		/// <summary>
-		/// The end angle in radians. 
-		/// </summary>
-		/// <remarks>
-		/// Use 6.28 radians to specify a closed circle or ellipse.
-		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
-		public double EndAngle { get; set; } = Math.PI;
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Arc;
 
 		/// <summary>
 		/// Default constructor
@@ -55,7 +55,7 @@ namespace ACadSharp.Entities
 		/// <returns></returns>
 		public static Arc CreateFromBulge(XY p1, XY p2, double bulge)
 		{
-			XY center = MathUtils.GetCenter(p1, p2, bulge, out double r);
+			XY center = GetCenter(p1, p2, bulge, out double r);
 
 			double startAngle;
 			double endAngle;
@@ -77,6 +77,85 @@ namespace ACadSharp.Entities
 				StartAngle = startAngle,
 				EndAngle = endAngle,
 			};
+		}
+
+		/// <summary>
+		/// Get the center coordinate from a start, end an a bulge value.
+		/// </summary>
+		/// <param name="start">Start point.</param>
+		/// <param name="end">Ending point.</param>
+		/// <param name="bulge">Bulge.</param>
+		/// <returns>Center of the represented circle.</returns>
+		public static XY GetCenter(XY start, XY end, double bulge)
+		{
+			return GetCenter(start, end, bulge, out _);
+		}
+
+		/// <summary>
+		/// Get the center coordinate from a start, end an a bulge value.
+		/// </summary>
+		/// <param name="start">Start point.</param>
+		/// <param name="end">Ending point.</param>
+		/// <param name="bulge">Bulge.</param>
+		/// <param name="radius">Radius of the circle.</param>
+		/// <returns>Center of the represented circle.</returns>
+		public static XY GetCenter(XY start, XY end, double bulge, out double radius)
+		{
+			double theta = 4 * Math.Atan(Math.Abs(bulge));
+			double c = start.DistanceFrom(end) / 2.0;
+			radius = c / Math.Sin(theta / 2.0);
+
+			double gamma = (Math.PI - theta) / 2;
+			double phi = (end - start).GetAngle() + Math.Sign(bulge) * gamma;
+			return new XY(start.X + radius * CSMath.MathHelper.Cos(phi), start.Y + radius * CSMath.MathHelper.Sin(phi));
+		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			var center = this.Center;
+			var normal = this.Normal;
+			var radius = this.Radius;
+
+			base.ApplyTransform(transform);
+
+			Matrix3 trans = getWorldMatrix(transform, normal, this.Normal, out Matrix3 transOW, out Matrix3 transWO);
+
+			XY start = XY.Rotate(new XY(this.Radius, 0.0), this.StartAngle);
+			XY end = XY.Rotate(new XY(this.Radius, 0.0), this.EndAngle);
+
+			XYZ vStart = transOW * new XYZ(start.X, start.Y, 0.0);
+			vStart = trans * vStart;
+			vStart = transWO * vStart;
+
+			XYZ vEnd = transOW * new XYZ(end.X, end.Y, 0.0);
+			vEnd = trans * vEnd;
+			vEnd = transWO * vEnd;
+
+			XY startPoint = new XY(vStart.X, vStart.Y);
+			XY endPoint = new XY(vEnd.X, vEnd.Y);
+
+			if (Math.Sign(trans.m00 * trans.m11 * trans.m22) < 0)
+			{
+				this.EndAngle = startPoint.GetAngle();
+				this.StartAngle = endPoint.GetAngle();
+			}
+			else
+			{
+				this.StartAngle = startPoint.GetAngle();
+				this.EndAngle = endPoint.GetAngle();
+			}
+
+			this.StartAngle = MathHelper.FixZero(this.StartAngle);
+			this.EndAngle = MathHelper.FixZero(this.EndAngle);
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			List<XY> vertices = this.PolygonalVertexes(256);
+
+			return BoundingBox.FromPoints(vertices.Select(v => (XYZ)v));
 		}
 
 		/// <summary>
@@ -119,21 +198,13 @@ namespace ACadSharp.Entities
 				double cosine = this.Radius * Math.Cos(angle);
 				double sine = this.Radius * Math.Sin(angle);
 
-				cosine = MathUtils.IsZero(cosine) ? 0 : cosine;
-				sine = MathUtils.IsZero(sine) ? 0 : sine;
+				cosine = MathHelper.IsZero(cosine) ? 0 : cosine;
+				sine = MathHelper.IsZero(sine) ? 0 : sine;
 
 				ocsVertexes.Add(new XY(cosine + this.Center.X, sine + this.Center.Y));
 			}
 
 			return ocsVertexes;
-		}
-
-		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			List<XY> vertices = this.PolygonalVertexes(256);
-
-			return BoundingBox.FromPoints(vertices.Select(v => (XYZ)v));
 		}
 	}
 }

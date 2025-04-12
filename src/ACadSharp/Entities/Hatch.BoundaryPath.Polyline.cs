@@ -45,6 +45,24 @@ namespace ACadSharp.Entities
 				public List<XYZ> Vertices { get; set; } = new();
 
 				/// <inheritdoc/>
+				public override Entity ToEntity()
+				{
+					List<Vertex> vertices = new();
+					foreach (XYZ v in this.Vertices)
+					{
+						vertices.Add(new Vertex2D(v));
+					}
+
+					return new Polyline2D(vertices.Cast<Vertex2D>(), this.IsClosed);
+				}
+
+				/// <inheritdoc/>
+				public override void ApplyTransform(Transform transform)
+				{
+					throw new System.NotImplementedException();
+				}
+
+				/// <inheritdoc/>
 				public override BoundingBox GetBoundingBox()
 				{
 					return BoundingBox.FromPoints(this.Vertices);

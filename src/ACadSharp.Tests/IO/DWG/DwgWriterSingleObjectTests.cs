@@ -23,7 +23,7 @@ namespace ACadSharp.Tests.IO.DWG
 			this.writeDwgFile(data, ACadVersion.AC1024);
 		}
 
-		[Theory(Skip = "AC1027 not stable")]
+		[Theory()]
 		[MemberData(nameof(Data))]
 		public void WriteCasesAC1027(SingleCaseGenerator data)
 		{

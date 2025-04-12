@@ -242,7 +242,7 @@ namespace ACadSharp.IO.DWG
 			this.addSection(sectionHolder);
 		}
 
-		public void writeRecords()
+		private void writeRecords()
 		{
 			this.writeMagicNumber();
 
