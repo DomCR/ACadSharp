@@ -158,7 +158,14 @@ namespace ACadSharp.Tables
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 342)]
-		public BlockRecord ArrowBlock { get; set; }
+		public BlockRecord ArrowBlock
+		{
+			get { return this._dimArrowBlock; }
+			set
+			{
+				this._dimArrowBlock = this.updateTable(value, this.Document?.BlockRecords);
+			}
+		}
 
 		/// <summary>
 		/// Controls the size of dimension line and leader line arrowheads. Also controls the
@@ -257,7 +264,14 @@ namespace ACadSharp.Tables
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 343)]
-		public BlockRecord DimArrow1 { get; set; }
+		public BlockRecord DimArrow1
+		{
+			get { return this._dimArrow1; }
+			set
+			{
+				this._dimArrow1 = this.updateTable(value, this.Document?.BlockRecords);
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the arrowhead for the first end of the dimension line when
@@ -274,7 +288,14 @@ namespace ACadSharp.Tables
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 344)]
-		public BlockRecord DimArrow2 { get; set; }
+		public BlockRecord DimArrow2
+		{
+			get { return this._dimArrow2; }
+			set
+			{
+				this._dimArrow2 = this.updateTable(value, this.Document?.BlockRecords);
+			}
+		}
 
 		/// <summary>
 		/// Determines how dimension text and arrows are arranged when space is not sufficient to
@@ -474,7 +495,14 @@ namespace ACadSharp.Tables
 		/// Note: Annotative blocks cannot be used as custom arrowheads for dimensions or leaders.
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 341)]
-		public BlockRecord LeaderArrow { get; set; }
+		public BlockRecord LeaderArrow
+		{
+			get { return this._leaderArrow; }
+			set
+			{
+				this._leaderArrow = this.updateTable(value, this.Document?.BlockRecords);
+			}
+		}
 
 		/// <summary>
 		/// Generates dimension limits as the default text
@@ -529,7 +557,7 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Line type for the extension line 1. 
+		/// Line type for the extension line 1.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 346)]
 		public LineType LineTypeExt1
@@ -542,7 +570,7 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Line type for the extension line 2. 
+		/// Line type for the extension line 2.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 347)]
 		public LineType LineTypeExt2
@@ -980,7 +1008,15 @@ namespace ACadSharp.Tables
 
 		private double _arrowSize = 0.18;
 
+		private BlockRecord _dimArrow1 = null;
+
+		private BlockRecord _dimArrow2 = null;
+
+		private BlockRecord _dimArrowBlock = null;
+
 		private double _joggedRadiusDimensionTransverseSegmentAngle = System.Math.PI / 4.0;
+
+		private BlockRecord _leaderArrow = null;
 
 		private LineType _lineType;
 
@@ -1025,25 +1061,39 @@ namespace ACadSharp.Tables
 			base.AssignDocument(doc);
 
 			this._style = this.updateTable(this.Style, doc.TextStyles);
+
 			this._lineType = this.updateTable(this.LineType, doc.LineTypes);
 			this._lineTypeExt1 = this.updateTable(this.LineTypeExt1, doc.LineTypes);
 			this._lineTypeExt2 = this.updateTable(this.LineTypeExt2, doc.LineTypes);
 
+			this._leaderArrow = this.updateTable(this.LeaderArrow, doc.BlockRecords);
+			this._dimArrow1 = this.updateTable(this.DimArrow1, doc.BlockRecords);
+			this._dimArrow2 = this.updateTable(this.DimArrow2, doc.BlockRecords);
+			this._dimArrowBlock = this.updateTable(this.ArrowBlock, doc.BlockRecords);
+
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 			doc.LineTypes.OnRemove += this.tableOnRemove;
+			doc.BlockRecords.OnRemove += this.tableOnRemove;
 		}
 
 		internal override void UnassignDocument()
 		{
 			this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
 			this.Document.LineTypes.OnRemove -= this.tableOnRemove;
+			this.Document.BlockRecords.OnRemove -= this.tableOnRemove;
 
 			base.UnassignDocument();
 
 			this.Style = (TextStyle)this.Style.Clone();
+
 			this.LineType = (LineType)(this.LineType?.Clone());
 			this.LineTypeExt1 = (LineType)(this.LineTypeExt1?.Clone());
 			this.LineTypeExt2 = (LineType)(this.LineTypeExt2?.Clone());
+
+			this.LeaderArrow = (BlockRecord)(this.LeaderArrow?.Clone());
+			this.DimArrow1 = (BlockRecord)(this.DimArrow1?.Clone());
+			this.DimArrow2 = (BlockRecord)(this.DimArrow2?.Clone());
+			this.ArrowBlock = (BlockRecord)(this.ArrowBlock?.Clone());
 		}
 
 		protected void tableOnRemove(object sender, CollectionChangedEventArgs e)
@@ -1053,19 +1103,30 @@ namespace ACadSharp.Tables
 				this.Style = this.Document.TextStyles[TextStyle.DefaultName];
 			}
 
-			if (e.Item.Equals(this.LineType))
+			if (e.Item is LineType ltype)
 			{
-				this.LineType = null;
+				this.LineType = this.checkRemovedEntry(ltype, this.LineType);
+				this.LineTypeExt1 = this.checkRemovedEntry(ltype, this.LineTypeExt1);
+				this.LineTypeExt2 = this.checkRemovedEntry(ltype, this.LineTypeExt2);
 			}
-
-			if (e.Item.Equals(this.LineTypeExt1))
+			else if (e.Item is BlockRecord blk)
 			{
-				this.LineTypeExt1 = null;
+				this.LeaderArrow = this.checkRemovedEntry(blk, this.LeaderArrow);
+				this.DimArrow1 = this.checkRemovedEntry(blk, this.DimArrow1);
+				this.DimArrow2 = this.checkRemovedEntry(blk, this.DimArrow2);
+				this.ArrowBlock = this.checkRemovedEntry(blk, this.ArrowBlock);
 			}
+		}
 
-			if (e.Item.Equals(this.LineTypeExt2))
+		private T checkRemovedEntry<T>(T entry, T original)
+		{
+			if (entry.Equals(original))
 			{
-				this.LineTypeExt2 = null;
+				return default(T);
+			}
+			else
+			{
+				return original;
 			}
 		}
 	}
