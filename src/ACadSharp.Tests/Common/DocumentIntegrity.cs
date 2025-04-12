@@ -94,7 +94,7 @@ namespace ACadSharp.Tests.Common
 #if !NETFRAMEWORK
 			this._document = doc;
 			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(
-				File.ReadAllText(Path.Combine(_folder, $"{doc.Header.Version}_tree.json"))
+				File.ReadAllText(Path.Combine(_folder, $"sample_{doc.Header.Version}_tree.json"))
 				);
 
 			if (doc.Header.Version > ACadVersion.AC1021)
@@ -117,7 +117,7 @@ namespace ACadSharp.Tests.Common
 #if !NETFRAMEWORK
 			this._document = doc;
 			CadDocumentTree tree = System.Text.Json.JsonSerializer.Deserialize<CadDocumentTree>(
-						File.ReadAllText(Path.Combine(_folder, $"{doc.Header.Version}_tree.json"))
+						File.ReadAllText(Path.Combine(_folder, $"sample_{doc.Header.Version}_tree.json"))
 						);
 
 			this.assertTableTree(doc.BlockRecords, tree.BlocksTable);
@@ -191,6 +191,12 @@ namespace ACadSharp.Tests.Common
 
 			foreach (R child in node.Entries)
 			{
+				//Blocks are not saved in the dwg file
+				if (child.Name == "*D22" || child.Name == "*D23")
+				{
+					continue;
+				}
+
 				if (this._document.Header.Version < ACadVersion.AC1024 &&
 					child is BlockRecordNode tmp &&
 					tmp.IsDynamic)
