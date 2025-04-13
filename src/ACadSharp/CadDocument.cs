@@ -206,7 +206,13 @@ namespace ACadSharp
 			DxfClassCollection.UpdateDxfClasses(this);
 
 			//Header and summary
-			this.Header = new CadHeader(this);
+			if (this.Header is null)
+			{
+				ulong seed = this.Header.HandleSeed;
+				this.Header = new CadHeader(this);
+				this.Header.HandleSeed = seed;
+			}
+
 			this.SummaryInfo = new CadSummaryInfo();
 
 			//The order of the elements is relevant for the handles assignation
