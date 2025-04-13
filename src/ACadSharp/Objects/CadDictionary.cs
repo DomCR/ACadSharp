@@ -298,6 +298,11 @@ namespace ACadSharp.Objects
 			return false;
 		}
 
+		/// <summary>
+		/// Removes a <see cref="NonGraphicalObject"/> from the collection, this method triggers <see cref="OnRemove"/>
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns>true if the element is successfully removed; otherwise, false.</returns>
 		public bool Remove(string key)
 		{
 			return this.Remove(key, out _);
