@@ -208,9 +208,7 @@ namespace ACadSharp
 			//Header and summary
 			if (this.Header is null)
 			{
-				ulong seed = this.Header.HandleSeed;
 				this.Header = new CadHeader(this);
-				this.Header.HandleSeed = seed;
 			}
 
 			this.SummaryInfo = new CadSummaryInfo();
