@@ -298,6 +298,11 @@ namespace ACadSharp.Objects
 			return false;
 		}
 
+		public bool Remove(string key)
+		{
+			return this.Remove(key, out _);
+		}
+
 		/// <summary>
 		/// Removes all keys and values from the <see cref="CadDictionary"/>.
 		/// </summary>
