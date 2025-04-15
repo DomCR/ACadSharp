@@ -34,6 +34,8 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
+
+			DwgWriter.Write("D:\\Albert DC\\Desktop\\tmp\\out-test.dwg", doc);
 		}
 
 		[Theory]
@@ -44,6 +46,9 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DxfReader.Read(test.Path, this.onNotification);
+			doc.Header.Version = ACadVersion.AC1032;
+
+			DwgWriter.Write("D:\\Albert DC\\Desktop\\tmp\\out.dwg", doc);
 		}
 
 		[Theory]

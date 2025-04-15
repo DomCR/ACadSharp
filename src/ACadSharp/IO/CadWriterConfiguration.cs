@@ -1,4 +1,6 @@
-﻿namespace ACadSharp.IO
+﻿using ACadSharp.Classes;
+
+namespace ACadSharp.IO
 {
 	/// <summary>
 	/// Configuration for the <see cref="CadWriterBase{T}"/> class.
@@ -31,5 +33,13 @@
 		/// default: true
 		/// </value>
 		public bool WriteXData { get; set; } = true;
+
+		/// <summary>
+		/// Resets the <see cref="DxfClass"/> collection in the <see cref="CadDocument"/> before writing it.
+		/// </summary>
+		/// <remarks>
+		/// Sometimes the files are corrupted by badly formed dxf classes, is recommended to keep this flag set.
+		/// </remarks>
+		public bool ResetDxfClasses { get; set; } = true;
 	}
 }

@@ -430,13 +430,13 @@ namespace ACadSharp.Classes
 		/// <param name="item"></param>
 		public void AddOrUpdate(DxfClass item)
 		{
-			if (_entries.TryGetValue(item.DxfName, out DxfClass result))
+			if (this._entries.TryGetValue(item.DxfName, out DxfClass result))
 			{
 				result.InstanceCount = item.InstanceCount;
 			}
 			else
 			{
-				_entries.Add(item.DxfName, item);
+				this._entries.Add(item.DxfName, item);
 			}
 		}
 
