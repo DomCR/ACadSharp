@@ -437,11 +437,31 @@ namespace ACadSharp.Tests.IO
 
 			public void Dimensions()
 			{
-				DimensionAligned dim = new DimensionAligned();
-
-				dim.SecondPoint = new XYZ(10);
+				DimensionAligned dim = new DimensionAligned
+				{
+					SecondPoint = new XYZ(10)
+				};
 
 				this.Document.Entities.Add(dim);
+
+				dim.UpdateBlock();
+
+				ACadSharp.Entities.Line line = new ACadSharp.Entities.Line
+				{
+					StartPoint = new CSMath.XYZ(1, 0, 0),
+					EndPoint = new CSMath.XYZ(5, 5, 0)
+				};
+
+				DimensionLinear dim1 = new DimensionLinear()
+				{
+					FirstPoint = line.StartPoint,
+					SecondPoint = line.EndPoint,
+					DefinitionPoint = new XYZ(2.8023467929098436, 6.758122565672127, 0)
+				};
+				dim1.UpdateBlock();
+
+				this.Document.Entities.Add(line);
+				this.Document.Entities.Add(dim1);
 			}
 
 			public void DimensionWithLineType()

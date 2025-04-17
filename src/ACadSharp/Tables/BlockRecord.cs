@@ -178,6 +178,25 @@ namespace ACadSharp.Tables
 			}
 		}
 
+		public bool IsAnonymous
+		{
+			get
+			{
+				return (this.Flags & BlockTypeFlags.Anonymous) != 0;
+			}
+			set
+			{
+				if (value)
+				{
+					this.Flags |= BlockTypeFlags.Anonymous;
+				}
+				else
+				{
+					this.Flags &= ~BlockTypeFlags.Anonymous;
+				}
+			}
+		}
+
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableBlockRecord;
 
