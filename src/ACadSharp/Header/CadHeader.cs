@@ -1860,7 +1860,7 @@ namespace ACadSharp.Header
 		/// System variable HANDSEED.
 		/// </remarks>
 		[CadSystemVariable("$HANDSEED", 5)]
-		public ulong HandleSeed { get; internal set; } = 0x0;
+		public ulong HandleSeed { get; internal set; } = 0x01;
 
 		/// <summary>
 		/// Specifies HIDETEXT system variable
