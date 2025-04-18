@@ -31,5 +31,10 @@ namespace ACadSharp.Entities
 		{
 			return BoundingBox.Null;
 		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+		}
 	}
 }

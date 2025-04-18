@@ -18,17 +18,44 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.MLine)]
 	public partial class MLine : Entity
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.MLINE;
+		/// <summary>
+		/// Flags.
+		/// </summary>
+		[DxfCodeValue(71)]
+		public MLineFlags Flags { get; set; }
+
+		/// <summary>
+		/// Justification.
+		/// </summary>
+		[DxfCodeValue(70)]
+		public MLineJustification Justification { get; set; }
+
+		/// <summary>
+		/// Extrusion direction.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityMLine;
 
 		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.MLine;
+		public override ObjectType ObjectType => ObjectType.MLINE;
 
 		/// <summary>
-		/// MLine Style
+		/// Scale factor.
+		/// </summary>
+		[DxfCodeValue(40)]
+		public double ScaleFactor { get; set; } = 1;
+
+		/// <summary>
+		/// Start point(in WCS).
+		/// </summary>
+		[DxfCodeValue(10, 20, 30)]
+		public XYZ StartPoint { get; set; }
+
+		/// <summary>
+		/// MLine Style.
 		/// </summary>
 		/// <remarks>
 		/// Name reference: <br/>
@@ -57,43 +84,28 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		/// <summary>
-		/// Scale factor
-		/// </summary>
-		[DxfCodeValue(40)]
-		public double ScaleFactor { get; set; } = 1;
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.MLine;
 
 		/// <summary>
-		/// Justification
-		/// </summary>
-		[DxfCodeValue(70)]
-		public MLineJustification Justification { get; set; }
-
-		/// <summary>
-		/// Flags
-		/// </summary>
-		[DxfCodeValue(71)]
-		public MLineFlags Flags { get; set; }
-
-		/// <summary>
-		/// Start point(in WCS)
-		/// </summary>
-		[DxfCodeValue(10, 20, 30)]
-		public XYZ StartPoint { get; set; }
-
-		/// <summary>
-		/// Extrusion direction
-		/// </summary>
-		[DxfCodeValue(210, 220, 230)]
-		public XYZ Normal { get; set; } = XYZ.AxisZ;
-
-		/// <summary>
-		/// Vertices in the MLine
+		/// Vertices in the MLine.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 72)]
 		public List<Vertex> Vertices { get; set; } = new List<Vertex>();
 
 		private MLineStyle _style = MLineStyle.Default;
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			this.Normal = this.transformNormal(transform, this.Normal);
+			this.StartPoint = transform.ApplyTransform(StartPoint);
+
+			foreach (var item in this.Vertices)
+			{
+				item.ApplyTransform(transform);
+			}
+		}
 
 		/// <inheritdoc/>
 		public override CadObject Clone()

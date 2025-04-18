@@ -14,11 +14,29 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Line)]
 	public class Line : Entity
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.LINE;
+		/// <summary>
+		/// A 3D coordinate representing the end point of the object.
+		/// </summary>
+		[DxfCodeValue(11, 21, 31)]
+		public XYZ EndPoint { get; set; } = XYZ.Zero;
+
+		/// <summary>
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityLine;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.LINE;
+
+		/// <summary>
+		/// A 3D coordinate representing the start point of the object.
+		/// </summary>
+		[DxfCodeValue(10, 20, 30)]
+		public XYZ StartPoint { get; set; } = XYZ.Zero;
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Line;
@@ -28,24 +46,6 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;
-
-		/// <summary>
-		/// Specifies the three-dimensional normal unit vector for the object.
-		/// </summary>
-		[DxfCodeValue(210, 220, 230)]
-		public XYZ Normal { get; set; } = XYZ.AxisZ;
-
-		/// <summary>
-		/// A 3D coordinate representing the start point of the object.
-		/// </summary>
-		[DxfCodeValue(10, 20, 30)]
-		public XYZ StartPoint { get; set; } = XYZ.Zero;
-
-		/// <summary>
-		/// A 3D coordinate representing the end point of the object.
-		/// </summary>
-		[DxfCodeValue(11, 21, 31)]
-		public XYZ EndPoint { get; set; } = XYZ.Zero;
 
 		/// <summary>
 		/// Default constructor.
@@ -72,6 +72,14 @@ namespace ACadSharp.Entities
 		{
 			this.StartPoint = start;
 			this.EndPoint = end;
+		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			this.StartPoint = transform.ApplyTransform(this.StartPoint);
+			this.EndPoint = transform.ApplyTransform(this.EndPoint);
+			this.Normal = this.transformNormal(transform, this.Normal);
 		}
 
 		/// <inheritdoc/>

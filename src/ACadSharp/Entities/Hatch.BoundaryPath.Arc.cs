@@ -1,9 +1,7 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.DXF;
 using CSMath;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -13,14 +11,23 @@ namespace ACadSharp.Entities
 		{
 			public class Arc : Edge
 			{
-				/// <inheritdoc/>
-				public override EdgeType Type => EdgeType.CircularArc;
-
 				/// <summary>
 				/// Center point (in OCS).
 				/// </summary>
 				[DxfCodeValue(10, 20)]
 				public XY Center { get; set; }
+
+				/// <summary>
+				/// Is counterclockwise flag.
+				/// </summary>
+				[DxfCodeValue(73)]
+				public bool CounterClockWise { get; set; }
+
+				/// <summary>
+				/// End angle.
+				/// </summary>
+				[DxfCodeValue(51)]
+				public double EndAngle { get; set; }
 
 				/// <summary>
 				/// Radius.
@@ -37,17 +44,14 @@ namespace ACadSharp.Entities
 				[DxfCodeValue(50)]
 				public double StartAngle { get; set; }
 
-				/// <summary>
-				/// End angle.
-				/// </summary>
-				[DxfCodeValue(51)]
-				public double EndAngle { get; set; }
+				/// <inheritdoc/>
+				public override EdgeType Type => EdgeType.CircularArc;
 
-				/// <summary>
-				/// Is counterclockwise flag.
-				/// </summary>
-				[DxfCodeValue(73)]
-				public bool CounterClockWise { get; set; }
+				/// <inheritdoc/>
+				public override void ApplyTransform(Transform transform)
+				{
+					throw new NotImplementedException();
+				}
 
 				/// <inheritdoc/>
 				public override BoundingBox GetBoundingBox()

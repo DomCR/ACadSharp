@@ -331,7 +331,11 @@ namespace ACadSharp.IO.DWG
 			//BD : CHAMFERD
 			_header.ChamferAngle = _reader.ReadBitDouble();
 			//BD : FACETRES
-			_header.FacetResolution = _reader.ReadBitDouble();
+			var facetResolution = _reader.ReadBitDouble();
+			if (facetResolution > 0)
+			{
+				_header.FacetResolution = facetResolution;
+			}
 			//BD : CMLSCALE
 			_header.CurrentMultilineScale = _reader.ReadBitDouble();
 			//BD : CELTSCALE

@@ -34,12 +34,6 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			if (this.CadObject.Name == "*U16")
-			{
-				//Is dynamic if Flags.Contains(Anonymous)
-				//Block reference -> ExtendedData["AcDbRegAppTableRecord"].Value[ACadSharp.DxfCode.ExtendedDataHandle] => handle
-			}
-
 			if (builder.TryGetCadObject(this.LayoutHandle, out Layout layout))
 			{
 				this.CadObject.Layout = layout;

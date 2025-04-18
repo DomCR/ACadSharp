@@ -1,8 +1,11 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -75,14 +78,7 @@ namespace ACadSharp.Entities
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				if (this.Document != null)
-				{
-					this._lineType = this.updateTable(value, this.Document.LineTypes);
-				}
-				else
-				{
-					this._lineType = value;
-				}
+				this._lineType = this.updateTable(value, this.Document?.LineTypes);
 			}
 		}
 
@@ -113,6 +109,46 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public Entity() : base() { }
+
+		/// <summary>
+		/// Apply a translation to this entity.
+		/// </summary>
+		/// <param name="translation"></param>
+		public void ApplyTranslation(XYZ translation)
+		{
+			Transform transform = Transform.CreateTranslation(translation);
+			this.ApplyTransform(transform);
+		}
+
+		/// <summary>
+		/// Apply a rotation to this entity.
+		/// </summary>
+		/// <param name="axis"></param>
+		/// <param name="rotation"></param>
+		public void ApplyRotation(XYZ axis, double rotation)
+		{
+			Transform transform = Transform.CreateRotation(axis, rotation);
+			this.ApplyTransform(transform);
+		}
+
+		/// <summary>
+		/// Apply a scale to this entity.
+		/// </summary>
+		/// <param name="scale"></param>
+		public void ApplyScaling(XYZ scale)
+		{
+			Transform transform = Transform.CreateScaling(scale);
+			this.ApplyTransform(transform);
+		}
+
+		public void ApplyScaling(XYZ scale, XYZ origin)
+		{
+			Transform transform = Transform.CreateScaling(scale, origin);
+			this.ApplyTransform(transform);
+		}
+
+		/// <inheritdoc/>
+		public abstract void ApplyTransform(Transform transform);
 
 		/// <inheritdoc/>
 		public override CadObject Clone()
@@ -193,6 +229,11 @@ namespace ACadSharp.Entities
 			this.LineType = (LineType)this.LineType.Clone();
 		}
 
+		protected XYZ transformNormal(Transform transform, XYZ normal)
+		{
+			return transform.Rotate(normal).Normalize();
+		}
+
 		protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
 		{
 			if (e.Item.Equals(this.Layer))
@@ -204,6 +245,63 @@ namespace ACadSharp.Entities
 			{
 				this.LineType = this.Document.LineTypes[LineType.ByLayerName];
 			}
+		}
+
+		protected Matrix3 getWorldMatrix(Transform transform, XYZ normal, XYZ newNormal, out Matrix3 transOW, out Matrix3 transWO)
+		{
+			transOW = Matrix3.ArbitraryAxis(normal);
+			transWO = Matrix3.ArbitraryAxis(newNormal).Transpose();
+			return new Matrix3(transform.Matrix);
+		}
+
+		protected XYZ applyWorldMatrix(XYZ xyz, Transform transform, Matrix3 transOW, Matrix3 transWO)
+		{
+			XYZ v = transOW * xyz;
+			v = transform.ApplyTransform(v);
+			v = transWO * v;
+			return v;
+		}
+
+		protected List<XY> applyRotation(IEnumerable<XY> points, double rotation)
+		{
+			if (points == null)
+			{
+				throw new ArgumentNullException(nameof(points));
+			}
+
+			if (MathHelper.IsZero(rotation))
+			{
+				return new List<XY>(points);
+			}
+
+			double sin = Math.Sin(rotation);
+			double cos = Math.Cos(rotation);
+
+			List<XY> transPoints;
+
+			transPoints = new List<XY>();
+			foreach (XY p in points)
+			{
+				transPoints.Add(new XY(p.X * cos - p.Y * sin, p.X * sin + p.Y * cos));
+			}
+			return transPoints;
+		}
+
+		protected List<XYZ> applyRotation(IEnumerable<XYZ> points, XYZ zAxis)
+		{
+			if (points == null)
+			{
+				throw new ArgumentNullException(nameof(points));
+			}
+
+			Matrix3 trans = Matrix3.ArbitraryAxis(zAxis);
+			List<XYZ> transPoints;
+			transPoints = new List<XYZ>();
+			foreach (XYZ p in points)
+			{
+				transPoints.Add(trans * p);
+			}
+			return transPoints;
 		}
 	}
 }

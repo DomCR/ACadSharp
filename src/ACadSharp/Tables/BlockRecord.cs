@@ -270,6 +270,15 @@ namespace ACadSharp.Tables
 		}
 
 		/// <inheritdoc/>
+		public void ApplyTransform(Transform transform)
+		{
+			foreach (Entity item in this.Entities)
+			{
+				item.ApplyTransform(transform);
+			}
+		}
+
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			BlockRecord clone = (BlockRecord)base.Clone();

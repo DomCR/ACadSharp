@@ -10,14 +10,29 @@ namespace ACadSharp.Entities
 		{
 			public class Ellipse : Edge
 			{
-				/// <inheritdoc/>
-				public override EdgeType Type => EdgeType.EllipticArc;
-
 				/// <summary>
 				/// Center point (in OCS).
 				/// </summary>
 				[DxfCodeValue(10, 20)]
 				public XY Center { get; set; }
+
+				/// <summary>
+				/// Is counterclockwise flag.
+				/// </summary>
+				[DxfCodeValue(73)]
+				public bool CounterClockWise { get; set; }
+
+				/// <summary>
+				/// End angle.
+				/// </summary>
+				[DxfCodeValue(51)]
+				public double EndAngle { get; set; }
+
+				/// <summary>
+				/// Is counterclockwise flag.
+				/// </summary>
+				[DxfCodeValue(73)]
+				public bool IsCounterclockwise { get; set; }
 
 				/// <summary>
 				/// Endpoint of major axis relative to center point (in OCS).
@@ -37,17 +52,20 @@ namespace ACadSharp.Entities
 				[DxfCodeValue(50)]
 				public double StartAngle { get; set; }
 
-				/// <summary>
-				/// End angle.
-				/// </summary>
-				[DxfCodeValue(51)]
-				public double EndAngle { get; set; }
+				/// <inheritdoc/>
+				public override EdgeType Type => EdgeType.EllipticArc;
 
-				/// <summary>
-				/// Is counterclockwise flag.
-				/// </summary>
-				[DxfCodeValue(73)]
-				public bool IsCounterclockwise { get; set; }
+				/// <inheritdoc/>
+				public override void ApplyTransform(Transform transform)
+				{
+					throw new System.NotImplementedException();
+				}
+
+				/// <inheritdoc/>
+				public override BoundingBox GetBoundingBox()
+				{
+					return this.ToEntity().GetBoundingBox();
+				}
 
 				/// <inheritdoc/>
 				public override Entity ToEntity()
@@ -64,12 +82,6 @@ namespace ACadSharp.Entities
 					ellipse.EndParameter = this.IsCounterclockwise ? this.EndAngle : 360 - this.StartAngle;
 
 					return ellipse;
-				}
-
-				/// <inheritdoc/>
-				public override BoundingBox GetBoundingBox()
-				{
-					return this.ToEntity().GetBoundingBox();
 				}
 			}
 		}

@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.Tests.IO
 {
@@ -44,6 +45,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
 			Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
+			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateGroup)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
@@ -63,7 +65,9 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomScale)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomBookColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
+			Data.Add(new(nameof(SingleCaseGenerator.DimensionWithLineType)));
 			Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
+			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeInBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.XData)));
 		}
@@ -80,6 +84,7 @@ namespace ACadSharp.Tests.IO
 		public class SingleCaseGenerator : IXunitSerializable
 		{
 			public CadDocument Document { get; private set; } = new CadDocument();
+
 			public string Name { get; private set; }
 
 			public SingleCaseGenerator()
@@ -220,21 +225,69 @@ namespace ACadSharp.Tests.IO
 
 				List<Hatch.BoundaryPath.Line> edges = new List<Hatch.BoundaryPath.Line>();
 
-				//edges
+				//Polyline circle
 				Hatch.BoundaryPath.Polyline polyline = new Hatch.BoundaryPath.Polyline();
 				polyline.IsClosed = true;
 				polyline.Vertices.Add(new XYZ(0, 2.5, 1));
 				polyline.Vertices.Add(new XYZ(10, 2.5, 1));
 
+				//Arc circle
+				Hatch.BoundaryPath.Arc arc = new();
+				arc.Center = new XY(10, 10);
+				arc.CounterClockWise = true;
+				arc.Radius = 5;
+				arc.StartAngle = 0;
+				arc.EndAngle = MathHelper.TwoPI;
+
 				Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-				foreach (var item in edges)
-				{
-					path.Edges.Add(item);
-				}
+				path.Edges.Add(polyline);
+
+				Hatch.BoundaryPath path1 = new Hatch.BoundaryPath();
+				path1.Edges.Add(arc);
 
 				hatch.Paths.Add(path);
+				hatch.Paths.Add(path1);
 
 				this.Document.Entities.Add(hatch);
+			}
+
+			public void CreateGroup()
+			{
+				Layer layer = new Layer("MyLayer");
+				layer.Color = new Color(0, 153, 0);
+				this.Document.Layers.Add(layer);
+
+				Circle circle = new Circle();
+				circle.Center = new CSMath.XYZ(1, 1, 0);
+				circle.Radius = 1;
+				circle.Normal = new CSMath.XYZ(0, 0, 1);
+
+				Line line = new Line();
+				line.StartPoint = new CSMath.XYZ(0, 0, 0);
+				line.EndPoint = new CSMath.XYZ(2, 2, 0);
+
+				circle.Layer = layer;
+				line.Layer = layer;
+
+				this.Document.Entities.Add(circle);
+				this.Document.Entities.Add(line);
+
+				//Group group = new Group();
+				//group.Name = "MyGroup";
+				//group.Add(circle);
+				//group.Add(line);
+
+				this.Document.Groups.CreateGroup("MyGroup", new List<Entity> { circle, line });
+
+				TextEntity text = new TextEntity();
+				text.Value = "Hello World!";
+				text.Layer = layer;
+				text.HorizontalAlignment = TextHorizontalAlignment.Center;
+				text.VerticalAlignment = TextVerticalAlignmentType.Middle;
+				text.InsertPoint = new CSMath.XYZ(1, 1, 0);
+				text.AlignmentPoint = new CSMath.XYZ(10, 10, 0);
+
+				this.Document.Entities.Add(text);
 			}
 
 			public void CreateHatch()
@@ -385,6 +438,23 @@ namespace ACadSharp.Tests.IO
 			public void Dimensions()
 			{
 				DimensionAligned dim = new DimensionAligned();
+
+				dim.SecondPoint = new XYZ(10);
+
+				this.Document.Entities.Add(dim);
+			}
+
+			public void DimensionWithLineType()
+			{
+				LineType linetype = new LineType("LTYPE:PAINT");
+				linetype.AddSegment(new LineType.Segment() { Length = 1 });
+				linetype.AddSegment(new LineType.Segment() { Length = -1 });
+
+				DimensionStyle style = new DimensionStyle("my_style");
+				style.LineType = linetype;
+
+				DimensionAligned dim = new DimensionAligned();
+				dim.Style = style;
 
 				dim.SecondPoint = new XYZ(10);
 
@@ -643,6 +713,24 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(wipeout);
 			}
 
+			public void TextAlignment()
+			{
+				XYZ insert = new XYZ(0, 0, 0);
+
+				foreach (var item in Enum.GetValues(typeof(TextHorizontalAlignment)).Cast<TextHorizontalAlignment>())
+				{
+					TextEntity textEntity = new TextEntity();
+					textEntity.Value = item.ToString();
+					textEntity.HorizontalAlignment = item;
+					textEntity.InsertPoint = insert;
+					textEntity.Height = 0.5;
+
+					this.Document.Entities.Add(textEntity);
+
+					insert = new XYZ(insert.X + 2, 0, 0);
+				}
+			}
+
 			public void TextWithChineseCharacters()
 			{
 				//this.Document.Header.CodePage = "GB2312";
@@ -668,45 +756,6 @@ namespace ACadSharp.Tests.IO
 			public override string ToString()
 			{
 				return this.Name;
-			}
-
-			public void CreateGroup()
-			{
-				Layer layer = new Layer("MyLayer");
-				layer.Color = new Color(0, 153, 0);
-				this.Document.Layers.Add(layer);
-
-				Circle circle = new Circle();
-				circle.Center = new CSMath.XYZ(1, 1, 0);
-				circle.Radius = 1;
-				circle.Normal = new CSMath.XYZ(0, 0, 1);
-
-				Line line = new Line();
-				line.StartPoint = new CSMath.XYZ(0, 0, 0);
-				line.EndPoint = new CSMath.XYZ(2, 2, 0);
-
-				circle.Layer = layer;
-				line.Layer = layer;
-
-				this.Document.Entities.Add(circle);
-				this.Document.Entities.Add(line);
-
-				Group group = new Group();
-				group.Name = "MyGroup";
-				group.Add(circle);
-				group.Add(line);
-
-				this.Document.Groups.Add(group);
-
-				TextEntity text = new TextEntity();
-				text.Value = "Hello World!";
-				text.Layer = layer;
-				text.HorizontalAlignment = TextHorizontalAlignment.Center;
-				text.VerticalAlignment = TextVerticalAlignmentType.Middle;
-				text.InsertPoint = new CSMath.XYZ(1, 1, 0);
-				text.AlignmentPoint = new CSMath.XYZ(10, 10, 0);
-
-				this.Document.Entities.Add(text);
 			}
 
 			public void ViewZoom()

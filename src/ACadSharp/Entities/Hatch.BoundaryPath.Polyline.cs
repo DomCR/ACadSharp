@@ -57,6 +57,12 @@ namespace ACadSharp.Entities
 				}
 
 				/// <inheritdoc/>
+				public override void ApplyTransform(Transform transform)
+				{
+					throw new System.NotImplementedException();
+				}
+
+				/// <inheritdoc/>
 				public override BoundingBox GetBoundingBox()
 				{
 					return BoundingBox.FromPoints(this.Vertices);

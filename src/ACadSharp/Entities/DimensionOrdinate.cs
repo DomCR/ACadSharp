@@ -16,20 +16,33 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.OrdinateDimension)]
 	public class DimensionOrdinate : Dimension
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.DIMENSION_ORDINATE;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityDimension;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.OrdinateDimension;
-
 		/// <summary>
 		/// Definition point for linear and angular dimensions (in WCS)
 		/// </summary>
 		[DxfCodeValue(13, 23, 33)]
 		public XYZ FeatureLocation { get; set; }
+
+		/// <summary>
+		/// Ordinate type. If true, ordinate is X-type else is ordinate is Y-type
+		/// </summary>
+		public bool IsOrdinateTypeX
+		{
+			get
+			{
+				return this._flags.HasFlag(DimensionType.OrdinateTypeX);
+			}
+			set
+			{
+				if (value)
+				{
+					this._flags = this._flags.AddFlag(DimensionType.OrdinateTypeX);
+				}
+				else
+				{
+					this._flags = this._flags.RemoveFlag(DimensionType.OrdinateTypeX);
+				}
+			}
+		}
 
 		/// <summary>
 		/// Definition point for linear and angular dimensions (in WCS)
@@ -55,32 +68,27 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		/// <summary>
-		/// Ordinate type. If true, ordinate is X-type else is ordinate is Y-type
-		/// </summary>
-		public bool IsOrdinateTypeX
-		{
-			get
-			{
-				return this._flags.HasFlag(DimensionType.OrdinateTypeX);
-			}
-			set
-			{
-				if (value)
-				{
-					this._flags = this._flags.AddFlag(DimensionType.OrdinateTypeX);
-				}
-				else
-				{
-					this._flags = this._flags.RemoveFlag(DimensionType.OrdinateTypeX);
-				}
-			}
-		}
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityDimension;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.DIMENSION_ORDINATE;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.OrdinateDimension;
 
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
 		public DimensionOrdinate() : base(DimensionType.Ordinate) { }
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			base.ApplyTransform(transform);
+			this.FeatureLocation = transform.ApplyTransform(this.FeatureLocation);
+			this.LeaderEndpoint = transform.ApplyTransform(this.LeaderEndpoint);
+		}
 
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
