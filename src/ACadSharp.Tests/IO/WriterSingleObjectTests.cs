@@ -64,6 +64,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomScale)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomBookColor)));
+			Data.Add(new(nameof(SingleCaseGenerator.DimensionsInBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionWithLineType)));
 			Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
@@ -433,6 +434,37 @@ namespace ACadSharp.Tests.IO
 			{
 				this.Name = info.GetValue<string>(nameof(this.Name));
 				this.GetType().GetMethod(this.Name).Invoke(this, null);
+			}
+
+			public void DimensionsInBlock()
+			{
+				DimensionAligned dim = new DimensionAligned
+				{
+					SecondPoint = new XYZ(10)
+				};
+
+				dim.UpdateBlock();
+
+				ACadSharp.Entities.Line line = new ACadSharp.Entities.Line
+				{
+					StartPoint = new CSMath.XYZ(1, 0, 0),
+					EndPoint = new CSMath.XYZ(5, 5, 0)
+				};
+
+				DimensionLinear dim1 = new DimensionLinear()
+				{
+					FirstPoint = line.StartPoint,
+					SecondPoint = line.EndPoint,
+					DefinitionPoint = new XYZ(2.8023467929098436, 6.758122565672127, 0)
+				};
+				dim1.UpdateBlock();
+
+				BlockRecord record = new BlockRecord("dim_block");
+						record.Entities.Add(dim);
+				record.Entities.Add(line);
+				record.Entities.Add(dim1);
+
+				Document.Entities.Add(new Insert(record));
 			}
 
 			public void Dimensions()

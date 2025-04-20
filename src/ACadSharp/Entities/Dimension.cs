@@ -299,7 +299,7 @@ namespace ACadSharp.Entities
 
 			base.UnassignDocument();
 
-			this.Style = (DimensionStyle)this.Style.Clone();
+			this.Style = (DimensionStyle)this.Style?.Clone();
 		}
 
 		private Block generateBlock()
@@ -323,7 +323,7 @@ namespace ACadSharp.Entities
 			return new Line(start, end)
 			{
 				Color = style.DimensionLineColor,
-				LineType = style.LineType,
+				LineType = style.LineType ?? LineType.ByLayer,
 				LineWeight = style.DimensionLineWeight
 			};
 		}
@@ -333,7 +333,7 @@ namespace ACadSharp.Entities
 			return new Line(start, end)
 			{
 				Color = style.ExtensionLineColor,
-				LineType = linetype,
+				LineType = style.LineType ?? LineType.ByLayer,
 				LineWeight = style.ExtensionLineWeight
 			};
 		}
