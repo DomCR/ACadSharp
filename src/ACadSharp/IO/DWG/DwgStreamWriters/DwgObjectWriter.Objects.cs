@@ -29,7 +29,6 @@ namespace ACadSharp.IO.DWG
 				case EvaluationGraph:
 				case Material:
 				case MultiLeaderAnnotContext:
-				case MultiLeaderStyle:
 				case SortEntitiesTable:
 				case UnknownNonGraphicalObject:
 				case VisualStyle:
@@ -638,6 +637,9 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitShort((short)mLeaderStyle.TextBottomAttachment);
 			//	BS	272	Bottom attachment (see paragraph on LEADER for more details).
 			this._writer.WriteBitShort((short)mLeaderStyle.TextTopAttachment);
+
+			//	B	298 Undocumented, found in DXF
+			this._writer.WriteBit(mLeaderStyle.UnknownFlag298);
 		}
 
 		private void writePlotSettings(PlotSettings plot)

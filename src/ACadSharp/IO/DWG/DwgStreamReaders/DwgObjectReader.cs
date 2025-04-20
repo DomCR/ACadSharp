@@ -3624,6 +3624,9 @@ namespace ACadSharp.IO.DWG
 			//	BS	272	Bottom attachment (see paragraph on LEADER for more details).
 			mLeaderStyle.TextTopAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
 
+			//	B	298 Undocumented, found in DXF
+			mLeaderStyle.UnknownFlag298 = this._objectReader.ReadBit();
+
 			return template;
 		}
 

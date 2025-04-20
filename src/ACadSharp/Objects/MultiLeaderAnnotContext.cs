@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ACadSharp.Attributes;
 using ACadSharp.Entities;
@@ -7,8 +8,7 @@ using ACadSharp.Tables;
 using CSMath;
 
 
-namespace ACadSharp.Objects
-{
+namespace ACadSharp.Objects {
 
 	/// <summary>
 	/// This class represents a subset ob the properties of the MLeaderAnnotContext
@@ -16,6 +16,9 @@ namespace ACadSharp.Objects
 	/// </summary>
 	public partial class MultiLeaderAnnotContext : NonGraphicalObject
 	{
+		private TextStyle _textStyle;
+		private BlockRecord _blockContent;
+
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
 		/// <inheritdoc />
@@ -218,7 +221,27 @@ namespace ACadSharp.Objects
 		/// Values should be equal, the value of this property is assumed to be used.
 		/// </remarks>
 		[DxfCodeValue(340)]
-		public TextStyle TextStyle { get; set; }
+		public TextStyle TextStyle
+		{
+			get { return this._textStyle; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._textStyle = this.updateTable(value, this.Document.TextStyles);
+				}
+				else
+				{
+					this._textStyle = value;
+				}
+			}
+		}
+
 
 		/// <summary>
 		/// Gets or sets the location of the text label of the multileader.
@@ -400,7 +423,14 @@ namespace ACadSharp.Objects
 		/// to be drawn as content for the multileader.
 		/// </summary>
 		[DxfCodeValue(341)]
-		public BlockRecord BlockContent { get; set; }
+		public BlockRecord BlockContent
+		{
+			get { return this._blockContent; }
+			set 
+			{
+				this._blockContent = this.updateTable(value, this.Document?.BlockRecords);
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the normal vector for the block content of the multileader.
@@ -546,17 +576,52 @@ namespace ACadSharp.Objects
 		/// </summary>
 		public MultiLeaderAnnotContext() : base() { }
 
-		public override CadObject Clone()
-		{
+		public override CadObject Clone() {
 			MultiLeaderAnnotContext clone = (MultiLeaderAnnotContext)base.Clone();
 
+			clone._textStyle = (TextStyle)this._textStyle.Clone();
+			clone._blockContent = (BlockRecord)this._blockContent?.Clone();
+
 			clone.LeaderRoots = new List<LeaderRoot>();
-			foreach (var leaderRoot in this.LeaderRoots)
+			foreach (LeaderRoot leaderRoot in this.LeaderRoots)
 			{
 				clone.LeaderRoots.Add((LeaderRoot)leaderRoot.Clone());
 			}
 
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			//	Should we call base method?
+			base.AssignDocument(doc);
+
+			this._textStyle = this.updateTable(this._textStyle, doc.TextStyles);
+			this._blockContent = this.updateTable(this._blockContent, doc.BlockRecords);
+
+			foreach (LeaderRoot leaderRoot in this.LeaderRoots)
+			{
+				foreach (LeaderLine leaderLine in leaderRoot.Lines)
+				{
+					leaderLine.AssignDocument(doc);
+				}
+			}
+		}
+
+		internal override void UnassignDocument()
+		{
+			base.UnassignDocument();
+
+			this._textStyle = (TextStyle)this._textStyle.Clone();
+			this._blockContent = (BlockRecord)this._blockContent?.Clone();
+
+			foreach (LeaderRoot leaderRoot in this.LeaderRoots)
+			{
+				foreach (LeaderLine leaderLine in leaderRoot.Lines)
+				{
+					leaderLine.UassignDocument();
+				}
+			}
 		}
 	}
 }
