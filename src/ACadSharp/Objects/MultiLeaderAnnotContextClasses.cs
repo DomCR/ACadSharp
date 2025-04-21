@@ -198,14 +198,18 @@ namespace ACadSharp.Objects
 						_lineType = null;
 						return;
 					}
-					
-					if (this.Document != null && this.Document.LineTypes.TryGetValue(_lineType.Name, out LineType lt))
+
+					if (this.Document != null)
 					{
-						this._lineType = lt;
-					}
-					else
-					{
-						this._lineType = value;
+						if (this.Document.LineTypes.TryGetValue(((LineType)value).Name, out LineType lt))
+						{
+							this._lineType = lt;
+						}
+						else
+						{
+							this._lineType = value;
+							this.Document.LineTypes.Add(this._lineType);
+						}
 					}
 				}
 			}
@@ -261,11 +265,16 @@ namespace ACadSharp.Objects
 			{
 				this.Document = doc;
 
-				if (_lineType != null && doc.LineTypes.TryGetValue(_lineType.Name, out LineType existing)) {
-					this._lineType = existing;
-				}
-				else {
-					doc.LineTypes.Add(_lineType);
+				if (_lineType != null)
+				{
+					if (doc.LineTypes.TryGetValue(_lineType.Name, out LineType existing))
+					{
+						this._lineType = existing;
+					}
+					else
+					{
+						doc.LineTypes.Add(_lineType);
+					}
 				}
 
 				doc.LineTypes.OnRemove += this.tableOnRemove;
