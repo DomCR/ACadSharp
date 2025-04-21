@@ -282,13 +282,14 @@ namespace ACadSharp.Objects
 
 			public void UassignDocument()
 			{
-				this.Document = null;
 				this.Document.LineTypes.OnRemove -= this.tableOnRemove;
+
+				this.Document = null;
 
 				this._lineType = (LineType)this._lineType?.Clone();
 			}
 
-			protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
+			private void tableOnRemove(object sender, CollectionChangedEventArgs e)
 			{
 				if (e.Item.Equals(this._lineType))
 				{

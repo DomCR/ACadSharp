@@ -19,9 +19,9 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.MultiLeader)]
 	public partial class MultiLeader : Entity
 	{
-		private MultiLeaderStyle _style;
-		private TextStyle _textStyle;
-		private LineType _leaderLineType;
+		private MultiLeaderStyle _style = MultiLeaderStyle.Default;
+		private TextStyle _textStyle = TextStyle.Default;
+		private LineType _leaderLineType = LineType.ByLayer;
 		private BlockRecord _arrowhead;
 		private BlockRecord _blockContent;
 
@@ -86,7 +86,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Contains the multileader content (block/text) and the leaders.
 		/// </summary>
-		public MultiLeaderAnnotContext ContextData { get; set; }
+		public MultiLeaderAnnotContext ContextData { get; set; } = new MultiLeaderAnnotContext();
 
 		/// <summary>
 		/// Enable Annotation Scale
@@ -613,7 +613,7 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._style = this.updateCollection(this._style, doc.MLeaderStyles);
+			this._style = this.updateCollection<MultiLeaderStyle>(this._style, doc.MLeaderStyles);
 			this._textStyle = this.updateTable(this._textStyle, doc.TextStyles);
 			this._leaderLineType = this.updateTable(this._leaderLineType, doc.LineTypes);
 			this._arrowhead = this.updateTable(this._arrowhead, doc.BlockRecords);
@@ -636,6 +636,8 @@ namespace ACadSharp.Entities
 
 			this.ContextData.UnassignDocument();
 
+			base.UnassignDocument();
+
 			this._leaderLineType = (LineType)this._leaderLineType.Clone();
 			this._textStyle = (TextStyle)this._textStyle.Clone();
 			this._style = (MultiLeaderStyle)this._style.Clone();
@@ -643,7 +645,7 @@ namespace ACadSharp.Entities
 			this._blockContent = (BlockRecord)this._blockContent?.Clone();
 		}
 
-		protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e) {
+		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e) {
 			base.tableOnRemove(sender, e);
 
 			if (e.Item.Equals(this._style))

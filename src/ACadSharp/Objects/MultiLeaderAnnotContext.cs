@@ -16,7 +16,7 @@ namespace ACadSharp.Objects {
 	/// </summary>
 	public partial class MultiLeaderAnnotContext : NonGraphicalObject
 	{
-		private TextStyle _textStyle;
+		private TextStyle _textStyle = TextStyle.Default;
 		private BlockRecord _blockContent;
 
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
@@ -593,7 +593,6 @@ namespace ACadSharp.Objects {
 
 		internal override void AssignDocument(CadDocument doc)
 		{
-			//	Should we call base method?
 			base.AssignDocument(doc);
 
 			this._textStyle = this.updateTable(this._textStyle, doc.TextStyles);
@@ -606,10 +605,16 @@ namespace ACadSharp.Objects {
 					leaderLine.AssignDocument(doc);
 				}
 			}
+
+			this.Document.TextStyles.OnRemove += tableOnRemove;
+			this.Document.BlockRecords.OnRemove += tableOnRemove;
 		}
 
 		internal override void UnassignDocument()
 		{
+			this.Document.TextStyles.OnRemove -= tableOnRemove;
+			this.Document.BlockRecords.OnRemove -= tableOnRemove;
+
 			base.UnassignDocument();
 
 			this._textStyle = (TextStyle)this._textStyle.Clone();
@@ -621,6 +626,18 @@ namespace ACadSharp.Objects {
 				{
 					leaderLine.UassignDocument();
 				}
+			}
+		}
+
+		private void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this._textStyle))
+			{
+				this._textStyle = this.Document.TextStyles[TextStyle.DefaultName];
+			}
+			if (e.Item == this._blockContent)
+			{
+				this._blockContent = null;
 			}
 		}
 	}

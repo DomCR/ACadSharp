@@ -17,8 +17,8 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.MLeaderStyle)]
 	public class MultiLeaderStyle : NonGraphicalObject
 	{
-		private LineType _leaderLineType;
-		private TextStyle _textStyle;
+		private LineType _leaderLineType = LineType.ByLayer;
+		private TextStyle _textStyle = TextStyle.Default;
 		private BlockRecord _arrowhead;
 		private BlockRecord _blockContent;
 
