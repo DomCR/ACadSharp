@@ -220,7 +220,7 @@ namespace ACadSharp.Objects {
 		/// (<see cref="MultiLeader.TextStyle"/>).
 		/// Values should be equal, the value of this property is assumed to be used.
 		/// </remarks>
-		[DxfCodeValue(340)]
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public TextStyle TextStyle
 		{
 			get { return this._textStyle; }
@@ -422,7 +422,7 @@ namespace ACadSharp.Objects {
 		/// Gets a <see cref="BlockRecord"/> containing elements
 		/// to be drawn as content for the multileader.
 		/// </summary>
-		[DxfCodeValue(341)]
+		[DxfCodeValue(DxfReferenceType.Handle, 341)]
 		public BlockRecord BlockContent
 		{
 			get { return this._blockContent; }

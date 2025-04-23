@@ -38,7 +38,7 @@ namespace ACadSharp.Entities
 		/// <see cref="LeaderLinePropertOverrideFlags.Arrowhead"/> flag is set in the
 		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
 		/// </remarks>
-		[DxfCodeValue(342)]
+		[DxfCodeValue(DxfReferenceType.Handle, 342)]
 		public BlockRecord Arrowhead
 		{
 			get { return this._arrowhead; }
@@ -148,7 +148,7 @@ namespace ACadSharp.Entities
 		/// <see cref="LeaderLinePropertOverrideFlags.LineType"/> flag is set in the
 		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
 		/// </remarks>
-		[DxfCodeValue(341)]
+		[DxfCodeValue(DxfReferenceType.Handle, 341)]
 		public LineType LeaderLineType
 		{
 			get { return this._leaderLineType; }
@@ -247,8 +247,9 @@ namespace ACadSharp.Entities
 		/// Gets a <see cref="MultiLeaderStyle"/> providing reusable style information
 		/// for this <see cref="MultiLeader"/>.
 		/// </summary>
-		[DxfCodeValue(340)]
-		public MultiLeaderStyle Style {
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
+		public MultiLeaderStyle Style
+		{
 			get { return this._style; }
 			set
 			{
@@ -371,7 +372,7 @@ namespace ACadSharp.Entities
 		/// Values should be equal, the <see cref="MultiLeaderAnnotContext.TextStyle"/>
 		/// is assumed to be used.
 		/// </remarks>
-		[DxfCodeValue(343)]
+		[DxfCodeValue(DxfReferenceType.Handle, 343)]
 		public TextStyle TextStyle
 		{
 			get { return this._textStyle; }
@@ -409,7 +410,7 @@ namespace ACadSharp.Entities
 		/// should be equal, the value <see cref="MultiLeaderAnnotContext.BlockContent"/> is
 		/// assumed to be used.
 		/// </remarks>
-		[DxfCodeValue(344)]
+		[DxfCodeValue(DxfReferenceType.Handle, 344)]
 		public BlockRecord BlockContent
 		{
 			get { return this._blockContent; }

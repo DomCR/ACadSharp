@@ -187,7 +187,7 @@ namespace ACadSharp.Objects
 			/// <summary>
 			/// Line type
 			/// </summary>
-			[DxfCodeValue(340)]
+			[DxfCodeValue(DxfReferenceType.Handle, 340)]
 			public LineType LineType
 			{
 				get { return this._lineType; }
@@ -230,7 +230,7 @@ namespace ACadSharp.Objects
 			/// Gets or sets a <see cref="BlockRecord"/> containig elements
 			/// to be dawn as arrow symbol.
 			/// </summary>
-			[DxfCodeValue(341)]
+			[DxfCodeValue(DxfReferenceType.Handle, 341)]
 			public BlockRecord Arrowhead { get; set; }
 
 			/// <summary>
