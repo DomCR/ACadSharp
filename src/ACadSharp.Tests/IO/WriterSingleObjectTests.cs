@@ -64,7 +64,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomScale)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomBookColor)));
-			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
+			Data.Add(new(nameof(SingleCaseGenerator.DimensionsTextPoint)));
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionWithLineType)));
 			Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
 			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
@@ -435,13 +435,23 @@ namespace ACadSharp.Tests.IO
 				this.GetType().GetMethod(this.Name).Invoke(this, null);
 			}
 
-			public void Dimensions()
+			public void DimensionsTextPoint()
 			{
 				DimensionAligned dim = new DimensionAligned();
 
-				dim.SecondPoint = new XYZ(10);
+				dim.SecondPoint = new XYZ(10, 0, 0);
+
+				dim.Text = "HELLO";
+				dim.IsTextUserDefinedLocation = true;
+				dim.TextMiddlePoint = new XYZ(10, 10, 0);
 
 				this.Document.Entities.Add(dim);
+
+				DimensionAligned dim1 = new DimensionAligned();
+
+				dim1.SecondPoint = new XYZ(10, 0, 0);
+
+				this.Document.Entities.Add(dim1);
 			}
 
 			public void DimensionWithLineType()
