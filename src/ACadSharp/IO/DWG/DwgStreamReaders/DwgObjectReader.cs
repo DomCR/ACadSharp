@@ -3119,7 +3119,7 @@ namespace ACadSharp.IO.DWG
 				var f270 = this._objectReader.ReadBitShort();
 			}
 
-			mLeader.ContextData = this.readMultiLeaderAnnotContext(template);
+			this.readMultiLeaderAnnotContext(mLeader.ContextData, template);
 
 			//	Multileader Common data
 			//	340 Leader StyleId (handle)
@@ -3241,10 +3241,8 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private MultiLeaderAnnotContext readMultiLeaderAnnotContext(CadMLeaderTemplate template)
+		private MultiLeaderAnnotContext readMultiLeaderAnnotContext(MultiLeaderAnnotContext annotContext, CadMLeaderTemplate template)
 		{
-			MultiLeaderAnnotContext annotContext = new MultiLeaderAnnotContext();
-
 			//	BL	-	Number of leader roots
 			int leaderRootCount = this._objectReader.ReadBitLong();
 			for (int i = 0; i < leaderRootCount; i++)

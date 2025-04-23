@@ -86,7 +86,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Contains the multileader content (block/text) and the leaders.
 		/// </summary>
-		public MultiLeaderAnnotContext ContextData { get; set; } = new MultiLeaderAnnotContext();
+		public MultiLeaderAnnotContext ContextData { get; private set; } = new MultiLeaderAnnotContext();
 
 		/// <summary>
 		/// Enable Annotation Scale
@@ -593,7 +593,7 @@ namespace ACadSharp.Entities
 		{
 			MultiLeader clone = (MultiLeader)base.Clone();
 
-			clone.ContextData = (MultiLeaderAnnotContext)this.ContextData?.Clone();
+			clone.ContextData = (MultiLeaderAnnotContext)this.ContextData.Clone();
 
 			clone.BlockAttributes = new List<BlockAttribute>();
 			foreach (var att in this.BlockAttributes)
