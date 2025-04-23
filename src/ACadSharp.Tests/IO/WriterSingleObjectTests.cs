@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using Xunit;
 using Xunit.Abstractions;
 using static System.Net.Mime.MediaTypeNames;
@@ -70,6 +71,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeInBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.XData)));
+			Data.Add(new(nameof(SingleCaseGenerator.SPlineCreation)));
 		}
 
 		public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
@@ -685,6 +687,31 @@ namespace ACadSharp.Tests.IO
 			public void SinglePoint()
 			{
 				this.Document.Entities.Add(new Point(XYZ.Zero));
+			}
+
+
+			public void SPlineCreation()
+			{
+				Spline spline = new Spline();
+
+				spline.ControlPoints.Add(new XYZ(0,0,0));
+				spline.ControlPoints.Add(new XYZ(10,10,0));
+				spline.ControlPoints.Add(new XYZ(20,10,0));
+				spline.ControlPoints.Add(new XYZ(50,30,0));
+
+				spline.Degree = 3;
+
+				spline.Knots.Add(0);
+				spline.Knots.Add(0);
+				spline.Knots.Add(0);
+				spline.Knots.Add(0);
+
+				spline.Knots.Add(1);
+				spline.Knots.Add(1);
+				spline.Knots.Add(1);
+				spline.Knots.Add(1);
+
+				this.Document.Entities.Add(spline);
 			}
 
 			public void SingleRasterImage()
