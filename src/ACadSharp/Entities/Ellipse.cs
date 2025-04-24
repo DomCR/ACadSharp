@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSMath.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityEllipse)]
 	[DxfSubClass(DxfSubclassMarker.Ellipse)]
-	public class Ellipse : Entity
+	public class Ellipse : Entity, ICurve
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.ELLIPSE;
@@ -108,18 +109,15 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <param name="angle">Angle in radians.</param>
 		/// <returns>A local point on the ellipse for the given angle relative to the center.</returns>
-		public XY PolarCoordinateRelativeToCenter(double angle)
+		public XYZ PolarCoordinateRelativeToCenter(double angle)
 		{
-			double a = this.MajorAxis * 0.5;
-			double b = this.MinorAxis * 0.5;
-
-			double a1 = a * Math.Sin((double)angle);
-			double b1 = b * Math.Cos((double)angle);
-
-			double radius = a * b / Math.Sqrt(b1 * b1 + a1 * a1);
-
-			// convert the radius back to Cartesian coordinates
-			return new XY(radius * Math.Cos((double)angle), radius * Math.Sin((double)angle));
+			return CurveExtensions.PolarCoordinateRelativeToCenter(
+				angle,
+				this.Center,
+				this.Normal,
+				this.EndPoint,
+				this.RadiusRatio
+				);
 		}
 
 		/// <summary>
@@ -127,61 +125,17 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <param name="precision">Number of vertexes generated.</param>
 		/// <returns>A list vertexes that represents the ellipse expressed in object coordinate system.</returns>
-		public List<XY> PolygonalVertexes(int precision)
+		public List<XYZ> PolygonalVertexes(int precision)
 		{
-			if (precision < 2)
-			{
-				throw new ArgumentOutOfRangeException(nameof(precision), precision, "The arc precision must be equal or greater than two.");
-			}
-
-			List<XY> points = new List<XY>();
-			double beta = this.Rotation;
-			double sinBeta = Math.Sin(beta);
-			double cosBeta = Math.Cos(beta);
-			double start;
-			double end;
-			double steps;
-
-			if (this.IsFullEllipse)
-			{
-				start = 0;
-				end = MathHelper.TwoPI;
-				steps = precision;
-			}
-			else
-			{
-				XY startPoint = this.PolarCoordinateRelativeToCenter(this.StartParameter);
-				XY endPoint = this.PolarCoordinateRelativeToCenter(this.EndParameter);
-				double a = 1 / (0.5 * this.MajorAxis);
-				double b = 1 / (0.5 * this.MinorAxis);
-				start = Math.Atan2(startPoint.Y * b, startPoint.X * a);
-				end = Math.Atan2(endPoint.Y * b, endPoint.X * a);
-
-				if (end < start)
-				{
-					end += MathHelper.TwoPI;
-				}
-				steps = precision - 1;
-			}
-
-			double delta = (end - start) / steps;
-
-			for (int i = 0; i < precision; i++)
-			{
-				double angle = start + delta * i;
-				double sinAlpha = Math.Sin(angle);
-				double cosAlpha = Math.Cos(angle);
-
-				double pointX = 0.5 * (this.MajorAxis * cosAlpha * cosBeta - this.MinorAxis * sinAlpha * sinBeta);
-				double pointY = 0.5 * (this.MajorAxis * cosAlpha * sinBeta + this.MinorAxis * sinAlpha * cosBeta);
-
-				pointX = MathHelper.FixZero(pointX);
-				pointY = MathHelper.FixZero(pointY);
-
-				points.Add(new XY(pointX, pointY) + this.Center.Convert<XY>());
-			}
-
-			return points;
+			return CurveExtensions.PolygonalVertexes(
+					precision,
+					this.Center,
+					this.StartParameter,
+					this.EndParameter,
+					this.Normal,
+					this.EndPoint,
+					this.RadiusRatio
+					);
 		}
 
 		/// <inheritdoc/>
@@ -208,7 +162,7 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			List<XY> pts = this.PolygonalVertexes(100);
+			List<XYZ> pts = this.PolygonalVertexes(100);
 			return BoundingBox.FromPoints(pts.Select(p => (XYZ)p));
 		}
 	}
