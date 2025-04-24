@@ -16,7 +16,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityEllipse)]
 	[DxfSubClass(DxfSubclassMarker.Ellipse)]
-	public class Ellipse : Entity, ICurve
+	public class Ellipse : Entity
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.ELLIPSE;
@@ -163,7 +163,7 @@ namespace ACadSharp.Entities
 		public override BoundingBox GetBoundingBox()
 		{
 			List<XYZ> pts = this.PolygonalVertexes(100);
-			return BoundingBox.FromPoints(pts.Select(p => (XYZ)p));
+			return BoundingBox.FromPoints(pts);
 		}
 	}
 }
