@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSUtilities.Extensions;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -15,6 +16,28 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Spline)]
 	public class Spline : Entity
 	{
+		/// <summary>
+		/// Flag whether the spline is closed.
+		/// </summary>
+		public bool Closed
+		{
+			get
+			{
+				return this.Flags.HasFlag(SplineFlags.Closed);
+			}
+			set
+			{
+				if (value)
+				{
+					this.Flags = this.Flags.AddFlag(SplineFlags.Closed);
+				}
+				else
+				{
+					this.Flags = this.Flags.RemoveFlag(SplineFlags.Closed);
+				}
+			}
+		}
+
 		/// <summary>
 		/// Number of control points (in WCS).
 		/// </summary>

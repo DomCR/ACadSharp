@@ -3,38 +3,38 @@
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Defines the spline flags
+	/// Defines the spline flags.
 	/// </summary>
 	[Flags]
 	public enum SplineFlags : ushort
 	{
 		/// <summary>
-		/// None
+		/// None.
 		/// </summary>
 		None = 0,
 
 		/// <summary>
-		/// Closed
+		/// Closed.
 		/// </summary>
 		Closed = 1,
 
 		/// <summary>
-		/// Periodic
+		/// Periodic.
 		/// </summary>
 		Periodic = 2,
 
 		/// <summary>
-		/// Rational
+		/// Rational.
 		/// </summary>
 		Rational = 4,
 
 		/// <summary>
-		/// Planar
+		/// Planar.
 		/// </summary>
 		Planar = 8,
 
 		/// <summary>
-		/// Linear (planar flag is also set)
+		/// Linear (planar flag is also set).
 		/// </summary>
 		Linear = 16,
 	}
