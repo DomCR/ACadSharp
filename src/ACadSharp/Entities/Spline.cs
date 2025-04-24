@@ -30,10 +30,12 @@ namespace ACadSharp.Entities
 				if (value)
 				{
 					this.Flags = this.Flags.AddFlag(SplineFlags.Closed);
+					this.Flags1 = this.Flags1.AddFlag(SplineFlags1.Closed);
 				}
 				else
 				{
 					this.Flags = this.Flags.RemoveFlag(SplineFlags.Closed);
+					this.Flags1 = this.Flags1.RemoveFlag(SplineFlags1.Closed);
 				}
 			}
 		}
@@ -83,6 +85,19 @@ namespace ACadSharp.Entities
 		public SplineFlags Flags { get; set; }
 
 		/// <summary>
+		/// Spline flags1.
+		/// </summary>
+		/// <remarks>
+		/// Only valid for dwg.
+		/// </remarks>
+		public SplineFlags1 Flags1 { get; set; }
+
+		/// <summary>
+		/// Knot parameters.
+		/// </summary>
+		public KnotParameterization KnotParameterization { get; set; }
+
+		/// <summary>
 		/// Number of knots.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 72)]
@@ -124,10 +139,6 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 41)]
 		public List<double> Weights { get; } = new List<double>();
-
-		internal SplineFlags1 Flags1 { get; set; }
-
-		internal KnotParameterization KnotParameterization { get; set; }
 
 		/// <inheritdoc/>
 		public Spline() : base() { }

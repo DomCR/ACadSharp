@@ -1,27 +1,27 @@
 ﻿namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Knot parameterization
+	/// Knot parameterization.
 	/// </summary>
 	public enum KnotParameterization : ushort
 	{
 		/// <summary>
-		/// Chord
+		/// Chord.
 		/// </summary>
 		Chord = 0,
 
 		/// <summary>
-		/// Square root
+		/// Square root.
 		/// </summary>
 		SquareRoot = 1,
 
 		/// <summary>
-		/// Uniform
+		/// Uniform.
 		/// </summary>
 		Uniform = 2,
 
 		/// <summary>
-		/// Custom
+		/// Custom.
 		/// </summary>
 		Custom = 15,
 	}
