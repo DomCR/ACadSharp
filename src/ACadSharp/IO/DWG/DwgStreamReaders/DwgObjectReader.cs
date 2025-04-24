@@ -2646,7 +2646,7 @@ namespace ACadSharp.IO.DWG
 				//Value is overwritten below in scenario 2 though, 
 				//Use knot parameter = 8
 				spline.Flags1 = (SplineFlags1)this._mergedReaders.ReadBitLong();
-				spline.Closed = spline.Flags1.HasFlag(SplineFlags1.Closed);
+				spline.IsClosed = spline.Flags1.HasFlag(SplineFlags1.Closed);
 
 				//Knot parameter BL Knot parameter:
 				//Chord = 0,

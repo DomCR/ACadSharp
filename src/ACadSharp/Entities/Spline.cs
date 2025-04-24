@@ -19,7 +19,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Flag whether the spline is closed.
 		/// </summary>
-		public bool Closed
+		public bool IsClosed
 		{
 			get
 			{
