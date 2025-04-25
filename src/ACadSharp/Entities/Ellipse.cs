@@ -142,7 +142,7 @@ namespace ACadSharp.Entities
 		public override void ApplyTransform(Transform transform)
 		{
 			XYZ perp = XYZ.Cross(this.Normal, this.EndPoint);
-			perp.Normalize();
+			perp = perp.Normalize();
 			perp *= this.EndPoint.GetLength() * this.RadiusRatio;
 
 			this.Center = transform.ApplyTransform(this.Center);
