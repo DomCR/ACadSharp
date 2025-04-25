@@ -485,6 +485,15 @@ namespace ACadSharp.Tests.IO
 				c.Normal = XYZ.AxisX;
 
 				this.Document.Entities.Add(c);
+
+				var arc = new Arc()
+				{
+					StartAngle = 0,
+					EndAngle = Math.PI / (2),
+					Normal = XYZ.AxisX
+				};
+
+				this.Document.Entities.Add(arc);
 			}
 
 			public void EntityColorByIndex()
@@ -694,10 +703,10 @@ namespace ACadSharp.Tests.IO
 			{
 				Spline spline = new Spline();
 
-				spline.ControlPoints.Add(new XYZ(0,0,0));
-				spline.ControlPoints.Add(new XYZ(10,10,0));
-				spline.ControlPoints.Add(new XYZ(20,10,0));
-				spline.ControlPoints.Add(new XYZ(50,30,0));
+				spline.ControlPoints.Add(new XYZ(0, 0, 0));
+				spline.ControlPoints.Add(new XYZ(10, 10, 0));
+				spline.ControlPoints.Add(new XYZ(20, 10, 0));
+				spline.ControlPoints.Add(new XYZ(50, 30, 0));
 
 				spline.Degree = 3;
 
