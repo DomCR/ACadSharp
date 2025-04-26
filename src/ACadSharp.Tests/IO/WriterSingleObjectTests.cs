@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using Xunit;
 using Xunit.Abstractions;
 using static System.Net.Mime.MediaTypeNames;
@@ -71,6 +72,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeInBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.XData)));
+			Data.Add(new(nameof(SingleCaseGenerator.SPlineCreation)));
 		}
 
 		public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
@@ -484,15 +486,16 @@ namespace ACadSharp.Tests.IO
 					EndPoint = new CSMath.XYZ(5, 5, 0)
 				};
 
-				DimensionLinear dim1 = new DimensionLinear()
-				{
-					FirstPoint = line.StartPoint,
-					SecondPoint = line.EndPoint,
-					DefinitionPoint = new XYZ(2.8023467929098436, 6.758122565672127, 0)
-				};
-				dim1.UpdateBlock();
+				dim.Text = "HELLO";
+				dim.IsTextUserDefinedLocation = true;
+				dim.TextMiddlePoint = new XYZ(10, 10, 0);
 
-				this.Document.Entities.Add(line);
+				this.Document.Entities.Add(dim);
+
+				DimensionAligned dim1 = new DimensionAligned();
+
+				dim1.SecondPoint = new XYZ(10, 0, 0);
+
 				this.Document.Entities.Add(dim1);
 			}
 
@@ -525,6 +528,26 @@ namespace ACadSharp.Tests.IO
 				c.Normal = XYZ.AxisX;
 
 				this.Document.Entities.Add(c);
+
+				var arc = new Arc()
+				{
+					StartAngle = 0,
+					EndAngle = Math.PI / (2),
+					Radius = 20,
+					Normal = XYZ.AxisX
+				};
+
+				foreach (XYZ item in arc.PolygonalVertexes(100))
+				{
+					this.Document.Entities.Add(new Circle()
+					{
+						Center = item,
+						Radius = 0.1,
+						Color = new Color(255, 0, 0)
+					});
+				}
+
+				this.Document.Entities.Add(arc);
 			}
 
 			public void EntityColorByIndex()
@@ -763,6 +786,30 @@ namespace ACadSharp.Tests.IO
 				wipeout.ClipBoundaryVertices.Add(new XY(1, 0));
 
 				this.Document.Entities.Add(wipeout);
+			}
+
+			public void SPlineCreation()
+			{
+				Spline spline = new Spline();
+
+				spline.ControlPoints.Add(new XYZ(0, 0, 0));
+				spline.ControlPoints.Add(new XYZ(10, 10, 0));
+				spline.ControlPoints.Add(new XYZ(20, 10, 0));
+				spline.ControlPoints.Add(new XYZ(50, 30, 0));
+
+				spline.Degree = 3;
+
+				spline.Knots.Add(0);
+				spline.Knots.Add(0);
+				spline.Knots.Add(0);
+				spline.Knots.Add(0);
+
+				spline.Knots.Add(1);
+				spline.Knots.Add(1);
+				spline.Knots.Add(1);
+				spline.Knots.Add(1);
+
+				this.Document.Entities.Add(spline);
 			}
 
 			public void TextAlignment()

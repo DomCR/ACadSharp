@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSUtilities.Extensions;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -15,6 +16,30 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Spline)]
 	public class Spline : Entity
 	{
+		/// <summary>
+		/// Flag whether the spline is closed.
+		/// </summary>
+		public bool IsClosed
+		{
+			get
+			{
+				return this.Flags.HasFlag(SplineFlags.Closed);
+			}
+			set
+			{
+				if (value)
+				{
+					this.Flags = this.Flags.AddFlag(SplineFlags.Closed);
+					this.Flags1 = this.Flags1.AddFlag(SplineFlags1.Closed);
+				}
+				else
+				{
+					this.Flags = this.Flags.RemoveFlag(SplineFlags.Closed);
+					this.Flags1 = this.Flags1.RemoveFlag(SplineFlags1.Closed);
+				}
+			}
+		}
+
 		/// <summary>
 		/// Number of control points (in WCS).
 		/// </summary>
@@ -60,6 +85,19 @@ namespace ACadSharp.Entities
 		public SplineFlags Flags { get; set; }
 
 		/// <summary>
+		/// Spline flags1.
+		/// </summary>
+		/// <remarks>
+		/// Only valid for dwg.
+		/// </remarks>
+		public SplineFlags1 Flags1 { get; set; }
+
+		/// <summary>
+		/// Knot parameters.
+		/// </summary>
+		public KnotParameterization KnotParameterization { get; set; }
+
+		/// <summary>
 		/// Number of knots.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 72)]
@@ -101,10 +139,6 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 41)]
 		public List<double> Weights { get; } = new List<double>();
-
-		internal SplineFlags1 Flags1 { get; set; }
-
-		internal KnotParameterization KnotParameterization { get; set; }
 
 		/// <inheritdoc/>
 		public Spline() : base() { }

@@ -54,20 +54,29 @@ namespace ACadSharp.Entities
 		public LeaderCreationType CreationType { get; set; } = LeaderCreationType.CreatedWithoutAnnotation;
 
 		/// <summary>
-		/// Hookline flag.
+		/// Hook line flag.
 		/// </summary>
 		[DxfCodeValue(75)]
-		public bool HasHookline { get; set; }
+		public bool HasHookline
+		{
+			get
+			{
+				bool result = false;
+				if (this.Vertices.Count <= 1)
+				{
+					return result;
+				}
+
+				double angle = (this.Vertices[this.Vertices.Count - 2] - this.Vertices[this.Vertices.Count - 1]).AngleBetweenVectors(this.HorizontalDirection);
+				return MathHelper.IsZero(angle);
+			}
+		}
 
 		/// <summary>
-		/// Hookline direction flag.
+		/// Hook line direction.
 		/// </summary>
-		/// <value>
-		/// 0 = Hookline(or end of tangent for a splined leader) is the opposite direction from the horizontal vector <br/>
-		/// 1 = Hookline(or end of tangent for a splined leader) is the same direction as horizontal vector(see code 75)
-		/// </value>
 		[DxfCodeValue(74)]
-		public bool HookLineDirection { get; set; }
+		public HookLineDirection HookLineDirection { get; set; }
 
 		/// <summary>
 		/// Horizontal direction for leader.

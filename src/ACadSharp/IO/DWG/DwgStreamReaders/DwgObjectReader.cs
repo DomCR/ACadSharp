@@ -2627,7 +2627,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readSpline()
 		{
 			Spline spline = new Spline();
-			CadEntityTemplate template = new CadEntityTemplate(spline);
+			CadSplineTemplate template = new CadSplineTemplate(spline);
 
 			this.readCommonEntityData(template);
 
@@ -2646,6 +2646,7 @@ namespace ACadSharp.IO.DWG
 				//Value is overwritten below in scenario 2 though, 
 				//Use knot parameter = 8
 				spline.Flags1 = (SplineFlags1)this._mergedReaders.ReadBitLong();
+				spline.IsClosed = spline.Flags1.HasFlag(SplineFlags1.Closed);
 
 				//Knot parameter BL Knot parameter:
 				//Chord = 0,
@@ -3062,7 +3063,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Hooklineonxdir B hook line is on x direction if 1
-			leader.HookLineDirection = this._objectReader.ReadBit();
+			leader.HookLineDirection = this._objectReader.ReadBit() ? HookLineDirection.Same : HookLineDirection.Opposite;
 			//Arrowheadon B arrowhead on indicator
 			leader.ArrowHeadEnabled = this._objectReader.ReadBit();
 
