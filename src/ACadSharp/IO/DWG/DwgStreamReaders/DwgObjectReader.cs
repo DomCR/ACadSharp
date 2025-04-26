@@ -1054,6 +1054,10 @@ namespace ACadSharp.IO.DWG
 					template = this.readMultiLeader();
 					break;
 				case "MLEADERSTYLE":
+					if (!this.R2010Plus) {
+						this.notify($"MLEADERSTYLE is not supported for {this._version}.", NotificationType.Warning);
+						return null;
+					}
 					template = this.readMultiLeaderStyle();
 					break;
 				case "PDFDEFINITION":
@@ -3513,11 +3517,6 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readMultiLeaderStyle()
 		{
-			//if (!this.R2010Plus)
-			//{
-			//	return null;
-			//}
-
 			MultiLeaderStyle mLeaderStyle = new MultiLeaderStyle();
 			CadMLeaderStyleTemplate template = new CadMLeaderStyleTemplate(mLeaderStyle);
 
