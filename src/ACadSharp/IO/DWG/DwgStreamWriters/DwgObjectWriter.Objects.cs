@@ -29,6 +29,7 @@ namespace ACadSharp.IO.DWG
 				case EvaluationGraph:
 				case Material:
 				case MultiLeaderAnnotContext:
+				case MultiLeaderStyle when !this.R2010Plus:
 				case SortEntitiesTable:
 				case UnknownNonGraphicalObject:
 				case VisualStyle:
