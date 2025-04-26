@@ -709,31 +709,6 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(new Point(XYZ.Zero));
 			}
 
-
-			public void SPlineCreation()
-			{
-				Spline spline = new Spline();
-
-				spline.ControlPoints.Add(new XYZ(0, 0, 0));
-				spline.ControlPoints.Add(new XYZ(10, 10, 0));
-				spline.ControlPoints.Add(new XYZ(20, 10, 0));
-				spline.ControlPoints.Add(new XYZ(50, 30, 0));
-
-				spline.Degree = 3;
-
-				spline.Knots.Add(0);
-				spline.Knots.Add(0);
-				spline.Knots.Add(0);
-				spline.Knots.Add(0);
-
-				spline.Knots.Add(1);
-				spline.Knots.Add(1);
-				spline.Knots.Add(1);
-				spline.Knots.Add(1);
-
-				this.Document.Entities.Add(spline);
-			}
-
 			public void SingleRasterImage()
 			{
 				ImageDefinition definition = new ImageDefinition();
@@ -768,6 +743,30 @@ namespace ACadSharp.Tests.IO
 				wipeout.ClipBoundaryVertices.Add(new XY(1, 0));
 
 				this.Document.Entities.Add(wipeout);
+			}
+
+			public void SPlineCreation()
+			{
+				Spline spline = new Spline();
+
+				spline.ControlPoints.Add(new XYZ(0, 0, 0));
+				spline.ControlPoints.Add(new XYZ(10, 10, 0));
+				spline.ControlPoints.Add(new XYZ(20, 10, 0));
+				spline.ControlPoints.Add(new XYZ(50, 30, 0));
+
+				spline.Degree = 3;
+
+				spline.Knots.Add(0);
+				spline.Knots.Add(0);
+				spline.Knots.Add(0);
+				spline.Knots.Add(0);
+
+				spline.Knots.Add(1);
+				spline.Knots.Add(1);
+				spline.Knots.Add(1);
+				spline.Knots.Add(1);
+
+				this.Document.Entities.Add(spline);
 			}
 
 			public void TextAlignment()
