@@ -15,7 +15,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityArc)]
 	[DxfSubClass(DxfSubclassMarker.Arc)]
-	public class Arc : Circle, ICurve
+	public class Arc : Circle
 	{
 		/// <summary>
 		/// The end angle in radians.
@@ -177,17 +177,12 @@ namespace ACadSharp.Entities
 			end = t * end;
 		}
 
-		public XYZ PolarCoordinateRelativeToCenter(double angle)
-		{
-			throw new NotImplementedException();
-		}
-
 		/// <summary>
 		/// Converts the arc in a list of vertexes.
 		/// </summary>
 		/// <param name="precision">Number of vertexes generated.</param>
 		/// <returns>A list vertexes that represents the arc expressed in object coordinate system.</returns>
-		public List<XYZ> PolygonalVertexes(int precision)
+		public override List<XYZ> PolygonalVertexes(int precision)
 		{
 			if (precision < 2)
 			{

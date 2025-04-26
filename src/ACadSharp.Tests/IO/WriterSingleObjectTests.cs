@@ -490,8 +490,19 @@ namespace ACadSharp.Tests.IO
 				{
 					StartAngle = 0,
 					EndAngle = Math.PI / (2),
+					Radius = 20,
 					Normal = XYZ.AxisX
 				};
+
+				foreach (XYZ item in arc.PolygonalVertexes(100))
+				{
+					this.Document.Entities.Add(new Circle()
+					{
+						Center = item,
+						Radius = 0.1,
+						Color = new Color(255, 0, 0)
+					});
+				}
 
 				this.Document.Entities.Add(arc);
 			}

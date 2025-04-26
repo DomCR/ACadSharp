@@ -121,6 +121,36 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
+		public void PolarCoordinateRelativeToCenterTest()
+		{
+			var mid = new XYZ(Math.Sqrt(2) / 2, Math.Sqrt(2) / 2, 0);
+			Arc arc = new Arc()
+			{
+				StartAngle = 0,
+				Radius = 1,
+				EndAngle = Math.PI / (2),
+			};
+
+			var v = arc.PolarCoordinateRelativeToCenter(Math.PI / 4);
+
+			AssertUtils.AreEqual<XYZ>(mid, v, "mid point");
+
+			arc = new Arc()
+			{
+				StartAngle = 0,
+				Radius = 1,
+				Center = new XYZ(20, 20, 0),
+				EndAngle = Math.PI / (2),
+			};
+
+			mid += arc.Center;
+
+			v = arc.PolarCoordinateRelativeToCenter(Math.PI / 4);
+
+			AssertUtils.AreEqual<XYZ>(mid, v, "mid point");
+		}
+
+		[Fact]
 		public void PolygonalVertexesTest()
 		{
 			var start = new XYZ(1, 0, 0);
