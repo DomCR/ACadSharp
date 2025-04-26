@@ -831,6 +831,8 @@ namespace ACadSharp.IO.DXF
 				case 340:
 					tmp.AnnotationHandle = this._reader.ValueAsHandle;
 					return true;
+				//Hook line flag - read only
+				case 75:
 				//Vertices count
 				case 76:
 					return true;

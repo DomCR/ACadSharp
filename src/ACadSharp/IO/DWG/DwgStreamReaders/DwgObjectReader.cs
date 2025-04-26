@@ -3063,7 +3063,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Hooklineonxdir B hook line is on x direction if 1
-			leader.HookLineDirection = this._objectReader.ReadBit();
+			leader.HookLineDirection = this._objectReader.ReadBit() ? HookLineDirection.Same : HookLineDirection.Opposite;
 			//Arrowheadon B arrowhead on indicator
 			leader.ArrowHeadEnabled = this._objectReader.ReadBit();
 
