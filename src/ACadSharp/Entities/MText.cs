@@ -74,7 +74,7 @@ namespace ACadSharp.Entities
 		/// Drawing direction
 		/// </summary>
 		[DxfCodeValue(72)]
-		public DrawingDirectionType DrawingDirection { get; set; }
+		public DrawingDirectionType DrawingDirection { get; set; } = DrawingDirectionType.LeftToRight;
 
 		/// <inheritdoc/>
 		[DxfCodeValue(1)]
@@ -105,7 +105,7 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		[DxfCodeValue(11, 21, 31)]
-		public XYZ AlignmentPoint { get; set; }
+		public XYZ AlignmentPoint { get; set; } = XYZ.AxisX;
 
 		/// <summary>
 		/// Horizontal width of the characters that make up the mtext entity.
