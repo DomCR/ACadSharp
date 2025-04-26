@@ -514,7 +514,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(71, leader.ArrowHeadEnabled ? (short)1 : (short)0, map);
 			this._writer.Write(72, (short)leader.PathType, map);
 			this._writer.Write(73, (short)leader.CreationType, map);
-			this._writer.Write(74, leader.HookLineDirection ? (short)1 : (short)0, map);
+			this._writer.Write(74, leader.HookLineDirection == HookLineDirection.Same ? (short)1 : (short)0, map);
 			this._writer.Write(75, leader.HasHookline ? (short)1 : (short)0, map);
 
 			this._writer.Write(40, leader.TextHeight, map);
