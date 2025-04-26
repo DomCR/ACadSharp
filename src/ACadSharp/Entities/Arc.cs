@@ -1,8 +1,8 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSMath.Geometry;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -41,13 +41,11 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Arc;
 
-		/// <summary>
-		/// Default constructor
-		/// </summary>
+		/// <inheritdoc/>
 		public Arc() : base() { }
 
 		/// <summary>
-		/// Creates an arc using 2 points and a bulge
+		/// Creates an arc using 2 points and a bulge.
 		/// </summary>
 		/// <param name="p1"></param>
 		/// <param name="p2"></param>
@@ -153,9 +151,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			List<XY> vertices = this.PolygonalVertexes(256);
+			List<XYZ> vertices = this.PolygonalVertexes(256);
 
-			return BoundingBox.FromPoints(vertices.Select(v => (XYZ)v));
+			return BoundingBox.FromPoints(vertices);
 		}
 
 		/// <summary>
@@ -163,12 +161,20 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <param name="start">Start point of the arc segment</param>
 		/// <param name="end">End point of the arc segment</param>
-		public void GetEndVertices(out XY start, out XY end)
+		public void GetEndVertices(out XYZ start, out XYZ end)
 		{
-			List<XY> pts = this.PolygonalVertexes(2);
+			//Start vector If normal = Z
+			start = new XYZ(MathHelper.Cos(this.StartAngle), MathHelper.Sin(this.StartAngle), 0.0);
+			start = this.Center + this.Radius * start;
 
-			start = pts[0];
-			end = pts[1];
+			//End vector if normal = Z
+			end = new XYZ(MathHelper.Cos(this.EndAngle), MathHelper.Sin(this.EndAngle), 0.0);
+			end = this.Center + this.Radius * end;
+
+			var t = Matrix4.GetArbitraryAxis(this.Normal);
+
+			start = t * start;
+			end = t * end;
 		}
 
 		/// <summary>
@@ -176,35 +182,23 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <param name="precision">Number of vertexes generated.</param>
 		/// <returns>A list vertexes that represents the arc expressed in object coordinate system.</returns>
-		public List<XY> PolygonalVertexes(int precision)
+		public override List<XYZ> PolygonalVertexes(int precision)
 		{
 			if (precision < 2)
 			{
 				throw new ArgumentOutOfRangeException(nameof(precision), precision, "The arc precision must be equal or greater than two.");
 			}
 
-			List<XY> ocsVertexes = new List<XY>();
-			double start = this.StartAngle;
-			double end = this.EndAngle;
-			if (end < start)
-			{
-				end += 2 * Math.PI;
-			}
+			this.GetEndVertices(out XYZ start, out XYZ end);
 
-			double delta = (end - start) / (precision - 1);
-			for (int i = 0; i < precision; i++)
-			{
-				double angle = start + delta * i;
-				double cosine = this.Radius * Math.Cos(angle);
-				double sine = this.Radius * Math.Sin(angle);
-
-				cosine = MathHelper.IsZero(cosine) ? 0 : cosine;
-				sine = MathHelper.IsZero(sine) ? 0 : sine;
-
-				ocsVertexes.Add(new XY(cosine + this.Center.X, sine + this.Center.Y));
-			}
-
-			return ocsVertexes;
+			return CurveExtensions.PolygonalVertexes(
+				precision,
+				this.Center,
+				this.StartAngle,
+				this.EndAngle,
+				this.Normal,
+				start - this.Center
+			);
 		}
 	}
 }

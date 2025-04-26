@@ -64,7 +64,7 @@ namespace ACadSharp.Entities
 				/// </summary>
 				/// <param name="precision">Number of vertexes generated.</param>
 				/// <returns>A list vertexes that represents the arc expressed in object coordinate system.</returns>
-				public List<XY> PolygonalVertexes(int precision)
+				public List<XYZ> PolygonalVertexes(int precision)
 				{
 					return ((Entities.Arc)this.ToEntity()).PolygonalVertexes(precision);
 				}

@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSMath.Geometry;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -13,7 +15,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityCircle)]
 	[DxfSubClass(DxfSubclassMarker.Circle)]
-	public class Circle : Entity
+	public class Circle : Entity, ICurve
 	{
 		/// <summary>
 		/// Specifies the center of an arc, circle, ellipse, view, or viewport.
@@ -51,6 +53,9 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
+		public double RadiusRatio { get { return 1; } }
+
+		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Circle;
 
 		/// <summary>
@@ -65,14 +70,6 @@ namespace ACadSharp.Entities
 		/// Default constructor
 		/// </summary>
 		public Circle() : base() { }
-
-		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			XYZ min = new XYZ(Math.Min(this.Center.X - this.Radius, this.Center.X + this.Radius), Math.Min(this.Center.Y - this.Radius, this.Center.Y + this.Radius), Math.Min(this.Center.Z, this.Center.Z));
-			XYZ max = new XYZ(Math.Max(this.Center.X - this.Radius, this.Center.X + this.Radius), Math.Max(this.Center.Y - this.Radius, this.Center.Y + this.Radius), Math.Max(this.Center.Z, this.Center.Z));
-			return new BoundingBox(min, max);
-		}
 
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
@@ -91,6 +88,48 @@ namespace ACadSharp.Entities
 
 			XY axisPoint = new XY(axis.X, axis.Y);
 			this._radius = axisPoint.GetLength();
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			XYZ min = new XYZ(Math.Min(this.Center.X - this.Radius, this.Center.X + this.Radius), Math.Min(this.Center.Y - this.Radius, this.Center.Y + this.Radius), Math.Min(this.Center.Z, this.Center.Z));
+			XYZ max = new XYZ(Math.Max(this.Center.X - this.Radius, this.Center.X + this.Radius), Math.Max(this.Center.Y - this.Radius, this.Center.Y + this.Radius), Math.Max(this.Center.Z, this.Center.Z));
+			return new BoundingBox(min, max);
+		}
+
+		/// <inheritdoc/>
+		public virtual XYZ PolarCoordinateRelativeToCenter(double angle)
+		{
+			//Start vector If normal = Z
+			var start = XYZ.AxisX;
+			start = this.Center + this.Radius * start;
+			start = Matrix4.GetArbitraryAxis(this.Normal) * start;
+
+			return CurveExtensions.PolarCoordinateRelativeToCenter(
+					angle,
+					this.Center,
+					this.Normal,
+					start - this.Center);
+		}
+
+		/// <inheritdoc/>
+		public virtual List<XYZ> PolygonalVertexes(int precision)
+		{
+			//Start vector If normal = Z
+			var start = XYZ.AxisX;
+			start = this.Center + this.Radius * start;
+			start = Matrix4.GetArbitraryAxis(this.Normal) * start;
+
+			return CurveExtensions.PolygonalVertexes(
+					precision,
+					this.Center,
+					0,
+					MathHelper.TwoPI,
+					this.Normal,
+					start - this.Center,
+					this.RadiusRatio
+					);
 		}
 	}
 }

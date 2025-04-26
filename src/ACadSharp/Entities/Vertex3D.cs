@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using CSMath;
 
 namespace ACadSharp.Entities
 {
@@ -18,5 +19,15 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Polyline3dVertex;
+
+		/// <inheritdoc/>
+		public Vertex3D() : base()
+		{
+		}
+
+		/// <inheritdoc/>
+		public Vertex3D(XYZ location) : base(location)
+		{
+		}
 	}
 }

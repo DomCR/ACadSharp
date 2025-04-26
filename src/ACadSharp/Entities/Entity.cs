@@ -262,6 +262,15 @@ namespace ACadSharp.Entities
 			return v;
 		}
 
+		protected XYZ applyWorldMatrix(XYZ xyz, XYZ normal, XYZ newNormal)
+		{
+			var transOW = Matrix3.ArbitraryAxis(normal).Transpose();
+			var transWO = Matrix3.ArbitraryAxis(newNormal);
+			XYZ v = transOW * xyz;
+			v = transWO * v;
+			return v;
+		}
+
 		protected List<XY> applyRotation(IEnumerable<XY> points, double rotation)
 		{
 			if (points == null)
@@ -302,6 +311,12 @@ namespace ACadSharp.Entities
 				transPoints.Add(trans * p);
 			}
 			return transPoints;
+		}
+
+		protected XYZ applyRotation(XYZ points, XYZ zAxis)
+		{
+			Matrix4 trans = Matrix4.GetArbitraryAxis(zAxis).Transpose();
+			return trans * points;
 		}
 	}
 }
