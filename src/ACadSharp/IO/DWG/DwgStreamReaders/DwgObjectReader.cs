@@ -3513,10 +3513,10 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readMultiLeaderStyle()
 		{
-			if (!this.R2010Plus)
-			{
-				return null;
-			}
+			//if (!this.R2010Plus)
+			//{
+			//	return null;
+			//}
 
 			MultiLeaderStyle mLeaderStyle = new MultiLeaderStyle();
 			CadMLeaderStyleTemplate template = new CadMLeaderStyleTemplate(mLeaderStyle);
