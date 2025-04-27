@@ -1,8 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
+using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -36,8 +35,6 @@ namespace ACadSharp.Tests.IO
 			{
 				doc = DwgReader.Read(test.Path);
 			}
-
-			List<Entity> entities = new List<Entity>(doc.Entities);
 
 			MultiLeader multiLeader;
 

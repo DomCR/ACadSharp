@@ -1,4 +1,5 @@
-﻿using ACadSharp.Attributes;
+﻿using System;
+using ACadSharp.Attributes;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
 using CSMath;
@@ -16,6 +17,12 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.MLeaderStyle)]
 	public class MultiLeaderStyle : NonGraphicalObject
 	{
+		private LineType _leaderLineType = LineType.ByLayer;
+		private TextStyle _textStyle = TextStyle.Default;
+		private BlockRecord _arrowhead;
+		private BlockRecord _blockContent;
+
+
 		/// <summary>
 		/// Default multiline style name
 		/// </summary>
@@ -155,7 +162,26 @@ namespace ACadSharp.Objects
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public LineType LeaderLineType { get; set; }
+		public LineType LeaderLineType
+		{
+			get { return this._leaderLineType; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._leaderLineType = this.updateTable(value, this.Document.LineTypes);
+				}
+				else
+				{
+					this._leaderLineType = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets a value specifying the lineweight to be applied to all leader lines of the multileader.
@@ -258,7 +284,14 @@ namespace ACadSharp.Objects
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 341)]
-		public BlockRecord Arrowhead { get; set; }
+		public BlockRecord Arrowhead
+		{
+			get { return this._arrowhead; }
+			set
+			{
+				this._arrowhead = this.updateTable(value, this.Document?.BlockRecords);
+			}
+		}
 
 		/// <summary>
 		/// Gests or sets the arrowhead size.
@@ -297,7 +330,26 @@ namespace ACadSharp.Objects
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 342)]
-		public TextStyle TextStyle { get; set; }
+		public TextStyle TextStyle
+		{
+			get { return this._textStyle; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._textStyle = this.updateTable(value, this.Document.TextStyles);
+				}
+				else
+				{
+					this._textStyle = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the Text Left Attachment Type.
@@ -438,7 +490,13 @@ namespace ACadSharp.Objects
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 343)]
-		public BlockRecord BlockContent { get; set; }
+		public BlockRecord BlockContent
+		{
+			get { return this._blockContent; }
+			set {
+				this._blockContent = this.updateTable(value, this.Document?.BlockRecords);
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the block-content color.
@@ -623,6 +681,12 @@ namespace ACadSharp.Objects
 		public TextAttachmentType TextTopAttachment { get; set; }
 
 		/// <summary>
+		/// Undocumented in ODS and DXF-ref boolean, found in DXF
+		/// </summary>
+		[DxfCodeValue(298)]
+		public bool UnknownFlag298 { get; set; }
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="MultiLeaderStyle"/> class.
 		/// </summary>
 		public MultiLeaderStyle() : this(string.Empty) { }
@@ -639,7 +703,64 @@ namespace ACadSharp.Objects
 		public override CadObject Clone()
 		{
 			MultiLeaderStyle clone = (MultiLeaderStyle)base.Clone();
+			clone.TextStyle = (TextStyle)this._textStyle.Clone();
+			clone.LeaderLineType = (LineType)this._leaderLineType.Clone();
+			
+			clone.Arrowhead = (BlockRecord)this._arrowhead?.Clone();
+			clone.BlockContent = (BlockRecord)this._blockContent?.Clone();
+
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._textStyle = this.updateTable(this._textStyle, doc.TextStyles);
+			this._leaderLineType = this.updateTable(this._leaderLineType, doc.LineTypes);
+			this._arrowhead = this.updateTable(this._arrowhead, doc.BlockRecords);
+			this._blockContent = this.updateTable(this._blockContent, doc.BlockRecords);
+
+			doc.TextStyles.OnRemove += this.tableOnRemove;
+			doc.LineTypes.OnRemove += this.tableOnRemove;
+			doc.BlockRecords.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.TextStyles.OnRemove -= this.tableOnRemove;
+			this.Document.LineTypes.OnRemove -= this.tableOnRemove;
+			this.Document.BlockRecords.OnRemove -= this.tableOnRemove;
+
+			base.UnassignDocument();
+
+			this._textStyle = (TextStyle)this._textStyle.Clone();
+			this._leaderLineType = (LineType)this._leaderLineType.Clone();
+			this._arrowhead = (BlockRecord)this._arrowhead?.Clone();
+			this._blockContent = (BlockRecord)this._blockContent?.Clone();
+		}
+
+		protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this._textStyle))
+			{
+				this._textStyle = this.Document.TextStyles[Layer.DefaultName];
+			}
+
+			if (e.Item.Equals(this._leaderLineType))
+			{
+				this._leaderLineType = this.Document.LineTypes[LineType.ByLayerName];
+			}
+
+			if (e.Item.Equals(this.Arrowhead))
+			{
+				this._arrowhead = null;
+			}
+
+			if (e.Item.Equals(this.BlockContent))
+			{
+				this._blockContent = null;
+			}
 		}
 	}
 }
