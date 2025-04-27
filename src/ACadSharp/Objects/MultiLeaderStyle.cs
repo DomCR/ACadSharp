@@ -684,7 +684,7 @@ namespace ACadSharp.Objects
 		/// Undocumented in ODS and DXF-ref boolean, found in DXF
 		/// </summary>
 		[DxfCodeValue(298)]
-		public bool UnknownFlag298 { get; set; }
+		internal bool UnknownFlag298 { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MultiLeaderStyle"/> class.
@@ -700,6 +700,7 @@ namespace ACadSharp.Objects
 			this.Name = name;
 		}
 
+		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			MultiLeaderStyle clone = (MultiLeaderStyle)base.Clone();
