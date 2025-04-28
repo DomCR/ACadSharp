@@ -8,7 +8,8 @@ using ACadSharp.Tables;
 using CSMath;
 
 
-namespace ACadSharp.Objects {
+namespace ACadSharp.Objects
+{
 
 	/// <summary>
 	/// This class represents a subset ob the properties of the MLeaderAnnotContext
@@ -22,7 +23,7 @@ namespace ACadSharp.Objects {
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
 		/// <inheritdoc />
-		public override string SubclassMarker => DxfSubclassMarker.MultiLeaderAnnotContext;
+		public override string SubclassMarker => DxfSubclassMarker.MultiLeaderAnnotContext; //Sublcass doesn't exist in the dxf specification
 
 		/// <inheritdoc />
 		public override string ObjectName => DxfFileToken.ObjectMLeaderContextData;
@@ -55,7 +56,7 @@ namespace ACadSharp.Objects {
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(40)]
-		public double ScaleFactor { get; set; }
+		public double ScaleFactor { get; set; } = 1;
 
 		//	TODO
 		/// <summary>
@@ -79,7 +80,7 @@ namespace ACadSharp.Objects {
 		/// The value returned is the value entered in AutoCAD multiplied with the <see cref="ScaleFactor"/>.
 		/// </value>
 		[DxfCodeValue(41)]
-		public double TextHeight { get; set; }
+		public double TextHeight { get; set; } = 0.18;
 
 		/// <summary>
 		/// Gets or sets the arrowhead size (see <see cref="MultiLeaderStyle.Arrowhead"/>)
@@ -113,7 +114,7 @@ namespace ACadSharp.Objects {
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property).
 		/// </summary>
 		[DxfCodeValue(145)]
-		public double LandingGap { get; set; }
+		public double LandingGap { get; set; } = 0.09;
 
 		/// <summary>
 		/// Gets or sets the text top attachment type (see <see cref="MultiLeaderStyle.TextLeftAttachment"/>).
@@ -246,17 +247,14 @@ namespace ACadSharp.Objects {
 		/// <summary>
 		/// Gets or sets the location of the text label of the multileader.
 		/// </summary>
-		/// <remarks>
-		/// This location is evaluated by AutoCAD from the <see cref="Conn"/>
-		/// </remarks>
 		[DxfCodeValue(12, 22, 32)]
 		public XYZ TextLocation { get; set; }
 
 		/// <summary>
-		/// Direction
+		/// Direction.
 		/// </summary>
 		[DxfCodeValue(13, 23, 33)]
-		public XYZ Direction { get; set; }
+		public XYZ Direction { get; set; } = XYZ.AxisX;
 
 		/// <summary>
 		/// Gets or sets the rotation of the text label of the multileader.
@@ -265,7 +263,7 @@ namespace ACadSharp.Objects {
 		/// The rotation angle in radians.
 		/// </value>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 42)]
-		public double TextRotation { get; set; }
+		public double TextRotation { get; set; } = 0.0d;
 
 		//	TODO
 		/// <summary>
@@ -325,7 +323,7 @@ namespace ACadSharp.Objects {
 		/// Gets or sets a value indicating the flow direction.
 		/// </summary>
 		[DxfCodeValue(172)]
-		public FlowDirectionType FlowDirection { get; set; }
+		public FlowDirectionType FlowDirection { get; set; } = FlowDirectionType.ByStyle;
 
 		//	TODO Create test cases
 		/// <summary>
@@ -426,7 +424,7 @@ namespace ACadSharp.Objects {
 		public BlockRecord BlockContent
 		{
 			get { return this._blockContent; }
-			set 
+			set
 			{
 				this._blockContent = this.updateTable(value, this.Document?.BlockRecords);
 			}
@@ -517,13 +515,13 @@ namespace ACadSharp.Objects {
 		/// Base direction
 		/// </summary>
 		[DxfCodeValue(111, 121, 131)]
-		public XYZ BaseDirection { get; set; }
+		public XYZ BaseDirection { get; set; } = XYZ.AxisX;
 
 		/// <summary>
 		/// Base vertical
 		/// </summary>
 		[DxfCodeValue(112, 122, 132)]
-		public XYZ BaseVertical { get; set; }
+		public XYZ BaseVertical { get; set; } = XYZ.AxisY;
 
 		/// <summary>
 		/// Is normal reversed?
@@ -549,7 +547,7 @@ namespace ACadSharp.Objects {
 		/// can be used ("vertical" attachment types).
 		/// </value>
 		[DxfCodeValue(273)]
-		public TextAttachmentType TextTopAttachment { get; set; }
+		public TextAttachmentType TextTopAttachment { get; set; } = TextAttachmentType.CenterOfText;
 
 		/// <summary>
 		/// Gets or sets the text bottom attachment type (see <see cref="MultiLeaderStyle.TextBottomAttachment"/>).
@@ -576,7 +574,8 @@ namespace ACadSharp.Objects {
 		/// </summary>
 		public MultiLeaderAnnotContext() : base() { }
 
-		public override CadObject Clone() {
+		public override CadObject Clone()
+		{
 			MultiLeaderAnnotContext clone = (MultiLeaderAnnotContext)base.Clone();
 
 			clone._textStyle = (TextStyle)this._textStyle.Clone();

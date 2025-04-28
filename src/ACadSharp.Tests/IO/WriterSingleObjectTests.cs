@@ -33,6 +33,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SingleEllipse)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.ViewZoom)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleMLeader)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
@@ -647,6 +648,15 @@ namespace ACadSharp.Tests.IO
 				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
 
 				this.Document.Entities.Add(line);
+			}
+
+			public void SingleMLeader()
+			{
+				MultiLeader mleader = new MultiLeader();
+				mleader.ContextData.BasePoint = new XYZ(5, 5, 0);
+				mleader.ContextData.TextLabel = "This is my test MLEader";
+
+				this.Document.Entities.Add(mleader);
 			}
 
 			public void SingleMLine()

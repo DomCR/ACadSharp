@@ -3125,12 +3125,14 @@ namespace ACadSharp.IO.DWG
 			//	Multileader Common data
 			//	340 Leader StyleId (handle)
 			template.LeaderStyleHandle = this.handleReference();
+
 			//BL	90  Property Override Flags (int32)
 			mLeader.PropertyOverrideFlags = (MultiLeaderPropertyOverrideFlags)this._objectReader.ReadBitLong();
 			//BS	170 LeaderLineType (short)
 			mLeader.PathType = (MultiLeaderPathType)this._objectReader.ReadBitShort();
 			//CMC	91  Leade LineColor (Color)
 			mLeader.LineColor = this._mergedReaders.ReadCmColor();
+
 			//H 	341 LeaderLineTypeID (handle/LineType)
 			template.LeaderLineTypeHandle = this.handleReference();
 
@@ -3140,9 +3142,9 @@ namespace ACadSharp.IO.DWG
 			mLeader.EnableLanding = this._objectReader.ReadBit();
 			//B  291 Enable Dogleg
 			mLeader.EnableDogleg = this._objectReader.ReadBit();
-
 			//  41  Dogleg Length / Landing distance
 			mLeader.LandingDistance = this._objectReader.ReadBitDouble();
+
 			//  342 Arrowhead ID
 			template.ArrowheadHandle = this.handleReference();
 
@@ -3150,6 +3152,7 @@ namespace ACadSharp.IO.DWG
 			mLeader.ArrowheadSize = this._objectReader.ReadBitDouble();
 			//BS	172 Content Type
 			mLeader.ContentType = (LeaderContentType)this._objectReader.ReadBitShort();
+
 			//H		343 Text Style ID (handle/TextStyle)
 			template.MTextStyleHandle = this.handleReference();
 
@@ -3157,6 +3160,7 @@ namespace ACadSharp.IO.DWG
 			mLeader.TextLeftAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
 			//  95  Text Right Attachment Type
 			mLeader.TextRightAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
+
 			//  174 Text Angle Type
 			mLeader.TextAngle = (TextAngleType)this._objectReader.ReadBitShort();
 			//  175 Text Alignment Type
