@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using ACadSharp.Attributes;
 using ACadSharp.Tables;
 
@@ -52,7 +52,7 @@ namespace ACadSharp.Objects
 			/// <summary>
 			/// Gets a list of <see cref="StartEndPointPair" />.
 			/// </summary>
-			public IList<StartEndPointPair> BreakStartEndPointsPairs { get; } = new List<StartEndPointPair>();
+			public IList<StartEndPointPair> BreakStartEndPointsPairs { get; private set; } = new List<StartEndPointPair>();
 
 			/// <summary>
 			/// Leader index
@@ -71,7 +71,7 @@ namespace ACadSharp.Objects
 			/// leader lines starting from the landing point
 			/// of the multi leader.
 			/// </summary>
-			public IList<LeaderLine> Lines { get; } = new List<LeaderLine>();
+			public IList<LeaderLine> Lines { get; private set; } = new List<LeaderLine>();
 
 			//R2010
 			/// <summary>
@@ -82,14 +82,16 @@ namespace ACadSharp.Objects
 
 			public object Clone()
 			{
-				LeaderRoot clone = (LeaderRoot)this.MemberwiseClone();
+				LeaderRoot clone = (LeaderRoot)base.MemberwiseClone();
 
-				foreach (var breakStartEndPoint in BreakStartEndPointsPairs.ToList())
+				clone.BreakStartEndPointsPairs = new List<StartEndPointPair>();
+				foreach (var breakStartEndPoint in this.BreakStartEndPointsPairs)
 				{
 					clone.BreakStartEndPointsPairs.Add((StartEndPointPair)breakStartEndPoint.Clone());
 				}
 
-				foreach (var line in Lines.ToList())
+				clone.Lines = new List<LeaderLine>();
+				foreach (var line in this.Lines)
 				{
 					clone.Lines.Add((LeaderLine)line.Clone());
 				}
@@ -137,12 +139,15 @@ namespace ACadSharp.Objects
 		/// </remarks>
 		public class LeaderLine : ICloneable
 		{
+			internal CadDocument Document { get; set; }
+			private LineType _lineType;
+
 			public LeaderLine() { }
 
 			/// <summary>
 			/// Get the list of points of this <see cref="LeaderLine"/>.
 			/// </summary>
-			public IList<XYZ> Points { get; } = new List<XYZ>();
+			public IList<XYZ> Points { get; private set; } = new List<XYZ>();
 
 			/// <summary>
 			/// Break info count
@@ -158,7 +163,7 @@ namespace ACadSharp.Objects
 			/// <summary>
 			/// Start/end point pairs
 			/// </summary>
-			public IList<StartEndPointPair> StartEndPoints { get; } = new List<StartEndPointPair>();
+			public IList<StartEndPointPair> StartEndPoints { get; private set; } = new List<StartEndPointPair>();
 
 			/// <summary>
 			/// Leader line index.
@@ -182,8 +187,32 @@ namespace ACadSharp.Objects
 			/// <summary>
 			/// Line type
 			/// </summary>
-			[DxfCodeValue(340)]
-			public LineType LineType { get; set; }
+			[DxfCodeValue(DxfReferenceType.Handle, 340)]
+			public LineType LineType
+			{
+				get { return this._lineType; }
+				set
+				{
+					if (value == null)
+					{
+						_lineType = null;
+						return;
+					}
+
+					if (this.Document != null)
+					{
+						if (this.Document.LineTypes.TryGetValue(((LineType)value).Name, out LineType lt))
+						{
+							this._lineType = lt;
+						}
+						else
+						{
+							this._lineType = value;
+							this.Document.LineTypes.Add(this._lineType);
+						}
+					}
+				}
+			}
 
 			/// <summary>
 			/// Line weight
@@ -201,7 +230,7 @@ namespace ACadSharp.Objects
 			/// Gets or sets a <see cref="BlockRecord"/> containig elements
 			/// to be dawn as arrow symbol.
 			/// </summary>
-			[DxfCodeValue(341)]
+			[DxfCodeValue(DxfReferenceType.Handle, 341)]
 			public BlockRecord Arrowhead { get; set; }
 
 			/// <summary>
@@ -214,17 +243,58 @@ namespace ACadSharp.Objects
 			{
 				LeaderLine clone = (LeaderLine)this.MemberwiseClone();
 
-				foreach (var point in Points.ToList())
+				clone.LineType = (LineType)this.LineType?.Clone();
+				clone.Arrowhead = (BlockRecord)this.Arrowhead?.Clone();
+
+				clone.Points = new List<XYZ>();
+				foreach (var point in this.Points)
 				{
 					clone.Points.Add(point);
 				}
 
-				foreach (var startEndPoint in StartEndPoints.ToList())
+				clone.StartEndPoints = new List<StartEndPointPair>();
+				foreach (var startEndPoint in this.StartEndPoints)
 				{
 					clone.StartEndPoints.Add((StartEndPointPair)startEndPoint.Clone());
 				}
 
 				return clone;
+			}
+
+			public void AssignDocument(CadDocument doc)
+			{
+				this.Document = doc;
+
+				if (_lineType != null)
+				{
+					if (doc.LineTypes.TryGetValue(_lineType.Name, out LineType existing))
+					{
+						this._lineType = existing;
+					}
+					else
+					{
+						doc.LineTypes.Add(_lineType);
+					}
+				}
+
+				doc.LineTypes.OnRemove += this.tableOnRemove;
+			}
+
+			public void UassignDocument()
+			{
+				this.Document.LineTypes.OnRemove -= this.tableOnRemove;
+
+				this.Document = null;
+
+				this._lineType = (LineType)this._lineType?.Clone();
+			}
+
+			private void tableOnRemove(object sender, CollectionChangedEventArgs e)
+			{
+				if (e.Item.Equals(this._lineType))
+				{
+					this._lineType = null;
+				}
 			}
 		}
 	}

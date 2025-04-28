@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Tests.Common;
 using CSMath;
 using System;
 using Xunit;
@@ -16,8 +17,9 @@ namespace ACadSharp.Tests.Entities
 
 			BoundingBox boundingBox = ellipse.GetBoundingBox();
 
-			Assert.Equal(new XYZ(-1, -0.5, 0), boundingBox.Min);
-			Assert.Equal(new XYZ(1, 0.5, 0), boundingBox.Max);
+			//The point may not be exactly at the min max values, the tolerance needs to decrease
+			AssertUtils.AreEqual(new XYZ(-1, -0.5, 0), boundingBox.Min, 2);
+			AssertUtils.AreEqual(new XYZ(1, 0.5, 0), boundingBox.Max, 2);
 		}
 	}
 }

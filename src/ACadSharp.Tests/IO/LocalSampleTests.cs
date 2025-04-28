@@ -48,6 +48,7 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DxfReader.Read(test.Path, this.onNotification);
+			doc.Header.Version = ACadVersion.AC1032;
 		}
 
 		[Theory]

@@ -43,5 +43,10 @@ namespace ACadSharp.Blocks
 		{
 			return BoundingBox.Null;
 		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+		}
 	}
 }

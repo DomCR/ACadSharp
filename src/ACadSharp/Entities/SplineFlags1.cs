@@ -3,33 +3,33 @@
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Defines the spline flags 1 
+	/// Defines the spline flags1.
 	/// </summary>
 	[Flags]
 	public enum SplineFlags1 : ushort
 	{
 		/// <summary>
-		/// None
+		/// None.
 		/// </summary>
 		None = 0,
 
 		/// <summary>
-		/// Method fit points
+		/// Method fit points.
 		/// </summary>
 		MethodFitPoints = 1,
 
 		/// <summary>
-		/// CV frame show
+		/// CV frame show.
 		/// </summary>
 		CVFrameShow = 2,
 
 		/// <summary>
-		/// Is closed
+		/// Closed.
 		/// </summary>
-		IsClosed = 4,
+		Closed = 4,
 
 		/// <summary>
-		/// Use knot parameter
+		/// Use knot parameter.
 		/// </summary>
 		UseKnotParameter = 8,
 	}

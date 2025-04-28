@@ -831,6 +831,8 @@ namespace ACadSharp.IO.DXF
 				case 340:
 					tmp.AnnotationHandle = this._reader.ValueAsHandle;
 					return true;
+				//Hook line flag - read only
+				case 75:
 				//Vertices count
 				case 76:
 					return true;
@@ -1586,7 +1588,7 @@ namespace ACadSharp.IO.DXF
 								ellipse.EndAngle = this._reader.ValueAsDouble;
 								break;
 							case 73:
-								ellipse.CounterClockWise = this._reader.ValueAsBool;
+								ellipse.IsCounterclockwise = this._reader.ValueAsBool;
 								break;
 							default:
 								return ellipse;

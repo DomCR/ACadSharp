@@ -1054,6 +1054,10 @@ namespace ACadSharp.IO.DWG
 					template = this.readMultiLeader();
 					break;
 				case "MLEADERSTYLE":
+					if (!this.R2010Plus) {
+						this.notify($"MLEADERSTYLE is not supported for {this._version}.", NotificationType.Warning);
+						return null;
+					}
 					template = this.readMultiLeaderStyle();
 					break;
 				case "PDFDEFINITION":
@@ -2627,7 +2631,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readSpline()
 		{
 			Spline spline = new Spline();
-			CadEntityTemplate template = new CadEntityTemplate(spline);
+			CadSplineTemplate template = new CadSplineTemplate(spline);
 
 			this.readCommonEntityData(template);
 
@@ -2646,6 +2650,7 @@ namespace ACadSharp.IO.DWG
 				//Value is overwritten below in scenario 2 though, 
 				//Use knot parameter = 8
 				spline.Flags1 = (SplineFlags1)this._mergedReaders.ReadBitLong();
+				spline.IsClosed = spline.Flags1.HasFlag(SplineFlags1.Closed);
 
 				//Knot parameter BL Knot parameter:
 				//Chord = 0,
@@ -3062,7 +3067,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Hooklineonxdir B hook line is on x direction if 1
-			leader.HookLineDirection = this._objectReader.ReadBit();
+			leader.HookLineDirection = this._objectReader.ReadBit() ? HookLineDirection.Same : HookLineDirection.Opposite;
 			//Arrowheadon B arrowhead on indicator
 			leader.ArrowHeadEnabled = this._objectReader.ReadBit();
 
@@ -3119,7 +3124,7 @@ namespace ACadSharp.IO.DWG
 				var f270 = this._objectReader.ReadBitShort();
 			}
 
-			mLeader.ContextData = this.readMultiLeaderAnnotContext(template);
+			this.readMultiLeaderAnnotContext(mLeader.ContextData, template);
 
 			//	Multileader Common data
 			//	340 Leader StyleId (handle)
@@ -3241,10 +3246,8 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private MultiLeaderAnnotContext readMultiLeaderAnnotContext(CadMLeaderTemplate template)
+		private MultiLeaderAnnotContext readMultiLeaderAnnotContext(MultiLeaderAnnotContext annotContext, CadMLeaderTemplate template)
 		{
-			MultiLeaderAnnotContext annotContext = new MultiLeaderAnnotContext();
-
 			//	BL	-	Number of leader roots
 			int leaderRootCount = this._objectReader.ReadBitLong();
 			for (int i = 0; i < leaderRootCount; i++)
@@ -3515,11 +3518,6 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readMultiLeaderStyle()
 		{
-			if (!this.R2010Plus)
-			{
-				return null;
-			}
-
 			MultiLeaderStyle mLeaderStyle = new MultiLeaderStyle();
 			CadMLeaderStyleTemplate template = new CadMLeaderStyleTemplate(mLeaderStyle);
 
@@ -3623,6 +3621,9 @@ namespace ACadSharp.IO.DWG
 			mLeaderStyle.TextBottomAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
 			//	BS	272	Bottom attachment (see paragraph on LEADER for more details).
 			mLeaderStyle.TextTopAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
+
+			//	B	298 Undocumented, found in DXF
+			mLeaderStyle.UnknownFlag298 = this._objectReader.ReadBit();
 
 			return template;
 		}
@@ -5344,7 +5345,7 @@ namespace ACadSharp.IO.DWG
 									//endangle BD 51 endangle
 									EndAngle = this._objectReader.ReadBitDouble(),
 									//isccw B 73 1 if counter clockwise, otherwise 0
-									CounterClockWise = this._objectReader.ReadBit()
+									IsCounterclockwise = this._objectReader.ReadBit()
 								});
 								break;
 							case Hatch.BoundaryPath.EdgeType.Spline:

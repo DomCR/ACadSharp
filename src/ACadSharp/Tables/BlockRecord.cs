@@ -6,6 +6,7 @@ using ACadSharp.Entities;
 using System.Linq;
 using System.Collections.Generic;
 using ACadSharp.Objects.Evaluations;
+using CSMath;
 
 namespace ACadSharp.Tables
 {
@@ -18,18 +19,8 @@ namespace ACadSharp.Tables
 	/// </remarks>
 	[DxfName(DxfFileToken.TableBlockRecord)]
 	[DxfSubClass(DxfSubclassMarker.BlockRecord)]
-	public class BlockRecord : TableEntry
+	public class BlockRecord : TableEntry, IGeometricEntity
 	{
-		/// <summary>
-		/// Default block record name for the model space
-		/// </summary>
-		public const string ModelSpaceName = "*Model_Space";
-
-		/// <summary>
-		/// Default block record name for the paper space
-		/// </summary>
-		public const string PaperSpaceName = "*Paper_Space";
-
 		/// <summary>
 		/// Create an instance of the *Model_Space block.
 		/// </summary>
@@ -70,58 +61,6 @@ namespace ACadSharp.Tables
 			}
 		}
 
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.BLOCK_HEADER;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.TableBlockRecord;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.BlockRecord;
-
-		/// <summary>
-		/// Block insertion units
-		/// </summary>
-		// [DxfCodeValue(70)]	//Table entry uses flags and has the same code but dwg saves also the block record flags
-		public UnitsType Units { get; set; }
-
-		//This seems to be the right way to set the flags for the block records
-		public new BlockTypeFlags Flags { get { return this.BlockEntity.Flags; } set { this.BlockEntity.Flags = value; } }
-
-		/// <summary>
-		/// Specifies whether the block can be exploded.
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 280)]
-		public bool IsExplodable { get; set; }
-
-		/// <summary>
-		/// Specifies the scaling allowed for the block.
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 281)]
-		public bool CanScale { get; set; } = true;
-
-		/// <summary>
-		/// DXF: Binary data for bitmap preview.
-		/// </summary>
-		/// <remarks>
-		/// Optional
-		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.Optional, 310)]
-		public byte[] Preview { get; set; }
-
-		/// <summary>
-		/// Associated Layout.
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public Layout Layout
-		{
-			get { return this._layout; }
-			internal set
-			{
-				this._layout = value;
-			}
-		}
-
 		/// <summary>
 		/// Attribute definitions in this block
 		/// </summary>
@@ -134,26 +73,36 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Flag indicating if the Block has Attributes attached
+		/// End block entity for this Block record.
 		/// </summary>
-		public bool HasAttributes
+		public BlockEnd BlockEnd
 		{
-			get
+			get { return this._blockEnd; }
+			internal set
 			{
-				return this.Entities.OfType<AttributeDefinition>().Any();
+				this._blockEnd = value;
+				this._blockEnd.Owner = this;
 			}
 		}
 
 		/// <summary>
-		/// ViewPorts attached to this block
+		/// Block entity for this record
 		/// </summary>
-		public IEnumerable<Viewport> Viewports
+		public Block BlockEntity
 		{
-			get
+			get { return this._blockEntity; }
+			internal set
 			{
-				return this.Entities.OfType<Viewport>();
+				this._blockEntity = value;
+				this._blockEntity.Owner = this;
 			}
 		}
+
+		/// <summary>
+		/// Specifies the scaling allowed for the block.
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Optional, 281)]
+		public bool CanScale { get; set; } = true;
 
 		/// <summary>
 		/// Entities owned by this block.
@@ -162,39 +111,6 @@ namespace ACadSharp.Tables
 		/// Entities with an owner cannot be added to another block.
 		/// </remarks>
 		public CadObjectCollection<Entity> Entities { get; private set; }
-
-		/// <summary>
-		/// Sort entities table for this block record.
-		/// </summary>
-		public SortEntitiesTable SortEntitiesTable
-		{
-			get
-			{
-				if (this.XDictionary == null)
-				{
-					return null;
-				}
-				else if (this.XDictionary.TryGetEntry(SortEntitiesTable.DictionaryEntryName, out SortEntitiesTable table))
-				{
-					return table;
-				}
-				else
-				{
-					return null;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Active flag if it has an <see cref="Objects.Evaluations.EvaluationGraph"/> attached to it with dynamic expressions.
-		/// </summary>
-		public bool IsDynamic
-		{
-			get
-			{
-				return this.EvaluationGraph != null;
-			}
-		}
 
 		/// <summary>
 		/// Gets the evaluation graph for this block if it has dynamic properties attached to it.
@@ -218,44 +134,122 @@ namespace ACadSharp.Tables
 			}
 		}
 
+		//This seems to be the right way to set the flags for the block records
+		public new BlockTypeFlags Flags { get { return this.BlockEntity.Flags; } set { this.BlockEntity.Flags = value; } }
+
 		/// <summary>
-		/// Block entity for this record
+		/// Flag indicating if the Block has Attributes attached
 		/// </summary>
-		public Block BlockEntity
+		public bool HasAttributes
 		{
-			get { return this._blockEntity; }
-			internal set
+			get
 			{
-				this._blockEntity = value;
-				this._blockEntity.Owner = this;
+				return this.Entities.OfType<AttributeDefinition>().Any();
 			}
 		}
 
 		/// <summary>
-		/// End block entity for this Block record.
+		/// Active flag if it has an <see cref="Objects.Evaluations.EvaluationGraph"/> attached to it with dynamic expressions.
 		/// </summary>
-		public BlockEnd BlockEnd
+		public bool IsDynamic
 		{
-			get { return this._blockEnd; }
-			internal set
+			get
 			{
-				this._blockEnd = value;
-				this._blockEnd.Owner = this;
+				return this.EvaluationGraph != null;
 			}
 		}
 
-		private Block _blockEntity;
+		/// <summary>
+		/// Specifies whether the block can be exploded.
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Optional, 280)]
+		public bool IsExplodable { get; set; }
+
+		/// <summary>
+		/// Associated Layout.
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
+		public Layout Layout
+		{
+			get { return this._layout; }
+			internal set
+			{
+				this._layout = value;
+			}
+		}
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.TableBlockRecord;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.BLOCK_HEADER;
+
+		/// <summary>
+		/// DXF: Binary data for bitmap preview.
+		/// </summary>
+		/// <remarks>
+		/// Optional
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Optional, 310)]
+		public byte[] Preview { get; set; }
+
+		/// <summary>
+		/// Sort entities table for this block record.
+		/// </summary>
+		public SortEntitiesTable SortEntitiesTable
+		{
+			get
+			{
+				if (this.XDictionary == null)
+				{
+					return null;
+				}
+				else if (this.XDictionary.TryGetEntry(SortEntitiesTable.DictionaryEntryName, out SortEntitiesTable table))
+				{
+					return table;
+				}
+				else
+				{
+					return null;
+				}
+			}
+		}
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.BlockRecord;
+
+		/// <summary>
+		/// Block insertion units
+		/// </summary>
+		// [DxfCodeValue(70)]	//Table entry uses flags and has the same code but dwg saves also the block record flags
+		public UnitsType Units { get; set; }
+
+		/// <summary>
+		/// ViewPorts attached to this block
+		/// </summary>
+		public IEnumerable<Viewport> Viewports
+		{
+			get
+			{
+				return this.Entities.OfType<Viewport>();
+			}
+		}
+
+		/// <summary>
+		/// Default block record name for the model space
+		/// </summary>
+		public const string ModelSpaceName = "*Model_Space";
+
+		/// <summary>
+		/// Default block record name for the paper space
+		/// </summary>
+		public const string PaperSpaceName = "*Paper_Space";
 
 		private BlockEnd _blockEnd;
 
-		private Layout _layout;
+		private Block _blockEntity;
 
-		internal BlockRecord() : base()
-		{
-			this.BlockEntity = new Block(this);
-			this.BlockEnd = new BlockEnd(this);
-			this.Entities = new CadObjectCollection<Entity>(this);
-		}
+		private Layout _layout;
 
 		/// <summary>
 		/// Default constructor.
@@ -268,24 +262,20 @@ namespace ACadSharp.Tables
 			this.Entities = new CadObjectCollection<Entity>(this);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public SortEntitiesTable CreateSortEntitiesTable()
+		internal BlockRecord() : base()
 		{
-			CadDictionary dictionary = this.CreateExtendedDictionary();
+			this.BlockEntity = new Block(this);
+			this.BlockEnd = new BlockEnd(this);
+			this.Entities = new CadObjectCollection<Entity>(this);
+		}
 
-			if (dictionary.TryGetEntry(SortEntitiesTable.DictionaryEntryName, out SortEntitiesTable table))
+		/// <inheritdoc/>
+		public void ApplyTransform(Transform transform)
+		{
+			foreach (Entity item in this.Entities)
 			{
-				return table;
+				item.ApplyTransform(transform);
 			}
-
-			table = new SortEntitiesTable(this);
-
-			dictionary.Add(table);
-
-			return table;
 		}
 
 		/// <inheritdoc/>
@@ -311,6 +301,57 @@ namespace ACadSharp.Tables
 			clone.BlockEnd.Owner = clone;
 
 			return clone;
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <returns></returns>
+		public SortEntitiesTable CreateSortEntitiesTable()
+		{
+			CadDictionary dictionary = this.CreateExtendedDictionary();
+
+			if (dictionary.TryGetEntry(SortEntitiesTable.DictionaryEntryName, out SortEntitiesTable table))
+			{
+				return table;
+			}
+
+			table = new SortEntitiesTable(this);
+
+			dictionary.Add(table);
+
+			return table;
+		}
+
+		/// <summary>
+		/// Get the bounding box for all the entities in the block.
+		/// </summary>
+		/// <returns></returns>
+		public BoundingBox GetBoundingBox()
+		{
+			return this.GetBoundingBox(true);
+		}
+
+		/// <summary>
+		/// Get the bounding box for all the entities in the block.
+		/// </summary>
+		/// <param name="ignoreInfinite">Ignore infinite entities, default: true</param>
+		/// <returns></returns>
+		public BoundingBox GetBoundingBox(bool ignoreInfinite)
+		{
+			BoundingBox box = BoundingBox.Null;
+			foreach (var item in this.Entities)
+			{
+				if (item.GetBoundingBox().Extent == BoundingBoxExtent.Infinite
+					&& ignoreInfinite)
+				{
+					continue;
+				}
+
+				box = box.Merge(item.GetBoundingBox());
+			}
+
+			return box;
 		}
 
 		internal override void AssignDocument(CadDocument doc)

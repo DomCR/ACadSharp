@@ -343,7 +343,16 @@ namespace ACadSharp.IO
 			while (this._reader.ValueAsString != DxfFileToken.EndSection)
 			{
 				if (this._reader.ValueAsString == DxfFileToken.ClassEntry)
-					classes.AddOrUpdate(this.readClass());
+				{
+					var dxfClass = this.readClass();
+
+					if(dxfClass.ClassNumber < 500)
+					{
+						dxfClass.ClassNumber = (short)(500 + classes.Count);
+					}
+
+					classes.AddOrUpdate(dxfClass);
+				}
 				else
 					this._reader.ReadNext();
 			}
