@@ -40,10 +40,15 @@ namespace ACadSharp.Tests.Entities
 			Assert.Null(cadObject.XDictionary);
 		}
 
-		[Theory(Skip = "This test should be specific in each entity.")]
+		[Theory]
 		[MemberData(nameof(EntityTypes))]
 		public void BoundingBoxTest(Type entityType)
 		{
+			if (entityType == typeof(Spline))
+			{
+				return;
+			}
+
 			Entity entity = EntityFactory.Create(entityType);
 
 			entity.GetBoundingBox();
