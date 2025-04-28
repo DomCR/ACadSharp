@@ -6,7 +6,7 @@ namespace ACadSharp.Tests.Entities
 	public class SplineTests : CommonEntityTests<Spline>
 	{
 		[Fact]
-		public void BoundingBoxTest()
+		public override void BoundingBoxTest()
 		{
 		}
 
