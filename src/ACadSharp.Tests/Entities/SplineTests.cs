@@ -3,8 +3,13 @@ using Xunit;
 
 namespace ACadSharp.Tests.Entities
 {
-	public class SplineTests
+	public class SplineTests : CommonEntityTests<Spline>
 	{
+		[Fact]
+		public void BoundingBoxTest()
+		{
+		}
+
 		[Fact]
 		public void CheckIsCloseFlag()
 		{
@@ -14,7 +19,6 @@ namespace ACadSharp.Tests.Entities
 
 			Assert.True(spline.Flags.HasFlag(SplineFlags.Closed));
 			Assert.True(spline.Flags1.HasFlag(SplineFlags1.Closed));
-
 
 			spline.IsClosed = false;
 

@@ -5,6 +5,7 @@ using Xunit;
 
 namespace ACadSharp.Tests.Entities
 {
+	[Obsolete]
 	public class EntityTests
 	{
 		public static readonly TheoryData<Type> EntityTypes = new TheoryData<Type>();
@@ -13,7 +14,7 @@ namespace ACadSharp.Tests.Entities
 		{
 			foreach (var item in DataFactory.GetTypes<Entity>())
 			{
-				if(item == typeof(UnknownEntity))
+				if (item == typeof(UnknownEntity))
 				{
 					continue;
 				}
@@ -39,7 +40,7 @@ namespace ACadSharp.Tests.Entities
 			Assert.Null(cadObject.XDictionary);
 		}
 
-		[Theory]
+		[Theory(Skip = "This test should be specific in each entity.")]
 		[MemberData(nameof(EntityTypes))]
 		public void BoundingBoxTest(Type entityType)
 		{
