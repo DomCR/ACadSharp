@@ -121,6 +121,8 @@ namespace ACadSharp.IO
 			{
 				this._writer = new DxfAsciiWriter(new StreamWriter(this._stream, encoding));
 			}
+
+			this._writer.WriteOptional = this.Configuration.WriteOptionalValues;
 		}
 
 		private void writeHeader()

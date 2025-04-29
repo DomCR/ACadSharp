@@ -7,7 +7,7 @@ namespace ACadSharp.IO.DXF
 {
 	internal abstract class DxfStreamWriterBase : IDxfStreamWriter
 	{
-		public bool WriteOptional { get; } = false;
+		public bool WriteOptional { get; set; } = false;
 
 		public void Write(DxfCode code, object value, DxfClassMap map = null)
 		{

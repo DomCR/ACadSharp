@@ -69,6 +69,17 @@ namespace ACadSharp.IO
 		public bool WriteAllHeaderVariables { get; set; } = false;
 
 		/// <summary>
+		/// Write the Dxf optional values.
+		/// </summary>
+		/// <remarks>
+		/// The values are marked with the attribute flag <see cref="DxfReferenceType.Optional"/>.
+		/// </remarks>
+		/// <value>
+		/// default: true
+		/// </value>
+		public bool WriteOptionalValues { get; set; } = true;
+
+		/// <summary>
 		/// Header variables to write in the dxf file
 		/// </summary>
 		public IEnumerable<string> HeaderVariables { get { return this._headerVariables.AsEnumerable(); } }
