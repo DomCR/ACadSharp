@@ -394,7 +394,7 @@ namespace ACadSharp.IO.SVG
 						this.WriteStartElement("tspan");
 						this.WriteAttributeString("x", 0);
 						this.WriteAttributeString("dy", "1em");
-						this.WriteRaw(item);
+						this.WriteString(item);
 						this.WriteEndElement();
 					}
 					break;
@@ -414,7 +414,7 @@ namespace ACadSharp.IO.SVG
 							break;
 					}
 
-					this.WriteRaw(text.Value);
+					this.WriteString(text.Value);
 					break;
 			}
 
