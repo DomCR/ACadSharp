@@ -776,7 +776,10 @@ namespace ACadSharp.Tests.IO
 				spline.Knots.Add(1);
 				spline.Knots.Add(1);
 
+				Polyline3D polyline = new Polyline3D(spline.PolygonalVertexes(255));
+
 				this.Document.Entities.Add(spline);
+				this.Document.Entities.Add(polyline);
 			}
 
 			public void TextAlignment()
