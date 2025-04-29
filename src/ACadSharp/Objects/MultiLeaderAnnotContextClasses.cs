@@ -35,7 +35,7 @@ namespace ACadSharp.Objects
 			/// Unknown (ODA writes true)
 			/// </summary>
 			[DxfCodeValue(291)]
-			public bool Unknown { get; set; }
+			internal bool Unknown { get; set; } = true;
 
 			/// <summary>
 			/// Connection point

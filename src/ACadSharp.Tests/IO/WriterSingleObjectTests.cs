@@ -655,6 +655,18 @@ namespace ACadSharp.Tests.IO
 				mleader.ContextData.BasePoint = new XYZ(5, 5, 0);
 				mleader.ContextData.TextLabel = "This is my test MLEader";
 
+				var root = new MultiLeaderAnnotContext.LeaderRoot
+				{
+					ConnectionPoint = new XYZ(1.5, 1.5, 0),
+					ContentValid = true,
+					Direction = XYZ.AxisX,
+
+				};
+				MultiLeaderAnnotContext.LeaderLine leaderLine = new MultiLeaderAnnotContext.LeaderLine();
+				leaderLine.Points.Add(XYZ.Zero);
+				root.Lines.Add(leaderLine);
+				mleader.ContextData.LeaderRoots.Add(root);
+
 				this.Document.Entities.Add(mleader);
 			}
 
