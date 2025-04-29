@@ -1045,11 +1045,7 @@ namespace ACadSharp.IO.DXF
 				this._writer.Write(51, text.ObliqueAngle, map);
 			}
 
-			if (text.Style != null)
-			{
-				//TODO: Implement text style in the writer
-				//this._writer.Write(7, text.Style.Name);
-			}
+			this._writer.Write(7, text.Style.Name);
 
 			this._writer.Write(11, text.AlignmentPoint, map);
 
