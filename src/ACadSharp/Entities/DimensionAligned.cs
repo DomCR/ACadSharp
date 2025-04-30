@@ -57,13 +57,13 @@ namespace ACadSharp.Entities
 		/// </summary>
 		public double Offset
 		{
-			get { return this.FirstPoint.DistanceFrom(this.DefinitionPoint); }
+			get { return this.SecondPoint.DistanceFrom(this.DefinitionPoint); }
 			set
 			{
-				XY p = (this.SecondPoint - this.FirstPoint)
-					.Convert<XY>().Perpendicular().Normalize();
+				//XY p = (this.SecondPoint - this.FirstPoint)
+				//	.Convert<XY>().Perpendicular().Normalize();
 
-				this.DefinitionPoint = this.FirstPoint + p.Convert<XYZ>() * value;
+				//this.DefinitionPoint = this.FirstPoint + p.Convert<XYZ>() * value;
 			}
 		}
 
@@ -94,9 +94,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void UpdateBlock()
 		{
-			List<Entity> entities = new();
-
 			base.UpdateBlock();
+
+			List<Entity> entities = new();
 
 			double measure = this.Measurement;
 
@@ -105,7 +105,7 @@ namespace ACadSharp.Entities
 			XY vec = ((ref2 - ref1).Perpendicular().Normalize());
 
 			XY dimRef1 = ref1 + this.Offset * vec;
-			XY dimRef2 = ref2 + this.Offset * vec; //this.DimLinePosition;
+			XY dimRef2 = ref2 + this.Offset * vec;
 
 			double refAngle = (ref2 - ref1).GetAngle();
 
@@ -151,7 +151,7 @@ namespace ACadSharp.Entities
 			this._block.Entities.AddRange(entities);
 
 			//TO DELETE
-			List<Line> lines = new List<Line>
+			List<Entity> lines = new List<Entity>
 			{
 				new Line
 				{
@@ -164,6 +164,16 @@ namespace ACadSharp.Entities
 					Color = new Color(0, 255, 0),
 					StartPoint = new XYZ(),
 					EndPoint = this.DefinitionPoint,
+				},
+				new Circle
+				{
+					Radius = 0.5,
+					Center = this.FirstPoint,
+				},
+				new Circle
+				{
+					Radius = 0.5,
+					Center = this.SecondPoint,
 				}
 			};
 
