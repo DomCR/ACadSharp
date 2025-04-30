@@ -448,20 +448,18 @@ namespace ACadSharp.Tests.IO
 					TextMiddlePoint = new XYZ(5, 1, 0)
 				};
 
+				DimensionAligned dim1 = new DimensionAligned
+				{
+					SecondPoint = new XYZ(10, 0, 0),
+					Offset = 2,
+					TextMiddlePoint = new XYZ(5, 1, 0)
+				};
+
 				this.Document.Entities.Add(dim);
+				this.Document.Entities.Add(dim1);
 
 				dim.UpdateBlock();
-
-				BlockRecord b = (BlockRecord)dim.Block.Clone();
-				b.IsAnonymous = false;
-				b.Name = "test";
-				this.Document.BlockRecords.Add(b);
-
-				Insert i = new Insert(b);
-				i.InsertPoint = new XYZ(0, -5, 0);
-				this.Document.Entities.Add(i);
-
-				dim.Block = b;
+				dim1.UpdateBlock();
 			}
 
 			public void Dimensions()

@@ -4,6 +4,7 @@ using ACadSharp.Tables;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -223,6 +224,18 @@ namespace ACadSharp.Entities
 		{
 			this._flags = type;
 			this._flags |= DimensionType.BlockReference;
+		}
+
+		public List<string> ProcessDimensionText()
+		{
+			List<string> texts = new List<string>();
+			if (!this.Text.IsNullOrEmpty())
+			{
+				texts.Add(string.Empty);
+				return texts;
+			}
+
+			throw new NotImplementedException();
 		}
 
 		/// <inheritdoc/>

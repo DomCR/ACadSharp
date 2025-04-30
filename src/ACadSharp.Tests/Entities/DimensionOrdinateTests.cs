@@ -3,8 +3,10 @@ using Xunit;
 
 namespace ACadSharp.Tests.Entities
 {
-	public class DimensionOrdinateTests
+	public class DimensionOrdinateTests : CommonDimensionTests<DimensionOrdinate>
 	{
+		public override DimensionType Type => DimensionType.Ordinate;
+
 		[Fact]
 		public void IsOrdinateTypeXTest()
 		{

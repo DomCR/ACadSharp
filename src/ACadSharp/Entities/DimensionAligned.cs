@@ -63,7 +63,7 @@ namespace ACadSharp.Entities
 				XY p = (this.SecondPoint - this.FirstPoint)
 					.Convert<XY>().Perpendicular().Normalize();
 
-				this.DefinitionPoint = this.FirstPoint + p.Convert<XYZ>() * value;
+				this.DefinitionPoint = this.SecondPoint + p.Convert<XYZ>() * value;
 			}
 		}
 
@@ -115,29 +115,29 @@ namespace ACadSharp.Entities
 			entities.Add(new Point(ref2.Convert<XYZ>()) { Layer = defPointLayer });
 			entities.Add(new Point(dimRef2.Convert<XYZ>()) { Layer = defPointLayer });
 
-			if (!Style.SuppressFirstDimensionLine && !Style.SuppressSecondDimensionLine)
+			if (!this.Style.SuppressFirstDimensionLine && !this.Style.SuppressSecondDimensionLine)
 			{
-				entities.Add(dimensionLine(dimRef1, dimRef2, refAngle, Style));
+				entities.Add(dimensionLine(dimRef1, dimRef2, refAngle, this.Style));
 				//Draw start arrow
 				//Draw end arrow
 			}
 
 			// extension lines
-			double thisexo = Math.Sign(this.Offset) * Style.ExtensionLineOffset * Style.ScaleFactor;
-			double thisexe = Math.Sign(this.Offset) * Style.ExtensionLineExtension * Style.ScaleFactor;
-			if (!Style.SuppressFirstExtensionLine)
+			double thisexo = Math.Sign(this.Offset) * this.Style.ExtensionLineOffset * this.Style.ScaleFactor;
+			double thisexe = Math.Sign(this.Offset) * this.Style.ExtensionLineExtension * this.Style.ScaleFactor;
+			if (!this.Style.SuppressFirstExtensionLine)
 			{
-				entities.Add(extensionLine(ref1 + thisexo * vec, dimRef1 + thisexe * vec, Style, Style.LineTypeExt1));
+				entities.Add(extensionLine(ref1 + thisexo * vec, dimRef1 + thisexe * vec, this.Style, this.Style.LineTypeExt1));
 			}
 
-			if (!Style.SuppressSecondExtensionLine)
+			if (!this.Style.SuppressSecondExtensionLine)
 			{
-				entities.Add(extensionLine(ref2 + thisexo * vec, dimRef2 + thisexe * vec, Style, Style.LineTypeExt2));
+				entities.Add(extensionLine(ref2 + thisexo * vec, dimRef2 + thisexe * vec, this.Style, this.Style.LineTypeExt2));
 			}
 
-			// thisension text
+			// dimension text
 			XY textRef = dimRef1.Mid(dimRef2);
-			double gap = Style.DimensionLineGap * Style.ScaleFactor;
+			double gap = this.Style.DimensionLineGap * this.Style.ScaleFactor;
 			double textRot = refAngle;
 			if (textRot > Math.PI / 2 && textRot <= (3 * Math.PI * 0.5))
 			{
@@ -145,51 +145,24 @@ namespace ACadSharp.Entities
 				textRot += Math.PI;
 			}
 
+			//List<string> texts = this.GetDimensionText();
+
 			this.TextMiddlePoint = (textRef + gap * vec).Convert<XYZ>();
 			this.IsTextUserDefinedLocation = false;
 
 			this._block.Entities.AddRange(entities);
-
-			//TO DELETE
-			List<Entity> lines = new List<Entity>
-			{
-				new Line
-				{
-					Color = new Color(255, 0, 0),
-					StartPoint = this.FirstPoint,
-					EndPoint = this.SecondPoint,
-				},
-				new Line
-				{
-					Color = new Color(0, 255, 0),
-					StartPoint = new XYZ(),
-					EndPoint = this.DefinitionPoint,
-				},
-				new Circle
-				{
-					Radius = 0.5,
-					Center = this.FirstPoint,
-				},
-				new Circle
-				{
-					Radius = 0.5,
-					Center = this.SecondPoint,
-				}
-			};
-
-			this._block.Entities.AddRange(lines);
 		}
 
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
 			XYZ newNormal = this.transformNormal(transform, this.Normal);
-			this.getWorldMatrix(transform, Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+			this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
 
 			base.ApplyTransform(transform);
 
-			this.FirstPoint = applyWorldMatrix(this.FirstPoint, transform, transOW, transWO);
-			this.SecondPoint = applyWorldMatrix(this.SecondPoint, transform, transOW, transWO);
+			this.FirstPoint = this.applyWorldMatrix(this.FirstPoint, transform, transOW, transWO);
+			this.SecondPoint = this.applyWorldMatrix(this.SecondPoint, transform, transOW, transWO);
 		}
 	}
 }
