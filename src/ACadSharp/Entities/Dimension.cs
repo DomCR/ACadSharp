@@ -278,7 +278,7 @@ namespace ACadSharp.Entities
 			base.AssignDocument(doc);
 
 			this._style = this.updateTable(this.Style, doc.DimensionStyles);
-			this._block = this.updateTable(this._block, this.Document.BlockRecords);
+			this._block = this.updateTable(this.Block, this.Document.BlockRecords);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 		}
@@ -290,6 +290,7 @@ namespace ACadSharp.Entities
 			base.UnassignDocument();
 
 			this.Style = (DimensionStyle)this.Style?.Clone();
+			this.Block = (BlockRecord)this.Block?.Clone();
 		}
 
 		private Block generateBlock()
