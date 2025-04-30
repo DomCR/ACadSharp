@@ -2,6 +2,7 @@
 using CSMath;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -23,6 +24,10 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.Polyline3d;
 
 		public Polyline3D() : base()
+		{
+		}
+
+		public Polyline3D(IEnumerable<XYZ> vertices, bool isClosed = false) : base(vertices.Select(v => new Vertex3D(v)), isClosed)
 		{
 		}
 

@@ -9,10 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using Xunit;
 using Xunit.Abstractions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.Tests.IO
 {
@@ -44,6 +42,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.LayerTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextRotation)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
 			Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
 			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
@@ -769,6 +768,22 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(mtext);
 			}
 
+			public void SingleMTextRotation()
+			{
+				MText mtext = new MText();
+				mtext.Value = "HELLO I'm a rotated MTEXT";
+				mtext.AlignmentPoint = new XYZ(Math.PI / 4, Math.PI / 4, 0);
+
+				this.Document.Entities.Add(mtext);
+
+				mtext = new MText();
+				mtext.Value = "normal changed";
+				mtext.AlignmentPoint = new XYZ(Math.PI / 4, Math.PI / 4, 0);
+				mtext.Normal = XYZ.AxisX;
+
+				this.Document.Entities.Add(mtext);
+			}
+
 			public void SingleMTextSpecialCharacter()
 			{
 				MText mtext = new MText();
@@ -840,7 +855,10 @@ namespace ACadSharp.Tests.IO
 				spline.Knots.Add(1);
 				spline.Knots.Add(1);
 
+				Polyline3D polyline = new Polyline3D(spline.PolygonalVertexes(255));
+
 				this.Document.Entities.Add(spline);
+				this.Document.Entities.Add(polyline);
 			}
 
 			public void TextAlignment()

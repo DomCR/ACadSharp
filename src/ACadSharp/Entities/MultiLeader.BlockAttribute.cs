@@ -4,7 +4,7 @@ using ACadSharp.Attributes;
 
 namespace ACadSharp.Entities
 {
-public partial class MultiLeader
+	public partial class MultiLeader
 	{
 		// TODO
 		// We omit this class because we assumed that the multileader

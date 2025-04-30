@@ -18,25 +18,49 @@ namespace ACadSharp.Entities
 	public partial class MText : Entity, IText
 	{
 		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.MTEXT;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityMText;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.MText;
+		[DxfCodeValue(11, 21, 31)]
+		public XYZ AlignmentPoint { get; set; } = XYZ.AxisX;
 
 		/// <summary>
-		/// A 3D WCS coordinate representing the insertion or origin point.
+		/// Attachment point
 		/// </summary>
-		[DxfCodeValue(10, 20, 30)]
-		public XYZ InsertPoint { get; set; } = XYZ.Zero;
+		[DxfCodeValue(71)]
+		public AttachmentPointType AttachmentPoint { get; set; } = AttachmentPointType.TopLeft;
 
 		/// <summary>
-		/// Specifies the three-dimensional normal unit vector for the object.
+		/// Background fill color
 		/// </summary>
-		[DxfCodeValue(210, 220, 230)]
-		public XYZ Normal { get; set; } = XYZ.AxisZ;
+		/// <remarks>
+		/// Color to use for background fill when group code 90 is 1.
+		/// </remarks>
+		[DxfCodeValue(63, 420, 430)]
+		public Color BackgroundColor { get; set; }
+
+		/// <summary>
+		/// Background fill setting
+		/// </summary>
+		[DxfCodeValue(90)]
+		public BackgroundFillFlags BackgroundFillFlags { get; set; } = BackgroundFillFlags.None;
+
+		/// <summary>
+		/// Determines how much border there is around the text.
+		/// </summary>
+		[DxfCodeValue(45)]
+		public double BackgroundScale { get; set; } = 1.5;
+
+		/// <summary>
+		/// Transparency of background fill color
+		/// </summary>
+		[DxfCodeValue(441)]
+		public Transparency BackgroundTransparency { get; set; }
+
+		public TextColumn Column { get; set; } = new TextColumn();
+
+		/// <summary>
+		/// Drawing direction
+		/// </summary>
+		[DxfCodeValue(72)]
+		public DrawingDirectionType DrawingDirection { get; set; } = DrawingDirectionType.LeftToRight;
 
 		/// <inheritdoc/>
 		[DxfCodeValue(40)]
@@ -53,10 +77,49 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Reference rectangle width.
+		/// Horizontal width of the characters that make up the mtext entity.
+		/// This value will always be equal to or less than the value of group code 41
 		/// </summary>
-		[DxfCodeValue(41)]
-		public double RectangleWidth { get; set; }
+		/// <remarks>
+		/// read-only, ignored if supplied
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Ignored, 42)]
+		public double HorizontalWidth { get; set; } = 0.9;
+
+		/// <summary>
+		/// A 3D WCS coordinate representing the insertion or origin point.
+		/// </summary>
+		[DxfCodeValue(10, 20, 30)]
+		public XYZ InsertPoint { get; set; } = XYZ.Zero;
+
+		public bool IsAnnotative { get; set; } = false;
+
+		/// <summary>
+		/// Mtext line spacing factor.
+		/// </summary>
+		/// <remarks>
+		/// Percentage of default (3-on-5) line spacing to be applied.Valid values range from 0.25 to 4.00
+		/// </remarks>
+		[DxfCodeValue(44)]
+		public double LineSpacing { get; set; } = 1.0;
+
+		/// <summary>
+		/// Mtext line spacing style.
+		/// </summary>
+		[DxfCodeValue(73)]
+		public LineSpacingStyleType LineSpacingStyle { get; set; }
+
+		/// <summary>
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityMText;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.MTEXT;
 
 		/// <summary>
 		/// Reference rectangle height.
@@ -65,20 +128,28 @@ namespace ACadSharp.Entities
 		public double RectangleHeight { get; set; }
 
 		/// <summary>
-		/// Attachment point
+		/// Reference rectangle width.
 		/// </summary>
-		[DxfCodeValue(71)]
-		public AttachmentPointType AttachmentPoint { get; set; } = AttachmentPointType.TopLeft;
+		[DxfCodeValue(41)]
+		public double RectangleWidth { get; set; }
 
 		/// <summary>
-		/// Drawing direction
+		/// Specifies the rotation angle for the object.
 		/// </summary>
-		[DxfCodeValue(72)]
-		public DrawingDirectionType DrawingDirection { get; set; } = DrawingDirectionType.LeftToRight;
-
-		/// <inheritdoc/>
-		[DxfCodeValue(1)]
-		public string Value { get; set; } = string.Empty;
+		/// <remarks>
+		/// The rotation is only valid if the <see cref="Normal"/> is set to the Z axis.
+		/// </remarks>
+		/// <value>
+		/// The rotation angle in radians.
+		/// </value>
+		[DxfCodeValue(DxfReferenceType.IsAngle | DxfReferenceType.Ignored, 50)]
+		public double Rotation
+		{
+			get
+			{
+				return new XY(this.AlignmentPoint.X, this.AlignmentPoint.Y).GetAngle();
+			}
+		}
 
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name | DxfReferenceType.Optional, 7)]
@@ -104,18 +175,11 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		[DxfCodeValue(11, 21, 31)]
-		public XYZ AlignmentPoint { get; set; } = XYZ.AxisX;
+		public override string SubclassMarker => DxfSubclassMarker.MText;
 
-		/// <summary>
-		/// Horizontal width of the characters that make up the mtext entity.
-		/// This value will always be equal to or less than the value of group code 41 
-		/// </summary>
-		/// <remarks>
-		/// read-only, ignored if supplied
-		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.Ignored, 42)]
-		public double HorizontalWidth { get; set; } = 0.9;
+		/// <inheritdoc/>
+		[DxfCodeValue(1)]
+		public string Value { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Vertical height of the mtext entity
@@ -125,61 +189,6 @@ namespace ACadSharp.Entities
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Ignored, 43)]
 		public double VerticalHeight { get; set; } = 0.2;
-
-		/// <summary>
-		/// Specifies the rotation angle for the object.
-		/// </summary>
-		/// <value>
-		/// The rotation angle in radians.
-		/// </value>
-		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
-		public double Rotation { get; set; } = 0.0;
-
-		/// <summary>
-		/// Mtext line spacing style.
-		/// </summary>
-		[DxfCodeValue(73)]
-		public LineSpacingStyleType LineSpacingStyle { get; set; }
-
-		/// <summary>
-		/// Mtext line spacing factor.
-		/// </summary>
-		/// <remarks>
-		/// Percentage of default (3-on-5) line spacing to be applied.Valid values range from 0.25 to 4.00
-		/// </remarks>
-		[DxfCodeValue(44)]
-		public double LineSpacing { get; set; } = 1.0;
-
-		/// <summary>
-		/// Background fill setting
-		/// </summary>
-		[DxfCodeValue(90)]
-		public BackgroundFillFlags BackgroundFillFlags { get; set; } = BackgroundFillFlags.None;
-
-		/// <summary>
-		/// Determines how much border there is around the text.
-		/// </summary>
-		[DxfCodeValue(45)]
-		public double BackgroundScale { get; set; } = 1.5;
-
-		/// <summary>
-		/// Background fill color 
-		/// </summary>
-		/// <remarks>
-		/// Color to use for background fill when group code 90 is 1.
-		/// </remarks>
-		[DxfCodeValue(63, 420, 430)]
-		public Color BackgroundColor { get; set; }
-
-		/// <summary>
-		/// Transparency of background fill color
-		/// </summary>
-		[DxfCodeValue(441)]
-		public Transparency BackgroundTransparency { get; set; }
-
-		public TextColumn Column { get; set; } = new TextColumn();
-
-		public bool IsAnnotative { get; set; } = false;
 
 		private double _height = 1.0;
 
@@ -280,9 +289,19 @@ namespace ACadSharp.Entities
 
 			this.InsertPoint = newInsert;
 			this.Normal = newNormal;
-			this.Rotation = newRotation;
 			this.Height = newHeight;
 			this.RectangleWidth *= scale;
+		}
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			MText clone = (MText)base.Clone();
+
+			clone.Style = (TextStyle)(this.Style?.Clone());
+			clone.Column = this.Column?.Clone();
+
+			return clone;
 		}
 
 		/// <inheritdoc/>
@@ -301,17 +320,6 @@ namespace ACadSharp.Entities
 				new string[] { "\r\n", "\r", "\n", "\\P" },
 				StringSplitOptions.None
 			);
-		}
-
-		/// <inheritdoc/>
-		public override CadObject Clone()
-		{
-			MText clone = (MText)base.Clone();
-
-			clone.Style = (TextStyle)(this.Style?.Clone());
-			clone.Column = this.Column?.Clone();
-
-			return clone;
 		}
 
 		internal override void AssignDocument(CadDocument doc)

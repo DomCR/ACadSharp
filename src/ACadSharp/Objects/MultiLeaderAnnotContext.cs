@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ACadSharp.Attributes;
 using ACadSharp.Entities;
@@ -7,8 +8,7 @@ using ACadSharp.Tables;
 using CSMath;
 
 
-namespace ACadSharp.Objects
-{
+namespace ACadSharp.Objects {
 
 	/// <summary>
 	/// This class represents a subset ob the properties of the MLeaderAnnotContext
@@ -16,6 +16,9 @@ namespace ACadSharp.Objects
 	/// </summary>
 	public partial class MultiLeaderAnnotContext : NonGraphicalObject
 	{
+		private TextStyle _textStyle = TextStyle.Default;
+		private BlockRecord _blockContent;
+
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
 		/// <inheritdoc />
@@ -32,7 +35,7 @@ namespace ACadSharp.Objects
 		/// A <see cref="MultiLeader"/> can have one or two leader roots having one ore more
 		/// leader lines each.
 		/// </remarks>
-		public IList<LeaderRoot> LeaderRoots { get; } = new List<LeaderRoot>();
+		public IList<LeaderRoot> LeaderRoots { get; private set; } = new List<LeaderRoot>();
 
 		/// <summary>
 		/// Gets or sets a scale factor (see <see cref="MultiLeaderStyle.ScaleFactor"/>).
@@ -217,8 +220,28 @@ namespace ACadSharp.Objects
 		/// (<see cref="MultiLeader.TextStyle"/>).
 		/// Values should be equal, the value of this property is assumed to be used.
 		/// </remarks>
-		[DxfCodeValue(340)]
-		public TextStyle TextStyle { get; set; }
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
+		public TextStyle TextStyle
+		{
+			get { return this._textStyle; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._textStyle = this.updateTable(value, this.Document.TextStyles);
+				}
+				else
+				{
+					this._textStyle = value;
+				}
+			}
+		}
+
 
 		/// <summary>
 		/// Gets or sets the location of the text label of the multileader.
@@ -399,8 +422,15 @@ namespace ACadSharp.Objects
 		/// Gets a <see cref="BlockRecord"/> containing elements
 		/// to be drawn as content for the multileader.
 		/// </summary>
-		[DxfCodeValue(341)]
-		public BlockRecord BlockContent { get; set; }
+		[DxfCodeValue(DxfReferenceType.Handle, 341)]
+		public BlockRecord BlockContent
+		{
+			get { return this._blockContent; }
+			set 
+			{
+				this._blockContent = this.updateTable(value, this.Document?.BlockRecords);
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the normal vector for the block content of the multileader.
@@ -546,17 +576,69 @@ namespace ACadSharp.Objects
 		/// </summary>
 		public MultiLeaderAnnotContext() : base() { }
 
-		public override CadObject Clone()
-		{
+		public override CadObject Clone() {
 			MultiLeaderAnnotContext clone = (MultiLeaderAnnotContext)base.Clone();
 
-			clone.LeaderRoots.Clear();
-			foreach (var leaderRoot in this.LeaderRoots)
+			clone._textStyle = (TextStyle)this._textStyle.Clone();
+			clone._blockContent = (BlockRecord)this._blockContent?.Clone();
+
+			clone.LeaderRoots = new List<LeaderRoot>();
+			foreach (LeaderRoot leaderRoot in this.LeaderRoots)
 			{
 				clone.LeaderRoots.Add((LeaderRoot)leaderRoot.Clone());
 			}
 
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._textStyle = this.updateTable(this._textStyle, doc.TextStyles);
+			this._blockContent = this.updateTable(this._blockContent, doc.BlockRecords);
+
+			foreach (LeaderRoot leaderRoot in this.LeaderRoots)
+			{
+				foreach (LeaderLine leaderLine in leaderRoot.Lines)
+				{
+					leaderLine.AssignDocument(doc);
+				}
+			}
+
+			this.Document.TextStyles.OnRemove += tableOnRemove;
+			this.Document.BlockRecords.OnRemove += tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.TextStyles.OnRemove -= tableOnRemove;
+			this.Document.BlockRecords.OnRemove -= tableOnRemove;
+
+			base.UnassignDocument();
+
+			this._textStyle = (TextStyle)this._textStyle.Clone();
+			this._blockContent = (BlockRecord)this._blockContent?.Clone();
+
+			foreach (LeaderRoot leaderRoot in this.LeaderRoots)
+			{
+				foreach (LeaderLine leaderLine in leaderRoot.Lines)
+				{
+					leaderLine.UassignDocument();
+				}
+			}
+		}
+
+		private void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this._textStyle))
+			{
+				this._textStyle = this.Document.TextStyles[TextStyle.DefaultName];
+			}
+			if (e.Item == this._blockContent)
+			{
+				this._blockContent = null;
+			}
 		}
 	}
 }

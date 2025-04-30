@@ -107,9 +107,7 @@ namespace ACadSharp.Tables.Collections
 			{
 				item.Owner = null;
 				OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));
-
 				item.OnNameChanged -= this.onEntryNameChanged;
-
 				return item;
 			}
 

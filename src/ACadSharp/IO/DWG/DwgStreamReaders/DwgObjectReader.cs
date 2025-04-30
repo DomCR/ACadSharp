@@ -1054,6 +1054,10 @@ namespace ACadSharp.IO.DWG
 					template = this.readMultiLeader();
 					break;
 				case "MLEADERSTYLE":
+					if (!this.R2010Plus) {
+						this.notify($"MLEADERSTYLE is not supported for {this._version}.", NotificationType.Warning);
+						return null;
+					}
 					template = this.readMultiLeaderStyle();
 					break;
 				case "PDFDEFINITION":
@@ -3120,7 +3124,7 @@ namespace ACadSharp.IO.DWG
 				var f270 = this._objectReader.ReadBitShort();
 			}
 
-			mLeader.ContextData = this.readMultiLeaderAnnotContext(template);
+			this.readMultiLeaderAnnotContext(mLeader.ContextData, template);
 
 			//	Multileader Common data
 			//	340 Leader StyleId (handle)
@@ -3242,10 +3246,8 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private MultiLeaderAnnotContext readMultiLeaderAnnotContext(CadMLeaderTemplate template)
+		private MultiLeaderAnnotContext readMultiLeaderAnnotContext(MultiLeaderAnnotContext annotContext, CadMLeaderTemplate template)
 		{
-			MultiLeaderAnnotContext annotContext = new MultiLeaderAnnotContext();
-
 			//	BL	-	Number of leader roots
 			int leaderRootCount = this._objectReader.ReadBitLong();
 			for (int i = 0; i < leaderRootCount; i++)
@@ -3516,11 +3518,6 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readMultiLeaderStyle()
 		{
-			if (!this.R2010Plus)
-			{
-				return null;
-			}
-
 			MultiLeaderStyle mLeaderStyle = new MultiLeaderStyle();
 			CadMLeaderStyleTemplate template = new CadMLeaderStyleTemplate(mLeaderStyle);
 
@@ -3624,6 +3621,9 @@ namespace ACadSharp.IO.DWG
 			mLeaderStyle.TextBottomAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
 			//	BS	272	Bottom attachment (see paragraph on LEADER for more details).
 			mLeaderStyle.TextTopAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
+
+			//	B	298 Undocumented, found in DXF
+			mLeaderStyle.UnknownFlag298 = this._objectReader.ReadBit();
 
 			return template;
 		}

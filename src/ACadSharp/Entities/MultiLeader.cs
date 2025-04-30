@@ -19,6 +19,12 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.MultiLeader)]
 	public partial class MultiLeader : Entity
 	{
+		private MultiLeaderStyle _style = MultiLeaderStyle.Default;
+		private TextStyle _textStyle = TextStyle.Default;
+		private LineType _leaderLineType = LineType.ByLayer;
+		private BlockRecord _arrowhead;
+		private BlockRecord _blockContent;
+
 		/// <summary>
 		/// Gets or sets a <see cref="BlockRecord"/> representing the arrowhead
 		/// (see <see cref="MultiLeaderStyle.Arrowhead"/>) to be displayed with every leader line.
@@ -32,8 +38,15 @@ namespace ACadSharp.Entities
 		/// <see cref="LeaderLinePropertOverrideFlags.Arrowhead"/> flag is set in the
 		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
 		/// </remarks>
-		[DxfCodeValue(342)]
-		public BlockRecord Arrowhead { get; set; }
+		[DxfCodeValue(DxfReferenceType.Handle, 342)]
+		public BlockRecord Arrowhead
+		{
+			get { return this._arrowhead; }
+			set
+			{
+				this._arrowhead = this.updateTable(value, this.Document?.BlockRecords);
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the arrowhead size (see <see cref="MultiLeaderStyle.Arrowhead"/>)
@@ -61,7 +74,7 @@ namespace ACadSharp.Entities
 		/// a reference to a "block attribute"? and some properties to adjust
 		/// the attribute.
 		/// </subject>
-		public IList<BlockAttribute> BlockAttributes { get; } = new List<BlockAttribute>();
+		public IList<BlockAttribute> BlockAttributes { get; private set; } = new List<BlockAttribute>();
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the content of this <see cref="MultiLeader"/>
@@ -73,7 +86,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Contains the multileader content (block/text) and the leaders.
 		/// </summary>
-		public MultiLeaderAnnotContext ContextData { get; set; }
+		public MultiLeaderAnnotContext ContextData { get; private set; } = new MultiLeaderAnnotContext();
 
 		/// <summary>
 		/// Enable Annotation Scale
@@ -135,8 +148,27 @@ namespace ACadSharp.Entities
 		/// <see cref="LeaderLinePropertOverrideFlags.LineType"/> flag is set in the
 		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
 		/// </remarks>
-		[DxfCodeValue(341)]
-		public LineType LeaderLineType { get; set; }
+		[DxfCodeValue(DxfReferenceType.Handle, 341)]
+		public LineType LeaderLineType
+		{
+			get { return this._leaderLineType; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._leaderLineType = this.updateTable(value, this.Document.LineTypes);
+				}
+				else
+				{
+					this._leaderLineType = value;
+				}
+			}
+		}
 
 		//  TODO Additional Line Weight? see Entity.LineWeight.
 		/// <summary>
@@ -215,8 +247,27 @@ namespace ACadSharp.Entities
 		/// Gets a <see cref="MultiLeaderStyle"/> providing reusable style information
 		/// for this <see cref="MultiLeader"/>.
 		/// </summary>
-		[DxfCodeValue(340)]
-		public MultiLeaderStyle Style { get; set; }
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
+		public MultiLeaderStyle Style
+		{
+			get { return this._style; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._style = this.updateCollection(value, this.Document.MLeaderStyles);
+				}
+				else
+				{
+					this._style = value;
+				}
+			}
+		}
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.MultiLeader;
@@ -321,8 +372,27 @@ namespace ACadSharp.Entities
 		/// Values should be equal, the <see cref="MultiLeaderAnnotContext.TextStyle"/>
 		/// is assumed to be used.
 		/// </remarks>
-		[DxfCodeValue(343)]
-		public TextStyle TextStyle { get; set; }
+		[DxfCodeValue(DxfReferenceType.Handle, 343)]
+		public TextStyle TextStyle
+		{
+			get { return this._textStyle; }
+			set
+				{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._textStyle = this.updateTable(value, this.Document.TextStyles);
+				}
+				else
+				{
+					this._textStyle = value;
+				}
+			}
+		}
 
 		#endregion Text Menu Properties
 
@@ -340,8 +410,16 @@ namespace ACadSharp.Entities
 		/// should be equal, the value <see cref="MultiLeaderAnnotContext.BlockContent"/> is
 		/// assumed to be used.
 		/// </remarks>
-		[DxfCodeValue(344)]
-		public BlockRecord BlockContent { get; set; }
+		[DxfCodeValue(DxfReferenceType.Handle, 344)]
+		public BlockRecord BlockContent
+		{
+			get { return this._blockContent; }
+			set
+			{
+				this._blockContent = this.updateTable(value, this.Document?.BlockRecords);
+			}
+		}
+
 
 		/// <summary>
 		/// Gets or sets the block-content color.
@@ -515,16 +593,84 @@ namespace ACadSharp.Entities
 		{
 			MultiLeader clone = (MultiLeader)base.Clone();
 
-			clone.ContextData = (MultiLeaderAnnotContext)this.ContextData?.Clone();
+			clone.ContextData = (MultiLeaderAnnotContext)this.ContextData.Clone();
 
-			clone.BlockAttributes.Clear();
+			clone.BlockAttributes = new List<BlockAttribute>();
 			foreach (var att in this.BlockAttributes)
 			{
 				clone.BlockAttributes.Add((BlockAttribute)att.Clone());
 			}
 
+			clone._style = (MultiLeaderStyle)this._style.Clone();
+			clone._textStyle = (TextStyle)this._textStyle.Clone();
+			clone._leaderLineType = (LineType)this._leaderLineType.Clone();
+			clone._arrowhead = (BlockRecord)this._arrowhead?.Clone();
+			clone._blockContent = (BlockRecord)this._blockContent?.Clone();
+
 			return clone;
 		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._style = this.updateCollection<MultiLeaderStyle>(this._style, doc.MLeaderStyles);
+			this._textStyle = this.updateTable(this._textStyle, doc.TextStyles);
+			this._leaderLineType = this.updateTable(this._leaderLineType, doc.LineTypes);
+			this._arrowhead = this.updateTable(this._arrowhead, doc.BlockRecords);
+			this._blockContent = this.updateTable(this._blockContent, doc.BlockRecords);
+
+			this.ContextData.AssignDocument(doc);
+
+			doc.LineTypes.OnRemove += this.tableOnRemove;
+			doc.TextStyles.OnRemove += this.tableOnRemove;
+			doc.MLeaderStyles.OnRemove += this.tableOnRemove;
+			doc.BlockRecords.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.LineTypes.OnRemove -= this.tableOnRemove;
+			this.Document.TextStyles.OnRemove -= this.tableOnRemove;
+			this.Document.MLeaderStyles.OnRemove -= this.tableOnRemove;
+			this.Document.BlockRecords.OnRemove -= this.tableOnRemove;
+
+			this.ContextData.UnassignDocument();
+
+			base.UnassignDocument();
+
+			this._leaderLineType = (LineType)this._leaderLineType.Clone();
+			this._textStyle = (TextStyle)this._textStyle.Clone();
+			this._style = (MultiLeaderStyle)this._style.Clone();
+			this._arrowhead = (BlockRecord)this._arrowhead?.Clone();
+			this._blockContent = (BlockRecord)this._blockContent?.Clone();
+		}
+
+		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e) {
+			base.tableOnRemove(sender, e);
+
+			if (e.Item.Equals(this._style))
+			{
+				this._style = this.Document.MLeaderStyles[MultiLeaderStyle.DefaultName];
+			}
+			if (e.Item.Equals(this._leaderLineType))
+			{
+				this._leaderLineType = this.Document.LineTypes[LineType.ByLayerName];
+			}
+			if (e.Item.Equals(this._textStyle))
+			{
+				this._textStyle = this.Document.TextStyles[TextStyle.DefaultName];
+			}
+			if (e.Item == this._arrowhead)
+			{
+				this._arrowhead = null;
+			}
+			if (e.Item == this._blockContent)
+			{
+				this._blockContent = null;
+			}
+		}
+
 
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
