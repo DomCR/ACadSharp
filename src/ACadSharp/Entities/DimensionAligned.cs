@@ -53,17 +53,17 @@ namespace ACadSharp.Entities
 		public override ObjectType ObjectType => ObjectType.DIMENSION_ALIGNED;
 
 		/// <summary>
-		/// Definition point offset relative to the <see cref="FirstPoint"/>.
+		/// Definition point offset relative to the <see cref="SecondPoint"/>.
 		/// </summary>
 		public double Offset
 		{
 			get { return this.SecondPoint.DistanceFrom(this.DefinitionPoint); }
 			set
 			{
-				//XY p = (this.SecondPoint - this.FirstPoint)
-				//	.Convert<XY>().Perpendicular().Normalize();
+				XY p = (this.SecondPoint - this.FirstPoint)
+					.Convert<XY>().Perpendicular().Normalize();
 
-				//this.DefinitionPoint = this.FirstPoint + p.Convert<XYZ>() * value;
+				this.DefinitionPoint = this.FirstPoint + p.Convert<XYZ>() * value;
 			}
 		}
 

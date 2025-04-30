@@ -33,7 +33,7 @@ namespace ACadSharp.Entities
 			get { return this._block; }
 			set
 			{
-				this._block = value;
+				this._block = this.updateTable(this._block, this.Document?.BlockRecords);
 			}
 		}
 
@@ -246,6 +246,9 @@ namespace ACadSharp.Entities
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		/// Updates the block that represents this dimension.
+		/// </summary>
 		public virtual void UpdateBlock()
 		{
 			if (this._block == null)
@@ -278,6 +281,12 @@ namespace ACadSharp.Entities
 			base.AssignDocument(doc);
 
 			this._style = this.updateTable(this.Style, doc.DimensionStyles);
+
+			if (this._block != null)
+			{
+				this._block.Name = this.generateBlockName();
+			}
+
 			this._block = this.updateTable(this.Block, this.Document.BlockRecords);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
@@ -300,16 +309,6 @@ namespace ACadSharp.Entities
 
 		private string generateBlockName()
 		{
-			//Should be removed??
-			//if (this._block != null)
-			//{
-			//	this._block.Name = this.generateBlockName();
-			//	while (doc.BlockRecords.Contains(this._block.Name))
-			//	{
-			//		this._block.Name += "_";
-			//	}
-			//}
-
 			return $"*D{this.Handle}";
 		}
 
