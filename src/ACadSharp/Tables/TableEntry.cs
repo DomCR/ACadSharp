@@ -70,13 +70,5 @@ namespace ACadSharp.Tables
 		{
 			return $"{this.ObjectName}:{this.Name}";
 		}
-
-		/// <inheritdoc/>
-		public override CadObject Clone()
-		{
-			TableEntry clone = (TableEntry)base.Clone();
-			clone.OnNameChanged = null;
-			return clone;
-		}
 	}
 }
