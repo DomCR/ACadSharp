@@ -12,9 +12,6 @@ namespace ACadSharp.Objects
 		public event EventHandler<OnNameChangedArgs> OnNameChanged;
 
 		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.UNLISTED;
-
-		/// <inheritdoc/>
 		/// <remarks>
 		/// The name of a <see cref="NonGraphicalObject"/> will be used as the name of the entry when the owner is a <see cref="CadDictionary"/>
 		/// otherwise the name may not be saved if there is no dxf code assigned to the <see cref="CadObject"/>.
@@ -29,12 +26,16 @@ namespace ACadSharp.Objects
 			}
 		}
 
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.UNLISTED;
+
 		private string _name = string.Empty;
 
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		public NonGraphicalObject() { }
+		public NonGraphicalObject()
+		{ }
 
 		/// <summary>
 		/// Initialize a <see cref="NonGraphicalObject"/> with an specific name.
@@ -43,6 +44,14 @@ namespace ACadSharp.Objects
 		public NonGraphicalObject(string name)
 		{
 			this._name = name;
+		}
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			NonGraphicalObject clone = (NonGraphicalObject)base.Clone();
+			clone.OnNameChanged = null;
+			return clone;
 		}
 
 		/// <inheritdoc/>
