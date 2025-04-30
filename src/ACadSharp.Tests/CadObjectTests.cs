@@ -6,7 +6,6 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.XData;
 using System.Collections.Generic;
-using System.Reflection.Emit;
 using System.Linq;
 
 namespace ACadSharp.Tests
@@ -62,7 +61,7 @@ namespace ACadSharp.Tests
 
 		[Theory]
 		[MemberData(nameof(ACadTypes))]
-		public void Clone(Type t)
+		public void ExtendedDataCloneTest(Type t)
 		{
 			CadObject cadObject = Factory.CreateObject(t);
 
