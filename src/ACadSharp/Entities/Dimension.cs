@@ -226,14 +226,74 @@ namespace ACadSharp.Entities
 			this._flags |= DimensionType.BlockReference;
 		}
 
-		public List<string> ProcessDimensionText()
+		public string GetMeasurementText()
 		{
-			List<string> texts = new List<string>();
-			if (!this.Text.IsNullOrEmpty())
+			return this.GetMeasurementText(this.Style);
+		}
+
+		public string GetMeasurementText(DimensionStyle style)
+		{
+			double value = this.Measurement;
+
+			if (style.Rounding != 0.0)
 			{
-				texts.Add(string.Empty);
-				return texts;
+				value = style.Rounding * System.Math.Round(value / style.Rounding);
 			}
+
+			string result = string.Empty;
+			switch (style.LinearUnitFormat)
+			{
+				case Types.Units.LinearUnitFormat.Scientific:
+					break;
+				case Types.Units.LinearUnitFormat.Decimal:
+				case Types.Units.LinearUnitFormat.WindowsDesktop:
+					break;
+				case Types.Units.LinearUnitFormat.Engineering:
+					break;
+				case Types.Units.LinearUnitFormat.Architectural:
+					break;
+				case Types.Units.LinearUnitFormat.Fractional:
+					break;
+				case Types.Units.LinearUnitFormat.None:
+				default:
+					break;
+			}
+
+			if (true)
+			{
+				switch (style.AngularUnit)
+				{
+					case Types.Units.AngularUnitFormat.DecimalDegrees:
+						break;
+					case Types.Units.AngularUnitFormat.DegreesMinutesSeconds:
+						break;
+					case Types.Units.AngularUnitFormat.Gradians:
+						break;
+					case Types.Units.AngularUnitFormat.Radians:
+						break;
+					case Types.Units.AngularUnitFormat.SurveyorsUnits:
+						break;
+					default:
+						break;
+				}
+			}
+
+			return result;
+		}
+
+		public string ProcessText()
+		{
+			return this.ProcessText(this.Style);
+		}
+
+		public string ProcessText(DimensionStyle style)
+		{
+			if (!this.Text.Equals(" "))
+			{
+				return string.Empty;
+			}
+
+
 
 			throw new NotImplementedException();
 		}
@@ -242,13 +302,13 @@ namespace ACadSharp.Entities
 		public override void ApplyTransform(Transform transform)
 		{
 			XYZ newNormal = this.transformNormal(transform, this.Normal);
-			this.getWorldMatrix(transform, Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+			this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
 
-			this.DefinitionPoint = applyWorldMatrix(this.DefinitionPoint, transform, transOW, transWO);
+			this.DefinitionPoint = this.applyWorldMatrix(this.DefinitionPoint, transform, transOW, transWO);
 
 			if (this.IsTextUserDefinedLocation)
 			{
-				this.TextMiddlePoint = applyWorldMatrix(this.TextMiddlePoint, transform, transOW, transWO);
+				this.TextMiddlePoint = this.applyWorldMatrix(this.TextMiddlePoint, transform, transOW, transWO);
 			}
 
 			this.Normal = newNormal;
@@ -315,9 +375,16 @@ namespace ACadSharp.Entities
 			this.Block = (BlockRecord)this.Block?.Clone();
 		}
 
-		private Block generateBlock()
+		protected MText createTextEntity(XYZ insertPoint, string text)
 		{
-			throw new NotImplementedException();
+			MText mText = new MText()
+			{
+				Value = text,
+				AttachmentPoint = AttachmentPointType.MiddleCenter,
+				InsertPoint = insertPoint
+			};
+
+			return mText;
 		}
 
 		private string generateBlockName()

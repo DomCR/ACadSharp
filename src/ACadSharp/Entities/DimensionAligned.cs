@@ -145,10 +145,14 @@ namespace ACadSharp.Entities
 				textRot += Math.PI;
 			}
 
-			//List<string> texts = this.GetDimensionText();
+			string text = this.Measurement.ToString("#.##");//Provisional
+			if (!this.IsTextUserDefinedLocation)
+			{
+				this.TextMiddlePoint = (textRef + gap * vec).Convert<XYZ>();
+			}
 
-			this.TextMiddlePoint = (textRef + gap * vec).Convert<XYZ>();
-			this.IsTextUserDefinedLocation = false;
+			MText mText = this.createTextEntity(this.TextMiddlePoint, text);
+			entities.Add(mText);
 
 			this._block.Entities.AddRange(entities);
 		}

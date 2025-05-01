@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Types.Units;
+using CSMath;
 using System;
+using System.Globalization;
 
 //	TODO should the described coupling of properties be implemented in this class,
 //		 e.g., GenerateTolerances and LimitsGeneration?
@@ -1037,6 +1039,57 @@ namespace ACadSharp.Tables
 
 		internal DimensionStyle() : base()
 		{
+		}
+
+		public string FormatLinearValue(double measure)
+		{
+			double scale = Math.Abs(this.LinearScaleFactor);
+
+			if (this.Rounding > 0.0)
+			{
+				measure = MathHelper.RoundToNearest(measure * scale, this.Rounding);
+			}
+			else
+			{
+				measure *= scale;
+			}
+
+			switch (this.LinearUnitFormat)
+			{
+				case LinearUnitFormat.None:
+					break;
+				case LinearUnitFormat.Scientific:
+					break;
+				case LinearUnitFormat.Decimal:
+					break;
+				case LinearUnitFormat.Engineering:
+					break;
+				case LinearUnitFormat.Architectural:
+					break;
+				case LinearUnitFormat.Fractional:
+					break;
+				case LinearUnitFormat.WindowsDesktop:
+					break;
+				default:
+					break;
+			}
+
+			throw new NotImplementedException();
+		}
+
+		public NumberFormatInfo GetNumberFormatInfo()
+		{
+
+			return new NumberFormatInfo
+			{
+				NumberDecimalDigits = this.DecimalPlaces,
+				NumberDecimalSeparator = this.DecimalSeparator.ToString(),
+			};
+		}
+
+		public string FormatAngularValue(double angle)
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <inheritdoc/>
