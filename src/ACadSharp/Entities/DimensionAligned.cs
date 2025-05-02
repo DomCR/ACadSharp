@@ -110,9 +110,10 @@ namespace ACadSharp.Entities
 			double refAngle = (ref2 - ref1).GetAngle();
 
 			// reference points
-			Layer defPointLayer = new Layer("Defpoints") { PlotFlag = false };
+			Layer defPointLayer = new Layer("defpoints") { PlotFlag = false };
 			entities.Add(new Point(ref1.Convert<XYZ>()) { Layer = defPointLayer });
 			entities.Add(new Point(ref2.Convert<XYZ>()) { Layer = defPointLayer });
+			entities.Add(new Point(dimRef1.Convert<XYZ>()) { Layer = defPointLayer });
 			entities.Add(new Point(dimRef2.Convert<XYZ>()) { Layer = defPointLayer });
 
 			if (!this.Style.SuppressFirstDimensionLine && !this.Style.SuppressSecondDimensionLine)
