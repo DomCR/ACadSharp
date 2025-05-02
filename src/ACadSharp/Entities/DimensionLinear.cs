@@ -91,7 +91,7 @@ namespace ACadSharp.Entities
 			XY ref1 = this.FirstPoint.Convert<XY>();
 			XY ref2 = this.SecondPoint.Convert<XY>();
 
-			XY vec = (XY.Rotate(XY.AxisY, (double)this.Rotation)).Normalize();
+			XY vec = XY.Rotate(XY.AxisY, (double)this.Rotation).Normalize();
 			double cross = XY.Cross(ref2 - ref1, vec);
 			if (cross < 0)
 			{
@@ -102,11 +102,10 @@ namespace ACadSharp.Entities
 			XY dimRef2 = this.DefinitionPoint.Convert<XY>();
 
 			// reference points
-			Layer defPointLayer = Layer.Defpoints;
-			this._block.Entities.Add(new Point(ref1.Convert<XYZ>()) { Layer = defPointLayer });
-			this._block.Entities.Add(new Point(ref2.Convert<XYZ>()) { Layer = defPointLayer });
-			this._block.Entities.Add(new Point(dimRef1.Convert<XYZ>()) { Layer = defPointLayer });
-			this._block.Entities.Add(new Point(dimRef2.Convert<XYZ>()) { Layer = defPointLayer });
+			this._block.Entities.Add(new Point(ref1.Convert<XYZ>()) { Layer = Layer.Defpoints });
+			this._block.Entities.Add(new Point(ref2.Convert<XYZ>()) { Layer = Layer.Defpoints });
+			this._block.Entities.Add(new Point(dimRef1.Convert<XYZ>()) { Layer = Layer.Defpoints });
+			this._block.Entities.Add(new Point(dimRef2.Convert<XYZ>()) { Layer = Layer.Defpoints });
 
 			if (!this.Style.SuppressFirstDimensionLine && !this.Style.SuppressSecondDimensionLine)
 			{
