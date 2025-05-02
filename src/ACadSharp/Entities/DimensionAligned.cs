@@ -2,7 +2,6 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -17,12 +16,6 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.AlignedDimension)]
 	public class DimensionAligned : Dimension
 	{
-		/// <inheritdoc/>
-		/// <remarks>
-		/// The definition point should be always positioned in a perpendicular line relative to the dimension.
-		/// </remarks>
-		public override XYZ DefinitionPoint { get => base.DefinitionPoint; set => base.DefinitionPoint = value; }
-
 		/// <summary>
 		/// Linear dimension types with an oblique angle have an optional group code 52.
 		/// When added to the rotation angle of the linear dimension(group code 50),
@@ -171,7 +164,10 @@ namespace ACadSharp.Entities
 			XY ref1 = this.FirstPoint.Convert<XY>();
 			XY ref2 = this.SecondPoint.Convert<XY>();
 			XY dirRef = ref2 - ref1;
+
 			XY dirDesp = dirRef.Perpendicular().Normalize();
+			dirDesp = dirDesp.IsNaN() || dirDesp.IsZero() ? XY.AxisY : dirDesp;
+
 			XY vec = this.Offset * dirDesp;
 			XY dimRef1 = ref1 + vec;
 			XY dimRef2 = ref2 + vec;

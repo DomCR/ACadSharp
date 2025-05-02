@@ -40,7 +40,7 @@ namespace ACadSharp.Entities
 		/// Definition point for the dimension line (in WCS).
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
-		public virtual XYZ DefinitionPoint { get; set; }
+		public XYZ DefinitionPoint { get; set; }
 
 		/// <summary>
 		/// Dimension type
