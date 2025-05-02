@@ -66,6 +66,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomBookColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionsInBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionAligned)));
+			Data.Add(new(nameof(SingleCaseGenerator.DimensionLinear)));
 			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionWithLineType)));
 			Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
@@ -443,12 +444,36 @@ namespace ACadSharp.Tests.IO
 				DimensionAligned dim = new DimensionAligned
 				{
 					SecondPoint = new XYZ(10, 0, 0),
-					//Offset = 0.5,
-					DefinitionPoint = new XYZ(10, 1, 0),
-					TextMiddlePoint = new XYZ(5, 1, 0)
+					Offset = 0.5,
+					//DefinitionPoint = new XYZ(10, 1, 0),
+					//TextMiddlePoint = new XYZ(5, 1, 0)
 				};
 
 				DimensionAligned dim1 = new DimensionAligned
+				{
+					SecondPoint = new XYZ(10, 0, 0),
+					Offset = 2,
+					TextMiddlePoint = new XYZ(5, 1, 0)
+				};
+
+				this.Document.Entities.Add(dim);
+				this.Document.Entities.Add(dim1);
+
+				dim.UpdateBlock();
+				dim1.UpdateBlock();
+			}
+
+			public void DimensionLinear()
+			{
+				DimensionLinear dim = new DimensionLinear
+				{
+					SecondPoint = new XYZ(10, 10, 0),
+					//Offset = 0.5,
+					//DefinitionPoint = new XYZ(10, 1, 0),
+					//TextMiddlePoint = new XYZ(5, 1, 0)
+				};
+
+				DimensionLinear dim1 = new DimensionLinear
 				{
 					SecondPoint = new XYZ(10, 0, 0),
 					Offset = 2,
@@ -508,8 +533,7 @@ namespace ACadSharp.Tests.IO
 				DimensionLinear dim1 = new DimensionLinear()
 				{
 					FirstPoint = line.StartPoint,
-					SecondPoint = line.EndPoint,
-					DefinitionPoint = new XYZ(2.8023467929098436, 6.758122565672127, 0)
+					SecondPoint = line.EndPoint
 				};
 
 				BlockRecord record = new BlockRecord("dim_block");

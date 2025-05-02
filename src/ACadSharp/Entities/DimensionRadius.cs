@@ -61,5 +61,15 @@ namespace ACadSharp.Entities
 			base.ApplyTransform(transform);
 			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
 		}
+
+		public override void UpdateBlock()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void CalculateReferencePoints()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

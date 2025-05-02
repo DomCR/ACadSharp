@@ -86,6 +86,18 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			XYZ newNormal = this.transformNormal(transform, this.Normal);
+			this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+
+			base.ApplyTransform(transform);
+
+			this.FirstPoint = this.applyWorldMatrix(this.FirstPoint, transform, transOW, transWO);
+			this.SecondPoint = this.applyWorldMatrix(this.SecondPoint, transform, transOW, transWO);
+		}
+
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.FirstPoint, this.SecondPoint);
@@ -94,11 +106,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void UpdateBlock()
 		{
-			base.UpdateBlock();
+			this.createBlock();
 
-			List<Entity> entities = new();
-
-			double measure = this.Measurement;
+			this.CalculateReferencePoints();
 
 			XY ref1 = this.FirstPoint.Convert<XY>();
 			XY ref2 = this.SecondPoint.Convert<XY>();
@@ -110,15 +120,14 @@ namespace ACadSharp.Entities
 			double refAngle = (ref2 - ref1).GetAngle();
 
 			// reference points
-			Layer defPointLayer = new Layer("defpoints") { PlotFlag = false };
-			entities.Add(new Point(ref1.Convert<XYZ>()) { Layer = defPointLayer });
-			entities.Add(new Point(ref2.Convert<XYZ>()) { Layer = defPointLayer });
-			entities.Add(new Point(dimRef1.Convert<XYZ>()) { Layer = defPointLayer });
-			entities.Add(new Point(dimRef2.Convert<XYZ>()) { Layer = defPointLayer });
+			this._block.Entities.Add(new Point(ref1.Convert<XYZ>()) { Layer = Layer.Defpoints });
+			this._block.Entities.Add(new Point(ref2.Convert<XYZ>()) { Layer = Layer.Defpoints });
+			this._block.Entities.Add(new Point(dimRef1.Convert<XYZ>()) { Layer = Layer.Defpoints });
+			this._block.Entities.Add(new Point(dimRef2.Convert<XYZ>()) { Layer = Layer.Defpoints });
 
 			if (!this.Style.SuppressFirstDimensionLine && !this.Style.SuppressSecondDimensionLine)
 			{
-				entities.Add(dimensionLine(dimRef1, dimRef2, refAngle, this.Style));
+				this._block.Entities.Add(dimensionLine(dimRef1, dimRef2, refAngle, this.Style));
 				//Draw start arrow
 				//Draw end arrow
 			}
@@ -128,12 +137,12 @@ namespace ACadSharp.Entities
 			double thisexe = Math.Sign(this.Offset) * this.Style.ExtensionLineExtension * this.Style.ScaleFactor;
 			if (!this.Style.SuppressFirstExtensionLine)
 			{
-				entities.Add(extensionLine(ref1 + thisexo * vec, dimRef1 + thisexe * vec, this.Style, this.Style.LineTypeExt1));
+				this._block.Entities.Add(extensionLine(ref1 + thisexo * vec, dimRef1 + thisexe * vec, this.Style, this.Style.LineTypeExt1));
 			}
 
 			if (!this.Style.SuppressSecondExtensionLine)
 			{
-				entities.Add(extensionLine(ref2 + thisexo * vec, dimRef2 + thisexe * vec, this.Style, this.Style.LineTypeExt2));
+				this._block.Entities.Add(extensionLine(ref2 + thisexo * vec, dimRef2 + thisexe * vec, this.Style, this.Style.LineTypeExt2));
 			}
 
 			// dimension text
@@ -153,21 +162,30 @@ namespace ACadSharp.Entities
 			}
 
 			MText mText = this.createTextEntity(this.TextMiddlePoint, text);
-			entities.Add(mText);
-
-			this._block.Entities.AddRange(entities);
+			this._block.Entities.Add(mText);
 		}
 
 		/// <inheritdoc/>
-		public override void ApplyTransform(Transform transform)
+		public override void CalculateReferencePoints()
 		{
-			XYZ newNormal = this.transformNormal(transform, this.Normal);
-			this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+			XY ref1 = this.FirstPoint.Convert<XY>();
+			XY ref2 = this.SecondPoint.Convert<XY>();
+			XY dirRef = ref2 - ref1;
+			XY dirDesp = dirRef.Perpendicular().Normalize();
+			XY vec = this.Offset * dirDesp;
+			XY dimRef1 = ref1 + vec;
+			XY dimRef2 = ref2 + vec;
 
-			base.ApplyTransform(transform);
+			this.DefinitionPoint = dimRef2.Convert<XYZ>();
 
-			this.FirstPoint = this.applyWorldMatrix(this.FirstPoint, transform, transOW, transWO);
-			this.SecondPoint = this.applyWorldMatrix(this.SecondPoint, transform, transOW, transWO);
+			if (!this.IsTextUserDefinedLocation)
+			{
+				double textGap = this.Style.DimensionLineGap;
+				double scale = this.Style.ScaleFactor;
+
+				double gap = textGap * scale;
+				this.TextMiddlePoint = (dimRef1.Mid(dimRef2) + gap * dirDesp).Convert<XYZ>();
+			}
 		}
 	}
 }

@@ -95,5 +95,15 @@ namespace ACadSharp.Entities
 		{
 			return new BoundingBox(this.FeatureLocation, this.LeaderEndpoint);
 		}
+
+		public override void UpdateBlock()
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void CalculateReferencePoints()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

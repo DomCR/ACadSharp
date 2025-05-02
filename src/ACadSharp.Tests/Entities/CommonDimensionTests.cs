@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using System;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities
@@ -15,6 +16,15 @@ namespace ACadSharp.Tests.Entities
 
 			Assert.True(dim.Flags.HasFlag(this.Type));
 			Assert.True(dim.Flags.HasFlag(DimensionType.BlockReference));
+		}
+
+		[Fact]
+		public void DimStyleNotNull()
+		{
+			T dim = new T();
+
+			Assert.NotNull(dim.Style);
+			Assert.Throws<ArgumentNullException>(() => dim.Style = null);
 		}
 
 		[Fact]

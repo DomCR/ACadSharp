@@ -1,10 +1,8 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Blocks;
 using ACadSharp.Tables;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -43,18 +41,6 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
 		public virtual XYZ DefinitionPoint { get; set; }
-
-		/// <summary>
-		/// Middle point of dimension text(in OCS).
-		/// </summary>
-		[DxfCodeValue(11, 21, 31)]
-		public XYZ TextMiddlePoint { get; set; }
-
-		/// <summary>
-		/// Insertion point for clones of a dimension-Baseline and Continue(in OCS).
-		/// </summary>
-		[DxfCodeValue(12, 22, 32)]
-		public XYZ InsertionPoint { get; set; }
 
 		/// <summary>
 		/// Dimension type
@@ -106,6 +92,12 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional | DxfReferenceType.IsAngle, 51)]
 		public double HorizontalDirection { get; set; }
+
+		/// <summary>
+		/// Insertion point for clones of a dimension-Baseline and Continue(in OCS).
+		/// </summary>
+		[DxfCodeValue(12, 22, 32)]
+		public XYZ InsertionPoint { get; set; }
 
 		/// <summary>
 		/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location
@@ -200,6 +192,12 @@ namespace ACadSharp.Entities
 		public string Text { get; set; }
 
 		/// <summary>
+		/// Middle point of dimension text(in OCS).
+		/// </summary>
+		[DxfCodeValue(11, 21, 31)]
+		public XYZ TextMiddlePoint { get; set; }
+
+		/// <summary>
 		/// rotation angle of the dimension text away from its default orientation (the direction of the dimension line)
 		/// </summary>
 		/// <remarks>
@@ -214,16 +212,49 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(280)]
 		public byte Version { get; set; }
 
+		protected BlockRecord _block;
+
 		//This group value is the negative of the angle between the OCS X axis and the UCS X axis.It is always in the XY plane of the OCS
 		protected DimensionType _flags;
 
 		private DimensionStyle _style = DimensionStyle.Default;
-		protected BlockRecord _block;
 
 		protected Dimension(DimensionType type)
 		{
 			this._flags = type;
 			this._flags |= DimensionType.BlockReference;
+		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			XYZ newNormal = this.transformNormal(transform, this.Normal);
+			this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+
+			this.DefinitionPoint = this.applyWorldMatrix(this.DefinitionPoint, transform, transOW, transWO);
+
+			if (this.IsTextUserDefinedLocation)
+			{
+				this.TextMiddlePoint = this.applyWorldMatrix(this.TextMiddlePoint, transform, transOW, transWO);
+			}
+
+			this.Normal = newNormal;
+		}
+
+		/// <summary>
+		/// Calculate the dimension reference points.
+		/// </summary>
+		public abstract void CalculateReferencePoints();
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			Dimension clone = (Dimension)base.Clone();
+
+			clone.Style = (DimensionStyle)(this.Style.Clone());
+			clone.Block = null;
+
+			return clone;
 		}
 
 		public string GetMeasurementText()
@@ -245,15 +276,20 @@ namespace ACadSharp.Entities
 			{
 				case Types.Units.LinearUnitFormat.Scientific:
 					break;
+
 				case Types.Units.LinearUnitFormat.Decimal:
 				case Types.Units.LinearUnitFormat.WindowsDesktop:
 					break;
+
 				case Types.Units.LinearUnitFormat.Engineering:
 					break;
+
 				case Types.Units.LinearUnitFormat.Architectural:
 					break;
+
 				case Types.Units.LinearUnitFormat.Fractional:
 					break;
+
 				case Types.Units.LinearUnitFormat.None:
 				default:
 					break;
@@ -265,14 +301,19 @@ namespace ACadSharp.Entities
 				{
 					case Types.Units.AngularUnitFormat.DecimalDegrees:
 						break;
+
 					case Types.Units.AngularUnitFormat.DegreesMinutesSeconds:
 						break;
+
 					case Types.Units.AngularUnitFormat.Gradians:
 						break;
+
 					case Types.Units.AngularUnitFormat.Radians:
 						break;
+
 					case Types.Units.AngularUnitFormat.SurveyorsUnits:
 						break;
+
 					default:
 						break;
 				}
@@ -293,61 +334,13 @@ namespace ACadSharp.Entities
 				return string.Empty;
 			}
 
-
-
-			throw new NotImplementedException();
-		}
-
-		/// <inheritdoc/>
-		public override void ApplyTransform(Transform transform)
-		{
-			XYZ newNormal = this.transformNormal(transform, this.Normal);
-			this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
-
-			this.DefinitionPoint = this.applyWorldMatrix(this.DefinitionPoint, transform, transOW, transWO);
-
-			if (this.IsTextUserDefinedLocation)
-			{
-				this.TextMiddlePoint = this.applyWorldMatrix(this.TextMiddlePoint, transform, transOW, transWO);
-			}
-
-			this.Normal = newNormal;
-		}
-
-		public void UpdateDefinitionPoint(double offset)
-		{
 			throw new NotImplementedException();
 		}
 
 		/// <summary>
 		/// Updates the block that represents this dimension.
 		/// </summary>
-		public virtual void UpdateBlock()
-		{
-			if (this._block == null)
-			{
-				this._block = new BlockRecord(this.generateBlockName());
-				this._block.IsAnonymous = true;
-			}
-
-			if (this.Document != null)
-			{
-				this._block = this.updateTable(this._block, this.Document.BlockRecords);
-			}
-
-			this._block.Entities.Clear();
-		}
-
-		/// <inheritdoc/>
-		public override CadObject Clone()
-		{
-			Dimension clone = (Dimension)base.Clone();
-
-			clone.Style = (DimensionStyle)(this.Style.Clone());
-			clone.Block = null;
-
-			return clone;
-		}
+		public abstract void UpdateBlock();
 
 		internal override void AssignDocument(CadDocument doc)
 		{
@@ -375,30 +368,14 @@ namespace ACadSharp.Entities
 			this.Block = (BlockRecord)this.Block?.Clone();
 		}
 
-		protected MText createTextEntity(XYZ insertPoint, string text)
-		{
-			MText mText = new MText()
-			{
-				Value = text,
-				AttachmentPoint = AttachmentPointType.MiddleCenter,
-				InsertPoint = insertPoint
-			};
-
-			return mText;
-		}
-
-		private string generateBlockName()
-		{
-			return $"*D{this.Handle}";
-		}
-
 		protected static Line dimensionLine(XY start, XY end, double rotation, DimensionStyle style)
 		{
-			double ext1 = style.ArrowSize * style.ScaleFactor;
-			double ext2 = -style.ArrowSize * style.ScaleFactor;
+			//TODO: apply this if the arrow is in place
+			//double ext1 = style.ArrowSize * style.ScaleFactor;
+			//double ext2 = -style.ArrowSize * style.ScaleFactor;
 
-			start = start.Polar(ext1, rotation);
-			end = end.Polar(ext2, rotation);
+			//start = start.Polar(ext1, rotation);
+			//end = end.Polar(ext2, rotation);
 
 			return new Line(start, end)
 			{
@@ -418,6 +395,35 @@ namespace ACadSharp.Entities
 			};
 		}
 
+		protected void createBlock()
+		{
+			if (this._block == null)
+			{
+				this._block = new BlockRecord(this.generateBlockName());
+				this._block.IsAnonymous = true;
+			}
+
+			if (this.Document != null)
+			{
+				this._block = this.updateTable(this._block, this.Document.BlockRecords);
+			}
+
+			this._block.Entities.Clear();
+		}
+
+		protected MText createTextEntity(XYZ insertPoint, string text)
+		{
+			MText mText = new MText()
+			{
+				Value = text,
+				AttachmentPoint = AttachmentPointType.MiddleCenter,
+				InsertPoint = insertPoint,
+				Height = this.Style.TextHeight
+			};
+
+			return mText;
+		}
+
 		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
 		{
 			base.tableOnRemove(sender, e);
@@ -426,6 +432,11 @@ namespace ACadSharp.Entities
 			{
 				this.Style = this.Document.DimensionStyles[DimensionStyle.DefaultName];
 			}
+		}
+
+		private string generateBlockName()
+		{
+			return $"*D{this.Handle}";
 		}
 	}
 }

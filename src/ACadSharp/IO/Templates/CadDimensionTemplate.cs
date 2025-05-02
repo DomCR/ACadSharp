@@ -52,6 +52,16 @@ namespace ACadSharp.IO.Templates
 			{
 				throw new System.NotImplementedException();
 			}
+
+			public override void UpdateBlock()
+			{
+				throw new System.NotImplementedException();
+			}
+
+			public override void CalculateReferencePoints()
+			{
+				throw new System.NotImplementedException();
+			}
 		}
 
 		public void SetDimensionFlags(DimensionType flags)

@@ -62,5 +62,15 @@ namespace ACadSharp.Entities
 			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
 			//LeaderLength should be scaled based on axis??
 		}
+
+		public override void UpdateBlock()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void CalculateReferencePoints()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }
