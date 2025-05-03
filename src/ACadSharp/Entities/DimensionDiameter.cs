@@ -2,7 +2,6 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -23,6 +22,9 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(15, 25, 35)]
 		public XYZ AngleVertex { get; set; }
 
+		/// <summary>
+		/// Center of the circle where this dimension is allocated.
+		/// </summary>
 		public XYZ Center { get { return this.DefinitionPoint.Mid(this.AngleVertex); } }
 
 		/// <summary>
