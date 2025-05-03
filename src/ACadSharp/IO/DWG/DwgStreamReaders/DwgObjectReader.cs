@@ -1072,9 +1072,9 @@ namespace ACadSharp.IO.DWG
 				case "SORTENTSTABLE":
 					template = this.readSortentsTable();
 					break;
-				//case "VISUALSTYLE":
-				//	template = this.readVisualStyle();
-				//	break;
+				case "VISUALSTYLE":
+					template = this.readVisualStyle();
+					break;
 				case "WIPEOUT":
 					template = this.readCadImage(new Wipeout());
 					break;
@@ -5541,15 +5541,25 @@ namespace ACadSharp.IO.DWG
 
 			//WARNING: this object is not documented, the fields have been found using exploration methods and matching them with the dxf file
 
-			visualStyle.Description = this._textReader.ReadVariableText();
+			//2 Name
+			visualStyle.Name = this._textReader.ReadVariableText();
+			//70
 			visualStyle.Type = this._objectReader.ReadBitLong();
+
+			//177 
+			var value177 = _objectReader.ReadBitShort();
+			//291 Internal use only flag
+			var value291 = _objectReader.ReadBit();
+
+			//70 Count then repeat 90 and 176
+			int count = this._objectReader.ReadBitLong();
 
 #if TEST
 			var objValues = DwgStreamReaderBase.Explore(_objectReader);
 			var textValues = DwgStreamReaderBase.Explore(_textReader);
 #endif
 
-			return null;
+			return template;
 		}
 
 		private CadTemplate readCadImage(CadWipeoutBase image)
