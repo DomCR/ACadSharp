@@ -42,7 +42,7 @@ namespace ACadSharp.Tests.Entities
 		[Fact]
 		public virtual void UpdateBlockTests()
 		{
-			T dim = new T();
+			T dim = this.createDim();
 
 			Assert.Null(dim.Block);
 
@@ -50,6 +50,11 @@ namespace ACadSharp.Tests.Entities
 
 			Assert.NotNull(dim.Block);
 			Assert.True(dim.Block.IsAnonymous);
+		}
+
+		protected virtual T createDim()
+		{
+			return new T();
 		}
 	}
 }

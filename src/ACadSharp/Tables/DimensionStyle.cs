@@ -213,7 +213,7 @@ namespace ACadSharp.Tables
 		/// </para>
 		/// </value>
 		[DxfCodeValue(141)]
-		public double CenterMarkSize { get; set; } = 2.5;
+		public double CenterMarkSize { get; set; } = 0.0900;
 
 		/// <summary>
 		/// Controls options for user-positioned text

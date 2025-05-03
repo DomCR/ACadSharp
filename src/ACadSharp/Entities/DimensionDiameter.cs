@@ -70,21 +70,14 @@ namespace ACadSharp.Entities
 				throw new ArgumentException("The center and the reference point cannot be the same");
 			}
 
-			XY centerRef = this.Center.Convert<XY>();
-			XY ref1 = this.AngleVertex.Convert<XY>();
-
-			double angleRef = centerRef.AngleBetweenVectors(ref1);
-
-			this.DefinitionPoint = XY.Polar(ref1, -(double)this.Measurement, angleRef).Convert<XYZ>();
-
-			if (this.IsTextUserDefinedLocation)
+			if (!this.IsTextUserDefinedLocation)
 			{
 				double textGap = this.Style.DimensionLineGap;
 				double scale = this.Style.ScaleFactor;
 				double arrowSize = this.Style.ArrowSize;
-				XYZ vec = (AngleVertex - this.Center).Normalize();
+				XYZ vec = (this.AngleVertex - this.DefinitionPoint).Normalize();
 				double minOffset = (2 * arrowSize + textGap) * scale;
-				this.TextMiddlePoint = AngleVertex + minOffset * vec;
+				this.TextMiddlePoint = this.AngleVertex + minOffset * vec;
 			}
 		}
 
@@ -108,10 +101,13 @@ namespace ACadSharp.Entities
 			XY ref1 = this.AngleVertex.Convert<XY>();
 			XY defPoint = this.DefinitionPoint.Convert<XY>();
 
-			double angleRef = centerRef.AngleBetweenVectors(ref1);
-
-			short inside; // 1 if the dimension line is inside the circumference, -1 otherwise
 			double minOffset = (2 * this.Style.ArrowSize + this.Style.DimensionLineGap) * this.Style.ScaleFactor;
+			//this.angularBlock(radius, centerRef, ref1, minOffset, true);
+
+			//return;
+
+			double angleRef = XY.Angle(defPoint, ref1);
+			short inside; // 1 if the dimension line is inside the circumference, -1 otherwise
 			if (offset >= radius && offset <= radius + minOffset)
 			{
 				offset = radius + minOffset;
@@ -131,7 +127,7 @@ namespace ACadSharp.Entities
 				inside = 1;
 			}
 
-			XY dimRef = XY.Polar(centerRef, offset - this.Style.DimensionLineGap * this.Style.ScaleFactor, angleRef);
+			XY dimRef = XY.Polar(defPoint, offset - this.Style.DimensionLineGap * this.Style.ScaleFactor, angleRef);
 
 			// reference points
 			Layer defPoints = Layer.Defpoints;
@@ -142,22 +138,12 @@ namespace ACadSharp.Entities
 			{
 				if (inside > 0)
 				{
-					this._block.Entities.Add(dimensionRadialLine(dimRef, ref1, angleRef, inside));
+					this._block.Entities.Add(dimensionRadialLine(dimRef, ref1, angleRef, (short)inside));
 					//End Arrow
 				}
 				else
 				{
-					this._block.Entities.Add(new Line(defPoint, ref1)
-					{
-						Color = this.Style.DimensionLineColor,
-						LineType = this.Style.LineType ?? LineType.ByLayer,
-						LineWeight = this.Style.DimensionLineWeight
-					});
 					this._block.Entities.Add(dimensionRadialLine(dimRef, ref1, angleRef, inside));
-					//End Arrow
-
-					XY dimRef2 = XY.Polar(centerRef, radius + minOffset - this.Style.DimensionLineGap * this.Style.ScaleFactor, Math.PI + angleRef);
-					this._block.Entities.Add(dimensionRadialLine(dimRef2, defPoint, Math.PI + angleRef, inside));
 					//End Arrow
 				}
 			}
@@ -165,11 +151,11 @@ namespace ACadSharp.Entities
 			// center cross
 			if (!MathHelper.IsZero(this.Style.CenterMarkSize))
 			{
-				this._block.Entities.AddRange(centerCross(centerRef, radius, this.Style));
+				this._block.Entities.AddRange(centerCross(this.Center, radius, this.Style));
 			}
 
 			// dimension text
-			string text = this.Measurement.ToString("#.##");//Provisional
+			var text = this.Measurement.ToString("#.##");//Provisional
 
 			double textRot = angleRef;
 			short reverse = 1;
@@ -179,14 +165,14 @@ namespace ACadSharp.Entities
 				reverse = -1;
 			}
 
-			XY textPos = XY.Polar(dimRef, -reverse * inside * this.Style.DimensionLineGap * this.Style.ScaleFactor, textRot);
 			if (!this.IsTextUserDefinedLocation)
 			{
+				XY textPos = XY.Polar(ref1, -reverse * inside * this.Style.DimensionLineGap * this.Style.ScaleFactor, textRot);
 				this.TextMiddlePoint = textPos.Convert<XYZ>();
 			}
 
 			AttachmentPointType attachmentPoint = reverse * inside < 0 ? AttachmentPointType.MiddleLeft : AttachmentPointType.MiddleRight;
-			MText mText = createTextEntity(this.TextMiddlePoint, text);
+			var mText = createTextEntity(this.TextMiddlePoint, text);
 			mText.AttachmentPoint = attachmentPoint;
 
 			this._block.Entities.Add(mText);

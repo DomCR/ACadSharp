@@ -396,7 +396,7 @@ namespace ACadSharp.Entities
 			};
 		}
 
-		protected List<Entity> centerCross(XY center, double radius, DimensionStyle style)
+		protected List<Entity> centerCross(XYZ center, double radius, DimensionStyle style)
 		{
 			List<Entity> lines = new();
 			if (MathHelper.IsZero(style.CenterMarkSize))
@@ -404,35 +404,35 @@ namespace ACadSharp.Entities
 				return lines;
 			}
 
-			XY c1;
-			XY c2;
+			XYZ c1;
+			XYZ c2;
 			double dist = Math.Abs(style.CenterMarkSize * style.ScaleFactor);
 
 			// center mark
-			c1 = new XY(0.0, -dist) + center;
-			c2 = new XY(0.0, dist) + center;
+			c1 = new XYZ(0.0, -dist, 0) + center;
+			c2 = new XYZ(0.0, dist, 0) + center;
 			lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
-			c1 = new XY(-dist, 0.0) + center;
-			c2 = new XY(dist, 0.0) + center;
+			c1 = new XYZ(-dist, 0.0, 0) + center;
+			c2 = new XYZ(dist, 0.0, 0) + center;
 			lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
 
 			// center lines
 			if (style.CenterMarkSize < 0)
 			{
-				c1 = new XY(2 * dist, 0.0) + center;
-				c2 = new XY(radius + dist, 0.0) + center;
+				c1 = new XYZ(2 * dist, 0.0, 0) + center;
+				c2 = new XYZ(radius + dist, 0.0, 0) + center;
 				lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
 
-				c1 = new XY(-2 * dist, 0.0) + center;
-				c2 = new XY(-radius - dist, 0.0) + center;
+				c1 = new XYZ(-2 * dist, 0.0, 0) + center;
+				c2 = new XYZ(-radius - dist, 0.0, 0) + center;
 				lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
 
-				c1 = new XY(0.0, 2 * dist) + center;
-				c2 = new XY(0.0, radius + dist) + center;
+				c1 = new XYZ(0.0, 2 * dist, 0) + center;
+				c2 = new XYZ(0.0, radius + dist, 0) + center;
 				lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
 
-				c1 = new XY(0.0, -2 * dist) + center;
-				c2 = new XY(0.0, -radius - dist) + center;
+				c1 = new XYZ(0.0, -2 * dist, 0) + center;
+				c2 = new XYZ(0.0, -radius - dist, 0) + center;
 				lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
 			}
 			return lines;
@@ -465,6 +465,97 @@ namespace ACadSharp.Entities
 			};
 
 			return mText;
+		}
+
+		protected void angularBlock(double radius, XY centerRef, XY ref1, double minOffset, bool drawRef2)
+		{
+			//Common for Diameter and radial
+			double offset = this.DefinitionPoint.DistanceFrom(this.TextMiddlePoint);
+			XY defPoint = this.DefinitionPoint.Convert<XY>();
+			double angleRef = centerRef.AngleBetweenVectors(ref1);
+
+			short inside; // 1 if the dimension line is inside the circumference, -1 otherwise
+			if (offset >= radius && offset <= radius + minOffset)
+			{
+				offset = radius + minOffset;
+				inside = -1;
+			}
+			else if (offset >= radius - minOffset && offset <= radius)
+			{
+				offset = radius - minOffset;
+				inside = 1;
+			}
+			else if (offset > radius)
+			{
+				inside = -1;
+			}
+			else
+			{
+				inside = 1;
+			}
+
+			XY dimRef = XY.Polar(centerRef, offset - this.Style.DimensionLineGap * this.Style.ScaleFactor, angleRef);
+
+			// reference points
+			Layer defPoints = Layer.Defpoints;
+			this._block.Entities.Add(new Point(ref1.Convert<XYZ>()) { Layer = defPoints });
+
+			// dimension lines
+			if (!this.Style.SuppressFirstDimensionLine && !this.Style.SuppressSecondDimensionLine)
+			{
+				if (inside > 0)
+				{
+					this._block.Entities.Add(dimensionRadialLine(dimRef, ref1, angleRef, inside));
+					//End Arrow
+				}
+				else
+				{
+					this._block.Entities.Add(new Line(defPoint, ref1)
+					{
+						Color = this.Style.DimensionLineColor,
+						LineType = this.Style.LineType ?? LineType.ByLayer,
+						LineWeight = this.Style.DimensionLineWeight
+					});
+					this._block.Entities.Add(dimensionRadialLine(dimRef, ref1, angleRef, inside));
+					//End Arrow
+
+					if (drawRef2)
+					{
+						XY dimRef2 = XY.Polar(centerRef, radius + minOffset - this.Style.DimensionLineGap * this.Style.ScaleFactor, Math.PI + angleRef);
+						this._block.Entities.Add(dimensionRadialLine(dimRef2, defPoint, Math.PI + angleRef, inside));
+						//End Arrow
+					}
+				}
+			}
+
+			// center cross
+			if (!MathHelper.IsZero(this.Style.CenterMarkSize))
+			{
+				this._block.Entities.AddRange(centerCross(centerRef.Convert<XYZ>(), radius, this.Style));
+			}
+
+			// dimension text
+			string text = this.Measurement.ToString("#.##");//Provisional
+
+			double textRot = angleRef;
+			short reverse = 1;
+			if (textRot > MathHelper.HalfPI && textRot <= MathHelper.ThreeHalfPI)
+			{
+				textRot += Math.PI;
+				reverse = -1;
+			}
+
+			if (!this.IsTextUserDefinedLocation)
+			{
+				XY textPos = XY.Polar(dimRef, -reverse * inside * this.Style.DimensionLineGap * this.Style.ScaleFactor, textRot);
+				this.TextMiddlePoint = textPos.Convert<XYZ>();
+			}
+
+			AttachmentPointType attachmentPoint = reverse * inside < 0 ? AttachmentPointType.MiddleLeft : AttachmentPointType.MiddleRight;
+			MText mText = createTextEntity(this.TextMiddlePoint, text);
+			mText.AttachmentPoint = attachmentPoint;
+
+			this._block.Entities.Add(mText);
 		}
 
 		protected Line dimensionRadialLine(XY start, XY end, double rotation, short reversed)
