@@ -68,6 +68,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionAligned)));
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionLinear)));
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionOrdinate)));
+			Data.Add(new(nameof(SingleCaseGenerator.DimensionDiameter)));
 			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionWithLineType)));
 			Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
@@ -500,6 +501,17 @@ namespace ACadSharp.Tests.IO
 				dim.UpdateBlock();
 			}
 
+			public void DimensionDiameter()
+			{
+				DimensionDiameter dim = new DimensionDiameter
+				{
+					AngleVertex = new XYZ(10, 10, 0),
+				};
+
+				this.Document.Entities.Add(dim);
+
+				dim.UpdateBlock();
+			}
 
 			public void Dimensions()
 			{

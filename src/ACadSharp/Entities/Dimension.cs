@@ -3,6 +3,7 @@ using ACadSharp.Tables;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -395,6 +396,48 @@ namespace ACadSharp.Entities
 			};
 		}
 
+		protected List<Entity> centerCross(XY center, double radius, DimensionStyle style)
+		{
+			List<Entity> lines = new();
+			if (MathHelper.IsZero(style.CenterMarkSize))
+			{
+				return lines;
+			}
+
+			XY c1;
+			XY c2;
+			double dist = Math.Abs(style.CenterMarkSize * style.ScaleFactor);
+
+			// center mark
+			c1 = new XY(0.0, -dist) + center;
+			c2 = new XY(0.0, dist) + center;
+			lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
+			c1 = new XY(-dist, 0.0) + center;
+			c2 = new XY(dist, 0.0) + center;
+			lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
+
+			// center lines
+			if (style.CenterMarkSize < 0)
+			{
+				c1 = new XY(2 * dist, 0.0) + center;
+				c2 = new XY(radius + dist, 0.0) + center;
+				lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
+
+				c1 = new XY(-2 * dist, 0.0) + center;
+				c2 = new XY(-radius - dist, 0.0) + center;
+				lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
+
+				c1 = new XY(0.0, 2 * dist) + center;
+				c2 = new XY(0.0, radius + dist) + center;
+				lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
+
+				c1 = new XY(0.0, -2 * dist) + center;
+				c2 = new XY(0.0, -radius - dist) + center;
+				lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
+			}
+			return lines;
+		}
+
 		protected void createBlock()
 		{
 			if (this._block == null)
@@ -422,6 +465,21 @@ namespace ACadSharp.Entities
 			};
 
 			return mText;
+		}
+
+		protected Line dimensionRadialLine(XY start, XY end, double rotation, short reversed)
+		{
+			var style = this.Style;
+			double ext = -style.ArrowSize * style.ScaleFactor;
+
+			end = XY.Polar(end, reversed * ext, rotation);
+
+			return new Line(start, end)
+			{
+				Color = style.DimensionLineColor,
+				LineType = style.LineType ?? LineType.ByLayer,
+				LineWeight = style.DimensionLineWeight
+			};
 		}
 
 		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
