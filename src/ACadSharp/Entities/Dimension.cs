@@ -472,7 +472,7 @@ namespace ACadSharp.Entities
 			//Common for Diameter and radial
 			double offset = this.DefinitionPoint.DistanceFrom(this.TextMiddlePoint);
 			XY defPoint = this.DefinitionPoint.Convert<XY>();
-			double angleRef = centerRef.AngleBetweenVectors(ref1);
+			double angleRef = XY.Angle(centerRef, ref1);
 
 			short inside; // 1 if the dimension line is inside the circumference, -1 otherwise
 			if (offset >= radius && offset <= radius + minOffset)
