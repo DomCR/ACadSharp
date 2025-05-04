@@ -108,7 +108,7 @@ namespace ACadSharp.Entities
 
 			//return;
 
-			double angleRef = XY.Angle(defPoint, ref1);
+			double angleRef = defPoint.GetAngle(ref1);
 			short inside; // 1 if the dimension line is inside the circumference, -1 otherwise
 			if (offset >= radius && offset <= radius + minOffset)
 			{
