@@ -38,14 +38,6 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
-
-			MultiLeader obj = doc.GetCadObject<MultiLeader>(569);
-			doc.Entities.Remove(obj);
-
-			CadDocument d = new CadDocument();
-			d.Entities.Add(obj);
-
-			DwgWriter.Write("D:\\Albert DC\\Desktop\\work\\mleader.dwg", d);
 		}
 
 		[Theory]
