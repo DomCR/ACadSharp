@@ -129,7 +129,7 @@ namespace ACadSharp.Entities
 		/// assumed to be used.
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 43)]
-		public double BlockContentRotation { get; set; } = 1.0;
+		public double BlockContentRotation { get; set; } = 0.0;
 
 		/// <summary>
 		/// Gets or sets the scale factor for block content.
@@ -150,7 +150,7 @@ namespace ACadSharp.Entities
 		/// is a text label, a content block, or a tolerance.
 		/// </summary>
 		[DxfCodeValue(172)]
-		public LeaderContentType ContentType { get; set; }
+		public LeaderContentType ContentType { get; set; } = LeaderContentType.MText;
 
 		/// <summary>
 		/// Contains the multileader content (block/text) and the leaders.
@@ -161,7 +161,7 @@ namespace ACadSharp.Entities
 		/// Enable Annotation Scale
 		/// </summary>
 		[DxfCodeValue(293)]
-		public bool EnableAnnotationScale { get; set; }
+		public bool EnableAnnotationScale { get; set; } = false;
 
 		/// <summary>
 		/// Gets or sets a value indicating that leader lines of this <see cref="MultiLeader"/>
@@ -295,7 +295,7 @@ namespace ACadSharp.Entities
 		/// or the attached <see cref="MultiLeaderAnnotContext"/>.
 		/// </summary>
 		[DxfCodeValue(90)]
-		public MultiLeaderPropertyOverrideFlags PropertyOverrideFlags { get; set; }
+		public MultiLeaderPropertyOverrideFlags PropertyOverrideFlags { get; set; } = MultiLeaderPropertyOverrideFlags.None;
 
 		/// <summary>
 		/// Gets or sets a scale factor (see <see cref="MultiLeaderStyle.ScaleFactor"/>).
@@ -345,7 +345,7 @@ namespace ACadSharp.Entities
 		/// Text Align in IPE (meaning unknown)
 		/// </summary>
 		[DxfCodeValue(178)]
-		public short TextAligninIPE { get; set; }
+		public short TextAligninIPE { get; set; } = 0;
 
 		/// <summary>
 		/// Gets or sets the text alignement type.
@@ -361,7 +361,7 @@ namespace ACadSharp.Entities
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(175)]
-		public TextAlignmentType TextAlignment { get; set; }
+		public TextAlignmentType TextAlignment { get; set; } = TextAlignmentType.Left;
 
 		/// <summary>
 		/// Gets or sets a value indicating the text angle.
@@ -468,14 +468,14 @@ namespace ACadSharp.Entities
 		/// assumed to be used.
 		/// </remarks>
 		[DxfCodeValue(92)]
-		public Color TextColor { get; set; }
+		public Color TextColor { get; set; } = Color.ByBlock;
 
 		//  public IList<ArrowheadAssociation> Arrowheads { get; } = new List<ArrowheadAssociation>();
 		/// <summary>
 		/// Text Direction Negative
 		/// </summary>
 		[DxfCodeValue(294)]
-		public bool TextDirectionNegative { get; set; }
+		public bool TextDirectionNegative { get; set; } = false;
 
 		/// <summary>
 		/// Gets or sets a value indicating that the text label is to be drawn with a frame.
@@ -484,7 +484,7 @@ namespace ACadSharp.Entities
 		/// <see cref="PropertyOverrideFlags"/> property).
 		/// </summary>
 		[DxfCodeValue(292)]
-		public bool TextFrame { get; set; }
+		public bool TextFrame { get; set; } = false;
 
 		/// <summary>
 		/// Gets or sets the text left attachment type (see <see cref="MultiLeaderStyle.TextLeftAttachment"/>).

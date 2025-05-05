@@ -38,28 +38,28 @@ namespace ACadSharp.Objects
 		/// The value returned is the value entered in AutoCAD multiplied with the <see cref="ScaleFactor"/>.
 		/// </value>
 		[DxfCodeValue(140)]
-		public double ArrowheadSize { get; set; }
+		public double ArrowheadSize { get; set; } = 0.18;
 
 		//	TODO Create test cases
 		/// <summary>
 		/// Background fill color
 		/// </summary>
 		[DxfCodeValue(91)]
-		public Color BackgroundFillColor { get; set; }
+		public Color BackgroundFillColor { get; set; } = Color.ByBlock;
 
 		//	TODO Create test cases
 		/// <summary>
 		/// Is background fill enabled
 		/// </summary>
 		[DxfCodeValue(291)]
-		public bool BackgroundFillEnabled { get; set; }
+		public bool BackgroundFillEnabled { get; set; } = false;
 
 		//	TODO Create test cases
 		/// <summary>
 		/// Is background mask fill on
 		/// </summary>
 		[DxfCodeValue(292)]
-		public bool BackgroundMaskFillOn { get; set; }
+		public bool BackgroundMaskFillOn { get; set; } = false;
 
 		//	TODO Create test cases
 		/// <summary>
@@ -73,7 +73,7 @@ namespace ACadSharp.Objects
 		/// Background transparency
 		/// </summary>
 		[DxfCodeValue(92)]
-		public int BackgroundTransparency { get; set; }
+		public int BackgroundTransparency { get; set; } = 0;
 
 		/// <summary>
 		/// Base direction
@@ -85,7 +85,7 @@ namespace ACadSharp.Objects
 		/// Base point
 		/// </summary>
 		[DxfCodeValue(110, 120, 130)]
-		public XYZ BasePoint { get; set; }
+		public XYZ BasePoint { get; set; } = XYZ.Zero;
 
 		/// <summary>
 		/// Base vertical
@@ -119,7 +119,7 @@ namespace ACadSharp.Objects
 		/// Values should be equal, the value of this property is assumed to be used.
 		/// </remarks>
 		[DxfCodeValue(93)]
-		public Color BlockContentColor { get; set; }
+		public Color BlockContentColor { get; set; } = Color.ByBlock;
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the multileader connects to the content-block extents
@@ -134,7 +134,7 @@ namespace ACadSharp.Objects
 		/// Values should be equal, the value of this property is assumed to be used.
 		/// </remarks>
 		[DxfCodeValue(177)]
-		public BlockContentConnectionType BlockContentConnection { get; set; }
+		public BlockContentConnectionType BlockContentConnection { get; set; } = BlockContentConnectionType.BlockExtents;
 
 		/// <summary>
 		/// Gets or sets the location of the böock content of the multileader.
@@ -143,13 +143,13 @@ namespace ACadSharp.Objects
 		/// This location is evaluated by AutoCAD from the <see cref="Conn"/>
 		/// </remarks>
 		[DxfCodeValue(15, 25, 35)]
-		public XYZ BlockContentLocation { get; set; }
+		public XYZ BlockContentLocation { get; set; } = XYZ.Zero;
 
 		/// <summary>
 		/// Gets or sets the normal vector for the block content of the multileader.
 		/// </summary>
 		[DxfCodeValue(14, 24, 34)]
-		public XYZ BlockContentNormal { get; set; }
+		public XYZ BlockContentNormal { get; set; } = XYZ.Zero;
 
 		/// <summary>
 		/// Gets or sets the rotation of the block content of the multileader.
@@ -163,7 +163,7 @@ namespace ACadSharp.Objects
 		/// The rotation angle in radians.
 		/// </value>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 46)]
-		public double BlockContentRotation { get; set; }
+		public double BlockContentRotation { get; set; } = 0;
 
 		/// <summary>
 		/// Gets or sets the scale factor for block content.
@@ -177,7 +177,7 @@ namespace ACadSharp.Objects
 		/// Values should be equal, the value of this property is assumed to be used.
 		/// </remarks>
 		[DxfCodeValue(16, 26, 36)]
-		public XYZ BlockContentScale { get; set; }
+		public XYZ BlockContentScale { get; set; } = XYZ.Zero;
 
 		//	TODO
 		/// <summary>
@@ -261,14 +261,14 @@ namespace ACadSharp.Objects
 		/// Gets or sets a value indicating that the multileader has a content block.
 		/// </summary>
 		[DxfCodeValue(296)]
-		public bool HasContentsBlock { get; set; }
+		public bool HasContentsBlock { get; set; } = false;
 
 		//	TODO Check dependency of HasTextContent, HasContentBlock and MultiLeader.ContentType
 		/// <summary>
 		/// Gets or sets a value indicating that the mutileader has a text label.
 		/// </summary>
 		[DxfCodeValue(290)]
-		public bool HasTextContents { get; set; }
+		public bool HasTextContents { get; set; } = false;
 
 		/// <summary>
 		/// Gets or sets the landing gap (see <see cref="MultiLeaderStyle.LandingGap"/>).
@@ -292,7 +292,7 @@ namespace ACadSharp.Objects
 		/// Gets or sets the line spacing style for the display of the text label.
 		/// </summary>
 		[DxfCodeValue(170)]
-		public LineSpacingStyle LineSpacing { get; set; }
+		public LineSpacingStyle LineSpacing { get; set; } = LineSpacingStyle.AtLeast;
 
 		/// <summary>
 		/// Gets or sets the line-spacing factor for the display of the text label.
@@ -351,7 +351,7 @@ namespace ACadSharp.Objects
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(176)]
-		public TextAlignmentType TextAlignment { get; set; }
+		public TextAlignmentType TextAlignment { get; set; } = TextAlignmentType.Left;
 
 		/// <summary>
 		/// Gets or sets a value indicating the text attachment point.
@@ -368,7 +368,7 @@ namespace ACadSharp.Objects
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(171)]
-		public TextAttachmentPointType TextAttachmentPoint { get; set; }
+		public TextAttachmentPointType TextAttachmentPoint { get; set; } = TextAttachmentPointType.Left;
 
 		/// <summary>
 		/// Gets or sets the text bottom attachment type (see <see cref="MultiLeaderStyle.TextBottomAttachment"/>).
@@ -388,7 +388,7 @@ namespace ACadSharp.Objects
 		/// can be used ("vertical" attachment types).
 		/// </value>
 		[DxfCodeValue(272)]
-		public TextAttachmentType TextBottomAttachment { get; set; }
+		public TextAttachmentType TextBottomAttachment { get; set; } = TextAttachmentType.CenterOfText;
 
 		/// <summary>
 		/// Gets or sets the color for the display of the text label
@@ -415,7 +415,7 @@ namespace ACadSharp.Objects
 		/// Is text height automatic?
 		/// </summary>
 		[DxfCodeValue(293)]
-		public bool TextHeightAutomatic { get; set; }
+		public bool TextHeightAutomatic { get; set; } = false;
 
 		/// <summary>
 		/// Gets or sets a string containg the text tat is to be dispayed a s text label of the
@@ -425,7 +425,7 @@ namespace ACadSharp.Objects
 		/// The string may contain MTEXT markups to specify new-lines, font, size, style, etc.
 		/// </remarks>
 		[DxfCodeValue(304)]
-		public string TextLabel { get; set; }
+		public string TextLabel { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Gets or sets the text top attachment type (see <see cref="MultiLeaderStyle.TextLeftAttachment"/>).
@@ -443,7 +443,7 @@ namespace ACadSharp.Objects
 		/// can be used ("horizontal" attachment types).
 		/// </value>
 		[DxfCodeValue(174)]
-		public TextAttachmentType TextLeftAttachment { get; set; }
+		public TextAttachmentType TextLeftAttachment { get; set; } = TextAttachmentType.MiddleOfTopLine;
 
 		/// <summary>
 		/// Gets or sets the location of the text label of the multileader.
@@ -473,7 +473,7 @@ namespace ACadSharp.Objects
 		/// can be used ("horizontal" attachment types).
 		/// </value>
 		[DxfCodeValue(175)]
-		public TextAttachmentType TextRightAttachment { get; set; }
+		public TextAttachmentType TextRightAttachment { get; set; } = TextAttachmentType.MiddleOfTopLine;
 
 		/// <summary>
 		/// Gets or sets the rotation of the text label of the multileader.
@@ -554,14 +554,14 @@ namespace ACadSharp.Objects
 		/// </list>
 		/// </remarks>
 		[DxfCodeValue(93)]
-		public Matrix4 TransformationMatrix { get; set; }
+		public Matrix4 TransformationMatrix { get; set; } = Matrix4.Zero;
 
 		//	TODO Create test cases
 		/// <summary>
 		/// Word break
 		/// </summary>
 		[DxfCodeValue(295)]
-		public bool WordBreak { get; set; }
+		public bool WordBreak { get; set; } = false;
 
 		private BlockRecord _blockContent;
 		private TextStyle _textStyle = TextStyle.Default;
