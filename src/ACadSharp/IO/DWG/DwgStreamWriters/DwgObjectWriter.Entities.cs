@@ -1143,7 +1143,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitLong((int)multiLeader.PropertyOverrideFlags);
 			//	170 LeaderLineType (short)
 			this._writer.WriteBitShort((short)multiLeader.PathType);
-			//	91  Leade LineColor (Color)
+			//	91  Leader LineColor (Color)
 			this._writer.WriteCmColor(multiLeader.LineColor);
 			//	341 LeaderLineTypeID (handle/LineType)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, multiLeader.LeaderLineType);
