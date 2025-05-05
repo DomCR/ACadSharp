@@ -652,7 +652,11 @@ namespace ACadSharp.Tests.IO
 			public void SingleMLeader()
 			{
 				MultiLeader mleader = new MultiLeader();
-				mleader.ContextData.BasePoint = new XYZ(5, 5, 0);
+				mleader.PathType = MultiLeaderPathType.StraightLineSegments;
+				mleader.PropertyOverrideFlags = MultiLeaderPropertyOverrideFlags.ContentType | MultiLeaderPropertyOverrideFlags.TextAlignment | MultiLeaderPropertyOverrideFlags.EnableUseDefaultMText;
+
+				mleader.ContextData.ContentBasePoint = new XYZ(1.8599999999999999, 1.5, 0);
+				mleader.ContextData.BasePoint = new XYZ(0, 0, 0);
 				mleader.ContextData.TextLabel = "This is my test MLEader";
 
 				var root = new MultiLeaderAnnotContext.LeaderRoot
@@ -660,9 +664,10 @@ namespace ACadSharp.Tests.IO
 					ConnectionPoint = new XYZ(1.5, 1.5, 0),
 					ContentValid = true,
 					Direction = XYZ.AxisX,
-
+					LandingDistance = 0.36,
 				};
 				MultiLeaderAnnotContext.LeaderLine leaderLine = new MultiLeaderAnnotContext.LeaderLine();
+				leaderLine.PathType = MultiLeaderPathType.StraightLineSegments;
 				leaderLine.Points.Add(XYZ.Zero);
 				root.Lines.Add(leaderLine);
 				mleader.ContextData.LeaderRoots.Add(root);

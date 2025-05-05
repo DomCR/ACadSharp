@@ -107,7 +107,8 @@ namespace ACadSharp.Objects
 		/// </summary>
 		public struct StartEndPointPair : ICloneable
 		{
-			public StartEndPointPair(XYZ startPoint, XYZ endPoint) {
+			public StartEndPointPair(XYZ startPoint, XYZ endPoint)
+			{
 				StartPoint = startPoint;
 				EndPoint = endPoint;
 			}
@@ -140,7 +141,7 @@ namespace ACadSharp.Objects
 		public class LeaderLine : ICloneable
 		{
 			internal CadDocument Document { get; set; }
-			private LineType _lineType;
+			private LineType _lineType = null;
 
 			public LeaderLine() { }
 
@@ -176,13 +177,13 @@ namespace ACadSharp.Objects
 			/// Leader type
 			/// </summary>
 			[DxfCodeValue(170)]
-			public MultiLeaderPathType PathType { get; set; }
+			public MultiLeaderPathType PathType { get; set; } = MultiLeaderPathType.StraightLineSegments;
 
 			/// <summary>
 			/// Line color
 			/// </summary>
 			[DxfCodeValue(92)]
-			public Color LineColor { get; set; }
+			public Color LineColor { get; set; } = Color.ByBlock;
 
 			/// <summary>
 			/// Line type
