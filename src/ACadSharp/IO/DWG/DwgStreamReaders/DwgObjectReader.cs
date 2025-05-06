@@ -1054,10 +1054,6 @@ namespace ACadSharp.IO.DWG
 					template = this.readMultiLeader();
 					break;
 				case "MLEADERSTYLE":
-					if (!this.R2010Plus) {
-						this.notify($"MLEADERSTYLE is not supported for {this._version}.", NotificationType.Warning);
-						return null;
-					}
 					template = this.readMultiLeaderStyle();
 					break;
 				case "PDFDEFINITION":
@@ -3129,12 +3125,14 @@ namespace ACadSharp.IO.DWG
 			//	Multileader Common data
 			//	340 Leader StyleId (handle)
 			template.LeaderStyleHandle = this.handleReference();
+
 			//BL	90  Property Override Flags (int32)
 			mLeader.PropertyOverrideFlags = (MultiLeaderPropertyOverrideFlags)this._objectReader.ReadBitLong();
 			//BS	170 LeaderLineType (short)
 			mLeader.PathType = (MultiLeaderPathType)this._objectReader.ReadBitShort();
 			//CMC	91  Leade LineColor (Color)
 			mLeader.LineColor = this._mergedReaders.ReadCmColor();
+
 			//H 	341 LeaderLineTypeID (handle/LineType)
 			template.LeaderLineTypeHandle = this.handleReference();
 
@@ -3144,9 +3142,9 @@ namespace ACadSharp.IO.DWG
 			mLeader.EnableLanding = this._objectReader.ReadBit();
 			//B  291 Enable Dogleg
 			mLeader.EnableDogleg = this._objectReader.ReadBit();
-
 			//  41  Dogleg Length / Landing distance
 			mLeader.LandingDistance = this._objectReader.ReadBitDouble();
+
 			//  342 Arrowhead ID
 			template.ArrowheadHandle = this.handleReference();
 
@@ -3154,6 +3152,7 @@ namespace ACadSharp.IO.DWG
 			mLeader.ArrowheadSize = this._objectReader.ReadBitDouble();
 			//BS	172 Content Type
 			mLeader.ContentType = (LeaderContentType)this._objectReader.ReadBitShort();
+
 			//H		343 Text Style ID (handle/TextStyle)
 			template.MTextStyleHandle = this.handleReference();
 
@@ -3161,6 +3160,7 @@ namespace ACadSharp.IO.DWG
 			mLeader.TextLeftAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
 			//  95  Text Right Attachment Type
 			mLeader.TextRightAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
+
 			//  174 Text Angle Type
 			mLeader.TextAngle = (TextAngleType)this._objectReader.ReadBitShort();
 			//  175 Text Alignment Type
@@ -3523,8 +3523,11 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			//	BS	179	Version expected: 2
-			var version = this._objectReader.ReadBitShort();
+			if (this.R2010Plus)
+			{
+				//	BS	179	Version expected: 2
+				var version = this._objectReader.ReadBitShort();
+			}
 
 			//	BS	170	Content type (see paragraph on LEADER for more details).
 			mLeaderStyle.ContentType = (LeaderContentType)this._objectReader.ReadBitShort();
@@ -3533,7 +3536,7 @@ namespace ACadSharp.IO.DWG
 			//	BS	172	Draw leader order (0 = draw leader head first, 1 = draw leader tail first)
 			mLeaderStyle.LeaderDrawOrder = (LeaderDrawOrderType)this._objectReader.ReadBitShort();
 			//	BL	90	Maximum number of points for leader
-			mLeaderStyle.MaxLeaderSegmentsPoints = this._objectReader.ReadBitShort();
+			mLeaderStyle.MaxLeaderSegmentsPoints = this._objectReader.ReadBitLong();
 			//	BD	40	First segment angle (radians)
 			mLeaderStyle.FirstSegmentAngleConstraint = this._objectReader.ReadBitDouble();
 			//	BD	41	Second segment angle (radians)
@@ -3542,8 +3545,10 @@ namespace ACadSharp.IO.DWG
 			mLeaderStyle.PathType = (MultiLeaderPathType)this._objectReader.ReadBitShort();
 			//	CMC	91	Leader line color
 			mLeaderStyle.LineColor = this._mergedReaders.ReadCmColor();
+
 			//	H	340	Leader line type handle (hard pointer)
 			template.LeaderLineTypeHandle = this.handleReference();
+
 			//	BL	92	Leader line weight
 			mLeaderStyle.LeaderLineWeight = (LineweightType)this._objectReader.ReadBitLong();
 			//	B	290	Is landing enabled?
@@ -3556,25 +3561,25 @@ namespace ACadSharp.IO.DWG
 			mLeaderStyle.LandingDistance = this._objectReader.ReadBitDouble();
 			//	TV	3	Style description
 			mLeaderStyle.Description = this._mergedReaders.ReadVariableText();
+
 			//	H	341	Arrow head block handle (hard pointer)
 			template.ArrowheadHandle = this.handleReference();
+
 			//	BD	44	Arrow head size
 			mLeaderStyle.ArrowheadSize = this._objectReader.ReadBitDouble();
 			//	TV	300	Text default
 			mLeaderStyle.DefaultTextContents = this._mergedReaders.ReadVariableText();
+
 			//	H	342	Text style handle (hard pointer)
 			template.MTextStyleHandle = this.handleReference();
+
 			//	BS	174	Left attachment (see paragraph on LEADER for more details).
 			mLeaderStyle.TextLeftAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
 			//	BS	178	Right attachment (see paragraph on LEADER for more details).
 			mLeaderStyle.TextRightAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
-			if (this.R2010Plus)
-			{//	IF IsNewFormat OR DXF file
-			 //	BS	175	Text angle type (see paragraph on LEADER for more details).
-				mLeaderStyle.TextAngle = (TextAngleType)this._objectReader.ReadBitShort();
-
-			}   //	END IF IsNewFormat OR DXF file
-				//	BS	176	Text alignment type
+			//	BS	175	Text angle type (see paragraph on LEADER for more details).
+			mLeaderStyle.TextAngle = (TextAngleType)this._objectReader.ReadBitShort();
+			//	BS	176	Text alignment type
 			mLeaderStyle.TextAlignment = (TextAlignmentType)this._objectReader.ReadBitShort();
 			//	CMC	93	Text color
 			mLeaderStyle.TextColor = this._mergedReaders.ReadCmColor();
@@ -3582,15 +3587,14 @@ namespace ACadSharp.IO.DWG
 			mLeaderStyle.TextHeight = this._objectReader.ReadBitDouble();
 			//	B	292	Text frame enabled
 			mLeaderStyle.TextFrame = this._objectReader.ReadBit();
-			if (this.R2010Plus)
-			{//	IF IsNewFormat OR DXF file
-			 //	B	297	Always align text left
-				mLeaderStyle.TextAlignAlwaysLeft = this._objectReader.ReadBit();
-			}//	END IF IsNewFormat OR DXF file
-			 //	BD	46	Align space
+			//	B	297	Always align text left
+			mLeaderStyle.TextAlignAlwaysLeft = this._objectReader.ReadBit();
+			//	BD	46	Align space
 			mLeaderStyle.AlignSpace = this._objectReader.ReadBitDouble();
+
 			//	H	343	Block handle (hard pointer)
 			template.BlockContentHandle = this.handleReference();
+
 			//	CMC	94	Block color
 			mLeaderStyle.BlockContentColor = this._mergedReaders.ReadCmColor();
 			//	3BD	47,49,140	Block scale vector
@@ -3615,15 +3619,21 @@ namespace ACadSharp.IO.DWG
 			//	BD	143	Break size
 			mLeaderStyle.BreakGapSize = this._objectReader.ReadBitDouble();
 
-			//	BS	271	Attachment direction (see paragraph on LEADER for more details).
-			mLeaderStyle.TextAttachmentDirection = (TextAttachmentDirectionType)this._objectReader.ReadBitShort();
-			//	BS	273	Top attachment (see paragraph on LEADER for more details).
-			mLeaderStyle.TextBottomAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
-			//	BS	272	Bottom attachment (see paragraph on LEADER for more details).
-			mLeaderStyle.TextTopAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
+			if (this.R2010Plus)
+			{
+				//	BS	271	Attachment direction (see paragraph on LEADER for more details).
+				mLeaderStyle.TextAttachmentDirection = (TextAttachmentDirectionType)this._objectReader.ReadBitShort();
+				//	BS	273	Top attachment (see paragraph on LEADER for more details).
+				mLeaderStyle.TextBottomAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
+				//	BS	272	Bottom attachment (see paragraph on LEADER for more details).
+				mLeaderStyle.TextTopAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
+			}
 
-			//	B	298 Undocumented, found in DXF
-			mLeaderStyle.UnknownFlag298 = this._objectReader.ReadBit();
+			if (this.R2013Plus)
+			{
+				//	B	298 Undocumented, found in DXF
+				mLeaderStyle.UnknownFlag298 = this._objectReader.ReadBit();
+			}
 
 			return template;
 		}
