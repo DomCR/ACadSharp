@@ -30,7 +30,6 @@ namespace ACadSharp.IO.DWG
 				case Material:
 				case MultiLeaderAnnotContext:
 				case MultiLeaderStyle when !this.R2010Plus:
-				case SortEntitiesTable:
 				case UnknownNonGraphicalObject:
 				case VisualStyle:
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
@@ -753,7 +752,6 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Numentries BL number of entries
 			this._writer.WriteBitLong(sortEntitiesTable.Sorters.Count());
-
 			foreach (var item in sortEntitiesTable.Sorters)
 			{
 				//Sort handle(numentries of these, CODE 0, i.e.part of the main bit stream, not of the handle bit stream!).
