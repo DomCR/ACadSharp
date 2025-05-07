@@ -494,6 +494,7 @@ namespace ACadSharp.IO.DXF
 				case 1 or 3 when tmp.CadObject is MText mtext:
 					mtext.Value += this._reader.ValueAsString;
 					return true;
+				case 50 when tmp.CadObject is MText://Read only for MText
 				case 70:
 				case 74:
 				case 101:
