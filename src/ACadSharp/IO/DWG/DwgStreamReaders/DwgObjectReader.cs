@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System;
-using static ACadSharp.Objects.MultiLeaderAnnotContext;
+using static ACadSharp.Objects.MultiLeaderObjectContextData;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
 using System.Globalization;
@@ -1052,6 +1052,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "MULTILEADER":
 					template = this.readMultiLeader();
+					break;
+				case "ACDB_MLEADEROBJECTCONTEXTDATA_CLASS":
+					template = this.readMultiLeaderAnnotContext();
 					break;
 				case "MLEADERSTYLE":
 					template = this.readMultiLeaderStyle();
@@ -3111,6 +3114,7 @@ namespace ACadSharp.IO.DWG
 		{
 			MultiLeader mLeader = new MultiLeader();
 			CadMLeaderTemplate template = new CadMLeaderTemplate(mLeader);
+			template.CadMLeaderAnnotContextTemplate = new CadMLeaderAnnotContextTemplate(mLeader.ContextData);
 
 			this.readCommonEntityData(template);
 
@@ -3120,7 +3124,7 @@ namespace ACadSharp.IO.DWG
 				var f270 = this._objectReader.ReadBitShort();
 			}
 
-			this.readMultiLeaderAnnotContext(mLeader.ContextData, template);
+			this.readMultiLeaderAnnotContext(mLeader.ContextData, template.CadMLeaderAnnotContextTemplate);
 
 			//	Multileader Common data
 			//	340 Leader StyleId (handle)
@@ -3246,10 +3250,59 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private MultiLeaderAnnotContext readMultiLeaderAnnotContext(MultiLeaderAnnotContext annotContext, CadMLeaderTemplate template)
+		private CadTemplate readObjectContextData(CadTemplate template)
+		{ 
+			this.readCommonNonEntityData(template);
+			ObjectContextData contextData = (ObjectContextData)template.CadObject;
+
+			//BS	70	Version (default value is 3).
+			contextData.Version = _objectReader.ReadBitShort();
+			//B	-	Has file to extension dictionary (default value is true).
+			contextData.HasFileToExtensionDictionary = _objectReader.ReadBit();
+			//B	290	Default flag (default value is false).
+			contextData.Default = _objectReader.ReadBit();
+
+			return template;
+		}
+
+
+		private CadTemplate readAnnotScaleObjectContextData(CadAnnotScaleObjectContextDataTemplate template)
+		{
+			this.readObjectContextData(template);
+			template.ScaleHandle = this.handleReference();
+
+			return template;
+		}
+
+		private CadTemplate readMultiLeaderAnnotContext()
+		{
+			MultiLeaderObjectContextData annotContext = new MultiLeaderObjectContextData();
+			CadMLeaderAnnotContextTemplate template = new CadMLeaderAnnotContextTemplate(annotContext);
+
+			this.readAnnotScaleObjectContextData(template);
+			this.readMultiLeaderAnnotContext(annotContext, template);
+
+			return template;
+		}
+
+
+		private MultiLeaderObjectContextData readMultiLeaderAnnotContext(MultiLeaderObjectContextData annotContext, CadMLeaderAnnotContextTemplate template)
 		{
 			//	BL	-	Number of leader roots
 			int leaderRootCount = this._objectReader.ReadBitLong();
+			if (leaderRootCount == 0)
+			{
+				bool b0 = _objectReader.ReadBit();
+				bool b1 = _objectReader.ReadBit();
+				bool b2 = _objectReader.ReadBit();
+				bool b3 = _objectReader.ReadBit();
+				bool b4 = _objectReader.ReadBit();
+				bool b5 = _objectReader.ReadBit();
+				bool b6 = _objectReader.ReadBit();
+
+				leaderRootCount = b5 ? 2 : 1;
+			}
+
 			for (int i = 0; i < leaderRootCount; i++)
 			{
 				annotContext.LeaderRoots.Add(this.readLeaderRoot(template));
@@ -3283,7 +3336,7 @@ namespace ACadSharp.IO.DWG
 				//	3BD	11	Normal vector
 				annotContext.TextNormal = this._objectReader.Read3BitDouble();
 				//	H	340	Text style handle (hard pointer)
-				template.AnnotContextTextStyleHandle = this.handleReference();
+				template.TextStyleHandle = this.handleReference();
 				//	3BD	12	Location
 				annotContext.TextLocation = this._objectReader.Read3BitDouble();
 				//	3BD	13	Direction
@@ -3344,7 +3397,7 @@ namespace ACadSharp.IO.DWG
 				//B	296	Has contents block
 				//IF Has contents block
 				//	H	341	AcDbBlockTableRecord handle (soft pointer)
-				template.AnnotContextBlockRecordHandle = this.handleReference();
+				template.BlockRecordHandle = this.handleReference();
 				//	3BD	14	Normal vector
 				annotContext.BlockContentNormal = this._objectReader.Read3BitDouble();
 				//	3BD	15	Location
@@ -3410,7 +3463,7 @@ namespace ACadSharp.IO.DWG
 			return annotContext;
 		}
 
-		private LeaderRoot readLeaderRoot(CadMLeaderTemplate template)
+		private LeaderRoot readLeaderRoot(CadMLeaderAnnotContextTemplate template)
 		{
 			LeaderRoot leaderRoot = new LeaderRoot();
 
@@ -3457,10 +3510,10 @@ namespace ACadSharp.IO.DWG
 			return leaderRoot;
 		}
 
-		private LeaderLine readLeaderLine(CadMLeaderTemplate template)
+		private LeaderLine readLeaderLine(CadMLeaderAnnotContextTemplate template)
 		{
 			LeaderLine leaderLine = new LeaderLine();
-			CadMLeaderTemplate.LeaderLineSubTemplate leaderLineSubTemplate = new CadMLeaderTemplate.LeaderLineSubTemplate(leaderLine);
+			CadMLeaderAnnotContextTemplate.LeaderLineSubTemplate leaderLineSubTemplate = new CadMLeaderAnnotContextTemplate.LeaderLineSubTemplate(leaderLine);
 			template.LeaderLineSubTemplates.Add(leaderLineSubTemplate);
 
 			//	Points

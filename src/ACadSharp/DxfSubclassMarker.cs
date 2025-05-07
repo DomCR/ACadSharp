@@ -47,7 +47,7 @@
 		public const string Material = "AcDbMaterial";
 		public const string MultiLeader = "AcDbMLeader";
 		public const string MLeaderStyle = "AcDbMLeaderStyle";
-		public const string MultiLeaderAnnotContext = "AcDbMultiLeaderAnnotContext";
+		public const string MultiLeaderObjectContextData = "AcDbMLeaderObjectContextData";
 		public const string LwPolyline = "AcDbPolyline";
 		public const string PolylineVertex = "AcDb2dVertex";
 		public const string Polyline3d = "AcDb3dPolyline";
@@ -85,6 +85,8 @@
 		public const string DictionaryVariables = "DictionaryVariables";
 		public const string Scale = "AcDbScale";
 		public const string GeoData = "AcDbGeoData";
+		public const string ObjectContextData = "AcDbObjectContextData";
+		public const string AnnotScaleObjectContextData = "AcDbAnnotScaleObjectContextData";
 
 		//Dynamic block constants
 		public const string EvalGraph = "AcDbEvalGraph";

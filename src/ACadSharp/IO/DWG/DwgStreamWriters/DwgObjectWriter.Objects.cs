@@ -28,6 +28,8 @@ namespace ACadSharp.IO.DWG
 			{
 				case EvaluationGraph:
 				case Material:
+				//	case MultiLeaderObjectContextData:
+				case MultiLeaderStyle when !this.R2010Plus:
 				case SortEntitiesTable:
 				case UnknownNonGraphicalObject:
 				case VisualStyle:
@@ -79,6 +81,11 @@ namespace ACadSharp.IO.DWG
 					break;
 				case MultiLeaderStyle multiLeaderStyle:
 					this.writeMultiLeaderStyle(multiLeaderStyle);
+					break;
+				case MultiLeaderObjectContextData multiLeaderObjectContextData:
+					this.writeObjectContextData(multiLeaderObjectContextData);
+					this.writeAnnotScaleObjectContextData(multiLeaderObjectContextData);
+					this.writeMultiLeaderAnnotContext(multiLeaderObjectContextData);
 					break;
 				case PlotSettings plotsettings:
 					this.writePlotSettings(plotsettings);
@@ -530,11 +537,13 @@ namespace ACadSharp.IO.DWG
 
 		private void writeMultiLeaderStyle(MultiLeaderStyle mLeaderStyle)
 		{
-			if (this.R2010Plus)
+			if (!R2010Plus)
 			{
-				//	BS	179	Version expected: 2
-				this._writer.WriteBitShort(2);
+				return;
 			}
+
+			//	BS	179	Version expected: 2
+			this._writer.WriteBitShort(2);
 
 			//	BS	170	Content type (see paragraph on LEADER for more details).
 			this._writer.WriteBitShort((short)mLeaderStyle.ContentType);
@@ -543,7 +552,7 @@ namespace ACadSharp.IO.DWG
 			//	BS	172	Draw leader order (0 = draw leader head first, 1 = draw leader tail first)
 			this._writer.WriteBitShort((short)mLeaderStyle.LeaderDrawOrder);
 			//	BL	90	Maximum number of points for leader
-			this._writer.WriteBitLong((short)mLeaderStyle.MaxLeaderSegmentsPoints);
+			this._writer.WriteBitShort((short)mLeaderStyle.MaxLeaderSegmentsPoints);
 			//	BD	40	First segment angle (radians)
 			this._writer.WriteBitDouble(mLeaderStyle.FirstSegmentAngleConstraint);
 			//	BD	41	Second segment angle (radians)
@@ -552,10 +561,8 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitShort((short)mLeaderStyle.PathType);
 			//	CMC	91	Leader line color
 			this._writer.WriteCmColor(mLeaderStyle.LineColor);
-
 			//	H	340	Leader line type handle (hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, mLeaderStyle.LeaderLineType);
-
 			//	BL	92	Leader line weight
 			this._writer.WriteBitLong((short)mLeaderStyle.LeaderLineWeight);
 			//	B	290	Is landing enabled?
@@ -568,24 +575,25 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(mLeaderStyle.LandingDistance);
 			//	TV	3	Style description
 			this._writer.WriteVariableText(mLeaderStyle.Description);
-
 			//	H	341	Arrow head block handle (hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, mLeaderStyle.Arrowhead);
-
 			//	BD	44	Arrow head size
 			this._writer.WriteBitDouble(mLeaderStyle.ArrowheadSize);
 			//	TV	300	Text default
 			this._writer.WriteVariableText(mLeaderStyle.DefaultTextContents);
-
 			//	H	342	Text style handle (hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, mLeaderStyle.TextStyle);
-
 			//	BS	174	Left attachment (see paragraph on LEADER for more details).
 			this._writer.WriteBitShort((short)mLeaderStyle.TextLeftAttachment);
 			//	BS	178	Right attachment (see paragraph on LEADER for more details).
 			this._writer.WriteBitShort((short)mLeaderStyle.TextRightAttachment);
-			//	BS	175	Text angle type (see paragraph on LEADER for more details).
-			this._writer.WriteBitShort((short)mLeaderStyle.TextAngle);
+			if (R2010Plus)
+			{
+				//	IF IsNewFormat OR DXF file
+				//	BS	175	Text angle type (see paragraph on LEADER for more details).
+				this._writer.WriteBitShort((short)mLeaderStyle.TextAngle);
+				//	END IF IsNewFormat OR DXF file
+			}
 			//	BS	176	Text alignment type
 			this._writer.WriteBitShort((short)mLeaderStyle.TextAlignment);
 			//	CMC	93	Text color
@@ -594,14 +602,17 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(mLeaderStyle.TextHeight);
 			//	B	292	Text frame enabled
 			this._writer.WriteBit(mLeaderStyle.TextFrame);
-			//	B	297	Always align text left
-			this._writer.WriteBit(mLeaderStyle.TextAlignAlwaysLeft);
+			if (R2010Plus)
+			{
+				//	IF IsNewFormat OR DXF file
+				//	B	297	Always align text left
+				this._writer.WriteBit(mLeaderStyle.TextAlignAlwaysLeft);
+				//	END IF IsNewFormat OR DXF file
+			}
 			//	BD	46	Align space
 			this._writer.WriteBitDouble(mLeaderStyle.AlignSpace);
-
 			//	H	343	Block handle (hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, mLeaderStyle.BlockContent);
-
 			//	CMC	94	Block color
 			this._writer.WriteCmColor(mLeaderStyle.BlockContentColor);
 			//	3BD	47,49,140	Block scale vector
@@ -626,21 +637,33 @@ namespace ACadSharp.IO.DWG
 			//	BD	143	Break size
 			this._writer.WriteBitDouble(mLeaderStyle.BreakGapSize);
 
-			if (this.R2010Plus)
-			{
-				//	BS	271	Attachment direction (see paragraph on LEADER for more details).
-				this._writer.WriteBitShort((short)mLeaderStyle.TextAttachmentDirection);
-				//	BS	273	Top attachment (see paragraph on LEADER for more details).
-				this._writer.WriteBitShort((short)mLeaderStyle.TextBottomAttachment);
-				//	BS	272	Bottom attachment (see paragraph on LEADER for more details).
-				this._writer.WriteBitShort((short)mLeaderStyle.TextTopAttachment);
-			}
+			//	BS	271	Attachment direction (see paragraph on LEADER for more details).
+			this._writer.WriteBitShort((short)mLeaderStyle.TextAttachmentDirection);
+			//	BS	273	Top attachment (see paragraph on LEADER for more details).
+			this._writer.WriteBitShort((short)mLeaderStyle.TextBottomAttachment);
+			//	BS	272	Bottom attachment (see paragraph on LEADER for more details).
+			this._writer.WriteBitShort((short)mLeaderStyle.TextTopAttachment);
 
-			if (this.R2013Plus)
-			{
-				//	B	298 Undocumented, found in DXF
-				this._writer.WriteBit(mLeaderStyle.UnknownFlag298);
-			}
+			//	B	298 Undocumented, found in DXF
+			this._writer.WriteBit(mLeaderStyle.UnknownFlag298);
+		}
+
+
+		private void writeObjectContextData(ObjectContextData objectContextData) {
+			//BS	70	Version.
+			this._writer.WriteBitShort(objectContextData.Version);
+			//B	-	Has file to extension dictionary.
+			this._writer.WriteBit(objectContextData.HasFileToExtensionDictionary);
+			//B	290	Default flag.
+			this._writer.WriteBit(objectContextData.Default);
+		}
+
+		private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData annotScaleObjectContextData) {
+			this._writer.HandleReference(DwgReferenceType.HardPointer, annotScaleObjectContextData.Scale);
+		}
+
+		private void writeMultiLeaderAnnotContext(MultiLeaderObjectContextData multiLeaderAnnotContext) {
+			writeMultiLeaderAnnotContextSubObject(false, multiLeaderAnnotContext);
 		}
 
 		private void writePlotSettings(PlotSettings plot)

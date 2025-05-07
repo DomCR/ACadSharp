@@ -426,6 +426,18 @@ namespace ACadSharp.Classes
 				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
 				WasZombie = false,
 			});
+
+			//AcDbMLeaderObjectContextData
+			doc.Classes.AddOrUpdate(new DxfClass {
+				CppClassName = DxfSubclassMarker.MultiLeaderObjectContextData,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.MC0_0,
+				DxfName = DxfFileToken.ObjectMLeaderContextData,
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
 		}
 
 		/// <summary>
