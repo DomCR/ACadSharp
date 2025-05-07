@@ -86,7 +86,7 @@ namespace ACadSharp.IO.DXF
 						//Entries of the dictionary are assigned in the template
 						break;
 					case CadBlockRecordTemplate record when template.CadObject is Entity entity:
-						//No longer needed
+						//The entries should be assigned in the blocks or entities section
 						break;
 					case CadPolyLineTemplate pline when template.CadObject is Vertex v:
 						pline.VertexHandles.Add(v.Handle);
