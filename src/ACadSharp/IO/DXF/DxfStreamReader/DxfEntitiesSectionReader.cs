@@ -42,6 +42,11 @@ namespace ACadSharp.IO.DXF
 				//Add the object and the template to the builder
 				this._builder.AddTemplate(template);
 
+				if(template.CadObject.Handle == 51790)
+				{
+
+				}
+
 				if (template.OwnerHandle == null)
 				{
 					this._builder.ModelSpaceEntities.Add(template.CadObject.Handle);
