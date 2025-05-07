@@ -774,7 +774,7 @@ namespace ACadSharp.IO.DWG
 			ms.EndianConverter = new LittleEndianConverter();
 
 			foreach (XRecord.Entry entry in xrecord.Entries)
-			{
+			{				
 				if (entry.Value == null)
 				{
 					continue;
