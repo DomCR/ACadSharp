@@ -115,12 +115,17 @@ namespace ACadSharp.IO.DXF
 				record.BlockEntity = blckEntity;
 				recordTemplate = new CadBlockRecordTemplate(record);
 
+				this._builder.AddTemplate(recordTemplate);
 				this._builder.BlockRecords.Add(record);
 
 				if (recordTemplate.CadObject.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase))
 				{
 					this._builder.ModelSpaceTemplate = recordTemplate;
 				}
+			}
+			else if (this._builder.TryGetObjectTemplate<CadBlockRecordTemplate>(record.Handle, out recordTemplate))
+			{
+
 			}
 			else
 			{
@@ -151,6 +156,12 @@ namespace ACadSharp.IO.DXF
 
 				//Add the object and the template to the builder
 				this._builder.AddTemplate(entityTemplate);
+
+				if (entityTemplate.CadObject.Handle == 0)
+				{
+
+				}
+
 				recordTemplate.OwnedObjectsHandlers.Add(entityTemplate.CadObject.Handle);
 			}
 
