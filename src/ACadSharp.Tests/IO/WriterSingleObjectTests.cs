@@ -64,7 +64,13 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomScale)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomBookColor)));
-			Data.Add(new(nameof(SingleCaseGenerator.DimensionsTextPoint)));
+			Data.Add(new(nameof(SingleCaseGenerator.DimensionsInBlock)));
+			Data.Add(new(nameof(SingleCaseGenerator.DimensionAligned)));
+			Data.Add(new(nameof(SingleCaseGenerator.DimensionLinear)));
+			Data.Add(new(nameof(SingleCaseGenerator.DimensionOrdinate)));
+			Data.Add(new(nameof(SingleCaseGenerator.DimensionDiameter)));
+			Data.Add(new(nameof(SingleCaseGenerator.DimensionRadius)));
+			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionWithLineType)));
 			Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
 			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
@@ -454,11 +460,116 @@ namespace ACadSharp.Tests.IO
 				this.GetType().GetMethod(this.Name).Invoke(this, null);
 			}
 
-			public void DimensionsTextPoint()
+			public void DimensionAligned()
 			{
-				DimensionAligned dim = new DimensionAligned();
+				DimensionAligned dim = new DimensionAligned
+				{
+					SecondPoint = new XYZ(10, 0, 0),
+					Offset = 0.5,
+					//DefinitionPoint = new XYZ(10, 1, 0),
+					//TextMiddlePoint = new XYZ(5, 1, 0)
+				};
 
-				dim.SecondPoint = new XYZ(10, 0, 0);
+				DimensionAligned dim1 = new DimensionAligned
+				{
+					SecondPoint = new XYZ(10, 0, 0),
+					Offset = 2,
+					TextMiddlePoint = new XYZ(5, 1, 0)
+				};
+
+				this.Document.Entities.Add(dim);
+				this.Document.Entities.Add(dim1);
+
+				dim.UpdateBlock();
+				dim1.UpdateBlock();
+			}
+
+			public void DimensionDiameter()
+			{
+				DimensionDiameter dim = new DimensionDiameter
+				{
+					AngleVertex = new XYZ(10, 10, 0),
+				};
+
+				this.Document.Entities.Add(dim);
+
+				dim.UpdateBlock();
+
+				dim = new DimensionDiameter
+				{
+					DefinitionPoint = new XYZ(0, 0, 0),
+					AngleVertex = new XYZ(10, 0, 0),
+				};
+
+				this.Document.Entities.Add(dim);
+
+				dim.UpdateBlock();
+			}
+
+			public void DimensionLinear()
+			{
+				DimensionLinear dim = new DimensionLinear
+				{
+					SecondPoint = new XYZ(10, 10, 0),
+					//Offset = 0.5,
+					//DefinitionPoint = new XYZ(10, 1, 0),
+					//TextMiddlePoint = new XYZ(5, 1, 0)
+				};
+
+				DimensionLinear dim1 = new DimensionLinear
+				{
+					SecondPoint = new XYZ(10, 0, 0),
+					Offset = 2,
+					TextMiddlePoint = new XYZ(5, 1, 0)
+				};
+
+				this.Document.Entities.Add(dim);
+				this.Document.Entities.Add(dim1);
+
+				dim.UpdateBlock();
+				dim1.UpdateBlock();
+			}
+
+			public void DimensionOrdinate()
+			{
+				DimensionOrdinate dim = new DimensionOrdinate
+				{
+					FeatureLocation = new XYZ(10, 10, 0),
+				};
+
+				this.Document.Entities.Add(dim);
+
+				dim.UpdateBlock();
+			}
+
+			public void DimensionRadius()
+			{
+				DimensionRadius dim = new DimensionRadius
+				{
+					AngleVertex = new XYZ(10, 10, 0),
+				};
+
+				this.Document.Entities.Add(dim);
+
+				dim.UpdateBlock();
+			}
+
+			public void Dimensions()
+			{
+				DimensionAligned dim = new DimensionAligned
+				{
+					SecondPoint = new XYZ(10)
+				};
+
+				this.Document.Entities.Add(dim);
+
+				dim.UpdateBlock();
+
+				ACadSharp.Entities.Line line = new ACadSharp.Entities.Line
+				{
+					StartPoint = new CSMath.XYZ(1, 0, 0),
+					EndPoint = new CSMath.XYZ(5, 5, 0)
+				};
 
 				dim.Text = "HELLO";
 				dim.IsTextUserDefinedLocation = true;
@@ -471,6 +582,40 @@ namespace ACadSharp.Tests.IO
 				dim1.SecondPoint = new XYZ(10, 0, 0);
 
 				this.Document.Entities.Add(dim1);
+			}
+
+			public void DimensionsInBlock()
+			{
+				DimensionAligned dim = new DimensionAligned
+				{
+					SecondPoint = new XYZ(10, 0, 0)
+				};
+
+				ACadSharp.Entities.Line line = new ACadSharp.Entities.Line
+				{
+					StartPoint = new CSMath.XYZ(1, 0, 0),
+					EndPoint = new CSMath.XYZ(5, 5, 0)
+				};
+
+				DimensionLinear dim1 = new DimensionLinear()
+				{
+					FirstPoint = line.StartPoint,
+					SecondPoint = line.EndPoint
+				};
+
+				BlockRecord record = new BlockRecord("dim_block");
+				record.Entities.Add(dim);
+				record.Entities.Add(line);
+				record.Entities.Add(dim1);
+
+				this.Document.Entities.Add(new Insert(record));
+
+				DimensionAligned c = (DimensionAligned)dim.Clone();
+				Document.Entities.Add(c);
+
+				dim.UpdateBlock();
+				dim1.UpdateBlock();
+				c.UpdateBlock();
 			}
 
 			public void DimensionWithLineType()
