@@ -165,14 +165,7 @@ namespace ACadSharp.Entities
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				if (this.Document != null)
-				{
-					this._style = this.updateTable(value, this.Document.DimensionStyles);
-				}
-				else
-				{
-					this._style = value;
-				}
+				this._style = this.updateTable(value, this.Document?.DimensionStyles);
 			}
 		}
 
@@ -280,6 +273,11 @@ namespace ACadSharp.Entities
 			if (e.Item.Equals(this.Style))
 			{
 				this.Style = this.Document.DimensionStyles[DimensionStyle.DefaultName];
+			}
+
+			if (e.Item.Equals(this.Block))
+			{
+				this._block = null;
 			}
 		}
 	}
