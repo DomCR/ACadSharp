@@ -24,19 +24,26 @@ namespace ACadSharp.Entities
 		public AttachmentPointType AttachmentPoint { get; set; }
 
 		/// <summary>
-		/// Block that contains the entities that make up the dimension picture
+		/// Block that contains the entities that make up the dimension picture.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 2)]
-		public BlockRecord Block { get; set; }
+		public BlockRecord Block
+		{
+			get { return this._block; }
+			set
+			{
+				this._block = this.updateTable(this._block, this.Document?.BlockRecords);
+			}
+		}
 
 		/// <summary>
-		/// Definition point(in WCS)
+		/// Definition point for the dimension line (in WCS).
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ DefinitionPoint { get; set; }
 
 		/// <summary>
-		/// Dimension type
+		/// Dimension type.
 		/// </summary>
 		[DxfCodeValue(70)]
 		public DimensionType Flags
@@ -52,7 +59,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the first arrow
+		/// Gets or sets a value indicating whether the first arrow.
 		/// is to be flipped.
 		/// </summary>
 		/// <value>
@@ -205,6 +212,8 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(280)]
 		public byte Version { get; set; }
 
+		protected BlockRecord _block;
+
 		//This group value is the negative of the angle between the OCS X axis and the UCS X axis.It is always in the XY plane of the OCS
 		protected DimensionType _flags;
 
@@ -222,11 +231,11 @@ namespace ACadSharp.Entities
 			XYZ newNormal = this.transformNormal(transform, this.Normal);
 			this.getWorldMatrix(transform, Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
 
-			this.DefinitionPoint = applyWorldMatrix(this.DefinitionPoint, transform, transOW, transWO);
+			this.DefinitionPoint = this.applyWorldMatrix(this.DefinitionPoint, transform, transOW, transWO);
 
 			if (this.IsTextUserDefinedLocation)
 			{
-				this.TextMiddlePoint = applyWorldMatrix(this.TextMiddlePoint, transform, transOW, transWO);
+				this.TextMiddlePoint = this.applyWorldMatrix(this.TextMiddlePoint, transform, transOW, transWO);
 			}
 
 			this.Normal = newNormal;
@@ -247,17 +256,21 @@ namespace ACadSharp.Entities
 			base.AssignDocument(doc);
 
 			this._style = this.updateTable(this.Style, doc.DimensionStyles);
+			this._block = this.updateTable(this.Block, doc.BlockRecords);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
+			doc.BlockRecords.OnRemove += this.tableOnRemove;
 		}
 
 		internal override void UnassignDocument()
 		{
 			this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
+			this.Document.BlockRecords.OnRemove -= this.tableOnRemove;
 
 			base.UnassignDocument();
 
-			this.Style = (DimensionStyle)this.Style.Clone();
+			this.Style = (DimensionStyle)this.Style?.Clone();
+			this.Block = (BlockRecord)this.Block?.Clone();
 		}
 
 		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
