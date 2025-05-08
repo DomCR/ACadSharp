@@ -242,6 +242,16 @@ namespace ACadSharp.Entities
 			return clone;
 		}
 
+		public string GetMeasurementText()
+		{
+			return this.GetMeasurementText(this.Style);
+		}
+
+		public string GetMeasurementText(DimensionStyle style)
+		{
+			throw new NotImplementedException();
+		}
+
 		internal override void AssignDocument(CadDocument doc)
 		{
 			base.AssignDocument(doc);
