@@ -2,6 +2,7 @@
 using CSMath;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -24,7 +25,14 @@ namespace ACadSharp.Entities
 
 		public Polyline3D() : base()
 		{
-			this.Vertices.OnAdd += this.verticesOnAdd;
+		}
+
+		public Polyline3D(IEnumerable<XYZ> vertices, bool isClosed = false) : base(vertices.Select(v => new Vertex3D(v)), isClosed)
+		{
+		}
+
+		public Polyline3D(IEnumerable<Vertex3D> vertices, bool isColsed) : base(vertices, isColsed)
+		{
 		}
 
 		public override IEnumerable<Entity> Explode()
@@ -32,7 +40,7 @@ namespace ACadSharp.Entities
 			return Polyline.Explode(this);
 		}
 
-		private void verticesOnAdd(object sender, CollectionChangedEventArgs e)
+		protected override void verticesOnAdd(object sender, CollectionChangedEventArgs e)
 		{
 			if (e.Item is not Vertex3D)
 			{

@@ -1,12 +1,9 @@
 ﻿using ACadSharp.IO;
 using ACadSharp.Tests.Common;
 using ACadSharp.Tests.TestModels;
-using System;
 using System.IO;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.Tests.IO
 {
@@ -62,7 +59,7 @@ namespace ACadSharp.Tests.IO
 		{
 			if (e.NotificationType == NotificationType.Error)
 			{
-				//throw e.Exception;
+				throw e.Exception;
 			}
 
 			_output.WriteLine(e.Message);

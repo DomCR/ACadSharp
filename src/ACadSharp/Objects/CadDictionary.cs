@@ -292,10 +292,21 @@ namespace ACadSharp.Objects
 			{
 				item.Owner = null;
 				OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));
+				item.OnNameChanged -= this.onEntryNameChanged;
 				return true;
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// Removes a <see cref="NonGraphicalObject"/> from the collection, this method triggers <see cref="OnRemove"/>
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns>true if the element is successfully removed; otherwise, false.</returns>
+		public bool Remove(string key)
+		{
+			return this.Remove(key, out _);
 		}
 
 		/// <summary>

@@ -6,6 +6,7 @@ using ACadSharp.Entities;
 using Xunit.Abstractions;
 using ACadSharp.Blocks;
 using System.Linq;
+using System.Diagnostics;
 
 namespace ACadSharp.Tests
 {
@@ -13,7 +14,9 @@ namespace ACadSharp.Tests
 	{
 		public static readonly TheoryData<Type> EntityTypes;
 
-		protected readonly DocumentIntegrity _docIntegrity;
+		private readonly DocumentIntegrity _docIntegrity;
+
+		private readonly ITestOutputHelper _output;
 
 		static CadDocumentTests()
 		{
@@ -32,34 +35,41 @@ namespace ACadSharp.Tests
 
 		public CadDocumentTests(ITestOutputHelper output)
 		{
+			this._output = output;
 			this._docIntegrity = new DocumentIntegrity(output);
 		}
 
 		[Fact]
-		public void CadDocumentTest()
+		public void AddCadObjectStressTest()
 		{
 			CadDocument doc = new CadDocument();
 
-			this._docIntegrity.AssertTableHierarchy(doc);
+			Stopwatch stopwatch = new Stopwatch();
+			this._output.WriteLine("StopWatch start");
+			stopwatch.Start();
+
+			for (int i = 0; i < 10000; i++)
+			{
+				Polyline3D polyline = new Polyline3D();
+				for (int j = 0; j < 50; j++)
+				{
+					polyline.Vertices.Add(new Vertex3D() { Location = new CSMath.XYZ(i, j, 0) });
+				}
+
+				doc.Entities.Add(polyline);
+			}
+
+			stopwatch.Stop();
+			this._output.WriteLine(stopwatch.Elapsed.TotalSeconds.ToString());
+
+			if (TestVariables.LocalEnv)
+			{
+				Assert.True(stopwatch.Elapsed.TotalSeconds < 5);
+			}
 		}
 
 		[Fact]
-		public void CadDocumentDefaultTest()
-		{
-			CadDocument doc = new CadDocument();
-
-			this._docIntegrity.AssertDocumentDefaults(doc);
-			this._docIntegrity.AssertTableHierarchy(doc);
-			this._docIntegrity.AssertBlockRecords(doc);
-
-			Assert.Equal(2, doc.BlockRecords.Count);
-			Assert.Equal(1, doc.Layers.Count);
-			Assert.Equal(3, doc.LineTypes.Count);
-			Assert.Equal(2, doc.Layouts.Count());
-		}
-
-		[Fact]
-		public void AddCadObject()
+		public void AddCadObjectTest()
 		{
 			Line line = new Line();
 			CadDocument doc = new CadDocument();
@@ -94,6 +104,29 @@ namespace ACadSharp.Tests
 			Assert.False(0 == layer.Handle);
 			Assert.NotNull(doc.Layers[layer.Name]);
 			Assert.Equal(layer, doc.Layers[layer.Name]);
+		}
+
+		[Fact]
+		public void CadDocumentDefaultTest()
+		{
+			CadDocument doc = new CadDocument();
+
+			this._docIntegrity.AssertDocumentDefaults(doc);
+			this._docIntegrity.AssertTableHierarchy(doc);
+			this._docIntegrity.AssertBlockRecords(doc);
+
+			Assert.Equal(2, doc.BlockRecords.Count);
+			Assert.Equal(1, doc.Layers.Count);
+			Assert.Equal(3, doc.LineTypes.Count);
+			Assert.Equal(2, doc.Layouts.Count());
+		}
+
+		[Fact]
+		public void CadDocumentTest()
+		{
+			CadDocument doc = new CadDocument();
+
+			this._docIntegrity.AssertTableHierarchy(doc);
 		}
 
 		[Fact]
@@ -134,6 +167,19 @@ namespace ACadSharp.Tests
 			Assert.False(0 == lineType.Handle);
 			Assert.NotNull(doc.LineTypes[lineType.Name]);
 			Assert.Equal(lineType, doc.LineTypes[lineType.Name]);
+		}
+
+		[Fact]
+		public void ChangeEntityLineTypeNoDocument()
+		{
+			Line line = new Line();
+			LineType lineType = new LineType("test_linetype");
+
+			line.LineType = lineType;
+
+			//Assert layer
+			Assert.Equal(line.LineType, lineType);
+			Assert.True(0 == lineType.Handle);
 		}
 
 		[Fact]
@@ -188,6 +234,27 @@ namespace ACadSharp.Tests
 		}
 
 		[Fact]
+		public void Get0HandleObject()
+		{
+			CadDocument doc = new CadDocument();
+
+			Assert.Null(doc.GetCadObject(0));
+			Assert.False(doc.TryGetCadObject(0, out CadObject cadObject));
+			Assert.Null(cadObject);
+		}
+
+		[Fact]
+		public void NotAllowDuplicate()
+		{
+			Line line = new Line();
+			CadDocument doc = new CadDocument();
+
+			doc.Entities.Add(line);
+
+			Assert.Throws<ArgumentException>(() => doc.Entities.Add(line));
+		}
+
+		[Fact]
 		public void RemoveCadObject()
 		{
 			Line line = new Line();
@@ -207,16 +274,6 @@ namespace ACadSharp.Tests
 			Assert.Null(l.Layer.Document);
 			Assert.True(0 == l.LineType.Handle);
 			Assert.Null(l.LineType.Document);
-		}
-
-		[Fact]
-		public void Get0HandleObject()
-		{
-			CadDocument doc = new CadDocument();
-
-			Assert.Null(doc.GetCadObject(0));
-			Assert.False(doc.TryGetCadObject(0, out CadObject cadObject));
-			Assert.Null(cadObject);
 		}
 
 		[Fact]
@@ -258,14 +315,26 @@ namespace ACadSharp.Tests
 		}
 
 		[Fact]
-		public void NotAllowDuplicate()
+		public void RestoreHandlesTest()
 		{
+			ulong bigHandle = 10000;
 			Line line = new Line();
+			line.Handle = bigHandle;
+
 			CadDocument doc = new CadDocument();
 
 			doc.Entities.Add(line);
 
-			Assert.Throws<ArgumentException>(() => doc.Entities.Add(line));
+			doc.RestoreHandles();
+
+			CadObject l = doc.GetCadObject(line.Handle);
+
+			//Assert existing element
+			Assert.NotNull(l);
+			Assert.Equal(line, l);
+			Assert.False(0 == l.Handle);
+			Assert.Equal(line.Handle, l.Handle);
+			Assert.True(line.Handle < bigHandle);
 		}
 	}
 }

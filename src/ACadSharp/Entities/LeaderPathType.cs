@@ -6,12 +6,12 @@
 	public enum LeaderPathType
 	{
 		/// <summary>
-		/// Draws the leader line as a set of straight line segments
+		/// Draws the leader line as a set of straight line segments.
 		/// </summary>
 		StraightLineSegments = 0,
 
 		/// <summary>
-		/// Draws the leader line as a spline
+		/// Draws the leader line as a spline.
 		/// </summary>
 		Spline = 1
 	}

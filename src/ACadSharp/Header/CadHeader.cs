@@ -383,10 +383,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMAPOST", 1)]
 		public string DimensionAlternateDimensioningSuffix
 		{
-			get { return this.DimensionStyleOverrides.AlternateDimensioningSuffix; }
+			get { return this._dimensionStyleOverrides.AlternateDimensioningSuffix; }
 			set
 			{
-				this.DimensionStyleOverrides.AlternateDimensioningSuffix = value;
+				this._dimensionStyleOverrides.AlternateDimensioningSuffix = value;
 			}
 		}
 
@@ -399,10 +399,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMALTD", 70)]
 		public short DimensionAlternateUnitDecimalPlaces
 		{
-			get { return this.DimensionStyleOverrides.AlternateUnitDecimalPlaces; }
+			get { return this._dimensionStyleOverrides.AlternateUnitDecimalPlaces; }
 			set
 			{
-				this.DimensionStyleOverrides.AlternateUnitDecimalPlaces = value;
+				this._dimensionStyleOverrides.AlternateUnitDecimalPlaces = value;
 			}
 		}
 
@@ -415,10 +415,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMALT", 70)]
 		public bool DimensionAlternateUnitDimensioning
 		{
-			get { return this.DimensionStyleOverrides.AlternateUnitDimensioning; }
+			get { return this._dimensionStyleOverrides.AlternateUnitDimensioning; }
 			set
 			{
-				this.DimensionStyleOverrides.AlternateUnitDimensioning = value;
+				this._dimensionStyleOverrides.AlternateUnitDimensioning = value;
 			}
 		}
 
@@ -431,10 +431,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMALTU", 70)]
 		public LinearUnitFormat DimensionAlternateUnitFormat
 		{
-			get { return this.DimensionStyleOverrides.AlternateUnitFormat; }
+			get { return this._dimensionStyleOverrides.AlternateUnitFormat; }
 			set
 			{
-				this.DimensionStyleOverrides.AlternateUnitFormat = value;
+				this._dimensionStyleOverrides.AlternateUnitFormat = value;
 			}
 		}
 
@@ -447,10 +447,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMALTRND", 40)]
 		public double DimensionAlternateUnitRounding
 		{
-			get { return this.DimensionStyleOverrides.AlternateUnitRounding; }
+			get { return this._dimensionStyleOverrides.AlternateUnitRounding; }
 			set
 			{
-				this.DimensionStyleOverrides.AlternateUnitRounding = value;
+				this._dimensionStyleOverrides.AlternateUnitRounding = value;
 			}
 		}
 
@@ -463,10 +463,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMALTF", 40)]
 		public double DimensionAlternateUnitScaleFactor
 		{
-			get { return this.DimensionStyleOverrides.AlternateUnitScaleFactor; }
+			get { return this._dimensionStyleOverrides.AlternateUnitScaleFactor; }
 			set
 			{
-				this.DimensionStyleOverrides.AlternateUnitScaleFactor = value;
+				this._dimensionStyleOverrides.AlternateUnitScaleFactor = value;
 			}
 		}
 
@@ -479,10 +479,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMALTTD", 70)]
 		public short DimensionAlternateUnitToleranceDecimalPlaces
 		{
-			get { return this.DimensionStyleOverrides.AlternateUnitToleranceDecimalPlaces; }
+			get { return this._dimensionStyleOverrides.AlternateUnitToleranceDecimalPlaces; }
 			set
 			{
-				this.DimensionStyleOverrides.AlternateUnitToleranceDecimalPlaces = value;
+				this._dimensionStyleOverrides.AlternateUnitToleranceDecimalPlaces = value;
 			}
 		}
 
@@ -495,10 +495,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMALTTZ", 70)]
 		public ZeroHandling DimensionAlternateUnitToleranceZeroHandling
 		{
-			get { return this.DimensionStyleOverrides.AlternateUnitToleranceZeroHandling; }
+			get { return this._dimensionStyleOverrides.AlternateUnitToleranceZeroHandling; }
 			set
 			{
-				this.DimensionStyleOverrides.AlternateUnitToleranceZeroHandling = value;
+				this._dimensionStyleOverrides.AlternateUnitToleranceZeroHandling = value;
 			}
 		}
 
@@ -511,10 +511,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMALTZ", 70)]
 		public ZeroHandling DimensionAlternateUnitZeroHandling
 		{
-			get { return this.DimensionStyleOverrides.AlternateUnitZeroHandling; }
+			get { return this._dimensionStyleOverrides.AlternateUnitZeroHandling; }
 			set
 			{
-				this.DimensionStyleOverrides.AlternateUnitZeroHandling = value;
+				this._dimensionStyleOverrides.AlternateUnitZeroHandling = value;
 			}
 		}
 
@@ -527,10 +527,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMALTMZF", 40)]
 		public double DimensionAltMzf
 		{
-			get { return this.DimensionStyleOverrides.AltMzf; }
+			get { return this._dimensionStyleOverrides.AltMzf; }
 			set
 			{
-				this.DimensionStyleOverrides.AltMzf = value;
+				this._dimensionStyleOverrides.AltMzf = value;
 			}
 		}
 
@@ -543,10 +543,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMALTMZS", 6)]
 		public string DimensionAltMzs
 		{
-			get { return this.DimensionStyleOverrides.AltMzs; }
+			get { return this._dimensionStyleOverrides.AltMzs; }
 			set
 			{
-				this.DimensionStyleOverrides.AltMzs = value;
+				this._dimensionStyleOverrides.AltMzs = value;
 			}
 		}
 
@@ -559,10 +559,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMADEC", 70)]
 		public short DimensionAngularDimensionDecimalPlaces
 		{
-			get { return this.DimensionStyleOverrides.AngularDimensionDecimalPlaces; }
+			get { return this._dimensionStyleOverrides.AngularDimensionDecimalPlaces; }
 			set
 			{
-				this.DimensionStyleOverrides.AngularDimensionDecimalPlaces = value;
+				this._dimensionStyleOverrides.AngularDimensionDecimalPlaces = value;
 			}
 		}
 
@@ -575,10 +575,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMAUNIT", 70)]
 		public AngularUnitFormat DimensionAngularUnit
 		{
-			get { return this.DimensionStyleOverrides.AngularUnit; }
+			get { return this._dimensionStyleOverrides.AngularUnit; }
 			set
 			{
-				this.DimensionStyleOverrides.AngularUnit = value;
+				this._dimensionStyleOverrides.AngularUnit = value;
 			}
 		}
 
@@ -591,10 +591,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMAZIN", 70)]
 		public ZeroHandling DimensionAngularZeroHandling
 		{
-			get { return this.DimensionStyleOverrides.AngularZeroHandling; }
+			get { return this._dimensionStyleOverrides.AngularZeroHandling; }
 			set
 			{
-				this.DimensionStyleOverrides.AngularZeroHandling = value;
+				this._dimensionStyleOverrides.AngularZeroHandling = value;
 			}
 		}
 
@@ -607,10 +607,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMARCSYM", 70)]
 		public ArcLengthSymbolPosition DimensionArcLengthSymbolPosition
 		{
-			get { return this.DimensionStyleOverrides.ArcLengthSymbolPosition; }
+			get { return this._dimensionStyleOverrides.ArcLengthSymbolPosition; }
 			set
 			{
-				this.DimensionStyleOverrides.ArcLengthSymbolPosition = value;
+				this._dimensionStyleOverrides.ArcLengthSymbolPosition = value;
 			}
 		}
 
@@ -623,10 +623,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMASZ", 40)]
 		public double DimensionArrowSize
 		{
-			get { return this.DimensionStyleOverrides.ArrowSize; }
+			get { return this._dimensionStyleOverrides.ArrowSize; }
 			set
 			{
-				this.DimensionStyleOverrides.ArrowSize = value;
+				this._dimensionStyleOverrides.ArrowSize = value;
 			}
 		}
 
@@ -675,10 +675,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMCEN", 40)]
 		public double DimensionCenterMarkSize
 		{
-			get { return this.DimensionStyleOverrides.CenterMarkSize; }
+			get { return this._dimensionStyleOverrides.CenterMarkSize; }
 			set
 			{
-				this.DimensionStyleOverrides.CenterMarkSize = value;
+				this._dimensionStyleOverrides.CenterMarkSize = value;
 			}
 		}
 
@@ -691,10 +691,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMUPT", 70)]
 		public bool DimensionCursorUpdate
 		{
-			get { return this.DimensionStyleOverrides.CursorUpdate; }
+			get { return this._dimensionStyleOverrides.CursorUpdate; }
 			set
 			{
-				this.DimensionStyleOverrides.CursorUpdate = value;
+				this._dimensionStyleOverrides.CursorUpdate = value;
 			}
 		}
 
@@ -707,10 +707,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMDEC", 70)]
 		public short DimensionDecimalPlaces
 		{
-			get { return this.DimensionStyleOverrides.DecimalPlaces; }
+			get { return this._dimensionStyleOverrides.DecimalPlaces; }
 			set
 			{
-				this.DimensionStyleOverrides.DecimalPlaces = value;
+				this._dimensionStyleOverrides.DecimalPlaces = value;
 			}
 		}
 
@@ -723,10 +723,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMDSEP", 70)]
 		public char DimensionDecimalSeparator
 		{
-			get { return this.DimensionStyleOverrides.DecimalSeparator; }
+			get { return this._dimensionStyleOverrides.DecimalSeparator; }
 			set
 			{
-				this.DimensionStyleOverrides.DecimalSeparator = value;
+				this._dimensionStyleOverrides.DecimalSeparator = value;
 			}
 		}
 
@@ -739,15 +739,15 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMATFIT", 70)]
 		public TextArrowFitType DimensionDimensionTextArrowFit
 		{
-			get { return this.DimensionStyleOverrides.DimensionTextArrowFit; }
+			get { return this._dimensionStyleOverrides.DimensionTextArrowFit; }
 			set
 			{
-				this.DimensionStyleOverrides.DimensionTextArrowFit = value;
+				this._dimensionStyleOverrides.DimensionTextArrowFit = value;
 			}
 		}
 
 		/// <summary>
-		/// Dimension extension line color
+		/// Dimension extension line color override.
 		/// </summary>
 		/// <remarks>
 		/// System variable DIMCLRE
@@ -755,15 +755,15 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMCLRE", 70)]
 		public Color DimensionExtensionLineColor
 		{
-			get { return this.DimensionStyleOverrides.ExtensionLineColor; }
+			get { return this._dimensionStyleOverrides.ExtensionLineColor; }
 			set
 			{
-				this.DimensionStyleOverrides.ExtensionLineColor = value;
+				this._dimensionStyleOverrides.ExtensionLineColor = value;
 			}
 		}
 
 		/// <summary>
-		/// Extension line extension
+		/// Extension line extension override.
 		/// </summary>
 		/// <remarks>
 		/// System variable DIMEXE
@@ -771,15 +771,15 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMEXE", 40)]
 		public double DimensionExtensionLineExtension
 		{
-			get { return this.DimensionStyleOverrides.ExtensionLineExtension; }
+			get { return this._dimensionStyleOverrides.ExtensionLineExtension; }
 			set
 			{
-				this.DimensionStyleOverrides.ExtensionLineExtension = value;
+				this._dimensionStyleOverrides.ExtensionLineExtension = value;
 			}
 		}
 
 		/// <summary>
-		/// Extension line offset
+		/// Extension line offset override.
 		/// </summary>
 		/// <remarks>
 		/// System variable DIMEXO
@@ -787,10 +787,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMEXO", 40)]
 		public double DimensionExtensionLineOffset
 		{
-			get { return this.DimensionStyleOverrides.ExtensionLineOffset; }
+			get { return this._dimensionStyleOverrides.ExtensionLineOffset; }
 			set
 			{
-				this.DimensionStyleOverrides.ExtensionLineOffset = value;
+				this._dimensionStyleOverrides.ExtensionLineOffset = value;
 			}
 		}
 
@@ -800,10 +800,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMFIT", 70)]
 		public short DimensionFit
 		{
-			get { return this.DimensionStyleOverrides.DimensionFit; }
+			get { return this._dimensionStyleOverrides.DimensionFit; }
 			set
 			{
-				this.DimensionStyleOverrides.DimensionFit = value;
+				this._dimensionStyleOverrides.DimensionFit = value;
 			}
 		}
 
@@ -816,10 +816,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMFXL", 40)]
 		public double DimensionFixedExtensionLineLength
 		{
-			get { return this.DimensionStyleOverrides.FixedExtensionLineLength; }
+			get { return this._dimensionStyleOverrides.FixedExtensionLineLength; }
 			set
 			{
-				this.DimensionStyleOverrides.FixedExtensionLineLength = value;
+				this._dimensionStyleOverrides.FixedExtensionLineLength = value;
 			}
 		}
 
@@ -832,15 +832,15 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMFRAC", 70)]
 		public FractionFormat DimensionFractionFormat
 		{
-			get { return this.DimensionStyleOverrides.FractionFormat; }
+			get { return this._dimensionStyleOverrides.FractionFormat; }
 			set
 			{
-				this.DimensionStyleOverrides.FractionFormat = value;
+				this._dimensionStyleOverrides.FractionFormat = value;
 			}
 		}
 
 		/// <summary>
-		/// Vertical justification for tolerance values
+		/// Vertical justification for tolerance values override.
 		/// </summary>
 		/// <remarks>
 		/// System variable DIMTOL
@@ -848,10 +848,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTOL", 70)]
 		public bool DimensionGenerateTolerances
 		{
-			get { return this.DimensionStyleOverrides.GenerateTolerances; }
+			get { return this._dimensionStyleOverrides.GenerateTolerances; }
 			set
 			{
-				this.DimensionStyleOverrides.GenerateTolerances = value;
+				this._dimensionStyleOverrides.GenerateTolerances = value;
 			}
 		}
 
@@ -864,10 +864,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMFXLON", 70)]
 		public bool DimensionIsExtensionLineLengthFixed
 		{
-			get { return this.DimensionStyleOverrides.IsExtensionLineLengthFixed; }
+			get { return this._dimensionStyleOverrides.IsExtensionLineLengthFixed; }
 			set
 			{
-				this.DimensionStyleOverrides.IsExtensionLineLengthFixed = value;
+				this._dimensionStyleOverrides.IsExtensionLineLengthFixed = value;
 			}
 		}
 
@@ -880,15 +880,15 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMJOGANG", 40)]
 		public double DimensionJoggedRadiusDimensionTransverseSegmentAngle
 		{
-			get { return this.DimensionStyleOverrides.JoggedRadiusDimensionTransverseSegmentAngle; }
+			get { return this._dimensionStyleOverrides.JoggedRadiusDimensionTransverseSegmentAngle; }
 			set
 			{
-				this.DimensionStyleOverrides.JoggedRadiusDimensionTransverseSegmentAngle = value;
+				this._dimensionStyleOverrides.JoggedRadiusDimensionTransverseSegmentAngle = value;
 			}
 		}
 
 		/// <summary>
-		/// Dimension limits generated if nonzero
+		/// Dimension limits generated if nonzero override.
 		/// </summary>
 		/// <remarks>
 		/// System variable DIMLIM
@@ -896,15 +896,15 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMLIM", 70)]
 		public bool DimensionLimitsGeneration
 		{
-			get { return this.DimensionStyleOverrides.LimitsGeneration; }
+			get { return this._dimensionStyleOverrides.LimitsGeneration; }
 			set
 			{
-				this.DimensionStyleOverrides.LimitsGeneration = value;
+				this._dimensionStyleOverrides.LimitsGeneration = value;
 			}
 		}
 
 		/// <summary>
-		/// Linear measurements scale factor
+		/// Linear measurements scale factor override.
 		/// </summary>
 		/// <remarks>
 		/// System variable DIMLFAC
@@ -912,10 +912,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMLFAC", 40)]
 		public double DimensionLinearScaleFactor
 		{
-			get { return this.DimensionStyleOverrides.LinearScaleFactor; }
+			get { return this._dimensionStyleOverrides.LinearScaleFactor; }
 			set
 			{
-				this.DimensionStyleOverrides.LinearScaleFactor = value;
+				this._dimensionStyleOverrides.LinearScaleFactor = value;
 			}
 		}
 
@@ -928,10 +928,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMLUNIT", 70)]
 		public LinearUnitFormat DimensionLinearUnitFormat
 		{
-			get { return this.DimensionStyleOverrides.LinearUnitFormat; }
+			get { return this._dimensionStyleOverrides.LinearUnitFormat; }
 			set
 			{
-				this.DimensionStyleOverrides.LinearUnitFormat = value;
+				this._dimensionStyleOverrides.LinearUnitFormat = value;
 			}
 		}
 
@@ -944,10 +944,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMCLRD", 70)]
 		public Color DimensionLineColor
 		{
-			get { return this.DimensionStyleOverrides.DimensionLineColor; }
+			get { return this._dimensionStyleOverrides.DimensionLineColor; }
 			set
 			{
-				this.DimensionStyleOverrides.DimensionLineColor = value;
+				this._dimensionStyleOverrides.DimensionLineColor = value;
 			}
 		}
 
@@ -960,10 +960,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMDLE", 40)]
 		public double DimensionLineExtension
 		{
-			get { return this.DimensionStyleOverrides.DimensionLineExtension; }
+			get { return this._dimensionStyleOverrides.DimensionLineExtension; }
 			set
 			{
-				this.DimensionStyleOverrides.DimensionLineExtension = value;
+				this._dimensionStyleOverrides.DimensionLineExtension = value;
 			}
 		}
 
@@ -976,10 +976,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMGAP", 40)]
 		public double DimensionLineGap
 		{
-			get { return this.DimensionStyleOverrides.DimensionLineGap; }
+			get { return this._dimensionStyleOverrides.DimensionLineGap; }
 			set
 			{
-				this.DimensionStyleOverrides.DimensionLineGap = value;
+				this._dimensionStyleOverrides.DimensionLineGap = value;
 			}
 		}
 
@@ -992,10 +992,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMDLI", 40)]
 		public double DimensionLineIncrement
 		{
-			get { return this.DimensionStyleOverrides.DimensionLineIncrement; }
+			get { return this._dimensionStyleOverrides.DimensionLineIncrement; }
 			set
 			{
-				this.DimensionStyleOverrides.DimensionLineIncrement = value;
+				this._dimensionStyleOverrides.DimensionLineIncrement = value;
 			}
 		}
 
@@ -1017,10 +1017,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMLWD", 70)]
 		public LineweightType DimensionLineWeight
 		{
-			get { return this.DimensionStyleOverrides.DimensionLineWeight; }
+			get { return this._dimensionStyleOverrides.DimensionLineWeight; }
 			set
 			{
-				this.DimensionStyleOverrides.DimensionLineWeight = value;
+				this._dimensionStyleOverrides.DimensionLineWeight = value;
 			}
 		}
 
@@ -1033,10 +1033,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTM", 40)]
 		public double DimensionMinusTolerance
 		{
-			get { return this.DimensionStyleOverrides.MinusTolerance; }
+			get { return this._dimensionStyleOverrides.MinusTolerance; }
 			set
 			{
-				this.DimensionStyleOverrides.MinusTolerance = value;
+				this._dimensionStyleOverrides.MinusTolerance = value;
 			}
 		}
 
@@ -1049,10 +1049,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMMZF", 40)]
 		public double DimensionMzf
 		{
-			get { return this.DimensionStyleOverrides.Mzf; }
+			get { return this._dimensionStyleOverrides.Mzf; }
 			set
 			{
-				this.DimensionStyleOverrides.Mzf = value;
+				this._dimensionStyleOverrides.Mzf = value;
 			}
 		}
 
@@ -1065,10 +1065,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMMZS", 6)]
 		public string DimensionMzs
 		{
-			get { return this.DimensionStyleOverrides.Mzs; }
+			get { return this._dimensionStyleOverrides.Mzs; }
 			set
 			{
-				this.DimensionStyleOverrides.Mzs = value;
+				this._dimensionStyleOverrides.Mzs = value;
 			}
 		}
 
@@ -1081,10 +1081,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTP", 40)]
 		public double DimensionPlusTolerance
 		{
-			get { return this.DimensionStyleOverrides.PlusTolerance; }
+			get { return this._dimensionStyleOverrides.PlusTolerance; }
 			set
 			{
-				this.DimensionStyleOverrides.PlusTolerance = value;
+				this._dimensionStyleOverrides.PlusTolerance = value;
 			}
 		}
 
@@ -1097,10 +1097,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMPOST", 1)]
 		public string DimensionPostFix
 		{
-			get { return this.DimensionStyleOverrides.PostFix; }
+			get { return this._dimensionStyleOverrides.PostFix; }
 			set
 			{
-				this.DimensionStyleOverrides.PostFix = value;
+				this._dimensionStyleOverrides.PostFix = value;
 			}
 		}
 
@@ -1113,10 +1113,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMRND", 40)]
 		public double DimensionRounding
 		{
-			get { return this.DimensionStyleOverrides.Rounding; }
+			get { return this._dimensionStyleOverrides.Rounding; }
 			set
 			{
-				this.DimensionStyleOverrides.Rounding = value;
+				this._dimensionStyleOverrides.Rounding = value;
 			}
 		}
 
@@ -1129,10 +1129,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMSCALE", 40)]
 		public double DimensionScaleFactor
 		{
-			get { return this.DimensionStyleOverrides.ScaleFactor; }
+			get { return this._dimensionStyleOverrides.ScaleFactor; }
 			set
 			{
-				this.DimensionStyleOverrides.ScaleFactor = value;
+				this._dimensionStyleOverrides.ScaleFactor = value;
 			}
 		}
 
@@ -1145,57 +1145,57 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMSAH", 70)]
 		public bool DimensionSeparateArrowBlocks
 		{
-			get { return this.DimensionStyleOverrides.SeparateArrowBlocks; }
+			get { return this._dimensionStyleOverrides.SeparateArrowBlocks; }
 			set
 			{
-				this.DimensionStyleOverrides.SeparateArrowBlocks = value;
+				this._dimensionStyleOverrides.SeparateArrowBlocks = value;
 			}
 		}
 
-		public DimensionStyle DimensionStyleOverrides
+		public DimensionStyle CurrentDimensionStyle
 		{
 			get
 			{
 				if (this.Document == null)
 				{
-					return this._dimensionStyleOverrides;
+					return this._currentDimensionStyle;
 				}
 				else
 				{
-					return this.Document.DimensionStyles[this.DimensionStyleOverridesName];
+					return this.Document.DimensionStyles[this.CurrentDimensionStyleName];
 				}
 			}
 			private set
 			{
-				this._dimensionStyleOverrides = value;
+				_currentDimensionStyle = value;
 			}
 		}
 
 		/// <summary>
-		/// Dimension style name
+		/// Dimension style name.
 		/// </summary>
 		/// <remarks>
 		/// System variable DIMSTYLE
 		/// </remarks>
 		[CadSystemVariable("$DIMSTYLE", true, 2)]
-		public string DimensionStyleOverridesName
+		public string CurrentDimensionStyleName
 		{
-			get { return this._dimensionStyleOverrides.Name; }
+			get { return this._currentDimensionStyle.Name; }
 			set
 			{
 				if (this.Document != null)
 				{
-					this._dimensionStyleOverrides = this.Document.DimensionStyles[value];
+					this._currentDimensionStyle = this.Document.DimensionStyles[value];
 				}
 				else
 				{
-					this._dimensionStyleOverrides = new DimensionStyle(value);
+					this._currentDimensionStyle = new DimensionStyle(value);
 				}
 			}
 		}
 
 		/// <summary>
-		/// Suppression of first extension line
+		/// Suppression of first extension line.
 		/// </summary>
 		/// <remarks>
 		/// System variable DIMSD1
@@ -1203,10 +1203,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMSD1", 70)]
 		public bool DimensionSuppressFirstDimensionLine
 		{
-			get { return this.DimensionStyleOverrides.SuppressFirstDimensionLine; }
+			get { return this._dimensionStyleOverrides.SuppressFirstDimensionLine; }
 			set
 			{
-				this.DimensionStyleOverrides.SuppressFirstDimensionLine = value;
+				this._dimensionStyleOverrides.SuppressFirstDimensionLine = value;
 			}
 		}
 
@@ -1219,10 +1219,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMSE1", 70)]
 		public bool DimensionSuppressFirstExtensionLine
 		{
-			get { return this.DimensionStyleOverrides.SuppressFirstExtensionLine; }
+			get { return this._dimensionStyleOverrides.SuppressFirstExtensionLine; }
 			set
 			{
-				this.DimensionStyleOverrides.SuppressFirstExtensionLine = value;
+				this._dimensionStyleOverrides.SuppressFirstExtensionLine = value;
 			}
 		}
 
@@ -1235,10 +1235,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMSOXD", 70)]
 		public bool DimensionSuppressOutsideExtensions
 		{
-			get { return this.DimensionStyleOverrides.SuppressOutsideExtensions; }
+			get { return this._dimensionStyleOverrides.SuppressOutsideExtensions; }
 			set
 			{
-				this.DimensionStyleOverrides.SuppressOutsideExtensions = value;
+				this._dimensionStyleOverrides.SuppressOutsideExtensions = value;
 			}
 		}
 
@@ -1251,10 +1251,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMSD2", 70)]
 		public bool DimensionSuppressSecondDimensionLine
 		{
-			get { return this.DimensionStyleOverrides.SuppressSecondDimensionLine; }
+			get { return this._dimensionStyleOverrides.SuppressSecondDimensionLine; }
 			set
 			{
-				this.DimensionStyleOverrides.SuppressSecondDimensionLine = value;
+				this._dimensionStyleOverrides.SuppressSecondDimensionLine = value;
 			}
 		}
 
@@ -1267,10 +1267,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMSE2", 70)]
 		public bool DimensionSuppressSecondExtensionLine
 		{
-			get { return this.DimensionStyleOverrides.SuppressSecondExtensionLine; }
+			get { return this._dimensionStyleOverrides.SuppressSecondExtensionLine; }
 			set
 			{
-				this.DimensionStyleOverrides.SuppressSecondExtensionLine = value;
+				this._dimensionStyleOverrides.SuppressSecondExtensionLine = value;
 			}
 		}
 
@@ -1301,10 +1301,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable(DxfReferenceType.Ignored, "$DIMTFILLCLR", 62)]
 		public Color DimensionTextBackgroundColor
 		{
-			get { return this.DimensionStyleOverrides.TextBackgroundColor; }
+			get { return this._dimensionStyleOverrides.TextBackgroundColor; }
 			set
 			{
-				this.DimensionStyleOverrides.TextBackgroundColor = value;
+				this._dimensionStyleOverrides.TextBackgroundColor = value;
 			}
 		}
 
@@ -1317,10 +1317,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTFILL", 70)]
 		public DimensionTextBackgroundFillMode DimensionTextBackgroundFillMode
 		{
-			get { return this.DimensionStyleOverrides.TextBackgroundFillMode; }
+			get { return this._dimensionStyleOverrides.TextBackgroundFillMode; }
 			set
 			{
-				this.DimensionStyleOverrides.TextBackgroundFillMode = value;
+				this._dimensionStyleOverrides.TextBackgroundFillMode = value;
 			}
 		}
 
@@ -1333,10 +1333,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMCLRT", 70)]
 		public Color DimensionTextColor
 		{
-			get { return this.DimensionStyleOverrides.TextColor; }
+			get { return this._dimensionStyleOverrides.TextColor; }
 			set
 			{
-				this.DimensionStyleOverrides.TextColor = value;
+				this._dimensionStyleOverrides.TextColor = value;
 			}
 		}
 
@@ -1349,10 +1349,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTXTDIRECTION", 70)]
 		public TextDirection DimensionTextDirection
 		{
-			get { return this.DimensionStyleOverrides.TextDirection; }
+			get { return this._dimensionStyleOverrides.TextDirection; }
 			set
 			{
-				this.DimensionStyleOverrides.TextDirection = value;
+				this._dimensionStyleOverrides.TextDirection = value;
 			}
 		}
 
@@ -1365,10 +1365,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTXT", 40)]
 		public double DimensionTextHeight
 		{
-			get { return this.DimensionStyleOverrides.TextHeight; }
+			get { return this._dimensionStyleOverrides.TextHeight; }
 			set
 			{
-				this.DimensionStyleOverrides.TextHeight = value;
+				this._dimensionStyleOverrides.TextHeight = value;
 			}
 		}
 
@@ -1381,10 +1381,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMJUST", 70)]
 		public DimensionTextHorizontalAlignment DimensionTextHorizontalAlignment
 		{
-			get { return this.DimensionStyleOverrides.TextHorizontalAlignment; }
+			get { return this._dimensionStyleOverrides.TextHorizontalAlignment; }
 			set
 			{
-				this.DimensionStyleOverrides.TextHorizontalAlignment = value;
+				this._dimensionStyleOverrides.TextHorizontalAlignment = value;
 			}
 		}
 
@@ -1397,10 +1397,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTIX", 70)]
 		public bool DimensionTextInsideExtensions
 		{
-			get { return this.DimensionStyleOverrides.TextInsideExtensions; }
+			get { return this._dimensionStyleOverrides.TextInsideExtensions; }
 			set
 			{
-				this.DimensionStyleOverrides.TextInsideExtensions = value;
+				this._dimensionStyleOverrides.TextInsideExtensions = value;
 			}
 		}
 
@@ -1413,10 +1413,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTIH", 70)]
 		public bool DimensionTextInsideHorizontal
 		{
-			get { return this.DimensionStyleOverrides.TextInsideHorizontal; }
+			get { return this._dimensionStyleOverrides.TextInsideHorizontal; }
 			set
 			{
-				this.DimensionStyleOverrides.TextInsideHorizontal = value;
+				this._dimensionStyleOverrides.TextInsideHorizontal = value;
 			}
 		}
 
@@ -1429,10 +1429,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTMOVE", 70)]
 		public TextMovement DimensionTextMovement
 		{
-			get { return this.DimensionStyleOverrides.TextMovement; }
+			get { return this._dimensionStyleOverrides.TextMovement; }
 			set
 			{
-				this.DimensionStyleOverrides.TextMovement = value;
+				this._dimensionStyleOverrides.TextMovement = value;
 			}
 		}
 
@@ -1445,10 +1445,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTOFL", 70)]
 		public bool DimensionTextOutsideExtensions
 		{
-			get { return this.DimensionStyleOverrides.TextOutsideExtensions; }
+			get { return this._dimensionStyleOverrides.TextOutsideExtensions; }
 			set
 			{
-				this.DimensionStyleOverrides.TextOutsideExtensions = value;
+				this._dimensionStyleOverrides.TextOutsideExtensions = value;
 			}
 		}
 
@@ -1461,10 +1461,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTOH", 70)]
 		public bool DimensionTextOutsideHorizontal
 		{
-			get { return this.DimensionStyleOverrides.TextOutsideHorizontal; }
+			get { return this._dimensionStyleOverrides.TextOutsideHorizontal; }
 			set
 			{
-				this.DimensionStyleOverrides.TextOutsideHorizontal = value;
+				this._dimensionStyleOverrides.TextOutsideHorizontal = value;
 			}
 		}
 
@@ -1519,10 +1519,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTAD", 70)]
 		public DimensionTextVerticalAlignment DimensionTextVerticalAlignment
 		{
-			get { return this.DimensionStyleOverrides.TextVerticalAlignment; }
+			get { return this._dimensionStyleOverrides.TextVerticalAlignment; }
 			set
 			{
-				this.DimensionStyleOverrides.TextVerticalAlignment = value;
+				this._dimensionStyleOverrides.TextVerticalAlignment = value;
 			}
 		}
 
@@ -1535,10 +1535,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTVP", 40)]
 		public double DimensionTextVerticalPosition
 		{
-			get { return this.DimensionStyleOverrides.TextVerticalPosition; }
+			get { return this._dimensionStyleOverrides.TextVerticalPosition; }
 			set
 			{
-				this.DimensionStyleOverrides.TextVerticalPosition = value;
+				this._dimensionStyleOverrides.TextVerticalPosition = value;
 			}
 		}
 
@@ -1551,10 +1551,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTSZ", 40)]
 		public double DimensionTickSize
 		{
-			get { return this.DimensionStyleOverrides.TickSize; }
+			get { return this._dimensionStyleOverrides.TickSize; }
 			set
 			{
-				this.DimensionStyleOverrides.TickSize = value;
+				this._dimensionStyleOverrides.TickSize = value;
 			}
 		}
 
@@ -1567,10 +1567,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTOLJ", 70)]
 		public ToleranceAlignment DimensionToleranceAlignment
 		{
-			get { return this.DimensionStyleOverrides.ToleranceAlignment; }
+			get { return this._dimensionStyleOverrides.ToleranceAlignment; }
 			set
 			{
-				this.DimensionStyleOverrides.ToleranceAlignment = value;
+				this._dimensionStyleOverrides.ToleranceAlignment = value;
 			}
 		}
 
@@ -1583,10 +1583,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTDEC", 70)]
 		public short DimensionToleranceDecimalPlaces
 		{
-			get { return this.DimensionStyleOverrides.ToleranceDecimalPlaces; }
+			get { return this._dimensionStyleOverrides.ToleranceDecimalPlaces; }
 			set
 			{
-				this.DimensionStyleOverrides.ToleranceDecimalPlaces = value;
+				this._dimensionStyleOverrides.ToleranceDecimalPlaces = value;
 			}
 		}
 
@@ -1599,10 +1599,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTFAC", 40)]
 		public double DimensionToleranceScaleFactor
 		{
-			get { return this.DimensionStyleOverrides.ToleranceScaleFactor; }
+			get { return this._dimensionStyleOverrides.ToleranceScaleFactor; }
 			set
 			{
-				this.DimensionStyleOverrides.ToleranceScaleFactor = value;
+				this._dimensionStyleOverrides.ToleranceScaleFactor = value;
 			}
 		}
 
@@ -1615,10 +1615,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMTZIN", 70)]
 		public ZeroHandling DimensionToleranceZeroHandling
 		{
-			get { return this.DimensionStyleOverrides.ToleranceZeroHandling; }
+			get { return this._dimensionStyleOverrides.ToleranceZeroHandling; }
 			set
 			{
-				this.DimensionStyleOverrides.ToleranceZeroHandling = value;
+				this._dimensionStyleOverrides.ToleranceZeroHandling = value;
 			}
 		}
 
@@ -1631,10 +1631,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMUNIT", 70)]
 		public short DimensionUnit
 		{
-			get { return this.DimensionStyleOverrides.DimensionUnit; }
+			get { return this._dimensionStyleOverrides.DimensionUnit; }
 			set
 			{
-				this.DimensionStyleOverrides.DimensionUnit = value;
+				this._dimensionStyleOverrides.DimensionUnit = value;
 			}
 		}
 
@@ -1647,12 +1647,17 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMZIN", 70)]
 		public ZeroHandling DimensionZeroHandling
 		{
-			get { return this.DimensionStyleOverrides.ZeroHandling; }
+			get { return this._dimensionStyleOverrides.ZeroHandling; }
 			set
 			{
-				this.DimensionStyleOverrides.ZeroHandling = value;
+				this._dimensionStyleOverrides.ZeroHandling = value;
 			}
 		}
+
+		/// <summary>
+		/// Get the <see cref="DimensionStyle"/> override for this document.
+		/// </summary>
+		public DimensionStyle DimensionstyleOverrides { get { return this._dimensionStyleOverrides; } }
 
 		/// <remarks>
 		/// System variable LIGHTGLYPHDISPLAY
@@ -1773,10 +1778,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMLWE", 70)]
 		public LineweightType ExtensionLineWeight
 		{
-			get { return this.DimensionStyleOverrides.ExtensionLineWeight; }
+			get { return this._dimensionStyleOverrides.ExtensionLineWeight; }
 			set
 			{
-				this.DimensionStyleOverrides.ExtensionLineWeight = value;
+				this._dimensionStyleOverrides.ExtensionLineWeight = value;
 			}
 		}
 
@@ -1855,7 +1860,7 @@ namespace ACadSharp.Header
 		/// System variable HANDSEED.
 		/// </remarks>
 		[CadSystemVariable("$HANDSEED", 5)]
-		public ulong HandleSeed { get; internal set; } = 0x0;
+		public ulong HandleSeed { get; internal set; } = 0x01;
 
 		/// <summary>
 		/// Specifies HIDETEXT system variable
@@ -3173,7 +3178,8 @@ namespace ACadSharp.Header
 		private LineType _currentLineType = LineType.ByLayer;
 		private MLineStyle _currentMLineStyle = MLineStyle.Default;
 		private TextStyle _currentTextStyle = TextStyle.Default;
-		private DimensionStyle _dimensionStyleOverrides = DimensionStyle.Default;
+		private DimensionStyle _dimensionStyleOverrides = new DimensionStyle("override");
+		private DimensionStyle _currentDimensionStyle = DimensionStyle.Default;
 		private TextStyle _dimensionTextStyle = TextStyle.Default;
 		private double _facetResolution = 0.5;
 		private short _linearUnitPrecision = 4;

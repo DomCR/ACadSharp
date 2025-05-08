@@ -357,7 +357,7 @@ namespace ACadSharp.IO.DXF
 					this._writer.Write(40, ellipse.MinorToMajorRatio);
 					this._writer.Write(50, ellipse.StartAngle);
 					this._writer.Write(51, ellipse.EndAngle);
-					this._writer.Write(73, ellipse.CounterClockWise ? (short)1 : (short)0);
+					this._writer.Write(73, ellipse.IsCounterclockwise ? (short)1 : (short)0);
 					break;
 				case Hatch.BoundaryPath.Line line:
 					this._writer.Write(10, line.Start);
@@ -514,7 +514,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(71, leader.ArrowHeadEnabled ? (short)1 : (short)0, map);
 			this._writer.Write(72, (short)leader.PathType, map);
 			this._writer.Write(73, (short)leader.CreationType, map);
-			this._writer.Write(74, leader.HookLineDirection ? (short)1 : (short)0, map);
+			this._writer.Write(74, leader.HookLineDirection == HookLineDirection.Same ? (short)1 : (short)0, map);
 			this._writer.Write(75, leader.HasHookline ? (short)1 : (short)0, map);
 
 			this._writer.Write(40, leader.TextHeight, map);
@@ -1045,11 +1045,7 @@ namespace ACadSharp.IO.DXF
 				this._writer.Write(51, text.ObliqueAngle, map);
 			}
 
-			if (text.Style != null)
-			{
-				//TODO: Implement text style in the writer
-				//this._writer.Write(7, text.Style.Name);
-			}
+			this._writer.Write(7, text.Style.Name);
 
 			this._writer.Write(11, text.AlignmentPoint, map);
 

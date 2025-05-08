@@ -494,6 +494,7 @@ namespace ACadSharp.IO.DXF
 				case 1 or 3 when tmp.CadObject is MText mtext:
 					mtext.Value += this._reader.ValueAsString;
 					return true;
+				case 50 when tmp.CadObject is MText://Read only for MText
 				case 70:
 				case 74:
 				case 101:
@@ -831,6 +832,8 @@ namespace ACadSharp.IO.DXF
 				case 340:
 					tmp.AnnotationHandle = this._reader.ValueAsHandle;
 					return true;
+				//Hook line flag - read only
+				case 75:
 				//Vertices count
 				case 76:
 					return true;
@@ -1586,7 +1589,7 @@ namespace ACadSharp.IO.DXF
 								ellipse.EndAngle = this._reader.ValueAsDouble;
 								break;
 							case 73:
-								ellipse.CounterClockWise = this._reader.ValueAsBool;
+								ellipse.IsCounterclockwise = this._reader.ValueAsBool;
 								break;
 							default:
 								return ellipse;

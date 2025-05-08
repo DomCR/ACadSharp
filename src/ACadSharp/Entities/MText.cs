@@ -2,6 +2,7 @@
 using ACadSharp.Tables;
 using CSMath;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -17,25 +18,49 @@ namespace ACadSharp.Entities
 	public partial class MText : Entity, IText
 	{
 		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.MTEXT;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityMText;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.MText;
+		[DxfCodeValue(11, 21, 31)]
+		public XYZ AlignmentPoint { get; set; } = XYZ.AxisX;
 
 		/// <summary>
-		/// A 3D WCS coordinate representing the insertion or origin point.
+		/// Attachment point
 		/// </summary>
-		[DxfCodeValue(10, 20, 30)]
-		public XYZ InsertPoint { get; set; } = XYZ.Zero;
+		[DxfCodeValue(71)]
+		public AttachmentPointType AttachmentPoint { get; set; } = AttachmentPointType.TopLeft;
 
 		/// <summary>
-		/// Specifies the three-dimensional normal unit vector for the object.
+		/// Background fill color
 		/// </summary>
-		[DxfCodeValue(210, 220, 230)]
-		public XYZ Normal { get; set; } = XYZ.AxisZ;
+		/// <remarks>
+		/// Color to use for background fill when group code 90 is 1.
+		/// </remarks>
+		[DxfCodeValue(63, 420, 430)]
+		public Color BackgroundColor { get; set; }
+
+		/// <summary>
+		/// Background fill setting
+		/// </summary>
+		[DxfCodeValue(90)]
+		public BackgroundFillFlags BackgroundFillFlags { get; set; } = BackgroundFillFlags.None;
+
+		/// <summary>
+		/// Determines how much border there is around the text.
+		/// </summary>
+		[DxfCodeValue(45)]
+		public double BackgroundScale { get; set; } = 1.5;
+
+		/// <summary>
+		/// Transparency of background fill color
+		/// </summary>
+		[DxfCodeValue(441)]
+		public Transparency BackgroundTransparency { get; set; }
+
+		public TextColumn Column { get; set; } = new TextColumn();
+
+		/// <summary>
+		/// Drawing direction
+		/// </summary>
+		[DxfCodeValue(72)]
+		public DrawingDirectionType DrawingDirection { get; set; } = DrawingDirectionType.LeftToRight;
 
 		/// <inheritdoc/>
 		[DxfCodeValue(40)]
@@ -52,10 +77,49 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Reference rectangle width.
+		/// Horizontal width of the characters that make up the mtext entity.
+		/// This value will always be equal to or less than the value of group code 41
 		/// </summary>
-		[DxfCodeValue(41)]
-		public double RectangleWidth { get; set; }
+		/// <remarks>
+		/// read-only, ignored if supplied
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Ignored, 42)]
+		public double HorizontalWidth { get; set; } = 0.9;
+
+		/// <summary>
+		/// A 3D WCS coordinate representing the insertion or origin point.
+		/// </summary>
+		[DxfCodeValue(10, 20, 30)]
+		public XYZ InsertPoint { get; set; } = XYZ.Zero;
+
+		public bool IsAnnotative { get; set; } = false;
+
+		/// <summary>
+		/// Mtext line spacing factor.
+		/// </summary>
+		/// <remarks>
+		/// Percentage of default (3-on-5) line spacing to be applied.Valid values range from 0.25 to 4.00
+		/// </remarks>
+		[DxfCodeValue(44)]
+		public double LineSpacing { get; set; } = 1.0;
+
+		/// <summary>
+		/// Mtext line spacing style.
+		/// </summary>
+		[DxfCodeValue(73)]
+		public LineSpacingStyleType LineSpacingStyle { get; set; }
+
+		/// <summary>
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityMText;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.MTEXT;
 
 		/// <summary>
 		/// Reference rectangle height.
@@ -64,20 +128,28 @@ namespace ACadSharp.Entities
 		public double RectangleHeight { get; set; }
 
 		/// <summary>
-		/// Attachment point
+		/// Reference rectangle width.
 		/// </summary>
-		[DxfCodeValue(71)]
-		public AttachmentPointType AttachmentPoint { get; set; } = AttachmentPointType.TopLeft;
+		[DxfCodeValue(41)]
+		public double RectangleWidth { get; set; }
 
 		/// <summary>
-		/// Drawing direction
+		/// Specifies the rotation angle for the object.
 		/// </summary>
-		[DxfCodeValue(72)]
-		public DrawingDirectionType DrawingDirection { get; set; }
-
-		/// <inheritdoc/>
-		[DxfCodeValue(1)]
-		public string Value { get; set; } = string.Empty;
+		/// <remarks>
+		/// The rotation is only valid if the <see cref="Normal"/> is set to the Z axis.
+		/// </remarks>
+		/// <value>
+		/// The rotation angle in radians.
+		/// </value>
+		[DxfCodeValue(DxfReferenceType.IsAngle | DxfReferenceType.Ignored, 50)]
+		public double Rotation
+		{
+			get
+			{
+				return new XY(this.AlignmentPoint.X, this.AlignmentPoint.Y).GetAngle();
+			}
+		}
 
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name | DxfReferenceType.Optional, 7)]
@@ -102,32 +174,12 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		/// <summary>
-		/// X-axis direction vector(in WCS)
-		/// </summary>
-		/// <remarks>
-		/// A group code 50 (rotation angle in radians) passed as DXF input is converted to the equivalent direction vector (if both a code 50 and codes 11, 21, 31 are passed, the last one wins). This is provided as a convenience for conversions from text objects
-		/// </remarks>
-		[DxfCodeValue(11, 21, 31)]
-		public XYZ AlignmentPoint
-		{
-			get => this._alignmentPoint;
-			set
-			{
-				this._alignmentPoint = value;
-				this._rotation = new XY(this._alignmentPoint.X, this._alignmentPoint.Y).GetAngle();
-			}
-		}
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.MText;
 
-		/// <summary>
-		/// Horizontal width of the characters that make up the mtext entity.
-		/// This value will always be equal to or less than the value of group code 41 
-		/// </summary>
-		/// <remarks>
-		/// read-only, ignored if supplied
-		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.Ignored, 42)]
-		public double HorizontalWidth { get; set; } = 0.9;
+		/// <inheritdoc/>
+		[DxfCodeValue(1)]
+		public string Value { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Vertical height of the mtext entity
@@ -138,74 +190,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Ignored, 43)]
 		public double VerticalHeight { get; set; } = 0.2;
 
-		/// <summary>
-		/// Specifies the rotation angle for the object.
-		/// </summary>
-		/// <value>
-		/// The rotation angle in radians.
-		/// </value>
-		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
-		public double Rotation
-		{
-			get => this._rotation;
-			set
-			{
-				this._rotation = value;
-				this.AlignmentPoint = new XYZ(Math.Cos(this._rotation), Math.Sin(this._rotation), 0.0);
-			}
-		}
-
-		/// <summary>
-		/// Mtext line spacing style 
-		/// </summary>
-		[DxfCodeValue(73)]
-		public LineSpacingStyleType LineSpacingStyle { get; set; }
-
-		/// <summary>
-		/// Mtext line spacing factor.
-		/// </summary>
-		/// <remarks>
-		/// Percentage of default (3-on-5) line spacing to be applied.Valid values range from 0.25 to 4.00
-		/// </remarks>
-		[DxfCodeValue(44)]
-		public double LineSpacing { get; set; } = 1.0;
-
-		/// <summary>
-		/// Background fill setting
-		/// </summary>
-		[DxfCodeValue(90)]
-		public BackgroundFillFlags BackgroundFillFlags { get; set; } = BackgroundFillFlags.None;
-
-		/// <summary>
-		/// Determines how much border there is around the text.
-		/// </summary>
-		[DxfCodeValue(45)]
-		public double BackgroundScale { get; set; } = 1.5;
-
-		/// <summary>
-		/// Background fill color 
-		/// </summary>
-		/// <remarks>
-		/// Color to use for background fill when group code 90 is 1.
-		/// </remarks>
-		[DxfCodeValue(63, 420, 430)]
-		public Color BackgroundColor { get; set; }
-
-		/// <summary>
-		/// Transparency of background fill color
-		/// </summary>
-		[DxfCodeValue(441)]
-		public Transparency BackgroundTransparency { get; set; }
-
-		public TextColumn Column { get; set; } = new TextColumn();
-
-		public bool IsAnnotative { get; set; } = false;
-
 		private double _height = 1.0;
-
-		private XYZ _alignmentPoint = XYZ.AxisX;
-
-		private double _rotation = 0.0;
 
 		private TextStyle _style = TextStyle.Default;
 
@@ -213,9 +198,99 @@ namespace ACadSharp.Entities
 		public MText() : base() { }
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public override void ApplyTransform(Transform transform)
 		{
-			return new BoundingBox(this.InsertPoint);
+			XYZ newInsert = transform.ApplyTransform(this.InsertPoint);
+			XYZ newNormal = this.transformNormal(transform, this.Normal);
+
+			var transformation = this.getWorldMatrix(transform, Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+
+			transWO = transWO.Transpose();
+
+			List<XY> uv = applyRotation(
+				new[]
+				{
+					XY.AxisX, XY.AxisY
+				},
+				this.Rotation);
+
+			XYZ v;
+			v = transOW * new XYZ(uv[0].X, uv[0].Y, 0.0);
+			v = transformation * v;
+			v = transWO * v;
+			XY newUvector = new XY(v.X, v.Y);
+
+			// the MText entity does not support non-uniform scaling
+			double scale = newUvector.GetLength();
+
+			v = transOW * new XYZ(uv[1].X, uv[1].Y, 0.0);
+			v = transformation * v;
+			v = transWO * v;
+			XY newVvector = new XY(v.X, v.Y);
+
+			double newRotation = newUvector.GetAngle();
+
+			if (XY.Cross(newUvector, newVvector) < 0.0)
+			{
+				if (newUvector.Dot(uv[0]) < 0.0)
+				{
+					newRotation += 180;
+
+					switch (this.AttachmentPoint)
+					{
+						case AttachmentPointType.TopLeft:
+							this.AttachmentPoint = AttachmentPointType.TopRight;
+							break;
+						case AttachmentPointType.TopRight:
+							this.AttachmentPoint = AttachmentPointType.TopLeft;
+							break;
+						case AttachmentPointType.MiddleLeft:
+							this.AttachmentPoint = AttachmentPointType.MiddleRight;
+							break;
+						case AttachmentPointType.MiddleRight:
+							this.AttachmentPoint = AttachmentPointType.MiddleLeft;
+							break;
+						case AttachmentPointType.BottomLeft:
+							this.AttachmentPoint = AttachmentPointType.BottomRight;
+							break;
+						case AttachmentPointType.BottomRight:
+							this.AttachmentPoint = AttachmentPointType.BottomLeft;
+							break;
+					}
+				}
+				else
+				{
+					switch (this.AttachmentPoint)
+					{
+						case AttachmentPointType.TopLeft:
+							this.AttachmentPoint = AttachmentPointType.BottomLeft;
+							break;
+						case AttachmentPointType.TopCenter:
+							this.AttachmentPoint = AttachmentPointType.BottomCenter;
+							break;
+						case AttachmentPointType.TopRight:
+							this.AttachmentPoint = AttachmentPointType.BottomRight;
+							break;
+						case AttachmentPointType.BottomLeft:
+							this.AttachmentPoint = AttachmentPointType.TopLeft;
+							break;
+						case AttachmentPointType.BottomCenter:
+							this.AttachmentPoint = AttachmentPointType.TopCenter;
+							break;
+						case AttachmentPointType.BottomRight:
+							this.AttachmentPoint = AttachmentPointType.TopRight;
+							break;
+					}
+				}
+			}
+
+			double newHeight = this.Height * scale;
+			newHeight = MathHelper.IsZero(newHeight) ? MathHelper.Epsilon : newHeight;
+
+			this.InsertPoint = newInsert;
+			this.Normal = newNormal;
+			this.Height = newHeight;
+			this.RectangleWidth *= scale;
 		}
 
 		/// <inheritdoc/>
@@ -227,6 +302,24 @@ namespace ACadSharp.Entities
 			clone.Column = this.Column?.Clone();
 
 			return clone;
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox(this.InsertPoint);
+		}
+
+		/// <summary>
+		/// Get the text value separated in lines.
+		/// </summary>
+		/// <returns></returns>
+		public string[] GetTextLines()
+		{
+			return this.Value.Split(
+				new string[] { "\r\n", "\r", "\n", "\\P" },
+				StringSplitOptions.None
+			);
 		}
 
 		internal override void AssignDocument(CadDocument doc)
