@@ -95,6 +95,16 @@
 		public const string Block2PtParameter = "AcDbBlock2PtParameter";
 		public const string BlockLinearParameter = "AcDbBlockLinearParameter";
 
+		public const string BlockAction = "AcDbBlockBlock";
+		public const string BlockBasePointParameter = "AcDbBlockBasePointParameter";
+		public const string BlockFlipAction = "AcDbBlockFlipAction";
+		public const string BlockFlipGrip = "AcDbBlockFlipGrip";
+		public const string BlockFlipParameter = "AcDbBlockFlipParameter";
+		public const string BlockGrip = "AcDbBlockGrip";
+		public const string BlockGripExpression = "AcDbBlockGripExpression";
+		public const string BlockGripLocationComponent = "AcDbBlockGripLocationComponent";
+		public const string BlockVisibilityGrip = "AcDbBlockVisibilityGrip";
+
 		public const string BlockVisibilityParameter = "AcDbBlockVisibilityParameter";
 		public const string DbColor = "AcDbColor";
 		public const string TableContent = "AcDbTableContent";

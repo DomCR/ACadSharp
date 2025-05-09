@@ -3,6 +3,8 @@ using System.Linq;
 using ACadSharp.Entities;
 using ACadSharp.Objects.Evaluations;
 
+using static ACadSharp.IO.Templates.CadBlockVisibilityParameterTemplate;
+
 namespace ACadSharp.IO.Templates
 {
 
@@ -24,6 +26,43 @@ namespace ACadSharp.IO.Templates
 		}
 	}
 
+	internal class CadBlockActionTemplate : CadBlockElementTemplate {
+
+		public BlockAction BlockAction { get { return this.CadObject as BlockAction; } }
+
+		public List<ulong> EntityHandles { get; } = new List<ulong>();
+
+		public CadBlockActionTemplate(BlockAction cadObject)
+			: base(cadObject)
+		{
+		}
+
+		public override void Build(CadDocumentBuilder builder)
+		{
+			base.Build(builder);
+
+			foreach (var handle in this.EntityHandles)
+			{
+				if (builder.TryGetCadObject(handle, out Entity entity)) {
+					BlockAction.Entities.Add(entity);
+				}
+				else {
+					builder.Notify($"[{BlockAction.ToString()}] entity with handle {handle} not found.");
+				}
+			}
+		}
+	}
+
+	internal class CadBlockFlipActionTemplate : CadBlockActionTemplate
+	{
+		public BlockFlipAction BlockFlipAction { get { return this.CadObject as BlockFlipAction; } }
+
+		public CadBlockFlipActionTemplate(BlockFlipAction cadObject)
+			: base(cadObject)
+		{
+		}
+	}
+
 	internal class CadBlockParameterTemplate : CadBlockElementTemplate
 	{
 		public BlockParameter BlockParameter { get { return this.CadObject as BlockParameter; } }
@@ -39,6 +78,26 @@ namespace ACadSharp.IO.Templates
 		public Block1PtParameter Block1PtParameter { get { return this.CadObject as Block1PtParameter; } }
 
 		public CadBlock1PtParameterTemplate(Block1PtParameter cadObject)
+			: base(cadObject)
+		{
+		}
+	}
+
+	internal class CadBlock2PtParameterTemplate : CadBlockParameterTemplate
+	{
+		public Block2PtParameter Block2PtParameter { get { return this.CadObject as Block2PtParameter; } }
+
+		public CadBlock2PtParameterTemplate(Block2PtParameter cadObject)
+			: base(cadObject)
+		{
+		}
+	}
+
+	internal class CadBlockFlipParameterTemplate : CadBlock2PtParameterTemplate
+	{
+		public Block2PtParameter BlockFlipParameter { get { return this.CadObject as BlockFlipParameter; } }
+
+		public CadBlockFlipParameterTemplate(BlockFlipParameter cadObject)
 			: base(cadObject)
 		{
 		}
