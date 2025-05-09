@@ -623,7 +623,8 @@ namespace ACadSharp.Entities
 
 		private bool tryGetContextdata(out MultiLeaderObjectContextData contextData)
 		{
-			if (this.XDictionary.TryGetEntry("AcDbContextDataManager", out CadDictionary contextDataManager) &&
+			if (this.XDictionary != null &&
+				this.XDictionary.TryGetEntry("AcDbContextDataManager", out CadDictionary contextDataManager) &&
 				contextDataManager.TryGetEntry("ACDB_ANNOTATIONSCALES", out CadDictionary annotScales) &&
 				annotScales.TryGetEntry("*A1", out MultiLeaderObjectContextData a1))
 			{
