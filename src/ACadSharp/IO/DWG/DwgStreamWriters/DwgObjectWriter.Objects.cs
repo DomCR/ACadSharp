@@ -3,6 +3,7 @@ using ACadSharp.Objects.Evaluations;
 using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
+using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -796,7 +797,7 @@ namespace ACadSharp.IO.DWG
 			ms.EndianConverter = new LittleEndianConverter();
 
 			foreach (XRecord.Entry entry in xrecord.Entries)
-			{
+			{				
 				if (entry.Value == null)
 				{
 					continue;
@@ -858,12 +859,12 @@ namespace ACadSharp.IO.DWG
 						else if (string.IsNullOrEmpty(text))
 						{
 							ms.Write<short, LittleEndianConverter>(0);
-							ms.Write((byte)this._writer.Encoding.CodePage);
+							ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
 						}
 						else
 						{
 							ms.Write<short, LittleEndianConverter>((short)text.Length);
-							ms.Write((byte)this._writer.Encoding.CodePage);
+							ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
 							ms.Write(text, this._writer.Encoding);
 						}
 						break;

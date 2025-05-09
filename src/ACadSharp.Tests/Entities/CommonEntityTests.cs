@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tests.Common;
-using System;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities
@@ -24,7 +23,7 @@ namespace ACadSharp.Tests.Entities
 			Assert.Null(entity.XDictionary);
 		}
 
-		[Fact()]
+		[Fact]
 		public virtual void BoundingBoxTest()
 		{
 			Entity entity = EntityFactory.Create(typeof(T));
