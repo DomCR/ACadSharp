@@ -71,6 +71,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeInBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.XData)));
 			Data.Add(new(nameof(SingleCaseGenerator.SPlineCreation)));
+			Data.Add(new(nameof(SingleCaseGenerator.CreateXRecords)));
 		}
 
 		public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
@@ -408,6 +409,23 @@ namespace ACadSharp.Tests.IO
 				Layout layout = new Layout("my_layout");
 
 				this.Document.Layouts.Add(layout);
+			}
+
+			public void CreateXRecords()
+			{
+				Layer lay = new Layer("my_layer");
+
+				//Extracted form a real case
+				var dict = lay.CreateExtendedDictionary();
+				var layerstates = new CadDictionary("ACAD_LAYERSTATES");
+				dict.Add(layerstates);
+
+				XRecord record = new XRecord("test");
+				record.CreateEntry(90, 1);
+				record.CreateEntry(330, Document.Layers);
+				layerstates.Add(record);
+
+				this.Document.Layers.Add(lay);
 			}
 
 			public void CurrentEntityByBlock()

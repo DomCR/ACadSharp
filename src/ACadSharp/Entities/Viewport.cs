@@ -393,6 +393,7 @@ namespace ACadSharp.Entities
 			Viewport clone = (Viewport)base.Clone();
 
 			clone.VisualStyle = (VisualStyle)this.VisualStyle?.Clone();
+			clone._scale = (Scale)this.Scale?.Clone();
 
 			return clone;
 		}
@@ -440,7 +441,7 @@ namespace ACadSharp.Entities
 
 			return entities;
 		}
-
+		
 		internal override void AssignDocument(CadDocument doc)
 		{
 			base.AssignDocument(doc);
@@ -456,7 +457,7 @@ namespace ACadSharp.Entities
 
 			base.UnassignDocument();
 
-			this._scale = (Scale)this.Scale.Clone();
+			this._scale = (Scale)this.Scale?.Clone();
 		}
 
 		private void scalesOnRemove(object sender, CollectionChangedEventArgs e)
