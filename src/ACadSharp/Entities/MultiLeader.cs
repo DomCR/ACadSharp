@@ -603,7 +603,7 @@ namespace ACadSharp.Entities
 		{
 			MultiLeader clone = (MultiLeader)base.Clone();
 
-			clone.ContextData = (MultiLeaderObjectContextData)this.ContextData?.Clone();
+			clone._contextData = (MultiLeaderObjectContextData)this._contextData?.Clone();
 
 			clone.BlockAttributes = new List<BlockAttribute>();
 			foreach (var att in this.BlockAttributes)
