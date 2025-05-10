@@ -92,6 +92,14 @@ namespace ACadSharp.Tests.Tables
 			Assert.Equal(value, style.ApplyRounding(value, true));
 		}
 
+		[Fact]
+		public void ZeroHandlingFormatTest()
+		{
+			DimensionStyle style = this.createEntry();
+
+			Assert.Equal("0.##", style.GetZeroHandlingFormat());
+		}
+
 		protected override Table<DimensionStyle> getTable(CadDocument document)
 		{
 			return document.DimensionStyles;

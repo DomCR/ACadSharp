@@ -1086,7 +1086,14 @@ namespace ACadSharp.Tables
 			throw new NotImplementedException();
 		}
 
-		public string ZeroHandlingFormat(bool isAlternate = false, bool isAngular = false, bool isInches = false)
+		/// <summary>
+		/// Get the string format based on the zero handling of the style.
+		/// </summary>
+		/// <param name="isAlternate"></param>
+		/// <param name="isAngular"></param>
+		/// <param name="isInches"></param>
+		/// <returns></returns>
+		public string GetZeroHandlingFormat(bool isAlternate = false, bool isAngular = false, bool isInches = false)
 		{
 			//By now is only linear and decimal
 			//TODO: include inches and angular units
@@ -1104,7 +1111,7 @@ namespace ACadSharp.Tables
 			StringBuilder zeroes = new();
 
 			zeroes.Append(leading);
-			zeroes.Append('.');
+			zeroes.Append(this.DecimalSeparator);
 
 			for (int i = 0; i < decimalPlaces; i++)
 			{
