@@ -1,0 +1,55 @@
+﻿using ACadSharp.Entities;
+using System;
+using Xunit;
+
+namespace ACadSharp.Tests.Entities
+{
+	public abstract class CommonDimensionTests<T>
+		where T : Dimension, new()
+	{
+		public abstract DimensionType Type { get; }
+
+		[Fact]
+		public void DimensionTypeTest()
+		{
+			T dim = new T();
+
+			Assert.True(dim.Flags.HasFlag(this.Type));
+			Assert.True(dim.Flags.HasFlag(DimensionType.BlockReference));
+		}
+
+		[Fact]
+		public void DimStyleNotNull()
+		{
+			T dim = new T();
+
+			Assert.NotNull(dim.Style);
+			Assert.Throws<ArgumentNullException>(() => dim.Style = null);
+		}
+
+		[Fact]
+		public void IsTextUserDefinedLocationTest()
+		{
+			T dim = new T();
+
+			Assert.False(dim.Flags.HasFlag(DimensionType.TextUserDefinedLocation));
+
+			dim.IsTextUserDefinedLocation = true;
+
+			Assert.True(dim.Flags.HasFlag(DimensionType.TextUserDefinedLocation));
+		}
+
+		[Fact]
+		public  void GetMeasurementTextTests()
+		{
+			T dim = this.createDim();
+
+			dim.GetMeasurementText();
+		}
+
+		protected virtual T createDim()
+		{
+			return new T();
+		}
+	}
+}
