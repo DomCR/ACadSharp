@@ -14,7 +14,7 @@ namespace ACadSharp.Objects {
 	/// This class represents a subset ob the properties of the MLeaderAnnotContext
 	/// object, that are embedded into the MultiLeader entity.
 	/// </summary>
-	public partial class MultiLeaderAnnotContext : NonGraphicalObject
+	public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData
 	{
 		private TextStyle _textStyle = TextStyle.Default;
 		private BlockRecord _blockContent;
@@ -22,7 +22,7 @@ namespace ACadSharp.Objects {
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
 		/// <inheritdoc />
-		public override string SubclassMarker => DxfSubclassMarker.MultiLeaderAnnotContext;
+		public override string SubclassMarker => DxfSubclassMarker.MultiLeaderObjectContextData;
 
 		/// <inheritdoc />
 		public override string ObjectName => DxfFileToken.ObjectMLeaderContextData;
@@ -572,12 +572,12 @@ namespace ACadSharp.Objects {
 		public TextAttachmentType TextBottomAttachment { get; set; }
 
 		/// <summary>
-		/// Initializes a new instance of a <see cref="MultiLeaderAnnotContext"/>.
+		/// Initializes a new instance of a <see cref="MultiLeaderObjectContextData"/>.
 		/// </summary>
-		public MultiLeaderAnnotContext() : base() { }
+		public MultiLeaderObjectContextData() : base() { }
 
 		public override CadObject Clone() {
-			MultiLeaderAnnotContext clone = (MultiLeaderAnnotContext)base.Clone();
+			MultiLeaderObjectContextData clone = (MultiLeaderObjectContextData)base.Clone();
 
 			clone._textStyle = (TextStyle)this._textStyle.Clone();
 			clone._blockContent = (BlockRecord)this._blockContent?.Clone();

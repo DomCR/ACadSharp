@@ -119,9 +119,9 @@ namespace ACadSharp.Objects
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para><para>
 		/// The value for all leader lines can be overridden for each individual leader line by the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.PathType"/> property when the
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.PathType"/> property when the
 		/// <see cref="LeaderLinePropertOverrideFlags.PathType"/> flag is set in the 
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(173)]
@@ -137,9 +137,9 @@ namespace ACadSharp.Objects
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para><para>
 		/// The value for all leader lines can be overridden for each individual leader line by the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.LineColor"/> property when the
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.LineColor"/> property when the
 		/// <see cref="LeaderLinePropertOverrideFlags.LineColor"/> flag is set in the 
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(91)]
@@ -156,9 +156,9 @@ namespace ACadSharp.Objects
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para><para>
 		/// The setting for all leader lines can be overridden for each individual leader line by the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.LineType"/> property when the
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.LineType"/> property when the
 		/// <see cref="LeaderLinePropertOverrideFlags.LineType"/> flag is set in the 
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
@@ -193,9 +193,9 @@ namespace ACadSharp.Objects
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para><para>
 		/// The value for all leader lines can be overridden for each individual leader line by the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.LineWeight"/> property when the
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.LineWeight"/> property when the
 		/// <see cref="LeaderLinePropertOverrideFlags.LineWeight"/> flag is set in the 
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(92)]
@@ -224,7 +224,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.LandingGap"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderObjectContextData.LandingGap"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.LandingGap"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para>
@@ -278,9 +278,9 @@ namespace ACadSharp.Objects
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para><para>
 		/// The value for all leader lines can be overridden for each individual leader line by the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.Arrowhead"/> property when the
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.Arrowhead"/> property when the
 		/// <see cref="LeaderLinePropertOverrideFlags.Arrowhead"/> flag is set in the 
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 341)]
@@ -298,14 +298,14 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.ArrowheadSize"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderObjectContextData.ArrowheadSize"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.ArrowheadSize"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para><para>
 		/// The value for all leader lines can be overridden for each individual leader line by the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.ArrowheadSize"/> property when the
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.ArrowheadSize"/> property when the
 		/// <see cref="LeaderLinePropertOverrideFlags.ArrowheadSize"/> flag is set in the 
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(44)]
@@ -324,7 +324,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.TextStyle"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderObjectContextData.TextStyle"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextStyle"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para>
@@ -358,7 +358,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.TextLeftAttachment"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderObjectContextData.TextLeftAttachment"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextLeftAttachment"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para><para>
@@ -390,11 +390,11 @@ namespace ACadSharp.Objects
 
 		/// <summary>
 		/// Gets or sets the text alignment, i.e. the alignment of text lines if the a multiline
-		/// text label, relative to the <see cref="MultiLeaderAnnotContext.TextLocation"/>.
+		/// text label, relative to the <see cref="MultiLeaderObjectContextData.TextLocation"/>.
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.TextAlignment"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderObjectContextData.TextAlignment"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextAlignment"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para>
@@ -409,7 +409,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.TextRightAttachment"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderObjectContextData.TextRightAttachment"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextRightAttachment"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para><para>
@@ -430,7 +430,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.TextColor"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderObjectContextData.TextColor"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextColor"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para>
@@ -443,7 +443,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.TextHeight"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderObjectContextData.TextHeight"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextHeight"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para>
@@ -484,7 +484,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// Thw standard content block can be overridden by the <see cref="MultiLeaderAnnotContext.BlockContent"/>
+		/// Thw standard content block can be overridden by the <see cref="MultiLeaderObjectContextData.BlockContent"/>
 		/// property when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContent"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para>
@@ -503,7 +503,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.BlockContentColor"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderObjectContextData.BlockContentColor"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentColor"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para>
@@ -516,7 +516,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.BlockContentScale"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderObjectContextData.BlockContentScale"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentScale"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para>
@@ -536,7 +536,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.BlockContentRotation"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderObjectContextData.BlockContentRotation"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentRotation"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para>
@@ -557,7 +557,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.BlockContentConnection"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderObjectContextData.BlockContentConnection"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentConnection"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para>
@@ -571,7 +571,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.ScaleFactor"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderObjectContextData.ScaleFactor"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.ScaleFactor"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para>
@@ -619,9 +619,9 @@ namespace ACadSharp.Objects
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para><para>
 		/// The value for all leader lines can be overridden for each individual leader line by the
-		/// <see cref="MultiLeaderAnnotContext.LeaderRoot.TextAttachmentDirection"/> property when the
+		/// <see cref="MultiLeaderObjectContextData.LeaderRoot.TextAttachmentDirection"/> property when the
 		/// <see cref="LeaderLinePropertOverrideFlags.TextAttachmentDirection"/> flag is set in the 
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
 		/// <value>
@@ -637,7 +637,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.TextBottomAttachment"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderObjectContextData.TextBottomAttachment"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextBottomAttachment"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para><para>
@@ -662,7 +662,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// This value can be overridden by the <see cref="MultiLeaderAnnotContext.TextTopAttachment"/> property
+		/// This value can be overridden by the <see cref="MultiLeaderObjectContextData.TextTopAttachment"/> property
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextTopAttachment"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para><para>
