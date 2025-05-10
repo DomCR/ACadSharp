@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Types.Units;
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 //	TODO should the described coupling of properties be implemented in this class,
 //		 e.g., GenerateTolerances and LimitsGeneration?
@@ -1039,6 +1041,24 @@ namespace ACadSharp.Tables
 		{
 		}
 
+		/// <summary>
+		/// Apply the rounding of the style to the value.
+		/// </summary>
+		/// <param name="value">value to apply the style rounding.</param>
+		/// <param name="isAlternate">flag to indicate to use the alternate rounding.</param>
+		/// <returns></returns>
+		public double ApplyRounding(double value, bool isAlternate = false)
+		{
+			double rounding = isAlternate ? this.AlternateUnitRounding : this.Rounding;
+
+			if (rounding != 0.0)
+			{
+				value = rounding * Math.Round(value / rounding);
+			}
+
+			return value;
+		}
+
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
@@ -1054,6 +1074,44 @@ namespace ACadSharp.Tables
 			clone.LineTypeExt2 = (LineType)this.LineTypeExt2?.Clone();
 
 			return clone;
+		}
+
+		/// <summary>
+		/// Get the number format in a string form.
+		/// </summary>
+		/// <param name="isAlternate"></param>
+		/// <returns></returns>
+		public string GetNumberFormat(bool isAlternate = false)
+		{
+			throw new NotImplementedException();
+		}
+
+		public string ZeroHandlingFormat(bool isAlternate = false, bool isAngular = false, bool isInches = false)
+		{
+			//By now is only linear and decimal
+			//TODO: include inches and angular units
+			short decimalPlaces = isAlternate ? this.AlternateUnitDecimalPlaces : this.DecimalPlaces;
+			var handling = isAlternate ? this.AlternateUnitZeroHandling : this.ZeroHandling;
+
+			char leading = handling == ZeroHandling.SuppressDecimalLeadingZeroes
+				|| handling == ZeroHandling.SuppressDecimalLeadingAndTrailingZeroes ?
+				'#' : '0';
+
+			char trailing = handling == ZeroHandling.SuppressDecimalTrailingZeroes
+				|| handling == ZeroHandling.SuppressDecimalLeadingAndTrailingZeroes ?
+				'#' : '0';
+
+			StringBuilder zeroes = new();
+
+			zeroes.Append(leading);
+			zeroes.Append('.');
+
+			for (int i = 0; i < decimalPlaces; i++)
+			{
+				zeroes.Append(trailing);
+			}
+
+			return zeroes.ToString();
 		}
 
 		internal override void AssignDocument(CadDocument doc)

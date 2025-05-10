@@ -242,13 +242,40 @@ namespace ACadSharp.Entities
 			return clone;
 		}
 
+		/// <summary>
+		/// Get the measurement text from the actual <see cref="Dimension.Measurement"/> value in the <see cref="DimensionStyle"/> assigned.
+		/// </summary>
+		/// <returns></returns>
 		public string GetMeasurementText()
 		{
 			return this.GetMeasurementText(this.Style);
 		}
 
-		public string GetMeasurementText(DimensionStyle style)
+		public string GetMeasurementText(DimensionStyle dimensionStyle)
 		{
+			double value = dimensionStyle.ApplyRounding(this.Measurement);
+
+			string result = string.Empty;
+
+			switch (dimensionStyle.LinearUnitFormat)
+			{
+				case Types.Units.LinearUnitFormat.Scientific:
+					break;
+				case Types.Units.LinearUnitFormat.Decimal:
+					break;
+				case Types.Units.LinearUnitFormat.Engineering:
+					break;
+				case Types.Units.LinearUnitFormat.Architectural:
+					break;
+				case Types.Units.LinearUnitFormat.Fractional:
+					break;
+				case Types.Units.LinearUnitFormat.WindowsDesktop:
+					break;
+				case Types.Units.LinearUnitFormat.None:
+				default:
+					break;
+			}
+
 			throw new NotImplementedException();
 		}
 
