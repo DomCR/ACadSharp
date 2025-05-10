@@ -647,7 +647,16 @@ namespace ACadSharp.IO.DWG
 				//	B	298 Undocumented, found in DXF
 				this._writer.WriteBit(mLeaderStyle.UnknownFlag298);
 			}
-        }
+		}
+
+		private void writeObjectContextData(ObjectContextData objectContextData) {
+			//BS	70	Version.
+			this._writer.WriteBitShort(objectContextData.Version);
+			//B	-	Has file to extension dictionary.
+			this._writer.WriteBit(objectContextData.HasFileToExtensionDictionary);
+			//B	290	Default flag.
+			this._writer.WriteBit(objectContextData.Default);
+		}
 
 		private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData annotScaleObjectContextData) {
 			this._writer.HandleReference(DwgReferenceType.HardPointer, annotScaleObjectContextData.Scale);
