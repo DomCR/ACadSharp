@@ -1134,7 +1134,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitShort(2);
 			}
 
-			writeMultiLeaderAnnotContext(multiLeader.ContextData);
+			writeMultiLeaderAnnotContextSubObject(true, multiLeader.ContextData);
 
 			//	Multileader Common data
 			//	340 Leader StyleId (handle)
