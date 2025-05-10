@@ -1,9 +1,10 @@
 ﻿using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
 using Xunit;
 
 namespace ACadSharp.Tests.Tables
 {
-	public class DimensionStyleTests
+	public class DimensionStyleTests : TableEntryCommonTests<DimensionStyle>
 	{
 		[Fact]
 		public void RemoveTableEntries()
@@ -66,6 +67,34 @@ namespace ACadSharp.Tests.Tables
 			Assert.Null(style.DimArrow2);
 			doc.BlockRecords.Remove(arrowBlockName);
 			Assert.Null(style.ArrowBlock);
+		}
+
+		[Fact]
+		public void ApplyRoundingTest()
+		{
+			double value = 42.3645788954;
+			DimensionStyle style = this.createEntry();
+
+			style.Rounding = 0.0;
+			Assert.Equal(value, style.ApplyRounding(value));
+			style.Rounding = 0.0001;
+			Assert.Equal(42.3646, style.ApplyRounding(value));
+			style.Rounding = 0.0005;
+			Assert.Equal(42.3645, style.ApplyRounding(value));
+			style.Rounding = 0.25;
+			Assert.Equal(42.25, style.ApplyRounding(value));
+			style.Rounding = 1;
+			Assert.Equal(42.0d, style.ApplyRounding(value));
+			style.Rounding = 10;
+			Assert.Equal(40.0d, style.ApplyRounding(value));
+
+			style.AlternateUnitRounding = 0.0;
+			Assert.Equal(value, style.ApplyRounding(value, true));
+		}
+
+		protected override Table<DimensionStyle> getTable(CadDocument document)
+		{
+			return document.DimensionStyles;
 		}
 	}
 }
