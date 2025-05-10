@@ -19,6 +19,7 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.MultiLeader)]
 	public partial class MultiLeader : Entity
 	{
+		private MultiLeaderObjectContextData _contextData = new MultiLeaderObjectContextData();
 		private MultiLeaderStyle _style = MultiLeaderStyle.Default;
 		private TextStyle _textStyle = TextStyle.Default;
 		private LineType _leaderLineType = LineType.ByLayer;
@@ -86,7 +87,16 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Contains the multileader content (block/text) and the leaders.
 		/// </summary>
-		public MultiLeaderObjectContextData ContextData { get; private set; } = new MultiLeaderObjectContextData();
+		public MultiLeaderObjectContextData ContextData {
+			get {
+				if (tryGetContextdata(out MultiLeaderObjectContextData contextData)) {
+					return contextData;
+				}
+				else {
+					return _contextData;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Enable Annotation Scale
