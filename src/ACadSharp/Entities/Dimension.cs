@@ -262,7 +262,7 @@ namespace ACadSharp.Entities
 			double value = dimensionStyle.ApplyRounding(this.Measurement);
 			string format = dimensionStyle.GetZeroHandlingFormat(isAngular: this.IsAngular);
 
-			if (IsAngular)
+			if (this.IsAngular)
 			{
 				switch (dimensionStyle.AngularUnit)
 				{
@@ -285,8 +285,7 @@ namespace ACadSharp.Entities
 				switch (dimensionStyle.LinearUnitFormat)
 				{
 					case Types.Units.LinearUnitFormat.Scientific:
-					case Types.Units.LinearUnitFormat.Decimal:
-						result = this.Measurement.ToString(format);
+						format = $"{format}{"E+00"}";
 						break;
 					case Types.Units.LinearUnitFormat.Engineering:
 						break;
@@ -294,15 +293,15 @@ namespace ACadSharp.Entities
 						break;
 					case Types.Units.LinearUnitFormat.Fractional:
 						break;
-					case Types.Units.LinearUnitFormat.WindowsDesktop:
-						break;
 					case Types.Units.LinearUnitFormat.None:
+					case Types.Units.LinearUnitFormat.Decimal:
+					case Types.Units.LinearUnitFormat.WindowsDesktop:
 					default:
 						break;
 				}
 			}
 
-			return result;
+			return this.Measurement.ToString(format);
 		}
 
 		internal override void AssignDocument(CadDocument doc)
