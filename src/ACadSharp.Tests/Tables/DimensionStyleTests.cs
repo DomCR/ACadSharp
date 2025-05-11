@@ -97,7 +97,22 @@ namespace ACadSharp.Tests.Tables
 		{
 			DimensionStyle style = this.createEntry();
 
-			Assert.Equal("0.##", style.GetZeroHandlingFormat());
+			//Test linear
+			style.DecimalPlaces = 2;
+			style.ZeroHandling = ZeroHandling.SuppressZeroFeetAndInches;
+			Assert.Equal("0.00", style.GetZeroHandlingFormat());
+
+			style.DecimalPlaces = 5;
+			style.ZeroHandling = ZeroHandling.SuppressDecimalTrailingZeroes;
+			Assert.Equal("0.#####", style.GetZeroHandlingFormat());
+
+			style.DecimalPlaces = 1;
+			style.ZeroHandling = ZeroHandling.SuppressDecimalLeadingAndTrailingZeroes;
+			Assert.Equal("#.#", style.GetZeroHandlingFormat());
+
+			style.DecimalPlaces = 1;
+			style.ZeroHandling = ZeroHandling.SuppressDecimalLeadingZeroes;
+			Assert.Equal("#.0", style.GetZeroHandlingFormat());
 		}
 
 		protected override Table<DimensionStyle> getTable(CadDocument document)

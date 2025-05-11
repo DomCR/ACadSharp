@@ -93,6 +93,11 @@ namespace ACadSharp.Entities
 		public XYZ InsertionPoint { get; set; }
 
 		/// <summary>
+		/// Indicates if the dimension is angular or linear.
+		/// </summary>
+		public bool IsAngular { get { return this.Flags.HasFlag(DimensionType.Angular3Point) || this.Flags.HasFlag(DimensionType.Angular); } }
+
+		/// <summary>
 		/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location
 		/// </summary>
 		public bool IsTextUserDefinedLocation
@@ -253,30 +258,51 @@ namespace ACadSharp.Entities
 
 		public string GetMeasurementText(DimensionStyle dimensionStyle)
 		{
-			double value = dimensionStyle.ApplyRounding(this.Measurement);
-
 			string result = string.Empty;
+			double value = dimensionStyle.ApplyRounding(this.Measurement);
+			string format = dimensionStyle.GetZeroHandlingFormat(isAngular: this.IsAngular);
 
-			switch (dimensionStyle.LinearUnitFormat)
+			if (IsAngular)
 			{
-				case Types.Units.LinearUnitFormat.Scientific:
-					break;
-				case Types.Units.LinearUnitFormat.Decimal:
-					break;
-				case Types.Units.LinearUnitFormat.Engineering:
-					break;
-				case Types.Units.LinearUnitFormat.Architectural:
-					break;
-				case Types.Units.LinearUnitFormat.Fractional:
-					break;
-				case Types.Units.LinearUnitFormat.WindowsDesktop:
-					break;
-				case Types.Units.LinearUnitFormat.None:
-				default:
-					break;
+				switch (dimensionStyle.AngularUnit)
+				{
+					case Types.Units.AngularUnitFormat.DecimalDegrees:
+						break;
+					case Types.Units.AngularUnitFormat.DegreesMinutesSeconds:
+						break;
+					case Types.Units.AngularUnitFormat.Gradians:
+						break;
+					case Types.Units.AngularUnitFormat.Radians:
+						break;
+					case Types.Units.AngularUnitFormat.SurveyorsUnits:
+						break;
+					default:
+						break;
+				}
+			}
+			else
+			{
+				switch (dimensionStyle.LinearUnitFormat)
+				{
+					case Types.Units.LinearUnitFormat.Scientific:
+					case Types.Units.LinearUnitFormat.Decimal:
+						result = this.Measurement.ToString(format);
+						break;
+					case Types.Units.LinearUnitFormat.Engineering:
+						break;
+					case Types.Units.LinearUnitFormat.Architectural:
+						break;
+					case Types.Units.LinearUnitFormat.Fractional:
+						break;
+					case Types.Units.LinearUnitFormat.WindowsDesktop:
+						break;
+					case Types.Units.LinearUnitFormat.None:
+					default:
+						break;
+				}
 			}
 
-			throw new NotImplementedException();
+			return result;
 		}
 
 		internal override void AssignDocument(CadDocument doc)

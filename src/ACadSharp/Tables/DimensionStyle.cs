@@ -1077,16 +1077,6 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Get the number format in a string form.
-		/// </summary>
-		/// <param name="isAlternate"></param>
-		/// <returns></returns>
-		public string GetNumberFormat(bool isAlternate = false)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
 		/// Get the string format based on the zero handling of the style.
 		/// </summary>
 		/// <param name="isAlternate"></param>
@@ -1095,10 +1085,19 @@ namespace ACadSharp.Tables
 		/// <returns></returns>
 		public string GetZeroHandlingFormat(bool isAlternate = false, bool isAngular = false, bool isInches = false)
 		{
-			//By now is only linear and decimal
-			//TODO: include inches and angular units
+			//By now is only decimal
+			//TODO: include inches
 			short decimalPlaces = isAlternate ? this.AlternateUnitDecimalPlaces : this.DecimalPlaces;
-			var handling = isAlternate ? this.AlternateUnitZeroHandling : this.ZeroHandling;
+			ZeroHandling handling;
+
+			if (isAngular)
+			{
+				handling = isAlternate ? this.AlternateUnitZeroHandling : this.AngularZeroHandling;
+			}
+			else
+			{
+				handling = isAlternate ? this.AlternateUnitZeroHandling : this.ZeroHandling;
+			}
 
 			char leading = handling == ZeroHandling.SuppressDecimalLeadingZeroes
 				|| handling == ZeroHandling.SuppressDecimalLeadingAndTrailingZeroes ?
