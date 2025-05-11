@@ -28,6 +28,22 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
+		public void GetMeasurementTextTests()
+		{
+			T dim = this.createDim();
+
+			dim.GetMeasurementText();
+		}
+
+		[Fact]
+		public void IsAngularTest()
+		{
+			T dim = this.createDim();
+
+			Assert.Equal(dim.Flags.HasFlag(DimensionType.Angular) || dim.Flags.HasFlag(DimensionType.Angular3Point), dim.IsAngular);
+		}
+
+		[Fact]
 		public void IsTextUserDefinedLocationTest()
 		{
 			T dim = new T();
@@ -37,14 +53,6 @@ namespace ACadSharp.Tests.Entities
 			dim.IsTextUserDefinedLocation = true;
 
 			Assert.True(dim.Flags.HasFlag(DimensionType.TextUserDefinedLocation));
-		}
-
-		[Fact]
-		public  void GetMeasurementTextTests()
-		{
-			T dim = this.createDim();
-
-			dim.GetMeasurementText();
 		}
 
 		protected virtual T createDim()
