@@ -32,7 +32,7 @@ namespace ACadSharp.Entities
 			get { return this._block; }
 			set
 			{
-				this._block = this.updateTable(this._block, this.Document?.BlockRecords);
+				this._block = this.updateTable(value, this.Document?.BlockRecords);
 			}
 		}
 
