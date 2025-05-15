@@ -1,5 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
+
 using CSMath;
 using CSUtilities.Extensions;
 using System;
@@ -30,9 +32,9 @@ namespace ACadSharp.Entities
 		public BlockRecord Block
 		{
 			get { return this._block; }
-			set
-			{
-				this._block = this.updateTable(this._block, this.Document?.BlockRecords);
+			set {
+				this._block = value;
+				this.addToBlockRecordsTable(_block);
 			}
 		}
 
@@ -240,6 +242,7 @@ namespace ACadSharp.Entities
 			Dimension clone = (Dimension)base.Clone();
 
 			clone.Style = (DimensionStyle)(this.Style.Clone());
+			clone.Block = (BlockRecord)this.Block?.Clone();
 
 			return clone;
 		}
@@ -249,7 +252,7 @@ namespace ACadSharp.Entities
 			base.AssignDocument(doc);
 
 			this._style = this.updateTable(this.Style, doc.DimensionStyles);
-			this._block = this.updateTable(this.Block, doc.BlockRecords);
+			this.addToBlockRecordsTable(this._block);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 			doc.BlockRecords.OnRemove += this.tableOnRemove;
@@ -279,6 +282,36 @@ namespace ACadSharp.Entities
 			{
 				this._block = null;
 			}
+		}
+
+
+		private void addToBlockRecordsTable(BlockRecord block)
+		{
+			if (this.Document == null) {
+				return;
+			}
+			if (block == null)
+			{
+				return;
+			}
+
+			if (block.Document != null)
+			{
+				return;
+			}
+			BlockRecordsTable blockRecords = this.Document.BlockRecords;
+			int num = 1;
+			foreach (BlockRecord blockRecord in blockRecords)
+			{
+				string name = blockRecord.Name;
+				if (name.StartsWith("*D"))
+				{
+					num = Convert.ToInt32(name.Substring(2)) + 1;
+				}
+			}
+
+			block.Name = $"*D{num}";
+			blockRecords.Add(block);
 		}
 	}
 }
