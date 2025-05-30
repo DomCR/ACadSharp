@@ -250,7 +250,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Get the measurement text from the actual <see cref="Dimension.Measurement"/> value in the <see cref="DimensionStyle"/> assigned.
+		/// Get the measurement text from the actual <see cref="Dimension.Measurement"/> value.
 		/// </summary>
 		/// <returns></returns>
 		public string GetMeasurementText()
@@ -258,6 +258,11 @@ namespace ACadSharp.Entities
 			return this.GetMeasurementText(this.Style);
 		}
 
+		/// <summary>
+		/// Get the measurement text from the actual <see cref="Dimension.Measurement"/> value.
+		/// </summary>
+		/// <param name="dimensionStyle">style to apply to the text.</param>
+		/// <returns></returns>
 		public string GetMeasurementText(DimensionStyle dimensionStyle)
 		{
 			string result = string.Empty;
@@ -303,7 +308,7 @@ namespace ACadSharp.Entities
 				}
 			}
 
-			return this.Measurement.ToString(format);
+			return value.ToString(format);
 		}
 
 		internal override void AssignDocument(CadDocument doc)
