@@ -1,7 +1,7 @@
 ﻿namespace ACadSharp.Tables
 {
 	/// <summary>
-	/// Represents supression of zeros in displaying decimal numbers.
+	/// Represents suppression of zeros in displaying decimal numbers.
 	/// </summary>
 	public enum ZeroHandling : byte
 	{
