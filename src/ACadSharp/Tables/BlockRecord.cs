@@ -283,11 +283,7 @@ namespace ACadSharp.Tables
 		{
 			BlockRecord clone = (BlockRecord)base.Clone();
 
-			Layout layout = (Layout)(this.Layout?.Clone());
-			if (layout is not null)
-			{
-				layout.AssociatedBlock = this;
-			}
+			clone.Layout = null;
 
 			clone.Entities = new CadObjectCollection<Entity>(clone);
 			foreach (var item in this.Entities)
