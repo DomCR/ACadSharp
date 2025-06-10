@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Extensions;
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
 using System;
@@ -111,6 +112,16 @@ namespace ACadSharp.Tests.Tables
 			Assert.NotNull(record.Document);
 			Assert.NotNull(record.BlockEntity.Document);
 			Assert.NotNull(record.BlockEnd.Document);
+		}
+
+		[Fact()]
+		public void ClonePaperSpaceTest()
+		{
+			CadDocument doc = new CadDocument();
+
+			BlockRecord record = doc.PaperSpace.CloneTyped();
+
+
 		}
 
 		[Fact()]
