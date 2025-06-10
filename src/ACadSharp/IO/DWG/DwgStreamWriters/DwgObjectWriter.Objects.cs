@@ -81,6 +81,11 @@ namespace ACadSharp.IO.DWG
 				case MultiLeaderStyle multiLeaderStyle:
 					this.writeMultiLeaderStyle(multiLeaderStyle);
 					break;
+				case MultiLeaderObjectContextData multiLeaderObjectContextData:
+					this.writeObjectContextData(multiLeaderObjectContextData);
+					this.writeAnnotScaleObjectContextData(multiLeaderObjectContextData);
+					this.writeMultiLeaderAnnotContext(multiLeaderObjectContextData);
+					break;
 				case PlotSettings plotsettings:
 					this.writePlotSettings(plotsettings);
 					break;
@@ -644,6 +649,23 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
+		private void writeObjectContextData(ObjectContextData objectContextData) {
+			//BS	70	Version.
+			this._writer.WriteBitShort(objectContextData.Version);
+			//B	-	Has file to extension dictionary.
+			this._writer.WriteBit(objectContextData.HasFileToExtensionDictionary);
+			//B	290	Default flag.
+			this._writer.WriteBit(objectContextData.Default);
+		}
+
+		private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData annotScaleObjectContextData) {
+			this._writer.HandleReference(DwgReferenceType.HardPointer, annotScaleObjectContextData.Scale);
+		}
+
+		private void writeMultiLeaderAnnotContext(MultiLeaderObjectContextData multiLeaderAnnotContext) {
+			writeMultiLeaderAnnotContextSubObject(false, multiLeaderAnnotContext);
+		}
+
 		private void writePlotSettings(PlotSettings plot)
 		{
 			//Common:
@@ -774,7 +796,7 @@ namespace ACadSharp.IO.DWG
 			ms.EndianConverter = new LittleEndianConverter();
 
 			foreach (XRecord.Entry entry in xrecord.Entries)
-			{				
+			{
 				if (entry.Value == null)
 				{
 					continue;
