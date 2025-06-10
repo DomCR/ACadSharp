@@ -1,5 +1,8 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
+using ACadSharp.Tests.Common;
 using System;
+using System.Globalization;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities
@@ -32,7 +35,25 @@ namespace ACadSharp.Tests.Entities
 		{
 			T dim = this.createDim();
 
-			dim.GetMeasurementText();
+			string text;
+
+			if (dim.IsAngular)
+			{
+				text = dim.GetMeasurementText(new DimensionStyle
+				{
+					AngularUnit = Types.Units.AngularUnitFormat.DecimalDegrees
+				});
+			}
+			else
+			{
+				text = dim.GetMeasurementText(new DimensionStyle
+				{
+					LinearUnitFormat = Types.Units.LinearUnitFormat.Scientific
+				});
+
+				Assert.True(double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out double result));
+				AssertUtils.AreEqual(dim.Measurement, result);
+			}
 		}
 
 		[Fact]
