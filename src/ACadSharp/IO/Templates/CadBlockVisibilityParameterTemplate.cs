@@ -1,48 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+
 using ACadSharp.Entities;
 using ACadSharp.Objects.Evaluations;
 
-namespace ACadSharp.IO.Templates
-{
-
-	internal class CadEvaluationExpressionTemplate : CadTemplate<EvaluationExpression>
-	{
-		public CadEvaluationExpressionTemplate(EvaluationExpression cadObject)
-			: base(cadObject)
-		{
-		}
-	}
-
-	internal class CadBlockElementTemplate : CadEvaluationExpressionTemplate
-	{
-		public BlockElement BlockElement { get { return this.CadObject as BlockElement; } }
-
-		public CadBlockElementTemplate(BlockElement cadObject)
-			: base(cadObject)
-		{
-		}
-	}
-
-	internal class CadBlockParameterTemplate : CadBlockElementTemplate
-	{
-		public BlockParameter BlockParameter { get { return this.CadObject as BlockParameter; } }
-
-		public CadBlockParameterTemplate(BlockParameter cadObject)
-			: base(cadObject)
-		{
-		}
-	}
-
-	internal class CadBlock1PtParameterTemplate : CadBlockParameterTemplate
-	{
-		public Block1PtParameter Block1PtParameter { get { return this.CadObject as Block1PtParameter; } }
-
-		public CadBlock1PtParameterTemplate(Block1PtParameter cadObject)
-			: base(cadObject)
-		{
-		}
-	}
+namespace ACadSharp.IO.Templates {
 
 	internal class CadBlockVisibilityParameterTemplate : CadBlock1PtParameterTemplate
 	{
