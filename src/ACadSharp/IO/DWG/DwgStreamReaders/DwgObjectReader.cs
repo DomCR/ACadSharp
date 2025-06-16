@@ -1909,14 +1909,23 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readArc()
 		{
 			Arc arc = new Arc();
-			CadEntityTemplate template = new CadArcTemplate(arc);
+			CadEntityTemplate template = new CadEntityTemplate(arc);
 
 			this.readCommonEntityData(template);
 
 			//Center 3BD 10
 			arc.Center = this._objectReader.Read3BitDouble();
 			//Radius BD 40
-			arc.Radius = this._objectReader.ReadBitDouble();
+			var radius = this._objectReader.ReadBitDouble();
+			if (radius <= 0)
+			{
+				arc.Radius = MathHelper.Epsilon;
+			}
+			else
+			{
+				arc.Radius = radius;
+			}
+
 			//Thickness BT 39
 			arc.Thickness = this._objectReader.ReadBitThickness();
 			//Extrusion BE 210
@@ -1938,8 +1947,18 @@ namespace ACadSharp.IO.DWG
 
 			//Center 3BD 10
 			circle.Center = this._objectReader.Read3BitDouble();
+
 			//Radius BD 40
-			circle.Radius = this._objectReader.ReadBitDouble();
+			var radius = this._objectReader.ReadBitDouble();
+			if (radius <= 0)
+			{
+				circle.Radius = MathHelper.Epsilon;
+			}
+			else
+			{
+				circle.Radius = radius;
+			}
+
 			//Thickness BT 39
 			circle.Thickness = this._objectReader.ReadBitThickness();
 			//Extrusion BE 210
