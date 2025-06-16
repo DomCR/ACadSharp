@@ -70,12 +70,6 @@ namespace ACadSharp.Tables
 
 		public const string ContinuousName = "Continuous";
 
-		///// <summary>
-		///// Pointer to STYLE object (one per element if code 74 > 0)
-		///// </summary>
-		//[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		//public TextStyle Style { get; set; }
-
 		private List<Segment> _segments = new List<Segment>();
 
 		/// <inheritdoc/>
