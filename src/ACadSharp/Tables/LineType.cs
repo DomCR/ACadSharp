@@ -16,32 +16,32 @@ namespace ACadSharp.Tables
 	[DxfSubClass(DxfSubclassMarker.Linetype)]
 	public partial class LineType : TableEntry
 	{
-		public const string ByLayerName = "ByLayer";
-
-		public const string ByBlockName = "ByBlock";
-
-		public const string ContinuousName = "Continuous";
+		public static LineType ByBlock { get { return new LineType("ByBlock"); } }
 
 		public static LineType ByLayer { get { return new LineType("ByLayer"); } }
 
-		public static LineType ByBlock { get { return new LineType("ByBlock"); } }
-
 		public static LineType Continuous { get { return new LineType("Continuous"); } }
 
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.LTYPE;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.TableLinetype;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Linetype;
+		/// <summary>
+		/// Alignment code.
+		/// </summary>
+		/// <value>
+		/// value is always 65, the ASCII code for A.
+		/// </value>
+		[DxfCodeValue(72)]
+		public char Alignment { get; internal set; } = 'A';
 
 		/// <summary>
 		/// Descriptive text for line type.
 		/// </summary>
 		[DxfCodeValue(3)]
 		public string Description { get; set; }
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.TableLinetype;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.LTYPE;
 
 		/// <summary>
 		/// Total pattern length.
@@ -56,19 +56,19 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Alignment code.
-		/// </summary>
-		/// <value>
-		/// value is always 65, the ASCII code for A.
-		/// </value>
-		[DxfCodeValue(72)]
-		public char Alignment { get; internal set; } = 'A';
-
-		/// <summary>
 		/// LineType Segments
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 73)]
 		public IEnumerable<Segment> Segments { get { return this._segments; } }
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Linetype;
+
+		public const string ByBlockName = "ByBlock";
+
+		public const string ByLayerName = "ByLayer";
+
+		public const string ContinuousName = "Continuous";
 
 		///// <summary>
 		///// Pointer to STYLE object (one per element if code 74 > 0)
@@ -78,10 +78,12 @@ namespace ACadSharp.Tables
 
 		private List<Segment> _segments = new List<Segment>();
 
-		internal LineType() : base() { }
-
 		/// <inheritdoc/>
 		public LineType(string name) : base(name) { }
+
+		internal LineType() : base()
+		{
+		}
 
 		/// <summary>
 		/// Add a segment to this line type.
