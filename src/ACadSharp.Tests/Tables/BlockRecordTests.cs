@@ -1,4 +1,6 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Extensions;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
 using System;
@@ -8,20 +10,6 @@ namespace ACadSharp.Tests.Tables
 {
 	public class BlockRecordTests
 	{
-		[Fact()]
-		public void BlockRecordTest()
-		{
-			string name = "my_block";
-			BlockRecord record = new BlockRecord(name);
-
-			Assert.Equal(name, record.Name);
-
-			Assert.NotNull(record.BlockEntity);
-			Assert.Equal(record.Name, record.BlockEntity.Name);
-
-			Assert.NotNull(record.BlockEnd);
-		}
-
 		[Fact()]
 		public void AddEntityTest()
 		{
@@ -45,33 +33,69 @@ namespace ACadSharp.Tests.Tables
 		}
 
 		[Fact()]
-		public void NotAllowDuplicatesTest()
+		public void BlockRecordTest()
 		{
 			string name = "my_block";
 			BlockRecord record = new BlockRecord(name);
 
-			Line l1 = new Line();
+			Assert.Equal(name, record.Name);
 
-			record.Entities.Add(l1);
-			Assert.Throws<ArgumentException>(() => record.Entities.Add(l1));
+			Assert.NotNull(record.BlockEntity);
+			Assert.Equal(record.Name, record.BlockEntity.Name);
+
+			Assert.NotNull(record.BlockEnd);
 		}
 
 		[Fact()]
-		public void CreateSortensTableTest()
+		public void CloneDetachDocumentTest()
 		{
 			string name = "my_block";
 			BlockRecord record = new BlockRecord(name);
+			CadDocument doc = new CadDocument();
 
-			record.Entities.Add(new Line());
-			record.Entities.Add(new Line());
-			record.Entities.Add(new Line());
-			record.Entities.Add(new Line());
+			doc.BlockRecords.Add(record);
 
-			record.CreateSortEntitiesTable();
+			BlockRecord clone = (BlockRecord)record.Clone();
 
-			Assert.NotNull(record.SortEntitiesTable);
-			Assert.NotNull(record.SortEntitiesTable.Sorters);
-			Assert.Empty(record.SortEntitiesTable.Sorters);
+			Assert.Null(clone.Document);
+			Assert.Null(clone.BlockEntity.Document);
+			Assert.Null(clone.BlockEnd.Document);
+
+			Assert.NotNull(record.Document);
+			Assert.NotNull(record.BlockEntity.Document);
+			Assert.NotNull(record.BlockEnd.Document);
+		}
+
+		[Fact()]
+		public void CloneInDocumentTest()
+		{
+			string name = "my_block";
+			BlockRecord record = new BlockRecord(name);
+			CadDocument doc = new CadDocument();
+
+			doc.BlockRecords.Add(record);
+
+			Assert.NotNull(record.Document);
+			Assert.NotNull(record.BlockEntity.Document);
+			Assert.NotNull(record.BlockEnd.Document);
+		}
+
+		[Fact()]
+		public void ClonePaperSpaceTest()
+		{
+			CadDocument doc = new CadDocument();
+
+			BlockRecord record = doc.PaperSpace.CloneTyped();
+
+			Assert.NotNull(record);
+			Assert.Null(record.Layout);
+
+			//Test the layout keeps the block
+			Layout paper = doc.Layouts["Layout1"];
+			Layout layout = paper.CloneTyped();
+
+			Assert.NotNull(layout);
+			Assert.NotNull(layout.AssociatedBlock);
 		}
 
 		[Fact()]
@@ -100,37 +124,33 @@ namespace ACadSharp.Tests.Tables
 		}
 
 		[Fact()]
-		public void CloneInDocumentTest()
+		public void CreateSortensTableTest()
 		{
 			string name = "my_block";
 			BlockRecord record = new BlockRecord(name);
-			CadDocument doc = new CadDocument();
 
-			doc.BlockRecords.Add(record);
+			record.Entities.Add(new Line());
+			record.Entities.Add(new Line());
+			record.Entities.Add(new Line());
+			record.Entities.Add(new Line());
 
-			Assert.NotNull(record.Document);
-			Assert.NotNull(record.BlockEntity.Document);
-			Assert.NotNull(record.BlockEnd.Document);
+			record.CreateSortEntitiesTable();
+
+			Assert.NotNull(record.SortEntitiesTable);
+			Assert.NotNull(record.SortEntitiesTable.Sorters);
+			Assert.Empty(record.SortEntitiesTable.Sorters);
 		}
 
 		[Fact()]
-		public void CloneDetachDocumentTest()
+		public void NotAllowDuplicatesTest()
 		{
 			string name = "my_block";
 			BlockRecord record = new BlockRecord(name);
-			CadDocument doc = new CadDocument();
 
-			doc.BlockRecords.Add(record);
+			Line l1 = new Line();
 
-			BlockRecord clone = (BlockRecord)record.Clone();
-
-			Assert.Null(clone.Document);
-			Assert.Null(clone.BlockEntity.Document);
-			Assert.Null(clone.BlockEnd.Document);
-
-			Assert.NotNull(record.Document);
-			Assert.NotNull(record.BlockEntity.Document);
-			Assert.NotNull(record.BlockEnd.Document);
+			record.Entities.Add(l1);
+			Assert.Throws<ArgumentException>(() => record.Entities.Add(l1));
 		}
 	}
 }

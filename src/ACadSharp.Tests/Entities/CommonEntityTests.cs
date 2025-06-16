@@ -23,7 +23,7 @@ namespace ACadSharp.Tests.Entities
 			Assert.Null(entity.XDictionary);
 		}
 
-		[Fact()]
+		[Fact]
 		public virtual void BoundingBoxTest()
 		{
 			Entity entity = EntityFactory.Create(typeof(T));

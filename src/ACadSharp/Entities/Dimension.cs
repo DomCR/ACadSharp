@@ -44,7 +44,7 @@ namespace ACadSharp.Entities
 		public XYZ DefinitionPoint { get; set; }
 
 		/// <summary>
-		/// Dimension type
+		/// Dimension type.
 		/// </summary>
 		[DxfCodeValue(70)]
 		public DimensionType Flags
@@ -60,7 +60,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the first arrow
+		/// Gets or sets a value indicating whether the first arrow.
 		/// is to be flipped.
 		/// </summary>
 		/// <value>
@@ -166,14 +166,7 @@ namespace ACadSharp.Entities
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				if (this.Document != null)
-				{
-					this._style = this.updateTable(value, this.Document.DimensionStyles);
-				}
-				else
-				{
-					this._style = value;
-				}
+				this._style = this.updateTable(value, this.Document?.DimensionStyles);
 			}
 		}
 
@@ -348,6 +341,7 @@ namespace ACadSharp.Entities
 			base.AssignDocument(doc);
 
 			this._style = this.updateTable(this.Style, doc.DimensionStyles);
+			this._block = this.updateTable(this.Block, doc.BlockRecords);
 
 			if (this._block != null)
 			{
@@ -357,11 +351,13 @@ namespace ACadSharp.Entities
 			this._block = this.updateTable(this.Block, this.Document.BlockRecords);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
+			doc.BlockRecords.OnRemove += this.tableOnRemove;
 		}
 
 		internal override void UnassignDocument()
 		{
 			this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
+			this.Document.BlockRecords.OnRemove -= this.tableOnRemove;
 
 			base.UnassignDocument();
 
@@ -580,6 +576,11 @@ namespace ACadSharp.Entities
 			if (e.Item.Equals(this.Style))
 			{
 				this.Style = this.Document.DimensionStyles[DimensionStyle.DefaultName];
+			}
+
+			if (e.Item.Equals(this.Block))
+			{
+				this._block = null;
 			}
 		}
 
