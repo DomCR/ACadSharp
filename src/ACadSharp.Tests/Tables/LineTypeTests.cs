@@ -11,6 +11,8 @@ namespace ACadSharp.Tests.Tables
 		[Fact]
 		public void CloneTest()
 		{
+			var textStyle = new TextStyle("my_style");
+
 			LineType lt = new LineType("segmented");
 			lt.Description = "line type description";
 
@@ -26,8 +28,15 @@ namespace ACadSharp.Tests.Tables
 				//Style = this.Document.TextStyles[TextStyle.DefaultName]
 			};
 
+			LineType.Segment s3 = new LineType.Segment
+			{
+				Length = 1,
+				Style = textStyle
+			};
+
 			lt.AddSegment(s1);
 			lt.AddSegment(s2);
+			lt.AddSegment(s3);
 
 			LineType clone = lt.CloneTyped();
 
@@ -37,6 +46,12 @@ namespace ACadSharp.Tests.Tables
 			{
 				Assert.Equal(lt.Segments.ElementAt(i).Length, clone.Segments.ElementAt(i).Length);
 			}
+
+			var last = clone.Segments.Last();
+
+			Assert.NotNull(last.Style);
+			Assert.NotEqual(textStyle, last.Style);
+			Assert.Equal(textStyle.Name, last.Style.Name);
 		}
 	}
 }

@@ -165,7 +165,7 @@ namespace ACadSharp.Entities
 
 				if (this.Document != null)
 				{
-					this._style = this.updateTable(value, this.Document.TextStyles);
+					this._style = updateTable(value, this.Document.TextStyles);
 				}
 				else
 				{
@@ -326,7 +326,7 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._style = this.updateTable(this.Style, doc.TextStyles);
+			this._style = updateTable(this.Style, doc.TextStyles);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 		}

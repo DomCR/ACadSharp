@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,6 +90,7 @@ namespace ACadSharp.Tables
 			if (segment.LineType != null)
 				throw new ArgumentException($"Segment has already a LineType: {segment.LineType.Name}");
 
+			segment.Style = updateTable(segment.Style, this.Document?.TextStyles);
 			segment.LineType = this;
 			this._segments.Add(segment);
 		}
@@ -105,6 +107,44 @@ namespace ACadSharp.Tables
 			}
 
 			return clone;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			foreach (var item in this._segments.Where(s => s.Style != null))
+			{
+				item.AssignDocument(doc);
+			}
+
+			doc.TextStyles.OnRemove += this.tableOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.TextStyles.OnRemove -= this.tableOnRemove;
+
+			foreach (var item in this._segments.Where(s => s.Style != null))
+			{
+				item.UnassignDocument();
+			}
+
+			base.UnassignDocument();
+		}
+
+		protected void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item is TextStyle style)
+			{
+				foreach (var item in this._segments.Where(s => s.Style != null))
+				{
+					if (item.Style == style)
+					{
+						item.Style = null;
+					}
+				}
+			}
 		}
 	}
 }

@@ -1,5 +1,7 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using CSMath;
+using System;
 
 namespace ACadSharp.Tables
 {
@@ -14,16 +16,9 @@ namespace ACadSharp.Tables
 			public double Length { get; set; }
 
 			/// <summary>
-			/// Complex linetype element type.
+			/// Line type where this segment belongs
 			/// </summary>
-			[DxfCodeValue(74)]
-			public LinetypeShapeFlags Shapeflag { get; set; }
-
-			/// <summary>
-			/// Shape number.
-			/// </summary>
-			[DxfCodeValue(75)]
-			public short ShapeNumber { get; set; }
+			public LineType LineType { get; internal set; }
 
 			/// <summary>
 			/// Offset.
@@ -44,6 +39,31 @@ namespace ACadSharp.Tables
 			public double Scale { get; set; } = 1.0d;
 
 			/// <summary>
+			/// Complex linetype element type.
+			/// </summary>
+			[DxfCodeValue(74)]
+			public LinetypeShapeFlags Shapeflag { get; set; }
+
+			/// <summary>
+			/// Shape number.
+			/// </summary>
+			[DxfCodeValue(75)]
+			public short ShapeNumber { get; set; }
+
+			/// <summary>
+			/// Pointer to STYLE object (one per element if code 74 > 0)
+			/// </summary>
+			[DxfCodeValue(DxfReferenceType.Handle, 340)]
+			public TextStyle Style
+			{
+				get { return this._style; }
+				set
+				{
+					this._style = updateTable(value, this.LineType?.Document?.TextStyles);
+				}
+			}
+
+			/// <summary>
 			/// Text string.
 			/// </summary>
 			/// <remarks>
@@ -59,25 +79,26 @@ namespace ACadSharp.Tables
 				}
 			}
 
-			/// <summary>
-			/// Pointer to STYLE object (one per element if code 74 > 0)
-			/// </summary>
-			[DxfCodeValue(DxfReferenceType.Handle, 340)]
-			public TextStyle Style { get; set; }
-
-			/// <summary>
-			/// Line type where this segment belongs
-			/// </summary>
-			public LineType LineType { get; internal set; }
+			private TextStyle _style = null;
 
 			private string _text = string.Empty;
 
 			public LineType.Segment Clone()
 			{
 				Segment clone = MemberwiseClone() as Segment;
-				clone.Style = (TextStyle)(this.Style?.Clone());
 				clone.LineType = null;
+				clone._style = (TextStyle)(this.Style?.Clone());
 				return clone;
+			}
+
+			internal void AssignDocument(CadDocument doc)
+			{
+				this._style = updateTable(this._style, doc.TextStyles);
+			}
+
+			internal void UnassignDocument()
+			{
+				this._style = this._style.CloneTyped();
 			}
 		}
 	}
