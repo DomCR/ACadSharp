@@ -73,24 +73,9 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			try
-			{
-				double minX = Math.Min(Math.Min(FirstCorner.X, SecondCorner.X), Math.Min(ThirdCorner.X, FourthCorner.X));
-				double minY = Math.Min(Math.Min(FirstCorner.Y, SecondCorner.Y), Math.Min(ThirdCorner.Y, FourthCorner.Y));
-				double minZ = Math.Min(Math.Min(FirstCorner.Z, SecondCorner.Z), Math.Min(ThirdCorner.Z, FourthCorner.Z));
-				double maxX = Math.Max(Math.Max(FirstCorner.X, SecondCorner.X), Math.Max(ThirdCorner.X, FourthCorner.X));
-				double maxY = Math.Max(Math.Max(FirstCorner.Y, SecondCorner.Y), Math.Max(ThirdCorner.Y, FourthCorner.Y));
-				double maxZ = Math.Max(Math.Max(FirstCorner.Z, SecondCorner.Z), Math.Max(ThirdCorner.Z, FourthCorner.Z));
-
-				return new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
-			}
-			catch
-			{
-				return BoundingBox.Null;
-			}
-			//return BoundingBox.Null;
-		}
-	}
+		    public override BoundingBox GetBoundingBox()
+        {
+            return BoundingBox.FromPoints(new[] { this.FirstCorner, this.SecondCorner, this.ThirdCorner, this.FourthCorner});
+        }
+   	}
 }
