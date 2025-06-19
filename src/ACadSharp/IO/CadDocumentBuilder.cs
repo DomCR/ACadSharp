@@ -40,7 +40,7 @@ namespace ACadSharp.IO
 
 		public ulong InitialHandSeed { get; set; } = 0;
 
-		protected Dictionary<ulong, CadTemplate> cadObjectsTemplates = new();
+		protected Dictionary<ulong, ICadObjectTemplate> cadObjectsTemplates = new();
 
 		protected Dictionary<ulong, ICadObjectTemplate> templatesMap = new();
 
@@ -71,7 +71,7 @@ namespace ACadSharp.IO
 			}
 		}
 
-		public void AddTemplate(CadTemplate template)
+		public void AddTemplate(ICadObjectTemplate template)
 		{
 			this.addToMap(template);
 
