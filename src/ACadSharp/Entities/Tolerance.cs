@@ -56,7 +56,7 @@ namespace ACadSharp.Entities
 
 				if (this.Document != null)
 				{
-					this._style = this.updateTable(value, this.Document.DimensionStyles);
+					this._style = updateTable(value, this.Document.DimensionStyles);
 				}
 				else
 				{

@@ -165,7 +165,7 @@ namespace ACadSharp.Tables
 			get { return this._dimArrowBlock; }
 			set
 			{
-				this._dimArrowBlock = this.updateTable(value, this.Document?.BlockRecords);
+				this._dimArrowBlock = updateTable(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -271,7 +271,7 @@ namespace ACadSharp.Tables
 			get { return this._dimArrow1; }
 			set
 			{
-				this._dimArrow1 = this.updateTable(value, this.Document?.BlockRecords);
+				this._dimArrow1 = updateTable(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -295,7 +295,7 @@ namespace ACadSharp.Tables
 			get { return this._dimArrow2; }
 			set
 			{
-				this._dimArrow2 = this.updateTable(value, this.Document?.BlockRecords);
+				this._dimArrow2 = updateTable(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -502,7 +502,7 @@ namespace ACadSharp.Tables
 			get { return this._leaderArrow; }
 			set
 			{
-				this._leaderArrow = this.updateTable(value, this.Document?.BlockRecords);
+				this._leaderArrow = updateTable(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -554,7 +554,7 @@ namespace ACadSharp.Tables
 			get { return this._lineType; }
 			set
 			{
-				this._lineType = this.updateTable(value, this.Document?.LineTypes);
+				this._lineType = updateTable(value, this.Document?.LineTypes);
 			}
 		}
 
@@ -567,7 +567,7 @@ namespace ACadSharp.Tables
 			get { return this._lineTypeExt1; }
 			set
 			{
-				this._lineTypeExt1 = this.updateTable(value, this.Document?.LineTypes);
+				this._lineTypeExt1 = updateTable(value, this.Document?.LineTypes);
 			}
 		}
 
@@ -580,7 +580,7 @@ namespace ACadSharp.Tables
 			get { return this._lineTypeExt2; }
 			set
 			{
-				this._lineTypeExt2 = this.updateTable(value, this.Document?.LineTypes);
+				this._lineTypeExt2 = updateTable(value, this.Document?.LineTypes);
 			}
 		}
 
@@ -734,7 +734,7 @@ namespace ACadSharp.Tables
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				this._style = this.updateTable(value, this.Document?.TextStyles);
+				this._style = updateTable(value, this.Document?.TextStyles);
 			}
 		}
 
@@ -1124,16 +1124,16 @@ namespace ACadSharp.Tables
 		{
 			base.AssignDocument(doc);
 
-			this._style = this.updateTable(this.Style, doc.TextStyles);
+			this._style = updateTable(this.Style, doc.TextStyles);
 
-			this._lineType = this.updateTable(this.LineType, doc.LineTypes);
-			this._lineTypeExt1 = this.updateTable(this.LineTypeExt1, doc.LineTypes);
-			this._lineTypeExt2 = this.updateTable(this.LineTypeExt2, doc.LineTypes);
+			this._lineType = updateTable(this.LineType, doc.LineTypes);
+			this._lineTypeExt1 = updateTable(this.LineTypeExt1, doc.LineTypes);
+			this._lineTypeExt2 = updateTable(this.LineTypeExt2, doc.LineTypes);
 
-			this._leaderArrow = this.updateTable(this.LeaderArrow, doc.BlockRecords);
-			this._dimArrow1 = this.updateTable(this.DimArrow1, doc.BlockRecords);
-			this._dimArrow2 = this.updateTable(this.DimArrow2, doc.BlockRecords);
-			this._dimArrowBlock = this.updateTable(this.ArrowBlock, doc.BlockRecords);
+			this._leaderArrow = updateTable(this.LeaderArrow, doc.BlockRecords);
+			this._dimArrow1 = updateTable(this.DimArrow1, doc.BlockRecords);
+			this._dimArrow2 = updateTable(this.DimArrow2, doc.BlockRecords);
+			this._dimArrowBlock = updateTable(this.ArrowBlock, doc.BlockRecords);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 			doc.LineTypes.OnRemove += this.tableOnRemove;

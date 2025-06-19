@@ -32,7 +32,7 @@ namespace ACadSharp.Entities
 			get { return this._block; }
 			set
 			{
-				this._block = this.updateTable(value, this.Document?.BlockRecords);
+				this._block = updateTable(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -170,7 +170,7 @@ namespace ACadSharp.Entities
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				this._style = this.updateTable(value, this.Document?.DimensionStyles);
+				this._style = updateTable(value, this.Document?.DimensionStyles);
 			}
 		}
 
@@ -315,8 +315,8 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._style = this.updateTable(this.Style, doc.DimensionStyles);
-			this._block = this.updateTable(this.Block, doc.BlockRecords);
+			this._style = updateTable(this.Style, doc.DimensionStyles);
+			this._block = updateTable(this.Block, doc.BlockRecords);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 			doc.BlockRecords.OnRemove += this.tableOnRemove;
