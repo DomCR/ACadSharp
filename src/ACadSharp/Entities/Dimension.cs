@@ -32,7 +32,7 @@ namespace ACadSharp.Entities
 			get { return this._block; }
 			set
 			{
-				this._block = updateTable(this._block, this.Document?.BlockRecords);
+				this._block = updateTable(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -98,6 +98,11 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(12, 22, 32)]
 		public XYZ InsertionPoint { get; set; }
+
+		/// <summary>
+		/// Indicates if the dimension is angular or linear.
+		/// </summary>
+		public bool IsAngular { get { return this.Flags.HasFlag(DimensionType.Angular3Point) || this.Flags.HasFlag(DimensionType.Angular); } }
 
 		/// <summary>
 		/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location
@@ -242,6 +247,68 @@ namespace ACadSharp.Entities
 			clone.Style = (DimensionStyle)(this.Style.Clone());
 
 			return clone;
+		}
+
+		/// <summary>
+		/// Get the measurement text from the actual <see cref="Dimension.Measurement"/> value.
+		/// </summary>
+		/// <returns></returns>
+		public string GetMeasurementText()
+		{
+			return this.GetMeasurementText(this.Style);
+		}
+
+		/// <summary>
+		/// Get the measurement text from the actual <see cref="Dimension.Measurement"/> value.
+		/// </summary>
+		/// <param name="dimensionStyle">style to apply to the text.</param>
+		/// <returns></returns>
+		public string GetMeasurementText(DimensionStyle dimensionStyle)
+		{
+			string result = string.Empty;
+			double value = dimensionStyle.ApplyRounding(this.Measurement);
+			string format = dimensionStyle.GetZeroHandlingFormat(isAngular: this.IsAngular);
+
+			if (this.IsAngular)
+			{
+				switch (dimensionStyle.AngularUnit)
+				{
+					case Types.Units.AngularUnitFormat.DecimalDegrees:
+						break;
+					case Types.Units.AngularUnitFormat.DegreesMinutesSeconds:
+						break;
+					case Types.Units.AngularUnitFormat.Gradians:
+						break;
+					case Types.Units.AngularUnitFormat.Radians:
+						break;
+					case Types.Units.AngularUnitFormat.SurveyorsUnits:
+						break;
+					default:
+						break;
+				}
+			}
+			else
+			{
+				switch (dimensionStyle.LinearUnitFormat)
+				{
+					case Types.Units.LinearUnitFormat.Scientific:
+						format = $"{format}{"E+00"}";
+						break;
+					case Types.Units.LinearUnitFormat.Engineering:
+						break;
+					case Types.Units.LinearUnitFormat.Architectural:
+						break;
+					case Types.Units.LinearUnitFormat.Fractional:
+						break;
+					case Types.Units.LinearUnitFormat.None:
+					case Types.Units.LinearUnitFormat.Decimal:
+					case Types.Units.LinearUnitFormat.WindowsDesktop:
+					default:
+						break;
+				}
+			}
+
+			return value.ToString(format);
 		}
 
 		internal override void AssignDocument(CadDocument doc)
