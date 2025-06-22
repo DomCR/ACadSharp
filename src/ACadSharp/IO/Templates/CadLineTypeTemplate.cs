@@ -26,8 +26,6 @@ namespace ACadSharp.IO.Templates
 
 		public List<SegmentTemplate> SegmentTemplates { get; set; } = new List<SegmentTemplate>();
 
-		private List<int> _readedCodes = new List<int>();
-
 		public CadLineTypeTemplate() : base(new LineType()) { }
 
 		public CadLineTypeTemplate(LineType entry) : base(entry) { }
@@ -39,6 +37,7 @@ namespace ACadSharp.IO.Templates
 			foreach (var item in this.SegmentTemplates)
 			{
 				item.Build(builder);
+
 				this.CadObject.AddSegment(item.Segment);
 			}
 		}

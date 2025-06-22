@@ -494,6 +494,8 @@ namespace ACadSharp.IO
 
 			if (!tmpReader.Find(DxfFileToken.HeaderSection))
 			{
+				this.triggerNotification($"Header section not found, using a generic reader.", NotificationType.Warning);
+
 				this._version = ACadVersion.Unknown;
 				tmpReader.Start();
 				return tmpReader;
@@ -535,6 +537,11 @@ namespace ACadSharp.IO
 				}
 
 				tmpReader.ReadNext();
+			}
+
+			if(this._version == ACadVersion.Unknown)
+			{
+				this.triggerNotification($"Dxf version not found, using a generic reader.", NotificationType.Warning);
 			}
 
 			return this.createReader(isBinary, isAC1009Format);
