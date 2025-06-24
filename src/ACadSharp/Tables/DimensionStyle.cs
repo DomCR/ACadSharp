@@ -642,6 +642,23 @@ namespace ACadSharp.Tables
 		public string PostFix { get; set; } = "<>";
 
 		/// <summary>
+		/// Gets or sets the prefix based on the <see cref="PostFix"/> value.
+		/// </summary>
+		public string Prefix
+		{
+			get
+			{
+				this.getDimStylePrefixAndSuffix(this.PostFix, '<', '>', out string prefix, out _);
+				return prefix;
+			}
+			set
+			{
+				this.getDimStylePrefixAndSuffix(this.PostFix, '<', '>', out _, out string suffix);
+				this.PostFix = $"{value}{this.PostFix}{suffix}";
+			}
+		}
+
+		/// <summary>
 		/// Rounds all dimensioning distances to the specified value
 		/// (see DIMRND System Variable).
 		/// </summary>
@@ -740,6 +757,23 @@ namespace ACadSharp.Tables
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.DimensionStyle;
+
+		/// <summary>
+		/// Gets or sets the suffix based on the <see cref="PostFix"/> value.
+		/// </summary>
+		public string Suffix
+		{
+			get
+			{
+				this.getDimStylePrefixAndSuffix(this.PostFix, '<', '>', out _, out string suffix);
+				return suffix;
+			}
+			set
+			{
+				this.getDimStylePrefixAndSuffix(this.PostFix, '<', '>', out string prefix, out _);
+				this.PostFix = $"{prefix}{this.PostFix}{value}";
+			}
+		}
 
 		/// <summary>
 		/// Controls suppression of the first dimension line and arrowhead
@@ -1192,6 +1226,38 @@ namespace ACadSharp.Tables
 			{
 				return original;
 			}
+		}
+
+		private string[] getDimStylePrefixAndSuffix(string text, char start, char end, out string prefix, out string suffix)
+		{
+			int index = -1; // first occurrence of '<>' or '[]'
+			for (int i = 0; i < text.Length; i++)
+			{
+				if (text[i] == start)
+				{
+					if (i + 1 < text.Length)
+					{
+						if (text[i + 1] == end)
+						{
+							index = i;
+							break;
+						}
+					}
+				}
+			}
+
+			if (index < 0)
+			{
+				prefix = string.Empty;
+				suffix = text;
+			}
+			else
+			{
+				prefix = text.Substring(0, index);
+				suffix = text.Substring(index + 2, text.Length - (index + 2));
+			}
+
+			return new[] { prefix, suffix };
 		}
 	}
 }

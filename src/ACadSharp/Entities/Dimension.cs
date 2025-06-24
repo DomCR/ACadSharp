@@ -1,8 +1,10 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using ACadSharp.Tables;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
+using System.Data;
 
 namespace ACadSharp.Entities
 {
@@ -261,17 +263,22 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Get the measurement text from the actual <see cref="Dimension.Measurement"/> value.
 		/// </summary>
-		/// <param name="dimensionStyle">style to apply to the text.</param>
+		/// <param name="style">style to apply to the text.</param>
 		/// <returns></returns>
-		public string GetMeasurementText(DimensionStyle dimensionStyle)
+		public string GetMeasurementText(DimensionStyle style)
 		{
-			string result = string.Empty;
-			double value = dimensionStyle.ApplyRounding(this.Measurement);
-			string format = dimensionStyle.GetZeroHandlingFormat(isAngular: this.IsAngular);
+			if (!string.IsNullOrEmpty(this.Text))
+			{
+				return this.Text;
+			}
+
+			string text = string.Empty;
+			double value = style.ApplyRounding(this.Measurement);
+			string format = style.GetZeroHandlingFormat(isAngular: this.IsAngular);
 
 			if (this.IsAngular)
 			{
-				switch (dimensionStyle.AngularUnit)
+				switch (style.AngularUnit)
 				{
 					case Types.Units.AngularUnitFormat.DecimalDegrees:
 						break;
@@ -289,16 +296,17 @@ namespace ACadSharp.Entities
 			}
 			else
 			{
-				switch (dimensionStyle.LinearUnitFormat)
+				switch (style.LinearUnitFormat)
 				{
 					case Types.Units.LinearUnitFormat.Scientific:
-						format = $"{format}{"E+00"}";
+						text = value.ToString($"{format}{"E+00"}");
 						break;
 					case Types.Units.LinearUnitFormat.Engineering:
 						break;
 					case Types.Units.LinearUnitFormat.Architectural:
 						break;
 					case Types.Units.LinearUnitFormat.Fractional:
+						text = UnitFormatExtensions.ToFractional(value, style.FractionFormat, style.DecimalPlaces, style.ToleranceScaleFactor);
 						break;
 					case Types.Units.LinearUnitFormat.None:
 					case Types.Units.LinearUnitFormat.Decimal:
@@ -308,7 +316,21 @@ namespace ACadSharp.Entities
 				}
 			}
 
-			return value.ToString(format);
+			string prefix = string.Empty;
+			switch (this.Flags)
+			{
+				case DimensionType.Diameter:
+					prefix = string.IsNullOrEmpty(style.Prefix) ? "Ø" : style.Prefix;
+					break;
+				case DimensionType.Radius:
+					prefix = string.IsNullOrEmpty(style.Prefix) ? "R" : style.Prefix;
+					break;
+				default:
+					prefix = string.IsNullOrEmpty(style.Prefix) ? string.Empty : style.Prefix;
+					break;
+			}
+
+			return $"{prefix}{text}{style.Suffix}";
 		}
 
 		internal override void AssignDocument(CadDocument doc)
