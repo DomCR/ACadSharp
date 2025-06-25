@@ -109,7 +109,6 @@
 		public const string ObjectsSection = "OBJECTS";
 		public const string ObjectDictionary = "DICTIONARY";
 		public const string ObjectDictionaryWithDefault = "ACDBDICTIONARYWDFLT";
-		public const string ObjectAcdbPlaceHolder = "ACDBPLACEHOLDER";
 		public const string ObjectDictionaryVar = "DICTIONARYVAR";
 		public const string ObjectDBColor = "DBCOLOR";
 		public const string ObjectPlotSettings = "PLOTSETTINGS";
@@ -132,6 +131,8 @@
 		public const string ObjectTableContent = "TABLECONTENT";
 		public const string ObjectGeoData = "GEODATA";
 		public const string ObjectGroup = "GROUP";
+		public const string ObjectTableStyle = "TABLESTYLE";
+		public const string ObjectCellStyleMap = "CELLSTYLEMAP";
 
 		#endregion
 	}

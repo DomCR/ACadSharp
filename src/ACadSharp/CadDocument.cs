@@ -199,6 +199,28 @@ namespace ACadSharp
 		}
 
 		/// <summary>
+		/// Updates the <see cref="DxfClass"/> in the document and their instance count.
+		/// </summary>
+		/// <param name="reset">Resets the list and clears any unnecessary classes.</param>
+		public void UpdateDxfClasses(bool reset)
+		{
+			if (reset)
+			{
+				this.Classes.Clear();
+			}
+
+			DxfClassCollection.UpdateDxfClasses(this);
+
+			foreach (var item in this.Classes)
+			{
+				item.InstanceCount = this._cadObjects.Values
+					.OfType<CadObject>()
+					.Where(c => c.ObjectName == item.DxfName)
+					.Count();
+			}
+		}
+
+		/// <summary>
 		/// Create the default entries and objects for the <see cref="CadDocument"/>.
 		/// </summary>
 		public void CreateDefaults()

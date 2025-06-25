@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Extensions;
 using ACadSharp.Header;
 using ACadSharp.IO;
 using ACadSharp.Tables;

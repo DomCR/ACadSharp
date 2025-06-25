@@ -249,7 +249,7 @@ namespace ACadSharp
 			}
 		}
 
-		protected T updateTable<T>(T entry, Table<T> table)
+		protected static T updateTable<T>(T entry, Table<T> table)
 			where T : TableEntry
 		{
 			if (table == null || entry == null)
