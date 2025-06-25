@@ -1146,50 +1146,6 @@ namespace ACadSharp.Tables
 			};
 		}
 
-		/// <summary>
-		/// Get the string format based on the zero handling of the style.
-		/// </summary>
-		/// <param name="isAlternate"></param>
-		/// <param name="isAngular"></param>
-		/// <param name="isInches"></param>
-		/// <returns></returns>
-		public string GetZeroHandlingFormat(bool isAlternate = false, bool isAngular = false, bool isInches = false)
-		{
-			//By now is only decimal
-			//TODO: include inches
-			short decimalPlaces = isAlternate ? this.AlternateUnitDecimalPlaces : this.DecimalPlaces;
-			ZeroHandling handling;
-
-			if (isAngular)
-			{
-				handling = isAlternate ? this.AlternateUnitZeroHandling : this.AngularZeroHandling;
-			}
-			else
-			{
-				handling = isAlternate ? this.AlternateUnitZeroHandling : this.ZeroHandling;
-			}
-
-			char leading = handling == ZeroHandling.SuppressDecimalLeadingZeroes
-				|| handling == ZeroHandling.SuppressDecimalLeadingAndTrailingZeroes ?
-				'#' : '0';
-
-			char trailing = handling == ZeroHandling.SuppressDecimalTrailingZeroes
-				|| handling == ZeroHandling.SuppressDecimalLeadingAndTrailingZeroes ?
-				'#' : '0';
-
-			StringBuilder zeroes = new();
-
-			zeroes.Append(leading);
-			zeroes.Append(this.DecimalSeparator);
-
-			for (int i = 0; i < decimalPlaces; i++)
-			{
-				zeroes.Append(trailing);
-			}
-
-			return zeroes.ToString();
-		}
-
 		internal override void AssignDocument(CadDocument doc)
 		{
 			base.AssignDocument(doc);
