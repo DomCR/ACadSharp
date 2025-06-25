@@ -2,6 +2,8 @@
 using ACadSharp.Types.Units;
 using CSMath;
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Globalization;
 
 //	TODO should the described coupling of properties be implemented in this class,
@@ -123,7 +125,7 @@ namespace ACadSharp.Tables
 		/// </para>
 		/// </value>
 		[DxfCodeValue(179)]
-		public short AngularDimensionDecimalPlaces { get; set; } = 0;
+		public short AngularDecimalPlaces { get; set; } = 0;
 
 		/// <summary>
 		/// Gets or sets the units format for angular dimensions
@@ -165,7 +167,7 @@ namespace ACadSharp.Tables
 			get { return this._dimArrowBlock; }
 			set
 			{
-				this._dimArrowBlock = this.updateTable(value, this.Document?.BlockRecords);
+				this._dimArrowBlock = updateTable(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -182,7 +184,7 @@ namespace ACadSharp.Tables
 			{
 				if (value < 0)
 				{
-					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(ArrowSize)} must be equals or greater than zero.");
+					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(this.ArrowSize)} must be equals or greater than zero.");
 				}
 				this._arrowSize = value;
 			}
@@ -271,7 +273,7 @@ namespace ACadSharp.Tables
 			get { return this._dimArrow1; }
 			set
 			{
-				this._dimArrow1 = this.updateTable(value, this.Document?.BlockRecords);
+				this._dimArrow1 = updateTable(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -295,7 +297,7 @@ namespace ACadSharp.Tables
 			get { return this._dimArrow2; }
 			set
 			{
-				this._dimArrow2 = this.updateTable(value, this.Document?.BlockRecords);
+				this._dimArrow2 = updateTable(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -471,17 +473,17 @@ namespace ACadSharp.Tables
 		{
 			get
 			{
-				return _joggedRadiusDimensionTransverseSegmentAngle;
+				return this._joggedRadiusDimensionTransverseSegmentAngle;
 			}
 			set
 			{
 				//5 - 90
 				if (value < CSMath.MathHelper.DegToRad(5) || value > Math.PI / 2)
 				{
-					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(JoggedRadiusDimensionTransverseSegmentAngle)} must be in range of 5 to 90 degrees.");
+					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(this.JoggedRadiusDimensionTransverseSegmentAngle)} must be in range of 5 to 90 degrees.");
 				}
 
-				_joggedRadiusDimensionTransverseSegmentAngle = value;
+				this._joggedRadiusDimensionTransverseSegmentAngle = value;
 			}
 		}
 
@@ -502,7 +504,7 @@ namespace ACadSharp.Tables
 			get { return this._leaderArrow; }
 			set
 			{
-				this._leaderArrow = this.updateTable(value, this.Document?.BlockRecords);
+				this._leaderArrow = updateTable(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -554,7 +556,7 @@ namespace ACadSharp.Tables
 			get { return this._lineType; }
 			set
 			{
-				this._lineType = this.updateTable(value, this.Document?.LineTypes);
+				this._lineType = updateTable(value, this.Document?.LineTypes);
 			}
 		}
 
@@ -567,7 +569,7 @@ namespace ACadSharp.Tables
 			get { return this._lineTypeExt1; }
 			set
 			{
-				this._lineTypeExt1 = this.updateTable(value, this.Document?.LineTypes);
+				this._lineTypeExt1 = updateTable(value, this.Document?.LineTypes);
 			}
 		}
 
@@ -580,7 +582,7 @@ namespace ACadSharp.Tables
 			get { return this._lineTypeExt2; }
 			set
 			{
-				this._lineTypeExt2 = this.updateTable(value, this.Document?.LineTypes);
+				this._lineTypeExt2 = updateTable(value, this.Document?.LineTypes);
 			}
 		}
 
@@ -642,6 +644,23 @@ namespace ACadSharp.Tables
 		public string PostFix { get; set; } = "<>";
 
 		/// <summary>
+		/// Gets or sets the prefix based on the <see cref="PostFix"/> value.
+		/// </summary>
+		public string Prefix
+		{
+			get
+			{
+				this.getDimStylePrefixAndSuffix(this.PostFix, '<', '>', out string prefix, out _);
+				return prefix;
+			}
+			set
+			{
+				this.getDimStylePrefixAndSuffix(this.PostFix, '<', '>', out _, out string suffix);
+				this.PostFix = $"{value}{this.PostFix}{suffix}";
+			}
+		}
+
+		/// <summary>
 		/// Rounds all dimensioning distances to the specified value
 		/// (see DIMRND System Variable).
 		/// </summary>
@@ -696,14 +715,14 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(40)]
 		public double ScaleFactor
 		{
-			get => _scaleFactor; set
+			get => this._scaleFactor; set
 			{
 				if (value < 0)
 				{
-					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(ScaleFactor)} must be equals or greater than zero.");
+					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(this.ScaleFactor)} must be equals or greater than zero.");
 				}
 
-				_scaleFactor = value;
+				this._scaleFactor = value;
 			}
 		}
 
@@ -734,12 +753,29 @@ namespace ACadSharp.Tables
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				this._style = this.updateTable(value, this.Document?.TextStyles);
+				this._style = updateTable(value, this.Document?.TextStyles);
 			}
 		}
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.DimensionStyle;
+
+		/// <summary>
+		/// Gets or sets the suffix based on the <see cref="PostFix"/> value.
+		/// </summary>
+		public string Suffix
+		{
+			get
+			{
+				this.getDimStylePrefixAndSuffix(this.PostFix, '<', '>', out _, out string suffix);
+				return suffix;
+			}
+			set
+			{
+				this.getDimStylePrefixAndSuffix(this.PostFix, '<', '>', out string prefix, out _);
+				this.PostFix = $"{prefix}{this.PostFix}{value}";
+			}
+		}
 
 		/// <summary>
 		/// Controls suppression of the first dimension line and arrowhead
@@ -827,15 +863,15 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(140)]
 		public double TextHeight
 		{
-			get { return _textHeight; }
+			get { return this._textHeight; }
 			set
 			{
 				if (value <= 0)
 				{
-					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(TextHeight)} must be greater than zero.");
+					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(this.TextHeight)} must be greater than zero.");
 				}
 
-				_textHeight = value;
+				this._textHeight = value;
 			}
 		}
 
@@ -1041,55 +1077,22 @@ namespace ACadSharp.Tables
 		{
 		}
 
-		public string FormatLinearValue(double measure)
+		/// <summary>
+		/// Apply the rounding of the style to the value.
+		/// </summary>
+		/// <param name="value">value to apply the style rounding.</param>
+		/// <param name="isAlternate">flag to indicate to use the alternate rounding.</param>
+		/// <returns></returns>
+		public double ApplyRounding(double value, bool isAlternate = false)
 		{
-			double scale = Math.Abs(this.LinearScaleFactor);
+			double rounding = isAlternate ? this.AlternateUnitRounding : this.Rounding;
 
-			if (this.Rounding > 0.0)
+			if (rounding != 0.0)
 			{
-				measure = MathHelper.RoundToNearest(measure * scale, this.Rounding);
-			}
-			else
-			{
-				measure *= scale;
-			}
-
-			switch (this.LinearUnitFormat)
-			{
-				case LinearUnitFormat.None:
-					break;
-				case LinearUnitFormat.Scientific:
-					break;
-				case LinearUnitFormat.Decimal:
-					break;
-				case LinearUnitFormat.Engineering:
-					break;
-				case LinearUnitFormat.Architectural:
-					break;
-				case LinearUnitFormat.Fractional:
-					break;
-				case LinearUnitFormat.WindowsDesktop:
-					break;
-				default:
-					break;
+				value = rounding * Math.Round(value / rounding);
 			}
 
-			throw new NotImplementedException();
-		}
-
-		public NumberFormatInfo GetNumberFormatInfo()
-		{
-
-			return new NumberFormatInfo
-			{
-				NumberDecimalDigits = this.DecimalPlaces,
-				NumberDecimalSeparator = this.DecimalSeparator.ToString(),
-			};
-		}
-
-		public string FormatAngularValue(double angle)
-		{
-			throw new NotImplementedException();
+			return value;
 		}
 
 		/// <inheritdoc/>
@@ -1109,20 +1112,56 @@ namespace ACadSharp.Tables
 			return clone;
 		}
 
+		/// <summary>
+		/// Get the alternate unit style format for this dimension style.
+		/// </summary>
+		/// <returns></returns>
+		public UnitStyleFormat GetAlternateUnitStyleFormat()
+		{
+			return new UnitStyleFormat
+			{
+				LinearDecimalPlaces = this.AlternateUnitDecimalPlaces,
+				AngularDecimalPlaces = this.AlternateUnitDecimalPlaces,
+				DecimalSeparator = this.DecimalSeparator.ToString(),
+				FractionHeightScale = this.ToleranceScaleFactor,
+				FractionType = this.FractionFormat,
+				LinearZeroHandling = this.AlternateUnitZeroHandling,
+				AngularZeroHandling = this.AlternateUnitZeroHandling,
+			};
+		}
+
+		/// <summary>
+		/// Get the unit style format for this dimension style.
+		/// </summary>
+		/// <returns></returns>
+		public UnitStyleFormat GetUnitStyleFormat()
+		{
+			return new UnitStyleFormat
+			{
+				LinearDecimalPlaces = this.DecimalPlaces,
+				AngularDecimalPlaces = this.AngularDecimalPlaces == -1 ? this.DecimalPlaces : this.AngularDecimalPlaces,
+				DecimalSeparator = this.DecimalSeparator.ToString(),
+				FractionHeightScale = this.ToleranceScaleFactor,
+				FractionType = this.FractionFormat,
+				LinearZeroHandling = this.ZeroHandling,
+				AngularZeroHandling = this.AngularZeroHandling,
+			};
+		}
+
 		internal override void AssignDocument(CadDocument doc)
 		{
 			base.AssignDocument(doc);
 
-			this._style = this.updateTable(this.Style, doc.TextStyles);
+			this._style = updateTable(this.Style, doc.TextStyles);
 
-			this._lineType = this.updateTable(this.LineType, doc.LineTypes);
-			this._lineTypeExt1 = this.updateTable(this.LineTypeExt1, doc.LineTypes);
-			this._lineTypeExt2 = this.updateTable(this.LineTypeExt2, doc.LineTypes);
+			this._lineType = updateTable(this.LineType, doc.LineTypes);
+			this._lineTypeExt1 = updateTable(this.LineTypeExt1, doc.LineTypes);
+			this._lineTypeExt2 = updateTable(this.LineTypeExt2, doc.LineTypes);
 
-			this._leaderArrow = this.updateTable(this.LeaderArrow, doc.BlockRecords);
-			this._dimArrow1 = this.updateTable(this.DimArrow1, doc.BlockRecords);
-			this._dimArrow2 = this.updateTable(this.DimArrow2, doc.BlockRecords);
-			this._dimArrowBlock = this.updateTable(this.ArrowBlock, doc.BlockRecords);
+			this._leaderArrow = updateTable(this.LeaderArrow, doc.BlockRecords);
+			this._dimArrow1 = updateTable(this.DimArrow1, doc.BlockRecords);
+			this._dimArrow2 = updateTable(this.DimArrow2, doc.BlockRecords);
+			this._dimArrowBlock = updateTable(this.ArrowBlock, doc.BlockRecords);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 			doc.LineTypes.OnRemove += this.tableOnRemove;
@@ -1181,6 +1220,38 @@ namespace ACadSharp.Tables
 			{
 				return original;
 			}
+		}
+
+		private string[] getDimStylePrefixAndSuffix(string text, char start, char end, out string prefix, out string suffix)
+		{
+			int index = -1; // first occurrence of '<>' or '[]'
+			for (int i = 0; i < text.Length; i++)
+			{
+				if (text[i] == start)
+				{
+					if (i + 1 < text.Length)
+					{
+						if (text[i + 1] == end)
+						{
+							index = i;
+							break;
+						}
+					}
+				}
+			}
+
+			if (index < 0)
+			{
+				prefix = string.Empty;
+				suffix = text;
+			}
+			else
+			{
+				prefix = text.Substring(0, index);
+				suffix = text.Substring(index + 2, text.Length - (index + 2));
+			}
+
+			return new[] { prefix, suffix };
 		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
+using ACadSharp.Types.Units;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
@@ -33,7 +34,7 @@ namespace ACadSharp.Entities
 			get { return this._block; }
 			set
 			{
-				this._block = this.updateTable(value, this.Document?.BlockRecords);
+				this._block = updateTable(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -101,6 +102,11 @@ namespace ACadSharp.Entities
 		public XYZ InsertionPoint { get; set; }
 
 		/// <summary>
+		/// Indicates if the dimension is angular or linear.
+		/// </summary>
+		public bool IsAngular { get { return this.Flags.HasFlag(DimensionType.Angular3Point) || this.Flags.HasFlag(DimensionType.Angular); } }
+
+		/// <summary>
 		/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location
 		/// </summary>
 		public bool IsTextUserDefinedLocation
@@ -166,7 +172,7 @@ namespace ACadSharp.Entities
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				this._style = this.updateTable(value, this.Document?.DimensionStyles);
+				this._style = updateTable(value, this.Document?.DimensionStyles);
 			}
 		}
 
@@ -251,84 +257,92 @@ namespace ACadSharp.Entities
 			return clone;
 		}
 
+		/// <summary>
+		/// Get the measurement text from the actual <see cref="Dimension.Measurement"/> value.
+		/// </summary>
+		/// <returns></returns>
 		public string GetMeasurementText()
 		{
 			return this.GetMeasurementText(this.Style);
 		}
 
+		/// <summary>
+		/// Get the measurement text from the actual <see cref="Dimension.Measurement"/> value.
+		/// </summary>
+		/// <param name="style">style to apply to the text.</param>
+		/// <returns></returns>
 		public string GetMeasurementText(DimensionStyle style)
 		{
-			double value = this.Measurement;
-
-			if (style.Rounding != 0.0)
+			if (!string.IsNullOrEmpty(this.Text))
 			{
-				value = style.Rounding * System.Math.Round(value / style.Rounding);
+				return this.Text;
 			}
 
-			string result = string.Empty;
-			switch (style.LinearUnitFormat)
-			{
-				case Types.Units.LinearUnitFormat.Scientific:
-					break;
+			string text = string.Empty;
+			double value = style.ApplyRounding(this.Measurement);
 
-				case Types.Units.LinearUnitFormat.Decimal:
-				case Types.Units.LinearUnitFormat.WindowsDesktop:
-					break;
+			UnitStyleFormat unitFormat = style.GetUnitStyleFormat();
 
-				case Types.Units.LinearUnitFormat.Engineering:
-					break;
-
-				case Types.Units.LinearUnitFormat.Architectural:
-					break;
-
-				case Types.Units.LinearUnitFormat.Fractional:
-					break;
-
-				case Types.Units.LinearUnitFormat.None:
-				default:
-					break;
-			}
-
-			if (true)
+			if (this.IsAngular)
 			{
 				switch (style.AngularUnit)
 				{
-					case Types.Units.AngularUnitFormat.DecimalDegrees:
+					case AngularUnitFormat.DegreesMinutesSeconds:
+						text = unitFormat.ToDegreesMinutesSeconds(value);
 						break;
-
-					case Types.Units.AngularUnitFormat.DegreesMinutesSeconds:
+					case AngularUnitFormat.Gradians:
+						text = unitFormat.ToGradians(value);
 						break;
-
-					case Types.Units.AngularUnitFormat.Gradians:
+					case AngularUnitFormat.Radians:
+						text = unitFormat.ToRadians(value);
 						break;
-
-					case Types.Units.AngularUnitFormat.Radians:
-						break;
-
-					case Types.Units.AngularUnitFormat.SurveyorsUnits:
-						break;
-
+					case AngularUnitFormat.DecimalDegrees:
+					case AngularUnitFormat.SurveyorsUnits:
 					default:
+						text = unitFormat.ToDecimal(value, true);
+						break;
+				}
+			}
+			else
+			{
+				switch (style.LinearUnitFormat)
+				{
+					case LinearUnitFormat.Scientific:
+						text = unitFormat.ToScientific(value);
+						break;
+					case LinearUnitFormat.Engineering:
+						text = unitFormat.ToEngineering(value);
+						break;
+					case LinearUnitFormat.Architectural:
+						text = unitFormat.ToArchitectural(value);
+						break;
+					case LinearUnitFormat.Fractional:
+						text = unitFormat.ToFractional(value);
+						break;
+					case LinearUnitFormat.None:
+					case LinearUnitFormat.Decimal:
+					case LinearUnitFormat.WindowsDesktop:
+					default:
+						text = unitFormat.ToDecimal(value);
 						break;
 				}
 			}
 
-			return result;
-		}
-
-		public string ProcessText()
-		{
-			return this.ProcessText(this.Style);
-		}
-
-		public string ProcessText(DimensionStyle style)
-		{
-			if (!this.Text.Equals(" "))
+			string prefix = string.Empty;
+			switch (this.Flags)
 			{
-				return string.Empty;
+				case DimensionType.Diameter:
+					prefix = string.IsNullOrEmpty(style.Prefix) ? "Ø" : style.Prefix;
+					break;
+				case DimensionType.Radius:
+					prefix = string.IsNullOrEmpty(style.Prefix) ? "R" : style.Prefix;
+					break;
+				default:
+					prefix = string.IsNullOrEmpty(style.Prefix) ? string.Empty : style.Prefix;
+					break;
 			}
 
-			throw new NotImplementedException();
+			return $"{prefix}{text}{style.Suffix}";
 		}
 
 		/// <summary>
@@ -340,15 +354,15 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._style = this.updateTable(this.Style, doc.DimensionStyles);
-			this._block = this.updateTable(this.Block, doc.BlockRecords);
+			this._style = updateTable(this.Style, doc.DimensionStyles);
+			this._block = updateTable(this.Block, doc.BlockRecords);
 
 			if (this._block != null)
 			{
 				this._block.Name = this.generateBlockName();
 			}
 
-			this._block = this.updateTable(this.Block, this.Document.BlockRecords);
+			this._block = updateTable(this.Block, this.Document.BlockRecords);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 			doc.BlockRecords.OnRemove += this.tableOnRemove;
@@ -390,77 +404,6 @@ namespace ACadSharp.Entities
 				LineType = style.LineType ?? LineType.ByLayer,
 				LineWeight = style.ExtensionLineWeight
 			};
-		}
-
-		protected List<Entity> centerCross(XYZ center, double radius, DimensionStyle style)
-		{
-			List<Entity> lines = new();
-			if (MathHelper.IsZero(style.CenterMarkSize))
-			{
-				return lines;
-			}
-
-			XYZ c1;
-			XYZ c2;
-			double dist = Math.Abs(style.CenterMarkSize * style.ScaleFactor);
-
-			// center mark
-			c1 = new XYZ(0.0, -dist, 0) + center;
-			c2 = new XYZ(0.0, dist, 0) + center;
-			lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
-			c1 = new XYZ(-dist, 0.0, 0) + center;
-			c2 = new XYZ(dist, 0.0, 0) + center;
-			lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
-
-			// center lines
-			if (style.CenterMarkSize < 0)
-			{
-				c1 = new XYZ(2 * dist, 0.0, 0) + center;
-				c2 = new XYZ(radius + dist, 0.0, 0) + center;
-				lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
-
-				c1 = new XYZ(-2 * dist, 0.0, 0) + center;
-				c2 = new XYZ(-radius - dist, 0.0, 0) + center;
-				lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
-
-				c1 = new XYZ(0.0, 2 * dist, 0) + center;
-				c2 = new XYZ(0.0, radius + dist, 0) + center;
-				lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
-
-				c1 = new XYZ(0.0, -2 * dist, 0) + center;
-				c2 = new XYZ(0.0, -radius - dist, 0) + center;
-				lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
-			}
-			return lines;
-		}
-
-		protected void createBlock()
-		{
-			if (this._block == null)
-			{
-				this._block = new BlockRecord(this.generateBlockName());
-				this._block.IsAnonymous = true;
-			}
-
-			if (this.Document != null)
-			{
-				this._block = this.updateTable(this._block, this.Document.BlockRecords);
-			}
-
-			this._block.Entities.Clear();
-		}
-
-		protected MText createTextEntity(XYZ insertPoint, string text)
-		{
-			MText mText = new MText()
-			{
-				Value = text,
-				AttachmentPoint = AttachmentPointType.MiddleCenter,
-				InsertPoint = insertPoint,
-				Height = this.Style.TextHeight
-			};
-
-			return mText;
 		}
 
 		protected void angularBlock(double radius, XY centerRef, XY ref1, double minOffset, bool drawRef2)
@@ -552,6 +495,77 @@ namespace ACadSharp.Entities
 			mText.AttachmentPoint = attachmentPoint;
 
 			this._block.Entities.Add(mText);
+		}
+
+		protected List<Entity> centerCross(XYZ center, double radius, DimensionStyle style)
+		{
+			List<Entity> lines = new();
+			if (MathHelper.IsZero(style.CenterMarkSize))
+			{
+				return lines;
+			}
+
+			XYZ c1;
+			XYZ c2;
+			double dist = Math.Abs(style.CenterMarkSize * style.ScaleFactor);
+
+			// center mark
+			c1 = new XYZ(0.0, -dist, 0) + center;
+			c2 = new XYZ(0.0, dist, 0) + center;
+			lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
+			c1 = new XYZ(-dist, 0.0, 0) + center;
+			c2 = new XYZ(dist, 0.0, 0) + center;
+			lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
+
+			// center lines
+			if (style.CenterMarkSize < 0)
+			{
+				c1 = new XYZ(2 * dist, 0.0, 0) + center;
+				c2 = new XYZ(radius + dist, 0.0, 0) + center;
+				lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
+
+				c1 = new XYZ(-2 * dist, 0.0, 0) + center;
+				c2 = new XYZ(-radius - dist, 0.0, 0) + center;
+				lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
+
+				c1 = new XYZ(0.0, 2 * dist, 0) + center;
+				c2 = new XYZ(0.0, radius + dist, 0) + center;
+				lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
+
+				c1 = new XYZ(0.0, -2 * dist, 0) + center;
+				c2 = new XYZ(0.0, -radius - dist, 0) + center;
+				lines.Add(new Line(c1, c2) { Color = style.ExtensionLineColor, LineWeight = style.ExtensionLineWeight });
+			}
+			return lines;
+		}
+
+		protected void createBlock()
+		{
+			if (this._block == null)
+			{
+				this._block = new BlockRecord(this.generateBlockName());
+				this._block.IsAnonymous = true;
+			}
+
+			if (this.Document != null)
+			{
+				this._block = updateTable(this._block, this.Document.BlockRecords);
+			}
+
+			this._block.Entities.Clear();
+		}
+
+		protected MText createTextEntity(XYZ insertPoint, string text)
+		{
+			MText mText = new MText()
+			{
+				Value = text,
+				AttachmentPoint = AttachmentPointType.MiddleCenter,
+				InsertPoint = insertPoint,
+				Height = this.Style.TextHeight
+			};
+
+			return mText;
 		}
 
 		protected Line dimensionRadialLine(XY start, XY end, double rotation, short reversed)

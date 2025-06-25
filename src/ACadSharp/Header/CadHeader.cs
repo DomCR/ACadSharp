@@ -559,10 +559,10 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$DIMADEC", 70)]
 		public short DimensionAngularDimensionDecimalPlaces
 		{
-			get { return this._dimensionStyleOverrides.AngularDimensionDecimalPlaces; }
+			get { return this._dimensionStyleOverrides.AngularDecimalPlaces; }
 			set
 			{
-				this._dimensionStyleOverrides.AngularDimensionDecimalPlaces = value;
+				this._dimensionStyleOverrides.AngularDecimalPlaces = value;
 			}
 		}
 

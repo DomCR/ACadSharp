@@ -62,6 +62,11 @@ namespace ACadSharp.Tests.IO
 				throw e.Exception;
 			}
 
+			if (!TestVariables.LocalEnv)
+			{
+				return;
+			}
+
 			_output.WriteLine(e.Message);
 			if (e.Exception != null)
 			{

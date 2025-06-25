@@ -81,7 +81,7 @@ namespace ACadSharp.Tables
 
 				if (this.Document != null)
 				{
-					this._lineType = this.updateTable(value, this.Document.LineTypes);
+					this._lineType = updateTable(value, this.Document.LineTypes);
 				}
 				else
 				{
@@ -142,7 +142,7 @@ namespace ACadSharp.Tables
 		{
 			base.AssignDocument(doc);
 
-			this._lineType = this.updateTable(this.LineType, doc.LineTypes);
+			this._lineType = updateTable(this.LineType, doc.LineTypes);
 
 			doc.LineTypes.OnRemove += this.tableOnRemove;
 		}

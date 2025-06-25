@@ -1,5 +1,8 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
+using ACadSharp.Tests.Common;
 using System;
+using System.Globalization;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities
@@ -25,6 +28,14 @@ namespace ACadSharp.Tests.Entities
 
 			Assert.NotNull(dim.Style);
 			Assert.Throws<ArgumentNullException>(() => dim.Style = null);
+		}
+
+		[Fact]
+		public void IsAngularTest()
+		{
+			T dim = this.createDim();
+
+			Assert.Equal(dim.Flags.HasFlag(DimensionType.Angular) || dim.Flags.HasFlag(DimensionType.Angular3Point), dim.IsAngular);
 		}
 
 		[Fact]

@@ -74,6 +74,17 @@ namespace ACadSharp.Entities
 		/// </summary>
 		public DimensionAligned() : base(DimensionType.Aligned) { }
 
+		/// <summary>
+		/// Constructor with the first and second point.
+		/// </summary>
+		/// <param name="firstPoint"></param>
+		/// <param name="secondPoint"></param>
+		public DimensionAligned(XYZ firstPoint, XYZ secondPoint) : this()
+		{
+			this.FirstPoint = firstPoint;
+			this.SecondPoint = secondPoint;
+		}
+
 		protected DimensionAligned(DimensionType type) : base(type)
 		{
 		}
@@ -88,6 +99,32 @@ namespace ACadSharp.Entities
 
 			this.FirstPoint = this.applyWorldMatrix(this.FirstPoint, transform, transOW, transWO);
 			this.SecondPoint = this.applyWorldMatrix(this.SecondPoint, transform, transOW, transWO);
+		}
+
+		/// <inheritdoc/>
+		public override void CalculateReferencePoints()
+		{
+			XY ref1 = this.FirstPoint.Convert<XY>();
+			XY ref2 = this.SecondPoint.Convert<XY>();
+			XY dirRef = ref2 - ref1;
+
+			XY dirDesp = dirRef.Perpendicular().Normalize();
+			dirDesp = dirDesp.IsNaN() || dirDesp.IsZero() ? XY.AxisY : dirDesp;
+
+			XY vec = this.Offset * dirDesp;
+			XY dimRef1 = ref1 + vec;
+			XY dimRef2 = ref2 + vec;
+
+			this.DefinitionPoint = dimRef2.Convert<XYZ>();
+
+			if (!this.IsTextUserDefinedLocation)
+			{
+				double textGap = this.Style.DimensionLineGap;
+				double scale = this.Style.ScaleFactor;
+
+				double gap = textGap * scale;
+				this.TextMiddlePoint = (dimRef1.Mid(dimRef2) + gap * dirDesp).Convert<XYZ>();
+			}
 		}
 
 		/// <inheritdoc/>
@@ -156,32 +193,6 @@ namespace ACadSharp.Entities
 
 			MText mText = this.createTextEntity(this.TextMiddlePoint, text);
 			this._block.Entities.Add(mText);
-		}
-
-		/// <inheritdoc/>
-		public override void CalculateReferencePoints()
-		{
-			XY ref1 = this.FirstPoint.Convert<XY>();
-			XY ref2 = this.SecondPoint.Convert<XY>();
-			XY dirRef = ref2 - ref1;
-
-			XY dirDesp = dirRef.Perpendicular().Normalize();
-			dirDesp = dirDesp.IsNaN() || dirDesp.IsZero() ? XY.AxisY : dirDesp;
-
-			XY vec = this.Offset * dirDesp;
-			XY dimRef1 = ref1 + vec;
-			XY dimRef2 = ref2 + vec;
-
-			this.DefinitionPoint = dimRef2.Convert<XYZ>();
-
-			if (!this.IsTextUserDefinedLocation)
-			{
-				double textGap = this.Style.DimensionLineGap;
-				double scale = this.Style.ScaleFactor;
-
-				double gap = textGap * scale;
-				this.TextMiddlePoint = (dimRef1.Mid(dimRef2) + gap * dirDesp).Convert<XYZ>();
-			}
 		}
 	}
 }

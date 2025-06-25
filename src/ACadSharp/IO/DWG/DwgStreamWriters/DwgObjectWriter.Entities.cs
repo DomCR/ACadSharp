@@ -1740,8 +1740,8 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteRawDouble(solid.ThirdCorner.X);
 			this._writer.WriteRawDouble(solid.ThirdCorner.Y);
 			//4th corner 2RD 13
-			this._writer.WriteRawDouble(solid.FirstCorner.X);
-			this._writer.WriteRawDouble(solid.FirstCorner.Y);
+			this._writer.WriteRawDouble(solid.FourthCorner.X);
+			this._writer.WriteRawDouble(solid.FourthCorner.Y);
 
 			//Extrusion BE 210
 			this._writer.WriteBitExtrusion(solid.Normal);

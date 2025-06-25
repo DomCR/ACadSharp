@@ -180,7 +180,7 @@ namespace ACadSharp.IO.DXF
 			{
 				this._reader.ReadNext();
 
-				CadTemplate template = null;
+				ICadTableEntryTemplate template = null;
 
 				//Get the entry
 				switch (tableTemplate.CadObject.ObjectName)
@@ -224,15 +224,25 @@ namespace ACadSharp.IO.DXF
 						break;
 				}
 
-				//tableTemplate.EntryHandles.Add(template.CadObject.Handle);
-				tableTemplate.CadObject.Add((T)template.CadObject);
+
+				if (tableTemplate.CadObject.Contains(template.Name) && this._builder.Configuration.Failsafe)
+				{
+					this._builder.Notify($"Duplicated entry with name {template.Name} found in {template.CadObject.ObjectName}", NotificationType.Warning);
+
+					tableTemplate.CadObject.Remove(template.Name);
+					tableTemplate.CadObject.Add((T)template.CadObject);
+				}
+				else
+				{
+					tableTemplate.CadObject.Add((T)template.CadObject);
+				}
 
 				//Add the object and the template to the builder
 				this._builder.AddTemplate(template);
 			}
 		}
 
-		private CadTemplate readTableEntry<T>(CadTableEntryTemplate<T> template, ReadEntryDelegate<T> readEntry)
+		private ICadTableEntryTemplate readTableEntry<T>(CadTableEntryTemplate<T> template, ReadEntryDelegate<T> readEntry)
 			where T : TableEntry
 		{
 			DxfMap map = DxfMap.Create<T>();
@@ -450,7 +460,7 @@ namespace ACadSharp.IO.DXF
 					template.CadObject.TextColor = new Color(this._reader.ValueAsShort);
 					return true;
 				case 179:
-					template.CadObject.AngularDimensionDecimalPlaces = this._reader.ValueAsShort;
+					template.CadObject.AngularDecimalPlaces = this._reader.ValueAsShort;
 					return true;
 				case 270:
 					template.CadObject.LinearUnitFormat = (LinearUnitFormat)this._reader.ValueAsShort;
