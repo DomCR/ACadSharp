@@ -495,7 +495,8 @@ namespace ACadSharp.Types.Units
 					break;
 
 				case FractionFormat.None:
-					text = $"{num} {numerator}/{denominator}";
+					string prefix = num == 0 ? string.Empty : $"{num.ToString()} ";
+					text = $"{prefix}{numerator}/{denominator}";
 					break;
 			}
 			return text;

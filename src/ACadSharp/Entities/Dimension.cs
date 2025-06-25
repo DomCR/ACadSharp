@@ -276,8 +276,6 @@ namespace ACadSharp.Entities
 
 			UnitStyleFormat unitFormat = style.GetUnitStyleFormat();
 
-			string format = style.GetZeroHandlingFormat(isAngular: this.IsAngular);
-
 			if (this.IsAngular)
 			{
 				switch (style.AngularUnit)
