@@ -460,7 +460,7 @@ namespace ACadSharp.IO.DXF
 					template.CadObject.TextColor = new Color(this._reader.ValueAsShort);
 					return true;
 				case 179:
-					template.CadObject.AngularDimensionDecimalPlaces = this._reader.ValueAsShort;
+					template.CadObject.AngularDecimalPlaces = this._reader.ValueAsShort;
 					return true;
 				case 270:
 					template.CadObject.LinearUnitFormat = (LinearUnitFormat)this._reader.ValueAsShort;
