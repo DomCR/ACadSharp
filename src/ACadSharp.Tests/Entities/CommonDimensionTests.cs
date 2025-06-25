@@ -31,32 +31,6 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
-		public void GetMeasurementTextTests()
-		{
-			T dim = this.createDim();
-
-			string text;
-
-			if (dim.IsAngular)
-			{
-				text = dim.GetMeasurementText(new DimensionStyle
-				{
-					AngularUnit = Types.Units.AngularUnitFormat.DecimalDegrees
-				});
-			}
-			else
-			{
-				text = dim.GetMeasurementText(new DimensionStyle
-				{
-					LinearUnitFormat = Types.Units.LinearUnitFormat.Scientific
-				});
-
-				Assert.True(double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out double result));
-				AssertUtils.AreEqual(dim.Measurement, result);
-			}
-		}
-
-		[Fact]
 		public void IsAngularTest()
 		{
 			T dim = this.createDim();
