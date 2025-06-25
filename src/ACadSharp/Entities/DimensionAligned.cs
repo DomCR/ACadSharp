@@ -185,7 +185,7 @@ namespace ACadSharp.Entities
 				textRot += Math.PI;
 			}
 
-			string text = this.Measurement.ToString("#.##");//Provisional
+			string text = this.GetMeasurementText();
 			if (!this.IsTextUserDefinedLocation)
 			{
 				this.TextMiddlePoint = (textRef + gap * vec).Convert<XYZ>();
