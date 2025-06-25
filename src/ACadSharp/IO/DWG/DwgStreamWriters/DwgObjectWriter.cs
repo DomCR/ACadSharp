@@ -1020,7 +1020,7 @@ namespace ACadSharp.IO.DWG
 				//DIMCLRT BS 178																				  
 				this._writer.WriteCmColor(dimStyle.TextColor);
 				//DIMADEC BS 179																				  
-				this._writer.WriteBitShort(dimStyle.AngularDimensionDecimalPlaces);
+				this._writer.WriteBitShort(dimStyle.AngularDecimalPlaces);
 				//DIMDEC BS 271																					  
 				this._writer.WriteBitShort(dimStyle.DecimalPlaces);
 				//DIMTDEC BS 272																				  

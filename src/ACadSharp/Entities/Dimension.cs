@@ -1,10 +1,9 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Extensions;
 using ACadSharp.Tables;
+using ACadSharp.Types.Units;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
-using System.Data;
 
 namespace ACadSharp.Entities
 {
@@ -274,23 +273,28 @@ namespace ACadSharp.Entities
 
 			string text = string.Empty;
 			double value = style.ApplyRounding(this.Measurement);
+
+			UnitStyleFormat unitFormat = style.GetUnitStyleFormat();
+
 			string format = style.GetZeroHandlingFormat(isAngular: this.IsAngular);
 
 			if (this.IsAngular)
 			{
 				switch (style.AngularUnit)
 				{
-					case Types.Units.AngularUnitFormat.DecimalDegrees:
+					case AngularUnitFormat.DegreesMinutesSeconds:
+						text = unitFormat.ToDegreesMinutesSeconds(value);
 						break;
-					case Types.Units.AngularUnitFormat.DegreesMinutesSeconds:
+					case AngularUnitFormat.Gradians:
+						text = unitFormat.ToGradians(value);
 						break;
-					case Types.Units.AngularUnitFormat.Gradians:
+					case AngularUnitFormat.Radians:
+						text = unitFormat.ToRadians(value);
 						break;
-					case Types.Units.AngularUnitFormat.Radians:
-						break;
-					case Types.Units.AngularUnitFormat.SurveyorsUnits:
-						break;
+					case AngularUnitFormat.DecimalDegrees:
+					case AngularUnitFormat.SurveyorsUnits:
 					default:
+						text = unitFormat.ToDecimal(value, true);
 						break;
 				}
 			}
@@ -298,20 +302,23 @@ namespace ACadSharp.Entities
 			{
 				switch (style.LinearUnitFormat)
 				{
-					case Types.Units.LinearUnitFormat.Scientific:
-						text = value.ToString($"{format}{"E+00"}");
+					case LinearUnitFormat.Scientific:
+						text = unitFormat.ToScientific(value);
 						break;
-					case Types.Units.LinearUnitFormat.Engineering:
+					case LinearUnitFormat.Engineering:
+						text = unitFormat.ToEngineering(value);
 						break;
-					case Types.Units.LinearUnitFormat.Architectural:
+					case LinearUnitFormat.Architectural:
+						text = unitFormat.ToArchitectural(value);
 						break;
-					case Types.Units.LinearUnitFormat.Fractional:
-						text = UnitFormatExtensions.ToFractional(value, style.FractionFormat, style.DecimalPlaces, style.ToleranceScaleFactor);
+					case LinearUnitFormat.Fractional:
+						text = unitFormat.ToFractional(value);
 						break;
-					case Types.Units.LinearUnitFormat.None:
-					case Types.Units.LinearUnitFormat.Decimal:
-					case Types.Units.LinearUnitFormat.WindowsDesktop:
+					case LinearUnitFormat.None:
+					case LinearUnitFormat.Decimal:
+					case LinearUnitFormat.WindowsDesktop:
 					default:
+						text = unitFormat.ToDecimal(value);
 						break;
 				}
 			}

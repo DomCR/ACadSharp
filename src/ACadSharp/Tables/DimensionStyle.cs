@@ -123,7 +123,7 @@ namespace ACadSharp.Tables
 		/// </para>
 		/// </value>
 		[DxfCodeValue(179)]
-		public short AngularDimensionDecimalPlaces { get; set; } = 0;
+		public short AngularDecimalPlaces { get; set; } = 0;
 
 		/// <summary>
 		/// Gets or sets the units format for angular dimensions
@@ -182,7 +182,7 @@ namespace ACadSharp.Tables
 			{
 				if (value < 0)
 				{
-					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(ArrowSize)} must be equals or greater than zero.");
+					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(this.ArrowSize)} must be equals or greater than zero.");
 				}
 				this._arrowSize = value;
 			}
@@ -471,17 +471,17 @@ namespace ACadSharp.Tables
 		{
 			get
 			{
-				return _joggedRadiusDimensionTransverseSegmentAngle;
+				return this._joggedRadiusDimensionTransverseSegmentAngle;
 			}
 			set
 			{
 				//5 - 90
 				if (value < CSMath.MathHelper.DegToRad(5) || value > Math.PI / 2)
 				{
-					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(JoggedRadiusDimensionTransverseSegmentAngle)} must be in range of 5 to 90 degrees.");
+					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(this.JoggedRadiusDimensionTransverseSegmentAngle)} must be in range of 5 to 90 degrees.");
 				}
 
-				_joggedRadiusDimensionTransverseSegmentAngle = value;
+				this._joggedRadiusDimensionTransverseSegmentAngle = value;
 			}
 		}
 
@@ -713,14 +713,14 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(40)]
 		public double ScaleFactor
 		{
-			get => _scaleFactor; set
+			get => this._scaleFactor; set
 			{
 				if (value < 0)
 				{
-					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(ScaleFactor)} must be equals or greater than zero.");
+					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(this.ScaleFactor)} must be equals or greater than zero.");
 				}
 
-				_scaleFactor = value;
+				this._scaleFactor = value;
 			}
 		}
 
@@ -861,15 +861,15 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(140)]
 		public double TextHeight
 		{
-			get { return _textHeight; }
+			get { return this._textHeight; }
 			set
 			{
 				if (value <= 0)
 				{
-					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(TextHeight)} must be greater than zero.");
+					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(this.TextHeight)} must be greater than zero.");
 				}
 
-				_textHeight = value;
+				this._textHeight = value;
 			}
 		}
 
@@ -1108,6 +1108,42 @@ namespace ACadSharp.Tables
 			clone.LineTypeExt2 = (LineType)this.LineTypeExt2?.Clone();
 
 			return clone;
+		}
+
+		/// <summary>
+		/// Get the alternate unit style format for this dimension style.
+		/// </summary>
+		/// <returns></returns>
+		public UnitStyleFormat GetAlternateUnitStyleFormat()
+		{
+			return new UnitStyleFormat
+			{
+				LinearDecimalPlaces = this.AlternateUnitDecimalPlaces,
+				AngularDecimalPlaces = this.AlternateUnitDecimalPlaces,
+				DecimalSeparator = this.DecimalSeparator.ToString(),
+				FractionHeightScale = this.ToleranceScaleFactor,
+				FractionType = this.FractionFormat,
+				LinearZeroHandling = this.AlternateUnitZeroHandling,
+				AngularZeroHandling = this.AlternateUnitZeroHandling,
+			};
+		}
+
+		/// <summary>
+		/// Get the unit style format for this dimension style.
+		/// </summary>
+		/// <returns></returns>
+		public UnitStyleFormat GetUnitStyleFormat()
+		{
+			return new UnitStyleFormat
+			{
+				LinearDecimalPlaces = this.DecimalPlaces,
+				AngularDecimalPlaces = this.AngularDecimalPlaces == -1 ? this.DecimalPlaces : this.AngularDecimalPlaces,
+				DecimalSeparator = this.DecimalSeparator.ToString(),
+				FractionHeightScale = this.ToleranceScaleFactor,
+				FractionType = this.FractionFormat,
+				LinearZeroHandling = this.ZeroHandling,
+				AngularZeroHandling = this.AngularZeroHandling,
+			};
 		}
 
 		/// <summary>

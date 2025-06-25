@@ -183,7 +183,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(177, style.ExtensionLineColor.GetApproxIndex(), map);
 			this._writer.Write(178, style.TextColor.GetApproxIndex(), map);
 
-			this._writer.Write(179, style.AngularDimensionDecimalPlaces);
+			this._writer.Write(179, style.AngularDecimalPlaces);
 
 			this._writer.Write(271, style.DecimalPlaces);
 			this._writer.Write(272, style.ToleranceDecimalPlaces);
