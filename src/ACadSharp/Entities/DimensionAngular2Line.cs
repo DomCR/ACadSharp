@@ -82,5 +82,15 @@ namespace ACadSharp.Entities
 			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
 			this.DimensionArc = transform.ApplyTransform(this.DimensionArc);
 		}
+
+		public override void UpdateBlock()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void CalculateReferencePoints()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }
