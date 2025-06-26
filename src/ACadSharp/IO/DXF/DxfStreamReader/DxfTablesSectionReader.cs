@@ -578,7 +578,16 @@ namespace ACadSharp.IO.DXF
 						template.CadObject.IsOn = false;
 						index = Math.Abs(index);
 					}
-					template.CadObject.Color = new Color(index);
+
+					var color = new Color(index);
+					if (color.IsByBlock || color.IsByLayer)
+					{
+						this._builder.Notify($"Wrong index {index} for layer {template.CadObject.Name}", NotificationType.Warning);
+					}
+					else
+					{
+						template.CadObject.Color = new Color(index);
+					}
 					return true;
 				case 347:
 					tmp.MaterialHandle = this._reader.ValueAsHandle;
