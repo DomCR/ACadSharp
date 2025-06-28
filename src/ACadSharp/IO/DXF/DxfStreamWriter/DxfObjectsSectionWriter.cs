@@ -502,10 +502,10 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.WriteHandle(330, e.BlockOwner);
 
-			foreach (SortEntitiesTable.Sorter item in e.Sorters)
+			foreach (SortEntitiesTable.Sorter item in e)
 			{
 				this._writer.WriteHandle(331, item.Entity);
-				this._writer.Write(5, item.Handle);
+				this._writer.Write(5, item.SortHandle);
 			}
 		}
 

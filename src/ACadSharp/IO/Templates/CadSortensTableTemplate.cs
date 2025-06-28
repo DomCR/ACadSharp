@@ -42,7 +42,7 @@ namespace ACadSharp.IO.Templates
 			{
 				if (builder.TryGetCadObject(pair.Item2, out Entity entity))
 				{
-					this.CadObject.AddEntity(entity, pair.Item1.Value);
+					this.CadObject.Add(entity, pair.Item1.Value);
 				}
 				else
 				{

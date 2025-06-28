@@ -2,6 +2,7 @@
 using ACadSharp.Entities;
 using ACadSharp.Tables;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace ACadSharp.Objects
@@ -15,7 +16,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectSortEntsTable)]
 	[DxfSubClass(DxfSubclassMarker.SortentsTable)]
-	public partial class SortEntitiesTable : NonGraphicalObject
+	public partial class SortEntitiesTable : NonGraphicalObject, IEnumerable<SortEntitiesTable.Sorter>
 	{
 		/// <summary>
 		/// Dictionary entry name for the object <see cref="SortEntitiesTable"/>
@@ -37,11 +38,6 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(330)]
 		public BlockRecord BlockOwner { get; internal set; }
 
-		/// <summary>
-		/// List of the <see cref="BlockOwner"/> entities sorted.
-		/// </summary>
-		public IEnumerable<Sorter> Sorters { get { return this._sorters; } }
-
 		private List<Sorter> _sorters = new();
 
 		internal SortEntitiesTable()
@@ -58,16 +54,32 @@ namespace ACadSharp.Objects
 		/// Sorter attached to an entity.
 		/// </summary>
 		/// <param name="entity">Entity in the block to be sorted.</param>
-		/// <param name="sorterHandle">Sorter handle, will use the entity handle if null.</param>
+		/// <param name="sorterHandle">Sorter handle.</param>
 		/// <exception cref="ArgumentException"></exception>
-		public void AddEntity(Entity entity, ulong? sorterHandle = null)
+		public void Add(Entity entity, ulong sorterHandle)
 		{
 			this._sorters.Add(new Sorter(entity, sorterHandle));
 		}
 
-		internal void OnAddEntity(object sender, CollectionChangedEventArgs e)
+		/// <summary>
+		/// Removes all elements in the collection.
+		/// </summary>
+		public void Clear()
 		{
-			this._sorters.Add(new Sorter((Entity)e.Item));
+			this._sorters.Clear();
+		}
+
+		/// <inheritdoc/>
+		public IEnumerator<Sorter> GetEnumerator()
+		{
+			this._sorters.Sort();
+			return this._sorters.GetEnumerator();
+		}
+
+		/// <inheritdoc/>
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return this.GetEnumerator();
 		}
 	}
 }

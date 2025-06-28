@@ -300,7 +300,7 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		///
+		/// Create an entity sorter table for this block.
 		/// </summary>
 		/// <returns></returns>
 		public SortEntitiesTable CreateSortEntitiesTable()
