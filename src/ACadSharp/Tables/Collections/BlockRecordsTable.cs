@@ -13,5 +13,16 @@
 		internal BlockRecordsTable() { }
 
 		internal BlockRecordsTable(CadDocument document) : base(document) { }
+
+		/// <inheritdoc/>
+		public override void Add(BlockRecord item)
+		{
+			if (item.IsAnonymous)
+			{
+
+			}
+
+			base.Add(item);
+		}
 	}
 }
