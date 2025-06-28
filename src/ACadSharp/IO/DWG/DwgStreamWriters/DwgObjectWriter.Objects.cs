@@ -760,7 +760,7 @@ namespace ACadSharp.IO.DWG
 				//This is just the handle used for determining the drawing order of the entity specified by the entity handle in the handle bit stream.
 				//When the sortentstable doesn’t have a
 				//mapping from entity handle to sort handle, then the entity’s own handle is used for sorting.
-				this._writer.HandleReference(item.Handle);
+				this._writer.Main.HandleReference(item.Handle);
 				this._writer.HandleReference(DwgReferenceType.SoftPointer, item.Entity);
 			}
 		}
