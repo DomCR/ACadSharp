@@ -137,8 +137,7 @@ namespace ACadSharp.Tests.Tables
 			record.CreateSortEntitiesTable();
 
 			Assert.NotNull(record.SortEntitiesTable);
-			Assert.NotNull(record.SortEntitiesTable.Sorters);
-			Assert.Empty(record.SortEntitiesTable.Sorters);
+			Assert.Empty(record.SortEntitiesTable);
 		}
 
 		[Fact()]
