@@ -4,6 +4,7 @@ using ACadSharp.Tables;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Objects
 {
@@ -19,24 +20,24 @@ namespace ACadSharp.Objects
 	public partial class SortEntitiesTable : NonGraphicalObject, IEnumerable<SortEntitiesTable.Sorter>
 	{
 		/// <summary>
-		/// Dictionary entry name for the object <see cref="SortEntitiesTable"/>
+		/// Block owner where the table is applied
 		/// </summary>
-		public const string DictionaryEntryName = "ACAD_SORTENTS";
-
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.UNLISTED;
+		[DxfCodeValue(330)]
+		public BlockRecord BlockOwner { get; internal set; }
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectSortEntsTable;
 
 		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.UNLISTED;
+
+		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.SortentsTable;
 
 		/// <summary>
-		/// Block owner where the table is applied
+		/// Dictionary entry name for the object <see cref="SortEntitiesTable"/>
 		/// </summary>
-		[DxfCodeValue(330)]
-		public BlockRecord BlockOwner { get; internal set; }
+		public const string DictionaryEntryName = "ACAD_SORTENTS";
 
 		private List<Sorter> _sorters = new();
 
@@ -62,6 +63,24 @@ namespace ACadSharp.Objects
 		}
 
 		/// <summary>
+		/// Add an entity above all existing entities in the table.
+		/// </summary>
+		/// <param name="entity"></param>
+		public void AddAbove(Entity entity)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Add an entity below all existing entities in the table.
+		/// </summary>
+		/// <param name="entity"></param>
+		public void AddBelow(Entity entity)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Removes all elements in the collection.
 		/// </summary>
 		public void Clear()
@@ -80,6 +99,41 @@ namespace ACadSharp.Objects
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return this.GetEnumerator();
+		}
+
+		/// <summary>
+		/// Get the sorter handle of an entity, if is not in the sorter table it will return the entity's handle.
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <returns></returns>
+		public ulong GetSorterHandle(Entity entity)
+		{
+			Sorter sorter = this._sorters.FirstOrDefault(s => s.Entity.Equals(entity));
+
+			if (sorter is not null)
+			{
+				return sorter.SortHandle;
+			}
+			else
+			{
+				return entity.Handle;
+			}
+		}
+
+		/// <summary>
+		/// Removes the first occurrence of a specific object from the sorters table.
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <returns></returns>
+		public bool Remove(Entity entity)
+		{
+			var sorter = _sorters.FirstOrDefault(s => s.Entity.Equals(entity));
+			if (sorter is null)
+			{
+				return false;
+			}
+
+			return _sorters.Remove(sorter);
 		}
 	}
 }

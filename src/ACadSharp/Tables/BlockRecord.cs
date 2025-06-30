@@ -350,6 +350,32 @@ namespace ACadSharp.Tables
 			return box;
 		}
 
+		/// <summary>
+		/// Get the entities in this block record sorted by it's handle and the sorter assigned if is present.
+		/// </summary>
+		/// <remarks>
+		/// If the record is not in a document the entities will not be sorted unless there is a
+		/// <see cref="SortEntitiesTable"/> assigned to the block.
+		/// </remarks>
+		/// <returns></returns>
+		public IEnumerable<Entity> GetSortedEntities()
+		{
+			if (this.SortEntitiesTable != null)
+			{
+				return this.Entities.OrderBy(e => e.Handle);
+			}
+
+			List<(ulong, Entity)> entities = new();
+
+			foreach (var entity in this.Entities)
+			{
+				ulong sorter = this.SortEntitiesTable.GetSorterHandle(entity);
+				entities.Add((sorter, entity));
+			}
+
+			return entities.OrderBy(e => e.Item1).Select(e => e.Item2);
+		}
+
 		internal override void AssignDocument(CadDocument doc)
 		{
 			base.AssignDocument(doc);
