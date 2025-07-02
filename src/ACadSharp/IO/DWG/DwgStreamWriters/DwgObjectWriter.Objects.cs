@@ -754,7 +754,6 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Numentries BL number of entries
 			this._writer.WriteBitLong(sortEntitiesTable.Sorters.Count());
-
 			foreach (var item in sortEntitiesTable.Sorters)
 			{
 				//Sort handle(numentries of these, CODE 0, i.e.part of the main bit stream, not of the handle bit stream!).
@@ -774,7 +773,7 @@ namespace ACadSharp.IO.DWG
 			ms.EndianConverter = new LittleEndianConverter();
 
 			foreach (XRecord.Entry entry in xrecord.Entries)
-			{				
+			{
 				if (entry.Value == null)
 				{
 					continue;

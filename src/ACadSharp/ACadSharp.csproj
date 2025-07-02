@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net5.0;net6.0;net7.0;net48;netstandard2.1;netstandard2.0</TargetFrameworks>
+		<TargetFrameworks>net5.0;net6.0;net7.0;net8.0;net9.0;net48;netstandard2.1;netstandard2.0</TargetFrameworks>
 		<Authors>DomCr</Authors>
 		<PackageId>ACadSharp</PackageId>
 		<PackageTags>C# Dwg Dxf</PackageTags>
@@ -17,7 +17,7 @@
 	<PropertyGroup>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<Version>1.1.22</Version>
+		<Version>3.0.8</Version>
 		<PackageOutputPath>../nupkg</PackageOutputPath>
 	</PropertyGroup>
 
@@ -33,12 +33,12 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-		<PackageReference Include="System.Memory" Version="4.5.5" />
+		<PackageReference Include="System.Memory" Version="4.6.3" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1' OR '$(TargetFramework)' == 'netstandard2.0'">
-		<PackageReference Include="System.Memory" Version="4.5.5" />
-		<PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
+		<PackageReference Include="System.Memory" Version="4.6.3" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.6" />
 	</ItemGroup>
 
 </Project>
