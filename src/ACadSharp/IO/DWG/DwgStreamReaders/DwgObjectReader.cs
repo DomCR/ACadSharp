@@ -4762,7 +4762,7 @@ namespace ACadSharp.IO.DWG
 				//DIMCLRT BS 178
 				dimStyle.TextColor = this._mergedReaders.ReadCmColor();
 				//DIMADEC BS 179
-				dimStyle.AngularDimensionDecimalPlaces = this._objectReader.ReadBitShort();
+				dimStyle.AngularDecimalPlaces = this._objectReader.ReadBitShort();
 				//DIMDEC BS 271
 				dimStyle.DecimalPlaces = this._objectReader.ReadBitShort();
 				//DIMTDEC BS 272
