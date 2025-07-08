@@ -285,10 +285,22 @@ namespace ACadSharp.Tables
 
 			clone.Layout = null;
 
+			if (this.SortEntitiesTable != null)
+			{
+				clone.CreateSortEntitiesTable();
+			}
+
 			clone.Entities = new CadObjectCollection<Entity>(clone);
 			foreach (var item in this.Entities)
 			{
-				clone.Entities.Add((Entity)item.Clone());
+				var e = (Entity)item.Clone();
+				clone.Entities.Add(e);
+
+				if (this.SortEntitiesTable != null
+					&& this.SortEntitiesTable.Select(s => s.Entity).Contains(item))
+				{
+					clone.SortEntitiesTable.Add(e, this.SortEntitiesTable.GetSorterHandle(item));
+				}
 			}
 
 			clone.BlockEntity = (Block)this.BlockEntity.Clone();

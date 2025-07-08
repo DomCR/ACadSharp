@@ -63,24 +63,6 @@ namespace ACadSharp.Objects
 		}
 
 		/// <summary>
-		/// Add an entity above all existing entities in the table.
-		/// </summary>
-		/// <param name="entity"></param>
-		public void AddAbove(Entity entity)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Add an entity below all existing entities in the table.
-		/// </summary>
-		/// <param name="entity"></param>
-		public void AddBelow(Entity entity)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
 		/// Removes all elements in the collection.
 		/// </summary>
 		public void Clear()
