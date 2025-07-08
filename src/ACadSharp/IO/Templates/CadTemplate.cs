@@ -72,12 +72,17 @@ namespace ACadSharp.IO.Templates
 		protected IEnumerable<T> getEntitiesCollection<T>(CadDocumentBuilder builder, ulong firstHandle, ulong endHandle)
 			where T : Entity
 		{
-			List<T> collection = new List<T>();
-
 			CadEntityTemplate template = builder.GetObjectTemplate<CadEntityTemplate>(firstHandle);
+
+			if (template == null)
+			{
+				builder.Notify($"Leading entity with handle {firstHandle} not found.", NotificationType.Warning);
+				template = builder.GetObjectTemplate<CadEntityTemplate>(endHandle);
+			}
+
 			while (template != null)
 			{
-				collection.Add((T)template.CadObject);
+				yield return (T)template.CadObject;
 
 				if (template.CadObject.Handle == endHandle)
 				{
@@ -93,8 +98,6 @@ namespace ACadSharp.IO.Templates
 					template = builder.GetObjectTemplate<CadEntityTemplate>(template.CadObject.Handle + 1);
 				}
 			}
-
-			return collection;
 		}
 
 		protected bool getTableReference<T>(CadDocumentBuilder builder, ulong? handle, string name, out T reference)

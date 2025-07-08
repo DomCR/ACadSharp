@@ -847,6 +847,8 @@ namespace ACadSharp.IO.DWG
 					template = this.readSpline();
 					break;
 				case ObjectType.REGION:
+					this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
+					template = this.readUnknownEntity(null);
 					break;
 				case ObjectType.SOLID3D:
 					break;
@@ -982,9 +984,13 @@ namespace ACadSharp.IO.DWG
 					template = this.readLayout();
 					break;
 				case ObjectType.ACAD_PROXY_ENTITY:
-					break;
+					this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
+					template = this.readUnknownEntity(null);
+					break; 
 				case ObjectType.ACAD_PROXY_OBJECT:
-					break;
+					this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
+					template = this.readUnknownNonGraphicalObject(null);
+					break; 
 				default:
 					return this.readUnlistedType((short)type);
 			}
