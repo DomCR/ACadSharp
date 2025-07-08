@@ -39,7 +39,7 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.Layout = layout;
 			}
 
-			if (this.FirstEntityHandle.HasValue || this.FirstEntityHandle.Value != 0)
+			if (this.FirstEntityHandle.HasValue && this.FirstEntityHandle.Value != 0)
 			{
 				foreach (Entity e in this.getEntitiesCollection<Entity>(builder, this.FirstEntityHandle.Value, this.LastEntityHandle.Value))
 				{
