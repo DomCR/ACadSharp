@@ -29,6 +29,7 @@ namespace ACadSharp.IO.DWG
 			{
 				case EvaluationGraph:
 				case Material:
+				case SortEntitiesTable:
 				case UnknownNonGraphicalObject:
 				case VisualStyle:
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
@@ -772,7 +773,7 @@ namespace ACadSharp.IO.DWG
 			ms.EndianConverter = new LittleEndianConverter();
 
 			foreach (XRecord.Entry entry in xrecord.Entries)
-			{				
+			{
 				if (entry.Value == null)
 				{
 					continue;

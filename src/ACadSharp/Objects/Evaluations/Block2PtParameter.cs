@@ -14,5 +14,18 @@ namespace ACadSharp.Objects.Evaluations
 
 		[DxfCodeValue(1011, 1021, 1031)]
 		public XYZ SecondPoint { get; set; }
+
+		//	Appears on DXF
+		//170	BS	4
+		//91	BL	31
+		//91	BL	0
+		//91	BL	0
+		//91	BL	0
+
+		//171	BS	0
+		//172	BS	0
+		//173	BS	0
+		//174	BS	0
+		//177	BS	0
 	}
 }
