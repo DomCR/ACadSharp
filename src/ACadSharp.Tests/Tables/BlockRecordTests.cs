@@ -4,6 +4,7 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace ACadSharp.Tests.Tables
@@ -99,6 +100,37 @@ namespace ACadSharp.Tests.Tables
 		}
 
 		[Fact()]
+		public void CloneSortensTableTest()
+		{
+			string name = "my_block";
+			BlockRecord record = new BlockRecord(name);
+
+			Line l1 = new Line();
+			Line l2 = new Line();
+			Line l3 = new Line();
+			Line l4 = new Line();
+			Line l5 = new Line();
+
+			record.Entities.Add(l1);
+			record.Entities.Add(l2);
+			record.Entities.Add(l3);
+			record.Entities.Add(l4);
+			record.Entities.Add(l5);
+
+			record.CreateSortEntitiesTable();
+
+			record.SortEntitiesTable.Add(l1, 1);
+			record.SortEntitiesTable.Add(l3, 3);
+			record.SortEntitiesTable.Add(l4, 4);
+
+			BlockRecord clone = record.CloneTyped();
+
+			Assert.NotNull(clone.SortEntitiesTable);
+			Assert.NotEmpty(clone.SortEntitiesTable);
+			Assert.Equal(3, clone.SortEntitiesTable.Count());
+		}
+
+		[Fact()]
 		public void CloneTest()
 		{
 			string name = "my_block";
@@ -137,8 +169,7 @@ namespace ACadSharp.Tests.Tables
 			record.CreateSortEntitiesTable();
 
 			Assert.NotNull(record.SortEntitiesTable);
-			Assert.NotNull(record.SortEntitiesTable.Sorters);
-			Assert.Empty(record.SortEntitiesTable.Sorters);
+			Assert.Empty(record.SortEntitiesTable);
 		}
 
 		[Fact()]
