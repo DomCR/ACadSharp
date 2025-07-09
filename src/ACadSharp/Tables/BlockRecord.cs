@@ -304,10 +304,22 @@ namespace ACadSharp.Tables
 
 			clone.Layout = null;
 
+			if (this.SortEntitiesTable != null)
+			{
+				clone.CreateSortEntitiesTable();
+			}
+
 			clone.Entities = new CadObjectCollection<Entity>(clone);
 			foreach (var item in this.Entities)
 			{
-				clone.Entities.Add((Entity)item.Clone());
+				var e = (Entity)item.Clone();
+				clone.Entities.Add(e);
+
+				if (this.SortEntitiesTable != null
+					&& this.SortEntitiesTable.Select(s => s.Entity).Contains(item))
+				{
+					clone.SortEntitiesTable.Add(e, this.SortEntitiesTable.GetSorterHandle(item));
+				}
 			}
 
 			clone.BlockEntity = (Block)this.BlockEntity.Clone();
@@ -319,7 +331,7 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		///
+		/// Create an entity sorter table for this block.
 		/// </summary>
 		/// <returns></returns>
 		public SortEntitiesTable CreateSortEntitiesTable()
@@ -367,6 +379,32 @@ namespace ACadSharp.Tables
 			}
 
 			return box;
+		}
+
+		/// <summary>
+		/// Get the entities in this block record sorted by it's handle and the sorter assigned if is present.
+		/// </summary>
+		/// <remarks>
+		/// If the record is not in a document the entities will not be sorted unless there is a
+		/// <see cref="SortEntitiesTable"/> assigned to the block.
+		/// </remarks>
+		/// <returns></returns>
+		public IEnumerable<Entity> GetSortedEntities()
+		{
+			if (this.SortEntitiesTable != null)
+			{
+				return this.Entities.OrderBy(e => e.Handle);
+			}
+
+			List<(ulong, Entity)> entities = new();
+
+			foreach (var entity in this.Entities)
+			{
+				ulong sorter = this.SortEntitiesTable.GetSorterHandle(entity);
+				entities.Add((sorter, entity));
+			}
+
+			return entities.OrderBy(e => e.Item1).Select(e => e.Item2);
 		}
 
 		internal override void AssignDocument(CadDocument doc)
