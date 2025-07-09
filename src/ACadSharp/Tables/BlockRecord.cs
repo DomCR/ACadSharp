@@ -149,6 +149,29 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
+		/// Blocks with the anonymous flag set are managed by this library or the editing software,
+		/// this may affect the entities or the block properties.
+		/// </summary>
+		public bool IsAnonymous
+		{
+			get
+			{
+				return (this.Flags & BlockTypeFlags.Anonymous) != 0;
+			}
+			set
+			{
+				if (value)
+				{
+					this.Flags |= BlockTypeFlags.Anonymous;
+				}
+				else
+				{
+					this.Flags &= ~BlockTypeFlags.Anonymous;
+				}
+			}
+		}
+
+		/// <summary>
 		/// Active flag if it has an <see cref="Objects.Evaluations.EvaluationGraph"/> attached to it with dynamic expressions.
 		/// </summary>
 		public bool IsDynamic
@@ -234,6 +257,11 @@ namespace ACadSharp.Tables
 				return this.Entities.OfType<Viewport>();
 			}
 		}
+
+		/// <summary>
+		/// Prefix used for naming any anonymous block managed by ACadSharp.
+		/// </summary>
+		public const string AnonymousPrefix = "*A";
 
 		/// <summary>
 		/// Default block record name for the model space
