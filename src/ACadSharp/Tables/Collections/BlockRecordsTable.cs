@@ -24,7 +24,7 @@
 					throw new System.ArgumentException($"The BlockRecord with name {item.Name} has already been added.");
 				}
 
-				item.Name = this.createName("*A");
+				item.Name = this.createName(BlockRecord.AnonymousPrefix);
 			}
 
 			base.Add(item);
