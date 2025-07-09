@@ -17,9 +17,9 @@
 		/// <inheritdoc/>
 		public override void Add(BlockRecord item)
 		{
-			if (item.IsAnonymous)
+			if (item.IsAnonymous && this.Contains(item.Name))
 			{
-
+				item.Name = this.createName("*A");
 			}
 
 			base.Add(item);

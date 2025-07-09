@@ -12,13 +12,8 @@ namespace ACadSharp.Tables.Collections
 		where T : TableEntry
 	{
 		public event EventHandler<CollectionChangedEventArgs> OnAdd;
+
 		public event EventHandler<CollectionChangedEventArgs> OnRemove;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.TableEntry;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Table;
 
 		/// <summary>
 		/// Gets the number of entries in this table
@@ -26,19 +21,18 @@ namespace ACadSharp.Tables.Collections
 		[DxfCodeValue(DxfReferenceType.Count, 70)]
 		public int Count => this.entries.Count;
 
-		public T this[string name]
-		{
-			get
-			{
-				return this.entries[name];
-			}
-		}
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.TableEntry;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Table;
 
 		protected abstract string[] defaultEntries { get; }
 
 		protected readonly Dictionary<string, T> entries = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
 
-		protected Table() { }
+		protected Table()
+		{ }
 
 		protected Table(CadDocument document)
 		{
@@ -54,7 +48,7 @@ namespace ACadSharp.Tables.Collections
 		{
 			if (string.IsNullOrEmpty(item.Name))
 			{
-				item.Name = this.createName();
+				item.Name = this.createName("unnamed");
 			}
 
 			this.add(item.Name, item);
@@ -73,17 +67,6 @@ namespace ACadSharp.Tables.Collections
 		}
 
 		/// <summary>
-		/// Gets the value associated with the specified key.
-		/// </summary>
-		/// <param name="key">The key of the value to get.</param>
-		/// <param name="item"></param>
-		/// <returns>true if the <see cref="Table{T}"/> contains an element with the specified key; otherwise, false.</returns>
-		public bool TryGetValue(string key, out T item)
-		{
-			return this.entries.TryGetValue(key, out item);
-		}
-
-		/// <summary>
 		/// Determines whether the <see cref="Table{T}"/> contains the specified key.
 		/// </summary>
 		/// <param name="key"></param>
@@ -91,27 +74,6 @@ namespace ACadSharp.Tables.Collections
 		public bool Contains(string key)
 		{
 			return this.entries.ContainsKey(key);
-		}
-
-		/// <summary>
-		/// Removes a <see cref="TableEntry"/> from the collection, this method triggers <see cref="OnRemove"/>
-		/// </summary>
-		/// <param name="key">key in the table</param>
-		/// <returns>The removed <see cref="TableEntry"/></returns>
-		public T Remove(string key)
-		{
-			if (this.defaultEntries.Contains(key))
-				return null;
-
-			if (this.entries.Remove(key, out T item))
-			{
-				item.Owner = null;
-				OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));
-				item.OnNameChanged -= this.onEntryNameChanged;
-				return item;
-			}
-
-			return null;
 		}
 
 		/// <summary>
@@ -140,6 +102,38 @@ namespace ACadSharp.Tables.Collections
 			return this.entries.Values.GetEnumerator();
 		}
 
+		/// <summary>
+		/// Removes a <see cref="TableEntry"/> from the collection, this method triggers <see cref="OnRemove"/>
+		/// </summary>
+		/// <param name="key">key in the table</param>
+		/// <returns>The removed <see cref="TableEntry"/></returns>
+		public T Remove(string key)
+		{
+			if (this.defaultEntries.Contains(key))
+				return null;
+
+			if (this.entries.Remove(key, out T item))
+			{
+				item.Owner = null;
+				OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));
+				item.OnNameChanged -= this.onEntryNameChanged;
+				return item;
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Gets the value associated with the specified key.
+		/// </summary>
+		/// <param name="key">The key of the value to get.</param>
+		/// <param name="item"></param>
+		/// <returns>true if the <see cref="Table{T}"/> contains an element with the specified key; otherwise, false.</returns>
+		public bool TryGetValue(string key, out T item)
+		{
+			return this.entries.TryGetValue(key, out item);
+		}
+
 		protected void add(string key, T item)
 		{
 			this.entries.Add(key, item);
@@ -162,6 +156,18 @@ namespace ACadSharp.Tables.Collections
 			this.entries.Add(key, item);
 		}
 
+		protected string createName(string prefix)
+		{
+			string name = prefix;
+			int i = 0;
+			while (this.entries.ContainsKey($"{prefix}{i}"))
+			{
+				i++;
+			}
+
+			return $"{prefix}{i}";
+		}
+
 		private void onEntryNameChanged(object sender, OnNameChangedArgs e)
 		{
 			if (this.defaultEntries.Contains(e.OldName, StringComparer.InvariantCultureIgnoreCase))
@@ -174,16 +180,12 @@ namespace ACadSharp.Tables.Collections
 			this.entries.Remove(e.OldName);
 		}
 
-		private string createName()
+		public T this[string name]
 		{
-			string name = "unamed";
-			int i = 0;
-			while (this.entries.ContainsKey($"{name}_{i}"))
+			get
 			{
-				i++;
+				return this.entries[name];
 			}
-
-			return $"{name}_{i}";
 		}
 	}
 }
