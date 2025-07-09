@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
 using System.Diagnostics;
 using System.IO;
@@ -34,6 +35,32 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
+
+			DimensionAligned dim = doc.GetCadObject<DimensionAligned>(0x23B);
+
+			doc.Entities.Add(new Circle()
+			{
+				Color = Color.Red,
+				Center = dim.FirstPoint,
+			});
+			doc.Entities.Add(new Circle()
+			{
+				Color = Color.Yellow,
+				Center = dim.SecondPoint,
+			});
+			doc.Entities.Add(new Circle()
+			{
+				Color = Color.Green,
+				Center = dim.DefinitionPoint,
+			});
+			doc.Entities.Add(new Circle()
+			{
+				Color = Color.Cyan,
+				Center = dim.InsertionPoint,
+			});
+
+			string path = Path.Combine(test.Folder, $"{test.NoExtensionName}{".data"}.dwg");
+			DwgWriter.Write(path, doc);
 		}
 
 		[Theory]

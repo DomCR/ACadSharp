@@ -280,6 +280,78 @@ namespace ACadSharp
 		}
 
 		/// <summary>
+		/// Defines a default red color.
+		/// </summary>
+		public static Color Red
+		{
+			get { return new Color(1); }
+		}
+
+		/// <summary>
+		/// Defines a default yellow color.
+		/// </summary>
+		public static Color Yellow
+		{
+			get { return new Color(2); }
+		}
+
+		/// <summary>
+		/// Defines a default green color.
+		/// </summary>
+		public static Color Green
+		{
+			get { return new Color(3); }
+		}
+
+		/// <summary>
+		/// Defines a default cyan color.
+		/// </summary>
+		public static Color Cyan
+		{
+			get { return new Color(4); }
+		}
+
+		/// <summary>
+		/// Defines a default blue color.
+		/// </summary>
+		public static Color Blue
+		{
+			get { return new Color(5); }
+		}
+
+		/// <summary>
+		/// Defines a default magenta color.
+		/// </summary>
+		public static Color Magenta
+		{
+			get { return new Color(6); }
+		}
+
+		/// <summary>
+		/// Defines a default white/black color.
+		/// </summary>
+		public static Color Default
+		{
+			get { return new Color(7); }
+		}
+
+		/// <summary>
+		/// Defines a default dark gray color.
+		/// </summary>
+		public static Color DarkGray
+		{
+			get { return new Color(8); }
+		}
+
+		/// <summary>
+		/// Defines a default light gray color.
+		/// </summary>
+		public static Color LightGray
+		{
+			get { return new Color(9); }
+		}
+
+		/// <summary>
 		/// This is found in some header variables but is not valid for Entities or Objects
 		/// </summary>
 		public static Color ByEntity
