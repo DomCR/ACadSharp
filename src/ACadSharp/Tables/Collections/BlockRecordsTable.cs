@@ -19,6 +19,11 @@
 		{
 			if (item.IsAnonymous && this.Contains(item.Name))
 			{
+				if (this[item.Name].Equals(item))
+				{
+					throw new System.ArgumentException($"The BlockRecord with name {item.Name} has already been added.");
+				}
+
 				item.Name = this.createName("*A");
 			}
 
