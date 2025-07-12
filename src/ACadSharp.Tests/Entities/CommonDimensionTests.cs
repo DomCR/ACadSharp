@@ -50,6 +50,19 @@ namespace ACadSharp.Tests.Entities
 			Assert.True(dim.Flags.HasFlag(DimensionType.TextUserDefinedLocation));
 		}
 
+		[Fact]
+		public virtual void UpdateBlockTests()
+		{
+			T dim = this.createDim();
+
+			Assert.Null(dim.Block);
+
+			dim.UpdateBlock();
+
+			Assert.NotNull(dim.Block);
+			Assert.True(dim.Block.IsAnonymous);
+		}
+
 		protected virtual T createDim()
 		{
 			return new T();

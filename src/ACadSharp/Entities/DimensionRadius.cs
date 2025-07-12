@@ -1,5 +1,7 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Tables;
 using CSMath;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -14,15 +16,6 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.RadialDimension)]
 	public class DimensionRadius : Dimension
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.DIMENSION_RADIUS;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityDimension;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.RadialDimension;
-
 		/// <summary>
 		/// Definition point for diameter, radius, and angular dimensions(in WCS).
 		/// </summary>
@@ -44,10 +37,48 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityDimension;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.DIMENSION_RADIUS;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.RadialDimension;
+
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
 		public DimensionRadius() : base(DimensionType.Radius) { }
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			base.ApplyTransform(transform);
+			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
+		}
+
+		/// <inheritdoc/>
+		public override void CalculateReferencePoints()
+		{
+			if (XY.Equals(this.DefinitionPoint, this.AngleVertex))
+			{
+				throw new ArgumentException("The center and the reference point cannot be the same");
+			}
+
+			if (!this.IsTextUserDefinedLocation)
+			{
+				double textGap = this.Style.DimensionLineGap;
+
+				double scale = this.Style.ScaleFactor;
+
+				double arrowSize = this.Style.ArrowSize;
+
+				XYZ vec = (this.AngleVertex - this.DefinitionPoint).Normalize();
+				double minOffset = (2 * arrowSize + textGap) * scale;
+				this.TextMiddlePoint = this.AngleVertex + minOffset * vec;
+			}
+		}
 
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
@@ -56,10 +87,18 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public override void ApplyTransform(Transform transform)
+		public override void UpdateBlock()
 		{
-			base.ApplyTransform(transform);
-			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
+			this.createBlock();
+
+			this.CalculateReferencePoints();
+
+			double offset = this.DefinitionPoint.DistanceFrom(this.TextMiddlePoint);
+			XY centerRef = this.DefinitionPoint.Convert<XY>();
+			XY ref1 = this.AngleVertex.Convert<XY>();
+			double minOffset = 2 * this.Style.ArrowSize * this.Style.ScaleFactor;
+
+			this.angularBlock(this.Measurement, centerRef, ref1, minOffset, false);
 		}
 	}
 }

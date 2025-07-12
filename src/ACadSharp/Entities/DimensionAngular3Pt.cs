@@ -84,5 +84,15 @@ namespace ACadSharp.Entities
 			this.SecondPoint = transform.ApplyTransform(this.SecondPoint);
 			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
 		}
+
+		public override void UpdateBlock()
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void CalculateReferencePoints()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
