@@ -871,6 +871,12 @@ namespace ACadSharp.Tests.IO
 				mtext.Normal = XYZ.AxisX;
 
 				this.Document.Entities.Add(mtext);
+
+				mtext = new MText();
+				mtext.Value = "Bla bla bla";
+				mtext.ApplyRotation(XYZ.AxisZ, Math.PI / 4);
+
+				this.Document.Entities.Add(mtext);
 			}
 
 			public void SingleMTextSpecialCharacter()
