@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
+using ACadSharp.Types.Units;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
@@ -32,7 +33,7 @@ namespace ACadSharp.Entities
 			get { return this._block; }
 			set
 			{
-				this._block = this.updateTable(this._block, this.Document?.BlockRecords);
+				this._block = updateTable(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -100,6 +101,11 @@ namespace ACadSharp.Entities
 		public XYZ InsertionPoint { get; set; }
 
 		/// <summary>
+		/// Indicates if the dimension is angular or linear.
+		/// </summary>
+		public bool IsAngular { get { return this.Flags.HasFlag(DimensionType.Angular3Point) || this.Flags.HasFlag(DimensionType.Angular); } }
+
+		/// <summary>
 		/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location
 		/// </summary>
 		public bool IsTextUserDefinedLocation
@@ -165,7 +171,7 @@ namespace ACadSharp.Entities
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				this._style = this.updateTable(value, this.Document?.DimensionStyles);
+				this._style = updateTable(value, this.Document?.DimensionStyles);
 			}
 		}
 
@@ -244,12 +250,100 @@ namespace ACadSharp.Entities
 			return clone;
 		}
 
+		/// <summary>
+		/// Get the measurement text from the actual <see cref="Dimension.Measurement"/> value.
+		/// </summary>
+		/// <returns></returns>
+		public string GetMeasurementText()
+		{
+			return this.GetMeasurementText(this.Style);
+		}
+
+		/// <summary>
+		/// Get the measurement text from the actual <see cref="Dimension.Measurement"/> value.
+		/// </summary>
+		/// <param name="style">style to apply to the text.</param>
+		/// <returns></returns>
+		public string GetMeasurementText(DimensionStyle style)
+		{
+			if (!string.IsNullOrEmpty(this.Text))
+			{
+				return this.Text;
+			}
+
+			string text = string.Empty;
+			double value = style.ApplyRounding(this.Measurement);
+
+			UnitStyleFormat unitFormat = style.GetUnitStyleFormat();
+
+			if (this.IsAngular)
+			{
+				switch (style.AngularUnit)
+				{
+					case AngularUnitFormat.DegreesMinutesSeconds:
+						text = unitFormat.ToDegreesMinutesSeconds(value);
+						break;
+					case AngularUnitFormat.Gradians:
+						text = unitFormat.ToGradians(value);
+						break;
+					case AngularUnitFormat.Radians:
+						text = unitFormat.ToRadians(value);
+						break;
+					case AngularUnitFormat.DecimalDegrees:
+					case AngularUnitFormat.SurveyorsUnits:
+					default:
+						text = unitFormat.ToDecimal(value, true);
+						break;
+				}
+			}
+			else
+			{
+				switch (style.LinearUnitFormat)
+				{
+					case LinearUnitFormat.Scientific:
+						text = unitFormat.ToScientific(value);
+						break;
+					case LinearUnitFormat.Engineering:
+						text = unitFormat.ToEngineering(value);
+						break;
+					case LinearUnitFormat.Architectural:
+						text = unitFormat.ToArchitectural(value);
+						break;
+					case LinearUnitFormat.Fractional:
+						text = unitFormat.ToFractional(value);
+						break;
+					case LinearUnitFormat.None:
+					case LinearUnitFormat.Decimal:
+					case LinearUnitFormat.WindowsDesktop:
+					default:
+						text = unitFormat.ToDecimal(value);
+						break;
+				}
+			}
+
+			string prefix = string.Empty;
+			switch (this.Flags)
+			{
+				case DimensionType.Diameter:
+					prefix = string.IsNullOrEmpty(style.Prefix) ? "Ø" : style.Prefix;
+					break;
+				case DimensionType.Radius:
+					prefix = string.IsNullOrEmpty(style.Prefix) ? "R" : style.Prefix;
+					break;
+				default:
+					prefix = string.IsNullOrEmpty(style.Prefix) ? string.Empty : style.Prefix;
+					break;
+			}
+
+			return $"{prefix}{text}{style.Suffix}";
+		}
+
 		internal override void AssignDocument(CadDocument doc)
 		{
 			base.AssignDocument(doc);
 
-			this._style = this.updateTable(this.Style, doc.DimensionStyles);
-			this._block = this.updateTable(this.Block, doc.BlockRecords);
+			this._style = updateTable(this.Style, doc.DimensionStyles);
+			this._block = updateTable(this.Block, doc.BlockRecords);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 			doc.BlockRecords.OnRemove += this.tableOnRemove;

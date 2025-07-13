@@ -109,7 +109,6 @@
 		public const string ObjectsSection = "OBJECTS";
 		public const string ObjectDictionary = "DICTIONARY";
 		public const string ObjectDictionaryWithDefault = "ACDBDICTIONARYWDFLT";
-		public const string ObjectAcdbPlaceHolder = "ACDBPLACEHOLDER";
 		public const string ObjectDictionaryVar = "DICTIONARYVAR";
 		public const string ObjectDBColor = "DBCOLOR";
 		public const string ObjectPlotSettings = "PLOTSETTINGS";
@@ -129,9 +128,14 @@
 		public const string ObjectEvalGraph = "ACAD_EVALUATION_GRAPH";
 		public const string ObjectBlockLinearParameter = "BLOCKLINEARPARAMETER";
 		public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
+		public const string ObjectBlockBasePointParameter = "BLOCKBASEPOINTPARAMETER";
+		public const string ObjectBlockFlipParameter = "BLOCKFLIPPARAMETER";
+		public const string ObjectBlockFlipAction= "BLOCKFLIPACTION";
 		public const string ObjectTableContent = "TABLECONTENT";
 		public const string ObjectGeoData = "GEODATA";
 		public const string ObjectGroup = "GROUP";
+		public const string ObjectTableStyle = "TABLESTYLE";
+		public const string ObjectCellStyleMap = "CELLSTYLEMAP";
 
 		#endregion
 	}

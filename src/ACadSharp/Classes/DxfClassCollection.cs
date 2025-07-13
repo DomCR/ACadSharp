@@ -24,10 +24,10 @@ namespace ACadSharp.Classes
 			//AcDbDictionaryWithDefault
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				CppClassName = "AcDbDictionaryWithDefault",
+				CppClassName = DxfSubclassMarker.DictionaryWithDefault,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = (ACadVersion)22,
-				DxfName = "ACDBDICTIONARYWDFLT",
+				DxfName = DxfFileToken.ObjectDictionaryWithDefault,
 				ItemClassId = 499,
 				MaintenanceVersion = 42,
 				ProxyFlags = ProxyFlags.R13FormatProxy,
@@ -37,10 +37,10 @@ namespace ACadSharp.Classes
 			//AcDbPlaceHolder
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				CppClassName = "AcDbPlaceHolder",
+				CppClassName = DxfSubclassMarker.AcDbPlaceHolder,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = (ACadVersion)0,
-				DxfName = "ACDBPLACEHOLDER",
+				DxfName = DxfFileToken.ObjectPlaceholder,
 				ItemClassId = 499,
 				MaintenanceVersion = 0,
 				ProxyFlags = ProxyFlags.None,
@@ -50,10 +50,10 @@ namespace ACadSharp.Classes
 			//AcDbLayout
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				CppClassName = "AcDbLayout",
+				CppClassName = DxfSubclassMarker.Layout,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = (ACadVersion)0,
-				DxfName = "LAYOUT",
+				DxfName = DxfFileToken.ObjectLayout,
 				ItemClassId = 499,
 				MaintenanceVersion = 0,
 				ProxyFlags = ProxyFlags.None,
@@ -63,10 +63,10 @@ namespace ACadSharp.Classes
 			//AcDbDictionaryVar
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				CppClassName = "AcDbDictionaryVar",
+				CppClassName = DxfSubclassMarker.DictionaryVar,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = (ACadVersion)20,
-				DxfName = "DICTIONARYVAR",
+				DxfName = DxfFileToken.ObjectDictionaryVar,
 				ItemClassId = 499,
 				MaintenanceVersion = 0,
 				ProxyFlags = ProxyFlags.None,
@@ -76,10 +76,10 @@ namespace ACadSharp.Classes
 			//AcDbTableStyle
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				CppClassName = "AcDbTableStyle",
+				CppClassName = DxfSubclassMarker.TableStyle,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = ACadVersion.AC1018,
-				DxfName = "TABLESTYLE",
+				DxfName = DxfFileToken.ObjectTableStyle,
 				ItemClassId = 499,
 				MaintenanceVersion = 0,
 				ProxyFlags = (ProxyFlags)4095,
@@ -89,10 +89,10 @@ namespace ACadSharp.Classes
 			//AcDbMaterial
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				CppClassName = "AcDbMaterial",
+				CppClassName = DxfSubclassMarker.Material,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = 0,
-				DxfName = "MATERIAL",
+				DxfName = DxfFileToken.ObjectMaterial,
 				ItemClassId = 499,
 				MaintenanceVersion = 0,
 				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
@@ -102,10 +102,10 @@ namespace ACadSharp.Classes
 			//AcDbVisualStyle
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				CppClassName = "AcDbVisualStyle",
+				CppClassName = DxfSubclassMarker.VisualStyle,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = ACadVersion.AC1021,
-				DxfName = "VISUALSTYLE",
+				DxfName = DxfFileToken.ObjectVisualStyle,
 				ItemClassId = 499,
 				MaintenanceVersion = 0,
 				ProxyFlags = (ProxyFlags)4095,
@@ -115,10 +115,10 @@ namespace ACadSharp.Classes
 			//AcDbScale
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				CppClassName = "AcDbScale",
+				CppClassName = DxfSubclassMarker.Scale,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = ACadVersion.AC1021,
-				DxfName = "SCALE",
+				DxfName = DxfFileToken.ObjectScale,
 				ItemClassId = 499,
 				MaintenanceVersion = 1,
 				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
@@ -128,10 +128,10 @@ namespace ACadSharp.Classes
 			//AcDbMLeaderStyle
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				CppClassName = "AcDbMLeaderStyle",
+				CppClassName = DxfSubclassMarker.MLeaderStyle,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = ACadVersion.AC1021,
-				DxfName = "MLEADERSTYLE",
+				DxfName = DxfFileToken.ObjectMLeaderStyle,
 				ItemClassId = 499,
 				MaintenanceVersion = 25,
 				ProxyFlags = (ProxyFlags)4095,
@@ -141,10 +141,10 @@ namespace ACadSharp.Classes
 			//AcDbCellStyleMap
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				CppClassName = "AcDbCellStyleMap",
+				CppClassName = DxfSubclassMarker.CellStyleMap,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = ACadVersion.AC1021,
-				DxfName = "CELLSTYLEMAP",
+				DxfName = DxfFileToken.ObjectCellStyleMap,
 				ItemClassId = 499,
 				MaintenanceVersion = 25,
 				ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
@@ -245,10 +245,10 @@ namespace ACadSharp.Classes
 			//AcDbSubDMesh
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				CppClassName = "AcDbSubDMesh",
+				CppClassName = DxfSubclassMarker.Mesh,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = 0,
-				DxfName = "MESH",
+				DxfName = DxfFileToken.EntityMesh,
 				ItemClassId = 498,
 				MaintenanceVersion = 0,
 				ProxyFlags = ProxyFlags.None,
@@ -258,10 +258,10 @@ namespace ACadSharp.Classes
 			//AcDbSortentsTable
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				CppClassName = "AcDbSortentsTable",
+				CppClassName = DxfSubclassMarker.SortentsTable,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = ACadVersion.AC1014,
-				DxfName = "SORTENTSTABLE",
+				DxfName = DxfFileToken.ObjectSortEntsTable,
 				ItemClassId = 499,
 				MaintenanceVersion = 0,
 				ProxyFlags = ProxyFlags.None,
@@ -285,10 +285,10 @@ namespace ACadSharp.Classes
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
 				ApplicationName = "WipeOut",
-				CppClassName = "AcDbWipeout",
+				CppClassName = DxfSubclassMarker.Wipeout,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = ACadVersion.AC1015,
-				DxfName = "WIPEOUT",
+				DxfName = DxfFileToken.EntityWipeout,
 				ItemClassId = 498,
 				MaintenanceVersion = 0,
 				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.TransformAllowed | ProxyFlags.ColorChangeAllowed | ProxyFlags.LayerChangeAllowed | ProxyFlags.LinetypeChangeAllowed | ProxyFlags.LinetypeScaleChangeAllowed | ProxyFlags.VisibilityChangeAllowed | ProxyFlags.R13FormatProxy,
@@ -326,10 +326,10 @@ namespace ACadSharp.Classes
 			//AcDbTable
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				CppClassName = "AcDbTable",
+				CppClassName = DxfSubclassMarker.TableEntity,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = ACadVersion.AC1018,
-				DxfName = "ACAD_TABLE",
+				DxfName = DxfFileToken.EntityTable,
 				ItemClassId = 498,
 				MaintenanceVersion = 0,
 				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
@@ -339,10 +339,10 @@ namespace ACadSharp.Classes
 			//AcDbTableContent
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				CppClassName = "AcDbTableContent",
+				CppClassName = DxfSubclassMarker.TableContent,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = ACadVersion.AC1018,
-				DxfName = "TABLECONTENT",
+				DxfName = DxfFileToken.ObjectTableContent,
 				ItemClassId = 499,
 				MaintenanceVersion = 21,
 				ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,

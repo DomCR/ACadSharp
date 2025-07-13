@@ -341,9 +341,7 @@ namespace ACadSharp.IO.DWG
 			//H 3 DIMSTYLE(hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, dimension.Style);
 			//H 2 anonymous BLOCK(hard pointer)
-			//TODO: fix annotative dimensions
-			//this._writer.HandleReference(DwgReferenceType.HardPointer, dimension.Block);
-			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, dimension.Block);
 		}
 
 		private void writeDimensionLinear(DimensionLinear dimension)
@@ -1143,7 +1141,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitLong((int)multiLeader.PropertyOverrideFlags);
 			//	170 LeaderLineType (short)
 			this._writer.WriteBitShort((short)multiLeader.PathType);
-			//	91  Leade LineColor (Color)
+			//	91  Leader LineColor (Color)
 			this._writer.WriteCmColor(multiLeader.LineColor);
 			//	341 LeaderLineTypeID (handle/LineType)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, multiLeader.LeaderLineType);
@@ -1754,8 +1752,8 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteRawDouble(solid.ThirdCorner.X);
 			this._writer.WriteRawDouble(solid.ThirdCorner.Y);
 			//4th corner 2RD 13
-			this._writer.WriteRawDouble(solid.FirstCorner.X);
-			this._writer.WriteRawDouble(solid.FirstCorner.Y);
+			this._writer.WriteRawDouble(solid.FourthCorner.X);
+			this._writer.WriteRawDouble(solid.FourthCorner.Y);
 
 			//Extrusion BE 210
 			this._writer.WriteBitExtrusion(solid.Normal);

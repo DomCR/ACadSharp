@@ -174,7 +174,7 @@ namespace ACadSharp.Objects
 
 				if (this.Document != null)
 				{
-					this._leaderLineType = this.updateTable(value, this.Document.LineTypes);
+					this._leaderLineType = updateTable(value, this.Document.LineTypes);
 				}
 				else
 				{
@@ -289,7 +289,7 @@ namespace ACadSharp.Objects
 			get { return this._arrowhead; }
 			set
 			{
-				this._arrowhead = this.updateTable(value, this.Document?.BlockRecords);
+				this._arrowhead = updateTable(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -342,7 +342,7 @@ namespace ACadSharp.Objects
 
 				if (this.Document != null)
 				{
-					this._textStyle = this.updateTable(value, this.Document.TextStyles);
+					this._textStyle = updateTable(value, this.Document.TextStyles);
 				}
 				else
 				{
@@ -494,7 +494,7 @@ namespace ACadSharp.Objects
 		{
 			get { return this._blockContent; }
 			set {
-				this._blockContent = this.updateTable(value, this.Document?.BlockRecords);
+				this._blockContent = updateTable(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -716,10 +716,10 @@ namespace ACadSharp.Objects
 		{
 			base.AssignDocument(doc);
 
-			this._textStyle = this.updateTable(this._textStyle, doc.TextStyles);
-			this._leaderLineType = this.updateTable(this._leaderLineType, doc.LineTypes);
-			this._arrowhead = this.updateTable(this._arrowhead, doc.BlockRecords);
-			this._blockContent = this.updateTable(this._blockContent, doc.BlockRecords);
+			this._textStyle = updateTable(this._textStyle, doc.TextStyles);
+			this._leaderLineType = updateTable(this._leaderLineType, doc.LineTypes);
+			this._arrowhead = updateTable(this._arrowhead, doc.BlockRecords);
+			this._blockContent = updateTable(this._blockContent, doc.BlockRecords);
 
 			doc.TextStyles.OnRemove += this.tableOnRemove;
 			doc.LineTypes.OnRemove += this.tableOnRemove;

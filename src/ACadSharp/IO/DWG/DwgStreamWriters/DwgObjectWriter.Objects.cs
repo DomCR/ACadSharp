@@ -29,7 +29,6 @@ namespace ACadSharp.IO.DWG
 			{
 				case EvaluationGraph:
 				case Material:
-				case SortEntitiesTable:
 				case UnknownNonGraphicalObject:
 				case VisualStyle:
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
@@ -775,16 +774,15 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Numentries BL number of entries
-			this._writer.WriteBitLong(sortEntitiesTable.Sorters.Count());
-
-			foreach (var item in sortEntitiesTable.Sorters)
+			this._writer.WriteBitLong(sortEntitiesTable.Count());
+			foreach (var item in sortEntitiesTable)
 			{
 				//Sort handle(numentries of these, CODE 0, i.e.part of the main bit stream, not of the handle bit stream!).
 				//The sort handle does not have to point to an entity (but it can).
 				//This is just the handle used for determining the drawing order of the entity specified by the entity handle in the handle bit stream.
 				//When the sortentstable doesn’t have a
 				//mapping from entity handle to sort handle, then the entity’s own handle is used for sorting.
-				this._writer.HandleReference(item.Handle);
+				this._writer.Main.HandleReference(item.SortHandle);
 				this._writer.HandleReference(DwgReferenceType.SoftPointer, item.Entity);
 			}
 		}

@@ -847,6 +847,8 @@ namespace ACadSharp.IO.DWG
 					template = this.readSpline();
 					break;
 				case ObjectType.REGION:
+					this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
+					template = this.readUnknownEntity(null);
 					break;
 				case ObjectType.SOLID3D:
 					break;
@@ -982,9 +984,13 @@ namespace ACadSharp.IO.DWG
 					template = this.readLayout();
 					break;
 				case ObjectType.ACAD_PROXY_ENTITY:
-					break;
+					this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
+					template = this.readUnknownEntity(null);
+					break; 
 				case ObjectType.ACAD_PROXY_OBJECT:
-					break;
+					this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
+					template = this.readUnknownNonGraphicalObject(null);
+					break; 
 				default:
 					return this.readUnlistedType((short)type);
 			}
@@ -1085,6 +1091,12 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "BLOCKVISIBILITYPARAMETER":
 					template = this.readBlockVisibilityParameter();
+					break;
+				case "BLOCKFLIPPARAMETER":
+					template = this.readBlockFlipParameter();
+					break;
+				case "BLOCKFLIPACTION":
+					template = this.readBlockFlipAction();
 					break;
 				default:
 					break;
@@ -1294,6 +1306,134 @@ namespace ACadSharp.IO.DWG
 				//333
 				template.SubSet2.Add(this.handleReference());
 			}
+
+			return template;
+		}
+
+		private CadBlockActionTemplate readBlockAction(CadBlockActionTemplate template)
+		{
+
+			this.readBlockElement(template);
+
+			BlockAction blockAction = template.BlockAction;
+
+			// 1010, 1020, 1030
+			blockAction.ActionPoint = _mergedReaders.Read3BitDouble();
+
+			//71
+			short entityCount = this._objectReader.ReadBitShort();
+			for (int i = 0; i < entityCount; i++)
+			{
+				ulong entityHandle = this.handleReference();
+				template.EntityHandles.Add(entityHandle);
+			}
+
+			// 70
+			blockAction.Value70 = this._mergedReaders.ReadBitShort();
+
+			return template;
+		}
+
+		private CadBlockFlipActionTemplate readBlockFlipAction() {
+
+			BlockFlipAction blockFlipAction = new BlockFlipAction();
+			CadBlockFlipActionTemplate template = new CadBlockFlipActionTemplate(blockFlipAction);
+
+			this.readBlockAction(template);
+
+			// 92
+			blockFlipAction.Value92 = this._mergedReaders.ReadBitLong();
+			// 93
+			blockFlipAction.Value93 = this._mergedReaders.ReadBitLong();
+			// 94
+			blockFlipAction.Value94 = this._mergedReaders.ReadBitLong();
+			// 95
+			blockFlipAction.Value95 = this._mergedReaders.ReadBitLong();
+
+
+			// 301
+			blockFlipAction.Caption301 = this._mergedReaders.ReadVariableText();
+			// 302
+			blockFlipAction.Caption302 = this._mergedReaders.ReadVariableText();
+			// 303
+			blockFlipAction.Caption303 = this._mergedReaders.ReadVariableText();
+			// 304
+			blockFlipAction.Caption304 = this._mergedReaders.ReadVariableText();
+
+			return template;
+		}
+
+		private CadBlock2PtParameterTemplate readBlock2PtParameter(CadBlockFlipParameterTemplate template) {
+
+			this.readBlockParameter(template);
+
+			Block2PtParameter block2PtParameter = template.Block2PtParameter;
+
+			//1010, 1020, 1030
+			block2PtParameter.FirstPoint = this._mergedReaders.Read3BitDouble();
+
+			//1011, 1021, 1031
+			block2PtParameter.SecondPoint = this._mergedReaders.Read3BitDouble();
+
+			//	Found in DXF
+				//170 BS  4
+				//91  BL  7
+				//91  BL  0
+				//91  BL  0
+				//91  BL  0
+				//171 BS  0
+				//172 BS  0
+				//173 BS  0
+				//174 BS  0
+				//177 BS  0
+			//	Guess, changed order
+			//	170 missing, seems to be the number of following 91-BLs (see below)
+			//	171
+			short s0 = this._mergedReaders.ReadBitShort();
+			//	172
+			short s1 = this._mergedReaders.ReadBitShort();
+			//	173
+			short s2 = this._mergedReaders.ReadBitShort();
+			//	174
+			short s3 = this._mergedReaders.ReadBitShort();
+
+			//	91 four times
+			int i0 = this._mergedReaders.ReadBitLong();
+			int i1 = this._mergedReaders.ReadBitLong();
+			int i2 = this._mergedReaders.ReadBitLong();
+			int i4 = this._mergedReaders.ReadBitLong();
+			//	177
+			short s4 = this._mergedReaders.ReadBitShort();
+
+			return template;
+		}
+
+		private CadBlockFlipParameterTemplate readBlockFlipParameter() {
+
+			BlockFlipParameter blockFlipParameter = new BlockFlipParameter();
+			CadBlockFlipParameterTemplate template = new CadBlockFlipParameterTemplate(blockFlipParameter);
+
+			this.readBlock2PtParameter(template);
+
+			//	305
+			blockFlipParameter.Caption = this._mergedReaders.ReadVariableText();
+			//	306
+			blockFlipParameter.Description = this._mergedReaders.ReadVariableText();
+			//	307
+			blockFlipParameter.BaseStateName = this._mergedReaders.ReadVariableText();
+			//	308
+			blockFlipParameter.FlippedStateName = this._mergedReaders.ReadVariableText();
+			//	1012, 1022, 1032
+			blockFlipParameter.CaptionLocation = this._mergedReaders.Read3BitDouble();
+			//	309
+			blockFlipParameter.Caption309 = this._mergedReaders.ReadVariableText();
+			//	96
+			blockFlipParameter.Value96 = this._mergedReaders.ReadBitLong();
+
+			//	The remainder seen in DXF cannot be read
+			//DwgAnalyseTool.Analyse03(_objectReader, _handlesReader, _textReader, "BD", null, 1000);
+			//blockFlipParameter.Caption1001 = this._mergedReaders.ReadVariableText();
+			//blockFlipParameter.Point1010 = this._mergedReaders.Read3BitDouble();
 
 			return template;
 		}
@@ -1912,14 +2052,23 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readArc()
 		{
 			Arc arc = new Arc();
-			CadEntityTemplate template = new CadArcTemplate(arc);
+			CadEntityTemplate template = new CadEntityTemplate(arc);
 
 			this.readCommonEntityData(template);
 
 			//Center 3BD 10
 			arc.Center = this._objectReader.Read3BitDouble();
 			//Radius BD 40
-			arc.Radius = this._objectReader.ReadBitDouble();
+			var radius = this._objectReader.ReadBitDouble();
+			if (radius <= 0)
+			{
+				arc.Radius = MathHelper.Epsilon;
+			}
+			else
+			{
+				arc.Radius = radius;
+			}
+
 			//Thickness BT 39
 			arc.Thickness = this._objectReader.ReadBitThickness();
 			//Extrusion BE 210
@@ -1941,8 +2090,18 @@ namespace ACadSharp.IO.DWG
 
 			//Center 3BD 10
 			circle.Center = this._objectReader.Read3BitDouble();
+
 			//Radius BD 40
-			circle.Radius = this._objectReader.ReadBitDouble();
+			var radius = this._objectReader.ReadBitDouble();
+			if (radius <= 0)
+			{
+				circle.Radius = MathHelper.Epsilon;
+			}
+			else
+			{
+				circle.Radius = radius;
+			}
+
 			//Thickness BT 39
 			circle.Thickness = this._objectReader.ReadBitThickness();
 			//Extrusion BE 210
@@ -4796,7 +4955,7 @@ namespace ACadSharp.IO.DWG
 				//DIMCLRT BS 178
 				dimStyle.TextColor = this._mergedReaders.ReadCmColor();
 				//DIMADEC BS 179
-				dimStyle.AngularDimensionDecimalPlaces = this._objectReader.ReadBitShort();
+				dimStyle.AngularDecimalPlaces = this._objectReader.ReadBitShort();
 				//DIMDEC BS 271
 				dimStyle.DecimalPlaces = this._objectReader.ReadBitShort();
 				//DIMTDEC BS 272

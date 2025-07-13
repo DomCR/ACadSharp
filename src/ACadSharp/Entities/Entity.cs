@@ -55,14 +55,7 @@ namespace ACadSharp.Entities
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				if (this.Document != null)
-				{
-					this._layer = this.updateTable(value, this.Document.Layers);
-				}
-				else
-				{
-					this._layer = value;
-				}
+				this._layer = updateTable(value, this.Document?.Layers);
 			}
 		}
 
@@ -78,7 +71,7 @@ namespace ACadSharp.Entities
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				this._lineType = this.updateTable(value, this.Document?.LineTypes);
+				this._lineType = updateTable(value, this.Document?.LineTypes);
 			}
 		}
 
@@ -211,8 +204,8 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._layer = this.updateTable(this.Layer, doc.Layers);
-			this._lineType = this.updateTable(this.LineType, doc.LineTypes);
+			this._layer = updateTable(this.Layer, doc.Layers);
+			this._lineType = updateTable(this.LineType, doc.LineTypes);
 
 			doc.Layers.OnRemove += this.tableOnRemove;
 			doc.LineTypes.OnRemove += this.tableOnRemove;
