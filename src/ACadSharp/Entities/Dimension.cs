@@ -241,18 +241,13 @@ namespace ACadSharp.Entities
 			this.Normal = newNormal;
 		}
 
-		/// <summary>
-		/// Calculate the dimension reference points.
-		/// </summary>
-		public abstract void CalculateReferencePoints();
-
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			Dimension clone = (Dimension)base.Clone();
 
 			clone.Style = this.Style.CloneTyped();
-			clone.Block = this.Block?.CloneTyped() ;
+			clone.Block = this.Block?.CloneTyped();
 
 			return clone;
 		}

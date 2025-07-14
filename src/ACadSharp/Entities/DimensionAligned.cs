@@ -44,6 +44,21 @@ namespace ACadSharp.Entities
 		public override ObjectType ObjectType => ObjectType.DIMENSION_ALIGNED;
 
 		/// <summary>
+		/// Definition point offset relative to the <see cref="SecondPoint"/>.
+		/// </summary>
+		public double Offset
+		{
+			get { return this.SecondPoint.DistanceFrom(this.DefinitionPoint); }
+			set
+			{
+				XYZ dir = this.SecondPoint - this.FirstPoint;
+				XYZ v = XYZ.Cross(this.Normal, dir).Normalize(); //Perpendicular to SecondPoint
+
+				this.DefinitionPoint = this.SecondPoint + v * value;
+			}
+		}
+
+		/// <summary>
 		/// Definition point for linear and angular dimensions(in WCS)
 		/// </summary>
 		[DxfCodeValue(14, 24, 34)]
@@ -76,18 +91,12 @@ namespace ACadSharp.Entities
 		public override void ApplyTransform(Transform transform)
 		{
 			XYZ newNormal = this.transformNormal(transform, this.Normal);
-			this.getWorldMatrix(transform, Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+			this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
 
 			base.ApplyTransform(transform);
 
-			this.FirstPoint = applyWorldMatrix(this.FirstPoint, transform, transOW, transWO);
-			this.SecondPoint = applyWorldMatrix(this.SecondPoint, transform, transOW, transWO);
-		}
-
-		/// <inheritdoc/>
-		public override void CalculateReferencePoints()
-		{
-			throw new System.NotImplementedException();
+			this.FirstPoint = this.applyWorldMatrix(this.FirstPoint, transform, transOW, transWO);
+			this.SecondPoint = this.applyWorldMatrix(this.SecondPoint, transform, transOW, transWO);
 		}
 
 		/// <inheritdoc/>
