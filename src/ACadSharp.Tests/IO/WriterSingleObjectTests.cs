@@ -716,7 +716,7 @@ namespace ACadSharp.Tests.IO
 			{
 				MText mtext = new MText();
 				mtext.Value = "HELLO I'm a rotated MTEXT";
-				mtext.AlignmentPoint = new XYZ(Math.PI / 4, Math.PI / 4, 0);
+				mtext.AlignmentPoint = new XYZ(Math.Cos(MathHelper.DegToRad(-30)), Math.Sin(MathHelper.DegToRad(-30)), 0);
 
 				this.Document.Entities.Add(mtext);
 
