@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSMath.Geometry;
 
 namespace ACadSharp.Entities
 {
@@ -51,7 +52,10 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				throw new System.NotImplementedException();
+				Line3D l1 = LineExtensions.CreateFromPoints<Line3D, XYZ>(this.DefinitionPoint, this.AngleVertex);
+				Line3D l2 = LineExtensions.CreateFromPoints<Line3D, XYZ>(this.FirstPoint, this.SecondPoint);
+
+				return l1.FindIntersection(l2);
 			}
 		}
 
