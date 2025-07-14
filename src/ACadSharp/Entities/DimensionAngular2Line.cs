@@ -14,27 +14,6 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Angular2LineDimension)]
 	public class DimensionAngular2Line : Dimension
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.DIMENSION_ANG_2_Ln;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityDimension;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Angular2LineDimension;
-
-		/// <summary>
-		/// Definition point for linear and angular dimensions (in WCS).
-		/// </summary>
-		[DxfCodeValue(13, 23, 33)]
-		public XYZ FirstPoint { get; set; }
-
-		/// <summary>
-		/// Definition point for linear and angular dimensions (in WCS).
-		/// </summary>
-		[DxfCodeValue(14, 24, 34)]
-		public XYZ SecondPoint { get; set; }
-
 		/// <summary>
 		/// Definition point for diameter, radius, and angular dimensions (in WCS).
 		/// </summary>
@@ -46,6 +25,12 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(16, 26, 36)]
 		public XYZ DimensionArc { get; set; }
+
+		/// <summary>
+		/// Definition point for linear and angular dimensions (in WCS).
+		/// </summary>
+		[DxfCodeValue(13, 23, 33)]
+		public XYZ FirstPoint { get; set; }
 
 		/// <inheritdoc/>
 		public override double Measurement
@@ -59,17 +44,26 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityDimension;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.DIMENSION_ANG_2_Ln;
+
+		/// <summary>
+		/// Definition point for linear and angular dimensions (in WCS).
+		/// </summary>
+		[DxfCodeValue(14, 24, 34)]
+		public XYZ SecondPoint { get; set; }
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Angular2LineDimension;
+
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
 		public DimensionAngular2Line() : base(DimensionType.Angular)
 		{
-		}
-
-		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			return new BoundingBox(this.FirstPoint, this.SecondPoint);
 		}
 
 		/// <inheritdoc/>
@@ -81,6 +75,18 @@ namespace ACadSharp.Entities
 			this.SecondPoint = transform.ApplyTransform(this.SecondPoint);
 			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
 			this.DimensionArc = transform.ApplyTransform(this.DimensionArc);
+		}
+
+		/// <inheritdoc/>
+		public override void CalculateReferencePoints()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox(this.FirstPoint, this.SecondPoint);
 		}
 	}
 }

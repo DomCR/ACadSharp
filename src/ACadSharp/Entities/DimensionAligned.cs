@@ -85,6 +85,12 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
+		public override void CalculateReferencePoints()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.FirstPoint, this.SecondPoint);

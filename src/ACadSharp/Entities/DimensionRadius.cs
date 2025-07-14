@@ -14,15 +14,6 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.RadialDimension)]
 	public class DimensionRadius : Dimension
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.DIMENSION_RADIUS;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityDimension;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.RadialDimension;
-
 		/// <summary>
 		/// Definition point for diameter, radius, and angular dimensions(in WCS).
 		/// </summary>
@@ -30,7 +21,7 @@ namespace ACadSharp.Entities
 		public XYZ AngleVertex { get; set; }
 
 		/// <summary>
-		/// Leader length for radius and diameter dimensions
+		/// Leader length for radius and diameter dimensions.
 		/// </summary>
 		[DxfCodeValue(40)]
 		public double LeaderLength { get; set; }
@@ -44,22 +35,37 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityDimension;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.DIMENSION_RADIUS;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.RadialDimension;
+
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
 		public DimensionRadius() : base(DimensionType.Radius) { }
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			return new BoundingBox(this.InsertionPoint - this.AngleVertex, this.InsertionPoint + this.AngleVertex);
-		}
-
-		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
 			base.ApplyTransform(transform);
 			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
+		}
+
+		/// <inheritdoc/>
+		public override void CalculateReferencePoints()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox(this.InsertionPoint - this.AngleVertex, this.InsertionPoint + this.AngleVertex);
 		}
 	}
 }
