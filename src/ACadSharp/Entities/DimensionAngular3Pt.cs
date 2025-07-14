@@ -16,13 +16,16 @@ namespace ACadSharp.Entities
 	public class DimensionAngular3Pt : Dimension
 	{
 		/// <summary>
-		/// Definition point for diameter, radius, and angular dimensions (in WCS)
+		/// Definition point for diameter, radius, and angular dimensions (in WCS).
 		/// </summary>
+		/// <remarks>
+		/// It has the same value as the center of the arc.
+		/// </remarks>
 		[DxfCodeValue(15, 25, 35)]
 		public XYZ AngleVertex { get; set; }
 
 		/// <summary>
-		/// Definition point for linear and angular dimensions (in WCS)
+		/// Definition point for linear and angular dimensions (in WCS).
 		/// </summary>
 		[DxfCodeValue(13, 23, 33)]
 		public XYZ FirstPoint { get; set; }

@@ -44,6 +44,32 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <summary>
+		/// Gets the center point of the measured arc.
+		/// </summary>
+		public XYZ Center
+		{
+			get
+			{
+				throw new System.NotImplementedException();
+			}
+		}
+
+		/// <summary>
+		/// Definition point offset relative to the <see cref="Center"/>.
+		/// </summary>
+		public virtual double Offset
+		{
+			get { return this.SecondPoint.DistanceFrom(this.DefinitionPoint); }
+			set
+			{
+				XYZ dir = this.SecondPoint - this.FirstPoint;
+				XYZ v = XYZ.Cross(this.Normal, dir).Normalize(); //Perpendicular to SecondPoint
+
+				this.DefinitionPoint = this.SecondPoint + v * value;
+			}
+		}
+
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityDimension;
 

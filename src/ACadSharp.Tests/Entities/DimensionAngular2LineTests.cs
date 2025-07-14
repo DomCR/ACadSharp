@@ -1,11 +1,21 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Tests.Common;
 using CSMath;
+using Xunit;
 
 namespace ACadSharp.Tests.Entities
 {
 	public class DimensionAngular2LineTests : CommonDimensionTests<DimensionAngular2Line>
 	{
 		public override DimensionType Type => DimensionType.Angular;
+
+		[Fact]
+		public void CenterTest()
+		{
+			var dim = this.createDim();
+
+			AssertUtils.AreEqual(XYZ.Zero, dim.Center);
+		}
 
 		protected override DimensionAngular2Line createDim()
 		{
