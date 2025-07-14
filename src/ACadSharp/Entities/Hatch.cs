@@ -156,7 +156,7 @@ namespace ACadSharp.Entities
 			{
 			}
 
-			//	throw new NotImplementedException();
+			throw new NotImplementedException();
 		}
 
 		/// <inheritdoc/>
