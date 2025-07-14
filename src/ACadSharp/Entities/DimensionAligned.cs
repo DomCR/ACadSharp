@@ -23,7 +23,7 @@ namespace ACadSharp.Entities
 		public double ExtLineRotation { get; set; }
 
 		/// <summary>
-		/// Insertion point for clones of a dimension—Baseline and Continue (in OCS)
+		/// Insertion point for clones of a dimension—Baseline and Continue (in OCS).
 		/// </summary>
 		[DxfCodeValue(13, 23, 33)]
 		public XYZ FirstPoint { get; set; }
@@ -46,7 +46,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Definition point offset relative to the <see cref="SecondPoint"/>.
 		/// </summary>
-		public double Offset
+		public virtual double Offset
 		{
 			get { return this.SecondPoint.DistanceFrom(this.DefinitionPoint); }
 			set
@@ -59,7 +59,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Definition point for linear and angular dimensions(in WCS)
+		/// Definition point for linear and angular dimensions(in WCS).
 		/// </summary>
 		[DxfCodeValue(14, 24, 34)]
 		public XYZ SecondPoint { get; set; }
