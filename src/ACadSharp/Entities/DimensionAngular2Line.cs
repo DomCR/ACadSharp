@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -83,14 +84,16 @@ namespace ACadSharp.Entities
 			this.DimensionArc = transform.ApplyTransform(this.DimensionArc);
 		}
 
+		/// <inheritdoc/>
 		public override void UpdateBlock()
 		{
 			throw new System.NotImplementedException();
 		}
 
+		/// <inheritdoc/>
 		public override void CalculateReferencePoints()
 		{
-			throw new System.NotImplementedException();
+			//All the points are defined by the measurement, no need to recalculate
 		}
 	}
 }

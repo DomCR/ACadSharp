@@ -136,9 +136,7 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void UpdateBlock()
 		{
-			this.createBlock();
-
-			this.CalculateReferencePoints();
+			base.UpdateBlock();
 
 			XY ref1 = this.FirstPoint.Convert<XY>();
 			XY ref2 = this.SecondPoint.Convert<XY>();

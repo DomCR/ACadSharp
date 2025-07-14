@@ -92,9 +92,7 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void UpdateBlock()
 		{
-			this.createBlock();
-
-			this.CalculateReferencePoints();
+			base.UpdateBlock();
 
 			double offset = this.DefinitionPoint.DistanceFrom(this.TextMiddlePoint);
 			double radius = (double)this.Measurement * 0.5;

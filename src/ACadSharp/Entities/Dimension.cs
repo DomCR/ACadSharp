@@ -348,7 +348,12 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Updates the block that represents this dimension.
 		/// </summary>
-		public abstract void UpdateBlock();
+		public virtual void UpdateBlock()
+		{
+			this.createBlock();
+
+			this.CalculateReferencePoints();
+		}
 
 		internal override void AssignDocument(CadDocument doc)
 		{

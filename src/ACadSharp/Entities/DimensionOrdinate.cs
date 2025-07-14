@@ -101,9 +101,7 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void UpdateBlock()
 		{
-			this.createBlock();
-
-			this.CalculateReferencePoints();
+			base.UpdateBlock();
 
 			var dim = this;
 			DimensionStyle style = this.Style;
