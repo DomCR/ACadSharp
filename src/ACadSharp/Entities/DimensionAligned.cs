@@ -112,26 +112,23 @@ namespace ACadSharp.Entities
 		{
 			base.UpdateBlock();
 
-			XY ref1 = this.FirstPoint.Convert<XY>();
-			XY ref2 = this.SecondPoint.Convert<XY>();
-			XY vec = ((ref2 - ref1).Perpendicular().Normalize());
+			XYZ dir = (this.SecondPoint - this.FirstPoint).Normalize();
+			XYZ vec = XYZ.Cross(this.Normal, dir).Normalize();
 
-			XY dimRef1 = ref1 + this.Offset * vec;
-			XY dimRef2 = ref2 + this.Offset * vec;
-
-			double refAngle = (ref2 - ref1).GetAngle();
+			XYZ dimRef1 = this.FirstPoint + vec * this.Offset;
+			XYZ dimRef2 = this.DefinitionPoint;
 
 			// reference points
-			this._block.Entities.Add(new Point(ref1.Convert<XYZ>()) { Layer = Layer.Defpoints });
-			this._block.Entities.Add(new Point(ref2.Convert<XYZ>()) { Layer = Layer.Defpoints });
+			this._block.Entities.Add(new Point(FirstPoint) { Layer = Layer.Defpoints });
+			this._block.Entities.Add(new Point(SecondPoint) { Layer = Layer.Defpoints });
 			this._block.Entities.Add(new Point(dimRef1.Convert<XYZ>()) { Layer = Layer.Defpoints });
 			this._block.Entities.Add(new Point(dimRef2.Convert<XYZ>()) { Layer = Layer.Defpoints });
 
 			if (!this.Style.SuppressFirstDimensionLine && !this.Style.SuppressSecondDimensionLine)
 			{
-				this._block.Entities.Add(dimensionLine(dimRef1, dimRef2, refAngle, this.Style));
-				//Draw start arrow
-				//Draw end arrow
+				this._block.Entities.Add(dimensionLine(dimRef1, dimRef2, this.Style));
+				this._block.Entities.Add(dimensionArrow(dimRef1, -dir, this.Style, this.Style.DimArrow1));
+				this._block.Entities.Add(dimensionArrow(dimRef1, dir, this.Style, this.Style.DimArrow2));
 			}
 
 			// extension lines
@@ -139,18 +136,18 @@ namespace ACadSharp.Entities
 			double thisexe = Math.Sign(this.Offset) * this.Style.ExtensionLineExtension * this.Style.ScaleFactor;
 			if (!this.Style.SuppressFirstExtensionLine)
 			{
-				this._block.Entities.Add(extensionLine(ref1 + thisexo * vec, dimRef1 + thisexe * vec, this.Style, this.Style.LineTypeExt1));
+				this._block.Entities.Add(extensionLine(this.FirstPoint + thisexo * vec, dimRef1 + thisexe * vec, this.Style, this.Style.LineTypeExt1));
 			}
 
 			if (!this.Style.SuppressSecondExtensionLine)
 			{
-				this._block.Entities.Add(extensionLine(ref2 + thisexo * vec, dimRef2 + thisexe * vec, this.Style, this.Style.LineTypeExt2));
+				this._block.Entities.Add(extensionLine(this.SecondPoint + thisexo * vec, dimRef2 + thisexe * vec, this.Style, this.Style.LineTypeExt2));
 			}
 
 			// dimension text
-			XY textRef = dimRef1.Mid(dimRef2);
+			XYZ textRef = dimRef1.Mid(dimRef2);
 			double gap = this.Style.DimensionLineGap * this.Style.ScaleFactor;
-			double textRot = refAngle;
+			double textRot = (double)this.ExtLineRotation;
 			if (textRot > Math.PI / 2 && textRot <= (3 * Math.PI * 0.5))
 			{
 				gap = -gap;
@@ -160,7 +157,7 @@ namespace ACadSharp.Entities
 			string text = this.GetMeasurementText();
 			if (!this.IsTextUserDefinedLocation)
 			{
-				this.TextMiddlePoint = (textRef + gap * vec).Convert<XYZ>();
+				this.TextMiddlePoint = (textRef + gap * vec);
 			}
 
 			MText mText = this.createTextEntity(this.TextMiddlePoint, text);

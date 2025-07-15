@@ -378,15 +378,42 @@ namespace ACadSharp.Entities
 			this.Block = (BlockRecord)this.Block?.Clone();
 		}
 
-		protected static Line dimensionLine(XY start, XY end, double rotation, DimensionStyle style)
+		protected Entity dimensionArrow(XYZ insertPoint, XYZ dir, DimensionStyle style, BlockRecord record)
 		{
-			//TODO: apply this if the arrow is in place
-			//double ext1 = style.ArrowSize * style.ScaleFactor;
-			//double ext2 = -style.ArrowSize * style.ScaleFactor;
+			double scale = style.ArrowSize * style.ScaleFactor;
+			double rotation = Math.Atan2(dir.Y, dir.X);
 
-			//start = start.Polar(ext1, rotation);
-			//end = end.Polar(ext2, rotation);
+			if (record == null)
+			{
+				XYZ p = XYZ.Cross(this.Normal, dir).Normalize();
 
+				Solid arrow = new Solid();
+				arrow.FirstCorner = insertPoint;
+				arrow.SecondCorner = insertPoint - scale * dir - scale / 6 * p;
+				arrow.ThirdCorner = insertPoint - scale * dir + scale / 6 * p;
+				arrow.FourthCorner = arrow.ThirdCorner;
+
+				return arrow;
+			}
+			else
+			{
+				Insert arrow = new Insert(record)
+				{
+					InsertPoint = insertPoint,
+					Color = style.DimensionLineColor,
+					XScale = scale,
+					YScale = scale,
+					ZScale = scale,
+					Rotation = rotation,
+					LineWeight = style.DimensionLineWeight,
+					Normal = this.Normal,
+				};
+				return arrow;
+			}
+		}
+
+		protected static Entity dimensionLine(XYZ start, XYZ end, DimensionStyle style)
+		{
 			return new Line(start, end)
 			{
 				Color = style.DimensionLineColor,
@@ -395,12 +422,12 @@ namespace ACadSharp.Entities
 			};
 		}
 
-		protected static Line extensionLine(XY start, XY end, DimensionStyle style, LineType linetype)
+		protected static Line extensionLine(XYZ start, XYZ end, DimensionStyle style, LineType linetype)
 		{
 			return new Line(start, end)
 			{
 				Color = style.ExtensionLineColor,
-				LineType = style.LineType ?? LineType.ByLayer,
+				LineType = linetype ?? LineType.ByLayer,
 				LineWeight = style.ExtensionLineWeight
 			};
 		}

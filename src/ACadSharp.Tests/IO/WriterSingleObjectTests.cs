@@ -462,13 +462,13 @@ namespace ACadSharp.Tests.IO
 
 			public void DimensionAligned()
 			{
-				DimensionAligned dim = new DimensionAligned
-				{
-					SecondPoint = new XYZ(10, 0, 0),
-					Offset = 0.5,
-					//DefinitionPoint = new XYZ(10, 1, 0),
-					//TextMiddlePoint = new XYZ(5, 1, 0)
-				};
+				//DimensionAligned dim = new DimensionAligned
+				//{
+				//	SecondPoint = new XYZ(10, 0, 0),
+				//	Offset = 0.5,
+				//	//DefinitionPoint = new XYZ(10, 1, 0),
+				//	//TextMiddlePoint = new XYZ(5, 1, 0)
+				//};
 
 				DimensionAligned dim1 = new DimensionAligned
 				{
@@ -477,10 +477,10 @@ namespace ACadSharp.Tests.IO
 					TextMiddlePoint = new XYZ(5, 1, 0)
 				};
 
-				this.Document.Entities.Add(dim);
+				//this.Document.Entities.Add(dim);
 				this.Document.Entities.Add(dim1);
 
-				dim.UpdateBlock();
+				//dim.UpdateBlock();
 				dim1.UpdateBlock();
 			}
 

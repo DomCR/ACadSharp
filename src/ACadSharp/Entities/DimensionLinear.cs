@@ -71,18 +71,20 @@ namespace ACadSharp.Entities
 		{
 			base.UpdateBlock();
 
-			XY ref1 = this.FirstPoint.Convert<XY>();
-			XY ref2 = this.SecondPoint.Convert<XY>();
+			XYZ ref1 = this.FirstPoint;
+			XYZ ref2 = this.SecondPoint;
 
-			XY vec = XY.Rotate(XY.AxisY, (double)this.Rotation).Normalize();
-			double cross = XY.Cross(ref2 - ref1, vec);
-			if (cross < 0)
-			{
-				(ref1, ref2) = (ref2, ref1);
-			}
+			var transform = Transform.CreateRotation(this.Normal, this.Rotation);
+			XYZ vec = transform.ApplyTransform(XYZ.AxisY).Normalize();
 
-			XY dimRef1 = this.DefinitionPoint.Convert<XY>() + (double)this.Measurement * vec.Perpendicular();
-			XY dimRef2 = this.DefinitionPoint.Convert<XY>();
+			//double cross = XYZ.Cross(ref2 - ref1, vec);
+			//if (cross < 0)
+			//{
+			//	(ref1, ref2) = (ref2, ref1);
+			//}
+
+			var dimRef1 = this.DefinitionPoint + (double)this.Measurement * vec;
+			var dimRef2 = this.DefinitionPoint;
 
 			// reference points
 			this._block.Entities.Add(new Point(ref1.Convert<XYZ>()) { Layer = Layer.Defpoints });
@@ -93,14 +95,12 @@ namespace ACadSharp.Entities
 			if (!this.Style.SuppressFirstDimensionLine && !this.Style.SuppressSecondDimensionLine)
 			{
 				// dimension line
-				this._block.Entities.Add(dimensionLine(dimRef1, dimRef2, (double)this.Rotation, this.Style));
-				//Draw start arrow
-				//Draw end arrow
+				this._block.Entities.Add(dimensionLine(dimRef1, dimRef2, this.Style));
 			}
 
 			// extension lines
-			XY dirRef1 = (dimRef1 - ref1).Normalize();
-			XY dirRef2 = (dimRef2 - ref2).Normalize();
+			var dirRef1 = (dimRef1 - ref1).Normalize();
+			var dirRef2 = (dimRef2 - ref2).Normalize();
 			double dimexo = this.Style.ExtensionLineOffset * this.Style.ScaleFactor;
 			double dimexe = this.Style.ExtensionLineExtension * this.Style.ScaleFactor;
 			if (!this.Style.SuppressFirstExtensionLine)
@@ -114,7 +114,7 @@ namespace ACadSharp.Entities
 			}
 
 			// dimension text
-			XY textRef = dimRef1.Mid(dimRef2);
+			var textRef = dimRef1.Mid(dimRef2);
 			double gap = this.Style.DimensionLineGap * this.Style.ScaleFactor;
 			double textRot = (double)this.Rotation;
 			if (textRot > MathHelper.HalfPI && textRot <= MathHelper.ThreeHalfPI)

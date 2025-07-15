@@ -700,7 +700,7 @@ namespace ACadSharp.Tables
 		/// </remarks>
 		/// <value>
 		/// <para>
-		/// <b>0.0</b>
+		/// <b>1.0</b>
 		/// </para><para>
 		/// A reasonable default value is computed based on the scaling between the current
 		/// model space viewport and paper space. If you are in paper space or model space
