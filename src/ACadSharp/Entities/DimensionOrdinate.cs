@@ -177,14 +177,5 @@ namespace ACadSharp.Entities
 			mText.AttachmentPoint = attachmentPoint;
 			this._block.Entities.Add(mText);
 		}
-
-		/// <inheritdoc/>
-		public override void CalculateReferencePoints()
-		{
-			if (!this.IsTextUserDefinedLocation)
-			{
-				this.TextMiddlePoint = this.LeaderEndpoint;
-			}
-		}
 	}
 }

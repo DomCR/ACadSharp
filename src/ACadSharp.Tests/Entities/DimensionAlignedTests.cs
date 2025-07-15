@@ -9,13 +9,6 @@ namespace ACadSharp.Tests.Entities
 	{
 		public override DimensionType Type => DimensionType.Aligned;
 
-		protected override DimensionAligned createDim()
-		{
-			DimensionAligned dim = new DimensionAligned(XYZ.Zero, new XYZ(10, 0, 0));
-
-			return dim;
-		}
-
 		[Fact]
 		public void DefinitionPointRecalculation()
 		{
@@ -29,6 +22,13 @@ namespace ACadSharp.Tests.Entities
 
 			Assert.True((aligned.DefinitionPoint - aligned.SecondPoint).IsPerpendicular(aligned.SecondPoint));
 			AssertUtils.AreEqual(new XYZ(5, 5, 0), aligned.DefinitionPoint);
+		}
+
+		protected override DimensionAligned createDim()
+		{
+			DimensionAligned dim = new DimensionAligned(XYZ.Zero, new XYZ(10, 0, 0));
+
+			return dim;
 		}
 	}
 }

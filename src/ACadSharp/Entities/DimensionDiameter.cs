@@ -23,9 +23,9 @@ namespace ACadSharp.Entities
 		public XYZ AngleVertex { get; set; }
 
 		/// <summary>
-		/// Center of the circle where this dimension is allocated.
+		/// Gets the center point of the measured arc.
 		/// </summary>
-		public XYZ Center { get { return this.DefinitionPoint.Mid(this.AngleVertex); } }
+		public XYZ Center { get { return this.AngleVertex.Mid(this.DefinitionPoint); } }
 
 		/// <summary>
 		/// Leader length for radius and diameter dimensions.
@@ -62,25 +62,6 @@ namespace ACadSharp.Entities
 			base.ApplyTransform(transform);
 			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
 			//LeaderLength should be scaled based on axis??
-		}
-
-		/// <inheritdoc/>
-		public override void CalculateReferencePoints()
-		{
-			if (XY.Equals(this.Center, this.AngleVertex))
-			{
-				throw new ArgumentException("The center and the reference point cannot be the same");
-			}
-
-			if (!this.IsTextUserDefinedLocation)
-			{
-				double textGap = this.Style.DimensionLineGap;
-				double scale = this.Style.ScaleFactor;
-				double arrowSize = this.Style.ArrowSize;
-				XYZ vec = (this.AngleVertex - this.DefinitionPoint).Normalize();
-				double minOffset = (2 * arrowSize + textGap) * scale;
-				this.TextMiddlePoint = this.AngleVertex + minOffset * vec;
-			}
 		}
 
 		/// <inheritdoc/>

@@ -33,6 +33,22 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.DIMENSION_LINEAR;
 
+		/// <inheritdoc/>
+		public override double Offset
+		{
+			get
+			{
+				return base.Offset;
+			}
+			set
+			{
+				var transform = Transform.CreateRotation(this.Normal, this.Rotation);
+				XYZ axisY = transform.ApplyTransform(XYZ.AxisY).Normalize();
+
+				this.DefinitionPoint = this.SecondPoint + axisY * value;
+			}
+		}
+
 		/// <summary>
 		/// Angle of rotated, horizontal, or vertical dimensions.
 		/// </summary>
@@ -45,40 +61,9 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.LinearDimension;
 
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		public DimensionLinear() : base(DimensionType.Linear) { }
-
 		/// <inheritdoc/>
-		public override void CalculateReferencePoints()
+		public DimensionLinear() : base(DimensionType.Linear)
 		{
-			double measure = this.Measurement;
-			XY midRef = this.FirstPoint.Mid(this.SecondPoint).Convert<XY>();
-			double dimRotation = this.Rotation;
-
-			XY vec = XY.Rotate(XY.AxisY, dimRotation).Normalize();
-			XY midDimLine = midRef + this.Offset * vec;
-			double cross = XY.Cross(this.SecondPoint.Convert<XY>() - this.FirstPoint.Convert<XY>(), vec);
-			if (cross < 0)
-			{
-				this.Offset *= -1;
-			}
-			this.DefinitionPoint = (midDimLine - measure * 0.5 * vec.Perpendicular()).Convert<XYZ>();
-
-			if (!this.IsTextUserDefinedLocation)
-			{
-				double textGap = this.Style.DimensionLineGap;
-				double scale = this.Style.ScaleFactor;
-
-				double gap = textGap * scale;
-				if (dimRotation > MathHelper.HalfPI && dimRotation <= MathHelper.ThreeHalfPI)
-				{
-					gap = -gap;
-				}
-
-				this.TextMiddlePoint = (midDimLine + gap * vec).Convert<XYZ>();
-			}
 		}
 
 		/// <inheritdoc/>

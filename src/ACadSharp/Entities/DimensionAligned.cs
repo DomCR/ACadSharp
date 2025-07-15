@@ -25,7 +25,7 @@ namespace ACadSharp.Entities
 		public double ExtLineRotation { get; set; }
 
 		/// <summary>
-		/// Insertion point for clones of a dimension—Baseline and Continue (in OCS)
+		/// Insertion point for clones of a dimension—Baseline and Continue (in OCS).
 		/// </summary>
 		[DxfCodeValue(13, 23, 33)]
 		public XYZ FirstPoint { get; set; }
@@ -48,20 +48,20 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Definition point offset relative to the <see cref="SecondPoint"/>.
 		/// </summary>
-		public double Offset
+		public virtual double Offset
 		{
 			get { return this.SecondPoint.DistanceFrom(this.DefinitionPoint); }
 			set
 			{
-				XY p = (this.SecondPoint - this.FirstPoint)
-					.Convert<XY>().Perpendicular().Normalize();
+				XYZ dir = this.SecondPoint - this.FirstPoint;
+				XYZ v = XYZ.Cross(this.Normal, dir).Normalize(); //Perpendicular to SecondPoint
 
-				this.DefinitionPoint = this.SecondPoint + p.Convert<XYZ>() * value;
+				this.DefinitionPoint = this.SecondPoint + v * value;
 			}
 		}
 
 		/// <summary>
-		/// Definition point for linear and angular dimensions(in WCS)
+		/// Definition point for linear and angular dimensions(in WCS).
 		/// </summary>
 		[DxfCodeValue(14, 24, 34)]
 		public XYZ SecondPoint { get; set; }
@@ -99,32 +99,6 @@ namespace ACadSharp.Entities
 
 			this.FirstPoint = this.applyWorldMatrix(this.FirstPoint, transform, transOW, transWO);
 			this.SecondPoint = this.applyWorldMatrix(this.SecondPoint, transform, transOW, transWO);
-		}
-
-		/// <inheritdoc/>
-		public override void CalculateReferencePoints()
-		{
-			XY ref1 = this.FirstPoint.Convert<XY>();
-			XY ref2 = this.SecondPoint.Convert<XY>();
-			XY dirRef = ref2 - ref1;
-
-			XY dirDesp = dirRef.Perpendicular().Normalize();
-			dirDesp = dirDesp.IsNaN() || dirDesp.IsZero() ? XY.AxisY : dirDesp;
-
-			XY vec = this.Offset * dirDesp;
-			XY dimRef1 = ref1 + vec;
-			XY dimRef2 = ref2 + vec;
-
-			this.DefinitionPoint = dimRef2.Convert<XYZ>();
-
-			if (!this.IsTextUserDefinedLocation)
-			{
-				double textGap = this.Style.DimensionLineGap;
-				double scale = this.Style.ScaleFactor;
-
-				double gap = textGap * scale;
-				this.TextMiddlePoint = (dimRef1.Mid(dimRef2) + gap * dirDesp).Convert<XYZ>();
-			}
 		}
 
 		/// <inheritdoc/>
