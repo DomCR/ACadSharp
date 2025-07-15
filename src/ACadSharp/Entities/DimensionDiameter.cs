@@ -21,6 +21,11 @@ namespace ACadSharp.Entities
 		public XYZ AngleVertex { get; set; }
 
 		/// <summary>
+		/// Gets the center point of the measured arc.
+		/// </summary>
+		public XYZ Center { get { return this.AngleVertex.Mid(this.DefinitionPoint); } }
+
+		/// <summary>
 		/// Leader length for radius and diameter dimensions.
 		/// </summary>
 		[DxfCodeValue(40)]
