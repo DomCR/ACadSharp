@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using ACadSharp.Tables;
 using ACadSharp.Types.Units;
 using CSMath;
@@ -19,7 +20,7 @@ namespace ACadSharp.Entities
 	public abstract class Dimension : Entity
 	{
 		/// <summary>
-		/// Attachment point
+		/// Attachment point.
 		/// </summary>
 		[DxfCodeValue(71)]
 		public AttachmentPointType AttachmentPoint { get; set; }
@@ -95,7 +96,7 @@ namespace ACadSharp.Entities
 		public double HorizontalDirection { get; set; }
 
 		/// <summary>
-		/// Insertion point for clones of a dimension-Baseline and Continue(in OCS)
+		/// Insertion point for clones of a dimension-Baseline and Continue(in OCS).
 		/// </summary>
 		[DxfCodeValue(12, 22, 32)]
 		public XYZ InsertionPoint { get; set; }
@@ -106,7 +107,7 @@ namespace ACadSharp.Entities
 		public bool IsAngular { get { return this.Flags.HasFlag(DimensionType.Angular3Point) || this.Flags.HasFlag(DimensionType.Angular); } }
 
 		/// <summary>
-		/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location
+		/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location.
 		/// </summary>
 		public bool IsTextUserDefinedLocation
 		{
@@ -128,7 +129,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Dimension text-line spacing factor
+		/// Dimension text-line spacing factor.
 		/// </summary>
 		/// <remarks>
 		/// Percentage of default (3-on-5) line spacing to be applied.
@@ -140,13 +141,13 @@ namespace ACadSharp.Entities
 		public double LineSpacingFactor { get; set; }
 
 		/// <summary>
-		/// Dimension text line-spacing style
+		/// Dimension text line-spacing style.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional, 72)]
 		public LineSpacingStyleType LineSpacingStyle { get; set; }
 
 		/// <summary>
-		/// Actual measurement
+		/// Actual measurement.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional, 42)]
 		public abstract double Measurement { get; }
@@ -158,7 +159,7 @@ namespace ACadSharp.Entities
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 		/// <summary>
-		/// Dimension style
+		/// Dimension style.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 3)]
 		public DimensionStyle Style
@@ -191,13 +192,13 @@ namespace ACadSharp.Entities
 		public string Text { get; set; }
 
 		/// <summary>
-		/// Middle point of dimension text(in OCS)
+		/// Middle point of dimension text(in OCS).
 		/// </summary>
 		[DxfCodeValue(11, 21, 31)]
 		public XYZ TextMiddlePoint { get; set; }
 
 		/// <summary>
-		/// rotation angle of the dimension text away from its default orientation (the direction of the dimension line)
+		/// Rotation angle of the dimension text away from its default orientation (the direction of the dimension line).
 		/// </summary>
 		/// <remarks>
 		/// Optional
@@ -206,7 +207,7 @@ namespace ACadSharp.Entities
 		public double TextRotation { get; set; }
 
 		/// <summary>
-		/// Version number
+		/// Version number.
 		/// </summary>
 		[DxfCodeValue(280)]
 		public byte Version { get; set; }
@@ -245,7 +246,8 @@ namespace ACadSharp.Entities
 		{
 			Dimension clone = (Dimension)base.Clone();
 
-			clone.Style = (DimensionStyle)(this.Style.Clone());
+			clone.Style = this.Style.CloneTyped();
+			clone.Block = this.Block?.CloneTyped();
 
 			return clone;
 		}

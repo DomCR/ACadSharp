@@ -14,20 +14,16 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.DiametricDimension)]
 	public class DimensionDiameter : Dimension
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.DIMENSION_DIAMETER;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityDimension;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.DiametricDimension;
-
 		/// <summary>
 		/// Definition point for diameter, radius, and angular dimensions(in WCS).
 		/// </summary>
 		[DxfCodeValue(15, 25, 35)]
 		public XYZ AngleVertex { get; set; }
+
+		/// <summary>
+		/// Gets the center point of the measured arc.
+		/// </summary>
+		public XYZ Center { get { return this.AngleVertex.Mid(this.DefinitionPoint); } }
 
 		/// <summary>
 		/// Leader length for radius and diameter dimensions.
@@ -44,16 +40,19 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityDimension;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.DIMENSION_DIAMETER;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.DiametricDimension;
+
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
 		public DimensionDiameter() : base(DimensionType.Diameter) { }
-
-		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			return new BoundingBox(this.InsertionPoint - this.AngleVertex, this.InsertionPoint + this.AngleVertex);
-		}
 
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
@@ -61,6 +60,12 @@ namespace ACadSharp.Entities
 			base.ApplyTransform(transform);
 			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
 			//LeaderLength should be scaled based on axis??
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox(this.InsertionPoint - this.AngleVertex, this.InsertionPoint + this.AngleVertex);
 		}
 	}
 }
