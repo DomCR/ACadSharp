@@ -365,9 +365,10 @@ namespace ACadSharp.Classes
 			//AcDbRasterImage
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
+				ApplicationName = "ISM",
 				CppClassName = DxfSubclassMarker.RasterImage,
 				ClassNumber = (short)(500 + doc.Classes.Count),
-				DwgVersion = ACadVersion.AC1014,
+				DwgVersion = (ACadVersion)20,
 				DxfName = DxfFileToken.EntityImage,
 				ItemClassId = 498,
 				MaintenanceVersion = 0,
@@ -378,13 +379,14 @@ namespace ACadSharp.Classes
 			//AcDbRasterImageDef
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
+				ApplicationName = "ISM",
 				CppClassName = DxfSubclassMarker.RasterImageDef,
 				ClassNumber = (short)(500 + doc.Classes.Count),
-				DwgVersion = ACadVersion.AC1014,
+				DwgVersion = (ACadVersion)20,
 				DxfName = DxfFileToken.ObjectImageDefinition,
 				ItemClassId = 499,
 				MaintenanceVersion = 0,
-				ProxyFlags = ProxyFlags.R13FormatProxy,
+				ProxyFlags = ProxyFlags.None,
 				WasZombie = false,
 			});
 
