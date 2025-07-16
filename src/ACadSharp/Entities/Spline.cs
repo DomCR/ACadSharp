@@ -155,7 +155,7 @@ namespace ACadSharp.Entities
 				this.ControlPoints[i] = transform.ApplyTransform(this.ControlPoints[i]);
 			}
 
-			for (int i = 0; i < this.FitPoints.Capacity; i++)
+			for (int i = 0; i < this.FitPoints.Count; i++)
 			{
 				this.FitPoints[i] = transform.ApplyTransform(this.FitPoints[i]);
 			}

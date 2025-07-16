@@ -16,13 +16,37 @@ namespace ACadSharp.Entities
 	public class DimensionLinear : DimensionAligned
 	{
 		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.DIMENSION_LINEAR;
+		public override double Measurement
+		{
+			get
+			{
+				var angle = new XYZ(System.Math.Cos(this.Rotation), System.Math.Sin(this.Rotation), 0.0);
+				double dot = Math.Abs(angle.Dot((this.SecondPoint - this.FirstPoint).Normalize()));
+				return base.Measurement * dot;
+			}
+		}
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityDimension;
 
 		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.LinearDimension;
+		public override ObjectType ObjectType => ObjectType.DIMENSION_LINEAR;
+
+		/// <inheritdoc/>
+		public override double Offset
+		{
+			get
+			{
+				return base.Offset;
+			}
+			set
+			{
+				var transform = Transform.CreateRotation(this.Normal, this.Rotation);
+				XYZ axisY = transform.ApplyTransform(XYZ.AxisY).Normalize();
+
+				this.DefinitionPoint = this.SecondPoint + axisY * value;
+			}
+		}
 
 		/// <summary>
 		/// Angle of rotated, horizontal, or vertical dimensions.
@@ -34,16 +58,11 @@ namespace ACadSharp.Entities
 		public double Rotation { get; set; }
 
 		/// <inheritdoc/>
-		public override double Measurement
-		{
-			get
-			{
-				var angle = new XYZ(System.Math.Cos(this.Rotation), System.Math.Sin(this.Rotation), 0.0);
-				double dot = Math.Abs(angle.Dot((this.SecondPoint - this.FirstPoint).Normalize()));
-				return base.Measurement * dot;
-			}
-		}
+		public override string SubclassMarker => DxfSubclassMarker.LinearDimension;
 
-		public DimensionLinear() : base(DimensionType.Linear) { }
+		/// <inheritdoc/>
+		public DimensionLinear() : base(DimensionType.Linear)
+		{
+		}
 	}
 }
