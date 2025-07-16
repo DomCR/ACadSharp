@@ -637,7 +637,7 @@ namespace ACadSharp.Header
 		/// System variable DIMASSOC
 		/// </remarks>
 		[CadSystemVariable("$DIMASSOC", 280)]
-		public DimensionAssociation DimensionAssociativity { get; set; } = DimensionAssociation.CreateExplodedDimensions;
+		public DimensionAssociation DimensionAssociativity { get; set; } = DimensionAssociation.CreateAssociativeDimensions;
 
 		/// <summary>
 		/// Arrow block name

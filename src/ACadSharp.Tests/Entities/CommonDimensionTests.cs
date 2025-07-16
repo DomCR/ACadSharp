@@ -1,8 +1,5 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.Tables;
-using ACadSharp.Tests.Common;
 using System;
-using System.Globalization;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities
@@ -48,6 +45,19 @@ namespace ACadSharp.Tests.Entities
 			dim.IsTextUserDefinedLocation = true;
 
 			Assert.True(dim.Flags.HasFlag(DimensionType.TextUserDefinedLocation));
+		}
+
+		[Fact]
+		public virtual void UpdateBlockTests()
+		{
+			T dim = this.createDim();
+
+			Assert.Null(dim.Block);
+
+			dim.UpdateBlock();
+
+			Assert.NotNull(dim.Block);
+			Assert.True(dim.Block.IsAnonymous);
 		}
 
 		protected virtual T createDim()

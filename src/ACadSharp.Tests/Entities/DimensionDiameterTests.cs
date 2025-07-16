@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using CSMath;
+using Xunit;
 
 namespace ACadSharp.Tests.Entities
 {

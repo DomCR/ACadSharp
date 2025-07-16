@@ -1,7 +1,9 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Tables;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -94,6 +96,86 @@ namespace ACadSharp.Entities
 		public override BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.FeatureLocation, this.LeaderEndpoint);
+		}
+
+		/// <inheritdoc/>
+		public override void UpdateBlock()
+		{
+			base.UpdateBlock();
+
+			var dim = this;
+			DimensionStyle style = this.Style;
+
+			double measure = dim.Measurement;
+			double minOffset = 2 * dim.Style.ArrowSize;
+			XY ref1 = dim.FeatureLocation.Convert<XY>();
+			XY ref2 = dim.LeaderEndpoint.Convert<XY>();
+			XY refDim = ref2 - ref1;
+			XY pto1;
+			XY pto2;
+			double rotation = dim.HorizontalDirection;
+			int side = 1;
+
+			if (this.IsOrdinateTypeX)
+			{
+				rotation += MathHelper.HalfPI;
+			}
+
+			XY ocsDimRef = XY.Rotate(refDim, -rotation);
+
+			if (ocsDimRef.X >= 0)
+			{
+				if (ocsDimRef.X >= 2 * minOffset)
+				{
+					pto1 = new XY(ocsDimRef.X - minOffset, 0);
+					pto2 = new XY(ocsDimRef.X - minOffset, ocsDimRef.Y);
+				}
+				else
+				{
+					pto1 = new XY(minOffset, 0);
+					pto2 = new XY(ocsDimRef.X - minOffset, ocsDimRef.Y);
+				}
+			}
+			else
+			{
+				if (ocsDimRef.X <= -2 * minOffset)
+				{
+					pto1 = new XY(ocsDimRef.X + minOffset, 0);
+					pto2 = new XY(ocsDimRef.X + minOffset, ocsDimRef.Y);
+				}
+				else
+				{
+					pto1 = new XY(-minOffset, 0);
+					pto2 = new XY(ocsDimRef.X + minOffset, ocsDimRef.Y);
+				}
+				side = -1;
+			}
+			pto1 = ref1 + XY.Rotate(pto1, rotation);
+			pto2 = ref1 + XY.Rotate(pto2, rotation);
+
+
+			// reference points
+			this._block.Entities.Add(new Point(dim.DefinitionPoint) { Layer = Layer.Defpoints });
+			this._block.Entities.Add(new Point(dim.FeatureLocation) { Layer = Layer.Defpoints });
+
+			// dimension lines
+			this._block.Entities.Add(new Line(XY.Polar(ref1, style.ExtensionLineOffset * style.ScaleFactor, rotation), pto1));
+			this._block.Entities.Add(new Line(pto1, pto2));
+			this._block.Entities.Add(new Line(pto2, ref2));
+
+			// dimension text
+			XY midText = XY.Polar(ref2, side * style.DimensionLineGap * style.ScaleFactor, rotation);
+
+			string text = this.GetMeasurementText();
+			if (!this.IsTextUserDefinedLocation)
+			{
+				dim.TextMiddlePoint = midText.Convert<XYZ>();
+			}
+
+			AttachmentPointType attachmentPoint = side < 0 ? AttachmentPointType.MiddleRight : AttachmentPointType.MiddleLeft;
+			MText mText = this.createTextEntity(this.TextMiddlePoint, text);
+			mText.AttachmentPoint = attachmentPoint;
+			this._block.Entities.Add(mText);
 		}
 	}
 }
