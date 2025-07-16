@@ -10,6 +10,14 @@ namespace ACadSharp.Tests.Entities
 		public override DimensionType Type => DimensionType.Angular;
 
 		[Fact]
+		public void CenterTest()
+		{
+			var dim = this.createDim();
+
+			AssertUtils.AreEqual(XYZ.Zero, dim.Center);
+		}
+
+		[Fact]
 		public void MeasurementTest()
 		{
 			var dim = this.createDim();
@@ -17,12 +25,8 @@ namespace ACadSharp.Tests.Entities
 			Assert.Equal(MathHelper.HalfPI, dim.Measurement);
 		}
 
-		[Fact]
-		public void CenterTest()
+		public override void UpdateBlockTests()
 		{
-			var dim = this.createDim();
-
-			AssertUtils.AreEqual(XYZ.Zero, dim.Center);
 		}
 
 		protected override DimensionAngular2Line createDim()
