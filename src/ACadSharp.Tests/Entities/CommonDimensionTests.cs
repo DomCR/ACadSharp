@@ -1,8 +1,5 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.Tables;
-using ACadSharp.Tests.Common;
 using System;
-using System.Globalization;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities

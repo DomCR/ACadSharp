@@ -10,6 +10,14 @@ namespace ACadSharp.Tests.Entities
 		public override DimensionType Type => DimensionType.Angular;
 
 		[Fact]
+		public void MeasurementTest()
+		{
+			var dim = this.createDim();
+
+			Assert.Equal(MathHelper.HalfPI, dim.Measurement);
+		}
+
+		[Fact]
 		public void CenterTest()
 		{
 			var dim = this.createDim();

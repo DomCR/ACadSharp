@@ -52,8 +52,8 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				XY v1 = (XY)(this.SecondPoint - this.FirstPoint);
-				XY v2 = (XY)(this.DefinitionPoint - this.AngleVertex);
+				var v1 = this.SecondPoint - this.FirstPoint;
+				var v2 = this.DefinitionPoint - this.AngleVertex;
 
 				return v1.AngleBetweenVectors(v2);
 			}
@@ -114,11 +114,34 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
+		/// <remarks>
+		/// For <see cref="DimensionAngular2Line"/> the generation of the block is not yet implemented
+		/// due its complexity.
+		/// </remarks>
 		public override void UpdateBlock()
 		{
+			//Needs a lot more investigation
+			return;
+
 			base.UpdateBlock();
 
+			var v1 = this.SecondPoint - this.FirstPoint;
+			var v2 = this.DefinitionPoint - this.AngleVertex;
 
+			this._block.Entities.Add(createDefinitionPoint(FirstPoint));
+			this._block.Entities.Add(createDefinitionPoint(SecondPoint));
+			this._block.Entities.Add(createDefinitionPoint(AngleVertex));
+			this._block.Entities.Add(createDefinitionPoint(DefinitionPoint));
+
+			if (this.Center.IsNaN())
+			{
+				return;
+			}
+
+			var startAngle = XYZ.AxisX.AngleBetweenVectors(this.AngleVertex);
+			var endAngle = XYZ.AxisX.AngleBetweenVectors(this.FirstPoint);
+
+			this._block.Entities.Add(new Arc(this.Center, this.Offset, startAngle, endAngle));
 		}
 	}
 }

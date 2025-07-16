@@ -68,6 +68,8 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionAligned)));
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionLinear)));
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionOrdinate)));
+			Data.Add(new(nameof(SingleCaseGenerator.DimensionAngular2Line)));
+			Data.Add(new(nameof(SingleCaseGenerator.DimensionAngular3Pt)));
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionDiameter)));
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionRadius)));
 			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
@@ -482,6 +484,34 @@ namespace ACadSharp.Tests.IO
 
 				//dim.UpdateBlock();
 				dim1.UpdateBlock();
+			}
+
+			public void DimensionAngular2Line()
+			{
+				DimensionAngular2Line dim = new DimensionAngular2Line();
+				dim.FirstPoint = XYZ.AxisY;
+				dim.SecondPoint = -XYZ.AxisY;
+
+				dim.DefinitionPoint = -XYZ.AxisX;
+				dim.AngleVertex = XYZ.AxisX;
+
+				this.Document.Entities.Add(dim);
+
+				dim.UpdateBlock();
+			}
+
+			public void DimensionAngular3Pt()
+			{
+				DimensionAngular3Pt dim = new DimensionAngular3Pt();
+				dim.FirstPoint = XYZ.AxisY;
+				dim.SecondPoint = XYZ.AxisX;
+
+				dim.DefinitionPoint = XYZ.Zero;
+				dim.AngleVertex = XYZ.AxisY;
+
+				this.Document.Entities.Add(dim);
+
+				dim.UpdateBlock();
 			}
 
 			public void DimensionDiameter()

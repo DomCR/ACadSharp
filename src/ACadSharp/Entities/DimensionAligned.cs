@@ -120,10 +120,10 @@ namespace ACadSharp.Entities
 			XYZ dimRef2 = this.DefinitionPoint;
 
 			// reference points
-			this._block.Entities.Add(new Point(FirstPoint) { Layer = Layer.Defpoints });
-			this._block.Entities.Add(new Point(SecondPoint) { Layer = Layer.Defpoints });
-			this._block.Entities.Add(new Point(dimRef1.Convert<XYZ>()) { Layer = Layer.Defpoints });
-			this._block.Entities.Add(new Point(dimRef2.Convert<XYZ>()) { Layer = Layer.Defpoints });
+			this._block.Entities.Add(createDefinitionPoint(FirstPoint));
+			this._block.Entities.Add(createDefinitionPoint(SecondPoint));
+			this._block.Entities.Add(createDefinitionPoint(dimRef1));
+			this._block.Entities.Add(createDefinitionPoint(dimRef2));
 
 			if (!this.Style.SuppressFirstDimensionLine && !this.Style.SuppressSecondDimensionLine)
 			{

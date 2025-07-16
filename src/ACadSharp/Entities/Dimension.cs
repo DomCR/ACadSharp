@@ -378,40 +378,6 @@ namespace ACadSharp.Entities
 			this.Block = (BlockRecord)this.Block?.Clone();
 		}
 
-		protected Entity dimensionArrow(XYZ insertPoint, XYZ dir, DimensionStyle style, BlockRecord record)
-		{
-			double scale = style.ArrowSize * style.ScaleFactor;
-			double rotation = Math.Atan2(dir.Y, dir.X);
-
-			if (record == null)
-			{
-				XYZ p = XYZ.Cross(this.Normal, dir).Normalize();
-
-				Solid arrow = new Solid();
-				arrow.FirstCorner = insertPoint;
-				arrow.SecondCorner = insertPoint - scale * dir - scale / 6 * p;
-				arrow.ThirdCorner = insertPoint - scale * dir + scale / 6 * p;
-				arrow.FourthCorner = arrow.ThirdCorner;
-
-				return arrow;
-			}
-			else
-			{
-				Insert arrow = new Insert(record)
-				{
-					InsertPoint = insertPoint,
-					Color = style.DimensionLineColor,
-					XScale = scale,
-					YScale = scale,
-					ZScale = scale,
-					Rotation = rotation,
-					LineWeight = style.DimensionLineWeight,
-					Normal = this.Normal,
-				};
-				return arrow;
-			}
-		}
-
 		protected static Entity dimensionLine(XYZ start, XYZ end, DimensionStyle style)
 		{
 			return new Line(start, end)
@@ -581,6 +547,11 @@ namespace ACadSharp.Entities
 			this._block.Entities.Clear();
 		}
 
+		protected Point createDefinitionPoint(XYZ location)
+		{
+			return new Point(location) { Layer = Layer.Defpoints };
+		}
+
 		protected MText createTextEntity(XYZ insertPoint, string text)
 		{
 			MText mText = new MText()
@@ -592,6 +563,40 @@ namespace ACadSharp.Entities
 			};
 
 			return mText;
+		}
+
+		protected Entity dimensionArrow(XYZ insertPoint, XYZ dir, DimensionStyle style, BlockRecord record)
+		{
+			double scale = style.ArrowSize * style.ScaleFactor;
+			double rotation = Math.Atan2(dir.Y, dir.X);
+
+			if (record == null)
+			{
+				XYZ p = XYZ.Cross(this.Normal, dir).Normalize();
+
+				Solid arrow = new Solid();
+				arrow.FirstCorner = insertPoint;
+				arrow.SecondCorner = insertPoint - scale * dir - scale / 6 * p;
+				arrow.ThirdCorner = insertPoint - scale * dir + scale / 6 * p;
+				arrow.FourthCorner = arrow.ThirdCorner;
+
+				return arrow;
+			}
+			else
+			{
+				Insert arrow = new Insert(record)
+				{
+					InsertPoint = insertPoint,
+					Color = style.DimensionLineColor,
+					XScale = scale,
+					YScale = scale,
+					ZScale = scale,
+					Rotation = rotation,
+					LineWeight = style.DimensionLineWeight,
+					Normal = this.Normal,
+				};
+				return arrow;
+			}
 		}
 
 		protected Line dimensionRadialLine(XY start, XY end, double rotation, short reversed)
