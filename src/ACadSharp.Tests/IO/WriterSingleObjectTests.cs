@@ -511,7 +511,7 @@ namespace ACadSharp.Tests.IO
 				DimensionLinear dim = new DimensionLinear
 				{
 					SecondPoint = new XYZ(10, 10, 0),
-					//Offset = 0.5,
+					Offset = 0.5,
 					//DefinitionPoint = new XYZ(10, 1, 0),
 					//TextMiddlePoint = new XYZ(5, 1, 0)
 				};

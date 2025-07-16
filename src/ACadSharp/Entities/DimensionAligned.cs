@@ -87,6 +87,7 @@ namespace ACadSharp.Entities
 
 		protected DimensionAligned(DimensionType type) : base(type)
 		{
+			this.DefinitionPoint = this.SecondPoint;
 		}
 
 		/// <inheritdoc/>

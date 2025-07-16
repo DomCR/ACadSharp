@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
+using CSMath.Geometry;
 using System;
 
 namespace ACadSharp.Entities
@@ -69,48 +70,46 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void UpdateBlock()
 		{
-			base.UpdateBlock();
-
-			XYZ ref1 = this.FirstPoint;
-			XYZ ref2 = this.SecondPoint;
+			this.createBlock();	//Should use base, needs to be optimized
 
 			var transform = Transform.CreateRotation(this.Normal, this.Rotation);
-			XYZ vec = transform.ApplyTransform(XYZ.AxisY).Normalize();
+			XYZ yVec = transform.ApplyTransform(XYZ.AxisY).Normalize();
+			XYZ xVec = transform.ApplyTransform(XYZ.AxisX).Normalize();
 
-			//double cross = XYZ.Cross(ref2 - ref1, vec);
-			//if (cross < 0)
-			//{
-			//	(ref1, ref2) = (ref2, ref1);
-			//}
+			Line3D line1 = new Line3D(this.FirstPoint, yVec);
+			Line3D line2 = new Line3D(this.DefinitionPoint, xVec);
 
-			var dimRef1 = this.DefinitionPoint + (double)this.Measurement * vec;
+			var dimRef1 = line1.FindIntersection(line2);
 			var dimRef2 = this.DefinitionPoint;
+			XYZ dir = (dimRef2 - dimRef1).Normalize();
 
 			// reference points
-			this._block.Entities.Add(new Point(ref1.Convert<XYZ>()) { Layer = Layer.Defpoints });
-			this._block.Entities.Add(new Point(ref2.Convert<XYZ>()) { Layer = Layer.Defpoints });
-			this._block.Entities.Add(new Point(dimRef1.Convert<XYZ>()) { Layer = Layer.Defpoints });
-			this._block.Entities.Add(new Point(dimRef2.Convert<XYZ>()) { Layer = Layer.Defpoints });
+			this._block.Entities.Add(new Point(this.FirstPoint) { Layer = Layer.Defpoints });
+			this._block.Entities.Add(new Point(this.SecondPoint) { Layer = Layer.Defpoints });
+			this._block.Entities.Add(new Point(dimRef1) { Layer = Layer.Defpoints });
+			this._block.Entities.Add(new Point(dimRef2) { Layer = Layer.Defpoints });
 
 			if (!this.Style.SuppressFirstDimensionLine && !this.Style.SuppressSecondDimensionLine)
 			{
 				// dimension line
 				this._block.Entities.Add(dimensionLine(dimRef1, dimRef2, this.Style));
+				this._block.Entities.Add(dimensionArrow(dimRef1, -dir, this.Style, this.Style.DimArrow1));
+				this._block.Entities.Add(dimensionArrow(dimRef2, dir, this.Style, this.Style.DimArrow2));
 			}
 
 			// extension lines
-			var dirRef1 = (dimRef1 - ref1).Normalize();
-			var dirRef2 = (dimRef2 - ref2).Normalize();
+			var dirRef1 = (dimRef1 - this.FirstPoint).Normalize();
+			var dirRef2 = (dimRef2 - this.SecondPoint).Normalize();
 			double dimexo = this.Style.ExtensionLineOffset * this.Style.ScaleFactor;
 			double dimexe = this.Style.ExtensionLineExtension * this.Style.ScaleFactor;
 			if (!this.Style.SuppressFirstExtensionLine)
 			{
-				this._block.Entities.Add(extensionLine(ref1 + dimexo * dirRef1, dimRef1 + dimexe * dirRef1, this.Style, this.Style.LineTypeExt1));
+				this._block.Entities.Add(extensionLine(this.FirstPoint + dimexo * dirRef1, dimRef1 + dimexe * dirRef1, this.Style, this.Style.LineTypeExt1));
 			}
 
 			if (!this.Style.SuppressSecondExtensionLine)
 			{
-				this._block.Entities.Add(extensionLine(ref2 + dimexo * dirRef2, dimRef2 + dimexe * dirRef2, this.Style, this.Style.LineTypeExt2));
+				this._block.Entities.Add(extensionLine(this.SecondPoint + dimexo * dirRef2, dimRef2 + dimexe * dirRef2, this.Style, this.Style.LineTypeExt2));
 			}
 
 			// dimension text
@@ -123,10 +122,10 @@ namespace ACadSharp.Entities
 				textRot += Math.PI;
 			}
 
-			string text = this.Measurement.ToString("#.##");//Provisional
+			string text = this.GetMeasurementText();
 			if (!this.IsTextUserDefinedLocation)
 			{
-				this.TextMiddlePoint = (textRef + gap * vec).Convert<XYZ>();
+				this.TextMiddlePoint = (textRef + gap * yVec).Convert<XYZ>();
 			}
 
 			MText mText = this.createTextEntity(this.TextMiddlePoint, text);
