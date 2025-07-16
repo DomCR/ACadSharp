@@ -22,6 +22,20 @@ namespace ACadSharp.Entities
 		public XYZ AngleVertex { get; set; }
 
 		/// <summary>
+		/// Gets the center point of the measured arc.
+		/// </summary>
+		public XYZ Center
+		{
+			get
+			{
+				Line3D l1 = LineExtensions.CreateFromPoints<Line3D, XYZ>(this.DefinitionPoint, this.AngleVertex);
+				Line3D l2 = LineExtensions.CreateFromPoints<Line3D, XYZ>(this.FirstPoint, this.SecondPoint);
+
+				return l1.FindIntersection(l2);
+			}
+		}
+
+		/// <summary>
 		/// Point defining dimension arc for angular dimensions (in OCS).
 		/// </summary>
 		[DxfCodeValue(16, 26, 36)]
@@ -45,19 +59,11 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		/// <summary>
-		/// Gets the center point of the measured arc.
-		/// </summary>
-		public XYZ Center
-		{
-			get
-			{
-				Line3D l1 = LineExtensions.CreateFromPoints<Line3D, XYZ>(this.DefinitionPoint, this.AngleVertex);
-				Line3D l2 = LineExtensions.CreateFromPoints<Line3D, XYZ>(this.FirstPoint, this.SecondPoint);
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityDimension;
 
-				return l1.FindIntersection(l2);
-			}
-		}
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.DIMENSION_ANG_2_Ln;
 
 		/// <summary>
 		/// Definition point offset relative to the <see cref="Center"/>.
@@ -73,12 +79,6 @@ namespace ACadSharp.Entities
 				this.DefinitionPoint = this.SecondPoint + v * value;
 			}
 		}
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityDimension;
-
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.DIMENSION_ANG_2_Ln;
 
 		/// <summary>
 		/// Definition point for linear and angular dimensions (in WCS).
@@ -111,6 +111,14 @@ namespace ACadSharp.Entities
 		public override BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.FirstPoint, this.SecondPoint);
+		}
+
+		/// <inheritdoc/>
+		public override void UpdateBlock()
+		{
+			base.UpdateBlock();
+
+
 		}
 	}
 }

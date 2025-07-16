@@ -166,7 +166,7 @@ namespace ACadSharp.Entities
 			// dimension text
 			XY midText = XY.Polar(ref2, side * style.DimensionLineGap * style.ScaleFactor, rotation);
 
-			string text = this.Measurement.ToString("#.##");//Provisional
+			string text = this.GetMeasurementText();
 			if (!this.IsTextUserDefinedLocation)
 			{
 				dim.TextMiddlePoint = midText.Convert<XYZ>();

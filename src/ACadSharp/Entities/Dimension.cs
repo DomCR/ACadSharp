@@ -500,7 +500,7 @@ namespace ACadSharp.Entities
 			}
 
 			// dimension text
-			string text = this.Measurement.ToString("#.##");//Provisional
+			string text = this.GetMeasurementText();
 
 			double textRot = angleRef;
 			short reverse = 1;
