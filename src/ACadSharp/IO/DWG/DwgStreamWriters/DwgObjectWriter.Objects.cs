@@ -29,7 +29,6 @@ namespace ACadSharp.IO.DWG
 			{
 				case EvaluationGraph:
 				case Material:
-				case SortEntitiesTable:
 				case UnknownNonGraphicalObject:
 				case VisualStyle:
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
@@ -80,6 +79,11 @@ namespace ACadSharp.IO.DWG
 					break;
 				case MultiLeaderStyle multiLeaderStyle:
 					this.writeMultiLeaderStyle(multiLeaderStyle);
+					break;
+				case MultiLeaderObjectContextData multiLeaderObjectContextData:
+					this.writeObjectContextData(multiLeaderObjectContextData);
+					this.writeAnnotScaleObjectContextData(multiLeaderObjectContextData);
+					this.writeMultiLeaderAnnotContext(multiLeaderObjectContextData);
 					break;
 				case PlotSettings plotsettings:
 					this.writePlotSettings(plotsettings);
@@ -642,6 +646,23 @@ namespace ACadSharp.IO.DWG
 				//	B	298 Undocumented, found in DXF
 				this._writer.WriteBit(mLeaderStyle.UnknownFlag298);
 			}
+		}
+
+		private void writeObjectContextData(ObjectContextData objectContextData) {
+			//BS	70	Version.
+			this._writer.WriteBitShort(objectContextData.Version);
+			//B	-	Has file to extension dictionary.
+			this._writer.WriteBit(objectContextData.HasFileToExtensionDictionary);
+			//B	290	Default flag.
+			this._writer.WriteBit(objectContextData.Default);
+		}
+
+		private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData annotScaleObjectContextData) {
+			this._writer.HandleReference(DwgReferenceType.HardPointer, annotScaleObjectContextData.Scale);
+		}
+
+		private void writeMultiLeaderAnnotContext(MultiLeaderObjectContextData multiLeaderAnnotContext) {
+			writeMultiLeaderAnnotContextSubObject(false, multiLeaderAnnotContext);
 		}
 
 		private void writePlotSettings(PlotSettings plot)

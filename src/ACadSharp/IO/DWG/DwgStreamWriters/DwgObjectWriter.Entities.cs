@@ -1132,7 +1132,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitShort(2);
 			}
 
-			writeMultiLeaderAnnotContext(multiLeader.ContextData);
+			writeMultiLeaderAnnotContextSubObject(true, multiLeader.ContextData);
 
 			//	Multileader Common data
 			//	340 Leader StyleId (handle)
@@ -1233,12 +1233,25 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private void writeMultiLeaderAnnotContext(MultiLeaderAnnotContext annotContext)
-		{
 
-			//	BL	-	Number of leader roots
+		private void writeMultiLeaderAnnotContextSubObject(bool writeLeaderRootsCount, MultiLeaderObjectContextData annotContext)
+		{
 			int leaderRootCount = annotContext.LeaderRoots.Count;
-			this._writer.WriteBitLong(leaderRootCount);
+			if (writeLeaderRootsCount) {
+				//	BL	-	Number of leader roots
+				this._writer.WriteBitLong(leaderRootCount);
+			}
+			else {
+				this._writer.WriteBitLong(0);
+				this._writer.WriteBit(false);    // b0
+				this._writer.WriteBit(false);    // b1
+				this._writer.WriteBit(false);    // b2
+				this._writer.WriteBit(false);    // b3
+				this._writer.WriteBit(false);    // b4
+				this._writer.WriteBit(leaderRootCount == 2);	// b5
+				this._writer.WriteBit(leaderRootCount == 1);	// b6
+			}
+
 			for (int i = 0; i < leaderRootCount; i++)
 			{
 				writeLeaderRoot(annotContext.LeaderRoots[i]);
@@ -1395,7 +1408,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private void writeLeaderRoot(MultiLeaderAnnotContext.LeaderRoot leaderRoot)
+		private void writeLeaderRoot(MultiLeaderObjectContextData.LeaderRoot leaderRoot)
 		{
 			//	B		290		Is content valid(ODA writes true)/DXF: Has Set Last Leader Line Point
 			this._writer.WriteBit(leaderRoot.ContentValid);
@@ -1411,7 +1424,7 @@ namespace ACadSharp.IO.DWG
 			//	3BD		12		Break start point
 			//	3BD		13		Break end point
 			this._writer.WriteBitLong(leaderRoot.BreakStartEndPointsPairs.Count);
-			foreach (MultiLeaderAnnotContext.StartEndPointPair startEndPointPair in leaderRoot.BreakStartEndPointsPairs)
+			foreach (MultiLeaderObjectContextData.StartEndPointPair startEndPointPair in leaderRoot.BreakStartEndPointsPairs)
 			{
 				this._writer.Write3BitDouble(startEndPointPair.StartPoint);
 				this._writer.Write3BitDouble(startEndPointPair.EndPoint);
@@ -1425,7 +1438,7 @@ namespace ACadSharp.IO.DWG
 			//	Leader lines
 			//	BL		Number of leader lines
 			this._writer.WriteBitLong(leaderRoot.Lines.Count);
-			foreach (MultiLeaderAnnotContext.LeaderLine leaderLine in leaderRoot.Lines)
+			foreach (MultiLeaderObjectContextData.LeaderLine leaderLine in leaderRoot.Lines)
 			{
 				writeLeaderLine(leaderLine);
 			}
@@ -1437,7 +1450,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private void writeLeaderLine(MultiLeaderAnnotContext.LeaderLine leaderLine)
+		private void writeLeaderLine(MultiLeaderObjectContextData.LeaderLine leaderLine)
 		{
 			//	Points
 			//	BL	-	Number of points
@@ -1460,7 +1473,7 @@ namespace ACadSharp.IO.DWG
 				//	Start/end point pairs
 				//	3BD	12	End point
 				this._writer.WriteBitLong(leaderLine.StartEndPoints.Count);
-				foreach (MultiLeaderAnnotContext.StartEndPointPair sep in leaderLine.StartEndPoints)
+				foreach (MultiLeaderObjectContextData.StartEndPointPair sep in leaderLine.StartEndPoints)
 				{
 					//	3BD	11	Start Point
 					this._writer.Write3BitDouble(sep.StartPoint);
