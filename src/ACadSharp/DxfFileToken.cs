@@ -120,6 +120,7 @@
 		public const string ObjectMaterial = "MATERIAL";
 		public const string ObjectMLineStyle = "MLINESTYLE";
 		public const string ObjectPdfDefinition = "PDFDEFINITION";
+		public const string ObjectRasterVariables = "RASTERVARIABLES";
 		public const string ObjectVisualStyle = "VISUALSTYLE";
 		public const string ObjectScale = "SCALE";
 		public const string ObjectSortEntsTable = "SORTENTSTABLE";

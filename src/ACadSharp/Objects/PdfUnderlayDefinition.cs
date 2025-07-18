@@ -3,7 +3,7 @@
 namespace ACadSharp.Objects
 {
 	/// <summary>
-	/// Represents a <see cref="PdfUnderlayDefinition"/> object
+	/// Represents a <see cref="PdfUnderlayDefinition"/> object.
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.ObjectPdfDefinition"/> <br/>

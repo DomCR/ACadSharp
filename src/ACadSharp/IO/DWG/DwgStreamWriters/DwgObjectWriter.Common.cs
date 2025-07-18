@@ -13,11 +13,6 @@ namespace ACadSharp.IO.DWG
 	{
 		private void registerObject(CadObject cadObject)
 		{
-			if(cadObject.Handle == 2)
-			{
-
-			}
-
 			this._writer.WriteSpearShift();
 
 			//Set the position to the entity to find

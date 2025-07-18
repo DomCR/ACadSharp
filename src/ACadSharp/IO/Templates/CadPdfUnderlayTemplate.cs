@@ -17,7 +17,7 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			if (builder.TryGetCadObject(this.DefinitionHandle, out UnderlayDefinition definition))
+			if (builder.TryGetCadObject(this.DefinitionHandle, out PdfUnderlayDefinition definition))
 			{
 				this.CadObject.Definition = definition;
 			}

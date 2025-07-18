@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Objects;
 
 namespace ACadSharp.Entities
 {
@@ -14,9 +15,17 @@ namespace ACadSharp.Entities
 	public class PdfUnderlay : UnderlayEntity
 	{
 		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.UNLISTED;
+		public override string ObjectName => DxfFileToken.EntityPdfUnderlay;
 
 		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityPdfUnderlay;
+		public override ObjectType ObjectType => ObjectType.UNLISTED;
+
+		public PdfUnderlay(PdfUnderlayDefinition definition)
+		{
+			this.Definition = definition;
+		}
+
+		public PdfUnderlay()
+		{ }
 	}
 }

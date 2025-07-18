@@ -4,6 +4,7 @@ using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.IO.DWG
 {
@@ -98,6 +99,9 @@ namespace ACadSharp.IO.DWG
 				case MultiLeader multiLeader:
 					this.writeMultiLeader(multiLeader);
 					break;
+				case PdfUnderlay pdfUnderlay:
+					this.writePdfUnderlay(pdfUnderlay);
+					break;
 				case Point p:
 					this.writePoint(p);
 					break;
@@ -187,6 +191,32 @@ namespace ACadSharp.IO.DWG
 			this.registerObject(entity);
 
 			this.writeChildEntities(children, seqend);
+		}
+
+		private void writePdfUnderlay(PdfUnderlay underlay)
+		{
+			this._writer.Write3BitDouble(underlay.Normal);
+
+			this._writer.Write3BitDouble(underlay.InsertPoint);
+
+			this._writer.WriteBitDouble(underlay.Rotation);
+
+			this._writer.WriteBitDouble(underlay.XScale);
+			this._writer.WriteBitDouble(underlay.YScale);
+			this._writer.WriteBitDouble(underlay.ZScale);
+
+			this._writer.WriteByte((byte)underlay.Flags);
+
+			this._writer.WriteByte(underlay.Contrast);
+			this._writer.WriteByte(underlay.Fade);
+
+			this._writer.HandleReference(DwgReferenceType.HardPointer, underlay.Definition);
+
+			this._writer.WriteBitLong(underlay.ClipBoundaryVertices.Count);
+			foreach (var v in underlay.ClipBoundaryVertices)
+			{
+				this._writer.Write2RawDouble(v);
+			}
 		}
 
 		private void writeArc(Arc arc)

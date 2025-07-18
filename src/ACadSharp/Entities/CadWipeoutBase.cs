@@ -154,7 +154,7 @@ namespace ACadSharp.Entities
 		public ClipType ClipType { get; set; } = ClipType.Rectangular;
 
 		/// <summary>
-		/// Clip boundary vertices
+		/// Clip boundary vertices.
 		/// </summary>
 		/// <remarks>
 		/// For rectangular clip boundary type, two opposite corners must be specified.Default is (-0.5,-0.5), (size.x-0.5, size.y-0.5). 2) For polygonal clip boundary type, three or more vertices must be specified.Polygonal vertices must be listed sequentially
