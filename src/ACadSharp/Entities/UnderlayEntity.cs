@@ -13,6 +13,16 @@ namespace ACadSharp.Entities
 	public abstract class UnderlayEntity : Entity
 	{
 		/// <summary>
+		/// 2d points in OCS/ECS.
+		/// </summary>
+		/// <remarks>
+		/// If only two, then they are the lower left and upper right corner points of a clip rectangle. <br/>
+		/// If more than two, then they are the vertices of a clipping polygon.
+		/// </remarks>
+		[DxfCollectionCodeValue(11, 21)]
+		public List<XY> ClipBoundaryVertices { get; set; } = new List<XY>();
+
+		/// <summary>
 		/// Contrast
 		/// </summary>
 		/// <remarks>
@@ -33,8 +43,30 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <summary>
+		/// The AcDbUnderlayDefinition object.
+		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public UnderlayDefinition Definition { get; set; }
+		public PdfUnderlayDefinition Definition
+		{
+			get { return this._definition; }
+			set
+			{
+				if (value == null)
+				{
+					return;
+				}
+
+				if (this.Document != null)
+				{
+					this._definition = this.updateCollection(value, this.Document.PdfDefinitions);
+				}
+				else
+				{
+					this._definition = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Fade
@@ -62,7 +94,7 @@ namespace ACadSharp.Entities
 		/// Underlay display options.
 		/// </summary>
 		[DxfCodeValue(280)]
-		public UnderlayDisplayFlags Flags { get; set; }
+		public UnderlayDisplayFlags Flags { get; set; } = UnderlayDisplayFlags.Default;
 
 		/// <summary>
 		/// Insertion point(in WCS)
@@ -151,7 +183,9 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		private byte _contrast = 50;
+		private byte _contrast = 100;
+
+		private PdfUnderlayDefinition _definition;
 
 		private byte _fade = 0;
 
@@ -199,10 +233,45 @@ namespace ACadSharp.Entities
 			this.ZScale = transform.Scale.Z * this.ZScale;
 		}
 
+		public override CadObject Clone()
+		{
+			UnderlayEntity clone = (UnderlayEntity)base.Clone();
+
+			clone.Definition = (PdfUnderlayDefinition)this.Definition?.Clone();
+
+			return clone;
+		}
+
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
 			return BoundingBox.Null;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._definition = this.updateCollection(this.Definition, doc.PdfDefinitions);
+
+			this.Document.PdfDefinitions.OnRemove += this.imageDefinitionsOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.ImageDefinitions.OnRemove -= this.imageDefinitionsOnRemove;
+
+			base.UnassignDocument();
+
+			this.Definition = (PdfUnderlayDefinition)this.Definition?.Clone();
+		}
+
+		private void imageDefinitionsOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this.Definition))
+			{
+				this.Definition = null;
+			}
 		}
 	}
 }

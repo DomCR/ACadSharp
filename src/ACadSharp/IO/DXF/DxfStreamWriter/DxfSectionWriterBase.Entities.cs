@@ -73,6 +73,9 @@ namespace ACadSharp.IO.DXF
 				case MultiLeader multiLeader:
 					this.writeMultiLeader(multiLeader);
 					break;
+				case PdfUnderlay pdfUnderlay:
+					this.writePdfUnderlay(pdfUnderlay);
+					break;
 				case Point point:
 					this.writePoint(point);
 					break;
@@ -858,19 +861,35 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(305, "}");   //	LEADER_Line
 		}
 
-		private void writePoint(Point line)
+		private void writePdfUnderlay(PdfUnderlay underlay)
+		{
+			DxfClassMap map = DxfClassMap.Create<PdfUnderlay>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Underlay);
+
+			this._writer.WriteHandle(340, underlay.Definition, map);
+
+			this._writer.Write(10, underlay.InsertPoint, map);
+
+			this._writer.Write(280, underlay.Flags, map);
+			this._writer.Write(281, underlay.Contrast, map);
+			this._writer.Write(282, underlay.Fade, map);
+
+		}
+
+		private void writePoint(Point point)
 		{
 			DxfClassMap map = DxfClassMap.Create<Point>();
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Point);
 
-			this._writer.Write(10, line.Location, map);
+			this._writer.Write(10, point.Location, map);
 
-			this._writer.Write(39, line.Thickness, map);
+			this._writer.Write(39, point.Thickness, map);
 
-			this._writer.Write(210, line.Normal, map);
+			this._writer.Write(210, point.Normal, map);
 
-			this._writer.Write(50, line.Rotation, map);
+			this._writer.Write(50, point.Rotation, map);
 		}
 
 		private void writePolyline(Polyline polyline)
