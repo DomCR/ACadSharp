@@ -167,16 +167,11 @@ namespace ACadSharp.Entities
 		/// Image definition.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public ImageDefinition Definition
+		public virtual ImageDefinition Definition
 		{
 			get { return this._definition; }
 			set
 			{
-				if (value == null)
-				{
-					return;
-				}
-
 				if (this.Document != null)
 				{
 					this._definition = this.updateCollection(value, this.Document.ImageDefinitions);

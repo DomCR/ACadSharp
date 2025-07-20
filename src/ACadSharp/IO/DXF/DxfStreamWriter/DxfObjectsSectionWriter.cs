@@ -39,7 +39,6 @@ namespace ACadSharp.IO.DXF
 				case VisualStyle:
 				case ImageDefinitionReactor:
 				case UnknownNonGraphicalObject:
-				case RasterVariables:
 				case XRecord:
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
@@ -89,6 +88,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case PdfUnderlayDefinition pdfUnderlayDefinition:
 					this.writePdfUnderlayDefinition(pdfUnderlayDefinition);
+					break;
+				case RasterVariables rasterVariables:
+					this.writeRasterVariables(rasterVariables);
 					break;
 				case Scale scale:
 					this.writeScale(scale);
@@ -203,6 +205,18 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(1, definition.File, map);
 			this._writer.Write(2, definition.Page, map);
+		}
+
+		protected void writeRasterVariables(RasterVariables variables)
+		{
+			DxfClassMap map = DxfClassMap.Create<RasterVariables>();
+
+			this._writer.Write(100, DxfSubclassMarker.RasterVariables);
+
+			this._writer.Write(90, variables.ClassVersion, map);
+			this._writer.Write(70, variables.IsDisplayFrameShown ? 1 : 0, map);
+			this._writer.Write(71, (short) variables.DisplayQuality, map);
+			this._writer.Write(72, (short)variables.DisplayQuality, map);
 		}
 
 		protected void writeScale(Scale scale)

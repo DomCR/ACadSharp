@@ -19,6 +19,7 @@ using ACadSharp.Objects.Evaluations;
 using ACadSharp.XData;
 using System.Diagnostics;
 using System.Numerics;
+using ACadSharp.Objects.Collections;
 
 namespace ACadSharp.IO.DWG
 {
@@ -5715,11 +5716,11 @@ namespace ACadSharp.IO.DWG
 			//Classver BL 90 classversion
 			vars.ClassVersion = this._mergedReaders.ReadBitLong();
 			//Dispfrm BS 70 displayframe
-			vars.DisplayFrame = this._mergedReaders.ReadBitShort();
+			vars.IsDisplayFrameShown = this._mergedReaders.ReadBitShort() != 0;
 			//Dispqual BS 71 display quality
-			vars.DisplayQuality = this._mergedReaders.ReadBitShort();
+			vars.DisplayQuality = (ImageDisplayQuality)this._mergedReaders.ReadBitShort();
 			//Units BS 72 units
-			vars.Units = this._mergedReaders.ReadBitShort();
+			vars.Units = (ImageUnits)this._mergedReaders.ReadBitShort();
 
 			return template;
 		}
@@ -5746,7 +5747,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readCadImage(CadWipeoutBase image)
 		{
-			CadImageTemplate template = new CadImageTemplate(image);
+			CadWipeoutBaseTemplate template = new CadWipeoutBaseTemplate(image);
 
 			this.readCommonEntityData(template);
 
@@ -6022,7 +6023,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readPdfUnderlay()
 		{
 			PdfUnderlay underlay = new PdfUnderlay();
-			CadPdfUnderlayTemplate template = new(underlay);
+			CadUnderlayTemplate<PdfUnderlayDefinition> template = new(underlay);
 
 			this.readCommonEntityData(template);
 

@@ -3,13 +3,13 @@ using ACadSharp.Objects;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadImageTemplate : CadEntityTemplate
+	internal class CadWipeoutBaseTemplate : CadEntityTemplate
 	{
 		public ulong? ImgDefHandle { get; set; }
 
 		public ulong? ImgReactorHandle { get; set; }
 
-		public CadImageTemplate(CadWipeoutBase image) : base(image) { }
+		public CadWipeoutBaseTemplate(CadWipeoutBase image) : base(image) { }
 
 		public override void Build(CadDocumentBuilder builder)
 		{

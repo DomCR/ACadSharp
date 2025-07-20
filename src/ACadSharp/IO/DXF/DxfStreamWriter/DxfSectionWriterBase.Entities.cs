@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.IO.DXF
 {
@@ -74,7 +75,7 @@ namespace ACadSharp.IO.DXF
 					this.writeMultiLeader(multiLeader);
 					break;
 				case PdfUnderlay pdfUnderlay:
-					this.writePdfUnderlay(pdfUnderlay);
+					this.writePdfUnderlay<PdfUnderlay, PdfUnderlayDefinition>(pdfUnderlay);
 					break;
 				case Point point:
 					this.writePoint(point);
@@ -861,9 +862,11 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(305, "}");   //	LEADER_Line
 		}
 
-		private void writePdfUnderlay(PdfUnderlay underlay)
+		private void writePdfUnderlay<T,R>(T underlay)
+			where T : UnderlayEntity<R>
+			where R : UnderlayDefinition
 		{
-			DxfClassMap map = DxfClassMap.Create<PdfUnderlay>();
+			DxfClassMap map = DxfClassMap.Create<T>();
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Underlay);
 
@@ -874,6 +877,11 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(280, underlay.Flags, map);
 			this._writer.Write(281, underlay.Contrast, map);
 			this._writer.Write(282, underlay.Fade, map);
+
+			foreach (XY bv in underlay.ClipBoundaryVertices)
+			{
+				this._writer.Write(11, bv, map);
+			}
 
 		}
 

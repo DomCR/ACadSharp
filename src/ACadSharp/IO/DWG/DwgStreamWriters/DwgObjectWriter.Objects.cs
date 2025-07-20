@@ -749,11 +749,11 @@ namespace ACadSharp.IO.DWG
 			//Classver BL 90 classversion
 			this._writer.WriteBitLong(vars.ClassVersion);
 			//Dispfrm BS 70 displayframe
-			this._writer.WriteBitShort(vars.DisplayFrame);
+			this._writer.WriteBitShort(vars.IsDisplayFrameShown ? (short)1 : (short)0);
 			//Dispqual BS 71 display quality
-			this._writer.WriteBitShort(vars.DisplayQuality);
+			this._writer.WriteBitShort((short)vars.DisplayQuality);
 			//Units BS 72 units
-			this._writer.WriteBitShort(vars.Units);
+			this._writer.WriteBitShort((short)vars.Units);
 		}
 
 		private void writeScale(Scale scale)

@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
+using ACadSharp.Objects.Collections;
 
 namespace ACadSharp.Entities
 {
@@ -12,7 +13,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityPdfUnderlay)]
 	[DxfSubClass(DxfSubclassMarker.Underlay)]
-	public class PdfUnderlay : UnderlayEntity
+	public class PdfUnderlay : UnderlayEntity<PdfUnderlayDefinition>
 	{
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityPdfUnderlay;
@@ -20,12 +21,16 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
-		public PdfUnderlay(PdfUnderlayDefinition definition)
+		/// <inheritdoc/>
+		public PdfUnderlay(PdfUnderlayDefinition definition) : base(definition) { }
+
+		internal PdfUnderlay()
 		{
-			this.Definition = definition;
 		}
 
-		public PdfUnderlay()
-		{ }
+		protected override ObjectDictionaryCollection<PdfUnderlayDefinition> getDocumentCollection(CadDocument document)
+		{
+			return document.PdfDefinitions;
+		}
 	}
 }
