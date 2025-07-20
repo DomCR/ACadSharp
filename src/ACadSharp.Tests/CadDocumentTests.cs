@@ -25,6 +25,7 @@ namespace ACadSharp.Tests
 			foreach (var item in DataFactory.GetTypes<Entity>())
 			{
 				if (item == typeof(Block)
+					|| item == typeof(PdfUnderlay)
 					|| item == typeof(BlockEnd)
 					|| item == typeof(UnknownEntity))
 					continue;
