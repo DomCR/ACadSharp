@@ -51,6 +51,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedLwPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline2DTest)));
+			Data.Add(new(nameof(SingleCaseGenerator.SinglePdfUnderlay)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleRasterImage)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleWipeout)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateLayout)));
@@ -740,6 +741,22 @@ namespace ACadSharp.Tests.IO
 			public void SinglePoint()
 			{
 				this.Document.Entities.Add(new Point(XYZ.Zero));
+			}
+
+			public void SinglePdfUnderlay()
+			{
+				var definition = new PdfUnderlayDefinition();
+				definition.Page = "1";
+				definition.File = "..\\..\\pdf-definition.pdf";
+
+				definition.Name = $"{definition.File} {definition.Page}";
+
+				PdfUnderlay raster = new PdfUnderlay(definition);
+
+				raster.ClipBoundaryVertices.Add(new XY(0, 0));
+				raster.ClipBoundaryVertices.Add(new XY(1, 1));
+
+				this.Document.Entities.Add(raster);
 			}
 
 			public void SingleRasterImage()

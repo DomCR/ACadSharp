@@ -19,6 +19,7 @@ using ACadSharp.Objects.Evaluations;
 using ACadSharp.XData;
 using System.Diagnostics;
 using System.Numerics;
+using ACadSharp.Objects.Collections;
 
 namespace ACadSharp.IO.DWG
 {
@@ -986,11 +987,11 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.ACAD_PROXY_ENTITY:
 					this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
 					template = this.readUnknownEntity(null);
-					break; 
+					break;
 				case ObjectType.ACAD_PROXY_OBJECT:
 					this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
 					template = this.readUnknownNonGraphicalObject(null);
-					break; 
+					break;
 				default:
 					return this.readUnlistedType((short)type);
 			}
@@ -1074,9 +1075,9 @@ namespace ACadSharp.IO.DWG
 				case "SORTENTSTABLE":
 					template = this.readSortentsTable();
 					break;
-				//case "VISUALSTYLE":
-				//	template = this.readVisualStyle();
-				//	break;
+				case "RASTERVARIABLES":
+					template = this.readRasterVariables();
+					break;
 				case "WIPEOUT":
 					template = this.readCadImage(new Wipeout());
 					break;
@@ -1331,7 +1332,8 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadBlockFlipActionTemplate readBlockFlipAction() {
+		private CadBlockFlipActionTemplate readBlockFlipAction()
+		{
 
 			BlockFlipAction blockFlipAction = new BlockFlipAction();
 			CadBlockFlipActionTemplate template = new CadBlockFlipActionTemplate(blockFlipAction);
@@ -1360,7 +1362,8 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadBlock2PtParameterTemplate readBlock2PtParameter(CadBlockFlipParameterTemplate template) {
+		private CadBlock2PtParameterTemplate readBlock2PtParameter(CadBlockFlipParameterTemplate template)
+		{
 
 			this.readBlockParameter(template);
 
@@ -1373,16 +1376,16 @@ namespace ACadSharp.IO.DWG
 			block2PtParameter.SecondPoint = this._mergedReaders.Read3BitDouble();
 
 			//	Found in DXF
-				//170 BS  4
-				//91  BL  7
-				//91  BL  0
-				//91  BL  0
-				//91  BL  0
-				//171 BS  0
-				//172 BS  0
-				//173 BS  0
-				//174 BS  0
-				//177 BS  0
+			//170 BS  4
+			//91  BL  7
+			//91  BL  0
+			//91  BL  0
+			//91  BL  0
+			//171 BS  0
+			//172 BS  0
+			//173 BS  0
+			//174 BS  0
+			//177 BS  0
 			//	Guess, changed order
 			//	170 missing, seems to be the number of following 91-BLs (see below)
 			//	171
@@ -1405,7 +1408,8 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadBlockFlipParameterTemplate readBlockFlipParameter() {
+		private CadBlockFlipParameterTemplate readBlockFlipParameter()
+		{
 
 			BlockFlipParameter blockFlipParameter = new BlockFlipParameter();
 			CadBlockFlipParameterTemplate template = new CadBlockFlipParameterTemplate(blockFlipParameter);
@@ -5701,6 +5705,26 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private CadTemplate readRasterVariables()
+		{
+			RasterVariables vars = new RasterVariables();
+			var template = new CadNonGraphicalObjectTemplate(vars);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Classver BL 90 classversion
+			vars.ClassVersion = this._mergedReaders.ReadBitLong();
+			//Dispfrm BS 70 displayframe
+			vars.IsDisplayFrameShown = this._mergedReaders.ReadBitShort() != 0;
+			//Dispqual BS 71 display quality
+			vars.DisplayQuality = (ImageDisplayQuality)this._mergedReaders.ReadBitShort();
+			//Units BS 72 units
+			vars.Units = (ImageUnits)this._mergedReaders.ReadBitShort();
+
+			return template;
+		}
+
 		private CadTemplate readVisualStyle()
 		{
 			VisualStyle visualStyle = new VisualStyle();
@@ -5723,7 +5747,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readCadImage(CadWipeoutBase image)
 		{
-			CadImageTemplate template = new CadImageTemplate(image);
+			CadWipeoutBaseTemplate template = new CadWipeoutBaseTemplate(image);
 
 			this.readCommonEntityData(template);
 
@@ -5999,7 +6023,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readPdfUnderlay()
 		{
 			PdfUnderlay underlay = new PdfUnderlay();
-			CadPdfUnderlayTemplate template = new(underlay);
+			CadUnderlayTemplate<PdfUnderlayDefinition> template = new(underlay);
 
 			this.readCommonEntityData(template);
 
@@ -6019,6 +6043,12 @@ namespace ACadSharp.IO.DWG
 			underlay.Fade = this._objectReader.ReadByte();
 
 			template.DefinitionHandle = this.handleReference();
+
+			int nvertices = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < nvertices; i++)
+			{
+				underlay.ClipBoundaryVertices.Add(this._mergedReaders.Read2RawDouble());
+			}
 
 			return template;
 		}

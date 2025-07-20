@@ -428,6 +428,46 @@ namespace ACadSharp.Classes
 				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
 				WasZombie = false,
 			});
+
+			//AcDbPdfReference
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.PdfReference,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = (ACadVersion)26,
+				DxfName = DxfFileToken.EntityPdfUnderlay,
+				ItemClassId = 498,
+				MaintenanceVersion = 0,
+				ProxyFlags = (ProxyFlags)4095,
+				WasZombie = false,
+			});
+
+			//AcDbPdfReference
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.PdfDefinition,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = (ACadVersion)26,
+				DxfName = DxfFileToken.ObjectPdfDefinition,
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+
+			//AcDbRasterVariables
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				ApplicationName = "ISM",
+				CppClassName = DxfSubclassMarker.RasterVariables,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = (ACadVersion)20,
+				DxfName = DxfFileToken.ObjectRasterVariables,
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.None,
+				WasZombie = false,
+			});
 		}
 
 		/// <summary>

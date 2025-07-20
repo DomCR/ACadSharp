@@ -3,13 +3,12 @@ using ACadSharp.Objects;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadPdfUnderlayTemplate : CadEntityTemplate<PdfUnderlay>
+	internal class CadUnderlayTemplate<T> : CadEntityTemplate
+		where T : UnderlayDefinition
 	{
 		public ulong? DefinitionHandle { get; set; }
 
-		public CadPdfUnderlayTemplate() : base(new PdfUnderlay()) { }
-
-		public CadPdfUnderlayTemplate(PdfUnderlay entity) : base(entity)
+		public CadUnderlayTemplate(UnderlayEntity<T> entity) : base(entity)
 		{
 		}
 
@@ -17,9 +16,11 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			if (builder.TryGetCadObject(this.DefinitionHandle, out UnderlayDefinition definition))
+			UnderlayEntity<T> underlay = this.CadObject as UnderlayEntity<T>;
+
+			if (builder.TryGetCadObject(this.DefinitionHandle, out T definition))
 			{
-				this.CadObject.Definition = definition;
+				underlay.Definition = definition;
 			}
 			else
 			{

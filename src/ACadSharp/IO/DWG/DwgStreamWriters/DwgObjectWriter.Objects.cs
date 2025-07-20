@@ -29,7 +29,6 @@ namespace ACadSharp.IO.DWG
 			{
 				case EvaluationGraph:
 				case Material:
-				case SortEntitiesTable:
 				case UnknownNonGraphicalObject:
 				case VisualStyle:
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
@@ -81,8 +80,14 @@ namespace ACadSharp.IO.DWG
 				case MultiLeaderStyle multiLeaderStyle:
 					this.writeMultiLeaderStyle(multiLeaderStyle);
 					break;
+				case PdfUnderlayDefinition pdfDefinition:
+					this.writePdfDefinition(pdfDefinition);
+					break;
 				case PlotSettings plotsettings:
 					this.writePlotSettings(plotsettings);
+					break;
+				case RasterVariables rasterVariables:
+					this.writeRasterVariables(rasterVariables);
 					break;
 				case Scale scale:
 					this.writeScale(scale);
@@ -368,6 +373,12 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Classver BL 90 class version
 			this._writer.WriteBitLong(definitionReactor.ClassVersion);
+		}
+
+		private void writePdfDefinition(PdfUnderlayDefinition definition)
+		{
+			this._writer.WriteVariableText(definition.File);
+			this._writer.WriteVariableText(definition.Page);
 		}
 
 		private void writeImageDefinition(ImageDefinition definition)
@@ -730,6 +741,19 @@ namespace ACadSharp.IO.DWG
 				//Visual Style handle(soft pointer)
 				this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
 			}
+		}
+
+		private void writeRasterVariables(RasterVariables vars)
+		{
+			//Common:
+			//Classver BL 90 classversion
+			this._writer.WriteBitLong(vars.ClassVersion);
+			//Dispfrm BS 70 displayframe
+			this._writer.WriteBitShort(vars.IsDisplayFrameShown ? (short)1 : (short)0);
+			//Dispqual BS 71 display quality
+			this._writer.WriteBitShort((short)vars.DisplayQuality);
+			//Units BS 72 units
+			this._writer.WriteBitShort((short)vars.Units);
 		}
 
 		private void writeScale(Scale scale)

@@ -266,9 +266,17 @@
         "Children": []
       },
       {
+        "Name": "AdeskUnderlayLayerOverrideData",
+        "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
+        "Handle": 3336,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
         "Name": "ACAD_SPLINE_DATA",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
-        "Handle": 3490,
+        "Handle": 3957,
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
@@ -1848,7 +1856,7 @@
             "LinetypeScale": 1.0,
             "LineWeight": -1,
             "Properties": {
-              "Measurement": 45.597606583030711
+              "Measurement": 45.59760658303071
             },
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DiametricDimension",
             "Handle": 1314,
@@ -1932,7 +1940,7 @@
             "LinetypeScale": 1.0,
             "LineWeight": -1,
             "Properties": {
-              "Measurement": 48.363565231105952
+              "Measurement": 48.36356523110595
             },
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.AlignedDimension",
             "Handle": 1319,
@@ -4172,7 +4180,7 @@
             "LinetypeScale": 1.0,
             "LineWeight": -1,
             "Properties": {
-              "Measurement": 35.123331546273221
+              "Measurement": 35.12333154627322
             },
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.RotatedDimension",
             "Handle": 3222,
@@ -4204,6 +4212,32 @@
             },
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.RotatedDimension",
             "Handle": 3236,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "Color": {
+              "IsByBlock": false,
+              "IsByLayer": false,
+              "Green": 66,
+              "Blue": 236,
+              "Red": 155,
+              "Index": 193
+            },
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "Properties": {},
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.PdfReference",
+            "Handle": 3335,
             "OwnerHandle": 31,
             "DictionaryHandle": 0,
             "Children": []
@@ -7115,7 +7149,7 @@
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.AttributeDefinition",
             "Handle": 1942,
             "OwnerHandle": 1919,
-            "DictionaryHandle": 3401,
+            "DictionaryHandle": 3868,
             "Children": []
           },
           {
@@ -7825,7 +7859,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
-            "Handle": 3497,
+            "Handle": 3964,
             "OwnerHandle": 2614,
             "DictionaryHandle": 0,
             "Children": []
@@ -7903,7 +7937,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockReference",
-            "Handle": 3498,
+            "Handle": 3965,
             "OwnerHandle": 2614,
             "DictionaryHandle": 0,
             "Children": []
