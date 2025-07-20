@@ -22,10 +22,10 @@ namespace ACadSharp.Tests.Internal
 			foreach (var item in d.GetTypes().Where(i => !i.IsAbstract && i.IsPublic))
 			{
 				if (item.IsSubclassOf(typeof(Entity))
-					|| item == typeof(PdfUnderlay)
 					|| item.IsSubclassOf(typeof(TableEntry)))
 				{
-					if (item == typeof(UnknownEntity))
+					if (item == typeof(UnknownEntity) 
+						|| item == typeof(PdfUnderlay))
 					{
 						continue;
 					}
