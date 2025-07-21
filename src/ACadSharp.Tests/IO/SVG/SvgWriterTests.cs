@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
+using ACadSharp.Objects;
 using ACadSharp.Tests.Common;
 using System;
 using System.IO;
@@ -10,35 +11,56 @@ namespace ACadSharp.Tests.IO.SVG
 {
 	public class SvgWriterTests : IOTestsBase
 	{
-		public static readonly TheoryData<Type> EntityTypes = new TheoryData<Type>();
+		public static CadDocument Document { get; }
+
+		public static TheoryData<Layout> Layouts { get; } = new();
 
 		static SvgWriterTests()
 		{
-			foreach (var item in DataFactory.GetTypes<Entity>())
+			string dwgFile = Path.Combine(TestVariables.SamplesFolder, "svg", $"export_sample.dwg");
+			Document = DwgReader.Read(dwgFile);
+
+			foreach (var item in Document.Layouts)
 			{
-				if (item == typeof(UnknownEntity))
+				if (!item.IsPaperSpace)
 				{
 					continue;
 				}
 
-				EntityTypes.Add(item);
+				Layouts.Add(item);
 			}
 		}
 
-		public SvgWriterTests(ITestOutputHelper output) : base(output) { }
+		public SvgWriterTests(ITestOutputHelper output) : base(output)
+		{
+		}
+
+		[Theory]
+		[MemberData(nameof(Layouts))]
+		public void WriteLayouts(Layout layout)
+		{
+			using (SvgWriter writer = createWriter($"{layout.Name}.svg", Document))
+			{
+				writer.Write(layout);
+			}
+		}
 
 		[Fact]
 		public void WriteModel()
 		{
-			string svg = Path.Combine(TestVariables.OutputSvgFolder, $"model.svg");
-			string dwg = Path.Combine(TestVariables.SamplesFolder, "svg", $"export_sample.dwg");
-			var doc = DwgReader.Read(dwg);
-
-			using (SvgWriter writer = new SvgWriter(svg, doc))
+			using (SvgWriter writer = createWriter($"model.svg", Document))
 			{
-				writer.OnNotification += this.onNotification;
 				writer.Write();
 			}
+		}
+
+		private SvgWriter createWriter(string filename, CadDocument doc)
+		{
+			string output = Path.Combine(TestVariables.OutputSvgFolder, filename);
+
+			var writer = new SvgWriter(output, doc);
+			writer.OnNotification += this.onNotification;
+			return writer;
 		}
 	}
 }
