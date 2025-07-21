@@ -114,7 +114,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(62, color.Color.GetApproxIndex());
 			this._writer.WriteTrueColor(420, color.Color);
-			this._writer.Write(430, color.Name);
+			this._writer.Write(430, $"{color.Name}${color.BookName}");
 		}
 
 		protected void writeDictionary(CadDictionary e)
@@ -215,7 +215,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(90, variables.ClassVersion, map);
 			this._writer.Write(70, variables.IsDisplayFrameShown ? 1 : 0, map);
-			this._writer.Write(71, (short) variables.DisplayQuality, map);
+			this._writer.Write(71, (short)variables.DisplayQuality, map);
 			this._writer.Write(72, (short)variables.DisplayQuality, map);
 		}
 

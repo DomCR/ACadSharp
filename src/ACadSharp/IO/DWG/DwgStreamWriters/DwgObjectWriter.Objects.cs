@@ -128,7 +128,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitLong((int)rgb);
 
 				byte flags = 0;
-				if (!string.IsNullOrEmpty(color.ColorName))
+				if (!string.IsNullOrEmpty(color.Name))
 				{
 					flags = (byte)(flags | 1u);
 				}

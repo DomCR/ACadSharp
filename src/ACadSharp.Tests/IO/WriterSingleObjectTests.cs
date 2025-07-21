@@ -166,6 +166,16 @@ namespace ACadSharp.Tests.IO
 
 				this.Document.Colors.Add(color);
 				this.Document.Entities.Add(line);
+
+				color = new BookColor("TEST");
+				color.Color = new(226, 144, 0);
+
+				line = new Line(new XYZ(100, 100, 0), XYZ.Zero);
+				line.Color = Color.ByBlock;
+				line.BookColor = color;
+
+				this.Document.Colors.Add(color);
+				this.Document.Entities.Add(line);
 			}
 
 			public void AddCustomScale()
