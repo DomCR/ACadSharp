@@ -22,6 +22,20 @@ namespace ACadSharp.Entities
 		public XYZ AngleVertex { get; set; }
 
 		/// <summary>
+		/// Gets the center point of the measured arc.
+		/// </summary>
+		public XYZ Center
+		{
+			get
+			{
+				Line3D l1 = LineExtensions.CreateFromPoints<Line3D, XYZ>(this.DefinitionPoint, this.AngleVertex);
+				Line3D l2 = LineExtensions.CreateFromPoints<Line3D, XYZ>(this.FirstPoint, this.SecondPoint);
+
+				return l1.FindIntersection(l2);
+			}
+		}
+
+		/// <summary>
 		/// Point defining dimension arc for angular dimensions (in OCS).
 		/// </summary>
 		[DxfCodeValue(16, 26, 36)]
@@ -38,26 +52,18 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				XY v1 = (XY)(this.SecondPoint - this.FirstPoint);
-				XY v2 = (XY)(this.DefinitionPoint - this.AngleVertex);
+				var v1 = this.SecondPoint - this.FirstPoint;
+				var v2 = this.DefinitionPoint - this.AngleVertex;
 
 				return v1.AngleBetweenVectors(v2);
 			}
 		}
 
-		/// <summary>
-		/// Gets the center point of the measured arc.
-		/// </summary>
-		public XYZ Center
-		{
-			get
-			{
-				Line3D l1 = LineExtensions.CreateFromPoints<Line3D, XYZ>(this.DefinitionPoint, this.AngleVertex);
-				Line3D l2 = LineExtensions.CreateFromPoints<Line3D, XYZ>(this.FirstPoint, this.SecondPoint);
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityDimension;
 
-				return l1.FindIntersection(l2);
-			}
-		}
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.DIMENSION_ANG_2_Ln;
 
 		/// <summary>
 		/// Definition point offset relative to the <see cref="Center"/>.
@@ -73,12 +79,6 @@ namespace ACadSharp.Entities
 				this.DefinitionPoint = this.SecondPoint + v * value;
 			}
 		}
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityDimension;
-
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.DIMENSION_ANG_2_Ln;
 
 		/// <summary>
 		/// Definition point for linear and angular dimensions (in WCS).
@@ -111,6 +111,36 @@ namespace ACadSharp.Entities
 		public override BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.FirstPoint, this.SecondPoint);
+		}
+
+		/// <inheritdoc/>
+		/// <remarks>
+		/// For <see cref="DimensionAngular2Line"/> the generation of the block is not yet implemented.
+		/// </remarks>
+		public override void UpdateBlock()
+		{
+			//Needs a lot more investigation
+			return;
+
+			base.UpdateBlock();
+
+			var v1 = this.SecondPoint - this.FirstPoint;
+			var v2 = this.DefinitionPoint - this.AngleVertex;
+
+			this._block.Entities.Add(createDefinitionPoint(FirstPoint));
+			this._block.Entities.Add(createDefinitionPoint(SecondPoint));
+			this._block.Entities.Add(createDefinitionPoint(AngleVertex));
+			this._block.Entities.Add(createDefinitionPoint(DefinitionPoint));
+
+			if (this.Center.IsNaN())
+			{
+				return;
+			}
+
+			var startAngle = XYZ.AxisX.AngleBetweenVectors(this.AngleVertex);
+			var endAngle = XYZ.AxisX.AngleBetweenVectors(this.FirstPoint);
+
+			this._block.Entities.Add(new Arc(this.Center, this.Offset, startAngle, endAngle));
 		}
 	}
 }

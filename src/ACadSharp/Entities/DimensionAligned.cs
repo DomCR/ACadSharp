@@ -1,5 +1,7 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Tables;
 using CSMath;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -85,6 +87,7 @@ namespace ACadSharp.Entities
 
 		protected DimensionAligned(DimensionType type) : base(type)
 		{
+			this.DefinitionPoint = this.SecondPoint;
 		}
 
 		/// <inheritdoc/>
@@ -103,6 +106,63 @@ namespace ACadSharp.Entities
 		public override BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.FirstPoint, this.SecondPoint);
+		}
+
+		/// <inheritdoc/>
+		public override void UpdateBlock()
+		{
+			base.UpdateBlock();
+
+			XYZ dir = (this.SecondPoint - this.FirstPoint).Normalize();
+			XYZ vec = XYZ.Cross(this.Normal, dir).Normalize();
+
+			XYZ dimRef1 = this.FirstPoint + vec * this.Offset;
+			XYZ dimRef2 = this.DefinitionPoint;
+
+			// reference points
+			this._block.Entities.Add(createDefinitionPoint(FirstPoint));
+			this._block.Entities.Add(createDefinitionPoint(SecondPoint));
+			this._block.Entities.Add(createDefinitionPoint(dimRef1));
+			this._block.Entities.Add(createDefinitionPoint(dimRef2));
+
+			if (!this.Style.SuppressFirstDimensionLine && !this.Style.SuppressSecondDimensionLine)
+			{
+				this._block.Entities.Add(dimensionLine(dimRef1, dimRef2, this.Style));
+				this._block.Entities.Add(dimensionArrow(dimRef1, -dir, this.Style, this.Style.DimArrow1));
+				this._block.Entities.Add(dimensionArrow(dimRef1, dir, this.Style, this.Style.DimArrow2));
+			}
+
+			// extension lines
+			double thisexo = Math.Sign(this.Offset) * this.Style.ExtensionLineOffset * this.Style.ScaleFactor;
+			double thisexe = Math.Sign(this.Offset) * this.Style.ExtensionLineExtension * this.Style.ScaleFactor;
+			if (!this.Style.SuppressFirstExtensionLine)
+			{
+				this._block.Entities.Add(extensionLine(this.FirstPoint + thisexo * vec, dimRef1 + thisexe * vec, this.Style, this.Style.LineTypeExt1));
+			}
+
+			if (!this.Style.SuppressSecondExtensionLine)
+			{
+				this._block.Entities.Add(extensionLine(this.SecondPoint + thisexo * vec, dimRef2 + thisexe * vec, this.Style, this.Style.LineTypeExt2));
+			}
+
+			// dimension text
+			XYZ textRef = dimRef1.Mid(dimRef2);
+			double gap = this.Style.DimensionLineGap * this.Style.ScaleFactor;
+			double textRot = (double)this.ExtLineRotation;
+			if (textRot > Math.PI / 2 && textRot <= (3 * Math.PI * 0.5))
+			{
+				gap = -gap;
+				textRot += Math.PI;
+			}
+
+			string text = this.GetMeasurementText();
+			if (!this.IsTextUserDefinedLocation)
+			{
+				this.TextMiddlePoint = (textRef + gap * vec);
+			}
+
+			MText mText = this.createTextEntity(this.TextMiddlePoint, text);
+			this._block.Entities.Add(mText);
 		}
 	}
 }

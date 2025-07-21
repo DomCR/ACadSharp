@@ -320,6 +320,7 @@ namespace ACadSharp.IO.DWG
 
 			byte flags = 0;
 			flags |= dimension.IsTextUserDefinedLocation ? (byte)0b00 : (byte)0b01;
+			//flags |= 8;
 
 			this._writer.WriteByte(flags);
 
@@ -334,7 +335,7 @@ namespace ACadSharp.IO.DWG
 			//Ins X - scale BD 41 Undoc'd. These apply to the insertion of the
 			//Ins Y - scale BD 42 anonymous block. None of them can be
 			//Ins Z - scale BD 43 dealt with via entget/entmake/entmod.
-			this._writer.Write3BitDouble(new XYZ());
+			this._writer.Write3BitDouble(new XYZ(1));
 			//Ins rotation BD 54 The last 2(43 and 54) are reported by DXFOUT(when not default values).
 			//ALL OF THEM can be set via DXFIN, however.
 			this._writer.WriteBitDouble(0);
@@ -358,9 +359,9 @@ namespace ACadSharp.IO.DWG
 				//Unknown B 73
 				this._writer.WriteBit(value: false);
 				//Flip arrow1 B 74
-				this._writer.WriteBit(value: false);
+				this._writer.WriteBit(dimension.FlipArrow1);
 				//Flip arrow2 B 75
-				this._writer.WriteBit(value: false);
+				this._writer.WriteBit(dimension.FlipArrow2);
 			}
 
 			//Common:

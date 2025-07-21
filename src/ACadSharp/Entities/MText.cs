@@ -190,7 +190,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Ignored, 43)]
 		public double VerticalHeight { get; set; } = 0.2;
 
-		private double _height = 1.0;
+		private double _height = 0.18;
 
 		private TextStyle _style = TextStyle.Default;
 

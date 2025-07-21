@@ -1,8 +1,10 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Types.Units;
+using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Globalization;
 
 //	TODO should the described coupling of properties be implemented in this class,
 //		 e.g., GenerateTolerances and LimitsGeneration?
@@ -213,7 +215,7 @@ namespace ACadSharp.Tables
 		/// </para>
 		/// </value>
 		[DxfCodeValue(141)]
-		public double CenterMarkSize { get; set; } = 2.5;
+		public double CenterMarkSize { get; set; } = 0.0900;
 
 		/// <summary>
 		/// Controls options for user-positioned text
@@ -698,7 +700,7 @@ namespace ACadSharp.Tables
 		/// </remarks>
 		/// <value>
 		/// <para>
-		/// <b>0.0</b>
+		/// <b>1.0</b>
 		/// </para><para>
 		/// A reasonable default value is computed based on the scaling between the current
 		/// model space viewport and paper space. If you are in paper space or model space

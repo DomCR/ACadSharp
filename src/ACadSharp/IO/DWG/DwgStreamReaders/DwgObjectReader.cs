@@ -4979,7 +4979,7 @@ namespace ACadSharp.IO.DWG
 			this._objectReader.ReadBit();
 
 			//External reference block handle(hard pointer)
-			long block = (long)this.handleReference();
+			template.BlockHandle = this.handleReference();
 
 			//340 shapefile(DIMTXSTY)(hard pointer)
 			template.TextStyleHandle = this.handleReference();

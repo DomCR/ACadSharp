@@ -117,7 +117,7 @@ namespace ACadSharp.Entities
 		/// Apply a rotation to this entity.
 		/// </summary>
 		/// <param name="axis"></param>
-		/// <param name="rotation"></param>
+		/// <param name="rotation">The angle to rotate around the given axis, in radians.</param>
 		public void ApplyRotation(XYZ axis, double rotation)
 		{
 			Transform transform = Transform.CreateRotation(axis, rotation);
