@@ -115,8 +115,7 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		/// <remarks>
-		/// For <see cref="DimensionAngular2Line"/> the generation of the block is not yet implemented
-		/// due its complexity.
+		/// For <see cref="DimensionAngular2Line"/> the generation of the block is not yet implemented.
 		/// </remarks>
 		public override void UpdateBlock()
 		{
