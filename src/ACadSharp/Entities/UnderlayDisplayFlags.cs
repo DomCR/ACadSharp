@@ -31,6 +31,8 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Clip is inside mode.
 		/// </summary>
-		ClipInsideMode = 16
+		ClipInsideMode = 16,
+
+		Default = 0xB,
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSMath;
@@ -176,7 +177,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityMLine:
 					return this.readEntityCodes<MLine>(new CadMLineTemplate(), this.readMLine);
 				case DxfFileToken.EntityPdfUnderlay:
-					return this.readEntityCodes<PdfUnderlay>(new CadPdfUnderlayTemplate(), this.readUnderlayEntity);
+					return this.readEntityCodes<PdfUnderlay>(new CadUnderlayTemplate<PdfUnderlayDefinition>(new PdfUnderlay()), this.readUnderlayEntity<PdfUnderlayDefinition>);
 				case DxfFileToken.EntityPoint:
 					return this.readEntityCodes<Point>(new CadEntityTemplate<Point>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityPolyline:
@@ -1083,9 +1084,10 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private bool readUnderlayEntity(CadEntityTemplate template, DxfMap map, string subclass = null)
+		private bool readUnderlayEntity<T>(CadEntityTemplate template, DxfMap map, string subclass = null)
+			where T : PdfUnderlayDefinition
 		{
-			CadPdfUnderlayTemplate tmp = template as CadPdfUnderlayTemplate;
+			CadUnderlayTemplate<T> tmp = template as CadUnderlayTemplate<T>;
 
 			switch (this._reader.Code)
 			{
