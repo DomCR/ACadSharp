@@ -6244,12 +6244,12 @@ namespace ACadSharp.IO.DWG
 
 				if ((flags & 1U) > 0U)
 				{
-					string colorName = this._textReader.ReadVariableText();
+					bookColor.ColorName = this._textReader.ReadVariableText();
 				}
 
 				if ((flags & 2U) > 0U)
 				{
-					string bookName = this._textReader.ReadVariableText();
+					bookColor.BookName = this._textReader.ReadVariableText();
 				}
 
 				byte[] arr = LittleEndianConverter.Instance.GetBytes(trueColor);
