@@ -1,6 +1,4 @@
-﻿using ACadSharp.IO;
-using System.IO;
-using Xunit.Abstractions;
+﻿using Xunit.Abstractions;
 
 namespace ACadSharp.Tests.TestModels
 {

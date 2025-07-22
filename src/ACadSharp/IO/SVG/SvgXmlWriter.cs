@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
 using System;
@@ -17,6 +18,23 @@ namespace ACadSharp.IO.SVG
 
 		public SvgConfiguration Configuration { get; } = new();
 
+		public Layout Layout { get; set; }
+
+		public PlotPaperUnits PlotPaperUnits
+		{
+			get
+			{
+				if (this.Layout == null)
+				{
+					return PlotPaperUnits.Milimeters;
+				}
+				else
+				{
+					return Layout.PaperUnits;
+				}
+			}
+		}
+
 		public SvgXmlWriter(Stream w, Encoding encoding, SvgConfiguration configuration) : base(w, encoding)
 		{
 			this.Configuration = configuration;
@@ -24,7 +42,10 @@ namespace ACadSharp.IO.SVG
 
 		public void WriteAttributeString(string localName, double value)
 		{
-			this.WriteAttributeString(localName, value.ToString(CultureInfo.InvariantCulture));
+			this.WriteAttributeString(
+				localName,
+				(SvgConfiguration.ToPixelSize(value, PlotPaperUnits))
+				.ToString(CultureInfo.InvariantCulture));
 		}
 
 		public void WriteBlock(BlockRecord record)
@@ -41,8 +62,39 @@ namespace ACadSharp.IO.SVG
 			this.endDocument();
 		}
 
+		public void WriteLayout(Layout layout)
+		{
+			this.Layout = layout;
+
+			XYZ lowerCorner = XYZ.Zero;
+			XYZ upperCorner = new XYZ(layout.PaperWidth, layout.PaperHeight, 0.0);
+			BoundingBox box = new BoundingBox(layout.MinExtents, layout.MaxExtents);
+			this.startDocument(box);
+
+			foreach (var e in layout.AssociatedBlock.Entities)
+			{
+				if (e.Layer.Name.Equals("control", StringComparison.OrdinalIgnoreCase))
+				{
+				}
+
+				this.writeEntity(e);
+			}
+
+			this.endDocument();
+		}
+
+		public override void WriteValue(double value)
+		{
+			base.WriteValue(SvgConfiguration.ToPixelSize(value, this.PlotPaperUnits));
+		}
+
 		private string colorSvg(Color color)
 		{
+			if (Layout != null && color.Equals(Color.Default))
+			{
+				color = Color.Black;
+			}
+
 			return $"rgb({color.R},{color.G},{color.B})";
 		}
 
@@ -79,6 +131,11 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndAttribute();
 
 			this.WriteAttributeString("transform", $"scale(1,-1)");
+
+			if (this.Layout != null)
+			{
+				this.WriteAttributeString("style", "background-color:white");
+			}
 		}
 
 		private string svgPoints(IEnumerable<IVector> points, Transform transform)
@@ -146,34 +203,6 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndElement();
 		}
 
-		private void writeInsert(Insert insert, Transform transform)
-		{
-			var insertTransform = insert.GetTransform();
-			var merged = new Transform(transform.Matrix * insertTransform.Matrix);
-
-			StringBuilder sb = new StringBuilder();
-			sb.Append($"translate(");
-			sb.Append($"{insert.InsertPoint.X.ToString(CultureInfo.InvariantCulture)},");
-			sb.Append($"{insert.InsertPoint.Y.ToString(CultureInfo.InvariantCulture)})");
-			sb.Append(' ');
-			sb.Append($"scale(");
-			sb.Append($"{insert.XScale.ToString(CultureInfo.InvariantCulture)},");
-			sb.Append($"{insert.YScale.ToString(CultureInfo.InvariantCulture)})");
-			sb.Append(' ');
-			sb.Append($"rotate(");
-			sb.Append($"{insert.Rotation.ToString(CultureInfo.InvariantCulture)})");
-
-			this.WriteStartElement("g");
-			this.WriteAttributeString("transform", sb.ToString());
-
-			foreach (var e in insert.Block.Entities)
-			{
-				this.writeEntity(e);
-			}
-
-			this.WriteEndElement();
-		}
-
 		private void writeEntity(Entity entity)
 		{
 			this.writeEntity(entity, new Transform());
@@ -216,6 +245,23 @@ namespace ACadSharp.IO.SVG
 			}
 		}
 
+		private void writeEntityStyle(IEntity entity)
+		{
+			Color color = entity.GetActiveColor();
+
+			this.WriteAttributeString("stroke", this.colorSvg(color));
+
+			var lineWeight = entity.LineWeight;
+			switch (lineWeight)
+			{
+				case LineweightType.ByLayer:
+					lineWeight = entity.Layer.LineWeight;
+					break;
+			}
+
+			this.WriteAttributeString("stroke-width", Configuration.GetLineWeightValue(lineWeight).ToString(CultureInfo.InvariantCulture));
+		}
+
 		private void writeHatch(Hatch hatch, Transform transform)
 		{
 			this.WriteStartElement("g");
@@ -243,28 +289,32 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndElement();
 		}
 
-		private void writePattern(HatchPattern pattern)
+		private void writeInsert(Insert insert, Transform transform)
 		{
-			this.WriteStartElement("pattern");
+			var insertTransform = insert.GetTransform();
+			var merged = new Transform(transform.Matrix * insertTransform.Matrix);
 
-			this.WriteEndElement();
-		}
+			StringBuilder sb = new StringBuilder();
+			sb.Append($"translate(");
+			sb.Append($"{insert.InsertPoint.X.ToString(CultureInfo.InvariantCulture)},");
+			sb.Append($"{insert.InsertPoint.Y.ToString(CultureInfo.InvariantCulture)})");
+			sb.Append(' ');
+			sb.Append($"scale(");
+			sb.Append($"{insert.XScale.ToString(CultureInfo.InvariantCulture)},");
+			sb.Append($"{insert.YScale.ToString(CultureInfo.InvariantCulture)})");
+			sb.Append(' ');
+			sb.Append($"rotate(");
+			sb.Append($"{insert.Rotation.ToString(CultureInfo.InvariantCulture)})");
 
-		private void writeEntityStyle(IEntity entity)
-		{
-			Color color = entity.GetActiveColor();
+			this.WriteStartElement("g");
+			this.WriteAttributeString("transform", sb.ToString());
 
-			this.WriteAttributeString("stroke", this.colorSvg(color));
-
-			var lineWeight = entity.LineWeight;
-			switch (lineWeight)
+			foreach (var e in insert.Block.Entities)
 			{
-				case LineweightType.ByLayer:
-					lineWeight = entity.Layer.LineWeight;
-					break;
+				this.writeEntity(e);
 			}
 
-			this.WriteAttributeString("stroke-width", Configuration.GetLineWeightValue(lineWeight));
+			this.WriteEndElement();
 		}
 
 		private void writeLine(Line line, Transform transform)
@@ -280,6 +330,13 @@ namespace ACadSharp.IO.SVG
 			this.WriteAttributeString("y1", start.Y);
 			this.WriteAttributeString("x2", end.X);
 			this.WriteAttributeString("y2", end.Y);
+
+			this.WriteEndElement();
+		}
+
+		private void writePattern(HatchPattern pattern)
+		{
+			this.WriteStartElement("pattern");
 
 			this.WriteEndElement();
 		}
@@ -323,12 +380,17 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndElement();
 		}
 
+		private string toStringFormat(double value)
+		{
+			return SvgConfiguration.ToPixelSize(value, this.PlotPaperUnits).ToString(CultureInfo.InvariantCulture);
+		}
+
 		private void writeText(IText text, Transform transform)
 		{
 			var insert = transform.ApplyTransform(text.InsertPoint);
 
 			this.WriteStartElement("g");
-			this.WriteAttributeString("transform", $"translate({insert.X.ToString(CultureInfo.InvariantCulture)},{insert.Y.ToString(CultureInfo.InvariantCulture)})");
+			this.WriteAttributeString("transform", $"translate({toStringFormat(insert.X)},{toStringFormat(insert.Y)})");
 
 			this.WriteStartElement("text");
 			this.WriteAttributeString("transform", "scale(1,-1)");

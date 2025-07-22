@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ACadSharp.Objects;
+using System;
+using System.ComponentModel;
 
 namespace ACadSharp.IO
 {
@@ -10,7 +12,10 @@ namespace ACadSharp.IO
 		/// <summary>
 		/// The <see cref="Entities.Entity.LineWeight"/> will be divided by this value to process the stroke-width in the svg.
 		/// </summary>
-		public double LineWeightRatio { get; set; } = 5;
+		/// <remarks>
+		/// The default value is 100, which matches with the line weight real value in mm.
+		/// </remarks>
+		public double LineWeightRatio { get; set; } = 100;
 
 		/// <summary>
 		/// Radius applied for the points.
@@ -23,6 +28,7 @@ namespace ACadSharp.IO
 		/// <summary>
 		/// Pixel size reference for the configuration.
 		/// </summary>
+		[Obsolete("this is only for mm")]
 		public const double PixelSize = 3.7795275591;
 
 		/// <summary>
@@ -35,10 +41,25 @@ namespace ACadSharp.IO
 			double value = (double)lineweightType;
 			if (lineweightType == LineweightType.W0)
 			{
-				value = 1;
+				value = 0.001;
 			}
 
-			return Math.Abs(value) / this.LineWeightRatio;
+			return ToPixelSize(Math.Abs(value) / this.LineWeightRatio, PlotPaperUnits.Milimeters);
+		}
+
+		public static double ToPixelSize(double value, PlotPaperUnits units)
+		{
+			switch (units)
+			{
+				case PlotPaperUnits.Inches:
+					return value * 96;
+				case PlotPaperUnits.Milimeters:
+					return value * 96 / 25.4;
+				case PlotPaperUnits.Pixels:
+					return value;
+				default:
+					throw new InvalidEnumArgumentException(nameof(units), (int)units, typeof(PlotPaperUnits));
+			}
 		}
 	}
 }

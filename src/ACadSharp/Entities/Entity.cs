@@ -163,6 +163,10 @@ namespace ACadSharp.Entities
 			{
 				color = this.Layer.Color;
 			}
+			else if (this.Color.IsByBlock && this.Owner is BlockRecord record)
+			{
+				color = record.BlockEntity.Color;
+			}
 			else
 			{
 				color = this.Color;

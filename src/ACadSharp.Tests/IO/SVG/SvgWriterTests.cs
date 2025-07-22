@@ -13,7 +13,7 @@ namespace ACadSharp.Tests.IO.SVG
 	{
 		public static CadDocument Document { get; }
 
-		public static TheoryData<Layout> Layouts { get; } = new();
+		public static readonly TheoryData<string> LayoutNames = new();
 
 		static SvgWriterTests()
 		{
@@ -27,7 +27,7 @@ namespace ACadSharp.Tests.IO.SVG
 					continue;
 				}
 
-				Layouts.Add(item);
+				LayoutNames.Add(item.Name);
 			}
 		}
 
@@ -36,10 +36,12 @@ namespace ACadSharp.Tests.IO.SVG
 		}
 
 		[Theory]
-		[MemberData(nameof(Layouts))]
-		public void WriteLayouts(Layout layout)
+		[MemberData(nameof(LayoutNames))]
+		public void WriteLayouts(string name)
 		{
-			using (SvgWriter writer = createWriter($"{layout.Name}.svg", Document))
+			Layout layout = Document.Layouts[name];
+
+			using (SvgWriter writer = createWriter($"{name}.svg", Document))
 			{
 				writer.Write(layout);
 			}
@@ -59,6 +61,7 @@ namespace ACadSharp.Tests.IO.SVG
 			string output = Path.Combine(TestVariables.OutputSvgFolder, filename);
 
 			var writer = new SvgWriter(output, doc);
+			writer.Configuration = this._svgConfiguration;
 			writer.OnNotification += this.onNotification;
 			return writer;
 		}
