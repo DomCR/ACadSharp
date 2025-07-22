@@ -76,6 +76,14 @@ namespace ACadSharp
 		public ImageDefinitionCollection ImageDefinitions { get; private set; }
 
 		/// <summary>
+		/// The collection of all images in the drawing.
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadImageDict"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public PdfDefinitionCollection PdfDefinitions { get; private set; }
+
+		/// <summary>
 		/// The collection of all layers in the drawing.
 		/// </summary>
 		public LayersTable Layers { get; private set; }
@@ -400,6 +408,11 @@ namespace ACadSharp
 			if (this.updateCollection(CadDictionary.AcadImageDict, createDictionaries, out CadDictionary imageDefinitions))
 			{
 				this.ImageDefinitions = new ImageDefinitionCollection(imageDefinitions);
+			}
+
+			if (this.updateCollection(CadDictionary.AcadPdfDefinitions, createDictionaries, out CadDictionary pdfDefinitions))
+			{
+				this.PdfDefinitions = new PdfDefinitionCollection(pdfDefinitions);
 			}
 
 			if (this.updateCollection(CadDictionary.AcadColor, createDictionaries, out CadDictionary colors))

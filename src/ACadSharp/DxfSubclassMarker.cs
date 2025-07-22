@@ -24,15 +24,15 @@
 
 		public const string Block2PtParameter = "AcDbBlock2PtParameter";
 
+		public const string BlockAction = "AcDbBlockAction";
+
+		public const string BlockBasePointParameter = "AcDbBlockBasePointParameter";
+
 		public const string BlockBegin = "AcDbBlockBegin";
 
 		public const string BlockElement = "AcDbBlockElement";
 
 		public const string BlockEnd = "AcDbBlockEnd";
-
-		public const string BlockAction = "AcDbBlockAction";
-
-		public const string BlockBasePointParameter = "AcDbBlockBasePointParameter";
 
 		public const string BlockFlipAction = "AcDbBlockFlipAction";
 
@@ -46,15 +46,17 @@
 
 		public const string BlockGripLocationComponent = "AcDbBlockGripLocationComponent";
 
-		public const string BlockVisibilityGrip = "AcDbBlockVisibilityGrip";
-
 		public const string BlockLinearParameter = "AcDbBlockLinearParameter";
 
 		public const string BlockParameter = "AcDbBlockParameter";
 
 		public const string BlockRecord = "AcDbBlockTableRecord";
 
+		public const string BlockVisibilityGrip = "AcDbBlockVisibilityGrip";
+
 		public const string BlockVisibilityParameter = "AcDbBlockVisibilityParameter";
+
+		public const string CellStyleMap = "AcDbCellStyleMap";
 
 		public const string Circle = "AcDbCircle";
 
@@ -134,6 +136,10 @@
 
 		public const string OrdinateDimension = "AcDbOrdinateDimension";
 
+		public const string PdfDefinition = "AcDbPdfDefinition";
+
+		public const string PdfReference = "AcDbPdfReference";
+
 		public const string PlotSettings = "AcDbPlotSettings";
 
 		public const string Point = "AcDbPoint";
@@ -185,8 +191,6 @@
 		public const string TableStyle = "AcDbTableStyle";
 
 		public const string Text = "AcDbText";
-		
-		public const string CellStyleMap = "AcDbCellStyleMap";
 
 		public const string TextStyle = "AcDbTextStyleTableRecord";
 

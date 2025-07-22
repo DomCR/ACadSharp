@@ -4,6 +4,7 @@ using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.IO.DWG
 {
@@ -98,6 +99,9 @@ namespace ACadSharp.IO.DWG
 				case MultiLeader multiLeader:
 					this.writeMultiLeader(multiLeader);
 					break;
+				case PdfUnderlay pdfUnderlay:
+					this.writePdfUnderlay(pdfUnderlay);
+					break;
 				case Point p:
 					this.writePoint(p);
 					break;
@@ -187,6 +191,32 @@ namespace ACadSharp.IO.DWG
 			this.registerObject(entity);
 
 			this.writeChildEntities(children, seqend);
+		}
+
+		private void writePdfUnderlay(PdfUnderlay underlay)
+		{
+			this._writer.Write3BitDouble(underlay.Normal);
+
+			this._writer.Write3BitDouble(underlay.InsertPoint);
+
+			this._writer.WriteBitDouble(underlay.Rotation);
+
+			this._writer.WriteBitDouble(underlay.XScale);
+			this._writer.WriteBitDouble(underlay.YScale);
+			this._writer.WriteBitDouble(underlay.ZScale);
+
+			this._writer.WriteByte((byte)underlay.Flags);
+
+			this._writer.WriteByte(underlay.Contrast);
+			this._writer.WriteByte(underlay.Fade);
+
+			this._writer.HandleReference(DwgReferenceType.HardPointer, underlay.Definition);
+
+			this._writer.WriteBitLong(underlay.ClipBoundaryVertices.Count);
+			foreach (var v in underlay.ClipBoundaryVertices)
+			{
+				this._writer.Write2RawDouble(v);
+			}
 		}
 
 		private void writeArc(Arc arc)
@@ -290,6 +320,7 @@ namespace ACadSharp.IO.DWG
 
 			byte flags = 0;
 			flags |= dimension.IsTextUserDefinedLocation ? (byte)0b00 : (byte)0b01;
+			//flags |= 8;
 
 			this._writer.WriteByte(flags);
 
@@ -304,7 +335,7 @@ namespace ACadSharp.IO.DWG
 			//Ins X - scale BD 41 Undoc'd. These apply to the insertion of the
 			//Ins Y - scale BD 42 anonymous block. None of them can be
 			//Ins Z - scale BD 43 dealt with via entget/entmake/entmod.
-			this._writer.Write3BitDouble(new XYZ());
+			this._writer.Write3BitDouble(new XYZ(1));
 			//Ins rotation BD 54 The last 2(43 and 54) are reported by DXFOUT(when not default values).
 			//ALL OF THEM can be set via DXFIN, however.
 			this._writer.WriteBitDouble(0);
@@ -328,9 +359,9 @@ namespace ACadSharp.IO.DWG
 				//Unknown B 73
 				this._writer.WriteBit(value: false);
 				//Flip arrow1 B 74
-				this._writer.WriteBit(value: false);
+				this._writer.WriteBit(dimension.FlipArrow1);
 				//Flip arrow2 B 75
-				this._writer.WriteBit(value: false);
+				this._writer.WriteBit(dimension.FlipArrow2);
 			}
 
 			//Common:

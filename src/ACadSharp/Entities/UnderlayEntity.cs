@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
+using ACadSharp.Objects.Collections;
 using CSMath;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,21 @@ namespace ACadSharp.Entities
 	/// Common base class for all underlay entities, like <see cref="PdfUnderlay" />.
 	/// </summary>
 	[DxfSubClass(null, true)]
-	public abstract class UnderlayEntity : Entity
+	public abstract class UnderlayEntity<T> : Entity
+		where T : UnderlayDefinition
 	{
 		/// <summary>
-		/// Contrast
+		/// 2d points in OCS/ECS.
+		/// </summary>
+		/// <remarks>
+		/// If only two, then they are the lower left and upper right corner points of a clip rectangle. <br/>
+		/// If more than two, then they are the vertices of a clipping polygon.
+		/// </remarks>
+		[DxfCollectionCodeValue(11, 21)]
+		public List<XY> ClipBoundaryVertices { get; set; } = new List<XY>();
+
+		/// <summary>
+		/// Contrast.
 		/// </summary>
 		/// <remarks>
 		/// 0-100; default = 50
@@ -33,11 +45,33 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		/// <summary>
+		/// The AcDbUnderlayDefinition object.
+		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public UnderlayDefinition Definition { get; set; }
+		public T Definition
+		{
+			get { return this._definition; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._definition = this.updateCollection(value, this.getDocumentCollection(this.Document));
+				}
+				else
+				{
+					this._definition = value;
+				}
+			}
+		}
 
 		/// <summary>
-		/// Fade
+		/// Fade.
 		/// </summary>
 		/// <value>
 		/// Range: 0 - 100 <br/>
@@ -62,10 +96,10 @@ namespace ACadSharp.Entities
 		/// Underlay display options.
 		/// </summary>
 		[DxfCodeValue(280)]
-		public UnderlayDisplayFlags Flags { get; set; }
+		public UnderlayDisplayFlags Flags { get; set; } = UnderlayDisplayFlags.Default;
 
 		/// <summary>
-		/// Insertion point(in WCS)
+		/// Insertion point(in WCS).
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ InsertPoint { get; set; }
@@ -151,7 +185,9 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		private byte _contrast = 50;
+		private byte _contrast = 100;
+
+		private T _definition;
 
 		private byte _fade = 0;
 
@@ -160,6 +196,19 @@ namespace ACadSharp.Entities
 		private double _yscale = 1;
 
 		private double _zscale = 1;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="UnderlayEntity{T}" /> class.
+		/// </summary>
+		/// <param name="definition"></param>
+		public UnderlayEntity(T definition)
+		{
+			this.Definition = definition;
+		}
+
+		internal UnderlayEntity()
+		{
+		}
 
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
@@ -200,9 +249,47 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			UnderlayEntity<T> clone = (UnderlayEntity<T>)base.Clone();
+
+			clone.Definition = (T)this.Definition?.Clone();
+
+			return clone;
+		}
+
+		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
 			return BoundingBox.Null;
+		}
+
+		internal override void AssignDocument(CadDocument doc)
+		{
+			base.AssignDocument(doc);
+
+			this._definition = this.updateCollection(this.Definition, getDocumentCollection(doc));
+
+			this.Document.PdfDefinitions.OnRemove += this.imageDefinitionsOnRemove;
+		}
+
+		internal override void UnassignDocument()
+		{
+			this.Document.ImageDefinitions.OnRemove -= this.imageDefinitionsOnRemove;
+
+			base.UnassignDocument();
+
+			this.Definition = (T)this.Definition?.Clone();
+		}
+
+		protected abstract ObjectDictionaryCollection<T> getDocumentCollection(CadDocument document);
+
+		private void imageDefinitionsOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this.Definition))
+			{
+				this.Definition = null;
+			}
 		}
 	}
 }

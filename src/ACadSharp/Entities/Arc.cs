@@ -45,6 +45,21 @@ namespace ACadSharp.Entities
 		public Arc() : base() { }
 
 		/// <summary>
+		/// Initializes a new instance of the <see cref="Arc"/> class.
+		/// </summary>
+		/// <param name="center"></param>
+		/// <param name="radius"></param>
+		/// <param name="start"></param>
+		/// <param name="end"></param>
+		public Arc(XYZ center, double radius, double start, double end) : base()
+		{
+			this.Center = center;
+			this.Radius = radius;
+			this.StartAngle = start;
+			this.EndAngle = end;
+		}
+
+		/// <summary>
 		/// Creates an arc using 2 points and a bulge.
 		/// </summary>
 		/// <param name="p1"></param>
@@ -117,7 +132,7 @@ namespace ACadSharp.Entities
 
 			base.ApplyTransform(transform);
 
-			Matrix3 trans = getWorldMatrix(transform, normal, this.Normal, out Matrix3 transOW, out Matrix3 transWO);
+			Matrix3 trans = this.getWorldMatrix(transform, normal, this.Normal, out Matrix3 transOW, out Matrix3 transWO);
 
 			XY start = XY.Rotate(new XY(this.Radius, 0.0), this.StartAngle);
 			XY end = XY.Rotate(new XY(this.Radius, 0.0), this.EndAngle);

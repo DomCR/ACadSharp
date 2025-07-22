@@ -154,7 +154,7 @@ namespace ACadSharp.Entities
 		public ClipType ClipType { get; set; } = ClipType.Rectangular;
 
 		/// <summary>
-		/// Clip boundary vertices
+		/// Clip boundary vertices.
 		/// </summary>
 		/// <remarks>
 		/// For rectangular clip boundary type, two opposite corners must be specified.Default is (-0.5,-0.5), (size.x-0.5, size.y-0.5). 2) For polygonal clip boundary type, three or more vertices must be specified.Polygonal vertices must be listed sequentially
@@ -167,16 +167,11 @@ namespace ACadSharp.Entities
 		/// Image definition.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public ImageDefinition Definition
+		public virtual ImageDefinition Definition
 		{
 			get { return this._definition; }
 			set
 			{
-				if (value == null)
-				{
-					return;
-				}
-
 				if (this.Document != null)
 				{
 					this._definition = this.updateCollection(value, this.Document.ImageDefinitions);

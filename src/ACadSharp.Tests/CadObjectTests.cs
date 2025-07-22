@@ -18,7 +18,9 @@ namespace ACadSharp.Tests
 		{
 			foreach (Type item in DataFactory.GetTypes<CadObject>())
 			{
-				if (item == typeof(UnknownEntity) || item == typeof(UnknownNonGraphicalObject))
+				if (item == typeof(UnknownEntity) 
+					|| item == typeof(PdfUnderlay) 
+					|| item == typeof(UnknownNonGraphicalObject))
 				{
 					continue;
 				}

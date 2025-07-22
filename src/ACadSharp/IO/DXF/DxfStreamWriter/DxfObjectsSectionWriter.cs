@@ -86,6 +86,12 @@ namespace ACadSharp.IO.DXF
 				case PlotSettings plotSettings:
 					this.writePlotSettings(plotSettings);
 					break;
+				case PdfUnderlayDefinition pdfUnderlayDefinition:
+					this.writePdfUnderlayDefinition(pdfUnderlayDefinition);
+					break;
+				case RasterVariables rasterVariables:
+					this.writeRasterVariables(rasterVariables);
+					break;
 				case Scale scale:
 					this.writeScale(scale);
 					break;
@@ -108,7 +114,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(62, color.Color.GetApproxIndex());
 			this._writer.WriteTrueColor(420, color.Color);
-			this._writer.Write(430, color.Name);
+			this._writer.Write(430, $"{color.Name}${color.BookName}");
 		}
 
 		protected void writeDictionary(CadDictionary e)
@@ -189,6 +195,28 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(148, plot.PaperImageOrigin.X, map);
 			this._writer.Write(149, plot.PaperImageOrigin.Y, map);
+		}
+
+		protected void writePdfUnderlayDefinition(PdfUnderlayDefinition definition)
+		{
+			DxfClassMap map = DxfClassMap.Create<PlotSettings>();
+
+			this._writer.Write(100, DxfSubclassMarker.UnderlayDefinition);
+
+			this._writer.Write(1, definition.File, map);
+			this._writer.Write(2, definition.Page, map);
+		}
+
+		protected void writeRasterVariables(RasterVariables variables)
+		{
+			DxfClassMap map = DxfClassMap.Create<RasterVariables>();
+
+			this._writer.Write(100, DxfSubclassMarker.RasterVariables);
+
+			this._writer.Write(90, variables.ClassVersion, map);
+			this._writer.Write(70, variables.IsDisplayFrameShown ? 1 : 0, map);
+			this._writer.Write(71, (short)variables.DisplayQuality, map);
+			this._writer.Write(72, (short)variables.DisplayQuality, map);
 		}
 
 		protected void writeScale(Scale scale)

@@ -17,6 +17,18 @@ namespace ACadSharp.Tests.Entities
 			AssertUtils.AreEqual(XYZ.Zero, dim.Center);
 		}
 
+		[Fact]
+		public void MeasurementTest()
+		{
+			var dim = this.createDim();
+
+			Assert.Equal(MathHelper.HalfPI, dim.Measurement);
+		}
+
+		public override void UpdateBlockTests()
+		{
+		}
+
 		protected override DimensionAngular2Line createDim()
 		{
 			DimensionAngular2Line angular = new DimensionAngular2Line();

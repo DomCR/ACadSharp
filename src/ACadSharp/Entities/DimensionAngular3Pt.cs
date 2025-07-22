@@ -35,8 +35,8 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				XY v1 = (XY)(this.FirstPoint - this.AngleVertex);
-				XY v2 = (XY)(this.SecondPoint - this.AngleVertex);
+				var v1 = this.FirstPoint - this.AngleVertex;
+				var v2 = this.SecondPoint - this.AngleVertex;
 
 				if (v1.Equals(v2))
 				{
@@ -80,6 +80,15 @@ namespace ACadSharp.Entities
 			this.FirstPoint = transform.ApplyTransform(this.FirstPoint);
 			this.SecondPoint = transform.ApplyTransform(this.SecondPoint);
 			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
+		}
+
+		/// <inheritdoc/>
+		/// <remarks>
+		/// For <see cref="DimensionAngular3Pt"/> the generation of the block is not yet implemented.
+		/// </remarks>
+		public override void UpdateBlock()
+		{
+			base.UpdateBlock();
 		}
 
 		/// <inheritdoc/>
