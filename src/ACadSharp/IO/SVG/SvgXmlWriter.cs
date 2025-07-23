@@ -146,11 +146,11 @@ namespace ACadSharp.IO.SVG
 			}
 
 			StringBuilder sb = new StringBuilder();
-			sb.Append(transform.ApplyTransform(points.First().Convert<XYZ>()).SvgPoint());
+			sb.Append(toStringFormat(points.First().Convert<XYZ>()));
 			foreach (IVector point in points.Skip(1))
 			{
 				sb.Append(' ');
-				sb.Append(transform.ApplyTransform(point.Convert<XYZ>()).SvgPoint());
+				sb.Append(toStringFormat(point.Convert<XYZ>()));
 			}
 
 			return sb.ToString();
@@ -159,6 +159,14 @@ namespace ACadSharp.IO.SVG
 		private string toStringFormat(double value)
 		{
 			return SvgConfiguration.ToPixelSize(value, this.PlotPaperUnits).ToString(CultureInfo.InvariantCulture);
+		}
+
+		private string toStringFormat(XYZ value)
+		{
+			string x = this.toStringFormat(value.X);
+			string y = this.toStringFormat(value.Y);
+
+			return $"{x},{y}";
 		}
 
 		private void writeArc(Arc arc, Transform transform)

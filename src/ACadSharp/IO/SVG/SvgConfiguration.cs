@@ -23,7 +23,7 @@ namespace ACadSharp.IO
 		/// <remarks>
 		/// In svg the points will be drawn as circles.
 		/// </remarks>
-		public double PointRadius { get; set; } = 0.5;
+		public double PointRadius { get; set; } = 0.1;
 
 		/// <summary>
 		/// Pixel size reference for the configuration.
