@@ -38,5 +38,13 @@ namespace ACadSharp.Entities
 		/// A group code 50 (rotation angle in radians) passed as DXF input is converted to the equivalent direction vector (if both a code 50 and codes 11, 21, 31 are passed, the last one wins). This is provided as a convenience for conversions from text objects
 		/// </remarks>
 		XYZ AlignmentPoint { get; set; }
+
+		/// <summary>
+		/// Specifies the rotation angle for the object.
+		/// </summary>
+		/// <value>
+		/// The rotation angle in radians.
+		/// </value>
+		public double Rotation { get; }
 	}
 }

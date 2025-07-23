@@ -44,7 +44,7 @@ namespace ACadSharp.IO.SVG
 		{
 			this.WriteAttributeString(
 				localName,
-				(SvgConfiguration.ToPixelSize(value, PlotPaperUnits))
+				SvgConfiguration.ToPixelSize(value, PlotPaperUnits)
 				.ToString(CultureInfo.InvariantCulture));
 		}
 
@@ -339,7 +339,7 @@ namespace ACadSharp.IO.SVG
 			this.WriteAttributeString("transform", sb.ToString());
 		}
 
-		private void writeTransform(XYZ? translation, XYZ? scale, double? rotation)
+		private void writeTransform(XYZ? translation = null, XYZ? scale = null, double? rotation = null)
 		{
 			StringBuilder sb = new StringBuilder();
 
@@ -348,8 +348,8 @@ namespace ACadSharp.IO.SVG
 				var t = translation.Value;
 
 				sb.Append($"translate(");
-				sb.Append($"{toStringFormat(t.X)},");
-				sb.Append($"{toStringFormat(t.Y)})");
+				sb.Append($"{t.X.ToString(CultureInfo.InvariantCulture)},");
+				sb.Append($"{t.Y.ToString(CultureInfo.InvariantCulture)})");
 				sb.Append(' ');
 			}
 
@@ -358,17 +358,17 @@ namespace ACadSharp.IO.SVG
 				var s = scale.Value;
 
 				sb.Append($"scale(");
-				sb.Append($"{toStringFormat(s.X)},");
-				sb.Append($"{toStringFormat(s.Y)})");
+				sb.Append($"{s.X.ToString(CultureInfo.InvariantCulture)},");
+				sb.Append($"{s.Y.ToString(CultureInfo.InvariantCulture)})");
 				sb.Append(' ');
 			}
 
-			if (scale.HasValue)
+			if (rotation.HasValue)
 			{
-				var r = rotation.Value;
+				var r = -MathHelper.RadToDeg(rotation.Value);
 
 				sb.Append($"rotate(");
-				sb.Append($"{toStringFormat(r)})");
+				sb.Append($"{r.ToString(CultureInfo.InvariantCulture)})");
 			}
 
 			this.WriteAttributeString("transform", sb.ToString());
@@ -444,7 +444,7 @@ namespace ACadSharp.IO.SVG
 			if (text is TextEntity lineText
 				&& (lineText.HorizontalAlignment != TextHorizontalAlignment.Left
 				|| lineText.VerticalAlignment != TextVerticalAlignmentType.Baseline)
-				&& !(lineText.HorizontalAlignment == TextHorizontalAlignment.Fit 
+				&& !(lineText.HorizontalAlignment == TextHorizontalAlignment.Fit
 				|| lineText.HorizontalAlignment == TextHorizontalAlignment.Aligned))
 			{
 				insert = lineText.AlignmentPoint;
@@ -460,7 +460,8 @@ namespace ACadSharp.IO.SVG
 			this.WriteAttributeString("transform", $"translate({toStringFormat(insert.X)},{toStringFormat(insert.Y)})");
 
 			this.WriteStartElement("text");
-			this.WriteAttributeString("transform", "scale(1,-1)");
+
+			this.writeTransform(scale: new XYZ(1, -1, 0), rotation: text.Rotation != 0 ? text.Rotation : null);
 
 			this.WriteAttributeString("fill", this.colorSvg(text.GetActiveColor()));
 
