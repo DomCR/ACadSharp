@@ -213,7 +213,7 @@ namespace ACadSharp.Entities
 				this.EndAngle,
 				this.Normal,
 				start
-				);
+			);
 		}
 	}
 }
