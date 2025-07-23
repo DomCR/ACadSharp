@@ -156,6 +156,11 @@ namespace ACadSharp.IO.SVG
 			return sb.ToString();
 		}
 
+		private string toStringFormat(double value)
+		{
+			return SvgConfiguration.ToPixelSize(value, this.PlotPaperUnits).ToString(CultureInfo.InvariantCulture);
+		}
+
 		private void writeArc(Arc arc, Transform transform)
 		{
 			//A rx ry rotation large-arc-flag sweep-flag x y
@@ -317,6 +322,58 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndElement();
 		}
 
+		private void writeTransform(Transform transform)
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.Append($"translate(");
+			sb.Append($"{transform.Translation.X.ToString(CultureInfo.InvariantCulture)},");
+			sb.Append($"{transform.Translation.Y.ToString(CultureInfo.InvariantCulture)})");
+			sb.Append(' ');
+			sb.Append($"scale(");
+			sb.Append($"{transform.Scale.X.ToString(CultureInfo.InvariantCulture)},");
+			sb.Append($"{transform.Scale.Y.ToString(CultureInfo.InvariantCulture)})");
+			sb.Append(' ');
+			sb.Append($"rotate(");
+			sb.Append($"{transform.EulerRotation.X.ToString(CultureInfo.InvariantCulture)})");
+
+			this.WriteAttributeString("transform", sb.ToString());
+		}
+
+		private void writeTransform(XYZ? translation, XYZ? scale, double? rotation)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			if (translation.HasValue)
+			{
+				var t = translation.Value;
+
+				sb.Append($"translate(");
+				sb.Append($"{toStringFormat(t.X)},");
+				sb.Append($"{toStringFormat(t.Y)})");
+				sb.Append(' ');
+			}
+
+			if (scale.HasValue)
+			{
+				var s = scale.Value;
+
+				sb.Append($"scale(");
+				sb.Append($"{toStringFormat(s.X)},");
+				sb.Append($"{toStringFormat(s.Y)})");
+				sb.Append(' ');
+			}
+
+			if (scale.HasValue)
+			{
+				var r = rotation.Value;
+
+				sb.Append($"rotate(");
+				sb.Append($"{toStringFormat(r)})");
+			}
+
+			this.WriteAttributeString("transform", sb.ToString());
+		}
+
 		private void writeLine(Line line, Transform transform)
 		{
 			var start = transform.ApplyTransform(line.StartPoint);
@@ -380,14 +437,24 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndElement();
 		}
 
-		private string toStringFormat(double value)
-		{
-			return SvgConfiguration.ToPixelSize(value, this.PlotPaperUnits).ToString(CultureInfo.InvariantCulture);
-		}
-
 		private void writeText(IText text, Transform transform)
 		{
-			var insert = transform.ApplyTransform(text.InsertPoint);
+			XYZ insert;
+
+			if (text is TextEntity lineText
+				&& (lineText.HorizontalAlignment != TextHorizontalAlignment.Left
+				|| lineText.VerticalAlignment != TextVerticalAlignmentType.Baseline)
+				&& !(lineText.HorizontalAlignment == TextHorizontalAlignment.Fit 
+				|| lineText.HorizontalAlignment == TextHorizontalAlignment.Aligned))
+			{
+				insert = lineText.AlignmentPoint;
+			}
+			else
+			{
+				insert = text.InsertPoint;
+			}
+
+			insert = transform.ApplyTransform(insert);
 
 			this.WriteStartElement("g");
 			this.WriteAttributeString("transform", $"translate({toStringFormat(insert.X)},{toStringFormat(insert.Y)})");
@@ -473,6 +540,20 @@ namespace ACadSharp.IO.SVG
 							break;
 						case TextHorizontalAlignment.Right:
 							this.WriteAttributeString("text-anchor", "end");
+							break;
+					}
+
+					switch (textEntity.VerticalAlignment)
+					{
+						case TextVerticalAlignmentType.Baseline:
+						case TextVerticalAlignmentType.Bottom:
+							this.WriteAttributeString("alignment-baseline", "baseline");
+							break;
+						case TextVerticalAlignmentType.Middle:
+							this.WriteAttributeString("alignment-baseline", "middle");
+							break;
+						case TextVerticalAlignmentType.Top:
+							this.WriteAttributeString("alignment-baseline", "hanging");
 							break;
 					}
 
