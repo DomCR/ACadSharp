@@ -164,7 +164,7 @@ namespace ACadSharp.Entities
 					this.StartParameter,
 					this.EndParameter,
 					this.Normal,
-					this.EndPoint,
+					this.EndPoint + this.Center,
 					this.RadiusRatio
 					);
 		}

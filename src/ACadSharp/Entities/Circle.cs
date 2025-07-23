@@ -127,7 +127,7 @@ namespace ACadSharp.Entities
 					0,
 					MathHelper.TwoPI,
 					this.Normal,
-					start - this.Center,
+					start,
 					this.RadiusRatio
 					);
 		}
