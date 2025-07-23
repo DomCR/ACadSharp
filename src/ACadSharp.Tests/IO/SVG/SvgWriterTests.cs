@@ -1,8 +1,5 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.IO;
+﻿using ACadSharp.IO;
 using ACadSharp.Objects;
-using ACadSharp.Tests.Common;
-using System;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
