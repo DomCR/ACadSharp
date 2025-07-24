@@ -105,9 +105,11 @@ namespace ACadSharp.IO.SVG
 
 			var printScale = layout.PrintScale;
 
+			Transform transform = new Transform(XYZ.Zero, new XYZ(layout.PrintScale), XYZ.Zero);
+
 			foreach (var e in layout.AssociatedBlock.Entities)
 			{
-				this.writeEntity(e);
+				this.writeEntity(e, transform);
 			}
 
 			this.endDocument();
@@ -303,7 +305,7 @@ namespace ACadSharp.IO.SVG
 					break;
 			}
 
-			this.WriteAttributeString("stroke-width", this.Configuration.GetLineWeightValue(lineWeight).ToString(CultureInfo.InvariantCulture));
+			this.WriteAttributeString("stroke-width",$"{this.Configuration.GetLineWeightValue(lineWeight).ToString(CultureInfo.InvariantCulture)}mm" );
 
 			this.writeTransform(transform);
 		}
@@ -357,10 +359,10 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(line, transform);
 
-			this.WriteAttributeString("x1", line.StartPoint.X);
-			this.WriteAttributeString("y1", line.StartPoint.Y);
-			this.WriteAttributeString("x2", line.EndPoint.X);
-			this.WriteAttributeString("y2", line.EndPoint.Y);
+			this.WriteAttributeString("x1", line.StartPoint.X, PlotPaperUnits.Milimeters);
+			this.WriteAttributeString("y1", line.StartPoint.Y, PlotPaperUnits.Milimeters);
+			this.WriteAttributeString("x2", line.EndPoint.X, PlotPaperUnits.Milimeters);
+			this.WriteAttributeString("y2", line.EndPoint.Y, PlotPaperUnits.Milimeters);
 
 			this.WriteEndElement();
 		}

@@ -15,7 +15,16 @@ namespace ACadSharp.IO
 		/// <remarks>
 		/// The default value is 100, which matches with the line weight real value in mm.
 		/// </remarks>
+		[Obsolete]
 		public double LineWeightRatio { get; set; } = 100;
+
+		/// <summary>
+		/// Weight value for the <see cref="LineweightType.Default"/>. 
+		/// </summary>
+		/// <value>
+		/// Value must be in mm.
+		/// </value>
+		public double DefaultLineWeight { get; set; } = 0.01;
 
 		/// <summary>
 		/// Radius applied for the points.
@@ -33,12 +42,16 @@ namespace ACadSharp.IO
 		public double GetLineWeightValue(LineweightType lineweightType)
 		{
 			double value = (double)lineweightType;
-			if (lineweightType == LineweightType.W0)
+
+			switch (lineweightType)
 			{
-				value = 0.001;
+				case LineweightType.Default:
+					return 0.01;
+				case LineweightType.W0:
+					return 0.001;
 			}
 
-			return ToPixelSize(Math.Abs(value) / this.LineWeightRatio, PlotPaperUnits.Milimeters);
+			return Math.Abs(value) / 100;
 		}
 
 		public static double ToPixelSize(double value, PlotPaperUnits units)
