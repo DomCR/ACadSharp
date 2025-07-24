@@ -61,7 +61,7 @@ namespace ACadSharp.IO
 			{
 				case PlotPaperUnits.Inches:
 					return value * 96;
-				case PlotPaperUnits.Milimeters:
+				case PlotPaperUnits.Millimeters:
 					return value * 96 / 25.4;
 				case PlotPaperUnits.Pixels:
 					return value;

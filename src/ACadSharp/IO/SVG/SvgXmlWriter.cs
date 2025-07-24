@@ -1,7 +1,9 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Extensions;
 using ACadSharp.IO.DXF;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using ACadSharp.Types.Units;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
@@ -22,13 +24,14 @@ namespace ACadSharp.IO.SVG
 
 		public Layout Layout { get; set; }
 
+		[Obsolete("Should use UnitType")]
 		public PlotPaperUnits PlotPaperUnits
 		{
 			get
 			{
 				if (this.Layout == null)
 				{
-					return PlotPaperUnits.Milimeters;
+					return PlotPaperUnits.Millimeters;
 				}
 				else
 				{
@@ -37,43 +40,43 @@ namespace ACadSharp.IO.SVG
 			}
 		}
 
+		public UnitsType Units { get; set; }
+
 		public SvgXmlWriter(Stream w, Encoding encoding, SvgConfiguration configuration) : base(w, encoding)
 		{
 			this.Configuration = configuration;
 		}
 
-		public void WriteAttributeString(string localName, double value, PlotPaperUnits? units = null)
+		public void WriteAttributeString(string localName, double value, UnitsType? units = null)
 		{
-			string unit = string.Empty;
-			if (units == null)
-			{
-				value = SvgConfiguration.ToPixelSize(value, this.PlotPaperUnits);
-			}
-			else
+			string unitSufix = string.Empty;
+			if (units.HasValue)
 			{
 				switch (units.Value)
 				{
-					case PlotPaperUnits.Milimeters:
-						unit = "mm";
+					case UnitsType.Centimeters:
+						unitSufix = "cm";
 						break;
-					case PlotPaperUnits.Inches:
-						unit = "in";
+					case UnitsType.Millimeters:
+						unitSufix = "mm";
+						break;
+					case UnitsType.Inches:
+						unitSufix = "in";
 						break;
 				}
 			}
 
-
 			this.WriteAttributeString(
 				localName,
-				$"{value.ToString(CultureInfo.InvariantCulture)}{unit}");
+				$"{value.ToString(CultureInfo.InvariantCulture)}{unitSufix}");
 		}
 
 		public void WriteBlock(BlockRecord record)
 		{
 			BoundingBox box = record.GetBoundingBox();
+
 			this.startDocument(box);
 
-			Transform transform = new Transform(-box.Min, new XYZ(1), XYZ.Zero);
 			foreach (var e in record.Entities)
 			{
 				this.writeEntity(e);
@@ -85,6 +88,7 @@ namespace ACadSharp.IO.SVG
 		public void WriteLayout(Layout layout)
 		{
 			this.Layout = layout;
+			this.Units = layout.PaperUnits.ToUnits();
 
 			double paperWidth = layout.PaperWidth;
 			double paperHeight = layout.PaperHeight;
@@ -107,10 +111,10 @@ namespace ACadSharp.IO.SVG
 				lowerMargin,
 				this.Layout.UnprintableMargin.TopCorner.Convert<XYZ>());
 
-			this.startDocument(paper, PlotPaperUnits.Milimeters);
+			this.startDocument(paper);
 
 			Transform transform = new Transform(
-				SvgConfiguration.ToPixelSize(lowerMargin, PlotPaperUnits.Milimeters),
+				lowerMargin.ToPixelSize(this.Units),
 				new XYZ(layout.PrintScale),
 				XYZ.Zero);
 
@@ -120,11 +124,6 @@ namespace ACadSharp.IO.SVG
 			}
 
 			this.endDocument();
-		}
-
-		public override void WriteValue(double value)
-		{
-			base.WriteValue(SvgConfiguration.ToPixelSize(value, this.PlotPaperUnits));
 		}
 
 		private string colorSvg(Color color)
@@ -149,24 +148,24 @@ namespace ACadSharp.IO.SVG
 			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, type, ex));
 		}
 
-		private void startDocument(BoundingBox box, PlotPaperUnits unit = PlotPaperUnits.Pixels)
+		private void startDocument(BoundingBox box)
 		{
 			this.WriteStartDocument();
 
 			this.WriteStartElement("svg");
 			this.WriteAttributeString("xmlns", "http://www.w3.org/2000/svg");
 
-			this.WriteAttributeString("width", box.Max.X - box.Min.X, unit);
-			this.WriteAttributeString("height", box.Max.Y - box.Min.Y, unit);
+			this.WriteAttributeString("width", box.Max.X - box.Min.X, this.Units);
+			this.WriteAttributeString("height", box.Max.Y - box.Min.Y, this.Units);
 
 			this.WriteStartAttribute("viewBox");
-			this.WriteValue(box.Min.X);
+			this.WriteValue(box.Min.X.ToSvg(this.Units));
 			this.WriteValue(" ");
-			this.WriteValue(box.Min.Y);
+			this.WriteValue(box.Min.Y.ToSvg(this.Units));
 			this.WriteValue(" ");
-			this.WriteValue(box.Max.X - box.Min.X);
+			this.WriteValue((box.Max.X - box.Min.X).ToSvg(this.Units));
 			this.WriteValue(" ");
-			this.WriteValue(box.Max.Y - box.Min.Y);
+			this.WriteValue((box.Max.Y - box.Min.Y).ToSvg(this.Units));
 			this.WriteEndAttribute();
 
 			this.WriteAttributeString("transform", $"scale(1,-1)");
@@ -366,10 +365,10 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(line, transform);
 
-			this.WriteAttributeString("x1", line.StartPoint.X, PlotPaperUnits.Milimeters);
-			this.WriteAttributeString("y1", line.StartPoint.Y, PlotPaperUnits.Milimeters);
-			this.WriteAttributeString("x2", line.EndPoint.X, PlotPaperUnits.Milimeters);
-			this.WriteAttributeString("y2", line.EndPoint.Y, PlotPaperUnits.Milimeters);
+			this.WriteAttributeString("x1", line.StartPoint.X, UnitsType.Millimeters);
+			this.WriteAttributeString("y1", line.StartPoint.Y, UnitsType.Millimeters);
+			this.WriteAttributeString("x2", line.EndPoint.X, UnitsType.Millimeters);
+			this.WriteAttributeString("y2", line.EndPoint.Y, UnitsType.Millimeters);
 
 			this.WriteEndElement();
 		}
@@ -387,7 +386,7 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(point, transform);
 
-			this.WriteAttributeString("r", this.Configuration.PointRadius);
+			this.WriteAttributeString("r", this.Configuration.PointRadius, UnitsType.Millimeters);
 			this.WriteAttributeString("cx", point.Location.X);
 			this.WriteAttributeString("cy", point.Location.Y);
 
@@ -436,19 +435,19 @@ namespace ACadSharp.IO.SVG
 			}
 
 			this.WriteStartElement("g");
-			this.WriteAttributeString("transform", $"translate({this.toStringFormat(insert.X)},{this.toStringFormat(insert.Y)})");
+			this.writeTransform(transform);
 
 			this.WriteStartElement("text");
 
-			this.writeTransform(scale: new XYZ(1, -1, 0), rotation: text.Rotation != 0 ? text.Rotation : null);
+			this.writeTransform(translation: insert.ToPixelSize(this.Units), scale: new XYZ(1, -1, 0), rotation: text.Rotation != 0 ? text.Rotation : null);
 
 			this.WriteAttributeString("fill", this.colorSvg(text.GetActiveColor()));
 
 			//<text x="20" y="35" class="small">My</text>
 			this.WriteStartAttribute("style");
 			this.WriteValue("font:");
-			this.WriteValue(text.Height);
-			this.WriteValue("px");
+			this.WriteValue(text.Height.ToString(CultureInfo.InvariantCulture));    //FIX
+			this.WriteValue("mm");
 			this.WriteValue(" ");
 			this.WriteValue(Path.GetFileNameWithoutExtension(text.Style.Filename));
 			this.WriteEndAttribute();

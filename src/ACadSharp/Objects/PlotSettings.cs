@@ -156,7 +156,7 @@ namespace ACadSharp.Objects
 		/// Plot paper units.
 		/// </summary>
 		[DxfCodeValue(72)]
-		public PlotPaperUnits PaperUnits { get; set; } = PlotPaperUnits.Milimeters;
+		public PlotPaperUnits PaperUnits { get; set; } = PlotPaperUnits.Millimeters;
 
 		/// <summary>
 		/// Plot paper rotation.
