@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.IO.DXF;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
@@ -99,13 +100,19 @@ namespace ACadSharp.IO.SVG
 
 			XYZ lowerCorner = XYZ.Zero;
 			XYZ upperCorner = new XYZ(paperWidth, paperHeight, 0.0);
-			BoundingBox corners = new BoundingBox(lowerCorner, upperCorner);
+			BoundingBox paper = new BoundingBox(lowerCorner, upperCorner);
 
-			this.startDocument(corners, PlotPaperUnits.Milimeters);
+			XYZ lowerMargin = this.Layout.UnprintableMargin.BottomLeftCorner.Convert<XYZ>();
+			BoundingBox margins = new BoundingBox(
+				lowerMargin,
+				this.Layout.UnprintableMargin.TopCorner.Convert<XYZ>());
 
-			var printScale = layout.PrintScale;
+			this.startDocument(paper, PlotPaperUnits.Milimeters);
 
-			Transform transform = new Transform(XYZ.Zero, new XYZ(layout.PrintScale), XYZ.Zero);
+			Transform transform = new Transform(
+				SvgConfiguration.ToPixelSize(lowerMargin, PlotPaperUnits.Milimeters),
+				new XYZ(layout.PrintScale),
+				XYZ.Zero);
 
 			foreach (var e in layout.AssociatedBlock.Entities)
 			{
@@ -305,7 +312,7 @@ namespace ACadSharp.IO.SVG
 					break;
 			}
 
-			this.WriteAttributeString("stroke-width",$"{this.Configuration.GetLineWeightValue(lineWeight).ToString(CultureInfo.InvariantCulture)}mm" );
+			this.WriteAttributeString("stroke-width", $"{this.Configuration.GetLineWeightValue(lineWeight).ToString(CultureInfo.InvariantCulture)}mm");
 
 			this.writeTransform(transform);
 		}

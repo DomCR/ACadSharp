@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Objects;
+using CSMath;
 using System;
 using System.ComponentModel;
 
@@ -67,6 +68,17 @@ namespace ACadSharp.IO
 				default:
 					throw new InvalidEnumArgumentException(nameof(units), (int)units, typeof(PlotPaperUnits));
 			}
+		}
+
+		public static T ToPixelSize<T>(T value, PlotPaperUnits units)
+			where T : IVector
+		{
+			for (int i = 0; i < value.Dimension; i++)
+			{
+				value[i] = ToPixelSize(value[i], units);
+			}
+
+			return value;
 		}
 	}
 }
