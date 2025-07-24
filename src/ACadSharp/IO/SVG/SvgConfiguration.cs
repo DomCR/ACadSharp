@@ -26,12 +26,6 @@ namespace ACadSharp.IO
 		public double PointRadius { get; set; } = 0.1;
 
 		/// <summary>
-		/// Pixel size reference for the configuration.
-		/// </summary>
-		[Obsolete("this is only for mm")]
-		public const double PixelSize = 3.7795275591;
-
-		/// <summary>
 		/// Get the value of the stroke-width.
 		/// </summary>
 		/// <param name="lineweightType"></param>
