@@ -2,6 +2,7 @@
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -84,14 +85,25 @@ namespace ACadSharp.IO.SVG
 		{
 			this.Layout = layout;
 
-			XYZ lowerCorner = XYZ.Zero;
-			XYZ upperCorner = new XYZ(layout.PaperWidth, layout.PaperHeight, 0.0);
+			double paperWidth = layout.PaperWidth;
+			double paperHeight = layout.PaperHeight;
 
+			switch (layout.PaperRotation)
+			{
+				case PlotRotation.Degrees90:
+				case PlotRotation.Degrees270:
+					paperWidth = layout.PaperHeight;
+					paperHeight = layout.PaperWidth;
+					break;
+			}
+
+			XYZ lowerCorner = XYZ.Zero;
+			XYZ upperCorner = new XYZ(paperWidth, paperHeight, 0.0);
 			BoundingBox corners = new BoundingBox(lowerCorner, upperCorner);
 
-			BoundingBox boxExtend = new BoundingBox(layout.MinExtents, layout.MaxExtents);
+			this.startDocument(corners, PlotPaperUnits.Milimeters);
 
-			this.startDocument(corners, Layout.PaperUnits);
+			var printScale = layout.PrintScale;
 
 			foreach (var e in layout.AssociatedBlock.Entities)
 			{
@@ -563,6 +575,11 @@ namespace ACadSharp.IO.SVG
 
 				sb.Append($"rotate(");
 				sb.Append($"{r.ToString(CultureInfo.InvariantCulture)})");
+			}
+
+			if (sb.ToString().IsNullOrEmpty())
+			{
+				return;
 			}
 
 			this.WriteAttributeString("transform", sb.ToString());
