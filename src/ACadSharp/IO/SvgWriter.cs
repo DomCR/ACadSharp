@@ -72,10 +72,11 @@ namespace ACadSharp.IO
 		/// Write the selected layout into a SVG.
 		/// </summary>
 		/// <param name="layout"></param>
-		/// <exception cref="NotImplementedException"></exception>
 		public void Write(Layout layout)
 		{
-			throw new NotImplementedException();
+			this.createWriter();
+
+			this._writer.WriteLayout(layout);
 		}
 
 		private void createWriter()

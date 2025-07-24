@@ -1,8 +1,10 @@
 ﻿using CSMath;
+using System;
 using System.Globalization;
 
 namespace ACadSharp.IO.SVG
 {
+	[Obsolete]
 	internal static class SvgConverter
 	{
 		public static string SvgDouble(this double value)
