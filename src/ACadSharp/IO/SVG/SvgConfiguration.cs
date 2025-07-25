@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Objects;
+using ACadSharp.Types.Units;
 using CSMath;
 using System;
 using System.ComponentModel;
@@ -11,12 +12,11 @@ namespace ACadSharp.IO
 	public class SvgConfiguration : CadWriterConfiguration
 	{
 		/// <summary>
-		/// The <see cref="Entities.Entity.LineWeight"/> will be divided by this value to process the stroke-width in the svg.
+		/// The <see cref="LineweightType"/> will be divided by this value to process the stroke-width in the svg when the units are <see cref="UnitsType.Unitless"/>.
 		/// </summary>
 		/// <remarks>
 		/// The default value is 100, which matches with the line weight real value in mm.
 		/// </remarks>
-		[Obsolete]
 		public double LineWeightRatio { get; set; } = 100;
 
 		/// <summary>
@@ -36,23 +36,29 @@ namespace ACadSharp.IO
 		public double PointRadius { get; set; } = 0.1;
 
 		/// <summary>
-		/// Get the value of the stroke-width.
+		/// Get the value of the stroke-width in mm.
 		/// </summary>
 		/// <param name="lineweightType"></param>
+		/// <param name="units"></param>
 		/// <returns></returns>
-		public double GetLineWeightValue(LineweightType lineweightType)
+		public double GetLineWeightValue(LineweightType lineweightType, UnitsType units)
 		{
-			double value = (double)lineweightType;
+			double value = Math.Abs((double)lineweightType);
+
+			if (units == UnitsType.Unitless)
+			{
+				return value / this.LineWeightRatio;
+			}
 
 			switch (lineweightType)
 			{
 				case LineweightType.Default:
-					return 0.01;
+					return DefaultLineWeight;
 				case LineweightType.W0:
 					return 0.001;
 			}
 
-			return Math.Abs(value) / 100;
+			return value / 100;
 		}
 
 		public static double ToPixelSize(double value, PlotPaperUnits units)

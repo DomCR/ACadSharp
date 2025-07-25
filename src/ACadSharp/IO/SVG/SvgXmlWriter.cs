@@ -273,6 +273,7 @@ namespace ACadSharp.IO.SVG
 		{
 			Color color = entity.GetActiveColor();
 
+			this.WriteAttributeString("vector-effect", "non-scaling-stroke");
 			this.WriteAttributeString("stroke", this.colorSvg(color));
 
 			var lineWeight = entity.LineWeight;
@@ -283,7 +284,7 @@ namespace ACadSharp.IO.SVG
 					break;
 			}
 
-			this.WriteAttributeString("stroke-width", $"{this.Configuration.GetLineWeightValue(lineWeight).ToString(CultureInfo.InvariantCulture)}mm");
+			this.WriteAttributeString("stroke-width", $"{this.Configuration.GetLineWeightValue(lineWeight, this.Units).ToSvg(UnitsType.Millimeters)}");
 
 			this.writeTransform(transform);
 		}
@@ -337,10 +338,10 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(line, transform);
 
-			this.WriteAttributeString("x1", line.StartPoint.X, UnitsType.Millimeters);
-			this.WriteAttributeString("y1", line.StartPoint.Y, UnitsType.Millimeters);
-			this.WriteAttributeString("x2", line.EndPoint.X, UnitsType.Millimeters);
-			this.WriteAttributeString("y2", line.EndPoint.Y, UnitsType.Millimeters);
+			this.WriteAttributeString("x1", line.StartPoint.X.ToSvg(this.Units));
+			this.WriteAttributeString("y1", line.StartPoint.Y.ToSvg(this.Units));
+			this.WriteAttributeString("x2", line.EndPoint.X.ToSvg(this.Units));
+			this.WriteAttributeString("y2", line.EndPoint.Y.ToSvg(this.Units));
 
 			this.WriteEndElement();
 		}
@@ -485,7 +486,7 @@ namespace ACadSharp.IO.SVG
 					this.WriteStartElement("tspan");
 					this.WriteAttributeString("x", 0);
 					this.WriteAttributeString("dy", "1em");
-					this.WriteAttributeString("visibility", "hidden");	
+					this.WriteAttributeString("visibility", "hidden");
 					this.WriteString(".");
 					this.WriteEndElement();
 					break;
