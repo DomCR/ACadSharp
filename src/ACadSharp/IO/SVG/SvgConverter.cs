@@ -39,6 +39,12 @@ namespace ACadSharp.IO.SVG
 			return $"{vector[0].ToSvg()},{vector[1].ToSvg()}";
 		}
 
+		public static string ToSvg<T>(this T vector, UnitsType units)
+			where T : IVector
+		{
+			return $"{vector[0].ToSvg(units)},{vector[1].ToSvg(units)}";
+		}
+
 		public static double ToPixelSize(this double value, UnitsType units)
 		{
 			switch (units)

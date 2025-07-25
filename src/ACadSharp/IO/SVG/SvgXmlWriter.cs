@@ -24,22 +24,6 @@ namespace ACadSharp.IO.SVG
 
 		public Layout Layout { get; set; }
 
-		[Obsolete("Should use UnitType")]
-		public PlotPaperUnits PlotPaperUnits
-		{
-			get
-			{
-				if (this.Layout == null)
-				{
-					return PlotPaperUnits.Millimeters;
-				}
-				else
-				{
-					return this.Layout.PaperUnits;
-				}
-			}
-		}
-
 		public UnitsType Units { get; set; }
 
 		public SvgXmlWriter(Stream w, Encoding encoding, SvgConfiguration configuration) : base(w, encoding)
@@ -73,6 +57,8 @@ namespace ACadSharp.IO.SVG
 
 		public void WriteBlock(BlockRecord record)
 		{
+			this.Units = record.Units;
+
 			BoundingBox box = record.GetBoundingBox();
 
 			this.startDocument(box);
@@ -184,28 +170,14 @@ namespace ACadSharp.IO.SVG
 			}
 
 			StringBuilder sb = new StringBuilder();
-			sb.Append(this.toStringFormat(points.First()));
+			sb.Append(points.First().ToSvg(this.Units));
 			foreach (IVector point in points.Skip(1))
 			{
 				sb.Append(' ');
-				sb.Append(this.toStringFormat(point));
+				sb.Append(point.ToSvg(this.Units));
 			}
 
 			return sb.ToString();
-		}
-
-		private string toStringFormat(double value)
-		{
-			return SvgConfiguration.ToPixelSize(value, this.PlotPaperUnits).ToString(CultureInfo.InvariantCulture);
-		}
-
-		private string toStringFormat(IVector vector)
-		{
-			var value = vector.Convert<XY>();
-			string x = this.toStringFormat(value.X);
-			string y = this.toStringFormat(value.Y);
-
-			return $"{x},{y}";
 		}
 
 		private void writeArc(Arc arc, Transform transform)
@@ -446,8 +418,11 @@ namespace ACadSharp.IO.SVG
 			//<text x="20" y="35" class="small">My</text>
 			this.WriteStartAttribute("style");
 			this.WriteValue("font:");
-			this.WriteValue(text.Height.ToString(CultureInfo.InvariantCulture));    //FIX
-			this.WriteValue("mm");
+			this.WriteValue(text.Height.ToSvg(this.Units));
+			if (this.Units == UnitsType.Unitless)
+			{
+				this.WriteValue("px");
+			}
 			this.WriteValue(" ");
 			this.WriteValue(Path.GetFileNameWithoutExtension(text.Style.Filename));
 			this.WriteEndAttribute();
@@ -505,6 +480,14 @@ namespace ACadSharp.IO.SVG
 						this.WriteString(item);
 						this.WriteEndElement();
 					}
+
+					//Line to avoid the strange offset at the end
+					this.WriteStartElement("tspan");
+					this.WriteAttributeString("x", 0);
+					this.WriteAttributeString("dy", "1em");
+					this.WriteAttributeString("visibility", "hidden");	
+					this.WriteString(".");
+					this.WriteEndElement();
 					break;
 				case TextEntity textEntity:
 

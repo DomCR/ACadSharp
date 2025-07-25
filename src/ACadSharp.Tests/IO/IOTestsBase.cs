@@ -33,7 +33,6 @@ namespace ACadSharp.Tests.IO
 			LineWeightRatio = 25
 		};
 
-
 		protected readonly ITestOutputHelper _output;
 
 		static IOTestsBase()
