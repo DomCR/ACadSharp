@@ -53,7 +53,7 @@ namespace ACadSharp.IO
 			switch (lineweightType)
 			{
 				case LineweightType.Default:
-					return DefaultLineWeight;
+					return this.DefaultLineWeight;
 				case LineweightType.W0:
 					return 0.001;
 			}

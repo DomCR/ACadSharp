@@ -170,11 +170,11 @@ namespace ACadSharp.IO.SVG
 			}
 
 			StringBuilder sb = new StringBuilder();
-			sb.Append(points.First().ToSvg(this.Units));
+			sb.Append(points.First().ToPixelSize(this.Units).ToSvg());
 			foreach (IVector point in points.Skip(1))
 			{
 				sb.Append(' ');
-				sb.Append(point.ToSvg(this.Units));
+				sb.Append(point.ToPixelSize(this.Units).ToSvg());
 			}
 
 			return sb.ToString();

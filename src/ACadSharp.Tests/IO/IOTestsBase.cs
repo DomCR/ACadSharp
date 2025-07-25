@@ -30,7 +30,8 @@ namespace ACadSharp.Tests.IO
 
 		protected readonly SvgConfiguration _svgConfiguration = new SvgConfiguration
 		{
-			LineWeightRatio = 50
+			DefaultLineWeight = 0.15,
+			LineWeightRatio = 50,
 		};
 
 		protected readonly ITestOutputHelper _output;
