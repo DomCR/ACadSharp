@@ -1,7 +1,11 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Extensions;
+using ACadSharp.IO.DXF;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using ACadSharp.Types.Units;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -20,58 +24,45 @@ namespace ACadSharp.IO.SVG
 
 		public Layout Layout { get; set; }
 
-		public PlotPaperUnits PlotPaperUnits
-		{
-			get
-			{
-				if (this.Layout == null)
-				{
-					return PlotPaperUnits.Milimeters;
-				}
-				else
-				{
-					return this.Layout.PaperUnits;
-				}
-			}
-		}
+		public UnitsType Units { get; set; }
 
 		public SvgXmlWriter(Stream w, Encoding encoding, SvgConfiguration configuration) : base(w, encoding)
 		{
 			this.Configuration = configuration;
 		}
 
-		public void WriteAttributeString(string localName, double value, PlotPaperUnits? units = null)
+		public void WriteAttributeString(string localName, double value, UnitsType? units = null)
 		{
-			string unit = string.Empty;
-			if (units == null)
-			{
-				value = SvgConfiguration.ToPixelSize(value, this.PlotPaperUnits);
-			}
-			else
+			string unitSufix = string.Empty;
+			if (units.HasValue)
 			{
 				switch (units.Value)
 				{
-					case PlotPaperUnits.Milimeters:
-						unit = "mm";
+					case UnitsType.Centimeters:
+						unitSufix = "cm";
 						break;
-					case PlotPaperUnits.Inches:
-						unit = "in";
+					case UnitsType.Millimeters:
+						unitSufix = "mm";
+						break;
+					case UnitsType.Inches:
+						unitSufix = "in";
 						break;
 				}
 			}
 
-
 			this.WriteAttributeString(
 				localName,
-				$"{value.ToString(CultureInfo.InvariantCulture)}{unit}");
+				$"{value.ToString(CultureInfo.InvariantCulture)}{unitSufix}");
 		}
 
 		public void WriteBlock(BlockRecord record)
 		{
+			this.Units = record.Units;
+
 			BoundingBox box = record.GetBoundingBox();
+
 			this.startDocument(box);
 
-			Transform transform = new Transform(-box.Min, new XYZ(1), XYZ.Zero);
 			foreach (var e in record.Entities)
 			{
 				this.writeEntity(e);
@@ -83,27 +74,42 @@ namespace ACadSharp.IO.SVG
 		public void WriteLayout(Layout layout)
 		{
 			this.Layout = layout;
+			this.Units = layout.PaperUnits.ToUnits();
+
+			double paperWidth = layout.PaperWidth;
+			double paperHeight = layout.PaperHeight;
+
+			switch (layout.PaperRotation)
+			{
+				case PlotRotation.Degrees90:
+				case PlotRotation.Degrees270:
+					paperWidth = layout.PaperHeight;
+					paperHeight = layout.PaperWidth;
+					break;
+			}
 
 			XYZ lowerCorner = XYZ.Zero;
-			XYZ upperCorner = new XYZ(layout.PaperWidth, layout.PaperHeight, 0.0);
+			XYZ upperCorner = new XYZ(paperWidth, paperHeight, 0.0);
+			BoundingBox paper = new BoundingBox(lowerCorner, upperCorner);
 
-			BoundingBox corners = new BoundingBox(lowerCorner, upperCorner);
+			XYZ lowerMargin = this.Layout.UnprintableMargin.BottomLeftCorner.Convert<XYZ>();
+			BoundingBox margins = new BoundingBox(
+				lowerMargin,
+				this.Layout.UnprintableMargin.TopCorner.Convert<XYZ>());
 
-			BoundingBox boxExtend = new BoundingBox(layout.MinExtents, layout.MaxExtents);
+			this.startDocument(paper);
 
-			this.startDocument(corners, Layout.PaperUnits);
+			Transform transform = new Transform(
+				lowerMargin.ToPixelSize(this.Units),
+				new XYZ(layout.PrintScale),
+				XYZ.Zero);
 
 			foreach (var e in layout.AssociatedBlock.Entities)
 			{
-				this.writeEntity(e);
+				this.writeEntity(e, transform);
 			}
 
 			this.endDocument();
-		}
-
-		public override void WriteValue(double value)
-		{
-			base.WriteValue(SvgConfiguration.ToPixelSize(value, this.PlotPaperUnits));
 		}
 
 		private string colorSvg(Color color)
@@ -128,24 +134,24 @@ namespace ACadSharp.IO.SVG
 			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, type, ex));
 		}
 
-		private void startDocument(BoundingBox box, PlotPaperUnits unit = PlotPaperUnits.Pixels)
+		private void startDocument(BoundingBox box)
 		{
 			this.WriteStartDocument();
 
 			this.WriteStartElement("svg");
 			this.WriteAttributeString("xmlns", "http://www.w3.org/2000/svg");
 
-			this.WriteAttributeString("width", box.Max.X - box.Min.X, unit);
-			this.WriteAttributeString("height", box.Max.Y - box.Min.Y, unit);
+			this.WriteAttributeString("width", box.Max.X - box.Min.X, this.Units);
+			this.WriteAttributeString("height", box.Max.Y - box.Min.Y, this.Units);
 
 			this.WriteStartAttribute("viewBox");
-			this.WriteValue(box.Min.X);
+			this.WriteValue(box.Min.X.ToSvg(this.Units));
 			this.WriteValue(" ");
-			this.WriteValue(box.Min.Y);
+			this.WriteValue(box.Min.Y.ToSvg(this.Units));
 			this.WriteValue(" ");
-			this.WriteValue(box.Max.X - box.Min.X);
+			this.WriteValue((box.Max.X - box.Min.X).ToSvg(this.Units));
 			this.WriteValue(" ");
-			this.WriteValue(box.Max.Y - box.Min.Y);
+			this.WriteValue((box.Max.Y - box.Min.Y).ToSvg(this.Units));
 			this.WriteEndAttribute();
 
 			this.WriteAttributeString("transform", $"scale(1,-1)");
@@ -164,28 +170,14 @@ namespace ACadSharp.IO.SVG
 			}
 
 			StringBuilder sb = new StringBuilder();
-			sb.Append(this.toStringFormat(points.First()));
+			sb.Append(points.First().ToPixelSize(this.Units).ToSvg());
 			foreach (IVector point in points.Skip(1))
 			{
 				sb.Append(' ');
-				sb.Append(this.toStringFormat(point));
+				sb.Append(point.ToPixelSize(this.Units).ToSvg());
 			}
 
 			return sb.ToString();
-		}
-
-		private string toStringFormat(double value)
-		{
-			return SvgConfiguration.ToPixelSize(value, this.PlotPaperUnits).ToString(CultureInfo.InvariantCulture);
-		}
-
-		private string toStringFormat(IVector vector)
-		{
-			var value = vector.Convert<XY>();
-			string x = this.toStringFormat(value.X);
-			string y = this.toStringFormat(value.Y);
-
-			return $"{x},{y}";
 		}
 
 		private void writeArc(Arc arc, Transform transform)
@@ -281,6 +273,7 @@ namespace ACadSharp.IO.SVG
 		{
 			Color color = entity.GetActiveColor();
 
+			this.WriteAttributeString("vector-effect", "non-scaling-stroke");
 			this.WriteAttributeString("stroke", this.colorSvg(color));
 
 			var lineWeight = entity.LineWeight;
@@ -291,7 +284,7 @@ namespace ACadSharp.IO.SVG
 					break;
 			}
 
-			this.WriteAttributeString("stroke-width", this.Configuration.GetLineWeightValue(lineWeight).ToString(CultureInfo.InvariantCulture));
+			this.WriteAttributeString("stroke-width", $"{this.Configuration.GetLineWeightValue(lineWeight, this.Units).ToSvg(UnitsType.Millimeters)}");
 
 			this.writeTransform(transform);
 		}
@@ -345,10 +338,10 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(line, transform);
 
-			this.WriteAttributeString("x1", line.StartPoint.X);
-			this.WriteAttributeString("y1", line.StartPoint.Y);
-			this.WriteAttributeString("x2", line.EndPoint.X);
-			this.WriteAttributeString("y2", line.EndPoint.Y);
+			this.WriteAttributeString("x1", line.StartPoint.X.ToSvg(this.Units));
+			this.WriteAttributeString("y1", line.StartPoint.Y.ToSvg(this.Units));
+			this.WriteAttributeString("x2", line.EndPoint.X.ToSvg(this.Units));
+			this.WriteAttributeString("y2", line.EndPoint.Y.ToSvg(this.Units));
 
 			this.WriteEndElement();
 		}
@@ -366,7 +359,7 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(point, transform);
 
-			this.WriteAttributeString("r", this.Configuration.PointRadius);
+			this.WriteAttributeString("r", this.Configuration.PointRadius, UnitsType.Millimeters);
 			this.WriteAttributeString("cx", point.Location.X);
 			this.WriteAttributeString("cy", point.Location.Y);
 
@@ -415,19 +408,22 @@ namespace ACadSharp.IO.SVG
 			}
 
 			this.WriteStartElement("g");
-			this.WriteAttributeString("transform", $"translate({this.toStringFormat(insert.X)},{this.toStringFormat(insert.Y)})");
+			this.writeTransform(transform);
 
 			this.WriteStartElement("text");
 
-			this.writeTransform(scale: new XYZ(1, -1, 0), rotation: text.Rotation != 0 ? text.Rotation : null);
+			this.writeTransform(translation: insert.ToPixelSize(this.Units), scale: new XYZ(1, -1, 0), rotation: text.Rotation != 0 ? text.Rotation : null);
 
 			this.WriteAttributeString("fill", this.colorSvg(text.GetActiveColor()));
 
 			//<text x="20" y="35" class="small">My</text>
 			this.WriteStartAttribute("style");
 			this.WriteValue("font:");
-			this.WriteValue(text.Height);
-			this.WriteValue("px");
+			this.WriteValue(text.Height.ToSvg(this.Units));
+			if (this.Units == UnitsType.Unitless)
+			{
+				this.WriteValue("px");
+			}
 			this.WriteValue(" ");
 			this.WriteValue(Path.GetFileNameWithoutExtension(text.Style.Filename));
 			this.WriteEndAttribute();
@@ -485,6 +481,14 @@ namespace ACadSharp.IO.SVG
 						this.WriteString(item);
 						this.WriteEndElement();
 					}
+
+					//Line to avoid the strange offset at the end
+					this.WriteStartElement("tspan");
+					this.WriteAttributeString("x", 0);
+					this.WriteAttributeString("dy", "1em");
+					this.WriteAttributeString("visibility", "hidden");
+					this.WriteString(".");
+					this.WriteEndElement();
 					break;
 				case TextEntity textEntity:
 
@@ -563,6 +567,11 @@ namespace ACadSharp.IO.SVG
 
 				sb.Append($"rotate(");
 				sb.Append($"{r.ToString(CultureInfo.InvariantCulture)})");
+			}
+
+			if (sb.ToString().IsNullOrEmpty())
+			{
+				return;
 			}
 
 			this.WriteAttributeString("transform", sb.ToString());
