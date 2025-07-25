@@ -31,28 +31,9 @@ namespace ACadSharp.IO.SVG
 			this.Configuration = configuration;
 		}
 
-		public void WriteAttributeString(string localName, double value, UnitsType? units = null)
+		public void WriteAttributeString(string localName, double value)
 		{
-			string unitSufix = string.Empty;
-			if (units.HasValue)
-			{
-				switch (units.Value)
-				{
-					case UnitsType.Centimeters:
-						unitSufix = "cm";
-						break;
-					case UnitsType.Millimeters:
-						unitSufix = "mm";
-						break;
-					case UnitsType.Inches:
-						unitSufix = "in";
-						break;
-				}
-			}
-
-			this.WriteAttributeString(
-				localName,
-				$"{value.ToString(CultureInfo.InvariantCulture)}{unitSufix}");
+			this.WriteAttributeString(localName, value.ToSvg(this.Units));
 		}
 
 		public void WriteBlock(BlockRecord record)
@@ -141,8 +122,8 @@ namespace ACadSharp.IO.SVG
 			this.WriteStartElement("svg");
 			this.WriteAttributeString("xmlns", "http://www.w3.org/2000/svg");
 
-			this.WriteAttributeString("width", box.Max.X - box.Min.X, this.Units);
-			this.WriteAttributeString("height", box.Max.Y - box.Min.Y, this.Units);
+			this.WriteAttributeString("width", box.Max.X - box.Min.X);
+			this.WriteAttributeString("height", box.Max.Y - box.Min.Y);
 
 			this.WriteStartAttribute("viewBox");
 			this.WriteValue(box.Min.X.ToSvg(this.Units));
@@ -359,7 +340,7 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(point, transform);
 
-			this.WriteAttributeString("r", this.Configuration.PointRadius, UnitsType.Millimeters);
+			this.WriteAttributeString("r", this.Configuration.PointRadius);
 			this.WriteAttributeString("cx", point.Location.X);
 			this.WriteAttributeString("cy", point.Location.Y);
 
@@ -548,7 +529,6 @@ namespace ACadSharp.IO.SVG
 				sb.Append($"translate(");
 				sb.Append($"{t.X.ToString(CultureInfo.InvariantCulture)},");
 				sb.Append($"{t.Y.ToString(CultureInfo.InvariantCulture)})");
-				sb.Append(' ');
 			}
 
 			if (scale.HasValue)
@@ -558,7 +538,6 @@ namespace ACadSharp.IO.SVG
 				sb.Append($"scale(");
 				sb.Append($"{s.X.ToString(CultureInfo.InvariantCulture)},");
 				sb.Append($"{s.Y.ToString(CultureInfo.InvariantCulture)})");
-				sb.Append(' ');
 			}
 
 			if (rotation.HasValue)
