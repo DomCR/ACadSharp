@@ -76,14 +76,6 @@ namespace ACadSharp
 		public ImageDefinitionCollection ImageDefinitions { get; private set; }
 
 		/// <summary>
-		/// The collection of all images in the drawing.
-		/// </summary>
-		/// <remarks>
-		/// The collection is null if the <see cref="CadDictionary.AcadImageDict"/> doesn't exist in the root dictionary.
-		/// </remarks>
-		public PdfDefinitionCollection PdfDefinitions { get; private set; }
-
-		/// <summary>
 		/// The collection of all layers in the drawing.
 		/// </summary>
 		public LayersTable Layers { get; private set; }
@@ -126,6 +118,14 @@ namespace ACadSharp
 		/// Default paper space of the model
 		/// </summary>
 		public BlockRecord PaperSpace { get { return this.BlockRecords[BlockRecord.PaperSpaceName]; } }
+
+		/// <summary>
+		/// The collection of all images in the drawing.
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadImageDict"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public PdfDefinitionCollection PdfDefinitions { get; private set; }
 
 		/// <summary>
 		/// Root dictionary of the document.
@@ -203,28 +203,6 @@ namespace ACadSharp
 			if (createDefaults)
 			{
 				this.CreateDefaults();
-			}
-		}
-
-		/// <summary>
-		/// Updates the <see cref="DxfClass"/> in the document and their instance count.
-		/// </summary>
-		/// <param name="reset">Resets the list and clears any unnecessary classes.</param>
-		public void UpdateDxfClasses(bool reset)
-		{
-			if (reset)
-			{
-				this.Classes.Clear();
-			}
-
-			DxfClassCollection.UpdateDxfClasses(this);
-
-			foreach (var item in this.Classes)
-			{
-				item.InstanceCount = this._cadObjects.Values
-					.OfType<CadObject>()
-					.Where(c => c.ObjectName == item.DxfName)
-					.Count();
 			}
 		}
 
@@ -315,6 +293,20 @@ namespace ACadSharp
 			}
 
 			return null;
+		}
+
+		/// <summary>
+		/// Get all the <see cref="HatchPattern"/> in the document.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<HatchPattern> GetHatchPatterns()
+		{
+			foreach (var item in this._cadObjects.Values.OfType<Hatch>())
+			{
+				if (item.Pattern == null) continue;
+
+				yield return item.Pattern;
+			}
 		}
 
 		/// <summary>
@@ -418,6 +410,28 @@ namespace ACadSharp
 			if (this.updateCollection(CadDictionary.AcadColor, createDictionaries, out CadDictionary colors))
 			{
 				this.Colors = new ColorCollection(colors);
+			}
+		}
+
+		/// <summary>
+		/// Updates the <see cref="DxfClass"/> in the document and their instance count.
+		/// </summary>
+		/// <param name="reset">Resets the list and clears any unnecessary classes.</param>
+		public void UpdateDxfClasses(bool reset)
+		{
+			if (reset)
+			{
+				this.Classes.Clear();
+			}
+
+			DxfClassCollection.UpdateDxfClasses(this);
+
+			foreach (var item in this.Classes)
+			{
+				item.InstanceCount = this._cadObjects.Values
+					.OfType<CadObject>()
+					.Where(c => c.ObjectName == item.DxfName)
+					.Count();
 			}
 		}
 
