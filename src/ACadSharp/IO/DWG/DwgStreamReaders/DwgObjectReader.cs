@@ -18,8 +18,6 @@ using System.Globalization;
 using ACadSharp.Objects.Evaluations;
 using ACadSharp.XData;
 using System.Diagnostics;
-using System.Numerics;
-using ACadSharp.Objects.Collections;
 
 namespace ACadSharp.IO.DWG
 {
@@ -985,12 +983,10 @@ namespace ACadSharp.IO.DWG
 					template = this.readLayout();
 					break;
 				case ObjectType.ACAD_PROXY_ENTITY:
-					this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
-					template = this.readUnknownEntity(null);
+					template = this.readProxyEntity();
 					break;
 				case ObjectType.ACAD_PROXY_OBJECT:
-					this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
-					template = this.readUnknownNonGraphicalObject(null);
+					template = this.readProxyObject();
 					break;
 				default:
 					return this.readUnlistedType((short)type);
@@ -1095,6 +1091,12 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "BLOCKFLIPACTION":
 					template = this.readBlockFlipAction();
+					break;
+				case "ACAD_PROXY_ENTITY":
+					template = this.readProxyEntity();
+					break;
+				case "ACAD_PROXY_OBJECT":
+					template = this.readProxyObject();
 					break;
 				default:
 					break;
@@ -6070,6 +6072,51 @@ namespace ACadSharp.IO.DWG
 			scale.DrawingUnits = this._mergedReaders.ReadBitDouble();
 			//B	290	Has unit scale
 			scale.IsUnitScale = this._mergedReaders.ReadBit();
+
+			return template;
+		}
+
+		private CadTemplate readProxyObject()
+		{
+			ProxyObject proxy = new ProxyObject();
+			var template = new CadNonGraphicalObjectTemplate(proxy);
+
+			this.readCommonNonEntityData(template);
+
+			int classId;
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Class ID BL 91
+				classId = _mergedReaders.ReadBitLong();
+
+				this._classes.TryGetValue((short)classId, out DxfClass dxfClass);
+
+
+				//The string stream seems to contain the dxfsubclass
+				string text = this._mergedReaders.ReadVariableText();
+			}
+			//Before R2018:
+			else
+			{
+				//Object Drawing Format BL 95 This is a bitwise OR of the version and the
+				//maintenance version, shifted 16 bits to the left.
+			}
+
+			//R2018 +:
+			//Version BL 71 The AutoCAD version of the object.
+			//Maintenance version BL 97 The AutoCAD maintenance version of the object.
+
+
+			return template;
+		}
+
+		private CadTemplate readProxyEntity()
+		{
+			ProxyEntity proxy = new ProxyEntity();
+			CadEntityTemplate<ProxyEntity> template = new CadEntityTemplate<ProxyEntity>(proxy);
+
+			this.readCommonEntityData(template);
 
 			return template;
 		}
