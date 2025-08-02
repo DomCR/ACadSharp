@@ -1318,7 +1318,7 @@ namespace ACadSharp.IO.DWG
 			BlockAction blockAction = template.BlockAction;
 
 			// 1010, 1020, 1030
-			blockAction.ActionPoint = _mergedReaders.Read3BitDouble();
+			blockAction.ActionPoint = this._mergedReaders.Read3BitDouble();
 
 			//71
 			short entityCount = this._objectReader.ReadBitShort();
@@ -6083,30 +6083,55 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			int classId;
+			//Class ID BL 91
+			//It seems to be the same for all versions
+			int classId = this._mergedReaders.ReadBitLong(); ;
+
+			if (this._classes.TryGetValue((short)classId, out DxfClass dxfClass))
+			{
+				proxy.DxfClass = dxfClass;
+			}
+
 			//R2000+:
 			if (this.R2000Plus)
 			{
-				//Class ID BL 91
-				classId = _mergedReaders.ReadBitLong();
+				if (this._version > ACadVersion.AC1015)
+				{
+					//The string stream seems to contain the dxfsubclass
+					string text = this._mergedReaders.ReadVariableText();
+				}
 
-				this._classes.TryGetValue((short)classId, out DxfClass dxfClass);
+				//Before R2018:
+				if (!this.R2018Plus)
+				{
+					//Object Drawing Format BL 95 This is a bitwise OR of the version and the
+					//maintenance version, shifted 16 bits to the left.
+					int format = this._mergedReaders.ReadBitLong();
+					proxy.Version = (ACadVersion)(format & 0b1111111111111111);
+					proxy.MaintenanceVersion = (short)(format >> 16);
+				}
+				//R2018+:
+				else
+				{
+					//Version BL 71 The AutoCAD version of the object.
+					proxy.Version = (ACadVersion)this._mergedReaders.ReadBitLong();
+					//Maintenance version BL 97 The AutoCAD maintenance version of the object.
+					proxy.MaintenanceVersion = this._mergedReaders.ReadBitLong();
+				}
 
-
-				//The string stream seems to contain the dxfsubclass
-				string text = this._mergedReaders.ReadVariableText();
+				//R2000 +:
+				//Original Data Format B 70 0 for dwg, 1 for dxf
+				proxy.OriginalDataFormatDxf = this._mergedReaders.ReadBit();
 			}
-			//Before R2018:
 			else
 			{
-				//Object Drawing Format BL 95 This is a bitwise OR of the version and the
-				//maintenance version, shifted 16 bits to the left.
+				return template;
 			}
 
-			//R2018 +:
-			//Version BL 71 The AutoCAD version of the object.
-			//Maintenance version BL 97 The AutoCAD maintenance version of the object.
+			//Common:
+			//Databits X databits, however many there are to the handles
 
+			//TODO: Investigate how to read the data in proxies, it can contain data, strings and handles
 
 			return template;
 		}

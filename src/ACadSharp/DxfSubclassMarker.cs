@@ -154,6 +154,10 @@
 
 		public const string PolylineVertex = "AcDb2dVertex";
 
+		public const string ProxyEntity = "AcDbProxyEntity";
+
+		public const string ProxyObject = "AcDbProxyObject";
+
 		public const string RadialDimension = "AcDbRadialDimension";
 
 		public const string RasterImage = "AcDbRasterImage";

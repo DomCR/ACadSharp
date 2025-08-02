@@ -57,7 +57,7 @@ namespace ACadSharp.Classes
 		/// <summary>
 		/// Item class id
 		/// </summary>
-		internal short ItemClassId { get; set; }
+		public short ItemClassId { get; internal set; }
 
 		public ACadVersion DwgVersion { get; set; }
 
