@@ -55,13 +55,13 @@ namespace ACadSharp.Objects
 		public PaperMargin UnprintableMargin { get; set; } 
 
 		/// <summary>
-		/// Physical paper width in millimeters
+		/// Physical paper width in millimeters.
 		/// </summary>
 		[DxfCodeValue(44)]
 		public double PaperWidth { get; set; }
 
 		/// <summary>
-		/// Physical paper height in millimeters
+		/// Physical paper height in millimeters.
 		/// </summary>
 		[DxfCodeValue(45)]
 		public double PaperHeight { get; set; } 
@@ -156,7 +156,7 @@ namespace ACadSharp.Objects
 		/// Plot paper units.
 		/// </summary>
 		[DxfCodeValue(72)]
-		public PlotPaperUnits PaperUnits { get; set; } = PlotPaperUnits.Milimeters;
+		public PlotPaperUnits PaperUnits { get; set; } = PlotPaperUnits.Millimeters;
 
 		/// <summary>
 		/// Plot paper rotation.

@@ -9,6 +9,14 @@ namespace ACadSharp
 	public readonly struct Color : IEquatable<Color>
 	{
 		/// <summary>
+		/// Defines a default black color.
+		/// </summary>
+		public static Color Black
+		{
+			get { return new Color(250); }
+		}
+
+		/// <summary>
 		/// Defines a default blue color.
 		/// </summary>
 		public static Color Blue

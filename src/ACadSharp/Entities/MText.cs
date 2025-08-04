@@ -133,15 +133,10 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(41)]
 		public double RectangleWidth { get; set; }
 
-		/// <summary>
-		/// Specifies the rotation angle for the object.
-		/// </summary>
+		/// <inheritdoc/>
 		/// <remarks>
 		/// The rotation is only valid if the <see cref="Normal"/> is set to the Z axis.
 		/// </remarks>
-		/// <value>
-		/// The rotation angle in radians.
-		/// </value>
 		[DxfCodeValue(DxfReferenceType.IsAngle | DxfReferenceType.Ignored, 50)]
 		public double Rotation
 		{
