@@ -46,12 +46,6 @@ namespace ACadSharp.Objects
 		public bool ClipFrontPlane { get; set; }
 
 		/// <summary>
-		/// Duplicate record cloning flag (determines how to merge duplicate entries)
-		/// </summary>
-		[DxfCodeValue(70)]
-		public DictionaryCloningFlags CloningFlags { get; set; }
-
-		/// <summary>
 		/// Clip boundary display enabled flag.
 		/// </summary>
 		[DxfCodeValue(71)]
