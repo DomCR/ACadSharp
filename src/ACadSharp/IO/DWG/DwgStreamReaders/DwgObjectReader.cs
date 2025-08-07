@@ -1339,7 +1339,7 @@ namespace ACadSharp.IO.DWG
 			this.readCommonNonEntityData(template);
 
 			//Common:
-			//Numpts BS 70 number of points /* really long? */
+			//Numpts BS 70 number of points
 			int numPts = this._mergedReaders.ReadBitShort();
 			//Repeat numpts times:
 			for (int i = 0; i < numPts; i++)
@@ -1347,7 +1347,6 @@ namespace ACadSharp.IO.DWG
 				//pt0 2RD 10 a point on the clip boundary
 				filter.BoundaryPoints.Add(this._mergedReaders.Read2RawDouble());
 			}
-			//End repeat
 
 			//Extrusion 3BD 210 extrusion
 			filter.Normal = this._mergedReaders.Read3BitDouble();
@@ -1355,9 +1354,9 @@ namespace ACadSharp.IO.DWG
 			filter.Origin = this._mergedReaders.Read3BitDouble();
 			//Dispbound BS 71 display boundary
 			filter.DisplayBoundary = this._mergedReaders.ReadBitShort() != 0;
-
 			//Frontclipon BS 72 1 if front clip on
 			filter.ClipFrontPlane = this._mergedReaders.ReadBitShort() != 0;
+
 			if (filter.ClipFrontPlane)
 			{
 				//Frontdist BD 40 front clip dist(present if frontclipon == 1)
