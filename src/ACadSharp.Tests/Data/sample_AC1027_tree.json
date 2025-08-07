@@ -4233,6 +4233,32 @@
             "OwnerHandle": 31,
             "DictionaryHandle": 0,
             "Children": []
+          },
+          {
+            "Color": {
+              "IsByBlock": false,
+              "IsByLayer": false,
+              "Green": 66,
+              "Blue": 236,
+              "Red": 155,
+              "Index": 193
+            },
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "Properties": {},
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockReference",
+            "Handle": 3375,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 3376,
+            "Children": []
           }
         ],
         "Name": "*Model_Space",
@@ -7141,7 +7167,7 @@
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.AttributeDefinition",
             "Handle": 1942,
             "OwnerHandle": 1919,
-            "DictionaryHandle": 3826,
+            "DictionaryHandle": 0,
             "Children": []
           },
           {
@@ -7851,7 +7877,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
-            "Handle": 3865,
+            "Handle": 3405,
             "OwnerHandle": 2614,
             "DictionaryHandle": 0,
             "Children": []
@@ -7929,7 +7955,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockReference",
-            "Handle": 3866,
+            "Handle": 3406,
             "OwnerHandle": 2614,
             "DictionaryHandle": 0,
             "Children": []
