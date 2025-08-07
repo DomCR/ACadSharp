@@ -15,6 +15,8 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.SpatialFilter)]
 	public class SpatialFilter : Filter
 	{
+		public const string SpatialFilterEntryName = "SPATIAL";
+
 		/// <summary>
 		/// Back clipping plane distance.
 		/// </summary>

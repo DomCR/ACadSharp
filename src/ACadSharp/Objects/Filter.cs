@@ -11,6 +11,8 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.Filter)]
 	public abstract class Filter : NonGraphicalObject
 	{
+		public const string FilterEntryName = "ACAD_FILTER";
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
