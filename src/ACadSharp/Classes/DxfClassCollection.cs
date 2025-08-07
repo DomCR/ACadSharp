@@ -428,17 +428,6 @@ namespace ACadSharp.Classes
 				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
 				WasZombie = false,
 			});
-            //AcDbPdfReference
-            doc.Classes.AddOrUpdate(new DxfClass {
-                CppClassName = DxfSubclassMarker.PdfReference,
-                ClassNumber = (short)(500 + doc.Classes.Count),
-                DwgVersion = (ACadVersion)26,
-                DxfName = DxfFileToken.EntityPdfUnderlay,
-                ItemClassId = 498,
-                MaintenanceVersion = 0,
-                ProxyFlags = (ProxyFlags)4095,
-                WasZombie = false,
-            });
 
 			//AcDbPdfReference
 			doc.Classes.AddOrUpdate(new DxfClass
@@ -453,7 +442,7 @@ namespace ACadSharp.Classes
 				WasZombie = false,
 			});
 
-			//AcDbPdfReference
+			//AcDbPdfDefinition
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
 				CppClassName = DxfSubclassMarker.PdfDefinition,
