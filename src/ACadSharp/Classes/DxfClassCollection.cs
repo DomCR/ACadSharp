@@ -442,7 +442,7 @@ namespace ACadSharp.Classes
 				WasZombie = false,
 			});
 
-			//AcDbPdfReference
+			//AcDbPdfDefinition
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
 				CppClassName = DxfSubclassMarker.PdfDefinition,
@@ -467,6 +467,20 @@ namespace ACadSharp.Classes
 				MaintenanceVersion = 0,
 				ProxyFlags = ProxyFlags.None,
 				WasZombie = false,
+			});
+
+			//AcDbSpatialFilter
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.SpatialFilter,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = (ACadVersion)20,
+				DxfName = DxfFileToken.ObjectSpatialFilter,
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.None,
+				WasZombie = false,
+				IsAnEntity = false,
 			});
 		}
 

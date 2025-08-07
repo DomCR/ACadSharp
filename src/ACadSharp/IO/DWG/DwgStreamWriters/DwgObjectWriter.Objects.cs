@@ -95,6 +95,9 @@ namespace ACadSharp.IO.DWG
 				case SortEntitiesTable sorttables:
 					this.writeSortEntitiesTable(sorttables);
 					break;
+				case SpatialFilter spatialFilter:
+					this.writeSpatialFilter(spatialFilter);
+					break;
 				case XRecord record:
 					this.writeXRecord(record);
 					break;
@@ -768,6 +771,59 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(scale.DrawingUnits);
 			//B	290	Has unit scale
 			this._writer.WriteBit(scale.IsUnitScale);
+		}
+
+		private void writeSpatialFilter(SpatialFilter filter)
+		{
+			//Common:
+			//Numpts BS 70 number of points
+			this._writer.WriteBitShort((short)filter.BoundaryPoints.Count);
+			//Repeat numpts times:
+			foreach (var pt in filter.BoundaryPoints)
+			{
+				//pt0 2RD 10 a point on the clip boundary
+				this._writer.Write2RawDouble(pt);
+			}
+
+			//Extrusion 3BD 210 extrusion
+			this._writer.Write3BitDouble(filter.Normal);
+			//Clipbdorg 3BD 10 clip bound origin
+			this._writer.Write3BitDouble(filter.Origin);
+			//Dispbound BS 71 display boundary
+			this._writer.WriteBitShort((short)(filter.DisplayBoundary ? 1 : 0));
+			//Frontclipon BS 72 1 if front clip on
+			this._writer.WriteBitShort((short)(filter.ClipFrontPlane ? 1 : 0));
+			if (filter.ClipFrontPlane)
+			{
+				//Frontdist BD 40 front clip dist(present if frontclipon == 1)
+				this._writer.WriteBitDouble(filter.FrontDistance);
+			}
+
+			//Backclipon BS 73 1 if back clip on
+			this._writer.WriteBitShort((short)(filter.ClipBackPlane ? 1 : 0));
+			if (filter.ClipBackPlane)
+			{
+				//Backdist BD 41 back clip dist(present if backclipon == 1)
+				this._writer.WriteBitDouble(filter.BackDistance);
+			}
+
+			//Invblktr 12BD 40 inverse block transformation matrix
+			//(double[4][3], column major order)
+			this.write4x3Matrix(filter.InverseInsertTransform);
+			//clipbdtr 12BD 40 clip bound transformation matrix
+			//(double[4][3], column major order)
+			this.write4x3Matrix(filter.InsertTransform);
+		}
+
+		private void write4x3Matrix(Matrix4 matrix)
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 4; j++)
+				{
+					this._writer.WriteBitDouble(matrix[i, j]);
+				}
+			}
 		}
 
 		private void writeSortEntitiesTable(SortEntitiesTable sortEntitiesTable)

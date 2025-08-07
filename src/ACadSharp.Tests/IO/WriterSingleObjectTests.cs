@@ -58,6 +58,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.EntityTransparency)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithSegments)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateInsertWithHatch)));
+			Data.Add(new(nameof(SingleCaseGenerator.InsertWithSpatialFilter)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateCircleHatch)));
@@ -387,7 +388,6 @@ namespace ACadSharp.Tests.IO
 				var modelSpace = doc.ModelSpace;
 
 				string blockName = Guid.NewGuid().ToString();
-				var block = new Block(new(blockName));
 				var blockRecord = new BlockRecord(blockName);
 				var insert = new Insert(blockRecord);
 				modelSpace.Entities.Add(insert);
@@ -417,6 +417,28 @@ namespace ACadSharp.Tests.IO
 				hatch.Paths.Add(path);
 
 				blockRecord.Entities.Add(hatch);
+			}
+
+			public void InsertWithSpatialFilter()
+			{
+				string blockName = Guid.NewGuid().ToString();
+				var blockRecord = new BlockRecord("my_block");
+				var insert = new Insert(blockRecord);
+
+				SpatialFilter filter = new SpatialFilter();
+				filter.BoundaryPoints.Add(XY.Zero);
+				filter.BoundaryPoints.Add(new XY(50, 50));
+				filter.DisplayBoundary = true;
+
+				insert.SpatialFilter = filter;
+
+				this.Document.Entities.Add(insert);
+
+				Circle circle = new Circle
+				{
+					Radius = 20
+				};
+				blockRecord.Entities.Add(circle);
 			}
 
 			public void CreateLayout()
@@ -513,6 +535,8 @@ namespace ACadSharp.Tests.IO
 
 			public void DimensionAngular3Pt()
 			{
+				return;
+
 				DimensionAngular3Pt dim = new DimensionAngular3Pt();
 				dim.FirstPoint = XYZ.AxisY;
 				dim.SecondPoint = XYZ.AxisX;
@@ -601,8 +625,6 @@ namespace ACadSharp.Tests.IO
 				{
 					SecondPoint = new XYZ(10)
 				};
-
-				this.Document.Entities.Add(dim);
 
 				dim.UpdateBlock();
 

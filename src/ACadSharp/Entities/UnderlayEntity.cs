@@ -236,7 +236,7 @@ namespace ACadSharp.Entities
 			v = transWO * v;
 			XY newVvector = new XY(v.X, v.Y);
 
-			int sign = Math.Sign(transformation.m00 * transformation.m11 * transformation.m22) < 0 ? -1 : 1;
+			int sign = Math.Sign(transformation.M00 * transformation.M11 * transformation.M22) < 0 ? -1 : 1;
 
 			double newRotation = (sign * newUvector).GetAngle();
 
