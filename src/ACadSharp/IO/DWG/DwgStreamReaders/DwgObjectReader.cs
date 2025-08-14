@@ -1094,13 +1094,12 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "SPATIAL_FILTER":
 					template = this.readSpatialFilter();
+					break;
 				case "ACAD_PROXY_ENTITY":
 					template = this.readProxyEntity();
 					break;
 				case "ACAD_PROXY_OBJECT":
 					template = this.readProxyObject();
-					break;
-				default:
 					break;
 			}
 
