@@ -148,7 +148,7 @@ namespace ACadSharp.Entities
 			XY startPoint = new XY(vStart.X, vStart.Y);
 			XY endPoint = new XY(vEnd.X, vEnd.Y);
 
-			if (Math.Sign(trans.m00 * trans.m11 * trans.m22) < 0)
+			if (Math.Sign(trans.M00 * trans.M11 * trans.M22) < 0)
 			{
 				this.EndAngle = startPoint.GetAngle();
 				this.StartAngle = endPoint.GetAngle();

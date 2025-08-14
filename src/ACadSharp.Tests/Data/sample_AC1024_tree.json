@@ -276,7 +276,7 @@
       {
         "Name": "ACAD_SPLINE_DATA",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
-        "Handle": 3957,
+        "Handle": 3552,
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
@@ -4241,6 +4241,32 @@
             "OwnerHandle": 31,
             "DictionaryHandle": 0,
             "Children": []
+          },
+          {
+            "Color": {
+              "IsByBlock": false,
+              "IsByLayer": false,
+              "Green": 66,
+              "Blue": 236,
+              "Red": 155,
+              "Index": 193
+            },
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "Properties": {},
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockReference",
+            "Handle": 3375,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 3376,
+            "Children": []
           }
         ],
         "Name": "*Model_Space",
@@ -7149,7 +7175,7 @@
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.AttributeDefinition",
             "Handle": 1942,
             "OwnerHandle": 1919,
-            "DictionaryHandle": 3868,
+            "DictionaryHandle": 3463,
             "Children": []
           },
           {
@@ -7859,7 +7885,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
-            "Handle": 3964,
+            "Handle": 3559,
             "OwnerHandle": 2614,
             "DictionaryHandle": 0,
             "Children": []
@@ -7937,7 +7963,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockReference",
-            "Handle": 3965,
+            "Handle": 3560,
             "OwnerHandle": 2614,
             "DictionaryHandle": 0,
             "Children": []

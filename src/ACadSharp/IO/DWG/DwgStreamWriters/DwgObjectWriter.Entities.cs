@@ -1385,25 +1385,25 @@ namespace ACadSharp.IO.DWG
 				//	- Scaling (using scale vector)
 				//	- Translation (using location)
 				var m4 = annotContext.TransformationMatrix;
-				this._writer.WriteBitDouble(m4.m00);
-				this._writer.WriteBitDouble(m4.m10);
-				this._writer.WriteBitDouble(m4.m20);
-				this._writer.WriteBitDouble(m4.m30);
+				this._writer.WriteBitDouble(m4.M00);
+				this._writer.WriteBitDouble(m4.M10);
+				this._writer.WriteBitDouble(m4.M20);
+				this._writer.WriteBitDouble(m4.M30);
 
-				this._writer.WriteBitDouble(m4.m01);
-				this._writer.WriteBitDouble(m4.m11);
-				this._writer.WriteBitDouble(m4.m21);
-				this._writer.WriteBitDouble(m4.m31);
+				this._writer.WriteBitDouble(m4.M01);
+				this._writer.WriteBitDouble(m4.M11);
+				this._writer.WriteBitDouble(m4.M21);
+				this._writer.WriteBitDouble(m4.M31);
 
-				this._writer.WriteBitDouble(m4.m02);
-				this._writer.WriteBitDouble(m4.m12);
-				this._writer.WriteBitDouble(m4.m22);
-				this._writer.WriteBitDouble(m4.m32);
+				this._writer.WriteBitDouble(m4.M02);
+				this._writer.WriteBitDouble(m4.M12);
+				this._writer.WriteBitDouble(m4.M22);
+				this._writer.WriteBitDouble(m4.M32);
 
-				this._writer.WriteBitDouble(m4.m03);
-				this._writer.WriteBitDouble(m4.m13);
-				this._writer.WriteBitDouble(m4.m23);
-				this._writer.WriteBitDouble(m4.m33);
+				this._writer.WriteBitDouble(m4.M03);
+				this._writer.WriteBitDouble(m4.M13);
+				this._writer.WriteBitDouble(m4.M23);
+				this._writer.WriteBitDouble(m4.M33);
 			}
 			//END IF Has contents block
 			//END IF Has text contents

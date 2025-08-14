@@ -1,10 +1,9 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
-using CSUtilities.Extensions;
 using System;
 using System.Linq;
-using System.Xml.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -64,8 +63,40 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Specifies the rotation angle for the object.
 		/// </summary>
-		public bool IsMultiple
-		{ get { return this.RowCount > 1 || this.ColumnCount > 1; } }
+		public bool IsMultiple { get { return this.RowCount > 1 || this.ColumnCount > 1; } }
+
+		/// <summary>
+		/// Gets or set the spatial filter entry for this <see cref="Insert"/> entity.
+		/// </summary>
+		public SpatialFilter SpatialFilter
+		{
+			get
+			{
+				if (this.XDictionary != null
+					&& this.XDictionary.TryGetEntry(Filter.FilterEntryName, out CadDictionary filters))
+				{
+					return filters.GetEntry<SpatialFilter>(SpatialFilter.SpatialFilterEntryName);
+				}
+
+				return null;
+			}
+			set
+			{
+				if (this.XDictionary == null)
+				{
+					this.CreateExtendedDictionary();
+				}
+
+				if (!this.XDictionary.TryGetEntry(Filter.FilterEntryName, out CadDictionary filters))
+				{
+					filters = new CadDictionary(Filter.FilterEntryName);
+					this.XDictionary.Add(filters);
+				}
+
+				filters.Remove(SpatialFilter.SpatialFilterEntryName);
+				filters.Add(SpatialFilter.SpatialFilterEntryName, value);
+			}
+		}
 
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
