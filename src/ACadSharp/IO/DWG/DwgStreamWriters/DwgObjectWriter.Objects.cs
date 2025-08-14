@@ -17,26 +17,17 @@ namespace ACadSharp.IO.DWG
 		{
 			while (this._objects.Any())
 			{
-				CadObject obj = this._objects.Dequeue();
+				NonGraphicalObject obj = this._objects.Dequeue();
 
 				this.writeObject(obj);
 			}
 		}
 
-		private void writeObject(CadObject obj)
+		private void writeObject(NonGraphicalObject obj)
 		{
-			switch (obj)
+			if (this.skipEntry(obj))
 			{
-				case EvaluationGraph:
-				case Material:
-				case UnknownNonGraphicalObject:
-				case VisualStyle:
-					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
-					return;
-			}
-
-			if (obj is XRecord && !this.WriteXRecords)
-			{
+				this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
 				return;
 			}
 
@@ -169,12 +160,7 @@ namespace ACadSharp.IO.DWG
 			List<NonGraphicalObject> entries = new List<NonGraphicalObject>();
 			foreach (var item in dictionary)
 			{
-				if (item is XRecord && !this.WriteXRecords)
-				{
-					continue;
-				}
-
-				if (item is UnknownNonGraphicalObject)
+				if (this.skipEntry(item))
 				{
 					continue;
 				}
@@ -202,12 +188,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			foreach (var item in entries)
 			{
-				if (item is XRecord && !this.WriteXRecords)
-				{
-					continue;
-				}
-
-				if (item is UnknownNonGraphicalObject)
+				if (this.skipEntry(item))
 				{
 					continue;
 				}
@@ -219,9 +200,25 @@ namespace ACadSharp.IO.DWG
 			this.addEntriesToWriter(dictionary);
 		}
 
+		private bool skipEntry(NonGraphicalObject entry)
+		{
+			switch (entry)
+			{
+				case XRecord when !this.WriteXRecords:
+				case EvaluationGraph:
+				case Material:
+				case UnknownNonGraphicalObject:
+				case VisualStyle:
+				case ProxyObject:
+					return true;
+			}
+
+			return false;
+		}
+
 		private void addEntriesToWriter(CadDictionary dictionary)
 		{
-			foreach (CadObject e in dictionary)
+			foreach (NonGraphicalObject e in dictionary)
 			{
 				this._objects.Enqueue(e);
 			}

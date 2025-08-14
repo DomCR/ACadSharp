@@ -28,7 +28,7 @@ namespace ACadSharp.IO.DWG
 
 		private Dictionary<ulong, CadDictionary> _dictionaries = new();
 
-		private Queue<CadObject> _objects = new();
+		private Queue<NonGraphicalObject> _objects = new();
 
 		private MemoryStream _msmain;
 

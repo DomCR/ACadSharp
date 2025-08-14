@@ -1,0 +1,49 @@
+﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
+
+namespace ACadSharp.Objects
+{
+	public class ProxyObject : NonGraphicalObject, IProxy
+	{
+		[DxfCodeValue(91)]
+		public int ClassId { get { return this.DxfClass.ItemClassId; } }
+
+		public DxfClass DxfClass { get; set; }
+
+		public int MaintenanceVersion { get; set; }
+
+		/// <inheritdoc/>
+		[DxfCodeValue(70)]
+		public bool OriginalDataFormatDxf { get; set; }
+
+		/// <inheritdoc/>
+		/// <remarks>
+		/// Always 499
+		/// </remarks>
+		[DxfCodeValue(90)]
+		public int ProxyClassId { get; } = 499;
+
+		//93 Size of entity data in bits
+		//310 Binary entity data(multiple entries can appear) (optional)
+
+		//330 or 340
+		//or 350 or 360
+		//An object ID(multiple entries can appear) (optional)
+
+		//94 0 (indicates end of object ID section)
+
+		/// <summary>
+		/// Object drawing format when it becomes a proxy: <br/>
+		/// Low word is AcDbDwgVersion. <br/>
+		/// High word is MaintenanceReleaseVersion.
+		/// </summary>
+		[DxfCodeValue(95)]
+		public int DrawingFormat { get { return (int)this.Version | (this.MaintenanceVersion << 16); } }
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.ProxyObject;
+
+		/// <inheritdoc/>
+		public ACadVersion Version { get; set; }
+	}
+}
