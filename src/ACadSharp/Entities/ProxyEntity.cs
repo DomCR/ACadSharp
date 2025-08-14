@@ -1,10 +1,18 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Classes;
 using CSMath;
-using System.Drawing;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Represents a <see cref="ProxyEntity"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EntityProxyEntity"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.ProxyEntity"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EntityProxyEntity)]
+	[DxfSubClass(DxfSubclassMarker.ProxyEntity)]
 	public class ProxyEntity : Entity, IProxy
 	{
 		/// <inheritdoc/>
