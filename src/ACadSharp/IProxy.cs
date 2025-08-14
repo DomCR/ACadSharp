@@ -2,6 +2,9 @@
 
 namespace ACadSharp
 {
+	/// <summary>
+	/// Represents a proxy object containing custom data.
+	/// </summary>
 	public interface IProxy
 	{
 		/// <summary>
@@ -23,5 +26,7 @@ namespace ACadSharp
 		/// Original custom object data format.
 		/// </summary>
 		bool OriginalDataFormatDxf { get; set; }
+		ACadVersion Version { get; set; }
+		int MaintenanceVersion { get; set; }
 	}
 }

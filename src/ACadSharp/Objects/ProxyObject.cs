@@ -35,10 +35,13 @@ namespace ACadSharp.Objects
 		//95 Object drawing format when it becomes a proxy(a 32-bit unsigned integer):
 		//Low word is AcDbDwgVersion
 		//High word is MaintenanceReleaseVersion
+		[DxfCodeValue(95)]
+		internal int DrawingFormat { get { return (int)this.Version | (this.MaintenanceVersion << 16); } }
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.ProxyObject;
 
+		/// <inheritdoc/>
 		public ACadVersion Version { get; set; }
 	}
 }

@@ -6147,6 +6147,25 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
+			this.readCommonProxyData(proxy);
+
+			return template;
+		}
+
+		private CadTemplate readProxyEntity()
+		{
+			ProxyEntity proxy = new ProxyEntity();
+			CadEntityTemplate<ProxyEntity> template = new CadEntityTemplate<ProxyEntity>(proxy);
+
+			this.readCommonEntityData(template);
+
+			this.readCommonProxyData(proxy);
+
+			return template;
+		}
+
+		private void readCommonProxyData(IProxy proxy)
+		{
 			//Class ID BL 91
 			//It seems to be the same for all versions
 			int classId = this._mergedReaders.ReadBitLong(); ;
@@ -6189,25 +6208,13 @@ namespace ACadSharp.IO.DWG
 			}
 			else
 			{
-				return template;
+				return;
 			}
 
 			//Common:
 			//Databits X databits, however many there are to the handles
 
 			//TODO: Investigate how to read the data in proxies, it can contain data, strings and handles
-
-			return template;
-		}
-
-		private CadTemplate readProxyEntity()
-		{
-			ProxyEntity proxy = new ProxyEntity();
-			CadEntityTemplate<ProxyEntity> template = new CadEntityTemplate<ProxyEntity>(proxy);
-
-			this.readCommonEntityData(template);
-
-			return template;
 		}
 
 		private CadTemplate readLayout()
