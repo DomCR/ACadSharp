@@ -15,26 +15,40 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.ProxyEntity)]
 	public class ProxyEntity : Entity, IProxy
 	{
-		/// <inheritdoc/>
-		/// <remarks>
-		/// Always 498
-		/// </remarks>
-		[DxfCodeValue(90)]
-		public int ProxyClassId { get; } = 498;
-
 		/// <summary>
-		/// Application dxf class ID. 
+		/// Application dxf class ID.
 		/// </summary>
 		[DxfCodeValue(91)]
 		public int ClassId { get { return this.DxfClass.ItemClassId; } }
 
+		/// <summary>
+		/// Object drawing format when it becomes a proxy: <br/>
+		/// Low word is AcDbDwgVersion. <br/>
+		/// High word is MaintenanceReleaseVersion.
+		/// </summary>
+		[DxfCodeValue(95)]
+		public int DrawingFormat { get { return (int)this.Version | (this.MaintenanceVersion << 16); } }
+
 		public DxfClass DxfClass { get; set; }
+
+		public int MaintenanceVersion { get; set; }
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityProxyEntity;
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.ACAD_PROXY_ENTITY;
+
+		/// <inheritdoc/>
+		[DxfCodeValue(70)]
+		public bool OriginalDataFormatDxf { get; set; }
+
+		/// <inheritdoc/>
+		/// <remarks>
+		/// Always 498
+		/// </remarks>
+		[DxfCodeValue(90)]
+		public int ProxyClassId { get; } = 498;
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.ProxyEntity;
@@ -50,14 +64,8 @@ namespace ACadSharp.Entities
 		//An object ID(multiple entries can appear) (optional)
 
 		//94 0 (indicates end of object ID section)
-
-		//95 Object drawing format when it becomes a proxy(a 32-bit unsigned integer):
-		//Low word is AcDbDwgVersion
-		//High word is MaintenanceReleaseVersion
-
 		/// <inheritdoc/>
-		[DxfCodeValue(70)]
-		public bool OriginalDataFormatDxf { get; set; }
+		public ACadVersion Version { get; set; }
 
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
