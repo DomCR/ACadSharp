@@ -39,6 +39,7 @@ namespace ACadSharp.IO.DXF
 				case VisualStyle:
 				case ImageDefinitionReactor:
 				case UnknownNonGraphicalObject:
+				case ProxyObject:
 				case XRecord:
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
