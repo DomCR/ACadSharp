@@ -482,7 +482,19 @@ namespace ACadSharp.Classes
 				WasZombie = false,
 				IsAnEntity = false,
 			});
-		}
+
+			//AcDbMLeaderObjectContextData
+			doc.Classes.AddOrUpdate(new DxfClass {
+				CppClassName = DxfSubclassMarker.MultiLeaderObjectContextData,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.MC0_0,
+				DxfName = DxfFileToken.ObjectMLeaderContextData,
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+        }
 
 		/// <summary>
 		/// Add a dxf class to the collection if the <see cref="DxfClass.DxfName"/> is not present

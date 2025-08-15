@@ -2,7 +2,7 @@
 {
 
 	/// <summary>
-	/// Specifies the draw order of a <see cref="MultiLeaderAnnotContext.LeaderRoot"/>
+	/// Specifies the draw order of a <see cref="MultiLeaderObjectContextData.LeaderRoot"/>
 	/// in a <see cref="Entities.MultiLeader"/> entity.
 	/// </summary>
 	public enum LeaderDrawOrderType
