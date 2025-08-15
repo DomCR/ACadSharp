@@ -1,6 +1,7 @@
 ﻿using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
+using CSMath;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -82,6 +83,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<TableContent>(new CadTableContentTemplate(), this.readTableContent);
 				case DxfFileToken.ObjectVisualStyle:
 					return this.readObjectCodes<VisualStyle>(new CadTemplate<VisualStyle>(new VisualStyle()), this.readVisualStyle);
+				case DxfFileToken.ObjectSpatialFilter:
+					return this.readObjectCodes<SpatialFilter>(new CadSpatialFilterTemplate(), this.readSpatialFilter);
 				case DxfFileToken.ObjectXRecord:
 					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), this.readXRecord);
 				default:
@@ -397,6 +400,62 @@ namespace ACadSharp.IO.DXF
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.VisualStyle]);
+			}
+		}
+
+		private bool readSpatialFilter(CadTemplate template, DxfMap map)
+		{
+			CadSpatialFilterTemplate tmp = template as CadSpatialFilterTemplate;
+			SpatialFilter filter = tmp.CadObject as SpatialFilter;
+
+			switch (this._reader.Code)
+			{
+				case 10:
+					filter.BoundaryPoints.Add(new CSMath.XY(this._reader.ValueAsDouble, 0));
+					return true;
+				case 20:
+					var pt = filter.BoundaryPoints.LastOrDefault();
+					filter.BoundaryPoints.Add(new CSMath.XY(pt.X, this._reader.ValueAsDouble));
+					return true;
+				case 40:
+					if (filter.ClipFrontPlane && !tmp.HasFrontPlane)
+					{
+						filter.FrontDistance = this._reader.ValueAsDouble;
+						tmp.HasFrontPlane = true;
+					}
+
+					double[] array = new double[16]
+					{
+						0.0, 0.0, 0.0, 0.0,
+						0.0, 0.0, 0.0, 0.0,
+						0.0, 0.0, 0.0, 0.0,
+						0.0, 0.0, 0.0, 1.0
+					};
+
+					for (int i = 0; i < 12; i++)
+					{
+						array[i] = this._reader.ValueAsDouble;
+
+						if (i < 11)
+						{
+							this._reader.ReadNext();
+						}
+					}
+
+					if (tmp.InsertTransformRead)
+					{
+						filter.InsertTransform = new Matrix4(array);
+						tmp.InsertTransformRead = true;
+					}
+					else
+					{
+						filter.InverseInsertTransform = new Matrix4(array);
+					}
+
+					return true;
+				case 73:
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.SpatialFilter]);
 			}
 		}
 

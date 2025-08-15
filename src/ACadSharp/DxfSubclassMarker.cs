@@ -88,6 +88,8 @@
 
 		public const string Face3d = "AcDbFace";
 
+		public const string Filter = "AcDbFilter";
+
 		public const string GeoData = "AcDbGeoData";
 
 		public const string Group = "AcDbGroup";
@@ -177,6 +179,8 @@
 		public const string Solid = "AcDbTrace";
 
 		public const string SortentsTable = "AcDbSortentsTable";
+
+		public const string SpatialFilter = "AcDbSpatialFilter";
 
 		public const string Spline = "AcDbSpline";
 

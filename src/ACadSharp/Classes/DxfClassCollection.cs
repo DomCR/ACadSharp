@@ -469,6 +469,20 @@ namespace ACadSharp.Classes
 				WasZombie = false,
 			});
 
+			//AcDbSpatialFilter
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.SpatialFilter,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = (ACadVersion)20,
+				DxfName = DxfFileToken.ObjectSpatialFilter,
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.None,
+				WasZombie = false,
+				IsAnEntity = false,
+			});
+
 			//AcDbMLeaderObjectContextData
 			doc.Classes.AddOrUpdate(new DxfClass {
 				CppClassName = DxfSubclassMarker.MultiLeaderObjectContextData,

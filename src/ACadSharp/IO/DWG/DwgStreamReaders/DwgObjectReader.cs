@@ -18,8 +18,6 @@ using System.Globalization;
 using ACadSharp.Objects.Evaluations;
 using ACadSharp.XData;
 using System.Diagnostics;
-using System.Numerics;
-using ACadSharp.Objects.Collections;
 
 namespace ACadSharp.IO.DWG
 {
@@ -1099,7 +1097,8 @@ namespace ACadSharp.IO.DWG
 				case "BLOCKFLIPACTION":
 					template = this.readBlockFlipAction();
 					break;
-				default:
+				case "SPATIAL_FILTER":
+					template = this.readSpatialFilter();
 					break;
 			}
 
@@ -1333,6 +1332,69 @@ namespace ACadSharp.IO.DWG
 			blockAction.Value70 = this._mergedReaders.ReadBitShort();
 
 			return template;
+		}
+
+		private CadTemplate readSpatialFilter()
+		{
+			SpatialFilter filter = new SpatialFilter();
+			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(filter);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Numpts BS 70 number of points
+			int numPts = this._mergedReaders.ReadBitShort();
+			//Repeat numpts times:
+			for (int i = 0; i < numPts; i++)
+			{
+				//pt0 2RD 10 a point on the clip boundary
+				filter.BoundaryPoints.Add(this._mergedReaders.Read2RawDouble());
+			}
+
+			//Extrusion 3BD 210 extrusion
+			filter.Normal = this._mergedReaders.Read3BitDouble();
+			//Clipbdorg 3BD 10 clip bound origin
+			filter.Origin = this._mergedReaders.Read3BitDouble();
+			//Dispbound BS 71 display boundary
+			filter.DisplayBoundary = this._mergedReaders.ReadBitShort() != 0;
+			//Frontclipon BS 72 1 if front clip on
+			filter.ClipFrontPlane = this._mergedReaders.ReadBitShort() != 0;
+
+			if (filter.ClipFrontPlane)
+			{
+				//Frontdist BD 40 front clip dist(present if frontclipon == 1)
+				filter.FrontDistance = this._mergedReaders.ReadBitDouble();
+			}
+
+			//Backclipon BS 73 1 if back clip on
+			filter.ClipBackPlane = this._mergedReaders.ReadBitShort() != 0;
+			if (filter.ClipBackPlane)
+			{
+				//Backdist BD 41 back clip dist(present if backclipon == 1)
+				filter.BackDistance = this._mergedReaders.ReadBitDouble();
+			}
+
+			//Invblktr 12BD 40 inverse block transformation matrix
+			//(double[4][3], column major order)
+			filter.InverseInsertTransform = this.read4x3Matrix();
+			//clipbdtr 12BD 40 clip bound transformation matrix
+			//(double[4][3], column major order)
+			filter.InsertTransform = this.read4x3Matrix();
+
+			return template;
+		}
+
+		private Matrix4 read4x3Matrix()
+		{
+			Matrix4 identity = Matrix4.Identity;
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 4; j++)
+				{
+					identity[i, j] = this._mergedReaders.ReadBitDouble();
+				}
+			}
+			return identity;
 		}
 
 		private CadBlockFlipActionTemplate readBlockFlipAction()
