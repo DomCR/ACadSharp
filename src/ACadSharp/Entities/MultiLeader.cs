@@ -85,16 +85,24 @@ namespace ACadSharp.Entities
 		public LeaderContentType ContentType { get; set; }
 
 		/// <summary>
-		/// Contains the multileader content (block/text) and the leaders.
+		/// Gets the embedded <see cref="MultiLeaderObjectContextData"/> object
+		/// contains the multileader content (block/text) and the leaders.
 		/// </summary>
+		/// <remarks><para>
+		/// The embedded <see cref="MultiLeaderObjectContextData"/> object is used
+		/// if the <see cref="EnableAnnotationScale"/> property is <b>false</b>.
+		/// If <see cref="EnableAnnotationScale"/> is <b>true</b> an alternate
+		/// <see cref="MultiLeaderObjectContextData"/> object with the respective
+		/// scaling value that is linked via the <see cref="CadObject.XDictionary"/>
+		/// property.
+		/// </para><para>
+		/// Note: The properties of the various <see cref="MultiLeaderObjectContextData"/> objects
+		/// are currently not synchronized.
+		/// </para>
+		/// </remarks>
 		public MultiLeaderObjectContextData ContextData {
 			get {
-				if (tryGetContextdata(out MultiLeaderObjectContextData contextData)) {
-					return contextData;
-				}
-				else {
-					return _contextData;
-				}
+				return _contextData;
 			}
 		}
 
@@ -603,7 +611,7 @@ namespace ACadSharp.Entities
 		{
 			MultiLeader clone = (MultiLeader)base.Clone();
 
-			clone._contextData = (MultiLeaderObjectContextData)this._contextData?.Clone();
+			clone._contextData = (MultiLeaderObjectContextData)this._contextData.Clone();
 
 			clone.BlockAttributes = new List<BlockAttribute>();
 			foreach (var att in this.BlockAttributes)
@@ -617,6 +625,7 @@ namespace ACadSharp.Entities
 			clone._arrowhead = (BlockRecord)this._arrowhead?.Clone();
 			clone._blockContent = (BlockRecord)this._blockContent?.Clone();
 
+			//	clone.XDictionary = (CadDictionary)this.XDictionary.Clone();
 			if (tryGetContextdata(out MultiLeaderObjectContextData contextData)) {
 				MultiLeaderObjectContextData contextDataClone = (MultiLeaderObjectContextData)contextData.Clone();
 
@@ -637,7 +646,7 @@ namespace ACadSharp.Entities
 				this.XDictionary.TryGetEntry("AcDbContextDataManager", out CadDictionary contextDataManager) &&
 				contextDataManager.TryGetEntry("ACDB_ANNOTATIONSCALES", out CadDictionary annotScales) &&
 				annotScales.TryGetEntry("*A1", out MultiLeaderObjectContextData a1))
-			{
+				{
 				contextData = a1;
 				return true;
 			}
