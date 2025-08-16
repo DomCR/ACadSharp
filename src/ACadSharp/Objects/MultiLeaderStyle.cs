@@ -29,7 +29,7 @@ namespace ACadSharp.Objects
 		public const string DefaultName = "Standard";
 
 		/// <summary>
-		/// Gets the default MLine style
+		/// Gets the default MultiLeaderStyle
 		/// </summary>
 		public static MultiLeaderStyle Default { get { return new MultiLeaderStyle(DefaultName); } }
 
