@@ -7,6 +7,7 @@ using CSMath;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 
@@ -1167,7 +1168,7 @@ namespace ACadSharp.Header
 			}
 			private set
 			{
-				_currentDimensionStyle = value;
+				this._currentDimensionStyle = value;
 			}
 		}
 
@@ -1192,6 +1193,78 @@ namespace ACadSharp.Header
 					this._currentDimensionStyle = new DimensionStyle(value);
 				}
 			}
+		}
+
+		public MultiLeaderStyle CurrentMultiLeaderStyle
+		{
+			get
+			{
+				if (this.Document == null) {
+					return this._currentMultiLeaderStyle;
+				}
+				else {
+					return this.Document.MLeaderStyles[this.CurrentMultiLeaderStyleName];
+				}
+			}
+			private set {
+				this._currentMultiLeaderStyle = value;
+			}
+		}
+
+		public string CurrentMultiLeaderStyleName
+		{
+			get
+			{
+				if (this.Document == null)
+				{
+					return this._currentMultiLeaderStyle.Name;
+				}
+				else
+				{
+					DictionaryVariable variableDictionaryEntry = ensureVariableDictionaryEntryExists(this.Document);
+					return variableDictionaryEntry.Value;
+				}
+			}
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+				{
+					throw new ArgumentNullException("value");
+				}
+				if (this.Document != null)
+				{
+					this._currentMultiLeaderStyle = this.Document.MLeaderStyles[value];
+
+					//  There is no accessible system variable $CMLEADERSTYLE
+					//  The current MultiLeaderStyle name is held in the Variable Dictionary
+					//	create or update this entry
+					DictionaryVariable variableDictionaryEntry = ensureVariableDictionaryEntryExists(this.Document);
+					variableDictionaryEntry.Value = value;
+				}
+				else
+				{
+					this._currentMultiLeaderStyle = new MultiLeaderStyle(value);
+				}
+			}
+		}
+
+		private static DictionaryVariable ensureVariableDictionaryEntryExists(CadDocument doc) {
+			//	Ensure a Variable Dictionary exits
+			var rootDictionary = doc.RootDictionary;
+			if (!rootDictionary.TryGetEntry(CadDictionary.VariableDictionary, out CadDictionary variableDictionary)) {
+				variableDictionary = new CadDictionary(CadDictionary.VariableDictionary);
+				rootDictionary.Add(variableDictionary);
+			}
+
+			if (!variableDictionary.TryGetEntry(CadDictionary.CurrentMultiLeaderStyle, out DictionaryVariable currentMultiLeaderStyleEntry))
+			{
+				currentMultiLeaderStyleEntry = new DictionaryVariable();
+				currentMultiLeaderStyleEntry.Name = CadDictionary.CurrentMultiLeaderStyle;
+				currentMultiLeaderStyleEntry.Value = MultiLeaderStyle.DefaultName;
+				variableDictionary.Add(currentMultiLeaderStyleEntry);
+			}
+
+			return currentMultiLeaderStyleEntry;
 		}
 
 		/// <summary>
@@ -3180,6 +3253,7 @@ namespace ACadSharp.Header
 		private TextStyle _currentTextStyle = TextStyle.Default;
 		private DimensionStyle _dimensionStyleOverrides = new DimensionStyle("override");
 		private DimensionStyle _currentDimensionStyle = DimensionStyle.Default;
+		private MultiLeaderStyle _currentMultiLeaderStyle = MultiLeaderStyle.Default;
 		private TextStyle _dimensionTextStyle = TextStyle.Default;
 		private double _facetResolution = 0.5;
 		private short _linearUnitPrecision = 4;

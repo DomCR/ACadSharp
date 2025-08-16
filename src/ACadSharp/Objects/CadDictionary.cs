@@ -145,6 +145,11 @@ namespace ACadSharp.Objects
 		/// </summary>
 		public const string VariableDictionary = "AcDbVariableDictionary";
 
+		/// <summary>
+		/// CMLEADERSTYLE variable-dictionary entry
+		/// </summary>
+		public const string CurrentMultiLeaderStyle = "CMLEADERSTYLE";
+
 		private readonly Dictionary<string, NonGraphicalObject> _entries = new(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>
@@ -185,7 +190,14 @@ namespace ACadSharp.Objects
 			root.TryAdd(new CadDictionary(AcadPlotSettings));
 			// { AcadPlotStyleName, new CadDictionaryWithDefault() },	//Add default entry "Normal"	PlaceHolder	??
 
-			root.TryAdd(new CadDictionary(VariableDictionary));
+			CadDictionary variableDictionary = root.ensureCadDictionaryExist(VariableDictionary);
+			root.TryAdd(variableDictionary);
+			DictionaryVariable cmLeaderStyleEntry = new DictionaryVariable()
+			{
+				Name = CurrentMultiLeaderStyle,
+				Value = MultiLeaderStyle.DefaultName	//	Style has been added, see above
+			};
+			variableDictionary.Add(cmLeaderStyleEntry);
 			//DictionaryVars Entry DIMASSOC and HIDETEXT ??
 
 			CadDictionary scales = root.ensureCadDictionaryExist(AcadScaleList);
