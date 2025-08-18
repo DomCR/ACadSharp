@@ -3,14 +3,37 @@ using ACadSharp.Classes;
 
 namespace ACadSharp.Objects
 {
+	/// <summary>
+	/// Represents a <see cref="ProxyObject"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.ObjectProxyObject"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.ProxyObject"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.ObjectProxyObject)]
+	[DxfSubClass(DxfSubclassMarker.ProxyObject)]
 	public class ProxyObject : NonGraphicalObject, IProxy
 	{
+		/// <inheritdoc/>
 		[DxfCodeValue(91)]
 		public int ClassId { get { return this.DxfClass.ItemClassId; } }
 
+		/// <summary>
+		/// Object drawing format when it becomes a proxy: <br/>
+		/// Low word is AcDbDwgVersion. <br/>
+		/// High word is MaintenanceReleaseVersion.
+		/// </summary>
+		[DxfCodeValue(95)]
+		public int DrawingFormat { get { return (int)this.Version | (this.MaintenanceVersion << 16); } }
+
+		/// <inheritdoc/>
 		public DxfClass DxfClass { get; set; }
 
+		/// <inheritdoc/>
 		public int MaintenanceVersion { get; set; }
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.ObjectProxyObject;
 
 		/// <inheritdoc/>
 		[DxfCodeValue(70)]
@@ -31,15 +54,6 @@ namespace ACadSharp.Objects
 		//An object ID(multiple entries can appear) (optional)
 
 		//94 0 (indicates end of object ID section)
-
-		/// <summary>
-		/// Object drawing format when it becomes a proxy: <br/>
-		/// Low word is AcDbDwgVersion. <br/>
-		/// High word is MaintenanceReleaseVersion.
-		/// </summary>
-		[DxfCodeValue(95)]
-		public int DrawingFormat { get { return (int)this.Version | (this.MaintenanceVersion << 16); } }
-
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.ProxyObject;
 
