@@ -4,6 +4,7 @@ using Xunit.Abstractions;
 
 namespace ACadSharp.Tests.TestModels
 {
+	//Json serialization needs to be fixed for the XUnit serialization to work
 	public class DimensionStyleTestCase : IXunitSerializable
 	{
 		public Dimension Dimension { get; private set; }
