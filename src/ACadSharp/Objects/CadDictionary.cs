@@ -197,7 +197,7 @@ namespace ACadSharp.Objects
 				Name = CurrentMultiLeaderStyle,
 				Value = MultiLeaderStyle.DefaultName	//	Style has been added, see above
 			};
-			variableDictionary.Add(cmLeaderStyleEntry);
+			variableDictionary.TryAdd(cmLeaderStyleEntry);
 			//DictionaryVars Entry DIMASSOC and HIDETEXT ??
 
 			CadDictionary scales = root.ensureCadDictionaryExist(AcadScaleList);
