@@ -55,6 +55,19 @@ namespace ACadSharp.Tests.Tables
 				},
 				{
 					new DimensionStyle {
+						AngularUnit = AngularUnitFormat.DecimalDegrees,
+						DecimalSeparator = ','
+					},
+					new DimensionAngular2Line{
+						FirstPoint = XYZ.Zero,
+						SecondPoint = new XYZ(10, 0, 0),
+						AngleVertex = XYZ.Zero,
+						DefinitionPoint = new XYZ(0,10, 0),
+					},
+					"1,57"
+				},
+				{
+					new DimensionStyle {
 						AngularUnit = AngularUnitFormat.Gradians
 					},
 					new DimensionAngular2Line{
@@ -75,6 +88,21 @@ namespace ACadSharp.Tests.Tables
 					},
 					new DimensionAligned(XYZ.Zero, new XYZ(10, 0, 0)),
 					"10"
+				},
+				{
+					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Decimal
+					},
+					new DimensionAligned(XYZ.Zero, new XYZ(10.5, 0, 0)),
+					"10.5"
+				},
+				{
+					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Decimal,
+						DecimalSeparator = ',',
+					},
+					new DimensionAligned(XYZ.Zero, new XYZ(10.5, 0, 0)),
+					"10,5"
 				},
 				{
 					new DimensionStyle {
@@ -136,14 +164,14 @@ namespace ACadSharp.Tests.Tables
 		[MemberData(nameof(LinearStyleFormat))]
 		public void GetLinearMeasurementText(DimensionStyle style, DimensionAligned dim, string result)
 		{
-			Assert.Equal(dim.GetMeasurementText(style), result);
+			Assert.Equal(result, dim.GetMeasurementText(style));
 		}
 
 		[Theory]
 		[MemberData(nameof(AngularStyleFormat))]
 		public void GetAngularMeasurementText(DimensionStyle style, DimensionAngular2Line dim, string result)
 		{
-			Assert.Equal(dim.GetMeasurementText(style), result);
+			Assert.Equal(result, dim.GetMeasurementText(style));
 		}
 
 		[Fact]
