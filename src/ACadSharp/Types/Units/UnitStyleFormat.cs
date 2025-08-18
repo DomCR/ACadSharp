@@ -255,7 +255,7 @@ namespace ACadSharp.Types.Units
 			StringBuilder zeroes = new();
 
 			zeroes.Append(leading);
-			zeroes.Append(this.DecimalSeparator);
+			zeroes.Append(".");
 
 			for (int i = 0; i < decimalPlaces; i++)
 			{
@@ -378,7 +378,12 @@ namespace ACadSharp.Types.Units
 		/// <returns>A string that represents the value in decimal units.</returns>
 		public string ToDecimal(double value, bool isAngular = false)
 		{
-			return value.ToString(this.GetZeroHandlingFormat(isAngular));
+			NumberFormatInfo numberFormat = new NumberFormatInfo
+			{
+				NumberDecimalSeparator = this.DecimalSeparator
+			};
+
+			return value.ToString(this.GetZeroHandlingFormat(isAngular), numberFormat);
 		}
 
 		/// <summary>
