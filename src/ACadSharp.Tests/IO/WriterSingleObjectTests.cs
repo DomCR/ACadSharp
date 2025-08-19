@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
+using ACadSharp.Extensions;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.XData;
@@ -970,6 +971,11 @@ namespace ACadSharp.Tests.IO
 				raster.ClipBoundaryVertices.Add(new XY(1, 1));
 
 				this.Document.Entities.Add(raster);
+
+				var clone = raster.CloneTyped();
+				clone.InsertPoint = new XYZ(10, 10, 0);
+
+				this.Document.Entities.Add(clone);
 			}
 
 			public void SingleRasterImage()
