@@ -254,6 +254,7 @@ namespace ACadSharp.Entities
 			UnderlayEntity<T> clone = (UnderlayEntity<T>)base.Clone();
 
 			clone.Definition = (T)this.Definition?.Clone();
+			clone.ClipBoundaryVertices = new List<XY>(this.ClipBoundaryVertices);
 
 			return clone;
 		}
