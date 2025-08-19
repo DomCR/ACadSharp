@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Classes;
+using System.IO;
 
 namespace ACadSharp.Objects
 {
@@ -16,7 +17,7 @@ namespace ACadSharp.Objects
 	{
 		/// <inheritdoc/>
 		[DxfCodeValue(91)]
-		public int ClassId { get { return this.DxfClass.ItemClassId; } }
+		public int ClassId { get { return this.DxfClass.ClassNumber; } }
 
 		/// <summary>
 		/// Object drawing format when it becomes a proxy: <br/>
@@ -49,11 +50,18 @@ namespace ACadSharp.Objects
 		//93 Size of entity data in bits
 		//310 Binary entity data(multiple entries can appear) (optional)
 
+		[DxfCodeValue(310)]
+		public Stream BinaryData { get; set; }
+
+		[DxfCodeValue(311)]
+		public Stream Data { get; set; }
+
 		//330 or 340
 		//or 350 or 360
 		//An object ID(multiple entries can appear) (optional)
 
 		//94 0 (indicates end of object ID section)
+
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.ProxyObject;
 

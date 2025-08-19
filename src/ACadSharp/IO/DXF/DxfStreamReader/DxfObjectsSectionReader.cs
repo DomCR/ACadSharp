@@ -1,9 +1,11 @@
-﻿using ACadSharp.IO.Templates;
+﻿using ACadSharp.Classes;
+using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
 using CSMath;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using static ACadSharp.IO.Templates.CadEvaluationGraphTemplate;
 
@@ -71,6 +73,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<PdfUnderlayDefinition>(new CadNonGraphicalObjectTemplate(new PdfUnderlayDefinition()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectSortEntsTable:
 					return this.readSortentsTable();
+				case DxfFileToken.ObjectProxyObject:
+					return this.readObjectCodes<ProxyObject>(new CadNonGraphicalObjectTemplate(new ProxyObject()), this.readProxyObject);
 				case DxfFileToken.ObjectRasterVariables:
 					return this.readObjectCodes<RasterVariables>(new CadNonGraphicalObjectTemplate(new RasterVariables()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectGroup:
@@ -140,6 +144,53 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return template;
+		}
+
+		private bool readProxyObject(CadTemplate template, DxfMap map)
+		{
+			ProxyObject proxy = template.CadObject as ProxyObject;
+
+			switch (this._reader.Code)
+			{
+				case 90:
+				case 94:
+				//Undocumented
+				case 97:
+				case 71:
+					return true;
+				case 95:
+					int format = this._reader.ValueAsInt;
+					proxy.Version = (ACadVersion)(format & 0xFFFF);
+					proxy.MaintenanceVersion = (short)(format >> 16);
+					return true;
+				case 91:
+					var classId = this._reader.ValueAsShort;
+					if (this._builder.DocumentToBuild.Classes.TryGetByClassNumber(classId, out DxfClass dxfClass))
+					{
+						proxy.DxfClass = dxfClass;
+					}
+					return true;
+				case 161:
+					return true;
+				case 162:
+					return true;
+				case 310:
+					if (proxy.BinaryData == null)
+					{
+						proxy.BinaryData = new MemoryStream();
+					}
+					proxy.BinaryData.Write(this._reader.ValueAsBinaryChunk, 0, this._reader.ValueAsBinaryChunk.Length);
+					return true;
+				case 311:
+					if (proxy.Data == null)
+					{
+						proxy.Data = new MemoryStream();
+					}
+					proxy.Data.Write(this._reader.ValueAsBinaryChunk, 0, this._reader.ValueAsBinaryChunk.Length);
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.ProxyObject]);
+			}
 		}
 
 		private bool readObjectSubclassMap(CadTemplate template, DxfMap map)

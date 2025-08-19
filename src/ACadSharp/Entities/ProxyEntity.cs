@@ -19,7 +19,7 @@ namespace ACadSharp.Entities
 		/// Application dxf class ID.
 		/// </summary>
 		[DxfCodeValue(91)]
-		public int ClassId { get { return this.DxfClass.ItemClassId; } }
+		public int ClassId { get { return this.DxfClass.ClassNumber; } }
 
 		/// <summary>
 		/// Object drawing format when it becomes a proxy: <br/>
