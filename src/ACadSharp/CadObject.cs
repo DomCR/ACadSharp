@@ -149,7 +149,7 @@ namespace ACadSharp
 			//Collections
 			clone._reactors = new List<CadObject>();
 			clone.ExtendedData = new ExtendedDataDictionary(clone);
-			clone._xdictionary = this._xdictionary?.CloneTyped();
+			clone.XDictionary = this._xdictionary?.CloneTyped();
 
 			return clone;
 		}
