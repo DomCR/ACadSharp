@@ -65,6 +65,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<CadDictionaryWithDefault>(new CadDictionaryWithDefaultTemplate(), this.readDictionaryWithDefault);
 				case DxfFileToken.ObjectLayout:
 					return this.readObjectCodes<Layout>(new CadLayoutTemplate(), this.readLayout);
+				case DxfFileToken.ObjectPlotSettings:
+					return this.readObjectCodes<PlotSettings>(new CadNonGraphicalObjectTemplate(new PlotSettings()), this.readPlotSettings);
 				case DxfFileToken.ObjectEvalGraph:
 					return this.readObjectCodes<EvaluationGraph>(new CadEvaluationGraphTemplate(), this.readEvaluationGraph);
 				case DxfFileToken.ObjectDictionaryVar:
