@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using CSUtilities.Extensions;
 using System;
 using System.Collections;
@@ -276,6 +277,23 @@ namespace ACadSharp.Objects
 			{
 				this.Remove(item.Key, out _);
 			}
+		}
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			CadDictionary clone = (CadDictionary)base.Clone();
+
+			clone.OnAdd = null;
+			clone.OnRemove = null;
+
+			clone._entries = new Dictionary<string, NonGraphicalObject>();
+			foreach (NonGraphicalObject item in this._entries.Values)
+			{
+				clone.Add(item.CloneTyped());
+			}
+
+			return clone;
 		}
 
 		/// <summary>

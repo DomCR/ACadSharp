@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
 using CSMath;
@@ -253,7 +254,8 @@ namespace ACadSharp.Entities
 		{
 			UnderlayEntity<T> clone = (UnderlayEntity<T>)base.Clone();
 
-			clone.Definition = (T)this.Definition?.Clone();
+			clone.Definition = this.Definition?.CloneTyped();
+			clone.ClipBoundaryVertices = new List<XY>(this.ClipBoundaryVertices);
 
 			return clone;
 		}
