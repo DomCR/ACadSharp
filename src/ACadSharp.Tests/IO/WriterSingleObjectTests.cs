@@ -29,6 +29,7 @@ namespace ACadSharp.Tests.IO
 			}
 
 			Data.Add(new(nameof(SingleCaseGenerator.Empty)));
+			Data.Add(new(nameof(SingleCaseGenerator.ArcSegments)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleEllipse)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.ViewZoom)));
@@ -272,6 +273,29 @@ namespace ACadSharp.Tests.IO
 				hatch.Paths.Add(path1);
 
 				this.Document.Entities.Add(hatch);
+			}
+
+			public void ArcSegments()
+			{
+				Arc arc = new Arc()
+				{
+					Center = new XYZ(100, 0, 0),
+					Radius = 50,
+					StartAngle = MathHelper.HalfPI,
+					EndAngle = Math.PI,
+				};
+
+				XYZ start = new XYZ(100, 50, 0);
+				XYZ end = new XYZ(50, 0, 0);
+
+				var v = arc.PolygonalVertexes(3);
+
+				Polyline2D polyline = new Polyline2D(v.Select(a => new Vertex2D(a)), false);
+
+				arc.GetEndVertices(out XYZ s, out XYZ e);
+
+				this.Document.Entities.Add(arc);
+				this.Document.Entities.Add(polyline);
 			}
 
 			public void CreateGroup()
