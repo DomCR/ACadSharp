@@ -151,7 +151,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		public const string CurrentMultiLeaderStyle = "CMLEADERSTYLE";
 
-		private readonly Dictionary<string, NonGraphicalObject> _entries = new(StringComparer.OrdinalIgnoreCase);
+		private Dictionary<string, NonGraphicalObject> _entries = new(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>
 		/// Default constructor.
