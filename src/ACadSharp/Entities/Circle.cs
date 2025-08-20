@@ -106,7 +106,7 @@ namespace ACadSharp.Entities
 			start = this.Center + this.Radius * start;
 			start = Matrix4.GetArbitraryAxis(this.Normal) * start;
 
-			return CurveExtensions.PolarCoordinateRelativeToCenter(
+			return CurveExtensions.PolarCoordinate(
 					angle,
 					this.Center,
 					this.Normal,
