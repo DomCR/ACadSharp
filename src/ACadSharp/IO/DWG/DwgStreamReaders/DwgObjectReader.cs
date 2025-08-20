@@ -2840,7 +2840,7 @@ namespace ACadSharp.IO.DWG
 			//Center 3BD 10 (WCS)
 			ellipse.Center = this._objectReader.Read3BitDouble();
 			//SM axis vec 3BD 11 Semi-major axis vector (WCS)
-			ellipse.EndPoint = this._objectReader.Read3BitDouble();
+			ellipse.MajorAxisEndPoint = this._objectReader.Read3BitDouble();
 			//Extrusion 3BD 210
 			ellipse.Normal = this._objectReader.Read3BitDouble();
 			//Axis ratio BD 40 Minor/major axis ratio
