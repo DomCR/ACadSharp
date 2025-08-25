@@ -137,7 +137,7 @@ namespace ACadSharp.Entities
 
 			this.Center = transform.ApplyTransform(this.Center);
 			this.MajorAxisEndPoint = transform.ApplyScale(this.MajorAxisEndPoint);
-
+			
 			XYZ newPrep = transform.ApplyTransform(perp);
 			if (newPrep != XYZ.Zero && this.MajorAxisEndPoint != XYZ.Zero)
 			{
@@ -149,7 +149,7 @@ namespace ACadSharp.Entities
 
 				this.RadiusRatio = ratio;
 
-				this.Normal = XYZ.Cross(this.MajorAxisEndPoint, newPrep).Normalize();
+				this.Normal = XYZ.Cross(newPrep, this.MajorAxisEndPoint).Normalize();
 			}
 			else
 			{
