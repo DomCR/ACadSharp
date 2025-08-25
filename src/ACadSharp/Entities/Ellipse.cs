@@ -136,16 +136,24 @@ namespace ACadSharp.Entities
 			perp *= this.MajorAxisEndPoint.GetLength() * this.RadiusRatio;
 
 			this.Center = transform.ApplyTransform(this.Center);
-			this.MajorAxisEndPoint = transform.ApplyTransform(this.MajorAxisEndPoint);
+			this.MajorAxisEndPoint = transform.ApplyScale(this.MajorAxisEndPoint);
+
 			XYZ newPrep = transform.ApplyTransform(perp);
 			if (newPrep != XYZ.Zero && this.MajorAxisEndPoint != XYZ.Zero)
 			{
-				this.RadiusRatio = newPrep.GetLength() / this.MajorAxisEndPoint.GetLength();
-				this.Normal = XYZ.Cross(this.MajorAxisEndPoint, newPrep);
+				var ratio = newPrep.GetLength() / this.MajorAxisEndPoint.GetLength();
+				if (ratio > 1)
+				{
+					ratio = this.RadiusRatio;
+				}
+
+				this.RadiusRatio = ratio;
+
+				this.Normal = XYZ.Cross(this.MajorAxisEndPoint, newPrep).Normalize();
 			}
 			else
 			{
-				this.Normal = transform.ApplyTransform(this.Normal);
+				this.Normal = this.transformNormal(transform, this.Normal);
 			}
 		}
 

@@ -337,7 +337,7 @@ namespace ACadSharp.Entities
 						break;
 				}
 
-				//c.ApplyTransform(transform);
+				c.ApplyTransform(transform);
 
 				yield return c;
 			}
