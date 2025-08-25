@@ -166,7 +166,7 @@ namespace ACadSharp.Entities
 				this.Vertices[i] = transform.ApplyTransform(this.Vertices[i]);
 			}
 
-			this.HorizontalDirection = transform.Rotate(this.HorizontalDirection).Normalize();
+			this.HorizontalDirection = transform.ApplyRotation(this.HorizontalDirection).Normalize();
 		}
 
 		/// <inheritdoc/>

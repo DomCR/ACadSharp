@@ -36,23 +36,6 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
-
-			var ellipses = doc.Entities.OfType<Ellipse>().ToList();
-			foreach (Ellipse e in ellipses)
-			{
-				if(e.Handle == 0x221)
-				{
-
-				}
-
-				var v = e.PolygonalVertexes(20).Select(p => new Vertex2D(p));
-				Polyline2D pline = new Polyline2D(v, false);
-
-				//doc.Entities.Remove(e);
-				doc.Entities.Add(pline);
-			}
-
-			DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc);
 		}
 
 		[Theory]
