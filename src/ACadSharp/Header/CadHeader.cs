@@ -1221,7 +1221,7 @@ namespace ACadSharp.Header
 				}
 				else
 				{
-					DictionaryVariable variableDictionaryEntry = ensureVariableDictionaryEntryExists(this.Document);
+					DictionaryVariable variableDictionaryEntry = ensureVariableDictionaryEntryExists(this.Document, CadDictionary.CurrentMultiLeaderStyle, MultiLeaderStyle.DefaultName);
 					return variableDictionaryEntry.Value;
 				}
 			}
@@ -1238,7 +1238,7 @@ namespace ACadSharp.Header
 					//  There is no accessible system variable $CMLEADERSTYLE
 					//  The current MultiLeaderStyle name is held in the Variable Dictionary
 					//	create or update this entry
-					DictionaryVariable variableDictionaryEntry = ensureVariableDictionaryEntryExists(this.Document);
+					DictionaryVariable variableDictionaryEntry = ensureVariableDictionaryEntryExists(this.Document, CadDictionary.CurrentMultiLeaderStyle, MultiLeaderStyle.DefaultName);
 					variableDictionaryEntry.Value = value;
 				}
 				else
@@ -1248,19 +1248,20 @@ namespace ACadSharp.Header
 			}
 		}
 
-		private static DictionaryVariable ensureVariableDictionaryEntryExists(CadDocument doc) {
+		private static DictionaryVariable ensureVariableDictionaryEntryExists(CadDocument doc, string entryName, string value) {
 			//	Ensure a Variable Dictionary exits
 			var rootDictionary = doc.RootDictionary;
-			if (!rootDictionary.TryGetEntry(CadDictionary.VariableDictionary, out CadDictionary variableDictionary)) {
+			if (!rootDictionary.TryGetEntry(CadDictionary.VariableDictionary, out CadDictionary variableDictionary))
+			{
 				variableDictionary = new CadDictionary(CadDictionary.VariableDictionary);
 				rootDictionary.Add(variableDictionary);
 			}
 
-			if (!variableDictionary.TryGetEntry(CadDictionary.CurrentMultiLeaderStyle, out DictionaryVariable currentMultiLeaderStyleEntry))
+			if (!variableDictionary.TryGetEntry(entryName, out DictionaryVariable currentMultiLeaderStyleEntry))
 			{
 				currentMultiLeaderStyleEntry = new DictionaryVariable();
-				currentMultiLeaderStyleEntry.Name = CadDictionary.CurrentMultiLeaderStyle;
-				currentMultiLeaderStyleEntry.Value = MultiLeaderStyle.DefaultName;
+				currentMultiLeaderStyleEntry.Name = entryName;
+				currentMultiLeaderStyleEntry.Value = value;
 				variableDictionary.Add(currentMultiLeaderStyleEntry);
 			}
 
