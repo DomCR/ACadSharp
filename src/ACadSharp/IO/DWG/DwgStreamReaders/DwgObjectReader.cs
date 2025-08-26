@@ -90,8 +90,6 @@ namespace ACadSharp.IO.DWG
 		private readonly Stream _crcStream;
 		private readonly byte[] _crcStreamBuffer;
 
-		private readonly byte[] _buffer;
-
 		public DwgObjectReader(
 			ACadVersion version,
 			DwgDocumentBuilder builder,
@@ -983,12 +981,10 @@ namespace ACadSharp.IO.DWG
 					template = this.readLayout();
 					break;
 				case ObjectType.ACAD_PROXY_ENTITY:
-					this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
-					template = this.readUnknownEntity(null);
+					template = this.readProxyEntity();
 					break;
 				case ObjectType.ACAD_PROXY_OBJECT:
-					this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
-					template = this.readUnknownNonGraphicalObject(null);
+					template = this.readProxyObject();
 					break;
 				default:
 					return this.readUnlistedType((short)type);
@@ -1099,6 +1095,12 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "SPATIAL_FILTER":
 					template = this.readSpatialFilter();
+					break;
+				case "ACAD_PROXY_ENTITY":
+					template = this.readProxyEntity();
+					break;
+				case "ACAD_PROXY_OBJECT":
+					template = this.readProxyObject();
 					break;
 			}
 
@@ -1318,7 +1320,7 @@ namespace ACadSharp.IO.DWG
 			BlockAction blockAction = template.BlockAction;
 
 			// 1010, 1020, 1030
-			blockAction.ActionPoint = _mergedReaders.Read3BitDouble();
+			blockAction.ActionPoint = this._mergedReaders.Read3BitDouble();
 
 			//71
 			short entityCount = this._objectReader.ReadBitShort();
@@ -2839,7 +2841,7 @@ namespace ACadSharp.IO.DWG
 			//Center 3BD 10 (WCS)
 			ellipse.Center = this._objectReader.Read3BitDouble();
 			//SM axis vec 3BD 11 Semi-major axis vector (WCS)
-			ellipse.EndPoint = this._objectReader.Read3BitDouble();
+			ellipse.MajorAxisEndPoint = this._objectReader.Read3BitDouble();
 			//Extrusion 3BD 210
 			ellipse.Normal = this._objectReader.Read3BitDouble();
 			//Axis ratio BD 40 Minor/major axis ratio
@@ -6187,6 +6189,83 @@ namespace ACadSharp.IO.DWG
 			scale.IsUnitScale = this._mergedReaders.ReadBit();
 
 			return template;
+		}
+
+		private CadTemplate readProxyObject()
+		{
+			ProxyObject proxy = new ProxyObject();
+			var template = new CadNonGraphicalObjectTemplate(proxy);
+
+			this.readCommonNonEntityData(template);
+
+			this.readCommonProxyData(proxy);
+
+			return template;
+		}
+
+		private CadTemplate readProxyEntity()
+		{
+			ProxyEntity proxy = new ProxyEntity();
+			CadEntityTemplate<ProxyEntity> template = new CadEntityTemplate<ProxyEntity>(proxy);
+
+			this.readCommonEntityData(template);
+
+			this.readCommonProxyData(proxy);
+
+			return template;
+		}
+
+		private void readCommonProxyData(IProxy proxy)
+		{
+			//Class ID BL 91
+			//It seems to be the same for all versions
+			int classId = this._mergedReaders.ReadBitLong(); ;
+
+			if (this._classes.TryGetValue((short)classId, out DxfClass dxfClass))
+			{
+				proxy.DxfClass = dxfClass;
+			}
+
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				if (this._version > ACadVersion.AC1015)
+				{
+					//The string stream seems to contain the dxfsubclass
+					string text = this._mergedReaders.ReadVariableText();
+				}
+
+				//Before R2018:
+				if (!this.R2018Plus)
+				{
+					//Object Drawing Format BL 95 This is a bitwise OR of the version and the
+					//maintenance version, shifted 16 bits to the left.
+					int format = this._mergedReaders.ReadBitLong();
+					proxy.Version = (ACadVersion)(format & 0b1111111111111111);
+					proxy.MaintenanceVersion = (short)(format >> 16);
+				}
+				//R2018+:
+				else
+				{
+					//Version BL 71 The AutoCAD version of the object.
+					proxy.Version = (ACadVersion)this._mergedReaders.ReadBitLong();
+					//Maintenance version BL 97 The AutoCAD maintenance version of the object.
+					proxy.MaintenanceVersion = this._mergedReaders.ReadBitLong();
+				}
+
+				//R2000 +:
+				//Original Data Format B 70 0 for dwg, 1 for dxf
+				proxy.OriginalDataFormatDxf = this._mergedReaders.ReadBit();
+			}
+			else
+			{
+				return;
+			}
+
+			//Common:
+			//Databits X databits, however many there are to the handles
+
+			//TODO: Investigate how to read the data in proxies, it can contain data, strings and handles
 		}
 
 		private CadTemplate readLayout()

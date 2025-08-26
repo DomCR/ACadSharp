@@ -4,7 +4,6 @@ using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.IO.DWG
 {
@@ -18,6 +17,7 @@ namespace ACadSharp.IO.DWG
 			//Ignored Entities
 			switch (entity)
 			{
+				case ProxyEntity:
 				case TableEntity:
 				case UnknownEntity:
 				case Solid3D:
@@ -465,7 +465,7 @@ namespace ACadSharp.IO.DWG
 		private void writeEllipse(Ellipse ellipse)
 		{
 			this._writer.Write3BitDouble(ellipse.Center);
-			this._writer.Write3BitDouble(ellipse.EndPoint);
+			this._writer.Write3BitDouble(ellipse.MajorAxisEndPoint);
 			this._writer.Write3BitDouble(ellipse.Normal);
 			this._writer.WriteBitDouble(ellipse.RadiusRatio);
 			this._writer.WriteBitDouble(ellipse.StartParameter);

@@ -126,9 +126,7 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
-			var center = this.Center;
 			var normal = this.Normal;
-			var radius = this.Radius;
 
 			base.ApplyTransform(transform);
 
@@ -211,8 +209,8 @@ namespace ACadSharp.Entities
 				this.Center,
 				this.StartAngle,
 				this.EndAngle,
-				this.Normal,
-				start
+				this.Radius,
+				this.Normal
 			);
 		}
 	}

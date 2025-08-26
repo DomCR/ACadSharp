@@ -443,7 +443,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(10, ellipse.Center, map);
 
-			this._writer.Write(11, ellipse.EndPoint, map);
+			this._writer.Write(11, ellipse.MajorAxisEndPoint, map);
 
 			this._writer.Write(210, ellipse.Normal, map);
 

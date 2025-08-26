@@ -71,6 +71,16 @@ namespace ACadSharp.Objects
 		}
 
 		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			SortEntitiesTable clone = (SortEntitiesTable)base.Clone();
+
+			clone._sorters = new List<Sorter>();
+
+			return clone;
+		}
+
+		/// <inheritdoc/>
 		public IEnumerator<Sorter> GetEnumerator()
 		{
 			this._sorters.Sort();

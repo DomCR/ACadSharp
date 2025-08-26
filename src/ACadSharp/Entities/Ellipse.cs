@@ -39,7 +39,7 @@ namespace ACadSharp.Entities
 		/// Axis X is set as default.
 		/// </remarks>
 		[DxfCodeValue(11, 21, 31)]
-		public XYZ EndPoint { get; set; } = XYZ.AxisX;
+		public XYZ MajorAxisEndPoint { get; set; } = XYZ.AxisX;
 
 		/// <summary>
 		/// Flag that indicates weather this ellipse is closed or not.
@@ -49,12 +49,25 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Length of the major axis.
 		/// </summary>
-		public double MajorAxis { get { return 2 * this.EndPoint.GetLength(); } }
+		public double MajorAxis { get { return 2 * this.MajorAxisEndPoint.GetLength(); } }
 
 		/// <summary>
 		/// Length of the minor axis.
 		/// </summary>
 		public double MinorAxis { get { return this.MajorAxis * this.RadiusRatio; } }
+
+		/// <summary>
+		/// Endpoint of minor axis, relative to the center (in WCS).
+		/// </summary>
+		public XYZ MinorAxisEndpoint
+		{
+			get
+			{
+				XYZ dir = XYZ.Cross(this.Normal, this.MajorAxisEndPoint.Normalize()).Normalize();
+				double length = this.MajorAxisEndPoint.GetLength();
+				return this.RadiusRatio * length * dir;
+			}
+		}
 
 		/// <summary>
 		/// Extrusion direction.
@@ -91,7 +104,7 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				return ((XY)this.EndPoint).GetAngle();
+				return ((XY)this.MajorAxisEndPoint).GetAngle();
 			}
 		}
 
@@ -118,21 +131,29 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
-			XYZ perp = XYZ.Cross(this.Normal, this.EndPoint);
+			XYZ perp = XYZ.Cross(this.Normal, this.MajorAxisEndPoint);
 			perp = perp.Normalize();
-			perp *= this.EndPoint.GetLength() * this.RadiusRatio;
+			perp *= this.MajorAxisEndPoint.GetLength() * this.RadiusRatio;
 
 			this.Center = transform.ApplyTransform(this.Center);
-			this.EndPoint = transform.ApplyTransform(this.EndPoint);
+			this.MajorAxisEndPoint = transform.ApplyScale(this.MajorAxisEndPoint);
+			
 			XYZ newPrep = transform.ApplyTransform(perp);
-			if (newPrep != XYZ.Zero && this.EndPoint != XYZ.Zero)
+			if (newPrep != XYZ.Zero && this.MajorAxisEndPoint != XYZ.Zero)
 			{
-				this.RadiusRatio = newPrep.GetLength() / this.EndPoint.GetLength();
-				this.Normal = XYZ.Cross(this.EndPoint, newPrep);
+				var ratio = newPrep.GetLength() / this.MajorAxisEndPoint.GetLength();
+				if (ratio > 1)
+				{
+					ratio = this.RadiusRatio;
+				}
+
+				this.RadiusRatio = ratio;
+
+				this.Normal = XYZ.Cross(newPrep, this.MajorAxisEndPoint).Normalize();
 			}
 			else
 			{
-				this.Normal = transform.ApplyTransform(this.Normal);
+				this.Normal = this.transformNormal(transform, this.Normal);
 			}
 		}
 
@@ -146,11 +167,11 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public XYZ PolarCoordinateRelativeToCenter(double angle)
 		{
-			return CurveExtensions.PolarCoordinateRelativeToCenter(
+			return CurveExtensions.PolarCoordinate(
 				angle,
 				this.Center,
 				this.Normal,
-				this.EndPoint,
+				this.MajorAxisEndPoint,
 				this.RadiusRatio
 				);
 		}
@@ -164,7 +185,7 @@ namespace ACadSharp.Entities
 					this.StartParameter,
 					this.EndParameter,
 					this.Normal,
-					this.EndPoint + this.Center,
+					this.MajorAxisEndPoint + this.Center,
 					this.RadiusRatio
 					);
 		}

@@ -16,7 +16,7 @@ namespace ACadSharp.Classes
 		public Dictionary<string, DxfClass> _entries = new Dictionary<string, DxfClass>(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>
-		/// Adds or updates the classes in a specific document 
+		/// Adds or updates the classes in a specific document
 		/// </summary>
 		/// <param name="doc"></param>
 		public static void UpdateDxfClasses(CadDocument doc)
@@ -521,34 +521,6 @@ namespace ACadSharp.Classes
 			}
 		}
 
-		/// <summary>
-		/// Gets the dxf class associated with <see cref="DxfClass.DxfName"/>
-		/// </summary>
-		/// <param name="dxfname"></param>
-		/// <returns></returns>
-		public DxfClass GetByName(string dxfname)
-		{
-			if (this._entries.TryGetValue(dxfname, out DxfClass result))
-			{
-				return result;
-			}
-			else
-			{
-				return null;
-			}
-		}
-
-		/// <summary>
-		/// Gets the dxf class associated with <see cref="DxfClass.DxfName"/>
-		/// </summary>
-		/// <param name="dxfname"></param>
-		/// <param name="result"></param>
-		/// <returns>true if the Collection contains an element with the specified key; otherwise, false.</returns>
-		public bool TryGetByName(string dxfname, out DxfClass result)
-		{
-			return this._entries.TryGetValue(dxfname, out result);
-		}
-
 		/// <inheritdoc/>
 		public void Clear()
 		{
@@ -556,7 +528,7 @@ namespace ACadSharp.Classes
 		}
 
 		/// <summary>
-		/// Determines whether the Collection contains a specific <see cref="DxfClass.DxfName"/>
+		/// Determines whether the Collection contains a specific <see cref="DxfClass.DxfName"/>.
 		/// </summary>
 		/// <param name="dxfname"></param>
 		/// <returns></returns>
@@ -574,7 +546,34 @@ namespace ACadSharp.Classes
 		/// <inheritdoc/>
 		public void CopyTo(DxfClass[] array, int arrayIndex)
 		{
-			throw new NotImplementedException();
+			this._entries.Values.CopyTo(array, arrayIndex);
+		}
+
+		/// <summary>
+		/// Gets the dxf class associated with <see cref="DxfClass.ClassNumber"/>.
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public DxfClass GetByClassNumber(short id)
+		{
+			return this._entries.Values.FirstOrDefault(c => c.ClassNumber == id);
+		}
+
+		/// <summary>
+		/// Gets the dxf class associated with <see cref="DxfClass.DxfName"/>.
+		/// </summary>
+		/// <param name="dxfname"></param>
+		/// <returns></returns>
+		public DxfClass GetByName(string dxfname)
+		{
+			if (this._entries.TryGetValue(dxfname, out DxfClass result))
+			{
+				return result;
+			}
+			else
+			{
+				return null;
+			}
 		}
 
 		/// <inheritdoc/>
@@ -584,15 +583,38 @@ namespace ACadSharp.Classes
 		}
 
 		/// <inheritdoc/>
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return this._entries.Values.GetEnumerator();
+		}
+
+		/// <inheritdoc/>
 		public bool Remove(DxfClass item)
 		{
 			return this._entries.Remove(item.DxfName);
 		}
 
-		/// <inheritdoc/>
-		IEnumerator IEnumerable.GetEnumerator()
+		/// <summary>
+		/// Gets the dxf class associated with <see cref="DxfClass.ClassNumber"/>.
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="result"></param>
+		/// <returns></returns>
+		public bool TryGetByClassNumber(short id, out DxfClass result)
 		{
-			return this._entries.Values.GetEnumerator();
+			result = this._entries.Values.FirstOrDefault(c => c.ClassNumber == id);
+			return result != null;
+		}
+
+		/// <summary>
+		/// Gets the dxf class associated with <see cref="DxfClass.DxfName"/>.
+		/// </summary>
+		/// <param name="dxfname"></param>
+		/// <param name="result"></param>
+		/// <returns>true if the Collection contains an element with the specified key; otherwise, false.</returns>
+		public bool TryGetByName(string dxfname, out DxfClass result)
+		{
+			return this._entries.TryGetValue(dxfname, out result);
 		}
 	}
 }

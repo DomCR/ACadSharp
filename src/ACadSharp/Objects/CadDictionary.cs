@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using CSUtilities.Extensions;
 using System;
 using System.Collections;
@@ -145,7 +146,12 @@ namespace ACadSharp.Objects
 		/// </summary>
 		public const string VariableDictionary = "AcDbVariableDictionary";
 
-		private readonly Dictionary<string, NonGraphicalObject> _entries = new(StringComparer.OrdinalIgnoreCase);
+		/// <summary>
+		/// CMLEADERSTYLE variable-dictionary entry
+		/// </summary>
+		public const string CurrentMultiLeaderStyle = "CMLEADERSTYLE";
+
+		private Dictionary<string, NonGraphicalObject> _entries = new(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>
 		/// Default constructor.
@@ -185,7 +191,14 @@ namespace ACadSharp.Objects
 			root.TryAdd(new CadDictionary(AcadPlotSettings));
 			// { AcadPlotStyleName, new CadDictionaryWithDefault() },	//Add default entry "Normal"	PlaceHolder	??
 
-			root.TryAdd(new CadDictionary(VariableDictionary));
+			CadDictionary variableDictionary = root.ensureCadDictionaryExist(VariableDictionary);
+			root.TryAdd(variableDictionary);
+			DictionaryVariable cmLeaderStyleEntry = new DictionaryVariable()
+			{
+				Name = CurrentMultiLeaderStyle,
+				Value = MultiLeaderStyle.DefaultName	//	Style has been added, see above
+			};
+			variableDictionary.TryAdd(cmLeaderStyleEntry);
 			//DictionaryVars Entry DIMASSOC and HIDETEXT ??
 
 			CadDictionary scales = root.ensureCadDictionaryExist(AcadScaleList);
@@ -264,6 +277,23 @@ namespace ACadSharp.Objects
 			{
 				this.Remove(item.Key, out _);
 			}
+		}
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			CadDictionary clone = (CadDictionary)base.Clone();
+
+			clone.OnAdd = null;
+			clone.OnRemove = null;
+
+			clone._entries = new Dictionary<string, NonGraphicalObject>();
+			foreach (NonGraphicalObject item in this._entries.Values)
+			{
+				clone.Add(item.CloneTyped());
+			}
+
+			return clone;
 		}
 
 		/// <summary>

@@ -18,7 +18,7 @@ namespace ACadSharp.Objects
 	public class MultiLeaderStyle : NonGraphicalObject
 	{
 		/// <summary>
-		/// Gets the default MLine style
+		/// Gets the default MultiLeaderStyle
 		/// </summary>
 		public static MultiLeaderStyle Default { get { return new MultiLeaderStyle(DefaultName); } }
 
