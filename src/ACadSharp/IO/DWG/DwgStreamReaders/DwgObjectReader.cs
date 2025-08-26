@@ -90,8 +90,6 @@ namespace ACadSharp.IO.DWG
 		private readonly Stream _crcStream;
 		private readonly byte[] _crcStreamBuffer;
 
-		private readonly byte[] _buffer;
-
 		public DwgObjectReader(
 			ACadVersion version,
 			DwgDocumentBuilder builder,
