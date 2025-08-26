@@ -127,7 +127,7 @@ namespace ACadSharp.Entities
 		public override void ApplyTransform(Transform transform)
 		{
 			this.Normal = this.transformNormal(transform, this.Normal);
-			this.InsertionPoint = transform.Translate(this.InsertionPoint);
+			this.InsertionPoint = transform.ApplyTranslation(this.InsertionPoint);
 		}
 	}
 }

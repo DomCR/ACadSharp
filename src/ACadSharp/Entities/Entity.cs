@@ -1,9 +1,7 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
-using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 
@@ -125,7 +123,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Apply a scale to this entity.
+		/// Apply a scaling transformation to this entity.
 		/// </summary>
 		/// <param name="scale"></param>
 		public void ApplyScaling(XYZ scale)
@@ -134,6 +132,11 @@ namespace ACadSharp.Entities
 			this.ApplyTransform(transform);
 		}
 
+		/// <summary>
+		/// Apply a scaling transformation to this entity.
+		/// </summary>
+		/// <param name="scale"></param>
+		/// <param name="origin"></param>
 		public void ApplyScaling(XYZ scale, XYZ origin)
 		{
 			Transform transform = Transform.CreateScaling(scale, origin);
@@ -228,7 +231,7 @@ namespace ACadSharp.Entities
 
 		protected XYZ transformNormal(Transform transform, XYZ normal)
 		{
-			return transform.Rotate(normal).Normalize();
+			return transform.ApplyRotation(normal).Normalize();
 		}
 
 		protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)

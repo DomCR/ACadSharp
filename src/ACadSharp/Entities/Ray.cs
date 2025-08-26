@@ -39,7 +39,7 @@ namespace ACadSharp.Entities
 		public override void ApplyTransform(Transform transform)
 		{
 			this.StartPoint = transform.ApplyTransform(this.StartPoint);
-			this.Direction = transform.Rotate(Direction);
+			this.Direction = transform.ApplyRotation(Direction);
 		}
 
 		/// <inheritdoc/>
