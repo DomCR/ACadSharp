@@ -304,6 +304,10 @@ namespace ACadSharp.Entities
 			return clone;
 		}
 
+		/// <summary>
+		/// Explodes the current insert.
+		/// </summary>
+		/// <returns></returns>
 		public IEnumerable<Entity> Explode()
 		{
 			Transform transform = this.GetTransform();
