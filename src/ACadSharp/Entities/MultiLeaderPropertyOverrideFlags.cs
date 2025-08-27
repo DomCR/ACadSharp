@@ -131,7 +131,6 @@ namespace ACadSharp.Entities
 		/// </summary>
 		BlockContentConnection = 0x800000,
 
-
 		/// <summary>
 		/// Override <see cref="MultiLeaderStyle.ScaleFactor"/> property.
 		/// </summary>
