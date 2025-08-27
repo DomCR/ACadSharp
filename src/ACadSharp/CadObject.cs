@@ -251,7 +251,7 @@ namespace ACadSharp
 		}
 
 		protected T updateCollection<T>(T entry, ObjectDictionaryCollection<T> collection)
-					where T : NonGraphicalObject
+			where T : NonGraphicalObject
 		{
 			if (collection == null || entry == null)
 			{

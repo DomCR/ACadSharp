@@ -41,6 +41,20 @@ namespace ACadSharp.Tests
 		}
 
 		[Fact]
+		public void GetCurrentTest()
+		{
+			CadDocument doc = new CadDocument();
+
+			Layer layer = doc.GetCurrent<Layer>();
+			Assert.NotNull(layer);
+			Assert.Equal(Layer.DefaultName, layer.Name);
+
+			LineType lineType = doc.GetCurrent<LineType>();
+			Assert.NotNull(lineType);
+			Assert.Equal(LineType.ContinuousName, lineType.Name);
+		}
+
+		[Fact]
 		public void AddCadObjectStressTest()
 		{
 			CadDocument doc = new CadDocument();
