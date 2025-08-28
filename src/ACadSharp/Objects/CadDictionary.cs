@@ -188,11 +188,11 @@ namespace ACadSharp.Objects
 
 			CadDictionary variableDictionary = root.ensureCadDictionaryExist(VariableDictionary);
 			root.TryAdd(variableDictionary);
-			DictionaryVariable cmLeaderStyleEntry = new DictionaryVariable()
-			{
-				Name = DictionaryVariable.CurrentMultiLeaderStyle,
-				Value = MultiLeaderStyle.DefaultName
-			};
+			DictionaryVariable cmLeaderStyleEntry = new DictionaryVariable
+			(
+				DictionaryVariable.CurrentMultiLeaderStyle,
+				MultiLeaderStyle.DefaultName
+			);
 			variableDictionary.TryAdd(cmLeaderStyleEntry);
 
 			//DictionaryVars Entry DIMASSOC and HIDETEXT ??
