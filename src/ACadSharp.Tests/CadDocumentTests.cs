@@ -42,36 +42,6 @@ namespace ACadSharp.Tests
 		}
 
 		[Fact]
-		public void GetCurrentTest()
-		{
-			CadDocument doc = new CadDocument();
-
-			Layer layer = doc.GetCurrent<Layer>();
-			Assert.NotNull(layer);
-			Assert.Equal(Layer.DefaultName, layer.Name);
-
-			LineType lineType = doc.GetCurrent<LineType>();
-			Assert.NotNull(lineType);
-			Assert.Equal(LineType.ByLayerName, lineType.Name);
-
-			TextStyle textStyle = doc.GetCurrent<TextStyle>();
-			Assert.NotNull(textStyle);
-			Assert.Equal(TextStyle.DefaultName, textStyle.Name);
-
-			DimensionStyle dimStyle = doc.GetCurrent<DimensionStyle>();
-			Assert.NotNull(dimStyle);
-			Assert.Equal(DimensionStyle.DefaultName, dimStyle.Name);
-
-			MLineStyle mlineStyle = doc.GetCurrent<MLineStyle>();
-			Assert.NotNull(mlineStyle);
-			Assert.Equal(MLineStyle.DefaultName, mlineStyle.Name);
-
-			MultiLeaderStyle multiLeaderStyle = doc.GetCurrent<MultiLeaderStyle>();
-			Assert.NotNull(multiLeaderStyle);
-			Assert.Equal(MultiLeaderStyle.DefaultName, multiLeaderStyle.Name);
-		}
-
-		[Fact]
 		public void AddCadObjectStressTest()
 		{
 			CadDocument doc = new CadDocument();
@@ -276,6 +246,36 @@ namespace ACadSharp.Tests
 		}
 
 		[Fact]
+		public void GetCurrentTest()
+		{
+			CadDocument doc = new CadDocument();
+
+			Layer layer = doc.GetCurrent<Layer>();
+			Assert.NotNull(layer);
+			Assert.Equal(Layer.DefaultName, layer.Name);
+
+			LineType lineType = doc.GetCurrent<LineType>();
+			Assert.NotNull(lineType);
+			Assert.Equal(LineType.ByLayerName, lineType.Name);
+
+			TextStyle textStyle = doc.GetCurrent<TextStyle>();
+			Assert.NotNull(textStyle);
+			Assert.Equal(TextStyle.DefaultName, textStyle.Name);
+
+			DimensionStyle dimStyle = doc.GetCurrent<DimensionStyle>();
+			Assert.NotNull(dimStyle);
+			Assert.Equal(DimensionStyle.DefaultName, dimStyle.Name);
+
+			MLineStyle mlineStyle = doc.GetCurrent<MLineStyle>();
+			Assert.NotNull(mlineStyle);
+			Assert.Equal(MLineStyle.DefaultName, mlineStyle.Name);
+
+			MultiLeaderStyle multiLeaderStyle = doc.GetCurrent<MultiLeaderStyle>();
+			Assert.NotNull(multiLeaderStyle);
+			Assert.Equal(MultiLeaderStyle.DefaultName, multiLeaderStyle.Name);
+		}
+
+		[Fact]
 		public void NotAllowDuplicate()
 		{
 			Line line = new Line();
@@ -367,6 +367,17 @@ namespace ACadSharp.Tests
 			Assert.False(0 == l.Handle);
 			Assert.Equal(line.Handle, l.Handle);
 			Assert.True(line.Handle < bigHandle);
+		}
+
+		[Fact]
+		public void SetCurrentTest()
+		{
+			CadDocument doc = new CadDocument();
+
+			string layerName = "my_layer";
+			doc.SetCurrent(new Layer(layerName));
+			Assert.True(doc.Layers.Contains(layerName));
+			Assert.Equal(layerName, doc.Header.CurrentLayerName);
 		}
 	}
 }
