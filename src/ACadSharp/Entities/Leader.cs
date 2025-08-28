@@ -123,7 +123,7 @@ namespace ACadSharp.Entities
 
 				if (this.Document != null)
 				{
-					this._style = updateTable(value, this.Document.DimensionStyles);
+					this._style = CadObject.updateCollection(value, this.Document.DimensionStyles);
 				}
 				else
 				{
@@ -187,7 +187,7 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._style = updateTable(this.Style, doc.DimensionStyles);
+			this._style = CadObject.updateCollection(this.Style, doc.DimensionStyles);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 		}

@@ -8,7 +8,7 @@ using System.Linq;
 namespace ACadSharp.Tables.Collections
 {
 	[DxfSubClass(DxfSubclassMarker.Table)]
-	public abstract class Table<T> : CadObject, ITable, IObservableCadCollection<T>
+	public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservableCadCollection<T>
 		where T : TableEntry
 	{
 		public event EventHandler<CollectionChangedEventArgs> OnAdd;
@@ -63,6 +63,24 @@ namespace ACadSharp.Tables.Collections
 			foreach (var item in items)
 			{
 				this.Add(item);
+			}
+		}
+
+		/// <summary>
+		/// Tries to add the item to the collection, if an item with the same name already exists it returns the existing item.
+		/// </summary>
+		/// <param name="item"></param>
+		/// <returns></returns>
+		public T TryAdd(T item)
+		{
+			if (this.TryGetValue(item.Name, out T existing))
+			{
+				return existing;
+			}
+			else
+			{
+				this.Add(item);
+				return item;
 			}
 		}
 

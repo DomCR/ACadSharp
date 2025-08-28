@@ -146,11 +146,6 @@ namespace ACadSharp.Objects
 		/// </summary>
 		public const string VariableDictionary = "AcDbVariableDictionary";
 
-		/// <summary>
-		/// CMLEADERSTYLE variable-dictionary entry.
-		/// </summary>
-		public const string CurrentMultiLeaderStyle = "CMLEADERSTYLE";
-
 		private Dictionary<string, NonGraphicalObject> _entries = new(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>

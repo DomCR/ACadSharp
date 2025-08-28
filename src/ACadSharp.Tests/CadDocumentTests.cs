@@ -7,6 +7,7 @@ using Xunit.Abstractions;
 using ACadSharp.Blocks;
 using System.Linq;
 using System.Diagnostics;
+using ACadSharp.Objects;
 
 namespace ACadSharp.Tests
 {
@@ -51,7 +52,23 @@ namespace ACadSharp.Tests
 
 			LineType lineType = doc.GetCurrent<LineType>();
 			Assert.NotNull(lineType);
-			Assert.Equal(LineType.ContinuousName, lineType.Name);
+			Assert.Equal(LineType.ByLayerName, lineType.Name);
+
+			TextStyle textStyle = doc.GetCurrent<TextStyle>();
+			Assert.NotNull(textStyle);
+			Assert.Equal(TextStyle.DefaultName, textStyle.Name);
+
+			DimensionStyle dimStyle = doc.GetCurrent<DimensionStyle>();
+			Assert.NotNull(dimStyle);
+			Assert.Equal(DimensionStyle.DefaultName, dimStyle.Name);
+
+			MLineStyle mlineStyle = doc.GetCurrent<MLineStyle>();
+			Assert.NotNull(mlineStyle);
+			Assert.Equal(MLineStyle.DefaultName, mlineStyle.Name);
+
+			MultiLeaderStyle multiLeaderStyle = doc.GetCurrent<MultiLeaderStyle>();
+			Assert.NotNull(multiLeaderStyle);
+			Assert.Equal(MultiLeaderStyle.DefaultName, multiLeaderStyle.Name);
 		}
 
 		[Fact]

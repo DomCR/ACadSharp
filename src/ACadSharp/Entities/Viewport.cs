@@ -207,7 +207,7 @@ namespace ACadSharp.Entities
 			{
 				if (this.Document != null)
 				{
-					this._scale = this.updateCollection(value, this.Document.Scales);
+					this._scale = updateCollection(value, this.Document.Scales);
 				}
 				else
 				{
@@ -446,7 +446,7 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._scale = this.updateCollection(this._scale, doc.Scales);
+			this._scale = updateCollection(this._scale, doc.Scales);
 
 			this.Document.Scales.OnRemove += this.scalesOnRemove;
 		}

@@ -24,7 +24,7 @@ namespace ACadSharp.Entities
 			{
 				if (this.Document != null)
 				{
-					this._bookColor = this.updateCollection(value, this.Document.Colors);
+					this._bookColor = updateCollection(value, this.Document.Colors);
 				}
 				else
 				{
@@ -53,7 +53,7 @@ namespace ACadSharp.Entities
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				this._layer = updateTable(value, this.Document?.Layers);
+				this._layer = updateCollection(value, this.Document?.Layers);
 			}
 		}
 
@@ -69,7 +69,7 @@ namespace ACadSharp.Entities
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				this._lineType = updateTable(value, this.Document?.LineTypes);
+				this._lineType = CadObject.updateCollection(value, this.Document?.LineTypes);
 			}
 		}
 
@@ -211,8 +211,8 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._layer = updateTable(this.Layer, doc.Layers);
-			this._lineType = updateTable(this.LineType, doc.LineTypes);
+			this._layer = CadObject.updateCollection(this.Layer, doc.Layers);
+			this._lineType = CadObject.updateCollection(this.LineType, doc.LineTypes);
 
 			doc.Layers.OnRemove += this.tableOnRemove;
 			doc.LineTypes.OnRemove += this.tableOnRemove;

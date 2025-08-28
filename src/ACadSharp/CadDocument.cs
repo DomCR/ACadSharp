@@ -250,6 +250,44 @@ namespace ACadSharp
 			}
 		}
 
+		public void SetCurrent<T>(T obj)
+			where T : CadObject, INamedCadObject
+		{
+			//switch (obj)
+			//{
+			//	case Layer layer:
+			//		if (this.Layers.Add(layer))
+
+			//			this.Header.CurrentLayerName = layer.Name;
+			//		break;
+			//	case LineType lineType:
+			//		this.Header.CurrentLineType = lineType;
+			//		break;
+			//	case TextStyle textStyle:
+			//		this.Header.CurrentTextStyle = textStyle;
+			//		break;
+			//	case DimensionStyle dimensionStyle:
+			//		this.Header.CurrentDimensionStyle = dimensionStyle;
+			//		break;
+			//	case MLineStyle mlineStyle:
+			//		this.Header.CurrentMLineStyle = mlineStyle;
+			//		break;
+			//	case MultiLeaderStyle multiLeaderStyle:
+			//		if (this.DictionaryVariables.TryGetValue(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
+			//		{
+			//			variable.Value = multiLeaderStyle.Name;
+			//		}
+			//		else
+			//		{
+			//			variable = new DictionaryVariable(DictionaryVariable.CurrentMultiLeaderStyle, multiLeaderStyle.Name);
+			//			this.DictionaryVariables.Add(variable);
+			//		}
+			//		break;
+			//	default:
+			//		throw new NotSupportedException($"The type {typeof(T)} is not a configurable type in the document.");
+			//}
+		}
+
 		/// <summary>
 		/// Create the default entries and objects for the <see cref="CadDocument"/>.
 		/// </summary>
