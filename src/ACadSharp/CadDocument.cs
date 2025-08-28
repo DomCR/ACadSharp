@@ -381,7 +381,7 @@ namespace ACadSharp
 					this.Header.CurrentLineTypeName = this.LineTypes.TryAdd(lineType).Name; ;
 					break;
 				case TextStyle textStyle:
-					this.Header.TextStyleName = this.TextStyles.TryAdd(textStyle).Name;
+					this.Header.CurrentTextStyleName = this.TextStyles.TryAdd(textStyle).Name;
 					break;
 				case DimensionStyle dimensionStyle:
 					this.Header.CurrentDimensionStyleName = this.DimensionStyles.TryAdd(dimensionStyle).Name;

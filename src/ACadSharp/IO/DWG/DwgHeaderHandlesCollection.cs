@@ -95,7 +95,7 @@ namespace ACadSharp.IO.DWG
 
 			if (builder.TryGetCadObject(this.TEXTSTYLE, out entry))
 			{
-				header.TextStyleName = entry.Name;
+				header.CurrentTextStyleName = entry.Name;
 			}
 
 			if (builder.TryGetCadObject(this.DIMTXSTY, out entry))

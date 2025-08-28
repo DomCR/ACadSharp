@@ -372,7 +372,7 @@ namespace ACadSharp.Header
 				}
 				else
 				{
-					return this.Document.TextStyles[this.TextStyleName];
+					return this.Document.TextStyles[this.CurrentTextStyleName];
 				}
 			}
 			private set
@@ -2858,7 +2858,7 @@ namespace ACadSharp.Header
 		/// System variable TEXTSTYLE.
 		/// </remarks>
 		[CadSystemVariable("$TEXTSTYLE", true, 7)]
-		public string TextStyleName
+		public string CurrentTextStyleName
 		{
 			get { return this._currentTextStyle.Name; }
 			set
