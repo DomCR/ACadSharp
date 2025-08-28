@@ -7,6 +7,7 @@ using Xunit.Abstractions;
 using ACadSharp.Blocks;
 using System.Linq;
 using System.Diagnostics;
+using ACadSharp.Objects;
 
 namespace ACadSharp.Tests
 {
@@ -245,6 +246,36 @@ namespace ACadSharp.Tests
 		}
 
 		[Fact]
+		public void GetCurrentTest()
+		{
+			CadDocument doc = new CadDocument();
+
+			Layer layer = doc.GetCurrent<Layer>();
+			Assert.NotNull(layer);
+			Assert.Equal(Layer.DefaultName, layer.Name);
+
+			LineType lineType = doc.GetCurrent<LineType>();
+			Assert.NotNull(lineType);
+			Assert.Equal(LineType.ByLayerName, lineType.Name);
+
+			TextStyle textStyle = doc.GetCurrent<TextStyle>();
+			Assert.NotNull(textStyle);
+			Assert.Equal(TextStyle.DefaultName, textStyle.Name);
+
+			DimensionStyle dimStyle = doc.GetCurrent<DimensionStyle>();
+			Assert.NotNull(dimStyle);
+			Assert.Equal(DimensionStyle.DefaultName, dimStyle.Name);
+
+			MLineStyle mlineStyle = doc.GetCurrent<MLineStyle>();
+			Assert.NotNull(mlineStyle);
+			Assert.Equal(MLineStyle.DefaultName, mlineStyle.Name);
+
+			MultiLeaderStyle multiLeaderStyle = doc.GetCurrent<MultiLeaderStyle>();
+			Assert.NotNull(multiLeaderStyle);
+			Assert.Equal(MultiLeaderStyle.DefaultName, multiLeaderStyle.Name);
+		}
+
+		[Fact]
 		public void NotAllowDuplicate()
 		{
 			Line line = new Line();
@@ -336,6 +367,41 @@ namespace ACadSharp.Tests
 			Assert.False(0 == l.Handle);
 			Assert.Equal(line.Handle, l.Handle);
 			Assert.True(line.Handle < bigHandle);
+		}
+
+		[Fact]
+		public void SetCurrentTest()
+		{
+			CadDocument doc = new CadDocument();
+
+			string layerName = "my_layer";
+			doc.SetCurrent(new Layer(layerName));
+			Assert.True(doc.Layers.Contains(layerName));
+			Assert.Equal(layerName, doc.Header.CurrentLayerName);
+
+			string lineTypeName = "my_linetype";
+			doc.SetCurrent(new LineType(lineTypeName));
+			Assert.True(doc.LineTypes.Contains(lineTypeName));
+			Assert.Equal(lineTypeName, doc.Header.CurrentLineTypeName);
+
+			string textStyleName = "my_textstyle";
+			doc.SetCurrent(new TextStyle(textStyleName));
+			Assert.True(doc.TextStyles.Contains(textStyleName));
+			Assert.Equal(textStyleName, doc.Header.CurrentTextStyleName);
+
+			string dimStyleName = "my_dimstyle";
+			doc.SetCurrent(new DimensionStyle(dimStyleName));
+			Assert.True(doc.DimensionStyles.Contains(dimStyleName));
+			Assert.Equal(dimStyleName, doc.Header.CurrentDimensionStyleName);
+
+			string mlineStyleName = "my_mlinestyle";
+			doc.SetCurrent(new MLineStyle(mlineStyleName));
+			Assert.True(doc.MLineStyles.ContainsKey(mlineStyleName));
+			Assert.Equal(mlineStyleName, doc.Header.CurrentMLineStyleName);
+
+			string multiLeaderStyleName = "my_multileaderstyle";
+			doc.SetCurrent(new MultiLeaderStyle(multiLeaderStyleName));
+			Assert.True(doc.MLeaderStyles.ContainsKey(multiLeaderStyleName));
 		}
 	}
 }
