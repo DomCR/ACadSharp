@@ -309,7 +309,7 @@ namespace ACadSharp.Header
 				}
 				else
 				{
-					return this.Document.MLineStyles[this.CurrentMultiLineStyleName];
+					return this.Document.MLineStyles[this.CurrentMLineStyleName];
 				}
 			}
 			private set
@@ -319,13 +319,13 @@ namespace ACadSharp.Header
 		}
 
 		/// <summary>
-		/// Current multiline justification.
+		/// Current multi line justification.
 		/// </summary>
 		/// <remarks>
 		/// System variable CMLJUST.
 		/// </remarks>
 		[CadSystemVariable("$CMLJUST", 70)]
-		public VerticalAlignmentType CurrentMultilineJustification { get; set; } = VerticalAlignmentType.Top;
+		public VerticalAlignmentType CurrentMultiLineJustification { get; set; } = VerticalAlignmentType.Top;
 
 		/// <summary>
 		/// Current multiline scale.
@@ -343,7 +343,7 @@ namespace ACadSharp.Header
 		/// System variable CMLSTYLE.
 		/// </remarks>
 		[CadSystemVariable("$CMLSTYLE", true, 2)]
-		public string CurrentMultiLineStyleName
+		public string CurrentMLineStyleName
 		{
 			get { return this._currentMLineStyle.Name; }
 			set

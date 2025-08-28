@@ -90,7 +90,7 @@ namespace ACadSharp.IO.DWG
 
 			if (builder.TryGetCadObject(this.CMLSTYLE, out entry))
 			{
-				header.CurrentMultiLineStyleName = entry.Name;
+				header.CurrentMLineStyleName = entry.Name;
 			}
 
 			if (builder.TryGetCadObject(this.TEXTSTYLE, out entry))

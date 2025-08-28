@@ -291,7 +291,7 @@ namespace ACadSharp.IO.DWG
 			//BS : ISOLINES
 			_header.SurfaceIsolineCount = _reader.ReadBitShort();
 			//BS : CMLJUST
-			_header.CurrentMultilineJustification = (Entities.VerticalAlignmentType)_reader.ReadBitShort();
+			_header.CurrentMultiLineJustification = (Entities.VerticalAlignmentType)_reader.ReadBitShort();
 			//BS : TEXTQLTY
 			_header.TextQuality = _reader.ReadBitShort();
 			//BD : LTSCALE

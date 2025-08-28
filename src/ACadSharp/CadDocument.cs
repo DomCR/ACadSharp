@@ -215,80 +215,6 @@ namespace ACadSharp
 		}
 
 		/// <summary>
-		/// Retrieves the current object of the specified type from the document's configuration.
-		/// </summary>
-		/// <typeparam name="T">The type of the object to retrieve. Must be a type that implements <see cref="CadObject"/> and <see
-		/// cref="INamedCadObject"/>.</typeparam>
-		/// <returns>The current object of the specified type, or throws an exception if the type is not supported.</returns>
-		/// <exception cref="NotSupportedException">Thrown if the specified type <typeparamref name="T"/> is not a configurable type in the document.</exception>
-		public T GetCurrent<T>()
-			where T : CadObject, INamedCadObject
-		{
-			switch (typeof(T))
-			{
-				case Type t when t.Equals(typeof(Layer)):
-					return this.Header.CurrentLayer as T;
-				case Type t when t.Equals(typeof(LineType)):
-					return this.Header.CurrentLineType as T;
-				case Type t when t.Equals(typeof(TextStyle)):
-					return this.Header.CurrentTextStyle as T;
-				case Type t when t.Equals(typeof(DimensionStyle)):
-					return this.Header.CurrentDimensionStyle as T;
-				case Type t when t.Equals(typeof(MLineStyle)):
-					return this.Header.CurrentMLineStyle as T;
-				case Type t when t.Equals(typeof(MultiLeaderStyle)):
-					if (this.DictionaryVariables.TryGetValue(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
-					{
-						if (this.MLeaderStyles.TryGetValue(variable.Value, out MultiLeaderStyle style))
-						{
-							return style as T;
-						}
-					}
-					return null;
-				default:
-					throw new NotSupportedException($"The type {typeof(T)} is not a configurable type in the document.");
-			}
-		}
-
-		public void SetCurrent<T>(T obj)
-			where T : CadObject, INamedCadObject
-		{
-			//switch (obj)
-			//{
-			//	case Layer layer:
-			//		if (this.Layers.Add(layer))
-
-			//			this.Header.CurrentLayerName = layer.Name;
-			//		break;
-			//	case LineType lineType:
-			//		this.Header.CurrentLineType = lineType;
-			//		break;
-			//	case TextStyle textStyle:
-			//		this.Header.CurrentTextStyle = textStyle;
-			//		break;
-			//	case DimensionStyle dimensionStyle:
-			//		this.Header.CurrentDimensionStyle = dimensionStyle;
-			//		break;
-			//	case MLineStyle mlineStyle:
-			//		this.Header.CurrentMLineStyle = mlineStyle;
-			//		break;
-			//	case MultiLeaderStyle multiLeaderStyle:
-			//		if (this.DictionaryVariables.TryGetValue(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
-			//		{
-			//			variable.Value = multiLeaderStyle.Name;
-			//		}
-			//		else
-			//		{
-			//			variable = new DictionaryVariable(DictionaryVariable.CurrentMultiLeaderStyle, multiLeaderStyle.Name);
-			//			this.DictionaryVariables.Add(variable);
-			//		}
-			//		break;
-			//	default:
-			//		throw new NotSupportedException($"The type {typeof(T)} is not a configurable type in the document.");
-			//}
-		}
-
-		/// <summary>
 		/// Create the default entries and objects for the <see cref="CadDocument"/>.
 		/// </summary>
 		public void CreateDefaults()
@@ -378,6 +304,42 @@ namespace ACadSharp
 		}
 
 		/// <summary>
+		/// Retrieves the current object of the specified type from the document's configuration.
+		/// </summary>
+		/// <typeparam name="T">The type of the object to retrieve. Must be a type that implements <see cref="CadObject"/> and <see
+		/// cref="INamedCadObject"/>.</typeparam>
+		/// <returns>The current object of the specified type, or throws an exception if the type is not supported.</returns>
+		/// <exception cref="NotSupportedException">Thrown if the specified type <typeparamref name="T"/> is not a configurable type in the document.</exception>
+		public T GetCurrent<T>()
+			where T : CadObject, INamedCadObject
+		{
+			switch (typeof(T))
+			{
+				case Type t when t.Equals(typeof(Layer)):
+					return this.Header.CurrentLayer as T;
+				case Type t when t.Equals(typeof(LineType)):
+					return this.Header.CurrentLineType as T;
+				case Type t when t.Equals(typeof(TextStyle)):
+					return this.Header.CurrentTextStyle as T;
+				case Type t when t.Equals(typeof(DimensionStyle)):
+					return this.Header.CurrentDimensionStyle as T;
+				case Type t when t.Equals(typeof(MLineStyle)):
+					return this.Header.CurrentMLineStyle as T;
+				case Type t when t.Equals(typeof(MultiLeaderStyle)):
+					if (this.DictionaryVariables.TryGetValue(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
+					{
+						if (this.MLeaderStyles.TryGetValue(variable.Value, out MultiLeaderStyle style))
+						{
+							return style as T;
+						}
+					}
+					return null;
+				default:
+					throw new NotSupportedException($"The type {typeof(T)} is not a configurable type in the document.");
+			}
+		}
+
+		/// <summary>
 		/// Reassign all the handles in the document to avoid the variable <see cref="CadHeader.HandleSeed"/> to grow past its limit.
 		/// </summary>
 		public void RestoreHandles()
@@ -399,6 +361,49 @@ namespace ACadSharp
 			}
 
 			this.Header.HandleSeed = nextHandle;
+		}
+
+		/// <summary>
+		/// This method sets the current configurable object of the specified type in the document's configuration.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="obj"></param>
+		/// <exception cref="NotSupportedException"></exception>
+		public void SetCurrent<T>(T obj)
+			where T : CadObject, INamedCadObject
+		{
+			switch (obj)
+			{
+				case Layer layer:
+					this.Header.CurrentLayerName = this.Layers.TryAdd(layer).Name;
+					break;
+				case LineType lineType:
+					this.Header.CurrentLineTypeName = this.LineTypes.TryAdd(lineType).Name; ;
+					break;
+				case TextStyle textStyle:
+					this.Header.TextStyleName = this.TextStyles.TryAdd(textStyle).Name;
+					break;
+				case DimensionStyle dimensionStyle:
+					this.Header.CurrentDimensionStyleName = this.DimensionStyles.TryAdd(dimensionStyle).Name;
+					break;
+				case MLineStyle mlineStyle:
+					this.Header.CurrentMLineStyleName = this.MLineStyles.TryAdd(mlineStyle).Name;
+					break;
+				case MultiLeaderStyle multiLeaderStyle:
+					if (this.DictionaryVariables.TryGetValue(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
+					{
+						variable.Value = multiLeaderStyle.Name;
+					}
+					else
+					{
+						variable = new DictionaryVariable(DictionaryVariable.CurrentMultiLeaderStyle, multiLeaderStyle.Name);
+						this.DictionaryVariables.Add(variable);
+					}
+					this.MLeaderStyles.TryAdd(multiLeaderStyle);
+					break;
+				default:
+					throw new NotSupportedException($"The type {typeof(T)} is not a configurable type in the document.");
+			}
 		}
 
 		/// <summary>

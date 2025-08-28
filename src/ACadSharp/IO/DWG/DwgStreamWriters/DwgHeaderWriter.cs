@@ -275,7 +275,7 @@ namespace ACadSharp.IO.DWG
 			//BS : ISOLINES
 			this._writer.WriteBitShort(this._header.SurfaceIsolineCount);
 			//BS : CMLJUST
-			this._writer.WriteBitShort((short)this._header.CurrentMultilineJustification);
+			this._writer.WriteBitShort((short)this._header.CurrentMultiLineJustification);
 			//BS : TEXTQLTY
 			this._writer.WriteBitShort(this._header.TextQuality);
 			//BD : LTSCALE
