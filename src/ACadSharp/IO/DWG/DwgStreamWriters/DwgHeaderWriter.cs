@@ -927,7 +927,7 @@ namespace ACadSharp.IO.DWG
 				//RC : HIDETEXT
 				this._writer.WriteByte(this._header.HideText);
 				//RC : XCLIPFRAME, before R2010 the value can be 0 or 1 only.
-				this._writer.WriteByte(this._header.ExternalReferenceClippingBoundaryType);
+				this._writer.WriteByte((byte)this._header.ExternalReferenceClippingBoundaryType);
 				//RC : DIMASSOC
 				this._writer.WriteByte((byte)this._header.DimensionAssociativity);
 				//RC : HALOGAP

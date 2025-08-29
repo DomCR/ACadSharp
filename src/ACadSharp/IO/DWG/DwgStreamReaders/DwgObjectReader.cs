@@ -4021,7 +4021,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//Loaded Bit B 0 indicates loaded for an xref
-				this._objectReader.ReadBit();
+				bool loaded = this._objectReader.ReadBit();
 			}
 
 			//R2004+:

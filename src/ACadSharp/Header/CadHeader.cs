@@ -7,7 +7,6 @@ using CSMath;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Reflection;
 
@@ -1805,13 +1804,13 @@ namespace ACadSharp.Header
 		}
 
 		/// <summary>
-		/// Controls the visibility of xref clipping boundaries
+		/// Determines whether xref clipping boundaries are visible or plotted in the current drawing.
 		/// </summary>
 		/// <remarks>
 		/// System variable XCLIPFRAME
 		/// </remarks>
-		[CadSystemVariable("$XCLIPFRAME", 280)] //note: mismatch with docs, code 290
-		public byte ExternalReferenceClippingBoundaryType { get; set; }
+		[CadSystemVariable("$XCLIPFRAME", 280)]
+		public XClipFrameType ExternalReferenceClippingBoundaryType { get; set; } = XClipFrameType.DisplayNotPlot;
 
 		/// <summary>
 		/// Adjusts the smoothness of shaded and rendered objects, rendered shadows, and objects with hidden lines removed.
@@ -2564,7 +2563,7 @@ namespace ACadSharp.Header
 		/// System variable REGENMODE.
 		/// </remarks>
 		[CadSystemVariable("$REGENMODE", 70)]
-		public bool RegenerationMode { get; set; } = false;
+		public bool RegenerationMode { get; set; } = true;
 
 		/// <summary>
 		/// The default value is 0.

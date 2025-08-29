@@ -288,7 +288,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//Loaded Bit B 0 indicates loaded for an xref
-				this._writer.WriteBit(record.Flags.HasFlag(BlockTypeFlags.XRef));
+				this._writer.WriteBit(false);
 			}
 
 			//R2004+:
@@ -297,7 +297,7 @@ namespace ACadSharp.IO.DWG
 				&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 			{
 				//Owned Object Count BL Number of objects owned by this object.
-				_writer.WriteBitLong(record.Entities.Count());
+				_writer.WriteBitLong(record.Entities.Count);
 			}
 
 			//Common:
