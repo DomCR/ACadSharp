@@ -1,12 +1,13 @@
 ﻿using ACadSharp.Extensions;
 using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
 using ACadSharp.Tests.Common;
 using System.Linq;
 using Xunit;
 
 namespace ACadSharp.Tests.Tables
 {
-	public class LineTypeTests
+	public class LineTypeTests : TableEntryCommonTests<LineType>
 	{
 		[Fact]
 		public void CloneTest()
@@ -52,6 +53,11 @@ namespace ACadSharp.Tests.Tables
 			Assert.NotNull(last.Style);
 			Assert.NotEqual(textStyle, last.Style);
 			Assert.Equal(textStyle.Name, last.Style.Name);
+		}
+
+		protected override Table<LineType> getTable(CadDocument document)
+		{
+			return document.LineTypes;
 		}
 	}
 }
