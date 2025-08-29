@@ -79,7 +79,7 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.DimArrow2 = dimArrow2;
 			}
 
-			if(this.getTableReference(builder, this.BlockHandle, null, out BlockRecord external))
+			if (this.getTableReference(builder, this.BlockHandle, null, out BlockRecord external))
 			{
 			}
 		}
