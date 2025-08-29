@@ -82,6 +82,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeInBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.XData)));
+			Data.Add(new(nameof(SingleCaseGenerator.XRef)));
 			Data.Add(new(nameof(SingleCaseGenerator.SPlineCreation)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateXRecords)));
 		}
@@ -1155,6 +1156,17 @@ namespace ACadSharp.Tests.IO
 				line.ExtendedData.Add(app, records);
 
 				this.Document.Entities.Add(line);
+			}
+
+			public void XRef()
+			{
+				BlockRecord record = new BlockRecord("my_xref");
+				record.Flags = BlockTypeFlags.XRef | BlockTypeFlags.XrefResolved;
+				record.BlockEntity.XrefPath = "C:\\Users\\alber\\source\\repos\\ACadSharp\\samples\\local\\user_files\\issue-748_spline.dwg";
+
+				this.Document.BlockRecords.Add(record);
+
+				this.Document.Entities.Add(new Insert(record));
 			}
 		}
 	}
