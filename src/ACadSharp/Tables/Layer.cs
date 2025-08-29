@@ -21,7 +21,7 @@ namespace ACadSharp.Tables
 		public static Layer Default { get { return new Layer(DefaultName); } }
 
 		/// <summary>
-		/// DefPoints layer, this layer usually stores definition points that will not be plot.
+		/// Defpoints layer, this layer usually stores definition points that will not be plot.
 		/// </summary>
 		public static Layer Defpoints { get { return new Layer(DefpointsName) { PlotFlag = false }; } }
 

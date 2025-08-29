@@ -102,10 +102,6 @@ namespace ACadSharp.IO.DXF
 					this.writeTolerance(tolerance);
 					break;
 				case Vertex vertex:
-					if(vertex is VertexFaceMesh)
-					{
-
-					}
 					this.writeVertex(vertex);
 					break;
 				case Viewport viewport:
