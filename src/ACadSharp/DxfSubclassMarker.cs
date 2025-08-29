@@ -132,6 +132,8 @@
 
 		public const string MultiLeaderAnnotContext = "AcDbMultiLeaderAnnotContext";
 
+		public const string Ole2Frame = "AcDbOle2Frame";
+
 		public const string OrdinateDimension = "AcDbOrdinateDimension";
 
 		public const string PdfDefinition = "AcDbPdfDefinition";
