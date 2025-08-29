@@ -69,7 +69,7 @@ namespace ACadSharp.IO.Templates
 
 				block.Flags = this.CadObject.BlockEntity.Flags;
 				block.BasePoint = this.CadObject.BlockEntity.BasePoint;
-				block.XrefPath = this.CadObject.BlockEntity.XrefPath;
+				block.XRefPath = this.CadObject.BlockEntity.XRefPath;
 				block.Comments = this.CadObject.BlockEntity.Comments;
 
 				this.CadObject.BlockEntity = block;

@@ -1161,8 +1161,8 @@ namespace ACadSharp.Tests.IO
 			public void XRef()
 			{
 				BlockRecord record = new BlockRecord("my_xref");
-				record.Flags = BlockTypeFlags.XRef | BlockTypeFlags.XrefResolved;
-				record.BlockEntity.XrefPath = "C:\\Users\\alber\\source\\repos\\ACadSharp\\samples\\local\\user_files\\issue-748_spline.dwg";
+				record.Flags = BlockTypeFlags.XRef | BlockTypeFlags.XRefResolved;
+				record.BlockEntity.XRefPath = "C:\\Users\\alber\\source\\repos\\ACadSharp\\samples\\local\\user_files\\issue-748_spline.dwg";
 
 				this.Document.BlockRecords.Add(record);
 

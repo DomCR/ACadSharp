@@ -305,7 +305,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.Write3BitDouble(record.BlockEntity.BasePoint);
 			//Xref pname TV 1 Xref pathname. That's right: DXF 1 AND 3!
 			//3 1 appears in a tblnext/ search elist; 3 appears in an entget.
-			this._writer.WriteVariableText(record.BlockEntity.XrefPath);
+			this._writer.WriteVariableText(record.BlockEntity.XRefPath);
 
 			//R2000+:
 			if (this.R2000Plus)

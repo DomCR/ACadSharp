@@ -16,19 +16,28 @@ namespace ACadSharp.Blocks
 	[DxfSubClass(DxfSubclassMarker.BlockBegin)]
 	public class Block : Entity
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.BLOCK;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.Block;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.BlockBegin;
+		/// <summary>
+		/// Specifies the insert point of the block.
+		/// </summary>
+		[DxfCodeValue(10, 20, 30)]
+		public XYZ BasePoint { get; set; } = XYZ.Zero;
 
 		/// <summary>
 		/// Block record that owns this entity
 		/// </summary>
 		public BlockRecord BlockOwner { get { return this.Owner as BlockRecord; } }
+
+		/// <summary>
+		/// Specifies the comments for the block or drawing.
+		/// </summary>
+		[DxfCodeValue(4)]
+		public string Comments { get; set; }
+
+		/// <summary>
+		/// Block active flags.
+		/// </summary>
+		[DxfCodeValue(70)]
+		public BlockTypeFlags Flags { get; set; }
 
 		/// <summary>
 		/// Specifies the name of the object.
@@ -40,38 +49,37 @@ namespace ACadSharp.Blocks
 			set { this.BlockOwner.Name = value; }
 		}
 
-		/// <summary>
-		/// Block active flags.
-		/// </summary>
-		[DxfCodeValue(70)]
-		public BlockTypeFlags Flags { get; set; }
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.Block;
 
-		/// <summary>
-		/// Specifies the insert point of the block.
-		/// </summary>
-		[DxfCodeValue(10, 20, 30)]
-		public XYZ BasePoint { get; set; } = XYZ.Zero;
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.BLOCK;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.BlockBegin;
 
 		/// <summary>
 		/// Gets the path of the block, document, application, or external reference.
 		/// </summary>
 		[DxfCodeValue(1)]
-		public string XrefPath { get; set; }
+		public string XRefPath { get; set; }
 
-		/// <summary>
-		/// Specifies the comments for the block or drawing.
-		/// </summary>
-		[DxfCodeValue(4)]
-		public string Comments { get; set; }
+		/// <inheritdoc/>
+		public Block(BlockRecord record) : base()
+		{
+			this.Owner = record;
+		}
 
 		internal Block()
 		{
 		}
 
 		/// <inheritdoc/>
-		public Block(BlockRecord record) : base()
+		/// <remarks>
+		/// Block entities don't have any geometric properties.
+		/// </remarks>
+		public override void ApplyTransform(Transform transform)
 		{
-			this.Owner = record;
 		}
 
 		/// <inheritdoc/>
@@ -85,14 +93,6 @@ namespace ACadSharp.Blocks
 			clone.Owner = new BlockRecord(this.Name);
 
 			return clone;
-		}
-
-		/// <inheritdoc/>
-		/// <remarks>
-		/// Block entities don't have any geometric properties.
-		/// </remarks>
-		public override void ApplyTransform(Transform transform)
-		{
 		}
 
 		/// <inheritdoc/>
