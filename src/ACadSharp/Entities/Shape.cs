@@ -43,7 +43,6 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(40)]
 		public double Size { get; set; } = 1.0;
 
-		//NOTE: shape name cannot contain numbers for dxf
 		/// <summary>
 		/// Shape name.
 		/// </summary>
