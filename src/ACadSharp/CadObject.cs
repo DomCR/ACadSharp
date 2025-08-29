@@ -52,7 +52,21 @@ namespace ACadSharp
 		/// Soft-pointer ID/handle to owner object.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 330)]
-		public IHandledCadObject Owner { get; internal set; }
+		public IHandledCadObject Owner
+		{
+			get { return this._owner; }
+			internal set
+			{
+				if(this.Handle == 1068)
+				{
+
+				}
+
+				this._owner = value;
+			}
+		}
+
+		public IHandledCadObject _owner;
 
 		/// <summary>
 		/// Objects that are attached to this object.

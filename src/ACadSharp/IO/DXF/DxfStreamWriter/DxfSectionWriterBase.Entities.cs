@@ -2,10 +2,7 @@
 using ACadSharp.Objects;
 using CSMath;
 using System;
-using System.IO;
 using System.Linq;
-using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.IO.DXF
 {
@@ -105,6 +102,10 @@ namespace ACadSharp.IO.DXF
 					this.writeTolerance(tolerance);
 					break;
 				case Vertex vertex:
+					if(vertex is VertexFaceMesh)
+					{
+
+					}
 					this.writeVertex(vertex);
 					break;
 				case Viewport viewport:

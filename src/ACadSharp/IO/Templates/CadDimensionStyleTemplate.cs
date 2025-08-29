@@ -30,6 +30,8 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? BlockHandle { get; set; }
 
+		public bool DxfFlagsAssigned { get; set; } = false;
+
 		public CadDimensionStyleTemplate() : base(new DimensionStyle())
 		{
 		}

@@ -55,7 +55,7 @@ namespace ACadSharp.IO.DXF
 			CadTemplate template = null;
 			Dictionary<string, List<ExtendedDataRecord>> edata = new();
 
-			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors);
+			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out HashSet<ulong> reactors);
 
 			if (this._reader.DxfCode == DxfCode.Subclass)
 			{
@@ -371,6 +371,17 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 69:
 					template.CadObject.TextBackgroundFillMode = (DimensionTextBackgroundFillMode)this._reader.ValueAsShort;
+					return true;
+				case 70:
+					if (!tmp.DxfFlagsAssigned)
+					{
+						tmp.DxfFlagsAssigned = true;
+						return true;
+					}
+					else if (this._reader.ValueAsShort >= 0)
+					{
+						template.CadObject.TextBackgroundColor = new Color(this._reader.ValueAsShort);
+					}
 					return true;
 				case 71:
 					template.CadObject.GenerateTolerances = this._reader.ValueAsBool;

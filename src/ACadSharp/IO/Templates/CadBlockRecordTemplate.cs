@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSUtilities.Extensions;
@@ -20,9 +19,9 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? LayoutHandle { get; set; }
 
-		public List<ulong> OwnedObjectsHandlers { get; set; } = new List<ulong>();
+		public HashSet<ulong> OwnedObjectsHandlers { get; set; } = new();
 
-		public List<ulong> InsertHandles { get; set; } = new List<ulong>();
+		public List<ulong> InsertHandles { get; set; } = new();
 
 		public string LayerName { get; set; }
 

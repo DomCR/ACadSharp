@@ -6,7 +6,7 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadGroupTemplate : CadTemplate<Group>
 	{
-		public List<ulong> Handles { get; set; } = new List<ulong>();
+		public HashSet<ulong> Handles { get; set; } = new();
 
 		public CadGroupTemplate() : base(new Group()) { }
 
