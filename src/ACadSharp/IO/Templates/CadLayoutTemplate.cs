@@ -17,7 +17,7 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? LasActiveViewportHandle { get; set; }
 
-		public List<ulong> ViewportHandles { get; set; } = new List<ulong>();
+		public HashSet<ulong> ViewportHandles { get; set; } = new();
 
 		public CadLayoutTemplate() : base(new Layout()) { }
 

@@ -20,7 +20,7 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? SeqendHandle { get; set; }
 
-		public List<ulong> AttributesHandles { get; set; } = new List<ulong>();
+		public HashSet<ulong> AttributesHandles { get; set; } = new();
 
 		public CadInsertTemplate() : base(new Insert()) { }
 
@@ -39,7 +39,7 @@ namespace ACadSharp.IO.Templates
 				insert.Block = owner;
 			}
 
-			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
+			if (builder.TryGetCadObject(this.SeqendHandle, out Seqend seqend))
 			{
 				insert.Attributes.Seqend = seqend;
 			}
@@ -53,7 +53,7 @@ namespace ACadSharp.IO.Templates
 			{
 				foreach (ulong handle in this.AttributesHandles)
 				{
-					if (builder.TryGetCadObject<AttributeEntity>(handle, out AttributeEntity att))
+					if (builder.TryGetCadObject(handle, out AttributeEntity att))
 					{
 						insert.Attributes.Add(att);
 					}

@@ -1,10 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Types.Units;
-using CSMath;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Globalization;
 
 //	TODO should the described coupling of properties be implemented in this class,
 //		 e.g., GenerateTolerances and LimitsGeneration?

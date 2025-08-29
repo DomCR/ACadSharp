@@ -13,7 +13,7 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? SeqendHandle { get; internal set; }
 
-		public List<ulong> VertexHandles { get; set; } = new List<ulong>();
+		public HashSet<ulong> VertexHandles { get; set; } = new();
 
 		public Polyline PolyLine => this.CadObject as Polyline;
 
