@@ -21,14 +21,19 @@ namespace ACadSharp.Tables
 		public const string DefaultName = "0";
 
 		/// <summary>
+		/// DefPoints layer name.
+		/// </summary>
+		public const string DefpointsName = "defpoints";
+
+		/// <summary>
 		/// Default layer in all cad formats, it will always exist in a file
 		/// </summary>
 		public static Layer Default { get { return new Layer(DefaultName); } }
 
 		/// <summary>
-		/// Defpoints layer, this layer usually stores definition points that will not be plot.
+		/// DefPoints layer, this layer usually stores definition points that will not be plot.
 		/// </summary>
-		public static Layer Defpoints { get { return new Layer("defpoints") { PlotFlag = false }; } }
+		public static Layer Defpoints { get { return new Layer(DefpointsName) { PlotFlag = false }; } }
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.LAYER;
@@ -94,7 +99,24 @@ namespace ACadSharp.Tables
 		/// Specifies if the layer is plottable.
 		/// </summary>
 		[DxfCodeValue(290)]
-		public bool PlotFlag { get; set; } = true;
+		public bool PlotFlag
+		{
+			get
+			{
+				if (this.name.Equals(DefpointsName, StringComparison.OrdinalIgnoreCase))
+				{
+					return false;
+				}
+
+				return this._plotFlag;
+			}
+			set
+			{
+				this._plotFlag = value;
+			}
+		}
+
+		private bool _plotFlag = true;
 
 		/// <summary>
 		/// Specifies the line weight of an individual object or the default line weight for the drawing.
