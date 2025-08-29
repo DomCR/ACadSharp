@@ -1162,7 +1162,7 @@ namespace ACadSharp.Tests.IO
 			{
 				BlockRecord record = new BlockRecord("my_xref");
 				record.Flags = BlockTypeFlags.XRef | BlockTypeFlags.XRefResolved;
-				record.BlockEntity.XRefPath = "C:\\Users\\alber\\source\\repos\\ACadSharp\\samples\\local\\user_files\\issue-748_spline.dwg";
+				record.BlockEntity.XRefPath = "./SinglePoint_AC1032.dwg";
 
 				this.Document.BlockRecords.Add(record);
 
