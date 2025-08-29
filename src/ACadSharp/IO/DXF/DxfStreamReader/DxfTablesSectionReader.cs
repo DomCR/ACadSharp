@@ -372,6 +372,17 @@ namespace ACadSharp.IO.DXF
 				case 69:
 					template.CadObject.TextBackgroundFillMode = (DimensionTextBackgroundFillMode)this._reader.ValueAsShort;
 					return true;
+				case 70:
+					if (!tmp.DxfFlagsAssigned)
+					{
+						tmp.DxfFlagsAssigned = true;
+						return true;
+					}
+					else if (this._reader.ValueAsShort >= 0)
+					{
+						template.CadObject.TextBackgroundColor = new Color(this._reader.ValueAsShort);
+					}
+					return true;
 				case 71:
 					template.CadObject.GenerateTolerances = this._reader.ValueAsBool;
 					return true;
