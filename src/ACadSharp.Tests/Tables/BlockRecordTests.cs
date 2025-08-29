@@ -4,6 +4,7 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
 using System;
+using System.IO;
 using System.Linq;
 using Xunit;
 
@@ -31,6 +32,28 @@ namespace ACadSharp.Tests.Tables
 			{
 				Assert.Equal(record, e.Owner);
 			}
+		}
+
+		[Fact()]
+		public void CreateXRef()
+		{
+			string name = "my_block";
+			string path = Path.Combine(TestVariables.SamplesFolder, "sample_AC1032.dwg");
+			BlockRecord record = new BlockRecord(name, path);
+
+			Assert.Equal(name, record.Name);
+			Assert.Equal(path, record.BlockEntity.XRefPath);
+			Assert.True(record.Flags.HasFlag(Blocks.BlockTypeFlags.XRef));
+			Assert.True(record.Flags.HasFlag(Blocks.BlockTypeFlags.XRefResolved));
+			Assert.False(record.Flags.HasFlag(Blocks.BlockTypeFlags.XRefOverlay));
+
+			BlockRecord overlay = new BlockRecord(name, path, true);
+
+			Assert.Equal(name, overlay.Name);
+			Assert.Equal(path, overlay.BlockEntity.XRefPath);
+			Assert.True(overlay.Flags.HasFlag(Blocks.BlockTypeFlags.XRef));
+			Assert.True(overlay.Flags.HasFlag(Blocks.BlockTypeFlags.XRefResolved));
+			Assert.True(overlay.Flags.HasFlag(Blocks.BlockTypeFlags.XRefOverlay));
 		}
 
 		[Fact()]

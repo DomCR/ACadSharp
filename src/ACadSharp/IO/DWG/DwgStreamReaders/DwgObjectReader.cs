@@ -4021,7 +4021,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//Loaded Bit B 0 indicates loaded for an xref
-				this._objectReader.ReadBit();
+				bool loaded = this._objectReader.ReadBit();
 			}
 
 			//R2004+:
@@ -4037,7 +4037,7 @@ namespace ACadSharp.IO.DWG
 			block.BasePoint = this._objectReader.Read3BitDouble();
 			//Xref pname TV 1 Xref pathname. That's right: DXF 1 AND 3!
 			//3 1 appears in a tblnext/ search elist; 3 appears in an entget.
-			block.XrefPath = this._textReader.ReadVariableText();
+			block.XRefPath = this._textReader.ReadVariableText();
 
 			//R2000+:
 			int insertCount = 0;
