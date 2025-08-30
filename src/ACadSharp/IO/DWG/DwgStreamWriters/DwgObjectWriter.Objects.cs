@@ -215,7 +215,7 @@ namespace ACadSharp.IO.DWG
 			{
 				case XRecord when !this.WriteXRecords:
 					notify = false;
-					break;
+					return true;
 				case EvaluationGraph:
 				case Material:
 				case UnknownNonGraphicalObject:
