@@ -868,7 +868,7 @@ namespace ACadSharp.IO.DWG
 					continue;
 				}
 
-				ms.Write<short>((short)entry.Code);
+				ms.Write<short, LittleEndianConverter>((short)entry.Code);
 				GroupCodeValueType groupValueType = GroupCodeValue.TransformValue(entry.Code);
 
 				switch (groupValueType)
@@ -940,7 +940,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Numdatabytes BL number of databytes
 			this._writer.WriteBitLong((int)ms.Length);
-			this._writer.WriteBytes(stream.GetBuffer());
+			this._writer.WriteBytes(stream.GetBuffer(), 0, (int)ms.Length);
 
 			//R2000+:
 			if (this.R2000Plus)
