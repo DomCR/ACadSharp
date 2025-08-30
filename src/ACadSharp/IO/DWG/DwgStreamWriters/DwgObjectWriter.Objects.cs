@@ -25,9 +25,12 @@ namespace ACadSharp.IO.DWG
 
 		private void writeObject(NonGraphicalObject obj)
 		{
-			if (this.skipEntry(obj))
+			if (this.skipEntry(obj, out bool notify))
 			{
-				this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
+				if (notify)
+				{
+					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
+				}
 				return;
 			}
 
@@ -202,9 +205,17 @@ namespace ACadSharp.IO.DWG
 
 		private bool skipEntry(NonGraphicalObject entry)
 		{
+			return this.skipEntry(entry, out _);
+		}
+
+		private bool skipEntry(NonGraphicalObject entry, out bool notify)
+		{
+			notify = true;
 			switch (entry)
 			{
 				case XRecord when !this.WriteXRecords:
+					notify = false;
+					break;
 				case EvaluationGraph:
 				case Material:
 				case UnknownNonGraphicalObject:
