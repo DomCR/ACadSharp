@@ -23,7 +23,7 @@ namespace ACadSharp.Tests.IO
 
 		[Theory]
 		[MemberData(nameof(DwgFiles))]
-		public void ReadUserDwg(FileModel test)
+		public void ReadDwgWriteDwg(FileModel test)
 		{
 			if (string.IsNullOrEmpty(test.Path))
 				return;
@@ -36,6 +36,8 @@ namespace ACadSharp.Tests.IO
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
 
 			DwgWriter.Write(Path.Combine(test.Folder, $"{test.NoExtensionName}.out.dwg"), doc, writerConfiguration, this.onNotification);
+
+			//Mesh fails when written, all the other entities are discarded
 		}
 	}
 }
