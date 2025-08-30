@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.IO.DWG
 {
@@ -904,38 +905,32 @@ namespace ACadSharp.IO.DWG
 						ms.Write((byte)array.Length);
 						ms.WriteBytes(array);
 						break;
-					case GroupCodeValueType.String:
-					case GroupCodeValueType.ExtendedDataString:
 					case GroupCodeValueType.Handle:
-						string text = (string)entry.Value;
-
-						if (this.R2007Plus)
+						var obj = entry.GetReference();
+						if (obj == null)
 						{
-							if (string.IsNullOrEmpty(text))
-							{
-								ms.Write<short, LittleEndianConverter>(0);
-								return;
-							}
-
-							ms.Write<short, LittleEndianConverter>((short)text.Length);
-							ms.Write(text, System.Text.Encoding.Unicode);
-						}
-						else if (string.IsNullOrEmpty(text))
-						{
-							ms.Write<short, LittleEndianConverter>(0);
-							ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
+							this.writeStringInStream(ms, string.Empty);
 						}
 						else
 						{
-							ms.Write<short, LittleEndianConverter>((short)text.Length);
-							ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
-							ms.Write(text, this._writer.Encoding);
+							this.writeStringInStream(ms, obj.Handle.ToString("X", System.Globalization.CultureInfo.InvariantCulture));
 						}
+						break;
+					case GroupCodeValueType.String:
+					case GroupCodeValueType.ExtendedDataString:
+						string text = (string)entry.Value;
+						this.writeStringInStream(ms, text);
 						break;
 					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:
-						ulong u = (entry.Value as ulong?).Value;
-						ms.Write<ulong, LittleEndianConverter>(u);
+						if (entry.GetReference() == null)
+						{
+							ms.Write<ulong, LittleEndianConverter>(0);
+						}
+						else
+						{
+							ms.Write<ulong, LittleEndianConverter>(entry.GetReference().Handle);
+						}
 						break;
 					default:
 						throw new NotSupportedException();
@@ -953,7 +948,32 @@ namespace ACadSharp.IO.DWG
 				//Cloning flag BS 280
 				this._writer.WriteBitShort((short)xrecord.CloningFlags);
 			}
+		}
 
+		private void writeStringInStream(StreamIO ms, string text)
+		{
+			if (this.R2007Plus)
+			{
+				if (string.IsNullOrEmpty(text))
+				{
+					ms.Write<short, LittleEndianConverter>(0);
+					return;
+				}
+
+				ms.Write<short, LittleEndianConverter>((short)text.Length);
+				ms.Write(text, System.Text.Encoding.Unicode);
+			}
+			else if (string.IsNullOrEmpty(text))
+			{
+				ms.Write<short, LittleEndianConverter>(0);
+				ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
+			}
+			else
+			{
+				ms.Write<short, LittleEndianConverter>((short)text.Length);
+				ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
+				ms.Write(text, this._writer.Encoding);
+			}
 		}
 	}
 }
