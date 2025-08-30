@@ -533,7 +533,6 @@ namespace ACadSharp.IO
 
 					CodePage code = CadUtils.GetCodePage(encoding.ToLower());
 					this._encoding = this.getListedEncoding((int)code);
-					break;
 				}
 
 				tmpReader.ReadNext();
