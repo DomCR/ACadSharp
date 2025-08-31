@@ -25,7 +25,7 @@ namespace ACadSharp.Objects
 
 				if (this.Document != null)
 				{
-					this._scale = this.updateCollection(value, this.Document.Scales);
+					this._scale = CadObject.updateCollection(value, this.Document.Scales);
 				}
 				else
 				{
@@ -47,7 +47,7 @@ namespace ACadSharp.Objects
 		{
 			base.AssignDocument(doc);
 
-			this._scale = this.updateCollection(this._scale, this.Document?.Scales);
+			this._scale = CadObject.updateCollection(this._scale, this.Document?.Scales);
 
 			this.Document.Scales.OnRemove += tableOnRemove;
 		}
