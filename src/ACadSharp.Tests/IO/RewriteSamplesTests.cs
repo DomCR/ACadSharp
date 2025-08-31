@@ -1,7 +1,9 @@
-﻿using ACadSharp.IO;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO;
 using ACadSharp.IO.DWG;
 using ACadSharp.Tests.TestModels;
 using System.IO;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -36,8 +38,6 @@ namespace ACadSharp.Tests.IO
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
 
 			DwgWriter.Write(Path.Combine(test.Folder, $"{test.NoExtensionName}.out.dwg"), doc, writerConfiguration, this.onNotification);
-
-			//Mesh fails when written, all the other entities are discarded
 		}
 	}
 }
