@@ -14,18 +14,6 @@ namespace ACadSharp.IO.DWG
 			List<Entity> children = new List<Entity>();
 			Seqend seqend = null;
 
-			//Ignored Entities
-			switch (entity)
-			{
-				case ProxyEntity:
-				case TableEntity:
-				case UnknownEntity:
-				case Solid3D:
-				case Mesh:
-					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
-					return;
-			}
-
 			this.writeCommonEntityData(entity);
 
 			switch (entity)

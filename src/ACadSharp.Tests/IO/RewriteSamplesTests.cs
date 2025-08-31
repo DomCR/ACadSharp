@@ -23,7 +23,7 @@ namespace ACadSharp.Tests.IO
 
 		[Theory]
 		[MemberData(nameof(DwgFiles))]
-		public void ReadUserDwg(FileModel test)
+		public void ReadDwgWriteDwg(FileModel test)
 		{
 			if (string.IsNullOrEmpty(test.Path))
 				return;
