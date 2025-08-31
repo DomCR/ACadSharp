@@ -49,6 +49,11 @@ namespace ACadSharp.IO.DXF
 			}
 
 			base.BuildDocument();
+
+			if (this.Configuration.CreateDefaults)
+			{
+				this.DocumentToBuild.CreateDefaults();
+			}
 		}
 
 		public List<Entity> BuildEntities()
