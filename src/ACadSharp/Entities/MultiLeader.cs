@@ -625,33 +625,7 @@ namespace ACadSharp.Entities
 			clone._arrowhead = (BlockRecord)this._arrowhead?.Clone();
 			clone._blockContent = (BlockRecord)this._blockContent?.Clone();
 
-			//	clone.XDictionary = (CadDictionary)this.XDictionary.Clone();
-			if (tryGetContextdata(out MultiLeaderObjectContextData contextData)) {
-				MultiLeaderObjectContextData contextDataClone = (MultiLeaderObjectContextData)contextData.Clone();
-
-				CadDictionary annotScales = new CadDictionary("ACDB_ANNOTATIONSCALES");
-				annotScales.Add("*A1", contextDataClone);
-				CadDictionary contextDataManager = new CadDictionary("AcDbContextDataManager");
-				contextDataManager.Add("ACDB_ANNOTATIONSCALES", annotScales);
-				clone.XDictionary = new CadDictionary("");
-				clone.XDictionary.Add("AcDbContextDataManager", contextDataManager);
-			}
-
 			return clone;
-		}
-
-		private bool tryGetContextdata(out MultiLeaderObjectContextData contextData)
-		{
-			if (this.XDictionary != null &&
-				this.XDictionary.TryGetEntry("AcDbContextDataManager", out CadDictionary contextDataManager) &&
-				contextDataManager.TryGetEntry("ACDB_ANNOTATIONSCALES", out CadDictionary annotScales) &&
-				annotScales.TryGetEntry("*A1", out MultiLeaderObjectContextData a1))
-				{
-				contextData = a1;
-				return true;
-			}
-			contextData = null;
-			return false;
 		}
 
 		internal override void AssignDocument(CadDocument doc)
