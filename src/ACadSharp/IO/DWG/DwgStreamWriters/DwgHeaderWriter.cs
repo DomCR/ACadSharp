@@ -275,7 +275,7 @@ namespace ACadSharp.IO.DWG
 			//BS : ISOLINES
 			this._writer.WriteBitShort(this._header.SurfaceIsolineCount);
 			//BS : CMLJUST
-			this._writer.WriteBitShort((short)this._header.CurrentMultilineJustification);
+			this._writer.WriteBitShort((short)this._header.CurrentMultiLineJustification);
 			//BS : TEXTQLTY
 			this._writer.WriteBitShort(this._header.TextQuality);
 			//BD : LTSCALE
@@ -927,7 +927,7 @@ namespace ACadSharp.IO.DWG
 				//RC : HIDETEXT
 				this._writer.WriteByte(this._header.HideText);
 				//RC : XCLIPFRAME, before R2010 the value can be 0 or 1 only.
-				this._writer.WriteByte(this._header.ExternalReferenceClippingBoundaryType);
+				this._writer.WriteByte((byte)this._header.ExternalReferenceClippingBoundaryType);
 				//RC : DIMASSOC
 				this._writer.WriteByte((byte)this._header.DimensionAssociativity);
 				//RC : HALOGAP

@@ -2,10 +2,7 @@
 using ACadSharp.Objects;
 using CSMath;
 using System;
-using System.IO;
 using System.Linq;
-using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.IO.DXF
 {
@@ -1142,13 +1139,17 @@ namespace ACadSharp.IO.DXF
 				this._writer.Write(74, (short)att.VerticalAlignment);
 			}
 
-			if (this.Version > ACadVersion.AC1027 && att.MText != null)
+			if (this.Version > ACadVersion.AC1027 && att.AttributeType != AttributeType.SingleLine)
 			{
 				this._writer.Write(71, (short)att.AttributeType);
 				this._writer.Write(72, (short)0);
 				this._writer.Write(11, att.AlignmentPoint);
 
-				this.writeMText(att.MText, false);
+				if(att.MText != null)
+				{
+					this._writer.Write(101, "Embedded Object");
+					this.writeMText(att.MText, false);
+				}
 			}
 		}
 

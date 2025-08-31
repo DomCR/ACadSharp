@@ -7,7 +7,6 @@ using CSMath;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Reflection;
 
@@ -206,6 +205,12 @@ namespace ACadSharp.Header
 		[CadSystemVariable("$CEPSNTYPE", 380)]
 		public EntityPlotStyleType CurrentEntityPlotStyle { get; set; }
 
+		/// <summary>
+		/// Gets the current layer associated with the document. If the document is null, returns the default layer.
+		/// </summary>
+		/// <remarks>This property retrieves the layer based on the current layer name from the document's layer
+		/// collection, if a document is available. If no document is associated, it returns the default layer stored
+		/// internally.</remarks>
 		public Layer CurrentLayer
 		{
 			get
@@ -248,6 +253,9 @@ namespace ACadSharp.Header
 			}
 		}
 
+		/// <summary>
+		/// Gets the current line type associated with the document or the default line type if no document is set.
+		/// </summary>
 		public LineType CurrentLineType
 		{
 			get
@@ -300,7 +308,7 @@ namespace ACadSharp.Header
 				}
 				else
 				{
-					return this.Document.MLineStyles[this.CurrentMultiLineStyleName];
+					return this.Document.MLineStyles[this.CurrentMLineStyleName];
 				}
 			}
 			private set
@@ -310,13 +318,13 @@ namespace ACadSharp.Header
 		}
 
 		/// <summary>
-		/// Current multiline justification.
+		/// Current multi line justification.
 		/// </summary>
 		/// <remarks>
 		/// System variable CMLJUST.
 		/// </remarks>
 		[CadSystemVariable("$CMLJUST", 70)]
-		public VerticalAlignmentType CurrentMultilineJustification { get; set; } = VerticalAlignmentType.Top;
+		public VerticalAlignmentType CurrentMultiLineJustification { get; set; } = VerticalAlignmentType.Top;
 
 		/// <summary>
 		/// Current multiline scale.
@@ -334,7 +342,7 @@ namespace ACadSharp.Header
 		/// System variable CMLSTYLE.
 		/// </remarks>
 		[CadSystemVariable("$CMLSTYLE", true, 2)]
-		public string CurrentMultiLineStyleName
+		public string CurrentMLineStyleName
 		{
 			get { return this._currentMLineStyle.Name; }
 			set
@@ -350,6 +358,9 @@ namespace ACadSharp.Header
 			}
 		}
 
+		/// <summary>
+		/// Gets the current text style applied to the document or the default text style if no document is loaded.
+		/// </summary>
 		public TextStyle CurrentTextStyle
 		{
 			get
@@ -360,7 +371,7 @@ namespace ACadSharp.Header
 				}
 				else
 				{
-					return this.Document.TextStyles[this.TextStyleName];
+					return this.Document.TextStyles[this.CurrentTextStyleName];
 				}
 			}
 			private set
@@ -1153,6 +1164,9 @@ namespace ACadSharp.Header
 			}
 		}
 
+		/// <summary>
+		/// Gets the current dimension style applied to the document or the default dimension style if no document is loaded.
+		/// </summary>
 		public DimensionStyle CurrentDimensionStyle
 		{
 			get
@@ -1193,79 +1207,6 @@ namespace ACadSharp.Header
 					this._currentDimensionStyle = new DimensionStyle(value);
 				}
 			}
-		}
-
-		public MultiLeaderStyle CurrentMultiLeaderStyle
-		{
-			get
-			{
-				if (this.Document == null) {
-					return this._currentMultiLeaderStyle;
-				}
-				else {
-					return this.Document.MLeaderStyles[this.CurrentMultiLeaderStyleName];
-				}
-			}
-			private set {
-				this._currentMultiLeaderStyle = value;
-			}
-		}
-
-		public string CurrentMultiLeaderStyleName
-		{
-			get
-			{
-				if (this.Document == null)
-				{
-					return this._currentMultiLeaderStyle.Name;
-				}
-				else
-				{
-					DictionaryVariable variableDictionaryEntry = ensureVariableDictionaryEntryExists(this.Document, CadDictionary.CurrentMultiLeaderStyle, MultiLeaderStyle.DefaultName);
-					return variableDictionaryEntry.Value;
-				}
-			}
-			set
-			{
-				if (string.IsNullOrEmpty(value))
-				{
-					throw new ArgumentNullException("value");
-				}
-				if (this.Document != null)
-				{
-					this._currentMultiLeaderStyle = this.Document.MLeaderStyles[value];
-
-					//  There is no accessible system variable $CMLEADERSTYLE
-					//  The current MultiLeaderStyle name is held in the Variable Dictionary
-					//	create or update this entry
-					DictionaryVariable variableDictionaryEntry = ensureVariableDictionaryEntryExists(this.Document, CadDictionary.CurrentMultiLeaderStyle, MultiLeaderStyle.DefaultName);
-					variableDictionaryEntry.Value = value;
-				}
-				else
-				{
-					this._currentMultiLeaderStyle = new MultiLeaderStyle(value);
-				}
-			}
-		}
-
-		private static DictionaryVariable ensureVariableDictionaryEntryExists(CadDocument doc, string entryName, string value) {
-			//	Ensure a Variable Dictionary exits
-			var rootDictionary = doc.RootDictionary;
-			if (!rootDictionary.TryGetEntry(CadDictionary.VariableDictionary, out CadDictionary variableDictionary))
-			{
-				variableDictionary = new CadDictionary(CadDictionary.VariableDictionary);
-				rootDictionary.Add(variableDictionary);
-			}
-
-			if (!variableDictionary.TryGetEntry(entryName, out DictionaryVariable currentMultiLeaderStyleEntry))
-			{
-				currentMultiLeaderStyleEntry = new DictionaryVariable();
-				currentMultiLeaderStyleEntry.Name = entryName;
-				currentMultiLeaderStyleEntry.Value = value;
-				variableDictionary.Add(currentMultiLeaderStyleEntry);
-			}
-
-			return currentMultiLeaderStyleEntry;
 		}
 
 		/// <summary>
@@ -1542,6 +1483,9 @@ namespace ACadSharp.Header
 			}
 		}
 
+		/// <summary>
+		/// Gets the current dimension text style applied to the document or the default dimension text style if no document is loaded.
+		/// </summary>
 		public TextStyle DimensionTextStyle
 		{
 			get
@@ -1860,13 +1804,13 @@ namespace ACadSharp.Header
 		}
 
 		/// <summary>
-		/// Controls the visibility of xref clipping boundaries
+		/// Determines whether xref clipping boundaries are visible or plotted in the current drawing.
 		/// </summary>
 		/// <remarks>
 		/// System variable XCLIPFRAME
 		/// </remarks>
-		[CadSystemVariable("$XCLIPFRAME", 280)] //note: mismatch with docs, code 290
-		public byte ExternalReferenceClippingBoundaryType { get; set; }
+		[CadSystemVariable("$XCLIPFRAME", 280)]
+		public XClipFrameType ExternalReferenceClippingBoundaryType { get; set; } = XClipFrameType.DisplayNotPlot;
 
 		/// <summary>
 		/// Adjusts the smoothness of shaded and rendered objects, rendered shadows, and objects with hidden lines removed.
@@ -2619,7 +2563,7 @@ namespace ACadSharp.Header
 		/// System variable REGENMODE.
 		/// </remarks>
 		[CadSystemVariable("$REGENMODE", 70)]
-		public bool RegenerationMode { get; set; } = false;
+		public bool RegenerationMode { get; set; } = true;
 
 		/// <summary>
 		/// The default value is 0.
@@ -2913,7 +2857,7 @@ namespace ACadSharp.Header
 		/// System variable TEXTSTYLE.
 		/// </remarks>
 		[CadSystemVariable("$TEXTSTYLE", true, 7)]
-		public string TextStyleName
+		public string CurrentTextStyleName
 		{
 			get { return this._currentTextStyle.Name; }
 			set
@@ -3254,7 +3198,6 @@ namespace ACadSharp.Header
 		private TextStyle _currentTextStyle = TextStyle.Default;
 		private DimensionStyle _dimensionStyleOverrides = new DimensionStyle("override");
 		private DimensionStyle _currentDimensionStyle = DimensionStyle.Default;
-		private MultiLeaderStyle _currentMultiLeaderStyle = MultiLeaderStyle.Default;
 		private TextStyle _dimensionTextStyle = TextStyle.Default;
 		private double _facetResolution = 0.5;
 		private short _linearUnitPrecision = 4;

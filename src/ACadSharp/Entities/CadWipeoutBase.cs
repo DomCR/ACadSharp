@@ -174,7 +174,7 @@ namespace ACadSharp.Entities
 			{
 				if (this.Document != null)
 				{
-					this._definition = this.updateCollection(value, this.Document.ImageDefinitions);
+					this._definition = CadObject.updateCollection(value, this.Document.ImageDefinitions);
 				}
 				else
 				{
@@ -248,7 +248,7 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._definition = this.updateCollection(this.Definition, doc.ImageDefinitions);
+			this._definition = CadObject.updateCollection(this.Definition, doc.ImageDefinitions);
 
 			this.Document.ImageDefinitions.OnRemove += this.imageDefinitionsOnRemove;
 		}

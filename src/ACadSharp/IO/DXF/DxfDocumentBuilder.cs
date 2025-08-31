@@ -34,7 +34,7 @@ namespace ACadSharp.IO.DXF
 				this.AddTemplate(this.ModelSpaceTemplate);
 			}
 
-			this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(this.ModelSpaceEntities);
+			this.ModelSpaceTemplate.OwnedObjectsHandlers.UnionWith(this.ModelSpaceEntities);
 
 			this.RegisterTables();
 

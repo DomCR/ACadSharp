@@ -62,7 +62,7 @@ namespace ACadSharp.Entities
 
 				if (this.Document != null)
 				{
-					this._definition = this.updateCollection(value, this.getDocumentCollection(this.Document));
+					this._definition = updateCollection(value, this.getDocumentCollection(this.Document));
 				}
 				else
 				{
@@ -270,7 +270,7 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._definition = this.updateCollection(this.Definition, getDocumentCollection(doc));
+			this._definition = updateCollection(this.Definition, getDocumentCollection(doc));
 
 			this.Document.PdfDefinitions.OnRemove += this.imageDefinitionsOnRemove;
 		}

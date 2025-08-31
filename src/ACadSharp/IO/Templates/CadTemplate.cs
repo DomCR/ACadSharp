@@ -14,7 +14,7 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? XDictHandle { get; set; }
 
-		public List<ulong> ReactorsHandles { get; set; } = new List<ulong>();
+		public HashSet<ulong> ReactorsHandles { get; set; } = new();
 
 		public Dictionary<ulong, List<ExtendedDataRecord>> EDataTemplate { get; set; } = new();
 

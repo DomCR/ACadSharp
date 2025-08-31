@@ -90,7 +90,7 @@ namespace ACadSharp.Tables
 			if (segment.LineType != null)
 				throw new ArgumentException($"Segment has already a LineType: {segment.LineType.Name}");
 
-			segment.Style = updateTable(segment.Style, this.Document?.TextStyles);
+			segment.Style = CadObject.updateCollection(segment.Style, this.Document?.TextStyles);
 			segment.LineType = this;
 			this._segments.Add(segment);
 		}

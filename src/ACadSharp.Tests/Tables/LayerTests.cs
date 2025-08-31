@@ -1,11 +1,22 @@
 ﻿using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
 using ACadSharp.Tests.Common;
 using Xunit;
 
 namespace ACadSharp.Tests.Tables
 {
-	public class LayerTests
+	public class LayerTests : TableEntryCommonTests<Layer>
 	{
+		[Fact]
+		public void DefpointsPlotTest()
+		{
+			Layer defpoints = Layer.Defpoints;
+
+			Assert.False(defpoints.PlotFlag);
+			defpoints.PlotFlag = true;
+			Assert.False(defpoints.PlotFlag);
+		}
+
 		[Fact]
 		public void CloneTest()
 		{
@@ -17,6 +28,11 @@ namespace ACadSharp.Tests.Tables
 			CadObjectTestUtils.AssertTableEntryClone(layer, clone);
 
 			Assert.Equal(layer.Color, clone.Color);
+		}
+
+		protected override Table<Layer> getTable(CadDocument document)
+		{
+			return document.Layers;
 		}
 	}
 }

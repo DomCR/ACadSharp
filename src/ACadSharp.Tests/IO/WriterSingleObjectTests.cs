@@ -54,6 +54,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedLwPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline2DTest)));
+			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline3DTest)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePdfUnderlay)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleRasterImage)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleWipeout)));
@@ -83,6 +84,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeInBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.XData)));
+			Data.Add(new(nameof(SingleCaseGenerator.XRef)));
 			Data.Add(new(nameof(SingleCaseGenerator.SPlineCreation)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateXRecords)));
 		}
@@ -234,6 +236,25 @@ namespace ACadSharp.Tests.IO
 				};
 
 				var pline = new Polyline2D();
+				pline.Vertices.AddRange(vector2d);
+				pline.IsClosed = true;
+				pline.Vertices.ElementAt(3).Bulge = 1;
+
+				this.Document.Entities.Add(pline);
+			}
+
+			public void ClosedPolyline3DTest()
+			{
+				List<Vertex3D> vector2d = new()
+				{
+					new Vertex3D() { Location = new XYZ(0, 0, 0) },
+					new Vertex3D() { Location = new XYZ(1, 0, 0) },
+					new Vertex3D() { Location = new XYZ(2, 1, 0) },
+					new Vertex3D() { Location = new XYZ(3, 1, 0) },
+					new Vertex3D() { Location = new XYZ(4, 4, 0) }
+				};
+
+				var pline = new Polyline3D();
 				pline.Vertices.AddRange(vector2d);
 				pline.IsClosed = true;
 				pline.Vertices.ElementAt(3).Bulge = 1;
@@ -1182,6 +1203,17 @@ namespace ACadSharp.Tests.IO
 				line.ExtendedData.Add(app, records);
 
 				this.Document.Entities.Add(line);
+			}
+
+			public void XRef()
+			{
+				BlockRecord record = new BlockRecord("my_xref");
+				record.Flags = BlockTypeFlags.XRef | BlockTypeFlags.XRefResolved;
+				record.BlockEntity.XRefPath = "./SinglePoint_AC1032.dwg";
+
+				this.Document.BlockRecords.Add(record);
+
+				this.Document.Entities.Add(new Insert(record));
 			}
 		}
 	}

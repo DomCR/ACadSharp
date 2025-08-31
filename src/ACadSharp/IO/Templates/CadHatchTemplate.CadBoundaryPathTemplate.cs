@@ -9,7 +9,7 @@ namespace ACadSharp.IO.Templates
 		{
 			public Hatch.BoundaryPath Path { get; set; } = new Hatch.BoundaryPath();
 
-			public List<ulong> Handles { get; set; } = new List<ulong>();
+			public HashSet<ulong> Handles { get; set; } = new();
 
 			public CadBoundaryPathTemplate() { }
 

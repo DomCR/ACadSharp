@@ -4,7 +4,7 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadViewportEntityControlTemplate : CadTemplate
 	{
-		public List<ulong> EntryHandles { get; } = new List<ulong>();
+		public HashSet<ulong> EntryHandles { get; } = new();
 
 		public CadViewportEntityControlTemplate() : base(new VPEntityPlaceholder()) { }
 

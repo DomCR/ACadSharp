@@ -2,14 +2,16 @@
 using ACadSharp.Extensions;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
 using ACadSharp.Tests.Common;
 using System;
+using System.IO;
 using System.Linq;
 using Xunit;
 
 namespace ACadSharp.Tests.Tables
 {
-	public class BlockRecordTests
+	public class BlockRecordTests : TableEntryCommonTests<BlockRecord>
 	{
 		[Fact()]
 		public void AddEntityTest()
@@ -173,6 +175,28 @@ namespace ACadSharp.Tests.Tables
 		}
 
 		[Fact()]
+		public void CreateXRef()
+		{
+			string name = "my_block";
+			string path = Path.Combine(TestVariables.SamplesFolder, "sample_AC1032.dwg");
+			BlockRecord record = new BlockRecord(name, path);
+
+			Assert.Equal(name, record.Name);
+			Assert.Equal(path, record.BlockEntity.XRefPath);
+			Assert.True(record.Flags.HasFlag(Blocks.BlockTypeFlags.XRef));
+			Assert.True(record.Flags.HasFlag(Blocks.BlockTypeFlags.XRefResolved));
+			Assert.False(record.Flags.HasFlag(Blocks.BlockTypeFlags.XRefOverlay));
+
+			BlockRecord overlay = new BlockRecord(name, path, true);
+
+			Assert.Equal(name, overlay.Name);
+			Assert.Equal(path, overlay.BlockEntity.XRefPath);
+			Assert.True(overlay.Flags.HasFlag(Blocks.BlockTypeFlags.XRef));
+			Assert.True(overlay.Flags.HasFlag(Blocks.BlockTypeFlags.XRefResolved));
+			Assert.True(overlay.Flags.HasFlag(Blocks.BlockTypeFlags.XRefOverlay));
+		}
+
+		[Fact()]
 		public void NotAllowDuplicatesTest()
 		{
 			string name = "my_block";
@@ -182,6 +206,11 @@ namespace ACadSharp.Tests.Tables
 
 			record.Entities.Add(l1);
 			Assert.Throws<ArgumentException>(() => record.Entities.Add(l1));
+		}
+
+		protected override Table<BlockRecord> getTable(CadDocument document)
+		{
+			return document.BlockRecords;
 		}
 	}
 }
