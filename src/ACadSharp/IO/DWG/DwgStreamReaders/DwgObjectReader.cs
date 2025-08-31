@@ -6059,6 +6059,8 @@ namespace ACadSharp.IO.DWG
 				mesh.Edges[l] = edge;
 			}
 
+			int unknown = this._objectReader.ReadBitLong();
+
 			return template;
 		}
 
