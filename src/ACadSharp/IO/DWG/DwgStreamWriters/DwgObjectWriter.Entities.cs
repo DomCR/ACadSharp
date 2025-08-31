@@ -627,7 +627,59 @@ namespace ACadSharp.IO.DWG
 
 		private void writeMesh(Mesh mesh)
 		{
+			//71 BS Version
+			this._writer.WriteBitShort(mesh.Version);
+			//72 BS BlendCrease
+			this._writer.WriteBit(mesh.BlendCrease);
+			//91 BL SubdivisionLevel
+			this._writer.WriteBitLong(mesh.SubdivisionLevel);
 
+			//92 BL nvertices
+			this._writer.WriteBitLong(mesh.Vertices.Count);
+			foreach (var vertex in mesh.Vertices)
+			{
+				//10 3BD vertice
+				this._writer.Write3BitDouble(vertex);
+			}
+
+			//Faces
+			var nfaces = mesh.Faces.Sum(f => 1 + f.Length);
+			this._writer.WriteBitLong(nfaces);
+
+			foreach (var face in mesh.Faces)
+			{
+				this._writer.WriteBitLong(face.Length);
+				foreach (int index in face)
+				{
+					this._writer.WriteBitLong(index);
+				}
+			}
+
+			//Edges
+			this._writer.WriteBitLong(mesh.Edges.Count);
+			foreach (var edge in mesh.Edges)
+			{
+				this._writer.WriteBitLong(edge.Start);
+				this._writer.WriteBitLong(edge.End);
+			}
+
+			//Crease
+			this._writer.WriteBitLong(mesh.Edges.Count);
+			foreach (var edge in mesh.Edges)
+			{
+				if (edge.Crease.HasValue)
+				{
+					this._writer.WriteBitDouble(edge.Crease.Value);
+				}
+				else
+				{
+					this._writer.WriteBitDouble(0);
+				}
+			}
+
+			//TODO: investigate last value in mesh
+			//Seen in all meshes, not sure but I think is the override option for meshes
+			this._writer.WriteBitLong(0);
 		}
 
 		private void writeMLine(MLine mline)
@@ -1021,22 +1073,22 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitDouble(hatch.PatternScale);
 				this._writer.WriteBit(hatch.IsDouble);
 
-				_writer.WriteBitShort((short)pattern.Lines.Count);
+				this._writer.WriteBitShort((short)pattern.Lines.Count);
 				foreach (var line in pattern.Lines)
 				{
 					//angle BD 53 line angle
-					_writer.WriteBitDouble(line.Angle);
+					this._writer.WriteBitDouble(line.Angle);
 					//pt0 2BD 43 / 44 pattern through this point(X, Y)
-					_writer.Write2BitDouble(line.BasePoint);
+					this._writer.Write2BitDouble(line.BasePoint);
 					//offset 2BD 45 / 56 pattern line offset
-					_writer.Write2BitDouble(line.Offset);
+					this._writer.Write2BitDouble(line.Offset);
 
 					//  numdashes BS 79 number of dash length items
-					_writer.WriteBitShort((short)line.DashLengths.Count);
+					this._writer.WriteBitShort((short)line.DashLengths.Count);
 					foreach (double dl in line.DashLengths)
 					{
 						//dashlength BD 49 dash length
-						_writer.WriteBitDouble(dl);
+						this._writer.WriteBitDouble(dl);
 					}
 				}
 			}
@@ -1159,7 +1211,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitShort(2);
 			}
 
-			writeMultiLeaderAnnotContext(multiLeader.ContextData);
+			this.writeMultiLeaderAnnotContext(multiLeader.ContextData);
 
 			//	Multileader Common data
 			//	340 Leader StyleId (handle)
@@ -1253,7 +1305,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitShort((short)multiLeader.TextTopAttachment);
 			}
 
-			if (R2013Plus)
+			if (this.R2013Plus)
 			{
 				//	295 Leader extended to text
 				this._writer.WriteBit(multiLeader.ExtendedToText);
@@ -1268,7 +1320,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitLong(leaderRootCount);
 			for (int i = 0; i < leaderRootCount; i++)
 			{
-				writeLeaderRoot(annotContext.LeaderRoots[i]);
+				this.writeLeaderRoot(annotContext.LeaderRoots[i]);
 			}
 
 			//	Common
@@ -1454,7 +1506,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitLong(leaderRoot.Lines.Count);
 			foreach (MultiLeaderAnnotContext.LeaderLine leaderLine in leaderRoot.Lines)
 			{
-				writeLeaderLine(leaderLine);
+				this.writeLeaderLine(leaderLine);
 			}
 
 			if (this.R2010Plus)

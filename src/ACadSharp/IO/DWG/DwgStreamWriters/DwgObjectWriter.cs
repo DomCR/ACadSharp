@@ -243,7 +243,6 @@ namespace ACadSharp.IO.DWG
 				case ProxyEntity:
 				case TableEntity:
 				case UnknownEntity:
-				case Mesh:
 				case Solid3D:
 					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return false;
