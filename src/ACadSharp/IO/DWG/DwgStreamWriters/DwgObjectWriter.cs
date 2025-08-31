@@ -278,6 +278,8 @@ namespace ACadSharp.IO.DWG
 
 		private void writeBlockHeader(BlockRecord record)
 		{
+			Entity[] entities = getCompatibleEntities(record.Entities);
+
 			this.writeCommonNonEntityData(record);
 
 			//Common:
@@ -319,7 +321,7 @@ namespace ACadSharp.IO.DWG
 				&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 			{
 				//Owned Object Count BL Number of objects owned by this object.
-				_writer.WriteBitLong(record.Entities.Count);
+				_writer.WriteBitLong(entities.Length);
 			}
 
 			//Common:
@@ -370,12 +372,12 @@ namespace ACadSharp.IO.DWG
 					&& !record.Flags.HasFlag(BlockTypeFlags.XRef)
 					&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 			{
-				if (record.Entities.Any())
+				if (entities.Any())
 				{
 					//first entity in the def. (soft pointer)
-					this._writer.HandleReference(DwgReferenceType.SoftPointer, record.Entities.First());
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, entities.First());
 					//last entity in the def. (soft pointer)
-					this._writer.HandleReference(DwgReferenceType.SoftPointer, record.Entities.Last());
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, entities.Last());
 				}
 				else
 				{
@@ -387,7 +389,7 @@ namespace ACadSharp.IO.DWG
 			//R2004+:
 			if (this.R2004Plus)
 			{
-				foreach (var item in record.Entities)
+				foreach (var item in entities)
 				{
 					//H[ENTITY(hard owner)] Repeats “Owned Object Count” times.
 					this._writer.HandleReference(DwgReferenceType.HardOwnership, item);
