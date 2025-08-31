@@ -35,7 +35,7 @@ namespace ACadSharp.IO.DXF
 				case AcdbPlaceHolder:
 				case EvaluationGraph:
 				case Material:
-				case MultiLeaderAnnotContext:
+				case MultiLeaderObjectContextData:
 				case VisualStyle:
 				case ImageDefinitionReactor:
 				case UnknownNonGraphicalObject:
