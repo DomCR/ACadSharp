@@ -86,12 +86,6 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			return BoundingBox.FromPoints(this.Vertices);
-		}
-
-		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			Mesh clone = (Mesh)base.Clone();
@@ -101,6 +95,12 @@ namespace ACadSharp.Entities
 			clone.Faces = new List<int[]>(this.Faces);
 
 			return clone;
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return BoundingBox.FromPoints(this.Vertices);
 		}
 	}
 }

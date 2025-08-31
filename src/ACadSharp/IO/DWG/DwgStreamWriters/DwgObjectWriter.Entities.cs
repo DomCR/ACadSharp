@@ -14,18 +14,6 @@ namespace ACadSharp.IO.DWG
 			List<Entity> children = new List<Entity>();
 			Seqend seqend = null;
 
-			//Ignored Entities
-			switch (entity)
-			{
-				case ProxyEntity:
-				case TableEntity:
-				case UnknownEntity:
-				case Solid3D:
-				case Mesh:
-					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
-					return;
-			}
-
 			this.writeCommonEntityData(entity);
 
 			switch (entity)
@@ -89,6 +77,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case LwPolyline lwpolyline:
 					this.writeLwPolyline(lwpolyline);
+					break;
+				case Mesh mesh:
+					this.writeMesh(mesh);
 					break;
 				case MLine mLine:
 					this.writeMLine(mLine);
@@ -632,6 +623,11 @@ namespace ACadSharp.IO.DWG
 					this._writer.WriteBitShort((short)face.Flags);
 				}
 			}
+		}
+
+		private void writeMesh(Mesh mesh)
+		{
+
 		}
 
 		private void writeMLine(MLine mline)

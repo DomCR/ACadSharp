@@ -213,7 +213,7 @@ namespace ACadSharp.IO.DWG
 
 				this._prev = null;
 				this._next = null;
-				Entity[] arr = blkRecord.Entities.ToArray();
+				Entity[] arr = getCompatibleEntities(blkRecord.Entities);
 				for (int i = 0; i < arr.Length; i++)
 				{
 					this._prev = arr.ElementAtOrDefault(i - 1);
@@ -227,6 +227,28 @@ namespace ACadSharp.IO.DWG
 				this._next = null;
 
 				this.writeBlockEnd(blkRecord.BlockEnd);
+			}
+		}
+
+		private Entity[] getCompatibleEntities(IEnumerable<Entity> entities)
+		{
+			return entities.Where(e => this.isEntitySupported(e)).ToArray();
+
+		}
+
+		private bool isEntitySupported(Entity entity)
+		{
+			switch (entity)
+			{
+				case ProxyEntity:
+				case TableEntity:
+				case UnknownEntity:
+				case Mesh:
+				case Solid3D:
+					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
+					return false;
+				default:
+					return true;
 			}
 		}
 
