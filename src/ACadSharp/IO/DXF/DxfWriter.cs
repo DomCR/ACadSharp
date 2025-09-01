@@ -79,31 +79,44 @@ namespace ACadSharp.IO
 		}
 
 		/// <summary>
-		/// Write a <see cref="CadDocument"/> into a file
+		/// Write a <see cref="CadDocument"/> into a file.
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <param name="document"></param>
 		/// <param name="binary"></param>
+		/// <param name="configuration"></param>
 		/// <param name="notification"></param>
-		public static void Write(string filename, CadDocument document, bool binary, NotificationEventHandler notification = null)
+		public static void Write(string filename, CadDocument document, bool binary, DxfWriterConfiguration configuration = null, NotificationEventHandler notification = null)
 		{
 			using (DxfWriter writer = new DxfWriter(filename, document, binary))
 			{
+				if (configuration != null)
+				{
+					writer.Configuration = configuration;
+				}
+
 				writer.OnNotification += notification;
 				writer.Write();
 			}
 		}
 
 		/// <summary>
-		/// Write a <see cref="CadDocument"/> intio a <see cref="Stream"/>
+		/// Write a <see cref="CadDocument"/> into a <see cref="Stream"/>.
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <param name="document"></param>
 		/// <param name="binary"></param>
-		public static void Write(Stream stream, CadDocument document, bool binary, NotificationEventHandler notification = null)
+		/// <param name="configuration"></param>
+		/// <param name="notification"></param>
+		public static void Write(Stream stream, CadDocument document, bool binary, DxfWriterConfiguration configuration = null, NotificationEventHandler notification = null)
 		{
 			using (DxfWriter writer = new DxfWriter(stream, document, binary))
 			{
+				if (configuration != null)
+				{
+					writer.Configuration = configuration;
+				}
+
 				writer.OnNotification += notification;
 				writer.Write();
 			}
