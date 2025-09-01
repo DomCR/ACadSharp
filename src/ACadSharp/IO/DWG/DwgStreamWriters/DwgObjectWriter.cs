@@ -26,6 +26,8 @@ namespace ACadSharp.IO.DWG
 
 		public bool WriteXData { get; }
 
+		public bool WriteShapes { get; } = true;
+
 		private Dictionary<ulong, CadDictionary> _dictionaries = new();
 
 		private Queue<NonGraphicalObject> _objects = new();
@@ -42,7 +44,10 @@ namespace ACadSharp.IO.DWG
 
 		private Entity _next;
 
-		public DwgObjectWriter(Stream stream, CadDocument document, Encoding encoding, bool writeXRecords = true, bool writeXData = true) : base(document.Header.Version)
+		public DwgObjectWriter(Stream stream, CadDocument document, Encoding encoding,
+			bool writeXRecords = true, 
+			bool writeXData = true,
+			bool writeShapes = true) : base(document.Header.Version)
 		{
 			this._stream = stream;
 			this._document = document;
@@ -51,6 +56,7 @@ namespace ACadSharp.IO.DWG
 			this._writer = DwgStreamWriterBase.GetMergedWriter(document.Header.Version, this._msmain, encoding);
 			this.WriteXRecords = writeXRecords;
 			this.WriteXData = writeXData;
+			this.WriteShapes = writeShapes;
 		}
 
 		public void Write()
@@ -240,6 +246,8 @@ namespace ACadSharp.IO.DWG
 		{
 			switch (entity)
 			{
+				case Shape:
+					return this.WriteShapes;
 				case ProxyEntity:
 				case TableEntity:
 				case UnknownEntity:
