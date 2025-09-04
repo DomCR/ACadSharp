@@ -12,13 +12,16 @@ namespace ACadSharp.Tables
 			/// <summary>
 			/// Dash, dot or space length.
 			/// </summary>
+			/// <remarks>
+			/// Negative lengths represents a space, zero a dot and a positive value a line segment.
+			/// </remarks>
 			[DxfCodeValue(49)]
 			public double Length { get; set; }
 
 			/// <summary>
 			/// Line type where this segment belongs
 			/// </summary>
-			public LineType LineType { get; internal set; }
+			public LineType Owner { get; internal set; }
 
 			/// <summary>
 			/// Offset.
@@ -42,7 +45,7 @@ namespace ACadSharp.Tables
 			/// Complex linetype element type.
 			/// </summary>
 			[DxfCodeValue(74)]
-			public LinetypeShapeFlags Shapeflag { get; set; }
+			public LinetypeShapeFlags ShapeFlag { get; set; }
 
 			/// <summary>
 			/// Shape number.
@@ -59,7 +62,7 @@ namespace ACadSharp.Tables
 				get { return this._style; }
 				set
 				{
-					this._style = CadObject.updateCollection(value, this.LineType?.Document?.TextStyles);
+					this._style = CadObject.updateCollection(value, this.Owner?.Document?.TextStyles);
 				}
 			}
 
@@ -86,7 +89,7 @@ namespace ACadSharp.Tables
 			public LineType.Segment Clone()
 			{
 				Segment clone = MemberwiseClone() as Segment;
-				clone.LineType = null;
+				clone.Owner = null;
 				clone._style = (TextStyle)(this.Style?.Clone());
 				return clone;
 			}

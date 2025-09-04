@@ -1,7 +1,6 @@
 ﻿using ACadSharp.IO.SVG;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
-using System;
 using System.IO;
 using System.Xml;
 

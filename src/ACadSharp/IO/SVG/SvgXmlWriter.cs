@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Extensions;
-using ACadSharp.IO.DXF;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Types.Units;
@@ -24,9 +23,13 @@ namespace ACadSharp.IO.SVG
 
 		public Layout Layout { get; set; }
 
-		public UnitsType Units { get; set; }
+		public UnitsType Units { get; protected set; }
 
-		public SvgXmlWriter(Stream w, Encoding encoding, SvgConfiguration configuration) : base(w, encoding)
+		public SvgXmlWriter(Stream stream, SvgConfiguration configuration) : this(stream, null, configuration)
+		{
+		}
+
+		public SvgXmlWriter(Stream stream, Encoding? encoding, SvgConfiguration configuration) : base(stream, encoding)
 		{
 			this.Configuration = configuration;
 		}
@@ -110,9 +113,14 @@ namespace ACadSharp.IO.SVG
 			this.Close();
 		}
 
-		private void notify(string message, NotificationType type, Exception ex = null)
+		protected void notify(string message, NotificationType type, Exception ex = null)
 		{
 			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, type, ex));
+		}
+
+		protected void triggerNotification(object sender, NotificationEventArgs e)
+		{
+			this.OnNotification?.Invoke(sender, e);
 		}
 
 		private void startDocument(BoundingBox box)
@@ -213,7 +221,7 @@ namespace ACadSharp.IO.SVG
 			this.writeEntity(entity, new Transform());
 		}
 
-		private void writeEntity(Entity entity, Transform transform)
+		protected void writeEntity(Entity entity, Transform transform)
 		{
 			switch (entity)
 			{
@@ -315,16 +323,29 @@ namespace ACadSharp.IO.SVG
 
 		private void writeLine(Line line, Transform transform)
 		{
-			this.WriteStartElement("line");
+			Polyline3D polyline = new Polyline3D(line.StartPoint, line.EndPoint);
+			var lines = line.GetActiveLineType().ApplyLineType(polyline);
 
-			this.writeEntityHeader(line, transform);
+			if (lines.Count() == 1)
+			{
+				this.WriteStartElement("line");
 
-			this.WriteAttributeString("x1", line.StartPoint.X.ToSvg(this.Units));
-			this.WriteAttributeString("y1", line.StartPoint.Y.ToSvg(this.Units));
-			this.WriteAttributeString("x2", line.EndPoint.X.ToSvg(this.Units));
-			this.WriteAttributeString("y2", line.EndPoint.Y.ToSvg(this.Units));
+				this.writeEntityHeader(line, transform);
 
-			this.WriteEndElement();
+				this.WriteAttributeString("x1", line.StartPoint.X.ToSvg(this.Units));
+				this.WriteAttributeString("y1", line.StartPoint.Y.ToSvg(this.Units));
+				this.WriteAttributeString("x2", line.EndPoint.X.ToSvg(this.Units));
+				this.WriteAttributeString("y2", line.EndPoint.Y.ToSvg(this.Units));
+				
+				this.WriteEndElement();
+			}
+			else
+			{
+				foreach (var item in lines)
+				{
+					this.writeEntity(item, transform);
+				}
+			}
 		}
 
 		private void writePattern(HatchPattern pattern)
@@ -363,8 +384,8 @@ namespace ACadSharp.IO.SVG
 			this.writeEntityHeader(polyline, transform);
 
 			var vertices = polyline.Vertices.Select(v => v.Location).ToList();
-
 			string pts = this.svgPoints(polyline.Vertices.Select(v => v.Location), transform);
+
 			this.WriteAttributeString("points", pts);
 			this.WriteAttributeString("fill", "none");
 

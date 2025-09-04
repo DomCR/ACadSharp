@@ -1,5 +1,7 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Entities;
 using ACadSharp.Extensions;
+using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +39,8 @@ namespace ACadSharp.Tables
 		/// </summary>
 		[DxfCodeValue(3)]
 		public string Description { get; set; }
+
+		public bool IsComplex { get { return this._segments.Count > 0; } }
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.TableLinetype;
@@ -87,12 +91,73 @@ namespace ACadSharp.Tables
 		/// <exception cref="ArgumentException"></exception>
 		public void AddSegment(Segment segment)
 		{
-			if (segment.LineType != null)
-				throw new ArgumentException($"Segment has already a LineType: {segment.LineType.Name}");
+			if (segment.Owner != null)
+				throw new ArgumentException($"Segment already assigned to a LineType: {segment.Owner.Name}");
 
 			segment.Style = CadObject.updateCollection(segment.Style, this.Document?.TextStyles);
-			segment.LineType = this;
+			segment.Owner = this;
 			this._segments.Add(segment);
+		}
+
+		/// <summary>
+		/// Converts a <see cref="Polyline"/> to a series of <see cref="Polyline3D"/> applying this line type.
+		/// </summary>
+		/// <param name="polyline"></param>
+		/// <returns></returns>
+		public IEnumerable<Polyline3D> ApplyLineType(IPolyline polyline)
+		{
+			var lst = new List<Polyline3D>();
+			if (!this.IsComplex)
+			{
+				lst.Add(new Polyline3D(polyline.GetPoints(), polyline.IsClosed));
+				return lst;
+			}
+
+			var pts = polyline.GetPoints().ToArray();
+			XYZ current = pts[0];
+			for (int i = 1; i < pts.Length; i++)
+			{
+				XYZ next = pts[i];
+				lst.AddRange(applySegment(current, next));
+				current = next;
+			}
+
+			if (polyline.IsClosed)
+			{
+				lst.AddRange(applySegment(pts[0], current));
+			}
+
+			return lst;
+		}
+
+		private List<Polyline3D> applySegment(XYZ start, XYZ end)
+		{
+			List<Polyline3D> lst = new List<Polyline3D>();
+			double dist = start.DistanceFrom(end);
+			if (dist < this.PatternLen)
+				return lst;
+
+			XYZ next = start;
+			int nSegments = (int)System.Math.Floor(dist / this.PatternLen);
+			XYZ v = (end - start).Normalize();
+			for (int i = 0; i < nSegments; i++)
+			{
+				foreach (var item in this.Segments)
+				{
+					next += v * Math.Abs(item.Length);
+
+					if (item.Length > 0)
+					{
+						Polyline3D pl = new Polyline3D(start, next);
+						lst.Add(pl);
+						continue;
+					}
+
+					start = next;
+				}
+			}
+
+			return lst;
 		}
 
 		/// <inheritdoc/>
