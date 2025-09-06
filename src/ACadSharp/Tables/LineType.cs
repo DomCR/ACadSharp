@@ -118,27 +118,29 @@ namespace ACadSharp.Tables
 			for (int i = 1; i < pts.Length; i++)
 			{
 				XYZ next = pts[i];
-				lst.AddRange(applySegment(current, next));
+				lst.AddRange(applySegment(current, next, polyline.GetActiveLineWeightType()));
 				current = next;
 			}
 
 			if (polyline.IsClosed)
 			{
-				lst.AddRange(applySegment(pts[0], current));
+				lst.AddRange(applySegment(pts[0], current, polyline.GetActiveLineWeightType()));
 			}
 
 			return lst;
 		}
 
-		private List<Polyline3D> applySegment(XYZ start, XYZ end)
+		private List<Polyline3D> applySegment(XYZ start, XYZ end, LineWeightType lineweight)
 		{
 			List<Polyline3D> lst = new List<Polyline3D>();
 			double dist = start.DistanceFrom(end);
 			if (dist < this.PatternLen)
+			{
 				return lst;
+			}
 
 			XYZ next = start;
-			int nSegments = (int)System.Math.Floor(dist / this.PatternLen);
+			int nSegments = (int)Math.Floor(dist / this.PatternLen);
 			XYZ v = (end - start).Normalize();
 			for (int i = 0; i < nSegments; i++)
 			{
@@ -146,11 +148,15 @@ namespace ACadSharp.Tables
 				{
 					next += v * Math.Abs(item.Length);
 
-					if (item.Length > 0)
+					if (item.IsPoint)
+					{
+						Polyline3D pl = new Polyline3D(start, next + v * lineweight.GetLineWeightValue());
+						lst.Add(pl);
+					}
+					else if (item.IsLine)
 					{
 						Polyline3D pl = new Polyline3D(start, next);
 						lst.Add(pl);
-						continue;
 					}
 
 					start = next;

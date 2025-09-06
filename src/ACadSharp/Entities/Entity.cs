@@ -79,7 +79,7 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		[DxfCodeValue(370)]
-		public LineweightType LineWeight { get; set; } = LineweightType.ByLayer;
+		public LineWeightType LineWeight { get; set; } = LineWeightType.ByLayer;
 
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Handle, 347)]
@@ -143,6 +143,7 @@ namespace ACadSharp.Entities
 			this.ApplyTransform(transform);
 		}
 
+		/// <inheritdoc/>
 		public LineType GetActiveLineType()
 		{
 			if (this.LineType.Name.Equals(LineType.ByLayerName, StringComparison.InvariantCultureIgnoreCase))
@@ -156,6 +157,27 @@ namespace ACadSharp.Entities
 			}
 
 			return this.LineType;
+		}
+
+		/// <inheritdoc/>
+		public LineWeightType GetActiveLineWeightType()
+		{
+			switch (this.LineWeight)
+			{
+				case LineWeightType.ByLayer:
+					return this.Layer.LineWeight;
+				case LineWeightType.ByBlock:
+					if (this.Owner is BlockRecord record)
+					{
+						return record.BlockEntity.LineWeight;
+					}
+					else
+					{
+						return this.LineWeight;
+					}
+				default:
+					return this.LineWeight;
+			}
 		}
 
 		/// <inheritdoc/>

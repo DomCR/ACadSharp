@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Extensions;
 using CSMath;
-using System;
 
 namespace ACadSharp.Tables
 {
@@ -9,6 +8,21 @@ namespace ACadSharp.Tables
 	{
 		public class Segment
 		{
+			/// <summary>
+			/// Get whether this segment is a line (dash).
+			/// </summary>
+			public bool IsLine { get { return this.Length > 0.0; } }
+
+			/// <summary>
+			/// Get whether this segment is a point (dot).
+			/// </summary>
+			public bool IsPoint { get { return this.Length == 0.0; } }
+
+			/// <summary>
+			/// Get whether this segment is a space.
+			/// </summary>
+			public bool IsSpace { get { return this.Length < 0.0; } }
+
 			/// <summary>
 			/// Dash, dot or space length.
 			/// </summary>
@@ -19,15 +33,15 @@ namespace ACadSharp.Tables
 			public double Length { get; set; }
 
 			/// <summary>
-			/// Line type where this segment belongs
-			/// </summary>
-			public LineType Owner { get; internal set; }
-
-			/// <summary>
 			/// Offset.
 			/// </summary>
 			[DxfCodeValue(44, 45)]
 			public XY Offset { get; set; }
+
+			/// <summary>
+			/// Line type where this segment belongs
+			/// </summary>
+			public LineType Owner { get; internal set; }
 
 			/// <summary>
 			/// Rotation value in radians of embedded shape or text.

@@ -4,7 +4,7 @@
 	{
 		public string LinetypeName { get; set; }
 
-		public LineweightType LineWeight { get; set; }
+		public LineWeightType LineWeight { get; set; }
 
 		public ColorData Color { get; set; } = new ColorData();
 	}
