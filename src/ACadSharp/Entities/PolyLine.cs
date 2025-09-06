@@ -97,6 +97,9 @@ namespace ACadSharp.Entities
 
 		public Polyline(IEnumerable<Vertex> vertices, bool isColsed) : this()
 		{
+			if(vertices == null || !vertices.Any())
+				throw new System.ArgumentException("The vertices enumerable cannot be null or empty", nameof(vertices));
+
 			this.Vertices.AddRange(vertices);
 			this.IsClosed = isColsed;
 		}

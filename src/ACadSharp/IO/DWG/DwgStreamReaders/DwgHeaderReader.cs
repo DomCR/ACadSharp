@@ -792,9 +792,9 @@ namespace ACadSharp.IO.DWG
 			if (R2000Plus)
 			{
 				//BS: DIMLWD
-				_header.DimensionLineWeight = (LineweightType)_reader.ReadBitShort();
+				_header.DimensionLineWeight = (LineWeightType)_reader.ReadBitShort();
 				//BS : DIMLWE
-				_header.ExtensionLineWeight = (LineweightType)_reader.ReadBitShort();
+				_header.ExtensionLineWeight = (LineWeightType)_reader.ReadBitShort();
 			}
 
 			//H: BLOCK CONTROL OBJECT(hard owner)
@@ -880,7 +880,7 @@ namespace ACadSharp.IO.DWG
 				//BL: Flags:
 				int flags = _reader.ReadBitLong();
 				//CELWEIGHT Flags & 0x001F
-				_header.CurrentEntityLineWeight = (LineweightType)(flags & 0x1F);
+				_header.CurrentEntityLineWeight = (LineWeightType)(flags & 0x1F);
 				//ENDCAPS Flags & 0x0060
 				_header.EndCaps = (short)(flags & 0x60);
 				//JOINSTYLE Flags & 0x0180
