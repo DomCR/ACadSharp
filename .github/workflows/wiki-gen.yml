@@ -1,4 +1,4 @@
-name: Wiki genrator
+name: Wiki generator
 
 on:
   push:
