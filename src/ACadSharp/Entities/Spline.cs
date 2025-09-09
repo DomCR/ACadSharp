@@ -18,12 +18,14 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Spline)]
 	public class Spline : Entity
 	{
+		public const short MaxDegree = 10;
+
 		/// <summary>
 		/// Number of control points (in WCS).
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 73)]
 		[DxfCollectionCodeValue(10, 20, 30)]
-		public List<XYZ> ControlPoints { get; } = new List<XYZ>();
+		public List<XYZ> ControlPoints { get; private set; } = new List<XYZ>();
 
 		/// <summary>
 		/// Control-point tolerance.
@@ -32,8 +34,11 @@ namespace ACadSharp.Entities
 		public double ControlPointTolerance { get; set; } = 0.0000001;
 
 		/// <summary>
-		/// Degree of the spline curve.
+		/// Gets or sets the polynomial degree of the resulting spline.
 		/// </summary>
+		/// <remarks>
+		/// Valid values are 1 (linear), degree 2 (quadratic), degree 3 (cubic), and so on up to degree 10.
+		/// </remarks>
 		[DxfCodeValue(71)]
 		public int Degree { get; set; }
 
@@ -48,7 +53,7 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 74)]
 		[DxfCollectionCodeValue(11, 21, 31)]
-		public List<XYZ> FitPoints { get; } = new List<XYZ>();
+		public List<XYZ> FitPoints { get; private set; } = new List<XYZ>();
 
 		/// <summary>
 		/// Fit tolerance.
@@ -104,7 +109,7 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 72)]
 		[DxfCollectionCodeValue(40)]
-		public List<double> Knots { get; } = new List<double>();
+		public List<double> Knots { get; private set; } = new List<double>();
 
 		/// <summary>
 		/// Knot tolerance.
@@ -140,7 +145,7 @@ namespace ACadSharp.Entities
 		/// Weight(if not 1); with multiple group pairs, they are present if all are not 1.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 41)]
-		public List<double> Weights { get; } = new List<double>();
+		public List<double> Weights { get; private set; } = new List<double>();
 
 		/// <inheritdoc/>
 		public Spline() : base() { }
@@ -159,6 +164,19 @@ namespace ACadSharp.Entities
 			{
 				this.FitPoints[i] = transform.ApplyTransform(this.FitPoints[i]);
 			}
+		}
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			Spline clone = (Spline)base.Clone();
+
+			clone.ControlPoints = new List<XYZ>(this.ControlPoints);
+			clone.FitPoints = new List<XYZ>(this.FitPoints);
+			clone.Weights = new List<double>(this.Weights);
+			clone.Knots = new List<double>(this.Weights);
+
+			return clone;
 		}
 
 		/// <inheritdoc/>
@@ -208,6 +226,133 @@ namespace ACadSharp.Entities
 			}
 
 			return ocsVertexes;
+		}
+
+		/// <summary>
+		/// Update the Spline control points from the fit points.
+		/// </summary>
+		/// <remarks>
+		/// The weights are set to 1 and the degree to 3 (cubic).
+		/// </remarks>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentOutOfRangeException"></exception>
+		public void UpdateFromFitPoints()
+		{
+			if (this.FitPoints == null)
+			{
+				throw new ArgumentNullException(nameof(this.FitPoints));
+			}
+
+			XYZ[] points = this.FitPoints.ToArray();
+			int numFitPoints = points.Length;
+			if (numFitPoints < 2)
+			{
+				throw new ArgumentOutOfRangeException(nameof(this.FitPoints), numFitPoints, "At least two fit points required.");
+			}
+
+			this.Degree = 3;
+
+			this.ControlPoints.Clear();
+			this.Weights.Clear();
+
+			int n = numFitPoints - 1;
+
+			XYZ firstControlPoint;
+			XYZ secondControlPoint;
+
+			if (n == 1)
+			{
+				// Special case: Bezier curve should be a straight line.
+				firstControlPoint = points[0] + (points[1] - points[0]) / 3.0;
+				secondControlPoint = points[1] + (points[0] - points[1]) / 3.0;
+
+				this.ControlPoints.AddRange([points[0], firstControlPoint, secondControlPoint, points[1]]);
+				this.Weights.AddRange([1, 1, 1, 1]);
+				return;
+			}
+
+			// Calculate first Bezier control points
+			// Right hand side vector
+			double[] rhs = new double[n];
+
+			// Set right hand side X values
+			for (int i = 1; i < n - 1; i++)
+			{
+				rhs[i] = 4.0 * points[i].X + 2.0 * points[i + 1].X;
+			}
+			rhs[0] = points[0].X + 2.0 * points[1].X;
+			rhs[n - 1] = (8.0 * points[n - 1].X + points[n].X) / 2.0;
+			// Get first control points X-values
+			double[] x = getFirstControlPoints(rhs);
+
+			// Set right hand side Y values
+			for (int i = 1; i < n - 1; i++)
+			{
+				rhs[i] = 4.0 * points[i].Y + 2.0 * points[i + 1].Y;
+			}
+			rhs[0] = points[0].Y + 2.0 * points[1].Y;
+			rhs[n - 1] = (8.0 * points[n - 1].Y + points[n].Y) / 2.0;
+			// Get first control points Y-values
+			double[] y = getFirstControlPoints(rhs);
+
+			// Set right hand side Z values
+			for (int i = 1; i < n - 1; i++)
+			{
+				rhs[i] = 4.0 * points[i].Z + 2.0 * points[i + 1].Z;
+			}
+			rhs[0] = points[0].Z + 2.0 * points[1].Z;
+			rhs[n - 1] = (8.0 * points[n - 1].Z + points[n].Z) / 2.0;
+			// Get first control points Z-values
+			double[] z = getFirstControlPoints(rhs);
+
+			// create the curves
+			for (int i = 0; i < n; i++)
+			{
+				// First control point
+				firstControlPoint = new XYZ(x[i], y[i], z[i]);
+
+				// Second control point
+				if (i < n - 1)
+				{
+					secondControlPoint = new XYZ(
+						2 * points[i + 1].X - x[i + 1],
+						2 * points[i + 1].Y - y[i + 1],
+						2 * points[i + 1].Z - z[i + 1]);
+				}
+				else
+				{
+					secondControlPoint = new XYZ(
+						(points[n].X + x[n - 1]) / 2.0,
+						(points[n].Y + y[n - 1]) / 2.0,
+						(points[n].Z + z[n - 1]) / 2.0);
+				}
+
+				this.ControlPoints.AddRange([points[i], firstControlPoint, secondControlPoint, points[i + 1]]);
+				this.Weights.AddRange([1, 1, 1, 1]);
+			}
+		}
+
+		private static double[] getFirstControlPoints(double[] rhs)
+		{
+			int n = rhs.Length;
+			double[] x = new double[n]; // Solution vector.
+			double[] tmp = new double[n]; // Temp workspace.
+
+			double b = 2.0;
+			x[0] = rhs[0] / b;
+			for (int i = 1; i < n; i++) // Decomposition and forward substitution.
+			{
+				tmp[i] = 1 / b;
+				b = (i < n - 1 ? 4.0 : 3.5) - tmp[i];
+				x[i] = (rhs[i] - x[i - 1]) / b;
+			}
+
+			for (int i = 1; i < n; i++)
+			{
+				x[n - i - 1] -= tmp[n - i] * x[n - i]; // Back substitution.
+			}
+
+			return x;
 		}
 
 		private double n(int i, int k, double u)
