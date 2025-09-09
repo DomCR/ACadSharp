@@ -40,7 +40,7 @@ namespace ACadSharp.Entities
 		/// Valid values are 1 (linear), degree 2 (quadratic), degree 3 (cubic), and so on up to degree 10.
 		/// </remarks>
 		[DxfCodeValue(71)]
-		public int Degree { get; set; }
+		public int Degree { get; set; } = 3;
 
 		/// <summary>
 		/// End tangent—may be omitted in WCS.
@@ -268,6 +268,7 @@ namespace ACadSharp.Entities
 
 				this.ControlPoints.AddRange([points[0], firstControlPoint, secondControlPoint, points[1]]);
 				this.Weights.AddRange([1, 1, 1, 1]);
+				this.Knots.AddRange(createBezierKnotVector(this.ControlPoints.Count, this.Degree));
 				return;
 			}
 
@@ -329,7 +330,47 @@ namespace ACadSharp.Entities
 
 				this.ControlPoints.AddRange([points[i], firstControlPoint, secondControlPoint, points[i + 1]]);
 				this.Weights.AddRange([1, 1, 1, 1]);
+				this.Knots.AddRange(createBezierKnotVector(this.ControlPoints.Count, this.Degree));
 			}
+		}
+
+		private static double[] createBezierKnotVector(int numControlPoints, int degree)
+		{
+			// create knot vector
+			int numKnots = numControlPoints + degree + 1;
+			double[] knots = new double[numKnots];
+
+			int np = degree + 1;
+			int nc = numKnots / np;
+			double fact = 1.0 / nc;
+			int index = 1;
+
+			for (int i = 0; i < numKnots;)
+			{
+				double knot;
+
+				if (i < np)
+				{
+					knot = 0.0;
+				}
+				else if (i >= numKnots - np)
+				{
+					knot = 1.0;
+				}
+				else
+				{
+					knot = fact * index;
+					index += 1;
+				}
+
+				for (int j = 0; j < np; j++)
+				{
+					knots[i] = knot;
+					i += 1;
+				}
+			}
+
+			return knots;
 		}
 
 		private static double[] getFirstControlPoints(double[] rhs)
