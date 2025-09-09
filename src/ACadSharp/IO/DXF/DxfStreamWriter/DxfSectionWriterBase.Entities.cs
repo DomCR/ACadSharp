@@ -861,7 +861,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(305, "}");   //	LEADER_Line
 		}
 
-		private void writePdfUnderlay<T,R>(T underlay)
+		private void writePdfUnderlay<T, R>(T underlay)
 			where T : UnderlayEntity<R>
 			where R : UnderlayDefinition
 		{
@@ -1023,8 +1023,14 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(43, spline.ControlPointTolerance, map);
 			this._writer.Write(44, spline.FitTolerance, map);
 
-			this._writer.Write(12, spline.StartTangent, map);
-			this._writer.Write(13, spline.EndTangent, map);
+			if (!spline.StartTangent.IsZero())
+			{
+				this._writer.Write(12, spline.StartTangent, map);
+			}
+			if (!spline.EndTangent.IsZero())
+			{
+				this._writer.Write(13, spline.EndTangent, map);
+			}
 
 			foreach (double knot in spline.Knots)
 			{
@@ -1147,7 +1153,7 @@ namespace ACadSharp.IO.DXF
 				this._writer.Write(72, (short)0);
 				this._writer.Write(11, att.AlignmentPoint);
 
-				if(att.MText != null)
+				if (att.MText != null)
 				{
 					this._writer.Write(101, "Embedded Object");
 					this.writeMText(att.MText, false);
