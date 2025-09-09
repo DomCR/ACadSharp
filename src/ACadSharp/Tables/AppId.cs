@@ -28,8 +28,12 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Application name for BlockRepETag.
 		/// </summary>
-		public const string BlockRepETag = "AcDbBlockRepETag";
 		public const string BlockRepBTag = "AcDbBlockRepBTag";
+
+		/// <summary>
+		/// Application name for AcDbBlockRepETag.
+		/// </summary>
+		public const string BlockRepETag = "AcDbBlockRepETag";
 
 		/// <summary>
 		/// Default application registry name.
