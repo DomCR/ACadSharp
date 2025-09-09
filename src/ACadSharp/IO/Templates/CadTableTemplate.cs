@@ -8,7 +8,7 @@ namespace ACadSharp.IO.Templates
 	internal class CadTableTemplate<T> : CadTemplate<Table<T>>, ICadTableTemplate
 		where T : TableEntry
 	{
-		public List<ulong> EntryHandles { get; } = new List<ulong>();
+		public HashSet<ulong> EntryHandles { get; } = new();
 
 		public CadTableTemplate(Table<T> tableControl) : base(tableControl) { }
 

@@ -16,26 +16,34 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Mesh)]
 	public partial class Mesh : Entity
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.UNLISTED;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityMesh;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Mesh;
-
-		/// <summary>
-		/// Version number
-		/// </summary>
-		[DxfCodeValue(71)]
-		public short Version { get; internal set; }
-
 		/// <summary>
 		/// Blend Crease flag
 		/// </summary>
 		[DxfCodeValue(72)]
 		public bool BlendCrease { get; set; }
+
+		/// <summary>
+		/// Edges of level 0
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Count, 94)]
+		[DxfCollectionCodeValue(90)]
+		public List<Edge> Edges { get; private set; } = new();
+
+		/// <summary>
+		/// Face list of level 0
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Count, 93)]
+		[DxfCollectionCodeValue(90)]
+		public List<int[]> Faces { get; private set; } = new();
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityMesh;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.UNLISTED;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Mesh;
 
 		/// <summary>
 		/// Number of subdivision level
@@ -44,25 +52,17 @@ namespace ACadSharp.Entities
 		public int SubdivisionLevel { get; set; }
 
 		/// <summary>
+		/// Version number
+		/// </summary>
+		[DxfCodeValue(71)]
+		public short Version { get; internal set; }
+
+		/// <summary>
 		/// Vertex count of level 0
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 92)]
 		[DxfCollectionCodeValue(10, 20, 30)]
-		public List<XYZ> Vertices { get; set; } = new();
-
-		/// <summary>
-		/// Face list of level 0
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Count, 93)]
-		[DxfCollectionCodeValue(90)]
-		public List<int[]> Faces { get; set; } = new();
-
-		/// <summary>
-		/// Edges of level 0
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Count, 94)]
-		[DxfCollectionCodeValue(90)]
-		public List<Edge> Edges { get; set; } = new();
+		public List<XYZ> Vertices { get; private set; } = new();
 
 		//90	Count of sub-entity which property has been overridden
 
@@ -77,15 +77,30 @@ namespace ACadSharp.Entities
 		//3 = Material mapper
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public override void ApplyTransform(Transform transform)
 		{
-			return BoundingBox.FromPoints(this.Vertices);
+			for (int i = 0; i < this.Vertices.Count; i++)
+			{
+				this.Vertices[i] = transform.ApplyTransform(this.Vertices[i]);
+			}
 		}
 
 		/// <inheritdoc/>
-		public override void ApplyTransform(Transform transform)
+		public override CadObject Clone()
 		{
-			throw new System.NotImplementedException();
+			Mesh clone = (Mesh)base.Clone();
+
+			clone.Edges = new List<Edge>(this.Edges);
+			clone.Vertices = new List<XYZ>(this.Vertices);
+			clone.Faces = new List<int[]>(this.Faces);
+
+			return clone;
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return BoundingBox.FromPoints(this.Vertices);
 		}
 	}
 }

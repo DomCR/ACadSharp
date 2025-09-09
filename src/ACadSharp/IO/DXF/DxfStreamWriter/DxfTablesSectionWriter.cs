@@ -140,7 +140,7 @@ namespace ACadSharp.IO.DXF
 			if (style.TextBackgroundFillMode != 0)
 			{
 				this._writer.Write(69, (short)style.TextBackgroundFillMode, map);
-				this._writer.Write(70, style.TextBackgroundColor.Index, map);
+				this._writer.Write(70, style.TextBackgroundColor.GetApproxIndex(), map);
 			}
 			else
 			{

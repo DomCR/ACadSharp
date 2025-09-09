@@ -122,7 +122,19 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
-			throw new NotImplementedException();
+			var newNormal = this.transformNormal(transform, this.Normal);
+
+			this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+
+			foreach (var vertex in this.Vertices)
+			{
+				XYZ v = transOW * vertex.Location.Convert<XYZ>();
+				v = transform.ApplyTransform(v);
+				v = transWO * v;
+				vertex.Location = v.Convert<XY>();
+			}
+
+			this.Normal = newNormal;
 		}
 	}
 }

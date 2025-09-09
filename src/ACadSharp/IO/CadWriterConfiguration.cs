@@ -66,5 +66,13 @@ namespace ACadSharp.IO
 		/// default: false
 		/// </value>
 		public bool WriteXRecords { get; set; } = false;
+
+		/// <summary>
+		/// The writer will not ignore the <see cref="ACadSharp.Entities.Shape"/> entities in the document.
+		/// </summary>
+		/// <remarks>
+		/// Shapes can cause corruption for some documents due the lack of support for shx files in this library which cannot validate the correct shape format.
+		/// </remarks>
+		public bool WriteShapes { get; set; } = false;
 	}
 }

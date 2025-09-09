@@ -74,7 +74,6 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
-			var center = this.Center;
 			var normal = this.Normal;
 
 			this.Center = transform.ApplyTransform(this.Center);

@@ -233,7 +233,7 @@ namespace ACadSharp.Objects {
 
 				if (this.Document != null)
 				{
-					this._textStyle = updateTable(value, this.Document.TextStyles);
+					this._textStyle = CadObject.updateCollection(value, this.Document.TextStyles);
 				}
 				else
 				{
@@ -428,7 +428,7 @@ namespace ACadSharp.Objects {
 			get { return this._blockContent; }
 			set 
 			{
-				this._blockContent = updateTable(value, this.Document?.BlockRecords);
+				this._blockContent = CadObject.updateCollection(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -595,8 +595,8 @@ namespace ACadSharp.Objects {
 		{
 			base.AssignDocument(doc);
 
-			this._textStyle = updateTable(this._textStyle, doc.TextStyles);
-			this._blockContent = updateTable(this._blockContent, doc.BlockRecords);
+			this._textStyle = CadObject.updateCollection(this._textStyle, doc.TextStyles);
+			this._blockContent = CadObject.updateCollection(this._blockContent, doc.BlockRecords);
 
 			foreach (LeaderRoot leaderRoot in this.LeaderRoots)
 			{

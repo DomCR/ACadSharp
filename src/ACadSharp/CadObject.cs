@@ -5,6 +5,7 @@ using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.XData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -231,42 +232,15 @@ namespace ACadSharp
 			this._reactors.Clear();
 		}
 
-		protected static T updateTable<T>(T entry, Table<T> table)
-			where T : TableEntry
+		protected static T updateCollection<T>(T entry, ICadCollection<T> table)
+			where T : CadObject, INamedCadObject
 		{
 			if (table == null || entry == null)
 			{
 				return entry;
 			}
 
-			if (table.TryGetValue(entry.Name, out T existing))
-			{
-				return existing;
-			}
-			else
-			{
-				table.Add(entry);
-				return entry;
-			}
-		}
-
-		protected T updateCollection<T>(T entry, ObjectDictionaryCollection<T> collection)
-					where T : NonGraphicalObject
-		{
-			if (collection == null || entry == null)
-			{
-				return entry;
-			}
-
-			if (collection.TryGetValue(entry.Name, out T existing))
-			{
-				return existing;
-			}
-			else
-			{
-				collection.Add(entry);
-				return entry;
-			}
+			return table.TryAdd(entry);
 		}
 	}
 }

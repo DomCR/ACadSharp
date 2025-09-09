@@ -99,7 +99,7 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(LineType.ByLayerName, header.CurrentLineTypeName, ignoreCase: true);
 
 			Assert.Equal(doc.TextStyles[TextStyle.DefaultName], header.CurrentTextStyle);
-			Assert.Equal(TextStyle.DefaultName, header.TextStyleName, ignoreCase: true);
+			Assert.Equal(TextStyle.DefaultName, header.CurrentTextStyleName, ignoreCase: true);
 		}
 
 		public void Dispose()

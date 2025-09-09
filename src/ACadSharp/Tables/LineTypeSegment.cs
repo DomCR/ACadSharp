@@ -59,7 +59,7 @@ namespace ACadSharp.Tables
 				get { return this._style; }
 				set
 				{
-					this._style = updateTable(value, this.LineType?.Document?.TextStyles);
+					this._style = CadObject.updateCollection(value, this.LineType?.Document?.TextStyles);
 				}
 			}
 
@@ -93,7 +93,7 @@ namespace ACadSharp.Tables
 
 			internal void AssignDocument(CadDocument doc)
 			{
-				this._style = updateTable(this._style, doc.TextStyles);
+				this._style = CadObject.updateCollection(this._style, doc.TextStyles);
 			}
 
 			internal void UnassignDocument()

@@ -291,7 +291,7 @@ namespace ACadSharp.IO.DWG
 			//BS : ISOLINES
 			_header.SurfaceIsolineCount = _reader.ReadBitShort();
 			//BS : CMLJUST
-			_header.CurrentMultilineJustification = (Entities.VerticalAlignmentType)_reader.ReadBitShort();
+			_header.CurrentMultiLineJustification = (Entities.VerticalAlignmentType)_reader.ReadBitShort();
 			//BS : TEXTQLTY
 			_header.TextQuality = _reader.ReadBitShort();
 			//BD : LTSCALE
@@ -923,7 +923,7 @@ namespace ACadSharp.IO.DWG
 				//RC : HIDETEXT
 				_header.HideText = _reader.ReadByte();
 				//RC : XCLIPFRAME, before R2010 the value can be 0 or 1 only.
-				_header.ExternalReferenceClippingBoundaryType = _reader.ReadByte();
+				_header.ExternalReferenceClippingBoundaryType = (XClipFrameType)_reader.ReadByte();
 				//RC : DIMASSOC
 				_header.DimensionAssociativity = (DimensionAssociation)_reader.ReadByte();
 				//RC : HALOGAP

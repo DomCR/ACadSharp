@@ -56,7 +56,7 @@ namespace ACadSharp.Entities
 
 				if (this.Document != null)
 				{
-					this._style = updateTable(value, this.Document.DimensionStyles);
+					this._style = CadObject.updateCollection(value, this.Document.DimensionStyles);
 				}
 				else
 				{
@@ -80,7 +80,7 @@ namespace ACadSharp.Entities
 		public override void ApplyTransform(Transform transform)
 		{
 			this.Normal = this.transformNormal(transform, this.Normal);
-			this.Direction = transform.Rotate(this.Direction);
+			this.Direction = transform.ApplyRotation(this.Direction);
 			this.InsertionPoint = transform.ApplyTransform(this.InsertionPoint);
 		}
 

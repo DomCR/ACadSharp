@@ -41,6 +41,26 @@
 				this.Owner = owner;
 			}
 
+			public CadObject GetReference()
+			{
+				if (!this.HasLinkedObject)
+					return null;
+
+				if (this.Value is CadObject cadObject)
+				{
+					if(cadObject.Document != this.Owner.Document)
+					{
+						return null;
+					}
+
+					return cadObject;
+				}
+				else
+				{
+					return null;
+				}
+			}
+
 			/// <inheritdoc/>
 			public override string ToString()
 			{

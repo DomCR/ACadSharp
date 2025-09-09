@@ -52,7 +52,7 @@ namespace ACadSharp.Tests.IO.DXF
 			string path = this.getPath(data.Name, "dxf", version);
 
 			data.Document.Header.Version = version;
-			DxfWriter.Write(path, data.Document, false, this.onNotification);
+			DxfWriter.Write(path, data.Document, false, notification: this.onNotification);
 		}
 	}
 }

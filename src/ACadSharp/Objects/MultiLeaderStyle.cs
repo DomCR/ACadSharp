@@ -29,7 +29,7 @@ namespace ACadSharp.Objects
 		public const string DefaultName = "Standard";
 
 		/// <summary>
-		/// Gets the default MLine style
+		/// Gets the default MultiLeaderStyle
 		/// </summary>
 		public static MultiLeaderStyle Default { get { return new MultiLeaderStyle(DefaultName); } }
 
@@ -174,7 +174,7 @@ namespace ACadSharp.Objects
 
 				if (this.Document != null)
 				{
-					this._leaderLineType = updateTable(value, this.Document.LineTypes);
+					this._leaderLineType = CadObject.updateCollection(value, this.Document.LineTypes);
 				}
 				else
 				{
@@ -289,7 +289,7 @@ namespace ACadSharp.Objects
 			get { return this._arrowhead; }
 			set
 			{
-				this._arrowhead = updateTable(value, this.Document?.BlockRecords);
+				this._arrowhead = CadObject.updateCollection(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -342,7 +342,7 @@ namespace ACadSharp.Objects
 
 				if (this.Document != null)
 				{
-					this._textStyle = updateTable(value, this.Document.TextStyles);
+					this._textStyle = CadObject.updateCollection(value, this.Document.TextStyles);
 				}
 				else
 				{
@@ -494,7 +494,7 @@ namespace ACadSharp.Objects
 		{
 			get { return this._blockContent; }
 			set {
-				this._blockContent = updateTable(value, this.Document?.BlockRecords);
+				this._blockContent = CadObject.updateCollection(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -716,10 +716,10 @@ namespace ACadSharp.Objects
 		{
 			base.AssignDocument(doc);
 
-			this._textStyle = updateTable(this._textStyle, doc.TextStyles);
-			this._leaderLineType = updateTable(this._leaderLineType, doc.LineTypes);
-			this._arrowhead = updateTable(this._arrowhead, doc.BlockRecords);
-			this._blockContent = updateTable(this._blockContent, doc.BlockRecords);
+			this._textStyle = CadObject.updateCollection(this._textStyle, doc.TextStyles);
+			this._leaderLineType = CadObject.updateCollection(this._leaderLineType, doc.LineTypes);
+			this._arrowhead = CadObject.updateCollection(this._arrowhead, doc.BlockRecords);
+			this._blockContent = CadObject.updateCollection(this._blockContent, doc.BlockRecords);
 
 			doc.TextStyles.OnRemove += this.tableOnRemove;
 			doc.LineTypes.OnRemove += this.tableOnRemove;

@@ -9,7 +9,7 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? LastVerticeHandle { get; set; }
 
-		public List<ulong> VerticesHandles { get; set; } = new List<ulong>();
+		public HashSet<ulong> VerticesHandles { get; set; } = new();
 
 		public ulong? SeqendHandle { get; set; }
 
