@@ -9,8 +9,32 @@ namespace ACadSharp.Tables
 		public class Segment
 		{
 			/// <summary>
+			/// Complex linetype element type.
+			/// </summary>
+			[DxfCodeValue(74)]
+			public LineTypeShapeFlags Flags { get; set; }
+
+			/// <summary>
+			/// Get whether this segment is a line (dash).
+			/// </summary>
+			public bool IsLine { get { return this.Length > 0.0; } }
+
+			/// <summary>
+			/// Get whether this segment is a point (dot).
+			/// </summary>
+			public bool IsPoint { get { return this.Length == 0.0; } }
+
+			/// <summary>
+			/// Get whether this segment is a space.
+			/// </summary>
+			public bool IsSpace { get { return this.Length < 0.0; } }
+
+			/// <summary>
 			/// Dash, dot or space length.
 			/// </summary>
+			/// <remarks>
+			/// Negative lengths represents a space, zero a dot and a positive value a line segment.
+			/// </remarks>
 			[DxfCodeValue(49)]
 			public double Length { get; set; }
 
@@ -29,7 +53,7 @@ namespace ACadSharp.Tables
 			/// Rotation value in radians of embedded shape or text.
 			/// </summary>
 			[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
-			public double Rotation { get; set; }
+			public double Rotation { get; set; } = 0;
 
 			/// <summary>
 			/// Scale value.
@@ -38,16 +62,10 @@ namespace ACadSharp.Tables
 			public double Scale { get; set; } = 1.0d;
 
 			/// <summary>
-			/// Complex linetype element type.
-			/// </summary>
-			[DxfCodeValue(74)]
-			public LinetypeShapeFlags Shapeflag { get; set; }
-
-			/// <summary>
 			/// Shape number.
 			/// </summary>
 			[DxfCodeValue(75)]
-			public short ShapeNumber { get; set; }
+			public short ShapeNumber { get; set; } = 0;
 
 			/// <summary>
 			/// Pointer to STYLE object (one per element if code 74 > 0)
@@ -66,7 +84,7 @@ namespace ACadSharp.Tables
 			/// Text string.
 			/// </summary>
 			/// <remarks>
-			/// Only present if <see cref="LinetypeShapeFlags.Text"/> is present
+			/// Only present if <see cref="LineTypeShapeFlags.Text"/> is present
 			/// </remarks>
 			[DxfCodeValue(9)]
 			public string Text

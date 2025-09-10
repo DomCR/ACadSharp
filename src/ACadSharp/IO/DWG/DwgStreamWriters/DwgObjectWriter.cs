@@ -565,9 +565,9 @@ namespace ACadSharp.IO.DWG
 				//Rotation BD 50 (0.0 for a simple dash.)
 				this._writer.WriteBitDouble(segment.Rotation);
 				//Shapeflag BS 74 bit coded:
-				this._writer.WriteBitShort((short)segment.Shapeflag);
+				this._writer.WriteBitShort((short)segment.Flags);
 
-				if (segment.Shapeflag.HasFlag(LinetypeShapeFlags.Text))
+				if (segment.Flags.HasFlag(LineTypeShapeFlags.Text))
 					isText = true;
 			}
 

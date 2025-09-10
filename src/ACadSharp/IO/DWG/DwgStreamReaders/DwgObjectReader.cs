@@ -4317,9 +4317,9 @@ namespace ACadSharp.IO.DWG
 				//Rotation BD 50 (0.0 for a simple dash.)
 				segment.Segment.Rotation = this._objectReader.ReadBitDouble();
 				//Shapeflag BS 74 bit coded:
-				segment.Segment.Shapeflag = (LinetypeShapeFlags)this._objectReader.ReadBitShort();
+				segment.Segment.Flags = (LineTypeShapeFlags)this._objectReader.ReadBitShort();
 
-				if (segment.Segment.Shapeflag.HasFlag(LinetypeShapeFlags.Text))
+				if (segment.Segment.Flags.HasFlag(LineTypeShapeFlags.Text))
 					isText = true;
 
 				//Add the segment to the type
