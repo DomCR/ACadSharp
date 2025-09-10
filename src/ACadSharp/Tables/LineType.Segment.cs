@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Extensions;
 using CSMath;
-using System;
 
 namespace ACadSharp.Tables
 {
@@ -16,15 +15,15 @@ namespace ACadSharp.Tables
 			public double Length { get; set; }
 
 			/// <summary>
-			/// Line type where this segment belongs
-			/// </summary>
-			public LineType LineType { get; internal set; }
-
-			/// <summary>
 			/// Offset.
 			/// </summary>
 			[DxfCodeValue(44, 45)]
 			public XY Offset { get; set; }
+
+			/// <summary>
+			/// Line type where this segment belongs.
+			/// </summary>
+			public LineType Owner { get; internal set; }
 
 			/// <summary>
 			/// Rotation value in radians of embedded shape or text.
@@ -59,7 +58,7 @@ namespace ACadSharp.Tables
 				get { return this._style; }
 				set
 				{
-					this._style = CadObject.updateCollection(value, this.LineType?.Document?.TextStyles);
+					this._style = CadObject.updateCollection(value, this.Owner?.Document?.TextStyles);
 				}
 			}
 
@@ -86,7 +85,7 @@ namespace ACadSharp.Tables
 			public LineType.Segment Clone()
 			{
 				Segment clone = MemberwiseClone() as Segment;
-				clone.LineType = null;
+				clone.Owner = null;
 				clone._style = (TextStyle)(this.Style?.Clone());
 				return clone;
 			}

@@ -365,7 +365,7 @@ namespace ACadSharp.Tables
 		/// (Multiply a value by 2540 to convert values from inches to hundredths of millimeters.)
 		/// </value>
 		[DxfCodeValue(371)]
-		public LineweightType DimensionLineWeight { get; set; } = LineweightType.ByBlock;
+		public LineWeightType DimensionLineWeight { get; set; } = LineWeightType.ByBlock;
 
 		/// <summary>
 		/// Determines how dimension text and arrows are arranged when space is not sufficient
@@ -419,7 +419,7 @@ namespace ACadSharp.Tables
 		/// (Multiply a value by 2540 to convert values from inches to hundredths of millimeters.)
 		/// </value>
 		[DxfCodeValue(372)]
-		public LineweightType ExtensionLineWeight { get; set; } = LineweightType.ByBlock;
+		public LineWeightType ExtensionLineWeight { get; set; } = LineWeightType.ByBlock;
 
 		/// <summary>
 		/// Sets the total length of the extension lines starting from the dimension line
