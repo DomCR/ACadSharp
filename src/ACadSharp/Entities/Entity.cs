@@ -75,11 +75,11 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		[DxfCodeValue(48)]
-		public double LinetypeScale { get; set; } = 1.0;
+		public double LineTypeScale { get; set; } = 1.0;
 
 		/// <inheritdoc/>
 		[DxfCodeValue(370)]
-		public LineweightType LineWeight { get; set; } = LineweightType.ByLayer;
+		public LineWeightType LineWeight { get; set; } = LineWeightType.ByLayer;
 
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Handle, 347)]
@@ -195,13 +195,13 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public LineweightType GetActiveLineWeightType()
+		public LineWeightType GetActiveLineWeightType()
 		{
 			switch (this.LineWeight)
 			{
-				case LineweightType.ByLayer:
+				case LineWeightType.ByLayer:
 					return this.Layer.LineWeight;
-				case LineweightType.ByBlock:
+				case LineWeightType.ByBlock:
 					if (this.Owner is BlockRecord record)
 					{
 						return record.BlockEntity.LineWeight;
@@ -239,7 +239,7 @@ namespace ACadSharp.Entities
 
 			entity.Color = this.Color;
 			entity.LineWeight = this.LineWeight;
-			entity.LinetypeScale = this.LinetypeScale;
+			entity.LineTypeScale = this.LineTypeScale;
 			entity.IsInvisible = this.IsInvisible;
 			entity.Transparency = this.Transparency;
 		}

@@ -260,7 +260,7 @@ namespace ACadSharp.IO.SVG
 			var lineWeight = entity.LineWeight;
 			switch (lineWeight)
 			{
-				case LineweightType.ByLayer:
+				case LineWeightType.ByLayer:
 					lineWeight = entity.Layer.LineWeight;
 					break;
 			}
