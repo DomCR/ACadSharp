@@ -9,7 +9,7 @@ namespace ACadSharp.Tables
 		public class Segment
 		{
 			/// <summary>
-			/// Complex linetype element type.
+			/// Complex line type element type.
 			/// </summary>
 			[DxfCodeValue(74)]
 			public LineTypeShapeFlags Flags { get; set; }
@@ -25,9 +25,53 @@ namespace ACadSharp.Tables
 			public bool IsPoint { get { return this.Length == 0.0; } }
 
 			/// <summary>
+			/// Get or set whether this segment is a shape.
+			/// </summary>
+			public bool IsShape
+			{
+				get
+				{
+					return this.Flags.HasFlag(LineTypeShapeFlags.Shape);
+				}
+				set
+				{
+					if (value)
+					{
+						this.Flags |= LineTypeShapeFlags.Shape;
+					}
+					else
+					{
+						this.Flags &= ~LineTypeShapeFlags.Shape;
+					}
+				}
+			}
+
+			/// <summary>
 			/// Get whether this segment is a space.
 			/// </summary>
 			public bool IsSpace { get { return this.Length < 0.0; } }
+
+			/// <summary>
+			/// Get or set whether this segment is a text.
+			/// </summary>
+			public bool IsText
+			{
+				get
+				{
+					return this.Flags.HasFlag(LineTypeShapeFlags.Text);
+				}
+				set
+				{
+					if (value)
+					{
+						this.Flags |= LineTypeShapeFlags.Text;
+					}
+					else
+					{
+						this.Flags &= ~LineTypeShapeFlags.Text;
+					}
+				}
+			}
 
 			/// <summary>
 			/// Dash, dot or space length.
@@ -84,7 +128,7 @@ namespace ACadSharp.Tables
 			/// Text string.
 			/// </summary>
 			/// <remarks>
-			/// Only present if <see cref="LineTypeShapeFlags.Text"/> is present
+			/// Only present if <see cref="LineTypeShapeFlags.Text"/> is present.
 			/// </remarks>
 			[DxfCodeValue(9)]
 			public string Text
