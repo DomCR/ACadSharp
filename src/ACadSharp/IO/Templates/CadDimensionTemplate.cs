@@ -76,7 +76,7 @@ namespace ACadSharp.IO.Templates
 
 			dimension.Color = this.CadObject.Color;
 			dimension.LineWeight = this.CadObject.LineWeight;
-			dimension.LinetypeScale = this.CadObject.LinetypeScale;
+			dimension.LineTypeScale = this.CadObject.LineTypeScale;
 			dimension.IsInvisible = this.CadObject.IsInvisible;
 			dimension.Transparency = this.CadObject.Transparency;
 

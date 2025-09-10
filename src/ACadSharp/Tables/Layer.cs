@@ -85,7 +85,7 @@ namespace ACadSharp.Tables
 		/// Specifies the line weight of an individual object or the default line weight for the drawing.
 		/// </summary>
 		[DxfCodeValue(370)]
-		public LineweightType LineWeight { get; set; } = LineweightType.Default;
+		public LineWeightType LineWeight { get; set; } = LineWeightType.Default;
 
 		/// <summary>
 		/// Hard-pointer ID/handle to Material object

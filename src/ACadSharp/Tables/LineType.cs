@@ -87,11 +87,11 @@ namespace ACadSharp.Tables
 		/// <exception cref="ArgumentException"></exception>
 		public void AddSegment(Segment segment)
 		{
-			if (segment.LineType != null)
-				throw new ArgumentException($"Segment has already a LineType: {segment.LineType.Name}");
+			if (segment.Owner != null)
+				throw new ArgumentException($"Segment has already a LineType: {segment.Owner.Name}");
 
 			segment.Style = CadObject.updateCollection(segment.Style, this.Document?.TextStyles);
-			segment.LineType = this;
+			segment.Owner = this;
 			this._segments.Add(segment);
 		}
 

@@ -5,6 +5,7 @@ using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
 using ACadSharp.Types.Units;
 using CSMath;
+using ACadSharp.XData;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
@@ -181,7 +182,33 @@ namespace ACadSharp.Tables
 		{
 			get
 			{
+				//Doesn't seem to be reliable
 				return this.EvaluationGraph != null;
+			}
+		}
+
+		/// <summary>
+		/// Gets the source block. <br/>
+		/// Only present if the block is dynamic and is in the same document as its source.
+		/// </summary>
+		public BlockRecord Source
+		{
+			get
+			{
+				if (this.Document == null
+					|| !this.IsAnonymous
+					|| this.ExtendedData == null)
+				{
+					return null;
+				}
+
+				if (this.ExtendedData.TryGet(AppId.BlockRepBTag, out ExtendedData data))
+				{
+					ExtendedDataHandle handle = data.Records.OfType<ExtendedDataHandle>().FirstOrDefault();
+					return (BlockRecord)handle.ResolveReference(this.Document);
+				}
+
+				return null;
 			}
 		}
 

@@ -255,7 +255,7 @@ namespace ACadSharp.Tests.Common
 
 			//Assert.Equal(entity.Transparency, node.Transparency);
 			Assert.Equal(entity.LineType.Name, node.LinetypeName, ignoreCase: true);
-			Assert.Equal(entity.LinetypeScale, node.LinetypeScale);
+			Assert.Equal(entity.LineTypeScale, node.LinetypeScale);
 
 			if (this._document.Header.Version > ACadVersion.AC1014)
 			{

@@ -76,19 +76,19 @@ namespace ACadSharp.Tests.Entities
 		public void GetActiveLineWeightTypeTest()
 		{
 			BlockRecord owner = new BlockRecord("owner");
-			owner.BlockEntity.LineWeight = LineweightType.W20;
+			owner.BlockEntity.LineWeight = LineWeightType.W20;
 
 			Entity entity = EntityFactory.Create(typeof(T), false);
-			entity.Layer.LineWeight = LineweightType.W50;
+			entity.Layer.LineWeight = LineWeightType.W50;
 
 			owner.Entities.Add(entity);
 
 			Assert.Equal(entity.Layer.LineWeight, entity.GetActiveLineWeightType());
 
-			entity.LineWeight = LineweightType.ByBlock;
+			entity.LineWeight = LineWeightType.ByBlock;
 			Assert.Equal(owner.BlockEntity.LineWeight, entity.GetActiveLineWeightType());
 
-			entity.LineWeight = LineweightType.W70;
+			entity.LineWeight = LineWeightType.W70;
 			Assert.Equal(entity.LineWeight, entity.GetActiveLineWeightType());
 		}
 	}

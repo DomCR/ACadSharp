@@ -400,7 +400,7 @@ namespace ACadSharp.IO.DWG
 				template.ColorHandle = this.handleReference();
 
 			//Ltype scale	BD	48
-			entity.LinetypeScale = this._objectReader.ReadBitDouble();
+			entity.LineTypeScale = this._objectReader.ReadBitDouble();
 
 			if (!(this._version >= ACadVersion.AC1015))
 			{
@@ -3364,7 +3364,7 @@ namespace ACadSharp.IO.DWG
 			template.LeaderLineTypeHandle = this.handleReference();
 
 			//BL	171 LeaderLine Weight
-			mLeader.LeaderLineWeight = (LineweightType)this._objectReader.ReadBitLong();
+			mLeader.LeaderLineWeight = (LineWeightType)this._objectReader.ReadBitLong();
 			//B  290 Enable Landing
 			mLeader.EnableLanding = this._objectReader.ReadBit();
 			//B  291 Enable Dogleg
@@ -3731,7 +3731,7 @@ namespace ACadSharp.IO.DWG
 				//	H	340	Line type handle(hard pointer)
 				leaderLineSubTemplate.LineTypeHandle = this.handleReference();
 				//	BL	171	Line weight
-				leaderLine.LineWeight = (LineweightType)this._objectReader.ReadBitLong();
+				leaderLine.LineWeight = (LineWeightType)this._objectReader.ReadBitLong();
 				//	BD	40	Arrow size
 				leaderLine.ArrowheadSize = this._objectReader.ReadBitDouble();
 				//	H	341	Arrow symbol handle(hard pointer)
@@ -3777,7 +3777,7 @@ namespace ACadSharp.IO.DWG
 			template.LeaderLineTypeHandle = this.handleReference();
 
 			//	BL	92	Leader line weight
-			mLeaderStyle.LeaderLineWeight = (LineweightType)this._objectReader.ReadBitLong();
+			mLeaderStyle.LeaderLineWeight = (LineWeightType)this._objectReader.ReadBitLong();
 			//	B	290	Is landing enabled?
 			mLeaderStyle.EnableLanding = this._objectReader.ReadBit();
 			//	BD	42	Landing gap
@@ -4317,9 +4317,9 @@ namespace ACadSharp.IO.DWG
 				//Rotation BD 50 (0.0 for a simple dash.)
 				segment.Segment.Rotation = this._objectReader.ReadBitDouble();
 				//Shapeflag BS 74 bit coded:
-				segment.Segment.Shapeflag = (LinetypeShapeFlags)this._objectReader.ReadBitShort();
+				segment.Segment.Flags = (LineTypeShapeFlags)this._objectReader.ReadBitShort();
 
-				if (segment.Segment.Shapeflag.HasFlag(LinetypeShapeFlags.Text))
+				if (segment.Segment.Flags.HasFlag(LineTypeShapeFlags.Text))
 					isText = true;
 
 				//Add the segment to the type
@@ -5033,9 +5033,9 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//DIMLWD BS 371
-				dimStyle.DimensionLineWeight = (LineweightType)this._objectReader.ReadBitShort();
+				dimStyle.DimensionLineWeight = (LineWeightType)this._objectReader.ReadBitShort();
 				//DIMLWE BS 372
-				dimStyle.ExtensionLineWeight = (LineweightType)this._objectReader.ReadBitShort();
+				dimStyle.ExtensionLineWeight = (LineWeightType)this._objectReader.ReadBitShort();
 			}
 
 			//Common:
