@@ -3,6 +3,7 @@ using CSMath;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities
@@ -81,6 +82,33 @@ namespace ACadSharp.Tests.Entities
 			hatch.Paths.Add(path);
 
 			Assert.True(path.IsPolyline);
+		}
+
+		[Fact]
+		public void UpdatePattern()
+		{
+			Hatch hatch = new Hatch();
+			var pattern = new HatchPattern("custom");
+			hatch.Pattern = pattern;
+
+			pattern.Lines.Add(new HatchPattern.Line
+			{
+				Angle = 0,
+				Offset = new XY(-1, 1),
+				DashLengths = { 0.5, 0.5 }
+			});
+
+			hatch.PatternScale = 2;
+
+			var line = pattern.Lines.First();
+			Assert.Equal(new XY(-2, 2), line.Offset);
+			foreach (var item in line.DashLengths)
+			{
+				Assert.Equal(1, item);
+			}
+
+			hatch.PatternAngle = MathHelper.HalfPI;
+			Assert.Equal(MathHelper.HalfPI, line.Angle);
 		}
 
 		[Fact]
