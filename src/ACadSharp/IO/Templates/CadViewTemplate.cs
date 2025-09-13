@@ -14,9 +14,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadViewTemplate(View entry) : base(entry) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			//TODO: assing ucs for view
 		}

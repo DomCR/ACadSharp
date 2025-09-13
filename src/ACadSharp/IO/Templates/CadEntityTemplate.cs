@@ -31,9 +31,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadEntityTemplate(Entity entity) : base(entity) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			if (this.getTableReference(builder, this.LayerHandle, this.LayerName, out Layer layer))
 			{

@@ -21,9 +21,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadPolyLineTemplate(Polyline entity) : base(entity) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			Polyline polyLine = this.CadObject as Polyline;
 
