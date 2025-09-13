@@ -8,9 +8,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadViewportEntityControlTemplate() : base(new VPEntityPlaceholder()) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 		}
 
 		public class VPEntityPlaceholder : CadObject

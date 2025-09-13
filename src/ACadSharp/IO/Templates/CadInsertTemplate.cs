@@ -26,9 +26,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadInsertTemplate(Insert insert) : base(insert) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			if (!(this.CadObject is Insert insert))
 				return;

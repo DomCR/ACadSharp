@@ -15,9 +15,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadPolyfaceMeshTemplate(PolyfaceMesh polyfaceMesh) : base(polyfaceMesh) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			PolyfaceMesh polyfaceMesh = (PolyfaceMesh)this.CadObject;
 

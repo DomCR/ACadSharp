@@ -65,9 +65,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadMLineStyleTemplate(MLineStyle mlStyle) : base(mlStyle) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			foreach (var item in this.ElementTemplates)
 			{

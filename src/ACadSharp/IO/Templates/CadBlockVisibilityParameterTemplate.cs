@@ -52,9 +52,9 @@ namespace ACadSharp.IO.Templates {
 		{
 		}
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			BlockVisibilityParameter bvp = this.CadObject as BlockVisibilityParameter;
 
