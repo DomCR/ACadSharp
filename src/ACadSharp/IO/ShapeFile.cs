@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ACadSharp.IO
 {
-	public class ShapeFile
+	public partial class ShapeFile
 	{
 		public const string DefaultShapeFile = "ltypeshp.shx";
 
@@ -18,8 +18,6 @@ namespace ACadSharp.IO
 			{
 				throw new ArgumentNullException(nameof(file));
 			}
-
-			File.OpenRead(file);
 
 			using (BinaryReader reader = new BinaryReader(File.OpenRead(file)))
 			{
@@ -50,6 +48,8 @@ namespace ACadSharp.IO
 				{
 					string name = nullTerminatedString(reader, Encoding.ASCII);
 					byte[] shape = reader.ReadBytes(shapes[i].Item2 - (name.Length + 1));
+
+					Geometry.Create(name, shape);
 				}
 			}
 		}
