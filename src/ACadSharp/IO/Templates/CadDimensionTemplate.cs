@@ -18,9 +18,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadDimensionTemplate(Dimension dimension) : base(dimension) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			Dimension dimension = this.CadObject as Dimension;
 

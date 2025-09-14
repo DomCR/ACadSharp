@@ -21,18 +21,22 @@ namespace ACadSharp.Entities
 			public XY BasePoint { get; set; }
 
 			/// <summary>
-			/// Pattern line offset.
-			/// </summary>
-			[DxfCodeValue(45, 46)]
-			public XY Offset { get; set; }
-
-			/// <summary>
 			/// Line dashes.
 			/// </summary>
 			[DxfCodeValue(DxfReferenceType.Count, 79)]
 			[DxfCollectionCodeValue(49)]
 			public List<double> DashLengths { get; set; } = new List<double>();
 
+			/// <summary>
+			/// Pattern line offset.
+			/// </summary>
+			[DxfCodeValue(45, 46)]
+			public XY Offset { get; set; }
+
+			/// <summary>
+			/// Clones this line.
+			/// </summary>
+			/// <returns></returns>
 			public Line Clone()
 			{
 				Line clone = (Line)this.MemberwiseClone();

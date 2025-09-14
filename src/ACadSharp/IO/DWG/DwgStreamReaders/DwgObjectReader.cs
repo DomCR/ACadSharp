@@ -1099,6 +1099,9 @@ namespace ACadSharp.IO.DWG
 				case "ACAD_PROXY_OBJECT":
 					template = this.readProxyObject();
 					break;
+				case DxfFileToken.ObjectPlotSettings:
+					template = this.readPlotSettings();
+					break;
 			}
 
 			if (template == null && c.IsAnEntity)
@@ -6215,6 +6218,18 @@ namespace ACadSharp.IO.DWG
 			//Databits X databits, however many there are to the handles
 
 			//TODO: Investigate how to read the data in proxies, it can contain data, strings and handles
+		}
+
+		private CadTemplate readPlotSettings()
+		{
+			PlotSettings plotsettings = new PlotSettings();
+			CadPlotSettingsTemplate template = new CadPlotSettingsTemplate(plotsettings);
+
+			this.readCommonNonEntityData(template);
+
+			this.readPlotSettings(plotsettings);
+
+			return template;
 		}
 
 		private CadTemplate readLayout()

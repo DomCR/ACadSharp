@@ -2,7 +2,6 @@
 using CSMath;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -17,15 +16,6 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Hatch)]
 	public partial class Hatch : Entity
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.HATCH;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityHatch;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Hatch;
-
 		/// <summary>
 		/// The current elevation of the object.
 		/// </summary>
@@ -33,10 +23,46 @@ namespace ACadSharp.Entities
 		public double Elevation { get; set; }
 
 		/// <summary>
+		/// Gradient color pattern, if exists.
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Name, 470)]
+		public HatchGradientPattern GradientColor { get; set; } = new HatchGradientPattern();
+
+		/// <summary>
+		/// Associativity flag.
+		/// </summary>
+		[DxfCodeValue(71)]
+		public bool IsAssociative { get; set; }
+
+		/// <summary>
+		/// Hatch pattern double flag (pattern fill only)
+		/// </summary>
+		[DxfCodeValue(77)]
+		public bool IsDouble { get; set; }
+
+		/// <summary>
+		/// Solid fill flag
+		/// </summary>
+		[DxfCodeValue(70)]
+		public bool IsSolid { get; set; }
+
+		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
 		/// </summary>
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityHatch;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.HATCH;
+
+		/// <summary>
+		/// Boundary paths (loops).
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Count, 91)]
+		public List<BoundaryPath> Paths { get; set; } = new List<BoundaryPath>();
 
 		/// <summary>
 		/// Pattern of this hatch.
@@ -48,24 +74,40 @@ namespace ACadSharp.Entities
 		public HatchPattern Pattern { get; set; } = HatchPattern.Solid;
 
 		/// <summary>
-		/// Solid fill flag
+		/// Hatch pattern angle (pattern fill only).
 		/// </summary>
-		[DxfCodeValue(70)]
-		public bool IsSolid { get; set; }
+		[DxfCodeValue(DxfReferenceType.IsAngle, 52)]
+		public double PatternAngle
+		{
+			get
+			{
+				return this._patternAngle;
+			}
 
-		//63	For MPolygon, pattern fill color as the ACI
+			set
+			{
+				this._patternAngle = value;
+				this.Pattern?.Update(XY.Zero, this._patternAngle, 1);
+			}
+		}
 
 		/// <summary>
-		/// Associativity flag.
+		/// Hatch pattern scale or spacing(pattern fill only).
 		/// </summary>
-		[DxfCodeValue(71)]
-		public bool IsAssociative { get; set; }
+		[DxfCodeValue(41)]
+		public double PatternScale
+		{
+			get
+			{
+				return this._patternScale;
+			}
 
-		/// <summary>
-		/// Hatch style.
-		/// </summary>
-		[DxfCodeValue(75)]
-		public HatchStyleType Style { get; set; }
+			set
+			{
+				this._patternScale = value;
+				this.Pattern?.Update(XY.Zero, 0, this._patternScale);
+			}
+		}
 
 		/// <summary>
 		/// Hatch pattern type
@@ -74,40 +116,10 @@ namespace ACadSharp.Entities
 		public HatchPatternType PatternType { get; set; }
 
 		/// <summary>
-		/// Hatch pattern angle (pattern fill only).
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.IsAngle, 52)]
-		public double PatternAngle { get; set; }
-
-		/// <summary>
-		/// Hatch pattern scale or spacing(pattern fill only)
-		/// </summary>
-		[DxfCodeValue(41)]
-		public double PatternScale { get; set; }
-
-		//73	For MPolygon, boundary annotation flag:
-		//0 = boundary is not an annotated boundary
-		//1 = boundary is an annotated boundary
-
-		/// <summary>
-		/// Hatch pattern double flag (pattern fill only)
-		/// </summary>
-		[DxfCodeValue(77)]
-		public bool IsDouble { get; set; }
-
-		//78	Number of pattern definition lines
-		//varies
-		//Pattern line data.Repeats number of times specified by code 78. See Pattern Data
-
-		/// <summary>
 		/// Pixel size used to determine the density to perform various intersection and ray casting operations in hatch pattern computation for associative hatches and hatches created with the Flood method of hatching
 		/// </summary>
 		[DxfCodeValue(47)]
 		public double PixelSize { get; set; }
-
-		//11	For MPolygon, offset vector
-
-		//99	For MPolygon, number of degenerate boundary paths(loops), where a degenerate boundary path is a border that is ignored by the hatch
 
 		/// <summary>
 		/// Seed points codes (in OCS)
@@ -116,39 +128,31 @@ namespace ACadSharp.Entities
 		[DxfCollectionCodeValue(10, 20)]
 		public List<XY> SeedPoints { get; set; } = new List<XY>();
 
+		//63	For MPolygon, pattern fill color as the ACI
 		/// <summary>
-		/// Gradient color pattern, if exists.
+		/// Hatch style.
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Name, 470)]
-		public HatchGradientPattern GradientColor { get; set; } = new HatchGradientPattern();
-
-		/// <summary>
-		/// Boundary paths (loops).
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Count, 91)]
-		public List<BoundaryPath> Paths { get; set; } = new List<BoundaryPath>();
+		[DxfCodeValue(75)]
+		public HatchStyleType Style { get; set; }
 
 		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Hatch;
+
+		private double _patternAngle;
+
+		private double _patternScale;
+
+		//73	For MPolygon, boundary annotation flag:
+		//0 = boundary is not an annotated boundary
+		//1 = boundary is an annotated boundary
+		//78	Number of pattern definition lines
+		//varies
+		//Pattern line data.Repeats number of times specified by code 78. See Pattern Data
+		//11	For MPolygon, offset vector
+
+		//99	For MPolygon, number of degenerate boundary paths(loops), where a degenerate boundary path is a border that is ignored by the hatch
+		/// <inheritdoc/>
 		public Hatch() : base() { }
-
-		/// <summary>
-		/// Explode the hatch edges into the equivalent entities.
-		/// </summary>
-		/// <returns></returns>
-		public IEnumerable<Entity> Explode()
-		{
-			List<Entity> entities = new List<Entity>();
-
-			foreach (BoundaryPath b in Paths)
-			{
-				foreach (BoundaryPath.Edge e in b.Edges)
-				{
-					entities.Add(e.ToEntity());
-				}
-			}
-
-			return entities;
-		}
 
 		public override void ApplyTransform(Transform transform)
 		{
@@ -157,19 +161,6 @@ namespace ACadSharp.Entities
 			}
 
 			throw new NotImplementedException();
-		}
-
-		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			BoundingBox box = BoundingBox.Null;
-
-			foreach (BoundaryPath bp in this.Paths)
-			{
-				box = box.Merge(bp.GetBoundingBox());
-			}
-
-			return box;
 		}
 
 		/// <inheritdoc/>
@@ -187,6 +178,38 @@ namespace ACadSharp.Entities
 			}
 
 			return clone;
+		}
+
+		/// <summary>
+		/// Explode the hatch edges into the equivalent entities.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<Entity> Explode()
+		{
+			List<Entity> entities = new List<Entity>();
+
+			foreach (BoundaryPath b in this.Paths)
+			{
+				foreach (BoundaryPath.Edge e in b.Edges)
+				{
+					entities.Add(e.ToEntity());
+				}
+			}
+
+			return entities;
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			BoundingBox box = BoundingBox.Null;
+
+			foreach (BoundaryPath bp in this.Paths)
+			{
+				box = box.Merge(bp.GetBoundingBox());
+			}
+
+			return box;
 		}
 	}
 }
