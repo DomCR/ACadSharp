@@ -73,6 +73,15 @@ namespace ACadSharp.IO
 			{
 			}
 
+			public Geometry Build(string name)
+			{
+				Geometry geometry = new Geometry(name);
+
+				geometry.Lines.AddRange(this.Polylines);
+
+				return geometry;
+			}
+
 			public bool HasToStore()
 			{
 				bool result = !this.NotStore;
@@ -164,7 +173,9 @@ namespace ACadSharp.IO
 						}
 						return i - index + 2;
 					case 0xA:
-					//Octant arc defined by next two bytes
+						//Octant arc defined by next two bytes
+
+						return 0;
 					case 0xB:
 					//Fractional arc defined by next five bytes
 					case 0xC:
@@ -176,11 +187,11 @@ namespace ACadSharp.IO
 						throw new NotImplementedException();
 					default:
 						byte b = data[index];
-						double num2 = (b >> 4) & 0xF;
-						XY vector2D = _vectors[b & 0xF];
+						double value = (b >> 4) & 0xF;
+						XY pt = _vectors[b & 0xF];
 						if (this.HasToStore())
 						{
-							this.drawLine(num2 * vector2D.X, num2 * vector2D.Y);
+							this.drawLine(value * pt.X, value * pt.Y);
 						}
 						return 1;
 				}
@@ -197,17 +208,17 @@ namespace ACadSharp.IO
 
 			private void drawLine(double x, double y)
 			{
-				var point2D = new XY(
+				var pt = new XY(
 				this.LastPt.X + this._current * x,
 				this.LastPt.Y + this._current * y);
 
 				if (this._drawModeOn)
 				{
 					this.createNewLine();
-					this.CurrentLine.Add(point2D);
+					this.CurrentLine.Add(pt);
 				}
 
-				this.LastPt = point2D;
+				this.LastPt = pt;
 			}
 		}
 	}

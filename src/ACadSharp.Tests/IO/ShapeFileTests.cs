@@ -9,7 +9,7 @@ namespace ACadSharp.Tests.IO
 		[Fact]
 		public void OpenTest()
 		{
-			//ShapeFile.Open(Path.Combine(TestVariables.SamplesFolder, ShapeFile.DefaultShapeFile));
+			ShapeFile.Open(Path.Combine(TestVariables.SamplesFolder, ShapeFile.DefaultShapeFile));
 			ShapeFile.Open(Path.Combine(TestVariables.SamplesFolder, "line.shx"));
 		}
 	}

@@ -12,6 +12,8 @@ namespace ACadSharp.IO
 
 		private const string _sentinelV1 = "AutoCAD-86 shapes 1.0";
 
+		public Dictionary<ushort, Geometry> Geometries { get; } = new();
+
 		public static void Open(string file)
 		{
 			if (string.IsNullOrEmpty(file))

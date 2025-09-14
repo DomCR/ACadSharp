@@ -7,32 +7,27 @@ namespace ACadSharp.IO
 	{
 		public class Geometry
 		{
-			public byte[] Data { get; }
-
 			public List<List<XY>> Lines { get; } = new();
 
 			public string Name { get; }
 
-			protected Geometry(string name, byte[] data)
+			public Geometry(string name)
 			{
 				this.Name = name;
-				this.Data = data;
 			}
 
 			public static Geometry Create(string name, byte[] data)
 			{
-				Geometry geometry = new Geometry(name, data);
-
 				int index = 0;
 
-				ShapeBuilder rawShape = new ShapeBuilder();
+				ShapeBuilder builder = new ShapeBuilder();
 
 				while (index < data.Length)
 				{
-					index += rawShape.ProcessValue(index, data);
+					index += builder.ProcessValue(index, data);
 				}
 
-				return geometry;
+				return builder.Build(name);
 			}
 		}
 	}
