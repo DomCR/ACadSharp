@@ -9,6 +9,12 @@ namespace ACadSharp.Tables
 		public class Segment
 		{
 			/// <summary>
+			/// Complex line type element type.
+			/// </summary>
+			[DxfCodeValue(74)]
+			public LineTypeShapeFlags Flags { get; set; }
+
+			/// <summary>
 			/// Get whether this segment is a line (dash).
 			/// </summary>
 			public bool IsLine { get { return this.Length > 0.0; } }
@@ -19,9 +25,53 @@ namespace ACadSharp.Tables
 			public bool IsPoint { get { return this.Length == 0.0; } }
 
 			/// <summary>
+			/// Get or set whether this segment is a shape.
+			/// </summary>
+			public bool IsShape
+			{
+				get
+				{
+					return this.Flags.HasFlag(LineTypeShapeFlags.Shape);
+				}
+				set
+				{
+					if (value)
+					{
+						this.Flags |= LineTypeShapeFlags.Shape;
+					}
+					else
+					{
+						this.Flags &= ~LineTypeShapeFlags.Shape;
+					}
+				}
+			}
+
+			/// <summary>
 			/// Get whether this segment is a space.
 			/// </summary>
 			public bool IsSpace { get { return this.Length < 0.0; } }
+
+			/// <summary>
+			/// Get or set whether this segment is a text.
+			/// </summary>
+			public bool IsText
+			{
+				get
+				{
+					return this.Flags.HasFlag(LineTypeShapeFlags.Text);
+				}
+				set
+				{
+					if (value)
+					{
+						this.Flags |= LineTypeShapeFlags.Text;
+					}
+					else
+					{
+						this.Flags &= ~LineTypeShapeFlags.Text;
+					}
+				}
+			}
 
 			/// <summary>
 			/// Dash, dot or space length.
@@ -39,7 +89,7 @@ namespace ACadSharp.Tables
 			public XY Offset { get; set; }
 
 			/// <summary>
-			/// Line type where this segment belongs
+			/// Line type where this segment belongs.
 			/// </summary>
 			public LineType Owner { get; internal set; }
 
@@ -47,7 +97,7 @@ namespace ACadSharp.Tables
 			/// Rotation value in radians of embedded shape or text.
 			/// </summary>
 			[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
-			public double Rotation { get; set; }
+			public double Rotation { get; set; } = 0;
 
 			/// <summary>
 			/// Scale value.
@@ -56,16 +106,10 @@ namespace ACadSharp.Tables
 			public double Scale { get; set; } = 1.0d;
 
 			/// <summary>
-			/// Complex linetype element type.
-			/// </summary>
-			[DxfCodeValue(74)]
-			public LinetypeShapeFlags ShapeFlag { get; set; }
-
-			/// <summary>
 			/// Shape number.
 			/// </summary>
 			[DxfCodeValue(75)]
-			public short ShapeNumber { get; set; }
+			public short ShapeNumber { get; set; } = 0;
 
 			/// <summary>
 			/// Pointer to STYLE object (one per element if code 74 > 0)
@@ -84,7 +128,7 @@ namespace ACadSharp.Tables
 			/// Text string.
 			/// </summary>
 			/// <remarks>
-			/// Only present if <see cref="LinetypeShapeFlags.Text"/> is present
+			/// Only present if <see cref="LineTypeShapeFlags.Text"/> is present.
 			/// </remarks>
 			[DxfCodeValue(9)]
 			public string Text

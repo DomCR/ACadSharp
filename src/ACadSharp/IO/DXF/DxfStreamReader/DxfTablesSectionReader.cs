@@ -671,7 +671,7 @@ namespace ACadSharp.IO.DXF
 						template.Segment.Rotation = this._reader.ValueAsAngle;
 						break;
 					case 74:
-						template.Segment.ShapeFlag = (LinetypeShapeFlags)this._reader.ValueAsUShort;
+						template.Segment.Flags = (LineTypeShapeFlags)this._reader.ValueAsUShort;
 						break;
 					case 75:
 						template.Segment.ShapeNumber = (short)this._reader.ValueAsInt;

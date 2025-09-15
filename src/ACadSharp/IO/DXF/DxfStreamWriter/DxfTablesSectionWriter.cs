@@ -254,15 +254,15 @@ namespace ACadSharp.IO.DXF
 			foreach (LineType.Segment s in linetype.Segments)
 			{
 				this._writer.Write(49, s.Length);
-				this._writer.Write(74, (short)s.ShapeFlag);
+				this._writer.Write(74, (short)s.Flags);
 
-				if (s.ShapeFlag != LinetypeShapeFlags.None)
+				if (s.Flags != LineTypeShapeFlags.None)
 				{
-					if (s.ShapeFlag.HasFlag(LinetypeShapeFlags.Shape))
+					if (s.Flags.HasFlag(LineTypeShapeFlags.Shape))
 					{
 						this._writer.Write(75, s.ShapeNumber);
 					}
-					if (s.ShapeFlag.HasFlag(LinetypeShapeFlags.Text))
+					if (s.Flags.HasFlag(LineTypeShapeFlags.Text))
 					{
 						this._writer.Write(75, (short)0);
 					}

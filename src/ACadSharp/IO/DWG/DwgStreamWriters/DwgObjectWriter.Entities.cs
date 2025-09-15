@@ -1883,10 +1883,14 @@ namespace ACadSharp.IO.DWG
 				if (spline.KnotParameterization == KnotParameterization.Custom || spline.FitPoints.Count == 0)
 				{
 					scenario = 1;
+					//If scenario is 1, the spline flags must not have the UseKnotParameter bit set or the file will be corrupt
+					spline.Flags1 &= ~SplineFlags1.UseKnotParameter;
 				}
 				else
 				{
 					scenario = 2;
+					//If scenario is 2, the spline flags must have the MethodFitPoints and UseKnotParameter bits set or the file will be corrupt
+					spline.Flags1 |= SplineFlags1.MethodFitPoints | SplineFlags1.UseKnotParameter;
 				}
 
 				this._writer.WriteBitLong(scenario);

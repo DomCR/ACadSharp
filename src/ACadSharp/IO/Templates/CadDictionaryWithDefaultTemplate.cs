@@ -10,9 +10,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadDictionaryWithDefaultTemplate(CadDictionaryWithDefault dictionary) : base(dictionary) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			if (builder.TryGetCadObject(DefaultEntryHandle, out CadObject entry))
 			{

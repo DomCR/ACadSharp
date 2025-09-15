@@ -23,9 +23,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadLayoutTemplate(Layout layout) : base(layout) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			if (builder.TryGetCadObject(this.PaperSpaceBlockHandle, out BlockRecord record))
 			{

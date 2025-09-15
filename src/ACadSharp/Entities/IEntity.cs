@@ -42,7 +42,7 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// This must be a positive, non-negative number.
 		/// </remarks>
-		double LinetypeScale { get; set; }
+		double LineTypeScale { get; set; }
 
 		/// <summary>
 		/// Specifies the line weight of an individual object or the default line weight for the drawing.
@@ -65,7 +65,6 @@ namespace ACadSharp.Entities
 		/// <returns></returns>
 		Color GetActiveColor();
 
-		/// <summary>
 		/// Get the active line type for the entity, process the line types like <see cref="LineType.ByBlock"/> and <see cref="LineType.ByLayer"/>.
 		/// </summary>
 		/// <returns></returns>

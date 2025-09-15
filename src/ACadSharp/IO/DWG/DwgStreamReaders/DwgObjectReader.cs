@@ -400,7 +400,7 @@ namespace ACadSharp.IO.DWG
 				template.ColorHandle = this.handleReference();
 
 			//Ltype scale	BD	48
-			entity.LinetypeScale = this._objectReader.ReadBitDouble();
+			entity.LineTypeScale = this._objectReader.ReadBitDouble();
 
 			if (!(this._version >= ACadVersion.AC1015))
 			{
@@ -1098,6 +1098,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "ACAD_PROXY_OBJECT":
 					template = this.readProxyObject();
+					break;
+				case DxfFileToken.ObjectPlotSettings:
+					template = this.readPlotSettings();
 					break;
 			}
 
@@ -4317,9 +4320,9 @@ namespace ACadSharp.IO.DWG
 				//Rotation BD 50 (0.0 for a simple dash.)
 				segment.Segment.Rotation = this._objectReader.ReadBitDouble();
 				//Shapeflag BS 74 bit coded:
-				segment.Segment.ShapeFlag = (LinetypeShapeFlags)this._objectReader.ReadBitShort();
+				segment.Segment.Flags = (LineTypeShapeFlags)this._objectReader.ReadBitShort();
 
-				if (segment.Segment.ShapeFlag.HasFlag(LinetypeShapeFlags.Text))
+				if (segment.Segment.Flags.HasFlag(LineTypeShapeFlags.Text))
 					isText = true;
 
 				//Add the segment to the type
@@ -6215,6 +6218,18 @@ namespace ACadSharp.IO.DWG
 			//Databits X databits, however many there are to the handles
 
 			//TODO: Investigate how to read the data in proxies, it can contain data, strings and handles
+		}
+
+		private CadTemplate readPlotSettings()
+		{
+			PlotSettings plotsettings = new PlotSettings();
+			CadPlotSettingsTemplate template = new CadPlotSettingsTemplate(plotsettings);
+
+			this.readCommonNonEntityData(template);
+
+			this.readPlotSettings(plotsettings);
+
+			return template;
 		}
 
 		private CadTemplate readLayout()

@@ -3,7 +3,6 @@ using CSMath;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -29,11 +28,42 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Count, 79)]
 		public List<Line> Lines { get; set; } = new List<Line>();
 
+		/// <summary>
+		/// Default constructor of a hatch pattern.
+		/// </summary>
+		/// <param name="name"></param>
 		public HatchPattern(string name)
 		{
 			this.Name = name;
 		}
 
+		/// <summary>
+		/// Update the pattern geometry with a translation, rotation and scale.
+		/// </summary>
+		/// <param name="translation"></param>
+		/// <param name="rotation"></param>
+		/// <param name="scale"></param>
+		public void Update(XY translation, double rotation, double scale)
+		{
+			var tr = Transform.CreateTranslation(translation.Convert<XYZ>());
+			var sc = Transform.CreateScaling(new XYZ(scale));
+			var rot = Transform.CreateRotation(XYZ.AxisZ, rotation);
+
+			var transform = new Transform(tr.Matrix * sc.Matrix * rot.Matrix);
+
+			foreach (var line in Lines)
+			{
+				line.Angle += rotation;
+				line.BasePoint = transform.ApplyTransform(line.BasePoint.Convert<XYZ>()).Convert<XY>();
+				line.Offset = transform.ApplyTransform(line.Offset.Convert<XYZ>()).Convert<XY>();
+				line.DashLengths = line.DashLengths.Select(d => d * scale).ToList();
+			}
+		}
+
+		/// <summary>
+		/// Clones the current pattern.
+		/// </summary>
+		/// <returns></returns>
 		public HatchPattern Clone()
 		{
 			HatchPattern clone = (HatchPattern)this.MemberwiseClone();
@@ -141,7 +171,7 @@ namespace ACadSharp.Entities
 
 					var offset = line.Offset;
 					var vector2D = new XY(offset.X * cos - offset.Y * sin, offset.X * sin + offset.Y * cos);
-					
+
 					sb.Append(angle.ToString(CultureInfo.InvariantCulture));
 					sb.Append(",");
 					sb.Append(line.BasePoint.ToString(CultureInfo.InvariantCulture));

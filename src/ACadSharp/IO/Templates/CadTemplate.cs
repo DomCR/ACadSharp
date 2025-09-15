@@ -8,6 +8,8 @@ namespace ACadSharp.IO.Templates
 {
 	internal abstract class CadTemplate : ICadObjectTemplate
 	{
+		public bool HasBeenBuilt { get; private set; } = false;
+
 		public CadObject CadObject { get; set; }
 
 		public ulong? OwnerHandle { get; set; }
@@ -25,7 +27,21 @@ namespace ACadSharp.IO.Templates
 			this.CadObject = cadObject;
 		}
 
-		public virtual void Build(CadDocumentBuilder builder)
+		public void Build(CadDocumentBuilder builder)
+		{
+			if (this.HasBeenBuilt)
+			{
+				return;
+			}
+			else
+			{
+				this.HasBeenBuilt = true;
+			}
+
+			this.build(builder);
+		}
+
+		protected virtual void build(CadDocumentBuilder builder)
 		{
 			if (builder.TryGetCadObject(this.XDictHandle, out CadDictionary cadDictionary))
 			{
