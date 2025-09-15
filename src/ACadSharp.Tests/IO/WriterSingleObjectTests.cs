@@ -422,7 +422,7 @@ namespace ACadSharp.Tests.IO
 				pline.Vertices.Add(new XYZ(0, 0, 0));
 
 				path.Edges.Add(pline);
-				path.Flags = path.Flags.AddFlag(BoundaryPathFlags.Polyline);
+				path.Flags |= BoundaryPathFlags.Polyline;
 				hatch.Paths.Add(path);
 
 				this.Document.Entities.Add(hatch);
