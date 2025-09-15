@@ -188,31 +188,6 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Gets the source block. <br/>
-		/// Only present if the block is dynamic and is in the same document as its source.
-		/// </summary>
-		public BlockRecord Source
-		{
-			get
-			{
-				if (this.Document == null
-					|| !this.IsAnonymous
-					|| this.ExtendedData == null)
-				{
-					return null;
-				}
-
-				if (this.ExtendedData.TryGet(AppId.BlockRepBTag, out ExtendedData data))
-				{
-					ExtendedDataHandle handle = data.Records.OfType<ExtendedDataHandle>().FirstOrDefault();
-					return (BlockRecord)handle.ResolveReference(this.Document);
-				}
-
-				return null;
-			}
-		}
-
-		/// <summary>
 		/// Specifies whether the block can be exploded.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional, 280)]
@@ -265,6 +240,31 @@ namespace ACadSharp.Tables
 				{
 					return null;
 				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the source block. <br/>
+		/// Only present if the block is dynamic and is in the same document as its source.
+		/// </summary>
+		public BlockRecord Source
+		{
+			get
+			{
+				if (this.Document == null
+					|| !this.IsAnonymous
+					|| this.ExtendedData == null)
+				{
+					return null;
+				}
+
+				if (this.ExtendedData.TryGet(AppId.BlockRepBTag, out ExtendedData data))
+				{
+					ExtendedDataHandle handle = data.Records.OfType<ExtendedDataHandle>().FirstOrDefault();
+					return (BlockRecord)handle.ResolveReference(this.Document);
+				}
+
+				return null;
 			}
 		}
 
@@ -343,7 +343,7 @@ namespace ACadSharp.Tables
 			this.Flags = BlockTypeFlags.XRef | BlockTypeFlags.XRefResolved;
 			if (isOverlay)
 			{
-				this.Flags = this.Flags.AddFlag(BlockTypeFlags.XRefOverlay);
+				this.Flags |= BlockTypeFlags.XRefOverlay;
 			}
 		}
 

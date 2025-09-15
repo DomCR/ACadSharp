@@ -18,8 +18,6 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Spline)]
 	public class Spline : Entity
 	{
-		public const short MaxDegree = 10;
-
 		/// <summary>
 		/// Number of control points (in WCS).
 		/// </summary>
@@ -65,7 +63,7 @@ namespace ACadSharp.Entities
 		/// Spline flags.
 		/// </summary>
 		[DxfCodeValue(70)]
-		public SplineFlags Flags { get; set; }
+		public SplineFlags Flags { get => _flags; set => _flags = value; }
 
 		/// <summary>
 		/// Spline flags1.
@@ -73,7 +71,7 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// Only valid for dwg.
 		/// </remarks>
-		public SplineFlags1 Flags1 { get; set; }
+		public SplineFlags1 Flags1 { get => _flags1; set => _flags1 = value; }
 
 		/// <summary>
 		/// Flag whether the spline is closed.
@@ -88,13 +86,13 @@ namespace ACadSharp.Entities
 			{
 				if (value)
 				{
-					this.Flags = this.Flags.AddFlag(SplineFlags.Closed);
-					this.Flags1 = this.Flags1.AddFlag(SplineFlags1.Closed);
+					this._flags.AddFlag(SplineFlags.Closed);
+					this._flags1.AddFlag(SplineFlags1.Closed);
 				}
 				else
 				{
-					this.Flags = this.Flags.RemoveFlag(SplineFlags.Closed);
-					this.Flags1 = this.Flags1.RemoveFlag(SplineFlags1.Closed);
+					this._flags.RemoveFlag(SplineFlags.Closed);
+					this._flags1.RemoveFlag(SplineFlags1.Closed);
 				}
 			}
 		}
@@ -146,6 +144,12 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 41)]
 		public List<double> Weights { get; private set; } = new List<double>();
+
+		public const short MaxDegree = 10;
+
+		private SplineFlags _flags;
+
+		private SplineFlags1 _flags1;
 
 		/// <inheritdoc/>
 		public Spline() : base() { }

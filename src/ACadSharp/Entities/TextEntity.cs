@@ -57,8 +57,7 @@ namespace ACadSharp.Entities
 		/// Mirror flags.
 		/// </summary>
 		[DxfCodeValue(71)]
-		public TextMirrorFlag Mirror { get; set; } = TextMirrorFlag.None;
-
+		public TextMirrorFlag Mirror { get => _mirror; set => _mirror = value; }
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
 		/// </summary>
@@ -154,6 +153,7 @@ namespace ACadSharp.Entities
 		private double _height = 0.0;
 		private TextStyle _style = TextStyle.Default;
 		private string _value = string.Empty;
+		private TextMirrorFlag _mirror = TextMirrorFlag.None;
 
 		public TextEntity() : base()
 		{
@@ -202,7 +202,7 @@ namespace ACadSharp.Entities
 						newRotation += Math.PI;
 					}
 
-					this.Mirror = this.Mirror.RemoveFlag(TextMirrorFlag.Backward);
+					this._mirror.RemoveFlag(TextMirrorFlag.Backward);
 				}
 				else
 				{
