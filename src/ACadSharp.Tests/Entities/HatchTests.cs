@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Entities;
 using CSMath;
-using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,7 +77,6 @@ namespace ACadSharp.Tests.Entities
 			pline.Vertices.Add(new XYZ(0, 0, 0));
 
 			path.Edges.Add(pline);
-			path.Flags = path.Flags.AddFlag(BoundaryPathFlags.Polyline);
 			hatch.Paths.Add(path);
 
 			Assert.True(path.IsPolyline);
@@ -100,7 +98,6 @@ namespace ACadSharp.Tests.Entities
 			pline.Vertices.Add(new XYZ(0, 0, 0));
 
 			path.Edges.Add(pline);
-			path.Flags = path.Flags.AddFlag(BoundaryPathFlags.Polyline);
 			hatch.Paths.Add(path);
 
 			var entities = hatch.Explode();

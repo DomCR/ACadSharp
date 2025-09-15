@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
-using CSUtilities.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -71,14 +70,20 @@ namespace ACadSharp.Entities
 				}
 
 				/// <inheritdoc/>
+				public override BoundingBox GetBoundingBox()
+				{
+					return BoundingBox.FromPoints(this.ControlPoints);
+				}
+
+				/// <inheritdoc/>
 				public override Entity ToEntity()
 				{
 					Entities.Spline spline = new();
-					
+
 					spline.Degree = this.Degree;
-					spline.Flags = this.Periodic ? spline.Flags.AddFlag(SplineFlags.Periodic) : spline.Flags;
-					spline.Flags = this.Rational ? spline.Flags.AddFlag(SplineFlags.Rational) : spline.Flags;
-					
+					spline.Flags = this.Periodic ? spline.Flags |= (SplineFlags.Periodic) : spline.Flags;
+					spline.Flags = this.Rational ? spline.Flags |= (SplineFlags.Rational) : spline.Flags;
+
 					spline.StartTangent = this.StartTangent.Convert<XYZ>();
 					spline.EndTangent = this.EndTangent.Convert<XYZ>();
 
@@ -87,12 +92,6 @@ namespace ACadSharp.Entities
 					spline.FitPoints.AddRange(this.FitPoints.Select(x => x.Convert<XYZ>()));
 
 					return spline;
-				}
-
-				/// <inheritdoc/>
-				public override BoundingBox GetBoundingBox()
-				{
-					return BoundingBox.FromPoints(this.ControlPoints);
 				}
 			}
 		}

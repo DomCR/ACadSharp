@@ -27,7 +27,7 @@ namespace ACadSharp.Entities
 		/// Polyline flags.
 		/// </summary>
 		[DxfCodeValue(70)]
-		public PolylineFlags Flags { get; set; }
+		public PolylineFlags Flags { get => _flags; set => _flags = value; }
 
 		/// <inheritdoc/>
 		public bool IsClosed
@@ -40,13 +40,13 @@ namespace ACadSharp.Entities
 			{
 				if (value)
 				{
-					this.Flags = this.Flags.AddFlag(PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM);
-					this.Flags = this.Flags.AddFlag(PolylineFlags.ClosedPolygonMeshInN);
+					this._flags.AddFlag(PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM);
+					this._flags.AddFlag(PolylineFlags.ClosedPolygonMeshInN);
 				}
 				else
 				{
-					this.Flags = this.Flags.RemoveFlag(PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM);
-					this.Flags = this.Flags.RemoveFlag(PolylineFlags.ClosedPolygonMeshInN);
+					this._flags.RemoveFlag(PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM);
+					this._flags.RemoveFlag(PolylineFlags.ClosedPolygonMeshInN);
 				}
 			}
 		}
@@ -88,6 +88,8 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		IEnumerable<IVertex> IPolyline.Vertices { get { return this.Vertices; } }
+
+		private PolylineFlags _flags;
 
 		public Polyline() : base()
 		{
@@ -165,8 +167,6 @@ namespace ACadSharp.Entities
 			return new BoundingBox(min, max);
 		}
 
-		protected abstract void verticesOnAdd(object sender, CollectionChangedEventArgs e);
-
 		internal static IEnumerable<Entity> Explode(IPolyline polyline)
 		{
 			//Generic explode method for Polyline2D and LwPolyline
@@ -231,5 +231,7 @@ namespace ACadSharp.Entities
 			this.Document.UnregisterCollection(this.Vertices);
 			base.UnassignDocument();
 		}
+
+		protected abstract void verticesOnAdd(object sender, CollectionChangedEventArgs e);
 	}
 }
