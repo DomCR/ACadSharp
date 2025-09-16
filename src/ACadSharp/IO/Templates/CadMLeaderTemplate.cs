@@ -28,7 +28,7 @@ namespace ACadSharp.IO.Templates
 
 		public CadMLeaderAnnotContextTemplate CadMLeaderAnnotContextTemplate { get; set; }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 			this.CadMLeaderAnnotContextTemplate.Build(builder);

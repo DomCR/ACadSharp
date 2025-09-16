@@ -32,7 +32,7 @@ namespace ACadSharp.IO.Templates {
 		}
 
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
 			MultiLeaderObjectContextData annotContext = (MultiLeaderObjectContextData)this.CadObject;
