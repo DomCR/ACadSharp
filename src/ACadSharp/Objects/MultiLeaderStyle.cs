@@ -335,7 +335,7 @@ namespace ACadSharp.Objects
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(92)]
-		public LineweightType LeaderLineWeight { get; set; } = LineweightType.ByBlock;
+		public LineWeightType LeaderLineWeight { get; set; } = LineWeightType.ByBlock;
 
 		/// <summary>
 		/// Gets or sets color to be applied all leader lines of the multileader.
