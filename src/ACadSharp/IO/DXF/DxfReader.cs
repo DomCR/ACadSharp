@@ -318,7 +318,7 @@ namespace ACadSharp.IO
 		{
 			base.Dispose();
 
-			if (this.Configuration.ClearChache)
+			if (this.Configuration.ClearCache)
 			{
 				DxfMap.ClearCache();
 			}

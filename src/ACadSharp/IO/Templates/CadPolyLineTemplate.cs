@@ -21,9 +21,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadPolyLineTemplate(Polyline entity) : base(entity) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			Polyline polyLine = this.CadObject as Polyline;
 
@@ -65,7 +65,7 @@ namespace ACadSharp.IO.Templates
 			polyLine.Handle = this.CadObject.Handle;
 			polyLine.Color = this.CadObject.Color;
 			polyLine.LineWeight = this.CadObject.LineWeight;
-			polyLine.LinetypeScale = this.CadObject.LinetypeScale;
+			polyLine.LineTypeScale = this.CadObject.LineTypeScale;
 			polyLine.IsInvisible = this.CadObject.IsInvisible;
 			polyLine.Transparency = this.CadObject.Transparency;
 

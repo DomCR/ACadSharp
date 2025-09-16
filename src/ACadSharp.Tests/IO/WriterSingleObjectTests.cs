@@ -423,7 +423,7 @@ namespace ACadSharp.Tests.IO
 				pline.Vertices.Add(new XYZ(0, 0, 0));
 
 				path.Edges.Add(pline);
-				path.Flags = path.Flags.AddFlag(BoundaryPathFlags.Polyline);
+				path.Flags |= BoundaryPathFlags.Polyline;
 				hatch.Paths.Add(path);
 
 				this.Document.Entities.Add(hatch);
@@ -1111,6 +1111,22 @@ namespace ACadSharp.Tests.IO
 
 				this.Document.Entities.Add(spline);
 				this.Document.Entities.Add(polyline);
+
+				List<XYZ> fitPoints = new()
+				{
+					new XYZ(0, 0, 0),
+					new XYZ(5, 5, 0),
+					new XYZ(10, 0, 0),
+					new XYZ(15, -5, 0),
+					new XYZ(20, 0, 0)
+				};
+
+				spline = new Spline();
+				spline.FitPoints.AddRange(fitPoints);
+
+				spline.UpdateFromFitPoints();
+
+				this.Document.Entities.Add(spline);
 			}
 
 			public void TextAlignment()

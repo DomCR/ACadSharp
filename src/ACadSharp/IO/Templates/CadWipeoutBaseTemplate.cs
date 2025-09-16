@@ -11,9 +11,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadWipeoutBaseTemplate(CadWipeoutBase image) : base(image) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			CadWipeoutBase image = this.CadObject as CadWipeoutBase;
 

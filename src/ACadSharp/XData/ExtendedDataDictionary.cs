@@ -79,7 +79,7 @@ namespace ACadSharp.XData
 		/// <returns></returns>
 		public IDictionary<string, ExtendedData> GetExtendedDataByName()
 		{
-			return this._data.ToDictionary(x => x.Key.Name, x => x.Value);
+			return this._data.ToDictionary(x => x.Key.Name, x => x.Value, StringComparer.OrdinalIgnoreCase);
 		}
 
 		/// <summary>
@@ -119,15 +119,7 @@ namespace ACadSharp.XData
 		/// <returns>true, if found.</returns>
 		public bool TryGet(string name, out ExtendedData value)
 		{
-			AppId app = this._data.Keys.FirstOrDefault(k => k.Name == name);
-			if (app == null)
-			{
-				value = null;
-				return false;
-			}
-
-			value = this._data[app];
-			return true;
+			return this.GetExtendedDataByName().TryGetValue(name, out value);
 		}
 
 		/// <summary>

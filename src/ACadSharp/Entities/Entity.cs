@@ -75,11 +75,11 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		[DxfCodeValue(48)]
-		public double LinetypeScale { get; set; } = 1.0;
+		public double LineTypeScale { get; set; } = 1.0;
 
 		/// <inheritdoc/>
 		[DxfCodeValue(370)]
-		public LineweightType LineWeight { get; set; } = LineweightType.ByLayer;
+		public LineWeightType LineWeight { get; set; } = LineWeightType.ByLayer;
 
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Handle, 347)]
@@ -100,16 +100,6 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public Entity() : base() { }
-
-		/// <summary>
-		/// Apply a translation to this entity.
-		/// </summary>
-		/// <param name="translation"></param>
-		public void ApplyTranslation(XYZ translation)
-		{
-			Transform transform = Transform.CreateTranslation(translation);
-			this.ApplyTransform(transform);
-		}
 
 		/// <summary>
 		/// Apply a rotation to this entity.
@@ -146,6 +136,16 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public abstract void ApplyTransform(Transform transform);
 
+		/// <summary>
+		/// Apply a translation to this entity.
+		/// </summary>
+		/// <param name="translation"></param>
+		public void ApplyTranslation(XYZ translation)
+		{
+			Transform transform = Transform.CreateTranslation(translation);
+			this.ApplyTransform(transform);
+		}
+
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
@@ -179,6 +179,43 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
+		public LineType GetActiveLineType()
+		{
+			if (this.LineType.Name.Equals(LineType.ByLayerName, StringComparison.InvariantCultureIgnoreCase))
+			{
+				return this.Layer.LineType;
+			}
+			else if (this.LineType.Name.Equals(LineType.ByBlockName, StringComparison.InvariantCultureIgnoreCase)
+				&& this.Owner is BlockRecord record)
+			{
+				return record.BlockEntity.LineType;
+			}
+
+			return this.LineType;
+		}
+
+		/// <inheritdoc/>
+		public LineWeightType GetActiveLineWeightType()
+		{
+			switch (this.LineWeight)
+			{
+				case LineWeightType.ByLayer:
+					return this.Layer.LineWeight;
+				case LineWeightType.ByBlock:
+					if (this.Owner is BlockRecord record)
+					{
+						return record.BlockEntity.LineWeight;
+					}
+					else
+					{
+						return this.LineWeight;
+					}
+				default:
+					return this.LineWeight;
+			}
+		}
+
+		/// <inheritdoc/>
 		public abstract BoundingBox GetBoundingBox();
 
 		/// <inheritdoc/>
@@ -202,7 +239,7 @@ namespace ACadSharp.Entities
 
 			entity.Color = this.Color;
 			entity.LineWeight = this.LineWeight;
-			entity.LinetypeScale = this.LinetypeScale;
+			entity.LineTypeScale = this.LineTypeScale;
 			entity.IsInvisible = this.IsInvisible;
 			entity.Transparency = this.Transparency;
 		}
@@ -227,48 +264,6 @@ namespace ACadSharp.Entities
 
 			this.Layer = (Layer)this.Layer.Clone();
 			this.LineType = (LineType)this.LineType.Clone();
-		}
-
-		protected XYZ transformNormal(Transform transform, XYZ normal)
-		{
-			return transform.ApplyRotation(normal).Normalize();
-		}
-
-		protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
-		{
-			if (e.Item.Equals(this.Layer))
-			{
-				this.Layer = this.Document.Layers[Layer.DefaultName];
-			}
-
-			if (e.Item.Equals(this.LineType))
-			{
-				this.LineType = this.Document.LineTypes[LineType.ByLayerName];
-			}
-		}
-
-		protected Matrix3 getWorldMatrix(Transform transform, XYZ normal, XYZ newNormal, out Matrix3 transOW, out Matrix3 transWO)
-		{
-			transOW = Matrix3.ArbitraryAxis(normal);
-			transWO = Matrix3.ArbitraryAxis(newNormal).Transpose();
-			return new Matrix3(transform.Matrix);
-		}
-
-		protected XYZ applyWorldMatrix(XYZ xyz, Transform transform, Matrix3 transOW, Matrix3 transWO)
-		{
-			XYZ v = transOW * xyz;
-			v = transform.ApplyTransform(v);
-			v = transWO * v;
-			return v;
-		}
-
-		protected XYZ applyWorldMatrix(XYZ xyz, XYZ normal, XYZ newNormal)
-		{
-			var transOW = Matrix3.ArbitraryAxis(normal).Transpose();
-			var transWO = Matrix3.ArbitraryAxis(newNormal);
-			XYZ v = transOW * xyz;
-			v = transWO * v;
-			return v;
 		}
 
 		protected List<XY> applyRotation(IEnumerable<XY> points, double rotation)
@@ -317,6 +312,48 @@ namespace ACadSharp.Entities
 		{
 			Matrix4 trans = Matrix4.GetArbitraryAxis(zAxis).Transpose();
 			return trans * points;
+		}
+
+		protected XYZ applyWorldMatrix(XYZ xyz, Transform transform, Matrix3 transOW, Matrix3 transWO)
+		{
+			XYZ v = transOW * xyz;
+			v = transform.ApplyTransform(v);
+			v = transWO * v;
+			return v;
+		}
+
+		protected XYZ applyWorldMatrix(XYZ xyz, XYZ normal, XYZ newNormal)
+		{
+			var transOW = Matrix3.ArbitraryAxis(normal).Transpose();
+			var transWO = Matrix3.ArbitraryAxis(newNormal);
+			XYZ v = transOW * xyz;
+			v = transWO * v;
+			return v;
+		}
+
+		protected Matrix3 getWorldMatrix(Transform transform, XYZ normal, XYZ newNormal, out Matrix3 transOW, out Matrix3 transWO)
+		{
+			transOW = Matrix3.ArbitraryAxis(normal);
+			transWO = Matrix3.ArbitraryAxis(newNormal).Transpose();
+			return new Matrix3(transform.Matrix);
+		}
+
+		protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this.Layer))
+			{
+				this.Layer = this.Document.Layers[Layer.DefaultName];
+			}
+
+			if (e.Item.Equals(this.LineType))
+			{
+				this.LineType = this.Document.LineTypes[LineType.ByLayerName];
+			}
+		}
+
+		protected XYZ transformNormal(Transform transform, XYZ normal)
+		{
+			return transform.ApplyRotation(normal).Normalize();
 		}
 	}
 }

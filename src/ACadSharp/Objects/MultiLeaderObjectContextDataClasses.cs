@@ -218,7 +218,7 @@ namespace ACadSharp.Objects
 			/// Line weight
 			/// </summary>
 			[DxfCodeValue(171)]
-			public LineweightType LineWeight { get; set; }
+			public LineWeightType LineWeight { get; set; }
 
 			/// <summary>
 			/// Arrowhead size

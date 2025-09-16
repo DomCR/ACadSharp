@@ -52,9 +52,9 @@ namespace ACadSharp.IO.Templates
 			this._currCellIndex++;
 		}
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 		}
 
 		internal class CadTableAttributeTemplate : ICadTemplate

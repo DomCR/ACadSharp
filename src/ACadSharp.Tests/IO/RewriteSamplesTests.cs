@@ -1,7 +1,9 @@
-﻿using ACadSharp.IO;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO;
 using ACadSharp.IO.DWG;
 using ACadSharp.Tests.TestModels;
 using System.IO;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,7 +25,7 @@ namespace ACadSharp.Tests.IO
 
 		[Theory]
 		[MemberData(nameof(DwgFiles))]
-		public void ReadUserDwg(FileModel test)
+		public void ReadDwgWriteDwg(FileModel test)
 		{
 			if (string.IsNullOrEmpty(test.Path))
 				return;
@@ -36,6 +38,23 @@ namespace ACadSharp.Tests.IO
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
 
 			DwgWriter.Write(Path.Combine(test.Folder, $"{test.NoExtensionName}.out.dwg"), doc, writerConfiguration, this.onNotification);
+		}
+
+		[Theory]
+		[MemberData(nameof(DwgFiles))]
+		public void ReadDwgWriteDxf(FileModel test)
+		{
+			if (string.IsNullOrEmpty(test.Path))
+				return;
+
+			DxfWriterConfiguration writerConfiguration = new DxfWriterConfiguration
+			{
+				WriteXRecords = true,
+			};
+
+			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
+
+			DxfWriter.Write(Path.Combine(test.Folder, $"{test.NoExtensionName}.out.dxf"), doc, false, writerConfiguration, this.onNotification);
 		}
 	}
 }

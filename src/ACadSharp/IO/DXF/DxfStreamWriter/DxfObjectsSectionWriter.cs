@@ -121,14 +121,14 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(430, $"{color.Name}${color.BookName}");
 		}
 
-		protected void writeDictionary(CadDictionary e)
+		protected void writeDictionary(CadDictionary dict)
 		{
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Dictionary);
 
-			this._writer.Write(280, e.HardOwnerFlag);
-			this._writer.Write(281, (int)e.ClonningFlags);
+			this._writer.Write(280, dict.HardOwnerFlag);
+			this._writer.Write(281, (int)dict.ClonningFlags);
 
-			foreach (NonGraphicalObject item in e)
+			foreach (NonGraphicalObject item in dict)
 			{
 				if (item is XRecord && !this.Configuration.WriteXRecords)
 				{
@@ -140,9 +140,15 @@ namespace ACadSharp.IO.DXF
 			}
 
 			//Add the entries as objects
-			foreach (CadObject item in e)
+			foreach (CadObject item in dict)
 			{
 				this.Holder.Objects.Enqueue(item);
+			}
+
+			if(dict is CadDictionaryWithDefault withDefault)
+			{
+				this._writer.Write(100, DxfSubclassMarker.DictionaryWithDefault);
+				this._writer.WriteHandle(340, withDefault.DefaultEntry);
 			}
 		}
 

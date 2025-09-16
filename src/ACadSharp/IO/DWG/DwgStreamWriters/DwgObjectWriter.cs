@@ -26,6 +26,8 @@ namespace ACadSharp.IO.DWG
 
 		public bool WriteXData { get; }
 
+		public bool WriteShapes { get; } = true;
+
 		private Dictionary<ulong, CadDictionary> _dictionaries = new();
 
 		private Queue<NonGraphicalObject> _objects = new();
@@ -42,7 +44,10 @@ namespace ACadSharp.IO.DWG
 
 		private Entity _next;
 
-		public DwgObjectWriter(Stream stream, CadDocument document, Encoding encoding, bool writeXRecords = true, bool writeXData = true) : base(document.Header.Version)
+		public DwgObjectWriter(Stream stream, CadDocument document, Encoding encoding,
+			bool writeXRecords = true, 
+			bool writeXData = true,
+			bool writeShapes = true) : base(document.Header.Version)
 		{
 			this._stream = stream;
 			this._document = document;
@@ -51,6 +56,7 @@ namespace ACadSharp.IO.DWG
 			this._writer = DwgStreamWriterBase.GetMergedWriter(document.Header.Version, this._msmain, encoding);
 			this.WriteXRecords = writeXRecords;
 			this.WriteXData = writeXData;
+			this.WriteShapes = writeShapes;
 		}
 
 		public void Write()
@@ -213,7 +219,7 @@ namespace ACadSharp.IO.DWG
 
 				this._prev = null;
 				this._next = null;
-				Entity[] arr = blkRecord.Entities.ToArray();
+				Entity[] arr = getCompatibleEntities(blkRecord.Entities);
 				for (int i = 0; i < arr.Length; i++)
 				{
 					this._prev = arr.ElementAtOrDefault(i - 1);
@@ -227,6 +233,29 @@ namespace ACadSharp.IO.DWG
 				this._next = null;
 
 				this.writeBlockEnd(blkRecord.BlockEnd);
+			}
+		}
+
+		private Entity[] getCompatibleEntities(IEnumerable<Entity> entities)
+		{
+			return entities.Where(e => this.isEntitySupported(e)).ToArray();
+
+		}
+
+		private bool isEntitySupported(Entity entity)
+		{
+			switch (entity)
+			{
+				case Shape:
+					return this.WriteShapes;
+				case ProxyEntity:
+				case TableEntity:
+				case UnknownEntity:
+				case Solid3D:
+					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
+					return false;
+				default:
+					return true;
 			}
 		}
 
@@ -256,6 +285,8 @@ namespace ACadSharp.IO.DWG
 
 		private void writeBlockHeader(BlockRecord record)
 		{
+			Entity[] entities = getCompatibleEntities(record.Entities);
+
 			this.writeCommonNonEntityData(record);
 
 			//Common:
@@ -297,7 +328,7 @@ namespace ACadSharp.IO.DWG
 				&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 			{
 				//Owned Object Count BL Number of objects owned by this object.
-				_writer.WriteBitLong(record.Entities.Count);
+				_writer.WriteBitLong(entities.Length);
 			}
 
 			//Common:
@@ -348,12 +379,12 @@ namespace ACadSharp.IO.DWG
 					&& !record.Flags.HasFlag(BlockTypeFlags.XRef)
 					&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 			{
-				if (record.Entities.Any())
+				if (entities.Any())
 				{
 					//first entity in the def. (soft pointer)
-					this._writer.HandleReference(DwgReferenceType.SoftPointer, record.Entities.First());
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, entities.First());
 					//last entity in the def. (soft pointer)
-					this._writer.HandleReference(DwgReferenceType.SoftPointer, record.Entities.Last());
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, entities.Last());
 				}
 				else
 				{
@@ -365,7 +396,7 @@ namespace ACadSharp.IO.DWG
 			//R2004+:
 			if (this.R2004Plus)
 			{
-				foreach (var item in record.Entities)
+				foreach (var item in entities)
 				{
 					//H[ENTITY(hard owner)] Repeats “Owned Object Count” times.
 					this._writer.HandleReference(DwgReferenceType.HardOwnership, item);
@@ -534,9 +565,9 @@ namespace ACadSharp.IO.DWG
 				//Rotation BD 50 (0.0 for a simple dash.)
 				this._writer.WriteBitDouble(segment.Rotation);
 				//Shapeflag BS 74 bit coded:
-				this._writer.WriteBitShort((short)segment.Shapeflag);
+				this._writer.WriteBitShort((short)segment.Flags);
 
-				if (segment.Shapeflag.HasFlag(LinetypeShapeFlags.Text))
+				if (segment.Flags.HasFlag(LineTypeShapeFlags.Text))
 					isText = true;
 			}
 

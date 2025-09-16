@@ -203,7 +203,7 @@ namespace ACadSharp.Entities
 		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </remarks>
 		[DxfCodeValue(171)]
-		public LineweightType LeaderLineWeight { get; set; }
+		public LineWeightType LeaderLineWeight { get; set; }
 
 		/// <summary>
 		/// Gets or sets color of the leader lines of this <see cref="MultiLeader"/>

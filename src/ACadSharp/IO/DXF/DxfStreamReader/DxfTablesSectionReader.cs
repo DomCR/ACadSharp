@@ -561,10 +561,10 @@ namespace ACadSharp.IO.DXF
 					tmp.Dimltex2 = this._reader.ValueAsHandle;
 					return true;
 				case 371:
-					template.CadObject.DimensionLineWeight = (LineweightType)this._reader.ValueAsShort;
+					template.CadObject.DimensionLineWeight = (LineWeightType)this._reader.ValueAsShort;
 					return true;
 				case 372:
-					template.CadObject.ExtensionLineWeight = (LineweightType)this._reader.ValueAsShort;
+					template.CadObject.ExtensionLineWeight = (LineWeightType)this._reader.ValueAsShort;
 					return true;
 				default:
 					return false;
@@ -671,7 +671,7 @@ namespace ACadSharp.IO.DXF
 						template.Segment.Rotation = this._reader.ValueAsAngle;
 						break;
 					case 74:
-						template.Segment.Shapeflag = (LinetypeShapeFlags)this._reader.ValueAsUShort;
+						template.Segment.Flags = (LineTypeShapeFlags)this._reader.ValueAsUShort;
 						break;
 					case 75:
 						template.Segment.ShapeNumber = (short)this._reader.ValueAsInt;
