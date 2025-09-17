@@ -130,51 +130,6 @@ namespace ACadSharp.Tables
 			return lst;
 		}
 
-		private List<Polyline3D> applySegment(XYZ start, XYZ end, LineWeightType lineweight)
-		{
-			List<Polyline3D> lst = new List<Polyline3D>();
-			double dist = start.DistanceFrom(end);
-			if (dist < this.PatternLen)
-			{
-				return lst;
-			}
-
-			XYZ next = start;
-			int nSegments = (int)Math.Floor(dist / this.PatternLen);
-			XYZ v = (end - start).Normalize();
-			for (int i = 0; i < nSegments; i++)
-			{
-				foreach (var item in this.Segments)
-				{
-					next += v * Math.Abs(item.Length);
-
-					if (item.IsPoint)
-					{
-						Polyline3D pl = new Polyline3D(start, next + v * lineweight.GetLineWeightValue());
-						lst.Add(pl);
-					}
-					else if (item.IsLine)
-					{
-						Polyline3D pl = new Polyline3D(start, next);
-						lst.Add(pl);
-					}
-
-					start = next;
-				}
-			}
-
-			double overflow = dist - (nSegments * this.PatternLen);
-			while (overflow > 0)
-			{
-				foreach (var item in this.Segments)
-				{
-
-				}
-			}
-
-			return lst;
-		}
-
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
@@ -225,6 +180,78 @@ namespace ACadSharp.Tables
 					}
 				}
 			}
+		}
+
+		private List<Polyline3D> applySegment(XYZ start, XYZ end, LineWeightType lineweight)
+		{
+			List<Polyline3D> lst = new List<Polyline3D>();
+			double dist = start.DistanceFrom(end);
+			if (dist < this.PatternLen)
+			{
+				return lst;
+			}
+
+			XYZ next = start;
+			int nSegments = (int)Math.Floor(dist / this.PatternLen);
+			XYZ v = (end - start).Normalize();
+			for (int i = 0; i < nSegments; i++)
+			{
+				foreach (var item in this.Segments)
+				{
+					next += v * Math.Abs(item.Length);
+
+					if (item.IsPoint)
+					{
+						Polyline3D pl = new Polyline3D(start, next + v * lineweight.GetLineWeightValue());
+						lst.Add(pl);
+					}
+					else if (item.IsLine)
+					{
+						Polyline3D pl = new Polyline3D(start, next);
+						lst.Add(pl);
+					}
+
+					start = next;
+				}
+			}
+
+			double overflow = dist - (nSegments * this.PatternLen);
+			while (overflow > 0)
+			{
+				foreach (var item in this.Segments)
+				{
+					if (item.Length < overflow)
+					{
+						next += v * Math.Abs(item.Length);
+						overflow -= Math.Abs(item.Length);
+					}
+					else
+					{
+						next += v * Math.Abs(overflow);
+						overflow -= Math.Abs(overflow);
+					}
+
+					if (item.IsPoint)
+					{
+						Polyline3D pl = new Polyline3D(start, next + v * lineweight.GetLineWeightValue());
+						lst.Add(pl);
+					}
+					else if (item.IsLine)
+					{
+						Polyline3D pl = new Polyline3D(start, next);
+						lst.Add(pl);
+					}
+
+					start = next;
+
+					if (overflow <= 0)
+					{
+						break;
+					}
+				}
+			}
+
+			return lst;
 		}
 	}
 }
