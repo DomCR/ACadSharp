@@ -134,43 +134,6 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public LineType GetActiveLineType()
-		{
-			if (this.LineType.Name.Equals(LineType.ByLayerName, StringComparison.InvariantCultureIgnoreCase))
-			{
-				return this.Layer.LineType;
-			}
-			else if (this.LineType.Name.Equals(LineType.ByBlockName, StringComparison.InvariantCultureIgnoreCase)
-				&& this.Owner is BlockRecord record)
-			{
-				return record.BlockEntity.LineType;
-			}
-
-			return this.LineType;
-		}
-
-		/// <inheritdoc/>
-		public LineWeightType GetActiveLineWeightType()
-		{
-			switch (this.LineWeight)
-			{
-				case LineWeightType.ByLayer:
-					return this.Layer.LineWeight;
-				case LineWeightType.ByBlock:
-					if (this.Owner is BlockRecord record)
-					{
-						return record.BlockEntity.LineWeight;
-					}
-					else
-					{
-						return this.LineWeight;
-					}
-				default:
-					return this.LineWeight;
-			}
-		}
-
-		/// <inheritdoc/>
 		public abstract void ApplyTransform(Transform transform);
 
 		/// <summary>
@@ -213,6 +176,43 @@ namespace ACadSharp.Entities
 			}
 
 			return color;
+		}
+
+		/// <inheritdoc/>
+		public LineType GetActiveLineType()
+		{
+			if (this.LineType.Name.Equals(LineType.ByLayerName, StringComparison.InvariantCultureIgnoreCase))
+			{
+				return this.Layer.LineType;
+			}
+			else if (this.LineType.Name.Equals(LineType.ByBlockName, StringComparison.InvariantCultureIgnoreCase)
+				&& this.Owner is BlockRecord record)
+			{
+				return record.BlockEntity.LineType;
+			}
+
+			return this.LineType;
+		}
+
+		/// <inheritdoc/>
+		public LineWeightType GetActiveLineWeightType()
+		{
+			switch (this.LineWeight)
+			{
+				case LineWeightType.ByLayer:
+					return this.Layer.LineWeight;
+				case LineWeightType.ByBlock:
+					if (this.Owner is BlockRecord record)
+					{
+						return record.BlockEntity.LineWeight;
+					}
+					else
+					{
+						return this.LineWeight;
+					}
+				default:
+					return this.LineWeight;
+			}
 		}
 
 		/// <inheritdoc/>
