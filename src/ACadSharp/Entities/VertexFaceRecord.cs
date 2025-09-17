@@ -20,26 +20,38 @@ namespace ACadSharp.Entities
 		public override string SubclassMarker => DxfSubclassMarker.PolyfaceMeshFace;
 
 		/// <summary>
-		/// Vert index BS 71 1 - based vertex index(see DXF doc)
+		/// Index 1 of the face,
 		/// </summary>
+		/// <remarks>
+		/// The start value for indexes is 1, if 0 the index will not take an effect.
+		/// </remarks>
 		[DxfCodeValue(71)]
 		public short Index1 { get; set; }
 
 		/// <summary>
-		/// Vert index BS 72 1 - based vertex index(see DXF doc)
+		/// Index 2 of the face,
 		/// </summary>
+		/// <remarks>
+		/// The start value for indexes is 1, if 0 the index will not take an effect.
+		/// </remarks>
 		[DxfCodeValue(72)]
 		public short Index2 { get; set; }
 
 		/// <summary>
-		/// Vert index BS 73 1 - based vertex index(see DXF doc)
+		/// Index 3 of the face,
 		/// </summary>
+		/// <remarks>
+		/// The start value for indexes is 1, if 0 the index will not take an effect.
+		/// </remarks>
 		[DxfCodeValue(73)]
 		public short Index3 { get; set; }
 
 		/// <summary>
-		/// Vert index BS 74 1 - based vertex index(see DXF doc)
+		/// Index 4 of the face,
 		/// </summary>
+		/// <remarks>
+		/// The start value for indexes is 1, if 0 the index will not take an effect.
+		/// </remarks>
 		[DxfCodeValue(74)]
 		public short Index4 { get; set; }
 	}
