@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using CSMath;
 using System;
 using System.Collections.Generic;
 
@@ -30,11 +29,13 @@ namespace ACadSharp.Entities
 		/// </summary>
 		public CadObjectCollection<VertexFaceRecord> Faces { get; private set; }
 
-		public PolyfaceMesh()
+		/// <inheritdoc/>
+		public PolyfaceMesh() : base()
 		{
 			this.Faces = new CadObjectCollection<VertexFaceRecord>(this);
 		}
 
+		/// <inheritdoc/>
 		public override IEnumerable<Entity> Explode()
 		{
 			throw new System.NotImplementedException();
