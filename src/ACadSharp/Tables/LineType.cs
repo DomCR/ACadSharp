@@ -163,6 +163,15 @@ namespace ACadSharp.Tables
 				}
 			}
 
+			double overflow = dist - (nSegments * this.PatternLen);
+			while (overflow > 0)
+			{
+				foreach (var item in this.Segments)
+				{
+
+				}
+			}
+
 			return lst;
 		}
 
