@@ -25,11 +25,13 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.PolyfaceMesh;
 
+		/// <summary>
+		/// Face records with the triangle indexes.
+		/// </summary>
 		public CadObjectCollection<VertexFaceRecord> Faces { get; private set; }
 
 		public PolyfaceMesh()
 		{
-			this.Vertices.OnAdd += this.verticesOnAdd;
 			this.Faces = new CadObjectCollection<VertexFaceRecord>(this);
 		}
 
@@ -46,7 +48,7 @@ namespace ACadSharp.Entities
 			clone.Faces = new SeqendCollection<VertexFaceRecord>(clone);
 			foreach (VertexFaceRecord v in this.Faces)
 			{
-				clone.Vertices.Add((VertexFaceRecord)v.Clone());
+				clone.Faces.Add((VertexFaceRecord)v.Clone());
 			}
 
 			return clone;
