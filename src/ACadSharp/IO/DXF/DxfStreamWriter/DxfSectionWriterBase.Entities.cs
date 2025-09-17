@@ -706,7 +706,7 @@ namespace ACadSharp.IO.DXF
 
 		private void writeMultiLeader(MultiLeader multiLeader)
 		{
-			MultiLeaderAnnotContext contextData = multiLeader.ContextData;
+			MultiLeaderObjectContextData contextData = multiLeader.ContextData;
 
 			this._writer.Write(100, "AcDbMLeader");
 
@@ -757,7 +757,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(295, 0);
 		}
 
-		private void writeMultiLeaderAnnotContext(MultiLeaderAnnotContext contextData)
+		private void writeMultiLeaderAnnotContext(MultiLeaderObjectContextData contextData)
 		{
 			this._writer.Write(300, "CONTEXT_DATA{");
 			this._writer.Write(40, contextData.ScaleFactor);
@@ -814,7 +814,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(297, contextData.NormalReversed);
 
-			foreach (MultiLeaderAnnotContext.LeaderRoot leaderRoot in contextData.LeaderRoots)
+			foreach (MultiLeaderObjectContextData.LeaderRoot leaderRoot in contextData.LeaderRoots)
 			{
 				writeLeaderRoot(leaderRoot);
 			}
@@ -824,7 +824,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(301, "}");       //	CONTEXT_DATA
 		}
 
-		private void writeLeaderRoot(MultiLeaderAnnotContext.LeaderRoot leaderRoot)
+		private void writeLeaderRoot(MultiLeaderObjectContextData.LeaderRoot leaderRoot)
 		{
 			this._writer.Write(302, "LEADER{");
 
@@ -839,7 +839,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(90, leaderRoot.LeaderIndex);
 			this._writer.Write(40, leaderRoot.LandingDistance);
 
-			foreach (MultiLeaderAnnotContext.LeaderLine leaderLine in leaderRoot.Lines)
+			foreach (MultiLeaderObjectContextData.LeaderLine leaderLine in leaderRoot.Lines)
 			{
 				writeLeaderLine(leaderLine);
 			}
@@ -848,7 +848,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(303, "}");   //	LEADER
 		}
 
-		private void writeLeaderLine(MultiLeaderAnnotContext.LeaderLine leaderLine)
+		private void writeLeaderLine(MultiLeaderObjectContextData.LeaderLine leaderLine)
 		{
 			this._writer.Write(304, "LEADER_LINE{");
 
