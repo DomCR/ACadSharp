@@ -144,6 +144,10 @@ namespace ACadSharp.Tables
 
 			private string _text = string.Empty;
 
+			/// <summary>
+			/// Clone the current segment.
+			/// </summary>
+			/// <returns></returns>
 			public LineType.Segment Clone()
 			{
 				Segment clone = MemberwiseClone() as Segment;
