@@ -47,6 +47,9 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable AUPREC.
 		/// </remarks>
+		/// <value>
+		/// Valid values are from 0 to 8.
+		/// </value>
 		[CadSystemVariable("$AUPREC", 70)]
 		public short AngularUnitPrecision
 		{
@@ -1984,6 +1987,9 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable LUPREC.
 		/// </remarks>
+		/// <value>
+		/// Valid values are from 0 to 8.
+		/// </value>
 		[CadSystemVariable("$LUPREC", 70)]
 		public short LinearUnitPrecision
 		{
@@ -2724,7 +2730,7 @@ namespace ACadSharp.Header
 		/// System variable STEPSPERSEC
 		/// </remarks>
 		/// <value>
-		/// Valid values are from 1 to 30
+		/// Valid values are from 1 to 30.
 		/// </value>
 		[CadSystemVariable("$STEPSPERSEC", 40)]
 		public double StepsPerSecond
@@ -2770,6 +2776,9 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable ISOLINES.
 		/// </remarks>
+		/// <value>
+		/// Valid values are from 0 to 2047.
+		/// </value>
 		public short SurfaceIsolineCount
 		{
 			get
@@ -2837,6 +2846,9 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable TEXTQLTY.
 		/// </remarks>
+		/// <value>
+		/// Valid values are from 1 to 100.
+		/// </value>
 		public short TextQuality
 		{
 			get
