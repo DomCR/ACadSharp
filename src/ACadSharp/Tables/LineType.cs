@@ -100,12 +100,18 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Converts a <see cref="Polyline"/> to a series of <see cref="Polyline3D"/> applying this line type.
+		/// Converts a <see cref="IPolyline"/> to a series of <see cref="Polyline3D"/> applying this line type.
 		/// </summary>
 		/// <param name="polyline"></param>
+		/// <param name="pointSize"></param>
 		/// <returns></returns>
-		public IEnumerable<Polyline3D> ApplyLineType(IPolyline polyline)
+		public IEnumerable<Polyline3D> ApplyLineType(IPolyline polyline, double? pointSize = null)
 		{
+			if (!pointSize.HasValue)
+			{
+				pointSize = polyline.GetActiveLineWeightType().GetLineWeightValue();
+			}
+
 			var lst = new List<Polyline3D>();
 			if (!this.IsComplex)
 			{
@@ -118,13 +124,13 @@ namespace ACadSharp.Tables
 			for (int i = 1; i < pts.Length; i++)
 			{
 				XYZ next = pts[i];
-				lst.AddRange(applySegment(current, next, polyline.GetActiveLineWeightType()));
+				lst.AddRange(applySegment(current, next, pointSize.Value));
 				current = next;
 			}
 
 			if (polyline.IsClosed)
 			{
-				lst.AddRange(applySegment(pts[0], current, polyline.GetActiveLineWeightType()));
+				lst.AddRange(applySegment(pts[0], current, pointSize.Value));
 			}
 
 			return lst;
@@ -182,7 +188,7 @@ namespace ACadSharp.Tables
 			}
 		}
 
-		private List<Polyline3D> applySegment(XYZ start, XYZ end, LineWeightType lineweight)
+		private List<Polyline3D> applySegment(XYZ start, XYZ end, double pointSize)
 		{
 			List<Polyline3D> lst = new List<Polyline3D>();
 			double dist = start.DistanceFrom(end);
@@ -202,7 +208,7 @@ namespace ACadSharp.Tables
 
 					if (item.IsPoint)
 					{
-						Polyline3D pl = new Polyline3D(start, next + v * lineweight.GetLineWeightValue());
+						Polyline3D pl = new Polyline3D(start, next + v * pointSize);
 						lst.Add(pl);
 					}
 					else if (item.IsLine)
@@ -233,7 +239,7 @@ namespace ACadSharp.Tables
 
 					if (item.IsPoint)
 					{
-						Polyline3D pl = new Polyline3D(start, next + v * lineweight.GetLineWeightValue());
+						Polyline3D pl = new Polyline3D(start, next + v * pointSize);
 						lst.Add(pl);
 					}
 					else if (item.IsLine)
