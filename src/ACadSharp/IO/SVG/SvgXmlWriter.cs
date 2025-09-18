@@ -96,6 +96,55 @@ namespace ACadSharp.IO.SVG
 			this.endDocument();
 		}
 
+		protected void notify(string message, NotificationType type, Exception ex = null)
+		{
+			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, type, ex));
+		}
+
+		protected void triggerNotification(object sender, NotificationEventArgs e)
+		{
+			this.OnNotification?.Invoke(sender, e);
+		}
+
+		protected void writeEntity(Entity entity, Transform transform)
+		{
+			this.WriteComment($"{entity.ObjectName} | {entity.Handle}");
+
+			switch (entity)
+			{
+				case Arc arc:
+					this.writeArc(arc, transform);
+					break;
+				case Line line:
+					this.writeLine(line, transform);
+					break;
+				case Point point:
+					this.writePoint(point, transform);
+					break;
+				case Circle circle:
+					this.writeCircle(circle, transform);
+					break;
+				case Ellipse ellipse:
+					this.writeEllipse(ellipse, transform);
+					break;
+				//case Hatch hatch:
+				//	this.writeHatch(hatch, transform);
+				//	break;
+				case Insert insert:
+					this.writeInsert(insert, transform);
+					break;
+				case IPolyline polyline:
+					this.writePolyline(polyline, transform);
+					break;
+				case IText text:
+					this.writeText(text, transform);
+					break;
+				default:
+					this.notify($"[{entity.ObjectName}] Entity not implemented.", NotificationType.NotImplemented);
+					break;
+			}
+		}
+
 		private string colorSvg(Color color)
 		{
 			if (this.Layout != null && color.Equals(Color.Default))
@@ -106,21 +155,40 @@ namespace ACadSharp.IO.SVG
 			return $"rgb({color.R},{color.G},{color.B})";
 		}
 
+		private string createPath(IEnumerable<IPolyline> polylines)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			foreach (var item in polylines)
+			{
+				var pts = item.GetPoints().ToArray();
+				if (!pts.Any())
+				{
+					continue;
+				}
+
+				var pt = pts[0];
+				sb.Append($"M {pt.ToPixelSize(this.Units).ToSvg()} ");
+				for (int i = 1; i < pts.Length; i++)
+				{
+					pt = pts[i];
+					sb.Append($"L {pt.ToPixelSize(this.Units).ToSvg()} ");
+				}
+
+				if (item.IsClosed)
+				{
+					sb.Append("Z");
+				}
+			}
+
+			return sb.ToString();
+		}
+
 		private void endDocument()
 		{
 			this.WriteEndElement();
 			this.WriteEndDocument();
 			this.Close();
-		}
-
-		protected void notify(string message, NotificationType type, Exception ex = null)
-		{
-			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, type, ex));
-		}
-
-		protected void triggerNotification(object sender, NotificationEventArgs e)
-		{
-			this.OnNotification?.Invoke(sender, e);
 		}
 
 		private void startDocument(BoundingBox box)
@@ -221,43 +289,6 @@ namespace ACadSharp.IO.SVG
 			this.writeEntity(entity, new Transform());
 		}
 
-		protected void writeEntity(Entity entity, Transform transform)
-		{
-			switch (entity)
-			{
-				case Arc arc:
-					this.writeArc(arc, transform);
-					break;
-				case Line line:
-					this.writeLine(line, transform);
-					break;
-				case Point point:
-					this.writePoint(point, transform);
-					break;
-				case Circle circle:
-					this.writeCircle(circle, transform);
-					break;
-				case Ellipse ellipse:
-					this.writeEllipse(ellipse, transform);
-					break;
-				//case Hatch hatch:
-				//	this.writeHatch(hatch, transform);
-				//	break;
-				case Insert insert:
-					this.writeInsert(insert, transform);
-					break;
-				case IPolyline polyline:
-					this.writePolyline(polyline, transform);
-					break;
-				case IText text:
-					this.writeText(text, transform);
-					break;
-				default:
-					this.notify($"[{entity.ObjectName}] Entity not implemented.", NotificationType.NotImplemented);
-					break;
-			}
-		}
-
 		private void writeEntityHeader(IEntity entity, Transform transform)
 		{
 			Color color = entity.GetActiveColor();
@@ -336,15 +367,18 @@ namespace ACadSharp.IO.SVG
 				this.WriteAttributeString("y1", line.StartPoint.Y.ToSvg(this.Units));
 				this.WriteAttributeString("x2", line.EndPoint.X.ToSvg(this.Units));
 				this.WriteAttributeString("y2", line.EndPoint.Y.ToSvg(this.Units));
-				
+
 				this.WriteEndElement();
 			}
 			else
 			{
-				foreach (var item in lines)
-				{
-					this.writeEntity(item, transform);
-				}
+				this.WriteStartElement("path");
+
+				this.writeEntityHeader(line, transform);
+
+				this.WriteAttributeString("d", this.createPath(lines));
+
+				this.WriteEndElement();
 			}
 		}
 
