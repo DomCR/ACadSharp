@@ -27,7 +27,7 @@ namespace ACadSharp.Entities
 		/// Polyline flags.
 		/// </summary>
 		[DxfCodeValue(70)]
-		public PolylineFlags Flags { get => _flags; set => _flags = value; }
+		public PolylineFlags Flags { get => this._flags; set => this._flags = value; }
 
 		/// <inheritdoc/>
 		public bool IsClosed
@@ -74,10 +74,6 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(39)]
 		public double Thickness { get; set; } = 0.0;
 
-		//71	Polygon mesh M vertex count(optional; default = 0)
-		//72	Polygon mesh N vertex count(optional; default = 0)
-		//73	Smooth surface M density(optional; default = 0)
-		//74	Smooth surface N density(optional; default = 0)
 		/// <summary>
 		/// Vertices that form this polyline.
 		/// </summary>
@@ -91,6 +87,9 @@ namespace ACadSharp.Entities
 
 		private PolylineFlags _flags;
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public Polyline() : base()
 		{
 			this.Vertices = new SeqendCollection<Vertex>(this);
