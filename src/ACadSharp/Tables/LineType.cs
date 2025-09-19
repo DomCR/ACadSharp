@@ -191,12 +191,8 @@ namespace ACadSharp.Tables
 		private List<Polyline3D> applySegment(XYZ start, XYZ end, double pointSize)
 		{
 			List<Polyline3D> lst = new List<Polyline3D>();
-			double dist = start.DistanceFrom(end);
-			if (dist < this.PatternLen)
-			{
-				return lst;
-			}
 
+			double dist = start.DistanceFrom(end);
 			XYZ next = start;
 			int nSegments = (int)Math.Floor(dist / this.PatternLen);
 			XYZ v = (end - start).Normalize();
