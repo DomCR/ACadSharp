@@ -100,12 +100,28 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Converts a <see cref="IPolyline"/> to a series of <see cref="Polyline3D"/> applying this line type.
+		/// Converts a collection of <see cref="IVector"/> to a series of <see cref="Polyline3D"/> in the line type shape.
+		/// </summary>
+		/// <param name="points"></param>
+		/// <param name="pointSize"></param>
+		/// <returns></returns>
+		public IEnumerable<Polyline3D> CreateLineTypeShape(IEnumerable<IVector> points, double? pointSize = null)
+		{
+			if (!points.Any() || points.Count() < 2)
+			{
+				throw new ArgumentException("The list must contain at least 2 points to create the shape.");
+			}
+
+			return this.CreateLineTypeShape(new Polyline3D(points.Select(v => v.Convert<XYZ>())), pointSize);
+		}
+
+		/// <summary>
+		/// Converts a <see cref="IPolyline"/> to a series of <see cref="Polyline3D"/> in line type shape.
 		/// </summary>
 		/// <param name="polyline"></param>
 		/// <param name="pointSize"></param>
 		/// <returns></returns>
-		public IEnumerable<Polyline3D> ApplyLineType(IPolyline polyline, double? pointSize = null)
+		public IEnumerable<Polyline3D> CreateLineTypeShape(IPolyline polyline, double? pointSize = null)
 		{
 			if (!pointSize.HasValue)
 			{

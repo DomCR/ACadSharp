@@ -356,7 +356,7 @@ namespace ACadSharp.IO.SVG
 		{
 			Polyline3D polyline = new Polyline3D(line.StartPoint, line.EndPoint);
 			double pointSize = line.GetActiveLineWeightType().GetLineWeightValue().ToPixelSize(this.Units);
-			var lines = line.GetActiveLineType().ApplyLineType(polyline, pointSize);
+			var lines = line.GetActiveLineType().CreateLineTypeShape(polyline, pointSize);
 
 			if (lines.Count() == 1)
 			{
