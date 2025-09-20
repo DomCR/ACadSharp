@@ -103,9 +103,19 @@ namespace ACadSharp.Tables
 		/// Converts a collection of <see cref="IVector"/> to a series of <see cref="Polyline3D"/> in the line type shape.
 		/// </summary>
 		/// <param name="points"></param>
-		/// <param name="pointSize"></param>
 		/// <returns></returns>
-		public IEnumerable<Polyline3D> CreateLineTypeShape(IEnumerable<IVector> points, double? pointSize = null)
+		public IEnumerable<Polyline3D> CreateLineTypeShape(params IEnumerable<IVector> points)
+		{
+			return this.CreateLineTypeShape(null, points);
+		}
+
+		/// <summary>
+		/// Converts a collection of <see cref="IVector"/> to a series of <see cref="Polyline3D"/> in the line type shape.
+		/// </summary>
+		/// <param name="pointSize"></param>
+		/// <param name="points"></param>
+		/// <returns></returns>
+		public IEnumerable<Polyline3D> CreateLineTypeShape(double? pointSize, params IEnumerable<IVector> points)
 		{
 			if (!points.Any() || points.Count() < 2)
 			{
@@ -140,13 +150,13 @@ namespace ACadSharp.Tables
 			for (int i = 1; i < pts.Length; i++)
 			{
 				XYZ next = pts[i];
-				lst.AddRange(applySegment(current, next, pointSize.Value));
+				lst.AddRange(this.createSegmentShape(current, next, pointSize.Value));
 				current = next;
 			}
 
 			if (polyline.IsClosed)
 			{
-				lst.AddRange(applySegment(pts[0], current, pointSize.Value));
+				lst.AddRange(this.createSegmentShape(current, pts[0], pointSize.Value));
 			}
 
 			return lst;
@@ -204,49 +214,64 @@ namespace ACadSharp.Tables
 			}
 		}
 
-		private List<Polyline3D> applySegment(XYZ start, XYZ end, double pointSize)
+		private List<Polyline3D> createSegmentShape(XYZ start, XYZ end, double pointSize)
 		{
 			List<Polyline3D> lst = new List<Polyline3D>();
+			Polyline3D current = new(start);
 
 			double dist = start.DistanceFrom(end);
 			XYZ next = start;
 			int nSegments = (int)Math.Floor(dist / this.PatternLen);
 			XYZ v = (end - start).Normalize();
-			for (int i = 0; i < nSegments; i++)
-			{
-				foreach (var item in this.Segments)
+
+			if (false)
+				for (int i = 0; i < nSegments; i++)
 				{
-					next += v * Math.Abs(item.Length);
-
-					if (item.IsPoint)
-					{
-						Polyline3D pl = new Polyline3D(start, next + v * pointSize);
-						lst.Add(pl);
-					}
-					else if (item.IsLine)
-					{
-						Polyline3D pl = new Polyline3D(start, next);
-						lst.Add(pl);
-					}
-
-					start = next;
-				}
-			}
-
-			double overflow = dist - (nSegments * this.PatternLen);
-			while (overflow > 0)
-			{
-				foreach (var item in this.Segments)
-				{
-					if (item.Length < overflow)
+					foreach (var item in this.Segments)
 					{
 						next += v * Math.Abs(item.Length);
-						overflow -= Math.Abs(item.Length);
+
+						if (item.IsPoint)
+						{
+							Polyline3D pl = new Polyline3D(start, next + v * pointSize);
+							lst.Add(pl);
+
+							if (current.Vertices.Any())
+							{
+								lst.Add(current);
+								current = new Polyline3D();
+							}
+						}
+						else if (item.IsLine)
+						{
+							current.Vertices.Add(new Vertex3D(next));
+						}
+						else if (item.IsSpace && current.Vertices.Any())
+						{
+							if (current.Vertices.Any())
+							{
+								lst.Add(current);
+								current = new Polyline3D();
+							}
+						}
+
+						start = next;
+					}
+				}
+
+			while ((double)dist > 0)
+			{
+				foreach (var item in this.Segments)
+				{
+					if (item.Length < (double)dist)
+					{
+						next += v * Math.Abs(item.Length);
+						dist -= Math.Abs(item.Length);
 					}
 					else
 					{
-						next += v * Math.Abs(overflow);
-						overflow -= Math.Abs(overflow);
+						next += v * Math.Abs((double)dist);
+						dist -= Math.Abs((double)dist);
 					}
 
 					if (item.IsPoint)
@@ -262,7 +287,7 @@ namespace ACadSharp.Tables
 
 					start = next;
 
-					if (overflow <= 0)
+					if ((double)dist <= 0)
 					{
 						break;
 					}

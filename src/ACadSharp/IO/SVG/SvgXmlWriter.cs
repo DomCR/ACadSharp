@@ -354,9 +354,8 @@ namespace ACadSharp.IO.SVG
 
 		private void writeLine(Line line, Transform transform)
 		{
-			Polyline3D polyline = new Polyline3D(line.StartPoint, line.EndPoint);
 			double pointSize = line.GetActiveLineWeightType().GetLineWeightValue().ToPixelSize(this.Units);
-			var lines = line.GetActiveLineType().CreateLineTypeShape(polyline, pointSize);
+			var lines = line.GetActiveLineType().CreateLineTypeShape(pointSize, line.StartPoint, line.EndPoint);
 
 			if (lines.Count() == 1)
 			{
