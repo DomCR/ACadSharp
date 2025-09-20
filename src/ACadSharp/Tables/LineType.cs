@@ -224,41 +224,6 @@ namespace ACadSharp.Tables
 			int nSegments = (int)Math.Floor(dist / this.PatternLen);
 			XYZ v = (end - start).Normalize();
 
-			if (false)
-				for (int i = 0; i < nSegments; i++)
-				{
-					foreach (var item in this.Segments)
-					{
-						next += v * Math.Abs(item.Length);
-
-						if (item.IsPoint)
-						{
-							Polyline3D pl = new Polyline3D(start, next + v * pointSize);
-							lst.Add(pl);
-
-							if (current.Vertices.Any())
-							{
-								lst.Add(current);
-								current = new Polyline3D();
-							}
-						}
-						else if (item.IsLine)
-						{
-							current.Vertices.Add(new Vertex3D(next));
-						}
-						else if (item.IsSpace && current.Vertices.Any())
-						{
-							if (current.Vertices.Any())
-							{
-								lst.Add(current);
-								current = new Polyline3D();
-							}
-						}
-
-						start = next;
-					}
-				}
-
 			while ((double)dist > 0)
 			{
 				foreach (var item in this.Segments)
@@ -278,17 +243,36 @@ namespace ACadSharp.Tables
 					{
 						Polyline3D pl = new Polyline3D(start, next + v * pointSize);
 						lst.Add(pl);
+
+						if (current.Vertices.Any())
+						{
+							lst.Add(current);
+							current = new Polyline3D();
+						}
 					}
 					else if (item.IsLine)
 					{
-						Polyline3D pl = new Polyline3D(start, next);
-						lst.Add(pl);
+						current.Vertices.Add(new Vertex3D(next));
+					}
+					else if (item.IsSpace)
+					{
+						if (current.Vertices.Any())
+						{
+							lst.Add(current);
+						}
+
+						current = new Polyline3D(next);
 					}
 
 					start = next;
 
 					if ((double)dist <= 0)
 					{
+						if (current.Vertices.Any())
+						{
+							lst.Add(current);
+						}
+
 						break;
 					}
 				}
