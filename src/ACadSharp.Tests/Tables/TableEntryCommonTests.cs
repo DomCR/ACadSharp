@@ -11,7 +11,7 @@ namespace ACadSharp.Tests.Tables
 	{
 		public static string DefaultName = "table_entry";
 
-		[Fact()]
+		[Fact]
 		public void ChangeName()
 		{
 			T entry = this.createEntry();
@@ -44,6 +44,17 @@ namespace ACadSharp.Tests.Tables
 		}
 
 		[Fact]
+		public void IsValidNameTest()
+		{
+			for (int i = 0; i < INamedCadObjectExtensions.InvalidCharacters.Length; i++)
+			{
+				var entry = this.createEntry($"{DefaultName}{INamedCadObjectExtensions.InvalidCharacters[i]}");
+
+				Assert.False(entry.IsValidDxfName());
+			}
+		}
+
+		[Fact]
 		public void SetFlagUsingMapper()
 		{
 			T entry = this.createEntry();
@@ -54,11 +65,16 @@ namespace ACadSharp.Tests.Tables
 			Assert.True(entry.Flags.HasFlag(StandardFlags.XrefResolved));
 		}
 
-		protected abstract Table<T> getTable(CadDocument document);
-
-		protected virtual T createEntry()
+		protected T createEntry()
 		{
-			return (T)Activator.CreateInstance(typeof(T), DefaultName);
+			return this.createEntry(DefaultName);
 		}
+
+		protected virtual T createEntry(string name)
+		{
+			return (T)Activator.CreateInstance(typeof(T), name);
+		}
+
+		protected abstract Table<T> getTable(CadDocument document);
 	}
 }
