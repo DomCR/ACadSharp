@@ -1,6 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using System.Reflection;
-using System;
 using CSMath;
 
 namespace ACadSharp.Entities
@@ -14,7 +12,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.Entity3DSolid)]
 	[DxfSubClass(DxfSubclassMarker.ModelerGeometry)]
-	public class Solid3D : Entity
+	public class Solid3D : ModelerGeometry
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.SOLID3D;

@@ -18,6 +18,7 @@ using System.Globalization;
 using ACadSharp.Objects.Evaluations;
 using ACadSharp.XData;
 using System.Diagnostics;
+using ACadSharp.Exceptions;
 
 namespace ACadSharp.IO.DWG
 {
@@ -848,6 +849,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readUnknownEntity(null);
 					break;
 				case ObjectType.SOLID3D:
+					template = this.readSolid3D();
 					break;
 				case ObjectType.BODY:
 					break;
@@ -2974,6 +2976,72 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private CadTemplate readSolid3D()
+		{
+			Solid3D solid = new Solid3D();
+			var template = new CadEntityTemplate<Solid3D>(solid);
+
+			this.readCommonEntityData(template);
+
+			this.readCommonModelerGeometry(solid);
+
+
+
+			return template;
+		}
+
+		private void readCommonModelerGeometry(ModelerGeometry geometry)
+		{
+			//ACIS Empty bit B X If 1, then no data follows
+			var hasData = this._mergedReaders.ReadBit();
+
+			if (hasData)
+			{
+				this.readMModelerGeometryData(geometry);
+			}
+
+			//Common:
+			//Wireframe data present B X True if wireframe data is present
+			var isWireframe = this._mergedReaders.ReadBit();
+			if (isWireframe)
+			{
+				//Point present B X If true, following point is present, otherwise assume 0,0,0 for point
+				if (this._mergedReaders.ReadBit())
+				{
+
+				}
+			}
+
+		}
+
+		private void readMModelerGeometryData(ModelerGeometry geometry)
+		{
+			//Unknown bit B X
+			bool unknown = this._mergedReaders.ReadBit();
+
+			//Version BS Can be 1 or 2.
+			short version = this._mergedReaders.ReadBitShort();
+
+			switch (version)
+			{
+				//Version == 1 (following 2 items repeat until Block Size is 0):
+				//Block Size BL X Number of bytes of SAT data in this block. if value 
+				//is between 0x20 and 0x7E, calculate 0x9F-the value
+				//to get the real character.If it's a tab, we
+				//convert to a space.
+				case 1:
+					break;
+				//Version == 2:
+				//Immediately following will be an acis file.Header value of “ACIS BinaryFile” indicates
+				//SAB, otherwise it is a text SAT file. No length is given.SAB files will end with
+				//“End\x0E\x02of\x0E\x04ACIS\x0D\x04data”. SAT files must be parsed to find the end.
+				case 2:
+					break;
+				default:
+					throw new DwgException("");
+			}
+		}
+
 		private CadTemplate readRay()
 		{
 			Ray ray = new Ray();
@@ -3481,7 +3549,7 @@ namespace ACadSharp.IO.DWG
 		}
 
 		private CadTemplate readObjectContextData(CadTemplate template)
-		{ 
+		{
 			this.readCommonNonEntityData(template);
 			ObjectContextData contextData = (ObjectContextData)template.CadObject;
 
