@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Objects;
 using ACadSharp.Tables;
-using CSMath;
 
 namespace ACadSharp.Entities
 {
@@ -46,7 +45,7 @@ namespace ACadSharp.Entities
 		double LineTypeScale { get; set; }
 
 		/// <summary>
-		/// Specifies the lineweight of an individual object or the default lineweight for the drawing.
+		/// Specifies the line weight of an individual object or the default line weight for the drawing.
 		/// </summary>
 		LineWeightType LineWeight { get; set; }
 

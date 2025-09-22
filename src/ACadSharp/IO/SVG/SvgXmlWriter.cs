@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Extensions;
-using ACadSharp.IO.DXF;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Types.Units;
@@ -24,9 +23,13 @@ namespace ACadSharp.IO.SVG
 
 		public Layout Layout { get; set; }
 
-		public UnitsType Units { get; set; }
+		public UnitsType Units { get; protected set; }
 
-		public SvgXmlWriter(Stream w, Encoding encoding, SvgConfiguration configuration) : base(w, encoding)
+		public SvgXmlWriter(Stream stream, SvgConfiguration configuration) : this(stream, null, configuration)
+		{
+		}
+
+		public SvgXmlWriter(Stream stream, Encoding? encoding, SvgConfiguration configuration) : base(stream, encoding)
 		{
 			this.Configuration = configuration;
 		}
@@ -93,128 +96,20 @@ namespace ACadSharp.IO.SVG
 			this.endDocument();
 		}
 
-		private string colorSvg(Color color)
-		{
-			if (this.Layout != null && color.Equals(Color.Default))
-			{
-				color = Color.Black;
-			}
-
-			return $"rgb({color.R},{color.G},{color.B})";
-		}
-
-		private void endDocument()
-		{
-			this.WriteEndElement();
-			this.WriteEndDocument();
-			this.Close();
-		}
-
-		private void notify(string message, NotificationType type, Exception ex = null)
+		protected void notify(string message, NotificationType type, Exception ex = null)
 		{
 			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, type, ex));
 		}
 
-		private void startDocument(BoundingBox box)
+		protected void triggerNotification(object sender, NotificationEventArgs e)
 		{
-			this.WriteStartDocument();
-
-			this.WriteStartElement("svg");
-			this.WriteAttributeString("xmlns", "http://www.w3.org/2000/svg");
-
-			this.WriteAttributeString("width", box.Max.X - box.Min.X);
-			this.WriteAttributeString("height", box.Max.Y - box.Min.Y);
-
-			this.WriteStartAttribute("viewBox");
-			this.WriteValue(box.Min.X.ToSvg(this.Units));
-			this.WriteValue(" ");
-			this.WriteValue(box.Min.Y.ToSvg(this.Units));
-			this.WriteValue(" ");
-			this.WriteValue((box.Max.X - box.Min.X).ToSvg(this.Units));
-			this.WriteValue(" ");
-			this.WriteValue((box.Max.Y - box.Min.Y).ToSvg(this.Units));
-			this.WriteEndAttribute();
-
-			this.WriteAttributeString("transform", $"scale(1,-1)");
-
-			if (this.Layout != null)
-			{
-				this.WriteAttributeString("style", "background-color:white");
-			}
+			this.OnNotification?.Invoke(sender, e);
 		}
 
-		private string svgPoints(IEnumerable<IVector> points, Transform transform)
+		protected void writeEntity(Entity entity, Transform transform)
 		{
-			if (!points.Any())
-			{
-				return string.Empty;
-			}
+			this.WriteComment($"{entity.ObjectName} | {entity.Handle}");
 
-			StringBuilder sb = new StringBuilder();
-			sb.Append(points.First().ToPixelSize(this.Units).ToSvg());
-			foreach (IVector point in points.Skip(1))
-			{
-				sb.Append(' ');
-				sb.Append(point.ToPixelSize(this.Units).ToSvg());
-			}
-
-			return sb.ToString();
-		}
-
-		private void writeArc(Arc arc, Transform transform)
-		{
-			//A rx ry rotation large-arc-flag sweep-flag x y
-
-			this.WriteStartElement("polyline");
-
-			this.writeEntityHeader(arc, transform);
-
-			IEnumerable<IVector> vertices = arc.PolygonalVertexes(256).OfType<IVector>();
-			string pts = this.svgPoints(vertices, transform);
-			this.WriteAttributeString("points", pts);
-			this.WriteAttributeString("fill", "none");
-
-			this.WriteEndElement();
-		}
-
-		private void writeCircle(Circle circle, Transform transform)
-		{
-			var loc = transform.ApplyTransform(circle.Center);
-
-			this.WriteStartElement("circle");
-
-			this.writeEntityHeader(circle, transform);
-
-			this.WriteAttributeString("r", circle.Radius);
-			this.WriteAttributeString("cx", loc.X);
-			this.WriteAttributeString("cy", loc.Y);
-
-			this.WriteAttributeString("fill", "none");
-
-			this.WriteEndElement();
-		}
-
-		private void writeEllipse(Ellipse ellipse, Transform transform)
-		{
-			this.WriteStartElement("polygon");
-
-			this.writeEntityHeader(ellipse, transform);
-
-			IEnumerable<IVector> vertices = ellipse.PolygonalVertexes(256).OfType<IVector>();
-			string pts = this.svgPoints(vertices, transform);
-			this.WriteAttributeString("points", pts);
-			this.WriteAttributeString("fill", "none");
-
-			this.WriteEndElement();
-		}
-
-		private void writeEntity(Entity entity)
-		{
-			this.writeEntity(entity, new Transform());
-		}
-
-		private void writeEntity(Entity entity, Transform transform)
-		{
 			switch (entity)
 			{
 				case Arc arc:
@@ -248,6 +143,151 @@ namespace ACadSharp.IO.SVG
 					this.notify($"[{entity.ObjectName}] Entity not implemented.", NotificationType.NotImplemented);
 					break;
 			}
+		}
+
+		private string colorSvg(Color color)
+		{
+			if (this.Layout != null && color.Equals(Color.Default))
+			{
+				color = Color.Black;
+			}
+
+			return $"rgb({color.R},{color.G},{color.B})";
+		}
+
+		private string createPath(IEnumerable<IPolyline> polylines)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			foreach (var item in polylines)
+			{
+				var pts = item.GetPoints<XY>().ToArray();
+				if (!pts.Any())
+				{
+					continue;
+				}
+
+				var pt = pts[0];
+				sb.Append($"M {pt.ToPixelSize(this.Units).ToSvg()} ");
+				for (int i = 1; i < pts.Length; i++)
+				{
+					pt = pts[i];
+					sb.Append($"L {pt.ToPixelSize(this.Units).ToSvg()} ");
+				}
+
+				if (item.IsClosed)
+				{
+					sb.Append("Z");
+				}
+			}
+
+			return sb.ToString();
+		}
+
+		private void endDocument()
+		{
+			this.WriteEndElement();
+			this.WriteEndDocument();
+			this.Close();
+		}
+
+		private void startDocument(BoundingBox box)
+		{
+			this.WriteStartDocument();
+
+			this.WriteStartElement("svg");
+			this.WriteAttributeString("xmlns", "http://www.w3.org/2000/svg");
+
+			this.WriteAttributeString("width", box.Max.X - box.Min.X);
+			this.WriteAttributeString("height", box.Max.Y - box.Min.Y);
+
+			this.WriteStartAttribute("viewBox");
+			this.WriteValue(box.Min.X.ToSvg(this.Units));
+			this.WriteValue(" ");
+			this.WriteValue(box.Min.Y.ToSvg(this.Units));
+			this.WriteValue(" ");
+			this.WriteValue((box.Max.X - box.Min.X).ToSvg(this.Units));
+			this.WriteValue(" ");
+			this.WriteValue((box.Max.Y - box.Min.Y).ToSvg(this.Units));
+			this.WriteEndAttribute();
+
+			this.WriteAttributeString("transform", $"scale(1,-1)");
+
+			if (this.Layout != null)
+			{
+				this.WriteAttributeString("style", "background-color:white");
+			}
+		}
+
+		private string svgPoints<T>(IEnumerable<T> points, Transform transform)
+			where T : IVector, new()
+		{
+			if (!points.Any())
+			{
+				return string.Empty;
+			}
+
+			StringBuilder sb = new StringBuilder();
+			sb.Append(points.First().ToPixelSize(this.Units).ToSvg());
+			foreach (T point in points.Skip(1))
+			{
+				sb.Append(' ');
+				sb.Append(point.ToPixelSize(this.Units).ToSvg());
+			}
+
+			return sb.ToString();
+		}
+
+		private void writeArc(Arc arc, Transform transform)
+		{
+			//A rx ry rotation large-arc-flag sweep-flag x y
+
+			this.WriteStartElement("polyline");
+
+			this.writeEntityHeader(arc, transform);
+
+			var vertices = arc.PolygonalVertexes(256);
+			string pts = this.svgPoints(vertices, transform);
+			this.WriteAttributeString("points", pts);
+			this.WriteAttributeString("fill", "none");
+
+			this.WriteEndElement();
+		}
+
+		private void writeCircle(Circle circle, Transform transform)
+		{
+			var loc = transform.ApplyTransform(circle.Center);
+
+			this.WriteStartElement("circle");
+
+			this.writeEntityHeader(circle, transform);
+
+			this.WriteAttributeString("r", circle.Radius);
+			this.WriteAttributeString("cx", loc.X);
+			this.WriteAttributeString("cy", loc.Y);
+
+			this.WriteAttributeString("fill", "none");
+
+			this.WriteEndElement();
+		}
+
+		private void writeEllipse(Ellipse ellipse, Transform transform)
+		{
+			this.WriteStartElement("polygon");
+
+			this.writeEntityHeader(ellipse, transform);
+
+			var vertices = ellipse.PolygonalVertexes(256);
+			string pts = this.svgPoints(vertices, transform);
+			this.WriteAttributeString("points", pts);
+			this.WriteAttributeString("fill", "none");
+
+			this.WriteEndElement();
+		}
+
+		private void writeEntity(Entity entity)
+		{
+			this.writeEntity(entity, new Transform());
 		}
 
 		private void writeEntityHeader(IEntity entity, Transform transform)
@@ -315,16 +355,32 @@ namespace ACadSharp.IO.SVG
 
 		private void writeLine(Line line, Transform transform)
 		{
-			this.WriteStartElement("line");
+			double pointSize = line.GetActiveLineWeightType().GetLineWeightValue().ToPixelSize(this.Units);
+			var lines = line.GetActiveLineType().CreateLineTypeShape(pointSize, line.StartPoint, line.EndPoint);
 
-			this.writeEntityHeader(line, transform);
+			if (lines.Count() == 1)
+			{
+				this.WriteStartElement("line");
 
-			this.WriteAttributeString("x1", line.StartPoint.X.ToSvg(this.Units));
-			this.WriteAttributeString("y1", line.StartPoint.Y.ToSvg(this.Units));
-			this.WriteAttributeString("x2", line.EndPoint.X.ToSvg(this.Units));
-			this.WriteAttributeString("y2", line.EndPoint.Y.ToSvg(this.Units));
+				this.writeEntityHeader(line, transform);
 
-			this.WriteEndElement();
+				this.WriteAttributeString("x1", line.StartPoint.X.ToSvg(this.Units));
+				this.WriteAttributeString("y1", line.StartPoint.Y.ToSvg(this.Units));
+				this.WriteAttributeString("x2", line.EndPoint.X.ToSvg(this.Units));
+				this.WriteAttributeString("y2", line.EndPoint.Y.ToSvg(this.Units));
+
+				this.WriteEndElement();
+			}
+			else
+			{
+				this.WriteStartElement("path");
+
+				this.writeEntityHeader(line, transform);
+
+				this.WriteAttributeString("d", this.createPath(lines));
+
+				this.WriteEndElement();
+			}
 		}
 
 		private void writePattern(HatchPattern pattern)
@@ -362,9 +418,8 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(polyline, transform);
 
-			var vertices = polyline.Vertices.Select(v => v.Location).ToList();
+			string pts = this.svgPoints(polyline.GetPoints<XY>(this.Configuration.ArcPoints), transform);
 
-			string pts = this.svgPoints(polyline.Vertices.Select(v => v.Location), transform);
 			this.WriteAttributeString("points", pts);
 			this.WriteAttributeString("fill", "none");
 

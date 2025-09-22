@@ -35,22 +35,24 @@ namespace ACadSharp.IO
 		/// </remarks>
 		public double PointRadius { get; set; } = 0.1;
 
+		public int ArcPoints { get; set; } = 256;
+
 		/// <summary>
 		/// Get the value of the stroke-width in mm.
 		/// </summary>
-		/// <param name="lineweightType"></param>
+		/// <param name="lineWeight"></param>
 		/// <param name="units"></param>
 		/// <returns></returns>
-		public double GetLineWeightValue(LineWeightType lineweightType, UnitsType units)
+		public double GetLineWeightValue(LineWeightType lineWeight, UnitsType units)
 		{
-			double value = Math.Abs((double)lineweightType);
+			double value = Math.Abs((double)lineWeight);
 
 			if (units == UnitsType.Unitless)
 			{
 				return value / this.LineWeightRatio;
 			}
 
-			switch (lineweightType)
+			switch (lineWeight)
 			{
 				case LineWeightType.Default:
 					return this.DefaultLineWeight;
