@@ -161,7 +161,7 @@ namespace ACadSharp.IO.SVG
 
 			foreach (var item in polylines)
 			{
-				var pts = item.GetPoints().ToArray();
+				var pts = item.GetPoints<XY>().ToArray();
 				if (!pts.Any())
 				{
 					continue;
@@ -219,7 +219,8 @@ namespace ACadSharp.IO.SVG
 			}
 		}
 
-		private string svgPoints(IEnumerable<IVector> points, Transform transform)
+		private string svgPoints<T>(IEnumerable<T> points, Transform transform)
+			where T : IVector, new()
 		{
 			if (!points.Any())
 			{
@@ -228,7 +229,7 @@ namespace ACadSharp.IO.SVG
 
 			StringBuilder sb = new StringBuilder();
 			sb.Append(points.First().ToPixelSize(this.Units).ToSvg());
-			foreach (IVector point in points.Skip(1))
+			foreach (T point in points.Skip(1))
 			{
 				sb.Append(' ');
 				sb.Append(point.ToPixelSize(this.Units).ToSvg());
@@ -245,7 +246,7 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(arc, transform);
 
-			IEnumerable<IVector> vertices = arc.PolygonalVertexes(256).OfType<IVector>();
+			var vertices = arc.PolygonalVertexes(256);
 			string pts = this.svgPoints(vertices, transform);
 			this.WriteAttributeString("points", pts);
 			this.WriteAttributeString("fill", "none");
@@ -276,7 +277,7 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(ellipse, transform);
 
-			IEnumerable<IVector> vertices = ellipse.PolygonalVertexes(256).OfType<IVector>();
+			var vertices = ellipse.PolygonalVertexes(256);
 			string pts = this.svgPoints(vertices, transform);
 			this.WriteAttributeString("points", pts);
 			this.WriteAttributeString("fill", "none");
@@ -417,8 +418,7 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(polyline, transform);
 
-			var vertices = polyline.Vertices.Select(v => v.Location).ToList();
-			string pts = this.svgPoints(polyline.Vertices.Select(v => v.Location), transform);
+			string pts = this.svgPoints(polyline.GetPoints<XY>(this.Configuration.ArcPoints), transform);
 
 			this.WriteAttributeString("points", pts);
 			this.WriteAttributeString("fill", "none");

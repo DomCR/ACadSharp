@@ -35,6 +35,8 @@ namespace ACadSharp.IO
 		/// </remarks>
 		public double PointRadius { get; set; } = 0.1;
 
+		public int ArcPoints { get; set; } = 256;
+
 		/// <summary>
 		/// Get the value of the stroke-width in mm.
 		/// </summary>

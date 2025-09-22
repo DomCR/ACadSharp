@@ -141,11 +141,11 @@ namespace ACadSharp.Tables
 			var lst = new List<Polyline3D>();
 			if (!this.IsComplex)
 			{
-				lst.Add(new Polyline3D(polyline.GetPoints(), polyline.IsClosed));
+				lst.Add(new Polyline3D(polyline.GetPoints<XYZ>(), polyline.IsClosed));
 				return lst;
 			}
 
-			var pts = polyline.GetPoints().ToArray();
+			var pts = polyline.GetPoints<XYZ>().ToArray();
 			XYZ current = pts[0];
 			for (int i = 1; i < pts.Length; i++)
 			{
