@@ -11,11 +11,13 @@ namespace ACadSharp.IO.DXF
 	{
 		public DxfReaderConfiguration Configuration { get; }
 
-		public CadBlockRecordTemplate ModelSpaceTemplate { get; set; }
-
-		public HashSet<ulong> ModelSpaceEntities { get; } = new();
-
 		public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
+
+		public override bool KeepUnknownNonGraphicalObjects => this.Configuration.KeepUnknownNonGraphicalObjects;
+
+		public HashSet<Entity> ModelSpaceEntities { get; } = new();
+
+		public CadBlockRecordTemplate ModelSpaceTemplate { get; set; }
 
 		public DxfDocumentBuilder(ACadVersion version, CadDocument document, DxfReaderConfiguration configuration) : base(version, document)
 		{
@@ -24,8 +26,6 @@ namespace ACadSharp.IO.DXF
 
 		public override void BuildDocument()
 		{
-			this.buildDictionaries();
-
 			if (this.ModelSpaceTemplate == null)
 			{
 				BlockRecord record = BlockRecord.ModelSpace;
@@ -34,11 +34,15 @@ namespace ACadSharp.IO.DXF
 				this.AddTemplate(this.ModelSpaceTemplate);
 			}
 
-			this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(this.ModelSpaceEntities);
-			
+			this.createMissingHandles();
+
+			this.ModelSpaceTemplate.OwnedObjectsHandlers.UnionWith(this.ModelSpaceEntities.Select(o => o.Handle));
+
 			this.RegisterTables();
 
 			this.BuildTables();
+
+			this.buildDictionaries();
 
 			//Assign the owners for the different objects
 			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
@@ -47,6 +51,11 @@ namespace ACadSharp.IO.DXF
 			}
 
 			base.BuildDocument();
+
+			if (this.Configuration.CreateDefaults)
+			{
+				this.DocumentToBuild.CreateDefaults();
+			}
 		}
 
 		public List<Entity> BuildEntities()
@@ -64,6 +73,7 @@ namespace ACadSharp.IO.DXF
 				.OfType<CadEntityTemplate>()
 				.Where(o => o.CadObject.Owner == null))
 			{
+				item.CadObject.Handle = 0;
 				entities.Add(item.CadObject);
 			}
 
@@ -83,7 +93,7 @@ namespace ACadSharp.IO.DXF
 						//Entries of the dictionary are assigned in the template
 						break;
 					case CadBlockRecordTemplate record when template.CadObject is Entity entity:
-						record.OwnedObjectsHandlers.Add(entity.Handle);
+						//The entries should be assigned in the blocks or entities section
 						break;
 					case CadPolyLineTemplate pline when template.CadObject is Vertex v:
 						pline.VertexHandles.Add(v.Handle);

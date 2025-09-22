@@ -6,10 +6,16 @@ namespace ACadSharp.Tables
 	[DxfSubClass(DxfSubclassMarker.TableRecord, true)]
 	public abstract class TableEntry : CadObject, INamedCadObject
 	{
+		/// <summary>
+		/// Event occurs when the <see cref="TableEntry.Name"/> changes.
+		/// </summary>
 		public event EventHandler<OnNameChangedArgs> OnNameChanged;
 
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.TableRecord;
+		/// <summary>
+		/// Standard flags
+		/// </summary>
+		[DxfCodeValue(70)]
+		public StandardFlags Flags { get; set; }
 
 		/// <summary>
 		/// Specifies the name of the object
@@ -30,22 +36,33 @@ namespace ACadSharp.Tables
 			}
 		}
 
-		/// <summary>
-		/// Standard flags
-		/// </summary>
-		[DxfCodeValue(70)]
-		public StandardFlags Flags { get; set; }
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.TableRecord;
 
 		protected string name = string.Empty;
 
-		internal TableEntry() { }
-
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		/// <param name="name">Name for the entry, must be unique is added to a <see cref="CadDocument"/>.</param>
+		/// <exception cref="ArgumentNullException"></exception>
 		public TableEntry(string name)
 		{
 			if (string.IsNullOrEmpty(name))
 				throw new ArgumentNullException(nameof(name), $"{this.GetType().Name} must have a name.");
 
 			this.Name = name;
+		}
+
+		internal TableEntry()
+		{ }
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			TableEntry clone = (TableEntry)base.Clone();
+			clone.OnNameChanged = null;
+			return clone;
 		}
 
 		/// <inheritdoc/>

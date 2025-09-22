@@ -37,12 +37,12 @@ namespace ACadSharp.Blocks
 		/// <summary>
 		/// This block is externally dependent.
 		/// </summary>
-		XrefDependent = 16,
+		XRefDependent = 16,
 
 		/// <summary>
 		/// This is a resolved external reference, or dependent of an external reference (ignored on input).
 		/// </summary>
-		XrefResolved = 32,
+		XRefResolved = 32,
 
 		/// <summary>
 		/// This definition is a referenced external reference (ignored on input).

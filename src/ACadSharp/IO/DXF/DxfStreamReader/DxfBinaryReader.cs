@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ACadSharp.IO.DXF
 {
-	internal class DxfBinaryReader : DxfStreamReaderBase, IDxfStreamReader
+	internal class DxfBinaryReader : DxfStreamReaderBase
 	{
 		public const string Sentinel = "AutoCAD Binary DXF\r\n\u001a\0";
 
@@ -24,12 +24,12 @@ namespace ACadSharp.IO.DXF
 			this._encoding = encoding;
 			this._stream = new BinaryReader(stream, this._encoding);
 
-			this.start();
+			this.Start();
 		}
 
-		protected override void start()
+		public override void Start()
 		{
-			base.start();
+			base.Start();
 
 			byte[] sentinel = this._stream.ReadBytes(22);
 			//AutoCAD Binary DXF\r\n\u001a\0

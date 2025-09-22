@@ -4,7 +4,7 @@ using CSMath;
 namespace ACadSharp.Tables
 {
 	/// <summary>
-	/// Represents a <see cref="UCS"/> entry
+	/// Represents a <see cref="UCS"/> entry.
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.TableUcs"/> <br/>
@@ -24,43 +24,44 @@ namespace ACadSharp.Tables
 		public override string SubclassMarker => DxfSubclassMarker.Ucs;
 
 		/// <summary>
-		/// Origin (in WCS)
+		/// Origin (in WCS).
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ Origin { get; set; } = XYZ.Zero;
 
 		/// <summary>
-		/// X-axis direction (in WCS)
+		/// X-axis direction (in WCS).
 		/// </summary>
 		[DxfCodeValue(11, 21, 31)]
 		public XYZ XAxis { get; set; } = XYZ.AxisX;
 
 		/// <summary>
-		/// Y-axis direction(in WCS)
+		/// Y-axis direction(in WCS).
 		/// </summary>
 		[DxfCodeValue(12, 22, 32)]
 		public XYZ YAxis { get; set; } = XYZ.AxisY;
 
 		/// <summary>
-		/// Orthographic type
+		/// Orthographic type.
 		/// </summary>
 		[DxfCodeValue(71)]
 		public OrthographicType OrthographicType { get; set; }
 
 		/// <summary>
-		/// Always 0
+		/// Always 0.
 		/// </summary>
 		[DxfCodeValue(79)]
 		public OrthographicType OrthographicViewType { get; set; }
 
 		/// <summary>
-		/// Elevation
+		/// Elevation.
 		/// </summary>
 		[DxfCodeValue(146)]
 		public double Elevation { get; set; }
 
 		internal UCS() : base() { }
 
+		/// <inheritdoc/>
 		public UCS(string name) : base(name) { }
 	}
 }

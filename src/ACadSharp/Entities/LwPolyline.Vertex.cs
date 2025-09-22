@@ -57,6 +57,12 @@ namespace ACadSharp.Entities
 			{
 				Location = location;
 			}
+
+			/// <inheritdoc/>
+			public override string ToString()
+			{
+				return this.Location.ToString();
+			}
 		}
 	}
 }

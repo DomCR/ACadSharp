@@ -83,6 +83,19 @@ namespace ACadSharp.IO
 			return isBinary;
 		}
 
+		public static CadDocument Read(string filename, DxfReaderConfiguration configuration, NotificationEventHandler notification = null)
+		{
+			CadDocument doc = null;
+
+			using (DxfReader reader = new DxfReader(filename, notification))
+			{
+				reader.Configuration = configuration;
+				doc = reader.Read();
+			}
+
+			return doc;
+		}
+
 		/// <summary>
 		/// Read a dxf document in a stream
 		/// </summary>
@@ -109,7 +122,7 @@ namespace ACadSharp.IO
 		/// <returns></returns>
 		public static CadDocument Read(string filename, NotificationEventHandler notification = null)
 		{
-			return Read(File.OpenRead(filename));
+			return Read(File.OpenRead(filename), notification);
 		}
 
 		/// <inheritdoc/>
@@ -139,6 +152,7 @@ namespace ACadSharp.IO
 				{
 					case DxfFileToken.HeaderSection:
 						this._document.Header = this.ReadHeader();
+						this._document.Header.Document = this._document;
 						this._builder.InitialHandSeed = this._document.Header.HandleSeed;
 						break;
 					case DxfFileToken.ClassesSection:
@@ -162,6 +176,11 @@ namespace ACadSharp.IO
 				}
 
 				this._reader.ReadNext();
+			}
+
+			if (this._document.Header == null)
+			{
+				this._document.Header = new CadHeader(this._document);
 			}
 
 			this._builder.BuildDocument();
@@ -299,7 +318,7 @@ namespace ACadSharp.IO
 		{
 			base.Dispose();
 
-			if (this.Configuration.ClearChache)
+			if (this.Configuration.ClearCache)
 			{
 				DxfMap.ClearCache();
 			}
@@ -324,7 +343,16 @@ namespace ACadSharp.IO
 			while (this._reader.ValueAsString != DxfFileToken.EndSection)
 			{
 				if (this._reader.ValueAsString == DxfFileToken.ClassEntry)
-					classes.AddOrUpdate(this.readClass());
+				{
+					var dxfClass = this.readClass();
+
+					if(dxfClass.ClassNumber < 500)
+					{
+						dxfClass.ClassNumber = (short)(500 + classes.Count);
+					}
+
+					classes.AddOrUpdate(dxfClass);
+				}
 				else
 					this._reader.ReadNext();
 			}
@@ -464,7 +492,14 @@ namespace ACadSharp.IO
 
 			tmpReader = this.createReader(isBinary, isAC1009Format);
 
-			tmpReader.Find(DxfFileToken.HeaderSection);
+			if (!tmpReader.Find(DxfFileToken.HeaderSection))
+			{
+				this.triggerNotification($"Header section not found, using a generic reader.", NotificationType.Warning);
+
+				this._version = ACadVersion.Unknown;
+				tmpReader.Start();
+				return tmpReader;
+			}
 
 			while (tmpReader.ValueAsString != DxfFileToken.EndSection)
 			{
@@ -498,10 +533,14 @@ namespace ACadSharp.IO
 
 					CodePage code = CadUtils.GetCodePage(encoding.ToLower());
 					this._encoding = this.getListedEncoding((int)code);
-					break;
 				}
 
 				tmpReader.ReadNext();
+			}
+
+			if(this._version == ACadVersion.Unknown)
+			{
+				this.triggerNotification($"Dxf version not found, using a generic reader.", NotificationType.Warning);
 			}
 
 			return this.createReader(isBinary, isAC1009Format);

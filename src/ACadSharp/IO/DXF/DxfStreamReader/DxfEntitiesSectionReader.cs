@@ -43,7 +43,11 @@ namespace ACadSharp.IO.DXF
 
 				if (template.OwnerHandle == null)
 				{
-					this._builder.ModelSpaceEntities.Add(template.CadObject.Handle);
+					this._builder.ModelSpaceEntities.Add(template.CadObject);
+				}
+				else if (this._builder.TryGetObjectTemplate(template.OwnerHandle, out CadBlockRecordTemplate owner))
+				{
+					owner.OwnedObjectsHandlers.Add(template.CadObject.Handle);
 				}
 			}
 		}

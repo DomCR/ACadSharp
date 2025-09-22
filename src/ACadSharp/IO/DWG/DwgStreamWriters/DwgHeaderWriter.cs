@@ -45,7 +45,7 @@ namespace ACadSharp.IO.DWG
 			//R2013+:
 			if (this.R2013Plus)
 			{
-				//BLL : Variabele REQUIREDVERSIONS, default value 0, read only.
+				//BLL : Variable REQUIREDVERSIONS, default value 0, read only.
 				this._writer.WriteBitLongLong(0);
 			}
 
@@ -275,7 +275,7 @@ namespace ACadSharp.IO.DWG
 			//BS : ISOLINES
 			this._writer.WriteBitShort(this._header.SurfaceIsolineCount);
 			//BS : CMLJUST
-			this._writer.WriteBitShort((short)this._header.CurrentMultilineJustification);
+			this._writer.WriteBitShort((short)this._header.CurrentMultiLineJustification);
 			//BS : TEXTQLTY
 			this._writer.WriteBitShort(this._header.TextQuality);
 			//BD : LTSCALE
@@ -377,7 +377,7 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//H: DIMSTYLE (hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.DimensionStyleOverrides);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.CurrentDimensionStyle);
 
 			//H: CMLSTYLE (hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
@@ -555,7 +555,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitShort(this._header.DimensionAlternateUnitToleranceDecimalPlaces);
 
 				//H : DIMTXSTY(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.DimensionStyleOverrides);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.DimensionTextStyle);
 			}
 
 			//Common:
@@ -750,7 +750,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//H: DIMTXSTY(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.DimensionTextStyle);
 				//H: DIMLDRBLK(hard pointer)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 				//H: DIMBLK(hard pointer)
@@ -927,7 +927,7 @@ namespace ACadSharp.IO.DWG
 				//RC : HIDETEXT
 				this._writer.WriteByte(this._header.HideText);
 				//RC : XCLIPFRAME, before R2010 the value can be 0 or 1 only.
-				this._writer.WriteByte(this._header.ExternalReferenceClippingBoundaryType);
+				this._writer.WriteByte((byte)this._header.ExternalReferenceClippingBoundaryType);
 				//RC : DIMASSOC
 				this._writer.WriteByte((byte)this._header.DimensionAssociativity);
 				//RC : HALOGAP

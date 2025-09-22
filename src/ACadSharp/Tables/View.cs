@@ -5,7 +5,7 @@ using CSMath;
 namespace ACadSharp.Tables
 {
 	/// <summary>
-	/// Represents a <see cref="View"/> entry
+	/// Represents a <see cref="View"/> entry.
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.TableView"/> <br/>
@@ -25,55 +25,55 @@ namespace ACadSharp.Tables
 		public override string SubclassMarker => DxfSubclassMarker.View;
 
 		/// <summary>
-		/// View height (in DCS)
+		/// View height (in DCS).
 		/// </summary>
 		[DxfCodeValue(40)]
 		public double Height { get; set; }
 
 		/// <summary>
-		/// View width (in DCS)
+		/// View width (in DCS).
 		/// </summary>
 		[DxfCodeValue(41)]
 		public double Width { get; set; }
 
 		/// <summary>
-		/// View width (in DCS)
+		/// View width (in DCS).
 		/// </summary>
 		[DxfCodeValue(42)]
 		public double LensLength { get; set; }
 
 		/// <summary>
-		/// Front clipping plane (offset from target point)
+		/// Front clipping plane (offset from target point).
 		/// </summary>
 		[DxfCodeValue(43)]
 		public double FrontClipping { get; set; }
 
 		/// <summary>
-		/// Back clipping plane (offset from target point)
+		/// Back clipping plane (offset from target point).
 		/// </summary>
 		[DxfCodeValue(44)]
 		public double BackClipping { get; set; }
 
 		/// <summary>
-		/// Twist angle
+		/// Twist angle.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Angle { get; set; }
 
 		/// <summary>
-		/// View mode (see VIEWMODE system variable)
+		/// View mode (see VIEWMODE system variable).
 		/// </summary>
 		[DxfCodeValue(71)]
 		public ViewModeType ViewMode { get; set; }
 
 		/// <summary>
-		/// 1 if there is a UCS associated to this view; 0 otherwise
+		/// 1 if there is a UCS associated to this view; 0 otherwise.
 		/// </summary>
 		[DxfCodeValue(72)]
 		public bool IsUcsAssociated { get; set; } = false;
 
 		/// <summary>
-		/// 1 if the camera is plottable
+		/// 1 if the camera is plottable.
 		/// </summary>
 		[DxfCodeValue(73)]
 		public bool IsPlottable { get; set; }

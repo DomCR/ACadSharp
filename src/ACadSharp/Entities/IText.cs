@@ -1,11 +1,12 @@
 ﻿using ACadSharp.Tables;
+using CSMath;
 
 namespace ACadSharp.Entities
 {
 	/// <summary>
 	/// Common interface for all text entities in the drawing.
 	/// </summary>
-	public interface IText
+	public interface IText : IEntity
 	{
 		/// <summary>
 		/// Changes the height of the object.
@@ -23,6 +24,27 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Style of this text entity.
 		/// </summary>
-		TextStyle Style {  get; set; }
+		TextStyle Style { get; set; }
+
+		/// <summary>
+		/// First alignment point(in OCS).
+		/// </summary>
+		XYZ InsertPoint { get; set; }
+
+		/// <summary>
+		/// X-axis direction vector(in WCS).
+		/// </summary>
+		/// <remarks>
+		/// A group code 50 (rotation angle in radians) passed as DXF input is converted to the equivalent direction vector (if both a code 50 and codes 11, 21, 31 are passed, the last one wins). This is provided as a convenience for conversions from text objects
+		/// </remarks>
+		XYZ AlignmentPoint { get; set; }
+
+		/// <summary>
+		/// Specifies the rotation angle for the object.
+		/// </summary>
+		/// <value>
+		/// The rotation angle in radians.
+		/// </value>
+		public double Rotation { get; }
 	}
 }

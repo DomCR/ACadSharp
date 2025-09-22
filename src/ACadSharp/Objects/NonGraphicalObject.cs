@@ -26,12 +26,16 @@ namespace ACadSharp.Objects
 			}
 		}
 
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.UNLISTED;
+
 		private string _name = string.Empty;
 
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		public NonGraphicalObject() { }
+		public NonGraphicalObject()
+		{ }
 
 		/// <summary>
 		/// Initialize a <see cref="NonGraphicalObject"/> with an specific name.
@@ -39,7 +43,15 @@ namespace ACadSharp.Objects
 		/// <param name="name"></param>
 		public NonGraphicalObject(string name)
 		{
-			this._name = name;
+			this.Name = name;
+		}
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			NonGraphicalObject clone = (NonGraphicalObject)base.Clone();
+			clone.OnNameChanged = null;
+			return clone;
 		}
 
 		/// <inheritdoc/>

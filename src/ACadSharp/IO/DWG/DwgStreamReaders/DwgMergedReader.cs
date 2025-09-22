@@ -88,6 +88,11 @@ namespace ACadSharp.IO.DWG
 			return this._mainReader.Read2RawDouble();
 		}
 
+		public XYZ Read3RawDouble()
+		{
+			return this._mainReader.Read3RawDouble();
+		}
+
 		public XYZ Read3BitDouble()
 		{
 			return this._mainReader.Read3BitDouble();
@@ -140,7 +145,7 @@ namespace ACadSharp.IO.DWG
 
 		public byte[] ReadBytes(int length)
 		{
-			throw new NotImplementedException();
+			return this._mainReader.ReadBytes(length);
 		}
 
 		public XY Read2BitDoubleWithDefault(XY defValues)
@@ -171,7 +176,11 @@ namespace ACadSharp.IO.DWG
 			uint rgb = (uint)this.ReadBitLong();
 			byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
 
-			if ((rgb & 0b0000_0001_0000_0000_0000_0000_0000_0000) != 0)
+			if (rgb == 0xC0000000)
+			{
+				color = Color.ByLayer;
+			}
+			else if ((rgb & 0b0000_0001_0000_0000_0000_0000_0000_0000) != 0)
 			{
 				//Indexed color
 				color = new Color(arr[0]);

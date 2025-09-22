@@ -45,7 +45,7 @@ namespace ACadSharp.Tests.Common
 			else if (type == typeof(Shape))
 			{
 				var style = TableEntryFactory.Create<TextStyle>();
-				style.Flags = style.Flags.AddFlag(StyleFlags.IsShape);
+				style.Flags |= StyleFlags.IsShape;
 				e = new Shape(style);
 			}
 			else if (type == typeof(RasterImage))
@@ -164,7 +164,7 @@ namespace ACadSharp.Tests.Common
 			// circle.Normal = _random.NextXYZ();	//Entity becomes invisible if has a different value
 			ellipse.Center = _random.NextXYZ();
 			ellipse.Thickness = _random.NextDouble();
-			ellipse.EndPoint = _random.NextXYZ();
+			ellipse.MajorAxisEndPoint = _random.NextXYZ();
 			ellipse.RadiusRatio = _random.NextDouble();
 			ellipse.StartParameter = _random.NextDouble();
 			ellipse.EndParameter = _random.NextDouble();

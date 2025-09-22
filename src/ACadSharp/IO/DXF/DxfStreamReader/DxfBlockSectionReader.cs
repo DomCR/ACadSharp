@@ -59,6 +59,7 @@ namespace ACadSharp.IO.DXF
 
 			string name = null;
 			BlockRecord record = null;
+			CadBlockRecordTemplate recordTemplate = null;
 
 			while (this._reader.DxfCode != DxfCode.Start)
 			{
@@ -112,14 +113,19 @@ namespace ACadSharp.IO.DXF
 			{
 				record = new BlockRecord(name);
 				record.BlockEntity = blckEntity;
-				CadBlockRecordTemplate recordTemplate = new CadBlockRecordTemplate(record);
+				recordTemplate = new CadBlockRecordTemplate(record);
 
+				this._builder.AddTemplate(recordTemplate);
 				this._builder.BlockRecords.Add(record);
 
 				if (recordTemplate.CadObject.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase))
 				{
 					this._builder.ModelSpaceTemplate = recordTemplate;
 				}
+			}
+			else if (!this._builder.TryGetObjectTemplate<CadBlockRecordTemplate>(record.Handle, out recordTemplate))
+			{
+				recordTemplate = new CadBlockRecordTemplate(record);
 			}
 
 			while (this._reader.ValueAsString != DxfFileToken.EndBlock)
@@ -146,7 +152,15 @@ namespace ACadSharp.IO.DXF
 
 				//Add the object and the template to the builder
 				this._builder.AddTemplate(entityTemplate);
-				record.Entities.Add(entityTemplate.CadObject);
+
+				if (entityTemplate.OwnerHandle == null)
+				{
+					recordTemplate.OwnedObjectsHandlers.Add(entityTemplate.CadObject.Handle);
+				}
+				else if (this._builder.TryGetObjectTemplate(entityTemplate.OwnerHandle, out CadBlockRecordTemplate owner))
+				{
+					owner.OwnedObjectsHandlers.Add(entityTemplate.CadObject.Handle);
+				}
 			}
 
 			this.readBlockEnd(record.BlockEnd);

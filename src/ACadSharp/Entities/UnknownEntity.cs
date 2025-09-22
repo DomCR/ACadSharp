@@ -1,13 +1,14 @@
 ﻿using ACadSharp.Classes;
 using CSMath;
+using System;
 
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Class that holds the basic information for an unknown entity
+	/// Class that holds the basic information for an unknown <see cref="Entity"/>.
 	/// </summary>
 	/// <remarks>
-	/// Unknown entities may appear in the <see cref="CadDocument"/> if the dwg file contains proxies or entities not yet supported by ACadSharp
+	/// Unknown entities may appear in the <see cref="CadDocument"/> if the cad file contains proxies or entities not yet supported by ACadSharp.
 	/// </remarks>
 	public class UnknownEntity : Entity
 	{
@@ -47,7 +48,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Dxf class linked to this entity
+		/// Dxf class linked to this entity.
 		/// </summary>
 		public DxfClass DxfClass { get; }
 
@@ -57,12 +58,17 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+		}
+
+		/// <inheritdoc/>
 		/// <remarks>
 		/// An Unknown Entity does not have any geometric shape, therfore it's bounding box will be always 0
 		/// </remarks>
 		public override BoundingBox GetBoundingBox()
 		{
-			return default;
+			return BoundingBox.Null;
 		}
 	}
 }

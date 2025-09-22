@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
 using System.Collections.Generic;
-using ACadSharp.IO.DXF;
 
 namespace ACadSharp.IO.Templates
 {
@@ -21,30 +20,26 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? SeqendHandle { get; set; }
 
-		public List<ulong> AttributesHandles { get; set; } = new List<ulong>();
+		public HashSet<ulong> AttributesHandles { get; set; } = new();
 
 		public CadInsertTemplate() : base(new Insert()) { }
 
 		public CadInsertTemplate(Insert insert) : base(insert) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			if (!(this.CadObject is Insert insert))
 				return;
 
 			BlockRecord block;
-			if (builder.TryGetCadObject(this.BlockHeaderHandle, out block))
+			if (this.getTableReference(builder, this.BlockHeaderHandle, this.BlockName, out BlockRecord owner))
 			{
-				insert.Block = block;
-			}
-			else if (!string.IsNullOrEmpty(this.BlockName) && builder.TryGetTableEntry(this.BlockName, out block))
-			{
-				insert.Block = block;
+				insert.Block = owner;
 			}
 
-			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
+			if (builder.TryGetCadObject(this.SeqendHandle, out Seqend seqend))
 			{
 				insert.Attributes.Seqend = seqend;
 			}
@@ -58,7 +53,7 @@ namespace ACadSharp.IO.Templates
 			{
 				foreach (ulong handle in this.AttributesHandles)
 				{
-					if (builder.TryGetCadObject<AttributeEntity>(handle, out AttributeEntity att))
+					if (builder.TryGetCadObject(handle, out AttributeEntity att))
 					{
 						insert.Attributes.Add(att);
 					}

@@ -5,28 +5,32 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadMLeaderStyleTemplate : CadTemplate<MultiLeaderStyle>
 	{
-		public CadMLeaderStyleTemplate(MultiLeaderStyle entry) : base(entry) { }
-
-		public ulong LeaderLineTypeHandle { get; internal set; }
-
 		public ulong ArrowheadHandle { get; internal set; }
-
-		public ulong MTextStyleHandle { get; internal set; }
 
 		public ulong BlockContentHandle { get; internal set; }
 
-		public override void Build(CadDocumentBuilder builder)
+		public ulong LeaderLineTypeHandle { get; internal set; }
+
+		public ulong MTextStyleHandle { get; internal set; }
+
+		public CadMLeaderStyleTemplate(MultiLeaderStyle entry) : base(entry)
 		{
-			base.Build(builder);
+		}
+
+		protected override void build(CadDocumentBuilder builder)
+		{
+			base.build(builder);
 
 			if (builder.TryGetCadObject(this.LeaderLineTypeHandle, out LineType lineType))
 			{
 				this.CadObject.LeaderLineType = lineType;
 			}
 
-			//if (builder.TryGetCadObject(this.ArrowheadHandle, out Arr arrowhead)) {
-			//	this.CadObject.Arrowhead = arrowhead;
-			//}
+			if (builder.TryGetCadObject(this.ArrowheadHandle, out BlockRecord arrowhead))
+			{
+				this.CadObject.Arrowhead = arrowhead;
+			}
+
 			if (builder.TryGetCadObject(this.MTextStyleHandle, out TextStyle textStyle))
 			{
 				this.CadObject.TextStyle = textStyle;

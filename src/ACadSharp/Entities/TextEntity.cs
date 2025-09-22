@@ -1,7 +1,9 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -16,26 +18,14 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Text)]
 	public class TextEntity : Entity, IText
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.TEXT;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityText;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Text;
-
 		/// <summary>
-		/// Specifies the distance a 2D object is extruded above or below its elevation.
+		/// Second alignment point (in OCS)
 		/// </summary>
-		[DxfCodeValue(39)]
-		public double Thickness { get; set; } = 0.0;
-
-		/// <summary>
-		/// First alignment point(in OCS)
-		/// </summary>
-		[DxfCodeValue(10, 20, 30)]
-		public XYZ InsertPoint { get; set; } = XYZ.Zero;
+		/// <remarks>
+		/// This value is meaningful only if the value of a 72 or 73 group is nonzero (if the justification is anything other than baseline/left)
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Optional, 11, 21, 31)]
+		public XYZ AlignmentPoint { get; set; }
 
 		/// <inheritdoc/>
 		[DxfCodeValue(40)]
@@ -50,6 +40,80 @@ namespace ACadSharp.Entities
 					this._height = value;
 			}
 		}
+
+		/// <summary>
+		/// Horizontal text justification type.
+		/// </summary>
+		[DxfCodeValue(72)]
+		public TextHorizontalAlignment HorizontalAlignment { get; set; } = TextHorizontalAlignment.Left;
+
+		/// <summary>
+		/// First alignment point(in OCS)
+		/// </summary>
+		[DxfCodeValue(10, 20, 30)]
+		public XYZ InsertPoint { get; set; } = XYZ.Zero;
+
+		/// <summary>
+		/// Mirror flags.
+		/// </summary>
+		[DxfCodeValue(71)]
+		public TextMirrorFlag Mirror { get => _mirror; set => _mirror = value; }
+		/// <summary>
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityText;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.TEXT;
+
+		/// <summary>
+		/// Specifies the oblique angle of the object.
+		/// </summary>
+		/// <value>
+		/// The angle in radians within the range of -85 to +85 degrees. A positive angle denotes a lean to the right; a negative value will have 2*PI added to it to convert it to its positive equivalent.
+		/// </value>
+		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
+		public double ObliqueAngle { get; set; } = 0.0;
+
+		/// <inheritdoc/>
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+		public double Rotation { get; set; }
+
+		/// <inheritdoc/>
+		[DxfCodeValue(DxfReferenceType.Name | DxfReferenceType.Optional, 7)]
+		public TextStyle Style
+		{
+			get { return this._style; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._style = CadObject.updateCollection(value, this.Document.TextStyles);
+				}
+				else
+				{
+					this._style = value;
+				}
+			}
+		}
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Text;
+
+		/// <summary>
+		/// Specifies the distance a 2D object is extruded above or below its elevation.
+		/// </summary>
+		[DxfCodeValue(39)]
+		public double Thickness { get; set; } = 0.0;
 
 		/// <inheritdoc/>
 		/// <value>
@@ -72,13 +136,10 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Specifies the rotation angle for the object.
+		/// Vertical text justification type.
 		/// </summary>
-		/// <value>
-		/// The rotation angle in radians.
-		/// </value>
-		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
-		public double Rotation { get; set; }
+		[DxfCodeValue(DxfReferenceType.Optional, 73)]
+		public virtual TextVerticalAlignmentType VerticalAlignment { get; set; } = TextVerticalAlignmentType.Baseline;
 
 		/// <summary>
 		/// Relative X scale factor—widt
@@ -89,83 +150,142 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Optional, 41)]
 		public double WidthFactor { get; set; } = 1.0;
 
-		/// <summary>
-		/// Specifies the oblique angle of the object.
-		/// </summary>
-		/// <value>
-		/// The angle in radians within the range of -85 to +85 degrees. A positive angle denotes a lean to the right; a negative value will have 2*PI added to it to convert it to its positive equivalent.
-		/// </value>
-		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
-		public double ObliqueAngle { get; set; } = 0.0;
+		private double _height = 0.0;
+		private TextStyle _style = TextStyle.Default;
+		private string _value = string.Empty;
+		private TextMirrorFlag _mirror = TextMirrorFlag.None;
+
+		public TextEntity() : base()
+		{
+		}
 
 		/// <inheritdoc/>
-		[DxfCodeValue(DxfReferenceType.Name | DxfReferenceType.Optional, 7)]
-		public TextStyle Style
+		public override void ApplyTransform(Transform transform)
 		{
-			get { return this._style; }
-			set
-			{
-				if (value == null)
-				{
-					throw new ArgumentNullException(nameof(value));
-				}
+			bool mirrText = this.Mirror.HasFlag(TextMirrorFlag.Backward);
 
-				if (this.Document != null)
+			XYZ newInsert = transform.ApplyTransform(this.InsertPoint);
+			XYZ newNormal = this.transformNormal(transform, this.Normal);
+
+			var transformation = this.getWorldMatrix(transform, Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+
+			List<XY> uv = applyRotation(
+				new[]
 				{
-					this._style = this.updateTable(value, this.Document.TextStyles);
+					this.WidthFactor * this.Height * XY.AxisX,
+					new XY(this.Height * Math.Tan(this.ObliqueAngle), this.Height)
+				},
+				this.Rotation);
+
+			XYZ v;
+			v = transOW * new XYZ(uv[0].X, uv[0].Y, 0.0);
+			v = transformation * v;
+			v = transWO * v;
+			XY newUvector = new XY(v.X, v.Y);
+
+			v = transOW * new XYZ(uv[1].X, uv[1].Y, 0.0);
+			v = transformation * v;
+			v = transWO * v;
+			XY newVvector = new XY(v.X, v.Y);
+
+			double newRotation = newUvector.GetAngle();
+			double newObliqueAngle = newVvector.GetAngle();
+
+			if (mirrText)
+			{
+				if (XY.Cross(newUvector, newVvector) < 0)
+				{
+					newObliqueAngle = MathHelper.HalfPI - (newRotation - newObliqueAngle);
+					if (!(this.HorizontalAlignment.HasFlag(TextHorizontalAlignment.Fit)
+						|| this.HorizontalAlignment.HasFlag(TextHorizontalAlignment.Aligned)))
+					{
+						newRotation += Math.PI;
+					}
+
+					this._mirror.RemoveFlag(TextMirrorFlag.Backward);
 				}
 				else
 				{
-					this._style = value;
+					newObliqueAngle = MathHelper.HalfPI + (newRotation - newObliqueAngle);
 				}
 			}
-		}
+			else
+			{
+				if (XY.Cross(newUvector, newVvector) < 0.0)
+				{
+					newObliqueAngle = MathHelper.HalfPI - (newRotation - newObliqueAngle);
 
-		/// <summary>
-		/// Mirror flags.
-		/// </summary>
-		[DxfCodeValue(71)]
-		public TextMirrorFlag Mirror { get; set; } = TextMirrorFlag.None;
+					if (newUvector.Dot(uv[0]) < 0.0)
+					{
+						newRotation += Math.PI;
 
-		/// <summary>
-		/// Horizontal text justification type.
-		/// </summary>
-		[DxfCodeValue(72)]
-		public TextHorizontalAlignment HorizontalAlignment { get; set; } = TextHorizontalAlignment.Left;
+						switch (this.HorizontalAlignment)
+						{
+							case TextHorizontalAlignment.Left:
+								this.HorizontalAlignment = TextHorizontalAlignment.Right;
+								break;
+							case TextHorizontalAlignment.Right:
+								this.HorizontalAlignment = TextHorizontalAlignment.Left;
+								break;
+						}
+					}
+					else
+					{
+						switch (this.VerticalAlignment)
+						{
+							case TextVerticalAlignmentType.Top:
+								this.VerticalAlignment = TextVerticalAlignmentType.Bottom;
+								break;
+							case TextVerticalAlignmentType.Bottom:
+								this.VerticalAlignment = TextVerticalAlignmentType.Top;
+								break;
+						}
+					}
+				}
+				else
+				{
+					newObliqueAngle = MathHelper.HalfPI + (newRotation - newObliqueAngle);
+				}
+			}
 
-		/// <summary>
-		/// Second alignment point (in OCS) 
-		/// </summary>
-		/// <remarks>
-		/// This value is meaningful only if the value of a 72 or 73 group is nonzero (if the justification is anything other than baseline/left)
-		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.Optional, 11, 21, 31)]
-		public XYZ AlignmentPoint { get; set; }
+			// the oblique angle is defined between -85 and 85 degrees
+			double maxOblique = MathHelper.DegToRad(85);
+			double minOblique = -maxOblique;
+			if (newObliqueAngle > Math.PI)
+			{
+				newObliqueAngle = Math.PI - newObliqueAngle;
+			}
 
-		/// <summary>
-		/// Specifies the three-dimensional normal unit vector for the object.
-		/// </summary>
-		[DxfCodeValue(210, 220, 230)]
-		public XYZ Normal { get; set; } = XYZ.AxisZ;
+			if (newObliqueAngle < minOblique)
+			{
+				newObliqueAngle = minOblique;
+			}
+			else if (newObliqueAngle > maxOblique)
+			{
+				newObliqueAngle = maxOblique;
+			}
 
-		/// <summary>
-		/// Vertical text justification type.
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 73)]
-		public virtual TextVerticalAlignmentType VerticalAlignment { get; set; } = TextVerticalAlignmentType.Baseline;
+			// the height must be greater than zero, the cos is always positive between -85 and 85
+			double newHeight = newVvector.GetLength() * Math.Cos(newObliqueAngle);
+			newHeight = MathHelper.IsZero(newHeight) ? MathHelper.Epsilon : newHeight;
 
-		private string _value = string.Empty;
+			// the width factor is defined between 0.01 and 100
+			double newWidthFactor = newUvector.GetLength() / newHeight;
+			if (newWidthFactor < 0.01)
+			{
+				newWidthFactor = 0.01;
+			}
+			else if (newWidthFactor > 100)
+			{
+				newWidthFactor = 100;
+			}
 
-		private double _height = 0.0;
-
-		private TextStyle _style = TextStyle.Default;
-
-		public TextEntity() : base() { }
-
-		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			return new BoundingBox(this.InsertPoint);
+			this.InsertPoint = newInsert;
+			this.Normal = newNormal;
+			this.Rotation = newRotation;
+			this.Height = newHeight;
+			this.WidthFactor = newWidthFactor;
+			this.ObliqueAngle = newObliqueAngle;
 		}
 
 		/// <inheritdoc/>
@@ -176,11 +296,17 @@ namespace ACadSharp.Entities
 			return clone;
 		}
 
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox(this.InsertPoint);
+		}
+
 		internal override void AssignDocument(CadDocument doc)
 		{
 			base.AssignDocument(doc);
 
-			this._style = this.updateTable(this.Style, doc.TextStyles);
+			this._style = CadObject.updateCollection(this.Style, doc.TextStyles);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 		}

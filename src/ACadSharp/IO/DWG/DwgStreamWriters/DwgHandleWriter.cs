@@ -29,6 +29,8 @@ namespace ACadSharp.IO.DWG
 			{
 				this._handleMap.Add(item.Key, item.Value);
 			}
+#elif NETSTANDARD2_0
+			this._handleMap = new Dictionary<ulong, long>(map.OrderBy(o => o.Key).ToDictionary(x => x.Key, x => x.Value));
 #else
 			this._handleMap = new Dictionary<ulong, long>(map.OrderBy(o => o.Key));
 #endif

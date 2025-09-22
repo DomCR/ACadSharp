@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
@@ -11,15 +12,19 @@ namespace ACadSharp.IO
 	{
 		public event NotificationEventHandler OnNotification;
 
-		public ACadVersion Version { get; }
-
-		public CadDocument DocumentToBuild { get; }
-
 		public AppIdsTable AppIds { get; set; } = new AppIdsTable();
 
 		public BlockRecordsTable BlockRecords { get; set; } = new BlockRecordsTable();
 
 		public DimensionStylesTable DimensionStyles { get; set; } = new DimensionStylesTable();
+
+		public CadDocument DocumentToBuild { get; }
+
+		public ulong InitialHandSeed { get; set; } = 0;
+
+		public abstract bool KeepUnknownEntities { get; }
+
+		public abstract bool KeepUnknownNonGraphicalObjects { get; }
 
 		public LayersTable Layers { get; set; } = new LayersTable();
 
@@ -29,25 +34,25 @@ namespace ACadSharp.IO
 
 		public UCSTable UCSs { get; set; } = new UCSTable();
 
+		public ACadVersion Version { get; }
+
 		public ViewsTable Views { get; set; } = new ViewsTable();
 
 		public VPortsTable VPorts { get; set; } = new VPortsTable();
 
-		public abstract bool KeepUnknownEntities { get; }
-
-		public ulong InitialHandSeed { get; set; } = 0;
-
-		protected Dictionary<ulong, CadTemplate> cadObjectsTemplates = new();
-
-		protected Dictionary<ulong, ICadObjectTemplate> templatesMap = new();
-
 		protected Dictionary<ulong, CadObject> cadObjects = new();
+
+		protected Dictionary<ulong, ICadObjectTemplate> cadObjectsTemplates = new();
+
+		protected Dictionary<ulong, ICadDictionaryTemplate> dictionaryTemplates = new();
 
 		protected Dictionary<ulong, ICadTableEntryTemplate> tableEntryTemplates = new();
 
 		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new();
 
-		protected Dictionary<ulong, ICadDictionaryTemplate> dictionaryTemplates = new();
+		protected Dictionary<ulong, ICadObjectTemplate> templatesMap = new();
+
+		protected List<ICadObjectTemplate> unassignedObjects = new();
 
 		public CadDocumentBuilder(ACadVersion version, CadDocument document)
 		{
@@ -55,22 +60,12 @@ namespace ACadSharp.IO
 			this.DocumentToBuild = document;
 		}
 
-		public virtual void BuildDocument()
+		public void AddTemplate(ICadObjectTemplate template)
 		{
-			foreach (ICadTableEntryTemplate template in this.tableEntryTemplates.Values)
+			if (!this.addToMap(template))
 			{
-				template.Build(this);
+				return;
 			}
-
-			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
-			{
-				template.Build(this);
-			}
-		}
-
-		public void AddTemplate(CadTemplate template)
-		{
-			this.addToMap(template);
 
 			switch (template)
 			{
@@ -89,6 +84,73 @@ namespace ACadSharp.IO
 			}
 		}
 
+		public virtual void BuildDocument()
+		{
+			foreach (ICadTableEntryTemplate template in this.tableEntryTemplates.Values)
+			{
+				template.Build(this);
+			}
+
+			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
+			{
+				template.Build(this);
+			}
+		}
+
+		public void BuildTable<T>(Table<T> table)
+			where T : TableEntry
+		{
+			if (this.tableTemplates.TryGetValue(table.Handle, out ICadTableTemplate template))
+			{
+				template.Build(this);
+			}
+			else
+			{
+				this.Notify($"Table {table.ObjectName} not found in the document", NotificationType.Warning);
+			}
+		}
+
+		public void BuildTables()
+		{
+			this.BuildTable(this.AppIds);
+			this.BuildTable(this.TextStyles);
+			this.BuildTable(this.LineTypesTable);
+			this.BuildTable(this.Layers);
+			this.BuildTable(this.UCSs);
+			this.BuildTable(this.Views);
+			this.BuildTable(this.BlockRecords);
+			this.BuildTable(this.DimensionStyles);
+			this.BuildTable(this.VPorts);
+		}
+
+		public T GetObjectTemplate<T>(ulong handle) where T : CadTemplate
+		{
+			if (this.templatesMap.TryGetValue(handle, out ICadObjectTemplate template))
+			{
+				return (T)template;
+			}
+
+			return null;
+		}
+
+		public void Notify(string message, NotificationType notificationType = NotificationType.None, Exception exception = null)
+		{
+			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, exception));
+		}
+
+		public void RegisterTables()
+		{
+			this.DocumentToBuild.RegisterCollection(this.AppIds);
+			this.DocumentToBuild.RegisterCollection(this.TextStyles);
+			this.DocumentToBuild.RegisterCollection(this.LineTypesTable);
+			this.DocumentToBuild.RegisterCollection(this.Layers);
+			this.DocumentToBuild.RegisterCollection(this.UCSs);
+			this.DocumentToBuild.RegisterCollection(this.Views);
+			this.DocumentToBuild.RegisterCollection(this.BlockRecords);
+			this.DocumentToBuild.RegisterCollection(this.DimensionStyles);
+			this.DocumentToBuild.RegisterCollection(this.VPorts);
+		}
+
 		public bool TryGetCadObject<T>(ulong? handle, out T value) where T : CadObject
 		{
 			if (!handle.HasValue || handle == 0)
@@ -105,6 +167,12 @@ namespace ACadSharp.IO
 					return false;
 				}
 
+				if (obj is UnknownNonGraphicalObject && !this.KeepUnknownNonGraphicalObjects)
+				{
+					value = null;
+					return false;
+				}
+
 				if (obj is T)
 				{
 					value = (T)obj;
@@ -116,14 +184,25 @@ namespace ACadSharp.IO
 			return false;
 		}
 
-		public T GetObjectTemplate<T>(ulong handle) where T : CadTemplate
+		public bool TryGetObjectTemplate<T>(ulong? handle, out T value) where T : CadTemplate
 		{
-			if (this.templatesMap.TryGetValue(handle, out ICadObjectTemplate template))
+			if (!handle.HasValue || handle == 0)
 			{
-				return (T)template;
+				value = null;
+				return false;
 			}
 
-			return null;
+			if (this.templatesMap.TryGetValue(handle.Value, out ICadObjectTemplate template))
+			{
+				if (template is T)
+				{
+					value = (T)template;
+					return true;
+				}
+			}
+
+			value = null;
+			return false;
 		}
 
 		public bool TryGetTableEntry<T>(string name, out T entry)
@@ -183,69 +262,25 @@ namespace ACadSharp.IO
 			return table.TryGetValue(name, out entry);
 		}
 
-		public bool TryGetObjectTemplate<T>(ulong? handle, out T value) where T : CadTemplate
+		protected void buildDictionaries()
 		{
-			if (!handle.HasValue || handle == 0)
+			foreach (ICadDictionaryTemplate dictionaryTemplate in dictionaryTemplates.Values)
 			{
-				value = null;
-				return false;
+				dictionaryTemplate.Build(this);
 			}
 
-			if (this.templatesMap.TryGetValue(handle.Value, out ICadObjectTemplate template))
+			this.DocumentToBuild.UpdateCollections(true);
+		}
+
+		protected void createMissingHandles()
+		{
+			foreach (var template in this.unassignedObjects)
 			{
-				if (template is T)
-				{
-					value = (T)template;
-					return true;
-				}
+				template.CadObject.Handle = this.InitialHandSeed + 1;
+				this.AddTemplate(template);
 			}
 
-			value = null;
-			return false;
-		}
-
-		public void RegisterTables()
-		{
-			this.DocumentToBuild.RegisterCollection(this.AppIds);
-			this.DocumentToBuild.RegisterCollection(this.LineTypesTable);
-			this.DocumentToBuild.RegisterCollection(this.Layers);
-			this.DocumentToBuild.RegisterCollection(this.TextStyles);
-			this.DocumentToBuild.RegisterCollection(this.UCSs);
-			this.DocumentToBuild.RegisterCollection(this.Views);
-			this.DocumentToBuild.RegisterCollection(this.DimensionStyles);
-			this.DocumentToBuild.RegisterCollection(this.VPorts);
-			this.DocumentToBuild.RegisterCollection(this.BlockRecords);
-		}
-
-		public void BuildTables()
-		{
-			this.BuildTable(this.AppIds);
-			this.BuildTable(this.LineTypesTable);
-			this.BuildTable(this.Layers);
-			this.BuildTable(this.TextStyles);
-			this.BuildTable(this.UCSs);
-			this.BuildTable(this.Views);
-			this.BuildTable(this.DimensionStyles);
-			this.BuildTable(this.VPorts);
-			this.BuildTable(this.BlockRecords);
-		}
-
-		public void Notify(string message, NotificationType notificationType = NotificationType.None, Exception exception = null)
-		{
-			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, exception));
-		}
-
-		public void BuildTable<T>(Table<T> table)
-			where T : TableEntry
-		{
-			if (this.tableTemplates.TryGetValue(table.Handle, out ICadTableTemplate template))
-			{
-				template.Build(this);
-			}
-			else
-			{
-				this.Notify($"Table {table.ObjectName} not found in the document", NotificationType.Warning);
-			}
+			this.unassignedObjects.Clear();
 		}
 
 		protected void registerTable<T, R>(T table)
@@ -262,21 +297,20 @@ namespace ACadSharp.IO
 			}
 		}
 
-		protected void buildDictionaries()
-		{
-			foreach (ICadDictionaryTemplate dictionaryTemplate in dictionaryTemplates.Values)
-			{
-				dictionaryTemplate.Build(this);
-			}
-
-			this.DocumentToBuild.UpdateCollections(true);
-		}
-
-		private void addToMap(ICadObjectTemplate template)
+		private bool addToMap(ICadObjectTemplate template)
 		{
 			if (template.CadObject.Handle == 0)
 			{
-				template.CadObject.Handle = this.InitialHandSeed + 1;
+				this.unassignedObjects.Add(template);
+				return false;
+			}
+
+			if (this.templatesMap.ContainsKey(template.CadObject.Handle))
+			{
+				this.Notify($"Repeated handle found {template.CadObject.Handle}.", NotificationType.Warning);
+				template.CadObject.Handle = 0;
+				this.unassignedObjects.Add(template);
+				return false;
 			}
 
 			if (template.CadObject.Handle > this.InitialHandSeed)
@@ -286,6 +320,7 @@ namespace ACadSharp.IO
 
 			this.templatesMap.Add(template.CadObject.Handle, template);
 			this.cadObjects.Add(template.CadObject.Handle, template.CadObject);
+			return true;
 		}
 	}
 }

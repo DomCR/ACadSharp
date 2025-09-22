@@ -3,12 +3,9 @@ using System.Text;
 using System;
 using System.IO;
 using ACadSharp.Classes;
-using ACadSharp.IO;
-using ACadSharp.Exceptions;
-using ACadSharp.IO.DWG;
-using ACadSharp.IO.DWG.DwgStreamWriters;
-using CSUtilities.IO;
-using System.Collections.Generic;
+using System.Linq;
+using ACadSharp.Entities;
+using ACadSharp.Tables;
 
 namespace ACadSharp.IO
 {
@@ -18,12 +15,7 @@ namespace ACadSharp.IO
 	public abstract class CadWriterBase<T> : ICadWriter
 		where T : CadWriterConfiguration, new()
 	{
-		/// <summary>
-		/// Notification event to get information about the writing process.
-		/// </summary>
-		/// <remarks>
-		/// The notification system informs about any issue or non critical errors during the writing.
-		/// </remarks>
+		/// <inheritdoc/>
 		public event NotificationEventHandler OnNotification;
 
 		/// <summary>
@@ -31,11 +23,11 @@ namespace ACadSharp.IO
 		/// </summary>
 		public T Configuration { get; set; } = new T();
 
-		protected Stream _stream;
-
 		protected CadDocument _document;
 
 		protected Encoding _encoding;
+
+		protected Stream _stream;
 
 		protected CadWriterBase(Stream stream, CadDocument document)
 		{
@@ -44,15 +36,33 @@ namespace ACadSharp.IO
 		}
 
 		/// <inheritdoc/>
+		public abstract void Dispose();
+
+		/// <inheritdoc/>
 		public virtual void Write()
 		{
-			DxfClassCollection.UpdateDxfClasses(_document);
+			this._document.UpdateDxfClasses(this.Configuration.ResetDxfClasses);
+
+			if (this.Configuration.UpdateDimensionsInModel)
+			{
+				this.updateDimensions(this._document.ModelSpace);
+			}
+
+			if (this.Configuration.UpdateDimensionsInBlocks)
+			{
+				foreach (var item in this._document.BlockRecords)
+				{
+					if (item.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase))
+					{
+						continue;
+					}
+
+					this.updateDimensions(item);
+				}
+			}
 
 			this._encoding = this.getListedEncoding(this._document.Header.CodePage);
 		}
-
-		/// <inheritdoc/>
-		public abstract void Dispose();
 
 		protected Encoding getListedEncoding(string codePage)
 		{
@@ -81,6 +91,14 @@ namespace ACadSharp.IO
 		protected void triggerNotification(object sender, NotificationEventArgs e)
 		{
 			this.OnNotification?.Invoke(sender, e);
+		}
+
+		private void updateDimensions(BlockRecord record)
+		{
+			foreach (var item in record.Entities.OfType<Dimension>())
+			{
+				item.UpdateBlock();
+			}
 		}
 	}
 }

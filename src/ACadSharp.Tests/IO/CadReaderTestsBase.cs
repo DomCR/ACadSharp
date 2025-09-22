@@ -1,7 +1,12 @@
-﻿using ACadSharp.Header;
+﻿using ACadSharp.Entities;
+using ACadSharp.Extensions;
+using ACadSharp.Header;
 using ACadSharp.IO;
+using ACadSharp.Tables;
+using ACadSharp.Tests.TestModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -16,23 +21,23 @@ namespace ACadSharp.Tests.IO
 		{
 		}
 
-		public virtual void ReadHeaderTest(string test)
+		public virtual void ReadHeaderTest(FileModel test)
 		{
-			using (T reader = (T)Activator.CreateInstance(typeof(T), test, null))
+			using (T reader = (T)Activator.CreateInstance(typeof(T), test.Path, null))
 			{
 				reader.OnNotification += this.onNotification;
 				CadHeader header = reader.ReadHeader();
 			}
 		}
 
-		public virtual void ReadTest(string test)
+		public virtual void ReadTest(FileModel test)
 		{
 			CadDocument doc = this.getDocument(test);
 
 			Assert.NotNull(doc);
 		}
 
-		public virtual void AssertDocumentDefaults(string test)
+		public virtual void AssertDocumentDefaults(FileModel test)
 		{
 			CadDocument doc = this.getDocument(test);
 
@@ -48,21 +53,21 @@ namespace ACadSharp.Tests.IO
 			this._docIntegrity.AssertDocumentDefaults(doc);
 		}
 
-		public virtual void AssertTableHirearchy(string test)
+		public virtual void AssertTableHierarchy(FileModel test)
 		{
 			CadDocument doc = this.getDocument(test);
 
-			this._docIntegrity.AssertTableHirearchy(doc);
+			this._docIntegrity.AssertTableHierarchy(doc);
 		}
 
-		public virtual void AssertBlockRecords(string test)
+		public virtual void AssertBlockRecords(FileModel test)
 		{
 			CadDocument doc = this.getDocument(test);
 
 			this._docIntegrity.AssertBlockRecords(doc);
 		}
 
-		public virtual void AssertDocumentContent(string test)
+		public virtual void AssertDocumentContent(FileModel test)
 		{
 			CadDocument doc = this.getDocument(test, false);
 
@@ -75,11 +80,26 @@ namespace ACadSharp.Tests.IO
 			this._docIntegrity.AssertDocumentContent(doc);
 		}
 
-		public virtual void AssertDocumentTree(string test)
+		public virtual void AssertDocumentTree(FileModel test)
 		{
 			CadDocument doc = this.getDocument(test, false);
 
 			this._docIntegrity.AssertDocumentTree(doc);
+		}
+
+		public virtual void AssertDocumentHeader(FileModel test)
+		{
+			CadDocument doc = this.getDocument(test, false);
+			CadHeader header = doc.Header;
+
+			Assert.Equal(doc.Layers[Layer.DefaultName], header.CurrentLayer);
+			Assert.Equal(Layer.DefaultName, header.CurrentLayerName, ignoreCase: true);
+
+			Assert.Equal(doc.LineTypes[LineType.ByLayerName], header.CurrentLineType);
+			Assert.Equal(LineType.ByLayerName, header.CurrentLineTypeName, ignoreCase: true);
+
+			Assert.Equal(doc.TextStyles[TextStyle.DefaultName], header.CurrentTextStyle);
+			Assert.Equal(TextStyle.DefaultName, header.CurrentTextStyleName, ignoreCase: true);
 		}
 
 		public void Dispose()
@@ -87,12 +107,12 @@ namespace ACadSharp.Tests.IO
 			this._documents.Clear();
 		}
 
-		protected CadDocument getDocument(string path, bool addEvent = true)
+		protected CadDocument getDocument(FileModel test, bool addEvent = true)
 		{
-			if (_documents.TryGetValue(path, out var doc))
+			if (_documents.TryGetValue(test.Path, out var doc))
 				return doc;
 
-			using (T reader = (T)Activator.CreateInstance(typeof(T), path, null))
+			using (T reader = (T)Activator.CreateInstance(typeof(T), test.Path, null))
 			{
 				if (addEvent)
 				{
@@ -102,7 +122,7 @@ namespace ACadSharp.Tests.IO
 				doc = reader.Read();
 			}
 
-			_documents.Add(path, doc);
+			_documents.Add(test.Path, doc);
 
 			return doc;
 		}

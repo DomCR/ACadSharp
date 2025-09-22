@@ -13,12 +13,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadHatchTemplate(Hatch hatch) : base(hatch) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
-
-			//TODO: Finish the hatch template
-			Hatch hatch = CadObject as Hatch;
+			base.build(builder);
 
 			if (!string.IsNullOrEmpty(this.HatchPatternName))
 			{

@@ -13,15 +13,17 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? SeqendHandle { get; internal set; }
 
-		public List<ulong> VertexHandles { get; set; } = new List<ulong>();
+		public HashSet<ulong> VertexHandles { get; set; } = new();
+
+		public Polyline PolyLine => this.CadObject as Polyline;
 
 		public CadPolyLineTemplate() : base(new PolyLinePlaceholder()) { }
 
 		public CadPolyLineTemplate(Polyline entity) : base(entity) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			Polyline polyLine = this.CadObject as Polyline;
 
@@ -63,7 +65,7 @@ namespace ACadSharp.IO.Templates
 			polyLine.Handle = this.CadObject.Handle;
 			polyLine.Color = this.CadObject.Color;
 			polyLine.LineWeight = this.CadObject.LineWeight;
-			polyLine.LinetypeScale = this.CadObject.LinetypeScale;
+			polyLine.LineTypeScale = this.CadObject.LineTypeScale;
 			polyLine.IsInvisible = this.CadObject.IsInvisible;
 			polyLine.Transparency = this.CadObject.Transparency;
 
@@ -97,6 +99,11 @@ namespace ACadSharp.IO.Templates
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
 
 			public override IEnumerable<Entity> Explode()
+			{
+				throw new NotImplementedException();
+			}
+
+			protected override void verticesOnAdd(object sender, CollectionChangedEventArgs e)
 			{
 				throw new NotImplementedException();
 			}

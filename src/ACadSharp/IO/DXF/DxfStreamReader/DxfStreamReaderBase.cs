@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Exceptions;
+using CSMath;
 using System;
 using System.IO;
 
@@ -42,7 +43,7 @@ namespace ACadSharp.IO.DXF
 
 		public double ValueAsDouble { get { return Convert.ToDouble(this.Value); } }
 
-		public double ValueAsAngle { get { return (double)(Convert.ToDouble(this.Value) * MathUtils.RadToDegFactor); } }
+		public double ValueAsAngle { get { return (double)(MathHelper.DegToRad(Convert.ToDouble(this.Value))); } }
 
 		public ulong ValueAsHandle { get { return (ulong)this.Value; } }
 
@@ -57,15 +58,27 @@ namespace ACadSharp.IO.DXF
 			this.Value = this.transformValue(this.GroupCodeValue);
 		}
 
-		public void Find(string dxfEntry)
+		public bool Find(string dxfEntry)
 		{
-			this.start();
+			this.Start();
 
 			do
 			{
 				this.ReadNext();
 			}
 			while (this.ValueAsString != dxfEntry && (this.ValueAsString != DxfFileToken.EndOfFile));
+
+			return this.ValueAsString == dxfEntry;
+		}
+
+		public void ExpectedCode(int code)
+		{
+			this.ReadNext();
+
+			if (this.Code != code)
+			{
+				throw new DxfException(code, this.Position);
+			}
 		}
 
 		public override string ToString()
@@ -73,7 +86,7 @@ namespace ACadSharp.IO.DXF
 			return $"{Code} | {Value}";
 		}
 
-		protected virtual void start()
+		public virtual void Start()
 		{
 			this.DxfCode = DxfCode.Invalid;
 			this.Value = string.Empty;

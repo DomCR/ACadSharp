@@ -5,9 +5,9 @@
 		DxfCode DxfCode { get; }
 
 		GroupCodeValueType GroupCodeValue { get; }
-		
+
 		int Code { get; }
-		
+
 		object Value { get; }
 
 		/// <summary>
@@ -27,25 +27,29 @@
 		short ValueAsShort { get; }
 
 		ushort ValueAsUShort { get; }
-		
+
 		int ValueAsInt { get; }
-		
+
 		long ValueAsLong { get; }
-		
+
 		double ValueAsDouble { get; }
 
 		double ValueAsAngle { get; }
-		
+
 		ulong ValueAsHandle { get; }
-		
+
 		byte[] ValueAsBinaryChunk { get; }
 
 		/// <summary>
 		/// Find a dxf entry in the file.
 		/// </summary>
 		/// <param name="dxfEntry"></param>
-		void Find(string dxfEntry);
+		bool Find(string dxfEntry);
+
+		void Start();
 
 		void ReadNext();
+
+		void ExpectedCode(int code);
 	}
 }

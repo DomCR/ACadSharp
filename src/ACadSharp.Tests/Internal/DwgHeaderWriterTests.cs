@@ -27,7 +27,7 @@ namespace ACadSharp.Tests.Internal
 			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, resetPositon: true);
 			var header = new CadHeader();
 			DwgHeaderReader reader = new DwgHeaderReader(version, sreader, header);
-			reader.Read(0, out _);
+			reader.Read(header.MaintenanceVersion, out _);
 		}
 	}
 }

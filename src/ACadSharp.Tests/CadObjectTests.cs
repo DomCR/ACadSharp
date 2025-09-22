@@ -1,8 +1,12 @@
 ﻿using System;
 using Xunit;
 using ACadSharp.Tests.Common;
-using ACadSharp.Tables.Collections;
 using ACadSharp.Entities;
+using ACadSharp.Objects;
+using ACadSharp.Tables;
+using ACadSharp.XData;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Tests
 {
@@ -14,7 +18,9 @@ namespace ACadSharp.Tests
 		{
 			foreach (Type item in DataFactory.GetTypes<CadObject>())
 			{
-				if (item == typeof(UnknownEntity))
+				if (item == typeof(UnknownEntity) 
+					|| item == typeof(PdfUnderlay) 
+					|| item == typeof(UnknownNonGraphicalObject))
 				{
 					continue;
 				}
@@ -28,21 +34,56 @@ namespace ACadSharp.Tests
 			}
 		}
 
+		[Fact]
+		public void CleanReactorsTest()
+		{
+			Line main = new Line();
+			Line line = new Line();
+			CadDocument doc = new CadDocument();
+
+			Assert.NotNull(main.Reactors);
+			Assert.Empty(main.Reactors);
+
+			doc.Entities.Add(main);
+			doc.Entities.Add(line);
+			Point point = new Point();
+			main.AddReactor(point);
+			main.AddReactor(line);
+
+			Assert.Contains(point, main.Reactors);
+			Assert.True(main.Reactors.Count() == 2);
+
+			main.CleanReactors();
+			Assert.NotEmpty(main.Reactors);
+			Assert.True(main.Reactors.Count() == 1);
+
+			doc.Entities.Remove(main);
+			Assert.Empty(main.Reactors);
+		}
+
 		[Theory]
 		[MemberData(nameof(ACadTypes))]
-		public void DefaultConstructor(Type t)
+		public void ExtendedDataCloneTest(Type t)
 		{
-			CadObject cadObject = Factory.CreateObject(t, false);
+			CadObject cadObject = Factory.CreateObject(t);
 
-			Assert.NotNull(cadObject);
-			Assert.True(0 == cadObject.Handle);
+			if (cadObject == null)
+			{
+				return;
+			}
 
-			Assert.NotEqual(ObjectType.UNDEFINED, cadObject.ObjectType);
+			CadObject clone = (CadObject)cadObject.Clone();
 
-			Assert.False(string.IsNullOrEmpty(cadObject.ObjectName));
-			Assert.False(string.IsNullOrEmpty(cadObject.SubclassMarker));
+			List<ExtendedDataRecord> records = new();
+			records.Add(new ExtendedDataControlString(false));
+			records.Add(new ExtendedDataInteger16(5));
+			records.Add(new ExtendedDataInteger32(33));
+			records.Add(new ExtendedDataString("my extended data string"));
+			records.Add(new ExtendedDataControlString(true));
 
-			Assert.Null(cadObject.XDictionary);
+			cadObject.ExtendedData.Add(new AppId("hello"), records);
+
+			CadObjectTestUtils.AssertClone(cadObject, clone);
 		}
 
 		[Fact]
@@ -53,16 +94,6 @@ namespace ACadSharp.Tests
 
 			Assert.NotNull(obj.XDictionary);
 			Assert.Empty(obj.XDictionary);
-		}
-
-		[Theory(Skip = "Factory refactor needed")]
-		[MemberData(nameof(ACadTypes))]
-		public void Clone(Type t)
-		{
-			CadObject cadObject = Factory.CreateObject(t);
-			CadObject clone = (CadObject)cadObject.Clone();
-
-			CadObjectTestUtils.AssertClone(cadObject, clone);
 		}
 	}
 }

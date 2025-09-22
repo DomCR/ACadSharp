@@ -1,24 +1,20 @@
-﻿using ACadSharp.IO;
-using ACadSharp.Entities;
+﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
-using System.IO;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
+using ACadSharp.Tests.TestModels;
+using ACadSharp.Objects;
 
 namespace ACadSharp.Tests.IO
 {
 	public class ColorTests : IOTestsBase
 	{
-		public static TheoryData<string> ColorSamplesFilePaths { get; }
+		public static TheoryData<FileModel> ColorSamplesFilePaths { get; } = new();
 
 		static ColorTests()
 		{
-			ColorSamplesFilePaths = new TheoryData<string>();
-			foreach (string p in Directory.GetFiles(Path.Combine($"{samplesFolder}", "color_samples"), $"*.dwg"))
-			{
-				ColorSamplesFilePaths.Add(Path.GetFileName(p));
-			}
+			loadSamples("./", "dxf", ColorSamplesFilePaths);
+			loadSamples("./", "dwg", ColorSamplesFilePaths);
 		}
 
 		public ColorTests(ITestOutputHelper output) : base(output)
@@ -27,17 +23,22 @@ namespace ACadSharp.Tests.IO
 
 		[Theory]
 		[MemberData(nameof(ColorSamplesFilePaths))]
-		public void ColorDwg(string path)
+		public void BasicColorTest(FileModel test)
 		{
-			path = Path.Combine($"{samplesFolder}", "color_samples", path);
+			CadDocument doc = this.readDocument(test);
 
-			CadDocument doc = DwgReader.Read(path);
+			if (doc.Header.Version <= ACadVersion.AC1015)
+			{
+				return;
+			}
 
-			//CECOLOR R 155 : G 66 : B 236
-			Color currentEntityColor = doc.Header.CurrentEntityColor;
-			Assert.Equal(155, currentEntityColor.R);
-			Assert.Equal(66, currentEntityColor.G);
-			Assert.Equal(236, currentEntityColor.B);
+			//Entity Line: R 52 : G 201 : B 24
+			Line line = doc.GetCadObject<Line>(0x99E);
+			Assert.NotNull(line);
+			Color lcolor = line.Color;
+			Assert.Equal(52, lcolor.R);
+			Assert.Equal(201, lcolor.G);
+			Assert.Equal(24, lcolor.B);
 
 			//Layer: color_125_33_79
 			Color layerColor = doc.Layers["color_125_33_79"].Color;
@@ -45,13 +46,17 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(33, layerColor.G);
 			Assert.Equal(79, layerColor.B);
 
-			//Entity Line: R 52 : G 201 : B 24
-			Line line = doc.Entities.OfType<Line>().FirstOrDefault();
-			Assert.NotNull(line);
-			Color lcolor = line.Color;
-			Assert.Equal(52, lcolor.R);
-			Assert.Equal(201, lcolor.G);
-			Assert.Equal(24, lcolor.B);
+			if (test.IsDxf)
+			{
+				//True color for dimension style is not supported in dxf
+				return;
+			}
+
+			//CECOLOR R 155 : G 66 : B 236
+			Color currentEntityColor = doc.Header.CurrentEntityColor;
+			Assert.Equal(155, currentEntityColor.R);
+			Assert.Equal(66, currentEntityColor.G);
+			Assert.Equal(236, currentEntityColor.B);
 
 			//DimStyle: custom_dim_style
 			DimensionStyle dimStyle = doc.DimensionStyles["custom_dim_style"];
@@ -79,8 +84,44 @@ namespace ACadSharp.Tests.IO
 				Assert.Equal(117, fillColor.G);
 				Assert.Equal(66, fillColor.B);
 			}
+		}
 
-			DwgWriter.Write(new MemoryStream(), doc);
+		[Theory]
+		[MemberData(nameof(ColorSamplesFilePaths))]
+		public void BookColor(FileModel test)
+		{
+			CadDocument doc = this.readDocument(test);
+
+			if (doc.Header.Version <= ACadVersion.AC1009)
+			{
+				return;
+			}
+
+			Circle circle = doc.GetCadObject<Circle>(0x99F);
+
+			string entryName;
+			if (doc.Header.Version >= ACadVersion.AC1015)
+			{
+				entryName = "RAL CLASSIC$RAL 1006";
+			}
+			else
+			{
+				entryName = "RAL_CLASSIC$RAL_1006";
+			}
+
+			Assert.True(doc.Colors.ContainsKey(entryName));
+			
+			if (doc.Header.Version <= ACadVersion.AC1015)
+			{
+				return;
+			}
+
+			Assert.NotNull(circle.BookColor);
+
+			BookColor color = circle.BookColor;
+
+			Assert.Equal("RAL 1006", color.ColorName);
+			Assert.Equal("RAL CLASSIC", color.BookName);
 		}
 	}
 }

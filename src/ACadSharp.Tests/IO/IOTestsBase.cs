@@ -1,7 +1,7 @@
 ﻿using ACadSharp.IO;
 using ACadSharp.Tests.Common;
+using ACadSharp.Tests.TestModels;
 using System.IO;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -9,19 +9,15 @@ namespace ACadSharp.Tests.IO
 {
 	public abstract class IOTestsBase
 	{
-		protected static string samplesFolder => TestVariables.SamplesFolder;
+		public static TheoryData<FileModel> DwgFilePaths { get; } = new();
 
-		protected static string samplesOutFolder => TestVariables.OutputSamplesFolder;
+		public static TheoryData<FileModel> DxfAsciiFiles { get; } = new();
 
-		protected static string singleCasesOutFolder => TestVariables.OutputSingleCasesFolder;
-
-		public static TheoryData<string> DwgFilePaths { get; }
-
-		public static TheoryData<string> DxfAsciiFiles { get; }
-
-		public static TheoryData<string> DxfBinaryFiles { get; }
+		public static TheoryData<FileModel> DxfBinaryFiles { get; } = new();
 
 		public static TheoryData<ACadVersion> Versions { get; }
+
+		protected readonly DocumentIntegrity _docIntegrity;
 
 		protected readonly DwgReaderConfiguration _dwgConfiguration = new DwgReaderConfiguration
 		{
@@ -32,29 +28,19 @@ namespace ACadSharp.Tests.IO
 		{
 		};
 
-		protected readonly ITestOutputHelper _output;
+		protected readonly SvgConfiguration _svgConfiguration = new SvgConfiguration
+		{
+			DefaultLineWeight = 0.15,
+			LineWeightRatio = 50,
+		};
 
-		protected readonly DocumentIntegrity _docIntegrity;
+		protected readonly ITestOutputHelper _output;
 
 		static IOTestsBase()
 		{
-			DwgFilePaths = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(samplesFolder, $"*.dwg"))
-			{
-				DwgFilePaths.Add(file);
-			}
-
-			DxfAsciiFiles = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(samplesFolder, "*_ascii.dxf"))
-			{
-				DxfAsciiFiles.Add(file);
-			}
-
-			DxfBinaryFiles = new TheoryData<string>();
-			foreach (string file in Directory.GetFiles(samplesFolder, "*_binary.dxf"))
-			{
-				DxfBinaryFiles.Add(file);
-			}
+			loadSamples("", "dwg", DwgFilePaths);
+			loadSamples("", "dxf", DxfAsciiFiles);
+			loadSamples("", "dxf", DxfBinaryFiles);
 
 			Versions = new TheoryData<ACadVersion>
 			{
@@ -75,38 +61,35 @@ namespace ACadSharp.Tests.IO
 			this._docIntegrity = new DocumentIntegrity(output);
 		}
 
-		protected void onNotification(object sender, NotificationEventArgs e)
+		protected static void loadLocalSamples(string folder, string ext, TheoryData<FileModel> files)
 		{
-			if (e.NotificationType == NotificationType.Error)
-			{
-				throw e.Exception;
-			}
-
-			_output.WriteLine(e.Message);
-			if (e.Exception != null)
-			{
-				_output.WriteLine(e.Exception.ToString());
-			}
+			string path = Path.Combine("local", folder);
+			loadSamples(path, ext, files);
 		}
 
-		protected static void loadSamples(string folder, string ext, TheoryData<string> files)
+		protected static void loadSamples(string folder, string ext, TheoryData<FileModel> files)
 		{
-			string path = Path.Combine(samplesFolder, "local", folder);
+			string path = TestVariables.SamplesFolder;
+
+			if (!string.IsNullOrEmpty(folder))
+			{
+				path = Path.Combine(TestVariables.SamplesFolder, folder);
+			}
 
 			if (!Directory.Exists(path))
 			{
-				files.Add(string.Empty);
+				files.Add(new FileModel());
 				return;
 			}
 
 			foreach (string file in Directory.GetFiles(path, $"*.{ext}"))
 			{
-				files.Add(file);
+				files.Add(new FileModel(file));
 			}
 
-			if (!files.Any())
+			if (files.Count == 0)
 			{
-				files.Add(string.Empty);
+				files.Add(new FileModel());
 			}
 		}
 
@@ -141,6 +124,56 @@ namespace ACadSharp.Tests.IO
 				default:
 					return false;
 			}
+		}
+
+		protected void onNotification(object sender, NotificationEventArgs e)
+		{
+			if (e.NotificationType == NotificationType.Error)
+			{
+				throw e.Exception;
+			}
+
+			if (!TestVariables.LocalEnv)
+			{
+				return;
+			}
+
+			_output.WriteLine(e.Message);
+			if (e.Exception != null)
+			{
+				_output.WriteLine(e.Exception.ToString());
+			}
+		}
+
+		protected CadDocument readDocument(FileModel test, CadReaderConfiguration configuration = null)
+		{
+			CadDocument doc;
+			if (test.IsDxf)
+			{
+				using (DxfReader dxfReader = new DxfReader(test.Path, this.onNotification))
+				{
+					if (configuration != null)
+					{
+						dxfReader.Configuration = (DxfReaderConfiguration)configuration;
+					}
+
+					doc = dxfReader.Read();
+				}
+			}
+			else
+			{
+				using (DwgReader dxfReader = new DwgReader(test.Path, this.onNotification))
+				{
+					if (configuration != null)
+					{
+						dxfReader.Configuration = (DwgReaderConfiguration)configuration;
+					}
+
+					doc = dxfReader.Read();
+				}
+			}
+
+			return doc;
 		}
 	}
 }
