@@ -360,7 +360,7 @@ namespace ACadSharp.IO.DXF
 					this._writer.Write(40, ellipse.MinorToMajorRatio);
 					this._writer.Write(50, ellipse.StartAngle);
 					this._writer.Write(51, ellipse.EndAngle);
-					this._writer.Write(73, ellipse.IsCounterclockwise ? (short)1 : (short)0);
+					this._writer.Write(73, ellipse.CounterClockWise ? (short)1 : (short)0);
 					break;
 				case Hatch.BoundaryPath.Line line:
 					this._writer.Write(10, line.Start);
