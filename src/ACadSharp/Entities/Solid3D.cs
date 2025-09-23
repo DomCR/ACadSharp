@@ -8,10 +8,10 @@ namespace ACadSharp.Entities
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.Entity3DSolid"/> <br/>
-	/// Dxf class name <see cref="DxfSubclassMarker.ModelerGeometry"/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Solid3D"/>
 	/// </remarks>
 	[DxfName(DxfFileToken.Entity3DSolid)]
-	[DxfSubClass(DxfSubclassMarker.ModelerGeometry)]
+	[DxfSubClass(DxfSubclassMarker.Solid3D)]
 	public class Solid3D : ModelerGeometry
 	{
 		/// <inheritdoc/>
@@ -21,7 +21,7 @@ namespace ACadSharp.Entities
 		public override string ObjectName => DxfFileToken.Entity3DSolid;
 
 		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.ModelerGeometry;
+		public override string SubclassMarker => DxfSubclassMarker.Solid3D;
 
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
