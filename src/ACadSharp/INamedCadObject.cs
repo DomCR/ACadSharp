@@ -3,7 +3,7 @@
 namespace ACadSharp
 {
 	/// <summary>
-	/// Defines a CadObject with a unique name
+	/// Defines a CadObject with a unique name.
 	/// </summary>
 	public interface INamedCadObject
 	{
@@ -12,6 +12,9 @@ namespace ACadSharp
 		/// <summary>
 		/// Name identifier for this object.
 		/// </summary>
+		/// <remarks>
+		/// All named entries are case insensitive.
+		/// </remarks>
 		string Name { get; }
 	}
 }
