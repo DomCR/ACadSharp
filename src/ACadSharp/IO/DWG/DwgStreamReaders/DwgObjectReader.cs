@@ -2979,25 +2979,33 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readSolid3D()
 		{
 			Solid3D solid = new Solid3D();
-			var template = new CadEntityTemplate<Solid3D>(solid);
+			var template = new CadSolid3DTemplate(solid);
 
 			this.readCommonEntityData(template);
 
 			this.readCommonModelerGeometry(solid);
 
-
+			//R2007 +:
+			if (this.R2007Plus)
+			{
+				//H 350 History ID
+				template.HistoryHandle = this._mergedReaders.HandleReference();
+			}
 
 			return template;
 		}
 
 		private void readCommonModelerGeometry(ModelerGeometry geometry)
 		{
-			//ACIS Empty bit B X If 1, then no data follows
-			var hasData = this._mergedReaders.ReadBit();
-
-			if (hasData)
+			//Chapter 24 - Info
+			if (!this.R2013Plus)
 			{
-				this.readMModelerGeometryData(geometry);
+				//ACIS Empty bit B X If 1, then no data follows
+				var hasData = this._mergedReaders.ReadBit();
+				if (!hasData)
+				{
+					this.readModelerGeometryData();
+				}
 			}
 
 			//Common:
@@ -3006,15 +3014,121 @@ namespace ACadSharp.IO.DWG
 			if (isWireframe)
 			{
 				//Point present B X If true, following point is present, otherwise assume 0,0,0 for point
+				bool hasPoint = this._mergedReaders.ReadBit();
+				if (hasPoint)
+				{
+					//Point 3BD X Present if above bit is 1.
+					geometry.Point = this._objectReader.Read3BitDouble();
+				}
+
+				//Num IsoLines BL X
+				int nIsoLines = this._mergedReaders.ReadBitLong();
+				//IsoLines present B X If true, isoline data is present.
 				if (this._mergedReaders.ReadBit())
 				{
+					//Num Wires BL X Number of ISO lines that follow.
+					int nWires = this._mergedReaders.ReadBitLong();
+					for (int i = 0; i < nWires; i++)
+					{
+						ModelerGeometry.Wire wire = new ModelerGeometry.Wire();
+						this.readWire(wire);
+						geometry.Wires.Add(wire);
+					}
+				}
 
+				//Repeat “Num. silhouettes” times:
+				int nSilhouettes = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < nSilhouettes; i++)
+				{
+					var silhouette = new ModelerGeometry.Silhouette();
+
+					//VP id BL X
+					silhouette.ViewportId = this._mergedReaders.ReadBitLong();
+					//VP Target 3BD X
+					silhouette.ViewportTarget = this._mergedReaders.Read3BitDouble();
+					//VP dir. From target 3BD X
+					silhouette.ViewportDirectionFromTarget = this._mergedReaders.Read3BitDouble();
+					//VP up dir. 3BD X
+					silhouette.ViewportUpDirection = this._mergedReaders.Read3BitDouble();
+					//VP perspective B X
+					silhouette.ViewportPerspective = this._mergedReaders.ReadBit();
+
+					//Num Wires BL X
+					int nWires = this._mergedReaders.ReadBitLong();
+					for (int j = 0; j < nWires; j++)
+					{
+						ModelerGeometry.Wire wire = new ModelerGeometry.Wire();
+						this.readWire(wire);
+						silhouette.Wires.Add(wire);
+					}
+
+					geometry.Silhouettes.Add(silhouette);
+				}
+
+				//ACIS Empty bit B X Normally 1.If 0, then acis data follows in the
+				//same format as described above, except no wireframe
+				//of silhouette data will be present(no empty bits
+				//for these items either).
+				if (!this._mergedReaders.ReadBit())
+				{
+					this.readModelerGeometryData();
 				}
 			}
 
+			//R2007 +:
+			if (this.R2007Plus)
+			{
+				//Unknown BL
+				this._mergedReaders.ReadBitLong();
+			}
 		}
 
-		private void readMModelerGeometryData(ModelerGeometry geometry)
+		private void readWire(ModelerGeometry.Wire wire)
+		{
+			//Wire type RC X
+			wire.Type = this._mergedReaders.ReadByte();
+			//Wire selection marker BL X
+			wire.SelectionMarker = this._mergedReaders.ReadBitLong();
+			//Wire color BS X
+			short color = this._mergedReaders.ReadBitShort();
+			color = color > 256 ? (short)256 : color;
+			wire.Color = new Color(color);
+
+			//Wire Acis Index BL X
+			wire.AcisIndex = this._mergedReaders.ReadBitLong();
+
+			//Wire # of points BL X
+			uint nPoints = (uint)this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < nPoints; i++)
+			{
+				//Point 3BD X Repeats “Wire # of points” times.
+				wire.Points.Add(this._mergedReaders.Read3BitDouble());
+			}
+
+			//Transform present B X
+			wire.ApplyTransformPresent = this._mergedReaders.ReadBit();
+			if (wire.ApplyTransformPresent)
+			{
+				//X Axis 3BD X
+				wire.XAxis = this._mergedReaders.Read3BitDouble();
+				//Y Axis 3BD X
+				wire.YAxis = this._mergedReaders.Read3BitDouble();
+				//Z Axis 3BD X
+				wire.ZAxis = this._mergedReaders.Read3BitDouble();
+				//Translation 3BD X
+				wire.Translation = this._mergedReaders.Read3BitDouble();
+				//Scale BD X
+				wire.Scale = this._mergedReaders.ReadBitDouble();
+				//Has rotation B X
+				wire.HasRotation = this._mergedReaders.ReadBit();
+				//Has reflection B X
+				wire.HasReflection = this._mergedReaders.ReadBit();
+				//Has shear B X
+				wire.HasShear = this._mergedReaders.ReadBit();
+			}
+		}
+
+		private void readModelerGeometryData()
 		{
 			//Unknown bit B X
 			bool unknown = this._mergedReaders.ReadBit();
@@ -3040,6 +3154,8 @@ namespace ACadSharp.IO.DWG
 				default:
 					throw new DwgException("");
 			}
+
+			throw new NotImplementedException();
 		}
 
 		private CadTemplate readRay()
