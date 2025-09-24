@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using CSMath;
 
 namespace ACadSharp.Entities
 {
@@ -22,17 +21,6 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Solid3D;
-
-		/// <inheritdoc/>
-		public override void ApplyTransform(Transform transform)
-		{
-		}
-
-		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			return BoundingBox.Null;
-		}
 
 		//70	Modeler format version number(currently = 1)
 		//1	Proprietary data(multiple lines < 255 characters each)

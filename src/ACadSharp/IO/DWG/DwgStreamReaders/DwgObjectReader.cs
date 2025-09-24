@@ -845,13 +845,13 @@ namespace ACadSharp.IO.DWG
 					template = this.readSpline();
 					break;
 				case ObjectType.REGION:
-					this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
-					template = this.readUnknownEntity(null);
+					template = this.readModelerGeometry(new CadEntityTemplate<Region>());
 					break;
 				case ObjectType.SOLID3D:
 					template = this.readSolid3D();
 					break;
 				case ObjectType.BODY:
+					template = this.readModelerGeometry(new CadEntityTemplate<CadBody>());
 					break;
 				case ObjectType.RAY:
 					template = this.readRay();
@@ -2981,9 +2981,7 @@ namespace ACadSharp.IO.DWG
 			Solid3D solid = new Solid3D();
 			var template = new CadSolid3DTemplate(solid);
 
-			this.readCommonEntityData(template);
-
-			this.readCommonModelerGeometry(solid);
+			this.readModelerGeometry(template);
 
 			//R2007 +:
 			if (this.R2007Plus)
@@ -2995,8 +2993,13 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private void readCommonModelerGeometry(ModelerGeometry geometry)
+		private CadEntityTemplate<T> readModelerGeometry<T>(CadEntityTemplate<T> template)
+			where T : ModelerGeometry, new()
 		{
+			ModelerGeometry geometry = template.CadObject;
+
+			this.readCommonEntityData(template);
+
 			//Chapter 24 - Info
 			if (!this.R2013Plus)
 			{
@@ -3043,7 +3046,7 @@ namespace ACadSharp.IO.DWG
 					var silhouette = new ModelerGeometry.Silhouette();
 
 					//VP id BL X
-					silhouette.ViewportId = this._mergedReaders.ReadBitLong();
+					silhouette.ViewportId = this._mergedReaders.ReadBitLongLong();
 					//VP Target 3BD X
 					silhouette.ViewportTarget = this._mergedReaders.Read3BitDouble();
 					//VP dir. From target 3BD X
@@ -3053,13 +3056,17 @@ namespace ACadSharp.IO.DWG
 					//VP perspective B X
 					silhouette.ViewportPerspective = this._mergedReaders.ReadBit();
 
-					//Num Wires BL X
-					int nWires = this._mergedReaders.ReadBitLong();
-					for (int j = 0; j < nWires; j++)
+					//IsoLines present B X If true, isoline data is present.
+					if (this._mergedReaders.ReadBit())
 					{
-						ModelerGeometry.Wire wire = new ModelerGeometry.Wire();
-						this.readWire(wire);
-						silhouette.Wires.Add(wire);
+						//Num Wires BL X
+						int nWires = this._mergedReaders.ReadBitLong();
+						for (int j = 0; j < nWires; j++)
+						{
+							ModelerGeometry.Wire wire = new ModelerGeometry.Wire();
+							this.readWire(wire);
+							silhouette.Wires.Add(wire);
+						}
 					}
 
 					geometry.Silhouettes.Add(silhouette);
@@ -3081,6 +3088,8 @@ namespace ACadSharp.IO.DWG
 				//Unknown BL
 				this._mergedReaders.ReadBitLong();
 			}
+
+			return template;
 		}
 
 		private void readWire(ModelerGeometry.Wire wire)
