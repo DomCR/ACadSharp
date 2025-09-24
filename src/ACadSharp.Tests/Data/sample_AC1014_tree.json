@@ -276,7 +276,7 @@
       {
         "Name": "AcadAnnotativeDecomposition",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
-        "Handle": 4024,
+        "Handle": 4149,
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
@@ -284,7 +284,7 @@
       {
         "Name": "ACAD_SPLINE_DATA",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
-        "Handle": 4321,
+        "Handle": 4447,
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
@@ -292,7 +292,7 @@
       {
         "Name": "AcDbAttr",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
-        "Handle": 4376,
+        "Handle": 4502,
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
@@ -300,7 +300,7 @@
       {
         "Name": "CONTENTBLOCKICON",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
-        "Handle": 4383,
+        "Handle": 4509,
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
@@ -308,7 +308,7 @@
       {
         "Name": "ACAD_DSTYLE_DIMTEXT_FILL",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
-        "Handle": 4386,
+        "Handle": 4512,
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
@@ -316,7 +316,7 @@
       {
         "Name": "CONTENTBLOCKDESCRIPTION",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
-        "Handle": 4414,
+        "Handle": 4540,
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
@@ -324,7 +324,7 @@
       {
         "Name": "ACAD_DSTYLE_DIM_LINETYPE",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
-        "Handle": 4438,
+        "Handle": 4564,
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
@@ -332,7 +332,7 @@
       {
         "Name": "ACAD_DSTYLE_DIM_EXT1_LINETYPE",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
-        "Handle": 4439,
+        "Handle": 4565,
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
@@ -340,7 +340,15 @@
       {
         "Name": "ACAD_DSTYLE_DIM_EXT2_LINETYPE",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
-        "Handle": 4440,
+        "Handle": 4566,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "ACAD_OBJECT_CHANGE_GUID",
+        "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
+        "Handle": 4571,
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
@@ -1317,7 +1325,7 @@
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1004,
             "OwnerHandle": 31,
-            "DictionaryHandle": 4315,
+            "DictionaryHandle": 4441,
             "Children": []
           },
           {
@@ -1343,7 +1351,7 @@
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1013,
             "OwnerHandle": 31,
-            "DictionaryHandle": 4317,
+            "DictionaryHandle": 4443,
             "Children": []
           },
           {
@@ -1369,7 +1377,7 @@
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1014,
             "OwnerHandle": 31,
-            "DictionaryHandle": 4319,
+            "DictionaryHandle": 4445,
             "Children": []
           },
           {
@@ -2591,7 +2599,7 @@
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1913,
             "OwnerHandle": 31,
-            "DictionaryHandle": 4381,
+            "DictionaryHandle": 4507,
             "Children": []
           },
           {
@@ -4309,6 +4317,136 @@
             "OwnerHandle": 31,
             "DictionaryHandle": 3376,
             "Children": []
+          },
+          {
+            "Color": {
+              "IsByBlock": false,
+              "IsByLayer": true,
+              "Green": 0,
+              "Blue": 0,
+              "Red": 0,
+              "Index": 256
+            },
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "Properties": {},
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid3d",
+            "Handle": 3429,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "Color": {
+              "IsByBlock": false,
+              "IsByLayer": true,
+              "Green": 0,
+              "Blue": 0,
+              "Red": 0,
+              "Index": 256
+            },
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "Properties": {},
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.Region",
+            "Handle": 3433,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "Color": {
+              "IsByBlock": false,
+              "IsByLayer": true,
+              "Green": 0,
+              "Blue": 0,
+              "Red": 0,
+              "Index": 256
+            },
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "Properties": {},
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid3d",
+            "Handle": 3434,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "Color": {
+              "IsByBlock": false,
+              "IsByLayer": true,
+              "Green": 0,
+              "Blue": 0,
+              "Red": 0,
+              "Index": 256
+            },
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "Properties": {},
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.Polyline",
+            "Handle": 3440,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "Color": {
+              "IsByBlock": false,
+              "IsByLayer": true,
+              "Green": 0,
+              "Blue": 0,
+              "Red": 0,
+              "Index": 256
+            },
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "Properties": {},
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBText",
+            "Handle": 3441,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
           }
         ],
         "Name": "*Model_Space",
@@ -4379,7 +4517,7 @@
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 88,
         "OwnerHandle": 1,
-        "DictionaryHandle": 4050,
+        "DictionaryHandle": 4175,
         "Children": []
       },
       {
@@ -4443,7 +4581,7 @@
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 93,
         "OwnerHandle": 1,
-        "DictionaryHandle": 4052,
+        "DictionaryHandle": 4177,
         "Children": []
       },
       {
@@ -4507,7 +4645,7 @@
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockTableRecord",
         "Handle": 601,
         "OwnerHandle": 1,
-        "DictionaryHandle": 4054,
+        "DictionaryHandle": 4179,
         "Children": []
       },
       {
@@ -4819,7 +4957,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
-            "Handle": 4322,
+            "Handle": 4448,
             "OwnerHandle": 1333,
             "DictionaryHandle": 0,
             "Children": []
@@ -4845,7 +4983,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
-            "Handle": 4323,
+            "Handle": 4449,
             "OwnerHandle": 1333,
             "DictionaryHandle": 0,
             "Children": []
@@ -4871,7 +5009,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Arc",
-            "Handle": 4324,
+            "Handle": 4450,
             "OwnerHandle": 1333,
             "DictionaryHandle": 0,
             "Children": []
@@ -4897,7 +5035,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid",
-            "Handle": 4325,
+            "Handle": 4451,
             "OwnerHandle": 1333,
             "DictionaryHandle": 0,
             "Children": []
@@ -4923,7 +5061,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid",
-            "Handle": 4326,
+            "Handle": 4452,
             "OwnerHandle": 1333,
             "DictionaryHandle": 0,
             "Children": []
@@ -4949,7 +5087,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
-            "Handle": 4327,
+            "Handle": 4453,
             "OwnerHandle": 1333,
             "DictionaryHandle": 0,
             "Children": []
@@ -4975,7 +5113,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
-            "Handle": 4328,
+            "Handle": 4454,
             "OwnerHandle": 1333,
             "DictionaryHandle": 0,
             "Children": []
@@ -5001,7 +5139,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
-            "Handle": 4329,
+            "Handle": 4455,
             "OwnerHandle": 1333,
             "DictionaryHandle": 0,
             "Children": []
@@ -5027,7 +5165,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
-            "Handle": 4330,
+            "Handle": 4456,
             "OwnerHandle": 1333,
             "DictionaryHandle": 0,
             "Children": []
@@ -5053,7 +5191,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
-            "Handle": 4331,
+            "Handle": 4457,
             "OwnerHandle": 1333,
             "DictionaryHandle": 0,
             "Children": []
@@ -5091,7 +5229,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
-            "Handle": 4332,
+            "Handle": 4458,
             "OwnerHandle": 1346,
             "DictionaryHandle": 0,
             "Children": []
@@ -5117,7 +5255,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
-            "Handle": 4333,
+            "Handle": 4459,
             "OwnerHandle": 1346,
             "DictionaryHandle": 0,
             "Children": []
@@ -5143,7 +5281,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Arc",
-            "Handle": 4334,
+            "Handle": 4460,
             "OwnerHandle": 1346,
             "DictionaryHandle": 0,
             "Children": []
@@ -5169,7 +5307,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid",
-            "Handle": 4335,
+            "Handle": 4461,
             "OwnerHandle": 1346,
             "DictionaryHandle": 0,
             "Children": []
@@ -5195,7 +5333,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid",
-            "Handle": 4336,
+            "Handle": 4462,
             "OwnerHandle": 1346,
             "DictionaryHandle": 0,
             "Children": []
@@ -5221,7 +5359,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
-            "Handle": 4337,
+            "Handle": 4463,
             "OwnerHandle": 1346,
             "DictionaryHandle": 0,
             "Children": []
@@ -5247,7 +5385,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
-            "Handle": 4338,
+            "Handle": 4464,
             "OwnerHandle": 1346,
             "DictionaryHandle": 0,
             "Children": []
@@ -5273,7 +5411,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
-            "Handle": 4339,
+            "Handle": 4465,
             "OwnerHandle": 1346,
             "DictionaryHandle": 0,
             "Children": []
@@ -5299,7 +5437,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
-            "Handle": 4340,
+            "Handle": 4466,
             "OwnerHandle": 1346,
             "DictionaryHandle": 0,
             "Children": []
@@ -5325,7 +5463,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
-            "Handle": 4341,
+            "Handle": 4467,
             "OwnerHandle": 1346,
             "DictionaryHandle": 0,
             "Children": []
@@ -5351,7 +5489,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
-            "Handle": 4342,
+            "Handle": 4468,
             "OwnerHandle": 1346,
             "DictionaryHandle": 0,
             "Children": []
@@ -5777,7 +5915,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
-            "Handle": 4343,
+            "Handle": 4469,
             "OwnerHandle": 1380,
             "DictionaryHandle": 0,
             "Children": []
@@ -5803,7 +5941,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
-            "Handle": 4344,
+            "Handle": 4470,
             "OwnerHandle": 1380,
             "DictionaryHandle": 0,
             "Children": []
@@ -5829,7 +5967,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.Line",
-            "Handle": 4345,
+            "Handle": 4471,
             "OwnerHandle": 1380,
             "DictionaryHandle": 0,
             "Children": []
@@ -5855,7 +5993,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockReference",
-            "Handle": 4346,
+            "Handle": 4472,
             "OwnerHandle": 1380,
             "DictionaryHandle": 0,
             "Children": []
@@ -5881,7 +6019,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockReference",
-            "Handle": 4347,
+            "Handle": 4473,
             "OwnerHandle": 1380,
             "DictionaryHandle": 0,
             "Children": []
@@ -5907,7 +6045,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
-            "Handle": 4348,
+            "Handle": 4474,
             "OwnerHandle": 1380,
             "DictionaryHandle": 0,
             "Children": []
@@ -5933,7 +6071,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
-            "Handle": 4349,
+            "Handle": 4475,
             "OwnerHandle": 1380,
             "DictionaryHandle": 0,
             "Children": []
@@ -5959,7 +6097,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
-            "Handle": 4350,
+            "Handle": 4476,
             "OwnerHandle": 1380,
             "DictionaryHandle": 0,
             "Children": []
@@ -5985,7 +6123,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBPoint",
-            "Handle": 4351,
+            "Handle": 4477,
             "OwnerHandle": 1380,
             "DictionaryHandle": 0,
             "Children": []
@@ -6959,7 +7097,7 @@
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
             "Handle": 1611,
             "OwnerHandle": 1462,
-            "DictionaryHandle": 4374,
+            "DictionaryHandle": 4500,
             "Children": []
           },
           {
@@ -7217,7 +7355,7 @@
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.AttributeDefinition",
             "Handle": 1942,
             "OwnerHandle": 1919,
-            "DictionaryHandle": 4032,
+            "DictionaryHandle": 4157,
             "Children": []
           },
           {
@@ -7927,7 +8065,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
-            "Handle": 4456,
+            "Handle": 4601,
             "OwnerHandle": 2614,
             "DictionaryHandle": 0,
             "Children": []
@@ -7953,7 +8091,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
-            "Handle": 4457,
+            "Handle": 4602,
             "OwnerHandle": 2614,
             "DictionaryHandle": 0,
             "Children": []
@@ -7979,7 +8117,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
-            "Handle": 4458,
+            "Handle": 4603,
             "OwnerHandle": 2614,
             "DictionaryHandle": 0,
             "Children": []
@@ -8057,7 +8195,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockReference",
-            "Handle": 4459,
+            "Handle": 4604,
             "OwnerHandle": 2614,
             "DictionaryHandle": 0,
             "Children": []
@@ -9856,7 +9994,7 @@
     "ACadName": "Autodesk.AutoCAD.DatabaseServices.ViewportTable",
     "Handle": 8,
     "OwnerHandle": 0,
-    "DictionaryHandle": 4200,
+    "DictionaryHandle": 4326,
     "Children": []
   }
 }

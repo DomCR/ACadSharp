@@ -252,6 +252,8 @@ namespace ACadSharp.IO.DWG
 				case TableEntity:
 				case UnknownEntity:
 				case Solid3D:
+				case CadBody:
+				case Region:
 					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return false;
 				default:
