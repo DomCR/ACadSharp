@@ -5638,7 +5638,7 @@ namespace ACadSharp.IO.DWG
 									//endangle BD 51 endangle
 									EndAngle = this._objectReader.ReadBitDouble(),
 									//isccw B 73 1 if counter clockwise, otherwise 0
-									IsCounterclockwise = this._objectReader.ReadBit()
+									CounterClockWise = this._objectReader.ReadBit()
 								});
 								break;
 							case Hatch.BoundaryPath.EdgeType.Spline:
