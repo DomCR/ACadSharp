@@ -3007,7 +3007,8 @@ namespace ACadSharp.IO.DWG
 				var hasData = this._mergedReaders.ReadBit();
 				if (!hasData)
 				{
-					this.readModelerGeometryData();
+					this.readModelerGeometryData(template);
+					return template;
 				}
 			}
 
@@ -3078,7 +3079,8 @@ namespace ACadSharp.IO.DWG
 				//for these items either).
 				if (!this._mergedReaders.ReadBit())
 				{
-					this.readModelerGeometryData();
+					this.readModelerGeometryData(template);
+					return template;
 				}
 			}
 
@@ -3137,7 +3139,8 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private void readModelerGeometryData()
+		private void readModelerGeometryData<T>(CadEntityTemplate<T> template)
+			where T : ModelerGeometry, new()
 		{
 			//Unknown bit B X
 			bool unknown = this._mergedReaders.ReadBit();
@@ -3160,11 +3163,10 @@ namespace ACadSharp.IO.DWG
 				//“End\x0E\x02of\x0E\x04ACIS\x0D\x04data”. SAT files must be parsed to find the end.
 				case 2:
 					break;
-				default:
-					throw new DwgException("");
 			}
 
-			throw new NotImplementedException();
+			this.notify($"Stream data reader hasn't been implemented for {template.CadObject.ObjectName}", NotificationType.NotImplemented);
+
 		}
 
 		private CadTemplate readRay()
