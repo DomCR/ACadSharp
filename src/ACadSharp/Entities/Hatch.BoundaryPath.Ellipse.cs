@@ -1,4 +1,6 @@
-﻿using ACadSharp.Attributes;
+﻿using System;
+
+using ACadSharp.Attributes;
 using ACadSharp.IO.DXF;
 using CSMath;
 
@@ -72,8 +74,8 @@ namespace ACadSharp.Entities
 
 					Entities.Ellipse ellipse = new();
 					ellipse.Center = center;
-					ellipse.StartParameter = this.CounterClockWise ? this.StartAngle : 360 - this.EndAngle;
-					ellipse.EndParameter = this.CounterClockWise ? this.EndAngle : 360 - this.StartAngle;
+					ellipse.StartParameter = this.CounterClockWise ? this.StartAngle : 2 * Math.PI - this.EndAngle;
+					ellipse.EndParameter = this.CounterClockWise ? this.EndAngle : 2 * Math.PI - this.StartAngle;
 
 					return ellipse;
 				}
