@@ -11,7 +11,7 @@ namespace ACadSharp.IO.DXF
 		protected void writeEntity<T>(T entity)
 			where T : Entity
 		{
-			if (this.isEntitySupported(entity))
+			if (!this.isEntitySupported(entity))
 			{
 				return;
 			}
