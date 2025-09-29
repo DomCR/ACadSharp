@@ -184,11 +184,22 @@ namespace ACadSharp.IO.SVG
 			return sb.ToString();
 		}
 
+		private bool drawableLineType(IEntity entity)
+		{
+			var lineType = entity.GetActiveLineType();
+			return lineType.IsComplex && !lineType.Segments.Any(s => s.IsShape);
+		}
+
 		private void endDocument()
 		{
 			this.WriteEndElement();
 			this.WriteEndDocument();
 			this.Close();
+		}
+
+		private double getPointSize(IEntity entity)
+		{
+			return entity.GetActiveLineWeightType().GetLineWeightValue().ToPixelSize(this.Units);
 		}
 
 		private void startDocument(BoundingBox box)
@@ -271,6 +282,26 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndElement();
 		}
 
+		private void writeDashes(LineType lineType, double pointSize)
+		{
+			StringBuilder str = new StringBuilder();
+			foreach (LineType.Segment segment in lineType.Segments)
+			{
+				if (segment.IsPoint)
+				{
+					str.Append(pointSize.ToPixelSize(this.Units));
+				}
+				else
+				{
+					str.Append(Math.Abs(segment.Length.ToPixelSize(this.Units)));
+				}
+
+				str.Append(' ');
+			}
+
+			this.WriteAttributeString("stroke-dasharray", str.ToString().Trim());
+		}
+
 		private void writeEllipse(Ellipse ellipse, Transform transform)
 		{
 			this.WriteStartElement("polygon");
@@ -288,6 +319,22 @@ namespace ACadSharp.IO.SVG
 		private void writeEntity(Entity entity)
 		{
 			this.writeEntity(entity, new Transform());
+		}
+
+		private void writeEntityAsPath<T>(Entity entity, Transform transform, params IEnumerable<T> points)
+			where T : IVector
+		{
+			//Will be needed to write the linetypes that use shapes
+			double pointSize = this.getPointSize(entity);
+			var lines = entity.GetActiveLineType().CreateLineTypeShape(pointSize, points);
+
+			this.WriteStartElement("path");
+
+			this.writeEntityHeader(entity, transform);
+
+			this.WriteAttributeString("d", this.createPath(lines));
+
+			this.WriteEndElement();
 		}
 
 		private void writeEntityHeader(IEntity entity, Transform transform)
@@ -308,6 +355,11 @@ namespace ACadSharp.IO.SVG
 			this.WriteAttributeString("stroke-width", $"{this.Configuration.GetLineWeightValue(lineWeight, this.Units).ToSvg(UnitsType.Millimeters)}");
 
 			this.writeTransform(transform);
+
+			if (this.drawableLineType(entity))
+			{
+				this.writeDashes(entity.GetActiveLineType(), this.getPointSize(entity));
+			}
 		}
 
 		private void writeHatch(Hatch hatch, Transform transform)
@@ -355,32 +407,16 @@ namespace ACadSharp.IO.SVG
 
 		private void writeLine(Line line, Transform transform)
 		{
-			double pointSize = line.GetActiveLineWeightType().GetLineWeightValue().ToPixelSize(this.Units);
-			var lines = line.GetActiveLineType().CreateLineTypeShape(pointSize, line.StartPoint, line.EndPoint);
+			this.WriteStartElement("line");
 
-			if (lines.Count() == 1)
-			{
-				this.WriteStartElement("line");
+			this.writeEntityHeader(line, transform);
 
-				this.writeEntityHeader(line, transform);
+			this.WriteAttributeString("x1", line.StartPoint.X.ToSvg(this.Units));
+			this.WriteAttributeString("y1", line.StartPoint.Y.ToSvg(this.Units));
+			this.WriteAttributeString("x2", line.EndPoint.X.ToSvg(this.Units));
+			this.WriteAttributeString("y2", line.EndPoint.Y.ToSvg(this.Units));
 
-				this.WriteAttributeString("x1", line.StartPoint.X.ToSvg(this.Units));
-				this.WriteAttributeString("y1", line.StartPoint.Y.ToSvg(this.Units));
-				this.WriteAttributeString("x2", line.EndPoint.X.ToSvg(this.Units));
-				this.WriteAttributeString("y2", line.EndPoint.Y.ToSvg(this.Units));
-
-				this.WriteEndElement();
-			}
-			else
-			{
-				this.WriteStartElement("path");
-
-				this.writeEntityHeader(line, transform);
-
-				this.WriteAttributeString("d", this.createPath(lines));
-
-				this.WriteEndElement();
-			}
+			this.WriteEndElement();
 		}
 
 		private void writePattern(HatchPattern pattern)

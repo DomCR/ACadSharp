@@ -40,6 +40,9 @@ namespace ACadSharp.Tables
 		[DxfCodeValue(3)]
 		public string Description { get; set; }
 
+		/// <summary>
+		/// Get if this line type is complex (has segments).
+		/// </summary>
 		public bool IsComplex { get { return this._segments.Count > 0; } }
 
 		/// <inheritdoc/>
@@ -52,7 +55,7 @@ namespace ACadSharp.Tables
 		/// Total pattern length.
 		/// </summary>
 		[DxfCodeValue(40)]
-		public double PatternLen
+		public double PatternLength
 		{
 			get
 			{
@@ -104,7 +107,8 @@ namespace ACadSharp.Tables
 		/// </summary>
 		/// <param name="points"></param>
 		/// <returns></returns>
-		public IEnumerable<Polyline3D> CreateLineTypeShape(params IEnumerable<IVector> points)
+		public IEnumerable<Polyline3D> CreateLineTypeShape<T>(params IEnumerable<T> points)
+			where T : IVector
 		{
 			return this.CreateLineTypeShape(null, points);
 		}
@@ -115,7 +119,8 @@ namespace ACadSharp.Tables
 		/// <param name="pointSize"></param>
 		/// <param name="points"></param>
 		/// <returns></returns>
-		public IEnumerable<Polyline3D> CreateLineTypeShape(double? pointSize, params IEnumerable<IVector> points)
+		public IEnumerable<Polyline3D> CreateLineTypeShape<T>(double? pointSize, params IEnumerable<T> points)
+			where T : IVector
 		{
 			if (!points.Any() || points.Count() < 2)
 			{
@@ -221,7 +226,7 @@ namespace ACadSharp.Tables
 
 			double dist = start.DistanceFrom(end);
 			XYZ next = start;
-			int nSegments = (int)Math.Floor(dist / this.PatternLen);
+			int nSegments = (int)Math.Floor(dist / this.PatternLength);
 			XYZ v = (end - start).Normalize();
 
 			while ((double)dist > 0)

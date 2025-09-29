@@ -249,7 +249,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(72, (short)linetype.Alignment, map);
 			this._writer.Write(73, (short)linetype.Segments.Count(), map);
-			this._writer.Write(40, linetype.PatternLen);
+			this._writer.Write(40, linetype.PatternLength);
 
 			foreach (LineType.Segment s in linetype.Segments)
 			{
