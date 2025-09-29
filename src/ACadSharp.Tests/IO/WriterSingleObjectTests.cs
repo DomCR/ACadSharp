@@ -33,6 +33,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SingleEllipse)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.ViewZoom)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleMLeader)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
@@ -422,7 +423,7 @@ namespace ACadSharp.Tests.IO
 				pline.Vertices.Add(new XYZ(0, 0, 0));
 
 				path.Edges.Add(pline);
-				path.Flags = path.Flags.AddFlag(BoundaryPathFlags.Polyline);
+				path.Flags |= BoundaryPathFlags.Polyline;
 				hatch.Paths.Add(path);
 
 				this.Document.Entities.Add(hatch);
@@ -918,6 +919,32 @@ namespace ACadSharp.Tests.IO
 				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
 
 				this.Document.Entities.Add(line);
+			}
+
+			public void SingleMLeader()
+			{
+				MultiLeader mleader = new MultiLeader();
+				mleader.PathType = MultiLeaderPathType.StraightLineSegments;
+				mleader.PropertyOverrideFlags = MultiLeaderPropertyOverrideFlags.ContentType | MultiLeaderPropertyOverrideFlags.TextAlignment | MultiLeaderPropertyOverrideFlags.EnableUseDefaultMText;
+
+				mleader.ContextData.ContentBasePoint = new XYZ(1.8599999999999999, 1.5, 0);
+				mleader.ContextData.BasePoint = new XYZ(0, 0, 0);
+				mleader.ContextData.TextLabel = "This is my test MLEader";
+
+				var root = new MultiLeaderObjectContextData.LeaderRoot
+				{
+					ConnectionPoint = new XYZ(1.5, 1.5, 0),
+					ContentValid = true,
+					Direction = XYZ.AxisX,
+					LandingDistance = 0.36,
+				};
+				MultiLeaderObjectContextData.LeaderLine leaderLine = new MultiLeaderObjectContextData.LeaderLine();
+				leaderLine.PathType = MultiLeaderPathType.StraightLineSegments;
+				leaderLine.Points.Add(XYZ.Zero);
+				root.Lines.Add(leaderLine);
+				mleader.ContextData.LeaderRoots.Add(root);
+
+				this.Document.Entities.Add(mleader);
 			}
 
 			public void SingleMLine()

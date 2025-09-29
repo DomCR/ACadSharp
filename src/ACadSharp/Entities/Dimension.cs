@@ -120,11 +120,11 @@ namespace ACadSharp.Entities
 			{
 				if (value)
 				{
-					this._flags = this._flags.AddFlag(DimensionType.TextUserDefinedLocation);
+					this._flags.AddFlag(DimensionType.TextUserDefinedLocation);
 				}
 				else
 				{
-					this._flags = this._flags.RemoveFlag(DimensionType.TextUserDefinedLocation);
+					this._flags.RemoveFlag(DimensionType.TextUserDefinedLocation);
 				}
 			}
 		}

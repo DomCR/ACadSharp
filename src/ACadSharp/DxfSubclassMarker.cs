@@ -10,6 +10,8 @@
 
 		public const string Angular3PointDimension = "AcDb3PointAngularDimension";
 
+		public const string AnnotScaleObjectContextData = "AcDbAnnotScaleObjectContextData";
+
 		public const string ApplicationId = "AcDbRegAppTableRecord";
 
 		public const string Arc = "AcDbArc";
@@ -130,7 +132,9 @@
 
 		public const string MultiLeader = "AcDbMLeader";
 
-		public const string MultiLeaderAnnotContext = "AcDbMultiLeaderAnnotContext";
+		public const string MultiLeaderObjectContextData = "AcDbMLeaderObjectContextData";
+
+		public const string ObjectContextData = "AcDbObjectContextData";
 
 		public const string OrdinateDimension = "AcDbOrdinateDimension";
 
@@ -177,6 +181,8 @@
 		public const string Shape = "AcDbShape";
 
 		public const string Solid = "AcDbTrace";
+
+		public const string Solid3D = "AcDb3dSolid";
 
 		public const string SortentsTable = "AcDbSortentsTable";
 

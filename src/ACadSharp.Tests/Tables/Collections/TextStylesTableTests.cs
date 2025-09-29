@@ -12,7 +12,7 @@ namespace ACadSharp.Tests.Tables.Collections
 			CadDocument doc = new CadDocument();
 
 			TextStyle style = new TextStyle("custom_text_00");
-			style.Flags = style.Flags.AddFlag(StyleFlags.IsShape);
+			style.Flags |= StyleFlags.IsShape;
 
 			doc.TextStyles.Add(style);
 		}
