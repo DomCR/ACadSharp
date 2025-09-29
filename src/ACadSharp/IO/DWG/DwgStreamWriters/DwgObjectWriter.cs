@@ -543,7 +543,7 @@ namespace ACadSharp.IO.DWG
 			//Description TV 3
 			this._writer.WriteVariableText(ltype.Description);
 			//Pattern Len BD 40
-			this._writer.WriteBitDouble(ltype.PatternLen);
+			this._writer.WriteBitDouble(ltype.PatternLength);
 			//Alignment RC 72 Always 'A'.
 			this._writer.WriteByte((byte)ltype.Alignment);
 
