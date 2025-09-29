@@ -304,36 +304,46 @@ namespace ACadSharp.IO.SVG
 
 		private void writeEllipse(Ellipse ellipse, Transform transform)
 		{
-			this.WriteStartElement("polyline");
-
-			this.writeEntityHeader(ellipse, transform);
-
-			var vertices = ellipse.PolygonalVertexes(256);
-			string pts = this.svgPoints(vertices, transform);
-			this.WriteAttributeString("points", pts);
-			this.WriteAttributeString("fill", "none");
-
-			this.WriteEndElement();
-
-			return;
-
 			if (ellipse.IsFullEllipse)
 			{
-				//Write ellipse as SVG ellipse
-				this.WriteStartElement("ellipse");
+				this.WriteStartElement("path");
 
 				this.writeEntityHeader(ellipse, transform);
-				this.WriteAttributeString("cx", ellipse.Center.X);
-				this.WriteAttributeString("cy", ellipse.Center.Y);
-				this.WriteAttributeString("rx", ellipse.MajorAxis);
-				this.WriteAttributeString("ry", ellipse.MinorAxis);
+
+				StringBuilder sb = new StringBuilder();
+
+				XYZ start = ellipse.PolarCoordinateRelativeToCenter(0);
+				XYZ end = ellipse.PolarCoordinateRelativeToCenter(Math.PI);
+
+				sb.Append($"M {start.ToPixelSize(this.Units).ToSvg()} ");
+				sb.Append($"A {ellipse.MajorAxis} {ellipse.MinorAxis} {MathHelper.RadToDeg(ellipse.Rotation)} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+
+				start = ellipse.PolarCoordinateRelativeToCenter(Math.PI);
+				end = ellipse.PolarCoordinateRelativeToCenter(MathHelper.TwoPI);
+				sb.Append($"A {ellipse.MajorAxis} {ellipse.MinorAxis} {MathHelper.RadToDeg(ellipse.Rotation)} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+
+				//A rx ry rotation large-arc-flag sweep-flag x y
+				this.WriteAttributeString("d", sb.ToString());
 
 				this.WriteAttributeString("fill", "none");
-
 				this.WriteEndElement();
 			}
 			else
 			{
+				this.WriteStartElement("polyline");
+
+				this.writeEntityHeader(ellipse, transform);
+
+				var vertices = ellipse.PolygonalVertexes(256);
+				string pts = this.svgPoints(vertices, transform);
+				this.WriteAttributeString("points", pts);
+				this.WriteAttributeString("fill", "none");
+
+				this.WriteEndElement();
+
+				return;
+
+				//TODO: Fix the ellipse generation
 				this.WriteStartElement("path");
 
 				this.writeEntityHeader(ellipse, transform);
