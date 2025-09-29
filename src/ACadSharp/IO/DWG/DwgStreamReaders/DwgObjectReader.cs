@@ -1066,6 +1066,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readPdfDefinition();
 					break;
 				case "PDFUNDERLAY":
+				case "PDFREFERENCE":
 					template = this.readPdfUnderlay();
 					break;
 				case "SCALE":
