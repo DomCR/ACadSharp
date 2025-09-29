@@ -276,7 +276,31 @@
       {
         "Name": "ACAD_SPLINE_DATA",
         "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
-        "Handle": 3552,
+        "Handle": 3646,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "ACAD_OBJECT_CHANGE_GUID",
+        "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
+        "Handle": 4754,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "ACAD_OBJECT_CHANGE_GUID",
+        "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
+        "Handle": 8831,
+        "OwnerHandle": 9,
+        "DictionaryHandle": 0,
+        "Children": []
+      },
+      {
+        "Name": "ACAD_OBJECT_CHANGE_GUID",
+        "ACadName": "Autodesk.AutoCAD.DatabaseServices.RegAppTableRecord",
+        "Handle": 3647,
         "OwnerHandle": 9,
         "DictionaryHandle": 0,
         "Children": []
@@ -4267,6 +4291,136 @@
             "OwnerHandle": 31,
             "DictionaryHandle": 3376,
             "Children": []
+          },
+          {
+            "Color": {
+              "IsByBlock": false,
+              "IsByLayer": true,
+              "Green": 0,
+              "Blue": 0,
+              "Red": 0,
+              "Index": 256
+            },
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "Properties": {},
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid3d",
+            "Handle": 3429,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "Color": {
+              "IsByBlock": false,
+              "IsByLayer": true,
+              "Green": 0,
+              "Blue": 0,
+              "Red": 0,
+              "Index": 256
+            },
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "Properties": {},
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.Region",
+            "Handle": 3433,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "Color": {
+              "IsByBlock": false,
+              "IsByLayer": true,
+              "Green": 0,
+              "Blue": 0,
+              "Red": 0,
+              "Index": 256
+            },
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "Properties": {},
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.Solid3d",
+            "Handle": 3434,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "Color": {
+              "IsByBlock": false,
+              "IsByLayer": true,
+              "Green": 0,
+              "Blue": 0,
+              "Red": 0,
+              "Index": 256
+            },
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "Properties": {},
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.Polyline",
+            "Handle": 3440,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
+          },
+          {
+            "Color": {
+              "IsByBlock": false,
+              "IsByLayer": true,
+              "Green": 0,
+              "Blue": 0,
+              "Red": 0,
+              "Index": 256
+            },
+            "LayerName": "0",
+            "IsInvisible": false,
+            "Transparency": {
+              "IsByLayer": false,
+              "IsByBlock": false,
+              "Value": 0
+            },
+            "LinetypeName": "ByLayer",
+            "LinetypeScale": 1.0,
+            "LineWeight": -1,
+            "Properties": {},
+            "ACadName": "Autodesk.AutoCAD.DatabaseServices.DBText",
+            "Handle": 3441,
+            "OwnerHandle": 31,
+            "DictionaryHandle": 0,
+            "Children": []
           }
         ],
         "Name": "*Model_Space",
@@ -7175,7 +7329,7 @@
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.AttributeDefinition",
             "Handle": 1942,
             "OwnerHandle": 1919,
-            "DictionaryHandle": 3463,
+            "DictionaryHandle": 3556,
             "Children": []
           },
           {
@@ -7885,7 +8039,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.MText",
-            "Handle": 3559,
+            "Handle": 3654,
             "OwnerHandle": 2614,
             "DictionaryHandle": 0,
             "Children": []
@@ -7963,7 +8117,7 @@
             "LineWeight": -1,
             "Properties": {},
             "ACadName": "Autodesk.AutoCAD.DatabaseServices.BlockReference",
-            "Handle": 3560,
+            "Handle": 3655,
             "OwnerHandle": 2614,
             "DictionaryHandle": 0,
             "Children": []

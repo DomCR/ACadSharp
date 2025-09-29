@@ -182,6 +182,8 @@
 
 		public const string Solid = "AcDbTrace";
 
+		public const string Solid3D = "AcDb3dSolid";
+
 		public const string SortentsTable = "AcDbSortentsTable";
 
 		public const string SpatialFilter = "AcDbSpatialFilter";
