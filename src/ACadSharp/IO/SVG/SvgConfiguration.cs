@@ -1,4 +1,5 @@
-﻿using ACadSharp.Objects;
+﻿using ACadSharp.Extensions;
+using ACadSharp.Objects;
 using ACadSharp.Types.Units;
 using CSMath;
 using System;
@@ -60,33 +61,7 @@ namespace ACadSharp.IO
 					return 0.001;
 			}
 
-			return value / 100;
-		}
-
-		public static double ToPixelSize(double value, PlotPaperUnits units)
-		{
-			switch (units)
-			{
-				case PlotPaperUnits.Inches:
-					return value * 96;
-				case PlotPaperUnits.Millimeters:
-					return value * 96 / 25.4;
-				case PlotPaperUnits.Pixels:
-					return value;
-				default:
-					throw new InvalidEnumArgumentException(nameof(units), (int)units, typeof(PlotPaperUnits));
-			}
-		}
-
-		public static T ToPixelSize<T>(T value, PlotPaperUnits units)
-			where T : IVector
-		{
-			for (int i = 0; i < value.Dimension; i++)
-			{
-				value[i] = ToPixelSize(value[i], units);
-			}
-
-			return value;
+			return lineWeight.GetLineWeightValue();
 		}
 	}
 }

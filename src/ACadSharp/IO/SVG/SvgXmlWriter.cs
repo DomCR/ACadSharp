@@ -251,15 +251,15 @@ namespace ACadSharp.IO.SVG
 
 		private void writeArc(Arc arc, Transform transform)
 		{
-			//A rx ry rotation large-arc-flag sweep-flag x y
-
-			this.WriteStartElement("polyline");
+			this.WriteStartElement("path");
 
 			this.writeEntityHeader(arc, transform);
 
-			var vertices = arc.PolygonalVertexes(256);
-			string pts = this.svgPoints(vertices, transform);
-			this.WriteAttributeString("points", pts);
+			arc.GetEndVertices(out XYZ start, out XYZ end);
+			
+			//A rx ry rotation large-arc-flag sweep-flag x y
+			this.WriteAttributeString("d", $"M {start.ToPixelSize(this.Units).ToSvg()} A {arc.Radius} {arc.Radius} {0} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+
 			this.WriteAttributeString("fill", "none");
 
 			this.WriteEndElement();
@@ -344,14 +344,7 @@ namespace ACadSharp.IO.SVG
 			this.WriteAttributeString("vector-effect", "non-scaling-stroke");
 			this.WriteAttributeString("stroke", this.colorSvg(color));
 
-			var lineWeight = entity.LineWeight;
-			switch (lineWeight)
-			{
-				case LineWeightType.ByLayer:
-					lineWeight = entity.Layer.LineWeight;
-					break;
-			}
-
+			var lineWeight = entity.GetActiveLineWeightType();
 			this.WriteAttributeString("stroke-width", $"{this.Configuration.GetLineWeightValue(lineWeight, this.Units).ToSvg(UnitsType.Millimeters)}");
 
 			this.writeTransform(transform);
