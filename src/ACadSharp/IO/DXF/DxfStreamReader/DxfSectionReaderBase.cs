@@ -152,6 +152,8 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<AttributeDefinition>(new CadAttributeTemplate(new AttributeDefinition()), this.readAttributeDefinition);
 				case DxfFileToken.EntityArc:
 					return this.readEntityCodes<Arc>(new CadEntityTemplate<Arc>(), this.readArc);
+				case DxfFileToken.EntityBody:
+					return this.readEntityCodes<CadBody>(new CadEntityTemplate<CadBody>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityCircle:
 					return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityDimension:
@@ -202,6 +204,10 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<Shape>(new CadShapeTemplate(new Shape()), this.readShape);
 				case DxfFileToken.EntitySpline:
 					return this.readEntityCodes<Spline>(new CadSplineTemplate(), this.readSpline);
+				case DxfFileToken.Entity3DSolid:
+					return this.readEntityCodes<Solid3D>(new CadSolid3DTemplate(), this.readEntitySubclassMap);
+				case DxfFileToken.EntityRegion:
+					return this.readEntityCodes<Region>(new CadEntityTemplate<Region>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityXline:
 					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), this.readEntitySubclassMap);
 				default:
@@ -1604,7 +1610,7 @@ namespace ACadSharp.IO.DXF
 								ellipse.EndAngle = this._reader.ValueAsDouble;
 								break;
 							case 73:
-								ellipse.IsCounterclockwise = this._reader.ValueAsBool;
+								ellipse.CounterClockWise = this._reader.ValueAsBool;
 								break;
 							default:
 								return ellipse;

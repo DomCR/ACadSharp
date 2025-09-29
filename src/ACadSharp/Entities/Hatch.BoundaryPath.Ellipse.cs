@@ -1,4 +1,6 @@
-﻿using ACadSharp.Attributes;
+﻿using System;
+
+using ACadSharp.Attributes;
 using ACadSharp.IO.DXF;
 using CSMath;
 
@@ -17,7 +19,7 @@ namespace ACadSharp.Entities
 				public XY Center { get; set; }
 
 				/// <summary>
-				/// Is counterclockwise flag.
+				/// Counterclockwise flag.
 				/// </summary>
 				[DxfCodeValue(73)]
 				public bool CounterClockWise { get; set; }
@@ -27,12 +29,6 @@ namespace ACadSharp.Entities
 				/// </summary>
 				[DxfCodeValue(51)]
 				public double EndAngle { get; set; }
-
-				/// <summary>
-				/// Is counterclockwise flag.
-				/// </summary>
-				[DxfCodeValue(73)]
-				public bool IsCounterclockwise { get; set; }
 
 				/// <summary>
 				/// Endpoint of major axis relative to center point (in OCS).
@@ -78,8 +74,8 @@ namespace ACadSharp.Entities
 
 					Entities.Ellipse ellipse = new();
 					ellipse.Center = center;
-					ellipse.StartParameter = this.IsCounterclockwise ? this.StartAngle : 360 - this.EndAngle;
-					ellipse.EndParameter = this.IsCounterclockwise ? this.EndAngle : 360 - this.StartAngle;
+					ellipse.StartParameter = this.CounterClockWise ? this.StartAngle : 2 * Math.PI - this.EndAngle;
+					ellipse.EndParameter = this.CounterClockWise ? this.EndAngle : 2 * Math.PI - this.StartAngle;
 
 					return ellipse;
 				}
