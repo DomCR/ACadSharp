@@ -256,7 +256,7 @@ namespace ACadSharp.IO.SVG
 			this.writeEntityHeader(arc, transform);
 
 			arc.GetEndVertices(out XYZ start, out XYZ end);
-			
+
 			//A rx ry rotation large-arc-flag sweep-flag x y
 			this.WriteAttributeString("d", $"M {start.ToPixelSize(this.Units).ToSvg()} A {arc.Radius} {arc.Radius} {0} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
 
@@ -304,7 +304,7 @@ namespace ACadSharp.IO.SVG
 
 		private void writeEllipse(Ellipse ellipse, Transform transform)
 		{
-			this.WriteStartElement("polygon");
+			this.WriteStartElement("polyline");
 
 			this.writeEntityHeader(ellipse, transform);
 
@@ -314,6 +314,38 @@ namespace ACadSharp.IO.SVG
 			this.WriteAttributeString("fill", "none");
 
 			this.WriteEndElement();
+
+			return;
+
+			if (ellipse.IsFullEllipse)
+			{
+				//Write ellipse as SVG ellipse
+				this.WriteStartElement("ellipse");
+
+				this.writeEntityHeader(ellipse, transform);
+				this.WriteAttributeString("cx", ellipse.Center.X);
+				this.WriteAttributeString("cy", ellipse.Center.Y);
+				this.WriteAttributeString("rx", ellipse.MajorAxis);
+				this.WriteAttributeString("ry", ellipse.MinorAxis);
+
+				this.WriteAttributeString("fill", "none");
+
+				this.WriteEndElement();
+			}
+			else
+			{
+				this.WriteStartElement("path");
+
+				this.writeEntityHeader(ellipse, transform);
+
+				ellipse.GetEndVertices(out XYZ start, out XYZ end);
+
+				//A rx ry rotation large-arc-flag sweep-flag x y
+				this.WriteAttributeString("d", $"M {start.ToPixelSize(this.Units).ToSvg()} A {ellipse.MajorAxis} {ellipse.MinorAxis} {MathHelper.RadToDeg(ellipse.Rotation)} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+
+				this.WriteAttributeString("fill", "none");
+				this.WriteEndElement();
+			}
 		}
 
 		private void writeEntity(Entity entity)

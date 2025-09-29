@@ -33,15 +33,6 @@ namespace ACadSharp.Entities
 		public double EndParameter { get; set; } = MathHelper.TwoPI;
 
 		/// <summary>
-		/// Endpoint of major axis, relative to the center (in WCS).
-		/// </summary>
-		/// <remarks>
-		/// Axis X is set as default.
-		/// </remarks>
-		[DxfCodeValue(11, 21, 31)]
-		public XYZ MajorAxisEndPoint { get; set; } = XYZ.AxisX;
-
-		/// <summary>
 		/// Flag that indicates weather this ellipse is closed or not.
 		/// </summary>
 		public bool IsFullEllipse { get { return this.StartParameter == 0 && this.EndParameter == MathHelper.TwoPI; } }
@@ -50,6 +41,15 @@ namespace ACadSharp.Entities
 		/// Length of the major axis.
 		/// </summary>
 		public double MajorAxis { get { return 2 * this.MajorAxisEndPoint.GetLength(); } }
+
+		/// <summary>
+		/// Endpoint of major axis, relative to the center (in WCS).
+		/// </summary>
+		/// <remarks>
+		/// Axis X is set as default.
+		/// </remarks>
+		[DxfCodeValue(11, 21, 31)]
+		public XYZ MajorAxisEndPoint { get; set; } = XYZ.AxisX;
 
 		/// <summary>
 		/// Length of the minor axis.
@@ -137,7 +137,7 @@ namespace ACadSharp.Entities
 
 			this.Center = transform.ApplyTransform(this.Center);
 			this.MajorAxisEndPoint = transform.ApplyScale(this.MajorAxisEndPoint);
-			
+
 			XYZ newPrep = transform.ApplyTransform(perp);
 			if (newPrep != XYZ.Zero && this.MajorAxisEndPoint != XYZ.Zero)
 			{
@@ -162,6 +162,23 @@ namespace ACadSharp.Entities
 		{
 			List<XYZ> pts = this.PolygonalVertexes(100);
 			return BoundingBox.FromPoints(pts);
+		}
+
+		/// <summary>
+		/// Get end vertices of the ellipse if is not <see cref="IsFullEllipse"/>.
+		/// </summary>
+		/// <param name="start"></param>
+		/// <param name="end"></param>
+		public void GetEndVertices(out XYZ start, out XYZ end)
+		{
+			if (this.IsFullEllipse)
+			{
+				start = XYZ.Zero;
+				end = XYZ.Zero;
+			}
+
+			start = this.PolarCoordinateRelativeToCenter(this.StartParameter);
+			end = this.PolarCoordinateRelativeToCenter(this.EndParameter);
 		}
 
 		/// <inheritdoc/>
