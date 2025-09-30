@@ -21,7 +21,7 @@ namespace ACadSharp.IO.SVG
 
 		public SvgConfiguration Configuration { get; } = new();
 
-		public Layout Layout { get; set; }
+		public bool IsPaperSpace { get; set; }
 
 		public UnitsType Units { get; protected set; }
 
@@ -42,10 +42,16 @@ namespace ACadSharp.IO.SVG
 		public void WriteBlock(BlockRecord record)
 		{
 			this.Units = record.Units;
+			this.IsPaperSpace = false;
 
 			BoundingBox box = record.GetBoundingBox();
 
 			this.startDocument(box);
+
+			if (record.Document != null)
+			{
+				this.writeDefinitions(record.Document);
+			}
 
 			foreach (var e in record.Entities)
 			{
@@ -57,8 +63,8 @@ namespace ACadSharp.IO.SVG
 
 		public void WriteLayout(Layout layout)
 		{
-			this.Layout = layout;
 			this.Units = layout.PaperUnits.ToUnits();
+			this.IsPaperSpace = layout.IsPaperSpace;
 
 			double paperWidth = layout.PaperWidth;
 			double paperHeight = layout.PaperHeight;
@@ -76,10 +82,10 @@ namespace ACadSharp.IO.SVG
 			XYZ upperCorner = new XYZ(paperWidth, paperHeight, 0.0);
 			BoundingBox paper = new BoundingBox(lowerCorner, upperCorner);
 
-			XYZ lowerMargin = this.Layout.UnprintableMargin.BottomLeftCorner.Convert<XYZ>();
+			XYZ lowerMargin = layout.UnprintableMargin.BottomLeftCorner.Convert<XYZ>();
 			BoundingBox margins = new BoundingBox(
 				lowerMargin,
-				this.Layout.UnprintableMargin.TopCorner.Convert<XYZ>());
+				layout.UnprintableMargin.TopCorner.Convert<XYZ>());
 
 			this.startDocument(paper);
 
@@ -147,7 +153,7 @@ namespace ACadSharp.IO.SVG
 
 		private string colorSvg(Color color)
 		{
-			if (this.Layout != null && color.Equals(Color.Default))
+			if (this.IsPaperSpace && color.Equals(Color.Default))
 			{
 				color = Color.Black;
 			}
@@ -224,7 +230,7 @@ namespace ACadSharp.IO.SVG
 
 			this.WriteAttributeString("transform", $"scale(1,-1)");
 
-			if (this.Layout != null)
+			if (this.IsPaperSpace)
 			{
 				this.WriteAttributeString("style", "background-color:white");
 			}
@@ -365,8 +371,7 @@ namespace ACadSharp.IO.SVG
 		private void writeHatch(Hatch hatch, Transform transform)
 		{
 			this.WriteStartElement("g");
-
-			this.writePattern(hatch.Pattern);
+			this.WriteAttributeString("fill", $"url(#{hatch.Pattern.Name})");
 
 			foreach (Hatch.BoundaryPath path in hatch.Paths)
 			{
@@ -381,7 +386,7 @@ namespace ACadSharp.IO.SVG
 
 				//this.WriteAttributeString("points", pts);
 
-				this.WriteAttributeString("fill", "none");
+				//this.WriteAttributeString("fill", "none");
 
 				this.WriteEndElement();
 			}
@@ -415,13 +420,6 @@ namespace ACadSharp.IO.SVG
 			this.WriteAttributeString("y1", line.StartPoint.Y.ToSvg(this.Units));
 			this.WriteAttributeString("x2", line.EndPoint.X.ToSvg(this.Units));
 			this.WriteAttributeString("y2", line.EndPoint.Y.ToSvg(this.Units));
-
-			this.WriteEndElement();
-		}
-
-		private void writePattern(HatchPattern pattern)
-		{
-			this.WriteStartElement("pattern");
 
 			this.WriteEndElement();
 		}
