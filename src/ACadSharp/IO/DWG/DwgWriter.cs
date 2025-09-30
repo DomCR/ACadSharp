@@ -310,7 +310,8 @@ namespace ACadSharp.IO
 				this._document,
 				this._encoding,
 				this.Configuration.WriteXRecords,
-				this.Configuration.WriteXData);
+				this.Configuration.WriteXData,
+				this.Configuration.WriteShapes);
 			writer.OnNotification += this.triggerNotification;
 			writer.Write();
 

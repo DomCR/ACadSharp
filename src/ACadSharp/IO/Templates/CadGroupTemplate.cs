@@ -6,21 +6,22 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadGroupTemplate : CadTemplate<Group>
 	{
-		public List<ulong> Handles { get; set; } = new List<ulong>();
+		public HashSet<ulong> Handles { get; set; } = new();
 
 		public CadGroupTemplate() : base(new Group()) { }
 
 		public CadGroupTemplate(Group group) : base(group) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			foreach (var handle in this.Handles)
 			{
-				if (builder.TryGetCadObject<Entity>(handle, out Entity e))
+				if (builder.TryGetObjectTemplate(handle, out CadEntityTemplate e))
 				{
-					this.CadObject.Add(e);
+					e.Build(builder);
+					this.CadObject.Add(e.CadObject);
 				}
 				else
 				{

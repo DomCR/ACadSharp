@@ -1,4 +1,5 @@
 ﻿using ACadSharp.IO;
+using ACadSharp.IO.DWG;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
@@ -45,7 +46,13 @@ namespace ACadSharp.Tests.IO.DWG
 			string path = this.getPath(data.Name, "dwg", version);
 
 			data.Document.Header.Version = version;
-			DwgWriter.Write(path, data.Document, notification: this.onNotification);
+
+			DwgWriterConfiguration configuration = new DwgWriterConfiguration()
+			{
+				WriteXRecords = true,
+			};
+
+			DwgWriter.Write(path, data.Document, configuration, this.onNotification);
 		}
 	}
 }

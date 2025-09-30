@@ -18,9 +18,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadDimensionTemplate(Dimension dimension) : base(dimension) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			Dimension dimension = this.CadObject as Dimension;
 
@@ -76,7 +76,7 @@ namespace ACadSharp.IO.Templates
 
 			dimension.Color = this.CadObject.Color;
 			dimension.LineWeight = this.CadObject.LineWeight;
-			dimension.LinetypeScale = this.CadObject.LinetypeScale;
+			dimension.LineTypeScale = this.CadObject.LineTypeScale;
 			dimension.IsInvisible = this.CadObject.IsInvisible;
 			dimension.Transparency = this.CadObject.Transparency;
 

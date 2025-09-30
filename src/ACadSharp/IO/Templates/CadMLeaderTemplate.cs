@@ -25,43 +25,15 @@ namespace ACadSharp.IO.Templates
 
 		public IDictionary<MultiLeader.BlockAttribute, ulong> BlockAttributeHandles { get; } = new Dictionary<MultiLeader.BlockAttribute, ulong>();
 
-		//	Context-Data Handles
-		public ulong AnnotContextTextStyleHandle { get; internal set; }
 
-		public ulong AnnotContextBlockRecordHandle { get; internal set; }
+		public CadMLeaderAnnotContextTemplate CadMLeaderAnnotContextTemplate { get; set; }
 
-		public IList<LeaderLineSubTemplate> LeaderLineSubTemplates { get; } = new List<LeaderLineSubTemplate>();
-		
-		public class LeaderLineSubTemplate
-		{
-			public MultiLeaderAnnotContext.LeaderLine LeaderLine { get; }
-
-			public LeaderLineSubTemplate(MultiLeaderAnnotContext.LeaderLine leaderLine)
-			{ 
-				this.LeaderLine = leaderLine;
-			}
-
-			public ulong LineTypeHandle { get; internal set; }
-
-			public ulong ArrowSymbolHandle { get; internal set; }
-		}
-
-
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
+			this.CadMLeaderAnnotContextTemplate.Build(builder);
 
 			MultiLeader multiLeader = (MultiLeader)this.CadObject;
-			MultiLeaderAnnotContext annotContext = multiLeader.ContextData;
-
-			if (builder.TryGetCadObject(this.AnnotContextTextStyleHandle, out TextStyle annotContextTextStyle))
-			{
-				annotContext.TextStyle = annotContextTextStyle;
-			}
-			if (builder.TryGetCadObject(this.AnnotContextBlockRecordHandle, out BlockRecord annotContextBlockRecord))
-			{
-				annotContext.BlockContent = annotContextBlockRecord;
-			}
 
 			if (builder.TryGetCadObject(this.LeaderStyleHandle, out MultiLeaderStyle leaderStyle))
 			{
@@ -94,19 +66,6 @@ namespace ACadSharp.IO.Templates
 				if (builder.TryGetCadObject(attributeHandle, out AttributeDefinition attributeDefinition))
 				{
 					blockAttribute.AttributeDefinition = attributeDefinition;
-				}
-			}
-
-			foreach (LeaderLineSubTemplate leaderLineSubTemplate in this.LeaderLineSubTemplates)
-			{
-				MultiLeaderAnnotContext.LeaderLine leaderLine = leaderLineSubTemplate.LeaderLine;
-				if (builder.TryGetCadObject(leaderLineSubTemplate.LineTypeHandle, out LineType leaderLinelineType))
-				{
-					leaderLine.LineType = leaderLinelineType;
-				}
-				if (builder.TryGetCadObject(leaderLineSubTemplate.ArrowSymbolHandle, out BlockRecord arrowhead))
-				{
-					leaderLine.Arrowhead = arrowhead;
 				}
 			}
 		}

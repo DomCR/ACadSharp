@@ -140,7 +140,7 @@ namespace ACadSharp.IO.DXF
 			if (style.TextBackgroundFillMode != 0)
 			{
 				this._writer.Write(69, (short)style.TextBackgroundFillMode, map);
-				this._writer.Write(70, style.TextBackgroundColor.Index, map);
+				this._writer.Write(70, style.TextBackgroundColor.GetApproxIndex(), map);
 			}
 			else
 			{
@@ -249,20 +249,20 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(72, (short)linetype.Alignment, map);
 			this._writer.Write(73, (short)linetype.Segments.Count(), map);
-			this._writer.Write(40, linetype.PatternLen);
+			this._writer.Write(40, linetype.PatternLength);
 
 			foreach (LineType.Segment s in linetype.Segments)
 			{
 				this._writer.Write(49, s.Length);
-				this._writer.Write(74, (short)s.Shapeflag);
+				this._writer.Write(74, (short)s.Flags);
 
-				if (s.Shapeflag != LinetypeShapeFlags.None)
+				if (s.Flags != LineTypeShapeFlags.None)
 				{
-					if (s.Shapeflag.HasFlag(LinetypeShapeFlags.Shape))
+					if (s.Flags.HasFlag(LineTypeShapeFlags.Shape))
 					{
 						this._writer.Write(75, s.ShapeNumber);
 					}
-					if (s.Shapeflag.HasFlag(LinetypeShapeFlags.Text))
+					if (s.Flags.HasFlag(LineTypeShapeFlags.Text))
 					{
 						this._writer.Write(75, (short)0);
 					}

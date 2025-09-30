@@ -20,7 +20,7 @@ For pdf export check :construction: [ACadSharp.Pdf](https://github.com/DomCR/ACa
 
 |      | DxfReader | DxfWriter | DwgReader | DwgWriter |
 ------ | :-------: | :-------: | :-------: | :-------: |
-AC1009 |    :x:    |   :x:     |    :x:    |    :x:    |
+AC1009 |    :heavy_check_mark:    |   :x:     |    :x:    |    :x:    |
 AC1012 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :x:    |    :x:    |
 AC1014 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1015 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |

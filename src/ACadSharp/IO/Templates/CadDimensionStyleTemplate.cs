@@ -30,6 +30,8 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? BlockHandle { get; set; }
 
+		public bool DxfFlagsAssigned { get; set; } = false;
+
 		public CadDimensionStyleTemplate() : base(new DimensionStyle())
 		{
 		}
@@ -38,9 +40,9 @@ namespace ACadSharp.IO.Templates
 		{
 		}
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			if (this.getTableReference(builder, this.TextStyleHandle, TextStyle_Name, out TextStyle style))
 			{
@@ -77,7 +79,7 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.DimArrow2 = dimArrow2;
 			}
 
-			if(this.getTableReference(builder, this.BlockHandle, null, out BlockRecord external))
+			if (this.getTableReference(builder, this.BlockHandle, null, out BlockRecord external))
 			{
 			}
 		}

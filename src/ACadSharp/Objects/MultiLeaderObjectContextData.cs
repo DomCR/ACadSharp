@@ -14,7 +14,7 @@ namespace ACadSharp.Objects {
 	/// This class represents a subset ob the properties of the MLeaderAnnotContext
 	/// object, that are embedded into the MultiLeader entity.
 	/// </summary>
-	public partial class MultiLeaderAnnotContext : NonGraphicalObject
+	public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData
 	{
 		private TextStyle _textStyle = TextStyle.Default;
 		private BlockRecord _blockContent;
@@ -22,7 +22,7 @@ namespace ACadSharp.Objects {
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
 		/// <inheritdoc />
-		public override string SubclassMarker => DxfSubclassMarker.MultiLeaderAnnotContext;
+		public override string SubclassMarker => DxfSubclassMarker.MultiLeaderObjectContextData;
 
 		/// <inheritdoc />
 		public override string ObjectName => DxfFileToken.ObjectMLeaderContextData;
@@ -233,7 +233,7 @@ namespace ACadSharp.Objects {
 
 				if (this.Document != null)
 				{
-					this._textStyle = updateTable(value, this.Document.TextStyles);
+					this._textStyle = CadObject.updateCollection(value, this.Document.TextStyles);
 				}
 				else
 				{
@@ -428,7 +428,7 @@ namespace ACadSharp.Objects {
 			get { return this._blockContent; }
 			set 
 			{
-				this._blockContent = updateTable(value, this.Document?.BlockRecords);
+				this._blockContent = CadObject.updateCollection(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -572,12 +572,12 @@ namespace ACadSharp.Objects {
 		public TextAttachmentType TextBottomAttachment { get; set; }
 
 		/// <summary>
-		/// Initializes a new instance of a <see cref="MultiLeaderAnnotContext"/>.
+		/// Initializes a new instance of a <see cref="MultiLeaderObjectContextData"/>.
 		/// </summary>
-		public MultiLeaderAnnotContext() : base() { }
+		public MultiLeaderObjectContextData() : base() { }
 
 		public override CadObject Clone() {
-			MultiLeaderAnnotContext clone = (MultiLeaderAnnotContext)base.Clone();
+			MultiLeaderObjectContextData clone = (MultiLeaderObjectContextData)base.Clone();
 
 			clone._textStyle = (TextStyle)this._textStyle.Clone();
 			clone._blockContent = (BlockRecord)this._blockContent?.Clone();
@@ -595,8 +595,8 @@ namespace ACadSharp.Objects {
 		{
 			base.AssignDocument(doc);
 
-			this._textStyle = updateTable(this._textStyle, doc.TextStyles);
-			this._blockContent = updateTable(this._blockContent, doc.BlockRecords);
+			this._textStyle = CadObject.updateCollection(this._textStyle, doc.TextStyles);
+			this._blockContent = CadObject.updateCollection(this._blockContent, doc.BlockRecords);
 
 			foreach (LeaderRoot leaderRoot in this.LeaderRoots)
 			{

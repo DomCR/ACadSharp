@@ -1,5 +1,4 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.IO;
+﻿using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
 using System.Diagnostics;
 using System.IO;

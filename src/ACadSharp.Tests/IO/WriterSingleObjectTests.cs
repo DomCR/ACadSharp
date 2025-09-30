@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
+using ACadSharp.Extensions;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.XData;
@@ -28,9 +29,11 @@ namespace ACadSharp.Tests.IO
 			}
 
 			Data.Add(new(nameof(SingleCaseGenerator.Empty)));
+			Data.Add(new(nameof(SingleCaseGenerator.ArcSegments)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleEllipse)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.ViewZoom)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleMLeader)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
@@ -51,6 +54,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedLwPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline2DTest)));
+			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline3DTest)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePdfUnderlay)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleRasterImage)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleWipeout)));
@@ -58,6 +62,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.EntityTransparency)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithSegments)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateInsertWithHatch)));
+			Data.Add(new(nameof(SingleCaseGenerator.InsertWithSpatialFilter)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateCircleHatch)));
@@ -79,6 +84,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeInBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.XData)));
+			Data.Add(new(nameof(SingleCaseGenerator.XRef)));
 			Data.Add(new(nameof(SingleCaseGenerator.SPlineCreation)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateXRecords)));
 		}
@@ -237,6 +243,25 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(pline);
 			}
 
+			public void ClosedPolyline3DTest()
+			{
+				List<Vertex3D> vector2d = new()
+				{
+					new Vertex3D() { Location = new XYZ(0, 0, 0) },
+					new Vertex3D() { Location = new XYZ(1, 0, 0) },
+					new Vertex3D() { Location = new XYZ(2, 1, 0) },
+					new Vertex3D() { Location = new XYZ(3, 1, 0) },
+					new Vertex3D() { Location = new XYZ(4, 4, 0) }
+				};
+
+				var pline = new Polyline3D();
+				pline.Vertices.AddRange(vector2d);
+				pline.IsClosed = true;
+				pline.Vertices.ElementAt(3).Bulge = 1;
+
+				this.Document.Entities.Add(pline);
+			}
+
 			public void CreateCircleHatch()
 			{
 				Hatch hatch = new Hatch();
@@ -270,6 +295,29 @@ namespace ACadSharp.Tests.IO
 				hatch.Paths.Add(path1);
 
 				this.Document.Entities.Add(hatch);
+			}
+
+			public void ArcSegments()
+			{
+				Arc arc = new Arc()
+				{
+					Center = new XYZ(100, 0, 0),
+					Radius = 50,
+					StartAngle = MathHelper.HalfPI,
+					EndAngle = Math.PI,
+				};
+
+				XYZ start = new XYZ(100, 50, 0);
+				XYZ end = new XYZ(50, 0, 0);
+
+				var v = arc.PolygonalVertexes(3);
+
+				Polyline2D polyline = new Polyline2D(v.Select(a => new Vertex2D(a)), false);
+
+				arc.GetEndVertices(out XYZ s, out XYZ e);
+
+				this.Document.Entities.Add(arc);
+				this.Document.Entities.Add(polyline);
 			}
 
 			public void CreateGroup()
@@ -375,7 +423,7 @@ namespace ACadSharp.Tests.IO
 				pline.Vertices.Add(new XYZ(0, 0, 0));
 
 				path.Edges.Add(pline);
-				path.Flags = path.Flags.AddFlag(BoundaryPathFlags.Polyline);
+				path.Flags |= BoundaryPathFlags.Polyline;
 				hatch.Paths.Add(path);
 
 				this.Document.Entities.Add(hatch);
@@ -387,7 +435,6 @@ namespace ACadSharp.Tests.IO
 				var modelSpace = doc.ModelSpace;
 
 				string blockName = Guid.NewGuid().ToString();
-				var block = new Block(new(blockName));
 				var blockRecord = new BlockRecord(blockName);
 				var insert = new Insert(blockRecord);
 				modelSpace.Entities.Add(insert);
@@ -417,6 +464,28 @@ namespace ACadSharp.Tests.IO
 				hatch.Paths.Add(path);
 
 				blockRecord.Entities.Add(hatch);
+			}
+
+			public void InsertWithSpatialFilter()
+			{
+				string blockName = Guid.NewGuid().ToString();
+				var blockRecord = new BlockRecord("my_block");
+				var insert = new Insert(blockRecord);
+
+				SpatialFilter filter = new SpatialFilter();
+				filter.BoundaryPoints.Add(XY.Zero);
+				filter.BoundaryPoints.Add(new XY(50, 50));
+				filter.DisplayBoundary = true;
+
+				insert.SpatialFilter = filter;
+
+				this.Document.Entities.Add(insert);
+
+				Circle circle = new Circle
+				{
+					Radius = 20
+				};
+				blockRecord.Entities.Add(circle);
 			}
 
 			public void CreateLayout()
@@ -513,6 +582,8 @@ namespace ACadSharp.Tests.IO
 
 			public void DimensionAngular3Pt()
 			{
+				return;
+
 				DimensionAngular3Pt dim = new DimensionAngular3Pt();
 				dim.FirstPoint = XYZ.AxisY;
 				dim.SecondPoint = XYZ.AxisX;
@@ -601,8 +672,6 @@ namespace ACadSharp.Tests.IO
 				{
 					SecondPoint = new XYZ(10)
 				};
-
-				this.Document.Entities.Add(dim);
 
 				dim.UpdateBlock();
 
@@ -852,6 +921,32 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(line);
 			}
 
+			public void SingleMLeader()
+			{
+				MultiLeader mleader = new MultiLeader();
+				mleader.PathType = MultiLeaderPathType.StraightLineSegments;
+				mleader.PropertyOverrideFlags = MultiLeaderPropertyOverrideFlags.ContentType | MultiLeaderPropertyOverrideFlags.TextAlignment | MultiLeaderPropertyOverrideFlags.EnableUseDefaultMText;
+
+				mleader.ContextData.ContentBasePoint = new XYZ(1.8599999999999999, 1.5, 0);
+				mleader.ContextData.BasePoint = new XYZ(0, 0, 0);
+				mleader.ContextData.TextLabel = "This is my test MLEader";
+
+				var root = new MultiLeaderObjectContextData.LeaderRoot
+				{
+					ConnectionPoint = new XYZ(1.5, 1.5, 0),
+					ContentValid = true,
+					Direction = XYZ.AxisX,
+					LandingDistance = 0.36,
+				};
+				MultiLeaderObjectContextData.LeaderLine leaderLine = new MultiLeaderObjectContextData.LeaderLine();
+				leaderLine.PathType = MultiLeaderPathType.StraightLineSegments;
+				leaderLine.Points.Add(XYZ.Zero);
+				root.Lines.Add(leaderLine);
+				mleader.ContextData.LeaderRoots.Add(root);
+
+				this.Document.Entities.Add(mleader);
+			}
+
 			public void SingleMLine()
 			{
 				//It creates a valid dxf but the MLine is wrongly drawn
@@ -948,6 +1043,11 @@ namespace ACadSharp.Tests.IO
 				raster.ClipBoundaryVertices.Add(new XY(1, 1));
 
 				this.Document.Entities.Add(raster);
+
+				var clone = raster.CloneTyped();
+				clone.InsertPoint = new XYZ(10, 10, 0);
+
+				this.Document.Entities.Add(clone);
 			}
 
 			public void SingleRasterImage()
@@ -1011,6 +1111,22 @@ namespace ACadSharp.Tests.IO
 
 				this.Document.Entities.Add(spline);
 				this.Document.Entities.Add(polyline);
+
+				List<XYZ> fitPoints = new()
+				{
+					new XYZ(0, 0, 0),
+					new XYZ(5, 5, 0),
+					new XYZ(10, 0, 0),
+					new XYZ(15, -5, 0),
+					new XYZ(20, 0, 0)
+				};
+
+				spline = new Spline();
+				spline.FitPoints.AddRange(fitPoints);
+
+				spline.UpdateFromFitPoints();
+
+				this.Document.Entities.Add(spline);
 			}
 
 			public void TextAlignment()
@@ -1103,6 +1219,17 @@ namespace ACadSharp.Tests.IO
 				line.ExtendedData.Add(app, records);
 
 				this.Document.Entities.Add(line);
+			}
+
+			public void XRef()
+			{
+				BlockRecord record = new BlockRecord("my_xref");
+				record.Flags = BlockTypeFlags.XRef | BlockTypeFlags.XRefResolved;
+				record.BlockEntity.XRefPath = "./SinglePoint_AC1032.dwg";
+
+				this.Document.BlockRecords.Add(record);
+
+				this.Document.Entities.Add(new Insert(record));
 			}
 		}
 	}

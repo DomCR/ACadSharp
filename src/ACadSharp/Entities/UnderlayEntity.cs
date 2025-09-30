@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
 using CSMath;
@@ -61,7 +62,7 @@ namespace ACadSharp.Entities
 
 				if (this.Document != null)
 				{
-					this._definition = this.updateCollection(value, this.getDocumentCollection(this.Document));
+					this._definition = updateCollection(value, this.getDocumentCollection(this.Document));
 				}
 				else
 				{
@@ -236,7 +237,7 @@ namespace ACadSharp.Entities
 			v = transWO * v;
 			XY newVvector = new XY(v.X, v.Y);
 
-			int sign = Math.Sign(transformation.m00 * transformation.m11 * transformation.m22) < 0 ? -1 : 1;
+			int sign = Math.Sign(transformation.M00 * transformation.M11 * transformation.M22) < 0 ? -1 : 1;
 
 			double newRotation = (sign * newUvector).GetAngle();
 
@@ -253,7 +254,8 @@ namespace ACadSharp.Entities
 		{
 			UnderlayEntity<T> clone = (UnderlayEntity<T>)base.Clone();
 
-			clone.Definition = (T)this.Definition?.Clone();
+			clone.Definition = this.Definition?.CloneTyped();
+			clone.ClipBoundaryVertices = new List<XY>(this.ClipBoundaryVertices);
 
 			return clone;
 		}
@@ -268,7 +270,7 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._definition = this.updateCollection(this.Definition, getDocumentCollection(doc));
+			this._definition = updateCollection(this.Definition, getDocumentCollection(doc));
 
 			this.Document.PdfDefinitions.OnRemove += this.imageDefinitionsOnRemove;
 		}

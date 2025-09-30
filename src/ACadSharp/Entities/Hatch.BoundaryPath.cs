@@ -37,11 +37,11 @@ namespace ACadSharp.Entities
 				{
 					if (this.IsPolyline)
 					{
-						this._flags = this._flags.AddFlag(BoundaryPathFlags.Polyline);
+						this._flags.AddFlag(BoundaryPathFlags.Polyline);
 					}
 					else
 					{
-						this._flags = this._flags.RemoveFlag(BoundaryPathFlags.Polyline);
+						this._flags.RemoveFlag(BoundaryPathFlags.Polyline);
 					}
 
 					return this._flags;

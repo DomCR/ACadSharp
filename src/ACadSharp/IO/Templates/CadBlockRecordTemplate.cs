@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
-using ACadSharp.IO.DWG;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSUtilities.Extensions;
@@ -20,9 +19,9 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? LayoutHandle { get; set; }
 
-		public List<ulong> OwnedObjectsHandlers { get; set; } = new List<ulong>();
+		public HashSet<ulong> OwnedObjectsHandlers { get; set; } = new();
 
-		public List<ulong> InsertHandles { get; set; } = new List<ulong>();
+		public List<ulong> InsertHandles { get; set; } = new();
 
 		public string LayerName { get; set; }
 
@@ -30,9 +29,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadBlockRecordTemplate(BlockRecord block) : base(block) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			if (builder.TryGetCadObject(this.LayoutHandle, out Layout layout))
 			{
@@ -69,7 +68,7 @@ namespace ACadSharp.IO.Templates
 
 				block.Flags = this.CadObject.BlockEntity.Flags;
 				block.BasePoint = this.CadObject.BlockEntity.BasePoint;
-				block.XrefPath = this.CadObject.BlockEntity.XrefPath;
+				block.XRefPath = this.CadObject.BlockEntity.XRefPath;
 				block.Comments = this.CadObject.BlockEntity.Comments;
 
 				this.CadObject.BlockEntity = block;

@@ -55,7 +55,7 @@ namespace ACadSharp.IO.DXF
 			CadTemplate template = null;
 			Dictionary<string, List<ExtendedDataRecord>> edata = new();
 
-			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors);
+			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out HashSet<ulong> reactors);
 
 			if (this._reader.DxfCode == DxfCode.Subclass)
 			{
@@ -372,6 +372,17 @@ namespace ACadSharp.IO.DXF
 				case 69:
 					template.CadObject.TextBackgroundFillMode = (DimensionTextBackgroundFillMode)this._reader.ValueAsShort;
 					return true;
+				case 70:
+					if (!tmp.DxfFlagsAssigned)
+					{
+						tmp.DxfFlagsAssigned = true;
+						return true;
+					}
+					else if (this._reader.ValueAsShort >= 0)
+					{
+						template.CadObject.TextBackgroundColor = new Color(this._reader.ValueAsShort);
+					}
+					return true;
 				case 71:
 					template.CadObject.GenerateTolerances = this._reader.ValueAsBool;
 					return true;
@@ -550,10 +561,10 @@ namespace ACadSharp.IO.DXF
 					tmp.Dimltex2 = this._reader.ValueAsHandle;
 					return true;
 				case 371:
-					template.CadObject.DimensionLineWeight = (LineweightType)this._reader.ValueAsShort;
+					template.CadObject.DimensionLineWeight = (LineWeightType)this._reader.ValueAsShort;
 					return true;
 				case 372:
-					template.CadObject.ExtensionLineWeight = (LineweightType)this._reader.ValueAsShort;
+					template.CadObject.ExtensionLineWeight = (LineWeightType)this._reader.ValueAsShort;
 					return true;
 				default:
 					return false;
@@ -660,7 +671,7 @@ namespace ACadSharp.IO.DXF
 						template.Segment.Rotation = this._reader.ValueAsAngle;
 						break;
 					case 74:
-						template.Segment.Shapeflag = (LinetypeShapeFlags)this._reader.ValueAsUShort;
+						template.Segment.Flags = (LineTypeShapeFlags)this._reader.ValueAsUShort;
 						break;
 					case 75:
 						template.Segment.ShapeNumber = (short)this._reader.ValueAsInt;

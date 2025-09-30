@@ -74,7 +74,6 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
-			var center = this.Center;
 			var normal = this.Normal;
 
 			this.Center = transform.ApplyTransform(this.Center);
@@ -106,7 +105,7 @@ namespace ACadSharp.Entities
 			start = this.Center + this.Radius * start;
 			start = Matrix4.GetArbitraryAxis(this.Normal) * start;
 
-			return CurveExtensions.PolarCoordinateRelativeToCenter(
+			return CurveExtensions.PolarCoordinate(
 					angle,
 					this.Center,
 					this.Normal,

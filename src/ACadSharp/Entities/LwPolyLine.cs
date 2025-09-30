@@ -17,21 +17,6 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.LwPolyline)]
 	public partial class LwPolyline : Entity, IPolyline
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.LWPOLYLINE;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityLwPolyline;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.LwPolyline;
-
-		/// <summary>
-		/// Polyline flags.
-		/// </summary>
-		[DxfCodeValue(70)]
-		public LwPolylineFlags Flags { get; set; }
-
 		/// <summary>
 		/// Constant width
 		/// </summary>
@@ -48,22 +33,10 @@ namespace ACadSharp.Entities
 		public double Elevation { get; set; } = 0.0;
 
 		/// <summary>
-		/// Specifies the distance a 2D object is extruded above or below its elevation.
+		/// Polyline flags.
 		/// </summary>
-		[DxfCodeValue(39)]
-		public double Thickness { get; set; } = 0.0;
-
-		/// <summary>
-		/// Specifies the three-dimensional normal unit vector for the object.
-		/// </summary>
-		[DxfCodeValue(210, 220, 230)]
-		public XYZ Normal { get; set; } = XYZ.AxisZ;
-
-		/// <summary>
-		/// Vertices that form this LwPolyline
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Count, 90)]
-		public List<Vertex> Vertices { get; set; } = new List<Vertex>();
+		[DxfCodeValue(70)]
+		public LwPolylineFlags Flags { get => _flags; set => _flags = value; }
 
 		/// <inheritdoc/>
 		public bool IsClosed
@@ -76,17 +49,64 @@ namespace ACadSharp.Entities
 			{
 				if (value)
 				{
-					this.Flags = this.Flags.AddFlag(LwPolylineFlags.Closed);
+					_flags.AddFlag(LwPolylineFlags.Closed);
 				}
 				else
 				{
-					this.Flags = this.Flags.RemoveFlag(LwPolylineFlags.Closed);
+					_flags.RemoveFlag(LwPolylineFlags.Closed);
 				}
 			}
 		}
 
+		/// <summary>
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityLwPolyline;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.LWPOLYLINE;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.LwPolyline;
+
+		/// <summary>
+		/// Specifies the distance a 2D object is extruded above or below its elevation.
+		/// </summary>
+		[DxfCodeValue(39)]
+		public double Thickness { get; set; } = 0.0;
+
+		/// <summary>
+		/// Vertices that form this LwPolyline
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Count, 90)]
+		public List<Vertex> Vertices { get; set; } = new List<Vertex>();
+
 		/// <inheritdoc/>
 		IEnumerable<IVertex> IPolyline.Vertices { get { return this.Vertices; } }
+
+		private LwPolylineFlags _flags;
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			var newNormal = this.transformNormal(transform, this.Normal);
+
+			this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+
+			foreach (var vertex in this.Vertices)
+			{
+				XYZ v = transOW * vertex.Location.Convert<XYZ>();
+				v = transform.ApplyTransform(v);
+				v = transWO * v;
+				vertex.Location = v.Convert<XY>();
+			}
+
+			this.Normal = newNormal;
+		}
 
 		/// <inheritdoc/>
 		public IEnumerable<Entity> Explode()
@@ -117,12 +137,6 @@ namespace ACadSharp.Entities
 			}
 
 			return new BoundingBox(min, max);
-		}
-
-		/// <inheritdoc/>
-		public override void ApplyTransform(Transform transform)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Extensions;
-using ACadSharp.IO.DXF;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Types.Units;
@@ -24,9 +23,13 @@ namespace ACadSharp.IO.SVG
 
 		public bool IsPaperSpace { get; set; }
 
-		public UnitsType Units { get; set; }
+		public UnitsType Units { get; protected set; }
 
-		public SvgXmlWriter(Stream w, Encoding encoding, SvgConfiguration configuration) : base(w, encoding)
+		public SvgXmlWriter(Stream stream, SvgConfiguration configuration) : this(stream, null, configuration)
+		{
+		}
+
+		public SvgXmlWriter(Stream stream, Encoding? encoding, SvgConfiguration configuration) : base(stream, encoding)
 		{
 			this.Configuration = configuration;
 		}
@@ -99,6 +102,55 @@ namespace ACadSharp.IO.SVG
 			this.endDocument();
 		}
 
+		protected void notify(string message, NotificationType type, Exception ex = null)
+		{
+			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, type, ex));
+		}
+
+		protected void triggerNotification(object sender, NotificationEventArgs e)
+		{
+			this.OnNotification?.Invoke(sender, e);
+		}
+
+		protected void writeEntity(Entity entity, Transform transform)
+		{
+			this.WriteComment($"{entity.ObjectName} | {entity.Handle}");
+
+			switch (entity)
+			{
+				case Arc arc:
+					this.writeArc(arc, transform);
+					break;
+				case Line line:
+					this.writeLine(line, transform);
+					break;
+				case Point point:
+					this.writePoint(point, transform);
+					break;
+				case Circle circle:
+					this.writeCircle(circle, transform);
+					break;
+				case Ellipse ellipse:
+					this.writeEllipse(ellipse, transform);
+					break;
+				//case Hatch hatch:
+				//	this.writeHatch(hatch, transform);
+				//	break;
+				case Insert insert:
+					this.writeInsert(insert, transform);
+					break;
+				case IPolyline polyline:
+					this.writePolyline(polyline, transform);
+					break;
+				case IText text:
+					this.writeText(text, transform);
+					break;
+				default:
+					this.notify($"[{entity.ObjectName}] Entity not implemented.", NotificationType.NotImplemented);
+					break;
+			}
+		}
+
 		private string colorSvg(Color color)
 		{
 			if (this.IsPaperSpace && color.Equals(Color.Default))
@@ -109,6 +161,41 @@ namespace ACadSharp.IO.SVG
 			return $"rgb({color.R},{color.G},{color.B})";
 		}
 
+		private string createPath(IEnumerable<IPolyline> polylines)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			foreach (var item in polylines)
+			{
+				var pts = item.GetPoints<XY>().ToArray();
+				if (!pts.Any())
+				{
+					continue;
+				}
+
+				var pt = pts[0];
+				sb.Append($"M {pt.ToPixelSize(this.Units).ToSvg()} ");
+				for (int i = 1; i < pts.Length; i++)
+				{
+					pt = pts[i];
+					sb.Append($"L {pt.ToPixelSize(this.Units).ToSvg()} ");
+				}
+
+				if (item.IsClosed)
+				{
+					sb.Append("Z");
+				}
+			}
+
+			return sb.ToString();
+		}
+
+		private bool drawableLineType(IEntity entity)
+		{
+			var lineType = entity.GetActiveLineType();
+			return lineType.IsComplex && !lineType.Segments.Any(s => s.IsShape);
+		}
+
 		private void endDocument()
 		{
 			this.WriteEndElement();
@@ -116,9 +203,9 @@ namespace ACadSharp.IO.SVG
 			this.Close();
 		}
 
-		private void notify(string message, NotificationType type, Exception ex = null)
+		private double getPointSize(IEntity entity)
 		{
-			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, type, ex));
+			return entity.GetActiveLineWeightType().GetLineWeightValue().ToPixelSize(this.Units);
 		}
 
 		private void startDocument(BoundingBox box)
@@ -149,7 +236,8 @@ namespace ACadSharp.IO.SVG
 			}
 		}
 
-		private string svgPoints(IEnumerable<IVector> points, Transform transform)
+		private string svgPoints<T>(IEnumerable<T> points, Transform transform)
+			where T : IVector, new()
 		{
 			if (!points.Any())
 			{
@@ -158,7 +246,7 @@ namespace ACadSharp.IO.SVG
 
 			StringBuilder sb = new StringBuilder();
 			sb.Append(points.First().ToPixelSize(this.Units).ToSvg());
-			foreach (IVector point in points.Skip(1))
+			foreach (T point in points.Skip(1))
 			{
 				sb.Append(' ');
 				sb.Append(point.ToPixelSize(this.Units).ToSvg());
@@ -175,7 +263,7 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(arc, transform);
 
-			IEnumerable<IVector> vertices = arc.PolygonalVertexes(256).OfType<IVector>();
+			var vertices = arc.PolygonalVertexes(256);
 			string pts = this.svgPoints(vertices, transform);
 			this.WriteAttributeString("points", pts);
 			this.WriteAttributeString("fill", "none");
@@ -200,33 +288,24 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndElement();
 		}
 
-		private void writeDefinitions(CadDocument document)
+		private void writeDashes(LineType lineType, double pointSize)
 		{
-			this.WriteStartElement("defs");
-
-			this.WriteComment("Hatch patterns");
-
-			foreach (var pattern in document.GetHatchPatterns())
+			StringBuilder str = new StringBuilder();
+			foreach (LineType.Segment segment in lineType.Segments)
 			{
-				this.WriteStartElement("pattern");
-				this.WriteAttributeString("id", pattern.Name);
-
-				foreach (var line in pattern.Lines)
+				if (segment.IsPoint)
 				{
-					this.WriteStartElement("line");
-
-					this.WriteAttributeString("x1", line.BasePoint.X.ToSvg(this.Units));
-					this.WriteAttributeString("y1", line.BasePoint.Y.ToSvg(this.Units));
-					this.WriteAttributeString("x2", line.Offset.X.ToSvg(this.Units));
-					this.WriteAttributeString("y2", line.Offset.Y.ToSvg(this.Units));
-
-					this.WriteEndElement();
+					str.Append(pointSize.ToPixelSize(this.Units));
+				}
+				else
+				{
+					str.Append(Math.Abs(segment.Length.ToPixelSize(this.Units)));
 				}
 
-				this.WriteEndElement();
+				str.Append(' ');
 			}
 
-			this.WriteEndElement();
+			this.WriteAttributeString("stroke-dasharray", str.ToString().Trim());
 		}
 
 		private void writeEllipse(Ellipse ellipse, Transform transform)
@@ -235,7 +314,7 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(ellipse, transform);
 
-			IEnumerable<IVector> vertices = ellipse.PolygonalVertexes(256).OfType<IVector>();
+			var vertices = ellipse.PolygonalVertexes(256);
 			string pts = this.svgPoints(vertices, transform);
 			this.WriteAttributeString("points", pts);
 			this.WriteAttributeString("fill", "none");
@@ -248,41 +327,20 @@ namespace ACadSharp.IO.SVG
 			this.writeEntity(entity, new Transform());
 		}
 
-		private void writeEntity(Entity entity, Transform transform)
+		private void writeEntityAsPath<T>(Entity entity, Transform transform, params IEnumerable<T> points)
+			where T : IVector
 		{
-			switch (entity)
-			{
-				case Arc arc:
-					this.writeArc(arc, transform);
-					break;
-				case Line line:
-					this.writeLine(line, transform);
-					break;
-				case Point point:
-					this.writePoint(point, transform);
-					break;
-				case Circle circle:
-					this.writeCircle(circle, transform);
-					break;
-				case Ellipse ellipse:
-					this.writeEllipse(ellipse, transform);
-					break;
-				case Hatch hatch:
-					this.writeHatch(hatch, transform);
-					break;
-				case Insert insert:
-					this.writeInsert(insert, transform);
-					break;
-				case IPolyline polyline:
-					this.writePolyline(polyline, transform);
-					break;
-				case IText text:
-					this.writeText(text, transform);
-					break;
-				default:
-					this.notify($"[{entity.ObjectName}] Entity not implemented.", NotificationType.NotImplemented);
-					break;
-			}
+			//Will be needed to write the linetypes that use shapes
+			double pointSize = this.getPointSize(entity);
+			var lines = entity.GetActiveLineType().CreateLineTypeShape(pointSize, points);
+
+			this.WriteStartElement("path");
+
+			this.writeEntityHeader(entity, transform);
+
+			this.WriteAttributeString("d", this.createPath(lines));
+
+			this.WriteEndElement();
 		}
 
 		private void writeEntityHeader(IEntity entity, Transform transform)
@@ -295,7 +353,7 @@ namespace ACadSharp.IO.SVG
 			var lineWeight = entity.LineWeight;
 			switch (lineWeight)
 			{
-				case LineweightType.ByLayer:
+				case LineWeightType.ByLayer:
 					lineWeight = entity.Layer.LineWeight;
 					break;
 			}
@@ -303,6 +361,11 @@ namespace ACadSharp.IO.SVG
 			this.WriteAttributeString("stroke-width", $"{this.Configuration.GetLineWeightValue(lineWeight, this.Units).ToSvg(UnitsType.Millimeters)}");
 
 			this.writeTransform(transform);
+
+			if (this.drawableLineType(entity))
+			{
+				this.writeDashes(entity.GetActiveLineType(), this.getPointSize(entity));
+			}
 		}
 
 		private void writeHatch(Hatch hatch, Transform transform)
@@ -389,9 +452,8 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(polyline, transform);
 
-			var vertices = polyline.Vertices.Select(v => v.Location).ToList();
+			string pts = this.svgPoints(polyline.GetPoints<XY>(this.Configuration.ArcPoints), transform);
 
-			string pts = this.svgPoints(polyline.Vertices.Select(v => v.Location), transform);
 			this.WriteAttributeString("points", pts);
 			this.WriteAttributeString("fill", "none");
 

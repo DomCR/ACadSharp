@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Header;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using Xunit;
 
@@ -38,9 +39,9 @@ namespace ACadSharp.Tests.Header
 			CadHeader header = new CadHeader(document);
 
 			Assert.NotNull(header.CurrentTextStyle);
-			Assert.True(header.CurrentTextStyle.Name == header.TextStyleName, "Name does not match");
+			Assert.True(header.CurrentTextStyle.Name == header.CurrentTextStyleName, "Name does not match");
 			Assert.True(header.CurrentTextStyle.Name == TextStyle.DefaultName, "Name does not match");
-			Assert.True(header.CurrentTextStyle.Handle == document.TextStyles[header.TextStyleName].Handle, "Handle does not match");
+			Assert.True(header.CurrentTextStyle.Handle == document.TextStyles[header.CurrentTextStyleName].Handle, "Handle does not match");
 			Assert.Equal(document.TextStyles, header.CurrentTextStyle.Owner);
 		}
 	}

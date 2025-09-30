@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-using ACadSharp.Entities;
+﻿using ACadSharp.Entities;
 using ACadSharp.Objects.Evaluations;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.IO.Templates {
 
@@ -12,9 +11,9 @@ namespace ACadSharp.IO.Templates {
 		{
 			public BlockVisibilityParameter.State State { get; } = new BlockVisibilityParameter.State();
 
-			public List<ulong> SubSet1 { get; } = new();
+			public HashSet<ulong> SubSet1 { get; } = new();
 
-			public List<ulong> SubSet2 { get; } = new();
+			public HashSet<ulong> SubSet2 { get; } = new();
 
 			public void Build(CadDocumentBuilder builder, IEnumerable<ulong> entityHandles)
 			{
@@ -53,9 +52,9 @@ namespace ACadSharp.IO.Templates {
 		{
 		}
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			BlockVisibilityParameter bvp = this.CadObject as BlockVisibilityParameter;
 

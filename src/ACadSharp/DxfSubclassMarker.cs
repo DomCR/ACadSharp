@@ -10,6 +10,8 @@
 
 		public const string Angular3PointDimension = "AcDb3PointAngularDimension";
 
+		public const string AnnotScaleObjectContextData = "AcDbAnnotScaleObjectContextData";
+
 		public const string ApplicationId = "AcDbRegAppTableRecord";
 
 		public const string Arc = "AcDbArc";
@@ -86,6 +88,8 @@
 
 		public const string Face3d = "AcDbFace";
 
+		public const string Filter = "AcDbFilter";
+
 		public const string GeoData = "AcDbGeoData";
 
 		public const string Group = "AcDbGroup";
@@ -128,7 +132,9 @@
 
 		public const string MultiLeader = "AcDbMLeader";
 
-		public const string MultiLeaderAnnotContext = "AcDbMultiLeaderAnnotContext";
+		public const string MultiLeaderObjectContextData = "AcDbMLeaderObjectContextData";
+
+		public const string ObjectContextData = "AcDbObjectContextData";
 
 		public const string OrdinateDimension = "AcDbOrdinateDimension";
 
@@ -154,6 +160,10 @@
 
 		public const string PolylineVertex = "AcDb2dVertex";
 
+		public const string ProxyEntity = "AcDbProxyEntity";
+
+		public const string ProxyObject = "AcDbProxyObject";
+
 		public const string RadialDimension = "AcDbRadialDimension";
 
 		public const string RasterImage = "AcDbRasterImage";
@@ -172,7 +182,11 @@
 
 		public const string Solid = "AcDbTrace";
 
+		public const string Solid3D = "AcDb3dSolid";
+
 		public const string SortentsTable = "AcDbSortentsTable";
+
+		public const string SpatialFilter = "AcDbSpatialFilter";
 
 		public const string Spline = "AcDbSpline";
 

@@ -35,10 +35,11 @@ namespace ACadSharp.IO.DXF
 				case AcdbPlaceHolder:
 				case EvaluationGraph:
 				case Material:
-				case MultiLeaderAnnotContext:
+				case MultiLeaderObjectContextData:
 				case VisualStyle:
 				case ImageDefinitionReactor:
 				case UnknownNonGraphicalObject:
+				case ProxyObject:
 				case XRecord:
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
@@ -95,6 +96,9 @@ namespace ACadSharp.IO.DXF
 				case Scale scale:
 					this.writeScale(scale);
 					break;
+				case SpatialFilter spatialFilter:
+					this.writeSpatialFilter(spatialFilter);
+					break;
 				case SortEntitiesTable sortensTable:
 					this.writeSortentsTable(sortensTable);
 					break;
@@ -117,14 +121,14 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(430, $"{color.Name}${color.BookName}");
 		}
 
-		protected void writeDictionary(CadDictionary e)
+		protected void writeDictionary(CadDictionary dict)
 		{
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Dictionary);
 
-			this._writer.Write(280, e.HardOwnerFlag);
-			this._writer.Write(281, (int)e.ClonningFlags);
+			this._writer.Write(280, dict.HardOwnerFlag);
+			this._writer.Write(281, (int)dict.ClonningFlags);
 
-			foreach (NonGraphicalObject item in e)
+			foreach (NonGraphicalObject item in dict)
 			{
 				if (item is XRecord && !this.Configuration.WriteXRecords)
 				{
@@ -136,9 +140,15 @@ namespace ACadSharp.IO.DXF
 			}
 
 			//Add the entries as objects
-			foreach (CadObject item in e)
+			foreach (CadObject item in dict)
 			{
 				this.Holder.Objects.Enqueue(item);
+			}
+
+			if(dict is CadDictionaryWithDefault withDefault)
+			{
+				this._writer.Write(100, DxfSubclassMarker.DictionaryWithDefault);
+				this._writer.WriteHandle(340, withDefault.DefaultEntry);
 			}
 		}
 
@@ -522,6 +532,51 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(272, (short)style.TextBottomAttachment, map);
 			this._writer.Write(273, (short)style.TextTopAttachment, map);
 			this._writer.Write(298, false); //	undocumented
+		}
+
+		private void writeSpatialFilter(SpatialFilter filter)
+		{
+			DxfClassMap map = DxfClassMap.Create<SpatialFilter>();
+
+			this._writer.Write(100, DxfSubclassMarker.Filter);
+			this._writer.Write(100, DxfSubclassMarker.SpatialFilter);
+
+			this._writer.Write(70, (short)filter.BoundaryPoints.Count, map);
+			foreach (var pt in filter.BoundaryPoints)
+			{
+				this._writer.Write(10, pt, map);
+			}
+
+			this._writer.Write(210, filter.Normal, map);
+			this._writer.Write(11, filter.Origin, map);
+			this._writer.Write(71, (short)(filter.DisplayBoundary ? 1 : 0), map);
+
+			this._writer.Write(72, filter.ClipFrontPlane ? 1 : 0, map);
+			if (filter.ClipFrontPlane)
+			{
+				this._writer.Write(40, filter.FrontDistance, map);
+			}
+
+			this._writer.Write(73, filter.ClipBackPlane ? 1 : 0, map);
+			if (filter.ClipBackPlane)
+			{
+				this._writer.Write(41, filter.BackDistance, map);
+			}
+
+			double[] array = new double[24]
+			{
+				filter.InverseInsertTransform.M00, filter.InverseInsertTransform.M01, filter.InverseInsertTransform.M02, filter.InverseInsertTransform.M03,
+				filter.InverseInsertTransform.M10, filter.InverseInsertTransform.M11, filter.InverseInsertTransform.M12, filter.InverseInsertTransform.M13,
+				filter.InverseInsertTransform.M20, filter.InverseInsertTransform.M21, filter.InverseInsertTransform.M22, filter.InverseInsertTransform.M23,
+				filter.InsertTransform.M00, filter.InsertTransform.M01, filter.InsertTransform.M02, filter.InsertTransform.M03,
+				filter.InsertTransform.M10, filter.InsertTransform.M11, filter.InsertTransform.M12, filter.InsertTransform.M13,
+				filter.InsertTransform.M20, filter.InsertTransform.M21, filter.InsertTransform.M22, filter.InsertTransform.M23
+			};
+
+			for (int i = 0; i < array.Length; i++)
+			{
+				this._writer.Write(40, array[i]);
+			}
 		}
 
 		private void writeSortentsTable(SortEntitiesTable e)

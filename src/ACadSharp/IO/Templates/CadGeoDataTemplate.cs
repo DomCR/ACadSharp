@@ -11,9 +11,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadGeoDataTemplate(GeoData geodata) : base(geodata) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			if (this.getTableReference(builder, this.HostBlockHandle, null, out BlockRecord host))
 			{

@@ -212,11 +212,19 @@ namespace ACadSharp.IO.DWG
 			//BS : LUNITS
 			_header.LinearUnitFormat = (LinearUnitFormat)_reader.ReadBitShort();
 			//BS : LUPREC
-			_header.LinearUnitPrecision = _reader.ReadBitShort();
+			var linearUnitPrecision = _reader.ReadBitShort();
+			if (linearUnitPrecision >= 0 && linearUnitPrecision <= 8)
+			{
+				_header.LinearUnitPrecision = linearUnitPrecision;
+			}
 			//BS : AUNITS
 			_header.AngularUnit = (AngularUnitFormat)_reader.ReadBitShort();
 			//BS : AUPREC
-			_header.AngularUnitPrecision = _reader.ReadBitShort();
+			var angularUnitPrecision = _reader.ReadBitShort();
+			if (angularUnitPrecision >= 0 && angularUnitPrecision <= 8)
+			{
+				this._header.AngularUnitPrecision = angularUnitPrecision;
+			}
 
 			//R13 - R14 Only Only(stored in registry from R15 onwards):
 			if (R13_14Only)
@@ -289,11 +297,19 @@ namespace ACadSharp.IO.DWG
 			//BS : MAXACTVP
 			_header.MaxViewportCount = _reader.ReadBitShort();
 			//BS : ISOLINES
-			_header.SurfaceIsolineCount = _reader.ReadBitShort();
+			var surfaceIsoLineCount = _reader.ReadBitShort();
+			if (surfaceIsoLineCount >= 0 && surfaceIsoLineCount <= 2047)
+			{
+				_header.SurfaceIsolineCount = surfaceIsoLineCount;
+			}
 			//BS : CMLJUST
-			_header.CurrentMultilineJustification = (Entities.VerticalAlignmentType)_reader.ReadBitShort();
+			_header.CurrentMultiLineJustification = (Entities.VerticalAlignmentType)_reader.ReadBitShort();
 			//BS : TEXTQLTY
-			_header.TextQuality = _reader.ReadBitShort();
+			var textQuality = _reader.ReadBitShort();
+			if (textQuality >= 0 && textQuality <= 100)
+			{
+				_header.TextQuality = textQuality;
+			}
 			//BD : LTSCALE
 			_header.LineTypeScale = _reader.ReadBitDouble();
 			//BD : TEXTSIZE
@@ -332,7 +348,7 @@ namespace ACadSharp.IO.DWG
 			_header.ChamferAngle = _reader.ReadBitDouble();
 			//BD : FACETRES
 			var facetResolution = _reader.ReadBitDouble();
-			if (facetResolution > 0)
+			if (facetResolution > 0 && facetResolution <= 10)
 			{
 				_header.FacetResolution = facetResolution;
 			}
@@ -792,9 +808,9 @@ namespace ACadSharp.IO.DWG
 			if (R2000Plus)
 			{
 				//BS: DIMLWD
-				_header.DimensionLineWeight = (LineweightType)_reader.ReadBitShort();
+				_header.DimensionLineWeight = (LineWeightType)_reader.ReadBitShort();
 				//BS : DIMLWE
-				_header.ExtensionLineWeight = (LineweightType)_reader.ReadBitShort();
+				_header.ExtensionLineWeight = (LineWeightType)_reader.ReadBitShort();
 			}
 
 			//H: BLOCK CONTROL OBJECT(hard owner)
@@ -880,7 +896,7 @@ namespace ACadSharp.IO.DWG
 				//BL: Flags:
 				int flags = _reader.ReadBitLong();
 				//CELWEIGHT Flags & 0x001F
-				_header.CurrentEntityLineWeight = (LineweightType)(flags & 0x1F);
+				_header.CurrentEntityLineWeight = (LineWeightType)(flags & 0x1F);
 				//ENDCAPS Flags & 0x0060
 				_header.EndCaps = (short)(flags & 0x60);
 				//JOINSTYLE Flags & 0x0180
@@ -923,7 +939,7 @@ namespace ACadSharp.IO.DWG
 				//RC : HIDETEXT
 				_header.HideText = _reader.ReadByte();
 				//RC : XCLIPFRAME, before R2010 the value can be 0 or 1 only.
-				_header.ExternalReferenceClippingBoundaryType = _reader.ReadByte();
+				_header.ExternalReferenceClippingBoundaryType = (XClipFrameType)_reader.ReadByte();
 				//RC : DIMASSOC
 				_header.DimensionAssociativity = (DimensionAssociation)_reader.ReadByte();
 				//RC : HALOGAP
@@ -967,7 +983,11 @@ namespace ACadSharp.IO.DWG
 				_reader.ReadBitDouble();
 
 				//BD : STEPSPERSEC
-				_header.StepsPerSecond = _reader.ReadBitDouble();
+				var stepsPerSecond = _reader.ReadBitDouble();
+				if (stepsPerSecond >= 1 && stepsPerSecond <= 30)
+				{
+					_header.StepsPerSecond = stepsPerSecond;
+				}
 				//BD : STEPSIZE
 				_header.StepSize = _reader.ReadBitDouble();
 				//BD : 3DDWFPREC

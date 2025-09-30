@@ -9,7 +9,7 @@ namespace ACadSharp.IO
 	public class SvgConfiguration : CadWriterConfiguration
 	{
 		/// <summary>
-		/// The <see cref="LineweightType"/> will be divided by this value to process the stroke-width in the svg when the units are <see cref="UnitsType.Unitless"/>.
+		/// The <see cref="LineWeightType"/> will be divided by this value to process the stroke-width in the svg when the units are <see cref="UnitsType.Unitless"/>.
 		/// </summary>
 		/// <remarks>
 		/// The default value is 100, which matches with the line weight real value in mm.
@@ -17,7 +17,7 @@ namespace ACadSharp.IO
 		public double LineWeightRatio { get; set; } = 100;
 
 		/// <summary>
-		/// Weight value for the <see cref="LineweightType.Default"/>. 
+		/// Weight value for the <see cref="LineWeightType.Default"/>. 
 		/// </summary>
 		/// <value>
 		/// Value must be in mm.
@@ -32,26 +32,28 @@ namespace ACadSharp.IO
 		/// </remarks>
 		public double PointRadius { get; set; } = 0.1;
 
+		public int ArcPoints { get; set; } = 256;
+
 		/// <summary>
 		/// Get the value of the stroke-width in mm.
 		/// </summary>
-		/// <param name="lineweightType"></param>
+		/// <param name="lineWeight"></param>
 		/// <param name="units"></param>
 		/// <returns></returns>
-		public double GetLineWeightValue(LineweightType lineweightType, UnitsType units)
+		public double GetLineWeightValue(LineWeightType lineWeight, UnitsType units)
 		{
-			double value = Math.Abs((double)lineweightType);
+			double value = Math.Abs((double)lineWeight);
 
 			if (units == UnitsType.Unitless)
 			{
 				return value / this.LineWeightRatio;
 			}
 
-			switch (lineweightType)
+			switch (lineWeight)
 			{
-				case LineweightType.Default:
+				case LineWeightType.Default:
 					return this.DefaultLineWeight;
-				case LineweightType.W0:
+				case LineWeightType.W0:
 					return 0.001;
 			}
 

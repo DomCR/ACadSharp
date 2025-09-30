@@ -13,7 +13,7 @@ namespace ACadSharp.Objects
 	/// <summary>
 	/// Nested classes in MultiLeaderAnnotContext
 	/// </summary>
-	public partial class MultiLeaderAnnotContext : NonGraphicalObject
+	public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData
 	{
 		/// <summary>
 		/// Represents a leader root
@@ -218,7 +218,7 @@ namespace ACadSharp.Objects
 			/// Line weight
 			/// </summary>
 			[DxfCodeValue(171)]
-			public LineweightType LineWeight { get; set; }
+			public LineWeightType LineWeight { get; set; }
 
 			/// <summary>
 			/// Arrowhead size

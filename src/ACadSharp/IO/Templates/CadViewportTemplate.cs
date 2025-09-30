@@ -21,15 +21,15 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? BlockHandle { get; set; }
 
-		public List<ulong> FrozenLayerHandles { get; set; } = new List<ulong>();
+		public HashSet<ulong> FrozenLayerHandles { get; set; } = new();
 
 		public CadViewportTemplate() : base(new Viewport()) { }
 
 		public CadViewportTemplate(Viewport entity) : base(entity) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			if (this.ViewportHeaderHandle.HasValue && this.ViewportHeaderHandle > 0)
 			{

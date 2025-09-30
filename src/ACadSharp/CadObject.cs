@@ -1,9 +1,11 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.XData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -103,47 +105,15 @@ namespace ACadSharp
 		}
 
 		/// <summary>
-		/// Creates a new object that is a copy of the current instance.
+		/// Add a reactor object linked to this one.
 		/// </summary>
 		/// <remarks>
-		/// The copy will be unattached from the document or any reference.
+		/// The <see cref="CadObject"/> and its reactors must be in the same <see cref="CadDocument"/> to be valid.
 		/// </remarks>
-		/// <returns>A new object that is a copy of this instance.</returns>
-		public virtual CadObject Clone()
+		/// <param name="reactor"></param>
+		public void AddReactor(CadObject reactor)
 		{
-			CadObject clone = (CadObject)this.MemberwiseClone();
-
-			clone.Handle = 0;
-
-			clone.Document = null;
-			clone.Owner = null;
-
-			//Collections
-			clone._reactors = new List<CadObject>();
-			clone._xdictionary = null;
-			clone.ExtendedData = new ExtendedDataDictionary(clone);
-
-			return clone;
-		}
-
-		/// <summary>
-		/// Creates the extended dictionary if null.
-		/// </summary>
-		/// <returns>The <see cref="CadDictionary"/> attached to this <see cref="CadObject"/></returns>
-		public CadDictionary CreateExtendedDictionary()
-		{
-			if (this._xdictionary == null)
-			{
-				this.XDictionary = new CadDictionary();
-			}
-
-			return this._xdictionary;
-		}
-
-		/// <inheritdoc/>
-		public override string ToString()
-		{
-			return $"{this.ObjectName}:{this.Handle}";
+			this._reactors.Add(reactor);
 		}
 
 		/// <summary>
@@ -162,15 +132,41 @@ namespace ACadSharp
 		}
 
 		/// <summary>
-		/// Add a reactor object linked to this one.
+		/// Creates a new object that is a copy of the current instance.
 		/// </summary>
 		/// <remarks>
-		/// The <see cref="CadObject"/> and its reactors must be in the same <see cref="CadDocument"/> to be valid.
+		/// The copy will be unattached from the document or any reference.
 		/// </remarks>
-		/// <param name="reactor"></param>
-		public void AddReactor(CadObject reactor)
+		/// <returns>A new object that is a copy of this instance.</returns>
+		public virtual CadObject Clone()
 		{
-			this._reactors.Add(reactor);
+			CadObject clone = (CadObject)this.MemberwiseClone();
+
+			clone.Handle = 0;
+
+			clone.Document = null;
+			clone.Owner = null;
+
+			//Collections
+			clone._reactors = new List<CadObject>();
+			clone.ExtendedData = new ExtendedDataDictionary(clone);
+			clone.XDictionary = this._xdictionary?.CloneTyped();
+
+			return clone;
+		}
+
+		/// <summary>
+		/// Creates the extended dictionary if null.
+		/// </summary>
+		/// <returns>The <see cref="CadDictionary"/> attached to this <see cref="CadObject"/></returns>
+		public CadDictionary CreateExtendedDictionary()
+		{
+			if (this._xdictionary == null)
+			{
+				this.XDictionary = new CadDictionary();
+			}
+
+			return this._xdictionary;
 		}
 
 		/// <summary>
@@ -181,6 +177,12 @@ namespace ACadSharp
 		public bool RemoveReactor(CadObject reactor)
 		{
 			return this._reactors.Remove(reactor);
+		}
+
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return $"{this.ObjectName}:{this.Handle}";
 		}
 
 		internal virtual void AssignDocument(CadDocument doc)
@@ -230,42 +232,15 @@ namespace ACadSharp
 			this._reactors.Clear();
 		}
 
-		protected T updateCollection<T>(T entry, ObjectDictionaryCollection<T> collection)
-			where T : NonGraphicalObject
-		{
-			if (collection == null || entry == null)
-			{
-				return entry;
-			}
-
-			if (collection.TryGetValue(entry.Name, out T existing))
-			{
-				return existing;
-			}
-			else
-			{
-				collection.Add(entry);
-				return entry;
-			}
-		}
-
-		protected static T updateTable<T>(T entry, Table<T> table)
-			where T : TableEntry
+		protected static T updateCollection<T>(T entry, ICadCollection<T> table)
+			where T : CadObject, INamedCadObject
 		{
 			if (table == null || entry == null)
 			{
 				return entry;
 			}
 
-			if (table.TryGetValue(entry.Name, out T existing))
-			{
-				return existing;
-			}
-			else
-			{
-				table.Add(entry);
-				return entry;
-			}
+			return table.TryAdd(entry);
 		}
 	}
 }

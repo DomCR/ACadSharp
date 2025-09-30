@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.IO.DWG
 {
@@ -17,26 +18,20 @@ namespace ACadSharp.IO.DWG
 		{
 			while (this._objects.Any())
 			{
-				CadObject obj = this._objects.Dequeue();
+				NonGraphicalObject obj = this._objects.Dequeue();
 
 				this.writeObject(obj);
 			}
 		}
 
-		private void writeObject(CadObject obj)
+		private void writeObject(NonGraphicalObject obj)
 		{
-			switch (obj)
+			if (this.skipEntry(obj, out bool notify))
 			{
-				case EvaluationGraph:
-				case Material:
-				case UnknownNonGraphicalObject:
-				case VisualStyle:
+				if (notify)
+				{
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
-					return;
-			}
-
-			if (obj is XRecord && !this.WriteXRecords)
-			{
+				}
 				return;
 			}
 
@@ -80,6 +75,11 @@ namespace ACadSharp.IO.DWG
 				case MultiLeaderStyle multiLeaderStyle:
 					this.writeMultiLeaderStyle(multiLeaderStyle);
 					break;
+				case MultiLeaderObjectContextData multiLeaderObjectContextData:
+					this.writeObjectContextData(multiLeaderObjectContextData);
+					this.writeAnnotScaleObjectContextData(multiLeaderObjectContextData);
+					this.writeMultiLeaderAnnotContext(multiLeaderObjectContextData);
+					break;
 				case PdfUnderlayDefinition pdfDefinition:
 					this.writePdfDefinition(pdfDefinition);
 					break;
@@ -94,6 +94,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case SortEntitiesTable sorttables:
 					this.writeSortEntitiesTable(sorttables);
+					break;
+				case SpatialFilter spatialFilter:
+					this.writeSpatialFilter(spatialFilter);
 					break;
 				case XRecord record:
 					this.writeXRecord(record);
@@ -166,12 +169,7 @@ namespace ACadSharp.IO.DWG
 			List<NonGraphicalObject> entries = new List<NonGraphicalObject>();
 			foreach (var item in dictionary)
 			{
-				if (item is XRecord && !this.WriteXRecords)
-				{
-					continue;
-				}
-
-				if (item is UnknownNonGraphicalObject)
+				if (this.skipEntry(item))
 				{
 					continue;
 				}
@@ -199,12 +197,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			foreach (var item in entries)
 			{
-				if (item is XRecord && !this.WriteXRecords)
-				{
-					continue;
-				}
-
-				if (item is UnknownNonGraphicalObject)
+				if (this.skipEntry(item))
 				{
 					continue;
 				}
@@ -216,9 +209,33 @@ namespace ACadSharp.IO.DWG
 			this.addEntriesToWriter(dictionary);
 		}
 
+		private bool skipEntry(NonGraphicalObject entry)
+		{
+			return this.skipEntry(entry, out _);
+		}
+
+		private bool skipEntry(NonGraphicalObject entry, out bool notify)
+		{
+			notify = true;
+			switch (entry)
+			{
+				case XRecord when !this.WriteXRecords:
+					notify = false;
+					return true;
+				case EvaluationGraph:
+				case Material:
+				case UnknownNonGraphicalObject:
+				case VisualStyle:
+				case ProxyObject:
+					return true;
+			}
+
+			return false;
+		}
+
 		private void addEntriesToWriter(CadDictionary dictionary)
 		{
-			foreach (CadObject e in dictionary)
+			foreach (NonGraphicalObject e in dictionary)
 			{
 				this._objects.Enqueue(e);
 			}
@@ -655,6 +672,23 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
+		private void writeObjectContextData(ObjectContextData objectContextData) {
+			//BS	70	Version.
+			this._writer.WriteBitShort(objectContextData.Version);
+			//B	-	Has file to extension dictionary.
+			this._writer.WriteBit(objectContextData.HasFileToExtensionDictionary);
+			//B	290	Default flag.
+			this._writer.WriteBit(objectContextData.Default);
+		}
+
+		private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData annotScaleObjectContextData) {
+			this._writer.HandleReference(DwgReferenceType.HardPointer, annotScaleObjectContextData.Scale);
+		}
+
+		private void writeMultiLeaderAnnotContext(MultiLeaderObjectContextData multiLeaderAnnotContext) {
+			writeMultiLeaderAnnotContextSubObject(false, multiLeaderAnnotContext);
+		}
+
 		private void writePlotSettings(PlotSettings plot)
 		{
 			//Common:
@@ -770,6 +804,59 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBit(scale.IsUnitScale);
 		}
 
+		private void writeSpatialFilter(SpatialFilter filter)
+		{
+			//Common:
+			//Numpts BS 70 number of points
+			this._writer.WriteBitShort((short)filter.BoundaryPoints.Count);
+			//Repeat numpts times:
+			foreach (var pt in filter.BoundaryPoints)
+			{
+				//pt0 2RD 10 a point on the clip boundary
+				this._writer.Write2RawDouble(pt);
+			}
+
+			//Extrusion 3BD 210 extrusion
+			this._writer.Write3BitDouble(filter.Normal);
+			//Clipbdorg 3BD 10 clip bound origin
+			this._writer.Write3BitDouble(filter.Origin);
+			//Dispbound BS 71 display boundary
+			this._writer.WriteBitShort((short)(filter.DisplayBoundary ? 1 : 0));
+			//Frontclipon BS 72 1 if front clip on
+			this._writer.WriteBitShort((short)(filter.ClipFrontPlane ? 1 : 0));
+			if (filter.ClipFrontPlane)
+			{
+				//Frontdist BD 40 front clip dist(present if frontclipon == 1)
+				this._writer.WriteBitDouble(filter.FrontDistance);
+			}
+
+			//Backclipon BS 73 1 if back clip on
+			this._writer.WriteBitShort((short)(filter.ClipBackPlane ? 1 : 0));
+			if (filter.ClipBackPlane)
+			{
+				//Backdist BD 41 back clip dist(present if backclipon == 1)
+				this._writer.WriteBitDouble(filter.BackDistance);
+			}
+
+			//Invblktr 12BD 40 inverse block transformation matrix
+			//(double[4][3], column major order)
+			this.write4x3Matrix(filter.InverseInsertTransform);
+			//clipbdtr 12BD 40 clip bound transformation matrix
+			//(double[4][3], column major order)
+			this.write4x3Matrix(filter.InsertTransform);
+		}
+
+		private void write4x3Matrix(Matrix4 matrix)
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 4; j++)
+				{
+					this._writer.WriteBitDouble(matrix[i, j]);
+				}
+			}
+		}
+
 		private void writeSortEntitiesTable(SortEntitiesTable sortEntitiesTable)
 		{
 			//parenthandle (soft pointer)
@@ -803,7 +890,7 @@ namespace ACadSharp.IO.DWG
 					continue;
 				}
 
-				ms.Write<short>((short)entry.Code);
+				ms.Write<short, LittleEndianConverter>((short)entry.Code);
 				GroupCodeValueType groupValueType = GroupCodeValue.TransformValue(entry.Code);
 
 				switch (groupValueType)
@@ -840,38 +927,32 @@ namespace ACadSharp.IO.DWG
 						ms.Write((byte)array.Length);
 						ms.WriteBytes(array);
 						break;
-					case GroupCodeValueType.String:
-					case GroupCodeValueType.ExtendedDataString:
 					case GroupCodeValueType.Handle:
-						string text = (string)entry.Value;
-
-						if (this.R2007Plus)
+						var obj = entry.GetReference();
+						if (obj == null)
 						{
-							if (string.IsNullOrEmpty(text))
-							{
-								ms.Write<short, LittleEndianConverter>(0);
-								return;
-							}
-
-							ms.Write<short, LittleEndianConverter>((short)text.Length);
-							ms.Write(text, System.Text.Encoding.Unicode);
-						}
-						else if (string.IsNullOrEmpty(text))
-						{
-							ms.Write<short, LittleEndianConverter>(0);
-							ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
+							this.writeStringInStream(ms, string.Empty);
 						}
 						else
 						{
-							ms.Write<short, LittleEndianConverter>((short)text.Length);
-							ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
-							ms.Write(text, this._writer.Encoding);
+							this.writeStringInStream(ms, obj.Handle.ToString("X", System.Globalization.CultureInfo.InvariantCulture));
 						}
+						break;
+					case GroupCodeValueType.String:
+					case GroupCodeValueType.ExtendedDataString:
+						string text = (string)entry.Value;
+						this.writeStringInStream(ms, text);
 						break;
 					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:
-						ulong u = (entry.Value as ulong?).Value;
-						ms.Write<ulong, LittleEndianConverter>(u);
+						if (entry.GetReference() == null)
+						{
+							ms.Write<ulong, LittleEndianConverter>(0);
+						}
+						else
+						{
+							ms.Write<ulong, LittleEndianConverter>(entry.GetReference().Handle);
+						}
 						break;
 					default:
 						throw new NotSupportedException();
@@ -881,7 +962,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Numdatabytes BL number of databytes
 			this._writer.WriteBitLong((int)ms.Length);
-			this._writer.WriteBytes(stream.GetBuffer());
+			this._writer.WriteBytes(stream.GetBuffer(), 0, (int)ms.Length);
 
 			//R2000+:
 			if (this.R2000Plus)
@@ -889,7 +970,32 @@ namespace ACadSharp.IO.DWG
 				//Cloning flag BS 280
 				this._writer.WriteBitShort((short)xrecord.CloningFlags);
 			}
+		}
 
+		private void writeStringInStream(StreamIO ms, string text)
+		{
+			if (this.R2007Plus)
+			{
+				if (string.IsNullOrEmpty(text))
+				{
+					ms.Write<short, LittleEndianConverter>(0);
+					return;
+				}
+
+				ms.Write<short, LittleEndianConverter>((short)text.Length);
+				ms.Write(text, System.Text.Encoding.Unicode);
+			}
+			else if (string.IsNullOrEmpty(text))
+			{
+				ms.Write<short, LittleEndianConverter>(0);
+				ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
+			}
+			else
+			{
+				ms.Write<short, LittleEndianConverter>((short)text.Length);
+				ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
+				ms.Write(text, this._writer.Encoding);
+			}
 		}
 	}
 }

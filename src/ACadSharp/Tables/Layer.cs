@@ -16,11 +16,6 @@ namespace ACadSharp.Tables
 	public class Layer : TableEntry
 	{
 		/// <summary>
-		/// Default layer 0, it will always exist in a file
-		/// </summary>
-		public const string DefaultName = "0";
-
-		/// <summary>
 		/// Default layer in all cad formats, it will always exist in a file
 		/// </summary>
 		public static Layer Default { get { return new Layer(DefaultName); } }
@@ -28,21 +23,7 @@ namespace ACadSharp.Tables
 		/// <summary>
 		/// Defpoints layer, this layer usually stores definition points that will not be plot.
 		/// </summary>
-		public static Layer Defpoints { get { return new Layer("defpoints") { PlotFlag = false }; } }
-
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.LAYER;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.TableLayer;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Layer;
-
-		/// <summary>
-		/// Layer state flags.
-		/// </summary>
-		public new LayerFlags Flags { get { return (LayerFlags)base.Flags; } set { base.Flags = (StandardFlags)value; } }
+		public static Layer Defpoints { get { return new Layer(DefpointsName) { PlotFlag = false }; } }
 
 		/// <summary>
 		/// Color
@@ -66,6 +47,16 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
+		/// Layer state flags.
+		/// </summary>
+		public new LayerFlags Flags { get { return (LayerFlags)base.Flags; } set { base.Flags = (StandardFlags)value; } }
+
+		/// <summary>
+		/// Indicates if the Layer is visible in the model
+		/// </summary>
+		public bool IsOn { get; set; } = true;
+
+		/// <summary>
 		/// The line type of an object. The default line type is the line type of the layer (ByLayer).
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Name, 6)]
@@ -81,7 +72,7 @@ namespace ACadSharp.Tables
 
 				if (this.Document != null)
 				{
-					this._lineType = updateTable(value, this.Document.LineTypes);
+					this._lineType = CadObject.updateCollection(value, this.Document.LineTypes);
 				}
 				else
 				{
@@ -91,41 +82,76 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Specifies if the layer is plottable.
-		/// </summary>
-		[DxfCodeValue(290)]
-		public bool PlotFlag { get; set; } = true;
-
-		/// <summary>
 		/// Specifies the line weight of an individual object or the default line weight for the drawing.
 		/// </summary>
 		[DxfCodeValue(370)]
-		public LineweightType LineWeight { get; set; } = LineweightType.Default;
-
-		/// <summary>
-		/// PlotStyleName object
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Unprocess, 390)]
-		public ulong PlotStyleName { get; internal set; } = 0;   //Note: The handle points to an ACDBPLACEHOLDER
+		public LineWeightType LineWeight { get; set; } = LineWeightType.Default;
 
 		/// <summary>
 		/// Hard-pointer ID/handle to Material object
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 347)]
-		public Material Material { get; set; }    //TODO: Implement ulong handles, change to internal or private, implement the material class
+		public Material Material { get; set; }
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.TableLayer;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.LAYER;
 
 		/// <summary>
-		/// Indicates if the Layer is visible in the model
+		/// Specifies if the layer is plottable.
 		/// </summary>
-		public bool IsOn { get; set; } = true;
+		[DxfCodeValue(290)]
+		public bool PlotFlag
+		{
+			get
+			{
+				if (this.name.Equals(DefpointsName, StringComparison.OrdinalIgnoreCase))
+				{
+					return false;
+				}
 
-		private LineType _lineType = LineType.Continuous;
+				return this._plotFlag;
+			}
+			set
+			{
+				this._plotFlag = value;
+			}
+		}
+
+		/// <summary>
+		/// PlotStyleName object
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Unprocess, 390)]
+		public ulong PlotStyleName { get; internal set; } = 0;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Layer;
+
+		/// <summary>
+		/// Default layer 0, it will always exist in a file
+		/// </summary>
+		public const string DefaultName = "0";
+
+		/// <summary>
+		/// DefPoints layer name.
+		/// </summary>
+		public const string DefpointsName = "defpoints";
 
 		private Color _color = new Color(7);
 
-		internal Layer() : base() { }
+		//TODO: Implement ulong handles, change to internal or private, implement the material class
+		private LineType _lineType = LineType.Continuous;
 
-		public Layer(string name) : base(name) { }
+		private bool _plotFlag = true;
+
+		public Layer(string name) : base(name)
+		{
+		}
+
+		//Note: The handle points to an ACDBPLACEHOLDER
+		internal Layer() : base() { }
 
 		/// <inheritdoc/>
 		public override CadObject Clone()
@@ -142,7 +168,7 @@ namespace ACadSharp.Tables
 		{
 			base.AssignDocument(doc);
 
-			this._lineType = updateTable(this.LineType, doc.LineTypes);
+			this._lineType = CadObject.updateCollection(this.LineType, doc.LineTypes);
 
 			doc.LineTypes.OnRemove += this.tableOnRemove;
 		}

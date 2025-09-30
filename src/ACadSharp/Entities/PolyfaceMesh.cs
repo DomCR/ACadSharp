@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using CSMath;
 using System;
 using System.Collections.Generic;
 
@@ -25,14 +24,18 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.PolyfaceMesh;
 
+		/// <summary>
+		/// Face records with the triangle indexes.
+		/// </summary>
 		public CadObjectCollection<VertexFaceRecord> Faces { get; private set; }
 
-		public PolyfaceMesh()
+		/// <inheritdoc/>
+		public PolyfaceMesh() : base()
 		{
-			this.Vertices.OnAdd += this.verticesOnAdd;
 			this.Faces = new CadObjectCollection<VertexFaceRecord>(this);
 		}
 
+		/// <inheritdoc/>
 		public override IEnumerable<Entity> Explode()
 		{
 			throw new System.NotImplementedException();
@@ -46,7 +49,7 @@ namespace ACadSharp.Entities
 			clone.Faces = new SeqendCollection<VertexFaceRecord>(clone);
 			foreach (VertexFaceRecord v in this.Faces)
 			{
-				clone.Vertices.Add((VertexFaceRecord)v.Clone());
+				clone.Faces.Add((VertexFaceRecord)v.Clone());
 			}
 
 			return clone;

@@ -247,7 +247,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Ltype scale	BD	48
-			this._writer.WriteBitDouble(entity.LinetypeScale);
+			this._writer.WriteBitDouble(entity.LineTypeScale);
 
 			if (!(this._version >= ACadVersion.AC1015))
 			{

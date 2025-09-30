@@ -1,10 +1,11 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
-using CSUtilities.Extensions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -64,8 +65,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Specifies the rotation angle for the object.
 		/// </summary>
-		public bool IsMultiple
-		{ get { return this.RowCount > 1 || this.ColumnCount > 1; } }
+		public bool IsMultiple { get { return this.RowCount > 1 || this.ColumnCount > 1; } }
 
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
@@ -112,6 +112,39 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional, 45)]
 		public double RowSpacing { get; set; } = 0;
+
+		/// <summary>
+		/// Gets or set the spatial filter entry for this <see cref="Insert"/> entity.
+		/// </summary>
+		public SpatialFilter SpatialFilter
+		{
+			get
+			{
+				if (this.XDictionary != null
+					&& this.XDictionary.TryGetEntry(Filter.FilterEntryName, out CadDictionary filters))
+				{
+					return filters.GetEntry<SpatialFilter>(SpatialFilter.SpatialFilterEntryName);
+				}
+
+				return null;
+			}
+			set
+			{
+				if (this.XDictionary == null)
+				{
+					this.CreateExtendedDictionary();
+				}
+
+				if (!this.XDictionary.TryGetEntry(Filter.FilterEntryName, out CadDictionary filters))
+				{
+					filters = new CadDictionary(Filter.FilterEntryName);
+					this.XDictionary.Add(filters);
+				}
+
+				filters.Remove(SpatialFilter.SpatialFilterEntryName);
+				filters.Add(SpatialFilter.SpatialFilterEntryName, value);
+			}
+		}
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => this.IsMultiple ? DxfSubclassMarker.MInsert : DxfSubclassMarker.Insert;
@@ -271,6 +304,49 @@ namespace ACadSharp.Entities
 			return clone;
 		}
 
+		/// <summary>
+		/// Explodes the current insert.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<Entity> Explode()
+		{
+			Transform transform = this.GetTransform();
+			foreach (var e in this.Block.Entities)
+			{
+				Entity c;
+				switch (e)
+				{
+					case Arc arc:
+						c = new Ellipse()
+						{
+							StartParameter = arc.StartAngle,
+							EndParameter = arc.EndAngle,
+							MajorAxisEndPoint = XYZ.AxisX * arc.Radius,
+							RadiusRatio = 1,
+							Center = arc.Center,
+						};
+						c.MatchProperties(e);
+						break;
+					case Circle circle:
+						c = new Ellipse()
+						{
+							MajorAxisEndPoint = XYZ.AxisX * circle.Radius,
+							RadiusRatio = 1,
+							Center = circle.Center,
+						};
+						c.MatchProperties(e);
+						break;
+					default:
+						c = e.CloneTyped();
+						break;
+				}
+
+				c.ApplyTransform(transform);
+
+				yield return c;
+			}
+		}
+
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
@@ -289,10 +365,12 @@ namespace ACadSharp.Entities
 		/// <returns></returns>
 		public Transform GetTransform()
 		{
-			XYZ scale = new XYZ(XScale, YScale, ZScale);
+			var world = Matrix4.GetArbitraryAxis(this.Normal);
+			var translation = Transform.CreateTranslation(this.InsertPoint);
+			var rotation = Transform.CreateRotation(XYZ.AxisZ, this.Rotation);
+			var scale = Transform.CreateScaling(new XYZ(this.XScale, this.YScale, this.ZScale));
 
-			//TODO: Apply rotation
-			return new Transform(this.InsertPoint, scale, XYZ.Zero);
+			return new Transform(world * translation.Matrix * rotation.Matrix * scale.Matrix);
 		}
 
 		/// <summary>
