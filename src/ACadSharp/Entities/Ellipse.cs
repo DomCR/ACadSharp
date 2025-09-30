@@ -165,18 +165,12 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Get end vertices of the ellipse if is not <see cref="IsFullEllipse"/>.
+		/// Get end vertices of the ellipse, if <see cref="IsFullEllipse"/> is set, the point will be the same.
 		/// </summary>
 		/// <param name="start"></param>
 		/// <param name="end"></param>
 		public void GetEndVertices(out XYZ start, out XYZ end)
 		{
-			if (this.IsFullEllipse)
-			{
-				start = XYZ.Zero;
-				end = XYZ.Zero;
-			}
-
 			start = this.PolarCoordinateRelativeToCenter(this.StartParameter);
 			end = this.PolarCoordinateRelativeToCenter(this.EndParameter);
 		}
