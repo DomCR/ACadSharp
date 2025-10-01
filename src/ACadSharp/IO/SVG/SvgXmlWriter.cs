@@ -413,6 +413,14 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndElement();
 		}
 
+		private void writePatternHeader(string id)
+		{
+			this.WriteStartElement("pattern");
+
+			this.WriteAttributeString("id", id);
+			this.WriteAttributeString("patternUnits", "userSpaceOnUse");
+		}
+
 		private string writePatternHeader(Hatch hatch)
 		{
 			string id = $"{hatch.Pattern.GetHashCode()}_{hatch.Pattern.Name}";
@@ -425,8 +433,10 @@ namespace ACadSharp.IO.SVG
 			return id;
 		}
 
-		private void writeSolidPattern(Hatch hatch)
+		private string writeSolidPattern(Hatch hatch)
 		{
+			string id = this.writePatternHeader(hatch);
+
 			this.WriteAttributeString("width", "100%");
 			this.WriteAttributeString("height", "100%");
 
@@ -441,34 +451,38 @@ namespace ACadSharp.IO.SVG
 
 			//pattern
 			this.WriteEndElement();
+
+			return id;
 		}
 
 		private string writePattern(Hatch hatch)
 		{
-			string id = this.writePatternHeader(hatch);
-
 			if (hatch.IsSolid)
 			{
-				this.writeSolidPattern(hatch);
-				return id;
+				return this.writeSolidPattern(hatch);
 			}
 
-			var box = hatch.Pattern.GetBoundingBox();
-			this.WriteAttributeString("width", (box.Width).ToSvg(this.Units));
-			this.WriteAttributeString("height", (box.Height).ToSvg(this.Units));
-
-			//Needs to change to "patternTransform"
-			this.writeTransform(translation: -box.Min);
-
+			Dictionary<string, BoundingBox> patterns = new();
 			foreach (var item in hatch.Pattern.Lines)
 			{
+				var i = $"{item.GetHashCode()}_line";
+				patterns.Add(i, new BoundingBox(XYZ.Zero, new XYZ(item.LineOffset, item.LineOffset, 0)));
+
+				//Each line works individually repeating itself every offset
+				this.writePatternHeader(i);
+				this.WriteAttributeString("width", item.LineOffset.ToSvg(this.Units));
+				this.WriteAttributeString("height", item.LineOffset.ToSvg(this.Units));
+
+				this.writeTransform(name: "patternTransform",
+					translation: item.BasePoint.Convert<XYZ>().ToPixelSize(this.Units));
+				//rotation: -item.Angle);
+
 				this.WriteStartElement("line");
 
-				var length = item.Offset.GetLength();
-
 				//Direction of the line
-				double x = MathHelper.Cos(item.Angle) * length;
-				double y = MathHelper.Sin(item.Angle) * length;
+				var length = item.Offset.GetLength();
+				double x = MathHelper.Cos(item.Angle) * 10;
+				double y = MathHelper.Sin(item.Angle) * 10;
 
 				//Offset -> is the size of the line box
 
@@ -478,6 +492,12 @@ namespace ACadSharp.IO.SVG
 				this.WriteAttributeString("x2", (x).ToSvg(this.Units));
 				this.WriteAttributeString("y2", (y).ToSvg(this.Units));
 
+				//Rotate the pattern after line
+				//this.WriteAttributeString("x1", 0.0d.ToSvg(this.Units));
+				//this.WriteAttributeString("y1", (item.LineOffset / 2).ToSvg(this.Units));
+				//this.WriteAttributeString("x2", 1.0d.ToSvg(this.Units));
+				//this.WriteAttributeString("y2", (item.LineOffset / 2).ToSvg(this.Units));
+
 				this.WriteAttributeString("stroke", this.colorSvg(hatch.Color));
 				this.WriteAttributeString("stroke-width", $"{this.Configuration.GetLineWeightValue(hatch.GetActiveLineWeightType(), this.Units).ToSvg(UnitsType.Millimeters)}");
 
@@ -486,8 +506,36 @@ namespace ACadSharp.IO.SVG
 					this.writeDashes(item.DashLengths);
 				}
 
-				this.WriteAttributeString("overflow", "visisble");
+				//Line
+				this.WriteEndElement();
 
+				if (false)
+				{
+					this.WriteStartElement("rect");
+					this.WriteAttributeString("width", (item.LineOffset).ToSvg(this.Units));
+					this.WriteAttributeString("height", (item.LineOffset).ToSvg(this.Units));
+					this.WriteAttributeString("fill", $"none");
+					this.WriteAttributeString("stroke", $"red");
+					this.WriteEndElement();
+				}
+
+				//Pattern
+				this.WriteEndElement();
+			}
+
+			string id = this.writePatternHeader(hatch);
+			var width = patterns.Values.Max(w => w.Width);
+			var height = patterns.Values.Max(w => w.Height);
+
+			this.WriteAttributeString("width", width.ToSvg(this.Units));
+			this.WriteAttributeString("height", height.ToSvg(this.Units));
+
+			foreach (var item in patterns)
+			{
+				this.WriteStartElement("rect");
+				this.WriteAttributeString("width", (item.Value.Width).ToSvg(this.Units));
+				this.WriteAttributeString("height", (item.Value.Height).ToSvg(this.Units));
+				this.WriteAttributeString("fill", $"url(#{item.Key})");
 				this.WriteEndElement();
 			}
 
@@ -707,10 +755,10 @@ namespace ACadSharp.IO.SVG
 			XYZ? scale = transform.Scale != new XYZ(1) ? transform.Scale : null;
 			double? rotation = transform.EulerRotation.Z != 0 ? transform.EulerRotation.Z : null;
 
-			this.writeTransform(translation, scale, rotation);
+			this.writeTransform(translation: translation, scale: scale, rotation: rotation);
 		}
 
-		private void writeTransform(XYZ? translation = null, XYZ? scale = null, double? rotation = null)
+		private void writeTransform(string name = "transform", XYZ? translation = null, XYZ? scale = null, double? rotation = null)
 		{
 			StringBuilder sb = new StringBuilder();
 
@@ -745,7 +793,7 @@ namespace ACadSharp.IO.SVG
 				return;
 			}
 
-			this.WriteAttributeString("transform", sb.ToString());
+			this.WriteAttributeString(name, sb.ToString());
 		}
 	}
 }

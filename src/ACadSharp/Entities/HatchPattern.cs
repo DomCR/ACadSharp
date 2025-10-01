@@ -60,15 +60,22 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		[Obsolete("No real use for it")]
 		public BoundingBox GetBoundingBox()
 		{
 			BoundingBox box = BoundingBox.Null;
 
 			foreach (var item in this.Lines)
 			{
+				var length = item.Offset.GetLength();
+
+				//Direction of the line
+				double x = MathHelper.Cos(item.Angle) * length;
+				double y = MathHelper.Sin(item.Angle) * length;
+
 				box = box.Merge(new BoundingBox(
-					item.BasePoint.Convert<XYZ>(),
-					(item.BasePoint + item.Offset).Convert<XYZ>()));
+					XYZ.Zero,
+					new XYZ(x, y, 0)));
 			}
 
 			return box;
