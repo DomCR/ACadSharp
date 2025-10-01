@@ -60,6 +60,20 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		public BoundingBox GetBoundingBox()
+		{
+			BoundingBox box = BoundingBox.Null;
+
+			foreach (var item in this.Lines)
+			{
+				box = box.Merge(new BoundingBox(
+					item.BasePoint.Convert<XYZ>(),
+					(item.BasePoint + item.Offset).Convert<XYZ>()));
+			}
+
+			return box;
+		}
+
 		/// <summary>
 		/// Clones the current pattern.
 		/// </summary>

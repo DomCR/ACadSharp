@@ -21,7 +21,7 @@ namespace ACadSharp.IO.SVG
 
 		public SvgConfiguration Configuration { get; } = new();
 
-		public bool IsPaperSpace { get; set; }
+		public Layout Layout { get; set; }
 
 		public UnitsType Units { get; protected set; }
 
@@ -36,22 +36,21 @@ namespace ACadSharp.IO.SVG
 
 		public void WriteAttributeString(string localName, double value)
 		{
-			this.WriteAttributeString(localName, value.ToSvg(this.Units));
+			this.WriteAttributeString(localName, value, this.Units);
+		}
+
+		public void WriteAttributeString(string localName, double value, UnitsType units)
+		{
+			this.WriteAttributeString(localName, value.ToSvg(units));
 		}
 
 		public void WriteBlock(BlockRecord record)
 		{
 			this.Units = record.Units;
-			this.IsPaperSpace = false;
 
 			BoundingBox box = record.GetBoundingBox();
 
-			this.startDocument(box);
-
-			if (record.Document != null)
-			{
-				this.writeDefinitions(record.Document);
-			}
+			this.startDocument(box, this.Units);
 
 			foreach (var e in record.Entities)
 			{
@@ -63,8 +62,8 @@ namespace ACadSharp.IO.SVG
 
 		public void WriteLayout(Layout layout)
 		{
+			this.Layout = layout;
 			this.Units = layout.PaperUnits.ToUnits();
-			this.IsPaperSpace = layout.IsPaperSpace;
 
 			double paperWidth = layout.PaperWidth;
 			double paperHeight = layout.PaperHeight;
@@ -87,7 +86,7 @@ namespace ACadSharp.IO.SVG
 				lowerMargin,
 				layout.UnprintableMargin.TopCorner.Convert<XYZ>());
 
-			this.startDocument(paper);
+			this.startDocument(paper, UnitsType.Millimeters);
 
 			Transform transform = new Transform(
 				lowerMargin.ToPixelSize(this.Units),
@@ -133,9 +132,9 @@ namespace ACadSharp.IO.SVG
 				case Ellipse ellipse:
 					this.writeEllipse(ellipse, transform);
 					break;
-				//case Hatch hatch:
-				//	this.writeHatch(hatch, transform);
-				//	break;
+				case Hatch hatch:
+					this.writeHatch(hatch, transform);
+					break;
 				case Insert insert:
 					this.writeInsert(insert, transform);
 					break;
@@ -153,7 +152,7 @@ namespace ACadSharp.IO.SVG
 
 		private string colorSvg(Color color)
 		{
-			if (this.IsPaperSpace && color.Equals(Color.Default))
+			if (this.Layout != null && color.Equals(Color.Default))
 			{
 				color = Color.Black;
 			}
@@ -161,7 +160,7 @@ namespace ACadSharp.IO.SVG
 			return $"rgb({color.R},{color.G},{color.B})";
 		}
 
-		private string createPath(IEnumerable<IPolyline> polylines)
+		private string createPath(params IEnumerable<IPolyline> polylines)
 		{
 			StringBuilder sb = new StringBuilder();
 
@@ -208,29 +207,29 @@ namespace ACadSharp.IO.SVG
 			return entity.GetActiveLineWeightType().GetLineWeightValue().ToPixelSize(this.Units);
 		}
 
-		private void startDocument(BoundingBox box)
+		private void startDocument(BoundingBox box, UnitsType units)
 		{
 			this.WriteStartDocument();
 
 			this.WriteStartElement("svg");
 			this.WriteAttributeString("xmlns", "http://www.w3.org/2000/svg");
 
-			this.WriteAttributeString("width", box.Max.X - box.Min.X);
-			this.WriteAttributeString("height", box.Max.Y - box.Min.Y);
+			this.WriteAttributeString("width", box.Max.X - box.Min.X, units);
+			this.WriteAttributeString("height", box.Max.Y - box.Min.Y, units);
 
 			this.WriteStartAttribute("viewBox");
-			this.WriteValue(box.Min.X.ToSvg(this.Units));
+			this.WriteValue(box.Min.X.ToSvg(units));
 			this.WriteValue(" ");
-			this.WriteValue(box.Min.Y.ToSvg(this.Units));
+			this.WriteValue(box.Min.Y.ToSvg(units));
 			this.WriteValue(" ");
-			this.WriteValue((box.Max.X - box.Min.X).ToSvg(this.Units));
+			this.WriteValue((box.Max.X - box.Min.X).ToSvg(units));
 			this.WriteValue(" ");
-			this.WriteValue((box.Max.Y - box.Min.Y).ToSvg(this.Units));
+			this.WriteValue((box.Max.Y - box.Min.Y).ToSvg(units));
 			this.WriteEndAttribute();
 
 			this.WriteAttributeString("transform", $"scale(1,-1)");
 
-			if (this.IsPaperSpace)
+			if (this.Layout != null)
 			{
 				this.WriteAttributeString("style", "background-color:white");
 			}
@@ -343,12 +342,20 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndElement();
 		}
 
-		private void writeEntityHeader(IEntity entity, Transform transform)
+		private void writeEntityHeader(IEntity entity, Transform transform, bool drawStroke = true)
 		{
 			Color color = entity.GetActiveColor();
 
 			this.WriteAttributeString("vector-effect", "non-scaling-stroke");
-			this.WriteAttributeString("stroke", this.colorSvg(color));
+
+			if (drawStroke)
+			{
+				this.WriteAttributeString("stroke", this.colorSvg(color));
+			}
+			else
+			{
+				this.WriteAttributeString("stroke", "none");
+			}
 
 			var lineWeight = entity.LineWeight;
 			switch (lineWeight)
@@ -371,27 +378,89 @@ namespace ACadSharp.IO.SVG
 		private void writeHatch(Hatch hatch, Transform transform)
 		{
 			this.WriteStartElement("g");
-			this.WriteAttributeString("fill", $"url(#{hatch.Pattern.Name})");
+
+			//this.writeEntityHeader(hatch, transform);
+
+			var patternId = this.writePattern(hatch);
 
 			foreach (Hatch.BoundaryPath path in hatch.Paths)
 			{
-				this.WriteStartElement("polyline");
+				this.WriteStartElement("path");
 
-				this.writeEntityHeader(hatch, transform);
+				this.writeEntityHeader(hatch, transform, drawStroke: false);
 
-				foreach (var item in path.Edges)
-				{
-					//TODO: svg edges for hatch drawing
-				}
+				var pline = path.ToPolyline();
+				this.WriteAttributeString("d", this.createPath(pline));
 
-				//this.WriteAttributeString("points", pts);
-
-				//this.WriteAttributeString("fill", "none");
+				this.WriteAttributeString("fill", $"url(#{patternId})");
 
 				this.WriteEndElement();
 			}
 
 			this.WriteEndElement();
+		}
+
+		private string writePattern(Hatch hatch)
+		{
+			string id = $"{hatch.Pattern.GetHashCode()}_{hatch.Pattern.Name}";
+
+			this.WriteStartElement("pattern");
+
+			this.WriteAttributeString("id", id);
+			this.WriteAttributeString("patternUnits", "userSpaceOnUse");
+
+			if (hatch.IsSolid)
+			{
+				this.WriteAttributeString("width", "100%");
+				this.WriteAttributeString("height", "100%");
+
+				this.WriteStartElement("rect");
+
+				this.WriteAttributeString("width", "100%");
+				this.WriteAttributeString("height", "100%");
+				this.WriteAttributeString("fill", this.colorSvg(hatch.Color));
+
+				//rect
+				this.WriteEndElement();
+
+				//pattern
+				this.WriteEndElement();
+				return id;
+			}
+
+			var box = hatch.Pattern.GetBoundingBox();
+			this.WriteAttributeString("width", (box.Width).ToSvg(this.Units));
+			this.WriteAttributeString("height", (box.Height).ToSvg(this.Units));
+
+			foreach (var item in hatch.Pattern.Lines)
+			{
+				this.WriteStartElement("line");
+
+				var length = item.Offset.GetLength();
+
+				//Direction of the line
+				double x = MathHelper.Cos(item.Angle) * length;
+				double y = MathHelper.Sin(item.Angle) * length;
+
+				//Offset -> is the size of the line box
+
+				//Add BasePoint
+				this.WriteAttributeString("x1", 0.0d.ToSvg(this.Units));
+				this.WriteAttributeString("y1", 0.0d.ToSvg(this.Units));
+				this.WriteAttributeString("x2", (x).ToSvg(this.Units));
+				this.WriteAttributeString("y2", (y).ToSvg(this.Units));
+
+				this.WriteAttributeString("stroke", this.colorSvg(hatch.Color));
+				this.WriteAttributeString("stroke-width", $"{this.Configuration.GetLineWeightValue(hatch.GetActiveLineWeightType(), this.Units).ToSvg(UnitsType.Millimeters)}");
+
+				this.WriteAttributeString("overflow", "visisble");
+
+				this.WriteEndElement();
+			}
+
+			this.WriteEndElement();
+
+			return id;
 		}
 
 		private void writeInsert(Insert insert, Transform transform)

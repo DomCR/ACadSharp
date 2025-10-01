@@ -343,6 +343,7 @@ namespace ACadSharp
 		/// Get all the <see cref="HatchPattern"/> in the document.
 		/// </summary>
 		/// <returns></returns>
+		[Obsolete("Each hatch modifies the pattern, it may not be needed.")]
 		public IEnumerable<HatchPattern> GetHatchPatterns()
 		{
 			foreach (var item in this._cadObjects.Values.OfType<Hatch>())
@@ -502,28 +503,6 @@ namespace ACadSharp
 			if (this.updateCollection(CadDictionary.VariableDictionary, createDictionaries, out CadDictionary variables))
 			{
 				this.DictionaryVariables = new DictionaryVariableCollection(variables);
-			}
-		}
-
-		/// <summary>
-		/// Updates the <see cref="DxfClass"/> in the document and their instance count.
-		/// </summary>
-		/// <param name="reset">Resets the list and clears any unnecessary classes.</param>
-		public void UpdateDxfClasses(bool reset)
-		{
-			if (reset)
-			{
-				this.Classes.Clear();
-			}
-
-			DxfClassCollection.UpdateDxfClasses(this);
-
-			foreach (var item in this.Classes)
-			{
-				item.InstanceCount = this._cadObjects.Values
-					.OfType<CadObject>()
-					.Where(c => c.ObjectName == item.DxfName)
-					.Count();
 			}
 		}
 

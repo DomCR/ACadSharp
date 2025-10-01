@@ -13,11 +13,8 @@ namespace ACadSharp.Entities
 		public partial class BoundaryPath : IGeometricEntity
 		{
 			/// <summary>
-			/// Number of edges in this boundary path.
+			/// Edges that form the boundary.
 			/// </summary>
-			/// <remarks>
-			/// Only if boundary is not a polyline.
-			/// </remarks>
 			[DxfCodeValue(DxfReferenceType.Count, 93)]
 			public ObservableCollection<Edge> Edges { get; private set; } = new();
 
@@ -58,6 +55,31 @@ namespace ACadSharp.Entities
 			public bool IsPolyline { get { return this.Edges.OfType<Polyline>().Any(); } }
 
 			private BoundaryPathFlags _flags;
+
+			public Polyline2D ToPolyline()
+			{
+				Polyline2D pline = new Polyline2D();
+				foreach (Edge edge in this.Edges)
+				{
+					switch (edge)
+					{
+						case Line line:
+							pline.Vertices.Add(new Vertex2D((XYZ)line.Start));
+							pline.Vertices.Add(new Vertex2D((XYZ)line.End));
+							break;
+						case Polyline poly:
+							foreach (XYZ v in poly.Vertices)
+							{
+								pline.Vertices.Add(new Vertex2D(v));
+							}
+							break;
+						default:
+							throw new System.NotImplementedException();
+					}
+				}
+
+				return pline;
+			}
 
 			/// <summary>
 			/// Default constructor.
