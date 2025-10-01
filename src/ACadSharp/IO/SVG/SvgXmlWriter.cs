@@ -287,24 +287,37 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndElement();
 		}
 
+		private void writeDashes(IEnumerable<double> dashes)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			foreach (var d in dashes)
+			{
+				sb.Append(Math.Abs(d.ToPixelSize(this.Units)));
+				sb.Append(' ');
+			}
+
+			this.WriteAttributeString("stroke-dasharray", sb.ToString().Trim());
+		}
+
 		private void writeDashes(LineType lineType, double pointSize)
 		{
-			StringBuilder str = new StringBuilder();
+			StringBuilder sb = new StringBuilder();
 			foreach (LineType.Segment segment in lineType.Segments)
 			{
 				if (segment.IsPoint)
 				{
-					str.Append(pointSize.ToPixelSize(this.Units));
+					sb.Append(pointSize.ToPixelSize(this.Units));
 				}
 				else
 				{
-					str.Append(Math.Abs(segment.Length.ToPixelSize(this.Units)));
+					sb.Append(Math.Abs(segment.Length.ToPixelSize(this.Units)));
 				}
 
-				str.Append(' ');
+				sb.Append(' ');
 			}
 
-			this.WriteAttributeString("stroke-dasharray", str.ToString().Trim());
+			this.WriteAttributeString("stroke-dasharray", sb.ToString().Trim());
 		}
 
 		private void writeEllipse(Ellipse ellipse, Transform transform)
@@ -400,7 +413,7 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndElement();
 		}
 
-		private string writePattern(Hatch hatch)
+		private string writePatternHeader(Hatch hatch)
 		{
 			string id = $"{hatch.Pattern.GetHashCode()}_{hatch.Pattern.Name}";
 
@@ -409,28 +422,43 @@ namespace ACadSharp.IO.SVG
 			this.WriteAttributeString("id", id);
 			this.WriteAttributeString("patternUnits", "userSpaceOnUse");
 
+			return id;
+		}
+
+		private void writeSolidPattern(Hatch hatch)
+		{
+			this.WriteAttributeString("width", "100%");
+			this.WriteAttributeString("height", "100%");
+
+			this.WriteStartElement("rect");
+
+			this.WriteAttributeString("width", "100%");
+			this.WriteAttributeString("height", "100%");
+			this.WriteAttributeString("fill", this.colorSvg(hatch.Color));
+
+			//rect
+			this.WriteEndElement();
+
+			//pattern
+			this.WriteEndElement();
+		}
+
+		private string writePattern(Hatch hatch)
+		{
+			string id = this.writePatternHeader(hatch);
+
 			if (hatch.IsSolid)
 			{
-				this.WriteAttributeString("width", "100%");
-				this.WriteAttributeString("height", "100%");
-
-				this.WriteStartElement("rect");
-
-				this.WriteAttributeString("width", "100%");
-				this.WriteAttributeString("height", "100%");
-				this.WriteAttributeString("fill", this.colorSvg(hatch.Color));
-
-				//rect
-				this.WriteEndElement();
-
-				//pattern
-				this.WriteEndElement();
+				this.writeSolidPattern(hatch);
 				return id;
 			}
 
 			var box = hatch.Pattern.GetBoundingBox();
 			this.WriteAttributeString("width", (box.Width).ToSvg(this.Units));
 			this.WriteAttributeString("height", (box.Height).ToSvg(this.Units));
+
+			//Needs to change to "patternTransform"
+			this.writeTransform(translation: -box.Min);
 
 			foreach (var item in hatch.Pattern.Lines)
 			{
@@ -453,11 +481,17 @@ namespace ACadSharp.IO.SVG
 				this.WriteAttributeString("stroke", this.colorSvg(hatch.Color));
 				this.WriteAttributeString("stroke-width", $"{this.Configuration.GetLineWeightValue(hatch.GetActiveLineWeightType(), this.Units).ToSvg(UnitsType.Millimeters)}");
 
+				if (item.DashLengths.Any())
+				{
+					this.writeDashes(item.DashLengths);
+				}
+
 				this.WriteAttributeString("overflow", "visisble");
 
 				this.WriteEndElement();
 			}
 
+			//pattern
 			this.WriteEndElement();
 
 			return id;

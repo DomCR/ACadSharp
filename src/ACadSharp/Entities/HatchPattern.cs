@@ -132,15 +132,20 @@ namespace ACadSharp.Entities
 				}
 				else
 				{
+					//;angle, x, y, shift, offset, [dash, space, ...]
 					string[] data = line.Split(',');
 					Line l = new Line();
+					//angle
 					l.Angle = MathHelper.DegToRad(double.Parse(data[0], CultureInfo.InvariantCulture));
+					//x, y
 					l.BasePoint = new XY(double.Parse(data[1], CultureInfo.InvariantCulture), double.Parse(data[2], CultureInfo.InvariantCulture));
 
-					XY offset = new XY(double.Parse(data[3], CultureInfo.InvariantCulture), double.Parse(data[4], CultureInfo.InvariantCulture));
+					double shift = double.Parse(data[3], CultureInfo.InvariantCulture);
+					double offset = double.Parse(data[4], CultureInfo.InvariantCulture);
+					XY dir = new XY(shift, offset);
 					double cos = Math.Cos(l.Angle);
 					double sin = Math.Sin(l.Angle);
-					l.Offset = new XY(offset.X * cos - offset.Y * sin, offset.X * sin + offset.Y * cos);
+					l.Offset = new XY(dir.X * cos - dir.Y * sin, dir.X * sin + dir.Y * cos);
 
 					IEnumerable<string> dashes = data.Skip(5);
 					if (dashes.Any())
@@ -180,17 +185,16 @@ namespace ACadSharp.Entities
 					StringBuilder sb = new StringBuilder();
 
 					double angle = MathHelper.DegToRad(line.Angle);
-					double cos = Math.Cos(line.Angle);
-					double sin = Math.Sin(line.Angle);
+					double cos = Math.Cos(0.0 - line.Angle);
+					double sin = Math.Sin(0.0 - line.Angle);
 
-					var offset = line.Offset;
-					var vector2D = new XY(offset.X * cos - offset.Y * sin, offset.X * sin + offset.Y * cos);
+					var v = new XY(line.Offset.X * cos - line.Offset.Y * sin, line.Offset.X * sin + line.Offset.Y * cos);
 
 					sb.Append(angle.ToString(CultureInfo.InvariantCulture));
 					sb.Append(",");
 					sb.Append(line.BasePoint.ToString(CultureInfo.InvariantCulture));
 					sb.Append(",");
-					sb.Append(vector2D.ToString(CultureInfo.InvariantCulture));
+					sb.Append(v.ToString(CultureInfo.InvariantCulture));
 
 					if (line.DashLengths.Count > 0)
 					{
