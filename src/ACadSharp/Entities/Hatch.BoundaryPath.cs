@@ -63,6 +63,10 @@ namespace ACadSharp.Entities
 				{
 					switch (edge)
 					{
+						case Arc:
+							break;
+						case Ellipse ellipse:
+							break;
 						case Line line:
 							pline.Vertices.Add(new Vertex2D((XYZ)line.Start));
 							pline.Vertices.Add(new Vertex2D((XYZ)line.End));
@@ -72,6 +76,8 @@ namespace ACadSharp.Entities
 							{
 								pline.Vertices.Add(new Vertex2D(v));
 							}
+							break;
+						case Spline spline:
 							break;
 						default:
 							throw new System.NotImplementedException();
