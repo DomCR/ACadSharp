@@ -38,6 +38,10 @@ namespace ACadSharp.IO.Templates
 			{
 				insert.Block = owner;
 			}
+			else
+			{
+				builder.Notify($"Block {this.BlockHeaderHandle} | {this.BlockName} not found for Insert {this.CadObject.Handle}", NotificationType.Warning);
+			}
 
 			if (builder.TryGetCadObject(this.SeqendHandle, out Seqend seqend))
 			{
