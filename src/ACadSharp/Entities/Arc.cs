@@ -106,10 +106,12 @@ namespace ACadSharp.Entities
 		/// indicates a counterclockwise arc, while a negative value indicates a clockwise arc.</returns>
 		public static double GetBulge(XY center, XY start, XY end, bool clockWise)
 		{
+			//TODO: add normal
+
 			XY u = start - center;
 			XY u2 = new XY(0.0 - u.Y, u.X);
 			XY v = end - center;
-			double angle = System.Math.Atan2(x: u.Dot(v), y: (u2.Dot(v)));
+			double angle = Math.Atan2(x: u.Dot(v), y: u2.Dot(v));
 			if (clockWise)
 			{
 				if (angle > 0.0)
@@ -122,7 +124,7 @@ namespace ACadSharp.Entities
 				angle += MathHelper.PI * 2.0;
 			}
 
-			return System.Math.Tan(angle / 4.0);
+			return Math.Tan(angle / 4.0);
 		}
 
 		/// <summary>
@@ -132,7 +134,7 @@ namespace ACadSharp.Entities
 		/// <returns>The bulge value, which is the tangent of half the angle.</returns>
 		public static double GetBulgeFromAngle(double angle)
 		{
-			return System.Math.Tan(angle / 4);
+			return Math.Tan(angle / 4);
 		}
 
 		/// <summary>
@@ -163,7 +165,7 @@ namespace ACadSharp.Entities
 
 			double gamma = (Math.PI - theta) / 2;
 			double phi = (end - start).GetAngle() + Math.Sign(bulge) * gamma;
-			return new XY(start.X + radius * CSMath.MathHelper.Cos(phi), start.Y + radius * CSMath.MathHelper.Sin(phi));
+			return new XY(start.X + radius * MathHelper.Cos(phi), start.Y + radius * MathHelper.Sin(phi));
 		}
 
 		/// <inheritdoc/>
@@ -255,6 +257,12 @@ namespace ACadSharp.Entities
 				this.Radius,
 				this.Normal
 			);
+		}
+
+		/// <inheritdoc/>
+		public override Polyline3D ToPolyline()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

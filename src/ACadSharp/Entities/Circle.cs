@@ -131,8 +131,22 @@ namespace ACadSharp.Entities
 					);
 		}
 
-		public virtual Polyline3D ToEntity()
+		/// <inheritdoc/>
+		public virtual Polyline3D ToPolyline()
 		{
+			var poly = new Polyline3D();
+
+			XYZ start = this.PolarCoordinateRelativeToCenter(0);
+			XYZ end = this.PolarCoordinateRelativeToCenter(MathHelper.PI);
+
+			double bulge = Arc.GetBulge(
+				this.Center.Convert<XY>(),
+				start.Convert<XY>(),
+				end.Convert<XY>(),
+				false);
+
+			poly.Vertices.Add(new Vertex3D(start));
+
 			throw new NotImplementedException();
 		}
 	}
