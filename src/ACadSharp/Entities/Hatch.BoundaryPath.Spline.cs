@@ -90,6 +90,7 @@ namespace ACadSharp.Entities
 					spline.ControlPoints.AddRange(this.ControlPoints);
 					spline.Weights.AddRange(this.ControlPoints.Select(x => x.Z));
 					spline.FitPoints.AddRange(this.FitPoints.Select(x => x.Convert<XYZ>()));
+					spline.Knots.AddRange(this.Knots);
 
 					return spline;
 				}
