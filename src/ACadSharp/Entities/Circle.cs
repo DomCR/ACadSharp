@@ -15,7 +15,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityCircle)]
 	[DxfSubClass(DxfSubclassMarker.Circle)]
-	public class Circle : Entity, ICurve
+	public class Circle : Entity, ICurve, IPolylineEquivalent
 	{
 		/// <summary>
 		/// Specifies the center of an arc, circle, ellipse, view, or viewport.
@@ -129,6 +129,11 @@ namespace ACadSharp.Entities
 					start,
 					this.RadiusRatio
 					);
+		}
+
+		public virtual Polyline3D ToEntity()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
