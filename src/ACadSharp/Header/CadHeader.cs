@@ -2639,7 +2639,7 @@ namespace ACadSharp.Header
 		/// System variable TILEMODE.
 		/// </remarks>
 		[CadSystemVariable("$TILEMODE", 70)]
-		public bool ShowModelSpace { get; set; }
+		public bool ShowModelSpace { get; set; } = true;
 
 		/// <remarks>
 		/// System variable SHOWHIST
