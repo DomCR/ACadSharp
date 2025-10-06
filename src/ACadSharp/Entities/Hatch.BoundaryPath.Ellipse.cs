@@ -1,8 +1,7 @@
-﻿using System;
-
-using ACadSharp.Attributes;
-using ACadSharp.IO.DXF;
+﻿using ACadSharp.Attributes;
 using CSMath;
+using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -78,6 +77,11 @@ namespace ACadSharp.Entities
 					ellipse.EndParameter = this.CounterClockWise ? this.EndAngle : 2 * Math.PI - this.StartAngle;
 
 					return ellipse;
+				}
+
+				public List<XYZ> PolygonalVertexes(int precision)
+				{
+					return ((Entities.Ellipse)this.ToEntity()).PolygonalVertexes(precision);
 				}
 			}
 		}
