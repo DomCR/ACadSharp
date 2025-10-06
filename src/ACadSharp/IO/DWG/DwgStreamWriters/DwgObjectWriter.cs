@@ -345,7 +345,7 @@ namespace ACadSharp.IO.DWG
 			{
 				//Insert Count RC A sequence of zero or more non-zero RC’s, followed by a terminating 0 RC.The total number of these indicates how many insert handles will be present.
 				foreach (var item in this._document.Entities.OfType<Insert>()
-					.Where(i => i.Block.Name == record.Name))
+					.Where(i => i.Block?.Name == record?.Name))
 				{
 					this._writer.WriteByte(1);
 				}
@@ -413,7 +413,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				foreach (var item in this._document.Entities.OfType<Insert>()
-					.Where(i => i.Block.Name == record.Name))
+					.Where(i => i.Block?.Name == record.Name))
 				{
 					this._writer.HandleReference(DwgReferenceType.SoftPointer, item);
 				}

@@ -259,15 +259,15 @@ namespace ACadSharp.IO.SVG
 
 		private void writeArc(Arc arc, Transform transform)
 		{
-			//A rx ry rotation large-arc-flag sweep-flag x y
-
-			this.WriteStartElement("polyline");
+			this.WriteStartElement("path");
 
 			this.writeEntityHeader(arc, transform);
 
-			var vertices = arc.PolygonalVertexes(256);
-			string pts = this.svgPoints(vertices, transform);
-			this.WriteAttributeString("points", pts);
+			arc.GetEndVertices(out XYZ start, out XYZ end);
+
+			//A rx ry rotation large-arc-flag sweep-flag x y
+			this.WriteAttributeString("d", $"M {start.ToPixelSize(this.Units).ToSvg()} A {arc.Radius} {arc.Radius} {0} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+
 			this.WriteAttributeString("fill", "none");
 
 			this.WriteEndElement();
@@ -325,16 +325,58 @@ namespace ACadSharp.IO.SVG
 
 		private void writeEllipse(Ellipse ellipse, Transform transform)
 		{
-			this.WriteStartElement("polygon");
+			if (ellipse.IsFullEllipse)
+			{
+				this.WriteStartElement("path");
 
-			this.writeEntityHeader(ellipse, transform);
+				this.writeEntityHeader(ellipse, transform);
 
-			var vertices = ellipse.PolygonalVertexes(256);
-			string pts = this.svgPoints(vertices, transform);
-			this.WriteAttributeString("points", pts);
-			this.WriteAttributeString("fill", "none");
+				StringBuilder sb = new StringBuilder();
 
-			this.WriteEndElement();
+				XYZ start = ellipse.PolarCoordinateRelativeToCenter(0);
+				XYZ end = ellipse.PolarCoordinateRelativeToCenter(Math.PI);
+
+				sb.Append($"M {start.ToPixelSize(this.Units).ToSvg()} ");
+				sb.Append($"A {ellipse.MajorAxis} {ellipse.MinorAxis} {MathHelper.RadToDeg(ellipse.Rotation)} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+
+				start = ellipse.PolarCoordinateRelativeToCenter(Math.PI);
+				end = ellipse.PolarCoordinateRelativeToCenter(MathHelper.TwoPI);
+				sb.Append($"A {ellipse.MajorAxis} {ellipse.MinorAxis} {MathHelper.RadToDeg(ellipse.Rotation)} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+
+				//A rx ry rotation large-arc-flag sweep-flag x y
+				this.WriteAttributeString("d", sb.ToString());
+
+				this.WriteAttributeString("fill", "none");
+				this.WriteEndElement();
+			}
+			else
+			{
+				this.WriteStartElement("polyline");
+
+				this.writeEntityHeader(ellipse, transform);
+
+				var vertices = ellipse.PolygonalVertexes(256);
+				string pts = this.svgPoints(vertices, transform);
+				this.WriteAttributeString("points", pts);
+				this.WriteAttributeString("fill", "none");
+
+				this.WriteEndElement();
+
+				return;
+
+				//TODO: Fix the ellipse generation
+				this.WriteStartElement("path");
+
+				this.writeEntityHeader(ellipse, transform);
+
+				ellipse.GetEndVertices(out XYZ start, out XYZ end);
+
+				//A rx ry rotation large-arc-flag sweep-flag x y
+				this.WriteAttributeString("d", $"M {start.ToPixelSize(this.Units).ToSvg()} A {ellipse.MajorAxis} {ellipse.MinorAxis} {MathHelper.RadToDeg(ellipse.Rotation)} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+
+				this.WriteAttributeString("fill", "none");
+				this.WriteEndElement();
+			}
 		}
 
 		private void writeEntity(Entity entity)
@@ -373,14 +415,7 @@ namespace ACadSharp.IO.SVG
 				this.WriteAttributeString("stroke", "none");
 			}
 
-			var lineWeight = entity.LineWeight;
-			switch (lineWeight)
-			{
-				case LineWeightType.ByLayer:
-					lineWeight = entity.Layer.LineWeight;
-					break;
-			}
-
+			var lineWeight = entity.GetActiveLineWeightType();
 			this.WriteAttributeString("stroke-width", $"{this.Configuration.GetLineWeightValue(lineWeight, this.Units).ToSvg(UnitsType.Millimeters)}");
 
 			this.writeTransform(transform);

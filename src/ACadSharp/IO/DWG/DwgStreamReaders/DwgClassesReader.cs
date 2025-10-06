@@ -105,7 +105,7 @@ namespace ACadSharp.IO.DWG
 				}
 				else
 				{
-					this.notify($"Invalid DxfClass id value: {dxfClass.ItemClassId} for {dxfClass.CppClassName}", NotificationType.Error);
+					this.notify($"Invalid DxfClass id value: {dxfClass.ItemClassId} for {dxfClass.CppClassName}", NotificationType.Warning);
 				}
 
 				if (this.R2004Plus)

@@ -1,4 +1,6 @@
-﻿using ACadSharp.Types.Units;
+﻿using ACadSharp.Extensions;
+using ACadSharp.Objects;
+using ACadSharp.Types.Units;
 using System;
 
 namespace ACadSharp.IO
@@ -57,7 +59,7 @@ namespace ACadSharp.IO
 					return 0.001;
 			}
 
-			return value / 100;
+			return lineWeight.GetLineWeightValue();
 		}
 	}
 }
