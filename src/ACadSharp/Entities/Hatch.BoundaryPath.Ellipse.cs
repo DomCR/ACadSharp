@@ -65,11 +65,6 @@ namespace ACadSharp.Entities
 				/// <inheritdoc/>
 				public override Entity ToEntity()
 				{
-					XYZ axisPoint = new XYZ(this.MajorAxisEndPoint.X, this.MajorAxisEndPoint.Y, 0.0);
-
-					double rotation = axisPoint.Convert<XY>().GetAngle();
-					double majorAxis = 2 * axisPoint.GetLength();
-
 					Entities.Ellipse ellipse = new();
 					ellipse.Center = this.Center.Convert<XYZ>();
 					ellipse.StartParameter = this.CounterClockWise ? this.StartAngle : 2 * Math.PI - this.EndAngle;
