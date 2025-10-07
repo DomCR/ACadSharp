@@ -11,7 +11,8 @@
 		/// <summary>
 		/// Converts the current object into it's 3D polyline representation.
 		/// </summary>
+		/// <param name="precision"></param>
 		/// <returns></returns>
-		Polyline3D ToPolyline();
+		Polyline3D ToPolyline(int precision = byte.MaxValue);
 	}
 }

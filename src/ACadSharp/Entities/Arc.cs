@@ -260,9 +260,29 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public override Polyline3D ToPolyline()
+		public override Polyline3D ToPolyline(int precision = byte.MaxValue)
 		{
-			throw new NotImplementedException();
+			var pline = new Polyline3D();
+			pline.Flags = PolylineFlags.Polyline3D;
+			pline.Thickness = this.Thickness;
+			pline.Normal = this.Normal;
+
+			this.GetEndVertices(out XYZ start, out XYZ end);
+
+			double bulge = Arc.GetBulge(
+				this.Center.Convert<XY>(),
+				start.Convert<XY>(),
+				end.Convert<XY>(),
+				false);
+
+			pline.Vertices.Add(new Vertex3D(start));
+			pline.Vertices.Add(new Vertex3D()
+			{
+				Location = end,
+				Bulge = bulge,
+			});
+
+			return pline;
 		}
 	}
 }

@@ -132,9 +132,11 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public virtual Polyline3D ToPolyline()
+		public virtual Polyline3D ToPolyline(int precision = byte.MaxValue)
 		{
-			var poly = new Polyline3D();
+			var pline = new Polyline3D();
+			pline.Thickness = this.Thickness;
+			pline.Normal = this.Normal;
 
 			XYZ start = this.PolarCoordinateRelativeToCenter(0);
 			XYZ end = this.PolarCoordinateRelativeToCenter(MathHelper.PI);
@@ -145,9 +147,14 @@ namespace ACadSharp.Entities
 				end.Convert<XY>(),
 				false);
 
-			poly.Vertices.Add(new Vertex3D(start));
+			pline.Vertices.Add(new Vertex3D(start));
+			pline.Vertices.Add(new Vertex3D()
+			{
+				Location = end,
+				Bulge = bulge,
+			});
 
-			throw new NotImplementedException();
+			return pline;
 		}
 	}
 }

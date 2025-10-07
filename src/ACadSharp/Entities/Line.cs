@@ -94,7 +94,13 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public Polyline3D ToPolyline()
 		{
-			throw new System.NotImplementedException();
+			var pline = new Polyline3D(this.StartPoint, this.EndPoint);
+			pline.Thickness = this.Thickness;
+			pline.Normal = this.Normal;
+
+			this.MatchProperties(pline);
+
+			return pline;
 		}
 	}
 }
