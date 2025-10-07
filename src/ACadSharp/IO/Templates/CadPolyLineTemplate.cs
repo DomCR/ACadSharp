@@ -52,7 +52,7 @@ namespace ACadSharp.IO.Templates
 					mesh.Vertices.AddRange(vertices.Cast<VertexFaceMesh>());
 					break;
 				default:
-					builder.Notify($"Unknown polyline type {this.CadObject.SubclassMarker}");
+					builder.Notify($"Unknown polyline type {this.CadObject.SubclassMarker}", NotificationType.Warning);
 					break;
 			}
 		}
@@ -110,7 +110,7 @@ namespace ACadSharp.IO.Templates
 					mesh.Vertices.Seqend = seqend;
 					break;
 				default:
-					builder.Notify($"Unknown polyline type {this.CadObject.SubclassMarker}");
+					builder.Notify($"Unknown polyline type {this.CadObject.SubclassMarker}", NotificationType.Warning);
 					break;
 			}
 		}
