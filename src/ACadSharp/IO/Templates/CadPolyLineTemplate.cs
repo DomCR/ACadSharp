@@ -32,6 +32,9 @@ namespace ACadSharp.IO.Templates
 				case Polyline3D pline3d:
 					pline3d.Vertices.Seqend = seqend;
 					break;
+				case PolyfaceMesh mesh:
+					mesh.Vertices.Seqend = seqend;
+					break;
 			}
 		}
 
@@ -44,6 +47,9 @@ namespace ACadSharp.IO.Templates
 					break;
 				case Polyline3D pline3d:
 					pline3d.Vertices.AddRange(vertices.Cast<Vertex3D>());
+					break;
+				case PolyfaceMesh mesh:
+					mesh.Vertices.AddRange(vertices.Cast<VertexFaceMesh>());
 					break;
 			}
 		}
