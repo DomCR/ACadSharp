@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace ACadSharp.IO.Templates
 {
@@ -37,7 +38,7 @@ namespace ACadSharp.IO.Templates
 			this.CadObject = polyLine;
 		}
 
-		protected void addVertices(params IEnumerable<IVertex> vertices)
+		protected void addVertices(CadDocumentBuilder builder, params IEnumerable<IVertex> vertices)
 		{
 			switch (this.CadObject)
 			{
@@ -50,6 +51,9 @@ namespace ACadSharp.IO.Templates
 				case PolyfaceMesh mesh:
 					mesh.Vertices.AddRange(vertices.Cast<VertexFaceMesh>());
 					break;
+				default:
+					builder.Notify($"Unknown polyline type {this.CadObject.SubclassMarker}");
+					break;
 			}
 		}
 
@@ -61,13 +65,13 @@ namespace ACadSharp.IO.Templates
 
 			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
 			{
-				this.setSeqend(seqend);
+				this.setSeqend(builder, seqend);
 			}
 
 			if (this.FirstVertexHandle.HasValue)
 			{
 				IEnumerable<Vertex> vertices = this.getEntitiesCollection<Vertex>(builder, this.FirstVertexHandle.Value, this.LastVertexHandle.Value);
-				this.addVertices(vertices);
+				this.addVertices(builder, vertices);
 			}
 			else
 			{
@@ -81,7 +85,7 @@ namespace ACadSharp.IO.Templates
 					{
 						if (builder.TryGetCadObject(handle, out Vertex v))
 						{
-							this.addVertices(v);
+							this.addVertices(builder, v);
 						}
 						else
 						{
@@ -92,7 +96,7 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
-		protected void setSeqend(Seqend seqend)
+		protected void setSeqend(CadDocumentBuilder builder, Seqend seqend)
 		{
 			switch (this.CadObject)
 			{
@@ -104,6 +108,9 @@ namespace ACadSharp.IO.Templates
 					break;
 				case PolyfaceMesh mesh:
 					mesh.Vertices.Seqend = seqend;
+					break;
+				default:
+					builder.Notify($"Unknown polyline type {this.CadObject.SubclassMarker}");
 					break;
 			}
 		}
