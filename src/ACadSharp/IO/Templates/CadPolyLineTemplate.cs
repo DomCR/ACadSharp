@@ -2,6 +2,7 @@
 using CSMath;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.IO.Templates
 {
@@ -15,27 +16,53 @@ namespace ACadSharp.IO.Templates
 
 		public HashSet<ulong> VertexHandles { get; set; } = new();
 
-		public Polyline PolyLine => this.CadObject as Polyline;
+		public IPolyline PolyLine => this.CadObject as IPolyline;
 
 		public CadPolyLineTemplate() : base(new PolyLinePlaceholder()) { }
 
-		public CadPolyLineTemplate(Polyline entity) : base(entity) { }
+		public CadPolyLineTemplate(IPolyline entity) : base((Entity)entity) { }
+
+		protected void setSeqend(Seqend seqend)
+		{
+			switch (this.CadObject)
+			{
+				case Polyline2D pline2d:
+					pline2d.Vertices.Seqend = seqend;
+					break;
+				case Polyline3D pline3d:
+					pline3d.Vertices.Seqend = seqend;
+					break;
+			}
+		}
+
+		protected void addVertices(params IEnumerable<IVertex> vertices)
+		{
+			switch (this.CadObject)
+			{
+				case Polyline2D pline2d:
+					pline2d.Vertices.AddRange(vertices.Cast<Vertex2D>());
+					break;
+				case Polyline3D pline3d:
+					pline3d.Vertices.AddRange(vertices.Cast<Vertex3D>());
+					break;
+			}
+		}
 
 		protected override void build(CadDocumentBuilder builder)
 		{
 			base.build(builder);
 
-			Polyline polyLine = this.CadObject as Polyline;
+			IPolyline polyLine = this.CadObject as IPolyline;
 
 			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
 			{
-				polyLine.Vertices.Seqend = seqend;
+				this.setSeqend(seqend);
 			}
 
 			if (this.FirstVertexHandle.HasValue)
 			{
 				IEnumerable<Vertex> vertices = this.getEntitiesCollection<Vertex>(builder, this.FirstVertexHandle.Value, this.LastVertexHandle.Value);
-				polyLine.Vertices.AddRange(vertices);
+				this.addVertices(vertices);
 			}
 			else
 			{
@@ -47,9 +74,9 @@ namespace ACadSharp.IO.Templates
 				{
 					foreach (var handle in this.VertexHandles)
 					{
-						if (builder.TryGetCadObject<Vertex>(handle, out Vertex v))
+						if (builder.TryGetCadObject(handle, out Vertex v))
 						{
-							polyLine.Vertices.Add(v);
+							this.addVertices(v);
 						}
 						else
 						{
@@ -60,7 +87,8 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
-		public void SetPolyLineObject(Polyline polyLine)
+		public void SetPolyLineObject<T>(Polyline<T> polyLine)
+			where T : Entity, IVertex
 		{
 			polyLine.Handle = this.CadObject.Handle;
 			polyLine.Color = this.CadObject.Color;
@@ -94,19 +122,9 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
-		internal class PolyLinePlaceholder : Polyline
+		internal class PolyLinePlaceholder : Polyline<Vertex>
 		{
 			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
-
-			public override IEnumerable<Entity> Explode()
-			{
-				throw new NotImplementedException();
-			}
-
-			protected override void verticesOnAdd(object sender, CollectionChangedEventArgs e)
-			{
-				throw new NotImplementedException();
-			}
 		}
 	}
 }

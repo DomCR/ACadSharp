@@ -8,6 +8,63 @@ namespace ACadSharp.Extensions
 {
 	public static class PolylineExtensions
 	{
+		/// <summary>
+		/// Explodes the polyline into a collection of entities formed by <see cref="Line"/> and <see cref="Arc"/>.
+		/// </summary>
+		/// <returns></returns>
+		public static IEnumerable<Entity> Explode(this IPolyline polyline)
+		{
+			//Generic explode method for Polyline2D and LwPolyline
+			List<Entity> entities = new List<Entity>();
+
+			for (int i = 0; i < polyline.Vertices.Count(); i++)
+			{
+				IVertex curr = polyline.Vertices.ElementAt(i);
+				IVertex next = polyline.Vertices.ElementAtOrDefault(i + 1);
+
+				if (next == null && polyline.IsClosed)
+				{
+					next = polyline.Vertices.First();
+				}
+				else if (next == null)
+				{
+					break;
+				}
+
+				Entity e = null;
+				if (curr.Bulge == 0)
+				{
+					//Is a line
+					e = new Line
+					{
+						StartPoint = curr.Location.Convert<XYZ>(),
+						EndPoint = next.Location.Convert<XYZ>(),
+						Normal = polyline.Normal,
+						Thickness = polyline.Thickness,
+					};
+				}
+				else
+				{
+					XY p1 = curr.Location.Convert<XY>();
+					XY p2 = next.Location.Convert<XY>();
+
+					//Is an arc
+					Arc arc = Arc.CreateFromBulge(p1, p2, curr.Bulge);
+					arc.Center = new XYZ(arc.Center.X, arc.Center.Y, polyline.Elevation);
+					arc.Normal = polyline.Normal;
+					arc.Thickness = polyline.Thickness;
+
+					e = arc;
+				}
+
+				polyline.MatchProperties(e);
+
+				entities.Add(e);
+			}
+
+			return entities;
+		}
+
 		public static IEnumerable<T> GetPoints<T>(this IPolyline polyline)
 			where T : IVector, new()
 		{

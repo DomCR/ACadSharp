@@ -7,11 +7,12 @@ using System.Linq;
 namespace ACadSharp.Entities
 {
 	/// <summary>
-	/// Represents a <see cref="Polyline"/> entity.
+	/// Represents a <see cref="Polyline{T}"/> entity.
 	/// </summary>
 	[DxfName(DxfFileToken.EntityPolyline)]
 	[DxfSubClass(null, true)]
-	public abstract class Polyline : Entity, IPolyline
+	public abstract class Polyline<T> : Entity, IPolyline
+		where T : Entity, IVertex
 	{
 		/// <inheritdoc/>
 		[DxfCodeValue(30)]
@@ -80,7 +81,7 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// Each <see cref="Vertex"/> has it's own unique handle.
 		/// </remarks>
-		public SeqendCollection<Vertex> Vertices { get; private set; }
+		public SeqendCollection<T> Vertices { get; private set; }
 
 		/// <inheritdoc/>
 		IEnumerable<IVertex> IPolyline.Vertices { get { return this.Vertices; } }
@@ -92,11 +93,10 @@ namespace ACadSharp.Entities
 		/// </summary>
 		public Polyline() : base()
 		{
-			this.Vertices = new SeqendCollection<Vertex>(this);
-			this.Vertices.OnAdd += this.verticesOnAdd;
+			this.Vertices = new SeqendCollection<T>(this);
 		}
 
-		public Polyline(IEnumerable<Vertex> vertices, bool isColsed) : this()
+		public Polyline(IEnumerable<T> vertices, bool isColsed) : this()
 		{
 			if (vertices == null)
 				throw new System.ArgumentException("The vertices enumerable cannot be null or empty", nameof(vertices));
@@ -114,7 +114,7 @@ namespace ACadSharp.Entities
 
 			foreach (var vertex in this.Vertices)
 			{
-				XYZ v = transOW * vertex.Location;
+				XYZ v = transOW * vertex.Location.Convert<XYZ>();
 				v = transform.ApplyTransform(v);
 				v = transWO * v;
 				vertex.Location = v;
@@ -126,19 +126,16 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
-			Polyline clone = (Polyline)base.Clone();
+			Polyline<T> clone = (Polyline<T>)base.Clone();
 
-			clone.Vertices = new SeqendCollection<Vertex>(clone);
-			foreach (Vertex v in this.Vertices)
+			clone.Vertices = new SeqendCollection<T>(clone);
+			foreach (T v in this.Vertices)
 			{
-				clone.Vertices.Add((Vertex)v.Clone());
+				clone.Vertices.Add((T)v.Clone());
 			}
 
 			return clone;
 		}
-
-		/// <inheritdoc/>
-		public abstract IEnumerable<Entity> Explode();
 
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
@@ -149,15 +146,15 @@ namespace ACadSharp.Entities
 				return BoundingBox.Null;
 			}
 
-			XYZ first = this.Vertices[0].Location;
-			XYZ second = this.Vertices[1].Location;
+			XYZ first = this.Vertices[0].Location.Convert<XYZ>();
+			XYZ second = this.Vertices[1].Location.Convert<XYZ>();
 
 			XYZ min = new XYZ(System.Math.Min(first.X, second.X), System.Math.Min(first.Y, second.Y), System.Math.Min(first.Z, second.Z));
 			XYZ max = new XYZ(System.Math.Max(first.X, second.X), System.Math.Max(first.Y, second.Y), System.Math.Max(first.Z, second.Z));
 
 			for (int i = 2; i < this.Vertices.Count; i++)
 			{
-				XYZ curr = this.Vertices[i].Location;
+				XYZ curr = this.Vertices[i].Location.Convert<XYZ>();
 
 				min = new XYZ(System.Math.Min(min.X, curr.X), System.Math.Min(min.Y, curr.Y), System.Math.Min(min.Z, curr.Z));
 				max = new XYZ(System.Math.Max(max.X, curr.X), System.Math.Max(max.Y, curr.Y), System.Math.Max(max.Z, curr.Z));
@@ -230,7 +227,5 @@ namespace ACadSharp.Entities
 			this.Document.UnregisterCollection(this.Vertices);
 			base.UnassignDocument();
 		}
-
-		protected abstract void verticesOnAdd(object sender, CollectionChangedEventArgs e);
 	}
 }

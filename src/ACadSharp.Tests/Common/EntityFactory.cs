@@ -212,7 +212,8 @@ namespace ACadSharp.Tests.Common
 			point.Location = _random.NextXYZ();
 		}
 
-		public static void RandomizePolyline(Polyline pline)
+		public static void RandomizePolyline<T>(Polyline<T> pline)
+			where T : Entity, IVertex
 		{
 			RandomizeEntity(pline);
 
@@ -223,18 +224,18 @@ namespace ACadSharp.Tests.Common
 
 				switch (pline)
 				{
-					case Polyline2D:
+					case Polyline2D pline2d:
 						v = new Vertex2D();
+						pline2d.Vertices.Add(v as Vertex2D);
 						break;
-					case Polyline3D:
+					case Polyline3D pline3d:
 						v = new Vertex3D();
+						pline3d.Vertices.Add(v as Vertex3D);
 						break;
 				}
 
 				v.Id = i;
 				v.Location = _random.NextXYZ();
-
-				pline.Vertices.Add(v);
 			}
 		}
 
