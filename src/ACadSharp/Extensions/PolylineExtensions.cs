@@ -65,12 +65,32 @@ namespace ACadSharp.Extensions
 			return entities;
 		}
 
+		/// <summary>
+		/// Retrieves the points of the specified polyline as a sequence of the specified vector type.
+		/// </summary>
+		/// <typeparam name="T">The type of vector to return for each point. Must implement <see cref="IVector"/> and have a parameterless
+		/// constructor.</typeparam>
+		/// <param name="polyline">The polyline from which to retrieve the points. Cannot be <see langword="null"/>.</param>
+		/// <returns>An <see cref="IEnumerable{T}"/> containing the points of the polyline, converted to the specified vector type.</returns>
 		public static IEnumerable<T> GetPoints<T>(this IPolyline polyline)
 			where T : IVector, new()
 		{
 			return polyline.Vertices.Select(v => v.Location.Convert<T>());
 		}
 
+		/// <summary>
+		/// Generates a collection of points representing the vertices of the specified polyline,  including interpolated
+		/// points for arcs based on the given precision.
+		/// </summary>
+		/// <remarks>This method processes the vertices of the polyline and generates a sequence of points.  For
+		/// straight segments, the start and end points are included. For arc segments, additional  points are interpolated
+		/// based on the specified <paramref name="precision"/>. If the polyline  is closed, the method ensures continuity by
+		/// connecting the last vertex to the first.</remarks>
+		/// <typeparam name="T">The type of the points to return. Must implement <see cref="IVector"/> and have a parameterless constructor.</typeparam>
+		/// <param name="polyline">The polyline from which to extract points. The polyline may contain straight segments and arcs.</param>
+		/// <param name="precision">The number of points to generate for each arc segment. Must be equal to or greater than 2.</param>
+		/// <returns>An <see cref="IEnumerable{T}"/> containing the points of the polyline, including interpolated points for arcs.</returns>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="precision"/> is less than 2.</exception>
 		public static IEnumerable<T> GetPoints<T>(this IPolyline polyline, int precision)
 			where T : IVector, new()
 		{
