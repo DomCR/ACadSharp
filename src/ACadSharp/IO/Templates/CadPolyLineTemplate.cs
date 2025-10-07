@@ -10,30 +10,31 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? LastVertexHandle { get; internal set; }
 
+		public IPolyline PolyLine => this.CadObject as IPolyline;
+
 		public ulong? SeqendHandle { get; internal set; }
 
 		public HashSet<ulong> VertexHandles { get; set; } = new();
 
-		public IPolyline PolyLine => this.CadObject as IPolyline;
-
-		public CadPolyLineTemplate() : base(new PolyLinePlaceholder()) { }
-
-		public CadPolyLineTemplate(IPolyline entity) : base((Entity)entity) { }
-
-		protected void setSeqend(Seqend seqend)
+		public CadPolyLineTemplate() : base(new PolyLinePlaceholder())
 		{
-			switch (this.CadObject)
-			{
-				case Polyline2D pline2d:
-					pline2d.Vertices.Seqend = seqend;
-					break;
-				case Polyline3D pline3d:
-					pline3d.Vertices.Seqend = seqend;
-					break;
-				case PolyfaceMesh mesh:
-					mesh.Vertices.Seqend = seqend;
-					break;
-			}
+		}
+
+		public CadPolyLineTemplate(IPolyline entity) : base((Entity)entity)
+		{
+		}
+
+		public void SetPolyLineObject<T>(Polyline<T> polyLine)
+			where T : Entity, IVertex
+		{
+			polyLine.Handle = this.CadObject.Handle;
+			polyLine.Color = this.CadObject.Color;
+			polyLine.LineWeight = this.CadObject.LineWeight;
+			polyLine.LineTypeScale = this.CadObject.LineTypeScale;
+			polyLine.IsInvisible = this.CadObject.IsInvisible;
+			polyLine.Transparency = this.CadObject.Transparency;
+
+			this.CadObject = polyLine;
 		}
 
 		protected void addVertices(params IEnumerable<IVertex> vertices)
@@ -91,17 +92,20 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
-		public void SetPolyLineObject<T>(Polyline<T> polyLine)
-			where T : Entity, IVertex
+		protected void setSeqend(Seqend seqend)
 		{
-			polyLine.Handle = this.CadObject.Handle;
-			polyLine.Color = this.CadObject.Color;
-			polyLine.LineWeight = this.CadObject.LineWeight;
-			polyLine.LineTypeScale = this.CadObject.LineTypeScale;
-			polyLine.IsInvisible = this.CadObject.IsInvisible;
-			polyLine.Transparency = this.CadObject.Transparency;
-
-			this.CadObject = polyLine;
+			switch (this.CadObject)
+			{
+				case Polyline2D pline2d:
+					pline2d.Vertices.Seqend = seqend;
+					break;
+				case Polyline3D pline3d:
+					pline3d.Vertices.Seqend = seqend;
+					break;
+				case PolyfaceMesh mesh:
+					mesh.Vertices.Seqend = seqend;
+					break;
+			}
 		}
 
 		private void buildPolyfaceMesh(PolyfaceMesh polyfaceMesh, CadDocumentBuilder builder)
