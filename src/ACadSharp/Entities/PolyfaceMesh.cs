@@ -1,6 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -13,7 +11,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityPolyline)]
 	[DxfSubClass(DxfSubclassMarker.PolyfaceMesh)]
-	public class PolyfaceMesh : Polyline
+	public class PolyfaceMesh : Polyline<VertexFaceMesh>
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType { get { return ObjectType.POLYLINE_PFACE; } }
@@ -36,12 +34,6 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public override IEnumerable<Entity> Explode()
-		{
-			throw new System.NotImplementedException();
-		}
-
-		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			PolyfaceMesh clone = (PolyfaceMesh)base.Clone();
@@ -53,15 +45,6 @@ namespace ACadSharp.Entities
 			}
 
 			return clone;
-		}
-
-		protected override void verticesOnAdd(object sender, CollectionChangedEventArgs e)
-		{
-			if (e.Item is not VertexFaceMesh)
-			{
-				this.Vertices.Remove((Vertex)e.Item);
-				throw new ArgumentException($"Wrong vertex type {e.Item.SubclassMarker} for {this.SubclassMarker}");
-			}
 		}
 
 		internal override void AssignDocument(CadDocument doc)

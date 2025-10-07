@@ -735,7 +735,7 @@ namespace ACadSharp.IO.DXF
 
 					if (vertexTemplate.Vertex.Handle == 0)
 					{
-						template.PolyLine.Vertices.Add(vertexTemplate.Vertex);
+						polyline.Vertices.Add(v);
 					}
 					else
 					{
@@ -750,7 +750,7 @@ namespace ACadSharp.IO.DXF
 					var seqendTemplate = new CadEntityTemplate<Seqend>(seqend);
 					this.readEntityCodes<Seqend>(seqendTemplate, this.readEntitySubclassMap);
 
-					template.PolyLine.Vertices.Seqend = seqend;
+					polyline.Vertices.Seqend = seqend;
 				}
 			}
 			else

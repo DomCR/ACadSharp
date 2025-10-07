@@ -72,8 +72,21 @@ namespace ACadSharp.IO.DXF
 				case Point point:
 					this.writePoint(point);
 					break;
-				case Polyline polyline:
-					this.writePolyline(polyline);
+				case IPolyline polyline:
+					switch (polyline)
+					{
+						case Polyline2D polyline2D:
+							this.writePolyline(polyline2D);
+							break;
+						case Polyline3D polyline3D:
+							this.writePolyline(polyline3D);
+							break;
+						case PolyfaceMesh polyfaceMesh:
+							this.writePolyline(polyfaceMesh);
+							break;
+						default:
+							throw new NotImplementedException($"Polyline not implemented {polyline.GetType().FullName}");
+					}
 					break;
 				case RasterImage rasterImage:
 					this.writeCadImage(rasterImage);
@@ -982,7 +995,8 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(50, point.Rotation, map);
 		}
 
-		private void writePolyline(Polyline polyline)
+		private void writePolyline<T>(Polyline<T> polyline)
+			where T : Entity, IVertex
 		{
 			DxfClassMap map;
 
@@ -1014,7 +1028,7 @@ namespace ACadSharp.IO.DXF
 
 			if (polyline.Vertices.Any())
 			{
-				foreach (Vertex v in polyline.Vertices)
+				foreach (T v in polyline.Vertices)
 				{
 					this.writeEntity(v);
 				}

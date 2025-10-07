@@ -96,24 +96,28 @@ namespace ACadSharp.IO.DWG
 				case Point p:
 					this.writePoint(p);
 					break;
-				case Polyline pline:
+				case IPolyline pline:
 					switch (pline)
 					{
 						case PolyfaceMesh faceMesh:
 							this.writePolyfaceMesh(faceMesh);
 							children.AddRange(faceMesh.Faces);
+							children.AddRange(faceMesh.Vertices);
+							seqend = faceMesh.Vertices.Seqend;
 							break;
 						case Polyline2D pline2d:
 							this.writePolyline2D(pline2d);
+							children.AddRange(pline2d.Vertices);
+							seqend = pline2d.Vertices.Seqend;
 							break;
 						case Polyline3D pline3d:
 							this.writePolyline3D(pline3d);
+							children.AddRange(pline3d.Vertices);
+							seqend = pline3d.Vertices.Seqend;
 							break;
 						default:
 							throw new NotImplementedException($"Polyline not implemented : {entity.GetType().FullName}");
 					}
-					children.AddRange(pline.Vertices);
-					seqend = pline.Vertices.Seqend;
 					break;
 				case Ray ray:
 					this.writeRay(ray);

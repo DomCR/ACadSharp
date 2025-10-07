@@ -109,12 +109,6 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public IEnumerable<Entity> Explode()
-		{
-			return Polyline.Explode(this);
-		}
-
-		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
 			if (this.Vertices.Count < 2)
