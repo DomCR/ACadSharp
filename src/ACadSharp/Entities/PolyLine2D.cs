@@ -27,7 +27,7 @@ namespace ACadSharp.Entities
 		{
 		}
 
-		public Polyline2D(IEnumerable<Vertex2D> vertices, bool isColsed) : base(vertices, isColsed)
+		public Polyline2D(IEnumerable<Vertex2D> vertices, bool isClosed) : base(vertices, isClosed)
 		{
 		}
 	}

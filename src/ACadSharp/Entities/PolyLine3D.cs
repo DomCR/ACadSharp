@@ -31,7 +31,7 @@ namespace ACadSharp.Entities
 		{
 		}
 
-		public Polyline3D(IEnumerable<Vertex3D> vertices, bool isColsed = false) : base(vertices, isColsed)
+		public Polyline3D(IEnumerable<Vertex3D> vertices, bool isClosed = false) : base(vertices, isClosed)
 		{
 		}
 

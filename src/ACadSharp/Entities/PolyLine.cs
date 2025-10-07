@@ -96,13 +96,13 @@ namespace ACadSharp.Entities
 			this.Vertices = new SeqendCollection<T>(this);
 		}
 
-		public Polyline(IEnumerable<T> vertices, bool isColsed) : this()
+		public Polyline(IEnumerable<T> vertices, bool isClosed) : this()
 		{
 			if (vertices == null)
 				throw new System.ArgumentException("The vertices enumerable cannot be null or empty", nameof(vertices));
 
 			this.Vertices.AddRange(vertices);
-			this.IsClosed = isColsed;
+			this.IsClosed = isClosed;
 		}
 
 		/// <inheritdoc/>
