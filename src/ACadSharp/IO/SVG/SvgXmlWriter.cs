@@ -82,14 +82,30 @@ namespace ACadSharp.IO.SVG
 			BoundingBox paper = new BoundingBox(lowerCorner, upperCorner);
 
 			XYZ lowerMargin = layout.UnprintableMargin.BottomLeftCorner.Convert<XYZ>();
+			XYZ upperMargin = upperCorner - layout.UnprintableMargin.TopCorner.Convert<XYZ>();
 			BoundingBox margins = new BoundingBox(
 				lowerMargin,
 				layout.UnprintableMargin.TopCorner.Convert<XYZ>());
 
 			this.startDocument(paper, UnitsType.Millimeters);
 
+			if (true)
+			{
+				this.WriteStartElement("rect");
+
+				this.WriteAttributeString("x", lowerMargin.X, UnitsType.Millimeters);
+				this.WriteAttributeString("y", lowerMargin.Y, UnitsType.Millimeters);
+				this.WriteAttributeString("width", Math.Abs(lowerMargin.X - upperMargin.X), UnitsType.Millimeters);
+				this.WriteAttributeString("height", Math.Abs(lowerMargin.Y - upperMargin.Y), UnitsType.Millimeters);
+				this.WriteAttributeString("fill", "none");
+				this.WriteAttributeString("stroke", "green");
+
+				//rect
+				this.WriteEndElement();
+			}
+
 			Transform transform = new Transform(
-				lowerMargin.ToPixelSize(this.Units),
+				lowerMargin.ToPixelSize(UnitsType.Millimeters),
 				new XYZ(layout.PrintScale),
 				XYZ.Zero);
 
