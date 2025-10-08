@@ -144,9 +144,9 @@ namespace ACadSharp.IO.SVG
 				case IText text:
 					this.writeText(text, transform);
 					break;
-				case Spline spline:
-					this.writeSpline(spline, transform);
-					break;
+				//case Spline spline:
+				//	this.writeSpline(spline, transform);
+				//	break;
 				default:
 					this.notify($"[{entity.ObjectName}] Entity not implemented.", NotificationType.NotImplemented);
 					break;
@@ -428,6 +428,11 @@ namespace ACadSharp.IO.SVG
 
 		private void writeHatch(Hatch hatch, Transform transform)
 		{
+			if(hatch.Handle == 2736)
+			{
+
+			}
+
 			this.WriteStartElement("g");
 
 			//this.writeEntityHeader(hatch, transform);
@@ -441,6 +446,7 @@ namespace ACadSharp.IO.SVG
 				this.writeEntityHeader(hatch, transform, drawStroke: false);
 
 				var pline = new Polyline3D(path.GetPoints(this.Configuration.ArcPoints));
+				pline.IsClosed = true;
 				this.WriteAttributeString("d", this.createPath(pline));
 
 				this.WriteAttributeString("fill", $"url(#{patternId})");
