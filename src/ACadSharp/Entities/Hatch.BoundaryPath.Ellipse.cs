@@ -75,6 +75,11 @@ namespace ACadSharp.Entities
 					return ellipse;
 				}
 
+				/// <summary>
+				/// Converts the ellipse in a list of vertexes.
+				/// </summary>
+				/// <param name="precision">Number of vertexes generated.</param>
+				/// <returns>A list vertexes that represents the arc expressed in object coordinate system.</returns>
 				public List<XYZ> PolygonalVertexes(int precision)
 				{
 					return ((Entities.Ellipse)this.ToEntity()).PolygonalVertexes(precision);

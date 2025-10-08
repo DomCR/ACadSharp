@@ -14,9 +14,6 @@ namespace ACadSharp.Entities
 	{
 		public static HatchPattern Solid { get { return new HatchPattern("SOLID"); } }
 
-		[DxfCodeValue(2)]
-		public string Name { get; set; }
-
 		/// <summary>
 		/// Description for this pattern.
 		/// </summary>
@@ -25,8 +22,19 @@ namespace ACadSharp.Entities
 		/// </remarks>
 		public string Description { get; set; }
 
+		/// <summary>
+		/// Gets or sets the collection of <see cref="Line"/> objects.
+		/// </summary>
+		/// <remarks>This property allows adding, removing, or modifying the lines in the collection. Changes to this
+		/// collection directly affect the associated context.</remarks>
 		[DxfCodeValue(DxfReferenceType.Count, 79)]
 		public List<Line> Lines { get; set; } = new List<Line>();
+
+		/// <summary>
+		/// Name for this pattern.
+		/// </summary>
+		[DxfCodeValue(2)]
+		public string Name { get; set; }
 
 		/// <summary>
 		/// Default constructor of a hatch pattern.
@@ -35,73 +43,6 @@ namespace ACadSharp.Entities
 		public HatchPattern(string name)
 		{
 			this.Name = name;
-		}
-
-		/// <summary>
-		/// Update the pattern geometry with a translation, rotation and scale.
-		/// </summary>
-		/// <param name="translation"></param>
-		/// <param name="rotation"></param>
-		/// <param name="scale"></param>
-		public void Update(XY translation, double rotation, double scale)
-		{
-			var tr = Transform.CreateTranslation(translation.Convert<XYZ>());
-			var sc = Transform.CreateScaling(new XYZ(scale));
-			var rot = Transform.CreateRotation(XYZ.AxisZ, rotation);
-
-			var transform = new Transform(tr.Matrix * sc.Matrix * rot.Matrix);
-
-			foreach (var line in Lines)
-			{
-				line.Angle += rotation;
-				line.BasePoint = transform.ApplyTransform(line.BasePoint.Convert<XYZ>()).Convert<XY>();
-				line.Offset = transform.ApplyTransform(line.Offset.Convert<XYZ>()).Convert<XY>();
-				line.DashLengths = line.DashLengths.Select(d => d * scale).ToList();
-			}
-		}
-
-		[Obsolete("No real use for it")]
-		public BoundingBox GetBoundingBox()
-		{
-			BoundingBox box = BoundingBox.Null;
-
-			foreach (var item in this.Lines)
-			{
-				var length = item.Offset.GetLength();
-
-				//Direction of the line
-				double x = MathHelper.Cos(item.Angle) * length;
-				double y = MathHelper.Sin(item.Angle) * length;
-
-				box = box.Merge(new BoundingBox(
-					XYZ.Zero,
-					new XYZ(x, y, 0)));
-			}
-
-			return box;
-		}
-
-		/// <summary>
-		/// Clones the current pattern.
-		/// </summary>
-		/// <returns></returns>
-		public HatchPattern Clone()
-		{
-			HatchPattern clone = (HatchPattern)this.MemberwiseClone();
-
-			clone.Lines = new List<Line>();
-			foreach (var item in this.Lines)
-			{
-				clone.Lines.Add(item.Clone());
-			}
-
-			return clone;
-		}
-
-		/// <inheritdoc/>
-		public override string ToString()
-		{
-			return $"{this.Name}";
 		}
 
 		/// <summary>
@@ -216,7 +157,52 @@ namespace ACadSharp.Entities
 
 					writer.WriteLine(sb.ToString());
 				}
+			}
+		}
 
+		/// <summary>
+		/// Clones the current pattern.
+		/// </summary>
+		/// <returns></returns>
+		public HatchPattern Clone()
+		{
+			HatchPattern clone = (HatchPattern)this.MemberwiseClone();
+
+			clone.Lines = new List<Line>();
+			foreach (var item in this.Lines)
+			{
+				clone.Lines.Add(item.Clone());
+			}
+
+			return clone;
+		}
+
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return $"{this.Name}";
+		}
+
+		/// <summary>
+		/// Update the pattern geometry with a translation, rotation and scale.
+		/// </summary>
+		/// <param name="translation"></param>
+		/// <param name="rotation"></param>
+		/// <param name="scale"></param>
+		public void Update(XY translation, double rotation, double scale)
+		{
+			var tr = Transform.CreateTranslation(translation.Convert<XYZ>());
+			var sc = Transform.CreateScaling(new XYZ(scale));
+			var rot = Transform.CreateRotation(XYZ.AxisZ, rotation);
+
+			var transform = new Transform(tr.Matrix * sc.Matrix * rot.Matrix);
+
+			foreach (var line in Lines)
+			{
+				line.Angle += rotation;
+				line.BasePoint = transform.ApplyTransform(line.BasePoint.Convert<XYZ>()).Convert<XY>();
+				line.Offset = transform.ApplyTransform(line.Offset.Convert<XYZ>()).Convert<XY>();
+				line.DashLengths = line.DashLengths.Select(d => d * scale).ToList();
 			}
 		}
 	}

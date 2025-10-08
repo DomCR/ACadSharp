@@ -103,6 +103,11 @@ namespace ACadSharp.Entities
 				return box;
 			}
 
+			/// <summary>
+			/// Retrieves the points of the specified boundary as a sequence of the specified vector type.
+			/// </summary>
+			/// <param name="precision">The number of points to generate for each arc segment. Must be equal to or greater than 2.</param>
+			/// <returns>An <see cref="IEnumerable{T}"/> containing the points of the polyline, including interpolated points for arcs.</returns>
 			public IEnumerable<XYZ> GetPoints(int precision = 256)
 			{
 				List<XYZ> pts = new();
@@ -127,46 +132,10 @@ namespace ACadSharp.Entities
 						case Spline spline:
 							pts.AddRange(spline.PolygonalVertexes(precision));
 							break;
-						default:
-							throw new System.NotImplementedException();
 					}
 				}
 
 				return pts;
-			}
-
-			public Polyline2D ToPolyline()
-			{
-				Polyline2D pline = new Polyline2D();
-				foreach (Edge edge in this.Edges)
-				{
-					switch (edge)
-					{
-						case Arc:
-							break;
-						case Ellipse ellipse:
-							break;
-						case Line line:
-							pline.Vertices.Add(new Vertex2D((XYZ)line.Start));
-							pline.Vertices.Add(new Vertex2D((XYZ)line.End));
-							break;
-						case Polyline poly:
-							foreach (XYZ v in poly.Vertices)
-							{
-								pline.Vertices.Add(new Vertex2D(v));
-							}
-							break;
-						case Spline spline:
-							foreach (var item in spline.ControlPoints)
-							{
-							}
-							break;
-						default:
-							throw new System.NotImplementedException();
-					}
-				}
-
-				return pline;
 			}
 
 			private void onAdd(NotifyCollectionChangedEventArgs e)

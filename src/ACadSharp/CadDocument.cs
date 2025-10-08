@@ -340,21 +340,6 @@ namespace ACadSharp
 		}
 
 		/// <summary>
-		/// Get all the <see cref="HatchPattern"/> in the document.
-		/// </summary>
-		/// <returns></returns>
-		[Obsolete("Each hatch modifies the pattern, it may not be needed.")]
-		public IEnumerable<HatchPattern> GetHatchPatterns()
-		{
-			foreach (var item in this._cadObjects.Values.OfType<Hatch>())
-			{
-				if (item.Pattern == null) continue;
-
-				yield return item.Pattern;
-			}
-		}
-
-		/// <summary>
 		/// Reassign all the handles in the document to avoid the variable <see cref="CadHeader.HandleSeed"/> to grow past its limit.
 		/// </summary>
 		public void RestoreHandles()
