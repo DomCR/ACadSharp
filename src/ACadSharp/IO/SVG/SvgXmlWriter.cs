@@ -36,7 +36,12 @@ namespace ACadSharp.IO.SVG
 
 		public void WriteAttributeString(string localName, double value)
 		{
-			this.WriteAttributeString(localName, value.ToSvg(this.Units));
+			this.WriteAttributeString(localName, value, this.Units);
+		}
+
+		public void WriteAttributeString(string localName, double value, UnitsType units)
+		{
+			this.WriteAttributeString(localName, value.ToSvg(units));
 		}
 
 		public void WriteBlock(BlockRecord record)
@@ -45,7 +50,7 @@ namespace ACadSharp.IO.SVG
 
 			BoundingBox box = record.GetBoundingBox();
 
-			this.startDocument(box);
+			this.startDocument(box, this.Units);
 
 			foreach (var e in record.Entities)
 			{
@@ -76,12 +81,12 @@ namespace ACadSharp.IO.SVG
 			XYZ upperCorner = new XYZ(paperWidth, paperHeight, 0.0);
 			BoundingBox paper = new BoundingBox(lowerCorner, upperCorner);
 
-			XYZ lowerMargin = this.Layout.UnprintableMargin.BottomLeftCorner.Convert<XYZ>();
+			XYZ lowerMargin = layout.UnprintableMargin.BottomLeftCorner.Convert<XYZ>();
 			BoundingBox margins = new BoundingBox(
 				lowerMargin,
-				this.Layout.UnprintableMargin.TopCorner.Convert<XYZ>());
+				layout.UnprintableMargin.TopCorner.Convert<XYZ>());
 
-			this.startDocument(paper);
+			this.startDocument(paper, UnitsType.Millimeters);
 
 			Transform transform = new Transform(
 				lowerMargin.ToPixelSize(this.Units),
@@ -127,9 +132,9 @@ namespace ACadSharp.IO.SVG
 				case Ellipse ellipse:
 					this.writeEllipse(ellipse, transform);
 					break;
-				//case Hatch hatch:
-				//	this.writeHatch(hatch, transform);
-				//	break;
+				case Hatch hatch:
+					this.writeHatch(hatch, transform);
+					break;
 				case Insert insert:
 					this.writeInsert(insert, transform);
 					break;
@@ -139,6 +144,9 @@ namespace ACadSharp.IO.SVG
 				case IText text:
 					this.writeText(text, transform);
 					break;
+				//case Spline spline:
+				//	this.writeSpline(spline, transform);
+				//	break;
 				default:
 					this.notify($"[{entity.ObjectName}] Entity not implemented.", NotificationType.NotImplemented);
 					break;
@@ -155,7 +163,7 @@ namespace ACadSharp.IO.SVG
 			return $"rgb({color.R},{color.G},{color.B})";
 		}
 
-		private string createPath(IEnumerable<IPolyline> polylines)
+		private string createPath(params IEnumerable<IPolyline> polylines)
 		{
 			StringBuilder sb = new StringBuilder();
 
@@ -202,24 +210,24 @@ namespace ACadSharp.IO.SVG
 			return entity.GetActiveLineWeightType().GetLineWeightValue().ToPixelSize(this.Units);
 		}
 
-		private void startDocument(BoundingBox box)
+		private void startDocument(BoundingBox box, UnitsType units)
 		{
 			this.WriteStartDocument();
 
 			this.WriteStartElement("svg");
 			this.WriteAttributeString("xmlns", "http://www.w3.org/2000/svg");
 
-			this.WriteAttributeString("width", box.Max.X - box.Min.X);
-			this.WriteAttributeString("height", box.Max.Y - box.Min.Y);
+			this.WriteAttributeString("width", box.Max.X - box.Min.X, units);
+			this.WriteAttributeString("height", box.Max.Y - box.Min.Y, units);
 
 			this.WriteStartAttribute("viewBox");
-			this.WriteValue(box.Min.X.ToSvg(this.Units));
+			this.WriteValue(box.Min.X.ToSvg(units));
 			this.WriteValue(" ");
-			this.WriteValue(box.Min.Y.ToSvg(this.Units));
+			this.WriteValue(box.Min.Y.ToSvg(units));
 			this.WriteValue(" ");
-			this.WriteValue((box.Max.X - box.Min.X).ToSvg(this.Units));
+			this.WriteValue((box.Max.X - box.Min.X).ToSvg(units));
 			this.WriteValue(" ");
-			this.WriteValue((box.Max.Y - box.Min.Y).ToSvg(this.Units));
+			this.WriteValue((box.Max.Y - box.Min.Y).ToSvg(units));
 			this.WriteEndAttribute();
 
 			this.WriteAttributeString("transform", $"scale(1,-1)");
@@ -255,10 +263,11 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(arc, transform);
 
-			arc.GetEndVertices(out XYZ start, out XYZ end);
-
 			//A rx ry rotation large-arc-flag sweep-flag x y
-			this.WriteAttributeString("d", $"M {start.ToPixelSize(this.Units).ToSvg()} A {arc.Radius} {arc.Radius} {0} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+
+			arc.GetEndVertices(out XYZ start, out XYZ end);
+			var largeArc = Math.Abs(arc.Sweep) > MathHelper.PI ? 1 : 0;
+			this.WriteAttributeString("d", $"M {start.ToPixelSize(this.Units).ToSvg()} A {arc.Radius} {arc.Radius} {0} {largeArc} {1} {end.ToPixelSize(this.Units).ToSvg()}");
 
 			this.WriteAttributeString("fill", "none");
 
@@ -282,24 +291,37 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndElement();
 		}
 
+		private void writeDashes(IEnumerable<double> dashes)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			foreach (var d in dashes)
+			{
+				sb.Append(Math.Abs(d.ToPixelSize(this.Units)));
+				sb.Append(' ');
+			}
+
+			this.WriteAttributeString("stroke-dasharray", sb.ToString().Trim());
+		}
+
 		private void writeDashes(LineType lineType, double pointSize)
 		{
-			StringBuilder str = new StringBuilder();
+			StringBuilder sb = new StringBuilder();
 			foreach (LineType.Segment segment in lineType.Segments)
 			{
 				if (segment.IsPoint)
 				{
-					str.Append(pointSize.ToPixelSize(this.Units));
+					sb.Append(pointSize.ToPixelSize(this.Units));
 				}
 				else
 				{
-					str.Append(Math.Abs(segment.Length.ToPixelSize(this.Units)));
+					sb.Append(Math.Abs(segment.Length.ToPixelSize(this.Units)));
 				}
 
-				str.Append(' ');
+				sb.Append(' ');
 			}
 
-			this.WriteAttributeString("stroke-dasharray", str.ToString().Trim());
+			this.WriteAttributeString("stroke-dasharray", sb.ToString().Trim());
 		}
 
 		private void writeEllipse(Ellipse ellipse, Transform transform)
@@ -316,11 +338,11 @@ namespace ACadSharp.IO.SVG
 				XYZ end = ellipse.PolarCoordinateRelativeToCenter(Math.PI);
 
 				sb.Append($"M {start.ToPixelSize(this.Units).ToSvg()} ");
-				sb.Append($"A {ellipse.MajorAxis} {ellipse.MinorAxis} {MathHelper.RadToDeg(ellipse.Rotation)} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+				sb.Append($"A {ellipse.MajorAxis / 2} {ellipse.MinorAxis / 2} {MathHelper.RadToDeg(ellipse.Rotation)} {0} {1} {end.ToPixelSize(this.Units).ToSvg()} ");
 
 				start = ellipse.PolarCoordinateRelativeToCenter(Math.PI);
 				end = ellipse.PolarCoordinateRelativeToCenter(MathHelper.TwoPI);
-				sb.Append($"A {ellipse.MajorAxis} {ellipse.MinorAxis} {MathHelper.RadToDeg(ellipse.Rotation)} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+				sb.Append($"A {ellipse.MajorAxis / 2} {ellipse.MinorAxis / 2} {MathHelper.RadToDeg(ellipse.Rotation)} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
 
 				//A rx ry rotation large-arc-flag sweep-flag x y
 				this.WriteAttributeString("d", sb.ToString());
@@ -379,12 +401,20 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndElement();
 		}
 
-		private void writeEntityHeader(IEntity entity, Transform transform)
+		private void writeEntityHeader(IEntity entity, Transform transform, bool drawStroke = true)
 		{
 			Color color = entity.GetActiveColor();
 
 			this.WriteAttributeString("vector-effect", "non-scaling-stroke");
-			this.WriteAttributeString("stroke", this.colorSvg(color));
+
+			if (drawStroke)
+			{
+				this.WriteAttributeString("stroke", this.colorSvg(color));
+			}
+			else
+			{
+				this.WriteAttributeString("stroke", "none");
+			}
 
 			var lineWeight = entity.GetActiveLineWeightType();
 			this.WriteAttributeString("stroke-width", $"{this.Configuration.GetLineWeightValue(lineWeight, this.Units).ToSvg(UnitsType.Millimeters)}");
@@ -401,27 +431,158 @@ namespace ACadSharp.IO.SVG
 		{
 			this.WriteStartElement("g");
 
-			this.writePattern(hatch.Pattern);
+			var patternId = this.writePattern(hatch);
 
+			List<Polyline3D> plines = new List<Polyline3D>();
 			foreach (Hatch.BoundaryPath path in hatch.Paths)
 			{
-				this.WriteStartElement("polyline");
+				var pline = new Polyline3D(path.GetPoints(this.Configuration.ArcPoints));
+				plines.Add(pline);
+			}
 
-				this.writeEntityHeader(hatch, transform);
+			this.WriteStartElement("path");
 
-				foreach (var item in path.Edges)
+			this.writeEntityHeader(hatch, transform, drawStroke: false);
+
+			this.WriteAttributeString("d", this.createPath(plines));
+
+			this.WriteAttributeString("fill", $"url(#{patternId})");
+
+			this.WriteEndElement();
+
+			this.WriteEndElement();
+		}
+
+		private void writePatternHeader(string id)
+		{
+			this.WriteStartElement("pattern");
+
+			this.WriteAttributeString("id", id);
+			this.WriteAttributeString("patternUnits", "userSpaceOnUse");
+		}
+
+		private string writePatternHeader(Hatch hatch)
+		{
+			string id = $"{hatch.Pattern.GetHashCode()}_{hatch.Pattern.Name}";
+
+			this.WriteStartElement("pattern");
+
+			this.WriteAttributeString("id", id);
+			this.WriteAttributeString("patternUnits", "userSpaceOnUse");
+
+			return id;
+		}
+
+		private string writeSolidPattern(Hatch hatch)
+		{
+			string id = this.writePatternHeader(hatch);
+
+			this.WriteAttributeString("width", "100%");
+			this.WriteAttributeString("height", "100%");
+
+			this.WriteStartElement("rect");
+
+			this.WriteAttributeString("width", "100%");
+			this.WriteAttributeString("height", "100%");
+			this.WriteAttributeString("fill", this.colorSvg(hatch.Color));
+
+			//rect
+			this.WriteEndElement();
+
+			//pattern
+			this.WriteEndElement();
+
+			return id;
+		}
+
+		private string writePattern(Hatch hatch)
+		{
+			if (hatch.IsSolid)
+			{
+				return this.writeSolidPattern(hatch);
+			}
+
+			Dictionary<string, BoundingBox> patterns = new();
+			foreach (var item in hatch.Pattern.Lines)
+			{
+				var i = $"{item.GetHashCode()}_line";
+				patterns.Add(i, new BoundingBox(XYZ.Zero, new XYZ(item.LineOffset, item.LineOffset, 0)));
+
+				//Each line works individually repeating itself every offset
+				this.writePatternHeader(i);
+				this.WriteAttributeString("width", item.LineOffset.ToSvg(this.Units));
+				this.WriteAttributeString("height", item.LineOffset.ToSvg(this.Units));
+
+				this.writeTransform(name: "patternTransform",
+					translation: item.BasePoint.Convert<XYZ>().ToPixelSize(this.Units));
+				//rotation: -item.Angle);
+
+				this.WriteStartElement("line");
+
+				//Direction of the line
+				var length = item.Offset.GetLength();
+				double x = MathHelper.Cos(item.Angle) * 10;
+				double y = MathHelper.Sin(item.Angle) * 10;
+
+				//Offset -> is the size of the line box
+
+				//Add BasePoint
+				this.WriteAttributeString("x1", 0.0d.ToSvg(this.Units));
+				this.WriteAttributeString("y1", 0.0d.ToSvg(this.Units));
+				this.WriteAttributeString("x2", (x).ToSvg(this.Units));
+				this.WriteAttributeString("y2", (y).ToSvg(this.Units));
+
+				//Rotate the pattern after line
+				//this.WriteAttributeString("x1", 0.0d.ToSvg(this.Units));
+				//this.WriteAttributeString("y1", (item.LineOffset / 2).ToSvg(this.Units));
+				//this.WriteAttributeString("x2", 1.0d.ToSvg(this.Units));
+				//this.WriteAttributeString("y2", (item.LineOffset / 2).ToSvg(this.Units));
+
+				this.WriteAttributeString("stroke", this.colorSvg(hatch.GetActiveColor()));
+				this.WriteAttributeString("stroke-width", $"{this.Configuration.GetLineWeightValue(hatch.GetActiveLineWeightType(), this.Units).ToSvg(UnitsType.Millimeters)}");
+
+				if (item.DashLengths.Any())
 				{
-					//TODO: svg edges for hatch drawing
+					this.writeDashes(item.DashLengths);
 				}
 
-				//this.WriteAttributeString("points", pts);
+				//Line
+				this.WriteEndElement();
 
-				this.WriteAttributeString("fill", "none");
+				if (false)
+				{
+					this.WriteStartElement("rect");
+					this.WriteAttributeString("width", (item.LineOffset).ToSvg(this.Units));
+					this.WriteAttributeString("height", (item.LineOffset).ToSvg(this.Units));
+					this.WriteAttributeString("fill", $"none");
+					this.WriteAttributeString("stroke", $"red");
+					this.WriteEndElement();
+				}
 
+				//Pattern
 				this.WriteEndElement();
 			}
 
+			string id = this.writePatternHeader(hatch);
+			var width = patterns.Values.Max(w => w.Width);
+			var height = patterns.Values.Max(w => w.Height);
+
+			this.WriteAttributeString("width", width.ToSvg(this.Units));
+			this.WriteAttributeString("height", height.ToSvg(this.Units));
+
+			foreach (var item in patterns)
+			{
+				this.WriteStartElement("rect");
+				this.WriteAttributeString("width", (item.Value.Width).ToSvg(this.Units));
+				this.WriteAttributeString("height", (item.Value.Height).ToSvg(this.Units));
+				this.WriteAttributeString("fill", $"url(#{item.Key})");
+				this.WriteEndElement();
+			}
+
+			//pattern
 			this.WriteEndElement();
+
+			return id;
 		}
 
 		private void writeInsert(Insert insert, Transform transform)
@@ -450,13 +611,6 @@ namespace ACadSharp.IO.SVG
 			this.WriteAttributeString("y1", line.StartPoint.Y.ToSvg(this.Units));
 			this.WriteAttributeString("x2", line.EndPoint.X.ToSvg(this.Units));
 			this.WriteAttributeString("y2", line.EndPoint.Y.ToSvg(this.Units));
-
-			this.WriteEndElement();
-		}
-
-		private void writePattern(HatchPattern pattern)
-		{
-			this.WriteStartElement("pattern");
 
 			this.WriteEndElement();
 		}
@@ -635,16 +789,22 @@ namespace ACadSharp.IO.SVG
 			this.WriteEndElement();
 		}
 
+		private void writeSpline(Spline spline, Transform transform)
+		{
+			spline.UpdateFromFitPoints();
+			this.writeEntityAsPath(spline, transform, spline.PolygonalVertexes(this.Configuration.ArcPoints));
+		}
+
 		private void writeTransform(Transform transform)
 		{
 			XYZ? translation = transform.Translation != XYZ.Zero ? transform.Translation : null;
 			XYZ? scale = transform.Scale != new XYZ(1) ? transform.Scale : null;
 			double? rotation = transform.EulerRotation.Z != 0 ? transform.EulerRotation.Z : null;
 
-			this.writeTransform(translation, scale, rotation);
+			this.writeTransform(translation: translation, scale: scale, rotation: rotation);
 		}
 
-		private void writeTransform(XYZ? translation = null, XYZ? scale = null, double? rotation = null)
+		private void writeTransform(string name = "transform", XYZ? translation = null, XYZ? scale = null, double? rotation = null)
 		{
 			StringBuilder sb = new StringBuilder();
 
@@ -679,7 +839,7 @@ namespace ACadSharp.IO.SVG
 				return;
 			}
 
-			this.WriteAttributeString("transform", sb.ToString());
+			this.WriteAttributeString(name, sb.ToString());
 		}
 	}
 }

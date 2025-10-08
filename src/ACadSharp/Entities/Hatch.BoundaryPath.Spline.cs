@@ -69,6 +69,17 @@ namespace ACadSharp.Entities
 					throw new System.NotImplementedException();
 				}
 
+				/// <summary>
+				/// Converts the spline in a list of vertexes.
+				/// </summary>
+				/// <param name="precision">Number of vertexes generated.</param>
+				/// <returns>A list vertexes that represents the spline expressed in object coordinate system.</returns>
+				public List<XYZ> PolygonalVertexes(int precision)
+				{
+					Entities.Spline spline = (Entities.Spline)this.ToEntity();
+					return spline.PolygonalVertexes(precision);
+				}
+
 				/// <inheritdoc/>
 				public override BoundingBox GetBoundingBox()
 				{

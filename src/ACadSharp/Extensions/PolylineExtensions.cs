@@ -135,11 +135,7 @@ namespace ACadSharp.Extensions
 					var f = lst.First().Round(8);
 					var l = lst.Last().Round(8);
 
-					if (i == 0)
-					{
-						points.AddRange(lst);
-					}
-					else if (f.Equals(curr.Location.Convert<T>().Round(8)))
+					if (f.Equals(curr.Location.Convert<T>().Round(8)))
 					{
 						points.AddRange(lst.Skip(1));
 					}

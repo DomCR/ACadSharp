@@ -229,6 +229,11 @@ namespace ACadSharp.Entities
 				ocsVertexes.Add(this.PointOnSpline(t));
 			}
 
+			if (this.IsClosed)
+			{
+				ocsVertexes.Add(ocsVertexes.First());
+			}
+
 			return ocsVertexes;
 		}
 
