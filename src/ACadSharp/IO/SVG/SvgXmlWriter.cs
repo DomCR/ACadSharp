@@ -338,11 +338,11 @@ namespace ACadSharp.IO.SVG
 				XYZ end = ellipse.PolarCoordinateRelativeToCenter(Math.PI);
 
 				sb.Append($"M {start.ToPixelSize(this.Units).ToSvg()} ");
-				sb.Append($"A {ellipse.MajorAxis} {ellipse.MinorAxis} {MathHelper.RadToDeg(ellipse.Rotation)} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+				sb.Append($"A {ellipse.MajorAxis / 2} {ellipse.MinorAxis / 2} {MathHelper.RadToDeg(ellipse.Rotation)} {0} {1} {end.ToPixelSize(this.Units).ToSvg()} ");
 
 				start = ellipse.PolarCoordinateRelativeToCenter(Math.PI);
 				end = ellipse.PolarCoordinateRelativeToCenter(MathHelper.TwoPI);
-				sb.Append($"A {ellipse.MajorAxis} {ellipse.MinorAxis} {MathHelper.RadToDeg(ellipse.Rotation)} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+				sb.Append($"A {ellipse.MajorAxis / 2} {ellipse.MinorAxis / 2} {MathHelper.RadToDeg(ellipse.Rotation)} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
 
 				//A rx ry rotation large-arc-flag sweep-flag x y
 				this.WriteAttributeString("d", sb.ToString());
