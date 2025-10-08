@@ -263,10 +263,11 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(arc, transform);
 
-			arc.GetEndVertices(out XYZ start, out XYZ end);
-
 			//A rx ry rotation large-arc-flag sweep-flag x y
-			this.WriteAttributeString("d", $"M {start.ToPixelSize(this.Units).ToSvg()} A {arc.Radius} {arc.Radius} {0} {0} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+
+			arc.GetEndVertices(out XYZ start, out XYZ end);
+			var largeArc = Math.Abs(arc.Sweep) > MathHelper.PI ? 1 : 0;
+			this.WriteAttributeString("d", $"M {start.ToPixelSize(this.Units).ToSvg()} A {arc.Radius} {arc.Radius} {0} {largeArc} {1} {end.ToPixelSize(this.Units).ToSvg()}");
 
 			this.WriteAttributeString("fill", "none");
 
