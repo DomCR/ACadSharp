@@ -428,31 +428,26 @@ namespace ACadSharp.IO.SVG
 
 		private void writeHatch(Hatch hatch, Transform transform)
 		{
-			if(hatch.Handle == 2736)
-			{
-
-			}
-
 			this.WriteStartElement("g");
-
-			//this.writeEntityHeader(hatch, transform);
 
 			var patternId = this.writePattern(hatch);
 
+			List<Polyline3D> plines = new List<Polyline3D>();
 			foreach (Hatch.BoundaryPath path in hatch.Paths)
 			{
-				this.WriteStartElement("path");
-
-				this.writeEntityHeader(hatch, transform, drawStroke: false);
-
 				var pline = new Polyline3D(path.GetPoints(this.Configuration.ArcPoints));
-				pline.IsClosed = true;
-				this.WriteAttributeString("d", this.createPath(pline));
-
-				this.WriteAttributeString("fill", $"url(#{patternId})");
-
-				this.WriteEndElement();
+				plines.Add(pline);
 			}
+
+			this.WriteStartElement("path");
+
+			this.writeEntityHeader(hatch, transform, drawStroke: false);
+
+			this.WriteAttributeString("d", this.createPath(plines));
+
+			this.WriteAttributeString("fill", $"url(#{patternId})");
+
+			this.WriteEndElement();
 
 			this.WriteEndElement();
 		}
