@@ -538,7 +538,7 @@ namespace ACadSharp.IO.SVG
 				//this.WriteAttributeString("x2", 1.0d.ToSvg(this.Units));
 				//this.WriteAttributeString("y2", (item.LineOffset / 2).ToSvg(this.Units));
 
-				this.WriteAttributeString("stroke", this.colorSvg(hatch.Color));
+				this.WriteAttributeString("stroke", this.colorSvg(hatch.GetActiveColor()));
 				this.WriteAttributeString("stroke-width", $"{this.Configuration.GetLineWeightValue(hatch.GetActiveLineWeightType(), this.Units).ToSvg(UnitsType.Millimeters)}");
 
 				if (item.DashLengths.Any())
