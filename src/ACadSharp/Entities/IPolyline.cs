@@ -26,12 +26,6 @@ namespace ACadSharp.Entities
 		double Thickness { get; set; }
 
 		/// <summary>
-		/// Explodes the polyline into a collection of entities formed by <see cref="Line"/> and <see cref="Arc"/>.
-		/// </summary>
-		/// <returns></returns>
-		IEnumerable<Entity> Explode();
-
-		/// <summary>
 		/// Vertices that form the Polyline.
 		/// </summary>
 		IEnumerable<IVertex> Vertices { get; }

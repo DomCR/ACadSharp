@@ -50,7 +50,11 @@ namespace ACadSharp.Entities
 					List<Vertex> vertices = new();
 					foreach (XYZ v in this.Vertices)
 					{
-						vertices.Add(new Vertex2D(v));
+						var vertex = new Vertex2D(v.Convert<XY>())
+						{
+							Bulge = v.Z,
+						};
+						vertices.Add(vertex);
 					}
 
 					return new Polyline2D(vertices.Cast<Vertex2D>(), this.IsClosed);
