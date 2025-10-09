@@ -50,7 +50,7 @@ namespace ACadSharp.IO.SVG
 
 			BoundingBox box = record.GetBoundingBox();
 
-			this.startDocument(box, this.Units);
+			this.startDocument(box, box, this.Units);
 
 			foreach (var e in record.Entities)
 			{
@@ -85,24 +85,9 @@ namespace ACadSharp.IO.SVG
 			XYZ upperMargin = upperCorner - layout.UnprintableMargin.TopCorner.Convert<XYZ>();
 			BoundingBox margins = new BoundingBox(
 				lowerMargin,
-				layout.UnprintableMargin.TopCorner.Convert<XYZ>());
+				upperMargin);
 
-			this.startDocument(paper, UnitsType.Millimeters);
-
-			if (true)
-			{
-				this.WriteStartElement("rect");
-
-				this.WriteAttributeString("x", lowerMargin.X, UnitsType.Millimeters);
-				this.WriteAttributeString("y", lowerMargin.Y, UnitsType.Millimeters);
-				this.WriteAttributeString("width", Math.Abs(lowerMargin.X - upperMargin.X), UnitsType.Millimeters);
-				this.WriteAttributeString("height", Math.Abs(lowerMargin.Y - upperMargin.Y), UnitsType.Millimeters);
-				this.WriteAttributeString("fill", "none");
-				this.WriteAttributeString("stroke", "green");
-
-				//rect
-				this.WriteEndElement();
-			}
+			this.startDocument(paper, null, UnitsType.Millimeters);
 
 			Transform transform = new Transform(
 				lowerMargin.ToPixelSize(UnitsType.Millimeters),
@@ -226,7 +211,7 @@ namespace ACadSharp.IO.SVG
 			return entity.GetActiveLineWeightType().GetLineWeightValue().ToPixelSize(this.Units);
 		}
 
-		private void startDocument(BoundingBox box, UnitsType units)
+		private void startDocument(BoundingBox box, BoundingBox? viewBox, UnitsType units)
 		{
 			this.WriteStartDocument();
 
@@ -236,15 +221,19 @@ namespace ACadSharp.IO.SVG
 			this.WriteAttributeString("width", box.Max.X - box.Min.X, units);
 			this.WriteAttributeString("height", box.Max.Y - box.Min.Y, units);
 
-			this.WriteStartAttribute("viewBox");
-			this.WriteValue(box.Min.X.ToSvg(units));
-			this.WriteValue(" ");
-			this.WriteValue(box.Min.Y.ToSvg(units));
-			this.WriteValue(" ");
-			this.WriteValue((box.Max.X - box.Min.X).ToSvg(units));
-			this.WriteValue(" ");
-			this.WriteValue((box.Max.Y - box.Min.Y).ToSvg(units));
-			this.WriteEndAttribute();
+			if (viewBox.HasValue)
+			{
+				var vb = viewBox.Value;
+				this.WriteStartAttribute("viewBox");
+				this.WriteValue(vb.Min.X.ToPixelSize(units));
+				this.WriteValue(" ");
+				this.WriteValue(vb.Min.Y.ToPixelSize(units));
+				this.WriteValue(" ");
+				this.WriteValue((vb.Width).ToPixelSize(units));
+				this.WriteValue(" ");
+				this.WriteValue((vb.Height).ToPixelSize(units));
+				this.WriteEndAttribute();
+			}
 
 			this.WriteAttributeString("transform", $"scale(1,-1)");
 
