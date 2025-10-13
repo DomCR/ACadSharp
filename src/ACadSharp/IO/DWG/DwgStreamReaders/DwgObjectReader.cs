@@ -738,8 +738,6 @@ namespace ACadSharp.IO.DWG
 
 			switch (type)
 			{
-				case ObjectType.UNDEFINED:
-					break;
 				case ObjectType.TEXT:
 					template = this.readText();
 					break;
@@ -764,15 +762,11 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.MINSERT:
 					template = this.readMInsert();
 					break;
-				case ObjectType.UNKNOW_9:
-					break;
 				case ObjectType.VERTEX_2D:
 					template = this.readVertex2D();
 					break;
 				case ObjectType.VERTEX_3D:
 					template = this.readVertex3D(new Vertex3D());
-					break;
-				case ObjectType.VERTEX_MESH:
 					break;
 				case ObjectType.VERTEX_PFACE:
 					template = this.readVertex3D(new VertexFaceMesh());
@@ -862,8 +856,6 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.DICTIONARY:
 					template = this.readDictionary();
 					break;
-				case ObjectType.OLEFRAME:
-					break;
 				case ObjectType.MTEXT:
 					template = this.readMText();
 					break;
@@ -897,20 +889,12 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.STYLE:
 					template = this.readTextStyle();
 					break;
-				case ObjectType.UNKNOW_36:
-					break;
-				case ObjectType.UNKNOW_37:
-					break;
 				case ObjectType.LTYPE_CONTROL_OBJ:
 					template = this.readLTypeControlObject();
 					this._builder.LineTypesTable = (LineTypesTable)template.CadObject;
 					break;
 				case ObjectType.LTYPE:
 					template = this.readLType();
-					break;
-				case ObjectType.UNKNOW_3A:
-					break;
-				case ObjectType.UNKNOW_3B:
 					break;
 				case ObjectType.VIEW_CONTROL_OBJ:
 					template = this.readDocumentTable(new ViewsTable());
@@ -959,12 +943,6 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.MLINESTYLE:
 					template = this.readMLineStyle();
 					break;
-				case ObjectType.OLE2FRAME:
-					break;
-				case ObjectType.DUMMY:
-					break;
-				case ObjectType.LONG_TRANSACTION:
-					break;
 				case ObjectType.LWPOLYLINE:
 					template = this.readLWPolyline();
 					break;
@@ -977,8 +955,6 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.ACDBPLACEHOLDER:
 					template = this.readPlaceHolder();
 					break;
-				case ObjectType.VBA_PROJECT:
-					break;
 				case ObjectType.LAYOUT:
 					template = this.readLayout();
 					break;
@@ -988,12 +964,36 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.ACAD_PROXY_OBJECT:
 					template = this.readProxyObject();
 					break;
+				//Not implemented entities:
+				case ObjectType.VERTEX_MESH:
+				case ObjectType.OLEFRAME:
+				case ObjectType.OLE2FRAME:
+				case ObjectType.DUMMY:
+					template = this.readUnknownEntity(null);
+					this._builder.Notify($"Unlisted object with DXF name {type} has been read as an UnknownEntity", NotificationType.Warning);
+					return template;
+				//Not implemented objects:
+				case ObjectType.VBA_PROJECT:
+				case ObjectType.LONG_TRANSACTION:
+					template = this.readUnknownNonGraphicalObject(null);
+					this._builder.Notify($"Unlisted object with DXF name {type} has been read as an UnknownNonGraphicalObject", NotificationType.Warning);
+					return template;
+				//Unknown:
+				case ObjectType.UNDEFINED:
+				case ObjectType.UNKNOW_3A:
+				case ObjectType.UNKNOW_3B:
+				case ObjectType.UNKNOW_36:
+				case ObjectType.UNKNOW_37:
+				case ObjectType.UNKNOW_9:
+					break;
 				default:
 					return this.readUnlistedType((short)type);
 			}
 
 			if (template == null)
+			{
 				this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
+			}
 
 			return template;
 		}
@@ -1119,11 +1119,6 @@ namespace ACadSharp.IO.DWG
 			{
 				template = this.readUnknownNonGraphicalObject(c);
 				this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownNonGraphicalObject", NotificationType.Warning);
-			}
-
-			if (template == null)
-			{
-				this._builder.Notify($"Unlisted object not implemented, DXF name: {c.DxfName}", NotificationType.NotImplemented);
 			}
 
 			return template;

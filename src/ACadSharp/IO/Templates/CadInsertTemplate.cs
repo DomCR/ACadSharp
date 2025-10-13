@@ -33,10 +33,9 @@ namespace ACadSharp.IO.Templates
 			if (!(this.CadObject is Insert insert))
 				return;
 
-			BlockRecord block;
-			if (this.getTableReference(builder, this.BlockHeaderHandle, this.BlockName, out BlockRecord owner))
+			if (this.getTableReference(builder, this.BlockHeaderHandle, this.BlockName, out BlockRecord block))
 			{
-				insert.Block = owner;
+				insert.Block = block;
 			}
 			else
 			{
