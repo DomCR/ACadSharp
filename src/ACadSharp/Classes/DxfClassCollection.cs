@@ -494,7 +494,20 @@ namespace ACadSharp.Classes
 				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
 				WasZombie = false,
 			});
-        }
+
+			//AcDbPlotSettings
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.PlotSettings,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1015,
+				DxfName = DxfFileToken.ObjectPlotSettings,
+				ItemClassId = 499,
+				MaintenanceVersion = 42,
+				ProxyFlags = ProxyFlags.None,
+				WasZombie = false,
+			});
+		}
 
 		/// <summary>
 		/// Add a dxf class to the collection if the <see cref="DxfClass.DxfName"/> is not present
