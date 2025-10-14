@@ -1,9 +1,10 @@
 using ACadSharp.Attributes;
 using CSMath;
-using System;
 using CSUtilities.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace ACadSharp.Entities
 {
@@ -100,7 +101,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Knot parameters.
 		/// </summary>
-		public KnotParameterization KnotParameterization { get; set; }
+		public KnotParametrization KnotParametrization { get; set; }
 
 		/// <summary>
 		/// Number of knots.
@@ -191,6 +192,19 @@ namespace ACadSharp.Entities
 			return BoundingBox.FromPoints(vertices);
 		}
 
+		public List<XYZ> NurbsEvaluator(int precision)
+		{
+			return nurbsEvaluator(
+				this.ControlPoints.ToArray(),
+				this.Weights.ToArray(),
+				this.Knots.ToArray(),
+				this.Degree,
+				this.IsClosed,
+				this.Flags.HasFlag(SplineFlags.Periodic),
+				precision
+				);
+		}
+
 		/// <summary>
 		/// Gets a point on the spline.
 		/// </summary>
@@ -226,7 +240,9 @@ namespace ACadSharp.Entities
 			for (int i = 0; i < precision; i++)
 			{
 				double t = (double)i / (double)(precision - 1);
-				ocsVertexes.Add(this.PointOnSpline(t));
+				var pt = this.PointOnSpline(t);
+				var lst = ocsVertexes.LastOrDefault();
+				ocsVertexes.Add(pt);
 			}
 
 			if (this.IsClosed)
@@ -247,6 +263,11 @@ namespace ACadSharp.Entities
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		public void UpdateFromFitPoints()
 		{
+			if (this.Degree != 3)
+			{
+				return;
+			}
+
 			if (this.FitPoints == null)
 			{
 				throw new ArgumentNullException(nameof(this.FitPoints));
@@ -258,8 +279,6 @@ namespace ACadSharp.Entities
 			{
 				throw new ArgumentOutOfRangeException(nameof(this.FitPoints), numFitPoints, "At least two fit points required.");
 			}
-
-			this.Degree = 3;
 
 			this.ControlPoints.Clear();
 			this.Weights.Clear();
@@ -343,6 +362,28 @@ namespace ACadSharp.Entities
 			}
 		}
 
+		private static XYZ c(XYZ[] ctrlPoints, double[] weights, double[] knots, int degree, double u)
+		{
+			XYZ vectorSum = XYZ.Zero;
+			double denominatorSum = 0.0;
+
+			// optimization suggested by ThVoss
+			for (int i = 0; i < ctrlPoints.Length; i++)
+			{
+				double nurb = n(knots, i, degree, u);
+				denominatorSum += nurb * weights[i];
+				vectorSum += weights[i] * nurb * ctrlPoints[i];
+			}
+
+			// avoid possible divided by zero error, this should never happen
+			if (Math.Abs(denominatorSum) < double.Epsilon)
+			{
+				return XYZ.Zero;
+			}
+
+			return (1.0 / denominatorSum) * vectorSum;
+		}
+
 		private static double[] createBezierKnotVector(int numControlPoints, int degree)
 		{
 			// create knot vector
@@ -382,6 +423,48 @@ namespace ACadSharp.Entities
 			return knots;
 		}
 
+		private static double[] createKnotVector(int numControlPoints, int degree, bool isPeriodic)
+		{
+			// create knot vector
+			int numKnots;
+			double[] knots;
+
+			if (!isPeriodic)
+			{
+				numKnots = numControlPoints + degree + 1;
+				knots = new double[numKnots];
+
+				int i;
+				for (i = 0; i <= degree; i++)
+				{
+					knots[i] = 0.0;
+				}
+
+				for (; i < numControlPoints; i++)
+				{
+					knots[i] = i - degree;
+				}
+
+				for (; i < numKnots; i++)
+				{
+					knots[i] = numControlPoints - degree;
+				}
+			}
+			else
+			{
+				numKnots = numControlPoints + 2 * degree + 1;
+				knots = new double[numKnots];
+
+				double factor = 1.0 / (numControlPoints - degree);
+				for (int i = 0; i < numKnots; i++)
+				{
+					knots[i] = (i - degree) * factor;
+				}
+			}
+
+			return knots;
+		}
+
 		private static double[] getFirstControlPoints(double[] rhs)
 		{
 			int n = rhs.Length;
@@ -405,6 +488,151 @@ namespace ACadSharp.Entities
 			return x;
 		}
 
+		private static double n(double[] knots, int i, int p, double u)
+		{
+			if (p <= 0)
+			{
+				if (knots[i] <= u && u < knots[i + 1])
+				{
+					return 1;
+				}
+
+				return 0.0;
+			}
+
+			double leftCoefficient = 0.0;
+			if (!(Math.Abs(knots[i + p] - knots[i]) < double.Epsilon))
+			{
+				leftCoefficient = (u - knots[i]) / (knots[i + p] - knots[i]);
+			}
+
+			double rightCoefficient = 0.0; // article contains error here, denominator is Knots[i + p + 1] - Knots[i + 1]
+			if (!(Math.Abs(knots[i + p + 1] - knots[i + 1]) < double.Epsilon))
+			{
+				rightCoefficient = (knots[i + p + 1] - u) / (knots[i + p + 1] - knots[i + 1]);
+			}
+
+			return leftCoefficient * n(knots, i, p - 1, u) + rightCoefficient * n(knots, i + 1, p - 1, u);
+		}
+
+		private static List<XYZ> nurbsEvaluator(XYZ[] controls, double[] weights, double[] knots, int degree, bool isClosed, bool isClosedPeriodic, int precision)
+		{
+			if (precision < 2)
+			{
+				throw new ArgumentOutOfRangeException(nameof(precision), precision, "The precision must be equal or greater than two.");
+			}
+
+			// control points
+			if (controls == null)
+			{
+				throw new ArgumentNullException(nameof(controls), "A spline entity with control points is required.");
+			}
+
+			int numCtrlPoints = controls.Length;
+
+			if (numCtrlPoints == 0)
+			{
+				throw new ArgumentException("A spline entity with control points is required.", nameof(controls));
+			}
+
+			// weights
+			if (weights == null || !weights.Any())
+			{
+				// give the default 1.0 to the control points weights
+				weights = new double[numCtrlPoints];
+				for (int i = 0; i < numCtrlPoints; i++)
+				{
+					weights[i] = 1.0;
+				}
+			}
+			else if (weights.Length != numCtrlPoints)
+			{
+				throw new ArgumentException("The number of control points must be the same as the number of weights.", nameof(weights));
+			}
+
+			// knots
+			if (knots == null || !knots.Any())
+			{
+				knots = createKnotVector(numCtrlPoints, degree, isClosedPeriodic);
+			}
+			else
+			{
+				int numKnots;
+				if (isClosedPeriodic)
+				{
+					numKnots = numCtrlPoints + 2 * degree + 1;
+				}
+				else
+				{
+					numKnots = numCtrlPoints + degree + 1;
+				}
+				if (knots.Length != numKnots)
+				{
+					//throw new ArgumentException("Invalid number of knots.");
+					return new List<XYZ>();
+				}
+			}
+
+			XYZ[] ctrl;
+			double[] w;
+			if (isClosedPeriodic)
+			{
+				ctrl = new XYZ[numCtrlPoints + degree];
+				w = new double[numCtrlPoints + degree];
+				for (int i = 0; i < degree; i++)
+				{
+					int index = numCtrlPoints - degree + i;
+					ctrl[i] = controls[index];
+					w[i] = weights[index];
+				}
+
+				controls.CopyTo(ctrl, degree);
+				weights.CopyTo(w, degree);
+			}
+			else
+			{
+				ctrl = controls;
+				w = weights;
+			}
+
+			double uStart;
+			double uEnd;
+			List<XYZ> vertexes = new List<XYZ>();
+
+			if (isClosed)
+			{
+				uStart = knots[0];
+				uEnd = knots[knots.Length - 1];
+			}
+			else if (isClosedPeriodic)
+			{
+				uStart = knots[degree];
+				uEnd = knots[knots.Length - degree - 1];
+			}
+			else
+			{
+				precision -= 1;
+				uStart = knots[0];
+				uEnd = knots[knots.Length - 1];
+			}
+
+			double uDelta = (uEnd - uStart) / precision;
+
+			for (int i = 0; i < precision; i++)
+			{
+				double u = uStart + uDelta * i;
+				vertexes.Add(c(ctrl, w, knots, degree, u));
+			}
+
+			if (!(isClosed || isClosedPeriodic))
+			{
+				vertexes.Add(ctrl[ctrl.Length - 1]);
+			}
+
+			return vertexes;
+		}
+
+		[Obsolete]
 		private double n(int i, int k, double u)
 		{
 			// Bspline basis function N_{i,k}(u)

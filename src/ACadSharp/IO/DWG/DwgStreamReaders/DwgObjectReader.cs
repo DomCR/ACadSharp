@@ -2885,9 +2885,9 @@ namespace ACadSharp.IO.DWG
 				//Uniform = 2,
 				//Custom = 15
 				//The scenario flag becomes 1 if the knot parameter is Custom or has no fit data, otherwise 2.
-				spline.KnotParameterization = (KnotParameterization)this._mergedReaders.ReadBitLong();
+				spline.KnotParametrization = (KnotParametrization)this._mergedReaders.ReadBitLong();
 
-				scenario = (spline.KnotParameterization == KnotParameterization.Custom || (spline.Flags1 & SplineFlags1.UseKnotParameter) == 0) ? 1 : 2;
+				scenario = (spline.KnotParametrization == KnotParametrization.Custom || (spline.Flags1 & SplineFlags1.UseKnotParameter) == 0) ? 1 : 2;
 			}
 			else if (scenario == 2)
 			{
@@ -2896,7 +2896,7 @@ namespace ACadSharp.IO.DWG
 			else
 			{
 				//If the spline does not have fit data, then the knot parameter should become Custom.
-				spline.KnotParameterization = KnotParameterization.Custom;
+				spline.KnotParametrization = KnotParametrization.Custom;
 			}
 
 			//Common:

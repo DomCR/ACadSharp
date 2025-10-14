@@ -2,6 +2,8 @@
 using ACadSharp.Extensions;
 using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
+using CSMath;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -37,6 +39,55 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
+
+			List<Entity> entities = new();
+			foreach (var spline in doc.Entities.OfType<Spline>())
+			{
+				if (spline.Handle == 0x283)
+				{
+
+				}
+
+				if (spline.FitPoints.Count > 2)
+				{
+					spline.UpdateFromFitPoints();
+				}
+
+				foreach (var cp in spline.ControlPoints)
+				{
+					entities.Add(new Circle()
+					{
+						Center = cp,
+						Color = Color.Red,
+						Radius = 0.5
+					});
+				}
+
+				foreach (var fp in spline.FitPoints)
+				{
+					entities.Add(new Circle()
+					{
+						Center = fp,
+						Color = Color.Green,
+						Radius = 0.5
+					});
+				}
+
+				System.Collections.Generic.List<CSMath.XYZ> v = spline.NurbsEvaluator(256);
+				LwPolyline poly = new LwPolyline(v.Select(v => v.Convert<XY>()));
+				poly.IsClosed = spline.IsClosed;
+				poly.Color = Color.Blue;
+				entities.Add(poly);
+
+				if(spline.Handle == 0x283)
+				{
+
+				}
+			}
+
+			doc.Entities.AddRange(entities);
+
+			DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc);
 		}
 
 		[Theory]
