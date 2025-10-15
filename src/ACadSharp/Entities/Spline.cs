@@ -4,7 +4,6 @@ using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 
 namespace ACadSharp.Entities
 {
@@ -339,18 +338,21 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Update the Spline control points from the fit points.
+		/// Updates the control points, weights, and knots of a Bezier curve based on the current fit points.
 		/// </summary>
-		/// <remarks>
-		/// The weights are set to 1 and the degree to 3 (cubic).
-		/// </remarks>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="ArgumentOutOfRangeException"></exception>
-		public void UpdateFromFitPoints()
+		/// <remarks>This method calculates the control points, weights, and knot vector for a cubic Bezier curve
+		/// using the fit points provided in the <see cref="FitPoints"/> property. The method supports both straight-line and
+		/// multi-segment Bezier curves. The degree of the curve must be 3, and at least two fit points are
+		/// required.</remarks>
+		/// <returns><see langword="true"/> if the control points, weights, and knots were successfully updated; otherwise, <see
+		/// langword="false"/> if the degree of the curve is not 3.</returns>
+		/// <exception cref="ArgumentNullException">Thrown if the <see cref="FitPoints"/> property is <see langword="null"/>.</exception>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if the <see cref="FitPoints"/> property contains fewer than two points.</exception>
+		public bool UpdateFromFitPoints()
 		{
 			if (this.Degree != 3)
 			{
-				return;
+				return false;
 			}
 
 			if (this.FitPoints == null)
@@ -382,7 +384,7 @@ namespace ACadSharp.Entities
 				this.ControlPoints.AddRange([points[0], firstControlPoint, secondControlPoint, points[1]]);
 				this.Weights.AddRange([1, 1, 1, 1]);
 				this.Knots.AddRange(createBezierKnotVector(this.ControlPoints.Count, this.Degree));
-				return;
+				return true;
 			}
 
 			// Calculate first Bezier control points
@@ -445,6 +447,8 @@ namespace ACadSharp.Entities
 				this.Weights.AddRange([1, 1, 1, 1]);
 				this.Knots.AddRange(createBezierKnotVector(this.ControlPoints.Count, this.Degree));
 			}
+
+			return true;
 		}
 
 		private static XYZ c(XYZ[] ctrlPoints, double[] weights, double[] knots, int degree, double u)
