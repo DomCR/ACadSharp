@@ -43,45 +43,60 @@ namespace ACadSharp.Tests.IO
 			List<Entity> entities = new();
 			foreach (var spline in doc.Entities.OfType<Spline>())
 			{
-				if (spline.Handle == 0x283)
+				try
 				{
+					if (spline.FitPoints.Count > 2)
+					{
+						spline.UpdateFromFitPoints();
+					}
 
-				}
+					foreach (var cp in spline.ControlPoints)
+					{
+						entities.Add(new Circle()
+						{
+							Center = cp,
+							Color = Color.Red,
+							Radius = 0.5
+						});
+					}
 
-				if (spline.FitPoints.Count > 2)
-				{
-					spline.UpdateFromFitPoints();
-				}
+					foreach (var fp in spline.FitPoints)
+					{
+						entities.Add(new Circle()
+						{
+							Center = fp,
+							Color = Color.Green,
+							Radius = 0.5
+						});
+					}
 
-				foreach (var cp in spline.ControlPoints)
-				{
 					entities.Add(new Circle()
 					{
-						Center = cp,
-						Color = Color.Red,
+						Center = spline.PointOnSpline(0),
+						Color = Color.Yellow,
 						Radius = 0.5
 					});
-				}
-
-				foreach (var fp in spline.FitPoints)
-				{
 					entities.Add(new Circle()
 					{
-						Center = fp,
-						Color = Color.Green,
+						Center = spline.PointOnSpline(0.5),
+						Color = Color.Yellow,
 						Radius = 0.5
 					});
+					entities.Add(new Circle()
+					{
+						Center = spline.PointOnSpline(1 - MathHelper.Epsilon),
+						Color = Color.Yellow,
+						Radius = 0.5
+					});
+
+					System.Collections.Generic.List<CSMath.XYZ> v = spline.PolygonalVertexes(256);
+					LwPolyline poly = new LwPolyline(v.Select(v => v.Convert<XY>()));
+					poly.IsClosed = spline.IsClosed;
+					poly.Color = Color.Blue;
+					entities.Add(poly);
 				}
-
-				System.Collections.Generic.List<CSMath.XYZ> v = spline.NurbsEvaluator(256);
-				LwPolyline poly = new LwPolyline(v.Select(v => v.Convert<XY>()));
-				poly.IsClosed = spline.IsClosed;
-				poly.Color = Color.Blue;
-				entities.Add(poly);
-
-				if(spline.Handle == 0x283)
+				catch (System.Exception)
 				{
-
 				}
 			}
 
