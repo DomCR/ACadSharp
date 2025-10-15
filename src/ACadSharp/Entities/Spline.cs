@@ -289,6 +289,56 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
+		/// Attempts to calculate a point on the spline at the specified parameter value.
+		/// </summary>
+		/// <remarks>This method catches any exceptions that occur during the calculation and returns <see
+		/// langword="false"/> in such cases. Ensure that the parameter <paramref name="t"/> is within the valid range for the
+		/// spline to avoid errors.</remarks>
+		/// <param name="t">The parameter value along the spline, typically in the range [0, 1].</param>
+		/// <param name="point">When this method returns, contains the calculated point on the spline if the operation succeeds; otherwise, <see
+		/// cref="XYZ.NaN"/>. This parameter is passed uninitialized.</param>
+		/// <returns><see langword="true"/> if the point was successfully calculated; otherwise, <see langword="false"/>.</returns>
+		public bool TryPointOnSpline(double t, out XYZ point)
+		{
+			point = XYZ.NaN;
+
+			try
+			{
+				point = this.PointOnSpline(t);
+				return true;
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Attempts to calculate the polygonal vertexes of the current object with the specified precision.
+		/// </summary>
+		/// <remarks>This method catches and suppresses any exceptions that occur during the calculation, returning
+		/// <see langword="false"/> in such cases. The <paramref name="points"/> parameter will always be initialized, even if
+		/// the operation fails.</remarks>
+		/// <param name="precision">The level of precision to use when calculating the polygonal vertexes. Must be a positive integer.</param>
+		/// <param name="points">When this method returns, contains a list of <see cref="XYZ"/> objects representing the calculated polygonal
+		/// vertexes, if the operation succeeds; otherwise, contains an empty list.</param>
+		/// <returns><see langword="true"/> if the polygonal vertexes were successfully calculated; otherwise, <see langword="false"/>.</returns>
+		public bool TryPolygonalVertexes(int precision, out List<XYZ> points)
+		{
+			points = new List<XYZ>();
+
+			try
+			{
+				points = this.PolygonalVertexes(precision);
+				return true;
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+		}
+
+		/// <summary>
 		/// Update the Spline control points from the fit points.
 		/// </summary>
 		/// <remarks>
