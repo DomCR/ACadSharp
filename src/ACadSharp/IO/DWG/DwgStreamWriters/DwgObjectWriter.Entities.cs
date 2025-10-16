@@ -1898,7 +1898,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2013Plus)
 			{
 				//The scenario flag becomes 1 if the knot parameter is Custom or has no fit data, otherwise 2.
-				if (spline.KnotParameterization == KnotParameterization.Custom || spline.FitPoints.Count == 0)
+				if (spline.KnotParametrization == KnotParametrization.Custom || spline.FitPoints.Count == 0)
 				{
 					scenario = 1;
 					//If scenario is 1, the spline flags must not have the UseKnotParameter bit set or the file will be corrupt
@@ -1913,12 +1913,12 @@ namespace ACadSharp.IO.DWG
 
 				this._writer.WriteBitLong(scenario);
 				this._writer.WriteBitLong((int)spline.Flags1);
-				this._writer.WriteBitLong((int)spline.KnotParameterization);
+				this._writer.WriteBitLong((int)spline.KnotParametrization);
 			}
 			else
 			{
 				scenario = (spline.FitPoints.Count <= 0) ? 1 : 2;
-				if (scenario == 2 && spline.KnotParameterization != 0)
+				if (scenario == 2 && spline.KnotParametrization != 0)
 				{
 					scenario = 1;
 				}

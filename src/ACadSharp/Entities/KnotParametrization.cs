@@ -3,7 +3,7 @@
 	/// <summary>
 	/// Knot parameterization.
 	/// </summary>
-	public enum KnotParameterization : ushort
+	public enum KnotParametrization : ushort
 	{
 		/// <summary>
 		/// Chord.
