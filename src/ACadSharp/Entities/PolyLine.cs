@@ -152,9 +152,9 @@ namespace ACadSharp.Entities
 			XYZ min = new XYZ(System.Math.Min(first.X, second.X), System.Math.Min(first.Y, second.Y), System.Math.Min(first.Z, second.Z));
 			XYZ max = new XYZ(System.Math.Max(first.X, second.X), System.Math.Max(first.Y, second.Y), System.Math.Max(first.Z, second.Z));
 
-			for (int i = 2; i < this.Vertices.Count; i++)
+			foreach (T v in this.Vertices.Skip(2))
 			{
-				XYZ curr = this.Vertices[i].Location.Convert<XYZ>();
+				XYZ curr = v.Location.Convert<XYZ>();
 
 				min = new XYZ(System.Math.Min(min.X, curr.X), System.Math.Min(min.Y, curr.Y), System.Math.Min(min.Z, curr.Z));
 				max = new XYZ(System.Math.Max(max.X, curr.X), System.Math.Max(max.Y, curr.Y), System.Math.Max(max.Z, curr.Z));
