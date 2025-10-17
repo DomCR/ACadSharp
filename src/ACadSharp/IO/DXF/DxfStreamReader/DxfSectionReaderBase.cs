@@ -501,7 +501,10 @@ namespace ACadSharp.IO.DXF
 				case 1 or 3 when tmp.CadObject is MText mtext:
 					mtext.Value += this._reader.ValueAsString;
 					return true;
-				case 50 when tmp.CadObject is MText://Read only for MText
+				case 50 when tmp.CadObject is MText mtext://Read only for MText
+					double angle = MathHelper.DegToRad(this._reader.ValueAsDouble);
+					mtext.AlignmentPoint = new XYZ(System.Math.Cos(angle), System.Math.Sin(angle), 0.0);
+					return true;
 				case 70:
 				case 74:
 				case 101:

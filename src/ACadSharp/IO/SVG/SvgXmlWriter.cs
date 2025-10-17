@@ -690,6 +690,17 @@ namespace ACadSharp.IO.SVG
 			{
 				this.WriteValue("px");
 			}
+
+			if(text.Style.TrueType.HasFlag(FontFlags.Bold))
+			{
+				this.WriteValue("bold");
+			}
+
+			if (text.Style.TrueType.HasFlag(FontFlags.Italic))
+			{
+				this.WriteValue("italic");
+			}
+
 			this.WriteValue(" ");
 			this.WriteValue(Path.GetFileNameWithoutExtension(text.Style.Filename));
 			this.WriteEndAttribute();
