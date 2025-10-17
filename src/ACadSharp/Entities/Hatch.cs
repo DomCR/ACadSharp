@@ -142,15 +142,6 @@ namespace ACadSharp.Entities
 
 		private double _patternScale;
 
-		//73	For MPolygon, boundary annotation flag:
-		//0 = boundary is not an annotated boundary
-		//1 = boundary is an annotated boundary
-		//78	Number of pattern definition lines
-		//varies
-		//Pattern line data.Repeats number of times specified by code 78. See Pattern Data
-		//11	For MPolygon, offset vector
-
-		//99	For MPolygon, number of degenerate boundary paths(loops), where a degenerate boundary path is a border that is ignored by the hatch
 		/// <inheritdoc/>
 		public Hatch() : base() { }
 
