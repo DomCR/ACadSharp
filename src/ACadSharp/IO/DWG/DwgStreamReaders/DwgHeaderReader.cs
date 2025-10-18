@@ -1,6 +1,8 @@
-﻿using ACadSharp.Types.Units;
-using ACadSharp.Header;
+﻿using ACadSharp.Header;
+using ACadSharp.Types.Units;
+using CSMath;
 using CSUtilities.IO;
+using System;
 
 namespace ACadSharp.IO.DWG
 {
@@ -616,7 +618,12 @@ namespace ACadSharp.IO.DWG
 				//BD: DIMFXL
 				_header.DimensionFixedExtensionLineLength = _reader.ReadBitDouble();
 				//BD : DIMJOGANG
-				_header.DimensionJoggedRadiusDimensionTransverseSegmentAngle = _reader.ReadBitDouble();
+				var dimensionJoggedRadiusDimensionTransverseSegmentAngle = _reader.ReadBitDouble();
+				var rounded = Math.Round(dimensionJoggedRadiusDimensionTransverseSegmentAngle, 6);
+				if (rounded > MathHelper.DegToRad(5) && rounded < MathHelper.HalfPI)
+				{
+					_header.DimensionJoggedRadiusDimensionTransverseSegmentAngle = dimensionJoggedRadiusDimensionTransverseSegmentAngle;
+				}
 				//BS : DIMTFILL
 				_header.DimensionTextBackgroundFillMode = (Tables.DimensionTextBackgroundFillMode)_reader.ReadBitShort();
 				//CMC : DIMTFILLCLR
