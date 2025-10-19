@@ -1056,6 +1056,20 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		private bool readSolid3d(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadShapeTemplate tmp = template as CadShapeTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 2:
+					tmp.ShapeFileName = this._reader.ValueAsString;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
 		private bool readSpline(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
 			CadSplineTemplate tmp = template as CadSplineTemplate;
