@@ -208,6 +208,10 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<Solid3D>(new CadSolid3DTemplate(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityRegion:
 					return this.readEntityCodes<Region>(new CadEntityTemplate<Region>(), this.readEntitySubclassMap);
+				case DxfFileToken.EntityImage:
+					return this.readEntityCodes<RasterImage>(new CadWipeoutBaseTemplate(new RasterImage()), this.readWipeoutBase);
+				case DxfFileToken.EntityWipeout:
+					return this.readEntityCodes<Wipeout>(new CadWipeoutBaseTemplate(new Wipeout()), this.readWipeoutBase);
 				case DxfFileToken.EntityXline:
 					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), this.readEntitySubclassMap);
 				default:
@@ -309,6 +313,18 @@ namespace ACadSharp.IO.DXF
 			else
 			{
 				return func.Invoke(template, map);
+			}
+		}
+
+		protected bool checkEntityEnd(CadEntityTemplate template, DxfMap map, string subclass, Func<CadEntityTemplate, DxfMap, string, bool> func)
+		{
+			if (this._reader.DxfCode == DxfCode.Start)
+			{
+				return true;
+			}
+			else
+			{
+				return func.Invoke(template, map, subclass);
 			}
 		}
 
@@ -1050,6 +1066,39 @@ namespace ACadSharp.IO.DXF
 			{
 				case 2:
 					tmp.ShapeFileName = this._reader.ValueAsString;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readWipeoutBase(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadWipeoutBaseTemplate tmp = template as CadWipeoutBaseTemplate;
+			CadWipeoutBase wipeout = tmp.CadObject as CadWipeoutBase;
+
+			switch (this._reader.Code)
+			{
+				case 91:
+					var nvertices = this._reader.ValueAsInt;
+					for (int i = 0; i < nvertices; i++)
+					{
+						this._reader.ReadNext();
+						var x = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						var y = this._reader.ValueAsDouble;
+
+						wipeout.ClipBoundaryVertices.Add(new XY(x, y));
+					}
+
+					this._reader.ReadNext();
+
+					return this.checkEntityEnd(template, map, subclass, this.readWipeoutBase);
+				case 340:
+					tmp.ImgDefHandle = this._reader.ValueAsHandle;
+					return true;
+				case 360:
+					tmp.ImgReactorHandle = this._reader.ValueAsHandle;
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
