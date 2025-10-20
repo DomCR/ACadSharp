@@ -33,7 +33,7 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// Color to use for background fill when group code 90 is 1.
 		/// </remarks>
-		[DxfCodeValue(63, 420, 430)]
+		[DxfCodeValue(63, 421, 430)]
 		public Color BackgroundColor { get; set; }
 
 		/// <summary>
