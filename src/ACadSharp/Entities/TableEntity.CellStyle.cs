@@ -54,6 +54,7 @@ namespace ACadSharp.Entities
 
 			public CellBorder TopBorder { get; set; } = new(CellEdgeFlags.Right);
 
+			[DxfCodeValue(90)]
 			public CellStyleTypeType Type { get; set; }
 
 			public double VerticalMargin { get; set; }

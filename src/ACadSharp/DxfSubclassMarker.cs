@@ -112,6 +112,8 @@
 
 		public const string Linetype = "AcDbLinetypeTableRecord";
 
+		public const string LinkedData = "AcDbLinkedData";
+
 		public const string LwPolyline = "AcDbPolyline";
 
 		public const string Material = "AcDbMaterial";
@@ -195,6 +197,8 @@
 		public const string TableContent = "AcDbTableContent";
 
 		public const string TableEntity = "AcDbTable";
+
+		public const string TableLinkedTableData = "AcDbLinkedTableData";
 
 		public const string TableRecord = "AcDbSymbolTableRecord";
 

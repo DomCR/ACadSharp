@@ -139,7 +139,17 @@
 		public const string ObjectTableStyle = "TABLESTYLE";
 		public const string ObjectCellStyleMap = "CELLSTYLEMAP";
 		public const string ObjectSpatialFilter = "SPATIAL_FILTER";
-
+		
+		//Table tokens
+		public const string ObjectTableColumn = "COLUMN";
+		public const string ObjectTableColumnBegin = "TABLECOLUMN_BEGIN";
+		public const string ObjectTableColumnEnd = "TABLECOLUMN_END";
+		public const string ObjectTableRow = "ROW";
+		public const string LinkedTableDataColumn_BEGIN = "LINKEDTABLEDATACOLUMN_BEGIN";
+		public const string LinkedTableDataColumn_END = "LINKEDTABLEDATACOLUMN_END";
+		public const string FormattedTableDataColumn_BEGIN = "FORMATTEDTABLEDATACOLUMN_BEGIN";
+		public const string FormattedTableDataColumn_END = "FORMATTEDTABLEDATACOLUMN_END";
+		public const string CustomData = "CUSTOMDATA";
 		#endregion
 	}
 }

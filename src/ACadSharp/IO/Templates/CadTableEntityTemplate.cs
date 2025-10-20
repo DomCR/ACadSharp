@@ -8,9 +8,7 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadTableEntityTemplate : CadInsertTemplate
 	{
-		/// <summary>
-		/// Horizontal cell margin; override applied at the table entity level
-		/// </summary>
+		// Horizontal cell margin; override applied at the table entity level
 		public double? HorizontalMargin { get; set; }
 
 		public ulong? StyleHandle { get; set; }

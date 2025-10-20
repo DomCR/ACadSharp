@@ -9,11 +9,11 @@ namespace ACadSharp.Objects
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.ObjectTableContent"/> <br/>
-	/// Dxf class name <see cref="DxfSubclassMarker.TableContent"/>
+	/// Dxf class name <see cref="DxfSubclassMarker.TableLinkedTableData"/>
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectTableContent)]
-	[DxfSubClass(DxfSubclassMarker.TableContent)]
-	public class TableContent : NonGraphicalObject
+	[DxfSubClass(DxfSubclassMarker.TableLinkedTableData)]
+	public class TableContent : LinkedData
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }
@@ -22,13 +22,7 @@ namespace ACadSharp.Objects
 		public override string ObjectName => DxfFileToken.ObjectTableContent;
 
 		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.TableContent;
-
-		[DxfCodeValue(1)]
-		public override string Name { get => base.Name; set => base.Name = value; }
-
-		[DxfCodeValue(300)]
-		public string Description { get; set; }
+		public override string SubclassMarker => DxfSubclassMarker.TableLinkedTableData;
 
 		public CellStyle CellStyleOverride { get; set; } = new();
 
