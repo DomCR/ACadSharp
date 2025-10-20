@@ -8,7 +8,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using static ACadSharp.IO.Templates.CadEvaluationGraphTemplate;
 
 namespace ACadSharp.IO.DXF
@@ -458,8 +457,9 @@ namespace ACadSharp.IO.DXF
 					//Read Column
 					this.readTableColumn();
 					return true;
-				case 300 when this._reader.ValueAsString.Equals(DxfFileToken.ObjectTableRow, StringComparison.InvariantCultureIgnoreCase):
+				case 301 when this._reader.ValueAsString.Equals(DxfFileToken.ObjectTableRow, StringComparison.InvariantCultureIgnoreCase):
 					//Read Row
+					this.readTableRow();
 					return true;
 				default:
 					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.TableLinkedTableData]))
@@ -475,6 +475,8 @@ namespace ACadSharp.IO.DXF
 			this._reader.ReadNext();
 
 			TableEntity.Column column = new TableEntity.Column();
+
+			bool end = false;
 			while (this._reader.DxfCode != DxfCode.Start)
 			{
 				switch (this._reader.Code)
@@ -487,14 +489,57 @@ namespace ACadSharp.IO.DXF
 						break;
 					case 1 when this._reader.ValueAsString.Equals(DxfFileToken.ObjectTableColumnBegin, StringComparison.InvariantCultureIgnoreCase):
 						this.readTableColumn(column);
+						end = true;
+						break;
+					default:
+						this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readTableColumn)} method.", NotificationType.None);
 						break;
 				}
 
+				if (end)
+				{
+					return column;
+				}
 
 				this._reader.ReadNext();
 			}
 
 			return column;
+		}
+
+		private TableEntity.Row readTableRow()
+		{
+			this._reader.ReadNext();
+
+			TableEntity.Row row = new TableEntity.Row();
+
+			bool end = false;
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				switch (this._reader.Code)
+				{
+					case 1 when this._reader.ValueAsString.Equals(DxfFileToken.LinkedTableDataRow_BEGIN, StringComparison.InvariantCultureIgnoreCase):
+						this.readLinkedTableRow(row);
+						break;
+					case 1 when this._reader.ValueAsString.Equals(DxfFileToken.FormattedTableDataRow_BEGIN, StringComparison.InvariantCultureIgnoreCase):
+					//break;
+					case 1 when this._reader.ValueAsString.Equals(DxfFileToken.ObjectTableRowBegin, StringComparison.InvariantCultureIgnoreCase):
+					//end = true;
+					//break;
+					default:
+						this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readTableRow)} method.", NotificationType.None);
+						break;
+				}
+
+				if (end)
+				{
+					return row;
+				}
+
+				this._reader.ReadNext();
+			}
+
+			return row;
 		}
 
 		private void readTableColumn(TableEntity.Column column)
@@ -538,13 +583,16 @@ namespace ACadSharp.IO.DXF
 		{
 			this._reader.ReadNext();
 
-			this._reader.ReadNext();
-
 			bool end = false;
 			while (this._reader.DxfCode != DxfCode.Start)
 			{
 				switch (this._reader.Code)
 				{
+					case 1 when this._reader.ValueAsString.Equals(DxfFileToken.LinkedTableDataColumn_BEGIN, StringComparison.InvariantCultureIgnoreCase):
+						break;
+					case 1:
+						end = true;
+						break;
 					case 91:
 						column.CustomData = this._reader.ValueAsInt;
 						break;
@@ -552,13 +600,121 @@ namespace ACadSharp.IO.DXF
 						column.Name = this._reader.ValueAsString;
 						break;
 					case 301 when this._reader.ValueAsString.Equals(DxfFileToken.CustomData, StringComparison.InvariantCultureIgnoreCase):
-						this.readCustomData(column);
+						this.readCustomData();
 						break;
 					case 309:
 						end = this._reader.ValueAsString.Equals(DxfFileToken.LinkedTableDataColumn_END, StringComparison.InvariantCultureIgnoreCase);
 						break;
 					default:
 						this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readLinkedTableColumn)} method.", NotificationType.None);
+						break;
+				}
+
+				if (end)
+				{
+					break;
+				}
+
+				this._reader.ReadNext();
+			}
+		}
+
+		private void readLinkedTableRow(TableEntity.Row column)
+		{
+			this._reader.ReadNext();
+
+			bool end = false;
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				switch (this._reader.Code)
+				{
+					case 1 when this._reader.ValueAsString.Equals(DxfFileToken.LinkedTableDataRow_BEGIN, StringComparison.InvariantCultureIgnoreCase):
+						break;
+					case 1:
+						end = true;
+						break;
+					case 90:
+						column.CustomData = this._reader.ValueAsInt;
+						break;
+					case 300 when this._reader.ValueAsString.Equals(DxfFileToken.ObjectCell, StringComparison.InvariantCultureIgnoreCase):
+						this.readCell();
+						break;
+					case 301 when this._reader.ValueAsString.Equals(DxfFileToken.CustomData, StringComparison.InvariantCultureIgnoreCase):
+						this.readCustomData();
+						break;
+					case 309:
+						end = this._reader.ValueAsString.Equals(DxfFileToken.LinkedTableDataRow_END, StringComparison.InvariantCultureIgnoreCase);
+						break;
+					default:
+						this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readLinkedTableRow)} method.", NotificationType.None);
+						break;
+				}
+
+				if (end)
+				{
+					break;
+				}
+
+				this._reader.ReadNext();
+			}
+		}
+
+		private TableEntity.Cell readCell()
+		{
+			this._reader.ReadNext();
+
+			TableEntity.Cell cell = new TableEntity.Cell();
+
+			bool end = false;
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				switch (this._reader.Code)
+				{
+					case 1 when this._reader.ValueAsString.Equals("LINKEDTABLEDATACELL_BEGIN", StringComparison.InvariantCultureIgnoreCase):
+						this.readLinkedTableCell(cell);
+						break;
+					case 1:
+						end = this._reader.ValueAsString.Equals("TABLECELL_BEGIN", StringComparison.InvariantCultureIgnoreCase);
+						break;
+					default:
+						this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readCell)} method.", NotificationType.None);
+						break;
+				}
+
+				if (end)
+				{
+					return cell;
+				}
+
+				this._reader.ReadNext();
+			}
+
+			return cell;
+		}
+
+		private void readLinkedTableCell(TableEntity.Cell cell)
+		{
+			this._reader.ReadNext();
+
+			bool end = false;
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				switch (this._reader.Code)
+				{
+					case 90:
+						cell.StateFlags = (TableEntity.TableCellStateFlags)this._reader.ValueAsInt;
+						break;
+					case 91:
+						cell.CustomData = this._reader.ValueAsInt;
+						break;
+					case 300:
+						cell.ToolTip = this._reader.ValueAsString;
+						break;
+					case 301 when this._reader.ValueAsString.Equals(DxfFileToken.CustomData, StringComparison.InvariantCultureIgnoreCase):
+						this.readCustomData();
+						break;
+					default:
+						this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readLinkedTableCell)} method.", NotificationType.None);
 						break;
 				}
 
@@ -642,7 +798,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readCustomData(TableEntity.Column column)
+		private void readCustomData()
 		{
 			this._reader.ReadNext();
 
@@ -659,6 +815,11 @@ namespace ACadSharp.IO.DXF
 						break;
 					case 90:
 						ndata = this._reader.ValueAsInt;
+						break;
+					case 300:
+						//Name
+						break;
+					case 301 when this._reader.ValueAsString.Equals("DATAMAP_VALUE", StringComparison.InvariantCultureIgnoreCase):
 						break;
 					case 309:
 						end = this._reader.ValueAsString.Equals("DATAMAP_END", StringComparison.InvariantCultureIgnoreCase);
