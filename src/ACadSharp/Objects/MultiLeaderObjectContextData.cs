@@ -14,6 +14,8 @@ namespace ACadSharp.Objects {
 	/// This class represents a subset ob the properties of the MLeaderAnnotContext
 	/// object, that are embedded into the MultiLeader entity.
 	/// </summary>
+	[DxfName(DxfFileToken.ObjectMLeaderContextData)]
+	[DxfSubClass(DxfSubclassMarker.MultiLeaderObjectContextData)]
 	public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData
 	{
 		private TextStyle _textStyle = TextStyle.Default;
@@ -486,7 +488,7 @@ namespace ACadSharp.Objects {
 		/// (<see cref="MultiLeader.BlockContentColor"/>).
 		/// Values should be equal, the value of this property is assumed to be used.
 		/// </remarks>
-		[DxfCodeValue(93)]
+		//[DxfCodeValue(93)]
 		public Color BlockContentColor { get; set; }
 
 		/// <summary>
@@ -504,7 +506,7 @@ namespace ACadSharp.Objects {
 		///	<item>Translation (using location)</item>
 		/// </list>
 		/// </remarks>
-		[DxfCodeValue(93)]
+		//[DxfCodeValue(93)]
 		public Matrix4 TransformationMatrix { get; set; }
 
 		/// <summary>

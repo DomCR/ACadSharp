@@ -5,7 +5,7 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadMLeaderTemplate : CadEntityTemplate
+	internal class CadMLeaderTemplate : CadEntityTemplate<MultiLeader>
 	{
 		public ulong ArrowheadHandle { get; internal set; }
 

@@ -1054,10 +1054,39 @@ namespace ACadSharp.IO.DXF
 					//f270 Version
 					return true;
 				case 300:
-
+					this.readMultiLeaderObjectContextData(tmp.CadObject.ContextData);
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private void readMultiLeaderObjectContextData(MultiLeaderObjectContextData contextData)
+		{
+			DxfMap map = DxfMap.Create<MultiLeaderObjectContextData>();
+
+			bool end = false;
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				switch (this._reader.Code)
+				{
+					case 301 when this._reader.ValueAsString.Equals("}"):
+						end = true;
+						break;
+					default:
+						if(!this.tryAssignCurrentValue(contextData, map.SubClasses[contextData.SubclassMarker]))
+						{
+							this._builder.Notify($"[AcDbMLeaderObjectContextData] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
+						}
+						break;
+				}
+
+				if (end)
+				{
+					break;
+				}
+
+				this._reader.ReadNext();
 			}
 		}
 

@@ -1,136 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using ACadSharp.Attributes;
 using ACadSharp.Tables;
-
 using CSMath;
-
 
 namespace ACadSharp.Objects
 {
-
-	/// <summary>
-	/// Nested classes in MultiLeaderAnnotContext
-	/// </summary>
-	public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData
+	public partial class MultiLeaderObjectContextData
 	{
-		/// <summary>
-		/// Represents a leader root
-		/// </summary>
-		/// <remarks>
-		/// Appears in DXF as 302 DXF: “LEADER“
-		/// </remarks>
-		public class LeaderRoot : ICloneable
-		{
-			public LeaderRoot() { }
-
-			/// <summary>
-			/// Is content valid (ODA writes true)
-			/// </summary>
-			[DxfCodeValue(290)]
-			public bool ContentValid { get; set; }
-
-			/// <summary>
-			/// Unknown (ODA writes true)
-			/// </summary>
-			[DxfCodeValue(291)]
-			public bool Unknown { get; set; }
-
-			/// <summary>
-			/// Connection point
-			/// </summary>
-			[DxfCodeValue(10, 20, 30)]
-			public XYZ ConnectionPoint { get; set; }
-
-			/// <summary>
-			/// Direction
-			/// </summary>
-			[DxfCodeValue(11, 21, 31)]
-			public XYZ Direction { get; set; }
-
-			/// <summary>
-			/// Gets a list of <see cref="StartEndPointPair" />.
-			/// </summary>
-			public IList<StartEndPointPair> BreakStartEndPointsPairs { get; private set; } = new List<StartEndPointPair>();
-
-			/// <summary>
-			/// Leader index
-			/// </summary>
-			[DxfCodeValue(90)]
-			public int LeaderIndex { get; set; }
-
-			/// <summary>
-			/// Landing distance
-			/// </summary>
-			[DxfCodeValue(40)]
-			public double LandingDistance { get; set; }
-
-			/// <summary>
-			/// Gets a list of <see cref="LeaderLine"/> objects representing
-			/// leader lines starting from the landing point
-			/// of the multi leader.
-			/// </summary>
-			public IList<LeaderLine> Lines { get; private set; } = new List<LeaderLine>();
-
-			//R2010
-			/// <summary>
-			/// Attachment direction
-			/// </summary>
-			[DxfCodeValue(271)]
-			public TextAttachmentDirectionType TextAttachmentDirection { get; set; }
-
-			public object Clone()
-			{
-				LeaderRoot clone = (LeaderRoot)base.MemberwiseClone();
-
-				clone.BreakStartEndPointsPairs = new List<StartEndPointPair>();
-				foreach (var breakStartEndPoint in this.BreakStartEndPointsPairs)
-				{
-					clone.BreakStartEndPointsPairs.Add((StartEndPointPair)breakStartEndPoint.Clone());
-				}
-
-				clone.Lines = new List<LeaderLine>();
-				foreach (var line in this.Lines)
-				{
-					clone.Lines.Add((LeaderLine)line.Clone());
-				}
-
-				return clone;
-			}
-		}
-
-		/// <summary>
-		/// Start/end point pairs
-		/// 3BD	11	Start Point
-		/// 3BD	12	End point
-		/// </summary>
-		public struct StartEndPointPair : ICloneable
-		{
-			public StartEndPointPair(XYZ startPoint, XYZ endPoint) {
-				StartPoint = startPoint;
-				EndPoint = endPoint;
-			}
-
-			/// <summary>
-			/// Break start point
-			/// </summary>
-			[DxfCodeValue(12, 22, 32)]
-			public XYZ StartPoint { get; private set; }
-
-			/// <summary>
-			/// Break end point
-			/// </summary>
-			[DxfCodeValue(13, 23, 33)]
-			public XYZ EndPoint { get; private set; }
-
-			public object Clone()
-			{
-				return this.MemberwiseClone();
-			}
-		}
-
-
 		/// <summary>
 		///	Represents a leader line
 		/// </summary>
