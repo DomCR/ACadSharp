@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-
 using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
@@ -8,29 +7,35 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadMLeaderTemplate : CadEntityTemplate
 	{
-		public CadMLeaderTemplate(MultiLeader entity) : base(entity) { }
-
-		public ulong LeaderStyleHandle { get; internal set; }
-
-		public ulong LeaderLineTypeHandle { get; internal set; }
-
-		public ulong MTextStyleHandle { get; internal set; }
-
-		public ulong BlockContentHandle { get; internal set; }
-
 		public ulong ArrowheadHandle { get; internal set; }
 
 		public IDictionary<ulong, bool> ArrowheadHandles { get; } = new Dictionary<ulong, bool>();
 
-
 		public IDictionary<MultiLeader.BlockAttribute, ulong> BlockAttributeHandles { get; } = new Dictionary<MultiLeader.BlockAttribute, ulong>();
 
+		public ulong BlockContentHandle { get; internal set; }
 
 		public CadMLeaderAnnotContextTemplate CadMLeaderAnnotContextTemplate { get; set; }
+
+		public ulong LeaderLineTypeHandle { get; internal set; }
+
+		public ulong LeaderStyleHandle { get; internal set; }
+
+		public ulong MTextStyleHandle { get; internal set; }
+
+		public CadMLeaderTemplate() : this(new MultiLeader())
+		{
+		}
+
+		public CadMLeaderTemplate(MultiLeader entity) : base(entity)
+		{
+			CadMLeaderAnnotContextTemplate = new CadMLeaderAnnotContextTemplate(entity.ContextData);
+		}
 
 		protected override void build(CadDocumentBuilder builder)
 		{
 			base.Build(builder);
+
 			this.CadMLeaderAnnotContextTemplate.Build(builder);
 
 			MultiLeader multiLeader = (MultiLeader)this.CadObject;
@@ -57,7 +62,8 @@ namespace ACadSharp.IO.Templates
 			}
 
 			//	TODO
-			foreach (KeyValuePair<ulong, bool> arrowHeadHandleEntries in ArrowheadHandles) {
+			foreach (KeyValuePair<ulong, bool> arrowHeadHandleEntries in ArrowheadHandles)
+			{
 			}
 
 			foreach (MultiLeader.BlockAttribute blockAttribute in multiLeader.BlockAttributes)

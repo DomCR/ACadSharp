@@ -178,6 +178,8 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<MText>(new CadTextEntityTemplate(new MText()), this.readTextEntity);
 				case DxfFileToken.EntityMLine:
 					return this.readEntityCodes<MLine>(new CadMLineTemplate(), this.readMLine);
+				case DxfFileToken.EntityMultiLeader:
+					return this.readEntityCodes<MultiLeader>(new CadMLeaderTemplate(), this.readMLeader);
 				case DxfFileToken.EntityPdfUnderlay:
 					return this.readEntityCodes<PdfUnderlay>(new CadUnderlayTemplate<PdfUnderlayDefinition>(new PdfUnderlay()), this.readUnderlayEntity<PdfUnderlayDefinition>);
 				case DxfFileToken.EntityPoint:
@@ -1039,6 +1041,23 @@ namespace ACadSharp.IO.DXF
 						return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 					}
 					return true;
+			}
+		}
+
+		private bool readMLeader(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadMLeaderTemplate tmp = template as CadMLeaderTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 270:
+					//f270 Version
+					return true;
+				case 300:
+
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
 		}
 

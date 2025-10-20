@@ -3535,7 +3535,6 @@ namespace ACadSharp.IO.DWG
 		{
 			MultiLeader mLeader = new MultiLeader();
 			CadMLeaderTemplate template = new CadMLeaderTemplate(mLeader);
-			template.CadMLeaderAnnotContextTemplate = new CadMLeaderAnnotContextTemplate(mLeader.ContextData);
 
 			this.readCommonEntityData(template);
 
