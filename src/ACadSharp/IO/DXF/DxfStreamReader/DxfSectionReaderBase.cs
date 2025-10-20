@@ -1056,6 +1056,15 @@ namespace ACadSharp.IO.DXF
 				case 300:
 					this.readMultiLeaderObjectContextData(tmp.CadObject.ContextData);
 					return true;
+				case 340:
+					tmp.LeaderStyleHandle = this._reader.ValueAsHandle;
+					return true;
+				case 341:
+					tmp.LineTypeHandle = this._reader.ValueAsHandle;
+					return true;
+				case 343:
+					tmp.MTextStyleHandle = this._reader.ValueAsHandle;
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
@@ -1074,7 +1083,7 @@ namespace ACadSharp.IO.DXF
 						end = true;
 						break;
 					default:
-						if(!this.tryAssignCurrentValue(contextData, map.SubClasses[contextData.SubclassMarker]))
+						if (!this.tryAssignCurrentValue(contextData, map.SubClasses[contextData.SubclassMarker]))
 						{
 							this._builder.Notify($"[AcDbMLeaderObjectContextData] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
 						}

@@ -129,6 +129,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Leader extended to text
 		/// </summary>
+		[DxfCodeValue(295)]
 		public bool ExtendedToText { get; set; }
 
 		/// <summary>
