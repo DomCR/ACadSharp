@@ -513,9 +513,9 @@ namespace ACadSharp.IO.DWG
 			//BL 91 Border type
 			border.Type = ((BorderType)this._mergedReaders.ReadBitLong());
 			//TC 62 Color
-			border.Color = (this._mergedReaders.ReadCmColor());
+			border.Color = this._mergedReaders.ReadCmColor();
 			//BL 92 Line weight
-			border.LineWeight = ((short)this._mergedReaders.ReadBitLong());
+			border.LineWeight = ((LineWeightType)this._mergedReaders.ReadBitLong());
 			//H 40 Line type (hard pointer)
 			template.BorderLinetypePairs.Add(new Tuple<CellBorder, ulong>(border, this.handleReference()));
 			//BL 93 Invisibility: 1 = invisible, 0 = visible.

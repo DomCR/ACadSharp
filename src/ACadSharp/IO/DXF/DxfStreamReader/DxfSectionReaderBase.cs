@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.IO.DXF
 {
@@ -375,8 +376,59 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				//Border overrides:
+				case 279:
+					//Lineweight for the top border of the cell; override applied at the cell level
+					tmp.CurrentCell.StyleOverride.TopBorder.LineWeight = (LineWeightType)this._reader.ValueAsShort;
+					return true;
+				case 275:
+					//Lineweight for the right border of the cell; override applied at the cell level
+					tmp.CurrentCell.StyleOverride.RightBorder.LineWeight = (LineWeightType)this._reader.ValueAsShort;
+					return true;
+				case 276:
+					//Lineweight for the bottom border of the cell; override applied at the cell level
+					tmp.CurrentCell.StyleOverride.BottomBorder.LineWeight = (LineWeightType)this._reader.ValueAsShort;
+					return true;
+				case 278:
+					//Lineweight for the left border of the cell; override applied at the cell level
+					tmp.CurrentCell.StyleOverride.LeftBorder.LineWeight = (LineWeightType)this._reader.ValueAsShort;
+					return true;
+				case 69:
+					//True color value for the top border of the cell; override applied at the cell level
+					tmp.CurrentCell.StyleOverride.TopBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 65:
+					//True color value for the right border of the cell; override applied at the cell level
+					tmp.CurrentCell.StyleOverride.RightBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 66:
+					//True color value for the bottom border of the cell; override applied at the cell level
+					tmp.CurrentCell.StyleOverride.BottomBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 68:
+					//True color value for the left border of the cell; override applied at the cell level
+					tmp.CurrentCell.StyleOverride.LeftBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
 				case 2:
 					tmp.BlockName = this._reader.ValueAsString;
+					return true;
+				case 40:
+					tmp.HorizontalMargin = this._reader.ValueAsDouble;
+					return true;
+				case 63:
+					tmp.CurrentCell.StyleOverride.BackgroundColor = new Color(this._reader.ValueAsShort);
+					return true;
+				case 64:
+					tmp.CurrentCell.StyleOverride.ContentColor = new Color(this._reader.ValueAsShort);
+					return true;
+				case 140:
+					if (tmp.CurrentCellTemplate != null)
+					{
+						tmp.CurrentCellTemplate.FormatTextHeight = this._reader.ValueAsDouble;
+					}
+					return true;
+				case 283:
+					tmp.CurrentCell.StyleOverride.IsFillColorOn = this._reader.ValueAsBool;
 					return true;
 				case 342:
 					tmp.StyleHandle = this._reader.ValueAsHandle;
@@ -485,6 +537,9 @@ namespace ACadSharp.IO.DXF
 					case 91:
 						content.Value.Value = this._reader.ValueAsInt;
 						break;
+					case 92:
+						//Extended cell flags (from AutoCAD 2007)
+						break;
 					case 93:
 						content.Value.Flags = this._reader.ValueAsInt;
 						break;
@@ -496,6 +551,9 @@ namespace ACadSharp.IO.DXF
 						break;
 					case 300:
 						content.Value.Format = this._reader.ValueAsString;
+						break;
+					case 310:
+						//Data for proxy entity graphics (multiple lines; 256-character maximum per line)
 						break;
 					default:
 						this._builder.Notify($"[CELL_VALUE] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
