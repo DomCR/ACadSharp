@@ -189,7 +189,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EndSequence:
 					return this.readEntityCodes<Seqend>(new CadEntityTemplate<Seqend>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntitySolid:
-					return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), this.readEntitySubclassMap);
+					return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), this.readModelerGeometry);
 				case DxfFileToken.EntityTable:
 					return this.readEntityCodes<TableEntity>(new CadTableEntityTemplate(), this.readTableEntity);
 				case DxfFileToken.EntityText:
@@ -205,9 +205,13 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntitySpline:
 					return this.readEntityCodes<Spline>(new CadSplineTemplate(), this.readSpline);
 				case DxfFileToken.Entity3DSolid:
-					return this.readEntityCodes<Solid3D>(new CadSolid3DTemplate(), this.readEntitySubclassMap);
+					return this.readEntityCodes<Solid3D>(new CadSolid3DTemplate(), this.readSolid3d);
 				case DxfFileToken.EntityRegion:
-					return this.readEntityCodes<Region>(new CadEntityTemplate<Region>(), this.readEntitySubclassMap);
+					return this.readEntityCodes<Region>(new CadEntityTemplate<Region>(), this.readModelerGeometry);
+				case DxfFileToken.EntityImage:
+					return this.readEntityCodes<RasterImage>(new CadWipeoutBaseTemplate(new RasterImage()), this.readWipeoutBase);
+				case DxfFileToken.EntityWipeout:
+					return this.readEntityCodes<Wipeout>(new CadWipeoutBaseTemplate(new Wipeout()), this.readWipeoutBase);
 				case DxfFileToken.EntityXline:
 					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), this.readEntitySubclassMap);
 				default:
@@ -309,6 +313,18 @@ namespace ACadSharp.IO.DXF
 			else
 			{
 				return func.Invoke(template, map);
+			}
+		}
+
+		protected bool checkEntityEnd(CadEntityTemplate template, DxfMap map, string subclass, Func<CadEntityTemplate, DxfMap, string, bool> func)
+		{
+			if (this._reader.DxfCode == DxfCode.Start)
+			{
+				return true;
+			}
+			else
+			{
+				return func.Invoke(template, map, subclass);
 			}
 		}
 
@@ -1056,17 +1072,67 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private bool readSolid3d(CadEntityTemplate template, DxfMap map, string subclass = null)
+		private bool readWipeoutBase(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
-			CadShapeTemplate tmp = template as CadShapeTemplate;
+			CadWipeoutBaseTemplate tmp = template as CadWipeoutBaseTemplate;
+			CadWipeoutBase wipeout = tmp.CadObject as CadWipeoutBase;
+
+			switch (this._reader.Code)
+			{
+				case 91:
+					var nvertices = this._reader.ValueAsInt;
+					for (int i = 0; i < nvertices; i++)
+					{
+						this._reader.ReadNext();
+						var x = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						var y = this._reader.ValueAsDouble;
+
+						wipeout.ClipBoundaryVertices.Add(new XY(x, y));
+					}
+
+					this._reader.ReadNext();
+
+					return this.checkEntityEnd(template, map, subclass, this.readWipeoutBase);
+				case 340:
+					tmp.ImgDefHandle = this._reader.ValueAsHandle;
+					return true;
+				case 360:
+					tmp.ImgReactorHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readModelerGeometry(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			string mapName = string.IsNullOrEmpty(subclass) ? template.CadObject.SubclassMarker : subclass;
+			var geometry = template.CadObject as ModelerGeometry;
 
 			switch (this._reader.Code)
 			{
 				case 2:
-					tmp.ShapeFileName = this._reader.ValueAsString;
+					geometry.Guid = new Guid(this._reader.ValueAsString);
+					return true;
+				case 290:
 					return true;
 				default:
-					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[mapName]);
+			}
+		}
+
+		private bool readSolid3d(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadSolid3DTemplate tmp = template as CadSolid3DTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 350:
+					tmp.HistoryHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					return this.readModelerGeometry(template, map, DxfSubclassMarker.ModelerGeometry);
 			}
 		}
 

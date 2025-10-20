@@ -264,14 +264,14 @@ namespace ACadSharp.Entities
 
 			base.UnassignDocument();
 
-			this.Definition = (ImageDefinition)this.Definition?.Clone();
+			this._definition = (ImageDefinition)this.Definition?.Clone();
 		}
 
 		private void imageDefinitionsOnRemove(object sender, CollectionChangedEventArgs e)
 		{
 			if (e.Item.Equals(this.Definition))
 			{
-				this.Definition = null;
+				this._definition = null;
 			}
 		}
 	}
