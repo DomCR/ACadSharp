@@ -76,6 +76,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<PdfUnderlayDefinition>(new CadNonGraphicalObjectTemplate(new PdfUnderlayDefinition()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectSortEntsTable:
 					return this.readSortentsTable();
+				case DxfFileToken.ObjectImageDefinitionReactor:
+					return this.readObjectCodes<ImageDefinitionReactor>(new CadNonGraphicalObjectTemplate(new ImageDefinitionReactor()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectProxyObject:
 					return this.readObjectCodes<ProxyObject>(new CadNonGraphicalObjectTemplate(new ProxyObject()), this.readProxyObject);
 				case DxfFileToken.ObjectRasterVariables:
