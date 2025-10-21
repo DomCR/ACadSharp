@@ -3535,7 +3535,6 @@ namespace ACadSharp.IO.DWG
 		{
 			MultiLeader mLeader = new MultiLeader();
 			CadMLeaderTemplate template = new CadMLeaderTemplate(mLeader);
-			template.CadMLeaderAnnotContextTemplate = new CadMLeaderAnnotContextTemplate(mLeader.ContextData);
 
 			this.readCommonEntityData(template);
 
@@ -3934,8 +3933,8 @@ namespace ACadSharp.IO.DWG
 		private LeaderLine readLeaderLine(CadMLeaderAnnotContextTemplate template)
 		{
 			LeaderLine leaderLine = new LeaderLine();
-			CadMLeaderAnnotContextTemplate.LeaderLineSubTemplate leaderLineSubTemplate = new CadMLeaderAnnotContextTemplate.LeaderLineSubTemplate(leaderLine);
-			template.LeaderLineSubTemplates.Add(leaderLineSubTemplate);
+			CadMLeaderAnnotContextTemplate.LeaderLineTemplate leaderLineSubTemplate = new CadMLeaderAnnotContextTemplate.LeaderLineTemplate(leaderLine);
+			template.LeaderLineTemplates.Add(leaderLineSubTemplate);
 
 			//	Points
 			//	BL	-	Number of points

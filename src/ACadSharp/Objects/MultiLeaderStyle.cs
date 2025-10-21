@@ -41,7 +41,7 @@ namespace ACadSharp.Objects
 		/// </para><para>
 		/// The value for all leader lines can be overridden for each individual leader line by the
 		/// <see cref="MultiLeaderObjectContextData.LeaderLine.Arrowhead"/> property when the
-		/// <see cref="LeaderLinePropertOverrideFlags.Arrowhead"/> flag is set in the 
+		/// <see cref="LeaderLinePropertOverrideFlags.Arrowhead"/> flag is set in the
 		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
@@ -66,7 +66,7 @@ namespace ACadSharp.Objects
 		/// </para><para>
 		/// The value for all leader lines can be overridden for each individual leader line by the
 		/// <see cref="MultiLeaderObjectContextData.LeaderLine.ArrowheadSize"/> property when the
-		/// <see cref="LeaderLinePropertOverrideFlags.ArrowheadSize"/> flag is set in the 
+		/// <see cref="LeaderLinePropertOverrideFlags.ArrowheadSize"/> flag is set in the
 		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
@@ -144,8 +144,56 @@ namespace ACadSharp.Objects
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
-		[DxfCodeValue(47, 49, 140)]
-		public XYZ BlockContentScale { get; set; } = new XYZ(1);
+		public XYZ BlockContentScale
+		{
+			get
+			{
+				return this._blockContentScale;
+			}
+			set
+			{
+				this._blockContentScale = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the scale factor along the X-axis for the block content.
+		/// </summary>
+		[DxfCodeValue(47)]
+		public double BlockContentScaleX
+		{
+			get { return this._blockContentScale.X; }
+			set
+			{
+				this._blockContentScale.X = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the scale factor applied to the Y-axis of the block content.
+		/// </summary>
+		[DxfCodeValue(49)]
+		public double BlockContentScaleY
+		{
+			get { return this._blockContentScale.Y; }
+			set
+			{
+				this._blockContentScale.Y = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the scale factor along the Z-axis for the block content.
+		/// </summary>
+		[DxfCodeValue(140)]
+		public double BlockContentScaleZ
+		{
+			get { return this._blockContentScale.Z; }
+			set
+			{
+				this._blockContentScale.Z = value;
+			}
+		}
 
 		//	TODO What is the meaning of this property?
 		/// <summary>
@@ -293,7 +341,7 @@ namespace ACadSharp.Objects
 		/// </para><para>
 		/// The setting for all leader lines can be overridden for each individual leader line by the
 		/// <see cref="MultiLeaderObjectContextData.LeaderLine.LineType"/> property when the
-		/// <see cref="LeaderLinePropertOverrideFlags.LineType"/> flag is set in the 
+		/// <see cref="LeaderLinePropertOverrideFlags.LineType"/> flag is set in the
 		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
@@ -330,7 +378,7 @@ namespace ACadSharp.Objects
 		/// </para><para>
 		/// The value for all leader lines can be overridden for each individual leader line by the
 		/// <see cref="MultiLeaderObjectContextData.LeaderLine.LineWeight"/> property when the
-		/// <see cref="LeaderLinePropertOverrideFlags.LineWeight"/> flag is set in the 
+		/// <see cref="LeaderLinePropertOverrideFlags.LineWeight"/> flag is set in the
 		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
@@ -348,7 +396,7 @@ namespace ACadSharp.Objects
 		/// </para><para>
 		/// The value for all leader lines can be overridden for each individual leader line by the
 		/// <see cref="MultiLeaderObjectContextData.LeaderLine.LineColor"/> property when the
-		/// <see cref="LeaderLinePropertOverrideFlags.LineColor"/> flag is set in the 
+		/// <see cref="LeaderLinePropertOverrideFlags.LineColor"/> flag is set in the
 		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
@@ -403,7 +451,7 @@ namespace ACadSharp.Objects
 		/// </para><para>
 		/// The value for all leader lines can be overridden for each individual leader line by the
 		/// <see cref="MultiLeaderObjectContextData.LeaderLine.PathType"/> property when the
-		/// <see cref="LeaderLinePropertOverrideFlags.PathType"/> flag is set in the 
+		/// <see cref="LeaderLinePropertOverrideFlags.PathType"/> flag is set in the
 		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
@@ -492,7 +540,7 @@ namespace ACadSharp.Objects
 		/// </para><para>
 		/// The value for all leader lines can be overridden for each individual leader line by the
 		/// <see cref="MultiLeaderObjectContextData.LeaderRoot.TextAttachmentDirection"/> property when the
-		/// <see cref="LeaderLinePropertOverrideFlags.TextAttachmentDirection"/> flag is set in the 
+		/// <see cref="LeaderLinePropertOverrideFlags.TextAttachmentDirection"/> flag is set in the
 		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
@@ -583,7 +631,7 @@ namespace ACadSharp.Objects
 		/// </para>
 		/// </remarks>
 		/// <value>
-		/// A <see cref="TextAttachmentType"/> having the values 0-8 
+		/// A <see cref="TextAttachmentType"/> having the values 0-8
 		/// can be used ("horizontal" attachment types).
 		/// </value>
 		[DxfCodeValue(174)]
@@ -606,7 +654,7 @@ namespace ACadSharp.Objects
 		/// </para>
 		/// </remarks>
 		/// <value>
-		/// A <see cref="TextAttachmentType"/> having the values 0-8 
+		/// A <see cref="TextAttachmentType"/> having the values 0-8
 		/// can be used ("horizontal" attachment types).
 		/// </value>
 		[DxfCodeValue(178)]
@@ -684,6 +732,8 @@ namespace ACadSharp.Objects
 		private BlockRecord _arrowhead;
 
 		private BlockRecord _blockContent;
+
+		private XYZ _blockContentScale = new XYZ(1);
 
 		private LineType _leaderLineType = LineType.ByLayer;
 

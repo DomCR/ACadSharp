@@ -91,6 +91,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<VisualStyle>(new CadTemplate<VisualStyle>(new VisualStyle()), this.readVisualStyle);
 				case DxfFileToken.ObjectSpatialFilter:
 					return this.readObjectCodes<SpatialFilter>(new CadSpatialFilterTemplate(), this.readSpatialFilter);
+				case DxfFileToken.ObjectMLeaderStyle:
+					return this.readObjectCodes<MultiLeaderStyle>(new CadMLeaderStyleTemplate(), this.readMLeaderStyle);
 				case DxfFileToken.ObjectXRecord:
 					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), this.readXRecord);
 				default:
@@ -509,6 +511,25 @@ namespace ACadSharp.IO.DXF
 				case 73:
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.SpatialFilter]);
+			}
+		}
+
+		private bool readMLeaderStyle(CadTemplate template, DxfMap map)
+		{
+			var tmp = template as CadMLeaderStyleTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 179:
+					return true;
+				case 340:
+					tmp.LeaderLineTypeHandle = this._reader.ValueAsHandle;
+					return true;
+				case 342:
+					tmp.MTextStyleHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
 		}
 
