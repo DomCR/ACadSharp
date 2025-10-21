@@ -7,19 +7,14 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.AnnotScaleObjectContextData)]
 	public abstract class AnnotScaleObjectContextData : ObjectContextData
 	{
-		private Scale _scale = Scale.Default;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.AnnotScaleObjectContextData;
-
-		//H	340	Handle to scale(AcDbScale) object (hard pointer).
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public Scale Scale
 		{
-			get { return _scale; } 
+			get { return _scale; }
 			set
 			{
-				if (value == null) {
+				if (value == null)
+				{
 					throw new ArgumentNullException(nameof(value));
 				}
 
@@ -34,9 +29,14 @@ namespace ACadSharp.Objects
 			}
 		}
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.AnnotScaleObjectContextData;
+
+		private Scale _scale = Scale.Default;
+
 		public override CadObject Clone()
 		{
-			AnnotScaleObjectContextData clone =  (AnnotScaleObjectContextData)base.Clone();
+			AnnotScaleObjectContextData clone = (AnnotScaleObjectContextData)base.Clone();
 
 			clone._scale = (Scale)this._scale?.Clone();
 
