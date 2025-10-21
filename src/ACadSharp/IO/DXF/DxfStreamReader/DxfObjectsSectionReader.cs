@@ -58,6 +58,8 @@ namespace ACadSharp.IO.DXF
 		{
 			switch (this._reader.ValueAsString)
 			{
+				case DxfFileToken.ObjectPlaceholder:
+					return this.readObjectCodes<AcdbPlaceHolder>(new CadNonGraphicalObjectTemplate(new AcdbPlaceHolder()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectDBColor:
 					return this.readObjectCodes<BookColor>(new CadNonGraphicalObjectTemplate(new BookColor()), this.readBookColor);
 				case DxfFileToken.ObjectDictionary:
@@ -70,6 +72,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<PlotSettings>(new CadNonGraphicalObjectTemplate(new PlotSettings()), this.readPlotSettings);
 				case DxfFileToken.ObjectEvalGraph:
 					return this.readObjectCodes<EvaluationGraph>(new CadEvaluationGraphTemplate(), this.readEvaluationGraph);
+				case DxfFileToken.ObjectImageDefinition:
+					return this.readObjectCodes<ImageDefinition>(new CadNonGraphicalObjectTemplate(new ImageDefinition()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectDictionaryVar:
 					return this.readObjectCodes<DictionaryVariable>(new CadTemplate<DictionaryVariable>(new DictionaryVariable()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectPdfDefinition:
