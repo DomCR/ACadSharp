@@ -644,7 +644,7 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._style = updateCollection<MultiLeaderStyle>(this._style, doc.MLeaderStyles);
+			this._style = updateCollection(this._style, doc.MLeaderStyles);
 			this._textStyle = updateCollection(this._textStyle, doc.TextStyles);
 			this._leaderLineType = updateCollection(this._leaderLineType, doc.LineTypes);
 			this._arrowhead = updateCollection(this._arrowhead, doc.BlockRecords);

@@ -16,15 +16,18 @@ namespace ACadSharp.Objects
 		/// </remarks>
 		public class LeaderLine : ICloneable
 		{
-			internal CadDocument Document { get; set; }
-			private LineType _lineType;
-
-			public LeaderLine() { }
+			/// <summary>
+			/// Gets or sets a <see cref="BlockRecord"/> containig elements
+			/// to be dawn as arrow symbol.
+			/// </summary>
+			[DxfCodeValue(DxfReferenceType.Handle, 341)]
+			public BlockRecord Arrowhead { get; set; }
 
 			/// <summary>
-			/// Get the list of points of this <see cref="LeaderLine"/>.
+			/// Arrowhead size
 			/// </summary>
-			public IList<XYZ> Points { get; private set; } = new List<XYZ>();
+			[DxfCodeValue(40)]
+			public double ArrowheadSize { get; set; }
 
 			/// <summary>
 			/// Break info count
@@ -32,28 +35,10 @@ namespace ACadSharp.Objects
 			public int BreakInfoCount { get; set; }
 
 			/// <summary>
-			/// Segment index
-			/// </summary>
-			[DxfCodeValue(90)]
-			public int SegmentIndex { get; set; }
-
-			/// <summary>
-			/// Start/end point pairs
-			/// </summary>
-			public IList<StartEndPointPair> StartEndPoints { get; private set; } = new List<StartEndPointPair>();
-
-			/// <summary>
 			/// Leader line index.
 			/// </summary>
 			[DxfCodeValue(91)]
 			public int Index { get; set; }
-
-			//R2010
-			/// <summary>
-			/// Leader type
-			/// </summary>
-			[DxfCodeValue(170)]
-			public MultiLeaderPathType PathType { get; set; }
 
 			/// <summary>
 			/// Line color
@@ -98,23 +83,59 @@ namespace ACadSharp.Objects
 			public LineWeightType LineWeight { get; set; }
 
 			/// <summary>
-			/// Arrowhead size
-			/// </summary>
-			[DxfCodeValue(40)]
-			public double ArrowheadSize { get; set; }
-
-			/// <summary>
-			/// Gets or sets a <see cref="BlockRecord"/> containig elements
-			/// to be dawn as arrow symbol.
-			/// </summary>
-			[DxfCodeValue(DxfReferenceType.Handle, 341)]
-			public BlockRecord Arrowhead { get; set; }
-
-			/// <summary>
 			/// Override flags
 			/// </summary>
 			[DxfCodeValue(93)]
 			public LeaderLinePropertOverrideFlags OverrideFlags { get; set; }
+
+			//R2010
+			/// <summary>
+			/// Leader type
+			/// </summary>
+			[DxfCodeValue(170)]
+			public MultiLeaderPathType PathType { get; set; }
+
+			/// <summary>
+			/// Get the list of points of this <see cref="LeaderLine"/>.
+			/// </summary>
+			public IList<XYZ> Points { get; private set; } = new List<XYZ>();
+
+			/// <summary>
+			/// Segment index
+			/// </summary>
+			[DxfCodeValue(90)]
+			public int SegmentIndex { get; set; }
+
+			/// <summary>
+			/// Start/end point pairs
+			/// </summary>
+			public IList<StartEndPointPair> StartEndPoints { get; private set; } = new List<StartEndPointPair>();
+
+			internal CadDocument Document { get; set; }
+
+			private LineType _lineType;
+
+			public LeaderLine()
+			{ }
+
+			public void AssignDocument(CadDocument doc)
+			{
+				this.Document = doc;
+
+				if (_lineType != null)
+				{
+					if (doc.LineTypes.TryGetValue(_lineType.Name, out LineType existing))
+					{
+						this._lineType = existing;
+					}
+					else
+					{
+						doc.LineTypes.Add(_lineType);
+					}
+				}
+
+				doc.LineTypes.OnRemove += this.tableOnRemove;
+			}
 
 			public object Clone()
 			{
@@ -136,25 +157,6 @@ namespace ACadSharp.Objects
 				}
 
 				return clone;
-			}
-
-			public void AssignDocument(CadDocument doc)
-			{
-				this.Document = doc;
-
-				if (_lineType != null)
-				{
-					if (doc.LineTypes.TryGetValue(_lineType.Name, out LineType existing))
-					{
-						this._lineType = existing;
-					}
-					else
-					{
-						doc.LineTypes.Add(_lineType);
-					}
-				}
-
-				doc.LineTypes.OnRemove += this.tableOnRemove;
 			}
 
 			public void UassignDocument()
