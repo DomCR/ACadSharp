@@ -16,10 +16,10 @@ namespace ACadSharp.Entities
 			[DxfCodeValue(170)]
 			public bool HasData { get; set; }
 
-			[DxfCodeValue(91)]
+			[DxfCodeValue(90)]
 			public int PropertyFlags { get; set; }
 
-			[DxfCodeValue(90)]
+			[DxfCodeValue(91)]
 			public TableCellStylePropertyFlags PropertyOverrideFlags { get; set; }
 
 			[DxfCodeValue(DxfReferenceType.IsAngle, 40)]

@@ -531,10 +531,12 @@ namespace ACadSharp.IO.DXF
 						this.readLinkedTableRow(row);
 						break;
 					case 1 when this._reader.ValueAsString.Equals(DxfFileToken.FormattedTableDataRow_BEGIN, StringComparison.InvariantCultureIgnoreCase):
-					//break;
+						this.readFormattedTableRow(row);
+						break;
 					case 1 when this._reader.ValueAsString.Equals(DxfFileToken.ObjectTableRowBegin, StringComparison.InvariantCultureIgnoreCase):
-					//end = true;
-					//break;
+
+						end = true;
+						break;
 					default:
 						this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readTableRow)} method.", NotificationType.None);
 						break;
@@ -549,6 +551,66 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return row;
+		}
+
+		private void readTableRow(TableEntity.Row row)
+		{
+			this._reader.ReadNext();
+
+			bool end = false;
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				switch (this._reader.Code)
+				{
+					case 90:
+						//StyleId
+						break;
+					case 309:
+						end = this._reader.ValueAsString.Equals("TABLEROW_END", StringComparison.InvariantCultureIgnoreCase);
+						break;
+					default:
+						this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readTableRow)} method.", NotificationType.None);
+						break;
+				}
+
+				if (end)
+				{
+					break;
+				}
+
+				this._reader.ReadNext();
+			}
+		}
+
+		private void readFormattedTableRow(TableEntity.Row row)
+		{
+			this._reader.ReadNext();
+
+			bool end = false;
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				switch (this._reader.Code)
+				{
+					case 300 when this._reader.ValueAsString.Equals("ROWTABLEFORMAT", StringComparison.InvariantCultureIgnoreCase):
+						break;
+					case 1 when this._reader.ValueAsString.Equals("TABLEFORMAT_BEGIN", StringComparison.InvariantCultureIgnoreCase):
+						this.readStyleOverride(new CadCellStyleTemplate(row.CellStyleOverride));
+						break;
+					case 309:
+						end = this._reader.ValueAsString.Equals("FORMATTEDTABLEDATAROW_END", StringComparison.InvariantCultureIgnoreCase);
+						break;
+					default:
+						this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readFormattedTableRow)} method.", NotificationType.None);
+						break;
+				}
+
+				if (end)
+				{
+					break;
+				}
+
+				this._reader.ReadNext();
+			}
 		}
 
 		private void readTableColumn(TableEntity.Column column)
@@ -780,7 +842,7 @@ namespace ACadSharp.IO.DXF
 				switch (this._reader.Code)
 				{
 					case 1 when this._reader.ValueAsString.Equals("TABLEFORMAT_BEGIN", StringComparison.InvariantCultureIgnoreCase):
-						this.readStyleOverride(cell.StyleOverride);
+						this.readStyleOverride(new CadCellStyleTemplate(cell.StyleOverride));
 						break;
 					case 1 when this._reader.ValueAsString.Equals("CELLSTYLE_BEGIN", StringComparison.InvariantCultureIgnoreCase):
 						this.readCellStyle(new CadCellStyleTemplate());
@@ -1030,11 +1092,8 @@ namespace ACadSharp.IO.DXF
 				{
 					case 300 when this._reader.ValueAsString.Equals("COLUMNTABLEFORMAT", StringComparison.InvariantCultureIgnoreCase):
 						break;
-					case 300:
-						end = true;
-						break;
 					case 1 when this._reader.ValueAsString.Equals("TABLEFORMAT_BEGIN", StringComparison.InvariantCultureIgnoreCase):
-						this.readStyleOverride(column.StyleOverride);
+						this.readStyleOverride(new CadCellStyleTemplate(column.CellStyleOverride));
 						break;
 					case 309:
 						end = this._reader.ValueAsString.Equals(DxfFileToken.FormattedTableDataColumn_END, StringComparison.InvariantCultureIgnoreCase);
@@ -1053,40 +1112,43 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readStyleOverride(TableEntity.CellStyle style)
+		private void readStyleOverride(CadCellStyleTemplate template)
 		{
+			var style = template.Format as TableEntity.CellStyle;
+			var mapstyle = DxfClassMap.Create(style.GetType(), "TABLEFORMAT_BEGIN");
+			var mapformat = DxfClassMap.Create(typeof(TableEntity.ContentFormat), "TABLEFORMAT_BEGIN");
+
 			this._reader.ReadNext();
 
 			bool end = false;
+			TableEntity.CellEdgeFlags currBorder = TableEntity.CellEdgeFlags.Unknown;
 			while (this._reader.DxfCode != DxfCode.Start)
 			{
 				switch (this._reader.Code)
 				{
+					case 95:
+						currBorder = (TableEntity.CellEdgeFlags)this._reader.ValueAsInt;
+						break;
 					case 1 when this._reader.ValueAsString.Equals("TABLEFORMAT_BEGIN", StringComparison.InvariantCultureIgnoreCase):
-						break;
-					case 1:
-						end = true;
-						break;
-					case 90:
-						style.Type = (TableEntity.CellStyleTypeType)this._reader.ValueAsInt;
-						break;
-					case 170:
-						//Has data
 						break;
 					case 300 when this._reader.ValueAsString.Equals("CONTENTFORMAT", StringComparison.InvariantCultureIgnoreCase):
 						readContentFormat(new CadTableCellContentFormatTemplate(new TableEntity.ContentFormat()));
 						break;
 					case 301 when this._reader.ValueAsString.Equals("MARGIN", StringComparison.InvariantCultureIgnoreCase):
-						this.readCellMargin();
+						this.readCellMargin(template);
 						break;
 					case 302 when this._reader.ValueAsString.Equals("GRIDFORMAT", StringComparison.InvariantCultureIgnoreCase):
-						this.readGridFormat();
+						TableEntity.CellBorder border = new TableEntity.CellBorder(currBorder);
+						this.readGridFormat(template, border);
 						break;
 					case 309:
 						end = this._reader.ValueAsString.Equals("TABLEFORMAT_END", StringComparison.InvariantCultureIgnoreCase);
 						break;
 					default:
-						this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readStyleOverride)} method.", NotificationType.None);
+						if (!this.tryAssignCurrentValue(style, mapstyle) && !this.tryAssignCurrentValue(style, mapformat))
+						{
+							this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readStyleOverride)} method.", NotificationType.None);
+						}
 						break;
 				}
 
@@ -1099,8 +1161,10 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readGridFormat()
+		private void readGridFormat(CadCellStyleTemplate template, TableEntity.CellBorder border)
 		{
+			var map = DxfClassMap.Create(border.GetType(), nameof(TableEntity.CellBorder));
+
 			this._reader.ReadNext();
 
 			bool end = false;
@@ -1110,11 +1174,17 @@ namespace ACadSharp.IO.DXF
 				{
 					case 1 when this._reader.ValueAsString.Equals("GRIDFORMAT_BEGIN", StringComparison.InvariantCultureIgnoreCase):
 						break;
+					case 340:
+						template.BorderLinetypePairs.Add(new Tuple<TableEntity.CellBorder, ulong>(border, this._reader.ValueAsHandle));
+						break;
 					case 309:
 						end = this._reader.ValueAsString.Equals("GRIDFORMAT_END", StringComparison.InvariantCultureIgnoreCase);
 						break;
 					default:
-						this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readGridFormat)} method.", NotificationType.None);
+						if (!this.tryAssignCurrentValue(border, map))
+						{
+							this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readGridFormat)} method.", NotificationType.None);
+						}
 						break;
 				}
 
@@ -1127,16 +1197,44 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readCellMargin()
+		private void readCellMargin(CadCellStyleTemplate template)
 		{
+			var style = template.Format as TableEntity.CellStyle;
+
 			this._reader.ReadNext();
 
 			bool end = false;
+			int i = 0;
 			while (this._reader.DxfCode != DxfCode.Start)
 			{
 				switch (this._reader.Code)
 				{
 					case 1 when this._reader.ValueAsString.Equals("CELLMARGIN_BEGIN", StringComparison.InvariantCultureIgnoreCase):
+						break;
+					case 40:
+						switch (i)
+						{
+							case 0:
+								style.VerticalMargin = this._reader.ValueAsDouble;
+								break;
+							case 1:
+								style.HorizontalMargin = this._reader.ValueAsDouble;
+								break;
+							case 2:
+								style.BottomMargin = this._reader.ValueAsDouble;
+								break;
+							case 3:
+								style.RightMargin = this._reader.ValueAsDouble;
+								break;
+							case 4:
+								style.MarginHorizontalSpacing = this._reader.ValueAsDouble;
+								break;
+							case 5:
+								style.MarginVerticalSpacing = this._reader.ValueAsDouble;
+								break;
+						}
+
+						i++;
 						break;
 					case 309:
 						end = this._reader.ValueAsString.Equals("CELLMARGIN_END", StringComparison.InvariantCultureIgnoreCase);

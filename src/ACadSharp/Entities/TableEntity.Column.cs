@@ -19,7 +19,7 @@ namespace ACadSharp.Entities
 			[DxfCodeValue(91)]
 			public int CustomData { get; set; }
 
-			public CellStyle StyleOverride { get; set; } = new();
+			public CellStyle CellStyleOverride { get; set; } = new();
 
 			public List<CustomDataEntry> CustomDataCollection { get; internal set; }
 		}

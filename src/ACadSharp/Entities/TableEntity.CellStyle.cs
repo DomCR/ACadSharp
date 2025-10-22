@@ -42,6 +42,7 @@ namespace ACadSharp.Entities
 
 			public double MarginHorizontalSpacing { get; set; }
 
+			[DxfCodeValue(171)]
 			public MarginFlags MarginOverrideFlags { get; set; }
 
 			public double MarginVerticalSpacing { get; set; }
@@ -50,6 +51,7 @@ namespace ACadSharp.Entities
 
 			public double RightMargin { get; set; }
 
+			[DxfCodeValue(92)]
 			public TableCellStylePropertyFlags TableCellStylePropertyFlags { get; set; }
 
 			public CellBorder TopBorder { get; set; } = new(CellEdgeFlags.Right);

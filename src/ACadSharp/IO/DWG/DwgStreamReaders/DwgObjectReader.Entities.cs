@@ -217,7 +217,7 @@ namespace ACadSharp.IO.DWG
 				}
 
 				//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the column.
-				CadCellStyleTemplate colStyleTemplate = new(column.StyleOverride);
+				CadCellStyleTemplate colStyleTemplate = new(column.CellStyleOverride);
 				this.readCellStyle(colStyleTemplate);
 
 				//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
