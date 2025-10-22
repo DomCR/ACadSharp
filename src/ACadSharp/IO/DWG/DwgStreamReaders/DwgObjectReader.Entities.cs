@@ -378,7 +378,7 @@ namespace ACadSharp.IO.DWG
 				//Format String TV 300
 				value.Format = this._mergedReaders.ReadVariableText();
 				//Value String TV 302
-				value.FormatedValue = this._mergedReaders.ReadVariableText();
+				value.FormattedValue = this._mergedReaders.ReadVariableText();
 			}
 		}
 
