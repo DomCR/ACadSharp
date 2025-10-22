@@ -534,7 +534,7 @@ namespace ACadSharp.IO.DXF
 						this.readFormattedTableRow(row);
 						break;
 					case 1 when this._reader.ValueAsString.Equals(DxfFileToken.ObjectTableRowBegin, StringComparison.InvariantCultureIgnoreCase):
-
+						this.readTableRow(row);
 						end = true;
 						break;
 					default:
@@ -562,8 +562,11 @@ namespace ACadSharp.IO.DXF
 			{
 				switch (this._reader.Code)
 				{
+					case 40:
+						row.Height = this._reader.ValueAsDouble;
+						break;
 					case 90:
-						//StyleId
+						//styleID
 						break;
 					case 309:
 						end = this._reader.ValueAsString.Equals("TABLEROW_END", StringComparison.InvariantCultureIgnoreCase);
@@ -690,19 +693,29 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readLinkedTableRow(TableEntity.Row column)
+		private void readLinkedTableRow(TableEntity.Row row)
 		{
 			this._reader.ReadNext();
 
 			bool end = false;
 			while (this._reader.DxfCode != DxfCode.Start)
 			{
+				if (this._reader.Code == 40 && this._reader.ValueAsDouble == 7.491035367212169)
+				{
+
+				}
+
 				switch (this._reader.Code)
 				{
 					case 1 when this._reader.ValueAsString.Equals(DxfFileToken.LinkedTableDataRow_BEGIN, StringComparison.InvariantCultureIgnoreCase):
 						break;
 					case 90:
-						column.CustomData = this._reader.ValueAsInt;
+						if (this._reader.Position == 49606)
+						{
+						}
+						break;
+					case 91:
+						row.CustomData = this._reader.ValueAsInt;
 						break;
 					case 300 when this._reader.ValueAsString.Equals(DxfFileToken.ObjectCell, StringComparison.InvariantCultureIgnoreCase):
 						this.readCell();
@@ -1264,9 +1277,6 @@ namespace ACadSharp.IO.DXF
 				switch (this._reader.Code)
 				{
 					case 1 when this._reader.ValueAsString.Equals("DATAMAP_BEGIN", StringComparison.InvariantCultureIgnoreCase):
-						break;
-					case 1:
-						end = true;
 						break;
 					case 90:
 						ndata = this._reader.ValueAsInt;
