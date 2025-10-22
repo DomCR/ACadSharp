@@ -467,7 +467,7 @@ namespace ACadSharp.IO.DXF
 					tmp.CurrentCell.MergedValue = this._reader.ValueAsInt;
 					return true;
 				case 174:
-					tmp.CurrentCell.Autofit = this._reader.ValueAsBool;
+					tmp.CurrentCell.AutoFit = this._reader.ValueAsBool;
 					return true;
 				case 175:
 					tmp.CurrentCell.BorderWidth = this._reader.ValueAsInt;

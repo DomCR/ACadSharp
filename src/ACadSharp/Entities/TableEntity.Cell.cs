@@ -10,10 +10,10 @@ namespace ACadSharp.Entities
 		public class Cell
 		{
 			/// <summary>
-			/// Boolean flag indicating if the autofit option is set for the cell.
+			/// Boolean flag indicating if the auto fit option is set for the cell.
 			/// </summary>
 			[DxfCodeValue(174)]
-			public bool Autofit { get; set; }
+			public bool AutoFit { get; set; }
 
 			/// <summary>
 			/// Cell border height.

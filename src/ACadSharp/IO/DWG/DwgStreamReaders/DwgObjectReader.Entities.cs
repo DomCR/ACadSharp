@@ -545,8 +545,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//BL 92 Has linked data flags, 0 = false, 1 = true If has linked data
-			var data = this._mergedReaders.ReadBitLong();
-			cell.HasLinkedData = data == 1;
+			cell.HasLinkedData = this._mergedReaders.ReadBitLong() == 1;
 			if (cell.HasLinkedData)
 			{
 				//H 340 Handle to data link object (hard pointer).
