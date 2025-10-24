@@ -467,7 +467,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(51, style.StartAngle, map);
 			this._writer.Write(52, style.EndAngle, map);
-			this._writer.Write(71, (short)style.Elements.Count, map);
+			this._writer.Write(71, (short)style.Elements.Count(), map);
 			foreach (MLineStyle.Element element in style.Elements)
 			{
 				this._writer.Write(49, element.Offset, map);

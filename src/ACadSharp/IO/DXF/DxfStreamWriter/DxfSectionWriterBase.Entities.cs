@@ -775,7 +775,7 @@ namespace ACadSharp.IO.DXF
 
 			if (mLine.Style != null)
 			{
-				this._writer.Write(73, (short)mLine.Style.Elements.Count);
+				this._writer.Write(73, (short)mLine.Style.Elements.Count());
 			}
 
 			this._writer.Write(10, mLine.StartPoint, map);

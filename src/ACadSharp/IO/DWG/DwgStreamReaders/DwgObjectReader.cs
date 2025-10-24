@@ -5596,7 +5596,7 @@ namespace ACadSharp.IO.DWG
 				}
 
 				template.ElementTemplates.Add(elementTemplate);
-				mlineStyle.Elements.Add(element);
+				mlineStyle.AddElement(element);
 			}
 
 			return template;
