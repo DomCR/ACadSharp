@@ -239,7 +239,7 @@ namespace ACadSharp.IO.DWG
 		{
 			throw new NotImplementedException();
 		}
-		public int ReadSignedModularChar()
+		public long ReadSignedModularChar()
 		{
 			throw new NotImplementedException();
 		}
