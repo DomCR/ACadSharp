@@ -88,8 +88,7 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		private readonly IDwgStreamReader _crcReader;
 
-		private readonly Stream _crcStream;
-		private readonly byte[] _crcStreamBuffer;
+		private readonly MemoryStream _memoryStream;
 
 		public DwgObjectReader(
 			ACadVersion version,
@@ -107,20 +106,29 @@ namespace ACadSharp.IO.DWG
 			this._map = new Dictionary<ulong, long>(handleMap);
 			this._classes = classes.ToDictionary(x => x.ClassNumber, x => x);
 
-			//Initialize the crc stream
-			//RS : CRC for the data section, starting after the sentinel. Use 0xC0C1 for the initial value
-			if (this._builder.Configuration.CrcCheck)
-				this._crcStream = new CRC8StreamHandler(this._reader.Stream, 0xC0C1);
-			else
-				this._crcStream = this._reader.Stream;
-
-			this._crcStreamBuffer = new byte[this._crcStream.Length];
-			this._crcStream.Read(this._crcStreamBuffer, 0, this._crcStreamBuffer.Length);
-
-			this._crcStream.Position = 0L;
+			if (this._reader.Stream is MemoryStream memoryStream)
+			{
+				try
+				{
+					var buffer = memoryStream.GetBuffer();
+					this._memoryStream = memoryStream;
+				}
+				catch
+				{
+					// Ignore, will be handled below
+				}
+			}
+			
+			if (this._memoryStream == null)
+			{
+				this._memoryStream = HugeMemoryStream.Create(this._reader.Stream.Length);
+				this._reader.Stream.Position = 0;
+				this._reader.Stream.CopyTo(this._memoryStream);
+				this._memoryStream.Position = 0;
+			}
 
 			//Setup the entity handler
-			this._crcReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._crcStream);
+			this._crcReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._memoryStream);
 		}
 
 		/// <summary>
@@ -206,7 +214,7 @@ namespace ACadSharp.IO.DWG
 				ulong handleSectionOffset = (ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize;
 
 				//Create a handler section reader
-				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
 				//set the initial position and get the object type
@@ -215,11 +223,11 @@ namespace ACadSharp.IO.DWG
 
 
 				//Create a handler section reader
-				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._handlesReader.SetPositionInBits((long)handleSectionOffset);
 
 				//Create a text section reader
-				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._textReader.SetPositionByFlag((long)handleSectionOffset - 1);
 
 				this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
@@ -227,10 +235,10 @@ namespace ACadSharp.IO.DWG
 			else
 			{
 				//Create a handler section reader
-				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
-				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._textReader = this._objectReader;
 
 				//set the initial position and get the object type
@@ -720,7 +728,7 @@ namespace ACadSharp.IO.DWG
 
 			if (this._version == ACadVersion.AC1021)
 			{
-				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				//"endbit" of the pre-handles section.
 				this._textReader.SetPositionByFlag(size + this._objectInitialPos - 1);
 			}

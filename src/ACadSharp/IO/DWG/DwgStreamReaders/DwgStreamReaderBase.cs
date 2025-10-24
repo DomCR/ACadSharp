@@ -418,12 +418,12 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
-		public int ReadSignedModularChar()
+		public long ReadSignedModularChar()
 		{
 			//Modular characters are a method of storing compressed integer values. They are used in the object map to
 			//indicate both handle offsets and file location offsets.They consist of a stream of bytes, terminating when
 			//the high bit of the byte is 0.
-			int value;
+			long value;
 
 			if (this.BitShift == 0)
 			{
@@ -443,7 +443,7 @@ namespace ACadSharp.IO.DWG
 				else
 				{
 					int totalShift = 0;
-					int sum = this._lastByte & sbyte.MaxValue;
+					long sum = this._lastByte & sbyte.MaxValue;
 					while (true)
 					{
 						//Shift to apply
@@ -452,13 +452,15 @@ namespace ACadSharp.IO.DWG
 
 						//Check if the highest byte is 0
 						if ((this._lastByte & 0b10000000) != 0)
-							sum |= (this._lastByte & sbyte.MaxValue) << totalShift;
+						{
+							sum |= (long)(this._lastByte & sbyte.MaxValue) << totalShift;
+						}
 						else
 							break;
 					}
 
 					//Drop the flags at the las byte, and add it's value
-					value = sum | (this._lastByte & 0b00111111) << totalShift;
+					value = sum | ((long)(this._lastByte & 0b00111111) << totalShift);
 
 					//Check the sign flag
 					if ((this._lastByte & 0b01000000) > 0U)

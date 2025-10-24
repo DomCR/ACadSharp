@@ -304,7 +304,7 @@ namespace ACadSharp.IO.DWG
 		/// The 4th bit of the final value it will be the sign.
 		/// </remarks>
 		/// <returns></returns>
-		int ReadSignedModularChar();
+		long ReadSignedModularChar();
 
 		/// <summary>
 		/// T : text (bitshort length, followed by the string).
