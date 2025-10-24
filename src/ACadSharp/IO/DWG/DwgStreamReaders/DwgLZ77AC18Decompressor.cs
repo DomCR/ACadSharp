@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace ACadSharp.IO.DWG
 {
@@ -32,10 +33,11 @@ namespace ACadSharp.IO.DWG
 		/// <param name="dst">Destination, decompressed stream.</param>
 		public static void DecompressToDest(Stream src, Stream dst)
 		{
+			var tempBuf = new byte[128];
 			int opcode1 = (byte)src.ReadByte();
 
 			if ((opcode1 & 0xF0) == 0)
-				opcode1 = copy(literalCount(opcode1, src) + 3, src, dst);
+				opcode1 = copy(literalCount(opcode1, src) + 3, src, dst, ref tempBuf);
 
 			//0x11 : Terminates the input stream.
 			while (opcode1 != 0x11)
@@ -69,13 +71,19 @@ namespace ACadSharp.IO.DWG
 				}
 
 				long position = dst.Position;
-				for (long i = compressedBytes + position; position < i; ++position)
+				if (tempBuf.Length < compressedBytes)
 				{
-					dst.Position = position - compOffset;
-					byte value = (byte)dst.ReadByte();
-					dst.Position = position;
-					dst.WriteByte(value);
+					tempBuf = new byte[compressedBytes];
 				}
+				dst.Position = position - compOffset;
+				dst.Read(tempBuf, 0, Math.Min(compressedBytes, compOffset));
+				dst.Position = position;
+				while (compressedBytes > 0)
+				{
+					dst.Write(tempBuf, 0, Math.Min(compressedBytes, compOffset));
+					compressedBytes -= compOffset;
+				}
+
 				//Number of uncompressed or literal bytes to be copied from the input stream, following the addition of the compressed bytes.
 				int litCount = opcode1 & 3;
 				//0x00 : litCount is read as the next Literal Length (see format below)
@@ -88,17 +96,18 @@ namespace ACadSharp.IO.DWG
 
 				//Copy as literal
 				if (litCount > 0U)
-					opcode1 = copy(litCount, src, dst);
+					opcode1 = copy(litCount, src, dst, ref tempBuf);
 			}
 		}
 		
-		private static byte copy(int count, Stream src, Stream dst)
+		private static byte copy(int count, Stream src, Stream dst, ref byte[] tempBuf)
 		{
-			for (int i = 0; i < count; ++i)
+			if (tempBuf.Length < count)
 			{
-				byte b = (byte)src.ReadByte();
-				dst.WriteByte(b);
+				tempBuf = new byte[count];
 			}
+			src.Read(tempBuf, 0, count);
+			dst.Write(tempBuf, 0, count);
 
 			return (byte)src.ReadByte();
 		}
