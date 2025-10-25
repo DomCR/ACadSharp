@@ -90,6 +90,8 @@
 
 		public const string Filter = "AcDbFilter";
 
+		public const string FormattedTableData = "AcDbFormattedTableData";
+
 		public const string GeoData = "AcDbGeoData";
 
 		public const string Group = "AcDbGroup";
@@ -111,6 +113,8 @@
 		public const string LinearDimension = "AcDbRotatedDimension";
 
 		public const string Linetype = "AcDbLinetypeTableRecord";
+
+		public const string LinkedData = "AcDbLinkedData";
 
 		public const string LwPolyline = "AcDbPolyline";
 
@@ -195,6 +199,8 @@
 		public const string TableContent = "AcDbTableContent";
 
 		public const string TableEntity = "AcDbTable";
+
+		public const string LinkedTableData = "AcDbLinkedTableData";
 
 		public const string TableRecord = "AcDbSymbolTableRecord";
 
