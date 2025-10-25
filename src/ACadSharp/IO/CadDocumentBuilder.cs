@@ -135,11 +135,10 @@ namespace ACadSharp.IO
 
 		public void Notify(string message, NotificationType notificationType = NotificationType.None, Exception exception = null)
 		{
-			if(message == "[AcDbLinkedTableData] Unhandled dxf code 40 with value 7.491035367212169")
+			if(message == "[AcDbLinkedTableData] Unhandled dxf code 92 with value 0")
 			{
 
 			}
-
 
 			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, exception));
 		}

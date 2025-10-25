@@ -549,7 +549,7 @@ namespace ACadSharp.IO.DWG
 			if (cell.HasLinkedData)
 			{
 				//H 340 Handle to data link object (hard pointer).
-				this._mergedReaders.HandleReference();
+				template.BlockRecordHandle = this._mergedReaders.HandleReference();
 				//BL 93 Row count.
 				this._mergedReaders.ReadBitLong();
 				//BL 94 Column count.

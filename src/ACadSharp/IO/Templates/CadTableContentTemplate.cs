@@ -7,5 +7,7 @@ namespace ACadSharp.IO.Templates
 		public CadTableContentTemplate() : base(new TableContent()) { }
 
 		public CadTableContentTemplate(TableContent cadObject) : base(cadObject) { }
+
+		public ulong SytleHandle { get; internal set; }
 	}
 }

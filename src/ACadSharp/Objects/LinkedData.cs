@@ -1,4 +1,7 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Objects;
+using System.Collections.Generic;
+using static ACadSharp.Entities.TableEntity;
 
 namespace ACadSharp.Objects
 {
@@ -25,5 +28,35 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(300)]
 		public string Description { get; set; }
+	}
+
+	/// <summary>
+	/// Represents a <see cref="LinkedTableData"/> object.
+	/// </summary>
+	/// <remarks>
+	/// Dxf class name <see cref="DxfSubclassMarker.LinkedTableData"/>
+	/// </remarks>
+	[DxfSubClass(DxfSubclassMarker.LinkedTableData)]
+	public abstract class LinkedTableData : LinkedData
+	{
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.LinkedTableData;
+	}
+
+	/// <summary>
+	/// Represents a <see cref="FormattedTableData"/> object.
+	/// </summary>
+	/// <remarks>
+	/// Dxf class name <see cref="DxfSubclassMarker.FormattedTableData"/>
+	/// </remarks>
+	[DxfSubClass(DxfSubclassMarker.FormattedTableData)]
+	public abstract class FormattedTableData : LinkedTableData
+	{
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.FormattedTableData;
+
+		public List<CellRange> MergedCellRanges { get; set; } = new();
+
+		public CellStyle CellStyleOverride { get; set; } = new();
 	}
 }
