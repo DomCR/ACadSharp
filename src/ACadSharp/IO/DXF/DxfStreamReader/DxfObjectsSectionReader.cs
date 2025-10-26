@@ -606,6 +606,9 @@ namespace ACadSharp.IO.DXF
 					case 91:
 						//Row count
 						break;
+					//Unknown
+					case 92:
+						break;
 					case 300 when this._reader.ValueAsString.Equals(DxfFileToken.ObjectTableColumn, StringComparison.InvariantCultureIgnoreCase):
 						//Read Column
 						this.readTableColumn();
@@ -955,7 +958,6 @@ namespace ACadSharp.IO.DXF
 				this._reader.ReadNext();
 			}
 		}
-
 
 		private void readFormattedTableCell(TableEntity.Cell cell)
 		{
@@ -1470,7 +1472,20 @@ namespace ACadSharp.IO.DXF
 			{
 				switch (this._reader.Code)
 				{
+					case 11:
+					case 21:
+					case 31:
+						//Value as point
+						break;
+					case 91:
+					case 92:
+						//Value as int
+						break;
 					case 140:
+						//Value as double
+						break;
+					case 310:
+						//Value as byte array
 						break;
 					case 304:
 						end = this._reader.ValueAsString.Equals("ACVALUE_END", StringComparison.InvariantCultureIgnoreCase);
