@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Entities;
 using ACadSharp.Objects;
 using System.Collections.Generic;
 using static ACadSharp.Entities.TableEntity;
@@ -41,6 +42,10 @@ namespace ACadSharp.Objects
 	{
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.LinkedTableData;
+
+		public List<TableEntity.Row> Rows { get; } = new();
+
+		public List<TableEntity.Column> Columns { get; } = new();
 	}
 
 	/// <summary>
