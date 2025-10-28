@@ -380,7 +380,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.CurrentDimensionStyle);
 
 			//H: CMLSTYLE (hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.CurrentMLineStyle);
 
 			//R2000+ Only:
 			if (this.R2000Plus)
@@ -843,7 +843,7 @@ namespace ACadSharp.IO.DWG
 				//H: DICTIONARY (MATERIALS) (hard pointer)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 				//H: DICTIONARY (COLORS) (hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.Colors);
 			}
 
 			//R2007 +:
