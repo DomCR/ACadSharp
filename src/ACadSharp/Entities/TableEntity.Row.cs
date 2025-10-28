@@ -13,6 +13,7 @@ namespace ACadSharp.Entities
 			[DxfCodeValue(141)]
 			public double Height { get; set; }
 
+			[DxfCodeValue(90)]
 			public int CustomData { get; set; }
 
 			public CellStyle CellStyleOverride { get; set; } = new();

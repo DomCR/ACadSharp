@@ -4,44 +4,15 @@ namespace ACadSharp.Entities
 {
 	public partial class TableEntity
 	{
-		public enum ValueUnitType
-		{
-			/// <summary>
-			/// No units.
-			/// </summary>
-			NoUnits = 0,
-			/// <summary>
-			/// Distance.
-			/// </summary>
-			Distance = 1,
-			/// <summary>
-			/// Angle.
-			/// </summary>
-			Angle = 2,
-			/// <summary>
-			/// Area.
-			/// </summary>
-			Area = 4,
-			/// <summary>
-			/// Volumne.
-			/// </summary>
-			Volume = 8,
-			/// <summary>
-			/// Currency.
-			/// </summary>
-			Currency = 0x10,
-			/// <summary>
-			/// Percentage.
-			/// </summary>
-			Percentage = 0x20
-		}
-
 		public class CellValue
 		{
+			[DxfCodeValue(90)]
 			public CellValueType ValueType { get; set; }
 
+			[DxfCodeValue(94)]
 			public ValueUnitType Units { get; set; }
 
+			[DxfCodeValue(93)]
 			public int Flags { get; set; }
 
 			public bool IsEmpty
@@ -73,10 +44,11 @@ namespace ACadSharp.Entities
 			public string Format { get; set; }
 
 			[DxfCodeValue(302)]
-			public string FormatedValue { get; set; }
+			public string FormattedValue { get; set; }
 
 			public object Value { get; set; }
 
+			/// <inheritdoc/>
 			public override string ToString()
 			{
 				return this.Value.ToString();

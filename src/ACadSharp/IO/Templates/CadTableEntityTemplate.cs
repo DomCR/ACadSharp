@@ -1,30 +1,24 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.Objects;
-using ACadSharp.Tables;
 using System;
 using System.Collections.Generic;
 using static ACadSharp.Entities.TableEntity;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadTableContentTemplate : CadTemplate<TableContent>
-	{
-		public CadTableContentTemplate() : base(new TableContent()) { }
-
-		public CadTableContentTemplate(TableContent cadObject) : base(cadObject) { }
-	}
-
 	internal class CadTableEntityTemplate : CadInsertTemplate
 	{
-		public ulong? StyleHandle { get; set; }
-
 		public ulong? BlockOwnerHandle { get; set; }
-
-		public ulong? NullHandle { get; internal set; }
 
 		public Cell CurrentCell { get { return this.CurrentCellTemplate.Cell; } }
 
 		public CadTableCellTemplate CurrentCellTemplate { get; private set; }
+
+		// Horizontal cell margin; override applied at the table entity level
+		public double? HorizontalMargin { get; set; }
+
+		public ulong? NullHandle { get; internal set; }
+
+		public ulong? StyleHandle { get; set; }
 
 		public TableEntity TableEntity { get { return this.CadObject as TableEntity; } }
 
@@ -32,9 +26,13 @@ namespace ACadSharp.IO.Templates
 
 		private int _currCellIndex = 0;
 
-		public CadTableEntityTemplate() : base(new TableEntity()) { }
+		public CadTableEntityTemplate() : base(new TableEntity())
+		{
+		}
 
-		public CadTableEntityTemplate(TableEntity table) : base(table) { }
+		public CadTableEntityTemplate(TableEntity table) : base(table)
+		{
+		}
 
 		public void CreateCell(CellType type)
 		{
@@ -57,6 +55,19 @@ namespace ACadSharp.IO.Templates
 			base.build(builder);
 		}
 
+		internal class CadCellStyleTemplate : CadTableCellContentFormatTemplate
+		{
+			public List<Tuple<CellBorder, ulong>> BorderLinetypePairs { get; set; } = new();
+
+			public CadCellStyleTemplate() : base(new())
+			{
+			}
+
+			public CadCellStyleTemplate(CellStyle style) : base(style)
+			{
+			}
+		}
+
 		internal class CadTableAttributeTemplate : ICadTemplate
 		{
 			public ulong? AttDefHandle { get; internal set; }
@@ -74,55 +85,11 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
-		internal class CadTableCellTemplate : ICadTemplate
-		{
-			public ulong? BlockRecordHandle { get; set; }
-
-			public ulong? UnknownHandle { get; internal set; }
-
-			public int StyleId { get; internal set; }
-
-			public double? FormatTextHeight { get; set; }
-
-			public TableEntity.Cell Cell { get; }
-
-			public List<CadTableCellContentTemplate> ContentTemplates { get; } = new();
-
-			public CadTableCellTemplate(TableEntity.Cell cell)
-			{
-				Cell = cell;
-			}
-
-			public void Build(CadDocumentBuilder builder)
-			{
-				throw new System.NotImplementedException();
-			}
-		}
-
-		internal class CadTableCellContentTemplate : ICadTemplate
-		{
-			public ulong? BlockRecordHandle { get; set; }
-
-			public ulong? FieldHandle { get; set; }
-
-			public TableEntity.CellContent Content { get; }
-
-			public CadTableCellContentTemplate(TableEntity.CellContent content)
-			{
-				Content = content;
-			}
-
-			public void Build(CadDocumentBuilder builder)
-			{
-				throw new System.NotImplementedException();
-			}
-		}
-
 		internal class CadTableCellContentFormatTemplate : ICadTemplate
 		{
-			public ulong? TextStyleHandle { get; internal set; }
-
 			public ContentFormat Format { get; }
+
+			public ulong? TextStyleHandle { get; internal set; }
 
 			public CadTableCellContentFormatTemplate(ContentFormat format)
 			{
@@ -135,12 +102,47 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
-		internal class CadCellStyleTemplate : CadTableCellContentFormatTemplate
+		internal class CadTableCellContentTemplate : ICadTemplate
 		{
-			public List<Tuple<CellBorder, ulong>> BorderLinetypePairs { get; set; } = new();
+			public ulong? BlockRecordHandle { get; set; }
 
-			public CadCellStyleTemplate(CellStyle style) : base(style)
+			public TableEntity.CellContent Content { get; }
+
+			public ulong? FieldHandle { get; set; }
+
+			public CadTableCellContentTemplate(TableEntity.CellContent content)
 			{
+				Content = content;
+			}
+
+			public void Build(CadDocumentBuilder builder)
+			{
+				throw new System.NotImplementedException();
+			}
+		}
+
+		internal class CadTableCellTemplate : ICadTemplate
+		{
+			public ulong? BlockRecordHandle { get; set; }
+
+			public TableEntity.Cell Cell { get; }
+
+			public List<CadTableCellContentTemplate> ContentTemplates { get; } = new();
+
+			public double? FormatTextHeight { get; set; }
+
+			public int StyleId { get; internal set; }
+
+			public ulong? UnknownHandle { get; internal set; }
+
+			public CadTableCellTemplate(TableEntity.Cell cell)
+			{
+				Cell = cell;
+			}
+
+			public void Build(CadDocumentBuilder builder)
+			{
+				throw new System.NotImplementedException();
 			}
 		}
 	}

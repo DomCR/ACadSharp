@@ -217,7 +217,7 @@ namespace ACadSharp.IO.DWG
 				}
 
 				//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the column.
-				CadCellStyleTemplate colStyleTemplate = new(column.StyleOverride);
+				CadCellStyleTemplate colStyleTemplate = new(column.CellStyleOverride);
 				this.readCellStyle(colStyleTemplate);
 
 				//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
@@ -378,7 +378,7 @@ namespace ACadSharp.IO.DWG
 				//Format String TV 300
 				value.Format = this._mergedReaders.ReadVariableText();
 				//Value String TV 302
-				value.FormatedValue = this._mergedReaders.ReadVariableText();
+				value.FormattedValue = this._mergedReaders.ReadVariableText();
 			}
 		}
 
@@ -513,9 +513,9 @@ namespace ACadSharp.IO.DWG
 			//BL 91 Border type
 			border.Type = ((BorderType)this._mergedReaders.ReadBitLong());
 			//TC 62 Color
-			border.Color = (this._mergedReaders.ReadCmColor());
+			border.Color = this._mergedReaders.ReadCmColor();
 			//BL 92 Line weight
-			border.LineWeight = ((short)this._mergedReaders.ReadBitLong());
+			border.LineWeight = ((LineWeightType)this._mergedReaders.ReadBitLong());
 			//H 40 Line type (hard pointer)
 			template.BorderLinetypePairs.Add(new Tuple<CellBorder, ulong>(border, this.handleReference()));
 			//BL 93 Invisibility: 1 = invisible, 0 = visible.
@@ -545,12 +545,11 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//BL 92 Has linked data flags, 0 = false, 1 = true If has linked data
-			var data = this._mergedReaders.ReadBitLong();
-			cell.HasLinkedData = data == 1;
+			cell.HasLinkedData = this._mergedReaders.ReadBitLong() == 1;
 			if (cell.HasLinkedData)
 			{
 				//H 340 Handle to data link object (hard pointer).
-				this._mergedReaders.HandleReference();
+				template.BlockRecordHandle = this._mergedReaders.HandleReference();
 				//BL 93 Row count.
 				this._mergedReaders.ReadBitLong();
 				//BL 94 Column count.

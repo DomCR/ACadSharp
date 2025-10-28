@@ -1,6 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using System.Collections.Generic;
-using static ACadSharp.Entities.TableEntity;
 
 namespace ACadSharp.Objects
 {
@@ -13,7 +11,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectTableContent)]
 	[DxfSubClass(DxfSubclassMarker.TableContent)]
-	public class TableContent : NonGraphicalObject
+	public class TableContent : FormattedTableData
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }
@@ -24,14 +22,7 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.TableContent;
 
-		[DxfCodeValue(1)]
-		public override string Name { get => base.Name; set => base.Name = value; }
-
-		[DxfCodeValue(300)]
-		public string Description { get; set; }
-
-		public CellStyle CellStyleOverride { get; set; } = new();
-
-		public List<CellRange> MergedCellRanges { get; set; } = new();
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
+		public TableStyle Style { get; set; } = new();
 	}
 }

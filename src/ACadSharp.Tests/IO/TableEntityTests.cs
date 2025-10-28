@@ -49,6 +49,9 @@ namespace ACadSharp.Tests.IO
 
 			BlockRecord record = table.Block;
 
+			//Table content is stored in XRecord: ACAD_ROUNDTRIP_2008_TABLE_ENTITY
+			//Xrecord handle = 0x11FC
+
 			Assert.NotNull(record);
 			Assert.Equal("*T16", record.Name);
 
