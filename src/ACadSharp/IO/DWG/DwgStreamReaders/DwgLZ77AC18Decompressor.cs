@@ -17,7 +17,7 @@ namespace ACadSharp.IO.DWG
 		public static Stream Decompress(Stream compressed, long decompressedSize)
 		{
 			//Create a new stream
-			MemoryStream memoryStream = new MemoryStream(new byte[decompressedSize]);
+			MemoryStream memoryStream = HugeMemoryStream.Create(decompressedSize);
 
 			//Decompress the stream
 			DecompressToDest(compressed, memoryStream);
