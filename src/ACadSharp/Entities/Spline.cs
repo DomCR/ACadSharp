@@ -210,7 +210,11 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			List<XYZ> vertices = this.PolygonalVertexes(256);
+			List<XYZ> vertices;
+			if (!this.TryPolygonalVertexes(256, out vertices))
+			{
+				vertices = new List<XYZ>(this.FitPoints);
+			}
 
 			return BoundingBox.FromPoints(vertices);
 		}
@@ -353,11 +357,6 @@ namespace ACadSharp.Entities
 			if (this.Degree != 3)
 			{
 				return false;
-			}
-
-			if (this.FitPoints == null)
-			{
-				throw new ArgumentNullException(nameof(this.FitPoints));
 			}
 
 			XYZ[] points = this.FitPoints.ToArray();
