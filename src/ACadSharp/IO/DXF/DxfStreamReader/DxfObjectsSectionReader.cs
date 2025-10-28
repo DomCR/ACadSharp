@@ -17,6 +17,8 @@ namespace ACadSharp.IO.DXF
 	{
 		public delegate bool ReadObjectDelegate<T>(CadTemplate template, DxfMap map) where T : CadObject;
 
+		private bool _blockPointer = false;
+
 		public DxfObjectsSectionReader(IDxfStreamReader reader, DxfDocumentBuilder builder)
 			: base(reader, builder)
 		{
@@ -108,12 +110,12 @@ namespace ACadSharp.IO.DXF
 					CadUnknownNonGraphicalObjectTemplate unknownEntityTemplate = null;
 					if (this._builder.DocumentToBuild.Classes.TryGetByName(this._reader.ValueAsString, out Classes.DxfClass dxfClass))
 					{
-						//this._builder.Notify($"NonGraphicalObject not supported read as an UnknownNonGraphicalObject: {this._reader.ValueAsString}", NotificationType.NotImplemented);
+						this._builder.Notify($"NonGraphicalObject not supported read as an UnknownNonGraphicalObject: {this._reader.ValueAsString}", NotificationType.NotImplemented);
 						unknownEntityTemplate = new CadUnknownNonGraphicalObjectTemplate(new UnknownNonGraphicalObject(dxfClass));
 					}
 					else
 					{
-						//this._builder.Notify($"UnknownNonGraphicalObject not supported: {this._reader.ValueAsString}", NotificationType.NotImplemented);
+						this._builder.Notify($"UnknownNonGraphicalObject not supported: {this._reader.ValueAsString}", NotificationType.NotImplemented);
 					}
 
 					this._reader.ReadNext();
@@ -135,8 +137,6 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private bool _notMove = false;
-
 		protected CadTemplate readObjectCodes<T>(CadTemplate template, ReadObjectDelegate<T> readObject)
 			where T : CadObject
 		{
@@ -153,9 +153,9 @@ namespace ACadSharp.IO.DXF
 						continue;
 				}
 
-				if (this._notMove)
+				if (this._blockPointer)
 				{
-					this._notMove = false;
+					this._blockPointer = false;
 					continue;
 				}
 
@@ -482,19 +482,19 @@ namespace ACadSharp.IO.DXF
 			{
 				case 100 when this._reader.ValueAsString.Equals(DxfSubclassMarker.TableContent, StringComparison.InvariantCultureIgnoreCase):
 					this.readTableContentSubclass(template, map);
-					this._notMove = true;
+					this._blockPointer = true;
 					return true;
 				case 100 when this._reader.ValueAsString.Equals(DxfSubclassMarker.FormattedTableData, StringComparison.InvariantCultureIgnoreCase):
 					this.readFormattedTableDataSubclass(template, map);
-					this._notMove = true;
+					this._blockPointer = true;
 					return true;
 				case 100 when this._reader.ValueAsString.Equals(DxfSubclassMarker.LinkedTableData, StringComparison.InvariantCultureIgnoreCase):
 					this.readLinkedTableDataSubclass(template, map);
-					this._notMove = true;
+					this._blockPointer = true;
 					return true;
 				case 100 when this._reader.ValueAsString.Equals(DxfSubclassMarker.LinkedData, StringComparison.InvariantCultureIgnoreCase):
 					this.readLinkedData(template, map);
-					this._notMove = true;
+					this._blockPointer = true;
 					return true;
 				default:
 					return false;

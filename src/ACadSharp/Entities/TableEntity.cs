@@ -16,6 +16,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityTable)]
 	[DxfSubClass(DxfSubclassMarker.TableEntity)]
+	[Obsolete("TableEntity is in a work in progress")]
 	public partial class TableEntity : Insert
 	{
 		/// <summary>
