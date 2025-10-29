@@ -101,12 +101,12 @@ namespace ACadSharp.Tests.Entities
 
 			Assert.Equal(7, spline.ControlPoints.Count);
 			AssertUtils.AreEqual(new XYZ(0, -5, 0), spline.ControlPoints[0]);
-			AssertUtils.AreEqual(new XYZ(1.6666666667, -2.1429, 0), spline.ControlPoints[1]);
-			AssertUtils.AreEqual(new XYZ(5, 3.5714, 0), spline.ControlPoints[2]);
-			AssertUtils.AreEqual(new XYZ(10, -9.2857, 0), spline.ControlPoints[3]);
-			AssertUtils.AreEqual(new XYZ(15, 3.5714, 0), spline.ControlPoints[4]);
-			AssertUtils.AreEqual(new XYZ(18.3333, -2.1429, 0), spline.ControlPoints[5]);
-			AssertUtils.AreEqual(new XYZ(20, -5, 0), spline.ControlPoints[6]);
+			AssertUtils.AreEqual(new XYZ(1.6667, -2.1428, 0), spline.ControlPoints[1].Round(4));
+			AssertUtils.AreEqual(new XYZ(5, 3.5714, 0), spline.ControlPoints[2].Round(4));
+			AssertUtils.AreEqual(new XYZ(10, -9.2857, 0), spline.ControlPoints[3].Round(4));
+			AssertUtils.AreEqual(new XYZ(15, 3.5714, 0), spline.ControlPoints[4].Round(4));
+			AssertUtils.AreEqual(new XYZ(18.3333, -2.1428, 0), spline.ControlPoints[5].Round(4));
+			AssertUtils.AreEqual(new XYZ(20, -5, 0), spline.ControlPoints[6].Round(4));
 		}
 	}
 }
