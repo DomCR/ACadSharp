@@ -63,7 +63,7 @@ namespace ACadSharp.Entities
 		/// Spline flags.
 		/// </summary>
 		[DxfCodeValue(70)]
-		public SplineFlags Flags { get => _flags; set => _flags = value; }
+		public SplineFlags Flags { get => this._flags; set => this._flags = value; }
 
 		/// <summary>
 		/// Spline flags1.
@@ -71,7 +71,22 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// Only valid for dwg.
 		/// </remarks>
-		public SplineFlags1 Flags1 { get => _flags1; set => _flags1 = value; }
+		public SplineFlags1 Flags1 { get => this._flags1; set => this._flags1 = value; }
+
+		/// <summary>
+		/// Gets a value indicating whether the knot vector has a valid count based on the control points, degree, and closure
+		/// status of the curve.
+		/// </summary>
+		/// <remarks>The expected knot count is calculated as the number of control points plus the degree of the
+		/// curve, adjusted for whether the curve is closed.</remarks>
+		public bool HasValidKnotCount
+		{
+			get
+			{
+				var expected = this.ControlPoints.Count + (this.IsClosed ? 2 : 1) * this.Degree + 1;
+				return this.Knots.Count == expected;
+			}
+		}
 
 		/// <summary>
 		/// Flag whether the spline is closed.
@@ -202,7 +217,7 @@ namespace ACadSharp.Entities
 			clone.ControlPoints = new List<XYZ>(this.ControlPoints);
 			clone.FitPoints = new List<XYZ>(this.FitPoints);
 			clone.Weights = new List<double>(this.Weights);
-			clone.Knots = new List<double>(this.Weights);
+			clone.Knots = new List<double>(this.Knots);
 
 			return clone;
 		}
@@ -238,9 +253,7 @@ namespace ACadSharp.Entities
 				t -= double.Epsilon;
 			}
 
-			var knots = this.Knots.ToArray();
-
-			this.prepare(out XYZ[] controlPts, out double[] weights);
+			this.prepare(out XYZ[] controlPts, out double[] weights, out double[] knots);
 			this.getStartAndEndKnots(knots, out double uStart, out double uEnd);
 
 			double uDelta = (uEnd - uStart) * t;
@@ -264,10 +277,9 @@ namespace ACadSharp.Entities
 				throw new ArgumentOutOfRangeException(nameof(precision), precision, "The precision must be equal or greater than two.");
 			}
 
-			var knots = this.Knots.ToArray();
-			this.prepare(out XYZ[] controlPts, out double[] weights);
-
 			List<XYZ> vertexes = new List<XYZ>();
+
+			this.prepare(out XYZ[] controlPts, out double[] weights, out double[] knots);
 			this.getStartAndEndKnots(knots, out double uStart, out double uEnd);
 
 			if (!this.IsClosed && !this.IsPeriodic)
@@ -342,112 +354,128 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Updates the control points, weights, and knots of a Bezier curve based on the current fit points.
+		/// Updates the spline's control points, knots, and weights based on the current fit points and tangents.
 		/// </summary>
-		/// <remarks>This method calculates the control points, weights, and knot vector for a cubic Bezier curve
-		/// using the fit points provided in the <see cref="FitPoints"/> property. The method supports both straight-line and
-		/// multi-segment Bezier curves. The degree of the curve must be 3, and at least two fit points are
-		/// required.</remarks>
-		/// <returns><see langword="true"/> if the control points, weights, and knots were successfully updated; otherwise, <see
-		/// langword="false"/> if the degree of the curve is not 3.</returns>
-		/// <exception cref="ArgumentNullException">Thrown if the <see cref="FitPoints"/> property is <see langword="null"/>.</exception>
-		/// <exception cref="ArgumentOutOfRangeException">Thrown if the <see cref="FitPoints"/> property contains fewer than two points.</exception>
-		public bool UpdateFromFitPoints()
+		/// <remarks>This method performs the following operations: <list type="bullet"> <item>Validates the spline's
+		/// degree, fit points, and knot parametrization.</item> <item>Generates knots and control points based on the fit
+		/// points and tangents.</item> <item>Refines the tangents iteratively if necessary, up to the specified iteration
+		/// limit.</item> <item>Assigns uniform weights to the control points.</item> </list> The method returns <see
+		/// langword="false"/> if the spline's degree is not 3, if there are fewer than two fit points, if the knot
+		/// parametrization is set to <see cref="KnotParametrization.Custom"/>, or if tangent refinement fails.</remarks>
+		/// <param name="iterationLimit">The maximum number of iterations allowed for refining the tangents. Defaults to <see cref="byte.MaxValue"/>.</param>
+		/// <returns><see langword="true"/> if the spline was successfully updated; otherwise, <see langword="false"/>.</returns>
+		public bool UpdateFromFitPoints(uint iterationLimit = byte.MaxValue)
 		{
-			if (this.Degree != 3)
+			if (this.Degree != 3
+				|| this.FitPoints.Count < 2
+				|| this.KnotParametrization == KnotParametrization.Custom)
 			{
 				return false;
 			}
 
-			XYZ[] points = this.FitPoints.ToArray();
-			int numFitPoints = points.Length;
-			if (numFitPoints < 2)
+			if (this.FitPoints.Count == 2)
 			{
-				throw new ArgumentOutOfRangeException(nameof(this.FitPoints), numFitPoints, "At least two fit points required.");
-			}
-
-			this.ControlPoints.Clear();
-			this.Weights.Clear();
-
-			int n = numFitPoints - 1;
-
-			XYZ firstControlPoint;
-			XYZ secondControlPoint;
-
-			if (n == 1)
-			{
-				// Special case: Bezier curve should be a straight line.
-				firstControlPoint = points[0] + (points[1] - points[0]) / 3.0;
-				secondControlPoint = points[1] + (points[0] - points[1]) / 3.0;
-
-				this.ControlPoints.AddRange([points[0], firstControlPoint, secondControlPoint, points[1]]);
-				this.Weights.AddRange([1, 1, 1, 1]);
-				this.Knots.AddRange(createBezierKnotVector(this.ControlPoints.Count, this.Degree));
+				this.straightLine();
 				return true;
 			}
 
-			// Calculate first Bezier control points
-			// Right hand side vector
-			double[] rhs = new double[n];
+			this.Knots.Clear();
+			this.ControlPoints.Clear();
+			this.Weights.Clear();
 
-			// Set right hand side X values
-			for (int i = 1; i < n - 1; i++)
+			//Compute knots
+			var fitPoints = this.FitPoints.ToArray();
+			double[] knotValues = generateKnotValues(this.KnotParametrization, fitPoints);
+			this.Knots = addSideKnots(this.Degree, knotValues);
+
+			if (this.StartTangent.IsEqual(XYZ.Zero) || this.EndTangent.IsEqual(XYZ.Zero))
 			{
-				rhs[i] = 4.0 * points[i].X + 2.0 * points[i + 1].X;
-			}
-			rhs[0] = points[0].X + 2.0 * points[1].X;
-			rhs[n - 1] = (8.0 * points[n - 1].X + points[n].X) / 2.0;
-			// Get first control points X-values
-			double[] x = getFirstControlPoints(rhs);
+				double epsilon = MathHelper.Epsilon;
+				int lastIndex = knotValues.Length - 1;
 
-			// Set right hand side Y values
-			for (int i = 1; i < n - 1; i++)
-			{
-				rhs[i] = 4.0 * points[i].Y + 2.0 * points[i + 1].Y;
-			}
-			rhs[0] = points[0].Y + 2.0 * points[1].Y;
-			rhs[n - 1] = (8.0 * points[n - 1].Y + points[n].Y) / 2.0;
-			// Get first control points Y-values
-			double[] y = getFirstControlPoints(rhs);
+				//https://dccg.upc.edu/wp-content/uploads/2025/05/3.3-Spline-Interpolation.pdf
+				//Try to manually get the first and last tangent
+				double startScale = 3.0 / (knotValues[1] - knotValues[0]);
+				double endScale = 3.0 / (knotValues[lastIndex] - knotValues[lastIndex - 1]);
 
-			// Set right hand side Z values
-			for (int i = 1; i < n - 1; i++)
-			{
-				rhs[i] = 4.0 * points[i].Z + 2.0 * points[i + 1].Z;
-			}
-			rhs[0] = points[0].Z + 2.0 * points[1].Z;
-			rhs[n - 1] = (8.0 * points[n - 1].Z + points[n].Z) / 2.0;
-			// Get first control points Z-values
-			double[] z = getFirstControlPoints(rhs);
+				XYZ startTangent = startScale * (fitPoints[1] - fitPoints[0] - 0.5 * (fitPoints[2] - fitPoints[1]));
+				XYZ endTangent = endScale * (fitPoints[lastIndex] - fitPoints[lastIndex - 1] - 0.5 * (fitPoints[lastIndex - 1] - fitPoints[lastIndex - 2]));
 
-			// create the curves
-			for (int i = 0; i < n; i++)
-			{
-				// First control point
-				firstControlPoint = new XYZ(x[i], y[i], z[i]);
-
-				// Second control point
-				if (i < n - 1)
+				double startMag = 1.0 / startTangent.ToEnumerable().Sum(v => v * v);
+				double endMag = 1.0 / endTangent.ToEnumerable().Sum(v => v * v);
+				if (double.IsInfinity(startMag) || double.IsInfinity(endMag))
 				{
-					secondControlPoint = new XYZ(
-						2 * points[i + 1].X - x[i + 1],
-						2 * points[i + 1].Y - y[i + 1],
-						2 * points[i + 1].Z - z[i + 1]);
-				}
-				else
-				{
-					secondControlPoint = new XYZ(
-						(points[n].X + x[n - 1]) / 2.0,
-						(points[n].Y + y[n - 1]) / 2.0,
-						(points[n].Z + z[n - 1]) / 2.0);
+					//Found this error in some cases
+					return false;
 				}
 
-				this.ControlPoints.AddRange([points[i], firstControlPoint, secondControlPoint, points[i + 1]]);
-				this.Weights.AddRange([1, 1, 1, 1]);
-				this.Knots.AddRange(createBezierKnotVector(this.ControlPoints.Count, this.Degree));
+				double startDiv = (knotValues[1] + knotValues[2] - 2.0 * knotValues[0]) / (knotValues[1] - knotValues[0]);
+				double endDiv = (2.0 * knotValues[lastIndex] - knotValues[lastIndex - 1] - knotValues[lastIndex - 2]) / (knotValues[lastIndex] - knotValues[lastIndex - 1]);
+				double startDelta = double.MaxValue;
+				double endDelta = double.MaxValue;
+
+				XYZ[] controlPoints = null;
+				var knots = this.Knots.ToArray();
+				do
+				{
+					XYZ lastV1 = startTangent;
+					XYZ lastV2 = endTangent;
+					controlPoints = computeControlPoints(this.Degree, knots, fitPoints, startTangent, endTangent);
+
+					// Update tangents based on new control points, only works for degree 3
+					XYZ startPt1 = controlPoints[0];
+					XYZ startPt2 = controlPoints[1];
+					XYZ startPt3 = controlPoints[2];
+					startTangent = 0.5 * (startPt2 - startPt1 + (startPt3 - startPt1) / startDiv) * startScale;
+
+					double currStartDelta = startDelta;
+					startDelta = startMag * (startTangent - lastV1).ToEnumerable().Sum(v => v * v);
+
+					XYZ endPt1 = controlPoints[controlPoints.Length - 1];
+					XYZ endPt2 = controlPoints[controlPoints.Length - 2];
+					XYZ endPt3 = controlPoints[controlPoints.Length - 3];
+					endTangent = 0.5 * (endPt1 - endPt2 + (endPt1 - endPt3) / endDiv) * endScale;
+
+					double currEndDelta = endDelta;
+					endDelta = endMag * (endTangent - lastV2).ToEnumerable().Sum(v => v * v);
+
+					if ((startDelta >= currStartDelta && endDelta >= currEndDelta)
+						|| --iterationLimit <= 0)
+					{
+						return false;
+					}
+				}
+				while (startDelta + endDelta > epsilon);
+
+				this.ControlPoints.AddRange(controlPoints);
 			}
+			else
+			{
+				this.ControlPoints.AddRange(computeControlPoints(this.Degree, this.Knots.ToArray(), fitPoints, this.StartTangent, this.EndTangent));
+			}
+
+			this.Weights = Enumerable.Repeat(1.0d, this.ControlPoints.Count).ToList();
 
 			return true;
+		}
+
+		private static List<double> addSideKnots(int degree, double[] knots)
+		{
+			List<double> list = new List<double>();
+			for (int i = 0; i < degree; i++)
+			{
+				list.Add(knots[0]);
+			}
+
+			list.AddRange(knots);
+
+			double item = list[list.Count - 1];
+			for (int j = 0; j < degree; j++)
+			{
+				list.Add(item);
+			}
+
+			return list;
 		}
 
 		private static XYZ c(XYZ[] ctrlPoints, double[] weights, double[] knots, int degree, double u)
@@ -469,7 +497,65 @@ namespace ACadSharp.Entities
 				return XYZ.Zero;
 			}
 
-			return (1.0 / denominatorSum) * vectorSum;
+			return 1.0 / denominatorSum * vectorSum;
+		}
+
+		private static XYZ[] computeControlPoints(
+			int degree,
+			double[] knots,
+			IList<XYZ> fitPoints,
+			XYZ startTangent, XYZ endTangent)
+		{
+			int nfitPoints = fitPoints.Count - 1;
+			XYZ[] controlPoints = new XYZ[nfitPoints + degree];
+
+			// Set endpoints and tangent control points
+			controlPoints[0] = fitPoints[0];
+			controlPoints[1] = fitPoints[0] + startTangent * ((knots[4] - knots[3]) / 3.0);
+			controlPoints[nfitPoints + 2] = fitPoints[nfitPoints];
+			controlPoints[nfitPoints + 1] = fitPoints[nfitPoints] - endTangent * ((knots[nfitPoints + 3] - knots[nfitPoints + 2]) / 3.0);
+
+			if (nfitPoints > 1)
+			{
+				var basis = new double[4];
+				var factors = new double[nfitPoints + 1];
+
+				// Precompute basis for first interior point
+				evaluateBasisFunctions(degree, knots, 4, knots[4], basis);
+				double denom = basis[1];
+				controlPoints[2] = (fitPoints[1] - basis[0] * controlPoints[1]) / denom;
+
+				// Forward sweep for interior control points
+				for (int i = 3; i < nfitPoints; i++)
+				{
+					factors[i] = basis[2] / denom;
+					evaluateBasisFunctions(degree, knots, i + 2, knots[i + 2], basis);
+					denom = basis[1] - basis[0] * factors[i];
+					controlPoints[i] = (fitPoints[i - 1] - basis[0] * controlPoints[i - 1]) / denom;
+				}
+
+				// Last interior control point
+				factors[nfitPoints] = basis[2] / denom;
+				evaluateBasisFunctions(degree, knots, nfitPoints + 2, knots[nfitPoints + 2], basis);
+				double denomLast = basis[1];
+				double numLeft = basis[0];
+				double factorLast = factors[nfitPoints];
+				controlPoints[nfitPoints] = (fitPoints[nfitPoints - 1] - basis[2] * controlPoints[nfitPoints + 1] - numLeft * controlPoints[nfitPoints - 1]) / (denomLast - numLeft * factorLast);
+
+				// Backward substitution for tridiagonal system
+				if (nfitPoints > 2)
+				{
+					for (int j = nfitPoints - 1; j >= 2; j--)
+					{
+						controlPoints[j] -= factors[j + 1] * controlPoints[j + 1];
+					}
+				}
+				else
+				{
+					controlPoints[nfitPoints] *= 0.75;
+				}
+			}
+			return controlPoints;
 		}
 
 		private static double computeNurb(double[] knots, int i, int p, double u)
@@ -497,45 +583,6 @@ namespace ACadSharp.Entities
 			}
 
 			return leftCoefficient * computeNurb(knots, i, p - 1, u) + rightCoefficient * computeNurb(knots, i + 1, p - 1, u);
-		}
-
-		private static double[] createBezierKnotVector(int numControlPoints, int degree)
-		{
-			// create knot vector
-			int numKnots = numControlPoints + degree + 1;
-			double[] knots = new double[numKnots];
-
-			int np = degree + 1;
-			int nc = numKnots / np;
-			double fact = 1.0 / nc;
-			int index = 1;
-
-			for (int i = 0; i < numKnots;)
-			{
-				double knot;
-
-				if (i < np)
-				{
-					knot = 0.0;
-				}
-				else if (i >= numKnots - np)
-				{
-					knot = 1.0;
-				}
-				else
-				{
-					knot = fact * index;
-					index += 1;
-				}
-
-				for (int j = 0; j < np; j++)
-				{
-					knots[i] = knot;
-					i += 1;
-				}
-			}
-
-			return knots;
 		}
 
 		private static double[] createKnotVector(int numControlPoints, int degree, bool isPeriodic)
@@ -580,27 +627,81 @@ namespace ACadSharp.Entities
 			return knots;
 		}
 
-		private static double[] getFirstControlPoints(double[] rhs)
+		private static void evaluateBasisFunctions(int degree, double[] knots, int knotIndex, double u, double[] result)
 		{
-			int n = rhs.Length;
-			double[] x = new double[n]; // Solution vector.
-			double[] tmp = new double[n]; // Temp workspace.
+			//https://www.itwinjs.org/reference/core-geometry/bspline/knotvector/evaluatebasisfunctions/
+			var leftBasis = new double[degree + 1];
+			var rightBasis = new double[degree + 1];
 
-			double b = 2.0;
-			x[0] = rhs[0] / b;
-			for (int i = 1; i < n; i++) // Decomposition and forward substitution.
+			result[0] = 1.0;
+			for (int i = 0; i < degree; i++)
 			{
-				tmp[i] = 1 / b;
-				b = (i < n - 1 ? 4.0 : 3.5) - tmp[i];
-				x[i] = (rhs[i] - x[i - 1]) / b;
+				leftBasis[i] = u - knots[knotIndex - i];
+				rightBasis[i] = knots[knotIndex + i + 1] - u;
+				double carry = 0.0;
+				for (int j = 0; j <= i; j++)
+				{
+					double fraction = result[j] / (rightBasis[j] + leftBasis[i - j]);
+					result[j] = carry + rightBasis[j] * fraction;
+					carry = leftBasis[i - j] * fraction;
+				}
+				result[i + 1] = carry;
+			}
+		}
+
+		private static double[] generateKnots(XYZ[] fitPoints, bool applySqrt)
+		{
+			double[] list = new double[fitPoints.Length];
+			double init = 0.0;
+			XYZ pt = XYZ.NaN;
+			for (int i = 0; i < fitPoints.Length; i++)
+			{
+				XYZ fp = fitPoints[i];
+				if (!pt.IsNaN())
+				{
+					if (applySqrt)
+					{
+						init += System.Math.Sqrt((fp - pt).GetLength());
+					}
+					else
+					{
+						init += (fp - pt).GetLength();
+					}
+				}
+
+				list[i] = init;
+				pt = fp;
 			}
 
-			for (int i = 1; i < n; i++)
+			return list;
+		}
+
+		private static double[] generateKnotsUniform(int fitPoints)
+		{
+			double[] list = new double[fitPoints];
+			for (int i = 0; i < fitPoints; i++)
 			{
-				x[n - i - 1] -= tmp[n - i] * x[n - i]; // Back substitution.
+				list[i] = i;
 			}
 
-			return x;
+			return list;
+		}
+
+		private static double[] generateKnotValues(KnotParametrization parametrization, XYZ[] fitPoints)
+		{
+			switch (parametrization)
+			{
+				case KnotParametrization.Chord:
+					return generateKnots(fitPoints, false);
+				case KnotParametrization.SquareRoot:
+					return generateKnots(fitPoints, true);
+				case KnotParametrization.Uniform:
+					return generateKnotsUniform(fitPoints.Length);
+				//Custom cannot be processed
+				case KnotParametrization.Custom:
+				default:
+					return [];
+			}
 		}
 
 		private void getStartAndEndKnots(double[] knots, out double uStart, out double uEnd)
@@ -622,41 +723,11 @@ namespace ACadSharp.Entities
 			}
 		}
 
-		[Obsolete]
-		private double n(int i, int k, double u)
-		{
-			// Bspline basis function N_{i,k}(u)
-			// u = parameter, ranges from lowest knot value to highest knot value
-			// k is the spline degree
-			// i ranges from 0 to (m-1) with m is the number of control points
-			if (k == 0)
-			{
-				if ((this.Knots[i] <= u) && (u <= this.Knots[i + 1]))
-					return 1;
-				else
-					return 0;
-			}
-			else
-			{
-				double memb1, memb2;
-				if (this.Knots[i + k] == this.Knots[i])
-					memb1 = 0;
-				else
-					memb1 = ((u - this.Knots[i]) / (this.Knots[i + k] - this.Knots[i])) * n(i, k - 1, u);
-
-				if (this.Knots[i + k + 1] == this.Knots[i + 1])
-					memb2 = 0;
-				else
-					memb2 = ((this.Knots[i + k + 1] - u) / (this.Knots[i + k + 1] - this.Knots[i + 1])) * n(i + 1, k - 1, u);
-				return memb1 + memb2;
-			}
-		}
-
-		private void prepare(out XYZ[] controlPts, out double[] weights)
+		private void prepare(out XYZ[] controlPts, out double[] weights, out double[] knots)
 		{
 			var c = this.ControlPoints.ToArray();
 			var w = this.Weights.ToArray();
-			var knots = this.Knots.ToArray();
+			knots = this.Knots.ToArray();
 
 			// control points
 			int numCtrlPoints = c.Length;
@@ -666,37 +737,16 @@ namespace ACadSharp.Entities
 			}
 
 			// weights
-			if (!w.Any() || w.Length != numCtrlPoints)
+			if (w.Length == 0 || w.Length != numCtrlPoints)
 			{
 				// give the default 1.0 to the control points weights
-				w = new double[numCtrlPoints];
-				for (int i = 0; i < numCtrlPoints; i++)
-				{
-					w[i] = 1.0;
-				}
+				w = Enumerable.Repeat(1.0d, this.ControlPoints.Count).ToArray();
 			}
 
 			// knots
-			if (!knots.Any())
+			if (knots.Length == 0 || !this.HasValidKnotCount)
 			{
 				knots = createKnotVector(numCtrlPoints, this.Degree, this.IsPeriodic);
-			}
-			else
-			{
-				int numKnots;
-				if (this.IsPeriodic)
-				{
-					numKnots = numCtrlPoints + 2 * this.Degree + 1;
-				}
-				else
-				{
-					numKnots = numCtrlPoints + this.Degree + 1;
-				}
-
-				if (knots.Length != numKnots)
-				{
-					throw new ArgumentException("Invalid number of knots.");
-				}
 			}
 
 			if (this.IsPeriodic)
@@ -738,6 +788,25 @@ namespace ACadSharp.Entities
 				uStart = knots[0];
 				uEnd = knots[knots.Length - 1];
 			}
+		}
+
+		private void straightLine()
+		{
+			// Special case: Bezier curve should be a straight line.
+			var fitPoints = this.FitPoints.ToArray();
+
+			this.Knots.Clear();
+			this.Knots.AddRange(addSideKnots(this.Degree, generateKnotValues(this.KnotParametrization, fitPoints)));
+
+			this.ControlPoints.Clear();
+			XYZ v = (fitPoints[1] - fitPoints[0]) / 3.0;
+			this.ControlPoints.Add(fitPoints[0]);
+			this.ControlPoints.Add(fitPoints[0] + v);
+			this.ControlPoints.Add(fitPoints[1] - v);
+			this.ControlPoints.Add(fitPoints[1]);
+
+			this.Weights.Clear();
+			this.Weights.AddRange([1, 1, 1, 1]);
 		}
 	}
 }
