@@ -96,7 +96,7 @@ namespace ACadSharp.Tables
 		/// <inheritdoc/>
 		public TextStyle(string name) : base(name)
 		{
-			this.Flags = StyleFlags.Referenced;
+			this.Flags = StyleFlags.XrefDependent;
 		}
 	}
 }
