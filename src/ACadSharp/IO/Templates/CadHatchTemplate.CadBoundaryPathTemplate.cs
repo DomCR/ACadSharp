@@ -7,7 +7,7 @@ namespace ACadSharp.IO.Templates
 	{
 		public class CadBoundaryPathTemplate : ICadTemplate
 		{
-			public Hatch.BoundaryPath Path { get; set; }
+			public Hatch.BoundaryPath Path { get; set; } = new();
 
 			public HashSet<ulong> Handles { get; set; } = new();
 
@@ -15,11 +15,6 @@ namespace ACadSharp.IO.Templates
 
 			public void Build(CadDocumentBuilder builder)
 			{
-				if (this.Path == null)
-				{
-					return;
-				}
-
 				foreach (var handle in this.Handles)
 				{
 					if (builder.TryGetCadObject(handle, out Entity entity))

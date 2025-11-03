@@ -53,7 +53,8 @@ namespace ACadSharp.Entities
 				/// <inheritdoc/>
 				public override void ApplyTransform(Transform transform)
 				{
-					throw new System.NotImplementedException();
+					this.Center = transform.ApplyTransform(this.Center.Convert<XYZ>()).Convert<XY>();
+					this.MajorAxisEndPoint = transform.ApplyTransform(this.MajorAxisEndPoint.Convert<XYZ>()).Convert<XY>();
 				}
 
 				/// <inheritdoc/>
