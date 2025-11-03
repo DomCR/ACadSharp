@@ -41,6 +41,24 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Arc;
 
+		/// <summary>
+		/// Sweep of the arc, in radians.
+		/// </summary>
+		public double Sweep
+		{
+			get
+			{
+				double start = this.StartAngle;
+				double end = this.EndAngle;
+				if (end < start)
+				{
+					end += MathHelper.TwoPI;
+				}
+
+				return start - end;
+			}
+		}
+
 		/// <inheritdoc/>
 		public Arc() : base() { }
 

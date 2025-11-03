@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Types.Units;
+using CSMath;
 using System;
 
 //	TODO should the described coupling of properties be implemented in this class,
@@ -474,7 +475,8 @@ namespace ACadSharp.Tables
 			set
 			{
 				//5 - 90
-				if (value < CSMath.MathHelper.DegToRad(5) || value > Math.PI / 2)
+				var rounded = Math.Round(value, 6);
+				if (rounded <= MathHelper.DegToRad(5) || rounded >= MathHelper.HalfPI)
 				{
 					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(this.JoggedRadiusDimensionTransverseSegmentAngle)} must be in range of 5 to 90 degrees.");
 				}

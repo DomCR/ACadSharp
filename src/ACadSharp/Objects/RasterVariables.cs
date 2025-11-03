@@ -42,7 +42,7 @@ namespace ACadSharp.Objects
 		/// AutoCAD units for inserting images. <br/>
 		/// This is what one AutoCAD unit is equal to for the purpose of inserting and scaling images with an associated resolution.
 		/// </summary>
-		[DxfCodeValue(92)]
+		[DxfCodeValue(72)]
 		public ImageUnits Units { get; set; }
 
 		/// <inheritdoc/>

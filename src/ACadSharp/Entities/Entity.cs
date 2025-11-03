@@ -291,42 +291,10 @@ namespace ACadSharp.Entities
 			return transPoints;
 		}
 
-		protected List<XYZ> applyRotation(IEnumerable<XYZ> points, XYZ zAxis)
-		{
-			if (points == null)
-			{
-				throw new ArgumentNullException(nameof(points));
-			}
-
-			Matrix3 trans = Matrix3.ArbitraryAxis(zAxis);
-			List<XYZ> transPoints;
-			transPoints = new List<XYZ>();
-			foreach (XYZ p in points)
-			{
-				transPoints.Add(trans * p);
-			}
-			return transPoints;
-		}
-
-		protected XYZ applyRotation(XYZ points, XYZ zAxis)
-		{
-			Matrix4 trans = Matrix4.GetArbitraryAxis(zAxis).Transpose();
-			return trans * points;
-		}
-
 		protected XYZ applyWorldMatrix(XYZ xyz, Transform transform, Matrix3 transOW, Matrix3 transWO)
 		{
 			XYZ v = transOW * xyz;
 			v = transform.ApplyTransform(v);
-			v = transWO * v;
-			return v;
-		}
-
-		protected XYZ applyWorldMatrix(XYZ xyz, XYZ normal, XYZ newNormal)
-		{
-			var transOW = Matrix3.ArbitraryAxis(normal).Transpose();
-			var transWO = Matrix3.ArbitraryAxis(newNormal);
-			XYZ v = transOW * xyz;
 			v = transWO * v;
 			return v;
 		}

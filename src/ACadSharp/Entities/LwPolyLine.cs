@@ -1,8 +1,8 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
 using CSUtilities.Extensions;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -83,12 +83,37 @@ namespace ACadSharp.Entities
 		/// Vertices that form this LwPolyline
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 90)]
-		public List<Vertex> Vertices { get; set; } = new List<Vertex>();
+		public List<Vertex> Vertices { get; private set; } = new List<Vertex>();
 
 		/// <inheritdoc/>
 		IEnumerable<IVertex> IPolyline.Vertices { get { return this.Vertices; } }
 
 		private LwPolylineFlags _flags;
+
+		/// <inheritdoc/>
+		public LwPolyline() : base() { }
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="LwPolyline"/> class with the specified vertices.
+		/// </summary>
+		/// <remarks>The provided <paramref name="vertices"/> are added to the polyline in the order they appear in
+		/// the collection.</remarks>
+		/// <param name="vertices">A collection of <see cref="Vertex"/> objects that define the vertices of the polyline.</param>
+		public LwPolyline(params IEnumerable<Vertex> vertices)
+		{
+			this.Vertices.AddRange(vertices);
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="LwPolyline"/> class with the specified vertices.
+		/// </summary>
+		/// <remarks>This constructor allows you to create a lightweight polyline by specifying its vertices as a
+		/// collection of <see cref="XY"/> points. The vertices are internally converted to <see cref="Vertex"/>
+		/// objects.</remarks>
+		/// <param name="vertices">A collection of <see cref="XY"/> points representing the vertices of the polyline. Each point defines a vertex in
+		/// the order it appears in the collection.</param>
+		public LwPolyline(params IEnumerable<XY> vertices)
+			: this(vertices.Select(v => new Vertex(v))) { }
 
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)

@@ -88,8 +88,7 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		private readonly IDwgStreamReader _crcReader;
 
-		private readonly Stream _crcStream;
-		private readonly byte[] _crcStreamBuffer;
+		private readonly MemoryStream _memoryStream;
 
 		public DwgObjectReader(
 			ACadVersion version,
@@ -107,20 +106,29 @@ namespace ACadSharp.IO.DWG
 			this._map = new Dictionary<ulong, long>(handleMap);
 			this._classes = classes.ToDictionary(x => x.ClassNumber, x => x);
 
-			//Initialize the crc stream
-			//RS : CRC for the data section, starting after the sentinel. Use 0xC0C1 for the initial value
-			if (this._builder.Configuration.CrcCheck)
-				this._crcStream = new CRC8StreamHandler(this._reader.Stream, 0xC0C1);
-			else
-				this._crcStream = this._reader.Stream;
-
-			this._crcStreamBuffer = new byte[this._crcStream.Length];
-			this._crcStream.Read(this._crcStreamBuffer, 0, this._crcStreamBuffer.Length);
-
-			this._crcStream.Position = 0L;
+			if (this._reader.Stream is MemoryStream memoryStream)
+			{
+				try
+				{
+					var buffer = memoryStream.GetBuffer();
+					this._memoryStream = memoryStream;
+				}
+				catch
+				{
+					// Ignore, will be handled below
+				}
+			}
+			
+			if (this._memoryStream == null)
+			{
+				this._memoryStream = HugeMemoryStream.Create(this._reader.Stream.Length);
+				this._reader.Stream.Position = 0;
+				this._reader.Stream.CopyTo(this._memoryStream);
+				this._memoryStream.Position = 0;
+			}
 
 			//Setup the entity handler
-			this._crcReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._crcStream);
+			this._crcReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._memoryStream);
 		}
 
 		/// <summary>
@@ -206,7 +214,7 @@ namespace ACadSharp.IO.DWG
 				ulong handleSectionOffset = (ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize;
 
 				//Create a handler section reader
-				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
 				//set the initial position and get the object type
@@ -215,11 +223,11 @@ namespace ACadSharp.IO.DWG
 
 
 				//Create a handler section reader
-				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._handlesReader.SetPositionInBits((long)handleSectionOffset);
 
 				//Create a text section reader
-				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._textReader.SetPositionByFlag((long)handleSectionOffset - 1);
 
 				this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
@@ -227,10 +235,10 @@ namespace ACadSharp.IO.DWG
 			else
 			{
 				//Create a handler section reader
-				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
-				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._textReader = this._objectReader;
 
 				//set the initial position and get the object type
@@ -720,7 +728,7 @@ namespace ACadSharp.IO.DWG
 
 			if (this._version == ACadVersion.AC1021)
 			{
-				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				//"endbit" of the pre-handles section.
 				this._textReader.SetPositionByFlag(size + this._objectInitialPos - 1);
 			}
@@ -738,8 +746,6 @@ namespace ACadSharp.IO.DWG
 
 			switch (type)
 			{
-				case ObjectType.UNDEFINED:
-					break;
 				case ObjectType.TEXT:
 					template = this.readText();
 					break;
@@ -764,15 +770,11 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.MINSERT:
 					template = this.readMInsert();
 					break;
-				case ObjectType.UNKNOW_9:
-					break;
 				case ObjectType.VERTEX_2D:
 					template = this.readVertex2D();
 					break;
 				case ObjectType.VERTEX_3D:
 					template = this.readVertex3D(new Vertex3D());
-					break;
-				case ObjectType.VERTEX_MESH:
 					break;
 				case ObjectType.VERTEX_PFACE:
 					template = this.readVertex3D(new VertexFaceMesh());
@@ -862,8 +864,6 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.DICTIONARY:
 					template = this.readDictionary();
 					break;
-				case ObjectType.OLEFRAME:
-					break;
 				case ObjectType.MTEXT:
 					template = this.readMText();
 					break;
@@ -897,20 +897,12 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.STYLE:
 					template = this.readTextStyle();
 					break;
-				case ObjectType.UNKNOW_36:
-					break;
-				case ObjectType.UNKNOW_37:
-					break;
 				case ObjectType.LTYPE_CONTROL_OBJ:
 					template = this.readLTypeControlObject();
 					this._builder.LineTypesTable = (LineTypesTable)template.CadObject;
 					break;
 				case ObjectType.LTYPE:
 					template = this.readLType();
-					break;
-				case ObjectType.UNKNOW_3A:
-					break;
-				case ObjectType.UNKNOW_3B:
 					break;
 				case ObjectType.VIEW_CONTROL_OBJ:
 					template = this.readDocumentTable(new ViewsTable());
@@ -959,12 +951,6 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.MLINESTYLE:
 					template = this.readMLineStyle();
 					break;
-				case ObjectType.OLE2FRAME:
-					break;
-				case ObjectType.DUMMY:
-					break;
-				case ObjectType.LONG_TRANSACTION:
-					break;
 				case ObjectType.LWPOLYLINE:
 					template = this.readLWPolyline();
 					break;
@@ -977,8 +963,6 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.ACDBPLACEHOLDER:
 					template = this.readPlaceHolder();
 					break;
-				case ObjectType.VBA_PROJECT:
-					break;
 				case ObjectType.LAYOUT:
 					template = this.readLayout();
 					break;
@@ -988,12 +972,36 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.ACAD_PROXY_OBJECT:
 					template = this.readProxyObject();
 					break;
+				//Not implemented entities:
+				case ObjectType.VERTEX_MESH:
+				case ObjectType.OLEFRAME:
+				case ObjectType.OLE2FRAME:
+				case ObjectType.DUMMY:
+					template = this.readUnknownEntity(null);
+					this._builder.Notify($"Unlisted object with DXF name {type} has been read as an UnknownEntity", NotificationType.Warning);
+					return template;
+				//Not implemented objects:
+				case ObjectType.VBA_PROJECT:
+				case ObjectType.LONG_TRANSACTION:
+					template = this.readUnknownNonGraphicalObject(null);
+					this._builder.Notify($"Unlisted object with DXF name {type} has been read as an UnknownNonGraphicalObject", NotificationType.Warning);
+					return template;
+				//Unknown:
+				case ObjectType.UNDEFINED:
+				case ObjectType.UNKNOW_3A:
+				case ObjectType.UNKNOW_3B:
+				case ObjectType.UNKNOW_36:
+				case ObjectType.UNKNOW_37:
+				case ObjectType.UNKNOW_9:
+					break;
 				default:
 					return this.readUnlistedType((short)type);
 			}
 
 			if (template == null)
+			{
 				this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
+			}
 
 			return template;
 		}
@@ -1119,11 +1127,6 @@ namespace ACadSharp.IO.DWG
 			{
 				template = this.readUnknownNonGraphicalObject(c);
 				this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownNonGraphicalObject", NotificationType.Warning);
-			}
-
-			if (template == null)
-			{
-				this._builder.Notify($"Unlisted object not implemented, DXF name: {c.DxfName}", NotificationType.NotImplemented);
 			}
 
 			return template;
@@ -2890,9 +2893,9 @@ namespace ACadSharp.IO.DWG
 				//Uniform = 2,
 				//Custom = 15
 				//The scenario flag becomes 1 if the knot parameter is Custom or has no fit data, otherwise 2.
-				spline.KnotParameterization = (KnotParameterization)this._mergedReaders.ReadBitLong();
+				spline.KnotParametrization = (KnotParametrization)this._mergedReaders.ReadBitLong();
 
-				scenario = (spline.KnotParameterization == KnotParameterization.Custom || (spline.Flags1 & SplineFlags1.UseKnotParameter) == 0) ? 1 : 2;
+				scenario = (spline.KnotParametrization == KnotParametrization.Custom || (spline.Flags1 & SplineFlags1.UseKnotParameter) == 0) ? 1 : 2;
 			}
 			else if (scenario == 2)
 			{
@@ -2901,7 +2904,7 @@ namespace ACadSharp.IO.DWG
 			else
 			{
 				//If the spline does not have fit data, then the knot parameter should become Custom.
-				spline.KnotParameterization = KnotParameterization.Custom;
+				spline.KnotParametrization = KnotParametrization.Custom;
 			}
 
 			//Common:
@@ -3540,7 +3543,6 @@ namespace ACadSharp.IO.DWG
 		{
 			MultiLeader mLeader = new MultiLeader();
 			CadMLeaderTemplate template = new CadMLeaderTemplate(mLeader);
-			template.CadMLeaderAnnotContextTemplate = new CadMLeaderAnnotContextTemplate(mLeader.ContextData);
 
 			this.readCommonEntityData(template);
 
@@ -3939,8 +3941,8 @@ namespace ACadSharp.IO.DWG
 		private LeaderLine readLeaderLine(CadMLeaderAnnotContextTemplate template)
 		{
 			LeaderLine leaderLine = new LeaderLine();
-			CadMLeaderAnnotContextTemplate.LeaderLineSubTemplate leaderLineSubTemplate = new CadMLeaderAnnotContextTemplate.LeaderLineSubTemplate(leaderLine);
-			template.LeaderLineSubTemplates.Add(leaderLineSubTemplate);
+			CadMLeaderAnnotContextTemplate.LeaderLineTemplate leaderLineSubTemplate = new CadMLeaderAnnotContextTemplate.LeaderLineTemplate(leaderLine);
+			template.LeaderLineTemplates.Add(leaderLineSubTemplate);
 
 			//	Points
 			//	BL	-	Number of points

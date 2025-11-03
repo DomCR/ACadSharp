@@ -1,9 +1,7 @@
 ﻿using ACadSharp.Extensions;
 using ACadSharp.Objects;
 using ACadSharp.Types.Units;
-using CSMath;
 using System;
-using System.ComponentModel;
 
 namespace ACadSharp.IO
 {

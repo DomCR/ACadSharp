@@ -57,6 +57,8 @@ namespace ACadSharp.IO.DXF
 		{
 			switch (this._reader.ValueAsString)
 			{
+				case DxfFileToken.ObjectPlaceholder:
+					return this.readObjectCodes<AcdbPlaceHolder>(new CadNonGraphicalObjectTemplate(new AcdbPlaceHolder()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectDBColor:
 					return this.readObjectCodes<BookColor>(new CadNonGraphicalObjectTemplate(new BookColor()), this.readBookColor);
 				case DxfFileToken.ObjectDictionary:
@@ -69,12 +71,16 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<PlotSettings>(new CadNonGraphicalObjectTemplate(new PlotSettings()), this.readPlotSettings);
 				case DxfFileToken.ObjectEvalGraph:
 					return this.readObjectCodes<EvaluationGraph>(new CadEvaluationGraphTemplate(), this.readEvaluationGraph);
+				case DxfFileToken.ObjectImageDefinition:
+					return this.readObjectCodes<ImageDefinition>(new CadNonGraphicalObjectTemplate(new ImageDefinition()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectDictionaryVar:
 					return this.readObjectCodes<DictionaryVariable>(new CadTemplate<DictionaryVariable>(new DictionaryVariable()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectPdfDefinition:
 					return this.readObjectCodes<PdfUnderlayDefinition>(new CadNonGraphicalObjectTemplate(new PdfUnderlayDefinition()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectSortEntsTable:
 					return this.readSortentsTable();
+				case DxfFileToken.ObjectImageDefinitionReactor:
+					return this.readObjectCodes<ImageDefinitionReactor>(new CadNonGraphicalObjectTemplate(new ImageDefinitionReactor()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectProxyObject:
 					return this.readObjectCodes<ProxyObject>(new CadNonGraphicalObjectTemplate(new ProxyObject()), this.readProxyObject);
 				case DxfFileToken.ObjectRasterVariables:
@@ -91,6 +97,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<VisualStyle>(new CadTemplate<VisualStyle>(new VisualStyle()), this.readVisualStyle);
 				case DxfFileToken.ObjectSpatialFilter:
 					return this.readObjectCodes<SpatialFilter>(new CadSpatialFilterTemplate(), this.readSpatialFilter);
+				case DxfFileToken.ObjectMLeaderStyle:
+					return this.readObjectCodes<MultiLeaderStyle>(new CadMLeaderStyleTemplate(), this.readMLeaderStyle);
 				case DxfFileToken.ObjectXRecord:
 					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), this.readXRecord);
 				default:
@@ -509,6 +517,25 @@ namespace ACadSharp.IO.DXF
 				case 73:
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.SpatialFilter]);
+			}
+		}
+
+		private bool readMLeaderStyle(CadTemplate template, DxfMap map)
+		{
+			var tmp = template as CadMLeaderStyleTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 179:
+					return true;
+				case 340:
+					tmp.LeaderLineTypeHandle = this._reader.ValueAsHandle;
+					return true;
+				case 342:
+					tmp.MTextStyleHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
 		}
 

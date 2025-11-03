@@ -14,9 +14,6 @@ namespace ACadSharp.Entities
 	{
 		public static HatchPattern Solid { get { return new HatchPattern("SOLID"); } }
 
-		[DxfCodeValue(2)]
-		public string Name { get; set; }
-
 		/// <summary>
 		/// Description for this pattern.
 		/// </summary>
@@ -25,8 +22,19 @@ namespace ACadSharp.Entities
 		/// </remarks>
 		public string Description { get; set; }
 
+		/// <summary>
+		/// Gets or sets the collection of <see cref="Line"/> objects.
+		/// </summary>
+		/// <remarks>This property allows adding, removing, or modifying the lines in the collection. Changes to this
+		/// collection directly affect the associated context.</remarks>
 		[DxfCodeValue(DxfReferenceType.Count, 79)]
 		public List<Line> Lines { get; set; } = new List<Line>();
+
+		/// <summary>
+		/// Name for this pattern.
+		/// </summary>
+		[DxfCodeValue(2)]
+		public string Name { get; set; }
 
 		/// <summary>
 		/// Default constructor of a hatch pattern.
@@ -35,52 +43,6 @@ namespace ACadSharp.Entities
 		public HatchPattern(string name)
 		{
 			this.Name = name;
-		}
-
-		/// <summary>
-		/// Update the pattern geometry with a translation, rotation and scale.
-		/// </summary>
-		/// <param name="translation"></param>
-		/// <param name="rotation"></param>
-		/// <param name="scale"></param>
-		public void Update(XY translation, double rotation, double scale)
-		{
-			var tr = Transform.CreateTranslation(translation.Convert<XYZ>());
-			var sc = Transform.CreateScaling(new XYZ(scale));
-			var rot = Transform.CreateRotation(XYZ.AxisZ, rotation);
-
-			var transform = new Transform(tr.Matrix * sc.Matrix * rot.Matrix);
-
-			foreach (var line in Lines)
-			{
-				line.Angle += rotation;
-				line.BasePoint = transform.ApplyTransform(line.BasePoint.Convert<XYZ>()).Convert<XY>();
-				line.Offset = transform.ApplyTransform(line.Offset.Convert<XYZ>()).Convert<XY>();
-				line.DashLengths = line.DashLengths.Select(d => d * scale).ToList();
-			}
-		}
-
-		/// <summary>
-		/// Clones the current pattern.
-		/// </summary>
-		/// <returns></returns>
-		public HatchPattern Clone()
-		{
-			HatchPattern clone = (HatchPattern)this.MemberwiseClone();
-
-			clone.Lines = new List<Line>();
-			foreach (var item in this.Lines)
-			{
-				clone.Lines.Add(item.Clone());
-			}
-
-			return clone;
-		}
-
-		/// <inheritdoc/>
-		public override string ToString()
-		{
-			return $"{this.Name}";
 		}
 
 		/// <summary>
@@ -118,15 +80,20 @@ namespace ACadSharp.Entities
 				}
 				else
 				{
+					//;angle, x, y, shift, offset, [dash, space, ...]
 					string[] data = line.Split(',');
 					Line l = new Line();
+					//angle
 					l.Angle = MathHelper.DegToRad(double.Parse(data[0], CultureInfo.InvariantCulture));
+					//x, y
 					l.BasePoint = new XY(double.Parse(data[1], CultureInfo.InvariantCulture), double.Parse(data[2], CultureInfo.InvariantCulture));
 
-					XY offset = new XY(double.Parse(data[3], CultureInfo.InvariantCulture), double.Parse(data[4], CultureInfo.InvariantCulture));
+					double shift = double.Parse(data[3], CultureInfo.InvariantCulture);
+					double offset = double.Parse(data[4], CultureInfo.InvariantCulture);
+					XY dir = new XY(shift, offset);
 					double cos = Math.Cos(l.Angle);
 					double sin = Math.Sin(l.Angle);
-					l.Offset = new XY(offset.X * cos - offset.Y * sin, offset.X * sin + offset.Y * cos);
+					l.Offset = new XY(dir.X * cos - dir.Y * sin, dir.X * sin + dir.Y * cos);
 
 					IEnumerable<string> dashes = data.Skip(5);
 					if (dashes.Any())
@@ -166,17 +133,16 @@ namespace ACadSharp.Entities
 					StringBuilder sb = new StringBuilder();
 
 					double angle = MathHelper.DegToRad(line.Angle);
-					double cos = Math.Cos(line.Angle);
-					double sin = Math.Sin(line.Angle);
+					double cos = Math.Cos(0.0 - line.Angle);
+					double sin = Math.Sin(0.0 - line.Angle);
 
-					var offset = line.Offset;
-					var vector2D = new XY(offset.X * cos - offset.Y * sin, offset.X * sin + offset.Y * cos);
+					var v = new XY(line.Offset.X * cos - line.Offset.Y * sin, line.Offset.X * sin + line.Offset.Y * cos);
 
 					sb.Append(angle.ToString(CultureInfo.InvariantCulture));
 					sb.Append(",");
 					sb.Append(line.BasePoint.ToString(CultureInfo.InvariantCulture));
 					sb.Append(",");
-					sb.Append(vector2D.ToString(CultureInfo.InvariantCulture));
+					sb.Append(v.ToString(CultureInfo.InvariantCulture));
 
 					if (line.DashLengths.Count > 0)
 					{
@@ -191,7 +157,52 @@ namespace ACadSharp.Entities
 
 					writer.WriteLine(sb.ToString());
 				}
+			}
+		}
 
+		/// <summary>
+		/// Clones the current pattern.
+		/// </summary>
+		/// <returns></returns>
+		public HatchPattern Clone()
+		{
+			HatchPattern clone = (HatchPattern)this.MemberwiseClone();
+
+			clone.Lines = new List<Line>();
+			foreach (var item in this.Lines)
+			{
+				clone.Lines.Add(item.Clone());
+			}
+
+			return clone;
+		}
+
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return $"{this.Name}";
+		}
+
+		/// <summary>
+		/// Update the pattern geometry with a translation, rotation and scale.
+		/// </summary>
+		/// <param name="translation"></param>
+		/// <param name="rotation"></param>
+		/// <param name="scale"></param>
+		public void Update(XY translation, double rotation, double scale)
+		{
+			var tr = Transform.CreateTranslation(translation.Convert<XYZ>());
+			var sc = Transform.CreateScaling(new XYZ(scale));
+			var rot = Transform.CreateRotation(XYZ.AxisZ, rotation);
+
+			var transform = new Transform(tr.Matrix * sc.Matrix * rot.Matrix);
+
+			foreach (var line in Lines)
+			{
+				line.Angle += rotation;
+				line.BasePoint = transform.ApplyTransform(line.BasePoint.Convert<XYZ>()).Convert<XY>();
+				line.Offset = transform.ApplyTransform(line.Offset.Convert<XYZ>()).Convert<XY>();
+				line.DashLengths = line.DashLengths.Select(d => d * scale).ToList();
 			}
 		}
 	}

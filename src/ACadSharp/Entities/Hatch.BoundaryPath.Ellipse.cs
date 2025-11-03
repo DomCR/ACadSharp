@@ -1,8 +1,7 @@
-﻿using System;
-
-using ACadSharp.Attributes;
-using ACadSharp.IO.DXF;
+﻿using ACadSharp.Attributes;
 using CSMath;
+using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -54,7 +53,8 @@ namespace ACadSharp.Entities
 				/// <inheritdoc/>
 				public override void ApplyTransform(Transform transform)
 				{
-					throw new System.NotImplementedException();
+					this.Center = transform.ApplyTransform(this.Center.Convert<XYZ>()).Convert<XY>();
+					this.MajorAxisEndPoint = transform.ApplyTransform(this.MajorAxisEndPoint.Convert<XYZ>()).Convert<XY>();
 				}
 
 				/// <inheritdoc/>
@@ -74,6 +74,16 @@ namespace ACadSharp.Entities
 					ellipse.RadiusRatio = this.MinorToMajorRatio;
 
 					return ellipse;
+				}
+
+				/// <summary>
+				/// Converts the ellipse in a list of vertexes.
+				/// </summary>
+				/// <param name="precision">Number of vertexes generated.</param>
+				/// <returns>A list vertexes that represents the arc expressed in object coordinate system.</returns>
+				public List<XYZ> PolygonalVertexes(int precision)
+				{
+					return ((Entities.Ellipse)this.ToEntity()).PolygonalVertexes(precision);
 				}
 			}
 		}

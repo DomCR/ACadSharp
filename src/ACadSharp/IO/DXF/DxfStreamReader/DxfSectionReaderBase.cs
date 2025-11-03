@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using static ACadSharp.IO.Templates.CadMLeaderAnnotContextTemplate;
 
 namespace ACadSharp.IO.DXF
 {
@@ -178,6 +179,8 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<MText>(new CadTextEntityTemplate(new MText()), this.readTextEntity);
 				case DxfFileToken.EntityMLine:
 					return this.readEntityCodes<MLine>(new CadMLineTemplate(), this.readMLine);
+				case DxfFileToken.EntityMultiLeader:
+					return this.readEntityCodes<MultiLeader>(new CadMLeaderTemplate(), this.readMLeader);
 				case DxfFileToken.EntityPdfUnderlay:
 					return this.readEntityCodes<PdfUnderlay>(new CadUnderlayTemplate<PdfUnderlayDefinition>(new PdfUnderlay()), this.readUnderlayEntity<PdfUnderlayDefinition>);
 				case DxfFileToken.EntityPoint:
@@ -189,7 +192,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EndSequence:
 					return this.readEntityCodes<Seqend>(new CadEntityTemplate<Seqend>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntitySolid:
-					return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), this.readEntitySubclassMap);
+					return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), this.readModelerGeometry);
 				case DxfFileToken.EntityTable:
 					return this.readEntityCodes<TableEntity>(new CadTableEntityTemplate(), this.readTableEntity);
 				case DxfFileToken.EntityText:
@@ -205,9 +208,13 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntitySpline:
 					return this.readEntityCodes<Spline>(new CadSplineTemplate(), this.readSpline);
 				case DxfFileToken.Entity3DSolid:
-					return this.readEntityCodes<Solid3D>(new CadSolid3DTemplate(), this.readEntitySubclassMap);
+					return this.readEntityCodes<Solid3D>(new CadSolid3DTemplate(), this.readSolid3d);
 				case DxfFileToken.EntityRegion:
-					return this.readEntityCodes<Region>(new CadEntityTemplate<Region>(), this.readEntitySubclassMap);
+					return this.readEntityCodes<Region>(new CadEntityTemplate<Region>(), this.readModelerGeometry);
+				case DxfFileToken.EntityImage:
+					return this.readEntityCodes<RasterImage>(new CadWipeoutBaseTemplate(new RasterImage()), this.readWipeoutBase);
+				case DxfFileToken.EntityWipeout:
+					return this.readEntityCodes<Wipeout>(new CadWipeoutBaseTemplate(new Wipeout()), this.readWipeoutBase);
 				case DxfFileToken.EntityXline:
 					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), this.readEntitySubclassMap);
 				default:
@@ -309,6 +316,18 @@ namespace ACadSharp.IO.DXF
 			else
 			{
 				return func.Invoke(template, map);
+			}
+		}
+
+		protected bool checkEntityEnd(CadEntityTemplate template, DxfMap map, string subclass, Func<CadEntityTemplate, DxfMap, string, bool> func)
+		{
+			if (this._reader.DxfCode == DxfCode.Start)
+			{
+				return true;
+			}
+			else
+			{
+				return func.Invoke(template, map, subclass);
 			}
 		}
 
@@ -501,7 +520,10 @@ namespace ACadSharp.IO.DXF
 				case 1 or 3 when tmp.CadObject is MText mtext:
 					mtext.Value += this._reader.ValueAsString;
 					return true;
-				case 50 when tmp.CadObject is MText://Read only for MText
+				case 50 when tmp.CadObject is MText mtext://Read only for MText
+					double angle = MathHelper.DegToRad(this._reader.ValueAsDouble);
+					mtext.AlignmentPoint = new XYZ(System.Math.Cos(angle), System.Math.Sin(angle), 0.0);
+					return true;
 				case 70:
 				case 74:
 				case 101:
@@ -721,7 +743,8 @@ namespace ACadSharp.IO.DXF
 		{
 			CadPolyLineTemplate template = null;
 
-			if (this._builder.Version == ACadVersion.Unknown)
+			if (this._builder.Version == ACadVersion.Unknown
+				|| this._builder.Version == ACadVersion.AC1009)
 			{
 				var polyline = new Polyline2D();
 				template = new CadPolyLineTemplate(polyline);
@@ -1039,6 +1062,157 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		private bool readMLeader(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadMLeaderTemplate tmp = template as CadMLeaderTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 270:
+					//f270 Version
+					return true;
+				case 300:
+					this.readMultiLeaderObjectContextData(tmp.CadMLeaderAnnotContextTemplate);
+					return true;
+				case 340:
+					tmp.LeaderStyleHandle = this._reader.ValueAsHandle;
+					return true;
+				case 341:
+					tmp.LineTypeHandle = this._reader.ValueAsHandle;
+					return true;
+				case 343:
+					tmp.MTextStyleHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private void readMultiLeaderObjectContextData(CadMLeaderAnnotContextTemplate template)
+		{
+			this._reader.ReadNext();
+
+			DxfMap map = DxfMap.Create<MultiLeaderObjectContextData>();
+			var contextData = template.CadObject as MultiLeaderObjectContextData;
+
+			bool end = false;
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				switch (this._reader.Code)
+				{
+					case 301 when this._reader.ValueAsString.Equals("}"):
+						end = true;
+						break;
+					case 302 when this._reader.ValueAsString.Equals("LEADER{"):
+						contextData.LeaderRoots.Add(this.readMultiLeaderLeader(template));
+						break;
+					case 340:
+						template.TextStyleHandle = this._reader.ValueAsHandle;
+						break;
+					default:
+						if (!this.tryAssignCurrentValue(contextData, map.SubClasses[contextData.SubclassMarker]))
+						{
+							this._builder.Notify($"[AcDbMLeaderObjectContextData] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
+						}
+						break;
+				}
+
+				if (end)
+				{
+					break;
+				}
+
+				this._reader.ReadNext();
+			}
+		}
+
+		private MultiLeaderObjectContextData.LeaderRoot readMultiLeaderLeader(CadMLeaderAnnotContextTemplate template)
+		{
+			MultiLeaderObjectContextData.LeaderRoot root = new();
+			var map = DxfClassMap.Create(root.GetType(), nameof(MultiLeaderObjectContextData.LeaderRoot));
+
+			this._reader.ReadNext();
+
+			bool end = false;
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				switch (this._reader.Code)
+				{
+					case 303 when this._reader.ValueAsString.Equals("}"):
+						end = true;
+						break;
+					case 304 when this._reader.ValueAsString.Equals("LEADER_LINE{"):
+						var lineTemplate = new LeaderLineTemplate();
+						template.LeaderLineTemplates.Add(lineTemplate);
+						root.Lines.Add(this.readMultiLeaderLine(lineTemplate));
+						break;
+					default:
+						if (!this.tryAssignCurrentValue(root, map))
+						{
+							this._builder.Notify($"[LeaderRoot] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
+						}
+						break;
+				}
+
+				if (end)
+				{
+					break;
+				}
+
+				this._reader.ReadNext();
+			}
+
+			return root;
+		}
+
+		private MultiLeaderObjectContextData.LeaderLine readMultiLeaderLine(LeaderLineTemplate template)
+		{
+			MultiLeaderObjectContextData.LeaderLine line = template.LeaderLine;
+			var map = DxfClassMap.Create(line.GetType(), nameof(MultiLeaderObjectContextData.LeaderLine));
+
+			this._reader.ReadNext();
+
+			bool end = false;
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				switch (this._reader.Code)
+				{
+					case 10:
+						XYZ pt = new XYZ(this._reader.ValueAsDouble, 0, 0);
+						line.Points.Add(pt);
+						break;
+					case 20:
+						pt = line.Points[line.Points.Count - 1];
+						pt.Y = this._reader.ValueAsDouble;
+						line.Points[line.Points.Count - 1] = pt;
+						break;
+					case 30:
+						pt = line.Points[line.Points.Count - 1];
+						pt.Z = this._reader.ValueAsDouble;
+						line.Points[line.Points.Count - 1] = pt;
+						break;
+					case 305 when this._reader.ValueAsString.Equals("}"):
+						end = true;
+						break;
+					default:
+						if (!this.tryAssignCurrentValue(line, map))
+						{
+							this._builder.Notify($"[LeaderLine] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
+						}
+						break;
+				}
+
+				if (end)
+				{
+					break;
+				}
+
+				this._reader.ReadNext();
+			}
+
+			return line;
+		}
+
 		private bool readShape(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
 			CadShapeTemplate tmp = template as CadShapeTemplate;
@@ -1050,6 +1224,70 @@ namespace ACadSharp.IO.DXF
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readWipeoutBase(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadWipeoutBaseTemplate tmp = template as CadWipeoutBaseTemplate;
+			CadWipeoutBase wipeout = tmp.CadObject as CadWipeoutBase;
+
+			switch (this._reader.Code)
+			{
+				case 91:
+					var nvertices = this._reader.ValueAsInt;
+					for (int i = 0; i < nvertices; i++)
+					{
+						this._reader.ReadNext();
+						var x = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						var y = this._reader.ValueAsDouble;
+
+						wipeout.ClipBoundaryVertices.Add(new XY(x, y));
+					}
+
+					this._reader.ReadNext();
+
+					return this.checkEntityEnd(template, map, subclass, this.readWipeoutBase);
+				case 340:
+					tmp.ImgDefHandle = this._reader.ValueAsHandle;
+					return true;
+				case 360:
+					tmp.ImgReactorHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readModelerGeometry(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			string mapName = string.IsNullOrEmpty(subclass) ? template.CadObject.SubclassMarker : subclass;
+			var geometry = template.CadObject as ModelerGeometry;
+
+			switch (this._reader.Code)
+			{
+				case 2:
+					geometry.Guid = new Guid(this._reader.ValueAsString);
+					return true;
+				case 290:
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[mapName]);
+			}
+		}
+
+		private bool readSolid3d(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadSolid3DTemplate tmp = template as CadSolid3DTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 350:
+					tmp.HistoryHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					return this.readModelerGeometry(template, map, DxfSubclassMarker.ModelerGeometry);
 			}
 		}
 
@@ -1742,7 +1980,7 @@ namespace ACadSharp.IO.DXF
 			return reactors;
 		}
 
-		protected bool tryAssignCurrentValue(CadObject cadObject, DxfClassMap map)
+		protected bool tryAssignCurrentValue(object cadObject, DxfClassMap map)
 		{
 			try
 			{

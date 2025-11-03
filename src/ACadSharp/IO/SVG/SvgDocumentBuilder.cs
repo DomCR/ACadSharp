@@ -2,6 +2,7 @@
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -9,6 +10,7 @@ using System.Xml;
 
 namespace ACadSharp.IO.SVG
 {
+	[Obsolete("is it needed? defs block? styles?")]
 	internal class SvgDocumentBuilder : SvgXmlWriter
 	{
 		public SvgXmlWriter EntitiesWriter { get; set; }

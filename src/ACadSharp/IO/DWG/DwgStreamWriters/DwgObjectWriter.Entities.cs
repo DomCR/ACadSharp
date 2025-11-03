@@ -1320,19 +1320,21 @@ namespace ACadSharp.IO.DWG
 		private void writeMultiLeaderAnnotContextSubObject(bool writeLeaderRootsCount, MultiLeaderObjectContextData annotContext)
 		{
 			int leaderRootCount = annotContext.LeaderRoots.Count;
-			if (writeLeaderRootsCount) {
+			if (writeLeaderRootsCount)
+			{
 				//	BL	-	Number of leader roots
 				this._writer.WriteBitLong(leaderRootCount);
 			}
-			else {
+			else
+			{
 				this._writer.WriteBitLong(0);
 				this._writer.WriteBit(false);    // b0
 				this._writer.WriteBit(false);    // b1
 				this._writer.WriteBit(false);    // b2
 				this._writer.WriteBit(false);    // b3
 				this._writer.WriteBit(false);    // b4
-				this._writer.WriteBit(leaderRootCount == 2);	// b5
-				this._writer.WriteBit(leaderRootCount == 1);	// b6
+				this._writer.WriteBit(leaderRootCount == 2);    // b5
+				this._writer.WriteBit(leaderRootCount == 1);    // b6
 			}
 
 			for (int i = 0; i < leaderRootCount; i++)
@@ -1703,15 +1705,14 @@ namespace ACadSharp.IO.DWG
 			//Extrusion BE 210
 			this._writer.WriteBitExtrusion(pline.Normal);
 
-			int count = pline.Vertices.Count;
 			//R2004+:
 			if (this.R2004Plus)
 			{
 				//Owned Object Count BL Number of objects owned by this object.
-				this._writer.WriteBitLong(count);
-				for (int i = 0; i < count; i++)
+				this._writer.WriteBitLong(pline.Vertices.Count);
+				foreach (var v in pline.Vertices)
 				{
-					this._writer.HandleReference(DwgReferenceType.HardOwnership, pline.Vertices[i]);
+					this._writer.HandleReference(DwgReferenceType.HardOwnership, v);
 				}
 			}
 
@@ -1897,7 +1898,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2013Plus)
 			{
 				//The scenario flag becomes 1 if the knot parameter is Custom or has no fit data, otherwise 2.
-				if (spline.KnotParameterization == KnotParameterization.Custom || spline.FitPoints.Count == 0)
+				if (spline.KnotParametrization == KnotParametrization.Custom || spline.FitPoints.Count == 0)
 				{
 					scenario = 1;
 					//If scenario is 1, the spline flags must not have the UseKnotParameter bit set or the file will be corrupt
@@ -1912,12 +1913,12 @@ namespace ACadSharp.IO.DWG
 
 				this._writer.WriteBitLong(scenario);
 				this._writer.WriteBitLong((int)spline.Flags1);
-				this._writer.WriteBitLong((int)spline.KnotParameterization);
+				this._writer.WriteBitLong((int)spline.KnotParametrization);
 			}
 			else
 			{
 				scenario = (spline.FitPoints.Count <= 0) ? 1 : 2;
-				if (scenario == 2 && spline.KnotParameterization != 0)
+				if (scenario == 2 && spline.KnotParametrization != 0)
 				{
 					scenario = 1;
 				}

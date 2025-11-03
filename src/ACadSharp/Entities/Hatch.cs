@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -142,16 +141,48 @@ namespace ACadSharp.Entities
 
 		private double _patternScale;
 
+		//73	For MPolygon, boundary annotation flag:
+		//0 = boundary is not an annotated boundary
+		//1 = boundary is an annotated boundary
+		//78	Number of pattern definition lines
+		//varies
+		//Pattern line data.Repeats number of times specified by code 78. See Pattern Data
+		//11	For MPolygon, offset vector
+
+		//99	For MPolygon, number of degenerate boundary paths(loops), where a degenerate boundary path is a border that is ignored by the hatch
+		//99	For MPolygon, number of degenerate boundary paths(loops), where a degenerate boundary path is a border that is ignored by the hatch
 		/// <inheritdoc/>
 		public Hatch() : base() { }
 
+		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
 			if (this.IsAssociative)
 			{
+				//Not sure how this effects the hatch
 			}
 
-			throw new NotImplementedException();
+			var newNormal = this.transformNormal(transform, this.Normal);
+			var worldTransform = this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+
+			foreach (BoundaryPath p in this.Paths)
+			{
+				p.ApplyTransform(transform);
+			}
+
+			XY refAxis = XY.Rotate(XY.AxisX, this._patternAngle);
+			refAxis = this._patternScale * refAxis;
+			XYZ v = transOW * new XYZ(refAxis.X, refAxis.Y, 0.0);
+			v = worldTransform * v;
+			v = transWO * v;
+			XY axis = new XY(v.X, v.Y);
+			this._patternAngle = axis.GetAngle();
+
+			double patScale = axis.GetLength();
+			this._patternScale = MathHelper.IsZero(patScale) ? MathHelper.Epsilon : patScale;
+
+			this.Pattern?.Update(transform.Translation.Convert<XY>(), this._patternAngle, this._patternScale);
+			this.Normal = newNormal;
 		}
 
 		/// <inheritdoc/>

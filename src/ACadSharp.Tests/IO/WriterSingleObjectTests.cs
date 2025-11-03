@@ -472,11 +472,7 @@ namespace ACadSharp.Tests.IO
 					Flags = BoundaryPathFlags.External,
 				};
 
-				path.Edges.Add(new Hatch.BoundaryPath.Polyline()
-				{
-					Vertices = [new(0, 0, 0), new(0, 5, 0), new(5, 5, 0), new(5, 0, 0)],
-					IsClosed = true,
-				});
+				path.Edges.Add(new Hatch.BoundaryPath.Polyline([new(0, 0, 0), new(0, 5, 0), new(5, 5, 0), new(5, 0, 0)]));
 
 				hatch.Paths.Add(path);
 
