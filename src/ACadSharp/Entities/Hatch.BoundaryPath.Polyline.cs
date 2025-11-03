@@ -11,8 +11,14 @@ namespace ACadSharp.Entities
 		{
 			public class Polyline : Edge
 			{
-				/// <inheritdoc/>
-				public override EdgeType Type => EdgeType.Polyline;
+				/// <summary>
+				/// Bulges applied to each vertice, the number of bulges must be equal to the vertices or empty.
+				/// </summary>
+				/// <remarks>
+				/// default value, 0 if not set
+				/// </remarks>
+				[DxfCodeValue(DxfReferenceType.Optional, 42)]
+				public IEnumerable<double> Bulges { get { return this.Vertices.Select(v => v.Z); } }
 
 				/// <summary>
 				/// The polyline has bulges with value different than 0.
@@ -26,14 +32,8 @@ namespace ACadSharp.Entities
 				[DxfCodeValue(73)]
 				public bool IsClosed { get; set; }
 
-				/// <summary>
-				/// Bulges applied to each vertice, the number of bulges must be equal to the vertices or empty.
-				/// </summary>
-				/// <remarks>
-				/// default value, 0 if not set
-				/// </remarks>
-				[DxfCodeValue(DxfReferenceType.Optional, 42)]
-				public IEnumerable<double> Bulges { get { return this.Vertices.Select(v => v.Z); } }
+				/// <inheritdoc/>
+				public override EdgeType Type => EdgeType.Polyline;
 
 				/// <summary>
 				/// Position values are only X and Y.
@@ -42,23 +42,7 @@ namespace ACadSharp.Entities
 				/// The vertex bulge is stored in the Z component.
 				/// </remarks>
 				[DxfCodeValue(DxfReferenceType.Count, 93)]
-				public List<XYZ> Vertices { get; set; } = new();
-
-				/// <inheritdoc/>
-				public override Entity ToEntity()
-				{
-					List<Vertex> vertices = new();
-					foreach (XYZ v in this.Vertices)
-					{
-						var vertex = new Vertex2D(v.Convert<XY>())
-						{
-							Bulge = v.Z,
-						};
-						vertices.Add(vertex);
-					}
-
-					return new Polyline2D(vertices.Cast<Vertex2D>(), this.IsClosed);
-				}
+				public List<XYZ> Vertices { get; private set; } = new();
 
 				/// <inheritdoc/>
 				public override void ApplyTransform(Transform transform)
@@ -76,9 +60,35 @@ namespace ACadSharp.Entities
 				}
 
 				/// <inheritdoc/>
+				public override Edge Clone()
+				{
+					Polyline clone = (Polyline)base.Clone();
+
+					clone.Vertices = new List<XYZ>(Vertices);
+
+					return clone;
+				}
+
+				/// <inheritdoc/>
 				public override BoundingBox GetBoundingBox()
 				{
 					return BoundingBox.FromPoints(this.Vertices);
+				}
+
+				/// <inheritdoc/>
+				public override Entity ToEntity()
+				{
+					List<Vertex> vertices = new();
+					foreach (XYZ v in this.Vertices)
+					{
+						var vertex = new Vertex2D(v.Convert<XY>())
+						{
+							Bulge = v.Z,
+						};
+						vertices.Add(vertex);
+					}
+
+					return new Polyline2D(vertices.Cast<Vertex2D>(), this.IsClosed);
 				}
 			}
 		}
