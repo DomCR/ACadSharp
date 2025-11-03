@@ -63,7 +63,16 @@ namespace ACadSharp.Entities
 				/// <inheritdoc/>
 				public override void ApplyTransform(Transform transform)
 				{
-					throw new System.NotImplementedException();
+					var arr = this.Vertices.ToArray();
+					this.Vertices.Clear();
+					for (int i = 0; i < arr.Length; i++)
+					{
+						var bulge = arr[i].Z;
+						var v = transform.ApplyTransform(arr[i]);
+						v.Z = bulge;
+
+						this.Vertices.Add(v);
+					}
 				}
 
 				/// <inheritdoc/>
