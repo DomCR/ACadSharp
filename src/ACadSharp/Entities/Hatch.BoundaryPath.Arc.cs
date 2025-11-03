@@ -63,14 +63,14 @@ namespace ACadSharp.Entities
 						this.EndAngle = 0.0 - this.EndAngle;
 					}
 
-					XYZ vstart = new XYZ(System.Math.Cos(StartAngle), System.Math.Sin(StartAngle), 0);
-					XYZ vend = new XYZ(System.Math.Cos(EndAngle), System.Math.Sin(EndAngle), 0);
+					XYZ vstart = new XYZ(Math.Cos(StartAngle), Math.Sin(StartAngle), 0);
+					XYZ vend = new XYZ(Math.Cos(EndAngle), Math.Sin(EndAngle), 0);
 
 					vstart = transform.ApplyTransform(vstart);
-					this.StartAngle = System.Math.Atan2(vstart.Y, vstart.X);
+					this.StartAngle = Math.Atan2(vstart.Y, vstart.X);
 
 					vend = transform.ApplyTransform(vend);
-					this.EndAngle = System.Math.Atan2(vend.Y, vend.X);
+					this.EndAngle = Math.Atan2(vend.Y, vend.X);
 
 					if (!this.CounterClockWise)
 					{

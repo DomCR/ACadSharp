@@ -44,6 +44,14 @@ namespace ACadSharp.Entities
 				[DxfCodeValue(DxfReferenceType.Count, 93)]
 				public List<XYZ> Vertices { get; private set; } = new();
 
+				public Polyline() { }
+
+				public Polyline(IEnumerable<XYZ> vertices, bool isClosed = true)
+				{
+					this.Vertices.AddRange(vertices);
+					this.IsClosed = isClosed;
+				}
+
 				/// <inheritdoc/>
 				public override void ApplyTransform(Transform transform)
 				{
