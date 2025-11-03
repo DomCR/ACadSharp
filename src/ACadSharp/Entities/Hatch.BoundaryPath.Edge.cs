@@ -35,7 +35,7 @@ namespace ACadSharp.Entities
 				/// Creates a new object that is a copy of the current instance.
 				/// </summary>
 				/// <returns></returns>
-				public Edge Clone()
+				public virtual Edge Clone()
 				{
 					return (Edge)this.MemberwiseClone();
 				}

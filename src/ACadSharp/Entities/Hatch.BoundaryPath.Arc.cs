@@ -50,7 +50,33 @@ namespace ACadSharp.Entities
 				/// <inheritdoc/>
 				public override void ApplyTransform(Transform transform)
 				{
-					throw new NotImplementedException();
+					double num = this.Radius;
+					double num2 = this.StartAngle;
+					double num3 = this.EndAngle;
+					bool flag = this.CounterClockWise;
+					this.Center = transform.ApplyTransform(this.Center.Convert<XYZ>()).Convert<XY>();
+					this.Radius = transform.ApplyTransform(new XYZ(this.Radius, 0.0, 0.0)).GetLength();
+
+					if (!this.CounterClockWise)
+					{
+						this.StartAngle = 0.0 - this.StartAngle;
+						this.EndAngle = 0.0 - this.EndAngle;
+					}
+
+					XYZ vstart = new XYZ(Math.Cos(StartAngle), Math.Sin(StartAngle), 0);
+					XYZ vend = new XYZ(Math.Cos(EndAngle), Math.Sin(EndAngle), 0);
+
+					vstart = transform.ApplyTransform(vstart);
+					this.StartAngle = Math.Atan2(vstart.Y, vstart.X);
+
+					vend = transform.ApplyTransform(vend);
+					this.EndAngle = Math.Atan2(vend.Y, vend.X);
+
+					if (!this.CounterClockWise)
+					{
+						this.StartAngle = 0.0 - this.StartAngle;
+						this.EndAngle = 0.0 - this.EndAngle;
+					}
 				}
 
 				/// <inheritdoc/>
