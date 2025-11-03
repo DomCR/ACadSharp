@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Tests.Common;
 using CSMath;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using Xunit;
 
 namespace ACadSharp.Tests.Entities
 {
-	public class HatchTests
+	public class HatchTests : CommonEntityTests<Hatch>
 	{
 		[Fact]
 		public void CreateHatch()
@@ -65,16 +66,8 @@ namespace ACadSharp.Tests.Entities
 		public void CreatePolylineHatch()
 		{
 			Hatch hatch = new Hatch();
-			hatch.IsSolid = true;
-
 			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-
-			Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
-			pline.Vertices.Add(new XYZ(0, 0, 0));
-			pline.Vertices.Add(new XYZ(1, 0, 0));
-			pline.Vertices.Add(new XYZ(1, 1, 0));
-			pline.Vertices.Add(new XYZ(0, 1, 0));
-			pline.Vertices.Add(new XYZ(0, 0, 0));
+			Hatch.BoundaryPath.Polyline pline = createPolylineBoundary();
 
 			path.Edges.Add(pline);
 			hatch.Paths.Add(path);
@@ -86,16 +79,8 @@ namespace ACadSharp.Tests.Entities
 		public void ExplodeTest()
 		{
 			Hatch hatch = new Hatch();
-			hatch.IsSolid = true;
-
 			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-
-			Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
-			pline.Vertices.Add(new XYZ(0, 0, 0));
-			pline.Vertices.Add(new XYZ(1, 0, 0));
-			pline.Vertices.Add(new XYZ(1, 1, 0));
-			pline.Vertices.Add(new XYZ(0, 1, 0));
-			pline.Vertices.Add(new XYZ(0, 0, 0));
+			Hatch.BoundaryPath.Polyline pline = createPolylineBoundary();
 
 			path.Edges.Add(pline);
 			hatch.Paths.Add(path);
@@ -103,26 +88,31 @@ namespace ACadSharp.Tests.Entities
 			var entities = hatch.Explode();
 
 			Assert.NotEmpty(entities);
+
+			Polyline2D result = entities.OfType<Polyline2D>().FirstOrDefault();
+			Assert.NotNull(result);
+			Assert.NotEmpty(result.Vertices);
+
+			for (int i = 0; i < result.Vertices.Count; i++)
+			{
+				AssertUtils.AreEqual(pline.Vertices[i], result.Vertices[i].Location);
+			}
+
+		}
+
+		[Fact]
+		public void TransformTest()
+		{
+			Hatch hatch = this.createPolylineHatch();
+			var translation = Transform.CreateTranslation(new XYZ(10, 10, 0));
+
+			hatch.ApplyTransform(translation);
 		}
 
 		[Fact]
 		public void GetBoundingBoxTest()
 		{
-			Hatch hatch = new Hatch();
-			hatch.IsSolid = true;
-
-			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-
-			Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
-			pline.Vertices.Add(new XYZ(0, 0, 0));
-			pline.Vertices.Add(new XYZ(1, 0, 0));
-			pline.Vertices.Add(new XYZ(1, 1, 0));
-			pline.Vertices.Add(new XYZ(0, 1, 0));
-			pline.Vertices.Add(new XYZ(0, 0, 0));
-
-			path.Edges.Add(pline);
-
-			hatch.Paths.Add(path);
+			Hatch hatch = this.createPolylineHatch();
 
 			var box = hatch.GetBoundingBox();
 
@@ -133,18 +123,8 @@ namespace ACadSharp.Tests.Entities
 		[Fact]
 		public void PolylineHatchNotAllowMoreEdges()
 		{
-			Hatch hatch = new Hatch();
-			hatch.IsSolid = true;
-
 			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-
-			Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
-			pline.Vertices.Add(new XYZ(0, 0, 0));
-			pline.Vertices.Add(new XYZ(1, 0, 0));
-			pline.Vertices.Add(new XYZ(1, 1, 0));
-			pline.Vertices.Add(new XYZ(0, 1, 0));
-			pline.Vertices.Add(new XYZ(0, 0, 0));
-
+			Hatch.BoundaryPath.Polyline pline = createPolylineBoundary();
 			path.Edges.Add(pline);
 
 			Assert.Throws<InvalidOperationException>(() =>
@@ -185,6 +165,38 @@ namespace ACadSharp.Tests.Entities
 
 			hatch.PatternAngle = MathHelper.HalfPI;
 			Assert.Equal(MathHelper.HalfPI, line.Angle);
+		}
+
+		private Hatch createPolylineHatch()
+		{
+			Hatch hatch = new Hatch();
+
+			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+
+			Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
+			pline.Vertices.Add(new XYZ(0, 0, 0));
+			pline.Vertices.Add(new XYZ(1, 0, 0));
+			pline.Vertices.Add(new XYZ(1, 1, 0));
+			pline.Vertices.Add(new XYZ(0, 1, 0));
+			pline.Vertices.Add(new XYZ(0, 0, 0));
+
+			path.Edges.Add(pline);
+
+			hatch.Paths.Add(path);
+
+			return hatch;
+		}
+
+		private Hatch.BoundaryPath.Polyline createPolylineBoundary()
+		{
+			Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
+			pline.Vertices.Add(new XYZ(0, 0, 0));
+			pline.Vertices.Add(new XYZ(1, 0, 0));
+			pline.Vertices.Add(new XYZ(1, 1, 0));
+			pline.Vertices.Add(new XYZ(0, 1, 0));
+			pline.Vertices.Add(new XYZ(0, 0, 0));
+
+			return pline;
 		}
 	}
 }
