@@ -390,16 +390,18 @@ namespace ACadSharp.Entities
 
 			if (this.StartTangent.IsEqual(XYZ.Zero) || this.EndTangent.IsEqual(XYZ.Zero))
 			{
-				double epsilon = MathHelper.Epsilon;
-				int lastIndex = knotValues.Length - 1;
-
 				//https://dccg.upc.edu/wp-content/uploads/2025/05/3.3-Spline-Interpolation.pdf
 				//Try to manually get the first and last tangent
-				double startScale = 3.0 / (knotValues[1] - knotValues[0]);
-				double endScale = 3.0 / (knotValues[lastIndex] - knotValues[lastIndex - 1]);
+				take3(knotValues, false, out double fisrtK1, out double firstK2, out double firstK3);
+				take3(knotValues, true, out double lastK1, out double lastK2, out double lastK3);
 
-				XYZ startTangent = startScale * (fitPoints[1] - fitPoints[0] - 0.5 * (fitPoints[2] - fitPoints[1]));
-				XYZ endTangent = endScale * (fitPoints[lastIndex] - fitPoints[lastIndex - 1] - 0.5 * (fitPoints[lastIndex - 1] - fitPoints[lastIndex - 2]));
+				double startScale = 3.0 / (firstK2 - fisrtK1);
+				double endScale = 3.0 / (lastK1 - lastK2);
+
+				take3(fitPoints, false, out XYZ fitPt1, out XYZ fitPt2, out XYZ fitPt3);
+				XYZ startTangent = startScale * (fitPt2 - fitPt1 - 0.5 * (fitPt3 - fitPt2));
+				take3(fitPoints, true, out fitPt1, out fitPt2, out fitPt3);
+				XYZ endTangent = endScale * (fitPt1 - fitPt2 - 0.5 * (fitPt2 - fitPt3));
 
 				double startMag = 1.0 / startTangent.ToEnumerable().Sum(v => v * v);
 				double endMag = 1.0 / endTangent.ToEnumerable().Sum(v => v * v);
@@ -409,8 +411,9 @@ namespace ACadSharp.Entities
 					return false;
 				}
 
-				double startDiv = (knotValues[1] + knotValues[2] - 2.0 * knotValues[0]) / (knotValues[1] - knotValues[0]);
-				double endDiv = (2.0 * knotValues[lastIndex] - knotValues[lastIndex - 1] - knotValues[lastIndex - 2]) / (knotValues[lastIndex] - knotValues[lastIndex - 1]);
+				double startDiv = (firstK2 + firstK3 - 2.0 * fisrtK1) / (firstK2 - fisrtK1);
+				double endDiv = (2.0 * lastK1 - lastK2 - lastK3) / (lastK1 - lastK2);
+
 				double startDelta = double.MaxValue;
 				double endDelta = double.MaxValue;
 
@@ -423,18 +426,14 @@ namespace ACadSharp.Entities
 					controlPoints = computeControlPoints(this.Degree, knots, fitPoints, startTangent, endTangent);
 
 					// Update tangents based on new control points, only works for degree 3
-					XYZ startPt1 = controlPoints[0];
-					XYZ startPt2 = controlPoints[1];
-					XYZ startPt3 = controlPoints[2];
-					startTangent = 0.5 * (startPt2 - startPt1 + (startPt3 - startPt1) / startDiv) * startScale;
+					take3(controlPoints, false, out XYZ pt1, out XYZ pt2, out XYZ pt3);
+					startTangent = 0.5 * (pt2 - pt1 + (pt3 - pt1) / startDiv) * startScale;
 
 					double currStartDelta = startDelta;
 					startDelta = startMag * (startTangent - lastV1).ToEnumerable().Sum(v => v * v);
 
-					XYZ endPt1 = controlPoints[controlPoints.Length - 1];
-					XYZ endPt2 = controlPoints[controlPoints.Length - 2];
-					XYZ endPt3 = controlPoints[controlPoints.Length - 3];
-					endTangent = 0.5 * (endPt1 - endPt2 + (endPt1 - endPt3) / endDiv) * endScale;
+					take3(controlPoints, true, out pt1, out pt2, out pt3);
+					endTangent = 0.5 * (pt1 - pt2 + (pt1 - pt3) / endDiv) * endScale;
 
 					double currEndDelta = endDelta;
 					endDelta = endMag * (endTangent - lastV2).ToEnumerable().Sum(v => v * v);
@@ -445,7 +444,7 @@ namespace ACadSharp.Entities
 						return false;
 					}
 				}
-				while (startDelta + endDelta > epsilon);
+				while (startDelta + endDelta > MathHelper.Epsilon);
 
 				this.ControlPoints.AddRange(controlPoints);
 			}
@@ -506,19 +505,18 @@ namespace ACadSharp.Entities
 			IList<XYZ> fitPoints,
 			XYZ startTangent, XYZ endTangent)
 		{
-			int nfitPoints = fitPoints.Count - 1;
-			XYZ[] controlPoints = new XYZ[nfitPoints + degree];
+			XYZ[] controlPoints = new XYZ[fitPoints.Count - 1 + degree];
 
 			// Set endpoints and tangent control points
 			controlPoints[0] = fitPoints[0];
 			controlPoints[1] = fitPoints[0] + startTangent * ((knots[4] - knots[3]) / 3.0);
-			controlPoints[nfitPoints + 2] = fitPoints[nfitPoints];
-			controlPoints[nfitPoints + 1] = fitPoints[nfitPoints] - endTangent * ((knots[nfitPoints + 3] - knots[nfitPoints + 2]) / 3.0);
+			controlPoints[fitPoints.Count + 1] = fitPoints[fitPoints.Count - 1];
+			controlPoints[fitPoints.Count] = fitPoints[fitPoints.Count - 1] - endTangent * ((knots[fitPoints.Count + 2] - knots[fitPoints.Count + 1]) / 3.0);
 
-			if (nfitPoints > 1)
+			if (fitPoints.Count - 1 > 1)
 			{
 				var basis = new double[4];
-				var factors = new double[nfitPoints + 1];
+				var factors = new double[fitPoints.Count];
 
 				// Precompute basis for first interior point
 				evaluateBasisFunctions(degree, knots, 4, knots[4], basis);
@@ -526,7 +524,7 @@ namespace ACadSharp.Entities
 				controlPoints[2] = (fitPoints[1] - basis[0] * controlPoints[1]) / denom;
 
 				// Forward sweep for interior control points
-				for (int i = 3; i < nfitPoints; i++)
+				for (int i = 3; i < fitPoints.Count - 1; i++)
 				{
 					factors[i] = basis[2] / denom;
 					evaluateBasisFunctions(degree, knots, i + 2, knots[i + 2], basis);
@@ -535,24 +533,24 @@ namespace ACadSharp.Entities
 				}
 
 				// Last interior control point
-				factors[nfitPoints] = basis[2] / denom;
-				evaluateBasisFunctions(degree, knots, nfitPoints + 2, knots[nfitPoints + 2], basis);
+				factors[fitPoints.Count - 1] = basis[2] / denom;
+				evaluateBasisFunctions(degree, knots, fitPoints.Count + 1, knots[fitPoints.Count + 1], basis);
 				double denomLast = basis[1];
 				double numLeft = basis[0];
-				double factorLast = factors[nfitPoints];
-				controlPoints[nfitPoints] = (fitPoints[nfitPoints - 1] - basis[2] * controlPoints[nfitPoints + 1] - numLeft * controlPoints[nfitPoints - 1]) / (denomLast - numLeft * factorLast);
+				double factorLast = factors[fitPoints.Count - 1];
+				controlPoints[fitPoints.Count - 1] = (fitPoints[fitPoints.Count - 2] - basis[2] * controlPoints[fitPoints.Count] - numLeft * controlPoints[fitPoints.Count - 2]) / (denomLast - numLeft * factorLast);
 
 				// Backward substitution for tridiagonal system
-				if (nfitPoints > 2)
+				if (fitPoints.Count - 1 <= 2)
 				{
-					for (int j = nfitPoints - 1; j >= 2; j--)
-					{
-						controlPoints[j] -= factors[j + 1] * controlPoints[j + 1];
-					}
+					controlPoints[fitPoints.Count - 1] *= 0.75;
 				}
 				else
 				{
-					controlPoints[nfitPoints] *= 0.75;
+					for (int j = fitPoints.Count - 2; j >= 2; j--)
+					{
+						controlPoints[j] -= factors[j + 1] * controlPoints[j + 1];
+					}
 				}
 			}
 			return controlPoints;
@@ -701,6 +699,23 @@ namespace ACadSharp.Entities
 				case KnotParametrization.Custom:
 				default:
 					return [];
+			}
+		}
+
+		private static void take3<T>(T[] pts, bool reverse, out T pt1, out T pt2, out T pt3)
+																					where T : struct
+		{
+			if (reverse)
+			{
+				pt1 = pts[pts.Length - 1];
+				pt2 = pts[pts.Length - 2];
+				pt3 = pts[pts.Length - 3];
+			}
+			else
+			{
+				pt1 = pts[0];
+				pt2 = pts[1];
+				pt3 = pts[2];
 			}
 		}
 
