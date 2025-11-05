@@ -534,7 +534,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(mlineStyle.EndAngle);
 
 			//linesinstyle RC Number of lines in this style
-			this._writer.WriteByte((byte)mlineStyle.Elements.Count);
+			this._writer.WriteByte((byte)mlineStyle.Elements.Count());
 			foreach (MLineStyle.Element element in mlineStyle.Elements)
 			{
 				//Offset BD Offset of this segment
