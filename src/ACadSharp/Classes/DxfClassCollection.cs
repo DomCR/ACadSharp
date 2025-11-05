@@ -390,6 +390,20 @@ namespace ACadSharp.Classes
 				WasZombie = false,
 			});
 
+			//AcDbRasterImageDef
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				ApplicationName = "ISM",
+				CppClassName = DxfSubclassMarker.RasterImageDefReactor,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = (ACadVersion)20,
+				DxfName = DxfFileToken.ObjectImageDefinitionReactor,
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed,
+				WasZombie = false,
+			});
+
 			//AcDbColor
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
@@ -484,7 +498,8 @@ namespace ACadSharp.Classes
 			});
 
 			//AcDbMLeaderObjectContextData
-			doc.Classes.AddOrUpdate(new DxfClass {
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
 				CppClassName = DxfSubclassMarker.MultiLeaderObjectContextData,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = ACadVersion.MC0_0,
