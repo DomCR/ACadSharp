@@ -195,7 +195,7 @@ namespace ACadSharp.IO.SVG
 
 		private bool drawableLineType(LineType lineType)
 		{
-			return lineType.IsComplex && !lineType.Segments.Any(s => s.IsShape);
+			return lineType.IsComplex && !lineType.HasShapes;
 		}
 
 		private void endDocument()
