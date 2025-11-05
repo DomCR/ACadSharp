@@ -743,7 +743,8 @@ namespace ACadSharp.IO.DXF
 		{
 			CadPolyLineTemplate template = null;
 
-			if (this._builder.Version == ACadVersion.Unknown)
+			if (this._builder.Version == ACadVersion.Unknown
+				|| this._builder.Version == ACadVersion.AC1009)
 			{
 				var polyline = new Polyline2D();
 				template = new CadPolyLineTemplate(polyline);
