@@ -12,7 +12,7 @@ namespace ACadSharp.IO.Templates {
 
 		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			AnnotScaleObjectContextData contextData = (AnnotScaleObjectContextData)this.CadObject;
 			if (builder.TryGetCadObject(this.ScaleHandle, out Scale scale))

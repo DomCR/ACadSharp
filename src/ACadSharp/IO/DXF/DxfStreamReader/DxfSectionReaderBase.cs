@@ -1078,7 +1078,7 @@ namespace ACadSharp.IO.DXF
 					tmp.LeaderStyleHandle = this._reader.ValueAsHandle;
 					return true;
 				case 341:
-					tmp.LineTypeHandle = this._reader.ValueAsHandle;
+					tmp.LeaderLineTypeHandle = this._reader.ValueAsHandle;
 					return true;
 				case 343:
 					tmp.MTextStyleHandle = this._reader.ValueAsHandle;
