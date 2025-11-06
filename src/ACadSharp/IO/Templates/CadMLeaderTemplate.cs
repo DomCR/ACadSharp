@@ -7,21 +7,21 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadMLeaderTemplate : CadEntityTemplate<MultiLeader>
 	{
-		public ulong ArrowheadHandle { get; internal set; }
+		public ulong ArrowheadHandle { get; set; }
 
 		public IDictionary<ulong, bool> ArrowheadHandles { get; } = new Dictionary<ulong, bool>();
 
 		public IDictionary<MultiLeader.BlockAttribute, ulong> BlockAttributeHandles { get; } = new Dictionary<MultiLeader.BlockAttribute, ulong>();
 
-		public ulong BlockContentHandle { get; internal set; }
+		public ulong BlockContentHandle { get; set; }
 
 		public CadMLeaderAnnotContextTemplate CadMLeaderAnnotContextTemplate { get; set; }
 
-		public ulong LeaderLineTypeHandle { get; internal set; }
+		public ulong? LeaderLineTypeHandle { get; set; }
 
-		public ulong LeaderStyleHandle { get; internal set; }
+		public ulong LeaderStyleHandle { get; set; }
 
-		public ulong MTextStyleHandle { get; internal set; }
+		public ulong MTextStyleHandle { get; set; }
 
 		public CadMLeaderTemplate() : this(new MultiLeader())
 		{
