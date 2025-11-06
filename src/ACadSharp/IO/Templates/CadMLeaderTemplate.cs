@@ -34,7 +34,7 @@ namespace ACadSharp.IO.Templates
 
 		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			this.CadMLeaderAnnotContextTemplate.Build(builder);
 
