@@ -6,10 +6,15 @@ using Xunit;
 
 namespace ACadSharp.Tests.Entities
 {
-	public class ViewportTests
+	public class ViewportTests : CommonEntityTests<Viewport>
 	{
+		public override void CloneTest()
+		{
+			throw new System.NotImplementedException();
+		}
+
 		[Fact]
-		public void GetBoundingBoxTest()
+		public override void GetBoundingBoxTest()
 		{
 			Viewport viewport = new Viewport();
 			viewport.Width = 100;

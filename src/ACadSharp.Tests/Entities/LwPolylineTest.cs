@@ -7,7 +7,7 @@ using Xunit;
 
 namespace ACadSharp.Tests.Entities
 {
-	public class LwPolylineTests
+	public class LwPolylineTests : CommonEntityTests<LwPolyline>
 	{
 		private XYZ[] _points = new XYZ[]
 			{
@@ -113,6 +113,16 @@ namespace ACadSharp.Tests.Entities
 
 				Assert.NotNull(result);
 			}
+		}
+
+		public override void CloneTest()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void GetBoundingBoxTest()
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

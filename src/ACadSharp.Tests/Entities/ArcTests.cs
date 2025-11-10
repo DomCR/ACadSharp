@@ -9,6 +9,11 @@ namespace ACadSharp.Tests.Entities
 {
 	public class ArcTests : CommonEntityTests<Arc>
 	{
+		public override void CloneTest()
+		{
+			throw new NotImplementedException();
+		}
+
 		[Fact]
 		public void CreateFromBulgeTest()
 		{
@@ -39,7 +44,7 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
-		public void GetBoundingBoxTest()
+		public override void GetBoundingBoxTest()
 		{
 			Arc arc = new Arc();
 			arc.Radius = 5;

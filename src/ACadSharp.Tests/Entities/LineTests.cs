@@ -89,7 +89,7 @@ namespace ACadSharp.Tests.Entities
 
 
 		[Fact]
-		public void GetBoundingBoxTest()
+		public override void GetBoundingBoxTest()
 		{
 			Line line = new Line();
 			line.EndPoint = new XYZ(10, 10, 0);
@@ -98,6 +98,11 @@ namespace ACadSharp.Tests.Entities
 
 			Assert.Equal(new XYZ(0, 0, 0), boundingBox.Min);
 			Assert.Equal(new XYZ(10, 10, 0), boundingBox.Max);
+		}
+
+		public override void CloneTest()
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

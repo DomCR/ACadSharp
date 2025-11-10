@@ -10,8 +10,13 @@ namespace ACadSharp.Tests.Entities
 	{
 		private CSMathRandom _random = new CSMathRandom();
 
+		public override void CloneTest()
+		{
+			throw new NotImplementedException();
+		}
+
 		[Fact]
-		public void GetBoundingBoxTest()
+		public override void GetBoundingBoxTest()
 		{
 			Circle circle = new Circle();
 			circle.Radius = 5;

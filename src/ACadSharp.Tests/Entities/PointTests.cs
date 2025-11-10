@@ -39,5 +39,15 @@ namespace ACadSharp.Tests.Entities
 			AssertUtils.AreEqual(new XYZ(5, 0, 5), point.Location, "Point Location");
 			AssertUtils.AreEqual(XYZ.AxisY, point.Normal);
 		}
+
+		public override void CloneTest()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void GetBoundingBoxTest()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

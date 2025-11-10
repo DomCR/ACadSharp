@@ -9,12 +9,7 @@ namespace ACadSharp.Tests.Entities
 		where T : Entity, new()
 	{
 		[Fact]
-		public virtual void BoundingBoxTest()
-		{
-			Entity entity = EntityFactory.Create(typeof(T));
-
-			entity.GetBoundingBox();
-		}
+		public abstract void CloneTest();
 
 		[Fact]
 		public void DefaultConstructor()
@@ -91,5 +86,8 @@ namespace ACadSharp.Tests.Entities
 			entity.LineWeight = LineWeightType.W70;
 			Assert.Equal(entity.LineWeight, entity.GetActiveLineWeightType());
 		}
+
+		[Fact]
+		public abstract void GetBoundingBoxTest();
 	}
 }

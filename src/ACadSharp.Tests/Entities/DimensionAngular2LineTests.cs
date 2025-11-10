@@ -17,6 +17,16 @@ namespace ACadSharp.Tests.Entities
 			AssertUtils.AreEqual(XYZ.Zero, dim.Center);
 		}
 
+		public override void CloneTest()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void GetBoundingBoxTest()
+		{
+			throw new System.NotImplementedException();
+		}
+
 		[Fact]
 		public void MeasurementTest()
 		{

@@ -15,5 +15,15 @@ namespace ACadSharp.Tests.Entities
 
 			EntityComparator.IsEqual(att, attributeDefinition);
 		}
+
+		public override void CloneTest()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void GetBoundingBoxTest()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

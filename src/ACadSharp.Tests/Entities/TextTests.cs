@@ -9,6 +9,16 @@ namespace ACadSharp.Tests.Entities
 	{
 		private CSMathRandom _random = new CSMathRandom();
 
+		public override void CloneTest()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void GetBoundingBoxTest()
+		{
+			throw new System.NotImplementedException();
+		}
+
 		[Fact]
 		public void TranslationTest()
 		{

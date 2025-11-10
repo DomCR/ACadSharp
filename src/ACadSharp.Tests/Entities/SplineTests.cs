@@ -8,7 +8,7 @@ namespace ACadSharp.Tests.Entities
 	public class SplineTests : CommonEntityTests<Spline>
 	{
 		[Fact]
-		public override void BoundingBoxTest()
+		public override void GetBoundingBoxTest()
 		{
 			Spline spline = new Spline();
 
@@ -51,6 +51,11 @@ namespace ACadSharp.Tests.Entities
 			Assert.False(spline.Flags.HasFlag(SplineFlags.Closed));
 			Assert.False(spline.Flags1.HasFlag(SplineFlags1.Closed));
 			Assert.False(spline.IsClosed);
+		}
+
+		public override void CloneTest()
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }
