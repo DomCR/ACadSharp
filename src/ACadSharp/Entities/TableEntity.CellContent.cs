@@ -1,12 +1,15 @@
-﻿namespace ACadSharp.Entities
+﻿using ACadSharp.Attributes;
+
+namespace ACadSharp.Entities
 {
 	public partial class TableEntity
 	{
 		public class CellContent
 		{
-			public ContentFormat Format { get; } = new();
-
+			[DxfCodeValue(90)]
 			public TableCellContentType ContentType { get; set; }
+
+			public ContentFormat Format { get; } = new();
 
 			public CellValue Value { get; } = new CellValue();
 		}
