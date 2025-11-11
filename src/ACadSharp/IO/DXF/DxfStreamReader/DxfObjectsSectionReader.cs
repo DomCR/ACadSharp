@@ -99,6 +99,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<VisualStyle>(new CadTemplate<VisualStyle>(new VisualStyle()), this.readVisualStyle);
 				case DxfFileToken.ObjectSpatialFilter:
 					return this.readObjectCodes<SpatialFilter>(new CadSpatialFilterTemplate(), this.readSpatialFilter);
+				case DxfFileToken.ObjectMLineStyle:
+					return this.readObjectCodes<MLineStyle>(new CadMLineStyleTemplate(), this.readMLineStyle);
 				case DxfFileToken.ObjectMLeaderStyle:
 					return this.readObjectCodes<MultiLeaderStyle>(new CadMLeaderStyleTemplate(), this.readMLeaderStyle);
 				case DxfFileToken.ObjectXRecord:
@@ -1572,6 +1574,34 @@ namespace ACadSharp.IO.DXF
 				case 73:
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.SpatialFilter]);
+			}
+		}
+
+		private bool readMLineStyle(CadTemplate template, DxfMap map)
+		{
+			var tmp = template as CadMLineStyleTemplate;
+			var mLineStyle = template.CadObject as MLineStyle;
+
+			switch (this._reader.Code)
+			{
+				case 6:
+					var t = tmp.ElementTemplates.LastOrDefault();
+					if (t == null)
+					{
+						return true;
+					}
+					t.LineTypeName = this._reader.ValueAsString;
+					return true;
+				case 49:
+					MLineStyle.Element element = new MLineStyle.Element();
+					CadMLineStyleTemplate.ElementTemplate elementTemplate = new CadMLineStyleTemplate.ElementTemplate(element);
+					element.Offset = this._reader.ValueAsDouble;
+
+					tmp.ElementTemplates.Add(elementTemplate);
+					mLineStyle.AddElement(element);
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
 		}
 
