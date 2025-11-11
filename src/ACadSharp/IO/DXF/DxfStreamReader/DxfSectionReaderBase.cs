@@ -20,6 +20,9 @@ namespace ACadSharp.IO.DXF
 		protected readonly IDxfStreamReader _reader;
 		protected readonly DxfDocumentBuilder _builder;
 
+		//Avoid to move the reader to the next line
+		protected bool lockPointer = false;
+
 		public DxfSectionReaderBase(IDxfStreamReader reader, DxfDocumentBuilder builder)
 		{
 			this._reader = reader;
@@ -263,6 +266,12 @@ namespace ACadSharp.IO.DXF
 					this.readCommonEntityCodes(template, out bool isExtendedData, map);
 					if (isExtendedData)
 						continue;
+				}
+
+				if (this.lockPointer)
+				{
+					this.lockPointer = false;
+					continue;
 				}
 
 				if (this._reader.DxfCode != DxfCode.Start)
@@ -626,7 +635,6 @@ namespace ACadSharp.IO.DXF
 			CadHatchTemplate tmp = template as CadHatchTemplate;
 			Hatch hatch = tmp.CadObject;
 
-			bool isFirstSeed = true;
 			XY seedPoint = new XY();
 
 			switch (this._reader.Code)
@@ -636,17 +644,15 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 10:
 					seedPoint.X = this._reader.ValueAsDouble;
+					hatch.SeedPoints.Add(seedPoint);
 					return true;
 				case 20:
-					if (!isFirstSeed)
-					{
-						seedPoint.Y = this._reader.ValueAsDouble;
-						hatch.SeedPoints.Add(seedPoint);
-					}
+					seedPoint = hatch.SeedPoints.LastOrDefault();
+					seedPoint.Y = this._reader.ValueAsDouble;
+					hatch.SeedPoints[hatch.SeedPoints.Count - 1] = seedPoint;
 					return true;
 				case 30:
 					hatch.Elevation = this._reader.ValueAsDouble;
-					isFirstSeed = false;
 					return true;
 				case 53:
 					hatch.PatternAngle = this._reader.ValueAsAngle;
@@ -660,10 +666,12 @@ namespace ACadSharp.IO.DXF
 				//Number of pattern definition lines
 				case 78:
 					this.readPattern(hatch.Pattern, this._reader.ValueAsInt);
+					this.lockPointer = true;
 					return true;
 				//Number of boundary paths (loops)
 				case 91:
 					this.readLoops(tmp, this._reader.ValueAsInt);
+					this.lockPointer = true;
 					return true;
 				//Number of seed points
 				case 98:
@@ -1647,7 +1655,7 @@ namespace ACadSharp.IO.DXF
 
 				CadHatchTemplate.CadBoundaryPathTemplate path = this.readLoop();
 				if (path != null)
-					template.PathTempaltes.Add(path);
+					template.PathTemplates.Add(path);
 			}
 		}
 
