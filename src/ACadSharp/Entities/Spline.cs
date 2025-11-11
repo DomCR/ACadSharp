@@ -198,6 +198,9 @@ namespace ACadSharp.Entities
 		{
 			this.Normal = this.transformNormal(transform, this.Normal);
 
+			this.StartTangent = transform.ApplyTransform(this.StartTangent);
+			this.EndTangent = transform.ApplyTransform(this.EndTangent);
+
 			for (int i = 0; i < this.ControlPoints.Count; i++)
 			{
 				this.ControlPoints[i] = transform.ApplyTransform(this.ControlPoints[i]);
