@@ -312,12 +312,111 @@ namespace ACadSharp.Tests.IO
 
 				var v = arc.PolygonalVertexes(3);
 
-				Polyline2D polyline = new Polyline2D(v.Select(a => new Vertex2D(a)), false);
+				Polyline3D polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
+				polyline.Color = Color.Red;
 
 				arc.GetEndVertices(out XYZ s, out XYZ e);
 
 				this.Document.Entities.Add(arc);
 				this.Document.Entities.Add(polyline);
+
+				//Inverted normal
+				arc = new Arc()
+				{
+					Center = new XYZ(0, 0, 0),
+					Radius = 50,
+					StartAngle = MathHelper.HalfPI,
+					EndAngle = Math.PI,
+					Normal = new XYZ(0, 0, -1)
+				};
+
+				arc.GetEndVertices(out s, out e);
+				Line l = new Line(s, e);
+
+				v = arc.PolygonalVertexes(3);
+				polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
+				//polyline.Normal = new XYZ(0, 0, -1);
+				polyline.Color = Color.Green;
+
+				this.Document.Entities.Add(arc);
+				this.Document.Entities.Add(polyline);
+				this.Document.Entities.Add(l);
+
+				arc = new Arc()
+				{
+					StartAngle = 0,
+					EndAngle = Math.PI / (2),
+					Radius = 20,
+					Normal = XYZ.AxisX
+				};
+
+				v = arc.PolygonalVertexes(3);
+				polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
+				polyline.Color = Color.Blue;
+
+				arc.GetEndVertices(out s, out e);
+				l = new Line(s, e);
+
+				this.Document.Entities.Add(arc);
+				this.Document.Entities.Add(polyline);
+				this.Document.Entities.Add(l);
+
+				arc = new Arc()
+				{
+					StartAngle = 0,
+					EndAngle = Math.PI / (2),
+					Radius = 20,
+					Normal = -XYZ.AxisX
+				};
+
+				v = arc.PolygonalVertexes(3);
+				polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
+				polyline.Color = Color.Yellow;
+
+				arc.GetEndVertices(out s, out e);
+				l = new Line(s, e);
+
+				this.Document.Entities.Add(arc);
+				this.Document.Entities.Add(polyline);
+				this.Document.Entities.Add(l);
+
+				arc = new Arc()
+				{
+					StartAngle = 0,
+					EndAngle = Math.PI / (2),
+					Radius = 20,
+					Normal = XYZ.AxisY
+				};
+
+				v = arc.PolygonalVertexes(3);
+				polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
+				polyline.Color = Color.Magenta;
+
+				arc.GetEndVertices(out s, out e);
+				l = new Line(s, e);
+
+				this.Document.Entities.Add(arc);
+				this.Document.Entities.Add(polyline);
+				this.Document.Entities.Add(l);
+
+				arc = new Arc()
+				{
+					StartAngle = 0,
+					EndAngle = Math.PI / (2),
+					Radius = 20,
+					Normal = -XYZ.AxisY
+				};
+
+				v = arc.PolygonalVertexes(3);
+				polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
+				polyline.Color = Color.Cyan;
+
+				arc.GetEndVertices(out s, out e);
+				l = new Line(s, e);
+
+				this.Document.Entities.Add(arc);
+				this.Document.Entities.Add(polyline);
+				this.Document.Entities.Add(l);
 			}
 
 			public void CreateGroup()
@@ -762,7 +861,9 @@ namespace ACadSharp.Tests.IO
 					Normal = XYZ.AxisX
 				};
 
-				foreach (XYZ item in arc.PolygonalVertexes(100))
+				var lst = arc.PolygonalVertexes(100);
+				var pline = new Polyline3D(lst);
+				foreach (XYZ item in lst)
 				{
 					this.Document.Entities.Add(new Circle()
 					{
@@ -773,6 +874,7 @@ namespace ACadSharp.Tests.IO
 				}
 
 				this.Document.Entities.Add(arc);
+				this.Document.Entities.Add(pline);
 			}
 
 			public void EntityColorByIndex()

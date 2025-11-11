@@ -20,7 +20,7 @@ namespace ACadSharp.IO.Templates
 
 		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 			MultiLeaderObjectContextData annotContext = (MultiLeaderObjectContextData)this.CadObject;
 
 			if (builder.TryGetCadObject(this.TextStyleHandle, out TextStyle annotContextTextStyle))

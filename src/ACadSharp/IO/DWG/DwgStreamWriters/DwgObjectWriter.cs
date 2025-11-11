@@ -45,7 +45,7 @@ namespace ACadSharp.IO.DWG
 		private Entity _next;
 
 		public DwgObjectWriter(Stream stream, CadDocument document, Encoding encoding,
-			bool writeXRecords = true, 
+			bool writeXRecords = true,
 			bool writeXData = true,
 			bool writeShapes = true) : base(document.Header.Version)
 		{
@@ -297,6 +297,11 @@ namespace ACadSharp.IO.DWG
 			{
 				//Warning: anonymous blocks do not write the full name, only *{type character}
 				this._writer.WriteVariableText(record.Name.Substring(0, 2));
+			}
+			else if (record.Layout != null)
+			{
+				var processedBlockName = new string(record.Name.Where(c => !char.IsDigit(c)).ToArray());
+				this._writer.WriteVariableText(processedBlockName);
 			}
 			else
 			{

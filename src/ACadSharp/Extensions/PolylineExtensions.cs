@@ -118,10 +118,10 @@ namespace ACadSharp.Extensions
 				{
 					if (i == 0)
 					{
-						points.Add((T)curr.Location);
+						points.Add(curr.Location.Convert<T>());
 					}
 
-					points.Add((T)next.Location);
+					points.Add(next.Location.Convert<T>());
 				}
 				else
 				{

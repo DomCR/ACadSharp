@@ -41,7 +41,12 @@ namespace ACadSharp.Tables
 		public string Description { get; set; }
 
 		/// <summary>
-		/// Get if this line type is complex (has segments).
+		/// Gets if this line type has any segment defined by a shape.
+		/// </summary>
+		public bool HasShapes { get { return this.Segments.Any(s => s.IsShape); } }
+
+		/// <summary>
+		/// Gets if this line type is complex (has segments).
 		/// </summary>
 		public bool IsComplex { get { return this._segments.Count > 0; } }
 
@@ -100,6 +105,20 @@ namespace ACadSharp.Tables
 			segment.Style = CadObject.updateCollection(segment.Style, this.Document?.TextStyles);
 			segment.Owner = this;
 			this._segments.Add(segment);
+		}
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			LineType clone = (LineType)base.Clone();
+
+			clone._segments = new List<Segment>();
+			foreach (var segment in this._segments)
+			{
+				clone.AddSegment(segment.Clone());
+			}
+
+			return clone;
 		}
 
 		/// <summary>
@@ -165,20 +184,6 @@ namespace ACadSharp.Tables
 			}
 
 			return lst;
-		}
-
-		/// <inheritdoc/>
-		public override CadObject Clone()
-		{
-			LineType clone = (LineType)base.Clone();
-
-			clone._segments = new List<Segment>();
-			foreach (var segment in this._segments)
-			{
-				clone.AddSegment(segment.Clone());
-			}
-
-			return clone;
 		}
 
 		internal override void AssignDocument(CadDocument doc)

@@ -5604,7 +5604,7 @@ namespace ACadSharp.IO.DWG
 				}
 
 				template.ElementTemplates.Add(elementTemplate);
-				mlineStyle.Elements.Add(element);
+				mlineStyle.AddElement(element);
 			}
 
 			return template;
@@ -5934,7 +5934,7 @@ namespace ACadSharp.IO.DWG
 					pathTemplate.Handles.Add(this.handleReference());
 				}
 
-				template.PathTempaltes.Add(pathTemplate);
+				template.PathTemplates.Add(pathTemplate);
 			}
 
 			#endregion Read the boundary path data
