@@ -7,7 +7,7 @@ namespace ACadSharp.IO.Templates
 	{
 		public string HatchPatternName { get; set; }
 
-		public List<CadBoundaryPathTemplate> PathTempaltes = new List<CadBoundaryPathTemplate>();
+		public List<CadBoundaryPathTemplate> PathTemplates = new List<CadBoundaryPathTemplate>();
 
 		public CadHatchTemplate() : base(new Hatch()) { }
 
@@ -17,12 +17,7 @@ namespace ACadSharp.IO.Templates
 		{
 			base.build(builder);
 
-			if (!string.IsNullOrEmpty(this.HatchPatternName))
-			{
-
-			}
-
-			foreach (CadBoundaryPathTemplate t in PathTempaltes)
+			foreach (CadBoundaryPathTemplate t in PathTemplates)
 			{
 				(this.CadObject as Hatch).Paths.Add(t.Path);
 				t.Build(builder);

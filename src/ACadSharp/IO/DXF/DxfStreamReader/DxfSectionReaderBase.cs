@@ -635,7 +635,6 @@ namespace ACadSharp.IO.DXF
 			CadHatchTemplate tmp = template as CadHatchTemplate;
 			Hatch hatch = tmp.CadObject;
 
-			bool isFirstSeed = true;
 			XY seedPoint = new XY();
 
 			switch (this._reader.Code)
@@ -645,17 +644,15 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 10:
 					seedPoint.X = this._reader.ValueAsDouble;
+					hatch.SeedPoints.Add(seedPoint);
 					return true;
 				case 20:
-					if (!isFirstSeed)
-					{
-						seedPoint.Y = this._reader.ValueAsDouble;
-						hatch.SeedPoints.Add(seedPoint);
-					}
+					seedPoint = hatch.SeedPoints.LastOrDefault();
+					seedPoint.Y = this._reader.ValueAsDouble;
+					hatch.SeedPoints[hatch.SeedPoints.Count - 1] = seedPoint;
 					return true;
 				case 30:
 					hatch.Elevation = this._reader.ValueAsDouble;
-					isFirstSeed = false;
 					return true;
 				case 53:
 					hatch.PatternAngle = this._reader.ValueAsAngle;
@@ -1658,7 +1655,7 @@ namespace ACadSharp.IO.DXF
 
 				CadHatchTemplate.CadBoundaryPathTemplate path = this.readLoop();
 				if (path != null)
-					template.PathTempaltes.Add(path);
+					template.PathTemplates.Add(path);
 			}
 		}
 
