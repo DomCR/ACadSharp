@@ -20,6 +20,9 @@ namespace ACadSharp.IO.DXF
 		protected readonly IDxfStreamReader _reader;
 		protected readonly DxfDocumentBuilder _builder;
 
+		//Avoid to move the reader to the next line
+		protected bool lockPointer = false;
+
 		public DxfSectionReaderBase(IDxfStreamReader reader, DxfDocumentBuilder builder)
 		{
 			this._reader = reader;
@@ -263,6 +266,12 @@ namespace ACadSharp.IO.DXF
 					this.readCommonEntityCodes(template, out bool isExtendedData, map);
 					if (isExtendedData)
 						continue;
+				}
+
+				if (this.lockPointer)
+				{
+					this.lockPointer = false;
+					continue;
 				}
 
 				if (this._reader.DxfCode != DxfCode.Start)
@@ -660,10 +669,12 @@ namespace ACadSharp.IO.DXF
 				//Number of pattern definition lines
 				case 78:
 					this.readPattern(hatch.Pattern, this._reader.ValueAsInt);
+					this.lockPointer = true;
 					return true;
 				//Number of boundary paths (loops)
 				case 91:
 					this.readLoops(tmp, this._reader.ValueAsInt);
+					this.lockPointer = true;
 					return true;
 				//Number of seed points
 				case 98:
