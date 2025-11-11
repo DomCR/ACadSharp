@@ -7,7 +7,7 @@ namespace ACadSharp.IO.Templates
 	{
 		public class CadBoundaryPathTemplate : ICadTemplate
 		{
-			public Hatch.BoundaryPath Path { get; set; } = new Hatch.BoundaryPath();
+			public Hatch.BoundaryPath Path { get; set; } = new();
 
 			public HashSet<ulong> Handles { get; set; } = new();
 

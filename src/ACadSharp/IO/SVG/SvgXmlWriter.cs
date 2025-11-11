@@ -193,10 +193,9 @@ namespace ACadSharp.IO.SVG
 			return sb.ToString();
 		}
 
-		private bool drawableLineType(IEntity entity)
+		private bool drawableLineType(LineType lineType)
 		{
-			var lineType = entity.GetActiveLineType();
-			return lineType.IsComplex && !lineType.Segments.Any(s => s.IsShape);
+			return lineType.IsComplex && !lineType.HasShapes;
 		}
 
 		private void endDocument()
@@ -426,9 +425,10 @@ namespace ACadSharp.IO.SVG
 
 			this.writeTransform(transform);
 
-			if (this.drawableLineType(entity))
+			LineType lt = entity.GetActiveLineType();
+			if (this.drawableLineType(lt))
 			{
-				this.writeDashes(entity.GetActiveLineType(), this.getPointSize(entity));
+				this.writeDashes(lt, this.getPointSize(entity));
 			}
 		}
 

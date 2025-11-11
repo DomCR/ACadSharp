@@ -55,22 +55,11 @@ Check the [documentation](https://github.com/DomCR/ACadSharp/tree/master/docs/) 
 
 Building
 ---
+
 Before building run:
+
 ```console
 git submodule update --init --recursive
 ```
-This command will clone the submodules. These are Shared Projects that this project dependes on.
 
-Contributing
----
-
-Please feel free to fork this repo and send a pull request if you want to contribute to this project.
-
-Notice that this project is in an alpha version, not all the features are implemented and there can be bugs due to this so any PR with a bug fix will not have a priority.
-
-If you want to contribute you can check the Dxf documentation [here](https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-235B22E0-A567-4CF6-92D3-38A2306D73F3). 
-
-License
----
-
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/DomCR/ACadSharp/blob/master/LICENSE) file for details
+This command will clone the submodules necessary to build the project.

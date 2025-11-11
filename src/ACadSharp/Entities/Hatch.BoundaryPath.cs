@@ -68,7 +68,10 @@ namespace ACadSharp.Entities
 			/// <inheritdoc/>
 			public void ApplyTransform(Transform transform)
 			{
-				throw new System.NotImplementedException();
+				foreach (var e in this.Edges)
+				{
+					e.ApplyTransform(transform);
+				}
 			}
 
 			/// <inheritdoc/>
