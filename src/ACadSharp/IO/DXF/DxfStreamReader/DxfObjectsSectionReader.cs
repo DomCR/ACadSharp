@@ -17,8 +17,6 @@ namespace ACadSharp.IO.DXF
 	{
 		public delegate bool ReadObjectDelegate<T>(CadTemplate template, DxfMap map) where T : CadObject;
 
-		private bool _blockPointer = false;
-
 		public DxfObjectsSectionReader(IDxfStreamReader reader, DxfDocumentBuilder builder)
 			: base(reader, builder)
 		{
@@ -153,9 +151,9 @@ namespace ACadSharp.IO.DXF
 						continue;
 				}
 
-				if (this._blockPointer)
+				if (this.lockPointer)
 				{
-					this._blockPointer = false;
+					this.lockPointer = false;
 					continue;
 				}
 
@@ -482,19 +480,19 @@ namespace ACadSharp.IO.DXF
 			{
 				case 100 when this._reader.ValueAsString.Equals(DxfSubclassMarker.TableContent, StringComparison.InvariantCultureIgnoreCase):
 					this.readTableContentSubclass(template, map);
-					this._blockPointer = true;
+					this.lockPointer = true;
 					return true;
 				case 100 when this._reader.ValueAsString.Equals(DxfSubclassMarker.FormattedTableData, StringComparison.InvariantCultureIgnoreCase):
 					this.readFormattedTableDataSubclass(template, map);
-					this._blockPointer = true;
+					this.lockPointer = true;
 					return true;
 				case 100 when this._reader.ValueAsString.Equals(DxfSubclassMarker.LinkedTableData, StringComparison.InvariantCultureIgnoreCase):
 					this.readLinkedTableDataSubclass(template, map);
-					this._blockPointer = true;
+					this.lockPointer = true;
 					return true;
 				case 100 when this._reader.ValueAsString.Equals(DxfSubclassMarker.LinkedData, StringComparison.InvariantCultureIgnoreCase):
 					this.readLinkedData(template, map);
-					this._blockPointer = true;
+					this.lockPointer = true;
 					return true;
 				default:
 					return false;
