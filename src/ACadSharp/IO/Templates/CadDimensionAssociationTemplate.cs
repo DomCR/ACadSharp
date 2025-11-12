@@ -4,8 +4,14 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadDimensionAssociationTemplate : CadTemplate<DimensionAssociation>
 	{
-		public CadDimensionAssociationTemplate() : base(new()) { }
+		public ulong? DimensionHandle { get; set; }
 
-		public CadDimensionAssociationTemplate(DimensionAssociation obj) : base(obj) { }
+		public CadDimensionAssociationTemplate() : base(new())
+		{
+		}
+
+		public CadDimensionAssociationTemplate(DimensionAssociation obj) : base(obj)
+		{
+		}
 	}
 }

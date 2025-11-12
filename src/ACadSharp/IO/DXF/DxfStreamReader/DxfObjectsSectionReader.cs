@@ -304,7 +304,14 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.Code)
 			{
 				case 330:
-					tmp.PaperSpaceBlockHandle = this._reader.ValueAsHandle;
+					if (template.OwnerHandle.HasValue)
+					{
+						tmp.PaperSpaceBlockHandle = this._reader.ValueAsHandle;
+					}
+					else
+					{
+						tmp.OwnerHandle = this._reader.ValueAsHandle;
+					}
 					return true;
 				case 331:
 					tmp.LasActiveViewportHandle = (this._reader.ValueAsHandle);
@@ -1682,6 +1689,16 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				case 330:
+					if (template.OwnerHandle.HasValue)
+					{
+						tmp.DimensionHandle = this._reader.ValueAsHandle;
+					}
+					else
+					{
+						tmp.OwnerHandle = this._reader.ValueAsHandle;
+					}
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
