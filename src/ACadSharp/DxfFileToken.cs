@@ -109,6 +109,7 @@
 		public const string ObjectsSection = "OBJECTS";
 		public const string ObjectDictionary = "DICTIONARY";
 		public const string ObjectDictionaryWithDefault = "ACDBDICTIONARYWDFLT";
+		public const string ObjectDimensionAssociation = "DIMASSOC";
 		public const string ObjectProxyObject = "ACAD_PROXY_OBJECT";
 		public const string ObjectDictionaryVar = "DICTIONARYVAR";
 		public const string ObjectDBColor = "DBCOLOR";
@@ -139,7 +140,7 @@
 		public const string ObjectTableStyle = "TABLESTYLE";
 		public const string ObjectCellStyleMap = "CELLSTYLEMAP";
 		public const string ObjectSpatialFilter = "SPATIAL_FILTER";
-		
+
 		//Table tokens
 		public const string ObjectTableColumn = "COLUMN";
 		public const string ObjectTableColumnBegin = "TABLECOLUMN_BEGIN";
