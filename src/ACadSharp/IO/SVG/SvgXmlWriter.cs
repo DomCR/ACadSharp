@@ -145,9 +145,9 @@ namespace ACadSharp.IO.SVG
 				case IText text:
 					this.writeText(text, transform);
 					break;
-				//case Spline spline:
-				//	this.writeSpline(spline, transform);
-				//	break;
+				case Spline spline:
+					this.writeSpline(spline, transform);
+					break;
 				default:
 					this.notify($"[{entity.ObjectName}] Entity not implemented.", NotificationType.NotImplemented);
 					break;
@@ -401,6 +401,8 @@ namespace ACadSharp.IO.SVG
 			this.writeEntityHeader(entity, transform);
 
 			this.WriteAttributeString("d", this.createPath(lines));
+
+			this.WriteAttributeString("fill", "none");
 
 			this.WriteEndElement();
 		}
@@ -691,7 +693,7 @@ namespace ACadSharp.IO.SVG
 				this.WriteValue("px");
 			}
 
-			if(text.Style.TrueType.HasFlag(FontFlags.Bold))
+			if (text.Style.TrueType.HasFlag(FontFlags.Bold))
 			{
 				this.WriteValue("bold");
 			}
@@ -807,8 +809,33 @@ namespace ACadSharp.IO.SVG
 
 		private void writeSpline(Spline spline, Transform transform)
 		{
-			spline.UpdateFromFitPoints();
-			this.writeEntityAsPath(spline, transform, spline.PolygonalVertexes(this.Configuration.ArcPoints));
+			if (!spline.ControlPoints.Any())
+			{
+				spline.UpdateFromFitPoints();
+			}
+
+			if (!spline.TryPolygonalVertexes(this.Configuration.ArcPoints, out var pts))
+			{
+				return;
+			}
+
+			if (spline.IsClosed)
+			{
+				this.WriteStartElement("polygon");
+			}
+			else
+			{
+				this.WriteStartElement("polyline");
+			}
+
+			this.writeEntityHeader(spline, transform);
+
+			string svgPts = this.svgPoints(pts, transform);
+
+			this.WriteAttributeString("points", svgPts);
+			this.WriteAttributeString("fill", "none");
+
+			this.WriteEndElement();
 		}
 
 		private void writeTransform(Transform transform)

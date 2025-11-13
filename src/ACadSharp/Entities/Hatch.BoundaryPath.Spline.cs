@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace ACadSharp.Entities
@@ -130,7 +131,16 @@ namespace ACadSharp.Entities
 					spline.EndTangent = this.EndTangent.Convert<XYZ>();
 
 					spline.ControlPoints.AddRange(this.ControlPoints);
-					spline.Weights.AddRange(this.ControlPoints.Select(x => x.Z));
+
+					if (this.Weights.Any(w => w == 0))
+					{
+						spline.Weights.AddRange(Enumerable.Repeat(1.0d, this.ControlPoints.Count));
+					}
+					else
+					{
+						spline.Weights.AddRange(this.Weights);
+					}
+
 					spline.FitPoints.AddRange(this.FitPoints.Select(x => x.Convert<XYZ>()));
 					spline.Knots.AddRange(this.Knots);
 
