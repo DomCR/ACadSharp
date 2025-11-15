@@ -159,7 +159,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityBody:
 					return this.readEntityCodes<CadBody>(new CadEntityTemplate<CadBody>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityCircle:
-					return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), this.readEntitySubclassMap);
+					return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), this.readCircle);
 				case DxfFileToken.EntityDimension:
 					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(), this.readDimension);
 				case DxfFileToken.Entity3DFace:
@@ -340,6 +340,28 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		private bool readCircle(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			Circle circle = template.CadObject as Circle;
+
+			switch (this._reader.Code)
+			{
+				case 40:
+					double radius = this._reader.ValueAsDouble;
+					if (radius <= 0)
+					{
+						circle.Radius = MathHelper.Epsilon;
+					}
+					else
+					{
+						circle.Radius = radius;
+					}
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Circle]);
+			}
+		}
+
 		private bool readArc(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
 			switch (this._reader.Code)
@@ -347,7 +369,7 @@ namespace ACadSharp.IO.DXF
 				default:
 					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Arc]))
 					{
-						return this.readEntitySubclassMap(template, map, DxfSubclassMarker.Circle);
+						return this.readCircle(template, map, DxfSubclassMarker.Circle);
 					}
 					return true;
 			}
