@@ -118,7 +118,7 @@ namespace ACadSharp.IO.DWG
 					// Ignore, will be handled below
 				}
 			}
-			
+
 			if (this._memoryStream == null)
 			{
 				this._memoryStream = HugeMemoryStream.Create(this._reader.Stream.Length);
@@ -1781,7 +1781,7 @@ namespace ACadSharp.IO.DWG
 
 			//Block name TV 2
 			string name = this._textReader.ReadVariableText();
-			if (!name.IsNullOrEmpty())
+			if (!string.IsNullOrWhiteSpace(name))
 			{
 				block.Name = name;
 			}
@@ -4374,7 +4374,6 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readLayer()
 		{
-			//Initialize the template with the default layer
 			Layer layer = new Layer();
 			CadLayerTemplate template = new CadLayerTemplate(layer);
 
@@ -4382,7 +4381,11 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Entry name TV 2
-			layer.Name = this._textReader.ReadVariableText();
+			string name = this._textReader.ReadVariableText();
+			if (!string.IsNullOrWhiteSpace(name))
+			{
+				layer.Name = name;
+			}
 
 			this.readXrefDependantBit(template.CadObject);
 
@@ -4537,7 +4540,11 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Entry name TV 2
-			ltype.Name = this._textReader.ReadVariableText();
+			string name = this._textReader.ReadVariableText();
+			if (!string.IsNullOrWhiteSpace(name))
+			{
+				ltype.Name = name;
+			}
 
 			this.readXrefDependantBit(template.CadObject);
 
@@ -4967,7 +4974,11 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			appId.Name = this._textReader.ReadVariableText();
+			string name = this._textReader.ReadVariableText();
+			if (!string.IsNullOrWhiteSpace(name))
+			{
+				appId.Name = name;
+			}
 
 			this.readXrefDependantBit(appId);
 
@@ -4990,11 +5001,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Entry name TV 2
 			string name = this._textReader.ReadVariableText();
-			if (name.IsNullOrEmpty())
-			{
-				this._builder.Notify($"[DimensionStyle] with handle {dimStyle.Handle} does not have a name assigned", NotificationType.Warning);
-			}
-			else
+			if (!string.IsNullOrWhiteSpace(name))
 			{
 				dimStyle.Name = name;
 			}
