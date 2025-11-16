@@ -135,6 +135,7 @@ namespace ACadSharp.Entities
 		public virtual Polyline3D ToPolyline(int precision = byte.MaxValue)
 		{
 			var pline = new Polyline3D();
+			pline.IsClosed = true;
 			pline.Thickness = this.Thickness;
 			pline.Normal = this.Normal;
 
@@ -153,6 +154,8 @@ namespace ACadSharp.Entities
 				Location = end,
 				Bulge = bulge,
 			});
+
+			this.MatchProperties(pline);
 
 			return pline;
 		}

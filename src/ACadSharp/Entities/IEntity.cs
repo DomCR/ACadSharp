@@ -77,9 +77,9 @@ namespace ACadSharp.Entities
 		LineWeightType GetActiveLineWeightType();
 
 		/// <summary>
-		/// Match the properties of this entity to another entity.
+		/// Matches the properties of the current entity to a specified entity.
 		/// </summary>
-		/// <param name="entity"></param>
+		/// <param name="entity">The entity whose properties will be matched. Cannot be <see langword="null"/>.</param>
 		void MatchProperties(IEntity entity);
 	}
 }

@@ -92,7 +92,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public Polyline3D ToPolyline()
+		public Polyline3D ToPolyline(int precision = 255)
 		{
 			var pline = new Polyline3D(this.StartPoint, this.EndPoint);
 			pline.Thickness = this.Thickness;

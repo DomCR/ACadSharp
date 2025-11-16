@@ -298,6 +298,8 @@ namespace ACadSharp.Entities
 				Bulge = bulge,
 			});
 
+			this.MatchProperties(pline);
+
 			return pline;
 		}
 	}
