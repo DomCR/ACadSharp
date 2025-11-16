@@ -95,7 +95,7 @@ namespace ACadSharp.Entities
 
 					clone.ControlPoints = new List<XYZ>(this.ControlPoints);
 					clone.FitPoints = new List<XY>(this.FitPoints);
-					clone.Knots = new List<double>(this.Weights);
+					clone.Knots = new List<double>(this.Knots);
 
 					return clone;
 				}

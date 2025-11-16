@@ -20,6 +20,9 @@ namespace ACadSharp.IO.DXF
 		protected readonly IDxfStreamReader _reader;
 		protected readonly DxfDocumentBuilder _builder;
 
+		//Avoid to move the reader to the next line
+		protected bool lockPointer = false;
+
 		public DxfSectionReaderBase(IDxfStreamReader reader, DxfDocumentBuilder builder)
 		{
 			this._reader = reader;
@@ -156,7 +159,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityBody:
 					return this.readEntityCodes<CadBody>(new CadEntityTemplate<CadBody>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityCircle:
-					return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), this.readEntitySubclassMap);
+					return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), this.readCircle);
 				case DxfFileToken.EntityDimension:
 					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(), this.readDimension);
 				case DxfFileToken.Entity3DFace:
@@ -265,6 +268,12 @@ namespace ACadSharp.IO.DXF
 						continue;
 				}
 
+				if (this.lockPointer)
+				{
+					this.lockPointer = false;
+					continue;
+				}
+
 				if (this._reader.DxfCode != DxfCode.Start)
 					this._reader.ReadNext();
 			}
@@ -331,6 +340,28 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		private bool readCircle(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			Circle circle = template.CadObject as Circle;
+
+			switch (this._reader.Code)
+			{
+				case 40:
+					double radius = this._reader.ValueAsDouble;
+					if (radius <= 0)
+					{
+						circle.Radius = MathHelper.Epsilon;
+					}
+					else
+					{
+						circle.Radius = radius;
+					}
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Circle]);
+			}
+		}
+
 		private bool readArc(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
 			switch (this._reader.Code)
@@ -338,7 +369,7 @@ namespace ACadSharp.IO.DXF
 				default:
 					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Arc]))
 					{
-						return this.readEntitySubclassMap(template, map, DxfSubclassMarker.Circle);
+						return this.readCircle(template, map, DxfSubclassMarker.Circle);
 					}
 					return true;
 			}
@@ -378,8 +409,59 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				//Border overrides:
+				case 279:
+					//Lineweight for the top border of the cell; override applied at the cell level
+					tmp.CurrentCell.StyleOverride.TopBorder.LineWeight = (LineWeightType)this._reader.ValueAsShort;
+					return true;
+				case 275:
+					//Lineweight for the right border of the cell; override applied at the cell level
+					tmp.CurrentCell.StyleOverride.RightBorder.LineWeight = (LineWeightType)this._reader.ValueAsShort;
+					return true;
+				case 276:
+					//Lineweight for the bottom border of the cell; override applied at the cell level
+					tmp.CurrentCell.StyleOverride.BottomBorder.LineWeight = (LineWeightType)this._reader.ValueAsShort;
+					return true;
+				case 278:
+					//Lineweight for the left border of the cell; override applied at the cell level
+					tmp.CurrentCell.StyleOverride.LeftBorder.LineWeight = (LineWeightType)this._reader.ValueAsShort;
+					return true;
+				case 69:
+					//True color value for the top border of the cell; override applied at the cell level
+					tmp.CurrentCell.StyleOverride.TopBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 65:
+					//True color value for the right border of the cell; override applied at the cell level
+					tmp.CurrentCell.StyleOverride.RightBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 66:
+					//True color value for the bottom border of the cell; override applied at the cell level
+					tmp.CurrentCell.StyleOverride.BottomBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 68:
+					//True color value for the left border of the cell; override applied at the cell level
+					tmp.CurrentCell.StyleOverride.LeftBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
 				case 2:
 					tmp.BlockName = this._reader.ValueAsString;
+					return true;
+				case 40:
+					tmp.HorizontalMargin = this._reader.ValueAsDouble;
+					return true;
+				case 63:
+					tmp.CurrentCell.StyleOverride.BackgroundColor = new Color(this._reader.ValueAsShort);
+					return true;
+				case 64:
+					tmp.CurrentCell.StyleOverride.ContentColor = new Color(this._reader.ValueAsShort);
+					return true;
+				case 140:
+					if (tmp.CurrentCellTemplate != null)
+					{
+						tmp.CurrentCellTemplate.FormatTextHeight = this._reader.ValueAsDouble;
+					}
+					return true;
+				case 283:
+					tmp.CurrentCell.StyleOverride.IsFillColorOn = this._reader.ValueAsBool;
 					return true;
 				case 342:
 					tmp.StyleHandle = this._reader.ValueAsHandle;
@@ -416,7 +498,7 @@ namespace ACadSharp.IO.DXF
 					tmp.CurrentCell.MergedValue = this._reader.ValueAsInt;
 					return true;
 				case 174:
-					tmp.CurrentCell.Autofit = this._reader.ValueAsBool;
+					tmp.CurrentCell.AutoFit = this._reader.ValueAsBool;
 					return true;
 				case 175:
 					tmp.CurrentCell.BorderWidth = this._reader.ValueAsInt;
@@ -488,6 +570,9 @@ namespace ACadSharp.IO.DXF
 					case 91:
 						content.Value.Value = this._reader.ValueAsInt;
 						break;
+					case 92:
+						//Extended cell flags (from AutoCAD 2007)
+						break;
 					case 93:
 						content.Value.Flags = this._reader.ValueAsInt;
 						break;
@@ -499,6 +584,9 @@ namespace ACadSharp.IO.DXF
 						break;
 					case 300:
 						content.Value.Format = this._reader.ValueAsString;
+						break;
+					case 310:
+						//Data for proxy entity graphics (multiple lines; 256-character maximum per line)
 						break;
 					default:
 						this._builder.Notify($"[CELL_VALUE] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
@@ -626,7 +714,6 @@ namespace ACadSharp.IO.DXF
 			CadHatchTemplate tmp = template as CadHatchTemplate;
 			Hatch hatch = tmp.CadObject;
 
-			bool isFirstSeed = true;
 			XY seedPoint = new XY();
 
 			switch (this._reader.Code)
@@ -636,17 +723,15 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 10:
 					seedPoint.X = this._reader.ValueAsDouble;
+					hatch.SeedPoints.Add(seedPoint);
 					return true;
 				case 20:
-					if (!isFirstSeed)
-					{
-						seedPoint.Y = this._reader.ValueAsDouble;
-						hatch.SeedPoints.Add(seedPoint);
-					}
+					seedPoint = hatch.SeedPoints.LastOrDefault();
+					seedPoint.Y = this._reader.ValueAsDouble;
+					hatch.SeedPoints[hatch.SeedPoints.Count - 1] = seedPoint;
 					return true;
 				case 30:
 					hatch.Elevation = this._reader.ValueAsDouble;
-					isFirstSeed = false;
 					return true;
 				case 53:
 					hatch.PatternAngle = this._reader.ValueAsAngle;
@@ -660,10 +745,12 @@ namespace ACadSharp.IO.DXF
 				//Number of pattern definition lines
 				case 78:
 					this.readPattern(hatch.Pattern, this._reader.ValueAsInt);
+					this.lockPointer = true;
 					return true;
 				//Number of boundary paths (loops)
 				case 91:
 					this.readLoops(tmp, this._reader.ValueAsInt);
+					this.lockPointer = true;
 					return true;
 				//Number of seed points
 				case 98:
@@ -1078,7 +1165,7 @@ namespace ACadSharp.IO.DXF
 					tmp.LeaderStyleHandle = this._reader.ValueAsHandle;
 					return true;
 				case 341:
-					tmp.LineTypeHandle = this._reader.ValueAsHandle;
+					tmp.LeaderLineTypeHandle = this._reader.ValueAsHandle;
 					return true;
 				case 343:
 					tmp.MTextStyleHandle = this._reader.ValueAsHandle;
@@ -1647,7 +1734,7 @@ namespace ACadSharp.IO.DXF
 
 				CadHatchTemplate.CadBoundaryPathTemplate path = this.readLoop();
 				if (path != null)
-					template.PathTempaltes.Add(path);
+					template.PathTemplates.Add(path);
 			}
 		}
 

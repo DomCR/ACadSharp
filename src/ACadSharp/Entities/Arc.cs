@@ -265,8 +265,6 @@ namespace ACadSharp.Entities
 				throw new ArgumentOutOfRangeException(nameof(precision), precision, "The arc precision must be equal or greater than two.");
 			}
 
-			this.GetEndVertices(out XYZ start, out XYZ end);
-
 			return CurveExtensions.PolygonalVertexes(
 				precision,
 				this.Center,
