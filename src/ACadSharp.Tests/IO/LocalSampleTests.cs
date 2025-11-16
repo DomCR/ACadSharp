@@ -59,7 +59,7 @@ namespace ACadSharp.Tests.IO
 			Stopwatch stopwatch = new Stopwatch();
 			stopwatch.Start();
 
-			if (extension == ".dxf")
+			if (test.IsDxf)
 			{
 				doc = DxfReader.Read(test.Path, this.onNotification);
 			}
