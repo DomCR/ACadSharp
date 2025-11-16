@@ -1,8 +1,8 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Extensions;
 using ACadSharp.Tests.Common;
 using CSMath;
 using System;
-using System.Linq;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities
@@ -11,7 +11,18 @@ namespace ACadSharp.Tests.Entities
 	{
 		public override void CloneTest()
 		{
-			throw new NotImplementedException();
+			Arc arc = new Arc();
+			arc.Radius = 5;
+			arc.EndAngle = Math.PI / 2;
+
+			Arc clone = arc.CloneTyped();
+
+			Assert.NotNull(clone);
+			EntityComparator.IsEqual(arc, clone);
+
+			Assert.Equal(arc.Radius, clone.Radius);
+			Assert.Equal(arc.StartAngle, clone.StartAngle);
+			Assert.Equal(arc.EndAngle, clone.EndAngle);
 		}
 
 		[Fact]
