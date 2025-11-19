@@ -457,7 +457,7 @@ namespace ACadSharp.Tables
 		/// <returns></returns>
 		public IEnumerable<Entity> GetSortedEntities()
 		{
-			if (this.SortEntitiesTable != null)
+			if (this.SortEntitiesTable == null)
 			{
 				return this.Entities.OrderBy(e => e.Handle);
 			}
