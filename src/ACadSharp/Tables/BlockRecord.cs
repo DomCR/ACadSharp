@@ -372,6 +372,7 @@ namespace ACadSharp.Tables
 
 			if (this.SortEntitiesTable != null)
 			{
+				clone.XDictionary.Remove(SortEntitiesTable.DictionaryEntryName);
 				clone.CreateSortEntitiesTable();
 			}
 
