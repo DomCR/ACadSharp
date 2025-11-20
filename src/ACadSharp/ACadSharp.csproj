@@ -19,6 +19,8 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<Version>3.2.49</Version>
 		<PackageOutputPath>../nupkg</PackageOutputPath>
+		<SignAssembly>True</SignAssembly>
+		<AssemblyOriginatorKeyFile>ACadSharp.snk</AssemblyOriginatorKeyFile>
 	</PropertyGroup>
 
 	<Import Project="..\CSUtilities\CSMath\CSMath.projitems" Label="Shared" />
