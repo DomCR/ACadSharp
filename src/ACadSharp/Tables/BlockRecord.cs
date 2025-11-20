@@ -372,8 +372,7 @@ namespace ACadSharp.Tables
 
 			if (this.SortEntitiesTable != null)
 			{
-				clone.XDictionary.Remove(SortEntitiesTable.DictionaryEntryName);
-				clone.CreateSortEntitiesTable();
+				clone.SortEntitiesTable.BlockOwner = clone;
 			}
 
 			clone.Entities = new CadObjectCollection<Entity>(clone);
