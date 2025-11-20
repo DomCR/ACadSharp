@@ -271,7 +271,7 @@ namespace ACadSharp.Entities
 				this.StartAngle,
 				this.EndAngle,
 				this.Radius,
-				this.Normal
+				this.Normal.Normalize()
 			);
 		}
 
