@@ -382,8 +382,7 @@ namespace ACadSharp.Tables
 				var e = (Entity)item.Clone();
 				clone.Entities.Add(e);
 
-				if (this.SortEntitiesTable != null
-					&& this.SortEntitiesTable.Select(s => s.Entity).Contains(item))
+				if (this.SortEntitiesTable != null)
 				{
 					clone.SortEntitiesTable.Add(e, this.SortEntitiesTable.GetSorterHandle(item));
 				}
@@ -464,7 +463,6 @@ namespace ACadSharp.Tables
 			}
 
 			List<(ulong, Entity)> entities = new();
-
 			foreach (var entity in this.Entities)
 			{
 				ulong sorter = this.SortEntitiesTable.GetSorterHandle(entity);
