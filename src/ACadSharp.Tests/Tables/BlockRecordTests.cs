@@ -128,6 +128,10 @@ namespace ACadSharp.Tests.Tables
 
 			var sorted = record.GetSortedEntities().ToArray();
 
+			Assert.NotNull(record.SortEntitiesTable);
+			Assert.NotEmpty(record.SortEntitiesTable);
+			Assert.Equal(4, record.SortEntitiesTable.Count());
+
 			Assert.Equal(l1, sorted[0]);
 			Assert.Equal(l3, sorted[1]);
 			Assert.Equal(l5, sorted[2]);
@@ -138,7 +142,7 @@ namespace ACadSharp.Tests.Tables
 
 			Assert.NotNull(clone.SortEntitiesTable);
 			Assert.NotEmpty(clone.SortEntitiesTable);
-			Assert.Equal(4, clone.SortEntitiesTable.Count());
+			Assert.Equal(5, clone.SortEntitiesTable.Count());
 
 			sorted = clone.GetSortedEntities().ToArray();
 
