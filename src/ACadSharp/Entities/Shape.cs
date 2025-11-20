@@ -56,15 +56,7 @@ namespace ACadSharp.Entities
 				{
 					throw new ArgumentNullException(nameof(value));
 				}
-
-				if (this.Document != null)
-				{
-					this._style = CadObject.updateCollection(value, this.Document.TextStyles);
-				}
-				else
-				{
-					this._style = value;
-				}
+				this._style = CadObject.updateCollection(value, this.Document?.TextStyles);
 			}
 		}
 
