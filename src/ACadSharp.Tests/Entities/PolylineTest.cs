@@ -1,12 +1,14 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tests.Common;
 using CSMath;
+using System;
 using System.Collections.Generic;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities
 {
-	public class PolylineTests
+	[Obsolete("Add common polyline tests")]
+	public class PolylineTests : CommonEntityTests<Polyline2D>
 	{
 		[Fact]
 		public void ClearVertrticesTest()
@@ -27,7 +29,7 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
-		public void CloneTest()
+		public override void CloneTest()
 		{
 			CadDocument doc = new CadDocument();
 
@@ -40,6 +42,11 @@ namespace ACadSharp.Tests.Entities
 
 			CadObjectTestUtils.AssertEntityClone(polyline, clone);
 			CadObjectTestUtils.AssertEntityCollection(polyline.Vertices, clone.Vertices);
+		}
+
+		public override void GetBoundingBoxTest()
+		{
+			throw new NotImplementedException();
 		}
 
 		[Fact]

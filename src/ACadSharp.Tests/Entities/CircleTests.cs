@@ -8,10 +8,8 @@ namespace ACadSharp.Tests.Entities
 {
 	public class CircleTests : CommonEntityTests<Circle>
 	{
-		private CSMathRandom _random = new CSMathRandom();
-
 		[Fact]
-		public void GetBoundingBoxTest()
+		public override void GetBoundingBoxTest()
 		{
 			Circle circle = new Circle();
 			circle.Radius = 5;
