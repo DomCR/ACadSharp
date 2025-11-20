@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Extensions;
 using ACadSharp.Tests.Common;
 using CSMath;
 using Xunit;
@@ -111,7 +112,48 @@ namespace ACadSharp.Tests.Entities
 
 		public override void CloneTest()
 		{
-			throw new System.NotImplementedException();
+			Spline spline = new Spline();
+
+			spline.ControlPoints.Add(new XYZ(0, 0, 0));
+			spline.ControlPoints.Add(new XYZ(10, 10, 0));
+			spline.ControlPoints.Add(new XYZ(20, 10, 0));
+			spline.ControlPoints.Add(new XYZ(50, 30, 0));
+
+			spline.FitPoints.Add(new XYZ(1, 0, 2));
+			spline.FitPoints.Add(new XYZ(20, 0, 0));
+			spline.FitPoints.Add(new XYZ(20, 30, 0));
+			spline.FitPoints.Add(new XYZ(50, 50, 0));
+
+			spline.Degree = 3;
+
+			spline.Knots.Add(0);
+			spline.Knots.Add(0);
+			spline.Knots.Add(0);
+			spline.Knots.Add(0);
+
+			spline.Knots.Add(1);
+			spline.Knots.Add(1);
+			spline.Knots.Add(1);
+			spline.Knots.Add(1);
+
+			spline.Weights.Add(1);
+			spline.Weights.Add(1);
+			spline.Weights.Add(1);
+			spline.Weights.Add(1);
+
+			Spline clone = spline.CloneTyped();
+
+			CadObjectTestUtils.AssertEntityClone(spline, clone);
+
+			Assert.NotEmpty(clone.ControlPoints);
+			Assert.NotEmpty(clone.Knots);
+			Assert.NotEmpty(clone.FitPoints);
+			Assert.NotEmpty(clone.Weights);
+
+			Assert.Equal(spline.ControlPoints, clone.ControlPoints);
+			Assert.Equal(spline.Knots, clone.Knots);
+			Assert.Equal(spline.FitPoints, clone.FitPoints);
+			Assert.Equal(spline.Weights, clone.Weights);
 		}
 	}
 }

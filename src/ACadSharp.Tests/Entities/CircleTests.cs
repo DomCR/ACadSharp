@@ -8,13 +8,6 @@ namespace ACadSharp.Tests.Entities
 {
 	public class CircleTests : CommonEntityTests<Circle>
 	{
-		private CSMathRandom _random = new CSMathRandom();
-
-		public override void CloneTest()
-		{
-			throw new NotImplementedException();
-		}
-
 		[Fact]
 		public override void GetBoundingBoxTest()
 		{

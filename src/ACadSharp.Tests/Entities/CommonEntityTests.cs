@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Extensions;
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
 using Xunit;
@@ -8,8 +9,19 @@ namespace ACadSharp.Tests.Entities
 	public abstract class CommonEntityTests<T>
 		where T : Entity, new()
 	{
+		protected CSMathRandom _random = new CSMathRandom();
+
 		[Fact]
-		public abstract void CloneTest();
+		public virtual void CloneTest()
+		{
+			T e = EntityFactory.Create<T>();
+
+			var clone = e.CloneTyped();
+
+			Assert.NotNull(clone);
+
+			CadObjectTestUtils.AssertEntityClone(e, clone);
+		}
 
 		[Fact]
 		public void DefaultConstructor()

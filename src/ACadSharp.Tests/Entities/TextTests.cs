@@ -7,16 +7,13 @@ namespace ACadSharp.Tests.Entities
 {
 	public class TextTests : CommonEntityTests<TextEntity>
 	{
-		private CSMathRandom _random = new CSMathRandom();
-
-		public override void CloneTest()
-		{
-			throw new System.NotImplementedException();
-		}
-
 		public override void GetBoundingBoxTest()
 		{
-			throw new System.NotImplementedException();
+			TextEntity text = new TextEntity();
+			text.InsertPoint = new XYZ(5, 5, 5);
+
+			BoundingBox b = text.GetBoundingBox();
+			Assert.Equal(new BoundingBox(new XYZ(5, 5, 5)), b);
 		}
 
 		[Fact]
@@ -28,7 +25,6 @@ namespace ACadSharp.Tests.Entities
 
 			text.ApplyTransform(transform);
 			AssertUtils.AreEqual(text.InsertPoint, newLocation);
-
 		}
 	}
 }

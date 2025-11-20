@@ -9,11 +9,6 @@ namespace ACadSharp.Tests.Entities
 	{
 		public override DimensionType Type => DimensionType.Aligned;
 
-		public override void CloneTest()
-		{
-			throw new System.NotImplementedException();
-		}
-
 		[Fact]
 		public void DefinitionPointRecalculation()
 		{
@@ -31,7 +26,10 @@ namespace ACadSharp.Tests.Entities
 
 		public override void GetBoundingBoxTest()
 		{
-			throw new System.NotImplementedException();
+			var dim = createDim();
+			BoundingBox b = dim.GetBoundingBox();
+
+			Assert.Equal(new BoundingBox(XYZ.Zero, new XYZ(10, 0, 0)), b);
 		}
 
 		protected override DimensionAligned createDim()

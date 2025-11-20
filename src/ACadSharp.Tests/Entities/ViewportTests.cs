@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Extensions;
 using ACadSharp.Tests.Common;
 using CSMath;
 using System.Collections.Generic;
@@ -8,11 +9,6 @@ namespace ACadSharp.Tests.Entities
 {
 	public class ViewportTests : CommonEntityTests<Viewport>
 	{
-		public override void CloneTest()
-		{
-			throw new System.NotImplementedException();
-		}
-
 		[Fact]
 		public override void GetBoundingBoxTest()
 		{
