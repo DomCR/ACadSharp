@@ -61,6 +61,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.CreateLayout)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityTransparency)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithSegments)));
+            Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithTextSegment)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateInsertWithHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.InsertWithSpatialFilter)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
@@ -996,6 +997,37 @@ namespace ACadSharp.Tests.IO
 
 				this.Document.LineTypes.Add(lt);
 			}
+
+            public void LineTypeWithTextSegment()
+            {
+                LineType lt = new LineType("segmentedWithText");
+                lt.Description = "hello text";
+
+                LineType.Segment s1 = new LineType.Segment
+                {
+                    Length = 12,
+                    //Style = this.Document.TextStyles[TextStyle.DefaultName]
+                };
+                
+                LineType.Segment s2 = new LineType.Segment
+                {
+                    Text = "Text",
+                    IsText = true
+                    //Style = this.Document.TextStyles[TextStyle.DefaultName]
+                };
+
+                LineType.Segment s3 = new LineType.Segment
+                {
+                    Length = -3,
+                    //Style = this.Document.TextStyles[TextStyle.DefaultName]
+                };
+
+                lt.AddSegment(s1);
+                lt.AddSegment(s2);
+                lt.AddSegment(s3);
+
+                this.Document.LineTypes.Add(lt);
+            }
 
 			public void Serialize(IXunitSerializationInfo info)
 			{
