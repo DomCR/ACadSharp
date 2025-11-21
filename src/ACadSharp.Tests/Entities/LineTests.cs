@@ -10,23 +10,34 @@ namespace ACadSharp.Tests.Entities
 		private CSMathRandom _random = new CSMathRandom();
 
 		[Fact]
-		public void TranslationTest()
+		public void GetBoundingBoxTest()
 		{
-			var start = XYZ.Zero;
-			var end = new XYZ(1, 1, 0);
+			Line line = new Line();
+			line.EndPoint = new XYZ(10, 10, 0);
+
+			BoundingBox boundingBox = line.GetBoundingBox();
+
+			Assert.Equal(new XYZ(0, 0, 0), boundingBox.Min);
+			Assert.Equal(new XYZ(10, 10, 0), boundingBox.Max);
+		}
+
+		[Fact]
+		public void RandomTranslationTest()
+		{
+			XYZ start = this._random.Next<XYZ>();
+			XYZ end = this._random.Next<XYZ>();
 			Line line = new Line
 			{
 				StartPoint = start,
 				EndPoint = end,
 			};
 
-			XYZ move = new XYZ(5, 5, 0);
-			Transform transform = Transform.CreateTranslation(move);
-			line.ApplyTransform(transform);
+			XYZ move = this._random.Next<XYZ>();
+			Transform translation = Transform.CreateTranslation(move);
+			line.ApplyTransform(translation);
 
 			AssertUtils.AreEqual(start.Add(move), line.StartPoint);
 			AssertUtils.AreEqual(end.Add(move), line.EndPoint);
-			AssertUtils.AreEqual(XYZ.AxisZ, line.Normal);
 		}
 
 		[Fact]
@@ -69,35 +80,41 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
-		public void RandomTranslationTest()
+		public void ToPolylineTest()
 		{
-			XYZ start = this._random.Next<XYZ>();
-			XYZ end = this._random.Next<XYZ>();
+			var start = new XYZ(-1, -1, 0);
+			var end = new XYZ(1, 1, 0);
 			Line line = new Line
 			{
 				StartPoint = start,
 				EndPoint = end,
 			};
 
-			XYZ move = this._random.Next<XYZ>();
-			Transform translation = Transform.CreateTranslation(move);
-			line.ApplyTransform(translation);
+			var pline = line.ToPolyline();
+
+			Assert.NotNull(pline);
+			Assert.Equal(pline.Vertices[0].Location, start);
+			Assert.Equal(pline.Vertices[1].Location, end);
+		}
+
+		[Fact]
+		public void TranslationTest()
+		{
+			var start = XYZ.Zero;
+			var end = new XYZ(1, 1, 0);
+			Line line = new Line
+			{
+				StartPoint = start,
+				EndPoint = end,
+			};
+
+			XYZ move = new XYZ(5, 5, 0);
+			Transform transform = Transform.CreateTranslation(move);
+			line.ApplyTransform(transform);
 
 			AssertUtils.AreEqual(start.Add(move), line.StartPoint);
 			AssertUtils.AreEqual(end.Add(move), line.EndPoint);
-		}
-
-
-		[Fact]
-		public void GetBoundingBoxTest()
-		{
-			Line line = new Line();
-			line.EndPoint = new XYZ(10, 10, 0);
-
-			BoundingBox boundingBox = line.GetBoundingBox();
-
-			Assert.Equal(new XYZ(0, 0, 0), boundingBox.Min);
-			Assert.Equal(new XYZ(10, 10, 0), boundingBox.Max);
+			AssertUtils.AreEqual(XYZ.AxisZ, line.Normal);
 		}
 	}
 }
