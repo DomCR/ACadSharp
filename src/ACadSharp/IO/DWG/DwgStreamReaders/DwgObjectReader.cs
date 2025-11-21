@@ -972,10 +972,12 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.ACAD_PROXY_OBJECT:
 					template = this.readProxyObject();
 					break;
+				case ObjectType.OLE2FRAME:
+					template = this.readOle2Frame();
+					break;
 				//Not implemented entities:
 				case ObjectType.VERTEX_MESH:
 				case ObjectType.OLEFRAME:
-				case ObjectType.OLE2FRAME:
 				case ObjectType.DUMMY:
 					template = this.readUnknownEntity(null);
 					this._builder.Notify($"Unlisted object with DXF name {type} has been read as an UnknownEntity", NotificationType.Warning);
@@ -5531,6 +5533,38 @@ namespace ACadSharp.IO.DWG
 			for (int index = 0; index < numhandles; ++index)
 				//the entries in the group(hard pointer)
 				template.Handles.Add(this.handleReference());
+
+			return template;
+		}
+
+		private CadTemplate readOle2Frame()
+		{
+			Ole2Frame ole2Frame = new Ole2Frame();
+			CadEntityTemplate<Ole2Frame> template = new CadEntityTemplate<Ole2Frame>(ole2Frame);
+
+			//Common Entity Data
+			this.readCommonEntityData(template);
+
+			//Flags BS 70
+			ole2Frame.Version = this._mergedReaders.ReadBitShort();
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//Mode BS
+				short mode = this._mergedReaders.ReadBitShort();
+			}
+
+			//Common:
+			//Data Length BL-- Bit - pair - coded long giving the length of the data
+			int dataLength = this._mergedReaders.ReadBitLong();
+
+			//section that follows.
+			//Unknown data ---The OLE2 data.
+			//R2000 +:
+			//Unknown RC
+			//Common:
+			//Common Entity Handle Data
 
 			return template;
 		}
