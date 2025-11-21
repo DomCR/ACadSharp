@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using CSMath;
 using CSUtilities.Extensions;
 using System.Collections.Generic;
@@ -140,27 +141,12 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			//TODO: can a polyline have only 1 vertex?
-			if (this.Vertices.Count < 2)
+			if (this.Vertices.Any(v => v.Bulge != 0))
 			{
-				return BoundingBox.Null;
+				return BoundingBox.FromPoints(this.GetPoints<XYZ>(byte.MaxValue));
 			}
 
-			XYZ first = this.Vertices[0].Location.Convert<XYZ>();
-			XYZ second = this.Vertices[1].Location.Convert<XYZ>();
-
-			XYZ min = new XYZ(System.Math.Min(first.X, second.X), System.Math.Min(first.Y, second.Y), System.Math.Min(first.Z, second.Z));
-			XYZ max = new XYZ(System.Math.Max(first.X, second.X), System.Math.Max(first.Y, second.Y), System.Math.Max(first.Z, second.Z));
-
-			foreach (T v in this.Vertices.Skip(2))
-			{
-				XYZ curr = v.Location.Convert<XYZ>();
-
-				min = new XYZ(System.Math.Min(min.X, curr.X), System.Math.Min(min.Y, curr.Y), System.Math.Min(min.Z, curr.Z));
-				max = new XYZ(System.Math.Max(max.X, curr.X), System.Math.Max(max.Y, curr.Y), System.Math.Max(max.Z, curr.Z));
-			}
-
-			return new BoundingBox(min, max);
+			return BoundingBox.FromPoints(this.Vertices.Select(v => v.Location.Convert<XYZ>()));
 		}
 
 		internal static IEnumerable<Entity> Explode(IPolyline polyline)
