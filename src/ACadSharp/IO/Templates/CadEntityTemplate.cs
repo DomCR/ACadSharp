@@ -7,9 +7,11 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadEntityTemplate : CadTemplate<Entity>
 	{
-		public byte EntityMode { get; set; }
+		public string BookColorName { get; set; }
 
-		public byte? LtypeFlags { get; set; }
+		public ulong? ColorHandle { get; set; }
+
+		public byte EntityMode { get; set; }
 
 		public ulong? LayerHandle { get; set; }
 
@@ -19,21 +21,34 @@ namespace ACadSharp.IO.Templates
 
 		public string LineTypeName { get; set; }
 
-		public ulong? PrevEntity { get; set; }
-
-		public ulong? NextEntity { get; set; }
-
-		public ulong? ColorHandle { get; set; }
-
-		public string BookColorName { get; set; }
+		public byte? LtypeFlags { get; set; }
 
 		public ulong? MaterialHandle { get; set; }
 
-		public CadEntityTemplate(Entity entity) : base(entity) { }
+		public ulong? NextEntity { get; set; }
 
-		public override void Build(CadDocumentBuilder builder)
+		public ulong? PrevEntity { get; set; }
+
+		public CadEntityTemplate(Entity entity) : base(entity)
 		{
-			base.Build(builder);
+		}
+
+		public void SetUnlinkedReferences()
+		{
+			if (!string.IsNullOrEmpty(this.LayerName))
+			{
+				this.CadObject.Layer = new Layer(this.LayerName);
+			}
+
+			if (!string.IsNullOrEmpty(this.LineTypeName))
+			{
+				this.CadObject.LineType = new LineType(this.LineTypeName);
+			}
+		}
+
+		protected override void build(CadDocumentBuilder builder)
+		{
+			base.build(builder);
 
 			if (this.getTableReference(builder, this.LayerHandle, this.LayerName, out Layer layer))
 			{
@@ -74,19 +89,6 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.BookColor = color;
 			}
 		}
-
-		public void SetUnlinkedReferences()
-		{
-			if (!string.IsNullOrEmpty(this.LayerName))
-			{
-				this.CadObject.Layer = new Layer(this.LayerName);
-			}
-
-			if (!string.IsNullOrEmpty(this.LineTypeName))
-			{
-				this.CadObject.LineType = new LineType(this.LineTypeName);
-			}
-		}
 	}
 
 	internal class CadEntityTemplate<T> : CadEntityTemplate
@@ -94,7 +96,9 @@ namespace ACadSharp.IO.Templates
 	{
 		public new T CadObject { get { return (T)base.CadObject; } set { base.CadObject = value; } }
 
-		public CadEntityTemplate() : base(new T()) { }
+		public CadEntityTemplate() : base(new T())
+		{
+		}
 
 		public CadEntityTemplate(T entity) : base(entity)
 		{

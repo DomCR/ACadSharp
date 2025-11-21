@@ -37,11 +37,11 @@ namespace ACadSharp.Entities
 			{
 				if (value)
 				{
-					this._flags = this._flags.AddFlag(DimensionType.OrdinateTypeX);
+					this._flags.AddFlag(DimensionType.OrdinateTypeX);
 				}
 				else
 				{
-					this._flags = this._flags.RemoveFlag(DimensionType.OrdinateTypeX);
+					this._flags.RemoveFlag(DimensionType.OrdinateTypeX);
 				}
 			}
 		}
@@ -152,7 +152,6 @@ namespace ACadSharp.Entities
 			}
 			pto1 = ref1 + XY.Rotate(pto1, rotation);
 			pto2 = ref1 + XY.Rotate(pto2, rotation);
-
 
 			// reference points
 			this._block.Entities.Add(new Point(dim.DefinitionPoint) { Layer = Layer.Defpoints });

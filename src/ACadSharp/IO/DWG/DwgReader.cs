@@ -1034,7 +1034,7 @@ namespace ACadSharp.IO
 				return null;
 
 			//get the total size of the page
-			MemoryStream memoryStream = new MemoryStream((int)descriptor.DecompressedSize * descriptor.LocalSections.Count);
+			MemoryStream memoryStream = HugeMemoryStream.Create((long)descriptor.DecompressedSize * descriptor.LocalSections.Count);
 
 			foreach (DwgLocalSectionMap section in descriptor.LocalSections)
 			{
@@ -1100,8 +1100,6 @@ namespace ACadSharp.IO
 
 		private Stream getSectionBuffer21(DwgFileHeaderAC21 fileheader, string sectionName)
 		{
-			Stream stream = null;
-
 			if (!fileheader.Descriptors.TryGetValue(sectionName, out DwgSectionDescriptor section))
 				return null;
 
@@ -1110,17 +1108,17 @@ namespace ACadSharp.IO
 			foreach (DwgLocalSectionMap page in section.LocalSections)
 				totalLength += page.DecompressedSize;
 
-			//Total buffer for the page
-			byte[] pagesBuffer = new byte[totalLength];
+			MemoryStream memoryStream = HugeMemoryStream.Create((long)totalLength);
 
-			long currOffset = 0;
 			foreach (DwgLocalSectionMap page in section.LocalSections)
 			{
 				if (page.IsEmpty)
 				{
 					//Page is empty, fill the gap with 0s
 					for (int i = 0; i < (int)page.DecompressedSize; ++i)
-						pagesBuffer[(int)currOffset++] = 0;
+					{
+						memoryStream.WriteByte(0);
+					}
 				}
 				else
 				{
@@ -1157,14 +1155,13 @@ namespace ACadSharp.IO
 						pageBytes = arr;
 					}
 
-					for (int i = 0; i < (int)page.DecompressedSize; ++i)
-						pagesBuffer[(int)currOffset++] = pageBytes[i];
+					memoryStream.Write(pageBytes, 0, (int)page.DecompressedSize);
 				}
 			}
 
-			stream = new MemoryStream(pagesBuffer, 0, pagesBuffer.Length, false, true);
+			memoryStream.Position = 0L;
 
-			return stream;
+			return memoryStream;
 		}
 
 		/// <summary>

@@ -318,7 +318,7 @@ namespace ACadSharp.IO
 		{
 			base.Dispose();
 
-			if (this.Configuration.ClearChache)
+			if (this.Configuration.ClearCache)
 			{
 				DxfMap.ClearCache();
 			}
@@ -533,7 +533,6 @@ namespace ACadSharp.IO
 
 					CodePage code = CadUtils.GetCodePage(encoding.ToLower());
 					this._encoding = this.getListedEncoding((int)code);
-					break;
 				}
 
 				tmpReader.ReadNext();

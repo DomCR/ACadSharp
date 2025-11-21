@@ -16,7 +16,7 @@ namespace ACadSharp.Objects
 	public class PlotSettings : NonGraphicalObject
 	{
 		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.INVALID;
+		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectPlotSettings;

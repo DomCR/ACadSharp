@@ -36,7 +36,7 @@ namespace ACadSharp.Tests.IO
 
 				doc = DxfReader.Read(test.Path, configuration, this.onNotification);
 
-				if(doc.Header.Version <= ACadVersion.AC1021)
+				if (doc.Header.Version <= ACadVersion.AC1021)
 				{
 					return;
 				}
@@ -50,9 +50,9 @@ namespace ACadSharp.Tests.IO
 				doc = DwgReader.Read(test.Path, configuration, this.onNotification);
 			}
 
-			//"my-dynamic-block" handle = 570
+			string dynamicName = "my-dynamic-block";
 
-			BlockRecord blk = doc.BlockRecords["my-dynamic-block"];
+			BlockRecord blk = doc.BlockRecords[dynamicName];
 
 			Assert.True(blk.IsDynamic);
 
@@ -66,6 +66,9 @@ namespace ACadSharp.Tests.IO
 
 			Insert basic = doc.GetCadObject<Insert>(0xABA);
 			Insert modified = doc.GetCadObject<Insert>(0xAC5);
+
+			Assert.NotNull(modified.Block.Source);
+			Assert.Equal(dynamicName, modified.Block.Source.Name);
 		}
 	}
 }

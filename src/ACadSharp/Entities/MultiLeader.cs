@@ -19,12 +19,6 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.MultiLeader)]
 	public partial class MultiLeader : Entity
 	{
-		private MultiLeaderStyle _style = MultiLeaderStyle.Default;
-		private TextStyle _textStyle = TextStyle.Default;
-		private LineType _leaderLineType = LineType.ByLayer;
-		private BlockRecord _arrowhead;
-		private BlockRecord _blockContent;
-
 		/// <summary>
 		/// Gets or sets a <see cref="BlockRecord"/> representing the arrowhead
 		/// (see <see cref="MultiLeaderStyle.Arrowhead"/>) to be displayed with every leader line.
@@ -34,9 +28,9 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <remarks>
 		/// The value for all leader lines can be overridden for each individual leader line by the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.Arrowhead"/> property when the
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.Arrowhead"/> property when the
 		/// <see cref="LeaderLinePropertOverrideFlags.Arrowhead"/> flag is set in the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 342)]
 		public BlockRecord Arrowhead
@@ -44,7 +38,7 @@ namespace ACadSharp.Entities
 			get { return this._arrowhead; }
 			set
 			{
-				this._arrowhead = updateTable(value, this.Document?.BlockRecords);
+				this._arrowhead = updateCollection(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -57,12 +51,12 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// <para>
 		/// The value for all leader lines can be overridden for each individual leader line by the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.ArrowheadSize"/> property when the
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.ArrowheadSize"/> property when the
 		/// <see cref="LeaderLinePropertOverrideFlags.ArrowheadSize"/> flag is set in the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </para><para>
-		/// This property is also exposed by the <see cref="MultiLeaderAnnotContext"/> class. Values
-		/// should be equal, the value <see cref="MultiLeaderAnnotContext.ArrowheadSize"/> is
+		/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+		/// should be equal, the value <see cref="MultiLeaderObjectContextData.ArrowheadSize"/> is
 		/// assumed to be used.
 		/// </para>
 		/// </remarks>
@@ -84,9 +78,28 @@ namespace ACadSharp.Entities
 		public LeaderContentType ContentType { get; set; }
 
 		/// <summary>
-		/// Contains the multileader content (block/text) and the leaders.
+		/// Gets the embedded <see cref="MultiLeaderObjectContextData"/> object
+		/// contains the multileader content (block/text) and the leaders.
 		/// </summary>
-		public MultiLeaderAnnotContext ContextData { get; private set; } = new MultiLeaderAnnotContext();
+		/// <remarks><para>
+		/// The embedded <see cref="MultiLeaderObjectContextData"/> object is used
+		/// if the <see cref="EnableAnnotationScale"/> property is <b>false</b>.
+		/// If <see cref="EnableAnnotationScale"/> is <b>true</b> an alternate
+		/// <see cref="MultiLeaderObjectContextData"/> object with the respective
+		/// scaling value that is linked via the <see cref="CadObject.XDictionary"/>
+		/// property.
+		/// </para><para>
+		/// Note: The properties of the various <see cref="MultiLeaderObjectContextData"/> objects
+		/// are currently not synchronized.
+		/// </para>
+		/// </remarks>
+		public MultiLeaderObjectContextData ContextData
+		{
+			get
+			{
+				return _contextData;
+			}
+		}
 
 		/// <summary>
 		/// Enable Annotation Scale
@@ -116,6 +129,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Leader extended to text
 		/// </summary>
+		[DxfCodeValue(295)]
 		public bool ExtendedToText { get; set; }
 
 		/// <summary>
@@ -126,7 +140,7 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <remarks><para>
 		/// There is only one field for the landing distance in the multileader property grid.
-		/// The value entered arrives in this property and the <see cref="Objects.MultiLeaderAnnotContext.LeaderRoot.LandingDistance"/>
+		/// The value entered arrives in this property and the <see cref="Objects.MultiLeaderObjectContextData.LeaderRoot.LandingDistance"/>
 		/// property. If two leader roots exist both receive the same value. I seems
 		/// <see cref="MultiLeaderPropertyOverrideFlags.LandingDistance"/> flag is never set.
 		/// </para>
@@ -144,9 +158,9 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <remarks>
 		/// The setting for all leader lines can be overridden for each individual leader line by the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.LineType"/> property when the
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.LineType"/> property when the
 		/// <see cref="LeaderLinePropertOverrideFlags.LineType"/> flag is set in the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 341)]
 		public LineType LeaderLineType
@@ -161,7 +175,7 @@ namespace ACadSharp.Entities
 
 				if (this.Document != null)
 				{
-					this._leaderLineType = updateTable(value, this.Document.LineTypes);
+					this._leaderLineType = updateCollection(value, this.Document.LineTypes);
 				}
 				else
 				{
@@ -180,12 +194,12 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <remarks>
 		/// The value for all leader lines can be overridden for each individual leader line by the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.LineWeight"/> property when the
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.LineWeight"/> property when the
 		/// <see cref="LeaderLinePropertOverrideFlags.LineWeight"/> flag is set in the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </remarks>
 		[DxfCodeValue(171)]
-		public LineweightType LeaderLineWeight { get; set; }
+		public LineWeightType LeaderLineWeight { get; set; }
 
 		/// <summary>
 		/// Gets or sets color of the leader lines of this <see cref="MultiLeader"/>
@@ -196,9 +210,9 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <remarks>
 		/// The value for all leader lines can be overridden for each individual leader line by the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.LineColor"/> property when the
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.LineColor"/> property when the
 		/// <see cref="LeaderLinePropertOverrideFlags.LineColor"/> flag is set in the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </remarks>
 		[DxfCodeValue(91)]
 		public Color LineColor { get; set; }
@@ -223,7 +237,7 @@ namespace ACadSharp.Entities
 		/// Gets or sets a value containing a list of flags indicating which multileader
 		/// properties specified by the associated <see cref="MultiLeaderStyle"/>
 		/// are to be overridden by properties specified by this <see cref="MultiLeader"/>
-		/// or the attached <see cref="MultiLeaderAnnotContext"/>.
+		/// or the attached <see cref="MultiLeaderObjectContextData"/>.
 		/// </summary>
 		[DxfCodeValue(90)]
 		public MultiLeaderPropertyOverrideFlags PropertyOverrideFlags { get; set; }
@@ -236,8 +250,8 @@ namespace ACadSharp.Entities
 		/// The scale factor is applied by AutoCAD.
 		/// </summary>
 		/// <remarks>
-		/// This property is also exposed by the <see cref="MultiLeaderAnnotContext"/> class. Values
-		/// should be equal, the value <see cref="MultiLeaderAnnotContext.ScaleFactor"/> is
+		/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+		/// should be equal, the value <see cref="MultiLeaderObjectContextData.ScaleFactor"/> is
 		/// assumed to be relevant.
 		/// </remarks>
 		[DxfCodeValue(45)]
@@ -260,7 +274,7 @@ namespace ACadSharp.Entities
 
 				if (this.Document != null)
 				{
-					this._style = this.updateCollection(value, this.Document.MLeaderStyles);
+					this._style = updateCollection(value, this.Document.MLeaderStyles);
 				}
 				else
 				{
@@ -272,209 +286,11 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.MultiLeader;
 
-		#region Text Menu Properties
-
 		/// <summary>
-		/// Gets or sets the text alignement type.
+		/// Text Align in IPE (meaning unknown)
 		/// </summary>
-		/// <remarks><para>
-		/// The Open Design Specification for DWG documents this property as <i>Unknown</i>,
-		/// DXF reference as <i>Text Aligment Type</i>.
-		/// Available DWG and DXF sample documents saved by AutoCAD return always 0=Left.
-		/// </para><para>
-		/// This property is also exposed by the <see cref="MultiLeaderAnnotContext"/> class. Values
-		/// should be equal, the value <see cref="MultiLeaderAnnotContext.TextAlignment"/> is
-		/// assumed to be used.
-		/// </para>
-		/// </remarks>
-		[DxfCodeValue(175)]
-		public TextAlignmentType TextAlignment { get; set; }
-
-		//	TODO How to set this value?
-		/// <summary>
-		/// Gets or sets a value indicating the text angle.
-		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
-		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextAngle"/> flag is set (see
-		/// <see cref="PropertyOverrideFlags"/> property).
-		/// </summary>
-		[DxfCodeValue(174)]
-		public TextAngleType TextAngle { get; set; }
-
-		/// <summary>
-		/// Gets or sets the color for the display of the text label.
-		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
-		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextColor"/> flag is set (see
-		/// <see cref="PropertyOverrideFlags"/> property).
-		/// </summary>
-		/// <remarks>
-		/// This property is also exposed by the <see cref="MultiLeaderAnnotContext"/> class. Values
-		/// should be equal, the value <see cref="MultiLeaderAnnotContext.TextColor"/> is
-		/// assumed to be used.
-		/// </remarks>
-		[DxfCodeValue(92)]
-		public Color TextColor { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating that the text label is to be drawn with a frame.
-		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
-		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextFrame"/> flag is set (see
-		/// <see cref="PropertyOverrideFlags"/> property).
-		/// </summary>
-		[DxfCodeValue(292)]
-		public bool TextFrame { get; set; }
-
-		/// <summary>
-		/// Gets or sets the text left attachment type (see <see cref="MultiLeaderStyle.TextLeftAttachment"/>).
-		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
-		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextLeftAttachment"/> flag is set (see
-		/// <see cref="PropertyOverrideFlags"/> property).
-		/// </summary>
-		/// <remarks>
-		/// This property is also exposed by the <see cref="MultiLeaderAnnotContext"/> class. Values
-		/// should be equal, the value <see cref="MultiLeaderAnnotContext.TextLeftAttachment"/> is
-		/// assumed to be used.
-		/// </remarks>
-		/// <value>
-		/// A <see cref="TextAttachmentType"/> having the values 0-8 can be used
-		/// ("horizontal" attachment types).
-		/// </value>
-		[DxfCodeValue(173)]
-		public TextAttachmentType TextLeftAttachment { get; set; }
-
-		/// <summary>
-		/// Gets or sets the text right attachment type (see <see cref="MultiLeaderStyle.TextRightAttachment"/>).
-		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
-		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextRightAttachment"/> flag is set (see
-		/// <see cref="PropertyOverrideFlags"/> property).
-		/// </summary>
-		/// <remarks>
-		/// This property is also exposed by the <see cref="MultiLeaderAnnotContext"/> class. Values
-		/// should be equal, the value <see cref="MultiLeaderAnnotContext.TextRightAttachment"/> is
-		/// assumed to be used.
-		/// </remarks>
-		/// <value>
-		/// A <see cref="TextAttachmentType"/> having the values 0-8 can be used
-		/// ("horizontal" attachment types).
-		/// </value>
-		[DxfCodeValue(95)]
-		public TextAttachmentType TextRightAttachment { get; set; }
-
-		/// <summary>
-		/// Gets or sets the <see cref="TextStyle"/> to be used to display the text label of this
-		/// <see cref="MultiLeader"/>.
-		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
-		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextStyle"/> flag is set in the
-		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
-		/// </summary>
-		/// <remarks>
-		/// This property is also exposed by the <see cref="MultiLeaderAnnotContext"/> class
-		/// (<see cref="MultiLeaderAnnotContext.TextStyle"/>).
-		/// Values should be equal, the <see cref="MultiLeaderAnnotContext.TextStyle"/>
-		/// is assumed to be used.
-		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.Handle, 343)]
-		public TextStyle TextStyle
-		{
-			get { return this._textStyle; }
-			set
-				{
-				if (value == null)
-				{
-					throw new ArgumentNullException(nameof(value));
-				}
-
-				if (this.Document != null)
-				{
-					this._textStyle = updateTable(value, this.Document.TextStyles);
-				}
-				else
-				{
-					this._textStyle = value;
-				}
-			}
-		}
-
-		#endregion Text Menu Properties
-
-		#region Block Content Properties
-
-		/// <summary>
-		/// Gets a <see cref="BlockRecord"/> containing elements
-		/// to be drawn as content for the multileader.
-		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
-		/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContent"/> flag is set (see
-		/// <see cref="PropertyOverrideFlags"/> property).
-		/// </summary>
-		/// <remarks>
-		/// This property is also exposed by the <see cref="MultiLeaderAnnotContext"/> class. Values
-		/// should be equal, the value <see cref="MultiLeaderAnnotContext.BlockContent"/> is
-		/// assumed to be used.
-		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.Handle, 344)]
-		public BlockRecord BlockContent
-		{
-			get { return this._blockContent; }
-			set
-			{
-				this._blockContent = updateTable(value, this.Document?.BlockRecords);
-			}
-		}
-
-
-		/// <summary>
-		/// Gets or sets the block-content color.
-		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
-		/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentColor"/> flag is set (see
-		/// <see cref="PropertyOverrideFlags"/> property).
-		/// </summary>
-		/// <remarks>
-		/// This property is also exposed by the <see cref="MultiLeaderAnnotContext"/> class. Values
-		/// should be equal, the value <see cref="MultiLeaderAnnotContext.BlockContentColor"/> is
-		/// assumed to be used.
-		/// </remarks>
-		[DxfCodeValue(93)]
-		public Color BlockContentColor { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating whether the multileader connects to the content-block extents
-		/// or to the content-block base point
-		/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentConnection"/> flag is set in the
-		/// <see cref="PropertyOverrideFlags"/> property.
-		/// </summary>
-		/// <remarks>
-		/// This property is also exposed by the <see cref="MultiLeaderAnnotContext"/> class. Values
-		/// should be equal, the value <see cref="MultiLeaderAnnotContext.BlockContentConnection"/> is
-		/// assumed to be used.
-		/// </remarks>
-		[DxfCodeValue(176)]
-		public BlockContentConnectionType BlockContentConnection { get; set; }
-
-		/// <summary>
-		/// Gets or sets the rotation of the block content of the multileader.
-		/// </summary>
-		/// <remarks>
-		/// This property is also exposed by the <see cref="MultiLeaderAnnotContext"/> class. Values
-		/// should be equal, the value <see cref="MultiLeaderAnnotContext.BlockContentRotation"/> is
-		/// assumed to be used.
-		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.IsAngle, 43)]
-		public double BlockContentRotation { get; set; }
-
-		/// <summary>
-		/// Gets or sets the scale factor for block content.
-		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
-		/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentScale"/> flag is set (see
-		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property).
-		/// </summary>
-		/// <remarks>
-		/// This property is also exposed by the <see cref="MultiLeaderAnnotContext"/> class. Values
-		/// should be equal, the value <see cref="MultiLeaderAnnotContext.BlockContentScale"/> is
-		/// assumed to be used.
-		/// </remarks>
-		[DxfCodeValue(10, 20, 30)]
-		public XYZ BlockContentScale { get; set; }
-
-		#endregion Block Content Properties
+		[DxfCodeValue(178)]
+		public short TextAligninIPE { get; set; }
 
 		//	TODO According to the OpenDesign_Specification_for_.dwg_files
 		//	a list of arror head AND a list of block attributes can occur.
@@ -489,13 +305,6 @@ namespace ACadSharp.Entities
 		//	Decision:
 		//		Ommit the Arrowheads property,
 		//		try to keep the block attributes.
-
-		/// <summary>
-		/// Text Align in IPE (meaning unknown)
-		/// </summary>
-		[DxfCodeValue(178)]
-		public short TextAligninIPE { get; set; }
-
 		/// <summary>
 		/// Gets or sets the Text attachment direction for text or block contents.
 		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
@@ -508,9 +317,9 @@ namespace ACadSharp.Entities
 		/// or attach to the top/bottom.
 		/// </para><para>
 		/// The value for all leader lines can be overridden for each individual leader line by the
-		/// <see cref="Objects.MultiLeaderAnnotContext.LeaderRoot.TextAttachmentDirection"/> property when the
+		/// <see cref="Objects.MultiLeaderObjectContextData.LeaderRoot.TextAttachmentDirection"/> property when the
 		/// <see cref="MultiLeaderPropertyOverrideFlags.TextAttachmentDirection"/> flag is set in the
-		/// <see cref="MultiLeaderAnnotContext.LeaderLine.OverrideFlags"/> property.
+		/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 		/// </para>
 		/// </remarks>
 		/// <value>
@@ -528,9 +337,9 @@ namespace ACadSharp.Entities
 		/// </para><para>
 		/// This property is also exposed by the <see cref="MultiLeader"/> class
 		/// (<see cref="MultiLeader.TextAttachmentPoint"/>).
-		/// The <see cref="MultiLeaderAnnotContext.TextAttachmentPoint"/> property always has the same value
-		/// and seems to have the respective value as <see cref="MultiLeaderAnnotContext.TextAlignment"/>.
-		/// The <see cref="MultiLeaderAnnotContext.TextAttachmentPoint"/> property is to be used.
+		/// The <see cref="MultiLeaderObjectContextData.TextAttachmentPoint"/> property always has the same value
+		/// and seems to have the respective value as <see cref="MultiLeaderObjectContextData.TextAlignment"/>.
+		/// The <see cref="MultiLeaderObjectContextData.TextAttachmentPoint"/> property is to be used.
 		/// </para>
 		/// </remarks>
 		[DxfCodeValue(179)]
@@ -543,8 +352,8 @@ namespace ACadSharp.Entities
 		/// <see cref="PropertyOverrideFlags"/> property).
 		/// </summary>
 		/// <remarks>
-		/// This property is also exposed by the <see cref="MultiLeaderAnnotContext"/> class. Values
-		/// should be equal, the value <see cref="MultiLeaderAnnotContext.TextBottomAttachment"/> is
+		/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+		/// should be equal, the value <see cref="MultiLeaderObjectContextData.TextBottomAttachment"/> is
 		/// assumed to be used.
 		/// </remarks>
 		/// <value>
@@ -570,8 +379,8 @@ namespace ACadSharp.Entities
 		/// <see cref="PropertyOverrideFlags"/> property).
 		/// </summary>
 		/// <remarks>
-		/// This property is also exposed by the <see cref="MultiLeaderAnnotContext"/> class. Values
-		/// should be equal, the value <see cref="MultiLeaderAnnotContext.TextTopAttachment"/> is
+		/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+		/// should be equal, the value <see cref="MultiLeaderObjectContextData.TextTopAttachment"/> is
 		/// assumed to be used.
 		/// </remarks>
 		/// <value>
@@ -583,6 +392,221 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(273)]
 		public TextAttachmentType TextTopAttachment { get; set; }
 
+		private BlockRecord _arrowhead;
+
+		private BlockRecord _blockContent;
+
+		private MultiLeaderObjectContextData _contextData = new MultiLeaderObjectContextData();
+
+		private LineType _leaderLineType = LineType.ByLayer;
+
+		private MultiLeaderStyle _style = MultiLeaderStyle.Default;
+
+		private TextStyle _textStyle = TextStyle.Default;
+
+		#region Text Menu Properties
+
+		/// <summary>
+		/// Gets or sets the text alignement type.
+		/// </summary>
+		/// <remarks><para>
+		/// The Open Design Specification for DWG documents this property as <i>Unknown</i>,
+		/// DXF reference as <i>Text Aligment Type</i>.
+		/// Available DWG and DXF sample documents saved by AutoCAD return always 0=Left.
+		/// </para><para>
+		/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+		/// should be equal, the value <see cref="MultiLeaderObjectContextData.TextAlignment"/> is
+		/// assumed to be used.
+		/// </para>
+		/// </remarks>
+		[DxfCodeValue(175)]
+		public TextAlignmentType TextAlignment { get; set; }
+
+		//	TODO How to set this value?
+		/// <summary>
+		/// Gets or sets a value indicating the text angle.
+		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
+		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextAngle"/> flag is set (see
+		/// <see cref="PropertyOverrideFlags"/> property).
+		/// </summary>
+		[DxfCodeValue(174)]
+		public TextAngleType TextAngle { get; set; }
+
+		/// <summary>
+		/// Gets or sets the color for the display of the text label.
+		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
+		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextColor"/> flag is set (see
+		/// <see cref="PropertyOverrideFlags"/> property).
+		/// </summary>
+		/// <remarks>
+		/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+		/// should be equal, the value <see cref="MultiLeaderObjectContextData.TextColor"/> is
+		/// assumed to be used.
+		/// </remarks>
+		[DxfCodeValue(92)]
+		public Color TextColor { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating that the text label is to be drawn with a frame.
+		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
+		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextFrame"/> flag is set (see
+		/// <see cref="PropertyOverrideFlags"/> property).
+		/// </summary>
+		[DxfCodeValue(292)]
+		public bool TextFrame { get; set; }
+
+		/// <summary>
+		/// Gets or sets the text left attachment type (see <see cref="MultiLeaderStyle.TextLeftAttachment"/>).
+		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
+		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextLeftAttachment"/> flag is set (see
+		/// <see cref="PropertyOverrideFlags"/> property).
+		/// </summary>
+		/// <remarks>
+		/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+		/// should be equal, the value <see cref="MultiLeaderObjectContextData.TextLeftAttachment"/> is
+		/// assumed to be used.
+		/// </remarks>
+		/// <value>
+		/// A <see cref="TextAttachmentType"/> having the values 0-8 can be used
+		/// ("horizontal" attachment types).
+		/// </value>
+		[DxfCodeValue(173)]
+		public TextAttachmentType TextLeftAttachment { get; set; }
+
+		/// <summary>
+		/// Gets or sets the text right attachment type (see <see cref="MultiLeaderStyle.TextRightAttachment"/>).
+		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
+		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextRightAttachment"/> flag is set (see
+		/// <see cref="PropertyOverrideFlags"/> property).
+		/// </summary>
+		/// <remarks>
+		/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+		/// should be equal, the value <see cref="MultiLeaderObjectContextData.TextRightAttachment"/> is
+		/// assumed to be used.
+		/// </remarks>
+		/// <value>
+		/// A <see cref="TextAttachmentType"/> having the values 0-8 can be used
+		/// ("horizontal" attachment types).
+		/// </value>
+		[DxfCodeValue(95)]
+		public TextAttachmentType TextRightAttachment { get; set; }
+
+		/// <summary>
+		/// Gets or sets the <see cref="TextStyle"/> to be used to display the text label of this
+		/// <see cref="MultiLeader"/>.
+		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
+		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextStyle"/> flag is set in the
+		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
+		/// </summary>
+		/// <remarks>
+		/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class
+		/// (<see cref="MultiLeaderObjectContextData.TextStyle"/>).
+		/// Values should be equal, the <see cref="MultiLeaderObjectContextData.TextStyle"/>
+		/// is assumed to be used.
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Handle, 343)]
+		public TextStyle TextStyle
+		{
+			get { return this._textStyle; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentNullException(nameof(value));
+				}
+
+				if (this.Document != null)
+				{
+					this._textStyle = updateCollection(value, this.Document.TextStyles);
+				}
+				else
+				{
+					this._textStyle = value;
+				}
+			}
+		}
+
+		#endregion Text Menu Properties
+
+		#region Block Content Properties
+
+		/// <summary>
+		/// Gets a <see cref="BlockRecord"/> containing elements
+		/// to be drawn as content for the multileader.
+		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
+		/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContent"/> flag is set (see
+		/// <see cref="PropertyOverrideFlags"/> property).
+		/// </summary>
+		/// <remarks>
+		/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+		/// should be equal, the value <see cref="MultiLeaderObjectContextData.BlockContent"/> is
+		/// assumed to be used.
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.Handle, 344)]
+		public BlockRecord BlockContent
+		{
+			get { return this._blockContent; }
+			set
+			{
+				this._blockContent = updateCollection(value, this.Document?.BlockRecords);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the block-content color.
+		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
+		/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentColor"/> flag is set (see
+		/// <see cref="PropertyOverrideFlags"/> property).
+		/// </summary>
+		/// <remarks>
+		/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+		/// should be equal, the value <see cref="MultiLeaderObjectContextData.BlockContentColor"/> is
+		/// assumed to be used.
+		/// </remarks>
+		[DxfCodeValue(93)]
+		public Color BlockContentColor { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the multileader connects to the content-block extents
+		/// or to the content-block base point
+		/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentConnection"/> flag is set in the
+		/// <see cref="PropertyOverrideFlags"/> property.
+		/// </summary>
+		/// <remarks>
+		/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+		/// should be equal, the value <see cref="MultiLeaderObjectContextData.BlockContentConnection"/> is
+		/// assumed to be used.
+		/// </remarks>
+		[DxfCodeValue(176)]
+		public BlockContentConnectionType BlockContentConnection { get; set; }
+
+		/// <summary>
+		/// Gets or sets the rotation of the block content of the multileader.
+		/// </summary>
+		/// <remarks>
+		/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+		/// should be equal, the value <see cref="MultiLeaderObjectContextData.BlockContentRotation"/> is
+		/// assumed to be used.
+		/// </remarks>
+		[DxfCodeValue(DxfReferenceType.IsAngle, 43)]
+		public double BlockContentRotation { get; set; }
+
+		/// <summary>
+		/// Gets or sets the scale factor for block content.
+		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
+		/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentScale"/> flag is set (see
+		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property).
+		/// </summary>
+		/// <remarks>
+		/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+		/// should be equal, the value <see cref="MultiLeaderObjectContextData.BlockContentScale"/> is
+		/// assumed to be used.
+		/// </remarks>
+		[DxfCodeValue(10, 20, 30)]
+		public XYZ BlockContentScale { get; set; }
+
+		#endregion Block Content Properties
+
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
@@ -593,7 +617,7 @@ namespace ACadSharp.Entities
 		{
 			MultiLeader clone = (MultiLeader)base.Clone();
 
-			clone.ContextData = (MultiLeaderAnnotContext)this.ContextData.Clone();
+			clone._contextData = (MultiLeaderObjectContextData)this._contextData.Clone();
 
 			clone.BlockAttributes = new List<BlockAttribute>();
 			foreach (var att in this.BlockAttributes)
@@ -610,15 +634,21 @@ namespace ACadSharp.Entities
 			return clone;
 		}
 
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return BoundingBox.Null;
+		}
+
 		internal override void AssignDocument(CadDocument doc)
 		{
 			base.AssignDocument(doc);
 
-			this._style = this.updateCollection<MultiLeaderStyle>(this._style, doc.MLeaderStyles);
-			this._textStyle = updateTable(this._textStyle, doc.TextStyles);
-			this._leaderLineType = updateTable(this._leaderLineType, doc.LineTypes);
-			this._arrowhead = updateTable(this._arrowhead, doc.BlockRecords);
-			this._blockContent = updateTable(this._blockContent, doc.BlockRecords);
+			this._style = updateCollection(this._style, doc.MLeaderStyles);
+			this._textStyle = updateCollection(this._textStyle, doc.TextStyles);
+			this._leaderLineType = updateCollection(this._leaderLineType, doc.LineTypes);
+			this._arrowhead = updateCollection(this._arrowhead, doc.BlockRecords);
+			this._blockContent = updateCollection(this._blockContent, doc.BlockRecords);
 
 			this.ContextData.AssignDocument(doc);
 
@@ -646,7 +676,8 @@ namespace ACadSharp.Entities
 			this._blockContent = (BlockRecord)this._blockContent?.Clone();
 		}
 
-		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e) {
+		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
 			base.tableOnRemove(sender, e);
 
 			if (e.Item.Equals(this._style))
@@ -669,13 +700,6 @@ namespace ACadSharp.Entities
 			{
 				this._blockContent = null;
 			}
-		}
-
-
-		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			return BoundingBox.Null;
 		}
 	}
 }

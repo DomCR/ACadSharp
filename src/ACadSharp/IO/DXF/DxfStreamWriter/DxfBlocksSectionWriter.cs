@@ -34,9 +34,9 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.BlockBegin);
 
-			if (!string.IsNullOrEmpty(block.XrefPath))
+			if (!string.IsNullOrEmpty(block.XRefPath))
 			{
-				this._writer.Write(1, block.XrefPath, map);
+				this._writer.Write(1, block.XRefPath, map);
 			}
 			this._writer.Write(2, block.Name, map);
 			this._writer.Write(70, (short)block.Flags, map);

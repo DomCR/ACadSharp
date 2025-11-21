@@ -1,7 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using CSMath;
-using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -14,7 +11,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityPolyline)]
 	[DxfSubClass(DxfSubclassMarker.PolyfaceMesh)]
-	public class PolyfaceMesh : Polyline
+	public class PolyfaceMesh : Polyline<VertexFaceMesh>
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType { get { return ObjectType.POLYLINE_PFACE; } }
@@ -25,17 +22,15 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.PolyfaceMesh;
 
+		/// <summary>
+		/// Face records with the triangle indexes.
+		/// </summary>
 		public CadObjectCollection<VertexFaceRecord> Faces { get; private set; }
 
-		public PolyfaceMesh()
+		/// <inheritdoc/>
+		public PolyfaceMesh() : base()
 		{
-			this.Vertices.OnAdd += this.verticesOnAdd;
 			this.Faces = new CadObjectCollection<VertexFaceRecord>(this);
-		}
-
-		public override IEnumerable<Entity> Explode()
-		{
-			throw new System.NotImplementedException();
 		}
 
 		/// <inheritdoc/>
@@ -46,19 +41,10 @@ namespace ACadSharp.Entities
 			clone.Faces = new SeqendCollection<VertexFaceRecord>(clone);
 			foreach (VertexFaceRecord v in this.Faces)
 			{
-				clone.Vertices.Add((VertexFaceRecord)v.Clone());
+				clone.Faces.Add((VertexFaceRecord)v.Clone());
 			}
 
 			return clone;
-		}
-
-		protected override void verticesOnAdd(object sender, CollectionChangedEventArgs e)
-		{
-			if (e.Item is not VertexFaceMesh)
-			{
-				this.Vertices.Remove((Vertex)e.Item);
-				throw new ArgumentException($"Wrong vertex type {e.Item.SubclassMarker} for {this.SubclassMarker}");
-			}
 		}
 
 		internal override void AssignDocument(CadDocument doc)

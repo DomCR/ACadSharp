@@ -1,9 +1,7 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.IO;
+﻿using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -61,7 +59,7 @@ namespace ACadSharp.Tests.IO
 			Stopwatch stopwatch = new Stopwatch();
 			stopwatch.Start();
 
-			if (extension == ".dxf")
+			if (test.IsDxf)
 			{
 				doc = DxfReader.Read(test.Path, this.onNotification);
 			}

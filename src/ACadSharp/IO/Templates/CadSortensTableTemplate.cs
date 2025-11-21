@@ -15,9 +15,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadSortensTableTemplate(SortEntitiesTable cadObject) : base(cadObject) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			if (builder.TryGetCadObject(this.BlockOwnerHandle, out CadObject owner))
 			{

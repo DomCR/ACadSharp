@@ -1,8 +1,7 @@
-﻿using ACadSharp.Objects;
+﻿using ACadSharp.Extensions;
+using ACadSharp.Objects;
 using ACadSharp.Types.Units;
-using CSMath;
 using System;
-using System.ComponentModel;
 
 namespace ACadSharp.IO
 {
@@ -12,7 +11,7 @@ namespace ACadSharp.IO
 	public class SvgConfiguration : CadWriterConfiguration
 	{
 		/// <summary>
-		/// The <see cref="LineweightType"/> will be divided by this value to process the stroke-width in the svg when the units are <see cref="UnitsType.Unitless"/>.
+		/// The <see cref="LineWeightType"/> will be divided by this value to process the stroke-width in the svg when the units are <see cref="UnitsType.Unitless"/>.
 		/// </summary>
 		/// <remarks>
 		/// The default value is 100, which matches with the line weight real value in mm.
@@ -20,7 +19,7 @@ namespace ACadSharp.IO
 		public double LineWeightRatio { get; set; } = 100;
 
 		/// <summary>
-		/// Weight value for the <see cref="LineweightType.Default"/>. 
+		/// Weight value for the <see cref="LineWeightType.Default"/>. 
 		/// </summary>
 		/// <value>
 		/// Value must be in mm.
@@ -35,56 +34,32 @@ namespace ACadSharp.IO
 		/// </remarks>
 		public double PointRadius { get; set; } = 0.1;
 
+		public int ArcPoints { get; set; } = 256;
+
 		/// <summary>
 		/// Get the value of the stroke-width in mm.
 		/// </summary>
-		/// <param name="lineweightType"></param>
+		/// <param name="lineWeight"></param>
 		/// <param name="units"></param>
 		/// <returns></returns>
-		public double GetLineWeightValue(LineweightType lineweightType, UnitsType units)
+		public double GetLineWeightValue(LineWeightType lineWeight, UnitsType units)
 		{
-			double value = Math.Abs((double)lineweightType);
+			double value = Math.Abs((double)lineWeight);
 
 			if (units == UnitsType.Unitless)
 			{
 				return value / this.LineWeightRatio;
 			}
 
-			switch (lineweightType)
+			switch (lineWeight)
 			{
-				case LineweightType.Default:
+				case LineWeightType.Default:
 					return this.DefaultLineWeight;
-				case LineweightType.W0:
+				case LineWeightType.W0:
 					return 0.001;
 			}
 
-			return value / 100;
-		}
-
-		public static double ToPixelSize(double value, PlotPaperUnits units)
-		{
-			switch (units)
-			{
-				case PlotPaperUnits.Inches:
-					return value * 96;
-				case PlotPaperUnits.Millimeters:
-					return value * 96 / 25.4;
-				case PlotPaperUnits.Pixels:
-					return value;
-				default:
-					throw new InvalidEnumArgumentException(nameof(units), (int)units, typeof(PlotPaperUnits));
-			}
-		}
-
-		public static T ToPixelSize<T>(T value, PlotPaperUnits units)
-			where T : IVector
-		{
-			for (int i = 0; i < value.Dimension; i++)
-			{
-				value[i] = ToPixelSize(value[i], units);
-			}
-
-			return value;
+			return lineWeight.GetLineWeightValue();
 		}
 	}
 }

@@ -2,7 +2,6 @@
 using System.Text;
 using System;
 using System.IO;
-using ACadSharp.Classes;
 using System.Linq;
 using ACadSharp.Entities;
 using ACadSharp.Tables;

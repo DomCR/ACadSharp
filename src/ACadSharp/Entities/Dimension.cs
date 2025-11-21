@@ -35,7 +35,7 @@ namespace ACadSharp.Entities
 			get { return this._block; }
 			set
 			{
-				this._block = updateTable(value, this.Document?.BlockRecords);
+				this._block = CadObject.updateCollection(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -120,11 +120,11 @@ namespace ACadSharp.Entities
 			{
 				if (value)
 				{
-					this._flags = this._flags.AddFlag(DimensionType.TextUserDefinedLocation);
+					this._flags.AddFlag(DimensionType.TextUserDefinedLocation);
 				}
 				else
 				{
-					this._flags = this._flags.RemoveFlag(DimensionType.TextUserDefinedLocation);
+					this._flags.RemoveFlag(DimensionType.TextUserDefinedLocation);
 				}
 			}
 		}
@@ -173,7 +173,7 @@ namespace ACadSharp.Entities
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				this._style = updateTable(value, this.Document?.DimensionStyles);
+				this._style = CadObject.updateCollection(value, this.Document?.DimensionStyles);
 			}
 		}
 
@@ -353,15 +353,15 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._style = updateTable(this.Style, doc.DimensionStyles);
-			this._block = updateTable(this.Block, doc.BlockRecords);
+			this._style = CadObject.updateCollection(this.Style, doc.DimensionStyles);
+			this._block = CadObject.updateCollection(this.Block, doc.BlockRecords);
 
 			if (this._block != null)
 			{
 				this._block.Name = this.generateBlockName();
 			}
 
-			this._block = updateTable(this.Block, this.Document.BlockRecords);
+			this._block = CadObject.updateCollection(this.Block, this.Document.BlockRecords);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 			doc.BlockRecords.OnRemove += this.tableOnRemove;
@@ -541,7 +541,7 @@ namespace ACadSharp.Entities
 
 			if (this.Document != null)
 			{
-				this._block = updateTable(this._block, this.Document.BlockRecords);
+				this._block = CadObject.updateCollection(this._block, this.Document.BlockRecords);
 			}
 
 			this._block.Entities.Clear();

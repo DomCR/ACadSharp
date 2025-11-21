@@ -2,9 +2,6 @@
 using ACadSharp.Types.Units;
 using CSMath;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Globalization;
 
 //	TODO should the described coupling of properties be implemented in this class,
 //		 e.g., GenerateTolerances and LimitsGeneration?
@@ -167,7 +164,7 @@ namespace ACadSharp.Tables
 			get { return this._dimArrowBlock; }
 			set
 			{
-				this._dimArrowBlock = updateTable(value, this.Document?.BlockRecords);
+				this._dimArrowBlock = CadObject.updateCollection(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -273,7 +270,7 @@ namespace ACadSharp.Tables
 			get { return this._dimArrow1; }
 			set
 			{
-				this._dimArrow1 = updateTable(value, this.Document?.BlockRecords);
+				this._dimArrow1 = CadObject.updateCollection(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -297,7 +294,7 @@ namespace ACadSharp.Tables
 			get { return this._dimArrow2; }
 			set
 			{
-				this._dimArrow2 = updateTable(value, this.Document?.BlockRecords);
+				this._dimArrow2 = CadObject.updateCollection(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -369,7 +366,7 @@ namespace ACadSharp.Tables
 		/// (Multiply a value by 2540 to convert values from inches to hundredths of millimeters.)
 		/// </value>
 		[DxfCodeValue(371)]
-		public LineweightType DimensionLineWeight { get; set; } = LineweightType.ByBlock;
+		public LineWeightType DimensionLineWeight { get; set; } = LineWeightType.ByBlock;
 
 		/// <summary>
 		/// Determines how dimension text and arrows are arranged when space is not sufficient
@@ -423,7 +420,7 @@ namespace ACadSharp.Tables
 		/// (Multiply a value by 2540 to convert values from inches to hundredths of millimeters.)
 		/// </value>
 		[DxfCodeValue(372)]
-		public LineweightType ExtensionLineWeight { get; set; } = LineweightType.ByBlock;
+		public LineWeightType ExtensionLineWeight { get; set; } = LineWeightType.ByBlock;
 
 		/// <summary>
 		/// Sets the total length of the extension lines starting from the dimension line
@@ -478,7 +475,8 @@ namespace ACadSharp.Tables
 			set
 			{
 				//5 - 90
-				if (value < CSMath.MathHelper.DegToRad(5) || value > Math.PI / 2)
+				var rounded = Math.Round(value, 6);
+				if (rounded <= MathHelper.DegToRad(5) || rounded >= MathHelper.HalfPI)
 				{
 					throw new ArgumentOutOfRangeException(nameof(value), value, $"The {nameof(this.JoggedRadiusDimensionTransverseSegmentAngle)} must be in range of 5 to 90 degrees.");
 				}
@@ -504,7 +502,7 @@ namespace ACadSharp.Tables
 			get { return this._leaderArrow; }
 			set
 			{
-				this._leaderArrow = updateTable(value, this.Document?.BlockRecords);
+				this._leaderArrow = CadObject.updateCollection(value, this.Document?.BlockRecords);
 			}
 		}
 
@@ -556,7 +554,7 @@ namespace ACadSharp.Tables
 			get { return this._lineType; }
 			set
 			{
-				this._lineType = updateTable(value, this.Document?.LineTypes);
+				this._lineType = CadObject.updateCollection(value, this.Document?.LineTypes);
 			}
 		}
 
@@ -569,7 +567,7 @@ namespace ACadSharp.Tables
 			get { return this._lineTypeExt1; }
 			set
 			{
-				this._lineTypeExt1 = updateTable(value, this.Document?.LineTypes);
+				this._lineTypeExt1 = CadObject.updateCollection(value, this.Document?.LineTypes);
 			}
 		}
 
@@ -582,7 +580,7 @@ namespace ACadSharp.Tables
 			get { return this._lineTypeExt2; }
 			set
 			{
-				this._lineTypeExt2 = updateTable(value, this.Document?.LineTypes);
+				this._lineTypeExt2 = CadObject.updateCollection(value, this.Document?.LineTypes);
 			}
 		}
 
@@ -753,7 +751,7 @@ namespace ACadSharp.Tables
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				this._style = updateTable(value, this.Document?.TextStyles);
+				this._style = CadObject.updateCollection(value, this.Document?.TextStyles);
 			}
 		}
 
@@ -1152,16 +1150,16 @@ namespace ACadSharp.Tables
 		{
 			base.AssignDocument(doc);
 
-			this._style = updateTable(this.Style, doc.TextStyles);
+			this._style = CadObject.updateCollection(this.Style, doc.TextStyles);
 
-			this._lineType = updateTable(this.LineType, doc.LineTypes);
-			this._lineTypeExt1 = updateTable(this.LineTypeExt1, doc.LineTypes);
-			this._lineTypeExt2 = updateTable(this.LineTypeExt2, doc.LineTypes);
+			this._lineType = CadObject.updateCollection(this.LineType, doc.LineTypes);
+			this._lineTypeExt1 = CadObject.updateCollection(this.LineTypeExt1, doc.LineTypes);
+			this._lineTypeExt2 = CadObject.updateCollection(this.LineTypeExt2, doc.LineTypes);
 
-			this._leaderArrow = updateTable(this.LeaderArrow, doc.BlockRecords);
-			this._dimArrow1 = updateTable(this.DimArrow1, doc.BlockRecords);
-			this._dimArrow2 = updateTable(this.DimArrow2, doc.BlockRecords);
-			this._dimArrowBlock = updateTable(this.ArrowBlock, doc.BlockRecords);
+			this._leaderArrow = CadObject.updateCollection(this.LeaderArrow, doc.BlockRecords);
+			this._dimArrow1 = CadObject.updateCollection(this.DimArrow1, doc.BlockRecords);
+			this._dimArrow2 = CadObject.updateCollection(this.DimArrow2, doc.BlockRecords);
+			this._dimArrowBlock = CadObject.updateCollection(this.ArrowBlock, doc.BlockRecords);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 			doc.LineTypes.OnRemove += this.tableOnRemove;

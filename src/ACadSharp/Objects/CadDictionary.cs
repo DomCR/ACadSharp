@@ -146,11 +146,6 @@ namespace ACadSharp.Objects
 		/// </summary>
 		public const string VariableDictionary = "AcDbVariableDictionary";
 
-		/// <summary>
-		/// CMLEADERSTYLE variable-dictionary entry
-		/// </summary>
-		public const string CurrentMultiLeaderStyle = "CMLEADERSTYLE";
-
 		private Dictionary<string, NonGraphicalObject> _entries = new(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>
@@ -193,12 +188,13 @@ namespace ACadSharp.Objects
 
 			CadDictionary variableDictionary = root.ensureCadDictionaryExist(VariableDictionary);
 			root.TryAdd(variableDictionary);
-			DictionaryVariable cmLeaderStyleEntry = new DictionaryVariable()
-			{
-				Name = CurrentMultiLeaderStyle,
-				Value = MultiLeaderStyle.DefaultName	//	Style has been added, see above
-			};
+			DictionaryVariable cmLeaderStyleEntry = new DictionaryVariable
+			(
+				DictionaryVariable.CurrentMultiLeaderStyle,
+				MultiLeaderStyle.DefaultName
+			);
 			variableDictionary.TryAdd(cmLeaderStyleEntry);
+
 			//DictionaryVars Entry DIMASSOC and HIDETEXT ??
 
 			CadDictionary scales = root.ensureCadDictionaryExist(AcadScaleList);

@@ -482,6 +482,31 @@ namespace ACadSharp.Classes
 				WasZombie = false,
 				IsAnEntity = false,
 			});
+
+			//AcDbMLeaderObjectContextData
+			doc.Classes.AddOrUpdate(new DxfClass {
+				CppClassName = DxfSubclassMarker.MultiLeaderObjectContextData,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.MC0_0,
+				DxfName = DxfFileToken.ObjectMLeaderContextData,
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+
+			//AcDbPlotSettings
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.PlotSettings,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1015,
+				DxfName = DxfFileToken.ObjectPlotSettings,
+				ItemClassId = 499,
+				MaintenanceVersion = 42,
+				ProxyFlags = ProxyFlags.None,
+				WasZombie = false,
+			});
 		}
 
 		/// <summary>

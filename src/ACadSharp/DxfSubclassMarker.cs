@@ -10,6 +10,8 @@
 
 		public const string Angular3PointDimension = "AcDb3PointAngularDimension";
 
+		public const string AnnotScaleObjectContextData = "AcDbAnnotScaleObjectContextData";
+
 		public const string ApplicationId = "AcDbRegAppTableRecord";
 
 		public const string Arc = "AcDbArc";
@@ -88,6 +90,8 @@
 
 		public const string Filter = "AcDbFilter";
 
+		public const string FormattedTableData = "AcDbFormattedTableData";
+
 		public const string GeoData = "AcDbGeoData";
 
 		public const string Group = "AcDbGroup";
@@ -110,6 +114,8 @@
 
 		public const string Linetype = "AcDbLinetypeTableRecord";
 
+		public const string LinkedData = "AcDbLinkedData";
+
 		public const string LwPolyline = "AcDbPolyline";
 
 		public const string Material = "AcDbMaterial";
@@ -130,7 +136,9 @@
 
 		public const string MultiLeader = "AcDbMLeader";
 
-		public const string MultiLeaderAnnotContext = "AcDbMultiLeaderAnnotContext";
+		public const string MultiLeaderObjectContextData = "AcDbMLeaderObjectContextData";
+
+		public const string ObjectContextData = "AcDbObjectContextData";
 
 		public const string Ole2Frame = "AcDbOle2Frame";
 
@@ -180,6 +188,8 @@
 
 		public const string Solid = "AcDbTrace";
 
+		public const string Solid3D = "AcDb3dSolid";
+
 		public const string SortentsTable = "AcDbSortentsTable";
 
 		public const string SpatialFilter = "AcDbSpatialFilter";
@@ -191,6 +201,8 @@
 		public const string TableContent = "AcDbTableContent";
 
 		public const string TableEntity = "AcDbTable";
+
+		public const string LinkedTableData = "AcDbLinkedTableData";
 
 		public const string TableRecord = "AcDbSymbolTableRecord";
 

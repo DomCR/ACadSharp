@@ -44,7 +44,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(10, 20, 30)]
 		public XYZ Location { get; set; } = XYZ.Zero;
 
-		IVector IVertex.Location { get { return this.Location; } }
+		IVector IVertex.Location { get { return this.Location; } set { this.Location = value.Convert<XYZ>(); } }
 
 		/// <summary>
 		/// Default constructor.

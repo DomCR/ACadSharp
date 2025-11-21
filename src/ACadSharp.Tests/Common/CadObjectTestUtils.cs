@@ -19,7 +19,7 @@ namespace ACadSharp.Tests.Common
 		{
 			AssertClone(original, clone);
 
-			Assert.Equal(original.LinetypeScale, clone.LinetypeScale);
+			Assert.Equal(original.LineTypeScale, clone.LineTypeScale);
 
 			//Assert clone
 			AssertTableEntryClone(original.Layer, clone.Layer);

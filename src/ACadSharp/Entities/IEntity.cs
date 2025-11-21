@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Objects;
 using ACadSharp.Tables;
-using CSMath;
 
 namespace ACadSharp.Entities
 {
@@ -43,12 +42,12 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// This must be a positive, non-negative number.
 		/// </remarks>
-		double LinetypeScale { get; set; }
+		double LineTypeScale { get; set; }
 
 		/// <summary>
-		/// Specifies the lineweight of an individual object or the default lineweight for the drawing.
+		/// Specifies the line weight of an individual object or the default line weight for the drawing.
 		/// </summary>
-		LineweightType LineWeight { get; set; }
+		LineWeightType LineWeight { get; set; }
 
 		/// <summary>
 		/// Material object (present if not BYLAYER)
@@ -66,8 +65,19 @@ namespace ACadSharp.Entities
 		/// <returns></returns>
 		Color GetActiveColor();
 
+		/// Get the active line type for the entity, process the line types like <see cref="LineType.ByBlock"/> and <see cref="LineType.ByLayer"/>.
+		/// </summary>
+		/// <returns></returns>
+		LineType GetActiveLineType();
+
 		/// <summary>
-		/// Match entity properties to another entity
+		/// Get the active line weight for the entity, process the line weights like <see cref="LineWeightType.ByBlock"/> and <see cref="LineWeightType.ByLayer"/>.
+		/// </summary>
+		/// <returns></returns>
+		LineWeightType GetActiveLineWeightType();
+
+		/// <summary>
+		/// Match the properties of this entity with another entity.
 		/// </summary>
 		/// <param name="entity"></param>
 		void MatchProperties(IEntity entity);

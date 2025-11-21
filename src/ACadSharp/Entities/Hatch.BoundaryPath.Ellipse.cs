@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.IO.DXF;
 using CSMath;
+using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -17,7 +18,7 @@ namespace ACadSharp.Entities
 				public XY Center { get; set; }
 
 				/// <summary>
-				/// Is counterclockwise flag.
+				/// Counterclockwise flag.
 				/// </summary>
 				[DxfCodeValue(73)]
 				public bool CounterClockWise { get; set; }
@@ -27,12 +28,6 @@ namespace ACadSharp.Entities
 				/// </summary>
 				[DxfCodeValue(51)]
 				public double EndAngle { get; set; }
-
-				/// <summary>
-				/// Is counterclockwise flag.
-				/// </summary>
-				[DxfCodeValue(73)]
-				public bool IsCounterclockwise { get; set; }
 
 				/// <summary>
 				/// Endpoint of major axis relative to center point (in OCS).
@@ -58,7 +53,8 @@ namespace ACadSharp.Entities
 				/// <inheritdoc/>
 				public override void ApplyTransform(Transform transform)
 				{
-					throw new System.NotImplementedException();
+					this.Center = transform.ApplyTransform(this.Center.Convert<XYZ>()).Convert<XY>();
+					this.MajorAxisEndPoint = transform.ApplyTransform(this.MajorAxisEndPoint.Convert<XYZ>()).Convert<XY>();
 				}
 
 				/// <inheritdoc/>
@@ -70,18 +66,24 @@ namespace ACadSharp.Entities
 				/// <inheritdoc/>
 				public override Entity ToEntity()
 				{
-					XYZ center = new XYZ(this.Center.X, this.Center.Y, 0.0);
-					XYZ axisPoint = new XYZ(this.MajorAxisEndPoint.X, this.MajorAxisEndPoint.Y, 0.0);
-
-					double rotation = axisPoint.Convert<XY>().GetAngle();
-					double majorAxis = 2 * axisPoint.GetLength();
-
 					Entities.Ellipse ellipse = new();
-					ellipse.Center = center;
-					ellipse.StartParameter = this.IsCounterclockwise ? this.StartAngle : 360 - this.EndAngle;
-					ellipse.EndParameter = this.IsCounterclockwise ? this.EndAngle : 360 - this.StartAngle;
+					ellipse.Center = this.Center.Convert<XYZ>();
+					ellipse.StartParameter = this.CounterClockWise ? this.StartAngle : 2 * Math.PI - this.EndAngle;
+					ellipse.EndParameter = this.CounterClockWise ? this.EndAngle : 2 * Math.PI - this.StartAngle;
+					ellipse.MajorAxisEndPoint = this.MajorAxisEndPoint.Convert<XYZ>();
+					ellipse.RadiusRatio = this.MinorToMajorRatio;
 
 					return ellipse;
+				}
+
+				/// <summary>
+				/// Converts the ellipse in a list of vertexes.
+				/// </summary>
+				/// <param name="precision">Number of vertexes generated.</param>
+				/// <returns>A list vertexes that represents the arc expressed in object coordinate system.</returns>
+				public List<XYZ> PolygonalVertexes(int precision)
+				{
+					return ((Entities.Ellipse)this.ToEntity()).PolygonalVertexes(precision);
 				}
 			}
 		}

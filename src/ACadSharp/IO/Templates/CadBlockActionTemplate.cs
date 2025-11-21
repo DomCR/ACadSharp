@@ -1,30 +1,33 @@
-﻿using System.Collections.Generic;
-
-using ACadSharp.Entities;
+﻿using ACadSharp.Entities;
 using ACadSharp.Objects.Evaluations;
+using System.Collections.Generic;
 
-namespace ACadSharp.IO.Templates {
-	internal class CadBlockActionTemplate : CadBlockElementTemplate {
+namespace ACadSharp.IO.Templates
+{
+	internal class CadBlockActionTemplate : CadBlockElementTemplate
+	{
 
 		public BlockAction BlockAction { get { return this.CadObject as BlockAction; } }
 
-		public List<ulong> EntityHandles { get; } = new List<ulong>();
+		public HashSet<ulong> EntityHandles { get; } = new();
 
 		public CadBlockActionTemplate(BlockAction cadObject)
 			: base(cadObject)
 		{
 		}
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			foreach (var handle in this.EntityHandles)
 			{
-				if (builder.TryGetCadObject(handle, out Entity entity)) {
+				if (builder.TryGetCadObject(handle, out Entity entity))
+				{
 					BlockAction.Entities.Add(entity);
 				}
-				else {
+				else
+				{
 					builder.Notify($"[{BlockAction.ToString()}] entity with handle {handle} not found.");
 				}
 			}

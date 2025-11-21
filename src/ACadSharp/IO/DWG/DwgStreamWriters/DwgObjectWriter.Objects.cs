@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.IO.DWG
 {
@@ -25,9 +26,12 @@ namespace ACadSharp.IO.DWG
 
 		private void writeObject(NonGraphicalObject obj)
 		{
-			if (this.skipEntry(obj))
+			if (this.skipEntry(obj, out bool notify))
 			{
-				this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
+				if (notify)
+				{
+					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
+				}
 				return;
 			}
 
@@ -70,6 +74,11 @@ namespace ACadSharp.IO.DWG
 					break;
 				case MultiLeaderStyle multiLeaderStyle:
 					this.writeMultiLeaderStyle(multiLeaderStyle);
+					break;
+				case MultiLeaderObjectContextData multiLeaderObjectContextData:
+					this.writeObjectContextData(multiLeaderObjectContextData);
+					this.writeAnnotScaleObjectContextData(multiLeaderObjectContextData);
+					this.writeMultiLeaderAnnotContext(multiLeaderObjectContextData);
 					break;
 				case PdfUnderlayDefinition pdfDefinition:
 					this.writePdfDefinition(pdfDefinition);
@@ -202,9 +211,17 @@ namespace ACadSharp.IO.DWG
 
 		private bool skipEntry(NonGraphicalObject entry)
 		{
+			return this.skipEntry(entry, out _);
+		}
+
+		private bool skipEntry(NonGraphicalObject entry, out bool notify)
+		{
+			notify = true;
 			switch (entry)
 			{
 				case XRecord when !this.WriteXRecords:
+					notify = false;
+					return true;
 				case EvaluationGraph:
 				case Material:
 				case UnknownNonGraphicalObject:
@@ -517,7 +534,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(mlineStyle.EndAngle);
 
 			//linesinstyle RC Number of lines in this style
-			this._writer.WriteByte((byte)mlineStyle.Elements.Count);
+			this._writer.WriteByte((byte)mlineStyle.Elements.Count());
 			foreach (MLineStyle.Element element in mlineStyle.Elements)
 			{
 				//Offset BD Offset of this segment
@@ -653,6 +670,23 @@ namespace ACadSharp.IO.DWG
 				//	B	298 Undocumented, found in DXF
 				this._writer.WriteBit(mLeaderStyle.UnknownFlag298);
 			}
+		}
+
+		private void writeObjectContextData(ObjectContextData objectContextData) {
+			//BS	70	Version.
+			this._writer.WriteBitShort(objectContextData.Version);
+			//B	-	Has file to extension dictionary.
+			this._writer.WriteBit(objectContextData.HasFileToExtensionDictionary);
+			//B	290	Default flag.
+			this._writer.WriteBit(objectContextData.Default);
+		}
+
+		private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData annotScaleObjectContextData) {
+			this._writer.HandleReference(DwgReferenceType.HardPointer, annotScaleObjectContextData.Scale);
+		}
+
+		private void writeMultiLeaderAnnotContext(MultiLeaderObjectContextData multiLeaderAnnotContext) {
+			writeMultiLeaderAnnotContextSubObject(false, multiLeaderAnnotContext);
 		}
 
 		private void writePlotSettings(PlotSettings plot)
@@ -856,7 +890,7 @@ namespace ACadSharp.IO.DWG
 					continue;
 				}
 
-				ms.Write<short>((short)entry.Code);
+				ms.Write<short, LittleEndianConverter>((short)entry.Code);
 				GroupCodeValueType groupValueType = GroupCodeValue.TransformValue(entry.Code);
 
 				switch (groupValueType)
@@ -893,38 +927,32 @@ namespace ACadSharp.IO.DWG
 						ms.Write((byte)array.Length);
 						ms.WriteBytes(array);
 						break;
-					case GroupCodeValueType.String:
-					case GroupCodeValueType.ExtendedDataString:
 					case GroupCodeValueType.Handle:
-						string text = (string)entry.Value;
-
-						if (this.R2007Plus)
+						var obj = entry.GetReference();
+						if (obj == null)
 						{
-							if (string.IsNullOrEmpty(text))
-							{
-								ms.Write<short, LittleEndianConverter>(0);
-								return;
-							}
-
-							ms.Write<short, LittleEndianConverter>((short)text.Length);
-							ms.Write(text, System.Text.Encoding.Unicode);
-						}
-						else if (string.IsNullOrEmpty(text))
-						{
-							ms.Write<short, LittleEndianConverter>(0);
-							ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
+							this.writeStringInStream(ms, string.Empty);
 						}
 						else
 						{
-							ms.Write<short, LittleEndianConverter>((short)text.Length);
-							ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
-							ms.Write(text, this._writer.Encoding);
+							this.writeStringInStream(ms, obj.Handle.ToString("X", System.Globalization.CultureInfo.InvariantCulture));
 						}
+						break;
+					case GroupCodeValueType.String:
+					case GroupCodeValueType.ExtendedDataString:
+						string text = (string)entry.Value;
+						this.writeStringInStream(ms, text);
 						break;
 					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:
-						ulong u = (entry.Value as ulong?).Value;
-						ms.Write<ulong, LittleEndianConverter>(u);
+						if (entry.GetReference() == null)
+						{
+							ms.Write<ulong, LittleEndianConverter>(0);
+						}
+						else
+						{
+							ms.Write<ulong, LittleEndianConverter>(entry.GetReference().Handle);
+						}
 						break;
 					default:
 						throw new NotSupportedException();
@@ -934,7 +962,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Numdatabytes BL number of databytes
 			this._writer.WriteBitLong((int)ms.Length);
-			this._writer.WriteBytes(stream.GetBuffer());
+			this._writer.WriteBytes(stream.GetBuffer(), 0, (int)ms.Length);
 
 			//R2000+:
 			if (this.R2000Plus)
@@ -942,7 +970,32 @@ namespace ACadSharp.IO.DWG
 				//Cloning flag BS 280
 				this._writer.WriteBitShort((short)xrecord.CloningFlags);
 			}
+		}
 
+		private void writeStringInStream(StreamIO ms, string text)
+		{
+			if (this.R2007Plus)
+			{
+				if (string.IsNullOrEmpty(text))
+				{
+					ms.Write<short, LittleEndianConverter>(0);
+					return;
+				}
+
+				ms.Write<short, LittleEndianConverter>((short)text.Length);
+				ms.Write(text, System.Text.Encoding.Unicode);
+			}
+			else if (string.IsNullOrEmpty(text))
+			{
+				ms.Write<short, LittleEndianConverter>(0);
+				ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
+			}
+			else
+			{
+				ms.Write<short, LittleEndianConverter>((short)text.Length);
+				ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
+				ms.Write(text, this._writer.Encoding);
+			}
 		}
 	}
 }

@@ -1,12 +1,16 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Types.Units;
-using ACadSharp.Objects;
 using ACadSharp.Blocks;
 using ACadSharp.Entities;
-using System.Linq;
-using System.Collections.Generic;
+using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
+using ACadSharp.Types.Units;
 using CSMath;
+using ACadSharp.XData;
+using CSUtilities.Extensions;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace ACadSharp.Tables
 {
@@ -178,6 +182,7 @@ namespace ACadSharp.Tables
 		{
 			get
 			{
+				//Doesn't seem to be reliable
 				return this.EvaluationGraph != null;
 			}
 		}
@@ -238,6 +243,31 @@ namespace ACadSharp.Tables
 			}
 		}
 
+		/// <summary>
+		/// Gets the source block. <br/>
+		/// Only present if the block is dynamic and is in the same document as its source.
+		/// </summary>
+		public BlockRecord Source
+		{
+			get
+			{
+				if (this.Document == null
+					|| !this.IsAnonymous
+					|| this.ExtendedData == null)
+				{
+					return null;
+				}
+
+				if (this.ExtendedData.TryGet(AppId.BlockRepBTag, out ExtendedData data))
+				{
+					ExtendedDataHandle handle = data.Records.OfType<ExtendedDataHandle>().FirstOrDefault();
+					return (BlockRecord)handle.ResolveReference(this.Document);
+				}
+
+				return null;
+			}
+		}
+
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.BlockRecord;
 
@@ -290,6 +320,33 @@ namespace ACadSharp.Tables
 			this.Entities = new CadObjectCollection<Entity>(this);
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <c>BlockRecord</c> class as an external reference drawing.
+		/// </summary>
+		/// <param name="name">Block name.</param>
+		/// <param name="xrefFile">External reference path name.</param>
+		/// <param name="isOverlay">Specifies if the external reference is an overlay, by default it is set to false.</param>
+		/// <remarks>Only DWG files can be used as externally referenced blocks.</remarks>
+		public BlockRecord(string name, string xrefFile, bool isOverlay = false) : this(name)
+		{
+			if (string.IsNullOrEmpty(xrefFile))
+			{
+				throw new ArgumentNullException(nameof(xrefFile));
+			}
+
+			if (xrefFile.IndexOfAny(Path.GetInvalidPathChars()) == 0)
+			{
+				throw new ArgumentException("File path contains invalid characters.", nameof(xrefFile));
+			}
+
+			this.BlockEntity.XRefPath = xrefFile;
+			this.Flags = BlockTypeFlags.XRef | BlockTypeFlags.XRefResolved;
+			if (isOverlay)
+			{
+				this.Flags |= BlockTypeFlags.XRefOverlay;
+			}
+		}
+
 		internal BlockRecord() : base()
 		{
 			this.BlockEntity = new Block(this);
@@ -315,7 +372,7 @@ namespace ACadSharp.Tables
 
 			if (this.SortEntitiesTable != null)
 			{
-				clone.CreateSortEntitiesTable();
+				clone.SortEntitiesTable.BlockOwner = clone;
 			}
 
 			clone.Entities = new CadObjectCollection<Entity>(clone);
@@ -324,8 +381,7 @@ namespace ACadSharp.Tables
 				var e = (Entity)item.Clone();
 				clone.Entities.Add(e);
 
-				if (this.SortEntitiesTable != null
-					&& this.SortEntitiesTable.Select(s => s.Entity).Contains(item))
+				if (this.SortEntitiesTable != null)
 				{
 					clone.SortEntitiesTable.Add(e, this.SortEntitiesTable.GetSorterHandle(item));
 				}
@@ -400,13 +456,12 @@ namespace ACadSharp.Tables
 		/// <returns></returns>
 		public IEnumerable<Entity> GetSortedEntities()
 		{
-			if (this.SortEntitiesTable != null)
+			if (this.SortEntitiesTable == null)
 			{
 				return this.Entities.OrderBy(e => e.Handle);
 			}
 
 			List<(ulong, Entity)> entities = new();
-
 			foreach (var entity in this.Entities)
 			{
 				ulong sorter = this.SortEntitiesTable.GetSorterHandle(entity);
