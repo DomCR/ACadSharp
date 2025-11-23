@@ -3,6 +3,8 @@ using ACadSharp.Tables;
 using CSMath;
 using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ACadSharp.Entities
 {
@@ -120,6 +122,32 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.MTEXT;
+
+		/// <summary>
+		/// Gets the plain text representation of the value, with font formatting removed.
+		/// </summary>
+		/// <remarks>This property processes the underlying value to remove any font formatting tags, returning only
+		/// the plain text.</remarks>
+		public string PlainText
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(this.Value))
+				{
+					return string.Empty;
+				}
+
+				StringBuilder sb = new StringBuilder();
+				//Remove the font format
+				var regex = new Regex(@"\{\\f.*?\;(.*?)\}");
+				foreach (var item in regex.Split(this.Value))
+				{
+					sb.Append(item);
+				}
+
+				return sb.ToString();
+			}
+		}
 
 		/// <summary>
 		/// Reference rectangle height.
@@ -306,9 +334,33 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Get the text value separated in lines.
+		/// Splits the plain text into an array of lines based on common line break sequences.
 		/// </summary>
-		/// <returns></returns>
+		/// <remarks>The method splits the text using the following line break sequences:  carriage return and line feed
+		/// ("\r\n"), carriage return ("\r"), line feed ("\n"), and the Unicode paragraph separator ("\P").
+		/// The resulting array includes all lines, including empty ones.
+		/// </remarks>
+		/// <returns>An array of strings, where each string represents a line of text. The array may contain empty strings if the plain
+		/// text includes consecutive line break sequences.</returns>
+		public string[] GetPlainTextLines()
+		{
+			return this.PlainText.Split(
+				new string[] { "\r\n", "\r", "\n", "\\P" },
+				StringSplitOptions.None
+			);
+		}
+
+		/// <summary>
+		/// Splits the text into an array of lines based on common line break sequences.
+		/// </summary>
+		/// <remarks>The method splits the text using the following line break sequences: carriage return and line feed
+		/// ("\r\n"), carriage return ("\r"),  line feed ("\n"), and the Unicode paragraph separator ("\P").
+		/// The resulting array includes all lines, including empty ones.
+		/// </remarks>
+		/// <returns>
+		/// An array of strings, where each string represents a line of text. The array may contain empty strings if the
+		/// text includes consecutive line break sequences.
+		/// </returns>
 		public string[] GetTextLines()
 		{
 			return this.Value.Split(
