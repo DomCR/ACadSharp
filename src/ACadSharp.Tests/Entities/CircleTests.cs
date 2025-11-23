@@ -43,7 +43,7 @@ namespace ACadSharp.Tests.Entities
 			{
 				Radius = 1,
 				Center = new XYZ(20, 20, 0),
-			};		
+			};
 
 
 			start += circle.Center;

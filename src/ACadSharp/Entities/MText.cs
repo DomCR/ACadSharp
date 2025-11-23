@@ -220,6 +220,15 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public MText() : base() { }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MText"/> class with the specified text value.
+		/// </summary>
+		/// <param name="value">The text value to initialize the instance with. Cannot be <see langword="null"/>.</param>
+		public MText(string value) : base()
+		{
+			this.Value = value;
+		}
+
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
