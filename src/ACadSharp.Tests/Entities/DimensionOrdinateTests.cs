@@ -7,6 +7,16 @@ namespace ACadSharp.Tests.Entities
 	{
 		public override DimensionType Type => DimensionType.Ordinate;
 
+		public override void CloneTest()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void GetBoundingBoxTest()
+		{
+			throw new System.NotImplementedException();
+		}
+
 		[Fact]
 		public void IsOrdinateTypeXTest()
 		{

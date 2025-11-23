@@ -110,7 +110,7 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
-		public void GetBoundingBoxTest()
+		public override void GetBoundingBoxTest()
 		{
 			Hatch hatch = this.createPolylineHatch();
 
@@ -197,6 +197,11 @@ namespace ACadSharp.Tests.Entities
 			pline.Vertices.Add(new XYZ(0, 0, 0));
 
 			return pline;
+		}
+
+		public override void CloneTest()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
