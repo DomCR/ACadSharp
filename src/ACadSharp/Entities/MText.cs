@@ -125,30 +125,15 @@ namespace ACadSharp.Entities
 		public override ObjectType ObjectType => ObjectType.MTEXT;
 
 		/// <summary>
-		/// Gets the plain text representation of the value, with font formatting removed.
+		/// Gets the plain text representation of the processed value.
 		/// </summary>
-		/// <remarks>This property processes the underlying value to remove any font formatting tags, returning only
-		/// the plain text.</remarks>
+		/// <remarks>This property processes the underlying value and returns its plain text equivalent. The parsing
+		/// operation may involve removing formatting or extracting meaningful content.</remarks>
 		public string PlainText
 		{
 			get
 			{
 				return TextProcessor.Parse(this.Value, out _);
-
-				if (string.IsNullOrEmpty(this.Value))
-				{
-					return string.Empty;
-				}
-
-				StringBuilder sb = new StringBuilder();
-				//Remove the font format
-				var regex = new Regex(@"\{\\f.*?\;(.*?)\}", RegexOptions.IgnoreCase);
-				foreach (var item in regex.Split(this.Value))
-				{
-					sb.Append(item);
-				}
-
-				return sb.ToString();
 			}
 		}
 
