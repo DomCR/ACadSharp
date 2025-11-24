@@ -113,6 +113,7 @@ namespace ACadSharp.Tests.IO
 			public SingleCaseGenerator(string name) : this()
 			{
 				this.Name = name;
+                this.GetType().GetMethod(name)?.Invoke(this, null);
 			}
 
 			public void AddBlockWithAttributes()
@@ -1005,20 +1006,22 @@ namespace ACadSharp.Tests.IO
 
                 LineType.Segment s1 = new LineType.Segment
                 {
-                    Length = 12,
+                    Length = 5,
                     //Style = this.Document.TextStyles[TextStyle.DefaultName]
                 };
                 
                 LineType.Segment s2 = new LineType.Segment
                 {
                     Text = "Text",
-                    IsText = true
-                    //Style = this.Document.TextStyles[TextStyle.DefaultName]
+                    Length = -3.0, 
+                    IsText = true,
+                    Offset = new XY(-2.8, -.5),
+                    Style = this.Document.TextStyles[TextStyle.DefaultName]
                 };
 
                 LineType.Segment s3 = new LineType.Segment
                 {
-                    Length = -3,
+                    Length = -.350,
                     //Style = this.Document.TextStyles[TextStyle.DefaultName]
                 };
 
@@ -1027,6 +1030,12 @@ namespace ACadSharp.Tests.IO
                 lt.AddSegment(s3);
 
                 this.Document.LineTypes.Add(lt);
+                
+                var line = new Line(new XYZ(0, 0, 0), new XYZ(20, 0, 0))
+                {
+                    LineType = lt
+                };
+                this.Document.Entities.Add(line);
             }
 
 			public void Serialize(IXunitSerializationInfo info)
