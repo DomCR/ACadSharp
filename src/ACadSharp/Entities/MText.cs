@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
+using ACadSharp.Text;
 using CSMath;
 using System;
 using System.Collections.Generic;
@@ -132,6 +133,8 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
+				return TextProcessor.Unescape(this.Value);
+
 				if (string.IsNullOrEmpty(this.Value))
 				{
 					return string.Empty;
@@ -139,7 +142,7 @@ namespace ACadSharp.Entities
 
 				StringBuilder sb = new StringBuilder();
 				//Remove the font format
-				var regex = new Regex(@"\{\\f.*?\;(.*?)\}");
+				var regex = new Regex(@"\{\\f.*?\;(.*?)\}", RegexOptions.IgnoreCase);
 				foreach (var item in regex.Split(this.Value))
 				{
 					sb.Append(item);
