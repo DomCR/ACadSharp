@@ -15,48 +15,67 @@ namespace ACadSharp.Text
 			StringBuilder sb = new StringBuilder();
 
 			int index = 0;
+			bool openGroup = false;
 			while (index < text.Length)
 			{
 				int currIndex = text.IndexOf(@"\", index);
 				if (currIndex <= 0)
 				{
+					string s = text.Substring(index, text.Length - index);
+					if (openGroup && s.Contains("}"))
+					{
+						s = s.Replace("}", string.Empty);
+						openGroup = false;
+					}
+					sb.Append(s);
 					break;
 				}
 
 				char prev = text[currIndex - 1];
+				char current = text[currIndex];
 				char next = text[currIndex + 1];
 
 				if (prev == '{')
 				{
 					currIndex--;
+					openGroup = true;
 				}
 
 				if (currIndex > index)
 				{
-					sb.Append(text.Substring(index, currIndex - index));
+					string s = text.Substring(index, currIndex - index);
+					if (openGroup && s.Contains("}"))
+					{
+						s = s.Replace("}", string.Empty);
+						openGroup = false;
+					}
+					sb.Append(s);
 				}
 
+				int f;
 				switch (next)
 				{
 					case 'f':
 					case 'F':
-						//Process font
-						processFont(text, currIndex, out int f);
+						processFont(text, currIndex, out f);
 						currIndex = f;
-						var a = text.Substring(currIndex, f - currIndex);
 						break;
 					case 'c':
 					case 'C':
+						processColor(text, currIndex, out f);
+						currIndex = f;
 						break;
 					case 'P':
 					case 'n':
 						sb.Append(Environment.NewLine);
-						currIndex += 1;
+						currIndex += 2;
 						break;
-					case '{':
+					case 'r':
+						break;
 					case '}':
+					case '{':
 					case '\\':
-					default:
+						sb.Append(next);
 						break;
 				}
 
@@ -78,6 +97,14 @@ namespace ACadSharp.Text
 			{
 				Name = data[0],
 			};
+		}
+
+		private static void processColor(string text, int start, out int end)
+		{
+			//Example:
+			//- Color text {\\C3;green}, {\\C5;blue}, {\\C1;red}, ByLayer, {\\C0;ByBlock}, {\\C21;\\c5872631;TrueColor}
+			end = text.IndexOf(';', start);
+			end += 1;
 		}
 	}
 

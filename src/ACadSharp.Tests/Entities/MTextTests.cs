@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using System;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities
@@ -9,7 +10,7 @@ namespace ACadSharp.Tests.Entities
 		public void PlainTextTest()
 		{
 			MText text = new MText("- Font: {\\fCalibri|b0|i0|c0|p34;Calibri\\Fcdm|c0; CDM \\fConsolas|b0|i0|c0|p49;Consolas\\P}");
-			Assert.Equal("- Font: Calibri CDM Consolas", text.PlainText);
+			Assert.Equal($"- Font: Calibri CDM Consolas{Environment.NewLine}", text.PlainText);
 
 			text = new MText("- Color text {\\C3;green}, {\\C5;blue}, {\\C1;red}, ByLayer, {\\C0;ByBlock}, {\\C21;\\c5872631;TrueColor}");
 			Assert.Equal("- Color text green, blue, red, ByLayer, ByBlock, TrueColor", text.PlainText);
