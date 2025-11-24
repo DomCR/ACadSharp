@@ -33,6 +33,7 @@ namespace ACadSharp.Text
 						case '{':
 						case '\\':
 							sb.Append(next);
+							index += 2; 
 							break;
 						case 'c':
 						case 'C':
@@ -41,6 +42,13 @@ namespace ACadSharp.Text
 						case 'f':
 						case 'F':
 							processFont(text, index, out index);
+							break;
+						case 'h':
+						case 'H':
+							processHeight(text, index, out index);
+							break;
+						case 'p':
+							processJustification(text, index, out index);
 							break;
 						case 'P':
 						case 'n':
@@ -171,6 +179,22 @@ namespace ACadSharp.Text
 		{
 			//Example:
 			//- Color text {\\C3;green}, {\\C5;blue}, {\\C1;red}, ByLayer, {\\C0;ByBlock}, {\\C21;\\c5872631;TrueColor}
+			end = text.IndexOf(';', start);
+			end += 1;
+		}
+
+		private static void processHeight(string text, int start, out int end)
+		{
+			//Example:
+			//- {\\H2x;Double height \\H0.875x;height is: 0.35\\H1.14286x;\\P}
+			end = text.IndexOf(';', start);
+			end += 1;
+		}
+
+		private static void processJustification(string text, int start, out int end)
+		{
+			//Example:
+			//\\pxqc;Text in the center\\P\\pq*;Hello this is an mText\\P
 			end = text.IndexOf(';', start);
 			end += 1;
 		}
