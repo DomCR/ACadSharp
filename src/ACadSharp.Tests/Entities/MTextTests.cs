@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities
@@ -9,6 +10,12 @@ namespace ACadSharp.Tests.Entities
 		[Fact]
 		public void PlainTextTest()
 		{
+			var s = Text.TextProcessor.Parse("- Font: {\\fCalibri|b0|i0|c0|p34;Calibri\\Fcdm|c0; CDM \\fConsolas|b0|i0|c0|p49;Consolas\\P}", out List<string> groups);
+			Assert.Equal($"- Font: Calibri CDM Consolas{Environment.NewLine}", s);
+			//Assert.Equal("- Font: ", groups[0]);
+			//Assert.Equal("Calibri", groups[1]);
+
+
 			MText text = new MText("- Font: {\\fCalibri|b0|i0|c0|p34;Calibri\\Fcdm|c0; CDM \\fConsolas|b0|i0|c0|p49;Consolas\\P}");
 			Assert.Equal($"- Font: Calibri CDM Consolas{Environment.NewLine}", text.PlainText);
 

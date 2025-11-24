@@ -133,7 +133,7 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				return TextProcessor.Unescape(this.Value);
+				return TextProcessor.Parse(this.Value, out _);
 
 				if (string.IsNullOrEmpty(this.Value))
 				{
