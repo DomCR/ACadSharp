@@ -1,90 +1,82 @@
-﻿namespace ACadSharp.Tables;
+﻿using ACadSharp.Attributes;
+
+namespace ACadSharp.Tables;
 
 using System.ComponentModel;
 
 public enum DimensionStyleOverrideType
 {
-    // ---------------------------
-    // TEXT & GENERAL APPEARANCE
-    // ---------------------------
-
-    ///
     /// <summary>
-    /// Text style used for dimension text.
-    /// DXF code: 340
+    /// Dimension text style.
     /// </summary>
-    [Description("DIMTXSTY")]
+    [DimOverrideXData(140, XDataValueKind.String, "DIMTXSTY")] 
     DimensionTextStyle,
     
-    ///<summary>
+    /// <summary>
     /// Dimension text height.
-    /// DXF code: 140
     /// </summary>
-    [Description("DIMTXT")]
+    [DimOverrideXData(140, XDataValueKind.Double, "DIMTXT")]
     DimensionTextHeight,
 
     /// <summary>
     /// Text vertical position relative to dimension line.
-    /// DXF code: 77
     /// </summary>
-    [Description("DIMTAD")]
+    [DimOverrideXData(77, XDataValueKind.DimensionTextVerticalAlignment, "DIMTAD")]
     TextVerticalPlacement,
 
     /// <summary>
     /// Text inside horizontal placement rule.
-    /// DXF code: 73
     /// </summary>
-    [Description("DIMTIH")]
+    [DimOverrideXData(73, XDataValueKind.Bool, "DIMTIH")]
     TextInsideHorizontal,
 
     /// <summary>
     /// Text outside horizontal placement rule.
-    /// DXF code: 74
     /// </summary>
-    [Description("DIMTOH")]
+    [DimOverrideXData(74, XDataValueKind.Bool, "DIMTOH")]
     TextOutsideHorizontal,
 
     /// <summary>
     /// Forces text inside extension lines when possible.
-    /// DXF code: 174
     /// </summary>
-    [Description("DIMTIX")]
+    [DimOverrideXData(174, XDataValueKind.Bool, "DIMTIX")]
     ForceTextInside,
 
     /// <summary>
     /// Forces extension lines if text must be moved outside.
-    /// DXF code: 172
     /// </summary>
-    [Description("DIMTOFL")]
+    [DimOverrideXData(172, XDataValueKind.Short, "DIMTOFL")]
     ForceExtensionLinesOutside,
 
     /// <summary>
     /// Text vertical position for user-placed text.
-    /// DXF code: 145
     /// </summary>
-    [Description("DIMTVP")]
+    [DimOverrideXData(145, XDataValueKind.Double, "DIMTVP")]
     TextVerticalPosition,
 
     /// <summary>
     /// Text alignment/justification.
-    /// DXF code: 280
     /// </summary>
-    [Description("DIMJUST")]
+    [DimOverrideXData(280, XDataValueKind.DimensionTextHorizontalAlignment, "DIMJUST")]
     TextJustification,
 
     /// <summary>
-    /// Formats prefix/suffix for dimension text.
-    /// DXF code: 3
+    /// Formats prefix for dimension text.
     /// </summary>
-    [Description("DIMPOST")]
-    DimensionTextFormat,
+    [DimOverrideXData(3, XDataValueKind.String, "DIMPOST")]
+    DimensionTextPrefix,
+    
+    /// <summary>
+    /// Formats prefix for dimension text.
+    /// </summary>
+    [DimOverrideXData(3, XDataValueKind.String, "DIMPOST")]
+    PostFix,
 
     /// <summary>
-    /// Formats prefix/suffix for alternate dimension text.
-    /// DXF code: 4
+    /// Formats prefix for alternate dimension text.
     /// </summary>
-    [Description("DIMAPOST")]
-    AltDimensionTextFormat,
+    [DimOverrideXData(4, XDataValueKind.String, "DIMAPOST")]
+    AlternateDimensioningSuffix,
 
 
     // ---------------------------
@@ -93,23 +85,20 @@ public enum DimensionStyleOverrideType
 
     /// <summary>
     /// Color of dimension lines.
-    /// DXF code: 176
     /// </summary>
-    [Description("DIMCLRD")]
+    [DimOverrideXData(176, XDataValueKind.Color, "DIMCLRD")]
     DimensionLineColor,
 
     /// <summary>
     /// Color of extension lines.
-    /// DXF code: 177
     /// </summary>
-    [Description("DIMCLRE")]
+    [DimOverrideXData(177, XDataValueKind.Color, "DIMCLRE")]
     ExtensionLineColor,
 
     /// <summary>
     /// Color of dimension text.
-    /// DXF code: 178
     /// </summary>
-    [Description("DIMCLRT")]
+    [DimOverrideXData(178, XDataValueKind.Color, "DIMCLRT")]
     DimensionTextColor,
 
 
@@ -119,37 +108,32 @@ public enum DimensionStyleOverrideType
 
     /// <summary>
     /// LineType for dimension lines.
-    /// DXF code: 345
     /// </summary>
-    [Description("DIMLTYPE")]
-    DimensionLineLinetype,
+    [DimOverrideXData(345, XDataValueKind.LineType, "DIMLTYPE")]
+    DimensionLineLineType,
 
     /// <summary>
     /// LineType for first extension line.
-    /// DXF code: 346
     /// </summary>
-    [Description("DIMLTEX1")]
-    ExtensionLine1Linetype,
+    [DimOverrideXData(346, XDataValueKind.LineType, "DIMLTEX1")]
+    ExtensionLine1LineType,
 
     /// <summary>
     /// LineType for second extension line.
-    /// DXF code: 347
     /// </summary>
-    [Description("DIMLTEX2")]
-    ExtensionLine2Linetype,
+    [DimOverrideXData(347, XDataValueKind.LineType, "DIMLTEX2")]
+    ExtensionLine2LineType,
 
     /// <summary>
     /// Lineweight of dimension lines.
-    /// DXF code: 371
     /// </summary>
-    [Description("DIMLWD")]
+    [DimOverrideXData(371, XDataValueKind.LineWeightType, "DIMLWD")]
     DimensionLineWeight,
 
     /// <summary>
     /// Lineweight of extension lines.
-    /// DXF code: 372
     /// </summary>
-    [Description("DIMLWE")]
+    [DimOverrideXData(372, XDataValueKind.LineWeightType, "DIMLWE")]
     ExtensionLineWeight,
 
 
@@ -159,72 +143,62 @@ public enum DimensionStyleOverrideType
 
     /// <summary>
     /// Extension of dimension lines beyond the extension lines.
-    /// DXF code: 46
     /// </summary>
-    [Description("DIMDLE")]
+    [DimOverrideXData(46, XDataValueKind.Double, "DIMDLE")]
     DimensionLineExtension,
 
     /// <summary>
     /// Incremental spacing of dimension lines.
-    /// DXF code: 43
     /// </summary>
-    [Description("DIMDLI")]
+    [DimOverrideXData(43, XDataValueKind.Double, "DIMDLI")]
     DimensionLineIncrement,
 
     /// <summary>
     /// Extension line extension beyond the dimension line.
-    /// DXF code: 44
     /// </summary>
-    [Description("DIMEXE")]
+    [DimOverrideXData(44, XDataValueKind.Double, "DIMEXE")]
     ExtensionLineExtension,
 
     /// <summary>
     /// Offset distance of extension lines from the measured points.
-    /// DXF code: 42
     /// </summary>
-    [Description("DIMEXO")]
+    [DimOverrideXData(42, XDataValueKind.Double, "DIMEXO")]
     ExtensionLineOffset,
 
     /// <summary>
     /// Suppress first extension line.
-    /// DXF code: 75
     /// </summary>
-    [Description("DIMSE1")]
+    [DimOverrideXData(75, XDataValueKind.Bool, "DIMSE1")]
     SuppressExtensionLine1,
 
     /// <summary>
     /// Suppress second extension line.
-    /// DXF code: 76
     /// </summary>
-    [Description("DIMSE2")]
+    [DimOverrideXData(76, XDataValueKind.Bool, "DIMSE2")]
     SuppressExtensionLine2,
 
     /// <summary>
     /// Suppress first dimension extension.
-    /// DXF code: 281
     /// </summary>
-    [Description("DIMSD1")]
+    [DimOverrideXData(281, XDataValueKind.Bool, "DIMSD1")]
     SuppressDimensionExtension1,
 
     /// <summary>
     /// Suppress second dimension extension.
-    /// DXF code: 282
     /// </summary>
-    [Description("DIMSD2")]
+    [DimOverrideXData(282, XDataValueKind.Bool, "DIMSD2")]
     SuppressDimensionExtension2,
 
     /// <summary>
     /// Fixed-length extension line setting.
-    /// DXF code: 49
     /// </summary>
-    [Description("DIMFXL")]
+    [DimOverrideXData(49, XDataValueKind.Double, "DIMFXL")]
     ExtensionLineFixedLength,
 
     /// <summary>
     /// Enables fixed extension line length.
-    /// DXF code: 290
     /// </summary>
-    [Description("DIMFXLON")]
+    [DimOverrideXData(290, XDataValueKind.Bool, "DIMFXLON")]
     ExtensionLineFixedLengthEnabled,
 
 
@@ -234,65 +208,56 @@ public enum DimensionStyleOverrideType
 
     /// <summary>
     /// Size of dimension arrows.
-    /// DXF code: 41
     /// </summary>
-    [Description("DIMASZ")]
+    [DimOverrideXData(41, XDataValueKind.Double, "DIMASZ")]
     ArrowSize,
 
     /// <summary>
     /// Tick size for architectural ticks.
-    /// DXF code:
     /// </summary>
-    [Description("DIMTSZ")]
+    [DimOverrideXData(142, XDataValueKind.Double, "DIMTSZ")]
     TickSize,
 
     /// <summary>
     /// Center mark size for arc/circle dimensions.
-    /// DXF code: 141
     /// </summary>
-    [Description("DIMCEN")]
+    [DimOverrideXData(141, XDataValueKind.Double, "DIMCEN")]
     CenterMarkSize,
 
     /// <summary>
     /// Uses custom arrow blocks.
-    /// DXF code: 173
     /// </summary>
-    [Description("DIMSAH")]
+    [DimOverrideXData(173, XDataValueKind.Bool, "DIMSAH")]
     UseCustomArrowBlocks,
 
     /// <summary>
     /// Arrow block for both ends.
-    /// DXF code: 342
     /// </summary>
-    [Description("DIMBLK")]
+    [DimOverrideXData(342, XDataValueKind.BlockRecord, "DIMBLK")]
     ArrowBlock,
 
     /// <summary>
     /// Arrow block for first end.
-    /// DXF code: 343
     /// </summary>
-    [Description("DIMBLK1")]
+    [DimOverrideXData(343, XDataValueKind.BlockRecord, "DIMBLK1")]
     ArrowBlock1,
 
     /// <summary>
     /// Arrow block for second end.
-    /// DXF code: 344
     /// </summary>
-    [Description("DIMBLK2")]
+    [DimOverrideXData(344, XDataValueKind.BlockRecord, "DIMBLK2")]
     ArrowBlock2,
 
     /// <summary>
     /// Leader arrow block.
-    /// DXF code:
     /// </summary>
-    [Description("DIMLDRBLK")]
+    [DimOverrideXData(341, XDataValueKind.BlockRecord, "DIMLDRBLK")]
     LeaderArrowBlock,
 
     /// <summary>
     /// Arc length dimension symbol placement.
-    /// DXF code: 341
     /// </summary>
-    [Description("DIMARCSYM")]
+    [DimOverrideXData(144, XDataValueKind.Double, "DIMARCSYM")]
     ArcLengthSymbolPlacement,
 
 
@@ -302,93 +267,80 @@ public enum DimensionStyleOverrideType
 
     /// <summary>
     /// Linear unit display mode.
-    /// DXF code: 277
     /// </summary>
-    [Description("DIMLUNIT")]
+    [DimOverrideXData(277, XDataValueKind.LinearUnitFormat, "DIMLUNIT")]
     LinearUnitFormat,
 
     /// <summary>
     /// Number of decimal places for linear dimensions.
-    /// DXF code: 271
     /// </summary>
-    [Description("DIMDEC")]
+    [DimOverrideXData(271, XDataValueKind.Short, "DIMDEC")]
     LinearDecimalPrecision,
 
     /// <summary>
     /// Decimal separator character.
-    /// DXF code: 278
     /// </summary>
-    [Description("DIMDSEP")]
+    [DimOverrideXData(278, XDataValueKind.Char, "DIMDSEP")]
     DecimalSeparator,
 
     /// <summary>
     /// Angular precision.
-    /// DXF code:
     /// </summary>
-    [Description("DIMADEC")]
+    [DimOverrideXData(270, XDataValueKind.Short, "DIMADEC")]
     AngularDecimalPrecision,
 
     /// <summary>
     /// Angular unit display format.
-    /// DXF code: 179
     /// </summary>
-    [Description("DIMAUNIT")]
+    [DimOverrideXData(179, XDataValueKind.Short, "DIMAUNIT")]
     AngularUnitFormat,
 
     /// <summary>
     /// Zero suppression for primary units.
-    /// DXF code: 78
     /// </summary>
-    [Description("DIMZIN")]
+    [DimOverrideXData(78, XDataValueKind.ZeroHandling, "DIMZIN")]
     ZeroSuppression,
 
     /// <summary>
     /// Zero suppression for alternative units.
-    /// DXF code: ???
     /// </summary>
-    [Description("DIMALTMZF")]
+    [DimOverrideXData(175, XDataValueKind.Bool, "DIMALTMZF")]
     AltUnitZeroSuppressionFactor,
 
     /// <summary>
     /// Enables alternate units.
-    /// DXF code: 170
     /// </summary>
-    [Description("DIMALT")]
+    [DimOverrideXData(170, XDataValueKind.Bool, "DIMALT")]
     EnableAlternateUnits,
 
     /// <summary>
     /// Scale factor for alternate units.
-    /// DXF code: 143
     /// </summary>
-    [Description("DIMALTF")]
+    [DimOverrideXData(143, XDataValueKind.Double, "DIMALTF")]
     AlternateUnitScaleFactor,
 
     /// <summary>
     /// Alternate unit rounding value.
-    /// DXF code: 148
     /// </summary>
-    [Description("DIMALTRND")]
+    [DimOverrideXData(148, XDataValueKind.Double, "DIMALTRND")]
     AlternateUnitRounding,
 
     /// <summary>
-    /// Alternate unit decimal precision.
-    /// DXF code: 274
+    /// Alternate unit tolerance precision.
     /// </summary>
-    [Description("DIMALTTD")]
+    [DimOverrideXData(274, XDataValueKind.Short, "DIMALTTD")]
     AlternateUnitToleranceDecimals,
 
     /// <summary>
     /// Number of decimal places for alternate units.
-    /// DXF code: 171
     /// </summary>
-    [Description("DIMALTD")]
+    [DimOverrideXData(171, XDataValueKind.Short, "DIMALTD")]
     AlternateUnitDecimalPlaces,
 
     /// <summary>
     /// Zero suppression for alt unit tolerances.
-    /// DXF code: 286
     /// </summary>
-    [Description("DIMALTTZ")]
+    [DimOverrideXData(286, XDataValueKind.ZeroHandling, "DIMALTTZ")]
     AlternateUnitToleranceZeroSuppression,
 
 
@@ -397,91 +349,79 @@ public enum DimensionStyleOverrideType
     // ---------------------------
 
     /// <summary>
-    /// Controls how text and arrows are placed when space is tight.
-    /// DXF code: ???
+    /// Controls text and arrow fit rules.
     /// </summary>
-    [Description("DIMFIT")]
+    [DimOverrideXData(287, XDataValueKind.Short, "DIMFIT")]
     FitOptions,
 
     /// <summary>
     /// Linear scale factor for dimensions.
-    /// DXF code: 144
     /// </summary>
-    [Description("DIMLFAC")]
+    [DimOverrideXData(144, XDataValueKind.Double, "DIMLFAC")]
     LinearScaleFactor,
 
     /// <summary>
-    /// Text scale factor for tolerances.
-    /// DXF code: 146
+    /// Tolerance text height scale factor.
     /// </summary>
-    [Description("DIMTFAC")]
+    [DimOverrideXData(146, XDataValueKind.Double, "DIMTFAC")]
     ToleranceTextScale,
 
     /// <summary>
     /// Controls text and arrow movement rules.
-    /// DXF code: 279
     /// </summary>
-    [Description("DIMTMOVE")]
+    [DimOverrideXData(279, XDataValueKind.TextMovement, "DIMTMOVE")]
     TextMovementRule,
 
     /// <summary>
     /// User-positioned text flag.
-    /// DXF code: 288
     /// </summary>
-    [Description("DIMUPT")]
+    [DimOverrideXData(288, XDataValueKind.Short, "DIMUPT")]
     UserPositionedText,
 
 
     // ---------------------------
-    // TOLERANCING
+    //– TOLERANCING
     // ---------------------------
 
     /// <summary>
     /// Enables dimension tolerances.
-    /// DXF code: 71
     /// </summary>
-    [Description("DIMTOL")]
+    [DimOverrideXData(71, XDataValueKind.Bool, "DIMTOL")]
     EnableTolerances,
 
     /// <summary>
     /// Enables limits-style tolerances.
-    /// DXF code:
     /// </summary>
-    [Description("DIMLTOL")]
+    [DimOverrideXData(72, XDataValueKind.Bool, "DIMLTOL")]
     EnableLimitsTolerances,
 
     /// <summary>
     /// Tolerance plus value.
-    /// DXF code: 47
     /// </summary>
-    [Description("DIMTP")]
+    [DimOverrideXData(47, XDataValueKind.Double, "DIMTP")]
     TolerancePlus,
 
     /// <summary>
     /// Tolerance minus value.
-    /// DXF code: 48
     /// </summary>
-    [Description("DIMTM")]
+    [DimOverrideXData(48, XDataValueKind.Double, "DIMTM")]
     ToleranceMinus,
 
     /// <summary>
     /// Tolerance justification.
-    /// DXF code: 283
     /// </summary>
-    [Description("DIMTOLJ")]
+    [DimOverrideXData(283, XDataValueKind.ToleranceAlignment, "DIMTOLJ")]
     ToleranceJustification,
 
     /// <summary>
     /// Zero suppression for tolerances.
-    /// DXF code: 284
     /// </summary>
-    [Description("DIMTZIN")]
+    [DimOverrideXData(284, XDataValueKind.ZeroHandling, "DIMTZIN")]
     ToleranceZeroSuppression,
 
     /// <summary>
-    /// Zero suppression for tolerances in alt units.
-    /// DXF code: ???
+    /// Zero suppression for alt-unit tolerances.
     /// </summary>
-    [Description("DIMTOLZ")]
+    [DimOverrideXData(285, XDataValueKind.ZeroHandling, "DIMTOLZ")]
     ToleranceZeroSuppressionAlternate
 }

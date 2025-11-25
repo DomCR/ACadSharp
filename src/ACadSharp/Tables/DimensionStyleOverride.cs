@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ACadSharp.Types.Units;
 
 namespace ACadSharp.Tables;
 
@@ -40,9 +41,9 @@ public sealed class DimensionStyleOverride
             { DimensionStyleOverrideType.ForceTextInside, typeof(bool) },
             { DimensionStyleOverrideType.ForceExtensionLinesOutside, typeof(bool) },
             { DimensionStyleOverrideType.TextVerticalPosition, typeof(double) },
-            { DimensionStyleOverrideType.TextJustification, typeof(short) },
-            { DimensionStyleOverrideType.DimensionTextFormat, typeof(string) },
-            { DimensionStyleOverrideType.AltDimensionTextFormat, typeof(string) },
+            { DimensionStyleOverrideType.TextJustification, typeof(DimensionTextHorizontalAlignment) },
+            { DimensionStyleOverrideType.PostFix, typeof(string) },
+            { DimensionStyleOverrideType.AlternateDimensioningSuffix, typeof(string) },
 
             // COLORS
             { DimensionStyleOverrideType.DimensionLineColor, typeof(Color) },
@@ -50,11 +51,11 @@ public sealed class DimensionStyleOverride
             { DimensionStyleOverrideType.DimensionTextColor, typeof(Color) },
 
             // LINETYPES & WEIGHTS
-            { DimensionStyleOverrideType.DimensionLineLinetype, typeof(LineType) },
-            { DimensionStyleOverrideType.ExtensionLine1Linetype, typeof(LineType) },
-            { DimensionStyleOverrideType.ExtensionLine2Linetype, typeof(LineType) },
-            { DimensionStyleOverrideType.DimensionLineWeight, typeof(short) },
-            { DimensionStyleOverrideType.ExtensionLineWeight, typeof(short) },
+            { DimensionStyleOverrideType.DimensionLineLineType, typeof(LineType) },
+            { DimensionStyleOverrideType.ExtensionLine1LineType, typeof(LineType) },
+            { DimensionStyleOverrideType.ExtensionLine2LineType, typeof(LineType) },
+            { DimensionStyleOverrideType.DimensionLineWeight, typeof(LineWeightType) },
+            { DimensionStyleOverrideType.ExtensionLineWeight, typeof(LineWeightType) },
 
             // DIM / EXT LINE VALUES
             { DimensionStyleOverrideType.DimensionLineExtension, typeof(double) },
@@ -73,32 +74,32 @@ public sealed class DimensionStyleOverride
             { DimensionStyleOverrideType.TickSize, typeof(double) },
             { DimensionStyleOverrideType.CenterMarkSize, typeof(double) },
             { DimensionStyleOverrideType.UseCustomArrowBlocks, typeof(bool) },
-            { DimensionStyleOverrideType.ArrowBlock, typeof(string) },
-            { DimensionStyleOverrideType.ArrowBlock1, typeof(string) },
-            { DimensionStyleOverrideType.ArrowBlock2, typeof(string) },
-            { DimensionStyleOverrideType.LeaderArrowBlock, typeof(string) },
-            { DimensionStyleOverrideType.ArcLengthSymbolPlacement, typeof(short) },
+            { DimensionStyleOverrideType.ArrowBlock, typeof(BlockRecord) },
+            { DimensionStyleOverrideType.ArrowBlock1, typeof(BlockRecord) },
+            { DimensionStyleOverrideType.ArrowBlock2, typeof(BlockRecord) },
+            { DimensionStyleOverrideType.LeaderArrowBlock, typeof(BlockRecord) },
+            { DimensionStyleOverrideType.ArcLengthSymbolPlacement, typeof(Double) },
 
             // UNITS
-            { DimensionStyleOverrideType.LinearUnitFormat, typeof(short) },
+            { DimensionStyleOverrideType.LinearUnitFormat, typeof(LinearUnitFormat) },
             { DimensionStyleOverrideType.LinearDecimalPrecision, typeof(short) },
-            { DimensionStyleOverrideType.DecimalSeparator, typeof(short) },
+            { DimensionStyleOverrideType.DecimalSeparator, typeof(Char) },
             { DimensionStyleOverrideType.AngularDecimalPrecision, typeof(short) },
             { DimensionStyleOverrideType.AngularUnitFormat, typeof(short) },
-            { DimensionStyleOverrideType.ZeroSuppression, typeof(short) },
+            { DimensionStyleOverrideType.ZeroSuppression, typeof(ZeroHandling) },
             { DimensionStyleOverrideType.AltUnitZeroSuppressionFactor, typeof(short) },
             { DimensionStyleOverrideType.EnableAlternateUnits, typeof(bool) },
             { DimensionStyleOverrideType.AlternateUnitScaleFactor, typeof(double) },
             { DimensionStyleOverrideType.AlternateUnitRounding, typeof(double) },
             { DimensionStyleOverrideType.AlternateUnitToleranceDecimals, typeof(short) },
             { DimensionStyleOverrideType.AlternateUnitDecimalPlaces, typeof(short) },
-            { DimensionStyleOverrideType.AlternateUnitToleranceZeroSuppression, typeof(short) },
+            { DimensionStyleOverrideType.AlternateUnitToleranceZeroSuppression, typeof(ZeroHandling) },
 
             // FIT
             { DimensionStyleOverrideType.FitOptions, typeof(short) },
             { DimensionStyleOverrideType.LinearScaleFactor, typeof(double) },
             { DimensionStyleOverrideType.ToleranceTextScale, typeof(double) },
-            { DimensionStyleOverrideType.TextMovementRule, typeof(short) },
+            { DimensionStyleOverrideType.TextMovementRule, typeof(TextMovement) },
             { DimensionStyleOverrideType.UserPositionedText, typeof(bool) },
 
             // TOLERANCES
@@ -106,8 +107,8 @@ public sealed class DimensionStyleOverride
             { DimensionStyleOverrideType.EnableLimitsTolerances, typeof(bool) },
             { DimensionStyleOverrideType.TolerancePlus, typeof(double) },
             { DimensionStyleOverrideType.ToleranceMinus, typeof(double) },
-            { DimensionStyleOverrideType.ToleranceJustification, typeof(short) },
-            { DimensionStyleOverrideType.ToleranceZeroSuppression, typeof(short) },
-            { DimensionStyleOverrideType.ToleranceZeroSuppressionAlternate, typeof(short) }
+            { DimensionStyleOverrideType.ToleranceJustification, typeof(ToleranceAlignment) },
+            { DimensionStyleOverrideType.ToleranceZeroSuppression, typeof(ZeroHandling) },
+            { DimensionStyleOverrideType.ToleranceZeroSuppressionAlternate, typeof(ZeroHandling) }
         };
 }

@@ -80,6 +80,8 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionRadius)));
 			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionWithLineType)));
+            Data.Add(new(nameof(SingleCaseGenerator.DimensionStyleOverride)));
+            Data.Add(new(nameof(SingleCaseGenerator.DimensionStyleOverrideClone)));
 			Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
 			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeInBlock)));
@@ -840,6 +842,44 @@ namespace ACadSharp.Tests.IO
 
 				this.Document.Entities.Add(dim);
 			}
+            
+            public void DimensionStyleOverride()
+            {
+                DimensionStyle style = new DimensionStyle("my_style");
+
+                DimensionAligned dim1 = new DimensionAligned();
+                DimensionAligned dim2 = new DimensionAligned();
+                dim1.Style = style;
+                dim2.Style = style;
+
+                dim1.SecondPoint = new XYZ(10);
+                dim2.SecondPoint = new XYZ(10, 0, 0);
+                dim1.StyleOverrides.Add(DimensionStyleOverrideType.TextJustification, DimensionTextHorizontalAlignment.Left);
+                dim1.StyleOverrides.Add(DimensionStyleOverrideType.DimensionTextColor, Color.Blue);
+                dim1.StyleOverrides.Add(DimensionStyleOverrideType.ArrowSize, .250);
+
+                this.Document.Entities.Add(dim1);
+                this.Document.Entities.Add(dim2);
+            }
+            
+            public void DimensionStyleOverrideClone()
+            {
+                DimensionStyle style = new DimensionStyle("my_style");
+
+                DimensionAligned dim1 = new DimensionAligned();
+                DimensionAligned dim2 = new DimensionAligned();
+                dim1.Style = style;
+                dim2.Style = style;
+
+                dim1.SecondPoint = new XYZ(10);
+                dim2.SecondPoint = new XYZ(10, 0, 0);
+                dim1.StyleOverrides.Add(DimensionStyleOverrideType.TextJustification, DimensionTextHorizontalAlignment.Left);
+                dim1.StyleOverrides.Add(DimensionStyleOverrideType.DimensionTextColor, Color.Blue);
+                dim1.StyleOverrides.Add(DimensionStyleOverrideType.ArrowSize, .250);
+
+                this.Document.Entities.Add(dim1);
+                this.Document.Entities.Add(dim2.Clone() as Entity);
+            }
 
 			public void Empty()
 			{ }
