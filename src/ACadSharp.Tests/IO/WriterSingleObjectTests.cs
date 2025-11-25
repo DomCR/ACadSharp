@@ -827,6 +827,7 @@ namespace ACadSharp.Tests.IO
 				ellipse.RadiusRatio = 0.5d;
 				ellipse.StartParameter = 0.0d;
 				ellipse.EndParameter = Math.PI * 2;
+				ellipse.MajorAxisEndPoint *= 4;
 				ellipse.Center = center;
 
 				var pline = new Polyline3D(ellipse.PolygonalVertexes(4));
@@ -862,14 +863,14 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(pline);
 				this.Document.Entities.Add(ellipse);
 
-				 ellipse = new Ellipse();
+				ellipse = new Ellipse();
 				ellipse.RadiusRatio = 0.5d;
 				ellipse.StartParameter = 0.0d;
 				ellipse.EndParameter = Math.PI * 2;
 				ellipse.Center = center;
 				ellipse.Normal = -XYZ.AxisZ;
 
-				 pline = new Polyline3D(ellipse.PolygonalVertexes(4));
+				pline = new Polyline3D(ellipse.PolygonalVertexes(4));
 				pline.Color = Color.Blue;
 
 				this.Document.Entities.Add(pline);
