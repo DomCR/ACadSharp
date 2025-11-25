@@ -6,6 +6,7 @@ using CSMath;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
+using ACadSharp.Tables.Collections;
 
 namespace ACadSharp.Entities
 {
@@ -176,6 +177,11 @@ namespace ACadSharp.Entities
 				this._style = CadObject.updateCollection(value, this.Document?.DimensionStyles);
 			}
 		}
+		
+		public DimensionStyleOverrideCollection StyleOverrides
+		{
+			get { return this._styleOverrideCollection; }
+		}
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Dimension;
@@ -219,6 +225,8 @@ namespace ACadSharp.Entities
 		protected DimensionType _flags;
 
 		private DimensionStyle _style = DimensionStyle.Default;
+
+		private DimensionStyleOverrideCollection _styleOverrideCollection = new();
 
 		protected Dimension(DimensionType type)
 		{
