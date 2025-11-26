@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO.Templates;
+﻿using ACadSharp.Blocks;
+using ACadSharp.IO.Templates;
 using System;
 
 namespace ACadSharp.IO.DXF
@@ -45,7 +46,7 @@ namespace ACadSharp.IO.DXF
 				{
 					this._builder.ModelSpaceEntities.Add(template.CadObject);
 				}
-				else if (this._builder.TryGetObjectTemplate(template.OwnerHandle, out CadBlockRecordTemplate owner))
+				else if (this._builder.TryGetObjectTemplate(template.OwnerHandle, out ICadOwnerTemplate owner))
 				{
 					owner.OwnedObjectsHandlers.Add(template.CadObject.Handle);
 				}
