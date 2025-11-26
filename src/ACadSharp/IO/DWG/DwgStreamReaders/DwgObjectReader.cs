@@ -5559,10 +5559,25 @@ namespace ACadSharp.IO.DWG
 
 			//section that follows.
 			//Unknown data ---The OLE2 data.
+			this._mergedReaders.ReadByte();
+			this._mergedReaders.ReadByte();
+
+			//Test dimensions:
+			//Height = 50
+			//Width = 57.2
+			//Lock = true
+
+			ole2Frame.UpperLeftCorner = this._mergedReaders.Read3RawDouble();
+			var upperRight = this._mergedReaders.Read3RawDouble();
+			ole2Frame.LowerRightCorner = this._mergedReaders.Read3RawDouble();
+
+			//Expected position = 5,5,0
+			var lowerLeft = this._mergedReaders.Read3RawDouble();
+
+			//No strings found in the data
+
 			//R2000 +:
 			//Unknown RC
-			//Common:
-			//Common Entity Handle Data
 
 			return template;
 		}

@@ -70,7 +70,7 @@ namespace ACadSharp.Entities
 		/// Gets or sets the upper-left corner of the object in world coordinate system (WCS).
 		/// </summary>
 		[DxfCodeValue(10, 20, 30)]
-		public XYZ UpperLeftCorner { get; set; } = XYZ.Zero;
+		public XYZ UpperLeftCorner { get; set; } = new XYZ(1, 1, 0);
 
 		/// <summary>
 		/// OLE version number.
