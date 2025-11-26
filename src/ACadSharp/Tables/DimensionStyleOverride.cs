@@ -40,7 +40,7 @@ public sealed class DimensionStyleOverride
             { DimensionStyleOverrideType.TextInsideHorizontal, typeof(bool) },
             { DimensionStyleOverrideType.TextOutsideHorizontal, typeof(bool) },
             { DimensionStyleOverrideType.ForceTextInside, typeof(bool) },
-            { DimensionStyleOverrideType.ForceExtensionLinesOutside, typeof(bool) },
+            { DimensionStyleOverrideType.TextOutsideExtensions, typeof(bool) },
             { DimensionStyleOverrideType.TextVerticalPosition, typeof(double) },
             { DimensionStyleOverrideType.TextJustification, typeof(DimensionTextHorizontalAlignment) },
             { DimensionStyleOverrideType.PostFix, typeof(string) },
@@ -63,12 +63,13 @@ public sealed class DimensionStyleOverride
             { DimensionStyleOverrideType.DimensionLineIncrement, typeof(double) },
             { DimensionStyleOverrideType.ExtensionLineExtension, typeof(double) },
             { DimensionStyleOverrideType.ExtensionLineOffset, typeof(double) },
-            { DimensionStyleOverrideType.SuppressExtensionLine1, typeof(bool) },
-            { DimensionStyleOverrideType.SuppressExtensionLine2, typeof(bool) },
+            { DimensionStyleOverrideType.SuppressFirstDimensionLine, typeof(bool) },
+            { DimensionStyleOverrideType.SuppressSecondDimensionLine, typeof(bool) },
             { DimensionStyleOverrideType.SuppressDimensionExtension1, typeof(bool) },
             { DimensionStyleOverrideType.SuppressDimensionExtension2, typeof(bool) },
             { DimensionStyleOverrideType.ExtensionLineFixedLength, typeof(double) },
             { DimensionStyleOverrideType.ExtensionLineFixedLengthEnabled, typeof(bool) },
+            { DimensionStyleOverrideType.SuppressOutsideExtensions, typeof(bool) },
 
             // ARROWS
             { DimensionStyleOverrideType.ArrowSize, typeof(double) },
@@ -79,30 +80,32 @@ public sealed class DimensionStyleOverride
             { DimensionStyleOverrideType.ArrowBlock1, typeof(BlockRecord) },
             { DimensionStyleOverrideType.ArrowBlock2, typeof(BlockRecord) },
             { DimensionStyleOverrideType.LeaderArrowBlock, typeof(BlockRecord) },
-            { DimensionStyleOverrideType.ArcLengthSymbolPlacement, typeof(Double) },
+            { DimensionStyleOverrideType.ArcLengthSymbolPosition, typeof(ArcLengthSymbolPosition) },
 
             // UNITS
             { DimensionStyleOverrideType.LinearUnitFormat, typeof(LinearUnitFormat) },
             { DimensionStyleOverrideType.DimensionScaleFactor, typeof(Double) },
             { DimensionStyleOverrideType.LinearDecimalPrecision, typeof(short) },
             { DimensionStyleOverrideType.DecimalSeparator, typeof(Char) },
-            { DimensionStyleOverrideType.AngularDecimalPrecision, typeof(short) },
-            { DimensionStyleOverrideType.AngularUnitFormat, typeof(short) },
+            { DimensionStyleOverrideType.AngularDecimalPlaces, typeof(short) },
+            { DimensionStyleOverrideType.AngularUnitFormat, typeof(AngularUnitFormat) },
             { DimensionStyleOverrideType.ZeroSuppression, typeof(ZeroHandling) },
-            { DimensionStyleOverrideType.AltUnitZeroSuppressionFactor, typeof(short) },
+            { DimensionStyleOverrideType.AngularZeroHandling, typeof(ZeroHandling) },
             { DimensionStyleOverrideType.EnableAlternateUnits, typeof(bool) },
             { DimensionStyleOverrideType.AlternateUnitScaleFactor, typeof(double) },
             { DimensionStyleOverrideType.AlternateUnitRounding, typeof(double) },
             { DimensionStyleOverrideType.AlternateUnitToleranceDecimals, typeof(short) },
             { DimensionStyleOverrideType.AlternateUnitDecimalPlaces, typeof(short) },
             { DimensionStyleOverrideType.AlternateUnitToleranceZeroSuppression, typeof(ZeroHandling) },
+            { DimensionStyleOverrideType.AlternateUnitFormat, typeof(LinearUnitFormat) },
 
             // FIT
             { DimensionStyleOverrideType.FitOptions, typeof(short) },
             { DimensionStyleOverrideType.LinearScaleFactor, typeof(double) },
             { DimensionStyleOverrideType.ToleranceTextScale, typeof(double) },
             { DimensionStyleOverrideType.TextMovementRule, typeof(TextMovement) },
-            { DimensionStyleOverrideType.UserPositionedText, typeof(bool) },
+            { DimensionStyleOverrideType.CursorUpdate, typeof(bool) },
+            { DimensionStyleOverrideType.DimensionTextArrowFit, typeof(TextArrowFitType) },
 
             // TOLERANCES
             { DimensionStyleOverrideType.EnableTolerances, typeof(bool) },
@@ -111,6 +114,14 @@ public sealed class DimensionStyleOverride
             { DimensionStyleOverrideType.ToleranceMinus, typeof(double) },
             { DimensionStyleOverrideType.ToleranceJustification, typeof(ToleranceAlignment) },
             { DimensionStyleOverrideType.ToleranceZeroSuppression, typeof(ZeroHandling) },
-            { DimensionStyleOverrideType.ToleranceZeroSuppressionAlternate, typeof(ZeroHandling) }
+            { DimensionStyleOverrideType.ToleranceZeroSuppressionAlternate, typeof(ZeroHandling) },
+            { DimensionStyleOverrideType.ToleranceDecimalPlaces, typeof(short) },
+
+            // ADDITIONAL UNITS / TEXT OPTIONS
+            { DimensionStyleOverrideType.Rounding, typeof(double) },
+            { DimensionStyleOverrideType.FractionFormat, typeof(FractionFormat) },
+            { DimensionStyleOverrideType.TextBackgroundFillMode, typeof(DimensionTextBackgroundFillMode) },
+            { DimensionStyleOverrideType.TextDirection, typeof(TextDirection) },
+            { DimensionStyleOverrideType.JoggedRadiusDimensionTransverseSegmentAngle, typeof(double) }
         };
 }

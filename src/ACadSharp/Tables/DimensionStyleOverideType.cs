@@ -9,7 +9,7 @@ public enum DimensionStyleOverrideType
     /// <summary>
     /// Dimension text style.
     /// </summary>
-    [DimOverrideXData(140, XDataValueKind.TextStyle, "DIMTXSTY")] 
+    [DimOverrideXData(340, XDataValueKind.TextStyle, "DIMTXSTY")] 
     DimensionTextStyle,
     
     /// <summary>
@@ -50,10 +50,10 @@ public enum DimensionStyleOverrideType
     ForceTextInside,
 
     /// <summary>
-    /// Forces extension lines if text must be moved outside.
+    /// Controls whether a dimension line is drawn between the extension lines even when the text is placed outside
     /// </summary>
-    [DimOverrideXData(172, XDataValueKind.Short, "DIMTOFL")]
-    ForceExtensionLinesOutside,
+    [DimOverrideXData(172, XDataValueKind.Bool, "DIMTOFL")]
+    TextOutsideExtensions,
 
     /// <summary>
     /// Text vertical position for user-placed text.
@@ -66,12 +66,6 @@ public enum DimensionStyleOverrideType
     /// </summary>
     [DimOverrideXData(280, XDataValueKind.DimensionTextHorizontalAlignment, "DIMJUST")]
     TextJustification,
-
-    /// <summary>
-    /// Formats prefix for dimension text.
-    /// </summary>
-    [DimOverrideXData(3, XDataValueKind.String, "DIMPOST")]
-    DimensionTextPrefix,
     
     /// <summary>
     /// Formats prefix for dimension text.
@@ -88,8 +82,8 @@ public enum DimensionStyleOverrideType
     /// <summary>
     /// Suppress outside-extensions dimension lines if nonzero
     /// </summary>
-    [DimOverrideXData(70, XDataValueKind.Bool, "DIMSOXD")]
-    DimensionSuppressOutsideExtensions,
+    [DimOverrideXData(175, XDataValueKind.Bool, "DIMSOXD")]
+    SuppressOutsideExtensions,
 
 
     // ---------------------------
@@ -182,13 +176,13 @@ public enum DimensionStyleOverrideType
     /// Suppress first extension line.
     /// </summary>
     [DimOverrideXData(75, XDataValueKind.Bool, "DIMSE1")]
-    SuppressExtensionLine1,
+    SuppressFirstDimensionLine,
 
     /// <summary>
     /// Suppress second extension line.
     /// </summary>
     [DimOverrideXData(76, XDataValueKind.Bool, "DIMSE2")]
-    SuppressExtensionLine2,
+    SuppressSecondDimensionLine,
 
     /// <summary>
     /// Suppress first dimension extension.
@@ -270,8 +264,8 @@ public enum DimensionStyleOverrideType
     /// <summary>
     /// Arc length dimension symbol placement.
     /// </summary>
-    [DimOverrideXData(144, XDataValueKind.Double, "DIMARCSYM")]
-    ArcLengthSymbolPlacement,
+    [DimOverrideXData(90, XDataValueKind.ArcLengthSymbolPosition, "DIMARCSYM")]
+    ArcLengthSymbolPosition,
 
 
     // ---------------------------
@@ -305,15 +299,15 @@ public enum DimensionStyleOverrideType
     /// <summary>
     /// Angular precision.
     /// </summary>
-    [DimOverrideXData(270, XDataValueKind.Short, "DIMADEC")]
-    AngularDecimalPrecision,
+    [DimOverrideXData(179, XDataValueKind.Short, "DIMADEC")]
+    AngularDecimalPlaces,
 
     /// <summary>
     /// Angular unit display format.
     /// </summary>
-    [DimOverrideXData(179, XDataValueKind.Short, "DIMAUNIT")]
+    [DimOverrideXData(275, XDataValueKind.AngularUnitFormat, "DIMAUNIT")]
     AngularUnitFormat,
-
+    
     /// <summary>
     /// Zero suppression for primary units.
     /// </summary>
@@ -321,11 +315,11 @@ public enum DimensionStyleOverrideType
     ZeroSuppression,
 
     /// <summary>
-    /// Zero suppression for alternative units.
+    /// Suppresses zeros for angular dimensions.
     /// </summary>
-    [DimOverrideXData(175, XDataValueKind.Bool, "DIMALTMZF")]
-    AltUnitZeroSuppressionFactor,
-
+    [DimOverrideXData(79, XDataValueKind.ZeroHandling, "DIMAZIN")]
+    AngularZeroHandling,
+    
     /// <summary>
     /// Enables alternate units.
     /// </summary>
@@ -362,6 +356,12 @@ public enum DimensionStyleOverrideType
     [DimOverrideXData(286, XDataValueKind.ZeroHandling, "DIMALTTZ")]
     AlternateUnitToleranceZeroSuppression,
 
+    /// <summary>
+    /// Units format for alternate units.
+    /// </summary>
+    [DimOverrideXData(273, XDataValueKind.LinearUnitFormat, "DIMALTU")]
+    AlternateUnitFormat,
+
 
     // ---------------------------
     // FIT / SCALING / AUTO-PLACEMENT
@@ -392,10 +392,16 @@ public enum DimensionStyleOverrideType
     TextMovementRule,
 
     /// <summary>
-    /// User-positioned text flag.
+    /// Determines how text and arrows are arranged when space is not sufficient.
     /// </summary>
-    [DimOverrideXData(288, XDataValueKind.Short, "DIMUPT")]
-    UserPositionedText,
+    [DimOverrideXData(289, XDataValueKind.TextArrowFitType, "DIMATFIT")]
+    DimensionTextArrowFit,
+
+    /// <summary>
+    /// Controls options for user-positioned text 
+    /// </summary>
+    [DimOverrideXData(288, XDataValueKind.Bool, "DIMUPT")]
+    CursorUpdate,
 
 
     // ---------------------------
@@ -442,5 +448,45 @@ public enum DimensionStyleOverrideType
     /// Zero suppression for alt-unit tolerances.
     /// </summary>
     [DimOverrideXData(285, XDataValueKind.ZeroHandling, "DIMTOLZ")]
-    ToleranceZeroSuppressionAlternate
+    ToleranceZeroSuppressionAlternate,
+
+    /// <summary>
+    /// Number of decimal places for tolerance values.
+    /// </summary>
+    [DimOverrideXData(272, XDataValueKind.Short, "DIMTDEC")]
+    ToleranceDecimalPlaces,
+
+    // ---------------------------
+    // ADDITIONAL UNITS / TEXT OPTIONS
+    // ---------------------------
+
+    /// <summary>
+    /// Rounding value for primary units.
+    /// </summary>
+    [DimOverrideXData(45, XDataValueKind.Double, "DIMRND")]
+    Rounding,
+
+    /// <summary>
+    /// Fraction display format for architectural/fractional units.
+    /// </summary>
+    [DimOverrideXData(276, XDataValueKind.FractionFormat, "DIMFRAC")]
+    FractionFormat,
+
+    /// <summary>
+    /// Background fill mode for dimension text.
+    /// </summary>
+    [DimOverrideXData(69, XDataValueKind.DimensionTextBackgroundFillMode, "DIMTFILL")]
+    TextBackgroundFillMode,
+
+    /// <summary>
+    /// Reading direction of dimension text.
+    /// </summary>
+    [DimOverrideXData(295, XDataValueKind.TextDirection, "DIMTXTDIRECTION")]
+    TextDirection,
+
+    /// <summary>
+    /// Jogged radius dimension transverse segment angle (radians).
+    /// </summary>
+    [DimOverrideXData(50, XDataValueKind.Double, "DIMJOGANG")]
+    JoggedRadiusDimensionTransverseSegmentAngle
 }

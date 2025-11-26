@@ -939,6 +939,12 @@ namespace ACadSharp.Entities
                 case XDataValueKind.TextMovement:
                 case XDataValueKind.ToleranceAlignment:
                 case XDataValueKind.ZeroHandling:
+                case XDataValueKind.AngularUnitFormat:
+                case XDataValueKind.ArcLengthSymbolPosition:
+                case XDataValueKind.FractionFormat:
+                case XDataValueKind.TextArrowFitType:
+                case XDataValueKind.DimensionTextBackgroundFillMode:
+                case XDataValueKind.TextDirection:
                     // All of these are short-backed enums
                     if (!tryToShort(rawValue, out var enumShort)) return false;
                     record = new ExtendedDataInteger16(enumShort);
@@ -964,11 +970,8 @@ namespace ACadSharp.Entities
 
                 case XDataValueKind.Short:
                 case XDataValueKind.Int16:
-                    if (record is ExtendedDataInteger16 i16)
-                    {
-                        value = i16.Value;
-                        return true;
-                    }
+                    if (record is ExtendedDataInteger16 i16) { value = i16.Value; return true; }
+                    if (record is ExtendedDataInteger32 i32) { value = (short)i32.Value; return true; }
                     return false;
 
                 case XDataValueKind.Bool:
@@ -1011,17 +1014,27 @@ namespace ACadSharp.Entities
                         return true;
                     }
                     return false;
+                case XDataValueKind.TextStyle:
+                    if (record is ExtendedDataHandle hts)
+                    {
+                        value = hts.Value; // raw handle as ulong
+                        return true;
+                    }
+                    return false;
+                case XDataValueKind.AngularUnitFormat:
+                case XDataValueKind.ArcLengthSymbolPosition:
+                case XDataValueKind.FractionFormat:
+                case XDataValueKind.TextArrowFitType:
+                case XDataValueKind.DimensionTextBackgroundFillMode:
+                case XDataValueKind.TextDirection:
                 case XDataValueKind.DimensionTextVerticalAlignment:
                 case XDataValueKind.DimensionTextHorizontalAlignment:
                 case XDataValueKind.LinearUnitFormat:
                 case XDataValueKind.TextMovement:
                 case XDataValueKind.ToleranceAlignment:
                 case XDataValueKind.ZeroHandling:
-                    if (record is ExtendedDataInteger16 e16)
-                    {
-                        value = e16.Value;
-                        return true;
-                    }
+                    if (record is ExtendedDataInteger16 e16) { value = e16.Value; return true; }
+                    if (record is ExtendedDataInteger32 e32) { value = (short)e32.Value; return true; }
                     return false;
 
                 default:
@@ -1121,19 +1134,26 @@ namespace ACadSharp.Entities
             {
                 switch (type)
                 {
-                    case DimensionStyleOverrideType.UserPositionedText:
-                    case DimensionStyleOverrideType.ForceExtensionLinesOutside:
+                    case DimensionStyleOverrideType.CursorUpdate:
+                    case DimensionStyleOverrideType.TextOutsideExtensions:
                         if (raw is short shortBool) { ovValue = shortBool != 0; return true; }
                         if (raw is bool braw) { ovValue = braw; return true; }
-                        break;
-                    case DimensionStyleOverrideType.AltUnitZeroSuppressionFactor:
-                        if (raw is bool braw2) { ovValue = (short)(braw2 ? 1 : 0); return true; }
-                        if (raw is short sraw2) { ovValue = sraw2; return true; }
                         break;
                 }
 
                 switch (kind)
                 {
+                    case XDataValueKind.TextStyle:
+                        if (doc != null)
+                        {
+                            var ts = doc.GetCadObject<TextStyle>((ulong)raw);
+                            if (ts != null)
+                            {
+                                ovValue = ts;
+                                return true;
+                            }
+                        }
+                        return false;
                     case XDataValueKind.Double:
                         ovValue = (double)raw;
                         return true;
@@ -1178,6 +1198,24 @@ namespace ACadSharp.Entities
                     case XDataValueKind.ZeroHandling:
                         ovValue = (ZeroHandling)(short)raw;
                         return true;
+                    case XDataValueKind.AngularUnitFormat:
+                        ovValue = (AngularUnitFormat)(short)raw;
+                        return true;
+                    case XDataValueKind.ArcLengthSymbolPosition:
+                        ovValue = (ArcLengthSymbolPosition)(short)raw;
+                        return true;
+                    case XDataValueKind.FractionFormat:
+                        ovValue = (FractionFormat)(short)raw;
+                        return true;
+                    case XDataValueKind.TextArrowFitType:
+                        ovValue = (TextArrowFitType)(short)raw;
+                        return true;
+                    case XDataValueKind.DimensionTextBackgroundFillMode:
+                        ovValue = (DimensionTextBackgroundFillMode)(short)raw;
+                        return true;
+                    case XDataValueKind.TextDirection:
+                        ovValue = (TextDirection)(short)raw;
+                        return true;
                     case XDataValueKind.LineType:
                         if (doc != null)
                         {
@@ -1203,8 +1241,8 @@ namespace ACadSharp.Entities
                     default:
                         switch (type)
                         {
-                            case DimensionStyleOverrideType.UserPositionedText:
-                            case DimensionStyleOverrideType.ForceExtensionLinesOutside:
+                            case DimensionStyleOverrideType.CursorUpdate:
+                            case DimensionStyleOverrideType.TextOutsideExtensions:
                                 if (raw is short shortVal)
                                 {
                                     ovValue = shortVal != 0;
@@ -1213,18 +1251,6 @@ namespace ACadSharp.Entities
                                 if (raw is bool b)
                                 {
                                     ovValue = b;
-                                    return true;
-                                }
-                                return false;
-                            case DimensionStyleOverrideType.AltUnitZeroSuppressionFactor:
-                                if (raw is bool b2)
-                                {
-                                    ovValue = (short)(b2 ? 1 : 0);
-                                    return true;
-                                }
-                                if (raw is short shortVal2)
-                                {
-                                    ovValue = shortVal2;
                                     return true;
                                 }
                                 return false;

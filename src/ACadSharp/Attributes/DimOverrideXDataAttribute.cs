@@ -35,5 +35,11 @@ public enum XDataValueKind
     TextMovement,
     ToleranceAlignment,
     ZeroHandling,
-    TextStyle
+    TextStyle,
+    AngularUnitFormat,
+    ArcLengthSymbolPosition,
+    FractionFormat,
+    TextArrowFitType,
+    DimensionTextBackgroundFillMode,
+    TextDirection
 }
