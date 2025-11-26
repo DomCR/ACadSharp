@@ -156,7 +156,7 @@ namespace ACadSharp.Tests.IO
     {
         private static string GetDumpFolder()
         {
-            var folder = Path.Combine(TestVariables.OutputSingleCasesFolder, "dimStyleOverrides");
+            var folder = Path.Combine(TestVariables.OutputSingleCasesFolder, "dim_style_overrides");
             Directory.CreateDirectory(folder);
             return folder;
         }
