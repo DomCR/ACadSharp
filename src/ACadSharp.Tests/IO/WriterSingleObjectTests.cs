@@ -118,7 +118,6 @@ namespace ACadSharp.Tests.IO
 			public SingleCaseGenerator(string name) : this()
 			{
 				this.Name = name;
-                this.GetType().GetMethod(name)?.Invoke(this, null);
 			}
 
 			public void AddBlockWithAttributes()
