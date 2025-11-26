@@ -35,6 +35,7 @@ public sealed class DimensionStyleOverride
             // TEXT & APPEARANCE
             { DimensionStyleOverrideType.DimensionTextStyle, typeof(TextStyle) },
             { DimensionStyleOverrideType.DimensionTextHeight, typeof(double) },
+            { DimensionStyleOverrideType.DimensionLineGap, typeof(double) },
             { DimensionStyleOverrideType.TextVerticalPlacement, typeof(DimensionTextVerticalAlignment) },
             { DimensionStyleOverrideType.TextInsideHorizontal, typeof(bool) },
             { DimensionStyleOverrideType.TextOutsideHorizontal, typeof(bool) },
@@ -82,6 +83,7 @@ public sealed class DimensionStyleOverride
 
             // UNITS
             { DimensionStyleOverrideType.LinearUnitFormat, typeof(LinearUnitFormat) },
+            { DimensionStyleOverrideType.DimensionScaleFactor, typeof(Double) },
             { DimensionStyleOverrideType.LinearDecimalPrecision, typeof(short) },
             { DimensionStyleOverrideType.DecimalSeparator, typeof(Char) },
             { DimensionStyleOverrideType.AngularDecimalPrecision, typeof(short) },

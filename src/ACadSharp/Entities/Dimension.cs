@@ -230,8 +230,12 @@ namespace ACadSharp.Entities
 
 		private DimensionStyleOverrideCollection _styleOverrideCollection = new();
         
+        private bool _suspendStyleOverrideSync;
+
         private void OnStyleOverrideAdded(object sender, DimensionStyleOverrideChangedEventArgs e)
         {
+            if (_suspendStyleOverrideSync)
+                return;
             if (!_xdataMeta.TryGetValue(e.Key, out var meta))
                 return; // this override type has no xdata annotation
 
@@ -264,6 +268,8 @@ namespace ACadSharp.Entities
 
         private void OnStyleOverrideRemoved(object sender, DimensionStyleOverrideChangedEventArgs e)
         {
+            if (_suspendStyleOverrideSync)
+                return;
             if (!_xdataMeta.TryGetValue(e.Key, out var meta))
                 return;
 
@@ -288,6 +294,8 @@ namespace ACadSharp.Entities
         
         private void BeforeStyleOverrideAdded(object sender, DimensionStyleOverrideChangedEventArgs e)
         {
+            if (_suspendStyleOverrideSync)
+                return;
             // Pre-clean duplicates for the same group code in the DSTYLE block
             if (!_xdataMeta.TryGetValue(e.Key, out var meta))
                 return;
@@ -303,6 +311,8 @@ namespace ACadSharp.Entities
 
         private void BeforeStyleOverrideRemoved(object sender, DimensionStyleOverrideChangedEventArgs e)
         {
+            if (_suspendStyleOverrideSync)
+                return;
             // Currently no-op: OnStyleOverrideRemoved performs the actual cleanup.
             // Hook reserved for future batch optimizations.
         }
@@ -909,6 +919,20 @@ namespace ACadSharp.Entities
                         return true;
                     }
                     return false;
+                case XDataValueKind.LineWeightType:
+                    if (tryToShort(rawValue, out var lw))
+                    {
+                        record = new ExtendedDataInteger16(lw);
+                        return true;
+                    }
+                    return false;
+                case XDataValueKind.TextStyle:
+                    if (rawValue is TextStyle textStyle)
+                    {
+                        record = new ExtendedDataHandle(textStyle.Handle);
+                        return true;
+                    }
+                    return false;
                 case XDataValueKind.DimensionTextVerticalAlignment:
                 case XDataValueKind.DimensionTextHorizontalAlignment:
                 case XDataValueKind.LinearUnitFormat:
@@ -980,6 +1004,13 @@ namespace ACadSharp.Entities
                         return true;
                     }
                     return false;
+                case XDataValueKind.LineWeightType:
+                    if (record is ExtendedDataInteger16 lw16)
+                    {
+                        value = lw16.Value;
+                        return true;
+                    }
+                    return false;
                 case XDataValueKind.DimensionTextVerticalAlignment:
                 case XDataValueKind.DimensionTextHorizontalAlignment:
                 case XDataValueKind.LinearUnitFormat:
@@ -995,6 +1026,216 @@ namespace ACadSharp.Entities
 
                 default:
                     return false;
+            }
+        }
+
+        private static readonly Dictionary<short, (DimensionStyleOverrideType Type, XDataValueKind Kind)> _xdataByGroupCode
+            = buildReverseXDataMeta();
+
+        private static Dictionary<short, (DimensionStyleOverrideType, XDataValueKind)> buildReverseXDataMeta()
+        {
+            var dict = new Dictionary<short, (DimensionStyleOverrideType, XDataValueKind)>();
+            foreach (var kv in _xdataMeta)
+            {
+                var type = kv.Key;
+                var attr = kv.Value;
+                // last one wins in case of duplicates
+                dict[attr.GroupCode] = (type, attr.Kind);
+            }
+            return dict;
+        }
+
+        internal void BuildOverridesFromXData(CadDocument doc)
+        {
+            if (!this.ExtendedData.TryGet(AppId.Default, out var ed))
+                return;
+
+            if (!tryFindDStyleBounds(ed, out var startIndex, out var endIndex))
+                return;
+
+            var parsed = new List<(DimensionStyleOverrideType Type, object Value)>();
+
+            int i = startIndex + 2;
+            while (i < endIndex)
+            {
+                if (ed.Records[i] is not ExtendedDataInteger16 gc)
+                {
+                    i++;
+                    continue;
+                }
+                short group = gc.Value;
+                int valIdx = i + 1;
+                if (valIdx >= endIndex)
+                    break;
+
+                var valueRec = ed.Records[valIdx];
+                if (!_xdataByGroupCode.TryGetValue(group, out var info))
+                {
+                    i += 2;
+                    continue;
+                }
+
+                if (!tryParseXDataValue(info.Kind, valueRec, out var raw))
+                {
+                    i += 2;
+                    continue;
+                }
+
+                if (!tryConvertParsedValueToOverride(info.Type, info.Kind, raw, doc, out var ov))
+                {
+                    i += 2;
+                    continue;
+                }
+
+                parsed.Add((info.Type, ov));
+                i += 2;
+            }
+
+            if (parsed.Count == 0)
+                return;
+
+            try
+            {
+                _suspendStyleOverrideSync = true;
+                this.StyleOverrides.Clear();
+                foreach (var (t, v) in parsed)
+                {
+                    this.StyleOverrides.Add(t, new DimensionStyleOverride(t, v));
+                }
+            }
+            finally
+            {
+                _suspendStyleOverrideSync = false;
+            }
+        }
+
+        private bool tryConvertParsedValueToOverride(
+            DimensionStyleOverrideType type,
+            XDataValueKind kind,
+            object raw,
+            CadDocument doc,
+            out object ovValue)
+        {
+            ovValue = null;
+            try
+            {
+                switch (type)
+                {
+                    case DimensionStyleOverrideType.UserPositionedText:
+                    case DimensionStyleOverrideType.ForceExtensionLinesOutside:
+                        if (raw is short shortBool) { ovValue = shortBool != 0; return true; }
+                        if (raw is bool braw) { ovValue = braw; return true; }
+                        break;
+                    case DimensionStyleOverrideType.AltUnitZeroSuppressionFactor:
+                        if (raw is bool braw2) { ovValue = (short)(braw2 ? 1 : 0); return true; }
+                        if (raw is short sraw2) { ovValue = sraw2; return true; }
+                        break;
+                }
+
+                switch (kind)
+                {
+                    case XDataValueKind.Double:
+                        ovValue = (double)raw;
+                        return true;
+                    case XDataValueKind.Bool:
+                        ovValue = (bool)raw;
+                        return true;
+                    case XDataValueKind.Short:
+                    case XDataValueKind.Int16:
+                        ovValue = (short)raw;
+                        return true;
+                    case XDataValueKind.Char:
+                        if (raw is string str && str.Length > 0)
+                        {
+                            ovValue = str[0];
+                            return true;
+                        }
+                        return false;
+                    case XDataValueKind.String:
+                        ovValue = (string)raw;
+                        return true;
+                    case XDataValueKind.Color:
+                        ovValue = (Color)raw;
+                        return true;
+                    case XDataValueKind.LineWeightType:
+                        ovValue = (LineWeightType)(short)raw;
+                        return true;
+                    case XDataValueKind.DimensionTextVerticalAlignment:
+                        ovValue = (DimensionTextVerticalAlignment)(short)raw;
+                        return true;
+                    case XDataValueKind.DimensionTextHorizontalAlignment:
+                        ovValue = (DimensionTextHorizontalAlignment)(short)raw;
+                        return true;
+                    case XDataValueKind.LinearUnitFormat:
+                        ovValue = (LinearUnitFormat)(short)raw;
+                        return true;
+                    case XDataValueKind.TextMovement:
+                        ovValue = (TextMovement)(short)raw;
+                        return true;
+                    case XDataValueKind.ToleranceAlignment:
+                        ovValue = (ToleranceAlignment)(short)raw;
+                        return true;
+                    case XDataValueKind.ZeroHandling:
+                        ovValue = (ZeroHandling)(short)raw;
+                        return true;
+                    case XDataValueKind.LineType:
+                        if (doc != null)
+                        {
+                            var lt = doc.GetCadObject<LineType>((ulong)raw);
+                            if (lt != null)
+                            {
+                                ovValue = lt;
+                                return true;
+                            }
+                        }
+                        return false;
+                    case XDataValueKind.BlockRecord:
+                        if (doc != null)
+                        {
+                            var br = doc.GetCadObject<BlockRecord>((ulong)raw);
+                            if (br != null)
+                            {
+                                ovValue = br;
+                                return true;
+                            }
+                        }
+                        return false;
+                    default:
+                        switch (type)
+                        {
+                            case DimensionStyleOverrideType.UserPositionedText:
+                            case DimensionStyleOverrideType.ForceExtensionLinesOutside:
+                                if (raw is short shortVal)
+                                {
+                                    ovValue = shortVal != 0;
+                                    return true;
+                                }
+                                if (raw is bool b)
+                                {
+                                    ovValue = b;
+                                    return true;
+                                }
+                                return false;
+                            case DimensionStyleOverrideType.AltUnitZeroSuppressionFactor:
+                                if (raw is bool b2)
+                                {
+                                    ovValue = (short)(b2 ? 1 : 0);
+                                    return true;
+                                }
+                                if (raw is short shortVal2)
+                                {
+                                    ovValue = shortVal2;
+                                    return true;
+                                }
+                                return false;
+                        }
+                        return false;
+                }
+            }
+            catch
+            {
+                ovValue = null;
+                return false;
             }
         }
         

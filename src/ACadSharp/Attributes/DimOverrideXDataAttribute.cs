@@ -34,5 +34,6 @@ public enum XDataValueKind
     Char,
     TextMovement,
     ToleranceAlignment,
-    ZeroHandling
+    ZeroHandling,
+    TextStyle
 }

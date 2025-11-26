@@ -9,7 +9,7 @@ public enum DimensionStyleOverrideType
     /// <summary>
     /// Dimension text style.
     /// </summary>
-    [DimOverrideXData(140, XDataValueKind.String, "DIMTXSTY")] 
+    [DimOverrideXData(140, XDataValueKind.TextStyle, "DIMTXSTY")] 
     DimensionTextStyle,
     
     /// <summary>
@@ -18,6 +18,13 @@ public enum DimensionStyleOverrideType
     [DimOverrideXData(140, XDataValueKind.Double, "DIMTXT")]
     DimensionTextHeight,
 
+    /// <summary>
+    /// Gets or sets the distance around the dimension text when the dimension line breaks to
+    /// accommodate dimension text
+    /// </summary>
+    [DimOverrideXData(147, XDataValueKind.Double, "DIMGAP")]
+    DimensionLineGap,
+    
     /// <summary>
     /// Text vertical position relative to dimension line.
     /// </summary>
@@ -77,6 +84,12 @@ public enum DimensionStyleOverrideType
     /// </summary>
     [DimOverrideXData(4, XDataValueKind.String, "DIMAPOST")]
     AlternateDimensioningSuffix,
+    
+    /// <summary>
+    /// Suppress outside-extensions dimension lines if nonzero
+    /// </summary>
+    [DimOverrideXData(70, XDataValueKind.Bool, "DIMSOXD")]
+    DimensionSuppressOutsideExtensions,
 
 
     // ---------------------------
@@ -270,6 +283,12 @@ public enum DimensionStyleOverrideType
     /// </summary>
     [DimOverrideXData(277, XDataValueKind.LinearUnitFormat, "DIMLUNIT")]
     LinearUnitFormat,
+    
+    /// <summary>
+    /// Overall dimensioning scale factor
+    /// </summary>
+    [DimOverrideXData(40, XDataValueKind.Double, "DIMSCALE")]
+    DimensionScaleFactor,
 
     /// <summary>
     /// Number of decimal places for linear dimensions.
