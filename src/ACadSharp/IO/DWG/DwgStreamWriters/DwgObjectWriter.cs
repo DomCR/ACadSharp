@@ -565,7 +565,7 @@ namespace ACadSharp.IO.DWG
     			}
     		}
 
-    		Encoding textEncoding = this.R2007Plus ? Encoding.Unicode :  Encoding.ASCII;
+            Encoding textEncoding = this.R2007Plus ? Encoding.Unicode : this._writer.Encoding;
             
     		byte[] textArea = null;
     		int textCursor = 0;
