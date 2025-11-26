@@ -630,7 +630,6 @@ namespace ACadSharp.Tests.IO
 
 			public void DimensionAligned()
 			{
-				throw new NotImplementedException();
 				//DimensionAligned dim = new DimensionAligned
 				//{
 				//	SecondPoint = new XYZ(10, 0, 0),
