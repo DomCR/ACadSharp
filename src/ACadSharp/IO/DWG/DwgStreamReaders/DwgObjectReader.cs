@@ -13,12 +13,10 @@ using System.IO;
 using System;
 using static ACadSharp.Objects.MultiLeaderObjectContextData;
 using CSUtilities.Converters;
-using CSUtilities.Extensions;
 using System.Globalization;
 using ACadSharp.Objects.Evaluations;
 using ACadSharp.XData;
 using System.Diagnostics;
-using ACadSharp.Exceptions;
 
 namespace ACadSharp.IO.DWG
 {
