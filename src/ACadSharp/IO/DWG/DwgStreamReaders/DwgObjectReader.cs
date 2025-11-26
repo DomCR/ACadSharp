@@ -1935,7 +1935,7 @@ namespace ACadSharp.IO.DWG
 			{
 				for (int i = 0; i < template.OwnedObjectsCount; ++i)
 					//H[ATTRIB(hard owner)] Repeats “Owned Object Count” times.
-					template.AttributesHandles.Add(this.handleReference());
+					template.OwnedObjectsHandlers.Add(this.handleReference());
 			}
 
 			//Common:
@@ -2049,7 +2049,7 @@ namespace ACadSharp.IO.DWG
 				int nownedObjects = this._objectReader.ReadBitLong();
 
 				for (int i = 0; i < nownedObjects; ++i)
-					template.VertexHandles.Add(this.handleReference());
+					template.OwnedObjectsHandlers.Add(this.handleReference());
 			}
 
 			//R13-R2000:
@@ -2107,7 +2107,7 @@ namespace ACadSharp.IO.DWG
 				int nownedObjects = this._objectReader.ReadBitLong();
 
 				for (int i = 0; i < nownedObjects; ++i)
-					template.VertexHandles.Add(this.handleReference());
+					template.OwnedObjectsHandlers.Add(this.handleReference());
 			}
 
 			//R13-R2000:

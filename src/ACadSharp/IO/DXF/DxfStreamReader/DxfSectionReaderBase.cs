@@ -849,7 +849,7 @@ namespace ACadSharp.IO.DXF
 					}
 					else
 					{
-						template.VertexHandles.Add(vertexTemplate.Vertex.Handle);
+						template.OwnedObjectsHandlers.Add(vertexTemplate.Vertex.Handle);
 						this._builder.AddTemplate(vertexTemplate);
 					}
 				}
