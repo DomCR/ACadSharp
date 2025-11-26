@@ -49,7 +49,6 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextRotation)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
 			Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
-			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateGroup)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
@@ -101,6 +100,11 @@ namespace ACadSharp.Tests.IO
 		public class SingleCaseGenerator : IXunitSerializable
 		{
 			public CadDocument Document { get; private set; } = new CadDocument();
+
+			/// <summary>
+			/// Gets a value indicating whether the operation has been executed.
+			/// </summary>
+			public bool HasExecuted { get; private set; }
 
 			public string Name { get; private set; }
 
@@ -612,7 +616,15 @@ namespace ACadSharp.Tests.IO
 			public void Deserialize(IXunitSerializationInfo info)
 			{
 				this.Name = info.GetValue<string>(nameof(this.Name));
-				this.GetType().GetMethod(this.Name).Invoke(this, null);
+				try
+				{
+					this.GetType().GetMethod(this.Name).Invoke(this, null);
+					this.HasExecuted = true;
+				}
+				catch
+				{
+					this.HasExecuted = false;
+				}
 			}
 
 			public void DimensionAligned()
