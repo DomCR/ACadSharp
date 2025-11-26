@@ -1699,6 +1699,9 @@ namespace ACadSharp.IO.DXF
 						tmp.OwnerHandle = this._reader.ValueAsHandle;
 					}
 					return true;
+				case 331:
+					tmp.GeometryHandle = this._reader.ValueAsHandle;
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}

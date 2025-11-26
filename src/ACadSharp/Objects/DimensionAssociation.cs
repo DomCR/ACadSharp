@@ -4,39 +4,67 @@ using CSMath;
 
 namespace ACadSharp.Objects
 {
-	public enum RotatedDimensionType : short
+	[System.Flags]
+	public enum AssociativityFlags : short
 	{
-		Unknown = 0,
-		Parallel = 1,
-		Perpendicular = 2
+		None = 0,
+
+		FirstPointReference = 1,
+
+		SecondPointReference = 2,
+
+		ThirdPointReference = 4,
+
+		FourthPointReference = 8
 	}
 
 	public enum ObjectOsnapType : short
 	{
 		None = 0,
+
 		Endpoint = 1,
+
 		Midpoint = 2,
+
 		Center = 3,
+
 		Node = 4,
+
 		Quadrant = 5,
+
 		Intersection = 6,
+
 		Insertion = 7,
+
 		Perpendicular = 8,
+
 		Tangent = 9,
+
 		Nearest = 10,
+
 		ApparentIntersection = 11,
+
 		Parallel = 12,
+
 		StartPoint = 13,
 	}
 
-	[System.Flags]
-	public enum AssociativityFlags : short
+	public enum RotatedDimensionType : short
 	{
-		None = 0,
-		FirstPointReference = 1,
-		SecondPointReference = 2,
-		ThirdPointReference = 4,
-		FourthPointReference = 8
+		Unknown = 0,
+
+		Parallel = 1,
+
+		Perpendicular = 2
+	}
+
+	public enum SubentType : short
+	{
+		Unknown = 0,
+
+		Edge = 1,
+
+		Face = 2
 	}
 
 	/// <summary>
@@ -50,38 +78,11 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.DimensionAssociation)]
 	public class DimensionAssociation : NonGraphicalObject
 	{
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.ObjectDimensionAssociation;
-
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.UNLISTED;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.DimensionAssociation;
-
-		/// <summary>
-		/// Gets or sets the associated dimension object.
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Handle, 330)]
-		public Dimension Dimension { get; set; }
-
 		/// <summary>
 		/// Gets or sets the associativity flags that define the reference points for an entity.
 		/// </summary>
 		[DxfCodeValue(90)]
 		public AssociativityFlags AssociativityFlags { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating whether the entity is in trans-space.
-		/// </summary>
-		[DxfCodeValue(70)]
-		public bool IsTransSpace { get; set; }
-
-		/// <summary>
-		/// Gets or sets the type of the rotated dimension, indicating whether it is parallel or perpendicular.
-		/// </summary>
-		[DxfCodeValue(71)]
-		public RotatedDimensionType RotatedDimensionType { get; set; } = RotatedDimensionType.Unknown;
 
 		/// <summary>
 		/// Gets the name of the class represented by this instance.
@@ -90,10 +91,59 @@ namespace ACadSharp.Objects
 		public string ClassName { get; set; } = "AcDbOsnapPointRef";
 
 		/// <summary>
+		/// Gets or sets the associated dimension object.
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Handle, 330)]
+		public Dimension Dimension { get; set; }
+
+		/// <summary>
+		/// Gets or sets the geometry parameter used for the Near object snap (Osnap).
+		/// </summary>
+		[DxfCodeValue(40)]
+		public double GeometryParameter { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the entity is in trans-space.
+		/// </summary>
+		[DxfCodeValue(70)]
+		public bool IsTransSpace { get; set; }
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.ObjectDimensionAssociation;
+
+		/// <summary>
 		/// Gets or sets the object snap type associated with the entity.
 		/// </summary>
 		[DxfCodeValue(72)]
 		public ObjectOsnapType ObjectOsnapType { get; set; }
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.UNLISTED;
+
+		//301
+		//Handle(string) of Xref object
+		/// <summary>
+		/// Gets or sets the object snap (Osnap) point in world coordinate system (WCS).
+		/// </summary>
+		/// <remarks>The Osnap point is used to specify precise locations on geometry for object snapping
+		/// operations.</remarks>
+		[DxfCodeValue(10, 20, 30)]
+		public XYZ OsnapPoint { get; set; }
+
+		/// <summary>
+		/// Gets or sets the type of the rotated dimension, indicating whether it is parallel or perpendicular.
+		/// </summary>
+		[DxfCodeValue(71)]
+		public RotatedDimensionType RotatedDimensionType { get; set; } = RotatedDimensionType.Unknown;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.DimensionAssociation;
+
+		/// <summary>
+		/// Gets or sets the type of the rotated dimension, indicating whether it is parallel or perpendicular.
+		/// </summary>
+		[DxfCodeValue(73)]
+		public SubentType SubentType { get; set; } = SubentType.Unknown;
 
 		//331
 		//ID of main object (geometry)
@@ -103,24 +153,6 @@ namespace ACadSharp.Objects
 
 		//91
 		//GsMarker of main object (index)
-
-		//301
-		//Handle(string) of Xref object
-
-		/// <summary>
-		/// Gets or sets the geometry parameter used for the Near object snap (Osnap).
-		/// </summary>
-		[DxfCodeValue(40)]
-		public double GeometryParameter { get; set; }
-
-		/// <summary>
-		/// Gets or sets the object snap (Osnap) point in world coordinate system (WCS).
-		/// </summary>
-		/// <remarks>The Osnap point is used to specify precise locations on geometry for object snapping
-		/// operations.</remarks>
-		[DxfCodeValue(10, 20, 30)]
-		public XYZ OsnapPoint { get; set; }
-
 		//332
 		//ID of intersection object (geometry)
 
