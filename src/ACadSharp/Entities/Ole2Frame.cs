@@ -21,15 +21,20 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.OLE2FRAME;
 
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Ole2Frame;
+
 		/// <summary>
 		/// OLE version number.
 		/// </summary>
 		[DxfCodeValue(70)]
 		public short Version { get; internal set; } = 2;
 
-		//3
-
-		//Length of binary data
+		/// <summary>
+		/// Gets or sets the name of the application that created or modified the associated data.
+		/// </summary>
+		[DxfCodeValue(3)]
+		public string SourceApplication { get; set; }
 
 		/// <summary>
 		/// Gets or sets the upper-left corner of the object in world coordinate system (WCS).
@@ -67,8 +72,11 @@ namespace ACadSharp.Entities
 		//Length of binary data
 		//310
 		//Binary data(multiple lines)
+		/// <summary>
+		/// Gets or sets the binary data associated with the object.
+		/// </summary>
 		[DxfCodeValue(310)]
-		public Stream BinaryData { get; set; }
+		public Stream BinaryData { get; set; } = new MemoryStream();
 
 		//1
 		//End of OLE data(the string “OLE”)
