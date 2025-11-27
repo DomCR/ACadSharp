@@ -79,7 +79,7 @@ namespace ACadSharp.Tests.IO
                 case XDataValueKind.LinearUnitFormat:
                     return LinearUnitFormat.Decimal;
                 case XDataValueKind.AngularUnitFormat:
-                    return AngularUnitFormat.DecimalDegrees;
+                    return AngularUnitFormat.Radians;
                 case XDataValueKind.ArcLengthSymbolPosition:
                     return ArcLengthSymbolPosition.BeforeDimensionText;
                 case XDataValueKind.FractionFormat:
@@ -97,11 +97,11 @@ namespace ACadSharp.Tests.IO
                 case XDataValueKind.ZeroHandling:
                     return ZeroHandling.SuppressZeroFeetAndInches;
                 case XDataValueKind.LineType:
-                    return EnsureLineType(doc, "LT_TEST");
+                    return ensureLineType(doc, "LT_TEST");
                 case XDataValueKind.BlockRecord:
-                    return EnsureBlockRecord(doc, "BLK_TEST");
+                    return ensureBlockRecord(doc, "BLK_TEST");
                 case XDataValueKind.TextStyle:
-                    return EnsureTextStyle(doc, "TXT_TEST");
+                    return ensureTextStyle(doc, "TXT_TEST");
                 default:
                     throw new NotSupportedException($"No generator for kind {ov.Kind}");
             }
@@ -109,8 +109,6 @@ namespace ACadSharp.Tests.IO
 
         public static object CoerceForSpecialCases(OverrideEntry ov, object value)
         {
-            // Some overrides have mismatched Kind vs expected runtime type in this branch.
-            // Adjust values to what the runtime expects to keep tests meaningful.
             switch (ov.Key)
             {
             }
@@ -118,7 +116,7 @@ namespace ACadSharp.Tests.IO
             return value;
         }
 
-        private static LineType EnsureLineType(CadDocument doc, string name)
+        private static LineType ensureLineType(CadDocument doc, string name)
         {
             var lt = doc.LineTypes.FirstOrDefault(x => x.Name == name);
             if (lt == null)
@@ -129,7 +127,7 @@ namespace ACadSharp.Tests.IO
             return lt;
         }
 
-        private static BlockRecord EnsureBlockRecord(CadDocument doc, string name)
+        private static BlockRecord ensureBlockRecord(CadDocument doc, string name)
         {
             var br = doc.BlockRecords.FirstOrDefault(x => x.Name == name);
             if (br == null)
@@ -140,7 +138,7 @@ namespace ACadSharp.Tests.IO
             return br;
         }
 
-        private static TextStyle EnsureTextStyle(CadDocument doc, string name)
+        private static TextStyle ensureTextStyle(CadDocument doc, string name)
         {
             var ts = doc.TextStyles.FirstOrDefault(x => x.Name == name);
             if (ts == null)
@@ -154,14 +152,14 @@ namespace ACadSharp.Tests.IO
 
     public class DimensionStyleOverrideMatrixTests : IOTestsBase
     {
-        private static string GetDumpFolder()
+        private static string getDumpFolder()
         {
             var folder = Path.Combine(TestVariables.OutputSingleCasesFolder, "dim_style_overrides");
             Directory.CreateDirectory(folder);
             return folder;
         }
         
-        private static string Sanitize(string s)
+        private static string sanitize(string s)
         {
             // Keep filenames safe
             return Regex.Replace(s, @"[^A-Za-z0-9_\-]+", "_");
@@ -183,62 +181,62 @@ namespace ACadSharp.Tests.IO
         [MemberData(nameof(AllOverrides))]
         public void RoundTrip_Dxf_OneOverride(OverrideEntry ov)
         {
-            var (doc, dim) = CreateDocWithOneDimension();
-            var raw = OverrideValueFactory.CreateValue(ov, doc);
-            var value = OverrideValueFactory.CoerceForSpecialCases(ov, raw);
-            dim.StyleOverrides[ov.Key] = new DimensionStyleOverride(ov.Key, value);
-            
-            DumpDocAsDxf(doc, ov, value);
+	        var (doc, dim) = createDocWithDimensionForOverride(ov);
+	        var raw = OverrideValueFactory.CreateValue(ov, doc);
+	        var value = OverrideValueFactory.CoerceForSpecialCases(ov, raw);
+	        dim.StyleOverrides[ov.Key] = new DimensionStyleOverride(ov.Key, value);
 
-            var path = Path.ChangeExtension(Path.GetTempFileName(), ".dxf");
-            using (var wr = new ACadSharp.IO.DxfWriter(path, doc, false))
-            {
-                wr.Write();
-            }
+	        dumpDocAsDxf(doc, ov, value);
 
-            CadDocument back;
-            using (var rd = new ACadSharp.IO.DxfReader(path, this.onNotification))
-            {
-                back = rd.Read();
-            }
+	        var path = Path.ChangeExtension(Path.GetTempFileName(), ".dxf");
+	        using (var wr = new ACadSharp.IO.DxfWriter(path, doc, false))
+	        {
+		        wr.Write();
+	        }
 
-            var dimBack = back.Entities.OfType<Dimension>().First();
-            Assert.True(dimBack.StyleOverrides.TryGetValue(ov.Key, out var ovBack));
-            AssertOverrideEquals(ov, value, ovBack.Value);
+	        CadDocument back;
+	        using (var rd = new ACadSharp.IO.DxfReader(path, this.onNotification))
+	        {
+		        back = rd.Read();
+	        }
+
+	        var dimBack = back.Entities.OfType<Dimension>().First();
+	        Assert.True(dimBack.StyleOverrides.TryGetValue(ov.Key, out var ovBack));
+	        assertOverrideEquals(ov, value, ovBack.Value);
         }
 
         [Theory]
         [MemberData(nameof(AllOverrides))]
         public void RoundTrip_Dwg_OneOverride(OverrideEntry ov)
         {
-            if (ShouldSkipForDwg(ov))
-                return;
+	        if (shouldSkipForDwg(ov))
+		        return;
 
-            var (doc, dim) = CreateDocWithOneDimension();
-            var raw = OverrideValueFactory.CreateValue(ov, doc);
-            var value = OverrideValueFactory.CoerceForSpecialCases(ov, raw);
-            dim.StyleOverrides[ov.Key] = new DimensionStyleOverride(ov.Key, value);
-            
-            DumpDocAsDwg(doc, ov, value);
+	        var (doc, dim) = createDocWithDimensionForOverride(ov);
+	        var raw = OverrideValueFactory.CreateValue(ov, doc);
+	        var value = OverrideValueFactory.CoerceForSpecialCases(ov, raw);
+	        dim.StyleOverrides[ov.Key] = new DimensionStyleOverride(ov.Key, value);
 
-            var path = Path.ChangeExtension(Path.GetTempFileName(), ".dwg");
-            using (var wr = new ACadSharp.IO.DwgWriter(path, doc))
-            {
-                wr.Write();
-            }
+	        dumpDocAsDwg(doc, ov, value);
 
-            CadDocument back;
-            using (var rd = new ACadSharp.IO.DwgReader(path, this.onNotification))
-            {
-                back = rd.Read();
-            }
+	        var path = Path.ChangeExtension(Path.GetTempFileName(), ".dwg");
+	        using (var wr = new ACadSharp.IO.DwgWriter(path, doc))
+	        {
+		        wr.Write();
+	        }
 
-            var dimBack = back.Entities.OfType<Dimension>().First();
-            Assert.True(dimBack.StyleOverrides.TryGetValue(ov.Key, out var ovBack));
-            AssertOverrideEquals(ov, value, ovBack.Value);
+	        CadDocument back;
+	        using (var rd = new ACadSharp.IO.DwgReader(path, this.onNotification))
+	        {
+		        back = rd.Read();
+	        }
+
+	        var dimBack = back.Entities.OfType<Dimension>().First();
+	        Assert.True(dimBack.StyleOverrides.TryGetValue(ov.Key, out var ovBack));
+	        assertOverrideEquals(ov, value, ovBack.Value);
         }
 
-        private static bool ShouldSkipForDwg(OverrideEntry ov)
+        private static bool shouldSkipForDwg(OverrideEntry ov)
         {
             switch (ov.Kind)
             {
@@ -249,21 +247,8 @@ namespace ACadSharp.Tests.IO
             }
             return false;
         }
-
-        private static (CadDocument, Dimension) CreateDocWithOneDimension()
-        {
-            var doc = new CadDocument();
-            var dim = new DimensionAligned
-            {
-                SecondPoint = new CSMath.XYZ(10, 0, 0),
-                Offset = 2,
-                TextMiddlePoint = new CSMath.XYZ(5, 1, 0)
-            };
-            doc.Entities.Add(dim);
-            return (doc, dim);
-        }
-
-        private static void AssertOverrideEquals(OverrideEntry ov, object expected, object actual)
+        
+        private static void assertOverrideEquals(OverrideEntry ov, object expected, object actual)
         {
             Assert.NotNull(actual);
 
@@ -300,18 +285,18 @@ namespace ACadSharp.Tests.IO
             }
         }
         
-        private static void DumpDocAsDxf(CadDocument doc, OverrideEntry ov, object value)
+        private static void dumpDocAsDxf(CadDocument doc, OverrideEntry ov, object value)
         {
             try
             {
                 if (!TestVariables.DumpDimensionStyleOverride) return;
-                var folder = GetDumpFolder();
+                var folder = getDumpFolder();
 
                 var versions = new[] { ACadVersion.AC1018, ACadVersion.AC1024, ACadVersion.AC1027, ACadVersion.AC1032 };
                 foreach (var ver in versions)
                 {
                     doc.Header.Version = ver;
-                    var file = $"{Sanitize(ov.Key.ToString())}_{ver}.dxf";
+                    var file = $"{sanitize(ov.Key.ToString())}_{ver}.dxf";
                     var path = Path.Combine(folder, file);
                     using var wr = new ACadSharp.IO.DxfWriter(path, doc, binary: false);
                     wr.Write();
@@ -323,20 +308,20 @@ namespace ACadSharp.Tests.IO
             }
         }
 
-        private static void DumpDocAsDwg(CadDocument doc, OverrideEntry ov, object value)
+        private static void dumpDocAsDwg(CadDocument doc, OverrideEntry ov, object value)
         {
             try
             {
                 if (!TestVariables.DumpDimensionStyleOverride) return;
-                var folder = GetDumpFolder();
+                var folder = getDumpFolder();
 
-                if (ShouldSkipForDwg(ov)) return;
+                if (shouldSkipForDwg(ov)) return;
 
                 var versions = new[] { ACadVersion.AC1018, ACadVersion.AC1024, ACadVersion.AC1027, ACadVersion.AC1032 };
                 foreach (var ver in versions)
                 {
                     doc.Header.Version = ver;
-                    var file = $"{Sanitize(ov.Key.ToString())}_{ver}.dwg";
+                    var file = $"{sanitize(ov.Key.ToString())}_{ver}.dwg";
                     var path = Path.Combine(folder, file);
                     using var wr = new ACadSharp.IO.DwgWriter(path, doc);
                     wr.Write();
@@ -347,5 +332,79 @@ namespace ACadSharp.Tests.IO
                 // Don’t fail tests due to dump issues
             }
         }
+        
+        private static (CadDocument, Dimension) createDocWithDimensionForOverride(OverrideEntry ov)
+		{
+		    var doc = new CadDocument();
+
+		    Dimension dim = createDimensionForOverride(ov.Key);
+		    doc.Entities.Add(dim);
+
+		    return (doc, dim);
+		}
+
+		private static Dimension createDimensionForOverride(DimensionStyleOverrideType key)
+		{
+		    if (isAngularOverride(key))
+		        return createAngular2Line();
+
+		    if (isJoggedRadialOverride(key))
+		        return createRadius();
+
+		    return createAligned();
+		}
+
+		private static bool isAngularOverride(DimensionStyleOverrideType key)
+		{
+		    switch (key)
+		    {
+		        case DimensionStyleOverrideType.AngularDecimalPlaces:
+		        case DimensionStyleOverrideType.AngularUnitFormat:
+		        case DimensionStyleOverrideType.AngularZeroHandling:
+		            return true;
+		        default:
+		            return false;
+		    }
+		}
+
+		private static bool isJoggedRadialOverride(DimensionStyleOverrideType key)
+		{
+			switch (key)
+			{
+				case DimensionStyleOverrideType.JoggedRadiusDimensionTransverseSegmentAngle:
+					return true;
+				default:
+					return false;
+			}
+		}
+		
+		private static Dimension createAligned()
+		{
+		    return new DimensionAligned
+		    {
+		        SecondPoint = new CSMath.XYZ(10, 0, 0),
+		        Offset = 2,
+		        TextMiddlePoint = new CSMath.XYZ(5, 1, 0)
+		    };
+		}
+
+		private static Dimension createAngular2Line()
+		{
+		    // Mirrors what WriterSingleObjectTests uses
+		    var dim = new DimensionAngular2Line();
+		    dim.FirstPoint = CSMath.XYZ.AxisY;
+		    dim.SecondPoint = -CSMath.XYZ.AxisY;
+		    dim.DefinitionPoint = -CSMath.XYZ.AxisX;
+		    dim.AngleVertex = CSMath.XYZ.AxisX;
+		    return dim;
+		}
+		
+		private static Dimension createRadius()
+		{
+		    return new DimensionRadius()
+		    {
+		        AngleVertex = new CSMath.XYZ(10, 10, 0)
+		    };
+		}
     }
 }
