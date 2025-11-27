@@ -660,8 +660,7 @@ namespace ACadSharp.IO.DWG
 
     		this.registerObject(ltype);
     	}
-        
-
+	    
 		private void writeTextStyle(TextStyle style)
 		{
 			this.writeCommonNonEntityData(style);

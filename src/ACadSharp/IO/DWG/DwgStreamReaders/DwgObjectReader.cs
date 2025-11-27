@@ -4595,18 +4595,16 @@ namespace ACadSharp.IO.DWG
 				//Strings area X 9 256 bytes of text area. The complex dashes that have text use this area via the 75-group indices. It's basically a pile of 0-terminated strings. First byte is always 0 for R13 and data starts at byte 1. In R14 it is not a valid data start from byte 0.
 				//(The 9 - group is undocumented.)
 				textarea = this._objectReader.ReadBytes(256);
-				//TODO: Read the line type text area
 			}
 			//R2007+:
 			if (this.R2007Plus && isText)
 			{
 				textarea = this._objectReader.ReadBytes(512);
-				//TODO: Read the line type text area
 			}
 
             if (isText)
             {
-                this.readLinetypeSegmentTexts(template.SegmentTemplates, textarea);
+                this.readLineTypeSegmentTexts(template.SegmentTemplates, textarea);
             }
 
 			//Common:
@@ -6649,7 +6647,7 @@ namespace ACadSharp.IO.DWG
 				this.handleReference();
 		}
         
-        private void readLinetypeSegmentTexts(IList<CadLineTypeTemplate.SegmentTemplate> segments, byte[] textArea)
+        private void readLineTypeSegmentTexts(IList<CadLineTypeTemplate.SegmentTemplate> segments, byte[] textArea)
         {
             if (segments == null || textArea == null || textArea.Length == 0)
                 return;
@@ -6672,12 +6670,12 @@ namespace ACadSharp.IO.DWG
                     continue;
                 }
 
-                segment.Segment.Text = this.readLinetypeTextString(textArea, offset, encoding);
+                segment.Segment.Text = this.readLineTypeTextString(textArea, offset, encoding);
                 segment.Segment.ShapeNumber = 0;
             }
         }
 
-        private string readLinetypeTextString(byte[] buffer, int offset, Encoding encoding)
+        private string readLineTypeTextString(byte[] buffer, int offset, Encoding encoding)
         {
             if (buffer == null || encoding == null || offset < 0 || offset >= buffer.Length)
                 return string.Empty;
