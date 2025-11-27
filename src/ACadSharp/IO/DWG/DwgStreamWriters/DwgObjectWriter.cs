@@ -326,7 +326,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//Loaded Bit B 0 indicates loaded for an xref
-				this._writer.WriteBit(false);
+				this._writer.WriteBit(record.IsUnloaded);
 			}
 
 			//R2004+:

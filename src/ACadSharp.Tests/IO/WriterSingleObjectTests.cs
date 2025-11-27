@@ -1394,6 +1394,11 @@ namespace ACadSharp.Tests.IO
 				BlockRecord record = new BlockRecord("my_xref", "./SinglePoint_AC1032.dwg");
 				this.Document.BlockRecords.Add(record);
 				this.Document.Entities.Add(new Insert(record));
+
+				record = new BlockRecord("my_line_xref", "./SingleLine_AC1032.dwg");
+				record.IsUnloaded = true;
+				this.Document.BlockRecords.Add(record);
+				this.Document.Entities.Add(new Insert(record));
 			}
 		}
 	}

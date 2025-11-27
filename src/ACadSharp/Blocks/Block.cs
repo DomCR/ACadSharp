@@ -40,6 +40,15 @@ namespace ACadSharp.Blocks
 		public BlockTypeFlags Flags { get; set; }
 
 		/// <summary>
+		/// Gets or sets a value indicating whether the XRef is unloaded.
+		/// </summary>
+		/// <remarks>
+		/// This flag only takes effect if its an external reference.
+		/// </remarks>
+		[DxfCodeValue(71)]
+		public bool IsUnloaded { get; set; } = false;
+
+		/// <summary>
 		/// Specifies the name of the object.
 		/// </summary>
 		[DxfCodeValue(2, 3)]
