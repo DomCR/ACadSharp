@@ -6,6 +6,9 @@ using CSMath;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using ACadSharp.Tables.Collections;
+using ACadSharp.XData;
 
 namespace ACadSharp.Entities
 {
@@ -176,6 +179,11 @@ namespace ACadSharp.Entities
 				this._style = CadObject.updateCollection(value, this.Document?.DimensionStyles);
 			}
 		}
+		
+		public DimensionStyleOverrideCollection StyleOverrides
+		{
+			get { return this._styleOverrideCollection; }
+		}
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Dimension;
@@ -220,10 +228,105 @@ namespace ACadSharp.Entities
 
 		private DimensionStyle _style = DimensionStyle.Default;
 
+		private DimensionStyleOverrideCollection _styleOverrideCollection = new();
+        
+        private bool _suspendStyleOverrideSync;
+
+        private void OnStyleOverrideAdded(object sender, DimensionStyleOverrideChangedEventArgs e)
+        {
+            if (_suspendStyleOverrideSync)
+                return;
+            if (!_xdataMeta.TryGetValue(e.Key, out var meta))
+                return; // this override type has no xdata annotation
+
+            if (!tryCreateXDataValue(meta.Kind, e.Override.Value, out var valueRecord))
+                return;
+
+            if (!this.ExtendedData.TryGet(AppId.Default, out var ed))
+            {
+                ed = new ExtendedData();
+                this.ExtendedData.Add(AppId.Default, ed);
+            }
+
+            ensureSingleDStyleBlock(ed);
+
+            if (!tryFindDStyleBounds(ed, out var startIndex, out var endIndex))
+            {
+                ed.Records.Add(new ExtendedDataString("DSTYLE"));
+                ed.Records.Add(ExtendedDataControlString.Open);
+                ed.Records.Add(new ExtendedDataInteger16(meta.GroupCode));
+                ed.Records.Add(valueRecord);
+                ed.Records.Add(ExtendedDataControlString.Close);
+                return;
+            }
+
+            removeGroupCodePairInRange(ed, meta.GroupCode, startIndex + 2, endIndex - 1);
+
+            ed.Records.Insert(endIndex, new ExtendedDataInteger16(meta.GroupCode));
+            ed.Records.Insert(endIndex + 1, valueRecord);
+        }
+
+        private void OnStyleOverrideRemoved(object sender, DimensionStyleOverrideChangedEventArgs e)
+        {
+            if (_suspendStyleOverrideSync)
+                return;
+            if (!_xdataMeta.TryGetValue(e.Key, out var meta))
+                return;
+
+            if (!this.ExtendedData.TryGet(AppId.Default, out var ed))
+                return;
+
+            if (!tryFindDStyleBounds(ed, out var startIndex, out var endIndex))
+                return;
+
+            removeGroupCodePairInRange(ed, meta.GroupCode, startIndex + 2, endIndex - 1);
+
+            if (tryFindDStyleBounds(ed, out startIndex, out endIndex))
+            {
+                if (endIndex == startIndex + 2)
+                {
+                    ed.Records.RemoveAt(endIndex);
+                    ed.Records.RemoveAt(startIndex + 1);
+                    ed.Records.RemoveAt(startIndex);
+                }
+            }
+        }
+        
+        private void BeforeStyleOverrideAdded(object sender, DimensionStyleOverrideChangedEventArgs e)
+        {
+            if (_suspendStyleOverrideSync)
+                return;
+            // Pre-clean duplicates for the same group code in the DSTYLE block
+            if (!_xdataMeta.TryGetValue(e.Key, out var meta))
+                return;
+
+            if (!this.ExtendedData.TryGet(AppId.Default, out var ed))
+                return;
+
+            if (!tryFindDStyleBounds(ed, out var startIndex, out var endIndex))
+                return;
+
+            removeGroupCodePairInRange(ed, meta.GroupCode, startIndex + 2, endIndex - 1);
+        }
+
+        private void BeforeStyleOverrideRemoved(object sender, DimensionStyleOverrideChangedEventArgs e)
+        {
+            if (_suspendStyleOverrideSync)
+                return;
+            // Currently no-op: OnStyleOverrideRemoved performs the actual cleanup.
+            // Hook reserved for future batch optimizations.
+        }
+        
 		protected Dimension(DimensionType type)
 		{
 			this._flags = type;
 			this._flags |= DimensionType.BlockReference;
+            
+            this._styleOverrideCollection = new DimensionStyleOverrideCollection();
+            this._styleOverrideCollection.OnAdd += this.OnStyleOverrideAdded;
+            this._styleOverrideCollection.OnRemove += this.OnStyleOverrideRemoved;
+            this._styleOverrideCollection.BeforeAdd += this.BeforeStyleOverrideAdded;
+            this._styleOverrideCollection.BeforeRemove += this.BeforeStyleOverrideRemoved;
 		}
 
 		/// <inheritdoc/>
@@ -249,6 +352,30 @@ namespace ACadSharp.Entities
 
 			clone.Style = this.Style.CloneTyped();
 			clone.Block = this.Block?.CloneTyped();
+
+            // Recreate the StyleOverrides collection so the clone does not share
+            // the same instance (and event handlers) with the original object.
+            var newOverrides = new DimensionStyleOverrideCollection();
+            newOverrides.OnAdd += clone.OnStyleOverrideAdded;
+            newOverrides.OnRemove += clone.OnStyleOverrideRemoved;
+            newOverrides.BeforeAdd += clone.BeforeStyleOverrideAdded;
+            newOverrides.BeforeRemove += clone.BeforeStyleOverrideRemoved;
+
+            // Assign the fresh collection to the clone
+            clone._styleOverrideCollection = newOverrides;
+
+            // Copy all overrides from the original into the clone. This will also
+            // trigger OnAdd to rebuild the DSTYLE XData in the clone's ExtendedData
+            // when possible (for simple types). For handle-based kinds (LineType, BlockRecord,
+            // TextStyle) that may not yet have handles at clone time, XData might be deferred,
+            // but the overrides themselves are preserved correctly.
+            foreach (var kv in this._styleOverrideCollection)
+            {
+                var ov = kv.Value;
+                // Create a new DimensionStyleOverride instance to avoid sharing state
+                var ovCopy = new DimensionStyleOverride(ov.Type, ov.Value);
+                clone._styleOverrideCollection.Add(ovCopy);
+            }
 
 			return clone;
 		}
@@ -633,5 +760,553 @@ namespace ACadSharp.Entities
 		{
 			return $"*D{this.Handle}";
 		}
+        
+        private static readonly Dictionary<DimensionStyleOverrideType, DimOverrideXDataAttribute> _xdataMeta = buildXDataMeta();
+
+        private static Dictionary<DimensionStyleOverrideType, DimOverrideXDataAttribute> buildXDataMeta()
+        {
+            var result = new Dictionary<DimensionStyleOverrideType, DimOverrideXDataAttribute>();
+
+            var type = typeof(DimensionStyleOverrideType);
+            foreach (DimensionStyleOverrideType value in Enum.GetValues(type))
+            {
+                var memInfo = type.GetMember(value.ToString());
+                var attr = memInfo[0].GetCustomAttribute<DimOverrideXDataAttribute>();
+                if (attr != null)
+                {
+                    result[value] = attr;
+                }
+            }
+
+            return result;
+        }
+        
+        private bool tryFindDStyleBounds(ExtendedData ed, out int dstyleStartIndex, out int dstyleEndIndex)
+        {
+            dstyleStartIndex = -1;
+            dstyleEndIndex = -1;
+
+            for (int i = 0; i < ed.Records.Count; i++)
+            {
+                if (ed.Records[i] is ExtendedDataString s && string.Equals(s.Value, "DSTYLE", StringComparison.Ordinal))
+                {
+                    // Expect an opening control right after
+                    int openIdx = i + 1;
+                    if (openIdx < ed.Records.Count && ed.Records[openIdx] is ExtendedDataControlString open && !open.IsClosing)
+                    {
+                        // Find the matching close
+                        for (int j = openIdx + 1; j < ed.Records.Count; j++)
+                        {
+                            if (ed.Records[j] is ExtendedDataControlString close && close.IsClosing)
+                            {
+                                dstyleStartIndex = i;
+                                dstyleEndIndex = j; // index of closing control
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private void ensureSingleDStyleBlock(ExtendedData ed)
+        {
+            // If one exists and is well-formed, do nothing
+            if (tryFindDStyleBounds(ed, out _, out _))
+                return;
+
+            // Otherwise create a fresh empty block at the end
+            ed.Records.Add(new ExtendedDataString("DSTYLE"));
+            ed.Records.Add(ExtendedDataControlString.Open);
+            ed.Records.Add(ExtendedDataControlString.Close);
+        }
+
+        private void removeGroupCodePairInRange(ExtendedData ed, short groupCode, int startInclusive, int endInclusive)
+        {
+            // Scan for a pair: ExtendedDataInteger16(groupCode) followed by any record, both within range
+            int i = startInclusive;
+            while (i <= endInclusive)
+            {
+                if (ed.Records[i] is ExtendedDataInteger16 g && g.Value == groupCode)
+                {
+                    int valueIdx = i + 1;
+                    if (valueIdx <= endInclusive)
+                    {
+                        ed.Records.RemoveAt(valueIdx);
+                        ed.Records.RemoveAt(i);
+                        endInclusive -= 2;
+                        // continue scanning from same i
+                        continue;
+                    }
+                }
+
+                i++;
+            }
+        }
+        
+        private bool tryCreateXDataValue(XDataValueKind kind, object rawValue, out ExtendedDataRecord record)
+        {
+            record = null;
+
+            switch (kind)
+            {
+                case XDataValueKind.Double:
+                    if (!tryToDouble(rawValue, out var d)) return false;
+                    record = new ExtendedDataReal(d);
+                    return true;
+
+                case XDataValueKind.Short:
+                case XDataValueKind.Int16:
+                    if (!tryToShort(rawValue, out var s)) return false;
+                    record = new ExtendedDataInteger16(s);
+                    return true;
+
+                case XDataValueKind.Bool:
+                    if (rawValue is bool b)
+                    {
+                        record = new ExtendedDataInteger16((short)(b ? 1 : 0));
+                        return true;
+                    }
+                    return false;
+                
+                case XDataValueKind.String:
+                    if (rawValue == null) return false;
+                    record = new ExtendedDataString(rawValue.ToString());
+                    return true;
+
+                case XDataValueKind.Char:
+                    if (rawValue is char c)
+                    {
+                        record = new ExtendedDataString(c.ToString());
+                        return true;
+                    }
+                    return false;
+
+                case XDataValueKind.LineType:
+                    // Accept only concrete LineType instances for now.
+                    if (rawValue is LineType lt)
+                    {
+                        // Only emit if the LineType has a valid handle already assigned.
+                        if (lt.Handle != 0)
+                        {
+                            record = new ExtendedDataHandle(lt.Handle);
+                            return true;
+                        }
+                        // Defer resolution to writer: do not emit unresolved references here.
+                        return false;
+                    }
+                    return false;
+
+                case XDataValueKind.BlockRecord:
+                    // Accept only concrete BlockRecord instances for now.
+                    if (rawValue is BlockRecord br)
+                    {
+                        if (br.Handle != 0)
+                        {
+                            record = new ExtendedDataHandle(br.Handle);
+                            return true;
+                        }
+                        return false; // defer unresolved to writer
+                    }
+                    return false;
+
+                case XDataValueKind.Color:
+                    if (rawValue is Color color)
+                    {
+                        record = new ExtendedDataInteger16(color.Index);
+                        return true;
+                    }
+                    return false;
+                case XDataValueKind.LineWeightType:
+                    if (tryToShort(rawValue, out var lw))
+                    {
+                        record = new ExtendedDataInteger16(lw);
+                        return true;
+                    }
+                    return false;
+                case XDataValueKind.TextStyle:
+                    if (rawValue is TextStyle textStyle)
+                    {
+                        record = new ExtendedDataHandle(textStyle.Handle);
+                        return true;
+                    }
+                    return false;
+                case XDataValueKind.DimensionTextVerticalAlignment:
+                case XDataValueKind.DimensionTextHorizontalAlignment:
+                case XDataValueKind.LinearUnitFormat:
+                case XDataValueKind.TextMovement:
+                case XDataValueKind.ToleranceAlignment:
+                case XDataValueKind.ZeroHandling:
+                case XDataValueKind.AngularUnitFormat:
+                case XDataValueKind.ArcLengthSymbolPosition:
+                case XDataValueKind.FractionFormat:
+                case XDataValueKind.TextArrowFitType:
+                case XDataValueKind.DimensionTextBackgroundFillMode:
+                case XDataValueKind.TextDirection:
+                    // All of these are short-backed enums
+                    if (!tryToShort(rawValue, out var enumShort)) return false;
+                    record = new ExtendedDataInteger16(enumShort);
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+        
+        private bool tryParseXDataValue(XDataValueKind kind, ExtendedDataRecord record, out object value)
+        {
+            value = null;
+            switch (kind)
+            {
+                case XDataValueKind.Double:
+                    if (record is ExtendedDataReal real)
+                    {
+                        value = real.Value;
+                        return true;
+                    }
+                    return false;
+
+                case XDataValueKind.Short:
+                case XDataValueKind.Int16:
+                    if (record is ExtendedDataInteger16 i16) { value = i16.Value; return true; }
+                    if (record is ExtendedDataInteger32 i32) { value = (short)i32.Value; return true; }
+                    return false;
+
+                case XDataValueKind.Bool:
+                    if (record is ExtendedDataInteger16 b16)
+                    {
+                        value = b16.Value != 0;
+                        return true;
+                    }
+                    return false;
+
+                case XDataValueKind.String:
+                case XDataValueKind.Char:
+                    if (record is ExtendedDataString s)
+                    {
+                        value = s.Value;
+                        return true;
+                    }
+                    return false;
+
+                case XDataValueKind.LineType:
+                case XDataValueKind.BlockRecord:
+                    if (record is ExtendedDataHandle h)
+                    {
+                        value = h.Value;
+                        return true;
+                    }
+                    return false;
+
+                case XDataValueKind.Color:
+                    if (record is ExtendedDataInteger16 c16)
+                    {
+                        value = new Color(c16.Value);
+                        return true;
+                    }
+                    return false;
+                case XDataValueKind.LineWeightType:
+                    if (record is ExtendedDataInteger16 lw16)
+                    {
+                        value = lw16.Value;
+                        return true;
+                    }
+                    return false;
+                case XDataValueKind.TextStyle:
+                    if (record is ExtendedDataHandle hts)
+                    {
+                        value = hts.Value; // raw handle as ulong
+                        return true;
+                    }
+                    return false;
+                case XDataValueKind.AngularUnitFormat:
+                case XDataValueKind.ArcLengthSymbolPosition:
+                case XDataValueKind.FractionFormat:
+                case XDataValueKind.TextArrowFitType:
+                case XDataValueKind.DimensionTextBackgroundFillMode:
+                case XDataValueKind.TextDirection:
+                case XDataValueKind.DimensionTextVerticalAlignment:
+                case XDataValueKind.DimensionTextHorizontalAlignment:
+                case XDataValueKind.LinearUnitFormat:
+                case XDataValueKind.TextMovement:
+                case XDataValueKind.ToleranceAlignment:
+                case XDataValueKind.ZeroHandling:
+                    if (record is ExtendedDataInteger16 e16) { value = e16.Value; return true; }
+                    if (record is ExtendedDataInteger32 e32) { value = (short)e32.Value; return true; }
+                    return false;
+
+                default:
+                    return false;
+            }
+        }
+
+        private static readonly Dictionary<short, (DimensionStyleOverrideType Type, XDataValueKind Kind)> _xdataByGroupCode
+            = buildReverseXDataMeta();
+
+        private static Dictionary<short, (DimensionStyleOverrideType, XDataValueKind)> buildReverseXDataMeta()
+        {
+            var dict = new Dictionary<short, (DimensionStyleOverrideType, XDataValueKind)>();
+            foreach (var kv in _xdataMeta)
+            {
+                var type = kv.Key;
+                var attr = kv.Value;
+                // last one wins in case of duplicates
+                dict[attr.GroupCode] = (type, attr.Kind);
+            }
+            return dict;
+        }
+
+        internal void BuildOverridesFromXData(CadDocument doc)
+        {
+            if (!this.ExtendedData.TryGet(AppId.Default, out var ed))
+                return;
+
+            if (!tryFindDStyleBounds(ed, out var startIndex, out var endIndex))
+                return;
+
+            var parsed = new List<(DimensionStyleOverrideType Type, object Value)>();
+
+            int i = startIndex + 2;
+            while (i < endIndex)
+            {
+                if (ed.Records[i] is not ExtendedDataInteger16 gc)
+                {
+                    i++;
+                    continue;
+                }
+                short group = gc.Value;
+                int valIdx = i + 1;
+                if (valIdx >= endIndex)
+                    break;
+
+                var valueRec = ed.Records[valIdx];
+                if (!_xdataByGroupCode.TryGetValue(group, out var info))
+                {
+                    i += 2;
+                    continue;
+                }
+
+                if (!tryParseXDataValue(info.Kind, valueRec, out var raw))
+                {
+                    i += 2;
+                    continue;
+                }
+
+                if (!tryConvertParsedValueToOverride(info.Type, info.Kind, raw, doc, out var ov))
+                {
+                    i += 2;
+                    continue;
+                }
+
+                parsed.Add((info.Type, ov));
+                i += 2;
+            }
+
+            if (parsed.Count == 0)
+                return;
+
+            try
+            {
+                _suspendStyleOverrideSync = true;
+                this.StyleOverrides.Clear();
+                foreach (var (t, v) in parsed)
+                {
+                    this.StyleOverrides.Add(t, new DimensionStyleOverride(t, v));
+                }
+            }
+            finally
+            {
+                _suspendStyleOverrideSync = false;
+            }
+        }
+
+        private bool tryConvertParsedValueToOverride(
+            DimensionStyleOverrideType type,
+            XDataValueKind kind,
+            object raw,
+            CadDocument doc,
+            out object ovValue)
+        {
+            ovValue = null;
+            try
+            {
+                switch (type)
+                {
+                    case DimensionStyleOverrideType.CursorUpdate:
+                    case DimensionStyleOverrideType.TextOutsideExtensions:
+                        if (raw is short shortBool) { ovValue = shortBool != 0; return true; }
+                        if (raw is bool braw) { ovValue = braw; return true; }
+                        break;
+                }
+
+                switch (kind)
+                {
+                    case XDataValueKind.TextStyle:
+                        if (doc != null)
+                        {
+                            var ts = doc.GetCadObject<TextStyle>((ulong)raw);
+                            if (ts != null)
+                            {
+                                ovValue = ts;
+                                return true;
+                            }
+                        }
+                        return false;
+                    case XDataValueKind.Double:
+                        ovValue = (double)raw;
+                        return true;
+                    case XDataValueKind.Bool:
+                        ovValue = (bool)raw;
+                        return true;
+                    case XDataValueKind.Short:
+                    case XDataValueKind.Int16:
+                        ovValue = (short)raw;
+                        return true;
+                    case XDataValueKind.Char:
+                        if (raw is string str && str.Length > 0)
+                        {
+                            ovValue = str[0];
+                            return true;
+                        }
+                        return false;
+                    case XDataValueKind.String:
+                        ovValue = (string)raw;
+                        return true;
+                    case XDataValueKind.Color:
+                        ovValue = (Color)raw;
+                        return true;
+                    case XDataValueKind.LineWeightType:
+                        ovValue = (LineWeightType)(short)raw;
+                        return true;
+                    case XDataValueKind.DimensionTextVerticalAlignment:
+                        ovValue = (DimensionTextVerticalAlignment)(short)raw;
+                        return true;
+                    case XDataValueKind.DimensionTextHorizontalAlignment:
+                        ovValue = (DimensionTextHorizontalAlignment)(short)raw;
+                        return true;
+                    case XDataValueKind.LinearUnitFormat:
+                        ovValue = (LinearUnitFormat)(short)raw;
+                        return true;
+                    case XDataValueKind.TextMovement:
+                        ovValue = (TextMovement)(short)raw;
+                        return true;
+                    case XDataValueKind.ToleranceAlignment:
+                        ovValue = (ToleranceAlignment)(short)raw;
+                        return true;
+                    case XDataValueKind.ZeroHandling:
+                        ovValue = (ZeroHandling)(short)raw;
+                        return true;
+                    case XDataValueKind.AngularUnitFormat:
+                        ovValue = (AngularUnitFormat)(short)raw;
+                        return true;
+                    case XDataValueKind.ArcLengthSymbolPosition:
+                        ovValue = (ArcLengthSymbolPosition)(short)raw;
+                        return true;
+                    case XDataValueKind.FractionFormat:
+                        ovValue = (FractionFormat)(short)raw;
+                        return true;
+                    case XDataValueKind.TextArrowFitType:
+                        ovValue = (TextArrowFitType)(short)raw;
+                        return true;
+                    case XDataValueKind.DimensionTextBackgroundFillMode:
+                        ovValue = (DimensionTextBackgroundFillMode)(short)raw;
+                        return true;
+                    case XDataValueKind.TextDirection:
+                        ovValue = (TextDirection)(short)raw;
+                        return true;
+                    case XDataValueKind.LineType:
+                        if (doc != null)
+                        {
+                            var lt = doc.GetCadObject<LineType>((ulong)raw);
+                            if (lt != null)
+                            {
+                                ovValue = lt;
+                                return true;
+                            }
+                        }
+                        return false;
+                    case XDataValueKind.BlockRecord:
+                        if (doc != null)
+                        {
+                            var br = doc.GetCadObject<BlockRecord>((ulong)raw);
+                            if (br != null)
+                            {
+                                ovValue = br;
+                                return true;
+                            }
+                        }
+                        return false;
+                    default:
+                        switch (type)
+                        {
+                            case DimensionStyleOverrideType.CursorUpdate:
+                            case DimensionStyleOverrideType.TextOutsideExtensions:
+                                if (raw is short shortVal)
+                                {
+                                    ovValue = shortVal != 0;
+                                    return true;
+                                }
+                                if (raw is bool b)
+                                {
+                                    ovValue = b;
+                                    return true;
+                                }
+                                return false;
+                        }
+                        return false;
+                }
+            }
+            catch
+            {
+                ovValue = null;
+                return false;
+            }
+        }
+        
+        private bool tryToDouble(object value, out double result)
+        {
+            if (value is double d)
+            {
+                result = d;
+                return true;
+            }
+
+            if (value is IConvertible conv)
+            {
+                try
+                {
+                    result = conv.ToDouble(null);
+                    return true;
+                }
+                catch { }
+            }
+
+            result = default;
+            return false;
+        }
+
+        private bool tryToShort(object value, out short result)
+        {
+            if (value is short s)
+            {
+                result = s;
+                return true;
+            }
+
+            if (value is IConvertible conv)
+            {
+                try
+                {
+                    result = conv.ToInt16(null);
+                    return true;
+                }
+                catch { }
+            }
+
+            result = default;
+            return false;
+        }
 	}
 }

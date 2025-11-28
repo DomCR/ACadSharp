@@ -108,7 +108,29 @@ namespace ACadSharp.XData
 		/// <param name="value">ExtendedData object.</param>
 		public bool TryGet(AppId app, out ExtendedData value)
 		{
-			return this._data.TryGetValue(app, out value);
+			// First, try direct reference equality on AppId keys
+			if (this._data.TryGetValue(app, out value))
+			{
+				return true;
+			}
+
+			// Fallback by AppId name to handle scenarios where the stored key is the
+			// document's AppId instance but the caller provides another AppId instance
+			// with the same name (e.g., AppId.Default vs document AppId entry).
+			if (app != null)
+			{
+				foreach (var kvp in this._data)
+				{
+					if (string.Equals(kvp.Key.Name, app.Name, StringComparison.OrdinalIgnoreCase))
+					{
+						value = kvp.Value;
+						return true;
+					}
+				}
+			}
+
+			value = null;
+			return false;
 		}
 
 		/// <summary>

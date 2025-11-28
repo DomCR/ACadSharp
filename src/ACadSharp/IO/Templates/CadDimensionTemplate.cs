@@ -18,22 +18,24 @@ namespace ACadSharp.IO.Templates
 
 		public CadDimensionTemplate(Dimension dimension) : base(dimension) { }
 
-		protected override void build(CadDocumentBuilder builder)
-		{
-			base.build(builder);
+  protected override void build(CadDocumentBuilder builder)
+  {
+      base.build(builder);
 
-			Dimension dimension = this.CadObject as Dimension;
+      Dimension dimension = this.CadObject as Dimension;
 
 			if (this.getTableReference(builder, this.StyleHandle, this.StyleName, out DimensionStyle style))
 			{
 				dimension.Style = style;
 			}
 
-			if (this.getTableReference(builder, this.BlockHandle, this.BlockName, out BlockRecord block))
-			{
-				dimension.Block = block;
-			}
-		}
+            if (this.getTableReference(builder, this.BlockHandle, this.BlockName, out BlockRecord block))
+            {
+                dimension.Block = block;
+            }
+            
+            dimension.BuildOverridesFromXData(builder.DocumentToBuild);
+        }
 
 		public class DimensionPlaceholder : Dimension
 		{
