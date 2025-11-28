@@ -17,8 +17,10 @@
 	<PropertyGroup>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<Version>3.2.45</Version>
+		<Version>3.3.4</Version>
 		<PackageOutputPath>../nupkg</PackageOutputPath>
+		<SignAssembly>True</SignAssembly>
+		<AssemblyOriginatorKeyFile>../ACadSharp.snk</AssemblyOriginatorKeyFile>
 	</PropertyGroup>
 
 	<Import Project="..\CSUtilities\CSMath\CSMath.projitems" Label="Shared" />

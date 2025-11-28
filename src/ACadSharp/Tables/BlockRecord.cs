@@ -90,7 +90,7 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Block entity for this record
+		/// Block entity for this record.
 		/// </summary>
 		public Block BlockEntity
 		{
@@ -192,6 +192,21 @@ namespace ACadSharp.Tables
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional, 280)]
 		public bool IsExplodable { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the XRef is unloaded.
+		/// </summary>
+		/// <remarks>
+		/// This flag only takes effect if its an external reference.
+		/// </remarks>
+		public bool IsUnloaded
+		{
+			get { return this.BlockEntity.IsUnloaded; }
+			set
+			{
+				this.BlockEntity.IsUnloaded = value;
+			}
+		}
 
 		/// <summary>
 		/// Associated Layout.
@@ -372,7 +387,7 @@ namespace ACadSharp.Tables
 
 			if (this.SortEntitiesTable != null)
 			{
-				clone.CreateSortEntitiesTable();
+				clone.SortEntitiesTable.BlockOwner = clone;
 			}
 
 			clone.Entities = new CadObjectCollection<Entity>(clone);
@@ -381,8 +396,7 @@ namespace ACadSharp.Tables
 				var e = (Entity)item.Clone();
 				clone.Entities.Add(e);
 
-				if (this.SortEntitiesTable != null
-					&& this.SortEntitiesTable.Select(s => s.Entity).Contains(item))
+				if (this.SortEntitiesTable != null)
 				{
 					clone.SortEntitiesTable.Add(e, this.SortEntitiesTable.GetSorterHandle(item));
 				}
@@ -457,13 +471,12 @@ namespace ACadSharp.Tables
 		/// <returns></returns>
 		public IEnumerable<Entity> GetSortedEntities()
 		{
-			if (this.SortEntitiesTable != null)
+			if (this.SortEntitiesTable == null)
 			{
 				return this.Entities.OrderBy(e => e.Handle);
 			}
 
 			List<(ulong, Entity)> entities = new();
-
 			foreach (var entity in this.Entities)
 			{
 				ulong sorter = this.SortEntitiesTable.GetSorterHandle(entity);
