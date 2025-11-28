@@ -14,11 +14,65 @@ namespace ACadSharp.Objects
 	public class DictionaryVariable : NonGraphicalObject
 	{
 		/// <summary>
-		/// Represents the name of the current multi-leader style.
+		/// The name of the system variable that represents the current annotation
+		/// scale for the current space.
+		/// </summary>
+		/// <remarks>
+		/// string, initial value: 1:1
+		/// </remarks>
+		public const string CurrentAnnotationStyle = "CANNOSCALE";
+
+		/// <summary>
+		/// The name of the system variable that represents of the current multi-leader style.
 		/// </summary>
 		/// <remarks>This constant is used to identify the current multi-leader style in the application. The value is
 		/// a string literal: "CMLEADERSTYLE".</remarks>
 		public const string CurrentMultiLeaderStyle = "CMLEADERSTYLE";
+
+		/// <summary>
+		/// The name of system variable that represents the current table style.
+		/// </summary>
+		///	<remarks>
+		///	string, initial value: Standard
+		///	</remarks>
+		public const string CurrentTableStyle = "CTABLESTYLE";
+
+		/// <summary>
+		/// The name of the system variable that represents of the current detail view style.
+		/// The current detail view style controls the appearance of all
+		/// new model documentation detail views, detail boundaries and
+		/// leader lines you create.
+		/// </summary>
+		/// <remarks>
+		/// string, intial value: Imperial24 (imperial) or Metric50 (metric)
+		/// </remarks>
+		public const string CurrentViewDetailStyle = "CVIEWDETAILSTYLE";
+
+		/// <summary>
+		/// The name of the system variable that represents the name of
+		/// the current section view style.
+		/// The current section view style controls the appearance of all
+		/// new model documentation section views and section lines you create.
+		/// </summary>
+		public const string CurrentViewSectionStyle = "CVIEWSECTIONSTYLE";
+
+		/// <summary>
+		/// The name of the system variable that controls the display
+		/// of frames for wipeout objects.
+		/// </summary>
+		/// <remarks>Integer, initial value: 1, allowed values:
+		/// <list>
+		/// <item>
+		/// 0 Frames are not displayed or plotted<br/>
+		///   Frames are temporarily displayed for object selection and selection preview.
+		/// </item><item>
+		/// 1 Frames are displayed and plotted
+		/// </item><item>
+		/// 2 Frames are displayed, but not plotted
+		/// </item>
+		/// </list>
+		/// </remarks>
+		public const string WipeoutFrame = "WIPEOUTFRAME";
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectDictionaryVar;

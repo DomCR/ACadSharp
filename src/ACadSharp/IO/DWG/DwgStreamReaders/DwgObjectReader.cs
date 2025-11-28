@@ -160,6 +160,13 @@ namespace ACadSharp.IO.DWG
 				{
 					//Read the object
 					template = this.readObject(type);
+
+					if (this._classes.TryGetValue((short)type, out DxfClass dxf)) {
+						this._builder.Notify($"Successfully read {dxf.DxfName} number {dxf.ClassNumber} with handle: {handle}", NotificationType.None);
+					}
+					else {
+						this._builder.Notify($"Successfully read {type} with handle: {handle}", NotificationType.None);
+					}
 				}
 				catch (Exception ex)
 				{
