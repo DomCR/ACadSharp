@@ -18,6 +18,7 @@ using System.Globalization;
 using ACadSharp.Objects.Evaluations;
 using ACadSharp.XData;
 using System.Diagnostics;
+using System.Text;
 using ACadSharp.Exceptions;
 
 namespace ACadSharp.IO.DWG
@@ -4587,20 +4588,24 @@ namespace ACadSharp.IO.DWG
 				template.SegmentTemplates.Add(segment);
 			}
 
+            byte[] textarea = null;
 			//R2004 and earlier:
 			if (this._version <= ACadVersion.AC1018)
 			{
 				//Strings area X 9 256 bytes of text area. The complex dashes that have text use this area via the 75-group indices. It's basically a pile of 0-terminated strings. First byte is always 0 for R13 and data starts at byte 1. In R14 it is not a valid data start from byte 0.
 				//(The 9 - group is undocumented.)
-				byte[] textarea = this._objectReader.ReadBytes(256);
-				//TODO: Read the line type text area
+				textarea = this._objectReader.ReadBytes(256);
 			}
 			//R2007+:
 			if (this.R2007Plus && isText)
 			{
-				byte[] textarea = this._objectReader.ReadBytes(512);
-				//TODO: Read the line type text area
+				textarea = this._objectReader.ReadBytes(512);
 			}
+
+            if (isText)
+            {
+                this.readLineTypeSegmentTexts(template.SegmentTemplates, textarea);
+            }
 
 			//Common:
 			//Handle refs H Ltype control(soft pointer)
@@ -6641,6 +6646,91 @@ namespace ACadSharp.IO.DWG
 				//Visual Style handle(soft pointer)
 				this.handleReference();
 		}
+        
+        private void readLineTypeSegmentTexts(IList<CadLineTypeTemplate.SegmentTemplate> segments, byte[] textArea)
+        {
+            if (segments == null || textArea == null || textArea.Length == 0)
+                return;
+
+            Encoding encoding = this._reader?.Encoding ?? Encoding.ASCII;
+
+            foreach (var segment in segments)
+            {
+                if (!segment.Segment.Flags.HasFlag(LineTypeShapeFlags.Text))
+                    continue;
+
+                int offset = (ushort)segment.Segment.ShapeNumber;
+                if (offset >= textArea.Length)
+                {
+                    this._builder.Notify(
+                        $"Unable to read linetype text segment; offset {offset} is outside the available buffer ({textArea.Length} bytes).",
+                        NotificationType.Warning);
+                    segment.Segment.Text = string.Empty;
+                    segment.Segment.ShapeNumber = 0;
+                    continue;
+                }
+
+                segment.Segment.Text = this.readLineTypeTextString(textArea, offset, encoding);
+                segment.Segment.ShapeNumber = 0;
+            }
+        }
+
+        private string readLineTypeTextString(byte[] buffer, int offset, Encoding encoding)
+        {
+            if (buffer == null || encoding == null || offset < 0 || offset >= buffer.Length)
+                return string.Empty;
+
+            if (encoding.IsSingleByte && looksLikeUtf16Le(buffer, offset))
+            {
+                // Trim trailing 0x0000 terminator if present.
+                int end = offset;
+                while (end + 1 < buffer.Length)
+                {
+                    if (buffer[end] == 0 && buffer[end + 1] == 0)
+                        break;
+
+                    end += 2;
+                }
+
+                return Encoding.Unicode.GetString(buffer, offset, end - offset);
+            }
+
+            int endAscii = offset;
+            while (endAscii < buffer.Length && buffer[endAscii] != 0)
+            {
+                endAscii++;
+            }
+
+            if (endAscii == offset)
+                return string.Empty;
+
+            return encoding.GetString(buffer, offset, endAscii - offset);
+        }
+
+        private static bool looksLikeUtf16Le(byte[] buffer, int offset)
+        {
+            if (buffer == null || offset < 0 || offset + 1 >= buffer.Length)
+                return false;
+
+            bool sawNonZero = false;
+
+            for (int i = offset; i + 1 < buffer.Length; i += 2)
+            {
+                byte lo = buffer[i];
+                byte hi = buffer[i + 1];
+
+                if (lo == 0 && hi == 0)
+                    return sawNonZero;
+
+                if (hi != 0)
+                    return false;
+
+                if (lo != 0)
+                    sawNonZero = true;
+            }
+
+            return false;
+        }
 
 		#endregion Object readers
 

@@ -535,86 +535,132 @@ namespace ACadSharp.IO.DWG
 			this.registerObject(layer);
 		}
 
-		private void writeLineType(LineType ltype)
-		{
-			this.writeCommonNonEntityData(ltype);
+    	private void writeLineType(LineType ltype)
+    	{
+    		this.writeCommonNonEntityData(ltype);
 
-			//Common:
-			//Entry name TV 2
-			this._writer.WriteVariableText(ltype.Name);
+    		//Common:
+    		//Entry name TV 2
+    		this._writer.WriteVariableText(ltype.Name);
 
-			this.writeXrefDependantBit(ltype);
+    		this.writeXrefDependantBit(ltype);
 
-			//Description TV 3
-			this._writer.WriteVariableText(ltype.Description);
-			//Pattern Len BD 40
-			this._writer.WriteBitDouble(ltype.PatternLength);
-			//Alignment RC 72 Always 'A'.
-			this._writer.WriteByte((byte)ltype.Alignment);
+    		//Description TV 3
+    		this._writer.WriteVariableText(ltype.Description);
+    		//Pattern Len BD 40
+    		this._writer.WriteBitDouble(ltype.PatternLength);
+    		//Alignment RC 72 Always 'A'.
+    		this._writer.WriteByte((byte)ltype.Alignment);
 
-			//Numdashes RC 73 The number of repetitions of the 49...74 data.
-			this._writer.WriteByte((byte)ltype.Segments.Count());
-			bool isText = false;
-			foreach (LineType.Segment segment in ltype.Segments)
-			{
-				//Dash length BD 49 Dash or dot specifier.
-				this._writer.WriteBitDouble(segment.Length);
-				//Complex shapecode BS 75 Shape number if shapeflag is 2, or index into the string area if shapeflag is 4.
-				this._writer.WriteBitShort(segment.ShapeNumber);
+    		//Numdashes RC 73 The number of repetitions of the 49...74 data.
+    		this._writer.WriteByte((byte)ltype.Segments.Count());
 
-				//X - offset RD 44 (0.0 for a simple dash.)
-				//Y - offset RD 45(0.0 for a simple dash.)
-				this._writer.WriteRawDouble(segment.Offset.X);
-				this._writer.WriteRawDouble(segment.Offset.Y);
+    		bool hasTextSegments = false;
+    		foreach (LineType.Segment segment in ltype.Segments)
+    		{
+    			if (segment.Flags.HasFlag(LineTypeShapeFlags.Text))
+    			{
+    				hasTextSegments = true;
+    				break;
+    			}
+    		}
 
-				//Scale BD 46 (1.0 for a simple dash.)
-				this._writer.WriteBitDouble(segment.Scale);
-				//Rotation BD 50 (0.0 for a simple dash.)
-				this._writer.WriteBitDouble(segment.Rotation);
-				//Shapeflag BS 74 bit coded:
-				this._writer.WriteBitShort((short)segment.Flags);
+            Encoding textEncoding = this.R2007Plus ? Encoding.Unicode : this._writer.Encoding;
+            
+    		byte[] textArea = null;
+    		int textCursor = 0;
+    		byte[] textTerminator = textEncoding.GetBytes("\0");
 
-				if (segment.Flags.HasFlag(LineTypeShapeFlags.Text))
-					isText = true;
-			}
+    		if (this._version <= ACadVersion.AC1018)
+    		{
+    			textArea = new byte[256];
+    			if (this._version <= ACadVersion.AC1014)
+    				textCursor = 1;
+    		}
+    		else if (this.R2007Plus && hasTextSegments)
+    		{
+    			textArea = new byte[512];
+    		}
 
-			//R2004 and earlier:
-			if (this._version <= ACadVersion.AC1018)
-			{
-				//Strings area X 9 256 bytes of text area. The complex dashes that have text use this area via the 75-group indices. It's basically a pile of 0-terminated strings.
-				//First byte is always 0 for R13 and data starts at byte 1.
-				//In R14 it is not a valid data start from byte 0.
-				//(The 9 - group is undocumented.)
-				for (int i = 0; i < 256; i++)
-				{
-					//TODO: Write the line type text area
-					this._writer.WriteByte(0);
-				}
-			}
+    		foreach (LineType.Segment segment in ltype.Segments)
+    		{
+    			if (segment.Flags.HasFlag(LineTypeShapeFlags.Text))
+    			{
+    				if (textArea == null || string.IsNullOrEmpty(segment.Text))
+    				{
+    					segment.ShapeNumber = 0;
+    				}
+    				else
+    				{
+    					byte[] textBytes = textEncoding.GetBytes(segment.Text);
+    					int required = textBytes.Length + textTerminator.Length;
 
-			//R2007+:
-			if (this.R2007Plus && isText)
-			{
-				for (int i = 0; i < 512; i++)
-				{
-					//TODO: Write the line type text area
-					this._writer.WriteByte(0);
-				}
-			}
+    					if (textCursor + required <= textArea.Length)
+    					{
+    						segment.ShapeNumber = (short)textCursor;
+    						Buffer.BlockCopy(textBytes, 0, textArea, textCursor, textBytes.Length);
+    						textCursor += textBytes.Length;
+    						Buffer.BlockCopy(textTerminator, 0, textArea, textCursor, textTerminator.Length);
+    						textCursor += textTerminator.Length;
+    					}
+    					else
+    					{
+    						segment.ShapeNumber = 0;
+    					}
+    				}
+    			}
 
-			//Common:
-			//External reference block handle(hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+    			//Dash length BD 49 Dash or dot specifier.
+    			this._writer.WriteBitDouble(segment.Length);
+    			//Complex shapecode BS 75 Shape number if shapeflag is 2, or index into the string area if shapeflag is 4.
+    			this._writer.WriteBitShort(segment.ShapeNumber);
 
-			foreach (var segment in ltype.Segments)
-			{
-				//340 shapefile for dash/shape (1 each) (hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, segment.Style);
-			}
+    			//X - offset RD 44 (0.0 for a simple dash.)
+    			//Y - offset RD 45(0.0 for a simple dash.)
+    			this._writer.WriteRawDouble(segment.Offset.X);
+    			this._writer.WriteRawDouble(segment.Offset.Y);
 
-			this.registerObject(ltype);
-		}
+    			//Scale BD 46 (1.0 for a simple dash.)
+    			this._writer.WriteBitDouble(segment.Scale);
+    			//Rotation BD 50 (0.0 for a simple dash.)
+    			this._writer.WriteBitDouble(segment.Rotation);
+    			//Shapeflag BS 74 bit coded:
+    			this._writer.WriteBitShort((short)segment.Flags);
+    		}
 
+    		//R2004 and earlier:
+    		if (this._version <= ACadVersion.AC1018)
+    		{
+    			byte[] buffer = textArea ?? new byte[256];
+    			for (int i = 0; i < buffer.Length; i++)
+    			{
+    				this._writer.WriteByte(buffer[i]);
+    			}
+    		}
+
+    		//R2007+:
+    		if (this.R2007Plus && hasTextSegments)
+    		{
+    			byte[] buffer = textArea ?? new byte[512];
+    			for (int i = 0; i < buffer.Length; i++)
+    			{
+    				this._writer.WriteByte(buffer[i]);
+    			}
+    		}
+
+    		//Common:
+    		//External reference block handle(hard pointer)
+    		this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+
+    		foreach (var segment in ltype.Segments)
+    		{
+    			//340 shapefile for dash/shape (1 each) (hard pointer)
+    			this._writer.HandleReference(DwgReferenceType.HardPointer, segment.Style);
+    		}
+
+    		this.registerObject(ltype);
+    	}
+	    
 		private void writeTextStyle(TextStyle style)
 		{
 			this.writeCommonNonEntityData(style);
