@@ -1363,8 +1363,7 @@ namespace ACadSharp.IO.DXF
 				case 73:
 					return true;
 				case 310:
-					var bytes = this._reader.ValueAsBinaryChunk;
-					tmp.CadObject.BinaryData.Write(bytes, 0, bytes.Length);
+					tmp.Chunks.Add(this._reader.ValueAsBinaryChunk);
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);

@@ -15,10 +15,6 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Ole2Frame)]
 	public class Ole2Frame : Entity
 	{
-		//90
-		//Length of binary data
-		//310
-		//Binary data(multiple lines)
 		/// <summary>
 		/// Gets or sets the binary data associated with the object.
 		/// </summary>
@@ -78,13 +74,11 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(70)]
 		public short Version { get; internal set; } = 2;
 
-		//1
-		//End of OLE data(the string “OLE”)
-
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
-			throw new System.NotImplementedException();
+			this.UpperLeftCorner = transform.ApplyTranslation(this.UpperLeftCorner);
+			this.LowerRightCorner = transform.ApplyTranslation(this.LowerRightCorner);
 		}
 
 		/// <inheritdoc/>

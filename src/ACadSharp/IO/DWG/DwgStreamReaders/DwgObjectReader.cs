@@ -5538,7 +5538,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readOle2Frame()
 		{
 			Ole2Frame ole2Frame = new Ole2Frame();
-			CadEntityTemplate<Ole2Frame> template = new CadEntityTemplate<Ole2Frame>(ole2Frame);
+			CadOle2FrameTemplate template = new CadOle2FrameTemplate(ole2Frame);
 
 			//Common Entity Data
 			this.readCommonEntityData(template);
@@ -5556,28 +5556,12 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Data Length BL-- Bit - pair - coded long giving the length of the data
 			int dataLength = this._mergedReaders.ReadBitLong();
-
-			//section that follows.
-			//Unknown data ---The OLE2 data.
-			this._mergedReaders.ReadByte();
-			this._mergedReaders.ReadByte();
-
-			//Test dimensions:
-			//Height = 50
-			//Width = 57.2
-			//Lock = true
-
-			ole2Frame.UpperLeftCorner = this._mergedReaders.Read3RawDouble();
-			var upperRight = this._mergedReaders.Read3RawDouble();
-			ole2Frame.LowerRightCorner = this._mergedReaders.Read3RawDouble();
-
-			//Expected position = 5,5,0
-			var lowerLeft = this._mergedReaders.Read3RawDouble();
-
-			//No strings found in the data
+			template.Data = this._mergedReaders.ReadBytes(dataLength);
 
 			//R2000 +:
 			//Unknown RC
+
+			//No strings found in the data
 
 			return template;
 		}
