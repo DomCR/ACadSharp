@@ -55,7 +55,7 @@ namespace ACadSharp.IO.DXF
 			DxfMap map = DxfMap.Create<Block>();
 
 			Block blckEntity = new Block();
-			CadEntityTemplate template = new CadEntityTemplate(blckEntity);
+			CadBlockEntityTemplate template = new CadBlockEntityTemplate(blckEntity);
 
 			string name = null;
 			BlockRecord record = null;
@@ -127,6 +127,9 @@ namespace ACadSharp.IO.DXF
 			{
 				recordTemplate = new CadBlockRecordTemplate(record);
 			}
+
+			//Add the entity template for owner information
+			recordTemplate.BlockEntityTemplate = template;
 
 			while (this._reader.ValueAsString != DxfFileToken.EndBlock)
 			{

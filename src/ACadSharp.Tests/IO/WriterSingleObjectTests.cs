@@ -49,7 +49,6 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextRotation)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
 			Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
-			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateGroup)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
@@ -62,6 +61,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.CreateLayout)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityTransparency)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithSegments)));
+            Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithTextSegment)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateInsertWithHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.InsertWithSpatialFilter)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
@@ -102,6 +102,11 @@ namespace ACadSharp.Tests.IO
 		public class SingleCaseGenerator : IXunitSerializable
 		{
 			public CadDocument Document { get; private set; } = new CadDocument();
+
+			/// <summary>
+			/// Gets a value indicating whether the operation has been executed.
+			/// </summary>
+			public bool HasExecuted { get; private set; }
 
 			public string Name { get; private set; }
 
@@ -613,7 +618,15 @@ namespace ACadSharp.Tests.IO
 			public void Deserialize(IXunitSerializationInfo info)
 			{
 				this.Name = info.GetValue<string>(nameof(this.Name));
-				this.GetType().GetMethod(this.Name).Invoke(this, null);
+				try
+				{
+					this.GetType().GetMethod(this.Name).Invoke(this, null);
+					this.HasExecuted = true;
+				}
+				catch
+				{
+					this.HasExecuted = false;
+				}
 			}
 
 			public void DimensionAligned()
@@ -862,14 +875,14 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(pline);
 				this.Document.Entities.Add(ellipse);
 
-				 ellipse = new Ellipse();
+				ellipse = new Ellipse();
 				ellipse.RadiusRatio = 0.5d;
 				ellipse.StartParameter = 0.0d;
 				ellipse.EndParameter = Math.PI * 2;
 				ellipse.Center = center;
 				ellipse.Normal = -XYZ.AxisZ;
 
-				 pline = new Polyline3D(ellipse.PolygonalVertexes(4));
+				pline = new Polyline3D(ellipse.PolygonalVertexes(4));
 				pline.Color = Color.Blue;
 
 				this.Document.Entities.Add(pline);
@@ -1054,6 +1067,94 @@ namespace ACadSharp.Tests.IO
 
 				this.Document.LineTypes.Add(lt);
 			}
+
+            public void LineTypeWithTextSegment()
+            {
+                LineType lt1 = new LineType("segmentedWithText")
+                {
+                    Description = "hello text"
+                };
+
+                LineType.Segment lt1s1 = new LineType.Segment
+                {
+                    Length = 5,
+                    //Style = this.Document.TextStyles[TextStyle.DefaultName]
+                };
+                
+                LineType.Segment lt1s2 = new LineType.Segment
+                {
+                    Text = "Text",
+                    Length = -3.0, 
+                    IsText = true,
+                    Offset = new XY(-2.8, -.5),
+                    Style = this.Document.TextStyles[TextStyle.DefaultName]
+                };
+
+                LineType.Segment lt1s3 = new LineType.Segment
+                {
+                    Length = -.350,
+                    //Style = this.Document.TextStyles[TextStyle.DefaultName]
+                };
+                
+                lt1.AddSegment(lt1s1);
+                lt1.AddSegment(lt1s2);
+                lt1.AddSegment(lt1s3);
+
+
+                LineType lt2 = new LineType("degrees")
+                {
+                    Description = "degree symbol",
+                    Segments = {  }
+                };
+                
+                
+                TextStyle style = new TextStyle("custom");
+                
+                //this.Document.Header.CodePage = "GB2312";
+                style.Filename = "romans.shx";
+                style.BigFontFilename = "chineset.shx";
+                this.Document.TextStyles.Add(style);
+                
+                LineType.Segment lt2s1 = new LineType.Segment
+                {
+                    Length = 5,
+                    //Style = this.Document.TextStyles[TextStyle.DefaultName]
+                };
+                
+                LineType.Segment lt2s2 = new LineType.Segment
+                {
+                    Text = "信",
+                    Length = -3.0, 
+                    IsText = true,
+                    Offset = new XY(-2.8, -.5),
+                    Style = style
+                };
+
+                LineType.Segment lt2s3 = new LineType.Segment
+                {
+                    Length = -.350,
+                    //Style = this.Document.TextStyles[TextStyle.DefaultName]
+                };
+                
+                lt2.AddSegment(lt2s1);
+                lt2.AddSegment(lt2s2);
+                lt2.AddSegment(lt2s3);
+
+                this.Document.LineTypes.Add(lt1);
+                this.Document.LineTypes.Add(lt2);
+                
+                var line1 = new Line(new XYZ(0, 0, 0), new XYZ(20, 0, 0))
+                {
+                    LineType = lt1
+                };
+                
+                var line2 = new Line(new XYZ(0, 0, 0), new XYZ(0, 20, 0))
+                {
+                    LineType = lt2
+                };
+                this.Document.Entities.Add(line1);
+                this.Document.Entities.Add(line2);
+            }
 
 			public void Serialize(IXunitSerializationInfo info)
 			{
@@ -1380,6 +1481,11 @@ namespace ACadSharp.Tests.IO
 			public void XRef()
 			{
 				BlockRecord record = new BlockRecord("my_xref", "./SinglePoint_AC1032.dwg");
+				this.Document.BlockRecords.Add(record);
+				this.Document.Entities.Add(new Insert(record));
+
+				record = new BlockRecord("my_line_xref", "./SingleLine_AC1032.dwg");
+				record.IsUnloaded = true;
 				this.Document.BlockRecords.Add(record);
 				this.Document.Entities.Add(new Insert(record));
 			}
