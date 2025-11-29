@@ -9,8 +9,6 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadOle2FrameTemplate : CadEntityTemplate<Ole2Frame>
 	{
-		public byte[] Data { get; set; }
-
 		public List<byte[]> Chunks { get; set; } = new();
 
 		public CadOle2FrameTemplate(Ole2Frame ole) : base(ole) { }
@@ -25,11 +23,10 @@ namespace ACadSharp.IO.Templates
 
 			if (this.Chunks.Any())
 			{
-				this.Data = this.Chunks.SelectMany(c => c).ToArray();
+				this.CadObject.BinaryData = this.Chunks.SelectMany(c => c).ToArray();
 			}
 
-			var diff = Data.Length - 549504;
-			StreamIO reader = new StreamIO(Data);
+			StreamIO reader = new StreamIO(CadObject.BinaryData);
 
 			//section that follows.
 			//Unknown data ---The OLE2 data.

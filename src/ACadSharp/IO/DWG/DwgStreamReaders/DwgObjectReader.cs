@@ -5556,10 +5556,14 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Data Length BL-- Bit - pair - coded long giving the length of the data
 			int dataLength = this._mergedReaders.ReadBitLong();
-			template.Data = this._mergedReaders.ReadBytes(dataLength);
+			template.CadObject.BinaryData = this._mergedReaders.ReadBytes(dataLength);
 
 			//R2000 +:
-			//Unknown RC
+			if (this.R2000Plus)
+			{
+				//Unknown RC
+				short unknown = this._mergedReaders.ReadByte();
+			}
 
 			//No strings found in the data
 

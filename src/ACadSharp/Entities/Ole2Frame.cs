@@ -19,7 +19,7 @@ namespace ACadSharp.Entities
 		/// Gets or sets the binary data associated with the object.
 		/// </summary>
 		[DxfCodeValue(310)]
-		public Stream BinaryData { get; set; } = new MemoryStream();
+		public byte[] BinaryData { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the object resides in paper space.
