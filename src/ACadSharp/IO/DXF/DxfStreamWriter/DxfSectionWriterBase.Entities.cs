@@ -66,6 +66,9 @@ namespace ACadSharp.IO.DXF
 				case MultiLeader multiLeader:
 					this.writeMultiLeader(multiLeader);
 					break;
+				case Ole2Frame ole2Frame:
+					this.writeOle2Frame(ole2Frame);
+					break;
 				case PdfUnderlay pdfUnderlay:
 					this.writePdfUnderlay<PdfUnderlay, PdfUnderlayDefinition>(pdfUnderlay);
 					break;
@@ -978,6 +981,27 @@ namespace ACadSharp.IO.DXF
 			{
 				this._writer.Write(11, bv, map);
 			}
+		}
+
+		private void writeOle2Frame(Ole2Frame ole)
+		{
+			DxfClassMap map = DxfClassMap.Create<Ole2Frame>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Ole2Frame);
+
+			this._writer.Write(70, ole.Version, map);
+			this._writer.Write(3, ole.SourceApplication, map);
+
+			this._writer.Write(10, ole.UpperLeftCorner, map);
+			this._writer.Write(11, ole.LowerRightCorner, map);
+
+			this._writer.Write(71, ole.OleObjectType, map);
+			this._writer.Write(72, ole.IsPaperSpace, map);
+			this._writer.Write(73, 3, map);//Undocumented
+
+			this._writer.Write(90, ole.BinaryData.Length, map);
+			this._writer.Write(310, ole.BinaryData, map);
+			this._writer.Write(1, "OLE");
 		}
 
 		private void writePoint(Point point)

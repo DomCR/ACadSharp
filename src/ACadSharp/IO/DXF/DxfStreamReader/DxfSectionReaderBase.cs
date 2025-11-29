@@ -190,6 +190,8 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<Point>(new CadEntityTemplate<Point>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityPolyline:
 					return this.readPolyline();
+				case DxfFileToken.EntityOle2Frame:
+					return this.readEntityCodes<Ole2Frame>(new CadOle2FrameTemplate(), this.readOle2Frame);
 				case DxfFileToken.EntityRay:
 					return this.readEntityCodes<Ray>(new CadEntityTemplate<Ray>(), this.readEntitySubclassMap);
 				case DxfFileToken.EndSequence:
@@ -1341,6 +1343,27 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 360:
 					tmp.ImgReactorHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readOle2Frame(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadOle2FrameTemplate tmp = template as CadOle2FrameTemplate;
+
+			switch (this._reader.Code)
+			{
+				//End of data
+				case 1:
+				//Length of binary data
+				case 90:
+				//Undocumented
+				case 73:
+					return true;
+				case 310:
+					tmp.Chunks.Add(this._reader.ValueAsBinaryChunk);
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
