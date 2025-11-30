@@ -6,19 +6,20 @@ using System.Linq;
 namespace ACadSharp.Objects.Collections
 {
 	/// <summary>
-	/// Object collection linked to a dictionary
+	/// Object collection linked to a dictionary.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public abstract class ObjectDictionaryCollection<T> : IHandledCadObject, IEnumerable<T>
+	public abstract class ObjectDictionaryCollection<T> : ICadCollection<T>, IObservableCadCollection<T>, IHandledCadObject, IEnumerable<T>
 		where T : NonGraphicalObject
 	{
-		public event EventHandler<CollectionChangedEventArgs> OnAdd { add { this._dictionary.OnAdd += value; } remove { this._dictionary.OnAdd -= value; } }
-		public event EventHandler<CollectionChangedEventArgs> OnRemove { add { this._dictionary.OnRemove += value; } remove { this._dictionary.OnRemove -= value; } }
+		public event EventHandler<CollectionChangedEventArgs> OnAdd
+		{ add { this._dictionary.OnAdd += value; } remove { this._dictionary.OnAdd -= value; } }
+
+		public event EventHandler<CollectionChangedEventArgs> OnRemove
+		{ add { this._dictionary.OnRemove += value; } remove { this._dictionary.OnRemove -= value; } }
 
 		/// <inheritdoc/>
 		public ulong Handle { get { return this._dictionary.Handle; } }
-
-		public T this[string key] { get { return (T)this._dictionary[key]; } }
 
 		protected CadDictionary _dictionary;
 
@@ -37,6 +38,14 @@ namespace ACadSharp.Objects.Collections
 		}
 
 		/// <summary>
+		/// Removes all keys and values from the <see cref="ObjectDictionaryCollection{T}"/>.
+		/// </summary>
+		public void Clear()
+		{
+			this._dictionary.Clear();
+		}
+
+		/// <summary>
 		/// Determines whether the <see cref="ObjectDictionaryCollection{T}"/> contains the specified key.
 		/// </summary>
 		/// <param name="key">The key to locate in the <see cref="ObjectDictionaryCollection{T}"/></param>
@@ -46,15 +55,16 @@ namespace ACadSharp.Objects.Collections
 			return this._dictionary.ContainsKey(key);
 		}
 
-		/// <summary>
-		/// Gets the value associated with the specific key
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="entry"></param>
-		/// <returns>true if the value is found or false if not found.</returns>
-		public bool TryGetValue(string name, out T entry)
+		/// <inheritdoc/>
+		public IEnumerator<T> GetEnumerator()
 		{
-			return this._dictionary.TryGetEntry(name, out entry);
+			return this._dictionary.OfType<T>().GetEnumerator();
+		}
+
+		/// <inheritdoc/>
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return this._dictionary.OfType<T>().GetEnumerator();
 		}
 
 		/// <summary>
@@ -80,24 +90,31 @@ namespace ACadSharp.Objects.Collections
 			return result;
 		}
 
+		/// <inheritdoc/>
+		public T TryAdd(T item)
+		{
+			if (this.TryGetValue(item.Name, out T existing))
+			{
+				return existing;
+			}
+			else
+			{
+				this.Add(item);
+				return item;
+			}
+		}
+
 		/// <summary>
-		/// Removes all keys and values from the <see cref="ObjectDictionaryCollection{T}"/>.
+		/// Gets the value associated with the specific key
 		/// </summary>
-		public void Clear()
+		/// <param name="name"></param>
+		/// <param name="entry"></param>
+		/// <returns>true if the value is found or false if not found.</returns>
+		public bool TryGetValue(string name, out T entry)
 		{
-			this._dictionary.Clear();
+			return this._dictionary.TryGetEntry(name, out entry);
 		}
 
-		/// <inheritdoc/>
-		public IEnumerator<T> GetEnumerator()
-		{
-			return this._dictionary.OfType<T>().GetEnumerator();
-		}
-
-		/// <inheritdoc/>
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return this._dictionary.OfType<T>().GetEnumerator();
-		}
+		public T this[string key] { get { return (T)this._dictionary[key]; } }
 	}
 }

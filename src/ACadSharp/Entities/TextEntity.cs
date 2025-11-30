@@ -57,8 +57,7 @@ namespace ACadSharp.Entities
 		/// Mirror flags.
 		/// </summary>
 		[DxfCodeValue(71)]
-		public TextMirrorFlag Mirror { get; set; } = TextMirrorFlag.None;
-
+		public TextMirrorFlag Mirror { get => _mirror; set => _mirror = value; }
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
 		/// </summary>
@@ -80,12 +79,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double ObliqueAngle { get; set; } = 0.0;
 
-		/// <summary>
-		/// Specifies the rotation angle for the object.
-		/// </summary>
-		/// <value>
-		/// The rotation angle in radians.
-		/// </value>
+		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 		public double Rotation { get; set; }
 
@@ -103,7 +97,7 @@ namespace ACadSharp.Entities
 
 				if (this.Document != null)
 				{
-					this._style = this.updateTable(value, this.Document.TextStyles);
+					this._style = CadObject.updateCollection(value, this.Document.TextStyles);
 				}
 				else
 				{
@@ -159,6 +153,7 @@ namespace ACadSharp.Entities
 		private double _height = 0.0;
 		private TextStyle _style = TextStyle.Default;
 		private string _value = string.Empty;
+		private TextMirrorFlag _mirror = TextMirrorFlag.None;
 
 		public TextEntity() : base()
 		{
@@ -200,29 +195,29 @@ namespace ACadSharp.Entities
 			{
 				if (XY.Cross(newUvector, newVvector) < 0)
 				{
-					newObliqueAngle = 90 - (newRotation - newObliqueAngle);
+					newObliqueAngle = MathHelper.HalfPI - (newRotation - newObliqueAngle);
 					if (!(this.HorizontalAlignment.HasFlag(TextHorizontalAlignment.Fit)
 						|| this.HorizontalAlignment.HasFlag(TextHorizontalAlignment.Aligned)))
 					{
-						newRotation += 180;
+						newRotation += Math.PI;
 					}
 
-					this.Mirror = this.Mirror.RemoveFlag(TextMirrorFlag.Backward);
+					this._mirror.RemoveFlag(TextMirrorFlag.Backward);
 				}
 				else
 				{
-					newObliqueAngle = 90 + (newRotation - newObliqueAngle);
+					newObliqueAngle = MathHelper.HalfPI + (newRotation - newObliqueAngle);
 				}
 			}
 			else
 			{
 				if (XY.Cross(newUvector, newVvector) < 0.0)
 				{
-					newObliqueAngle = 90 - (newRotation - newObliqueAngle);
+					newObliqueAngle = MathHelper.HalfPI - (newRotation - newObliqueAngle);
 
 					if (newUvector.Dot(uv[0]) < 0.0)
 					{
-						newRotation += 180;
+						newRotation += Math.PI;
 
 						switch (this.HorizontalAlignment)
 						{
@@ -249,24 +244,25 @@ namespace ACadSharp.Entities
 				}
 				else
 				{
-					newObliqueAngle = 90 + (newRotation - newObliqueAngle);
+					newObliqueAngle = MathHelper.HalfPI + (newRotation - newObliqueAngle);
 				}
 			}
 
 			// the oblique angle is defined between -85 and 85 degrees
-			newObliqueAngle = MathHelper.NormalizeAngle(newObliqueAngle);
-			if (newObliqueAngle > 180)
+			double maxOblique = MathHelper.DegToRad(85);
+			double minOblique = -maxOblique;
+			if (newObliqueAngle > Math.PI)
 			{
-				newObliqueAngle = 180 - newObliqueAngle;
+				newObliqueAngle = Math.PI - newObliqueAngle;
 			}
 
-			if (newObliqueAngle < -85)
+			if (newObliqueAngle < minOblique)
 			{
-				newObliqueAngle = -85;
+				newObliqueAngle = minOblique;
 			}
-			else if (newObliqueAngle > 85)
+			else if (newObliqueAngle > maxOblique)
 			{
-				newObliqueAngle = 85;
+				newObliqueAngle = maxOblique;
 			}
 
 			// the height must be greater than zero, the cos is always positive between -85 and 85
@@ -310,7 +306,7 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._style = this.updateTable(this.Style, doc.TextStyles);
+			this._style = CadObject.updateCollection(this.Style, doc.TextStyles);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 		}

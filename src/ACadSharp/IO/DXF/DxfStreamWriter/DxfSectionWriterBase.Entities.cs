@@ -2,9 +2,7 @@
 using ACadSharp.Objects;
 using CSMath;
 using System;
-using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace ACadSharp.IO.DXF
 {
@@ -13,14 +11,9 @@ namespace ACadSharp.IO.DXF
 		protected void writeEntity<T>(T entity)
 			where T : Entity
 		{
-			//TODO: Implement complex entities in a separated branch
-			switch (entity)
+			if (!this.isEntitySupported(entity))
 			{
-				case TableEntity:
-				case Solid3D:
-				case UnknownEntity:
-					this.notify($"Entity type not implemented : {entity.GetType().FullName}", NotificationType.NotImplemented);
-					return;
+				return;
 			}
 
 			this._writer.Write(DxfCode.Start, entity.ObjectName);
@@ -73,11 +66,30 @@ namespace ACadSharp.IO.DXF
 				case MultiLeader multiLeader:
 					this.writeMultiLeader(multiLeader);
 					break;
+				case Ole2Frame ole2Frame:
+					this.writeOle2Frame(ole2Frame);
+					break;
+				case PdfUnderlay pdfUnderlay:
+					this.writePdfUnderlay<PdfUnderlay, PdfUnderlayDefinition>(pdfUnderlay);
+					break;
 				case Point point:
 					this.writePoint(point);
 					break;
-				case Polyline polyline:
-					this.writePolyline(polyline);
+				case IPolyline polyline:
+					switch (polyline)
+					{
+						case Polyline2D polyline2D:
+							this.writePolyline(polyline2D);
+							break;
+						case Polyline3D polyline3D:
+							this.writePolyline(polyline3D);
+							break;
+						case PolyfaceMesh polyfaceMesh:
+							this.writePolyline(polyfaceMesh);
+							break;
+						default:
+							throw new NotImplementedException($"Polyline not implemented {polyline.GetType().FullName}");
+					}
 					break;
 				case RasterImage rasterImage:
 					this.writeCadImage(rasterImage);
@@ -119,6 +131,25 @@ namespace ACadSharp.IO.DXF
 			this.writeExtendedData(entity.ExtendedData);
 		}
 
+		private bool isEntitySupported(Entity entity)
+		{
+			switch (entity)
+			{
+				case Shape:
+					return this.Configuration.WriteShapes;
+				case ProxyEntity:
+				case TableEntity:
+				case UnknownEntity:
+				case Solid3D:
+				case CadBody:
+				case Region:
+					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
+					return false;
+				default:
+					return true;
+			}
+		}
+
 		private void writeArc(Arc arc)
 		{
 			DxfClassMap map = DxfClassMap.Create<Arc>();
@@ -129,6 +160,100 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(50, arc.StartAngle, map);
 			this._writer.Write(51, arc.EndAngle, map);
+		}
+
+		private void writeAttributeBase(AttributeBase att)
+		{
+			this._writer.Write(2, att.Tag);
+
+			this._writer.Write(70, (short)att.Flags);
+			this._writer.Write(73, (short)0);
+
+			if (att.VerticalAlignment != 0)
+			{
+				this._writer.Write(74, (short)att.VerticalAlignment);
+			}
+
+			if (this.Version > ACadVersion.AC1027 && att.AttributeType != AttributeType.SingleLine)
+			{
+				this._writer.Write(71, (short)att.AttributeType);
+				this._writer.Write(72, (short)0);
+				this._writer.Write(11, att.AlignmentPoint);
+
+				if (att.MText != null)
+				{
+					this._writer.Write(101, "Embedded Object");
+					this.writeMText(att.MText, false);
+				}
+			}
+		}
+
+		private void writeBoundaryPath(Hatch.BoundaryPath path)
+		{
+			this._writer.Write(92, (int)path.Flags);
+
+			if (!path.Flags.HasFlag(BoundaryPathFlags.Polyline))
+			{
+				this._writer.Write(93, path.Edges.Count);
+			}
+
+			foreach (Hatch.BoundaryPath.Edge edge in path.Edges)
+			{
+				this.writeHatchBoundaryPathEdge(edge);
+			}
+
+			this._writer.Write(97, path.Entities.Count);
+			foreach (Entity entity in path.Entities)
+			{
+				this._writer.WriteHandle(330, entity);
+			}
+		}
+
+		private void writeCadImage<T>(T image)
+			where T : CadWipeoutBase
+		{
+			DxfClassMap map = DxfClassMap.Create<T>();
+
+			this._writer.Write(DxfCode.Subclass, image.SubclassMarker);
+
+			this._writer.Write(90, image.ClassVersion, map);
+
+			this._writer.Write(10, image.InsertPoint, map);
+			this._writer.Write(11, image.UVector, map);
+			this._writer.Write(12, image.VVector, map);
+			this._writer.Write(13, image.Size, map);
+
+			this._writer.WriteHandle(340, image.Definition, map);
+
+			this._writer.Write(70, (short)image.Flags, map);
+
+			this._writer.Write(280, image.ClippingState, map);
+			this._writer.Write(281, image.Brightness, map);
+			this._writer.Write(282, image.Contrast, map);
+			this._writer.Write(283, image.Fade, map);
+
+			//this._writer.WriteHandle(360, image.DefinitionReactor, map);
+
+			this._writer.Write(71, (short)image.ClipType, map);
+
+			if (image.ClipType == ClipType.Polygonal)
+			{
+				this._writer.Write(91, image.ClipBoundaryVertices.Count + 1, map);
+				foreach (XY bv in image.ClipBoundaryVertices)
+				{
+					this._writer.Write(14, bv, map);
+				}
+
+				this._writer.Write(14, image.ClipBoundaryVertices.First(), map);
+			}
+			else
+			{
+				this._writer.Write(91, image.ClipBoundaryVertices.Count, map);
+				foreach (XY bv in image.ClipBoundaryVertices)
+				{
+					this._writer.Write(14, bv, map);
+				}
+			}
 		}
 
 		private void writeCircle(Circle circle)
@@ -211,37 +336,6 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void writeDimensionLinear(DimensionLinear linear)
-		{
-			DxfClassMap map = DxfClassMap.Create<DimensionLinear>();
-
-			this._writer.Write(50, linear.Rotation, map);
-
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.LinearDimension);
-		}
-
-		private void writeDimensionRadius(DimensionRadius radius)
-		{
-			DxfClassMap map = DxfClassMap.Create<DimensionRadius>();
-
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.RadialDimension);
-
-			this._writer.Write(15, radius.AngleVertex, map);
-
-			this._writer.Write(40, radius.LeaderLength, map);
-		}
-
-		private void writeDimensionDiameter(DimensionDiameter diameter)
-		{
-			DxfClassMap map = DxfClassMap.Create<DimensionDiameter>();
-
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.DiametricDimension);
-
-			this._writer.Write(15, diameter.AngleVertex, map);
-
-			this._writer.Write(40, diameter.LeaderLength, map);
-		}
-
 		private void writeDimensionAngular2Line(DimensionAngular2Line angular2Line)
 		{
 			DxfClassMap map = DxfClassMap.Create<DimensionAngular2Line>();
@@ -265,6 +359,26 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(15, angular3Pt.AngleVertex, map);
 		}
 
+		private void writeDimensionDiameter(DimensionDiameter diameter)
+		{
+			DxfClassMap map = DxfClassMap.Create<DimensionDiameter>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.DiametricDimension);
+
+			this._writer.Write(15, diameter.AngleVertex, map);
+
+			this._writer.Write(40, diameter.LeaderLength, map);
+		}
+
+		private void writeDimensionLinear(DimensionLinear linear)
+		{
+			DxfClassMap map = DxfClassMap.Create<DimensionLinear>();
+
+			this._writer.Write(50, linear.Rotation, map);
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.LinearDimension);
+		}
+
 		private void writeDimensionOrdinate(DimensionOrdinate ordinate)
 		{
 			DxfClassMap map = DxfClassMap.Create<DimensionOrdinate>();
@@ -273,6 +387,49 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(13, ordinate.FeatureLocation, map);
 			this._writer.Write(14, ordinate.LeaderEndpoint, map);
+		}
+
+		private void writeDimensionRadius(DimensionRadius radius)
+		{
+			DxfClassMap map = DxfClassMap.Create<DimensionRadius>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.RadialDimension);
+
+			this._writer.Write(15, radius.AngleVertex, map);
+
+			this._writer.Write(40, radius.LeaderLength, map);
+		}
+
+		private void writeEllipse(Ellipse ellipse)
+		{
+			DxfClassMap map = DxfClassMap.Create<Ellipse>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Ellipse);
+
+			this._writer.Write(10, ellipse.Center, map);
+
+			this._writer.Write(11, ellipse.MajorAxisEndPoint, map);
+
+			this._writer.Write(210, ellipse.Normal, map);
+
+			this._writer.Write(39, ellipse.Thickness, map);
+			this._writer.Write(40, ellipse.RadiusRatio, map);
+			this._writer.Write(41, ellipse.StartParameter, map);
+			this._writer.Write(42, ellipse.EndParameter, map);
+		}
+
+		private void writeFace3D(Face3D face)
+		{
+			DxfClassMap map = DxfClassMap.Create<Face3D>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Face3d);
+
+			this._writer.Write(10, face.FirstCorner, map);
+			this._writer.Write(11, face.SecondCorner, map);
+			this._writer.Write(12, face.ThirdCorner, map);
+			this._writer.Write(13, face.FourthCorner, map);
+
+			this._writer.Write(70, (short)face.Flags, map);
 		}
 
 		private void writeHatch(Hatch hatch)
@@ -314,27 +471,6 @@ namespace ACadSharp.IO.DXF
 			//TODO: Implement HatchGradientPattern
 		}
 
-		private void writeBoundaryPath(Hatch.BoundaryPath path)
-		{
-			this._writer.Write(92, (int)path.Flags);
-
-			if (!path.Flags.HasFlag(BoundaryPathFlags.Polyline))
-			{
-				this._writer.Write(93, path.Edges.Count);
-			}
-
-			foreach (Hatch.BoundaryPath.Edge edge in path.Edges)
-			{
-				this.writeHatchBoundaryPathEdge(edge);
-			}
-
-			this._writer.Write(97, path.Entities.Count);
-			foreach (Entity entity in path.Entities)
-			{
-				this._writer.WriteHandle(330, entity);
-			}
-		}
-
 		private void writeHatchBoundaryPathEdge(Hatch.BoundaryPath.Edge edge)
 		{
 			if (edge is not Hatch.BoundaryPath.Polyline)
@@ -357,7 +493,7 @@ namespace ACadSharp.IO.DXF
 					this._writer.Write(40, ellipse.MinorToMajorRatio);
 					this._writer.Write(50, ellipse.StartAngle);
 					this._writer.Write(51, ellipse.EndAngle);
-					this._writer.Write(73, ellipse.IsCounterclockwise ? (short)1 : (short)0);
+					this._writer.Write(73, ellipse.CounterClockWise ? (short)1 : (short)0);
 					break;
 				case Hatch.BoundaryPath.Line line:
 					this._writer.Write(10, line.Start);
@@ -431,38 +567,6 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void writeEllipse(Ellipse ellipse)
-		{
-			DxfClassMap map = DxfClassMap.Create<Ellipse>();
-
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Ellipse);
-
-			this._writer.Write(10, ellipse.Center, map);
-
-			this._writer.Write(11, ellipse.EndPoint, map);
-
-			this._writer.Write(210, ellipse.Normal, map);
-
-			this._writer.Write(39, ellipse.Thickness, map);
-			this._writer.Write(40, ellipse.RadiusRatio, map);
-			this._writer.Write(41, ellipse.StartParameter, map);
-			this._writer.Write(42, ellipse.EndParameter, map);
-		}
-
-		private void writeFace3D(Face3D face)
-		{
-			DxfClassMap map = DxfClassMap.Create<Face3D>();
-
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Face3d);
-
-			this._writer.Write(10, face.FirstCorner, map);
-			this._writer.Write(11, face.SecondCorner, map);
-			this._writer.Write(12, face.ThirdCorner, map);
-			this._writer.Write(13, face.FourthCorner, map);
-
-			this._writer.Write(70, (short)face.Flags, map);
-		}
-
 		private void writeInsert(Insert insert)
 		{
 			DxfClassMap map = DxfClassMap.Create<Insert>();
@@ -478,7 +582,6 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(43, insert.ZScale, map);
 
 			this._writer.Write(50, insert.Rotation, map);
-
 
 			this._writer.Write(70, (short)insert.ColumnCount);
 			this._writer.Write(71, (short)insert.RowCount);
@@ -534,6 +637,43 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(211, leader.HorizontalDirection, map);
 			this._writer.Write(212, leader.BlockOffset, map);
 			this._writer.Write(213, leader.AnnotationOffset, map);
+		}
+
+		private void writeLeaderLine(MultiLeaderObjectContextData.LeaderLine leaderLine)
+		{
+			this._writer.Write(304, "LEADER_LINE{");
+
+			foreach (XYZ point in leaderLine.Points)
+			{
+				this._writer.Write(10, point);
+			}
+			this._writer.Write(91, leaderLine.Index);
+
+			this._writer.Write(305, "}");   //	LEADER_Line
+		}
+
+		private void writeLeaderRoot(MultiLeaderObjectContextData.LeaderRoot leaderRoot)
+		{
+			this._writer.Write(302, "LEADER{");
+
+			// TODO: true is placeholder
+			this._writer.Write(290, true ? (short)1 : (short)0); // Has Set Last Leader Line Point
+			this._writer.Write(291, true ? (short)1 : (short)0); // Has Set Dogleg Vector
+
+			this._writer.Write(10, leaderRoot.ConnectionPoint);
+
+			this._writer.Write(11, leaderRoot.Direction);
+
+			this._writer.Write(90, leaderRoot.LeaderIndex);
+			this._writer.Write(40, leaderRoot.LandingDistance);
+
+			foreach (MultiLeaderObjectContextData.LeaderLine leaderLine in leaderRoot.Lines)
+			{
+				writeLeaderLine(leaderLine);
+			}
+
+			this._writer.Write(271, 0);
+			this._writer.Write(303, "}");   //	LEADER
 		}
 
 		private void writeLine(Line line)
@@ -638,7 +778,7 @@ namespace ACadSharp.IO.DXF
 
 			if (mLine.Style != null)
 			{
-				this._writer.Write(73, (short)mLine.Style.Elements.Count);
+				this._writer.Write(73, (short)mLine.Style.Elements.Count());
 			}
 
 			this._writer.Write(10, mLine.StartPoint, map);
@@ -703,7 +843,7 @@ namespace ACadSharp.IO.DXF
 
 		private void writeMultiLeader(MultiLeader multiLeader)
 		{
-			MultiLeaderAnnotContext contextData = multiLeader.ContextData;
+			MultiLeaderObjectContextData contextData = multiLeader.ContextData;
 
 			this._writer.Write(100, "AcDbMLeader");
 
@@ -754,7 +894,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(295, 0);
 		}
 
-		private void writeMultiLeaderAnnotContext(MultiLeaderAnnotContext contextData)
+		private void writeMultiLeaderAnnotContext(MultiLeaderObjectContextData contextData)
 		{
 			this._writer.Write(300, "CONTEXT_DATA{");
 			this._writer.Write(40, contextData.ScaleFactor);
@@ -811,7 +951,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(297, contextData.NormalReversed);
 
-			foreach (MultiLeaderAnnotContext.LeaderRoot leaderRoot in contextData.LeaderRoots)
+			foreach (MultiLeaderObjectContextData.LeaderRoot leaderRoot in contextData.LeaderRoots)
 			{
 				writeLeaderRoot(leaderRoot);
 			}
@@ -821,59 +961,66 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(301, "}");       //	CONTEXT_DATA
 		}
 
-		private void writeLeaderRoot(MultiLeaderAnnotContext.LeaderRoot leaderRoot)
+		private void writePdfUnderlay<T, R>(T underlay)
+			where T : UnderlayEntity<R>
+			where R : UnderlayDefinition
 		{
-			this._writer.Write(302, "LEADER{");
+			DxfClassMap map = DxfClassMap.Create<T>();
 
-			// TODO: true is placeholder
-			this._writer.Write(290, true ? (short)1 : (short)0); // Has Set Last Leader Line Point
-			this._writer.Write(291, true ? (short)1 : (short)0); // Has Set Dogleg Vector
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Underlay);
 
-			this._writer.Write(10, leaderRoot.ConnectionPoint);
+			this._writer.WriteHandle(340, underlay.Definition, map);
 
-			this._writer.Write(11, leaderRoot.Direction);
+			this._writer.Write(10, underlay.InsertPoint, map);
 
-			this._writer.Write(90, leaderRoot.LeaderIndex);
-			this._writer.Write(40, leaderRoot.LandingDistance);
+			this._writer.Write(280, underlay.Flags, map);
+			this._writer.Write(281, underlay.Contrast, map);
+			this._writer.Write(282, underlay.Fade, map);
 
-			foreach (MultiLeaderAnnotContext.LeaderLine leaderLine in leaderRoot.Lines)
+			foreach (XY bv in underlay.ClipBoundaryVertices)
 			{
-				writeLeaderLine(leaderLine);
+				this._writer.Write(11, bv, map);
 			}
-
-			this._writer.Write(271, 0);
-			this._writer.Write(303, "}");   //	LEADER
 		}
 
-		private void writeLeaderLine(MultiLeaderAnnotContext.LeaderLine leaderLine)
+		private void writeOle2Frame(Ole2Frame ole)
 		{
-			this._writer.Write(304, "LEADER_LINE{");
+			DxfClassMap map = DxfClassMap.Create<Ole2Frame>();
 
-			foreach (XYZ point in leaderLine.Points)
-			{
-				this._writer.Write(10, point);
-			}
-			this._writer.Write(91, leaderLine.Index);
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Ole2Frame);
 
-			this._writer.Write(305, "}");   //	LEADER_Line
+			this._writer.Write(70, ole.Version, map);
+			this._writer.Write(3, ole.SourceApplication, map);
+
+			this._writer.Write(10, ole.UpperLeftCorner, map);
+			this._writer.Write(11, ole.LowerRightCorner, map);
+
+			this._writer.Write(71, ole.OleObjectType, map);
+			this._writer.Write(72, ole.IsPaperSpace, map);
+			this._writer.Write(73, 3, map);//Undocumented
+
+			this._writer.Write(90, ole.BinaryData.Length, map);
+			this._writer.Write(310, ole.BinaryData, map);
+			this._writer.Write(1, "OLE");
 		}
 
-		private void writePoint(Point line)
+		private void writePoint(Point point)
 		{
 			DxfClassMap map = DxfClassMap.Create<Point>();
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Point);
 
-			this._writer.Write(10, line.Location, map);
+			this._writer.Write(10, point.Location, map);
 
-			this._writer.Write(39, line.Thickness, map);
+			this._writer.Write(39, point.Thickness, map);
 
-			this._writer.Write(210, line.Normal, map);
+			this._writer.Write(210, point.Normal, map);
 
-			this._writer.Write(50, line.Rotation, map);
+			this._writer.Write(50, point.Rotation, map);
 		}
 
-		private void writePolyline(Polyline polyline)
+		private void writePolyline<T>(Polyline<T> polyline)
+			where T : Entity, IVertex
 		{
 			DxfClassMap map;
 
@@ -905,22 +1052,13 @@ namespace ACadSharp.IO.DXF
 
 			if (polyline.Vertices.Any())
 			{
-				foreach (Vertex v in polyline.Vertices)
+				foreach (T v in polyline.Vertices)
 				{
 					this.writeEntity(v);
 				}
 
 				this.writeSeqend(polyline.Vertices.Seqend);
 			}
-		}
-
-		private void writeSeqend(Seqend seqend)
-		{
-			this._writer.Write(0, seqend.ObjectName);
-			this._writer.Write(5, seqend.Handle);
-			this._writer.Write(330, seqend.Owner.Handle);
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Entity);
-			this._writer.Write(8, seqend.Layer.Name);
 		}
 
 		private void writeRay(Ray ray)
@@ -932,6 +1070,15 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(10, ray.StartPoint, map);
 
 			this._writer.Write(11, ray.Direction, map);
+		}
+
+		private void writeSeqend(Seqend seqend)
+		{
+			this._writer.Write(0, seqend.ObjectName);
+			this._writer.Write(5, seqend.Handle);
+			this._writer.Write(330, seqend.Owner.Handle);
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Entity);
+			this._writer.Write(8, seqend.Layer.Name);
 		}
 
 		private void writeShape(Shape shape)
@@ -997,8 +1144,14 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(43, spline.ControlPointTolerance, map);
 			this._writer.Write(44, spline.FitTolerance, map);
 
-			this._writer.Write(12, spline.StartTangent, map);
-			this._writer.Write(13, spline.EndTangent, map);
+			if (!spline.StartTangent.IsZero())
+			{
+				this._writer.Write(12, spline.StartTangent, map);
+			}
+			if (!spline.EndTangent.IsZero())
+			{
+				this._writer.Write(13, spline.EndTangent, map);
+			}
 
 			foreach (double knot in spline.Knots)
 			{
@@ -1103,28 +1256,6 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(1, tolerance.Text, map);
 		}
 
-		private void writeAttributeBase(AttributeBase att)
-		{
-			this._writer.Write(2, att.Tag);
-
-			this._writer.Write(70, (short)att.Flags);
-			this._writer.Write(73, (short)0);
-
-			if (att.VerticalAlignment != 0)
-			{
-				this._writer.Write(74, (short)att.VerticalAlignment);
-			}
-
-			if (this.Version > ACadVersion.AC1027 && att.MText != null)
-			{
-				this._writer.Write(71, (short)att.AttributeType);
-				this._writer.Write(72, (short)0);
-				this._writer.Write(11, att.AlignmentPoint);
-
-				this.writeMText(att.MText, false);
-			}
-		}
-
 		private void writeVertex(Vertex v)
 		{
 			DxfClassMap map = DxfClassMap.Create<Vertex>();
@@ -1196,53 +1327,6 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(111, vp.UcsXAxis, map);
 
 			this._writer.Write(112, vp.UcsYAxis, map);
-		}
-
-		private void writeCadImage<T>(T image)
-			where T : CadWipeoutBase
-		{
-			DxfClassMap map = DxfClassMap.Create<T>();
-
-			this._writer.Write(DxfCode.Subclass, image.SubclassMarker);
-
-			this._writer.Write(90, image.ClassVersion, map);
-
-			this._writer.Write(10, image.InsertPoint, map);
-			this._writer.Write(11, image.UVector, map);
-			this._writer.Write(12, image.VVector, map);
-			this._writer.Write(13, image.Size, map);
-
-			this._writer.WriteHandle(340, image.Definition, map);
-
-			this._writer.Write(70, (short)image.Flags, map);
-
-			this._writer.Write(280, image.ClippingState, map);
-			this._writer.Write(281, image.Brightness, map);
-			this._writer.Write(282, image.Contrast, map);
-			this._writer.Write(283, image.Fade, map);
-
-			//this._writer.WriteHandle(360, image.DefinitionReactor, map);
-
-			this._writer.Write(71, (short)image.ClipType, map);
-
-			if (image.ClipType == ClipType.Polygonal)
-			{
-				this._writer.Write(91, image.ClipBoundaryVertices.Count + 1, map);
-				foreach (XY bv in image.ClipBoundaryVertices)
-				{
-					this._writer.Write(14, bv, map);
-				}
-
-				this._writer.Write(14, image.ClipBoundaryVertices.First(), map);
-			}
-			else
-			{
-				this._writer.Write(91, image.ClipBoundaryVertices.Count, map);
-				foreach (XY bv in image.ClipBoundaryVertices)
-				{
-					this._writer.Write(14, bv, map);
-				}
-			}
 		}
 
 		private void writeXLine(XLine xline)

@@ -23,7 +23,7 @@ namespace ACadSharp.IO
 		/// <param name="filename">The file to write into.</param>
 		/// <param name="document"></param>
 		/// <param name="binary"></param>
-		public DxfWriter(string filename, CadDocument document, bool binary)
+		public DxfWriter(string filename, CadDocument document, bool binary = false)
 			: this(File.Create(filename), document, binary)
 		{
 		}
@@ -34,7 +34,7 @@ namespace ACadSharp.IO
 		/// <param name="stream">The stream to write into</param>
 		/// <param name="document"></param>
 		/// <param name="binary"></param>
-		public DxfWriter(Stream stream, CadDocument document, bool binary) : base(stream, document)
+		public DxfWriter(Stream stream, CadDocument document, bool binary = false) : base(stream, document)
 		{
 			this.IsBinary = binary;
 		}
@@ -79,31 +79,35 @@ namespace ACadSharp.IO
 		}
 
 		/// <summary>
-		/// Write a <see cref="CadDocument"/> into a file
+		/// Write a <see cref="CadDocument"/> into a file.
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <param name="document"></param>
 		/// <param name="binary"></param>
+		/// <param name="configuration"></param>
 		/// <param name="notification"></param>
-		public static void Write(string filename, CadDocument document, bool binary, NotificationEventHandler notification = null)
+		public static void Write(string filename, CadDocument document, bool binary = false, DxfWriterConfiguration configuration = null, NotificationEventHandler notification = null)
 		{
-			using (DxfWriter writer = new DxfWriter(filename, document, binary))
-			{
-				writer.OnNotification += notification;
-				writer.Write();
-			}
+			Write(File.Create(filename), document, binary, configuration, notification);
 		}
 
 		/// <summary>
-		/// Write a <see cref="CadDocument"/> intio a <see cref="Stream"/>
+		/// Write a <see cref="CadDocument"/> into a <see cref="Stream"/>.
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <param name="document"></param>
 		/// <param name="binary"></param>
-		public static void Write(Stream stream, CadDocument document, bool binary, NotificationEventHandler notification = null)
+		/// <param name="configuration"></param>
+		/// <param name="notification"></param>
+		public static void Write(Stream stream, CadDocument document, bool binary = false, DxfWriterConfiguration configuration = null, NotificationEventHandler notification = null)
 		{
 			using (DxfWriter writer = new DxfWriter(stream, document, binary))
 			{
+				if (configuration != null)
+				{
+					writer.Configuration = configuration;
+				}
+
 				writer.OnNotification += notification;
 				writer.Write();
 			}

@@ -11,13 +11,13 @@ namespace ACadSharp.IO.DXF
 	{
 		public DxfReaderConfiguration Configuration { get; }
 
-		public CadBlockRecordTemplate ModelSpaceTemplate { get; set; }
-
-		public HashSet<ulong> ModelSpaceEntities { get; } = new();
-
 		public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
 
 		public override bool KeepUnknownNonGraphicalObjects => this.Configuration.KeepUnknownNonGraphicalObjects;
+
+		public HashSet<Entity> ModelSpaceEntities { get; } = new();
+
+		public CadBlockRecordTemplate ModelSpaceTemplate { get; set; }
 
 		public DxfDocumentBuilder(ACadVersion version, CadDocument document, DxfReaderConfiguration configuration) : base(version, document)
 		{
@@ -34,7 +34,9 @@ namespace ACadSharp.IO.DXF
 				this.AddTemplate(this.ModelSpaceTemplate);
 			}
 
-			this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(this.ModelSpaceEntities);
+			this.createMissingHandles();
+
+			this.ModelSpaceTemplate.OwnedObjectsHandlers.UnionWith(this.ModelSpaceEntities.Select(o => o.Handle));
 
 			this.RegisterTables();
 
@@ -49,6 +51,11 @@ namespace ACadSharp.IO.DXF
 			}
 
 			base.BuildDocument();
+
+			if (this.Configuration.CreateDefaults)
+			{
+				this.DocumentToBuild.CreateDefaults();
+			}
 		}
 
 		public List<Entity> BuildEntities()
@@ -78,6 +85,8 @@ namespace ACadSharp.IO.DXF
 			if (template.CadObject.Owner != null || template.CadObject is CadDictionary || !template.OwnerHandle.HasValue)
 				return;
 
+			return;
+
 			if (this.TryGetObjectTemplate(template.OwnerHandle, out CadTemplate owner))
 			{
 				switch (owner)
@@ -89,13 +98,13 @@ namespace ACadSharp.IO.DXF
 						//The entries should be assigned in the blocks or entities section
 						break;
 					case CadPolyLineTemplate pline when template.CadObject is Vertex v:
-						pline.VertexHandles.Add(v.Handle);
+						pline.OwnedObjectsHandlers.Add(v.Handle);
 						break;
 					case CadPolyLineTemplate pline when template.CadObject is Seqend seqend:
 						pline.SeqendHandle = seqend.Handle;
 						break;
 					case CadInsertTemplate insert when template.CadObject is AttributeEntity att:
-						insert.AttributesHandles.Add(att.Handle);
+						insert.OwnedObjectsHandlers.Add(att.Handle);
 						break;
 					case CadInsertTemplate insert when template.CadObject is Seqend seqend:
 						insert.SeqendHandle = seqend.Handle;

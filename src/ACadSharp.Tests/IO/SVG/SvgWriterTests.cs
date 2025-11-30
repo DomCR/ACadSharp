@@ -1,7 +1,5 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.IO;
-using ACadSharp.Tests.Common;
-using System;
+﻿using ACadSharp.IO;
+using ACadSharp.Objects;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
@@ -10,35 +8,59 @@ namespace ACadSharp.Tests.IO.SVG
 {
 	public class SvgWriterTests : IOTestsBase
 	{
-		public static readonly TheoryData<Type> EntityTypes = new TheoryData<Type>();
+		public static CadDocument Document { get; }
+
+		public static readonly TheoryData<string> LayoutNames = new();
 
 		static SvgWriterTests()
 		{
-			foreach (var item in DataFactory.GetTypes<Entity>())
+			string dwgFile = Path.Combine(TestVariables.SamplesFolder, "svg", $"export_sample.dwg");
+			Document = DwgReader.Read(dwgFile);
+
+			foreach (var item in Document.Layouts)
 			{
-				if (item == typeof(UnknownEntity))
+				if (!item.IsPaperSpace)
 				{
 					continue;
 				}
 
-				EntityTypes.Add(item);
+				LayoutNames.Add(item.Name);
 			}
 		}
 
-		public SvgWriterTests(ITestOutputHelper output) : base(output) { }
+		public SvgWriterTests(ITestOutputHelper output) : base(output)
+		{
+		}
+
+		[Theory]
+		[MemberData(nameof(LayoutNames))]
+		public void WriteLayouts(string name)
+		{
+			Layout layout = Document.Layouts[name];
+
+			using (SvgWriter writer = createWriter($"{name}.svg", Document))
+			{
+				writer.Write(layout);
+			}
+		}
 
 		[Fact]
 		public void WriteModel()
 		{
-			string svg = Path.Combine(TestVariables.OutputSvgFolder, $"model.svg");
-			string dwg = Path.Combine(TestVariables.SamplesFolder, "svg", $"export_sample.dwg");
-			var doc = DwgReader.Read(dwg);
-
-			using (SvgWriter writer = new SvgWriter(svg, doc))
+			using (SvgWriter writer = createWriter($"model.svg", Document))
 			{
-				writer.OnNotification += this.onNotification;
 				writer.Write();
 			}
+		}
+
+		private SvgWriter createWriter(string filename, CadDocument doc)
+		{
+			string output = Path.Combine(TestVariables.OutputSvgFolder, filename);
+
+			var writer = new SvgWriter(output, doc);
+			writer.Configuration = this._svgConfiguration;
+			writer.OnNotification += this.onNotification;
+			return writer;
 		}
 	}
 }

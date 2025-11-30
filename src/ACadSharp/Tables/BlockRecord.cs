@@ -1,12 +1,16 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Types.Units;
-using ACadSharp.Objects;
 using ACadSharp.Blocks;
 using ACadSharp.Entities;
-using System.Linq;
-using System.Collections.Generic;
+using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
+using ACadSharp.Types.Units;
 using CSMath;
+using ACadSharp.XData;
+using CSUtilities.Extensions;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace ACadSharp.Tables
 {
@@ -86,7 +90,7 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Block entity for this record
+		/// Block entity for this record.
 		/// </summary>
 		public Block BlockEntity
 		{
@@ -149,12 +153,36 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
+		/// Blocks with the anonymous flag set are managed by this library or the editing software,
+		/// this may affect the entities or the block properties.
+		/// </summary>
+		public bool IsAnonymous
+		{
+			get
+			{
+				return (this.Flags & BlockTypeFlags.Anonymous) != 0;
+			}
+			set
+			{
+				if (value)
+				{
+					this.Flags |= BlockTypeFlags.Anonymous;
+				}
+				else
+				{
+					this.Flags &= ~BlockTypeFlags.Anonymous;
+				}
+			}
+		}
+
+		/// <summary>
 		/// Active flag if it has an <see cref="Objects.Evaluations.EvaluationGraph"/> attached to it with dynamic expressions.
 		/// </summary>
 		public bool IsDynamic
 		{
 			get
 			{
+				//Doesn't seem to be reliable
 				return this.EvaluationGraph != null;
 			}
 		}
@@ -164,6 +192,21 @@ namespace ACadSharp.Tables
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional, 280)]
 		public bool IsExplodable { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the XRef is unloaded.
+		/// </summary>
+		/// <remarks>
+		/// This flag only takes effect if its an external reference.
+		/// </remarks>
+		public bool IsUnloaded
+		{
+			get { return this.BlockEntity.IsUnloaded; }
+			set
+			{
+				this.BlockEntity.IsUnloaded = value;
+			}
+		}
 
 		/// <summary>
 		/// Associated Layout.
@@ -215,6 +258,31 @@ namespace ACadSharp.Tables
 			}
 		}
 
+		/// <summary>
+		/// Gets the source block. <br/>
+		/// Only present if the block is dynamic and is in the same document as its source.
+		/// </summary>
+		public BlockRecord Source
+		{
+			get
+			{
+				if (this.Document == null
+					|| !this.IsAnonymous
+					|| this.ExtendedData == null)
+				{
+					return null;
+				}
+
+				if (this.ExtendedData.TryGet(AppId.BlockRepBTag, out ExtendedData data))
+				{
+					ExtendedDataHandle handle = data.Records.OfType<ExtendedDataHandle>().FirstOrDefault();
+					return (BlockRecord)handle.ResolveReference(this.Document);
+				}
+
+				return null;
+			}
+		}
+
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.BlockRecord;
 
@@ -234,6 +302,11 @@ namespace ACadSharp.Tables
 				return this.Entities.OfType<Viewport>();
 			}
 		}
+
+		/// <summary>
+		/// Prefix used for naming any anonymous block managed by ACadSharp.
+		/// </summary>
+		public const string AnonymousPrefix = "*A";
 
 		/// <summary>
 		/// Default block record name for the model space
@@ -262,6 +335,33 @@ namespace ACadSharp.Tables
 			this.Entities = new CadObjectCollection<Entity>(this);
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <c>BlockRecord</c> class as an external reference drawing.
+		/// </summary>
+		/// <param name="name">Block name.</param>
+		/// <param name="xrefFile">External reference path name.</param>
+		/// <param name="isOverlay">Specifies if the external reference is an overlay, by default it is set to false.</param>
+		/// <remarks>Only DWG files can be used as externally referenced blocks.</remarks>
+		public BlockRecord(string name, string xrefFile, bool isOverlay = false) : this(name)
+		{
+			if (string.IsNullOrEmpty(xrefFile))
+			{
+				throw new ArgumentNullException(nameof(xrefFile));
+			}
+
+			if (xrefFile.IndexOfAny(Path.GetInvalidPathChars()) == 0)
+			{
+				throw new ArgumentException("File path contains invalid characters.", nameof(xrefFile));
+			}
+
+			this.BlockEntity.XRefPath = xrefFile;
+			this.Flags = BlockTypeFlags.XRef | BlockTypeFlags.XRefResolved;
+			if (isOverlay)
+			{
+				this.Flags |= BlockTypeFlags.XRefOverlay;
+			}
+		}
+
 		internal BlockRecord() : base()
 		{
 			this.BlockEntity = new Block(this);
@@ -283,16 +383,23 @@ namespace ACadSharp.Tables
 		{
 			BlockRecord clone = (BlockRecord)base.Clone();
 
-			Layout layout = (Layout)(this.Layout?.Clone());
-			if (layout is not null)
+			clone.Layout = null;
+
+			if (this.SortEntitiesTable != null)
 			{
-				layout.AssociatedBlock = this;
+				clone.SortEntitiesTable.BlockOwner = clone;
 			}
 
 			clone.Entities = new CadObjectCollection<Entity>(clone);
 			foreach (var item in this.Entities)
 			{
-				clone.Entities.Add((Entity)item.Clone());
+				var e = (Entity)item.Clone();
+				clone.Entities.Add(e);
+
+				if (this.SortEntitiesTable != null)
+				{
+					clone.SortEntitiesTable.Add(e, this.SortEntitiesTable.GetSorterHandle(item));
+				}
 			}
 
 			clone.BlockEntity = (Block)this.BlockEntity.Clone();
@@ -304,7 +411,7 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		///
+		/// Create an entity sorter table for this block.
 		/// </summary>
 		/// <returns></returns>
 		public SortEntitiesTable CreateSortEntitiesTable()
@@ -352,6 +459,31 @@ namespace ACadSharp.Tables
 			}
 
 			return box;
+		}
+
+		/// <summary>
+		/// Get the entities in this block record sorted by it's handle and the sorter assigned if is present.
+		/// </summary>
+		/// <remarks>
+		/// If the record is not in a document the entities will not be sorted unless there is a
+		/// <see cref="SortEntitiesTable"/> assigned to the block.
+		/// </remarks>
+		/// <returns></returns>
+		public IEnumerable<Entity> GetSortedEntities()
+		{
+			if (this.SortEntitiesTable == null)
+			{
+				return this.Entities.OrderBy(e => e.Handle);
+			}
+
+			List<(ulong, Entity)> entities = new();
+			foreach (var entity in this.Entities)
+			{
+				ulong sorter = this.SortEntitiesTable.GetSorterHandle(entity);
+				entities.Add((sorter, entity));
+			}
+
+			return entities.OrderBy(e => e.Item1).Select(e => e.Item2);
 		}
 
 		internal override void AssignDocument(CadDocument doc)

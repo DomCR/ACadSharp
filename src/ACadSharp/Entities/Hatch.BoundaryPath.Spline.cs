@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
-using CSUtilities.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,7 +16,7 @@ namespace ACadSharp.Entities
 				/// </remarks>
 				[DxfCodeValue(96)]
 				//42	Weights(optional, default = 1)	??
-				public List<XYZ> ControlPoints { get; set; } = new List<XYZ>();
+				public List<XYZ> ControlPoints { get; private set; } = new List<XYZ>();
 
 				/// <summary>
 				/// Degree.
@@ -35,13 +34,13 @@ namespace ACadSharp.Entities
 				/// Number of fit data.
 				/// </remarks>
 				[DxfCodeValue(97)]
-				public List<XY> FitPoints { get; set; } = new List<XY>();
+				public List<XY> FitPoints { get; private set; } = new List<XY>();
 
 				/// <summary>
 				/// Number of knots.
 				/// </summary>
 				[DxfCodeValue(95)]
-				public List<double> Knots { get; set; } = new List<double>();
+				public List<double> Knots { get; private set; } = new List<double>();
 
 				/// <summary>
 				/// Periodic.
@@ -64,35 +63,78 @@ namespace ACadSharp.Entities
 				/// <inheritdoc/>
 				public override EdgeType Type => EdgeType.Spline;
 
+				/// <summary>
+				/// Gets a collection of weights derived from the Z-coordinates of the control points.
+				/// </summary>
+				public IEnumerable<double> Weights { get { return this.ControlPoints.Select(c => c.Z); } }
+
 				/// <inheritdoc/>
 				public override void ApplyTransform(Transform transform)
 				{
-					throw new System.NotImplementedException();
+					var arr = this.ControlPoints.ToArray();
+					this.ControlPoints.Clear();
+					for (int i = 0; i < arr.Length; i++)
+					{
+						var weight = arr[i].Z;
+						var v = transform.ApplyTransform(arr[i]);
+						v.Z = weight;
+
+						this.ControlPoints.Add(v);
+					}
+
+					for (int i = 0; i < this.FitPoints.Count; i++)
+					{
+						this.FitPoints[i] = transform.ApplyTransform(this.FitPoints[i].Convert<XYZ>()).Convert<XY>();
+					}
 				}
 
 				/// <inheritdoc/>
-				public override Entity ToEntity()
+				public override Edge Clone()
 				{
-					Entities.Spline spline = new();
-					
-					spline.Degree = this.Degree;
-					spline.Flags = this.Periodic ? spline.Flags.AddFlag(SplineFlags.Periodic) : spline.Flags;
-					spline.Flags = this.Rational ? spline.Flags.AddFlag(SplineFlags.Rational) : spline.Flags;
-					
-					spline.StartTangent = this.StartTangent.Convert<XYZ>();
-					spline.EndTangent = this.EndTangent.Convert<XYZ>();
+					Spline clone = (Spline)base.Clone();
 
-					spline.ControlPoints.AddRange(this.ControlPoints);
-					spline.Weights.AddRange(this.ControlPoints.Select(x => x.Z));
-					spline.FitPoints.AddRange(this.FitPoints.Select(x => x.Convert<XYZ>()));
+					clone.ControlPoints = new List<XYZ>(this.ControlPoints);
+					clone.FitPoints = new List<XY>(this.FitPoints);
+					clone.Knots = new List<double>(this.Knots);
 
-					return spline;
+					return clone;
 				}
 
 				/// <inheritdoc/>
 				public override BoundingBox GetBoundingBox()
 				{
 					return BoundingBox.FromPoints(this.ControlPoints);
+				}
+
+				/// <summary>
+				/// Converts the spline in a list of vertexes.
+				/// </summary>
+				/// <param name="precision">Number of vertexes generated.</param>
+				/// <returns>A list vertexes that represents the spline expressed in object coordinate system.</returns>
+				public List<XYZ> PolygonalVertexes(int precision)
+				{
+					Entities.Spline spline = (Entities.Spline)this.ToEntity();
+					return spline.PolygonalVertexes(precision);
+				}
+
+				/// <inheritdoc/>
+				public override Entity ToEntity()
+				{
+					Entities.Spline spline = new();
+
+					spline.Degree = this.Degree;
+					spline.Flags = this.Periodic ? spline.Flags |= (SplineFlags.Periodic) : spline.Flags;
+					spline.Flags = this.Rational ? spline.Flags |= (SplineFlags.Rational) : spline.Flags;
+
+					spline.StartTangent = this.StartTangent.Convert<XYZ>();
+					spline.EndTangent = this.EndTangent.Convert<XYZ>();
+
+					spline.ControlPoints.AddRange(this.ControlPoints);
+					spline.Weights.AddRange(this.ControlPoints.Select(x => x.Z));
+					spline.FitPoints.AddRange(this.FitPoints.Select(x => x.Convert<XYZ>()));
+					spline.Knots.AddRange(this.Knots);
+
+					return spline;
 				}
 			}
 		}

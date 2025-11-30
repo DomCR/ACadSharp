@@ -215,7 +215,6 @@ namespace ACadSharp.Tests.Common
 							//The dynamic block instance for tables are generated on the spot and not saved.
 							break;
 						}
-
 						this.assertCollectionTree(record.Entities, blockRecordNode.Entities);
 						break;
 					case Layer layer when child is LayerNode layerNode:
@@ -255,7 +254,7 @@ namespace ACadSharp.Tests.Common
 
 			//Assert.Equal(entity.Transparency, node.Transparency);
 			Assert.Equal(entity.LineType.Name, node.LinetypeName, ignoreCase: true);
-			Assert.Equal(entity.LinetypeScale, node.LinetypeScale);
+			Assert.Equal(entity.LineTypeScale, node.LinetypeScale);
 
 			if (this._document.Header.Version > ACadVersion.AC1014)
 			{
@@ -267,6 +266,9 @@ namespace ACadSharp.Tests.Common
 			{
 				case Dimension dim:
 					assertDimensionProperties(dim, node);
+					break;
+				case IPolyline pline:
+					Assert.True(pline.Vertices.Any());
 					break;
 			}
 		}

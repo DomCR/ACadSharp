@@ -17,6 +17,8 @@ namespace ACadSharp.Tests.IO
 
 		public static TheoryData<ACadVersion> Versions { get; }
 
+		protected readonly DocumentIntegrity _docIntegrity;
+
 		protected readonly DwgReaderConfiguration _dwgConfiguration = new DwgReaderConfiguration
 		{
 			Failsafe = false
@@ -26,9 +28,13 @@ namespace ACadSharp.Tests.IO
 		{
 		};
 
-		protected readonly ITestOutputHelper _output;
+		protected readonly SvgConfiguration _svgConfiguration = new SvgConfiguration
+		{
+			DefaultLineWeight = 0.15,
+			LineWeightRatio = 50,
+		};
 
-		protected readonly DocumentIntegrity _docIntegrity;
+		protected readonly ITestOutputHelper _output;
 
 		static IOTestsBase()
 		{
@@ -53,20 +59,6 @@ namespace ACadSharp.Tests.IO
 		{
 			this._output = output;
 			this._docIntegrity = new DocumentIntegrity(output);
-		}
-
-		protected void onNotification(object sender, NotificationEventArgs e)
-		{
-			if (e.NotificationType == NotificationType.Error)
-			{
-				throw e.Exception;
-			}
-
-			_output.WriteLine(e.Message);
-			if (e.Exception != null)
-			{
-				_output.WriteLine(e.Exception.ToString());
-			}
 		}
 
 		protected static void loadLocalSamples(string folder, string ext, TheoryData<FileModel> files)
@@ -131,6 +123,25 @@ namespace ACadSharp.Tests.IO
 				case ACadVersion.Unknown:
 				default:
 					return false;
+			}
+		}
+
+		protected void onNotification(object sender, NotificationEventArgs e)
+		{
+			if (e.NotificationType == NotificationType.Error)
+			{
+				throw e.Exception;
+			}
+
+			if (!TestVariables.LocalEnv)
+			{
+				return;
+			}
+
+			_output.WriteLine(e.Message);
+			if (e.Exception != null)
+			{
+				_output.WriteLine(e.Exception.ToString());
 			}
 		}
 

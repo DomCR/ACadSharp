@@ -1,8 +1,11 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
+using ACadSharp.Text;
 using CSMath;
 using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ACadSharp.Entities
 {
@@ -33,7 +36,7 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// Color to use for background fill when group code 90 is 1.
 		/// </remarks>
-		[DxfCodeValue(63, 420, 430)]
+		[DxfCodeValue(63, 421, 430)]
 		public Color BackgroundColor { get; set; }
 
 		/// <summary>
@@ -122,6 +125,19 @@ namespace ACadSharp.Entities
 		public override ObjectType ObjectType => ObjectType.MTEXT;
 
 		/// <summary>
+		/// Gets the plain text representation of the processed value.
+		/// </summary>
+		/// <remarks>This property processes the underlying value and returns its plain text equivalent. The parsing
+		/// operation may involve removing formatting or extracting meaningful content.</remarks>
+		public string PlainText
+		{
+			get
+			{
+				return TextProcessor.Parse(this.Value, out _);
+			}
+		}
+
+		/// <summary>
 		/// Reference rectangle height.
 		/// </summary>
 		[DxfCodeValue(46)]
@@ -133,15 +149,10 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(41)]
 		public double RectangleWidth { get; set; }
 
-		/// <summary>
-		/// Specifies the rotation angle for the object.
-		/// </summary>
+		/// <inheritdoc/>
 		/// <remarks>
 		/// The rotation is only valid if the <see cref="Normal"/> is set to the Z axis.
 		/// </remarks>
-		/// <value>
-		/// The rotation angle in radians.
-		/// </value>
 		[DxfCodeValue(DxfReferenceType.IsAngle | DxfReferenceType.Ignored, 50)]
 		public double Rotation
 		{
@@ -165,7 +176,7 @@ namespace ACadSharp.Entities
 
 				if (this.Document != null)
 				{
-					this._style = this.updateTable(value, this.Document.TextStyles);
+					this._style = CadObject.updateCollection(value, this.Document.TextStyles);
 				}
 				else
 				{
@@ -190,12 +201,21 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Ignored, 43)]
 		public double VerticalHeight { get; set; } = 0.2;
 
-		private double _height = 1.0;
+		private double _height = 0.18;
 
 		private TextStyle _style = TextStyle.Default;
 
 		/// <inheritdoc/>
 		public MText() : base() { }
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MText"/> class with the specified text value.
+		/// </summary>
+		/// <param name="value">The text value to initialize the instance with. Cannot be <see langword="null"/>.</param>
+		public MText(string value) : base()
+		{
+			this.Value = value;
+		}
 
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
@@ -311,9 +331,33 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Get the text value separated in lines.
+		/// Splits the plain text into an array of lines based on common line break sequences.
 		/// </summary>
-		/// <returns></returns>
+		/// <remarks>The method splits the text using the following line break sequences:  carriage return and line feed
+		/// ("\r\n"), carriage return ("\r"), line feed ("\n"), and the Unicode paragraph separator ("\P").
+		/// The resulting array includes all lines, including empty ones.
+		/// </remarks>
+		/// <returns>An array of strings, where each string represents a line of text. The array may contain empty strings if the plain
+		/// text includes consecutive line break sequences.</returns>
+		public string[] GetPlainTextLines()
+		{
+			return this.PlainText.Split(
+				new string[] { "\r\n", "\r", "\n", "\\P" },
+				StringSplitOptions.None
+			);
+		}
+
+		/// <summary>
+		/// Splits the text into an array of lines based on common line break sequences.
+		/// </summary>
+		/// <remarks>The method splits the text using the following line break sequences: carriage return and line feed
+		/// ("\r\n"), carriage return ("\r"),  line feed ("\n"), and the Unicode paragraph separator ("\P").
+		/// The resulting array includes all lines, including empty ones.
+		/// </remarks>
+		/// <returns>
+		/// An array of strings, where each string represents a line of text. The array may contain empty strings if the
+		/// text includes consecutive line break sequences.
+		/// </returns>
 		public string[] GetTextLines()
 		{
 			return this.Value.Split(
@@ -326,7 +370,7 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._style = this.updateTable(this.Style, doc.TextStyles);
+			this._style = CadObject.updateCollection(this.Style, doc.TextStyles);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 		}

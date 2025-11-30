@@ -34,12 +34,17 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.BlockBegin);
 
-			if (!string.IsNullOrEmpty(block.XrefPath))
+			if (!string.IsNullOrEmpty(block.XRefPath))
 			{
-				this._writer.Write(1, block.XrefPath, map);
+				this._writer.Write(1, block.XRefPath, map);
 			}
 			this._writer.Write(2, block.Name, map);
 			this._writer.Write(70, (short)block.Flags, map);
+
+			if (this.Version >= ACadVersion.AC1015 && block.IsUnloaded)
+			{
+				this._writer.Write(71, block.IsUnloaded ? 1 : 0, map);
+			}
 
 			this._writer.Write(10, block.BasePoint, map);
 

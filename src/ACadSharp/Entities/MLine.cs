@@ -75,7 +75,7 @@ namespace ACadSharp.Entities
 
 				if (this.Document != null)
 				{
-					this._style = this.updateCollection(value, this.Document.MLineStyles);
+					this._style = updateCollection(value, this.Document.MLineStyles);
 				}
 				else
 				{
@@ -133,7 +133,7 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._style = this.updateCollection(this.Style, doc.MLineStyles);
+			this._style = updateCollection(this.Style, doc.MLineStyles);
 
 			this.Document.MLineStyles.OnRemove += this.mLineStylesOnRemove;
 		}

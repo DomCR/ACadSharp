@@ -8,13 +8,15 @@ namespace ACadSharp.IO.Templates
 {
 	internal abstract class CadTemplate : ICadObjectTemplate
 	{
+		public bool HasBeenBuilt { get; private set; } = false;
+
 		public CadObject CadObject { get; set; }
 
 		public ulong? OwnerHandle { get; set; }
 
 		public ulong? XDictHandle { get; set; }
 
-		public List<ulong> ReactorsHandles { get; set; } = new List<ulong>();
+		public HashSet<ulong> ReactorsHandles { get; set; } = new();
 
 		public Dictionary<ulong, List<ExtendedDataRecord>> EDataTemplate { get; set; } = new();
 
@@ -25,7 +27,21 @@ namespace ACadSharp.IO.Templates
 			this.CadObject = cadObject;
 		}
 
-		public virtual void Build(CadDocumentBuilder builder)
+		public void Build(CadDocumentBuilder builder)
+		{
+			if (this.HasBeenBuilt)
+			{
+				return;
+			}
+			else
+			{
+				this.HasBeenBuilt = true;
+			}
+
+			this.build(builder);
+		}
+
+		protected virtual void build(CadDocumentBuilder builder)
 		{
 			if (builder.TryGetCadObject(this.XDictHandle, out CadDictionary cadDictionary))
 			{
@@ -72,12 +88,17 @@ namespace ACadSharp.IO.Templates
 		protected IEnumerable<T> getEntitiesCollection<T>(CadDocumentBuilder builder, ulong firstHandle, ulong endHandle)
 			where T : Entity
 		{
-			List<T> collection = new List<T>();
-
 			CadEntityTemplate template = builder.GetObjectTemplate<CadEntityTemplate>(firstHandle);
+
+			if (template == null)
+			{
+				builder.Notify($"Leading entity with handle {firstHandle} not found.", NotificationType.Warning);
+				template = builder.GetObjectTemplate<CadEntityTemplate>(endHandle);
+			}
+
 			while (template != null)
 			{
-				collection.Add((T)template.CadObject);
+				yield return (T)template.CadObject;
 
 				if (template.CadObject.Handle == endHandle)
 				{
@@ -93,8 +114,6 @@ namespace ACadSharp.IO.Templates
 					template = builder.GetObjectTemplate<CadEntityTemplate>(template.CadObject.Handle + 1);
 				}
 			}
-
-			return collection;
 		}
 
 		protected bool getTableReference<T>(CadDocumentBuilder builder, ulong? handle, string name, out T reference)

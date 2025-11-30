@@ -41,8 +41,41 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Arc;
 
+		/// <summary>
+		/// Sweep of the arc, in radians.
+		/// </summary>
+		public double Sweep
+		{
+			get
+			{
+				double start = this.StartAngle;
+				double end = this.EndAngle;
+				if (end < start)
+				{
+					end += MathHelper.TwoPI;
+				}
+
+				return start - end;
+			}
+		}
+
 		/// <inheritdoc/>
 		public Arc() : base() { }
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Arc"/> class.
+		/// </summary>
+		/// <param name="center"></param>
+		/// <param name="radius"></param>
+		/// <param name="start"></param>
+		/// <param name="end"></param>
+		public Arc(XYZ center, double radius, double start, double end) : base()
+		{
+			this.Center = center;
+			this.Radius = radius;
+			this.StartAngle = start;
+			this.EndAngle = end;
+		}
 
 		/// <summary>
 		/// Creates an arc using 2 points and a bulge.
@@ -111,13 +144,11 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
-			var center = this.Center;
 			var normal = this.Normal;
-			var radius = this.Radius;
 
 			base.ApplyTransform(transform);
 
-			Matrix3 trans = getWorldMatrix(transform, normal, this.Normal, out Matrix3 transOW, out Matrix3 transWO);
+			Matrix3 trans = this.getWorldMatrix(transform, normal, this.Normal, out Matrix3 transOW, out Matrix3 transWO);
 
 			XY start = XY.Rotate(new XY(this.Radius, 0.0), this.StartAngle);
 			XY end = XY.Rotate(new XY(this.Radius, 0.0), this.EndAngle);
@@ -133,7 +164,7 @@ namespace ACadSharp.Entities
 			XY startPoint = new XY(vStart.X, vStart.Y);
 			XY endPoint = new XY(vEnd.X, vEnd.Y);
 
-			if (Math.Sign(trans.m00 * trans.m11 * trans.m22) < 0)
+			if (Math.Sign(trans.M00 * trans.M11 * trans.M22) < 0)
 			{
 				this.EndAngle = startPoint.GetAngle();
 				this.StartAngle = endPoint.GetAngle();
@@ -189,15 +220,13 @@ namespace ACadSharp.Entities
 				throw new ArgumentOutOfRangeException(nameof(precision), precision, "The arc precision must be equal or greater than two.");
 			}
 
-			this.GetEndVertices(out XYZ start, out XYZ end);
-
 			return CurveExtensions.PolygonalVertexes(
 				precision,
 				this.Center,
 				this.StartAngle,
 				this.EndAngle,
-				this.Normal,
-				start - this.Center
+				this.Radius,
+				this.Normal.Normalize()
 			);
 		}
 	}

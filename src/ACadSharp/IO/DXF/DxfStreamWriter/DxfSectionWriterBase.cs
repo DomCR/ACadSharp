@@ -179,7 +179,7 @@ namespace ACadSharp.IO.DXF
 				this._writer.Write(440, Transparency.ToAlphaValue(entity.Transparency));
 			}
 
-			this._writer.Write(48, entity.LinetypeScale, map);
+			this._writer.Write(48, entity.LineTypeScale, map);
 
 			this._writer.Write(60, entity.IsInvisible ? (short)1 : (short)0, map);
 

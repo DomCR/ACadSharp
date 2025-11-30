@@ -1,7 +1,6 @@
 ﻿using ACadSharp.IO.SVG;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
-using System;
 using System.IO;
 using System.Xml;
 
@@ -72,10 +71,11 @@ namespace ACadSharp.IO
 		/// Write the selected layout into a SVG.
 		/// </summary>
 		/// <param name="layout"></param>
-		/// <exception cref="NotImplementedException"></exception>
 		public void Write(Layout layout)
 		{
-			throw new NotImplementedException();
+			this.createWriter();
+
+			this._writer.WriteLayout(layout);
 		}
 
 		private void createWriter()

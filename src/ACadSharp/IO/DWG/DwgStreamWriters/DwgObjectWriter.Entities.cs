@@ -14,17 +14,6 @@ namespace ACadSharp.IO.DWG
 			List<Entity> children = new List<Entity>();
 			Seqend seqend = null;
 
-			//Ignored Entities
-			switch (entity)
-			{
-				case TableEntity:
-				case UnknownEntity:
-				case Solid3D:
-				case Mesh:
-					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
-					return;
-			}
-
 			this.writeCommonEntityData(entity);
 
 			switch (entity)
@@ -89,6 +78,9 @@ namespace ACadSharp.IO.DWG
 				case LwPolyline lwpolyline:
 					this.writeLwPolyline(lwpolyline);
 					break;
+				case Mesh mesh:
+					this.writeMesh(mesh);
+					break;
 				case MLine mLine:
 					this.writeMLine(mLine);
 					break;
@@ -98,27 +90,37 @@ namespace ACadSharp.IO.DWG
 				case MultiLeader multiLeader:
 					this.writeMultiLeader(multiLeader);
 					break;
+				case Ole2Frame ole2Frame:
+					this.writeOle2Frame(ole2Frame);
+					break;
+				case PdfUnderlay pdfUnderlay:
+					this.writePdfUnderlay(pdfUnderlay);
+					break;
 				case Point p:
 					this.writePoint(p);
 					break;
-				case Polyline pline:
+				case IPolyline pline:
 					switch (pline)
 					{
 						case PolyfaceMesh faceMesh:
 							this.writePolyfaceMesh(faceMesh);
 							children.AddRange(faceMesh.Faces);
+							children.AddRange(faceMesh.Vertices);
+							seqend = faceMesh.Vertices.Seqend;
 							break;
 						case Polyline2D pline2d:
 							this.writePolyline2D(pline2d);
+							children.AddRange(pline2d.Vertices);
+							seqend = pline2d.Vertices.Seqend;
 							break;
 						case Polyline3D pline3d:
 							this.writePolyline3D(pline3d);
+							children.AddRange(pline3d.Vertices);
+							seqend = pline3d.Vertices.Seqend;
 							break;
 						default:
 							throw new NotImplementedException($"Polyline not implemented : {entity.GetType().FullName}");
 					}
-					children.AddRange(pline.Vertices);
-					seqend = pline.Vertices.Seqend;
 					break;
 				case Ray ray:
 					this.writeRay(ray);
@@ -187,6 +189,32 @@ namespace ACadSharp.IO.DWG
 			this.registerObject(entity);
 
 			this.writeChildEntities(children, seqend);
+		}
+
+		private void writePdfUnderlay(PdfUnderlay underlay)
+		{
+			this._writer.Write3BitDouble(underlay.Normal);
+
+			this._writer.Write3BitDouble(underlay.InsertPoint);
+
+			this._writer.WriteBitDouble(underlay.Rotation);
+
+			this._writer.WriteBitDouble(underlay.XScale);
+			this._writer.WriteBitDouble(underlay.YScale);
+			this._writer.WriteBitDouble(underlay.ZScale);
+
+			this._writer.WriteByte((byte)underlay.Flags);
+
+			this._writer.WriteByte(underlay.Contrast);
+			this._writer.WriteByte(underlay.Fade);
+
+			this._writer.HandleReference(DwgReferenceType.HardPointer, underlay.Definition);
+
+			this._writer.WriteBitLong(underlay.ClipBoundaryVertices.Count);
+			foreach (var v in underlay.ClipBoundaryVertices)
+			{
+				this._writer.Write2RawDouble(v);
+			}
 		}
 
 		private void writeArc(Arc arc)
@@ -290,6 +318,7 @@ namespace ACadSharp.IO.DWG
 
 			byte flags = 0;
 			flags |= dimension.IsTextUserDefinedLocation ? (byte)0b00 : (byte)0b01;
+			//flags |= 8;
 
 			this._writer.WriteByte(flags);
 
@@ -304,7 +333,7 @@ namespace ACadSharp.IO.DWG
 			//Ins X - scale BD 41 Undoc'd. These apply to the insertion of the
 			//Ins Y - scale BD 42 anonymous block. None of them can be
 			//Ins Z - scale BD 43 dealt with via entget/entmake/entmod.
-			this._writer.Write3BitDouble(new XYZ());
+			this._writer.Write3BitDouble(new XYZ(1));
 			//Ins rotation BD 54 The last 2(43 and 54) are reported by DXFOUT(when not default values).
 			//ALL OF THEM can be set via DXFIN, however.
 			this._writer.WriteBitDouble(0);
@@ -328,9 +357,9 @@ namespace ACadSharp.IO.DWG
 				//Unknown B 73
 				this._writer.WriteBit(value: false);
 				//Flip arrow1 B 74
-				this._writer.WriteBit(value: false);
+				this._writer.WriteBit(dimension.FlipArrow1);
 				//Flip arrow2 B 75
-				this._writer.WriteBit(value: false);
+				this._writer.WriteBit(dimension.FlipArrow2);
 			}
 
 			//Common:
@@ -341,9 +370,7 @@ namespace ACadSharp.IO.DWG
 			//H 3 DIMSTYLE(hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, dimension.Style);
 			//H 2 anonymous BLOCK(hard pointer)
-			//TODO: fix annotative dimensions
-			//this._writer.HandleReference(DwgReferenceType.HardPointer, dimension.Block);
-			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, dimension.Block);
 		}
 
 		private void writeDimensionLinear(DimensionLinear dimension)
@@ -436,7 +463,7 @@ namespace ACadSharp.IO.DWG
 		private void writeEllipse(Ellipse ellipse)
 		{
 			this._writer.Write3BitDouble(ellipse.Center);
-			this._writer.Write3BitDouble(ellipse.EndPoint);
+			this._writer.Write3BitDouble(ellipse.MajorAxisEndPoint);
 			this._writer.Write3BitDouble(ellipse.Normal);
 			this._writer.WriteBitDouble(ellipse.RadiusRatio);
 			this._writer.WriteBitDouble(ellipse.StartParameter);
@@ -603,6 +630,63 @@ namespace ACadSharp.IO.DWG
 					this._writer.WriteBitShort((short)face.Flags);
 				}
 			}
+		}
+
+		private void writeMesh(Mesh mesh)
+		{
+			//71 BS Version
+			this._writer.WriteBitShort(mesh.Version);
+			//72 BS BlendCrease
+			this._writer.WriteBit(mesh.BlendCrease);
+			//91 BL SubdivisionLevel
+			this._writer.WriteBitLong(mesh.SubdivisionLevel);
+
+			//92 BL nvertices
+			this._writer.WriteBitLong(mesh.Vertices.Count);
+			foreach (var vertex in mesh.Vertices)
+			{
+				//10 3BD vertice
+				this._writer.Write3BitDouble(vertex);
+			}
+
+			//Faces
+			var nfaces = mesh.Faces.Sum(f => 1 + f.Length);
+			this._writer.WriteBitLong(nfaces);
+
+			foreach (var face in mesh.Faces)
+			{
+				this._writer.WriteBitLong(face.Length);
+				foreach (int index in face)
+				{
+					this._writer.WriteBitLong(index);
+				}
+			}
+
+			//Edges
+			this._writer.WriteBitLong(mesh.Edges.Count);
+			foreach (var edge in mesh.Edges)
+			{
+				this._writer.WriteBitLong(edge.Start);
+				this._writer.WriteBitLong(edge.End);
+			}
+
+			//Crease
+			this._writer.WriteBitLong(mesh.Edges.Count);
+			foreach (var edge in mesh.Edges)
+			{
+				if (edge.Crease.HasValue)
+				{
+					this._writer.WriteBitDouble(edge.Crease.Value);
+				}
+				else
+				{
+					this._writer.WriteBitDouble(0);
+				}
+			}
+
+			//TODO: investigate last value in mesh
+			//Seen in all meshes, not sure but I think is the override option for meshes
+			this._writer.WriteBitLong(0);
 		}
 
 		private void writeMLine(MLine mline)
@@ -919,7 +1003,7 @@ namespace ACadSharp.IO.DWG
 								//endangle BD 51 endangle
 								this._writer.WriteBitDouble(ellispe.EndAngle);
 								//isccw B 73 1 if counter clockwise; otherwise 0
-								this._writer.WriteBit(ellispe.IsCounterclockwise);
+								this._writer.WriteBit(ellispe.CounterClockWise);
 								break;
 							case Hatch.BoundaryPath.Spline splineEdge:
 								//degree BL 94 degree of the spline
@@ -996,22 +1080,22 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitDouble(hatch.PatternScale);
 				this._writer.WriteBit(hatch.IsDouble);
 
-				_writer.WriteBitShort((short)pattern.Lines.Count);
+				this._writer.WriteBitShort((short)pattern.Lines.Count);
 				foreach (var line in pattern.Lines)
 				{
 					//angle BD 53 line angle
-					_writer.WriteBitDouble(line.Angle);
+					this._writer.WriteBitDouble(line.Angle);
 					//pt0 2BD 43 / 44 pattern through this point(X, Y)
-					_writer.Write2BitDouble(line.BasePoint);
+					this._writer.Write2BitDouble(line.BasePoint);
 					//offset 2BD 45 / 56 pattern line offset
-					_writer.Write2BitDouble(line.Offset);
+					this._writer.Write2BitDouble(line.Offset);
 
 					//  numdashes BS 79 number of dash length items
-					_writer.WriteBitShort((short)line.DashLengths.Count);
+					this._writer.WriteBitShort((short)line.DashLengths.Count);
 					foreach (double dl in line.DashLengths)
 					{
 						//dashlength BD 49 dash length
-						_writer.WriteBitDouble(dl);
+						this._writer.WriteBitDouble(dl);
 					}
 				}
 			}
@@ -1125,6 +1209,31 @@ namespace ACadSharp.IO.DWG
 			this._writer.HandleReference(DwgReferenceType.HardPointer, leader.Style);
 		}
 
+		private void writeOle2Frame(Ole2Frame ole2Frame)
+		{
+			//Flags BS 70
+			this._writer.WriteBitShort(ole2Frame.Version);
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//Mode BS
+				this._writer.WriteBitShort(0);
+			}
+
+			//Common:
+			//Data Length BL-- Bit - pair - coded long giving the length of the data
+			this._writer.WriteBitLong(ole2Frame.BinaryData.Length);
+			this._writer.WriteBytes(ole2Frame.BinaryData);
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//Mode BS
+				this._writer.WriteByte(3);
+			}
+		}
+
 		private void writeMultiLeader(MultiLeader multiLeader)
 		{
 
@@ -1134,7 +1243,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitShort(2);
 			}
 
-			writeMultiLeaderAnnotContext(multiLeader.ContextData);
+			writeMultiLeaderAnnotContextSubObject(true, multiLeader.ContextData);
 
 			//	Multileader Common data
 			//	340 Leader StyleId (handle)
@@ -1228,22 +1337,37 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitShort((short)multiLeader.TextTopAttachment);
 			}
 
-			if (R2013Plus)
+			if (this.R2013Plus)
 			{
 				//	295 Leader extended to text
 				this._writer.WriteBit(multiLeader.ExtendedToText);
 			}
 		}
 
-		private void writeMultiLeaderAnnotContext(MultiLeaderAnnotContext annotContext)
-		{
 
-			//	BL	-	Number of leader roots
+		private void writeMultiLeaderAnnotContextSubObject(bool writeLeaderRootsCount, MultiLeaderObjectContextData annotContext)
+		{
 			int leaderRootCount = annotContext.LeaderRoots.Count;
-			this._writer.WriteBitLong(leaderRootCount);
+			if (writeLeaderRootsCount)
+			{
+				//	BL	-	Number of leader roots
+				this._writer.WriteBitLong(leaderRootCount);
+			}
+			else
+			{
+				this._writer.WriteBitLong(0);
+				this._writer.WriteBit(false);    // b0
+				this._writer.WriteBit(false);    // b1
+				this._writer.WriteBit(false);    // b2
+				this._writer.WriteBit(false);    // b3
+				this._writer.WriteBit(false);    // b4
+				this._writer.WriteBit(leaderRootCount == 2);    // b5
+				this._writer.WriteBit(leaderRootCount == 1);    // b6
+			}
+
 			for (int i = 0; i < leaderRootCount; i++)
 			{
-				writeLeaderRoot(annotContext.LeaderRoots[i]);
+				this.writeLeaderRoot(annotContext.LeaderRoots[i]);
 			}
 
 			//	Common
@@ -1356,25 +1480,25 @@ namespace ACadSharp.IO.DWG
 				//	- Scaling (using scale vector)
 				//	- Translation (using location)
 				var m4 = annotContext.TransformationMatrix;
-				this._writer.WriteBitDouble(m4.m00);
-				this._writer.WriteBitDouble(m4.m10);
-				this._writer.WriteBitDouble(m4.m20);
-				this._writer.WriteBitDouble(m4.m30);
+				this._writer.WriteBitDouble(m4.M00);
+				this._writer.WriteBitDouble(m4.M10);
+				this._writer.WriteBitDouble(m4.M20);
+				this._writer.WriteBitDouble(m4.M30);
 
-				this._writer.WriteBitDouble(m4.m01);
-				this._writer.WriteBitDouble(m4.m11);
-				this._writer.WriteBitDouble(m4.m21);
-				this._writer.WriteBitDouble(m4.m31);
+				this._writer.WriteBitDouble(m4.M01);
+				this._writer.WriteBitDouble(m4.M11);
+				this._writer.WriteBitDouble(m4.M21);
+				this._writer.WriteBitDouble(m4.M31);
 
-				this._writer.WriteBitDouble(m4.m02);
-				this._writer.WriteBitDouble(m4.m12);
-				this._writer.WriteBitDouble(m4.m22);
-				this._writer.WriteBitDouble(m4.m32);
+				this._writer.WriteBitDouble(m4.M02);
+				this._writer.WriteBitDouble(m4.M12);
+				this._writer.WriteBitDouble(m4.M22);
+				this._writer.WriteBitDouble(m4.M32);
 
-				this._writer.WriteBitDouble(m4.m03);
-				this._writer.WriteBitDouble(m4.m13);
-				this._writer.WriteBitDouble(m4.m23);
-				this._writer.WriteBitDouble(m4.m33);
+				this._writer.WriteBitDouble(m4.M03);
+				this._writer.WriteBitDouble(m4.M13);
+				this._writer.WriteBitDouble(m4.M23);
+				this._writer.WriteBitDouble(m4.M33);
 			}
 			//END IF Has contents block
 			//END IF Has text contents
@@ -1397,7 +1521,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private void writeLeaderRoot(MultiLeaderAnnotContext.LeaderRoot leaderRoot)
+		private void writeLeaderRoot(MultiLeaderObjectContextData.LeaderRoot leaderRoot)
 		{
 			//	B		290		Is content valid(ODA writes true)/DXF: Has Set Last Leader Line Point
 			this._writer.WriteBit(leaderRoot.ContentValid);
@@ -1413,7 +1537,7 @@ namespace ACadSharp.IO.DWG
 			//	3BD		12		Break start point
 			//	3BD		13		Break end point
 			this._writer.WriteBitLong(leaderRoot.BreakStartEndPointsPairs.Count);
-			foreach (MultiLeaderAnnotContext.StartEndPointPair startEndPointPair in leaderRoot.BreakStartEndPointsPairs)
+			foreach (MultiLeaderObjectContextData.StartEndPointPair startEndPointPair in leaderRoot.BreakStartEndPointsPairs)
 			{
 				this._writer.Write3BitDouble(startEndPointPair.StartPoint);
 				this._writer.Write3BitDouble(startEndPointPair.EndPoint);
@@ -1427,9 +1551,9 @@ namespace ACadSharp.IO.DWG
 			//	Leader lines
 			//	BL		Number of leader lines
 			this._writer.WriteBitLong(leaderRoot.Lines.Count);
-			foreach (MultiLeaderAnnotContext.LeaderLine leaderLine in leaderRoot.Lines)
+			foreach (MultiLeaderObjectContextData.LeaderLine leaderLine in leaderRoot.Lines)
 			{
-				writeLeaderLine(leaderLine);
+				this.writeLeaderLine(leaderLine);
 			}
 
 			if (this.R2010Plus)
@@ -1439,7 +1563,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private void writeLeaderLine(MultiLeaderAnnotContext.LeaderLine leaderLine)
+		private void writeLeaderLine(MultiLeaderObjectContextData.LeaderLine leaderLine)
 		{
 			//	Points
 			//	BL	-	Number of points
@@ -1462,7 +1586,7 @@ namespace ACadSharp.IO.DWG
 				//	Start/end point pairs
 				//	3BD	12	End point
 				this._writer.WriteBitLong(leaderLine.StartEndPoints.Count);
-				foreach (MultiLeaderAnnotContext.StartEndPointPair sep in leaderLine.StartEndPoints)
+				foreach (MultiLeaderObjectContextData.StartEndPointPair sep in leaderLine.StartEndPoints)
 				{
 					//	3BD	11	Start Point
 					this._writer.Write3BitDouble(sep.StartPoint);
@@ -1609,15 +1733,14 @@ namespace ACadSharp.IO.DWG
 			//Extrusion BE 210
 			this._writer.WriteBitExtrusion(pline.Normal);
 
-			int count = pline.Vertices.Count;
 			//R2004+:
 			if (this.R2004Plus)
 			{
 				//Owned Object Count BL Number of objects owned by this object.
-				this._writer.WriteBitLong(count);
-				for (int i = 0; i < count; i++)
+				this._writer.WriteBitLong(pline.Vertices.Count);
+				foreach (var v in pline.Vertices)
 				{
-					this._writer.HandleReference(DwgReferenceType.HardOwnership, pline.Vertices[i]);
+					this._writer.HandleReference(DwgReferenceType.HardOwnership, v);
 				}
 			}
 
@@ -1741,8 +1864,8 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteRawDouble(solid.ThirdCorner.X);
 			this._writer.WriteRawDouble(solid.ThirdCorner.Y);
 			//4th corner 2RD 13
-			this._writer.WriteRawDouble(solid.FirstCorner.X);
-			this._writer.WriteRawDouble(solid.FirstCorner.Y);
+			this._writer.WriteRawDouble(solid.FourthCorner.X);
+			this._writer.WriteRawDouble(solid.FourthCorner.Y);
 
 			//Extrusion BE 210
 			this._writer.WriteBitExtrusion(solid.Normal);
@@ -1803,23 +1926,27 @@ namespace ACadSharp.IO.DWG
 			if (this.R2013Plus)
 			{
 				//The scenario flag becomes 1 if the knot parameter is Custom or has no fit data, otherwise 2.
-				if (spline.KnotParameterization == KnotParameterization.Custom || spline.FitPoints.Count == 0)
+				if (spline.KnotParametrization == KnotParametrization.Custom || spline.FitPoints.Count == 0)
 				{
 					scenario = 1;
+					//If scenario is 1, the spline flags must not have the UseKnotParameter bit set or the file will be corrupt
+					spline.Flags1 &= ~SplineFlags1.UseKnotParameter;
 				}
 				else
 				{
 					scenario = 2;
+					//If scenario is 2, the spline flags must have the MethodFitPoints and UseKnotParameter bits set or the file will be corrupt
+					spline.Flags1 |= SplineFlags1.MethodFitPoints | SplineFlags1.UseKnotParameter;
 				}
 
 				this._writer.WriteBitLong(scenario);
 				this._writer.WriteBitLong((int)spline.Flags1);
-				this._writer.WriteBitLong((int)spline.KnotParameterization);
+				this._writer.WriteBitLong((int)spline.KnotParametrization);
 			}
 			else
 			{
 				scenario = (spline.FitPoints.Count <= 0) ? 1 : 2;
-				if (scenario == 2 && spline.KnotParameterization != 0)
+				if (scenario == 2 && spline.KnotParametrization != 0)
 				{
 					scenario = 1;
 				}

@@ -8,9 +8,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadAttributeTemplate(AttributeBase entity) : base(entity) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			if (this.MTextTemplate != null)
 			{

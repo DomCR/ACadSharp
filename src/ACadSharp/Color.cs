@@ -3,10 +3,173 @@ using System;
 
 namespace ACadSharp
 {
+	/// <summary>
+	/// Represents an ACI color that also supports true color.
+	/// </summary>
 	public readonly struct Color : IEquatable<Color>
 	{
-		private static readonly byte[][] _indexRgb = new byte[][]
+		/// <summary>
+		/// Defines a default black color.
+		/// </summary>
+		public static Color Black
 		{
+			get { return new Color(250); }
+		}
+
+		/// <summary>
+		/// Defines a default blue color.
+		/// </summary>
+		public static Color Blue
+		{
+			get { return new Color(5); }
+		}
+
+		/// <summary>
+		/// Gets the ByBlock color.
+		/// </summary>
+		public static Color ByBlock
+		{
+			get { return new Color((short)0); }
+		}
+
+		/// <summary>
+		/// This is found in some header variables but is not valid for Entities or Objects
+		/// </summary>
+		public static Color ByEntity
+		{
+			get { return new Color((short)257); }
+		}
+
+		/// <summary>
+		/// Gets the ByLayer color.
+		/// </summary>
+		public static Color ByLayer
+		{
+			get { return new Color((short)256); }
+		}
+
+		/// <summary>
+		/// Defines a default cyan color.
+		/// </summary>
+		public static Color Cyan
+		{
+			get { return new Color(4); }
+		}
+
+		/// <summary>
+		/// Defines a default dark gray color.
+		/// </summary>
+		public static Color DarkGray
+		{
+			get { return new Color(8); }
+		}
+
+		/// <summary>
+		/// Defines a default white/black color.
+		/// </summary>
+		public static Color Default
+		{
+			get { return new Color(7); }
+		}
+
+		/// <summary>
+		/// Defines a default green color.
+		/// </summary>
+		public static Color Green
+		{
+			get { return new Color(3); }
+		}
+
+		/// <summary>
+		/// Defines a default light gray color.
+		/// </summary>
+		public static Color LightGray
+		{
+			get { return new Color(9); }
+		}
+
+		/// <summary>
+		/// Defines a default magenta color.
+		/// </summary>
+		public static Color Magenta
+		{
+			get { return new Color(6); }
+		}
+
+		/// <summary>
+		/// Defines a default red color.
+		/// </summary>
+		public static Color Red
+		{
+			get { return new Color(1); }
+		}
+
+		/// <summary>
+		/// Defines a default yellow color.
+		/// </summary>
+		public static Color Yellow
+		{
+			get { return new Color(2); }
+		}
+
+		/// <summary>
+		/// Blue component of the color
+		/// </summary>
+		public byte B { get { return this.GetRgb()[2]; } }
+
+		/// <summary>
+		/// Green component of the color
+		/// </summary>
+		public byte G { get { return this.GetRgb()[1]; } }
+
+		/// <summary>
+		/// Indexed color.  If the color is stored as a true color, returns -1;
+		/// </summary>
+		public short Index => this.IsTrueColor ? (short)-1 : (short)this._color;
+
+		/// <summary>
+		/// Defines if the color is defined by block.
+		/// </summary>
+		public bool IsByBlock
+		{
+			get { return this.Index == 0; }
+		}
+
+		/// <summary>
+		/// Defines if the color is defined by layer.
+		/// </summary>
+		public bool IsByLayer
+		{
+			get { return this.Index == 256; }
+		}
+
+		/// <summary>
+		/// True if the stored color is a true color.  False if the color is an indexed color.
+		/// </summary>
+		public bool IsTrueColor
+		{
+			get
+			{
+				return this._color > 257 || this._color < 0;
+			}
+		}
+
+		/// <summary>
+		/// Red component of the color
+		/// </summary>
+		public byte R { get { return this.GetRgb()[0]; } }
+
+		/// <summary>
+		/// True color.  If the color is stored as an indexed color, returns -1;
+		/// </summary>
+		public int TrueColor => this.IsTrueColor ? (int)(this._color ^ (1 << 30)) : -1;
+
+		private const int _maxTrueColor = 0b0001_0000_0000_0000_0000_0000_0000;
+
+		private const int _trueColorFlag = 0b0100_0000_0000_0000_0000_0000_0000_0000;
+
+		private static readonly byte[][] _indexRgb = new byte[][]
+																																														{
 			new byte[] { 0, 0, 0 },	//Dummy entry
 			new byte[] { 255, 0, 0 },
 			new byte[] { 255, 255, 0 },
@@ -265,80 +428,9 @@ namespace ACadSharp
 			new byte[] { 255, 255, 255 }
 		};
 
-		private const int _maxTrueColor = 0b0001_0000_0000_0000_0000_0000_0000;  // 1 << 24;
+		// 1 << 24;
 
-		private const int _trueColorFlag = 0b0100_0000_0000_0000_0000_0000_0000_0000;  //1 << 30
-
-		public static Color ByLayer
-		{
-			get { return new Color((short)256); }
-		}
-
-		public static Color ByBlock
-		{
-			get { return new Color((short)0); }
-		}
-
-		/// <summary>
-		/// This is found in some header variables but is not valid for Entities or Objects
-		/// </summary>
-		public static Color ByEntity
-		{
-			get { return new Color((short)257); }
-		}
-
-		/// <summary>
-		/// Defines if the color is defined by layer.
-		/// </summary>
-		public bool IsByLayer
-		{
-			get { return this.Index == 256; }
-		}
-
-		/// <summary>
-		/// Defines if the color is defined by block.
-		/// </summary>
-		public bool IsByBlock
-		{
-			get { return this.Index == 0; }
-		}
-
-		/// <summary>
-		/// Indexed color.  If the color is stored as a true color, returns -1;
-		/// </summary>
-		public short Index => this.IsTrueColor ? (short)-1 : (short)this._color;
-
-		/// <summary>
-		/// True color.  If the color is stored as an indexed color, returns -1;
-		/// </summary>
-		public int TrueColor => this.IsTrueColor ? (int)(this._color ^ (1 << 30)) : -1;
-
-		/// <summary>
-		/// True if the stored color is a true color.  False if the color is an indexed color.
-		/// </summary>
-		public bool IsTrueColor
-		{
-			get
-			{
-				return this._color > 257 || this._color < 0;
-			}
-		}
-
-		/// <summary>
-		/// Red component of the color
-		/// </summary>
-		public byte R { get { return this.GetRgb()[0]; } }
-
-		/// <summary>
-		/// Green component of the color
-		/// </summary>
-		public byte G { get { return this.GetRgb()[1]; } }
-
-		/// <summary>
-		/// Blue component of the color
-		/// </summary>
-		public byte B { get { return this.GetRgb()[2]; } }
-
+		//1 << 30
 		/// <summary>
 		/// Represents the actual stored color.  Either a True Color or an indexed color.
 		/// </summary>
@@ -392,31 +484,6 @@ namespace ACadSharp
 		/// <summary>
 		/// Approximates color from a true color RGB.
 		/// </summary>
-		/// <returns>Approximate RGB color.</returns>
-		public byte GetApproxIndex()
-		{
-			if (this.IsTrueColor)
-			{
-				return Color.ApproxIndex(this.R, this.G, this.B);
-			}
-			else
-			{
-				return (byte)this.Index;
-			}
-		}
-
-		/// <summary>
-		/// Creates a color out of a true color int32.
-		/// </summary>
-		/// <param name="color">True color int 32.</param>
-		public static Color FromTrueColor(uint color)
-		{
-			return new Color(color);
-		}
-
-		/// <summary>
-		/// Approximates color from a true color RGB.
-		/// </summary>
 		/// <param name="r">Red</param>
 		/// <param name="g">Green</param>
 		/// <param name="b">Blue</param>
@@ -441,6 +508,15 @@ namespace ACadSharp
 		}
 
 		/// <summary>
+		/// Creates a color out of a true color int32.
+		/// </summary>
+		/// <param name="color">True color int 32.</param>
+		public static Color FromTrueColor(uint color)
+		{
+			return new Color(color);
+		}
+
+		/// <summary>
 		/// Returns the RGB color code which matches the passed indexed color.
 		/// </summary>
 		/// <returns>Approximate RGB color from indexed color.</returns>
@@ -449,21 +525,38 @@ namespace ACadSharp
 			return _indexRgb[index].AsSpan();
 		}
 
+		/// <inheritdoc/>
+		public bool Equals(Color other)
+		{
+			return this._color == other._color;
+		}
+
+		/// <inheritdoc/>
+		public override bool Equals(object obj)
+		{
+			return obj is Color other && this.Equals(other);
+		}
+
 		/// <summary>
-		/// Returns the RGB color code using the true color value.
+		/// Approximates color from a true color RGB.
 		/// </summary>
-		/// <remarks>
-		/// If the color is not <see cref="IsTrueColor"/> it will return the default values for RGB
-		/// </remarks>
-		/// <returns></returns>
-		public ReadOnlySpan<byte> GetTrueColorRgb()
+		/// <returns>Approximate RGB color.</returns>
+		public byte GetApproxIndex()
 		{
 			if (this.IsTrueColor)
 			{
-				return getRGBfromTrueColor(this._color);
+				return Color.ApproxIndex(this.R, this.G, this.B);
 			}
+			else
+			{
+				return (byte)this.Index;
+			}
+		}
 
-			return default;
+		/// <inheritdoc/>
+		public override int GetHashCode()
+		{
+			return (int)this._color;
 		}
 
 		/// <summary>
@@ -482,22 +575,21 @@ namespace ACadSharp
 			}
 		}
 
-		/// <inheritdoc/>
-		public bool Equals(Color other)
+		/// <summary>
+		/// Returns the RGB color code using the true color value.
+		/// </summary>
+		/// <remarks>
+		/// If the color is not <see cref="IsTrueColor"/> it will return the default values for RGB
+		/// </remarks>
+		/// <returns></returns>
+		public ReadOnlySpan<byte> GetTrueColorRgb()
 		{
-			return this._color == other._color;
-		}
+			if (this.IsTrueColor)
+			{
+				return getRGBfromTrueColor(this._color);
+			}
 
-		/// <inheritdoc/>
-		public override bool Equals(object obj)
-		{
-			return obj is Color other && this.Equals(other);
-		}
-
-		/// <inheritdoc/>
-		public override int GetHashCode()
-		{
-			return (int)this._color;
+			return default;
 		}
 
 		/// <inheritdoc/>
@@ -520,7 +612,6 @@ namespace ACadSharp
 			}
 
 			return $"Indexed Color:{this.Index}";
-
 		}
 
 		private static uint getInt24(byte[] array)
