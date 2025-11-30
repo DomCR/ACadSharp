@@ -5782,7 +5782,7 @@ namespace ACadSharp.IO.DWG
 			var text = DwgStreamReaderBase.Explore(this._textReader);
 #endif
 
-			return null;
+			return template;
 		}
 
 		private CadTemplate readHatch()
