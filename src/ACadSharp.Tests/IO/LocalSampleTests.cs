@@ -44,8 +44,6 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DxfReader.Read(test.Path, this.onNotification);
-
-			DxfWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dxf"), doc);
 		}
 
 		[Theory]
