@@ -86,6 +86,10 @@ namespace ACadSharp.IO.Templates
 						{
 							this.addVertices(builder, v);
 						}
+						else if (builder.TryGetCadObject(handle, out Seqend s))
+						{
+							this.setSeqend(builder, s);
+						}
 						else
 						{
 							builder.Notify($"Vertex {handle} not found for polyline {this.CadObject.Handle}", NotificationType.Warning);
@@ -127,6 +131,10 @@ namespace ACadSharp.IO.Templates
 					else if (e is VertexFaceRecord face)
 					{
 						polyfaceMesh.Faces.Add(face);
+					}
+					else if (e is Seqend seqend)
+					{
+						polyfaceMesh.Vertices.Seqend = seqend;
 					}
 					else
 					{
