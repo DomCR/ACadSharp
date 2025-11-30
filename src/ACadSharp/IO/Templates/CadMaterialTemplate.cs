@@ -8,9 +8,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadMaterialTemplate(Material material) : base(material) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 		}
 	}
 }
