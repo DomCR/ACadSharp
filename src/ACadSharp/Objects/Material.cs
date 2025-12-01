@@ -5,7 +5,7 @@ using CSUtilities.Extensions;
 namespace ACadSharp.Objects
 {
 	[System.Flags]
-	public enum AutoTransformMethodFlags
+	public enum AutoTransformMethodFlags : byte
 	{
 		/// <summary>
 		/// None.
@@ -35,14 +35,14 @@ namespace ACadSharp.Objects
 		Override = 1,
 	}
 
-	public enum MapSource
+	public enum MapSource : byte
 	{
 		UseCurrentScene = 0,
 
 		UseImageFile = 1,
 	}
 
-	public enum ProjectionMethod
+	public enum ProjectionMethod : byte
 	{
 		None = 0,
 
@@ -55,7 +55,7 @@ namespace ACadSharp.Objects
 		Sphere = 4
 	}
 
-	public enum TilingMethod
+	public enum TilingMethod : byte
 	{
 		None = 0,
 
@@ -220,7 +220,7 @@ namespace ACadSharp.Objects
 		/// Tiling method of diffuse map mapper.
 		/// </summary>
 		[DxfCodeValue(74)]
-		public TilingMethod DiffuseMapper { get; set; } = TilingMethod.Tile;
+		public TilingMethod DiffuseTilingMethod { get; set; } = TilingMethod.Tile;
 
 		/// <summary>
 		/// Diffuse map source.

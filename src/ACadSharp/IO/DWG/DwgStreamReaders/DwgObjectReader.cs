@@ -5804,12 +5804,75 @@ namespace ACadSharp.IO.DWG
 				byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
 				material.DiffuseColor = new Color(arr[2], arr[1], arr[0]);
 			}
+
+			//DiffuseMapBlendFactor BD 42
+			material.DiffuseMapBlendFactor = this._mergedReaders.ReadBitDouble();
+			//DiffuseMapSource B 72
+			material.DiffuseMapSource = (MapSource)this._mergedReaders.ReadByte();
+			switch (material.DiffuseMapSource)
+			{
+				case MapSource.UseCurrentScene:
+					break;
+				case MapSource.UseImageFile:
+					//Diffuse map file name(string, default = null string) 3 VT
+					material.DiffuseMapFileName = this._mergedReaders.ReadVariableText();
+					break;
+			}
+
+			//Projection method of diffuse map mapper B 73
+			material.DiffuseProjectionMethod = (ProjectionMethod)this._mergedReaders.ReadByte();
+			//Tiling method of diffuse map mapper B 74
+			material.DiffuseTilingMethod = (TilingMethod)this._mergedReaders.ReadByte();
+			//Auto transform method of diffuse map mapper B 75
+			material.DiffuseAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
+			//Transform matrix of diffuse map mapper BD 43
+			material.DiffuseMatrix = this.readMatrix4();
+
+			//SpecularColorMethod B 70
+			material.SpecularColorMethod = (ColorMethod)this._mergedReaders.ReadByte();
+			//SpecularGlossFactor B 44
+			material.SpecularGlossFactor = this._mergedReaders.ReadBitDouble();
+			if (material.SpecularColorMethod == ColorMethod.Override)
+			{
+				//Only present if override
+				//SpecularColor B 92
+				uint rgb = (uint)this._mergedReaders.ReadBitLong();
+				byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
+				material.SpecularColor = new Color(arr[2], arr[1], arr[0]);
+			}
+
+
+
 #if TEST
 			var obj = DwgStreamReaderBase.Explore(this._objectReader);
 			var text = DwgStreamReaderBase.Explore(this._textReader);
 #endif
 
 			return template;
+		}
+
+		private Matrix4 readMatrix4()
+		{
+			Matrix4 matrix = Matrix4.Identity;
+
+			matrix.M00 = this._mergedReaders.ReadBitDouble();
+			matrix.M01 = this._mergedReaders.ReadBitDouble();
+			matrix.M02 = this._mergedReaders.ReadBitDouble();
+			matrix.M03 = this._mergedReaders.ReadBitDouble();
+			matrix.M10 = this._mergedReaders.ReadBitDouble();
+			matrix.M11 = this._mergedReaders.ReadBitDouble();
+			matrix.M12 = this._mergedReaders.ReadBitDouble();
+			matrix.M13 = this._mergedReaders.ReadBitDouble();
+			matrix.M20 = this._mergedReaders.ReadBitDouble();
+			matrix.M21 = this._mergedReaders.ReadBitDouble();
+			matrix.M22 = this._mergedReaders.ReadBitDouble();
+			matrix.M23 = this._mergedReaders.ReadBitDouble();
+			matrix.M30 = this._mergedReaders.ReadBitDouble();
+			matrix.M31 = this._mergedReaders.ReadBitDouble();
+			matrix.M32 = this._mergedReaders.ReadBitDouble();
+			matrix.M33 = this._mergedReaders.ReadBitDouble();
+
+			return Matrix4.Identity;
 		}
 
 		private CadTemplate readHatch()
