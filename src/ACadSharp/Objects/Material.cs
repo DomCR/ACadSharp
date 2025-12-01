@@ -28,7 +28,7 @@ namespace ACadSharp.Objects
 		IncludeCurrentBlock = 4
 	}
 
-	public enum ColorMethod
+	public enum ColorMethod : byte
 	{
 		Current = 0,
 
@@ -196,7 +196,7 @@ namespace ACadSharp.Objects
 		}
 
 		/// <summary>
-		/// Ambient color method.
+		/// Diffuse color method.
 		/// </summary>
 		[DxfCodeValue(71)]
 		public ColorMethod DiffuseColorMethod { get; set; } = ColorMethod.Current;
