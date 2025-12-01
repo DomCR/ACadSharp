@@ -5830,8 +5830,8 @@ namespace ACadSharp.IO.DWG
 
 			//SpecularColorMethod B 70
 			material.SpecularColorMethod = (ColorMethod)this._mergedReaders.ReadByte();
-			//SpecularGlossFactor B 44
-			material.SpecularGlossFactor = this._mergedReaders.ReadBitDouble();
+			//SpecularColorFactor B 45
+			material.SpecularColorFactor = this._mergedReaders.ReadBitDouble();
 			if (material.SpecularColorMethod == ColorMethod.Override)
 			{
 				//Only present if override
@@ -5841,7 +5841,23 @@ namespace ACadSharp.IO.DWG
 				material.SpecularColor = new Color(arr[2], arr[1], arr[0]);
 			}
 
+			//DiffuseMapBlendFactor BD 46
+			material.SpecularMapBlendFactor = this._mergedReaders.ReadBitDouble();
+			//DiffuseMapSource B 77
+			material.SpecularMapSource = (MapSource)this._mergedReaders.ReadByte();
+			switch (material.SpecularMapSource)
+			{
+				case MapSource.UseCurrentScene:
+					break;
+				case MapSource.UseImageFile:
+					//Specular map file name(string, default = null string) 4 VT
+					material.SpecularMapFileName = this._mergedReaders.ReadVariableText();
+					break;
+			}
 
+			//Ambient and Diffuse don't have specular, this is at the end for specular
+			//DiffuseMapBlendFactor BD 44
+			material.SpecularGlossFactor = this._mergedReaders.ReadBitDouble();
 
 #if TEST
 			var obj = DwgStreamReaderBase.Explore(this._objectReader);
