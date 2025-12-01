@@ -5813,6 +5813,16 @@ namespace ACadSharp.IO.DWG
 
 			//DiffuseMapBlendFactor BD 42
 			material.DiffuseMapBlendFactor = this._mergedReaders.ReadBitDouble();
+
+			//Projection method of diffuse map mapper B 73
+			material.DiffuseProjectionMethod = (ProjectionMethod)this._mergedReaders.ReadByte();
+			//Tiling method of diffuse map mapper B 74
+			material.DiffuseTilingMethod = (TilingMethod)this._mergedReaders.ReadByte();
+			//Auto transform method of diffuse map mapper B 75
+			material.DiffuseAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
+			//Transform matrix of diffuse map mapper BD 43
+			material.DiffuseMatrix = this.readMatrix4();
+
 			//DiffuseMapSource B 72
 			material.DiffuseMapSource = (MapSource)this._mergedReaders.ReadByte();
 			switch (material.DiffuseMapSource)
@@ -5826,24 +5836,15 @@ namespace ACadSharp.IO.DWG
 				case MapSource.Procedural:
 					//AcGiMaterialMap::Source Enumeration contains the missing type
 					throw new NotImplementedException();
-					break;
 			}
-
-			//Projection method of diffuse map mapper B 73
-			material.DiffuseProjectionMethod = (ProjectionMethod)this._mergedReaders.ReadByte();
-			//Tiling method of diffuse map mapper B 74
-			material.DiffuseTilingMethod = (TilingMethod)this._mergedReaders.ReadByte();
-			//Auto transform method of diffuse map mapper B 75
-			material.DiffuseAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
-			//Transform matrix of diffuse map mapper BD 43
-			material.DiffuseMatrix = this.readMatrix4();
 
 			#endregion
 
 			#region Specular
 
-			//SpecularColorMethod B 70
+			//SpecularColorMethod B 76
 			material.SpecularColorMethod = (ColorMethod)this._mergedReaders.ReadByte();
+
 			//SpecularColorFactor B 45
 			material.SpecularColorFactor = this._mergedReaders.ReadBitDouble();
 			if (material.SpecularColorMethod == ColorMethod.Override)
@@ -5855,9 +5856,19 @@ namespace ACadSharp.IO.DWG
 				material.SpecularColor = new Color(arr[2], arr[1], arr[0]);
 			}
 
-			//DiffuseMapBlendFactor BD 46
+			//SpecularMapBlendFactor BD 46
 			material.SpecularMapBlendFactor = this._mergedReaders.ReadBitDouble();
-			//DiffuseMapSource B 77
+
+			//Projection method of specular map mapper B 78
+			material.SpecularProjectionMethod = (ProjectionMethod)this._mergedReaders.ReadByte();
+			//Tiling method of specular map mapper B 79
+			material.SpecularTilingMethod = (TilingMethod)this._mergedReaders.ReadByte();
+			//Auto transform method of specular map mapper B 170
+			material.SpecularAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
+			//Transform matrix of specular map mapper BD 47
+			material.SpecularMatrix = this.readMatrix4();
+
+			//SpecularMapSource B 77
 			material.SpecularMapSource = (MapSource)this._mergedReaders.ReadByte();
 			switch (material.SpecularMapSource)
 			{
@@ -5867,16 +5878,10 @@ namespace ACadSharp.IO.DWG
 					//Specular map file name(string, default = null string) 4 VT
 					material.SpecularMapFileName = this._mergedReaders.ReadVariableText();
 					break;
+				case MapSource.Procedural:
+					//AcGiMaterialMap::Source Enumeration contains the missing type
+					throw new NotImplementedException();
 			}
-
-			//Projection method of specular map mapper B 73
-			material.SpecularProjectionMethod = (ProjectionMethod)this._mergedReaders.ReadByte();
-			//Tiling method of specular map mapper B 74
-			material.SpecularTilingMethod = (TilingMethod)this._mergedReaders.ReadByte();
-			//Auto transform method of specular map mapper B 75
-			material.SpecularAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
-			//Transform matrix of specular map mapper BD 47
-			material.SpecularMatrix = this.readMatrix4();
 
 			//Ambient and Diffuse don't have specular, this is at the end for specular
 			//SpecularGlossFactor BD 44
@@ -5884,9 +5889,19 @@ namespace ACadSharp.IO.DWG
 
 			#endregion
 
-			//ReflectionMapBlendFactor BD 46
+			//ReflectionMapBlendFactor BD 48
 			material.ReflectionMapBlendFactor = this._mergedReaders.ReadBitDouble();
-			//ReflectionMapSource B 77
+
+			//Projection method of Reflection map mapper B 172
+			material.ReflectionProjectionMethod = (ProjectionMethod)this._mergedReaders.ReadByte();
+			//Tiling method of Reflection map mapper B 173
+			material.ReflectionTilingMethod = (TilingMethod)this._mergedReaders.ReadByte();
+			//Auto transform method of Reflection map mapper B 174
+			material.ReflectionAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
+			//Transform matrix of Reflection map mapper BD 49
+			material.ReflectionMatrix = this.readMatrix4();
+
+			//ReflectionMapSource B 171
 			material.ReflectionMapSource = (MapSource)this._mergedReaders.ReadByte();
 			switch (material.ReflectionMapSource)
 			{
@@ -5896,8 +5911,12 @@ namespace ACadSharp.IO.DWG
 					//Reflection map file name(string, default = null string) 6 VT
 					material.ReflectionMapFileName = this._mergedReaders.ReadVariableText();
 					break;
+				case MapSource.Procedural:
+					//AcGiMaterialMap::Source Enumeration contains the missing type
+					throw new NotImplementedException();
 			}
 
+			//ReflectionMapSource BD 140
 			material.Opacity = this._mergedReaders.ReadBitDouble();
 
 #if TEST

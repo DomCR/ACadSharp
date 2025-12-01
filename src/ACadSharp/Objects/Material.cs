@@ -343,7 +343,7 @@ namespace ACadSharp.Objects
 		/// Tiling method of reflection map mapper.
 		/// </summary>
 		[DxfCodeValue(173)]
-		public TilingMethod ReflectionMapper { get; set; } = TilingMethod.Tile;
+		public TilingMethod ReflectionTilingMethod { get; set; } = TilingMethod.Tile;
 
 		/// <summary>
 		/// Reflection map source.
