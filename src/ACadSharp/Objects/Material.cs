@@ -40,6 +40,8 @@ namespace ACadSharp.Objects
 		UseCurrentScene = 0,
 
 		UseImageFile = 1,
+
+		Procedural = 2,
 	}
 
 	public enum ProjectionMethod : byte
@@ -481,7 +483,7 @@ namespace ACadSharp.Objects
 		/// Tiling method of specular map mapper.
 		/// </summary>
 		[DxfCodeValue(79)]
-		public TilingMethod SpecularMapper { get; set; } = TilingMethod.Tile;
+		public TilingMethod SpecularTilingMethod { get; set; } = TilingMethod.Tile;
 
 		/// <summary>
 		/// Specular map source.

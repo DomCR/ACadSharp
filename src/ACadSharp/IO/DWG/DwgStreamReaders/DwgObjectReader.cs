@@ -5779,6 +5779,8 @@ namespace ACadSharp.IO.DWG
 			//Name VT 2
 			material.Description = this._mergedReaders.ReadVariableText();
 
+			#region Ambient
+
 			//AmbientColorMethod B 70
 			material.AmbientColorMethod = (ColorMethod)this._mergedReaders.ReadByte();
 			//AmbientColor B 40
@@ -5791,6 +5793,10 @@ namespace ACadSharp.IO.DWG
 				byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
 				material.AmbientColor = new Color(arr[2], arr[1], arr[0]);
 			}
+
+			#endregion
+
+			#region Diffuse
 
 			//DiffuseColorMethod B 71
 			material.DiffuseColorMethod = (ColorMethod)this._mergedReaders.ReadByte();
@@ -5817,6 +5823,10 @@ namespace ACadSharp.IO.DWG
 					//Diffuse map file name(string, default = null string) 3 VT
 					material.DiffuseMapFileName = this._mergedReaders.ReadVariableText();
 					break;
+				case MapSource.Procedural:
+					//AcGiMaterialMap::Source Enumeration contains the missing type
+					throw new NotImplementedException();
+					break;
 			}
 
 			//Projection method of diffuse map mapper B 73
@@ -5827,6 +5837,10 @@ namespace ACadSharp.IO.DWG
 			material.DiffuseAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
 			//Transform matrix of diffuse map mapper BD 43
 			material.DiffuseMatrix = this.readMatrix4();
+
+			#endregion
+
+			#region Specular
 
 			//SpecularColorMethod B 70
 			material.SpecularColorMethod = (ColorMethod)this._mergedReaders.ReadByte();
@@ -5855,9 +5869,36 @@ namespace ACadSharp.IO.DWG
 					break;
 			}
 
+			//Projection method of specular map mapper B 73
+			material.SpecularProjectionMethod = (ProjectionMethod)this._mergedReaders.ReadByte();
+			//Tiling method of specular map mapper B 74
+			material.SpecularTilingMethod = (TilingMethod)this._mergedReaders.ReadByte();
+			//Auto transform method of specular map mapper B 75
+			material.SpecularAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
+			//Transform matrix of specular map mapper BD 47
+			material.SpecularMatrix = this.readMatrix4();
+
 			//Ambient and Diffuse don't have specular, this is at the end for specular
-			//DiffuseMapBlendFactor BD 44
+			//SpecularGlossFactor BD 44
 			material.SpecularGlossFactor = this._mergedReaders.ReadBitDouble();
+
+			#endregion
+
+			//ReflectionMapBlendFactor BD 46
+			material.ReflectionMapBlendFactor = this._mergedReaders.ReadBitDouble();
+			//ReflectionMapSource B 77
+			material.ReflectionMapSource = (MapSource)this._mergedReaders.ReadByte();
+			switch (material.ReflectionMapSource)
+			{
+				case MapSource.UseCurrentScene:
+					break;
+				case MapSource.UseImageFile:
+					//Reflection map file name(string, default = null string) 6 VT
+					material.ReflectionMapFileName = this._mergedReaders.ReadVariableText();
+					break;
+			}
+
+			material.Opacity = this._mergedReaders.ReadBitDouble();
 
 #if TEST
 			var obj = DwgStreamReaderBase.Explore(this._objectReader);
