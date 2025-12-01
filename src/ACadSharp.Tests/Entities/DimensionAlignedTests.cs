@@ -24,6 +24,14 @@ namespace ACadSharp.Tests.Entities
 			AssertUtils.AreEqual(new XYZ(5, 5, 0), aligned.DefinitionPoint);
 		}
 
+		public override void GetBoundingBoxTest()
+		{
+			var dim = createDim();
+			BoundingBox b = dim.GetBoundingBox();
+
+			Assert.Equal(new BoundingBox(XYZ.Zero, new XYZ(10, 0, 0)), b);
+		}
+
 		protected override DimensionAligned createDim()
 		{
 			DimensionAligned dim = new DimensionAligned(XYZ.Zero, new XYZ(10, 0, 0));

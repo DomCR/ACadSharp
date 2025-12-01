@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Extensions;
 using ACadSharp.Tests.Common;
 using CSMath;
 using Xunit;
@@ -8,7 +9,7 @@ namespace ACadSharp.Tests.Entities
 	public class SplineTests : CommonEntityTests<Spline>
 	{
 		[Fact]
-		public override void BoundingBoxTest()
+		public override void GetBoundingBoxTest()
 		{
 			Spline spline = new Spline();
 
@@ -107,6 +108,52 @@ namespace ACadSharp.Tests.Entities
 			AssertUtils.AreEqual(new XYZ(15, 3.5714, 0), spline.ControlPoints[4].Round(4));
 			AssertUtils.AreEqual(new XYZ(18.3333, -2.1428, 0), spline.ControlPoints[5].Round(4));
 			AssertUtils.AreEqual(new XYZ(20, -5, 0), spline.ControlPoints[6].Round(4));
+		}
+
+		public override void CloneTest()
+		{
+			Spline spline = new Spline();
+
+			spline.ControlPoints.Add(new XYZ(0, 0, 0));
+			spline.ControlPoints.Add(new XYZ(10, 10, 0));
+			spline.ControlPoints.Add(new XYZ(20, 10, 0));
+			spline.ControlPoints.Add(new XYZ(50, 30, 0));
+
+			spline.FitPoints.Add(new XYZ(1, 0, 2));
+			spline.FitPoints.Add(new XYZ(20, 0, 0));
+			spline.FitPoints.Add(new XYZ(20, 30, 0));
+			spline.FitPoints.Add(new XYZ(50, 50, 0));
+
+			spline.Degree = 3;
+
+			spline.Knots.Add(0);
+			spline.Knots.Add(0);
+			spline.Knots.Add(0);
+			spline.Knots.Add(0);
+
+			spline.Knots.Add(1);
+			spline.Knots.Add(1);
+			spline.Knots.Add(1);
+			spline.Knots.Add(1);
+
+			spline.Weights.Add(1);
+			spline.Weights.Add(1);
+			spline.Weights.Add(1);
+			spline.Weights.Add(1);
+
+			Spline clone = spline.CloneTyped();
+
+			CadObjectTestUtils.AssertEntityClone(spline, clone);
+
+			Assert.NotEmpty(clone.ControlPoints);
+			Assert.NotEmpty(clone.Knots);
+			Assert.NotEmpty(clone.FitPoints);
+			Assert.NotEmpty(clone.Weights);
+
+			Assert.Equal(spline.ControlPoints, clone.ControlPoints);
+			Assert.Equal(spline.Knots, clone.Knots);
+			Assert.Equal(spline.FitPoints, clone.FitPoints);
+			Assert.Equal(spline.Weights, clone.Weights);
 		}
 	}
 }

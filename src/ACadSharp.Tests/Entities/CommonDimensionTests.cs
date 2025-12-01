@@ -4,7 +4,7 @@ using Xunit;
 
 namespace ACadSharp.Tests.Entities
 {
-	public abstract class CommonDimensionTests<T>
+	public abstract class CommonDimensionTests<T> : CommonEntityTests<T>
 		where T : Dimension, new()
 	{
 		public abstract DimensionType Type { get; }
