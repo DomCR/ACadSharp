@@ -158,6 +158,14 @@ namespace ACadSharp
 		public ScaleCollection Scales { get; private set; }
 
 		/// <summary>
+		/// The collection of all materials in the drawing.
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadMaterial"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public MaterialCollection Materials { get; private set; }
+
+		/// <summary>
 		/// Accesses drawing properties such as the Title, Subject, Author, and Keywords properties.
 		/// </summary>
 		public CadSummaryInfo SummaryInfo { get; set; }
@@ -488,6 +496,11 @@ namespace ACadSharp
 			if (this.updateCollection(CadDictionary.VariableDictionary, createDictionaries, out CadDictionary variables))
 			{
 				this.DictionaryVariables = new DictionaryVariableCollection(variables);
+			}
+
+			if (this.updateCollection(CadDictionary.AcadMaterial, createDictionaries, out CadDictionary materials))
+			{
+				this.Materials = new MaterialCollection(materials);
 			}
 		}
 

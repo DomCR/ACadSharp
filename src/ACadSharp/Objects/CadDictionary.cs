@@ -219,6 +219,11 @@ namespace ACadSharp.Objects
 			root.TryAdd(new CadDictionary(AcadVisualStyle));
 			root.TryAdd(new CadDictionary(AcadFieldList));
 			root.TryAdd(new CadDictionary(AcadImageDict));
+
+			CadDictionary materials = root.ensureCadDictionaryExist(AcadMaterial);
+			materials.TryAdd(new Material("Global"));
+			materials.TryAdd(new Material("ByLayer"));
+			materials.TryAdd(new Material("ByBlock"));
 		}
 
 		/// <summary>
