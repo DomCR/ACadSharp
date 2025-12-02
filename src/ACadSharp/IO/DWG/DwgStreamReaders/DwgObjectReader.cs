@@ -5889,6 +5889,8 @@ namespace ACadSharp.IO.DWG
 
 			#endregion
 
+			#region Reflection
+
 			//ReflectionMapBlendFactor BD 48
 			material.ReflectionMapBlendFactor = this._mergedReaders.ReadBitDouble();
 
@@ -5916,9 +5918,106 @@ namespace ACadSharp.IO.DWG
 					throw new NotImplementedException();
 			}
 
-			//ReflectionMapSource BD 140
+			//Opacity BD 140
 			material.Opacity = this._mergedReaders.ReadBitDouble();
 
+			#endregion
+
+			#region Opacity
+
+			//OpacityMapBlendFactor BD 141
+			material.OpacityMapBlendFactor = this._mergedReaders.ReadBitDouble();
+
+			//Projection method of Opacity map mapper B 176
+			material.OpacityProjectionMethod = (ProjectionMethod)this._mergedReaders.ReadByte();
+			//Tiling method of Opacity map mapper B 177
+			material.OpacityTilingMethod = (TilingMethod)this._mergedReaders.ReadByte();
+			//Auto transform method of Opacity map mapper B 178
+			material.OpacityAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
+			//Transform matrix of Opacity map mapper BD 142
+			material.OpacityMatrix = this.readMatrix4();
+
+			//OpacityMapSource B 175
+			material.OpacityMapSource = (MapSource)this._mergedReaders.ReadByte();
+			switch (material.OpacityMapSource)
+			{
+				case MapSource.UseCurrentScene:
+					break;
+				case MapSource.UseImageFile:
+					//Opacity map file name(string, default = null string) 7 VT
+					material.OpacityMapFileName = this._mergedReaders.ReadVariableText();
+					break;
+				case MapSource.Procedural:
+					//AcGiMaterialMap::Source Enumeration contains the missing type
+					throw new NotImplementedException();
+			}
+
+			#endregion
+
+			#region Bump
+
+			//BumpMapBlendFactor BD 143
+			material.BumpMapBlendFactor = this._mergedReaders.ReadBitDouble();
+
+			//Projection method of Bump map mapper B 270
+			material.BumpProjectionMethod = (ProjectionMethod)this._mergedReaders.ReadByte();
+			//Tiling method of Bump map mapper B 271
+			material.BumpTilingMethod = (TilingMethod)this._mergedReaders.ReadByte();
+			//Auto transform method of Bump map mapper B 272
+			material.BumpAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
+			//Transform matrix of Bump map mapper BD 144
+			material.BumpMatrix = this.readMatrix4();
+
+			//BumpMapSource B 179
+			material.BumpMapSource = (MapSource)this._mergedReaders.ReadByte();
+			switch (material.BumpMapSource)
+			{
+				case MapSource.UseCurrentScene:
+					break;
+				case MapSource.UseImageFile:
+					//Bump map file name(string, default = null string) 8 VT
+					material.BumpMapFileName = this._mergedReaders.ReadVariableText();
+					break;
+				case MapSource.Procedural:
+					//AcGiMaterialMap::Source Enumeration contains the missing type
+					throw new NotImplementedException();
+			}
+
+			//RefractionIndex BD 145
+			material.RefractionIndex = this._mergedReaders.ReadBitDouble();
+
+			#endregion
+
+			#region Refraction
+
+			//RefractionMapBlendFactor BD 146
+			material.RefractionMapBlendFactor = this._mergedReaders.ReadBitDouble();
+
+			//Projection method of Refraction map mapper B 274
+			material.RefractionProjectionMethod = (ProjectionMethod)this._mergedReaders.ReadByte();
+			//Tiling method of Refraction map mapper B 275
+			material.RefractionTilingMethod = (TilingMethod)this._mergedReaders.ReadByte();
+			//Auto transform method of Refraction map mapper B 276
+			material.RefractionAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
+			//Transform matrix of Refraction map mapper BD 147
+			material.RefractionMatrix = this.readMatrix4();
+
+			//RefractionMapSource B 273
+			material.RefractionMapSource = (MapSource)this._mergedReaders.ReadByte();
+			switch (material.RefractionMapSource)
+			{
+				case MapSource.UseCurrentScene:
+					break;
+				case MapSource.UseImageFile:
+					//Refraction map file name(string, default = null string) 9 VT
+					material.RefractionMapFileName = this._mergedReaders.ReadVariableText();
+					break;
+				case MapSource.Procedural:
+					//AcGiMaterialMap::Source Enumeration contains the missing type
+					throw new NotImplementedException();
+			}
+
+			#endregion
 #if TEST
 			var obj = DwgStreamReaderBase.Explore(this._objectReader);
 			var text = DwgStreamReaderBase.Explore(this._textReader);

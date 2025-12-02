@@ -4,70 +4,6 @@ using CSUtilities.Extensions;
 
 namespace ACadSharp.Objects
 {
-	[System.Flags]
-	public enum AutoTransformMethodFlags : byte
-	{
-		/// <summary>
-		/// None.
-		/// </summary>
-		None = 0,
-
-		/// <summary>
-		/// No auto transform.
-		/// </summary>
-		NoAutoTransform = 1,
-
-		/// <summary>
-		/// Scale mapper to current entity extents; translate mapper to entity origin.
-		/// </summary>
-		ScaleMapper = 2,
-
-		/// <summary>
-		/// Include current block transform in mapper transform.
-		/// </summary>
-		IncludeCurrentBlock = 4
-	}
-
-	public enum ColorMethod : byte
-	{
-		Current = 0,
-
-		Override = 1,
-	}
-
-	public enum MapSource : byte
-	{
-		UseCurrentScene = 0,
-
-		UseImageFile = 1,
-
-		Procedural = 2,
-	}
-
-	public enum ProjectionMethod : byte
-	{
-		None = 0,
-
-		Planar = 1,
-
-		Box = 2,
-
-		Cylinder = 3,
-
-		Sphere = 4
-	}
-
-	public enum TilingMethod : byte
-	{
-		None = 0,
-
-		Tile = 1,
-
-		Crop = 2,
-
-		Clamp = 3
-	}
-
 	/// <summary>
 	/// Represents a <see cref="Material"/> object
 	/// </summary>
@@ -136,7 +72,7 @@ namespace ACadSharp.Objects
 		/// Tiling method of bump map mapper.
 		/// </summary>
 		[DxfCodeValue(271)]
-		public TilingMethod BumpMapper { get; set; } = TilingMethod.Tile;
+		public TilingMethod BumpTilingMethod { get; set; } = TilingMethod.Tile;
 
 		/// <summary>
 		/// Bump map source.
@@ -298,7 +234,7 @@ namespace ACadSharp.Objects
 		/// Tiling method of opacity map mapper.
 		/// </summary>
 		[DxfCodeValue(177)]
-		public TilingMethod OpacityMapper { get; set; } = TilingMethod.Tile;
+		public TilingMethod OpacityTilingMethod { get; set; } = TilingMethod.Tile;
 
 		/// <summary>
 		/// Opacity map source.
@@ -397,7 +333,7 @@ namespace ACadSharp.Objects
 		/// Tiling method of refraction map mapper.
 		/// </summary>
 		[DxfCodeValue(275)]
-		public TilingMethod RefractionMapper { get; set; } = TilingMethod.Tile;
+		public TilingMethod RefractionTilingMethod { get; set; } = TilingMethod.Tile;
 
 		/// <summary>
 		/// Refraction map source.
