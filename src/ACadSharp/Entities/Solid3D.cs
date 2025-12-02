@@ -23,9 +23,7 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Solid3D;
 
-		//70	Modeler format version number(currently = 1)
-		//1	Proprietary data(multiple lines < 255 characters each)
-		//3	Additional lines of proprietary data(if previous group 1 string is greater than 255 characters) (optional)
 		//350	Soft-owner ID/handle to history object
+
 	}
 }

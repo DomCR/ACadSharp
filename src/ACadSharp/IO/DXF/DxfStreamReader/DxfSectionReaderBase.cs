@@ -1372,11 +1372,16 @@ namespace ACadSharp.IO.DXF
 
 		private bool readModelerGeometry(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
+			CadSolid3DTemplate tmp = template as CadSolid3DTemplate;
 			string mapName = string.IsNullOrEmpty(subclass) ? template.CadObject.SubclassMarker : subclass;
 			var geometry = template.CadObject as ModelerGeometry;
 
 			switch (this._reader.Code)
 			{
+				case 1:
+				case 3:
+					geometry.ProprietaryData.AppendLine(this._reader.ValueAsString);
+					return true;
 				case 2:
 					geometry.Guid = new Guid(this._reader.ValueAsString);
 					return true;
