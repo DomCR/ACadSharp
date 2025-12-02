@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
+using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Tests.TestModels;
@@ -62,10 +63,12 @@ namespace ACadSharp.Tests.Common
 
 			//Assert Model layout
 			var layout = doc.Layouts.FirstOrDefault(l => l.Name == Layout.ModelLayoutName);
-
 			this.notNull(layout, "Layout Model is null");
-
 			Assert.True(layout.AssociatedBlock == doc.ModelSpace);
+
+			this.entryNotNull(doc.Materials, "Global");
+			this.entryNotNull(doc.Materials, "ByLayer");
+			this.entryNotNull(doc.Materials, "ByBlock");
 		}
 
 		public void AssertBlockRecords(CadDocument doc)
@@ -335,6 +338,14 @@ namespace ACadSharp.Tests.Common
 		{
 			var record = table[entry];
 			Assert.True(record != null, $"Entry with name {entry} is null for table {table}");
+			Assert.NotNull(record.Document);
+		}
+
+		private void entryNotNull<T>(ObjectDictionaryCollection<T> table, string entry)
+			where T : NonGraphicalObject
+		{
+			var record = table[entry];
+			Assert.True(record != null, $"Entry with name {entry} is null for dictionary {table}");
 			Assert.NotNull(record.Document);
 		}
 	}
