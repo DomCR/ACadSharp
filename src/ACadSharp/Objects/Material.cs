@@ -69,12 +69,6 @@ namespace ACadSharp.Objects
 		public string BumpMapFileName { get; set; }
 
 		/// <summary>
-		/// Tiling method of bump map mapper.
-		/// </summary>
-		[DxfCodeValue(271)]
-		public TilingMethod BumpTilingMethod { get; set; } = TilingMethod.Tile;
-
-		/// <summary>
 		/// Bump map source.
 		/// </summary>
 		[DxfCodeValue(179)]
@@ -91,6 +85,12 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(270)]
 		public ProjectionMethod BumpProjectionMethod { get; set; } = ProjectionMethod.Planar;
+
+		/// <summary>
+		/// Tiling method of bump map mapper.
+		/// </summary>
+		[DxfCodeValue(271)]
+		public TilingMethod BumpTilingMethod { get; set; } = TilingMethod.Tile;
 
 		/// <summary>
 		/// Channel Flags.
@@ -155,12 +155,6 @@ namespace ACadSharp.Objects
 		public string DiffuseMapFileName { get; set; }
 
 		/// <summary>
-		/// Tiling method of diffuse map mapper.
-		/// </summary>
-		[DxfCodeValue(74)]
-		public TilingMethod DiffuseTilingMethod { get; set; } = TilingMethod.Tile;
-
-		/// <summary>
 		/// Diffuse map source.
 		/// </summary>
 		[DxfCodeValue(72)]
@@ -177,6 +171,12 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(73)]
 		public ProjectionMethod DiffuseProjectionMethod { get; set; } = ProjectionMethod.Planar;
+
+		/// <summary>
+		/// Tiling method of diffuse map mapper.
+		/// </summary>
+		[DxfCodeValue(74)]
+		public TilingMethod DiffuseTilingMethod { get; set; } = TilingMethod.Tile;
 
 		/// <summary>
 		/// Material name.
@@ -231,12 +231,6 @@ namespace ACadSharp.Objects
 		public string OpacityMapFileName { get; set; }
 
 		/// <summary>
-		/// Tiling method of opacity map mapper.
-		/// </summary>
-		[DxfCodeValue(177)]
-		public TilingMethod OpacityTilingMethod { get; set; } = TilingMethod.Tile;
-
-		/// <summary>
 		/// Opacity map source.
 		/// </summary>
 		[DxfCodeValue(175)]
@@ -253,6 +247,12 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(176)]
 		public ProjectionMethod OpacityProjectionMethod { get; set; } = ProjectionMethod.Planar;
+
+		/// <summary>
+		/// Tiling method of opacity map mapper.
+		/// </summary>
+		[DxfCodeValue(177)]
+		public TilingMethod OpacityTilingMethod { get; set; } = TilingMethod.Tile;
 
 		/// <summary>
 		/// Auto transform method of reflection map mapper.
@@ -276,12 +276,6 @@ namespace ACadSharp.Objects
 		public string ReflectionMapFileName { get; set; }
 
 		/// <summary>
-		/// Tiling method of reflection map mapper.
-		/// </summary>
-		[DxfCodeValue(173)]
-		public TilingMethod ReflectionTilingMethod { get; set; } = TilingMethod.Tile;
-
-		/// <summary>
 		/// Reflection map source.
 		/// </summary>
 		[DxfCodeValue(171)]
@@ -298,6 +292,12 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(172)]
 		public ProjectionMethod ReflectionProjectionMethod { get; set; } = ProjectionMethod.Planar;
+
+		/// <summary>
+		/// Tiling method of reflection map mapper.
+		/// </summary>
+		[DxfCodeValue(173)]
+		public TilingMethod ReflectionTilingMethod { get; set; } = TilingMethod.Tile;
 
 		/// <summary>
 		/// Auto transform method of refraction map mapper.
@@ -330,12 +330,6 @@ namespace ACadSharp.Objects
 		public string RefractionMapFileName { get; set; }
 
 		/// <summary>
-		/// Tiling method of refraction map mapper.
-		/// </summary>
-		[DxfCodeValue(275)]
-		public TilingMethod RefractionTilingMethod { get; set; } = TilingMethod.Tile;
-
-		/// <summary>
 		/// Refraction map source.
 		/// </summary>
 		[DxfCodeValue(273)]
@@ -352,6 +346,12 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(274)]
 		public ProjectionMethod RefractionProjectionMethod { get; set; } = ProjectionMethod.Planar;
+
+		/// <summary>
+		/// Tiling method of refraction map mapper.
+		/// </summary>
+		[DxfCodeValue(275)]
+		public TilingMethod RefractionTilingMethod { get; set; } = TilingMethod.Tile;
 
 		/// <summary>
 		/// Auto transform method of specular map mapper.
@@ -416,12 +416,6 @@ namespace ACadSharp.Objects
 		public string SpecularMapFileName { get; set; }
 
 		/// <summary>
-		/// Tiling method of specular map mapper.
-		/// </summary>
-		[DxfCodeValue(79)]
-		public TilingMethod SpecularTilingMethod { get; set; } = TilingMethod.Tile;
-
-		/// <summary>
 		/// Specular map source.
 		/// </summary>
 		[DxfCodeValue(77)]
@@ -439,6 +433,12 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(78)]
 		public ProjectionMethod SpecularProjectionMethod { get; set; } = ProjectionMethod.Planar;
 
+		/// <summary>
+		/// Tiling method of specular map mapper.
+		/// </summary>
+		[DxfCodeValue(79)]
+		public TilingMethod SpecularTilingMethod { get; set; } = TilingMethod.Tile;
+
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Material;
 
@@ -447,6 +447,15 @@ namespace ACadSharp.Objects
 		private double _diffuseColorFactor = 1.0;
 
 		private double _specularColorFactor = 1.0;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Material"/> class with the specified name.
+		/// </summary>
+		/// <param name="name">The name of the material. This value cannot be null or empty.</param>
+		public Material(string name) : base(name) { }
+
+		internal Material()
+		{ }
 
 		//460
 		//Color Bleed Scale
