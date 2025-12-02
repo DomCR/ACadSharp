@@ -178,6 +178,9 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(74)]
 		public TilingMethod DiffuseTilingMethod { get; set; } = TilingMethod.Tile;
 
+		[DxfCodeValue(93)]
+		public int IlluminationModel { get; set; } = 0;
+
 		/// <summary>
 		/// Material name.
 		/// </summary>
@@ -298,6 +301,9 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(173)]
 		public TilingMethod ReflectionTilingMethod { get; set; } = TilingMethod.Tile;
+
+		[DxfCodeValue(468)]
+		public double Reflectivity { get; set; } = 0.0;
 
 		/// <summary>
 		/// Auto transform method of refraction map mapper.
@@ -442,6 +448,9 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Material;
 
+		[DxfCodeValue(148)]
+		public double Translucence { get; set; } = 0.0;
+
 		private double _ambientColorFactor = 1.0;
 
 		private double _diffuseColorFactor = 1.0;
@@ -484,9 +493,7 @@ namespace ACadSharp.Objects
 		//293	Materials Anonymous
 		//272	Global Illumination Mode
 		//273	Final Gather Mode
-		//300
-
-		//GenProcName
+		//300	GenProcName
 		//291	GenProcValBool
 		//271	GenProcValInt
 		//469	GenProcValReal
@@ -496,9 +503,6 @@ namespace ACadSharp.Objects
 		//420	GenProcValColorRGB
 		//430	GenProcValColorName
 		//270	Map UTile
-		//148	Translucence
 		//90	Self-Illuminaton
-		//468	Reflectivity
-		//93	Illumination Model
 	}
 }

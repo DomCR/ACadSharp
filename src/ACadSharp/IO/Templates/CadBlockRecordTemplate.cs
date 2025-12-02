@@ -80,6 +80,7 @@ namespace ACadSharp.IO.Templates
 				block.BasePoint = this.CadObject.BlockEntity.BasePoint;
 				block.XRefPath = this.CadObject.BlockEntity.XRefPath;
 				block.Comments = this.CadObject.BlockEntity.Comments;
+				block.IsUnloaded = this.CadObject.BlockEntity.IsUnloaded;
 
 				this.CadObject.BlockEntity = block;
 			}
