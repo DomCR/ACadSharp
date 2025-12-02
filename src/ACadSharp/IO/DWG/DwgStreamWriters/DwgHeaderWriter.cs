@@ -84,7 +84,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2004Pre)
 			{
 				//H : Handle of the current viewport entity header (hard pointer)
-				this._writer.HandleReference(0);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 			}
 
 			//Common:
@@ -841,7 +841,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2004Plus)
 			{
 				//H: DICTIONARY (MATERIALS) (hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.Materials);
 				//H: DICTIONARY (COLORS) (hard pointer)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.Colors);
 			}
