@@ -380,7 +380,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.CurrentDimensionStyle);
 
 			//H: CMLSTYLE (hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.MLineStyles);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.CurrentMLineStyle);
 
 			//R2000+ Only:
 			if (this.R2000Plus)
