@@ -804,7 +804,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R13_15Only)
 			{
 				//H: VIEWPORT ENTITY HEADER CONTROL OBJECT(hard owner)
-				this._writer.HandleReference(DwgReferenceType.HardOwnership, null);
+				this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.VEntityControl);
 			}
 
 			//Common:

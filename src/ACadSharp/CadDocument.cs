@@ -102,6 +102,14 @@ namespace ACadSharp
 		public LineTypesTable LineTypes { get; private set; }
 
 		/// <summary>
+		/// The collection of all materials in the drawing.
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadMaterial"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public MaterialCollection Materials { get; private set; }
+
+		/// <summary>
 		/// The collection of all Multi leader styles in the drawing.
 		/// </summary>
 		/// <remarks>
@@ -158,14 +166,6 @@ namespace ACadSharp
 		public ScaleCollection Scales { get; private set; }
 
 		/// <summary>
-		/// The collection of all materials in the drawing.
-		/// </summary>
-		/// <remarks>
-		/// The collection is null if the <see cref="CadDictionary.AcadMaterial"/> doesn't exist in the root dictionary.
-		/// </remarks>
-		public MaterialCollection Materials { get; private set; }
-
-		/// <summary>
 		/// Accesses drawing properties such as the Title, Subject, Author, and Keywords properties.
 		/// </summary>
 		public CadSummaryInfo SummaryInfo { get; set; }
@@ -189,6 +189,8 @@ namespace ACadSharp
 		/// The collection of all vports in the drawing.
 		/// </summary>
 		public VPortsTable VPorts { get; private set; }
+
+		internal ViewportEntityControl VEntityControl { get; set; }
 
 		//Contains all the objects in the document
 		private readonly Dictionary<ulong, IHandledCadObject> _cadObjects = new Dictionary<ulong, IHandledCadObject>();
