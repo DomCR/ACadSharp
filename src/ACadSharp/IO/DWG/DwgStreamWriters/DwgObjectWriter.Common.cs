@@ -116,6 +116,7 @@ namespace ACadSharp.IO.DWG
 
 			switch (cadObject.ObjectType)
 			{
+				case ObjectType.LAYOUT when this.R2004Pre:
 				case ObjectType.UNLISTED:
 					if (this._document.Classes.TryGetByName(cadObject.ObjectName, out DxfClass dxfClass))
 					{

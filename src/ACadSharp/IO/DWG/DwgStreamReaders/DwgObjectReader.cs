@@ -5356,7 +5356,7 @@ namespace ACadSharp.IO.DWG
 			int numentries = this._objectReader.ReadBitLong();
 			for (int i = 0; i < numentries; ++i)
 			{
-				//Handle refs H NULL(soft pointer)	xdicobjhandle(hard owner)	the apps(soft owner)
+				//Handle refs H NULL(soft pointer)
 				template.EntryHandles.Add(this.handleReference());
 			}
 
@@ -5365,18 +5365,16 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readViewportEntityHeader()
 		{
-			Viewport viewport = new Viewport();
-			CadViewportTemplate template = new CadViewportTemplate(viewport);
+			ViewportEntityHeader viewport = new ViewportEntityHeader();
+			CadViewportEntityHeaderTemplate template = new(viewport);
 
 			this.readCommonNonEntityData(template);
 
 			//Common:
 			//Entry name TV 2
-			viewport.StyleSheetName = this._textReader.ReadVariableText();
+			viewport.Name = this._textReader.ReadVariableText();
 
-			this._objectReader.ReadBit();
-			this._objectReader.ReadBitShort();
-			this._objectReader.ReadBit();
+			this.readXrefDependantBit(template.CadObject);
 
 			//1 flag B The 1 bit of the 70 group
 			this._objectReader.ReadBit();

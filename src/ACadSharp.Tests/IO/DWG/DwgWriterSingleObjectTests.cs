@@ -1,6 +1,5 @@
 ﻿using ACadSharp.IO;
 using ACadSharp.IO.DWG;
-using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -9,6 +8,13 @@ namespace ACadSharp.Tests.IO.DWG
 	public class DwgWriterSingleObjectTests : WriterSingleObjectTests
 	{
 		public DwgWriterSingleObjectTests(ITestOutputHelper output) : base(output) { }
+
+		[Theory()]
+		[MemberData(nameof(Data))]
+		public void WriteCasesAC1015(SingleCaseGenerator data)
+		{
+			this.writeDwgFile(data, ACadVersion.AC1015);
+		}
 
 		[Theory()]
 		[MemberData(nameof(Data))]

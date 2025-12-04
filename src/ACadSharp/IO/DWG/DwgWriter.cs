@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Exceptions;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamWriters;
+using ACadSharp.Tables.Collections;
 using CSUtilities.IO;
 using CSUtilities.Text;
 using System.Collections.Generic;
@@ -48,6 +49,11 @@ namespace ACadSharp.IO
 		public override void Write()
 		{
 			base.Write();
+
+			if(this._version < ACadVersion.AC1018)
+			{
+				this._document.VEntityControl ??= new ViewportEntityControl(this._document);
+			}
 
 			this.getFileHeaderWriter();
 

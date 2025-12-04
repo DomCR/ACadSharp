@@ -184,6 +184,9 @@ namespace ACadSharp.Objects
 
 			root.TryAdd(new CadDictionary(AcadTableStyle));
 			root.TryAdd(new CadDictionary(AcadPlotSettings));
+
+			//root.TryAdd(new CadDictionaryWithDefault(AcadPlotStyleName, new PlotSettings("Normal")));
+
 			// { AcadPlotStyleName, new CadDictionaryWithDefault() },	//Add default entry "Normal"	PlaceHolder	??
 
 			CadDictionary variableDictionary = root.ensureCadDictionaryExist(VariableDictionary);
