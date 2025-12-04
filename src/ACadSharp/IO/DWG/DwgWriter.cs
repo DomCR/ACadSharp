@@ -52,7 +52,7 @@ namespace ACadSharp.IO
 
 			if(this._version < ACadVersion.AC1018)
 			{
-				this._document.VEntityControl = new ViewportEntityControl(this._document);
+				this._document.VEntityControl ??= new ViewportEntityControl(this._document);
 			}
 
 			this.getFileHeaderWriter();

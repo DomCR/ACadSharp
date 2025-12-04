@@ -31,7 +31,6 @@ namespace ACadSharp.IO.Templates
 		{
 			base.build(builder);
 
-
 			if (builder.TryGetCadObject<Entity>(this.BoundaryHandle, out Entity entity))
 			{
 				this.CadObject.Boundary = entity;
@@ -50,21 +49,6 @@ namespace ACadSharp.IO.Templates
 			{
 				builder.Notify($"Base ucs not implemented for Viewport, handle {this.BaseUcsHandle}");
 			}
-
-			//if (this.CadObject.XDictionary != null &&
-			//	this.CadObject.XDictionary.TryGetEntry(Viewport.ASDK_XREC_ANNOTATION_SCALE_INFO, out XRecord record))
-			//{
-			//	foreach (XRecord.Entry item in record.Entries)
-			//	{
-			//		if (item.Code == 340)
-			//		{
-			//			if (builder.TryGetCadObject((ulong?)item.Value, out Scale scale))
-			//			{
-			//				this.CadObject.Scale = scale;
-			//			}
-			//		}
-			//	}
-			//}
 
 			foreach (var handle in this.FrozenLayerHandles)
 			{
