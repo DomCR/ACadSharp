@@ -1740,6 +1740,8 @@ namespace ACadSharp.IO.DXF
 				switch (this._reader.GroupCodeValue)
 				{
 					case GroupCodeValueType.Handle:
+					case GroupCodeValueType.ObjectId:
+					case GroupCodeValueType.ExtendedDataHandle:
 						template.AddHandleReference(this._reader.Code, this._reader.ValueAsHandle);
 						break;
 					default:
