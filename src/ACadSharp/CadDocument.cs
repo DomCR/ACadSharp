@@ -282,6 +282,7 @@ namespace ACadSharp
 			if (!this.BlockRecords.Contains(BlockRecord.PaperSpaceName))
 			{
 				BlockRecord pspace = BlockRecord.PaperSpace;
+				pspace.Layout.TabOrder = 1;
 				this.Layouts.Add(pspace.Layout);
 			}
 		}

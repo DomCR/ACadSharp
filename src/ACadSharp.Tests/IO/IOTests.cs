@@ -66,9 +66,6 @@ namespace ACadSharp.Tests.IO
 			string file = Path.GetFileNameWithoutExtension(test.Path);
 			string pathOut = Path.Combine(TestVariables.OutputSamplesFolder, $"{file}_out.dwg");
 
-			if (doc.Header.Version == ACadVersion.AC1032)
-				return;
-
 			this.writeDwgFile(pathOut, doc);
 		}
 
