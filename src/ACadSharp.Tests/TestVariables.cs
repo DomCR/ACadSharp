@@ -25,6 +25,9 @@ namespace ACadSharp.Tests
 		public static bool RunDwgWriterSingleCases { get { return EnvironmentVars.Get<bool>("RUN_DWG_WRITER_SINGLE_CASES_TEST"); } }
 
 		public static bool SavePreview { get { return EnvironmentVars.Get<bool>("SAVE_PREVIEW"); } }
+        
+        public static bool DumpDimensionStyleOverride { get { return EnvironmentVars.Get<bool>("ACADSHARP_DUMP_DIMSTYLE_MATRIX"); }
+        }
 
 		static TestVariables()
 		{
@@ -37,6 +40,7 @@ namespace ACadSharp.Tests
 			EnvironmentVars.SetIfNull("DECIMAL_PRECISION", "5");
 			EnvironmentVars.SetIfNull("RUN_DWG_WRITER_SINGLE_CASES_TEST", "true");
 			EnvironmentVars.SetIfNull("SAVE_PREVIEW", "true");
+            EnvironmentVars.SetIfNull("ACADSHARP_DUMP_DIMSTYLE_MATRIX", "true");
 		}
 
 		public static void CreateOutputFolders()
