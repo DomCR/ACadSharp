@@ -220,7 +220,6 @@ namespace ACadSharp.Objects
 			scales.TryAdd(new Scale { Name = "B6", PaperUnits = 100.0, DrawingUnits = 1.0, IsUnitScale = false });
 
 			root.TryAdd(new CadDictionary(AcadVisualStyle));
-			root.TryAdd(new CadDictionary(AcadFieldList));
 			root.TryAdd(new CadDictionary(AcadImageDict));
 
 			CadDictionary materials = root.ensureCadDictionaryExist(AcadMaterial);

@@ -1739,7 +1739,7 @@ namespace ACadSharp.Header
 		/// System variable 3DDWFPREC
 		/// </remarks>
 		[CadSystemVariable("$3DDWFPREC", 40)]
-		public double Dw3DPrecision { get; set; }
+		public double Dw3DPrecision { get; set; } = 2.0d;
 
 		/// <remarks>
 		/// System variable DWFFRAME
@@ -1961,7 +1961,7 @@ namespace ACadSharp.Header
 		/// System variable LENSLENGTH
 		/// </remarks>
 		[CadSystemVariable("$LENSLENGTH", 40)]
-		public double LensLength { get; set; }
+		public double LensLength { get; set; } = 50.0d;
 
 		/// <summary>
 		/// Controls whether you can create objects outside the grid limits.
@@ -2829,7 +2829,7 @@ namespace ACadSharp.Header
 		/// System variable PSOLWIDTH
 		/// </remarks>
 		[CadSystemVariable("$PSOLWIDTH", 40)]
-		public double SweptSolidWidth { get; set; }
+		public double SweptSolidWidth { get; set; } = 5.0d;
 
 		/// <summary>
 		/// Sets the default text height when creating new text objects.
