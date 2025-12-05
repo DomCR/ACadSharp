@@ -4,10 +4,10 @@
 	{
 		private delegate void copyDelegate(byte[] src, uint srcIndex, byte[] dst, uint dstIndex);
 
-		private static uint m_sourceOffset = 0;
-		private static uint m_length = 0;
-		private static uint m_sourceIndex;
-		private static uint m_opCode = 0;
+		private static uint _sourceOffset = 0;
+		private static uint _length = 0;
+		private static uint _sourceIndex;
+		private static uint _opCode = 0;
 
 		/// <summary>
 		/// Decompress a compressed source buffer.
@@ -18,31 +18,31 @@
 		/// <param name="buffer"></param>
 		public static void Decompress(byte[] source, uint initialOffset, uint length, byte[] buffer)
 		{
-			m_sourceOffset = 0;
-			m_length = 0;
-			m_sourceIndex = initialOffset;
-			m_opCode = source[m_sourceIndex];
+			_sourceOffset = 0;
+			_length = 0;
+			_sourceIndex = initialOffset;
+			_opCode = source[_sourceIndex];
 
 			uint destIndex = 0;
-			uint endIndex = m_sourceIndex + length;
+			uint endIndex = _sourceIndex + length;
 
-			++m_sourceIndex;
+			++_sourceIndex;
 
-			if (m_sourceIndex >= endIndex)
+			if (_sourceIndex >= endIndex)
 				return;
 
-			if (((int)m_opCode & 240) == 32)
+			if (((int)_opCode & 240) == 32)
 			{
-				m_sourceIndex += 3U;
-				m_length = source[m_sourceIndex - 1];
-				m_length &= 7U;
+				_sourceIndex += 3U;
+				_length = source[_sourceIndex - 1];
+				_length &= 7U;
 			}
 
-			while (m_sourceIndex < endIndex)
+			while (_sourceIndex < endIndex)
 			{
 				nextIndex(source, buffer, ref destIndex);
 
-				if (m_sourceIndex >= endIndex)
+				if (_sourceIndex >= endIndex)
 					break;
 
 				destIndex = copyDecompressedChunks(source, endIndex, buffer, destIndex);
@@ -50,42 +50,42 @@
 		}
 		private static void nextIndex(byte[] source, byte[] dest, ref uint index)
 		{
-			if (m_length == 0U)
+			if (_length == 0U)
 				readLiteralLength(source);
 
-			copy(source, m_sourceIndex, dest, index, m_length);
+			copy(source, _sourceIndex, dest, index, _length);
 
-			m_sourceIndex += m_length;
+			_sourceIndex += _length;
 
-			index += m_length;
+			index += _length;
 		}
 		private static uint copyDecompressedChunks(byte[] src, uint endIndex, byte[] dst, uint destIndex)
 		{
-			m_length = 0U;
-			m_opCode = src[m_sourceIndex];
-			++m_sourceIndex;
+			_length = 0U;
+			_opCode = src[_sourceIndex];
+			++_sourceIndex;
 
 			readInstructions(src);
 
 			while (true)
 			{
-				copyBytes(dst, destIndex, m_length, m_sourceOffset);
+				copyBytes(dst, destIndex, _length, _sourceOffset);
 
-				destIndex += m_length;
+				destIndex += _length;
 
-				m_length = m_opCode & 0x07;
+				_length = _opCode & 0x07;
 
-				if (m_length != 0U || m_sourceIndex >= endIndex)
+				if (_length != 0U || _sourceIndex >= endIndex)
 					break;
 
-				m_opCode = src[m_sourceIndex];
-				++m_sourceIndex;
+				_opCode = src[_sourceIndex];
+				++_sourceIndex;
 
-				if (m_opCode >> 4 == 0)
+				if (_opCode >> 4 == 0)
 					break;
 
-				if (m_opCode >> 4 == 15)
-					m_opCode &= 15;
+				if (_opCode >> 4 == 15)
+					_opCode &= 15;
 
 				readInstructions(src);
 			}
@@ -93,75 +93,75 @@
 		}
 		private static void readInstructions(byte[] buffer)
 		{
-			switch (m_opCode >> 4)
+			switch (_opCode >> 4)
 			{
 				case 0:
-					m_length = (m_opCode & 0xF) + 0x13;
-					m_sourceOffset = buffer[m_sourceIndex];
-					++m_sourceIndex;
-					m_opCode = buffer[m_sourceIndex];
-					++m_sourceIndex;
-					m_length = (m_opCode >> 3 & 0x10) + m_length;
-					m_sourceOffset = ((m_opCode & 0x78) << 5) + 1 + m_sourceOffset;
+					_length = (_opCode & 0xF) + 0x13;
+					_sourceOffset = buffer[_sourceIndex];
+					++_sourceIndex;
+					_opCode = buffer[_sourceIndex];
+					++_sourceIndex;
+					_length = (_opCode >> 3 & 0x10) + _length;
+					_sourceOffset = ((_opCode & 0x78) << 5) + 1 + _sourceOffset;
 					break;
 				case 1:
-					m_length = (m_opCode & 0xF) + 3;
-					m_sourceOffset = buffer[m_sourceIndex];
-					++m_sourceIndex;
-					m_opCode = buffer[m_sourceIndex];
-					++m_sourceIndex;
-					m_sourceOffset = ((m_opCode & 248) << 5) + 1 + m_sourceOffset;
+					_length = (_opCode & 0xF) + 3;
+					_sourceOffset = buffer[_sourceIndex];
+					++_sourceIndex;
+					_opCode = buffer[_sourceIndex];
+					++_sourceIndex;
+					_sourceOffset = ((_opCode & 248) << 5) + 1 + _sourceOffset;
 					break;
 				case 2:
-					m_sourceOffset = buffer[m_sourceIndex];
-					++m_sourceIndex;
-					m_sourceOffset = (uint)(buffer[m_sourceIndex] << 8 & 0xFF00) | m_sourceOffset;
-					++m_sourceIndex;
-					m_length = m_opCode & 7U;
-					if ((m_opCode & 8) == 0)
+					_sourceOffset = buffer[_sourceIndex];
+					++_sourceIndex;
+					_sourceOffset = (uint)(buffer[_sourceIndex] << 8 & 0xFF00) | _sourceOffset;
+					++_sourceIndex;
+					_length = _opCode & 7U;
+					if ((_opCode & 8) == 0)
 					{
-						m_opCode = buffer[m_sourceIndex];
-						++m_sourceIndex;
-						m_length = (m_opCode & 0xF8) + m_length;
+						_opCode = buffer[_sourceIndex];
+						++_sourceIndex;
+						_length = (_opCode & 0xF8) + _length;
 
 					}
 					else
 					{
-						++m_sourceOffset;
-						m_length = (uint)((buffer[m_sourceIndex] << 3) + m_length);
-						++m_sourceIndex;
-						m_opCode = buffer[m_sourceIndex];
-						++m_sourceIndex;
-						m_length = ((m_opCode & 0xF8) << 8) + m_length + 0x100;
+						++_sourceOffset;
+						_length = (uint)((buffer[_sourceIndex] << 3) + _length);
+						++_sourceIndex;
+						_opCode = buffer[_sourceIndex];
+						++_sourceIndex;
+						_length = ((_opCode & 0xF8) << 8) + _length + 0x100;
 					}
 					break;
 				default:
-					m_length = m_opCode >> 4;
-					m_sourceOffset = m_opCode & 15U;
-					m_opCode = buffer[m_sourceIndex];
-					++m_sourceIndex;
-					m_sourceOffset = ((m_opCode & 0xF8) << 1) + m_sourceOffset + 1;
+					_length = _opCode >> 4;
+					_sourceOffset = _opCode & 15U;
+					_opCode = buffer[_sourceIndex];
+					++_sourceIndex;
+					_sourceOffset = ((_opCode & 0xF8) << 1) + _sourceOffset + 1;
 					break;
 			}
 		}
 		private static void readLiteralLength(byte[] buffer)
 		{
-			m_length = m_opCode + 8;
-			if (m_length == 0x17)
+			_length = _opCode + 8;
+			if (_length == 0x17)
 			{
-				uint n = buffer[m_sourceIndex];
-				++m_sourceIndex;
-				m_length += n;
+				uint n = buffer[_sourceIndex];
+				++_sourceIndex;
+				_length += n;
 
 				if (n == 0xFF)
 				{
 					do
 					{
-						n = buffer[m_sourceIndex];
-						++m_sourceIndex;
-						n |= (uint)buffer[m_sourceIndex] << 8;
-						++m_sourceIndex;
-						m_length += n;
+						n = buffer[_sourceIndex];
+						++_sourceIndex;
+						n |= (uint)buffer[_sourceIndex] << 8;
+						++_sourceIndex;
+						_length += n;
 
 					} while (n == 0xFFFF);
 				}
