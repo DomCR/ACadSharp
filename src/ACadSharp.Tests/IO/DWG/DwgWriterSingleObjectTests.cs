@@ -1,5 +1,7 @@
 ﻿using ACadSharp.IO;
 using ACadSharp.IO.DWG;
+using System;
+using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -21,6 +23,17 @@ namespace ACadSharp.Tests.IO.DWG
 		public void WriteCasesAC1018(SingleCaseGenerator data)
 		{
 			this.writeDwgFile(data, ACadVersion.AC1018);
+		}
+
+		[Theory()]
+		[MemberData(nameof(Data))]
+		public void WriteCasesAC1021(SingleCaseGenerator data)
+		{
+			this.writeDwgFile(data, ACadVersion.AC1021);
+
+			string path = this.getPath(data.Name, "dwg", ACadVersion.AC1021);
+
+			DwgReader.Read(path);
 		}
 
 		[Theory()]

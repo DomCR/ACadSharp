@@ -12,20 +12,20 @@ namespace ACadSharp.IO.DWG
 	{
 		public override int HandleSectionOffset { get { return 0; } }
 
-		protected override int _fileHeaderSize { get { return 0x100; } }
+		protected override int fileHeaderSize { get { return 0x100; } }
 
-		protected new DwgFileHeaderAC18 _fileHeader { get; } = new DwgFileHeaderAC18();
+		protected new DwgFileHeaderAC18 fileHeader { get; } = new DwgFileHeaderAC18();
 
 		protected virtual ICompressor compressor { get; } = new DwgLZ77AC18Compressor();
 
 		private List<DwgLocalSectionMap> _localSectionsMaps = new List<DwgLocalSectionMap>();
 
-		private Dictionary<string, DwgSectionDescriptor> _descriptors { get { return this._fileHeader.Descriptors; } }
+		private Dictionary<string, DwgSectionDescriptor> _descriptors { get { return this.fileHeader.Descriptors; } }
 
 		public DwgFileHeaderWriterAC18(Stream stream, Encoding encoding, CadDocument document) : base(stream, encoding, document)
 		{
 			// File header info
-			for (int i = 0; i < this._fileHeaderSize; i++)
+			for (int i = 0; i < this.fileHeaderSize; i++)
 			{
 				this._stream.WriteByte(0);
 			}
@@ -33,9 +33,9 @@ namespace ACadSharp.IO.DWG
 
 		public override void WriteFile()
 		{
-			this._fileHeader.SectionArrayPageSize = (uint)(this._localSectionsMaps.Count + 2);
-			this._fileHeader.SectionPageMapId = this._fileHeader.SectionArrayPageSize;
-			this._fileHeader.SectionMapId = this._fileHeader.SectionArrayPageSize - 1;
+			this.fileHeader.SectionArrayPageSize = (uint)(this._localSectionsMaps.Count + 2);
+			this.fileHeader.SectionPageMapId = this.fileHeader.SectionArrayPageSize;
+			this.fileHeader.SectionMapId = this.fileHeader.SectionArrayPageSize - 1;
 
 			this.writeDescriptors();
 
@@ -44,14 +44,10 @@ namespace ACadSharp.IO.DWG
 			this.writeFileMetaData();
 		}
 
-		public override void AddSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400)
+		public override void AddSection(string name, MemoryStream stream, bool isCompressed, int decompressedSize = 0x7400)
 		{
-			DwgSectionDescriptor descriptor = new DwgSectionDescriptor(name);
-			this._fileHeader.AddSection(descriptor);
-			descriptor.DecompressedSize = (ulong)decompsize;
-
-			descriptor.CompressedSize = (ulong)stream.Length;
-			descriptor.CompressedCode = ((!isCompressed) ? 1 : 2);
+			DwgSectionDescriptor descriptor = this.createDescriptor(name, (ulong)stream.Length, (ulong)decompressedSize, isCompressed);
+			this.fileHeader.AddSection(descriptor);
 
 			int nlocalSections = (int)(stream.Length / (int)descriptor.DecompressedSize);
 
@@ -59,7 +55,7 @@ namespace ACadSharp.IO.DWG
 			ulong offset = 0uL;
 			for (int i = 0; i < nlocalSections; i++)
 			{
-				this.craeteLocalSection(
+				this.createLocalSection(
 					descriptor,
 					buffer,
 					(int)descriptor.DecompressedSize,
@@ -72,7 +68,7 @@ namespace ACadSharp.IO.DWG
 			int spearBytes = (int)(stream.Length % (int)descriptor.DecompressedSize);
 			if (spearBytes > 0 && !checkEmptyBytes(buffer, offset, (ulong)spearBytes))
 			{
-				this.craeteLocalSection(
+				this.createLocalSection(
 					descriptor,
 					buffer,
 					(int)descriptor.DecompressedSize,
@@ -82,7 +78,17 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		protected virtual void craeteLocalSection(DwgSectionDescriptor descriptor, byte[] buffer, int decompressedSize, ulong offset, int totalSize, bool isCompressed)
+		protected virtual DwgSectionDescriptor createDescriptor(string name, ulong compressedSize, ulong decompressedSize, bool isCompressed)
+		{
+			DwgSectionDescriptor descriptor = new DwgSectionDescriptor(name);
+			descriptor.DecompressedSize = decompressedSize;
+			descriptor.CompressedSize = compressedSize;
+			descriptor.CompressedCode = (!isCompressed) ? 1 : 2;
+
+			return descriptor;
+		}
+
+		protected virtual void createLocalSection(DwgSectionDescriptor descriptor, byte[] buffer, int decompressedSize, ulong offset, int totalSize, bool isCompressed)
 		{
 			MemoryStream descriptorStream = this.applyCompression(buffer, decompressedSize, offset, totalSize, isCompressed);
 
@@ -276,18 +282,18 @@ namespace ACadSharp.IO.DWG
 			this.compressChecksum(section, stream);
 
 			DwgLocalSectionMap last = this._localSectionsMaps[this._localSectionsMaps.Count - 1];
-			this._fileHeader.GapAmount = 0u;
-			this._fileHeader.LastPageId = last.PageNumber;
-			this._fileHeader.LastSectionAddr = (ulong)(last.Seeker + size - 256);
-			this._fileHeader.SectionAmount = (uint)(this._localSectionsMaps.Count - 1);
-			this._fileHeader.PageMapAddress = (ulong)section.Seeker;
+			this.fileHeader.GapAmount = 0u;
+			this.fileHeader.LastPageId = last.PageNumber;
+			this.fileHeader.LastSectionAddr = (ulong)(last.Seeker + size - 256);
+			this.fileHeader.SectionAmount = (uint)(this._localSectionsMaps.Count - 1);
+			this.fileHeader.PageMapAddress = (ulong)section.Seeker;
 		}
 
 		protected void writeFileMetaData()
 		{
 			StreamIO writer = new StreamIO(this._stream);
 
-			this._fileHeader.SecondHeaderAddr = (ulong)this._stream.Position;
+			this.fileHeader.SecondHeaderAddr = (ulong)this._stream.Position;
 
 			MemoryStream stream = new MemoryStream();
 			this.writeFileHeader(stream);
@@ -346,7 +352,7 @@ namespace ACadSharp.IO.DWG
 			this._stream.Write(DwgCheckSumCalculator.MagicSequence, 236, 20);
 		}
 
-		private void writeFileHeader(MemoryStream stream)
+		protected virtual void writeFileHeader(MemoryStream stream)
 		{
 			CRC32StreamHandler crcStream = new CRC32StreamHandler(stream, 0u);
 			StreamIO swriter = new StreamIO(crcStream);
@@ -362,25 +368,25 @@ namespace ACadSharp.IO.DWG
 			//0x14	4	0x04(long)
 			swriter.Write<int>(0x04);
 			//0x18	4	Root tree node gap
-			swriter.Write<int>(this._fileHeader.RootTreeNodeGap);
+			swriter.Write<int>(this.fileHeader.RootTreeNodeGap);
 			//0x1C	4	Lowermost left tree node gap
-			swriter.Write<int>(this._fileHeader.LeftGap);
+			swriter.Write<int>(this.fileHeader.LeftGap);
 			//0x20	4	Lowermost right tree node gap
-			swriter.Write<int>(this._fileHeader.RigthGap);
+			swriter.Write<int>(this.fileHeader.RigthGap);
 			//0x24	4	Unknown long(ODA writes 1)	
 			swriter.Write<int>(1);
 			//0x28	4	Last section page Id
-			swriter.Write<int>(this._fileHeader.LastPageId);
+			swriter.Write<int>(this.fileHeader.LastPageId);
 
 			//0x2C	8	Last section page end address
-			swriter.Write<ulong>(this._fileHeader.LastSectionAddr);
+			swriter.Write<ulong>(this.fileHeader.LastSectionAddr);
 			//0x34	8	Second header data address pointing to the repeated header data at the end of the file
-			swriter.Write<ulong>(this._fileHeader.SecondHeaderAddr);
+			swriter.Write<ulong>(this.fileHeader.SecondHeaderAddr);
 
 			//0x3C	4	Gap amount
-			swriter.Write<uint>(this._fileHeader.GapAmount);
+			swriter.Write<uint>(this.fileHeader.GapAmount);
 			//0x40	4	Section page amount
-			swriter.Write<uint>(this._fileHeader.SectionAmount);
+			swriter.Write<uint>(this.fileHeader.SectionAmount);
 
 			//0x44	4	0x20(long)
 			swriter.Write<int>(0x20);
@@ -390,15 +396,15 @@ namespace ACadSharp.IO.DWG
 			swriter.Write<int>(0x40);
 
 			//0x50	4	Section Page Map Id
-			swriter.Write(this._fileHeader.SectionPageMapId);
+			swriter.Write(this.fileHeader.SectionPageMapId);
 			//0x54	8	Section Page Map address(add 0x100 to this value)
-			swriter.Write<ulong>(this._fileHeader.PageMapAddress - 256);
+			swriter.Write<ulong>(this.fileHeader.PageMapAddress - 256);
 			//0x5C	4	Section Map Id
-			swriter.Write<uint>(this._fileHeader.SectionMapId);
+			swriter.Write<uint>(this.fileHeader.SectionMapId);
 			//0x60	4	Section page array size
-			swriter.Write<uint>(this._fileHeader.SectionArrayPageSize);
+			swriter.Write<uint>(this.fileHeader.SectionArrayPageSize);
 			//0x64	4	Gap array size
-			swriter.Write<uint>(this._fileHeader.GapArraySize);
+			swriter.Write<uint>(this.fileHeader.GapArraySize);
 
 			long position = crcStream.Position;
 			swriter.Write<uint>(0u);

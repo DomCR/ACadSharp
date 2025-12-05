@@ -10,9 +10,9 @@ namespace ACadSharp.IO.DWG
 	{
 		public abstract int HandleSectionOffset { get; }
 
-		protected abstract int _fileHeaderSize { get; }
+		protected abstract int fileHeaderSize { get; }
 
-		protected DwgFileHeader _fileHeader { get; }
+		protected DwgFileHeader fileHeader { get; }
 
 		protected ACadVersion _version;
 

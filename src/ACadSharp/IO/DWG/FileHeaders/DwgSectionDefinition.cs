@@ -8,12 +8,14 @@ namespace ACadSharp.IO.DWG
 		public const string AppInfo = "AcDb:AppInfo";
 		public const string AuxHeader = "AcDb:AuxHeader";
 		public const string Header = "AcDb:Header";
+		public const string Security = "AcDb:Security";
 		public const string Classes = "AcDb:Classes";
 		public const string Handles = "AcDb:Handles";
 		public const string ObjFreeSpace = "AcDb:ObjFreeSpace";
 		public const string Template = "AcDb:Template";
 		public const string SummaryInfo = "AcDb:SummaryInfo";
 		public const string FileDepList = "AcDb:FileDepList";
+		public const string VBAProject = "AcDb:VBAProject ";
 		public const string Preview = "AcDb:Preview";
 		public const string RevHistory = "AcDb:RevHistory";
 

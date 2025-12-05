@@ -30,7 +30,7 @@ namespace ACadSharp.IO.DWG
 		{
 			get
 			{
-				long offset = _fileHeaderSize;
+				long offset = fileHeaderSize;
 
 				foreach (var item in this._records)
 				{
@@ -44,7 +44,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		protected override int _fileHeaderSize { get { return 0x61; } }
+		protected override int fileHeaderSize { get { return 0x61; } }
 
 		private readonly Dictionary<string, (DwgSectionLocatorRecord, MemoryStream)> _records;
 
@@ -85,7 +85,7 @@ namespace ACadSharp.IO.DWG
 
 		private void setRecordSeekers()
 		{
-			long currOffset = _fileHeaderSize;
+			long currOffset = fileHeaderSize;
 			foreach (var item in this._records.Values)
 			{
 				item.Item1.Seeker = currOffset;

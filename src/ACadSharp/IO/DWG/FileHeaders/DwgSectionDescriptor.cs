@@ -5,16 +5,6 @@ namespace ACadSharp.IO.DWG
 {
 	internal class DwgSectionDescriptor
 	{
-		public long PageType { get; } = 0x4163043B;
-
-		public string Name { get; set; }
-
-		public ulong CompressedSize { get; set; }
-
-		public int PageCount { get; set; }
-
-		public ulong DecompressedSize { get; set; } = 0x7400;
-
 		/// <remarks>
 		/// Is only used for the version <see cref="ACadVersion.AC1018"/> and <see cref="ACadVersion.AC1024"/> or above.
 		/// </remarks>
@@ -25,24 +15,35 @@ namespace ACadSharp.IO.DWG
 					throw new Exception();
 		}
 
-		private int _compressed = 2;
+		public ulong CompressedSize { get; set; }
+
+		public ulong DecompressedSize { get; set; } = 0x7400;
+
+		public ulong? Encoding { get; internal set; }
+
+		public int Encrypted { get; set; }
+
+		public ulong? HashCode { get; internal set; }
 
 		/// <remarks>
 		/// Is only used for the version <see cref="ACadVersion.AC1018"/> and <see cref="ACadVersion.AC1024"/> or above.
 		/// </remarks>
 		public bool IsCompressed { get { return this._compressed == 2; } }
 
-		public int SectionId { get; set; }
-
-		public int Encrypted { get; set; }
-
-		public ulong? HashCode { get; internal set; }
-
-		public ulong? Encoding { get; internal set; }
-
 		public List<DwgLocalSectionMap> LocalSections { get; set; } = new List<DwgLocalSectionMap>();
 
-		public DwgSectionDescriptor() { }
+		public string Name { get; set; }
+
+		public int PageCount { get; set; }
+
+		public long PageType { get; } = 0x4163043B;
+
+		public int SectionId { get; set; }
+
+		private int _compressed = 2;
+
+		public DwgSectionDescriptor()
+		{ }
 
 		public DwgSectionDescriptor(string name)
 		{
