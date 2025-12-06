@@ -792,7 +792,7 @@ namespace ACadSharp.IO
 				fileheader.CompressedMetadata.PagesMapSizeCompressed,
 				fileheader.CompressedMetadata.PagesMapSizeUncompressed,
 				fileheader.CompressedMetadata.PagesMapCorrectionFactor,
-				0xEF, sreader.Stream);
+				239, sreader.Stream);
 
 			//Read the page data
 			StreamIO pageDataStream = new StreamIO(arr);
