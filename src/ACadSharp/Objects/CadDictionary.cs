@@ -194,6 +194,10 @@ namespace ACadSharp.Objects
 				MultiLeaderStyle.DefaultName
 			);
 			variableDictionary.TryAdd(cmLeaderStyleEntry);
+			variableDictionary.TryAdd(new DictionaryVariable(DictionaryVariable.CurrentAnnotationStyle, "1:1"));
+			variableDictionary.TryAdd(new DictionaryVariable(DictionaryVariable.CurrentTableStyle, "Standard"));
+			variableDictionary.TryAdd(new DictionaryVariable(DictionaryVariable.CurrentViewDetailStyle, "Metric50"));
+			variableDictionary.TryAdd(new DictionaryVariable(DictionaryVariable.CurrentViewSectionStyle, "Metric50"));
 
 			//DictionaryVars Entry DIMASSOC and HIDETEXT ??
 
