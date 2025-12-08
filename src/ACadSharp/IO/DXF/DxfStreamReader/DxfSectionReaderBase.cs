@@ -494,10 +494,10 @@ namespace ACadSharp.IO.DXF
 					tmp.CreateCell((TableEntity.CellType)this._reader.ValueAsInt);
 					return true;
 				case 172:
-					tmp.CurrentCell.FlagValue = this._reader.ValueAsInt;
+					tmp.CurrentCell.EdgeFlags = this._reader.ValueAsShort;
 					return true;
 				case 173:
-					tmp.CurrentCell.MergedValue = this._reader.ValueAsInt;
+					tmp.CurrentCell.MergedValue = this._reader.ValueAsShort;
 					return true;
 				case 174:
 					tmp.CurrentCell.AutoFit = this._reader.ValueAsBool;
@@ -520,7 +520,7 @@ namespace ACadSharp.IO.DXF
 					this.readCellValue(content);
 					return true;
 				case 340:
-					tmp.CurrentCellTemplate.BlockRecordHandle = this._reader.ValueAsHandle;
+					tmp.CurrentCellTemplate.ValueHandle = this._reader.ValueAsHandle;
 					return true;
 				default:
 					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Insert]))

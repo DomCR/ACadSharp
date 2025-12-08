@@ -17,11 +17,6 @@ namespace ACadSharp.IO.DWG
 			TableEntity table = new TableEntity();
 			CadTableEntityTemplate template = new CadTableEntityTemplate(table);
 
-			if (!this.R2010Plus)
-			{
-				return null;
-			}
-
 			this.readInsertCommonData(template);
 			this.readInsertCommonHandles(template);
 
@@ -34,9 +29,9 @@ namespace ACadSharp.IO.DWG
 
 				//BL Unknown (default 0)
 				long longZero = this._mergedReaders.ReadBitLong();
+				//R2013
 				if (this.R2013Plus)
 				{
-					//R2013
 					//Unknown (default 0)
 					this._mergedReaders.ReadBitLong();
 				}
@@ -170,14 +165,76 @@ namespace ACadSharp.IO.DWG
 
 		private void readTableCellData(CadTableCellTemplate template)
 		{
-			TableEntity.Cell cellPlaceholder = template.Cell;
+			TableEntity.Cell cell = template.Cell;
 
 			//Cell type BS 171 1 = text, 2 = block.
 			//In AutoCAD 2007 a cell can contain either 1 text
 			//or 1 block.In AutoCAD 2008 this changed(TODO).
-			cellPlaceholder.Type = (CellType)this._mergedReaders.ReadBitShort();
+			cell.Type = (CellType)this._mergedReaders.ReadBitShort();
 
-			throw new NotImplementedException();
+			//Cell edge flags RC 172
+			cell.EdgeFlags = this._mergedReaders.ReadByte();
+
+			//Cell merged value B 173 Determines whether this cell is merged with another cell.
+			cell.MergedValue = this._mergedReaders.ReadBit() ? (short)1 : (short)0;
+			//Autofit flag B 174
+			cell.AutoFit = this._mergedReaders.ReadBit();
+			//Merged width flag BL 175 Represents the horizontal number of merged cells.
+			cell.BorderWidth = this._mergedReaders.ReadBitLong();
+			//Merged height flag BL 176 Represents the vertical number of merged cells.
+			cell.BorderHeight = this._mergedReaders.ReadBitLong();
+			//Rotation value BD 145
+			cell.Rotation = this._mergedReaders.ReadBitDouble();
+
+			//H 344 for text cell, 340 for block cell (hard pointer)
+			template.ValueHandle = this.handleReference();
+
+			switch (cell.Type)
+			{
+				case CellType.Text when template.ValueHandle == 0:
+					//Text string TV 1 Present only if 344 value below is 0
+					template.CellText = this._mergedReaders.ReadVariableText();
+					break;
+				case CellType.Block:
+					//Block scale BD 144
+					cell.BlockScale = this._mergedReaders.ReadBitDouble();
+					//Has attributes flag B
+					if (this._mergedReaders.ReadBit())
+					{
+						// Attr. Def. count BS 179
+						int natts = this._mergedReaders.ReadBitShort();
+						for (int i = 0; i < natts; i++)
+						{
+							//H 331 Attr. Def. ID (soft pointer, present only for block
+							//cells, when additional data flag == 1, and 1 entry
+							//per attr.def.)
+							var atthandle = this.handleReference();
+							//Attr.Def.index BS  Not present in dxf
+							short index = this._mergedReaders.ReadBitShort();
+							//Attr. Def. text TV 300
+							string text = this._mergedReaders.ReadVariableText();
+
+							template.AttributeHandles.Add((atthandle, text));
+						}
+					}
+					break;
+				default:
+					throw new NotSupportedException();
+			}
+
+			//Common to both text and block cells:
+			//has override flag B
+			if (this._mergedReaders.ReadBit())
+			{
+				//Cell flag override BL 177 (deprecated)
+				int flags = this._mergedReaders.ReadBitLong();
+
+				//Virtual edge flag RC 178 Determines which edges are virtual, see also the
+				//explanation on the cell edge flags above.When an
+				//edge is virtual, that edge has no border overrides.
+				//1 = top, 2 = right, 4 = bottom, 8 = left.
+				cell.VirtualEdgeFlag = this._mergedReaders.ReadByte();
+			}
 		}
 
 		private void readTableContent(TableContent content, CadTableEntityTemplate template)
@@ -549,7 +606,7 @@ namespace ACadSharp.IO.DWG
 			if (cell.HasLinkedData)
 			{
 				//H 340 Handle to data link object (hard pointer).
-				template.BlockRecordHandle = this._mergedReaders.HandleReference();
+				template.ValueHandle = this._mergedReaders.HandleReference();
 				//BL 93 Row count.
 				this._mergedReaders.ReadBitLong();
 				//BL 94 Column count.

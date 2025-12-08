@@ -40,11 +40,6 @@ namespace ACadSharp.Tests.IO
 
 			CadDocument doc = this.readDocument(test, configuration);
 
-			if(doc.Header.Version <= ACadVersion.AC1021)
-			{
-				return;
-			}
-
 			TableEntity table = doc.GetCadObject<TableEntity>(0xA35);
 
 			BlockRecord record = table.Block;

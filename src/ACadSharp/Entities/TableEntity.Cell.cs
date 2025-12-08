@@ -58,7 +58,7 @@ namespace ACadSharp.Entities
 			/// Cell flag value.
 			/// </summary>
 			[DxfCodeValue(172)]
-			public int FlagValue { get; set; }
+			public short EdgeFlags { get; set; }
 
 			public CellContentGeometry Geometry { get; set; }
 
@@ -82,7 +82,7 @@ namespace ACadSharp.Entities
 			/// Cell merged value.
 			/// </summary>
 			[DxfCodeValue(173)]
-			public int MergedValue { get; set; }
+			public short MergedValue { get; set; }
 
 			/// <summary>
 			/// Rotation value.
@@ -92,6 +92,9 @@ namespace ACadSharp.Entities
 			/// </remarks>
 			[DxfCodeValue(145)]
 			public double Rotation { get; set; }
+
+			[DxfCodeValue(144)]
+			public double BlockScale { get; set; }
 
 			[DxfCodeValue(90)]
 			public TableCellStateFlags StateFlags { get; set; }

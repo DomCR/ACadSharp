@@ -16,7 +16,6 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityTable)]
 	[DxfSubClass(DxfSubclassMarker.TableEntity)]
-	[Obsolete("TableEntity is in a work in progress")]
 	public partial class TableEntity : Insert
 	{
 		/// <summary>
@@ -99,9 +98,7 @@ namespace ACadSharp.Entities
 
 		internal TableContent Content { get; set; } = new();
 
-		//343	Hard pointer ID of the owning BLOCK record
 		[DxfCodeValue(DxfReferenceType.Handle, 343)]
-		[Obsolete("Is it needed??")]
 		internal BlockRecord TableBlock { get { return this.Block; } }
 
 		internal BreakData TableBreakData { get; set; } = new();

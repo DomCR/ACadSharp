@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
 using System;
 using System.Collections.Generic;
 using static ACadSharp.Entities.TableEntity;
@@ -123,7 +124,7 @@ namespace ACadSharp.IO.Templates
 
 		internal class CadTableCellTemplate : ICadTemplate
 		{
-			public ulong? BlockRecordHandle { get; set; }
+			public ulong? ValueHandle { get; set; }
 
 			public TableEntity.Cell Cell { get; }
 
@@ -135,6 +136,11 @@ namespace ACadSharp.IO.Templates
 
 			public ulong? UnknownHandle { get; internal set; }
 
+			//TO DELTE, temporal prop to check the content
+			public string CellText { get; internal set; }
+
+			public HashSet<(ulong, string)> AttributeHandles { get; } = new();
+
 			public CadTableCellTemplate(TableEntity.Cell cell)
 			{
 				Cell = cell;
@@ -142,6 +148,10 @@ namespace ACadSharp.IO.Templates
 
 			public void Build(CadDocumentBuilder builder)
 			{
+				if (builder.TryGetCadObject<CadObject>(this.ValueHandle, out var cadObject))
+				{
+				}
+
 				throw new System.NotImplementedException();
 			}
 		}
