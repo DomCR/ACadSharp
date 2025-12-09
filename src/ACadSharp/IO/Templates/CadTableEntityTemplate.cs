@@ -140,6 +140,7 @@ namespace ACadSharp.IO.Templates
 			public string CellText { get; internal set; }
 
 			public HashSet<(ulong, string)> AttributeHandles { get; } = new();
+			public ulong? TextStyleOverrideHandle { get;  set; }
 
 			public CadTableCellTemplate(TableEntity.Cell cell)
 			{

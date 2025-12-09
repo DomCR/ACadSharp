@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,6 +9,42 @@ namespace ACadSharp.Entities
 	{
 		public class Cell
 		{
+			[Flags]
+			internal enum OverrideFlags
+			{
+				None = 0,
+				CellAlignment = 0x01,
+				BackgroundFillNone = 0x02,
+				BackgroundColor = 0x04,
+				ContentColor = 0x08,
+				TextStyle = 0x10,
+				TextHeight = 0x20,
+			}
+
+			[Flags]
+			public enum VirtualEdgeFlags
+			{
+				None = 0,
+				Top = 1,
+				Right = 2,
+				Bottom = 4,
+				Left = 8
+			}
+
+			public enum CellAlignment
+			{
+				None = 0,
+				TopLeft = 1,
+				TopCenter = 2,
+				TopRight = 3,
+				MiddleLeft = 4,
+				MiddleCenter = 5,
+				MiddleRight = 6,
+				BottomLeft = 7,
+				BottomCenter = 8,
+				BottomRight = 9,
+			}
+
 			/// <summary>
 			/// Boolean flag indicating if the auto fit option is set for the cell.
 			/// </summary>

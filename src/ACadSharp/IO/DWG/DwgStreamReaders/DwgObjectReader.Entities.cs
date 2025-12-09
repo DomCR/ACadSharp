@@ -227,13 +227,44 @@ namespace ACadSharp.IO.DWG
 			if (this._mergedReaders.ReadBit())
 			{
 				//Cell flag override BL 177 (deprecated)
-				int flags = this._mergedReaders.ReadBitLong();
+				TableEntity.Cell.OverrideFlags flags = (Cell.OverrideFlags)this._mergedReaders.ReadBitLong();
 
 				//Virtual edge flag RC 178 Determines which edges are virtual, see also the
 				//explanation on the cell edge flags above.When an
 				//edge is virtual, that edge has no border overrides.
 				//1 = top, 2 = right, 4 = bottom, 8 = left.
 				cell.VirtualEdgeFlag = this._mergedReaders.ReadByte();
+
+				if (flags.HasFlag(Cell.OverrideFlags.CellAlignment))
+				{
+					//Cell alignment RS 170 Present only if bit 0x01 is set in cell flag 
+					cell.StyleOverride.CellAlignment = (Cell.CellAlignment)this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.BackgroundFillNone))
+				{
+					//Background fill none B 283 Present only if bit 0x02 is set in cell flag
+					cell.StyleOverride.IsFillColorOn = this._mergedReaders.ReadBit();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.BackgroundColor))
+				{
+					//Background color CMC 63 Present only if bit 0x04 is set in cell flag
+					cell.StyleOverride.BackgroundColor = this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.ContentColor))
+				{
+					//Content color CMC 64 Present only if bit 0x08 is set in cell flag 
+					cell.StyleOverride.ContentColor = this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.TextStyle))
+				{
+					//Content color CMC 64 Present only if bit 0x08 is set in cell flag 
+					template.TextStyleOverrideHandle = this.handleReference();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.TextHeight))
+				{
+					//Text height BD 140 Present only if bit 0x20 is set in cell flag 
+					cell.StyleOverride.TextHeight = this._mergedReaders.ReadBitDouble();
+				}
 			}
 		}
 
