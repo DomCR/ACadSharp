@@ -8,19 +8,19 @@ namespace ACadSharp.IO.Templates
 {
 	internal abstract class CadTemplate : ICadObjectTemplate
 	{
-		public bool HasBeenBuilt { get; private set; } = false;
-
 		public CadObject CadObject { get; set; }
-
-		public ulong? OwnerHandle { get; set; }
-
-		public ulong? XDictHandle { get; set; }
-
-		public HashSet<ulong> ReactorsHandles { get; set; } = new();
 
 		public Dictionary<ulong, List<ExtendedDataRecord>> EDataTemplate { get; set; } = new();
 
 		public Dictionary<string, List<ExtendedDataRecord>> EDataTemplateByAppName { get; set; } = new();
+
+		public bool HasBeenBuilt { get; private set; } = false;
+
+		public ulong? OwnerHandle { get; set; }
+
+		public HashSet<ulong> ReactorsHandles { get; set; } = new();
+
+		public ulong? XDictHandle { get; set; }
 
 		public CadTemplate(CadObject cadObject)
 		{

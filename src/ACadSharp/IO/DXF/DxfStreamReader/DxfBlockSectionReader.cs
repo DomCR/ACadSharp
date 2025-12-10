@@ -160,9 +160,13 @@ namespace ACadSharp.IO.DXF
 				{
 					recordTemplate.OwnedObjectsHandlers.Add(entityTemplate.CadObject.Handle);
 				}
-				else if (this._builder.TryGetObjectTemplate(entityTemplate.OwnerHandle, out CadBlockRecordTemplate owner))
+				else if (this._builder.TryGetObjectTemplate(entityTemplate.OwnerHandle, out ICadOwnerTemplate owner))
 				{
 					owner.OwnedObjectsHandlers.Add(entityTemplate.CadObject.Handle);
+				}
+				else
+				{
+					_builder.OrphanTemplates.Add(entityTemplate);
 				}
 			}
 
