@@ -41,6 +41,11 @@ namespace ACadSharp.IO.Templates
 			this.build(builder);
 		}
 
+		public override string ToString()
+		{
+			return $"{this.CadObject?.ToString()}";
+		}
+
 		protected virtual void build(CadDocumentBuilder builder)
 		{
 			if (builder.TryGetCadObject(this.XDictHandle, out CadDictionary cadDictionary))

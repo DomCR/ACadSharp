@@ -2072,7 +2072,6 @@ namespace ACadSharp.IO.DWG
 			{
 				//DataFlags RC Used to determine presence of subsquent data
 				byte dataFlags = 0;
-
 				if (text.InsertPoint.Z == 0.0)
 				{
 					dataFlags = (byte)(dataFlags | 0b1);
@@ -2110,7 +2109,9 @@ namespace ACadSharp.IO.DWG
 
 				//Elevation RD --- present if !(DataFlags & 0x01)
 				if ((dataFlags & 0b1) == 0)
+				{
 					this._writer.WriteRawDouble(text.InsertPoint.Z);
+				}
 
 				//Insertion pt 2RD 10
 				this._writer.WriteRawDouble(text.InsertPoint.X);
