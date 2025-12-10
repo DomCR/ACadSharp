@@ -4,8 +4,6 @@ using ACadSharp.Text;
 using CSMath;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace ACadSharp.Entities
 {
@@ -72,8 +70,10 @@ namespace ACadSharp.Entities
 			get => this._height;
 			set
 			{
-				if (value < 0)
-					throw new ArgumentOutOfRangeException("Height value cannot be negative.");
+				if (value <= 0)
+				{
+					throw new ArgumentOutOfRangeException(nameof(value), value, "The MText height must be greater than zero.");
+				}
 				else
 					this._height = value;
 			}
@@ -201,7 +201,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Ignored, 43)]
 		public double VerticalHeight { get; set; } = 0.2;
 
-		private double _height = 0.18;
+		private double _height = 1.0d;
 
 		private TextStyle _style = TextStyle.Default;
 

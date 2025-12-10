@@ -283,8 +283,10 @@ namespace ACadSharp.IO.DWG
 		private void readCommonData(CadTemplate template)
 		{
 			if (this._version >= ACadVersion.AC1015 && this._version < ACadVersion.AC1024)
+			{
 				//Obj size RL size of object in bits, not including end handles
 				this.updateHandleReader();
+			}
 
 			//Common:
 			//Handle H 5 code 0, length followed by the handle bytes.
@@ -394,9 +396,13 @@ namespace ACadSharp.IO.DWG
 			else if (!this.R2004Plus)
 			{
 				if (!this._readedObjects.ContainsKey(entity.Handle - 1UL))
+				{
 					this._handles.Enqueue(entity.Handle - 1UL);
+				}
 				if (!this._readedObjects.ContainsKey(entity.Handle + 1UL))
+				{
 					this._handles.Enqueue(entity.Handle + 1UL);
+				}
 			}
 
 			//Color	CMC(B)	62

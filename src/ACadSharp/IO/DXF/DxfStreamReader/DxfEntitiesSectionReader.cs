@@ -50,6 +50,10 @@ namespace ACadSharp.IO.DXF
 				{
 					owner.OwnedObjectsHandlers.Add(template.CadObject.Handle);
 				}
+				else
+				{
+					_builder.OrphanTemplates.Add(template);
+				}
 			}
 		}
 	}

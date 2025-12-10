@@ -3,6 +3,7 @@ using ACadSharp.Entities;
 using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSUtilities.Converters;
+using CSUtilities.Extensions;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -138,8 +139,10 @@ namespace ACadSharp.IO.DWG
 			}
 
 			if (this._version >= ACadVersion.AC1015 && this._version < ACadVersion.AC1024)
+			{
 				//Obj size RL size of object in bits, not including end handles
 				this._writer.SavePositonForSize();
+			}
 
 			//Common:
 			//Handle H 5 code 0, length followed by the handle bytes.
@@ -221,20 +224,22 @@ namespace ACadSharp.IO.DWG
 			//R13-R2000 Only:
 			//previous/next handles present if Nolinks is 0.
 			//Nolinks B 1 if major links are assumed +1, -1, else 0 For R2004+this always has value 1 (links are not used)
-			bool hasLinks = true;
 			if (!this.R2004Plus)
 			{
-				hasLinks = _prev != null
-						&& _prev.Handle == entity.Handle - 1
-						&& _next != null
-						&& _next.Handle == entity.Handle + 1;
+				bool hasLinks = _prev != null
+							&& _prev.Handle == entity.Handle - 1
+							&& _next != null
+							&& _next.Handle == entity.Handle + 1;
 
 				this._writer.WriteBit(hasLinks);
 
-				//[PREVIOUS ENTITY (relative soft pointer)]
-				this._writer.HandleReference(DwgReferenceType.SoftPointer, _prev);
-				//[NEXT ENTITY (relative soft pointer)]
-				this._writer.HandleReference(DwgReferenceType.SoftPointer, _next);
+				if (!hasLinks)
+				{
+					//[PREVIOUS ENTITY (relative soft pointer)]
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, _prev);
+					//[NEXT ENTITY (relative soft pointer)]
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, _next);
+				}
 			}
 
 			//Color	CMC(B)	62
@@ -419,10 +424,12 @@ namespace ACadSharp.IO.DWG
 							}
 							else
 							{
+								var encodingIndex = CadUtils.GetCodeIndex((CSUtilities.Text.CodePage)this._writer.Encoding.CodePage);
 								byte[] bytes = this._writer.Encoding.GetBytes(string.IsNullOrEmpty(str.Value) ? string.Empty : str.Value);
-								mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)str.Value.Length + 1), 0, 2);
+
+								mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)str.Value.Length), 0, 2);
+								mstream.WriteByte((byte)encodingIndex);
 								mstream.Write(bytes, 0, bytes.Length);
-								mstream.WriteByte(0);
 							}
 							break;
 						default:
@@ -442,6 +449,7 @@ namespace ACadSharp.IO.DWG
 		{
 			//Numreactors S number of reactors in this object
 			cadObject.CleanReactors();
+
 			this._writer.WriteBitLong(cadObject.Reactors.Count());
 			foreach (var item in cadObject.Reactors)
 			{

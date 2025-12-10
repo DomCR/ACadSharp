@@ -4,7 +4,6 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSMath;
-using CSUtilities.Converters;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

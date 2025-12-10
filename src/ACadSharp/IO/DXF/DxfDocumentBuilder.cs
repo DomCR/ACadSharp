@@ -2,6 +2,7 @@
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,6 +19,8 @@ namespace ACadSharp.IO.DXF
 		public HashSet<Entity> ModelSpaceEntities { get; } = new();
 
 		public CadBlockRecordTemplate ModelSpaceTemplate { get; set; }
+
+		public List<CadTemplate> OrphanTemplates { get; set; } = new();
 
 		public DxfDocumentBuilder(ACadVersion version, CadDocument document, DxfReaderConfiguration configuration) : base(version, document)
 		{
@@ -45,7 +48,7 @@ namespace ACadSharp.IO.DXF
 			this.buildDictionaries();
 
 			//Assign the owners for the different objects
-			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
+			foreach (CadTemplate template in this.OrphanTemplates)
 			{
 				this.assignOwner(template);
 			}
@@ -85,8 +88,6 @@ namespace ACadSharp.IO.DXF
 			if (template.CadObject.Owner != null || template.CadObject is CadDictionary || !template.OwnerHandle.HasValue)
 				return;
 
-			return;
-
 			if (this.TryGetObjectTemplate(template.OwnerHandle, out CadTemplate owner))
 			{
 				switch (owner)
@@ -110,13 +111,13 @@ namespace ACadSharp.IO.DXF
 						insert.SeqendHandle = seqend.Handle;
 						break;
 					default:
-						this.Notify($"Owner {owner.GetType().Name} with handle {template.OwnerHandle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}");
+						this.Notify($"Owner {owner.GetType().Name} with handle {template.OwnerHandle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}", NotificationType.Warning);
 						break;
 				}
 			}
 			else
 			{
-				this.Notify($"Owner {template.OwnerHandle} not found for {template.GetType().FullName} with handle {template.CadObject.Handle}");
+				this.Notify($"Owner {template.OwnerHandle} not found for {template.GetType().FullName} with handle {template.CadObject.Handle}", NotificationType.Warning);
 			}
 		}
 	}
