@@ -50,7 +50,7 @@ namespace ACadSharp.IO
 		{
 			base.Write();
 
-			if(this._version < ACadVersion.AC1018)
+			if (this._version < ACadVersion.AC1018)
 			{
 				this._document.VEntityControl ??= new ViewportEntityControl(this._document);
 			}
@@ -119,10 +119,15 @@ namespace ACadSharp.IO
 		/// <param name="stream"></param>
 		/// <param name="document"></param>
 		/// <param name="notification"></param>
-		public static void Write(Stream stream, CadDocument document, NotificationEventHandler notification = null)
+		public static void Write(Stream stream, CadDocument document, DwgWriterConfiguration configuration = null, NotificationEventHandler notification = null)
 		{
 			using (DwgWriter writer = new DwgWriter(stream, document))
 			{
+				if (configuration != null)
+				{
+					writer.Configuration = configuration;
+				}
+
 				writer.OnNotification += notification;
 				writer.Write();
 			}
