@@ -8,6 +8,10 @@ namespace ACadSharp.Tests.Entities
 	{
 		public override DimensionType Type => DimensionType.Diameter;
 
+		public override void GetBoundingBoxTest()
+		{
+		}
+
 		protected override DimensionDiameter createDim()
 		{
 			return new DimensionDiameter

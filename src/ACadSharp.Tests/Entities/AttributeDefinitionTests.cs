@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tests.Common;
+using CSMath;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities
@@ -14,6 +15,16 @@ namespace ACadSharp.Tests.Entities
 			AttributeDefinition attributeDefinition = new AttributeDefinition(att);
 
 			EntityComparator.IsEqual(att, attributeDefinition);
+		}
+
+		public override void GetBoundingBoxTest()
+		{
+			AttributeDefinition att = new AttributeDefinition();
+			att.InsertPoint = new CSMath.XYZ(5, 5, 5);
+
+			BoundingBox box = att.GetBoundingBox();
+
+			Assert.Equal(new BoundingBox(new CSMath.XYZ(5, 5, 5)), box);
 		}
 	}
 }

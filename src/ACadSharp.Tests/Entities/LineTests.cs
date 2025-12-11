@@ -89,7 +89,7 @@ namespace ACadSharp.Tests.Entities
 
 
 		[Fact]
-		public void GetBoundingBoxTest()
+		public override void GetBoundingBoxTest()
 		{
 			Line line = new Line();
 			line.EndPoint = new XYZ(10, 10, 0);

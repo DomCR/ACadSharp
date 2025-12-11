@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Extensions;
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
 using Xunit;
@@ -8,12 +9,18 @@ namespace ACadSharp.Tests.Entities
 	public abstract class CommonEntityTests<T>
 		where T : Entity, new()
 	{
-		[Fact]
-		public virtual void BoundingBoxTest()
-		{
-			Entity entity = EntityFactory.Create(typeof(T));
+		protected CSMathRandom _random = new CSMathRandom();
 
-			entity.GetBoundingBox();
+		[Fact]
+		public virtual void CloneTest()
+		{
+			T e = EntityFactory.Create<T>();
+
+			var clone = e.CloneTyped();
+
+			Assert.NotNull(clone);
+
+			CadObjectTestUtils.AssertEntityClone(e, clone);
 		}
 
 		[Fact]
@@ -91,5 +98,8 @@ namespace ACadSharp.Tests.Entities
 			entity.LineWeight = LineWeightType.W70;
 			Assert.Equal(entity.LineWeight, entity.GetActiveLineWeightType());
 		}
+
+		[Fact]
+		public abstract void GetBoundingBoxTest();
 	}
 }

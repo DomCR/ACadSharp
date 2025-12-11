@@ -8,7 +8,7 @@ namespace ACadSharp.Tests.Entities
 	public class EllipseTests : CommonEntityTests<Ellipse>
 	{
 		[Fact]
-		public void GetBoundingBoxTest()
+		public override void GetBoundingBoxTest()
 		{
 			//Ellipse size: x = 1, y = 0.5
 			Ellipse ellipse = new();
