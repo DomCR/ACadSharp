@@ -1610,6 +1610,8 @@ namespace ACadSharp.IO.DXF
 				case 420:
 					return true;
 				default:
+					//Avoid noise while is not implemented
+					return true;
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.VisualStyle]);
 			}
 		}
