@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ACadSharp.Objects.Collections
+﻿namespace ACadSharp.Objects.Collections
 {
 	public class ScaleCollection : ObjectDictionaryCollection<Scale>
 	{

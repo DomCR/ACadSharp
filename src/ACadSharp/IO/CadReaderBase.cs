@@ -33,7 +33,7 @@ namespace ACadSharp.IO
 			this.OnNotification += notification;
 		}
 
-		protected CadReaderBase(string filename, NotificationEventHandler notification = null) : this(File.OpenRead(filename), notification)
+		protected CadReaderBase(string filename, NotificationEventHandler notification = null) : this(File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), notification)
 		{
 		}
 

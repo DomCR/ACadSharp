@@ -6,9 +6,13 @@ namespace ACadSharp.Tests
 {
 	public static class TestVariables
 	{
+		public static int DecimalPrecision { get { return EnvironmentVars.Get<int>("DECIMAL_PRECISION"); } }
+
+		public static double Delta { get { return EnvironmentVars.Get<double>("DELTA"); } }
+
 		public static string DesktopFolder { get { return Environment.GetFolderPath(Environment.SpecialFolder.Desktop); } }
 
-		public static string SamplesFolder { get { return EnvironmentVars.Get<string>("SAMPLES_FOLDER"); } }
+		public static bool LocalEnv { get { return EnvironmentVars.Get<bool>("LOCAL_ENV"); } }
 
 		public static string OutputSamplesFolder { get { return EnvironmentVars.Get<string>("OUTPUT_SAMPLES_FOLDER"); } }
 
@@ -16,15 +20,13 @@ namespace ACadSharp.Tests
 
 		public static string OutputSvgFolder { get { return EnvironmentVars.Get<string>("OUTPUT_SVG"); } }
 
-		public static bool LocalEnv { get { return EnvironmentVars.Get<bool>("LOCAL_ENV"); } }
+		public static bool SaveOutputInStream { get { return EnvironmentVars.Get<bool>("SAVE_OUTPUT_IN_STREAM"); } }
 
-		public static double Delta { get { return EnvironmentVars.Get<double>("DELTA"); } }
-
-		public static int DecimalPrecision { get { return EnvironmentVars.Get<int>("DECIMAL_PRECISION"); } }
-
-		public static bool RunDwgWriterSingleCases { get { return EnvironmentVars.Get<bool>("RUN_DWG_WRITER_SINGLE_CASES_TEST"); } }
+		public static string SamplesFolder { get { return EnvironmentVars.Get<string>("SAMPLES_FOLDER"); } }
 
 		public static bool SavePreview { get { return EnvironmentVars.Get<bool>("SAVE_PREVIEW"); } }
+
+		public static bool SelfCheckOutput { get { return EnvironmentVars.Get<bool>("SELF_CHECK_OUTPUT"); } }
 
 		static TestVariables()
 		{
@@ -35,8 +37,9 @@ namespace ACadSharp.Tests
 			EnvironmentVars.SetIfNull("LOCAL_ENV", "true");
 			EnvironmentVars.SetIfNull("DELTA", "0.00001");
 			EnvironmentVars.SetIfNull("DECIMAL_PRECISION", "5");
-			EnvironmentVars.SetIfNull("RUN_DWG_WRITER_SINGLE_CASES_TEST", "true");
+			EnvironmentVars.SetIfNull("SAVE_OUTPUT_IN_STREAM", "true");
 			EnvironmentVars.SetIfNull("SAVE_PREVIEW", "true");
+			EnvironmentVars.SetIfNull("SELF_CHECK_OUTPUT", "true");
 		}
 
 		public static void CreateOutputFolders()

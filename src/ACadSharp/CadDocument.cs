@@ -102,6 +102,14 @@ namespace ACadSharp
 		public LineTypesTable LineTypes { get; private set; }
 
 		/// <summary>
+		/// The collection of all materials in the drawing.
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadMaterial"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public MaterialCollection Materials { get; private set; }
+
+		/// <summary>
 		/// The collection of all Multi leader styles in the drawing.
 		/// </summary>
 		/// <remarks>
@@ -181,6 +189,8 @@ namespace ACadSharp
 		/// The collection of all vports in the drawing.
 		/// </summary>
 		public VPortsTable VPorts { get; private set; }
+
+		internal ViewportEntityControl VEntityControl { get; set; }
 
 		//Contains all the objects in the document
 		private readonly Dictionary<ulong, IHandledCadObject> _cadObjects = new Dictionary<ulong, IHandledCadObject>();
@@ -272,6 +282,7 @@ namespace ACadSharp
 			if (!this.BlockRecords.Contains(BlockRecord.PaperSpaceName))
 			{
 				BlockRecord pspace = BlockRecord.PaperSpace;
+				pspace.Layout.TabOrder = 1;
 				this.Layouts.Add(pspace.Layout);
 			}
 		}
@@ -488,6 +499,11 @@ namespace ACadSharp
 			if (this.updateCollection(CadDictionary.VariableDictionary, createDictionaries, out CadDictionary variables))
 			{
 				this.DictionaryVariables = new DictionaryVariableCollection(variables);
+			}
+
+			if (this.updateCollection(CadDictionary.AcadMaterial, createDictionaries, out CadDictionary materials))
+			{
+				this.Materials = new MaterialCollection(materials);
 			}
 		}
 

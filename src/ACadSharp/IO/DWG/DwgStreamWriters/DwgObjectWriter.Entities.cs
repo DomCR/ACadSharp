@@ -90,6 +90,9 @@ namespace ACadSharp.IO.DWG
 				case MultiLeader multiLeader:
 					this.writeMultiLeader(multiLeader);
 					break;
+				case Ole2Frame ole2Frame:
+					this.writeOle2Frame(ole2Frame);
+					break;
 				case PdfUnderlay pdfUnderlay:
 					this.writePdfUnderlay(pdfUnderlay);
 					break;
@@ -1206,6 +1209,31 @@ namespace ACadSharp.IO.DWG
 			this._writer.HandleReference(DwgReferenceType.HardPointer, leader.Style);
 		}
 
+		private void writeOle2Frame(Ole2Frame ole2Frame)
+		{
+			//Flags BS 70
+			this._writer.WriteBitShort(ole2Frame.Version);
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//Mode BS
+				this._writer.WriteBitShort(0);
+			}
+
+			//Common:
+			//Data Length BL-- Bit - pair - coded long giving the length of the data
+			this._writer.WriteBitLong(ole2Frame.BinaryData.Length);
+			this._writer.WriteBytes(ole2Frame.BinaryData);
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//Mode BS
+				this._writer.WriteByte(3);
+			}
+		}
+
 		private void writeMultiLeader(MultiLeader multiLeader)
 		{
 
@@ -2044,7 +2072,6 @@ namespace ACadSharp.IO.DWG
 			{
 				//DataFlags RC Used to determine presence of subsquent data
 				byte dataFlags = 0;
-
 				if (text.InsertPoint.Z == 0.0)
 				{
 					dataFlags = (byte)(dataFlags | 0b1);
@@ -2082,7 +2109,9 @@ namespace ACadSharp.IO.DWG
 
 				//Elevation RD --- present if !(DataFlags & 0x01)
 				if ((dataFlags & 0b1) == 0)
+				{
 					this._writer.WriteRawDouble(text.InsertPoint.Z);
+				}
 
 				//Insertion pt 2RD 10
 				this._writer.WriteRawDouble(text.InsertPoint.X);

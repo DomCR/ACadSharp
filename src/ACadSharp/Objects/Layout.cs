@@ -51,7 +51,7 @@ namespace ACadSharp.Objects
 		/// Layout elevation.
 		/// </summary>
 		[DxfCodeValue(146)]
-		public double Elevation { get; set; }
+		public double Elevation { get; set; } = 0.0d;
 
 		/// <summary>
 		/// Insertion base point for this layout(defined by INSBASE while this layout is current).
@@ -150,7 +150,7 @@ namespace ACadSharp.Objects
 		/// Orthographic type of UCS.
 		/// </summary>
 		[DxfCodeValue(76)]
-		public OrthographicType UcsOrthographicType { get; set; }
+		public OrthographicType UcsOrthographicType { get; set; } = OrthographicType.None;
 
 		/// <summary>
 		/// Viewport that was last active in this layout when the layout was current.

@@ -12,7 +12,7 @@ namespace ACadSharp.Entities
 		/// Changes the height of the object.
 		/// </summary>
 		/// <value>
-		/// This must be a positive, non-negative number.
+		/// Valid values must be greater than zero. Default: 1.0
 		/// </value>
 		double Height { get; set; }
 

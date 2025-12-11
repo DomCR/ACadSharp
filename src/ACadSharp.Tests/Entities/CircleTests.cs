@@ -24,35 +24,39 @@ namespace ACadSharp.Tests.Entities
 		public void PolygonalVertexesTest()
 		{
 			var start = new XYZ(1, 0, 0);
-			var mid = new XYZ(Math.Sqrt(2) / 2, Math.Sqrt(2) / 2, 0);
-			var end = new XYZ(0, 1, 0);
+			var mid1 = new XYZ(0, 1, 0);
+			var mid2 = new XYZ(-1, 0, 0);
+			var end = new XYZ(0, -1, 0);
 			Circle circle = new Circle()
 			{
 				Radius = 1,
 			};
 
-			var v = circle.PolygonalVertexes(9);
+			var v = circle.PolygonalVertexes(4);
 
 			AssertUtils.AreEqual<XYZ>(start, v[0], "start point");
-			AssertUtils.AreEqual<XYZ>(mid, v[1], "mid point");
-			AssertUtils.AreEqual<XYZ>(end, v[2], "end point");
+			AssertUtils.AreEqual<XYZ>(mid1, v[1], "mid point");
+			AssertUtils.AreEqual<XYZ>(mid2, v[2], "mid point");
+			AssertUtils.AreEqual<XYZ>(end, v[3], "end point");
 
 			circle = new Circle()
 			{
 				Radius = 1,
 				Center = new XYZ(20, 20, 0),
-			};		
+			};
 
 
 			start += circle.Center;
-			mid += circle.Center;
+			mid1 += circle.Center;
+			mid2 += circle.Center;
 			end += circle.Center;
 
-			v = circle.PolygonalVertexes(9);
+			v = circle.PolygonalVertexes(4);
 
 			AssertUtils.AreEqual<XYZ>(start, v[0], "start point");
-			AssertUtils.AreEqual<XYZ>(mid, v[1], "mid point");
-			AssertUtils.AreEqual<XYZ>(end, v[2], "end point");
+			AssertUtils.AreEqual<XYZ>(mid1, v[1], "mid point");
+			AssertUtils.AreEqual<XYZ>(mid2, v[2], "mid point");
+			AssertUtils.AreEqual<XYZ>(end, v[3], "end point");
 		}
 
 		[Fact]
