@@ -7,11 +7,6 @@ namespace ACadSharp.Tests.Entities
 {
 	public class EllipseTests : CommonEntityTests<Ellipse>
 	{
-		public override void CloneTest()
-		{
-			throw new System.NotImplementedException();
-		}
-
 		[Fact]
 		public override void GetBoundingBoxTest()
 		{

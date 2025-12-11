@@ -198,10 +198,5 @@ namespace ACadSharp.Tests.Entities
 
 			return pline;
 		}
-
-		public override void CloneTest()
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

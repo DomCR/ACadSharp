@@ -9,11 +9,6 @@ namespace ACadSharp.Tests.Entities
 	{
 		public override DimensionType Type => DimensionType.Linear;
 
-		public override void CloneTest()
-		{
-			throw new System.NotImplementedException();
-		}
-
 		[Fact]
 		public void DefinitionPointRecalculation()
 		{
@@ -41,7 +36,6 @@ namespace ACadSharp.Tests.Entities
 
 		public override void GetBoundingBoxTest()
 		{
-			throw new System.NotImplementedException();
 		}
 
 		protected override DimensionLinear createDim()

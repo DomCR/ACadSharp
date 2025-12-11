@@ -46,7 +46,13 @@ namespace ACadSharp.Tests.Entities
 
 		public override void GetBoundingBoxTest()
 		{
-			throw new NotImplementedException();
+			List<Vertex2D> vertices = this.createVertices2DMock();
+			Polyline2D polyline = this.createPolyline2DMock(vertices);
+
+			var box = polyline.GetBoundingBox();
+
+			Assert.Equal(new XYZ(0, 0, 0), box.Min);
+			Assert.Equal(new XYZ(2, 2, 0), box.Max);
 		}
 
 		[Fact]

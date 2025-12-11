@@ -8,14 +8,8 @@ namespace ACadSharp.Tests.Entities
 	{
 		public override DimensionType Type => DimensionType.Diameter;
 
-		public override void CloneTest()
-		{
-			throw new System.NotImplementedException();
-		}
-
 		public override void GetBoundingBoxTest()
 		{
-			throw new System.NotImplementedException();
 		}
 
 		protected override DimensionDiameter createDim()

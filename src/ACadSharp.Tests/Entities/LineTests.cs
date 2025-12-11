@@ -99,10 +99,5 @@ namespace ACadSharp.Tests.Entities
 			Assert.Equal(new XYZ(0, 0, 0), boundingBox.Min);
 			Assert.Equal(new XYZ(10, 10, 0), boundingBox.Max);
 		}
-
-		public override void CloneTest()
-		{
-			throw new System.NotImplementedException();
-		}
 	}
 }
