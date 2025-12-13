@@ -153,7 +153,6 @@ namespace ACadSharp.IO.DWG
 					//Cell data, repeats for all cells in n x m table:
 					TableEntity.Cell cell = new TableEntity.Cell();
 					CadTableCellTemplate cellTemplate = new CadTableCellTemplate(cell);
-
 					table.Rows[n].Cells.Add(cell);
 
 					this.readTableCellData(cellTemplate);
@@ -191,7 +190,8 @@ namespace ACadSharp.IO.DWG
 
 			switch (cell.Type)
 			{
-				case CellType.Text when template.ValueHandle == 0:
+				//In AutoCAD 2007 a cell can contain either 1 text block.
+				case CellType.Text when template.ValueHandle == 0 && this._version < ACadVersion.AC1021:
 					//Text string TV 1 Present only if 344 value below is 0
 					template.CellText = this._mergedReaders.ReadVariableText();
 					break;
@@ -218,8 +218,6 @@ namespace ACadSharp.IO.DWG
 						}
 					}
 					break;
-				default:
-					throw new NotSupportedException();
 			}
 
 			//Common to both text and block cells:
@@ -265,6 +263,80 @@ namespace ACadSharp.IO.DWG
 					//Text height BD 140 Present only if bit 0x20 is set in cell flag 
 					cell.StyleOverride.TextHeight = this._mergedReaders.ReadBitDouble();
 				}
+
+				if (flags.HasFlag(Cell.OverrideFlags.TopGridColor))
+				{
+					//Top grid color CMC 69 Present only if bit 0x00040 is set in cell flag 
+					cell.StyleOverride.TopBorder.Color = this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.TopGridLineWeight))
+				{
+					//Top grid lineweight BS 279 Present only if bit 0x00400 is set in cell flag 
+					cell.StyleOverride.TopBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.TopGridLineWeight))
+				{
+					//Top visibility BS 289 Present only if bit 0x04000 is set in cell flag 
+					cell.StyleOverride.TopBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
+				}
+
+				if (flags.HasFlag(Cell.OverrideFlags.RightGridColor))
+				{
+					//Right grid color CMC 65 Present only if bit 0x00080 is set in cell flag 
+					cell.StyleOverride.RightBorder.Color = this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.RightGridLineWeight))
+				{
+					//Right grid lineweight BS 275 Present only if bit 0x00800 is set in cell flag 
+					cell.StyleOverride.RightBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.RightGridLineWeight))
+				{
+					//Right visibility BS 285 Present only if bit 0x08000 is set in cell flag 
+					cell.StyleOverride.RightBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
+				}
+
+				if (flags.HasFlag(Cell.OverrideFlags.BottomGridColor))
+				{
+					//Bottom grid color CMC 66 Present only if bit 0x00100 is set in cell flag 
+					cell.StyleOverride.BottomBorder.Color = this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.BottomGridLineWeight))
+				{
+					//Bottom grid lineweight BS 276 Present only if bit 0x01000 is set in cell flag 
+					cell.StyleOverride.BottomBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.BottomGridLineWeight))
+				{
+					//Bottom visibility BS 286 Present only if bit 0x10000 is set in cell flag 
+					cell.StyleOverride.BottomBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
+				}
+
+				if (flags.HasFlag(Cell.OverrideFlags.LeftGridColor))
+				{
+					//Left grid color CMC 68 Present only if bit 0x00200 is set in cell flag 
+					cell.StyleOverride.LeftBorder.Color = this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.LeftGridLineWeight))
+				{
+					//Left grid lineweight BS 278 Present only if bit 0x02000 is set in cell flag 
+					cell.StyleOverride.LeftBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.LeftGridLineWeight))
+				{
+					//Left visibility BS 288 Present only if bit 0x20000 is set in cell flag 
+					cell.StyleOverride.LeftBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
+				}
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Unknown BL
+				var unknown = this._mergedReaders.ReadBitLong();
+				//Value fields … See paragraph 20.4.98.
+				cell.Contents.Add(new CellContent());
+				this.readCustomTableDataValue(cell.Content.Value);
 			}
 		}
 
