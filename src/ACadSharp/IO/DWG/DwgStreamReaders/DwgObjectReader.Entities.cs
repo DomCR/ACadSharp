@@ -152,8 +152,9 @@ namespace ACadSharp.IO.DWG
 				{
 					//Cell data, repeats for all cells in n x m table:
 					TableEntity.Cell cell = new TableEntity.Cell();
-					CadTableCellTemplate cellTemplate = new CadTableCellTemplate(cell);
 					table.Rows[n].Cells.Add(cell);
+					CadTableCellTemplate cellTemplate = new CadTableCellTemplate(cell);
+					template.CadTableCellTemplates.Add(cellTemplate);
 
 					this.readTableCellData(cellTemplate);
 				}
@@ -194,6 +195,8 @@ namespace ACadSharp.IO.DWG
 				case CellType.Text when template.ValueHandle == 0 && this._version < ACadVersion.AC1021:
 					//Text string TV 1 Present only if 344 value below is 0
 					template.CellText = this._mergedReaders.ReadVariableText();
+
+					cell.Contents.Add(new CellContent());
 					break;
 				case CellType.Block:
 					//Block scale BD 144

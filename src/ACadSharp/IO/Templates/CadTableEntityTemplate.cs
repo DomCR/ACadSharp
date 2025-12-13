@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
+using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using static ACadSharp.Entities.TableEntity;
@@ -23,7 +24,7 @@ namespace ACadSharp.IO.Templates
 
 		public TableEntity TableEntity { get { return this.CadObject as TableEntity; } }
 
-		private readonly List<CadTableCellTemplate> _cadTableCellTemplates = new();
+		public List<CadTableCellTemplate> CadTableCellTemplates { get; } = new();
 
 		private int _currCellIndex = 0;
 
@@ -46,7 +47,7 @@ namespace ACadSharp.IO.Templates
 
 			this.CurrentCellTemplate = new CadTableCellTemplate(cell);
 
-			this._cadTableCellTemplates.Add(this.CurrentCellTemplate);
+			this.CadTableCellTemplates.Add(this.CurrentCellTemplate);
 
 			this._currCellIndex++;
 		}
@@ -54,6 +55,11 @@ namespace ACadSharp.IO.Templates
 		protected override void build(CadDocumentBuilder builder)
 		{
 			base.build(builder);
+
+			foreach (var cellTemplate in this.CadTableCellTemplates)
+			{
+				cellTemplate.Build(builder);
+			}
 		}
 
 		internal class CadCellStyleTemplate : CadTableCellContentFormatTemplate
@@ -140,7 +146,7 @@ namespace ACadSharp.IO.Templates
 			public string CellText { get; internal set; }
 
 			public HashSet<(ulong, string)> AttributeHandles { get; } = new();
-			public ulong? TextStyleOverrideHandle { get;  set; }
+			public ulong? TextStyleOverrideHandle { get; set; }
 
 			public CadTableCellTemplate(TableEntity.Cell cell)
 			{
@@ -153,7 +159,10 @@ namespace ACadSharp.IO.Templates
 				{
 				}
 
-				throw new System.NotImplementedException();
+				if (!this.CellText.IsNullOrEmpty())
+				{
+
+				}
 			}
 		}
 	}
