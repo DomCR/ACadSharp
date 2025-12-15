@@ -65,7 +65,7 @@ namespace ACadSharp.IO
 		/// <value>
 		/// default: false
 		/// </value>
-		public bool WriteXRecords { get; set; } = true;
+		public bool WriteXRecords { get; set; } = false;
 
 		/// <summary>
 		/// The writer will not ignore the <see cref="ACadSharp.Entities.Shape"/> entities in the document.
