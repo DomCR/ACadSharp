@@ -160,6 +160,143 @@ namespace ACadSharp.IO.DWG
 				}
 			}
 
+			//Common:
+			//End Cell Data(remaining data applies to entire table)
+			//Has table overrides B
+			if (this._mergedReaders.ReadBit())
+			{
+				var styleOverride = new TableStyle();
+				table.Content.StyleOverride = styleOverride;
+
+				//TODO: implement table style override
+
+				//If has override flag == 1
+				//Cell flag override BL 177 (deprecated)
+				TableEntity.OverrideFlags flags = (OverrideFlags)this._mergedReaders.ReadBitLong();
+				if (flags.HasFlag(TableEntity.OverrideFlags.TitleSuppressed))
+				{
+					//Title suppressed B 280 Present only if bit 0x0001 is set in table overrides 
+					styleOverride.SuppressTitle = this._mergedReaders.ReadBit();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.TitleSuppressed))
+				{
+					//Header suppresed -- 281 Always true (do not read any data for this)
+
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.FlowDirection))
+				{
+					//Flow direction BS 70 Present only if bit 0x0004 is set in table overrides
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.HorizontalCellMargin))
+				{
+					//Horz. Cell margin BD 40 Present only if bit 0x0008 is set in table overrides 
+					this._mergedReaders.ReadBitDouble();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.VerticalCellMargin))
+				{
+					//Vert. cell margin BD 41 Present only if bit 0x0010 is set in table overrides 
+					this._mergedReaders.ReadBitDouble();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.TitleRowColor))
+				{
+					//Title row color CMC 64 Present only if bit 0x0020 is set in table overrides 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.HeaderRowColor))
+				{
+					//Header row color CMC 64 Present only if bit 0x0040 is set in table overrides 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.DataRowColor))
+				{
+					//Data row color CMC 64 Present only if bit 0x0080 is set in table overrides 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.TitleRowFillNone))
+				{
+					//Title row fill none B 283 Present only if bit 0x0100 is set in table overrides 
+					this._mergedReaders.ReadBit();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.HeaderRowFillNone))
+				{
+					//Header row fill none B 283 Present only if bit 0x0200 is set in table overrides 
+					this._mergedReaders.ReadBit();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.DataRowFillNone))
+				{
+					//Data row fill none B 283 Present only if bit 0x0400 is set in table overrides 
+					this._mergedReaders.ReadBit();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.TitleRowFillColor))
+				{
+					//Title row fill color CMC 63 Present only if bit 0x0800 is set in table overrides 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.HeaderRowFillColor))
+				{
+					//Header row fill clr. CMC 63 Present only if bit 0x1000 is set in table overrides 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.DataRowFillColor))
+				{
+					//Data row fill color CMC 63 Present only if bit 0x2000 is set in table overrides 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.TitleRowAlign))
+				{
+					//Title row align. BS 170 Present only if bit 0x4000 is set in table overrides 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.HeaderRowAlign))
+				{
+					//Header row align. BS 170 Present only if bit 0x8000 is set in table overrides 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.DataRowAlign))
+				{
+					//Data row align. BS 170 Present only if bit 0x10000 is set in table 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.TitleTextStyle))
+				{
+					//Title text style hnd H 7 Present only if bit 0x20000 is set in table 
+					this.handleReference();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.HeaderTextStyle))
+				{
+					//Title text style hnd H 7 Present only if bit 0x40000 is set in table 
+					this.handleReference();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.DataTextStyle))
+				{
+					//Title text style hnd H 7 Present only if bit 0x80000 is set in table 
+					this.handleReference();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.TitleRowHeight))
+				{
+					//Title row height BD 140 Present only if bit 0x100000 is set in table 
+					this._mergedReaders.ReadBitDouble();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.HeaderRowHeight))
+				{
+					//Header row height BD 140 Present only if bit 0x200000 is set in table 
+					this._mergedReaders.ReadBitDouble();
+				}
+				if (flags.HasFlag(TableEntity.OverrideFlags.DataRowHeight))
+				{
+					//Data row height BD 140 Present only if bit 0x400000 is set in table 
+					this._mergedReaders.ReadBitDouble();
+				}
+			}
+
+			//End If has table overrides == 1
+			//Has border color overrides B
+			if (this._mergedReaders.ReadBit())
+			{
+
+			}
+
 			return template;
 		}
 
@@ -194,9 +331,10 @@ namespace ACadSharp.IO.DWG
 				//In AutoCAD 2007 a cell can contain either 1 text block.
 				case CellType.Text when template.ValueHandle == 0 && this._version < ACadVersion.AC1021:
 					//Text string TV 1 Present only if 344 value below is 0
-					template.CellText = this._mergedReaders.ReadVariableText();
-
-					cell.Contents.Add(new CellContent());
+					var content = new CellContent();
+					content.Value.ValueType = CellValueType.String;
+					content.Value.Value = this._mergedReaders.ReadVariableText();
+					cell.Contents.Add(content);
 					break;
 				case CellType.Block:
 					//Block scale BD 144
