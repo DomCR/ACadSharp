@@ -63,7 +63,7 @@ namespace ACadSharp.Tables
 		/// Last height used
 		/// </summary>
 		[DxfCodeValue(42)]
-		public double LastHeight { get; set; }
+		public double LastHeight { get; set; } = 2.5;
 
 		/// <summary>
 		/// Specifies the oblique angle of the object.
@@ -94,7 +94,10 @@ namespace ACadSharp.Tables
 		internal TextStyle() : base() { }
 
 		/// <inheritdoc/>
-		public TextStyle(string name) : base(name) { }
+		public TextStyle(string name) : base(name)
+		{
+			this.Flags = StyleFlags.XrefDependent;
+		}
 	}
 }
 

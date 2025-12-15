@@ -40,6 +40,11 @@ namespace ACadSharp.Tables
 				Layout layout = new Layout();
 				layout.Name = Layout.ModelLayoutName;
 				layout.AssociatedBlock = record;
+				layout.Flags = PlotFlags.UseStandardScale | PlotFlags.PlotPlotStyles | PlotFlags.PrintLineweights | PlotFlags.DrawViewportsFirst | PlotFlags.ModelType | PlotFlags.UpdatePaper | PlotFlags.Initializing;
+				layout.LayoutFlags = LayoutFlags.PaperSpaceLinetypeScaling;
+				layout.MaxLimits = new XY(12, 9);
+				layout.PlotType = PlotType.LastScreenDisplay;
+				layout.PaperUnits = PlotPaperUnits.Millimeters;
 
 				return record;
 			}
