@@ -529,8 +529,33 @@ namespace ACadSharp
 			}
 		}
 
+		/// <summary>
+		/// Updates the image definition reactors for all raster images in the current collection.
+		/// </summary>
+		/// <remarks>
+		/// This method removes existing <see cref="ImageDefinitionReactor"/> instances from the document
+		/// and creates new reactors for each <see cref="RasterImage"/>. The new reactors are associated with their
+		/// corresponding image definitions and added to the document.
+		/// </remarks>
+		public void UpdateImageReactors()
+		{
+			var reactors = this._cadObjects.Values.OfType<ImageDefinitionReactor>().ToList();
+			foreach (var item in reactors)
+			{
+				this._cadObjects.Remove(item.Handle);
+			}
+
+			var rasterImages = this._cadObjects.Values.OfType<RasterImage>().ToList();
+			foreach (RasterImage image in rasterImages)
+			{
+				image.DefinitionReactor = new ImageDefinitionReactor(image);
+				this.addCadObject(image.DefinitionReactor);
+				image.Definition.AddReactor(image.DefinitionReactor);
+			}
+		}
+
 		internal void RegisterCollection<T>(IObservableCadCollection<T> collection)
-			where T : CadObject
+					where T : CadObject
 		{
 			switch (collection)
 			{

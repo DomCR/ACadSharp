@@ -37,10 +37,8 @@ namespace ACadSharp.IO.DXF
 				case Material:
 				case MultiLeaderObjectContextData:
 				case VisualStyle:
-				case ImageDefinitionReactor:
 				case UnknownNonGraphicalObject:
 				case ProxyObject:
-				case XRecord:
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
 			}
@@ -74,6 +72,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case ImageDefinition imageDefinition:
 					this.writeImageDefinition(imageDefinition);
+					return;
+				case ImageDefinitionReactor reactor:
+					this.writeImageDefinitionReactor(reactor);
 					return;
 				case Layout layout:
 					this.writeLayout(layout);
@@ -112,6 +113,14 @@ namespace ACadSharp.IO.DXF
 			this.writeExtendedData(co.ExtendedData);
 		}
 
+		private void writeImageDefinitionReactor(ImageDefinitionReactor reactor)
+		{
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.RasterImageDefReactor);
+
+			this._writer.Write(90, reactor.ClassVersion);
+			this._writer.WriteHandle(330, reactor.Image);
+		}
+
 		protected void writeBookColor(BookColor color)
 		{
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.DbColor);
@@ -132,20 +141,16 @@ namespace ACadSharp.IO.DXF
 			{
 				if (item is XRecord && !this.Configuration.WriteXRecords)
 				{
-					return;
+					continue;
 				}
 
 				this._writer.Write(3, item.Name);
 				this._writer.Write(350, item.Handle);
-			}
 
-			//Add the entries as objects
-			foreach (CadObject item in dict)
-			{
 				this.Holder.Objects.Enqueue(item);
 			}
 
-			if(dict is CadDictionaryWithDefault withDefault)
+			if (dict is CadDictionaryWithDefault withDefault)
 			{
 				this._writer.Write(100, DxfSubclassMarker.DictionaryWithDefault);
 				this._writer.WriteHandle(340, withDefault.DefaultEntry);

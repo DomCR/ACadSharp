@@ -157,10 +157,21 @@ namespace ACadSharp.Tests.IO
 
 		protected virtual void writeDxfFile(string file, CadDocument doc)
 		{
-			using (DxfWriter writer = new DxfWriter(file, doc, false))
+			if (TestVariables.SaveOutputInStream)
 			{
-				writer.OnNotification += this.onNotification;
-				writer.Write();
+				using (DxfWriter writer = new DxfWriter(new MemoryStream(), doc, false))
+				{
+					writer.OnNotification += this.onNotification;
+					writer.Write();
+				}
+			}
+			else
+			{
+				using (DxfWriter writer = new DxfWriter(file, doc, false))
+				{
+					writer.OnNotification += this.onNotification;
+					writer.Write();
+				}
 			}
 		}
 	}

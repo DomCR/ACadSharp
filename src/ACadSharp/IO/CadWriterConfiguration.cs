@@ -24,7 +24,7 @@ namespace ACadSharp.IO
 		/// <value>
 		/// default: true
 		/// </value>
-		public bool ResetDxfClasses { get; set; } = true;
+		public bool ResetDxfClasses { get; set; } = false;
 
 		/// <summary>
 		///  Update the blocks that visualize the dimensions in the model space.
