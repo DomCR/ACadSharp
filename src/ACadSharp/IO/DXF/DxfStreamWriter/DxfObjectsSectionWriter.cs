@@ -597,13 +597,32 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		protected void writeXRecord(XRecord e)
+		protected void writeXRecord(XRecord record)
 		{
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XRecord);
 
-			foreach (var item in e.Entries)
+			this._writer.Write(280, record.CloningFlags);
+
+			foreach (var e in record.Entries)
 			{
-				this._writer.Write(item.Code, item.Value);
+				switch (e.GroupCode)
+				{
+					case GroupCodeValueType.None:
+						break;
+					case GroupCodeValueType.Point3D:
+						var pt = e.Value as IVector;
+						this._writer.Write(e.Code, pt);
+						break;
+					case GroupCodeValueType.Handle:
+					case GroupCodeValueType.ObjectId:
+					case GroupCodeValueType.ExtendedDataHandle:
+						var obj = e.Value as IHandledCadObject;
+						this._writer.Write(e.Code, obj.Handle);
+						break;
+					default:
+						this._writer.Write(e.Code, e.Value);
+						break;
+				}
 			}
 		}
 	}
