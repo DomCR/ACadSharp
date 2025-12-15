@@ -2082,6 +2082,8 @@ namespace ACadSharp.IO.DXF
 
 			while (this._reader.DxfCode != DxfCode.ControlString)
 			{
+				reactors.Add(this._reader.ValueAsHandle);
+
 				this._reader.ReadNext();
 			}
 

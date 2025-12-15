@@ -232,7 +232,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(282, image.Contrast, map);
 			this._writer.Write(283, image.Fade, map);
 
-			//this._writer.WriteHandle(360, image.DefinitionReactor, map);
+			this._writer.WriteHandle(360, image.DefinitionReactor, map);
 
 			this._writer.Write(71, (short)image.ClipType, map);
 
@@ -254,6 +254,8 @@ namespace ACadSharp.IO.DXF
 					this._writer.Write(14, bv, map);
 				}
 			}
+
+			this.Holder.Objects.Enqueue(image.DefinitionReactor);
 		}
 
 		private void writeCircle(Circle circle)
