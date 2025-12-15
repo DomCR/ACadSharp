@@ -19,7 +19,31 @@ namespace ACadSharp.Entities
 	public partial class TableEntity : Insert
 	{
 		[Flags]
-		internal enum OverrideFlags
+		internal enum BorderOverrideFlags
+		{
+			None = 0,
+			TitleHorizontalTopColor = 0x01,
+			TitleHorizontalInsertColor = 0x02,
+			TitleHorizontalBottomColor = 0x04,
+			TitleVerticalLeftColor = 0x8,
+			TitleVerticalInsertColor = 0x10,
+			TitleVerticalRightColor = 0x20,
+			HeaderHorizontalTopColor = 0x40,
+			HeaderHorizontalInsertColor = 0x80,
+			HeaderHorizontalBottomColor = 0x100,
+			HeaderVerticalLeftColor = 0x200,
+			HeaderVerticalInsertColor = 0x400,
+			HeaderVerticalRightColor = 0x800,
+			DataHorizontalTopColor = 0x1000,
+			DataHorizontalInsertColor = 0x2000,
+			DataHorizontalBottomColor = 0x4000,
+			DataVerticalLeftColor = 0x8000,
+			DataVerticalInsertColor = 0x10000,
+			DataVerticalRightColor = 0x20000,
+		}
+
+		[Flags]
+		internal enum TableOverrideFlags
 		{
 			None = 0,
 			TitleSuppressed = 0x0001,

@@ -172,118 +172,118 @@ namespace ACadSharp.IO.DWG
 
 				//If has override flag == 1
 				//Cell flag override BL 177 (deprecated)
-				TableEntity.OverrideFlags flags = (OverrideFlags)this._mergedReaders.ReadBitLong();
-				if (flags.HasFlag(TableEntity.OverrideFlags.TitleSuppressed))
+				TableEntity.TableOverrideFlags flags = (TableOverrideFlags)this._mergedReaders.ReadBitLong();
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleSuppressed))
 				{
 					//Title suppressed B 280 Present only if bit 0x0001 is set in table overrides 
 					styleOverride.SuppressTitle = this._mergedReaders.ReadBit();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.TitleSuppressed))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleSuppressed))
 				{
 					//Header suppresed -- 281 Always true (do not read any data for this)
 
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.FlowDirection))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.FlowDirection))
 				{
 					//Flow direction BS 70 Present only if bit 0x0004 is set in table overrides
 					this._mergedReaders.ReadBitShort();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.HorizontalCellMargin))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.HorizontalCellMargin))
 				{
 					//Horz. Cell margin BD 40 Present only if bit 0x0008 is set in table overrides 
 					this._mergedReaders.ReadBitDouble();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.VerticalCellMargin))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.VerticalCellMargin))
 				{
 					//Vert. cell margin BD 41 Present only if bit 0x0010 is set in table overrides 
 					this._mergedReaders.ReadBitDouble();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.TitleRowColor))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowColor))
 				{
 					//Title row color CMC 64 Present only if bit 0x0020 is set in table overrides 
 					this._mergedReaders.ReadCmColor();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.HeaderRowColor))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowColor))
 				{
 					//Header row color CMC 64 Present only if bit 0x0040 is set in table overrides 
 					this._mergedReaders.ReadCmColor();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.DataRowColor))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowColor))
 				{
 					//Data row color CMC 64 Present only if bit 0x0080 is set in table overrides 
 					this._mergedReaders.ReadCmColor();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.TitleRowFillNone))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowFillNone))
 				{
 					//Title row fill none B 283 Present only if bit 0x0100 is set in table overrides 
 					this._mergedReaders.ReadBit();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.HeaderRowFillNone))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowFillNone))
 				{
 					//Header row fill none B 283 Present only if bit 0x0200 is set in table overrides 
 					this._mergedReaders.ReadBit();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.DataRowFillNone))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowFillNone))
 				{
 					//Data row fill none B 283 Present only if bit 0x0400 is set in table overrides 
 					this._mergedReaders.ReadBit();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.TitleRowFillColor))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowFillColor))
 				{
 					//Title row fill color CMC 63 Present only if bit 0x0800 is set in table overrides 
 					this._mergedReaders.ReadCmColor();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.HeaderRowFillColor))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowFillColor))
 				{
 					//Header row fill clr. CMC 63 Present only if bit 0x1000 is set in table overrides 
 					this._mergedReaders.ReadCmColor();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.DataRowFillColor))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowFillColor))
 				{
 					//Data row fill color CMC 63 Present only if bit 0x2000 is set in table overrides 
 					this._mergedReaders.ReadCmColor();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.TitleRowAlign))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowAlign))
 				{
 					//Title row align. BS 170 Present only if bit 0x4000 is set in table overrides 
 					this._mergedReaders.ReadBitShort();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.HeaderRowAlign))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowAlign))
 				{
 					//Header row align. BS 170 Present only if bit 0x8000 is set in table overrides 
 					this._mergedReaders.ReadBitShort();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.DataRowAlign))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowAlign))
 				{
 					//Data row align. BS 170 Present only if bit 0x10000 is set in table 
 					this._mergedReaders.ReadBitShort();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.TitleTextStyle))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleTextStyle))
 				{
 					//Title text style hnd H 7 Present only if bit 0x20000 is set in table 
 					this.handleReference();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.HeaderTextStyle))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderTextStyle))
 				{
 					//Title text style hnd H 7 Present only if bit 0x40000 is set in table 
 					this.handleReference();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.DataTextStyle))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.DataTextStyle))
 				{
 					//Title text style hnd H 7 Present only if bit 0x80000 is set in table 
 					this.handleReference();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.TitleRowHeight))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowHeight))
 				{
 					//Title row height BD 140 Present only if bit 0x100000 is set in table 
 					this._mergedReaders.ReadBitDouble();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.HeaderRowHeight))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowHeight))
 				{
 					//Header row height BD 140 Present only if bit 0x200000 is set in table 
 					this._mergedReaders.ReadBitDouble();
 				}
-				if (flags.HasFlag(TableEntity.OverrideFlags.DataRowHeight))
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowHeight))
 				{
 					//Data row height BD 140 Present only if bit 0x400000 is set in table 
 					this._mergedReaders.ReadBitDouble();
@@ -292,6 +292,132 @@ namespace ACadSharp.IO.DWG
 
 			//End If has table overrides == 1
 			//Has border color overrides B
+			if (this._mergedReaders.ReadBit())
+			{
+				//Overrides flag BL 94 Border COLOR overrides
+				var flags = (TableEntity.BorderOverrideFlags)this._mergedReaders.ReadBitLong();
+
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalTopColor))
+				{
+					//Title hor. Top. col. CMC 64 Present only if bit 0x01 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalInsertColor))
+				{
+					//Title hor. ins. col. CMC 65 Present only if bit 0x02 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalBottomColor))
+				{
+					//Title hor. bot. col. CMC 66 Present only if bit 0x04 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalLeftColor))
+				{
+					//Title ver. left.col.CMC 63 Present only if bit 0x08 is set in border color
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalInsertColor))
+				{
+					//Title ver. ins. col. CMC 68 Present only if bit 0x10 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalRightColor))
+				{
+					//Title ver. rt. col. CMC 69 Present only if bit 0x20 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalTopColor))
+				{
+					//Header hor. Top. col. CMC 64 Present only if bit 0x40 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalInsertColor))
+				{
+					//Header hor. ins. col. CMC 65 Present only if bit 0x80 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalBottomColor))
+				{
+					//Header hor. bot. col. CMC 66 Present only if bit 0x100 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalLeftColor))
+				{
+					//Header ver. left. col.CMC 63 Present only if bit 0x200 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalInsertColor))
+				{
+					//Header ver. ins. col. CMC 68 Present only if bit 0x400 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalRightColor))
+				{
+					//Header ver. rt. col. CMC 69 Present only if bit 0x800 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalTopColor))
+				{
+					//Data hor. Top. col. CMC 64 Present only if bit 0x1000 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalInsertColor))
+				{
+					//Data hor. ins. col. CMC 65 Present only if bit 0x2000 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalBottomColor))
+				{
+					//Data hor. bot. col. CMC 66 Present only if bit 0x4000 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalLeftColor))
+				{
+					//Data ver. left. col. CMC 63 Present only if bit 0x8000 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalInsertColor))
+				{
+					//Data ver. ins. col. CMC 68 Present only if bit 0x10000 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalRightColor))
+				{
+					//Data ver. rt. col. CMC 69 Present only if bit 0x20000 is set in border color 
+					this._mergedReaders.ReadCmColor();
+				}
+			}
+
+			//Has border lineweight overrides B
+			if (this._mergedReaders.ReadBit())
+			{
+				//Overrides flag BL 95 Border LINEWEIGHT overrides
+				var flags = this._mergedReaders.ReadBitLong();
+
+				//Title hor. Top. lw. BS Present only if bit 0x01 is set in border color 
+				//Title hor. ins. lw. BS Present only if bit 0x02 is set in border color 
+				//Title hor. bot. lw. BS Present only if bit 0x04 is set in border color 
+				//Title ver. left. lw. BS Present only if bit 0x08 is set in border color 
+				//Title ver. ins. lw. BS Present only if bit 0x10 is set in border color 
+				//Title ver. rt. lw. BS Present only if bit 0x20 is set in border color 
+				//Header hor. Top. lw. BS Present only if bit 0x40 is set in border color 
+				//Header hor. ins. lw. BS Present only if bit 0x80 is set in border color 
+				//Header hor. bot. lw. BS Present only if bit 0x100 is set in border color 
+				//Header ver. left. lw. BS Present only if bit 0x200 is set in border color 
+				//Header ver. ins. lw. BS Present only if bit 0x400 is set in border color 
+				//Header ver. rt. lw. BS Present only if bit 0x800 is set in border color 
+				//Data hor. Top. lw. BS Present only if bit 0x1000 is set in border color 
+				//Data hor. ins. lw. BS Present only if bit 0x2000 is set in border color 
+				//Data hor. bot. lw. BS Present only if bit 0x4000 is set in border color 
+				//Data ver. left. lw. BS Present only if bit 0x8000 is set in border color 
+				//Data ver. ins. lw. BS Present only if bit 0x10000 is set in border color 
+				//Data ver. rt. lw. BS Present only if bit 0x20000 is set in border color 
+			}
+
+			//Has border visibility overrides B
 			if (this._mergedReaders.ReadBit())
 			{
 
