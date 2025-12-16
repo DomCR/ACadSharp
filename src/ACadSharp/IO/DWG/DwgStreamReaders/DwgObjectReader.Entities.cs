@@ -156,11 +156,6 @@ namespace ACadSharp.IO.DWG
 					CadTableCellTemplate cellTemplate = new CadTableCellTemplate(cell);
 					template.CadTableCellTemplates.Add(cellTemplate);
 
-					if(table.Handle == 1320 && n == 4 && m == 0)
-					{
-
-					}
-
 					this.readTableCellData(cellTemplate);
 				}
 			}
