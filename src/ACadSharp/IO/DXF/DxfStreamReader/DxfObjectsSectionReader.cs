@@ -1741,6 +1741,16 @@ namespace ACadSharp.IO.DXF
 			{
 				switch (this._reader.GroupCodeValue)
 				{
+					case GroupCodeValueType.Point3D:
+						var code = this._reader.Code;
+						var x = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						var y = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						var z = this._reader.ValueAsDouble;
+						XYZ pt = new XYZ(x, y, z);
+						template.CadObject.CreateEntry(code, pt);
+						break;
 					case GroupCodeValueType.Handle:
 					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:

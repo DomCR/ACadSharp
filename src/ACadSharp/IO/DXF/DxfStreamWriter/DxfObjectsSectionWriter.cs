@@ -610,8 +610,14 @@ namespace ACadSharp.IO.DXF
 					case GroupCodeValueType.None:
 						break;
 					case GroupCodeValueType.Point3D:
-						var pt = e.Value as IVector;
-						this._writer.Write(e.Code, pt);
+						if (e.Value is IVector v)
+						{
+							this._writer.Write(e.Code, v);
+						}
+						else
+						{
+							this._writer.Write(e.Code, e.Value);
+						}
 						break;
 					case GroupCodeValueType.Handle:
 					case GroupCodeValueType.ObjectId:
