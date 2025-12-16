@@ -156,6 +156,11 @@ namespace ACadSharp.IO.DWG
 					CadTableCellTemplate cellTemplate = new CadTableCellTemplate(cell);
 					template.CadTableCellTemplates.Add(cellTemplate);
 
+					if(table.Handle == 1320 && n == 4 && m == 0)
+					{
+
+					}
+
 					this.readTableCellData(cellTemplate);
 				}
 			}
@@ -201,17 +206,17 @@ namespace ACadSharp.IO.DWG
 				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowColor))
 				{
 					//Title row color CMC 64 Present only if bit 0x0020 is set in table overrides 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowColor))
 				{
 					//Header row color CMC 64 Present only if bit 0x0040 is set in table overrides 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowColor))
 				{
 					//Data row color CMC 64 Present only if bit 0x0080 is set in table overrides 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowFillNone))
 				{
@@ -231,17 +236,17 @@ namespace ACadSharp.IO.DWG
 				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowFillColor))
 				{
 					//Title row fill color CMC 63 Present only if bit 0x0800 is set in table overrides 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowFillColor))
 				{
 					//Header row fill clr. CMC 63 Present only if bit 0x1000 is set in table overrides 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowFillColor))
 				{
 					//Data row fill color CMC 63 Present only if bit 0x2000 is set in table overrides 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowAlign))
 				{
@@ -299,94 +304,94 @@ namespace ACadSharp.IO.DWG
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalTop))
 				{
 					//Title hor. Top. col. CMC 64 Present only if bit 0x01 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalInsert))
 				{
 					//Title hor. ins. col. CMC 65 Present only if bit 0x02 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalBottom))
 				{
 					//Title hor. bot. col. CMC 66 Present only if bit 0x04 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalLeft))
 				{
 					//Title ver. left.col.CMC 63 Present only if bit 0x08 is set in border color
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalInsert))
 				{
 					//Title ver. ins. col. CMC 68 Present only if bit 0x10 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalRight))
 				{
 					//Title ver. rt. col. CMC 69 Present only if bit 0x20 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalTop))
 				{
 					//Header hor. Top. col. CMC 64 Present only if bit 0x40 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalInsert))
 				{
 					//Header hor. ins. col. CMC 65 Present only if bit 0x80 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalBottom))
 				{
 					//Header hor. bot. col. CMC 66 Present only if bit 0x100 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalLeft))
 				{
 					//Header ver. left. col.CMC 63 Present only if bit 0x200 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalInsert))
 				{
 					//Header ver. ins. col. CMC 68 Present only if bit 0x400 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalRight))
 				{
 					//Header ver. rt. col. CMC 69 Present only if bit 0x800 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalTop))
 				{
 					//Data hor. Top. col. CMC 64 Present only if bit 0x1000 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalInsert))
 				{
 					//Data hor. ins. col. CMC 65 Present only if bit 0x2000 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalBottom))
 				{
 					//Data hor. bot. col. CMC 66 Present only if bit 0x4000 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalLeft))
 				{
 					//Data ver. left. col. CMC 63 Present only if bit 0x8000 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalInsert))
 				{
 					//Data ver. ins. col. CMC 68 Present only if bit 0x10000 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalRight))
 				{
 					//Data ver. rt. col. CMC 69 Present only if bit 0x20000 is set in border color 
-					this._mergedReaders.ReadCmColor();
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 			}
 
@@ -678,16 +683,16 @@ namespace ACadSharp.IO.DWG
 				if (flags.HasFlag(Cell.OverrideFlags.BackgroundColor))
 				{
 					//Background color CMC 63 Present only if bit 0x04 is set in cell flag
-					cell.StyleOverride.BackgroundColor = this._mergedReaders.ReadCmColor();
+					cell.StyleOverride.BackgroundColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(Cell.OverrideFlags.ContentColor))
 				{
 					//Content color CMC 64 Present only if bit 0x08 is set in cell flag 
-					cell.StyleOverride.ContentColor = this._mergedReaders.ReadCmColor();
+					cell.StyleOverride.ContentColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(Cell.OverrideFlags.TextStyle))
 				{
-					//Content color CMC 64 Present only if bit 0x08 is set in cell flag 
+					//Text style H 7 Present only if bit 0x10 is set in cell flag 
 					template.TextStyleOverrideHandle = this.handleReference();
 				}
 				if (flags.HasFlag(Cell.OverrideFlags.TextHeight))
@@ -699,7 +704,7 @@ namespace ACadSharp.IO.DWG
 				if (flags.HasFlag(Cell.OverrideFlags.TopGridColor))
 				{
 					//Top grid color CMC 69 Present only if bit 0x00040 is set in cell flag 
-					cell.StyleOverride.TopBorder.Color = this._mergedReaders.ReadCmColor();
+					cell.StyleOverride.TopBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(Cell.OverrideFlags.TopGridLineWeight))
 				{
@@ -715,7 +720,7 @@ namespace ACadSharp.IO.DWG
 				if (flags.HasFlag(Cell.OverrideFlags.RightGridColor))
 				{
 					//Right grid color CMC 65 Present only if bit 0x00080 is set in cell flag 
-					cell.StyleOverride.RightBorder.Color = this._mergedReaders.ReadCmColor();
+					cell.StyleOverride.RightBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(Cell.OverrideFlags.RightGridLineWeight))
 				{
@@ -731,7 +736,7 @@ namespace ACadSharp.IO.DWG
 				if (flags.HasFlag(Cell.OverrideFlags.BottomGridColor))
 				{
 					//Bottom grid color CMC 66 Present only if bit 0x00100 is set in cell flag 
-					cell.StyleOverride.BottomBorder.Color = this._mergedReaders.ReadCmColor();
+					cell.StyleOverride.BottomBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(Cell.OverrideFlags.BottomGridLineWeight))
 				{
@@ -747,7 +752,7 @@ namespace ACadSharp.IO.DWG
 				if (flags.HasFlag(Cell.OverrideFlags.LeftGridColor))
 				{
 					//Left grid color CMC 68 Present only if bit 0x00200 is set in cell flag 
-					cell.StyleOverride.LeftBorder.Color = this._mergedReaders.ReadCmColor();
+					cell.StyleOverride.LeftBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 				}
 				if (flags.HasFlag(Cell.OverrideFlags.LeftGridLineWeight))
 				{
@@ -1053,7 +1058,7 @@ namespace ACadSharp.IO.DWG
 			//BL  92 Merge flags, but may only for bits 0x8000 and 0x10000.
 			cellStyle.TableCellStylePropertyFlags = (TableCellStylePropertyFlags)this._mergedReaders.ReadBitLong();
 			//TC 62 Background color
-			cellStyle.BackgroundColor = this._mergedReaders.ReadCmColor();
+			cellStyle.BackgroundColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
 
 			//BL 93 Content layout flags
 			cellStyle.ContentLayoutFlags = (TableCellContentLayoutFlags)this._mergedReaders.ReadBitLong();
@@ -1105,7 +1110,7 @@ namespace ACadSharp.IO.DWG
 			//BL 91 Border type
 			border.Type = ((BorderType)this._mergedReaders.ReadBitLong());
 			//TC 62 Color
-			border.Color = this._mergedReaders.ReadCmColor();
+			border.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			//BL 92 Line weight
 			border.LineWeight = ((LineWeightType)this._mergedReaders.ReadBitLong());
 			//H 40 Line type (hard pointer)
@@ -1286,7 +1291,7 @@ namespace ACadSharp.IO.DWG
 			//BL  94 Cell alignment
 			format.Alignment = this._mergedReaders.ReadBitLong();
 			//TC 62 Content color
-			format.Color = this._mergedReaders.ReadCmColor();
+			format.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			//H 340 Text style handle (hard pointer)
 			template.TextStyleHandle = this.handleReference();
 			//BD 144 Text height
