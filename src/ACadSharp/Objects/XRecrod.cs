@@ -17,15 +17,6 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.XRecord)]
 	public partial class XRecord : NonGraphicalObject
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.XRECORD;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.ObjectXRecord;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.XRecord;
-
 		/// <summary>
 		/// Duplicate record cloning flag (determines how to merge duplicate entries)
 		/// </summary>
@@ -35,12 +26,32 @@ namespace ACadSharp.Objects
 		//1-369 (except 5 and 105)	These values can be used by an application in any way
 		public IEnumerable<Entry> Entries { get { return this._entries; } }
 
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.ObjectXRecord;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.XRECORD;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.XRecord;
+
 		private readonly List<Entry> _entries = new List<Entry>();
 
-		public XRecord() : base() { }
+		/// <inheritdoc/>
+		public XRecord() : base()
+		{
+		}
 
-		public XRecord(string name) : base(name) { }
+		/// <inheritdoc/>
+		public XRecord(string name) : base(name)
+		{
+		}
 
+		/// <summary>
+		/// Adds a new entry with the specified code and value to the collection.
+		/// </summary>
+		/// <param name="code">The integer code that identifies the entry. The value should be unique within the collection.</param>
+		/// <param name="value">The value to associate with the entry. Can be any object, including <see langword="null"/>.</param>
 		public void CreateEntry(int code, object value)
 		{
 			this._entries.Add(new Entry(code, value, this));
