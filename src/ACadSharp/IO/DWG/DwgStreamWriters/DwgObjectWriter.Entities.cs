@@ -1915,8 +1915,14 @@ namespace ACadSharp.IO.DWG
 			}
 
 			this._writer.HandleReference(DwgReferenceType.HardPointer, image.Definition);
+
 			//Reactor, not needed
-			this._writer.HandleReference(null);
+			this._writer.HandleReference(image.DefinitionReactor);
+
+			if(image.DefinitionReactor != null)
+			{
+				this._objects.Enqueue(image.DefinitionReactor);
+			}
 		}
 
 		private void writeSpline(Spline spline)

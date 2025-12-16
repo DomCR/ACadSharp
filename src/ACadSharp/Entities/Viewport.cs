@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
@@ -392,8 +393,15 @@ namespace ACadSharp.Entities
 		{
 			Viewport clone = (Viewport)base.Clone();
 
+			clone.Boundary = (Entity)this.Boundary?.Clone();
 			clone.VisualStyle = (VisualStyle)this.VisualStyle?.Clone();
 			clone._scale = (Scale)this.Scale?.Clone();
+
+			clone.FrozenLayers = new List<Layer>();
+			foreach (var item in this.FrozenLayers)
+			{
+				clone.FrozenLayers.Add(item.CloneTyped());
+			}
 
 			return clone;
 		}
@@ -441,7 +449,7 @@ namespace ACadSharp.Entities
 
 			return entities;
 		}
-		
+
 		internal override void AssignDocument(CadDocument doc)
 		{
 			base.AssignDocument(doc);

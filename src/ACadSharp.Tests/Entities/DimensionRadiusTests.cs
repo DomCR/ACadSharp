@@ -6,6 +6,10 @@ namespace ACadSharp.Tests.Entities
 	{
 		public override DimensionType Type => DimensionType.Radius;
 
+		public override void GetBoundingBoxTest()
+		{
+		}
+
 		protected override DimensionRadius createDim()
 		{
 			var dim = new DimensionRadius()

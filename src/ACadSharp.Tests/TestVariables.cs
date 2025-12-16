@@ -37,7 +37,7 @@ namespace ACadSharp.Tests
 			EnvironmentVars.SetIfNull("LOCAL_ENV", "true");
 			EnvironmentVars.SetIfNull("DELTA", "0.00001");
 			EnvironmentVars.SetIfNull("DECIMAL_PRECISION", "5");
-			EnvironmentVars.SetIfNull("SAVE_OUTPUT_IN_STREAM", "true");
+			EnvironmentVars.SetIfNull("SAVE_OUTPUT_IN_STREAM", "false");
 			EnvironmentVars.SetIfNull("SAVE_PREVIEW", "true");
 			EnvironmentVars.SetIfNull("SELF_CHECK_OUTPUT", "true");
 		}

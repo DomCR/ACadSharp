@@ -37,10 +37,8 @@ namespace ACadSharp.IO.DXF
 				case Material:
 				case MultiLeaderObjectContextData:
 				case VisualStyle:
-				case ImageDefinitionReactor:
 				case UnknownNonGraphicalObject:
 				case ProxyObject:
-				case XRecord:
 					this.notify($"Object not implemented : {co.GetType().FullName}");
 					return;
 			}
@@ -74,6 +72,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case ImageDefinition imageDefinition:
 					this.writeImageDefinition(imageDefinition);
+					return;
+				case ImageDefinitionReactor reactor:
+					this.writeImageDefinitionReactor(reactor);
 					return;
 				case Layout layout:
 					this.writeLayout(layout);
@@ -112,6 +113,14 @@ namespace ACadSharp.IO.DXF
 			this.writeExtendedData(co.ExtendedData);
 		}
 
+		private void writeImageDefinitionReactor(ImageDefinitionReactor reactor)
+		{
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.RasterImageDefReactor);
+
+			this._writer.Write(90, reactor.ClassVersion);
+			this._writer.WriteHandle(330, reactor.Image);
+		}
+
 		protected void writeBookColor(BookColor color)
 		{
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.DbColor);
@@ -132,20 +141,16 @@ namespace ACadSharp.IO.DXF
 			{
 				if (item is XRecord && !this.Configuration.WriteXRecords)
 				{
-					return;
+					continue;
 				}
 
 				this._writer.Write(3, item.Name);
 				this._writer.Write(350, item.Handle);
-			}
 
-			//Add the entries as objects
-			foreach (CadObject item in dict)
-			{
 				this.Holder.Objects.Enqueue(item);
 			}
 
-			if(dict is CadDictionaryWithDefault withDefault)
+			if (dict is CadDictionaryWithDefault withDefault)
 			{
 				this._writer.Write(100, DxfSubclassMarker.DictionaryWithDefault);
 				this._writer.WriteHandle(340, withDefault.DefaultEntry);
@@ -592,13 +597,38 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		protected void writeXRecord(XRecord e)
+		protected void writeXRecord(XRecord record)
 		{
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XRecord);
 
-			foreach (var item in e.Entries)
+			this._writer.Write(280, record.CloningFlags);
+
+			foreach (var e in record.Entries)
 			{
-				this._writer.Write(item.Code, item.Value);
+				switch (e.GroupCode)
+				{
+					case GroupCodeValueType.None:
+						break;
+					case GroupCodeValueType.Point3D:
+						if (e.Value is IVector v)
+						{
+							this._writer.Write(e.Code, v);
+						}
+						else
+						{
+							this._writer.Write(e.Code, e.Value);
+						}
+						break;
+					case GroupCodeValueType.Handle:
+					case GroupCodeValueType.ObjectId:
+					case GroupCodeValueType.ExtendedDataHandle:
+						var obj = e.Value as IHandledCadObject;
+						this._writer.Write(e.Code, obj.Handle);
+						break;
+					default:
+						this._writer.Write(e.Code, e.Value);
+						break;
+				}
 			}
 		}
 	}

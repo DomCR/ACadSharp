@@ -1478,12 +1478,6 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
-				//Polyface mesh vertex index
-				case 71:
-				case 72:
-				case 73:
-				case 74:
-					return true;
 				case 100:
 					switch (this._reader.ValueAsString)
 					{
@@ -2088,6 +2082,8 @@ namespace ACadSharp.IO.DXF
 
 			while (this._reader.DxfCode != DxfCode.ControlString)
 			{
+				reactors.Add(this._reader.ValueAsHandle);
+
 				this._reader.ReadNext();
 			}
 
