@@ -410,7 +410,16 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				case 1:
+					var content = new TableEntity.CellContent();
+					content.Value.ValueType = TableEntity.CellValueType.String;
+					content.Value.Value = this._reader.ValueAsString;
+					tmp.CurrentCell.Contents.Add(content);
+					return true;
 				//Border overrides:
+				case 177:
+					//Cell override flag value (before AutoCAD 2007)
+					return true;
 				case 279:
 					//Lineweight for the top border of the cell; override applied at the cell level
 					tmp.CurrentCell.StyleOverride.TopBorder.LineWeight = (LineWeightType)this._reader.ValueAsShort;
@@ -514,7 +523,7 @@ namespace ACadSharp.IO.DXF
 					//Unknown value
 					return true;
 				case 301:
-					var content = new TableEntity.CellContent();
+					content = new TableEntity.CellContent();
 					tmp.CurrentCell.Contents.Add(content);
 					this.readCellValue(content);
 					return true;
