@@ -84,7 +84,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2004Pre)
 			{
 				//H : Handle of the current viewport entity header (hard pointer)
-				this._writer.HandleReference(0);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 			}
 
 			//Common:
@@ -275,7 +275,7 @@ namespace ACadSharp.IO.DWG
 			//BS : ISOLINES
 			this._writer.WriteBitShort(this._header.SurfaceIsolineCount);
 			//BS : CMLJUST
-			this._writer.WriteBitShort((short)this._header.CurrentMultilineJustification);
+			this._writer.WriteBitShort((short)this._header.CurrentMultiLineJustification);
 			//BS : TEXTQLTY
 			this._writer.WriteBitShort(this._header.TextQuality);
 			//BD : LTSCALE
@@ -377,10 +377,10 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//H: DIMSTYLE (hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.DimensionStyleOverrides);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.CurrentDimensionStyle);
 
 			//H: CMLSTYLE (hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.CurrentMLineStyle);
 
 			//R2000+ Only:
 			if (this.R2000Plus)
@@ -555,7 +555,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitShort(this._header.DimensionAlternateUnitToleranceDecimalPlaces);
 
 				//H : DIMTXSTY(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.DimensionStyleOverrides);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.DimensionTextStyle);
 			}
 
 			//Common:
@@ -750,7 +750,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//H: DIMTXSTY(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.DimensionTextStyle);
 				//H: DIMLDRBLK(hard pointer)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 				//H: DIMBLK(hard pointer)
@@ -804,7 +804,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R13_15Only)
 			{
 				//H: VIEWPORT ENTITY HEADER CONTROL OBJECT(hard owner)
-				this._writer.HandleReference(DwgReferenceType.HardOwnership, null);
+				this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.VEntityControl);
 			}
 
 			//Common:
@@ -841,9 +841,9 @@ namespace ACadSharp.IO.DWG
 			if (this.R2004Plus)
 			{
 				//H: DICTIONARY (MATERIALS) (hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.Materials);
 				//H: DICTIONARY (COLORS) (hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.Colors);
 			}
 
 			//R2007 +:
@@ -927,7 +927,7 @@ namespace ACadSharp.IO.DWG
 				//RC : HIDETEXT
 				this._writer.WriteByte(this._header.HideText);
 				//RC : XCLIPFRAME, before R2010 the value can be 0 or 1 only.
-				this._writer.WriteByte(this._header.ExternalReferenceClippingBoundaryType);
+				this._writer.WriteByte((byte)this._header.ExternalReferenceClippingBoundaryType);
 				//RC : DIMASSOC
 				this._writer.WriteByte((byte)this._header.DimensionAssociativity);
 				//RC : HALOGAP

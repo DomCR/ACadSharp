@@ -2,7 +2,6 @@
 using Xunit.Abstractions;
 using ACadSharp.Tests.TestModels;
 using ACadSharp.Entities;
-using System.Linq;
 using ACadSharp.Tables;
 using ACadSharp.IO;
 
@@ -14,7 +13,8 @@ namespace ACadSharp.Tests.IO
 
 		static TableEntityTests()
 		{
-			loadSamples("table_samples", "*", TableSamplesFilePaths);
+			loadSamples("./", "dxf", TableSamplesFilePaths);
+			loadSamples("./", "dwg", TableSamplesFilePaths);
 		}
 
 		public TableEntityTests(ITestOutputHelper output) : base(output)
@@ -40,12 +40,21 @@ namespace ACadSharp.Tests.IO
 
 			CadDocument doc = this.readDocument(test, configuration);
 
-			TableEntity table = (TableEntity)doc.Entities.First();
+			if (doc.Header.Version < ACadVersion.AC1012)
+			{
+				this._output.WriteLine($"Table entity not compatible for {doc.Header.Version}");
+				return;
+			}
+
+			TableEntity table = doc.GetCadObject<TableEntity>(0xA35);
 
 			BlockRecord record = table.Block;
 
+			//Table content is stored in XRecord: ACAD_ROUNDTRIP_2008_TABLE_ENTITY
+			//Xrecord handle = 0x11FC
+
 			Assert.NotNull(record);
-			Assert.Equal("*T1", record.Name);
+			Assert.Equal("*T16", record.Name);
 
 			Assert.Equal(5, table.Columns.Count);
 			foreach (var column in table.Columns)

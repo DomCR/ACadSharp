@@ -1,0 +1,36 @@
+name: Auto Version
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: write
+
+env:
+  CURRENT_BRANCH: ${{github.event.pull_request.head.ref}}
+  VERSION_FORMAT: ${{ fromJSON('[ "*.^.0", "*.*.^"]')[contains(github.event.pull_request.labels.*.name, 'minor')] }}
+
+jobs:
+  update:
+    if: contains(github.event.pull_request.labels.*.name, 'minor') || contains(github.event.pull_request.labels.*.name, 'major')
+    runs-on: windows-latest
+    name: Update version
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with: 
+          submodules: true
+          ref: ${{env.CURRENT_BRANCH}}
+      - name: Update version
+        id: update
+        uses: vers-one/dotnet-project-version-updater@v1.7
+        with:
+          file: ./src/ACadSharp/ACadSharp.csproj
+          version: ${{env.VERSION_FORMAT}}
+      - name: Push changes
+        run: ./push-changes.sh
+        shell: bash
+        env:
+          VERSION: ${{steps.update.outputs.newVersion}}
+          BRANCH: ${{env.CURRENT_BRANCH}}

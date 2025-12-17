@@ -28,7 +28,6 @@ namespace ACadSharp.IO.DWG
 			else if (value.IsByLayer)
 			{
 				arr[3] = 0b11000000;
-				arr[0] = (byte)value.Index;
 			}
 			else
 			{

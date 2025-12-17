@@ -45,7 +45,7 @@ namespace ACadSharp.Tests.Common
 			else if (type == typeof(Shape))
 			{
 				var style = TableEntryFactory.Create<TextStyle>();
-				style.Flags = style.Flags.AddFlag(StyleFlags.IsShape);
+				style.Flags |= StyleFlags.IsShape;
 				e = new Shape(style);
 			}
 			else if (type == typeof(RasterImage))
@@ -164,7 +164,7 @@ namespace ACadSharp.Tests.Common
 			// circle.Normal = _random.NextXYZ();	//Entity becomes invisible if has a different value
 			ellipse.Center = _random.NextXYZ();
 			ellipse.Thickness = _random.NextDouble();
-			ellipse.EndPoint = _random.NextXYZ();
+			ellipse.MajorAxisEndPoint = _random.NextXYZ();
 			ellipse.RadiusRatio = _random.NextDouble();
 			ellipse.StartParameter = _random.NextDouble();
 			ellipse.EndParameter = _random.NextDouble();
@@ -212,7 +212,8 @@ namespace ACadSharp.Tests.Common
 			point.Location = _random.NextXYZ();
 		}
 
-		public static void RandomizePolyline(Polyline pline)
+		public static void RandomizePolyline<T>(Polyline<T> pline)
+			where T : Entity, IVertex
 		{
 			RandomizeEntity(pline);
 
@@ -223,18 +224,18 @@ namespace ACadSharp.Tests.Common
 
 				switch (pline)
 				{
-					case Polyline2D:
+					case Polyline2D pline2d:
 						v = new Vertex2D();
+						pline2d.Vertices.Add(v as Vertex2D);
 						break;
-					case Polyline3D:
+					case Polyline3D pline3d:
 						v = new Vertex3D();
+						pline3d.Vertices.Add(v as Vertex3D);
 						break;
 				}
 
 				v.Id = i;
 				v.Location = _random.NextXYZ();
-
-				pline.Vertices.Add(v);
 			}
 		}
 

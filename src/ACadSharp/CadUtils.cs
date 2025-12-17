@@ -80,32 +80,32 @@ namespace ACadSharp
 			{"iso8859-15",CodePage.Iso885915},
 		};
 
-		private static readonly LineweightType[] _indexedValue = new LineweightType[]
+		private static readonly LineWeightType[] _indexedValue = new LineWeightType[]
 		{
-				 LineweightType.W0,
-				 LineweightType.W5,
-				 LineweightType.W9,
-				 LineweightType.W13,
-				 LineweightType.W15,
-				 LineweightType.W18,
-				 LineweightType.W20,
-				 LineweightType.W25,
-				 LineweightType.W30,
-				 LineweightType.W35,
-				 LineweightType.W40,
-				 LineweightType.W50,
-				 LineweightType.W53,
-				 LineweightType.W60,
-				 LineweightType.W70,
-				 LineweightType.W80,
-				 LineweightType.W90,
-				 LineweightType.W100,
-				 LineweightType.W106,
-				 LineweightType.W120,
-				 LineweightType.W140,
-				 LineweightType.W158,
-				 LineweightType.W200,
-				 LineweightType.W211
+				 LineWeightType.W0,
+				 LineWeightType.W5,
+				 LineWeightType.W9,
+				 LineWeightType.W13,
+				 LineWeightType.W15,
+				 LineWeightType.W18,
+				 LineWeightType.W20,
+				 LineWeightType.W25,
+				 LineWeightType.W30,
+				 LineWeightType.W35,
+				 LineWeightType.W40,
+				 LineWeightType.W50,
+				 LineWeightType.W53,
+				 LineWeightType.W60,
+				 LineWeightType.W70,
+				 LineWeightType.W80,
+				 LineWeightType.W90,
+				 LineWeightType.W100,
+				 LineWeightType.W106,
+				 LineWeightType.W120,
+				 LineWeightType.W140,
+				 LineWeightType.W158,
+				 LineWeightType.W200,
+				 LineWeightType.W211
 		};
 
 		private static readonly CodePage[] _pageCodes = new CodePage[]
@@ -157,38 +157,38 @@ namespace ACadSharp
 			CodePage.Windows1258
 		};
 
-		public static LineweightType ToValue(byte b)
+		public static LineWeightType ToValue(byte b)
 		{
 			switch (b)
 			{
 				case 28:
 				case 29:
-					return LineweightType.ByLayer;
+					return LineWeightType.ByLayer;
 				case 30:
-					return LineweightType.ByBlock;
+					return LineWeightType.ByBlock;
 				case 31:
-					return LineweightType.Default;
+					return LineWeightType.Default;
 				default:
 					if (b < 0 || b >= _indexedValue.Length)
 					{
-						return LineweightType.Default;
+						return LineWeightType.Default;
 					}
 					return _indexedValue[b];
 			}
 		}
 
-		public static byte ToIndex(LineweightType value)
+		public static byte ToIndex(LineWeightType value)
 		{
 			byte result = 0;
 			switch (value)
 			{
-				case LineweightType.Default:
+				case LineWeightType.Default:
 					result = 31;
 					break;
-				case LineweightType.ByBlock:
+				case LineWeightType.ByBlock:
 					result = 30;
 					break;
-				case LineweightType.ByLayer:
+				case LineWeightType.ByLayer:
 					result = 29;
 					break;
 				default:

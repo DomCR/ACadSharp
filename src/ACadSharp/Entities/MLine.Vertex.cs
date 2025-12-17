@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -32,6 +33,20 @@ namespace ACadSharp.Entities
 			[DxfCodeValue(DxfReferenceType.Count, 73)]
 			public List<Segment> Segments { get; set; } = new List<Segment>();
 
+			/// <inheritdoc/>
+			public void ApplyTransform(Transform transform)
+			{
+				this.Position = transform.ApplyTransform(Position);
+				this.Direction = transform.ApplyTransform(Direction);
+				this.Miter = transform.ApplyTransform(Miter);
+
+				foreach (var segment in Segments)
+				{
+					segment.ApplyScale(this.Miter.GetLength());
+				}
+			}
+
+			/// <inheritdoc/>
 			public Vertex Clone()
 			{
 				Vertex clone = (Vertex)this.MemberwiseClone();
@@ -64,6 +79,19 @@ namespace ACadSharp.Entities
 				[DxfCollectionCodeValue(42)]
 				public List<double> AreaFillParameters { get; set; } = new List<double>();
 
+				/// <inheritdoc/>
+				public void ApplyScale(double scaleFactor)
+				{
+					for (int i = this.Parameters.Count - 1; i >= 0; i--)
+					{
+						this.Parameters[i] = this.Parameters[i] * scaleFactor;
+					}
+
+					for (int i = this.AreaFillParameters.Count - 1; i >= 0; i--)
+					{
+						this.AreaFillParameters[i] = this.AreaFillParameters[i] * scaleFactor;
+					}
+				}
 			}
 		}
 	}

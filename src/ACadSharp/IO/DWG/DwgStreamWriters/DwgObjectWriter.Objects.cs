@@ -1,11 +1,14 @@
 ﻿using ACadSharp.Objects;
+using ACadSharp.Objects.Evaluations;
 using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
+using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.IO.DWG
 {
@@ -15,28 +18,20 @@ namespace ACadSharp.IO.DWG
 		{
 			while (this._objects.Any())
 			{
-				CadObject obj = this._objects.Dequeue();
+				NonGraphicalObject obj = this._objects.Dequeue();
 
 				this.writeObject(obj);
 			}
 		}
 
-		private void writeObject(CadObject obj)
+		private void writeObject(NonGraphicalObject obj)
 		{
-			switch (obj)
+			if (this.skipEntry(obj, out bool notify))
 			{
-				case Material:
-				case MultiLeaderAnnotContext:
-				case MultiLeaderStyle:
-				case SortEntitiesTable:
-				case UnknownNonGraphicalObject:
-				case VisualStyle:
+				if (notify)
+				{
 					this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
-					return;
-			}
-
-			if (obj is XRecord && !this.WriteXRecords)
-			{
+				}
 				return;
 			}
 
@@ -59,6 +54,9 @@ namespace ACadSharp.IO.DWG
 				case DictionaryVariable dictionaryVariable:
 					this.writeDictionaryVariable(dictionaryVariable);
 					break;
+				case GeoData geodata:
+					this.writeGeoData(geodata);
+					break;
 				case Group group:
 					this.writeGroup(group);
 					break;
@@ -77,14 +75,28 @@ namespace ACadSharp.IO.DWG
 				case MultiLeaderStyle multiLeaderStyle:
 					this.writeMultiLeaderStyle(multiLeaderStyle);
 					break;
+				case MultiLeaderObjectContextData multiLeaderObjectContextData:
+					this.writeObjectContextData(multiLeaderObjectContextData);
+					this.writeAnnotScaleObjectContextData(multiLeaderObjectContextData);
+					this.writeMultiLeaderAnnotContext(multiLeaderObjectContextData);
+					break;
+				case PdfUnderlayDefinition pdfDefinition:
+					this.writePdfDefinition(pdfDefinition);
+					break;
 				case PlotSettings plotsettings:
 					this.writePlotSettings(plotsettings);
+					break;
+				case RasterVariables rasterVariables:
+					this.writeRasterVariables(rasterVariables);
 					break;
 				case Scale scale:
 					this.writeScale(scale);
 					break;
 				case SortEntitiesTable sorttables:
 					this.writeSortEntitiesTable(sorttables);
+					break;
+				case SpatialFilter spatialFilter:
+					this.writeSpatialFilter(spatialFilter);
 					break;
 				case XRecord record:
 					this.writeXRecord(record);
@@ -119,7 +131,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitLong((int)rgb);
 
 				byte flags = 0;
-				if (!string.IsNullOrEmpty(color.ColorName))
+				if (!string.IsNullOrEmpty(color.Name))
 				{
 					flags = (byte)(flags | 1u);
 				}
@@ -157,12 +169,7 @@ namespace ACadSharp.IO.DWG
 			List<NonGraphicalObject> entries = new List<NonGraphicalObject>();
 			foreach (var item in dictionary)
 			{
-				if (item is XRecord && !this.WriteXRecords)
-				{
-					continue;
-				}
-
-				if (item is UnknownNonGraphicalObject)
+				if (this.skipEntry(item))
 				{
 					continue;
 				}
@@ -190,12 +197,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			foreach (var item in entries)
 			{
-				if (item is XRecord && !this.WriteXRecords)
-				{
-					continue;
-				}
-
-				if (item is UnknownNonGraphicalObject)
+				if (this.skipEntry(item))
 				{
 					continue;
 				}
@@ -207,9 +209,33 @@ namespace ACadSharp.IO.DWG
 			this.addEntriesToWriter(dictionary);
 		}
 
+		private bool skipEntry(NonGraphicalObject entry)
+		{
+			return this.skipEntry(entry, out _);
+		}
+
+		private bool skipEntry(NonGraphicalObject entry, out bool notify)
+		{
+			notify = true;
+			switch (entry)
+			{
+				case XRecord when !this.WriteXRecords:
+					notify = false;
+					return true;
+				case EvaluationGraph:
+				case Material:
+				case UnknownNonGraphicalObject:
+				case VisualStyle:
+				case ProxyObject:
+					return true;
+			}
+
+			return false;
+		}
+
 		private void addEntriesToWriter(CadDictionary dictionary)
 		{
-			foreach (CadObject e in dictionary)
+			foreach (NonGraphicalObject e in dictionary)
 			{
 				this._objects.Enqueue(e);
 			}
@@ -224,6 +250,122 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteVariableText(dictionaryVariable.Value);
 		}
 
+		private void writeGeoData(GeoData geodata)
+		{
+			//BL Object version formats
+			this._writer.WriteBitLong((int)geodata.Version);
+
+			//H Soft pointer to host block
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, geodata.HostBlock);
+
+			//BS Design coordinate type
+			this._writer.WriteBitShort((short)geodata.CoordinatesType);
+
+			switch (geodata.Version)
+			{
+				case GeoDataVersion.R2009:
+					//3BD  Reference point 
+					this._writer.Write3BitDouble(geodata.ReferencePoint);
+
+					//BL  Units value horizontal
+					this._writer.WriteBitLong((int)geodata.HorizontalUnits);
+
+					//3BD  Design point
+					this._writer.Write3BitDouble(geodata.DesignPoint);
+
+					//3BD  Obsolete, ODA writes (0, 0, 0) 
+					this._writer.Write3BitDouble(XYZ.Zero);
+
+					//3BD  Up direction
+					this._writer.Write3BitDouble(geodata.UpDirection);
+
+					//BD Angle of north direction (radians, angle measured clockwise from the (0, 1) vector). 
+					this._writer.WriteBitDouble(System.Math.PI / 2.0 - geodata.NorthDirection.GetAngle());
+
+					//3BD  Obsolete, ODA writes(1, 1, 1)
+					this._writer.Write3BitDouble(new XYZ(1, 1, 1));
+
+					//VT  Coordinate system definition. In AutoCAD 2009 this is a “Well known text” (WKT)string containing a projected coordinate system(PROJCS).
+					this._writer.WriteVariableText(geodata.CoordinateSystemDefinition);
+					//VT  Geo RSS tag.
+					this._writer.WriteVariableText(geodata.GeoRssTag);
+
+					//BD Unit scale factor horizontal
+					this._writer.WriteBitDouble(geodata.HorizontalUnitScale);
+					geodata.VerticalUnitScale = geodata.HorizontalUnitScale;
+
+					//VT  Obsolete, coordinate system datum name 
+					this._writer.WriteVariableText(string.Empty);
+					//VT  Obsolete: coordinate system WKT 
+					this._writer.WriteVariableText(string.Empty);
+					break;
+				case GeoDataVersion.R2010:
+				case GeoDataVersion.R2013:
+					//3BD  Design point
+					this._writer.Write3BitDouble(geodata.DesignPoint);
+					//3BD  Reference point
+					this._writer.Write3BitDouble(geodata.ReferencePoint);
+					//BD  Unit scale factor horizontal
+					this._writer.WriteBitDouble(geodata.HorizontalUnitScale);
+					//BL  Units value horizontal
+					this._writer.WriteBitLong((int)geodata.HorizontalUnits);
+					//BD  Unit scale factor vertical 
+					this._writer.WriteBitDouble(geodata.VerticalUnitScale);
+					//BL  Units value vertical
+					this._writer.WriteBitLong((int)geodata.HorizontalUnits);
+					//3RD  Up direction
+					this._writer.Write3BitDouble(geodata.UpDirection);
+					//3RD  North direction
+					this._writer.Write2RawDouble(geodata.NorthDirection);
+					//BL Scale estimation method.
+					this._writer.WriteBitLong((int)geodata.ScaleEstimationMethod);
+					//BD  User specified scale factor
+					this._writer.WriteBitDouble(geodata.UserSpecifiedScaleFactor);
+					//B  Do sea level correction
+					this._writer.WriteBit(geodata.EnableSeaLevelCorrection);
+					//BD  Sea level elevation
+					this._writer.WriteBitDouble(geodata.SeaLevelElevation);
+					//BD  Coordinate projection radius
+					this._writer.WriteBitDouble(geodata.CoordinateProjectionRadius);
+					//VT  Coordinate system definition . In AutoCAD 2010 this is a map guide XML string.
+					this._writer.WriteVariableText(geodata.CoordinateSystemDefinition);
+					//VT  Geo RSS tag.
+					this._writer.WriteVariableText(geodata.GeoRssTag);
+					break;
+				default:
+					break;
+			}
+
+			//VT  Observation from tag
+			this._writer.WriteVariableText(geodata.ObservationFromTag);
+			//VT  Observation to tag
+			this._writer.WriteVariableText(geodata.ObservationToTag);
+			//VT  Observation coverage tag
+			this._writer.WriteVariableText(geodata.ObservationCoverageTag);
+
+			//BL Number of geo mesh points
+			this._writer.WriteBitLong(geodata.Points.Count);
+			foreach (var pt in geodata.Points)
+			{
+				//2RD Source point 
+				this._writer.Write2RawDouble(pt.Source);
+				//2RD Destination point 
+				this._writer.Write2RawDouble(pt.Destination);
+			}
+
+			//BL Number of geo mesh faces
+			this._writer.WriteBitLong(geodata.Faces.Count);
+			foreach (var face in geodata.Faces)
+			{
+				//BL Face index 1
+				this._writer.WriteBitLong(face.Index1);
+				//BL Face index 2
+				this._writer.WriteBitLong(face.Index2);
+				//BL Face index 3
+				this._writer.WriteBitLong(face.Index3);
+			}
+		}
+
 		private void writeGroup(Group group)
 		{
 			//Str TV name of group
@@ -235,11 +377,11 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitShort((short)(group.Selectable ? 1 : 0));
 
 			//Numhandles BL # objhandles in this group
-			this._writer.WriteBitLong(group.Entities.Count);
-			foreach (ulong h in group.Entities.Keys)
+			this._writer.WriteBitLong(group.Entities.Count());
+			foreach (var e in group.Entities)
 			{
 				//the entries in the group(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, h);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, e);
 			}
 		}
 
@@ -248,6 +390,12 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Classver BL 90 class version
 			this._writer.WriteBitLong(definitionReactor.ClassVersion);
+		}
+
+		private void writePdfDefinition(PdfUnderlayDefinition definition)
+		{
+			this._writer.WriteVariableText(definition.File);
+			this._writer.WriteVariableText(definition.Page);
 		}
 
 		private void writeImageDefinition(ImageDefinition definition)
@@ -386,7 +534,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(mlineStyle.EndAngle);
 
 			//linesinstyle RC Number of lines in this style
-			this._writer.WriteByte((byte)mlineStyle.Elements.Count);
+			this._writer.WriteByte((byte)mlineStyle.Elements.Count());
 			foreach (MLineStyle.Element element in mlineStyle.Elements)
 			{
 				//Offset BD Offset of this segment
@@ -411,16 +559,11 @@ namespace ACadSharp.IO.DWG
 
 		private void writeMultiLeaderStyle(MultiLeaderStyle mLeaderStyle)
 		{
-			//TODO: Remove this line when MultiLeaderStyle is fixed for writing
-			return;
-
-			if (!R2010Plus)
+			if (this.R2010Plus)
 			{
-				return;
+				//	BS	179	Version expected: 2
+				this._writer.WriteBitShort(2);
 			}
-
-			//	BS	179	Version expected: 2
-			this._writer.WriteBitShort(2);
 
 			//	BS	170	Content type (see paragraph on LEADER for more details).
 			this._writer.WriteBitShort((short)mLeaderStyle.ContentType);
@@ -429,7 +572,7 @@ namespace ACadSharp.IO.DWG
 			//	BS	172	Draw leader order (0 = draw leader head first, 1 = draw leader tail first)
 			this._writer.WriteBitShort((short)mLeaderStyle.LeaderDrawOrder);
 			//	BL	90	Maximum number of points for leader
-			this._writer.WriteBitShort((short)mLeaderStyle.MaxLeaderSegmentsPoints);
+			this._writer.WriteBitLong((short)mLeaderStyle.MaxLeaderSegmentsPoints);
 			//	BD	40	First segment angle (radians)
 			this._writer.WriteBitDouble(mLeaderStyle.FirstSegmentAngleConstraint);
 			//	BD	41	Second segment angle (radians)
@@ -438,8 +581,10 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitShort((short)mLeaderStyle.PathType);
 			//	CMC	91	Leader line color
 			this._writer.WriteCmColor(mLeaderStyle.LineColor);
+
 			//	H	340	Leader line type handle (hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, mLeaderStyle.LeaderLineType);
+
 			//	BL	92	Leader line weight
 			this._writer.WriteBitLong((short)mLeaderStyle.LeaderLineWeight);
 			//	B	290	Is landing enabled?
@@ -452,25 +597,24 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(mLeaderStyle.LandingDistance);
 			//	TV	3	Style description
 			this._writer.WriteVariableText(mLeaderStyle.Description);
+
 			//	H	341	Arrow head block handle (hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, mLeaderStyle.Arrowhead);
+
 			//	BD	44	Arrow head size
 			this._writer.WriteBitDouble(mLeaderStyle.ArrowheadSize);
 			//	TV	300	Text default
 			this._writer.WriteVariableText(mLeaderStyle.DefaultTextContents);
+
 			//	H	342	Text style handle (hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, mLeaderStyle.TextStyle);
+
 			//	BS	174	Left attachment (see paragraph on LEADER for more details).
 			this._writer.WriteBitShort((short)mLeaderStyle.TextLeftAttachment);
 			//	BS	178	Right attachment (see paragraph on LEADER for more details).
 			this._writer.WriteBitShort((short)mLeaderStyle.TextRightAttachment);
-			if (R2010Plus)
-			{
-				//	IF IsNewFormat OR DXF file
-				//	BS	175	Text angle type (see paragraph on LEADER for more details).
-				this._writer.WriteBitShort((short)mLeaderStyle.TextAngle);
-				//	END IF IsNewFormat OR DXF file
-			}
+			//	BS	175	Text angle type (see paragraph on LEADER for more details).
+			this._writer.WriteBitShort((short)mLeaderStyle.TextAngle);
 			//	BS	176	Text alignment type
 			this._writer.WriteBitShort((short)mLeaderStyle.TextAlignment);
 			//	CMC	93	Text color
@@ -479,17 +623,14 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitDouble(mLeaderStyle.TextHeight);
 			//	B	292	Text frame enabled
 			this._writer.WriteBit(mLeaderStyle.TextFrame);
-			if (R2010Plus)
-			{
-				//	IF IsNewFormat OR DXF file
-				//	B	297	Always align text left
-				this._writer.WriteBit(mLeaderStyle.TextAlignAlwaysLeft);
-				//	END IF IsNewFormat OR DXF file
-			}
+			//	B	297	Always align text left
+			this._writer.WriteBit(mLeaderStyle.TextAlignAlwaysLeft);
 			//	BD	46	Align space
 			this._writer.WriteBitDouble(mLeaderStyle.AlignSpace);
+
 			//	H	343	Block handle (hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, mLeaderStyle.BlockContent);
+
 			//	CMC	94	Block color
 			this._writer.WriteCmColor(mLeaderStyle.BlockContentColor);
 			//	3BD	47,49,140	Block scale vector
@@ -514,12 +655,38 @@ namespace ACadSharp.IO.DWG
 			//	BD	143	Break size
 			this._writer.WriteBitDouble(mLeaderStyle.BreakGapSize);
 
-			//	BS	271	Attachment direction (see paragraph on LEADER for more details).
-			this._writer.WriteBitShort((short)mLeaderStyle.TextAttachmentDirection);
-			//	BS	273	Top attachment (see paragraph on LEADER for more details).
-			this._writer.WriteBitShort((short)mLeaderStyle.TextBottomAttachment);
-			//	BS	272	Bottom attachment (see paragraph on LEADER for more details).
-			this._writer.WriteBitShort((short)mLeaderStyle.TextTopAttachment);
+			if (this.R2010Plus)
+			{
+				//	BS	271	Attachment direction (see paragraph on LEADER for more details).
+				this._writer.WriteBitShort((short)mLeaderStyle.TextAttachmentDirection);
+				//	BS	273	Top attachment (see paragraph on LEADER for more details).
+				this._writer.WriteBitShort((short)mLeaderStyle.TextBottomAttachment);
+				//	BS	272	Bottom attachment (see paragraph on LEADER for more details).
+				this._writer.WriteBitShort((short)mLeaderStyle.TextTopAttachment);
+			}
+
+			if (this.R2013Plus)
+			{
+				//	B	298 Undocumented, found in DXF
+				this._writer.WriteBit(mLeaderStyle.UnknownFlag298);
+			}
+		}
+
+		private void writeObjectContextData(ObjectContextData objectContextData) {
+			//BS	70	Version.
+			this._writer.WriteBitShort(objectContextData.Version);
+			//B	-	Has file to extension dictionary.
+			this._writer.WriteBit(objectContextData.HasFileToExtensionDictionary);
+			//B	290	Default flag.
+			this._writer.WriteBit(objectContextData.Default);
+		}
+
+		private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData annotScaleObjectContextData) {
+			this._writer.HandleReference(DwgReferenceType.HardPointer, annotScaleObjectContextData.Scale);
+		}
+
+		private void writeMultiLeaderAnnotContext(MultiLeaderObjectContextData multiLeaderAnnotContext) {
+			writeMultiLeaderAnnotContextSubObject(false, multiLeaderAnnotContext);
 		}
 
 		private void writePlotSettings(PlotSettings plot)
@@ -610,6 +777,19 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
+		private void writeRasterVariables(RasterVariables vars)
+		{
+			//Common:
+			//Classver BL 90 classversion
+			this._writer.WriteBitLong(vars.ClassVersion);
+			//Dispfrm BS 70 displayframe
+			this._writer.WriteBitShort(vars.IsDisplayFrameShown ? (short)1 : (short)0);
+			//Dispqual BS 71 display quality
+			this._writer.WriteBitShort((short)vars.DisplayQuality);
+			//Units BS 72 units
+			this._writer.WriteBitShort((short)vars.Units);
+		}
+
 		private void writeScale(Scale scale)
 		{
 			//BS	70	Unknown(ODA writes 0).
@@ -624,6 +804,59 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBit(scale.IsUnitScale);
 		}
 
+		private void writeSpatialFilter(SpatialFilter filter)
+		{
+			//Common:
+			//Numpts BS 70 number of points
+			this._writer.WriteBitShort((short)filter.BoundaryPoints.Count);
+			//Repeat numpts times:
+			foreach (var pt in filter.BoundaryPoints)
+			{
+				//pt0 2RD 10 a point on the clip boundary
+				this._writer.Write2RawDouble(pt);
+			}
+
+			//Extrusion 3BD 210 extrusion
+			this._writer.Write3BitDouble(filter.Normal);
+			//Clipbdorg 3BD 10 clip bound origin
+			this._writer.Write3BitDouble(filter.Origin);
+			//Dispbound BS 71 display boundary
+			this._writer.WriteBitShort((short)(filter.DisplayBoundary ? 1 : 0));
+			//Frontclipon BS 72 1 if front clip on
+			this._writer.WriteBitShort((short)(filter.ClipFrontPlane ? 1 : 0));
+			if (filter.ClipFrontPlane)
+			{
+				//Frontdist BD 40 front clip dist(present if frontclipon == 1)
+				this._writer.WriteBitDouble(filter.FrontDistance);
+			}
+
+			//Backclipon BS 73 1 if back clip on
+			this._writer.WriteBitShort((short)(filter.ClipBackPlane ? 1 : 0));
+			if (filter.ClipBackPlane)
+			{
+				//Backdist BD 41 back clip dist(present if backclipon == 1)
+				this._writer.WriteBitDouble(filter.BackDistance);
+			}
+
+			//Invblktr 12BD 40 inverse block transformation matrix
+			//(double[4][3], column major order)
+			this.write4x3Matrix(filter.InverseInsertTransform);
+			//clipbdtr 12BD 40 clip bound transformation matrix
+			//(double[4][3], column major order)
+			this.write4x3Matrix(filter.InsertTransform);
+		}
+
+		private void write4x3Matrix(Matrix4 matrix)
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 4; j++)
+				{
+					this._writer.WriteBitDouble(matrix[i, j]);
+				}
+			}
+		}
+
 		private void writeSortEntitiesTable(SortEntitiesTable sortEntitiesTable)
 		{
 			//parenthandle (soft pointer)
@@ -631,16 +864,15 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Numentries BL number of entries
-			this._writer.WriteBitLong(sortEntitiesTable.Sorters.Count());
-
-			foreach (var item in sortEntitiesTable.Sorters)
+			this._writer.WriteBitLong(sortEntitiesTable.Count());
+			foreach (var item in sortEntitiesTable)
 			{
 				//Sort handle(numentries of these, CODE 0, i.e.part of the main bit stream, not of the handle bit stream!).
 				//The sort handle does not have to point to an entity (but it can).
 				//This is just the handle used for determining the drawing order of the entity specified by the entity handle in the handle bit stream.
 				//When the sortentstable doesn’t have a
 				//mapping from entity handle to sort handle, then the entity’s own handle is used for sorting.
-				this._writer.HandleReference(item.Handle);
+				this._writer.Main.HandleReference(item.SortHandle);
 				this._writer.HandleReference(DwgReferenceType.SoftPointer, item.Entity);
 			}
 		}
@@ -658,7 +890,7 @@ namespace ACadSharp.IO.DWG
 					continue;
 				}
 
-				ms.Write<short>((short)entry.Code);
+				ms.Write<short, LittleEndianConverter>((short)entry.Code);
 				GroupCodeValueType groupValueType = GroupCodeValue.TransformValue(entry.Code);
 
 				switch (groupValueType)
@@ -695,38 +927,32 @@ namespace ACadSharp.IO.DWG
 						ms.Write((byte)array.Length);
 						ms.WriteBytes(array);
 						break;
-					case GroupCodeValueType.String:
-					case GroupCodeValueType.ExtendedDataString:
 					case GroupCodeValueType.Handle:
-						string text = (string)entry.Value;
-
-						if (this.R2007Plus)
+						var obj = entry.GetReference();
+						if (obj == null)
 						{
-							if (string.IsNullOrEmpty(text))
-							{
-								ms.Write<short, LittleEndianConverter>(0);
-								return;
-							}
-
-							ms.Write<short, LittleEndianConverter>((short)text.Length);
-							ms.Write(text, System.Text.Encoding.Unicode);
-						}
-						else if (string.IsNullOrEmpty(text))
-						{
-							ms.Write<short, LittleEndianConverter>(0);
-							ms.Write((byte)this._writer.Encoding.CodePage);
+							this.writeStringInStream(ms, string.Empty);
 						}
 						else
 						{
-							ms.Write<short, LittleEndianConverter>((short)text.Length);
-							ms.Write((byte)this._writer.Encoding.CodePage);
-							ms.Write(text, this._writer.Encoding);
+							this.writeStringInStream(ms, obj.Handle.ToString("X", System.Globalization.CultureInfo.InvariantCulture));
 						}
+						break;
+					case GroupCodeValueType.String:
+					case GroupCodeValueType.ExtendedDataString:
+						string text = (string)entry.Value;
+						this.writeStringInStream(ms, text);
 						break;
 					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:
-						ulong u = (entry.Value as ulong?).Value;
-						ms.Write<ulong, LittleEndianConverter>(u);
+						if (entry.GetReference() == null)
+						{
+							ms.Write<ulong, LittleEndianConverter>(0);
+						}
+						else
+						{
+							ms.Write<ulong, LittleEndianConverter>(entry.GetReference().Handle);
+						}
 						break;
 					default:
 						throw new NotSupportedException();
@@ -736,7 +962,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Numdatabytes BL number of databytes
 			this._writer.WriteBitLong((int)ms.Length);
-			this._writer.WriteBytes(stream.GetBuffer());
+			this._writer.WriteBytes(stream.GetBuffer(), 0, (int)ms.Length);
 
 			//R2000+:
 			if (this.R2000Plus)
@@ -744,7 +970,32 @@ namespace ACadSharp.IO.DWG
 				//Cloning flag BS 280
 				this._writer.WriteBitShort((short)xrecord.CloningFlags);
 			}
+		}
 
+		private void writeStringInStream(StreamIO ms, string text)
+		{
+			if (this.R2007Plus)
+			{
+				if (string.IsNullOrEmpty(text))
+				{
+					ms.Write<short, LittleEndianConverter>(0);
+					return;
+				}
+
+				ms.Write<short, LittleEndianConverter>((short)text.Length);
+				ms.Write(text, System.Text.Encoding.Unicode);
+			}
+			else if (string.IsNullOrEmpty(text))
+			{
+				ms.Write<short, LittleEndianConverter>(0);
+				ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
+			}
+			else
+			{
+				ms.Write<short, LittleEndianConverter>((short)text.Length);
+				ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
+				ms.Write(text, this._writer.Encoding);
+			}
 		}
 	}
 }

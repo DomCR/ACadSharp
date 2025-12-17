@@ -16,23 +16,72 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityTable)]
 	[DxfSubClass(DxfSubclassMarker.TableEntity)]
-	[Obsolete("TableEntity is in a work in progress, is only supported in Dwg and for versions higher than AC1021")]
 	public partial class TableEntity : Insert
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.UNLISTED;
+		[Flags]
+		internal enum BorderOverrideFlags
+		{
+			None = 0,
+			TitleHorizontalTop = 0x01,
+			TitleHorizontalInsert = 0x02,
+			TitleHorizontalBottom = 0x04,
+			TitleVerticalLeft = 0x8,
+			TitleVerticalInsert = 0x10,
+			TitleVerticalRight = 0x20,
+			HeaderHorizontalTop = 0x40,
+			HeaderHorizontalInsert = 0x80,
+			HeaderHorizontalBottom = 0x100,
+			HeaderVerticalLeft = 0x200,
+			HeaderVerticalInsert = 0x400,
+			HeaderVerticalRight = 0x800,
+			DataHorizontalTop = 0x1000,
+			DataHorizontalInsert = 0x2000,
+			DataHorizontalBottom = 0x4000,
+			DataVerticalLeft = 0x8000,
+			DataVerticalInsert = 0x10000,
+			DataVerticalRight = 0x20000,
+		}
 
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityTable;
+		[Flags]
+		internal enum TableOverrideFlags
+		{
+			None = 0,
+			TitleSuppressed = 0x0001,
+			HeaderSuppressed = 0x02,
+			FlowDirection = 0x0004,
+			HorizontalCellMargin = 0x0008,
+			VerticalCellMargin = 0x0010,
 
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.TableEntity;
+			TitleRowColor = 0x0020,
+			HeaderRowColor = 0x00040,
+			DataRowColor = 0x0080,
+
+			TitleRowFillNone = 0x0100,
+			HeaderRowFillNone = 0x0200,
+			DataRowFillNone = 0x0400,
+
+			TitleRowFillColor = 0x0800,
+			HeaderRowFillColor = 0x1000,
+			DataRowFillColor = 0x2000,
+
+			TitleRowAlign = 0x4000,
+			HeaderRowAlign = 0x8000,
+			DataRowAlign = 0x10000,
+
+			TitleTextStyle = 0x20000,
+			HeaderTextStyle = 0x40000,
+			DataTextStyle = 0x80000,
+
+			TitleRowHeight = 0x100000,
+			HeaderRowHeight = 0x200000,
+			DataRowHeight = 0x400000,
+		}
 
 		/// <summary>
-		/// Table data version
+		/// Table columns
 		/// </summary>
-		[DxfCodeValue(280)]
-		public short Version { get; set; }
+		[DxfCodeValue(DxfReferenceType.Count, 92)]
+		public List<Column> Columns { get { return this.Content.Columns; } }
 
 		/// <summary>
 		/// Horizontal direction vector
@@ -40,29 +89,11 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(11, 21, 31)]
 		public XYZ HorizontalDirection { get; set; }
 
-		/// <summary>
-		/// Flag for table value.
-		/// </summary>
-		[DxfCodeValue(90)]
-		public int ValueFlag { get; set; }
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityTable;
 
-		/// <summary>
-		/// Table rows.
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Count, 91)]
-		public List<Row> Rows { get; set; } = new List<Row>();
-
-		/// <summary>
-		/// Table columns
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Count, 92)]
-		public List<Column> Columns { get; set; } = new List<Column>();
-
-		/// <summary>
-		/// Flag for an override.
-		/// </summary>
-		[DxfCodeValue(93)]
-		public bool OverrideFlag { get; set; }
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
 		/// <summary>
 		/// Flag for an override of border color.
@@ -83,25 +114,58 @@ namespace ACadSharp.Entities
 		public bool OverrideBorderVisibility { get; set; }
 
 		/// <summary>
-		/// Table Style
+		/// Flag for an override.
+		/// </summary>
+		[DxfCodeValue(93)]
+		public bool OverrideFlag { get; set; }
+
+		/// <summary>
+		/// Table rows.
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Count, 91)]
+		public List<Row> Rows { get { return this.Content.Rows; } }
+
+		/// <summary>
+		/// Gets or sets the table style associated with this object.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 342)]
-		public TableStyle Style { get; set; }
+		public TableStyle Style
+		{
+			get { return this.Content.Style; }
+			set
+			{
+				this.Content.Style = value;
+			}
+		}
 
-		//343	Hard pointer ID of the owning BLOCK record
-		[DxfCodeValue(DxfReferenceType.Handle, 343)]
-		[Obsolete("Is it needed??")]
-		internal BlockRecord TableBlock { get { return this.Block; } }
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.TableEntity;
 
-		public TableContent Content { get; set; } = new();
+		/// <summary>
+		/// Flag for table value.
+		/// </summary>
+		[DxfCodeValue(90)]
+		public int ValueFlag { get; set; }
 
-		internal BreakData TableBreakData { get; set; } = new();
+		/// <summary>
+		/// Table data version
+		/// </summary>
+		[DxfCodeValue(280)]
+		public short Version { get; set; }
 
 		internal List<BreakRowRange> BreakRowRanges { get; set; } = new();
 
-		public Cell GetCell(int row, int column)
+		internal TableContent Content { get; set; } = new();
+
+		[DxfCodeValue(DxfReferenceType.Handle, 343)]
+		internal BlockRecord TableBlock { get { return this.Block; } }
+
+		internal BreakData TableBreakData { get; set; } = new();
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
 		{
-			return this.Rows[row].Cells[column];
+			return base.Clone();
 		}
 
 		/// <inheritdoc/>
@@ -110,10 +174,9 @@ namespace ACadSharp.Entities
 			return BoundingBox.Null;
 		}
 
-		/// <inheritdoc/>
-		public override CadObject Clone()
+		public Cell GetCell(int row, int column)
 		{
-			return base.Clone();
+			return this.Rows[row].Cells[column];
 		}
 	}
 }

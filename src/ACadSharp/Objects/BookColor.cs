@@ -1,7 +1,8 @@
 ﻿using ACadSharp.Attributes;
+using CSUtilities.Extensions;
 using System;
+using System.Drawing;
 using System.Linq;
-using System.Xml.Linq;
 
 namespace ACadSharp.Objects
 {
@@ -25,38 +26,73 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.DbColor;
 
+		/// <summary>
+		/// Returns the full name of the color, following the structure BookName$ColorName,
+		/// if when set doesn't follow this structure only the name will be changed.
+		/// </summary>
 		/// <inheritdoc/>
 		public override string Name
 		{
-			get { return base.Name; }
+			get
+			{
+				if (this.ColorName.IsNullOrEmpty())
+				{
+					return string.Empty;
+				}
+				else
+				{
+					return $"{this.BookName}${this.ColorName}";
+				}
+			}
 			set
 			{
-				if (!value.Contains('$'))
+				if (value.Contains('$'))
 				{
-					throw new ArgumentException($"Invalid BookColor name: ({value}), a book color name has to separate the book name and the color name by the character '$'", nameof(value));
-				}
+					base.Name = value;
 
-				base.Name = value;
+					this.BookName = value.Split('$').First();
+					this.ColorName = value.Split('$').Last();
+				}
+				else
+				{
+					this.ColorName = value;
+				}
 			}
 		}
 
 		/// <summary>
 		/// Color name.
 		/// </summary>
-		public string ColorName { get { return this.Name.Split('$').Last(); } }
+		public string ColorName { get; set; }
 
 		/// <summary>
 		/// Book name where the color is stored.
 		/// </summary>
-		public string BookName { get { return this.Name.Split('$').First(); } }
+		public string BookName { get; set; }
 
 		[DxfCodeValue(62, 420)]
 		public Color Color { get; set; }
 
+		/// <inheritdoc/>
 		public BookColor() : base() { }
 
+		/// <summary>
+		/// Initialize a <see cref="BookColor"/> with an specific name.
+		/// </summary>
+		/// <param name="name"></param>
 		public BookColor(string name) : base(name)
 		{
+		}
+
+		/// <summary>
+		/// Initialize a <see cref="BookColor"/> with an specific book and color name.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="bookName"></param>
+		public BookColor(string name, string bookName) : base()
+		{
+			this.Name = name;
+			this.BookName = bookName;
 		}
 	}
 }

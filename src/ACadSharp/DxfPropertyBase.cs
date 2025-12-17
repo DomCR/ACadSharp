@@ -5,7 +5,6 @@ using CSUtilities.Converters;
 using CSUtilities.Extensions;
 using System;
 using System.Collections;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
 
@@ -64,6 +63,20 @@ namespace ACadSharp
 			this.SetValue(this.AssignedCode, obj, value);
 		}
 
+		/// <summary>
+		/// Sets the value of a specified property on a CAD object, converting the value as needed based on the property's
+		/// type.
+		/// </summary>
+		/// <remarks>This method supports setting values for various property types, including vectors (<see
+		/// cref="XY"/> and <see cref="XYZ"/>), colors (<see cref="Color"/>), margins (<see cref="PaperMargin"/>),
+		/// transparency (<see cref="Transparency"/>), and other primitive or enum types. The behavior of the method depends
+		/// on the property's type and the provided <paramref name="code"/>.</remarks>
+		/// <typeparam name="TCadObject">The type of the CAD object on which the property value is being set. Must derive from <see cref="CadObject"/>.</typeparam>
+		/// <param name="code">A code that determines how the value should be interpreted or applied. The interpretation of this code depends on
+		/// the property's type.</param>
+		/// <param name="obj">The CAD object whose property value is being set. Cannot be <see langword="null"/>.</param>
+		/// <param name="value">The value to set for the property. The value will be converted to the appropriate type based on the property's
+		/// type.</param>
 		public void SetValue<TCadObject>(int code, TCadObject obj, object value)
 			where TCadObject : CadObject
 		{
@@ -170,6 +183,101 @@ namespace ACadSharp
 				case DxfReferenceType.None:
 				default:
 					return getRawValue(code, obj);
+			}
+		}
+
+		internal void SetValue(int code, object obj, object value)
+		{
+			if (this._property.PropertyType.IsEquivalentTo(typeof(XY)))
+			{
+				XY vector = (XY)this._property.GetValue(obj);
+
+				int index = (code / 10) % 10 - 1;
+				vector[index] = Convert.ToDouble(value);
+
+				this._property.SetValue(obj, vector);
+			}
+			else if (this._property.PropertyType.IsEquivalentTo(typeof(XYZ)))
+			{
+				XYZ vector = (XYZ)this._property.GetValue(obj);
+
+				int index = (code / 10) % 10 - 1;
+				vector[index] = Convert.ToDouble(value);
+
+				this._property.SetValue(obj, vector);
+			}
+			else if (this._property.PropertyType.IsEquivalentTo(typeof(Color)))
+			{
+				switch (code)
+				{
+					case 62:
+						this._property.SetValue(obj, new Color((short)value));
+						break;
+					case 90:
+						byte[] b = LittleEndianConverter.Instance.GetBytes((int)(value));
+						// true color
+						this._property.SetValue(obj, new Color(b[2], b[1], b[0]));
+						break;
+					case 420:
+						b = LittleEndianConverter.Instance.GetBytes((int)value);
+						// true color
+						this._property.SetValue(obj, new Color(b[2], b[1], b[0]));
+						break;
+				}
+			}
+			else if (_property.PropertyType.IsEquivalentTo(typeof(PaperMargin)))
+			{
+				PaperMargin margin = (PaperMargin)_property.GetValue(obj);
+
+				switch (code)
+				{
+					//40	Size, in millimeters, of unprintable margin on left side of paper
+					case 40:
+						margin = new PaperMargin((double)value, margin.Bottom, margin.Right, margin.Top);
+						break;
+					//41	Size, in millimeters, of unprintable margin on bottom of paper
+					case 41:
+						margin = new PaperMargin(margin.Left, (double)value, margin.Right, margin.Top);
+						break;
+					//42	Size, in millimeters, of unprintable margin on right side of paper
+					case 42:
+						margin = new PaperMargin(margin.Left, margin.Bottom, (double)value, margin.Top);
+						break;
+					//43	Size, in millimeters, of unprintable margin on top of paper
+					case 43:
+						margin = new PaperMargin(margin.Left, margin.Bottom, margin.Right, (double)value);
+						break;
+				}
+
+				this._property.SetValue(obj, margin);
+			}
+			else if (this._property.PropertyType.IsEquivalentTo(typeof(Transparency)))
+			{
+				this._property.SetValue(obj, Transparency.FromAlphaValue((int)value));
+			}
+			else if (this._property.PropertyType.IsEquivalentTo(typeof(bool)))
+			{
+				this._property.SetValue(obj, Convert.ToBoolean(value));
+			}
+			else if (this._property.PropertyType.IsEquivalentTo(typeof(char)))
+			{
+				this._property.SetValue(obj, Convert.ToChar(value));
+			}
+			else if (this._property.PropertyType.IsEquivalentTo(typeof(byte)))
+			{
+				this._property.SetValue(obj, Convert.ToByte(value));
+			}
+			else if (this._property.PropertyType.IsEnum)
+			{
+				this._property.SetValue(obj, Enum.ToObject(this._property.PropertyType, value));
+			}
+			else if (this._property.PropertyType.IsEquivalentTo(typeof(ushort)))
+			{
+				this._property.SetValue(obj, Convert.ToUInt16(value));
+			}
+			else
+			{
+				this._property.SetValue(obj, value);
 			}
 		}
 

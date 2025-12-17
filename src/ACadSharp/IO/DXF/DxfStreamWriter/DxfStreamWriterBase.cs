@@ -1,4 +1,5 @@
-﻿using CSUtilities.Converters;
+﻿using CSMath;
+using CSUtilities.Converters;
 using System;
 
 
@@ -6,24 +7,19 @@ namespace ACadSharp.IO.DXF
 {
 	internal abstract class DxfStreamWriterBase : IDxfStreamWriter
 	{
-		public bool WriteOptional { get; } = false;
+		public bool WriteOptional { get; set; } = false;
 
-		public void Write(DxfCode code, object value)
-		{
-			this.Write((int)code, value, null);
-		}
-
-		public void Write(DxfCode code, object value, DxfClassMap map)
+		public void Write(DxfCode code, object value, DxfClassMap map = null)
 		{
 			this.Write((int)code, value, map);
 		}
 
-		public void Write(int code, object value)
+		public void Write(DxfCode code, CSMath.IVector value, DxfClassMap map = null)
 		{
-			this.Write(code, value, null);
+			this.Write((int)code, value, map);
 		}
 
-		public void Write(int code, CSMath.IVector value, DxfClassMap map)
+		public void Write(int code, CSMath.IVector value, DxfClassMap map = null)
 		{
 			for (int i = 0; i < value.Dimension; i++)
 			{
@@ -71,7 +67,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		public void WriteHandle(int code, IHandledCadObject value, DxfClassMap map)
+		public void WriteHandle(int code, IHandledCadObject value, DxfClassMap map = null)
 		{
 			if (value != null)
 			{
@@ -79,7 +75,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		public void WriteName(int code, INamedCadObject value, DxfClassMap map)
+		public void WriteName(int code, INamedCadObject value, DxfClassMap map = null)
 		{
 			if (value != null)
 			{
@@ -87,7 +83,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		public void Write(int code, object value, DxfClassMap map)
+		public void Write(int code, object value, DxfClassMap map = null)
 		{
 			if (value == null)
 			{
@@ -103,7 +99,7 @@ namespace ACadSharp.IO.DXF
 
 				if (prop.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
 				{
-					value = (double)value * MathUtils.RadToDegFactor;
+					value = MathHelper.RadToDeg((double)value);
 				}
 			}
 

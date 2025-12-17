@@ -3,6 +3,7 @@ using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Types.Units;
+using ACadSharp.XData;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
@@ -33,7 +34,7 @@ namespace ACadSharp.IO.DXF
 				if (this._reader.ValueAsString == DxfFileToken.TableEntry)
 					this.readTable();
 				else
-					throw new DxfException($"Unexpected token at the begining of a table: {this._reader.ValueAsString}", this._reader.Position);
+					throw new DxfException($"Unexpected token at the beginning of a table: {this._reader.ValueAsString}", this._reader.Position);
 
 
 				if (this._reader.ValueAsString == DxfFileToken.EndTable)
@@ -52,9 +53,9 @@ namespace ACadSharp.IO.DXF
 
 			int nentries = 0;
 			CadTemplate template = null;
-			Dictionary<string, ExtendedData> edata = new Dictionary<string, ExtendedData>();
+			Dictionary<string, List<ExtendedDataRecord>> edata = new();
 
-			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out List<ulong> reactors);
+			this.readCommonObjectData(out string name, out ulong handle, out ulong? ownerHandle, out ulong? xdictHandle, out HashSet<ulong> reactors);
 
 			if (this._reader.DxfCode == DxfCode.Subclass)
 			{
@@ -91,7 +92,7 @@ namespace ACadSharp.IO.DXF
 					this._reader.ReadNext();
 				}
 			}
-			else if(this._reader.ValueAsString == DxfFileToken.EndTable)
+			else if (this._reader.ValueAsString == DxfFileToken.EndTable)
 			{
 				return;
 			}
@@ -179,7 +180,7 @@ namespace ACadSharp.IO.DXF
 			{
 				this._reader.ReadNext();
 
-				CadTemplate template = null;
+				ICadTableEntryTemplate template = null;
 
 				//Get the entry
 				switch (tableTemplate.CadObject.ObjectName)
@@ -223,15 +224,25 @@ namespace ACadSharp.IO.DXF
 						break;
 				}
 
-				//tableTemplate.EntryHandles.Add(template.CadObject.Handle);
-				tableTemplate.CadObject.Add((T)template.CadObject);
+
+				if (tableTemplate.CadObject.Contains(template.Name) && this._builder.Configuration.Failsafe)
+				{
+					this._builder.Notify($"Duplicated entry with name {template.Name} found in {template.CadObject.ObjectName}", NotificationType.Warning);
+
+					tableTemplate.CadObject.Remove(template.Name);
+					tableTemplate.CadObject.Add((T)template.CadObject);
+				}
+				else
+				{
+					tableTemplate.CadObject.Add((T)template.CadObject);
+				}
 
 				//Add the object and the template to the builder
 				this._builder.AddTemplate(template);
 			}
 		}
 
-		private CadTemplate readTableEntry<T>(CadTableEntryTemplate<T> template, ReadEntryDelegate<T> readEntry)
+		private ICadTableEntryTemplate readTableEntry<T>(CadTableEntryTemplate<T> template, ReadEntryDelegate<T> readEntry)
 			where T : TableEntry
 		{
 			DxfMap map = DxfMap.Create<T>();
@@ -361,6 +372,17 @@ namespace ACadSharp.IO.DXF
 				case 69:
 					template.CadObject.TextBackgroundFillMode = (DimensionTextBackgroundFillMode)this._reader.ValueAsShort;
 					return true;
+				case 70:
+					if (!tmp.DxfFlagsAssigned)
+					{
+						tmp.DxfFlagsAssigned = true;
+						return true;
+					}
+					else if (this._reader.ValueAsShort >= 0)
+					{
+						template.CadObject.TextBackgroundColor = new Color(this._reader.ValueAsShort);
+					}
+					return true;
 				case 71:
 					template.CadObject.GenerateTolerances = this._reader.ValueAsBool;
 					return true;
@@ -449,7 +471,7 @@ namespace ACadSharp.IO.DXF
 					template.CadObject.TextColor = new Color(this._reader.ValueAsShort);
 					return true;
 				case 179:
-					template.CadObject.AngularDimensionDecimalPlaces = this._reader.ValueAsShort;
+					template.CadObject.AngularDecimalPlaces = this._reader.ValueAsShort;
 					return true;
 				case 270:
 					template.CadObject.LinearUnitFormat = (LinearUnitFormat)this._reader.ValueAsShort;
@@ -529,11 +551,20 @@ namespace ACadSharp.IO.DXF
 				case 344:
 					tmp.DIMBLK2 = this._reader.ValueAsHandle;
 					return true;
+				case 345:
+					tmp.Dimltype = this._reader.ValueAsHandle;
+					return true;
+				case 346:
+					tmp.Dimltex1 = this._reader.ValueAsHandle;
+					return true;
+				case 347:
+					tmp.Dimltex2 = this._reader.ValueAsHandle;
+					return true;
 				case 371:
-					template.CadObject.DimensionLineWeight = (LineweightType)this._reader.ValueAsShort;
+					template.CadObject.DimensionLineWeight = (LineWeightType)this._reader.ValueAsShort;
 					return true;
 				case 372:
-					template.CadObject.ExtensionLineWeight = (LineweightType)this._reader.ValueAsShort;
+					template.CadObject.ExtensionLineWeight = (LineWeightType)this._reader.ValueAsShort;
 					return true;
 				default:
 					return false;
@@ -558,7 +589,16 @@ namespace ACadSharp.IO.DXF
 						template.CadObject.IsOn = false;
 						index = Math.Abs(index);
 					}
-					template.CadObject.Color = new Color(index);
+
+					var color = new Color(index);
+					if (color.IsByBlock || color.IsByLayer)
+					{
+						this._builder.Notify($"Wrong index {index} for layer {template.CadObject.Name}", NotificationType.Warning);
+					}
+					else
+					{
+						template.CadObject.Color = new Color(index);
+					}
 					return true;
 				case 347:
 					tmp.MaterialHandle = this._reader.ValueAsHandle;
@@ -631,7 +671,7 @@ namespace ACadSharp.IO.DXF
 						template.Segment.Rotation = this._reader.ValueAsAngle;
 						break;
 					case 74:
-						template.Segment.Shapeflag = (LinetypeShapeFlags)this._reader.ValueAsUShort;
+						template.Segment.Flags = (LineTypeShapeFlags)this._reader.ValueAsUShort;
 						break;
 					case 75:
 						template.Segment.ShapeNumber = (short)this._reader.ValueAsInt;

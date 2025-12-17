@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using ACadSharp.XData;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
@@ -9,22 +10,43 @@ namespace ACadSharp.IO.Templates
 	{
 		public CadObject CadObject { get; set; }
 
+		public Dictionary<ulong, List<ExtendedDataRecord>> EDataTemplate { get; set; } = new();
+
+		public Dictionary<string, List<ExtendedDataRecord>> EDataTemplateByAppName { get; set; } = new();
+
+		public bool HasBeenBuilt { get; private set; } = false;
+
 		public ulong? OwnerHandle { get; set; }
 
+		public HashSet<ulong> ReactorsHandles { get; set; } = new();
+
 		public ulong? XDictHandle { get; set; }
-
-		public List<ulong> ReactorsHandles { get; set; } = new List<ulong>();
-
-		public Dictionary<ulong, ExtendedData> EDataTemplate { get; set; } = new Dictionary<ulong, ExtendedData>();
-
-		public Dictionary<string, ExtendedData> EDataTemplateByAppName { get; set; } = new Dictionary<string, ExtendedData>();
 
 		public CadTemplate(CadObject cadObject)
 		{
 			this.CadObject = cadObject;
 		}
 
-		public virtual void Build(CadDocumentBuilder builder)
+		public void Build(CadDocumentBuilder builder)
+		{
+			if (this.HasBeenBuilt)
+			{
+				return;
+			}
+			else
+			{
+				this.HasBeenBuilt = true;
+			}
+
+			this.build(builder);
+		}
+
+		public override string ToString()
+		{
+			return $"{this.CadObject?.ToString()}";
+		}
+
+		protected virtual void build(CadDocumentBuilder builder)
 		{
 			if (builder.TryGetCadObject(this.XDictHandle, out CadDictionary cadDictionary))
 			{
@@ -35,14 +57,7 @@ namespace ACadSharp.IO.Templates
 			{
 				if (builder.TryGetCadObject(handle, out CadObject reactor))
 				{
-					if (this.CadObject.Reactors.ContainsKey(handle))
-					{
-						builder.Notify($"Reactor with handle {handle} already exist in the object {this.CadObject.Handle}", NotificationType.Warning);
-					}
-					else
-					{
-						this.CadObject.Reactors.Add(handle, reactor);
-					}
+					this.CadObject.AddReactor(reactor);
 				}
 				else
 				{
@@ -50,7 +65,7 @@ namespace ACadSharp.IO.Templates
 				}
 			}
 
-			foreach (KeyValuePair<ulong, ExtendedData> item in this.EDataTemplate)
+			foreach (var item in this.EDataTemplate)
 			{
 				if (builder.TryGetCadObject(item.Key, out AppId app))
 				{
@@ -62,7 +77,7 @@ namespace ACadSharp.IO.Templates
 				}
 			}
 
-			foreach (KeyValuePair<string, ExtendedData> item in this.EDataTemplateByAppName)
+			foreach (var item in this.EDataTemplateByAppName)
 			{
 				if (builder.TryGetTableEntry(item.Key, out AppId app))
 				{
@@ -78,12 +93,17 @@ namespace ACadSharp.IO.Templates
 		protected IEnumerable<T> getEntitiesCollection<T>(CadDocumentBuilder builder, ulong firstHandle, ulong endHandle)
 			where T : Entity
 		{
-			List<T> collection = new List<T>();
-
 			CadEntityTemplate template = builder.GetObjectTemplate<CadEntityTemplate>(firstHandle);
+
+			if (template == null)
+			{
+				builder.Notify($"Leading entity with handle {firstHandle} not found.", NotificationType.Warning);
+				template = builder.GetObjectTemplate<CadEntityTemplate>(endHandle);
+			}
+
 			while (template != null)
 			{
-				collection.Add((T)template.CadObject);
+				yield return (T)template.CadObject;
 
 				if (template.CadObject.Handle == endHandle)
 				{
@@ -99,8 +119,6 @@ namespace ACadSharp.IO.Templates
 					template = builder.GetObjectTemplate<CadEntityTemplate>(template.CadObject.Handle + 1);
 				}
 			}
-
-			return collection;
 		}
 
 		protected bool getTableReference<T>(CadDocumentBuilder builder, ulong? handle, string name, out T reference)

@@ -4,7 +4,6 @@ about: Create a report to help us improve
 title: ''
 labels: bug
 assignees: ''
-
 ---
 
 **Describe the bug**
@@ -22,3 +21,10 @@ If applicable, add screenshots to help explain your problem.
 **Additional context**
 Add any other context about the problem here.
 If the issue is related to an specific dwg/dxf file and if able, attach that file to the issue of an equivalent with the same error.
+
+---
+
+**Release needed**
+
+- [ ] Yes, using the Nuget package.
+- [ ] No, using the github repo.

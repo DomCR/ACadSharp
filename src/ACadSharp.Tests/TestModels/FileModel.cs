@@ -4,9 +4,15 @@ namespace ACadSharp.Tests.TestModels
 {
 	public class FileModel : IXunitSerializable
 	{
-		public string FileName { get; set; }
+		public string Extension { get { return System.IO.Path.GetExtension(this.Path); } }
 
-		public string Path { get; set; }
+		public string FileName { get; private set; }
+
+		public string NoExtensionName { get { return System.IO.Path.GetFileNameWithoutExtension(this.Path); } }
+
+		public string Path { get; private set; }
+
+		public string Folder { get { return System.IO.Path.GetDirectoryName(this.Path); } }
 
 		public bool IsDxf { get { return System.IO.Path.GetExtension(this.Path) == ".dxf"; } }
 

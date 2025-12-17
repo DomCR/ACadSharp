@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System.Dynamic;
 
 namespace ACadSharp.Entities
 {
@@ -49,13 +50,19 @@ namespace ACadSharp.Entities
 			[DxfCodeValue(91)]
 			public int Id { get; set; } = 0;
 
-			IVector IVertex.Location { get { return this.Location; } }
+			IVector IVertex.Location { get { return this.Location; } set { this.Location = value.Convert<XY>(); } }
 
 			public Vertex() { }
 
 			public Vertex(XY location)
 			{
 				Location = location;
+			}
+
+			/// <inheritdoc/>
+			public override string ToString()
+			{
+				return this.Location.ToString();
 			}
 		}
 	}

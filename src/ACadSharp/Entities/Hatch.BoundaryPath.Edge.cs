@@ -28,17 +28,26 @@ namespace ACadSharp.Entities
 				/// </summary>
 				public abstract EdgeType Type { get; }
 
+				/// <inheritdoc/>
+				public abstract void ApplyTransform(Transform transform);
+
 				/// <summary>
 				/// Creates a new object that is a copy of the current instance.
 				/// </summary>
 				/// <returns></returns>
-				public Edge Clone()
+				public virtual Edge Clone()
 				{
 					return (Edge)this.MemberwiseClone();
 				}
 
 				/// <inheritdoc/>
 				public abstract BoundingBox GetBoundingBox();
+
+				/// <summary>
+				/// Create the equivalent entity for this Edge.
+				/// </summary>
+				/// <returns></returns>
+				public abstract Entity ToEntity();
 			}
 		}
 	}

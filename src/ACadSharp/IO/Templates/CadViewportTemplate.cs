@@ -21,20 +21,15 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? BlockHandle { get; set; }
 
-		public List<ulong> FrozenLayerHandles { get; set; } = new List<ulong>();
+		public HashSet<ulong> FrozenLayerHandles { get; set; } = new();
 
 		public CadViewportTemplate() : base(new Viewport()) { }
 
 		public CadViewportTemplate(Viewport entity) : base(entity) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
-
-			if (this.ViewportHeaderHandle.HasValue && this.ViewportHeaderHandle > 0)
-			{
-				builder.Notify($"ViewportHeaderHandle not implemented for Viewport, handle {this.ViewportHeaderHandle}");
-			}
+			base.build(builder);
 
 			if (builder.TryGetCadObject<Entity>(this.BoundaryHandle, out Entity entity))
 			{
@@ -53,21 +48,6 @@ namespace ACadSharp.IO.Templates
 			if (this.BaseUcsHandle.HasValue && this.BaseUcsHandle > 0)
 			{
 				builder.Notify($"Base ucs not implemented for Viewport, handle {this.BaseUcsHandle}");
-			}
-
-			if (this.CadObject.XDictionary != null &&
-				this.CadObject.XDictionary.TryGetEntry(Viewport.ASDK_XREC_ANNOTATION_SCALE_INFO, out XRecord record))
-			{
-				foreach (XRecord.Entry item in record.Entries)
-				{
-					if (item.Code == 340)
-					{
-						if (builder.TryGetCadObject((ulong?)item.Value, out Scale scale))
-						{
-							this.CadObject.Scale = scale;
-						}
-					}
-				}
 			}
 
 			foreach (var handle in this.FrozenLayerHandles)

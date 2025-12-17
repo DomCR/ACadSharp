@@ -12,7 +12,9 @@ namespace ACadSharp
 		/// </summary>
 		private static readonly ConcurrentDictionary<Type, DxfClassMap> _cache = new ConcurrentDictionary<Type, DxfClassMap>();
 
-		public DxfClassMap() : base() { }
+		public DxfClassMap() : base()
+		{
+		}
 
 		public DxfClassMap(string name) : base()
 		{
@@ -31,8 +33,25 @@ namespace ACadSharp
 		public static DxfClassMap Create<T>()
 			where T : CadObject
 		{
-			Type type = typeof(T);
+			return Create(typeof(T));
+		}
 
+		/// <summary>
+		/// Clears the map cache.
+		/// </summary>
+		public void ClearCache()
+		{
+			_cache.Clear();
+		}
+
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return $"DxfClassMap:{this.Name}";
+		}
+
+		internal static DxfClassMap Create(Type type, string name = null)
+		{
 			if (_cache.TryGetValue(type, out var classMap))
 			{
 				return classMap;
@@ -40,11 +59,17 @@ namespace ACadSharp
 
 			classMap = new DxfClassMap();
 
-			var att = type.GetCustomAttribute<DxfSubClassAttribute>();
-			if (att == null)
-				throw new ArgumentException($"{type.FullName} is not a dxf subclass");
-
-			classMap.Name = type.GetCustomAttribute<DxfSubClassAttribute>().ClassName;
+			if (string.IsNullOrEmpty(name))
+			{
+				var att = type.GetCustomAttribute<DxfSubClassAttribute>();
+				if (att == null)
+					throw new ArgumentException($"{type.FullName} is not a dxf subclass");
+				classMap.Name = att.ClassName;
+			}
+			else
+			{
+				classMap.Name = name;
+			}
 
 			addClassProperties(classMap, type);
 
@@ -58,20 +83,6 @@ namespace ACadSharp
 			_cache.TryAdd(type, classMap);
 
 			return classMap;
-		}
-
-
-		/// <summary>
-		/// Clears the map cache.
-		/// </summary>
-		public void ClearCache()
-		{
-			_cache.Clear();
-		}
-
-		public override string ToString()
-		{
-			return $"DxfClassMap:{this.Name}";
 		}
 	}
 }

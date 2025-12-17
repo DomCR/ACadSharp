@@ -1,11 +1,10 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
 using System.Collections.Generic;
-using ACadSharp.IO.DXF;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadInsertTemplate : CadEntityTemplate
+	internal class CadInsertTemplate : CadEntityTemplate, ICadOwnerTemplate
 	{
 		public bool HasAtts { get; set; }
 
@@ -21,26 +20,29 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? SeqendHandle { get; set; }
 
-		public List<ulong> AttributesHandles { get; set; } = new List<ulong>();
+		public HashSet<ulong> OwnedObjectsHandlers { get; set; } = new();
 
 		public CadInsertTemplate() : base(new Insert()) { }
 
 		public CadInsertTemplate(Insert insert) : base(insert) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			if (!(this.CadObject is Insert insert))
 				return;
 
-			BlockRecord block;
-			if (this.getTableReference(builder, this.BlockHeaderHandle, this.BlockName, out BlockRecord owner))
+			if (this.getTableReference(builder, this.BlockHeaderHandle, this.BlockName, out BlockRecord block))
 			{
-				insert.Block = owner;
+				insert.Block = block;
+			}
+			else
+			{
+				builder.Notify($"Block {this.BlockHeaderHandle} | {this.BlockName} not found for Insert {this.CadObject.Handle}", NotificationType.Warning);
 			}
 
-			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
+			if (builder.TryGetCadObject(this.SeqendHandle, out Seqend seqend))
 			{
 				insert.Attributes.Seqend = seqend;
 			}
@@ -52,9 +54,9 @@ namespace ACadSharp.IO.Templates
 			}
 			else
 			{
-				foreach (ulong handle in this.AttributesHandles)
+				foreach (ulong handle in this.OwnedObjectsHandlers)
 				{
-					if (builder.TryGetCadObject<AttributeEntity>(handle, out AttributeEntity att))
+					if (builder.TryGetCadObject(handle, out AttributeEntity att))
 					{
 						insert.Attributes.Add(att);
 					}

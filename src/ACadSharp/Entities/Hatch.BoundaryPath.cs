@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using CSMath;
 using CSUtilities.Extensions;
 using System.Collections.Generic;
@@ -13,9 +14,16 @@ namespace ACadSharp.Entities
 		public partial class BoundaryPath : IGeometricEntity
 		{
 			/// <summary>
-			/// Flag that indicates that this boundary path is formed by a polyline.
+			/// Edges that form the boundary.
 			/// </summary>
-			public bool IsPolyline { get { return this.Edges.OfType<Polyline>().Any(); } }
+			[DxfCodeValue(DxfReferenceType.Count, 93)]
+			public ObservableCollection<Edge> Edges { get; private set; } = new();
+
+			/// <summary>
+			/// Source boundary objects.
+			/// </summary>
+			[DxfCodeValue(DxfReferenceType.Count, 97)]
+			public List<Entity> Entities { get; set; } = new List<Entity>();
 
 			/// <summary>
 			/// Boundary path type flag
@@ -27,11 +35,11 @@ namespace ACadSharp.Entities
 				{
 					if (this.IsPolyline)
 					{
-						this._flags = this._flags.AddFlag(BoundaryPathFlags.Polyline);
+						this._flags.AddFlag(BoundaryPathFlags.Polyline);
 					}
 					else
 					{
-						this._flags = this._flags.RemoveFlag(BoundaryPathFlags.Polyline);
+						this._flags.RemoveFlag(BoundaryPathFlags.Polyline);
 					}
 
 					return this._flags;
@@ -43,19 +51,9 @@ namespace ACadSharp.Entities
 			}
 
 			/// <summary>
-			/// Number of edges in this boundary path.
+			/// Flag that indicates that this boundary path is formed by a polyline.
 			/// </summary>
-			/// <remarks>
-			/// Only if boundary is not a polyline.
-			/// </remarks>
-			[DxfCodeValue(DxfReferenceType.Count, 93)]
-			public ObservableCollection<Edge> Edges { get; private set; } = new();
-
-			/// <summary>
-			/// Source boundary objects.
-			/// </summary>
-			[DxfCodeValue(DxfReferenceType.Count, 97)]
-			public List<Entity> Entities { get; set; } = new List<Entity>();
+			public bool IsPolyline { get { return this.Edges.OfType<Polyline>().Any(); } }
 
 			private BoundaryPathFlags _flags;
 
@@ -65,6 +63,29 @@ namespace ACadSharp.Entities
 			public BoundaryPath()
 			{
 				this.Edges.CollectionChanged += this.onEdgesCollectionChanged;
+			}
+
+			/// <inheritdoc/>
+			public void ApplyTransform(Transform transform)
+			{
+				foreach (var e in this.Edges)
+				{
+					e.ApplyTransform(transform);
+				}
+			}
+
+			/// <inheritdoc/>
+			public BoundaryPath Clone()
+			{
+				BoundaryPath path = (BoundaryPath)this.MemberwiseClone();
+
+				path.Entities = new List<Entity>();
+				path.Entities.AddRange(this.Entities.Select(e => (Entity)e.Clone()));
+
+				path.Edges = new ObservableCollection<Edge>(
+					this.Edges.Select(e => e.Clone()));
+
+				return path;
 			}
 
 			/// <inheritdoc/>
@@ -85,18 +106,50 @@ namespace ACadSharp.Entities
 				return box;
 			}
 
-			/// <inheritdoc/>
-			public BoundaryPath Clone()
+			/// <summary>
+			/// Retrieves the points of the specified boundary as a sequence of the specified vector type.
+			/// </summary>
+			/// <param name="precision">The number of points to generate for each arc segment. Must be equal to or greater than 2.</param>
+			/// <returns>An <see cref="IEnumerable{T}"/> containing the points of the polyline, including interpolated points for arcs.</returns>
+			public IEnumerable<XYZ> GetPoints(int precision = 256)
 			{
-				BoundaryPath path = (BoundaryPath)this.MemberwiseClone();
+				List<XYZ> pts = new();
+				foreach (Edge edge in this.Edges)
+				{
+					switch (edge)
+					{
+						case Arc arc:
+							pts.AddRange(arc.PolygonalVertexes(precision));
+							break;
+						case Ellipse ellipse:
+							pts.AddRange(ellipse.PolygonalVertexes(precision));
+							break;
+						case Line line:
+							pts.Add((XYZ)line.Start);
+							pts.Add((XYZ)line.End);
+							break;
+						case Polyline poly:
+							Polyline2D pline2d = (Polyline2D)poly.ToEntity();
+							pts.AddRange(pline2d.GetPoints<XYZ>(precision));
+							break;
+						case Spline spline:
+							pts.AddRange(spline.PolygonalVertexes(precision));
+							break;
+					}
+				}
 
-				path.Entities = new List<Entity>();
-				path.Entities.AddRange(this.Entities.Select(e => (Entity)e.Clone()));
+				return pts;
+			}
 
-				path.Edges = new ObservableCollection<Edge>(
-					this.Edges.Select(e => e.Clone()));
-
-				return path;
+			private void onAdd(NotifyCollectionChangedEventArgs e)
+			{
+				foreach (Edge edge in e.NewItems)
+				{
+					if (this.Edges.Count > 1 && this.IsPolyline)
+					{
+						throw new System.InvalidOperationException();
+					}
+				}
 			}
 
 			private void onEdgesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -114,17 +167,6 @@ namespace ACadSharp.Entities
 						break;
 					case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
 						break;
-				}
-			}
-
-			private void onAdd(NotifyCollectionChangedEventArgs e)
-			{
-				foreach (Edge edge in e.NewItems)
-				{
-					if (this.Edges.Count > 1 && this.IsPolyline)
-					{
-						throw new System.InvalidOperationException();
-					}
 				}
 			}
 		}

@@ -30,6 +30,8 @@ namespace ACadSharp.IO.DWG
 
 		public override void BuildDocument()
 		{
+			this.createMissingHandles();
+
 			//Set the names for the block records before add them to the table
 			foreach (var item in this.BlockRecordTemplates)
 			{
@@ -43,6 +45,8 @@ namespace ACadSharp.IO.DWG
 			this.buildDictionaries();
 
 			base.BuildDocument();
+
+			this.HeaderHandles.UpdateHeader(this.DocumentToBuild.Header, this);
 		}
 	}
 }

@@ -1,7 +1,8 @@
-﻿using System;
+﻿using ACadSharp.Header;
+using ACadSharp.Objects;
+using ACadSharp.Tables;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
@@ -74,10 +75,66 @@ namespace ACadSharp.IO.DWG
 			return new List<ulong?>(_handles.Values);
 		}
 
+		public void UpdateHeader(CadHeader header, DwgDocumentBuilder builder)
+		{
+			TableEntry entry;
+			if (builder.TryGetCadObject(this.CLAYER, out entry))
+			{
+				header.CurrentLayerName = entry.Name;
+			}
+
+			if (builder.TryGetCadObject(this.CELTYPE, out entry))
+			{
+				header.CurrentLineTypeName = entry.Name;
+			}
+
+			if (builder.TryGetCadObject(this.CMLSTYLE, out entry))
+			{
+				header.CurrentMLineStyleName = entry.Name;
+			}
+
+			if (builder.TryGetCadObject(this.TEXTSTYLE, out entry))
+			{
+				header.CurrentTextStyleName = entry.Name;
+			}
+
+			if (builder.TryGetCadObject(this.DIMTXSTY, out entry))
+			{
+				header.DimensionTextStyleName = entry.Name;
+			}
+
+			if (builder.TryGetCadObject(this.DIMSTYLE, out entry))
+			{
+				header.CurrentDimensionStyleName = entry.Name;
+			}
+
+			BlockRecord record;
+			if (builder.TryGetCadObject(this.DIMBLK, out record))
+			{
+				header.DimensionBlockName = record.Name;
+			}
+
+			if (builder.TryGetCadObject(this.DIMLDRBLK, out record))
+			{
+				header.DimensionBlockName = record.Name;
+			}
+
+			if (builder.TryGetCadObject(this.DIMBLK1, out record))
+			{
+				header.DimensionBlockNameFirst = record.Name;
+			}
+
+			if (builder.TryGetCadObject(this.DIMBLK2, out record))
+			{
+				header.DimensionBlockNameSecond = record.Name;
+			}
+		}
+
 		private ulong? getHandle([CallerMemberName] string name = null)
 		{
 			return GetHandle(name);
 		}
+
 		private void setHandle([CallerMemberName] string name = null, ulong? value = 0)
 		{
 			SetHandle(name, value);
