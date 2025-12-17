@@ -21,6 +21,7 @@ namespace ACadSharp.IO.DXF
 
 		//Avoid to move the reader to the next line
 		protected bool lockPointer = false;
+		protected string currentSubclass = null;
 
 		public DxfSectionReaderBase(IDxfStreamReader reader, DxfDocumentBuilder builder)
 		{
@@ -122,6 +123,7 @@ namespace ACadSharp.IO.DXF
 					break;
 				//Check with mapper
 				case 100:
+					this.currentSubclass = this._reader.ValueAsString;
 					if (map != null && !map.SubClasses.ContainsKey(this._reader.ValueAsString))
 					{
 						this._builder.Notify($"[{template.CadObject.ObjectName}] Unidentified subclass {this._reader.ValueAsString}", NotificationType.Warning);
@@ -410,7 +412,54 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				case 1:
+					TableEntity.CellContent content;
+					if (tmp.CurrentCell.Content == null)
+					{
+						content = new TableEntity.CellContent();
+						content.Value.ValueType = TableEntity.CellValueType.String;
+						tmp.CurrentCell.Contents.Add(content);
+					}
+					else
+					{
+						content = tmp.CurrentCell.Content;
+					}
+
+					if (content.Value.Value == null)
+					{
+						content.Value.Value = this._reader.ValueAsString;
+					}
+					else
+					{
+						string str = content.Value.Value as string;
+						str += this._reader.ValueAsString;
+						content.Value.Value = str;
+					}
+					return true;
+				case 2:
+					if (this.currentSubclass.Equals(DxfSubclassMarker.TableEntity, StringComparison.OrdinalIgnoreCase))
+					{
+						content = tmp.CurrentCell.Content;
+						if (content.Value.Value == null)
+						{
+							content.Value.Value = this._reader.ValueAsString;
+						}
+						else
+						{
+							string str = content.Value.Value as string;
+							str += this._reader.ValueAsString;
+							content.Value.Value = str;
+						}
+					}
+					else
+					{
+						tmp.BlockName = this._reader.ValueAsString;
+					}
+					return true;
 				//Border overrides:
+				case 177:
+					//Cell override flag value (before AutoCAD 2007)
+					return true;
 				case 279:
 					//Lineweight for the top border of the cell; override applied at the cell level
 					tmp.CurrentCell.StyleOverride.TopBorder.LineWeight = (LineWeightType)this._reader.ValueAsShort;
@@ -442,9 +491,6 @@ namespace ACadSharp.IO.DXF
 				case 68:
 					//True color value for the left border of the cell; override applied at the cell level
 					tmp.CurrentCell.StyleOverride.LeftBorder.Color = new Color(this._reader.ValueAsShort);
-					return true;
-				case 2:
-					tmp.BlockName = this._reader.ValueAsString;
 					return true;
 				case 40:
 					tmp.HorizontalMargin = this._reader.ValueAsDouble;
@@ -493,10 +539,10 @@ namespace ACadSharp.IO.DXF
 					tmp.CreateCell((TableEntity.CellType)this._reader.ValueAsInt);
 					return true;
 				case 172:
-					tmp.CurrentCell.FlagValue = this._reader.ValueAsInt;
+					tmp.CurrentCell.EdgeFlags = this._reader.ValueAsShort;
 					return true;
 				case 173:
-					tmp.CurrentCell.MergedValue = this._reader.ValueAsInt;
+					tmp.CurrentCell.MergedValue = this._reader.ValueAsShort;
 					return true;
 				case 174:
 					tmp.CurrentCell.AutoFit = this._reader.ValueAsBool;
@@ -514,12 +560,12 @@ namespace ACadSharp.IO.DXF
 					//Unknown value
 					return true;
 				case 301:
-					var content = new TableEntity.CellContent();
+					content = new TableEntity.CellContent();
 					tmp.CurrentCell.Contents.Add(content);
 					this.readCellValue(content);
 					return true;
 				case 340:
-					tmp.CurrentCellTemplate.BlockRecordHandle = this._reader.ValueAsHandle;
+					tmp.CurrentCellTemplate.ValueHandle = this._reader.ValueAsHandle;
 					return true;
 				default:
 					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Insert]))

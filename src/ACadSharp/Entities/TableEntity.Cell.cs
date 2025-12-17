@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,6 +9,58 @@ namespace ACadSharp.Entities
 	{
 		public class Cell
 		{
+			[Flags]
+			internal enum OverrideFlags
+			{
+				None = 0,
+				CellAlignment = 0x01,
+				BackgroundFillNone = 0x02,
+				BackgroundColor = 0x04,
+				ContentColor = 0x08,
+				TextStyle = 0x10,
+				TextHeight = 0x20,
+
+				TopGridColor = 0x00040,
+				TopGridLineWeight = 0x00400,
+				TopVisibility = 0x04000,
+
+				RightGridColor = 0x00080,
+				RightGridLineWeight = 0x00800,
+				RightVisibility = 0x08000,
+
+				BottomGridColor = 0x00100,
+				BottomGridLineWeight = 0x01000,
+				BottomVisibility = 0x10000,
+
+				LeftGridColor = 0x00200,
+				LeftGridLineWeight = 0x02000,
+				LeftVisibility = 0x20000,
+			}
+
+			[Flags]
+			public enum VirtualEdgeFlags
+			{
+				None = 0,
+				Top = 1,
+				Right = 2,
+				Bottom = 4,
+				Left = 8
+			}
+
+			public enum CellAlignment
+			{
+				None = 0,
+				TopLeft = 1,
+				TopCenter = 2,
+				TopRight = 3,
+				MiddleLeft = 4,
+				MiddleCenter = 5,
+				MiddleRight = 6,
+				BottomLeft = 7,
+				BottomCenter = 8,
+				BottomRight = 9,
+			}
+
 			/// <summary>
 			/// Boolean flag indicating if the auto fit option is set for the cell.
 			/// </summary>
@@ -58,7 +111,7 @@ namespace ACadSharp.Entities
 			/// Cell flag value.
 			/// </summary>
 			[DxfCodeValue(172)]
-			public int FlagValue { get; set; }
+			public short EdgeFlags { get; set; }
 
 			public CellContentGeometry Geometry { get; set; }
 
@@ -82,7 +135,7 @@ namespace ACadSharp.Entities
 			/// Cell merged value.
 			/// </summary>
 			[DxfCodeValue(173)]
-			public int MergedValue { get; set; }
+			public short MergedValue { get; set; }
 
 			/// <summary>
 			/// Rotation value.
@@ -92,6 +145,9 @@ namespace ACadSharp.Entities
 			/// </remarks>
 			[DxfCodeValue(145)]
 			public double Rotation { get; set; }
+
+			[DxfCodeValue(144)]
+			public double BlockScale { get; set; }
 
 			[DxfCodeValue(90)]
 			public TableCellStateFlags StateFlags { get; set; }

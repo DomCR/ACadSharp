@@ -25,11 +25,14 @@ namespace ACadSharp.Entities
 			[DxfCodeValue(DxfReferenceType.IsAngle, 40)]
 			public double Rotation { get; set; }
 
-			[DxfCodeValue(140)]
+			[DxfCodeValue(144)]
 			public double Scale { get; set; }
 
-			[DxfCodeValue(144)]
+			[DxfCodeValue(140)]
 			public double TextHeight { get; set; }
+
+			[DxfCodeValue(340)]
+			public TextStyle TextStyle { get; set; }
 
 			[DxfCodeValue(92)]
 			public int ValueDataType { get; set; }
@@ -39,9 +42,6 @@ namespace ACadSharp.Entities
 
 			[DxfCodeValue(93)]
 			public int ValueUnitType { get; set; }
-
-			[DxfCodeValue(340)]
-			public TextStyle TextStyle { get; set; }
 		}
 	}
 }

@@ -60,6 +60,12 @@ namespace ACadSharp.Entities
 			public CellStyleTypeType Type { get; set; }
 
 			public double VerticalMargin { get; set; }
+
+			/// <summary>
+			/// Gets or sets the alignment of the content within a cell.
+			/// </summary>
+			[DxfCodeValue(170)]
+			public Cell.CellAlignment CellAlignment { get; set; }
 		}
 	}
 }
