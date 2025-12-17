@@ -1124,6 +1124,9 @@ namespace ACadSharp.IO.DWG
 				case "ACAD_PROXY_OBJECT":
 					template = this.readProxyObject();
 					break;
+				case DxfFileToken.ObjectVisualStyle:
+					template = this.readVisualStyle();
+					break;
 				case DxfFileToken.ObjectPlotSettings:
 					template = this.readPlotSettings();
 					break;
@@ -6390,15 +6393,27 @@ namespace ACadSharp.IO.DWG
 
 			//WARNING: this object is not documented, the fields have been found using exploration methods and matching them with the dxf file
 
-			visualStyle.Description = this._textReader.ReadVariableText();
+			//2 Name
+			visualStyle.Name = this._textReader.ReadVariableText();
+			//70
 			visualStyle.Type = this._objectReader.ReadBitLong();
+
+			//177 
+			var value177 = _objectReader.ReadBitShort();
+			//291 Internal use only flag
+			var value291 = _objectReader.ReadBit();
+
+			//70 Count then repeat 90 and 176
+			int count = this._objectReader.ReadBitLong();
 
 #if TEST
 			var objValues = DwgStreamReaderBase.Explore(_objectReader);
 			var textValues = DwgStreamReaderBase.Explore(_textReader);
 #endif
 
-			return null;
+			//TODO: Finish dwg implementation for VisualStyle (avoids noise in the logs)
+
+			return template;
 		}
 
 		private CadTemplate readCadImage(CadWipeoutBase image)
