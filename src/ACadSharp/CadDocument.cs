@@ -337,9 +337,9 @@ namespace ACadSharp
 				case Type t when t.Equals(typeof(MLineStyle)):
 					return this.Header.CurrentMLineStyle as T;
 				case Type t when t.Equals(typeof(MultiLeaderStyle)):
-					if (this.DictionaryVariables.TryGetValue(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
+					if (this.DictionaryVariables.TryGet(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
 					{
-						if (this.MLeaderStyles.TryGetValue(variable.Value, out MultiLeaderStyle style))
+						if (this.MLeaderStyles.TryGet(variable.Value, out MultiLeaderStyle style))
 						{
 							return style as T;
 						}
@@ -401,7 +401,7 @@ namespace ACadSharp
 					this.Header.CurrentMLineStyleName = this.MLineStyles.TryAdd(mlineStyle).Name;
 					break;
 				case MultiLeaderStyle multiLeaderStyle:
-					if (this.DictionaryVariables.TryGetValue(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
+					if (this.DictionaryVariables.TryGet(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
 					{
 						variable.Value = multiLeaderStyle.Name;
 					}
