@@ -1124,6 +1124,9 @@ namespace ACadSharp.IO.DWG
 				case "ACAD_PROXY_OBJECT":
 					template = this.readProxyObject();
 					break;
+				case DxfFileToken.ObjectVisualStyle:
+					template = this.readVisualStyle();
+					break;
 				case DxfFileToken.ObjectPlotSettings:
 					template = this.readPlotSettings();
 					break;
@@ -6407,6 +6410,8 @@ namespace ACadSharp.IO.DWG
 			var objValues = DwgStreamReaderBase.Explore(_objectReader);
 			var textValues = DwgStreamReaderBase.Explore(_textReader);
 #endif
+
+			//TODO: Finish dwg implementation for VisualStyle (avoids noise in the logs)
 
 			return template;
 		}

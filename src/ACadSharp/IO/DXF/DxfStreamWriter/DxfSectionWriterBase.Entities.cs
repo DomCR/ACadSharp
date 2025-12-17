@@ -135,11 +135,12 @@ namespace ACadSharp.IO.DXF
 		{
 			switch (entity)
 			{
+				case UnknownEntity:
+					return false;
 				case Shape:
 					return this.Configuration.WriteShapes;
 				case ProxyEntity:
 				case TableEntity:
-				case UnknownEntity:
 				case Solid3D:
 				case CadBody:
 				case Region:
