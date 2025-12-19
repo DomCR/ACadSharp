@@ -5,7 +5,9 @@ using ACadSharp.Types.Units;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -89,19 +91,50 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(75)]
 		public bool FlipArrow2 { get; set; }
 
-		public bool HasStyleOverride { get { return StyleOverride != null; } }
+		public bool HasStyleOverride { get { return GetStyleOverrideMap() != null; } }
 
-		public DimensionStyle StyleOverride
+		public DxfMap GetStyleOverrideMap()
 		{
-			get
+			if (this.ExtendedData.TryGet(AppId.DefaultName, out XData.ExtendedData edata))
 			{
-				if (this.ExtendedData.TryGet(AppId.DefaultName, out XData.ExtendedData edata))
+				var header = edata.Records.FirstOrDefault() as XData.ExtendedDataString;
+				if (header == null || header.Value != "DSTYLE")
 				{
-
+					return null;
 				}
 
-				return null;
+				DxfClassMap styleMap = DxfClassMap.Create<DimensionStyle>();
+
+				DxfMap map = new DxfMap();
+				map.Name = header.Value;
+
+				var values = edata.Records
+					.SkipWhile(c => c is not XData.ExtendedDataControlString)
+					.Skip(1)
+					.TakeWhile(c => c is not XData.ExtendedDataControlString)
+					.ToArray();
+
+				if (values.Length % 2 != 0)
+				{
+					//Check dxf code | value pairs
+					return null;
+				}
+
+				for (int i = 0; i < values.Length; i++)
+				{
+					XData.ExtendedDataInteger16 code = values[i] as XData.ExtendedDataInteger16;
+					i++;
+					XData.ExtendedDataRecord value = values[i];
+					DxfProperty prop = styleMap.DxfProperties[code.Value];
+					prop.StoredValue = value.RawValue;
+
+					map.DxfProperties.Add(code.Value, prop);
+				}
+
+				return map;
 			}
+
+			return null;
 		}
 
 		/// <summary>
