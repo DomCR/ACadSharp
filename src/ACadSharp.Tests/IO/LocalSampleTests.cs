@@ -37,7 +37,7 @@ namespace ACadSharp.Tests.IO
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
 
-			var over = doc.Entities.OfType<Dimension>().First().StyleOverride;
+			var over = doc.Entities.OfType<Dimension>().First().GetStyleOverrideMap();
 
 			DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc, notification: onNotification);
 		}
