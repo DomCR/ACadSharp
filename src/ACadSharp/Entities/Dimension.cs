@@ -89,6 +89,21 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(75)]
 		public bool FlipArrow2 { get; set; }
 
+		public bool HasStyleOverride { get { return StyleOverride != null; } }
+
+		public DimensionStyle StyleOverride
+		{
+			get
+			{
+				if (this.ExtendedData.TryGet(AppId.DefaultName, out XData.ExtendedData edata))
+				{
+
+				}
+
+				return null;
+			}
+		}
+
 		/// <summary>
 		/// All dimension types have an optional 51 group code, which indicates the horizontal direction for the dimension entity.The dimension entity determines the orientation of dimension text and lines for horizontal, vertical, and rotated linear dimensions
 		/// This group value is the negative of the angle between the OCS X axis and the UCS X axis. It is always in the XY plane of the OCS

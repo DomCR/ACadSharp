@@ -34,17 +34,32 @@ namespace ACadSharp
 			this._assignedCode = code;
 		}
 
+		/// <summary>
+		/// Gets the collection of DXF codes associated with the property, if defined.
+		/// </summary>
+		/// <remarks>Use this method to retrieve custom DXF code mappings specified by the <see
+		/// cref="DxfCollectionCodeValueAttribute"/> on the property. Returns <see langword="null"/> if the attribute is not
+		/// present.</remarks>
+		/// <returns>An array of <see cref="DxfCode"/> values representing the collection codes for the property; or <see
+		/// langword="null"/> if no collection codes are defined.</returns>
+		public DxfCode[] GetCollectionCodes()
+		{
+			return this._property.GetCustomAttribute<DxfCollectionCodeValueAttribute>()?.ValueCodes;
+		}
+
+		/// <summary>
+		/// Gets the value of the specified property from the given CAD object.
+		/// </summary>
+		/// <typeparam name="TCadObject">The type of CAD object from which to retrieve the property value. Must derive from CadObject.</typeparam>
+		/// <param name="obj">The CAD object instance from which to retrieve the property value. Cannot be null.</param>
+		/// <returns>The value of the property for the specified CAD object.</returns>
 		public object GetValue<TCadObject>(TCadObject obj)
 			where TCadObject : CadObject
 		{
 			return this._property.GetValue(obj);
 		}
 
-		public DxfCode[] GetCollectionCodes()
-		{
-			return this._property.GetCustomAttribute<DxfCollectionCodeValueAttribute>()?.ValueCodes;
-		}
-
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			string str = string.Empty;
