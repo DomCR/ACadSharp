@@ -91,50 +91,33 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(75)]
 		public bool FlipArrow2 { get; set; }
 
-		public bool HasStyleOverride { get { return GetStyleOverrideMap() != null; } }
-
-		public DxfMap GetStyleOverrideMap()
+		/// <summary>
+		/// Gets a value indicating whether a style override is present in the extended data.
+		/// </summary>
+		/// <remarks>Use this property to determine if the object contains custom style information that overrides
+		/// default styling. This can be useful when rendering or processing objects that may have user-defined appearance
+		/// settings.</remarks>
+		public bool HasStyleOverride
 		{
-			if (this.ExtendedData.TryGet(AppId.DefaultName, out XData.ExtendedData edata))
+			get
 			{
-				var header = edata.Records.FirstOrDefault() as XData.ExtendedDataString;
-				if (header == null || header.Value != "DSTYLE")
+				if (this.ExtendedData.TryGet(AppId.DefaultName, out XData.ExtendedData edata))
 				{
-					return null;
+					var header = edata.Records.FirstOrDefault() as XData.ExtendedDataString;
+					if (header == null || header.Value != DimensionStyle.StyleOverrideEntryName)
+					{
+						return false;
+					}
+					else
+					{
+						return true;
+					}
 				}
-
-				DxfClassMap styleMap = DxfClassMap.Create<DimensionStyle>();
-
-				DxfMap map = new DxfMap();
-				map.Name = header.Value;
-
-				var values = edata.Records
-					.SkipWhile(c => c is not XData.ExtendedDataControlString)
-					.Skip(1)
-					.TakeWhile(c => c is not XData.ExtendedDataControlString)
-					.ToArray();
-
-				if (values.Length % 2 != 0)
+				else
 				{
-					//Check dxf code | value pairs
-					return null;
+					return false;
 				}
-
-				for (int i = 0; i < values.Length; i++)
-				{
-					XData.ExtendedDataInteger16 code = values[i] as XData.ExtendedDataInteger16;
-					i++;
-					XData.ExtendedDataRecord value = values[i];
-					DxfProperty prop = styleMap.DxfProperties[code.Value];
-					prop.StoredValue = value.RawValue;
-
-					map.DxfProperties.Add(code.Value, prop);
-				}
-
-				return map;
 			}
-
-			return null;
 		}
 
 		/// <summary>
@@ -387,6 +370,58 @@ namespace ACadSharp.Entities
 			}
 
 			return $"{prefix}{text}{style.Suffix}";
+		}
+
+		/// <summary>
+		/// Retrieves a map of style override properties from the extended data, if present and valid.
+		/// </summary>
+		/// <remarks>This method inspects the extended data for a section identified as a style override ("DSTYLE").
+		/// If the section is not present or is malformed, the method returns <see langword="null"/>. The returned map can be
+		/// used to access or apply dimension style overrides defined in the extended data.</remarks>
+		/// <returns>A <see cref="DxfMap"/> containing the style override properties if the extended data includes a valid style
+		/// override section; otherwise, <see langword="null"/>.</returns>
+		public DxfMap GetStyleOverrideMap()
+		{
+			if (!this.ExtendedData.TryGet(AppId.DefaultName, out XData.ExtendedData edata))
+			{
+				return null;
+			}
+
+			var header = edata.Records.FirstOrDefault() as XData.ExtendedDataString;
+			if (header == null || header.Value != DimensionStyle.StyleOverrideEntryName)
+			{
+				return null;
+			}
+
+			DxfClassMap styleMap = DxfClassMap.Create<DimensionStyle>();
+
+			DxfMap map = new DxfMap();
+			map.Name = header.Value;
+
+			var values = edata.Records
+				.SkipWhile(c => c is not XData.ExtendedDataControlString)
+				.Skip(1)
+				.TakeWhile(c => c is not XData.ExtendedDataControlString)
+				.ToArray();
+
+			if (values.Length % 2 != 0)
+			{
+				//Check dxf code | value pairs
+				return null;
+			}
+
+			for (int i = 0; i < values.Length; i++)
+			{
+				XData.ExtendedDataInteger16 code = values[i] as XData.ExtendedDataInteger16;
+				i++;
+				XData.ExtendedDataRecord value = values[i];
+				DxfProperty prop = styleMap.DxfProperties[code.Value];
+				prop.StoredValue = value.RawValue;
+
+				map.DxfProperties.Add(code.Value, prop);
+			}
+
+			return map;
 		}
 
 		/// <summary>
