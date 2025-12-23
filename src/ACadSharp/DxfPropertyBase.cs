@@ -59,9 +59,7 @@ namespace ACadSharp
 			get { return this._storedValue; }
 			set
 			{
-				var code = this.DxfCodes[0];
-				var groupCode = GroupCodeValue.TransformValue(code);
-				switch (groupCode)
+				switch (this.GroupCode)
 				{
 					case GroupCodeValueType.None:
 						this._storedValue = value;
@@ -108,8 +106,20 @@ namespace ACadSharp
 						this._storedValue = value as byte[];
 						break;
 					default:
-						throw new ArgumentException($"Invalid type {value.GetType()} for group code {groupCode}");
+						throw new ArgumentException($"Invalid type {value.GetType()} for group code {this.GroupCode}");
 				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the group code value associated with this instance.
+		/// </summary>
+		public GroupCodeValueType GroupCode
+		{
+			get
+			{
+				var code = this.DxfCodes[0];
+				return GroupCodeValue.TransformValue(code);
 			}
 		}
 

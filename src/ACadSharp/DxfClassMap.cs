@@ -5,6 +5,13 @@ using System.Reflection;
 
 namespace ACadSharp
 {
+	/// <summary>
+	/// Represents the mapping information for a DXF class, including metadata and property mappings used for serialization
+	/// and deserialization of CAD objects.
+	/// </summary>
+	/// <remarks>Instances of this class are typically created and managed via the static Create methods, which
+	/// provide caching to improve performance when mapping types multiple times. Use the ClearCache method to clear all
+	/// cached mappings if the underlying type information changes or to force remapping.</remarks>
 	public class DxfClassMap : DxfMapBase
 	{
 		/// <summary>
@@ -36,6 +43,12 @@ namespace ACadSharp
 			return Create(typeof(T));
 		}
 
+		public static DxfClassMap Create<T>(T obj)
+			where T : CadObject
+		{
+			return Create(typeof(T));
+		}
+
 		/// <summary>
 		/// Clears the map cache.
 		/// </summary>
@@ -50,7 +63,7 @@ namespace ACadSharp
 			return $"DxfClassMap:{this.Name}";
 		}
 
-		internal static DxfClassMap Create(Type type, string name = null)
+		internal static DxfClassMap Create(Type type, string name = null, CadObject obj = null)
 		{
 			if (_cache.TryGetValue(type, out var classMap))
 			{

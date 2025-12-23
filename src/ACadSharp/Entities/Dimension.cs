@@ -372,15 +372,56 @@ namespace ACadSharp.Entities
 			return $"{prefix}{text}{style.Suffix}";
 		}
 
+		/// <exception cref="System.NotImplementedException"></exception>
+		public void SetDimensionOverride(DimensionStyle styleOverride)
+		{
+			DxfClassMap styleMap = DxfClassMap.Create<DimensionStyle>(this.Style);
+			DxfClassMap overrideMap = DxfClassMap.Create<DimensionStyle>(styleOverride);
+
+			throw new NotImplementedException();
+		}
+
+		/// <exception cref="System.NotImplementedException"></exception>
+		public DimensionStyle GetDimensionOverride()
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <exception cref="System.NotImplementedException"></exception>
+		public void SetStyleOverrideMap(DxfClassMap map)
+		{
+			throw new NotImplementedException();
+
+			//TODO: needs to refactor the extended data records
+			if (!this.ExtendedData.TryGet(AppId.DefaultName, out XData.ExtendedData edata))
+			{
+				edata = new XData.ExtendedData();
+				this.ExtendedData.Add(AppId.DefaultName, edata);
+			}
+
+			//Not sure if there can be multiple elements
+			edata.Records.Clear();
+
+			edata.Records.Add(new XData.ExtendedDataString(DimensionStyle.StyleOverrideEntryName));
+			edata.Records.Add(new XData.ExtendedDataControlString(false));
+
+			foreach (KeyValuePair<int, DxfProperty> item in map.DxfProperties)
+			{
+
+			}
+
+			edata.Records.Add(new XData.ExtendedDataControlString(true));
+		}
+
 		/// <summary>
 		/// Retrieves a map of style override properties from the extended data, if present and valid.
 		/// </summary>
 		/// <remarks>This method inspects the extended data for a section identified as a style override ("DSTYLE").
 		/// If the section is not present or is malformed, the method returns <see langword="null"/>. The returned map can be
 		/// used to access or apply dimension style overrides defined in the extended data.</remarks>
-		/// <returns>A <see cref="DxfMap"/> containing the style override properties if the extended data includes a valid style
+		/// <returns>A <see cref="DxfClassMap"/> containing the style override properties if the extended data includes a valid style
 		/// override section; otherwise, <see langword="null"/>.</returns>
-		public DxfMap GetStyleOverrideMap()
+		public DxfClassMap GetStyleOverrideMap()
 		{
 			if (!this.ExtendedData.TryGet(AppId.DefaultName, out XData.ExtendedData edata))
 			{
@@ -395,7 +436,7 @@ namespace ACadSharp.Entities
 
 			DxfClassMap styleMap = DxfClassMap.Create<DimensionStyle>();
 
-			DxfMap map = new DxfMap();
+			DxfClassMap map = new DxfClassMap();
 			map.Name = header.Value;
 
 			var values = edata.Records

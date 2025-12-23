@@ -20,6 +20,8 @@ namespace ACadSharp.XData
 
 		private Dictionary<AppId, ExtendedData> _data = new Dictionary<AppId, ExtendedData>();
 
+		public CadDocument Document { get { return this.Owner?.Document; } }
+
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
@@ -36,6 +38,16 @@ namespace ACadSharp.XData
 		public void Add(AppId app)
 		{
 			this.Add(app, new ExtendedData());
+		}
+
+		public void Add(string appName)
+		{
+			this.Add(appName, new ExtendedData());
+		}
+
+		public void Add(string appName, ExtendedData extendedData)
+		{
+			this.Add(new AppId(appName), extendedData);
 		}
 
 		/// <summary>

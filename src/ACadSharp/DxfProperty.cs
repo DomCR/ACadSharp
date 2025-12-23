@@ -1,5 +1,8 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.XData;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -57,6 +60,20 @@ namespace ACadSharp
 			where TCadObject : CadObject
 		{
 			return this._property.GetValue(obj);
+		}
+
+		public IEnumerable<ExtendedDataRecord> ToXDataRecords()
+		{
+			List<ExtendedDataRecord> records = new List<ExtendedDataRecord>();
+			if (this.StoredValue == null)
+			{
+				return records;
+			}
+
+			records.Add(new ExtendedDataInteger16((short)this.AssignedCode));
+			//records.Add(ExtendedDataRecord.Create(this.GroupCode, this.StoredValue));
+
+			return records;
 		}
 
 		/// <inheritdoc/>
