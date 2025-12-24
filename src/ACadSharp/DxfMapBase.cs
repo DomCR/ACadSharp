@@ -17,7 +17,7 @@ namespace ACadSharp
 		/// </summary>
 		public Dictionary<int, DxfProperty> DxfProperties { get; } = new Dictionary<int, DxfProperty>();
 
-		protected static void addClassProperties(DxfMapBase map, Type type, CadObject obj)
+		protected static void addClassProperties(DxfMapBase map, Type type, CadObject obj = null)
 		{
 			foreach (var item in cadObjectMapDxf(type))
 			{
