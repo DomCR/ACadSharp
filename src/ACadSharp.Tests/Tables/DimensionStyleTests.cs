@@ -161,15 +161,31 @@ namespace ACadSharp.Tests.Tables
 		}
 
 		[Theory]
-		[MemberData(nameof(LinearStyleFormat))]
-		public void GetLinearMeasurementText(DimensionStyle style, DimensionAligned dim, string result)
+		[MemberData(nameof(AngularStyleFormat))]
+		public void GetAngularMeasurementText(DimensionStyle style, DimensionAngular2Line dim, string result)
 		{
 			Assert.Equal(result, dim.GetMeasurementText(style));
 		}
 
+		[Fact]
+		public void GetDimensionOverride()
+		{
+			string styleName = "my_style";
+			DimensionStyle style = new DimensionStyle(styleName);
+			DimensionAligned aligned = new DimensionAligned(XYZ.Zero, new XYZ(5, 0, 0));
+			aligned.Style = style;
+
+			var active = aligned.GetActiveDimensionStyle();
+			Assert.NotNull(active);
+			Assert.Equal(style, active);
+			Assert.Equal(styleName, active.Name);
+
+			style.ScaleFactor = 5;
+		}
+
 		[Theory]
-		[MemberData(nameof(AngularStyleFormat))]
-		public void GetAngularMeasurementText(DimensionStyle style, DimensionAngular2Line dim, string result)
+		[MemberData(nameof(LinearStyleFormat))]
+		public void GetLinearMeasurementText(DimensionStyle style, DimensionAligned dim, string result)
 		{
 			Assert.Equal(result, dim.GetMeasurementText(style));
 		}

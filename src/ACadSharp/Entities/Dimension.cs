@@ -378,13 +378,40 @@ namespace ACadSharp.Entities
 			DxfClassMap styleMap = DxfClassMap.Create<DimensionStyle>(this.Style);
 			DxfClassMap overrideMap = DxfClassMap.Create<DimensionStyle>(styleOverride);
 
-			throw new NotImplementedException();
+			foreach (KeyValuePair<int, DxfProperty> item in overrideMap.DxfProperties)
+			{
+				var p = styleMap.DxfProperties[item.Key];
+				if (p.StoredValue != item.Value.StoredValue)
+				{
+
+				}
+			}
 		}
 
 		/// <exception cref="System.NotImplementedException"></exception>
-		public DimensionStyle GetDimensionOverride()
+		public DimensionStyle GetActiveDimensionStyle()
 		{
-			throw new NotImplementedException();
+			if (!this.HasStyleOverride)
+			{
+				return this.Style;
+			}
+
+			DimensionStyle style = this.Style.CloneTyped();
+			style.Name = "override";
+
+			DxfClassMap styleMap = DxfClassMap.Create<DimensionStyle>(this.Style);
+			DxfClassMap overrideMap = this.GetStyleOverrideMap();
+
+			foreach (KeyValuePair<int, DxfProperty> item in overrideMap.DxfProperties)
+			{
+				var p = styleMap.DxfProperties[item.Key];
+				if(p.StoredValue != item.Value.StoredValue)
+				{
+					p.SetValue(style, item.Value.StoredValue);
+				}
+			}
+
+			return style;
 		}
 
 		/// <exception cref="System.NotImplementedException"></exception>

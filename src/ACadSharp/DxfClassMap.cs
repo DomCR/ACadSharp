@@ -46,7 +46,7 @@ namespace ACadSharp
 		public static DxfClassMap Create<T>(T obj)
 			where T : CadObject
 		{
-			return Create(typeof(T));
+			return Create(typeof(T), obj: obj);
 		}
 
 		/// <summary>
@@ -76,7 +76,10 @@ namespace ACadSharp
 			{
 				var att = type.GetCustomAttribute<DxfSubClassAttribute>();
 				if (att == null)
+				{
 					throw new ArgumentException($"{type.FullName} is not a dxf subclass");
+				}
+
 				classMap.Name = att.ClassName;
 			}
 			else
@@ -84,13 +87,13 @@ namespace ACadSharp
 				classMap.Name = name;
 			}
 
-			addClassProperties(classMap, type);
+			addClassProperties(classMap, type, obj);
 
 			DxfSubClassAttribute baseAtt = type.BaseType.GetCustomAttribute<DxfSubClassAttribute>();
 			if (baseAtt != null && baseAtt.IsEmpty)
 			{
 				//Properties in the table seem to be embeded to the hinerit type
-				addClassProperties(classMap, type.BaseType);
+				addClassProperties(classMap, type.BaseType, obj);
 			}
 
 			_cache.TryAdd(type, classMap);
