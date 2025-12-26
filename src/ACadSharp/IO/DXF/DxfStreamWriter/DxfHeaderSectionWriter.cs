@@ -46,7 +46,7 @@ namespace ACadSharp.IO.DXF
 
 				foreach (var csv in item.Value.DxfCodes)
 				{
-					object value = item.Value.GetValue(csv, this._document.Header);
+					object value = item.Value.GetSystemValue(csv, this._document.Header);
 
 					if (value == null)
 						continue;
