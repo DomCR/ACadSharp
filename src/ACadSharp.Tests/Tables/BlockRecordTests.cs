@@ -107,11 +107,11 @@ namespace ACadSharp.Tests.Tables
 			string name = "my_block";
 			BlockRecord record = new BlockRecord(name);
 
-			Line l1 = new Line();
-			Line l2 = new Line();
-			Line l3 = new Line();
-			Line l4 = new Line();
-			Line l5 = new Line();
+			Line l1 = new Line() { Handle = 10 };
+			Line l2 = new Line() { Handle = 11 };
+			Line l3 = new Line() { Handle = 12 };
+			Line l4 = new Line() { Handle = 13 };
+			Line l5 = new Line() { Handle = 14 };
 
 			record.Entities.Add(l1);
 			record.Entities.Add(l2);
@@ -123,13 +123,36 @@ namespace ACadSharp.Tests.Tables
 
 			record.SortEntitiesTable.Add(l1, 1);
 			record.SortEntitiesTable.Add(l3, 3);
-			record.SortEntitiesTable.Add(l4, 4);
+			record.SortEntitiesTable.Add(l4, 8);
+			record.SortEntitiesTable.Add(l5, 4);
+
+			var sorted = record.GetSortedEntities().ToArray();
+
+			Assert.NotNull(record.SortEntitiesTable);
+			Assert.NotEmpty(record.SortEntitiesTable);
+			Assert.Equal(4, record.SortEntitiesTable.Count());
+
+			Assert.Equal(l1, sorted[0]);
+			Assert.Equal(l3, sorted[1]);
+			Assert.Equal(l5, sorted[2]);
+			Assert.Equal(l4, sorted[3]);
+			Assert.Equal(l2, sorted[4]);
 
 			BlockRecord clone = record.CloneTyped();
 
 			Assert.NotNull(clone.SortEntitiesTable);
 			Assert.NotEmpty(clone.SortEntitiesTable);
-			Assert.Equal(3, clone.SortEntitiesTable.Count());
+			Assert.Equal(5, clone.SortEntitiesTable.Count());
+
+			sorted = clone.GetSortedEntities().ToArray();
+
+			Assert.NotNull(clone.SortEntitiesTable);
+			Assert.NotNull(clone.SortEntitiesTable.BlockOwner);
+
+			Assert.Equal(clone, clone.SortEntitiesTable.BlockOwner);
+
+			Assert.NotEqual(clone.SortEntitiesTable.Owner, record.SortEntitiesTable.Owner);
+			Assert.NotEqual(clone.SortEntitiesTable.BlockOwner, record.SortEntitiesTable.BlockOwner);
 		}
 
 		[Fact()]

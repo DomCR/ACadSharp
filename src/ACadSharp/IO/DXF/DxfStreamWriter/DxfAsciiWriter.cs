@@ -1,5 +1,8 @@
-﻿using System;
+﻿using CSUtilities.IO;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace ACadSharp.IO.DXF
 {
@@ -84,11 +87,31 @@ namespace ACadSharp.IO.DXF
 				case GroupCodeValueType.Chunk:
 				case GroupCodeValueType.ExtendedDataChunk:
 					byte[] arr = value as byte[];
-					foreach (byte v in arr)
+					MemoryStream ms = new MemoryStream(arr);
+					List<string> lines = new List<string>();
+
+					int nlines = arr.Length / 64;
+					byte[] array = new byte[64];
+					for (int i = 0; i < nlines; i++)
 					{
-						this._stream.Write(string.Format("{0:X2}", v));
+						ms.Read(array, 0, 64);
+						lines.Add(new string(array.SelectMany(b => string.Format("{0:X2}", b)).ToArray()));
 					}
-					this._stream.Write(Environment.NewLine);
+
+					int surp = arr.Length % 64;
+					if (surp != 0)
+					{
+						byte[] array2 = new byte[surp];
+						ms.Read(array, 0, surp);
+						lines.Add(new string(array.SelectMany(b => string.Format("{0:X2}", b)).ToArray()));
+					}
+
+					this._stream.WriteLine(lines.First());
+					foreach (string l in lines.Skip(1))
+					{
+						this._stream.WriteLine(code);
+						this._stream.WriteLine(l);
+					}
 					return;
 			}
 

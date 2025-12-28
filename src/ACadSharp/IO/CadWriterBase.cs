@@ -40,6 +40,8 @@ namespace ACadSharp.IO
 		/// <inheritdoc/>
 		public virtual void Write()
 		{
+			this._document.UpdateImageReactors();
+
 			this._document.UpdateDxfClasses(this.Configuration.ResetDxfClasses);
 
 			if (this.Configuration.UpdateDimensionsInModel)

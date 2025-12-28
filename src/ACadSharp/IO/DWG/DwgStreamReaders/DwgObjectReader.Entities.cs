@@ -17,11 +17,6 @@ namespace ACadSharp.IO.DWG
 			TableEntity table = new TableEntity();
 			CadTableEntityTemplate template = new CadTableEntityTemplate(table);
 
-			if (!this.R2010Plus)
-			{
-				return null;
-			}
-
 			this.readInsertCommonData(template);
 			this.readInsertCommonHandles(template);
 
@@ -34,9 +29,9 @@ namespace ACadSharp.IO.DWG
 
 				//BL Unknown (default 0)
 				long longZero = this._mergedReaders.ReadBitLong();
+				//R2013
 				if (this.R2013Plus)
 				{
-					//R2013
 					//Unknown (default 0)
 					this._mergedReaders.ReadBitLong();
 				}
@@ -157,11 +152,439 @@ namespace ACadSharp.IO.DWG
 				{
 					//Cell data, repeats for all cells in n x m table:
 					TableEntity.Cell cell = new TableEntity.Cell();
-					CadTableCellTemplate cellTemplate = new CadTableCellTemplate(cell);
-
 					table.Rows[n].Cells.Add(cell);
+					CadTableCellTemplate cellTemplate = new CadTableCellTemplate(cell);
+					template.CadTableCellTemplates.Add(cellTemplate);
 
 					this.readTableCellData(cellTemplate);
+				}
+			}
+
+			//Common:
+			//End Cell Data(remaining data applies to entire table)
+			//Has table overrides B
+			if (this._mergedReaders.ReadBit())
+			{
+				var styleOverride = new TableStyle();
+				table.Content.StyleOverride = styleOverride;
+
+				//TODO: implement table style override
+
+				//If has override flag == 1
+				//Cell flag override BL 177 (deprecated)
+				TableEntity.TableOverrideFlags flags = (TableOverrideFlags)this._mergedReaders.ReadBitLong();
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleSuppressed))
+				{
+					//Title suppressed B 280 Present only if bit 0x0001 is set in table overrides 
+					styleOverride.SuppressTitle = this._mergedReaders.ReadBit();
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleSuppressed))
+				{
+					//Header suppresed -- 281 Always true (do not read any data for this)
+
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.FlowDirection))
+				{
+					//Flow direction BS 70 Present only if bit 0x0004 is set in table overrides
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.HorizontalCellMargin))
+				{
+					//Horz. Cell margin BD 40 Present only if bit 0x0008 is set in table overrides 
+					this._mergedReaders.ReadBitDouble();
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.VerticalCellMargin))
+				{
+					//Vert. cell margin BD 41 Present only if bit 0x0010 is set in table overrides 
+					this._mergedReaders.ReadBitDouble();
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowColor))
+				{
+					//Title row color CMC 64 Present only if bit 0x0020 is set in table overrides 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowColor))
+				{
+					//Header row color CMC 64 Present only if bit 0x0040 is set in table overrides 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowColor))
+				{
+					//Data row color CMC 64 Present only if bit 0x0080 is set in table overrides 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowFillNone))
+				{
+					//Title row fill none B 283 Present only if bit 0x0100 is set in table overrides 
+					this._mergedReaders.ReadBit();
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowFillNone))
+				{
+					//Header row fill none B 283 Present only if bit 0x0200 is set in table overrides 
+					this._mergedReaders.ReadBit();
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowFillNone))
+				{
+					//Data row fill none B 283 Present only if bit 0x0400 is set in table overrides 
+					this._mergedReaders.ReadBit();
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowFillColor))
+				{
+					//Title row fill color CMC 63 Present only if bit 0x0800 is set in table overrides 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowFillColor))
+				{
+					//Header row fill clr. CMC 63 Present only if bit 0x1000 is set in table overrides 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowFillColor))
+				{
+					//Data row fill color CMC 63 Present only if bit 0x2000 is set in table overrides 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowAlign))
+				{
+					//Title row align. BS 170 Present only if bit 0x4000 is set in table overrides 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowAlign))
+				{
+					//Header row align. BS 170 Present only if bit 0x8000 is set in table overrides 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowAlign))
+				{
+					//Data row align. BS 170 Present only if bit 0x10000 is set in table 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleTextStyle))
+				{
+					//Title text style hnd H 7 Present only if bit 0x20000 is set in table 
+					this.handleReference();
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderTextStyle))
+				{
+					//Title text style hnd H 7 Present only if bit 0x40000 is set in table 
+					this.handleReference();
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.DataTextStyle))
+				{
+					//Title text style hnd H 7 Present only if bit 0x80000 is set in table 
+					this.handleReference();
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowHeight))
+				{
+					//Title row height BD 140 Present only if bit 0x100000 is set in table 
+					this._mergedReaders.ReadBitDouble();
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowHeight))
+				{
+					//Header row height BD 140 Present only if bit 0x200000 is set in table 
+					this._mergedReaders.ReadBitDouble();
+				}
+				if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowHeight))
+				{
+					//Data row height BD 140 Present only if bit 0x400000 is set in table 
+					this._mergedReaders.ReadBitDouble();
+				}
+			}
+
+			//End If has table overrides == 1
+			//Has border color overrides B
+			if (this._mergedReaders.ReadBit())
+			{
+				//Overrides flag BL 94 Border COLOR overrides
+				var flags = (TableEntity.BorderOverrideFlags)this._mergedReaders.ReadBitLong();
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalTop))
+				{
+					//Title hor. Top. col. CMC 64 Present only if bit 0x01 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalInsert))
+				{
+					//Title hor. ins. col. CMC 65 Present only if bit 0x02 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalBottom))
+				{
+					//Title hor. bot. col. CMC 66 Present only if bit 0x04 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalLeft))
+				{
+					//Title ver. left.col.CMC 63 Present only if bit 0x08 is set in border color
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalInsert))
+				{
+					//Title ver. ins. col. CMC 68 Present only if bit 0x10 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalRight))
+				{
+					//Title ver. rt. col. CMC 69 Present only if bit 0x20 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalTop))
+				{
+					//Header hor. Top. col. CMC 64 Present only if bit 0x40 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalInsert))
+				{
+					//Header hor. ins. col. CMC 65 Present only if bit 0x80 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalBottom))
+				{
+					//Header hor. bot. col. CMC 66 Present only if bit 0x100 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalLeft))
+				{
+					//Header ver. left. col.CMC 63 Present only if bit 0x200 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalInsert))
+				{
+					//Header ver. ins. col. CMC 68 Present only if bit 0x400 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalRight))
+				{
+					//Header ver. rt. col. CMC 69 Present only if bit 0x800 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalTop))
+				{
+					//Data hor. Top. col. CMC 64 Present only if bit 0x1000 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalInsert))
+				{
+					//Data hor. ins. col. CMC 65 Present only if bit 0x2000 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalBottom))
+				{
+					//Data hor. bot. col. CMC 66 Present only if bit 0x4000 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalLeft))
+				{
+					//Data ver. left. col. CMC 63 Present only if bit 0x8000 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalInsert))
+				{
+					//Data ver. ins. col. CMC 68 Present only if bit 0x10000 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalRight))
+				{
+					//Data ver. rt. col. CMC 69 Present only if bit 0x20000 is set in border color 
+					this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+			}
+
+			//Has border lineweight overrides B
+			if (this._mergedReaders.ReadBit())
+			{
+				//Overrides flag BL 95 Border LINEWEIGHT overrides
+				var flags = (TableEntity.BorderOverrideFlags)this._mergedReaders.ReadBitLong();
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalTop))
+				{
+					//Title hor. Top. lw. BS Present only if bit 0x01 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalInsert))
+				{
+					//Title hor. ins. lw. BS Present only if bit 0x02 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalBottom))
+				{
+					//Title hor. bot. lw. BS Present only if bit 0x04 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalLeft))
+				{
+					//Title ver. left. lw. BS Present only if bit 0x08 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalInsert))
+				{
+					//Title ver. ins. lw. BS Present only if bit 0x10 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalRight))
+				{
+					//Title ver. rt. lw. BS Present only if bit 0x20 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalTop))
+				{
+					//Header hor. Top. lw. BS Present only if bit 0x40 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalInsert))
+				{
+					//Header hor. ins. lw. BS Present only if bit 0x80 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalBottom))
+				{
+					//Header hor. bot. lw. BS Present only if bit 0x100 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalLeft))
+				{
+					//Header ver. left. lw. BS Present only if bit 0x200 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalInsert))
+				{
+					//Header ver. ins. lw. BS Present only if bit 0x400 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalRight))
+				{
+					//Header ver. rt. lw. BS Present only if bit 0x800 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalTop))
+				{
+					//Data hor. Top. lw. BS Present only if bit 0x1000 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalInsert))
+				{
+					//Data hor. ins. lw. BS Present only if bit 0x2000 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalBottom))
+				{
+					//Data hor. bot. lw. BS Present only if bit 0x4000 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalLeft))
+				{
+					//Data ver. left. lw. BS Present only if bit 0x8000 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalInsert))
+				{
+					//Data ver. ins. lw. BS Present only if bit 0x10000 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalRight))
+				{
+					//Data ver. rt. lw. BS Present only if bit 0x20000 is set in border color 
+					this._mergedReaders.ReadBitShort();
+				}
+			}
+
+			//Has border visibility overrides B
+			if (this._mergedReaders.ReadBit())
+			{
+				//Overrides flag BL 96 Border visibility overrides
+				var flags = (TableEntity.BorderOverrideFlags)this._mergedReaders.ReadBitLong();
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalTop))
+				{
+					//Title hor. Top. vsb. BS Present only if bit 0x01 is set in border visibility 
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalInsert))
+				{
+					//Title hor. ins. vsb. BS Present only if bit 0x02 is set in border visibility 
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalBottom))
+				{
+					//Title hor. bot. vsb. BS Present only if bit 0x04 is set in border visibility 
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalLeft))
+				{
+					//Title ver. left. vsb. BS Present only if bit 0x08 is set in border visibility 
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalInsert))
+				{
+					//Title ver. ins. vsb. BS Present only if bit 0x10 is set in border visibility 
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalRight))
+				{
+					//Title ver. rt. vsb. BS Present only if bit 0x20 is set in border visibility 
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalTop))
+				{
+					//Header hor. Top. vsb. BS Present only if bit 0x40 is set in border visibility 
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalInsert))
+				{
+					//Header hor. ins. vsb. BS Present only if bit 0x80 is set in border visibility 
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalBottom))
+				{
+					//Header hor. bot. vsb. BS Present only if bit 0x100 is set in border 
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalLeft))
+				{
+					//Header ver. left. vsb. BS Present only if bit 0x200 is set in border 
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalInsert))
+				{
+					//Header ver. ins. vsb. BS Present only if bit 0x400 is set in border
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalRight))
+				{
+					//Header ver. rt. vsb. BS Present only if bit 0x800 is set in border
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalTop))
+				{
+					//Data hor. Top. vsb. BS Present only if bit 0x1000 is set in border 
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalInsert))
+				{
+					//Data hor. ins. vsb. BS Present only if bit 0x2000 is set in border 
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalBottom))
+				{
+					//Data hor. bot. vsb. BS Present only if bit 0x4000 is set in border 
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalLeft))
+				{
+					//Data ver. left. vsb. BS Present only if bit 0x8000 is set in border 
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalInsert))
+				{
+					//Data ver. ins. vsb. BS Present only if bit 0x10000 is set in border 
+					this._mergedReaders.ReadBitShortAsBool();
+				}
+				if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalRight))
+				{
+					//Data ver. rt. vsb. BS Present only if bit 0x20000 is set in border 
+					this._mergedReaders.ReadBitShortAsBool();
 				}
 			}
 
@@ -170,14 +593,183 @@ namespace ACadSharp.IO.DWG
 
 		private void readTableCellData(CadTableCellTemplate template)
 		{
-			TableEntity.Cell cellPlaceholder = template.Cell;
+			TableEntity.Cell cell = template.Cell;
 
 			//Cell type BS 171 1 = text, 2 = block.
 			//In AutoCAD 2007 a cell can contain either 1 text
 			//or 1 block.In AutoCAD 2008 this changed(TODO).
-			cellPlaceholder.Type = (CellType)this._mergedReaders.ReadBitShort();
+			cell.Type = (CellType)this._mergedReaders.ReadBitShort();
 
-			throw new NotImplementedException();
+			//Cell edge flags RC 172
+			cell.EdgeFlags = this._mergedReaders.ReadByte();
+
+			//Cell merged value B 173 Determines whether this cell is merged with another cell.
+			cell.MergedValue = this._mergedReaders.ReadBit() ? (short)1 : (short)0;
+			//Autofit flag B 174
+			cell.AutoFit = this._mergedReaders.ReadBit();
+			//Merged width flag BL 175 Represents the horizontal number of merged cells.
+			cell.BorderWidth = this._mergedReaders.ReadBitLong();
+			//Merged height flag BL 176 Represents the vertical number of merged cells.
+			cell.BorderHeight = this._mergedReaders.ReadBitLong();
+			//Rotation value BD 145
+			cell.Rotation = this._mergedReaders.ReadBitDouble();
+
+			//H 344 for text cell, 340 for block cell (hard pointer)
+			template.ValueHandle = this.handleReference();
+
+			switch (cell.Type)
+			{
+				//In AutoCAD 2007 a cell can contain either 1 text block.
+				case CellType.Text when template.ValueHandle == 0 && this._version < ACadVersion.AC1021:
+					//Text string TV 1 Present only if 344 value below is 0
+					var content = new CellContent();
+					content.Value.ValueType = CellValueType.String;
+					content.Value.Value = this._mergedReaders.ReadVariableText();
+					cell.Contents.Add(content);
+					break;
+				case CellType.Block:
+					//Block scale BD 144
+					cell.BlockScale = this._mergedReaders.ReadBitDouble();
+					//Has attributes flag B
+					if (this._mergedReaders.ReadBit())
+					{
+						// Attr. Def. count BS 179
+						int natts = this._mergedReaders.ReadBitShort();
+						for (int i = 0; i < natts; i++)
+						{
+							//H 331 Attr. Def. ID (soft pointer, present only for block
+							//cells, when additional data flag == 1, and 1 entry
+							//per attr.def.)
+							var atthandle = this.handleReference();
+							//Attr.Def.index BS  Not present in dxf
+							short index = this._mergedReaders.ReadBitShort();
+							//Attr. Def. text TV 300
+							string text = this._mergedReaders.ReadVariableText();
+
+							template.AttributeHandles.Add((atthandle, text));
+						}
+					}
+					break;
+			}
+
+			//Common to both text and block cells:
+			//has override flag B
+			if (this._mergedReaders.ReadBit())
+			{
+				//Cell flag override BL 177 (deprecated)
+				TableEntity.Cell.OverrideFlags flags = (Cell.OverrideFlags)this._mergedReaders.ReadBitLong();
+
+				//Virtual edge flag RC 178 Determines which edges are virtual, see also the
+				//explanation on the cell edge flags above.When an
+				//edge is virtual, that edge has no border overrides.
+				//1 = top, 2 = right, 4 = bottom, 8 = left.
+				cell.VirtualEdgeFlag = this._mergedReaders.ReadByte();
+
+				if (flags.HasFlag(Cell.OverrideFlags.CellAlignment))
+				{
+					//Cell alignment RS 170 Present only if bit 0x01 is set in cell flag 
+					cell.StyleOverride.CellAlignment = (Cell.CellAlignment)this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.BackgroundFillNone))
+				{
+					//Background fill none B 283 Present only if bit 0x02 is set in cell flag
+					cell.StyleOverride.IsFillColorOn = this._mergedReaders.ReadBit();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.BackgroundColor))
+				{
+					//Background color CMC 63 Present only if bit 0x04 is set in cell flag
+					cell.StyleOverride.BackgroundColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.ContentColor))
+				{
+					//Content color CMC 64 Present only if bit 0x08 is set in cell flag 
+					cell.StyleOverride.ContentColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.TextStyle))
+				{
+					//Text style H 7 Present only if bit 0x10 is set in cell flag 
+					template.TextStyleOverrideHandle = this.handleReference();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.TextHeight))
+				{
+					//Text height BD 140 Present only if bit 0x20 is set in cell flag 
+					cell.StyleOverride.TextHeight = this._mergedReaders.ReadBitDouble();
+				}
+
+				if (flags.HasFlag(Cell.OverrideFlags.TopGridColor))
+				{
+					//Top grid color CMC 69 Present only if bit 0x00040 is set in cell flag 
+					cell.StyleOverride.TopBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.TopGridLineWeight))
+				{
+					//Top grid lineweight BS 279 Present only if bit 0x00400 is set in cell flag 
+					cell.StyleOverride.TopBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.TopGridLineWeight))
+				{
+					//Top visibility BS 289 Present only if bit 0x04000 is set in cell flag 
+					cell.StyleOverride.TopBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
+				}
+
+				if (flags.HasFlag(Cell.OverrideFlags.RightGridColor))
+				{
+					//Right grid color CMC 65 Present only if bit 0x00080 is set in cell flag 
+					cell.StyleOverride.RightBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.RightGridLineWeight))
+				{
+					//Right grid lineweight BS 275 Present only if bit 0x00800 is set in cell flag 
+					cell.StyleOverride.RightBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.RightGridLineWeight))
+				{
+					//Right visibility BS 285 Present only if bit 0x08000 is set in cell flag 
+					cell.StyleOverride.RightBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
+				}
+
+				if (flags.HasFlag(Cell.OverrideFlags.BottomGridColor))
+				{
+					//Bottom grid color CMC 66 Present only if bit 0x00100 is set in cell flag 
+					cell.StyleOverride.BottomBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.BottomGridLineWeight))
+				{
+					//Bottom grid lineweight BS 276 Present only if bit 0x01000 is set in cell flag 
+					cell.StyleOverride.BottomBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.BottomGridLineWeight))
+				{
+					//Bottom visibility BS 286 Present only if bit 0x10000 is set in cell flag 
+					cell.StyleOverride.BottomBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
+				}
+
+				if (flags.HasFlag(Cell.OverrideFlags.LeftGridColor))
+				{
+					//Left grid color CMC 68 Present only if bit 0x00200 is set in cell flag 
+					cell.StyleOverride.LeftBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.LeftGridLineWeight))
+				{
+					//Left grid lineweight BS 278 Present only if bit 0x02000 is set in cell flag 
+					cell.StyleOverride.LeftBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
+				}
+				if (flags.HasFlag(Cell.OverrideFlags.LeftGridLineWeight))
+				{
+					//Left visibility BS 288 Present only if bit 0x20000 is set in cell flag 
+					cell.StyleOverride.LeftBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
+				}
+			}
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Unknown BL
+				var unknown = this._mergedReaders.ReadBitLong();
+				//Value fields … See paragraph 20.4.98.
+				cell.Contents.Add(new CellContent());
+				this.readCustomTableDataValue(cell.Content.Value);
+			}
 		}
 
 		private void readTableContent(TableContent content, CadTableEntityTemplate template)
@@ -461,7 +1053,7 @@ namespace ACadSharp.IO.DWG
 			//BL  92 Merge flags, but may only for bits 0x8000 and 0x10000.
 			cellStyle.TableCellStylePropertyFlags = (TableCellStylePropertyFlags)this._mergedReaders.ReadBitLong();
 			//TC 62 Background color
-			cellStyle.BackgroundColor = this._mergedReaders.ReadCmColor();
+			cellStyle.BackgroundColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
 
 			//BL 93 Content layout flags
 			cellStyle.ContentLayoutFlags = (TableCellContentLayoutFlags)this._mergedReaders.ReadBitLong();
@@ -513,7 +1105,7 @@ namespace ACadSharp.IO.DWG
 			//BL 91 Border type
 			border.Type = ((BorderType)this._mergedReaders.ReadBitLong());
 			//TC 62 Color
-			border.Color = this._mergedReaders.ReadCmColor();
+			border.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			//BL 92 Line weight
 			border.LineWeight = ((LineWeightType)this._mergedReaders.ReadBitLong());
 			//H 40 Line type (hard pointer)
@@ -549,7 +1141,7 @@ namespace ACadSharp.IO.DWG
 			if (cell.HasLinkedData)
 			{
 				//H 340 Handle to data link object (hard pointer).
-				template.BlockRecordHandle = this._mergedReaders.HandleReference();
+				template.ValueHandle = this._mergedReaders.HandleReference();
 				//BL 93 Row count.
 				this._mergedReaders.ReadBitLong();
 				//BL 94 Column count.
@@ -694,7 +1286,7 @@ namespace ACadSharp.IO.DWG
 			//BL  94 Cell alignment
 			format.Alignment = this._mergedReaders.ReadBitLong();
 			//TC 62 Content color
-			format.Color = this._mergedReaders.ReadCmColor();
+			format.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			//H 340 Text style handle (hard pointer)
 			template.TextStyleHandle = this.handleReference();
 			//BD 144 Text height

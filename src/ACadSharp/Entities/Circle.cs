@@ -115,20 +115,19 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public virtual List<XYZ> PolygonalVertexes(int precision)
 		{
-			//Start vector If normal = Z
-			var start = XYZ.AxisX;
-			start = this.Center + this.Radius * start;
-			start = Matrix4.GetArbitraryAxis(this.Normal) * start;
+			if (precision < 2)
+			{
+				throw new ArgumentOutOfRangeException(nameof(precision), precision, "The arc precision must be equal or greater than two.");
+			}
 
 			return CurveExtensions.PolygonalVertexes(
-					precision,
-					this.Center,
-					0,
-					MathHelper.TwoPI,
-					this.Normal,
-					start,
-					this.RadiusRatio
-					);
+				precision,
+				this.Center,
+				0,
+				MathHelper.TwoPI,
+				this.Radius,
+				this.Normal.Normalize()
+			);
 		}
 	}
 }

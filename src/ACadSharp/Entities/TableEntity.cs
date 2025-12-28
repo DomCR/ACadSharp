@@ -16,9 +16,67 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityTable)]
 	[DxfSubClass(DxfSubclassMarker.TableEntity)]
-	[Obsolete("TableEntity is in a work in progress")]
 	public partial class TableEntity : Insert
 	{
+		[Flags]
+		internal enum BorderOverrideFlags
+		{
+			None = 0,
+			TitleHorizontalTop = 0x01,
+			TitleHorizontalInsert = 0x02,
+			TitleHorizontalBottom = 0x04,
+			TitleVerticalLeft = 0x8,
+			TitleVerticalInsert = 0x10,
+			TitleVerticalRight = 0x20,
+			HeaderHorizontalTop = 0x40,
+			HeaderHorizontalInsert = 0x80,
+			HeaderHorizontalBottom = 0x100,
+			HeaderVerticalLeft = 0x200,
+			HeaderVerticalInsert = 0x400,
+			HeaderVerticalRight = 0x800,
+			DataHorizontalTop = 0x1000,
+			DataHorizontalInsert = 0x2000,
+			DataHorizontalBottom = 0x4000,
+			DataVerticalLeft = 0x8000,
+			DataVerticalInsert = 0x10000,
+			DataVerticalRight = 0x20000,
+		}
+
+		[Flags]
+		internal enum TableOverrideFlags
+		{
+			None = 0,
+			TitleSuppressed = 0x0001,
+			HeaderSuppressed = 0x02,
+			FlowDirection = 0x0004,
+			HorizontalCellMargin = 0x0008,
+			VerticalCellMargin = 0x0010,
+
+			TitleRowColor = 0x0020,
+			HeaderRowColor = 0x00040,
+			DataRowColor = 0x0080,
+
+			TitleRowFillNone = 0x0100,
+			HeaderRowFillNone = 0x0200,
+			DataRowFillNone = 0x0400,
+
+			TitleRowFillColor = 0x0800,
+			HeaderRowFillColor = 0x1000,
+			DataRowFillColor = 0x2000,
+
+			TitleRowAlign = 0x4000,
+			HeaderRowAlign = 0x8000,
+			DataRowAlign = 0x10000,
+
+			TitleTextStyle = 0x20000,
+			HeaderTextStyle = 0x40000,
+			DataTextStyle = 0x80000,
+
+			TitleRowHeight = 0x100000,
+			HeaderRowHeight = 0x200000,
+			DataRowHeight = 0x400000,
+		}
+
 		/// <summary>
 		/// Table columns
 		/// </summary>
@@ -99,9 +157,7 @@ namespace ACadSharp.Entities
 
 		internal TableContent Content { get; set; } = new();
 
-		//343	Hard pointer ID of the owning BLOCK record
 		[DxfCodeValue(DxfReferenceType.Handle, 343)]
-		[Obsolete("Is it needed??")]
 		internal BlockRecord TableBlock { get { return this.Block; } }
 
 		internal BreakData TableBreakData { get; set; } = new();

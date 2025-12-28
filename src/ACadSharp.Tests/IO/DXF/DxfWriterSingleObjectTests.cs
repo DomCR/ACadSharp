@@ -44,15 +44,37 @@ namespace ACadSharp.Tests.IO.DXF
 			this.writeDxfFile(data, ACadVersion.AC1032);
 		}
 
-		protected virtual void writeDxfFile(SingleCaseGenerator data, ACadVersion version)
+		protected void writeDxfFile(SingleCaseGenerator data, ACadVersion version)
 		{
-			if (!TestVariables.RunDwgWriterSingleCases)
-				return;
+			Assert.True(data.HasExecuted, $"The writer has failed during it's execution.");
 
 			string path = this.getPath(data.Name, "dxf", version);
-
 			data.Document.Header.Version = version;
-			DxfWriter.Write(path, data.Document, false, notification: this.onNotification);
+
+			if (TestVariables.SaveOutputInStream)
+			{
+				MemoryStream ms = new MemoryStream();
+				DxfWriter.Write(ms, data.Document, false, notification: this.onNotification);
+				data.Stream = new MemoryStream(ms.ToArray());
+			}
+			else
+			{
+				DxfWriter.Write(path, data.Document, false, notification: this.onNotification);
+			}
+
+			if (TestVariables.SelfCheckOutput)
+			{
+				this._output.WriteLine("--- starting read ---");
+
+				if (TestVariables.SaveOutputInStream)
+				{
+					DxfReader.Read(data.Stream, this.onNotification);
+				}
+				else
+				{
+					DxfReader.Read(path, this.onNotification);
+				}
+			}
 		}
 	}
 }

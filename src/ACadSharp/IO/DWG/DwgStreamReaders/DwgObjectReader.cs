@@ -13,11 +13,11 @@ using System.IO;
 using System;
 using static ACadSharp.Objects.MultiLeaderObjectContextData;
 using CSUtilities.Converters;
-using CSUtilities.Extensions;
 using System.Globalization;
 using ACadSharp.Objects.Evaluations;
 using ACadSharp.XData;
 using System.Diagnostics;
+using System.Text;
 using ACadSharp.Exceptions;
 
 namespace ACadSharp.IO.DWG
@@ -118,7 +118,7 @@ namespace ACadSharp.IO.DWG
 					// Ignore, will be handled below
 				}
 			}
-			
+
 			if (this._memoryStream == null)
 			{
 				this._memoryStream = HugeMemoryStream.Create(this._reader.Stream.Length);
@@ -283,8 +283,10 @@ namespace ACadSharp.IO.DWG
 		private void readCommonData(CadTemplate template)
 		{
 			if (this._version >= ACadVersion.AC1015 && this._version < ACadVersion.AC1024)
+			{
 				//Obj size RL size of object in bits, not including end handles
 				this.updateHandleReader();
+			}
 
 			//Common:
 			//Handle H 5 code 0, length followed by the handle bytes.
@@ -394,9 +396,13 @@ namespace ACadSharp.IO.DWG
 			else if (!this.R2004Plus)
 			{
 				if (!this._readedObjects.ContainsKey(entity.Handle - 1UL))
+				{
 					this._handles.Enqueue(entity.Handle - 1UL);
+				}
 				if (!this._readedObjects.ContainsKey(entity.Handle + 1UL))
+				{
 					this._handles.Enqueue(entity.Handle + 1UL);
+				}
 			}
 
 			//Color	CMC(B)	62
@@ -972,10 +978,12 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.ACAD_PROXY_OBJECT:
 					template = this.readProxyObject();
 					break;
+				case ObjectType.OLE2FRAME:
+					template = this.readOle2Frame();
+					break;
 				//Not implemented entities:
 				case ObjectType.VERTEX_MESH:
 				case ObjectType.OLEFRAME:
-				case ObjectType.OLE2FRAME:
 				case ObjectType.DUMMY:
 					template = this.readUnknownEntity(null);
 					this._builder.Notify($"Unlisted object with DXF name {type} has been read as an UnknownEntity", NotificationType.Warning);
@@ -1058,6 +1066,9 @@ namespace ACadSharp.IO.DWG
 				case "LWPOLYLINE":
 					template = this.readLWPolyline();
 					break;
+				case "MATERIAL":
+					template = this.readMaterial();
+					break;
 				case "MESH":
 					template = this.readMesh();
 					break;
@@ -1112,6 +1123,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "ACAD_PROXY_OBJECT":
 					template = this.readProxyObject();
+					break;
+				case DxfFileToken.ObjectVisualStyle:
+					template = this.readVisualStyle();
 					break;
 				case DxfFileToken.ObjectPlotSettings:
 					template = this.readPlotSettings();
@@ -1781,7 +1795,7 @@ namespace ACadSharp.IO.DWG
 
 			//Block name TV 2
 			string name = this._textReader.ReadVariableText();
-			if (!name.IsNullOrEmpty())
+			if (!string.IsNullOrWhiteSpace(name))
 			{
 				block.Name = name;
 			}
@@ -1935,7 +1949,7 @@ namespace ACadSharp.IO.DWG
 			{
 				for (int i = 0; i < template.OwnedObjectsCount; ++i)
 					//H[ATTRIB(hard owner)] Repeats “Owned Object Count” times.
-					template.AttributesHandles.Add(this.handleReference());
+					template.OwnedObjectsHandlers.Add(this.handleReference());
 			}
 
 			//Common:
@@ -2049,7 +2063,7 @@ namespace ACadSharp.IO.DWG
 				int nownedObjects = this._objectReader.ReadBitLong();
 
 				for (int i = 0; i < nownedObjects; ++i)
-					template.VertexHandles.Add(this.handleReference());
+					template.OwnedObjectsHandlers.Add(this.handleReference());
 			}
 
 			//R13-R2000:
@@ -2107,7 +2121,7 @@ namespace ACadSharp.IO.DWG
 				int nownedObjects = this._objectReader.ReadBitLong();
 
 				for (int i = 0; i < nownedObjects; ++i)
-					template.VertexHandles.Add(this.handleReference());
+					template.OwnedObjectsHandlers.Add(this.handleReference());
 			}
 
 			//R13-R2000:
@@ -4275,7 +4289,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//Loaded Bit B 0 indicates loaded for an xref
-				bool loaded = this._objectReader.ReadBit();
+				block.IsUnloaded = this._objectReader.ReadBit();
 			}
 
 			//R2004+:
@@ -4374,7 +4388,6 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readLayer()
 		{
-			//Initialize the template with the default layer
 			Layer layer = new Layer();
 			CadLayerTemplate template = new CadLayerTemplate(layer);
 
@@ -4382,7 +4395,11 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Entry name TV 2
-			layer.Name = this._textReader.ReadVariableText();
+			string name = this._textReader.ReadVariableText();
+			if (!string.IsNullOrWhiteSpace(name))
+			{
+				layer.Name = name;
+			}
 
 			this.readXrefDependantBit(template.CadObject);
 
@@ -4537,7 +4554,11 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Entry name TV 2
-			ltype.Name = this._textReader.ReadVariableText();
+			string name = this._textReader.ReadVariableText();
+			if (!string.IsNullOrWhiteSpace(name))
+			{
+				ltype.Name = name;
+			}
 
 			this.readXrefDependantBit(template.CadObject);
 
@@ -4580,19 +4601,23 @@ namespace ACadSharp.IO.DWG
 				template.SegmentTemplates.Add(segment);
 			}
 
+			byte[] textarea = null;
 			//R2004 and earlier:
 			if (this._version <= ACadVersion.AC1018)
 			{
 				//Strings area X 9 256 bytes of text area. The complex dashes that have text use this area via the 75-group indices. It's basically a pile of 0-terminated strings. First byte is always 0 for R13 and data starts at byte 1. In R14 it is not a valid data start from byte 0.
 				//(The 9 - group is undocumented.)
-				byte[] textarea = this._objectReader.ReadBytes(256);
-				//TODO: Read the line type text area
+				textarea = this._objectReader.ReadBytes(256);
 			}
 			//R2007+:
 			if (this.R2007Plus && isText)
 			{
-				byte[] textarea = this._objectReader.ReadBytes(512);
-				//TODO: Read the line type text area
+				textarea = this._objectReader.ReadBytes(512);
+			}
+
+			if (isText)
+			{
+				this.readLineTypeSegmentTexts(template.SegmentTemplates, textarea);
 			}
 
 			//Common:
@@ -4967,7 +4992,11 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			appId.Name = this._textReader.ReadVariableText();
+			string name = this._textReader.ReadVariableText();
+			if (!string.IsNullOrWhiteSpace(name))
+			{
+				appId.Name = name;
+			}
 
 			this.readXrefDependantBit(appId);
 
@@ -4990,11 +5019,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Entry name TV 2
 			string name = this._textReader.ReadVariableText();
-			if (name.IsNullOrEmpty())
-			{
-				this._builder.Notify($"[DimensionStyle] with handle {dimStyle.Handle} does not have a name assigned", NotificationType.Warning);
-			}
-			else
+			if (!string.IsNullOrWhiteSpace(name))
 			{
 				dimStyle.Name = name;
 			}
@@ -5340,7 +5365,7 @@ namespace ACadSharp.IO.DWG
 			int numentries = this._objectReader.ReadBitLong();
 			for (int i = 0; i < numentries; ++i)
 			{
-				//Handle refs H NULL(soft pointer)	xdicobjhandle(hard owner)	the apps(soft owner)
+				//Handle refs H NULL(soft pointer)
 				template.EntryHandles.Add(this.handleReference());
 			}
 
@@ -5349,18 +5374,16 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readViewportEntityHeader()
 		{
-			Viewport viewport = new Viewport();
-			CadViewportTemplate template = new CadViewportTemplate(viewport);
+			ViewportEntityHeader viewport = new ViewportEntityHeader();
+			CadViewportEntityHeaderTemplate template = new(viewport);
 
 			this.readCommonNonEntityData(template);
 
 			//Common:
 			//Entry name TV 2
-			viewport.StyleSheetName = this._textReader.ReadVariableText();
+			viewport.Name = this._textReader.ReadVariableText();
 
-			this._objectReader.ReadBit();
-			this._objectReader.ReadBitShort();
-			this._objectReader.ReadBit();
+			this.readXrefDependantBit(template.CadObject);
 
 			//1 flag B The 1 bit of the 70 group
 			this._objectReader.ReadBit();
@@ -5524,6 +5547,41 @@ namespace ACadSharp.IO.DWG
 			for (int index = 0; index < numhandles; ++index)
 				//the entries in the group(hard pointer)
 				template.Handles.Add(this.handleReference());
+
+			return template;
+		}
+
+		private CadTemplate readOle2Frame()
+		{
+			Ole2Frame ole2Frame = new Ole2Frame();
+			CadOle2FrameTemplate template = new CadOle2FrameTemplate(ole2Frame);
+
+			//Common Entity Data
+			this.readCommonEntityData(template);
+
+			//Flags BS 70
+			ole2Frame.Version = this._mergedReaders.ReadBitShort();
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//Mode BS
+				short mode = this._mergedReaders.ReadBitShort();
+			}
+
+			//Common:
+			//Data Length BL-- Bit - pair - coded long giving the length of the data
+			int dataLength = this._mergedReaders.ReadBitLong();
+			template.CadObject.BinaryData = this._mergedReaders.ReadBytes(dataLength);
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//Unknown RC
+				short unknown = this._mergedReaders.ReadByte();
+			}
+
+			//No strings found in the data
 
 			return template;
 		}
@@ -5714,6 +5772,289 @@ namespace ACadSharp.IO.DWG
 			}
 
 			return template;
+		}
+
+		private CadTemplate readMaterial()
+		{
+			Material material = new Material();
+			CadMaterialTemplate template = new CadMaterialTemplate(material);
+
+			this.readCommonNonEntityData(template);
+
+			//Name VT 1
+			material.Name = this._mergedReaders.ReadVariableText();
+			//Name VT 2
+			material.Description = this._mergedReaders.ReadVariableText();
+
+			#region Ambient
+
+			//AmbientColorMethod B 70
+			material.AmbientColorMethod = (ColorMethod)this._mergedReaders.ReadByte();
+			//AmbientColor B 40
+			material.AmbientColorFactor = this._mergedReaders.ReadBitDouble();
+			if (material.AmbientColorMethod == ColorMethod.Override)
+			{
+				//Only present if override
+				//AmbientColor B 90
+				uint rgb = (uint)this._mergedReaders.ReadBitLong();
+				byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
+				material.AmbientColor = new Color(arr[2], arr[1], arr[0]);
+			}
+
+			#endregion
+
+			#region Diffuse
+
+			//DiffuseColorMethod B 71
+			material.DiffuseColorMethod = (ColorMethod)this._mergedReaders.ReadByte();
+			//DiffuseColorFactor B 41
+			material.DiffuseColorFactor = this._mergedReaders.ReadBitDouble();
+			if (material.DiffuseColorMethod == ColorMethod.Override)
+			{
+				//Only present if override
+				//DiffuseColor B 91
+				uint rgb = (uint)this._mergedReaders.ReadBitLong();
+				byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
+				material.DiffuseColor = new Color(arr[2], arr[1], arr[0]);
+			}
+
+			//DiffuseMapBlendFactor BD 42
+			material.DiffuseMapBlendFactor = this._mergedReaders.ReadBitDouble();
+
+			//Projection method of diffuse map mapper B 73
+			material.DiffuseProjectionMethod = (ProjectionMethod)this._mergedReaders.ReadByte();
+			//Tiling method of diffuse map mapper B 74
+			material.DiffuseTilingMethod = (TilingMethod)this._mergedReaders.ReadByte();
+			//Auto transform method of diffuse map mapper B 75
+			material.DiffuseAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
+			//Transform matrix of diffuse map mapper BD 43
+			material.DiffuseMatrix = this.readMatrix4();
+
+			//DiffuseMapSource B 72
+			material.DiffuseMapSource = (MapSource)this._mergedReaders.ReadByte();
+			switch (material.DiffuseMapSource)
+			{
+				case MapSource.UseCurrentScene:
+					break;
+				case MapSource.UseImageFile:
+					//Diffuse map file name(string, default = null string) 3 VT
+					material.DiffuseMapFileName = this._mergedReaders.ReadVariableText();
+					break;
+				case MapSource.Procedural:
+					//AcGiMaterialMap::Source Enumeration contains the missing type
+					throw new NotImplementedException();
+			}
+
+			#endregion
+
+			#region Specular
+
+			//SpecularColorMethod B 76
+			material.SpecularColorMethod = (ColorMethod)this._mergedReaders.ReadByte();
+
+			//SpecularColorFactor B 45
+			material.SpecularColorFactor = this._mergedReaders.ReadBitDouble();
+			if (material.SpecularColorMethod == ColorMethod.Override)
+			{
+				//Only present if override
+				//SpecularColor B 92
+				uint rgb = (uint)this._mergedReaders.ReadBitLong();
+				byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
+				material.SpecularColor = new Color(arr[2], arr[1], arr[0]);
+			}
+
+			//SpecularMapBlendFactor BD 46
+			material.SpecularMapBlendFactor = this._mergedReaders.ReadBitDouble();
+
+			//Projection method of specular map mapper B 78
+			material.SpecularProjectionMethod = (ProjectionMethod)this._mergedReaders.ReadByte();
+			//Tiling method of specular map mapper B 79
+			material.SpecularTilingMethod = (TilingMethod)this._mergedReaders.ReadByte();
+			//Auto transform method of specular map mapper B 170
+			material.SpecularAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
+			//Transform matrix of specular map mapper BD 47
+			material.SpecularMatrix = this.readMatrix4();
+
+			//SpecularMapSource B 77
+			material.SpecularMapSource = (MapSource)this._mergedReaders.ReadByte();
+			switch (material.SpecularMapSource)
+			{
+				case MapSource.UseCurrentScene:
+					break;
+				case MapSource.UseImageFile:
+					//Specular map file name(string, default = null string) 4 VT
+					material.SpecularMapFileName = this._mergedReaders.ReadVariableText();
+					break;
+				case MapSource.Procedural:
+					//AcGiMaterialMap::Source Enumeration contains the missing type
+					throw new NotImplementedException();
+			}
+
+			//Ambient and Diffuse don't have specular, this is at the end for specular
+			//SpecularGlossFactor BD 44
+			material.SpecularGlossFactor = this._mergedReaders.ReadBitDouble();
+
+			#endregion
+
+			#region Reflection
+
+			//ReflectionMapBlendFactor BD 48
+			material.ReflectionMapBlendFactor = this._mergedReaders.ReadBitDouble();
+
+			//Projection method of Reflection map mapper B 172
+			material.ReflectionProjectionMethod = (ProjectionMethod)this._mergedReaders.ReadByte();
+			//Tiling method of Reflection map mapper B 173
+			material.ReflectionTilingMethod = (TilingMethod)this._mergedReaders.ReadByte();
+			//Auto transform method of Reflection map mapper B 174
+			material.ReflectionAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
+			//Transform matrix of Reflection map mapper BD 49
+			material.ReflectionMatrix = this.readMatrix4();
+
+			//ReflectionMapSource B 171
+			material.ReflectionMapSource = (MapSource)this._mergedReaders.ReadByte();
+			switch (material.ReflectionMapSource)
+			{
+				case MapSource.UseCurrentScene:
+					break;
+				case MapSource.UseImageFile:
+					//Reflection map file name(string, default = null string) 6 VT
+					material.ReflectionMapFileName = this._mergedReaders.ReadVariableText();
+					break;
+				case MapSource.Procedural:
+					//AcGiMaterialMap::Source Enumeration contains the missing type
+					throw new NotImplementedException();
+			}
+
+			//Opacity BD 140
+			material.Opacity = this._mergedReaders.ReadBitDouble();
+
+			#endregion
+
+			#region Opacity
+
+			//OpacityMapBlendFactor BD 141
+			material.OpacityMapBlendFactor = this._mergedReaders.ReadBitDouble();
+
+			//Projection method of Opacity map mapper B 176
+			material.OpacityProjectionMethod = (ProjectionMethod)this._mergedReaders.ReadByte();
+			//Tiling method of Opacity map mapper B 177
+			material.OpacityTilingMethod = (TilingMethod)this._mergedReaders.ReadByte();
+			//Auto transform method of Opacity map mapper B 178
+			material.OpacityAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
+			//Transform matrix of Opacity map mapper BD 142
+			material.OpacityMatrix = this.readMatrix4();
+
+			//OpacityMapSource B 175
+			material.OpacityMapSource = (MapSource)this._mergedReaders.ReadByte();
+			switch (material.OpacityMapSource)
+			{
+				case MapSource.UseCurrentScene:
+					break;
+				case MapSource.UseImageFile:
+					//Opacity map file name(string, default = null string) 7 VT
+					material.OpacityMapFileName = this._mergedReaders.ReadVariableText();
+					break;
+				case MapSource.Procedural:
+					//AcGiMaterialMap::Source Enumeration contains the missing type
+					throw new NotImplementedException();
+			}
+
+			#endregion
+
+			#region Bump
+
+			//BumpMapBlendFactor BD 143
+			material.BumpMapBlendFactor = this._mergedReaders.ReadBitDouble();
+
+			//Projection method of Bump map mapper B 270
+			material.BumpProjectionMethod = (ProjectionMethod)this._mergedReaders.ReadByte();
+			//Tiling method of Bump map mapper B 271
+			material.BumpTilingMethod = (TilingMethod)this._mergedReaders.ReadByte();
+			//Auto transform method of Bump map mapper B 272
+			material.BumpAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
+			//Transform matrix of Bump map mapper BD 144
+			material.BumpMatrix = this.readMatrix4();
+
+			//BumpMapSource B 179
+			material.BumpMapSource = (MapSource)this._mergedReaders.ReadByte();
+			switch (material.BumpMapSource)
+			{
+				case MapSource.UseCurrentScene:
+					break;
+				case MapSource.UseImageFile:
+					//Bump map file name(string, default = null string) 8 VT
+					material.BumpMapFileName = this._mergedReaders.ReadVariableText();
+					break;
+				case MapSource.Procedural:
+					//AcGiMaterialMap::Source Enumeration contains the missing type
+					throw new NotImplementedException();
+			}
+
+			//RefractionIndex BD 145
+			material.RefractionIndex = this._mergedReaders.ReadBitDouble();
+
+			#endregion
+
+			#region Refraction
+
+			//RefractionMapBlendFactor BD 146
+			material.RefractionMapBlendFactor = this._mergedReaders.ReadBitDouble();
+
+			//Projection method of Refraction map mapper B 274
+			material.RefractionProjectionMethod = (ProjectionMethod)this._mergedReaders.ReadByte();
+			//Tiling method of Refraction map mapper B 275
+			material.RefractionTilingMethod = (TilingMethod)this._mergedReaders.ReadByte();
+			//Auto transform method of Refraction map mapper B 276
+			material.RefractionAutoTransform = (AutoTransformMethodFlags)this._mergedReaders.ReadByte();
+			//Transform matrix of Refraction map mapper BD 147
+			material.RefractionMatrix = this.readMatrix4();
+
+			//RefractionMapSource B 273
+			material.RefractionMapSource = (MapSource)this._mergedReaders.ReadByte();
+			switch (material.RefractionMapSource)
+			{
+				case MapSource.UseCurrentScene:
+					break;
+				case MapSource.UseImageFile:
+					//Refraction map file name(string, default = null string) 9 VT
+					material.RefractionMapFileName = this._mergedReaders.ReadVariableText();
+					break;
+				case MapSource.Procedural:
+					//AcGiMaterialMap::Source Enumeration contains the missing type
+					throw new NotImplementedException();
+			}
+
+			#endregion
+#if TEST
+			var obj = DwgStreamReaderBase.Explore(this._objectReader);
+			var text = DwgStreamReaderBase.Explore(this._textReader);
+#endif
+
+			return template;
+		}
+
+		private Matrix4 readMatrix4()
+		{
+			Matrix4 matrix = Matrix4.Identity;
+
+			matrix.M00 = this._mergedReaders.ReadBitDouble();
+			matrix.M01 = this._mergedReaders.ReadBitDouble();
+			matrix.M02 = this._mergedReaders.ReadBitDouble();
+			matrix.M03 = this._mergedReaders.ReadBitDouble();
+			matrix.M10 = this._mergedReaders.ReadBitDouble();
+			matrix.M11 = this._mergedReaders.ReadBitDouble();
+			matrix.M12 = this._mergedReaders.ReadBitDouble();
+			matrix.M13 = this._mergedReaders.ReadBitDouble();
+			matrix.M20 = this._mergedReaders.ReadBitDouble();
+			matrix.M21 = this._mergedReaders.ReadBitDouble();
+			matrix.M22 = this._mergedReaders.ReadBitDouble();
+			matrix.M23 = this._mergedReaders.ReadBitDouble();
+			matrix.M30 = this._mergedReaders.ReadBitDouble();
+			matrix.M31 = this._mergedReaders.ReadBitDouble();
+			matrix.M32 = this._mergedReaders.ReadBitDouble();
+			matrix.M33 = this._mergedReaders.ReadBitDouble();
+
+			return Matrix4.Identity;
 		}
 
 		private CadTemplate readHatch()
@@ -6052,15 +6393,27 @@ namespace ACadSharp.IO.DWG
 
 			//WARNING: this object is not documented, the fields have been found using exploration methods and matching them with the dxf file
 
-			visualStyle.Description = this._textReader.ReadVariableText();
+			//2 Name
+			visualStyle.Name = this._textReader.ReadVariableText();
+			//70
 			visualStyle.Type = this._objectReader.ReadBitLong();
+
+			//177 
+			var value177 = _objectReader.ReadBitShort();
+			//291 Internal use only flag
+			var value291 = _objectReader.ReadBit();
+
+			//70 Count then repeat 90 and 176
+			int count = this._objectReader.ReadBitLong();
 
 #if TEST
 			var objValues = DwgStreamReaderBase.Explore(_objectReader);
 			var textValues = DwgStreamReaderBase.Explore(_textReader);
 #endif
 
-			return null;
+			//TODO: Finish dwg implementation for VisualStyle (avoids noise in the logs)
+
+			return template;
 		}
 
 		private CadTemplate readCadImage(CadWipeoutBase image)
@@ -6633,6 +6986,91 @@ namespace ACadSharp.IO.DWG
 			if (this.R2007Plus)
 				//Visual Style handle(soft pointer)
 				this.handleReference();
+		}
+
+		private void readLineTypeSegmentTexts(IList<CadLineTypeTemplate.SegmentTemplate> segments, byte[] textArea)
+		{
+			if (segments == null || textArea == null || textArea.Length == 0)
+				return;
+
+			Encoding encoding = this._reader?.Encoding ?? Encoding.ASCII;
+
+			foreach (var segment in segments)
+			{
+				if (!segment.Segment.Flags.HasFlag(LineTypeShapeFlags.Text))
+					continue;
+
+				int offset = (ushort)segment.Segment.ShapeNumber;
+				if (offset >= textArea.Length)
+				{
+					this._builder.Notify(
+						$"Unable to read linetype text segment; offset {offset} is outside the available buffer ({textArea.Length} bytes).",
+						NotificationType.Warning);
+					segment.Segment.Text = string.Empty;
+					segment.Segment.ShapeNumber = 0;
+					continue;
+				}
+
+				segment.Segment.Text = this.readLineTypeTextString(textArea, offset, encoding);
+				segment.Segment.ShapeNumber = 0;
+			}
+		}
+
+		private string readLineTypeTextString(byte[] buffer, int offset, Encoding encoding)
+		{
+			if (buffer == null || encoding == null || offset < 0 || offset >= buffer.Length)
+				return string.Empty;
+
+			if (encoding.IsSingleByte && looksLikeUtf16Le(buffer, offset))
+			{
+				// Trim trailing 0x0000 terminator if present.
+				int end = offset;
+				while (end + 1 < buffer.Length)
+				{
+					if (buffer[end] == 0 && buffer[end + 1] == 0)
+						break;
+
+					end += 2;
+				}
+
+				return Encoding.Unicode.GetString(buffer, offset, end - offset);
+			}
+
+			int endAscii = offset;
+			while (endAscii < buffer.Length && buffer[endAscii] != 0)
+			{
+				endAscii++;
+			}
+
+			if (endAscii == offset)
+				return string.Empty;
+
+			return encoding.GetString(buffer, offset, endAscii - offset);
+		}
+
+		private static bool looksLikeUtf16Le(byte[] buffer, int offset)
+		{
+			if (buffer == null || offset < 0 || offset + 1 >= buffer.Length)
+				return false;
+
+			bool sawNonZero = false;
+
+			for (int i = offset; i + 1 < buffer.Length; i += 2)
+			{
+				byte lo = buffer[i];
+				byte hi = buffer[i + 1];
+
+				if (lo == 0 && hi == 0)
+					return sawNonZero;
+
+				if (hi != 0)
+					return false;
+
+				if (lo != 0)
+					sawNonZero = true;
+			}
+
+			return false;
 		}
 
 		#endregion Object readers

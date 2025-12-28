@@ -317,22 +317,25 @@ namespace ACadSharp.Entities
 				switch (e)
 				{
 					case Arc arc:
-						c = new Ellipse()
-						{
-							StartParameter = arc.StartAngle,
-							EndParameter = arc.EndAngle,
-							MajorAxisEndPoint = XYZ.AxisX * arc.Radius,
-							RadiusRatio = 1,
-							Center = arc.Center,
-						};
-						c.MatchProperties(e);
-						break;
+						arc.GetEndVertices(out XYZ start, out XYZ end);
+
+						Arc a = new Arc(
+						transform.ApplyTransform(arc.Center),
+						transform.ApplyTransform(start),
+						transform.ApplyTransform(end),
+						arc.Normal);
+
+						a.MatchProperties(e);
+
+						yield return a;
+						continue;
 					case Circle circle:
 						c = new Ellipse()
 						{
 							MajorAxisEndPoint = XYZ.AxisX * circle.Radius,
 							RadiusRatio = 1,
 							Center = circle.Center,
+							Normal = circle.Normal,
 						};
 						c.MatchProperties(e);
 						break;

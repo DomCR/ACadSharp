@@ -82,6 +82,11 @@ namespace ACadSharp.IO.DWG
 			//For some reason the dimension must be writen the last
 			this.writeTable(this._document.DimensionStyles);
 
+			if (this.R2004Pre)
+			{
+				this.writeTable(this._document.VEntityControl);
+			}
+
 			this.writeBlockEntities();
 			this.writeObjects();
 		}
@@ -246,11 +251,12 @@ namespace ACadSharp.IO.DWG
 		{
 			switch (entity)
 			{
+				case UnknownEntity:
+					return false;
 				case Shape:
 					return this.WriteShapes;
 				case ProxyEntity:
 				case TableEntity:
-				case UnknownEntity:
 				case Solid3D:
 				case CadBody:
 				case Region:
@@ -326,7 +332,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//Loaded Bit B 0 indicates loaded for an xref
-				this._writer.WriteBit(false);
+				this._writer.WriteBit(record.IsUnloaded);
 			}
 
 			//R2004+:
@@ -554,9 +560,62 @@ namespace ACadSharp.IO.DWG
 
 			//Numdashes RC 73 The number of repetitions of the 49...74 data.
 			this._writer.WriteByte((byte)ltype.Segments.Count());
-			bool isText = false;
+
+			bool hasTextSegments = false;
 			foreach (LineType.Segment segment in ltype.Segments)
 			{
+				if (segment.Flags.HasFlag(LineTypeShapeFlags.Text))
+				{
+					hasTextSegments = true;
+					break;
+				}
+			}
+
+			Encoding textEncoding = this.R2007Plus ? Encoding.Unicode : this._writer.Encoding;
+
+			byte[] textArea = null;
+			int textCursor = 0;
+			byte[] textTerminator = textEncoding.GetBytes("\0");
+
+			if (this._version <= ACadVersion.AC1018)
+			{
+				textArea = new byte[256];
+				if (this._version <= ACadVersion.AC1014)
+					textCursor = 1;
+			}
+			else if (this.R2007Plus && hasTextSegments)
+			{
+				textArea = new byte[512];
+			}
+
+			foreach (LineType.Segment segment in ltype.Segments)
+			{
+				if (segment.Flags.HasFlag(LineTypeShapeFlags.Text))
+				{
+					if (textArea == null || string.IsNullOrEmpty(segment.Text))
+					{
+						segment.ShapeNumber = 0;
+					}
+					else
+					{
+						byte[] textBytes = textEncoding.GetBytes(segment.Text);
+						int required = textBytes.Length + textTerminator.Length;
+
+						if (textCursor + required <= textArea.Length)
+						{
+							segment.ShapeNumber = (short)textCursor;
+							Buffer.BlockCopy(textBytes, 0, textArea, textCursor, textBytes.Length);
+							textCursor += textBytes.Length;
+							Buffer.BlockCopy(textTerminator, 0, textArea, textCursor, textTerminator.Length);
+							textCursor += textTerminator.Length;
+						}
+						else
+						{
+							segment.ShapeNumber = 0;
+						}
+					}
+				}
+
 				//Dash length BD 49 Dash or dot specifier.
 				this._writer.WriteBitDouble(segment.Length);
 				//Complex shapecode BS 75 Shape number if shapeflag is 2, or index into the string area if shapeflag is 4.
@@ -573,32 +632,25 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBitDouble(segment.Rotation);
 				//Shapeflag BS 74 bit coded:
 				this._writer.WriteBitShort((short)segment.Flags);
-
-				if (segment.Flags.HasFlag(LineTypeShapeFlags.Text))
-					isText = true;
 			}
 
 			//R2004 and earlier:
 			if (this._version <= ACadVersion.AC1018)
 			{
-				//Strings area X 9 256 bytes of text area. The complex dashes that have text use this area via the 75-group indices. It's basically a pile of 0-terminated strings.
-				//First byte is always 0 for R13 and data starts at byte 1.
-				//In R14 it is not a valid data start from byte 0.
-				//(The 9 - group is undocumented.)
-				for (int i = 0; i < 256; i++)
+				byte[] buffer = textArea ?? new byte[256];
+				for (int i = 0; i < buffer.Length; i++)
 				{
-					//TODO: Write the line type text area
-					this._writer.WriteByte(0);
+					this._writer.WriteByte(buffer[i]);
 				}
 			}
 
 			//R2007+:
-			if (this.R2007Plus && isText)
+			if (this.R2007Plus && hasTextSegments)
 			{
-				for (int i = 0; i < 512; i++)
+				byte[] buffer = textArea ?? new byte[512];
+				for (int i = 0; i < buffer.Length; i++)
 				{
-					//TODO: Write the line type text area
-					this._writer.WriteByte(0);
+					this._writer.WriteByte(buffer[i]);
 				}
 			}
 

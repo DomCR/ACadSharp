@@ -84,7 +84,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2004Pre)
 			{
 				//H : Handle of the current viewport entity header (hard pointer)
-				this._writer.HandleReference(0);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
 			}
 
 			//Common:
@@ -380,7 +380,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.CurrentDimensionStyle);
 
 			//H: CMLSTYLE (hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.MLineStyles);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, this._header.CurrentMLineStyle);
 
 			//R2000+ Only:
 			if (this.R2000Plus)
@@ -804,7 +804,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R13_15Only)
 			{
 				//H: VIEWPORT ENTITY HEADER CONTROL OBJECT(hard owner)
-				this._writer.HandleReference(DwgReferenceType.HardOwnership, null);
+				this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.VEntityControl);
 			}
 
 			//Common:
@@ -841,7 +841,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2004Plus)
 			{
 				//H: DICTIONARY (MATERIALS) (hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.Materials);
 				//H: DICTIONARY (COLORS) (hard pointer)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.Colors);
 			}
