@@ -7,7 +7,12 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadBlockRecordTemplate : CadTableEntryTemplate<BlockRecord>
+	internal interface ICadOwnerTemplate : ICadObjectTemplate
+	{
+		public HashSet<ulong> OwnedObjectsHandlers { get; }
+	}
+
+	internal class CadBlockRecordTemplate : CadTableEntryTemplate<BlockRecord>, ICadOwnerTemplate
 	{
 		public ulong? FirstEntityHandle { get; set; }
 
@@ -23,7 +28,7 @@ namespace ACadSharp.IO.Templates
 
 		public List<ulong> InsertHandles { get; set; } = new();
 
-		public string LayerName { get; set; }
+		public CadBlockEntityTemplate BlockEntityTemplate { get; set; }
 
 		public CadBlockRecordTemplate() : base(new BlockRecord()) { }
 
@@ -47,6 +52,11 @@ namespace ACadSharp.IO.Templates
 			}
 			else
 			{
+				if (this.BlockEntityTemplate != null)
+				{
+					this.OwnedObjectsHandlers.UnionWith(this.BlockEntityTemplate.OwnedObjectsHandlers);
+				}
+
 				foreach (ulong handle in this.OwnedObjectsHandlers)
 				{
 					if (builder.TryGetCadObject(handle, out Entity child))
@@ -70,6 +80,7 @@ namespace ACadSharp.IO.Templates
 				block.BasePoint = this.CadObject.BlockEntity.BasePoint;
 				block.XRefPath = this.CadObject.BlockEntity.XRefPath;
 				block.Comments = this.CadObject.BlockEntity.Comments;
+				block.IsUnloaded = this.CadObject.BlockEntity.IsUnloaded;
 
 				this.CadObject.BlockEntity = block;
 			}

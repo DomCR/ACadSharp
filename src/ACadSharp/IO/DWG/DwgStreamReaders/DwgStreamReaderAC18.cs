@@ -9,7 +9,7 @@ namespace ACadSharp.IO.DWG
 		public DwgStreamReaderAC18(Stream stream, bool resetPosition) : base(stream, resetPosition) { }
 
 		/// <inheritdoc/>
-		public override Color ReadCmColor()
+		public override Color ReadCmColor(bool useTextStream = false)
 		{
 			Color color = default;
 

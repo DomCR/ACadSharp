@@ -699,7 +699,7 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
-		public virtual Color ReadCmColor()
+		public virtual Color ReadCmColor(bool useTextStream = false)
 		{
 			//R15 and earlier: BS color index
 			short colorIndex = this.ReadBitShort();

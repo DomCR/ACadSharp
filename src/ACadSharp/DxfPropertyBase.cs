@@ -213,8 +213,13 @@ namespace ACadSharp
 					case 62:
 						this._property.SetValue(obj, new Color((short)value));
 						break;
+					case 90:
+						byte[] b = LittleEndianConverter.Instance.GetBytes((int)(value));
+						// true color
+						this._property.SetValue(obj, new Color(b[2], b[1], b[0]));
+						break;
 					case 420:
-						byte[] b = LittleEndianConverter.Instance.GetBytes((int)value);
+						b = LittleEndianConverter.Instance.GetBytes((int)value);
 						// true color
 						this._property.SetValue(obj, new Color(b[2], b[1], b[0]));
 						break;

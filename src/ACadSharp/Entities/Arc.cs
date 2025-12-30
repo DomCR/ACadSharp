@@ -78,6 +78,53 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
+		/// Initializes a new instance of the Arc class that passes through the specified start and end points, is centered at
+		/// the given point, and lies in the plane defined by the specified normal vector.
+		/// </summary>
+		/// <remarks>The arc is constructed in the plane defined by the normal vector, with its center at the
+		/// specified point. The start and end points determine the angular span of the arc. The direction from start to end
+		/// is determined by the order of the points and the orientation of the normal vector.</remarks>
+		/// <param name="center">The center point of the arc. Defines the origin of the arc's circle.</param>
+		/// <param name="start">The start point of the arc. Must lie on the circle defined by the center and radius.</param>
+		/// <param name="end">The end point of the arc. Must lie on the circle defined by the center and radius.</param>
+		/// <param name="normal">The normal vector defining the plane in which the arc lies. Must be a non-zero vector.</param>
+		public Arc(XYZ center, XYZ start, XYZ end, XYZ normal)
+		{
+			this.Normal = normal;
+			this.Center = center;
+			this.Radius = center.DistanceFrom(start);
+
+			var startAngle = XYZ.AxisX.GetAngle2(start - center, Normal);
+			var endAngle = XYZ.AxisX.GetAngle2(end - center, Normal);
+
+			if (endAngle < startAngle)
+			{
+				this.StartAngle = endAngle;
+				this.EndAngle = startAngle;
+			}
+			else
+			{
+				this.StartAngle = startAngle;
+				this.EndAngle = endAngle;
+			}
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the Arc class that passes through the specified center, start, and end points, using
+		/// the default axis of rotation.
+		/// </summary>
+		/// <remarks>This constructor creates an arc in the plane defined by the provided points, using the Z axis as
+		/// the default normal. To specify a different axis of rotation, use the constructor that accepts an axis
+		/// parameter.</remarks>
+		/// <param name="center">The center point of the arc.</param>
+		/// <param name="start">The start point of the arc.</param>
+		/// <param name="end">The end point of the arc.</param>
+		public Arc(XYZ center, XYZ start, XYZ end)
+			: this(center, start, end, XYZ.AxisZ)
+		{
+		}
+
+		/// <summary>
 		/// Creates an arc using 2 points and a bulge.
 		/// </summary>
 		/// <param name="p1"></param>

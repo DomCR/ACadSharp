@@ -17,101 +17,6 @@ namespace ACadSharp.IO.DXF
 		{
 		}
 
-		protected override void writeSection()
-		{
-			while (this.Holder.Objects.Any())
-			{
-				CadObject item = this.Holder.Objects.Dequeue();
-
-				this.writeObject(item);
-			}
-		}
-
-		protected void writeObject<T>(T co)
-			where T : CadObject
-		{
-			switch (co)
-			{
-				case AcdbPlaceHolder:
-				case EvaluationGraph:
-				case Material:
-				case MultiLeaderObjectContextData:
-				case VisualStyle:
-				case ImageDefinitionReactor:
-				case UnknownNonGraphicalObject:
-				case ProxyObject:
-				case XRecord:
-					this.notify($"Object not implemented : {co.GetType().FullName}");
-					return;
-			}
-
-
-			if (co is XRecord && !this.Configuration.WriteXRecords)
-			{
-				return;
-			}
-
-			this._writer.Write(DxfCode.Start, co.ObjectName);
-
-			this.writeCommonObjectData(co);
-
-			switch (co)
-			{
-				case BookColor bookColor:
-					this.writeBookColor(bookColor);
-					return;
-				case CadDictionary cadDictionary:
-					this.writeDictionary(cadDictionary);
-					return;
-				case DictionaryVariable dictvar:
-					this.writeDictionaryVariable(dictvar);
-					break;
-				case GeoData geodata:
-					this.writeGeoData(geodata);
-					break;
-				case Group group:
-					this.writeGroup(group);
-					break;
-				case ImageDefinition imageDefinition:
-					this.writeImageDefinition(imageDefinition);
-					return;
-				case Layout layout:
-					this.writeLayout(layout);
-					break;
-				case MLineStyle mlStyle:
-					this.writeMLineStyle(mlStyle);
-					break;
-				case MultiLeaderStyle multiLeaderlStyle:
-					this.writeMultiLeaderStyle(multiLeaderlStyle);
-					break;
-				case PlotSettings plotSettings:
-					this.writePlotSettings(plotSettings);
-					break;
-				case PdfUnderlayDefinition pdfUnderlayDefinition:
-					this.writePdfUnderlayDefinition(pdfUnderlayDefinition);
-					break;
-				case RasterVariables rasterVariables:
-					this.writeRasterVariables(rasterVariables);
-					break;
-				case Scale scale:
-					this.writeScale(scale);
-					break;
-				case SpatialFilter spatialFilter:
-					this.writeSpatialFilter(spatialFilter);
-					break;
-				case SortEntitiesTable sortensTable:
-					this.writeSortentsTable(sortensTable);
-					break;
-				case XRecord record:
-					this.writeXRecord(record);
-					break;
-				default:
-					throw new NotImplementedException($"Object not implemented : {co.GetType().FullName}");
-			}
-
-			this.writeExtendedData(co.ExtendedData);
-		}
-
 		protected void writeBookColor(BookColor color)
 		{
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.DbColor);
@@ -132,20 +37,16 @@ namespace ACadSharp.IO.DXF
 			{
 				if (item is XRecord && !this.Configuration.WriteXRecords)
 				{
-					return;
+					continue;
 				}
 
 				this._writer.Write(3, item.Name);
 				this._writer.Write(350, item.Handle);
-			}
 
-			//Add the entries as objects
-			foreach (CadObject item in dict)
-			{
 				this.Holder.Objects.Enqueue(item);
 			}
 
-			if(dict is CadDictionaryWithDefault withDefault)
+			if (dict is CadDictionaryWithDefault withDefault)
 			{
 				this._writer.Write(100, DxfSubclassMarker.DictionaryWithDefault);
 				this._writer.WriteHandle(340, withDefault.DefaultEntry);
@@ -160,84 +61,6 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(1, dictvar.Value, map);
 			this._writer.Write(280, dictvar.ObjectSchemaNumber, map);
-		}
-
-		protected void writePlotSettings(PlotSettings plot)
-		{
-			DxfClassMap map = DxfClassMap.Create<PlotSettings>();
-
-			this._writer.Write(100, DxfSubclassMarker.PlotSettings);
-
-			this._writer.Write(1, plot.PageName, map);
-			this._writer.Write(2, plot.SystemPrinterName, map);
-
-			this._writer.Write(4, plot.PaperSize, map);
-
-			this._writer.Write(6, plot.PlotViewName, map);
-			this._writer.Write(7, plot.StyleSheet, map);
-
-			this._writer.Write(40, plot.UnprintableMargin.Left, map);
-			this._writer.Write(41, plot.UnprintableMargin.Bottom, map);
-			this._writer.Write(42, plot.UnprintableMargin.Right, map);
-			this._writer.Write(43, plot.UnprintableMargin.Top, map);
-			this._writer.Write(44, plot.PaperWidth, map);
-			this._writer.Write(45, plot.PaperHeight, map);
-			this._writer.Write(46, plot.PlotOriginX, map);
-			this._writer.Write(47, plot.PlotOriginY, map);
-			this._writer.Write(48, plot.WindowLowerLeftX, map);
-			this._writer.Write(49, plot.WindowLowerLeftY, map);
-
-			this._writer.Write(140, plot.WindowUpperLeftX, map);
-			this._writer.Write(141, plot.WindowUpperLeftY, map);
-			this._writer.Write(142, plot.NumeratorScale, map);
-			this._writer.Write(143, plot.DenominatorScale, map);
-
-			this._writer.Write(70, (short)plot.Flags, map);
-
-			this._writer.Write(72, (short)plot.PaperUnits, map);
-			this._writer.Write(73, (short)plot.PaperRotation, map);
-			this._writer.Write(74, (short)plot.PlotType, map);
-			this._writer.Write(75, plot.ScaledFit, map);
-			this._writer.Write(76, (short)plot.ShadePlotMode, map);
-			this._writer.Write(77, (short)plot.ShadePlotResolutionMode, map);
-			this._writer.Write(78, plot.ShadePlotDPI, map);
-			this._writer.Write(147, plot.PrintScale, map);
-
-			this._writer.Write(148, plot.PaperImageOrigin.X, map);
-			this._writer.Write(149, plot.PaperImageOrigin.Y, map);
-		}
-
-		protected void writePdfUnderlayDefinition(PdfUnderlayDefinition definition)
-		{
-			DxfClassMap map = DxfClassMap.Create<PlotSettings>();
-
-			this._writer.Write(100, DxfSubclassMarker.UnderlayDefinition);
-
-			this._writer.Write(1, definition.File, map);
-			this._writer.Write(2, definition.Page, map);
-		}
-
-		protected void writeRasterVariables(RasterVariables variables)
-		{
-			DxfClassMap map = DxfClassMap.Create<RasterVariables>();
-
-			this._writer.Write(100, DxfSubclassMarker.RasterVariables);
-
-			this._writer.Write(90, variables.ClassVersion, map);
-			this._writer.Write(70, variables.IsDisplayFrameShown ? 1 : 0, map);
-			this._writer.Write(71, (short)variables.DisplayQuality, map);
-			this._writer.Write(72, (short)variables.DisplayQuality, map);
-		}
-
-		protected void writeScale(Scale scale)
-		{
-			this._writer.Write(100, DxfSubclassMarker.Scale);
-
-			this._writer.Write(70, 0);
-			this._writer.Write(300, scale.Name);
-			this._writer.Write(140, scale.PaperUnits);
-			this._writer.Write(141, scale.DrawingUnits);
-			this._writer.Write(290, scale.IsUnitScale ? (short)1 : (short)0);
 		}
 
 		protected void writeGeoData(GeoData geodata)
@@ -534,6 +357,246 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(298, false); //	undocumented
 		}
 
+		protected void writeObject<T>(T co)
+			where T : CadObject
+		{
+			if (!this.isObjectSupported(co))
+			{
+				return;
+			}
+
+			if (co is XRecord && !this.Configuration.WriteXRecords)
+			{
+				return;
+			}
+
+			this._writer.Write(DxfCode.Start, co.ObjectName);
+
+			this.writeCommonObjectData(co);
+
+			switch (co)
+			{
+				case BookColor bookColor:
+					this.writeBookColor(bookColor);
+					return;
+				case CadDictionary cadDictionary:
+					this.writeDictionary(cadDictionary);
+					return;
+				case DictionaryVariable dictvar:
+					this.writeDictionaryVariable(dictvar);
+					break;
+				case GeoData geodata:
+					this.writeGeoData(geodata);
+					break;
+				case Group group:
+					this.writeGroup(group);
+					break;
+				case ImageDefinition imageDefinition:
+					this.writeImageDefinition(imageDefinition);
+					return;
+				case ImageDefinitionReactor reactor:
+					this.writeImageDefinitionReactor(reactor);
+					return;
+				case Layout layout:
+					this.writeLayout(layout);
+					break;
+				case MLineStyle mlStyle:
+					this.writeMLineStyle(mlStyle);
+					break;
+				case MultiLeaderStyle multiLeaderlStyle:
+					this.writeMultiLeaderStyle(multiLeaderlStyle);
+					break;
+				case PlotSettings plotSettings:
+					this.writePlotSettings(plotSettings);
+					break;
+				case PdfUnderlayDefinition pdfUnderlayDefinition:
+					this.writePdfUnderlayDefinition(pdfUnderlayDefinition);
+					break;
+				case RasterVariables rasterVariables:
+					this.writeRasterVariables(rasterVariables);
+					break;
+				case Scale scale:
+					this.writeScale(scale);
+					break;
+				case SpatialFilter spatialFilter:
+					this.writeSpatialFilter(spatialFilter);
+					break;
+				case SortEntitiesTable sortensTable:
+					this.writeSortentsTable(sortensTable);
+					break;
+				case XRecord record:
+					this.writeXRecord(record);
+					break;
+				default:
+					throw new NotImplementedException($"Object not implemented : {co.GetType().FullName}");
+			}
+
+			this.writeExtendedData(co.ExtendedData);
+		}
+
+		protected void writePdfUnderlayDefinition(PdfUnderlayDefinition definition)
+		{
+			DxfClassMap map = DxfClassMap.Create<PlotSettings>();
+
+			this._writer.Write(100, DxfSubclassMarker.UnderlayDefinition);
+
+			this._writer.Write(1, definition.File, map);
+			this._writer.Write(2, definition.Page, map);
+		}
+
+		protected void writePlotSettings(PlotSettings plot)
+		{
+			DxfClassMap map = DxfClassMap.Create<PlotSettings>();
+
+			this._writer.Write(100, DxfSubclassMarker.PlotSettings);
+
+			this._writer.Write(1, plot.PageName, map);
+			this._writer.Write(2, plot.SystemPrinterName, map);
+
+			this._writer.Write(4, plot.PaperSize, map);
+
+			this._writer.Write(6, plot.PlotViewName, map);
+			this._writer.Write(7, plot.StyleSheet, map);
+
+			this._writer.Write(40, plot.UnprintableMargin.Left, map);
+			this._writer.Write(41, plot.UnprintableMargin.Bottom, map);
+			this._writer.Write(42, plot.UnprintableMargin.Right, map);
+			this._writer.Write(43, plot.UnprintableMargin.Top, map);
+			this._writer.Write(44, plot.PaperWidth, map);
+			this._writer.Write(45, plot.PaperHeight, map);
+			this._writer.Write(46, plot.PlotOriginX, map);
+			this._writer.Write(47, plot.PlotOriginY, map);
+			this._writer.Write(48, plot.WindowLowerLeftX, map);
+			this._writer.Write(49, plot.WindowLowerLeftY, map);
+
+			this._writer.Write(140, plot.WindowUpperLeftX, map);
+			this._writer.Write(141, plot.WindowUpperLeftY, map);
+			this._writer.Write(142, plot.NumeratorScale, map);
+			this._writer.Write(143, plot.DenominatorScale, map);
+
+			this._writer.Write(70, (short)plot.Flags, map);
+
+			this._writer.Write(72, (short)plot.PaperUnits, map);
+			this._writer.Write(73, (short)plot.PaperRotation, map);
+			this._writer.Write(74, (short)plot.PlotType, map);
+			this._writer.Write(75, plot.ScaledFit, map);
+			this._writer.Write(76, (short)plot.ShadePlotMode, map);
+			this._writer.Write(77, (short)plot.ShadePlotResolutionMode, map);
+			this._writer.Write(78, plot.ShadePlotDPI, map);
+			this._writer.Write(147, plot.PrintScale, map);
+
+			this._writer.Write(148, plot.PaperImageOrigin.X, map);
+			this._writer.Write(149, plot.PaperImageOrigin.Y, map);
+		}
+
+		protected void writeRasterVariables(RasterVariables variables)
+		{
+			DxfClassMap map = DxfClassMap.Create<RasterVariables>();
+
+			this._writer.Write(100, DxfSubclassMarker.RasterVariables);
+
+			this._writer.Write(90, variables.ClassVersion, map);
+			this._writer.Write(70, variables.IsDisplayFrameShown ? 1 : 0, map);
+			this._writer.Write(71, (short)variables.DisplayQuality, map);
+			this._writer.Write(72, (short)variables.DisplayQuality, map);
+		}
+
+		protected void writeScale(Scale scale)
+		{
+			this._writer.Write(100, DxfSubclassMarker.Scale);
+
+			this._writer.Write(70, 0);
+			this._writer.Write(300, scale.Name);
+			this._writer.Write(140, scale.PaperUnits);
+			this._writer.Write(141, scale.DrawingUnits);
+			this._writer.Write(290, scale.IsUnitScale ? (short)1 : (short)0);
+		}
+
+		protected override void writeSection()
+		{
+			while (this.Holder.Objects.Any())
+			{
+				CadObject item = this.Holder.Objects.Dequeue();
+
+				this.writeObject(item);
+			}
+		}
+
+		protected void writeXRecord(XRecord record)
+		{
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XRecord);
+
+			this._writer.Write(280, record.CloningFlags);
+
+			foreach (var e in record.Entries)
+			{
+				switch (e.GroupCode)
+				{
+					case GroupCodeValueType.None:
+						break;
+					case GroupCodeValueType.Point3D:
+						if (e.Value is IVector v)
+						{
+							this._writer.Write(e.Code, v);
+						}
+						else
+						{
+							this._writer.Write(e.Code, e.Value);
+						}
+						break;
+					case GroupCodeValueType.Handle:
+					case GroupCodeValueType.ObjectId:
+					case GroupCodeValueType.ExtendedDataHandle:
+						var obj = e.Value as IHandledCadObject;
+						this._writer.Write(e.Code, obj.Handle);
+						break;
+					default:
+						this._writer.Write(e.Code, e.Value);
+						break;
+				}
+			}
+		}
+
+		private bool isObjectSupported(CadObject co)
+		{
+			switch (co)
+			{
+				case UnknownNonGraphicalObject:
+					return false;
+				case AcdbPlaceHolder:
+				case EvaluationGraph:
+				case Material:
+				case MultiLeaderObjectContextData:
+				case VisualStyle:
+				case ProxyObject:
+					this.notify($"Object not implemented : {co.GetType().FullName}", NotificationType.NotImplemented);
+					return false;
+				default:
+					return true;
+			}
+		}
+
+		private void writeImageDefinitionReactor(ImageDefinitionReactor reactor)
+		{
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.RasterImageDefReactor);
+
+			this._writer.Write(90, reactor.ClassVersion);
+			this._writer.WriteHandle(330, reactor.Image);
+		}
+
+		private void writeSortentsTable(SortEntitiesTable e)
+		{
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.SortentsTable);
+
+			this._writer.WriteHandle(330, e.BlockOwner);
+
+			foreach (SortEntitiesTable.Sorter item in e)
+			{
+				this._writer.WriteHandle(331, item.Entity);
+				this._writer.Write(5, item.SortHandle);
+			}
+		}
+
 		private void writeSpatialFilter(SpatialFilter filter)
 		{
 			DxfClassMap map = DxfClassMap.Create<SpatialFilter>();
@@ -576,29 +639,6 @@ namespace ACadSharp.IO.DXF
 			for (int i = 0; i < array.Length; i++)
 			{
 				this._writer.Write(40, array[i]);
-			}
-		}
-
-		private void writeSortentsTable(SortEntitiesTable e)
-		{
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.SortentsTable);
-
-			this._writer.WriteHandle(330, e.BlockOwner);
-
-			foreach (SortEntitiesTable.Sorter item in e)
-			{
-				this._writer.WriteHandle(331, item.Entity);
-				this._writer.Write(5, item.SortHandle);
-			}
-		}
-
-		protected void writeXRecord(XRecord e)
-		{
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XRecord);
-
-			foreach (var item in e.Entries)
-			{
-				this._writer.Write(item.Code, item.Value);
 			}
 		}
 	}

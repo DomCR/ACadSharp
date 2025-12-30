@@ -80,5 +80,11 @@ namespace ACadSharp.Entities
 		{
 			return new BoundingBox(this.Location);
 		}
+
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return $"{this.SubclassMarker}|{this.Location.ToString()}";
+		}
 	}
 }

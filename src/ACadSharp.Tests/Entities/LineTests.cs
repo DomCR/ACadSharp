@@ -7,34 +7,20 @@ namespace ACadSharp.Tests.Entities
 {
 	public class LineTests : CommonEntityTests<Line>
 	{
-		private CSMathRandom _random = new CSMathRandom();
-
 		[Fact]
-		public void GetBoundingBoxTest()
+		public void TranslationTest()
 		{
-			Line line = new Line();
-			line.EndPoint = new XYZ(10, 10, 0);
-
-			BoundingBox boundingBox = line.GetBoundingBox();
-
-			Assert.Equal(new XYZ(0, 0, 0), boundingBox.Min);
-			Assert.Equal(new XYZ(10, 10, 0), boundingBox.Max);
-		}
-
-		[Fact]
-		public void RandomTranslationTest()
-		{
-			XYZ start = this._random.Next<XYZ>();
-			XYZ end = this._random.Next<XYZ>();
+			var start = XYZ.Zero;
+			var end = new XYZ(1, 1, 0);
 			Line line = new Line
 			{
 				StartPoint = start,
 				EndPoint = end,
 			};
 
-			XYZ move = this._random.Next<XYZ>();
-			Transform translation = Transform.CreateTranslation(move);
-			line.ApplyTransform(translation);
+			XYZ move = new XYZ(5, 5, 0);
+			Transform transform = Transform.CreateTranslation(move);
+			line.ApplyTransform(transform);
 
 			AssertUtils.AreEqual(start.Add(move), line.StartPoint);
 			AssertUtils.AreEqual(end.Add(move), line.EndPoint);
@@ -98,23 +84,15 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
-		public void TranslationTest()
+		public override void GetBoundingBoxTest()
 		{
-			var start = XYZ.Zero;
-			var end = new XYZ(1, 1, 0);
-			Line line = new Line
-			{
-				StartPoint = start,
-				EndPoint = end,
-			};
+			Line line = new Line();
+			line.EndPoint = new XYZ(10, 10, 0);
 
-			XYZ move = new XYZ(5, 5, 0);
-			Transform transform = Transform.CreateTranslation(move);
-			line.ApplyTransform(transform);
+			BoundingBox boundingBox = line.GetBoundingBox();
 
-			AssertUtils.AreEqual(start.Add(move), line.StartPoint);
-			AssertUtils.AreEqual(end.Add(move), line.EndPoint);
-			AssertUtils.AreEqual(XYZ.AxisZ, line.Normal);
+			Assert.Equal(new XYZ(0, 0, 0), boundingBox.Min);
+			Assert.Equal(new XYZ(10, 10, 0), boundingBox.Max);
 		}
 	}
 }

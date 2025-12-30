@@ -40,8 +40,9 @@ namespace ACadSharp.Tests.IO
 
 			CadDocument doc = this.readDocument(test, configuration);
 
-			if(doc.Header.Version <= ACadVersion.AC1021)
+			if (doc.Header.Version < ACadVersion.AC1012)
 			{
+				this._output.WriteLine($"Table entity not compatible for {doc.Header.Version}");
 				return;
 			}
 

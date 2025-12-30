@@ -31,11 +31,6 @@ namespace ACadSharp.IO.Templates
 		{
 			base.build(builder);
 
-			if (this.ViewportHeaderHandle.HasValue && this.ViewportHeaderHandle > 0)
-			{
-				builder.Notify($"ViewportHeaderHandle not implemented for Viewport, handle {this.ViewportHeaderHandle}");
-			}
-
 			if (builder.TryGetCadObject<Entity>(this.BoundaryHandle, out Entity entity))
 			{
 				this.CadObject.Boundary = entity;
@@ -53,21 +48,6 @@ namespace ACadSharp.IO.Templates
 			if (this.BaseUcsHandle.HasValue && this.BaseUcsHandle > 0)
 			{
 				builder.Notify($"Base ucs not implemented for Viewport, handle {this.BaseUcsHandle}");
-			}
-
-			if (this.CadObject.XDictionary != null &&
-				this.CadObject.XDictionary.TryGetEntry(Viewport.ASDK_XREC_ANNOTATION_SCALE_INFO, out XRecord record))
-			{
-				foreach (XRecord.Entry item in record.Entries)
-				{
-					if (item.Code == 340)
-					{
-						if (builder.TryGetCadObject((ulong?)item.Value, out Scale scale))
-						{
-							this.CadObject.Scale = scale;
-						}
-					}
-				}
 			}
 
 			foreach (var handle in this.FrozenLayerHandles)

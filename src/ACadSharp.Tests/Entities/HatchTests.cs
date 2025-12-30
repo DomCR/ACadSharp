@@ -143,7 +143,7 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
-		public void GetBoundingBoxTest()
+		public override void GetBoundingBoxTest()
 		{
 			Hatch hatch = this.createPolylineHatch();
 

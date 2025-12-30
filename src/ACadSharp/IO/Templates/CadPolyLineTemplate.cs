@@ -1,11 +1,10 @@
 ﻿using ACadSharp.Entities;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadPolyLineTemplate : CadEntityTemplate
+	internal class CadPolyLineTemplate : CadEntityTemplate, ICadOwnerTemplate
 	{
 		public ulong? FirstVertexHandle { get; internal set; }
 
@@ -15,7 +14,7 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? SeqendHandle { get; internal set; }
 
-		public HashSet<ulong> VertexHandles { get; set; } = new();
+		public HashSet<ulong> OwnedObjectsHandlers { get; } = new();
 
 		public CadPolyLineTemplate() : base(new PolyLinePlaceholder())
 		{
@@ -81,11 +80,15 @@ namespace ACadSharp.IO.Templates
 				}
 				else
 				{
-					foreach (var handle in this.VertexHandles)
+					foreach (var handle in this.OwnedObjectsHandlers)
 					{
 						if (builder.TryGetCadObject(handle, out Vertex v))
 						{
 							this.addVertices(builder, v);
+						}
+						else if (builder.TryGetCadObject(handle, out Seqend s))
+						{
+							this.setSeqend(builder, s);
 						}
 						else
 						{
@@ -117,7 +120,7 @@ namespace ACadSharp.IO.Templates
 
 		private void buildPolyfaceMesh(PolyfaceMesh polyfaceMesh, CadDocumentBuilder builder)
 		{
-			foreach (var handle in this.VertexHandles)
+			foreach (var handle in this.OwnedObjectsHandlers)
 			{
 				if (builder.TryGetCadObject(handle, out Entity e))
 				{
@@ -128,6 +131,10 @@ namespace ACadSharp.IO.Templates
 					else if (e is VertexFaceRecord face)
 					{
 						polyfaceMesh.Faces.Add(face);
+					}
+					else if (e is Seqend seqend)
+					{
+						polyfaceMesh.Vertices.Seqend = seqend;
 					}
 					else
 					{

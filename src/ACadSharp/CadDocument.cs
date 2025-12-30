@@ -102,6 +102,14 @@ namespace ACadSharp
 		public LineTypesTable LineTypes { get; private set; }
 
 		/// <summary>
+		/// The collection of all materials in the drawing.
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadMaterial"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public MaterialCollection Materials { get; private set; }
+
+		/// <summary>
 		/// The collection of all Multi leader styles in the drawing.
 		/// </summary>
 		/// <remarks>
@@ -181,6 +189,8 @@ namespace ACadSharp
 		/// The collection of all vports in the drawing.
 		/// </summary>
 		public VPortsTable VPorts { get; private set; }
+
+		internal ViewportEntityControl VEntityControl { get; set; }
 
 		//Contains all the objects in the document
 		private readonly Dictionary<ulong, IHandledCadObject> _cadObjects = new Dictionary<ulong, IHandledCadObject>();
@@ -272,6 +282,7 @@ namespace ACadSharp
 			if (!this.BlockRecords.Contains(BlockRecord.PaperSpaceName))
 			{
 				BlockRecord pspace = BlockRecord.PaperSpace;
+				pspace.Layout.TabOrder = 1;
 				this.Layouts.Add(pspace.Layout);
 			}
 		}
@@ -326,9 +337,9 @@ namespace ACadSharp
 				case Type t when t.Equals(typeof(MLineStyle)):
 					return this.Header.CurrentMLineStyle as T;
 				case Type t when t.Equals(typeof(MultiLeaderStyle)):
-					if (this.DictionaryVariables.TryGetValue(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
+					if (this.DictionaryVariables.TryGet(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
 					{
-						if (this.MLeaderStyles.TryGetValue(variable.Value, out MultiLeaderStyle style))
+						if (this.MLeaderStyles.TryGet(variable.Value, out MultiLeaderStyle style))
 						{
 							return style as T;
 						}
@@ -390,7 +401,7 @@ namespace ACadSharp
 					this.Header.CurrentMLineStyleName = this.MLineStyles.TryAdd(mlineStyle).Name;
 					break;
 				case MultiLeaderStyle multiLeaderStyle:
-					if (this.DictionaryVariables.TryGetValue(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
+					if (this.DictionaryVariables.TryGet(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
 					{
 						variable.Value = multiLeaderStyle.Name;
 					}
@@ -489,6 +500,11 @@ namespace ACadSharp
 			{
 				this.DictionaryVariables = new DictionaryVariableCollection(variables);
 			}
+
+			if (this.updateCollection(CadDictionary.AcadMaterial, createDictionaries, out CadDictionary materials))
+			{
+				this.Materials = new MaterialCollection(materials);
+			}
 		}
 
 		/// <summary>
@@ -513,8 +529,33 @@ namespace ACadSharp
 			}
 		}
 
+		/// <summary>
+		/// Updates the image definition reactors for all raster images in the current collection.
+		/// </summary>
+		/// <remarks>
+		/// This method removes existing <see cref="ImageDefinitionReactor"/> instances from the document
+		/// and creates new reactors for each <see cref="RasterImage"/>. The new reactors are associated with their
+		/// corresponding image definitions and added to the document.
+		/// </remarks>
+		public void UpdateImageReactors()
+		{
+			var reactors = this._cadObjects.Values.OfType<ImageDefinitionReactor>().ToList();
+			foreach (var item in reactors)
+			{
+				this._cadObjects.Remove(item.Handle);
+			}
+
+			var rasterImages = this._cadObjects.Values.OfType<RasterImage>().ToList();
+			foreach (RasterImage image in rasterImages)
+			{
+				image.DefinitionReactor = new ImageDefinitionReactor(image);
+				this.addCadObject(image.DefinitionReactor);
+				image.Definition.AddReactor(image.DefinitionReactor);
+			}
+		}
+
 		internal void RegisterCollection<T>(IObservableCadCollection<T> collection)
-			where T : CadObject
+					where T : CadObject
 		{
 			switch (collection)
 			{
