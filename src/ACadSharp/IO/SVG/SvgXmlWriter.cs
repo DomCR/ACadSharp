@@ -443,7 +443,8 @@ namespace ACadSharp.IO.SVG
 			List<Polyline3D> plines = new List<Polyline3D>();
 			foreach (Hatch.BoundaryPath path in hatch.Paths)
 			{
-				var pline = new Polyline3D(path.GetPoints(this.Configuration.ArcPoints));
+				var pts = path.GetPoints(this.Configuration.ArcPoints);
+				var pline = new Polyline3D(pts);
 				plines.Add(pline);
 			}
 

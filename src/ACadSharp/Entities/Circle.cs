@@ -71,6 +71,15 @@ namespace ACadSharp.Entities
 		/// </summary>
 		public Circle() : base() { }
 
+		/// <summary>
+		/// Initializes a new instance of the Circle class with the specified center point.
+		/// </summary>
+		/// <param name="center">The coordinates of the center point of the circle.</param>
+		public Circle(XYZ center) : base()
+		{
+			this.Center = center;
+		}
+
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
