@@ -197,6 +197,7 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<Ray>(new CadEntityTemplate<Ray>(), this.readEntitySubclassMap);
 				case DxfFileToken.EndSequence:
 					return this.readEntityCodes<Seqend>(new CadEntityTemplate<Seqend>(), this.readEntitySubclassMap);
+				case DxfFileToken.EntityTrace:
 				case DxfFileToken.EntitySolid:
 					return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), this.readModelerGeometry);
 				case DxfFileToken.EntityTable:
