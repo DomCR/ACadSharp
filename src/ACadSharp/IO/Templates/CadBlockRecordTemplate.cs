@@ -7,11 +7,6 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal interface ICadOwnerTemplate : ICadObjectTemplate
-	{
-		public HashSet<ulong> OwnedObjectsHandlers { get; }
-	}
-
 	internal class CadBlockRecordTemplate : CadTableEntryTemplate<BlockRecord>, ICadOwnerTemplate
 	{
 		public ulong? FirstEntityHandle { get; set; }
@@ -67,7 +62,7 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
-		public void SetBlockToRecord(CadDocumentBuilder builder)
+		public void SetBlockToRecord(CadDocumentBuilder builder, DWG.DwgHeaderHandlesCollection headerHandles)
 		{
 			if (builder.TryGetCadObject(this.BeginBlockHandle, out Block block))
 			{
@@ -88,6 +83,19 @@ namespace ACadSharp.IO.Templates
 			if (builder.TryGetCadObject(this.EndBlockHandle, out BlockEnd blockEnd))
 			{
 				this.CadObject.BlockEnd = blockEnd;
+			}
+
+			this.ensureCorrectNaming(builder, headerHandles.MODEL_SPACE, BlockRecord.ModelSpaceName);
+			this.ensureCorrectNaming(builder, headerHandles.PAPER_SPACE, BlockRecord.PaperSpaceName);
+		}
+
+		private void ensureCorrectNaming(CadDocumentBuilder builder, ulong? handle, string expected)
+		{
+			if (this.CadObject.Handle == handle
+				&& !this.CadObject.Name.Equals(expected, System.StringComparison.InvariantCultureIgnoreCase))
+			{
+				builder.Notify($"Invalid name for {this.CadObject.Name} changed to {expected}", NotificationType.Warning);
+				this.CadObject.Name = expected;
 			}
 		}
 
