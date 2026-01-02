@@ -1919,7 +1919,7 @@ namespace ACadSharp.IO.DWG
 			//Reactor, not needed
 			this._writer.HandleReference(image.DefinitionReactor);
 
-			if(image.DefinitionReactor != null)
+			if (image.DefinitionReactor != null)
 			{
 				this._objects.Enqueue(image.DefinitionReactor);
 			}
