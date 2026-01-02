@@ -65,7 +65,7 @@ namespace ACadSharp
 
 		internal static DxfClassMap Create(Type type, string name = null, CadObject obj = null)
 		{
-			if (_cache.TryGetValue(type, out var classMap))
+			if (_cache.TryGetValue(type, out var classMap) && obj == null)
 			{
 				return classMap;
 			}

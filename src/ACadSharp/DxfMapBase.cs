@@ -24,7 +24,7 @@ namespace ACadSharp
 				map.DxfProperties.Add(item.Key, item.Value);
 				if (obj != null)
 				{
-					item.Value.StoredValue = item.Value.GetValue(obj);
+					item.Value.StoredValue = item.Value.GetRawValue(obj);
 				}
 			}
 		}

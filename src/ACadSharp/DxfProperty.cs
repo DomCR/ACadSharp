@@ -71,7 +71,7 @@ namespace ACadSharp
 			}
 
 			records.Add(new ExtendedDataInteger16((short)this.AssignedCode));
-			//records.Add(ExtendedDataRecord.Create(this.GroupCode, this.StoredValue));
+			records.Add(ExtendedDataRecord.Create(this.GroupCode, this.StoredValue));
 
 			return records;
 		}

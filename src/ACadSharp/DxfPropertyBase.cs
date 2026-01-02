@@ -59,6 +59,11 @@ namespace ACadSharp
 			get { return this._storedValue; }
 			set
 			{
+				this._storedValue = value;
+
+				return;
+
+				//Does it need a validation??
 				switch (this.GroupCode)
 				{
 					case GroupCodeValueType.None:
@@ -79,6 +84,9 @@ namespace ACadSharp
 					case GroupCodeValueType.Byte when value is byte b:
 						this._storedValue = b;
 						break;
+					case GroupCodeValueType.Int16 when value is bool bo:
+						this._storedValue = bo ? 1 : 0;
+						break;
 					case GroupCodeValueType.Int16 when value is short:
 					case GroupCodeValueType.ExtendedDataInt16 when value is short:
 						this._storedValue = value as short?;
@@ -90,12 +98,12 @@ namespace ACadSharp
 					case GroupCodeValueType.Int64 when value is long l:
 						this._storedValue = l;
 						break;
-					case GroupCodeValueType.Handle when value is IHandledCadObject:
-					case GroupCodeValueType.ObjectId when value is IHandledCadObject:
-					case GroupCodeValueType.ExtendedDataHandle when value is IHandledCadObject:
-						if (value is IHandledCadObject handled)
+					case GroupCodeValueType.Handle when value is ulong:
+					case GroupCodeValueType.ObjectId when value is ulong:
+					case GroupCodeValueType.ExtendedDataHandle when value is ulong:
+						if (value is ulong handle)
 						{
-							this._storedValue = handled.Handle;
+							this._storedValue = handle;
 						}
 						break;
 					case GroupCodeValueType.Bool when value is bool b:
@@ -393,6 +401,11 @@ namespace ACadSharp
 			INamedCadObject handled = (INamedCadObject)this._property.GetValue(obj);
 
 			return handled?.Name;
+		}
+
+		public object GetRawValue(CadObject obj)
+		{
+			return this.getRawValue(this.AssignedCode, obj);
 		}
 
 		protected object getRawValue<TCadObject>(int code, TCadObject obj)

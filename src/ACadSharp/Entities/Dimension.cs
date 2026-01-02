@@ -2,6 +2,7 @@
 using ACadSharp.Extensions;
 using ACadSharp.Tables;
 using ACadSharp.Types.Units;
+using ACadSharp.XData;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
@@ -372,23 +373,59 @@ namespace ACadSharp.Entities
 			return $"{prefix}{text}{style.Suffix}";
 		}
 
-		/// <exception cref="System.NotImplementedException"></exception>
+		/// <summary>
+		/// Applies the specified dimension style override to the current object, updating its extended data to reflect the
+		/// overridden properties.
+		/// </summary>
+		/// <remarks>This method updates the object's extended data to record the overridden dimension style
+		/// properties. Properties that are identical between the current style and the override are not affected. Use this
+		/// method to persist style overrides for dimension objects in environments that support extended data.</remarks>
+		/// <param name="styleOverride">The dimension style containing property values to override the current object's style. Only properties with values
+		/// different from the current style are applied.</param>
 		public void SetDimensionOverride(DimensionStyle styleOverride)
 		{
-			DxfClassMap styleMap = DxfClassMap.Create<DimensionStyle>(this.Style);
-			DxfClassMap overrideMap = DxfClassMap.Create<DimensionStyle>(styleOverride);
+			DxfClassMap styleMap = DxfClassMap.Create<DimensionStyle>();
+			styleMap.DxfProperties.Remove(2);
+			styleMap.DxfProperties.Remove(70);
 
-			foreach (KeyValuePair<int, DxfProperty> item in overrideMap.DxfProperties)
+			List<DxfProperty> props = new List<DxfProperty>();
+			foreach (KeyValuePair<int, DxfProperty> item in styleMap.DxfProperties)
 			{
-				var p = styleMap.DxfProperties[item.Key];
-				if (p.StoredValue != item.Value.StoredValue)
-				{
+				var curr = item.Value.GetRawValue(this.Style);
+				var over = item.Value.GetRawValue(styleOverride);
 
+				if(curr == null || over == null)
+				{
+					continue;
+				}
+
+				if (!curr.Equals(over))
+				{
+					item.Value.StoredValue = over;
+					props.Add(item.Value);
 				}
 			}
+
+			XData.ExtendedData edata = new ExtendedData();
+			this.ExtendedData.Add(AppId.DefaultName, edata);
+
+			edata.Records.Add(new ExtendedDataString(DimensionStyle.StyleOverrideEntryName));
+			edata.Records.Add(new ExtendedDataControlString(false));
+			foreach (DxfProperty p in props)
+			{
+				edata.Records.AddRange(p.ToXDataRecords());
+			}
+			edata.Records.Add(new ExtendedDataControlString(true));
 		}
 
-		/// <exception cref="System.NotImplementedException"></exception>
+		/// <summary>
+		/// Retrieves the currently active dimension style, including any style overrides that are applied.
+		/// </summary>
+		/// <remarks>Use this method to obtain the effective dimension style for rendering or measurement purposes.
+		/// The returned style reflects all current overrides and can differ from the base style if overrides are
+		/// set.</remarks>
+		/// <returns>A <see cref="DimensionStyle"/> instance representing the active dimension style. If no overrides are present,
+		/// returns the base style; otherwise, returns a copy of the style with overrides applied.</returns>
 		public DimensionStyle GetActiveDimensionStyle()
 		{
 			if (!this.HasStyleOverride)
@@ -405,7 +442,7 @@ namespace ACadSharp.Entities
 			foreach (KeyValuePair<int, DxfProperty> item in overrideMap.DxfProperties)
 			{
 				var p = styleMap.DxfProperties[item.Key];
-				if(p.StoredValue != item.Value.StoredValue)
+				if (p.StoredValue != item.Value.StoredValue)
 				{
 					p.SetValue(style, item.Value.StoredValue);
 				}

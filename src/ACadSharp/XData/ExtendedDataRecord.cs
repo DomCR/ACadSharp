@@ -1,4 +1,6 @@
-﻿namespace ACadSharp.XData
+﻿using CSMath;
+
+namespace ACadSharp.XData
 {
 	/// <summary>
 	/// Defines an <see cref="ExtendedData"/> record.
@@ -34,56 +36,41 @@
 			return $"{this.Code}:{this._value}";
 		}
 
-		/// <exception cref="System.NotImplementedException"></exception>
 		public static ExtendedDataRecord Create(GroupCodeValueType groupCode, object value)
 		{
-			throw new System.NotImplementedException();
-
 			switch (groupCode)
 			{
-				case GroupCodeValueType.None:
-					break;
-				case GroupCodeValueType.String:
-					break;
-				case GroupCodeValueType.Point3D:
-					break;
-				case GroupCodeValueType.Double:
-					break;
-				case GroupCodeValueType.Byte:
-					break;
-				case GroupCodeValueType.Int16:
-					break;
-				case GroupCodeValueType.Int32:
-					break;
-				case GroupCodeValueType.Int64:
-					break;
-				case GroupCodeValueType.Handle:
-					break;
-				case GroupCodeValueType.ObjectId:
-					break;
 				case GroupCodeValueType.Bool:
-					break;
-				case GroupCodeValueType.Chunk:
-					break;
+					return new ExtendedDataInteger16((short)(((bool)value) ? 1 : 0));
+				case GroupCodeValueType.Point3D:
+					return new ExtendedDataCoordinate((XYZ)value);
+				case GroupCodeValueType.Handle:
+				case GroupCodeValueType.ObjectId:
+					return new ExtendedDataHandle((ulong)value);
+				case GroupCodeValueType.String:
 				case GroupCodeValueType.Comment:
-					break;
 				case GroupCodeValueType.ExtendedDataString:
-					break;
+					return new ExtendedDataString((string)value);
+				case GroupCodeValueType.Chunk:
 				case GroupCodeValueType.ExtendedDataChunk:
-					break;
+					return new ExtendedDataBinaryChunk((byte[])value);
 				case GroupCodeValueType.ExtendedDataHandle:
-					break;
+					return new ExtendedDataHandle((ulong)value);
+				case GroupCodeValueType.Double:
 				case GroupCodeValueType.ExtendedDataDouble:
-					break;
+					return new ExtendedDataReal((double)value);
+				case GroupCodeValueType.Int16:
 				case GroupCodeValueType.ExtendedDataInt16:
-					break;
+					return new ExtendedDataInteger16((short)value);
+				case GroupCodeValueType.Int32:
 				case GroupCodeValueType.ExtendedDataInt32:
 					return new ExtendedDataInteger32((int)value);
+				case GroupCodeValueType.None:
+				case GroupCodeValueType.Byte:
+				case GroupCodeValueType.Int64:
 				default:
-					break;
+					throw new System.NotSupportedException();
 			}
-
-			throw new System.NotImplementedException();
 		}
 	}
 
