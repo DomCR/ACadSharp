@@ -28,6 +28,15 @@ namespace ACadSharp
 			this.Name = name;
 		}
 
+		public DxfClassMap(DxfClassMap map) : base()
+		{
+			this.Name = map.Name;
+			foreach (var item in map.DxfProperties)
+			{
+				this.DxfProperties.Add(item.Key, item.Value);
+			}
+		}
+
 		/// <summary>
 		/// Creates a DXF map of the passed type.
 		/// </summary>
@@ -67,7 +76,7 @@ namespace ACadSharp
 		{
 			if (_cache.TryGetValue(type, out var classMap) && obj == null)
 			{
-				return classMap;
+				return new DxfClassMap(classMap);
 			}
 
 			classMap = new DxfClassMap();
@@ -98,7 +107,7 @@ namespace ACadSharp
 
 			_cache.TryAdd(type, classMap);
 
-			return classMap;
+			return new DxfClassMap(classMap);
 		}
 	}
 }
