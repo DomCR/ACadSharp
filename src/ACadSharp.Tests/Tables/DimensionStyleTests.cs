@@ -161,15 +161,47 @@ namespace ACadSharp.Tests.Tables
 		}
 
 		[Theory]
-		[MemberData(nameof(LinearStyleFormat))]
-		public void GetLinearMeasurementText(DimensionStyle style, DimensionAligned dim, string result)
+		[MemberData(nameof(AngularStyleFormat))]
+		public void GetAngularMeasurementText(DimensionStyle style, DimensionAngular2Line dim, string result)
 		{
 			Assert.Equal(result, dim.GetMeasurementText(style));
 		}
 
+		[Fact]
+		public void GetDimensionOverride()
+		{
+			string styleName = "my_style";
+			DimensionStyle style = new DimensionStyle(styleName);
+			DimensionAligned dim = new DimensionAligned(XYZ.Zero, new XYZ(5, 0, 0));
+			dim.Style = style;
+
+			var active = dim.GetActiveDimensionStyle();
+			Assert.NotNull(active);
+			Assert.Equal(style, active);
+			Assert.Equal(styleName, active.Name);
+
+			style.ScaleFactor = 5;
+
+			Assert.Equal(5, active.ScaleFactor);
+
+			string dimOverrideName = "my_override";
+			DimensionStyle dimOverride = new DimensionStyle(dimOverrideName);
+			dimOverride.ScaleFactor = 50;
+
+			dim.SetDimensionOverride(dimOverride);
+
+			Assert.True(dim.HasStyleOverride);
+
+			active = dim.GetActiveDimensionStyle();
+			Assert.NotNull(active);
+			Assert.NotEqual(style, active);
+			Assert.Equal("override", active.Name);
+			Assert.Equal(50, active.ScaleFactor);
+		}
+
 		[Theory]
-		[MemberData(nameof(AngularStyleFormat))]
-		public void GetAngularMeasurementText(DimensionStyle style, DimensionAngular2Line dim, string result)
+		[MemberData(nameof(LinearStyleFormat))]
+		public void GetLinearMeasurementText(DimensionStyle style, DimensionAligned dim, string result)
 		{
 			Assert.Equal(result, dim.GetMeasurementText(style));
 		}

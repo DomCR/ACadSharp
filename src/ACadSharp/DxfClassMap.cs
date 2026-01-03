@@ -5,6 +5,13 @@ using System.Reflection;
 
 namespace ACadSharp
 {
+	/// <summary>
+	/// Represents the mapping information for a DXF class, including metadata and property mappings used for serialization
+	/// and deserialization of CAD objects.
+	/// </summary>
+	/// <remarks>Instances of this class are typically created and managed via the static Create methods, which
+	/// provide caching to improve performance when mapping types multiple times. Use the ClearCache method to clear all
+	/// cached mappings if the underlying type information changes or to force remapping.</remarks>
 	public class DxfClassMap : DxfMapBase
 	{
 		/// <summary>
@@ -19,6 +26,15 @@ namespace ACadSharp
 		public DxfClassMap(string name) : base()
 		{
 			this.Name = name;
+		}
+
+		public DxfClassMap(DxfClassMap map) : base()
+		{
+			this.Name = map.Name;
+			foreach (var item in map.DxfProperties)
+			{
+				this.DxfProperties.Add(item.Key, item.Value);
+			}
 		}
 
 		/// <summary>
@@ -36,6 +52,12 @@ namespace ACadSharp
 			return Create(typeof(T));
 		}
 
+		public static DxfClassMap Create<T>(T obj)
+			where T : CadObject
+		{
+			return Create(typeof(T), obj: obj);
+		}
+
 		/// <summary>
 		/// Clears the map cache.
 		/// </summary>
@@ -50,11 +72,11 @@ namespace ACadSharp
 			return $"DxfClassMap:{this.Name}";
 		}
 
-		internal static DxfClassMap Create(Type type, string name = null)
+		internal static DxfClassMap Create(Type type, string name = null, CadObject obj = null)
 		{
-			if (_cache.TryGetValue(type, out var classMap))
+			if (_cache.TryGetValue(type, out var classMap) && obj == null)
 			{
-				return classMap;
+				return new DxfClassMap(classMap);
 			}
 
 			classMap = new DxfClassMap();
@@ -63,7 +85,10 @@ namespace ACadSharp
 			{
 				var att = type.GetCustomAttribute<DxfSubClassAttribute>();
 				if (att == null)
+				{
 					throw new ArgumentException($"{type.FullName} is not a dxf subclass");
+				}
+
 				classMap.Name = att.ClassName;
 			}
 			else
@@ -71,18 +96,18 @@ namespace ACadSharp
 				classMap.Name = name;
 			}
 
-			addClassProperties(classMap, type);
+			addClassProperties(classMap, type, obj);
 
 			DxfSubClassAttribute baseAtt = type.BaseType.GetCustomAttribute<DxfSubClassAttribute>();
 			if (baseAtt != null && baseAtt.IsEmpty)
 			{
 				//Properties in the table seem to be embeded to the hinerit type
-				addClassProperties(classMap, type.BaseType);
+				addClassProperties(classMap, type.BaseType, obj);
 			}
 
 			_cache.TryAdd(type, classMap);
 
-			return classMap;
+			return new DxfClassMap(classMap);
 		}
 	}
 }

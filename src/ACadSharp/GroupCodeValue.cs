@@ -1,7 +1,43 @@
-﻿namespace ACadSharp
+﻿using CSMath;
+
+namespace ACadSharp
 {
 	public static class GroupCodeValue
 	{
+		public static bool IsValid(this DxfCode code, object value)
+		{
+			return TransformValue((int)code).IsValid(value);
+		}
+
+		public static bool IsValid(this GroupCodeValueType groupCode, object value)
+		{
+			switch (groupCode)
+			{
+				case GroupCodeValueType.String when value is string:
+				case GroupCodeValueType.ExtendedDataString when value is string:
+				case GroupCodeValueType.Comment when value is string:
+				case GroupCodeValueType.Point3D when value is IVector:
+				case GroupCodeValueType.Double when value is double:
+				case GroupCodeValueType.ExtendedDataDouble when value is double:
+				case GroupCodeValueType.Byte when value is byte:
+				case GroupCodeValueType.Int16 when value is short:
+				case GroupCodeValueType.ExtendedDataInt16 when value is short:
+				case GroupCodeValueType.Int32 when value is int:
+				case GroupCodeValueType.ExtendedDataInt32 when value is int:
+				case GroupCodeValueType.Int64 when value is long:
+				case GroupCodeValueType.Handle when value is ulong:
+				case GroupCodeValueType.ObjectId when value is ulong:
+				case GroupCodeValueType.ExtendedDataHandle when value is ulong:
+				case GroupCodeValueType.Bool when value is bool:
+				case GroupCodeValueType.Chunk when value is byte[]:
+				case GroupCodeValueType.ExtendedDataChunk when value is byte[]:
+					return true;
+				case GroupCodeValueType.None:
+				default:
+					return false;
+			}
+		}
+
 		public static GroupCodeValueType TransformValue(int code)
 		{
 			if (code >= 0 && code <= 4)
