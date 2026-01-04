@@ -41,7 +41,7 @@ namespace ACadSharp
 		/// Creates a DXF map of the passed type.
 		/// </summary>
 		/// <remarks>
-		///   Will return a cached instance if it exists.  if not, it will be created on call.
+		/// Will return a cached instance if it exists.  if not, it will be created on call.
 		/// Use the <see cref="ClearCache"/> method to clear the cache and force a new mapping to be created.
 		/// </remarks>
 		/// <typeparam name="T">Type of CadObject to map.</typeparam>
