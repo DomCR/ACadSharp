@@ -270,7 +270,7 @@ namespace ACadSharp.IO
 				dictionaryTemplate.Build(this);
 			}
 
-			this.DocumentToBuild.UpdateCollections(true);
+			this.DocumentToBuild.UpdateCollections(true, false);
 		}
 
 		protected void createMissingHandles()

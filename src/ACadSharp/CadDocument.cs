@@ -262,7 +262,7 @@ namespace ACadSharp
 				CadDictionary.CreateDefaultEntries(this.RootDictionary);
 			}
 
-			this.UpdateCollections(true);
+			this.UpdateCollections(true, true);
 
 			//Default variables
 			this.AppIds.CreateDefaultEntries();
@@ -445,7 +445,7 @@ namespace ACadSharp
 		/// Updates the collections in the document and link them to it's dictionary.
 		/// </summary>
 		/// <param name="createDictionaries"></param>
-		public void UpdateCollections(bool createDictionaries)
+		public void UpdateCollections(bool createDictionaries, bool createDefaults)
 		{
 			if (createDictionaries && this.RootDictionary == null)
 			{
@@ -469,16 +469,19 @@ namespace ACadSharp
 			if (this.updateCollection(CadDictionary.AcadScaleList, createDictionaries, out CadDictionary scales))
 			{
 				this.Scales = new ScaleCollection(scales);
+				if (createDefaults) { this.Scales.CreateDefaults(); }
 			}
 
 			if (this.updateCollection(CadDictionary.AcadMLineStyle, createDictionaries, out CadDictionary mlineStyles))
 			{
 				this.MLineStyles = new MLineStyleCollection(mlineStyles);
+				if (createDefaults) { this.MLineStyles.CreateDefaults(); }
 			}
 
 			if (this.updateCollection(CadDictionary.AcadMLeaderStyle, createDictionaries, out CadDictionary mleaderStyles))
 			{
 				this.MLeaderStyles = new MLeaderStyleCollection(mleaderStyles);
+				if (createDefaults) { this.MLeaderStyles.CreateDefaults(); }
 			}
 
 			if (this.updateCollection(CadDictionary.AcadImageDict, createDictionaries, out CadDictionary imageDefinitions))
@@ -499,11 +502,13 @@ namespace ACadSharp
 			if (this.updateCollection(CadDictionary.VariableDictionary, createDictionaries, out CadDictionary variables))
 			{
 				this.DictionaryVariables = new DictionaryVariableCollection(variables);
+				if (createDefaults) { this.DictionaryVariables.CreateDefaults(); }
 			}
 
 			if (this.updateCollection(CadDictionary.AcadMaterial, createDictionaries, out CadDictionary materials))
 			{
 				this.Materials = new MaterialCollection(materials);
+				if (createDefaults) { this.Materials.CreateDefaults(); }
 			}
 		}
 
