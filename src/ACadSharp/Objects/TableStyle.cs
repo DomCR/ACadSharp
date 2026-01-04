@@ -13,6 +13,8 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.TableStyle)]
 	public class TableStyle : NonGraphicalObject
 	{
+		public const string DefaultName = "Standard";
+
 		public override string ObjectName => DxfFileToken.TableStyle;
 
 		/// <inheritdoc/>

@@ -13,13 +13,6 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.DictionaryVariables)]
 	public class DictionaryVariable : NonGraphicalObject
 	{
-		/// <summary>
-		/// Represents the name of the current multi-leader style.
-		/// </summary>
-		/// <remarks>This constant is used to identify the current multi-leader style in the application. The value is
-		/// a string literal: "CMLEADERSTYLE".</remarks>
-		public const string CurrentMultiLeaderStyle = "CMLEADERSTYLE";
-
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectDictionaryVar;
 
@@ -40,6 +33,35 @@ namespace ACadSharp.Objects
 		/// </summary>
 		[DxfCodeValue(1)]
 		public string Value { get; set; }
+
+		/// <summary>
+		/// Represents the name of the system variable that specifies the current <see cref="Scale"/>.
+		/// </summary>
+		/// <remarks>
+		/// This constant is used to identify the current <see cref="Scale"/> in the application.
+		/// </remarks>
+		public const string CurrentAnnotationScale = "CANNOSCALE";
+
+		/// <summary>
+		/// Represents the name of the current <see cref="MultiLeaderStyle"/>.
+		/// </summary>
+		/// <remarks>
+		/// This constant is used to identify the current <see cref="MultiLeaderStyle"/> in the application.
+		/// </remarks>
+		public const string CurrentMultiLeaderStyle = "CMLEADERSTYLE";
+
+		/// <summary>
+		/// Represents the name of the current <see cref="TableStyle"/>.
+		/// </summary>
+		/// <remarks>
+		/// This constant is used to identify the current <see cref="TableStyle"/> in the application.
+		/// </remarks>
+		public const string CurrentTableStyle = "CTABLESTYLE";
+
+		/// <summary>
+		/// The name of the system variable that controls the display of frames for wipeout objects.
+		/// </summary>
+		public const string WipeoutFrame = "WIPEOUTFRAME";
 
 		/// <inheritdoc/>
 		public DictionaryVariable() : base()

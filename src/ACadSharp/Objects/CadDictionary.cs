@@ -171,16 +171,14 @@ namespace ACadSharp.Objects
 			root.TryAdd(new CadDictionary(AcadColor));
 			root.TryAdd(new CadDictionary(AcadGroup));
 
-			CadDictionary layouts = root.ensureCadDictionaryExist(AcadLayout);
+			root.ensureCadDictionaryExist(AcadLayout);
 
 			root.TryAdd(new CadDictionary(AcadMaterial));
 			root.TryAdd(new CadDictionary(AcadSortEnts));
 
-			CadDictionary mLeaderStyles = root.ensureCadDictionaryExist(AcadMLeaderStyle);
-			mLeaderStyles.TryAdd(MultiLeaderStyle.Default);
+			root.ensureCadDictionaryExist(AcadMLeaderStyle);
 
-			CadDictionary mLineStyles = root.ensureCadDictionaryExist(AcadMLineStyle);
-			mLineStyles.TryAdd(MLineStyle.Default);
+			root.ensureCadDictionaryExist(AcadMLineStyle);
 
 			root.TryAdd(new CadDictionary(AcadTableStyle));
 			root.TryAdd(new CadDictionary(AcadPlotSettings));
@@ -190,43 +188,16 @@ namespace ACadSharp.Objects
 			// { AcadPlotStyleName, new CadDictionaryWithDefault() },	//Add default entry "Normal"	PlaceHolder	??
 
 			CadDictionary variableDictionary = root.ensureCadDictionaryExist(VariableDictionary);
-			root.TryAdd(variableDictionary);
-			DictionaryVariable cmLeaderStyleEntry = new DictionaryVariable
-			(
-				DictionaryVariable.CurrentMultiLeaderStyle,
-				MultiLeaderStyle.DefaultName
-			);
-			variableDictionary.TryAdd(cmLeaderStyleEntry);
 
 			//DictionaryVars Entry DIMASSOC and HIDETEXT ??
 
 			CadDictionary scales = root.ensureCadDictionaryExist(AcadScaleList);
-			scales.TryAdd(new Scale { Name = "A0", PaperUnits = 1.0, DrawingUnits = 1.0, IsUnitScale = true });
-			scales.TryAdd(new Scale { Name = "A1", PaperUnits = 1.0, DrawingUnits = 2.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "A2", PaperUnits = 1.0, DrawingUnits = 4.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "A3", PaperUnits = 1.0, DrawingUnits = 5.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "A4", PaperUnits = 1.0, DrawingUnits = 8.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "A5", PaperUnits = 1.0, DrawingUnits = 10.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "A6", PaperUnits = 1.0, DrawingUnits = 16.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "A7", PaperUnits = 1.0, DrawingUnits = 20.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "A8", PaperUnits = 1.0, DrawingUnits = 30.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "A9", PaperUnits = 1.0, DrawingUnits = 40.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "B0", PaperUnits = 1.0, DrawingUnits = 50.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "B1", PaperUnits = 1.0, DrawingUnits = 100.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "B2", PaperUnits = 2.0, DrawingUnits = 1.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "B3", PaperUnits = 4.0, DrawingUnits = 1.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "B4", PaperUnits = 8.0, DrawingUnits = 1.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "B5", PaperUnits = 10.0, DrawingUnits = 1.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "B6", PaperUnits = 100.0, DrawingUnits = 1.0, IsUnitScale = false });
 
 			root.TryAdd(new CadDictionary(AcadVisualStyle));
 			root.TryAdd(new CadDictionary(AcadFieldList));
 			root.TryAdd(new CadDictionary(AcadImageDict));
 
 			CadDictionary materials = root.ensureCadDictionaryExist(AcadMaterial);
-			materials.TryAdd(new Material("Global"));
-			materials.TryAdd(new Material("ByLayer"));
-			materials.TryAdd(new Material("ByBlock"));
 		}
 
 		/// <summary>

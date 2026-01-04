@@ -14,7 +14,9 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.Scale)]
 	public class Scale : NonGraphicalObject
 	{
-		public static Scale Default { get { return new Scale { Name = "1:1", PaperUnits = 1.0, DrawingUnits = 1.0, IsUnitScale = true }; } }
+		public const string DefaultName = "1:1";
+
+		public static Scale Default { get { return new Scale { Name = DefaultName, PaperUnits = 1.0, DrawingUnits = 1.0, IsUnitScale = true }; } }
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }
