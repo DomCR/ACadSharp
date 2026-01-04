@@ -286,6 +286,39 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
+		/// Retrieves the currently active dimension style, including any style overrides that are applied.
+		/// </summary>
+		/// <remarks>Use this method to obtain the effective dimension style for rendering or measurement purposes.
+		/// The returned style reflects all current overrides and can differ from the base style if overrides are
+		/// set.</remarks>
+		/// <returns>A <see cref="DimensionStyle"/> instance representing the active dimension style. If no overrides are present,
+		/// returns the base style; otherwise, returns a copy of the style with overrides applied.</returns>
+		public DimensionStyle GetActiveDimensionStyle()
+		{
+			if (!this.HasStyleOverride)
+			{
+				return this.Style;
+			}
+
+			DimensionStyle style = this.Style.CloneTyped();
+			style.Name = "override";
+
+			DxfClassMap styleMap = DxfClassMap.Create<DimensionStyle>(this.Style);
+			DxfClassMap overrideMap = this.GetStyleOverrideMap();
+
+			foreach (KeyValuePair<int, DxfProperty> item in overrideMap.DxfProperties)
+			{
+				var p = styleMap.DxfProperties[item.Key];
+				if (p.StoredValue != item.Value.StoredValue)
+				{
+					p.SetValue(style, item.Value.StoredValue);
+				}
+			}
+
+			return style;
+		}
+
+		/// <summary>
 		/// Get the measurement text from the actual <see cref="Dimension.Measurement"/> value.
 		/// </summary>
 		/// <returns></returns>
@@ -374,110 +407,6 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Applies the specified dimension style override to the current object, updating its extended data to reflect the
-		/// overridden properties.
-		/// </summary>
-		/// <remarks>This method updates the object's extended data to record the overridden dimension style
-		/// properties. Properties that are identical between the current style and the override are not affected. Use this
-		/// method to persist style overrides for dimension objects in environments that support extended data.</remarks>
-		/// <param name="styleOverride">The dimension style containing property values to override the current object's style. Only properties with values
-		/// different from the current style are applied.</param>
-		public void SetDimensionOverride(DimensionStyle styleOverride)
-		{
-			DxfClassMap styleMap = DxfClassMap.Create<DimensionStyle>();
-			styleMap.DxfProperties.Remove(2);
-			styleMap.DxfProperties.Remove(70);
-
-			List<DxfProperty> props = new List<DxfProperty>();
-			foreach (KeyValuePair<int, DxfProperty> item in styleMap.DxfProperties)
-			{
-				var curr = item.Value.GetRawValue(this.Style);
-				var over = item.Value.GetRawValue(styleOverride);
-
-				if(curr == null || over == null)
-				{
-					continue;
-				}
-
-				if (!curr.Equals(over))
-				{
-					item.Value.StoredValue = over;
-					props.Add(item.Value);
-				}
-			}
-
-			XData.ExtendedData edata = new ExtendedData();
-			this.ExtendedData.Add(AppId.DefaultName, edata);
-
-			edata.Records.Add(new ExtendedDataString(DimensionStyle.StyleOverrideEntryName));
-			edata.Records.Add(new ExtendedDataControlString(false));
-			foreach (DxfProperty p in props)
-			{
-				edata.Records.AddRange(p.ToXDataRecords());
-			}
-			edata.Records.Add(new ExtendedDataControlString(true));
-		}
-
-		/// <summary>
-		/// Retrieves the currently active dimension style, including any style overrides that are applied.
-		/// </summary>
-		/// <remarks>Use this method to obtain the effective dimension style for rendering or measurement purposes.
-		/// The returned style reflects all current overrides and can differ from the base style if overrides are
-		/// set.</remarks>
-		/// <returns>A <see cref="DimensionStyle"/> instance representing the active dimension style. If no overrides are present,
-		/// returns the base style; otherwise, returns a copy of the style with overrides applied.</returns>
-		public DimensionStyle GetActiveDimensionStyle()
-		{
-			if (!this.HasStyleOverride)
-			{
-				return this.Style;
-			}
-
-			DimensionStyle style = this.Style.CloneTyped();
-			style.Name = "override";
-
-			DxfClassMap styleMap = DxfClassMap.Create<DimensionStyle>(this.Style);
-			DxfClassMap overrideMap = this.GetStyleOverrideMap();
-
-			foreach (KeyValuePair<int, DxfProperty> item in overrideMap.DxfProperties)
-			{
-				var p = styleMap.DxfProperties[item.Key];
-				if (p.StoredValue != item.Value.StoredValue)
-				{
-					p.SetValue(style, item.Value.StoredValue);
-				}
-			}
-
-			return style;
-		}
-
-		/// <exception cref="System.NotImplementedException"></exception>
-		public void SetStyleOverrideMap(DxfClassMap map)
-		{
-			throw new NotImplementedException();
-
-			//TODO: needs to refactor the extended data records
-			if (!this.ExtendedData.TryGet(AppId.DefaultName, out XData.ExtendedData edata))
-			{
-				edata = new XData.ExtendedData();
-				this.ExtendedData.Add(AppId.DefaultName, edata);
-			}
-
-			//Not sure if there can be multiple elements
-			edata.Records.Clear();
-
-			edata.Records.Add(new XData.ExtendedDataString(DimensionStyle.StyleOverrideEntryName));
-			edata.Records.Add(new XData.ExtendedDataControlString(false));
-
-			foreach (KeyValuePair<int, DxfProperty> item in map.DxfProperties)
-			{
-
-			}
-
-			edata.Records.Add(new XData.ExtendedDataControlString(true));
-		}
-
-		/// <summary>
 		/// Retrieves a map of style override properties from the extended data, if present and valid.
 		/// </summary>
 		/// <remarks>This method inspects the extended data for a section identified as a style override ("DSTYLE").
@@ -527,6 +456,64 @@ namespace ACadSharp.Entities
 			}
 
 			return map;
+		}
+
+		/// <summary>
+		/// Applies the specified dimension style override to the current object, updating its extended data to reflect the
+		/// overridden properties.
+		/// </summary>
+		/// <remarks>This method updates the object's extended data to record the overridden dimension style
+		/// properties. Properties that are identical between the current style and the override are not affected. Use this
+		/// method to persist style overrides for dimension objects in environments that support extended data.</remarks>
+		/// <param name="styleOverride">The dimension style containing property values to override the current object's style. Only properties with values
+		/// different from the current style are applied.</param>
+		public void SetDimensionOverride(DimensionStyle styleOverride)
+		{
+			DxfClassMap styleMap = DxfClassMap.Create<DimensionStyle>();
+			styleMap.DxfProperties.Remove(2);
+			styleMap.DxfProperties.Remove(70);
+
+			DxfClassMap overrideMap = new DxfClassMap();
+			foreach (KeyValuePair<int, DxfProperty> item in styleMap.DxfProperties)
+			{
+				var curr = item.Value.GetRawValue(this.Style);
+				var over = item.Value.GetRawValue(styleOverride);
+
+				if (curr == null || over == null)
+				{
+					continue;
+				}
+
+				if (!curr.Equals(over))
+				{
+					item.Value.StoredValue = over;
+					overrideMap.DxfProperties.Add(item.Key, item.Value);
+				}
+			}
+
+			this.SetStyleOverrideMap(overrideMap);
+		}
+
+		/// <summary>
+		/// Sets the style override mapping for the current object using the specified DXF class map.
+		/// </summary>
+		/// <remarks>This method updates the object's extended data to reflect the provided style overrides. Existing
+		/// style override entries are cleared before applying the new map. Use this method to programmatically control
+		/// dimension style overrides in the object's extended data.</remarks>
+		/// <param name="map">A DXF class map containing the property overrides to apply. Each property in the map defines a style override
+		/// entry.</param>
+		public void SetStyleOverrideMap(DxfClassMap map)
+		{
+			XData.ExtendedData edata = this.ExtendedData.TryAdd(AppId.DefaultName, new ExtendedData());
+			edata.Records.Clear();
+
+			edata.Records.Add(new ExtendedDataString(DimensionStyle.StyleOverrideEntryName));
+			edata.Records.Add(new ExtendedDataControlString(false));
+			foreach (DxfProperty p in map.DxfProperties.Values)
+			{
+				edata.Records.AddRange(p.ToXDataRecords());
+			}
+			edata.Records.Add(new ExtendedDataControlString(true));
 		}
 
 		/// <summary>
