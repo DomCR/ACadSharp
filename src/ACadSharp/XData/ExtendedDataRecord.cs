@@ -1,4 +1,6 @@
-﻿namespace ACadSharp.XData
+﻿using CSMath;
+
+namespace ACadSharp.XData
 {
 	/// <summary>
 	/// Defines an <see cref="ExtendedData"/> record.
@@ -32,6 +34,43 @@
 		public override string ToString()
 		{
 			return $"{this.Code}:{this._value}";
+		}
+
+		public static ExtendedDataRecord Create(GroupCodeValueType groupCode, object value)
+		{
+			switch (groupCode)
+			{
+				case GroupCodeValueType.Bool:
+					return new ExtendedDataInteger16((short)(((bool)value) ? 1 : 0));
+				case GroupCodeValueType.Point3D:
+					return new ExtendedDataCoordinate((XYZ)value);
+				case GroupCodeValueType.Handle:
+				case GroupCodeValueType.ObjectId:
+					return new ExtendedDataHandle((ulong)value);
+				case GroupCodeValueType.String:
+				case GroupCodeValueType.Comment:
+				case GroupCodeValueType.ExtendedDataString:
+					return new ExtendedDataString((string)value);
+				case GroupCodeValueType.Chunk:
+				case GroupCodeValueType.ExtendedDataChunk:
+					return new ExtendedDataBinaryChunk((byte[])value);
+				case GroupCodeValueType.ExtendedDataHandle:
+					return new ExtendedDataHandle((ulong)value);
+				case GroupCodeValueType.Double:
+				case GroupCodeValueType.ExtendedDataDouble:
+					return new ExtendedDataReal((double)value);
+				case GroupCodeValueType.Int16:
+				case GroupCodeValueType.ExtendedDataInt16:
+					return new ExtendedDataInteger16((short)value);
+				case GroupCodeValueType.Int32:
+				case GroupCodeValueType.ExtendedDataInt32:
+					return new ExtendedDataInteger32((int)value);
+				case GroupCodeValueType.None:
+				case GroupCodeValueType.Byte:
+				case GroupCodeValueType.Int64:
+				default:
+					throw new System.NotSupportedException();
+			}
 		}
 	}
 

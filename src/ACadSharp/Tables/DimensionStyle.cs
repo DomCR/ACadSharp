@@ -3,9 +3,6 @@ using ACadSharp.Types.Units;
 using CSMath;
 using System;
 
-//	TODO should the described coupling of properties be implemented in this class,
-//		 e.g., GenerateTolerances and LimitsGeneration?
-
 namespace ACadSharp.Tables
 {
 	/// <summary>
@@ -19,6 +16,12 @@ namespace ACadSharp.Tables
 	[DxfSubClass(DxfSubclassMarker.DimensionStyle)]
 	public class DimensionStyle : TableEntry
 	{
+		/// <summary>
+		/// Gets the default dimension style instance with standard settings.
+		/// </summary>
+		/// <remarks>
+		/// Use this property to obtain a baseline dimension style for creating or resetting
+		/// dimension-related objects. The returned instance uses the default configuration defined by the system.</remarks>
 		public static DimensionStyle Default { get { return new DimensionStyle(DefaultName); } }
 
 		/// <summary>
@@ -1041,6 +1044,13 @@ namespace ACadSharp.Tables
 		internal string Mzs { get; set; }
 
 		public const string DefaultName = "Standard";
+
+		/// <summary>
+		/// Represents the entry name used for style override data in the underlying storage format.
+		/// </summary>
+		/// <remarks>This constant can be used when reading from or writing to data sources that require a specific
+		/// entry name for style overrides. The value is case-sensitive.</remarks>
+		public const string StyleOverrideEntryName = "DSTYLE";
 
 		private double _arrowSize = 0.18;
 
