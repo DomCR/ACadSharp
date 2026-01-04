@@ -171,14 +171,14 @@ namespace ACadSharp.Objects
 			root.TryAdd(new CadDictionary(AcadColor));
 			root.TryAdd(new CadDictionary(AcadGroup));
 
-			root.ensureCadDictionaryExist(AcadLayout);
+			root.TryAdd(new CadDictionary(AcadLayout));
 
 			root.TryAdd(new CadDictionary(AcadMaterial));
 			root.TryAdd(new CadDictionary(AcadSortEnts));
 
-			root.ensureCadDictionaryExist(AcadMLeaderStyle);
+			root.TryAdd(new CadDictionary(AcadMLeaderStyle));
 
-			root.ensureCadDictionaryExist(AcadMLineStyle);
+			root.TryAdd(new CadDictionary(AcadMLineStyle));
 
 			root.TryAdd(new CadDictionary(AcadTableStyle));
 			root.TryAdd(new CadDictionary(AcadPlotSettings));
@@ -187,17 +187,17 @@ namespace ACadSharp.Objects
 
 			// { AcadPlotStyleName, new CadDictionaryWithDefault() },	//Add default entry "Normal"	PlaceHolder	??
 
-			CadDictionary variableDictionary = root.ensureCadDictionaryExist(VariableDictionary);
+			root.TryAdd(new CadDictionary(VariableDictionary));
 
 			//DictionaryVars Entry DIMASSOC and HIDETEXT ??
 
-			CadDictionary scales = root.ensureCadDictionaryExist(AcadScaleList);
+			root.TryAdd(new CadDictionary(AcadScaleList));
 
 			root.TryAdd(new CadDictionary(AcadVisualStyle));
 			root.TryAdd(new CadDictionary(AcadFieldList));
 			root.TryAdd(new CadDictionary(AcadImageDict));
 
-			CadDictionary materials = root.ensureCadDictionaryExist(AcadMaterial);
+			root.TryAdd(new CadDictionary(AcadMaterial));
 		}
 
 		/// <summary>
@@ -372,17 +372,6 @@ namespace ACadSharp.Objects
 
 			value = null;
 			return false;
-		}
-
-		private CadDictionary ensureCadDictionaryExist(string name)
-		{
-			if (!this.TryGetEntry(name, out CadDictionary entry))
-			{
-				entry = new CadDictionary(name);
-				this.Add(entry);
-			}
-
-			return entry;
 		}
 
 		private void onEntryNameChanged(object sender, OnNameChangedArgs e)
