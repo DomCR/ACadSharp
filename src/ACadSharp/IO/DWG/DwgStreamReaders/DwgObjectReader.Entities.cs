@@ -1087,13 +1087,31 @@ namespace ACadSharp.IO.DWG
 			{
 				//BL 95 Edge flags
 				CellEdgeFlags edgeFlags = (CellEdgeFlags)this._mergedReaders.ReadBitLong();
-				// If edge flags is non - zero
-				if (edgeFlags != 0)
-				{
-					CellBorder border = new CellBorder(edgeFlags);
-					cellStyle.Borders.Add(border);
 
-					this.readBorder(template, border);
+				// If edge flags is non - zero
+				switch (edgeFlags)
+				{
+					case CellEdgeFlags.Top:
+						this.readBorder(template, cellStyle.TopBorder);
+						break;
+					case CellEdgeFlags.Right:
+						this.readBorder(template, cellStyle.RightBorder);
+						break;
+					case CellEdgeFlags.Bottom:
+						this.readBorder(template, cellStyle.BottomBorder);
+						break;
+					case CellEdgeFlags.Left:
+						this.readBorder(template, cellStyle.LeftBorder);
+						break;
+					case CellEdgeFlags.InsideVertical:
+						this.readBorder(template, cellStyle.VerticalInsideBorder);
+						break;
+					case CellEdgeFlags.InsideHorizontal:
+						this.readBorder(template, cellStyle.HorizontalInsideBorder);
+						break;
+					case CellEdgeFlags.Unknown:
+					default:
+						continue;
 				}
 			}
 		}

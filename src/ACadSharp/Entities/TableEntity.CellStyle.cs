@@ -15,9 +15,6 @@ namespace ACadSharp.Entities
 			[DxfCodeValue(63)]
 			public Color BackgroundColor { get; set; }
 
-			[Obsolete("use oriented base borders")]
-			public List<CellBorder> Borders { get; set; } = new();
-
 			public CellBorder BottomBorder { get; set; } = new(CellEdgeFlags.Bottom);
 
 			public double BottomMargin { get; set; }
