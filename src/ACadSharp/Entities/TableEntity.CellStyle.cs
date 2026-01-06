@@ -23,12 +23,20 @@ namespace ACadSharp.Entities
 			public double BottomMargin { get; set; }
 
 			/// <summary>
+			/// Gets or sets the alignment of the content within a cell.
+			/// </summary>
+			[DxfCodeValue(170)]
+			public Cell.CellAlignmentType CellAlignment { get; set; }
+
+			/// <summary>
 			/// Value for the color of cell content; override applied at the cell level
 			/// </summary>
 			[DxfCodeValue(64)]
 			public Color ContentColor { get; internal set; }
 
 			public TableCellContentLayoutFlags ContentLayoutFlags { get; set; }
+
+			public CellBorder HorizontalInsideBorder { get; set; } = new(CellEdgeFlags.InsideHorizontal);
 
 			public double HorizontalMargin { get; set; }
 
@@ -54,18 +62,17 @@ namespace ACadSharp.Entities
 			[DxfCodeValue(92)]
 			public TableCellStylePropertyFlags TableCellStylePropertyFlags { get; set; }
 
+			[DxfCodeValue(62)]
+			public Color TextColor { get; set; }
+
 			public CellBorder TopBorder { get; set; } = new(CellEdgeFlags.Right);
 
 			[DxfCodeValue(90)]
 			public CellStyleTypeType Type { get; set; }
 
-			public double VerticalMargin { get; set; }
+			public CellBorder VerticalInsideBorder { get; set; } = new(CellEdgeFlags.InsideVertical);
 
-			/// <summary>
-			/// Gets or sets the alignment of the content within a cell.
-			/// </summary>
-			[DxfCodeValue(170)]
-			public Cell.CellAlignment CellAlignment { get; set; }
+			public double VerticalMargin { get; set; }
 		}
 	}
 }

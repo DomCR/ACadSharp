@@ -668,7 +668,7 @@ namespace ACadSharp.IO.DWG
 				if (flags.HasFlag(Cell.OverrideFlags.CellAlignment))
 				{
 					//Cell alignment RS 170 Present only if bit 0x01 is set in cell flag 
-					cell.StyleOverride.CellAlignment = (Cell.CellAlignment)this._mergedReaders.ReadBitShort();
+					cell.StyleOverride.CellAlignment = (Cell.CellAlignmentType)this._mergedReaders.ReadBitShort();
 				}
 				if (flags.HasFlag(Cell.OverrideFlags.BackgroundFillNone))
 				{

@@ -1130,6 +1130,9 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectPlotSettings:
 					template = this.readPlotSettings();
 					break;
+				case DxfFileToken.ObjectTableStyle:
+					template = this.readTableStyle();
+					break;
 			}
 
 			if (template == null && c.IsAnEntity)
@@ -6834,6 +6837,95 @@ namespace ACadSharp.IO.DWG
 			this.readPlotSettings(plotsettings);
 
 			return template;
+		}
+
+		private CadTemplate readTableStyle()
+		{
+			TableStyle style = new TableStyle();
+			CadTableStyleTemplate template = new CadTableStyleTemplate(style);
+
+			this.readCommonNonEntityData(template);
+
+			if (this.R2007Pre)
+			{
+				//TABLESTYLE format until R21
+				//Common:
+				//Description TV 3
+				style.Description = this._mergedReaders.ReadVariableText();
+				//Flow direction BS 70 0 = down, 1 = up
+				style.FlowDirection = (TableFlowDirectionType)this._mergedReaders.ReadBitShort();
+				//Bit flags BS 71 Meaning unknown.
+				style.Flags = this._mergedReaders.ReadBitShort();
+				//Horizontal cell margin BD 40
+				style.HorizontalCellMargin = this._mergedReaders.ReadBitDouble();
+				//Vertical cell margin BD 41
+				style.VerticalCellMargin = this._mergedReaders.ReadBitDouble();
+				//Suppress title B 280
+				style.SuppressTitle = this._mergedReaders.ReadBit();
+				//Suppress header B 281
+				style.SuppressHeaderRow = this._mergedReaders.ReadBit();
+
+				//Begin repeat 3 times (data, title and header row styles in this order)
+				this.readRowCellStyle(template, (style.DataCellStyle));
+				this.readRowCellStyle(template, (style.TitleCellStyle));
+				this.readRowCellStyle(template, (style.HeaderCellStyle));
+
+				return template;
+			}
+
+			return template;
+		}
+
+		private void readRowCellStyle(CadTableStyleTemplate tableStyleTemplate, TableEntity.CellStyle style)
+		{
+			var cellStyleTemplate = new CadTableEntityTemplate.CadCellStyleTemplate(style);
+
+			tableStyleTemplate.CellStyleTemplates.Add(cellStyleTemplate);
+
+			//Text style ID H 7 Hard pointer.
+			cellStyleTemplate.TextStyleHandle = this.handleReference();
+			//Text height BD 140
+			style.TextHeight = (this._mergedReaders.ReadBitDouble());
+			//Text alignment BS 170 Top left = 1, top center = 2, top right = 3, middle
+			//left = 4, middle center = 5, middle right = 6,
+			//bottom left = 7, bottom center = 8, bottom right = 9
+			style.CellAlignment = ((TableEntity.Cell.CellAlignmentType)this._mergedReaders.ReadBitShort());
+			//Text color CMC 62
+			style.TextColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
+			//Fill color CMC 63
+			style.BackgroundColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
+			//Background color enabled B 283
+			style.IsFillColorOn = this._mergedReaders.ReadBit();
+
+			// Begin repeat 6 times (borders: top, horizontal inside, bottom, left, vertical inside, right, in Begin repeat 6 times
+			// (borders: top, horizontal inside, bottom, left, vertical inside, right, in this order)
+			this.readBorderStyle(style.TopBorder);
+			this.readBorderStyle(style.HorizontalInsideBorder);
+			this.readBorderStyle(style.BottomBorder);
+			this.readBorderStyle(style.LeftBorder);
+			this.readBorderStyle(style.VerticalInsideBorder);
+			this.readBorderStyle(style.RightBorder);
+
+			//R2007+
+			if (this.R2007Plus)
+			{
+				//Data type BL 90 As defined in the ACAD_TABLE entity.
+				style.ValueDataType = this._mergedReaders.ReadBitLong();
+				//Data unit type BL 91 As defined in the ACAD_TABLE entity.
+				style.ValueUnitType = this._mergedReaders.ReadBitLong();
+				//Format string TV 1
+				style.ValueFormatString = this._mergedReaders.ReadVariableText();
+			}
+		}
+
+		private void readBorderStyle(TableEntity.CellBorder border)
+		{
+			//Line weight BS 274-279
+			border.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
+			//Visible B 284-289 0 = invisible, 1 = visible
+			border.IsInvisible = !this._mergedReaders.ReadBit();
+			//Border color CMC 64-69
+			border.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 		}
 
 		private CadTemplate readLayout()
