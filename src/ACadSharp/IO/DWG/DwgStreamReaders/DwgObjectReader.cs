@@ -6866,9 +6866,9 @@ namespace ACadSharp.IO.DWG
 				style.SuppressHeaderRow = this._mergedReaders.ReadBit();
 
 				//Begin repeat 3 times (data, title and header row styles in this order)
-				this.readRowCellStyle(template, (style.DataCellStyle));
-				this.readRowCellStyle(template, (style.TitleCellStyle));
-				this.readRowCellStyle(template, (style.HeaderCellStyle));
+				this.readRowCellStyle(template, style.DataCellStyle);
+				this.readRowCellStyle(template, style.TitleCellStyle);
+				this.readRowCellStyle(template, style.HeaderCellStyle);
 
 				return template;
 			}
@@ -6932,11 +6932,11 @@ namespace ACadSharp.IO.DWG
 			//Text style ID H 7 Hard pointer.
 			cellStyleTemplate.TextStyleHandle = this.handleReference();
 			//Text height BD 140
-			style.TextHeight = (this._mergedReaders.ReadBitDouble());
+			style.TextHeight = this._mergedReaders.ReadBitDouble();
 			//Text alignment BS 170 Top left = 1, top center = 2, top right = 3, middle
 			//left = 4, middle center = 5, middle right = 6,
 			//bottom left = 7, bottom center = 8, bottom right = 9
-			style.CellAlignment = ((TableEntity.Cell.CellAlignmentType)this._mergedReaders.ReadBitShort());
+			style.CellAlignment = (TableEntity.Cell.CellAlignmentType)this._mergedReaders.ReadBitShort();
 			//Text color CMC 62
 			style.TextColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			//Fill color CMC 63

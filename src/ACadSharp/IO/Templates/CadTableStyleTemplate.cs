@@ -11,5 +11,14 @@ namespace ACadSharp.IO.Templates
 
 		public CadTableStyleTemplate(TableStyle tableStyle) : base(tableStyle) { }
 
+		protected override void build(CadDocumentBuilder builder)
+		{
+			base.build(builder);
+
+			foreach (var item in this.CellStyleTemplates)
+			{
+				this.CadObject.CellStyles.Add(item.CellStyle);
+			}
+		}
 	}
 }

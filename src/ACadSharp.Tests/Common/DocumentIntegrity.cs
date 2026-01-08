@@ -44,31 +44,33 @@ namespace ACadSharp.Tests.Common
 		public void AssertDocumentDefaults(CadDocument doc)
 		{
 			//Assert the default values for the document
-			this.entryNotNull(doc.BlockRecords, "*Model_Space");
-			this.entryNotNull(doc.BlockRecords, "*Paper_Space");
+			this.entryNotNull(doc.BlockRecords, BlockRecord.ModelSpaceName);
+			this.entryNotNull(doc.BlockRecords, BlockRecord.PaperSpaceName);
 
-			this.entryNotNull(doc.LineTypes, "ByLayer");
-			this.entryNotNull(doc.LineTypes, "ByBlock");
-			this.entryNotNull(doc.LineTypes, "Continuous");
+			this.entryNotNull(doc.LineTypes, LineType.ByLayerName);
+			this.entryNotNull(doc.LineTypes, LineType.ByBlockName);
+			this.entryNotNull(doc.LineTypes, LineType.ContinuousName);
 
-			this.entryNotNull(doc.Layers, "0");
+			this.entryNotNull(doc.Layers, Layer.DefaultName);
 
-			this.entryNotNull(doc.TextStyles, "Standard");
+			this.entryNotNull(doc.TextStyles, TextStyle.DefaultName);
 
-			this.entryNotNull(doc.AppIds, "ACAD");
+			this.entryNotNull(doc.AppIds, AppId.DefaultName);
 
-			this.entryNotNull(doc.DimensionStyles, "Standard");
+			this.entryNotNull(doc.DimensionStyles, DimensionStyle.DefaultName);
 
-			this.entryNotNull(doc.VPorts, "*Active");
+			this.entryNotNull(doc.VPorts, VPort.DefaultName);
 
 			//Assert Model layout
 			var layout = doc.Layouts.FirstOrDefault(l => l.Name == Layout.ModelLayoutName);
 			this.notNull(layout, "Layout Model is null");
 			Assert.True(layout.AssociatedBlock == doc.ModelSpace);
 
-			this.entryNotNull(doc.Materials, "Global");
-			this.entryNotNull(doc.Materials, "ByLayer");
-			this.entryNotNull(doc.Materials, "ByBlock");
+			this.entryNotNull(doc.Materials, Material.GlobalName);
+			this.entryNotNull(doc.Materials, Material.ByLayerName);
+			this.entryNotNull(doc.Materials, Material.ByBlockName);
+
+			this.entryNotNull(doc.TableStyles, TableStyle.DefaultName);
 		}
 
 		public void AssertBlockRecords(CadDocument doc)

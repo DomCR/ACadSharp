@@ -65,6 +65,8 @@ namespace ACadSharp.IO.Templates
 		{
 			public List<Tuple<CellBorder, ulong>> BorderLinetypePairs { get; set; } = new();
 
+			public CellStyle CellStyle { get { return this.Format as CellStyle; } }
+
 			public CadCellStyleTemplate() : base(new())
 			{
 			}
