@@ -765,7 +765,7 @@ namespace ACadSharp.IO.SVG
 							break;
 					}
 
-					foreach (var item in mtext.GetTextLines())
+					foreach (var item in mtext.GetPlainTextLines())
 					{
 						this.WriteStartElement("tspan");
 						this.WriteAttributeString("x", 0);
