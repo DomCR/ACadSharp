@@ -33,7 +33,10 @@ namespace ACadSharp.Text
 						case '{':
 						case '\\':
 							sb.Append(next);
-							index += 2; 
+							index += 2;
+							break;
+						case 'A':
+							jump(text, index, out index);
 							break;
 						case 'c':
 						case 'C':
@@ -173,6 +176,14 @@ namespace ACadSharp.Text
 			{
 				Name = data[0],
 			};
+		}
+
+		private static void jump(string text, int start, out int end)
+		{
+			//Example:
+			//\\(unknown escape code)(escape text);
+			end = text.IndexOf(';', start);
+			end += 1;
 		}
 
 		private static void processColor(string text, int start, out int end)

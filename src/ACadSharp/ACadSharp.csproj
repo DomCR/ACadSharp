@@ -17,7 +17,7 @@
 	<PropertyGroup>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<Version>3.3.23</Version>
+		<Version>3.3.24</Version>
 		<PackageOutputPath>../nupkg</PackageOutputPath>
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>../ACadSharp.snk</AssemblyOriginatorKeyFile>
