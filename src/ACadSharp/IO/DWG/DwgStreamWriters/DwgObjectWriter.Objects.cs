@@ -225,6 +225,7 @@ namespace ACadSharp.IO.DWG
 				case Material:
 				case UnknownNonGraphicalObject:
 				case VisualStyle:
+				case TableStyle:
 				case ProxyObject:
 					return true;
 			}

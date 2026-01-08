@@ -668,7 +668,7 @@ namespace ACadSharp.IO.DWG
 				if (flags.HasFlag(Cell.OverrideFlags.CellAlignment))
 				{
 					//Cell alignment RS 170 Present only if bit 0x01 is set in cell flag 
-					cell.StyleOverride.CellAlignment = (Cell.CellAlignment)this._mergedReaders.ReadBitShort();
+					cell.StyleOverride.CellAlignment = (Cell.CellAlignmentType)this._mergedReaders.ReadBitShort();
 				}
 				if (flags.HasFlag(Cell.OverrideFlags.BackgroundFillNone))
 				{
@@ -1037,7 +1037,7 @@ namespace ACadSharp.IO.DWG
 			CellStyle cellStyle = (CellStyle)template.Format;
 
 			//BL 90 Cell style type
-			cellStyle.Type = (CellStyleTypeType)this._mergedReaders.ReadBitLong();
+			cellStyle.Type = (CellStyleType)this._mergedReaders.ReadBitLong();
 
 			//BS 170 Data flags, 0 = no data, 1 = data is present
 			//If data is present
@@ -1087,13 +1087,31 @@ namespace ACadSharp.IO.DWG
 			{
 				//BL 95 Edge flags
 				CellEdgeFlags edgeFlags = (CellEdgeFlags)this._mergedReaders.ReadBitLong();
-				// If edge flags is non - zero
-				if (edgeFlags != 0)
-				{
-					CellBorder border = new CellBorder(edgeFlags);
-					cellStyle.Borders.Add(border);
 
-					this.readBorder(template, border);
+				// If edge flags is non - zero
+				switch (edgeFlags)
+				{
+					case CellEdgeFlags.Top:
+						this.readBorder(template, cellStyle.TopBorder);
+						break;
+					case CellEdgeFlags.Right:
+						this.readBorder(template, cellStyle.RightBorder);
+						break;
+					case CellEdgeFlags.Bottom:
+						this.readBorder(template, cellStyle.BottomBorder);
+						break;
+					case CellEdgeFlags.Left:
+						this.readBorder(template, cellStyle.LeftBorder);
+						break;
+					case CellEdgeFlags.InsideVertical:
+						this.readBorder(template, cellStyle.VerticalInsideBorder);
+						break;
+					case CellEdgeFlags.InsideHorizontal:
+						this.readBorder(template, cellStyle.HorizontalInsideBorder);
+						break;
+					case CellEdgeFlags.Unknown:
+					default:
+						continue;
 				}
 			}
 		}
@@ -1113,7 +1131,7 @@ namespace ACadSharp.IO.DWG
 			//BL 93 Invisibility: 1 = invisible, 0 = visible.
 			border.IsInvisible = (this._mergedReaders.ReadBitLong() == 1);
 			//BD 40 Double line spacing
-			border.DoubleLineSpacing = (this._mergedReaders.ReadBitDouble());
+			border.DoubleLineSpacing = this._mergedReaders.ReadBitDouble();
 		}
 
 		private void readTableCell(CadTableCellTemplate template)
