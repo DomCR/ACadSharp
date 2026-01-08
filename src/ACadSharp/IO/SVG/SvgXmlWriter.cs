@@ -151,6 +151,9 @@ namespace ACadSharp.IO.SVG
 				//case Spline spline:
 				//	this.writeSpline(spline, transform);
 				//	break;
+				case Solid solid:
+					this.writeSolid(solid, transform);
+					break;
 				default:
 					this.notify($"[{entity.ObjectName}] Entity not implemented.", NotificationType.NotImplemented);
 					break;
@@ -826,6 +829,19 @@ namespace ACadSharp.IO.SVG
 			}
 
 			this.WriteEndElement();
+			this.WriteEndElement();
+		}
+
+		private void writeSolid(Solid solid, Transform transform)
+		{
+			this.WriteStartElement("polygon");
+
+			this.writeEntityHeader(solid, transform);
+
+			string pts = this.svgPoints([solid.FirstCorner, solid.SecondCorner, solid.ThirdCorner, solid.FourthCorner], transform);
+			this.WriteAttributeString("points", pts);
+			this.WriteAttributeString("fill", this.colorSvg(solid.GetActiveColor()));
+
 			this.WriteEndElement();
 		}
 
