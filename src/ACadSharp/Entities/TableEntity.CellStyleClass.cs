@@ -1,11 +1,15 @@
 ﻿using ACadSharp.Attributes;
-using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
 	public partial class TableEntity
 	{
+		public enum CellStyleClass
+		{
+			Data = 1,
+			Label = 2
+		}
+
 		public class CellStyle : ContentFormat
 		{
 			/// <summary>
@@ -52,6 +56,9 @@ namespace ACadSharp.Entities
 
 			public double MarginVerticalSpacing { get; set; }
 
+			[DxfCodeValue(300)]
+			public string Name { get; set; }
+
 			public CellBorder RightBorder { get; set; } = new(CellEdgeFlags.Right);
 
 			public double RightMargin { get; set; }
@@ -65,11 +72,15 @@ namespace ACadSharp.Entities
 			public CellBorder TopBorder { get; set; } = new(CellEdgeFlags.Right);
 
 			[DxfCodeValue(90)]
-			public CellStyleTypeType Type { get; set; }
+			public CellStyleType Type { get; set; }
+
+			[DxfCodeValue(91)]
+			public CellStyleClass StyleClass { get; set; }
 
 			public CellBorder VerticalInsideBorder { get; set; } = new(CellEdgeFlags.InsideVertical);
 
 			public double VerticalMargin { get; set; }
+			internal int Id { get; set; }
 		}
 	}
 }

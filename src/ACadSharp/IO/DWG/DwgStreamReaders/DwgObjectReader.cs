@@ -6873,6 +6873,53 @@ namespace ACadSharp.IO.DWG
 				return template;
 			}
 
+			//RC - Unknown
+			var rc = this._mergedReaders.ReadByte();
+			//TV 3 Description
+			style.Description = this._mergedReaders.ReadVariableText();
+			//BL - Unknown
+			var bl1 = this._mergedReaders.ReadBitLong();
+			//BL - Unknown
+			var bl2 = this._mergedReaders.ReadBitLong();
+			//H - Unknown(hard owner)
+			var h = this.handleReference();
+
+			//… The cell style with name “Table”, see paragraph 20.4.101.4.
+			var tableCellStyleTemplate = new CadTableEntityTemplate.CadCellStyleTemplate(style.TableCellStyle);
+			this.readCellStyle(tableCellStyleTemplate);
+
+			//BL 90 Cell style ID, 1 = title, 2 = header, 3 = data, 4 = table (new in R24).
+			//The cell style ID is used by cells, columns, rows to reference a cell style in the
+			//table’s table style.Custom cell style ID’s are numbered starting at 101.
+			//TODO: is the same as the cell type??
+			style.TableCellStyle.Id = this._mergedReaders.ReadBitLong();
+			//BL 91 Cell style class, 1= data, 2 = label. The default value is label.
+			style.TableCellStyle.StyleClass = (TableEntity.CellStyleClass)this._mergedReaders.ReadBitLong();
+			//TV 300 Cell style name
+			style.TableCellStyle.Name = this._mergedReaders.ReadVariableText();
+			//BL The number of cell styles (should be 3), the non-custom cell styles are present
+			//only in the CELLSTYLEMAP.
+			int nCellStyles = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < nCellStyles; i++)
+			{
+				var cellStyle = new TableEntity.CellStyle();
+				var cellStyleTemplate = new CadTableEntityTemplate.CadCellStyleTemplate(cellStyle);
+				template.CellStyleTemplates.Add(cellStyleTemplate);
+
+				//… The cell style fields, see paragraph 20.4.101.4.
+				int unknown = this._mergedReaders.ReadBitLong();
+				this.readCellStyle(cellStyleTemplate);
+
+				//BL - Cell style ID, 1 = title, 2 = header, 3 = data, 4 = table (new in R24).
+				//The cell style ID is used by cells, columns, rows to reference a cell style in the
+				//table’s table style.Custom cell style ID’s are numbered starting at 101.
+				cellStyle.Id = this._mergedReaders.ReadBitLong();
+				//BL - Cell style class, 1= data, 2 = label. The default value is label.
+				cellStyle.StyleClass = (TableEntity.CellStyleClass)this._mergedReaders.ReadBitLong();
+				//TV - Cell style name
+				cellStyle.Name = this._mergedReaders.ReadVariableText();
+			}
+
 			return template;
 		}
 

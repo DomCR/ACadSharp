@@ -1037,7 +1037,7 @@ namespace ACadSharp.IO.DWG
 			CellStyle cellStyle = (CellStyle)template.Format;
 
 			//BL 90 Cell style type
-			cellStyle.Type = (CellStyleTypeType)this._mergedReaders.ReadBitLong();
+			cellStyle.Type = (CellStyleType)this._mergedReaders.ReadBitLong();
 
 			//BS 170 Data flags, 0 = no data, 1 = data is present
 			//If data is present

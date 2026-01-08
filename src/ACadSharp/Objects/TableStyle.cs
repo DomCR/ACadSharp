@@ -56,6 +56,7 @@ namespace ACadSharp.Objects
 		public TableEntity.CellStyle DataCellStyle { get; } = new TableEntity.CellStyle();
 		public TableEntity.CellStyle TitleCellStyle { get; } = new TableEntity.CellStyle();
 		public TableEntity.CellStyle HeaderCellStyle { get; } = new TableEntity.CellStyle();
+		public TableEntity.CellStyle TableCellStyle { get; } = new TableEntity.CellStyle();
 
 		public const string DefaultName = "Standard";
 	}
