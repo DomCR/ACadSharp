@@ -121,6 +121,9 @@ namespace ACadSharp.IO.SVG
 				case Arc arc:
 					this.writeArc(arc, transform);
 					break;
+				case Dimension dimension:
+					this.writeDimension(dimension, transform);
+					break;
 				case Line line:
 					this.writeLine(line, transform);
 					break;
@@ -274,6 +277,18 @@ namespace ACadSharp.IO.SVG
 			this.WriteAttributeString("d", $"M {start.ToPixelSize(this.Units).ToSvg()} A {arc.Radius} {arc.Radius} {0} {largeArc} {1} {end.ToPixelSize(this.Units).ToSvg()}");
 
 			this.WriteAttributeString("fill", "none");
+
+			this.WriteEndElement();
+		}
+
+		private void writeDimension(Dimension dimension, Transform transform)
+		{
+			this.WriteStartElement("g");
+
+			foreach (Entity e in dimension.Block.Entities)
+			{
+				this.writeEntity(e, transform);
+			}
 
 			this.WriteEndElement();
 		}
@@ -626,7 +641,7 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(point, transform);
 
-			this.WriteAttributeString("r", this.Configuration.PointRadius);
+			this.WriteAttributeString("r", this.Configuration.PointRadius, UnitsType.Unitless);
 			this.WriteAttributeString("cx", point.Location.X);
 			this.WriteAttributeString("cy", point.Location.Y);
 
@@ -691,7 +706,7 @@ namespace ACadSharp.IO.SVG
 				this.WriteValue("px");
 			}
 
-			if(text.Style.TrueType.HasFlag(FontFlags.Bold))
+			if (text.Style.TrueType.HasFlag(FontFlags.Bold))
 			{
 				this.WriteValue("bold");
 			}
