@@ -91,6 +91,17 @@ namespace ACadSharp.Tests.Tables
 				},
 				{
 					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Decimal,
+						LinearScaleFactor = 10
+					},
+					new DimensionLinear {
+						FirstPoint = XYZ.Zero,
+						SecondPoint = new XYZ(10, 0, 0)
+					},
+					"100"
+				},
+				{
+					new DimensionStyle {
 						LinearUnitFormat = LinearUnitFormat.Decimal
 					},
 					new DimensionAligned(XYZ.Zero, new XYZ(10.5, 0, 0)),

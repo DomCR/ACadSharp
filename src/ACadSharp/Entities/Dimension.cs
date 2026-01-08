@@ -366,25 +366,26 @@ namespace ACadSharp.Entities
 			}
 			else
 			{
+				var scaledValue = value * style.LinearScaleFactor;
 				switch (style.LinearUnitFormat)
 				{
 					case LinearUnitFormat.Scientific:
-						text = unitFormat.ToScientific(value);
+						text = unitFormat.ToScientific(scaledValue);
 						break;
 					case LinearUnitFormat.Engineering:
-						text = unitFormat.ToEngineering(value);
+						text = unitFormat.ToEngineering(scaledValue);
 						break;
 					case LinearUnitFormat.Architectural:
-						text = unitFormat.ToArchitectural(value);
+						text = unitFormat.ToArchitectural(scaledValue);
 						break;
 					case LinearUnitFormat.Fractional:
-						text = unitFormat.ToFractional(value);
+						text = unitFormat.ToFractional(scaledValue);
 						break;
 					case LinearUnitFormat.None:
 					case LinearUnitFormat.Decimal:
 					case LinearUnitFormat.WindowsDesktop:
 					default:
-						text = unitFormat.ToDecimal(value);
+						text = unitFormat.ToDecimal(scaledValue);
 						break;
 				}
 			}
