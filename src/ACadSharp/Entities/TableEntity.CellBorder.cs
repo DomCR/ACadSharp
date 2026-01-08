@@ -6,7 +6,8 @@ namespace ACadSharp.Entities
 	{
 		public class CellBorder
 		{
-			[DxfCodeValue(62)]
+			//[DxfCodeValue(62)]
+			//64-69
 			public Color Color { get; set; }
 
 			[DxfCodeValue(40)]
@@ -15,10 +16,12 @@ namespace ACadSharp.Entities
 			[DxfCodeValue(95)]
 			public CellEdgeFlags EdgeFlags { get; }
 
-			[DxfCodeValue(93)]
-			public bool IsInvisible { get; set; }
+			//284-289
+			[DxfCodeValue(284)]
+			public bool IsInvisible { get; set; } = false;
 
-			[DxfCodeValue(92)]
+			//274-279
+			[DxfCodeValue(274)]
 			public LineWeightType LineWeight { get; set; }
 
 			[DxfCodeValue(90)]

@@ -67,7 +67,7 @@ namespace ACadSharp.IO.Templates
 
 			public CellStyle CellStyle { get { return this.Format as CellStyle; } }
 
-			public CadCellStyleTemplate() : base(new())
+			public CadCellStyleTemplate() : base(new CellStyle())
 			{
 			}
 
@@ -97,7 +97,9 @@ namespace ACadSharp.IO.Templates
 		{
 			public ContentFormat Format { get; }
 
-			public ulong? TextStyleHandle { get; internal set; }
+			public ulong? TextStyleHandle { get; set; }
+
+			public string TextStyleName { get; set; }
 
 			public CadTableCellContentFormatTemplate(ContentFormat format)
 			{

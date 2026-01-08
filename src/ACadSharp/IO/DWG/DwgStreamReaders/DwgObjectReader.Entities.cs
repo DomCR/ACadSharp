@@ -1131,7 +1131,7 @@ namespace ACadSharp.IO.DWG
 			//BL 93 Invisibility: 1 = invisible, 0 = visible.
 			border.IsInvisible = (this._mergedReaders.ReadBitLong() == 1);
 			//BD 40 Double line spacing
-			border.DoubleLineSpacing = (this._mergedReaders.ReadBitDouble());
+			border.DoubleLineSpacing = this._mergedReaders.ReadBitDouble();
 		}
 
 		private void readTableCell(CadTableCellTemplate template)

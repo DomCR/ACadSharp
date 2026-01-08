@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Objects;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
@@ -7,9 +8,22 @@ namespace ACadSharp.IO.Templates
 	{
 		public List<CadTableEntityTemplate.CadCellStyleTemplate> CellStyleTemplates { get; } = new();
 
-		public CadTableStyleTemplate() : base(new TableStyle()) { }
+		public CadTableEntityTemplate.CadCellStyleTemplate CurrentCellStyleTemplate { get; private set; }
 
-		public CadTableStyleTemplate(TableStyle tableStyle) : base(tableStyle) { }
+		public CadTableStyleTemplate() : base(new TableStyle())
+		{
+		}
+
+		public CadTableStyleTemplate(TableStyle tableStyle) : base(tableStyle)
+		{
+		}
+
+		public CadTableEntityTemplate.CadCellStyleTemplate CreateCurrentCellStyleTemplate()
+		{
+			this.CurrentCellStyleTemplate = new CadTableEntityTemplate.CadCellStyleTemplate();
+			this.CellStyleTemplates.Add(this.CurrentCellStyleTemplate);
+			return this.CurrentCellStyleTemplate;
+		}
 
 		protected override void build(CadDocumentBuilder builder)
 		{

@@ -106,6 +106,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<MLineStyle>(new CadMLineStyleTemplate(), this.readMLineStyle);
 				case DxfFileToken.ObjectMLeaderStyle:
 					return this.readObjectCodes<MultiLeaderStyle>(new CadMLeaderStyleTemplate(), this.readMLeaderStyle);
+				case DxfFileToken.ObjectTableStyle:
+					return this.readObjectCodes<TableStyle>(new CadTableStyleTemplate(), this.readTableStyle);
 				case DxfFileToken.ObjectXRecord:
 					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), this.readXRecord);
 				default:
@@ -1436,6 +1438,15 @@ namespace ACadSharp.IO.DXF
 				{
 					case 1 when this._reader.ValueAsString.Equals("GRIDFORMAT_BEGIN", StringComparison.InvariantCultureIgnoreCase):
 						break;
+					case 62:
+						border.Color = new Color(this._reader.ValueAsShort);
+						break;
+					case 92:
+						border.LineWeight = (LineWeightType)this._reader.ValueAsInt;
+						break;
+					case 93:
+						border.IsInvisible = this._reader.ValueAsBool;
+						break;
 					case 340:
 						template.BorderLinetypePairs.Add(new Tuple<TableEntity.CellBorder, ulong>(border, this._reader.ValueAsHandle));
 						break;
@@ -1694,6 +1705,104 @@ namespace ACadSharp.IO.DXF
 
 					tmp.ElementTemplates.Add(elementTemplate);
 					mLineStyle.AddElement(element);
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readTableStyle(CadTemplate template, DxfMap map)
+		{
+			var tmp = template as CadTableStyleTemplate;
+			var style = tmp.CadObject;
+			var cellStyle = tmp.CurrentCellStyleTemplate?.CellStyle;
+
+			switch (this._reader.Code)
+			{
+				case 7:
+					tmp.CreateCurrentCellStyleTemplate();
+					tmp.CurrentCellStyleTemplate.TextStyleName = this._reader.ValueAsString;
+					return true;
+				case 94:
+					cellStyle.Alignment = this._reader.ValueAsInt;
+					return true;
+				case 62:
+					cellStyle.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 63:
+					cellStyle.BackgroundColor = new Color(this._reader.ValueAsShort);
+					return true;
+				case 140:
+					cellStyle.TextHeight = this._reader.ValueAsDouble;
+					return true;
+				case 170:
+					cellStyle.CellAlignment = (TableEntity.Cell.CellAlignmentType)this._reader.ValueAsShort;
+					return true;
+				case 283:
+					cellStyle.IsFillColorOn = this._reader.ValueAsBool;
+					return true;
+				case 90:
+					cellStyle.Type = (TableEntity.CellStyleType)this._reader.ValueAsShort;
+					return true;
+				case 91:
+					cellStyle.StyleClass = (TableEntity.CellStyleClass)this._reader.ValueAsShort;
+					return true;
+				case 1:
+					//Undocumented
+					return true;
+				case 274:
+					cellStyle.TopBorder.LineWeight = (LineWeightType)this._reader.ValueAsInt;
+					return true;
+				case 275:
+					cellStyle.HorizontalInsideBorder.LineWeight = (LineWeightType)this._reader.ValueAsInt;
+					return true;
+				case 276:
+					cellStyle.BottomBorder.LineWeight = (LineWeightType)this._reader.ValueAsInt;
+					return true;
+				case 277:
+					cellStyle.LeftBorder.LineWeight = (LineWeightType)this._reader.ValueAsInt;
+					return true;
+				case 278:
+					cellStyle.VerticalInsideBorder.LineWeight = (LineWeightType)this._reader.ValueAsInt;
+					return true;
+				case 279:
+					cellStyle.RightBorder.LineWeight = (LineWeightType)this._reader.ValueAsInt;
+					return true;
+				case 284:
+					cellStyle.TopBorder.IsInvisible = this._reader.ValueAsBool;
+					return true;
+				case 285:
+					cellStyle.HorizontalInsideBorder.IsInvisible = this._reader.ValueAsBool;
+					return true;
+				case 286:
+					cellStyle.BottomBorder.IsInvisible = this._reader.ValueAsBool;
+					return true;
+				case 287:
+					cellStyle.LeftBorder.IsInvisible = this._reader.ValueAsBool;
+					return true;
+				case 288:
+					cellStyle.VerticalInsideBorder.IsInvisible = this._reader.ValueAsBool;
+					return true;
+				case 289:
+					cellStyle.RightBorder.IsInvisible = this._reader.ValueAsBool;
+					return true;
+				case 64:
+					cellStyle.TopBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 65:
+					cellStyle.HorizontalInsideBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 66:
+					cellStyle.BottomBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 67:
+					cellStyle.LeftBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 68:
+					cellStyle.VerticalInsideBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 69:
+					cellStyle.RightBorder.Color = new Color(this._reader.ValueAsShort);
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
