@@ -274,7 +274,16 @@ namespace ACadSharp.IO.SVG
 
 			arc.GetEndVertices(out XYZ start, out XYZ end);
 			var largeArc = Math.Abs(arc.Sweep) > MathHelper.PI ? 1 : 0;
-			this.WriteAttributeString("d", $"M {start.ToPixelSize(this.Units).ToSvg()} A {arc.Radius} {arc.Radius} {0} {largeArc} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+
+			StringBuilder sb = new StringBuilder();
+
+			sb.Append($"M {start.ToPixelSize(this.Units).ToSvg()}");
+			sb.Append($" ");
+			sb.Append($"A {arc.Radius.ToPixelSize(this.Units)} {arc.Radius.ToPixelSize(this.Units)}");
+			sb.Append($" ");
+			sb.Append($"{0} {largeArc} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+
+			this.WriteAttributeString("d", sb.ToString());
 
 			this.WriteAttributeString("fill", "none");
 
