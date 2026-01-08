@@ -1,14 +1,30 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Extensions;
 using ACadSharp.Tests.Common;
 using CSMath;
 using System;
-using System.Linq;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities
 {
 	public class ArcTests : CommonEntityTests<Arc>
 	{
+		public override void CloneTest()
+		{
+			Arc arc = new Arc();
+			arc.Radius = 5;
+			arc.EndAngle = Math.PI / 2;
+
+			Arc clone = arc.CloneTyped();
+
+			Assert.NotNull(clone);
+			EntityComparator.IsEqual(arc, clone);
+
+			Assert.Equal(arc.Radius, clone.Radius);
+			Assert.Equal(arc.StartAngle, clone.StartAngle);
+			Assert.Equal(arc.EndAngle, clone.EndAngle);
+		}
+
 		[Fact]
 		public void CreateFromBulgeTest()
 		{
@@ -39,7 +55,7 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
-		public void GetBoundingBoxTest()
+		public override void GetBoundingBoxTest()
 		{
 			Arc arc = new Arc();
 			arc.Radius = 5;

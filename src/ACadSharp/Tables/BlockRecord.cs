@@ -90,7 +90,7 @@ namespace ACadSharp.Tables
 		}
 
 		/// <summary>
-		/// Block entity for this record
+		/// Block entity for this record.
 		/// </summary>
 		public Block BlockEntity
 		{
@@ -192,6 +192,21 @@ namespace ACadSharp.Tables
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Optional, 280)]
 		public bool IsExplodable { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the XRef is unloaded.
+		/// </summary>
+		/// <remarks>
+		/// This flag only takes effect if its an external reference.
+		/// </remarks>
+		public bool IsUnloaded
+		{
+			get { return this.BlockEntity.IsUnloaded; }
+			set
+			{
+				this.BlockEntity.IsUnloaded = value;
+			}
+		}
 
 		/// <summary>
 		/// Associated Layout.

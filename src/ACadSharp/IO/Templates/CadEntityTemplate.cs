@@ -84,7 +84,7 @@ namespace ACadSharp.IO.Templates
 			else if (!this.BookColorName.IsNullOrEmpty() &&
 				builder.DocumentToBuild != null &&
 				builder.DocumentToBuild.Colors != null &&
-				builder.DocumentToBuild.Colors.TryGetValue(this.BookColorName, out color))
+				builder.DocumentToBuild.Colors.TryGet(this.BookColorName, out color))
 			{
 				this.CadObject.BookColor = color;
 			}

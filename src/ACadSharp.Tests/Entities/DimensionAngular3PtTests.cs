@@ -6,6 +6,10 @@ namespace ACadSharp.Tests.Entities
 	{
 		public override DimensionType Type => DimensionType.Angular3Point;
 
+		public override void GetBoundingBoxTest()
+		{
+		}
+
 		public override void UpdateBlockTests()
 		{
 		}

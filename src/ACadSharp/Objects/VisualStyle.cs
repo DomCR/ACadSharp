@@ -13,20 +13,14 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.VisualStyle)]
 	public class VisualStyle : NonGraphicalObject
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.UNLISTED;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.ObjectVisualStyle;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.VisualStyle;
+		[DxfCodeValue(44)]
+		public double Brightness { get; set; }
 
 		/// <summary>
-		/// Raster file name
+		/// Color
 		/// </summary>
-		[DxfCodeValue(1)]
-		public string RasterFile { get; set; }
+		[DxfCodeValue(62, 63)]
+		public Color Color { get; set; }
 
 		/// <summary>
 		/// Description
@@ -34,43 +28,71 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(2)]
 		public string Description { get; set; }
 
-		/// <summary>
-		/// Type
-		/// </summary>
-		[DxfCodeValue(70)]
-		public int Type { get; set; }
+		[DxfCodeValue(93)]
+		public int DisplaySettings { get; set; }
 
-		//71	Face lighting model
-		//0 =Invisible
-		//1 = Visible
-		//2 = Phong
-		//3 = Gooch
-		[DxfCodeValue(71)]
-		public FaceLightingModelType FaceLightingModel { get; set; }
+		[DxfCodeValue(174)]
+		public short EdgeApplyStyleFlag { get; set; }
 
-		//72	Face lighting quality
-		//0 = No lighting
-		//1 = Per face lighting
-		//2 = Per vertex lighting
-		[DxfCodeValue(72)]
-		public FaceLightingQualityType FaceLightingQuality { get; set; }
+		[DxfCodeValue(66)]
+		public int EdgeColor { get; set; }
 
-		//73	Face color mode
-		//0 = No color
-		//1 = Object color
-		//2 = Background color
-		//3 = Custom color
-		//4 = Mono color
-		//5 = Tinted
-		//6 = Desaturated
+		[DxfCodeValue(42)]
+		public double EdgeCreaseAngle { get; set; }
+
+		[DxfCodeValue(64)]
+		public Color EdgeIntersectionColor { get; set; }
+
+		[DxfCodeValue(175)]
+		public int EdgeIntersectionLineType { get; set; }
+
+		[DxfCodeValue(171)]
+		public short EdgeIsolineCount { get; set; }
+
+		[DxfCodeValue(78)]
+		public int EdgeJitter { get; set; }
+
+		[DxfCodeValue(92)]
+		public int EdgeModifiers { get; set; }
+
+		[DxfCodeValue(65)]
+		public Color EdgeObscuredColor { get; set; }
+
+		[DxfCodeValue(75)]
+		public int EdgeObscuredLineType { get; set; }
+
+		[DxfCodeValue(77)]
+		public int EdgeOverhang { get; set; }
+
+		[DxfCodeValue(67)]
+		public Color EdgeSilhouetteColor { get; set; }
+
+		[DxfCodeValue(79)]
+		public int EdgeSilhouetteWidth { get; set; }
+
+		[DxfCodeValue(91)]
+		public int EdgeStyle { get; set; }
+
+		[DxfCodeValue(74)]
+		public EdgeStyleModel EdgeStyleModel { get; set; }
+
+		[DxfCodeValue(76)]
+		public int EdgeWidth { get; set; }
+
 		[DxfCodeValue(73)]
 		public FaceColorMode FaceColorMode { get; set; }
 
-		//90
-		//Face modifiers
-		//0 = No modifiers
-		//1 = Opacity
-		//2 = Specular
+		/// <summary>
+		/// Gets or sets the lighting model used to render the face.
+		/// </summary>
+		/// <remarks>The lighting model determines how light interacts with the face during rendering, affecting its
+		/// appearance and shading. Set this property to control the visual style of the face in 3D scenes.</remarks>
+		[DxfCodeValue(71)]
+		public FaceLightingModelType FaceLightingModel { get; set; }
+
+		[DxfCodeValue(72)]
+		public FaceLightingQualityType FaceLightingQuality { get; set; }
+
 		[DxfCodeValue(90)]
 		public FaceModifierType FaceModifiers { get; set; }
 
@@ -87,98 +109,28 @@ namespace ACadSharp.Objects
 		public double FaceSpecularLevel { get; set; }
 
 		/// <summary>
-		/// Color
-		/// </summary>
-		[DxfCodeValue(62, 63)]
-		public Color Color { get; set; }
-
-		/// <summary>
 		/// Face style mono color
 		/// </summary>
 		[DxfCodeValue(421)]
 		public Color FaceStyleMonoColor { get; set; }
 
-		//74
-		//Edge style model
-		//0 = No edges
-		//1 = Isolines
-		//2 = Facet edges
+		[DxfCodeValue(170)]
+		public short HaloGap { get; set; }
 
-		//91
+		/// <summary>
+		/// Internal use only flag
+		/// </summary>
+		[DxfCodeValue(291)]
+		public bool InternalFlag { get; internal set; }
 
-		//Edge style
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.ObjectVisualStyle;
 
-		//64
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
-		//Edge intersection color
-
-		//65
-
-		//Edge obscured color
-
-		//75
-
-		//Edge obscured linetype
-
-		//175
-
-		//Edge intersection linetype
-
-		//42
-
-		//Edge crease angle
-
-		//92
-
-		//Edge modifiers
-
-		//66
-
-		//Edge color
-
-		//43
-
-		//Edge opacity level
-
-		//76
-
-		//Edge width
-
-		//77
-
-		//Edge overhang
-
-		//78
-
-		//Edge jitter
-
-		//67
-
-		//Edge silhouette color
-
-		//79
-
-		//Edge silhouette width
-
-		//170
-
-		//Edge halo gap
-
-		//171
-
-		//Number of edge isolines
-
-		//174
-
-		//Edge style apply flag
-
-		//93
-
-		//Display style display settings
-
-		//44	Brightness
-
-		//173	Shadow type
+		[DxfCodeValue(43)]
+		public double OpacityLevel { get; set; }
 
 		/// <summary>
 		/// Edge hide precision flag
@@ -187,9 +139,26 @@ namespace ACadSharp.Objects
 		public bool PrecisionFlag { get; set; }
 
 		/// <summary>
-		/// Internal use only flag
+		/// Raster file name
 		/// </summary>
-		[DxfCodeValue(291)]
-		public bool InternalFlag { get; internal set; }
+		[DxfCodeValue(1)]
+		public string RasterFile { get; set; }
+
+		[DxfCodeValue(173)]
+		public short ShadowType { get; set; }
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.VisualStyle;
+
+		/// <summary>
+		/// Type
+		/// </summary>
+		[DxfCodeValue(70)]
+		public int Type { get; set; }
+
+		/// <summary>
+		/// Default <see cref="VisualStyle"/> name.
+		/// </summary>
+		public const string DefaultName = "2dWireframe";
 	}
 }

@@ -24,5 +24,7 @@ namespace ACadSharp.Objects
 
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public TableStyle Style { get; set; } = new();
+
+		public TableStyle StyleOverride { get; set; }
 	}
 }

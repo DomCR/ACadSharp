@@ -41,6 +41,11 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(2, block.Name, map);
 			this._writer.Write(70, (short)block.Flags, map);
 
+			if (this.Version >= ACadVersion.AC1015 && block.IsUnloaded)
+			{
+				this._writer.Write(71, block.IsUnloaded ? 1 : 0, map);
+			}
+
 			this._writer.Write(10, block.BasePoint, map);
 
 			this._writer.Write(3, block.Name, map);

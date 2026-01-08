@@ -24,7 +24,7 @@ namespace ACadSharp.IO
 		/// <value>
 		/// default: true
 		/// </value>
-		public bool ResetDxfClasses { get; set; } = true;
+		public bool ResetDxfClasses { get; set; } = false;
 
 		/// <summary>
 		///  Update the blocks that visualize the dimensions in the model space.
@@ -65,7 +65,7 @@ namespace ACadSharp.IO
 		/// <value>
 		/// default: false
 		/// </value>
-		public bool WriteXRecords { get; set; } = false;
+		public bool WriteXRecords { get; set; } = true;
 
 		/// <summary>
 		/// The writer will not ignore the <see cref="ACadSharp.Entities.Shape"/> entities in the document.

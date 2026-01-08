@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.IO.DWG
 {
@@ -226,6 +225,7 @@ namespace ACadSharp.IO.DWG
 				case Material:
 				case UnknownNonGraphicalObject:
 				case VisualStyle:
+				case TableStyle:
 				case ProxyObject:
 					return true;
 			}

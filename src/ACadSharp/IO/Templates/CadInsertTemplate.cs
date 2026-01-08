@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadInsertTemplate : CadEntityTemplate
+	internal class CadInsertTemplate : CadEntityTemplate, ICadOwnerTemplate
 	{
 		public bool HasAtts { get; set; }
 
@@ -20,7 +20,7 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? SeqendHandle { get; set; }
 
-		public HashSet<ulong> AttributesHandles { get; set; } = new();
+		public HashSet<ulong> OwnedObjectsHandlers { get; set; } = new();
 
 		public CadInsertTemplate() : base(new Insert()) { }
 
@@ -54,7 +54,7 @@ namespace ACadSharp.IO.Templates
 			}
 			else
 			{
-				foreach (ulong handle in this.AttributesHandles)
+				foreach (ulong handle in this.OwnedObjectsHandlers)
 				{
 					if (builder.TryGetCadObject(handle, out AttributeEntity att))
 					{

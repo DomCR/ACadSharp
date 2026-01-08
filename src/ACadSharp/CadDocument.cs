@@ -102,6 +102,14 @@ namespace ACadSharp
 		public LineTypesTable LineTypes { get; private set; }
 
 		/// <summary>
+		/// The collection of all materials in the drawing.
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadMaterial"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public MaterialCollection Materials { get; private set; }
+
+		/// <summary>
 		/// The collection of all Multi leader styles in the drawing.
 		/// </summary>
 		/// <remarks>
@@ -163,6 +171,14 @@ namespace ACadSharp
 		public CadSummaryInfo SummaryInfo { get; set; }
 
 		/// <summary>
+		/// The collection of all table styles in the drawing.
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadTableStyle"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public TableStyleCollection TableStyles { get; private set; }
+
+		/// <summary>
 		/// The collection of all text styles in the drawing.
 		/// </summary>
 		public TextStylesTable TextStyles { get; private set; }
@@ -181,6 +197,8 @@ namespace ACadSharp
 		/// The collection of all vports in the drawing.
 		/// </summary>
 		public VPortsTable VPorts { get; private set; }
+
+		internal ViewportEntityControl VEntityControl { get; set; }
 
 		//Contains all the objects in the document
 		private readonly Dictionary<ulong, IHandledCadObject> _cadObjects = new Dictionary<ulong, IHandledCadObject>();
@@ -252,7 +270,7 @@ namespace ACadSharp
 				CadDictionary.CreateDefaultEntries(this.RootDictionary);
 			}
 
-			this.UpdateCollections(true);
+			this.UpdateCollections(true, true);
 
 			//Default variables
 			this.AppIds.CreateDefaultEntries();
@@ -272,6 +290,7 @@ namespace ACadSharp
 			if (!this.BlockRecords.Contains(BlockRecord.PaperSpaceName))
 			{
 				BlockRecord pspace = BlockRecord.PaperSpace;
+				pspace.Layout.TabOrder = 1;
 				this.Layouts.Add(pspace.Layout);
 			}
 		}
@@ -326,9 +345,18 @@ namespace ACadSharp
 				case Type t when t.Equals(typeof(MLineStyle)):
 					return this.Header.CurrentMLineStyle as T;
 				case Type t when t.Equals(typeof(MultiLeaderStyle)):
-					if (this.DictionaryVariables.TryGetValue(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
+					if (this.DictionaryVariables.TryGet(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
 					{
-						if (this.MLeaderStyles.TryGetValue(variable.Value, out MultiLeaderStyle style))
+						if (this.MLeaderStyles.TryGet(variable.Value, out MultiLeaderStyle style))
+						{
+							return style as T;
+						}
+					}
+					return null;
+				case Type t when t.Equals(typeof(TableStyle)):
+					if (this.DictionaryVariables.TryGet(DictionaryVariable.CurrentTableStyle, out variable))
+					{
+						if (this.TableStyles.TryGet(variable.Value, out TableStyle style))
 						{
 							return style as T;
 						}
@@ -390,7 +418,7 @@ namespace ACadSharp
 					this.Header.CurrentMLineStyleName = this.MLineStyles.TryAdd(mlineStyle).Name;
 					break;
 				case MultiLeaderStyle multiLeaderStyle:
-					if (this.DictionaryVariables.TryGetValue(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
+					if (this.DictionaryVariables.TryGet(DictionaryVariable.CurrentMultiLeaderStyle, out DictionaryVariable variable))
 					{
 						variable.Value = multiLeaderStyle.Name;
 					}
@@ -400,6 +428,18 @@ namespace ACadSharp
 						this.DictionaryVariables.Add(variable);
 					}
 					this.MLeaderStyles.TryAdd(multiLeaderStyle);
+					break;
+				case TableStyle tableStyle:
+					if (this.DictionaryVariables.TryGet(DictionaryVariable.CurrentTableStyle, out variable))
+					{
+						variable.Value = tableStyle.Name;
+					}
+					else
+					{
+						variable = new DictionaryVariable(DictionaryVariable.CurrentTableStyle, tableStyle.Name);
+						this.DictionaryVariables.Add(variable);
+					}
+					this.TableStyles.TryAdd(tableStyle);
 					break;
 				default:
 					throw new NotSupportedException($"The type {typeof(T)} is not a configurable type in the document.");
@@ -434,7 +474,7 @@ namespace ACadSharp
 		/// Updates the collections in the document and link them to it's dictionary.
 		/// </summary>
 		/// <param name="createDictionaries"></param>
-		public void UpdateCollections(bool createDictionaries)
+		public void UpdateCollections(bool createDictionaries, bool createDefaults)
 		{
 			if (createDictionaries && this.RootDictionary == null)
 			{
@@ -458,16 +498,25 @@ namespace ACadSharp
 			if (this.updateCollection(CadDictionary.AcadScaleList, createDictionaries, out CadDictionary scales))
 			{
 				this.Scales = new ScaleCollection(scales);
+				if (createDefaults) { this.Scales.CreateDefaults(); }
 			}
 
 			if (this.updateCollection(CadDictionary.AcadMLineStyle, createDictionaries, out CadDictionary mlineStyles))
 			{
 				this.MLineStyles = new MLineStyleCollection(mlineStyles);
+				if (createDefaults) { this.MLineStyles.CreateDefaults(); }
 			}
 
 			if (this.updateCollection(CadDictionary.AcadMLeaderStyle, createDictionaries, out CadDictionary mleaderStyles))
 			{
 				this.MLeaderStyles = new MLeaderStyleCollection(mleaderStyles);
+				if (createDefaults) { this.MLeaderStyles.CreateDefaults(); }
+			}
+
+			if (this.updateCollection(CadDictionary.AcadTableStyle, createDictionaries, out CadDictionary tableStyles))
+			{
+				this.TableStyles = new TableStyleCollection(tableStyles);
+				if (createDefaults) { this.TableStyles.CreateDefaults(); }
 			}
 
 			if (this.updateCollection(CadDictionary.AcadImageDict, createDictionaries, out CadDictionary imageDefinitions))
@@ -488,6 +537,13 @@ namespace ACadSharp
 			if (this.updateCollection(CadDictionary.VariableDictionary, createDictionaries, out CadDictionary variables))
 			{
 				this.DictionaryVariables = new DictionaryVariableCollection(variables);
+				if (createDefaults) { this.DictionaryVariables.CreateDefaults(); }
+			}
+
+			if (this.updateCollection(CadDictionary.AcadMaterial, createDictionaries, out CadDictionary materials))
+			{
+				this.Materials = new MaterialCollection(materials);
+				if (createDefaults) { this.Materials.CreateDefaults(); }
 			}
 		}
 
@@ -513,8 +569,33 @@ namespace ACadSharp
 			}
 		}
 
+		/// <summary>
+		/// Updates the image definition reactors for all raster images in the current collection.
+		/// </summary>
+		/// <remarks>
+		/// This method removes existing <see cref="ImageDefinitionReactor"/> instances from the document
+		/// and creates new reactors for each <see cref="RasterImage"/>. The new reactors are associated with their
+		/// corresponding image definitions and added to the document.
+		/// </remarks>
+		public void UpdateImageReactors()
+		{
+			var reactors = this._cadObjects.Values.OfType<ImageDefinitionReactor>().ToList();
+			foreach (var item in reactors)
+			{
+				this._cadObjects.Remove(item.Handle);
+			}
+
+			var rasterImages = this._cadObjects.Values.OfType<RasterImage>().ToList();
+			foreach (RasterImage image in rasterImages)
+			{
+				image.DefinitionReactor = new ImageDefinitionReactor(image);
+				this.addCadObject(image.DefinitionReactor);
+				image.Definition.AddReactor(image.DefinitionReactor);
+			}
+		}
+
 		internal void RegisterCollection<T>(IObservableCadCollection<T> collection)
-			where T : CadObject
+					where T : CadObject
 		{
 			switch (collection)
 			{

@@ -66,9 +66,6 @@ namespace ACadSharp.Tests.IO
 			string file = Path.GetFileNameWithoutExtension(test.Path);
 			string pathOut = Path.Combine(TestVariables.OutputSamplesFolder, $"{file}_out.dwg");
 
-			if (doc.Header.Version == ACadVersion.AC1032)
-				return;
-
 			this.writeDwgFile(pathOut, doc);
 		}
 
@@ -160,10 +157,21 @@ namespace ACadSharp.Tests.IO
 
 		protected virtual void writeDxfFile(string file, CadDocument doc)
 		{
-			using (DxfWriter writer = new DxfWriter(file, doc, false))
+			if (TestVariables.SaveOutputInStream)
 			{
-				writer.OnNotification += this.onNotification;
-				writer.Write();
+				using (DxfWriter writer = new DxfWriter(new MemoryStream(), doc, false))
+				{
+					writer.OnNotification += this.onNotification;
+					writer.Write();
+				}
+			}
+			else
+			{
+				using (DxfWriter writer = new DxfWriter(file, doc, false))
+				{
+					writer.OnNotification += this.onNotification;
+					writer.Write();
+				}
 			}
 		}
 	}

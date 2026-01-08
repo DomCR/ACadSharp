@@ -5,6 +5,7 @@ using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
 using CSMath;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -93,6 +94,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<Group>(new CadGroupTemplate(), this.readGroup);
 				case DxfFileToken.ObjectGeoData:
 					return this.readObjectCodes<GeoData>(new CadGeoDataTemplate(), this.readGeoData);
+				case DxfFileToken.ObjectMaterial:
+					return this.readObjectCodes<Material>(new CadMaterialTemplate(), this.readMaterial);
 				case DxfFileToken.ObjectScale:
 					return this.readObjectCodes<Scale>(new CadTemplate<Scale>(new Scale()), this.readScale);
 				case DxfFileToken.ObjectTableContent:
@@ -105,6 +108,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<MLineStyle>(new CadMLineStyleTemplate(), this.readMLineStyle);
 				case DxfFileToken.ObjectMLeaderStyle:
 					return this.readObjectCodes<MultiLeaderStyle>(new CadMLeaderStyleTemplate(), this.readMLeaderStyle);
+				case DxfFileToken.ObjectTableStyle:
+					return this.readObjectCodes<TableStyle>(new CadTableStyleTemplate(), this.readTableStyle);
 				case DxfFileToken.ObjectXRecord:
 					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), this.readXRecord);
 				default:
@@ -444,6 +449,96 @@ namespace ACadSharp.IO.DXF
 				case 304:
 				case 292:
 					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readMaterial(CadTemplate template, DxfMap map)
+		{
+			CadMaterialTemplate tmp = template as CadMaterialTemplate;
+			List<double> arr = null;
+
+			switch (this._reader.Code)
+			{
+				case 43:
+					arr = new();
+					for (int i = 0; i < 16; i++)
+					{
+						Debug.Assert(this._reader.Code == 43);
+
+						arr.Add(this._reader.ValueAsDouble);
+
+						this._reader.ReadNext();
+					}
+
+					tmp.CadObject.DiffuseMatrix = new CSMath.Matrix4(arr.ToArray());
+					return this.checkObjectEnd(template, map, this.readMaterial);
+				case 47:
+					arr = new();
+					for (int i = 0; i < 16; i++)
+					{
+						Debug.Assert(this._reader.Code == 47);
+
+						arr.Add(this._reader.ValueAsDouble);
+
+						this._reader.ReadNext();
+					}
+
+					tmp.CadObject.SpecularMatrix = new CSMath.Matrix4(arr.ToArray());
+					return this.checkObjectEnd(template, map, this.readMaterial);
+				case 49:
+					arr = new();
+					for (int i = 0; i < 16; i++)
+					{
+						Debug.Assert(this._reader.Code == 49);
+
+						arr.Add(this._reader.ValueAsDouble);
+
+						this._reader.ReadNext();
+					}
+
+					tmp.CadObject.ReflectionMatrix = new CSMath.Matrix4(arr.ToArray());
+					return this.checkObjectEnd(template, map, this.readMaterial);
+				case 142:
+					arr = new();
+					for (int i = 0; i < 16; i++)
+					{
+						Debug.Assert(this._reader.Code == 142);
+
+						arr.Add(this._reader.ValueAsDouble);
+
+						this._reader.ReadNext();
+					}
+
+					tmp.CadObject.OpacityMatrix = new CSMath.Matrix4(arr.ToArray());
+					return this.checkObjectEnd(template, map, this.readMaterial);
+				case 144:
+					arr = new();
+					for (int i = 0; i < 16; i++)
+					{
+						Debug.Assert(this._reader.Code == 144);
+
+						arr.Add(this._reader.ValueAsDouble);
+
+						this._reader.ReadNext();
+					}
+
+					tmp.CadObject.BumpMatrix = new CSMath.Matrix4(arr.ToArray());
+					return this.checkObjectEnd(template, map, this.readMaterial);
+				case 147:
+					arr = new();
+					for (int i = 0; i < 16; i++)
+					{
+						Debug.Assert(this._reader.Code == 147);
+
+						arr.Add(this._reader.ValueAsDouble);
+
+						this._reader.ReadNext();
+					}
+
+					tmp.CadObject.RefractionMatrix = new CSMath.Matrix4(arr.ToArray());
+					return this.checkObjectEnd(template, map, this.readMaterial);
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
@@ -1352,6 +1447,15 @@ namespace ACadSharp.IO.DXF
 				{
 					case 1 when this._reader.ValueAsString.Equals("GRIDFORMAT_BEGIN", StringComparison.InvariantCultureIgnoreCase):
 						break;
+					case 62:
+						border.Color = new Color(this._reader.ValueAsShort);
+						break;
+					case 92:
+						border.LineWeight = (LineWeightType)this._reader.ValueAsInt;
+						break;
+					case 93:
+						border.IsInvisible = this._reader.ValueAsBool;
+						break;
 					case 340:
 						template.BorderLinetypePairs.Add(new Tuple<TableEntity.CellBorder, ulong>(border, this._reader.ValueAsHandle));
 						break;
@@ -1526,6 +1630,8 @@ namespace ACadSharp.IO.DXF
 				case 420:
 					return true;
 				default:
+					//Avoid noise while is not implemented
+					return true;
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.VisualStyle]);
 			}
 		}
@@ -1614,6 +1720,104 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		private bool readTableStyle(CadTemplate template, DxfMap map)
+		{
+			var tmp = template as CadTableStyleTemplate;
+			var style = tmp.CadObject;
+			var cellStyle = tmp.CurrentCellStyleTemplate?.CellStyle;
+
+			switch (this._reader.Code)
+			{
+				case 7:
+					tmp.CreateCurrentCellStyleTemplate();
+					tmp.CurrentCellStyleTemplate.TextStyleName = this._reader.ValueAsString;
+					return true;
+				case 94:
+					cellStyle.Alignment = this._reader.ValueAsInt;
+					return true;
+				case 62:
+					cellStyle.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 63:
+					cellStyle.BackgroundColor = new Color(this._reader.ValueAsShort);
+					return true;
+				case 140:
+					cellStyle.TextHeight = this._reader.ValueAsDouble;
+					return true;
+				case 170:
+					cellStyle.CellAlignment = (TableEntity.Cell.CellAlignmentType)this._reader.ValueAsShort;
+					return true;
+				case 283:
+					cellStyle.IsFillColorOn = this._reader.ValueAsBool;
+					return true;
+				case 90:
+					cellStyle.Type = (TableEntity.CellStyleType)this._reader.ValueAsShort;
+					return true;
+				case 91:
+					cellStyle.StyleClass = (TableEntity.CellStyleClass)this._reader.ValueAsShort;
+					return true;
+				case 1:
+					//Undocumented
+					return true;
+				case 274:
+					cellStyle.TopBorder.LineWeight = (LineWeightType)this._reader.ValueAsInt;
+					return true;
+				case 275:
+					cellStyle.HorizontalInsideBorder.LineWeight = (LineWeightType)this._reader.ValueAsInt;
+					return true;
+				case 276:
+					cellStyle.BottomBorder.LineWeight = (LineWeightType)this._reader.ValueAsInt;
+					return true;
+				case 277:
+					cellStyle.LeftBorder.LineWeight = (LineWeightType)this._reader.ValueAsInt;
+					return true;
+				case 278:
+					cellStyle.VerticalInsideBorder.LineWeight = (LineWeightType)this._reader.ValueAsInt;
+					return true;
+				case 279:
+					cellStyle.RightBorder.LineWeight = (LineWeightType)this._reader.ValueAsInt;
+					return true;
+				case 284:
+					cellStyle.TopBorder.IsInvisible = this._reader.ValueAsBool;
+					return true;
+				case 285:
+					cellStyle.HorizontalInsideBorder.IsInvisible = this._reader.ValueAsBool;
+					return true;
+				case 286:
+					cellStyle.BottomBorder.IsInvisible = this._reader.ValueAsBool;
+					return true;
+				case 287:
+					cellStyle.LeftBorder.IsInvisible = this._reader.ValueAsBool;
+					return true;
+				case 288:
+					cellStyle.VerticalInsideBorder.IsInvisible = this._reader.ValueAsBool;
+					return true;
+				case 289:
+					cellStyle.RightBorder.IsInvisible = this._reader.ValueAsBool;
+					return true;
+				case 64:
+					cellStyle.TopBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 65:
+					cellStyle.HorizontalInsideBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 66:
+					cellStyle.BottomBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 67:
+					cellStyle.LeftBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 68:
+					cellStyle.VerticalInsideBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				case 69:
+					cellStyle.RightBorder.Color = new Color(this._reader.ValueAsShort);
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
 		private bool readMLeaderStyle(CadTemplate template, DxfMap map)
 		{
 			var tmp = template as CadMLeaderStyleTemplate;
@@ -1655,7 +1859,19 @@ namespace ACadSharp.IO.DXF
 			{
 				switch (this._reader.GroupCodeValue)
 				{
+					case GroupCodeValueType.Point3D:
+						var code = this._reader.Code;
+						var x = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						var y = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						var z = this._reader.ValueAsDouble;
+						XYZ pt = new XYZ(x, y, z);
+						template.CadObject.CreateEntry(code, pt);
+						break;
 					case GroupCodeValueType.Handle:
+					case GroupCodeValueType.ObjectId:
+					case GroupCodeValueType.ExtendedDataHandle:
 						template.AddHandleReference(this._reader.Code, this._reader.ValueAsHandle);
 						break;
 					default:

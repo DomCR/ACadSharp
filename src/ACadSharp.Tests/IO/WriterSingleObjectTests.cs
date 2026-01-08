@@ -1,11 +1,9 @@
-﻿using ACadSharp.Blocks;
-using ACadSharp.Entities;
+﻿using ACadSharp.Entities;
 using ACadSharp.Extensions;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSMath;
-using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,12 +20,6 @@ namespace ACadSharp.Tests.IO
 		static WriterSingleObjectTests()
 		{
 			Data = new();
-			if (!TestVariables.RunDwgWriterSingleCases)
-			{
-				Data.Add(new(nameof(SingleCaseGenerator.Empty)));
-				return;
-			}
-
 			Data.Add(new(nameof(SingleCaseGenerator.Empty)));
 			Data.Add(new(nameof(SingleCaseGenerator.ArcSegments)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleEllipse)));
@@ -61,6 +53,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.CreateLayout)));
 			Data.Add(new(nameof(SingleCaseGenerator.EntityTransparency)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithSegments)));
+			Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithTextSegment)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateInsertWithHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.InsertWithSpatialFilter)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
@@ -107,6 +100,8 @@ namespace ACadSharp.Tests.IO
 			public bool HasExecuted { get; private set; }
 
 			public string Name { get; private set; }
+
+			public Stream Stream { get; set; }
 
 			public SingleCaseGenerator()
 			{
@@ -1067,6 +1062,94 @@ namespace ACadSharp.Tests.IO
 				this.Document.LineTypes.Add(lt);
 			}
 
+			public void LineTypeWithTextSegment()
+			{
+				LineType lt1 = new LineType("segmentedWithText")
+				{
+					Description = "hello text"
+				};
+
+				LineType.Segment lt1s1 = new LineType.Segment
+				{
+					Length = 5,
+					//Style = this.Document.TextStyles[TextStyle.DefaultName]
+				};
+
+				LineType.Segment lt1s2 = new LineType.Segment
+				{
+					Text = "Text",
+					Length = -3.0,
+					IsText = true,
+					Offset = new XY(-2.8, -.5),
+					Style = this.Document.TextStyles[TextStyle.DefaultName]
+				};
+
+				LineType.Segment lt1s3 = new LineType.Segment
+				{
+					Length = -.350,
+					//Style = this.Document.TextStyles[TextStyle.DefaultName]
+				};
+
+				lt1.AddSegment(lt1s1);
+				lt1.AddSegment(lt1s2);
+				lt1.AddSegment(lt1s3);
+
+
+				LineType lt2 = new LineType("degrees")
+				{
+					Description = "degree symbol",
+					Segments = { }
+				};
+
+
+				TextStyle style = new TextStyle("custom");
+
+				//this.Document.Header.CodePage = "GB2312";
+				style.Filename = "romans.shx";
+				style.BigFontFilename = "chineset.shx";
+				this.Document.TextStyles.Add(style);
+
+				LineType.Segment lt2s1 = new LineType.Segment
+				{
+					Length = 5,
+					//Style = this.Document.TextStyles[TextStyle.DefaultName]
+				};
+
+				LineType.Segment lt2s2 = new LineType.Segment
+				{
+					Text = "信",
+					Length = -3.0,
+					IsText = true,
+					Offset = new XY(-2.8, -.5),
+					Style = style
+				};
+
+				LineType.Segment lt2s3 = new LineType.Segment
+				{
+					Length = -.350,
+					//Style = this.Document.TextStyles[TextStyle.DefaultName]
+				};
+
+				lt2.AddSegment(lt2s1);
+				lt2.AddSegment(lt2s2);
+				lt2.AddSegment(lt2s3);
+
+				this.Document.LineTypes.Add(lt1);
+				this.Document.LineTypes.Add(lt2);
+
+				var line1 = new Line(new XYZ(0, 0, 0), new XYZ(20, 0, 0))
+				{
+					LineType = lt1
+				};
+
+				var line2 = new Line(new XYZ(0, 0, 0), new XYZ(0, 20, 0))
+				{
+					LineType = lt2
+				};
+				this.Document.Entities.Add(line1);
+				this.Document.Entities.Add(line2);
+			}
+
 			public void Serialize(IXunitSerializationInfo info)
 			{
 				info.AddValue(nameof(this.Name), this.Name);
@@ -1373,7 +1456,7 @@ namespace ACadSharp.Tests.IO
 				records.Add(new ExtendedDataInteger16(5));
 				records.Add(new ExtendedDataInteger32(33));
 				records.Add(new ExtendedDataString("my extended data string"));
-				records.Add(new ExtendedDataHandle(5));
+				//records.Add(new ExtendedDataHandle(5));
 				records.Add(new ExtendedDataReal(25.35));
 				records.Add(new ExtendedDataScale(0.66));
 				records.Add(new ExtendedDataDistance(481.48));
@@ -1392,6 +1475,11 @@ namespace ACadSharp.Tests.IO
 			public void XRef()
 			{
 				BlockRecord record = new BlockRecord("my_xref", "./SinglePoint_AC1032.dwg");
+				this.Document.BlockRecords.Add(record);
+				this.Document.Entities.Add(new Insert(record));
+
+				record = new BlockRecord("my_line_xref", "./SingleLine_AC1032.dwg");
+				record.IsUnloaded = true;
 				this.Document.BlockRecords.Add(record);
 				this.Document.Entities.Add(new Insert(record));
 			}

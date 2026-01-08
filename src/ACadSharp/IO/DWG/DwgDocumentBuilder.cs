@@ -35,7 +35,7 @@ namespace ACadSharp.IO.DWG
 			//Set the names for the block records before add them to the table
 			foreach (var item in this.BlockRecordTemplates)
 			{
-				item.SetBlockToRecord(this);
+				item.SetBlockToRecord(this, this.HeaderHandles);
 			}
 
 			this.RegisterTables();

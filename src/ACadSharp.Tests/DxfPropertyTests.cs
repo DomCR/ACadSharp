@@ -21,6 +21,18 @@ namespace ACadSharp.Tests
 		}
 
 		[Fact]
+		public void NotReferencedByCache()
+		{
+			DxfClassMap map = DxfClassMap.Create<Line>();
+			DxfClassMap modified = DxfClassMap.Create<Line>();
+
+			modified.DxfProperties.Remove(39);
+
+			Assert.False(modified.DxfProperties.ContainsKey(39));
+			Assert.True(map.DxfProperties.ContainsKey(39));
+		}
+
+		[Fact]
 		public void SetXYValueTest()
 		{
 			Viewport viewport = new Viewport();

@@ -719,13 +719,13 @@ namespace ACadSharp.Objects
 		public TextAttachmentType TextTopAttachment { get; set; }
 
 		/// <summary>
-		/// Undocumented in ODS and DXF-ref boolean, found in DXF
+		/// Undocumented in ODS and DXF-ref boolean, found in DXF.
 		/// </summary>
 		[DxfCodeValue(298)]
 		public bool UnknownFlag298 { get; set; }
 
 		/// <summary>
-		/// Default multiline style name
+		/// Default multiline style name.
 		/// </summary>
 		public const string DefaultName = "Standard";
 
@@ -748,9 +748,8 @@ namespace ACadSharp.Objects
 		/// Initializes a new instance of the <see cref="MultiLeaderStyle"/> class
 		/// and sets the name of this style.
 		/// </summary>
-		public MultiLeaderStyle(string name) : base()
+		public MultiLeaderStyle(string name) : base(name)
 		{
-			this.Name = name;
 		}
 
 		/// <inheritdoc/>

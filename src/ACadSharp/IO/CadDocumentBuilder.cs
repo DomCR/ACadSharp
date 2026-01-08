@@ -184,11 +184,12 @@ namespace ACadSharp.IO
 			return false;
 		}
 
-		public bool TryGetObjectTemplate<T>(ulong? handle, out T value) where T : CadTemplate
+		public bool TryGetObjectTemplate<T>(ulong? handle, out T value)
+			where T : ICadObjectTemplate
 		{
 			if (!handle.HasValue || handle == 0)
 			{
-				value = null;
+				value = default;
 				return false;
 			}
 
@@ -201,7 +202,7 @@ namespace ACadSharp.IO
 				}
 			}
 
-			value = null;
+			value = default;
 			return false;
 		}
 
@@ -269,7 +270,7 @@ namespace ACadSharp.IO
 				dictionaryTemplate.Build(this);
 			}
 
-			this.DocumentToBuild.UpdateCollections(true);
+			this.DocumentToBuild.UpdateCollections(true, false);
 		}
 
 		protected void createMissingHandles()

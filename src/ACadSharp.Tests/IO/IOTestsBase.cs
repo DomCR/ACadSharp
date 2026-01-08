@@ -39,8 +39,8 @@ namespace ACadSharp.Tests.IO
 		static IOTestsBase()
 		{
 			loadSamples("", "dwg", DwgFilePaths);
-			loadSamples("", "dxf", DxfAsciiFiles);
-			loadSamples("", "dxf", DxfBinaryFiles);
+			loadSamples("", "_ascii", "dxf", DxfAsciiFiles);
+			loadSamples("", "_binary", "dxf", DxfBinaryFiles);
 
 			Versions = new TheoryData<ACadVersion>
 			{
@@ -69,6 +69,11 @@ namespace ACadSharp.Tests.IO
 
 		protected static void loadSamples(string folder, string ext, TheoryData<FileModel> files)
 		{
+			loadSamples(folder, string.Empty, ext, files);
+		}
+
+		protected static void loadSamples(string folder, string prefix, string ext, TheoryData<FileModel> files)
+		{
 			string path = TestVariables.SamplesFolder;
 
 			if (!string.IsNullOrEmpty(folder))
@@ -82,7 +87,7 @@ namespace ACadSharp.Tests.IO
 				return;
 			}
 
-			foreach (string file in Directory.GetFiles(path, $"*.{ext}"))
+			foreach (string file in Directory.GetFiles(path, $"*{prefix}.{ext}"))
 			{
 				files.Add(new FileModel(file));
 			}

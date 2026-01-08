@@ -23,8 +23,17 @@ namespace ACadSharp.Objects.Collections
 
 		protected CadDictionary _dictionary;
 
+		/// <summary>
+		/// Initializes a new instance of the ObjectDictionaryCollection class with the specified CAD dictionary.
+		/// </summary>
+		/// <param name="dictionary">The CAD dictionary that provides the underlying storage for the collection. Cannot be null.</param>
 		protected ObjectDictionaryCollection(CadDictionary dictionary)
 		{
+			if (dictionary == null)
+			{
+				throw new ArgumentNullException(nameof(dictionary));
+			}
+
 			this._dictionary = dictionary;
 		}
 
@@ -93,7 +102,7 @@ namespace ACadSharp.Objects.Collections
 		/// <inheritdoc/>
 		public T TryAdd(T item)
 		{
-			if (this.TryGetValue(item.Name, out T existing))
+			if (this.TryGet(item.Name, out T existing))
 			{
 				return existing;
 			}
@@ -105,12 +114,13 @@ namespace ACadSharp.Objects.Collections
 		}
 
 		/// <summary>
-		/// Gets the value associated with the specific key
+		/// Attempts to retrieve the entry associated with the specified name.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="entry"></param>
-		/// <returns>true if the value is found or false if not found.</returns>
-		public bool TryGetValue(string name, out T entry)
+		/// <param name="name">The name of the entry to locate. Cannot be null.</param>
+		/// <param name="entry">When this method returns, contains the entry associated with the specified name, if the name is found; otherwise,
+		/// the default value for the type of the entry parameter. This parameter is passed uninitialized.</param>
+		/// <returns>true if an entry with the specified name is found; otherwise, false.</returns>
+		public bool TryGet(string name, out T entry)
 		{
 			return this._dictionary.TryGetEntry(name, out entry);
 		}

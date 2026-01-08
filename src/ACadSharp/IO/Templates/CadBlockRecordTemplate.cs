@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadBlockRecordTemplate : CadTableEntryTemplate<BlockRecord>
+	internal class CadBlockRecordTemplate : CadTableEntryTemplate<BlockRecord>, ICadOwnerTemplate
 	{
 		public ulong? FirstEntityHandle { get; set; }
 
@@ -23,7 +23,7 @@ namespace ACadSharp.IO.Templates
 
 		public List<ulong> InsertHandles { get; set; } = new();
 
-		public string LayerName { get; set; }
+		public CadBlockEntityTemplate BlockEntityTemplate { get; set; }
 
 		public CadBlockRecordTemplate() : base(new BlockRecord()) { }
 
@@ -47,6 +47,11 @@ namespace ACadSharp.IO.Templates
 			}
 			else
 			{
+				if (this.BlockEntityTemplate != null)
+				{
+					this.OwnedObjectsHandlers.UnionWith(this.BlockEntityTemplate.OwnedObjectsHandlers);
+				}
+
 				foreach (ulong handle in this.OwnedObjectsHandlers)
 				{
 					if (builder.TryGetCadObject(handle, out Entity child))
@@ -57,7 +62,7 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
-		public void SetBlockToRecord(CadDocumentBuilder builder)
+		public void SetBlockToRecord(CadDocumentBuilder builder, DWG.DwgHeaderHandlesCollection headerHandles)
 		{
 			if (builder.TryGetCadObject(this.BeginBlockHandle, out Block block))
 			{
@@ -70,6 +75,7 @@ namespace ACadSharp.IO.Templates
 				block.BasePoint = this.CadObject.BlockEntity.BasePoint;
 				block.XRefPath = this.CadObject.BlockEntity.XRefPath;
 				block.Comments = this.CadObject.BlockEntity.Comments;
+				block.IsUnloaded = this.CadObject.BlockEntity.IsUnloaded;
 
 				this.CadObject.BlockEntity = block;
 			}
@@ -77,6 +83,19 @@ namespace ACadSharp.IO.Templates
 			if (builder.TryGetCadObject(this.EndBlockHandle, out BlockEnd blockEnd))
 			{
 				this.CadObject.BlockEnd = blockEnd;
+			}
+
+			this.ensureCorrectNaming(builder, headerHandles.MODEL_SPACE, BlockRecord.ModelSpaceName);
+			this.ensureCorrectNaming(builder, headerHandles.PAPER_SPACE, BlockRecord.PaperSpaceName);
+		}
+
+		private void ensureCorrectNaming(CadDocumentBuilder builder, ulong? handle, string expected)
+		{
+			if (this.CadObject.Handle == handle
+				&& !this.CadObject.Name.Equals(expected, System.StringComparison.InvariantCultureIgnoreCase))
+			{
+				builder.Notify($"Invalid name for {this.CadObject.Name} changed to {expected}", NotificationType.Warning);
+				this.CadObject.Name = expected;
 			}
 		}
 

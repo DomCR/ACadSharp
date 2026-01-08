@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using CSMath;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -7,6 +8,16 @@ namespace ACadSharp.Tests.Entities
 {
 	public class MTextTests : CommonEntityTests<MText>
 	{
+		public override void GetBoundingBoxTest()
+		{
+			XYZ pt = _random.NextXYZ();
+			MText text = new MText("hello") { InsertPoint = pt };
+
+			var box = text.GetBoundingBox();
+			Assert.Equal(BoundingBoxExtent.Point, box.Extent);
+			Assert.Equal(pt, box.Center);
+		}
+
 		[Fact]
 		public void PlainTextTest()
 		{

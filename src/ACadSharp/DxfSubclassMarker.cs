@@ -142,6 +142,8 @@
 
 		public const string ObjectContextData = "AcDbObjectContextData";
 
+		public const string Ole2Frame = "AcDbOle2Frame";
+
 		public const string OrdinateDimension = "AcDbOrdinateDimension";
 
 		public const string PdfDefinition = "AcDbPdfDefinition";

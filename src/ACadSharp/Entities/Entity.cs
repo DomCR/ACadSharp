@@ -204,7 +204,7 @@ namespace ACadSharp.Entities
 				case LineWeightType.ByBlock:
 					if (this.Owner is BlockRecord record)
 					{
-						return record.BlockEntity.LineWeight;
+						return record.BlockEntity.GetActiveLineWeightType();
 					}
 					else
 					{

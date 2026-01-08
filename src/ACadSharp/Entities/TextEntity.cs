@@ -31,11 +31,11 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(40)]
 		public double Height
 		{
-			get => _height;
+			get => this._height;
 			set
 			{
-				if (value < 0)
-					throw new ArgumentOutOfRangeException("Height value cannot be negative.");
+				if (value <= 0)
+					throw new ArgumentOutOfRangeException(nameof(value), value, "The Text height must be greater than zero.");
 				else
 					this._height = value;
 			}
@@ -57,7 +57,8 @@ namespace ACadSharp.Entities
 		/// Mirror flags.
 		/// </summary>
 		[DxfCodeValue(71)]
-		public TextMirrorFlag Mirror { get => _mirror; set => _mirror = value; }
+		public TextMirrorFlag Mirror { get => this._mirror; set => this._mirror = value; }
+
 		/// <summary>
 		/// Specifies the three-dimensional normal unit vector for the object.
 		/// </summary>
@@ -124,7 +125,7 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				return _value;
+				return this._value;
 			}
 			set
 			{
@@ -150,10 +151,13 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Optional, 41)]
 		public double WidthFactor { get; set; } = 1.0;
 
-		private double _height = 0.0;
-		private TextStyle _style = TextStyle.Default;
-		private string _value = string.Empty;
+		private double _height = 1.0d;
+
 		private TextMirrorFlag _mirror = TextMirrorFlag.None;
+
+		private TextStyle _style = TextStyle.Default;
+
+		private string _value = string.Empty;
 
 		public TextEntity() : base()
 		{
@@ -167,9 +171,9 @@ namespace ACadSharp.Entities
 			XYZ newInsert = transform.ApplyTransform(this.InsertPoint);
 			XYZ newNormal = this.transformNormal(transform, this.Normal);
 
-			var transformation = this.getWorldMatrix(transform, Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+			var transformation = this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
 
-			List<XY> uv = applyRotation(
+			List<XY> uv = this.applyRotation(
 				new[]
 				{
 					this.WidthFactor * this.Height * XY.AxisX,
