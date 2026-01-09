@@ -5,6 +5,7 @@ using ACadSharp.Tables.Collections;
 using ACadSharp.Types.Units;
 using ACadSharp.XData;
 using CSMath;
+using CSUtilities;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
@@ -336,11 +337,17 @@ namespace ACadSharp.IO.DXF
 					tmp.DIMBLK2_Name = this._reader.ValueAsString;
 					return true;
 				case 40:
-					//Somethimes is 0 but it shouldn't be allowed
-					template.CadObject.ScaleFactor = this._reader.ValueAsDouble <= 0 ? 1.0d : this._reader.ValueAsDouble;
+					if (!Try.Do(() => template.CadObject.ScaleFactor = this._reader.ValueAsDouble, out Exception ex))
+					{
+						template.CadObject.ScaleFactor = MathHelper.Epsilon;
+						this._builder.Notify($"[{template.CadObject.SubclassMarker}] Assignation error for {nameof(DimensionStyle.ScaleFactor)}.", NotificationType.Warning, ex);
+					}
 					return true;
 				case 41:
-					template.CadObject.ArrowSize = this._reader.ValueAsDouble;
+					if (!Try.Do(() => template.CadObject.ArrowSize = this._reader.ValueAsDouble, out ex))
+					{
+						this._builder.Notify($"[{template.CadObject.SubclassMarker}] Assignation error for {nameof(DimensionStyle.ArrowSize)}.", NotificationType.Warning, ex);
+					}
 					return true;
 				case 42:
 					template.CadObject.ExtensionLineOffset = this._reader.ValueAsDouble;
@@ -367,7 +374,10 @@ namespace ACadSharp.IO.DXF
 					template.CadObject.FixedExtensionLineLength = this._reader.ValueAsDouble;
 					return true;
 				case 50:
-					template.CadObject.JoggedRadiusDimensionTransverseSegmentAngle = CSMath.MathHelper.DegToRad(this._reader.ValueAsDouble);
+					if (!Try.Do(() => template.CadObject.JoggedRadiusDimensionTransverseSegmentAngle = this._reader.ValueAsAngle, out ex))
+					{
+						this._builder.Notify($"[{template.CadObject.SubclassMarker}] Assignation error for {nameof(DimensionStyle.JoggedRadiusDimensionTransverseSegmentAngle)}.", NotificationType.Warning, ex);
+					}
 					return true;
 				case 69:
 					template.CadObject.TextBackgroundFillMode = (DimensionTextBackgroundFillMode)this._reader.ValueAsShort;
@@ -417,7 +427,10 @@ namespace ACadSharp.IO.DXF
 					template.CadObject.Handle = this._reader.ValueAsHandle;
 					return true;
 				case 140:
-					template.CadObject.TextHeight = this._reader.ValueAsDouble;
+					if (!Try.Do(() => template.CadObject.TextHeight = this._reader.ValueAsDouble, out ex))
+					{
+						this._builder.Notify($"[{template.CadObject.SubclassMarker}] Assignation error for {nameof(DimensionStyle.TextHeight)}.", NotificationType.Warning, ex);
+					}
 					return true;
 				case 141:
 					template.CadObject.CenterMarkSize = this._reader.ValueAsDouble;
