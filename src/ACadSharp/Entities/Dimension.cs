@@ -348,6 +348,9 @@ namespace ACadSharp.Entities
 			{
 				switch (style.AngularUnit)
 				{
+					case AngularUnitFormat.DecimalDegrees:
+						text = unitFormat.ToDegrees(value);
+						break;
 					case AngularUnitFormat.DegreesMinutesSeconds:
 						text = unitFormat.ToDegreesMinutesSeconds(value);
 						break;
@@ -357,7 +360,6 @@ namespace ACadSharp.Entities
 					case AngularUnitFormat.Radians:
 						text = unitFormat.ToRadians(value);
 						break;
-					case AngularUnitFormat.DecimalDegrees:
 					case AngularUnitFormat.SurveyorsUnits:
 					default:
 						text = unitFormat.ToDecimal(value, true);
