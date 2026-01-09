@@ -11,6 +11,39 @@ namespace ACadSharp.Tests.Entities
 	public class HatchTests : CommonEntityTests<Hatch>
 	{
 		[Fact]
+		public void BoundaryPathToEntityTest()
+		{
+			var a = new Hatch.BoundaryPath.Arc
+			{
+				Center = new XY(25, 0),
+				StartAngle = 0,
+				EndAngle = MathHelper.HalfPI,
+				Radius = 10,
+				CounterClockWise = true
+			};
+
+			ACadSharp.Entities.Arc arc = (Arc)a.ToEntity();
+
+			Assert.NotNull(arc);
+			Assert.Equal(a.Center.Convert<XYZ>(), arc.Center);
+			Assert.Equal(a.StartAngle, arc.StartAngle);
+			Assert.Equal(a.EndAngle, arc.EndAngle);
+			Assert.Equal(a.Radius, arc.Radius);
+
+			var l = new Hatch.BoundaryPath.Line
+			{
+				Start = new XY(25, 0),
+				End = new XY(25, 0)
+			};
+
+			ACadSharp.Entities.Line line = (Line)l.ToEntity();
+
+			Assert.NotNull(line);
+			Assert.Equal(l.Start.Convert<XYZ>(), line.StartPoint);
+			Assert.Equal(l.End.Convert<XYZ>(), line.EndPoint);
+		}
+
+		[Fact]
 		public void CreateHatch()
 		{
 			Hatch hatch = new Hatch();
