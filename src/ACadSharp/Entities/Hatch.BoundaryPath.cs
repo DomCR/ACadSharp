@@ -2,6 +2,7 @@
 using ACadSharp.Extensions;
 using CSMath;
 using CSUtilities.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -63,6 +64,46 @@ namespace ACadSharp.Entities
 			public BoundaryPath()
 			{
 				this.Edges.CollectionChanged += this.onEdgesCollectionChanged;
+			}
+
+			public BoundaryPath(IEnumerable<Edge> edges) : this()
+			{
+				foreach (var edge in edges)
+				{
+					this.Edges.Add(edge);
+				}
+			}
+
+			public BoundaryPath(params IEnumerable<Entity> entities) : this()
+			{
+				this._flags = BoundaryPathFlags.Derived | BoundaryPathFlags.External;
+				this.Entities.AddRange(entities);
+				this.UpdateEdges();
+			}
+
+			public void UpdateEdges()
+			{
+				if (!this.Entities.Any())
+				{
+					return;
+				}
+
+				this.Edges.Clear();
+
+				foreach (var entity in this.Entities)
+				{
+					switch (entity)
+					{
+						case Entities.Arc arc:
+							this.Edges.Add(new Arc(arc));
+							break;
+						case Entities.Circle circle:
+							this.Edges.Add(new Arc(circle));
+							break;
+						default:
+							throw new ArgumentException(($"The entity type {entity.ObjectName} cannot be part of a hatch boundary. Only Arc, Circle, Ellipse, Line, Polyline2D, Polyline3D, and Spline entities are allowed."));
+					}
+				}
 			}
 
 			/// <inheritdoc/>
