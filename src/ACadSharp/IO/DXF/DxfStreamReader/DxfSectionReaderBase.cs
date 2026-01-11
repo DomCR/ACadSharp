@@ -2058,10 +2058,10 @@ namespace ACadSharp.IO.DXF
 								spline.Degree = this._reader.ValueAsInt;
 								break;
 							case 73:
-								spline.Rational = this._reader.ValueAsBool;
+								spline.IsRational = this._reader.ValueAsBool;
 								break;
 							case 74:
-								spline.Periodic = this._reader.ValueAsBool;
+								spline.IsPeriodic = this._reader.ValueAsBool;
 								break;
 							case 95:
 								nKnots = this._reader.ValueAsInt;

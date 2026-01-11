@@ -399,6 +399,28 @@ namespace ACadSharp.Tests.IO
 
 				this.Document.Entities.Add(hatch);
 				this.Document.Entities.Add(c);
+
+				hatch = new Hatch();
+				hatch.IsSolid = true;
+
+				hatch.Paths.Add(new Hatch.BoundaryPath(new Arc
+				{
+					Radius = 5,
+					Center = new XYZ(10, 10, 0)
+				}));
+
+				this.Document.Entities.Add(hatch);
+
+				hatch = new Hatch();
+				hatch.IsSolid = true;
+
+				hatch.Paths.Add(new Hatch.BoundaryPath(new Line
+				{
+					StartPoint = XYZ.Zero,
+					EndPoint = new XYZ(10, 10, 0)
+				}));
+
+				this.Document.Entities.Add(hatch);
 			}
 
 			public void CreateCircleHatch()

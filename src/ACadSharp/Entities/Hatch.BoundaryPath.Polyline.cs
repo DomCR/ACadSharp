@@ -44,12 +44,38 @@ namespace ACadSharp.Entities
 				[DxfCodeValue(DxfReferenceType.Count, 93)]
 				public List<XYZ> Vertices { get; private set; } = new();
 
-				public Polyline() { }
+				/// <summary>
+				/// Initializes a new instance of the Polyline class.
+				/// </summary>
+				public Polyline()
+				{ }
 
+				/// <summary>
+				/// Initializes a new instance of the Polyline class with the specified vertices and closure state.
+				/// </summary>
+				/// <param name="vertices">The collection of points that define the vertices of the polyline. The order of the points determines the
+				/// sequence of the polyline's segments. Cannot be null or empty.</param>
+				/// <param name="isClosed">true to create a closed polyline where the last vertex connects to the first; otherwise, false.</param>
 				public Polyline(IEnumerable<XYZ> vertices, bool isClosed = true)
 				{
 					this.Vertices.AddRange(vertices);
 					this.IsClosed = isClosed;
+				}
+
+				/// <summary>
+				/// Initializes a new instance of the Polyline class by copying the vertices and closed state from the specified
+				/// polyline.
+				/// </summary>
+				/// <param name="polyline">The source polyline whose vertices and closed state are used to initialize the new instance. Cannot be null.</param>
+				public Polyline(IPolyline polyline)
+				{
+					foreach (var v in polyline.Vertices)
+					{
+						XY xy = v.Location.Convert<XY>();
+						this.Vertices.Add(new XYZ(xy.X, xy.Y, v.Bulge));
+					}
+
+					this.IsClosed = polyline.IsClosed;
 				}
 
 				/// <inheritdoc/>

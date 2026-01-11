@@ -59,13 +59,19 @@ namespace ACadSharp.Entities
 			private BoundaryPathFlags _flags;
 
 			/// <summary>
-			/// Default constructor.
+			/// Initializes a new instance of the BoundaryPath class.
 			/// </summary>
+			/// <remarks>Subscribes to changes in the Edges collection to keep the BoundaryPath instance updated when
+			/// the collection is modified.</remarks>
 			public BoundaryPath()
 			{
 				this.Edges.CollectionChanged += this.onEdgesCollectionChanged;
 			}
 
+			/// <summary>
+			/// Initializes a new instance of the BoundaryPath class with the specified collection of edges.
+			/// </summary>
+			/// <param name="edges">A collection of Edge objects that define the boundary path. Cannot be null.</param>
 			public BoundaryPath(IEnumerable<Edge> edges) : this()
 			{
 				foreach (var edge in edges)
@@ -74,6 +80,12 @@ namespace ACadSharp.Entities
 				}
 			}
 
+			/// <summary>
+			/// Initializes a new instance of the BoundaryPath class using the specified collection of entities.
+			/// </summary>
+			/// <remarks>The entities provided are added to the Entities collection of the BoundaryPath. The path is
+			/// marked as derived and external by default.</remarks>
+			/// <param name="entities">A collection of Entity objects that define the segments of the boundary path. Cannot be null.</param>
 			public BoundaryPath(params IEnumerable<Entity> entities) : this()
 			{
 				this._flags = BoundaryPathFlags.Derived | BoundaryPathFlags.External;
@@ -99,6 +111,18 @@ namespace ACadSharp.Entities
 							break;
 						case Entities.Circle circle:
 							this.Edges.Add(new Arc(circle));
+							break;
+						case Entities.Ellipse ellipse:
+							this.Edges.Add(new Ellipse(ellipse));
+							break;
+						case Entities.Line line:
+							this.Edges.Add(new Line(line));
+							break;
+						case IPolyline polyline:
+							this.Edges.Add(new Polyline(polyline));
+							break;
+						case Entities.Spline spline:
+							this.Edges.Add(new Spline(spline));
 							break;
 						default:
 							throw new ArgumentException(($"The entity type {entity.ObjectName} cannot be part of a hatch boundary. Only Arc, Circle, Ellipse, Line, Polyline2D, Polyline3D, and Spline entities are allowed."));

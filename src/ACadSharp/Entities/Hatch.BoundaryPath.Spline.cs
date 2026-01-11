@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -43,16 +44,19 @@ namespace ACadSharp.Entities
 				public List<double> Knots { get; private set; } = new List<double>();
 
 				/// <summary>
-				/// Periodic.
+				/// Gets or sets a value indicating whether the spline is periodic.
 				/// </summary>
+				/// <remarks>A periodic spline forms a closed, continuous curve where the start and end points are joined
+				/// seamlessly. Setting this property to true creates a smooth, looping spline; setting it to false creates an open
+				/// spline.</remarks>
 				[DxfCodeValue(74)]
-				public bool Periodic { get; set; }
+				public bool IsPeriodic { get; set; }
 
 				/// <summary>
-				/// Rational.
+				/// Gets or sets a value indicating whether the spline is rational.
 				/// </summary>
 				[DxfCodeValue(73)]
-				public bool Rational { get; set; }
+				public bool IsRational { get; set; }
 
 				/// <summary>
 				/// Start tangent.
@@ -67,6 +71,36 @@ namespace ACadSharp.Entities
 				/// Gets a collection of weights derived from the Z-coordinates of the control points.
 				/// </summary>
 				public IEnumerable<double> Weights { get { return this.ControlPoints.Select(c => c.Z); } }
+
+				/// <summary>
+				/// Initializes a new instance of the Spline class.
+				/// </summary>
+				public Spline()
+				{ }
+
+				/// <summary>
+				/// Initializes a new instance of the Spline class using the specified spline entity.
+				/// </summary>
+				/// <param name="spline">The spline entity that provides the data for initializing this Spline instance. Cannot be null.</param>
+				public Spline(Entities.Spline spline)
+				{
+					this.Degree = spline.Degree;
+					this.IsRational = true;
+					this.IsPeriodic = spline.IsClosed;
+					if (!spline.ControlPoints.Any())
+					{
+						throw new ArgumentException("The HatchBoundaryPath spline edge requires a spline entity with control points.", nameof(spline));
+					}
+
+					Matrix3 trans = Matrix3.ArbitraryAxis(spline.Normal).Transpose();
+					for (int i = 0; i < spline.ControlPoints.Count; i++)
+					{
+						XYZ point = trans * spline.ControlPoints[i];
+						this.ControlPoints[i] = new XYZ(point.X, point.Y, spline.Weights[i]);
+					}
+
+					this.Knots.AddRange(spline.Knots);
+				}
 
 				/// <inheritdoc/>
 				public override void ApplyTransform(Transform transform)
@@ -123,8 +157,8 @@ namespace ACadSharp.Entities
 					Entities.Spline spline = new();
 
 					spline.Degree = this.Degree;
-					spline.Flags = this.Periodic ? spline.Flags |= (SplineFlags.Periodic) : spline.Flags;
-					spline.Flags = this.Rational ? spline.Flags |= (SplineFlags.Rational) : spline.Flags;
+					spline.Flags = this.IsPeriodic ? spline.Flags |= (SplineFlags.Periodic) : spline.Flags;
+					spline.Flags = this.IsRational ? spline.Flags |= (SplineFlags.Rational) : spline.Flags;
 
 					spline.StartTangent = this.StartTangent.Convert<XYZ>();
 					spline.EndTangent = this.EndTangent.Convert<XYZ>();

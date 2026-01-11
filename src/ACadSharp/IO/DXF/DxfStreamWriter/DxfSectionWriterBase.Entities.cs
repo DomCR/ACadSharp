@@ -518,8 +518,8 @@ namespace ACadSharp.IO.DXF
 					}
 					break;
 				case Hatch.BoundaryPath.Spline spline:
-					this._writer.Write(73, spline.Rational ? (short)1 : (short)0);
-					this._writer.Write(74, spline.Periodic ? (short)1 : (short)0);
+					this._writer.Write(73, spline.IsRational ? (short)1 : (short)0);
+					this._writer.Write(74, spline.IsPeriodic ? (short)1 : (short)0);
 
 					this._writer.Write(94, (int)spline.Degree);
 					this._writer.Write(95, spline.Knots.Count);
@@ -534,7 +534,7 @@ namespace ACadSharp.IO.DXF
 					{
 						this._writer.Write(10, point.X);
 						this._writer.Write(20, point.Y);
-						if (spline.Rational)
+						if (spline.IsRational)
 						{
 							this._writer.Write(42, point.Z);
 						}
