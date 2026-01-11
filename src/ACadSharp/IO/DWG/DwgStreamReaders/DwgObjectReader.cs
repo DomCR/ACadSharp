@@ -1032,6 +1032,9 @@ namespace ACadSharp.IO.DWG
 				case "ACAD_TABLE":
 					template = this.readTableEntity();
 					break;
+				case DxfFileToken.ObjectDimensionAssociation:
+					template = this.readDimensionAssociation();
+					break;
 				case "DBCOLOR":
 					template = this.readDbColor();
 					break;
@@ -7213,6 +7216,56 @@ namespace ACadSharp.IO.DWG
 		}
 
 		#endregion Object readers
+
+		private CadTemplate readDimensionAssociation()
+		{
+			DimensionAssociation association = new DimensionAssociation();
+			CadDimensionAssociationTemplate template = new CadDimensionAssociationTemplate(association);
+
+			this.readCommonNonEntityData(template);
+
+			//Following the order of dxf:
+			//330
+			template.DimensionHandle = this.handleReference();
+
+			//90 
+			association.AssociativityFlags = (AssociativityFlags)this._mergedReaders.ReadBitLong();
+			//70
+			association.IsTransSpace = this._mergedReaders.ReadBit();
+			//71
+			association.RotatedDimensionType = (RotatedDimensionType)this._mergedReaders.ReadByte();
+
+			if (association.AssociativityFlags.HasFlag(AssociativityFlags.FirstPointReference))
+			{
+				this.readOsnapPointRef();
+			}
+
+			if (association.AssociativityFlags.HasFlag(AssociativityFlags.SecondPointReference))
+			{
+
+			}
+
+			if (association.AssociativityFlags.HasFlag(AssociativityFlags.ThirdPointReference))
+			{
+
+			}
+
+			if (association.AssociativityFlags.HasFlag(AssociativityFlags.FourthPointReference))
+			{
+
+			}
+
+			return template;
+		}
+
+		private DimensionAssociation.OsnapPointRef readOsnapPointRef()
+		{
+			var osnap = new DimensionAssociation.OsnapPointRef();
+
+
+
+			return osnap;
+		}
 
 		private CadTemplate readDbColor()
 		{
