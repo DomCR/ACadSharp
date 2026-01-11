@@ -42,12 +42,6 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectDimensionAssociation;
 
-		/// <summary>
-		/// Gets or sets the object snap type associated with the entity.
-		/// </summary>
-		[DxfCodeValue(72)]
-		public ObjectOsnapType ObjectOsnapType { get; set; }
-
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
@@ -62,11 +56,6 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.DimensionAssociation;
 
-		/// <summary>
-		/// Gets or sets the type of the rotated dimension, indicating whether it is parallel or perpendicular.
-		/// </summary>
-		[DxfCodeValue(73)]
-		public SubentType SubentType { get; set; } = SubentType.Unknown;
 
 		public const string OsnapPointRefClassName = "AcDbOsnapPointRef";
 
@@ -77,6 +66,24 @@ namespace ACadSharp.Objects
 
 		public class OsnapPointRef
 		{
+			/// <summary>
+			/// Gets or sets the object snap type associated with the entity.
+			/// </summary>
+			[DxfCodeValue(72)]
+			public ObjectOsnapType ObjectOsnapType { get; set; }
+
+			/// <summary>
+			/// Gets or sets the type of the rotated dimension, indicating whether it is parallel or perpendicular.
+			/// </summary>
+			[DxfCodeValue(73)]
+			public SubentType SubentType { get; set; } = SubentType.Unknown;
+
+			/// <summary>
+			/// Gets the name of the associated class for the dimension reference.
+			/// </summary>
+			[DxfCodeValue(1)]
+			public string ClassName { get; internal set; } = DimensionAssociation.OsnapPointRefClassName;
+
 			/// <summary>
 			/// Gets or sets the geometry parameter used for the Near object snap (Osnap).
 			/// </summary>
@@ -91,9 +98,6 @@ namespace ACadSharp.Objects
 			[DxfCodeValue(10, 20, 30)]
 			public XYZ OsnapPoint { get; set; }
 		}
-
-		//73
-		//SubentType of main object (edge, face)
 
 		//91
 		//GsMarker of main object (index)

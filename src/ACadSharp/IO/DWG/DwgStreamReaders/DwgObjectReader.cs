@@ -3704,11 +3704,11 @@ namespace ACadSharp.IO.DWG
 			ObjectContextData contextData = (ObjectContextData)template.CadObject;
 
 			//BS	70	Version (default value is 3).
-			contextData.Version = _objectReader.ReadBitShort();
+			contextData.Version = this._objectReader.ReadBitShort();
 			//B	-	Has file to extension dictionary (default value is true).
-			contextData.HasFileToExtensionDictionary = _objectReader.ReadBit();
+			contextData.HasFileToExtensionDictionary = this._objectReader.ReadBit();
 			//B	290	Default flag (default value is false).
-			contextData.Default = _objectReader.ReadBit();
+			contextData.Default = this._objectReader.ReadBit();
 
 			return template;
 		}
@@ -3740,13 +3740,13 @@ namespace ACadSharp.IO.DWG
 			int leaderRootCount = this._objectReader.ReadBitLong();
 			if (leaderRootCount == 0)
 			{
-				bool b0 = _objectReader.ReadBit();
-				bool b1 = _objectReader.ReadBit();
-				bool b2 = _objectReader.ReadBit();
-				bool b3 = _objectReader.ReadBit();
-				bool b4 = _objectReader.ReadBit();
-				bool b5 = _objectReader.ReadBit();
-				bool b6 = _objectReader.ReadBit();
+				bool b0 = this._objectReader.ReadBit();
+				bool b1 = this._objectReader.ReadBit();
+				bool b2 = this._objectReader.ReadBit();
+				bool b3 = this._objectReader.ReadBit();
+				bool b4 = this._objectReader.ReadBit();
+				bool b5 = this._objectReader.ReadBit();
+				bool b6 = this._objectReader.ReadBit();
 
 				leaderRootCount = b5 ? 2 : 1;
 			}
@@ -6405,9 +6405,9 @@ namespace ACadSharp.IO.DWG
 			visualStyle.Type = this._objectReader.ReadBitLong();
 
 			//177 
-			var value177 = _objectReader.ReadBitShort();
+			var value177 = this._objectReader.ReadBitShort();
 			//291 Internal use only flag
-			var value291 = _objectReader.ReadBit();
+			var value291 = this._objectReader.ReadBit();
 
 			//70 Count then repeat 90 and 176
 			int count = this._objectReader.ReadBitLong();
@@ -7242,17 +7242,17 @@ namespace ACadSharp.IO.DWG
 
 			if (association.AssociativityFlags.HasFlag(AssociativityFlags.SecondPointReference))
 			{
-
+				this.readOsnapPointRef();
 			}
 
 			if (association.AssociativityFlags.HasFlag(AssociativityFlags.ThirdPointReference))
 			{
-
+				this.readOsnapPointRef();
 			}
 
 			if (association.AssociativityFlags.HasFlag(AssociativityFlags.FourthPointReference))
 			{
-
+				this.readOsnapPointRef();
 			}
 
 			return template;
@@ -7261,8 +7261,14 @@ namespace ACadSharp.IO.DWG
 		private DimensionAssociation.OsnapPointRef readOsnapPointRef()
 		{
 			var osnap = new DimensionAssociation.OsnapPointRef();
+			
+			//1
+			osnap.ClassName = this._mergedReaders.ReadVariableText();
+			//72
+			osnap.ObjectOsnapType = (ObjectOsnapType)this._mergedReaders.ReadByte();
 
-
+			//331
+			ulong h1 = this.handleReference();
 
 			return osnap;
 		}
