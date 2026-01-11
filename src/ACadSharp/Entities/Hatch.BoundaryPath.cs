@@ -93,6 +93,14 @@ namespace ACadSharp.Entities
 				this.UpdateEdges();
 			}
 
+			/// <summary>
+			/// Updates the collection of edges to reflect the current set of entities in the boundary definition.
+			/// </summary>
+			/// <remarks>This method clears the existing edges and reconstructs them based on the current entities. It
+			/// should be called after modifying the entities collection to ensure the edges remain consistent with the boundary
+			/// definition.</remarks>
+			/// <exception cref="ArgumentException">Thrown if an entity in the collection is not of a supported type. Only Arc, Circle, Ellipse, Line, Polyline2D,
+			/// Polyline3D, and Spline entities are allowed as hatch boundary elements.</exception>
 			public void UpdateEdges()
 			{
 				if (!this.Entities.Any())
