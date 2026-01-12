@@ -50,6 +50,9 @@ namespace ACadSharp.IO.Templates
 				case PolyfaceMesh mesh:
 					mesh.Vertices.AddRange(vertices.Cast<VertexFaceMesh>());
 					break;
+				case PolygonMesh polygon:
+					polygon.Vertices.AddRange(vertices.Cast<PolygonMeshVertex>());
+					break;
 				default:
 					builder.Notify($"Unknown polyline type {this.CadObject.SubclassMarker}", NotificationType.Warning);
 					break;
@@ -111,6 +114,9 @@ namespace ACadSharp.IO.Templates
 					break;
 				case PolyfaceMesh mesh:
 					mesh.Vertices.Seqend = seqend;
+					break;
+				case PolygonMesh polygon:
+					polygon.Vertices.Seqend = seqend;
 					break;
 				default:
 					builder.Notify($"Unknown polyline type {this.CadObject.SubclassMarker}", NotificationType.Warning);

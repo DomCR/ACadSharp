@@ -29,7 +29,7 @@ namespace ACadSharp.Entities
 		/// Polyline flags.
 		/// </summary>
 		[DxfCodeValue(70)]
-		public PolylineFlags Flags { get => this._flags; set => this._flags = value; }
+		public virtual PolylineFlags Flags { get => this._flags; set => this._flags = value; }
 
 		/// <inheritdoc/>
 		public bool IsClosed

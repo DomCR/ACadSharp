@@ -938,14 +938,6 @@ namespace ACadSharp.IO.DXF
 				case 20:
 				//Obsolete; formerly an “entities follow flag” (optional; ignore if present)
 				case 66:
-				//Polygon mesh M vertex count (optional; default = 0)
-				case 71:
-				//Polygon mesh N vertex count(optional; default = 0)
-				case 72:
-				//Smooth surface M density(optional; default = 0)
-				case 73:
-				//Smooth surface N density (optional; default = 0)
-				case 74:
 					return true;
 				case 100:
 					switch (this._reader.ValueAsString)
