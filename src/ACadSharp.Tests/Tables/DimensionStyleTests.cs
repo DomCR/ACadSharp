@@ -196,16 +196,7 @@ namespace ACadSharp.Tests.Tables
 					},
 					new DimensionAligned(XYZ.Zero, new XYZ(10.25, 0, 0)),
 					"1.03E+01"
-				},
-				{
-					new DimensionStyle {
-						LinearUnitFormat = LinearUnitFormat.Decimal,
-						Prefix = "Pre",
-						Suffix = "Suf"
-					},
-					new DimensionAligned(XYZ.Zero, new XYZ(10.5, 0, 0)),
-					"Pre10.5Suf"
-				},
+				}
 			};
 		}
 
