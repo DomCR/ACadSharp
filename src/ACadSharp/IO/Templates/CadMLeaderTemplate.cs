@@ -1,68 +1,44 @@
 ﻿using System.Collections.Generic;
-
 using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadMLeaderTemplate : CadEntityTemplate
+	internal class CadMLeaderTemplate : CadEntityTemplate<MultiLeader>
 	{
-		public CadMLeaderTemplate(MultiLeader entity) : base(entity) { }
-
-		public ulong LeaderStyleHandle { get; internal set; }
-
-		public ulong LeaderLineTypeHandle { get; internal set; }
-
-		public ulong MTextStyleHandle { get; internal set; }
-
-		public ulong BlockContentHandle { get; internal set; }
-
-		public ulong ArrowheadHandle { get; internal set; }
+		public ulong ArrowheadHandle { get; set; }
 
 		public IDictionary<ulong, bool> ArrowheadHandles { get; } = new Dictionary<ulong, bool>();
 
-
 		public IDictionary<MultiLeader.BlockAttribute, ulong> BlockAttributeHandles { get; } = new Dictionary<MultiLeader.BlockAttribute, ulong>();
 
-		//	Context-Data Handles
-		public ulong AnnotContextTextStyleHandle { get; internal set; }
+		public ulong BlockContentHandle { get; set; }
 
-		public ulong AnnotContextBlockRecordHandle { get; internal set; }
+		public CadMLeaderAnnotContextTemplate CadMLeaderAnnotContextTemplate { get; set; }
 
-		public IList<LeaderLineSubTemplate> LeaderLineSubTemplates { get; } = new List<LeaderLineSubTemplate>();
-		
+		public ulong? LeaderLineTypeHandle { get; set; }
 
-		public class LeaderLineSubTemplate
+		public ulong LeaderStyleHandle { get; set; }
+
+		public ulong MTextStyleHandle { get; set; }
+
+		public CadMLeaderTemplate() : this(new MultiLeader())
 		{
-			public MultiLeaderAnnotContext.LeaderLine LeaderLine { get; }
-
-			public LeaderLineSubTemplate(MultiLeaderAnnotContext.LeaderLine leaderLine)
-			{ 
-				this.LeaderLine = leaderLine;
-			}
-
-			public ulong LineTypeHandle { get; internal set; }
-
-			public ulong ArrowSymbolHandle { get; internal set; }
 		}
 
-
-		public override void Build(CadDocumentBuilder builder)
+		public CadMLeaderTemplate(MultiLeader entity) : base(entity)
 		{
-			base.Build(builder);
+			CadMLeaderAnnotContextTemplate = new CadMLeaderAnnotContextTemplate(entity.ContextData);
+		}
+
+		protected override void build(CadDocumentBuilder builder)
+		{
+			base.build(builder);
+
+			this.CadMLeaderAnnotContextTemplate.Build(builder);
 
 			MultiLeader multiLeader = (MultiLeader)this.CadObject;
-			MultiLeaderAnnotContext annotContext = multiLeader.ContextData;
-
-			if (builder.TryGetCadObject(this.AnnotContextTextStyleHandle, out TextStyle annotContextTextStyle))
-			{
-				annotContext.TextStyle = annotContextTextStyle;
-			}
-			if (builder.TryGetCadObject(this.AnnotContextBlockRecordHandle, out BlockRecord annotContextBlockRecord))
-			{
-				annotContext.BlockContent = annotContextBlockRecord;
-			}
 
 			if (builder.TryGetCadObject(this.LeaderStyleHandle, out MultiLeaderStyle leaderStyle))
 			{
@@ -86,7 +62,8 @@ namespace ACadSharp.IO.Templates
 			}
 
 			//	TODO
-			foreach (KeyValuePair<ulong, bool> arrowHeadHandleEntries in ArrowheadHandles) {
+			foreach (KeyValuePair<ulong, bool> arrowHeadHandleEntries in ArrowheadHandles)
+			{
 			}
 
 			foreach (MultiLeader.BlockAttribute blockAttribute in multiLeader.BlockAttributes)
@@ -95,19 +72,6 @@ namespace ACadSharp.IO.Templates
 				if (builder.TryGetCadObject(attributeHandle, out AttributeDefinition attributeDefinition))
 				{
 					blockAttribute.AttributeDefinition = attributeDefinition;
-				}
-			}
-
-			foreach (LeaderLineSubTemplate leaderLineSubTemplate in this.LeaderLineSubTemplates)
-			{
-				MultiLeaderAnnotContext.LeaderLine leaderLine = leaderLineSubTemplate.LeaderLine;
-				if (builder.TryGetCadObject(leaderLineSubTemplate.LineTypeHandle, out LineType leaderLinelineType))
-				{
-					leaderLine.LineType = leaderLinelineType;
-				}
-				if (builder.TryGetCadObject(leaderLineSubTemplate.ArrowSymbolHandle, out BlockRecord arrowhead))
-				{
-					leaderLine.Arrowhead = arrowhead;
 				}
 			}
 		}

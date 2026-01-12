@@ -14,7 +14,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityPolyline)]
 	[DxfSubClass(DxfSubclassMarker.Polyline)]
-	public class Polyline2D : Polyline
+	public class Polyline2D : Polyline<Vertex2D>
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.POLYLINE_2D;
@@ -22,23 +22,13 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Polyline;
 
+		/// <inheritdoc/>
 		public Polyline2D() : base()
 		{
-			this.Vertices.OnAdd += this.verticesOnAdd;
 		}
 
-		public override IEnumerable<Entity> Explode()
+		public Polyline2D(IEnumerable<Vertex2D> vertices, bool isClosed) : base(vertices, isClosed)
 		{
-			return Polyline.Explode(this);
-		}
-
-		private void verticesOnAdd(object sender, CollectionChangedEventArgs e)
-		{
-			if (e.Item is not Vertex2D)
-			{
-				this.Vertices.Remove((Vertex)e.Item);
-				throw new ArgumentException($"Wrong vertex type for {DxfSubclassMarker.Polyline}");
-			}
 		}
 	}
 }

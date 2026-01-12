@@ -2,6 +2,7 @@
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,13 +12,15 @@ namespace ACadSharp.IO.DXF
 	{
 		public DxfReaderConfiguration Configuration { get; }
 
-		public CadBlockRecordTemplate ModelSpaceTemplate { get; set; }
-
-		public HashSet<ulong> ModelSpaceEntities { get; } = new();
-
 		public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
 
 		public override bool KeepUnknownNonGraphicalObjects => this.Configuration.KeepUnknownNonGraphicalObjects;
+
+		public HashSet<Entity> ModelSpaceEntities { get; } = new();
+
+		public CadBlockRecordTemplate ModelSpaceTemplate { get; set; }
+
+		public List<CadTemplate> OrphanTemplates { get; set; } = new();
 
 		public DxfDocumentBuilder(ACadVersion version, CadDocument document, DxfReaderConfiguration configuration) : base(version, document)
 		{
@@ -26,8 +29,6 @@ namespace ACadSharp.IO.DXF
 
 		public override void BuildDocument()
 		{
-			this.buildDictionaries();
-
 			if (this.ModelSpaceTemplate == null)
 			{
 				BlockRecord record = BlockRecord.ModelSpace;
@@ -36,19 +37,28 @@ namespace ACadSharp.IO.DXF
 				this.AddTemplate(this.ModelSpaceTemplate);
 			}
 
-			this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(this.ModelSpaceEntities);
-			
+			this.createMissingHandles();
+
+			this.ModelSpaceTemplate.OwnedObjectsHandlers.UnionWith(this.ModelSpaceEntities.Select(o => o.Handle));
+
 			this.RegisterTables();
 
 			this.BuildTables();
 
+			this.buildDictionaries();
+
 			//Assign the owners for the different objects
-			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
+			foreach (CadTemplate template in this.OrphanTemplates)
 			{
 				this.assignOwner(template);
 			}
 
 			base.BuildDocument();
+
+			if (this.Configuration.CreateDefaults)
+			{
+				this.DocumentToBuild.CreateDefaults();
+			}
 		}
 
 		public List<Entity> BuildEntities()
@@ -86,28 +96,28 @@ namespace ACadSharp.IO.DXF
 						//Entries of the dictionary are assigned in the template
 						break;
 					case CadBlockRecordTemplate record when template.CadObject is Entity entity:
-						record.OwnedObjectsHandlers.Add(entity.Handle);
+						//The entries should be assigned in the blocks or entities section
 						break;
 					case CadPolyLineTemplate pline when template.CadObject is Vertex v:
-						pline.VertexHandles.Add(v.Handle);
+						pline.OwnedObjectsHandlers.Add(v.Handle);
 						break;
 					case CadPolyLineTemplate pline when template.CadObject is Seqend seqend:
 						pline.SeqendHandle = seqend.Handle;
 						break;
 					case CadInsertTemplate insert when template.CadObject is AttributeEntity att:
-						insert.AttributesHandles.Add(att.Handle);
+						insert.OwnedObjectsHandlers.Add(att.Handle);
 						break;
 					case CadInsertTemplate insert when template.CadObject is Seqend seqend:
 						insert.SeqendHandle = seqend.Handle;
 						break;
 					default:
-						this.Notify($"Owner {owner.GetType().Name} with handle {template.OwnerHandle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}");
+						this.Notify($"Owner {owner.GetType().Name} with handle {template.OwnerHandle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}", NotificationType.Warning);
 						break;
 				}
 			}
 			else
 			{
-				this.Notify($"Owner {template.OwnerHandle} not found for {template.GetType().FullName} with handle {template.CadObject.Handle}");
+				this.Notify($"Owner {template.OwnerHandle} not found for {template.GetType().FullName} with handle {template.CadObject.Handle}", NotificationType.Warning);
 			}
 		}
 	}

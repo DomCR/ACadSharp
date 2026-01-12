@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Exceptions;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamWriters;
+using ACadSharp.Tables.Collections;
 using CSUtilities.IO;
 using CSUtilities.Text;
 using System.Collections.Generic;
@@ -12,8 +13,10 @@ namespace ACadSharp.IO
 	/// <summary>
 	/// Class for writing a DWG from a <see cref="CadDocument"/>.
 	/// </summary>
-	public class DwgWriter : CadWriterBase<CadWriterConfiguration>
+	public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 	{
+		public DwgPreview Preview { get; set; }
+
 		private ACadVersion _version { get { return this._document.Header.Version; } }
 
 		private DwgFileHeader _fileHeader;
@@ -46,6 +49,11 @@ namespace ACadSharp.IO
 		public override void Write()
 		{
 			base.Write();
+
+			if (this._version < ACadVersion.AC1018)
+			{
+				this._document.VEntityControl ??= new ViewportEntityControl(this._document);
+			}
 
 			this.getFileHeaderWriter();
 
@@ -91,7 +99,7 @@ namespace ACadSharp.IO
 		/// <param name="document"></param>
 		/// <param name="configuration"></param>
 		/// <param name="notification"></param>
-		public static void Write(string filename, CadDocument document, CadWriterConfiguration configuration = null, NotificationEventHandler notification = null)
+		public static void Write(string filename, CadDocument document, DwgWriterConfiguration configuration = null, NotificationEventHandler notification = null)
 		{
 			using (DwgWriter writer = new DwgWriter(filename, document))
 			{
@@ -111,10 +119,15 @@ namespace ACadSharp.IO
 		/// <param name="stream"></param>
 		/// <param name="document"></param>
 		/// <param name="notification"></param>
-		public static void Write(Stream stream, CadDocument document, NotificationEventHandler notification = null)
+		public static void Write(Stream stream, CadDocument document, DwgWriterConfiguration configuration = null, NotificationEventHandler notification = null)
 		{
 			using (DwgWriter writer = new DwgWriter(stream, document))
 			{
+				if (configuration != null)
+				{
+					writer.Configuration = configuration;
+				}
+
 				writer.OnNotification += notification;
 				writer.Write();
 			}
@@ -172,7 +185,7 @@ namespace ACadSharp.IO
 			DwgClassesWriter writer = new DwgClassesWriter(stream, this._document, this._encoding);
 			writer.Write();
 
-			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Classes, stream, false);
+			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Classes, stream, true);
 		}
 
 		private void writeSummaryInfo()
@@ -221,9 +234,21 @@ namespace ACadSharp.IO
 		{
 			MemoryStream stream = new MemoryStream();
 			DwgPreviewWriter writer = new DwgPreviewWriter(this._version, stream);
-			writer.Write();
 
-			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, false, 0x400);
+			if (this.Preview != null && this.Preview.Code != DwgPreview.PreviewType.Unknown)
+			{
+				writer.Write(this.Preview, this._stream.Position);
+
+				//Page has to fit the image byte size, in intervals of 0x400
+				int pageSize = (int)((stream.Length % 0x400) * 0x400 + 0x400);
+				this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, false, pageSize);
+			}
+			else
+			{
+				writer.Write();
+				this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, false, 0x400);
+			}
+
 		}
 
 		private void writeAppInfo()
@@ -291,7 +316,13 @@ namespace ACadSharp.IO
 		private void writeObjects()
 		{
 			MemoryStream stream = new MemoryStream();
-			DwgObjectWriter writer = new DwgObjectWriter(stream, this._document, this._encoding, this.Configuration.WriteXRecords);
+			DwgObjectWriter writer = new DwgObjectWriter(
+				stream,
+				this._document,
+				this._encoding,
+				this.Configuration.WriteXRecords,
+				this.Configuration.WriteXData,
+				this.Configuration.WriteShapes);
 			writer.OnNotification += this.triggerNotification;
 			writer.Write();
 

@@ -26,7 +26,7 @@ namespace ACadSharp.IO.Templates
 
 			vertex.Color = this.CadObject.Color;
 			vertex.LineWeight = this.CadObject.LineWeight;
-			vertex.LinetypeScale = this.CadObject.LinetypeScale;
+			vertex.LineTypeScale = this.CadObject.LineTypeScale;
 			vertex.IsInvisible = this.CadObject.IsInvisible;
 			vertex.Transparency = this.CadObject.Transparency;
 

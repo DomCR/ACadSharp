@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using CSMath;
 using CSUtilities.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -13,9 +15,16 @@ namespace ACadSharp.Entities
 		public partial class BoundaryPath : IGeometricEntity
 		{
 			/// <summary>
-			/// Flag that indicates that this boundary path is formed by a polyline.
+			/// Edges that form the boundary.
 			/// </summary>
-			public bool IsPolyline { get { return this.Edges.OfType<Polyline>().Any(); } }
+			[DxfCodeValue(DxfReferenceType.Count, 93)]
+			public ObservableCollection<Edge> Edges { get; private set; } = new();
+
+			/// <summary>
+			/// Source boundary objects.
+			/// </summary>
+			[DxfCodeValue(DxfReferenceType.Count, 97)]
+			public List<Entity> Entities { get; set; } = new List<Entity>();
 
 			/// <summary>
 			/// Boundary path type flag
@@ -27,11 +36,11 @@ namespace ACadSharp.Entities
 				{
 					if (this.IsPolyline)
 					{
-						this._flags = this._flags.AddFlag(BoundaryPathFlags.Polyline);
+						this._flags.AddFlag(BoundaryPathFlags.Polyline);
 					}
 					else
 					{
-						this._flags = this._flags.RemoveFlag(BoundaryPathFlags.Polyline);
+						this._flags.RemoveFlag(BoundaryPathFlags.Polyline);
 					}
 
 					return this._flags;
@@ -43,28 +52,68 @@ namespace ACadSharp.Entities
 			}
 
 			/// <summary>
-			/// Number of edges in this boundary path.
+			/// Flag that indicates that this boundary path is formed by a polyline.
 			/// </summary>
-			/// <remarks>
-			/// Only if boundary is not a polyline.
-			/// </remarks>
-			[DxfCodeValue(DxfReferenceType.Count, 93)]
-			public ObservableCollection<Edge> Edges { get; private set; } = new();
-
-			/// <summary>
-			/// Source boundary objects.
-			/// </summary>
-			[DxfCodeValue(DxfReferenceType.Count, 97)]
-			public List<Entity> Entities { get; set; } = new List<Entity>();
+			public bool IsPolyline { get { return this.Edges.OfType<Polyline>().Any(); } }
 
 			private BoundaryPathFlags _flags;
 
 			/// <summary>
-			/// Default constructor.
+			/// Initializes a new instance of the BoundaryPath class.
 			/// </summary>
+			/// <remarks>Subscribes to changes in the Edges collection to keep the BoundaryPath instance updated when
+			/// the collection is modified.</remarks>
 			public BoundaryPath()
 			{
 				this.Edges.CollectionChanged += this.onEdgesCollectionChanged;
+			}
+
+			/// <summary>
+			/// Initializes a new instance of the BoundaryPath class with the specified collection of edges.
+			/// </summary>
+			/// <param name="edges">A collection of Edge objects that define the boundary path. Cannot be null.</param>
+			public BoundaryPath(IEnumerable<Edge> edges) : this()
+			{
+				foreach (var edge in edges)
+				{
+					this.Edges.Add(edge);
+				}
+			}
+
+			/// <summary>
+			/// Initializes a new instance of the BoundaryPath class using the specified collection of entities.
+			/// </summary>
+			/// <remarks>The entities provided are added to the Entities collection of the BoundaryPath. The path is
+			/// marked as derived and external by default.</remarks>
+			/// <param name="entities">A collection of Entity objects that define the segments of the boundary path. Cannot be null.</param>
+			public BoundaryPath(params IEnumerable<Entity> entities) : this()
+			{
+				this._flags = BoundaryPathFlags.Derived | BoundaryPathFlags.External;
+				this.Entities.AddRange(entities);
+				this.UpdateEdges();
+			}
+
+			/// <inheritdoc/>
+			public void ApplyTransform(Transform transform)
+			{
+				foreach (var e in this.Edges)
+				{
+					e.ApplyTransform(transform);
+				}
+			}
+
+			/// <inheritdoc/>
+			public BoundaryPath Clone()
+			{
+				BoundaryPath path = (BoundaryPath)this.MemberwiseClone();
+
+				path.Entities = new List<Entity>();
+				path.Entities.AddRange(this.Entities.Select(e => (Entity)e.Clone()));
+
+				path.Edges = new ObservableCollection<Edge>(
+					this.Edges.Select(e => e.Clone()));
+
+				return path;
 			}
 
 			/// <inheritdoc/>
@@ -85,18 +134,95 @@ namespace ACadSharp.Entities
 				return box;
 			}
 
-			/// <inheritdoc/>
-			public BoundaryPath Clone()
+			/// <summary>
+			/// Retrieves the points of the specified boundary as a sequence of the specified vector type.
+			/// </summary>
+			/// <param name="precision">The number of points to generate for each arc segment. Must be equal to or greater than 2.</param>
+			/// <returns>An <see cref="IEnumerable{T}"/> containing the points of the polyline, including interpolated points for arcs.</returns>
+			public IEnumerable<XYZ> GetPoints(int precision = 256)
 			{
-				BoundaryPath path = (BoundaryPath)this.MemberwiseClone();
+				List<XYZ> pts = new();
+				foreach (Edge edge in this.Edges)
+				{
+					switch (edge)
+					{
+						case Arc arc:
+							pts.AddRange(arc.PolygonalVertexes(precision));
+							break;
+						case Ellipse ellipse:
+							pts.AddRange(ellipse.PolygonalVertexes(precision));
+							break;
+						case Line line:
+							pts.Add((XYZ)line.Start);
+							pts.Add((XYZ)line.End);
+							break;
+						case Polyline poly:
+							Polyline2D pline2d = (Polyline2D)poly.ToEntity();
+							pts.AddRange(pline2d.GetPoints<XYZ>(precision));
+							break;
+						case Spline spline:
+							pts.AddRange(spline.PolygonalVertexes(precision));
+							break;
+					}
+				}
 
-				path.Entities = new List<Entity>();
-				path.Entities.AddRange(this.Entities.Select(e => (Entity)e.Clone()));
+				return pts;
+			}
 
-				path.Edges = new ObservableCollection<Edge>(
-					this.Edges.Select(e => e.Clone()));
+			/// <summary>
+			/// Updates the collection of edges to reflect the current set of entities in the boundary definition.
+			/// </summary>
+			/// <remarks>This method clears the existing edges and reconstructs them based on the current entities. It
+			/// should be called after modifying the entities collection to ensure the edges remain consistent with the boundary
+			/// definition.</remarks>
+			/// <exception cref="ArgumentException">Thrown if an entity in the collection is not of a supported type. Only Arc, Circle, Ellipse, Line, Polyline2D,
+			/// Polyline3D, and Spline entities are allowed as hatch boundary elements.</exception>
+			public void UpdateEdges()
+			{
+				if (!this.Entities.Any())
+				{
+					return;
+				}
 
-				return path;
+				this.Edges.Clear();
+
+				foreach (var entity in this.Entities)
+				{
+					switch (entity)
+					{
+						case Entities.Arc arc:
+							this.Edges.Add(new Arc(arc));
+							break;
+						case Entities.Circle circle:
+							this.Edges.Add(new Arc(circle));
+							break;
+						case Entities.Ellipse ellipse:
+							this.Edges.Add(new Ellipse(ellipse));
+							break;
+						case Entities.Line line:
+							this.Edges.Add(new Line(line));
+							break;
+						case IPolyline polyline:
+							this.Edges.Add(new Polyline(polyline));
+							break;
+						case Entities.Spline spline:
+							this.Edges.Add(new Spline(spline));
+							break;
+						default:
+							throw new ArgumentException(($"The entity type {entity.ObjectName} cannot be part of a hatch boundary. Only Arc, Circle, Ellipse, Line, Polyline2D, Polyline3D, and Spline entities are allowed."));
+					}
+				}
+			}
+
+			private void onAdd(NotifyCollectionChangedEventArgs e)
+			{
+				foreach (Edge edge in e.NewItems)
+				{
+					if (this.Edges.Count > 1 && this.IsPolyline)
+					{
+						throw new System.InvalidOperationException();
+					}
+				}
 			}
 
 			private void onEdgesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -114,17 +240,6 @@ namespace ACadSharp.Entities
 						break;
 					case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
 						break;
-				}
-			}
-
-			private void onAdd(NotifyCollectionChangedEventArgs e)
-			{
-				foreach (Edge edge in e.NewItems)
-				{
-					if (this.Edges.Count > 1 && this.IsPolyline)
-					{
-						throw new System.InvalidOperationException();
-					}
 				}
 			}
 		}

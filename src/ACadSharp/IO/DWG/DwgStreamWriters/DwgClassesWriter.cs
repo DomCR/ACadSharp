@@ -84,9 +84,9 @@ namespace ACadSharp.IO.DWG
 					//BL : Number of objects created of this type in the current DB(DXF 91).
 					this._writer.WriteBitLong(c.InstanceCount);
 					//BS : Dwg Version
-					this._writer.WriteBitShort((short)this._document.Header.Version);
+					this._writer.WriteBitLong((int)c.DwgVersion);
 					//BS : Maintenance release version.
-					this._writer.WriteBitShort(this._document.Header.MaintenanceVersion);
+					this._writer.WriteBitLong(c.MaintenanceVersion);
 					//BL : Unknown(normally 0L)
 					this._writer.WriteBitLong(0);
 					//BL : Unknown(normally 0L)
@@ -129,8 +129,8 @@ namespace ACadSharp.IO.DWG
 			if (this.R2004Plus)
 			{
 				//For R18 and later 8 unknown bytes follow. The ODA writes 0 bytes.
-				_startWriter.WriteRawLong(0);
-				_startWriter.WriteRawLong(0);
+				this._startWriter.WriteRawLong(0);
+				this._startWriter.WriteRawLong(0);
 			}
 		}
 	}

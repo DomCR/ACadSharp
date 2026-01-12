@@ -1,8 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
-using System.Collections.Generic;
-using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -14,7 +12,8 @@ namespace ACadSharp.Tests.IO
 
 		static MultiLeaderTests()
 		{
-			loadSamples("multileader", "dwg", MultiLeaderFilePaths);
+			loadSamples("./", "dxf", MultiLeaderFilePaths);
+			loadSamples("./", "dwg", MultiLeaderFilePaths);
 		}
 
 		public MultiLeaderTests(ITestOutputHelper output) : base(output)
@@ -25,16 +24,23 @@ namespace ACadSharp.Tests.IO
 		[MemberData(nameof(MultiLeaderFilePaths))]
 		public void MultiLeaderDwg(FileModel test)
 		{
-			CadDocument doc = DwgReader.Read(test.Path);
+			CadDocument doc;
 
-			// There are 14 multileaders in DWG file
-			Assert.Equal(14, doc.Entities.Count);
+			if (test.IsDxf)
+			{
+				doc = DxfReader.Read(test.Path);
 
-			List<Entity> entities = new List<Entity>(doc.Entities);
+				if (doc.Header.Version <= ACadVersion.AC1009)
+					return;
+			}
+			else
+			{
+				doc = DwgReader.Read(test.Path);
+			}
 
 			MultiLeader multiLeader;
 
-			multiLeader = (MultiLeader)entities[0];
+			multiLeader = doc.GetCadObject<MultiLeader>(0xB1A);
 			Assert.Equal(@"MULTILEADER TEST", multiLeader.ContextData.TextLabel);
 			Assert.Equal(TextAttachmentPointType.Left, multiLeader.TextAttachmentPoint);
 			Assert.Equal(TextAttachmentType.MiddleOfTopLine, multiLeader.TextLeftAttachment);
@@ -42,7 +48,7 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(8, multiLeader.LandingDistance);
 			Assert.Equal(TextAttachmentDirectionType.Horizontal, multiLeader.TextAttachmentDirection);
 
-			multiLeader = (MultiLeader)entities[1];
+			multiLeader = doc.GetCadObject<MultiLeader>(0xB1B);
 			Assert.Equal(@"MULTILEADER\PTEST\P123", multiLeader.ContextData.TextLabel);
 			Assert.Equal(TextAttachmentPointType.Left, multiLeader.TextAttachmentPoint);
 			Assert.Equal(TextAttachmentType.MiddleOfTopLine, multiLeader.TextLeftAttachment);
@@ -50,7 +56,7 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(8, multiLeader.LandingDistance);
 			Assert.Equal(TextAttachmentDirectionType.Horizontal, multiLeader.TextAttachmentDirection);
 
-			multiLeader = (MultiLeader)entities[2];
+			multiLeader = doc.GetCadObject<MultiLeader>(0xB1C);
 			Assert.Equal(@"MULTILEADER\PTEST\P123", multiLeader.ContextData.TextLabel);
 			Assert.Equal(TextAttachmentPointType.Center, multiLeader.TextAttachmentPoint);
 			Assert.Equal(TextAttachmentType.MiddleOfTopLine, multiLeader.TextLeftAttachment);
@@ -58,7 +64,7 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(8, multiLeader.LandingDistance);
 			Assert.Equal(TextAttachmentDirectionType.Horizontal, multiLeader.TextAttachmentDirection);
 
-			multiLeader = (MultiLeader)entities[3];
+			multiLeader = doc.GetCadObject<MultiLeader>(0xB1D);
 			Assert.Equal(@"MULTILEADER\PTEST\P123", multiLeader.ContextData.TextLabel);
 			Assert.Equal(TextAttachmentPointType.Right, multiLeader.TextAttachmentPoint);
 			Assert.Equal(TextAttachmentType.MiddleOfTopLine, multiLeader.TextLeftAttachment);
@@ -66,7 +72,7 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(8, multiLeader.LandingDistance);
 			Assert.Equal(TextAttachmentDirectionType.Horizontal, multiLeader.TextAttachmentDirection);
 
-			multiLeader = (MultiLeader)entities[4];
+			multiLeader = doc.GetCadObject<MultiLeader>(0xB1E);
 			Assert.Equal(@"MULTILEADER\PTEST\P123", multiLeader.ContextData.TextLabel);
 			Assert.Equal(TextAttachmentPointType.Right, multiLeader.TextAttachmentPoint);
 			Assert.Equal(TextAttachmentType.MiddleOfTopLine, multiLeader.TextLeftAttachment);
@@ -74,7 +80,7 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(8, multiLeader.LandingDistance);
 			Assert.Equal(TextAttachmentDirectionType.Horizontal, multiLeader.TextAttachmentDirection);
 
-			multiLeader = (MultiLeader)entities[5];
+			multiLeader = doc.GetCadObject<MultiLeader>(0xB1F);
 			Assert.Equal(@"MULTILEADER\PTEST\P123", multiLeader.ContextData.TextLabel);
 			Assert.Equal(TextAttachmentPointType.Right, multiLeader.TextAttachmentPoint);
 			Assert.Equal(TextAttachmentType.MiddleOfTopLine, multiLeader.TextLeftAttachment);
@@ -82,7 +88,7 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(8, multiLeader.LandingDistance);
 			Assert.Equal(TextAttachmentDirectionType.Horizontal, multiLeader.TextAttachmentDirection);
 
-			multiLeader = (MultiLeader)entities[6];
+			multiLeader = doc.GetCadObject<MultiLeader>(0xB20);
 			Assert.Equal(@"MULTILEADER\PTEST\P123", multiLeader.ContextData.TextLabel);
 			Assert.Equal(TextAttachmentPointType.Right, multiLeader.TextAttachmentPoint);
 			Assert.Equal(TextAttachmentType.MiddleOfTopLine, multiLeader.TextLeftAttachment);
@@ -90,7 +96,7 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(16, multiLeader.LandingDistance);
 			Assert.Equal(TextAttachmentDirectionType.Horizontal, multiLeader.TextAttachmentDirection);
 
-			multiLeader = (MultiLeader)entities[7];
+			multiLeader = doc.GetCadObject<MultiLeader>(0xB21);
 			Assert.Equal(@"MULTILEADER\PTEST\P123", multiLeader.ContextData.TextLabel);
 			Assert.Equal(TextAttachmentPointType.Right, multiLeader.TextAttachmentPoint);
 			Assert.Equal(TextAttachmentType.MiddleOfTopLine, multiLeader.TextLeftAttachment);
@@ -98,7 +104,7 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(16, multiLeader.LandingDistance);
 			Assert.Equal(TextAttachmentDirectionType.Horizontal, multiLeader.TextAttachmentDirection);
 
-			multiLeader = (MultiLeader)entities[8];
+			multiLeader = doc.GetCadObject<MultiLeader>(0xB22);
 			Assert.Equal(@"MULTILEADER\PTEST\P123", multiLeader.ContextData.TextLabel);
 			Assert.Equal(TextAttachmentPointType.Right, multiLeader.TextAttachmentPoint);
 			Assert.Equal(TextAttachmentType.MiddleOfTopLine, multiLeader.TextLeftAttachment);
@@ -106,7 +112,7 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(16, multiLeader.LandingDistance);
 			Assert.Equal(TextAttachmentDirectionType.Horizontal, multiLeader.TextAttachmentDirection);
 
-			multiLeader = (MultiLeader)entities[9];
+			multiLeader = doc.GetCadObject<MultiLeader>(0xB23);
 			Assert.Equal(@"MULTILEADER\PTEST\P123", multiLeader.ContextData.TextLabel);
 			Assert.Equal(TextAttachmentPointType.Right, multiLeader.TextAttachmentPoint);
 			Assert.Equal(TextAttachmentType.MiddleOfTopLine, multiLeader.TextLeftAttachment);
@@ -114,7 +120,7 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(16, multiLeader.LandingDistance);
 			Assert.Equal(TextAttachmentDirectionType.Horizontal, multiLeader.TextAttachmentDirection);
 
-			multiLeader = (MultiLeader)entities[10];
+			multiLeader = doc.GetCadObject<MultiLeader>(0xB24);
 			Assert.Equal(@"MULTILEADER\PTEST\P123", multiLeader.ContextData.TextLabel);
 			Assert.Equal(TextAttachmentPointType.Right, multiLeader.TextAttachmentPoint);
 			Assert.Equal(TextAttachmentType.MiddleOfTopLine, multiLeader.TextLeftAttachment);
@@ -122,7 +128,7 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(16, multiLeader.LandingDistance);
 			Assert.Equal(TextAttachmentDirectionType.Horizontal, multiLeader.TextAttachmentDirection);
 
-			multiLeader = (MultiLeader)entities[11];
+			multiLeader = doc.GetCadObject<MultiLeader>(0xB25);
 			Assert.Equal(@"MULTILEADER TEST", multiLeader.ContextData.TextLabel);
 			Assert.Equal(TextAttachmentPointType.Left, multiLeader.TextAttachmentPoint);
 			Assert.Equal(TextAttachmentType.BottomLine, multiLeader.TextLeftAttachment);
@@ -130,7 +136,7 @@ namespace ACadSharp.Tests.IO
 			Assert.Equal(8, multiLeader.LandingDistance);
 			Assert.Equal(TextAttachmentDirectionType.Horizontal, multiLeader.TextAttachmentDirection);
 
-			multiLeader = (MultiLeader)entities[12];
+			multiLeader = doc.GetCadObject<MultiLeader>(0xB26);
 			Assert.Equal(@"MULTILEADER TEST", multiLeader.ContextData.TextLabel);
 			Assert.Equal(TextAttachmentPointType.Left, multiLeader.TextAttachmentPoint);
 			Assert.Equal(TextAttachmentType.TopOfTopLine, multiLeader.TextLeftAttachment);
@@ -141,7 +147,7 @@ namespace ACadSharp.Tests.IO
 			if (doc.Header.Version > ACadVersion.AC1021)
 			{
 				//For some reason this entity is not compatible for versions before AC1021
-				multiLeader = (MultiLeader)entities[13];
+				multiLeader = doc.GetCadObject<MultiLeader>(0xB27);
 				Assert.Equal(@"MULTILEADER TEST", multiLeader.ContextData.TextLabel);
 				Assert.Equal(TextAttachmentPointType.Left, multiLeader.TextAttachmentPoint);
 				Assert.Equal(TextAttachmentType.TopOfTopLine, multiLeader.TextLeftAttachment);

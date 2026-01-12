@@ -12,9 +12,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadDictionaryTemplate(CadDictionary dictionary) : base(dictionary) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			if (this.OwnerHandle.HasValue
 				&& this.OwnerHandle == 0
@@ -35,6 +35,10 @@ namespace ACadSharp.IO.Templates
 			{
 				if (builder.TryGetCadObject(item.Value, out NonGraphicalObject entry))
 				{
+					//This section basically sets the key and name to the same value to make sure that the 
+					//different collections and dictionaries work properly.
+					//For some collections like Scales there are some cases where the key doesn't match the name
+					//but regarding changing the key doesn't seem to take an effect on it.
 					if (string.IsNullOrEmpty(entry.Name))
 					{
 						entry.Name = item.Key;
@@ -42,7 +46,7 @@ namespace ACadSharp.IO.Templates
 
 					try
 					{
-						this.CadObject.Add(item.Key, entry);
+						this.CadObject.Add(entry.Name, entry);
 					}
 					catch (System.Exception ex)
 					{

@@ -9,15 +9,15 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? LastVerticeHandle { get; set; }
 
-		public List<ulong> VerticesHandles { get; set; } = new List<ulong>();
+		public HashSet<ulong> VerticesHandles { get; set; } = new();
 
 		public ulong? SeqendHandle { get; set; }
 
 		public CadPolyfaceMeshTemplate(PolyfaceMesh polyfaceMesh) : base(polyfaceMesh) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			PolyfaceMesh polyfaceMesh = (PolyfaceMesh)this.CadObject;
 

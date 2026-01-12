@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -10,8 +12,12 @@ namespace ACadSharp.Entities
 		{
 			public class Spline : Edge
 			{
-				/// <inheritdoc/>
-				public override EdgeType Type => EdgeType.Spline;
+				/// <remarks>
+				/// Position values are only X and Y, Z represents the weight.
+				/// </remarks>
+				[DxfCodeValue(96)]
+				//42	Weights(optional, default = 1)	??
+				public List<XYZ> ControlPoints { get; private set; } = new List<XYZ>();
 
 				/// <summary>
 				/// Degree.
@@ -20,35 +26,37 @@ namespace ACadSharp.Entities
 				public int Degree { get; set; }
 
 				/// <summary>
-				/// Rational.
+				/// End tangent.
 				/// </summary>
-				[DxfCodeValue(73)]
-				public bool Rational { get; set; }
-
-				/// <summary>
-				/// Periodic.
-				/// </summary>
-				[DxfCodeValue(74)]
-				public bool Periodic { get; set; }
-
-				/// <summary>
-				/// Number of knots.
-				/// </summary>
-				[DxfCodeValue(95)]
-				public List<double> Knots { get; set; } = new List<double>();
-
-				/// <remarks>
-				/// Position values are only X and Y, Z represents the weight.
-				/// </remarks>
-				[DxfCodeValue(96)]
-				//42	Weights(optional, default = 1)	??
-				public List<XYZ> ControlPoints { get; set; } = new List<XYZ>();
+				[DxfCodeValue(13, 23)]
+				public XY EndTangent { get; set; }
 
 				/// <remarks>
 				/// Number of fit data.
 				/// </remarks>
 				[DxfCodeValue(97)]
-				public List<XY> FitPoints { get; set; } = new List<XY>();
+				public List<XY> FitPoints { get; private set; } = new List<XY>();
+
+				/// <summary>
+				/// Number of knots.
+				/// </summary>
+				[DxfCodeValue(95)]
+				public List<double> Knots { get; private set; } = new List<double>();
+
+				/// <summary>
+				/// Gets or sets a value indicating whether the spline is periodic.
+				/// </summary>
+				/// <remarks>A periodic spline forms a closed, continuous curve where the start and end points are joined
+				/// seamlessly. Setting this property to true creates a smooth, looping spline; setting it to false creates an open
+				/// spline.</remarks>
+				[DxfCodeValue(74)]
+				public bool IsPeriodic { get; set; }
+
+				/// <summary>
+				/// Gets or sets a value indicating whether the spline is rational.
+				/// </summary>
+				[DxfCodeValue(73)]
+				public bool IsRational { get; set; }
 
 				/// <summary>
 				/// Start tangent.
@@ -56,16 +64,111 @@ namespace ACadSharp.Entities
 				[DxfCodeValue(12, 22)]
 				public XY StartTangent { get; set; }
 
+				/// <inheritdoc/>
+				public override EdgeType Type => EdgeType.Spline;
+
 				/// <summary>
-				/// End tangent.
+				/// Gets a collection of weights derived from the Z-coordinates of the control points.
 				/// </summary>
-				[DxfCodeValue(13, 23)]
-				public XY EndTangent { get; set; }
+				public IEnumerable<double> Weights { get { return this.ControlPoints.Select(c => c.Z); } }
+
+				/// <summary>
+				/// Initializes a new instance of the Spline class.
+				/// </summary>
+				public Spline()
+				{ }
+
+				/// <summary>
+				/// Initializes a new instance of the Spline class using the specified spline entity.
+				/// </summary>
+				/// <param name="spline">The spline entity that provides the data for initializing this Spline instance. Cannot be null.</param>
+				public Spline(Entities.Spline spline)
+				{
+					this.Degree = spline.Degree;
+					this.IsRational = true;
+					this.IsPeriodic = spline.IsClosed;
+					if (!spline.ControlPoints.Any())
+					{
+						throw new ArgumentException("The HatchBoundaryPath spline edge requires a spline entity with control points.", nameof(spline));
+					}
+
+					Matrix3 trans = Matrix3.ArbitraryAxis(spline.Normal).Transpose();
+					for (int i = 0; i < spline.ControlPoints.Count; i++)
+					{
+						XYZ point = trans * spline.ControlPoints[i];
+						this.ControlPoints[i] = new XYZ(point.X, point.Y, spline.Weights[i]);
+					}
+
+					this.Knots.AddRange(spline.Knots);
+				}
+
+				/// <inheritdoc/>
+				public override void ApplyTransform(Transform transform)
+				{
+					var arr = this.ControlPoints.ToArray();
+					this.ControlPoints.Clear();
+					for (int i = 0; i < arr.Length; i++)
+					{
+						var weight = arr[i].Z;
+						var v = transform.ApplyTransform(arr[i]);
+						v.Z = weight;
+
+						this.ControlPoints.Add(v);
+					}
+
+					for (int i = 0; i < this.FitPoints.Count; i++)
+					{
+						this.FitPoints[i] = transform.ApplyTransform(this.FitPoints[i].Convert<XYZ>()).Convert<XY>();
+					}
+				}
+
+				/// <inheritdoc/>
+				public override Edge Clone()
+				{
+					Spline clone = (Spline)base.Clone();
+
+					clone.ControlPoints = new List<XYZ>(this.ControlPoints);
+					clone.FitPoints = new List<XY>(this.FitPoints);
+					clone.Knots = new List<double>(this.Knots);
+
+					return clone;
+				}
 
 				/// <inheritdoc/>
 				public override BoundingBox GetBoundingBox()
 				{
 					return BoundingBox.FromPoints(this.ControlPoints);
+				}
+
+				/// <summary>
+				/// Converts the spline in a list of vertexes.
+				/// </summary>
+				/// <param name="precision">Number of vertexes generated.</param>
+				/// <returns>A list vertexes that represents the spline expressed in object coordinate system.</returns>
+				public List<XYZ> PolygonalVertexes(int precision)
+				{
+					Entities.Spline spline = (Entities.Spline)this.ToEntity();
+					return spline.PolygonalVertexes(precision);
+				}
+
+				/// <inheritdoc/>
+				public override Entity ToEntity()
+				{
+					Entities.Spline spline = new();
+
+					spline.Degree = this.Degree;
+					spline.Flags = this.IsPeriodic ? spline.Flags |= (SplineFlags.Periodic) : spline.Flags;
+					spline.Flags = this.IsRational ? spline.Flags |= (SplineFlags.Rational) : spline.Flags;
+
+					spline.StartTangent = this.StartTangent.Convert<XYZ>();
+					spline.EndTangent = this.EndTangent.Convert<XYZ>();
+
+					spline.ControlPoints.AddRange(this.ControlPoints);
+					spline.Weights.AddRange(this.ControlPoints.Select(x => x.Z));
+					spline.FitPoints.AddRange(this.FitPoints.Select(x => x.Convert<XYZ>()));
+					spline.Knots.AddRange(this.Knots);
+
+					return spline;
 				}
 			}
 		}

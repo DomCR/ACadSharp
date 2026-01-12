@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Classes;
 using CSMath;
+using System;
 
 namespace ACadSharp.Entities
 {
@@ -54,6 +55,11 @@ namespace ACadSharp.Entities
 		internal UnknownEntity(DxfClass dxfClass)
 		{
 			this.DxfClass = dxfClass;
+		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
 		}
 
 		/// <inheritdoc/>

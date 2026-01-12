@@ -5,8 +5,6 @@ using System;
 
 namespace ACadSharp.Tables
 {
-	//TODO: Implement UCS for VPORT
-
 	/// <summary>
 	/// Represents a <see cref="VPort"/> table entry
 	/// </summary>
@@ -144,13 +142,13 @@ namespace ACadSharp.Tables
 		/// Render mode
 		/// </summary>
 		[DxfCodeValue(281)]
-		public RenderMode RenderMode { get; set; }
+		public RenderMode RenderMode { get; set; } = RenderMode.Optimized2D;
 
 		/// <summary>
 		/// View mode(see VIEWMODE system variable)
 		/// </summary>
 		[DxfCodeValue(71)]
-		public ViewModeType ViewMode { get; set; }
+		public ViewModeType ViewMode { get; set; } = ViewModeType.FrontClippingZ;
 
 		/// <summary>
 		/// UCSICON setting
@@ -223,7 +221,7 @@ namespace ACadSharp.Tables
 		/// Orthographic type of UCS
 		/// </summary>
 		[DxfCodeValue(79)]
-		public OrthographicType OrthographicType { get; set; }
+		public OrthographicType OrthographicType { get; set; } = OrthographicType.None;
 
 		/// <summary>
 		/// Elevation

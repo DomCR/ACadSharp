@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -125,8 +126,7 @@ namespace ACadSharp.IO.DXF
 		{
 			var str = this.readStringLine();
 
-			byte[] bytes = new byte[str.Length];
-
+			List<byte> bytes = new List<byte>();
 			for (int i = 0; i < str.Length; i++)
 			{
 				//Create a byte value
@@ -134,7 +134,7 @@ namespace ACadSharp.IO.DXF
 
 				if (byte.TryParse(hex, NumberStyles.AllowHexSpecifier | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.InvariantCulture, out byte result))
 				{
-					bytes[i] = result;
+					bytes.Add(result);
 				}
 				else
 				{
@@ -142,7 +142,7 @@ namespace ACadSharp.IO.DXF
 				}
 			}
 
-			return bytes;
+			return bytes.ToArray();
 		}
 	}
 }

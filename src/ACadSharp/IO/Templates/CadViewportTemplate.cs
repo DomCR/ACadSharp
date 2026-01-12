@@ -1,10 +1,11 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadViewportTemplate : CadEntityTemplate
+	internal class CadViewportTemplate : CadEntityTemplate<Viewport>
 	{
 		public ulong? ViewportHeaderHandle { get; set; }
 
@@ -16,30 +17,25 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? VisualStyleHandle { get; set; }
 
-		public short? ViewportId { get; internal set; }
+		public short? ViewportId { get; set; }
 
-		public List<ulong> FrozenLayerHandles { get; set; } = new List<ulong>();
+		public ulong? BlockHandle { get; set; }
+
+		public HashSet<ulong> FrozenLayerHandles { get; set; } = new();
 
 		public CadViewportTemplate() : base(new Viewport()) { }
 
 		public CadViewportTemplate(Viewport entity) : base(entity) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
-
-			Viewport viewport = this.CadObject as Viewport;
-
-			if (this.ViewportHeaderHandle.HasValue && this.ViewportHeaderHandle > 0)
-			{
-				builder.Notify($"ViewportHeaderHandle not implemented for Viewport, handle {this.ViewportHeaderHandle}");
-			}
+			base.build(builder);
 
 			if (builder.TryGetCadObject<Entity>(this.BoundaryHandle, out Entity entity))
 			{
-				viewport.Boundary = entity;
+				this.CadObject.Boundary = entity;
 			}
-			else if(this.BoundaryHandle.HasValue  && this.BoundaryHandle > 0)
+			else if (this.BoundaryHandle.HasValue && this.BoundaryHandle > 0)
 			{
 				builder.Notify($"Boundary {this.BoundaryHandle} not found for viewport {this.CadObject.Handle}", NotificationType.Warning);
 			}
@@ -58,7 +54,7 @@ namespace ACadSharp.IO.Templates
 			{
 				if (builder.TryGetCadObject(handle, out Layer layer))
 				{
-					viewport.FrozenLayers.Add(layer);
+					this.CadObject.FrozenLayers.Add(layer);
 				}
 				else
 				{

@@ -9,7 +9,10 @@ namespace ACadSharp.Tests.IO.DXF
 {
 	public class DxfReaderTests : CadReaderTestsBase<DxfReader>
 	{
-		public DxfReaderTests(ITestOutputHelper output) : base(output) { }
+		public DxfReaderTests(ITestOutputHelper output) : base(output)
+		{
+			this._docIntegrity.IsDxf = true;
+		}
 
 		[Theory]
 		[MemberData(nameof(DxfAsciiFiles))]
@@ -89,9 +92,9 @@ namespace ACadSharp.Tests.IO.DXF
 		[Theory]
 		[MemberData(nameof(DxfAsciiFiles))]
 		[MemberData(nameof(DxfBinaryFiles))]
-		public override void AssertTableHirearchy(FileModel test)
+		public override void AssertTableHierarchy(FileModel test)
 		{
-			base.AssertTableHirearchy(test);
+			base.AssertTableHierarchy(test);
 		}
 
 		[Theory]
@@ -126,7 +129,7 @@ namespace ACadSharp.Tests.IO.DXF
 				doc = reader.Read();
 			}
 
-			if(doc.Header.Version < ACadVersion.AC1012)
+			if (doc.Header.Version < ACadVersion.AC1012)
 			{
 				//Older version do not keep the handles for tables and other objects like block_records
 				return;
@@ -135,6 +138,15 @@ namespace ACadSharp.Tests.IO.DXF
 			this._docIntegrity.AssertDocumentTree(doc);
 		}
 
+		[Theory]
+		[MemberData(nameof(DxfAsciiFiles))]
+		[MemberData(nameof(DxfBinaryFiles))]
+		public override void AssertDocumentHeader(FileModel test)
+		{
+			base.AssertDocumentHeader(test);
+		}
+
+#if !NETFRAMEWORK
 		[Theory]
 		[MemberData(nameof(DxfAsciiFiles))]
 		[MemberData(nameof(DxfBinaryFiles))]
@@ -161,5 +173,6 @@ namespace ACadSharp.Tests.IO.DXF
 				}
 			}
 		}
+#endif
 	}
 }

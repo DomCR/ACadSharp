@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using CSUtilities.Extensions;
 using System;
 using System.Collections;
@@ -19,67 +20,94 @@ namespace ACadSharp.Objects
 	public class CadDictionary : NonGraphicalObject, IObservableCadCollection<NonGraphicalObject>
 	{
 		public event EventHandler<CollectionChangedEventArgs> OnAdd;
+
 		public event EventHandler<CollectionChangedEventArgs> OnRemove;
 
-		#region Root dictionary entries
-
 		/// <summary>
-		/// ROOT dictionary, only used in the top level dictionary
+		/// Duplicate record cloning flag (determines how to merge duplicate entries)
 		/// </summary>
-		public const string Root = "ROOT";
+		[DxfCodeValue(281)]
+		public DictionaryCloningFlags ClonningFlags { get; set; }
 
 		/// <summary>
-		/// ACAD_COLOR dictionary entry
+		/// Soft-owner ID/handle to entry object
+		/// </summary>
+		[DxfCodeValue(350)]
+		public ulong[] EntryHandles { get { return this._entries.Values.Select(c => c.Handle).ToArray(); } }
+
+		/// <summary>
+		/// Entry names
+		/// </summary>
+		[DxfCodeValue(3)]
+		public string[] EntryNames { get { return this._entries.Keys.ToArray(); } }
+
+		/// <summary>
+		/// indicates that elements of the dictionary are to be treated as hard-owned.
+		/// </summary>
+		[DxfCodeValue(280)]
+		public bool HardOwnerFlag { get; set; }
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.ObjectDictionary;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.DICTIONARY;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Dictionary;
+
+		/// <summary>
+		/// ACAD_COLOR dictionary entry.
 		/// </summary>
 		public const string AcadColor = "ACAD_COLOR";
 
 		/// <summary>
-		/// ACAD_GROUP dictionary entry
+		/// ACAD_FIELDLIST dictionary entry.
+		/// </summary>
+		public const string AcadFieldList = "ACAD_FIELDLIST";
+
+		/// <summary>
+		/// ACAD_GROUP dictionary entry.
 		/// </summary>
 		public const string AcadGroup = "ACAD_GROUP";
 
 		/// <summary>
-		/// ACAD_LAYOUT dictionary entry
+		/// ACAD_IMAGE_DICT dictionary entry.
+		/// </summary>
+		public const string AcadImageDict = "ACAD_IMAGE_DICT";
+
+		/// <summary>
+		/// ACAD_LAYOUT dictionary entry.
 		/// </summary>
 		public const string AcadLayout = "ACAD_LAYOUT";
 
 		/// <summary>
-		/// ACAD_MATERIAL dictionary entry
+		/// ACAD_MATERIAL dictionary entry.
 		/// </summary>
 		public const string AcadMaterial = "ACAD_MATERIAL";
 
 		/// <summary>
-		/// ACAD_SORTENTS dictionary entry
-		/// </summary>
-		public const string AcadSortEnts = "ACAD_SORTENTS";
-
-		/// <summary>
-		/// ACAD_MLEADERSTYLE dictionary entry
+		/// ACAD_MLEADERSTYLE dictionary entry.
 		/// </summary>
 		public const string AcadMLeaderStyle = "ACAD_MLEADERSTYLE";
 
 		/// <summary>
-		/// ACAD_MLINESTYLE dictionary entry
+		/// ACAD_MLINESTYLE dictionary entry.
 		/// </summary>
 		public const string AcadMLineStyle = "ACAD_MLINESTYLE";
 
 		/// <summary>
-		/// ACAD_TABLESTYLE dictionary entry
+		/// ACAD_PDFDEFINITIONS dictionary entry.
 		/// </summary>
-		public const string AcadTableStyle = "ACAD_TABLESTYLE";
+		public const string AcadPdfDefinitions = "ACAD_PDFDEFINITIONS";
 
 		/// <summary>
-		/// ACAD_PLOTSETTINGS dictionary entry
+		/// ACAD_PLOTSETTINGS dictionary entry.
 		/// </summary>
 		public const string AcadPlotSettings = "ACAD_PLOTSETTINGS";
 
 		/// <summary>
-		/// AcDbVariableDictionary dictionary entry
-		/// </summary>
-		public const string VariableDictionary = "AcDbVariableDictionary";
-
-		/// <summary>
-		/// ACAD_PLOTSTYLENAME dictionary entry
+		/// ACAD_PLOTSTYLENAME dictionary entry.
 		/// </summary>
 		public const string AcadPlotStyleName = "ACAD_PLOTSTYLENAME";
 
@@ -89,58 +117,88 @@ namespace ACadSharp.Objects
 		public const string AcadScaleList = "ACAD_SCALELIST";
 
 		/// <summary>
-		/// ACAD_VISUALSTYLE dictionary entry
+		/// ACAD_SORTENTS dictionary entry.
+		/// </summary>
+		public const string AcadSortEnts = "ACAD_SORTENTS";
+
+		/// <summary>
+		/// ACAD_TABLESTYLE dictionary entry.
+		/// </summary>
+		public const string AcadTableStyle = "ACAD_TABLESTYLE";
+
+		/// <summary>
+		/// ACAD_VISUALSTYLE dictionary entry.
 		/// </summary>
 		public const string AcadVisualStyle = "ACAD_VISUALSTYLE";
 
 		/// <summary>
-		/// ACAD_FIELDLIST dictionary entry
+		/// ACAD_GEOGRAPHICDATA dictionary entry.
 		/// </summary>
-		public const string AcadFieldList = "ACAD_FIELDLIST";
+		public const string GeographicData = "ACAD_GEOGRAPHICDATA";
 
 		/// <summary>
-		/// ACAD_IMAGE_DICT dictionary entry
+		/// ROOT dictionary, only used in the top level dictionary.
 		/// </summary>
-		public const string AcadImageDict = "ACAD_IMAGE_DICT";
-
-		#endregion
-
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.DICTIONARY;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.ObjectDictionary;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Dictionary;
+		public const string Root = "ROOT";
 
 		/// <summary>
-		/// indicates that elements of the dictionary are to be treated as hard-owned.
+		/// AcDbVariableDictionary dictionary entry.
 		/// </summary>
-		[DxfCodeValue(280)]
-		public bool HardOwnerFlag { get; set; }
+		public const string VariableDictionary = "AcDbVariableDictionary";
+
+		private Dictionary<string, NonGraphicalObject> _entries = new(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>
-		/// Duplicate record cloning flag (determines how to merge duplicate entries)
+		/// Default constructor.
 		/// </summary>
-		[DxfCodeValue(281)]
-		public DictionaryCloningFlags ClonningFlags { get; set; }
+		public CadDictionary()
+		{ }
 
 		/// <summary>
-		/// Entry names
+		/// Constructor for a named dictionary.
 		/// </summary>
-		[DxfCodeValue(3)]
-		public string[] EntryNames { get { return this._entries.Keys.ToArray(); } }
+		/// <param name="name">Dictionary name.</param>
+		public CadDictionary(string name)
+		{
+			this.Name = name;
+		}
 
 		/// <summary>
-		/// Soft-owner ID/handle to entry object
+		/// Create the default entries for the root dictionary.
 		/// </summary>
-		[DxfCodeValue(350)]
-		public ulong[] EntryHandles { get { return this._entries.Values.Select(c => c.Handle).ToArray(); } }
+		public static void CreateDefaultEntries(CadDictionary root)
+		{
+			root.TryAdd(new CadDictionary(AcadColor));
+			root.TryAdd(new CadDictionary(AcadGroup));
 
-		public CadObject this[string key] { get { return this._entries[key]; } }
+			root.TryAdd(new CadDictionary(AcadLayout));
 
-		private readonly Dictionary<string, NonGraphicalObject> _entries = new(StringComparer.OrdinalIgnoreCase);
+			root.TryAdd(new CadDictionary(AcadMaterial));
+			root.TryAdd(new CadDictionary(AcadSortEnts));
+
+			root.TryAdd(new CadDictionary(AcadMLeaderStyle));
+
+			root.TryAdd(new CadDictionary(AcadMLineStyle));
+
+			root.TryAdd(new CadDictionary(AcadTableStyle));
+			root.TryAdd(new CadDictionary(AcadPlotSettings));
+
+			//root.TryAdd(new CadDictionaryWithDefault(AcadPlotStyleName, new PlotSettings("Normal")));
+
+			// { AcadPlotStyleName, new CadDictionaryWithDefault() },	//Add default entry "Normal"	PlaceHolder	??
+
+			root.TryAdd(new CadDictionary(VariableDictionary));
+
+			//DictionaryVars Entry DIMASSOC and HIDETEXT ??
+
+			root.TryAdd(new CadDictionary(AcadScaleList));
+
+			root.TryAdd(new CadDictionary(AcadVisualStyle));
+			root.TryAdd(new CadDictionary(AcadFieldList));
+			root.TryAdd(new CadDictionary(AcadImageDict));
+
+			root.TryAdd(new CadDictionary(AcadMaterial));
+		}
 
 		/// <summary>
 		/// Creates the root dictionary with the default entries.
@@ -153,70 +211,6 @@ namespace ACadSharp.Objects
 			CreateDefaultEntries(root);
 
 			return root;
-		}
-
-		/// <summary>
-		/// Create the default entries for the root dictionary.
-		/// </summary>
-		public static void CreateDefaultEntries(CadDictionary root)
-		{
-			root.TryAdd(new CadDictionary(AcadColor));
-			root.TryAdd(new CadDictionary(AcadGroup));
-
-			CadDictionary layouts = root.ensureCadDictionaryExist(AcadLayout);
-
-			root.TryAdd(new CadDictionary(AcadMaterial));
-			root.TryAdd(new CadDictionary(AcadSortEnts));
-
-			CadDictionary mLeaderStyles = root.ensureCadDictionaryExist(AcadMLeaderStyle);
-			mLeaderStyles.TryAdd(MultiLeaderStyle.Default);
-
-			CadDictionary mLineStyles = root.ensureCadDictionaryExist(AcadMLineStyle);
-			mLineStyles.TryAdd(MLineStyle.Default);
-
-			root.TryAdd(new CadDictionary(AcadTableStyle));
-			root.TryAdd(new CadDictionary(AcadPlotSettings));
-			// { AcadPlotStyleName, new CadDictionaryWithDefault() },	//Add default entry "Normal"	PlaceHolder	??
-
-			root.TryAdd(new CadDictionary(VariableDictionary));
-			//DictionaryVars Entry DIMASSOC and HIDETEXT ??
-
-			CadDictionary scales = root.ensureCadDictionaryExist(AcadScaleList);
-			scales.TryAdd(new Scale { Name = "A0", PaperUnits = 1.0, DrawingUnits = 1.0, IsUnitScale = true });
-			scales.TryAdd(new Scale { Name = "A1", PaperUnits = 1.0, DrawingUnits = 2.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "A2", PaperUnits = 1.0, DrawingUnits = 4.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "A3", PaperUnits = 1.0, DrawingUnits = 5.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "A4", PaperUnits = 1.0, DrawingUnits = 8.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "A5", PaperUnits = 1.0, DrawingUnits = 10.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "A6", PaperUnits = 1.0, DrawingUnits = 16.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "A7", PaperUnits = 1.0, DrawingUnits = 20.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "A8", PaperUnits = 1.0, DrawingUnits = 30.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "A9", PaperUnits = 1.0, DrawingUnits = 40.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "B0", PaperUnits = 1.0, DrawingUnits = 50.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "B1", PaperUnits = 1.0, DrawingUnits = 100.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "B2", PaperUnits = 2.0, DrawingUnits = 1.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "B3", PaperUnits = 4.0, DrawingUnits = 1.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "B4", PaperUnits = 8.0, DrawingUnits = 1.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "B5", PaperUnits = 10.0, DrawingUnits = 1.0, IsUnitScale = false });
-			scales.TryAdd(new Scale { Name = "B6", PaperUnits = 100.0, DrawingUnits = 1.0, IsUnitScale = false });
-
-			root.TryAdd(new CadDictionary(AcadVisualStyle));
-			root.TryAdd(new CadDictionary(AcadFieldList));
-			root.TryAdd(new CadDictionary(AcadImageDict));
-		}
-
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		public CadDictionary() { }
-
-		/// <summary>
-		/// Constructor for a named dictionary.
-		/// </summary>
-		/// <param name="name">Dictionary name.</param>
-		public CadDictionary(string name)
-		{
-			this.Name = name;
 		}
 
 		/// <summary>
@@ -250,19 +244,31 @@ namespace ACadSharp.Objects
 		}
 
 		/// <summary>
-		/// Tries to add the <see cref="NonGraphicalObject"/> entry using the name as key.
+		/// Removes all keys and values from the <see cref="CadDictionary"/>.
 		/// </summary>
-		/// <param name="value"></param>
-		/// <returns>true if the element is successfully added; otherwise, false.</returns>
-		public bool TryAdd(NonGraphicalObject value)
+		public void Clear()
 		{
-			if (!this._entries.ContainsKey(value.Name))
+			foreach (var item in this._entries)
 			{
-				this.Add(value.Name, value);
-				return true;
+				this.Remove(item.Key, out _);
+			}
+		}
+
+		/// <inheritdoc/>
+		public override CadObject Clone()
+		{
+			CadDictionary clone = (CadDictionary)base.Clone();
+
+			clone.OnAdd = null;
+			clone.OnRemove = null;
+
+			clone._entries = new Dictionary<string, NonGraphicalObject>();
+			foreach (NonGraphicalObject item in this._entries.Values)
+			{
+				clone.Add(item.CloneTyped());
 			}
 
-			return false;
+			return clone;
 		}
 
 		/// <summary>
@@ -273,6 +279,31 @@ namespace ACadSharp.Objects
 		public bool ContainsKey(string key)
 		{
 			return this._entries.ContainsKey(key);
+		}
+
+		/// <summary>
+		/// Gets the value associated with the specific key
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="name"></param>
+		/// <returns>The value with Type T or null if not found or different type</returns>
+		public T GetEntry<T>(string name)
+			where T : NonGraphicalObject
+		{
+			this.TryGetEntry<T>(name, out T value);
+			return value;
+		}
+
+		/// <inheritdoc/>
+		public IEnumerator<NonGraphicalObject> GetEnumerator()
+		{
+			return this._entries.Values.GetEnumerator();
+		}
+
+		/// <inheritdoc/>
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return this._entries.Values.GetEnumerator();
 		}
 
 		/// <summary>
@@ -287,6 +318,7 @@ namespace ACadSharp.Objects
 			{
 				item.Owner = null;
 				OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));
+				item.OnNameChanged -= this.onEntryNameChanged;
 				return true;
 			}
 
@@ -294,27 +326,29 @@ namespace ACadSharp.Objects
 		}
 
 		/// <summary>
-		/// Removes all keys and values from the <see cref="CadDictionary"/>.
+		/// Removes a <see cref="NonGraphicalObject"/> from the collection, this method triggers <see cref="OnRemove"/>
 		/// </summary>
-		public void Clear()
+		/// <param name="key"></param>
+		/// <returns>true if the element is successfully removed; otherwise, false.</returns>
+		public bool Remove(string key)
 		{
-			foreach (var item in this._entries)
-			{
-				this.Remove(item.Key, out _);
-			}
+			return this.Remove(key, out _);
 		}
 
 		/// <summary>
-		/// Gets the value associated with the specific key
+		/// Tries to add the <see cref="NonGraphicalObject"/> entry using the name as key.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="name"></param>
-		/// <returns>The value with Type T or null if not found or different type</returns>
-		public T GetEntry<T>(string name)
-			where T : NonGraphicalObject
+		/// <param name="value"></param>
+		/// <returns>true if the element is successfully added; otherwise, false.</returns>
+		public bool TryAdd(NonGraphicalObject value)
 		{
-			this.TryGetEntry<T>(name, out T value);
-			return value;
+			if (!this._entries.ContainsKey(value.Name))
+			{
+				this.Add(value.Name, value);
+				return true;
+			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -340,35 +374,13 @@ namespace ACadSharp.Objects
 			return false;
 		}
 
-		/// <inheritdoc/>
-		public IEnumerator<NonGraphicalObject> GetEnumerator()
-		{
-			return this._entries.Values.GetEnumerator();
-		}
-
-		/// <inheritdoc/>
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return this._entries.Values.GetEnumerator();
-		}
-
-		private CadDictionary ensureCadDictionaryExist(string name)
-		{
-			if (!this.TryGetEntry(name, out CadDictionary entry))
-			{
-				entry = new CadDictionary(name);
-				this.Add(entry);
-			}
-
-			return entry;
-		}
-
 		private void onEntryNameChanged(object sender, OnNameChangedArgs e)
 		{
-
 			var entry = this._entries[e.OldName];
 			this._entries.Add(e.NewName, entry);
 			this._entries.Remove(e.OldName);
 		}
+
+		public CadObject this[string key] { get { return this._entries[key]; } }
 	}
 }

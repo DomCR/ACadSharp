@@ -9,7 +9,7 @@ namespace ACadSharp.IO.DWG
 		public DwgStreamReaderAC18(Stream stream, bool resetPosition) : base(stream, resetPosition) { }
 
 		/// <inheritdoc/>
-		public override Color ReadCmColor()
+		public override Color ReadCmColor(bool useTextStream = false)
 		{
 			Color color = default;
 
@@ -21,19 +21,17 @@ namespace ACadSharp.IO.DWG
 			uint rgb = (uint)this.ReadBitLong();
 			byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
 
-			if ((rgb & 0b0000_0001_0000_0000_0000_0000_0000_0000) != 0)
+			if (rgb == 0xC0000000)
+			{
+				color = Color.ByLayer;
+			}
+			else if ((rgb & 0b0000_0001_0000_0000_0000_0000_0000_0000) != 0)
 			{
 				//Indexed color
 				color = new Color(arr[0]);
 			}
 			else
 			{
-				//CECOLOR:
-				//3221225472
-				//0b11000000000000000000000000000000
-				//0b1100_0000_0000_0000_0000_0000_0000_0000 --> this should be ByLayer
-				//0xC0000000
-
 				//True color
 				color = new Color(arr[2], arr[1], arr[0]);
 			}
@@ -59,11 +57,11 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
-		public override Color ReadEnColor(out Transparency transparency, out bool flag)
+		public override Color ReadEnColor(out Transparency transparency, out bool isBookColor)
 		{
 			Color color = new Color();
 			transparency = Transparency.ByLayer;
-			flag = false;
+			isBookColor = false;
 
 			//BS : color number: flags + color index
 			short size = this.ReadBitShort();
@@ -78,7 +76,7 @@ namespace ACadSharp.IO.DWG
 				{
 					color = Color.ByBlock;
 					//The handle to the color is written in the handle stream.
-					flag = true;
+					isBookColor = true;
 				}
 				//0x8000: complex color (rgb).
 				else if ((flags & 0x8000) > 0)

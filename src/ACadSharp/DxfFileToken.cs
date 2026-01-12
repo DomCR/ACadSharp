@@ -57,6 +57,7 @@
 		public const string Entity3DFace = "3DFACE";
 		public const string Entity3DSolid = "3DSOLID";
 		public const string EntityProxyEntity = "ACAD_PROXY_ENTITY";
+		public const string EntityTable = "ACAD_TABLE";
 		public const string EntityArc = "ARC";
 		public const string EntityAttributeDefinition = "ATTDEF";
 		public const string EntityAttribute = "ATTRIB";
@@ -92,7 +93,6 @@
 		public const string EntitySpline = "SPLINE";
 		public const string EntitySun = "SUN";
 		public const string EntitySurface = "SURFACE";
-		public const string EntityTable = "TABLE";
 		public const string EntityText = "TEXT";
 		public const string EntityTolerance = "TOLERANCE";
 		public const string EntityTrace = "TRACE";
@@ -109,8 +109,9 @@
 		public const string ObjectsSection = "OBJECTS";
 		public const string ObjectDictionary = "DICTIONARY";
 		public const string ObjectDictionaryWithDefault = "ACDBDICTIONARYWDFLT";
-		public const string ObjectAcdbPlaceHolder = "ACDBPLACEHOLDER";
+		public const string ObjectProxyObject = "ACAD_PROXY_OBJECT";
 		public const string ObjectDictionaryVar = "DICTIONARYVAR";
+		public const string ObjectDBColor = "DBCOLOR";
 		public const string ObjectPlotSettings = "PLOTSETTINGS";
 		public const string ObjectPlaceholder = "ACDBPLACEHOLDER";
 		public const string ObjectLayout = "LAYOUT";
@@ -120,12 +121,47 @@
 		public const string ObjectMaterial = "MATERIAL";
 		public const string ObjectMLineStyle = "MLINESTYLE";
 		public const string ObjectPdfDefinition = "PDFDEFINITION";
+		public const string ObjectRasterVariables = "RASTERVARIABLES";
 		public const string ObjectVisualStyle = "VISUALSTYLE";
 		public const string ObjectScale = "SCALE";
 		public const string ObjectSortEntsTable = "SORTENTSTABLE";
 		public const string ObjectXRecord = "XRECORD";
-		public const string ObjectMLeaderContextData = "CONTEXT_DATA";
+		public const string ObjectMLeaderContextData = "ACDB_MLEADEROBJECTCONTEXTDATA_CLASS";
+		public const string ObjectEvalGraph = "ACAD_EVALUATION_GRAPH";
+		public const string ObjectBlockLinearParameter = "BLOCKLINEARPARAMETER";
+		public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
+		public const string ObjectBlockBasePointParameter = "BLOCKBASEPOINTPARAMETER";
+		public const string ObjectBlockFlipParameter = "BLOCKFLIPPARAMETER";
+		public const string ObjectBlockFlipAction = "BLOCKFLIPACTION";
+		public const string ObjectTableContent = "TABLECONTENT";
+		public const string ObjectGeoData = "GEODATA";
+		public const string ObjectGroup = "GROUP";
+		public const string ObjectTableStyle = "TABLESTYLE";
+		public const string ObjectCellStyleMap = "CELLSTYLEMAP";
+		public const string ObjectSpatialFilter = "SPATIAL_FILTER";
+		
+		//Table tokens
+		public const string ObjectTableColumn = "COLUMN";
+		public const string ObjectTableColumnBegin = "TABLECOLUMN_BEGIN";
+		public const string ObjectTableColumnEnd = "TABLECOLUMN_END";
+		public const string LinkedTableDataColumn_BEGIN = "LINKEDTABLEDATACOLUMN_BEGIN";
+		public const string LinkedTableDataColumn_END = "LINKEDTABLEDATACOLUMN_END";
+		public const string FormattedTableDataColumn_BEGIN = "FORMATTEDTABLEDATACOLUMN_BEGIN";
+		public const string FormattedTableDataColumn_END = "FORMATTEDTABLEDATACOLUMN_END";
 
+		public const string ObjectTableRow = "ROW";
+		public const string ObjectTableRowBegin = "TABLEROW_BEGIN";
+		public const string ObjectTableRowEnd = "TABLEOW_END";
+		public const string LinkedTableDataRow_BEGIN = "LINKEDTABLEDATAROW_BEGIN";
+		public const string LinkedTableDataRow_END = "LINKEDTABLEDATAROW_END";
+		public const string FormattedTableDataRow_BEGIN = "FORMATTEDTABLEDATAROW_BEGIN";
+		public const string FormattedTableDataRow_END = "FORMATTEDTABLEDATAROW_END";
+
+		public const string ObjectCell = "CELL";
+		public const string LinkedTableDataCell_BEGIN = "LINKEDTABLEDATACELL_BEGIN";
+		public const string LinkedTableDataCell_END = "LINKEDTABLEDATACELL_END";
+
+		public const string CustomData = "CUSTOMDATA";
 		#endregion
 	}
 }

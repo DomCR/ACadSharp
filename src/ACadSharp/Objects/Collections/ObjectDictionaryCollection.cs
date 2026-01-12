@@ -6,24 +6,34 @@ using System.Linq;
 namespace ACadSharp.Objects.Collections
 {
 	/// <summary>
-	/// Object collection linked to a dictionary
+	/// Object collection linked to a dictionary.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public abstract class ObjectDictionaryCollection<T> : IHandledCadObject, IEnumerable<T>
+	public abstract class ObjectDictionaryCollection<T> : ICadCollection<T>, IObservableCadCollection<T>, IHandledCadObject, IEnumerable<T>
 		where T : NonGraphicalObject
 	{
-		public event EventHandler<CollectionChangedEventArgs> OnAdd { add { this._dictionary.OnAdd += value; } remove { this._dictionary.OnAdd -= value; } }
-		public event EventHandler<CollectionChangedEventArgs> OnRemove { add { this._dictionary.OnRemove += value; } remove { this._dictionary.OnRemove -= value; } }
+		public event EventHandler<CollectionChangedEventArgs> OnAdd
+		{ add { this._dictionary.OnAdd += value; } remove { this._dictionary.OnAdd -= value; } }
+
+		public event EventHandler<CollectionChangedEventArgs> OnRemove
+		{ add { this._dictionary.OnRemove += value; } remove { this._dictionary.OnRemove -= value; } }
 
 		/// <inheritdoc/>
 		public ulong Handle { get { return this._dictionary.Handle; } }
 
-		public T this[string key] { get { return (T)this._dictionary[key]; } }
-
 		protected CadDictionary _dictionary;
 
+		/// <summary>
+		/// Initializes a new instance of the ObjectDictionaryCollection class with the specified CAD dictionary.
+		/// </summary>
+		/// <param name="dictionary">The CAD dictionary that provides the underlying storage for the collection. Cannot be null.</param>
 		protected ObjectDictionaryCollection(CadDictionary dictionary)
 		{
+			if (dictionary == null)
+			{
+				throw new ArgumentNullException(nameof(dictionary));
+			}
+
 			this._dictionary = dictionary;
 		}
 
@@ -31,9 +41,17 @@ namespace ACadSharp.Objects.Collections
 		/// Add an entry to the collection
 		/// </summary>
 		/// <param name="entry"></param>
-		public void Add(T entry)
+		public virtual void Add(T entry)
 		{
 			this._dictionary.Add(entry);
+		}
+
+		/// <summary>
+		/// Removes all keys and values from the <see cref="ObjectDictionaryCollection{T}"/>.
+		/// </summary>
+		public void Clear()
+		{
+			this._dictionary.Clear();
 		}
 
 		/// <summary>
@@ -46,15 +64,16 @@ namespace ACadSharp.Objects.Collections
 			return this._dictionary.ContainsKey(key);
 		}
 
-		/// <summary>
-		/// Gets the value associated with the specific key
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="entry"></param>
-		/// <returns>true if the value is found or false if not found.</returns>
-		public bool TryGetValue(string name, out T entry)
+		/// <inheritdoc/>
+		public IEnumerator<T> GetEnumerator()
 		{
-			return this._dictionary.TryGetEntry(name, out entry);
+			return this._dictionary.OfType<T>().GetEnumerator();
+		}
+
+		/// <inheritdoc/>
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return this._dictionary.OfType<T>().GetEnumerator();
 		}
 
 		/// <summary>
@@ -80,24 +99,32 @@ namespace ACadSharp.Objects.Collections
 			return result;
 		}
 
+		/// <inheritdoc/>
+		public T TryAdd(T item)
+		{
+			if (this.TryGet(item.Name, out T existing))
+			{
+				return existing;
+			}
+			else
+			{
+				this.Add(item);
+				return item;
+			}
+		}
+
 		/// <summary>
-		/// Removes all keys and values from the <see cref="ObjectDictionaryCollection{T}"/>.
+		/// Attempts to retrieve the entry associated with the specified name.
 		/// </summary>
-		public void Clear()
+		/// <param name="name">The name of the entry to locate. Cannot be null.</param>
+		/// <param name="entry">When this method returns, contains the entry associated with the specified name, if the name is found; otherwise,
+		/// the default value for the type of the entry parameter. This parameter is passed uninitialized.</param>
+		/// <returns>true if an entry with the specified name is found; otherwise, false.</returns>
+		public bool TryGet(string name, out T entry)
 		{
-			this._dictionary.Clear();
+			return this._dictionary.TryGetEntry(name, out entry);
 		}
 
-		/// <inheritdoc/>
-		public IEnumerator<T> GetEnumerator()
-		{
-			return this._dictionary.OfType<T>().GetEnumerator();
-		}
-
-		/// <inheritdoc/>
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return this._dictionary.OfType<T>().GetEnumerator();
-		}
+		public T this[string key] { get { return (T)this._dictionary[key]; } }
 	}
 }

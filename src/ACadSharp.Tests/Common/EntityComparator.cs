@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Entities;
 using CSMath;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ACadSharp.Tests.Common
 {
@@ -23,7 +22,7 @@ namespace ACadSharp.Tests.Common
 
 			//AssertUtils.AreEqual(expected.Color.Equals(actual.Color), nameof(actual. color));
 			AssertUtils.AreEqual(expected.LineWeight, actual.LineWeight, nameof(actual.LineWeight));
-			AssertUtils.AreEqual(expected.LinetypeScale, actual.LinetypeScale, nameof(actual.LinetypeScale));
+			AssertUtils.AreEqual(expected.LineTypeScale, actual.LineTypeScale, nameof(actual.LineTypeScale));
 			AssertUtils.AreEqual(expected.IsInvisible, actual.IsInvisible, nameof(actual.IsInvisible));
 			//AssertUtils.AreEqual(expected.Transparency.Equals(actual.Transparency), nameof(actual. Transparency));
 

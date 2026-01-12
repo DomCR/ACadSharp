@@ -24,9 +24,13 @@ namespace ACadSharp.IO.DWG
 
 		public bool WriteXRecords { get; }
 
+		public bool WriteXData { get; }
+
+		public bool WriteShapes { get; } = true;
+
 		private Dictionary<ulong, CadDictionary> _dictionaries = new();
 
-		private Queue<CadObject> _objects = new();
+		private Queue<NonGraphicalObject> _objects = new();
 
 		private MemoryStream _msmain;
 
@@ -40,7 +44,10 @@ namespace ACadSharp.IO.DWG
 
 		private Entity _next;
 
-		public DwgObjectWriter(Stream stream, CadDocument document, Encoding encoding, bool writeXRecords = true) : base(document.Header.Version)
+		public DwgObjectWriter(Stream stream, CadDocument document, Encoding encoding,
+			bool writeXRecords = true,
+			bool writeXData = true,
+			bool writeShapes = true) : base(document.Header.Version)
 		{
 			this._stream = stream;
 			this._document = document;
@@ -48,6 +55,8 @@ namespace ACadSharp.IO.DWG
 			this._msmain = new MemoryStream();
 			this._writer = DwgStreamWriterBase.GetMergedWriter(document.Header.Version, this._msmain, encoding);
 			this.WriteXRecords = writeXRecords;
+			this.WriteXData = writeXData;
+			this.WriteShapes = writeShapes;
 		}
 
 		public void Write()
@@ -72,6 +81,11 @@ namespace ACadSharp.IO.DWG
 			this.writeTable(this._document.AppIds);
 			//For some reason the dimension must be writen the last
 			this.writeTable(this._document.DimensionStyles);
+
+			if (this.R2004Pre)
+			{
+				this.writeTable(this._document.VEntityControl);
+			}
 
 			this.writeBlockEntities();
 			this.writeObjects();
@@ -210,7 +224,7 @@ namespace ACadSharp.IO.DWG
 
 				this._prev = null;
 				this._next = null;
-				Entity[] arr = blkRecord.Entities.ToArray();
+				Entity[] arr = getCompatibleEntities(blkRecord.Entities);
 				for (int i = 0; i < arr.Length; i++)
 				{
 					this._prev = arr.ElementAtOrDefault(i - 1);
@@ -224,6 +238,32 @@ namespace ACadSharp.IO.DWG
 				this._next = null;
 
 				this.writeBlockEnd(blkRecord.BlockEnd);
+			}
+		}
+
+		private Entity[] getCompatibleEntities(IEnumerable<Entity> entities)
+		{
+			return entities.Where(e => this.isEntitySupported(e)).ToArray();
+
+		}
+
+		private bool isEntitySupported(Entity entity)
+		{
+			switch (entity)
+			{
+				case UnknownEntity:
+					return false;
+				case Shape:
+					return this.WriteShapes;
+				case ProxyEntity:
+				case TableEntity:
+				case Solid3D:
+				case CadBody:
+				case Region:
+					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
+					return false;
+				default:
+					return true;
 			}
 		}
 
@@ -253,12 +293,26 @@ namespace ACadSharp.IO.DWG
 
 		private void writeBlockHeader(BlockRecord record)
 		{
+			Entity[] entities = getCompatibleEntities(record.Entities);
+
 			this.writeCommonNonEntityData(record);
 
 			//Common:
 			//Entry name TV 2
-			//Warning: names ended with a number are not readed in this method
-			this._writer.WriteVariableText(record.Name);
+			if (record.Flags.HasFlag(BlockTypeFlags.Anonymous))
+			{
+				//Warning: anonymous blocks do not write the full name, only *{type character}
+				this._writer.WriteVariableText(record.Name.Substring(0, 2));
+			}
+			else if (record.Layout != null)
+			{
+				var processedBlockName = new string(record.Name.Where(c => !char.IsDigit(c)).ToArray());
+				this._writer.WriteVariableText(processedBlockName);
+			}
+			else
+			{
+				this._writer.WriteVariableText(record.Name);
+			}
 
 			this.writeXrefDependantBit(record);
 
@@ -278,7 +332,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				//Loaded Bit B 0 indicates loaded for an xref
-				this._writer.WriteBit(record.Flags.HasFlag(BlockTypeFlags.XRef));
+				this._writer.WriteBit(record.IsUnloaded);
 			}
 
 			//R2004+:
@@ -287,7 +341,7 @@ namespace ACadSharp.IO.DWG
 				&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 			{
 				//Owned Object Count BL Number of objects owned by this object.
-				_writer.WriteBitLong(record.Entities.Count());
+				_writer.WriteBitLong(entities.Length);
 			}
 
 			//Common:
@@ -295,14 +349,14 @@ namespace ACadSharp.IO.DWG
 			this._writer.Write3BitDouble(record.BlockEntity.BasePoint);
 			//Xref pname TV 1 Xref pathname. That's right: DXF 1 AND 3!
 			//3 1 appears in a tblnext/ search elist; 3 appears in an entget.
-			this._writer.WriteVariableText(record.BlockEntity.XrefPath);
+			this._writer.WriteVariableText(record.BlockEntity.XRefPath);
 
 			//R2000+:
 			if (this.R2000Plus)
 			{
 				//Insert Count RC A sequence of zero or more non-zero RC’s, followed by a terminating 0 RC.The total number of these indicates how many insert handles will be present.
 				foreach (var item in this._document.Entities.OfType<Insert>()
-					.Where(i => i.Block.Name == record.Name))
+					.Where(i => i.Block?.Name == record?.Name))
 				{
 					this._writer.WriteByte(1);
 				}
@@ -338,12 +392,12 @@ namespace ACadSharp.IO.DWG
 					&& !record.Flags.HasFlag(BlockTypeFlags.XRef)
 					&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 			{
-				if (record.Entities.Any())
+				if (entities.Any())
 				{
 					//first entity in the def. (soft pointer)
-					this._writer.HandleReference(DwgReferenceType.SoftPointer, record.Entities.First());
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, entities.First());
 					//last entity in the def. (soft pointer)
-					this._writer.HandleReference(DwgReferenceType.SoftPointer, record.Entities.Last());
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, entities.Last());
 				}
 				else
 				{
@@ -355,7 +409,7 @@ namespace ACadSharp.IO.DWG
 			//R2004+:
 			if (this.R2004Plus)
 			{
-				foreach (var item in record.Entities)
+				foreach (var item in entities)
 				{
 					//H[ENTITY(hard owner)] Repeats “Owned Object Count” times.
 					this._writer.HandleReference(DwgReferenceType.HardOwnership, item);
@@ -370,7 +424,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2000Plus)
 			{
 				foreach (var item in this._document.Entities.OfType<Insert>()
-					.Where(i => i.Block.Name == record.Name))
+					.Where(i => i.Block?.Name == record.Name))
 				{
 					this._writer.HandleReference(DwgReferenceType.SoftPointer, item);
 				}
@@ -500,15 +554,68 @@ namespace ACadSharp.IO.DWG
 			//Description TV 3
 			this._writer.WriteVariableText(ltype.Description);
 			//Pattern Len BD 40
-			this._writer.WriteBitDouble(ltype.PatternLen);
+			this._writer.WriteBitDouble(ltype.PatternLength);
 			//Alignment RC 72 Always 'A'.
 			this._writer.WriteByte((byte)ltype.Alignment);
 
 			//Numdashes RC 73 The number of repetitions of the 49...74 data.
 			this._writer.WriteByte((byte)ltype.Segments.Count());
-			bool isText = false;
+
+			bool hasTextSegments = false;
 			foreach (LineType.Segment segment in ltype.Segments)
 			{
+				if (segment.Flags.HasFlag(LineTypeShapeFlags.Text))
+				{
+					hasTextSegments = true;
+					break;
+				}
+			}
+
+			Encoding textEncoding = this.R2007Plus ? Encoding.Unicode : this._writer.Encoding;
+
+			byte[] textArea = null;
+			int textCursor = 0;
+			byte[] textTerminator = textEncoding.GetBytes("\0");
+
+			if (this._version <= ACadVersion.AC1018)
+			{
+				textArea = new byte[256];
+				if (this._version <= ACadVersion.AC1014)
+					textCursor = 1;
+			}
+			else if (this.R2007Plus && hasTextSegments)
+			{
+				textArea = new byte[512];
+			}
+
+			foreach (LineType.Segment segment in ltype.Segments)
+			{
+				if (segment.Flags.HasFlag(LineTypeShapeFlags.Text))
+				{
+					if (textArea == null || string.IsNullOrEmpty(segment.Text))
+					{
+						segment.ShapeNumber = 0;
+					}
+					else
+					{
+						byte[] textBytes = textEncoding.GetBytes(segment.Text);
+						int required = textBytes.Length + textTerminator.Length;
+
+						if (textCursor + required <= textArea.Length)
+						{
+							segment.ShapeNumber = (short)textCursor;
+							Buffer.BlockCopy(textBytes, 0, textArea, textCursor, textBytes.Length);
+							textCursor += textBytes.Length;
+							Buffer.BlockCopy(textTerminator, 0, textArea, textCursor, textTerminator.Length);
+							textCursor += textTerminator.Length;
+						}
+						else
+						{
+							segment.ShapeNumber = 0;
+						}
+					}
+				}
+
 				//Dash length BD 49 Dash or dot specifier.
 				this._writer.WriteBitDouble(segment.Length);
 				//Complex shapecode BS 75 Shape number if shapeflag is 2, or index into the string area if shapeflag is 4.
@@ -524,33 +631,26 @@ namespace ACadSharp.IO.DWG
 				//Rotation BD 50 (0.0 for a simple dash.)
 				this._writer.WriteBitDouble(segment.Rotation);
 				//Shapeflag BS 74 bit coded:
-				this._writer.WriteBitShort((short)segment.Shapeflag);
-
-				if (segment.Shapeflag.HasFlag(LinetypeShapeFlags.Text))
-					isText = true;
+				this._writer.WriteBitShort((short)segment.Flags);
 			}
 
 			//R2004 and earlier:
 			if (this._version <= ACadVersion.AC1018)
 			{
-				//Strings area X 9 256 bytes of text area. The complex dashes that have text use this area via the 75-group indices. It's basically a pile of 0-terminated strings.
-				//First byte is always 0 for R13 and data starts at byte 1.
-				//In R14 it is not a valid data start from byte 0.
-				//(The 9 - group is undocumented.)
-				for (int i = 0; i < 256; i++)
+				byte[] buffer = textArea ?? new byte[256];
+				for (int i = 0; i < buffer.Length; i++)
 				{
-					//TODO: Write the line type text area
-					this._writer.WriteByte(0);
+					this._writer.WriteByte(buffer[i]);
 				}
 			}
 
 			//R2007+:
-			if (this.R2007Plus && isText)
+			if (this.R2007Plus && hasTextSegments)
 			{
-				for (int i = 0; i < 512; i++)
+				byte[] buffer = textArea ?? new byte[512];
+				for (int i = 0; i < buffer.Length; i++)
 				{
-					//TODO: Write the line type text area
-					this._writer.WriteByte(0);
+					this._writer.WriteByte(buffer[i]);
 				}
 			}
 
@@ -1010,7 +1110,7 @@ namespace ACadSharp.IO.DWG
 				//DIMCLRT BS 178																				  
 				this._writer.WriteCmColor(dimStyle.TextColor);
 				//DIMADEC BS 179																				  
-				this._writer.WriteBitShort(dimStyle.AngularDimensionDecimalPlaces);
+				this._writer.WriteBitShort(dimStyle.AngularDecimalPlaces);
 				//DIMDEC BS 271																					  
 				this._writer.WriteBitShort(dimStyle.DecimalPlaces);
 				//DIMTDEC BS 272																				  
@@ -1111,11 +1211,11 @@ namespace ACadSharp.IO.DWG
 			if (this.R2007Plus)
 			{
 				//345 dimltype(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.LineType);
 				//346 dimltex1(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.LineTypeExt1);
 				//347 dimltex2(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.LineTypeExt2);
 			}
 
 			this.registerObject(dimStyle);

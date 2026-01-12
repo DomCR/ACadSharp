@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using CSMath;
 
 namespace ACadSharp.Objects
 {
@@ -13,6 +14,10 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.Scale)]
 	public class Scale : NonGraphicalObject
 	{
+		public const string DefaultName = "1:1";
+
+		public static Scale Default { get { return new Scale { Name = DefaultName, PaperUnits = 1.0, DrawingUnits = 1.0, IsUnitScale = true }; } }
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }
 
@@ -56,10 +61,30 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(290)]
 		public bool IsUnitScale { get; set; }
 
+		public double ScaleFactor => this.PaperUnits / this.DrawingUnits;
+
 		public Scale() { }
 
 		public Scale(string name) : base(name)
 		{
+		}
+
+		public double ApplyTo(double value)
+		{
+			return value * ScaleFactor;
+		}
+
+		public T ApplyTo<T>(T value)
+			where T : IVector, new()
+		{
+			T result = new();
+
+			for (int i = 0; i < value.Dimension; i++)
+			{
+				result[i] = ApplyTo(value[i]);
+			}
+
+			return result;
 		}
 	}
 }

@@ -2,6 +2,7 @@
 using CSMath;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -14,7 +15,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityPolyline)]
 	[DxfSubClass(DxfSubclassMarker.Polyline3d)]
-	public class Polyline3D : Polyline
+	public class Polyline3D : Polyline<Vertex3D>
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.POLYLINE_3D;
@@ -24,25 +25,18 @@ namespace ACadSharp.Entities
 
 		public Polyline3D() : base()
 		{
-			this.Vertices.OnAdd += this.verticesOnAdd;
 		}
 
-		public override IEnumerable<Entity> Explode()
+		public Polyline3D(IEnumerable<XYZ> vertices, bool isClosed = false) : base(vertices.Select(v => new Vertex3D(v)), isClosed)
 		{
-			return Polyline.Explode(this);
 		}
 
-		private void verticesOnAdd(object sender, CollectionChangedEventArgs e)
+		public Polyline3D(IEnumerable<Vertex3D> vertices, bool isClosed = false) : base(vertices, isClosed)
 		{
-			if (e.Item is not Vertex3D)
-			{
-				this.Vertices.Remove((Vertex)e.Item);
-				throw new ArgumentException($"Wrong vertex type for {DxfSubclassMarker.Polyline3d}");
-			}
-			else if (e.Item is Vertex3D v && v.Bulge != 0)
-			{
-				throw new ArgumentException($"Bulge value cannot be different than 0 for a Vertex3D in a 3D Polyline");
-			}
+		}
+
+		public Polyline3D(params IEnumerable<XYZ> vertices) : base(vertices.Select(v => new Vertex3D(v)), false)
+		{
 		}
 	}
 }

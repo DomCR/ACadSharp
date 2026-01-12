@@ -88,6 +88,11 @@ namespace ACadSharp.IO.DWG
 			return this._mainReader.Read2RawDouble();
 		}
 
+		public XYZ Read3RawDouble()
+		{
+			return this._mainReader.Read3RawDouble();
+		}
+
 		public XYZ Read3BitDouble()
 		{
 			return this._mainReader.Read3BitDouble();
@@ -140,7 +145,7 @@ namespace ACadSharp.IO.DWG
 
 		public byte[] ReadBytes(int length)
 		{
-			throw new NotImplementedException();
+			return this._mainReader.ReadBytes(length);
 		}
 
 		public XY Read2BitDoubleWithDefault(XY defValues)
@@ -153,10 +158,12 @@ namespace ACadSharp.IO.DWG
 			return this._mainReader.Read3BitDoubleWithDefault(defValues);
 		}
 
-		public Color ReadCmColor()
+		public Color ReadCmColor(bool useTextStream = false)
 		{
-			if (!(this._mainReader is DwgStreamReaderAC18))
+			if (!(this._mainReader is DwgStreamReaderAC18) && !useTextStream)
+			{
 				return this._mainReader.ReadCmColor();
+			}
 
 			Color color = default;
 
@@ -171,7 +178,11 @@ namespace ACadSharp.IO.DWG
 			uint rgb = (uint)this.ReadBitLong();
 			byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
 
-			if ((rgb & 0b0000_0001_0000_0000_0000_0000_0000_0000) != 0)
+			if (rgb == 0xC0000000)
+			{
+				color = Color.ByLayer;
+			}
+			else if ((rgb & 0b0000_0001_0000_0000_0000_0000_0000_0000) != 0)
 			{
 				//Indexed color
 				color = new Color(arr[0]);
@@ -230,7 +241,7 @@ namespace ACadSharp.IO.DWG
 		{
 			throw new NotImplementedException();
 		}
-		public int ReadSignedModularChar()
+		public long ReadSignedModularChar()
 		{
 			throw new NotImplementedException();
 		}

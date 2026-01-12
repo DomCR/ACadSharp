@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Extensions;
 using ACadSharp.Header;
 using ACadSharp.IO;
+using ACadSharp.Tables;
 using ACadSharp.Tests.TestModels;
 using System;
 using System.Collections.Generic;
@@ -51,11 +53,11 @@ namespace ACadSharp.Tests.IO
 			this._docIntegrity.AssertDocumentDefaults(doc);
 		}
 
-		public virtual void AssertTableHirearchy(FileModel test)
+		public virtual void AssertTableHierarchy(FileModel test)
 		{
 			CadDocument doc = this.getDocument(test);
 
-			this._docIntegrity.AssertTableHirearchy(doc);
+			this._docIntegrity.AssertTableHierarchy(doc);
 		}
 
 		public virtual void AssertBlockRecords(FileModel test)
@@ -83,6 +85,21 @@ namespace ACadSharp.Tests.IO
 			CadDocument doc = this.getDocument(test, false);
 
 			this._docIntegrity.AssertDocumentTree(doc);
+		}
+
+		public virtual void AssertDocumentHeader(FileModel test)
+		{
+			CadDocument doc = this.getDocument(test, false);
+			CadHeader header = doc.Header;
+
+			Assert.Equal(doc.Layers[Layer.DefaultName], header.CurrentLayer);
+			Assert.Equal(Layer.DefaultName, header.CurrentLayerName, ignoreCase: true);
+
+			Assert.Equal(doc.LineTypes[LineType.ByLayerName], header.CurrentLineType);
+			Assert.Equal(LineType.ByLayerName, header.CurrentLineTypeName, ignoreCase: true);
+
+			Assert.Equal(doc.TextStyles[TextStyle.DefaultName], header.CurrentTextStyle);
+			Assert.Equal(TextStyle.DefaultName, header.CurrentTextStyleName, ignoreCase: true);
 		}
 
 		public void Dispose()

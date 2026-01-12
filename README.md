@@ -1,4 +1,4 @@
-﻿ACadSharp ![Build&Test](https://github.com/DomCr/ACadSharp/actions/workflows/build_n_test.yml/badge.svg) ![License](https://img.shields.io/github/license/DomCr/ACadSharp) ![nuget](https://img.shields.io/nuget/v/Acadsharp) [![Coverage Status](https://coveralls.io/repos/github/DomCR/ACadSharp/badge.svg?branch=master)](https://coveralls.io/github/DomCR/ACadSharp?branch=master)
+﻿ACadSharp ![Build&Test](https://github.com/DomCr/ACadSharp/actions/workflows/csharp.yml/badge.svg) ![License](https://img.shields.io/github/license/DomCr/ACadSharp) ![nuget](https://img.shields.io/nuget/v/Acadsharp) [![Coverage Status](https://coveralls.io/repos/github/DomCR/ACadSharp/badge.svg?branch=master)](https://coveralls.io/github/DomCR/ACadSharp?branch=master)
 ---
 
 C# library to read/write cad files like dxf/dwg.
@@ -20,14 +20,14 @@ For pdf export check :construction: [ACadSharp.Pdf](https://github.com/DomCR/ACa
 
 |      | DxfReader | DxfWriter | DwgReader | DwgWriter |
 ------ | :-------: | :-------: | :-------: | :-------: |
-AC1009 |    :x:    |   :x:     |    :x:    |    :x:    |
+AC1009 |    :heavy_check_mark:    |   :x:     |    :x:    |    :x:    |
 AC1012 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :x:    |    :x:    |
 AC1014 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1015 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1018 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1021 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:                   |
 AC1024 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
-AC1027 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:                   |
+AC1027 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:                   |
 AC1032 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 
 Code Example
@@ -47,20 +47,19 @@ private static void onNotification(object sender, NotificationEventArgs e)
 }
 ```
 
-For more examples [check](https://github.com/DomCR/ACadSharp/tree/master/src/ACadSharp.Examples).
+For more code examples [check](https://github.com/DomCR/ACadSharp/tree/master/src/ACadSharp.Examples).
 
-For more information visit the :construction: [wiki](https://github.com/DomCR/ACadSharp/wiki) :construction: .
+Visit the :construction: [wiki](https://github.com/DomCR/ACadSharp/wiki) :construction: for the API specification of the library.
 
-Contributing
+Check the [documentation](https://github.com/DomCR/ACadSharp/tree/master/docs/) for specific information about some use cases.
+
+Building
 ---
 
-Please feel free to fork this repo and send a pull request if you want to contribute to this project.
+Before building run:
 
-Notice that this project is in an alpha version, not all the features are implemented and there can be bugs due to this so any PR with a bug fix will not have a priority.
+```console
+git submodule update --init --recursive
+```
 
-If you want to contribute you can check the Dxf documentation [here](https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-235B22E0-A567-4CF6-92D3-38A2306D73F3). 
-
-License
----
-
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/DomCR/ACadSharp/blob/master/LICENSE) file for details
+This command will clone the submodules necessary to build the project.

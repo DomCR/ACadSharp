@@ -21,10 +21,11 @@ namespace ACadSharp.Tests.Internal
 
 			foreach (var item in d.GetTypes().Where(i => !i.IsAbstract && i.IsPublic))
 			{
-				if (item.IsSubclassOf(typeof(Entity)) 
+				if (item.IsSubclassOf(typeof(Entity))
 					|| item.IsSubclassOf(typeof(TableEntry)))
 				{
-					if(item == typeof(UnknownEntity))
+					if (item == typeof(UnknownEntity) 
+						|| item == typeof(PdfUnderlay))
 					{
 						continue;
 					}
@@ -40,12 +41,12 @@ namespace ACadSharp.Tests.Internal
 		{
 			DxfNameAttribute att = t.GetCustomAttribute<DxfNameAttribute>();
 			DxfSubClassAttribute subclass = t.GetCustomAttribute<DxfSubClassAttribute>();
+			CadObject obj = Factory.CreateObject(t);
 
 			Assert.NotNull(att);
 
-			if (subclass != null)
+			if (subclass != null && !obj.HasDynamicSubclass)
 			{
-				CadObject obj = Factory.CreateObject(t);
 				Assert.True(obj.SubclassMarker == subclass.ClassName);
 			}
 
