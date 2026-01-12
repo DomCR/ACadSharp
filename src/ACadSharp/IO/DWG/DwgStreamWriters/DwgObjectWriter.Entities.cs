@@ -118,6 +118,11 @@ namespace ACadSharp.IO.DWG
 							children.AddRange(pline3d.Vertices);
 							seqend = pline3d.Vertices.Seqend;
 							break;
+						case PolygonMesh polygonMesh:
+							this.writePolygonMesh(polygonMesh);
+							children.AddRange(polygonMesh.Vertices);
+							seqend = polygonMesh.Vertices.Seqend;
+							break;
 						default:
 							throw new NotImplementedException($"Polyline not implemented : {entity.GetType().FullName}");
 					}
@@ -170,6 +175,7 @@ namespace ACadSharp.IO.DWG
 							break;
 						case Vertex3D:
 						case VertexFaceMesh:
+						case PolygonMeshVertex:
 							this.writeVertex(vertex);
 							break;
 						default:
@@ -1790,6 +1796,47 @@ namespace ACadSharp.IO.DWG
 				this._writer.HandleReference(DwgReferenceType.SoftPointer, pline.Vertices.FirstOrDefault());
 				//H last VERTEX (soft pointer)
 				this._writer.HandleReference(DwgReferenceType.SoftPointer, pline.Vertices.LastOrDefault());
+			}
+
+			//Common:
+			//H SEQEND(hard owner)
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, pline.Vertices.Seqend);
+		}
+
+		private void writePolygonMesh(PolygonMesh pline)
+		{
+			//Flags BS 70
+			this._writer.WriteBitShort((short)pline.Flags);
+			//Curve type BS 75 Curve and smooth surface type.
+			this._writer.WriteBitShort((short)pline.SmoothSurface);
+			//M vert count BS 71 M vertex count
+			this._writer.WriteBitShort(pline.MVertexCount);
+			//N vert count BS 72 N vertex count
+			this._writer.WriteBitShort(pline.NVertexCount);
+			//M density BS 73 M vertex count
+			this._writer.WriteBitShort(pline.MSmoothSurfaceDensity);
+			//N density BS 74 N vertex count
+			this._writer.WriteBitShort(pline.NSmoothSurfaceDensity);
+
+			//R13-R2000:
+			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)
+			{
+				//H first VERTEX (soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, pline.Vertices.FirstOrDefault());
+				//H last VERTEX (soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, pline.Vertices.LastOrDefault());
+			}
+
+			//R2004+:
+			if (this.R2004Plus)
+			{
+				//Owned Object Count BL Number of objects owned by this object.
+				this._writer.WriteBitLong(pline.Vertices.Count);
+
+				foreach (var vertex in pline.Vertices)
+				{
+					this._writer.HandleReference(DwgReferenceType.HardOwnership, vertex);
+				}
 			}
 
 			//Common:
