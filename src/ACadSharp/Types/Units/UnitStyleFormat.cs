@@ -232,16 +232,18 @@ namespace ACadSharp.Types.Units
 		/// <returns></returns>
 		public string GetZeroHandlingFormat(bool isAngular = false)
 		{
-			short decimalPlaces = this.LinearDecimalPlaces;
+			short decimalPlaces;
 			ZeroHandling handling;
 
 			if (isAngular)
 			{
 				handling = this.AngularZeroHandling;
+				decimalPlaces = this.AngularDecimalPlaces;
 			}
 			else
 			{
 				handling = this.LinearZeroHandling;
+				decimalPlaces = this.LinearDecimalPlaces;
 			}
 
 			char leading = handling == ZeroHandling.SuppressDecimalLeadingZeroes
@@ -387,11 +389,25 @@ namespace ACadSharp.Types.Units
 		}
 
 		/// <summary>
+		/// Converts an angle value in degrees string representation.
+		/// </summary>
+		/// <param name="angle">Angle value in radians.</param>
+		/// <returns>A string that represents the value in degrees</returns>
+		public string ToDegrees(double angle)
+		{
+			double degrees = MathHelper.RadToDeg(angle);
+			NumberFormatInfo numberFormat = new NumberFormatInfo
+			{
+				NumberDecimalSeparator = this.DecimalSeparator
+			};
+			return degrees.ToString(GetZeroHandlingFormat(isAngular: true), numberFormat) + this.DegreesSymbol;
+		}
+
+		/// <summary>
 		/// Converts an angle value in degrees into its degrees, minutes and seconds string representation.
 		/// </summary>
 		/// <param name="angle">Angle value in radians.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <returns>A string that represents the value in degrees, minutes and seconds</returns>
 		public string ToDegreesMinutesSeconds(double angle)
 		{
 			double degrees = MathHelper.RadToDeg(angle);
