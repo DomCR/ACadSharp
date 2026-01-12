@@ -59,6 +59,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateCircleHatch)));
+			Data.Add(new(nameof(SingleCaseGenerator.HatchWithEntities)));
 			Data.Add(new(nameof(SingleCaseGenerator.ChangedEncoding)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomScale)));
@@ -382,6 +383,44 @@ namespace ACadSharp.Tests.IO
 				pline.Vertices.ElementAt(3).Bulge = 1;
 
 				this.Document.Entities.Add(pline);
+			}
+
+			public void HatchWithEntities()
+			{
+				Hatch hatch = new Hatch();
+				hatch.IsSolid = true;
+
+				Circle c = new Circle
+				{
+					Radius = 5
+				};
+
+				hatch.Paths.Add(new Hatch.BoundaryPath(c));
+
+				this.Document.Entities.Add(hatch);
+				this.Document.Entities.Add(c);
+
+				hatch = new Hatch();
+				hatch.IsSolid = true;
+
+				hatch.Paths.Add(new Hatch.BoundaryPath(new Arc
+				{
+					Radius = 5,
+					Center = new XYZ(10, 10, 0)
+				}));
+
+				this.Document.Entities.Add(hatch);
+
+				hatch = new Hatch();
+				hatch.IsSolid = true;
+
+				hatch.Paths.Add(new Hatch.BoundaryPath(new Line
+				{
+					StartPoint = XYZ.Zero,
+					EndPoint = new XYZ(10, 10, 0)
+				}));
+
+				this.Document.Entities.Add(hatch);
 			}
 
 			public void CreateCircleHatch()

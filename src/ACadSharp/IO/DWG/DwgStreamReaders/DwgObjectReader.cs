@@ -6189,9 +6189,9 @@ namespace ACadSharp.IO.DWG
 								//degree BL 94 degree of the spline
 								splineEdge.Degree = this._objectReader.ReadBitLong();
 								//isrational B 73 1 if rational(has weights), else 0
-								splineEdge.Rational = this._objectReader.ReadBit();
+								splineEdge.IsRational = this._objectReader.ReadBit();
 								//isperiodic B 74 1 if periodic, else 0
-								splineEdge.Periodic = this._objectReader.ReadBit();
+								splineEdge.IsPeriodic = this._objectReader.ReadBit();
 
 								//numknots BL 95 number of knots
 								int numknots = this._objectReader.ReadBitLong();
@@ -6208,7 +6208,7 @@ namespace ACadSharp.IO.DWG
 									var cp = this._objectReader.Read2RawDouble();
 
 									double wheight = 0;
-									if (splineEdge.Rational)
+									if (splineEdge.IsRational)
 										//weight BD 40 weight
 										wheight = this._objectReader.ReadBitDouble();
 

@@ -1009,9 +1009,9 @@ namespace ACadSharp.IO.DWG
 								//degree BL 94 degree of the spline
 								this._writer.WriteBitLong(splineEdge.Degree);
 								//isrational B 73 1 if rational(has weights), else 0
-								this._writer.WriteBit(splineEdge.Rational);
+								this._writer.WriteBit(splineEdge.IsRational);
 								//isperiodic B 74 1 if periodic, else 0
-								this._writer.WriteBit(splineEdge.Periodic);
+								this._writer.WriteBit(splineEdge.IsPeriodic);
 
 								//numknots BL 95 number of knots
 								this._writer.WriteBitLong(splineEdge.Knots.Count);
@@ -1028,7 +1028,7 @@ namespace ACadSharp.IO.DWG
 									//pt0 2RD 10 control point
 									this._writer.Write2RawDouble((XY)splineEdge.ControlPoints[p]);
 
-									if (splineEdge.Rational)
+									if (splineEdge.IsRational)
 										//weight BD 40 weight
 										this._writer.WriteBitDouble(splineEdge.ControlPoints[p].Z);
 								}
