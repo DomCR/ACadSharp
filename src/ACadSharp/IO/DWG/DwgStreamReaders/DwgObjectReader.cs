@@ -1,24 +1,25 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
-using ACadSharp.Types.Units;
+using ACadSharp.Exceptions;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
+using ACadSharp.Objects.Evaluations;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
-using CSMath;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using System;
-using static ACadSharp.Objects.MultiLeaderObjectContextData;
-using CSUtilities.Converters;
-using System.Globalization;
-using ACadSharp.Objects.Evaluations;
+using ACadSharp.Types.Units;
 using ACadSharp.XData;
+using CSMath;
+using CSUtilities.Converters;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
-using ACadSharp.Exceptions;
+using static ACadSharp.Objects.MultiLeaderObjectContextData;
 
 namespace ACadSharp.IO.DWG
 {
@@ -785,6 +786,9 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.VERTEX_PFACE:
 					template = this.readVertex3D(new VertexFaceMesh());
 					break;
+				case ObjectType.VERTEX_MESH:
+					template = this.readVertex3D(new PolygonMeshVertex());
+					break;
 				case ObjectType.VERTEX_PFACE_FACE:
 					template = this.readPfaceVertex();
 					break;
@@ -982,7 +986,6 @@ namespace ACadSharp.IO.DWG
 					template = this.readOle2Frame();
 					break;
 				//Not implemented entities:
-				case ObjectType.VERTEX_MESH:
 				case ObjectType.OLEFRAME:
 				case ObjectType.DUMMY:
 					template = this.readUnknownEntity(null);
@@ -2633,7 +2636,51 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readPolylineMesh()
 		{
-			return null;
+			PolygonMesh pline = new PolygonMesh();
+			CadPolyLineTemplate template = new CadPolyLineTemplate(pline);
+
+			this.readCommonEntityData(template);
+
+			//Flags BS 70
+			pline.Flags = (PolylineFlags)this._objectReader.ReadBitShort();
+			//Curve type BS 75 Curve and smooth surface type.
+			pline.SmoothSurface = (SmoothSurfaceType)this._objectReader.ReadBitShort();
+			//M vert count BS 71 M vertex count
+			pline.MVertexCount = this._objectReader.ReadBitShort();
+			//N vert count BS 72 N vertex count
+			pline.NVertexCount = this._objectReader.ReadBitShort();
+			//M density BS 73 M vertex count
+			pline.MSmoothSurfaceDensity = this._objectReader.ReadBitShort();
+			//N density BS 74 N vertex count
+			pline.NSmoothSurfaceDensity = this._objectReader.ReadBitShort();
+
+			//R13 - R2000:
+			if (this.R13_15Only)
+			{
+				//H first VERTEX(soft pointer)
+				template.FirstVertexHandle = this.handleReference();
+				//H last VERTEX(soft pointer)
+				template.LastVertexHandle = this.handleReference();
+			}
+
+			//R2004+:
+			if (this.R2004Plus)
+			{
+				//Owned Object Count BL Number of objects owned by this object.
+				int n = this._objectReader.ReadBitLong();
+				for (int i = 0; i < n; i++)
+				{
+					//H[VERTEX(soft pointer)]
+					//Repeats “Owned Object Count” times.
+					template.OwnedObjectsHandlers.Add(this.handleReference());
+				}
+			}
+
+			//Common:
+			//H SEQEND(hard owner)
+			template.SeqendHandle = this.handleReference();
+
+			return template;
 		}
 
 		private CadTemplate readSolid()
