@@ -31,7 +31,8 @@ namespace ACadSharp.Tests.Tables
 				},
 				{
 					new DimensionStyle {
-						AngularUnit = AngularUnitFormat.Radians
+						AngularUnit = AngularUnitFormat.Radians,
+						AngularDecimalPlaces = 2
 					},
 					new DimensionAngular2Line{
 						FirstPoint = XYZ.Zero,
@@ -51,11 +52,39 @@ namespace ACadSharp.Tests.Tables
 						AngleVertex = XYZ.Zero,
 						DefinitionPoint = new XYZ(0,10, 0),
 					},
-					"1.57"
+					"90°"
 				},
 				{
 					new DimensionStyle {
 						AngularUnit = AngularUnitFormat.DecimalDegrees,
+						AngularZeroHandling = ZeroHandling.SuppressDecimalLeadingZeroes,
+						AngularDecimalPlaces = 2
+					},
+					new DimensionAngular2Line{
+						FirstPoint = XYZ.Zero,
+						SecondPoint = new XYZ(10, 0, 0),
+						AngleVertex = XYZ.Zero,
+						DefinitionPoint = new XYZ(0,10, 0),
+					},
+					"90.00°"
+				},
+				{
+					new DimensionStyle {
+						AngularUnit = AngularUnitFormat.Radians,
+						AngularDecimalPlaces = 2
+					},
+					new DimensionAngular2Line{
+						FirstPoint = XYZ.Zero,
+						SecondPoint = new XYZ(10, 0, 0),
+						AngleVertex = XYZ.Zero,
+						DefinitionPoint = new XYZ(0,10, 0),
+					},
+					"1.57r"
+				},
+				{
+					new DimensionStyle {
+						AngularUnit = AngularUnitFormat.Radians,
+						AngularDecimalPlaces = 2,
 						DecimalSeparator = ','
 					},
 					new DimensionAngular2Line{
@@ -64,11 +93,26 @@ namespace ACadSharp.Tests.Tables
 						AngleVertex = XYZ.Zero,
 						DefinitionPoint = new XYZ(0,10, 0),
 					},
-					"1,57"
+					"1,57r"
 				},
 				{
 					new DimensionStyle {
-						AngularUnit = AngularUnitFormat.Gradians
+						AngularUnit = AngularUnitFormat.Gradians,
+						AngularDecimalPlaces = 2
+					},
+					new DimensionAngular2Line{
+						FirstPoint = XYZ.Zero,
+						SecondPoint = new XYZ(10, 0, 0),
+						AngleVertex = XYZ.Zero,
+						DefinitionPoint = new XYZ(0,10, 0),
+					},
+					"100g"
+				},
+				{
+					new DimensionStyle {
+						AngularUnit = AngularUnitFormat.Gradians,
+						AngularZeroHandling = ZeroHandling.SuppressDecimalLeadingZeroes,
+						AngularDecimalPlaces = 2
 					},
 					new DimensionAngular2Line{
 						FirstPoint = XYZ.Zero,
@@ -110,6 +154,14 @@ namespace ACadSharp.Tests.Tables
 				{
 					new DimensionStyle {
 						LinearUnitFormat = LinearUnitFormat.Decimal,
+						Rounding = 1
+					},
+					new DimensionAligned(XYZ.Zero, new XYZ(10.1, 0, 0)),
+					"10"
+				},
+				{
+					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Decimal,
 						DecimalSeparator = ',',
 					},
 					new DimensionAligned(XYZ.Zero, new XYZ(10.5, 0, 0)),
@@ -144,7 +196,7 @@ namespace ACadSharp.Tests.Tables
 					},
 					new DimensionAligned(XYZ.Zero, new XYZ(10.25, 0, 0)),
 					"1.03E+01"
-				},
+				}
 			};
 		}
 
