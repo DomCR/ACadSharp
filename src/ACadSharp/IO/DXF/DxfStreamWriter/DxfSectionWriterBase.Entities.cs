@@ -87,6 +87,9 @@ namespace ACadSharp.IO.DXF
 						case PolyfaceMesh polyfaceMesh:
 							this.writePolyline(polyfaceMesh);
 							break;
+						case PolygonMesh polygonMesh:
+							this.writePolyline(polygonMesh);
+							break;
 						default:
 							throw new NotImplementedException($"Polyline not implemented {polyline.GetType().FullName}");
 					}
@@ -1040,6 +1043,9 @@ namespace ACadSharp.IO.DXF
 				case PolyfaceMesh:
 					map = DxfClassMap.Create<PolyfaceMesh>();
 					break;
+				case PolygonMesh:
+					map = DxfClassMap.Create<PolygonMesh>();
+					break;
 				default:
 					throw new NotImplementedException($"Polyline not implemented {polyline.GetType().FullName}");
 			}
@@ -1052,6 +1058,14 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(70, (short)polyline.Flags, map);
 			this._writer.Write(75, (short)polyline.SmoothSurface, map);
+
+			if (polyline is PolygonMesh polygon)
+			{
+				this._writer.WriteIfNotDefault(71, polygon.MVertexCount, 0, map);
+				this._writer.WriteIfNotDefault(72, polygon.MVertexCount, 0, map);
+				this._writer.WriteIfNotDefault(73, polygon.MSmoothSurfaceDensity, 0, map);
+				this._writer.WriteIfNotDefault(74, polygon.NSmoothSurfaceDensity, 0, map);
+			}
 
 			this._writer.Write(210, polyline.Normal, map);
 
