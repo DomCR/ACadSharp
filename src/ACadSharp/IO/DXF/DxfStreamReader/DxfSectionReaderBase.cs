@@ -962,6 +962,10 @@ namespace ACadSharp.IO.DXF
 							tmp.SetPolyLineObject(new PolyfaceMesh());
 							map.SubClasses.Add(DxfSubclassMarker.PolyfaceMesh, DxfClassMap.Create<PolyfaceMesh>());
 							return true;
+						case DxfSubclassMarker.PolygonMesh:
+							tmp.SetPolyLineObject(new PolygonMesh());
+							map.SubClasses.Add(DxfSubclassMarker.PolygonMesh, DxfClassMap.Create<PolygonMesh>());
+							return true;
 						default:
 							return false;
 					}
@@ -1545,6 +1549,10 @@ namespace ACadSharp.IO.DXF
 						case DxfSubclassMarker.PolyfaceMeshFace:
 							tmp.SetVertexObject(new VertexFaceRecord());
 							map.SubClasses.Add(DxfSubclassMarker.PolyfaceMeshFace, DxfClassMap.Create<VertexFaceRecord>());
+							return true;
+						case DxfSubclassMarker.PolygonMeshVertex:
+							tmp.SetVertexObject(new PolygonMeshVertex());
+							map.SubClasses.Add(DxfSubclassMarker.PolygonMeshVertex, DxfClassMap.Create<PolygonMeshVertex>());
 							return true;
 						default:
 							return false;
