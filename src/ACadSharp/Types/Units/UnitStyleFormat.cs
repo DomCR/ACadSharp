@@ -392,8 +392,7 @@ namespace ACadSharp.Types.Units
 		/// Converts an angle value in degrees string representation.
 		/// </summary>
 		/// <param name="angle">Angle value in radians.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <returns>A string that represents the value in degrees</returns>
 		public string ToDegrees(double angle)
 		{
 			double degrees = MathHelper.RadToDeg(angle);
@@ -408,8 +407,7 @@ namespace ACadSharp.Types.Units
 		/// Converts an angle value in degrees into its degrees, minutes and seconds string representation.
 		/// </summary>
 		/// <param name="angle">Angle value in radians.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <returns>A string that represents the value in degrees, minutes and seconds</returns>
 		public string ToDegreesMinutesSeconds(double angle)
 		{
 			double degrees = MathHelper.RadToDeg(angle);
