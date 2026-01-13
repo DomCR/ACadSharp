@@ -10,14 +10,23 @@ namespace ACadSharp.IO.Templates
 		{
 			public BlockVisibilityParameter.State State { get; } = new BlockVisibilityParameter.State();
 
-			public HashSet<ulong> SubSet1 { get; } = new();
+			public HashSet<ulong> EntityHandles { get; } = new();
 
-			public HashSet<ulong> SubSet2 { get; } = new();
+			public HashSet<ulong> ExpressionHandles { get; } = new();
+
+			public StateTemplate()
+			{
+			}
+
+			public StateTemplate(BlockVisibilityParameter.State state)
+			{
+				this.State = state;
+			}
 
 			public void Build(CadDocumentBuilder builder, IEnumerable<ulong> entityHandles)
 			{
-				this.setEntities(builder, State.Entities, SubSet1, entityHandles);
-				this.setEntities(builder, State.Expressions, SubSet2, null);
+				this.setEntities(builder, State.Entities, EntityHandles, entityHandles);
+				this.setEntities(builder, State.Expressions, ExpressionHandles, null);
 			}
 
 			private void setEntities<T>(CadDocumentBuilder builder, List<T> subset, IEnumerable<ulong> handles, IEnumerable<ulong> entities = null)

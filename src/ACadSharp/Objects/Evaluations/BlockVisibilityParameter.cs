@@ -34,7 +34,7 @@ namespace ACadSharp.Objects.Evaluations
 		/// Gets the list of states each containing a 2 subsets of <see cref="Entity"/> <br/>
 		/// Objects must belong to the dynamic <see cref="BlockVisibilityParameter"/> associated with.
 		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Count, 95)]
+		[DxfCodeValue(DxfReferenceType.Count, 92)]
 		//Should be a dictionary with the state name as keys
 		public List<State> States { get; private set; } = new List<State>();
 

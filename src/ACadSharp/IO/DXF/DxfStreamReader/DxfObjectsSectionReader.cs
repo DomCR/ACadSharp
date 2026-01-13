@@ -1892,7 +1892,22 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
-				case 90:
+				case 92:
+					var stateCount = this._reader.ValueAsInt;
+					for (int i = 0; i < stateCount; i++)
+					{
+						this._reader.ReadNext();
+						tmp.StateTemplates.Add(this.readState());
+					}
+					return true;
+				case 93 when this.currentSubclass == DxfSubclassMarker.BlockVisibilityParameter:
+					var entityCount = this._reader.ValueAsInt;
+					for (int i = 0; i < entityCount; i++)
+					{
+						this._reader.ReadNext();
+						tmp.EntityHandles.Add(this._reader.ValueAsHandle);
+					}
+					return true;
 				default:
 					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockVisibilityParameter]))
 					{
@@ -1900,6 +1915,56 @@ namespace ACadSharp.IO.DXF
 					}
 					return true;
 			}
+		}
+
+		private CadBlockVisibilityParameterTemplate.StateTemplate readState()
+		{
+			var state = new BlockVisibilityParameter.State();
+			var template = new CadBlockVisibilityParameterTemplate.StateTemplate(state);
+
+			List<int> expectedCodes = new List<int>();
+			expectedCodes.Add(303);
+			expectedCodes.Add(94);
+			expectedCodes.Add(95);
+
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				expectedCodes.Remove(this._reader.Code);
+
+				switch (this._reader.Code)
+				{
+					case 303:
+						state.Name = this._reader.ValueAsString;
+						break;
+					case 94:
+						var count = this._reader.ValueAsInt;
+						for (int i = 0; i < count; i++)
+						{
+							this._reader.ReadNext();
+							template.EntityHandles.Add(this._reader.ValueAsHandle);
+						}
+						break;
+					case 95:
+						count = this._reader.ValueAsInt;
+						for (int i = 0; i < count; i++)
+						{
+							this._reader.ReadNext();
+							template.ExpressionHandles.Add(this._reader.ValueAsHandle);
+						}
+						break;
+					default:
+						return template;
+				}
+
+				if (!expectedCodes.Any())
+				{
+					break;
+				}
+
+				this._reader.ReadNext();
+			}
+
+			return template;
 		}
 
 		private bool readXRecord(CadTemplate template, DxfMap map)

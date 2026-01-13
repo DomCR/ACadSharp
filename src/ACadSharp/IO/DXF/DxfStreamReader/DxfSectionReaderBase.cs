@@ -142,7 +142,7 @@ namespace ACadSharp.IO.DXF
 					this.readExtendedData(template.EDataTemplateByAppName);
 					break;
 				default:
-					this._builder.Notify($"[{template.CadObject.SubclassMarker}] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
+					this._builder.Notify($"[{this.currentSubclass}] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
 					break;
 			}
 		}

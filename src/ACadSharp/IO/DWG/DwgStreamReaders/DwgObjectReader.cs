@@ -1327,7 +1327,7 @@ namespace ACadSharp.IO.DWG
 			for (int i = 0; i < n1; i++)
 			{
 				//332
-				template.SubSet1.Add(this.handleReference());
+				template.EntityHandles.Add(this.handleReference());
 			}
 
 			//DXF 95 subset count 2 
@@ -1335,7 +1335,7 @@ namespace ACadSharp.IO.DWG
 			for (int i = 0; i < n2; i++)
 			{
 				//333
-				template.SubSet2.Add(this.handleReference());
+				template.ExpressionHandles.Add(this.handleReference());
 			}
 
 			return template;
