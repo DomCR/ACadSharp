@@ -110,6 +110,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<TableStyle>(new CadTableStyleTemplate(), this.readTableStyle);
 				case DxfFileToken.ObjectXRecord:
 					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), this.readXRecord);
+				case DxfFileToken.ObjectBlockVisibilityGrip:
+					return this.readObjectCodes<BlockVisibilityGrip>(new CadBlockVisibilityGripTemplate(), this.readBlockVisibilityGrip);
 				case DxfFileToken.ObjectBlockVisibilityParameter:
 					return this.readObjectCodes<BlockVisibilityParameter>(new CadBlockVisibilityParameterTemplate(), this.readBlockVisibilityParameter);
 				default:
@@ -1965,6 +1967,36 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return template;
+		}
+
+		private bool readBlockGrip(CadTemplate template, DxfMap map)
+		{
+			CadBlockGripTemplate tmp = template as CadBlockGripTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockGrip]))
+					{
+						return this.readBlockElement(template, map);
+					}
+					return true;
+			}
+		}
+
+		private bool readBlockVisibilityGrip(CadTemplate template, DxfMap map)
+		{
+			CadBlockVisibilityGripTemplate tmp = template as CadBlockVisibilityGripTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockVisibilityGrip]))
+					{
+						return this.readBlockGrip(template, map);
+					}
+					return true;
+			}
 		}
 
 		private bool readXRecord(CadTemplate template, DxfMap map)
