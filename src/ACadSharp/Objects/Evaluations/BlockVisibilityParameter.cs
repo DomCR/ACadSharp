@@ -34,6 +34,7 @@ namespace ACadSharp.Objects.Evaluations
 		/// Objects must belong to the dynamic <see cref="BlockVisibilityParameter"/> associated with.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 95)]
+		//Should be a dictionary with the state name as keys
 		public List<State> States { get; private set; } = new List<State>();
 
 		/// <summary>
