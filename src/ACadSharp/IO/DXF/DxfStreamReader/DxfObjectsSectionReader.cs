@@ -110,6 +110,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<TableStyle>(new CadTableStyleTemplate(), this.readTableStyle);
 				case DxfFileToken.ObjectXRecord:
 					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), this.readXRecord);
+				case DxfFileToken.ObjectBlockVisibilityParameter:
+					return this.readObjectCodes<BlockVisibilityParameter>(new CadBlockVisibilityParameterTemplate(), this.readBlockVisibilityParameter);
 				default:
 					DxfMap map = DxfMap.Create<CadObject>();
 					CadUnknownNonGraphicalObjectTemplate unknownEntityTemplate = null;
@@ -1825,6 +1827,17 @@ namespace ACadSharp.IO.DXF
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readBlockVisibilityParameter(CadTemplate template, DxfMap map)
+		{
+			CadBlockVisibilityParameterTemplate tmp = template as CadBlockVisibilityParameterTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
 			}
 		}
 

@@ -26,7 +26,8 @@ namespace ACadSharp.Objects.Evaluations
 		/// Gets the list of all <see cref="Entity"/> objects of the dynamic block
 		/// this <see cref="BlockVisibilityParameter"/> is associated with.
 		/// </summary>
-		[DxfCodeValue(331)]
+		[DxfCollectionCodeValue(331)]
+		[DxfCodeValue(DxfReferenceType.Count, 93)]
 		public List<Entity> Entities { get; private set; } = new List<Entity>();
 
 		/// <summary>
