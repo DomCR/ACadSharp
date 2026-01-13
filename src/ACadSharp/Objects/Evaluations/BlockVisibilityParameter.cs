@@ -51,7 +51,7 @@ namespace ACadSharp.Objects.Evaluations
 		public string Description { get; set; }
 
 		[DxfCodeValue(91)]
-		internal bool Value91 { get; set; }
+		public bool Value91 { get; set; }
 
 		/// <inheritdoc/>
 		public override CadObject Clone()

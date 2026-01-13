@@ -1830,14 +1830,75 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		private bool readEvaluationExpression(CadTemplate template, DxfMap map)
+		{
+			CadEvaluationExpressionTemplate tmp = template as CadEvaluationExpressionTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.EvalGraphExpr]);
+			}
+		}
+
+		private bool readBlockElement(CadTemplate template, DxfMap map)
+		{
+			CadBlockElementTemplate tmp = template as CadBlockElementTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockElement]))
+					{
+						return this.readEvaluationExpression(template, map);
+					}
+					return true;
+			}
+		}
+
+		private bool readBlockParameter(CadTemplate template, DxfMap map)
+		{
+			CadBlockParameterTemplate tmp = template as CadBlockParameterTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockParameter]))
+					{
+						return this.readBlockElement(template, map);
+					}
+					return true;
+			}
+		}
+
+		private bool readBlock1PtParameter(CadTemplate template, DxfMap map)
+		{
+			CadBlock1PtParameterTemplate tmp = template as CadBlock1PtParameterTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Block1PtParameter]))
+					{
+						return this.readBlockParameter(template, map);
+					}
+					return true;
+			}
+		}
+
 		private bool readBlockVisibilityParameter(CadTemplate template, DxfMap map)
 		{
 			CadBlockVisibilityParameterTemplate tmp = template as CadBlockVisibilityParameterTemplate;
 
 			switch (this._reader.Code)
 			{
+				case 90:
 				default:
-					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockVisibilityParameter]))
+					{
+						return this.readBlock1PtParameter(template, map);
+					}
+					return true;
 			}
 		}
 

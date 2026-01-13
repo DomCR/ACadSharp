@@ -15,12 +15,12 @@ namespace ACadSharp.Objects.Evaluations
 		public override string SubclassMarker => DxfSubclassMarker.EvalGraphExpr;
 
 		[DxfCodeValue(90)]
-		internal int Value90 { get; set; }
+		public int Value90 { get; set; }
 
 		[DxfCodeValue(98)]
-		internal int Value98 { get; set; }
+		public int Value98 { get; set; }
 
 		[DxfCodeValue(99)]
-		internal int Value99 { get; set; }
+		public int Value99 { get; set; }
 	}
 }
