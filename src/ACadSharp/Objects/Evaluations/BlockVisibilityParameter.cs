@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ACadSharp.Attributes;
 using ACadSharp.Entities;
 
@@ -16,11 +17,11 @@ namespace ACadSharp.Objects.Evaluations
 	[DxfSubClass(DxfSubclassMarker.BlockVisibilityParameter)]
 	public partial class BlockVisibilityParameter : Block1PtParameter
 	{
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.ObjectBlockVisibilityParameter;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.BlockVisibilityParameter;
+		/// <summary>
+		/// Visibility parameter description.
+		/// </summary>
+		[DxfCodeValue(302)]
+		public string Description { get; set; }
 
 		/// <summary>
 		/// Gets the list of all <see cref="Entity"/> objects of the dynamic block
@@ -31,27 +32,37 @@ namespace ACadSharp.Objects.Evaluations
 		public List<Entity> Entities { get; private set; } = new List<Entity>();
 
 		/// <summary>
-		/// Gets the list of states each containing a 2 subsets of <see cref="Entity"/> <br/>
-		/// Objects must belong to the dynamic <see cref="BlockVisibilityParameter"/> associated with.
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Count, 92)]
-		//Should be a dictionary with the state name as keys
-		public List<State> States { get; private set; } = new List<State>();
-
-		/// <summary>
 		/// Visibility parameter name.
 		/// </summary>
 		[DxfCodeValue(301)]
 		public string Name { get; set; }
 
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.ObjectBlockVisibilityParameter;
+
 		/// <summary>
-		/// Visibility parameter description.
+		/// Gets the list of states each containing a 2 subsets of <see cref="Entity"/> <br/>
+		/// Objects must belong to the dynamic <see cref="BlockVisibilityParameter"/> associated with.
 		/// </summary>
-		[DxfCodeValue(302)]
-		public string Description { get; set; }
+		[DxfCodeValue(DxfReferenceType.Count, 92)]
+		public IReadOnlyDictionary<string, State> States { get => _states; }
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.BlockVisibilityParameter;
 
 		[DxfCodeValue(91)]
 		public bool Value91 { get; set; }
+
+		private Dictionary<string, State> _states = new(StringComparer.InvariantCultureIgnoreCase);
+
+		/// <summary>
+		/// Adds a state to the collection using the state's name as the key.
+		/// </summary>
+		/// <param name="state">The state to add to the collection. Cannot be null. The state's name must be unique within the collection.</param>
+		public void AddState(State state)
+		{
+			this._states.Add(state.Name, state);
+		}
 
 		/// <inheritdoc/>
 		public override CadObject Clone()
@@ -64,10 +75,11 @@ namespace ACadSharp.Objects.Evaluations
 				clone.Entities.Add((Entity)item.Clone());
 			}
 
-			clone.States = new List<State>();
-			foreach (var item in this.States)
+			clone._states = new(StringComparer.InvariantCultureIgnoreCase);
+			foreach (State item in this._states.Values)
 			{
-				clone.States.Add((State)item.Clone());
+				var state = (State)item.Clone();
+				clone._states.Add(state.Name, state);
 			}
 
 			return clone;

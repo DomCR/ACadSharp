@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects.Evaluations;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ACadSharp.IO.Templates
 {
@@ -38,10 +37,10 @@ namespace ACadSharp.IO.Templates
 				}
 			}
 
-			foreach (var item in StateTemplates)
+			foreach (var item in this.StateTemplates)
 			{
 				item.Build(builder, this.EntityHandles);
-				bvp.States.Add(item.State);
+				bvp.AddState(item.State);
 			}
 		}
 	}
