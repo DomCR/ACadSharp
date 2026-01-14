@@ -1,6 +1,6 @@
 ﻿using ACadSharp.IO.Templates;
+using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
-using System.Diagnostics;
 
 namespace ACadSharp.IO.DWG
 {
@@ -52,6 +52,19 @@ namespace ACadSharp.IO.DWG
 			template.BlockParameter.Value280 = this._mergedReaders.ReadBit();
 			//281
 			template.BlockParameter.Value281 = this._mergedReaders.ReadBit();
+		}
+
+		private CadTemplate readBlockRepresentationData()
+		{
+			BlockRepresentationData representation = new BlockRepresentationData();
+			CadBlockRepresentationDataTemplate template = new CadBlockRepresentationDataTemplate(representation);
+
+			this.readCommonNonEntityData(template);
+
+			representation.Value70 = this._reader.ReadBitShort();
+			template.BlockHandle = this.handleReference();
+
+			return template;
 		}
 
 		private CadTemplate readBlockVisibilityParameter()

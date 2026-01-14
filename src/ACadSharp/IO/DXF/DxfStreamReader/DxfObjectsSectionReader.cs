@@ -110,6 +110,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<TableStyle>(new CadTableStyleTemplate(), this.readTableStyle);
 				case DxfFileToken.ObjectXRecord:
 					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), this.readXRecord);
+				case DxfFileToken.ObjectBlockRepresentationData:
+					return this.readObjectCodes<BlockRepresentationData>(new CadBlockRepresentationDataTemplate(), this.readBlockRepresentationData);
 				case DxfFileToken.ObjectBlockGripLocationComponent:
 					return this.readObjectCodes<BlockGripExpression>(new CadBlockGripExpressionTemplate(), this.readBlockGripExpression);
 				case DxfFileToken.ObjectBlockVisibilityGrip:
@@ -2004,6 +2006,20 @@ namespace ACadSharp.IO.DXF
 						return this.readBlockGrip(template, map);
 					}
 					return true;
+			}
+		}
+
+		private bool readBlockRepresentationData(CadTemplate template, DxfMap map)
+		{
+			CadBlockRepresentationDataTemplate tmp = template as CadBlockRepresentationDataTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 340:
+					tmp.BlockHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
 		}
 

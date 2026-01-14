@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
+using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
 using ACadSharp.Tables;
 using ACadSharp.Tests.TestModels;
@@ -88,6 +89,15 @@ namespace ACadSharp.Tests.IO
 			foreach (BlockRecord record in doc.BlockRecords.Where(b => b.IsAnonymous))
 			{
 				Assert.Equal(original, record.Source);
+			}
+
+			foreach (Insert insert in doc.Entities.OfType<Insert>())
+			{
+				var dict = insert.XDictionary.GetEntry<CadDictionary>("AcDbBlockRepresentation");
+				var representation = dict.GetEntry<BlockRepresentationData>("AcDbRepData");
+
+				Assert.NotNull(representation);
+				Assert.Equal(original, representation.Block);
 			}
 		}
 	}

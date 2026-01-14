@@ -1115,6 +1115,9 @@ namespace ACadSharp.IO.DWG
 				case "BLOCKFLIPPARAMETER":
 					template = this.readBlockFlipParameter();
 					break;
+				case DxfFileToken.ObjectBlockRepresentationData:
+					template = this.readBlockRepresentationData();
+					break;
 				case DxfFileToken.ObjectBlockGripLocationComponent:
 					template = this.readBlockGripLocationComponent();
 					break;

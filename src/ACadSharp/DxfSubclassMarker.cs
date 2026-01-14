@@ -50,6 +50,8 @@
 
 		public const string BlockRecord = "AcDbBlockTableRecord";
 
+		public const string BlockRepresentationData = "AcDbBlockRepresentationData";
+
 		public const string BlockVisibilityGrip = "AcDbBlockVisibilityGrip";
 
 		public const string BlockVisibilityParameter = "AcDbBlockVisibilityParameter";
