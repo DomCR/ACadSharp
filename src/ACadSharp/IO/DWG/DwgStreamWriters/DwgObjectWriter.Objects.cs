@@ -227,6 +227,7 @@ namespace ACadSharp.IO.DWG
 				case VisualStyle:
 				case TableStyle:
 				case ProxyObject:
+				case BlockRepresentationData:
 					return true;
 			}
 
@@ -672,7 +673,8 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private void writeObjectContextData(ObjectContextData objectContextData) {
+		private void writeObjectContextData(ObjectContextData objectContextData)
+		{
 			//BS	70	Version.
 			this._writer.WriteBitShort(objectContextData.Version);
 			//B	-	Has file to extension dictionary.
@@ -681,11 +683,13 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBit(objectContextData.Default);
 		}
 
-		private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData annotScaleObjectContextData) {
+		private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData annotScaleObjectContextData)
+		{
 			this._writer.HandleReference(DwgReferenceType.HardPointer, annotScaleObjectContextData.Scale);
 		}
 
-		private void writeMultiLeaderAnnotContext(MultiLeaderObjectContextData multiLeaderAnnotContext) {
+		private void writeMultiLeaderAnnotContext(MultiLeaderObjectContextData multiLeaderAnnotContext)
+		{
 			writeMultiLeaderAnnotContextSubObject(false, multiLeaderAnnotContext);
 		}
 
