@@ -110,6 +110,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<TableStyle>(new CadTableStyleTemplate(), this.readTableStyle);
 				case DxfFileToken.ObjectXRecord:
 					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), this.readXRecord);
+				case DxfFileToken.ObjectBlockGripLocationComponent:
+					return this.readObjectCodes<BlockGripExpression>(new CadBlockGripExpressionTemplate(), this.readBlockGripExpression);
 				case DxfFileToken.ObjectBlockVisibilityGrip:
 					return this.readObjectCodes<BlockVisibilityGrip>(new CadBlockVisibilityGripTemplate(), this.readBlockVisibilityGrip);
 				case DxfFileToken.ObjectBlockVisibilityParameter:
@@ -1838,6 +1840,10 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				case 1:
+					this._reader.ExpectedCode(70);
+					this._reader.ExpectedCode(140);
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.EvalGraphExpr]);
 			}
@@ -1994,6 +2000,21 @@ namespace ACadSharp.IO.DXF
 					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockVisibilityGrip]))
 					{
 						return this.readBlockGrip(template, map);
+					}
+					return true;
+			}
+		}
+
+		private bool readBlockGripExpression(CadTemplate template, DxfMap map)
+		{
+			CadBlockGripExpressionTemplate tmp = template as CadBlockGripExpressionTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockGripExpression]))
+					{
+						return this.readEvaluationExpression(template, map);
 					}
 					return true;
 			}

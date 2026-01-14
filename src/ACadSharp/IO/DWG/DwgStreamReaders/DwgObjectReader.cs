@@ -1240,7 +1240,7 @@ namespace ACadSharp.IO.DWG
 			Debug.Assert(n9999 == -9999);
 
 			//90
-			template.CadObject.Value90 = this._objectReader.ReadBitLong();
+			template.CadObject.Id = this._objectReader.ReadBitLong();
 		}
 
 		private void readBlockElement(CadBlockElementTemplate template)

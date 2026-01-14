@@ -42,9 +42,7 @@
 
 		public const string BlockGrip = "AcDbBlockGrip";
 
-		public const string BlockGripExpression = "AcDbBlockGripExpression";
-
-		public const string BlockGripLocationComponent = "AcDbBlockGripLocationComponent";
+		public const string BlockGripExpression = "AcDbBlockGripExpr";
 
 		public const string BlockLinearParameter = "AcDbBlockLinearParameter";
 

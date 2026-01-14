@@ -132,6 +132,7 @@
 		public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
 		public const string ObjectBlockVisibilityGrip = "BLOCKVISIBILITYGRIP";
 		public const string ObjectBlockBasePointParameter = "BLOCKBASEPOINTPARAMETER";
+		public const string ObjectBlockGripLocationComponent = "BLOCKGRIPLOCATIONCOMPONENT";
 		public const string ObjectBlockFlipParameter = "BLOCKFLIPPARAMETER";
 		public const string ObjectBlockFlipAction = "BLOCKFLIPACTION";
 		public const string ObjectTableContent = "TABLECONTENT";
