@@ -56,6 +56,11 @@ namespace ACadSharp.IO.DXF
 			this.DxfCode = this.readCode();
 			this.GroupCodeValue = ACadSharp.GroupCodeValue.TransformValue(this.Code);
 			this.Value = this.transformValue(this.GroupCodeValue);
+
+			if (this.DxfCode == DxfCode.Comment)
+			{
+				this.ReadNext();
+			}
 		}
 
 		public bool Find(string dxfEntry)
