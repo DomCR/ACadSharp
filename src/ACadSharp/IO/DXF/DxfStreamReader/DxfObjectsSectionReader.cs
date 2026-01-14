@@ -282,7 +282,8 @@ namespace ACadSharp.IO.DXF
 						tmp.NodeTemplates.Add(nodeTemplate);
 					}
 
-					return this.checkObjectEnd(template, map, this.readEvaluationGraph);
+					this.lockPointer = true;
+					return true;
 				case 92:
 					//Edges
 					while (this._reader.Code == 92)
@@ -300,7 +301,8 @@ namespace ACadSharp.IO.DXF
 						this._reader.ReadNext();
 					}
 
-					return this.checkObjectEnd(template, map, this.readEvaluationGraph);
+					this.lockPointer = true;
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.EvalGraph]);
 			}
