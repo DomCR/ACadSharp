@@ -61,7 +61,7 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			representation.Value70 = this._reader.ReadBitShort();
+			representation.Value70 = this._mergedReaders.ReadBitShort();
 			template.BlockHandle = this.handleReference();
 
 			return template;
