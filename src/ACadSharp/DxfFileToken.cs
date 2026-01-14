@@ -127,10 +127,13 @@
 		public const string ObjectSortEntsTable = "SORTENTSTABLE";
 		public const string ObjectXRecord = "XRECORD";
 		public const string ObjectMLeaderContextData = "ACDB_MLEADEROBJECTCONTEXTDATA_CLASS";
+		public const string ObjectBlockRepresentationData = "ACDB_BLOCKREPRESENTATION_DATA";
 		public const string ObjectEvalGraph = "ACAD_EVALUATION_GRAPH";
 		public const string ObjectBlockLinearParameter = "BLOCKLINEARPARAMETER";
 		public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
+		public const string ObjectBlockVisibilityGrip = "BLOCKVISIBILITYGRIP";
 		public const string ObjectBlockBasePointParameter = "BLOCKBASEPOINTPARAMETER";
+		public const string ObjectBlockGripLocationComponent = "BLOCKGRIPLOCATIONCOMPONENT";
 		public const string ObjectBlockFlipParameter = "BLOCKFLIPPARAMETER";
 		public const string ObjectBlockFlipAction = "BLOCKFLIPACTION";
 		public const string ObjectTableContent = "TABLECONTENT";

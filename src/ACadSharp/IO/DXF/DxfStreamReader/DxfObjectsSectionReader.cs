@@ -110,6 +110,14 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<TableStyle>(new CadTableStyleTemplate(), this.readTableStyle);
 				case DxfFileToken.ObjectXRecord:
 					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), this.readXRecord);
+				case DxfFileToken.ObjectBlockRepresentationData:
+					return this.readObjectCodes<BlockRepresentationData>(new CadBlockRepresentationDataTemplate(), this.readBlockRepresentationData);
+				case DxfFileToken.ObjectBlockGripLocationComponent:
+					return this.readObjectCodes<BlockGripExpression>(new CadBlockGripExpressionTemplate(), this.readBlockGripExpression);
+				case DxfFileToken.ObjectBlockVisibilityGrip:
+					return this.readObjectCodes<BlockVisibilityGrip>(new CadBlockVisibilityGripTemplate(), this.readBlockVisibilityGrip);
+				case DxfFileToken.ObjectBlockVisibilityParameter:
+					return this.readObjectCodes<BlockVisibilityParameter>(new CadBlockVisibilityParameterTemplate(), this.readBlockVisibilityParameter);
 				default:
 					DxfMap map = DxfMap.Create<CadObject>();
 					CadUnknownNonGraphicalObjectTemplate unknownEntityTemplate = null;
@@ -276,7 +284,8 @@ namespace ACadSharp.IO.DXF
 						tmp.NodeTemplates.Add(nodeTemplate);
 					}
 
-					return this.checkObjectEnd(template, map, this.readEvaluationGraph);
+					this.lockPointer = true;
+					return true;
 				case 92:
 					//Edges
 					while (this._reader.Code == 92)
@@ -294,7 +303,8 @@ namespace ACadSharp.IO.DXF
 						this._reader.ReadNext();
 					}
 
-					return this.checkObjectEnd(template, map, this.readEvaluationGraph);
+					this.lockPointer = true;
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.EvalGraph]);
 			}
@@ -1825,6 +1835,206 @@ namespace ACadSharp.IO.DXF
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readEvaluationExpression(CadTemplate template, DxfMap map)
+		{
+			CadEvaluationExpressionTemplate tmp = template as CadEvaluationExpressionTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 1:
+					this._reader.ExpectedCode(70);
+					this._reader.ExpectedCode(140);
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.EvalGraphExpr]);
+			}
+		}
+
+		private bool readBlockElement(CadTemplate template, DxfMap map)
+		{
+			CadBlockElementTemplate tmp = template as CadBlockElementTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockElement]))
+					{
+						return this.readEvaluationExpression(template, map);
+					}
+					return true;
+			}
+		}
+
+		private bool readBlockParameter(CadTemplate template, DxfMap map)
+		{
+			CadBlockParameterTemplate tmp = template as CadBlockParameterTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockParameter]))
+					{
+						return this.readBlockElement(template, map);
+					}
+					return true;
+			}
+		}
+
+		private bool readBlock1PtParameter(CadTemplate template, DxfMap map)
+		{
+			CadBlock1PtParameterTemplate tmp = template as CadBlock1PtParameterTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Block1PtParameter]))
+					{
+						return this.readBlockParameter(template, map);
+					}
+					return true;
+			}
+		}
+
+		private bool readBlockVisibilityParameter(CadTemplate template, DxfMap map)
+		{
+			CadBlockVisibilityParameterTemplate tmp = template as CadBlockVisibilityParameterTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 92:
+					var stateCount = this._reader.ValueAsInt;
+					for (int i = 0; i < stateCount; i++)
+					{
+						this._reader.ReadNext();
+						tmp.StateTemplates.Add(this.readState());
+					}
+					return true;
+				case 93 when this.currentSubclass == DxfSubclassMarker.BlockVisibilityParameter:
+					var entityCount = this._reader.ValueAsInt;
+					for (int i = 0; i < entityCount; i++)
+					{
+						this._reader.ReadNext();
+						tmp.EntityHandles.Add(this._reader.ValueAsHandle);
+					}
+					return true;
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockVisibilityParameter]))
+					{
+						return this.readBlock1PtParameter(template, map);
+					}
+					return true;
+			}
+		}
+
+		private CadBlockVisibilityParameterTemplate.StateTemplate readState()
+		{
+			var state = new BlockVisibilityParameter.State();
+			var template = new CadBlockVisibilityParameterTemplate.StateTemplate(state);
+
+			List<int> expectedCodes = new List<int>();
+			expectedCodes.Add(303);
+			expectedCodes.Add(94);
+			expectedCodes.Add(95);
+
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				expectedCodes.Remove(this._reader.Code);
+
+				switch (this._reader.Code)
+				{
+					case 303:
+						state.Name = this._reader.ValueAsString;
+						break;
+					case 94:
+						var count = this._reader.ValueAsInt;
+						for (int i = 0; i < count; i++)
+						{
+							this._reader.ReadNext();
+							template.EntityHandles.Add(this._reader.ValueAsHandle);
+						}
+						break;
+					case 95:
+						count = this._reader.ValueAsInt;
+						for (int i = 0; i < count; i++)
+						{
+							this._reader.ReadNext();
+							template.ExpressionHandles.Add(this._reader.ValueAsHandle);
+						}
+						break;
+					default:
+						return template;
+				}
+
+				if (!expectedCodes.Any())
+				{
+					break;
+				}
+
+				this._reader.ReadNext();
+			}
+
+			return template;
+		}
+
+		private bool readBlockGrip(CadTemplate template, DxfMap map)
+		{
+			CadBlockGripTemplate tmp = template as CadBlockGripTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockGrip]))
+					{
+						return this.readBlockElement(template, map);
+					}
+					return true;
+			}
+		}
+
+		private bool readBlockVisibilityGrip(CadTemplate template, DxfMap map)
+		{
+			CadBlockVisibilityGripTemplate tmp = template as CadBlockVisibilityGripTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockVisibilityGrip]))
+					{
+						return this.readBlockGrip(template, map);
+					}
+					return true;
+			}
+		}
+
+		private bool readBlockRepresentationData(CadTemplate template, DxfMap map)
+		{
+			CadBlockRepresentationDataTemplate tmp = template as CadBlockRepresentationDataTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 340:
+					tmp.BlockHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readBlockGripExpression(CadTemplate template, DxfMap map)
+		{
+			CadBlockGripExpressionTemplate tmp = template as CadBlockGripExpressionTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockGripExpression]))
+					{
+						return this.readEvaluationExpression(template, map);
+					}
+					return true;
 			}
 		}
 

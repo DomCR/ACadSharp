@@ -142,7 +142,7 @@ namespace ACadSharp.IO.DXF
 					this.readExtendedData(template.EDataTemplateByAppName);
 					break;
 				default:
-					this._builder.Notify($"[{template.CadObject.SubclassMarker}] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
+					this._builder.Notify($"[{this.currentSubclass}] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
 					break;
 			}
 		}
@@ -320,6 +320,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		[Obsolete("use lockpointer instead")]
 		protected bool checkObjectEnd(CadTemplate template, DxfMap map, Func<CadTemplate, DxfMap, bool> func)
 		{
 			if (this._reader.DxfCode == DxfCode.Start)

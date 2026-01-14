@@ -18,9 +18,6 @@ namespace ACadSharp.Objects
 	public class BookColor : NonGraphicalObject
 	{
 		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.UNLISTED;
-
-		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectDBColor;
 
 		/// <inheritdoc/>

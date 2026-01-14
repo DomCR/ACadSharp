@@ -1,51 +1,18 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects.Evaluations;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace ACadSharp.IO.Templates {
-
-	internal class CadBlockVisibilityParameterTemplate : CadBlock1PtParameterTemplate
+namespace ACadSharp.IO.Templates
+{
+	internal partial class CadBlockVisibilityParameterTemplate : CadBlock1PtParameterTemplate
 	{
-		public class StateTemplate
-		{
-			public BlockVisibilityParameter.State State { get; } = new BlockVisibilityParameter.State();
-
-			public HashSet<ulong> SubSet1 { get; } = new();
-
-			public HashSet<ulong> SubSet2 { get; } = new();
-
-			public void Build(CadDocumentBuilder builder, IEnumerable<ulong> entityHandles)
-			{
-				this.setEntities(builder, State.Entities, SubSet1, entityHandles);
-				this.setEntities(builder, State.Expressions, SubSet2, null);
-			}
-
-			private void setEntities<T>(CadDocumentBuilder builder, List<T> subset, IEnumerable<ulong> handles, IEnumerable<ulong> entities = null)
-				where T : CadObject
-			{
-				foreach (var h in handles)
-				{
-					if (entities != null && !entities.Contains(h))
-					{
-						builder.Notify($"[{State.ToString()}] parent does not contain handle {h}.");
-					}
-
-					if (builder.TryGetCadObject(h, out T obj))
-					{
-						subset.Add(obj);
-					}
-					else
-					{
-						builder.Notify($"[{State.ToString()}] {typeof(T).FullName} with handle {h} not found.");
-					}
-				}
-			}
-		}
-
 		public List<ulong> EntityHandles { get; } = new List<ulong>();
 
 		public List<StateTemplate> StateTemplates { get; } = new();
+
+		public CadBlockVisibilityParameterTemplate() : base(new BlockVisibilityParameter())
+		{
+		}
 
 		public CadBlockVisibilityParameterTemplate(BlockVisibilityParameter cadObject)
 			: base(cadObject)
@@ -70,10 +37,10 @@ namespace ACadSharp.IO.Templates {
 				}
 			}
 
-			foreach (var item in StateTemplates)
+			foreach (var item in this.StateTemplates)
 			{
 				item.Build(builder, this.EntityHandles);
-				bvp.States.Add(item.State);
+				bvp.AddState(item.State);
 			}
 		}
 	}
