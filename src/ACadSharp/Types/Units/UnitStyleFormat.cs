@@ -238,8 +238,10 @@ namespace ACadSharp.Types.Units
 			if (isAngular)
 			{
 				decimalPlaces = this.AngularDecimalPlaces;
-				leading = this.AngularZeroHandling == AngularZeroHandling.SuppressLeadingZeroes ? '#' : '0';
-				trailing = this.AngularZeroHandling == AngularZeroHandling.SupressTrailingZeroes ? '#' : '0';
+				leading = this.AngularZeroHandling == AngularZeroHandling.SuppressLeadingZeroes 
+					|| this.AngularZeroHandling == AngularZeroHandling.SupressAll ? '#' : '0';
+				trailing = this.AngularZeroHandling == AngularZeroHandling.SupressTrailingZeroes
+					|| this.AngularZeroHandling == AngularZeroHandling.SupressAll ? '#' : '0';
 			}
 			else
 			{
