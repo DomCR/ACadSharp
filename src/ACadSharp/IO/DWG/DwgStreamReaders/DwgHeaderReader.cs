@@ -650,7 +650,7 @@ namespace ACadSharp.IO.DWG
 				//BS : DIMZIN
 				_header.DimensionZeroHandling = (Tables.ZeroHandling)(char)_reader.ReadBitShort();
 				//BS : DIMAZIN
-				_header.DimensionAngularZeroHandling = (Tables.ZeroHandling)_reader.ReadBitShort();
+				_header.DimensionAngularZeroHandling = (Tables.AngularZeroHandling)_reader.ReadBitShort();
 			}
 
 			//R2007 + Only:

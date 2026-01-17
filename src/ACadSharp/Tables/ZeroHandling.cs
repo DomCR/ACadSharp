@@ -34,4 +34,24 @@
 		/// </summary>
 		SuppressDecimalLeadingAndTrailingZeroes = 12,
 	}
+
+	public enum AngularZeroHandling : byte
+	{
+		/// <summary>
+		/// Displays all leading and trailing zeros.
+		/// </summary>
+		DisplayAll = 0,
+		/// <summary>
+		/// Suppresses leading zeros in decimal dimensions.
+		/// </summary>
+		SuppressLeadingZeroes = 1,
+		/// <summary>
+		/// Suppresses trailing zeros in decimal dimensions.
+		/// </summary>
+		SupressTrailingZeroes = 2,
+		/// <summary>
+		/// Suppresses leading and trailing zeros.
+		/// </summary>
+		SupressAll = 3,
+	}
 }

@@ -57,7 +57,7 @@ namespace ACadSharp.Tests.Tables
 				{
 					new DimensionStyle {
 						AngularUnit = AngularUnitFormat.DecimalDegrees,
-						AngularZeroHandling = ZeroHandling.SuppressDecimalLeadingZeroes,
+						AngularZeroHandling = AngularZeroHandling.SuppressLeadingZeroes,
 						AngularDecimalPlaces = 2
 					},
 					new DimensionAngular2Line{
@@ -111,7 +111,7 @@ namespace ACadSharp.Tests.Tables
 				{
 					new DimensionStyle {
 						AngularUnit = AngularUnitFormat.Gradians,
-						AngularZeroHandling = ZeroHandling.SuppressDecimalLeadingZeroes,
+						AngularZeroHandling = AngularZeroHandling.SuppressLeadingZeroes,
 						AngularDecimalPlaces = 2
 					},
 					new DimensionAngular2Line{
