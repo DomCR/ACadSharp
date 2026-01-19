@@ -5138,7 +5138,7 @@ namespace ACadSharp.IO.DWG
 				//DIMZIN BS 78
 				dimStyle.ZeroHandling = (ZeroHandling)this._objectReader.ReadBitShort();
 				//DIMAZIN BS 79
-				dimStyle.AngularZeroHandling = (ZeroHandling)this._objectReader.ReadBitShort();
+				dimStyle.AngularZeroHandling = (AngularZeroHandling)this._objectReader.ReadBitShort();
 			}
 
 			//R2007 +:

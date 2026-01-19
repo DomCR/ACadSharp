@@ -30,7 +30,7 @@ namespace ACadSharp.Types.Units
 		/// <summary>
 		/// Gets or sets the suppression of zeros in the angular values.
 		/// </summary>
-		public ZeroHandling AngularZeroHandling { get; set; } = ZeroHandling.SuppressDecimalTrailingZeroes;
+		public AngularZeroHandling AngularZeroHandling { get; set; } = AngularZeroHandling.DisplayAll;
 
 		/// <summary>
 		/// Gets or set the decimal separator.
@@ -233,26 +233,26 @@ namespace ACadSharp.Types.Units
 		public string GetZeroHandlingFormat(bool isAngular = false)
 		{
 			short decimalPlaces;
-			ZeroHandling handling;
-
+			char leading;
+			char trailing;
 			if (isAngular)
 			{
-				handling = this.AngularZeroHandling;
 				decimalPlaces = this.AngularDecimalPlaces;
+				leading = this.AngularZeroHandling == AngularZeroHandling.SuppressLeadingZeroes 
+					|| this.AngularZeroHandling == AngularZeroHandling.SupressAll ? '#' : '0';
+				trailing = this.AngularZeroHandling == AngularZeroHandling.SupressTrailingZeroes
+					|| this.AngularZeroHandling == AngularZeroHandling.SupressAll ? '#' : '0';
 			}
 			else
 			{
-				handling = this.LinearZeroHandling;
 				decimalPlaces = this.LinearDecimalPlaces;
+				leading = this.LinearZeroHandling == ZeroHandling.SuppressDecimalLeadingZeroes
+				  || this.LinearZeroHandling == ZeroHandling.SuppressDecimalLeadingAndTrailingZeroes ?
+				  '#' : '0';
+				trailing = this.LinearZeroHandling == ZeroHandling.SuppressDecimalTrailingZeroes
+				  || this.LinearZeroHandling == ZeroHandling.SuppressDecimalLeadingAndTrailingZeroes ?
+				  '#' : '0';
 			}
-
-			char leading = handling == ZeroHandling.SuppressDecimalLeadingZeroes
-				   || handling == ZeroHandling.SuppressDecimalLeadingAndTrailingZeroes ?
-				   '#' : '0';
-
-			char trailing = handling == ZeroHandling.SuppressDecimalTrailingZeroes
-			   || handling == ZeroHandling.SuppressDecimalLeadingAndTrailingZeroes ?
-			   '#' : '0';
 
 			StringBuilder zeroes = new();
 

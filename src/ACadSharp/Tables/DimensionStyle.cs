@@ -139,7 +139,7 @@ namespace ACadSharp.Tables
 		/// (see DIMAZIN System Variable).
 		/// </summary>
 		[DxfCodeValue(79)]
-		public ZeroHandling AngularZeroHandling { get; set; } = ZeroHandling.SuppressDecimalLeadingAndTrailingZeroes;
+		public AngularZeroHandling AngularZeroHandling { get; set; } = AngularZeroHandling.DisplayAll;
 
 		/// <summary>
 		/// Controls display of the arc symbol in an arc length dimension
@@ -1134,7 +1134,7 @@ namespace ACadSharp.Tables
 				FractionHeightScale = this.ToleranceScaleFactor,
 				FractionType = this.FractionFormat,
 				LinearZeroHandling = this.AlternateUnitZeroHandling,
-				AngularZeroHandling = this.AlternateUnitZeroHandling,
+				AngularZeroHandling = this.AngularZeroHandling,
 			};
 		}
 
