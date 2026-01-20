@@ -36,8 +36,11 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
-			doc.Header.Version = ACadVersion.AC1032;
-			DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc, notification: onNotification);
+
+			if (!TestVariables.SaveOutputInStream)
+			{
+				DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc, notification: onNotification);
+			}
 		}
 
 		[Theory]
@@ -48,7 +51,10 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DxfReader.Read(test.Path, this.onNotification);
-			DxfWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dxf"), doc, notification: onNotification);
+			if (!TestVariables.SaveOutputInStream)
+			{
+				DxfWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dxf"), doc, notification: onNotification);
+			}
 		}
 
 		[Theory]
