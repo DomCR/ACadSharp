@@ -43,12 +43,47 @@ namespace ACadSharp.Classes
 		/// If 0, instances may appear only in the OBJECTS section
 		/// </summary>
 		[DxfCodeValue(281)]
-		public bool IsAnEntity { get; set; }
+		public bool IsAnEntity
+		{
+			get => this._isAnEntity;
+			set
+			{
+				if (value)
+				{
+					this.ItemClassId = 0x1F2;
+				}
+				else
+				{
+					this.ItemClassId = 0x1F3;
+				}
+
+				this._isAnEntity = value;
+			}
+		}
 
 		/// <summary>
 		/// Item class id.
 		/// </summary>
-		public short ItemClassId { get; internal set; }
+		/// <remarks>
+		/// Only effective for dwg.
+		/// </remarks>
+		public short ItemClassId
+		{
+			get => this._itemClassId;
+			set
+			{
+				if (value == 0x1F2)
+				{
+					this.IsAnEntity = true;
+				}
+				else
+				{
+					this.IsAnEntity = false;
+				}
+
+				this._itemClassId = value;
+			}
+		}
 
 		/// <summary>
 		/// Proxy capabilities flag.
@@ -66,10 +101,14 @@ namespace ACadSharp.Classes
 
 		internal short MaintenanceVersion { get; set; }
 
+		private bool _isAnEntity;
+
+		private short _itemClassId;
+
 		/// <inheritdoc/>
 		public override string ToString()
 		{
-			return $"{DxfName}:{ClassNumber}";
+			return $"{this.DxfName}:{this.ClassNumber}";
 		}
 	}
 }

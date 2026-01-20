@@ -494,7 +494,6 @@ namespace ACadSharp.Classes
 				MaintenanceVersion = 0,
 				ProxyFlags = ProxyFlags.None,
 				WasZombie = false,
-				IsAnEntity = false,
 			});
 
 			//AcDbMLeaderObjectContextData
