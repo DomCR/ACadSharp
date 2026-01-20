@@ -50,11 +50,11 @@ namespace ACadSharp.Classes
 			{
 				if (value)
 				{
-					this.ItemClassId = 0x1F2;
+					this._itemClassId = 0x1F2;
 				}
 				else
 				{
-					this.ItemClassId = 0x1F3;
+					this._itemClassId = 0x1F3;
 				}
 
 				this._isAnEntity = value;
@@ -74,11 +74,11 @@ namespace ACadSharp.Classes
 			{
 				if (value == 0x1F2)
 				{
-					this.IsAnEntity = true;
+					this._isAnEntity = true;
 				}
 				else
 				{
-					this.IsAnEntity = false;
+					this._isAnEntity = false;
 				}
 
 				this._itemClassId = value;
