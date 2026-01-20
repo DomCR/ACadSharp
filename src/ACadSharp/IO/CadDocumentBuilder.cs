@@ -276,7 +276,7 @@ namespace ACadSharp.IO
 				var root = this.dictionaryTemplates.Values.Select(t => t.CadObject).OfType<CadDictionary>().Where(d => d.Owner == null);
 				if (root.Count() > 1 || !root.Any())
 				{
-					this.Notify($"The root dictionary could not be found.", NotificationType.Error);
+					this.Notify($"The root dictionary could not be found.", NotificationType.Warning);
 				}
 				else
 				{
