@@ -16,7 +16,12 @@
 				this._writer.Write(2, c.CppClassName);
 				this._writer.Write(3, c.ApplicationName);
 				this._writer.Write(90, (int)c.ProxyFlags);
-				this._writer.Write(91, c.InstanceCount);
+
+				if (this.Version > ACadVersion.AC1015)
+				{
+					this._writer.Write(91, c.InstanceCount);
+				}
+
 				this._writer.Write(280, c.WasZombie);
 				this._writer.Write(281, c.IsAnEntity);
 			}
