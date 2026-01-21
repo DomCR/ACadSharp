@@ -4426,7 +4426,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readTextStyle()
 		{
 			TextStyle style = new TextStyle();
-			CadTableEntryTemplate<TextStyle> template = new CadTableEntryTemplate<TextStyle>(style);
+			CadTextStyleTemplate template = new CadTextStyleTemplate(style);
 
 			this.readCommonNonEntityData(template);
 
