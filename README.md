@@ -27,7 +27,7 @@ AC1015 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_m
 AC1018 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1021 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:                   |
 AC1024 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
-AC1027 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:                   |
+AC1027 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1032 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 
 Code Example
@@ -40,7 +40,7 @@ public static void Main()
 	CadDocument doc = DwgReader.Read(path, onNotification);
 }
 
-// Process a notification form the reader
+// Process a notification from the reader
 private static void onNotification(object sender, NotificationEventArgs e)
 {
 	Console.WriteLine(e.Message);
