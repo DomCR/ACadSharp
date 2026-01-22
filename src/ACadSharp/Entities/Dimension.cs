@@ -334,11 +334,6 @@ namespace ACadSharp.Entities
 		/// <returns></returns>
 		public string GetMeasurementText(DimensionStyle style)
 		{
-			if (!string.IsNullOrEmpty(this.Text))
-			{
-				return this.Text;
-			}
-
 			string text = string.Empty;
 			double value = style.ApplyRounding(this.Measurement);
 
@@ -406,7 +401,16 @@ namespace ACadSharp.Entities
 					break;
 			}
 
-			return $"{prefix}{text}{style.Suffix}";
+			var valueText = $"{prefix}{text}{style.Suffix}";
+
+			if (!string.IsNullOrEmpty(this.Text))
+			{
+				var styledText = this.Text;
+				styledText = styledText.Replace("<>", valueText);
+				return styledText;
+			}
+
+			return valueText;
 		}
 
 		/// <summary>
