@@ -197,7 +197,29 @@ namespace ACadSharp.Tests.Tables
 					},
 					new DimensionAligned(XYZ.Zero, new XYZ(10.25, 0, 0)),
 					"1.03E+01"
-				}
+				},
+				{
+					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Decimal
+					},
+					new DimensionAligned { 
+						FirstPoint = XYZ.Zero, 
+						SecondPoint = new XYZ(10, 0, 0),
+						Text = "<> Dimension"
+						},
+					"10 Dimension"
+				},
+				{
+					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Decimal
+					},
+					new DimensionAligned {
+						FirstPoint = XYZ.Zero,
+						SecondPoint = new XYZ(13, 0, 0),
+						Text = "A very long text with <> \\x\\p something"
+						},
+					"A very long text with 13 \\x\\p something"
+				},
 			};
 		}
 
