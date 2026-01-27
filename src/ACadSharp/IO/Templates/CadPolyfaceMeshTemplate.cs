@@ -1,9 +1,11 @@
 ﻿using ACadSharp.Entities;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadPolyfaceMeshTemplate : CadEntityTemplate
+	[Obsolete("use CadPolyLineTemplate")]
+	internal class CadPolyfaceMeshTemplate : CadEntityTemplate<PolyfaceMesh>
 	{
 		public ulong? FirstVerticeHandle { get; set; }
 

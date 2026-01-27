@@ -58,6 +58,11 @@ namespace ACadSharp.IO.DXF
 			{
 				foreach (Entity e in b.Entities)
 				{
+					if(e is Seqend)
+					{
+
+					}
+
 					this.Holder.Entities.Enqueue(e);
 				}
 			}

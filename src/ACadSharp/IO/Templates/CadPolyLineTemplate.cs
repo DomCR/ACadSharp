@@ -10,8 +10,6 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? LastVertexHandle { get; internal set; }
 
-		public IPolyline PolyLine => this.CadObject as IPolyline;
-
 		public ulong? SeqendHandle { get; internal set; }
 
 		public HashSet<ulong> OwnedObjectsHandlers { get; } = new();
