@@ -35,7 +35,7 @@ namespace ACadSharp.IO.Templates
 			this.CadObject = polyLine;
 		}
 
-		protected void addVertices(CadDocumentBuilder builder, params IEnumerable<IVertex> vertices)
+		protected void addVertices(CadDocumentBuilder builder, params IEnumerable<Entity> vertices)
 		{
 			switch (this.CadObject)
 			{
@@ -46,7 +46,10 @@ namespace ACadSharp.IO.Templates
 					pline3d.Vertices.AddRange(vertices.Cast<Vertex3D>());
 					break;
 				case PolyfaceMesh mesh:
-					mesh.Vertices.AddRange(vertices.Cast<VertexFaceMesh>());
+					foreach (var item in vertices)
+					{
+						this.addPolyfaceMeshVertex(builder, mesh, item);
+					}
 					break;
 				case PolygonMesh polygon:
 					polygon.Vertices.AddRange(vertices.Cast<PolygonMeshVertex>());
@@ -128,23 +131,28 @@ namespace ACadSharp.IO.Templates
 			{
 				if (builder.TryGetCadObject(handle, out Entity e))
 				{
-					if (e is VertexFaceMesh v3)
-					{
-						polyfaceMesh.Vertices.Add(v3);
-					}
-					else if (e is VertexFaceRecord face)
-					{
-						polyfaceMesh.Faces.Add(face);
-					}
-					else if (e is Seqend seqend)
-					{
-						polyfaceMesh.Vertices.Seqend = seqend;
-					}
-					else
-					{
-						builder.Notify($"Unidentified type for PolyfaceMesh {e.GetType().FullName}");
-					}
+					this.addPolyfaceMeshVertex(builder, polyfaceMesh, e);
 				}
+			}
+		}
+
+		private void addPolyfaceMeshVertex(CadDocumentBuilder builder, PolyfaceMesh polyfaceMesh, Entity e)
+		{
+			if (e is VertexFaceMesh v3)
+			{
+				polyfaceMesh.Vertices.Add(v3);
+			}
+			else if (e is VertexFaceRecord face)
+			{
+				polyfaceMesh.Faces.Add(face);
+			}
+			else if (e is Seqend seqend)
+			{
+				polyfaceMesh.Vertices.Seqend = seqend;
+			}
+			else
+			{
+				builder.Notify($"Unidentified type for PolyfaceMesh {e.GetType().FullName}");
 			}
 		}
 

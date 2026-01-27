@@ -2483,7 +2483,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readPolyfaceMesh()
 		{
-			CadPolyfaceMeshTemplate template = new CadPolyfaceMeshTemplate(new PolyfaceMesh());
+			CadPolyLineTemplate template = new CadPolyLineTemplate(new PolyfaceMesh());
 
 			//Common Entity Data
 			this.readCommonEntityData(template);
@@ -2501,7 +2501,7 @@ namespace ACadSharp.IO.DWG
 				//H[VERTEX(soft pointer)] Repeats “Owned Object Count” times.
 				for (int i = 0; i < ownedVertices; i++)
 				{
-					template.VerticesHandles.Add(this.handleReference());
+					template.OwnedObjectsHandlers.Add(this.handleReference());
 				}
 			}
 
@@ -2509,9 +2509,9 @@ namespace ACadSharp.IO.DWG
 			if (this.R13_15Only)
 			{
 				//H first VERTEX(soft pointer)
-				template.FirstVerticeHandle = this.handleReference();
+				template.FirstVertexHandle = this.handleReference();
 				//H last VERTEX(soft pointer)
-				template.LastVerticeHandle = this.handleReference();
+				template.LastVertexHandle = this.handleReference();
 			}
 
 			//Common:

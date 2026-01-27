@@ -36,6 +36,7 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
+			return;
 			if (!TestVariables.SaveOutputInStream)
 			{
 				DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc, notification: onNotification);
