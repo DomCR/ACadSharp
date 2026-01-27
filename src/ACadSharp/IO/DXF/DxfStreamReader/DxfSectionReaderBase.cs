@@ -2138,6 +2138,23 @@ namespace ACadSharp.IO.DXF
 			return reactors;
 		}
 
+		protected bool tryAssignCurrentValue(object cadObject, DxfMap map)
+		{
+			if (string.IsNullOrEmpty(this.currentSubclass))
+			{
+				return false;
+			}
+
+			if (map.SubClasses.TryGetValue(this.currentSubclass, out var subClass))
+			{
+				return this.tryAssignCurrentValue(cadObject, subClass);
+			}
+			else
+			{
+				return false;
+			}
+		}
+
 		protected bool tryAssignCurrentValue(object cadObject, DxfClassMap map)
 		{
 			try
