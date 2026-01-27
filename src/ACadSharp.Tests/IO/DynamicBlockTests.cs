@@ -85,6 +85,25 @@ namespace ACadSharp.Tests.IO
 			var config = getConfiguration(test);
 			var doc = this.readDocument(test, config);
 
+			switch (test.NoExtensionName)
+			{
+				case DxfFileToken.ObjectBlockVisibilityParameter:
+					this.assertVisibilityParameter(doc);
+					break;
+				case DxfFileToken.ObjectBlockRotationParameter:
+					this.assertRotationParameter(doc);
+					break;
+				default:
+					throw new System.NotImplementedException();
+			}
+		}
+
+		private void assertRotationParameter(CadDocument doc)
+		{
+		}
+
+		private void assertVisibilityParameter(CadDocument doc)
+		{
 			var original = doc.BlockRecords["block_visibility_parameter"];
 			foreach (BlockRecord record in doc.BlockRecords.Where(b => b.IsAnonymous))
 			{
@@ -96,8 +115,19 @@ namespace ACadSharp.Tests.IO
 				var dict = insert.XDictionary.GetEntry<CadDictionary>("AcDbBlockRepresentation");
 				var representation = dict.GetEntry<BlockRepresentationData>("AcDbRepData");
 
+				Assert.NotEmpty(insert.Block.Source.EvaluationGraph.Nodes.Select(n => n.Expression).OfType<BlockVisibilityParameter>());
+
 				Assert.NotNull(representation);
 				Assert.Equal(original, representation.Block);
+
+				XRecord record = insert.XDictionary
+					.GetEntry<CadDictionary>("AcDbBlockRepresentation")
+					.GetEntry<CadDictionary>("AppDataCache")
+					.GetEntry<CadDictionary>("ACAD_ENHANCEDBLOCKDATA")
+					.OfType<XRecord>().First();
+
+				var name = record.Entries.FirstOrDefault(e => e.Code == 1).Value as string;
+				Assert.False(string.IsNullOrEmpty(name));
 			}
 		}
 	}

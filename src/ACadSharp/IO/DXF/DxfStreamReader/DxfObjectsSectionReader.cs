@@ -58,6 +58,7 @@ namespace ACadSharp.IO.DXF
 
 		private CadTemplate readObject()
 		{
+			this.currentSubclass = string.Empty;
 			switch (this._reader.ValueAsString)
 			{
 				case DxfFileToken.ObjectPlaceholder:
@@ -118,6 +119,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<BlockVisibilityGrip>(new CadBlockVisibilityGripTemplate(), this.readBlockVisibilityGrip);
 				case DxfFileToken.ObjectBlockVisibilityParameter:
 					return this.readObjectCodes<BlockVisibilityParameter>(new CadBlockVisibilityParameterTemplate(), this.readBlockVisibilityParameter);
+				case DxfFileToken.ObjectBlockRotationParameter:
+					return this.readObjectCodes<BlockRotationParameter>(new CadBlockRotationParameterTemplate(), this.readBlockRotationParameter);
 				default:
 					DxfMap map = DxfMap.Create<CadObject>();
 					CadUnknownNonGraphicalObjectTemplate unknownEntityTemplate = null;
@@ -1898,6 +1901,24 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		private bool readBlock2PtParameter(CadTemplate template, DxfMap map)
+		{
+			var tmp = template as CadBlock2PtParameterTemplate;
+
+			switch (this._reader.Code)
+			{
+				//Stores always 4 entries using this code
+				case 91:
+					return true;
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map))
+					{
+						return this.readBlockParameter(template, map);
+					}
+					return true;
+			}
+		}
+
 		private bool readBlockVisibilityParameter(CadTemplate template, DxfMap map)
 		{
 			CadBlockVisibilityParameterTemplate tmp = template as CadBlockVisibilityParameterTemplate;
@@ -1924,6 +1945,21 @@ namespace ACadSharp.IO.DXF
 					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockVisibilityParameter]))
 					{
 						return this.readBlock1PtParameter(template, map);
+					}
+					return true;
+			}
+		}
+
+		private bool readBlockRotationParameter(CadTemplate template, DxfMap map)
+		{
+			var tmp = template as CadBlockRotationParameterTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map))
+					{
+						return this.readBlock2PtParameter(template, map);
 					}
 					return true;
 			}
