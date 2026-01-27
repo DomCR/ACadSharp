@@ -900,9 +900,10 @@ namespace ACadSharp.IO.DXF
 				if (vertexTemplate.OwnerHandle == null)
 				{
 					vertexTemplate.OwnerHandle = template.CadObject.Handle;
-					template.OwnedObjectsHandlers.Add(vertexTemplate.CadObject.Handle);
-					_builder.AddTemplate(vertexTemplate);
 				}
+
+				template.OwnedObjectsHandlers.Add(vertexTemplate.CadObject.Handle);
+				_builder.AddTemplate(vertexTemplate);
 			}
 
 			while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EndSequence)
@@ -914,9 +915,10 @@ namespace ACadSharp.IO.DXF
 				if (seqendTemplate.OwnerHandle == null)
 				{
 					seqendTemplate.OwnerHandle = template.CadObject.Handle;
-					template.OwnedObjectsHandlers.Add(seqendTemplate.CadObject.Handle);
-					_builder.AddTemplate(seqendTemplate);
 				}
+
+				template.OwnedObjectsHandlers.Add(seqendTemplate.CadObject.Handle);
+				_builder.AddTemplate(seqendTemplate);
 			}
 
 			return template;
