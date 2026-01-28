@@ -22,8 +22,6 @@ namespace ACadSharp.IO.DXF
 
 		public List<CadTemplate> OrphanTemplates { get; set; } = new();
 
-		public ICadObjectTemplate LastTemplate { get { return this.cadObjectsTemplates.Values.LastOrDefault(); } }
-
 		public DxfDocumentBuilder(ACadVersion version, CadDocument document, DxfReaderConfiguration configuration) : base(version, document)
 		{
 			this.Configuration = configuration;
