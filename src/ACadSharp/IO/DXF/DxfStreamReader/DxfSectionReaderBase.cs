@@ -877,51 +877,83 @@ namespace ACadSharp.IO.DXF
 
 		private CadEntityTemplate readPolyline()
 		{
-			CadPolyLineTemplate template = null;
-
 			if (this._builder.Version == ACadVersion.Unknown
 				|| this._builder.Version == ACadVersion.AC1009)
 			{
-				var polyline = new Polyline2D();
-				template = new CadPolyLineTemplate(polyline);
-				this.readEntityCodes<Polyline2D>(template, this.readPolyline);
-
-				while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EntityVertex)
-				{
-					Vertex2D v = new Vertex2D();
-					CadVertexTemplate vertexTemplate = new CadVertexTemplate(v);
-					this.readEntityCodes<Vertex2D>(vertexTemplate, this.readVertex);
-
-					if (vertexTemplate.Vertex.Handle == 0)
-					{
-						polyline.Vertices.Add(v);
-					}
-					else
-					{
-						template.OwnedObjectsHandlers.Add(vertexTemplate.Vertex.Handle);
-						this._builder.AddTemplate(vertexTemplate);
-					}
-				}
-
-				while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EndSequence)
-				{
-					var seqend = new Seqend();
-					var seqendTemplate = new CadEntityTemplate<Seqend>(seqend);
-					this.readEntityCodes<Seqend>(seqendTemplate, this.readEntitySubclassMap);
-
-					polyline.Vertices.Seqend = seqend;
-				}
+				return this.readLegacyPolyline();
 			}
-			else
-			{
-				template = new CadPolyLineTemplate();
-				this.readEntityCodes<Entity>(template, this.readPolyline);
-			}
+
+			CadPolyLineTemplate template = null;
+			template = new CadPolyLineTemplate();
+			this.readEntityCodes<Entity>(template, this.readPolyline);
 
 			if (template.CadObject is CadPolyLineTemplate.PolyLinePlaceholder)
 			{
 				this._builder.Notify($"[{DxfFileToken.EntityPolyline}] Subclass not found, entity discarded", NotificationType.Warning);
 				return null;
+			}
+
+			while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EntityVertex)
+			{
+				var vertexTemplate = this.readEntityCodes<Entity>(new CadVertexTemplate(), this.readVertex);
+
+				if (vertexTemplate.OwnerHandle == null)
+				{
+					vertexTemplate.OwnerHandle = template.CadObject.Handle;
+				}
+
+				template.OwnedObjectsHandlers.Add(vertexTemplate.CadObject.Handle);
+				_builder.AddTemplate(vertexTemplate);
+			}
+
+			while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EndSequence)
+			{
+				var seqend = new Seqend();
+				var seqendTemplate = new CadEntityTemplate<Seqend>(seqend);
+				this.readEntityCodes<Seqend>(seqendTemplate, this.readEntitySubclassMap);
+
+				if (seqendTemplate.OwnerHandle == null)
+				{
+					seqendTemplate.OwnerHandle = template.CadObject.Handle;
+				}
+
+				template.OwnedObjectsHandlers.Add(seqendTemplate.CadObject.Handle);
+				_builder.AddTemplate(seqendTemplate);
+			}
+
+			return template;
+		}
+
+		private CadEntityTemplate readLegacyPolyline()
+		{
+			var polyline = new Polyline2D();
+			CadPolyLineTemplate template = new CadPolyLineTemplate(polyline);
+			this.readEntityCodes<Polyline2D>(template, this.readPolyline);
+
+			while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EntityVertex)
+			{
+				Vertex2D v = new Vertex2D();
+				CadVertexTemplate vertexTemplate = new CadVertexTemplate(v);
+				this.readEntityCodes<Vertex2D>(vertexTemplate, this.readVertex);
+
+				if (vertexTemplate.Vertex.Handle == 0)
+				{
+					polyline.Vertices.Add(v);
+				}
+				else
+				{
+					template.OwnedObjectsHandlers.Add(vertexTemplate.Vertex.Handle);
+					this._builder.AddTemplate(vertexTemplate);
+				}
+			}
+
+			while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EndSequence)
+			{
+				var seqend = new Seqend();
+				var seqendTemplate = new CadEntityTemplate<Seqend>(seqend);
+				this.readEntityCodes<Seqend>(seqendTemplate, this.readEntitySubclassMap);
+
+				polyline.Vertices.Seqend = seqend;
 			}
 
 			return template;
