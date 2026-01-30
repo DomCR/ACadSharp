@@ -52,6 +52,8 @@
 
 		public const string BlockRepresentationData = "AcDbBlockRepresentationData";
 
+		public const string BlockRotationParameter = "AcDbBlockRotationParameter";
+
 		public const string BlockVisibilityGrip = "AcDbBlockVisibilityGrip";
 
 		public const string BlockVisibilityParameter = "AcDbBlockVisibilityParameter";
