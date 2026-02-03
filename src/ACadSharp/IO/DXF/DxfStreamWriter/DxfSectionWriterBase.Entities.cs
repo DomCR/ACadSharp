@@ -138,6 +138,7 @@ namespace ACadSharp.IO.DXF
 		{
 			switch (entity)
 			{
+				case Seqend://Manually assign at the end of the collections
 				case UnknownEntity:
 					return false;
 				case Shape:
