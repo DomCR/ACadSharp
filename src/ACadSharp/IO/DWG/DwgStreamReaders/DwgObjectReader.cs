@@ -1109,7 +1109,10 @@ namespace ACadSharp.IO.DWG
 				case "ACAD_EVALUATION_GRAPH":
 					template = this.readEvaluationGraph();
 					break;
-				case "BLOCKVISIBILITYPARAMETER":
+				case DxfFileToken.ObjectBlockRotationParameter:
+					template = this.readBlockRotationParameter();
+					break;
+				case DxfFileToken.ObjectBlockVisibilityParameter:
 					template = this.readBlockVisibilityParameter();
 					break;
 				case "BLOCKFLIPPARAMETER":

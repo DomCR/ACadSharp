@@ -1,11 +1,42 @@
 ﻿using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
+using System;
 
 namespace ACadSharp.IO.DWG
 {
 	internal partial class DwgObjectReader : DwgSectionIO
 	{
+		private void readBlock2PtParameter(CadBlock2PtParameterTemplate template)
+		{
+			this.readBlockParameter(template);
+
+			//1010 1020 1030
+			template.Block2PtParameter.FirstPoint = this._mergedReaders.Read3BitDouble();
+			//1011 1021 1031
+			template.Block2PtParameter.SecondPoint = this._mergedReaders.Read3BitDouble();
+
+			//170 (always 4)
+			for (int i = 0; i < 4; i++)
+			{
+				//171 172 173 174
+				short n = this._mergedReaders.ReadBitShort();
+				for (int j = 0; j < n; j++)
+				{
+					//94 95 (I guess 96 97)
+					var d = this._mergedReaders.ReadBitLong();
+					//303 304
+					var e = this._mergedReaders.ReadVariableText();
+				}
+			}
+
+			for (int k = 0; k < 4; k++)
+			{
+				//91 values
+				var f = this._mergedReaders.ReadBitLong();
+			}
+		}
+
 		private void readBlock1PtParameter(CadBlock1PtParameterTemplate template)
 		{
 			this.readBlockParameter(template);
@@ -63,6 +94,34 @@ namespace ACadSharp.IO.DWG
 
 			representation.Value70 = this._mergedReaders.ReadBitShort();
 			template.BlockHandle = this.handleReference();
+
+			return template;
+		}
+
+		private CadTemplate readBlockRotationParameter()
+		{
+			BlockRotationParameter blockRotationParameter = new();
+			CadBlockRotationParameterTemplate template = new CadBlockRotationParameterTemplate(blockRotationParameter);
+
+			this.readBlock2PtParameter(template);
+
+			//1011 1021 1031
+			blockRotationParameter.Point = this._mergedReaders.Read3BitDouble();
+			//305
+			blockRotationParameter.Name = this._mergedReaders.ReadVariableText();
+			//306
+			blockRotationParameter.Description = this._mergedReaders.ReadVariableText();
+			//140
+			blockRotationParameter.NameOffset = this._mergedReaders.ReadBitDouble();
+
+			//307 missing text?
+
+			var value96 = this._mergedReaders.ReadBitLong();
+			var value141 = this._mergedReaders.ReadBitDouble();
+			var value142 = this._mergedReaders.ReadBitDouble();
+			var value143 = this._mergedReaders.ReadBitDouble();
+
+			var value175 = this._mergedReaders.ReadBitLong();
 
 			return template;
 		}
