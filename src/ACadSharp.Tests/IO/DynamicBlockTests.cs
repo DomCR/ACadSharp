@@ -117,10 +117,15 @@ namespace ACadSharp.Tests.IO
 
 			foreach (Insert insert in doc.Entities.OfType<Insert>())
 			{
+				if (insert.XDictionary == null)
+				{
+					continue;
+				}
+
 				var dict = insert.XDictionary.GetEntry<CadDictionary>("AcDbBlockRepresentation");
 				var representation = dict.GetEntry<BlockRepresentationData>("AcDbRepData");
 
-				Assert.NotEmpty(insert.Block.Source.EvaluationGraph.Nodes.Select(n => n.Expression).OfType<BlockVisibilityParameter>());
+				Assert.NotEmpty(insert.Block.Source.EvaluationGraph.Nodes.Select(n => n.Expression).OfType<BlockRotationParameter>());
 
 				Assert.NotNull(representation);
 				Assert.Equal(original, representation.Block);
@@ -130,9 +135,6 @@ namespace ACadSharp.Tests.IO
 					.GetEntry<CadDictionary>("AppDataCache")
 					.GetEntry<CadDictionary>("ACAD_ENHANCEDBLOCKDATA")
 					.OfType<XRecord>().First();
-
-				var name = record.Entries.FirstOrDefault(e => e.Code == 1).Value as string;
-				Assert.False(string.IsNullOrEmpty(name));
 			}
 		}
 

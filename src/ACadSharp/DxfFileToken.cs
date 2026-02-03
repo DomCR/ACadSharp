@@ -131,6 +131,7 @@
 		public const string ObjectEvalGraph = "ACAD_EVALUATION_GRAPH";
 		public const string ObjectBlockLinearParameter = "BLOCKLINEARPARAMETER";
 		public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
+		public const string ObjectBlockRotationGrip = "BLOCKROTATIONGRIP";
 		public const string ObjectBlockVisibilityGrip = "BLOCKVISIBILITYGRIP";
 		public const string ObjectBlockBasePointParameter = "BLOCKBASEPOINTPARAMETER";
 		public const string ObjectBlockRotationParameter = "BLOCKROTATIONPARAMETER";

@@ -35,6 +35,8 @@ namespace ACadSharp.IO.DWG
 				//91 values
 				var f = this._mergedReaders.ReadBitLong();
 			}
+
+			var value177 = this._mergedReaders.ReadBitShort();
 		}
 
 		private void readBlock1PtParameter(CadBlock1PtParameterTemplate template)
