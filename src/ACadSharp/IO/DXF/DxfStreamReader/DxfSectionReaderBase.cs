@@ -2123,7 +2123,10 @@ namespace ACadSharp.IO.DXF
 		{
 			this.readDefinedGroups(out ulong? xdict, out HashSet<ulong> reactorsHandles);
 
-			template.XDictHandle = xdict;
+			if (xdict.HasValue)
+			{
+				template.XDictHandle = xdict;
+			}
 			template.ReactorsHandles.UnionWith(reactorsHandles);
 		}
 
@@ -2168,6 +2171,23 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return reactors;
+		}
+
+		protected bool tryAssignCurrentValue(object cadObject, DxfMap map)
+		{
+			if (string.IsNullOrEmpty(this.currentSubclass))
+			{
+				return false;
+			}
+
+			if (map.SubClasses.TryGetValue(this.currentSubclass, out var subClass))
+			{
+				return this.tryAssignCurrentValue(cadObject, subClass);
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		protected bool tryAssignCurrentValue(object cadObject, DxfClassMap map)

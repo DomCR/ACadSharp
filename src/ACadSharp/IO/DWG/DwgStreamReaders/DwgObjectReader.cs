@@ -1106,10 +1106,13 @@ namespace ACadSharp.IO.DWG
 				case "XRECORD":
 					template = this.readXRecord();
 					break;
-				case "ACAD_EVALUATION_GRAPH":
+				case DxfFileToken.ObjectEvalGraph:
 					template = this.readEvaluationGraph();
 					break;
-				case "BLOCKVISIBILITYPARAMETER":
+				case DxfFileToken.ObjectBlockRotationParameter:
+					template = this.readBlockRotationParameter();
+					break;
+				case DxfFileToken.ObjectBlockVisibilityParameter:
 					template = this.readBlockVisibilityParameter();
 					break;
 				case "BLOCKFLIPPARAMETER":
@@ -1121,8 +1124,19 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockGripLocationComponent:
 					template = this.readBlockGripLocationComponent();
 					break;
-				case "BLOCKFLIPACTION":
+				case DxfFileToken.ObjectBlockRotationGrip:
+					template = new CadBlockRotationGripTemplate();
+					this.readBlockGrip(template as CadBlockRotationGripTemplate);
+					break;
+				case DxfFileToken.ObjectBlockVisibilityGrip:
+					template = new CadBlockVisibilityGripTemplate();
+					this.readBlockGrip(template as CadBlockVisibilityGripTemplate);
+					break;
+				case DxfFileToken.ObjectBlockFlipAction:
 					template = this.readBlockFlipAction();
+					break;
+				case DxfFileToken.ObjectBlockRotateAction:
+					template = this.readBlockRotateAction();
 					break;
 				case "SPATIAL_FILTER":
 					template = this.readSpatialFilter();
@@ -1228,30 +1242,6 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadBlockActionTemplate readBlockAction(CadBlockActionTemplate template)
-		{
-
-			this.readBlockElement(template);
-
-			BlockAction blockAction = template.BlockAction;
-
-			// 1010, 1020, 1030
-			blockAction.ActionPoint = this._mergedReaders.Read3BitDouble();
-
-			//71
-			short entityCount = this._objectReader.ReadBitShort();
-			for (int i = 0; i < entityCount; i++)
-			{
-				ulong entityHandle = this.handleReference();
-				template.EntityHandles.Add(entityHandle);
-			}
-
-			// 70
-			blockAction.Value70 = this._mergedReaders.ReadBitShort();
-
-			return template;
-		}
-
 		private CadTemplate readSpatialFilter()
 		{
 			SpatialFilter filter = new SpatialFilter();
@@ -1315,9 +1305,8 @@ namespace ACadSharp.IO.DWG
 			return identity;
 		}
 
-		private CadBlockFlipActionTemplate readBlockFlipAction()
+		private CadTemplate readBlockFlipAction()
 		{
-
 			BlockFlipAction blockFlipAction = new BlockFlipAction();
 			CadBlockFlipActionTemplate template = new CadBlockFlipActionTemplate(blockFlipAction);
 
@@ -1332,7 +1321,6 @@ namespace ACadSharp.IO.DWG
 			// 95
 			blockFlipAction.Value95 = this._mergedReaders.ReadBitLong();
 
-
 			// 301
 			blockFlipAction.Caption301 = this._mergedReaders.ReadVariableText();
 			// 302
@@ -1341,52 +1329,6 @@ namespace ACadSharp.IO.DWG
 			blockFlipAction.Caption303 = this._mergedReaders.ReadVariableText();
 			// 304
 			blockFlipAction.Caption304 = this._mergedReaders.ReadVariableText();
-
-			return template;
-		}
-
-		private CadBlock2PtParameterTemplate readBlock2PtParameter(CadBlockFlipParameterTemplate template)
-		{
-
-			this.readBlockParameter(template);
-
-			Block2PtParameter block2PtParameter = template.Block2PtParameter;
-
-			//1010, 1020, 1030
-			block2PtParameter.FirstPoint = this._mergedReaders.Read3BitDouble();
-
-			//1011, 1021, 1031
-			block2PtParameter.SecondPoint = this._mergedReaders.Read3BitDouble();
-
-			//	Found in DXF
-			//170 BS  4
-			//91  BL  7
-			//91  BL  0
-			//91  BL  0
-			//91  BL  0
-			//171 BS  0
-			//172 BS  0
-			//173 BS  0
-			//174 BS  0
-			//177 BS  0
-			//	Guess, changed order
-			//	170 missing, seems to be the number of following 91-BLs (see below)
-			//	171
-			short s0 = this._mergedReaders.ReadBitShort();
-			//	172
-			short s1 = this._mergedReaders.ReadBitShort();
-			//	173
-			short s2 = this._mergedReaders.ReadBitShort();
-			//	174
-			short s3 = this._mergedReaders.ReadBitShort();
-
-			//	91 four times
-			int i0 = this._mergedReaders.ReadBitLong();
-			int i1 = this._mergedReaders.ReadBitLong();
-			int i2 = this._mergedReaders.ReadBitLong();
-			int i4 = this._mergedReaders.ReadBitLong();
-			//	177
-			short s4 = this._mergedReaders.ReadBitShort();
 
 			return template;
 		}

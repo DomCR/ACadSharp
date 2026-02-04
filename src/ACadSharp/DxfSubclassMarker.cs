@@ -26,6 +26,8 @@
 
 		public const string BlockAction = "AcDbBlockAction";
 
+		public const string BlockActionBasePt = "AcDbBlockActionWithBasePt";
+
 		public const string BlockBasePointParameter = "AcDbBlockBasePointParameter";
 
 		public const string BlockBegin = "AcDbBlockBegin";
@@ -51,6 +53,12 @@
 		public const string BlockRecord = "AcDbBlockTableRecord";
 
 		public const string BlockRepresentationData = "AcDbBlockRepresentationData";
+
+		public const string BlockRotationAction = "AcDbBlockRotationAction";
+
+		public const string BlockRotationGrip = "AcDbBlockRotationGrip";
+
+		public const string BlockRotationParameter = "AcDbBlockRotationParameter";
 
 		public const string BlockVisibilityGrip = "AcDbBlockVisibilityGrip";
 
