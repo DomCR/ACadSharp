@@ -26,10 +26,28 @@ namespace ACadSharp.Objects.Evaluations
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectBlockRotationParameter;
 
+		[DxfCodeValue(1011, 1021, 1031)]
+		public XYZ Point { get; set; }
+
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.BlockRotationParameter;
 
-		[DxfCodeValue(1011, 1021, 1031)]
-		public XYZ Point { get; set; }
+		[DxfCodeValue(141)]
+		public double Value141 { get; set; }
+
+		[DxfCodeValue(142)]
+		public double Value142 { get; set; }
+
+		[DxfCodeValue(143)]
+		public double Value143 { get; set; }
+
+		[DxfCodeValue(175)]
+		public int Value175 { get; set; }
+
+		[DxfCodeValue(307)]
+		public string Value307 { get; set; }
+
+		[DxfCodeValue(96)]
+		public int Value96 { get; set; }
 	}
 }

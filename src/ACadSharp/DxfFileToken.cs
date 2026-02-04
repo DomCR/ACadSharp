@@ -139,6 +139,7 @@
 		public const string ObjectBlockGripLocationComponent = "BLOCKGRIPLOCATIONCOMPONENT";
 		public const string ObjectBlockFlipParameter = "BLOCKFLIPPARAMETER";
 		public const string ObjectBlockFlipAction = "BLOCKFLIPACTION";
+		public const string ObjectBlockRotateAction = "BLOCKROTATEACTION";
 		public const string ObjectTableContent = "TABLECONTENT";
 		public const string ObjectGeoData = "GEODATA";
 		public const string ObjectGroup = "GROUP";

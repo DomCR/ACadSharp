@@ -121,6 +121,10 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<BlockVisibilityParameter>(new CadBlockVisibilityParameterTemplate(), this.readBlockVisibilityParameter);
 				case DxfFileToken.ObjectBlockRotationParameter:
 					return this.readObjectCodes<BlockRotationParameter>(new CadBlockRotationParameterTemplate(), this.readBlockRotationParameter);
+				case DxfFileToken.ObjectBlockRotationGrip:
+					return this.readObjectCodes<BlockRotationGrip>(new CadBlockRotationGripTemplate(), this.readBlockRotationGrip);
+				case DxfFileToken.ObjectBlockRotateAction:
+					return this.readObjectCodes<BlockRotationAction>(new CadBlockRotationActionTemplate(), this.readBlockRotationAction);
 				default:
 					DxfMap map = DxfMap.Create<CadObject>();
 					CadUnknownNonGraphicalObjectTemplate unknownEntityTemplate = null;
@@ -1871,6 +1875,51 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		private bool readBlockAction(CadTemplate template, DxfMap map)
+		{
+			CadBlockActionTemplate tmp = template as CadBlockActionTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockAction]))
+					{
+						return this.readBlockElement(template, map);
+					}
+					return true;
+			}
+		}
+
+		private bool readBlockActionBasePt(CadTemplate template, DxfMap map)
+		{
+			CadBlockActionBasePtTemplate tmp = template as CadBlockActionBasePtTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockActionBasePt]))
+					{
+						return this.readBlockAction(template, map);
+					}
+					return true;
+			}
+		}
+
+		private bool readBlockRotationAction(CadTemplate template, DxfMap map)
+		{
+			CadBlockRotationActionTemplate tmp = template as CadBlockRotationActionTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockRotationAction]))
+					{
+						return this.readBlockActionBasePt(template, map);
+					}
+					return true;
+			}
+		}
+
 		private bool readBlockParameter(CadTemplate template, DxfMap map)
 		{
 			CadBlockParameterTemplate tmp = template as CadBlockParameterTemplate;
@@ -2025,6 +2074,21 @@ namespace ACadSharp.IO.DXF
 					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockGrip]))
 					{
 						return this.readBlockElement(template, map);
+					}
+					return true;
+			}
+		}
+
+		private bool readBlockRotationGrip(CadTemplate template, DxfMap map)
+		{
+			CadBlockRotationGripTemplate tmp = template as CadBlockRotationGripTemplate;
+
+			switch (this._reader.Code)
+			{
+				default:
+					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockRotationGrip]))
+					{
+						return this.readBlockGrip(template, map);
 					}
 					return true;
 			}
