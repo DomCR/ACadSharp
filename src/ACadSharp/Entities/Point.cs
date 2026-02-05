@@ -1,0 +1,80 @@
+﻿using ACadSharp.Attributes;
+using CSMath;
+
+namespace ACadSharp.Entities
+{
+	/// <summary>
+	/// Represents a <see cref="Point"/> entity.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.EntityPoint"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.Point"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.EntityPoint)]
+	[DxfSubClass(DxfSubclassMarker.Point)]
+	public class Point : Entity
+	{
+		/// <summary>
+		/// Point location(in WCS)
+		/// </summary>
+		[DxfCodeValue(10, 20, 30)]
+		public XYZ Location { get; set; } = XYZ.Zero;
+
+		/// <summary>
+		/// Specifies the three-dimensional normal unit vector for the object.
+		/// </summary>
+		[DxfCodeValue(210, 220, 230)]
+		public XYZ Normal { get; set; } = XYZ.AxisZ;
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityPoint;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.POINT;
+
+		/// <summary>
+		/// Specifies the rotation angle for the object.
+		/// </summary>
+		/// <value>
+		/// The rotation angle in radians.
+		/// </value>
+		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+		public double Rotation { get; set; } = 0.0;
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.Point;
+
+		/// <summary>
+		/// Specifies the distance a 2D object is extruded above or below its elevation.
+		/// </summary>
+		[DxfCodeValue(39)]
+		public double Thickness { get; set; } = 0.0;
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public Point() : base() { }
+
+		/// <summary>
+		/// Create a point in a specific location
+		/// </summary>
+		/// <param name="location"></param>
+		public Point(XYZ location) : base()
+		{
+			this.Location = location;
+		}
+
+		/// <inheritdoc/>
+		public override void ApplyTransform(Transform transform)
+		{
+			this.Location = transform.ApplyTransform(this.Location);
+			this.Normal = this.transformNormal(transform, this.Normal);
+		}
+
+		/// <inheritdoc/>
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox(this.Location);
+		}
+	}
+}

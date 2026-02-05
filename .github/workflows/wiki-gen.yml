@@ -1,0 +1,21 @@
+name: Wiki generator
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      run: git config --global core.autocrlf true
+    - uses: actions/checkout@v2
+      with: 
+        submodules: true
+    - name: Update Wiki
+      run: ./update-wiki.sh
+      shell: bash
+      env:
+        ASSEMBLY_PATH: "ACadSharp/bin/Release/net9.0/ACadSharp.dll"
+        GITHUB_TOKEN: ${{ github.token }}

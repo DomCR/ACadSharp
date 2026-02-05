@@ -1,0 +1,114 @@
+﻿using ACadSharp.Attributes;
+
+namespace ACadSharp.Classes
+{
+	public class DxfClass
+	{
+		/// <summary>
+		/// Application name.
+		/// Posted in Alert box when a class definition listed in this section is not currently loaded.
+		/// </summary>
+		[DxfCodeValue(3)]
+		public string ApplicationName { get; set; } = "ObjectDBX Classes";
+
+		/// <summary>
+		/// Class number.
+		/// </summary>
+		public short ClassNumber { get; set; }
+
+		/// <summary>
+		/// C++ class name.
+		/// Used to bind with software that defines object class behavior; always unique.
+		/// </summary>
+		[DxfCodeValue(2)]
+		public string CppClassName { get; set; }
+
+		public ACadVersion DwgVersion { get; set; }
+
+		/// <summary>
+		/// Class DXF record name; always unique.
+		/// </summary>
+		[DxfCodeValue(1)]
+		public string DxfName { get; set; }
+
+		/// <summary>
+		/// Instance count for a custom class.
+		/// </summary>
+		[DxfCodeValue(91)]
+		public int InstanceCount { get; set; }
+
+		/// <summary>
+		/// Is-an-entity flag.
+		/// Set to 1 if class was derived from the AcDbEntity class and can reside in the BLOCKS or ENTITIES section.
+		/// If 0, instances may appear only in the OBJECTS section
+		/// </summary>
+		[DxfCodeValue(281)]
+		public bool IsAnEntity
+		{
+			get => this._isAnEntity;
+			set
+			{
+				if (value)
+				{
+					this._itemClassId = 0x1F2;
+				}
+				else
+				{
+					this._itemClassId = 0x1F3;
+				}
+
+				this._isAnEntity = value;
+			}
+		}
+
+		/// <summary>
+		/// Item class id.
+		/// </summary>
+		/// <remarks>
+		/// Only effective for dwg.
+		/// </remarks>
+		public short ItemClassId
+		{
+			get => this._itemClassId;
+			set
+			{
+				if (value == 0x1F2)
+				{
+					this._isAnEntity = true;
+				}
+				else
+				{
+					this._isAnEntity = false;
+				}
+
+				this._itemClassId = value;
+			}
+		}
+
+		/// <summary>
+		/// Proxy capabilities flag.
+		/// Bit-coded value that indicates the capabilities of this object as a proxy.
+		/// </summary>
+		[DxfCodeValue(90)]
+		public ProxyFlags ProxyFlags { get; set; }
+
+		/// <summary>
+		/// Was-a-proxy flag.
+		/// Set to 1 if class was not loaded when this DXF file was created, and 0 otherwise.
+		/// </summary>
+		[DxfCodeValue(280)]
+		public bool WasZombie { get; set; }
+
+		internal short MaintenanceVersion { get; set; }
+
+		private bool _isAnEntity;
+
+		private short _itemClassId;
+
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return $"{this.DxfName}:{this.ClassNumber}";
+		}
+	}
+}
