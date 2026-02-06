@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
+using ACadSharp.Entities.AecObjects;
 using ACadSharp.Exceptions;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
@@ -1026,8 +1027,19 @@ namespace ACadSharp.IO.DWG
 
 			switch (c.DxfName)
 			{
-				case "AEC_WALL":
+				case DxfFileToken.EntityAecWall:
 					template = this.readAecWall();
+					break;
+				case "ACAECBINRECORD":
+				case "AcAecBinRecord":
+				case DxfFileToken.ObjectBinRecord:  // Add this variant
+					template = this.readBinRecord();
+					break;
+				case DxfFileToken.ObjectAecWallStyle:
+					template = this.readAecWallStyle();
+					break;
+				case DxfFileToken.ObjectAecCleanupGroupDef:
+					template = this.readAecCleanupGroup();
 					break;
 				case "ACDBDICTIONARYWDFLT":
 					template = this.readDictionaryWithDefault();
@@ -3099,16 +3111,188 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private CadTemplate readBinRecord()
+		{
+			AecBinRecord binRecord = new AecBinRecord();
+			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(binRecord);
+
+			this.readCommonNonEntityData(template);
+
+			try
+			{
+				// Version information (common in binary record formats)
+				if (this.R2000Plus)
+				{
+					binRecord.Version = this._mergedReaders.ReadBitLong();
+				}
+
+				// Calculate remaining data
+				long currentPos = this._mergedReaders.PositionInBits();
+
+				this._builder.Notify(
+					$"BinRecord: Handle reader at position {currentPos}, " +
+					$"BinRecord Handle: {binRecord.Handle:X}",
+					NotificationType.None);
+
+				long endPos = this._objectInitialPos + (this._size * 8);
+				long remainingBits = endPos - currentPos;
+
+				if (remainingBits > 0)
+				{
+					int remainingBytes = (int)(remainingBits / 8);
+
+					if (remainingBytes > 0)
+					{
+						binRecord.BinaryData = this._mergedReaders.ReadBytes(remainingBytes);
+
+						this._builder.Notify(
+							$"BinRecord: Read {remainingBytes} bytes of binary data. " +
+							$"Version: {binRecord.Version}, Handle: {binRecord.Handle:X}",
+							NotificationType.None);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				this._builder.Notify(
+					$"Error reading AcAecBinRecord [Handle: {binRecord.Handle}]: {ex.Message}",
+					NotificationType.Error,
+					ex);
+			}
+
+			return template;
+		}
+
 		private CadTemplate readAecWall()
 		{
 			Wall wall = new();
-			CadEntityTemplate template = new CadEntityTemplate(wall);
+			CadWallTemplate template = new CadWallTemplate(wall);
 
 			this.readCommonEntityData(template);
 
-#if TEST
-			Dictionary<string, object> objValues = DwgStreamReaderBase.Explore(this._mergedReaders);
-#endif
+			try
+			{
+				// Version information (common in AEC objects)
+				if (this.R2000Plus)
+				{
+					wall.Version = this._mergedReaders.ReadBitLong();
+				}
+
+				// Read standard handles
+				this.handleReference(); // skip 0 handle
+				template.StyleHandle = this.handleReference(); // Should be AEC_WALL_STYLE
+				template.CleanupGroupHandle = this.handleReference(); // Should be AEC_CLEANUP_GROUP_DEF
+
+				long objectPos = this._objectReader.PositionInBits();
+				long handlesPos = this._handlesReader.PositionInBits();
+				long objectDataSize = handlesPos - objectPos;
+
+				// Store raw proprietary data
+				if (objectDataSize > 0)
+				{
+					int dataBytes = (int)(objectDataSize / 8);
+					if (objectDataSize % 8 != 0) dataBytes++;
+
+					byte[] rawData = this._objectReader.ReadBytes(dataBytes);
+					template.RawData = rawData;
+				}
+
+				// search in the rawData
+			}
+			catch (Exception ex)
+			{
+				this._builder.Notify(
+					$"Error reading AEC_WALL entity [Handle: {wall.Handle:X}]: {ex.Message}",
+					NotificationType.Error,
+					ex);
+			}
+
+			return template;
+		}
+
+		private CadTemplate readAecWallStyle()
+		{
+			AecWallStyle wallStyle = new AecWallStyle();
+			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(wallStyle);
+
+			this.readCommonNonEntityData(template);
+
+			try
+			{
+				// Version information (common in AEC objects)
+				if (this.R2000Plus)
+				{
+					wallStyle.Version = this._mergedReaders.ReadBitLong();
+				}
+
+				// Description field (common in AEC style objects)  
+				wallStyle.Description = this._mergedReaders.ReadVariableText();
+
+				long currentPos = this._mergedReaders.PositionInBits();
+				long endPos = this._objectInitialPos + (this._size * 8);
+				long remainingBits = endPos - currentPos;
+
+				// Store any remaining data as proprietary binary data for future analysis
+				if (remainingBits > 0)
+				{
+					int remainingBytes = (int)(remainingBits / 8);
+					if (remainingBytes > 0)
+					{
+						wallStyle.RawData = this._mergedReaders.ReadBytes(remainingBytes);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				this._builder.Notify(
+					$"Error reading AEC_WALL_STYLE [Handle: {wallStyle.Handle:X}]: {ex.Message}\n" +
+					$"Position: {this._mergedReaders.PositionInBits()} bits",
+					NotificationType.Error,
+					ex);
+			}
+
+			return template;
+		}
+
+		private CadTemplate readAecCleanupGroup()
+		{
+			AecCleanupGroup cleanupGroup = new AecCleanupGroup();
+			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(cleanupGroup);
+
+			this.readCommonNonEntityData(template);
+
+			try
+			{
+				// Version information (common in AEC objects)
+				if (this.R2000Plus)
+				{
+					cleanupGroup.Version = this._mergedReaders.ReadBitLong();
+				}
+
+				cleanupGroup.Description = this._mergedReaders.ReadVariableText();
+
+				// Calculate remaining data to read as binary
+				long currentPos = this._mergedReaders.PositionInBits();
+				long endPos = this._objectInitialPos + (this._size * 8);
+				long remainingBits = endPos - currentPos;
+
+				// Read any remaining proprietary data
+				if (remainingBits > 0)
+				{
+					int remainingBytes = (int)(remainingBits / 8);
+					if (remainingBytes > 0)
+					{
+						cleanupGroup.RawData = this._mergedReaders.ReadBytes(remainingBytes);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				this._builder.Notify(
+					$"Error reading AEC_CLEANUP_GROUP [Handle: {cleanupGroup.Handle:X}]: {ex.Message}",
+					NotificationType.Error,
+					ex);
+			}
 
 			return template;
 		}
@@ -7105,7 +7289,7 @@ namespace ACadSharp.IO.DWG
 			return false;
 		}
 
-		#endregion Object readers
+#endregion Object readers
 
 		private CadTemplate readDbColor()
 		{

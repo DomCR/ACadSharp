@@ -4,7 +4,9 @@ using CSUtilities.Converters;
 using CSUtilities.IO;
 using CSUtilities.Text;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -128,6 +130,221 @@ namespace ACadSharp.IO.DWG
 			{
 				reader.SetPositionInBits(pos);
 			}
+		}
+#endif
+
+#if TEST
+		public static Dictionary<string, object> ExploreSequential(IDwgStreamReader reader, int maxBytes = 100)
+		{
+			Dictionary<string, object> values = new Dictionary<string, object>();
+			long startPos = reader.PositionInBits();
+
+			try
+			{
+				// Read raw bytes first to see the actual data
+				var rawBytes = new List<byte>();
+				for (int i = 0; i < maxBytes && reader.Stream.Position < reader.Stream.Length; i++)
+				{
+					rawBytes.Add(reader.ReadByte());
+				}
+				values.Add("RawBytes", string.Join(" ", rawBytes.Select(b => b.ToString("X2"))));
+
+				// Reset and try to interpret sequentially
+				reader.SetPositionInBits(startPos);
+
+				var interpretations = new List<string>();
+				int offset = 0;
+
+				// Try reading as different patterns
+				while (offset < Math.Min(rawBytes.Count, 50))
+				{
+					reader.SetPositionInBits(startPos + (offset * 8));
+
+					try
+					{
+						// Try as BD (BitDouble)
+						var bd = reader.ReadBitDouble();
+						if (!double.IsNaN(bd) && !double.IsInfinity(bd) && Math.Abs(bd) < 1e10)
+						{
+							interpretations.Add($"Offset {offset}: BD = {bd}");
+						}
+
+						// Reset and try as BL (BitLong)
+						reader.SetPositionInBits(startPos + (offset * 8));
+						var bl = reader.ReadBitLong();
+						interpretations.Add($"Offset {offset}: BL = {bl}");
+
+						// Reset and try as 3BD (3 BitDoubles)
+						reader.SetPositionInBits(startPos + (offset * 8));
+						var xyz = reader.Read3BitDouble();
+						if (!double.IsNaN(xyz.X) && !double.IsInfinity(xyz.X))
+						{
+							interpretations.Add($"Offset {offset}: 3BD = ({xyz.X}, {xyz.Y}, {xyz.Z})");
+						}
+					}
+					catch { }
+
+					offset++;
+				}
+
+				values.Add("Interpretations", interpretations);
+			}
+			finally
+			{
+				reader.SetPositionInBits(startPos);
+			}
+
+			return values;
+		}
+
+		public static List<string> ExploreBruteForceExtended(IDwgStreamReader reader,
+			double expectedWidth = 240,
+			double expectedHeight = 3000,
+			double expectedLength = 10286)
+		{
+			var findings = new List<string>();
+			long startPos = reader.PositionInBits();
+
+			// Define expected values
+			XYZ expectedStart = new XYZ(566, 22014, 0);
+			XYZ expectedEnd = new XYZ(566, 32300, 0);
+
+			// Calculate what we might find
+			double deltaY = expectedEnd.Y - expectedStart.Y; // 10286
+			double deltaX = expectedEnd.X - expectedStart.X; // 0
+
+			findings.Add("=== SEARCHING FOR EXPECTED VALUES ===");
+			findings.Add($"Expected Width: {expectedWidth}");
+			findings.Add($"Expected Height: {expectedHeight}");
+			findings.Add($"Expected Length: {expectedLength}");
+			findings.Add($"Expected Start: ({expectedStart.X}, {expectedStart.Y}, {expectedStart.Z})");
+			findings.Add($"Expected End: ({expectedEnd.X}, {expectedEnd.Y}, {expectedEnd.Z})");
+			findings.Add($"Expected Delta Y: {deltaY}");
+			findings.Add("");
+
+			// Expanded search range
+			int maxSearchBytes = 400;
+
+			for (int offset = 0; offset < maxSearchBytes; offset++)
+			{
+				reader.SetPositionInBits(startPos + (offset * 8));
+
+				try
+				{
+					// Try BitDouble (most common in DWG)
+					var bd = reader.ReadBitDouble();
+
+					// Check for exact matches
+					if (Math.Abs(bd - expectedWidth) < 0.01)
+					{
+						findings.Add($"✓ FOUND Width (BD) at byte {offset}: {bd}");
+					}
+					else if (Math.Abs(bd - expectedHeight) < 0.01)
+					{
+						findings.Add($"✓ FOUND Height (BD) at byte {offset}: {bd}");
+					}
+					else if (Math.Abs(bd - expectedLength) < 0.01)
+					{
+						findings.Add($"✓ FOUND Length (BD) at byte {offset}: {bd}");
+					}
+					else if (Math.Abs(bd - expectedStart.X) < 0.01)
+					{
+						findings.Add($"✓ FOUND Start.X (BD) at byte {offset}: {bd}");
+					}
+					else if (Math.Abs(bd - expectedStart.Y) < 0.01)
+					{
+						findings.Add($"✓ FOUND Start.Y (BD) at byte {offset}: {bd}");
+					}
+					else if (Math.Abs(bd - expectedEnd.Y) < 0.01)
+					{
+						findings.Add($"✓ FOUND End.Y (BD) at byte {offset}: {bd}");
+					}
+					else if (Math.Abs(bd - deltaY) < 0.01)
+					{
+						findings.Add($"✓ FOUND Delta Y (BD) at byte {offset}: {bd}");
+					}
+
+					// Try as 3BD (3 BitDoubles for point)
+					reader.SetPositionInBits(startPos + (offset * 8));
+					var xyz = reader.Read3BitDouble();
+
+					// Check if any coordinate matches
+					if (Math.Abs(xyz.X - expectedStart.X) < 0.01 &&
+						Math.Abs(xyz.Y - expectedStart.Y) < 0.01)
+					{
+						findings.Add($"✓ FOUND StartPoint (3BD) at byte {offset}: ({xyz.X}, {xyz.Y}, {xyz.Z})");
+					}
+					else if (Math.Abs(xyz.X - expectedEnd.X) < 0.01 &&
+							 Math.Abs(xyz.Y - expectedEnd.Y) < 0.01)
+					{
+						findings.Add($"✓ FOUND EndPoint (3BD) at byte {offset}: ({xyz.X}, {xyz.Y}, {xyz.Z})");
+					}
+					// Check individual coordinates
+					else if (Math.Abs(xyz.X - expectedStart.X) < 0.01 ||
+							 Math.Abs(xyz.Y - expectedStart.Y) < 0.01 ||
+							 Math.Abs(xyz.X - expectedEnd.X) < 0.01 ||
+							 Math.Abs(xyz.Y - expectedEnd.Y) < 0.01)
+					{
+						findings.Add($"? Partial match (3BD) at byte {offset}: ({xyz.X}, {xyz.Y}, {xyz.Z})");
+					}
+
+					// Try as raw double (RD)
+					reader.SetPositionInBits(startPos + (offset * 8));
+					var rd = reader.ReadDouble();
+
+					if (Math.Abs(rd - expectedWidth) < 0.01)
+					{
+						findings.Add($"✓ FOUND Width (RD) at byte {offset}: {rd}");
+					}
+					else if (Math.Abs(rd - expectedHeight) < 0.01)
+					{
+						findings.Add($"✓ FOUND Height (RD) at byte {offset}: {rd}");
+					}
+					else if (Math.Abs(rd - expectedLength) < 0.01)
+					{
+						findings.Add($"✓ FOUND Length (RD) at byte {offset}: {rd}");
+					}
+					else if (Math.Abs(rd - expectedStart.Y) < 0.01)
+					{
+						findings.Add($"✓ FOUND Start.Y (RD) at byte {offset}: {rd}");
+					}
+					else if (Math.Abs(rd - expectedEnd.Y) < 0.01)
+					{
+						findings.Add($"✓ FOUND End.Y (RD) at byte {offset}: {rd}");
+					}
+				}
+				catch { }
+			}
+
+			if (findings.Count <= 7) // Only the header lines
+			{
+				findings.Add("");
+				findings.Add("❌ NO MATCHES FOUND");
+				findings.Add("");
+				findings.Add("The data might be:");
+				findings.Add("1. Stored in millimeters instead of your expected units");
+				findings.Add("2. Located beyond the 400-byte search range");
+				findings.Add("3. Stored as relative coordinates/deltas");
+				findings.Add("4. Part of a more complex data structure");
+				findings.Add("");
+				findings.Add("Let's dump the first 100 bytes as hex to analyze manually:");
+
+				reader.SetPositionInBits(startPos);
+				var hexDump = new StringBuilder();
+				for (int i = 0; i < 100 && reader.Stream.Position < reader.Stream.Length; i++)
+				{
+					if (i % 16 == 0)
+					{
+						if (i > 0) hexDump.AppendLine();
+						hexDump.Append($"{i:X4}: ");
+					}
+					hexDump.Append($"{reader.ReadByte():X2} ");
+				}
+				findings.Add(hexDump.ToString());
+			}
+
+			reader.SetPositionInBits(startPos);
+			return findings;
 		}
 #endif
 
