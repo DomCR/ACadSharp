@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
+using ACadSharp.Entities.AecObjects;
 using ACadSharp.Exceptions;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
@@ -1026,6 +1027,9 @@ namespace ACadSharp.IO.DWG
 
 			switch (c.DxfName)
 			{
+				case "AEC_WALL":
+					template = this.readAecWall();
+					break;
 				case "ACDBDICTIONARYWDFLT":
 					template = this.readDictionaryWithDefault();
 					break;
@@ -3092,6 +3096,20 @@ namespace ACadSharp.IO.DWG
 			xline.FirstPoint = this._objectReader.Read3BitDouble();
 			//3 RD : another point
 			xline.Direction = this._objectReader.Read3BitDouble();
+
+			return template;
+		}
+
+		private CadTemplate readAecWall()
+		{
+			Wall wall = new();
+			CadEntityTemplate template = new CadEntityTemplate(wall);
+
+			this.readCommonEntityData(template);
+
+#if TEST
+			Dictionary<string, object> objValues = DwgStreamReaderBase.Explore(this._mergedReaders);
+#endif
 
 			return template;
 		}
