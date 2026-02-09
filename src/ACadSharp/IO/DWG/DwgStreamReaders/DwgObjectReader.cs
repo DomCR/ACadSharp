@@ -3276,8 +3276,6 @@ namespace ACadSharp.IO.DWG
 				//Registered application H Hard pointer
 				ulong appHandle = this.handleReference();
 
-				//TODO: finish Mtext reader, save redundant fields??
-
 				//Attachment point BL
 				AttachmentPointType attachmentPoint = (AttachmentPointType)this._objectReader.ReadBitLong();
 				//X - axis dir 3BD 10
@@ -3295,28 +3293,28 @@ namespace ACadSharp.IO.DWG
 				//END REDUNDANT FIELDS
 
 				//Column type BS 71 0 = No columns, 1 = static columns, 2 = dynamic columns
-				mtext.Column.ColumnType = (ColumnType)this._objectReader.ReadBitShort();
+				mtext.ColumnData.ColumnType = (ColumnType)this._objectReader.ReadBitShort();
 				//IF Has Columns data(column type is not 0)
-				if (mtext.Column.ColumnType != ColumnType.NoColumns)
+				if (mtext.ColumnData.ColumnType != ColumnType.NoColumns)
 				{
 					//Column height count BL 72
-					int count = this._objectReader.ReadBitLong();
+					mtext.ColumnData.ColumnCount = this._objectReader.ReadBitLong();
 					//Columnn width BD 44
-					mtext.Column.ColumnWidth = this._objectReader.ReadBitDouble();
+					mtext.ColumnData.Width = this._objectReader.ReadBitDouble();
 					//Gutter BD 45
-					mtext.Column.ColumnGutter = this._objectReader.ReadBitDouble();
+					mtext.ColumnData.Gutter = this._objectReader.ReadBitDouble();
 					//Auto height? B 73
-					mtext.Column.ColumnAutoHeight = this._objectReader.ReadBit();
+					mtext.ColumnData.AutoHeight = this._objectReader.ReadBit();
 					//Flow reversed? B 74
-					mtext.Column.ColumnFlowReversed = this._objectReader.ReadBit();
+					mtext.ColumnData.FlowReversed = this._objectReader.ReadBit();
 
 					//IF not auto height and column type is dynamic columns
-					if (!mtext.Column.ColumnAutoHeight && mtext.Column.ColumnType == ColumnType.DynamicColumns && count > 0)
+					if (!mtext.ColumnData.AutoHeight && mtext.ColumnData.ColumnType == ColumnType.DynamicColumns && mtext.ColumnData.ColumnCount > 0)
 					{
-						for (int i = 0; i < count; ++i)
+						for (int i = 0; i < mtext.ColumnData.ColumnCount; ++i)
 						{
 							//Column height BD 46
-							mtext.Column.ColumnHeights.Add(this._objectReader.ReadBitDouble());
+							mtext.ColumnData.Heights.Add(this._objectReader.ReadBitDouble());
 						}
 					}
 				}

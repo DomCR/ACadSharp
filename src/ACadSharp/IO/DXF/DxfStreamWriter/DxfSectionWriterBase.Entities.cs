@@ -848,6 +848,34 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(11, mtext.AlignmentPoint, map);
 
 			this._writer.Write(210, mtext.Normal, map);
+
+			if (!mtext.HasColumns || this.Version < ACadVersion.AC1032)
+			{
+				return;
+			}
+
+			this._writer.Write(101, "Embedded Object");
+			this._writer.Write(70, (short)1);
+
+			this._writer.Write(10, mtext.AlignmentPoint);
+			this._writer.Write(11, mtext.InsertPoint);
+
+			this._writer.Write(40, mtext.RectangleWidth);
+			this._writer.Write(41, mtext.RectangleHeight);
+			this._writer.Write(42, mtext.HorizontalWidth);
+			this._writer.Write(43, mtext.VerticalHeight);
+
+			this._writer.Write(71, (short)mtext.ColumnData.ColumnType);
+			this._writer.Write(72, (short)mtext.ColumnData.ColumnCount);
+			this._writer.Write(44, mtext.ColumnData.Width);
+			this._writer.Write(45, mtext.ColumnData.Gutter);
+			this._writer.Write(73, mtext.ColumnData.AutoHeight ? (short)1 : (short)0);
+			this._writer.Write(74, mtext.ColumnData.FlowReversed ? (short)1 : (short)0);
+
+			foreach (double h in mtext.ColumnData.Heights)
+			{
+				this._writer.Write(46, h);
+			}
 		}
 
 		private void writeMultiLeader(MultiLeader multiLeader)
