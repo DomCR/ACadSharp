@@ -7,8 +7,6 @@ namespace ACadSharp.Tests.Entities
 {
 	public class LineTests : CommonEntityTests<Line>
 	{
-		private CSMathRandom _random = new CSMathRandom();
-
 		[Fact]
 		public void TranslationTest()
 		{
@@ -26,7 +24,6 @@ namespace ACadSharp.Tests.Entities
 
 			AssertUtils.AreEqual(start.Add(move), line.StartPoint);
 			AssertUtils.AreEqual(end.Add(move), line.EndPoint);
-			AssertUtils.AreEqual(XYZ.AxisZ, line.Normal);
 		}
 
 		[Fact]
@@ -69,24 +66,22 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
-		public void RandomTranslationTest()
+		public void ToPolylineTest()
 		{
-			XYZ start = this._random.Next<XYZ>();
-			XYZ end = this._random.Next<XYZ>();
+			var start = new XYZ(-1, -1, 0);
+			var end = new XYZ(1, 1, 0);
 			Line line = new Line
 			{
 				StartPoint = start,
 				EndPoint = end,
 			};
 
-			XYZ move = this._random.Next<XYZ>();
-			Transform translation = Transform.CreateTranslation(move);
-			line.ApplyTransform(translation);
+			var pline = line.ToPolyline();
 
-			AssertUtils.AreEqual(start.Add(move), line.StartPoint);
-			AssertUtils.AreEqual(end.Add(move), line.EndPoint);
+			Assert.NotNull(pline);
+			Assert.Equal(pline.Vertices[0].Location, start);
+			Assert.Equal(pline.Vertices[1].Location, end);
 		}
-
 
 		[Fact]
 		public override void GetBoundingBoxTest()

@@ -16,7 +16,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntitySpline)]
 	[DxfSubClass(DxfSubclassMarker.Spline)]
-	public class Spline : Entity
+	public class Spline : Entity, IPolylineEquivalent
 	{
 		/// <summary>
 		/// Number of control points (in WCS).
@@ -285,25 +285,35 @@ namespace ACadSharp.Entities
 			this.prepare(out XYZ[] controlPts, out double[] weights, out double[] knots);
 			this.getStartAndEndKnots(knots, out double uStart, out double uEnd);
 
-			if (!this.IsClosed && !this.IsPeriodic)
-			{
-				precision -= 1;
-			}
-
 			double uDelta = (uEnd - uStart) / precision;
-
 			for (int i = 0; i < precision; i++)
 			{
 				double u = uStart + uDelta * i;
 				vertexes.Add(c(controlPts, weights, knots, this.Degree, u));
 			}
 
-			if (!(this.IsClosed || this.IsPeriodic))
+			return vertexes;
+		}
+
+		public Polyline3D ToPolyline(int precision = 255)
+		{
+			if (!this.ControlPoints.Any())
 			{
-				vertexes.Add(controlPts[controlPts.Length - 1]);
+				//Should not update the entity
+				if (!this.UpdateFromFitPoints())
+				{
+					return new Polyline3D(this.FitPoints);
+				}
 			}
 
-			return vertexes;
+			if (this.TryPolygonalVertexes(precision, out List<XYZ> pts))
+			{
+				var pline = new Polyline3D(pts);
+				//pline.IsClosed = this.IsClosed;
+				return pline;
+			}
+
+			return new Polyline3D();
 		}
 
 		/// <summary>
@@ -441,13 +451,12 @@ namespace ACadSharp.Entities
 					double currEndDelta = endDelta;
 					endDelta = endMag * (endTangent - lastV2).ToEnumerable().Sum(v => v * v);
 
-					if ((startDelta >= currStartDelta && endDelta >= currEndDelta)
-						|| --iterationLimit <= 0)
+					if (startDelta >= currStartDelta && endDelta >= currEndDelta)
 					{
 						return false;
 					}
 				}
-				while (startDelta + endDelta > MathHelper.Epsilon);
+				while (startDelta + endDelta > MathHelper.Epsilon && --iterationLimit > 0);
 
 				this.ControlPoints.AddRange(controlPoints);
 			}
@@ -706,7 +715,7 @@ namespace ACadSharp.Entities
 		}
 
 		private static void take3<T>(T[] pts, bool reverse, out T pt1, out T pt2, out T pt3)
-																					where T : struct
+			where T : struct
 		{
 			if (reverse)
 			{
@@ -724,12 +733,7 @@ namespace ACadSharp.Entities
 
 		private void getStartAndEndKnots(double[] knots, out double uStart, out double uEnd)
 		{
-			if (this.IsClosed)
-			{
-				uStart = knots[0];
-				uEnd = knots[knots.Length - 1];
-			}
-			else if (this.IsPeriodic)
+			if (this.IsPeriodic)
 			{
 				uStart = knots[this.Degree];
 				uEnd = knots[knots.Length - this.Degree - 1];
@@ -791,12 +795,7 @@ namespace ACadSharp.Entities
 			double uEnd;
 			List<XYZ> vertexes = new List<XYZ>();
 
-			if (this.IsClosed)
-			{
-				uStart = knots[0];
-				uEnd = knots[knots.Length - 1];
-			}
-			else if (this.IsPeriodic)
+			if (this.IsPeriodic)
 			{
 				uStart = knots[this.Degree];
 				uEnd = knots[knots.Length - this.Degree - 1];
