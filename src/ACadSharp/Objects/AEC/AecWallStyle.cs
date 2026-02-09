@@ -11,8 +11,8 @@ namespace ACadSharp.Objects
 	/// These objects are stored in the DWG file and referenced by wall entities.
 	/// Object name: AEC_WALL_STYLE
 	/// </remarks>
-	[DxfName("AEC_WALL_STYLE")]
-	[DxfSubClass("AecDbWallStyle")]
+	[DxfName(DxfFileToken.ObjectAecWallStyle)]
+	[DxfSubClass(DxfSubclassMarker.AecDbWallStyle)]
 	public class AecWallStyle : NonGraphicalObject
 	{
 

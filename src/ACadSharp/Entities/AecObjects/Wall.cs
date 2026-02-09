@@ -91,8 +91,8 @@ namespace ACadSharp.Entities.AecObjects
 		/// End position of the wall.
 		/// </summary>
 		public XYZ EndPoint { get; set; } = XYZ.Zero;
-		public XYZ Normal { get; internal set; }
-		public double Height { get; internal set; }
+		public XYZ Normal { get; set; }
+		public double Height { get; set; }
 		public byte[] RawData { get; internal set; }
 
 		public override void ApplyTransform(Transform transform)

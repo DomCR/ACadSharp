@@ -1030,8 +1030,6 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.EntityAecWall:
 					template = this.readAecWall();
 					break;
-				case "ACAECBINRECORD":
-				case "AcAecBinRecord":
 				case DxfFileToken.ObjectBinRecord:  // Add this variant
 					template = this.readBinRecord();
 					break;
@@ -3118,46 +3116,36 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			try
+			// Version information (common in binary record formats)
+			if (this.R2000Plus)
 			{
-				// Version information (common in binary record formats)
-				if (this.R2000Plus)
-				{
-					binRecord.Version = this._mergedReaders.ReadBitLong();
-				}
-
-				// Calculate remaining data
-				long currentPos = this._mergedReaders.PositionInBits();
-
-				this._builder.Notify(
-					$"BinRecord: Handle reader at position {currentPos}, " +
-					$"BinRecord Handle: {binRecord.Handle:X}",
-					NotificationType.None);
-
-				long endPos = this._objectInitialPos + (this._size * 8);
-				long remainingBits = endPos - currentPos;
-
-				if (remainingBits > 0)
-				{
-					int remainingBytes = (int)(remainingBits / 8);
-
-					if (remainingBytes > 0)
-					{
-						binRecord.BinaryData = this._mergedReaders.ReadBytes(remainingBytes);
-
-						this._builder.Notify(
-							$"BinRecord: Read {remainingBytes} bytes of binary data. " +
-							$"Version: {binRecord.Version}, Handle: {binRecord.Handle:X}",
-							NotificationType.None);
-					}
-				}
+				binRecord.Version = this._mergedReaders.ReadBitLong();
 			}
-			catch (Exception ex)
+
+			// Calculate remaining data
+			long currentPos = this._mergedReaders.PositionInBits();
+
+			this._builder.Notify(
+				$"BinRecord: Handle reader at position {currentPos}, " +
+				$"BinRecord Handle: {binRecord.Handle:X}",
+				NotificationType.None);
+
+			long endPos = this._objectInitialPos + (this._size * 8);
+			long remainingBits = endPos - currentPos;
+
+			if (remainingBits > 0)
 			{
-				this._builder.Notify(
-					$"Error reading AcAecBinRecord [Handle: {binRecord.Handle}]: {ex.Message}",
-					NotificationType.Error,
-					ex);
+				int remainingBytes = (int)(remainingBits / 8);
+
+				if (remainingBytes > 0)
+				{
+					binRecord.BinaryData = this._mergedReaders.ReadBytes(remainingBytes);
+
+					this._builder.Notify(
+						$"BinRecord: Read {remainingBytes} bytes of binary data. " +
+						$"Version: {binRecord.Version}, Handle: {binRecord.Handle:X}",
+						NotificationType.None);
+				}
 			}
 
 			return template;

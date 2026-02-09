@@ -10,8 +10,8 @@ namespace ACadSharp.Objects
 	/// how walls join and interact with each other at intersections and endpoints.
 	/// Object name: AEC_CLEANUP_GROUP
 	/// </remarks>
-	[DxfName("AEC_CLEANUP_GROUP")]
-	[DxfSubClass("AecDbCleanupGroup")]
+	[DxfName(DxfFileToken.ObjectAecCleanupGroupDef)]
+	[DxfSubClass(DxfSubclassMarker.AecDbCleanupGroupDef)]
 	public class AecCleanupGroup : NonGraphicalObject
 	{
 		/// <inheritdoc/>
