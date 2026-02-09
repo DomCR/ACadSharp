@@ -3276,8 +3276,6 @@ namespace ACadSharp.IO.DWG
 				//Registered application H Hard pointer
 				ulong appHandle = this.handleReference();
 
-				//TODO: finish Mtext reader, save redundant fields??
-
 				//Attachment point BL
 				AttachmentPointType attachmentPoint = (AttachmentPointType)this._objectReader.ReadBitLong();
 				//X - axis dir 3BD 10
@@ -3302,21 +3300,21 @@ namespace ACadSharp.IO.DWG
 					//Column height count BL 72
 					mtext.ColumnData.ColumnCount = this._objectReader.ReadBitLong();
 					//Columnn width BD 44
-					mtext.ColumnData.ColumnWidth = this._objectReader.ReadBitDouble();
+					mtext.ColumnData.Width = this._objectReader.ReadBitDouble();
 					//Gutter BD 45
-					mtext.ColumnData.ColumnGutter = this._objectReader.ReadBitDouble();
+					mtext.ColumnData.Gutter = this._objectReader.ReadBitDouble();
 					//Auto height? B 73
-					mtext.ColumnData.ColumnAutoHeight = this._objectReader.ReadBit();
+					mtext.ColumnData.AutoHeight = this._objectReader.ReadBit();
 					//Flow reversed? B 74
-					mtext.ColumnData.ColumnFlowReversed = this._objectReader.ReadBit();
+					mtext.ColumnData.FlowReversed = this._objectReader.ReadBit();
 
 					//IF not auto height and column type is dynamic columns
-					if (!mtext.ColumnData.ColumnAutoHeight && mtext.ColumnData.ColumnType == ColumnType.DynamicColumns && mtext.ColumnData.ColumnCount > 0)
+					if (!mtext.ColumnData.AutoHeight && mtext.ColumnData.ColumnType == ColumnType.DynamicColumns && mtext.ColumnData.ColumnCount > 0)
 					{
 						for (int i = 0; i < mtext.ColumnData.ColumnCount; ++i)
 						{
 							//Column height BD 46
-							mtext.ColumnData.ColumnHeights.Add(this._objectReader.ReadBitDouble());
+							mtext.ColumnData.Heights.Add(this._objectReader.ReadBitDouble());
 						}
 					}
 				}

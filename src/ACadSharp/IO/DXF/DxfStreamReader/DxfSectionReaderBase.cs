@@ -706,16 +706,16 @@ namespace ACadSharp.IO.DXF
 					case 43:
 						break;
 					case 44:
-						mtext.ColumnData.ColumnWidth = this._reader.ValueAsDouble;
+						mtext.ColumnData.Width = this._reader.ValueAsDouble;
 						break;
 					case 45:
-						mtext.ColumnData.ColumnGutter = this._reader.ValueAsDouble;
+						mtext.ColumnData.Gutter = this._reader.ValueAsDouble;
 						break;
 					case 73:
-						mtext.ColumnData.ColumnAutoHeight = this._reader.ValueAsBool;
+						mtext.ColumnData.AutoHeight = this._reader.ValueAsBool;
 						break;
 					case 74:
-						mtext.ColumnData.ColumnFlowReversed = this._reader.ValueAsBool;
+						mtext.ColumnData.FlowReversed = this._reader.ValueAsBool;
 						break;
 					default:
 						this._builder.Notify($"[MText.ColumnData] unkown dxf code {this._reader.Code}.", NotificationType.None);

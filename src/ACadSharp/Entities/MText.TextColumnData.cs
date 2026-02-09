@@ -23,31 +23,31 @@ namespace ACadSharp.Entities
 			/// Gets or sets a value indicating whether flow is reversed
 			/// </summary>
 			[DxfCodeValue(74)]
-			public bool ColumnFlowReversed { get; set; }
+			public bool FlowReversed { get; set; }
 
 			/// <summary>
 			/// Gets or sets a value indicating whether height is automatic
 			/// </summary>
 			[DxfCodeValue(73)]
-			public bool ColumnAutoHeight { get; set; }
+			public bool AutoHeight { get; set; }
 
 			/// <summary>
 			/// Width of the column.
 			/// </summary>
 			[DxfCodeValue(44)]
-			public double ColumnWidth { get; set; }
+			public double Width { get; set; }
 
 			/// <summary>
 			/// Column gutter.
 			/// </summary>
 			[DxfCodeValue(45)]
-			public double ColumnGutter { get; set; }
+			public double Gutter { get; set; }
 
 			/// <summary>
 			/// Column heights.
 			/// </summary>
 			[DxfCodeValue(46)]
-			public List<double> ColumnHeights { get; } = new List<double>();
+			public List<double> Heights { get; } = new List<double>();
 
 			public TextColumnData Clone()
 			{

@@ -2333,18 +2333,18 @@ namespace ACadSharp.IO.DWG
 				//Column height count BL 72
 				this._writer.WriteBitLong(mtext.ColumnData.ColumnCount);
 				//Columnn width BD 44
-				this._writer.WriteBitDouble(mtext.ColumnData.ColumnWidth);
+				this._writer.WriteBitDouble(mtext.ColumnData.Width);
 				//Gutter BD 45
-				this._writer.WriteBitDouble(mtext.ColumnData.ColumnGutter);
+				this._writer.WriteBitDouble(mtext.ColumnData.Gutter);
 				//Auto height? B 73
-				this._writer.WriteBit(mtext.ColumnData.ColumnAutoHeight);
+				this._writer.WriteBit(mtext.ColumnData.AutoHeight);
 				//Flow reversed? B 74
-				this._writer.WriteBit(mtext.ColumnData.ColumnFlowReversed);
+				this._writer.WriteBit(mtext.ColumnData.FlowReversed);
 
 				//IF not auto height and column type is dynamic columns
-				if (!mtext.ColumnData.ColumnAutoHeight && mtext.ColumnData.ColumnType == ColumnType.DynamicColumns)
+				if (!mtext.ColumnData.AutoHeight && mtext.ColumnData.ColumnType == ColumnType.DynamicColumns)
 				{
-					foreach (double h in mtext.ColumnData.ColumnHeights)
+					foreach (double h in mtext.ColumnData.Heights)
 					{
 						//Column height BD 46
 						this._writer.WriteBitDouble(h);
