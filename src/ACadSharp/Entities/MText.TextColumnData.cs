@@ -5,53 +5,53 @@ namespace ACadSharp.Entities
 {
 	public partial class MText
 	{
-		public class TextColumn
+		public class TextColumnData
 		{
 			/// <summary>
 			/// Text column type
 			/// </summary>
-			[DxfCodeValue(75)]
+			[DxfCodeValue(71)]
 			public ColumnType ColumnType { get; set; } = ColumnType.NoColumns;
 
 			/// <summary>
 			/// Number of columns
 			/// </summary>
-			[DxfCodeValue(76)]
-			public int ColumnCount { get { return this.ColumnHeights.Count; } }
+			[DxfCodeValue(72)]
+			public int ColumnCount { get; set; }
 
 			/// <summary>
 			/// Gets or sets a value indicating whether flow is reversed
 			/// </summary>
-			[DxfCodeValue(78)]
+			[DxfCodeValue(74)]
 			public bool ColumnFlowReversed { get; set; }
 
 			/// <summary>
 			/// Gets or sets a value indicating whether height is automatic
 			/// </summary>
-			[DxfCodeValue(79)]
+			[DxfCodeValue(73)]
 			public bool ColumnAutoHeight { get; set; }
 
 			/// <summary>
 			/// Width of the column.
 			/// </summary>
-			[DxfCodeValue(48)]
+			[DxfCodeValue(44)]
 			public double ColumnWidth { get; set; }
 
 			/// <summary>
 			/// Column gutter.
 			/// </summary>
-			[DxfCodeValue(49)]
+			[DxfCodeValue(45)]
 			public double ColumnGutter { get; set; }
 
 			/// <summary>
 			/// Column heights.
 			/// </summary>
-			[DxfCodeValue(50)]
+			[DxfCodeValue(46)]
 			public List<double> ColumnHeights { get; } = new List<double>();
 
-			public TextColumn Clone()
+			public TextColumnData Clone()
 			{
-				return this.MemberwiseClone() as TextColumn;
+				return this.MemberwiseClone() as TextColumnData;
 			}
 		}
 	}
