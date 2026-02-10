@@ -95,6 +95,7 @@ namespace ACadSharp.Entities
 		public Polyline() : base()
 		{
 			this.Vertices = new SeqendCollection<T>(this);
+			this.Vertices.OnAdd += this.onAddVertices;
 		}
 
 		public Polyline(IEnumerable<T> vertices, bool isClosed) : this()
@@ -212,6 +213,16 @@ namespace ACadSharp.Entities
 		{
 			this.Document.UnregisterCollection(this.Vertices);
 			base.UnassignDocument();
+		}
+
+		private void onAddVertices(object sender, CollectionChangedEventArgs e)
+		{
+			if (!(e.Item is Entity entity))
+			{
+				return;
+			}
+
+			this.MatchProperties(entity);
 		}
 	}
 }
