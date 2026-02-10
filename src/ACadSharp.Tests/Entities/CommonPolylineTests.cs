@@ -84,18 +84,16 @@ namespace ACadSharp.Tests.Entities
 		[Fact]
 		public void OnAddVertexShouldMatchProperties()
 		{
-			// Arrange
 			var polyline = new T();
-			var layer = new Layer("test_layer");
-			polyline.Layer = layer;
+			polyline.Layer = new Layer("test_layer");
+			polyline.LineType = new LineType("test_ltype");
 
 			var vertex = new R();
 
-			// Act
 			polyline.Vertices.Add(vertex);
 
-			// Assert
-			Assert.Equal(layer, vertex.Layer);
+			Assert.Equal(polyline.Layer.Name, vertex.Layer.Name);
+			Assert.Equal(polyline.LineType.Name, vertex.LineType.Name);
 		}
 
 		protected T createPolyline(IEnumerable<R> vertices)
