@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
 using CSMath;
 using System;
@@ -80,6 +81,30 @@ namespace ACadSharp.Tests.Entities
 			Assert.True(polyline.Flags.HasFlag(PolylineFlags.ClosedPolygonMeshInN));
 		}
 
+		[Fact]
+		public void OnAddVertexShouldMatchProperties()
+		{
+			// Arrange
+			var polyline = new T();
+			var layer = new Layer("test_layer");
+			polyline.Layer = layer;
+
+			var vertex = new R();
+
+			// Act
+			polyline.Vertices.Add(vertex);
+
+			// Assert
+			Assert.Equal(layer, vertex.Layer);
+		}
+
+		protected T createPolyline(IEnumerable<R> vertices)
+		{
+			T polyline = new T();
+			polyline.Vertices.AddRange(vertices);
+			return polyline;
+		}
+
 		protected IEnumerable<R> createVertices(int amount = 5)
 		{
 			List<R> vertices = new List<R>();
@@ -90,13 +115,6 @@ namespace ACadSharp.Tests.Entities
 				vertices.Add(v);
 			}
 			return vertices;
-		}
-
-		protected T createPolyline(IEnumerable<R> vertices)
-		{
-			T polyline = new T();
-			polyline.Vertices.AddRange(vertices);
-			return polyline;
 		}
 	}
 }
