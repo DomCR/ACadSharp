@@ -125,6 +125,10 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<BlockRotationGrip>(new CadBlockRotationGripTemplate(), this.readBlockRotationGrip);
 				case DxfFileToken.ObjectBlockRotateAction:
 					return this.readObjectCodes<BlockRotationAction>(new CadBlockRotationActionTemplate(), this.readBlockRotationAction);
+				case DxfFileToken.ObjectField:
+					return this.readObjectCodes<Field>(new CadFieldTemplate(new Field()), this.readField);
+				case DxfFileToken.ObjectFieldList:
+					return this.readObjectCodes<FieldList>(new CadNonGraphicalObjectTemplate(new Field()), this.readFieldList);
 				default:
 					DxfMap map = DxfMap.Create<CadObject>();
 					CadUnknownNonGraphicalObjectTemplate unknownEntityTemplate = null;
@@ -186,6 +190,43 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return template;
+		}
+
+		private bool readFieldList(CadTemplate template, DxfMap map)
+		{
+			switch (this._reader.Code)
+			{
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.FieldList]);
+			}
+		}
+
+		private bool readField(CadTemplate template, DxfMap map)
+		{
+			var tmp = template as CadFieldTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 6:
+				case 7:
+					readACadValue();
+					return true;
+				case 331:
+					tmp.CadObjectsHandles.Add(this._reader.ValueAsHandle);
+					return true;
+				case 360:
+					tmp.ChildrenHandles.Add(this._reader.ValueAsHandle);
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Field]);
+			}
+		}
+
+		private void readACadValue()
+		{
+			while (this._reader.Code != 304)
+			{
+			}
 		}
 
 		private bool readProxyObject(CadTemplate template, DxfMap map)
