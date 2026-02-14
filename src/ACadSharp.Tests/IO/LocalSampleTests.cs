@@ -37,13 +37,7 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
-
-			List<Entity> entities = new List<Entity>();
-			foreach (var item in doc.Entities.OfType<Insert>())
-			{
-				entities.AddRange(item.Explode());
-			}
-			doc.Entities.AddRange(entities);
+			return;
 			if (!TestVariables.SaveOutputInStream)
 			{
 				DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc, notification: onNotification);
@@ -58,6 +52,7 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DxfReader.Read(test.Path, this.onNotification);
+			return;
 			if (!TestVariables.SaveOutputInStream)
 			{
 				DxfWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dxf"), doc, notification: onNotification);

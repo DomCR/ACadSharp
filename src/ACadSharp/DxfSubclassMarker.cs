@@ -96,6 +96,10 @@
 
 		public const string Face3d = "AcDbFace";
 
+		public const string Field = "AcDbField";
+
+		public const string FieldList = "AcDbFieldList";
+
 		public const string Filter = "AcDbFilter";
 
 		public const string FormattedTableData = "AcDbFormattedTableData";

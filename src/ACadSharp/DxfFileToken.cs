@@ -117,6 +117,8 @@
 		public const string ObjectLayout = "LAYOUT";
 		public const string ObjectMLeaderStyle = "MLEADERSTYLE";
 		public const string ObjectImageDefinition = "IMAGEDEF";
+		public const string ObjectField = "FIELD";
+		public const string ObjectFieldList = "FIELDLIST";
 		public const string ObjectImageDefinitionReactor = "IMAGEDEF_REACTOR";
 		public const string ObjectMaterial = "MATERIAL";
 		public const string ObjectMLineStyle = "MLINESTYLE";
