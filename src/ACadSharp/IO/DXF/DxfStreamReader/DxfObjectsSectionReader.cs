@@ -86,7 +86,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.ObjectImageDefinitionReactor:
 					return this.readObjectCodes<ImageDefinitionReactor>(new CadNonGraphicalObjectTemplate(new ImageDefinitionReactor()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectProxyObject:
-					return this.readObjectCodes<ProxyObject>(new CadNonGraphicalObjectTemplate(new ProxyObject()), this.readProxyObject);
+					return this.readObjectCodes<ProxyObject>(new CadProxyObjectTemplate(), this.readProxyObject);
 				case DxfFileToken.ObjectRasterVariables:
 					return this.readObjectCodes<RasterVariables>(new CadNonGraphicalObjectTemplate(new RasterVariables()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectGroup:
@@ -207,9 +207,12 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				//98 Length of format string
+				case 98:
+					return true;
 				case 6:
 				case 7:
-					readACadValue();
+					this.readCadValue();
 					return true;
 				case 331:
 					tmp.CadObjectsHandles.Add(this._reader.ValueAsHandle);
@@ -222,15 +225,49 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readACadValue()
+		private void readCadValue()
 		{
+			this._reader.ReadNext();
+
+			CadValue value = new();
+			var map = DxfClassMap.Create(value.GetType(), "DATAMAP_VALUE");
+
 			while (this._reader.Code != 304)
 			{
+				switch (this._reader.Code)
+				{
+					case 11:
+					case 21:
+					case 31:
+						//Value as point
+						break;
+					case 91:
+					case 92:
+						//Value as int
+						break;
+					case 140:
+						//Value as double
+						break;
+					case 310:
+						//Value as byte array
+						break;
+					case 330:
+						break;
+					default:
+						if (!this.tryAssignCurrentValue(value, map))
+						{
+							this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readCadValue)} method.", NotificationType.None);
+						}
+						break;
+				}
+
+				this._reader.ReadNext();
 			}
 		}
 
 		private bool readProxyObject(CadTemplate template, DxfMap map)
 		{
+			CadProxyObjectTemplate tmp = template as CadProxyObjectTemplate;
 			ProxyObject proxy = template.CadObject as ProxyObject;
 
 			switch (this._reader.Code)
@@ -270,6 +307,12 @@ namespace ACadSharp.IO.DXF
 						proxy.Data = new MemoryStream();
 					}
 					proxy.Data.Write(this._reader.ValueAsBinaryChunk, 0, this._reader.ValueAsBinaryChunk.Length);
+					return true;
+				case 330:
+				case 340:
+				case 350:
+				case 360:
+					tmp.Entries.Add(this._reader.ValueAsHandle);
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.ProxyObject]);

@@ -129,13 +129,11 @@ public class Field : NonGraphicalObject
 
 	//Binary data(if data type of field value is binary)
 
-	//301
-	//Format string
+	[DxfCodeValue(301)]
+	public string FormatString { get; set; }
 
-	//9
-	//Overflow of format string
+	[DxfCodeValue(9)]
+	public string OverflowFormatString { get; set; }
 
-	//98
 
-	//Length of format string
 }

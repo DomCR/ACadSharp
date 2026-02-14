@@ -1,20 +1,94 @@
 ﻿using ACadSharp.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static ACadSharp.Entities.TableEntity;
 
 namespace ACadSharp;
+
+public enum CadValueType
+{
+	/// <summary>
+	/// Unknown
+	/// </summary>
+	Unknown = 0,
+	/// <summary>
+	/// 32 bit Long value
+	/// </summary>
+	Long = 1,
+	/// <summary>
+	/// Double value
+	/// </summary>
+	Double = 2,
+	/// <summary>
+	/// String value
+	/// </summary>
+	String = 4,
+	/// <summary>
+	/// Date value
+	/// </summary>
+	Date = 8,
+	/// <summary>
+	/// 2D point value
+	/// </summary>
+	Point2D = 0x10,
+	/// <summary>
+	/// 3D point value
+	/// </summary>
+	Point3D = 0x20,
+	/// <summary>
+	/// Object handle value
+	/// </summary>
+	Handle = 0x40,
+	/// <summary>
+	/// Buffer value
+	/// </summary>
+	Buffer = 0x80,
+	/// <summary>
+	/// Result buffer value
+	/// </summary>
+	ResultBuffer = 0x100,
+	/// <summary>
+	/// General
+	/// </summary>
+	General = 0x200
+}
+
+public enum CadValueUnitType
+{
+	/// <summary>
+	/// No units.
+	/// </summary>
+	NoUnits = 0,
+	/// <summary>
+	/// Distance.
+	/// </summary>
+	Distance = 1,
+	/// <summary>
+	/// Angle.
+	/// </summary>
+	Angle = 2,
+	/// <summary>
+	/// Area.
+	/// </summary>
+	Area = 4,
+	/// <summary>
+	/// Volumne.
+	/// </summary>
+	Volume = 8,
+	/// <summary>
+	/// Currency.
+	/// </summary>
+	Currency = 0x10,
+	/// <summary>
+	/// Percentage.
+	/// </summary>
+	Percentage = 0x20
+}
 
 public class CadValue
 {
 	[DxfCodeValue(90)]
-	public CellValueType ValueType { get; set; }
+	public CadValueType ValueType { get; set; }
 
 	[DxfCodeValue(94)]
-	public ValueUnitType Units { get; set; }
+	public CadValueUnitType Units { get; set; }
 
 	[DxfCodeValue(93)]
 	public int Flags { get; set; }
@@ -38,9 +112,6 @@ public class CadValue
 		}
 	}
 
-	/// <summary>
-	/// Text string in a cell.
-	/// </summary>
 	[DxfCodeValue(1)]
 	public string Text { get; set; }
 
