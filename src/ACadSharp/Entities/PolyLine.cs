@@ -195,7 +195,7 @@ namespace ACadSharp.Entities
 					e = arc;
 				}
 
-				polyline.MatchProperties(e);
+				e.MatchProperties(polyline);
 
 				entities.Add(e);
 			}
@@ -222,7 +222,7 @@ namespace ACadSharp.Entities
 				return;
 			}
 
-			this.MatchProperties(entity);
+			entity.MatchProperties(this);
 		}
 	}
 }

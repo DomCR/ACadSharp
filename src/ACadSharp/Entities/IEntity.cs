@@ -3,6 +3,15 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Defines the contract for a CAD entity, providing common properties and methods for graphical objects within a CAD
+	/// document.
+	/// </summary>
+	/// <remarks>The <see cref="IEntity"/> interface exposes standard attributes such as color, layer, linetype, line weight,
+	/// material, and transparency, as well as methods to resolve effective property values and to match properties with
+	/// another entity. Implementations are expected to represent geometric or drawable objects in a CAD environment. This
+	/// interface extends IHandledCadObject and IGeometricEntity, ensuring that all entities have unique handles and
+	/// geometric characteristics. Thread safety and mutability depend on the specific implementation.</remarks>
 	public interface IEntity : IHandledCadObject, IGeometricEntity
 	{
 		/// <summary>
@@ -14,6 +23,11 @@ namespace ACadSharp.Entities
 		/// Using an RGB value, you can choose from millions of colors.
 		/// </remarks>
 		Color Color { get; set; }
+
+		/// <summary>
+		/// Document where this element belongs.
+		/// </summary>
+		public CadDocument Document { get; }
 
 		/// <summary>
 		/// Specifies the visibility of an object or the application.
@@ -77,9 +91,11 @@ namespace ACadSharp.Entities
 		LineWeightType GetActiveLineWeightType();
 
 		/// <summary>
-		/// Match the properties of this entity with another entity.
+		/// Copies matching property values from the specified entity to the current object.
 		/// </summary>
-		/// <param name="entity"></param>
+		/// <remarks>Only properties with matching names and compatible types are considered for copying. Properties that
+		/// do not exist or are not compatible in either object are ignored.</remarks>
+		/// <param name="entity">The source entity whose property values will be matched and copied. Cannot be null.</param>
 		void MatchProperties(IEntity entity);
 	}
 }
