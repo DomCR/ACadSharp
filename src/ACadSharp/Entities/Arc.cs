@@ -26,6 +26,17 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 		public double EndAngle { get; set; } = Math.PI;
 
+		/// <summary>
+		/// Gets a value indicating whether the arc is oriented in a counterclockwise direction.
+		/// </summary>
+		public bool IsCounterClockWise
+		{
+			get
+			{
+				return this.Sweep < 0;
+			}
+		}
+
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityArc;
 
@@ -97,16 +108,8 @@ namespace ACadSharp.Entities
 			var startAngle = XYZ.AxisX.GetAngle2(start - center, Normal);
 			var endAngle = XYZ.AxisX.GetAngle2(end - center, Normal);
 
-			if (endAngle < startAngle)
-			{
-				this.StartAngle = endAngle;
-				this.EndAngle = startAngle;
-			}
-			else
-			{
-				this.StartAngle = startAngle;
-				this.EndAngle = endAngle;
-			}
+			this.StartAngle = endAngle;
+			this.EndAngle = startAngle;
 		}
 
 		/// <summary>

@@ -70,7 +70,7 @@ namespace ACadSharp.Entities
 
 		protected void matchAttributeProperties(AttributeBase src)
 		{
-			src.MatchProperties(this);
+			this.MatchProperties(src);
 
 			this.Thickness = src.Thickness;
 			this.InsertPoint = src.InsertPoint;

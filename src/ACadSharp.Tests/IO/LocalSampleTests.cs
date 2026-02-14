@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -36,7 +37,13 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
-			return;
+
+			List<Entity> entities = new List<Entity>();
+			foreach (var item in doc.Entities.OfType<Insert>())
+			{
+				entities.AddRange(item.Explode());
+			}
+			doc.Entities.AddRange(entities);
 			if (!TestVariables.SaveOutputInStream)
 			{
 				DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc, notification: onNotification);

@@ -57,7 +57,7 @@ namespace ACadSharp.Extensions
 					e = arc;
 				}
 
-				polyline.MatchProperties(e);
+				e.MatchProperties(polyline);
 
 				entities.Add(e);
 			}
