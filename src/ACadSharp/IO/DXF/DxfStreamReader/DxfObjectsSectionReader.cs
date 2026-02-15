@@ -63,6 +63,8 @@ namespace ACadSharp.IO.DXF
 			{
 				case DxfFileToken.BlkRefObjectContextData:
 					return this.readObjectCodes<BlockReferenceObjectContextData>(new CadAnnotScaleObjectContextDataTemplate(new BlockReferenceObjectContextData()), this.readAnnotScaleObjectContextData);
+				case DxfFileToken.MTextAttributeObjectContextData:
+					return this.readObjectCodes<MTextAttributeObjectContextData>(new CadAnnotScaleObjectContextDataTemplate(new MTextAttributeObjectContextData()), this.readAnnotScaleObjectContextData);
 				case DxfFileToken.ObjectPlaceholder:
 					return this.readObjectCodes<AcdbPlaceHolder>(new CadNonGraphicalObjectTemplate(new AcdbPlaceHolder()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectDBColor:

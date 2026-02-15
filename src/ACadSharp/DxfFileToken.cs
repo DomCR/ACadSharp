@@ -173,6 +173,8 @@
 
 		public const string BlkRefObjectContextData = "ACDB_BLKREFOBJECTCONTEXTDATA_CLASS";
 
+		public const string MTextAttributeObjectContextData = "ACDB_MTEXTATTRIBUTEOBJECTCONTEXTDATA_CLASS";
+
 		public const string CustomData = "CUSTOMDATA";
 
 		public const string FormattedTableDataColumn_BEGIN = "FORMATTEDTABLEDATACOLUMN_BEGIN";
