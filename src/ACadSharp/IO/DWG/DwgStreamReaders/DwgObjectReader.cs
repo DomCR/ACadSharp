@@ -3588,6 +3588,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readAnnotScaleObjectContextData(CadAnnotScaleObjectContextDataTemplate template)
 		{
 			this.readObjectContextData(template);
+
 			template.ScaleHandle = this.handleReference();
 
 			return template;

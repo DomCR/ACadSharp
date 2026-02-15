@@ -7,7 +7,8 @@ namespace ACadSharp.Objects;
 [DxfSubClass(null, true)]
 public abstract class AnnotScaleObjectContextData : ObjectContextData
 {
-	[DxfCodeValue(DxfReferenceType.Handle, 340)]
+	//TODO: solve conflict with MultiLeaderObjectContextData
+	//[DxfCodeValue(DxfReferenceType.Handle, 340)]
 	public Scale Scale
 	{
 		get { return _scale; }
