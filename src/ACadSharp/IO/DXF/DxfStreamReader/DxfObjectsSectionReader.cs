@@ -61,6 +61,8 @@ namespace ACadSharp.IO.DXF
 			this.currentSubclass = string.Empty;
 			switch (this._reader.ValueAsString)
 			{
+				case DxfFileToken.BlkRefObjectContextData:
+					return this.readObjectCodes<BlockReferenceObjectContextData>(new CadAnnotScaleObjectContextDataTemplate(new BlockReferenceObjectContextData()), this.readAnnotScaleObjectContextData);
 				case DxfFileToken.ObjectPlaceholder:
 					return this.readObjectCodes<AcdbPlaceHolder>(new CadNonGraphicalObjectTemplate(new AcdbPlaceHolder()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectDBColor:
@@ -324,7 +326,34 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.Code)
 			{
 				default:
-					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
+					if (string.IsNullOrEmpty(this.currentSubclass))
+					{
+						return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
+					}
+					else
+					{
+						return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[this.currentSubclass]);
+					}
+			}
+		}
+
+		private bool readAnnotScaleObjectContextData(CadTemplate template, DxfMap map)
+		{
+			var tmp = template as CadAnnotScaleObjectContextDataTemplate;
+			switch (this._reader.Code)
+			{
+				case 340:
+					tmp.ScaleHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					if (string.IsNullOrEmpty(this.currentSubclass))
+					{
+						return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
+					}
+					else
+					{
+						return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[this.currentSubclass]);
+					}
 			}
 		}
 
