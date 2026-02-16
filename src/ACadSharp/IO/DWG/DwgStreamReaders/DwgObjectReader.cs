@@ -1156,6 +1156,12 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectTableStyle:
 					template = this.readTableStyle();
 					break;
+				case DxfFileToken.BlkRefObjectContextData:
+					template = this.readBlkRefObjectContextData();
+					break;
+				case DxfFileToken.MTextAttributeObjectContextData:
+					template = this.readMTextAttributeObjectContextData();
+					break;
 			}
 
 			if (template == null && c.IsAnEntity)
@@ -3565,31 +3571,6 @@ namespace ACadSharp.IO.DWG
 				//	295 Leader extended to text
 				mLeader.ExtendedToText = this._objectReader.ReadBit();
 			}
-
-			return template;
-		}
-
-		private CadTemplate readObjectContextData(CadTemplate template)
-		{
-			this.readCommonNonEntityData(template);
-			ObjectContextData contextData = (ObjectContextData)template.CadObject;
-
-			//BS	70	Version (default value is 3).
-			contextData.Version = _objectReader.ReadBitShort();
-			//B	-	Has file to extension dictionary (default value is true).
-			contextData.HasFileToExtensionDictionary = _objectReader.ReadBit();
-			//B	290	Default flag (default value is false).
-			contextData.Default = _objectReader.ReadBit();
-
-			return template;
-		}
-
-
-		private CadTemplate readAnnotScaleObjectContextData(CadAnnotScaleObjectContextDataTemplate template)
-		{
-			this.readObjectContextData(template);
-
-			template.ScaleHandle = this.handleReference();
 
 			return template;
 		}
