@@ -324,23 +324,11 @@ namespace ACadSharp.Entities
 					case Arc arc:
 						arc.GetEndVertices(out XYZ start, out XYZ end);
 
-						Arc a;
-						if (arc.IsCounterClockWise)
-						{
-							a = new Arc(
-								transform.ApplyTransform(arc.Center),
-								transform.ApplyTransform(end),
-								transform.ApplyTransform(start),
-								arc.Normal);
-						}
-						else
-						{
-							a = new Arc(
+						Arc a = new Arc(
 								transform.ApplyTransform(arc.Center),
 								transform.ApplyTransform(start),
 								transform.ApplyTransform(end),
 								arc.Normal);
-						}
 
 						a.MatchProperties(e);
 
