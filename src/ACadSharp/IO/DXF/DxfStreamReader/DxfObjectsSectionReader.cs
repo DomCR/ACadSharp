@@ -65,6 +65,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<AcdbPlaceHolder>(new CadNonGraphicalObjectTemplate(new AcdbPlaceHolder()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectDBColor:
 					return this.readObjectCodes<BookColor>(new CadNonGraphicalObjectTemplate(new BookColor()), this.readBookColor);
+				case DxfFileToken.ObjectDimensionAssociation:
+					return this.readObjectCodes<DimensionAssociation>(new CadDimensionAssociationTemplate(), this.readDimensionAssociation);
 				case DxfFileToken.ObjectDictionary:
 					return this.readObjectCodes<CadDictionary>(new CadDictionaryTemplate(), this.readDictionary);
 				case DxfFileToken.ObjectDictionaryWithDefault:
@@ -324,7 +326,14 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.Code)
 			{
 				case 330:
-					tmp.PaperSpaceBlockHandle = this._reader.ValueAsHandle;
+					if (template.OwnerHandle.HasValue)
+					{
+						tmp.PaperSpaceBlockHandle = this._reader.ValueAsHandle;
+					}
+					else
+					{
+						tmp.OwnerHandle = this._reader.ValueAsHandle;
+					}
 					return true;
 				case 331:
 					tmp.LasActiveViewportHandle = (this._reader.ValueAsHandle);
@@ -2196,6 +2205,31 @@ namespace ACadSharp.IO.DXF
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.DbColor]);
+			}
+		}
+
+		private bool readDimensionAssociation(CadTemplate template, DxfMap map)
+		{
+			CadDimensionAssociationTemplate tmp = template as CadDimensionAssociationTemplate;
+			DimensionAssociation dimassoc = tmp.CadObject;
+
+			switch (this._reader.Code)
+			{
+				case 330:
+					if (template.OwnerHandle.HasValue)
+					{
+						tmp.DimensionHandle = this._reader.ValueAsHandle;
+					}
+					else
+					{
+						tmp.OwnerHandle = this._reader.ValueAsHandle;
+					}
+					return true;
+				case 331:
+					tmp.GeometryHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
 		}
 

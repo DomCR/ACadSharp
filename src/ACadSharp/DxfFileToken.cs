@@ -109,6 +109,7 @@
 		public const string ObjectsSection = "OBJECTS";
 		public const string ObjectDictionary = "DICTIONARY";
 		public const string ObjectDictionaryWithDefault = "ACDBDICTIONARYWDFLT";
+		public const string ObjectDimensionAssociation = "DIMASSOC";
 		public const string ObjectProxyObject = "ACAD_PROXY_OBJECT";
 		public const string ObjectDictionaryVar = "DICTIONARYVAR";
 		public const string ObjectDBColor = "DBCOLOR";

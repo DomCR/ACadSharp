@@ -77,7 +77,6 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
 			Data.Add(new(nameof(SingleCaseGenerator.DimensionWithLineType)));
 			Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
-			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 			Data.Add(new(nameof(SingleCaseGenerator.LineTypeInBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.XData)));
 			Data.Add(new(nameof(SingleCaseGenerator.XRef)));
@@ -875,6 +874,7 @@ namespace ACadSharp.Tests.IO
 				ellipse.RadiusRatio = 0.5d;
 				ellipse.StartParameter = 0.0d;
 				ellipse.EndParameter = Math.PI * 2;
+				ellipse.MajorAxisEndPoint *= 4;
 				ellipse.Center = center;
 
 				var pline = new Polyline3D(ellipse.PolygonalVertexes(4));

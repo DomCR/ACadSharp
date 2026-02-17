@@ -1,11 +1,8 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Extensions;
 using ACadSharp.Objects;
-using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
-using ACadSharp.Tables.Collections;
 using ACadSharp.XData;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
