@@ -35,7 +35,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		MTextAttributeObjectContextData contextData = new();
 		CadAnnotScaleObjectContextDataTemplate template = new CadAnnotScaleObjectContextDataTemplate(contextData);
 
-		this.readAnnotScaleObjectContextData(template);
+		//this.readAnnotScaleObjectContextData(template);
 
 		return null;
 	}

@@ -571,6 +571,10 @@ namespace ACadSharp.IO.DXF
 				case TableStyle:
 				case ProxyObject:
 				case BlockRepresentationData:
+				case Field:
+				case FieldList:
+				case MTextAttributeObjectContextData:
+				case BlockReferenceObjectContextData:
 					this.notify($"Object not implemented : {co.GetType().FullName}", NotificationType.NotImplemented);
 					return false;
 				default:
