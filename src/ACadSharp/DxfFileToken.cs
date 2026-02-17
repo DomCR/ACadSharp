@@ -4,9 +4,8 @@
 	{
 		public const string BeginSection = "SECTION";
 
-		/// <summary>
-		/// Block references
-		/// </summary>
+		public const string BlkRefObjectContextData = "ACDB_BLKREFOBJECTCONTEXTDATA_CLASS";
+
 		public const string BlkRefToken = "{BLKREFS";
 
 		public const string Block = "BLOCK";
@@ -17,9 +16,8 @@
 
 		public const string ClassesSection = "CLASSES";
 
-		/// <summary>
-		/// Handle for the xdictionary
-		/// </summary>
+		public const string CustomData = "CUSTOMDATA";
+
 		public const string DictionaryToken = "{ACAD_XDICTIONARY";
 
 		public const string EndBlock = "ENDBLK";
@@ -30,46 +28,7 @@
 
 		public const string EndSequence = "SEQEND";
 
-		public const string HeaderSection = "HEADER";
-
-		/// <summary>
-		/// Object reactors, list of handles
-		/// </summary>
-		public const string ReactorsToken = "{ACAD_REACTORS";
-
-		public const string Undefined = "";
-
-		#region Tables
-
 		public const string EndTable = "ENDTAB";
-
-		public const string TableAppId = "APPID";
-
-		public const string TableBlockRecord = "BLOCK_RECORD";
-
-		public const string TableDimstyle = "DIMSTYLE";
-
-		public const string TableEntry = "TABLE";
-
-		public const string TableGroup = "GROUP";
-
-		public const string TableLayer = "LAYER";
-
-		public const string TableLinetype = "LTYPE";
-
-		public const string TablesSection = "TABLES";
-
-		public const string TableStyle = "STYLE";
-
-		public const string TableUcs = "UCS";
-
-		public const string TableView = "VIEW";
-
-		public const string TableVport = "VPORT";
-
-		#endregion Tables
-
-		#region Entities
 
 		public const string EntitiesSection = "ENTITIES";
 
@@ -167,16 +126,6 @@
 
 		public const string EntityXline = "XLINE";
 
-		#endregion Entities
-
-		#region Objects
-
-		public const string BlkRefObjectContextData = "ACDB_BLKREFOBJECTCONTEXTDATA_CLASS";
-
-		public const string MTextAttributeObjectContextData = "ACDB_MTEXTATTRIBUTEOBJECTCONTEXTDATA_CLASS";
-
-		public const string CustomData = "CUSTOMDATA";
-
 		public const string FormattedTableDataColumn_BEGIN = "FORMATTEDTABLEDATACOLUMN_BEGIN";
 
 		public const string FormattedTableDataColumn_END = "FORMATTEDTABLEDATACOLUMN_END";
@@ -184,6 +133,8 @@
 		public const string FormattedTableDataRow_BEGIN = "FORMATTEDTABLEDATAROW_BEGIN";
 
 		public const string FormattedTableDataRow_END = "FORMATTEDTABLEDATAROW_END";
+
+		public const string HeaderSection = "HEADER";
 
 		public const string LinkedTableDataCell_BEGIN = "LINKEDTABLEDATACELL_BEGIN";
 
@@ -196,6 +147,8 @@
 		public const string LinkedTableDataRow_BEGIN = "LINKEDTABLEDATAROW_BEGIN";
 
 		public const string LinkedTableDataRow_END = "LINKEDTABLEDATAROW_END";
+
+		public const string MTextAttributeObjectContextData = "ACDB_MTEXTATTRIBUTEOBJECTCONTEXTDATA_CLASS";
 
 		public const string ObjectBlockBasePointParameter = "BLOCKBASEPOINTPARAMETER";
 
@@ -275,7 +228,6 @@
 
 		public const string ObjectsSection = "OBJECTS";
 
-		//Table tokens
 		public const string ObjectTableColumn = "COLUMN";
 
 		public const string ObjectTableColumnBegin = "TABLECOLUMN_BEGIN";
@@ -296,6 +248,30 @@
 
 		public const string ObjectXRecord = "XRECORD";
 
-		#endregion Objects
+		public const string ReactorsToken = "{ACAD_REACTORS";
+
+		public const string TableAppId = "APPID";
+
+		public const string TableBlockRecord = "BLOCK_RECORD";
+
+		public const string TableDimstyle = "DIMSTYLE";
+
+		public const string TableEntry = "TABLE";
+
+		public const string TableGroup = "GROUP";
+
+		public const string TableLayer = "LAYER";
+
+		public const string TableLinetype = "LTYPE";
+
+		public const string TablesSection = "TABLES";
+
+		public const string TableStyle = "STYLE";
+
+		public const string TableUcs = "UCS";
+
+		public const string TableView = "VIEW";
+
+		public const string TableVport = "VPORT";
 	}
 }
