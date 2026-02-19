@@ -56,6 +56,7 @@
 		public const string EntitiesSection = "ENTITIES";
 		public const string Entity3DFace = "3DFACE";
 		public const string Entity3DSolid = "3DSOLID";
+		public const string EntityAecWall = "AEC_WALL";
 		public const string EntityProxyEntity = "ACAD_PROXY_ENTITY";
 		public const string EntityTable = "ACAD_TABLE";
 		public const string EntityArc = "ARC";
@@ -146,6 +147,9 @@
 		public const string ObjectTableStyle = "TABLESTYLE";
 		public const string ObjectCellStyleMap = "CELLSTYLEMAP";
 		public const string ObjectSpatialFilter = "SPATIAL_FILTER";
+		public const string ObjectBinRecord = "BINRECORD";
+		public const string ObjectAecWallStyle = "AEC_WALL_STYLE";
+		public const string ObjectAecCleanupGroupDef = "AEC_CLEANUP_GROUP_DEF";
 
 		//Table tokens
 		public const string ObjectTableColumn = "COLUMN";
