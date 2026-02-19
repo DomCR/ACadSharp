@@ -6,21 +6,21 @@ using System.Text;
 
 namespace ACadSharp.IO.DWG.DwgStreamWriters;
 
-internal class DwgFileHeaderWriterAC15 : DwgFileHeaderWriterBase
+internal class DwgFileHeaderWriterAC15 : DwgFileHeaderWriterBase<DwgFileHeaderAC15>
 {
+	public override int FileHeaderSize { get { return 0x61; } }
+
 	public override int HandleSectionOffset
 	{
 		get
 		{
-			return (int)(_fileHeaderSize
+			return (int)(FileHeaderSize
 				+ this._records[DwgSectionDefinition.AuxHeader].Stream.Length
 				+ this._records[DwgSectionDefinition.Preview].Stream.Length
 				+ this._records[DwgSectionDefinition.Header].Stream.Length
 				+ this._records[DwgSectionDefinition.Classes].Stream.Length);
 		}
 	}
-
-	protected override int _fileHeaderSize { get { return 0x61; } }
 
 	private const int _nRecords = 6;
 
@@ -68,7 +68,7 @@ internal class DwgFileHeaderWriterAC15 : DwgFileHeaderWriterBase
 
 	private void setSeekers()
 	{
-		var currOffset = this._fileHeaderSize;
+		var currOffset = this.FileHeaderSize;
 		foreach (var kv in this._records)
 		{
 			var record = kv.Value;
