@@ -4,6 +4,8 @@
 	{
 		public const string AcDbPlaceHolder = "AcDbPlaceHolder";
 
+		public const string AecWall = "AecDbWall";
+
 		public const string AlignedDimension = "AcDbAlignedDimension";
 
 		public const string Angular2LineDimension = "AcDb2LineAngularDimension";
