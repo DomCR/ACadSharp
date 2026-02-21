@@ -2325,26 +2325,26 @@ namespace ACadSharp.IO.DWG
 			//END REDUNDANT FIELDS
 
 			//Column type BS 71 0 = No columns, 1 = static columns, 2 = dynamic columns
-			this._writer.WriteBitShort((short)mtext.Column.ColumnType);
+			this._writer.WriteBitShort((short)mtext.ColumnData.ColumnType);
 
 			//IF Has Columns data(column type is not 0)
-			if (mtext.Column.ColumnType != ColumnType.NoColumns)
+			if (mtext.ColumnData.ColumnType != ColumnType.NoColumns)
 			{
 				//Column height count BL 72
-				this._writer.WriteBitLong(mtext.Column.ColumnCount);
+				this._writer.WriteBitLong(mtext.ColumnData.ColumnCount);
 				//Columnn width BD 44
-				this._writer.WriteBitDouble(mtext.Column.ColumnWidth);
+				this._writer.WriteBitDouble(mtext.ColumnData.Width);
 				//Gutter BD 45
-				this._writer.WriteBitDouble(mtext.Column.ColumnGutter);
+				this._writer.WriteBitDouble(mtext.ColumnData.Gutter);
 				//Auto height? B 73
-				this._writer.WriteBit(mtext.Column.ColumnAutoHeight);
+				this._writer.WriteBit(mtext.ColumnData.AutoHeight);
 				//Flow reversed? B 74
-				this._writer.WriteBit(mtext.Column.ColumnFlowReversed);
+				this._writer.WriteBit(mtext.ColumnData.FlowReversed);
 
 				//IF not auto height and column type is dynamic columns
-				if (!mtext.Column.ColumnAutoHeight && mtext.Column.ColumnType == ColumnType.DynamicColumns)
+				if (!mtext.ColumnData.AutoHeight && mtext.ColumnData.ColumnType == ColumnType.DynamicColumns)
 				{
-					foreach (double h in mtext.Column.ColumnHeights)
+					foreach (double h in mtext.ColumnData.Heights)
 					{
 						//Column height BD 46
 						this._writer.WriteBitDouble(h);
