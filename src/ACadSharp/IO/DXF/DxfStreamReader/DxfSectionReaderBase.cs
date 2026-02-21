@@ -149,6 +149,7 @@ namespace ACadSharp.IO.DXF
 
 		protected CadEntityTemplate readEntity()
 		{
+			this.currentSubclass = string.Empty;
 			switch (this._reader.ValueAsString)
 			{
 				case DxfFileToken.EntityAttribute:
@@ -1309,7 +1310,7 @@ namespace ACadSharp.IO.DXF
 		{
 			this._reader.ReadNext();
 
-			DxfMap map = DxfMap.Create<MultiLeaderObjectContextData>();
+			var map = DxfClassMap.Create<MultiLeaderObjectContextData>();
 			var contextData = template.CadObject as MultiLeaderObjectContextData;
 
 			bool end = false;
@@ -1327,7 +1328,7 @@ namespace ACadSharp.IO.DXF
 						template.TextStyleHandle = this._reader.ValueAsHandle;
 						break;
 					default:
-						if (!this.tryAssignCurrentValue(contextData, map.SubClasses[contextData.SubclassMarker]))
+						if (!this.tryAssignCurrentValue(contextData, map))
 						{
 							this._builder.Notify($"[AcDbMLeaderObjectContextData] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
 						}

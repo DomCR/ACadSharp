@@ -6,6 +6,40 @@ namespace ACadSharp.IO.DWG;
 
 internal partial class DwgObjectReader : DwgSectionIO
 {
+	private void readAnnotScaleObjectContextData(CadAnnotScaleObjectContextDataTemplate template)
+	{
+		this.readObjectContextData(template);
+
+		template.ScaleHandle = this.handleReference();
+	}
+
+	private CadTemplate readBlkRefObjectContextData()
+	{
+		BlockReferenceObjectContextData contextData = new BlockReferenceObjectContextData();
+		CadAnnotScaleObjectContextDataTemplate template = new CadAnnotScaleObjectContextDataTemplate(contextData);
+
+		this.readAnnotScaleObjectContextData(template);
+
+		contextData.Rotation = this._mergedReaders.ReadBitDouble();
+		contextData.InsertionPoint = this._mergedReaders.Read3BitDouble();
+		contextData.XScale = this._mergedReaders.ReadBitDouble();
+		contextData.YScale = this._mergedReaders.ReadBitDouble();
+		contextData.ZScale = this._mergedReaders.ReadBitDouble();
+
+		return template;
+	}
+
+	private CadTemplate readMTextAttributeObjectContextData()
+	{
+		//TODO: MTextAttributeObjectContextData for dwg
+		MTextAttributeObjectContextData contextData = new();
+		CadAnnotScaleObjectContextDataTemplate template = new CadAnnotScaleObjectContextDataTemplate(contextData);
+
+		//this.readAnnotScaleObjectContextData(template);
+
+		return null;
+	}
+
 	private void readBlock1PtParameter(CadBlock1PtParameterTemplate template)
 	{
 		this.readBlockParameter(template);
@@ -80,12 +114,12 @@ internal partial class DwgObjectReader : DwgSectionIO
 		BlockActionBasePt blockActionBasePt = template.CadObject as BlockActionBasePt;
 
 		blockActionBasePt.Value1011 = this._mergedReaders.Read3BitDouble();
-		
+
 		blockActionBasePt.Value92 = this._mergedReaders.ReadBitLong();
 		blockActionBasePt.Value301 = this._mergedReaders.ReadVariableText();
 		blockActionBasePt.Value93 = this._mergedReaders.ReadBitLong();
 		blockActionBasePt.Value302 = this._mergedReaders.ReadVariableText();
-		
+
 		blockActionBasePt.Value280 = this._mergedReaders.ReadBit();
 		blockActionBasePt.Value1012 = this._mergedReaders.Read3BitDouble();
 	}
@@ -158,7 +192,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		this.readBlockActionBasePt(template);
 
 		rotationAction.Value94 = this._mergedReaders.ReadBitLong();
-		rotationAction. Value303 = this._mergedReaders.ReadVariableText();
+		rotationAction.Value303 = this._mergedReaders.ReadVariableText();
 
 		return template;
 	}
@@ -255,6 +289,18 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		//90
 		template.CadObject.Id = this._objectReader.ReadBitLong();
+	}
+
+	private void readObjectContextData(CadTemplate template)
+	{
+		this.readCommonNonEntityData(template);
+
+		ObjectContextData contextData = (ObjectContextData)template.CadObject;
+
+		//BS	70	Version (default value is 3).
+		contextData.Version = _objectReader.ReadBitShort();
+		//B	290	Default flag (default value is false).
+		contextData.Default = _objectReader.ReadBit();
 	}
 
 	private CadBlockVisibilityParameterTemplate.StateTemplate readState()
