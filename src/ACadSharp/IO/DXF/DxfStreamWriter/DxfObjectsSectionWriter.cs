@@ -5,6 +5,7 @@ using CSMath;
 using CSUtilities.Converters;
 using System;
 using System.Linq;
+using System.Numerics;
 
 namespace ACadSharp.IO.DXF
 {
@@ -400,6 +401,12 @@ namespace ACadSharp.IO.DXF
 				case Layout layout:
 					this.writeLayout(layout);
 					break;
+				case Field field:
+					this.writeField(field);
+					break;
+				case FieldList fieldList:
+					this.writeFieldList(fieldList);
+					break;
 				case MLineStyle mlStyle:
 					this.writeMLineStyle(mlStyle);
 					break;
@@ -571,8 +578,6 @@ namespace ACadSharp.IO.DXF
 				case TableStyle:
 				case ProxyObject:
 				case BlockRepresentationData:
-				case Field:
-				case FieldList:
 				case MTextAttributeObjectContextData:
 				case BlockReferenceObjectContextData:
 					this.notify($"Object not implemented : {co.GetType().FullName}", NotificationType.NotImplemented);
@@ -580,6 +585,31 @@ namespace ACadSharp.IO.DXF
 				default:
 					return true;
 			}
+		}
+
+		private void writeField(Field field)
+		{
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Field);
+
+			this._writer.Write(1, field.EvaluatorId);
+
+			writeLongTextValue(2, 3, field.FieldCode);
+
+			throw new NotImplementedException();
+		}
+
+		private void writeFieldList(FieldList fieldList)
+		{
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.IdSet);
+
+			this._writer.Write(90, fieldList.Fields.Count);
+			foreach (Field field in fieldList.Fields)
+			{
+				this._writer.WriteHandle(330, field);
+				this.Holder.Objects.Enqueue(field);
+			}
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.FieldList);
 		}
 
 		private void writeImageDefinitionReactor(ImageDefinitionReactor reactor)

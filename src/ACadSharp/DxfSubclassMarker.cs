@@ -114,6 +114,8 @@
 
 		public const string Helix = "AcDbHelix";
 
+		public const string IdSet = "AcDbIdSet";
+
 		public const string Insert = "AcDbBlockReference";
 
 		public const string Layer = "AcDbLayerTableRecord";

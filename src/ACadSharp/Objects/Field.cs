@@ -4,48 +4,6 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Objects;
 
-[System.Flags]
-public enum EvaluationStatusFlags
-{
-	NotEvaluated = 1,
-
-	Success = 2,
-
-	EvaluatorNotFound = 4,
-
-	SyntaxError = 8,
-
-	InvalidCode = 0x10,
-
-	InvalidContext = 0x20,
-
-	OtherError = 0x40
-}
-
-[System.Flags]
-public enum FieldStateFlags
-{
-	Unknown = 0,
-
-	Initialized = 1,
-
-	Compiled = 2,
-
-	Modified = 4,
-
-	Evaluated = 8,
-
-	Cached = 16
-}
-
-[System.Flags]
-public enum FilingOptionFlags
-{
-	None = 0,
-
-	NoFieldResult = 1
-}
-
 /// <summary>
 /// Represents a <see cref="Field"/> object.
 /// </summary>
@@ -57,36 +15,55 @@ public enum FilingOptionFlags
 [DxfSubClass(DxfSubclassMarker.Field)]
 public class Field : NonGraphicalObject
 {
+	/// <summary>
+	/// Gets or sets the collection of CAD objects associated with this entity.
+	/// </summary>
 	[DxfCodeValue(DxfReferenceType.Count, 97)]
 	[DxfCollectionCodeValue(DxfReferenceType.Handle, 331)]
-	//Object ID used in the field code(AcDbSoftPointerId); repeats for the number of object IDs used in the field code
 	public List<CadObject> CadObjects { get; set; } = new();
 
+	/// <summary>
+	/// Gets the collection of child fields associated with this object.
+	/// </summary>
 	[DxfCodeValue(DxfReferenceType.Count, 90)]
 	[DxfCollectionCodeValue(DxfReferenceType.Handle, 360)]
-	//Child field ID(AcDbHardOwnershipId); repeats for number of children
-	public List<Field> Children { get; set; } = new();
+	public CadObjectCollection<Field> Children { get; private set; }
 
+	/// <summary>
+	/// Gets or sets the error code resulting from the evaluation process.
+	/// </summary>
 	[DxfCodeValue(96)]
 	public int EvaluationErrorCode { get; set; }
 
+	/// <summary>
+	/// Gets or sets the error message generated during evaluation.
+	/// </summary>
 	[DxfCodeValue(300)]
 	public string EvaluationErrorMessage { get; set; }
 
+	/// <summary>
+	/// Gets or sets the evaluation option flags that control how the associated expression is evaluated.
+	/// </summary>
 	[DxfCodeValue(91)]
 	public EvaluationOptionFlags EvaluationOptionFlags { get; set; }
 
+	/// <summary>
+	/// Gets or sets the evaluation status flags that indicate the current state of the object evaluation process.
+	/// </summary>
+	/// <remarks>These flags provide information about the outcome or progress of the evaluation, such as whether
+	/// the evaluation succeeded, failed, or is in progress. The specific meaning of each flag is defined by the
+	/// EvaluationStatusFlags enumeration.</remarks>
 	[DxfCodeValue(95)]
 	public EvaluationStatusFlags EvaluationStatusFlags { get; set; }
 
+	/// <summary>
+	/// Gets or sets the identifier of the evaluator associated with this entity.
+	/// </summary>
 	[DxfCodeValue(1)]
 	public string EvaluatorId { get; set; }
 
 	[DxfCodeValue(2)]
 	public string FieldCode { get; set; }
-
-	[DxfCodeValue(3)]
-	public string FieldCodeOverflow { get; set; }
 
 	[DxfCodeValue(94)]
 	public FieldStateFlags FieldStateFlags { get; set; }
@@ -94,46 +71,67 @@ public class Field : NonGraphicalObject
 	[DxfCodeValue(92)]
 	public FilingOptionFlags FilingOptionFlags { get; set; }
 
+	[DxfCodeValue(301)]
+	public string FormatString { get; set; }
+
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectField;
+
+	//Binary data(if data type of field value is binary)
+	[DxfCodeValue(9)]
+	public string OverflowFormatString { get; set; }
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.Field;
 
+	/// <inheritdoc/>
+	public Field() : base()
+	{
+		this.Children = new(this);
+	}
+
+	/// <summary>
+	/// Gets or sets the collection of CAD values associated with the field.
+	/// </summary>
 	[DxfCodeValue(DxfReferenceType.Count, 93)]
-	//Number of the data set in the field
-	public List<object> Values { get; set; } = new();
+	[DxfCollectionCodeValue(6)]
+	public Dictionary<string, CadValue> Values { get; private set; } = new(StringComparer.InvariantCultureIgnoreCase);
 
-	//6
-	//Key string for the field data; a key-field pair is repeated for the number of data sets in the field
-
-	//7
-	//Key string for the evaluated cache; this key is hard-coded as ACFD_FIELD_VALUE
+	[DxfCodeValue(7)]
+	public CadValue Value { get; set; }
 
 	//90
-
 	//Data type of field value
-	//140
 
+	//140
 	//Double value(if data type of field value is double)
 
 	//330
-
 	//ID value, AcDbSoftPointerId (if data type of field value is ID)
 
 	//92
-
 	//Binary data buffer size(if data type of field value is binary)
 
 	//310
-
 	//Binary data(if data type of field value is binary)
 
-	[DxfCodeValue(301)]
-	public string FormatString { get; set; }
+	//301	Format string
 
-	[DxfCodeValue(9)]
-	public string OverflowFormatString { get; set; }
+	//9	Overflow of format string
 
+	//98	Length of format string
 
+	internal override void AssignDocument(CadDocument doc)
+	{
+		base.AssignDocument(doc);
+
+		doc.RegisterCollection(this.Children);
+	}
+
+	internal override void UnassignDocument()
+	{
+		this.Document.UnregisterCollection(this.Children);
+
+		base.UnassignDocument();
+	}
 }
