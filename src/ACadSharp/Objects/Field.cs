@@ -98,7 +98,7 @@ public class Field : NonGraphicalObject
 	public Dictionary<string, CadValue> Values { get; private set; } = new(StringComparer.InvariantCultureIgnoreCase);
 
 	[DxfCodeValue(7)]
-	public CadValue Value { get; set; }
+	public CadValue Value { get; set; } = new();
 
 	//90
 	//Data type of field value
