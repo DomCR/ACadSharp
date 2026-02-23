@@ -151,6 +151,36 @@ internal partial class DwgObjectReader : DwgSectionIO
 		blockGrip.Value93 = this._mergedReaders.ReadBitLong();
 	}
 
+	private CadTemplate readFieldList()
+	{
+		FieldList fieldList = new FieldList();
+		CadFieldListTemplate template = new CadFieldListTemplate(fieldList);
+
+		this.readCommonNonEntityData(template);
+
+		//BL Number of fields
+		int nhandles = this._mergedReaders.ReadBitLong();
+		//B Unknown
+		this._mergedReaders.ReadBit();
+		for (int i = 0; i < nhandles; i++)
+		{
+			//H 330 Field handle (soft pointer)
+			template.OwnedObjectsHandlers.Add(this.handleReference());
+		}
+
+		return template;
+	}
+
+	private CadTemplate readField()
+	{
+		var field = new Field();
+		CadFieldTemplate template = new CadFieldTemplate(field);
+
+		this.readCommonNonEntityData(template);
+
+		return template;
+	}
+
 	private CadTemplate readBlockGripLocationComponent()
 	{
 		BlockGripExpression gripExpression = new BlockGripExpression();
