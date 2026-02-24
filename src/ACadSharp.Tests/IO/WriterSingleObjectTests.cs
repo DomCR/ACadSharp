@@ -36,6 +36,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByIndex)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityColorTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByIndex)));
+			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.LayerTrueColor)));
@@ -628,6 +629,11 @@ namespace ACadSharp.Tests.IO
 				layerstates.Add(record);
 
 				this.Document.Layers.Add(lay);
+			}
+
+			public void CurrentEntityByLayer()
+			{
+				this.Document.Header.CurrentEntityColor = Color.ByLayer;
 			}
 
 			public void CurrentEntityByBlock()
