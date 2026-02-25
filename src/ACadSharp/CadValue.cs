@@ -5,9 +5,6 @@ namespace ACadSharp;
 
 public class CadValue
 {
-	[DxfCodeValue(330)]
-	public CadObject CadObject { get; internal set; }
-
 	[DxfCodeValue(93)]
 	public int Flags { get; set; }
 
@@ -35,9 +32,6 @@ public class CadValue
 			}
 		}
 	}
-
-	[DxfCodeValue(11, 21, 31)]
-	public XYZ? PointValue { get; set; }
 
 	[DxfCodeValue(1)]
 	public string Text { get; set; }

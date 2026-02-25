@@ -376,10 +376,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 					break;
 				case CadValueType.General:
 				case CadValueType.String:
-					value.Value = this.readStringCellValue();
+					value.Value = this.readStringCadValue();
 					break;
 				case CadValueType.Date:
-					System.DateTime? dateTime = this.readDateCellValue();
+					System.DateTime? dateTime = this.readDateCadValue();
 					if (dateTime.HasValue)
 					{
 						value.Value = dateTime.Value;

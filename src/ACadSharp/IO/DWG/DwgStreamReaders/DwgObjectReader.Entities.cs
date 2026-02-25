@@ -937,10 +937,10 @@ namespace ACadSharp.IO.DWG
 						break;
 					case CellValueType.General:
 					case CellValueType.String:
-						value.Value = this.readStringCellValue();
+						value.Value = this.readStringCadValue();
 						break;
 					case CellValueType.Date:
-						System.DateTime? dateTime = this.readDateCellValue();
+						System.DateTime? dateTime = this.readDateCadValue();
 						if (dateTime.HasValue)
 						{
 							value.Value = dateTime.Value;
@@ -974,7 +974,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private string readStringCellValue()
+		private string readStringCadValue()
 		{
 			//General, BL containing the byte count followed by a
 			//byte array. (introduced in R2007, use Unknown before
@@ -995,18 +995,63 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private System.DateTime? readDateCellValue()
+		private System.DateTime? readDateCadValue()
 		{
 			//data size N, 
-			int data = this._mergedReaders.ReadBitLong();
-
-			if (data > 0)
+			int size = this._mergedReaders.ReadBitLong();
+			if (size <= 0)
 			{
-				byte[] array = this._mergedReaders.ReadBytes(data);
+				return null;
 			}
 
-			//TODO: Finish implementation
-			return null;
+			//followed by N bytes (Int64 value)
+			byte[] array = this._mergedReaders.ReadBytes(size);
+			if (this.R2007Plus)
+			{
+				switch (size)
+				{
+					case 16:
+						{
+							int year = LittleEndianConverter.Instance.ToInt16(array, 0);
+							int month = LittleEndianConverter.Instance.ToInt16(array, 2);
+							int day = LittleEndianConverter.Instance.ToInt16(array, 6);
+							int hour = LittleEndianConverter.Instance.ToInt16(array, 8);
+							int minute = LittleEndianConverter.Instance.ToInt16(array, 10);
+							int second = LittleEndianConverter.Instance.ToInt16(array, 12);
+							int millisecond = LittleEndianConverter.Instance.ToInt16(array, 14);
+
+							return new System.DateTime(year, month, day, hour, minute, second, millisecond);
+						}
+					case 14:
+						{
+							int year = LittleEndianConverter.Instance.ToInt16(array, 0);
+							int month = LittleEndianConverter.Instance.ToInt16(array, 2);
+							int day = LittleEndianConverter.Instance.ToInt16(array, 4);
+							int hour = LittleEndianConverter.Instance.ToInt16(array, 6);
+							int minute = LittleEndianConverter.Instance.ToInt16(array, 8);
+							int second = LittleEndianConverter.Instance.ToInt16(array, 10);
+							int millisecond = LittleEndianConverter.Instance.ToInt16(array, 12);
+
+							return new System.DateTime(year, month, day, hour, minute, second, millisecond);
+						}
+					default:
+						return null;
+				}
+			}
+			else
+			{
+				if (size != 8)
+				{
+					return null;
+				}
+
+				long high = BigEndianConverter.Instance.ToInt32(array, 0);
+				long low = BigEndianConverter.Instance.ToInt32(array, 4);
+
+				long seconds = (high << 32) | (low & 0xFFFFFFFFL);
+
+				return new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc).AddSeconds(seconds);
+			}
 		}
 
 		private XY? readCellValueXY()
