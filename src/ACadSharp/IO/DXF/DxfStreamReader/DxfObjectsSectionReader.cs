@@ -261,6 +261,22 @@ namespace ACadSharp.IO.DXF
 			{
 				switch (this._reader.Code)
 				{
+					case 11:
+						XYZ xyz = new XYZ();
+						xyz.X = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						xyz.Y = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						xyz.Z = this._reader.ValueAsDouble;
+
+						value.Value = xyz;
+						break;
+					case 91:
+						value.Value = this._reader.ValueAsInt;
+						break;
+					case 140:
+						value.Value = this._reader.ValueAsDouble;
+						break;
 					case 330:
 						template.ValueHandle = this._reader.ValueAsHandle;
 						break;

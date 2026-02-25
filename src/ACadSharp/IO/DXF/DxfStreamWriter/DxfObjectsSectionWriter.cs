@@ -595,7 +595,37 @@ namespace ACadSharp.IO.DXF
 
 			writeLongTextValue(2, 3, field.FieldCode);
 
-			throw new NotImplementedException();
+			this._writer.Write(90, field.Children.Count);
+			foreach (var item in field.Children)
+			{
+				this._writer.WriteHandle(360, item);
+			}
+
+			this._writer.Write(97, field.CadObjects.Count);
+			foreach (var item in field.CadObjects)
+			{
+				this._writer.WriteHandle(331, item);
+			}
+
+			this._writer.Write(91, (int)field.EvaluationOptionFlags);
+			this._writer.Write(92, (int)field.FilingOptionFlags);
+			this._writer.Write(94, (int)field.FieldStateFlags);
+			this._writer.Write(95, (int)field.EvaluationStatusFlags);
+			this._writer.Write(96, field.EvaluationErrorCode);
+			this._writer.Write(300, field.EvaluationErrorMessage);
+
+			this._writer.Write(93, field.Values.Count);
+			foreach (var item in field.Values)
+			{
+				this._writer.Write(6, item.Key);
+				this.writeCadValue(item.Value);
+			}
+
+			this._writer.Write(7, "ACFD_FIELD_VALUE");
+			this.writeCadValue(field.Value);
+
+			this.writeLongTextValue(301, 9, field.FormatString);
+			this._writer.Write(98, field.FormatString.Length);
 		}
 
 		private void writeFieldList(FieldList fieldList)

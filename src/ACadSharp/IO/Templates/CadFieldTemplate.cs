@@ -35,7 +35,7 @@ internal class CadFieldTemplate : CadTemplate<Field>
 		{
 			if (builder.TryGetCadObject(handle, out Field f))
 			{
-				this.CadObject.CadObjects.Add(f);
+				this.CadObject.Children.Add(f);
 			}
 			else
 			{

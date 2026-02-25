@@ -48,6 +48,49 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(DxfCode.Start, DxfFileToken.EndSection);
 		}
 
+		protected void writeCadValue(CadValue value)
+		{
+			this._writer.Write(93, value.Flags);
+
+			this._writer.Write(90, (int)value.ValueType);
+			switch (value.ValueType)
+			{
+				case CadValueType.Unknown:
+					this._writer.Write(91, 0);
+					break;
+				case CadValueType.Double:
+					this._writer.Write(140, Convert.ToDouble(value.Value));
+					break;
+				case CadValueType.Date:
+					//TODO: Implement date for dxf
+					this._writer.Write(91, 0);
+					break;
+				case CadValueType.General:
+				case CadValueType.String:
+					this.writeLongTextValue(1, 2, (string)value.Value);
+					break;
+				case CadValueType.Point2D:
+				case CadValueType.Point3D:
+					this._writer.Write(11, (XYZ)value.Value);
+					break;
+				case CadValueType.Long:
+					this._writer.Write(91, Convert.ToInt32(value.Value));
+					break;
+				case CadValueType.Handle:
+					var handleObj = value.Value as IHandledCadObject;
+					if (handleObj != null)
+					{
+						this._writer.WriteHandle(330, handleObj);
+					}
+					break;
+				case CadValueType.Buffer:
+				case CadValueType.ResultBuffer:
+					//TODO: Implement date for dxf
+					this._writer.Write(91, 0);
+					break;
+			}
+		}
+
 		protected void writeCommonObjectData(CadObject cadObject)
 		{
 			if (cadObject is DimensionStyle)
