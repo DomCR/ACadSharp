@@ -132,7 +132,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.ObjectField:
 					return this.readObjectCodes<Field>(new CadFieldTemplate(new Field()), this.readField);
 				case DxfFileToken.ObjectFieldList:
-					return this.readObjectCodes<FieldList>(new CadNonGraphicalObjectTemplate(new Field()), this.readFieldList);
+					return this.readObjectCodes<FieldList>(new CadFieldListTemplate(new FieldList()), this.readFieldList);
 				default:
 					DxfMap map = DxfMap.Create<CadObject>();
 					CadUnknownNonGraphicalObjectTemplate unknownEntityTemplate = null;
@@ -198,8 +198,18 @@ namespace ACadSharp.IO.DXF
 
 		private bool readFieldList(CadTemplate template, DxfMap map)
 		{
+			var tmp = template as CadFieldListTemplate;
+
 			switch (this._reader.Code)
 			{
+				case 100 when this._reader.ValueAsString == DxfSubclassMarker.IdSet:
+					this.currentSubclass = this._reader.ValueAsString;
+					return true;
+				case 90 when this.currentSubclass == DxfSubclassMarker.IdSet:
+					return true;
+				case 330 when this.currentSubclass == DxfSubclassMarker.IdSet:
+					tmp.OwnedObjectsHandlers.Add(this._reader.ValueAsHandle);
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.FieldList]);
 			}
@@ -211,12 +221,22 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				case 3:
+					tmp.CadObject.FieldCode += this._reader.ValueAsString;
+					return true;
 				//98 Length of format string
 				case 98:
 					return true;
 				case 6:
+					string key = this._reader.ValueAsString;
+					var t = this.readCadValue(this._reader.ValueAsString);
+					tmp.CadObject.Values.Add(key, t.CadValue);
+					tmp.CadValueTemplates.Add(t);
+					return true;
 				case 7:
-					this.readCadValue();
+					t = this.readCadValue(this._reader.ValueAsString);
+					tmp.CadObject.Value = t.CadValue;
+					tmp.CadValueTemplates.Add(t);
 					return true;
 				case 331:
 					tmp.CadObjectsHandles.Add(this._reader.ValueAsHandle);
@@ -229,33 +249,36 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readCadValue()
+		private CadValueTemplate readCadValue(string name)
 		{
 			this._reader.ReadNext();
 
 			CadValue value = new();
-			var map = DxfClassMap.Create(value.GetType(), "DATAMAP_VALUE");
+			CadValueTemplate template = new(value);
+			var map = DxfClassMap.Create(value.GetType(), name);
 
 			while (this._reader.Code != 304)
 			{
 				switch (this._reader.Code)
 				{
 					case 11:
-					case 21:
-					case 31:
-						//Value as point
+						XYZ xyz = new XYZ();
+						xyz.X = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						xyz.Y = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						xyz.Z = this._reader.ValueAsDouble;
+
+						value.Value = xyz;
 						break;
 					case 91:
-					case 92:
-						//Value as int
+						value.Value = this._reader.ValueAsInt;
 						break;
 					case 140:
-						//Value as double
-						break;
-					case 310:
-						//Value as byte array
+						value.Value = this._reader.ValueAsDouble;
 						break;
 					case 330:
+						template.ValueHandle = this._reader.ValueAsHandle;
 						break;
 					default:
 						if (!this.tryAssignCurrentValue(value, map))
@@ -267,6 +290,8 @@ namespace ACadSharp.IO.DXF
 
 				this._reader.ReadNext();
 			}
+
+			return template;
 		}
 
 		private bool readProxyObject(CadTemplate template, DxfMap map)

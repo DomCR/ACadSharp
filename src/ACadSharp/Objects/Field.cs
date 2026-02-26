@@ -4,48 +4,6 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Objects;
 
-[System.Flags]
-public enum EvaluationStatusFlags
-{
-	NotEvaluated = 1,
-
-	Success = 2,
-
-	EvaluatorNotFound = 4,
-
-	SyntaxError = 8,
-
-	InvalidCode = 0x10,
-
-	InvalidContext = 0x20,
-
-	OtherError = 0x40
-}
-
-[System.Flags]
-public enum FieldStateFlags
-{
-	Unknown = 0,
-
-	Initialized = 1,
-
-	Compiled = 2,
-
-	Modified = 4,
-
-	Evaluated = 8,
-
-	Cached = 16
-}
-
-[System.Flags]
-public enum FilingOptionFlags
-{
-	None = 0,
-
-	NoFieldResult = 1
-}
-
 /// <summary>
 /// Represents a <see cref="Field"/> object.
 /// </summary>
@@ -57,42 +15,84 @@ public enum FilingOptionFlags
 [DxfSubClass(DxfSubclassMarker.Field)]
 public class Field : NonGraphicalObject
 {
+	/// <summary>
+	/// Gets or sets the collection of CAD objects associated with this entity.
+	/// </summary>
 	[DxfCodeValue(DxfReferenceType.Count, 97)]
 	[DxfCollectionCodeValue(DxfReferenceType.Handle, 331)]
-	//Object ID used in the field code(AcDbSoftPointerId); repeats for the number of object IDs used in the field code
 	public List<CadObject> CadObjects { get; set; } = new();
 
+	/// <summary>
+	/// Gets the collection of child fields associated with this object.
+	/// </summary>
 	[DxfCodeValue(DxfReferenceType.Count, 90)]
 	[DxfCollectionCodeValue(DxfReferenceType.Handle, 360)]
-	//Child field ID(AcDbHardOwnershipId); repeats for number of children
-	public List<Field> Children { get; set; } = new();
+	public CadObjectCollection<Field> Children { get; private set; }
 
+	/// <summary>
+	/// Gets or sets the error code resulting from the evaluation process.
+	/// </summary>
 	[DxfCodeValue(96)]
 	public int EvaluationErrorCode { get; set; }
 
+	/// <summary>
+	/// Gets or sets the error message generated during evaluation.
+	/// </summary>
 	[DxfCodeValue(300)]
 	public string EvaluationErrorMessage { get; set; }
 
+	/// <summary>
+	/// Gets or sets the evaluation option flags that control how the associated expression is evaluated.
+	/// </summary>
 	[DxfCodeValue(91)]
 	public EvaluationOptionFlags EvaluationOptionFlags { get; set; }
 
+	/// <summary>
+	/// Gets or sets the evaluation status flags that indicate the current state of the object evaluation process.
+	/// </summary>
+	/// <remarks>These flags provide information about the outcome or progress of the evaluation, such as whether
+	/// the evaluation succeeded, failed, or is in progress. The specific meaning of each flag is defined by the
+	/// EvaluationStatusFlags enumeration.</remarks>
 	[DxfCodeValue(95)]
 	public EvaluationStatusFlags EvaluationStatusFlags { get; set; }
 
+	/// <summary>
+	/// Gets or sets the identifier of the evaluator associated with this entity.
+	/// </summary>
 	[DxfCodeValue(1)]
 	public string EvaluatorId { get; set; }
 
+	/// <summary>
+	/// Gets or sets the code string representing the field definition in the DXF file.
+	/// </summary>
+	/// <remarks>The field code typically contains the raw expression or formula used in the field. This value may
+	/// be used for parsing or evaluating the field within DXF processing workflows.</remarks>
 	[DxfCodeValue(2)]
 	public string FieldCode { get; set; }
 
-	[DxfCodeValue(3)]
-	public string FieldCodeOverflow { get; set; }
-
+	/// <summary>
+	/// Gets or sets the flags that indicate the current state of the field.
+	/// </summary>
 	[DxfCodeValue(94)]
 	public FieldStateFlags FieldStateFlags { get; set; }
 
+	/// <summary>
+	/// Gets or sets the set of flags that specify filing options for the associated entity.
+	/// </summary>
+	/// <remarks>The filing option flags determine how the entity is processed or stored during serialization. The
+	/// specific meaning of each flag depends on the context in which the entity is used. Refer to the documentation for
+	/// the FilingOptionFlags enumeration for details on available options.</remarks>
 	[DxfCodeValue(92)]
 	public FilingOptionFlags FilingOptionFlags { get; set; }
+
+	/// <summary>
+	/// Gets or sets the format string used to control how values are displayed or serialized.
+	/// </summary>
+	/// <remarks>The format string determines the representation of values when output or stored. The expected
+	/// format depends on the context in which this property is used. If the format string is invalid or unsupported, the
+	/// output may not be formatted as intended.</remarks>
+	[DxfCodeValue(301)]
+	public string FormatString { get; set; }
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectField;
@@ -100,40 +100,48 @@ public class Field : NonGraphicalObject
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.Field;
 
+	[DxfCodeValue(7)]
+	public CadValue Value { get; set; } = new();
+
+	/// <summary>
+	/// Gets or sets the collection of CAD values associated with the field.
+	/// </summary>
 	[DxfCodeValue(DxfReferenceType.Count, 93)]
-	//Number of the data set in the field
-	public List<object> Values { get; set; } = new();
+	[DxfCollectionCodeValue(6)]
+	public Dictionary<string, CadValue> Values { get; private set; } = new(StringComparer.InvariantCultureIgnoreCase);
 
-	//6
-	//Key string for the field data; a key-field pair is repeated for the number of data sets in the field
-
-	//7
-	//Key string for the evaluated cache; this key is hard-coded as ACFD_FIELD_VALUE
+	/// <inheritdoc/>
+	public Field() : base()
+	{
+		this.Children = new(this);
+	}
 
 	//90
-
 	//Data type of field value
-	//140
 
+	//140
 	//Double value(if data type of field value is double)
 
 	//330
-
 	//ID value, AcDbSoftPointerId (if data type of field value is ID)
 
 	//92
-
 	//Binary data buffer size(if data type of field value is binary)
 
 	//310
-
 	//Binary data(if data type of field value is binary)
 
-	[DxfCodeValue(301)]
-	public string FormatString { get; set; }
+	internal override void AssignDocument(CadDocument doc)
+	{
+		base.AssignDocument(doc);
 
-	[DxfCodeValue(9)]
-	public string OverflowFormatString { get; set; }
+		doc.RegisterCollection(this.Children);
+	}
 
+	internal override void UnassignDocument()
+	{
+		this.Document.UnregisterCollection(this.Children);
 
+		base.UnassignDocument();
+	}
 }
